@@ -16,7 +16,8 @@
 // Pilotage par HTTP local :
 //   GET  /flux                     la liste des flux et leurs compteurs
 //   POST /profil  {port, montant:{...}, descendant:{...}}   port = port source
-//        du navigateur, ou "tous" ; `montant` = navigateur vers serveur.
+//        du navigateur ou port du relais cote serveur, ou "tous" ;
+//        `montant` = navigateur vers serveur.
 //
 // Usage : node tool/salle/reseau_degrade.mjs <ip_ecoute> <port> <ip_serveur> <port_serveur> [port_pilotage]
 // Rien ne sort de la machine : les deux adresses sont locales.
@@ -93,7 +94,8 @@ function fluxDe(adresse, port) {
   amont.on('error', () => {});
   // Ports 20000 a 20999 : le pare-feu du banc (tool/salle/banc.sh) ne laisse
   // LiveKit repondre qu'a eux, pour que rien ne contourne le relais.
-  amont.bind(20000 + (prochainPort++ % 1000), ipEcoute);
+  f.portAmont = 20000 + (prochainPort++ % 1000);
+  amont.bind(f.portAmont, ipEcoute);
   flux.set(cle, f);
   return f;
 }
@@ -117,7 +119,7 @@ const etat = (s) => ({ ...s.p, passes: s.passes, perdus: s.perdus, octets: s.oct
 http.createServer((req, res) => {
   const rendre = (code, o) => { res.writeHead(code, { 'Content-Type': 'application/json' }); res.end(JSON.stringify(o)); };
   if (req.method === 'GET' && req.url === '/flux') {
-    return rendre(200, [...flux.values()].map((f) => ({ port: f.port, adresse: f.adresse, ne: f.ne, vu: f.vu,
+    return rendre(200, [...flux.values()].map((f) => ({ port: f.port, portAmont: f.portAmont, adresse: f.adresse, ne: f.ne, vu: f.vu,
       montant: etat(f.montant), descendant: etat(f.descendant) })));
   }
   if (req.method === 'POST' && req.url === '/profil') {
@@ -126,7 +128,11 @@ http.createServer((req, res) => {
     req.on('end', () => {
       try {
         const o = JSON.parse(corps);
-        const cibles = o.port === 'tous' ? [...flux.values()] : [...flux.values()].filter((f) => f.port === Number(o.port));
+        // Le navigateur ne connait pas toujours son vrai port : ses statistiques
+        // donnent l'adresse que LiveKit lui a renvoyee, donc le port du relais
+        // cote serveur (`portAmont`). On accepte l'un ou l'autre.
+        const cibles = o.port === 'tous' ? [...flux.values()]
+          : [...flux.values()].filter((f) => f.port === Number(o.port) || f.portAmont === Number(o.port));
         if (o.port === 'tous' && o.defaut) profilDefaut = { montant: o.montant ?? {}, descendant: o.descendant ?? {} };
         for (const f of cibles) { f.montant.regler(o.montant ?? {}); f.descendant.regler(o.descendant ?? {}); }
         rendre(200, { regles: cibles.length });

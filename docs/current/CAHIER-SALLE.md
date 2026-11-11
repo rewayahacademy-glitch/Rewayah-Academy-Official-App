@@ -2,6 +2,12 @@
 
 > **Journal des modifications de ce cahier** (la plus récente en premier)
 >
+> - 11/11/2026, Fable : §8 complété par une remarque du directeur sur la première capture du banc
+>   (élève au téléphone) : « En ligne » et « En salle » font doublon ; le chrono est trop bavard, il
+>   ne doit montrer que ce qui reste ; à zéro il sonne puis compte en croissant ; les minutes
+>   ajoutées après la durée officielle sont un réglage de la direction ; tout cela bien animé.
+>   Mon désaccord, dit au directeur le jour même : le bip sonne chez l'enseignant seulement (un bip
+>   peut tomber au milieu d'un verset chez l'élève), et un signal est ajouté 5 minutes avant la fin.
 > - 11/11/2026, Fable : §5 complété sur ordre du directeur (« n'oublie pas de travailler l'audio côté
 >   enseignant aussi », 10/11 au soir) : la règle vaut **dans les deux sens**. L'enseignant doit
 >   entendre chaque lettre de la récitation de l'élève pour pouvoir la corriger ; son micro, sa
@@ -195,6 +201,10 @@ la page « Ma classe ».
   deux semaines d'usage. Attendu : visible, beau et animé, qui entre et sort avec un **mouvement
   liquide** (un ressort, une forme qui se déforme, comme la Dynamic Island). Les minutes défilent
   avec une animation.
+- **État et chrono (directeur, 11/11, sur une capture du banc)** : « En ligne » et « En salle »
+  disent deux fois la même chose ; le chrono ne montre que le temps restant ; à zéro, il sonne puis
+  continue en croissant, dans la limite d'un réglage de la direction ; ces changements sont animés,
+  avec des effets visibles et modernes.
 - **Actions sur un profil** :
   - **« Faire réciter »** ne marche pas, et personne ne sait à quoi il sert. Donne-lui une vraie
     stratégie, ou supprime-le. Une piste : couper les micros des autres et mettre l'élève choisi

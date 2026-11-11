@@ -61,7 +61,7 @@ YAML
   (setsid nohup node "$DEPOT/tool/salle/reseau_degrade.mjs" "$PASSERELLE" 7882 "$IP_LK" 7882 7890 \
      > "$TRAVAIL/relais_udp.log" 2>&1 < /dev/null &)
   for _ in $(seq 20); do curl -sf http://127.0.0.1:7880 >/dev/null && break; sleep 1; done
-  curl -sf http://127.0.0.1:7890/flux >/dev/null
+  for _ in $(seq 20); do curl -sf http://127.0.0.1:7890/flux >/dev/null && break; sleep 1; done
   echo "Banc pret : LiveKit $IP_LK derriere le relais ${PASSERELLE}:7882 ; pilotage http://127.0.0.1:7890"
 }
 

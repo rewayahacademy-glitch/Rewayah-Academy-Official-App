@@ -77,3 +77,73 @@ natives et les serveurs, pas le navigateur) ; mesure du poids du paquet web du 1
 **Limite dite clairement** : un banc local n'a ni la distance réelle entre pays, ni les vrais
 téléphones. Il prouve le comportement de l'application sous un réseau donné ; la preuve finale
 reste celle du directeur, en production, avec de vrais élèves.
+
+---
+
+## D-003 (11/11/2026). Le chrono : ce qui reste, puis le dépassement ; le bip chez l'enseignant seul
+
+**Demande du directeur (11/11, sur une capture du banc)** : le chrono est trop bavard, il ne montre
+que ce qui reste ; à zéro il sonne et continue en croissant ; les minutes ajoutées sont un réglage
+de la direction ; le tout animé, avec des effets visibles et modernes. « En ligne » et « En salle »
+font doublon.
+
+**Décidé** (détail et références : `docs/current/UX_REVIEW_CHRONO-ETAT.md`) :
+
+1. Une capsule avec le temps restant seul et un anneau d'avancement. Chiffres qui roulent, capsule
+   qui s'étire et « respire » sur un ressort.
+2. À la fin prévue, le chrono compte le dépassement en croissant (`+03:12`). Sa borne est le
+   réglage serveur qui existe déjà, `grace_after_end_minutes` (15 minutes par défaut) : c'est lui
+   qui ferme aussi la porte de la salle. **Aucune valeur n'est écrite dans l'écran.**
+3. Un seul mot d'état : « En salle » quand la présence est confirmée, sinon l'état de la connexion.
+
+**Où je contredis la demande, et pourquoi :**
+
+- **Le bip ne sonne que chez l'enseignant.** Chez l'élève, il peut tomber au milieu d'un verset ;
+  et tenir l'heure est l'affaire de celui qui conduit la séance. Pour la même raison, la capsule
+  de l'élève ne prend aucune teinte d'alerte (référence : conception adaptée à l'âge, Children's
+  Code ; règle déjà posée par LIVE-CHRONO-01 : jamais de pression sur l'enfant).
+- **Un signal est ajouté cinq minutes avant la fin.** C'est à ce moment qu'il faut conclure ; à
+  zéro, il est trop tard (référence : Google Meet prévient cinq minutes avant la coupure).
+
+**À trancher par le directeur (argent) :** le temps de dépassement est-il payé à l'enseignant ?
+Aujourd'hui la paie compte par élève présent et par heure prévue (`DECISION-TARIFS-2026-10-18.md`).
+Je ne change rien à cette règle ; je signale seulement qu'un dépassement visible à l'écran posera
+la question. Ma proposition : le dépassement reste un geste gratuit de l'enseignant, plafonné par
+le réglage, et il n'entre pas dans la paie.
+
+**Reste à faire dans ce lot :** un écran de la direction pour régler `grace_after_end_minutes` s'il
+n'existe pas ; le chrono visible au repos sur le téléphone de l'enseignant (réduit à son anneau
+quand rien ne presse, déplié au toucher et dès que la fin approche).
+
+---
+
+## D-004 (11/11/2026). Le relevé de qualité de connexion : proposition
+
+**Demande (cahier §6)** : la qualité réelle de connexion de chaque participant est enregistrée et
+figure dans les rapports de séance, comme preuve en cas de litige ; à moi de décider quoi garder,
+combien de temps et qui lit, d'après la loi, sources citées.
+
+**Proposé** (sources et limites : `docs/current/salle/DROIT-RELEVE-QUALITE.md`) :
+
+- **Quoi** : par séance et par participant, à intervalle régulier : heure du serveur, niveau du
+  lien, pertes, gigue, part de son reconstruit, débit, coupures. Jamais d'adresse IP, de son ni
+  d'image.
+- **Combien de temps** : 180 jours par défaut (réglage de la direction), puis suppression ; gel
+  des seules séances contestées, jusqu'à la fin du litige.
+- **Qui lit** : la direction, en lecture seule, chaque lecture tracée ; l'enseignant voit en direct
+  l'état de ses élèves pendant la séance, rien après.
+- **Valeur de preuve** : table en ajout seul (ni modification ni suppression possibles hors purge
+  planifiée), heure du serveur, et deux regards croisés : chaque appareil relève ce qu'il reçoit,
+  et l'appareil de l'enseignant relève la qualité que **le serveur de visio** attribue à chaque
+  élève. Une famille ne peut donc pas fabriquer seule un « mauvais réseau de l'enseignant ».
+- **Jamais** : noter automatiquement un enfant ou un enseignant à partir de ce relevé.
+
+**Pourquoi passer par le serveur plutôt que d'ouvrir le canal de données aux élèves** : aujourd'hui
+un élève ne peut rien émettre vers la classe (`canPublishData = false`), et c'est une bonne règle de
+sécurité. Je ne l'affaiblis pas : l'appareil de l'élève écrit son relevé par une fonction serveur
+qui vérifie qu'il appartient à la séance, et l'enseignant le lit de là. Le même chemin sert à la
+preuve et à l'alerte en direct (« Amina vous entend mal »).
+
+**À valider par le directeur avant le code serveur** : les 180 jours ; la phrase d'information aux
+familles et l'accord du parent à l'inscription (obligatoire au Québec pour les moins de 14 ans) ;
+le recours à un juriste pour les points listés au §10 du document.

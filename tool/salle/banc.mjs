@@ -34,7 +34,7 @@ const CROCHET = () => {
   window.RTCPeerConnection = Espion;
 
   window.__stats = async () => {
-    const sortie = { recu: [], emis: [], paires: [], distant: [] };
+    const sortie = { a: performance.now(), recu: [], emis: [], paires: [], distant: [] };
     for (const pc of window.__pcs) {
       if (pc.connectionState === 'closed') continue;
       const r = await pc.getStats();
@@ -42,7 +42,7 @@ const CROCHET = () => {
       r.forEach((s) => {
         const codec = s.codecId ? parId.get(s.codecId) : null;
         if (s.type === 'inbound-rtp') {
-          sortie.recu.push({ genre: s.kind, codec: codec?.mimeType, fmtp: codec?.sdpFmtpLine, ssrc: s.ssrc,
+          sortie.recu.push({ genre: s.kind, codec: codec?.mimeType, nack: s.nackCount, retransmisRecus: s.retransmittedPacketsReceived, fmtp: codec?.sdpFmtpLine, ssrc: s.ssrc,
             paquets: s.packetsReceived, perdus: s.packetsLost, gigue: s.jitter, octets: s.bytesReceived,
             echantillons: s.totalSamplesReceived, dissimules: s.concealedSamples, dissimulesMuets: s.silentConcealedSamples,
             evenementsDissimulation: s.concealmentEvents, fecRecus: s.fecPacketsReceived, fecJetes: s.fecPacketsDiscarded,
@@ -63,6 +63,34 @@ const CROCHET = () => {
       });
     }
     return sortie;
+  };
+
+  // Regle le tampon de gigue vise par les recepteurs audio (W3C
+  // RTCRtpReceiver.jitterBufferTarget, en ms) : plus de retard, mais le temps
+  // de recevoir une seconde fois un paquet perdu. Rend le nombre de recepteurs.
+  window.__tampon = (ms) => {
+    let n = 0;
+    for (const pc of window.__pcs) {
+      if (pc.connectionState === 'closed') continue;
+      for (const r of pc.getReceivers()) {
+        if (r.track?.kind === 'audio') { r.jitterBufferTarget = ms; n += 1; }
+      }
+    }
+    return n;
+  };
+
+  // Ce que la negociation dit de l'audio recu : codecs et retours (nack).
+  window.__sdpAudio = () => {
+    const lignes = new Set();
+    for (const pc of window.__pcs) {
+      const sdp = pc.remoteDescription?.sdp ?? '';
+      for (const section of sdp.split(/\r?\nm=/).filter((x) => x.startsWith('audio') || x.includes('\nm=audio'))) {
+        for (const l of section.split(/\r?\n/)) {
+          if (/^a=(rtpmap|rtcp-fb|fmtp):\d+ .*(opus|red|nack)/i.test(l) || /^a=rtcp-fb:\d+ nack/.test(l)) lignes.add(l.trim());
+        }
+      }
+    }
+    return [...lignes];
   };
 
   // Enregistre toutes les pistes audio recues, melangees comme a l'ecoute.
@@ -162,9 +190,13 @@ export async function appuyer(p, motif, { delai = 8000, pause = 1500, role = 'bu
 /// `descendant` (le serveur vers lui). Sans argument : reseau parfait.
 export async function reseau(p, { montant = {}, descendant = {} } = {}) {
   const ports = await p.ports();
+  let regles = 0;
   for (const port of ports) {
-    await fetch(`${RELAIS}/profil`, { method: 'POST', body: JSON.stringify({ port, montant, descendant }) });
+    const r = await (await fetch(`${RELAIS}/profil`, { method: 'POST', body: JSON.stringify({ port, montant, descendant }) })).json();
+    regles += r.regles ?? 0;
   }
+  // Un reglage qui ne touche aucun flux fausserait toute la mesure en silence.
+  if (!regles) throw new Error(`${p.nom} : aucun flux du relais ne correspond aux ports ${ports.join(', ')}`);
   return ports;
 }
 
@@ -196,7 +228,7 @@ export function bilanAudio(avant, apres) {
       fecRecus: d('fecRecus'),
       tamponMs: Math.round(1000 * d('tamponDelai') / Math.max(1, d('tamponEmis'))),
       gigueMs: Math.round(1000 * (b.gigue ?? 0)),
-      debitKbps: Math.round(d('octets') * 8 / 1000) });
+      debitKbps: Math.round(d('octets') * 8 / Math.max(1, apres.a - avant.a)) });
   }
   return sortie;
 }

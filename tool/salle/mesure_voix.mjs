@@ -25,19 +25,37 @@ const RECITATION = process.env.BANC_RECITATION ?? '/opt/banc-audio/ref/recitatio
 const SORTIE = process.env.BANC_SORTIE ?? `/tmp/banc-salle/${etiquette}`;
 const PYTHON = process.env.BANC_PYTHON ?? '/opt/banc-audio/venv/bin/python';
 const DUREE = Number(arg('duree', '70'));
+// `--tampon=250` : le tampon de gigue vise chez l'auditeur, en ms (0 : celui du navigateur).
+const TAMPON = Number(arg('tampon', '0'));
+const SUFFIXE = `${avecCamera ? '_camera' : ''}${TAMPON ? `_tampon${TAMPON}` : ''}`;
 
 // Les memes reglages dans les deux sens du lien de l'eleve.
+// Chaque essai avec pertes porte aussi une latence ordinaire (100 ms aller-retour,
+// un peu de gigue) : sur un lien sans latence, le serveur a le temps de renvoyer
+// chaque paquet perdu, ce qu'un vrai reseau ne permet pas, et la mesure flatterait.
+const LIEN = { delai: 50, gigue: 10 };
 export const PROFILS = {
   parfait: {},
-  'pertes-10': { perte: 0.10 },
-  'pertes-10-rafales': { perte: 0.10, rafale: 3 },
-  'pertes-20': { perte: 0.20 },
-  'pertes-20-rafales': { perte: 0.20, rafale: 3 },
-  'pertes-30-rafales': { perte: 0.30, rafale: 4 },
+  'pertes-10': { ...LIEN, perte: 0.10 },
+  'pertes-10-rafales': { ...LIEN, perte: 0.10, rafale: 3 },
+  'pertes-20': { ...LIEN, perte: 0.20 },
+  'pertes-20-rafales': { ...LIEN, perte: 0.20, rafale: 3 },
+  'pertes-30-rafales': { ...LIEN, perte: 0.30, rafale: 4 },
   'latence-300': { delai: 150, gigue: 40 }, // 150 ms par sens : 300 ms aller-retour
   // Mobile 3G moyen : 384 kbit/s en reception, 128 en emission, 300 ms aller-retour, 2 % de pertes.
   '3g': { descendant: { debit: 384, delai: 150, gigue: 40, perte: 0.02 }, montant: { debit: 128, delai: 150, gigue: 40, perte: 0.02 } },
 };
+/// Note les enregistrements de `resultats` et complete chaque ligne.
+export function noter(sortie, sens, resultats, dire = console.log) {
+  const notes = execFileSync(PYTHON, [path.join(import.meta.dirname, 'mesure_audio.py'), RECITATION, ...resultats.map((r) => r.fichier)],
+    { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'], maxBuffer: 1 << 26 }).trim().split('\n').map((l) => JSON.parse(l));
+  for (const r of resultats) {
+    const n = notes.find((x) => x.fichier === r.fichier) ?? {};
+    Object.assign(r, { estoi: n.estoi, estoi_pire: n.estoi_pire, trous: n.trous, wer: n.wer, mots: n.mots_original, erreur: n.erreur });
+    dire(`${sens} ${r.profil} : mots perdus ou changes ${n.wer} ; ESTOI ${n.estoi} (pire ${n.estoi_pire}) ; son reconstruit ${r.audio[0]?.dissimule} ; pertes ${r.audio[0]?.pertes} ; debit ${r.audio[0]?.debitKbps} kbit/s`);
+  }
+}
+
 const choisis = arg('profils', Object.keys(PROFILS).join(',')).split(',');
 
 fs.mkdirSync(SORTIE, { recursive: true });
@@ -55,9 +73,11 @@ try {
   if (!(await appuyer(parleur, /^Ouvrir le micro/, { pause: 3000 }))) throw new Error(`${parleur.nom} : pas de « Ouvrir le micro » ; ${await parleur.lus(40)}`);
   if (avecCamera) dire(`camera de l'enseignant : ${await appuyer(ens, /^Allumer la caméra/, { pause: 3000 })}`);
   await auditeur.page.waitForTimeout(6000);
+  if (TAMPON) dire(`tampon de gigue vise : ${TAMPON} ms sur ${await auditeur.page.evaluate((ms) => window.__tampon(ms), TAMPON)} recepteur(s) audio`);
   const emis = (await parleur.stats()).emis.filter((x) => x.genre === 'audio');
   dire(`== ${etiquette} ; sens ${sens} ; camera ${avecCamera} ; ${new Date().toISOString()}`);
   dire(`emission audio : ${JSON.stringify(emis.map((x) => ({ codec: x.codec, fmtp: x.fmtp, cible: x.cible })))}`);
+  dire(`negociation audio chez l'auditeur : ${(await auditeur.page.evaluate(() => window.__sdpAudio())).join(' | ')}`);
 
   for (const nom of choisis) {
     const p = PROFILS[nom];
@@ -65,7 +85,7 @@ try {
     const ports = await reseau(eleve, reglage);
     await auditeur.page.waitForTimeout(8000); // le temps que l'emetteur et le tampon s'adaptent
     const avant = await auditeur.stats();
-    const fichier = path.join(SORTIE, `${sens}_${nom}.webm`);
+    const fichier = path.join(SORTIE, `${sens}${SUFFIXE}_${nom}.webm`);
     await ecouter(auditeur, DUREE, fichier);
     const apres = await auditeur.stats();
     const video = apres.recu.filter((x) => x.genre === 'video').map((x) => `${x.largeur}x${x.hauteur}@${x.ips ?? 0}`).join(',');
@@ -76,17 +96,12 @@ try {
     await auditeur.page.waitForTimeout(4000);
   }
   // La notation, en un lot : le modele de reconnaissance n'est charge qu'une fois.
+  // `--sans-note` : on enregistre seulement ; `tool/salle/noter.mjs` notera plus tard.
   await ens.fermer(); await eleve.fermer();
-  const notes = execFileSync(PYTHON, [path.join(import.meta.dirname, 'mesure_audio.py'), RECITATION, ...resultats.map((r) => r.fichier)],
-    { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'], maxBuffer: 1 << 26 }).trim().split('\n').map((l) => JSON.parse(l));
-  for (const r of resultats) {
-    const n = notes.find((x) => x.fichier === r.fichier) ?? {};
-    Object.assign(r, { estoi: n.estoi, estoi_pire: n.estoi_pire, trous: n.trous, wer: n.wer, mots: n.mots_original, erreur: n.erreur });
-    dire(`${r.profil} : mots perdus ou changes ${n.wer} ; ESTOI ${n.estoi} (pire ${n.estoi_pire}) ; son reconstruit ${r.audio[0]?.dissimule} ; pertes ${r.audio[0]?.pertes}`);
-  }
+  if (!process.argv.includes('--sans-note')) noter(SORTIE, sens, resultats, dire);
 } catch (e) {
   dire(`ECHEC : ${String(e.message ?? e).slice(0, 500)}`);
 } finally {
-  fs.writeFileSync(path.join(SORTIE, `${sens}.json`), JSON.stringify({ etiquette, sens, camera: avecCamera, date: new Date().toISOString(), resultats }, null, 1));
+  fs.writeFileSync(path.join(SORTIE, `${sens}${SUFFIXE}.json`), JSON.stringify({ etiquette, sens, camera: avecCamera, tampon: TAMPON, date: new Date().toISOString(), resultats }, null, 1));
   await ens.fermer().catch(() => {}); await eleve.fermer().catch(() => {});
 }
