@@ -3393,6 +3393,16 @@ void main() {
         final Finder plus = find.byKey(
           const ValueKey<String>('salle-zoom-plus'),
         );
+        // Directeur, 11/11/2026 : au telephone, aucun bouton de zoom sur la
+        // page ; le pincement et le double toucher restent.
+        if (taille.shortestSide < 600) {
+          expect(plus, findsNothing);
+          expect(
+            find.byKey(const ValueKey<String>('salle-zoom-moins')),
+            findsNothing,
+          );
+          return;
+        }
         expect(plus, findsOneWidget);
         // Au premier palier, « moins » n'est pas rendu (jamais grise).
         expect(

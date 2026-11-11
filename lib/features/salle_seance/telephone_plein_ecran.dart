@@ -460,7 +460,12 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
               : null;
           // Fiche 1, ligne 13 : la pilule du zoom ni sur un panneau ouvert,
           // ni sur le profil deplie.
+          // Directeur, 11/11/2026 : au telephone, plus de bouton de zoom
+          // (« ca ne sert a rien car on peut pincer, en plus ca bloque la
+          // vue ») : le pincement et le double toucher restent, et le tiroir
+          // des Commandes garde plus et moins chez l'enseignant.
           final bool zoom =
+              !telephone &&
               !libre &&
               !sceneDevant &&
               !paletteADroite &&

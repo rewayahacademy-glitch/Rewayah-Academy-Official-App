@@ -1110,14 +1110,22 @@ void main() {
               ltr ? taille.width - k.right : k.left,
               moreOrLessEquals(16, epsilon: 1),
             );
-            // Le zoom, au bord de fin.
-            final Rect z = tester.getRect(
-              find.byKey(const ValueKey<String>('salle-zoom')),
-            );
-            expect(
-              ltr ? taille.width - z.right : z.left,
-              moreOrLessEquals(16, epsilon: 1),
-            );
+            // Directeur, 11/11/2026 : plus de bouton de zoom au telephone
+            // (le pincement et le double toucher restent).
+            if (taille.shortestSide < 600) {
+              expect(
+                find.byKey(const ValueKey<String>('salle-zoom')),
+                findsNothing,
+              );
+            } else {
+              final Rect z = tester.getRect(
+                find.byKey(const ValueKey<String>('salle-zoom')),
+              );
+              expect(
+                ltr ? taille.width - z.right : z.left,
+                moreOrLessEquals(16, epsilon: 1),
+              );
+            }
             // La capsule : vignette, point, oeil dans le sens de lecture.
             final double v = tester
                 .getCenter(
@@ -1546,6 +1554,14 @@ void main() {
             await _attendreLeRepos(tester);
             expect(zoom.hitTestable(), findsNothing);
             await _toucher(tester);
+            // Directeur, 11/11/2026 : au telephone, aucun bouton de zoom ne
+            // flotte sur la page (le pincement et le double toucher restent,
+            // le tiroir des Commandes garde plus et moins).
+            if (taille.shortestSide < 600) {
+              expect(zoom, findsNothing);
+              expect(tester.takeException(), isNull);
+              return;
+            }
             expect(zoom, findsOneWidget);
             final Rect z = tester.getRect(zoom);
             // Pilote C7 : a 100 %, « + » seul, un bouton rond, sans case

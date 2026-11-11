@@ -1,0 +1,16 @@
+== Ecran qui s'eteint ; 2026-11-11T06:07:45.281Z ; classe « E2E Banc veille 64575 » ; gels : 20 s, 75 s
+enseignant, micro : /^Ouvrir le micro/
+eleve, micro : /^Ouvrir le micro/
+verrou d'ecran chez l'eleve : {"demandes":0,"tenus":0,"relaches":0,"erreurs":[],"absent":false}
+eleve avant le gel : {"recu":153272,"emis":59858,"microOuvert":false,"microFerme":false,"attend":[]}
+-- gel de 20 s
+enseignant, pendant le gel, voit : group:E2E Banc veille 64575 E2E Enseignant En ligne Visite de contrôle possible. Élèves 1/1 | flt-semantics:57 min restantes | img:Vidéo d'E2E Enseignant | group:Personne ne récite | header:File de récitation | flt-semantics:Personne ne récite | button:Afficher la fiche d'Amina, Connecté | flt-semantics:Amina, Sans image | button:Ouvrir le Coran | button:Focus, agrandir le contenu et réduire les panneaux | button:Gestes pour Amina | button:Bibliothèque Fermer | input:Rechercher un support | butt
+reveil apres 20 s : voix de l'enseignant revenue en 2.5 s ; micro de l'eleve ouvert et emettant en PLUS DE 60 s (avant le gel : ouvert=false)
+eleve apres le reveil : {"recu":819221,"emis":552062,"microOuvert":false,"microFerme":false,"attend":[]}
+verrou d'ecran : {"demandes":0,"tenus":0,"relaches":0,"erreurs":[],"absent":false}
+-- gel de 75 s
+enseignant, pendant le gel, voit : group:E2E Banc veille 64575 E2E Enseignant En ligne Visite de contrôle possible. Élèves 1/1 | flt-semantics:55 min restantes | img:Vidéo d'E2E Enseignant | group:Personne ne récite | header:File de récitation | flt-semantics:Personne ne récite | button:Afficher la fiche d'Amina, Connecté | flt-semantics:Amina, Sans image | button:Ouvrir le Coran | button:Focus, agrandir le contenu et réduire les panneaux | button:Gestes pour Amina | button:Bibliothèque Fermer | input:Rechercher un support | butt
+reveil apres 75 s : voix de l'enseignant revenue en 2.5 s ; micro de l'eleve ouvert et emettant en PLUS DE 60 s (avant le gel : ouvert=false)
+eleve apres le reveil : {"recu":1946081,"emis":1389671,"microOuvert":false,"microFerme":false,"attend":[]}
+verrou d'ecran : {"demandes":0,"tenus":0,"relaches":0,"erreurs":[],"absent":false}
+== fin sans erreur de script
