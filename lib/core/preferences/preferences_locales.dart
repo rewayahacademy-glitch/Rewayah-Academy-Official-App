@@ -3,16 +3,22 @@ import 'dart:async';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+// `ProviderListenable` n'est pas exporte par l'entree principale de Riverpod 3.
+import 'package:flutter_riverpod/misc.dart' show ProviderListenable;
 
 import '../../features/inscription/questionnaire/memoire_appareil.dart';
 import '../appairage/profils_locaux.dart' show baseLocaleProvider;
 import '../cache/db/app_database.dart';
+import '../capacites/port_langues_communication.dart';
 import '../i18n/langue_demarrage.dart';
 import '../i18n/strings.g.dart';
 import '../observabilite/journal_dev.dart';
 import '../theme/polices_differees.dart' show chargerPoliceArabe;
+import 'preferences_compte.dart';
 
-/// Le choix local du theme. Il ne modifie aucune preference de profil distante.
+/// Le choix du theme. Porte par le compte (PREFERENCES-PAR-COMPTE, 11/11/2026) :
+/// garde au serveur et dans le cache de ce compte sur l'appareil
+/// ([persistanceApparenceProvider]).
 enum PreferenceTheme {
   systeme,
   clair,
@@ -212,6 +218,20 @@ class PreferencesLocalesControleur extends Notifier<PreferencesLocales> {
     state = state.copyWith(theme: valeur);
   }
 
+  /// Vrai quand le theme a ete choisi par la personne depuis le dernier
+  /// changement de compte.
+  bool get themeChoisi => _themeChoisi;
+
+  /// Vrai quand la langue a ete choisie par la personne depuis le dernier
+  /// changement de compte.
+  bool get langueChoisie => _langueChoisie;
+
+  /// Un autre compte arrive : ses reglages remplaceront le theme affiche.
+  void oublierChoixTheme() => _themeChoisi = false;
+
+  /// Un autre compte arrive : ses reglages remplaceront la langue affichee.
+  void oublierChoixLangue() => _langueChoisie = false;
+
   /// Change la langue (Reglages : Systeme, Francais, Arabe). L'application
   /// la prend tout de suite ([persistanceLangueProvider]).
   void langue(PreferenceLangue valeur) {
@@ -274,7 +294,9 @@ PreferenceTheme? _themeImmediat(LecturePreferencesImmediate? lecture) {
     return null;
   }
   try {
-    return PreferenceTheme.depuis(lecture.lireImmediat(clefPreferenceTheme));
+    return PreferenceTheme.depuis(
+      lirePreferenceImmediate(lecture, clefPreferenceTheme),
+    );
   } on Object {
     return null;
   }
@@ -301,6 +323,44 @@ const String clefPreferenceTheme = 'apparence.theme';
 
 /// Clef de la preference de langue dans le stockage local.
 const String clefPreferenceLangue = 'apparence.langue';
+
+/// Clef du pointeur vers le dernier compte connecte sur cet appareil
+/// (PREFERENCES-PAR-COMPTE) : son identifiant de profil, vide apres une
+/// deconnexion. Le script d'`index.html` le lit avant Flutter.
+const String clefPointeurCompte = 'compte.dernier';
+
+/// La clef de [clef] pour le compte [profil] (`apparence.theme.<profil>`) ;
+/// la clef de l'appareil, sans compte.
+String clefDuCompte(String clef, String? profil) =>
+    profil == null || profil.isEmpty ? clef : '$clef.$profil';
+
+/// La valeur de [clef] avant que la session soit connue : celle du dernier
+/// compte connecte (par le pointeur), sinon celle de l'appareil. Meme ordre
+/// que le script d'`index.html`.
+String? lirePreferenceImmediate(
+  LecturePreferencesImmediate lecture,
+  String clef,
+) {
+  final String? pointeur = lecture.lireImmediat(clefPointeurCompte);
+  if (pointeur != null && pointeur.isNotEmpty) {
+    final String? duCompte = lecture.lireImmediat(clefDuCompte(clef, pointeur));
+    if (duCompte != null) return duCompte;
+  }
+  return lecture.lireImmediat(clef);
+}
+
+/// [lirePreferenceImmediate], sur un stockage qui se lit en asynchrone.
+Future<String?> lirePreferenceAuLancement(
+  StockagePreferences stockage,
+  String clef,
+) async {
+  final String? pointeur = await stockage.lire(clefPointeurCompte);
+  if (pointeur != null && pointeur.isNotEmpty) {
+    final String? duCompte = await stockage.lire(clefDuCompte(clef, pointeur));
+    if (duCompte != null) return duCompte;
+  }
+  return stockage.lire(clef);
+}
 
 /// Un stockage cle/valeur local, durable et **non sensible**.
 ///
@@ -407,8 +467,9 @@ final Provider<StockagePreferences> stockagePreferencesProvider =
 /// Hors web, `null` ici ; [persistanceLangueProvider] la restaure ensuite.
 PreferenceLangue? langueMemoriseeAuDemarrage() => kIsWeb
     ? PreferenceLangue.depuis(
-        lireMemoireAppareil(
-          '${StockagePreferencesNavigateur.prefixe}$clefPreferenceLangue',
+        lirePreferenceImmediate(
+          const StockagePreferencesNavigateur(),
+          clefPreferenceLangue,
         ),
       )
     : null;
@@ -440,93 +501,246 @@ Future<AppLocale> _appliquerLangue(AppLocale? imposee) async {
   }
 }
 
-/// Relie la preference de langue a son stockage et a l'application : une
-/// lecture au montage, puis, a chaque changement, une ecriture et la langue
-/// appliquee (`LocaleSettings`, que `TranslationProvider` fait redessiner).
+/// Relie une preference d'affichage (theme ou langue) a son stockage **par
+/// compte** et au serveur (PREFERENCES-PAR-COMPTE, directeur, 11/11/2026).
+///
+/// * Au lancement, tant que la session n'est pas connue, la valeur vient du
+///   dernier compte connecte sur cet appareil ([lirePreferenceAuLancement]).
+/// * A la connexion d'un compte : son cache sur l'appareil, puis sa valeur au
+///   serveur, qui fait foi. Rien du compte precedent ne passe.
+/// * Sans personne connectee apres un compte (deconnexion, session expiree) :
+///   retour au defaut de l'appareil (« Systeme »), jamais aux reglages du
+///   compte sorti. Sans compte avant, le choix fait sur l'appareil reste.
+/// * Un choix de la personne est ecrit dans le cache de son compte, et au
+///   serveur quand elle est connectee. Un reglage repris du cache ou du
+///   serveur n'est jamais renvoye au serveur.
+///
+/// Une panne du stockage ou du serveur ne casse rien : elle est journalisee
+/// et la preference reste en memoire.
+void _persisterParCompte<T extends Enum>({
+  required Ref ref,
+  required String clef,
+  required String nom,
+  required T? Function(String? valeur) depuis,
+  required T parDefaut,
+  required ProviderListenable<T> selection,
+  required void Function(T valeur) restaurer,
+  required void Function() oublierChoix,
+  required bool Function() choisi,
+  required Future<T?> Function() lireServeur,
+  required Future<void> Function(T valeur) ecrireServeur,
+  void Function(T valeur)? appliquer,
+}) {
+  final StockagePreferences stockage = ref.watch(stockagePreferencesProvider);
+  final ComptePreferences auMontage = ref.read(compteDesPreferencesProvider);
+  String? profil = auMontage.profil;
+  bool connu = auMontage.resolue;
+  // Chaque changement de compte ouvre une generation : une lecture lente
+  // d'un compte precedent n'est jamais appliquee au suivant.
+  int generation = 0;
+
+  Future<String?> lire(String c) async {
+    try {
+      return await stockage.lire(c);
+    } on Object catch (erreur) {
+      journalDev('Preference $nom illisible, reste en memoire : $erreur');
+      return null;
+    }
+  }
+
+  Future<void> ecrire(String c, String valeur) async {
+    try {
+      await stockage.ecrire(c, valeur);
+    } on Object catch (erreur) {
+      journalDev('Preference $nom non ecrite, reste en memoire : $erreur');
+    }
+  }
+
+  void appliquerSiCourant(int g, T? valeur) {
+    if (valeur != null && ref.mounted && g == generation) {
+      restaurer(valeur);
+    }
+  }
+
+  Future<void> adopterServeur(int g) async {
+    try {
+      appliquerSiCourant(g, await lireServeur());
+    } on Object catch (erreur) {
+      journalDev('Preference $nom du compte non lue au serveur : $erreur');
+    }
+  }
+
+  Future<void> passerAuCompte(String? nouveau) async {
+    final int g = ++generation;
+    final String? ancien = profil;
+    profil = nouveau;
+    if (nouveau != null) {
+      oublierChoix();
+      await ecrire(clefPointeurCompte, nouveau);
+      appliquerSiCourant(
+        g,
+        depuis(await lire(clefDuCompte(clef, nouveau))) ?? parDefaut,
+      );
+      await adopterServeur(g);
+      return;
+    }
+    final String? pointeur = await lire(clefPointeurCompte);
+    if (g != generation || !ref.mounted) {
+      return;
+    }
+    if (ancien == null && (pointeur == null || pointeur.isEmpty)) {
+      // Aucun compte avant : le choix fait sur cet appareil reste.
+      appliquerSiCourant(g, depuis(await lire(clef)));
+      return;
+    }
+    oublierChoix();
+    restaurer(parDefaut);
+    await ecrire(clef, parDefaut.name);
+    await ecrire(clefPointeurCompte, '');
+  }
+
+  Future<void> lancement() async {
+    final int g = generation;
+    try {
+      appliquerSiCourant(
+        g,
+        depuis(await lirePreferenceAuLancement(stockage, clef)),
+      );
+    } on Object catch (erreur) {
+      journalDev('Preference $nom illisible, reste en memoire : $erreur');
+    }
+  }
+
+  unawaited(connu ? passerAuCompte(profil) : lancement());
+
+  ref.listen<ComptePreferences>(compteDesPreferencesProvider, (
+    ComptePreferences? _,
+    ComptePreferences apres,
+  ) {
+    if (!apres.resolue || (connu && apres.profil == profil)) {
+      return;
+    }
+    connu = true;
+    unawaited(passerAuCompte(apres.profil));
+  });
+
+  ref.listen<T>(selection, (T? avant, T apres) {
+    if (avant == apres) {
+      return;
+    }
+    unawaited(ecrire(clefDuCompte(clef, profil), apres.name));
+    appliquer?.call(apres);
+    if (profil != null && choisi()) {
+      unawaited(() async {
+        try {
+          await ecrireServeur(apres);
+        } on Object catch (erreur) {
+          journalDev(
+            'Preference $nom du compte non ecrite au serveur : $erreur',
+          );
+        }
+      }());
+    }
+  });
+}
+
+/// La langue du compte au serveur : la langue de communication, quand elle
+/// est le francais ou l'arabe (les deux langues de l'application) ; `null`
+/// sinon, et le cache du compte reste.
+PreferenceLangue? langueDuCompte(String? code) => switch (code) {
+  'fr' => PreferenceLangue.francais,
+  'ar' => PreferenceLangue.arabe,
+  _ => null,
+};
+
+/// Relie la preference de langue a son stockage par compte, au serveur et a
+/// l'application : a chaque changement, une ecriture et la langue appliquee
+/// (`LocaleSettings`, que `TranslationProvider` fait redessiner).
+///
+/// Au serveur, la langue du compte est sa langue de communication
+/// (`ma_langue_communication_regler`) : « Francais » ecrit `fr`, « Arabe »
+/// ecrit `ar`. « Systeme » n'a pas de valeur au serveur : il reste dans le
+/// cache du compte sur cet appareil.
 /// **Monte par `RewayahApp` seulement**, comme [persistanceApparenceProvider].
 final Provider<void> persistanceLangueProvider = Provider<void>((Ref ref) {
-  final StockagePreferences stockage = ref.watch(stockagePreferencesProvider);
   final PreferencesLocalesControleur controleur = ref.read(
     preferencesLocalesProvider.notifier,
   );
-
-  Future<void> restaurer() async {
-    try {
-      final PreferenceLangue? lu = PreferenceLangue.depuis(
-        await stockage.lire(clefPreferenceLangue),
-      );
-      if (lu != null && ref.mounted) {
-        controleur.restaurerLangue(lu);
-      }
-    } on Object catch (erreur) {
-      journalDev('Preference de langue illisible, reste en memoire : $erreur');
-    }
-  }
-
-  Future<void> ecrire(PreferenceLangue valeur) async {
-    try {
-      await stockage.ecrire(clefPreferenceLangue, valeur.name);
-    } on Object catch (erreur) {
-      journalDev('Preference de langue non ecrite, reste en memoire : $erreur');
-    }
-  }
-
-  unawaited(restaurer());
-  ref.listen<PreferenceLangue>(
-    preferencesLocalesProvider.select((PreferencesLocales p) => p.langue),
-    (PreferenceLangue? avant, PreferenceLangue apres) {
-      if (avant != apres) {
-        unawaited(ecrire(apres));
-        unawaited(appliquerPreferenceLangue(apres));
+  _persisterParCompte<PreferenceLangue>(
+    ref: ref,
+    clef: clefPreferenceLangue,
+    nom: 'de langue',
+    depuis: PreferenceLangue.depuis,
+    parDefaut: PreferenceLangue.systeme,
+    selection: preferencesLocalesProvider.select(
+      (PreferencesLocales p) => p.langue,
+    ),
+    restaurer: controleur.restaurerLangue,
+    oublierChoix: controleur.oublierChoixLangue,
+    choisi: () => controleur.langueChoisie,
+    lireServeur: () async => langueDuCompte(
+      await ref.read(portLanguesCommunicationProvider).maLangue(),
+    ),
+    ecrireServeur: (PreferenceLangue valeur) async {
+      final String? code = switch (valeur) {
+        PreferenceLangue.francais => 'fr',
+        PreferenceLangue.arabe => 'ar',
+        PreferenceLangue.systeme => null,
+      };
+      if (code != null) {
+        await ref.read(portLanguesCommunicationProvider).regler(code);
       }
     },
+    appliquer: (PreferenceLangue valeur) =>
+        unawaited(appliquerPreferenceLangue(valeur)),
   );
 });
 
-/// Relie la preference de theme a son stockage : une lecture au montage, une
-/// ecriture a chaque changement.
+/// Relie la preference de theme a son stockage par compte et au serveur
+/// (`ma_preference_theme`, `ma_preference_theme_regler`).
 ///
 /// **Monte par `RewayahApp` seulement** : un ecran teste seul, ou la page
 /// Reglages montee dans un test, ne touche jamais la base locale. Une panne
 /// du stockage ne casse rien : la preference reste en memoire pour la
 /// session.
 final Provider<void> persistanceApparenceProvider = Provider<void>((Ref ref) {
-  final StockagePreferences stockage = ref.watch(stockagePreferencesProvider);
   final PreferencesLocalesControleur controleur = ref.read(
     preferencesLocalesProvider.notifier,
   );
-
-  Future<void> restaurer() async {
-    try {
-      final PreferenceTheme? lu = PreferenceTheme.depuis(
-        await stockage.lire(clefPreferenceTheme),
-      );
-      if (lu != null && ref.mounted) {
-        controleur.restaurerTheme(lu);
-      }
-    } on Object catch (erreur) {
-      journalDev('Preference de theme illisible, reste en memoire : $erreur');
-    }
-  }
-
-  Future<void> ecrire(PreferenceTheme valeur) async {
-    try {
-      await stockage.ecrire(clefPreferenceTheme, valeur.name);
-    } on Object catch (erreur) {
-      journalDev('Preference de theme non ecrite, reste en memoire : $erreur');
-    }
-  }
-
-  unawaited(restaurer());
-  ref.listen<PreferenceTheme>(
-    preferencesLocalesProvider.select((PreferencesLocales p) => p.theme),
-    (PreferenceTheme? avant, PreferenceTheme apres) {
-      if (avant != apres) {
-        unawaited(ecrire(apres));
-      }
-    },
+  _persisterParCompte<PreferenceTheme>(
+    ref: ref,
+    clef: clefPreferenceTheme,
+    nom: 'de theme',
+    depuis: PreferenceTheme.depuis,
+    parDefaut: PreferenceTheme.systeme,
+    selection: preferencesLocalesProvider.select(
+      (PreferencesLocales p) => p.theme,
+    ),
+    restaurer: controleur.restaurerTheme,
+    oublierChoix: controleur.oublierChoixTheme,
+    choisi: () => controleur.themeChoisi,
+    lireServeur: () async =>
+        PreferenceTheme.depuis(await ref.read(portThemeCompteProvider).lire()),
+    ecrireServeur: (PreferenceTheme valeur) =>
+        ref.read(portThemeCompteProvider).regler(valeur.name),
   );
 });
+
+/// Ce que la deconnexion efface sur l'appareil (PREFERENCES-PAR-COMPTE) : le
+/// pointeur vers le dernier compte, et le theme et la langue de l'appareil
+/// remis a « Systeme » ; la langue de l'appareil est appliquee tout de suite.
+/// Le cache de chaque compte reste : il sert a son prochain retour. Ne leve
+/// jamais.
+Future<void> oublierPreferencesDuCompte(StockagePreferences stockage) async {
+  try {
+    await stockage.ecrire(clefPointeurCompte, '');
+    await stockage.ecrire(clefPreferenceTheme, PreferenceTheme.systeme.name);
+    await stockage.ecrire(clefPreferenceLangue, PreferenceLangue.systeme.name);
+  } on Object catch (erreur) {
+    journalDev('Preferences du compte non oubliees : $erreur');
+  }
+  await appliquerPreferenceLangue(PreferenceLangue.systeme);
+}
 
 /// Le mode de theme a donner a `MaterialApp`, tire de la preference.
 final Provider<ThemeMode> modeThemeProvider = Provider<ThemeMode>(

@@ -298,8 +298,17 @@
     // SOMBRE-SANS-ECLAIR (11/11/2026) : la meme cle que l'application
     // (lib/core/preferences/preferences_locales.dart, prefixe
     // `rewayah.preferences.` et cle `apparence.theme`), lue avant Flutter.
+    // PREFERENCES-PAR-COMPTE (11/11/2026) : d'abord le theme du dernier compte
+    // connecte (pointeur `compte.dernier`, efface a la deconnexion, cle
+    // `apparence.theme.<profil>`), sinon celui de l'appareil. Meme ordre que
+    // `lirePreferenceImmediate`.
     try {
-      var choix = localStorage.getItem('rewayah.preferences.apparence.theme');
+      var p = 'rewayah.preferences.';
+      var compte = localStorage.getItem(p + 'compte.dernier');
+      var choix = compte ? localStorage.getItem(p + 'apparence.theme.' + compte) : null;
+      if (choix === null) {
+        choix = localStorage.getItem(p + 'apparence.theme');
+      }
       if (choix === 'clair' || choix === 'sombre') {
         document.documentElement.setAttribute('data-theme', choix);
       }

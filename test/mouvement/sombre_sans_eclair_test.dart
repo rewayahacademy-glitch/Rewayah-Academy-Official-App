@@ -31,10 +31,15 @@ import '../teaching_core/a/faux/faux_groupes.dart' show PortHorlogeMuet;
 
 const Key _cadre = ValueKey<String>('cadre-sombre');
 
-/// Systeme clair, preference « Sombre » deja enregistree sur l'appareil.
+/// Systeme clair, preference « Sombre » deja enregistree sur l'appareil, et
+/// pour le compte de demonstration du tuteur (PREFERENCES-PAR-COMPTE : le
+/// theme suit le compte qui se connecte).
 List<Override> _sombreEnregistre() {
   final StockagePreferencesMemoire stockage = StockagePreferencesMemoire(
-    <String, String>{clefPreferenceTheme: 'sombre'},
+    <String, String>{
+      clefPreferenceTheme: 'sombre',
+      clefDuCompte(clefPreferenceTheme, 'demo-tuteur'): 'sombre',
+    },
   );
   return <Override>[
     stockagePreferencesProvider.overrideWithValue(stockage),
