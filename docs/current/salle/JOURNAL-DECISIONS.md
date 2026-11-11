@@ -181,3 +181,52 @@ bibliothèque revient au pilote, qui doit rejouer `tool/salle/mesure_voix.mjs` c
 **Références** : RFC 2198 (RTP Payload for Redundant Audio Data) ; RFC 6716 (Opus) ; statistiques
 WebRTC du W3C (`concealedSamples`, `totalSamplesReceived`) ; ESTOI, Jensen et Taal, IEEE/ACM
 TASLP 2016.
+
+---
+
+## D-006 (11/11/2026). Proposition : cinq places fixes, pas une disposition de plus
+
+**État : proposition.** Rien n'est codé. Elle sera montrée au directeur en images avant toute ligne
+de code de disposition, puis prouvée sur le banc à 6 élèves.
+
+**Pourquoi.** Les refontes ont échoué parce que chaque remarque déplaçait quelque chose (constat
+§1). L'essai en séance réelle le montre encore (constat §2 bis) : un bouton posé sur une vignette,
+un message de réseau dit à deux endroits, l'enseignant qui ne voit plus ses élèves dès qu'il
+partage une page. Ce qu'il manque n'est pas un meilleur dessin : c'est **une règle de places** que
+plus personne ne rediscute.
+
+**La règle proposée : cinq places, les mêmes pour tous les rôles et tous les appareils.** Seule
+leur taille change.
+
+| Place | Où | Ce qu'elle contient, et rien d'autre |
+| :-- | :-- | :-- |
+| 1. La scène | le centre | **Une seule chose à la fois** : le support partagé s'il y en a un, sinon les personnes |
+| 2. Les personnes | une rangée (téléphone : en haut ; ordinateur : sur le côté du début) | Les vignettes. Quand un support occupe la scène, **elles ne disparaissent pas** : l'élève garde l'enseignant, l'enseignant garde ses élèves (celui qui récite en premier) |
+| 3. L'île de séance | en haut, au début | Le chrono, l'état en un mot, la mention. **Tous les messages** (réseau, appel, consigne) sortent sous elle, un seul à la fois, le plus urgent d'abord |
+| 4. La barre d'appel | en bas, au centre | Micro, caméra, quitter ; le pointeur pour l'enseignant. Sur ordinateur et tablette, les outils de l'enseignant s'y ajoutent |
+| 5. Le tiroir des supports | au bord de fin, replié, avec sa languette | L'étagère des supports (cahier §7) : « Afficher » et « Partager » |
+
+Trois interdits qui en découlent : **rien au milieu** de la scène (ni bouton ni menu) ; **aucun
+message en bas** ; **aucune deuxième place** pour une chose qui en a déjà une.
+
+**Références.** Google Meet et Zoom : une scène et un bandeau de vignettes (« speaker view » au
+téléphone, la personne qui parle en grand) ; barre d'appel en bas au centre (déjà retenue le
+24/10). Material 3 : régions fixes d'un écran adaptatif (corps, volet de support). Nielsen 4
+(cohérence) et 6 (reconnaître plutôt que se souvenir). Fitts : les commandes d'appel au pouce.
+
+**Ce que ça change pour le cahier §9 (téléphone réduit).** Je suis d'accord avec la décision du
+10/11 : au téléphone, seulement rejoindre, voir et entendre, micro, caméra, suivre le support,
+pointeur, quitter. Les places 1 à 4 suffisent ; le tiroir (place 5) n'existe que sur tablette et
+ordinateur. **Une réserve** : l'enseignant au téléphone doit quand même pouvoir tourner la page (fait,
+S-1) et ouvrir un support déjà choisi pour la classe, sinon un enseignant dont l'ordinateur tombe en
+panne ne peut plus faire cours. À trancher avec le directeur.
+
+**Comment éviter une huitième refonte.**
+
+1. Les cinq places sont écrites **une fois** dans le code (un seul fichier de composition), et
+   chaque écran les remplit ; plus de disposition par rôle et par largeur.
+2. Les trois dispositions mortes et leurs 35 fichiers de tests sont retirés d'abord (avec l'accord
+   du directeur, règle du dépôt).
+3. Chaque étape est essayée sur le banc à 6 élèves **avant** d'être proposée, captures à l'appui.
+4. Une remarque du directeur change ce qu'une place contient, jamais la liste des places, sauf
+   décision écrite ici.
