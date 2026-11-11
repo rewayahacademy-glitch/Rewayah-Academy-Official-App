@@ -947,6 +947,10 @@
     }
   },
   "salle": {
+    "vignette": {
+      "ranger": "إخفاء فيديو \u2068{deNom}\u2069",
+      "montrer": "إظهار فيديو \u2068{deNom}\u2069"
+    },
     "reseau": {
       "bon": "شبكة جيدة",
       "correct": "شبكة مقبولة",

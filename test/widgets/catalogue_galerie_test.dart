@@ -88,6 +88,9 @@ const List<String> composantsDuCatalogue = <String>[
   'OrnementMarque',
   // SUPPORTS-ETAGERE (directeur, 11/11/2026) : la couverture d'un support.
   'CouvertureSupport',
+  // VIGNETTE-TELEPHONE (directeur, 11/11/2026) : la languette d'une vignette
+  // rangee au bord de l'ecran.
+  'LanguetteBord',
   // Page introuvable (directeur, 23/10/2026) : la porte du logo et sa lumiere.
   'PorteLumiere',
   // K-55 (revue du directeur du 01/10) : jamais de cartes collees.

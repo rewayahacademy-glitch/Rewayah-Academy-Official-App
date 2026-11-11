@@ -1079,3 +1079,34 @@ enseignant.
   (retour, vidéo, point d'état, œil, barres de réseau) ; les en-têtes des deux panneaux de
   l'ordinateur (Élèves sans titre ni croix, Bibliothèque avec une pastille et une croix) ; la
   phrase « Choisissez un support… » de la Bibliothèque, qui emploie un mot écarté le 30/10.
+
+## D-023 (11/11/2026). Au téléphone, ranger la vidéo de l'enseignant au bord et la rappeler (lot VIGNETTE-TELEPHONE)
+
+**Demande** : « Est-ce qu'on peut bouger les vignettes de vidéo ou les cacher comme on le veut, ou
+bien c'est toujours figé ? », puis « je parlais du mobile, téléphone » (directeur, 11/11/2026). Il a
+retenu la recommandation du pilote : glisser vers le bord range, une languette reste, la toucher ou
+la tirer remontre la vidéo ; les quatre coins ne changent pas ; rien n'est envoyé.
+
+**Ce qui est codé** (`VignetteAimantee`, `rangeable` ; composant partagé `LanguetteBord`) :
+- chez l'élève, le tuteur et le contrôleur devant une page, au téléphone et à la tablette en
+  portrait : la vignette lâchée à moitié au-delà du bord gauche ou droit (ou lancée vers lui après
+  le quart) se range ; une languette de 24 de large (cible de 48), icône caméra, reste sur ce bord à
+  la hauteur du rangement ; un appui ou un tirage la ramène au coin le plus proche de ce bord ;
+  un glissement court ne range jamais ; un appui sur la vignette la met toujours en grand ;
+- une poignée (chevron vers le bord) à côté de la vignette posée la range d'un appui (WCAG 2.5.7) ;
+  lecteur d'écran « Ranger la vidéo de … », « Montrer la vidéo de … » ; clavier ;
+- la languette suit les commandes : visible au toucher, masquée à 3 s ; état rangé gardé pendant la
+  séance ; caméra éteinte puis rallumée : la languette revient au prochain toucher, sans forcer
+  l'affichage (pas de signe en plus) ;
+- sur ordinateur et en paysage chez l'élève : le même geste, la languette au bord de la fenêtre,
+  dans la bande de côté ; pas en Interface guidée (l'enfant garde le visage de son enseignant) ;
+- rien ne change chez l'enseignant (sa capsule n'apparaît déjà qu'au toucher ; la galerie en grand
+  se ferme par « Revenir à la page », un appui).
+
+**Sécurité** : seulement l'affichage chez soi ; ni paquet, ni demande au serveur, ni caméra, ni
+micro (mesuré par le test).
+
+**Preuves** : tests locaux `test/features/salle_vignette_telephone_test.dart` (vrai `/salle` de
+l'élève ; 320, 390, 820, 1440 ; clair et sombre ; texte x2 ; arabe) ; captures **de test** dans
+`docs/current/captures/E2E/vignette-telephone/`. Pas essayé sur un vrai téléphone, ni sur le banc,
+ni en production. Revue : `docs/current/UX_REVIEW_VIGNETTE-TELEPHONE.md`.

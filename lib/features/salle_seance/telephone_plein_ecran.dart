@@ -21,13 +21,17 @@
 import 'dart:async';
 import 'dart:math' as math;
 
+import 'package:flutter/gestures.dart'
+    show DeviceGestureSettings, DragStartBehavior, PanGestureRecognizer;
 import 'package:flutter/material.dart';
+import 'package:flutter/physics.dart' show SpringSimulation;
 import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/accessibilite/commandes_masquables.dart';
 import '../../core/domain/enums.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/tc_outils/etat_outils.dart';
@@ -39,6 +43,7 @@ import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/widgets/bouton_icone.dart';
+import '../../core/widgets/languette_bord.dart';
 import '../tc_mushaf/fleches_page_mushaf.dart';
 import '../tc_mushaf/page_madina_15.dart' show ratioHauteurPageMadina15;
 import 'actions_seance.dart';
@@ -1145,6 +1150,8 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
                   diametreBoutonAppel(context) +
                   2 * AppSpacing.sm +
                   AppSpacing.lg,
+              // Lot VIGNETTE-TELEPHONE : glissee au bord, elle se range.
+              rangeable: true,
             ),
           if (zoom)
             PositionedDirectional(
@@ -1210,6 +1217,11 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
                       CoinVignette.basDebut,
                     ]
                   : const <CoinVignette>[CoinVignette.hautFin],
+              // Lot VIGNETTE-TELEPHONE : sur les cotes (ordinateur, paysage),
+              // la languette vit au bord de la bande, hors de la page. En
+              // Interface guidee (rangees), l'enfant garde toujours le visage
+              // de son enseignant : pas de rangement.
+              rangeable: cote,
             ),
           // Le zoom : sur les cotes, debout au milieu de la bande de fin ;
           // sinon couche, dans la rangee du haut, avant la vignette.
@@ -1326,6 +1338,16 @@ enum CoinVignette { hautDebut, hautFin, basDebut, basFin }
 /// doigt et a la souris, aimantee au coin le plus proche du lacher (standard
 /// Meet, FaceTime). Le coin choisi est garde pendant la seance (stockage de
 /// la route). Toucher la vignette la met toujours en grand.
+///
+/// Lot VIGNETTE-TELEPHONE (directeur, 11/11/2026 : « bouger les vignettes de
+/// video ou les cacher comme on le veut ») : quand elle est [rangeable],
+/// glissee au-dela du bord gauche ou droit, elle se range et laisse une
+/// [LanguetteBord] sur ce bord, a la hauteur du rangement ; toucher ou tirer
+/// la languette la ramene au coin le plus proche de ce bord. Une poignee
+/// (« Ranger la video de … ») la range d'un simple appui (WCAG 2.5.7).
+/// Ranger la video ne touche qu'a l'affichage chez soi : la camera de
+/// l'enseignant et les droits ne changent pas, rien n'est envoye au serveur.
+/// L'etat range est garde pendant la seance, comme le coin.
 class VignetteAimantee extends StatefulWidget {
   const VignetteAimantee({
     required this.vue,
@@ -1333,6 +1355,7 @@ class VignetteAimantee extends StatefulWidget {
     required this.haut,
     required this.bas,
     this.coinsPermis,
+    this.rangeable = false,
     super.key,
   });
 
@@ -1349,15 +1372,72 @@ class VignetteAimantee extends StatefulWidget {
   final double haut;
   final double bas;
 
+  /// Lot VIGNETTE-TELEPHONE : la vignette se range au bord (eleve, tuteur,
+  /// controleur devant une page) ; faux ailleurs (rien ne change).
+  final bool rangeable;
+
   /// La cle de la vignette deplacable (tests).
   static const Key cle = ValueKey<String>('vignette-aimantee');
+
+  /// La poignee « Ranger la video » (tests).
+  static const Key clePoignee = ValueKey<String>('vignette-poignee');
+
+  /// La languette de la vignette rangee (tests).
+  static const Key cleLanguette = ValueKey<String>('vignette-languette');
 
   @override
   State<VignetteAimantee> createState() => _EtatVignetteAimantee();
 }
 
-class _EtatVignetteAimantee extends State<VignetteAimantee> {
+/// Une vignette rangee : le bord physique et le haut de la vignette au
+/// moment du rangement (la languette se pose a cette hauteur).
+@immutable
+class _Rangement {
+  const _Rangement({required this.gauche, required this.haut});
+
+  final bool gauche;
+  final double haut;
+}
+
+class _EtatVignetteAimantee extends State<VignetteAimantee>
+    with SingleTickerProviderStateMixin {
   static const String _cleStockage = 'salle-vignette-coin';
+  static const String _cleRangement = 'salle-vignette-rangee';
+
+  /// Le ressort qui pose la vignette apres le lacher (sans rebond).
+  late final AnimationController _ressort = AnimationController.unbounded(
+    vsync: this,
+  )..addListener(_suivreRessort);
+
+  /// Le coin haut-gauche de la vignette pendant le geste ou le ressort ;
+  /// `null` au repos (a son coin, ou rangee).
+  Offset? _position;
+  Offset _depart = Offset.zero;
+  Offset _arrivee = Offset.zero;
+
+  /// Vrai quand le geste en cours a commence sur la languette.
+  bool _depuisLanguette = false;
+
+  /// Le chemin parcouru vers l'interieur depuis la languette.
+  double _tire = 0;
+
+  /// La taille de la scene (mesuree a chaque mise en page).
+  Size _ecran = Size.zero;
+
+  final FocusNode _noeudPoignee = FocusNode(debugLabel: 'vignette-poignee');
+  final FocusNode _noeudLanguette = FocusNode(debugLabel: 'vignette-languette');
+
+  @override
+  void dispose() {
+    _ressort.dispose();
+    _noeudPoignee.dispose();
+    _noeudLanguette.dispose();
+    super.dispose();
+  }
+
+  double get _hauteur => widget.largeur / MesuresVignette.ratio;
+
+  bool get _ltr => Directionality.of(context) == TextDirection.ltr;
 
   CoinVignette get _coin {
     final CoinVignette? lu = PageStorage.maybeOf(
@@ -1367,6 +1447,20 @@ class _EtatVignetteAimantee extends State<VignetteAimantee> {
     if (permis == null) return lu ?? CoinVignette.hautFin;
     return lu != null && permis.contains(lu) ? lu : permis.first;
   }
+
+  void _ecrireCoin(CoinVignette coin) =>
+      PageStorage.maybeOf(context)
+          ?.writeState(context, coin, identifier: _cleStockage);
+
+  _Rangement? get _rangement => widget.rangeable
+      ? PageStorage.maybeOf(context)
+                ?.readState(context, identifier: _cleRangement)
+            as _Rangement?
+      : null;
+
+  void _ecrireRangement(_Rangement? r) =>
+      PageStorage.maybeOf(context)
+          ?.writeState(context, r, identifier: _cleRangement);
 
   static bool _enHaut(CoinVignette c) =>
       c == CoinVignette.hautDebut || c == CoinVignette.hautFin;
@@ -1385,52 +1479,368 @@ class _EtatVignetteAimantee extends State<VignetteAimantee> {
     );
   }
 
-  void _lacher(DraggableDetails d) {
-    final Size ecran = MediaQuery.sizeOf(context);
-    final Offset centre =
-        d.offset +
-        Offset(widget.largeur, widget.largeur / MesuresVignette.ratio) / 2;
-    final bool gauche = centre.dx < ecran.width / 2;
-    final bool enHaut = centre.dy < ecran.height / 2;
+  /// Le coin pres de [centre] ; avec [bord], le coin de ce bord physique
+  /// d'abord (rappel depuis la languette).
+  CoinVignette _coinPres(Offset centre, {bool? bord}) {
+    final bool gauche = bord ?? centre.dx < _ecran.width / 2;
+    final bool enHaut = centre.dy < _ecran.height / 2;
     // Debut et fin suivent le sens de lecture.
-    final bool debut =
-        gauche == (Directionality.of(context) == TextDirection.ltr);
-    final CoinVignette coin = _permis(
-      enHaut
-          ? (debut ? CoinVignette.hautDebut : CoinVignette.hautFin)
-          : (debut ? CoinVignette.basDebut : CoinVignette.basFin),
-    );
-    PageStorage.maybeOf(context)
-        ?.writeState(context, coin, identifier: _cleStockage);
-    setState(() {});
+    final bool debut = gauche == _ltr;
+    final CoinVignette voulu = enHaut
+        ? (debut ? CoinVignette.hautDebut : CoinVignette.hautFin)
+        : (debut ? CoinVignette.basDebut : CoinVignette.basFin);
+    final List<CoinVignette>? permis = widget.coinsPermis;
+    if (bord != null && permis != null && !permis.contains(voulu)) {
+      final Iterable<CoinVignette> memeBord = permis.where(
+        (CoinVignette c) => _debut(c) == debut,
+      );
+      if (memeBord.isNotEmpty) return memeBord.first;
+    }
+    return _permis(voulu);
   }
+
+  /// Le coin haut-gauche de la vignette posee a [coin].
+  Offset _placeDuCoin(CoinVignette coin) {
+    final bool gauche = _debut(coin) == _ltr;
+    return Offset(
+      gauche ? AppSpacing.lg : _ecran.width - AppSpacing.lg - widget.largeur,
+      _enHaut(coin) ? widget.haut : _ecran.height - widget.bas - _hauteur,
+    );
+  }
+
+  /// [y] ramene entre la marge du haut et celle du bas.
+  double _borne(double y, double hauteur) => y.clamp(
+    widget.haut,
+    math.max(widget.haut, _ecran.height - widget.bas - hauteur),
+  );
+
+  /// La vignette rangee : juste hors de l'ecran, sur son bord.
+  Offset _placeRangee(_Rangement r) => Offset(
+    r.gauche ? -widget.largeur : _ecran.width,
+    _borne(r.haut, _hauteur),
+  );
+
+  Offset _placeAuRepos() {
+    final _Rangement? r = _rangement;
+    return r == null ? _placeDuCoin(_coin) : _placeRangee(r);
+  }
+
+  void _suivreRessort() {
+    if (!mounted) return;
+    setState(() => _position = Offset.lerp(_depart, _arrivee, _ressort.value));
+  }
+
+  /// Pose la vignette a [arrivee] sur le ressort (sans rebond) ; sans
+  /// mouvement si « reduire les animations » ou [instantane].
+  void _allerA(
+    Offset arrivee, {
+    Offset vitesse = Offset.zero,
+    bool instantane = false,
+  }) {
+    final Offset depart = _position ?? arrivee;
+    final double distance = (arrivee - depart).distance;
+    if (instantane || AppMouvement.mouvementReduit(context) || distance < 1) {
+      _ressort.stop();
+      setState(() => _position = null);
+      return;
+    }
+    _depart = depart;
+    _arrivee = arrivee;
+    final Offset sens = (arrivee - depart) / distance;
+    // L'elan du lacher, dans le sens du trajet ; borne pour que le ressort
+    // critique n'aille jamais au-dela de sa place (aucun rebond).
+    final double elan =
+        ((vitesse.dx * sens.dx + vitesse.dy * sens.dy) / distance).clamp(
+          0,
+          _elanMax,
+        );
+    _ressort.value = 0;
+    _ressort
+        .animateWith(SpringSimulation(AppMouvement.ressort, 0, 1, elan))
+        .whenComplete(() {
+          if (mounted) setState(() => _position = null);
+        });
+  }
+
+  /// Au-dela, le ressort critique depasserait sa place.
+  static const double _elanMax = 10;
+
+  void _ranger({
+    required bool gauche,
+    Offset vitesse = Offset.zero,
+    bool instantane = false,
+  }) {
+    final double haut = _borne((_position ?? _placeDuCoin(_coin)).dy, _hauteur);
+    final _Rangement r = _Rangement(gauche: gauche, haut: haut);
+    _ecrireRangement(r);
+    _allerA(_placeRangee(r), vitesse: vitesse, instantane: instantane);
+  }
+
+  void _montrer({
+    required _Rangement r,
+    Offset vitesse = Offset.zero,
+    bool instantane = false,
+  }) {
+    final Offset depart = _position ?? _placeRangee(r);
+    final CoinVignette coin = _coinPres(
+      Offset(r.gauche ? 0 : _ecran.width, depart.dy + _hauteur / 2),
+      bord: r.gauche,
+    );
+    _ecrireCoin(coin);
+    _ecrireRangement(null);
+    _position = depart;
+    _allerA(_placeDuCoin(coin), vitesse: vitesse, instantane: instantane);
+  }
+
+  /// La poignee : ranger d'un appui. Au clavier, le focus passe a la
+  /// languette (sans mouvement, pour qu'elle existe tout de suite).
+  void _rangerParAppui({required bool gauche}) {
+    final bool clavier = _noeudPoignee.hasFocus;
+    _ranger(gauche: gauche, instantane: clavier);
+    if (clavier) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _noeudLanguette.requestFocus();
+      });
+    }
+  }
+
+  /// La languette : montrer d'un appui ; au clavier, le focus passe a la
+  /// poignee.
+  void _montrerParAppui(_Rangement r) {
+    final bool clavier = _noeudLanguette.hasFocus;
+    _montrer(r: r, instantane: clavier);
+    if (clavier) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _noeudPoignee.requestFocus();
+      });
+    }
+  }
+
+  void _debutGeste(DragStartDetails d) {
+    _ressort.stop();
+    final _Rangement? r = _rangement;
+    setState(() {
+      _depuisLanguette = r != null;
+      _tire = 0;
+      _position ??= _placeAuRepos();
+    });
+  }
+
+  void _suivreGeste(DragUpdateDetails d) {
+    final Offset? p = _position;
+    if (p == null) return;
+    final _Rangement? r = _rangement;
+    if (_depuisLanguette && r != null) {
+      _tire += r.gauche ? d.delta.dx : -d.delta.dx;
+    }
+    // La vignette suit le doigt, sans retard ni lissage.
+    setState(() => _position = p + d.delta);
+  }
+
+  void _finGeste(DragEndDetails d) {
+    final Offset? p = _position;
+    if (p == null) return;
+    final Offset v = d.velocity.pixelsPerSecond;
+    final double l = widget.largeur;
+    final _Rangement? r = _rangement;
+    if (_depuisLanguette && r != null) {
+      // Tirer la languette vers l'interieur ramene la vignette ; un tirage
+      // trop court la laisse rangee.
+      final double elan = r.gauche ? v.dx : -v.dx;
+      if (_tire >= AppSpacing.xxl || elan > AppMouvement.elanRangement) {
+        _montrer(r: r, vitesse: v);
+      } else {
+        _allerA(_placeRangee(r), vitesse: v);
+      }
+      return;
+    }
+    if (widget.rangeable) {
+      // Ranger : la vignette passe a moitie au-dela du bord, ou elle y est
+      // lancee vite apres en avoir passe le quart. Un glissement court (le
+      // bord est a 16 de la vignette) ne range jamais.
+      bool vers({required bool gauche}) {
+        final double hors = gauche ? -p.dx : p.dx + l - _ecran.width;
+        final double elan = gauche ? -v.dx : v.dx;
+        return hors > l / 2 ||
+            (hors > l / 4 && elan > AppMouvement.elanRangement);
+      }
+
+      for (final bool gauche in <bool>[true, false]) {
+        if (vers(gauche: gauche)) {
+          _ranger(gauche: gauche, vitesse: v);
+          return;
+        }
+      }
+    }
+    final CoinVignette coin = _coinPres(p + Offset(l, _hauteur) / 2);
+    _ecrireCoin(coin);
+    _allerA(_placeDuCoin(coin), vitesse: v);
+  }
+
+  void _annulerGeste() {
+    if (_position == null || _ressort.isAnimating) return;
+    _allerA(_placeAuRepos());
+  }
+
+  /// Le glisser de la vignette et de sa languette. La page dessous a son
+  /// propre glissement horizontal ([GlisserPage]), qui part a 18 points :
+  /// le seuil du glisser de la vignette est plus court (16), pour qu'un
+  /// glissement commence sur la vignette la deplace toujours, et jamais la
+  /// page. Un appui sans deplacement reste un appui ([Pressable]).
+  Widget _glissable(Widget enfant) => RawGestureDetector(
+    gestures: <Type, GestureRecognizerFactory>{
+      PanGestureRecognizer:
+          GestureRecognizerFactoryWithHandlers<PanGestureRecognizer>(
+            PanGestureRecognizer.new,
+            (PanGestureRecognizer r) => r
+              // Le premier deplacement compte le seuil : la vignette ne
+              // saute pas derriere le doigt.
+              ..dragStartBehavior = DragStartBehavior.down
+              ..gestureSettings = const DeviceGestureSettings(
+                touchSlop: AppSpacing.sm,
+              )
+              ..onStart = _debutGeste
+              ..onUpdate = _suivreGeste
+              ..onEnd = _finGeste
+              ..onCancel = _annulerGeste,
+          ),
+    },
+    child: enfant,
+  );
+
+  /// Pose [child] a l'abscisse physique [x] (depuis le bord gauche de la
+  /// scene) : le geste et les bords de l'ecran sont physiques ; la pose passe
+  /// par le debut et la fin du sens de lecture.
+  Widget _poser({
+    required Key cle,
+    required double x,
+    required double largeur,
+    required double top,
+    required Widget child,
+  }) => PositionedDirectional(
+    key: cle,
+    start: _ltr ? x : _ecran.width - x - largeur,
+    top: top,
+    child: child,
+  );
+
+  /// Pendant un geste ou un ressort, la poignee et la languette restent
+  /// dans l'arbre (leur geste en cours n'est pas perdu) mais ne se voient
+  /// pas, ne se touchent pas et ne se lisent pas. La forme de l'arbre ne
+  /// change pas d'un etat a l'autre (sinon le geste serait perdu).
+  Widget _pendantGeste({required bool auRepos, required Widget child}) =>
+      ExcludeSemantics(
+        excluding: !auRepos,
+        child: IgnorePointer(
+          ignoring: !auRepos,
+          child: Opacity(opacity: auRepos ? 1 : 0, child: child),
+        ),
+      );
 
   @override
   Widget build(BuildContext context) {
-    final CoinVignette coin = _coin;
-    final bool enHaut =
-        coin == CoinVignette.hautDebut || coin == CoinVignette.hautFin;
-    final bool debut =
-        coin == CoinVignette.hautDebut || coin == CoinVignette.basDebut;
-    final Widget vignette = VignetteVideo(
-      vue: widget.vue,
-      largeur: widget.largeur,
-    );
-    return PositionedDirectional(
-      key: VignetteAimantee.cle,
-      top: enHaut ? widget.haut : null,
-      bottom: enHaut ? null : widget.bas,
-      start: debut ? AppSpacing.lg : null,
-      end: debut ? null : AppSpacing.lg,
-      child: Draggable<CoinVignette>(
-        data: coin,
-        feedback: Material(type: MaterialType.transparency, child: vignette),
-        childWhenDragging: SizedBox(
-          width: widget.largeur,
-          height: widget.largeur / MesuresVignette.ratio,
-        ),
-        onDragEnd: _lacher,
-        child: vignette,
+    final String nom = deDevant(widget.vue.nomEnseignant);
+    return Positioned.fill(
+      child: LayoutBuilder(
+        builder: (BuildContext contexte, BoxConstraints c) {
+          _ecran = c.biggest;
+          final _Rangement? r = _rangement;
+          final Offset? mobile = _position;
+          final Offset place = mobile ?? _placeAuRepos();
+          final bool auRepos = mobile == null;
+          final bool gauche = place.dx + widget.largeur / 2 < _ecran.width / 2;
+          final double hautLanguette = _borne(
+            place.dy + _hauteur / 2 - LanguetteBord.hauteur / 2,
+            LanguetteBord.hauteur,
+          );
+          return Stack(
+            clipBehavior: Clip.none,
+            children: <Widget>[
+              if (r == null || !auRepos)
+                _poser(
+                  cle: const ValueKey<String>('pose-vignette'),
+                  x: place.dx,
+                  largeur: widget.largeur,
+                  top: place.dy,
+                  child: _glissable(
+                    KeyedSubtree(
+                      key: VignetteAimantee.cle,
+                      child: VignetteVideo(
+                        vue: widget.vue,
+                        largeur: widget.largeur,
+                      ),
+                    ),
+                  ),
+                ),
+              // La poignee, au bord de la vignette posee : la ranger d'un
+              // appui, sans glisser (WCAG 2.5.7) ; elle se glisse aussi.
+              // Pendant un geste, elle reste dans l'arbre, invisible : un
+              // glisser commence sur elle n'est pas perdu.
+              if (widget.rangeable && r == null)
+                _poser(
+                  cle: const ValueKey<String>('pose-poignee'),
+                  x: gauche ? 0 : _ecran.width - LanguetteBord.cible,
+                  largeur: LanguetteBord.cible,
+                  top: hautLanguette,
+                  child: _pendantGeste(
+                    auRepos: auRepos,
+                    child: _glissable(
+                      LanguetteBord(
+                        key: VignetteAimantee.clePoignee,
+                        bord: gauche
+                            ? BordLanguette.gauche
+                            : BordLanguette.droite,
+                        icone: AppIcons.suivant,
+                        retourner: gauche,
+                        libelle: t.salle.vignette.ranger(deNom: nom),
+                        focusNode: _noeudPoignee,
+                        onPress: () => _rangerParAppui(gauche: gauche),
+                      ),
+                    ),
+                  ),
+                ),
+              // La vignette rangee : la languette sur son bord, en fondu ;
+              // invisible (mais dans l'arbre) pendant qu'on la tire.
+              if (r != null)
+                _poser(
+                  cle: const ValueKey<String>('pose-languette'),
+                  x: r.gauche ? 0 : _ecran.width - LanguetteBord.cible,
+                  largeur: LanguetteBord.cible,
+                  top: _borne(
+                    _borne(r.haut, _hauteur) +
+                        _hauteur / 2 -
+                        LanguetteBord.hauteur / 2,
+                    LanguetteBord.hauteur,
+                  ),
+                  child: TweenAnimationBuilder<double>(
+                    tween: Tween<double>(begin: 0, end: 1),
+                    duration: AppMouvement.duree(
+                      context,
+                      AppMouvement.apparition,
+                    ),
+                    curve: AppMouvement.entree,
+                    builder: (BuildContext _, double opacite, Widget? enfant) =>
+                        Opacity(opacity: opacite, child: enfant),
+                    child: _pendantGeste(
+                      auRepos: auRepos,
+                      child: _glissable(
+                        LanguetteBord(
+                          key: VignetteAimantee.cleLanguette,
+                          bord: r.gauche
+                              ? BordLanguette.gauche
+                              : BordLanguette.droite,
+                          icone: AppIcons.camera,
+                          libelle: t.salle.vignette.montrer(deNom: nom),
+                          focusNode: _noeudLanguette,
+                          onPress: () => _montrerParAppui(r),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          );
+        },
       ),
     );
   }

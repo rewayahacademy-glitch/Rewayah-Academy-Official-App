@@ -294,6 +294,13 @@ abstract final class AppMouvement {
   /// L'amplitude du rebond du bout de la pilule, en points, au plus.
   static const double amplitudeBordPilule = 3;
 
+  /// Lot VIGNETTE-TELEPHONE (directeur, 11/11/2026) : la vitesse, en points
+  /// par seconde, au-dela de laquelle un lancer vers le bord range la
+  /// vignette video (ou tire sa languette vers l'interieur), meme si elle
+  /// n'a pas encore passe la moitie du bord. Un glissement lent et court ne
+  /// range rien.
+  static const double elanRangement = 700;
+
   /// Translation verticale d'un element qui entre dans une liste.
   static const double translationAjout = 8;
 

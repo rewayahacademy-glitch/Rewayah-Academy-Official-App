@@ -289,6 +289,10 @@
     "saisieVide": "Écrivez le prénom {prenom} pour confirmer"
   },
   "salle": {
+    "vignette": {
+      "ranger": "Ranger la vidéo {deNom}",
+      "montrer": "Montrer la vidéo {deNom}"
+    },
     "reseau": {
       "bon": "Bon réseau",
       "correct": "Réseau correct",
