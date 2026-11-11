@@ -367,8 +367,14 @@ class DockSeance extends StatelessWidget {
     this.avantQuitter = const <Widget>[],
     this.rond = false,
     this.raccourcis = false,
+    this.colonne = false,
     super.key,
   });
+
+  /// CORAN-GRAND (directeur, 11/11/2026), avec [nommee] : les tuiles se
+  /// posent l'une sous l'autre, a la largeur de la colonne des commandes de
+  /// l'ordinateur, dans le meme ordre.
+  final bool colonne;
 
   /// BARRE-ORDINATEUR (11/11/2026) : les raccourcis clavier sont actifs ;
   /// chaque tuile nommee montre sa touche dans l'infobulle (M, V, T).
@@ -636,6 +642,15 @@ class DockSeance extends StatelessWidget {
             ),
           ),
         ),
+      );
+    }
+    if (nommee && colonne) {
+      return Column(
+        key: const ValueKey<String>('dock-seance'),
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        spacing: AppSpacing.sm,
+        children: boutons,
       );
     }
     if (nommee) {

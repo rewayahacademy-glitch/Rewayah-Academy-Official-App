@@ -7,6 +7,9 @@
 // Captures 1440 (repos, eleve deplie, bibliotheque depliee, focus, barre
 // d'outils) seulement avec CAPTURE_DIR.
 
+import 'dart:io' show Platform;
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart' show Ref;
@@ -37,10 +40,10 @@ import 'package:rewayah_academy/features/salle_seance/pilule_etat_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/salle_ordinateur.dart';
 
 import 'package:rewayah_academy/features/salle_seance/telephone_plein_ecran.dart'
-    show TelephonePleinEcran;
+    show TelephonePleinEcran, margeFlechePage;
 import 'package:rewayah_academy/features/salle_seance/vignette_video.dart';
 import 'package:rewayah_academy/features/tc_mushaf/page_madina_15.dart'
-    show cleLigneMadina15;
+    show cleLigneMadina15, ratioHauteurPageMadina15;
 
 import '../capture/outil_capture.dart';
 import '../support/aucun_mot_coupe.dart';
@@ -253,11 +256,11 @@ void main() {
                 expect(droite.left, greaterThan(centre.right - 0.5));
               }
               verifierSansChevauchement(tester, <Finder>[
-                find.byKey(SalleOrdinateur.cleHaut),
+                find.byKey(SalleOrdinateur.cleTete),
                 find.byKey(SalleOrdinateur.cleGauche),
                 find.byKey(SalleOrdinateur.cleCentre),
                 find.byKey(SalleOrdinateur.cleDroite),
-                find.byKey(SalleOrdinateur.cleBas),
+                find.byKey(SalleOrdinateur.cleCommandes),
               ]);
               verifierUnSeulBoutonPlein(tester);
               final int cartes = verifierAucuneCarteCollee(
@@ -268,22 +271,18 @@ void main() {
               // liste : la regle s'y verifie sur celles qui sont rendues.
               if (taille.height >= 900) expect(cartes, greaterThan(0));
               verifierAucunMotCoupe(tester, find.byKey(SalleOrdinateur.cleBas));
-              // Decision du directeur du 26/10/2026 : une tuile se place du
-              // cote du panneau qu'elle ouvre, en arabe comme en francais.
-              // BARRE-ORDINATEUR (11/11/2026) : plus de filet unique au
-              // milieu ; le milieu de la barre fait la frontiere.
-              final double filet = tester
-                  .getCenter(find.byKey(SalleOrdinateur.cleBas))
-                  .dx;
-              bool memeCote(String cle, Rect panneau) {
-                final double x = tester
-                    .getCenter(find.byKey(ValueKey<String>(cle)))
-                    .dx;
-                return (x < filet) == (panneau.center.dx < filet);
+              // CORAN-GRAND (directeur, 11/11/2026) : la colonne des
+              // commandes au bord de debut de lecture, avant les Eleves (ecart
+              // date a la regle du 26/10 « une tuile du cote du panneau
+              // qu'elle ouvre » : toutes les tuiles sont du meme cote).
+              final Rect colonne = tester.getRect(
+                find.byKey(SalleOrdinateur.cleCommandes),
+              );
+              if (langue == AppLocale.ar) {
+                expect(colonne.left, greaterThan(gauche.right - 0.5));
+              } else {
+                expect(colonne.right, lessThan(gauche.left + 0.5));
               }
-
-              expect(memeCote('salle-eleves', gauche), isTrue);
-              expect(memeCote('salle-bibliotheque', droite), isTrue);
             });
           }
         }
@@ -459,11 +458,34 @@ void main() {
         tuile(tester, t.salle.seance.commandes.affichageTableau).ton,
         TonTuileSalle.repos,
       );
-      // Une seule rangee a 1440.
-      final Set<double> hauts = <double>{
-        for (final Rect r in places(tester).values) r.top.roundToDouble(),
-      };
-      expect(hauts, hasLength(1));
+      // CORAN-GRAND : une seule colonne, toutes les tuiles a la meme largeur,
+      // dans l'ordre des groupes de haut en bas ; Quitter tout en bas.
+      final Map<String, Rect> p = places(tester);
+      expect(<double>{
+        for (final Rect r in p.values) r.left.roundToDouble(),
+      }, hasLength(1));
+      expect(<double>{
+        for (final Rect r in p.values) r.width.roundToDouble(),
+      }, hasLength(1));
+      final List<String> ordre = <String>[
+        t.salle.micro,
+        t.salle.camera,
+        t.salle.seance.eleves,
+        t.salle.seance.outils.pointeur,
+        t.salle.seance.outils.ecrire,
+        t.salle.seance.commandes.bibliotheque,
+        t.salle.seance.commandes.affichageTableau,
+        t.salle.sortie.reduireNom,
+        t.salle.quitter,
+      ];
+      for (int i = 1; i < ordre.length; i++) {
+        expect(p[ordre[i]]!.top, greaterThan(p[ordre[i - 1]]!.bottom - 0.5));
+      }
+      // Les noms sont peints a 1440 x 900 (la colonne a la hauteur).
+      expect(
+        find.byKey(const ValueKey<String>('nom-commande')),
+        findsNWidgets(ordre.length),
+      );
       expect(tester.takeException(), isNull);
     });
 
@@ -512,11 +534,16 @@ void main() {
       expect(pageApres.height, closeTo(page.height, 0.5));
       expect(pageApres.top, closeTo(page.top, 0.5));
       expect(palette.right, lessThanOrEqualTo(pageApres.left + 0.5));
+      expect(pageApres.width, closeTo(page.width, 0.5));
+      // CORAN-GRAND : la palette prend la place du panneau des Eleves.
+      final Rect gauche = tester.getRect(find.byKey(SalleOrdinateur.cleGauche));
+      expect(palette.left, greaterThanOrEqualTo(gauche.left - 0.5));
+      expect(palette.right, lessThanOrEqualTo(gauche.right + 0.5));
       expect(
-        palette.bottom,
-        lessThanOrEqualTo(
-          tester.getRect(find.byKey(SalleOrdinateur.cleBas)).top,
+        palette.overlaps(
+          tester.getRect(find.byKey(SalleOrdinateur.cleCommandes)),
         ),
+        isFalse,
       );
       expect(places(tester), avant);
 
@@ -609,15 +636,11 @@ void main() {
                   tester,
                   find.byKey(SalleOrdinateur.cleBas),
                 );
-                // Une seule rangee ; texte x1,3 : mesure avec les vraies
-                // polices (plus bas), la police de test est plus large.
-                if (texte == 1) {
-                  final Set<double> hauts = <double>{
-                    for (final Rect r in places(tester).values)
-                      r.top.roundToDouble(),
-                  };
-                  expect(hauts, hasLength(1));
-                }
+                // CORAN-GRAND : une seule colonne, a toutes les tailles.
+                expect(<double>{
+                  for (final Rect r in places(tester).values)
+                    r.left.roundToDouble(),
+                }, hasLength(1));
                 final Rect palette = tester.getRect(
                   find.byKey(BarreOutilsSalle.cle),
                 );
@@ -631,10 +654,10 @@ void main() {
                   expect(palette.right, lessThanOrEqualTo(page.left + 0.5));
                 }
                 verifierSansChevauchement(tester, <Finder>[
-                  find.byKey(SalleOrdinateur.cleHaut),
+                  find.byKey(SalleOrdinateur.cleTete),
                   find.byKey(BarreOutilsSalle.cle),
                   find.byKey(SalleOrdinateur.cleCentre),
-                  find.byKey(SalleOrdinateur.cleBas),
+                  find.byKey(SalleOrdinateur.cleCommandes),
                 ]);
                 verifierUnSeulBoutonPlein(tester);
               });
@@ -648,7 +671,7 @@ void main() {
   // Les mots de la palette se mesurent avec les vraies polices (la police
   // de test peint chaque lettre en carre de 14 : « Moyen » y prend 70).
   for (final double texte in <double>[1, 1.3]) {
-    testWidgets('BARRE-ORDINATEUR, vraies polices, 1280, texte x$texte : '
+    testWidgets('BARRE-ORDINATEUR, vraies polices, 1280x800, texte x$texte : '
         'aucun mot coupe dans la palette ni dans la barre', (
       WidgetTester tester,
     ) async {
@@ -663,11 +686,11 @@ void main() {
       await tester.pumpAndSettle();
       verifierAucunMotCoupe(tester, find.byKey(BarreOutilsSalle.cle));
       verifierAucunMotCoupe(tester, find.byKey(SalleOrdinateur.cleBas));
-      final Set<double> hauts = <double>{
+      final Set<double> bords = <double>{
         for (final Element e in find.byType(TuileCommandeSalle).evaluate())
-          tester.getRect(find.byWidget(e.widget)).top.roundToDouble(),
+          tester.getRect(find.byWidget(e.widget)).left.roundToDouble(),
       };
-      expect(hauts, hasLength(1), reason: 'la barre tient sur une rangee');
+      expect(bords, hasLength(1), reason: 'la colonne tient sur une colonne');
       expect(tester.takeException(), isNull);
     });
   }
@@ -810,131 +833,223 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
+    // CORAN-GRAND (directeur, 11/11/2026) : la page prend toute la hauteur ;
+    // tout ce qui n'est pas elle est dans la colonne, les panneaux ou les
+    // marges de la page ; rien ne la recouvre. Quatre tailles, panneaux
+    // ouverts et fermes, clair et sombre, francais et arabe, texte x1 et x1,3.
     for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {
       group('B ${langue.languageCode}', () {
         setUp(() => LocaleSettings.setLocale(langue));
         for (final Size taille in <Size>[
+          const Size(1280, 720),
           const Size(1280, 800),
           const Size(1440, 900),
           const Size(1920, 1080),
         ]) {
           for (final double texte in <double>[1, 1.3]) {
-            testWidgets(
-              'B ${langue.languageCode} ${taille.width.toInt()}, texte '
-              'x$texte : une rangee, la Classe au debut, le support et ses '
-              'outils au centre, la pilule a la fin, rien ne se recouvre',
-              (WidgetTester tester) async {
-                await _monter(tester, taille: taille, texte: texte);
-                expect(tester.takeException(), isNull);
-                final Rect classe = tester.getRect(
-                  find.byKey(SalleOrdinateur.cleClasse),
-                );
-                final Rect support = tester.getRect(
-                  find.byKey(SalleOrdinateur.cleSupport),
-                );
-                final Rect pilule = tester.getRect(
-                  find.byType(PiluleEtatSalle),
-                );
-                final Rect haut = tester.getRect(
-                  find.byKey(SalleOrdinateur.cleHaut),
-                );
-                // Une seule rangee : les trois groupes dans la hauteur du haut.
-                for (final Rect r in <Rect>[classe, support, pilule]) {
-                  expect(r.top, greaterThanOrEqualTo(haut.top - 0.5));
-                  expect(r.bottom, lessThanOrEqualTo(haut.bottom + 0.5));
-                }
-                // Le support est au centre de la largeur.
-                expect(support.center.dx, closeTo(taille.width / 2, 1));
-                // Les outils colles au titre du support, dans son groupe.
-                for (final Key cle in <Key>[
-                  SalleOrdinateur.cleTitreSupport,
-                  SalleOrdinateur.cleFocus,
-                  const ValueKey<String>('salle-ranger-support'),
-                ]) {
+            for (final ThemeMode theme in <ThemeMode>[
+              ThemeMode.light,
+              ThemeMode.dark,
+            ]) {
+              for (final bool ouverts in <bool>[true, false]) {
+                testWidgets('B ${langue.languageCode} ${taille.width.toInt()}x'
+                    '${taille.height.toInt()}, texte x$texte, ${theme.name}, '
+                    'panneaux ${ouverts ? 'ouverts' : 'fermes'} : la page a '
+                    'toute la hauteur, ses fleches et ses outils a cote, rien '
+                    'ne la recouvre', (WidgetTester tester) async {
+                  await _monter(
+                    tester,
+                    taille: taille,
+                    texte: texte,
+                    theme: theme,
+                  );
+                  if (!ouverts) {
+                    await tester.tap(
+                      find.byKey(const ValueKey<String>('salle-eleves')),
+                    );
+                    await tester.pumpAndSettle();
+                    if (find
+                        .byKey(SalleOrdinateur.cleDroite)
+                        .evaluate()
+                        .isNotEmpty) {
+                      await tester.tap(
+                        find.byKey(
+                          const ValueKey<String>('salle-bibliotheque'),
+                        ),
+                      );
+                      await tester.pumpAndSettle();
+                    }
+                    expect(find.byKey(SalleOrdinateur.cleGauche), findsNothing);
+                    expect(find.byKey(SalleOrdinateur.cleDroite), findsNothing);
+                  }
+                  expect(tester.takeException(), isNull);
+                  final Rect page = tester.getRect(
+                    find.byKey(TelephonePleinEcran.clePage),
+                  );
+                  final Rect centre = tester.getRect(
+                    find.byKey(SalleOrdinateur.cleCentre),
+                  );
+                  // Toute la hauteur que la largeur permet, fleches
+                  // comprises ; panneaux fermes, toute la hauteur de
+                  // l'ecran, aux marges pres.
+                  final double attendue = math.min(
+                    centre.height,
+                    (centre.width - 2 * margeFlechePage) *
+                        ratioHauteurPageMadina15,
+                  );
+                  expect(page.height, closeTo(attendue, 1));
+                  expect(page.center.dy, closeTo(centre.center.dy, 0.5));
+                  if (!ouverts) {
+                    expect(page.height, closeTo(taille.height - 32, 0.5));
+                  }
+                  // Les fleches restent, a mi-hauteur de la page.
                   expect(
-                    find.descendant(
-                      of: find.byKey(SalleOrdinateur.cleSupport),
-                      matching: find.byKey(cle),
-                    ),
+                    find.byKey(const ValueKey<String>('fleches-page-salle')),
                     findsOneWidget,
                   );
-                }
-                // Debut et fin suivent le sens de lecture.
-                final bool rtl = langue == AppLocale.ar;
-                if (rtl) {
-                  expect(classe.left, greaterThan(support.right));
-                  expect(pilule.right, lessThan(support.left));
-                } else {
-                  expect(classe.right, lessThan(support.left));
-                  expect(pilule.left, greaterThan(support.right));
-                }
-                verifierSansChevauchement(tester, <Finder>[
-                  find.byKey(SalleOrdinateur.cleClasse),
-                  find.byKey(SalleOrdinateur.cleSupport),
-                  find.byType(PiluleEtatSalle),
-                ]);
-                verifierUnSeulBoutonPlein(tester);
-              },
-            );
+                  final Rect zoom = tester.getRect(
+                    find.byKey(const ValueKey<String>('salle-zoom')),
+                  );
+                  final Rect outils = tester.getRect(
+                    find.byKey(SalleOrdinateur.cleSupport),
+                  );
+                  // Le zoom dans la marge de debut, ranger et focus dans
+                  // celle de fin, au-dessus des fleches, dans le centre.
+                  final bool rtl = langue == AppLocale.ar;
+                  if (rtl) {
+                    expect(zoom.left, greaterThanOrEqualTo(page.right - 0.5));
+                    expect(outils.right, lessThanOrEqualTo(page.left + 0.5));
+                  } else {
+                    expect(zoom.right, lessThanOrEqualTo(page.left + 0.5));
+                    expect(outils.left, greaterThanOrEqualTo(page.right - 0.5));
+                  }
+                  for (final Rect r in <Rect>[zoom, outils]) {
+                    expect(r.top, greaterThanOrEqualTo(centre.top - 0.5));
+                    expect(r.bottom, lessThan(page.center.dy - 32));
+                  }
+                  verifierSansChevauchement(tester, <Finder>[
+                    find.byKey(TelephonePleinEcran.clePage),
+                    find.byKey(SalleOrdinateur.cleTete),
+                    find.byKey(SalleOrdinateur.cleCommandes),
+                    find.byKey(const ValueKey<String>('salle-zoom')),
+                    find.byKey(SalleOrdinateur.cleSupport),
+                    if (ouverts) ...<Finder>[
+                      find.byKey(SalleOrdinateur.cleGauche),
+                      find.byKey(SalleOrdinateur.cleDroite),
+                    ],
+                  ]);
+                  // La colonne au bord de debut, dans l'ecran, sans
+                  // defilement.
+                  final Rect colonne = tester.getRect(
+                    find.byKey(SalleOrdinateur.cleCommandes),
+                  );
+                  expect(colonne.top, greaterThanOrEqualTo(0));
+                  expect(colonne.bottom, lessThanOrEqualTo(taille.height));
+                  if (rtl) {
+                    expect(colonne.right, closeTo(taille.width - 16, 0.5));
+                  } else {
+                    expect(colonne.left, closeTo(16, 0.5));
+                  }
+                  expect(
+                    find.descendant(
+                      of: find.byKey(SalleOrdinateur.cleCommandes),
+                      matching: find.byType(Scrollable),
+                    ),
+                    findsNothing,
+                  );
+                  verifierUnSeulBoutonPlein(tester);
+                });
+              }
+            }
           }
         }
       });
     }
 
-    testWidgets('B : repli, la rangee etroite perd d abord le nom de '
-        'l enseignant, sans debordement', (WidgetTester tester) async {
+    testWidgets('B : repli, la colonne garde ses neuf tuiles sans defiler ; '
+        'quand la hauteur manque, les noms partent (icone et infobulle)', (
+      WidgetTester tester,
+    ) async {
+      await tester.runAsync(() async {
+        await chargerPolicesDuDepot();
+        await chargerPoliceMadina15();
+      });
+      final Finder noms = find.byKey(const ValueKey<String>('nom-commande'));
       await _monter(tester);
-      expect(find.byKey(SalleOrdinateur.cleEnseignant), findsOneWidget);
+      expect(find.byKey(SalleOrdinateur.cleClasse), findsOneWidget);
+      expect(find.byKey(SalleOrdinateur.cleTitreSupport), findsOneWidget);
+      expect(noms, findsNWidgets(9));
+      // 1280 x 720, texte x1,3 : la colonne ne tient plus avec les noms.
+      await _monter(tester, taille: const Size(1280, 720), texte: 1.3);
+      expect(tester.takeException(), isNull);
+      expect(noms, findsNothing);
+      expect(find.byType(TuileCommandeSalle), findsNWidgets(9));
+      for (final TuileCommandeSalle tuile in tester.widgetList(
+        find.byType(TuileCommandeSalle),
+      )) {
+        expect(tuile.infobulle, isNotNull);
+      }
+      // Le plus petit ordinateur, texte x2 : rien ne deborde, le focus reste.
       await _monter(tester, taille: const Size(860, 720), texte: 2);
       expect(tester.takeException(), isNull);
-      expect(find.byKey(SalleOrdinateur.cleClasse), findsOneWidget);
-      expect(find.byKey(SalleOrdinateur.cleEnseignant), findsNothing);
       expect(find.byKey(SalleOrdinateur.cleFocus), findsOneWidget);
-      verifierSansChevauchement(tester, <Finder>[
-        find.byKey(SalleOrdinateur.cleClasse),
-        find.byKey(SalleOrdinateur.cleSupport),
-        find.byType(PiluleEtatSalle),
-      ]);
+      expect(find.byType(TuileCommandeSalle), findsNWidgets(9));
     });
 
     testWidgets(
-      'C : la page prend toute la hauteur entre la rangee du haut '
-      'et la barre du bas, panneau ouvert comme ferme (mesure a 1440 x 900)',
+      'C : la page prend toute la hauteur de l ecran, aux marges pres '
+      '(mesure a 1440 x 900, vraies polices)',
       (WidgetTester tester) async {
-        // Les vraies polices : la largeur du texte se mesure avec elles.
         await tester.runAsync(() async {
           await chargerPolicesDuDepot();
           await chargerPoliceMadina15();
         });
         await _monter(tester);
-        final Rect haut = tester.getRect(find.byKey(SalleOrdinateur.cleHaut));
-        final Rect bas = tester.getRect(find.byKey(SalleOrdinateur.cleBas));
         final Rect boite = tester.getRect(
           find.byKey(TelephonePleinEcran.clePage),
         );
-        final Size page = _texteDeLaPage(tester);
-        // ignore: avoid_print
-        print('C 1440x900, panneaux ouverts : boite $boite, texte $page');
-        expect(boite.top, closeTo(haut.bottom + 16, 0.5));
-        expect(boite.bottom, closeTo(bas.top - 16, 0.5));
-        expect(boite.height, greaterThan(690));
-        if (dossierCapture != null) {
-          await capturerVue(tester, 'enseignant_1440_coran-grand');
-        }
+        // Panneaux ouverts : la largeur borne un peu la page (moins de 3 %).
+        expect(boite.height, greaterThan(840));
         await tester.tap(find.byKey(const ValueKey<String>('salle-eleves')));
         await tester.pumpAndSettle();
-        final Rect boiteFermee = tester.getRect(
+        final Rect fermee = tester.getRect(
           find.byKey(TelephonePleinEcran.clePage),
         );
-        final Size pageFermee = _texteDeLaPage(tester);
-        // ignore: avoid_print
-        print(
-          'C 1440x900, Eleves ferme : boite $boiteFermee, page $pageFermee',
-        );
-        expect(boiteFermee.height, closeTo(boite.height, 0.5));
-        expect(pageFermee.height, greaterThanOrEqualTo(page.height - 0.5));
+        expect(fermee.top, closeTo(16, 0.5));
+        expect(fermee.height, closeTo(900 - 32, 0.5));
+        expect(tester.takeException(), isNull);
       },
     );
+
+    testWidgets('C : focus (F), la page seule a pleine hauteur ; il reste la '
+        'colonne en icones, l ile, et les outils contre la page', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester, taille: const Size(1280, 720));
+      await tester.sendKeyEvent(LogicalKeyboardKey.keyF);
+      await tester.pumpAndSettle();
+      expect(find.byKey(SalleOrdinateur.cleGauche), findsNothing);
+      expect(find.byKey(SalleOrdinateur.cleDroite), findsNothing);
+      expect(find.byKey(SalleOrdinateur.cleClasse), findsNothing);
+      expect(find.byKey(SalleOrdinateur.cleTitreSupport), findsNothing);
+      expect(find.byType(PiluleEtatSalle), findsOneWidget);
+      expect(find.byKey(SalleOrdinateur.cleFocus), findsOneWidget);
+      expect(find.byKey(const ValueKey<String>('nom-commande')), findsNothing);
+      expect(find.byType(TuileCommandeSalle), findsNWidgets(9));
+      final Rect page = tester.getRect(find.byKey(TelephonePleinEcran.clePage));
+      expect(page.height, closeTo(720 - 32, 0.5));
+      verifierSansChevauchement(tester, <Finder>[
+        find.byKey(TelephonePleinEcran.clePage),
+        find.byKey(SalleOrdinateur.cleTete),
+        find.byKey(SalleOrdinateur.cleCommandes),
+        find.byKey(SalleOrdinateur.cleSupport),
+        find.byKey(const ValueKey<String>('salle-zoom')),
+      ]);
+      await tester.sendKeyEvent(LogicalKeyboardKey.keyF);
+      await tester.pumpAndSettle();
+      expect(find.byKey(SalleOrdinateur.cleGauche), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
 
     testWidgets('C : l eleve sur ordinateur, la page sur toute la hauteur', (
       WidgetTester tester,
@@ -1014,6 +1129,141 @@ void main() {
         expect(tester.takeException(), isNull);
         await capturerVue(tester, nom);
       }, skip: dossierCapture == null);
+    });
+  }
+
+  // CORAN-GRAND (directeur, 11/11/2026 : « Sur PC, il faut que le Coran soit
+  // grand ») : la taille du texte de la page de l'enseignant, avec les vraies
+  // polices, panneaux ouverts puis fermes. Ce test tourne avant et apres le
+  // lot (il ne lit que la page et les tuiles Eleves et Bibliotheque) ; les
+  // chiffres sont dans docs/current/UX_REVIEW_CORAN-GRAND.md.
+  for (final Size taille in <Size>[
+    const Size(1440, 900),
+    const Size(1280, 720),
+  ]) {
+    testWidgets('CORAN-GRAND mesure ${taille.width.toInt()}x'
+        '${taille.height.toInt()} : texte de la page, panneaux ouverts puis '
+        'fermes', (WidgetTester tester) async {
+      await tester.runAsync(() async {
+        await chargerPolicesDuDepot();
+        await chargerPoliceMadina15();
+      });
+      await _monter(tester, taille: taille);
+      final String nom = '${taille.width.toInt()}x${taille.height.toInt()}';
+      final Size ouverts = _texteDeLaPage(tester);
+      final Rect boiteOuverts = tester.getRect(
+        find.byKey(TelephonePleinEcran.clePage),
+      );
+      final String? capture = Platform.environment['CORAN_GRAND_ETIQUETTE'];
+      if (dossierCapture != null && capture != null) {
+        await capturerVue(tester, '${capture}_${nom}_panneaux-ouverts');
+      }
+      await tester.tap(find.byKey(const ValueKey<String>('salle-eleves')));
+      await tester.pumpAndSettle();
+      await tester.tap(
+        find.byKey(const ValueKey<String>('salle-bibliotheque')),
+      );
+      await tester.pumpAndSettle();
+      expect(find.byKey(SalleOrdinateur.cleGauche), findsNothing);
+      expect(find.byKey(SalleOrdinateur.cleDroite), findsNothing);
+      final Size fermes = _texteDeLaPage(tester);
+      final Rect boiteFermes = tester.getRect(
+        find.byKey(TelephonePleinEcran.clePage),
+      );
+      if (dossierCapture != null && capture != null) {
+        await capturerVue(tester, '${capture}_${nom}_panneaux-fermes');
+      }
+      // ignore: avoid_print
+      print(
+        'CORAN-GRAND $nom ouverts : texte ${ouverts.width.toStringAsFixed(0)}'
+        ' x ${ouverts.height.toStringAsFixed(0)} (boite $boiteOuverts) ; '
+        'fermes : texte ${fermes.width.toStringAsFixed(0)} x '
+        '${fermes.height.toStringAsFixed(0)} (boite $boiteFermes)',
+      );
+      expect(tester.takeException(), isNull);
+    });
+  }
+
+  // Captures CORAN-GRAND (CAPTURE_DIR et CORAN_GRAND_ETIQUETTE : « avant »
+  // sur la base, « apres » sur le lot) : vraies polices, fond de la salle.
+  for (final (
+        String nom,
+        Size taille,
+        ThemeMode theme,
+        AppLocale langue,
+        bool focus,
+      )
+      in <(String, Size, ThemeMode, AppLocale, bool)>[
+        (
+          '1440x900_clair',
+          const Size(1440, 900),
+          ThemeMode.light,
+          AppLocale.fr,
+          false,
+        ),
+        (
+          '1440x900_sombre',
+          const Size(1440, 900),
+          ThemeMode.dark,
+          AppLocale.fr,
+          false,
+        ),
+        (
+          '1440x900_arabe',
+          const Size(1440, 900),
+          ThemeMode.light,
+          AppLocale.ar,
+          false,
+        ),
+        (
+          '1440x900_focus',
+          const Size(1440, 900),
+          ThemeMode.light,
+          AppLocale.fr,
+          true,
+        ),
+        (
+          '1280x720_sombre',
+          const Size(1280, 720),
+          ThemeMode.dark,
+          AppLocale.fr,
+          false,
+        ),
+        (
+          '1280x720_arabe',
+          const Size(1280, 720),
+          ThemeMode.light,
+          AppLocale.ar,
+          false,
+        ),
+        (
+          '1280x720_focus',
+          const Size(1280, 720),
+          ThemeMode.dark,
+          AppLocale.fr,
+          true,
+        ),
+      ]) {
+    group('CORAN-GRAND capture $nom', () {
+      setUp(() => LocaleSettings.setLocale(langue));
+      testWidgets('CORAN-GRAND capture $nom', (WidgetTester tester) async {
+        final String? etiquette = Platform.environment['CORAN_GRAND_ETIQUETTE'];
+        if (dossierCapture == null || etiquette == null) return;
+        await tester.runAsync(() async {
+          await chargerPolicesDuDepot();
+          await chargerPoliceMadina15();
+        });
+        await _monter(tester, taille: taille, theme: theme);
+        // L'ile au repos : la mention de l'entree se replie apres 10 s.
+        await tester.pump(const Duration(seconds: 11));
+        await tester.pumpAndSettle();
+        if (focus) {
+          await tester.sendKeyEvent(LogicalKeyboardKey.keyF);
+          await tester.pumpAndSettle();
+        }
+        expect(tester.takeException(), isNull);
+        await capturerVue(tester, '${etiquette}_$nom');
+      });
     });
   }
 }

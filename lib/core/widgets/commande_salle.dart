@@ -590,6 +590,58 @@ class TuileCommandeSalle extends StatelessWidget {
   /// La largeur minimale d'une tuile.
   static const double largeurMin = AppSpacing.respiration + AppSpacing.lg;
 
+  /// CORAN-GRAND (directeur, 11/11/2026) : la barre de l'ordinateur passe
+  /// en colonne sur un cote. Les tuiles y prennent toutes la largeur de la
+  /// colonne (une cible plus large, Fitts) ; cette largeur est celle du nom
+  /// le plus long sur une ligne, marges comprises, jamais moins que
+  /// [largeurMin]. [avecNom] faux : les tuiles n'ont que l'icone
+  /// ([SurfaceTuilesSalle.sansNom]).
+  static double largeurColonne(
+    BuildContext context,
+    Iterable<String> noms, {
+    required bool avecNom,
+  }) {
+    if (!avecNom) return largeurMin;
+    double plusLong = 0;
+    for (final String nom in noms) {
+      plusLong = math.max(plusLong, _mesurerNom(context, nom).width);
+    }
+    return math.max(largeurMin, plusLong.ceilToDouble() + 2 * AppSpacing.md);
+  }
+
+  /// La hauteur d'une tuile de la colonne ([largeurColonne]) : marges,
+  /// icone et, [avecNom], la ligne du nom le plus haut. Sans nom, la cible
+  /// tactile (48).
+  static double hauteurColonne(
+    BuildContext context,
+    Iterable<String> noms, {
+    required bool avecNom,
+  }) {
+    const double sansNom = 2 * AppSpacing.sm + AppSpacing.xxl;
+    if (!avecNom) return math.max(AppTouchTarget.standard, sansNom);
+    double ligne = 0;
+    for (final String nom in noms) {
+      ligne = math.max(ligne, _mesurerNom(context, nom).height);
+    }
+    return math.max(
+      AppTouchTarget.standard,
+      sansNom + AppSpacing.xs + ligne.ceilToDouble(),
+    );
+  }
+
+  /// Le nom peint sur une ligne, dans le style de la tuile nommee.
+  static Size _mesurerNom(BuildContext context, String nom) {
+    final TextPainter peintre = TextPainter(
+      text: TextSpan(text: nom, style: Theme.of(context).textTheme.labelMedium),
+      textDirection: Directionality.of(context),
+      textScaler: MediaQuery.textScalerOf(context),
+      maxLines: 1,
+    )..layout();
+    final Size taille = peintre.size;
+    peintre.dispose();
+    return taille;
+  }
+
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
