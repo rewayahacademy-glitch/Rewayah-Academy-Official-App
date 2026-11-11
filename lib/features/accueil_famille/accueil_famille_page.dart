@@ -737,7 +737,10 @@ class _CorpsAccueil extends ConsumerWidget {
                       nature:
                           lumierePourFamille(signaux, MotifFamille.acces) ??
                           lumierePourFamille(signaux, MotifFamille.salle),
-                      child: bandeau,
+                      // Pleine largeur : sinon la lueur, calee sur la tuile,
+                      // se voit a cote d'une carte plus etroite (« Rejoindre »
+                      // est une carte au contenu).
+                      child: SizedBox(width: double.infinity, child: bandeau),
                     ),
                   ),
                 TuileBento(

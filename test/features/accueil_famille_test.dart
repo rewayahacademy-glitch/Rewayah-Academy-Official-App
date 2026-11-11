@@ -1759,6 +1759,8 @@ void main() {
       await _monter(tester);
       await _ouvrirAccueilParLaBarre(tester);
       expect(halos(tester, NatureHalo.salle), 1);
+      // La lueur n'est jamais coupee (LUMIERE-DOUCE, 11/11/2026).
+      verifierLumieresEntieres(tester);
     });
 
     testWidgets('salle fermee (seance dans 3 h) : pas de vert', (
