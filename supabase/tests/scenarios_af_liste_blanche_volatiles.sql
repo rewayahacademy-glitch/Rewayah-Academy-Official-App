@@ -451,7 +451,15 @@ declare
     -- PHOTO-FIGEE (07/11) : la direction lit la photo figee d'un dossier de
     -- candidature (garde positive app_role() = 'admin' et app_account_valid(),
     -- genre du lecteur ; journalise l'exception super admin, d'ou VOLATILE).
-    'photo_dossier_candidat(uuid)'
+    'photo_dossier_candidat(uuid)',
+    -- PARTAGE-GENERIQUE (20261123000000, 11/11/2026) : l'enseignant effectif
+    -- de la seance retient la page presentee d'un support autre que le Coran
+    -- (garde positive app_account_valid() ET app_role() = 'teacher' ET
+    -- private.c29_enseignant_effectif_session(seance) = auth.uid() ; fenetre
+    -- de la seance a 60 minutes pres ; support, version et page bornes ; une
+    -- ligne par Classe et par support). Relue par le pilote de la salle le
+    -- 11/11/2026 (la CI l'avait refusee hors liste, a raison).
+    'enregistrer_position_support(uuid,text,text,integer,integer)'
   ];
   -- Ouvertes a anon par choix : la desinscription d'un e-mail et le depot d'un
   -- avis se font sans compte.
