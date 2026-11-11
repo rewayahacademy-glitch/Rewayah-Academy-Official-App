@@ -42,6 +42,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/accueil/signaux_accueils.dart';
 import '../../core/controle/service_controle.dart' show graceApresFin;
 import '../../core/domain/enums.dart';
 import '../../core/enseignant/absence_remplacement.dart';
@@ -83,9 +84,11 @@ import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/grille_bento.dart';
 import '../../core/widgets/groupe_reglages.dart';
+import '../../core/widgets/halo_lumiere.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/ligne_cle_valeur.dart';
 import '../../core/widgets/local_feedback.dart';
+import '../../core/widgets/lumiere_autour.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/point_rappel.dart';
@@ -324,6 +327,20 @@ class _Corps extends ConsumerWidget {
     );
     final bool offresIllisibles = offresIllisiblesDans(lectureOffres);
 
+    // LUMIERE-ACCUEILS 3 : les lumieres, depuis les seuls etats du serveur
+    // (offres ouvertes, cahiers en retard). L'arbitre de `NavShell` fait
+    // tourner la plus urgente, les autres restent en lueur fixe.
+    final List<SignalAccueil<MotifEnseignant>> signaux = signauxAujourdhui(
+      offresRemplacement: offres.length,
+      cahiersARemplir: aTerminer.length,
+    );
+    NatureHalo? lumiere(MotifEnseignant motif) {
+      for (final SignalAccueil<MotifEnseignant> x in signaux) {
+        if (x.motif == motif) return x.nature;
+      }
+      return null;
+    }
+
     // SALLE-3-ACCUEIL : sans Classe (la lecture a repondu et n'en rend aucune),
     // la carte de bienvenue passe avant tout. Une lecture qui echoue ou qui
     // charge encore n'affiche rien : on ne dit pas « sans Classe » a un doute.
@@ -353,6 +370,7 @@ class _Corps extends ConsumerWidget {
           ? null
           : _ATerminer(
               cahiers: aTerminer,
+              lumiere: lumiere(MotifEnseignant.cahier),
               enFile:
                   ref.watch(cahiersEnFileProvider).value ?? const <String>{},
             ),
@@ -370,6 +388,7 @@ class _Corps extends ConsumerWidget {
                   : 0,
               offres: offres,
               offresIllisibles: offresIllisibles,
+              lumiere: lumiere(MotifEnseignant.remplacement),
               coursAnnule: _retrouverParId(toutes, annulee),
               phrasePartielle: phrasePartielle,
               onReessayerPartiel: partielle
@@ -1043,9 +1062,16 @@ class _MaJournee extends StatelessWidget {
 
 /// « A terminer » : les cahiers non valides, trois au plus (K-45).
 class _ATerminer extends ConsumerWidget {
-  const _ATerminer({required this.cahiers, this.enFile = const <String>{}});
+  const _ATerminer({
+    required this.cahiers,
+    this.enFile = const <String>{},
+    this.lumiere,
+  });
 
   final List<CahierEnRetard> cahiers;
+
+  /// La lumiere « a preparer » (LUMIERE-ACCUEILS 3), ou `null`.
+  final NatureHalo? lumiere;
 
   /// Les seances dont le cahier valide attend l'envoi (file locale).
   final Set<String> enFile;
@@ -1138,9 +1164,12 @@ class _ATerminer extends ConsumerWidget {
           ),
         ),
         Ecart.vSm,
-        _LignesATerminer(
-          cahiers: tries.take(maximumATerminer).toList(growable: false),
-          enFile: enFile,
+        LumiereAutour(
+          nature: lumiere,
+          child: _LignesATerminer(
+            cahiers: tries.take(maximumATerminer).toList(growable: false),
+            enFile: enFile,
+          ),
         ),
       ],
     );
@@ -1415,10 +1444,14 @@ class _AlertesUtiles extends StatelessWidget {
     this.entete = true,
     this.offres = const <OffreRemplacement>[],
     this.offresIllisibles = false,
+    this.lumiere,
     this.coursAnnule,
     this.phrasePartielle,
     this.onReessayerPartiel,
   });
+
+  /// La lumiere des remplacements (LUMIERE-ACCUEILS 3), ou `null`.
+  final NatureHalo? lumiere;
 
   /// Combien d'alertes de presence ne sont pas montrees : au-dela de zero,
   /// un lien ouvre la page qui les liste toutes (DASH-ENS-LISTES).
@@ -1463,26 +1496,29 @@ class _AlertesUtiles extends StatelessWidget {
           if (lignes) Ecart.vLg,
         ],
         if (lignes)
-          GroupeReglages(
-            lignes: <LigneRubrique>[
-              // REMPL-1b : une seule source d'offres, une seule destination.
-              // L'appui mene a l'ecran commun meme sans remplacement confirme.
-              for (final OffreRemplacement offre in offres)
-                LigneRubrique(
-                  icone: AppIcons.cours,
-                  libelle: titreRemplacementUrgent(offre.debut),
-                  legende: offre.classe,
-                  onPress: versRemplacements,
-                ),
-              if (offresIllisibles)
-                LigneRubrique(
-                  icone: AppIcons.avertissement,
-                  libelle: t.enseignant.remplacements.sansDonnees,
-                  onPress: versRemplacements,
-                ),
-              for (final String alerte in alertes)
-                LigneRubrique(icone: AppIcons.avertissement, libelle: alerte),
-            ],
+          LumiereAutour(
+            nature: offres.isEmpty ? null : lumiere,
+            child: GroupeReglages(
+              lignes: <LigneRubrique>[
+                // REMPL-1b : une seule source d'offres, une seule destination.
+                // L'appui mene a l'ecran commun meme sans remplacement confirme.
+                for (final OffreRemplacement offre in offres)
+                  LigneRubrique(
+                    icone: AppIcons.cours,
+                    libelle: titreRemplacementUrgent(offre.debut),
+                    legende: offre.classe,
+                    onPress: versRemplacements,
+                  ),
+                if (offresIllisibles)
+                  LigneRubrique(
+                    icone: AppIcons.avertissement,
+                    libelle: t.enseignant.remplacements.sansDonnees,
+                    onPress: versRemplacements,
+                  ),
+                for (final String alerte in alertes)
+                  LigneRubrique(icone: AppIcons.avertissement, libelle: alerte),
+              ],
+            ),
           ),
         // DASH-ENS-LISTES : « et N autres » devient un lien vers la page qui
         // les liste toutes (l'exception D6 b tombe).
