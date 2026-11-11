@@ -1,4 +1,13 @@
 {
+  "salle.reseau.bon": "directeur, 11/11/2026, salle (lot RESEAU-ELEVES : l enseignant voit le reseau de chaque eleve ; celui qu on entend peut-etre mal le sait, cahier de la salle §5 et §6)",
+  "salle.reseau.correct": "directeur, 11/11/2026, salle (lot RESEAU-ELEVES : l enseignant voit le reseau de chaque eleve ; celui qu on entend peut-etre mal le sait, cahier de la salle §5 et §6)",
+  "salle.reseau.faible": "directeur, 11/11/2026, salle (lot RESEAU-ELEVES : l enseignant voit le reseau de chaque eleve ; celui qu on entend peut-etre mal le sait, cahier de la salle §5 et §6)",
+  "salle.reseau.perdu": "directeur, 11/11/2026, salle (lot RESEAU-ELEVES : l enseignant voit le reseau de chaque eleve ; celui qu on entend peut-etre mal le sait, cahier de la salle §5 et §6)",
+  "salle.reseau.onEntendMal": "directeur, 11/11/2026, salle (lot RESEAU-ELEVES : l enseignant voit le reseau de chaque eleve ; celui qu on entend peut-etre mal le sait, cahier de la salle §5 et §6)",
+  "salle.reseau.entendMal": "directeur, 11/11/2026, salle (lot RESEAU-ELEVES : l enseignant voit le reseau de chaque eleve ; celui qu on entend peut-etre mal le sait, cahier de la salle §5 et §6)",
+  "salle.reseau.onVousEntendMal": "directeur, 11/11/2026, salle (lot RESEAU-ELEVES : l enseignant voit le reseau de chaque eleve ; celui qu on entend peut-etre mal le sait, cahier de la salle §5 et §6)",
+  "salle.reseau.onTEntendMal": "directeur, 11/11/2026, salle (lot RESEAU-ELEVES : l enseignant voit le reseau de chaque eleve ; celui qu on entend peut-etre mal le sait, cahier de la salle §5 et §6)",
+  "salle.reseau.onTEntendMalGuidee": "directeur, 11/11/2026, salle (lot RESEAU-ELEVES : l enseignant voit le reseau de chaque eleve ; celui qu on entend peut-etre mal le sait, cahier de la salle §5 et §6)",
   "salle.etagere.etape": "directeur, 11/11/2026, salle (lot SUPPORTS-ETAGERE, reprise : couvertures aux couleurs de l academie, couverture standard du Coran en arabe)",
   "salle.etagere.coranCouverture.titre": "directeur, 11/11/2026, salle (lot SUPPORTS-ETAGERE, reprise : couvertures aux couleurs de l academie, couverture standard du Coran en arabe)",
   "salle.etagere.coranCouverture.edition": "directeur, 11/11/2026, salle (lot SUPPORTS-ETAGERE, reprise : couvertures aux couleurs de l academie, couverture standard du Coran en arabe)",

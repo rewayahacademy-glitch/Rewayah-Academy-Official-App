@@ -107,6 +107,9 @@ class PiluleEtatSalle extends StatefulWidget {
   /// Les signes de l'ile repliee (tests).
   static const Key cleRepliee = ValueKey<String>('pilule-etat-repliee');
 
+  /// Le signe court d'une situation de reseau, ile repliee (tests).
+  static const Key cleSigneReseau = ValueKey<String>('pilule-signe-reseau');
+
   @override
   State<PiluleEtatSalle> createState() => _PiluleEtatSalleEtat();
 }
@@ -124,7 +127,8 @@ class _PiluleEtatSalleEtat extends State<PiluleEtatSalle> {
     final bool enSalle =
         (PorteeMediaSalle.de(context)?.presenceEnSalle ?? false) &&
         vue.connexion.etablie &&
-        !vue.videoSuspendue;
+        // RESEAU-ELEVES : une situation de reseau passe avant « En salle ».
+        !vue.reseauADire;
     return enSalle ? t.presence.presente : vue.texteConnexion;
   }
 
@@ -284,12 +288,17 @@ class _PiluleEtatSalleEtat extends State<PiluleEtatSalle> {
             ),
           ),
         ],
-        if (vue.videoSuspendue) ...<Widget>[
+        // RESEAU-ELEVES : tant qu'une situation de reseau dure, un seul
+        // signe court (la phrase entiere est lue avec l'etat). « On vous
+        // entend peut-etre mal » et le reseau faible : l'onde du reseau ;
+        // l'image coupee seule : la camera barree.
+        if (_signeReseau(vue) case final IconData signe) ...<Widget>[
           Ecart.hSm,
           ExcludeSemantics(
             child: IconTheme(
+              key: PiluleEtatSalle.cleSigneReseau,
               data: IconThemeData(color: fond.onBackground, size: icone),
-              child: Icon(AppIcons.cameraCoupee.repos),
+              child: Icon(signe),
             ),
           ),
         ],
@@ -374,4 +383,17 @@ class _PiluleEtatSalleEtat extends State<PiluleEtatSalle> {
       ),
     );
   }
+}
+
+/// RESEAU-ELEVES : le signe court de l'ile repliee pour la situation de
+/// reseau qui dure, ou `null`. Un seul signe a la fois.
+IconData? _signeReseau(VueSeance vue) {
+  if (!vue.reseauADire) return null;
+  if (vue.onVousEntendMal ||
+      (vue.reseauDansIle &&
+          !vue.videoSuspendue &&
+          vue.connexion == ConnexionSeance.reseauFaible)) {
+    return AppIcons.reseau.repos;
+  }
+  return vue.videoSuspendue ? AppIcons.cameraCoupee.repos : null;
 }

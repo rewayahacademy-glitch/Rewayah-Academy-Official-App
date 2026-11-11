@@ -14,6 +14,7 @@ import '../../core/presence/service_presence.dart';
 import '../../core/tc_groupe/group_summary_vm.dart' show TitreEnseignant;
 import '../../core/tc_horloge/chrono_seance.dart' show BornesChrono;
 import '../../core/tc_observation/port_annonce_observation.dart';
+import '../../core/video/seuils_reseau.dart' show EtatReseau;
 import '../../core/video/video_session_provider.dart'
     show ParticipantSalle, QualiteLien;
 import '../salle/vue_salle.dart';
@@ -42,6 +43,8 @@ abstract final class DepuisSalle {
     String? idEnseignant,
     TitreEnseignant? titreEnseignant,
     BornesChrono? chrono,
+    Map<String, EtatReseau> reseaux = const <String, EtatReseau>{},
+    bool reseauDansIle = true,
   }) {
     final RoleSeance? role = RoleSeance.resoudre(salle.role, mode);
     if (role == null) return null;
@@ -87,6 +90,34 @@ abstract final class DepuisSalle {
       visite = VisiteSeance(prenomEnfant: prenomEleve ?? '', concerneMoi: true);
     }
 
+    // RESEAU-ELEVES (11/11/2026) : le reseau de chacun, filtre contre le
+    // clignotement par la salle (`SuiviReseau`), par identite LiveKit (le
+    // profil). Le micro publie de chaque participant choisit la phrase.
+    final Map<String, ParticipantSalle> parIdentite =
+        <String, ParticipantSalle>{
+          for (final ParticipantSalle p in salle.participantsListes)
+            if (p.identite.isNotEmpty) p.identite: p,
+        };
+    final ParticipantSalle? moi = salle.moi;
+    final EtatReseau? monReseau = moi == null ? null : reseaux[moi.identite];
+    EleveSeance avecReseau(EleveSeance e) {
+      final String? id = e.profilId;
+      if (id == null) return e;
+      final EtatReseau? reseau = reseaux[id];
+      if (reseau == null) return e;
+      return EleveSeance(
+        prenom: e.prenom,
+        statut: e.statut,
+        fiche: e.fiche,
+        id: e.id,
+        cleAvatar: e.cleAvatar,
+        peutEcrire: e.peutEcrire,
+        profilId: e.profilId,
+        reseau: reseau,
+        microOuvert: parIdentite[id]?.micro ?? false,
+      );
+    }
+
     return VueSeance(
       role: role,
       nomClasse: nomClasse,
@@ -105,7 +136,18 @@ abstract final class DepuisSalle {
       chrono: chrono,
       connexion: connexionDe(salle.phase, qualite: salle.qualite),
       // Defaut R-1 (11/11/2026) : les barres disent la qualite reelle.
-      signalEnseignant: barresDuLien(salle.qualite),
+      // RESEAU-ELEVES : filtree contre le clignotement quand la salle la
+      // suit ; sinon la mesure brute.
+      signalEnseignant: reseaux.isEmpty
+          ? barresDuLien(salle.qualite)
+          : monReseau?.barres,
+      // Defaut C6-4 : la ou l'ile reste posee (eleve partout, enseignant sur
+      // ordinateur), c'est elle qui dit le reseau, une seule fois ; ailleurs
+      // (telephone de l'enseignant, ou l'ile ne vit que dans le profil
+      // deplie), le bandeau le dit, une seule fois aussi.
+      reseauDansIle: reseauDansIle,
+      // On l'entend peut-etre mal : mauvais lien qui dure, micro ouvert.
+      onVousEntendMal: (monReseau?.alerte ?? false) && (moi?.micro ?? false),
       // Une impasse n'est pas une salle : rien n'y est enregistre.
       enregistrementConfirme: salle.phase != PhaseSalle.refus,
       visite: visite,
@@ -119,33 +161,15 @@ abstract final class DepuisSalle {
       // echec ou pas encore rendue), l'enseignant voit au moins les eleves
       // que la salle connait, connectes ; jamais une liste vide qui dirait
       // « personne ».
-      eleves: enseignant && presence == null
-          ? <EleveSeance>[
-              for (final ParticipantSalle p in salle.participantsListes)
-                if (RoleSalle.depuis(p.role) == RoleSalle.eleve)
-                  EleveSeance(
-                    prenom: p.nom,
-                    statut: StatutEleveSeance.connecte,
-                    // L'identite LiveKit est l'identifiant de profil.
-                    profilId: p.identite.isEmpty ? null : p.identite,
-                  ),
-            ]
-          : enseignant
-          ? <EleveSeance>[
-              for (final PresenceParticipant p in lignes)
-                if (RoleSalle.depuis(p.role) == RoleSalle.eleve)
-                  EleveSeance(
-                    prenom: p.prenom,
-                    statut: statut(p),
-                    // Le matricule : la fiche et ses actions (rappel,
-                    // recitation) visent l'eleve par lui.
-                    id: p.identifiantImmuable.isEmpty
-                        ? null
-                        : p.identifiantImmuable,
-                    profilId: p.profilId.isEmpty ? null : p.profilId,
-                  ),
-            ]
-          : const <EleveSeance>[],
+      eleves: <EleveSeance>[
+        for (final EleveSeance e in _eleves(
+          salle: salle,
+          enseignant: enseignant,
+          presence: presence,
+          lignes: lignes,
+        ))
+          avecReseau(e),
+      ],
       fin: fin,
       groupeId: groupeId,
       // MA-TUTOIEMENT-1 : le registre suit l'age, jamais la presentation ;
@@ -157,6 +181,40 @@ abstract final class DepuisSalle {
       videoSuspendue: videoSuspendue,
     );
   }
+
+  /// La liste des inscrits de l'enseignant (vide pour l'eleve).
+  static List<EleveSeance> _eleves({
+    required VueSalle salle,
+    required bool enseignant,
+    required List<PresenceParticipant>? presence,
+    required List<PresenceParticipant> lignes,
+  }) => enseignant && presence == null
+      ? <EleveSeance>[
+          for (final ParticipantSalle p in salle.participantsListes)
+            if (RoleSalle.depuis(p.role) == RoleSalle.eleve)
+              EleveSeance(
+                prenom: p.nom,
+                statut: StatutEleveSeance.connecte,
+                // L'identite LiveKit est l'identifiant de profil.
+                profilId: p.identite.isEmpty ? null : p.identite,
+              ),
+        ]
+      : enseignant
+      ? <EleveSeance>[
+          for (final PresenceParticipant p in lignes)
+            if (RoleSalle.depuis(p.role) == RoleSalle.eleve)
+              EleveSeance(
+                prenom: p.prenom,
+                statut: statut(p),
+                // Le matricule : la fiche et ses actions (rappel,
+                // recitation) visent l'eleve par lui.
+                id: p.identifiantImmuable.isEmpty
+                    ? null
+                    : p.identifiantImmuable,
+                profilId: p.profilId.isEmpty ? null : p.profilId,
+              ),
+        ]
+      : const <EleveSeance>[];
 
   /// S0 : la page [numero] du mushaf de Medine comme support a page fixe,
   /// au ratio du papier A4 (directeur, 24/10/2026), jamais etiree.

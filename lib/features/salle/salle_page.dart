@@ -66,6 +66,7 @@ import '../../core/video/pre_vol.dart';
 import '../../core/video/publication_differee.dart';
 import '../../core/video/repli_audio.dart';
 import '../../core/video/service_video.dart';
+import '../../core/video/seuils_reseau.dart';
 import '../../core/video/signal_rappel.dart';
 import '../../core/video/video_session_provider.dart';
 import '../../core/widgets/action_principale.dart';
@@ -287,6 +288,14 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   /// flux de qualite avec la meme hysteresis que le moteur ; la pilule d'etat
   /// dit « Image coupee... La voix continue. » tant qu'il dure.
   final RepliAudio _repliAffiche = RepliAudio();
+
+  /// RESEAU-ELEVES (11/11/2026) : le reseau de chaque participant, filtre
+  /// contre le clignotement ; en memoire seulement, rien n'est conserve.
+  late final SuiviReseau _suiviReseau = SuiviReseau(
+    quandChange: () {
+      if (mounted) setState(() {});
+    },
+  );
   List<ParticipantSalle> _participants = const <ParticipantSalle>[];
   QualiteLien _qualite = QualiteLien.inconnue;
 
@@ -557,7 +566,10 @@ class _SallePageEtat extends ConsumerState<SallePage> {
         _participants = liste;
         return;
       }
-      setState(() => _participants = liste);
+      setState(() {
+        _participants = liste;
+        _suiviReseau.mesurer(liste);
+      });
       _verifierRecitant(liste);
     });
     _sQualite = _moteur.qualite.listen((QualiteLien lien) {
@@ -681,6 +693,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   @override
   void dispose() {
     RelaisRappelSalle.retirer(_envoyerRappel);
+    _suiviReseau.fermer();
     _finAnnonce?.cancel();
     unawaited(_sEtats?.cancel());
     unawaited(_sParticipants?.cancel());
@@ -717,6 +730,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       _cameraAbsente = false;
       _erreurCameraFermee = false;
       _repliAffiche.remettre();
+      _suiviReseau.remettre();
       _materielPret = false;
       _acces = null;
     });
@@ -2538,6 +2552,14 @@ class _SallePageEtat extends ConsumerState<SallePage> {
             ? null
             : DepuisSalle.pageCoran(presentee.page),
         videoSuspendue: _repliAffiche.videoSuspendue,
+        // RESEAU-ELEVES : le reseau de chacun, filtre (barres, alerte).
+        reseaux: _suiviReseau.etats(),
+        // L'ile reste posee partout, sauf au telephone de l'enseignant (moins
+        // de 840 points), ou elle ne vit que dans le profil deplie : le
+        // bandeau y garde la phrase de reseau (`salleTelephoneEnseignant`).
+        reseauDansIle:
+            vue.role != RoleSalle.enseignant ||
+            MediaQuery.sizeOf(context).width >= AppGabarit.seuilEtendu,
         // FN-023 : le chrono du temps restant, sur les bornes que le serveur
         // sert deja (seances de l'enseignant ou de l'eleve).
         chrono: ref.watch(
@@ -2941,7 +2963,12 @@ class _PastillePresence extends StatelessWidget {
     // CHRONO-ETAT (directeur, 11/11/2026) : « En salle » est deja dit par la
     // pilule d'etat ; la pastille ne reste que pour ce qui s'en ecarte (« Pas
     // encore la », « En retard »...).
-    final bool ditAilleurs = mienne.etat == EtatPresence.presente;
+    // RESEAU-ELEVES (defaut C6-4) : la reconnexion et la coupure de ma propre
+    // connexion sont dites par l'ile ; la pastille ne les redit pas.
+    final bool ditAilleurs =
+        mienne.etat == EtatPresence.presente ||
+        mienne.etat == EtatPresence.enReconnexion ||
+        mienne.etat == EtatPresence.deconnectee;
     final Widget presence = MergeSemantics(
       child: Semantics(
         label: t.presence.mienne,

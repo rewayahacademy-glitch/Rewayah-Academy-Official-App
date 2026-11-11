@@ -289,6 +289,17 @@
     "saisieVide": "Écrivez le prénom {prenom} pour confirmer"
   },
   "salle": {
+    "reseau": {
+      "bon": "Bon réseau",
+      "correct": "Réseau correct",
+      "faible": "Réseau faible",
+      "perdu": "Réseau perdu",
+      "onEntendMal": "On entend peut-être mal {prenom}.",
+      "entendMal": "{prenom} entend peut-être mal.",
+      "onVousEntendMal": "Votre connexion est faible\u00a0: on vous entend peut-être mal. Rapprochez-vous du Wi-Fi ou fermez les autres applications.",
+      "onTEntendMal": "Ta connexion est faible\u00a0: on t'entend peut-être mal. Rapproche-toi du Wi-Fi ou ferme les autres applications.",
+      "onTEntendMalGuidee": "On t'entend peut-être mal. Rapproche-toi du Wi-Fi."
+    },
     "coranEleve": {
       "retrouverReprise": "Revoir où reprendre la lecture",
       "revenirPage": "Revenir page {page}",

@@ -29,6 +29,7 @@ import '../../core/widgets/bouton_outil.dart';
 import '../../core/widgets/pressable.dart';
 import '../foyer/photo_eleve.dart';
 import 'actions_seance.dart';
+import 'vignette_video.dart' show SignalVideo;
 import 'vue_seance.dart';
 
 /// Le libelle d'un statut pendant la seance.
@@ -262,6 +263,13 @@ class _CarteEleve extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             _EnTeteEleve(eleve: eleve, deplie: deplie, onBasculer: onBasculer),
+            // RESEAU-ELEVES : un reseau mauvais depuis plusieurs secondes se
+            // dit en une ligne dans la carte, jamais en alerte qui derange.
+            if (eleve.phraseReseau case final String phrase)
+              _PhraseReseau(
+                key: ValueKey<String>('reseau-phrase-${cleEleveSeance(eleve)}'),
+                phrase: phrase,
+              ),
             if (deplie && fiche != null) ...<Widget>[
               if (serre) Ecart.vXs else Ecart.vSm,
               _GrilleFiche(fiche: fiche, large: large, serre: serre),
@@ -341,6 +349,15 @@ class _EnTeteEleve extends StatelessWidget {
                 ),
               ],
             ),
+            // RESEAU-ELEVES (directeur, 11/11/2026) : le reseau de l'eleve,
+            // les memes barres que la video (`SignalVideo`) : nombre de
+            // barres, teinte d'attention a une barre, et le libelle lu avec
+            // la carte. Sans mesure stable : aucun signe.
+            if (connecte && eleve.reseau?.barres != null)
+              SignalVideo(
+                key: ValueKey<String>('reseau-${cleEleveSeance(eleve)}'),
+                barres: eleve.reseau!.barres!,
+              ),
             // TB-10 (plan V2 §12 « Autorisation de dessin » : eleve et droit
             // visibles dans Participants ; planche 8) : l'icone et le mot,
             // jamais la couleur seule.
@@ -377,9 +394,12 @@ class _EnTeteEleve extends StatelessWidget {
       ),
     );
     final VoidCallback? basculer = onBasculer;
-    final String etat = eleve.peutEcrire
-        ? '$statut, ${t.salle.seance.ecriture.peutEcrire}'
-        : statut;
+    final String? reseau = connecte ? eleve.libelleReseau : null;
+    final String etat = <String>[
+      statut,
+      ?reseau,
+      if (eleve.peutEcrire) t.salle.seance.ecriture.peutEcrire,
+    ].join(', ');
     // TB-RC (revue TB-R, m12) : le nom lu dit deja le prenom et l'etat ; la
     // ligne peinte se tait (sinon « Mariam, Connecte » est lu deux fois).
     if (basculer == null) {
@@ -397,6 +417,45 @@ class _EnTeteEleve extends StatelessWidget {
             '${deplie ? t.salle.seance.replierFiche(dePrenom: deDevant(eleve.prenom)) : t.salle.seance.deplierFiche(dePrenom: deDevant(eleve.prenom))}, $etat',
         arrondiFocus: AppRadius.arrondiSm,
         child: ExcludeSemantics(child: ligne),
+      ),
+    );
+  }
+}
+
+/// RESEAU-ELEVES : la phrase courte d'un reseau mauvais qui dure (« On
+/// entend peut-etre mal Yasmine »), l'icone du reseau et le mot, jamais la
+/// couleur seule.
+class _PhraseReseau extends StatelessWidget {
+  const _PhraseReseau({required this.phrase, super.key});
+
+  final String phrase;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    return Padding(
+      padding: const EdgeInsetsDirectional.only(
+        start: AppSpacing.xs,
+        end: AppSpacing.xs,
+        bottom: AppSpacing.xs,
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          ExcludeSemantics(
+            child: IconTheme(
+              data: palette.inkWarning.asIconTheme(size: AppSpacing.lg),
+              child: Icon(AppIcons.reseau.repos),
+            ),
+          ),
+          Ecart.hXs,
+          Expanded(
+            child: Text(
+              phrase,
+              style: palette.inkWarning.applyTo(_styleFiche(context)),
+            ),
+          ),
+        ],
       ),
     );
   }
