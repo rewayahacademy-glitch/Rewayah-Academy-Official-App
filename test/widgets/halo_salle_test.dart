@@ -393,7 +393,7 @@ void main() {
             ),
           ],
           child: HaloVivant(
-            role: AppRole.teacher,
+            source: SourceSalle.journee,
             notifications: null,
             construire: (BuildContext _, EtatHaloCompte? halo) {
               vu = halo;

@@ -3350,7 +3350,11 @@ class _CoquilleNavigation extends ConsumerWidget {
     // NAV-REFONTE 2b : le halo vert de la salle ouverte s'ajoute, lu dans le
     // calcul unique du role ; un seul halo, Urgent puis salle puis Nouveau.
     final Widget coquille = HaloVivant(
-      role: role,
+      source: switch (role) {
+        AppRole.guardian => SourceSalle.foyer,
+        AppRole.teacher => SourceSalle.journee,
+        _ => null,
+      },
       notifications: haloCloche,
       construire: (BuildContext _, EtatHaloCompte? halo) => NavShell(
         halo: halo,

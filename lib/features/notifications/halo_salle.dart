@@ -8,7 +8,6 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../core/domain/enums.dart';
 import '../../core/enseignant/carte_seance.dart';
 import '../../core/enseignant/cta_seance.dart';
 import '../../core/enseignant/modeles_enseignant.dart';
@@ -31,18 +30,29 @@ import '../journee/journee_page.dart'
 ///
 /// Le minuteur vit dans ce widget, comme celui de l'Accueil : il s'arrete avec
 /// la coquille.
+/// Ou le halo vert lit « salle rejoignable » : le calcul unique de chaque
+/// ecran, choisi par la coquille (jamais par un role lu ici, COM-BR-16).
+enum SourceSalle {
+  /// Les profils du foyer, comme l'Accueil du tuteur
+  /// (`salleOuverteDuFoyerProvider`).
+  foyer,
+
+  /// La carte de la Journee de l'enseignant (`carteSeanceEnseignantProvider`).
+  journee,
+}
+
 class HaloVivant extends ConsumerStatefulWidget {
   /// Cree le halo vivant.
   const HaloVivant({
-    required this.role,
+    required this.source,
     required this.notifications,
     required this.construire,
     this.horlogeAppareil = DateTime.now,
     super.key,
   });
 
-  /// Le role de la coquille.
-  final AppRole role;
+  /// La source du halo vert, ou `null` : pas de halo vert.
+  final SourceSalle? source;
 
   /// Le halo tire des notifications, ou `null`.
   final EtatHaloCompte? notifications;
@@ -63,13 +73,13 @@ class _EtatHaloVivant extends ConsumerState<HaloVivant>
   DateTime Function() get horlogeAppareil => widget.horlogeAppareil;
 
   @override
-  Widget build(BuildContext context) => switch (widget.role) {
+  Widget build(BuildContext context) => switch (widget.source) {
     // Le tuteur : l'instant de l'HorlogeServeurPartagee de la coquille, celui
     // de l'Accueil et de la Classe.
-    AppRole.guardian => _avec(_haloTuteur(ref, maintenantServeur())),
+    SourceSalle.foyer => _avec(_haloTuteur(ref, maintenantServeur())),
     // L'enseignant : la cadence de la Journee (meme horloge, memes bascules
     // a l'instant exact, chaque minute pleine), jamais un autre battement.
-    AppRole.teacher => CadenceSeance(
+    SourceSalle.journee => CadenceSeance(
       lire: ref.watch(maintenantJourneeProvider),
       instants: <DateTime>[
         for (final SeanceEnseignant s
@@ -80,7 +90,7 @@ class _EtatHaloVivant extends ConsumerState<HaloVivant>
       constructeur: (DateTime maintenant) =>
           _avec(_haloEnseignant(ref, maintenant)),
     ),
-    _ => _avec(null),
+    null => _avec(null),
   };
 
   Widget _avec(EtatHaloCompte? salle) => widget.construire(
