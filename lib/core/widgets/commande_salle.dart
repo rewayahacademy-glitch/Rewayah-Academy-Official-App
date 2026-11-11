@@ -736,7 +736,10 @@ class TuileCommandeSalle extends StatelessWidget {
               dessin,
               PositionedDirectional(
                 top: -AppSpacing.xs,
-                end: -AppSpacing.sm,
+                // Tuile : la pastille part du coin de fin de l'icone et
+                // grandit vers la fin (texte agrandi), sans la recouvrir.
+                start: rond ? null : AppSpacing.lg,
+                end: rond ? -AppSpacing.sm : null,
                 child: ExcludeSemantics(
                   child: DecoratedBox(
                     key: const ValueKey<String>('pastille-commande'),
@@ -784,7 +787,10 @@ class TuileCommandeSalle extends StatelessWidget {
               : rond
               ? AppTouchTarget.standard
               : largeurMin,
-          minHeight: AppTouchTarget.standard,
+          // Case egale : la cible suit le Mode Accessibilite (72).
+          minHeight: egale
+              ? AppMetriques.of(context).cibleTactile
+              : AppTouchTarget.standard,
         ),
         child: DecoratedBox(
           key: const ValueKey<String>('tuile-commande'),

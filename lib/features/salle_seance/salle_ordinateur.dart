@@ -204,19 +204,19 @@ class _EtatSalleOrdinateur extends ConsumerState<SalleOrdinateur> {
           // CORAN-GRAND (directeur, 11/11/2026) : la barre des commandes est
           // une colonne sur le bord de debut ; plus rien au-dessus ni
           // au-dessous de la page, qui prend toute la hauteur.
+          //
+          // GRILLE-COMMANDES : la colonne est PEINTE EN DERNIER (enfants
+          // et sens inverses : les places ne changent pas), pour que l'ile
+          // depliee passe par-dessus le panneau voisin au lieu de se plier
+          // sur quatre lignes dans la colonne. Le lecteur d'ecran et la
+          // touche Tab suivent la place a l'ecran : la colonne d'abord.
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             spacing: AppSpacing.lg,
+            textDirection: Directionality.of(context) == TextDirection.ltr
+                ? TextDirection.rtl
+                : TextDirection.ltr,
             children: <Widget>[
-              _Colonne(
-                vue: vue,
-                actions: actions,
-                local: local,
-                focus: focus,
-                eleves: eleves,
-                bibliotheque: bibliotheque && !commandes,
-                raccourcis: widget.raccourcis,
-              ),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -284,6 +284,16 @@ class _EtatSalleOrdinateur extends ConsumerState<SalleOrdinateur> {
                     ),
                   ],
                 ),
+              ),
+              _Colonne(
+                vue: vue,
+                actions: actions,
+                local: local,
+                focus: focus,
+                eleves: eleves,
+                panneauEleves: gauche != null,
+                bibliotheque: bibliotheque && !commandes,
+                raccourcis: widget.raccourcis,
               ),
             ],
           ),
@@ -465,11 +475,19 @@ Widget? _outilsSupport(
   required VueSeance vue,
   required ActionsSeance actions,
   required EtatLocalSeance local,
+  bool zoom = false,
 }) {
   final VoidCallback? agrandir = actions.onAgrandir;
   final bool ranger = vue.voitRanger && actions.onRanger != null;
-  if (agrandir == null && !ranger) return null;
+  // GRILLE-COMMANDES (directeur, 11/11/2026) : le zoom rejoint les autres
+  // outils de la page, dans la meme pile, les memes boutons ronds. Plus de
+  // pilule blanche a part, avec une case vide quand un seul sens est permis.
+  final VoidCallback? plus = zoom ? actions.onZoomPlus : null;
+  final VoidCallback? moins = zoom ? actions.onZoomMoins : null;
+  final bool aZoom = plus != null || moins != null;
+  if (agrandir == null && !ranger && !aZoom) return null;
   final NomsFocus noms = nomsFocus(context, agrandi: local.agrandi);
+  final double diametre = diametreBoutonAppel(context);
   return Semantics(
     container: true,
     explicitChildNodes: true,
@@ -502,18 +520,46 @@ Widget? _outilsSupport(
             selectionne: local.agrandi,
             onPress: agrandir,
           ),
+        if (aZoom)
+          Column(
+            key: const ValueKey<String>('salle-zoom'),
+            mainAxisSize: MainAxisSize.min,
+            spacing: AppSpacing.sm,
+            children: <Widget>[
+              // Au dernier palier, « plus » s'efface et garde sa place :
+              // « moins » ne saute pas sous le doigt (jamais grise).
+              if (plus != null)
+                BoutonIcone(
+                  key: const ValueKey<String>('salle-zoom-plus'),
+                  forme: FormeBoutonIcone.appel,
+                  icone: AppIcons.zoomPlus,
+                  diametre: diametre,
+                  libelle: t.salle.seance.zoomPlus,
+                  infobulle: t.salle.seance.zoomPlus,
+                  onPress: plus,
+                )
+              else
+                SizedBox.square(dimension: diametre),
+              if (moins != null)
+                BoutonIcone(
+                  key: const ValueKey<String>('salle-zoom-moins'),
+                  forme: FormeBoutonIcone.appel,
+                  icone: AppIcons.zoomMoins,
+                  diametre: diametre,
+                  libelle: t.salle.seance.zoomMoins,
+                  infobulle: t.salle.seance.zoomMoins,
+                  onPress: moins,
+                ),
+            ],
+          ),
       ],
     ),
   );
 }
 
-/// La hauteur des outils de [_outilsSupport] (deux boutons et leur ecart).
-double _hauteurOutilsSupport(BuildContext context) =>
-    2 * diametreBoutonAppel(context) + AppSpacing.sm;
-
-/// La hauteur de la pilule verticale du zoom ([PiluleZoomSalle]).
-double _hauteurZoom(BuildContext context) =>
-    2 * diametreBoutonAppel(context) + 3 * AppSpacing.sm;
+/// La hauteur de [nombre] outils de [_outilsSupport] et de leurs ecarts.
+double _hauteurOutilsSupport(BuildContext context, {int nombre = 2}) =>
+    nombre * diametreBoutonAppel(context) + (nombre - 1) * AppSpacing.sm;
 
 /// Vrai quand la scene video prend le centre (aucune page, ou la scene mise
 /// au premier plan).
@@ -635,12 +681,10 @@ class _Centre extends StatelessWidget {
       actions: actions,
       local: local,
     );
-    final Widget? zoom =
+    final bool peutZoomer =
         support != null &&
-            !scene &&
-            (actions.onZoomPlus != null || actions.onZoomMoins != null)
-        ? PiluleZoomSalle(actions: actions)
-        : null;
+        !scene &&
+        (actions.onZoomPlus != null || actions.onZoomMoins != null);
     return LayoutBuilder(
       key: SalleOrdinateur.cleCentre,
       builder: (BuildContext contexte, BoxConstraints c) {
@@ -676,6 +720,22 @@ class _Centre extends StatelessWidget {
           if (page != null) {
             // La place libre au-dessus d'une fleche de page (centree).
             final double voie = (h - coteFlechesSalle) / 2 - AppSpacing.sm;
+            // Les outils de la page, une seule pile au coin de fin : ranger,
+            // focus, puis le zoom quand la hauteur le permet (Ctrl + molette
+            // et le pincement restent).
+            final Widget? pile =
+                peutZoomer &&
+                    voie >= _hauteurOutilsSupport(contexte, nombre: 4)
+                ? _outilsSupport(
+                    contexte,
+                    vue: vue,
+                    actions: actions,
+                    local: local,
+                    zoom: true,
+                  )
+                : voie >= _hauteurOutilsSupport(contexte)
+                ? outils
+                : null;
             return Center(
               child: SizedBox(
                 width: boite.width + 2 * coteFlechesSalle,
@@ -688,20 +748,12 @@ class _Centre extends StatelessWidget {
                         child: page,
                       ),
                     ),
-                    if (zoom != null && voie >= _hauteurZoom(contexte))
-                      PositionedDirectional(
-                        top: 0,
-                        start: 0,
-                        width: coteFlechesSalle,
-                        child: Center(child: zoom),
-                      ),
-                    if (outils != null &&
-                        voie >= _hauteurOutilsSupport(contexte))
+                    if (pile != null)
                       PositionedDirectional(
                         top: 0,
                         end: 0,
                         width: coteFlechesSalle,
-                        child: Center(child: outils),
+                        child: Center(child: pile),
                       ),
                   ],
                 ),
@@ -846,6 +898,7 @@ class _Colonne extends ConsumerWidget {
     required this.local,
     required this.focus,
     required this.eleves,
+    required this.panneauEleves,
     required this.bibliotheque,
     required this.raccourcis,
   });
@@ -855,6 +908,11 @@ class _Colonne extends ConsumerWidget {
   final EtatLocalSeance local;
   final bool focus;
   final bool eleves;
+
+  /// Le panneau des Eleves est a l'ecran, a cote de la colonne : l'ile
+  /// depliee peut passer par-dessus (elle n'y couvre que le haut de la video
+  /// de l'enseignant, quelques secondes).
+  final bool panneauEleves;
   final bool bibliotheque;
 
   /// Les raccourcis clavier sont actifs : chaque tuile montre sa touche.
@@ -895,12 +953,12 @@ class _Colonne extends ConsumerWidget {
       if (lesEleves != null) <String>[t.salle.seance.eleves],
       if (outils)
         <String>[t.salle.seance.outils.pointeur, t.salle.seance.outils.ecrire],
-    ].where((List<String> g) => g.isNotEmpty).toList();
-    final List<List<String>> nomsFin = <List<String>>[
       <String>[
         if (livres != null) t.salle.seance.commandes.bibliotheque,
         if (tableau) t.salle.seance.commandes.affichageTableau,
       ],
+    ].where((List<String> g) => g.isNotEmpty).toList();
+    final List<List<String>> nomsFin = <List<String>>[
       <String>[
         if (actions.onRetour != null && vue.role != RoleSeance.guidee)
           t.salle.sortie.reduireNom,
@@ -932,13 +990,7 @@ class _Colonne extends ConsumerWidget {
       return total;
     }
 
-    final String classe = vue.nomClasse.isEmpty
-        ? t.salle.seance.titre
-        : vue.nomClasse;
     final String? titre = _titreSupport(context, vue);
-    final TextStyle styleClasse = palette.inkStrong.applyTo(
-      textes.titleSmall ?? const TextStyle(),
-    );
     final TextStyle styleTitre = palette.inkMuted.applyTo(
       textes.bodySmall ?? const TextStyle(),
     );
@@ -947,7 +999,7 @@ class _Colonne extends ConsumerWidget {
         text: TextSpan(text: texte, style: style),
         textDirection: Directionality.of(context),
         textScaler: MediaQuery.textScalerOf(context),
-        maxLines: 2,
+        maxLines: 1,
         ellipsis: '…',
       )..layout(maxWidth: largeur);
       final double h = peintre.height;
@@ -1040,8 +1092,6 @@ class _Colonne extends ConsumerWidget {
             ),
           ),
         ]),
-    ];
-    final List<Widget> fin = <Widget>[
       groupe(cleSupport, t.salle.barre.groupes.support, <Widget>[
         if (livres != null)
           BoutonAppel(
@@ -1057,6 +1107,8 @@ class _Colonne extends ConsumerWidget {
           ),
         if (tableau) dockSeance(const <CommandeDock>[CommandeDock.tableau]),
       ]),
+    ];
+    final List<Widget> fin = <Widget>[
       groupe(cleSortir, t.salle.barre.groupes.sortir, <Widget>[
         // « Reduire » se pose avant Quitter (SORTIE-SALLE, inchange) ; la
         // sortie du focus n'y est pas : elle reste contre la page (touche F).
@@ -1072,16 +1124,15 @@ class _Colonne extends ConsumerWidget {
 
     return LayoutBuilder(
       builder: (BuildContext _, BoxConstraints c) {
-        // Le repli, du plus complet au plus sobre ; le premier qui tient.
-        final List<(bool, bool, bool)> replis = focus
-            ? const <(bool, bool, bool)>[(false, false, false)]
-            : const <(bool, bool, bool)>[
-                (true, true, true),
-                (true, true, false),
-                (true, false, false),
-                (false, true, true),
-                (false, true, false),
-                (false, false, false),
+        // Le repli, du plus complet au plus sobre ; le premier qui tient :
+        // (noms des tuiles, titre du support).
+        final List<(bool, bool)> replis = focus
+            ? const <(bool, bool)>[(false, false)]
+            : const <(bool, bool)>[
+                (true, true),
+                (true, false),
+                (false, true),
+                (false, false),
               ];
         // La colonne est au moins assez large pour l'ile repliee sur une
         // ligne : marges, anneau et temps restant du chrono, point d'etat
@@ -1100,17 +1151,16 @@ class _Colonne extends ConsumerWidget {
                     (vue.texteMention != null ? 2 * AppSpacing.sm : 0))
                 .ceilToDouble();
         temps.dispose();
-        // L'ile repliee : une ligne ou deux (le chrono, puis ses signes)
-        // selon la largeur ; on compte deux lignes.
+        // GRILLE-COMMANDES : la place de l'ile est FIXE (une ligne, l'ile
+        // repliee). Depliee, elle ne pousse rien et ne se plie plus dans la
+        // largeur de la colonne : elle passe par-dessus ce qui est a cote.
         final double ile =
             2 * AppSpacing.sm +
-            2 * MediaQuery.textScalerOf(context).scale(AppSpacing.xl) +
-            AppSpacing.xs;
+            MediaQuery.textScalerOf(context).scale(AppSpacing.xl);
         bool avecNom = false;
-        bool avecClasse = false;
         bool avecTitre = false;
         double largeur = TuileCommandeSalle.largeurMin + 2 * AppSpacing.sm;
-        for (final (bool nom, bool cl, bool ti) in replis) {
+        for (final (bool nom, bool ti) in replis) {
           final double l = math.max(
             largeurIle,
             TuileCommandeSalle.largeurColonne(context, tousNoms, avecNom: nom) +
@@ -1118,84 +1168,72 @@ class _Colonne extends ConsumerWidget {
           );
           final bool montreTitre = ti && titre != null;
           final double tete =
-              (cl ? hauteurTexte(classe, styleClasse, l) : 0) +
               (montreTitre
-                  ? AppSpacing.xs + hauteurTexte(titre, styleTitre, l)
+                  ? hauteurTexte(titre, styleTitre, l) + AppSpacing.xs
                   : 0) +
-              (cl || montreTitre ? AppSpacing.sm : 0) +
               ile +
-              AppSpacing.lg;
+              AppSpacing.sm;
           avecNom = nom;
-          avecClasse = cl;
           avecTitre = montreTitre;
           largeur = l;
           if (tete + hauteurBarre(nom) <= c.maxHeight) break;
         }
-        // La tete (Classe, titre, ile) ne prend jamais la place de la barre
-        // en icones : au-dela, elle est coupee (la phrase de l'ile reste lue
-        // en entier par le lecteur d'ecran).
-        final double maxTete = math.max(
-          0,
-          c.maxHeight - AppSpacing.lg - hauteurBarre(false),
-        );
+        // Jusqu'ou l'ile depliee peut s'etendre : par-dessus le panneau des
+        // Eleves quand il est la ; sinon dans la marge de la page (la place
+        // de sa fleche), jamais sur la page.
+        final double largeurIleDepliee =
+            largeur +
+            AppSpacing.lg +
+            (panneauEleves ? largeurPanneauGauche : coteFlechesSalle);
         return SizedBox(
           width: largeur,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              ConstrainedBox(
+              KeyedSubtree(
                 key: SalleOrdinateur.cleTete,
-                constraints: BoxConstraints(maxHeight: maxTete),
-                child: UnconstrainedBox(
-                  constrainedAxis: Axis.horizontal,
-                  alignment: AlignmentDirectional.topStart,
-                  clipBehavior: Clip.hardEdge,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      if (avecClasse)
-                        Text(
-                          classe,
-                          key: SalleOrdinateur.cleClasse,
-                          maxLines: 2,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    if (avecTitre && titre != null)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: AppSpacing.xs),
+                        child: Text(
+                          titre,
+                          key: SalleOrdinateur.cleTitreSupport,
+                          maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: styleClasse,
-                        ),
-                      if (avecTitre && titre != null)
-                        Padding(
-                          padding: const EdgeInsets.only(top: AppSpacing.xs),
-                          child: Text(
-                            titre,
-                            key: SalleOrdinateur.cleTitreSupport,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: styleTitre,
-                          ),
-                        ),
-                      if (avecClasse || avecTitre) Ecart.vSm,
-                      // L'ile, au coin de debut, hors de la page. Depliee,
-                      // elle grandit vers le bas un court instant ; la barre
-                      // perd alors ses noms si besoin, jamais sa largeur.
-                      Align(
-                        alignment: AlignmentDirectional.topStart,
-                        child: PiluleEtatSalle(
-                          vue: vue,
-                          avecChrono: true,
-                          largeurMax: largeur,
-                          aLaLigne: true,
-                          onPause: actions.onPause,
+                          style: styleTitre,
                         ),
                       ),
-                    ],
-                  ),
+                    SizedBox(
+                      height: ile,
+                      child: OverflowBox(
+                        alignment: AlignmentDirectional.topStart,
+                        minWidth: 0,
+                        maxWidth: largeurIleDepliee,
+                        minHeight: 0,
+                        maxHeight: double.infinity,
+                        child: Align(
+                          alignment: AlignmentDirectional.topStart,
+                          widthFactor: 1,
+                          heightFactor: 1,
+                          child: PiluleEtatSalle(
+                            vue: vue,
+                            avecChrono: true,
+                            largeurMax: largeurIleDepliee,
+                            aLaLigne: true,
+                            onPause: actions.onPause,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              Ecart.vLg,
+              Ecart.vSm,
               Expanded(
-                // L'ile depliee prend un court instant de la hauteur a la
-                // barre : si les noms n'y tiennent plus, ils partent le temps
-                // qu'elle se replie ; la largeur ne bouge pas, ni la page.
                 child: LayoutBuilder(
                   builder: (BuildContext _, BoxConstraints cb) {
                     final bool noms =

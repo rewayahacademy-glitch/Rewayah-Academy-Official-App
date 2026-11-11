@@ -1027,3 +1027,55 @@ enseignant.
 - **Questions au directeur** : Bibliothèque ouverte d'office seulement à 1600 et plus (recommandé) ;
   colonne collée au bord (recommandé, lot suivant) ; palette qui cache les Élèves pendant
   l'écriture (recommandé) ; icônes de 24 dans la colonne pour garder les noms à 720 (à essayer).
+
+## D-027 (11/11/2026). La grille des commandes : une seule règle au téléphone, sur tablette et sur ordinateur (lot GRILLE-COMMANDES)
+
+- **Retour du directeur** (11/11, sur deux captures) : « C'est nul comme layout, aucun patterne, pas
+  bien aligné, ni coordonné… En plus "Commandes" veut dire quoi sur mobile si le pointeur est déjà
+  dehors ? Il faut bien aligner les icônes partout, c'est l'une des raisons pour la refonte. »
+- **Constat, sur ses captures** : au téléphone, trois objets posés à trois endroits (le Pointeur
+  flottant, le bouton « Commandes », la pilule à disques), des noms qui changeaient avec l'état et
+  dépassaient (« icro coupé », « Quitte ») ; sur ordinateur, le nom et l'icône des tuiles
+  « ouvertes » (Élèves, Bibliothèque) collés au bord au lieu d'être centrés, l'état de la séance
+  plié sur quatre lignes dans 110 points, le zoom dans une pilule blanche à moitié vide d'un côté de
+  la page et les autres outils de l'autre, les groupes de la colonne coupés par un vide.
+- **La règle, écrite une fois** :
+  1. **Une tuile, la même partout** (`TuileCommandeSalle`) : l'icône, et dessous un nom **fixe**
+     sur une ligne. L'état ne change jamais le mot (« Micro », jamais « Micro coupé ») : il se lit
+     par l'icône barrée, l'aplat et le lecteur d'écran.
+  2. **Des cases égales** (`SurfaceTuilesSalle.egale`) : dans une barre, toutes les cases ont la
+     même largeur et la même hauteur ; les icônes sont sur une ligne, à pas régulier.
+  3. **Tous les noms, ou aucun** (`TuileCommandeSalle.nomsTiennent`) : si un seul nom ne tient pas
+     dans sa case (écran étroit, texte agrandi, arabe), toute la rangée passe en icônes seules ;
+     le nom reste dans l'infobulle et pour le lecteur d'écran. Jamais un nom coupé.
+  4. **Le même ordre partout** : ma voix (Micro, Caméra), ma classe (Élèves), la page (Pointeur,
+     Écrire), les supports (Bibliothèque, Tableau), sortir (Réduire, Quitter). Ce qui ne tient pas
+     au téléphone va derrière « Plus », dans le même ordre.
+  5. **Un seul endroit par chose** : les outils de la page (ranger, plein écran, zoom) ensemble, au
+     même coin de la page, mêmes boutons ronds ; plus rien de flottant à côté de la barre.
+- **Codé, téléphone et tablette de l'enseignant** (sous 840 points, `BarreCommandesTelephone`) :
+  une barre, six cases : Micro, Caméra, Élèves, Pointeur, Plus, Quitter. Le mot « Commandes »
+  disparaît : la case s'appelle « Plus » ; le tiroir porte le nom de son contenu (« Bibliothèque »
+  au téléphone, « Bibliothèque et outils » sur tablette). Au repos, plus de bouton posé sur la
+  page ; le Pointeur tenu reste seul, à sa place dans la rangée. À 320 points, les écarts se
+  resserrent pour garder six cases de 48.
+- **Codé, ordinateur** : le contenu des tuiles « ouvertes » est centré ; quatre groupes en haut
+  (voix, classe, page, supports), « sortir » seul en bas ; la tête de la colonne ne porte plus le
+  nom de la Classe (deux lignes coupées dans 110 points), seulement « Coran · Page 42 » sur une
+  ligne et l'île ; l'île a une place fixe d'une ligne et, dépliée, passe par-dessus le panneau des
+  Élèves au lieu de se plier (elle ne pousse plus la barre) ; ranger, plein écran et zoom sont une
+  seule pile au coin de fin de la page.
+- **Écarts datés** : à la fiche 1 du téléphone (26/10 : pilule à disques, « Commandes » au-dessus,
+  noms d'état) et à D-020 (Pointeur à côté de « Commandes ») ; à D-021 (Classe en tête de colonne,
+  zoom du côté début). Gardé tel quel : micro ou caméra coupés en violet de marque (directeur,
+  25/10), Quitter seul rouge.
+- **Ce que cela coûte, dit** : au téléphone, au repos, il n'y a plus de bouton visible en bas ; il
+  faut toucher la page pour revoir la barre (comme chez l'élève), puis « Plus » : deux gestes pour
+  la Bibliothèque, comme avant depuis l'état « au toucher », un de plus depuis le repos.
+- **Non prouvé** : captures de test seulement (`docs/current/captures/E2E/grille-commandes/`), rien
+  vu dans la vraie application ni sur un vrai téléphone. En arabe à 390 points, « الميكروفون » ne
+  tient pas dans une case : la rangée est en icônes seules (un mot plus court serait à choisir).
+- **Reste à ranger selon la même règle** (pas fait dans ce lot) : la capsule du haut au téléphone
+  (retour, vidéo, point d'état, œil, barres de réseau) ; les en-têtes des deux panneaux de
+  l'ordinateur (Élèves sans titre ni croix, Bibliothèque avec une pastille et une croix) ; la
+  phrase « Choisissez un support… » de la Bibliothèque, qui emploie un mot écarté le 30/10.

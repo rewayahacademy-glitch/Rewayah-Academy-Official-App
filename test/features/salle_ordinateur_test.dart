@@ -913,16 +913,17 @@ void main() {
                   final Rect outils = tester.getRect(
                     find.byKey(SalleOrdinateur.cleSupport),
                   );
-                  // Le zoom dans la marge de debut, ranger et focus dans
-                  // celle de fin, au-dessus des fleches, dans le centre.
+                  // GRILLE-COMMANDES (11/11/2026) : ranger, focus et zoom
+                  // sont UNE pile, dans la marge de fin, au-dessus de la
+                  // fleche, dans le centre.
                   final bool rtl = langue == AppLocale.ar;
                   if (rtl) {
-                    expect(zoom.left, greaterThanOrEqualTo(page.right - 0.5));
                     expect(outils.right, lessThanOrEqualTo(page.left + 0.5));
                   } else {
-                    expect(zoom.right, lessThanOrEqualTo(page.left + 0.5));
                     expect(outils.left, greaterThanOrEqualTo(page.right - 0.5));
                   }
+                  expect(outils.contains(zoom.center), isTrue);
+                  expect(zoom.center.dx, closeTo(outils.center.dx, 0.5));
                   for (final Rect r in <Rect>[zoom, outils]) {
                     expect(r.top, greaterThanOrEqualTo(centre.top - 0.5));
                     expect(r.bottom, lessThan(page.center.dy - 32));
@@ -931,7 +932,6 @@ void main() {
                     find.byKey(TelephonePleinEcran.clePage),
                     find.byKey(SalleOrdinateur.cleTete),
                     find.byKey(SalleOrdinateur.cleCommandes),
-                    find.byKey(const ValueKey<String>('salle-zoom')),
                     find.byKey(SalleOrdinateur.cleSupport),
                     if (ouverts) ...<Finder>[
                       find.byKey(SalleOrdinateur.cleGauche),
@@ -976,7 +976,8 @@ void main() {
       });
       final Finder noms = find.byKey(const ValueKey<String>('nom-commande'));
       await _monter(tester);
-      expect(find.byKey(SalleOrdinateur.cleClasse), findsOneWidget);
+      // GRILLE-COMMANDES : la tete ne porte plus le nom de la Classe.
+      expect(find.byKey(SalleOrdinateur.cleClasse), findsNothing);
       expect(find.byKey(SalleOrdinateur.cleTitreSupport), findsOneWidget);
       expect(noms, findsNWidgets(9));
       // 1280 x 720, texte x1,3 : la colonne ne tient plus avec les noms.
@@ -1043,7 +1044,6 @@ void main() {
         find.byKey(SalleOrdinateur.cleTete),
         find.byKey(SalleOrdinateur.cleCommandes),
         find.byKey(SalleOrdinateur.cleSupport),
-        find.byKey(const ValueKey<String>('salle-zoom')),
       ]);
       await tester.sendKeyEvent(LogicalKeyboardKey.keyF);
       await tester.pumpAndSettle();
