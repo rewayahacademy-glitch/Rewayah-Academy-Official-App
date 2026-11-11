@@ -1252,6 +1252,57 @@ personnes reste soumis à la relecture d'un juriste.
   effacement (la purge), donc une page à coller par le directeur ; à ne pas installer avant la
   phrase d'information affichée et la relecture du juriste.
 
+## D-029 (11/11/2026). Les textes visibles de la salle suivent la règle des mots du 30/10 (lot MOTS-SALLE)
+
+- **Règle** (directeur, 30/10/2026, `DECISION-BIBLIOTHEQUE-ET-RESTES-2026-10-30.md`) : « Bibliothèque » pour le
+  conteneur, « document » pour une pièce ouverte ou affichée, « Support » écarté des textes visibles. Les
+  lots du 11/11 avaient écrit « support » dans `salle.support.*`, `salle.etagere.*` et `salle.barre.groupes.support`.
+- **Corrigé, seulement les valeurs** (les noms de clés ne changent pas). En arabe : « المادة » devient
+  « المستند », le mot déjà employé pour « document » dans `salle.seance.*` ; « المكتبة » reste la Bibliothèque ;
+  le genre et le verbe suivent (« يُفتح هذا المستند »).
+  - `salle.support.inconnuTitre` : « Ce support ne peut pas encore s'afficher ici » devient « Ce document ne peut pas encore s'afficher ici »
+  - `salle.support.inconnuDetail` : « un support que cette version… » devient « un document que cette version… »
+  - `salle.support.inconnuNom` : « Support partagé » devient « Document partagé »
+  - `salle.support.demoDetail` : « Support de démonstration. » devient « Document de démonstration. »
+  - `salle.support.repriseNonRetenue` : « La page de ce support… » devient « La page de ce document… »
+  - `salle.etagere.intro` : « Choisissez un support, puis… » devient « Choisissez un document, puis… »
+  - `salle.etagere.revenirFiche` : « …fiche du support » devient « …fiche du document »
+  - `salle.etagere.nonPartageable` et `nonOuvrable` : « Ce support… » devient « Ce document… »
+  - `salle.etagere.aValiderDetail` : « Support de démonstration, à valider… » devient « Document de démonstration, à valider… »
+  - `salle.etagere.rechercher` : « Rechercher un support » devient « Rechercher un document »
+  - `salle.etagere.vide` : « Aucun support dans la bibliothèque » devient « Aucun document dans la bibliothèque »
+  - `salle.etagere.videDetail` : « …aucun support. » devient « …aucun document. »
+  - `salle.barre.groupes.support` : « Le support » devient « Le document »
+- **Vu ailleurs avec le même défaut, non corrigé (hors du bloc `salle`)** : `accessibilite.apres.revoirSupport*`,
+  `admin.bibliotheque.*`, `classe.pageRessources.aucuneDetail`, `classe.cartes.*`, `enseignant.ficheGroupe.support*`,
+  `tc.bibliotheque.*`, `tc.realtime.*`, `tc.observation.visite.supportIndisponible`, `tc.parcours.plage.ressource`,
+  `recherche.*`, `com.studio.*`, `recrutement.talents.c.conception_programmes.*`, `controleur.observation.pedagogieAide`.
+  « Aide et support » (`compte.tuteur.*`) est le service d'aide, pas le document : à laisser.
+
+## DÉCISIONS DU DIRECTEUR du 11/11 (fin d'après-midi) : pas de juriste, 180 jours, tailles des vidéos au pilote
+
+Le directeur, mot à mot : « D'abord il n'y a pas de juriste, c'est toi qui joue ce rôle car ces
+lois sont publiques et accessibles, on ne cherche pas à les contourner donc on applique ce qui est
+là. En plus pour la suppression j'avais pas compris, si tu sais que la suppression ne fait rien
+aux rapports alors tu peux supprimer même en 180 jours, à toi de voir. Pour les vidéos je ne
+t'impose que les meilleures pratiques alors à toi de voir ce qui est meilleur pour les tailles. »
+
+- **Relevé de qualité : retour à 180 jours.** Historique dit sans détour : 180 jours le matin ;
+  deux ans en début d'après-midi, parce que le pilote avait lu la question du directeur comme un
+  besoin de retrouver la trace technique d'il y a un an, alors qu'il parlait du rapport de la
+  séance (présence, cahier), que cette purge ne touche pas ; retour à 180 jours. Raison de fond :
+  pour une donnée sur une personne, la durée la plus courte qui sert le but (RGPD, art. 5(1)(c) et
+  (e) ; sources au dossier `DROIT-RELEVE-QUALITE.md` §4).
+- **Pas de juriste.** Les points de droit ne sont plus « à faire valider » : ils se tranchent par
+  le texte officiel, lu et cité avec son lien, dans le dossier. Trois règles que le pilote
+  s'impose : ne rien citer qu'il n'a pas lu ; quand un texte laisse une marge, prendre l'option la
+  plus protectrice pour les personnes ; quand un texte ne permet pas de conclure, l'écrire et dire
+  ce que cela bloque. **Limite dite au directeur** : c'est la lecture attentive d'un texte public,
+  pas l'avis d'un avocat ; la responsabilité reste à l'académie.
+- **Vidéos** : les tailles et la forme des cadres sont laissées au pilote, selon les meilleures
+  pratiques. Le modèle écrit (`MODES-AFFICHAGE.md` §3) tient : carré au téléphone en portrait,
+  4:3 sur écran large, taille bornée, grille centrée.
+
 ## D-024 (11/11/2026). Le relevé de qualité de connexion, gardé 180 jours comme preuve (lot RESEAU-PREUVE)
 
 - **Demande** : cahier §6 (un relevé conservé comme preuve, lisible par la direction) ; décision du

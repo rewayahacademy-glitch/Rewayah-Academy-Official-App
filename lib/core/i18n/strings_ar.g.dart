@@ -3184,12 +3184,12 @@ class _Traductions$salle$support$ar extends Traductions$salle$support$fr {
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String get inconnuTitre => 'لا يمكن عرض هذه المادة هنا بعد';
-	@override String get inconnuDetail => 'المعلم يشارك مادة لا تعرفها هذه النسخة من التطبيق. الحصة مستمرة بالصوت. بعد الحصة، إغلاق التطبيق ثم فتحه من جديد يحدّثه.';
-	@override String get inconnuNom => 'مادة مشتركة';
+	@override String get inconnuTitre => 'لا يمكن عرض هذا المستند هنا بعد';
+	@override String get inconnuDetail => 'المعلم يشارك مستند لا تعرفه هذه النسخة من التطبيق. الحصة مستمرة بالصوت. بعد الحصة، إغلاق التطبيق ثم فتحه من جديد يحدّثه.';
+	@override String get inconnuNom => 'مستند مشترك';
 	@override String titrePage({required Object titre, required Object page}) => '⁨${titre}⁩ · الصفحة ⁨${page}⁩';
-	@override String get demoDetail => 'مادة تجريبية. تُستعمل لتجربة المشاركة.';
-	@override String get repriseNonRetenue => 'صفحة هذه المادة لا تُحفظ بعد من حصة إلى أخرى. في الحصة القادمة، اختر الصفحة من جديد.';
+	@override String get demoDetail => 'مستند تجريبي. يُستعمل لتجربة المشاركة.';
+	@override String get repriseNonRetenue => 'صفحة هذا المستند لا يُحفظ بعد من حصة إلى أخرى. في الحصة القادمة، اختر الصفحة من جديد.';
 	@override String get pageIllisible => 'هذه الصفحة لا تظهر';
 	@override String get pageIllisibleDetail => 'ملف الصفحة لم يصل، ربما انقطع الاتصال. أعد المحاولة: الحصة والصوت مستمران.';
 	@override String reessayerPage({required Object page}) => 'إعادة محاولة عرض الصفحة ⁨${page}⁩';
@@ -3204,10 +3204,10 @@ class _Traductions$salle$etagere$ar extends Traductions$salle$etagere$fr {
 	// Translations
 	@override String etape({required Object numero}) => 'المرحلة ⁨${numero}⁩';
 	@override late final _Traductions$salle$etagere$coranCouverture$ar coranCouverture = _Traductions$salle$etagere$coranCouverture$ar._(_root);
-	@override String get intro => 'اختر مادة، ثم اطّلع عليها وحدك أو اعرضها على الفصل.';
+	@override String get intro => 'اختر مستند، ثم اطّلع عليه وحدك أو اعرضه على الفصل.';
 	@override String ouvrirFiche({required Object titre}) => 'فتح بطاقة ⁨${titre}⁩';
 	@override String get revenir => 'العودة إلى المكتبة';
-	@override String get revenirFiche => 'العودة إلى بطاقة المادة';
+	@override String get revenirFiche => 'العودة إلى بطاقة المستند';
 	@override String get afficher => 'عرض لي';
 	@override String afficherSemantique({required Object titre}) => 'عرض ⁨${titre}⁩ لك وحدك';
 	@override String get afficherDetail => 'تطّلع عليها وحدك. لا يرى الفصل شيئًا.';
@@ -3222,15 +3222,15 @@ class _Traductions$salle$etagere$ar extends Traductions$salle$etagere$fr {
 	@override String get seulVous => 'أنت وحدك ترى هذه الصفحة. يبقى الفصل على ما يراه.';
 	@override String get pagePrecedente => 'الصفحة السابقة';
 	@override String get pageSuivante => 'الصفحة التالية';
-	@override String get nonPartageable => 'لا تُشارَك هذه المادة في الفصل بعد. يمكنك الاطّلاع عليها فقط.';
+	@override String get nonPartageable => 'لا يُشارَك هذا المستند في الفصل بعد. يمكنك الاطّلاع عليه فقط.';
 	@override String get jamaisOuvert => 'لم يُفتح بعد في هذا الفصل.';
-	@override String get nonOuvrable => 'لا تُفتح هذه المادة في القاعة بعد. الإدارة تُعدّ محتواها.';
+	@override String get nonOuvrable => 'لا يُفتح هذا المستند في القاعة بعد. الإدارة تُعدّ محتواه.';
 	@override String get aValider => 'بانتظار الاعتماد';
-	@override String get aValiderDetail => 'مادة تجريبية بانتظار اعتماد الإدارة. محتواها غير رسمي بعد.';
-	@override String get rechercher => 'البحث عن مادة';
+	@override String get aValiderDetail => 'مستند تجريبي بانتظار اعتماد الإدارة. محتواه غير رسمي بعد.';
+	@override String get rechercher => 'البحث عن مستند';
 	@override String get fermerRecherche => 'إغلاق البحث';
-	@override String get vide => 'لا توجد أي مادة في المكتبة';
-	@override String get videDetail => 'لم تُضف الإدارة أي مادة بعد. يبقى القرآن متاحًا حين يُحمَّل.';
+	@override String get vide => 'لا توجد أي مستند في المكتبة';
+	@override String get videDetail => 'لم تُضف الإدارة أي مستند بعد. يبقى القرآن متاحًا حين يُحمَّل.';
 	@override String get erreurTitre => 'لم تُحمَّل المكتبة';
 	@override String get erreurDetail => 'ربما انقطع الاتصال. أعد المحاولة، وإن لم يتغيّر شيء فأبلغ الإدارة.';
 	@override String get horsLigne => 'لا يوجد اتصال';
@@ -11208,7 +11208,7 @@ class _Traductions$salle$barre$groupes$ar extends Traductions$salle$barre$groupe
 	@override String get voix => 'صوتي وصورتي';
 	@override String get classe => 'فصلي';
 	@override String get page => 'على الصفحة';
-	@override String get support => 'المادة المعروضة';
+	@override String get support => 'المستند المعروض';
 	@override String get sortir => 'الخروج';
 }
 
@@ -24805,22 +24805,22 @@ extension on TraductionsAr {
 			'salle.coranEleve.revenirPageClasse' => ({required Object page}) => 'العودة إلى صفحة الصف ⁨${page}⁩',
 			'salle.coranEleve.fermerReprise' => ({required Object page}) => 'إغلاق تذكير الصفحة ⁨${page}⁩',
 			'salle.coranEleve.pageDeLaClasse' => 'الصفحة تتبع صفحة المعلم، وتُقلب مع الصف.',
-			'salle.support.inconnuTitre' => 'لا يمكن عرض هذه المادة هنا بعد',
-			'salle.support.inconnuDetail' => 'المعلم يشارك مادة لا تعرفها هذه النسخة من التطبيق. الحصة مستمرة بالصوت. بعد الحصة، إغلاق التطبيق ثم فتحه من جديد يحدّثه.',
-			'salle.support.inconnuNom' => 'مادة مشتركة',
+			'salle.support.inconnuTitre' => 'لا يمكن عرض هذا المستند هنا بعد',
+			'salle.support.inconnuDetail' => 'المعلم يشارك مستند لا تعرفه هذه النسخة من التطبيق. الحصة مستمرة بالصوت. بعد الحصة، إغلاق التطبيق ثم فتحه من جديد يحدّثه.',
+			'salle.support.inconnuNom' => 'مستند مشترك',
 			'salle.support.titrePage' => ({required Object titre, required Object page}) => '⁨${titre}⁩ · الصفحة ⁨${page}⁩',
-			'salle.support.demoDetail' => 'مادة تجريبية. تُستعمل لتجربة المشاركة.',
-			'salle.support.repriseNonRetenue' => 'صفحة هذه المادة لا تُحفظ بعد من حصة إلى أخرى. في الحصة القادمة، اختر الصفحة من جديد.',
+			'salle.support.demoDetail' => 'مستند تجريبي. يُستعمل لتجربة المشاركة.',
+			'salle.support.repriseNonRetenue' => 'صفحة هذا المستند لا يُحفظ بعد من حصة إلى أخرى. في الحصة القادمة، اختر الصفحة من جديد.',
 			'salle.support.pageIllisible' => 'هذه الصفحة لا تظهر',
 			'salle.support.pageIllisibleDetail' => 'ملف الصفحة لم يصل، ربما انقطع الاتصال. أعد المحاولة: الحصة والصوت مستمران.',
 			'salle.support.reessayerPage' => ({required Object page}) => 'إعادة محاولة عرض الصفحة ⁨${page}⁩',
 			'salle.etagere.etape' => ({required Object numero}) => 'المرحلة ⁨${numero}⁩',
 			'salle.etagere.coranCouverture.titre' => 'القرآن الكريم',
 			'salle.etagere.coranCouverture.edition' => 'مصحف المدينة',
-			'salle.etagere.intro' => 'اختر مادة، ثم اطّلع عليها وحدك أو اعرضها على الفصل.',
+			'salle.etagere.intro' => 'اختر مستند، ثم اطّلع عليه وحدك أو اعرضه على الفصل.',
 			'salle.etagere.ouvrirFiche' => ({required Object titre}) => 'فتح بطاقة ⁨${titre}⁩',
 			'salle.etagere.revenir' => 'العودة إلى المكتبة',
-			'salle.etagere.revenirFiche' => 'العودة إلى بطاقة المادة',
+			'salle.etagere.revenirFiche' => 'العودة إلى بطاقة المستند',
 			'salle.etagere.afficher' => 'عرض لي',
 			'salle.etagere.afficherSemantique' => ({required Object titre}) => 'عرض ⁨${titre}⁩ لك وحدك',
 			'salle.etagere.afficherDetail' => 'تطّلع عليها وحدك. لا يرى الفصل شيئًا.',
@@ -24835,15 +24835,15 @@ extension on TraductionsAr {
 			'salle.etagere.seulVous' => 'أنت وحدك ترى هذه الصفحة. يبقى الفصل على ما يراه.',
 			'salle.etagere.pagePrecedente' => 'الصفحة السابقة',
 			'salle.etagere.pageSuivante' => 'الصفحة التالية',
-			'salle.etagere.nonPartageable' => 'لا تُشارَك هذه المادة في الفصل بعد. يمكنك الاطّلاع عليها فقط.',
+			'salle.etagere.nonPartageable' => 'لا يُشارَك هذا المستند في الفصل بعد. يمكنك الاطّلاع عليه فقط.',
 			'salle.etagere.jamaisOuvert' => 'لم يُفتح بعد في هذا الفصل.',
-			'salle.etagere.nonOuvrable' => 'لا تُفتح هذه المادة في القاعة بعد. الإدارة تُعدّ محتواها.',
+			'salle.etagere.nonOuvrable' => 'لا يُفتح هذا المستند في القاعة بعد. الإدارة تُعدّ محتواه.',
 			'salle.etagere.aValider' => 'بانتظار الاعتماد',
-			'salle.etagere.aValiderDetail' => 'مادة تجريبية بانتظار اعتماد الإدارة. محتواها غير رسمي بعد.',
-			'salle.etagere.rechercher' => 'البحث عن مادة',
+			'salle.etagere.aValiderDetail' => 'مستند تجريبي بانتظار اعتماد الإدارة. محتواه غير رسمي بعد.',
+			'salle.etagere.rechercher' => 'البحث عن مستند',
 			'salle.etagere.fermerRecherche' => 'إغلاق البحث',
-			'salle.etagere.vide' => 'لا توجد أي مادة في المكتبة',
-			'salle.etagere.videDetail' => 'لم تُضف الإدارة أي مادة بعد. يبقى القرآن متاحًا حين يُحمَّل.',
+			'salle.etagere.vide' => 'لا توجد أي مستند في المكتبة',
+			'salle.etagere.videDetail' => 'لم تُضف الإدارة أي مستند بعد. يبقى القرآن متاحًا حين يُحمَّل.',
 			'salle.etagere.erreurTitre' => 'لم تُحمَّل المكتبة',
 			'salle.etagere.erreurDetail' => 'ربما انقطع الاتصال. أعد المحاولة، وإن لم يتغيّر شيء فأبلغ الإدارة.',
 			'salle.etagere.horsLigne' => 'لا يوجد اتصال',
@@ -24859,7 +24859,7 @@ extension on TraductionsAr {
 			'salle.barre.groupes.voix' => 'صوتي وصورتي',
 			'salle.barre.groupes.classe' => 'فصلي',
 			'salle.barre.groupes.page' => 'على الصفحة',
-			'salle.barre.groupes.support' => 'المادة المعروضة',
+			'salle.barre.groupes.support' => 'المستند المعروض',
 			'salle.barre.groupes.sortir' => 'الخروج',
 			'salle.telephone.ecrireAilleurs' => 'للكتابة على الصفحة أو فتح السبورة، استعمل جهازًا لوحيًا أو حاسوبًا.',
 			'salle.sortie.reduire' => 'تصغير القاعة',

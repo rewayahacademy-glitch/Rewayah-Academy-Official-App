@@ -4804,23 +4804,23 @@ class Traductions$salle$support$fr {
 
 	// Translations
 
-	/// fr: 'Ce support ne peut pas encore s'afficher ici'
-	String get inconnuTitre => 'Ce support ne peut pas encore s\'afficher ici';
+	/// fr: 'Ce document ne peut pas encore s'afficher ici'
+	String get inconnuTitre => 'Ce document ne peut pas encore s\'afficher ici';
 
-	/// fr: 'L'enseignant partage un support que cette version de l'application ne connaît pas. Le cours continue à la voix. Après le cours, fermer puis rouvrir l'application la met à jour.'
-	String get inconnuDetail => 'L\'enseignant partage un support que cette version de l\'application ne connaît pas. Le cours continue à la voix. Après le cours, fermer puis rouvrir l\'application la met à jour.';
+	/// fr: 'L'enseignant partage un document que cette version de l'application ne connaît pas. Le cours continue à la voix. Après le cours, fermer puis rouvrir l'application la met à jour.'
+	String get inconnuDetail => 'L\'enseignant partage un document que cette version de l\'application ne connaît pas. Le cours continue à la voix. Après le cours, fermer puis rouvrir l\'application la met à jour.';
 
-	/// fr: 'Support partagé'
-	String get inconnuNom => 'Support partagé';
+	/// fr: 'Document partagé'
+	String get inconnuNom => 'Document partagé';
 
 	/// fr: '{titre} · Page {page}'
 	String titrePage({required Object titre, required Object page}) => '${titre} · Page ${page}';
 
-	/// fr: 'Support de démonstration. Il sert à essayer le partage.'
-	String get demoDetail => 'Support de démonstration. Il sert à essayer le partage.';
+	/// fr: 'Document de démonstration. Il sert à essayer le partage.'
+	String get demoDetail => 'Document de démonstration. Il sert à essayer le partage.';
 
-	/// fr: 'La page de ce support n'est pas encore retenue d'une séance à l'autre. À la prochaine séance, choisissez de nouveau la page.'
-	String get repriseNonRetenue => 'La page de ce support n\'est pas encore retenue d\'une séance à l\'autre. À la prochaine séance, choisissez de nouveau la page.';
+	/// fr: 'La page de ce document n'est pas encore retenue d'une séance à l'autre. À la prochaine séance, choisissez de nouveau la page.'
+	String get repriseNonRetenue => 'La page de ce document n\'est pas encore retenue d\'une séance à l\'autre. À la prochaine séance, choisissez de nouveau la page.';
 
 	/// fr: 'Cette page ne s'affiche pas'
 	String get pageIllisible => 'Cette page ne s\'affiche pas';
@@ -4845,8 +4845,8 @@ class Traductions$salle$etagere$fr {
 
 	late final Traductions$salle$etagere$coranCouverture$fr coranCouverture = Traductions$salle$etagere$coranCouverture$fr.internal(_root);
 
-	/// fr: 'Choisissez un support, puis regardez-le seul ou montrez-le à la classe.'
-	String get intro => 'Choisissez un support, puis regardez-le seul ou montrez-le à la classe.';
+	/// fr: 'Choisissez un document, puis regardez-le seul ou montrez-le à la classe.'
+	String get intro => 'Choisissez un document, puis regardez-le seul ou montrez-le à la classe.';
 
 	/// fr: 'Ouvrir la fiche de {titre}'
 	String ouvrirFiche({required Object titre}) => 'Ouvrir la fiche de ${titre}';
@@ -4854,8 +4854,8 @@ class Traductions$salle$etagere$fr {
 	/// fr: 'Revenir à la bibliothèque'
 	String get revenir => 'Revenir à la bibliothèque';
 
-	/// fr: 'Revenir à la fiche du support'
-	String get revenirFiche => 'Revenir à la fiche du support';
+	/// fr: 'Revenir à la fiche du document'
+	String get revenirFiche => 'Revenir à la fiche du document';
 
 	/// fr: 'Afficher'
 	String get afficher => 'Afficher';
@@ -4899,32 +4899,32 @@ class Traductions$salle$etagere$fr {
 	/// fr: 'Page suivante'
 	String get pageSuivante => 'Page suivante';
 
-	/// fr: 'Ce support ne se partage pas encore en classe. Vous pouvez seulement le regarder.'
-	String get nonPartageable => 'Ce support ne se partage pas encore en classe. Vous pouvez seulement le regarder.';
+	/// fr: 'Ce document ne se partage pas encore en classe. Vous pouvez seulement le regarder.'
+	String get nonPartageable => 'Ce document ne se partage pas encore en classe. Vous pouvez seulement le regarder.';
 
 	/// fr: 'Pas encore ouvert dans cette classe.'
 	String get jamaisOuvert => 'Pas encore ouvert dans cette classe.';
 
-	/// fr: 'Ce support ne s'ouvre pas encore dans la salle. La direction prépare son contenu.'
-	String get nonOuvrable => 'Ce support ne s\'ouvre pas encore dans la salle. La direction prépare son contenu.';
+	/// fr: 'Ce document ne s'ouvre pas encore dans la salle. La direction prépare son contenu.'
+	String get nonOuvrable => 'Ce document ne s\'ouvre pas encore dans la salle. La direction prépare son contenu.';
 
 	/// fr: 'À valider'
 	String get aValider => 'À valider';
 
-	/// fr: 'Support de démonstration, à valider par la direction. Son contenu n'est pas encore officiel.'
-	String get aValiderDetail => 'Support de démonstration, à valider par la direction. Son contenu n\'est pas encore officiel.';
+	/// fr: 'Document de démonstration, à valider par la direction. Son contenu n'est pas encore officiel.'
+	String get aValiderDetail => 'Document de démonstration, à valider par la direction. Son contenu n\'est pas encore officiel.';
 
-	/// fr: 'Rechercher un support'
-	String get rechercher => 'Rechercher un support';
+	/// fr: 'Rechercher un document'
+	String get rechercher => 'Rechercher un document';
 
 	/// fr: 'Fermer la recherche'
 	String get fermerRecherche => 'Fermer la recherche';
 
-	/// fr: 'Aucun support dans la bibliothèque'
-	String get vide => 'Aucun support dans la bibliothèque';
+	/// fr: 'Aucun document dans la bibliothèque'
+	String get vide => 'Aucun document dans la bibliothèque';
 
-	/// fr: 'La direction n'a encore ajouté aucun support. Le Coran reste disponible dès qu'il se charge.'
-	String get videDetail => 'La direction n\'a encore ajouté aucun support. Le Coran reste disponible dès qu\'il se charge.';
+	/// fr: 'La direction n'a encore ajouté aucun document. Le Coran reste disponible dès qu'il se charge.'
+	String get videDetail => 'La direction n\'a encore ajouté aucun document. Le Coran reste disponible dès qu\'il se charge.';
 
 	/// fr: 'La bibliothèque ne s'est pas chargée'
 	String get erreurTitre => 'La bibliothèque ne s\'est pas chargée';
@@ -24063,8 +24063,8 @@ class Traductions$salle$barre$groupes$fr {
 	/// fr: 'Sur la page'
 	String get page => 'Sur la page';
 
-	/// fr: 'Le support'
-	String get support => 'Le support';
+	/// fr: 'Le document'
+	String get support => 'Le document';
 
 	/// fr: 'Sortir'
 	String get sortir => 'Sortir';
@@ -49268,22 +49268,22 @@ extension on Traductions {
 			'salle.coranEleve.revenirPageClasse' => ({required Object page}) => 'Revenir à la page ${page} de la classe',
 			'salle.coranEleve.fermerReprise' => ({required Object page}) => 'Fermer le rappel de la page ${page}',
 			'salle.coranEleve.pageDeLaClasse' => 'La page suit celle de l\'enseignant. Elle tourne avec la classe.',
-			'salle.support.inconnuTitre' => 'Ce support ne peut pas encore s\'afficher ici',
-			'salle.support.inconnuDetail' => 'L\'enseignant partage un support que cette version de l\'application ne connaît pas. Le cours continue à la voix. Après le cours, fermer puis rouvrir l\'application la met à jour.',
-			'salle.support.inconnuNom' => 'Support partagé',
+			'salle.support.inconnuTitre' => 'Ce document ne peut pas encore s\'afficher ici',
+			'salle.support.inconnuDetail' => 'L\'enseignant partage un document que cette version de l\'application ne connaît pas. Le cours continue à la voix. Après le cours, fermer puis rouvrir l\'application la met à jour.',
+			'salle.support.inconnuNom' => 'Document partagé',
 			'salle.support.titrePage' => ({required Object titre, required Object page}) => '${titre} · Page ${page}',
-			'salle.support.demoDetail' => 'Support de démonstration. Il sert à essayer le partage.',
-			'salle.support.repriseNonRetenue' => 'La page de ce support n\'est pas encore retenue d\'une séance à l\'autre. À la prochaine séance, choisissez de nouveau la page.',
+			'salle.support.demoDetail' => 'Document de démonstration. Il sert à essayer le partage.',
+			'salle.support.repriseNonRetenue' => 'La page de ce document n\'est pas encore retenue d\'une séance à l\'autre. À la prochaine séance, choisissez de nouveau la page.',
 			'salle.support.pageIllisible' => 'Cette page ne s\'affiche pas',
 			'salle.support.pageIllisibleDetail' => 'Le fichier de la page n\'est pas arrivé, la connexion a peut-être été coupée. Réessayez : la séance et le son continuent.',
 			'salle.support.reessayerPage' => ({required Object page}) => 'Réessayer d\'afficher la page ${page}',
 			'salle.etagere.etape' => ({required Object numero}) => 'Étape ${numero}',
 			'salle.etagere.coranCouverture.titre' => 'القرآن الكريم',
 			'salle.etagere.coranCouverture.edition' => 'مصحف المدينة',
-			'salle.etagere.intro' => 'Choisissez un support, puis regardez-le seul ou montrez-le à la classe.',
+			'salle.etagere.intro' => 'Choisissez un document, puis regardez-le seul ou montrez-le à la classe.',
 			'salle.etagere.ouvrirFiche' => ({required Object titre}) => 'Ouvrir la fiche de ${titre}',
 			'salle.etagere.revenir' => 'Revenir à la bibliothèque',
-			'salle.etagere.revenirFiche' => 'Revenir à la fiche du support',
+			'salle.etagere.revenirFiche' => 'Revenir à la fiche du document',
 			'salle.etagere.afficher' => 'Afficher',
 			'salle.etagere.afficherSemantique' => ({required Object titre}) => 'Afficher ${titre} pour vous seul',
 			'salle.etagere.afficherDetail' => 'Vous le regardez seul. La classe ne voit rien.',
@@ -49298,15 +49298,15 @@ extension on Traductions {
 			'salle.etagere.seulVous' => 'Vous seul voyez cette page. La classe garde ce qu\'elle voit.',
 			'salle.etagere.pagePrecedente' => 'Page précédente',
 			'salle.etagere.pageSuivante' => 'Page suivante',
-			'salle.etagere.nonPartageable' => 'Ce support ne se partage pas encore en classe. Vous pouvez seulement le regarder.',
+			'salle.etagere.nonPartageable' => 'Ce document ne se partage pas encore en classe. Vous pouvez seulement le regarder.',
 			'salle.etagere.jamaisOuvert' => 'Pas encore ouvert dans cette classe.',
-			'salle.etagere.nonOuvrable' => 'Ce support ne s\'ouvre pas encore dans la salle. La direction prépare son contenu.',
+			'salle.etagere.nonOuvrable' => 'Ce document ne s\'ouvre pas encore dans la salle. La direction prépare son contenu.',
 			'salle.etagere.aValider' => 'À valider',
-			'salle.etagere.aValiderDetail' => 'Support de démonstration, à valider par la direction. Son contenu n\'est pas encore officiel.',
-			'salle.etagere.rechercher' => 'Rechercher un support',
+			'salle.etagere.aValiderDetail' => 'Document de démonstration, à valider par la direction. Son contenu n\'est pas encore officiel.',
+			'salle.etagere.rechercher' => 'Rechercher un document',
 			'salle.etagere.fermerRecherche' => 'Fermer la recherche',
-			'salle.etagere.vide' => 'Aucun support dans la bibliothèque',
-			'salle.etagere.videDetail' => 'La direction n\'a encore ajouté aucun support. Le Coran reste disponible dès qu\'il se charge.',
+			'salle.etagere.vide' => 'Aucun document dans la bibliothèque',
+			'salle.etagere.videDetail' => 'La direction n\'a encore ajouté aucun document. Le Coran reste disponible dès qu\'il se charge.',
 			'salle.etagere.erreurTitre' => 'La bibliothèque ne s\'est pas chargée',
 			'salle.etagere.erreurDetail' => 'La connexion a peut-être été coupée. Réessayez ; si rien ne change, prévenez la direction.',
 			'salle.etagere.horsLigne' => 'La bibliothèque n\'est pas encore chargée',
@@ -49322,7 +49322,7 @@ extension on Traductions {
 			'salle.barre.groupes.voix' => 'Ma voix et mon image',
 			'salle.barre.groupes.classe' => 'Ma classe',
 			'salle.barre.groupes.page' => 'Sur la page',
-			'salle.barre.groupes.support' => 'Le support',
+			'salle.barre.groupes.support' => 'Le document',
 			'salle.barre.groupes.sortir' => 'Sortir',
 			'salle.telephone.ecrireAilleurs' => 'Pour écrire sur la page ou ouvrir le tableau, utilisez une tablette ou un ordinateur.',
 			'salle.sortie.reduire' => 'Réduire la salle',
