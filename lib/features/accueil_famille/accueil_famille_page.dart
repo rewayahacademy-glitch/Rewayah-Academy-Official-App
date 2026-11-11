@@ -141,6 +141,10 @@ class AccueilFamillePage extends ConsumerStatefulWidget {
   /// (ONBOARDING-TUTEUR, 09/11/2026).
   static const Key espaceEleveKey = Key('tuteur.accueil.espaceEleve');
 
+  /// Le squelette de la page, tant que les lectures de la porte ne sont pas
+  /// toutes arrivees.
+  static const Key squeletteKey = Key('tuteur.accueil.squelette');
+
   /// La tuile « Rejoindre la salle avec {prenom} », salle ouverte (D6, R8).
   static const Key rejoindreKey = Key('tuteur.accueil.rejoindre');
 
@@ -231,7 +235,7 @@ class _AccueilFamillePageEtat extends ConsumerState<AccueilFamillePage>
 
 /// La forme de l'Accueil pendant la premiere lecture.
 class _Squelette extends StatelessWidget {
-  const _Squelette();
+  const _Squelette() : super(key: AccueilFamillePage.squeletteKey);
 
   @override
   Widget build(BuildContext context) => const Column(

@@ -1862,8 +1862,9 @@ void main() {
       classe: classeFictive(),
     );
 
+    // Le squelette de la page, pas ceux qui reservent la place d'une tuile.
     int squelettes(WidgetTester tester) =>
-        find.byType(Skeleton).evaluate().length;
+        find.byKey(AccueilFamillePage.squeletteKey).evaluate().length;
 
     testWidgets('premiere arrivee : un seul squelette tant que la classe n est '
         'pas lue, aucune carte ni etat vide, puis le contenu', (
@@ -1880,6 +1881,8 @@ void main() {
       expect(find.byType(SelecteurProfils), findsNothing);
 
       port.retenues[_a1]!.complete();
+      // L'horloge de la classe se lit apres la classe, puis le fondu.
+      await stabiliser(tester);
       await stabiliser(tester);
       expect(find.byType(CarteClasseSeance), findsOneWidget);
       expect(find.byType(EtatSysteme), findsNothing);
@@ -1909,6 +1912,7 @@ void main() {
 
       regles.complete(FauxServiceOffres().reglesRendues);
       await stabiliser(tester);
+      await stabiliser(tester);
       expect(
         find.text(t.tuteur.accueil.sansClasseTitre(prenom: 'Élève A1')),
         findsOneWidget,
@@ -1920,12 +1924,15 @@ void main() {
         'squelette, et le selecteur suit le geste', (
       WidgetTester tester,
     ) async {
-      final _ClassesRetenues port = _ClassesRetenues(<ClasseFoyer>[classeA1]);
+      // La classe d'A2 est retenue des le depart (le halo du cercle Compte lit
+      // deja la classe de chaque profil : une lecture en cache ne se retient
+      // pas) ; A1, choisi, n'attend rien.
+      final _ClassesRetenues port = _ClassesRetenues(<ClasseFoyer>[classeA1])
+        ..retenues[_a2] = Completer<void>();
       await _monter(tester, portClasses: port);
       await _ouvrirAccueilParLaBarre(tester);
       expect(find.byType(CarteClasseSeance), findsOneWidget);
 
-      port.retenues[_a2] = Completer<void>();
       await tester.tap(
         find.descendant(
           of: find.byType(SelecteurProfils),
