@@ -109,6 +109,24 @@ class GoutteProfils extends StatefulWidget {
     return (avancement: c.valeur(), aspiration: c.aspiration);
   }
 
+  /// Pour les tests : le haut du disque d'ou part le cou du contenu du profil
+  /// [id], et le bas de son item (rond et libelle), dans le repere de la
+  /// portee. Le cou ne traverse le libelle que si le premier est au-dessus du
+  /// second.
+  @visibleForTesting
+  static ({double hautDuDepart, double basDeLItem})? departContenuDe(
+    BuildContext context,
+    String id,
+  ) {
+    final _EtatGoutteProfils? e = context
+        .getInheritedWidgetOfExactType<_PorteeGoutte>()
+        ?.etat;
+    final ({Offset centre, double rayon})? d = e?._departContenu(id);
+    final Rect? item = e?._rectItem(id);
+    if (d == null || item == null) return null;
+    return (hautDuDepart: d.centre.dy - d.rayon, basDeLItem: item.bottom);
+  }
+
   @override
   State<GoutteProfils> createState() => _EtatGoutteProfils();
 }
@@ -142,6 +160,7 @@ class _ChuteEnCours {
 class _EtatGoutteProfils extends State<GoutteProfils>
     with TickerProviderStateMixin {
   final Map<String, GlobalKey> _cles = <String, GlobalKey>{};
+  final Map<String, GlobalKey> _clesItems = <String, GlobalKey>{};
   final Map<String, double> _rapports = <String, double>{};
 
   // 0 a 1 : la goutte du rond quitte vers le rond choisi. Sans borne.
@@ -178,6 +197,9 @@ class _EtatGoutteProfils extends State<GoutteProfils>
   _ChuteEnCours? _chute;
 
   GlobalKey cle(String id) => _cles.putIfAbsent(id, GlobalKey.new);
+
+  /// La cle de l'item entier d'un profil (rond et libelle).
+  GlobalKey cleItem(String id) => _clesItems.putIfAbsent(id, GlobalKey.new);
 
   @override
   void initState() {
@@ -280,6 +302,29 @@ class _EtatGoutteProfils extends State<GoutteProfils>
     return (centre: r.center, rayon: r.shortestSide / 2 * rapport);
   }
 
+  /// Le disque d'ou part le cou du contenu : tangent par le haut au bas de
+  /// l'item (sous le libelle), a l'aplomb du rond. `null` sans mesure de
+  /// l'item.
+  ({Offset centre, double rayon})? _departContenu(String id) {
+    final ({Offset centre, double rayon})? rond = _disque(id);
+    final Rect? item = _rectItem(id);
+    if (rond == null || item == null) return null;
+    final double rayon = rond.rayon * _PeintreGoutte._rapportDepartContenu;
+    return (
+      centre: Offset(
+        rond.centre.dx,
+        math.max(item.bottom, rond.centre.dy) + rayon,
+      ),
+      rayon: rayon,
+    );
+  }
+
+  /// La boite de l'item entier de [id] (rond et libelle), ou `null`.
+  Rect? _rectItem(String id) {
+    final GlobalKey? cle = _clesItems[id];
+    return cle == null ? null : _rect(cle);
+  }
+
   /// Le point du bord haut de [cle] (repere de la portee) ; `null` si absent.
   Rect? _rect(GlobalKey cle) {
     final RenderObject? moi = context.findRenderObject();
@@ -350,6 +395,27 @@ class _PorteeGoutte extends InheritedWidget {
       ancien.vers != vers ||
       ancien.selectionId != selectionId ||
       ancien.etat != etat;
+}
+
+/// L'item entier d'un profil (rond ET libelle), declare a la portee : le cou
+/// du contenu part du BAS de l'item, jamais du rond, pour ne jamais traverser
+/// le libelle (garde-cap, 11/11/2026). Hors portee, l'enfant tel quel.
+class ItemGoutte extends StatelessWidget {
+  /// Declare l'item de [id].
+  const ItemGoutte({required this.id, required this.child, super.key});
+
+  /// Le profil.
+  final String id;
+
+  /// L'item (rond et libelle).
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final _PorteeGoutte? portee = GoutteProfils._portee(context);
+    if (portee == null) return child;
+    return KeyedSubtree(key: portee.etat.cleItem(id), child: child);
+  }
 }
 
 /// Le rond d'un profil, declare a la portee : mesure par elle, et il reprend
@@ -668,6 +734,9 @@ class _PeintreGoutte extends CustomPainter {
   static const double _plein = 0.5;
   static const double _fin = 0.04;
 
+  /// Le rayon de la goutte qui part du bas de l'item, rapporte a celui du rond.
+  static const double _rapportDepartContenu = 0.4;
+
   @override
   void paint(Canvas canvas, Size size) {
     _peindreRonds(canvas);
@@ -710,9 +779,15 @@ class _PeintreGoutte extends CustomPainter {
   void _peindreContenu(Canvas canvas) {
     final _ChuteEnCours? c = etat._chute;
     if (c == null) return;
-    final ({Offset centre, double rayon})? rond = etat._disque(c.idRond);
+    final ({Offset centre, double rayon})? rondDuProfil = etat._disque(
+      c.idRond,
+    );
     final Rect? plein = etat._rect(c.cleContenu);
-    if (rond == null || plein == null) return;
+    if (rondDuProfil == null || plein == null) return;
+    // Le cou part du BAS de l'item (sous le libelle), a l'aplomb du rond : il
+    // ne traverse jamais le prenom ni l'etat. Sans mesure de l'item, du rond.
+    final ({Offset centre, double rayon}) rond =
+        etat._departContenu(c.idRond) ?? rondDuProfil;
     final double t = c.valeur().clamp(0, 1).toDouble();
     // Le cou : a la chute, plein puis de plus en plus fin jusqu'a la rupture ;
     // a l'aspiration, il se forme a mesure que le contenu approche du rond.

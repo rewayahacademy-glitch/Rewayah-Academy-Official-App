@@ -287,66 +287,72 @@ class _Item extends StatelessWidget {
           // plus long mot de son etat. L'etat passe alors a la ligne entre
           // ses mots (« Aucune / séance ») au lieu d'etre rogne au bord de
           // l'ecran (« Aucune séan »). Sinon, largeur naturelle, une ligne.
-          child: ConstrainedBox(
-            constraints: compacte
-                ? BoxConstraints(
-                    maxWidth: _largeurItem(context, styleNom, styleEtat),
-                  )
-                : const BoxConstraints(),
-            child: AvatarNom.vertical(
-              prenom: profil.prenom,
-              urlSignee: profil.urlPhoto,
-              // La photo est construite a sa taille choisie, puis reduite
-              // au repos par le rond (une seule image, jamais rechargee).
-              diametre: mesures.photoChoisi,
-              role: profil.etat,
-              styleNom: styleNom,
-              styleRole: styleEtat,
-              // Decisions du directeur du 10/11/2026 : le meme rond que le
-              // cercle Compte de la barre, aux memes proportions ; le profil
-              // choisi grandit au ressort, bord d'accent.
-              enveloppeAvatar: (Widget avatar) => Stack(
-                clipBehavior: Clip.none,
-                children: <Widget>[
-                  // GOUTTE D'HUILE (11/11/2026) : sous une `GoutteProfils`, le
-                  // rond se declare a la portee et la couleur de selection
-                  // arrive a la rupture du cou ; ailleurs, rien ne change.
-                  RondGoutte(
-                    id: profil.id,
-                    rapport: mesures.rondRepos / mesures.rondChoisi,
-                    child: CercleSelectionnable(
-                      choisi: selectionne,
-                      mesures: mesures,
-                      ombre: false,
-                      fonduAccent: GoutteProfils.fonduRond(context, profil.id),
-                      photo: (double d) => SizedBox.square(
-                        dimension: d,
-                        child: FittedBox(child: avatar),
+          child: ItemGoutte(
+            id: profil.id,
+            child: ConstrainedBox(
+              constraints: compacte
+                  ? BoxConstraints(
+                      maxWidth: _largeurItem(context, styleNom, styleEtat),
+                    )
+                  : const BoxConstraints(),
+              child: AvatarNom.vertical(
+                prenom: profil.prenom,
+                urlSignee: profil.urlPhoto,
+                // La photo est construite a sa taille choisie, puis reduite
+                // au repos par le rond (une seule image, jamais rechargee).
+                diametre: mesures.photoChoisi,
+                role: profil.etat,
+                styleNom: styleNom,
+                styleRole: styleEtat,
+                // Decisions du directeur du 10/11/2026 : le meme rond que le
+                // cercle Compte de la barre, aux memes proportions ; le profil
+                // choisi grandit au ressort, bord d'accent.
+                enveloppeAvatar: (Widget avatar) => Stack(
+                  clipBehavior: Clip.none,
+                  children: <Widget>[
+                    // GOUTTE D'HUILE (11/11/2026) : sous une `GoutteProfils`, le
+                    // rond se declare a la portee et la couleur de selection
+                    // arrive a la rupture du cou ; ailleurs, rien ne change.
+                    RondGoutte(
+                      id: profil.id,
+                      rapport: mesures.rondRepos / mesures.rondChoisi,
+                      child: CercleSelectionnable(
+                        choisi: selectionne,
+                        mesures: mesures,
+                        ombre: false,
+                        fonduAccent: GoutteProfils.fonduRond(
+                          context,
+                          profil.id,
+                        ),
+                        photo: (double d) => SizedBox.square(
+                          dimension: d,
+                          child: FittedBox(child: avatar),
+                        ),
                       ),
                     ),
-                  ),
-                  if (point != null)
-                    PositionedDirectional(
-                      end: AppSpacing.xs,
-                      bottom: AppSpacing.xs,
-                      child: profil.annulee
-                          ? PointAnnulation(cerclage: palette.surfaceCanvas)
-                          : profil.enDirect
-                          ? PointDirect(
-                              diametre: SelecteurProfils.diametrePoint,
-                              cerclage: palette.surfaceCanvas,
-                            )
-                          : SizedBox.square(
-                              dimension: SelecteurProfils.diametrePoint,
-                              child: DecoratedBox(
-                                decoration: _couleurPoint(
-                                  palette,
-                                  point,
-                                ).pastille(cerclage: palette.surfaceCanvas),
+                    if (point != null)
+                      PositionedDirectional(
+                        end: AppSpacing.xs,
+                        bottom: AppSpacing.xs,
+                        child: profil.annulee
+                            ? PointAnnulation(cerclage: palette.surfaceCanvas)
+                            : profil.enDirect
+                            ? PointDirect(
+                                diametre: SelecteurProfils.diametrePoint,
+                                cerclage: palette.surfaceCanvas,
+                              )
+                            : SizedBox.square(
+                                dimension: SelecteurProfils.diametrePoint,
+                                child: DecoratedBox(
+                                  decoration: _couleurPoint(
+                                    palette,
+                                    point,
+                                  ).pastille(cerclage: palette.surfaceCanvas),
+                                ),
                               ),
-                            ),
-                    ),
-                ],
+                      ),
+                  ],
+                ),
               ),
             ),
           ),

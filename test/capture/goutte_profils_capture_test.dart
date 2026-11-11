@@ -15,6 +15,7 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/theme/app_palette.dart';
 import 'package:rewayah_academy/core/theme/app_radius.dart';
@@ -190,18 +191,40 @@ void main() {
           'contenu': <List<String>>[],
         };
 
-    for (final (String nom, AppLocale langue, ThemeMode theme)
-        in <(String, AppLocale, ThemeMode)>[
-          ('clair', AppLocale.fr, ThemeMode.light),
-          ('sombre', AppLocale.fr, ThemeMode.dark),
-          ('arabe', AppLocale.ar, ThemeMode.light),
+    for (final (
+          String nom,
+          AppLocale langue,
+          ThemeMode theme,
+          double echelle,
+          InterfaceMode mode,
+        )
+        in <(String, AppLocale, ThemeMode, double, InterfaceMode)>[
+          ('clair', AppLocale.fr, ThemeMode.light, 1, InterfaceMode.standard),
+          ('sombre', AppLocale.fr, ThemeMode.dark, 1, InterfaceMode.standard),
+          ('arabe', AppLocale.ar, ThemeMode.light, 1, InterfaceMode.standard),
+          // Garde-cap (11/11/2026) : texte x2 et Interface guidee.
+          (
+            'texte_x2',
+            AppLocale.fr,
+            ThemeMode.light,
+            2,
+            InterfaceMode.standard,
+          ),
+          ('guidee', AppLocale.fr, ThemeMode.light, 1, InterfaceMode.enfant),
         ]) {
       testWidgets(nom, (WidgetTester tester) async {
         await tester.runAsync(() => LocaleSettings.setLocale(langue));
         addTearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
         fixerVueCapture(tester, _vue, _densite);
         final _Hote h = _Hote();
-        await tester.pumpWidget(hoteCapture(h.ecran(), themeMode: theme));
+        await tester.pumpWidget(
+          hoteCapture(
+            h.ecran(),
+            themeMode: theme,
+            echelleTexte: echelle,
+            interfaceMode: mode,
+          ),
+        );
         await stabiliser(tester);
         await tester.pump(const Duration(seconds: 1));
 

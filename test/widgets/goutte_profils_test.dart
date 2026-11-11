@@ -323,4 +323,24 @@ void main() {
       expect(find.text('contenu b'), findsOneWidget);
     });
   });
+
+  // GARDE-CAP (11/11/2026) : le cou du contenu ne croise JAMAIS le libelle du
+  // rond (defaut visible, bloque la fusion) : il part du bas de l'item.
+  testWidgets('le cou du contenu part sous le libelle, jamais au travers', (
+    WidgetTester tester,
+  ) async {
+    final _Hote h = _Hote();
+    await tester.pumpWidget(h.monter());
+    await tester.pump(const Duration(seconds: 1));
+    for (final String id in <String>['a', 'b', 'c']) {
+      final ({double hautDuDepart, double basDeLItem})? d =
+          GoutteProfils.departContenuDe(h.contexteContenu!, id);
+      expect(d, isNotNull);
+      expect(
+        d!.hautDuDepart,
+        greaterThanOrEqualTo(d.basDeLItem - 0.001),
+        reason: 'le cou de $id part au-dessus du bas de son libelle',
+      );
+    }
+  });
 }
