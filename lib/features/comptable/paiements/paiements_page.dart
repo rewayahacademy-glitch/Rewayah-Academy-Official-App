@@ -26,6 +26,7 @@ import '../../../core/capacites/capacite_indisponible.dart';
 import '../../../core/capacites/port_export_rapports.dart';
 import '../../../core/capacites/port_obligations_payables.dart';
 import '../../../core/capacites/port_payout.dart' show payoutOuvertProvider;
+import '../../../core/comptable/onglets_comptable_ouverts.dart';
 import '../../../core/comptable/statuts_comptable.dart';
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/reseau/service_reseau.dart';
@@ -288,9 +289,12 @@ class _PaiementsAEffectuerPageState
     return PageShell(
       titre: espace.titre,
       sousTitre: p.sousTitre,
-      entete: SousNavigationDomaine(
-        onglets: espace.onglets,
-        indexActif: espace.indexOnglet,
+      entete: SousNavigationDomaine.depuis(
+        ongletsComptableOuverts(
+          ref,
+          espace.onglets,
+          indexActif: espace.indexOnglet,
+        ),
       ),
       actionsEntete: const <Widget>[BasculeMontants(avecEtat: true)],
       // Au bureau, le tableau defile lui-meme sous son en-tete de colonnes ;

@@ -19,6 +19,7 @@ import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/core/widgets/montant_sensible.dart';
 import 'package:rewayah_academy/core/widgets/pastilles_comptable.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
+import 'package:rewayah_academy/features/comptable/graphiques/blocs_graphiques.dart';
 import 'package:rewayah_academy/features/comptable/tresorerie/carte_coffre.dart';
 import 'package:rewayah_academy/features/comptable/tresorerie/carte_politique_reserve.dart';
 import 'package:rewayah_academy/features/comptable/tresorerie/tresorerie_donnees.dart';
@@ -322,7 +323,11 @@ void main() {
       expect(find.byKey(TresoreriePage.cleAlimenter), findsNothing);
     });
 
-    testWidgets('source absente (production) : en preparation, sans chiffre', (
+    // PORTS-COMPTABLE (pilote, 11/11/2026) : sans serveur de la Tresorerie,
+    // la page garde ses gestes reels (les graphiques des series, l'entree
+    // des paiements des familles) et ne dit plus « en preparation ».
+    testWidgets('source absente (production) : les graphiques des series, '
+        'sans synthese ni coffres ni « en preparation »', (
       WidgetTester tester,
     ) async {
       tester.view.physicalSize = const Size(390, 1200);
@@ -332,8 +337,11 @@ void main() {
       await tester.pumpWidget(hotePage(const TresorerieIndisponible()));
       await tester.pump();
       await tester.pump();
-      expect(find.text(c.enPreparationTitre), findsOneWidget);
-      expect(find.byType(MontantSensible), findsNothing);
+      expect(find.text(c.enPreparationTitre), findsNothing);
+      expect(find.byType(BlocRepartitionCoffres), findsOneWidget);
+      expect(find.byType(BlocEvolution6Mois), findsOneWidget);
+      expect(find.byKey(TresoreriePage.clePaiementsFamilles), findsOneWidget);
+      expect(find.byKey(TresoreriePage.cleAlimenter), findsNothing);
     });
 
     testWidgets('aucun mouvement permis ni refuse : une phrase, aucun bouton', (

@@ -11,6 +11,7 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show ProviderOrFamily;
 
 import '../comptable/modeles_comptable.dart';
 import '../comptable/statuts_comptable.dart';
@@ -217,3 +218,13 @@ class TresorerieIndisponible implements PortTresorerie {
 /// Le port ; la demonstration le surcharge (`tresorerie_demo.dart`).
 final Provider<PortTresorerie> portTresorerieProvider =
     Provider<PortTresorerie>((Ref _) => const TresorerieIndisponible());
+
+/// PORTS-COMPTABLE (pilote, 11/11/2026) : vrai quand les blocs de la Tresorerie (synthese, Reserve, coffres, prevision, historique, politique, mouvements) a un serveur,
+/// c'est-a-dire quand [portTresorerieProvider] n'est plus [TresorerieIndisponible]. Faux en production
+/// tant qu'aucun adaptateur n'est branche : l'entree n'est pas montree,
+/// jamais un « indisponible ». La demonstration le surcharge.
+final Provider<bool> tresorerieOuverteProvider = Provider<bool>(
+  (Ref ref) => ref.watch(portTresorerieProvider) is! TresorerieIndisponible,
+  // Lue sous la portee de la demonstration, qui surcharge le port.
+  dependencies: <ProviderOrFamily>[portTresorerieProvider],
+);

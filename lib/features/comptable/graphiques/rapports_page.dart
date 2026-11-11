@@ -13,6 +13,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/capacites/port_export_rapports.dart';
 import '../../../core/comptable/navigation_comptable.dart';
+import '../../../core/comptable/onglets_comptable_ouverts.dart';
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/bascule_montants.dart';
@@ -32,9 +33,12 @@ class RapportsPage extends ConsumerWidget {
     return PageShell(
       titre: g.rapportsTitre,
       sousTitre: g.rapportsSousTitre,
-      entete: SousNavigationDomaine(
-        onglets: ongletsTresorerieComptable(),
-        indexActif: 3,
+      entete: SousNavigationDomaine.depuis(
+        ongletsComptableOuverts(
+          ref,
+          ongletsTresorerieComptable(),
+          indexActif: 3,
+        ),
       ),
       actionsEntete: const <Widget>[BasculeMontants(avecEtat: true)],
       child: const ColonneCorps(
