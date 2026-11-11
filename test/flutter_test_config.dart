@@ -15,12 +15,18 @@ import 'dart:async';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/page_differee.dart';
 import 'package:rewayah_academy/core/theme/polices_differees.dart';
+import 'package:rewayah_academy/core/widgets/scene_attente.dart';
 import 'package:rewayah_academy/features/tc_mushaf/routes_tc_c.dart';
 
 import 'support/garde_ancres_execution.dart';
 
 Future<void> testExecutable(FutureOr<void> Function() testMain) async {
   BindingGardeAncres.installer();
+  // Scene d'attente de la salle (11/11/2026) : ses ondes tournent tant que
+  // l'attente dure ; dans la suite, elles restent posees, sinon aucun
+  // `pumpAndSettle` d'un ecran qui attend ne rendrait la main. Le test du
+  // composant rallume la boucle pour la verifier.
+  SceneAttente.boucle = false;
   // Polices differees (PR 265) : `flutter test` ne charge que les familles de
   // la section `fonts` du fichier de configuration. Les polices du Coran,
   // deplacees dans `assets`, sont chargees ici depuis leur asset. La police

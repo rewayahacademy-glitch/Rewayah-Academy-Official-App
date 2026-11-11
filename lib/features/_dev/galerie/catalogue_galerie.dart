@@ -113,6 +113,7 @@ import '../../../core/widgets/raccourci_tactile.dart';
 import '../../../core/widgets/rangee_filtres.dart';
 import '../../../core/widgets/resume_soldes.dart';
 import '../../../core/widgets/rosace_verset.dart';
+import '../../../core/widgets/scene_attente.dart';
 import '../../../core/widgets/schedule_option.dart';
 import '../../../core/widgets/section_header.dart';
 import '../../../core/widgets/selecteur_couleur_profil.dart';
@@ -3021,6 +3022,19 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
             onChange: _segmentIgnore,
           ),
         ),
+      ),
+    ],
+  ),
+  // ATTENTE-SALLE (directeur, 11/11/2026) : la scene d'attente de la salle,
+  // le symbole de la marque au centre d'ondes lentes.
+  EntreeGalerie(
+    nom: 'SceneAttente',
+    famille: FamilleComposant.structure,
+    etats: <EtatGalerie>[
+      EtatGalerie('taille standard', (BuildContext _) => const SceneAttente()),
+      EtatGalerie(
+        'petite (telephone)',
+        (BuildContext _) => const SceneAttente(cote: SceneAttente.coteMinimal),
       ),
     ],
   ),

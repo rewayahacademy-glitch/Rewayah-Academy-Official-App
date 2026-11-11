@@ -77,6 +77,17 @@ abstract final class AppMouvement {
   /// Aucune boucle sous mouvement reduit.
   static const Duration refletSquelette = Duration(milliseconds: 1800);
 
+  /// Periode d'un tour des ondes de la scene d'attente de la salle
+  /// (`SceneAttente`, directeur, 11/11/2026 : « des effets et animations
+  /// hypnotisants pour faciliter l'attente »).
+  ///
+  /// **Hors du budget de transition**, comme [refletSquelette] : une boucle
+  /// d'attente, qui dure tant que l'attente dure. Tres lente (une onde met
+  /// huit secondes a traverser la scene) : elle apaise, elle n'alerte pas ;
+  /// aucun clignotement. Aucune boucle sous mouvement reduit : les ondes
+  /// restent posees.
+  static const Duration ondeAttente = Duration(milliseconds: 8000);
+
   /// La coche de reussite d'`ActionPrincipale` (FLUIDITE-1, decision §2 :
   /// « une reussite se voit ») : le temps ou elle reste lisible, entre son
   /// entree ([apparition]) et sa sortie ([disparitionOpacite]). Jouee une

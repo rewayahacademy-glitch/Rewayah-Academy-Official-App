@@ -77,12 +77,12 @@ import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/ligne_presence.dart';
 import '../../core/widgets/menu_actions.dart';
 import '../../core/widgets/offline_banner.dart' show ReserveCoinFin;
-import '../../core/widgets/ornement_marque.dart';
 import '../../core/widgets/page_immersive.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/permanent_notice.dart';
 import '../../core/widgets/pressable.dart';
+import '../../core/widgets/scene_attente.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/setting_row.dart';
 import '../../core/widgets/status_pill.dart';
@@ -4080,39 +4080,50 @@ class _Seul extends StatelessWidget {
 
     // SALLE-200-1 : la phrase d'attente defile plutot que de deborder quand
     // le texte est agrandi sur un petit ecran.
+    // Directeur, 11/11/2026 : l'attente porte le symbole de la marque au
+    // centre d'ondes lentes ([SceneAttente]), sur la surface de l'ecran
+    // (jamais un fond violet). La scene prend la moitie du petit cote de la
+    // place, pour laisser la phrase lisible sur un telephone.
     return DecoratedBox(
       key: cle,
       decoration: palette.surfaceSunken.decoration(
         borderRadius: AppRadius.arrondiLg,
       ),
-      child: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(AppSpacing.xxl),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              const OrnementMarque(taille: TailleOrnement.grand),
-              Ecart.vLg,
-              Text(
-                phrase.$1,
-                textAlign: TextAlign.center,
-                style: palette.surfaceSunken.applyTo(
-                  textes.titleMedium ?? const TextStyle(),
+      child: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints c) => Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(AppSpacing.xxl),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                SceneAttente(
+                  cote: math.min(
+                    SceneAttente.coteStandard,
+                    c.biggest.shortestSide / 2,
+                  ),
                 ),
-              ),
-              Ecart.vSm,
-              Text(
-                phrase.$2,
-                textAlign: TextAlign.center,
-                style: palette.surfaceSunken.applyTo(
-                  textes.bodyMedium ?? const TextStyle(),
+                Ecart.vLg,
+                Text(
+                  phrase.$1,
+                  textAlign: TextAlign.center,
+                  style: palette.surfaceSunken.applyTo(
+                    textes.titleMedium ?? const TextStyle(),
+                  ),
                 ),
-              ),
-              if (action
-                  case final ({String libelle, VoidCallback onPress})
-                      a) ...<Widget>[Ecart.vLg, ActionSousLaScene.bouton(a)],
-            ],
+                Ecart.vSm,
+                Text(
+                  phrase.$2,
+                  textAlign: TextAlign.center,
+                  style: palette.surfaceSunken.applyTo(
+                    textes.bodyMedium ?? const TextStyle(),
+                  ),
+                ),
+                if (action
+                    case final ({String libelle, VoidCallback onPress})
+                        a) ...<Widget>[Ecart.vLg, ActionSousLaScene.bouton(a)],
+              ],
+            ),
           ),
         ),
       ),
