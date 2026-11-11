@@ -72,6 +72,7 @@ import '../../../core/widgets/grille_bento.dart';
 import '../../../core/widgets/groupe_reglages.dart';
 import '../../../core/widgets/halo_compte.dart';
 import '../../../core/widgets/identite_profil.dart';
+import '../../../core/widgets/indicateur_liquide.dart';
 import '../../../core/widgets/lien_fleche.dart';
 import '../../../core/widgets/ligne_allocation.dart';
 import '../../../core/widgets/ligne_cle_valeur.dart';
@@ -1045,6 +1046,23 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
           diametre: AppAvatar.moyen,
           child: AvatarCompte(repli: 'Compte', diametre: AppAvatar.moyen),
         ),
+      ),
+    ],
+  ),
+  // Decisions du directeur du 10/11/2026 : l'effet liquide de la barre ;
+  // au repos, la destination ouverte garde son fond (la goutte ne se
+  // dessine qu'en mouvement).
+  EntreeGalerie(
+    nom: 'IndicateurLiquide',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'au repos, premiere destination ouverte',
+        (BuildContext _) => const _DemoLiquide(actif: 0),
+      ),
+      EtatGalerie(
+        'au repos, troisieme destination ouverte',
+        (BuildContext _) => const _DemoLiquide(actif: 2),
       ),
     ],
   ),
@@ -4473,3 +4491,50 @@ class _PanneauGalerie extends StatelessWidget {
 }
 
 void _tailleIgnoree(int taille) {}
+
+/// La demonstration de l'effet liquide pour la galerie : trois pastilles,
+/// celle de [actif] porte le fond doux.
+class _DemoLiquide extends StatefulWidget {
+  const _DemoLiquide({required this.actif});
+
+  final int actif;
+
+  @override
+  State<_DemoLiquide> createState() => _EtatDemoLiquide();
+}
+
+class _EtatDemoLiquide extends State<_DemoLiquide> {
+  final List<GlobalKey> _cles = List<GlobalKey>.generate(
+    3,
+    (int i) => GlobalKey(debugLabel: 'demo-liquide-$i'),
+  );
+  final GlobalKey _zone = GlobalKey(debugLabel: 'demo-liquide-zone');
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    return IndicateurLiquide(
+      cibles: _cles,
+      zones: <GlobalKey>[_zone],
+      indexActif: widget.actif,
+      couleur: palette.washAccent.background,
+      child: Row(
+        key: _zone,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          for (int i = 0; i < 3; i++)
+            DecoratedBox(
+              key: _cles[i],
+              decoration: BoxDecoration(
+                color: i == widget.actif
+                    ? palette.washAccent.background
+                    : palette.washAccent.background.withValues(alpha: 0),
+                borderRadius: AppRadius.arrondiFull,
+              ),
+              child: const SizedBox.square(dimension: AppTouchTarget.standard),
+            ),
+        ],
+      ),
+    );
+  }
+}

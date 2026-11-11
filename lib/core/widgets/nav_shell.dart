@@ -25,6 +25,7 @@ import 'avatar_tile.dart' show AppAvatar;
 import 'brand_logo.dart';
 import 'cercle_selectionnable.dart';
 import 'halo_compte.dart';
+import 'indicateur_liquide.dart';
 import 'page_shell.dart' show FondDeCoquille, NavigationDeCoquille;
 import 'pressable.dart';
 
@@ -621,6 +622,9 @@ class _CoquilleBarreBasseEtat extends State<_CoquilleBarreBasse> {
   /// Le fond de la page affichee, publie par elle ([FondDeCoquille]).
   final ValueNotifier<Color?> _fondDePage = ValueNotifier<Color?>(null);
 
+  /// Les cles de l'effet liquide : stables d'une construction a l'autre.
+  final _ClesLiquide _cles = _ClesLiquide();
+
   @override
   void dispose() {
     _controleur.dispose();
@@ -674,6 +678,7 @@ class _CoquilleBarreBasseEtat extends State<_CoquilleBarreBasse> {
                     onAller: widget.onAller,
                     halo: widget.halo,
                     onHaloTouche: widget.onHaloTouche,
+                    cles: _cles,
                   ),
                 ),
             ],
@@ -690,15 +695,30 @@ class _CoquilleBarreBasseEtat extends State<_CoquilleBarreBasse> {
 /// Destination active : icone pleine, libelle en accent et soulignement de
 /// trois points. Inactive : icone au trait et encre attenuee. Jamais la
 /// couleur seule : l'etat « selectionne » est aussi annonce.
+/// Les cles de l'effet liquide de la barre flottante : une par onglet, la
+/// pilule et le cercle Compte.
+class _ClesLiquide {
+  final List<GlobalKey> onglets = List<GlobalKey>.generate(
+    NavShell.maxDestinations,
+    (int i) => GlobalKey(debugLabel: 'onglet-liquide-$i'),
+  );
+  final GlobalKey pilule = GlobalKey(debugLabel: 'pilule-liquide');
+  final GlobalKey cercle = GlobalKey(debugLabel: 'cercle-liquide');
+}
+
 class _BarreFlottante extends StatelessWidget {
   const _BarreFlottante({
     required this.guide,
     required this.destinations,
     required this.indexActif,
     required this.onAller,
+    required this.cles,
     this.halo,
     this.onHaloTouche,
   });
+
+  /// Les cles de l'effet liquide.
+  final _ClesLiquide cles;
 
   /// Le halo du cercle Compte, ou `null`.
   final EtatHaloCompte? halo;
@@ -841,7 +861,11 @@ class _BarreFlottante extends StatelessWidget {
                 ),
                 child: MediaQuery.withClampedTextScaling(
                   maxScaleFactor: NavShell.echelleTexteMaxBarre,
-                  child: LayoutBuilder(builder: _rangeeStandard),
+                  // La part de la goutte dans la pilule : entre son fond et
+                  // ses onglets.
+                  child: CoucheLiquide(
+                    child: LayoutBuilder(builder: _rangeeStandard),
+                  ),
                 ),
               ),
       ),
@@ -855,29 +879,55 @@ class _BarreFlottante extends StatelessWidget {
         container: true,
         explicitChildNodes: true,
         label: t.nav.principale,
-        child: compte == null
-            ? pilule
-            : Row(
-                children: <Widget>[
-                  Expanded(child: pilule),
-                  // MA-CMD-1 : en Mode Accessibilite, quatre cibles de 72
-                  // tiennent a 320 ; l'ecart avec la tuile se resserre a 4,
-                  // comme entre les onglets.
-                  // Le rond reserve deja sa place choisie (64) : 8 jusqu'a la
-                  // pilule, meme ouvert (decision du 10/11/2026).
-                  if (guide && serre) Ecart.hXs else Ecart.hSm,
-                  _CercleCompte(
-                    destination: compte,
-                    actif: _compteActif,
-                    guide: guide,
-                    onAller: onAller,
-                    halo: halo,
-                    onHaloTouche: onHaloTouche,
-                    apparition: indexActif,
-                  ),
-                ],
-              ),
+        child: _liquide(
+          context,
+          palette,
+          compte == null
+              ? KeyedSubtree(key: cles.pilule, child: pilule)
+              : Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: KeyedSubtree(key: cles.pilule, child: pilule),
+                    ),
+                    // MA-CMD-1 : en Mode Accessibilite, quatre cibles de 72
+                    // tiennent a 320 ; l'ecart avec la tuile se resserre a 4,
+                    // comme entre les onglets.
+                    // Le rond reserve deja sa place choisie (64) : 8 jusqu'a la
+                    // pilule, meme ouvert (decision du 10/11/2026).
+                    if (guide && serre) Ecart.hXs else Ecart.hSm,
+                    _CercleCompte(
+                      key: cles.cercle,
+                      destination: compte,
+                      actif: _compteActif,
+                      guide: guide,
+                      onAller: onAller,
+                      halo: halo,
+                      onHaloTouche: onHaloTouche,
+                      apparition: indexActif,
+                    ),
+                  ],
+                ),
+        ),
       ),
+    );
+  }
+
+  /// L'effet liquide (decisions du directeur du 10/11/2026) autour de la
+  /// rangee standard : la goutte de l'onglet ouvert, et le pont jusqu'au
+  /// cercle Compte. Le Mode Accessibilite garde ses tuiles, sans goutte.
+  Widget _liquide(BuildContext context, AppPalette palette, Widget rangee) {
+    if (guide) return rangee;
+    final List<Destination> onglets = _onglets;
+    final bool avecCompte = _compte != null;
+    return IndicateurLiquide(
+      cibles: <GlobalKey>[
+        for (int i = 0; i < onglets.length; i++) cles.onglets[i],
+        if (avecCompte) cles.cercle,
+      ],
+      zones: <GlobalKey>[cles.pilule, if (avecCompte) cles.cercle],
+      indexActif: _compteActif ? onglets.length : _actifOnglet,
+      couleur: palette.washAccent.background,
+      child: rangee,
     );
   }
 
@@ -919,6 +969,7 @@ class _BarreFlottante extends StatelessWidget {
           i == actif
               ? Flexible(
                   child: _OngletBarre(
+                    key: cles.onglets[i],
                     destination: onglets[i],
                     actif: true,
                     empile: empile,
@@ -926,6 +977,7 @@ class _BarreFlottante extends StatelessWidget {
                   ),
                 )
               : _OngletBarre(
+                  key: cles.onglets[i],
                   destination: onglets[i],
                   actif: false,
                   empile: false,
@@ -1135,6 +1187,7 @@ class _BarreFlottante extends StatelessWidget {
 
 class _OngletBarre extends ConsumerWidget {
   const _OngletBarre({
+    super.key,
     required this.destination,
     required this.actif,
     required this.empile,
@@ -1178,10 +1231,14 @@ class _OngletBarre extends ConsumerWidget {
     // NAV-REFONTE : onglet ouvert = fond doux, icone pleine, nom visible
     // (trois signaux, jamais la couleur seule) ; fermes = icone seule, le nom
     // lu par le lecteur d'ecran et montre en infobulle.
+    // Pendant que la goutte se deplace, c'est elle qui peint le fond doux.
+    final bool goutte = IndicateurLiquide.enMouvement(context);
     final Widget dessin = actif
         ? DecoratedBox(
             decoration: BoxDecoration(
-              color: palette.washAccent.background,
+              color: goutte
+                  ? palette.washAccent.background.withValues(alpha: 0)
+                  : palette.washAccent.background,
               borderRadius: AppRadius.arrondiFull,
             ),
             child: ConstrainedBox(
@@ -1257,6 +1314,7 @@ class _OngletBarre extends ConsumerWidget {
 /// annonce).
 class _CercleCompte extends StatelessWidget {
   const _CercleCompte({
+    super.key,
     required this.destination,
     required this.actif,
     required this.guide,
