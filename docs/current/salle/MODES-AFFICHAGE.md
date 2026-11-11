@@ -72,6 +72,10 @@ Règles qui en découlent (elles ne se discutent plus écran par écran) :
 - **Ordre** : l'enseignant d'abord (chez l'élève), puis les élèves dans un ordre qui ne bouge pas ;
   soi-même en dernier. L'ordre ne change pas quand quelqu'un parle (l'anneau suffit).
 - **Seul avec une personne** (cours à deux) : un seul grand cadre, à sa forme, centré.
+- **Seul dans la salle** : la scène d'attente (le symbole et ses ondes). Si sa caméra est allumée,
+  son propre cadre est posé sous la scène d'attente, centré, borné (240 de large au plus), dans la
+  mise en page : on vérifie son image avant l'arrivée des autres, et rien ne flotte (décidé par le
+  pilote le 11/11 après le lot SCENE-CLASSE, qui l'avait retiré).
 - **Au-delà de la place** (jamais atteint à 7 personnes) : la grille défile par pages entières,
   jamais des cadres minuscules.
 - **Les commandes** : la barre a sa place réservée sous la grille (téléphone) ou sur le côté
@@ -84,7 +88,7 @@ Règles qui en découlent (elles ne se discutent plus écran par écran) :
 | :--- | :--- | :--- |
 | Ordinateur, enseignant | le panneau des Élèves | chaque carte d'élève porte son cadre vivant (à la place de l'initiale) ; l'enseignant en tête ; panneau fermé : aucun visage, c'est son choix |
 | Ordinateur ou tablette large, élève | la bande de côté déjà réservée | l'enseignant, puis l'élève qui récite s'il y en a un |
-| Téléphone, élève | la vignette qu'on déplace et qu'on range (D-023) | un seul cadre : l'enseignant ; pendant une récitation, l'élève qui récite prend sa place |
+| Téléphone, élève | la vignette qu'on déplace et qu'on range (D-023) | un seul cadre : l'enseignant, toujours (c'est lui qui corrige ; le camarade qui récite s'entend) |
 | Téléphone, enseignant | la feuille « Élèves » et la capsule du haut | la capsule montre l'élève qui récite s'il y en a un, sinon lui-même |
 
 - La page garde **toute** sa taille : le ruban ne la réduit jamais (règle du directeur).
@@ -107,6 +111,18 @@ aucun nouveau langage.
 
 « Réduire les animations » : fondu seul. Aucune animation sans fin. Rien ne se rejoue à une
 reconnexion.
+
+## 5 bis. Où en est le code (11/11/2026, soir)
+
+- **Fait (lot SCENE-CLASSE, D-028)** : `CadreVisage` et `GrilleVisages` (core), la scène en mode
+  Classe chez tous (`lib/features/salle/scene_classe.dart`), `ModeScene` et son calcul
+  (`media_salle.dart`). Vu dans la vraie application sur le banc à 3 et 6 élèves
+  (`captures/E2E/salle-banc/scene-classe-3/`, `scene-classe-6/`). Bornes choisies : cadre de 480 de
+  large au plus, 96 au moins ; en dessous, la grille passe en pages (seul cas : 7 personnes sur un
+  téléphone de 320 de large, deux pages).
+- **Reste (lot suivant)** : le ruban du §4 (la vignette, la capsule et les cartes du panneau
+  passent par `CadreVisage`), les passages entre modes du §5, les derniers drapeaux
+  (`scenePremierPlan` de `zone_support.dart`), son propre cadre quand on est seul.
 
 ## 6. Ce que ce modèle ne fait pas (à décider ensuite)
 
