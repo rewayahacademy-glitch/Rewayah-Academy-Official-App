@@ -43,6 +43,7 @@ import '../../capture/outil_capture.dart'
 import '../../support/aucun_mot_coupe.dart';
 import '../../support/harnais.dart' show FauxServicePresence;
 import '../../support/hors_ligne_une_fois.dart';
+import '../../support/titre_de_page.dart';
 import 'faux/faux_observation.dart';
 import 'support/hote_tc_g.dart';
 
@@ -182,7 +183,8 @@ Future<void> _presser(WidgetTester tester, Finder cible) async {
   await tester.pumpAndSettle();
 }
 
-Finder get _titreExplication => find.text(t.tc.observation.explication.titre);
+Finder get _titreExplication =>
+    titreDePage(t.tc.observation.explication.titre);
 Finder get _observerMaintenant =>
     find.text(t.tc.observation.explication.observer);
 Finder get _pasMaintenant =>
