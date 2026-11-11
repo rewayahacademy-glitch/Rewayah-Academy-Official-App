@@ -555,15 +555,15 @@ void main() {
       // mais le theme et la langue de l'appareil reviennent a « Systeme » et
       // le pointeur vers le compte sorti est efface.
       final Map<String, String> reglages = <String, String>{
-        for (final PreferenceLocaleData l in await base
-            .select(base.preferenceLocale)
-            .get())
+        for (final PreferenceLocaleData l
+            in await base.select(base.preferenceLocale).get())
           l.clef: l.valeur,
       };
       expect(reglages, <String, String>{
         clefPreferenceTheme: 'systeme',
         clefPreferenceLangue: 'systeme',
         clefPointeurCompte: '',
+        clefVersionPreferences: versionPreferences,
       });
       expect(remises, 1);
     },

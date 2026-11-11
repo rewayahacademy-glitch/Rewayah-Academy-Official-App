@@ -120,7 +120,7 @@ void main() {
     expect(serveur.themes[_a], 'sombre', reason: 'le theme part au compte');
     expect(serveur.langues[_a], 'ar', reason: 'la langue part au compte');
     expect(appareil.valeurs['$clefPreferenceTheme.$_a'], 'sombre');
-    expect(appareil.valeurs[clefPreferenceTheme], isNull);
+    expect(appareil.valeurs[clefPreferenceTheme], 'systeme');
 
     // 2. Deconnexion : l'etape de `Deconnexion`, puis la memoire remise a
     //    zero (conteneur neuf), sans personne connectee.
@@ -226,7 +226,10 @@ void main() {
 
   test('sans compte avant, le choix fait sur l appareil reste', () async {
     final StockagePreferencesMemoire appareil = StockagePreferencesMemoire(
-      <String, String>{clefPreferenceTheme: 'sombre'},
+      <String, String>{
+        clefVersionPreferences: versionPreferences,
+        clefPreferenceTheme: 'sombre',
+      },
     );
     final ProviderContainer c = _lancer(appareil, _Serveur());
     expect(_prefs(c).theme, PreferenceTheme.sombre);
@@ -235,9 +238,35 @@ void main() {
     expect(_prefs(c).theme, PreferenceTheme.sombre);
   });
 
+  test('herite d avant le lot : « sombre » sur l appareil, aucun compte, '
+      'demarrage en Systeme (garde-cap)', () async {
+    final StockagePreferencesMemoire appareil = StockagePreferencesMemoire(
+      <String, String>{
+        clefPreferenceTheme: 'sombre',
+        clefPreferenceLangue: 'arabe',
+      },
+    );
+    expect(lirePreferenceImmediate(appareil, clefPreferenceTheme), isNull);
+    final ProviderContainer c = _lancer(appareil, _Serveur());
+    expect(_prefs(c).theme, PreferenceTheme.systeme);
+    c.read(_compte.notifier).personne();
+    await pumpEventQueue();
+    expect(_prefs(c).theme, PreferenceTheme.systeme);
+    expect(_prefs(c).langue, PreferenceLangue.systeme);
+    expect(appareil.valeurs[clefPreferenceTheme], 'systeme');
+    expect(appareil.valeurs[clefPreferenceLangue], 'systeme');
+    expect(appareil.valeurs[clefVersionPreferences], versionPreferences);
+
+    // Apres la purge, un choix fait sans compte est garde et relu.
+    c.read(preferencesLocalesProvider.notifier).theme(PreferenceTheme.sombre);
+    await pumpEventQueue();
+    expect(lirePreferenceImmediate(appareil, clefPreferenceTheme), 'sombre');
+  });
+
   test('lecture avant la premiere image : pointeur, compte, puis appareil', () {
     final StockagePreferencesMemoire appareil = StockagePreferencesMemoire(
       <String, String>{
+        clefVersionPreferences: versionPreferences,
         clefPreferenceTheme: 'clair',
         '$clefPreferenceTheme.$_a': 'sombre',
       },

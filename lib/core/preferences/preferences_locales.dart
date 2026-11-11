@@ -329,14 +329,41 @@ const String clefPreferenceLangue = 'apparence.langue';
 /// deconnexion. Le script d'`index.html` le lit avant Flutter.
 const String clefPointeurCompte = 'compte.dernier';
 
+/// Clef du marqueur de version des preferences de l'appareil
+/// (PREFERENCES-PAR-COMPTE, garde-cap, 11/11/2026). Tant qu'il ne vaut pas
+/// [versionPreferences], le theme et la langue de l'appareil ont ete ecrits
+/// avant ce lot, peut-etre par un autre compte : ils ne sont jamais lus, et
+/// [purgerPreferencesHeritees] les remet a « Systeme ».
+const String clefVersionPreferences = 'preferences.v2';
+
+/// La valeur du marqueur une fois la purge faite.
+const String versionPreferences = '1';
+
+/// Purge unique, au premier lancement de cette version : le theme et la
+/// langue de l'appareil herites d'avant le lot reviennent a « Systeme », puis
+/// le marqueur est pose. Ensuite, ne fait rien. Ne leve jamais.
+Future<void> purgerPreferencesHeritees(StockagePreferences stockage) async {
+  try {
+    if (await stockage.lire(clefVersionPreferences) == versionPreferences) {
+      return;
+    }
+    await stockage.ecrire(clefPreferenceTheme, PreferenceTheme.systeme.name);
+    await stockage.ecrire(clefPreferenceLangue, PreferenceLangue.systeme.name);
+    await stockage.ecrire(clefVersionPreferences, versionPreferences);
+  } on Object catch (erreur) {
+    journalDev('Preferences heritees non purgees : $erreur');
+  }
+}
+
 /// La clef de [clef] pour le compte [profil] (`apparence.theme.<profil>`) ;
 /// la clef de l'appareil, sans compte.
 String clefDuCompte(String clef, String? profil) =>
     profil == null || profil.isEmpty ? clef : '$clef.$profil';
 
 /// La valeur de [clef] avant que la session soit connue : celle du dernier
-/// compte connecte (par le pointeur), sinon celle de l'appareil. Meme ordre
-/// que le script d'`index.html`.
+/// compte connecte (par le pointeur), sinon celle de l'appareil, si elle a
+/// ete ecrite depuis ce lot ([clefVersionPreferences]). Meme ordre que le
+/// script d'`index.html`.
 String? lirePreferenceImmediate(
   LecturePreferencesImmediate lecture,
   String clef,
@@ -346,7 +373,9 @@ String? lirePreferenceImmediate(
     final String? duCompte = lecture.lireImmediat(clefDuCompte(clef, pointeur));
     if (duCompte != null) return duCompte;
   }
-  return lecture.lireImmediat(clef);
+  return lecture.lireImmediat(clefVersionPreferences) == versionPreferences
+      ? lecture.lireImmediat(clef)
+      : null;
 }
 
 /// [lirePreferenceImmediate], sur un stockage qui se lit en asynchrone.
@@ -359,7 +388,9 @@ Future<String?> lirePreferenceAuLancement(
     final String? duCompte = await stockage.lire(clefDuCompte(clef, pointeur));
     if (duCompte != null) return duCompte;
   }
-  return stockage.lire(clef);
+  return await stockage.lire(clefVersionPreferences) == versionPreferences
+      ? stockage.lire(clef)
+      : null;
 }
 
 /// Un stockage cle/valeur local, durable et **non sensible**.
@@ -549,8 +580,13 @@ void _persisterParCompte<T extends Enum>({
     }
   }
 
+  // Purge unique des reglages herites : toute ecriture l'attend, pour qu'elle
+  // n'efface jamais un choix fait pendant qu'elle tourne.
+  final Future<void> purge = purgerPreferencesHeritees(stockage);
+
   Future<void> ecrire(String c, String valeur) async {
     try {
+      await purge;
       await stockage.ecrire(c, valeur);
     } on Object catch (erreur) {
       journalDev('Preference $nom non ecrite, reste en memoire : $erreur');
@@ -612,7 +648,11 @@ void _persisterParCompte<T extends Enum>({
     }
   }
 
-  unawaited(connu ? passerAuCompte(profil) : lancement());
+  unawaited(() async {
+    // Les reglages de l'appareil ecrits avant ce lot ne sont jamais repris.
+    await purge;
+    await (connu ? passerAuCompte(profil) : lancement());
+  }());
 
   ref.listen<ComptePreferences>(compteDesPreferencesProvider, (
     ComptePreferences? _,
@@ -769,6 +809,7 @@ Future<void> oublierPreferencesDuCompte(StockagePreferences stockage) async {
     await stockage.ecrire(clefPointeurCompte, '');
     await stockage.ecrire(clefPreferenceTheme, PreferenceTheme.systeme.name);
     await stockage.ecrire(clefPreferenceLangue, PreferenceLangue.systeme.name);
+    await stockage.ecrire(clefVersionPreferences, versionPreferences);
   } on Object catch (erreur) {
     journalDev('Preferences du compte non oubliees : $erreur');
   }

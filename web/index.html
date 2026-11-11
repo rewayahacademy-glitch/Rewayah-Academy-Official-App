@@ -306,7 +306,9 @@
       var p = 'rewayah.preferences.';
       var compte = localStorage.getItem(p + 'compte.dernier');
       var choix = compte ? localStorage.getItem(p + 'apparence.theme.' + compte) : null;
-      if (choix === null) {
+      // Le theme de l'appareil n'est lu que s'il a ete ecrit depuis ce lot
+      // (marqueur `preferences.v2`) : avant, un autre compte l'a peut-etre pose.
+      if (choix === null && localStorage.getItem(p + 'preferences.v2') === '1') {
         choix = localStorage.getItem(p + 'apparence.theme');
       }
       if (choix === 'clair' || choix === 'sombre') {

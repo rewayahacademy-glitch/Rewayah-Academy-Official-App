@@ -99,7 +99,10 @@ void main() {
   group('persistance sur l appareil', () {
     test('le theme ecrit est relu au lancement', () async {
       final StockagePreferencesMemoire stockage = StockagePreferencesMemoire(
-        <String, String>{clefPreferenceTheme: 'sombre'},
+        <String, String>{
+          clefVersionPreferences: versionPreferences,
+          clefPreferenceTheme: 'sombre',
+        },
       );
       final ProviderContainer c = _conteneur(stockage);
       await pumpEventQueue();
@@ -198,6 +201,7 @@ void main() {
       await monter(
         tester,
         StockagePreferencesMemoire(<String, String>{
+          clefVersionPreferences: versionPreferences,
           clefPreferenceTheme: 'sombre',
         }),
       );

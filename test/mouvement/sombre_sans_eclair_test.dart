@@ -37,6 +37,7 @@ const Key _cadre = ValueKey<String>('cadre-sombre');
 List<Override> _sombreEnregistre() {
   final StockagePreferencesMemoire stockage = StockagePreferencesMemoire(
     <String, String>{
+      clefVersionPreferences: versionPreferences,
       clefPreferenceTheme: 'sombre',
       clefDuCompte(clefPreferenceTheme, 'demo-tuteur'): 'sombre',
     },
@@ -110,6 +111,7 @@ void main() {
       overrides: <Override>[
         stockagePreferencesProvider.overrideWithValue(
           StockagePreferencesMemoire(<String, String>{
+            clefVersionPreferences: versionPreferences,
             clefPreferenceTheme: 'sombre',
           }),
         ),
@@ -137,6 +139,7 @@ void main() {
             ...surchargesRouteur(FausseSourceSession()),
             lecturePreferencesImmediateProvider.overrideWithValue(
               StockagePreferencesMemoire(<String, String>{
+                clefVersionPreferences: versionPreferences,
                 clefPreferenceTheme: 'sombre',
               }),
             ),
