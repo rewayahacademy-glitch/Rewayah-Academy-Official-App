@@ -10,12 +10,14 @@ import '../../core/offres/service_offres.dart' show parcoursFoyerProvider;
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
+import '../../core/session/session_state.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/ecran_resultat.dart';
 import '../../core/widgets/etat_systeme.dart';
+import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart' show TonEtat;
@@ -42,11 +44,15 @@ import '../compte/donnees_compte.dart' show profilEleveTitulaireExisteProvider;
 /// envoi en cours, creation faite, creation non confirmee (K-59, D5).
 class CreerMonProfilPage extends ConsumerStatefulWidget {
   /// Cree la page.
-  const CreerMonProfilPage({super.key, this.onRetour});
+  const CreerMonProfilPage({super.key, this.onRetour, this.onOuvrirEspace});
 
   /// Le retour ; par defaut, le Foyer par son adresse (un `pop` garderait
   /// `?pour=moi` dans l'adresse). La demonstration y ramene a sa coquille.
   final VoidCallback? onRetour;
+
+  /// L'ouverture de l'espace eleve ; par defaut, `Routes.eleveAdulte` par son
+  /// adresse. La demonstration y ramene a sa coquille.
+  final VoidCallback? onOuvrirEspace;
 
   /// L'action « Creer mon profil eleve ».
   static const Key creerKey = Key('foyer.monProfil.creer');
@@ -56,6 +62,13 @@ class CreerMonProfilPage extends ConsumerStatefulWidget {
 
   /// L'etat « profil deja present ».
   static const Key dejaKey = Key('foyer.monProfil.deja');
+
+  /// « Ouvrir mon espace eleve », action principale du profil deja present
+  /// quand la capacite « eleve autonome » est servie.
+  static const Key ouvrirEspaceKey = Key('foyer.monProfil.ouvrirEspace');
+
+  /// « Retour au foyer », lien discret sous « Ouvrir mon espace eleve ».
+  static const Key retourLienKey = Key('foyer.monProfil.retourLien');
 
   /// Le message « creation non confirmee ».
   static const Key nonConfirmeKey = Key('foyer.monProfil.nonConfirme');
@@ -75,6 +88,15 @@ class _CreerMonProfilPageState extends ConsumerState<CreerMonProfilPage> {
       propre();
     } else {
       GoRouter.of(context).go(Routes.tuteurFoyer);
+    }
+  }
+
+  void _ouvrirEspace() {
+    final VoidCallback? propre = widget.onOuvrirEspace;
+    if (propre != null) {
+      propre();
+    } else {
+      GoRouter.of(context).go(Routes.eleveAdulte);
     }
   }
 
@@ -127,6 +149,18 @@ class _CreerMonProfilPageState extends ConsumerState<CreerMonProfilPage> {
     final AsyncValue<bool> existe = ref.watch(
       profilEleveTitulaireExisteProvider,
     );
+    // PROFIL-DEJA (directeur, 11/11/2026) : la capacite « eleve autonome »
+    // (jamais le role). Tant qu'elle est en lecture, l'ecran attend : jamais
+    // un bouton qui apparait puis disparait sous les doigts.
+    final _CapaciteEspace capacite = ref.watch(
+      sessionProvider.select(
+        (SessionState s) => s.capaciteEleveEnLecture
+            ? _CapaciteEspace.enLecture
+            : s.eleveAutonome
+            ? _CapaciteEspace.servie
+            : _CapaciteEspace.nonServie,
+      ),
+    );
     final Widget corps;
     if (_envoi == _Envoi.cree) {
       corps = EcranResultat(
@@ -146,14 +180,10 @@ class _CreerMonProfilPageState extends ConsumerState<CreerMonProfilPage> {
         squelette: const Skeleton.texte(),
         onReessayer: () => ref.invalidate(profilEleveTitulaireExisteProvider),
         construire: (bool deja) => deja
-            ? EcranResultat(
-                key: CreerMonProfilPage.dejaKey,
-                icone: AppIcons.profil,
-                ton: TonEtat.neutre,
-                titre: pol.dejaTitre,
-                phrase: pol.dejaPhrase,
-                libelleAction: pol.retour,
-                onAction: _retour,
+            ? _Deja(
+                capacite: capacite,
+                onOuvrirEspace: _ouvrirEspace,
+                onRetour: _retour,
               )
             : _Proposition(
                 envoi: _envoi,
@@ -167,6 +197,74 @@ class _CreerMonProfilPageState extends ConsumerState<CreerMonProfilPage> {
       onRetour: _retour,
       child: ColonneSousPage(child: corps),
     );
+  }
+}
+
+enum _CapaciteEspace { enLecture, servie, nonServie }
+
+/// Le profil eleve du titulaire existe deja (PROFIL-DEJA, directeur,
+/// 11/11/2026) : celui qui touche « Creer mon profil eleve » alors qu'il en a
+/// un cherche en realite son espace eleve.
+///
+/// - Capacite servie : « Ouvrir mon espace eleve » est la seule action pleine
+///   (K-56) ; « Retour au foyer » devient un lien discret sous elle.
+/// - Capacite non servie (acces pas encore ouvert) : « Retour au foyer » reste
+///   la seule action, et une phrase dit pourquoi l'espace n'est pas ouvert.
+/// - Capacite en lecture : le squelette, rien d'autre.
+class _Deja extends StatelessWidget {
+  const _Deja({
+    required this.capacite,
+    required this.onOuvrirEspace,
+    required this.onRetour,
+  });
+
+  final _CapaciteEspace capacite;
+  final VoidCallback onOuvrirEspace;
+  final VoidCallback onRetour;
+
+  @override
+  Widget build(BuildContext context) {
+    final pol = t.foyer.monProfil;
+    switch (capacite) {
+      case _CapaciteEspace.enLecture:
+        return const Skeleton.texte();
+      case _CapaciteEspace.nonServie:
+        return EcranResultat(
+          key: CreerMonProfilPage.dejaKey,
+          icone: AppIcons.profil,
+          ton: TonEtat.neutre,
+          titre: pol.dejaTitre,
+          phrase: pol.dejaAttentePhrase,
+          libelleAction: pol.retour,
+          onAction: onRetour,
+        );
+      case _CapaciteEspace.servie:
+        return Column(
+          key: CreerMonProfilPage.dejaKey,
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            EcranResultat(
+              icone: AppIcons.profil,
+              ton: TonEtat.neutre,
+              titre: pol.dejaTitre,
+              phrase: pol.dejaOuvertPhrase,
+              libelleAction: t.tuteur.accueil.ouvrirEspaceEleve,
+              onAction: onOuvrirEspace,
+              cleAction: CreerMonProfilPage.ouvrirEspaceKey,
+            ),
+            Ecart.vMd,
+            Center(
+              child: LienFleche(
+                key: CreerMonProfilPage.retourLienKey,
+                libelle: pol.retour,
+                onPress: onRetour,
+                fleche: false,
+              ),
+            ),
+          ],
+        );
+    }
   }
 }
 
