@@ -66,7 +66,6 @@ import '../classe_tuteur/rejoindre_avec_eleve.dart';
 import '../consentements/consentement_observation_page.dart';
 import '../foyer/foyer_second_adulte.dart';
 import '../foyer/invitation_conjoint.dart' show invitationRecueProvider;
-import '../parcours_offres/bloc_parcours.dart';
 import '../presentation_tuteur/demandes_presentation_page.dart'
     show CarteDemandePresentation;
 import '../suivi_demandes/carte_suivi_demandes.dart';
@@ -78,6 +77,7 @@ import 'carte_classe_seance.dart';
 import 'carte_horaire.dart';
 import 'ligne_derniere_seance.dart';
 import 'liste_preparation.dart';
+import 'parcours_du_profil_choisi.dart';
 import 'salle_rejoignable.dart';
 
 /// La classe courante d'un eleve (contrat K6), `null` s'il n'en a pas.
@@ -564,7 +564,7 @@ class _CorpsAccueil extends ConsumerWidget {
         if (horaireAChoisir != null)
           CarteHoraireAccueil(apprenant: horaireAChoisir)
         else ...<Widget>[
-          const BlocParcours(),
+          ParcoursDuProfilChoisi(eleveId: eleveId),
           EtatSysteme(
             nature: NatureEtat.aucunResultat,
             titre: t.tuteur.accueil.sansClasseTitre(prenom: profil.prenom),
