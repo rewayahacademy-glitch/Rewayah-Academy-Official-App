@@ -82,8 +82,7 @@ class PreferencesComptePage extends ConsumerWidget {
               legende: langue,
               // PROFILS P4 : la langue du compte, une seule (la page « Langue
               // des e-mails » est supprimee).
-              onPress:
-                  onLangue ?? () => unawaited(ouvrirLangueCompte(context)),
+              onPress: onLangue ?? () => unawaited(ouvrirLangueCompte(context)),
             ),
             LigneRubrique(
               icone: AppIcons.notifications,

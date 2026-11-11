@@ -27,7 +27,6 @@ import 'package:rewayah_academy/features/compte/compte_tuteur_page.dart';
 import 'package:rewayah_academy/features/compte/informations_page.dart';
 import 'package:rewayah_academy/features/compte/lignes_compte.dart'
     show FeuilleLangueCompte;
-import 'package:rewayah_academy/features/compte/paiements_page.dart';
 import 'package:rewayah_academy/features/compte/securite_page.dart';
 import 'package:rewayah_academy/features/consentements/consentement_observation_page.dart';
 import 'package:rewayah_academy/features/foyer/creer_mon_profil_page.dart';
@@ -127,6 +126,7 @@ void main() {
     ) async {
       await monterCompte(tester, taille: const Size(1440, 900));
       for (final String absent in <String>[
+        t.compte.tuteur.acces.paiements,
         'Modifier',
         'Gérer les paiements',
         'Historique et reçus',
@@ -141,7 +141,6 @@ void main() {
       // fois.
       for (final String unique in <String>[
         t.compte.tuteur.acces.ligne,
-        t.compte.tuteur.acces.paiements,
         t.compte.tuteur.securite.methode,
         t.compte.tuteur.informations.titre,
         t.compte.profils,
@@ -161,11 +160,6 @@ void main() {
         t.compte.tuteur.acces.ligne,
         Routes.compteTuteurSousPage('acces'),
         AccesComptePage,
-      ),
-      (
-        t.compte.tuteur.acces.paiements,
-        Routes.compteTuteurSousPage('paiements'),
-        PaiementsComptePage,
       ),
       (
         t.compte.tuteur.securite.methode,

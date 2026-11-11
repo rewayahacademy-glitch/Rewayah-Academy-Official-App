@@ -186,11 +186,6 @@ class _CompteTuteurPageState extends ConsumerState<CompteTuteurPage> {
               valeur: _valeurAcces(acces),
               onPress: () => aller(Routes.compteTuteurSousPage('acces')),
             ),
-            LigneRubrique(
-              icone: AppIcons.fichierPdf,
-              libelle: t.compte.tuteur.acces.paiements,
-              onPress: () => aller(Routes.compteTuteurSousPage('paiements')),
-            ),
           ],
           SectionCompte.compteSecurite: <LigneRubrique>[
             LigneRubrique(

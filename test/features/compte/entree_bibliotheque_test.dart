@@ -68,9 +68,7 @@ void main() {
     expect(find.text('Bibliothèque'), findsNothing);
   });
 
-  testWidgets('le tuteur : la Bibliotheque sort de son Compte', (
-    tester,
-  ) async {
+  testWidgets('le tuteur : la Bibliotheque sort de son Compte', (tester) async {
     await _monter(tester, AppRole.guardian, Routes.tuteurCompte);
     expect(find.text('Ouvrir la bibliothèque'), findsNothing);
     expect(find.text('Bibliothèque'), findsNothing);
