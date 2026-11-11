@@ -3836,8 +3836,11 @@ void main() {
         final Rect centre = tester.getRect(
           find.byKey(SalleOrdinateur.cleCentre),
         );
-        // De bas en haut de sa zone, centree dans le centre.
-        expect(boite.bottom, closeTo(centre.bottom, 0.5));
+        // CORAN-GRAND (11/11/2026) : toute la hauteur que la largeur permet
+        // (fleches comprises), centree dans le centre.
+        expect(boite.center.dy, closeTo(centre.center.dy, 0.5));
+        expect(boite.top, greaterThanOrEqualTo(centre.top - 0.5));
+        expect(boite.bottom, lessThanOrEqualTo(centre.bottom + 0.5));
         expect(boite.center.dx, closeTo(centre.center.dx, 0.5));
         expect(boite.left, greaterThanOrEqualTo(centre.left - 0.5));
         expect(boite.right, lessThanOrEqualTo(centre.right + 0.5));
@@ -3853,9 +3856,10 @@ void main() {
           );
         }
         // Sa largeur suit la composition du mushaf, plafonnee a 1,4 fois.
-        final Size attendue = boitePagePleinEcran(
+        final Size attendue = boitePageAvecFleches(
           Size(centre.width, boite.height),
           telephone: false,
+          avecFleches: true,
         );
         expect(boite.width, closeTo(attendue.width, 0.5));
         // La page composee remplit la hauteur de sa boite.
@@ -3926,8 +3930,11 @@ void main() {
           final Rect centre = tester.getRect(
             find.byKey(SalleOrdinateur.cleCentre),
           );
+          // CORAN-GRAND (11/11/2026) : ranger et focus dans une marge de
+          // fin, a cote du tableau.
           expect(canevas.left, closeTo(centre.left, 0.5));
-          expect(canevas.right, closeTo(centre.right, 0.5));
+          expect(canevas.right, lessThan(centre.right));
+          expect(canevas.right, greaterThan(centre.right - 80));
           expect(canevas.bottom, closeTo(centre.bottom, 0.5));
         }
         final Rect feuille = tester.getRect(
@@ -4111,11 +4118,11 @@ void main() {
         findsNothing,
       );
       final Rect barre = tester.getRect(find.byKey(BarreOutilsSalle.cle));
+      // CORAN-GRAND (11/11/2026) : la colonne des commandes est sur le bord
+      // de debut ; la palette ne la recouvre pas.
       expect(
-        barre.bottom,
-        lessThanOrEqualTo(
-          tester.getRect(find.byKey(SalleOrdinateur.cleBas)).top,
-        ),
+        barre.overlaps(tester.getRect(find.byKey(SalleOrdinateur.cleBas))),
+        isFalse,
       );
       // Une couleur franche : retenue (anneau et coche, jamais la couleur
       // seule) ; la couleur d'intention ne l'est plus.

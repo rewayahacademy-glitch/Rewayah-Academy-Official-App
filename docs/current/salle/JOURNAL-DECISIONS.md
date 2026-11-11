@@ -1002,3 +1002,28 @@ enseignant.
 - Les tests Deno de `supabase/functions/_shared/` ne sont toujours pas lancés par la CI.
 - Sans le prénom du récitant (message de la récitation non reçu par l'application), le camarade lit
   la phrase de l'attente de l'enseignant, fausse dans ce cas. Existant, non corrigé ici.
+
+## D-021 (11/11/2026). Le Coran grand chez l'enseignant sur ordinateur : la barre passe sur un côté (lot CORAN-GRAND)
+
+- **Demande** : « Sur PC, il faut que le Coran soit grand » ; décision du directeur sur la
+  recommandation du pilote : « la barre sur un côté d'abord » (question 5 ci-dessus).
+- **Décidé et codé** (`salle_ordinateur.dart`) : la barre des commandes devient une colonne sur le
+  bord de début (mêmes cinq groupes, même ordre de haut en bas, mêmes tuiles, états, raccourcis et
+  infobulles ; Quitter seul rouge, tout en bas). La rangée du haut disparaît : la Classe, le titre
+  du support et l'île en tête de la colonne ; zoom, ranger et focus dans les marges de la page,
+  au-dessus de ses flèches. La page prend toute la hauteur de l'écran. Repli de la colonne quand la
+  hauteur manque : le titre, puis la Classe, puis les noms des tuiles (icônes et infobulles) ; elle
+  ne défile jamais. Focus : les panneaux partent, la colonne reste en icônes, l'île reste. Quand
+  l'enseignant écrit, la palette prend la place du panneau des Élèves.
+- **Mesures** (texte de la page, vraies polices) : 1440 x 900, de 371 x 614 à 448 x 742 panneaux
+  ouverts (+ 21 %) et 462 x 765 fermés (+ 25 %) ; 1280 x 720, de 275 x 455 à 295 x 488 ouverts
+  (+ 7 %, la largeur borne) et 366 x 607 fermés (+ 33 %).
+- **Écarts datés** à la composition du 26/10 et à D-015 : barre sur toute la largeur devenue
+  colonne ; « une tuile du côté du panneau qu'elle ouvre » abandonnée (tout est du même côté) ;
+  le focus retire aussi les noms de la colonne au lieu du haut.
+- **Non prouvé** : rien vu sur la vraie application ; captures de test seulement
+  (`docs/current/captures/E2E/coran-grand/`). Détail, sources et questions :
+  `docs/current/UX_REVIEW_CORAN-GRAND.md`.
+- **Questions au directeur** : Bibliothèque ouverte d'office seulement à 1600 et plus (recommandé) ;
+  colonne collée au bord (recommandé, lot suivant) ; palette qui cache les Élèves pendant
+  l'écriture (recommandé) ; icônes de 24 dans la colonne pour garder les noms à 720 (à essayer).

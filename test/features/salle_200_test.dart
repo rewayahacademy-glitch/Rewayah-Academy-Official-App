@@ -1091,7 +1091,10 @@ void main() {
         matching: find.byKey(const ValueKey<String>('nom-commande')),
       );
       expect(disques, findsWidgets);
-      expect(noms.evaluate().length, disques.evaluate().length);
+      // CORAN-GRAND (11/11/2026) : la barre est une colonne ; quand la
+      // hauteur manque (texte agrandi), tous les noms partent ensemble et
+      // l'infobulle garde chaque nom.
+      expect(noms.evaluate().length, anyOf(0, disques.evaluate().length));
       for (final Element e in disques.evaluate()) {
         final Size taille = tester.getSize(find.byWidget(e.widget));
         expect(taille.height, greaterThanOrEqualTo(diametre - 0.5));
