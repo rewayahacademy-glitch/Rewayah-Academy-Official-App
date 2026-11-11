@@ -7,11 +7,11 @@
 // Sources (lues par les ecrans, jamais ici) :
 // * enseignant :
 //   - remplacements : `offres_remplacement()` (DECISION-REMPLACEMENT) -> urgent ;
-//   - eleves absents ou en retard pendant la seance en cours : A VENIR, en
-//     dernier. Ce rouge lira la meme fonction serveur que le rouge « retard »
-//     de H (migration de H, plage 20261122700000 a 799999) ; aucune source
-//     propre ici (arbitrage du pilote du 11/11/2026). « Excusee » reste
-//     lisible dans la presence, sans lumiere propre ;
+//   - eleves pas encore entres dans la seance en direct, seuil depasse :
+//     `retard_en_direct(uuid)` par le port de H (`retardEnDirectProvider`,
+//     LUMIERE 3, arbitrage du pilote du 11/11/2026) -> urgent. Un eleve entre
+//     en retard est dans la salle : il n'allume rien. « Excusee » et les
+//     derogations de la direction sont exclues par le serveur ;
 //   - cahier a remplir : `mes_rapports_en_attente()` -> a preparer ;
 //   - les messages sont hors de ce lot.
 // * direction :
@@ -36,6 +36,9 @@ import '../widgets/halo_lumiere.dart';
 enum MotifEnseignant {
   /// Une ou plusieurs offres de remplacement.
   remplacement,
+
+  /// Des eleves pas encore entres dans la seance en direct (LUMIERE 3).
+  absents,
 
   /// Des cahiers de transmission a remplir.
   cahier,
@@ -90,16 +93,27 @@ class SignalAccueil<M extends Enum> {
 }
 
 /// Les signaux de l'« Aujourd'hui » de l'enseignant, dans l'ordre de
-/// priorite : les remplacements (urgent), puis le cahier (a preparer).
+/// priorite : les remplacements (urgent), les eleves pas encore entres dans
+/// la seance en direct (urgent), puis le cahier (a preparer).
+///
+/// [elevesPasEntres] est le nombre de lignes rendues par `retard_en_direct`
+/// pour la seance en direct ; une lecture illisible ou absente vaut 0.
 List<SignalAccueil<MotifEnseignant>> signauxAujourdhui({
   required int offresRemplacement,
   required int cahiersARemplir,
+  int elevesPasEntres = 0,
 }) => <SignalAccueil<MotifEnseignant>>[
   if (offresRemplacement > 0)
     SignalAccueil<MotifEnseignant>(
       nature: NatureHalo.urgent,
       motif: MotifEnseignant.remplacement,
       nombre: offresRemplacement,
+    ),
+  if (elevesPasEntres > 0)
+    SignalAccueil<MotifEnseignant>(
+      nature: NatureHalo.urgent,
+      motif: MotifEnseignant.absents,
+      nombre: elevesPasEntres,
     ),
   if (cahiersARemplir > 0)
     SignalAccueil<MotifEnseignant>(
