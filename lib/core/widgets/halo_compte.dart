@@ -44,7 +44,7 @@ class EtatHaloCompte {
     required this.titre,
     required this.chemin,
     this.detail,
-  }) : nature = NatureHalo.urgent,
+  }) : _sorte = _SorteCercle.urgent,
        nombre = null,
        idsNonLus = const <String>{},
        action = t.nav.halo.ouvrirAlerte,
@@ -59,7 +59,7 @@ class EtatHaloCompte {
     required this.chemin,
     required void Function(BuildContext contexte) this.agir,
     this.detail,
-  }) : nature = NatureHalo.salle,
+  }) : _sorte = _SorteCercle.salle,
        titre = t.classe.entree.annonce.fenetreOuverte,
        nombre = null,
        idsNonLus = const <String>{};
@@ -69,14 +69,18 @@ class EtatHaloCompte {
     required int this.nombre,
     required this.chemin,
     this.idsNonLus = const <String>{},
-  }) : nature = NatureHalo.nouveau,
+  }) : _sorte = _SorteCercle.nouveau,
        titre = t.nav.halo.nouveauTitre(n: nombre, nombre: nombre),
        detail = null,
        action = t.nav.halo.lire,
        agir = null;
 
+  // Le cercle Compte ne porte que trois sortes de lumiere : « a preparer »
+  // est une lumiere d'ecran, impossible a construire ici (garde-cap, 2a-bis).
+  final _SorteCercle _sorte;
+
   /// Ce que le halo signale.
-  final NatureHalo nature;
+  NatureHalo get nature => _sorte.nature;
 
   /// Le titre de la feuille « En ce moment ».
   final String titre;
@@ -107,27 +111,24 @@ class EtatHaloCompte {
   AppHaloColor get couleurs => nature.couleurs;
 
   /// L'icone de la pastille.
-  IconData get icone => switch (nature) {
-    NatureHalo.urgent => AppIcons.avertissement.actif,
-    NatureHalo.salle => AppIcons.camera.actif,
-    NatureHalo.aPreparer => throw StateError(_horsDuCercle),
-    NatureHalo.nouveau => AppIcons.notifications.actif,
+  IconData get icone => switch (_sorte) {
+    _SorteCercle.urgent => AppIcons.avertissement.actif,
+    _SorteCercle.salle => AppIcons.camera.actif,
+    _SorteCercle.nouveau => AppIcons.notifications.actif,
   };
 
   /// Le mot court ecrit sous « Compte » dans la tuile du Mode Accessibilite.
-  String get motCourt => switch (nature) {
-    NatureHalo.urgent => t.nav.halo.urgentMot,
-    NatureHalo.salle => t.tc.groupe.temps.salleOuverteCourt,
-    NatureHalo.aPreparer => throw StateError(_horsDuCercle),
-    NatureHalo.nouveau => t.nav.halo.nouveauMot,
+  String get motCourt => switch (_sorte) {
+    _SorteCercle.urgent => t.nav.halo.urgentMot,
+    _SorteCercle.salle => t.tc.groupe.temps.salleOuverteCourt,
+    _SorteCercle.nouveau => t.nav.halo.nouveauMot,
   };
 
   /// Le nom lu du cercle : [compte] (« Compte », « Profil »...) et l'etat.
-  String nomAccessible(String compte) => switch (nature) {
-    NatureHalo.urgent => t.nav.halo.urgentNom(compte: compte),
-    NatureHalo.salle => t.nav.halo.salleNom(compte: compte),
-    NatureHalo.aPreparer => throw StateError(_horsDuCercle),
-    NatureHalo.nouveau => t.nav.halo.nouveauNom(
+  String nomAccessible(String compte) => switch (_sorte) {
+    _SorteCercle.urgent => t.nav.halo.urgentNom(compte: compte),
+    _SorteCercle.salle => t.nav.halo.salleNom(compte: compte),
+    _SorteCercle.nouveau => t.nav.halo.nouveauNom(
       n: nombre ?? 0,
       compte: compte,
       nombre: nombre ?? 0,
@@ -506,6 +507,14 @@ class _CorpsEnCeMoment extends StatelessWidget {
   }
 }
 
-/// « A preparer » est une lumiere d'ecran (lots E et H), jamais celle du
-/// cercle Compte : aucun `EtatHaloCompte` ne la porte.
-const String _horsDuCercle = 'a preparer : lumiere d ecran, pas du cercle';
+/// Les lumieres que le cercle Compte peut porter : urgent, salle ouverte,
+/// nouveau. « A preparer » n'en fait pas partie (lumiere d'ecran).
+enum _SorteCercle {
+  urgent(NatureHalo.urgent),
+  salle(NatureHalo.salle),
+  nouveau(NatureHalo.nouveau);
+
+  const _SorteCercle(this.nature);
+
+  final NatureHalo nature;
+}

@@ -2,9 +2,12 @@
 // halo, cercle ou rectangle arrondi, et l'arbitre de l'ecran.
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/admin/admin_domaine.dart';
 import 'package:rewayah_academy/core/theme/app_color_pair.dart';
 import 'package:rewayah_academy/core/theme/app_palette.dart';
+import 'package:rewayah_academy/core/widgets/admin_shell.dart';
 import 'package:rewayah_academy/core/widgets/halo_lumiere.dart';
 
 import '../support/harnais.dart';
@@ -163,5 +166,30 @@ void main() {
       await tester.pump(const Duration(milliseconds: 300));
       expect(_lumieres(), findsNWidgets(3));
     });
+  });
+
+  testWidgets('la direction (AdminShell) pose aussi l arbitre, une fois', (
+    WidgetTester tester,
+  ) async {
+    final List<EtatArbitreLumieres?> vus = <EtatArbitreLumieres?>[];
+    await tester.pumpWidget(
+      hote(
+        AdminShell(
+          domaines: domainesAdmin(voitDirection: true),
+          domaineActif: AdminDomaine.accueil,
+          onAller: (String _) {},
+          onCompte: () {},
+          child: Builder(
+            builder: (BuildContext contexte) {
+              vus.add(ArbitreLumieres.de(contexte));
+              return const SizedBox();
+            },
+          ),
+        ),
+        surcharges: <Override>[sansPersonneConnectee()],
+      ),
+    );
+    await tester.pump();
+    expect(vus.last, isNotNull);
   });
 }
