@@ -7,11 +7,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
 import 'package:go_router/go_router.dart';
 
+import '../../core/accueil/signaux_accueils.dart' show SignalAccueil;
+import '../../core/accueil/signaux_famille.dart';
 import '../../core/admission/profils_demande.dart';
 import '../../core/appairage/service_appairage.dart';
 import '../../core/capacites/port_catalogue_classes.dart'
     show catalogueClassesOuvert, portCatalogueClassesProvider;
 import '../../core/capacites/port_classes_foyer.dart';
+import '../../core/capacites/port_partage_pedagogique.dart'
+    show CompteRenduFamille;
 import '../../core/domain/enums.dart';
 import '../../core/foyer/selection_eleve.dart';
 import '../../core/i18n/elision.dart';
@@ -36,12 +40,13 @@ import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/grille_bento.dart';
 import '../../core/widgets/lien_fleche.dart';
+import '../../core/widgets/lumiere_autour.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/selecteur_profils.dart';
 import '../../core/widgets/skeleton.dart';
 import '../acces_finance/acces_finance.dart'
-    show BandeauPlace, accesEleveProvider;
+    show BandeauPlace, OuvertureSeances, accesEleveProvider, ouvertureSeances;
 import '../acces_finance/carte_acces_finance.dart';
 import '../classe_tuteur/rejoindre_avec_eleve.dart';
 import '../consentements/consentement_observation_page.dart';
@@ -50,6 +55,7 @@ import '../parcours_offres/bloc_parcours.dart';
 import '../presentation_tuteur/demandes_presentation_page.dart'
     show CarteDemandePresentation;
 import '../suivi_demandes/carte_suivi_demandes.dart';
+import '../suivi_foyer/bloc_compte_rendu.dart' show compteRenduFamilleProvider;
 import 'ancre_horloge_serveur.dart';
 import 'bandeau_blocage.dart';
 import 'bloc_seance.dart';
@@ -438,6 +444,33 @@ class _Contenu extends ConsumerWidget {
       },
     );
 
+    // LUMIERE-ACCUEILS (11/11/2026) : trois lumieres, toutes tirees d'etats que
+    // le serveur rend (voir `signauxFamille`) ; l'arbitre n'en fait tourner
+    // qu'une seule par ecran.
+    final bool fermees =
+        ouvertureSeances(ref.watch(accesEleveProvider(eleveId)).value) ==
+        OuvertureSeances.fermees;
+    final AsyncValue<CompteRenduFamille>? cahier = derniereId == null
+        ? null
+        : ref.watch(
+            compteRenduFamilleProvider((
+              seanceId: derniereId,
+              eleveId: eleveId,
+            )),
+          );
+    final List<SignalAccueil<MotifFamille>> signaux = signauxFamille(
+      // Le blocage n'est la tuile du haut que si la salle n'est pas
+      // rejoignable : sinon la tuile est le bouton « Rejoindre ».
+      accesBloque:
+          !salle.rejoignable &&
+          (fermees ? bandeauPlace != null : (bandeauPlace == null && blocage)),
+      maintenantServeurUtc: maintenantServeurUtc,
+      debutProchaineUtc: prochaine.value?.debutUtc,
+      travailAPreparer: travail?.value?.isNotEmpty ?? false,
+      etatCahier: cahier?.value?.etat,
+      debutDerniereUtc: derniere.value?.debutUtc,
+    );
+
     final Widget? bandeau = rejoindre
         ? AppCard(
             key: AccueilFamillePage.rejoindreKey,
@@ -548,7 +581,10 @@ class _Contenu extends ConsumerWidget {
                   TuileBento(
                     etendue: EtendueBento.large,
                     etendueLarge: const EtendueBento(4, 1),
-                    child: bandeau,
+                    child: LumiereAutour(
+                      nature: lumierePourFamille(signaux, MotifFamille.acces),
+                      child: bandeau,
+                    ),
                   ),
                 TuileBento(
                   etendue: EtendueBento.grande,
@@ -558,12 +594,18 @@ class _Contenu extends ConsumerWidget {
                 TuileBento(
                   etendue: EtendueBento.grande,
                   etendueLarge: pleine,
-                  child: AppCard(marge: marge, child: preparation),
+                  child: LumiereAutour(
+                    nature: lumierePourFamille(signaux, MotifFamille.preparer),
+                    child: AppCard(marge: marge, child: preparation),
+                  ),
                 ),
                 TuileBento(
                   etendue: EtendueBento.large,
                   etendueLarge: const EtendueBento(4, 1),
-                  child: AppCard(marge: marge, child: derniereSeance),
+                  child: LumiereAutour(
+                    nature: lumierePourFamille(signaux, MotifFamille.cahier),
+                    child: AppCard(marge: marge, child: derniereSeance),
+                  ),
                 ),
                 // Pleine largeur, apres la derniere seance : jamais cote a
                 // cote avec une carte de meme taille.

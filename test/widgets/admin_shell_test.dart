@@ -6,6 +6,7 @@ import 'package:rewayah_academy/core/icons/app_icons.dart';
 import 'package:rewayah_academy/core/widgets/admin_shell.dart';
 import 'package:rewayah_academy/core/widgets/brand_logo.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
+import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/core/widgets/page_shell.dart';
 
 import '../support/harnais.dart';
@@ -128,7 +129,9 @@ void main() {
     // Aucun champ visible : la recherche est un bouton qui ouvre la feuille.
     expect(find.byType(TextField), findsNothing);
     expect(find.bySemanticsLabel(t.nav.admin.recherche), findsOneWidget);
-    expect(find.bySemanticsLabel(t.nav.compte), findsOneWidget);
+    // NAV-REFONTE etape 4 : le compte a quitte l'en-tete pour le pied de
+    // la colonne (photo, nom, menu).
+    expect(find.byKey(NavShell.piedCompteKey), findsOneWidget);
     expect(find.bySemanticsLabel(t.commun.theme.sombre), findsOneWidget);
     // Pas de cloche tant qu'aucun service de notifications n'existe (Q5).
     expect(find.byIcon(AppIcons.notifications.repos), findsNothing);
@@ -202,10 +205,17 @@ void main() {
     await tester.pump();
     // LOGO-APP : le logo horizontal tient la tete de la barre laterale.
     expect(logoRendu(VarianteLogo.horizontal), findsOneWidget);
-    expect(find.text(t.compte.roles.admin), findsOneWidget);
-    expect(find.text(t.admin.comptes.roleAdmin), findsOneWidget);
-    await tester.tap(find.text(t.compte.roles.admin));
-    await tester.pump();
+    // NAV-REFONTE etape 4 : le pied est celui des roles ; sans prenom lu,
+    // il porte « Mon compte », et son menu mene au compte.
+    final Finder pied = find.byKey(NavShell.piedCompteKey);
+    expect(
+      find.descendant(of: pied, matching: find.text(t.nav.compte)),
+      findsOneWidget,
+    );
+    await tester.tap(pied);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(t.nav.compte).last);
+    await tester.pumpAndSettle();
     expect(comptes, 1);
 
     // L'etat actif porte aussi la graisse, pas seulement la couleur.
