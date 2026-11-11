@@ -42,7 +42,6 @@ import 'package:rewayah_academy/core/tc_realtime/codec_message_pedagogique.dart'
 import 'package:rewayah_academy/core/tc_realtime/port_realtime_pedagogique.dart'
     show MessagePedagogique;
 import 'package:rewayah_academy/core/tc_realtime/types_message.dart';
-import 'package:rewayah_academy/core/theme/app_gabarit.dart';
 import 'package:rewayah_academy/core/theme/app_mouvement.dart';
 import 'package:rewayah_academy/core/video/garde_fermeture.dart';
 import 'package:rewayah_academy/core/video/gestes_salle.dart';
@@ -3872,7 +3871,10 @@ void main() {
     }
 
     for (final Size taille in <Size>[
-      const Size(390, 844),
+      // TELEPHONE-REDUIT (11/11/2026) : sous 600, le tableau ne s'ouvre
+      // plus au telephone de l'enseignant ; l'iPad en portrait garde le
+      // tiroir a onglets.
+      const Size(834, 1194),
       const Size(1366, 768),
     ]) {
       final String nom = '${taille.width.toInt()}x${taille.height.toInt()}';
@@ -3882,7 +3884,7 @@ void main() {
         // Plan §4 (PR B) : au telephone, le tableau vit dans l'onglet Outils
         // du tiroir des Commandes ; la pilule ne garde que micro, camera et
         // quitter. Sur ordinateur, la barre du bas le porte.
-        if (taille.width < AppGabarit.seuilTablette) {
+        if (taille.width < 840) {
           // Les commandes se masquent au delai : un toucher les ramene.
           await tester.tapAt(const Offset(10, 10));
           await tester.pumpAndSettle();
@@ -3895,7 +3897,7 @@ void main() {
         await tester.tap(find.byKey(const ValueKey<String>('bouton-tableau')));
         await tester.pumpAndSettle();
         // Le tiroir se referme pour laisser voir le tableau.
-        if (taille.width < AppGabarit.seuilTablette) {
+        if (taille.width < 840) {
           await tester.tap(
             find.byKey(PanneauSeance.cleReduire).hitTestable().first,
           );

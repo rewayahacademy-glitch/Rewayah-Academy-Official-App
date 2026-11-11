@@ -403,9 +403,13 @@ void main() {
             // Pilote C10 : la capsule suit le toucher, absente au repos.
             expect(capsule.hitTestable(), findsNothing);
             expect(commandes.hitTestable(), findsOneWidget);
-            // Rien d'autre : ni pilule d'etat, ni Eleves, ni croix, ni texte.
-            expect(_horsDe(tester, <Finder>[commandes]), isEmpty);
-            expect(find.byType(PiluleEtatSalle), findsNothing);
+            // Rien d'autre que l'ile (TELEPHONE-REDUIT, cahier §8 : le
+            // chrono se lit au repos) : ni Eleves, ni croix, ni texte.
+            final Finder ile = find.byKey(
+              const ValueKey<String>('ligne-etat-telephone'),
+            );
+            expect(_horsDe(tester, <Finder>[commandes, ile]), isEmpty);
+            expect(find.byType(PiluleEtatSalle), findsOneWidget);
             expect(
               find.byKey(const ValueKey<String>('salle-eleves')),
               findsNothing,
@@ -496,6 +500,8 @@ void main() {
             expect(
               _horsDe(tester, <Finder>[
                 capsule,
+                // TELEPHONE-REDUIT : l'ile, au-dessus de la capsule.
+                find.byKey(const ValueKey<String>('ligne-etat-telephone')),
               ]).where((h) => h.cadre.top <= c.bottom),
               isEmpty,
               reason: 'en haut hors de la capsule',
@@ -693,11 +699,13 @@ void main() {
             await tester.tap(repos);
             await tester.pumpAndSettle();
             expect(find.byKey(TiroirCommandesTelephone.cle), findsOneWidget);
+            // TELEPHONE-REDUIT : sous 600, le tableau ne s'ouvre plus au
+            // telephone (rien a y ecrire au doigt).
             expect(
               find
                   .byKey(const ValueKey<String>('bouton-tableau'))
                   .hitTestable(),
-              findsOneWidget,
+              taille.width < 600 ? findsNothing : findsOneWidget,
             );
             expect(tester.takeException(), isNull);
           });
@@ -750,7 +758,8 @@ void main() {
           ) async {
             await _monter(tester, taille: taille, texte: texte);
             await _toucher(tester);
-            // La ligne d'etat n'est nulle part avant.
+            // La ligne d'etat n'est nulle part au toucher (TELEPHONE-REDUIT :
+            // l'ile la dit au repos, a la place de la capsule).
             expect(find.byType(PiluleEtatSalle), findsNothing);
             await tester.tap(find.byKey(CapsuleVideoTelephone.cleDeplier));
             await tester.pumpAndSettle();
@@ -931,6 +940,9 @@ void main() {
           ]) {
             testWidgets('$nom, ${theme.name} : ligne 7, le tiroir : une surface, '
                 'Support | Outils', (WidgetTester tester) async {
+              // TELEPHONE-REDUIT : sous 600, le tiroir n'a plus d'onglets ni
+              // d'ecriture (telephone_reduit_test.dart) ; la tablette garde tout.
+              if (taille.width < 600) return;
               await _monter(tester, taille: taille, texte: texte, theme: theme);
               await _ouvrirTiroir(tester);
               final Finder tiroir = find.byKey(TiroirCommandesTelephone.cle);
@@ -1049,8 +1061,11 @@ void main() {
             await tester.pumpAndSettle();
             await _ouvrirTiroir(tester);
             _aucuneCommandeEnDouble(tester, 'tiroir Support');
-            await _onglet(tester, t.salle.seance.commandes.ongletOutils);
-            _aucuneCommandeEnDouble(tester, 'tiroir Outils');
+            // TELEPHONE-REDUIT : sous 600, plus d'onglet Outils.
+            if (taille.width >= 600) {
+              await _onglet(tester, t.salle.seance.commandes.ongletOutils);
+              _aucuneCommandeEnDouble(tester, 'tiroir Outils');
+            }
             await tester.tap(find.byKey(TelephonePleinEcran.cleEleves));
             await tester.pumpAndSettle();
             expect(find.byKey(FeuilleElevesTelephone.cle), findsOneWidget);
@@ -1071,12 +1086,15 @@ void main() {
             await tester.pumpAndSettle();
             await _ouvrirTiroir(tester);
             _verifierLigne14(tester, 'tiroir Support');
-            await _onglet(tester, t.salle.seance.commandes.ongletOutils);
-            await tester.tap(
-              find.byKey(const ValueKey<String>('barre-outils-stylet')),
-            );
-            await tester.pumpAndSettle();
-            _verifierLigne14(tester, 'tiroir Outils');
+            // TELEPHONE-REDUIT : sous 600, plus d'onglet Outils.
+            if (taille.width >= 600) {
+              await _onglet(tester, t.salle.seance.commandes.ongletOutils);
+              await tester.tap(
+                find.byKey(const ValueKey<String>('barre-outils-stylet')),
+              );
+              await tester.pumpAndSettle();
+              _verifierLigne14(tester, 'tiroir Outils');
+            }
             await tester.tap(find.byKey(TelephonePleinEcran.cleEleves));
             await tester.pumpAndSettle();
             _verifierLigne14(tester, 'eleves');
@@ -1199,6 +1217,9 @@ void main() {
 
           testWidgets('$nom : ligne 8, Outils : Stylo, Surligner, Gomme, '
               'Annuler, les couleurs', (WidgetTester tester) async {
+            // TELEPHONE-REDUIT : sous 600, le tiroir n'a plus d'onglets ni
+            // d'ecriture (telephone_reduit_test.dart) ; la tablette garde tout.
+            if (taille.width < 600) return;
             await _monter(tester, taille: taille, texte: texte);
             await _ouvrirTiroir(tester);
             await _onglet(tester, t.salle.seance.commandes.ongletOutils);
@@ -1345,6 +1366,9 @@ void main() {
 
           testWidgets('$nom : ligne 9, Support : Tableau, Bibliotheque, '
               '« Ranger le support »', (WidgetTester tester) async {
+            // TELEPHONE-REDUIT : sous 600, le tiroir n'a plus d'onglets ni
+            // d'ecriture (telephone_reduit_test.dart) ; la tablette garde tout.
+            if (taille.width < 600) return;
             await _monter(tester, taille: taille, texte: texte);
             await _ouvrirTiroir(tester);
             final Finder tiroir = find.byKey(TiroirCommandesTelephone.cle);
@@ -1522,7 +1546,8 @@ void main() {
               await tester.tapAt(Offset(taille.width / 2, (haut + bas) / 2));
               await tester.pumpAndSettle();
               expect(ouvert, findsNothing);
-              if (!elevesOuverts) {
+              // TELEPHONE-REDUIT : sous 600, plus d'ecriture au telephone.
+              if (!elevesOuverts && taille.width >= 600) {
                 // Pilote (26/10) : un outil retenu, le toucher de la page
                 // dessine et le tiroir reste ouvert ; « Reduire » le ferme.
                 await _toucher(tester);
@@ -1679,12 +1704,14 @@ void main() {
       await tester.pumpAndSettle();
       await _ouvrirTiroir(tester);
       await capturerVue(tester, 'fiche1-$taille-tiroir-support');
-      await _onglet(tester, t.salle.seance.commandes.ongletOutils);
-      await tester.tap(
-        find.byKey(const ValueKey<String>('barre-outils-stylet')),
-      );
-      await tester.pumpAndSettle();
-      await capturerVue(tester, 'fiche1-$taille-tiroir-outils');
+      if (ecran.width >= 600) {
+        await _onglet(tester, t.salle.seance.commandes.ongletOutils);
+        await tester.tap(
+          find.byKey(const ValueKey<String>('barre-outils-stylet')),
+        );
+        await tester.pumpAndSettle();
+        await capturerVue(tester, 'fiche1-$taille-tiroir-outils');
+      }
       await tester.tap(find.byKey(TelephonePleinEcran.cleEleves));
       await tester.pumpAndSettle();
       await capturerVue(tester, 'fiche1-$taille-eleves');

@@ -42,6 +42,10 @@ contrôleur de session (`controleurSessionProvider`), il continue hors de l'écr
    - **Téléphone : la pilule micro · caméra · quitter ne grossit pas** (fiche 1). Le geste y est
      proposé par la question de Quitter (point 2) et par le retour du téléphone (point 3). Le
      tiroir « Commandes » n'a plus d'onglet « Séance » et son fichier n'est pas dans ce lot (Q1).
+     **Mis à jour le 11/11/2026 (lot TELEPHONE-REDUIT, D-020)** : au téléphone de l'enseignant (et
+     sur iPad en portrait), « Réduire la salle » est un bouton visible **au début de la capsule du
+     haut**, au toucher, à côté de sa vidéo (la place du retour d'un téléphone) ; la pilule ne
+     change pas. Voir `docs/current/UX_REVIEW_TELEPHONE-REDUIT.md` §3.
    - Interface guidée : ni la commande ni le choix « Réduire » (un enfant seul ne doit pas laisser
      l'appel ouvert sans le voir) ; sa sortie reste la question simple. Voir Q4.
    - Le geste n'apparaît **que si l'appel est tenu** : `/salle` ne donne `onRetour` que dans ce
@@ -81,7 +85,7 @@ SORTIE-SALLE : retour du téléphone, Réduire puis vraie sortie). Le test du re
 
 | # | Question | Recommandation |
 | :-- | :-- | :-- |
-| Q1 | Au téléphone, l'enseignant doit-il avoir « Réduire la salle » ailleurs que dans la question de Quitter ? | Oui : une ligne « Réduire la salle » dans le tiroir « Commandes » (onglet Outils), sans toucher la pilule. Petit lot dans `telephone_enseignant.dart` |
+| Q1 | Au téléphone, l'enseignant doit-il avoir « Réduire la salle » ailleurs que dans la question de Quitter ? | **Fait (lot TELEPHONE-REDUIT, D-020), à confirmer** : pas dans le tiroir (trois gestes, pas plus visible que la question), mais au début de la capsule du haut, deux gestes, sans toucher la pilule (un cinquième disque la mettait sur deux rangées à 390) |
 | Q2 | Faut-il un « Terminer la séance pour tous » chez celui qui conduit ? | Oui, mais avec la fermeture de la salle par le serveur (SEC-1) : sans elle, le bouton promettrait une fin que le serveur ne fait pas |
 | Q3 | Le contrôleur passe par la même question (CTR-02 disait « sans confirmation ») | Garder la question : elle lui propose aussi de réduire la salle et ne coûte qu'un appui |
 | Q4 | L'élève en interface guidée doit-il voir « Réduire la salle » ? | Non pour un enfant seul (appliqué ainsi dans ce lot, à confirmer) : il garde « Quitter » seul ; un retour du navigateur garde toujours l'appel et la barre |
