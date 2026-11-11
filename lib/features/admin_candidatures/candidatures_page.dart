@@ -195,10 +195,22 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
     _filtrer(_filtre.avec(recherche: texte));
   }
 
-  void _filtrer(FiltreCandidatures filtre) => setState(() {
-    _filtre = filtre;
-    _page = 1;
-  });
+  /// Pose un filtre (recherche comprise). Une selection faite sous l'ancien
+  /// filtre ne dit plus ce qu'elle retient : elle est retiree, et la page le
+  /// dit (`lot.selectionRetiree`), jamais en silence. Un filtre egal a
+  /// l'actuel ne fait rien : ni selection retiree, ni retour a la premiere page.
+  /// Le tri ne change pas les candidatures retenues : il garde la selection.
+  void _filtrer(FiltreCandidatures filtre) {
+    if (filtre == _filtre) return;
+    setState(() {
+      if (_retenues.isNotEmpty) {
+        _retenues.clear();
+        _retour = t.admin.candidatures.lot.selectionRetiree;
+      }
+      _filtre = filtre;
+      _page = 1;
+    });
+  }
 
   void _effacer() {
     _attenteSaisie?.cancel();
