@@ -701,6 +701,52 @@ void main() {
   });
 
   group('selection', () {
+    testWidgets(
+      'un filtre change : la selection est retiree, et la page le dit',
+      (tester) async {
+        final FauxCandidaturesDirection port = FauxCandidaturesDirection(
+          lignes: _lignes(),
+          capacitesRendues: capacitesGestes,
+        );
+        await monterCandidatures(tester, port: port);
+        await tester.tap(_cle('candidatures-selectionner'));
+        await laisser(tester);
+        await tester.tap(_cle('candidature-a1'));
+        await laisser(tester);
+        expect(find.byKey(CandidaturesPage.cleBarreLot), findsOneWidget);
+        await toucherFiltre(tester, _cle('candidatures-filtre-examen'));
+        await laisser(tester);
+        expect(find.byKey(CandidaturesPage.cleBarreLot), findsNothing);
+        expect(
+          find.text(t.admin.candidatures.lot.selectionRetiree),
+          findsOneWidget,
+        );
+      },
+    );
+
+    testWidgets('le tri change : la selection est gardee, aucun message', (
+      tester,
+    ) async {
+      final FauxCandidaturesDirection port = FauxCandidaturesDirection(
+        lignes: _lignes(),
+        capacitesRendues: capacitesGestes,
+      );
+      await monterCandidatures(tester, port: port);
+      await tester.tap(_cle('candidatures-selectionner'));
+      await laisser(tester);
+      await tester.tap(_cle('candidature-a1'));
+      await laisser(tester);
+      final Finder reception = find.text(t.admin.candidatures.tri.reception);
+      await tester.ensureVisible(reception.first);
+      await tester.tap(reception.first);
+      await laisser(tester);
+      expect(find.byKey(CandidaturesPage.cleBarreLot), findsOneWidget);
+      expect(
+        find.text(t.admin.candidatures.lot.selectionRetiree),
+        findsNothing,
+      );
+    });
+
     Future<FauxCandidaturesDirection> monter(
       WidgetTester tester, {
       bool horsLigne = false,
