@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart' show ValueListenable;
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
@@ -142,6 +143,17 @@ class _CommandesMasquablesState extends State<CommandesMasquables> {
   /// Le dernier etat signale a la barre (evite les signaux repetes).
   bool _barreEffacee = false;
 
+  /// CORRECTIF-BARRE (directeur, 11/11/2026) : le lecteur n'efface la barre
+  /// que tant qu'il est A L'ECRAN. Laisse dans un onglet quitte (la pile
+  /// indexee des onglets le garde monte mais coupe ses animations :
+  /// `TickerMode`), il la rend ; au retour sur l'onglet, il l'efface de
+  /// nouveau si ses commandes sont masquees.
+  ValueListenable<TickerModeData>? _scene;
+
+  bool get _enScene => _scene?.value.enabled ?? true;
+
+  void _surScene() => _synchroniserBarre(differe: true);
+
   /// TB-2 : le pointeur survole les commandes.
   bool _survol = false;
 
@@ -195,6 +207,13 @@ class _CommandesMasquablesState extends State<CommandesMasquables> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    final ValueListenable<TickerModeData> scene = TickerMode.getValuesNotifier(
+      context,
+    );
+    if (!identical(scene, _scene)) {
+      _scene?.removeListener(_surScene);
+      _scene = scene..addListener(_surScene);
+    }
     final ControleurBarreBasse? barre = widget.effacerBarreBasse
         ? EffacementBarreBasse.de(context)
         : null;
@@ -206,8 +225,8 @@ class _CommandesMasquablesState extends State<CommandesMasquables> {
     // Lecteur d'ecran active pendant que tout est masque : tout revient.
     if (!_visibles && _toujoursVisibles(context)) {
       _visibles = true;
-      _synchroniserBarre(differe: true);
     }
+    _synchroniserBarre(differe: true);
   }
 
   @override
@@ -228,6 +247,7 @@ class _CommandesMasquablesState extends State<CommandesMasquables> {
   @override
   void dispose() {
     _minuteur?.cancel();
+    _scene?.removeListener(_surScene);
     FocusManager.instance.removeHighlightModeListener(_surModeFocus);
     HardwareKeyboard.instance.removeHandler(_surTouche);
     _entree
@@ -250,7 +270,7 @@ class _CommandesMasquablesState extends State<CommandesMasquables> {
   void _synchroniserBarre({bool differe = false}) {
     final ControleurBarreBasse? barre = _barre;
     if (barre == null) return;
-    final bool effacee = !_visibles;
+    final bool effacee = !_visibles && _enScene;
     if (effacee == _barreEffacee) return;
     _barreEffacee = effacee;
     if (differe) {
