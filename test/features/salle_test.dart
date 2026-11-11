@@ -3847,7 +3847,10 @@ void main() {
       // Plan de composition du 26/10/2026 : sur ordinateur, la
       // Bibliotheque est le panneau de droite ; le Coran y est seul.
       expect(find.byKey(PanneauBibliothequeSalle.cle), findsOneWidget);
-      expect(find.text(t.salle.supports.coran), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey<String>('bibliotheque-support-coran')),
+        findsOneWidget,
+      );
       await tester.tap(
         find.byKey(const ValueKey<String>('bibliotheque-deplier-coran')),
       );

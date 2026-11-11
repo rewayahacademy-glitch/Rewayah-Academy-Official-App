@@ -2516,7 +2516,7 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
     famille: FamilleComposant.structure,
     etats: <EtatGalerie>[
       EtatGalerie(
-        'le Coran : double cadre, ornement moyen',
+        'le Coran : couverture standard, toujours en arabe',
         (BuildContext _) => SizedBox(
           width: AppSpacing.respiration * 2,
           child: CouvertureSupport(
@@ -2526,7 +2526,7 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
         ),
       ),
       EtatGalerie(
-        'demonstration a valider : les lettres',
+        'collection de l academie, a valider : les lettres',
         (BuildContext _) => SizedBox(
           width: AppSpacing.respiration * 2,
           child: CouvertureSupport(
@@ -2538,6 +2538,7 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
               type: TypeRessource.texteStructure,
             ),
             mention: t.salle.etagere.aValider,
+            repere: t.salle.etagere.etape(numero: 1),
           ),
         ),
       ),
@@ -2556,6 +2557,7 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
                 type: TypeRessource.texteStructure,
               ),
               mention: t.salle.etagere.aValider,
+              repere: t.salle.etagere.etape(numero: 2),
             ),
           ),
         ),

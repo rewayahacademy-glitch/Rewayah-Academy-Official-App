@@ -181,25 +181,28 @@ List<SupportBibliotheque> _demo() => <SupportBibliotheque>[
     pageReprise: 42,
     onReprendre: () {},
   ),
-  for (final (String id, String titre, String detail, int teinte)
-      in <(String, String, String, int)>[
+  for (final (String id, String titre, String detail, int nuance, int? etape)
+      in <(String, String, String, int, int?)>[
         (
           'lettres',
           t.salle.etagere.demo.lettres,
           t.salle.etagere.demo.lettresDetail,
-          3,
+          0,
+          1,
         ),
         (
           'voyelles',
           t.salle.etagere.demo.voyelles,
           t.salle.etagere.demo.voyellesDetail,
-          9,
+          1,
+          2,
         ),
         (
           'priere',
           t.salle.etagere.demo.priere,
           t.salle.etagere.demo.priereDetail,
-          14,
+          2,
+          null,
         ),
       ])
     SupportBibliotheque(
@@ -207,12 +210,13 @@ List<SupportBibliotheque> _demo() => <SupportBibliotheque>[
       titre: titre,
       detail: detail,
       couverture: CouvertureRessource(
-        indexTeinte: teinte,
+        indexTeinte: nuance,
         motif: MotifCouverture.lignes,
         monogramme: titre.substring(0, 1),
         type: TypeRessource.texteStructure,
       ),
       aValider: true,
+      repere: etape == null ? null : t.salle.etagere.etape(numero: etape),
     ),
 ];
 

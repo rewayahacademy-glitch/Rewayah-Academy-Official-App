@@ -53,10 +53,56 @@ est retiré.
 | Un bouton qui ne peut pas aboutir n'est pas rendu | `lib/CLAUDE.md` | Sans droit de présenter ou sans partage possible : pas de « Partager », une phrase le dit ; sans lecture : pas d'« Afficher » | `onPresenter` et `lecteur` facultatifs |
 | Un widget lit une capacité, jamais un rôle | Invariant | Le droit de présenter reste vérifié au point d'insertion (`actions.onBibliotheque`, jeton `can_publish_data`) ; rien n'est élargi | Aucun changement de droit |
 | LISTES-1 : le contenu d'abord | `DECISION-LISTES-2026-10-23.md` | Les couvertures d'abord ; filtres sur une rangée discrète ; recherche derrière une loupe, ouverte d'office au-delà de 8 supports | `seuilRecherche` |
-| Couleurs : jetons seulement, aucune image inventée | `lib/CLAUDE.md`, marque | Teinte `surfaceQuran` (Coran) ou `teintesIdentite` ; étiquette `surfaceRaised` ; aucune image de mushaf | `CouvertureSupport.teinteDe` (repris par `VignetteRessource`) |
-| Ornement de la marque | `assets/brand/logo/README.md`, `BRAND-ORN-1` | Ornement décoratif, par `OrnementMarque` seul : violet sur l'étiquette claire, blanc sur l'étiquette sombre et sur la languette violette ; jamais le logo (interdit dans une carte ou une liste) | — |
+| Couleurs : jetons seulement, aucune image inventée | `lib/CLAUDE.md`, marque | **Remplacé le 11/11 (reprise, §2 bis)** : la collection de l'académie dans les violets de la marque, le Coran en bleu nuit et or ; aucune image de mushaf | `AppCouleursCouverture` |
+| Ornement de la marque | `assets/brand/logo/README.md`, `BRAND-ORN-1`, M-14, M-28 | Ornement par `OrnementMarque` seul, blanc sur le violet ; jamais le logo (README : jamais dans une liste) ; **aucune marque sur la couverture du Coran** | — |
 | Lisible à 320, texte ×2, arabe, sombre ; jamais un mot coupé | `garde_interface`, `aucun_mot_coupe` | Le titre de couverture passe à la ligne et ne se réduit que si la hauteur manque, jamais en coupant un mot ; le dos du livre passe à droite en arabe | Tests 320 ×2 clair et sombre ; `salle_telephone_test` (390 et 834, ×1 et ×2) |
 | États chargement, vide, erreur, hors ligne | Invariant | `EtatEtagere` : planches en `Skeleton`, `EmptyState` vide, erreur avec « Réessayer », hors ligne | Testés ; **non branchés** : la salle passe une liste synchrone (le Coran), ces états ne servent qu'au jour où la Bibliothèque lira le catalogue |
+
+## 2 bis. Reprise du 11/11/2026 : couvertures aux couleurs de l'académie, Coran standard
+
+Demande du directeur, mot pour mot : « n'oublie pas de brander les couvertures aux styles et couleurs
+de l'académie ; le Coran, lui, doit avoir une couverture standard : si le complexe Roi Fahd n'en
+fournit pas, tu en choisis une qui est en arabe, compréhensible et familière à tous les musulmans du
+monde. »
+
+### Les livres de l'académie : ce qui vient de la marque, source par source
+
+| Élément | Décidé par | Ce qui est pris |
+| :-- | :-- | :-- |
+| Couleurs | Registre M-16 (les jetons font foi, violet du logo `#8652E6`) et M-32 (famille des violets de l'application : `#4E2983`, `#6538E4`, `#8652E6`) | Trois nuances de cette famille, encre blanche (10,6:1 ; 6,5:1 ; 4,8:1), regroupées dans `AppCouleursCouverture.academie` (`app_palette.dart`). Aucune valeur nouvelle : elles existent déjà dans la palette. Les teintes d'identité (lilas, pêche, orange) ne servent plus aux couvertures (M-23 : hors charte de marque). |
+| Ornement | M-14, M-28, `BRAND-ORN-1`, README du logo (blanc sur fond violet) | `OrnementMarque` blanc, petit, sous le titre |
+| Logo | README du logo, « Placement » : jamais dans une carte ni une liste | **Non posé** : l'étagère est une liste de supports |
+| Typographie | M-15 (DM Sans pour les titres) | Le titre suit `titleMedium` du thème (DM Sans en français, la police arabe d'interface en arabe) |
+| Ce qui distingue deux livres | **Mon choix** | Le titre, un repère (« Étape 1 », « Étape 2 » : étapes du programme, `programme-rewayah` §2) et la nuance de violet ; une seule maquette pour tous (dos, filet blanc, ornement) |
+
+Point à valider : M-14 dit « jamais sur un écran de travail » pour l'ornement signature. Sur une
+couverture, l'ornement est le décor d'un objet (M-28 l'admet pour les supports), pas la signature de
+l'écran. C'est mon interprétation.
+
+### La couverture du Coran
+
+- **Couverture officielle du Complexe du Roi Fahd : aucune trouvée.** Le dépôt ne cite que les polices
+  KFGQPC (`assets/fonts/LICENSE-UthmanicHafs.txt`, `LICENSE-UthmanTahaNaskh.txt`) et le texte
+  Tanzil / quran.ws ; aucune licence d'image. Le site `qurancomplex.gov.sa`, lu le 11/11/2026, ne
+  propose aucune image de couverture à télécharger ni aucune licence de réutilisation (« جميع الحقوق
+  محفوظة », publications « قريباً »). Aucune image n'est copiée.
+- **Dessin retenu (mon choix)** : bleu nuit, double filet doré, médaillon ovale à filet doré,
+  « القرآن الكريم » en grand au centre, « مصحف المدينة » dessous. Ces deux textes sont déjà ceux de
+  l'application (`ar.i18n.json`, `salle.coran.titrePage` = « القرآن الكريم، مصحف المدينة ») ; ils restent
+  en arabe dans les deux langues (clés `salle.etagere.coranCouverture.*`, identiques en français et en
+  arabe, exception déclarée dans `test/i18n/ar_domaines_test.dart`). Le lecteur d'écran lit le titre
+  dans la langue de l'interface. Aucun verset, aucune image de mushaf réel, aucune marque de
+  l'académie.
+- **Police du titre** : KFGQPC Uthman Taha Naskh (`AppFontFamily.arabeDocument`, chargée après la
+  première image quelle que soit la langue). Licence du Complexe : usage, copie et distribution
+  gratuits, sans vendre ni modifier la police (`assets/fonts/LICENSE-UthmanTahaNaskh.txt`). Composer un
+  titre avec elle est un usage. UthmanicHafs reste réservée au texte du Coran.
+- **Couleurs nouvelles, à valider par le directeur** : `AppCouleursCouverture.coran` (fond `#0E2240`,
+  titre `#E6C77A`, 9,7:1) et `filetCoran` (`#C9A44E`, 6,7:1), identiques en clair et en sombre. Bleu
+  nuit plutôt que vert : la marque interdit « vert et or » comme identité périmée de l'académie
+  (`marque-rewayah`, interdit 3) ; ce n'est pas l'identité de l'académie ici, mais le bleu nuit évite
+  toute confusion. Pas de fond parchemin. Contrastes vérifiés par
+  `test/widgets/couverture_support_test.dart`.
 
 ## 3. Le tiroir et la languette : franchement
 
