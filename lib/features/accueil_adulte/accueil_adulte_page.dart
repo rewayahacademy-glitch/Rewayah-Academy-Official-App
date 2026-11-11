@@ -418,6 +418,7 @@ class _Corps extends StatelessWidget {
 
     return LecteurGroupe(
       groupeId: groupeId,
+      seanceParServeur: onRejoindre != null,
       squelette: const SqueletteAccueilAdulte(),
       construire: (BuildContext contexte, LectureGroupe lecture) => _Sections(
         vue: vue,
@@ -472,11 +473,7 @@ class _Sections extends StatelessWidget {
         titre: t.adulte.accueil.prochaineSeance,
       ),
       Ecart.vMd,
-      ...lecture.identiteEtCarte(
-        onRejoindre: onRejoindre,
-        accesFerme: acces.ferme,
-        accesEnLecture: acces.enLecture,
-      ),
+      ...lecture.identiteEtCarte(onRejoindre: onRejoindre),
       // N2 (E1) : Ma classe, en lien sous la carte de la Classe.
       if (onVoirMaClasse != null) ...<Widget>[
         Ecart.vMd,

@@ -39,6 +39,7 @@ import 'package:rewayah_academy/features/salle_seance/barre_support.dart';
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
 import 'package:rewayah_academy/features/tc_espace_groupe/carte_session.dart';
 
+import '../support/carte_session_fournie.dart';
 import '../support/demo/accessibilite_demo.dart';
 import '../support/demo/classe_demo.dart';
 import '../support/demo/seance_demo.dart';
@@ -428,7 +429,7 @@ String premier(int n) => lu(LibellesGroupe.dureeSeule(Duration(minutes: n)), nul
           in MomentDemoAccessibilite.values) {
         await tester.pumpWidget(
           _hote(
-            CarteSession(
+            carteSessionDeTest(
               key: ValueKey<MomentDemoAccessibilite>(moment),
               espace: DonneesAccessibiliteDemo.espaceAccueil(moment),
               onRejoindre: () {},
@@ -494,7 +495,7 @@ String premier(int n) => lu(LibellesGroupe.dureeSeule(Duration(minutes: n)), nul
       for (final bool tutoiement in <bool>[false, true]) {
         await tester.pumpWidget(
           _hote(
-            CarteSession(
+            carteSessionDeTest(
               key: ValueKey<bool>(tutoiement),
               espace: espace,
               tutoiement: tutoiement,
@@ -543,7 +544,7 @@ String premier(int n) => lu(LibellesGroupe.dureeSeule(Duration(minutes: n)), nul
       addTearDown(tester.view.reset);
       await tester.pumpWidget(
         _hote(
-          CarteSession(
+          carteSessionDeTest(
             espace: DonneesAccessibiliteDemo.espaceAccueil(
               MomentDemoAccessibilite.avant,
             ),
