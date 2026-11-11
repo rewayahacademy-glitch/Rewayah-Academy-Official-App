@@ -157,6 +157,17 @@ abstract final class AppMouvement {
     ratio: 1,
   );
 
+  /// L'effet liquide de la navigation (decisions du directeur du 10/11/2026) :
+  /// le bord de devant de la goutte, raide, qui part le premier. Amortissement
+  /// critique, comme [ressort] : aucun rebond.
+  static final SpringDescription ressortGoutteTete =
+      SpringDescription.withDampingRatio(mass: 1, stiffness: 520, ratio: 1);
+
+  /// Le bord de derriere de la goutte, plus souple, qui suit : l'ecart entre
+  /// les deux etire la goutte dans le sens du mouvement, puis elle se reforme.
+  static final SpringDescription ressortGoutteQueue =
+      SpringDescription.withDampingRatio(mass: 1, stiffness: 170, ratio: 1);
+
   /// Translation verticale d'un element qui entre dans une liste.
   static const double translationAjout = 8;
 
