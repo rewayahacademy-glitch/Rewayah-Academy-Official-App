@@ -240,6 +240,10 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   StreamSubscription<List<ParticipantSalle>>? _sParticipants;
   StreamSubscription<QualiteLien>? _sQualite;
 
+  /// MICRO-AVANT-ENSEIGNANT (11/11/2026) : les droits de publication que le
+  /// serveur change pendant la seance (`DroitsPublicationVivants`).
+  StreamSubscription<AccesSalle>? _sAcces;
+
   bool _materielPret = false;
 
   /// La preparation de l'enseignant est a l'ecran : rien n'est connecte.
@@ -461,6 +465,17 @@ class _SallePageEtat extends ConsumerState<SallePage> {
         });
       }
     });
+    // MICRO-AVANT-ENSEIGNANT (directeur, 11/11/2026) : quand le serveur rend
+    // a l'eleve son droit de publier (son enseignant est entre), le bouton
+    // du micro apparait. Le micro reste ferme : seul l'eleve l'ouvre.
+    if (_moteur case final DroitsPublicationVivants vivants) {
+      _sAcces = vivants.accesMisAJour.listen((AccesSalle acces) {
+        if (!mounted || _acces == null) return;
+        setState(() => _acces = acces);
+        // La barre « Seance toujours en direct » lit le meme acces.
+        if (_tenu) _confier(acces);
+      });
+    }
     // Le tuteur observateur n'a AUCUNE preparation (D-14) : il n'ouvre ni
     // micro ni camera.
     // Seuls l'eleve et l'enseignant en ont une ; session pas encore lue
@@ -482,7 +497,10 @@ class _SallePageEtat extends ConsumerState<SallePage> {
 
   /// La salle rouverte sur l'appel confie a `controleurSessionProvider`.
   void _reprendre() {
-    final AccesSalle? acces = _session.etatCourant.acces;
+    // MICRO-AVANT-ENSEIGNANT : l'acces du moteur d'abord, il suit les droits
+    // que le serveur a pu changer pendant que l'ecran etait ferme.
+    final AccesSalle? acces =
+        _moteur.accesCourant ?? _session.etatCourant.acces;
     _enPreparation = false;
     _materielPret = true;
     _acces = acces;
@@ -527,6 +545,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     unawaited(_sEtats?.cancel());
     unawaited(_sParticipants?.cancel());
     unawaited(_sQualite?.cancel());
+    unawaited(_sAcces?.cancel());
     _veilleCamera?.cancel();
     unawaited(_synchro?.liberer());
     // Directeur, 31/10/2026 : un appel ouvert et confie continue hors de

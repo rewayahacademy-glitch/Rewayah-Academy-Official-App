@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
@@ -377,7 +378,12 @@ class DockSeance extends StatelessWidget {
     final AppPalette palette = AppPalette.of(context);
     final bool telephone = AppGabarit.de(context) == Gabarit.mobile;
     final String? texteCamera = vue.texteCameraInterdite;
-    final Widget? statutCamera = texteCamera == null
+    // MICRO-AVANT-ENSEIGNANT : la phrase d'attente prend la place du statut
+    // de la camera (les deux ne se disent jamais ensemble).
+    final String? texteMicro = vue.texteMicroEnAttente;
+    final Widget? statutCamera = texteMicro != null
+        ? StatutMicroEnAttente(texte: texteMicro)
+        : texteCamera == null
         ? null
         : StatutCameraInterdite(texte: texteCamera);
     // TB-2 : tant que le focus local est actif ([agrandi]), sa sortie reste
@@ -546,6 +552,56 @@ class StatutCameraInterdite extends StatelessWidget {
         texte,
         style: palette.inkMuted.applyTo(
           Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
+        ),
+      ),
+    );
+  }
+}
+
+/// MICRO-AVANT-ENSEIGNANT (directeur, 11/11/2026) : « Votre micro s'ouvrira
+/// quand votre enseignant sera là. », rendue au-dessus de la pilule a la
+/// place du bouton du micro que le serveur refuserait
+/// ([VueSeance.texteMicroEnAttente]). Meme place que [StatutCameraInterdite] :
+/// un texte d'etat non interactif, lu avant le dock ; annonce par le lecteur
+/// d'ecran quand il apparait, et centre parce qu'il parle de la pilule qu'il
+/// surmonte.
+///
+/// Il porte son propre fond (la surface des pilules de la salle, opaque) : a
+/// 320 points en texte x2, le dock flotte sur le support, et une phrase sans
+/// fond s'y melerait au texte qu'elle recouvre.
+class StatutMicroEnAttente extends StatelessWidget {
+  const StatutMicroEnAttente({required this.texte, super.key});
+
+  final String texte;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final AppColorPair surface = palette.surfaceRaised;
+    return ConstrainedBox(
+      key: const ValueKey<String>('statut-micro-en-attente'),
+      constraints: const BoxConstraints(maxWidth: AppPage.largeurEtatVide),
+      child: DecoratedBox(
+        // Le filet la detache d'un support de meme couleur qu'elle.
+        decoration: surface.decoration(
+          borderRadius: AppRadius.arrondiLg,
+          side: palette.borderHairline.asBorderSide(),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.lg,
+            vertical: AppSpacing.sm,
+          ),
+          child: Semantics(
+            liveRegion: true,
+            child: Text(
+              texte,
+              textAlign: TextAlign.center,
+              style: surface.applyTo(
+                Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
+              ),
+            ),
+          ),
         ),
       ),
     );

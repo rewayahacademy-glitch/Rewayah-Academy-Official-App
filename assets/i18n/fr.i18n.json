@@ -290,6 +290,11 @@
   },
   "salle": {
     "retourner": "Retourner dans la salle",
+    "microAttente": {
+      "phrase": "Votre micro s'ouvrira quand votre enseignant sera là.",
+      "phraseTutoie": "Ton micro s'ouvrira quand ton enseignant sera là.",
+      "guidee": "Ton micro attend ton enseignant."
+    },
     "supports": {
       "coran": "Coran, Mushaf de Médine",
       "coranDetail": "La page s'ouvre pour toute la classe."

@@ -167,8 +167,25 @@ abstract interface class ServiceVideo {
   Future<void> annoncerSortie(String seanceId);
 }
 
+/// MICRO-AVANT-ENSEIGNANT (directeur, 11/11/2026) : le filet. Un eleve dont
+/// le droit de publier attend l'enseignant, et qui voit son enseignant dans
+/// la salle, demande au serveur de lui rendre ce droit.
+///
+/// **Le client ne decide rien** : le serveur reverifie que l'appelant a droit
+/// a cette seance et que l'enseignant est bien dans la salle LiveKit, puis
+/// change lui-meme les droits du participant. Le resultat arrive par LiveKit
+/// (changement de permissions), pas par la reponse de cet appel.
+///
+/// Interface a part, comme `MotifEchecSalle` : seul le service qui parle au
+/// serveur reel l'implemente.
+abstract interface class RetablissementPublication {
+  /// Demande au serveur de rendre le droit de publier de [acces]. Sans effet
+  /// si l'acces ne dit pas pour quelle seance il a ete emis.
+  Future<void> retablirPublication(AccesSalle acces);
+}
+
 /// L'implementation reelle.
-class ServiceVideoSupabase implements ServiceVideo {
+class ServiceVideoSupabase implements ServiceVideo, RetablissementPublication {
   /// Cree le service.
   const ServiceVideoSupabase(this._client);
 
@@ -198,7 +215,24 @@ class ServiceVideoSupabase implements ServiceVideo {
     if (corps is! Map<String, dynamic>) {
       throw const EchecSalle(MotifRefusSalle.reseau);
     }
-    return AccesSalle.depuisJson(corps);
+    return AccesSalle.depuisJson(corps)
+        .pourLaDemande(seanceId: seanceId, eleveId: eleveId);
+  }
+
+  @override
+  Future<void> retablirPublication(AccesSalle acces) async {
+    final String? seanceId = acces.seanceId;
+    if (seanceId == null) {
+      return;
+    }
+    await _client.functions.invoke(
+      'create-room-token',
+      body: <String, dynamic>{
+        'session_id': seanceId,
+        'eleve_id': ?acces.eleveId,
+        'action': 'retablir_publication',
+      },
+    );
   }
 
   /// Traduit le refus du backend, sans jamais inventer une raison qu'il n'a

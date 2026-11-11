@@ -30,7 +30,13 @@
 // session.
 
 import { clientService, json } from '../_shared/clients.ts'
-import { verifierWebhook } from '../_shared/livekit.ts'
+import {
+  type Fournisseur,
+  retablirPublication,
+  type RouteSalle,
+  urlDe,
+  verifierWebhookSigne,
+} from '../_shared/livekit.ts'
 import { entrerArchiveSiEgressTermine } from '../_shared/r2/ingestion_archive.ts'
 
 Deno.serve(async (requete: Request) => {
@@ -41,8 +47,12 @@ Deno.serve(async (requete: Request) => {
   const corps = await requete.text()
 
   let evenement: Record<string, unknown>
+  let fournisseur: Fournisseur
   try {
-    evenement = await verifierWebhook(corps, requete.headers.get('Authorization'))
+    ;({ evenement, fournisseur } = await verifierWebhookSigne(
+      corps,
+      requete.headers.get('Authorization'),
+    ))
   } catch (e) {
     console.error('webhook refuse', { erreur: (e as Error).message })
     return new Response('signature invalide', { status: 401 })
@@ -126,5 +136,60 @@ Deno.serve(async (requete: Request) => {
   // et reste rattrapable a la main.
   const archive = await entrerArchiveSiEgressTermine(service, type, evenement)
 
-  return json({ applique: data === true, archive })
+  // MICRO-AVANT-ENSEIGNANT (directeur, 11/11/2026, defaut SEC-1) : a chaque
+  // entree, si l'enseignant est dans la salle, les eleves dont le jeton a ete
+  // signe sans droit de publier le retrouvent aussitot.
+  //
+  // A CHAQUE entree, et pas seulement a celle de l'enseignant : un eleve qui
+  // a demande son jeton juste avant l'enseignant et entre juste apres lui
+  // arrive differe dans une salle ou l'enseignant est deja ; c'est sa propre
+  // entree qui le retablit. La fonction lit l'etat de la salle, jamais
+  // l'ordre des evenements : un webhook en double ou en retard ne change rien.
+  //
+  // Meme regle que l'archive ci-dessus : un echec ici est consigne et ne
+  // change pas la reponse. Le filet (`create-room-token`, action
+  // `retablir_publication`, demande par le client) rattrape.
+  let publication: { retablis: number; echecs: number } | null = null
+  if (type === 'participant_joined' && salle) {
+    try {
+      const bilan = await retablirPublication(
+        await routeDeLaSalle(service, String(salle), fournisseur),
+      )
+      publication = { retablis: bilan.retablis.length, echecs: bilan.echecs.length }
+    } catch (e) {
+      console.error('retablissement de la publication en echec (webhook)', {
+        salle,
+        erreur: (e as Error).message,
+      })
+    }
+  }
+
+  return json({ applique: data === true, archive, publication })
 })
+
+/// La route LiveKit de la salle annoncee : celle que la base a figee a la
+/// premiere emission de jeton (`session_video_route`). Si elle ne se relit
+/// pas, le fournisseur dont le trousseau a signe ce webhook et son adresse de
+/// configuration : c'est la meme salle, et rendre un micro ne doit pas
+/// dependre d'une lecture de plus.
+async function routeDeLaSalle(
+  service: ReturnType<typeof clientService>,
+  salle: string,
+  fournisseur: Fournisseur,
+): Promise<RouteSalle> {
+  try {
+    const { data, error } = await service
+      .from('session_video_route')
+      .select('provider, ws_url, room_name')
+      .eq('room_name', salle)
+      .maybeSingle()
+    if (error) {
+      console.error('route de la salle illisible', { salle, erreur: error.message })
+    } else if (data?.ws_url && (data.provider === 'cloud' || data.provider === 'self_hosted')) {
+      return { provider: data.provider, ws_url: String(data.ws_url), room_name: salle }
+    }
+  } catch (e) {
+    console.error('route de la salle en echec', { salle, erreur: (e as Error).message })
+  }
+  return { provider: fournisseur, ws_url: urlDe(fournisseur), room_name: salle }
+}
