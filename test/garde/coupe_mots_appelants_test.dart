@@ -23,7 +23,7 @@ import 'package:rewayah_academy/features/suivi_eleve/suivi_eleve_page.dart';
 
 import '../support/balayage_ecrans.dart';
 import '../support/demo/demo_comptable_page.dart';
-import '../support/harnais.dart' show FauxServiceSuivi;
+import '../support/harnais.dart' show FauxServiceSuivi, sansPersonneConnectee;
 
 final DateTime _maintenant = DateTime(2026, 9, 23, 18, 30);
 
@@ -63,6 +63,9 @@ List<EcranBalayage> ecransAppelants() => <EcranBalayage>[
     routeur: null,
     depart: null,
     surcharges: () => <Override>[
+      // La page lit la session (titre de l'onglet, Bibliotheque) : jamais la
+      // source Supabase sous test.
+      sansPersonneConnectee(),
       serviceSuiviProvider.overrideWithValue(
         FauxServiceSuivi(
           seancesRendues: <Seance>[_seance('s1', 0), _seance('s2', 7)],

@@ -10,9 +10,7 @@ comptabilite /comptable/paiements/beneficiaires B6
 comptabilite /comptable/paiements/contractuels B6
 comptabilite /comptable/tresorerie/paiements-familles B4
 comptabilite /comptable/tresorerie/rapports B4
-comptabilite /compte/reglages B4
 comptabilite /recherche B4
-controle /compte/reglages B4
 controle /recherche B4
 direction /admin/acces-agents B4
 direction /admin/acces-agents B5
@@ -47,11 +45,8 @@ direction /admin/securite-audit/acces-agents B4
 direction /admin/securite-audit/acces-agents B5
 direction /admin/securite-audit/journal B6
 direction /admin/securite-audit/observations B6
-direction /compte/reglages B4
 direction /recherche B4
-eleve /compte/reglages B4
 eleve /recherche B4
-enseignant /compte/reglages B4
 enseignant /enseignant/bienvenue B1
 enseignant /enseignant/bienvenue B7
 enseignant /enseignant/revenus B4
