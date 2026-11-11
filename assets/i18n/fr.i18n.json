@@ -7580,7 +7580,6 @@
       "student": "Suit ses cours et son Coran"
     },
     "tuteur": {
-      "preferences": "Préférences",
       "dateLongue": "{jour} {mois} {annee}",
       "identite": {
         "statutValide": "Compte validé",
@@ -7672,24 +7671,8 @@
         "justificatif": "Justificatif disponible"
       },
       "pagePreferences": {
-        "titre": "Préférences",
-        "sousTitre": "Personnalisez votre expérience sur cet appareil.",
-        "apparence": "Apparence",
-        "apparenceDetail": "Thème et confort visuel",
-        "langue": "Langue et région",
         "notifications": "Notifications",
         "notificationsDetail": "Cet appareil et ce que vous recevez"
-      },
-      "pageApparence": {
-        "titre": "Apparence",
-        "sousTitre": "Appliqué sur cet appareil.",
-        "theme": "Thème de l'application",
-        "themeDetail": "Personnalisez l'apparence de Rewayah.",
-        "confort": "Confort visuel",
-        "animations": "Animations",
-        "animationsDetail": "Réduites quand votre appareil le demande",
-        "texte": "Taille du texte",
-        "texteDetail": "Suit la taille du système"
       },
       "pageAide": {
         "titre": "Aide et support",

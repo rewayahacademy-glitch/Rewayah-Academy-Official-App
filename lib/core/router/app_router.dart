@@ -161,7 +161,6 @@ import '../../features/comptable/tresorerie/tresorerie_page.dart'
     deferred as d_tresorerie_page;
 import '../../features/compte/acces_page.dart';
 import '../../features/compte/aide_page.dart';
-import '../../features/compte/apparence_page.dart';
 import '../../features/compte/compte_page.dart';
 import '../../features/compte/compte_tuteur_page.dart';
 import '../../features/compte/double_verification_page.dart';
@@ -170,7 +169,6 @@ import '../../features/compte/informations_legales_page.dart';
 import '../../features/compte/informations_page.dart';
 import '../../features/compte/mes_donnees_page.dart';
 import '../../features/compte/paiements_page.dart';
-import '../../features/compte/preferences_page.dart';
 import '../../features/compte/securite_page.dart';
 import '../../features/connexion/accueil_invite.dart';
 import '../../features/connexion/connexion_page.dart';
@@ -1403,17 +1401,17 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                       ),
                     ),
                   ),
+                  // PROFILS P2 : les preferences sont dans le Compte ; les
+                  // anciennes adresses y reviennent.
                   GoRouteSure(
                     path: 'preferences',
-                    pageBuilder: glissee(
-                      (GoRouterState _) => const PreferencesComptePage(),
-                    ),
+                    redirect: (BuildContext _, GoRouterState _) =>
+                        Routes.tuteurCompte,
                     routes: <RouteBase>[
                       GoRouteSure(
                         path: 'apparence',
-                        pageBuilder: glissee(
-                          (GoRouterState _) => const ApparenceComptePage(),
-                        ),
+                        redirect: (BuildContext _, GoRouterState _) =>
+                            Routes.tuteurCompte,
                       ),
                     ],
                   ),

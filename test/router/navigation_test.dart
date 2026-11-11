@@ -13,7 +13,6 @@ import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/redirection.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
-import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/features/accueil_eleve/accueil_eleve_page.dart';
 import 'package:rewayah_academy/features/accueil_famille/accueil_famille_page.dart';
@@ -28,13 +27,11 @@ import 'package:rewayah_academy/features/classe_tuteur/ressources_classe_page.da
 import 'package:rewayah_academy/features/classe_tuteur/travail_classe_page.dart';
 import 'package:rewayah_academy/features/compte/acces_page.dart';
 import 'package:rewayah_academy/features/compte/aide_page.dart';
-import 'package:rewayah_academy/features/compte/apparence_page.dart';
 import 'package:rewayah_academy/features/compte/compte_page.dart';
 import 'package:rewayah_academy/features/compte/compte_tuteur_page.dart';
 import 'package:rewayah_academy/features/compte/informations_legales_page.dart';
 import 'package:rewayah_academy/features/compte/informations_page.dart';
 import 'package:rewayah_academy/features/compte/paiements_page.dart';
-import 'package:rewayah_academy/features/compte/preferences_page.dart';
 import 'package:rewayah_academy/features/compte/securite_page.dart';
 import 'package:rewayah_academy/features/consentements/consentement_observation_page.dart';
 import 'package:rewayah_academy/features/foyer/creer_mon_profil_page.dart';
@@ -289,8 +286,6 @@ void main() {
       (Routes.compteTuteurSousPage('securite'), SecuriteComptePage, 3),
       (Routes.compteTuteurSousPage('acces'), AccesComptePage, 3),
       (Routes.compteTuteurSousPage('paiements'), PaiementsComptePage, 3),
-      (Routes.tuteurComptePreferences, PreferencesComptePage, 3),
-      (Routes.tuteurCompteApparence, ApparenceComptePage, 3),
       (Routes.compteTuteurSousPage('aide'), AideComptePage, 3),
       (
         Routes.compteTuteurSousPage('informations-legales'),
@@ -344,8 +339,6 @@ void main() {
       SecuriteComptePage: compte,
       AccesComptePage: compte,
       PaiementsComptePage: compte,
-      PreferencesComptePage: compte,
-      ApparenceComptePage: compte,
       AideComptePage: compte,
       InformationsLegalesComptePage: compte,
       ConsentementObservationPage: compte,
@@ -417,8 +410,6 @@ void main() {
         Routes.tuteurAjouterEnfant,
         Routes.appairerPour('e1'),
         Routes.parcoursPour('e1'),
-        Routes.tuteurComptePreferences,
-        Routes.tuteurCompteApparence,
         Routes.tuteurCompteConsentements,
       ]) {
         await _monter(tester, chemin);
@@ -443,25 +434,18 @@ void main() {
       }
     });
 
-    testWidgets(
-      'les preferences, tache focalisee, sortent par le disque retour',
-      (WidgetTester tester) async {
-        // Revue phase 0 (routes D4) : la barre basse s'efface sur les
-        // preferences ; sans disque retour, la cloche etait la seule sortie.
-        final GoRouter routeur = await _monter(
-          tester,
-          Routes.tuteurComptePreferences,
-        );
-        expect(find.byKey(NavShell.barreBasseKey), findsNothing);
-        expect(find.byType(DisqueRetour), findsOneWidget);
-
-        await tester.tap(find.byType(DisqueRetour));
-        await _stabiliser(tester);
+    for (final String ancienne in <String>[
+      Routes.tuteurComptePreferences,
+      Routes.tuteurCompteApparence,
+    ]) {
+      testWidgets('PROFILS P2 : $ancienne revient au Compte (les preferences '
+          'y sont)', (WidgetTester tester) async {
+        final GoRouter routeur = await _monter(tester, ancienne);
         expect(_lieu(routeur), Routes.tuteurCompte);
+        expect(find.byType(CompteTuteurPage), findsOneWidget);
         expect(find.byKey(NavShell.barreBasseKey), findsOneWidget);
-        expect(tester.takeException(), isNull);
-      },
-    );
+      });
+    }
 
     testWidgets('la ligne des profils du Compte allume le Foyer', (
       WidgetTester tester,
@@ -524,7 +508,7 @@ void main() {
       ),
       Routes.compte: Routes.tuteurCompte,
       Routes.compteProfil: Routes.compteTuteurSousPage('informations'),
-      Routes.compteReglages: Routes.tuteurComptePreferences,
+      Routes.compteReglages: Routes.tuteurCompte,
       Routes.compteProfils: Routes.tuteurFoyer,
       Routes.compteProfilEnfantPour('e1'): Routes.ficheElevePour('e1'),
       Routes.tcGroupes: Routes.tuteurAccueil,

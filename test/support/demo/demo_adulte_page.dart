@@ -14,7 +14,7 @@
 // role reel reste lu du jeton. Aucun appel serveur (K-28).
 //
 // L'Accueil (EA-2) et Ma classe (EA-3) sont les vrais ecrans ; les vraies
-// sous-pages du Compte (informations, paiements, securite, preferences et
+// sous-pages du Compte (informations, paiements, securite,
 // apparence, aide, informations legales) restent ouvertes par leur adresse,
 // avec un retour vers l'Accueil (MON-ESPACE-ADULTE-SUPPR, 11/11/2026 : Mon
 // espace, qui les ouvrait, est supprime ; « Mes accords » et « Cours et
@@ -78,7 +78,6 @@ import 'package:rewayah_academy/features/appareils/appareils_page.dart';
 import 'package:rewayah_academy/features/appareils/liste_appareils_eleve.dart'
     show donneesAppareilsFoyerProvider;
 import 'package:rewayah_academy/features/compte/aide_page.dart';
-import 'package:rewayah_academy/features/compte/apparence_page.dart';
 import 'package:rewayah_academy/features/compte/donnees_compte.dart'
     show
         identiteTitulaireProvider,
@@ -87,7 +86,6 @@ import 'package:rewayah_academy/features/compte/donnees_compte.dart'
 import 'package:rewayah_academy/features/compte/informations_legales_page.dart';
 import 'package:rewayah_academy/features/compte/informations_page.dart';
 import 'package:rewayah_academy/features/compte/paiements_page.dart';
-import 'package:rewayah_academy/features/compte/preferences_page.dart';
 import 'package:rewayah_academy/features/compte/securite_page.dart';
 import 'package:rewayah_academy/features/foyer/creer_mon_profil_page.dart';
 import 'package:rewayah_academy/features/foyer/fiche_eleve_page.dart';
@@ -139,12 +137,6 @@ enum EcranDemoAdulte {
 
   /// Connexion et securite (EA-4).
   securite,
-
-  /// Preferences (EA-4).
-  preferences,
-
-  /// Apparence, ouverte depuis les Preferences (EA-4).
-  apparence,
 
   /// Aide et contact (EA-4).
   aide,
@@ -459,8 +451,6 @@ String libelleEcranDemoAdulte(EcranDemoAdulte ecran) => switch (ecran) {
   EcranDemoAdulte.paiements => t.adulte.monEspace.paiements,
   EcranDemoAdulte.informations => t.adulte.monEspace.informations,
   EcranDemoAdulte.securite => t.compte.tuteur.securite.titre,
-  EcranDemoAdulte.preferences => t.compte.tuteur.preferences,
-  EcranDemoAdulte.apparence => t.compte.tuteur.pagePreferences.apparence,
   EcranDemoAdulte.aide => t.compte.tuteur.aide.ligne,
   EcranDemoAdulte.informationsLegales => t.compte.tuteur.aide.legal,
   EcranDemoAdulte.paiementsFoyer => t.adulte.famille.paiementsFoyer,
@@ -1151,14 +1141,6 @@ class CoquilleAdulteDemo extends StatelessWidget {
             ),
             EcranDemoAdulte.securite => SecuriteComptePage(
               onRetour: versAccueil,
-            ),
-            EcranDemoAdulte.preferences => PreferencesComptePage(
-              onRetour: versAccueil,
-              onApparence: () =>
-                  context.go(_adresse(EcranDemoAdulte.apparence)),
-            ),
-            EcranDemoAdulte.apparence => ApparenceComptePage(
-              onRetour: () => context.go(_adresse(EcranDemoAdulte.preferences)),
             ),
             EcranDemoAdulte.aide => AideComptePage(onRetour: versAccueil),
             EcranDemoAdulte.informationsLegales =>

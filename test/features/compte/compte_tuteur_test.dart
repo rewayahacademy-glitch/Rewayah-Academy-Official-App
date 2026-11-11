@@ -23,10 +23,13 @@ import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/compte/acces_page.dart';
+import 'package:rewayah_academy/features/compte/aide_page.dart';
 import 'package:rewayah_academy/features/compte/compte_tuteur_page.dart';
+import 'package:rewayah_academy/features/compte/informations_legales_page.dart';
 import 'package:rewayah_academy/features/compte/informations_page.dart';
 import 'package:rewayah_academy/features/compte/lignes_compte.dart'
     show FeuilleLangueCompte;
+import 'package:rewayah_academy/features/compte/paiements_page.dart';
 import 'package:rewayah_academy/features/compte/securite_page.dart';
 import 'package:rewayah_academy/features/consentements/consentement_observation_page.dart';
 import 'package:rewayah_academy/features/foyer/creer_mon_profil_page.dart';
@@ -456,6 +459,9 @@ void main() {
         tester,
         depart: Routes.compteTuteurSousPage('paiements'),
       );
+      // La ligne a quitte le Compte (dette PAIEMENTS-RECUS-TUTEUR) ; la page
+      // reste atteignable par son adresse et dit la verite.
+      expect(find.byType(PaiementsComptePage), findsOneWidget);
       expect(
         _texte(t.compte.tuteur.pagePaiements.indisponibleTitre),
         findsOneWidget,
@@ -467,6 +473,7 @@ void main() {
       WidgetTester tester,
     ) async {
       await monterCompte(tester, depart: Routes.compteTuteurSousPage('aide'));
+      expect(find.byType(AideComptePage), findsOneWidget);
       expect(
         _texte(t.compte.tuteur.pageAide.indisponibleTitre),
         findsOneWidget,
@@ -490,6 +497,7 @@ void main() {
           ],
         ),
       );
+      expect(find.byType(InformationsLegalesComptePage), findsOneWidget);
       expect(
         _texte(t.compte.tuteur.pageLegal.conditionsTuteur),
         findsOneWidget,

@@ -2625,7 +2625,6 @@
       "student": "يتابع دروسه وقراءته للقرآن"
     },
     "tuteur": {
-      "preferences": "التفضيلات",
       "dateLongue": "⁨{jour}⁩ ⁨{mois}⁩ ⁨{annee}⁩",
       "identite": {
         "statutValide": "الحساب معتمَد",
@@ -2725,24 +2724,8 @@
         "justificatif": "الإيصال متاح"
       },
       "pagePreferences": {
-        "titre": "التفضيلات",
-        "sousTitre": "خصّص تجربتك على هذا الجهاز.",
-        "apparence": "المظهر",
-        "apparenceDetail": "المظهر والراحة البصرية",
-        "langue": "اللغة والمنطقة",
         "notifications": "الإشعارات",
         "notificationsDetail": "هذا الجهاز وما تستقبلونه"
-      },
-      "pageApparence": {
-        "titre": "المظهر",
-        "sousTitre": "مطبَّق على هذا الجهاز.",
-        "theme": "مظهر التطبيق",
-        "themeDetail": "خصّص مظهر Rewayah.",
-        "confort": "الراحة البصرية",
-        "animations": "الحركة",
-        "animationsDetail": "تقلّ حين يطلب جهازك ذلك",
-        "texte": "حجم النص",
-        "texteDetail": "يتبع حجم النظام"
       },
       "pageAide": {
         "titre": "المساعدة والدعم",
