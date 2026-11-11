@@ -8,8 +8,9 @@
 // que la situation dure ; la rotation (ses quelques tours, jamais infinie) se
 // rejoue a chaque ouverture de l'application, a chaque retour au premier plan
 // et a chaque apparition d'un ecran. Un seul halo a la
-// fois, le plus prioritaire l'emporte : Urgent, puis Nouveau. La salle ouverte
-// (halo vert) viendra a l'etape 2b, une fois son calcul rendu unique.
+// fois, le plus prioritaire l'emporte : Urgent, puis la salle ouverte, puis
+// Nouveau. La salle ouverte (etape 2b, 10/11/2026) : un halo vert qui respire,
+// lu dans le calcul unique « salle rejoignable » (tuteur et enseignant).
 //
 // Jamais la couleur seule : la vitesse (rapide, un seul tour), la pastille
 // d'icone de 18 sur le bord, et le nom lu (« Compte, une alerte urgente »).
@@ -35,6 +36,9 @@ enum NatureHalo {
   /// Une alerte urgente encore a faire.
   urgent,
 
+  /// La salle est ouverte : la personne peut la rejoindre maintenant.
+  salle,
+
   /// Des nouveautes a lire.
   nouveau,
 }
@@ -53,7 +57,22 @@ class EtatHaloCompte {
   }) : nature = NatureHalo.urgent,
        nombre = null,
        idsNonLus = const <String>{},
-       action = t.nav.halo.ouvrirAlerte;
+       action = t.nav.halo.ouvrirAlerte,
+       agir = null;
+
+  /// La salle est ouverte : [action] est le mot du bouton (« Rejoindre la
+  /// salle avec Yasmine », « Rejoindre la salle ») et [agir] le geste de
+  /// l'ecran qui sait entrer (le meme que son bouton) ; [chemin] est l'ecran
+  /// de ce bouton, lu si le geste manque.
+  EtatHaloCompte.salle({
+    required this.action,
+    required this.chemin,
+    required void Function(BuildContext contexte) this.agir,
+    this.detail,
+  }) : nature = NatureHalo.salle,
+       titre = t.classe.entree.annonce.fenetreOuverte,
+       nombre = null,
+       idsNonLus = const <String>{};
 
   /// [nombre] nouveautes a lire ; [chemin] ouvre les notifications.
   EtatHaloCompte.nouveau({
@@ -63,7 +82,8 @@ class EtatHaloCompte {
   }) : nature = NatureHalo.nouveau,
        titre = t.nav.halo.nouveauTitre(n: nombre, nombre: nombre),
        detail = null,
-       action = t.nav.halo.lire;
+       action = t.nav.halo.lire,
+       agir = null;
 
   /// Ce que le halo signale.
   final NatureHalo nature;
@@ -80,6 +100,10 @@ class EtatHaloCompte {
   /// Le chemin interne que le bouton plein ouvre.
   final String chemin;
 
+  /// Le geste du bouton plein quand il n'est pas un chemin (entrer dans la
+  /// salle, avec son billet), ou `null`.
+  final void Function(BuildContext contexte)? agir;
+
   /// Le nombre de nouveautes, pour [NatureHalo.nouveau].
   final int? nombre;
 
@@ -92,24 +116,28 @@ class EtatHaloCompte {
   /// La lumiere de cet etat (seule exception au branding, 09/11).
   AppHaloColor get couleurs => switch (nature) {
     NatureHalo.urgent => CouleursHalo.urgent,
+    NatureHalo.salle => CouleursHalo.salle,
     NatureHalo.nouveau => CouleursHalo.nouveau,
   };
 
   /// L'icone de la pastille.
   IconData get icone => switch (nature) {
     NatureHalo.urgent => AppIcons.avertissement.actif,
+    NatureHalo.salle => AppIcons.camera.actif,
     NatureHalo.nouveau => AppIcons.notifications.actif,
   };
 
   /// Le mot court ecrit sous « Compte » dans la tuile du Mode Accessibilite.
   String get motCourt => switch (nature) {
     NatureHalo.urgent => t.nav.halo.urgentMot,
+    NatureHalo.salle => t.tc.groupe.temps.salleOuverteCourt,
     NatureHalo.nouveau => t.nav.halo.nouveauMot,
   };
 
   /// Le nom lu du cercle : [compte] (« Compte », « Profil »...) et l'etat.
   String nomAccessible(String compte) => switch (nature) {
     NatureHalo.urgent => t.nav.halo.urgentNom(compte: compte),
+    NatureHalo.salle => t.nav.halo.salleNom(compte: compte),
     NatureHalo.nouveau => t.nav.halo.nouveauNom(
       n: nombre ?? 0,
       compte: compte,
@@ -120,12 +148,14 @@ class EtatHaloCompte {
   /// La duree d'un tour de lumiere.
   Duration get dureeTour => switch (nature) {
     NatureHalo.urgent => AppMouvement.tourHaloUrgent,
+    NatureHalo.salle => AppMouvement.respirationHalo,
     NatureHalo.nouveau => AppMouvement.tourHaloNouveau,
   };
 
   /// Le nombre de tours avant la lueur fixe.
   int get tours => switch (nature) {
     NatureHalo.urgent => AppMouvement.toursHaloUrgent,
+    NatureHalo.salle => AppMouvement.respirationsHalo,
     NatureHalo.nouveau => 1,
   };
 
@@ -301,6 +331,7 @@ class _EtatHaloCompte extends State<HaloCompte>
                       etat: etat,
                       diametre: d,
                       angle: _angle(etat, tour.value),
+                      intensite: _intensite(etat, tour.value),
                       forte: !palette.estSombre,
                     ),
             ),
@@ -326,10 +357,21 @@ class _EtatHaloCompte extends State<HaloCompte>
   /// L'angle de la lumiere : lineaire pour l'urgence, un seul tour qui
   /// ralentit pour une nouveaute.
   static double _angle(EtatHaloCompte etat, double t) {
+    // La salle ouverte respire sur place : la lumiere ne tourne pas.
+    if (etat.nature == NatureHalo.salle) return 0;
     final double avance = etat.nature == NatureHalo.nouveau
         ? AppMouvement.sortie.transform(t)
         : t;
     return avance * etat.tours * 2 * math.pi;
+  }
+
+  /// L'intensite de la lumiere : pleine quand elle tourne ; pour la salle
+  /// ouverte, une respiration lente (de 0,35 a 1) repetee
+  /// [EtatHaloCompte.tours] fois.
+  static double _intensite(EtatHaloCompte etat, double t) {
+    if (etat.nature != NatureHalo.salle) return 1;
+    final double souffle = (1 - math.cos(2 * math.pi * etat.tours * t)) / 2;
+    return 0.35 + 0.65 * souffle;
   }
 
   /// Le retournement unique : la photo se tourne vers l'icone d'etat, puis
@@ -359,11 +401,13 @@ class _Lumiere extends StatelessWidget {
     required this.diametre,
     required this.angle,
     required this.forte,
+    this.intensite = 1,
   });
 
   final EtatHaloCompte etat;
   final double diametre;
   final double angle;
+  final double intensite;
   final bool forte;
 
   @override
@@ -374,6 +418,7 @@ class _Lumiere extends StatelessWidget {
       painter: _PeintreLumiere(
         couleurs: etat.couleurs,
         angle: angle,
+        intensite: intensite,
         forte: forte,
       ),
     ),
@@ -384,11 +429,13 @@ class _PeintreLumiere extends CustomPainter {
   const _PeintreLumiere({
     required this.couleurs,
     required this.angle,
+    required this.intensite,
     required this.forte,
   });
 
   final AppHaloColor couleurs;
   final double angle;
+  final double intensite;
   final bool forte;
 
   @override
@@ -396,7 +443,11 @@ class _PeintreLumiere extends CustomPainter {
     final Offset centre = size.center(Offset.zero);
     final double rayon = size.shortestSide / 2 + HaloCompte.portee;
     final Rect zone = Rect.fromCircle(center: centre, radius: rayon);
-    final Paint pinceau = couleurs.pinceau(zone, angle: angle)
+    final Paint pinceau = couleurs.pinceau(
+      zone,
+      angle: angle,
+      intensite: intensite,
+    )
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, AppSpacing.xs);
     canvas.drawCircle(centre, rayon, pinceau);
     // En clair, la lumiere se voit moins : une seconde couche la renforce.
@@ -406,6 +457,7 @@ class _PeintreLumiere extends CustomPainter {
   @override
   bool shouldRepaint(_PeintreLumiere ancien) =>
       ancien.angle != angle ||
+      ancien.intensite != intensite ||
       ancien.couleurs != couleurs ||
       ancien.forte != forte;
 }
@@ -532,7 +584,9 @@ Future<void> ouvrirFeuilleEnCeMoment(
       children: <Widget>[
         ActionPrincipale(
           libelle: etat.action,
-          onPress: () => Navigator.of(contexte).pop(etat.chemin),
+          onPress: () => Navigator.of(
+            contexte,
+          ).pop(etat.agir == null ? etat.chemin : _agirIci),
         ),
         Ecart.vMd,
         LienFleche(
@@ -542,8 +596,17 @@ Future<void> ouvrirFeuilleEnCeMoment(
       ],
     ),
   );
-  if (aller != null) onAller(aller);
+  if (aller == _agirIci) {
+    // Le geste de l'ecran qui sait entrer, apres la fermeture de la feuille.
+    if (context.mounted) etat.agir?.call(context);
+  } else if (aller != null) {
+    onAller(aller);
+  }
 }
+
+/// Ce que la feuille rend quand son bouton est un geste et non un chemin (un
+/// chemin interne commence toujours par « / »).
+const String _agirIci = 'agir';
 
 class _CorpsEnCeMoment extends StatelessWidget {
   const _CorpsEnCeMoment({required this.etat});

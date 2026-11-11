@@ -120,6 +120,15 @@ abstract final class AppMouvement {
   /// fixe.
   static const Duration tourHaloNouveau = Duration(milliseconds: 2000);
 
+  /// Halo de la salle ouverte (etape 2b, 10/11/2026) : une respiration
+  /// lente de la lumiere, [respirationsHalo] fois (4,8 s, sous les cinq
+  /// secondes de WCAG 2.2.2), puis une lueur fixe. Hors du budget de
+  /// transition : il signale un etat.
+  static const Duration respirationHalo = Duration(milliseconds: 2400);
+
+  /// Nombre de respirations de la salle ouverte.
+  static const int respirationsHalo = 2;
+
   /// Le retournement unique de la photo vers l'icone d'etat, puis retour
   /// (decision du directeur du 09/11/2026). Aucun retournement sous mouvement
   /// reduit : la pastille seule.

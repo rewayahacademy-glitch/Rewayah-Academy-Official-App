@@ -2862,7 +2862,8 @@
         "other": "مستجدات للقراءة: ⁨{nombre}⁩"
       },
       "nouveauMot": "للقراءة",
-      "lire": "قراءة"
+      "lire": "قراءة",
+      "salleNom": "⁨{compte}⁩، القاعة مفتوحة"
     },
     "filAriane": {
       "separateur": "›",
