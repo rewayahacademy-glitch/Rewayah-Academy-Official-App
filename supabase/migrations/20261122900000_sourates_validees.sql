@@ -5,9 +5,15 @@
 --
 -- Ce que fait cette migration :
 --   1. private.sourates_des_bases : LA source unique des 17 sourates des
---      bases, dans l'ordre d'etude (Al-Fatiha, puis 114 a 99 ;
---      programme-rewayah, « Les 17 sourates des bases »). Lecture interne
---      seulement (fonctions SECURITY DEFINER).
+--      bases, dans l'ordre d'etude, posees telles quelles depuis
+--      .claude/skills/programme-rewayah/SKILL.md, section 2, ligne 51 :
+--      « Les 17 sourates des bases (105 versets) : Al-Fatiha 7 · An-Nas (114)
+--      6 · Al-Falaq (113) 5 · Al-Ikhlas (112) 4 · Al-Masad (111) 5 · An-Nasr
+--      (110) 3 · Al-Kafirun (109) 6 · Al-Kawthar (108) 3 · Al-Ma'un (107) 7 ·
+--      Quraysh (106) 4 · Al-Fil (105) 5 · Al-Humaza (104) 9 · Al-'Asr (103) 3
+--      · At-Takathur (102) 8 · Al-Qari'a (101) 11 · Al-'Adiyat (100) 11 ·
+--      Az-Zalzalah (99) 8. » Lecture interne seulement (fonctions SECURITY
+--      DEFINER).
 --   2. public.sourates_validees : une ligne par eleve et par sourate
 --      validee. Jamais effacee ni modifiee (« ce qui est valide n'est jamais
 --      perdu ») : aucune politique, aucun droit direct.
@@ -25,9 +31,10 @@
 --      private.cahier_c1_peut_lire_classe (titulaire, remplacant de la
 --      seance, direction en lecture).
 --
--- Hypothese soumise au directeur (pas une decision) : une sourate cochee
--- compte quelle que soit l'etape de l'eleve, sur les 17 des bases (Al-Fatiha
--- et les trois dernieres sont apprises plus tot, en matiere secondaire).
+-- Decision du directeur (11/11/2026, relayee par le garde-cap et le pilote) :
+-- les 17 sourates des bases comptent a toute etape ; le total est 17. La
+-- direction ne valide pas les sourates : elle voit l'etat, sans plus (lecture
+-- par sourates_bases_classe ; aucune RPC d'ecriture).
 --
 -- Mots qui demandent la seconde confirmation de staging : un DROP FUNCTION
 -- (section 4). Le directeur colle ce fichier dans l'editeur SQL de staging

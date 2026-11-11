@@ -60,7 +60,7 @@ Ce qui suit vaut pour A et B. Pour C, seul le calcul change : il compte les `eva
    - L'élève adulte lit le sien, et pas celui d'un autre élève.
    - Une validation n'est jamais perdue, même après un changement de classe.
    - `null` à l'étape 2.
-   - `total = 17` sur les bases (hypothèse ci-dessous).
+   - `total = 17` sur les bases (décision du directeur ci-dessous).
    - `anon` refusé.
 7. **Plage de migration** : à demander au garde-cap avant toute écriture. La dernière migration de `main` est `20261122800000_cand_alertes_bloquees_retard.sql`. Il faut une plage libre après elle, pour un ou deux fichiers. L'installation en production reste au pilote.
 
@@ -88,7 +88,6 @@ Branche `claude/sourates-travail`, migration `20261122900000_sourates_validees.s
 - **Cahier** : sous chaque élève, les sourates pas encore validées se cochent (« Cochez une sourate seulement si cet élève l'a récitée de mémoire, sans erreur de mot »). Une sourate déjà validée ne se propose plus.
 - **Anneau** : il reste à la PR #382 (H). Tant que le serveur ne rend pas le compte, le client lit `null` : doré seul, jamais 0.
 
-### Hypothèse soumise au directeur (pas une décision)
+### Décision du directeur (11/11/2026)
 
-**Une sourate cochée compte quelle que soit l'étape de l'élève, et le total est de 17 (les sourates des bases).** Référence : `programme-rewayah`, « Les 17 sourates des bases (105 versets) », et l'étape 4 (« Les sourates courtes, d'Al-Masad (111) à Az-Zalzalah (99) »). Si le directeur veut compter par étape (13 à l'étape 4), seul le calcul du total change.
-
+**Les 17 sourates des bases comptent à toute étape ; le total est 17.** Elles sont posées telles quelles depuis `programme-rewayah`, section 2, ligne 51 (« Les 17 sourates des bases (105 versets) »). La direction ne valide pas les sourates : elle voit l'état, sans plus (décision relayée par le garde-cap et le pilote).
