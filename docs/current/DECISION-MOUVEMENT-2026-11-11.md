@@ -88,5 +88,9 @@ dialogue (`AppBottomSheet.ouvrir`).
   l'application : **présent dans le code** (`lib/core/mouvement/retour_navigateur.dart`,
   test `test/mouvement/retour_navigateur_test.dart`). Un `popstate` du navigateur marque les
   600 ms suivantes : le retour joue le fondu court ; la flèche de l'application joue l'axe
-  partagé inverse. **Non prouvé dans un navigateur** : qu'une flèche de l'application ne
-  déclenche aucun `popstate` reste à vérifier sur un aperçu.
+  partagé inverse. **Mesuré dans un navigateur** (build web local de l'aperçu, démonstration
+  du tuteur, Playwright, 11/11/2026) : Foyer, puis fiche d'Aïcha, puis la flèche de
+  l'application : 0 `popstate` (le routeur ajoute une entrée d'historique) ; la même fiche,
+  puis le retour du navigateur (`history.back()`) : 1 `popstate`. **Non mesuré** : la
+  différence visible entre les deux animations (les images prises à 70 ms montrent déjà la
+  page d'arrivée dans les deux cas).
