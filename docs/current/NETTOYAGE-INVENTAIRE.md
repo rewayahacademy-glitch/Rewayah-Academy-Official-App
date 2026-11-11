@@ -331,3 +331,36 @@ codex) »). Sur `main`, **leurs ports n'existent plus** :
 
 Preuve : `git grep -l "DemandesHorairesSupabase\|ResumeSeanceFamilleSupabase" origin/main` ne rend que le
 document BR1 ; `grep -rn "DemandesHoraires\|ResumeSeanceFamille" lib` ne rend rien.
+
+### Réserves du garde-cap sur le §6 (11/11/2026)
+
+**c) Le reçu : l'écran n'est PAS retiré, c'est une preuve de paiement.** Vérification faite par
+lecture du dépôt (`main` `b86dbc9d9`), rien n'est lu en production :
+
+- **Aucune RPC de lecture d'un reçu.** Le serveur rend `'recu', NULL` dans les mouvements du
+  profil (`supabase/migrations/20261017160100_bf1_02_finances_profil.sql:265`). Les factures
+  existent côté serveur (`factures_mensuelles`, `emettre_factures_mois`,
+  `20261017171000_fac_b_01_factures_mensuelles.sql:369`, redéfinie par
+  `20261102600000_b4_factures_et_relances_planifiees.sql:100`), mais aucune fonction ne les rend à
+  une famille : `git grep -n "CREATE.*FUNCTION public\.[a-z_]*factur" origin/main -- supabase/migrations`
+  ne trouve que `emettre_factures_mois`. **C'est une dette finance pour le directeur.**
+- **Un e-mail existe, mais ce n'est pas un reçu.** Quand Stripe confirme un paiement
+  (`checkout.session.completed` ou `async_payment_succeeded`, « paid »), une notification
+  `paiement_recu` est créée, et le déclencheur `courriel_notification` met l'e-mail en file dans
+  `courriels_sortants` (`20261103400000_paiement_recu_courriel.sql:1-3`, `:146-160`). Son texte :
+  « Le paiement de {montant} est reçu. Le solde est à jour dans l'application. »
+  (`supabase/functions/_shared/courriel/modeles_fr.ts:291-297`). C'est un avis de paiement, pas un
+  reçu (ni facture, ni détail, ni pièce jointe). La migration le dit elle-même : « La page de
+  paiement Stripe envoie son propre reçu seulement si l'option est activée dans le tableau de
+  bord » (`:6-8`), ce que le dépôt ne peut pas prouver.
+- **Envoi en production : non prouvé.** Seule une ligne de `courriels_sortants` au statut envoyé,
+  lue en production, le prouverait ; je n'ai aucun accès à la production.
+- **Conséquence, selon la règle du garde-cap : l'écran reste tel quel.** Il ne dit pas « Votre reçu
+  vous est envoyé par e-mail ». Le bouton « Télécharger le reçu » et sa phrase « reçu
+  indisponible » restent jusqu'à la RPC du reçu (dette finance, au directeur).
+
+**d) Le comptable : on ne retire un écran que s'il ne sert à aucun geste réel aujourd'hui.** Les
+six décisions « RETIRER » du comptable (Aujourd'hui, Trésorerie, Encaissements, Rapprochement,
+Contractuels, Bénéficiaires) sont donc **à revoir écran par écran au lot comptable**, avec pour
+chacun le geste réel qu'il sert ou non, et sans aucun calcul financier côté Flutter. Elles ne
+sont pas des décisions arrêtées.
