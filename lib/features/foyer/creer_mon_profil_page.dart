@@ -44,7 +44,12 @@ import '../compte/donnees_compte.dart' show profilEleveTitulaireExisteProvider;
 /// envoi en cours, creation faite, creation non confirmee (K-59, D5).
 class CreerMonProfilPage extends ConsumerStatefulWidget {
   /// Cree la page.
-  const CreerMonProfilPage({super.key, this.onRetour, this.onOuvrirEspace});
+  const CreerMonProfilPage({
+    super.key,
+    this.onRetour,
+    this.onOuvrirEspace,
+    this.eleveAutonome,
+  });
 
   /// Le retour ; par defaut, le Foyer par son adresse (un `pop` garderait
   /// `?pour=moi` dans l'adresse). La demonstration y ramene a sa coquille.
@@ -53,6 +58,11 @@ class CreerMonProfilPage extends ConsumerStatefulWidget {
   /// L'ouverture de l'espace eleve ; par defaut, `Routes.eleveAdulte` par son
   /// adresse. La demonstration y ramene a sa coquille.
   final VoidCallback? onOuvrirEspace;
+
+  /// La capacite « eleve autonome » donnee par l'hote. Nulle (defaut) : la
+  /// page la lit dans la session, comme sur le routeur. La demonstration,
+  /// montee sans session, la donne elle-meme.
+  final bool? eleveAutonome;
 
   /// L'action « Creer mon profil eleve ».
   static const Key creerKey = Key('foyer.monProfil.creer');
@@ -152,15 +162,18 @@ class _CreerMonProfilPageState extends ConsumerState<CreerMonProfilPage> {
     // PROFIL-DEJA (directeur, 11/11/2026) : la capacite « eleve autonome »
     // (jamais le role). Tant qu'elle est en lecture, l'ecran attend : jamais
     // un bouton qui apparait puis disparait sous les doigts.
-    final _CapaciteEspace capacite = ref.watch(
-      sessionProvider.select(
-        (SessionState s) => s.capaciteEleveEnLecture
-            ? _CapaciteEspace.enLecture
-            : s.eleveAutonome
-            ? _CapaciteEspace.servie
-            : _CapaciteEspace.nonServie,
-      ),
-    );
+    final bool? donnee = widget.eleveAutonome;
+    final _CapaciteEspace capacite = donnee != null
+        ? (donnee ? _CapaciteEspace.servie : _CapaciteEspace.nonServie)
+        : ref.watch(
+            sessionProvider.select(
+              (SessionState s) => s.capaciteEleveEnLecture
+                  ? _CapaciteEspace.enLecture
+                  : s.eleveAutonome
+                  ? _CapaciteEspace.servie
+                  : _CapaciteEspace.nonServie,
+            ),
+          );
     final Widget corps;
     if (_envoi == _Envoi.cree) {
       corps = EcranResultat(
