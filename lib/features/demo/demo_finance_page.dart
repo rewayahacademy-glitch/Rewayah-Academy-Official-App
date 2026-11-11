@@ -27,6 +27,7 @@ import '../admin_finance/politiques_commerciales.dart';
 import '../admin_finance/vue_globale_finance.dart';
 import 'comptable/beneficiaires_demo.dart' show BeneficiairesPaiementDemo;
 import 'comptable/direction_demo.dart';
+import 'doubles_demo.dart';
 import 'finance_demo.dart';
 import 'mode_demonstration.dart';
 import 'repere_demonstration.dart';

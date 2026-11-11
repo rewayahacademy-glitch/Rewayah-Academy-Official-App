@@ -768,7 +768,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
             const _CoquilleSecondaire(child: ProfilsComptePage()),
       ),
       GoRouteSure(
-        path: '${Routes.compteProfilEnfant}/:profilId',
+        path: '${Routes.compteProfils}/:profilId',
         builder: (BuildContext _, GoRouterState etat) => _CoquilleSecondaire(
           child: ProfilEnfantPage(
             profilId: etat.pathParameters['profilId'] ?? '',

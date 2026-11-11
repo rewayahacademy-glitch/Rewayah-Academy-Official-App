@@ -2,13 +2,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/router/go_route_sure.dart';
 import '../../core/router/page_differee.dart';
+import '../../core/router/routes.dart';
 import 'mushaf_page.dart' deferred as d_mushaf_page;
-
-/// Les chemins du moteur Coran, sous le prefixe reserve `/tc/`.
-abstract final class RoutesCoran {
-  /// Le moteur Coran, hors classe.
-  static const String mushaf = '/tc/mushaf';
-}
 
 /// Les routes du moteur Coran.
 ///
@@ -25,7 +20,8 @@ abstract final class RoutesCoran {
 /// dans `docs/archive/2026-09-pre-remise-a-plat/teaching-core/TC_CONTRACT_REQUEST_C.md`.
 List<RouteBase> routesTcC() => <RouteBase>[
   GoRouteSure(
-    path: RoutesCoran.mushaf,
+    // Une seule constante pour ce chemin : `Routes.tcMushaf` (NETTOYAGE-1).
+    path: Routes.tcMushaf,
     // Charge a la demande (lot ouverture rapide, 29/10/2026).
     builder: (_, _) => PageDifferee(
       cle: 'routes_tc_c.d_mushaf_page',
