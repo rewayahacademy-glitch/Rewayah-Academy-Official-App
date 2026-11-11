@@ -1,11 +1,12 @@
-// EN-TETES AU TELEPHONE (directeur, 10/11/2026 ; arbitrage du pilote : la regle
-// COUPE-MOTS-1 passe avant). Sous 600, une page de niveau 2 ou plus (celle qui
-// porte un disque retour) a une barre compacte : retour et titre cote a cote,
-// le titre un palier au-dessus d'un titre de section (HIER-1, sans reduction),
-// a la ligne entre ses mots, deux lignes au plus. Jamais d'ellipse ni de mot
-// coupe. Un titre qui ne tient pas ainsi, ou un texte au-dela de 130 %, garde
-// l'en-tete d'avant ; le grand titre reste celui des pages racines, de la
-// tablette et du bureau.
+// EN-TETES AU TELEPHONE (directeur, 10/11/2026 ; arbitrages du pilote et du
+// garde-cap). Sous 600, une page de niveau 2 ou plus (celle qui porte un disque
+// retour) a une barre compacte : retour et titre cote a cote, le titre un palier
+// au-dessus d'un titre de section (HIER-1, sans reduction), a la ligne entre
+// ses mots, deux lignes au plus. Un titre plus long est abrege en fin de mot,
+// suivi de « … » : aucun mot coupe (COUPE-MOTS-1), le titre entier au lecteur
+// d'ecran et en infobulle a la pression longue. Un mot plus large que la ligne,
+// ou un texte au-dela de 130 %, garde l'en-tete d'avant ; le grand titre reste
+// celui des pages racines, de la tablette et du bureau.
 
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart' show RenderParagraph;
@@ -108,12 +109,51 @@ void main() {
       expect(texte.left, greaterThanOrEqualTo(disque.right));
     });
 
-    testWidgets('un titre qui ne tient pas en deux lignes : l\'en-tete '
-        'd\'avant, grand titre, mots entiers', (WidgetTester tester) async {
+    testWidgets('un titre trop long : deux lignes, coupe en fin de mot, « … », '
+        'le titre entier lu et en infobulle', (WidgetTester tester) async {
+      final SemanticsHandle poignee = tester.ensureSemantics();
       await _poser(tester, vue: const Size(320, 640));
-      expect(find.byKey(EnteteCompact.barreKey), findsNothing);
-      expect(_taille(tester, _long), 28);
+      expect(tester.takeException(), isNull);
+      expect(find.byKey(EnteteCompact.barreKey), findsOneWidget);
+      // Le texte montre les premiers mots entiers, puis « … ».
+      final Text rendu = tester.widget<Text>(
+        find.byKey(EnteteCompact.titreKey),
+      );
+      final String texte = rendu.data!;
+      expect(texte.endsWith('\u2026'), isTrue, reason: texte);
+      final String debut = texte.substring(0, texte.length - 1);
+      expect(_long.startsWith(debut), isTrue, reason: 'prefixe du titre');
+      // Fin de mot : le caractere qui suit le prefixe est une espace.
+      expect(_long[debut.length], ' ');
+      // Deux lignes au plus, rien de coupe : le garde partage, sans exception.
+      final RenderParagraph p = _paragraphe(tester, texte);
+      expect(p.didExceedMaxLines, isFalse);
+      expect(
+        p.size.height,
+        lessThanOrEqualTo(p.text.style!.fontSize! * 2 * 1.5),
+      );
       expect(motsCoupes(tester, find.byType(EntetePage)), isEmpty);
+      expect(_taille(tester, texte), 24);
+      // Le titre entier au lecteur d'ecran...
+      expect(find.bySemanticsLabel(_long), findsOneWidget);
+      // ...et en infobulle a la pression longue.
+      expect(find.byTooltip(_long), findsOneWidget);
+      await tester.longPress(find.byKey(EnteteCompact.titreKey));
+      await tester.pump(const Duration(milliseconds: 100));
+      expect(find.text(_long), findsOneWidget);
+      poignee.dispose();
+    });
+
+    testWidgets('un titre qui tient : aucune infobulle, titre entier', (
+      WidgetTester tester,
+    ) async {
+      await _poser(
+        tester,
+        vue: const Size(320, 640),
+        titre: 'Mes séances passées',
+      );
+      expect(find.byType(Tooltip), findsNothing);
+      expect(find.text('Mes séances passées'), findsOneWidget);
     });
 
     testWidgets('un nom compose qui se couperait apres son trait d\'union : '
@@ -281,6 +321,7 @@ void main() {
       for (final (String, String) cas in <(String, String)>[
         ('cahier-de-transmission', 'Cahier de transmission'),
         ('mes-seances-passees', 'Mes séances passées'),
+        ('titre-long', 'Cahier de transmission à valider'),
       ]) {
         final String nom = '320-x${echelle.round()}-${cas.$1}';
         testWidgets('capture $nom', (WidgetTester tester) async {

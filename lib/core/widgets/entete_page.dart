@@ -131,16 +131,18 @@ class EntetePage extends StatelessWidget {
         ? null
         : DisqueRetour(onPress: onRetour!);
 
-    // EN-TETES AU TELEPHONE (directeur, 10/11/2026 ; arbitrage du pilote
-    // sur COUPE-MOTS-1) : sous 600, une page de niveau 2 ou plus (celle qui
+    // EN-TETES AU TELEPHONE (directeur, 10/11/2026 ; arbitrages du pilote et
+    // du garde-cap, 11/11) : sous 600, une page de niveau 2 ou plus (celle qui
     // porte un disque retour) a une barre compacte : retour et titre cote a
     // cote, le titre un palier au-dessus d'un titre de section (HIER-1,
-    // `EnteteCompact.echelleTitre`, sans reduction), a la ligne entre ses mots
-    // et sur deux lignes au plus. Jamais d'ellipse, jamais de mot coupe. Si le
-    // titre ne tient pas ainsi, ou au-dela de 130 % de texte, l'en-tete
-    // d'avant s'applique (retour et grand titre). Le grand titre reste celui
-    // des pages racines des onglets (aucun retour), de la tablette et du
-    // bureau.
+    // `EnteteCompact.echelleBarre`, sans reduction), a la ligne entre ses mots,
+    // deux lignes au plus. Un titre plus long est abrege en FIN DE MOT sur la
+    // deuxieme ligne, suivi de « ... » : aucun mot coupe (COUPE-MOTS-1), le
+    // titre entier lu par le lecteur d'ecran et en infobulle a la pression
+    // longue. Seul un mot plus large que la ligne, ou un nom compose qui se
+    // couperait apres son trait d'union, garde l'en-tete d'avant ; au-dela de
+    // 130 % de texte aussi. Le grand titre reste celui des pages racines des
+    // onglets (aucun retour), de la tablette et du bureau.
     final bool barreEligible =
         mobile &&
         retour != null &&
@@ -289,14 +291,31 @@ class EntetePage extends StatelessWidget {
             c.maxWidth -
             (cible + AppSpacing.xs) -
             actions.length * (cible + AppSpacing.xs);
-        if (!_tientSurDeuxLignes(
+        final String? texte = _titreDeBarre(
           contexte,
           titre,
           titreComplet,
           echelleBarre,
           largeurTitre,
-        )) {
-          return enteteActuel();
+        );
+        if (texte == null) return enteteActuel();
+        final bool abrege = texte != titre;
+        Widget titreRendu = Text(
+          texte,
+          key: EnteteCompact.titreKey,
+          style: titreComplet,
+          // La taille de la barre : un palier au-dessus d'un titre de
+          // section, jamais reduite (HIER-1).
+          textScaler: echelleBarre,
+        );
+        // Abrege (fin de mot, « ... ») : le titre entier se lit a la pression
+        // longue, comme il se lit au lecteur d'ecran.
+        if (abrege) {
+          titreRendu = Tooltip(
+            message: titre,
+            triggerMode: TooltipTriggerMode.longPress,
+            child: titreRendu,
+          );
         }
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -313,16 +332,10 @@ class EntetePage extends StatelessWidget {
                     focusTitre,
                     Semantics(
                       header: true,
+                      // Le titre entier, abrege ou non.
                       label: titre,
                       excludeSemantics: true,
-                      child: Text(
-                        titre,
-                        key: EnteteCompact.titreKey,
-                        style: titreComplet,
-                        // La taille de la barre : un palier au-dessus d'un
-                        // titre de section, jamais reduite (HIER-1).
-                        textScaler: echelleBarre,
-                      ),
+                      child: titreRendu,
                     ),
                   ),
                 ),
@@ -338,6 +351,51 @@ class EntetePage extends StatelessWidget {
       },
     );
   }
+}
+
+/// Le texte que la barre compacte montre pour [titre] : le titre entier quand il
+/// tient dans [largeur] sur deux lignes au plus ; sinon ses premiers mots, la
+/// coupe tombant **en fin de mot** sur la deuxieme ligne, suivie de « … »
+/// (aucun mot n'est coupe : COUPE-MOTS-1). `null` : un mot seul est plus large
+/// que la ligne (ou le premier mot et « … » ne tiennent pas, ou un nom compose
+/// se couperait apres son trait d'union), la page garde l'en-tete d'avant.
+String? _titreDeBarre(
+  BuildContext context,
+  String titre,
+  TextStyle style,
+  TextScaler echelle,
+  double largeur,
+) {
+  if (!largeur.isFinite || largeur <= 0) return null;
+  if (_tientSurDeuxLignes(context, titre, style, echelle, largeur)) {
+    return titre;
+  }
+  // Un nom compose (« Classe An-Nour ») qui se couperait apres son trait
+  // d'union : abreger perdrait son mot le plus utile (« Classe… »), l'en-tete
+  // d'avant montre le titre entier.
+  if (!identical(
+    sansCoupureAuTrait(
+      titre,
+      DefaultTextStyle.of(context).style.merge(style),
+      Directionality.of(context),
+      echelle,
+      largeur,
+    ),
+    titre,
+  )) {
+    return null;
+  }
+  final List<String> mots = titre
+      .split(RegExp('[ \u00A0]+'))
+      .where((String m) => m.isNotEmpty)
+      .toList();
+  for (int n = mots.length - 1; n >= 1; n--) {
+    final String candidat = '${mots.take(n).join(' ')}\u2026';
+    if (_tientSurDeuxLignes(context, candidat, style, echelle, largeur)) {
+      return candidat;
+    }
+  }
+  return null;
 }
 
 /// Vrai quand [titre], a [style] et [echelle], tient dans [largeur] sur deux
