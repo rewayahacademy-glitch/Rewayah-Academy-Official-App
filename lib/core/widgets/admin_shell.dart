@@ -645,7 +645,7 @@ class _TeteNavigation extends StatelessWidget {
       child: Row(
         children: <Widget>[
           BoutonPanneau(
-            key: AdminShell.boutonPanneauKey,
+            cleBouton: AdminShell.boutonPanneauKey,
             repliee: false,
             onBasculer: basculer,
           ),
@@ -899,7 +899,7 @@ class _Rail extends StatelessWidget {
                           start: AppSpacing.lg,
                         ),
                         child: BoutonPanneau(
-                          key: AdminShell.boutonPanneauKey,
+                          cleBouton: AdminShell.boutonPanneauKey,
                           repliee: true,
                           onBasculer: basculer,
                         ),

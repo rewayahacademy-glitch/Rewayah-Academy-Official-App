@@ -15,7 +15,6 @@ import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/halo_compte.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/core/widgets/page_shell.dart';
-import 'package:rewayah_academy/core/widgets/pressable.dart';
 
 import '../support/aucun_mot_coupe.dart';
 
@@ -112,9 +111,7 @@ void main() {
       await _monter(tester, taille: const Size(1440, 900));
       expect(tester.getSize(_bouton()).width, greaterThanOrEqualTo(48));
       expect(
-        tester.getSemantics(
-          find.descendant(of: _bouton(), matching: find.byType(Pressable)),
-        ),
+        tester.getSemantics(_bouton()),
         matchesSemantics(
           label: t.nav.replier,
           isButton: true,

@@ -1957,8 +1957,13 @@ class BoutonPanneau extends StatelessWidget {
   const BoutonPanneau({
     required this.repliee,
     required this.onBasculer,
+    this.cleBouton,
     super.key,
   });
+
+  /// La cle posee sur le bouton lui-meme (le noeud lu par le lecteur
+  /// d'ecran), pour les tests et les robots.
+  final Key? cleBouton;
 
   /// Vrai quand le panneau est replie : le bouton dit « Deplier ».
   final bool repliee;
@@ -1978,6 +1983,7 @@ class BoutonPanneau extends StatelessWidget {
       child: Semantics(
         expanded: !repliee,
         child: Pressable.selon(
+          key: cleBouton,
           onPress: onBasculer,
           libelleSemantique: libelle,
           arrondiFocus: AppRadius.arrondiSm,
@@ -2039,7 +2045,7 @@ class _EnteteColonne extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Widget bouton = BoutonPanneau(
-      key: NavShell.boutonRepliKey,
+      cleBouton: NavShell.boutonRepliKey,
       repliee: repliee,
       onBasculer: onBasculer,
     );
