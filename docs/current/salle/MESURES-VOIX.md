@@ -97,6 +97,31 @@ voix garde son débit : la voix passe avant l'image, dans les deux versions.
 4. **La correction n'est jamais nettement pire.** La seule case où « avant » fait mieux (élève qui
    écoute, 20 % en rafales) est un passage unique ; la même case avec la caméra dit l'inverse.
 
+## Essai : un tampon d'avance de 250 ms chez l'élève
+
+Idée : retarder un peu le son chez l'auditeur en difficulté, pour laisser aux paquets perdus le
+temps d'être renvoyés. L'élève écoute l'enseignant, sans caméra. Chaque case : mots perdus · ESTOI
+· son reconstruit.
+
+| Réseau de l'élève | Avant, sans tampon | Avant, tampon 250 ms | Après, sans tampon | Après, tampon 250 ms |
+| :-- | :-- | :-- | :-- | :-- |
+| 3G | 0 % · 0,79 · 2,3 % | **0 % · 0,84 · 0,1 %** | 0 % · 0,85 · 0 % | 0 % · 0,89 · 0 % |
+| 10 % en rafales | 3 % · 0,70 · 6,8 % | 0 % · 0,72 · 3,7 % | 6 % · 0,74 · 7,7 % | 10 % · 0,78 · 6,2 % |
+| 20 % en rafales | 0 % · 0,74 · 5,8 % | 0 % · 0,76 · 5,7 % | 10 % · 0,70 · 13,7 % | 0 % · 0,73 · 11,9 % |
+| 30 % en rafales | 37 % · 0,53 · muette 41 % | 14 % · 0,54 · 11,0 % | 3 % · 0,61 · 21,9 % | 23 % · 0,58 · 21,9 % |
+
+Ce que ça dit, honnêtement :
+
+- Le tampon aide la version qui **renvoie** les paquets perdus (« avant ») : la 3G devient presque
+  parfaite, et la voix ne se coupe plus à 30 %. Il n'aide presque pas la version à redondance
+  (« après »), parce que le serveur de visio ne renvoie pas les paquets d'une voix redondante.
+- Sous des rafales, **aucune des quatre combinaisons ne tient la règle** : il reste 4 à 22 % de son
+  reconstruit, et des mots tombent d'un essai à l'autre (les écarts de mots entre cases voisines
+  sont dans le hasard d'un passage unique).
+- Les deux mécanismes se complètent : la redondance répare tout de suite les pertes isolées, le
+  renvoi répare les rafales quand il a le temps. Il faut **les deux ensemble**. C'est la piste
+  principale de la suite, et elle se joue en partie dans les réglages du serveur de visio.
+
 ## La règle : ce que l'application fait sous chaque seuil
 
 En vigueur avec cette branche :
@@ -122,9 +147,10 @@ réglables côté serveur.
 
 ## Ce qui reste à faire
 
-- **Les rafales.** Essai en cours : donner au son un tampon d'avance chez l'auditeur qui a un
-  mauvais réseau (250 ms), pour que les paquets perdus aient le temps d'être renvoyés. Résultat à
-  ajouter ici.
+- **Les rafales : toujours ouvertes.** Voir l'essai du tampon ci-dessous : il ne suffit pas. Pistes
+  suivantes, à mesurer : un tampon plus long (500 ms) avec le renvoi des paquets ; obtenir du
+  serveur de visio à la fois la redondance et le renvoi (aujourd'hui c'est l'un ou l'autre) ; une
+  redondance sur deux paquets au lieu d'un.
 - **Répéter** chaque case trois fois pour chiffrer le hasard, et refaire les deux cases invalides.
 - **Dire la vérité à l'écran** : mesurer le son reconstruit en direct et prévenir l'élève et
   l'enseignant (défaut V-2 du constat).
