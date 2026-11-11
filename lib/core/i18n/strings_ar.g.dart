@@ -7988,7 +7988,7 @@ class _Traductions$foyer$monProfil$ar extends Traductions$foyer$monProfil$fr {
 	@override String get dejaTitre => 'لديك ملف طلابي بالفعل';
 	@override String get dejaPhrase => 'ملفك كطالب موجود بالفعل: لا شيء لإنشائه.';
 	@override String get dejaOuvertPhrase => 'ملفك كطالب موجود بالفعل: دروسك في انتظارك في مساحتك كطالب.';
-	@override String get dejaAttentePhrase => 'ملفك كطالب موجود بالفعل. ستُفتح مساحتك كطالب بمجرد فتح وصولك.';
+	@override String get dejaAttentePhrase => 'ستكون مساحتك كطالب متاحة فور مصادقة الإدارة على طلب التحاقك.';
 	@override String get retour => 'العودة إلى الأسرة';
 }
 
@@ -31853,7 +31853,7 @@ extension on TraductionsAr {
 			'foyer.monProfil.dejaTitre' => 'لديك ملف طلابي بالفعل',
 			'foyer.monProfil.dejaPhrase' => 'ملفك كطالب موجود بالفعل: لا شيء لإنشائه.',
 			'foyer.monProfil.dejaOuvertPhrase' => 'ملفك كطالب موجود بالفعل: دروسك في انتظارك في مساحتك كطالب.',
-			'foyer.monProfil.dejaAttentePhrase' => 'ملفك كطالب موجود بالفعل. ستُفتح مساحتك كطالب بمجرد فتح وصولك.',
+			'foyer.monProfil.dejaAttentePhrase' => 'ستكون مساحتك كطالب متاحة فور مصادقة الإدارة على طلب التحاقك.',
 			'foyer.monProfil.retour' => 'العودة إلى الأسرة',
 			'foyer.ajout.suivant' => 'التالي',
 			'foyer.ajout.creer' => 'إنشاء الملف',

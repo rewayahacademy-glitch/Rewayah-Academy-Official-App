@@ -6566,8 +6566,8 @@ class Traductions$foyer$monProfil$fr {
 	/// fr: 'Votre profil élève existe déjà : vos cours vous attendent dans votre espace élève.'
 	String get dejaOuvertPhrase => 'Votre profil élève existe déjà : vos cours vous attendent dans votre espace élève.';
 
-	/// fr: 'Votre profil élève existe déjà. Votre espace élève s'ouvrira dès que votre accès sera ouvert.'
-	String get dejaAttentePhrase => 'Votre profil élève existe déjà. Votre espace élève s\'ouvrira dès que votre accès sera ouvert.';
+	/// fr: 'Votre espace élève sera disponible dès que la direction aura validé votre demande d'admission.'
+	String get dejaAttentePhrase => 'Votre espace élève sera disponible dès que la direction aura validé votre demande d\'admission.';
 
 	/// fr: 'Retour au foyer'
 	String get retour => 'Retour au foyer';
@@ -49740,7 +49740,7 @@ extension on Traductions {
 			'foyer.monProfil.dejaTitre' => 'Vous avez déjà votre profil élève',
 			'foyer.monProfil.dejaPhrase' => 'Votre profil élève existe déjà : il n\'y a rien à créer.',
 			'foyer.monProfil.dejaOuvertPhrase' => 'Votre profil élève existe déjà : vos cours vous attendent dans votre espace élève.',
-			'foyer.monProfil.dejaAttentePhrase' => 'Votre profil élève existe déjà. Votre espace élève s\'ouvrira dès que votre accès sera ouvert.',
+			'foyer.monProfil.dejaAttentePhrase' => 'Votre espace élève sera disponible dès que la direction aura validé votre demande d\'admission.',
 			'foyer.monProfil.retour' => 'Retour au foyer',
 			'foyer.ajout.suivant' => 'Suivant',
 			'foyer.ajout.creer' => 'Créer le profil',

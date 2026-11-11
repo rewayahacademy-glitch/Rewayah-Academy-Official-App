@@ -1677,7 +1677,7 @@
       "dejaTitre": "Vous avez déjà votre profil élève",
       "dejaPhrase": "Votre profil élève existe déjà\u00a0: il n'y a rien à créer.",
       "dejaOuvertPhrase": "Votre profil élève existe déjà\u00a0: vos cours vous attendent dans votre espace élève.",
-      "dejaAttentePhrase": "Votre profil élève existe déjà. Votre espace élève s'ouvrira dès que votre accès sera ouvert.",
+      "dejaAttentePhrase": "Votre espace élève sera disponible dès que la direction aura validé votre demande d'admission.",
       "retour": "Retour au foyer"
     },
     "ajout": {
