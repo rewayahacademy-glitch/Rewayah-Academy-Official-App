@@ -92,6 +92,47 @@ class SceneClasse extends StatelessWidget {
   /// La cle de la zone de l'action sous la grille (tests, captures).
   static const Key cleAction = ValueKey<String>('scene-classe-action');
 
+  /// RUBAN-TELEPHONE : la cle de son propre cadre quand on est seul dans la
+  /// salle, camera allumee (tests, captures).
+  static const Key cleMoiSeul = ValueKey<String>('scene-classe-moi-seul');
+
+  /// RUBAN-TELEPHONE : la largeur maximale de son propre cadre quand on est
+  /// seul (MODES-AFFICHAGE §3, precise le 11/11 : 240 au plus).
+  static const double largeurMoiSeul = AppSpacing.respiration * 3.75;
+
+  /// RUBAN-TELEPHONE (MODES-AFFICHAGE §2, regle 2) : LE cadre vivant de
+  /// [identite] hors de la grille (la vignette de l'eleve, la capsule de
+  /// l'enseignant, la bande de cote) : le meme widget que dans la grille,
+  /// nourri par le moteur (image, micro, parole). `null` : la personne n'est
+  /// pas dans la salle.
+  static Widget? cadreHorsGrille(
+    VueSalle vue,
+    String identite, {
+    String? recitant,
+    String? libelleNom,
+    Widget? coin,
+    bool detache = false,
+  }) {
+    for (final ParticipantSalle p in <ParticipantSalle>[
+      ?vue.moi,
+      ?vue.dominant,
+      ...vue.autres,
+    ]) {
+      if (p.identite == identite) {
+        return _CadreParticipant(
+          key: ValueKey<String>('cadre-hors-grille-${p.identite}'),
+          participant: p,
+          moi: p.estLocal,
+          recite: recitant != null && p.identite == recitant,
+          libelleNom: libelleNom,
+          coin: coin,
+          detache: detache,
+        );
+      }
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     // Les distants dans l'ordre de lecture que la vue a decide : le role
@@ -129,7 +170,14 @@ class SceneClasse extends StatelessWidget {
       ),
       child: distants.isEmpty
           // Seul dans la salle : la scene d'attente, inchangee.
-          ? _Seul(role: vue.role, attendu: attendu, action: action)
+          ? _Seul(
+              role: vue.role,
+              attendu: attendu,
+              action: action,
+              // RUBAN-TELEPHONE (MODES-AFFICHAGE §3, precise le 11/11) :
+              // camera allumee, son propre cadre sous la scene d'attente.
+              moi: moi,
+            )
           : Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
@@ -186,14 +234,23 @@ class _CadreParticipant extends ConsumerStatefulWidget {
   const _CadreParticipant({
     required this.participant,
     required this.moi,
+    super.key,
     this.recite = false,
     this.menu,
+    this.libelleNom,
+    this.coin,
+    this.detache = false,
   });
 
   final ParticipantSalle participant;
   final bool moi;
   final bool recite;
   final Widget? menu;
+
+  /// RUBAN-TELEPHONE : voir [CadreVisage.libelleNom] et [CadreVisage.coin].
+  final String? libelleNom;
+  final Widget? coin;
+  final bool detache;
 
   @override
   ConsumerState<_CadreParticipant> createState() => _CadreParticipantEtat();
@@ -251,6 +308,9 @@ class _CadreParticipantEtat extends ConsumerState<_CadreParticipant> {
       parle: _parle,
       recite: widget.recite,
       menu: widget.menu,
+      libelleNom: widget.libelleNom,
+      coin: widget.coin,
+      detache: widget.detache,
     );
   }
 }
@@ -264,7 +324,11 @@ class _CadreParticipantEtat extends ConsumerState<_CadreParticipant> {
 /// phrase : ce qui se passe et quoi faire. Encre de la surface (contraste
 /// > 4,5:1, clair et sombre). Le depart de l'enseignant ramene ici.
 class _Seul extends StatelessWidget {
-  const _Seul({required this.role, this.attendu, this.action});
+  const _Seul({required this.role, this.attendu, this.action, this.moi});
+
+  /// RUBAN-TELEPHONE : soi-meme, camera allumee et sans cadre ailleurs, ou
+  /// `null` : la scene d'attente seule.
+  final ParticipantSalle? moi;
 
   final RoleSalle role;
 
@@ -348,6 +412,26 @@ class _Seul extends StatelessWidget {
                     textes.bodyMedium ?? const TextStyle(),
                   ),
                 ),
+                // RUBAN-TELEPHONE : son propre cadre, centre, borne a 240,
+                // dans la mise en page (rien ne flotte) : on verifie son
+                // image avant l'arrivee des autres.
+                if (moi case final ParticipantSalle local) ...<Widget>[
+                  Ecart.vLg,
+                  SizedBox(
+                    key: SceneClasse.cleMoiSeul,
+                    width: math.min(
+                      SceneClasse.largeurMoiSeul,
+                      math.max(0, c.maxWidth - 2 * AppSpacing.xxl),
+                    ),
+                    child: AspectRatio(
+                      // MODES-AFFICHAGE §3 : carre au telephone, 4:3 au large.
+                      aspectRatio: c.maxWidth >= AppGabarit.seuilTablette
+                          ? 4 / 3
+                          : 1,
+                      child: _CadreParticipant(participant: local, moi: true),
+                    ),
+                  ),
+                ],
                 if (action
                     case final ({String libelle, VoidCallback onPress})
                         a) ...<Widget>[Ecart.vLg, ActionSousLaScene.bouton(a)],

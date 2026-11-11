@@ -369,6 +369,7 @@ class DockSeance extends StatelessWidget {
     this.raccourcis = false,
     this.colonne = false,
     this.avecReduire = true,
+    this.statutEnTete = false,
     this.cleDock = const ValueKey<String>('dock-seance'),
     super.key,
   });
@@ -381,6 +382,11 @@ class DockSeance extends StatelessWidget {
   /// l'enseignant, ou « Reduire la salle » est en haut (la fleche de retour
   /// de la capsule) et dans la question de Quitter, jamais dans la barre.
   final bool avecReduire;
+
+  /// RUBAN-TELEPHONE (directeur, 11/11/2026, cahier §8) : vrai quand la salle
+  /// pose la phrase d'etat de l'eleve en haut ([StatutCameraInterdite],
+  /// [StatutMicroEnAttente]) : la pilule ne la porte plus au-dessus d'elle.
+  final bool statutEnTete;
 
   /// CORAN-GRAND (directeur, 11/11/2026), avec [nommee] : les tuiles se
   /// posent l'une sous l'autre, a la largeur de la colonne des commandes de
@@ -585,7 +591,9 @@ class DockSeance extends StatelessWidget {
     // MICRO-AVANT-ENSEIGNANT : la phrase d'attente prend la place du statut
     // de la camera (les deux ne se disent jamais ensemble).
     final String? texteMicro = vue.texteMicroEnAttente;
-    final Widget? statutCamera = texteMicro != null
+    final Widget? statutCamera = statutEnTete
+        ? null
+        : texteMicro != null
         ? StatutMicroEnAttente(texte: texteMicro)
         : texteCamera == null
         ? null
@@ -754,13 +762,28 @@ class BoutonPlusAppel extends StatelessWidget {
 /// avant le dock. Une phrase de cinq mots : une `StatusPill` (deux mots au
 /// plus) passait a la ligne ; le texte reflue librement a 320 et a 200 %.
 class StatutCameraInterdite extends StatelessWidget {
-  const StatutCameraInterdite({required this.texte, super.key});
+  const StatutCameraInterdite({
+    required this.texte,
+    this.surFond = false,
+    super.key,
+  });
 
   final String texte;
+
+  /// RUBAN-TELEPHONE (cahier §8) : posee en haut, par-dessus la page un court
+  /// instant, la phrase porte le meme fond que [StatutMicroEnAttente] (sans
+  /// fond, elle se melait au texte du Coran).
+  final bool surFond;
 
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
+    if (surFond) {
+      return KeyedSubtree(
+        key: const ValueKey<String>('statut-camera-interdite'),
+        child: FondStatutSalle(child: Text(texte)),
+      );
+    }
     return ConstrainedBox(
       key: const ValueKey<String>('statut-camera-interdite'),
       constraints: const BoxConstraints(maxWidth: AppPage.largeurEtatVide),
@@ -791,14 +814,33 @@ class StatutMicroEnAttente extends StatelessWidget {
   final String texte;
 
   @override
+  Widget build(BuildContext context) => KeyedSubtree(
+    key: const ValueKey<String>('statut-micro-en-attente'),
+    child: FondStatutSalle(
+      child: Semantics(
+        liveRegion: true,
+        child: Text(texte, textAlign: TextAlign.center),
+      ),
+    ),
+  );
+}
+
+/// Le fond des phrases d'etat de la salle : la surface des pilules (opaque),
+/// un filet qui la detache d'un support de meme couleur, et l'encre de cette
+/// surface pour le texte ([child]). Partage par [StatutMicroEnAttente] et par
+/// [StatutCameraInterdite] posee en haut (RUBAN-TELEPHONE).
+class FondStatutSalle extends StatelessWidget {
+  const FondStatutSalle({required this.child, super.key});
+
+  final Widget child;
+
+  @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final AppColorPair surface = palette.surfaceRaised;
     return ConstrainedBox(
-      key: const ValueKey<String>('statut-micro-en-attente'),
       constraints: const BoxConstraints(maxWidth: AppPage.largeurEtatVide),
       child: DecoratedBox(
-        // Le filet la detache d'un support de meme couleur qu'elle.
         decoration: surface.decoration(
           borderRadius: AppRadius.arrondiLg,
           side: palette.borderHairline.asBorderSide(),
@@ -808,15 +850,12 @@ class StatutMicroEnAttente extends StatelessWidget {
             horizontal: AppSpacing.lg,
             vertical: AppSpacing.sm,
           ),
-          child: Semantics(
-            liveRegion: true,
-            child: Text(
-              texte,
-              textAlign: TextAlign.center,
-              style: surface.applyTo(
-                Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
-              ),
+          child: DefaultTextStyle.merge(
+            textAlign: TextAlign.center,
+            style: surface.applyTo(
+              Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
             ),
+            child: child,
           ),
         ),
       ),

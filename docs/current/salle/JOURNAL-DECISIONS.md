@@ -1445,3 +1445,42 @@ t'impose que les meilleures pratiques alors à toi de voir ce qui est meilleur p
   `test/core/widgets/cadre_visage_test.dart`, `test/features/salle_seance/mode_scene_test.dart` ; tests de
   la salle verts. Captures de test : `docs/current/captures/E2E/scene-classe/` ; vraie application :
   `docs/current/captures/E2E/salle-banc/scene-classe-3/` et `scene-classe-6/`.
+
+## D-031 (11/11/2026). Le ruban au téléphone et chez l'élève, et les passages entre modes (lot RUBAN-TELEPHONE, seconde moitié du modèle)
+
+- **Demande** (directeur, 11/11) : « il faut que tout soit bien coordonné et ne pas agir comme des
+  entités différentes. Pense aussi aux transitions si nécessaire. » Règle : `MODES-AFFICHAGE.md` §2 à §5.
+  Revue : `docs/current/UX_REVIEW_RUBAN-TELEPHONE.md`.
+- **Un seul cadre** : la vignette de l'enseignant chez l'élève, la capsule de l'enseignant au téléphone
+  et la bande de côté passent par `CadreVisage`. `VignetteVideo` devient une enveloppe (largeur, rapport,
+  clé `vignette-video`, toucher « voir en grand », barres du réseau dans le cadre). Dans `/salle`, le cadre
+  est servi par la portée (`PorteeMediaSalle.cadre`, ajout) : c'est le cadre de la grille
+  (`SceneClasse.cadreHorsGrille`), avec la parole écoutée sur le moteur. Ajouts compatibles au core :
+  `CadreVisage.coin`, `libelleNom`, `detache` (filet du cadre posé seul sur la page, WCAG 1.4.11).
+- **Le ruban** : élève au téléphone, toujours l'enseignant (le « Point 2 » du 30/10, vignette du camarade
+  qui récite chez l'élève, est **remplacé** : `identiteVignetteRecitant` retiré de `salle_page.dart`) ;
+  élève sur écran large, l'enseignant (bande de fin) puis le récitant (milieu de la bande de début), même
+  taille, hors de la page ; enseignant au téléphone, la capsule montre le récitant en Document ou
+  Tableau (`PorteeMediaSalle.identiteRecitant`, ajout), lui-même en Classe.
+- **La capsule** (« reste à ranger » de D-027) : Réduire la salle · le cadre · Voir la classe (ou
+  Revenir à la page), marge 8, écart 8, cibles 48. Le point vert ne se pose plus (il ne pouvait être que
+  vert, A-01) ; rouge, il se poserait dans le cadre. Le profil déplié garde point et réseau.
+- **Seul dans la salle** : caméra allumée, son propre cadre sous l'attente, 240 au plus, dans la colonne
+  (tranche le point laissé ouvert par D-028, comme précisé le 11/11).
+- **Passages** : `PassageVisages` (`lib/core/mouvement/passage_visages.dart`, nouveau) : grille qui part
+  vers la place du ruban, vignette qui arrive en grandissant, page en fondu ; retour plus vite ; Document
+  vers Tableau en fondu court. Version coordonnée, pas un vol (raison dans la revue). Ne se joue qu'à
+  l'image où le mode change.
+- **Phrases d'état** : « Caméra désactivée pour ce profil. » et le micro en attente passent en haut, sous
+  l'île, avec le fond des pilules (`FondStatutSalle`), le temps des commandes, devant une page qui garde
+  l'écran ; en Interface guidée et sur la scène elles restent au-dessus de la pilule (place réservée).
+- **Flux** : un flux reçu de plus chez l'enseignant au téléphone pendant une récitation, deux au lieu
+  d'un chez l'élève sur grand écran ; le repli réseau coupe les vidéos avant la voix.
+- **À trancher par le directeur** : sur grand écran, la bande (enseignant et récitant) se masque avec les
+  commandes à 3 s, comme la vignette depuis CORAN-ELEVE ; elle ne recouvre rien, elle pourrait rester.
+  La feuille « Élèves » du téléphone garde des cartes sans image vivante (zone de l'autre lot).
+- **Preuves** : `test/features/salle_ruban_telephone_test.dart` (40 tests : une personne un cadre, quatre
+  rôles, 390, 820, 1440, Classe et Document ; ruban de l'élève ; capsule FR et AR, cibles, récitant ;
+  seul avec et sans caméra ; passages : départ, arrivée, interrompu, mouvement réduit, masquage,
+  reconnexion ; phrases en haut). Captures de test : `docs/current/captures/E2E/ruban-telephone/`. Pas
+  de preuve dans la vraie application.

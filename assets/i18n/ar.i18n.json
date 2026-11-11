@@ -1075,7 +1075,8 @@
     "scene": {
       "parle": "يتحدث الآن",
       "precedents": "الوجوه السابقة",
-      "suivants": "الوجوه التالية"
+      "suivants": "الوجوه التالية",
+      "voirLaClasse": "عرض الفصل"
     },
     "microCoupe": "الميكروفون مغلق",
     "cameraAllumee": "الكاميرا مشغّلة",

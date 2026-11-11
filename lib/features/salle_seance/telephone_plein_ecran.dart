@@ -34,6 +34,7 @@ import '../../core/domain/enums.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/mouvement/passage_visages.dart';
 import '../../core/tc_outils/etat_outils.dart';
 import '../../core/tc_outils/port_dock_hote.dart' show OutilDock;
 import '../../core/theme/app_gabarit.dart';
@@ -128,6 +129,22 @@ Size boitePageAvecFleches(
 
 /// La vignette flottante du telephone (≈ 96 de large).
 const double largeurVignetteTelephone = AppSpacing.respiration * 1.5;
+
+/// RUBAN-TELEPHONE : la largeur d'un cadre de la bande de cote de l'eleve
+/// (l'enseignant, le recitant) : la meme pour les deux.
+double largeurCadreBande(GeometrieEleve geometrie) => math.min(
+  MesuresVignette.largeurPleinCadreLarge,
+  geometrie.bande - 2 * AppSpacing.lg,
+);
+
+/// RUBAN-TELEPHONE : la cle de la grille qui part vers le ruban (tests).
+const Key cleGrilleSortante = ValueKey<String>('grille-sortante');
+
+/// RUBAN-TELEPHONE : la cle du voile qui fait arriver la page en fondu.
+const Key cleVoilePage = ValueKey<String>('voile-page');
+
+/// RUBAN-TELEPHONE : la cle du cadre du recitant dans la bande de cote.
+const Key cleRecitantBande = ValueKey<String>('bande-cadre-recitant');
 
 /// Lot CORAN-ELEVE (directeur, 11/11/2026) : la place de la page de l'eleve
 /// (et du tuteur, du controleur) et de ce qui l'entoure, pour que rien ne
@@ -474,6 +491,48 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
   /// visibles [AppMouvement.ilePassage] quand la phrase apparait, puis
   /// suivent le masquage habituel.
   bool _microAttente = false;
+
+  /// RUBAN-TELEPHONE (MODES-AFFICHAGE §5) : le dernier mode vu, pour savoir
+  /// quel passage jouer quand il change ; `null` avant la premiere image (rien
+  /// ne se joue a l'entree ni a une reconnexion qui remonte l'ecran).
+  ModeScene? _modeVu;
+
+  /// Le passage en cours, seulement pendant l'image ou le mode change (remis
+  /// a faux apres elle) : un cadre monte plus tard ne le rejoue pas.
+  bool _versRuban = false;
+  bool _versGrille = false;
+
+  /// Vrai le temps du fondu d'arrivee de la page (un voile du fond qui
+  /// s'efface au-dessus d'elle, sans geste ni lecture).
+  bool _voilePage = false;
+
+  /// La grille qui part (Classe vers Document ou Tableau), le temps de son
+  /// passage ; `null` sinon.
+  Widget? _grilleSortante;
+
+  /// Le numero du passage : la cle de ce qui se joue (un passage, un
+  /// montage).
+  int _passage = 0;
+
+  /// RUBAN-TELEPHONE : note le mode de cette image et le passage a jouer.
+  void _suivreMode(ModeScene mode, Widget? laScene) {
+    final ModeScene? avant = _modeVu;
+    if (avant == mode) return;
+    _modeVu = mode;
+    if (avant == null) return;
+    _passage++;
+    _versRuban = avant == ModeScene.classe;
+    _versGrille = mode == ModeScene.classe;
+    _grilleSortante = _versRuban ? laScene : null;
+    // La page (ou le tableau) arrive en fondu : depuis la classe, sur la
+    // duree du passage ; d'un document au tableau, fondu enchaine court.
+    _voilePage = !_versGrille;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _versRuban = false;
+      _versGrille = false;
+    });
+  }
+
   Timer? _minuterieMicroAttente;
 
   void _suivreMicroAttente({required bool avant}) {
@@ -622,6 +681,32 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
               !libre &&
               surface != null;
           final bool sceneDevant = enseignant && scene;
+          // RUBAN-TELEPHONE (MODES-AFFICHAGE §5) : le passage entre modes.
+          // La place du ruban : la capsule (enseignant, en haut au centre) ou
+          // la vignette (en haut a la fin) ; l'echelle : la taille de ce
+          // cadre rapportee a la largeur de l'ecran.
+          _suivreMode(
+            scene
+                ? ModeScene.classe
+                : modeSceneDe(context, vue) == ModeScene.tableau
+                ? ModeScene.tableau
+                : ModeScene.document,
+            laScene,
+          );
+          final AlignmentGeometry placeRuban = enseignant
+              ? Alignment.topCenter
+              : AlignmentDirectional.topEnd;
+          final double echelleRuban = ecran.width <= 0
+              ? 1
+              : math.min(
+                  1,
+                  (enseignant
+                          ? CapsuleVideoTelephone.largeurVideo
+                          : telephone
+                          ? largeurVignetteTelephone
+                          : MesuresVignette.largeurPleinCadreLarge) /
+                      ecran.width,
+                );
           final Widget haut = _Haut(
             vue: vue,
             actions: actions,
@@ -630,24 +715,6 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
             vignette: false,
             aCote: !telephone && !enseignant,
             microOuvert: _microOuvertEntendu,
-          );
-          final Widget bas = Padding(
-            // Standard : marge 16 des bords (et la zone sure). GRILLE-
-            // COMMANDES : sous 360 de large, la barre de l'enseignant
-            // s'approche des bords (8) pour garder ses six cases de 48.
-            padding: enseignant && ecran.width < 360
-                ? const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.sm,
-                    vertical: AppSpacing.lg,
-                  )
-                : const EdgeInsets.all(AppSpacing.lg),
-            child: _Bas(
-              vue: vue,
-              actions: actions,
-              local: local,
-              paletteAuDessus: telephone || enseignant,
-              enseignantTelephone: enseignant,
-            ),
           );
           // Plan §4 : le tiroir des Commandes et la feuille des eleves
           // montent du bas, au-dessus de la pilule de l'appel.
@@ -697,6 +764,35 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
                   hauteurBas: _hauteurBas,
                 )
               : null;
+          // RUBAN-TELEPHONE (cahier §8, regle du directeur : une information
+          // se pose en haut, jamais sur la page) : devant une page qui garde
+          // l'ecran (portrait superpose ou bandes de cote), les phrases
+          // d'etat de l'eleve (« Camera desactivee pour ce profil. », le
+          // micro en attente) quittent le dessus de la pilule du bas et
+          // passent en haut ([_StatutEnHaut]). En Interface guidee (la page
+          // entre deux rangees) et sur la scene, la pilule a sa place
+          // reservee : la phrase y reste, elle ne couvre rien.
+          final bool statutEnHaut =
+              geometrie != null && (geometrie.cote || geometrie.superposee);
+          final Widget bas = Padding(
+            // Standard : marge 16 des bords (et la zone sure). GRILLE-
+            // COMMANDES : sous 360 de large, la barre de l'enseignant
+            // s'approche des bords (8) pour garder ses six cases de 48.
+            padding: enseignant && ecran.width < 360
+                ? const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.sm,
+                    vertical: AppSpacing.lg,
+                  )
+                : const EdgeInsets.all(AppSpacing.lg),
+            child: _Bas(
+              vue: vue,
+              actions: actions,
+              local: local,
+              paletteAuDessus: telephone || enseignant,
+              enseignantTelephone: enseignant,
+              statutEnTete: statutEnHaut,
+            ),
+          );
           // L'ile de l'eleve : toujours la, repliee (au repos comme au
           // toucher) ; sur les cotes, dans la bande de debut ; en portrait,
           // posee en haut de la page (elle est petite) ; avec les rangees,
@@ -769,18 +865,36 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
                               key: const ValueKey<String>('telephone-scene'),
                               // « Ouvrir le Coran » est pose par la scene,
                               // jamais par-dessus sa phrase d'attente.
-                              child: actionScene == null
-                                  ? laScene
-                                  : ActionSousLaScene(
-                                      action: actionScene,
-                                      child: laScene,
-                                    ),
+                              // RUBAN-TELEPHONE : au retour en mode Classe,
+                              // la grille revient en grandissant depuis la
+                              // capsule, plus vite (deux tiers).
+                              child: PassageVisages(
+                                key: ValueKey<String>(
+                                  'scene-arrivee-$_passage',
+                                ),
+                                jouer: _versGrille,
+                                facon: FaconVisages.entree,
+                                duree: AppMouvement.deplacementSortie,
+                                alignement: placeRuban,
+                                echelle: echelleRuban,
+                                child: actionScene == null
+                                    ? laScene
+                                    : ActionSousLaScene(
+                                        action: actionScene,
+                                        child: laScene,
+                                      ),
+                              ),
                             ),
                           ),
                         ],
                       ),
                     )
                   : null);
+          // RUBAN-TELEPHONE (MODES-AFFICHAGE §5) : la page arrive en fondu
+          // par un voile du fond qui s'efface au-dessus d'elle ([_voilePage]) ;
+          // la page elle-meme n'est jamais enveloppee (elle garde son arbre,
+          // ses lectures et son zoom).
+          final Widget? pagePassee = page;
           // Fiche 1, lignes 1, 2, 5 : la capsule (ou le profil deplie) en
           // haut. Sans page ni scene devant une page, rien a reduire : pas de
           // capsule. Page illisible : son constat et son « Reessayer » se
@@ -818,6 +932,12 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
                     onDeplier: _deplierProfil,
                     onRevenirPage: revenirPage,
                     oeil: !sceneDevant || revenirPage != null,
+                    // RUBAN-TELEPHONE (MODES-AFFICHAGE §4) : en mode
+                    // Document ou Tableau, l'eleve qui recite ; en mode
+                    // Classe il est deja dans la grille (une personne, un
+                    // cadre) : l'enseignant lui-meme.
+                    recitant: sceneDevant ? null : media?.identiteRecitant,
+                    nomRecitant: vue.recitantPrenom,
                     // SORTIE-SALLE, Q1 : seulement si l'appel continue hors
                     // de l'ecran ; jamais en Interface guidee.
                     onReduireSalle: vue.role == RoleSeance.guidee
@@ -914,7 +1034,18 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
                       Expanded(
                         child: SafeArea(
                           top: false,
-                          child: ZoneSupport(vue: vue, zoom: local.zoom),
+                          // RUBAN-TELEPHONE : au retour en mode Classe, la
+                          // grille revient en grandissant depuis la
+                          // vignette, plus vite (deux tiers).
+                          child: PassageVisages(
+                            key: ValueKey<String>('scene-arrivee-$_passage'),
+                            jouer: _versGrille,
+                            facon: FaconVisages.entree,
+                            duree: AppMouvement.deplacementSortie,
+                            alignement: placeRuban,
+                            echelle: echelleRuban,
+                            child: ZoneSupport(vue: vue, zoom: local.zoom),
+                          ),
                         ),
                       ),
                     ],
@@ -924,15 +1055,66 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
                     behavior: HitTestBehavior.translucent,
                     onPointerDown: _toucherPage,
                     child: geometrie == null
-                        ? Center(child: page)
+                        ? Center(child: pagePassee)
                         : Stack(
                             children: <Widget>[
                               Positioned.fromRect(
                                 rect: geometrie.page,
-                                child: Center(child: page),
+                                child: Center(child: pagePassee),
                               ),
                             ],
                           ),
+                  ),
+                // RUBAN-TELEPHONE : la grille qui part retrecit vers la place
+                // du ruban et s'efface (ni geste ni lecture), pendant que le
+                // cadre du ruban arrive en grandissant ; puis elle est
+                // retiree.
+                if (_voilePage && page != null && !sceneDevant)
+                  Positioned.fill(
+                    child: PassageVisages(
+                      key: ValueKey<String>('voile-page-$_passage'),
+                      jouer: true,
+                      facon: FaconVisages.sortie,
+                      duree: _grilleSortante != null
+                          ? AppMouvement.deplacementEntree
+                          : AppMouvement.fonduEntree,
+                      onFini: () {
+                        if (mounted) setState(() => _voilePage = false);
+                      },
+                      child: DecoratedBox(
+                        key: cleVoilePage,
+                        decoration: palette.surfaceCanvas.decoration(),
+                      ),
+                    ),
+                  ),
+                if (_grilleSortante case final Widget grille)
+                  Positioned.fill(
+                    top: enseignant
+                        ? _hautSceneEnseignant(context)
+                        : MediaQuery.paddingOf(context).top +
+                              AppSpacing.lg +
+                              hauteurPiluleEtat,
+                    bottom: enseignant
+                        ? MediaQuery.paddingOf(context).bottom +
+                              (_hauteurBasScene ??
+                                  diametreBoutonAppel(context) +
+                                      2 * AppSpacing.lg)
+                        : 0,
+                    child: PassageVisages(
+                      key: ValueKey<String>('grille-sortante-$_passage'),
+                      jouer: true,
+                      facon: FaconVisages.sortie,
+                      duree: AppMouvement.deplacementEntree,
+                      alignement: placeRuban,
+                      echelle: echelleRuban,
+                      onFini: () {
+                        if (mounted) setState(() => _grilleSortante = null);
+                      },
+                      child: KeyedSubtree(
+                        key: cleGrilleSortante,
+                        child: grille,
+                      ),
+                    ),
                   ),
                 ?hautEleve,
                 // Pilote C10 (27/10) : sur la scene video en grand, rien a
@@ -1200,7 +1382,27 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
                   AppSpacing.lg,
               // Lot VIGNETTE-TELEPHONE : glissee au bord, elle se range.
               rangeable: true,
+              arrivee: _versRuban,
             ),
+          // RUBAN-TELEPHONE : la phrase d'etat, en haut, sous l'ile, avant la
+          // vignette ; elle vient et part avec les commandes.
+          PositionedDirectional(
+            top:
+                zoneSure.top +
+                AppSpacing.lg +
+                hauteurPiluleEtat +
+                AppSpacing.sm,
+            start: AppSpacing.lg,
+            width: math.max(
+              0,
+              ecran.width -
+                  2 * AppSpacing.lg -
+                  (vue.voitVignetteSurSupport
+                      ? largeurVignetteTelephone + AppSpacing.sm
+                      : 0),
+            ),
+            child: _StatutEnHaut(vue: vue),
+          ),
           if (zoom)
             PositionedDirectional(
               top: 0,
@@ -1252,10 +1454,7 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
             VignetteAimantee(
               vue: vue,
               largeur: cote
-                  ? math.min(
-                      MesuresVignette.largeurPleinCadreLarge,
-                      geometrie.bande - 2 * AppSpacing.lg,
-                    )
+                  ? largeurCadreBande(geometrie)
                   : largeurVignetteTelephone,
               haut: zoneSure.top + AppSpacing.lg,
               bas: zoneSure.bottom + AppSpacing.lg,
@@ -1270,6 +1469,48 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
               // Interface guidee (rangees), l'enfant garde toujours le visage
               // de son enseignant : pas de rangement.
               rangeable: cote,
+              arrivee: _versRuban,
+            ),
+          // RUBAN-TELEPHONE (MODES-AFFICHAGE §4) : sur un ecran large, la
+          // bande de cote porte aussi le cadre de l'eleve qui recite, apres
+          // celui de l'enseignant : au milieu de la bande de debut (sous
+          // l'ile, au-dessus du coin bas ou l'on peut poser l'enseignant),
+          // a la meme taille. La page garde toute sa taille, rien ne la
+          // recouvre ; une personne, un cadre (le recitant n'est nulle part
+          // ailleurs dans ce mode).
+          if (PorteeMediaSalle.de(context)?.identiteRecitant
+              case final String recitant when cote)
+            PositionedDirectional(
+              start: AppSpacing.lg,
+              top: 0,
+              bottom: 0,
+              width: largeurCadreBande(geometrie),
+              child: Center(
+                child: VignetteVideo(
+                  vue: vue,
+                  largeur: largeurCadreBande(geometrie),
+                  identite: recitant,
+                  nom: vue.recitantPrenom ?? '',
+                  touchable: false,
+                  avecSignal: false,
+                  cleCadre: cleRecitantBande,
+                ),
+              ),
+            ),
+          // RUBAN-TELEPHONE : sur les cotes, la phrase d'etat en haut de la
+          // bande de debut, sous l'ile ; elle vient et part avec les
+          // commandes. (En Interface guidee, elle reste sur la pilule du
+          // bas, dans sa rangee reservee.)
+          if (cote)
+            PositionedDirectional(
+              top:
+                  zoneSure.top +
+                  AppSpacing.lg +
+                  hauteurPiluleEtat +
+                  AppSpacing.sm,
+              start: AppSpacing.lg,
+              width: math.max(0, geometrie.bande - 2 * AppSpacing.lg),
+              child: _StatutEnHaut(vue: vue),
             ),
           // Le zoom : sur les cotes, debout au milieu de la bande de fin ;
           // sinon couche, dans la rangee du haut, avant la vignette.
@@ -1376,6 +1617,40 @@ class _ZoomFlottant extends StatelessWidget {
   }
 }
 
+/// RUBAN-TELEPHONE (directeur, 11/11/2026, cahier §8 : « messages tantot en
+/// haut, tantot en bas ») : la phrase d'etat de l'eleve posee en haut, sous
+/// l'ile, au lieu d'etre posee sans fond sur la page au-dessus de la pilule.
+/// Elle vit dans la couche des commandes : elle se lit a l'entree (le micro
+/// en attente retient les commandes [AppMouvement.ilePassage]) et a chaque
+/// toucher qui les ramene, puis part avec elles ; jamais posee sur la page
+/// pour de bon. Le lecteur d'ecran l'entend comme avant (zone vivante pour
+/// le micro) ; les commandes restent toujours visibles pour lui.
+class _StatutEnHaut extends StatelessWidget {
+  const _StatutEnHaut({required this.vue});
+
+  final VueSeance vue;
+
+  @override
+  Widget build(BuildContext context) {
+    final String? micro = vue.texteMicroEnAttente;
+    final String? camera = vue.texteCameraInterdite;
+    final Widget? phrase = micro != null
+        ? StatutMicroEnAttente(texte: micro)
+        : camera != null
+        ? StatutCameraInterdite(texte: camera, surFond: true)
+        : null;
+    if (phrase == null) return const SizedBox.shrink();
+    return Align(
+      key: cleStatutEnHaut,
+      alignment: AlignmentDirectional.topStart,
+      child: phrase,
+    );
+  }
+}
+
+/// RUBAN-TELEPHONE : la cle de la phrase d'etat posee en haut (tests).
+const Key cleStatutEnHaut = ValueKey<String>('statut-en-haut');
+
 /// La hauteur de la pilule d'etat ([PiluleEtatSalle]).
 const double hauteurPiluleEtat = AppSpacing.xxxl + AppSpacing.xs;
 
@@ -1404,8 +1679,14 @@ class VignetteAimantee extends StatefulWidget {
     required this.bas,
     this.coinsPermis,
     this.rangeable = false,
+    this.arrivee = false,
     super.key,
   });
+
+  /// RUBAN-TELEPHONE (MODES-AFFICHAGE §5) : vrai pendant l'image ou la salle
+  /// passe du mode Classe a la page : la vignette arrive en grandissant
+  /// (une fois, au montage), pendant que la grille retrecit vers elle.
+  final bool arrivee;
 
   final VueSeance vue;
   final double largeur;
@@ -1813,9 +2094,16 @@ class _EtatVignetteAimantee extends State<VignetteAimantee>
                   child: _glissable(
                     KeyedSubtree(
                       key: VignetteAimantee.cle,
-                      child: VignetteVideo(
-                        vue: widget.vue,
-                        largeur: widget.largeur,
+                      child: PassageVisages(
+                        jouer: widget.arrivee,
+                        facon: FaconVisages.entree,
+                        duree: AppMouvement.deplacementEntree,
+                        alignement: Alignment.center,
+                        echelle: AppMouvement.echelleVersIle,
+                        child: VignetteVideo(
+                          vue: widget.vue,
+                          largeur: widget.largeur,
+                        ),
                       ),
                     ),
                   ),
@@ -2279,7 +2567,12 @@ class _Bas extends StatelessWidget {
     required this.local,
     required this.paletteAuDessus,
     this.enseignantTelephone = false,
+    this.statutEnTete = false,
   });
+
+  /// RUBAN-TELEPHONE : la phrase d'etat de l'eleve est posee en haut
+  /// ([_StatutEnHaut]), pas au-dessus de la pilule.
+  final bool statutEnTete;
 
   final VueSeance vue;
   final ActionsSeance actions;
@@ -2334,6 +2627,7 @@ class _Bas extends StatelessWidget {
       microOuvert: local.microOuvert,
       cameraAllumee: local.cameraAllumee,
       agrandi: local.agrandi,
+      statutEnTete: statutEnTete,
       plus:
           commandes != null &&
               CommandesPedagogiques.aDesEntrees(vue, actions) &&

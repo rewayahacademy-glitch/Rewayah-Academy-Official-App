@@ -2175,15 +2175,27 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           : null,
       video: moteur.renduVideo,
       // L'enseignant chez l'eleve ; sa propre image chez l'enseignant.
-      // Point 2 : l'eleve qui recite prend la vignette chez ses camarades.
-      identiteVignette:
-          identiteVignetteRecitant(
-            enseignant: enseignant,
-            parole: parole,
-            moi: moi,
-          )
-          ? parole!.profilId
-          : (enseignant ? moi : vue.dominant)?.identite,
+      // RUBAN-TELEPHONE (MODES-AFFICHAGE §4, precise le 11/11) : chez
+      // l'eleve, la vignette montre TOUJOURS l'enseignant (c'est lui qui
+      // corrige ; le camarade qui recite s'entend, et sur un ecran large il
+      // a son cadre dans la bande de cote). Remplace le Point 2 du 30/10.
+      identiteVignette: (enseignant ? moi : vue.dominant)?.identite,
+      identiteRecitant: parole?.profilId,
+      // RUBAN-TELEPHONE : LE cadre de la grille, hors de la grille.
+      cadre:
+          (
+            String identite, {
+            String? libelleNom,
+            Widget? coin,
+            bool detache = false,
+          }) => SceneClasse.cadreHorsGrille(
+            vue,
+            identite,
+            recitant: parole?.profilId,
+            libelleNom: libelleNom,
+            coin: coin,
+            detache: detache,
+          ),
       // PHOTOS-A (04/11/2026) : la photo de la vignette se lit par
       // identiteVignette (l'id), dans VignetteVideo ; plus de cle copiee.
       // L'enseignant garde les etats de lecture de son panneau (page
@@ -5184,15 +5196,6 @@ String? cheminCahierOuvrable(RouteConfiguration routeur, String seanceId) {
   final String chemin = Routes.cahierPour(seanceId);
   return routeur.findMatch(Uri.parse(chemin)).isEmpty ? null : chemin;
 }
-
-/// Point 2 (30/10/2026) : chez un eleve, la vignette montre son camarade
-/// qui recite (jamais lui-meme : il garde son enseignant).
-@visibleForTesting
-bool identiteVignetteRecitant({
-  required bool enseignant,
-  required ParoleSalle? parole,
-  required ParticipantSalle? moi,
-}) => !enseignant && parole != null && parole.profilId != moi?.identite;
 
 /// La preparation de l'enseignant sur les vraies lectures : le pre-vol
 /// (`preVolProvider`, seul chemin), la connectivite, et la preparation de la

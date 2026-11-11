@@ -124,6 +124,17 @@ reconnexion.
   passent par `CadreVisage`), les passages entre modes du §5, les derniers drapeaux
   (`scenePremierPlan` de `zone_support.dart`), son propre cadre quand on est seul.
 
+- **Fait au téléphone et chez l'élève (lot RUBAN-TELEPHONE, D-031, tests et captures de test, pas
+  encore vu sur le banc)** : la vignette de l'enseignant, la capsule de l'enseignant au téléphone et la
+  bande de côté de l'élève passent par `CadreVisage`, servi par la portée (le même cadre que la grille) ;
+  élève au téléphone : un seul cadre, l'enseignant ; élève sur écran large : l'enseignant (bande de fin)
+  puis le récitant (milieu de la bande de début), même taille ; enseignant au téléphone : la capsule
+  (Réduire la salle · cadre · Voir la classe) montre le récitant en Document ou Tableau ; seul dans la
+  salle, son propre cadre sous l'attente (240 au plus) ; les passages du §5 en version coordonnée
+  (`PassageVisages`), pas un vol ; les phrases d'état de l'élève en haut. Restent : la bande se masque
+  avec les commandes à 3 s sur grand écran (à trancher) ; la feuille « Élèves » du téléphone sans image
+  vivante (autre lot).
+
 ## 6. Ce que ce modèle ne fait pas (à décider ensuite)
 
 - Épingler un élève en grand à côté de la page (utile pour corriger une bouche) : proposé, pas

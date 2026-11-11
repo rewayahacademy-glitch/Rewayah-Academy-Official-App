@@ -1,7 +1,8 @@
 {
   "salle.scene.parle": "directeur, 11/11/2026, salle (lot SCENE-CLASSE : la grille des visages, un seul cadre ; ce que le lecteur d ecran dit d une personne qui parle, et les pages de la grille quand la place manque, MODES-AFFICHAGE §3)",
   "salle.scene.precedents": "directeur, 11/11/2026, salle (lot SCENE-CLASSE : la grille des visages, un seul cadre ; ce que le lecteur d ecran dit d une personne qui parle, et les pages de la grille quand la place manque, MODES-AFFICHAGE §3)",
-  "salle.scene.suivants": "directeur, 11/11/2026, salle (lot SCENE-CLASSE : la grille des visages, un seul cadre ; ce que le lecteur d ecran dit d une personne qui parle, et les pages de la grille quand la place manque, MODES-AFFICHAGE §3)",
+  "salle.scene.voirLaClasse": "directeur, 11/11/2026, salle (lot RUBAN-TELEPHONE : la fin de la capsule de l enseignant au telephone repasse en mode Classe sans fermer le document, MODES-AFFICHAGE §4)",
+  "salle.scene.suivants":"directeur, 11/11/2026, salle (lot SCENE-CLASSE : la grille des visages, un seul cadre ; ce que le lecteur d ecran dit d une personne qui parle, et les pages de la grille quand la place manque, MODES-AFFICHAGE §3)",
   "salle.vignette.ranger": "directeur, 11/11/2026, salle (lot VIGNETTE-TELEPHONE : au telephone, l eleve range la video de l enseignant au bord de l ecran et la rappelle par sa languette ; seulement l affichage chez soi, D-023)",
   "salle.vignette.montrer": "directeur, 11/11/2026, salle (lot VIGNETTE-TELEPHONE : au telephone, l eleve range la video de l enseignant au bord de l ecran et la rappelle par sa languette ; seulement l affichage chez soi, D-023)",
   "salle.reseau.bon": "directeur, 11/11/2026, salle (lot RESEAU-ELEVES : l enseignant voit le reseau de chaque eleve ; celui qu on entend peut-etre mal le sait, cahier de la salle §5 et §6)",

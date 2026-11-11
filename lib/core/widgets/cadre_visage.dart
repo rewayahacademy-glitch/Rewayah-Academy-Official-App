@@ -48,7 +48,28 @@ class CadreVisage extends StatelessWidget {
     this.parle = false,
     this.recite = false,
     this.menu,
+    this.coin,
+    this.libelleNom,
+    this.detache = false,
   });
+
+  /// RUBAN-TELEPHONE (11/11/2026) : un signe pose DANS le cadre, en haut a
+  /// la fin (les barres du reseau de la capsule de l'enseignant), ou `null`.
+  /// Le cadre ne le lit pas : l'appelant le rend lisible lui-meme.
+  final Widget? coin;
+
+  /// RUBAN-TELEPHONE : ce que le lecteur d'ecran dit a la place du nom
+  /// (« Video de Khadija » dans la vignette), ou `null` : le nom.
+  final String? libelleNom;
+
+  /// RUBAN-TELEPHONE : vrai quand le cadre est pose seul sur une page ou un
+  /// fond de la meme teinte que lui (la vignette sur le Coran) : un filet le
+  /// detache, pour que son bord se voie (WCAG 1.4.11). La grille, sur sa
+  /// propre scene, n'en a pas besoin.
+  final bool detache;
+
+  /// La cle du signe pose dans le coin (tests).
+  static const Key cleCoin = ValueKey<String>('cadre-visage-coin');
 
   /// Le nom affiche (« Khadija », « Vous »).
   final String nom;
@@ -103,7 +124,10 @@ class CadreVisage extends StatelessWidget {
 
   /// La phrase que le lecteur d'ecran lit pour ce cadre.
   String get libelle => <String>[
-    if (nom.trim().isNotEmpty) nom,
+    if (libelleNom case final String l when l.trim().isNotEmpty)
+      l
+    else if (nom.trim().isNotEmpty)
+      nom,
     if (microCoupe) t.salle.microCoupe,
     if (image == null) t.salle.sansImage,
     if (recite) t.tc.classe.recitation.pastille,
@@ -134,11 +158,10 @@ class CadreVisage extends StatelessWidget {
                 reverseDuration: AppMouvement.fonduSortie,
                 switchInCurve: AppMouvement.courbeFondu,
                 switchOutCurve: AppMouvement.courbeFondu,
-                layoutBuilder: (Widget? courant, List<Widget> anciens) =>
-                    Stack(
-                      fit: StackFit.expand,
-                      children: <Widget>[...anciens, ?courant],
-                    ),
+                layoutBuilder: (Widget? courant, List<Widget> anciens) => Stack(
+                  fit: StackFit.expand,
+                  children: <Widget>[...anciens, ?courant],
+                ),
                 child: image != null
                     ? KeyedSubtree(
                         key: const ValueKey<String>('cadre-visage-image'),
@@ -194,7 +217,10 @@ class CadreVisage extends StatelessWidget {
           ),
         );
         final Widget cadre = DecoratedBox(
-          decoration: palette.surfaceSunken.decoration(borderRadius: coins),
+          decoration: palette.surfaceSunken.decoration(
+            borderRadius: coins,
+            side: detache ? palette.borderStrong.asBorderSide() : null,
+          ),
           child: Stack(
             fit: StackFit.expand,
             children: <Widget>[
@@ -224,14 +250,18 @@ class CadreVisage extends StatelessWidget {
                     decoration: BoxDecoration(
                       borderRadius: coins,
                       border: Border.fromBorderSide(
-                        palette.inkAccent.asBorderSide(
-                          width: epaisseurAnneau,
-                        ),
+                        palette.inkAccent.asBorderSide(width: epaisseurAnneau),
                       ),
                     ),
                   ),
                 ),
               ),
+              if (coin case final Widget signe)
+                PositionedDirectional(
+                  top: AppSpacing.sm,
+                  end: AppSpacing.sm,
+                  child: KeyedSubtree(key: cleCoin, child: signe),
+                ),
               if (gestes != null && largeur >= seuilMenu)
                 PositionedDirectional(
                   top: 0,

@@ -60,9 +60,19 @@ import 'vue_seance.dart';
 enum OngletTiroir { support, outils }
 
 /// Fiche 1 (26/10/2026), ligne 2 : la capsule du haut, une seule, sombre,
-/// au centre : la vignette video, le point d'etat (rouge seulement sur un
-/// enregistrement reel, vert sinon), l'oeil « Voir la video en grand ».
-/// Ligne 5 : toucher la capsule (hors de l'oeil) deplie le profil.
+/// au centre. Ligne 5 : toucher le cadre deplie le profil.
+///
+/// RUBAN-TELEPHONE (directeur, 11/11/2026, grille des commandes D-027 et
+/// MODES-AFFICHAGE §4) : trois places, au meme rythme (cibles de 48, ecart
+/// de 8, marge de 8) : au debut « Reduire la salle » (la fleche de retour),
+/// au centre LE cadre de la salle ([VignetteVideo], donc [CadreVisage]) avec
+/// ses signes DANS le cadre (les barres du reseau en haut a la fin, le micro
+/// coupe en bas au debut), a la fin « Voir la classe » ou « Revenir a la
+/// page ». En mode Document ou Tableau, le cadre montre l'eleve qui RECITE
+/// s'il y en a un ([recitant] : l'enseignant voit sa bouche), sinon
+/// l'enseignant lui-meme. Le point d'etat vert ne disait rien (aucun cours
+/// n'est enregistre, A-01) : il ne se pose plus que s'il devient rouge ; le
+/// profil deplie le garde, avec le reseau.
 class CapsuleVideoTelephone extends StatelessWidget {
   const CapsuleVideoTelephone({
     required this.vue,
@@ -70,6 +80,8 @@ class CapsuleVideoTelephone extends StatelessWidget {
     this.onRevenirPage,
     this.oeil = true,
     this.onReduireSalle,
+    this.recitant,
+    this.nomRecitant,
     super.key = cle,
   });
 
@@ -78,6 +90,15 @@ class CapsuleVideoTelephone extends StatelessWidget {
   /// retour du telephone) ; `null` quand l'appel ne peut pas continuer hors
   /// de l'ecran ([ActionsSeance.onRetour] absent) ou en Interface guidee.
   final VoidCallback? onReduireSalle;
+
+  /// RUBAN-TELEPHONE : l'identite de l'eleve qui recite, montre dans le
+  /// cadre a la place de l'enseignant ; `null` : l'enseignant lui-meme.
+  /// L'appelant ne le donne jamais en mode Classe (il est deja dans la
+  /// grille : une personne, un cadre).
+  final String? recitant;
+
+  /// Le prenom du recitant hors de `/salle` (demonstration), ou `null`.
+  final String? nomRecitant;
 
   /// La cle de « Reduire la salle ».
   static const Key cleReduireSalle = ValueKey<String>(
@@ -88,8 +109,8 @@ class CapsuleVideoTelephone extends StatelessWidget {
   /// grand, aucune page ou revenir).
   final bool oeil;
 
-  /// La video est en grand devant la page (pilote, 26/10) : l'oeil devient
-  /// « Revenir a la page » ; `null` : « Voir la video en grand ».
+  /// La classe est en grand devant la page (pilote, 26/10) : l'oeil devient
+  /// « Revenir a la page » ; `null` : « Voir la classe ».
   final VoidCallback? onRevenirPage;
 
   final VueSeance vue;
@@ -100,7 +121,7 @@ class CapsuleVideoTelephone extends StatelessWidget {
   /// La cle de la capsule (tests, captures).
   static const Key cle = ValueKey<String>('telephone-capsule');
 
-  /// La cle de « Voir la video en grand ».
+  /// La cle de « Voir la classe ».
   static const Key cleVoir = ValueKey<String>('telephone-capsule-voir');
 
   /// La cle de « Revenir a la page ».
@@ -109,11 +130,11 @@ class CapsuleVideoTelephone extends StatelessWidget {
   /// La cle de la partie qui deplie le profil.
   static const Key cleDeplier = ValueKey<String>('telephone-capsule-deplier');
 
-  /// La largeur de la video dans la capsule.
+  /// La largeur du cadre dans la capsule.
   static const double largeurVideo = AppSpacing.respiration * 1.5;
 
-  /// La hauteur de la capsule : la plus haute de la video, de la cible du
-  /// point et de l'oeil, et sa marge.
+  /// La hauteur de la capsule : la plus haute du cadre et des cibles, et sa
+  /// marge.
   static double hauteur(BuildContext context) =>
       2 * AppSpacing.sm +
       math.max(
@@ -125,7 +146,41 @@ class CapsuleVideoTelephone extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final VoidCallback? enGrand = PorteeMediaSalle.de(context)?.onBasculerScene;
-    // C1 : UNE surface sombre qui porte la vignette, le point et l'oeil.
+    final String? recitant = this.recitant;
+    final VoidCallback? revenir = onRevenirPage;
+    final Widget? fin = !oeil
+        ? null
+        : revenir != null
+        ? BoutonIcone(
+            key: cleRevenir,
+            icone: AppIcons.coran,
+            libelle: t.salle.revenirALaPage,
+            infobulle: t.salle.revenirALaPage,
+            forme: FormeBoutonIcone.appel,
+            onPress: revenir,
+          )
+        : enGrand != null
+        ? BoutonIcone(
+            key: cleVoir,
+            icone: AppIcons.oeil,
+            libelle: t.salle.scene.voirLaClasse,
+            infobulle: t.salle.scene.voirLaClasse,
+            forme: FormeBoutonIcone.appel,
+            onPress: enGrand,
+          )
+        : null;
+    final VoidCallback? reduire = onReduireSalle;
+    final Widget? debut = reduire == null
+        ? null
+        : BoutonIcone(
+            key: cleReduireSalle,
+            icone: AppIcons.retour,
+            libelle: t.salle.sortie.reduireSemantique,
+            infobulle: t.salle.sortie.reduire,
+            forme: FormeBoutonIcone.appel,
+            onPress: reduire,
+          );
+    // C1 : UNE surface sombre qui porte les trois places.
     return CoucheSalle(
       child: DecoratedBox(
         decoration: palette.coucheSalle.decoration(
@@ -137,56 +192,36 @@ class CapsuleVideoTelephone extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             spacing: AppSpacing.sm,
             children: <Widget>[
-              if (onReduireSalle case final VoidCallback reduire)
-                BoutonIcone(
-                  key: cleReduireSalle,
-                  icone: AppIcons.retour,
-                  libelle: t.salle.sortie.reduireSemantique,
-                  infobulle: t.salle.sortie.reduire,
-                  forme: FormeBoutonIcone.appel,
-                  onPress: reduire,
-                ),
+              ?debut,
               Pressable(
                 key: cleDeplier,
                 onPress: onDeplier,
                 libelleSemantique: t.salle.seance.contexte.titre,
                 arrondiFocus: AppRadius.arrondiMd,
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
+                child: Stack(
                   children: <Widget>[
                     VignetteVideo(
                       vue: vue,
                       largeur: largeurVideo,
                       touchable: false,
                       avecNom: false,
+                      identite: recitant,
+                      nom: recitant == null ? null : (nomRecitant ?? ''),
+                      // Les barres disent le lien de l'enseignant : elles
+                      // ne se posent pas sur le visage du recitant.
+                      avecSignal: recitant == null,
                     ),
-                    SizedBox.square(
-                      dimension: AppTouchTarget.standard,
-                      child: Center(child: PointEtatTelephone(vue: vue)),
-                    ),
+                    // Rouge seulement sur un enregistrement reel (A-01).
+                    if (PointEtatTelephone.rouge(vue))
+                      PositionedDirectional(
+                        top: AppSpacing.sm,
+                        start: AppSpacing.sm,
+                        child: PointEtatTelephone(vue: vue),
+                      ),
                   ],
                 ),
               ),
-              if (!oeil)
-                ...<Widget>[]
-              else if (onRevenirPage case final VoidCallback revenir)
-                BoutonIcone(
-                  key: cleRevenir,
-                  icone: AppIcons.coran,
-                  libelle: t.salle.revenirALaPage,
-                  infobulle: t.salle.revenirALaPage,
-                  forme: FormeBoutonIcone.appel,
-                  onPress: revenir,
-                )
-              else if (enGrand != null)
-                BoutonIcone(
-                  key: cleVoir,
-                  icone: AppIcons.oeil,
-                  libelle: t.salle.voirVideoEnGrand,
-                  infobulle: t.salle.voirVideoEnGrand,
-                  forme: FormeBoutonIcone.appel,
-                  onPress: enGrand,
-                ),
+              ?fin,
             ],
           ),
         ),
