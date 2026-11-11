@@ -1130,7 +1130,7 @@ class _Traductions$attente$ar extends Traductions$attente$fr {
 	@override String get correctionImpossible => 'لا يمكن تعديل هذا الملف الآن.';
 	@override String get actualiser => 'تحديث حالة الملف';
 	@override String get suspenduDetail => 'يمكنك التواصل مع الأكاديمية لمعرفة الخطوات المطلوبة.';
-	@override String get copieDonnees => 'للحصول على نسخة من بياناتك، راسلنا.';
+	@override String get copieDonnees => 'للحصول على نسخة من بياناتك، راسل الأكاديمية.';
 	@override String get seDeconnecter => 'تسجيل الخروج';
 	@override String get titreDossier => 'ملفك';
 	@override String get titreCompte => 'حسابك';
@@ -31616,7 +31616,7 @@ extension on TraductionsAr {
 			'attente.correctionImpossible' => 'لا يمكن تعديل هذا الملف الآن.',
 			'attente.actualiser' => 'تحديث حالة الملف',
 			'attente.suspenduDetail' => 'يمكنك التواصل مع الأكاديمية لمعرفة الخطوات المطلوبة.',
-			'attente.copieDonnees' => 'للحصول على نسخة من بياناتك، راسلنا.',
+			'attente.copieDonnees' => 'للحصول على نسخة من بياناتك، راسل الأكاديمية.',
 			'attente.seDeconnecter' => 'تسجيل الخروج',
 			'attente.titreDossier' => 'ملفك',
 			'attente.titreCompte' => 'حسابك',

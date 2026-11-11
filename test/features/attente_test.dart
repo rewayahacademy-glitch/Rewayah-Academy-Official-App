@@ -24,6 +24,7 @@ import 'package:rewayah_academy/features/dossier/apprenants_demande.dart';
 import 'package:rewayah_academy/features/dossier/attente_page.dart';
 import 'package:rewayah_academy/features/inscription/brouillon_inscription.dart';
 import 'package:rewayah_academy/features/inscription/questionnaire/questionnaire_inscription.dart';
+import 'package:rewayah_academy/features/juridique/juridique_pages.dart';
 import 'package:rewayah_academy/features/juridique/textes_juridiques.dart';
 import 'package:rewayah_academy/features/parcours_offres/libelles_parcours.dart';
 import 'package:rewayah_academy/features/partage_offre/tuile_partage.dart';
@@ -259,14 +260,14 @@ void main() {
       expect(find.text(t.attente.titre), findsNothing);
     });
 
-    testWidgets('suspendu : « Aide et contact » mene aux mentions '
-        'legales, qui donnent le courriel de contact', (
-      WidgetTester tester,
-    ) async {
-      // COMPTE-SUSPENDU (11/11/2026) : « Contacter l'academie » etait un texte sans moyen de
-      // contact. Les mentions legales sont la seule page atteignable sans
-      // role (`/juridique`) qui donne le courriel. Aucune raison inventee,
-      // pas de « Mes donnees » (l'export refuse un compte desactive).
+    testWidgets('suspendu : « Contacter l academie » mene aux mentions '
+        'legales, la phrase de copie des donnees est sous le lien, et le '
+        'retour ramene au portail', (WidgetTester tester) async {
+      // COMPTE-SUSPENDU (11/11/2026, verdict du garde-cap) : « Contacter
+      // l'academie » etait un texte sans moyen de contact. Les mentions
+      // legales sont la seule page atteignable sans role (`/juridique`) qui
+      // donne le courriel. Pas de « Mes donnees » (l'export refuse un compte
+      // desactive) : une phrase dit d'ecrire a l'academie.
       final FauxServiceDossier dossier = FauxServiceDossier()
         ..etatRendu = _etat(statut: AccountStatus.disabled);
       await tester.pumpWidget(
@@ -283,7 +284,7 @@ void main() {
             GoRoute(
               path: TexteJuridique.mentions.chemin,
               builder: (BuildContext _, GoRouterState _) =>
-                  const Text('mentions-legales'),
+                  const TexteJuridiquePage(texte: TexteJuridique.mentions),
             ),
           ],
         ),
@@ -292,17 +293,33 @@ void main() {
       expect(find.text(t.attente.suspendu), findsOneWidget);
       expect(find.text(t.attente.seDeconnecter), findsOneWidget);
       expect(find.text(t.compte.donnees.titre), findsNothing);
-      expect(find.text(t.attente.copieDonnees), findsOneWidget);
-      expect(find.text(t.compte.tuteur.aide.ligne), findsOneWidget);
       verifierUnSeulBoutonPlein(tester);
       final Finder lien = find.byKey(
         const ValueKey<String>('suspendu-contacter'),
       );
-      expect(lien, findsOneWidget);
+      final Finder phrase = find.text(t.attente.copieDonnees);
+      expect(find.text(t.attente.contacterAcademie), findsOneWidget);
+      expect(phrase, findsOneWidget);
+      // La phrase est sous le lien.
+      expect(
+        tester.getRect(phrase).top,
+        greaterThanOrEqualTo(tester.getRect(lien).bottom),
+      );
+
+      // Le lien ouvre les mentions legales, qui donnent le courriel.
       await tester.ensureVisible(lien);
       await tester.tap(lien);
       await tester.pumpAndSettle();
-      expect(find.text('mentions-legales'), findsOneWidget);
+      expect(find.byType(TexteJuridiquePage), findsOneWidget);
+      expect(find.byType(AttentePage), findsNothing);
+
+      // Le retour ramene au portail : on n'est pas bloque sur les mentions.
+      final Finder retour = find.bySemanticsLabel(t.commun.retour);
+      expect(retour, findsWidgets);
+      await tester.tap(retour.first);
+      await tester.pumpAndSettle();
+      expect(find.byType(AttentePage), findsOneWidget);
+      expect(find.text(t.attente.suspendu), findsOneWidget);
     });
 
     testWidgets('un etat illisible se dit, et laisse reessayer', (

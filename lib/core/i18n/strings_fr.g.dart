@@ -686,8 +686,8 @@ class Traductions$attente$fr {
 	/// fr: 'Vous pouvez joindre l'académie pour connaître la marche à suivre.'
 	String get suspenduDetail => 'Vous pouvez joindre l\'académie pour connaître la marche à suivre.';
 
-	/// fr: 'Pour obtenir une copie de vos données, écrivez-nous.'
-	String get copieDonnees => 'Pour obtenir une copie de vos données, écrivez-nous.';
+	/// fr: 'Pour obtenir une copie de vos données, écrivez à l'académie.'
+	String get copieDonnees => 'Pour obtenir une copie de vos données, écrivez à l\'académie.';
 
 	/// fr: 'Se déconnecter'
 	String get seDeconnecter => 'Se déconnecter';
@@ -49154,7 +49154,7 @@ extension on Traductions {
 			'attente.correctionImpossible' => 'Ce dossier ne peut pas être modifié pour le moment.',
 			'attente.actualiser' => 'Actualiser l\'état du dossier',
 			'attente.suspenduDetail' => 'Vous pouvez joindre l\'académie pour connaître la marche à suivre.',
-			'attente.copieDonnees' => 'Pour obtenir une copie de vos données, écrivez-nous.',
+			'attente.copieDonnees' => 'Pour obtenir une copie de vos données, écrivez à l\'académie.',
 			'attente.seDeconnecter' => 'Se déconnecter',
 			'attente.titreDossier' => 'Votre dossier',
 			'attente.titreCompte' => 'Votre compte',
