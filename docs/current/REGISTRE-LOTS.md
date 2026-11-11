@@ -14,7 +14,7 @@ Relevé fait par E le 11/11/2026 vers 12 h UTC, sur `main` `b86dbc9d9`, avec `to
 
 ## D'abord : ce qui est faux, bloqué ou non prouvé
 
-- **117 lignes sur 241 sont « non vérifié ».** Leur contenu manque à `main` au 11/11, et aucune décision ni aucun ordre écrit ne dit quoi en faire. Ce sont autant de lots peut-être perdus. Pour chacune, le pilote décide, ou le directeur quand il s'agit d'une décision de produit.
+- **112 lignes sur 241 sont « non vérifié »** (117 au premier relevé ; 5 PR de la file ont reçu leur agent du pilote le 11/11 à 12:02). Leur contenu manque à `main` au 11/11, et aucune décision ni aucun ordre écrit ne dit quoi en faire. Ce sont autant de lots peut-être perdus. Pour chacune, le pilote décide, ou le directeur quand il s'agit d'une décision de produit.
 - **Trois PR ouvertes attendent une décision du directeur depuis le 08/11, sans réponse écrite trouvée** (`docs/orchestration/TRI-PR-AVANT-25-10.md`) :
   - **#26** : les aperçus de PR construisent encore l'application avec les secrets Supabase de la **production**. `.github/workflows/flutter-deploy.yml`, lignes 150-151, au 11/11. La PR 26 les isolait sur STAGING. Le risque est probable, non prouvé : je ne peux pas lire la valeur des secrets.
   - **#42** : 18 compétences tierces sous `.claude/skills/`.
@@ -57,12 +57,12 @@ S'il passe sans conflit, le contenu est dans `main`. Un diff nul ne contient rie
 
 | PR | Branche | Statut | Preuve |
 | :-: | :-- | :-- | :-- |
-| 433 | `claude/goutte-huile` | non vérifié | créée le 11/11 ; dans la file du pilote d'après son message du 11/11 ; l'agent n'est pas écrit |
-| 432 | `claude/titulaire-sans-appareil` | non vérifié | idem |
-| 431 | `claude/fix-clignote-demande` | non vérifié | idem |
-| 430 | `claude/sombre-sans-eclair` | non vérifié | idem |
-| 429 | `claude/retirer-absence-detectee` | À LIVRER (E, dans la file du pilote) | tête `595604ca7` ; elle ne se pousse que pour corriger un test rouge (pilote, 11/11) |
-| 426 | `claude/bande-barre` | non vérifié | créée le 11/11 ; dans la file du pilote d'après son message du 11/11 ; l'agent n'est pas écrit |
+| 433 | `claude/goutte-huile` | À LIVRER (H, file du pilote, 6e) | pilote, 11/11 12:02 (relais) |
+| 432 | `claude/titulaire-sans-appareil` | À LIVRER (H, file du pilote, 5e) | pilote, 11/11 12:02 (relais) |
+| 431 | `claude/fix-clignote-demande` | À LIVRER (H, file du pilote, 4e) | pilote, 11/11 12:02 (relais) |
+| 430 | `claude/sombre-sans-eclair` | À LIVRER (A, SOMBRE-SANS-ÉCLAIR, file du pilote, 1re) | pilote, 11/11 12:02 (relais) |
+| 429 | `claude/retirer-absence-detectee` | À LIVRER (E, file du pilote, 3e) | tête `595604ca7` ; elle ne se pousse que pour corriger un test rouge (pilote, 11/11) |
+| 426 | `claude/bande-barre` | À LIVRER (B, bande sous la barre, file du pilote, 2e) | pilote, 11/11 12:02 (relais) |
 | 421 | `claude/proposition-progression-sourates` | non vérifié | documentation seule ; ni agent ni ordre écrit trouvé. La question qu'elle posait (« sourate validée ») est tranchée en option A (pilote, 11/11) |
 | 409 | `claude/zealous-tesla-ewstzw` | À LIVRER (Fable, la salle) | pilote, 11/11 : PR en cours, personne d'autre n'y touche |
 | 382 | `claude/ma-progression` | À LIVRER (H, après le lot SOURATES de B) | pilote, 11/11 : « sourate validée » est tranchée en option A ; la PR dépend de SOURATES (migration) |
@@ -70,6 +70,37 @@ S'il passe sans conflit, le contenu est dans `main`. Un diff nul ne contient rie
 | 42 | `claude/jolly-gauss-7rlt4y` | non vérifié | DÉCISION du directeur demandée le 08/11 (`TRI-PR-AVANT-25-10.md`) : 18 compétences tierces sous `.claude/skills/` (104 fichiers) ; absentes de `main` au 11/11, qui n'a que `marque-rewayah`, `mots-rewayah` et `programme-rewayah` |
 | 26 | `codex/backend-staging-preview-secrets` | non vérifié | DÉCISION du directeur demandée le 08/11 ; au 11/11, `flutter-deploy.yml` (l. 150-151) construit encore les aperçus avec les secrets de production. La branche vise un ancien `flutter-deploy.yml` et ne s'applique pas telle quelle |
 | 22 | `codex/backend-sec-prod` | non vérifié | proposée FERMER après une vérification du garde-cap (`TRI-PR-AVANT-25-10.md`), vérification non trouvée ; `docs/backend/SEC_PROD_REMEDIATION.sql` absent de `main` au 11/11 ; `PROD_SECURITY_SNAPSHOT_2026-10-10.md` est dans `main` (`adb1c857f`), dans une autre version |
+
+## La file du pilote et les lots en cours (pilote, 11/11/2026 12:02, relais)
+
+Mise à jour du 11/11 après midi. Les agents sont ceux que donne le pilote ; la branche est lue
+par `git ls-remote` le 11/11. « non poussée » : aucune branche distante au moment du relevé.
+
+| Rang | Lot | Agent | Statut | Branche ou PR |
+| --: | :-- | :-: | :-- | :-- |
+| 1 | SOMBRE-SANS-ÉCLAIR | A | À LIVRER | PR 430 |
+| 2 | Bande sous la barre | B | À LIVRER | PR 426 |
+| 3 | Clé morte `absenceDetectee` | E | À LIVRER | PR 429 |
+| 4 | Geste de la carte « Horaire à choisir » | H | À LIVRER | PR 431 |
+| 5 | Jamais « Aucun appareil prêt » pour le titulaire | H | À LIVRER | PR 432 |
+| 6 | Goutte d'huile des profils | H | À LIVRER | PR 433 |
+| 7 | Bande, suite | B | À LIVRER | `claude/bande-suite-travail` (`bfcb63483`) |
+| 8 | Progression de l'élève adulte | A | À LIVRER | PR 380 ; `claude/progression-adulte-travail` (`8d27fa751`) |
+| 9 | TRANSITIONS et ses trois dettes | A | À LIVRER | `claude/transitions-travail` (`e4dd58c10`) |
+| 10 | SOURATES | B | À LIVRER | `claude/sourates-travail` (`cfa41c158`) |
+| 11 | MA-PROGRESSION | H | À LIVRER (après SOURATES) | PR 382 |
+| en cours | PRÉFÉRENCES-PAR-COMPTE (passe avant P1+P4 ; apporte `langue_compte.dart`) | A | À LIVRER | `claude/preferences-compte-travail`, non poussée |
+| en cours | PROFILS P1+P4 (gabarit du Compte et ComptePage partagée) | E | À LIVRER | `claude/profils-p1-travail` (`ec427b9f3`) |
+| en cours | NETTOYAGE-INVENTAIRE | A | À LIVRER | branche non écrite |
+| en cours | PROFILS P2 | H | À LIVRER | branche non écrite |
+| en cours | PROFILS P3 | B | À LIVRER | branche non écrite |
+| en cours | NON-BRANCHÉ-ÉCHUS (suppression de `port_capacite_payout.dart`) | E | À LIVRER | `claude/non-branche-echus-travail`, non poussée (commit local `86840822c`) |
+
+**Remplacé** : `claude/profils-p1-travail-a` (`5fe00c834`), le P1 fait en parallèle par A, est
+REMPLACÉ par le P1 de E (`claude/profils-p1-travail`, `ec427b9f3`). Décision du pilote, 11/11
+12:03. Une seule pièce en est reprise : `lib/core/compte/langue_compte.dart`
+(`choisirLangueCompte`, `synchroLangueCompteProvider`). Elle arrive par le lot
+PRÉFÉRENCES-PAR-COMPTE de A.
 
 ## Dettes nommées, hors branche
 
@@ -85,26 +116,26 @@ S'il passe sans conflit, le contenu est dans `main`. Un diff nul ne contient rie
 
 Les 206 branches livrées (PR fusionnée) ne figurent que dans la sortie du script, plus bas.
 
-### À LIVRER (5)
+### À LIVRER (10)
 
 | Date | Branche | PR | Commits hors main | Statut | Preuve |
 | :-- | :-- | :-: | --: | :-- | :-- |
 | 2026-11-11 | `claude/zealous-tesla-ewstzw` | 409 | 77 | À LIVRER (Fable, PR 409 en cours ; personne d'autre n'y touche) | pilote, 11/11 |
-| 2026-11-11 | `claude/retirer-absence-detectee` | 429 | 2 | À LIVRER (E, dans la file du pilote du 11/11) | PR 429, tête 595604ca7 |
-| 2026-11-11 | `claude/profils-p1-travail` | - | 1 | À LIVRER (A, PROFILS P1 ; reprend la tête ec427b9f3 de E) | pilote, 11/11 ; non vert : conflit R1 du branchement signalé au pilote |
+| 2026-11-11 | `claude/retirer-absence-detectee` | 429 | 2 | À LIVRER (E, PR 429, file du pilote, 3e) | pilote, 11/11 12:02 (relais) |
+| 2026-11-11 | `claude/profils-p1-travail` | - | 1 | À LIVRER (E, P1+P4, depuis ec427b9f3) | pilote, 11/11 12:02 (relais) |
 | 2026-11-08 | `claude/progression-adulte` | 380 | 4 | À LIVRER (A, après la file actuelle) | pilote, 11/11 : abandonnée le 08/11 sur une panne de CI sqlite3 qui ne venait pas d'elle |
 | 2026-11-08 | `claude/ma-progression` | 382 | 3 | À LIVRER (H, après le lot SOURATES de B) | pilote, 11/11 : « sourate validée » tranchée en option A |
+| 2026-11-11 | `claude/titulaire-sans-appareil` | 432 | 1 | À LIVRER (H, PR 432, file du pilote, 5e) | pilote, 11/11 12:02 (relais) |
+| 2026-11-11 | `claude/sombre-sans-eclair` | 430 | 5 | À LIVRER (A, PR 430, file du pilote, 1re) | pilote, 11/11 12:02 (relais) |
+| 2026-11-11 | `claude/goutte-huile` | 433 | 3 | À LIVRER (H, PR 433, file du pilote, 6e) | pilote, 11/11 12:02 (relais) |
+| 2026-11-11 | `claude/fix-clignote-demande` | 431 | 1 | À LIVRER (H, PR 431, file du pilote, 4e) | pilote, 11/11 12:02 (relais) |
+| 2026-11-11 | `claude/bande-barre` | 426 | 8 | À LIVRER (B, PR 426, file du pilote, 2e) | pilote, 11/11 12:02 (relais) |
 
-### Non vérifié (117)
+### Non vérifié (112)
 
 | Date | Branche | PR | Commits hors main | Statut | Preuve |
 | :-- | :-- | :-: | --: | :-- | :-- |
-| 2026-11-11 | `claude/titulaire-sans-appareil` | 432 | 1 | non vérifié | PR 432 ouverte, créée le 11/11 ; dans la file du pilote d'après son message du 11/11 ; agent non écrit dans le registre |
-| 2026-11-11 | `claude/sombre-sans-eclair` | 430 | 5 | non vérifié | PR 430 ouverte, créée le 11/11 ; dans la file du pilote d'après son message du 11/11 ; agent non écrit dans le registre |
 | 2026-11-11 | `claude/proposition-progression-sourates` | 421 | 1 | non vérifié | PR 421 ouverte (documentation seule) ; ni agent ni ordre écrits trouvés |
-| 2026-11-11 | `claude/goutte-huile` | 433 | 3 | non vérifié | PR 433 ouverte, créée le 11/11 ; dans la file du pilote d'après son message du 11/11 ; agent non écrit dans le registre |
-| 2026-11-11 | `claude/fix-clignote-demande` | 431 | 1 | non vérifié | PR 431 ouverte, créée le 11/11 ; dans la file du pilote d'après son message du 11/11 ; agent non écrit dans le registre |
-| 2026-11-11 | `claude/bande-barre` | 426 | 8 | non vérifié | PR 426 ouverte, créée le 11/11 ; dans la file du pilote d'après son message du 11/11 ; agent non écrit dans le registre |
 | 2026-10-19 | `claude/jolly-gauss-7rlt4y` | 42 | 1 | non vérifié | PR 42 ouverte ; DÉCISION du directeur demandée le 08/11 (TRI-PR-AVANT-25-10 l.75), sans réponse écrite trouvée |
 | 2026-10-17 | `claude/sharp-goldberg-z10a13` | 40 | 7 | non vérifié | PR 40 fermée sans fusion le 2026-11-08 ; annexe 08/11 l.26, verdict a (livrable tel quel) : simulation économique sur STAGING (seed, outils ; PR 40 ouverte) ; contenu absent de main au 11/11 |
 | 2026-10-10 | `codex/backend-staging-preview-secrets` | 26 | 2 | non vérifié | PR 26 ouverte ; DÉCISION du directeur demandée le 08/11 (TRI-PR-AVANT-25-10 l.61) ; au 11/11, flutter-deploy.yml construit encore les aperçus avec secrets.SUPABASE_URL et SUPABASE_ANON_KEY (lignes 150-151), comme la production |
@@ -350,6 +381,202 @@ Les 206 branches livrées (PR fusionnée) ne figurent que dans la sortie du scri
 | 2026-10-04 | `projet/ressources` | - | 16 | LIVRÉ (rien hors de main) | 11/11 : diff nul entre la branche et sa base commune avec main |
 | 2026-09-09 | `specs` | - | 1 | LIVRÉ (rien hors de main) | 11/11 : diff nul entre la branche et sa base commune avec main |
 | 2026-09-09 | `refactor-ui-lavender-3628477128789856989` | 1 | 3 | LIVRÉ (rien hors de main) | 11/11 : diff nul entre la branche et sa base commune avec main |
+
+## TRI-CODEX : les branches `codex/*` (pilote, 11/11/2026)
+
+Les 177 branches distantes `codex/*` (lot serveur Codex, surtout du 10 au 13/10), une par une,
+sur `main` `b86dbc9d9`. Relevé mécanique par un sous-agent (petit modèle), contrôlé par sondage
+par E le 11/11 : `codex/backend-c29-versioned-quota` ABSENT (sa migration `20261013000400`
+manque à `main`) ; `codex/site-public-local-2026-10-13` ancêtre de `main`.
+
+- **LIVRÉ** (92) : branche ancêtre de `main`, diff réappliqué à l'envers sans conflit, ou diff nul.
+- **REMPLACÉ** (23) : seulement quand l'annexe ALERTE du 08/11 donne un verdict c avec le commit
+  de `main` qui a réécrit les fichiers (relais du 08/11).
+- **ABSENT de main** (62) : le contenu manque à `main` au 11/11. La description vient des seuls
+  sujets de commit et chemins de fichiers.
+
+**Ce qui touche au produit, à la sécurité ou au KYC est porté au directeur par le pilote. Ce
+tri ne tranche rien.**
+
+| Date | Branche | Commits hors main | Fichiers | Statut | Ce qu'elle fait (pour ABSENT : à quoi elle servait, fichiers principaux) |
+| :-- | :-- | --: | --: | :-- | :-- |
+| 2026-10-13 | `codex/site-public-local-2026-10-13` | 0 | 0 | LIVRÉ (ancêtre de main) | site public : version locale la plus recente (reprise finale), sauvegarde du 13/10/2026 |
+| 2026-10-13 | `codex/journal` | 10 | 1 | ABSENT de main | Journal de notes du lot serveur Codex (scénarios de confidentialité C-20), documentation seule. Fichiers principaux : docs/backend/codex1/JOURNAL.md. |
+| 2026-10-13 | `codex/backend-x2-22-anon-negative-r1` | 0 | 0 | LIVRÉ (ancêtre de main) | test(x2-22): cover disabled and anonymous pause callers |
+| 2026-10-13 | `codex/backend-rech-back-4-negative-r1` | 0 | 0 | LIVRÉ (ancêtre de main) | test(rech-back-4): cover anon and disabled controller |
+| 2026-10-13 | `codex/backend-imm-accueil-f86` | 0 | 0 | LIVRÉ (ancêtre de main) | fix(imm-accueil): pin exact F86 fingerprints |
+| 2026-10-13 | `codex/backend-f86-take-student-context-negative-r1` | 0 | 0 | LIVRÉ (ancêtre de main) | test(f86): reject unauthorized student assignment contexts |
+| 2026-10-13 | `codex/backend-f86-registration-acl-r3` | 0 | 0 | LIVRÉ (ancêtre de main) | fix(f86): reject confirmed or signed-in child accounts |
+| 2026-10-13 | `codex/backend-f86-registration-acl-r2` | 0 | 0 | LIVRÉ (ancêtre de main) | fix(f86): require server child provenance |
+| 2026-10-13 | `codex/backend-f86-observation-context-negative-r1` | 0 | 0 | LIVRÉ (ancêtre de main) | test(f86): reject unauthorized observation contexts |
+| 2026-10-13 | `codex/backend-f70-review-fixes-r2` | 0 | 0 | LIVRÉ (ancêtre de main) | fix(f70): clear const infos in test |
+| 2026-10-13 | `codex/backend-canon-fixes` | 0 | 0 | LIVRÉ (ancêtre de main) | Merge remote-tracking branch 'origin/codex2/imm-accueil-back-phase3-wip' into codex/backend-canon-imm-accueil-integration |
+| 2026-10-13 | `codex/backend-c35-library-read-negative-r1` | 0 | 0 | LIVRÉ (ancêtre de main) | test(c35): reject disabled reader account |
+| 2026-10-13 | `codex/backend-c29-versioned-quota` | 1 | 2 | ABSENT de main | Quota hebdomadaire des missions versionné (migration 20261013000400) et scénarios de poids d'affectation. Fichiers principaux : supabase/migrations/20261013000400_c29_versioned_mission_quota.sql; supabase/tests/scenarios_c29_assignment_weights.sql. |
+| 2026-10-13 | `codex/backend-c29-rules-negative-r1` | 0 | 0 | LIVRÉ (ancêtre de main) | test(c29): cover rule RPC negative contexts |
+| 2026-10-13 | `codex/backend-c29-control-negative-r1` | 0 | 0 | LIVRÉ (ancêtre de main) | test(c29): cover negative capability contexts |
+| 2026-10-13 | `codex/backend-c21-negative-context-r1` | 1 | 1 | REMPLACÉ par 5fd08c31d (annexe 08/11 ligne 151, relais) | Test de refus : accès non autorisé au verdict KYC (scénario c21). Fichiers principaux : supabase/tests/scenarios_c21_kyc_access_verdict.sql. |
+| 2026-10-13 | `codex/backend-c20-timeline-negative-r1` | 0 | 0 | LIVRÉ (ancêtre de main) | test(c20): deny cross-household and anonymous timeline reads |
+| 2026-10-13 | `codex/backend-c04-negative-context-r1` | 1 | 1 | REMPLACÉ par b9af42c6c (annexe 08/11 ligne 150, relais) | Test de refus : appelants interdits pour la candidature de titre enseignant (c04). Fichiers principaux : supabase/tests/scenarios_c04_teacher_title.sql. |
+| 2026-10-13 | `codex/backend-b15-negative-context-r1` | 0 | 0 | LIVRÉ (ancêtre de main) | test(b15): cover disabled and anonymous annotation RPCs |
+| 2026-10-13 | `codex/backend-b14-negative-context-r1` | 0 | 0 | LIVRÉ (ancêtre de main) | test(b14): cover disabled and anonymous RPC access |
+| 2026-10-13 | `codex/backend-b13-anon-negative-r1` | 0 | 0 | LIVRÉ (ancêtre de main) | test(b13): deny anonymous observation history read |
+| 2026-10-13 | `codex/backend-b11-student-concern-anon-r1` | 0 | 0 | LIVRÉ (ancêtre de main) | test(b11): deny anonymous student concern RPCs |
+| 2026-10-13 | `codex/backend-b11-negative-context-r1` | 0 | 0 | LIVRÉ (ancêtre de main) | test(b11): cover disabled and anonymous feedback access |
+| 2026-10-13 | `codex/backend-b10-negative-context-r1` | 0 | 0 | LIVRÉ (ancêtre de main) | test(b10): cover anon and disabled support access |
+| 2026-10-13 | `codex/backend-b09-replacement-negative-r1` | 0 | 0 | LIVRÉ (ancêtre de main) | test(b09): cover replacement RPC negative contexts |
+| 2026-10-13 | `codex/backend-b09-notifications-sources` | 1 | 1 | REMPLACÉ par 18d5da209 (annexe 08/11 ligne 149, relais) | Libellés des événements de notification cités dans une source (tool/libelles_sources.json). Fichiers principaux : tool/libelles_sources.json. |
+| 2026-10-13 | `codex/backend-b09-notifications-negative-r1` | 0 | 0 | LIVRÉ (ancêtre de main) | test(b09): deny disabled notification recipient |
+| 2026-10-13 | `codex/backend-b09-notifications-integration-r1` | 0 | 0 | LIVRÉ (ancêtre de main) | feat(b09): combine notification adapter on current canon |
+| 2026-10-13 | `codex/backend-b09-notifications-canon-r3` | 0 | 0 | LIVRÉ (ancêtre de main) | fix(notifications): source B-09 event labels |
+| 2026-10-13 | `codex/backend-b09-dart-l10n-r4` | 0 | 0 | LIVRÉ (ancêtre de main) | docs(notifications): source B-09 event labels |
+| 2026-10-13 | `codex/backend-b08-summary-negative-context-r1` | 0 | 0 | LIVRÉ (ancêtre de main) | test(b08): reject anon and disabled summary writers |
+| 2026-10-13 | `codex/backend-b07-negative-context-r1` | 0 | 0 | LIVRÉ (ancêtre de main) | test(b07): cover disabled and anonymous holder access |
+| 2026-10-13 | `codex/backend-b04-negative-context-r1` | 0 | 0 | LIVRÉ (ancêtre de main) | test(b04): cover disabled and anonymous recovery access |
+| 2026-10-13 | `codex/backend-b03-negative-context-r1` | 0 | 0 | LIVRÉ (ancêtre de main) | test(b03): cover disabled and anonymous invitation RPCs |
+| 2026-10-13 | `codex/backend-agt01-negative-context-r1` | 0 | 0 | LIVRÉ (ancêtre de main) | test(agt01): cover admin RPC denial contexts |
+| 2026-10-13 | `codex/backend-age-presentation-negative-r1` | 0 | 0 | LIVRÉ (ancêtre de main) | test(age-presentation): cover anonymous and disabled access |
+| 2026-10-12 | `codex/deleg-fin-1-serveur` | 7 | 547 | ABSENT de main | Fusion DELEG-FIN-1 (intégration Ccr) : polices, i18n et documents mêlés ; le détail au-delà du titre n'est pas lisible dans les commits. Fichiers principaux : lib/core/i18n/strings_fr.g.dart; lib/core/i18n/strings_ar.g.dart; test/features/ped_apres/admin_partage_test.dart; test/features/admin_finance/reserve_delegation/deleg_fin_1_test.dart; lib/features/tc_mushaf/page_madina_15.dart. |
+| 2026-10-12 | `codex/com-back-1-wip` | 2 | 1 | ABSENT de main | Proposition COM-BACK-1 (document d'orientation), une seule modification d'espaces. Fichiers principaux : docs/orchestration/COM-BACK-1-PROPOSITION.md. |
+| 2026-10-12 | `codex/backend-sec-prod-27-invoker` | 2 | 3 | ABSENT de main | Audit des fonctions SECURITY DEFINER conservées (SEC-PROD 27) : migration de déclencheurs en mode invoker et scénario de sécurité. Fichiers principaux : docs/backend/SEC_PROD_DEFINER_27.md; supabase/migrations/20261012020000_sec_prod_27_pure_triggers_invoker.sql; supabase/tests/scenarios_b18_security_definer.sql. |
+| 2026-10-12 | `codex/backend-rech-d3-enseignants` | 5 | 10 | REMPLACÉ par 81c838165 (annexe 08/11 ligne 146, relais) | Recherche d'enseignants : dédoublonnage des résultats avant pagination, fonction recherche-enseignants et curseur. Fichiers principaux : supabase/functions/recherche-enseignants/index.ts; supabase/functions/_shared/recherche/curseur.ts; supabase/functions/recherche-enseignants/index_test.ts; supabase/functions/_shared/recherche/curseur_test.ts; supabase/functions/_shared/recherche/appelant.ts. |
+| 2026-10-12 | `codex/backend-kyc-lecture-negative-coverage` | 0 | 0 | LIVRÉ (ancêtre de main) | test(kyc): assert anon lacks RPC execute |
+| 2026-10-12 | `codex/backend-kyc-lecture-1` | 2 | 2 | LIVRÉ (dans main, apply -R --check) | revert(kyc): keep workflow outside lot scope |
+| 2026-10-12 | `codex/backend-instant-creneau-a793` | 0 | 0 | LIVRÉ (ancêtre de main) | test(a793): space generated etape4 slots |
+| 2026-10-12 | `codex/backend-imm-back-1-integration` | 0 | 0 | LIVRÉ (ancêtre de main) | docs(db): mark IMM-BACK-1 F86 fingerprints pending |
+| 2026-10-12 | `codex/backend-f86-titulaire-profile-create-guard` | 1 | 1 | ABSENT de main | Garde F86 sur la création du profil titulaire (migration 20261012112000). Fichiers principaux : supabase/migrations/20261012112000_f86_titulaire_profile_create_guard.sql. |
+| 2026-10-12 | `codex/backend-f86-timezone-transition-guard` | 0 | 0 | LIVRÉ (ancêtre de main) | fix(f86): guard timezone transition admin RPC |
+| 2026-10-12 | `codex/backend-f86-teacher-profile-guard` | 1 | 2 | ABSENT de main | Garde F86 : un profil enseignant doit avoir un compte valide (migration et scénario). Fichiers principaux : supabase/migrations/20261012122000_f86_teacher_profile_guard.sql; supabase/tests/scenarios_f86_teacher_profile.sql. |
+| 2026-10-12 | `codex/backend-f86-take-student-guard` | 0 | 0 | LIVRÉ (ancêtre de main) | test(f86): avoid teacher activation fixture |
+| 2026-10-12 | `codex/backend-f86-student-identity-guards` | 0 | 0 | LIVRÉ (ancêtre de main) | fix(f86): align pairing guard preflight |
+| 2026-10-12 | `codex/backend-f86-schedule-withdraw-guards` | 0 | 0 | LIVRÉ (ancêtre de main) | fix(f86): add positive guards to schedule withdrawal RPCs |
+| 2026-10-12 | `codex/backend-f86-schedule-request-guards` | 0 | 0 | LIVRÉ (ancêtre de main) | fix(f86): escape schedule request guard literals |
+| 2026-10-12 | `codex/backend-f86-registration-acl` | 0 | 0 | LIVRÉ (ancêtre de main) | fix(f86): scope registration RPCs to authenticated guardians |
+| 2026-10-12 | `codex/backend-f86-refus-a774` | 0 | 0 | LIVRÉ (ancêtre de main) | test(f86): reach guarded schedule calls |
+| 2026-10-12 | `codex/backend-f86-refus` | 0 | 0 | LIVRÉ (ancêtre de main) | test(f86): cover guarded RPC refusals |
+| 2026-10-12 | `codex/backend-f86-presence-scope` | 0 | 0 | LIVRÉ (ancêtre de main) | fix(f86): make presence scope denial null-safe |
+| 2026-10-12 | `codex/backend-f86-pairing-code-guard` | 1 | 1 | ABSENT de main | Garde F86 positive sur la création des codes d'appairage (migration). Fichiers principaux : supabase/migrations/20261012140000_f86_pairing_code_positive_guard.sql. |
+| 2026-10-12 | `codex/backend-f86-observation-policy-guard` | 0 | 0 | LIVRÉ (ancêtre de main) | fix(f86): align observation policy preflight |
+| 2026-10-12 | `codex/backend-f86-observation-join-guard` | 0 | 0 | LIVRÉ (ancêtre de main) | fix(f86): reject null-role observation callers |
+| 2026-10-12 | `codex/backend-f86-observation-entry-guard` | 0 | 0 | LIVRÉ (ancêtre de main) | fix(f86): align observation entry message |
+| 2026-10-12 | `codex/backend-f86-null-safe-review-fixes` | 4 | 4 | ABSENT de main | Gardes F86 contre les entrées nulles du catalogue ; scénarios isolés après C11 bis. Fichiers principaux : supabase/migrations/20261012010000_f86_catalog_null_safe_guards.sql; supabase/tests/scenarios_f86_null_inputs.sql; supabase/tests/scenarios_ctr01.sql; supabase/tests/scenarios_b11_student_concern.sql. |
+| 2026-10-12 | `codex/backend-f86-null-safe` | 2 | 4 | ABSENT de main | Gardes F86 sur les entrées nulles, hashes revus et cas nuls (migration catalogue et scénarios). Fichiers principaux : supabase/migrations/20261012010000_f86_catalog_null_safe_guards.sql; supabase/tests/scenarios_offres_personnalisees.sql; supabase/tests/scenarios_ctr01.sql; supabase/tests/scenarios_b11_student_concern.sql. |
+| 2026-10-12 | `codex/backend-f86-manual-assignment` | 0 | 0 | LIVRÉ (ancêtre de main) | fix(f86): harden manual assignment guard |
+| 2026-10-12 | `codex/backend-f86-kyc-document-read-guard` | 0 | 0 | LIVRÉ (ancêtre de main) | fix(f86): escape KYC guard literals |
+| 2026-10-12 | `codex/backend-f86-kyc-decision` | 0 | 0 | LIVRÉ (ancêtre de main) | fix(f86): harden KYC decision guard |
+| 2026-10-12 | `codex/backend-f86-dossiers-pending-guard` | 0 | 0 | LIVRÉ (ancêtre de main) | fix(f86): require valid admin for pending dossiers |
+| 2026-10-12 | `codex/backend-f86-class-assignment-negative-contexts` | 0 | 0 | LIVRÉ (ancêtre de main) | test(security): cover F86 assignment denial contexts |
+| 2026-10-12 | `codex/backend-f86-class-assignment-guards` | 0 | 0 | LIVRÉ (ancêtre de main) | fix(f86): escape class guard message literals |
+| 2026-10-12 | `codex/backend-f86-b18-negative-cases` | 2 | 1 | REMPLACÉ par e3f52ffa1 (annexe 08/11 ligne 145, relais) | Test F86 : statut de compte désactivé valide dans le scénario B18. Fichiers principaux : supabase/tests/scenarios_b18_security_definer.sql. |
+| 2026-10-12 | `codex/backend-f86-assignment-read-guards` | 0 | 0 | LIVRÉ (ancêtre de main) | fix(f86): guard manual assignment read RPCs |
+| 2026-10-12 | `codex/backend-f86-archive-retention-guard` | 1 | 1 | ABSENT de main | Garde F86 durcie sur la rétention des archives (migration). Fichiers principaux : supabase/migrations/20261012113500_f86_archive_retention_guard.sql. |
+| 2026-10-12 | `codex/backend-f86-archive-listen-guard` | 1 | 1 | ABSENT de main | Garde F86 : restreindre les rôles d'écoute des archives (migration). Fichiers principaux : supabase/migrations/20261012114500_f86_archive_listen_role_guard.sql. |
+| 2026-10-12 | `codex/backend-f86-admin-negative-cases` | 0 | 0 | LIVRÉ (ancêtre de main) | test(f86): fix admin fixture values |
+| 2026-10-12 | `codex/backend-f86-admin-mutators-negative` | 0 | 0 | LIVRÉ (ancêtre de main) | test(f86): cover invalid admin identities |
+| 2026-10-12 | `codex/backend-f86-admin-mutators` | 0 | 0 | LIVRÉ (ancêtre de main) | fix(f86): harden admin mutation guards |
+| 2026-10-12 | `codex/backend-f86-admin-group-mutator-guards` | 2 | 4 | ABSENT de main | Gardes F86 sur les modifications de groupes par l'administration (migration et scénarios). Fichiers principaux : supabase/migrations/20261012123000_f86_admin_group_mutator_guards.sql; supabase/tests/scenarios_f86_admin_group_mutator_guards.sql; supabase/migrations/20261012122000_f86_teacher_profile_guard.sql; supabase/tests/scenarios_f86_teacher_profile.sql. |
+| 2026-10-12 | `codex/backend-f70-review-fixes` | 34 | 46 | ABSENT de main | Fusion des corrections canon dans F70 : CI, capacités famille et dossiers (lot large). Fichiers principaux : supabase/migrations/0076_b08_published_summary_controls.sql; supabase/tests/scenarios_f69_kyc_super_admin.sql; supabase/migrations/0057_signature_contrat_versionnee.sql; supabase/migrations/0087_teacher_contract_activation_guard.sql; lib/core/offres/port_suivi_demandes_supabase.dart. |
+| 2026-10-12 | `codex/backend-etape4-timezone-review-fix` | 0 | 0 | LIVRÉ (ancêtre de main) | test(etape4): avoid cross-zone past-hour rollover |
+| 2026-10-12 | `codex/backend-ea-role-br` | 2 | 3 | ABSENT de main | Fusion de la branche canon-fixes dans le rôle BR : port de capacité élève côté Supabase. Fichiers principaux : test/core/session/port_capacite_eleve_supabase_test.dart; lib/core/session/port_capacite_eleve_supabase.dart; lib/core/session/port_capacite_eleve.dart. |
+| 2026-10-12 | `codex/backend-cap29-review-fixes` | 1 | 1 | ABSENT de main | Correction CAP29 : lecture des métadonnées de droits révoquée pour les comptes connectés (migration). Fichiers principaux : supabase/migrations/20261011112958_cap29_rights_metadata.sql. |
+| 2026-10-12 | `codex/backend-cap29-r2-upload` | 0 | 0 | LIVRÉ (ancêtre de main) | test(cap29): sign teacher contracts before activation |
+| 2026-10-12 | `codex/backend-cap29-c35` | 0 | 0 | LIVRÉ (ancêtre de main) | merge: current canon-fixes into C-35 |
+| 2026-10-12 | `codex/backend-cap29-back-2` | 5 | 6 | REMPLACÉ par 291249c7f (annexe 08/11 ligne 144, relais) | Scénarios CAP29 : appels RPC admin en anon, clés R2 et détail de bibliothèque. Fichiers principaux : supabase/tests/scenarios_cap29_rights_review.sql; supabase/tests/scenarios_cap29_library_detail.sql; supabase/tests/scenarios_c35_library_read.sql; supabase/functions/_shared/r2/signature_test.ts; supabase/functions/_shared/r2/cles_test.ts. |
+| 2026-10-12 | `codex/backend-canon-fixes-a778` | 0 | 0 | LIVRÉ (ancêtre de main) | test: verify shared class instant across timezones |
+| 2026-10-12 | `codex/backend-c35-review-fix` | 0 | 0 | LIVRÉ (ancêtre de main) | fix(c35): align rights joins with version metadata |
+| 2026-10-12 | `codex/backend-c29-port-wiring` | 1 | 1 | REMPLACÉ par 0081ee309 (annexe 08/11 ligne 143, relais) | Branchement du port de tirage réel dans lib/main.dart. Fichiers principaux : lib/main.dart. |
+| 2026-10-12 | `codex/backend-c29-fixture-time` | 0 | 0 | LIVRÉ (ancêtre de main) | test(c29): make session fixtures time independent |
+| 2026-10-12 | `codex/backend-c29-f86-hashes` | 1 | 1 | ABSENT de main | Enregistrer les hashes des définitions de fonctions revues (C29 / F86, migration). Fichiers principaux : supabase/migrations/20261012110000_c29_f86_functiondef_hashes.sql. |
+| 2026-10-12 | `codex/backend-c29-effective-teacher` | 0 | 0 | LIVRÉ (ancêtre de main) | Merge remote-tracking branch 'origin/codex/backend-canon-fixes' into codex/backend-c29-effective-teacher |
+| 2026-10-12 | `codex/backend-c22-presentation-adapter-safe` | 1 | 0 | LIVRÉ (diff nul) | merge: corrected canon fixes into C22 adapter |
+| 2026-10-12 | `codex/backend-c21-canon-adapter` | 0 | 0 | LIVRÉ (ancêtre de main) | test(c21): sign current teacher NDA in fixture |
+| 2026-10-12 | `codex/backend-c20-frise-2` | 0 | 0 | LIVRÉ (ancêtre de main) | fix(c20): guard optional realtime publication |
+| 2026-10-12 | `codex/backend-c11bis-f74-canon` | 1 | 0 | LIVRÉ (diff nul) | merge: corrected canon fixes into C11bis F74 |
+| 2026-10-12 | `codex/backend-b12-negative-contexts` | 0 | 0 | LIVRÉ (ancêtre de main) | Merge branch 'codex/backend-canon-fixes' of https://github.com/rewayahacademy-glitch/Rewayah-Academy-Official-App into codex/backend-b12-negative-contexts |
+| 2026-10-12 | `codex/backend-b12-control-mission-1` | 0 | 0 | LIVRÉ (ancêtre de main) | test(b12): repair control mission fixtures |
+| 2026-10-12 | `codex/backend-b09-notifs` | 3 | 8 | ABSENT de main | CI : scénario SQL des notifications B-09, avec adaptateur, migrations 0063 et 0086. Fichiers principaux : supabase/tests/scenarios_b09_notifications.sql; lib/core/capacites/notifications_supabase.dart; supabase/migrations/0086_b09_request_notifications.sql; test/core/capacites/notifications_supabase_test.dart; supabase/migrations/0063_notifications_privatives.sql. |
+| 2026-10-12 | `codex/backend-b09-notifications-canon-2` | 0 | 0 | LIVRÉ (ancêtre de main) | fix(b09): combine notification events and localized provider |
+| 2026-10-12 | `codex/backend-b09-events-destinations-r2` | 1 | 2 | REMPLACÉ par 355ba7dee (annexe 08/11 ligne 142, relais) | Adaptateur des notifications : prise en charge de tous les événements de base de données (B-09). Fichiers principaux : lib/core/capacites/notifications_supabase.dart; test/core/capacites/notifications_supabase_test.dart. |
+| 2026-10-12 | `codex/backend-b04-reprise-canon` | 0 | 0 | LIVRÉ (ancêtre de main) | merge: reviewed canon-fixes into B-04 |
+| 2026-10-12 | `codex/backend-a816-a793-occurrence` | 0 | 0 | LIVRÉ (ancêtre de main) | fix(a793): secure weekly slot helper and assert offsets |
+| 2026-10-11 | `codex/pubspec-mushaf` | 0 | 0 | LIVRÉ (ancêtre de main) | chore(mushaf): register Uthmanic Hafs font |
+| 2026-10-11 | `codex/backend-sec-prod-m2-fixes` | 17 | 2 | ABSENT de main | Correction des gardes de rôle d'observation (SEC-PROD : snapshot et remédiation). Fichiers principaux : docs/backend/PROD_SECURITY_SNAPSHOT_2026-10-10.md; docs/backend/SEC_PROD_REMEDIATION.sql. |
+| 2026-10-11 | `codex/backend-sec-prod-allowlist` | 30 | 12 | ABSENT de main | Inventaire des déclencheurs d'événements et liste blanche SECURITY DEFINER (SEC-PROD, F79) ; 30 commits. Fichiers principaux : docs/backend/SECURITY_DEFINER_INVENTORY_PROD_2026-10-11.json; docs/backend/PROD_SECURITY_SNAPSHOT_2026-10-10.md; docs/backend/SEC_PROD_REMEDIATION.sql; tool/security_definer_gate/verify_allowlist.py; tool/security_definer_gate/tests/test_verify_allowlist.py. |
+| 2026-10-11 | `codex/backend-rls-disabled` | 1 | 2 | ABSENT de main | Bloquer l'accès des comptes désactivés (migration et scénario RLS). Fichiers principaux : supabase/tests/scenarios_disabled_account_access.sql; supabase/migrations/20261011192337_disabled_account_access_guards.sql. |
+| 2026-10-11 | `codex/backend-recherche-classes` | 1 | 2 | REMPLACÉ par ad1e4c28a (annexe 08/11 ligne 140, relais) | Curseurs de pagination signés pour la recherche de classes. Fichiers principaux : supabase/functions/_shared/recherche/curseur.ts; supabase/functions/_shared/recherche/curseur_test.ts. |
+| 2026-10-11 | `codex/backend-offres-adapters` | 15 | 27 | ABSENT de main | Corrections des scénarios SQL B08 et offres, adaptateurs offres (lot large). Fichiers principaux : supabase/migrations/0049_creneau_personnalise_ouvert_au_quota.sql; supabase/migrations/0053_invitations_foyer.sql; supabase/tests/scenarios_offres_personnalisees.sql; supabase/migrations/0054_seance_resumes_famille.sql; supabase/migrations/0050_demandes_horaires_privees_admin.sql. |
+| 2026-10-11 | `codex/backend-foyer-ports` | 15 | 35 | ABSENT de main | Adaptateur de lecture des invitations reçues du foyer (lot large). Fichiers principaux : supabase/migrations/0049_creneau_personnalise_ouvert_au_quota.sql; supabase/migrations/0053_invitations_foyer.sql; supabase/tests/scenarios_offres_personnalisees.sql; supabase/migrations/0054_seance_resumes_famille.sql; supabase/migrations/0050_demandes_horaires_privees_admin.sql. |
+| 2026-10-11 | `codex/backend-f86-positive-guards` | 0 | 0 | LIVRÉ (ancêtre de main) | fix(f86): canonical guard for spouse invitation cancel |
+| 2026-10-11 | `codex/backend-f79-allowlist` | 4 | 6 | ABSENT de main | CI : isoler les vérifications F79 à chaque push (liste blanche SECURITY DEFINER). Fichiers principaux : tool/security_definer_gate/verify_allowlist.py; tool/security_definer_gate/tests/test_verify_allowlist.py; tool/security_definer_gate/tests/test_guard_scanner.py; tool/security_definer_gate/catalog.sql; docs/backend/SECURITY_DEFINER_GATE.md. |
+| 2026-10-11 | `codex/backend-f70-status-tests` | 1 | 1 | REMPLACÉ par d2f4561eb (annexe 08/11 ligne 139, relais) | Test de l'accès au statut de signature enseignant (scénario etape3). Fichiers principaux : supabase/tests/scenarios_etape3.sql. |
+| 2026-10-11 | `codex/backend-f70-contract-publication` | 25 | 55 | ABSENT de main | Publication du contrat enseignant approuvé (feat backend, lot large). Fichiers principaux : supabase/migrations/0049_creneau_personnalise_ouvert_au_quota.sql; supabase/migrations/0053_invitations_foyer.sql; supabase/tests/scenarios_offres_personnalisees.sql; supabase/migrations/0054_seance_resumes_famille.sql; supabase/migrations/0050_demandes_horaires_privees_admin.sql. |
+| 2026-10-11 | `codex/backend-f69-super-admin-controls` | 2 | 2 | ABSENT de main | Contrôles super-admin F69 (migration et scénarios) ; fusion des corrections canon. Fichiers principaux : supabase/migrations/20261011153000_f69_super_admin_controls.sql; supabase/tests/scenarios_f69_super_admin_controls.sql. |
+| 2026-10-11 | `codex/backend-f69-k65` | 1 | 2 | ABSENT de main | Restreindre l'exception KYC F69 au seul rôle postgres (migration). Fichiers principaux : supabase/migrations/0100_f69_postgres_only_controls.sql; supabase/tests/scenarios_f69_operator_controls.sql. |
+| 2026-10-11 | `codex/backend-contract-signature-continuation` | 21 | 55 | ABSENT de main | Exposer le hash et le nom des acceptations de contrat (suite de la signature, lot large). Fichiers principaux : supabase/migrations/0049_creneau_personnalise_ouvert_au_quota.sql; supabase/migrations/0053_invitations_foyer.sql; supabase/tests/scenarios_offres_personnalisees.sql; supabase/migrations/0054_seance_resumes_famille.sql; supabase/migrations/0050_demandes_horaires_privees_admin.sql. |
+| 2026-10-11 | `codex/backend-contract-signature` | 1 | 2 | ABSENT de main | Versionner la signature du contrat enseignant (migration 0057 et scénario). Fichiers principaux : supabase/migrations/0057_signature_contrat_versionnee.sql; supabase/tests/scenarios_etape3.sql. |
+| 2026-10-11 | `codex/backend-cap29-version-integrity` | 27 | 58 | ABSENT de main | Intégrité des versions publiées de la bibliothèque (CAP29, lot large). Fichiers principaux : supabase/migrations/0049_creneau_personnalise_ouvert_au_quota.sql; supabase/migrations/0053_invitations_foyer.sql; supabase/tests/scenarios_offres_personnalisees.sql; supabase/migrations/0054_seance_resumes_famille.sql; supabase/migrations/0050_demandes_horaires_privees_admin.sql. |
+| 2026-10-11 | `codex/backend-cap29-rights-schema` | 0 | 0 | LIVRÉ (ancêtre de main) | feat(backend): add CAP29 rights review RPC |
+| 2026-10-11 | `codex/backend-cap29-library-visibility` | 30 | 61 | ABSENT de main | Lectures paginées du catalogue administrateur (CAP29, lot large). Fichiers principaux : supabase/migrations/0049_creneau_personnalise_ouvert_au_quota.sql; supabase/migrations/0053_invitations_foyer.sql; supabase/tests/scenarios_offres_personnalisees.sql; supabase/migrations/0054_seance_resumes_famille.sql; supabase/migrations/0050_demandes_horaires_privees_admin.sql. |
+| 2026-10-11 | `codex/backend-cap29-catalogue` | 4 | 4 | REMPLACÉ par 291249c7f (annexe 08/11 ligne 138, relais) | Valider les clés d'objet avant signature R2 (CAP29). Fichiers principaux : supabase/functions/_shared/r2/cles_test.ts; supabase/functions/_shared/r2/signature_test.ts; supabase/functions/_shared/r2/cles.ts; supabase/functions/_shared/r2/signature.ts. |
+| 2026-10-11 | `codex/backend-canon` | 0 | 0 | LIVRÉ (ancêtre de main) | feat(backend): assemble canonical migrations 0049-0092 |
+| 2026-10-11 | `codex/backend-c29-tirage` | 4 | 5 | REMPLACÉ par 4b9980cb6 (annexe 08/11 ligne 137, relais) | Test : les règles cibles ne peuvent être ni modifiées ni supprimées (C29, migrations). Fichiers principaux : supabase/migrations/20261011121039_c29_control_capabilities.sql; supabase/migrations/20261011125034_c29_mission_engine.sql; supabase/tests/scenarios_c29_control_capabilities.sql; supabase/tests/scenarios_c29_mission_engine.sql; .github/workflows/ci.yml. |
+| 2026-10-11 | `codex/backend-c25-regroupements` | 1 | 4 | ABSENT de main | Adaptateur des pages de regroupement (C-25) : fonction regroupements-pages et config Supabase. Fichiers principaux : supabase/functions/regroupements-pages/index.ts; lib/core/offres/regroupements_pages_supabase.dart; test/core/offres/regroupements_pages_supabase_test.dart; supabase/config.toml. |
+| 2026-10-11 | `codex/backend-c25-c11bis-followup` | 0 | 0 | LIVRÉ (ancêtre de main) | feat: connect paged C-25 regroupement admin |
+| 2026-10-11 | `codex/backend-c23-reprise-adapter` | 4 | 78 | ABSENT de main | Brancher le port des reprises de foyer côté administration (C23, lot large). Fichiers principaux : docs/backend/PROD_SECURITY_SNAPSHOT_2026-10-10.md; docs/backend/REWAYAH_BR0B_CANONICAL_BACKEND_BLUEPRINT_V0_2.md; supabase/migrations/0049_creneau_personnalise_ouvert_au_quota.sql; supabase/migrations/0053_invitations_foyer.sql; supabase/migrations/0061_assignations_annotations_securisees.sql. |
+| 2026-10-11 | `codex/backend-c23-adapter` | 0 | 0 | LIVRÉ (ancêtre de main) | feat(c23): add household reprise admin adapter |
+| 2026-10-11 | `codex/backend-c22-hardening` | 1 | 2 | ABSENT de main | Durcir l'accès au retour d'expérience et à la présence (migration et scénario). Fichiers principaux : supabase/migrations/20261011170000_c22_feedback_presence_account_guard.sql; supabase/tests/scenarios_b11_feedback_questions.sql. |
+| 2026-10-11 | `codex/backend-c22-canon-adapter` | 3 | 8 | ABSENT de main | Projection du fuseau horaire du foyer pour les demandes de présentation (C22). Fichiers principaux : test/core/accessibilite/reponse_presentation_supabase_test.dart; supabase/migrations/20261011200000_c22_presentation_timezone_projection.sql; lib/core/accessibilite/reponse_presentation_supabase.dart; supabase/migrations/20261011100000_a81_capacity_positive_guard.sql; supabase/tests/scenarios_age_presentation.sql. |
+| 2026-10-11 | `codex/backend-c22-age-presentation` | 287 | 101 | ABSENT de main | Stabiliser le scénario de présentation selon l'âge (C22, très grand lot). Fichiers principaux : docs/backend/PROD_SECURITY_SNAPSHOT_2026-10-10.md; docs/backend/REWAYAH_BR0B_CANONICAL_BACKEND_BLUEPRINT_V0_2.md; supabase/tests/scenarios_offres_personnalisees.sql; supabase/migrations/0049_creneau_personnalise_ouvert_au_quota.sql; supabase/migrations/0053_invitations_foyer.sql. |
+| 2026-10-11 | `codex/backend-c21-kyc-verdict` | 15 | 32 | ABSENT de main | Port serveur du verdict d'accès KYC (C21, 32 fichiers). Fichiers principaux : supabase/migrations/0049_creneau_personnalise_ouvert_au_quota.sql; supabase/migrations/0053_invitations_foyer.sql; supabase/tests/scenarios_offres_personnalisees.sql; supabase/migrations/0054_seance_resumes_famille.sql; supabase/migrations/0050_demandes_horaires_privees_admin.sql. |
+| 2026-10-11 | `codex/backend-c21-kyc-access-adapter` | 19 | 48 | ABSENT de main | Fermer l'accès du rôle service au verdict KYC (C21). Fichiers principaux : supabase/migrations/0049_creneau_personnalise_ouvert_au_quota.sql; supabase/migrations/0053_invitations_foyer.sql; supabase/tests/scenarios_offres_personnalisees.sql; supabase/migrations/0054_seance_resumes_famille.sql; supabase/migrations/0050_demandes_horaires_privees_admin.sql. |
+| 2026-10-11 | `codex/backend-c17-signature-status` | 27 | 56 | ABSENT de main | Fermer le garde des statuts de signature (sécurité, lot large). Fichiers principaux : supabase/migrations/0049_creneau_personnalise_ouvert_au_quota.sql; supabase/migrations/0053_invitations_foyer.sql; supabase/tests/scenarios_offres_personnalisees.sql; supabase/migrations/0054_seance_resumes_famille.sql; supabase/migrations/0050_demandes_horaires_privees_admin.sql. |
+| 2026-10-11 | `codex/backend-c11bis-f74-v2` | 0 | 0 | LIVRÉ (ancêtre de main) | feat(backend): partition C-11 bis groups by F74 dimensions |
+| 2026-10-11 | `codex/backend-c11bis-adapter` | 0 | 0 | LIVRÉ (ancêtre de main) | feat(offres): map C11bis regroupements to Supabase |
+| 2026-10-11 | `codex/backend-b18-ci-state` | 1 | 1 | REMPLACÉ par e3f52ffa1 (annexe 08/11 ligne 136, relais) | Test : accepter le code SQLSTATE du refus KYC protégé (B18). Fichiers principaux : supabase/tests/scenarios_b18_security_definer.sql. |
+| 2026-10-11 | `codex/backend-b12-f84-ccr` | 1 | 10 | ABSENT de main | Extraire les ports et modèles B12 vers le cœur (contrôles), 10 fichiers. Fichiers principaux : lib/core/controle/modele_rapport_controle.dart; lib/core/controle/modele_observation_controle.dart; lib/core/controle/modele_echanges.dart; lib/core/controle/modele_visite.dart; lib/core/controle/port_historique.dart. |
+| 2026-10-11 | `codex/backend-b09-remplacements` | 1 | 0 | LIVRÉ (ancêtre de main) | feat(b09): add audited replacement producers |
+| 2026-10-11 | `codex/backend-b09-notifications` | 8 | 5 | REMPLACÉ par 4b9980cb6 (annexe 08/11 ligne 135, relais) | CI : scénario SQL des notifications B-09 (migration 0063 et tests). Fichiers principaux : lib/core/capacites/notifications_supabase.dart; supabase/tests/scenarios_b09_notifications.sql; test/core/capacites/notifications_supabase_test.dart; supabase/migrations/0063_notifications_privatives.sql; .github/workflows/ci.yml. |
+| 2026-10-11 | `codex/backend-b09-f1-producers` | 25 | 35 | ABSENT de main | Corriger les compteurs B-09 (producteurs de notifications F1, lot large). Fichiers principaux : supabase/migrations/0049_creneau_personnalise_ouvert_au_quota.sql; supabase/migrations/0053_invitations_foyer.sql; supabase/tests/scenarios_offres_personnalisees.sql; supabase/migrations/0054_seance_resumes_famille.sql; supabase/migrations/0050_demandes_horaires_privees_admin.sql. |
+| 2026-10-11 | `codex/backend-b09-adaptateur` | 1 | 2 | REMPLACÉ par 355ba7dee (annexe 08/11 ligne 134, relais) | Adaptateur Supabase des notifications (B-09). Fichiers principaux : lib/core/capacites/notifications_supabase.dart; test/core/capacites/notifications_supabase_test.dart. |
+| 2026-10-11 | `codex/backend-b04-reprise` | 3 | 76 | REMPLACÉ par ea1a0da98 (annexe 08/11 ligne 133, relais) | Fermer les reprises de foyer refusées par le titulaire (B-04, 76 fichiers). Fichiers principaux : docs/backend/PROD_SECURITY_SNAPSHOT_2026-10-10.md; docs/backend/REWAYAH_BR0B_CANONICAL_BACKEND_BLUEPRINT_V0_2.md; supabase/migrations/0049_creneau_personnalise_ouvert_au_quota.sql; supabase/migrations/0053_invitations_foyer.sql; supabase/migrations/0061_assignations_annotations_securisees.sql. |
+| 2026-10-11 | `codex/backend-b03-b12` | 1 | 10 | ABSENT de main | Extraire les ports et modèles B12 vers le cœur (contrôles), même contenu que la branche b12-f84-ccr. Fichiers principaux : lib/core/controle/modele_rapport_controle.dart; lib/core/controle/modele_observation_controle.dart; lib/core/controle/modele_echanges.dart; lib/core/controle/modele_visite.dart; lib/core/controle/port_historique.dart. |
+| 2026-10-11 | `codex/backend-al01-05-f86` | 3 | 4 | REMPLACÉ par b2a59b705 (annexe 08/11 ligne 132, relais) | Bloquer l'identité de rôle auth dans la porte de fonctions F86 (outillage de contrôle). Fichiers principaux : tool/security_definer_gate/verify_allowlist.py; tool/security_definer_gate/tests/test_verify_allowlist.py; tool/security_definer_gate/tests/test_guard_scanner.py; tool/security_definer_gate/catalog.sql. |
+| 2026-10-11 | `codex/backend-adult-kyc-contract` | 15 | 49 | ABSENT de main | Scénarios adulte et KYC dans la CI Postgres (lot large). Fichiers principaux : supabase/migrations/0049_creneau_personnalise_ouvert_au_quota.sql; supabase/migrations/0053_invitations_foyer.sql; supabase/tests/scenarios_offres_personnalisees.sql; supabase/migrations/0054_seance_resumes_famille.sql; supabase/migrations/0050_demandes_horaires_privees_admin.sql. |
+| 2026-10-11 | `codex/backend-a81-f86` | 1 | 2 | ABSENT de main | Garde de capacité élève autonome (migration a81 et scénario d'âge). Fichiers principaux : supabase/migrations/20261011100000_a81_capacity_positive_guard.sql; supabase/tests/scenarios_age_presentation.sql. |
+| 2026-10-11 | `codex/backend-a81-f69-hardening` | 17 | 45 | ABSENT de main | Durcir la capacité adulte et l'accès KYC (A81 / F69, lot large). Fichiers principaux : supabase/migrations/0049_creneau_personnalise_ouvert_au_quota.sql; supabase/migrations/0053_invitations_foyer.sql; supabase/tests/scenarios_offres_personnalisees.sql; supabase/migrations/0054_seance_resumes_famille.sql; supabase/migrations/0050_demandes_horaires_privees_admin.sql. |
+| 2026-10-11 | `codex/backend-a81-c24-adapter` | 1 | 1 | REMPLACÉ par aa68b38c9 (annexe 08/11 ligne 131, relais) | Lire la capacité élève autonome depuis Supabase (adaptateur de session). Fichiers principaux : lib/core/session/port_capacite_eleve_supabase.dart. |
+| 2026-10-10 | `codex/backend-teacher-recruitment` | 0 | 0 | LIVRÉ (ancêtre de main) | REPRISE : decisions du directeur (paie hors app, contrat valide, Actions epuisees) |
+| 2026-10-10 | `codex/backend-staging-preview-secrets` | 2 | 1 | REMPLACÉ par 48f0bde6d (annexe 08/11 ligne 128, relais) | Fusion ccr dans la branche des secrets d'aperçu staging (workflow de déploiement Flutter). Fichiers principaux : .github/workflows/flutter-deploy.yml. |
+| 2026-10-10 | `codex/backend-sec-prod` | 29 | 2 | ABSENT de main | Durcir et exercer le scanner M2 global (SEC-PROD : snapshot et remédiation). Fichiers principaux : docs/backend/PROD_SECURITY_SNAPSHOT_2026-10-10.md; docs/backend/SEC_PROD_REMEDIATION.sql. |
+| 2026-10-10 | `codex/backend-passation-2026-10-10` | 1 | 1 | ABSENT de main | Instantané de passation Codex du 10/10 (document). Fichiers principaux : docs/backend/PASSATION-CODEX-2026-10-10.md. |
+| 2026-10-10 | `codex/backend-notifications` | 6 | 4 | REMPLACÉ par 355ba7dee (annexe 08/11 ligne 127, relais) | Corriger la transaction de migration des notifications (B-09). Fichiers principaux : lib/core/capacites/notifications_supabase.dart; supabase/tests/scenarios_b09_notifications.sql; test/core/capacites/notifications_supabase_test.dart; supabase/migrations/0063_notifications_privatives.sql. |
+| 2026-10-10 | `codex/backend-lota-ledger-provenance` | 3 | 1 | ABSENT de main | Documenter les limites d'historique des migrations (addendum de réconciliation). Fichiers principaux : docs/backend/RECONCILIATION_MIGRATIONS_ADDENDUM_2026-10-10.md. |
+| 2026-10-10 | `codex/backend-lot-f1` | 98 | 22 | ABSENT de main | Fusion de la dernière version ccr dans le lot F1 (blueprint, profil élève, lot large). Fichiers principaux : docs/backend/REWAYAH_BR0B_CANONICAL_BACKEND_BLUEPRINT_V0_2.md; supabase/migrations/0049_creneau_personnalise_ouvert_au_quota.sql; supabase/migrations/0053_invitations_foyer.sql; supabase/tests/scenarios_offres_personnalisees.sql; supabase/migrations/0054_seance_resumes_famille.sql. |
+| 2026-10-10 | `codex/backend-lot-c-staging-api` | 115 | 26 | ABSENT de main | Horodatages émis complétés pour les jetons de test SEC-01 (lot large, 115 commits). Fichiers principaux : docs/backend/REWAYAH_BR0B_CANONICAL_BACKEND_BLUEPRINT_V0_2.md; supabase/migrations/0049_creneau_personnalise_ouvert_au_quota.sql; supabase/migrations/0053_invitations_foyer.sql; supabase/tests/scenarios_offres_personnalisees.sql; supabase/migrations/0054_seance_resumes_famille.sql. |
+| 2026-10-10 | `codex/backend-lot-a-manifest` | 4 | 1 | ABSENT de main | Comparer les corps des migrations live pour le lot A (document de réconciliation). Fichiers principaux : docs/backend/RECONCILIATION_MIGRATIONS_BR0B_2026-10-10.md. |
+| 2026-10-10 | `codex/backend-f2-b13-admin-rls` | 58 | 20 | ABSENT de main | Renvoyer les violations de contrôle pour les ancrages invalides (B-15) ; RLS administrateur. Fichiers principaux : supabase/migrations/0058_assignations_annotations_securisees.sql; lib/core/tc_outils/annotations_supabase.dart; supabase/migrations/0056_student_concern_rpc.sql; supabase/tests/scenarios_b15_assignations_annotations.sql; lib/core/tc_outils/assignations_supabase.dart. |
+| 2026-10-10 | `codex/backend-f2-after-c` | 282 | 98 | ABSENT de main | Scénario de titre enseignant C-04 en CI (très grand lot, 282 commits). Fichiers principaux : docs/backend/PROD_SECURITY_SNAPSHOT_2026-10-10.md; docs/backend/REWAYAH_BR0B_CANONICAL_BACKEND_BLUEPRINT_V0_2.md; supabase/tests/scenarios_offres_personnalisees.sql; supabase/migrations/0049_creneau_personnalise_ouvert_au_quota.sql; supabase/migrations/0053_invitations_foyer.sql. |
+| 2026-10-10 | `codex/backend-f1-ccr-port` | 20 | 20 | ABSENT de main | Utiliser le faux JWT compatible PostgREST dans les tests (F1). Fichiers principaux : supabase/migrations/0049_creneau_personnalise_ouvert_au_quota.sql; supabase/migrations/0053_invitations_foyer.sql; supabase/tests/scenarios_offres_personnalisees.sql; supabase/migrations/0054_seance_resumes_famille.sql; supabase/migrations/0050_demandes_horaires_privees_admin.sql. |
+| 2026-10-10 | `codex/backend-f1-ccr-8ea7831` | 2 | 20 | ABSENT de main | Fusion des instructions ccr courantes dans la branche backend (F1). Fichiers principaux : supabase/migrations/0049_creneau_personnalise_ouvert_au_quota.sql; supabase/migrations/0053_invitations_foyer.sql; supabase/tests/scenarios_offres_personnalisees.sql; supabase/migrations/0054_seance_resumes_famille.sql; supabase/migrations/0050_demandes_horaires_privees_admin.sql. |
+| 2026-10-10 | `codex/backend-blueprint` | 5 | 5 | ABSENT de main | Statut d'exécution BR-0B courant (documents de blueprint). Fichiers principaux : docs/backend/blueprints/REWAYAH_BR0B_CANONICAL_BACKEND_BLUEPRINT_V0_2.md; docs/backend/blueprints/REWAYAH_BR0B_CANONICAL_BACKEND_BLUEPRINT_V0_1.md; docs/backend/blueprints/REWAYAH_CAP55_PRESENTATION_APP_HANDOFF_CLAUDE_V1.md; docs/backend/blueprints/REWAYAH_COMPLEMENT_IMMATRICULATION_IDENTITES_V0_1.md; docs/backend/blueprints/BR0B_EXECUTION_STATUS_2026-10-10.md. |
+| 2026-10-10 | `codex/backend-b20-ccr-8ea7831` | 2 | 6 | ABSENT de main | Fusion des instructions ccr dans la branche backend (identité d'agent B20). Fichiers principaux : supabase/tests/scenarios_agent_identity.sql; supabase/migrations/0074_agent_identity_account_validity.sql; supabase/migrations/0057_agent_identity_subject.sql; supabase/tests/scenarios_agt01.sql; supabase/tests/stub_auth.sql. |
+| 2026-10-10 | `codex/backend-b20-agent-identity` | 7 | 6 | ABSENT de main | Test : claims JWT PostgREST pour les changements de rôle (identité d'agent). Fichiers principaux : supabase/tests/scenarios_agent_identity.sql; supabase/migrations/0074_agent_identity_account_validity.sql; supabase/migrations/0057_agent_identity_subject.sql; supabase/tests/scenarios_agt01.sql; supabase/tests/stub_auth.sql. |
+| 2026-10-10 | `codex/backend-b13-ci-ccr` | 5 | 3 | REMPLACÉ par 4b9980cb6 (annexe 08/11 ligne 126, relais) | Retirer le numéro de migration réservé à F1 (B13). Fichiers principaux : supabase/tests/scenarios_b13_admin_suspended.sql; supabase/migrations/0058_guardian_visit_admin_account_valid.sql; .github/workflows/ci.yml. |
+| 2026-10-10 | `codex/backend-b13-ccr-8ea7831` | 3 | 3 | REMPLACÉ par 4b9980cb6 (annexe 08/11 ligne 125, relais) | Fusion des instructions ccr dans la branche B13 (visite du tuteur, compte admin valide). Fichiers principaux : supabase/tests/scenarios_b13_admin_suspended.sql; supabase/migrations/0058_guardian_visit_admin_account_valid.sql; .github/workflows/ci.yml. |
+| 2026-10-10 | `codex/backend-b13-admin-suspended` | 3 | 3 | ABSENT de main | CI : scénario B-13 du compte administrateur suspendu. Fichiers principaux : supabase/tests/scenarios_b13_admin_suspended.sql; supabase/migrations/0049_guardian_visit_admin_active_account.sql; .github/workflows/ci.yml. |
+| 2026-10-09 | `codex/backend-staging-deploy` | 14 | 16 | ABSENT de main | Utiliser les secrets de staging et conditionner le déploiement des fonctions staging (CI). Fichiers principaux : docs/claude-handoff/REWAYAH_BR0B_CANONICAL_BACKEND_BLUEPRINT_V0_2.md; supabase/migrations/0039_budget_observation_repond_sur_la_visite_en_cours.sql; supabase/migrations/0040_tuteur_masque_et_annonce_reservee_a_son_enfant.sql; docs/claude-handoff/REWAYAH_BR0B_CANONICAL_BACKEND_BLUEPRINT_V0_1.md; docs/claude-handoff/REWAYAH_CAP55_PRESENTATION_APP_HANDOFF_CLAUDE_V1.md. |
+| 2026-10-09 | `codex/backend-security-null-guards` | 0 | 0 | LIVRÉ (ancêtre de main) | Add negative B-18 role and missing-claim scenarios |
+| 2026-10-09 | `codex/backend-security-acl` | 0 | 0 | LIVRÉ (ancêtre de main) | docs(backend): documenter la revue ACL Supabase en lecture seule |
+| 2026-10-09 | `codex/backend-migrations-historiques` | 0 | 0 | LIVRÉ (ancêtre de main) | Document restoration provenance for applied migrations 0039-0042 |
+| 2026-10-09 | `codex/backend-lot-f2` | 0 | 0 | LIVRÉ (ancêtre de main) | docs(orchestration): STAGING devient l'etape obligatoire avant PROD |
+| 2026-10-09 | `codex/backend-lot-c` | 14 | 7 | ABSENT de main | Vérifier le type de la fonction de session agent (CI, identité d'agent). Fichiers principaux : supabase/tests/scenarios_agent_identity.sql; supabase/migrations/20261009180731_agent_identity_subject.sql; supabase/tests/scenarios_agt01.sql; supabase/tests/stub_storage.sql; .github/workflows/ci.yml. |
+| 2026-10-09 | `codex/backend-lot-b` | 0 | 0 | LIVRÉ (ancêtre de main) | docs(orchestration): STAGING devient l'etape obligatoire avant PROD |
+| 2026-10-09 | `codex/backend-lot-a` | 0 | 0 | LIVRÉ (ancêtre de main) | Preserve authenticated ACLs when revoking PUBLIC |
+| 2026-10-09 | `codex/backend-inventory` | 0 | 0 | LIVRÉ (ancêtre de main) | docs(backend): préciser les sources candidates des migrations historiques |
+| 2026-10-09 | `codex/backend-catalogue-classes` | 0 | 0 | LIVRÉ (ancêtre de main) | docs(orchestration): STAGING devient l'etape obligatoire avant PROD |
+| 2026-10-08 | `codex/site-public-preview-main` | 1 | 25 | REMPLACÉ par 48f0bde6d (annexe 08/11 ligne 123, relais) | Aperçu du site public en français à côté du web Flutter (documents site-public et workflow). Fichiers principaux : site-public/content/pages.json; site-public/build_site.py; site-public/styles/site.css; site-public/tests/test_build_site_qa.py; .github/workflows/flutter-deploy.yml. |
+| 2026-09-15 | `codex/release-all-20260915` | 0 | 0 | LIVRÉ (ancêtre de main) | fix: add local fictional-role demo access |
+| 2026-09-13 | `codex/r1-adaptive-design-system` | 1 | 30 | ABSENT de main | Système de design adaptatif R1 (couleurs, élévation, espacements, mouvement, thème). Fichiers principaux : lib/core/theme/app_theme.dart; lib/core/theme/app_palette.dart; lib/features/_dev/galerie/catalogue_galerie.dart; lib/core/widgets/schedule_option.dart; CODEX_FRONTEND_BASELINE.md. |
 
 ## Sortie du script (11/11/2026, vrai clone, historique complet)
 
