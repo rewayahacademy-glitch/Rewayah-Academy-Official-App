@@ -58,6 +58,23 @@ enum MotifServeurSalle {
   /// SNT (03/11/2026) : aucun enseignant n'a rejoint la salle a temps, la
   /// seance est reportee ; la salle ne s'ouvre plus pour personne.
   seanceReportee,
+
+  /// SITUATIONS-GRAVES (11/11/2026) : cette seance n'est pas celle de
+  /// l'appelant (la meme reponse qu'elle existe ou non).
+  nonInscrit,
+
+  /// SITUATIONS-GRAVES : l'acces de l'eleve a cette classe est suspendu.
+  /// Aucun detail d'argent n'arrive ici.
+  accesSuspendu,
+
+  /// SITUATIONS-GRAVES : l'enseignant a fait sortir cet eleve de la seance.
+  sorti,
+
+  /// SITUATIONS-GRAVES : le temps d'observation du tuteur est epuise.
+  observationTerminee,
+
+  /// SITUATIONS-GRAVES : le compte n'est plus valide.
+  compteInvalide,
 }
 
 /// FN-025 : le motif d'un refus et les heures du serveur qui l'accompagnent.
@@ -83,6 +100,11 @@ class DetailRefusSalle {
       'titulaire_entre' => MotifServeurSalle.titulaireEntre,
       'remplacant_entre' => MotifServeurSalle.remplacantEntre,
       'seance_reportee' => MotifServeurSalle.seanceReportee,
+      'non_inscrit' => MotifServeurSalle.nonInscrit,
+      'acces_suspendu' => MotifServeurSalle.accesSuspendu,
+      'sorti' => MotifServeurSalle.sorti,
+      'observation_terminee' => MotifServeurSalle.observationTerminee,
+      'compte_invalide' => MotifServeurSalle.compteInvalide,
       _ => null,
     };
     if (motif == null) return null;
@@ -167,8 +189,43 @@ abstract interface class ServiceVideo {
   Future<void> annoncerSortie(String seanceId);
 }
 
+/// MICRO-AVANT-ENSEIGNANT (directeur, 11/11/2026) : le filet. Un eleve dont
+/// le droit de publier attend l'enseignant, et qui voit son enseignant dans
+/// la salle, demande au serveur de lui rendre ce droit.
+///
+/// **Le client ne decide rien** : le serveur reverifie que l'appelant a droit
+/// a cette seance et que l'enseignant est bien dans la salle LiveKit, puis
+/// change lui-meme les droits du participant. Le resultat arrive par LiveKit
+/// (changement de permissions), pas par la reponse de cet appel.
+///
+/// Interface a part, comme `MotifEchecSalle` : seul le service qui parle au
+/// serveur reel l'implemente.
+abstract interface class RetablissementPublication {
+  /// Demande au serveur de rendre le droit de publier de [acces]. Sans effet
+  /// si l'acces ne dit pas pour quelle seance il a ete emis.
+  Future<void> retablirPublication(AccesSalle acces);
+}
+
+/// FERMETURE-SALLE (directeur, 11/11/2026, journal D-018) : un participant
+/// demande au serveur de relire la regle dans sa salle (enseignant parti
+/// depuis le delai de grace, seance finie).
+///
+/// **Le client ne decide rien** : le serveur relit lui-meme qui est dans la
+/// salle chez LiveKit et la seance en base, puis ferme les micros des eleves
+/// ou la salle. Le resultat arrive par LiveKit (changement de permissions,
+/// deconnexion), pas par la reponse de cet appel.
+///
+/// Interface a part, comme [RetablissementPublication].
+abstract interface class VerificationSalle {
+  /// Demande la verification pour la seance de [acces]. Rend le temps qui
+  /// reste avant l'echeance, en secondes, quand un delai court ; `null`
+  /// sinon (rien en cours, porte fermee, acces sans seance).
+  Future<int?> verifierSalle(AccesSalle acces);
+}
+
 /// L'implementation reelle.
-class ServiceVideoSupabase implements ServiceVideo {
+class ServiceVideoSupabase
+    implements ServiceVideo, RetablissementPublication, VerificationSalle {
   /// Cree le service.
   const ServiceVideoSupabase(this._client);
 
@@ -198,7 +255,51 @@ class ServiceVideoSupabase implements ServiceVideo {
     if (corps is! Map<String, dynamic>) {
       throw const EchecSalle(MotifRefusSalle.reseau);
     }
-    return AccesSalle.depuisJson(corps);
+    return AccesSalle.depuisJson(corps)
+        .pourLaDemande(seanceId: seanceId, eleveId: eleveId);
+  }
+
+  @override
+  Future<void> retablirPublication(AccesSalle acces) async {
+    final String? seanceId = acces.seanceId;
+    if (seanceId == null) {
+      return;
+    }
+    await _client.functions.invoke(
+      'create-room-token',
+      body: <String, dynamic>{
+        'session_id': seanceId,
+        'eleve_id': ?acces.eleveId,
+        'action': 'retablir_publication',
+      },
+    );
+  }
+
+  @override
+  Future<int?> verifierSalle(AccesSalle acces) async {
+    final String? seanceId = acces.seanceId;
+    if (seanceId == null) {
+      return null;
+    }
+    try {
+      final FunctionResponse reponse = await _client.functions.invoke(
+        'create-room-token',
+        body: <String, dynamic>{
+          'session_id': seanceId,
+          'eleve_id': ?acces.eleveId,
+          'action': 'verifier_salle',
+        },
+      );
+      return resteAvantEcheance(reponse.data);
+    } on FunctionException catch (e) {
+      // 403 : la porte de la seance est fermee (seance finie). Le serveur a
+      // relu la salle ; s'il l'a fermee, LiveKit le dira. Ce n'est pas une
+      // panne.
+      if (e.status == 403) {
+        return null;
+      }
+      rethrow;
+    }
   }
 
   /// Traduit le refus du backend, sans jamais inventer une raison qu'il n'a
@@ -243,6 +344,14 @@ class ServiceVideoSupabase implements ServiceVideo {
       journalDev('annonce de sortie impossible : $e');
     }
   }
+}
+
+/// FERMETURE-SALLE : lit `reste_s` dans la reponse de `verifier_salle`, ou
+/// `null` (absent, forme inattendue, valeur negative) : rien n'est invente.
+int? resteAvantEcheance(Object? corps) {
+  if (corps is! Map) return null;
+  final Object? reste = corps['reste_s'];
+  return reste is int && reste >= 0 ? reste : null;
 }
 
 /// Le service video employe par l'application.

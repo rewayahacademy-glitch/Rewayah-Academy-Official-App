@@ -1076,7 +1076,10 @@ void main() {
   }) async {
     expect(tester.takeException(), isNull);
     final Finder docks = find.byKey(const ValueKey<String>('dock-seance'));
-    expect(docks, findsNWidgets(2));
+    // BARRE-ORDINATEUR (directeur, 11/11/2026) : la barre est faite de
+    // groupes nommes ; les commandes d'appel y sont reparties (voix,
+    // tableau, sortie), chaque groupe garde les memes regles.
+    expect(docks, findsAtLeastNWidgets(2));
     for (final Element dock in docks.evaluate()) {
       final Finder ce = find.byWidget(dock.widget);
       final Finder disques = find.descendant(
@@ -1088,7 +1091,10 @@ void main() {
         matching: find.byKey(const ValueKey<String>('nom-commande')),
       );
       expect(disques, findsWidgets);
-      expect(noms.evaluate().length, disques.evaluate().length);
+      // CORAN-GRAND (11/11/2026) : la barre est une colonne ; quand la
+      // hauteur manque (texte agrandi), tous les noms partent ensemble et
+      // l'infobulle garde chaque nom.
+      expect(noms.evaluate().length, anyOf(0, disques.evaluate().length));
       for (final Element e in disques.evaluate()) {
         final Size taille = tester.getSize(find.byWidget(e.widget));
         expect(taille.height, greaterThanOrEqualTo(diametre - 0.5));
@@ -1128,16 +1134,24 @@ void main() {
       of: dock,
       matching: find.byKey(const ValueKey<String>('nom-commande')),
     );
-    expect(tuiles, findsNWidgets(4));
+    // GRILLE-COMMANDES (directeur, 11/11/2026) : la barre aux six cases
+    // egales (Micro, Camera, Eleves, Pointeur, Plus, Quitter), plus de
+    // disques ; les noms, tous ou aucun, jamais un nom coupe.
+    expect(tuiles, findsNWidgets(6));
     expect(
       find.descendant(
         of: dock,
         matching: find.byKey(const ValueKey<String>('disque-commande')),
       ),
-      findsNWidgets(4),
+      findsNothing,
     );
+    expect(noms.evaluate().length, anyOf(0, 6));
     if (nomsExiges) {
-      expect(noms, findsNWidgets(4));
+      // Une icone par case, toujours.
+      expect(
+        find.descendant(of: dock, matching: find.byType(Icon)),
+        findsNWidgets(6),
+      );
     }
     for (final Element e in tuiles.evaluate()) {
       final Size taille = tester.getSize(find.byWidget(e.widget));

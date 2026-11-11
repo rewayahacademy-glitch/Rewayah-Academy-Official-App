@@ -207,15 +207,34 @@ void main() {
       expect(t.moteur.departs, 0);
       expect(t.controleur.etatCourant.cours, cours);
 
+      // Pendant la suspension, le moteur a perdu le lien et le reprend.
+      t.moteur.poser(EtatSalle.reconnexion);
       t.controleur.didChangeAppLifecycleState(AppLifecycleState.resumed);
       expect(t.controleur.etatCourant.enArrierePlan, isFalse);
       expect(t.moteur.departs, 0);
-      // **Le doute survit au retour.** On ne promet pas une connexion que la
-      // plateforme ne permet pas : il faut que le moteur la redise.
+      // **Le doute survit au retour** quand le moteur n'a pas encore redit
+      // le lien : on ne promet pas une connexion qu'on n'a pas.
       expect(t.controleur.etatCourant.retourDeSuspension, isTrue);
 
-      t.controleur.confirmerLien();
+      t.moteur.poser(EtatSalle.retabli);
+      await Future<void>.delayed(Duration.zero);
       expect(t.controleur.etatCourant.retourDeSuspension, isFalse);
+    });
+
+    test('ECRAN-EVEILLE : au retour, un lien jamais perdu ne laisse aucun '
+        'message en attente', () async {
+      // Constat du 11/11/2026 : le moteur restait `connecte`, aucun
+      // evenement ne venait, et le message du retour restait affiche.
+      final _Banc t = monter();
+      await t.controleur.ouvrir(cours: cours, preVol: t.preVol.verifier);
+
+      t.controleur.didChangeAppLifecycleState(AppLifecycleState.paused);
+      expect(t.controleur.etatCourant.retourDeSuspension, isTrue);
+      t.controleur.didChangeAppLifecycleState(AppLifecycleState.resumed);
+
+      expect(t.controleur.etatCourant.retourDeSuspension, isFalse);
+      expect(t.controleur.etatCourant.enArrierePlan, isFalse);
+      expect(t.moteur.departs, 0);
     });
 
     test('confirmer un lien jamais suspendu ne change rien', () async {

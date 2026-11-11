@@ -24,6 +24,8 @@ import '../../core/enseignant/service_enseignant.dart'
 import '../../core/planning/service_planning.dart' show Seance, seancesProvider;
 import '../../core/tc_horloge/chrono_seance.dart';
 import '../../core/tc_horloge/fenetre_seance.dart';
+import '../../core/tc_horloge/port_horloge_seance.dart'
+    show horlogeClasseLueProvider;
 import '../../core/video/pre_vol.dart' show seuilOuvertureSalle;
 
 /// Une seance lue, reduite a ce que le chrono demande.
@@ -45,6 +47,7 @@ BornesChrono? bornesDeLaSeance({
   required String seanceId,
   required String? groupeId,
   required Iterable<LigneBornes> lignes,
+  Duration? depassement,
 }) {
   LigneBornes? trouvee;
   for (final LigneBornes l in lignes) {
@@ -69,7 +72,11 @@ BornesChrono? bornesDeLaSeance({
       // Le seuil et la grace de core (ADR-005), jamais redeclares ici ; le
       // chrono n'en lit que le debut et la fin prevue.
       fenetreAcces: seuilOuvertureSalle,
-      graceApresFin: graceApresFin,
+      // CHRONO-ETAT (11/11/2026) : le depassement compte par le chrono est
+      // le reglage de la direction, servi par le serveur (`horloge_classe`).
+      // Tant qu'il n'est pas lu, la valeur de repli de core, la meme que
+      // celle du serveur par defaut.
+      graceApresFin: depassement ?? graceApresFin,
     ),
   );
 }
@@ -110,9 +117,13 @@ final ProviderFamily<BornesChrono?, CleBornesSalle> bornesSalleProvider =
             ),
         ];
       }
+      final String? groupe = cle.groupeId;
       return bornesDeLaSeance(
         seanceId: cle.seanceId,
-        groupeId: cle.groupeId,
+        groupeId: groupe,
         lignes: lignes,
+        depassement: groupe == null
+            ? null
+            : ref.watch(horlogeClasseLueProvider(groupe)).value?.graceApresFin,
       );
     });

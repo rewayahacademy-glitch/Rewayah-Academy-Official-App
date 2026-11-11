@@ -11,6 +11,7 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/tc_horloge/chrono_seance.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/core/widgets/chrono_vivant.dart';
 import 'package:rewayah_academy/features/salle_seance/chrono_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/pilule_etat_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
@@ -80,8 +81,13 @@ Future<void> _poser(
   await tester.pump(const Duration(seconds: 1));
 }
 
-String _texte(WidgetTester tester) =>
-    tester.widget<Text>(find.byKey(ChronoSalle.cleTexte)).data!;
+/// Ce que la capsule donne a lire (CHRONO-ETAT, 11/11/2026).
+String _texte(WidgetTester tester) {
+  final ChronoVivant c = tester.widget<ChronoVivant>(find.byType(ChronoVivant));
+  return c.chrono.prevuEcoule
+      ? c.libelleFini
+      : ChronoVivant.chiffresDe(c.chrono);
+}
 
 String _annonce(WidgetTester tester) => tester
     .getSemantics(find.byKey(ChronoSalle.cleAnnonce))
@@ -103,8 +109,7 @@ void main() {
         role: role,
         maintenant: _t0.add(const Duration(minutes: 57, seconds: 30)),
       );
-      expect(_texte(tester), contains('00:02:30'));
-      expect(_texte(tester), contains('restant'));
+      expect(_texte(tester), '02:30');
     });
   }
 
@@ -116,19 +121,19 @@ void main() {
       tester,
       maintenant: _t0.add(const Duration(minutes: 1, seconds: 10)),
     );
-    expect(_annonce(tester), contains('1 min écoulée,'));
+    expect(_annonce(tester), '59 min restantes');
     await _poser(
       tester,
       maintenant: _t0.add(const Duration(minutes: 2, seconds: 10)),
     );
-    expect(_annonce(tester), contains('2 min écoulées,'));
+    expect(_annonce(tester), '58 min restantes');
     await _poser(tester, maintenant: _t0.add(const Duration(minutes: 58)));
-    expect(_annonce(tester), contains('2 min restantes.'));
+    expect(_annonce(tester), '2 min restantes');
     await _poser(
       tester,
       maintenant: _t0.add(const Duration(minutes: 59, seconds: 10)),
     );
-    expect(_annonce(tester), contains('1 min restante.'));
+    expect(_annonce(tester), '1 min restante');
     expect(_annonce(tester), isNot(contains('restantes')));
   });
 

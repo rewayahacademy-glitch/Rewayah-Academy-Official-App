@@ -289,7 +289,121 @@
     "saisieVide": "Écrivez le prénom {prenom} pour confirmer"
   },
   "salle": {
+    "vignette": {
+      "ranger": "Ranger la vidéo {deNom}",
+      "montrer": "Montrer la vidéo {deNom}"
+    },
+    "reseau": {
+      "bon": "Bon réseau",
+      "correct": "Réseau correct",
+      "faible": "Réseau faible",
+      "perdu": "Réseau perdu",
+      "onEntendMal": "On entend peut-être mal {prenom}.",
+      "entendMal": "{prenom} entend peut-être mal.",
+      "onVousEntendMal": "Votre connexion est faible\u00a0: on vous entend peut-être mal. Rapprochez-vous du Wi-Fi ou fermez les autres applications.",
+      "onTEntendMal": "Ta connexion est faible\u00a0: on t'entend peut-être mal. Rapproche-toi du Wi-Fi ou ferme les autres applications.",
+      "onTEntendMalGuidee": "On t'entend peut-être mal. Rapproche-toi du Wi-Fi."
+    },
+    "coranEleve": {
+      "retrouverReprise": "Revoir où reprendre la lecture",
+      "revenirPage": "Revenir page {page}",
+      "revenirPageClasse": "Revenir à la page {page} de la classe",
+      "fermerReprise": "Fermer le rappel de la page {page}",
+      "pageDeLaClasse": "La page suit celle de l'enseignant. Elle tourne avec la classe."
+    },
+    "support": {
+      "inconnuTitre": "Ce document ne peut pas encore s'afficher ici",
+      "inconnuDetail": "L'enseignant partage un document que cette version de l'application ne connaît pas. Le cours continue à la voix. Après le cours, fermer puis rouvrir l'application la met à jour.",
+      "inconnuNom": "Document partagé",
+      "titrePage": "{titre} · Page {page}",
+      "demoDetail": "Document de démonstration. Il sert à essayer le partage.",
+      "repriseNonRetenue": "La page de ce document n'est pas encore retenue d'une séance à l'autre. À la prochaine séance, choisissez de nouveau la page.",
+      "pageIllisible": "Cette page ne s'affiche pas",
+      "pageIllisibleDetail": "Le fichier de la page n'est pas arrivé, la connexion a peut-être été coupée. Réessayez\u00a0: la séance et le son continuent.",
+      "reessayerPage": "Réessayer d'afficher la page {page}"
+    },
+    "etagere": {
+      "etape": "Étape {numero}",
+      "coranCouverture": {
+        "titre": "القرآن الكريم",
+        "edition": "مصحف المدينة"
+      },
+      "intro": "Choisissez un document, puis regardez-le seul ou montrez-le à la classe.",
+      "ouvrirFiche": "Ouvrir la fiche de {titre}",
+      "revenir": "Revenir à la bibliothèque",
+      "revenirFiche": "Revenir à la fiche du document",
+      "afficher": "Afficher",
+      "afficherSemantique": "Afficher {titre} pour vous seul",
+      "afficherDetail": "Vous le regardez seul. La classe ne voit rien.",
+      "partager": "Partager",
+      "partagerSemantique": "Partager {titre} avec la classe",
+      "partagerDetail": "La classe le voit maintenant.",
+      "partagerPage": "Partager page {page}",
+      "partagerPageSemantique": "Partager la page {page} avec la classe",
+      "partagerPageDetail": "La classe le voit maintenant, à la page où elle s'était arrêtée.",
+      "choisirDebut": "Partager à partir d'un autre endroit",
+      "reprise": "La classe s'était arrêtée page {page}.",
+      "seulVous": "Vous seul voyez cette page. La classe garde ce qu'elle voit.",
+      "pagePrecedente": "Page précédente",
+      "pageSuivante": "Page suivante",
+      "nonPartageable": "Ce document ne se partage pas encore en classe. Vous pouvez seulement le regarder.",
+      "jamaisOuvert": "Pas encore ouvert dans cette classe.",
+      "nonOuvrable": "Ce document ne s'ouvre pas encore dans la salle. La direction prépare son contenu.",
+      "aValider": "À valider",
+      "aValiderDetail": "Document de démonstration, à valider par la direction. Son contenu n'est pas encore officiel.",
+      "rechercher": "Rechercher un document",
+      "fermerRecherche": "Fermer la recherche",
+      "vide": "Aucun document dans la bibliothèque",
+      "videDetail": "La direction n'a encore ajouté aucun document. Le Coran reste disponible dès qu'il se charge.",
+      "erreurTitre": "La bibliothèque ne s'est pas chargée",
+      "erreurDetail": "La connexion a peut-être été coupée. Réessayez\u00a0; si rien ne change, prévenez la direction.",
+      "horsLigne": "La bibliothèque n'est pas encore chargée",
+      "horsLigneDetail": "La bibliothèque se chargera dès le retour de la connexion. Ce que la classe voit reste affiché.",
+      "demo": {
+        "lettres": "Les lettres",
+        "lettresDetail": "Étape 1 des bases. Pages à définir.",
+        "voyelles": "Lire avec les voyelles",
+        "voyellesDetail": "Étape 2 des bases, jusqu'à la chadda. Pages à définir.",
+        "priere": "Les paroles de la prière",
+        "priereDetail": "Matière secondaire. Illustrations à valider."
+      }
+    },
+    "barre": {
+      "infobulle": "{etat} (touche {touche})",
+      "outilTenu": "{outil} en main (Échap pour le reposer)",
+      "groupes": {
+        "voix": "Ma voix et mon image",
+        "classe": "Ma classe",
+        "page": "Sur la page",
+        "support": "Le document",
+        "sortir": "Sortir"
+      }
+    },
+    "telephone": {
+      "ecrireAilleurs": "Pour écrire sur la page ou ouvrir le tableau, utilisez une tablette ou un ordinateur."
+    },
+    "sortie": {
+      "reduire": "Réduire la salle",
+      "reduireNom": "Réduire",
+      "reduireSemantique": "Réduire la salle\u00a0: la séance continue et vous entendez toujours la classe",
+      "question": "Quitter la séance ?",
+      "conduiteReduire": "Si vous quittez, vos élèves restent dans la salle sans vous. Réduisez plutôt la salle\u00a0: la classe continue de vous entendre, et vous revenez d'un appui sur «\u00a0Retourner dans la salle\u00a0».",
+      "conduite": "Si vous quittez, vos élèves restent dans la salle sans vous. Vous passerez ensuite au cahier de transmission.",
+      "eleveReduire": "Vous sortez de l'appel. Vous pouvez revenir tant que la séance est ouverte. Pour entendre la classe sur un autre écran, réduisez plutôt la salle."
+    },
     "retourner": "Retourner dans la salle",
+    "microAttente": {
+      "phrase": "Votre micro s'ouvrira quand votre enseignant sera là.",
+      "phraseTutoie": "Ton micro s'ouvrira quand ton enseignant sera là.",
+      "guidee": "Ton micro attend ton enseignant."
+    },
+    "ile": {
+      "deplier": "Voir le détail de la séance",
+      "deplierEtat": "Voir l'état de la salle",
+      "replier": "Réduire le détail de la séance",
+      "conclure": "Moins de 5 minutes\u00a0: pensez à conclure.",
+      "finAtteinte": "Fin prévue atteinte\u00a0: séance toujours en direct."
+    },
     "supports": {
       "coran": "Coran, Mushaf de Médine",
       "coranDetail": "La page s'ouvre pour toute la classe."
@@ -392,6 +506,35 @@
         "p4": "Le bandeau en haut de la salle te rappelle qu'une visite est possible. Si tu as une question, ou si quelque chose te dérange, parle à tes parents ou écris à {contact}."
       }
     },
+    "releve": {
+      "titre": "La connexion pendant la séance",
+      "titreGuidee": "Ta connexion pendant le cours",
+      "adulte": "Pendant une séance, l'application note si la connexion de l'enseignant et celle de chaque élève adulte sont bonnes, faibles ou perdues, et si leur micro est ouvert à ce moment-là. Elle ne garde ni le son ni l'image, ni l'adresse de la connexion. Pour un élève mineur, elle ne garde rien. Ce relevé sert à comprendre ce qui s'est passé quand une séance est contestée. Il est gardé 180 jours, puis effacé. Seule la direction peut le lire. Vous pouvez demander à la direction les données qui vous concernent, et vous opposer à ce relevé.",
+      "mineur": "Pendant une séance, l'application note si la connexion de ton enseignant est bonne, faible ou perdue, et si son micro est ouvert à ce moment-là. Elle ne garde ni le son ni l'image. Sur ta connexion à toi, elle ne garde rien. Ce relevé est gardé 180 jours, puis effacé. Seule la direction peut le lire.",
+      "guidee": "Pendant le cours, l'application regarde si ta connexion marche bien. Elle ne garde ni ta voix ni ton image, et elle ne garde rien sur ta connexion."
+    },
+    "situations": {
+      "microEchecTitre": "Le micro ne s'ouvre pas",
+      "microRefuse": "Le navigateur refuse l'accès au micro. Autorisez le micro dans les réglages du site (à gauche de l'adresse), puis réessayez.",
+      "microOccupe": "Le micro est déjà utilisé par une autre application ou une autre fenêtre. Fermez-la, puis réessayez.",
+      "microAbsent": "Aucun micro n'est trouvé sur cet appareil. Branchez un casque ou un micro, puis réessayez.",
+      "microAutre": "Le micro n'a pas pu s'ouvrir. Réessayez\u00a0; si rien ne change, rechargez la page ou prévenez la direction.",
+      "microRefuseEntree": "Le navigateur refuse l'accès au micro. Autorisez le micro dans les réglages du site (à gauche de l'adresse), puis touchez «\u00a0Réessayer\u00a0».",
+      "reessayerMicro": "Réessayer le micro",
+      "nonInscritTitre": "Ce cours n'est pas dans vos cours",
+      "nonInscrit": "Ouvrez la salle depuis votre accueil. Si ce cours devrait être le vôtre, écrivez à la direction.",
+      "accesSuspenduTitre": "Accès à cette classe temporairement indisponible",
+      "accesSuspendu": "La personne qui gère le compte peut rétablir l'accès. Pour toute question, écrivez à la direction.",
+      "observationTermineeTitre": "Votre temps d'observation est terminé",
+      "observationTerminee": "Le temps d'observation permis est écoulé. Votre enfant continue son cours normalement.",
+      "compteInvalideTitre": "Votre compte ne permet pas d'entrer",
+      "compteInvalide": "Votre compte n'est plus actif. Écrivez à la direction pour le rétablir.",
+      "enseignantPartiTitre": "Votre enseignant n'est plus dans la salle",
+      "enseignantParti": "Restez sur cet écran\u00a0: il peut revenir dans un instant.",
+      "enseignantPartiTutoie": "Reste sur cet écran\u00a0: il peut revenir dans un instant.",
+      "pauseTitre": "Pause",
+      "pause": "La séance reprend dans un instant."
+    },
     "secours": {
       "reseauFaible": "Réseau faible. L'audio est prioritaire.",
       "reseauFaibleGuidee": "Le réseau est faible.",
@@ -437,7 +580,8 @@
           "one": "{minutes} min restante",
           "other": "{minutes} min restantes"
         },
-        "annoncePrevuEcoule": "Temps prévu écoulé."
+        "annoncePrevuEcoule": "Temps prévu écoulé.",
+        "annonceDepassement": "Séance toujours en direct, {minutes} min après la fin prévue."
       },
       "pause": {
         "dans": "Pause dans {minutes} min",
@@ -557,7 +701,7 @@
         "voirBibliotheque": "Voir toute la bibliothèque"
       },
       "eleves": "Élèves",
-      "rappeler": "Appeler discrètement",
+      "rappeler": "Appeler",
       "faireReciter": "Faire réciter",
       "fileRecitation": "File de récitation",
       "aSuivre": "À suivre",
@@ -575,11 +719,12 @@
       },
       "optionsPanneau": "Options du panneau {titre}",
       "commandes": {
-        "declencheur": "Commandes",
-        "declencheurSemantique": "Ouvrir les commandes de la bibliothèque et du tableau",
-        "titre": "Commandes",
+        "declencheur": "Plus",
+        "declencheurSemantique": "Plus : la bibliothèque et le tableau",
+        "titre": "Plus",
+        "titreTiroir": "Bibliothèque et outils",
         "reduire": "Réduire",
-        "reduireSemantique": "Réduire les commandes",
+        "reduireSemantique": "Réduire ce panneau",
         "ongletSupport": "Bibliothèque",
         "ongletOutils": "Outils",
         "ongletSeance": "Séance",
@@ -776,6 +921,15 @@
       }
     },
     "micro": "Micro",
+    "ruban": {
+      "voirLaClasse": "Voir la classe"
+    },
+    "scene": {
+      "parle": "en train de parler",
+      "precedents": "Visages précédents",
+      "suivants": "Visages suivants",
+      "voirLaClasse": "Voir la classe"
+    },
     "microCoupe": "Micro coupé",
     "microOuvert": "Micro ouvert",
     "camera": "Caméra",
@@ -801,6 +955,14 @@
     "retireDetail": "Vous pourrez revenir quand votre enseignant vous aura réadmis. Touchez alors «\u00a0Réessayer\u00a0».",
     "ouverteAilleurs": "La salle est ouverte sur un autre onglet ou appareil",
     "ouverteAilleursDetail": "Votre compte ne peut être dans la salle qu'à un seul endroit à la fois. Fermez l'autre onglet, ou touchez «\u00a0Réessayer\u00a0» pour revenir ici.",
+    "fermeture": {
+      "sansEnseignantTitre": "Votre enseignant n'est plus dans la salle",
+      "sansEnseignantTitreTutoie": "Ton enseignant n'est plus dans la salle",
+      "microFerme": "Votre micro est fermé jusqu'à son retour.",
+      "microFermeTutoie": "Ton micro est fermé jusqu'à son retour.",
+      "seanceTerminee": "La séance est terminée.",
+      "seanceTermineeDetail": "La salle est fermée. Vous pouvez revenir à l'accueil."
+    },
     "gestes": {
       "menu": "Gestes pour {prenom}",
       "couperMicro": "Couper le micro {dePrenom}",
@@ -811,10 +973,47 @@
       "echec": "Le geste n'a pas abouti. Réessayez dans un instant.",
       "sortis": "Sortis du cours",
       "readmettre": "Réadmettre {prenom}",
-      "sortisErreur": "La liste des élèves sortis du cours n'a pas pu être lue. Réessayez dans un instant."
+      "sortisErreur": "La liste des élèves sortis du cours n'a pas pu être lue. Réessayez dans un instant.",
+      "faireReciter": "Faire réciter {prenom}",
+      "terminerRecitation": "Terminer la récitation",
+      "appeler": "Appeler {prenom}",
+      "recitationOuverteTitre": "{prenom} récite",
+      "recitationOuverte": "Les micros des autres élèves sont fermés jusqu'à la fin de sa récitation. Demandez à {prenom} d'ouvrir son micro.",
+      "recitationTermineeTitre": "Récitation terminée",
+      "recitationTerminee": "Tous les élèves peuvent de nouveau ouvrir leur micro.",
+      "recitationFinieSeule": "{prenom} a quitté la salle. Tous les élèves peuvent de nouveau ouvrir leur micro.",
+      "recitationAbsentTitre": "{prenom} ne peut pas réciter maintenant",
+      "recitationAbsent": "{prenom} n'est pas dans la salle. Choisissez un élève présent.",
+      "recitationEchecTitre": "La récitation n'a pas commencé",
+      "recitationEchec": "Les micros des autres élèves n'ont pas pu être fermés. Réessayez dans un instant.",
+      "finEchecTitre": "Les micros ne sont pas encore rendus",
+      "finEchec": "La fin de la récitation n'est pas confirmée. Touchez de nouveau «\u00a0Terminer la récitation\u00a0».",
+      "appelEnvoyeTitre": "Appel envoyé à {prenom}",
+      "appelEnvoye": "Un son et un message s'affichent sur son écran.",
+      "appelEchecTitre": "L'appel n'est pas parti vers {prenom}",
+      "appelEchec": "Vérifiez {quePrenom} est dans la salle, puis réessayez.",
+      "appelRecuTitre": "Votre enseignant vous appelle",
+      "appelRecuTitreTutoie": "Ton enseignant t'appelle",
+      "appelRecu": "Regardez l'écran et répondez à votre enseignant.",
+      "appelRecuTutoie": "Regarde l'écran et réponds à ton enseignant.",
+      "aVousTitre": "C'est à vous de réciter",
+      "aVousTitreTutoie": "C'est à toi de réciter",
+      "aVous": "Votre enseignant vous demande de réciter\u00a0: ouvrez votre micro.",
+      "aVousTutoie": "Ton enseignant te demande de réciter\u00a0: ouvre ton micro.",
+      "autreReciteTitre": "{prenom} récite",
+      "autreRecite": "Votre micro est fermé le temps de sa récitation. Il vous sera rendu ensuite.",
+      "autreReciteTutoie": "Ton micro est fermé le temps de sa récitation. Il te sera rendu ensuite.",
+      "finRecitationTitre": "La récitation est terminée",
+      "finRecitation": "Vous pouvez de nouveau ouvrir votre micro.",
+      "finRecitationTutoie": "Tu peux de nouveau ouvrir ton micro.",
+      "microFerme": "Votre micro est fermé pendant {quePrenom} récite.",
+      "microFermeTutoie": "Ton micro est fermé pendant {quePrenom} récite.",
+      "microFermeGuidee": "{prenom} récite. Ton micro attend."
     },
     "seulEnseignant": "Votre professeur n'est pas encore arrivé",
     "seulEnseignantDetail": "Restez sur cet écran\u00a0: la séance commence dès que votre enseignant entre.",
+    "seulEnseignantTutoie": "Ton enseignant n'est pas encore arrivé",
+    "seulEnseignantDetailTutoie": "Reste sur cet écran\u00a0: la séance commence dès que ton enseignant entre.",
     "attenteDe": "En attente {deNom}",
     "seulEleve": "Votre élève n'est pas encore arrivé",
     "voirVideoEnGrand": "Voir la vidéo en grand",
@@ -5028,6 +5227,8 @@
       "dureeMinimalePayeeDetail": "En dessous de cette durée, une séance écourtée reste payée en entier.",
       "pauseEntreSeances": "Pause entre deux séances",
       "pauseEntreSeancesDetail": "Le temps minimum laissé à un enseignant entre deux séances consécutives.",
+      "depassementSeance": "Dépassement autorisé après la fin prévue",
+      "depassementSeanceDetail": "Après la fin prévue d'une séance, la salle reste ouverte pendant ce temps et le chrono compte le dépassement. Ensuite, plus personne ne peut la rejoindre.",
       "elevesParEnseignant": "Élèves par enseignant",
       "elevesParEnseignantDetail": "Le nombre maximal d'élèves qu'un enseignant peut suivre en parallèle.",
       "horizonAffectation": "Horizon d'affectation",

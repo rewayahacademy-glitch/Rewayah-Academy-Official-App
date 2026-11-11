@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/widgets.dart';
 
 /// Le budget de mouvement de l'application.
@@ -86,6 +88,17 @@ abstract final class AppMouvement {
   /// Aucune boucle sous mouvement reduit.
   static const Duration refletSquelette = Duration(milliseconds: 1800);
 
+  /// Periode d'un tour des ondes de la scene d'attente de la salle
+  /// (`SceneAttente`, directeur, 11/11/2026 : « des effets et animations
+  /// hypnotisants pour faciliter l'attente »).
+  ///
+  /// **Hors du budget de transition**, comme [refletSquelette] : une boucle
+  /// d'attente, qui dure tant que l'attente dure. Tres lente (une onde met
+  /// huit secondes a traverser la scene) : elle apaise, elle n'alerte pas ;
+  /// aucun clignotement. Aucune boucle sous mouvement reduit : les ondes
+  /// restent posees.
+  static const Duration ondeAttente = Duration(milliseconds: 8000);
+
   /// La coche de reussite d'`ActionPrincipale` (FLUIDITE-1, decision §2 :
   /// « une reussite se voit ») : le temps ou elle reste lisible, entre son
   /// entree ([apparition]) et sa sortie ([disparitionOpacite]). Jouee une
@@ -101,6 +114,65 @@ abstract final class AppMouvement {
   /// [pulsation] : elle raconte l'arrivee, elle n'explique pas un changement.
   /// En mouvement reduit, la meme duree en fondus seuls, meme image finale.
   static const Duration entreeIllustration = Duration(milliseconds: 1500);
+
+  // TRANSITIONS-SALLE (directeur, 11/11/2026, avis du pilote retenu par le
+  // garde-cap ; `docs/current/UX_REVIEW_TRANSITIONS-SALLE.md`). Les jetons
+  // des transitions de la salle, nommes par leur role : ce qui SE DEPLACE
+  // (panneau, feuille, ile, annonce) suit [ressortDeplacement], un ressort
+  // sans rebond ; ce qui APPARAIT seulement suit [courbeFondu]. La sortie
+  // dure environ les deux tiers de l'entree ; l'ordinateur, plus court.
+
+  /// Le moment de l'arche (`EntreeArche`) : l'ecran s'assombrit et la porte
+  /// s'ouvre. **Joue PENDANT le delai reel d'entree, jamais en plus** : la
+  /// salle prete l'efface aussitot, meme inachevee. Une fois, puis la scene
+  /// reste immobile. Hors du budget de transition, comme
+  /// [entreeIllustration] : elle raconte l'arrivee.
+  static const Duration entreeArche = Duration(milliseconds: 700);
+
+  /// La passation de l'arche a la salle prete : un voile qui s'efface. La
+  /// salle est deja la, entiere et utilisable, sous le voile.
+  static const Duration passageArche = Duration(milliseconds: 150);
+
+  /// La sortie de la salle (volontaire ou subie) : un fondu court, rien
+  /// d'autre. Jamais une porte qui se referme.
+  static const Duration sortieSalle = Duration(milliseconds: 150);
+
+  /// Un deplacement qui entre (feuille du telephone, ile, annonce, salle qui
+  /// se redeplie depuis l'ile).
+  static const Duration deplacementEntree = Duration(milliseconds: 280);
+
+  /// Un deplacement qui sort : les deux tiers de [deplacementEntree].
+  static const Duration deplacementSortie = Duration(milliseconds: 190);
+
+  /// Un panneau de l'ordinateur qui s'ouvre (plus court qu'au telephone).
+  static const Duration deplacementEntreeOrdinateur = Duration(
+    milliseconds: 240,
+  );
+
+  /// Un panneau de l'ordinateur qui se ferme.
+  static const Duration deplacementSortieOrdinateur = Duration(
+    milliseconds: 160,
+  );
+
+  /// Un fondu qui entre (un support remplace un autre, le contenu d'un
+  /// panneau qui s'ouvre).
+  static const Duration fonduEntree = Duration(milliseconds: 200);
+
+  /// Un fondu qui sort.
+  static const Duration fonduSortie = Duration(milliseconds: 130);
+
+  /// SCENE-CLASSE (11/11/2026) : le temps qu'un visage parti garde sa place
+  /// dans la grille, attenue, avant de partir pour de bon. Une reconnexion
+  /// plus courte (reseau qui saute, onglet recharge) ne fait pas danser la
+  /// grille. Ce n'est pas un mouvement : « Reduire les animations » le garde.
+  static const Duration graceDepartVisage = Duration(seconds: 3);
+
+  /// Le leger retrecissement de la salle vers l'ile (et son retour) : la
+  /// salle part a cette echelle, en haut de l'ecran, ou vit l'ile.
+  static const double echelleVersIle = 0.94;
+
+  /// La part de leur hauteur dont une annonce de tete descend en entrant.
+  static const double glisseAnnonce = 0.4;
 
   /// Nombre de battements du point « En direct » avant qu'il reste fixe :
   /// trois fois [pulsationDirect], soit 4,5 s, **sous les cinq secondes** au
@@ -170,11 +242,59 @@ abstract final class AppMouvement {
   /// lisible ce temps, puis s'efface.
   static const Duration rappelRecuMaintien = Duration(seconds: 5);
 
+  /// ILE-SALLE (directeur, 11/11/2026 ; D-007, approuvee) : une ile (dans la
+  /// salle ou hors de la salle) qui se deplie d'elle-meme pour dire une phrase
+  /// (un mot d'etat qui change, une situation de reseau, les cinq dernieres
+  /// minutes, la fin prevue atteinte) se replie seule apres ce temps. Un appui
+  /// la redeplie pour le meme temps. Ce qui empeche d'entendre (lien perdu,
+  /// reconnexion) reste deplie tant que ca dure.
+  static const Duration ilePassage = Duration(seconds: 6);
+
+  /// ILE-SALLE : la mention « Visite de controle possible. » reste depliee ce
+  /// temps a l'entree dans la salle, puis se reduit a son point neutre
+  /// permanent (la phrase revient a l'appui et reste lue en entier par le
+  /// lecteur d'ecran).
+  static const Duration ileMention = Duration(seconds: 10);
+
   /// Rappel discret recu : la vibration courte, quand l'appareil la permet.
   static const Duration vibrationRappel = Duration(milliseconds: 200);
 
   /// Rappel discret recu : le son doux, court, quand l'appareil le permet.
   static const Duration sonRappel = Duration(milliseconds: 250);
+
+  /// GESTES-POINTEUR (directeur, 11/11/2026, cahier de la salle §8) : le
+  /// pointeur de l'enseignant part au rythme des images, au plus une position
+  /// toutes les 33 ms (30 par seconde). La derniere position d'un geste part
+  /// toujours, meme si elle tombe dans cet intervalle.
+  static const Duration pointeurCadence = Duration(milliseconds: 33);
+
+  /// GESTES-POINTEUR : tant que l'enseignant montre un point sans bouger, sa
+  /// position est redite a ce rythme. Le canal du pointeur ne retransmet
+  /// rien : c'est ce battement qui rattrape un paquet perdu et qui dit a la
+  /// classe que le pointeur est toujours pose.
+  static const Duration pointeurBattement = Duration(milliseconds: 250);
+
+  /// GESTES-POINTEUR : sans nouvelle de l'enseignant pendant ce temps (quatre
+  /// battements manques), le pointeur s'efface seul chez l'eleve. Il ne reste
+  /// jamais fige a l'ecran.
+  static const Duration pointeurPerime = Duration(milliseconds: 1000);
+
+  /// GESTES-POINTEUR : le sillage du pointeur s'efface presque aussitot.
+  static const Duration pointeurSillage = Duration(milliseconds: 350);
+
+  /// GESTES-POINTEUR : le temps que met le point affiche a rejoindre la
+  /// derniere position recue (deux images environ). Il comble l'intervalle
+  /// entre deux positions sans ajouter de retard visible.
+  static const Duration pointeurLissage = Duration(milliseconds: 45);
+
+  /// GESTES-POINTEUR : a la souris, sans appuyer, le pointeur suit le curseur
+  /// et s'efface seul apres ce temps d'immobilite.
+  static const Duration pointeurRepos = Duration(milliseconds: 2000);
+
+  /// GESTES-POINTEUR : ce qu'un geste de la salle dit a la personne (« Votre
+  /// enseignant vous appelle », « Yasmine recite », le retour a l'enseignant)
+  /// reste lisible ce temps en tete de la salle, puis s'efface seul.
+  static const Duration annonceGesteMaintien = Duration(seconds: 6);
 
   /// Delai avant qu'un squelette de chargement apparaisse.
   ///
@@ -198,6 +318,17 @@ abstract final class AppMouvement {
   /// Tout ce qui sort.
   static const Curve sortie = Curves.easeInCubic;
 
+  /// TRANSITIONS-SALLE : la courbe d'un fondu, simple, sans ressort.
+  static const Curve courbeFondu = Curves.easeOut;
+
+  /// TRANSITIONS-SALLE : la courbe de tout ce qui se deplace dans la salle
+  /// (panneau, feuille, ile, annonce). Un ressort a **amortissement
+  /// critique** (decision du directeur du 10/11/2026 : aucun rebond),
+  /// ramene a la duree du jeton qui l'accompagne : il part vite, ne depasse
+  /// jamais sa place, et s'y pose sans a-coup. Interruptible : repris a mi-
+  /// course, le controleur repart de la ou il est.
+  static const Curve ressortDeplacement = _CourbeRessortCritique(7);
+
   /// Reserve aux rotations continues et aux barres de progression
   /// indeterminees. Interdit partout ailleurs.
   static const Curve progressionIndeterminee = Curves.linear;
@@ -215,7 +346,9 @@ abstract final class AppMouvement {
 
   /// L'effet liquide de la navigation (decisions du directeur du 10/11/2026) :
   /// le bord de devant de la goutte, raide, qui part le premier. Amortissement
-  /// critique, comme [ressort] : aucun rebond.
+  /// critique, comme [ressort] : aucun rebond. Il sert aussi a l'ile de la
+  /// salle (`IleLiquide`) et au pouls du chrono (`ChronoVivant`) depuis le
+  /// 11/11/2026 : le ressort a rebond du chrono est retire.
   static final SpringDescription ressortGoutteTete =
       SpringDescription.withDampingRatio(mass: 1, stiffness: 520, ratio: 1);
 
@@ -257,6 +390,13 @@ abstract final class AppMouvement {
 
   /// L'amplitude du rebond du bout de la pilule, en points, au plus.
   static const double amplitudeBordPilule = 3;
+
+  /// Lot VIGNETTE-TELEPHONE (directeur, 11/11/2026) : la vitesse, en points
+  /// par seconde, au-dela de laquelle un lancer vers le bord range la
+  /// vignette video (ou tire sa languette vers l'interieur), meme si elle
+  /// n'a pas encore passe la moitie du bord. Un glissement lent et court ne
+  /// range rien.
+  static const double elanRangement = 700;
 
   /// GOUTTE D'HUILE DES PROFILS (directeur, 11/11/2026) : la goutte qui part
   /// du rond quitte vers le rond choisi. Amortissement critique : le
@@ -334,4 +474,23 @@ abstract final class AppMouvement {
   /// (`04-systeme-mouvement.md` section 5).
   static bool mouvementReduit(BuildContext context) =>
       MediaQuery.disableAnimationsOf(context);
+}
+
+/// Un ressort a amortissement critique, vu comme une courbe sur [0, 1] :
+/// `x(t) = 1 - (1 + w t) e^(-w t)`, normalise pour finir exactement a 1.
+/// Aucun depassement, par construction (la derivee ne change jamais de
+/// signe). [_raideur] (w, en temps normalise) regle la vitesse de depart :
+/// 7 pose 99 % du chemin a la fin de la duree.
+class _CourbeRessortCritique extends Curve {
+  const _CourbeRessortCritique(this._raideur);
+
+  final double _raideur;
+
+  double _x(double t) {
+    final double wt = _raideur * t;
+    return 1 - (1 + wt) * math.exp(-wt);
+  }
+
+  @override
+  double transformInternal(double t) => _x(t) / _x(1);
 }

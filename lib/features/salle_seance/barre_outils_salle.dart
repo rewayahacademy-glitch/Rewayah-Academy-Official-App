@@ -1,10 +1,11 @@
 // Plan de la salle du 26/10/2026 (§3, docs/current/maquettes/salle/
 // PLAN-SALLE-COMPOSITION-2026-10-26.md) : la barre d'outils de l'ordinateur,
 // au standard de la tablette. Quand l'enseignant ecrit (Ecrire retenu, ou
-// tableau ouvert), une barre horizontale se pose juste au-dessus des
-// commandes et reste tant qu'il ecrit : Stylo, Surligneur, Gomme, Annuler,
-// Retablir, Tout effacer, dix couleurs, trois epaisseurs. Tout visible
-// d'un coup, rien dans un menu.
+// tableau ouvert), la palette se pose et reste tant qu'il ecrit : Stylo,
+// Surligneur, Gomme, Annuler, Retablir, Tout effacer, dix couleurs, trois
+// epaisseurs. Tout visible d'un coup, rien dans un menu. BARRE-ORDINATEUR
+// (11/11/2026) : une colonne contre la page, et non plus une rangee qui
+// reduisait la page ([BarreOutilsSalle]).
 //
 // Les couleurs : les quatre tons d'intention d'abord, avec leurs noms (la
 // pedagogie reste lisible), puis les six couleurs franches
@@ -34,7 +35,7 @@ import '../../core/widgets/bouton_icone.dart';
 import '../../core/widgets/commande_salle.dart' show TuileCommandeSalle;
 import '../../core/widgets/controle_segmente.dart';
 import 'actions_seance.dart';
-import 'dock_seance.dart' show BoutonAppel, diametreBoutonAppel;
+import 'dock_seance.dart' show BoutonAppel;
 import 'ecriture_seance.dart';
 import 'outils_enseignement.dart';
 import 'vue_seance.dart';
@@ -92,14 +93,28 @@ List<Widget> pastillesCouleurSalle(
   ];
 }
 
-/// La largeur du choix des trois epaisseurs (≈ 96 par segment).
-const double largeurEpaisseurs = AppSpacing.respiration * 4 + AppSpacing.xxxl;
+/// BARRE-ORDINATEUR (directeur, 11/11/2026) : cinq cases de 48 et leurs
+/// quatre ecarts de 8 (272), la largeur de la palette d'ecriture de
+/// l'ordinateur, posee contre la page ; les trois epaisseurs y tiennent
+/// avec leurs mots entiers, texte x1,3 compris.
+const double largeurPaletteEcriture =
+    5 * AppTouchTarget.standard + 4 * AppSpacing.sm;
 
-/// La barre d'outils de l'ordinateur.
+/// La palette d'ecriture de l'ordinateur.
+///
+/// BARRE-ORDINATEUR (directeur, 11/11/2026 : « rien ne recouvre ni ne
+/// reduit la page du Coran », « un outil se pose pres de l'objet sur lequel
+/// il agit ») : la palette n'est plus une rangee posee entre la page et la
+/// barre du bas (elle volait 80 points de hauteur a la page a chaque appui
+/// sur Ecrire, et la page sautait). C'est une colonne de 272 posee contre la
+/// page, du cote d'Ecrire dans la barre, dans la largeur libre a cote d'elle :
+/// la page ne bouge pas. Tout reste visible d'un coup, rien dans un menu
+/// (plan du 26/10, §3) : les six outils et les dix couleurs par rangees de
+/// cinq, les trois epaisseurs.
 class BarreOutilsSalle extends ConsumerWidget {
   const BarreOutilsSalle({required this.vue, super.key = cle});
 
-  /// La cle de la barre.
+  /// La cle de la palette.
   static const Key cle = ValueKey<String>('salle-barre-outils');
 
   final VueSeance vue;
@@ -109,7 +124,7 @@ class BarreOutilsSalle extends ConsumerWidget {
     final AppPalette palette = AppPalette.of(context);
     final EtatOutils etat = ref.watch(etatOutilsProvider);
     final ControleurOutils controleur = ref.read(etatOutilsProvider.notifier);
-    final double diametre = diametreBoutonAppel(context);
+    const double diametre = AppTouchTarget.standard;
     final bool ecrit = etat.styletArme;
 
     void armer() {
@@ -135,9 +150,9 @@ class BarreOutilsSalle extends ConsumerWidget {
     );
 
     // Annuler et Retablir disparaissent quand ils n'ont rien a faire ; leur
-    // place reste (jamais grise, la barre ne saute pas).
+    // place reste (jamais grise, la palette ne saute pas).
     Widget ouPlace(bool possible, Widget enfant) =>
-        possible ? enfant : SizedBox.square(dimension: diametre);
+        possible ? enfant : const SizedBox.square(dimension: diametre);
 
     final List<Widget> outils = <Widget>[
       for (final OutilTrait outil in vue.outilsEcriture)
@@ -155,6 +170,14 @@ class BarreOutilsSalle extends ConsumerWidget {
             controleur.choisirOutilTrait(outil);
           },
         ),
+      // Tout effacer avec les outils (premiere rangee, toujours la) ;
+      // Annuler et Retablir dessous, rendus quand ils ont a faire.
+      bouton(
+        key: const ValueKey<String>('barre-outils-effacer'),
+        icone: AppIcons.toutEffacer,
+        libelle: t.salle.seance.ecriture.toutEffacer,
+        onPress: () => unawaited(toutEffacerSurLaSurface(ref, vue)),
+      ),
       ouPlace(
         peutAnnulerSurLaSurface(ref, vue),
         bouton(
@@ -173,18 +196,20 @@ class BarreOutilsSalle extends ConsumerWidget {
           onPress: () => unawaited(retablirSurLaSurface(ref, vue)),
         ),
       ),
-      bouton(
-        key: const ValueKey<String>('barre-outils-effacer'),
-        icone: AppIcons.toutEffacer,
-        libelle: t.salle.seance.ecriture.toutEffacer,
-        onPress: () => unawaited(toutEffacerSurLaSurface(ref, vue)),
-      ),
     ];
 
     final List<Widget> couleurs = pastillesCouleurSalle(
       etat,
       controleur,
       armer,
+    );
+    final Widget filet = Padding(
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+      child: Divider(
+        height: 1,
+        thickness: 1,
+        color: palette.borderHairline.asBorderSide().color,
+      ),
     );
 
     return Semantics(
@@ -196,39 +221,37 @@ class BarreOutilsSalle extends ConsumerWidget {
         ),
         child: Padding(
           padding: const EdgeInsets.all(AppSpacing.sm),
-          // Choix de formulaire, pas un filtre : les outils, les couleurs et
-          // l'epaisseur du trait a poser, tout visible ; la barre passe sur
-          // deux rangees plutot que de couper un groupe.
-          child: Wrap(
-            alignment: WrapAlignment.center,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            spacing: AppSpacing.lg,
-            runSpacing: AppSpacing.sm,
-            children: <Widget>[
-              _Groupe(
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
+          child: SizedBox(
+            width: largeurPaletteEcriture,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                // Choix de formulaire, pas un filtre : les six outils du
+                // trait, par rangees de cinq.
+                Wrap(
+                  key: const ValueKey<String>('barre-outils-traits'),
                   spacing: AppSpacing.sm,
+                  runSpacing: AppSpacing.sm,
                   children: outils,
                 ),
-              ),
-              Semantics(
-                container: true,
-                label: t.salle.seance.ecriture.couleur,
-                child: _Groupe(
-                  child: Row(
+                filet,
+                Semantics(
+                  container: true,
+                  label: t.salle.seance.ecriture.couleur,
+                  // Choix de formulaire, pas un filtre : les dix couleurs du
+                  // trait, par rangees de cinq, toutes visibles.
+                  child: Wrap(
                     key: const ValueKey<String>('barre-outils-couleurs'),
-                    mainAxisSize: MainAxisSize.min,
+                    spacing: AppSpacing.sm,
+                    runSpacing: AppSpacing.sm,
                     children: couleurs,
                   ),
                 ),
-              ),
-              // Trois epaisseurs, a la largeur de leurs mots : jamais
-              // etirees sur toute la barre.
-              ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: largeurEpaisseurs),
-                child: ControleSegmente<EpaisseurTrait>(
+                filet,
+                ControleSegmente<EpaisseurTrait>(
                   key: const ValueKey<String>('barre-outils-epaisseur'),
+                  dense: true,
                   segments: <Segment<EpaisseurTrait>>[
                     for (final EpaisseurTrait e in EpaisseurTrait.values)
                       Segment<EpaisseurTrait>(
@@ -242,8 +265,8 @@ class BarreOutilsSalle extends ConsumerWidget {
                     controleur.choisirEpaisseur(e);
                   },
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

@@ -1,0 +1,30 @@
+OK    1. A et B ont le droit de publier
+OK    1. A et B ouvrent leur micro
+OK    2. un eleve qui demande « Faire reciter » est refuse par la base : {"statut":403,"corps":{"error":"geste refuse"}}
+OK    2. ... et rien n'a change pour A
+OK    3. l'enseignant fait reciter A : le serveur l'applique : {"statut":200,"corps":{"applique":true,"motif":null,"fermes":1,"echecs":0}}
+OK    3. LiveKit retire a B le droit de publier : {"ms":20,"droits":{"canPublish":false,"sources":[]}}
+OK    3. le micro de B est depublie par le serveur
+OK    3. rouvrir le micro de B ECHOUE (refuse par le serveur) : {"ouvert":false,"erreur":"failed to publish track, insufficient permissions"}
+OK    3. A garde son droit et son micro
+OK    3. l'enseignant garde son droit
+OK    3. la salle porte la recitation (ecrite par le serveur) : "{\"recitation\":{\"recitant\":\"fbf7373a-bfb2-4631-8490-194241edb93b\",\"depuis\":1794387986256}}"
+OK    4. le filet demande par B ne rend rien pendant la recitation : {"statut":200,"corps":{"retabli":false,"publication_differee":true,"enseignant_present":true}}
+OK    4. ... et son droit reste ferme chez LiveKit
+OK    5. C, entre pendant la recitation, est ferme a son tour (webhook) : {"ms":213}
+OK    5. ... et son micro ne s'ouvre pas
+OK    6. l'enseignant termine : le serveur rend les droits : {"statut":200,"corps":{"applique":true,"rendus":2,"echecs":0}}
+OK    6. B et C retrouvent le droit de publier
+OK    6. leurs micros restent fermes : rien n'est rouvert a leur place
+OK    6. B rouvre son micro lui-meme
+OK    6. la salle ne porte plus de recitation
+OK    7. nouvelle recitation de A : {"statut":200,"corps":{"applique":true,"motif":null,"fermes":2,"echecs":0}}
+OK    7. A quitte la salle : B retrouve son droit sans geste de l'enseignant (webhook de sortie) : {"ms":3}
+OK    7. ... C aussi
+OK    8. recitation de B : {"statut":200,"corps":{"applique":true,"motif":null,"fermes":1,"echecs":0}}
+OK    8. l'enseignant quitte la salle : C retrouve son droit (webhook de sortie) : {"ms":208}
+OK    9. « Terminer » sans recitation en cours ne fait rien : {"statut":200,"corps":{"applique":false,"rendus":0,"echecs":0}}
+OK    9. faire reciter un eleve sorti de la salle est refuse, sans rien fermer : {"statut":200,"corps":{"applique":false,"motif":"recitant_absent","fermes":0,"echecs":0}}
+OK    9. ... B et C gardent leur droit
+
+GESTES, recitation : la regle tient sur la pile.

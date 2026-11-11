@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -16,12 +17,14 @@ import 'package:rewayah_academy/core/enseignant/service_enseignant.dart'
     show groupesEnseignantProvider, seancesEnseignantProvider;
 import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/mouvement/passage_salle.dart';
 import 'package:rewayah_academy/core/photos/photo_personne.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart'
     show Creneau;
 import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/profil/service_profil_enseignant.dart'
     show ProfilEnseignant, profilEnseignantParIdProvider;
+import 'package:rewayah_academy/core/router/billet_salle.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
@@ -38,9 +41,11 @@ import 'package:rewayah_academy/core/tc_outils/annotation_layer.dart'
     show PointNormalise;
 import 'package:rewayah_academy/core/tc_outils/port_annotations.dart';
 import 'package:rewayah_academy/core/tc_realtime/codec_message_pedagogique.dart';
+import 'package:rewayah_academy/core/tc_realtime/port_realtime_pedagogique.dart'
+    show MessagePedagogique;
 import 'package:rewayah_academy/core/tc_realtime/types_message.dart';
-import 'package:rewayah_academy/core/theme/app_gabarit.dart';
 import 'package:rewayah_academy/core/theme/app_mouvement.dart';
+import 'package:rewayah_academy/core/video/garde_fermeture.dart';
 import 'package:rewayah_academy/core/video/gestes_salle.dart';
 import 'package:rewayah_academy/core/video/livekit_session_provider.dart';
 import 'package:rewayah_academy/core/video/pre_vol.dart';
@@ -50,10 +55,14 @@ import 'package:rewayah_academy/core/video/video_session_provider.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/avatar_tile.dart';
 import 'package:rewayah_academy/core/widgets/bouton_couleur.dart';
+import 'package:rewayah_academy/core/widgets/entree_arche.dart';
 import 'package:rewayah_academy/core/widgets/ligne_presence.dart';
 import 'package:rewayah_academy/core/widgets/permanent_notice.dart';
 import 'package:rewayah_academy/features/salle/salle_page.dart';
+import 'package:rewayah_academy/features/salle/synchro_salle.dart'
+    show typeParoleSalle;
 import 'package:rewayah_academy/features/salle_enseignant/page_coran_salle.dart';
+import 'package:rewayah_academy/features/salle_seance/annonce_geste.dart';
 import 'package:rewayah_academy/features/salle_seance/barre_outils_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/bornes_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/commandes_pedagogiques.dart'
@@ -79,6 +88,7 @@ import 'package:rewayah_academy/features/tc_observation_ui/indicateur_observatio
 
 import '../capture/outil_capture.dart';
 import '../support/aucun_mot_coupe.dart';
+import '../support/garde_interface.dart' show verifierUnSeulBoutonPlein;
 import '../support/harnais.dart';
 import '../support/hors_ligne_une_fois.dart';
 import '../support/mushaf_15l.dart'
@@ -124,6 +134,30 @@ class FauxGestesSalle implements PortGestesSalle {
     String eleveId,
     GesteSalle geste,
   ) async => gestes.add((eleveId, geste));
+
+  /// GESTES-POINTEUR : les recitations demandees au serveur, dans l'ordre
+  /// (`null` : « Terminer la recitation »).
+  final List<String?> recitations = <String?>[];
+
+  /// Ce que le serveur repond a « Faire reciter ».
+  IssueRecitation issueRecitation = IssueRecitation.ouverte;
+
+  /// Le serveur ne repond pas a la recitation (ouverture ou fin).
+  bool recitationEnPanne = false;
+
+  @override
+  Future<IssueRecitation> faireReciter(String seanceId, String eleveId) async {
+    if (recitationEnPanne) throw StateError('serveur video indisponible');
+    if (issueRecitation == IssueRecitation.ouverte) recitations.add(eleveId);
+    return issueRecitation;
+  }
+
+  @override
+  Future<void> terminerRecitation(String seanceId, {String? eleveId}) async {
+    if (recitationEnPanne) throw StateError('serveur video indisponible');
+    // Sans eleve : le menage a l'entree de l'enseignant, rien a terminer.
+    if (eleveId != null) recitations.add(null);
+  }
 
   @override
   Future<void> readmettre(String seanceId, String eleveId) async =>
@@ -251,6 +285,9 @@ Future<void> _monterSalle(
   // (`PointEnregistrement`) : on ne peut pas attendre le repos.
   bool auRepos = true,
   String? groupeId,
+  // TRANSITIONS-SALLE : les captures de l'arche prennent la main des la
+  // premiere image (0 : aucune image de plus apres le montage).
+  int images = 10,
 }) async {
   await tester.pumpWidget(
     hoteRoutant(
@@ -303,7 +340,7 @@ Future<void> _monterSalle(
     await tester.pumpAndSettle();
     return;
   }
-  for (int i = 0; i < 10; i++) {
+  for (int i = 0; i < images; i++) {
     await tester.pump(const Duration(milliseconds: 100));
   }
 }
@@ -361,6 +398,11 @@ Future<void> _deplierProfilSiCapsule(WidgetTester tester) async {
   await tester.pump(const Duration(milliseconds: 400));
 }
 
+/// SORTIE-SALLE (11/11/2026) : « Quitter la seance » de la question de sortie,
+/// quand l'appel tenu propose aussi de reduire la salle.
+final Finder _sortieQuitter = find.byKey(
+  const ValueKey<String>('sortie-quitter'),
+);
 void main() {
   group('L entree en salle, dans ses trois temps', () {
     testWidgets('le pre-vol precede la demande de jeton', (
@@ -689,7 +731,7 @@ void main() {
 
       await tester.tap(_commande(t.salle.seance.sortir));
       await tester.pumpAndSettle();
-      await tester.tap(find.text(t.salle.quitter).last);
+      await tester.tap(_sortieQuitter);
       await tester.pumpAndSettle();
       preVol.cameraDisponible = true;
       await tester.tap(find.byKey(ResultatSeance.revenirKey));
@@ -1052,8 +1094,11 @@ void main() {
       moteur.publierQualite(QualiteLien.mediocre);
       await tester.pumpAndSettle();
 
-      // S0 : le bandeau de la salle de seance le dit en mots.
-      expect(find.text(t.salle.secours.reseauFaible), findsOneWidget);
+      // S0 : la salle le dit en mots. RESEAU-ELEVES (C6-4) : une seule fois,
+      // dans l'ile ; la camera locale coupee par le repli audio, c'est la
+      // phrase de l'image coupee qui le dit (la plus precise), sans bandeau.
+      expect(find.text(t.salle.videoSuspendue), findsOneWidget);
+      expect(find.text(t.salle.secours.reseauFaible), findsNothing);
     });
 
     testWidgets('une reconnexion n est pas une absence', (
@@ -1072,8 +1117,9 @@ void main() {
       moteur.poser(EtatSalle.reconnexion);
       await tester.pumpAndSettle();
 
-      // La salle reste montee, le bandeau reste la, et l'ecran le dit.
-      expect(find.text(t.salle.reconnexionCourt), findsOneWidget);
+      // La salle reste montee, le bandeau reste la, et l'ecran le dit, une
+      // seule fois, dans l'ile (RESEAU-ELEVES, C6-4).
+      expect(find.text(t.salle.secours.reconnexion), findsOneWidget);
       expect(find.text(t.salle.bandeauPermanent), findsOneWidget);
       expect(find.text(t.salle.refusReseau), findsNothing);
     });
@@ -1125,13 +1171,13 @@ void main() {
 
       moteur.poser(EtatSalle.reconnexion);
       await tester.pumpAndSettle();
-      expect(find.text(t.salle.reconnexionCourt), findsOneWidget);
+      expect(find.text(t.salle.secours.reconnexion), findsOneWidget);
 
       moteur.poser(EtatSalle.retabli);
       await tester.pumpAndSettle();
 
       expect(find.text(t.salle.secours.retablie), findsOneWidget);
-      expect(find.text(t.salle.reconnexionCourt), findsNothing);
+      expect(find.text(t.salle.secours.reconnexion), findsNothing);
       expect(find.text(t.salle.bandeauPermanent), findsOneWidget);
     });
   });
@@ -1329,7 +1375,9 @@ void main() {
         const ValueKey<String>('scene-premier-plan'),
       );
       expect(scene, findsOneWidget);
-      expect(find.byKey(const ValueKey<String>('revenir-page')), findsNothing);
+      // RUBAN-ORDINATEUR : « Revenir a la page » vit sous la grille, avec
+      // « Ouvrir le Coran » (le bouton de la scene), jamais sur un visage.
+      expect(find.text(t.salle.revenirALaPage), findsNothing);
 
       moteur.publierContenu(_contenu());
       await tester.pumpAndSettle();
@@ -1340,7 +1388,14 @@ void main() {
       await tester.tap(find.byKey(const ValueKey<String>('vignette-en-grand')));
       await tester.pumpAndSettle();
       expect(scene, findsOneWidget);
-      await tester.tap(find.byKey(const ValueKey<String>('revenir-page')));
+      expect(
+        find.descendant(
+          of: find.byKey(ActionSousLaScene.cleBouton),
+          matching: find.text(t.salle.revenirALaPage),
+        ),
+        findsOneWidget,
+      );
+      await tester.tap(find.text(t.salle.revenirALaPage));
       await tester.pumpAndSettle();
       expect(find.byKey(SallePage.pageEleveKey), findsOneWidget);
     });
@@ -1513,7 +1568,14 @@ void main() {
         find.byKey(const ValueKey<String>('surface-feuille')),
         findsOneWidget,
       );
-      expect(find.byTooltip(t.salle.seance.tableauOuvert), findsOneWidget);
+      // BARRE-ORDINATEUR (11/11/2026) : l'infobulle dit l'etat, puis la
+      // touche (« Tableau ouvert (touche T) »).
+      expect(
+        find.byTooltip(
+          RegExp('^${RegExp.escape(t.salle.seance.tableauOuvert)}'),
+        ),
+        findsOneWidget,
+      );
       // L'ouverture part a la classe, sur le canal fiable.
       expect(moteur.donneesPubliees.last.fiable, isTrue);
 
@@ -1552,7 +1614,12 @@ void main() {
       );
 
       moteur.publierContenu(_contenu());
-      await tester.pumpAndSettle();
+      // RUBAN-TELEPHONE : le passage de la classe a la page dure plus que le
+      // delai du squelette, et la page de ce test ne se charge jamais (son
+      // squelette boucle) : on laisse passer le passage, sans attendre le
+      // repos.
+      await tester.pump();
+      await tester.pump(AppMouvement.deplacementEntree);
 
       // L'abonnement arrive APRES la publication, et il recoit quand meme.
       final ContenuPresente vu = await moteur.contenusPresentes.first;
@@ -1814,6 +1881,307 @@ void main() {
       ]);
     });
 
+    testWidgets('GESTES-POINTEUR : « Faire reciter Yusuf » passe par le '
+        'serveur AVANT d etre annonce a la classe, puis « Terminer la '
+        'recitation » rend les micros', (WidgetTester tester) async {
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      final FauxGestesSalle gestes = FauxGestesSalle();
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: FauxServiceVideo(acces0: _acces('teacher')),
+          moteur: moteur,
+          preVol: FauxServicePreVol(),
+          role: AppRole.teacher,
+          gestes: gestes,
+        ),
+      );
+      moteur.poser(EtatSalle.connecte);
+      moteur.publier(<ParticipantSalle>[
+        _personne(identite: 't1', role: 'teacher', nom: 'Omar', local: true),
+        _personne(identite: 'e1', role: 'student', nom: 'Yusuf', micro: true),
+      ]);
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byKey(const ValueKey<String>('gestes-e1')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(t.salle.gestes.faireReciter(prenom: 'Yusuf')));
+      await tester.pump();
+      await tester.pump();
+      // Le serveur a ferme les micros des camarades ; l'enseignant le lit.
+      expect(gestes.recitations, <String?>['e1']);
+      expect(
+        find.descendant(
+          of: find.byKey(CoucheAnnonceGeste.cle),
+          matching: find.text(
+            t.salle.gestes.recitationOuverte(prenom: 'Yusuf'),
+          ),
+        ),
+        findsOneWidget,
+      );
+      // Puis seulement la classe l'apprend, sur le canal fiable.
+      final MessagePedagogique annonce = messageDepuisOctets(
+        moteur.donneesPubliees.last.charge,
+      )!;
+      expect(annonce.type, typeParoleSalle);
+      expect(annonce.charge['profil'], 'e1');
+      expect(moteur.donneesPubliees.last.fiable, isTrue);
+
+      await tester.pump(AppMouvement.annonceGesteMaintien);
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey<String>('gestes-e1')));
+      await tester.pumpAndSettle();
+      expect(
+        find.text(t.salle.gestes.faireReciter(prenom: 'Yusuf')),
+        findsNothing,
+      );
+      await tester.tap(find.text(t.salle.gestes.terminerRecitation));
+      await tester.pump();
+      await tester.pump();
+      expect(gestes.recitations, <String?>['e1', null]);
+      expect(find.text(t.salle.gestes.recitationTerminee), findsOneWidget);
+      final MessagePedagogique fin = messageDepuisOctets(
+        moteur.donneesPubliees.last.charge,
+      )!;
+      expect(fin.type, typeParoleSalle);
+      expect(fin.charge['profil'], isNull);
+      await tester.pump(AppMouvement.annonceGesteMaintien);
+      await tester.pumpAndSettle();
+    });
+
+    testWidgets('GESTES-POINTEUR : le serveur ne repond pas, rien n est '
+        'annonce a la classe et l enseignant lit pourquoi', (
+      WidgetTester tester,
+    ) async {
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      final FauxGestesSalle gestes = FauxGestesSalle()
+        ..recitationEnPanne = true;
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: FauxServiceVideo(acces0: _acces('teacher')),
+          moteur: moteur,
+          preVol: FauxServicePreVol(),
+          role: AppRole.teacher,
+          gestes: gestes,
+        ),
+      );
+      moteur.poser(EtatSalle.connecte);
+      moteur.publier(<ParticipantSalle>[
+        _personne(identite: 't1', role: 'teacher', nom: 'Omar', local: true),
+        _personne(identite: 'e1', role: 'student', nom: 'Yusuf', micro: true),
+      ]);
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey<String>('gestes-e1')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(t.salle.gestes.faireReciter(prenom: 'Yusuf')));
+      await tester.pump();
+      await tester.pump();
+      expect(find.text(t.salle.gestes.recitationEchecTitre), findsOneWidget);
+      expect(find.text(t.salle.gestes.recitationEchec), findsOneWidget);
+      // Aucune recitation n'a ete dite a la classe.
+      expect(
+        moteur.donneesPubliees.where(
+          (PaquetDonnees p) =>
+              messageDepuisOctets(p.charge)?.type == typeParoleSalle,
+        ),
+        isEmpty,
+      );
+      await tester.pump(AppMouvement.annonceGesteMaintien);
+      await tester.pumpAndSettle();
+    });
+
+    testWidgets('GESTES-POINTEUR : l eleve choisi n est pas dans la salle, '
+        'le serveur refuse et rien ne change', (WidgetTester tester) async {
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      final FauxGestesSalle gestes = FauxGestesSalle()
+        ..issueRecitation = IssueRecitation.recitantAbsent;
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: FauxServiceVideo(acces0: _acces('teacher')),
+          moteur: moteur,
+          preVol: FauxServicePreVol(),
+          role: AppRole.teacher,
+          gestes: gestes,
+        ),
+      );
+      moteur.poser(EtatSalle.connecte);
+      moteur.publier(<ParticipantSalle>[
+        _personne(identite: 't1', role: 'teacher', nom: 'Omar', local: true),
+        _personne(identite: 'e1', role: 'student', nom: 'Yusuf'),
+      ]);
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey<String>('gestes-e1')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(t.salle.gestes.faireReciter(prenom: 'Yusuf')));
+      await tester.pump();
+      await tester.pump();
+      expect(
+        find.text(t.salle.gestes.recitationAbsent(prenom: 'Yusuf')),
+        findsOneWidget,
+      );
+      expect(gestes.recitations, isEmpty);
+      await tester.pump(AppMouvement.annonceGesteMaintien);
+      await tester.pumpAndSettle();
+    });
+
+    testWidgets('GESTES-POINTEUR : le recitant quitte la salle, la '
+        'recitation se termine d elle-meme (jamais une classe muette)', (
+      WidgetTester tester,
+    ) async {
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      final FauxGestesSalle gestes = FauxGestesSalle();
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: FauxServiceVideo(acces0: _acces('teacher')),
+          moteur: moteur,
+          preVol: FauxServicePreVol(),
+          role: AppRole.teacher,
+          gestes: gestes,
+        ),
+      );
+      moteur.poser(EtatSalle.connecte);
+      final ParticipantSalle enseignant = _personne(
+        identite: 't1',
+        role: 'teacher',
+        nom: 'Omar',
+        local: true,
+      );
+      moteur.publier(<ParticipantSalle>[
+        enseignant,
+        _personne(identite: 'e1', role: 'student', nom: 'Yusuf'),
+      ]);
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey<String>('gestes-e1')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(t.salle.gestes.faireReciter(prenom: 'Yusuf')));
+      await tester.pump();
+      await tester.pump();
+      expect(gestes.recitations, <String?>['e1']);
+
+      // Yusuf sort de la salle.
+      moteur.publier(<ParticipantSalle>[enseignant]);
+      await tester.pump();
+      await tester.pump();
+      expect(gestes.recitations, <String?>['e1', null]);
+      expect(
+        find.text(t.salle.gestes.recitationFinieSeule(prenom: 'Yusuf')),
+        findsOneWidget,
+      );
+      final MessagePedagogique fin = messageDepuisOctets(
+        moteur.donneesPubliees.last.charge,
+      )!;
+      expect(fin.type, typeParoleSalle);
+      expect(fin.charge['profil'], isNull);
+      await tester.pump(AppMouvement.annonceGesteMaintien);
+      await tester.pumpAndSettle();
+    });
+
+    testWidgets('GESTES-POINTEUR : chez l eleve, « Aicha recite » dit que '
+        'son micro est ferme et pourquoi ; a la fin, qu il peut le rouvrir', (
+      WidgetTester tester,
+    ) async {
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      int signaux = 0;
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: FauxServiceVideo(acces0: _acces('student')),
+          moteur: moteur,
+          preVol: FauxServicePreVol(),
+          signalRappel: () => signaux++,
+        ),
+      );
+      moteur.poser(EtatSalle.connecte);
+      await tester.pumpAndSettle();
+
+      void recevoirParole(String? profil, String prenom, int ms) {
+        moteur.recevoirDonnees(
+          PaquetDonnees(
+            sujet: sujetProtocolePedagogique,
+            charge: messageVersOctets(
+              MessagePedagogique(
+                type: typeParoleSalle,
+                sessionId: _seance,
+                emetteurProfilId: 't1',
+                charge: profil == null
+                    ? const <String, dynamic>{}
+                    : <String, dynamic>{'profil': profil, 'prenom': prenom},
+                emisLeUtc: DateTime.utc(2026, 11, 11, 10, 0, 0, ms),
+              ),
+            ),
+            fiable: true,
+            emetteurIdentite: 't1',
+          ),
+        );
+      }
+
+      recevoirParole('e2', 'Aicha', 1);
+      await tester.pump();
+      await tester.pump();
+      expect(
+        find.descendant(
+          of: find.byKey(CoucheAnnonceGeste.cle),
+          matching: find.text(t.salle.gestes.autreReciteTitre(prenom: 'Aicha')),
+        ),
+        findsOneWidget,
+      );
+      expect(find.text(t.salle.gestes.autreRecite), findsOneWidget);
+      expect(signaux, 0, reason: 'un camarade recite : aucun son');
+
+      recevoirParole(null, '', 2);
+      await tester.pump();
+      await tester.pump();
+      expect(find.text(t.salle.gestes.finRecitationTitre), findsOneWidget);
+      expect(find.text(t.salle.gestes.finRecitation), findsOneWidget);
+
+      // C'est a lui : il lit « ouvrez votre micro », et son appareil sonne.
+      recevoirParole('p1', 'Moi', 3);
+      await tester.pump();
+      await tester.pump();
+      expect(find.text(t.salle.gestes.aVousTitre), findsOneWidget);
+      expect(find.text(t.salle.gestes.aVous), findsOneWidget);
+      expect(signaux, 1);
+      await tester.pump(AppMouvement.annonceGesteMaintien);
+      await tester.pumpAndSettle();
+    });
+
+    testWidgets('GESTES-POINTEUR : une personne, un cadre. L enseignant, '
+        'camera allumee, ne se voit pas une seconde fois dans la scene', (
+      WidgetTester tester,
+    ) async {
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: FauxServiceVideo(acces0: _acces('teacher')),
+          moteur: moteur,
+          preVol: FauxServicePreVol(),
+          role: AppRole.teacher,
+        ),
+      );
+      moteur.poser(EtatSalle.connecte);
+      moteur.publier(<ParticipantSalle>[
+        _personne(
+          identite: 't1',
+          role: 'teacher',
+          nom: 'Omar',
+          local: true,
+          camera: true,
+        ),
+        _personne(identite: 'e1', role: 'student', nom: 'Yusuf'),
+      ]);
+      await tester.pumpAndSettle();
+      // Son image est sa vignette ; la scene ne porte que l'eleve.
+      expect(
+        find.byKey(const ValueKey<String>('vignette-video')),
+        findsOneWidget,
+      );
+      expect(find.byKey(const ValueKey<String>('t1')), findsNothing);
+    });
+
     testWidgets('l eleve n a aucun geste sur ses camarades', (
       WidgetTester tester,
     ) async {
@@ -1895,6 +2263,169 @@ void main() {
       expect(video.demandes, hasLength(2));
     });
 
+    // FERMETURE-SALLE (directeur, 11/11/2026, D-018) : le serveur ferme la
+    // salle quand la seance est finie. Ni « La connexion au cours est
+    // perdue », ni « Votre enseignant vous a fait sortir du cours ».
+    testWidgets('FERMETURE-SALLE : salle fermee par le serveur, l eleve '
+        'arrive sur « Seance terminee », sans « Reessayer »', (
+      WidgetTester tester,
+    ) async {
+      final _MoteurFermeture moteur = _MoteurFermeture();
+      final FauxServiceVideo video = FauxServiceVideo(
+        acces0: _acces('student'),
+      );
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: video,
+          moteur: moteur,
+          preVol: FauxServicePreVol(),
+        ),
+      );
+      moteur.poser(EtatSalle.connecte);
+      await tester.pumpAndSettle();
+      moteur.salleFermee = true;
+      moteur.poser(EtatSalle.echec);
+      await tester.pumpAndSettle();
+      expect(find.byType(ResultatSeance), findsOneWidget);
+      expect(find.text(t.salle.fin.titre), findsOneWidget);
+      expect(find.text(t.salle.retire), findsNothing);
+      expect(find.text(t.salle.perdue), findsNothing);
+      expect(find.text(t.commun.reessayer), findsNothing);
+      // Aucun jeton n'est redemande : le serveur a deja tout dit.
+      expect(video.demandes, hasLength(1));
+    });
+
+    testWidgets('FERMETURE-SALLE : en Interface guidee, l eleve lit « La '
+        'seance est terminee. »', (WidgetTester tester) async {
+      final _MoteurFermeture moteur = _MoteurFermeture();
+      await _monterSalle(
+        tester,
+        mode: InterfaceMode.enfant,
+        surcharges: _surcharges(
+          video: FauxServiceVideo(acces0: _acces('student')),
+          moteur: moteur,
+          preVol: FauxServicePreVol(),
+        ),
+      );
+      moteur.poser(EtatSalle.connecte);
+      await tester.pumpAndSettle();
+      moteur.salleFermee = true;
+      moteur.poser(EtatSalle.echec);
+      await tester.pumpAndSettle();
+      expect(find.text(t.salle.fin.titreGuidee), findsOneWidget);
+      expect(find.text(t.salle.retire), findsNothing);
+    });
+
+    testWidgets('FERMETURE-SALLE : le tuteur qui observe lit « La seance est '
+        'terminee. », pas « Votre enseignant vous a fait sortir »', (
+      WidgetTester tester,
+    ) async {
+      final _MoteurFermeture moteur = _MoteurFermeture();
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: FauxServiceVideo(acces0: _acces('guardian_observer')),
+          moteur: moteur,
+          preVol: FauxServicePreVol(),
+          role: AppRole.guardian,
+        ),
+      );
+      moteur.poser(EtatSalle.connecte);
+      await tester.pumpAndSettle();
+      moteur.salleFermee = true;
+      moteur.poser(EtatSalle.echec);
+      await tester.pumpAndSettle();
+      expect(find.text(t.salle.fermeture.seanceTerminee), findsOneWidget);
+      expect(find.text(t.salle.fermeture.seanceTermineeDetail), findsOneWidget);
+      expect(find.text(t.salle.retire), findsNothing);
+      expect(find.text(t.salle.perdue), findsNothing);
+      expect(find.text(t.commun.reessayer), findsNothing);
+    });
+
+    testWidgets('FERMETURE-SALLE : sans la fermeture du serveur, une '
+        'connexion perdue reste une connexion perdue', (
+      WidgetTester tester,
+    ) async {
+      final _MoteurFermeture moteur = _MoteurFermeture();
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: FauxServiceVideo(acces0: _acces('student')),
+          moteur: moteur,
+          preVol: FauxServicePreVol(),
+        ),
+      );
+      moteur.poser(EtatSalle.connecte);
+      await tester.pumpAndSettle();
+      moteur.poser(EtatSalle.echec);
+      await tester.pumpAndSettle();
+      expect(find.text(t.salle.perdue), findsOneWidget);
+      expect(find.text(t.salle.fin.titre), findsNothing);
+    });
+
+    testWidgets('FERMETURE-SALLE : le serveur ferme le micro de l eleve apres '
+        'le depart de l enseignant ; il le lit en tete de la salle', (
+      WidgetTester tester,
+    ) async {
+      final _MoteurFermeture moteur = _MoteurFermeture();
+      final AccesSalle acces = _acces('student');
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: FauxServiceVideo(acces0: acces),
+          moteur: moteur,
+          preVol: FauxServicePreVol(),
+        ),
+      );
+      moteur
+        ..poser(EtatSalle.connecte)
+        ..publier(<ParticipantSalle>[
+          _participantFermeture('p1', 'student', local: true),
+          _participantFermeture('prof', 'teacher'),
+        ]);
+      await tester.pumpAndSettle();
+      // Pendant une recitation, le serveur ferme aussi ce droit, mais
+      // l'enseignant est la : ce n'est pas cette phrase.
+      final AccesSalle ferme = acces.avecPublication(
+        peutPublier: false,
+        peutPublierVideo: false,
+      );
+      moteur.accorder(ferme);
+      await tester.pump();
+      await tester.pump();
+      expect(find.text(t.salle.fermeture.sansEnseignantTitre), findsNothing);
+      moteur.accorder(acces);
+      await tester.pump();
+
+      // L'enseignant sort : l'eleve le sait tout de suite (SITUATIONS-GRAVES,
+      // « il peut revenir dans un instant »), sans rien sur son micro, que le
+      // serveur n'a pas encore ferme.
+      moteur.publier(<ParticipantSalle>[
+        _participantFermeture('p1', 'student', local: true),
+      ]);
+      await tester.pump();
+      await tester.pump();
+      expect(
+        find.text(t.salle.situations.enseignantPartiTitre),
+        findsOneWidget,
+      );
+      expect(find.text(t.salle.situations.enseignantParti), findsOneWidget);
+      expect(find.text(t.salle.fermeture.microFerme), findsNothing);
+      // Apres le delai, le serveur ferme le droit : la meme place le dit,
+      // une seule annonce a la fois.
+      moteur.accorder(ferme);
+      await tester.pump();
+      await tester.pump();
+      expect(find.text(t.salle.fermeture.sansEnseignantTitre), findsOneWidget);
+      expect(find.text(t.salle.fermeture.microFerme), findsOneWidget);
+      expect(find.text(t.salle.situations.enseignantParti), findsNothing);
+      // L'annonce s'efface seule.
+      await tester.pump(AppMouvement.annonceGesteMaintien);
+      await tester.pumpAndSettle();
+      expect(find.text(t.salle.fermeture.sansEnseignantTitre), findsNothing);
+    });
+
     testWidgets('rappel discret recu : l eleve lit « Le professeur vous '
         'appelle », son appareil est sollicite, puis le message s efface', (
       WidgetTester tester,
@@ -1912,7 +2443,7 @@ void main() {
       );
       moteur.poser(EtatSalle.connecte);
       await tester.pumpAndSettle();
-      expect(find.text(t.tc.classe.rappel.recu), findsNothing);
+      expect(find.text(t.salle.gestes.appelRecuTitre), findsNothing);
 
       moteur.recevoirDonnees(
         PaquetDonnees(
@@ -1931,12 +2462,21 @@ void main() {
       );
       await tester.pump();
       await tester.pump();
-      expect(find.text(t.tc.classe.rappel.recu), findsOneWidget);
+      // GESTES-POINTEUR (11/11/2026) : en tete de la salle, dans la couche
+      // des annonces (jamais dans une couche que le telephone masque).
+      expect(
+        find.descendant(
+          of: find.byKey(CoucheAnnonceGeste.cle),
+          matching: find.text(t.salle.gestes.appelRecuTitre),
+        ),
+        findsOneWidget,
+      );
+      expect(find.text(t.salle.gestes.appelRecu), findsOneWidget);
       expect(signaux, 1);
 
-      await tester.pump(AppMouvement.rappelRecuMaintien);
+      await tester.pump(AppMouvement.annonceGesteMaintien);
       await tester.pumpAndSettle();
-      expect(find.text(t.tc.classe.rappel.recu), findsNothing);
+      expect(find.text(t.salle.gestes.appelRecuTitre), findsNothing);
     });
 
     testWidgets('31/10/2026 : le retour du telephone ou du navigateur quitte '
@@ -1981,10 +2521,81 @@ void main() {
       // La sortie volontaire, elle, annonce puis deconnecte.
       await tester.tap(_commande(t.salle.seance.sortir));
       await tester.pumpAndSettle();
-      await tester.tap(find.text(t.salle.quitter).last);
+      await tester.tap(_sortieQuitter);
       await tester.pumpAndSettle();
       expect(video.sorties, <String>[_seance]);
       expect(moteur.departs, greaterThan(departs));
+    });
+
+    // SORTIE-SALLE (directeur, 11/11/2026).
+    testWidgets('SORTIE-SALLE : le retour du telephone, salle seule dans la '
+        'pile, reduit la salle au lieu de fermer l application ; l appel '
+        'continue', (WidgetTester tester) async {
+      addTearDown(GardeFermeture.remettre);
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      final FauxServiceVideo video = FauxServiceVideo(
+        acces0: _acces('student'),
+      );
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: video,
+          moteur: moteur,
+          preVol: FauxServicePreVol(),
+        ),
+      );
+      moteur.poser(EtatSalle.connecte);
+      await tester.pumpAndSettle();
+      final int departs = moteur.departs;
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+      expect(find.byType(SallePage), findsNothing);
+      expect(find.text(t.salle.confirmerSortie), findsNothing);
+      expect(moteur.departs, departs, reason: 'l appel continue');
+      expect(video.sorties, isEmpty);
+    });
+
+    testWidgets('SORTIE-SALLE : la question de Quitter propose de reduire la '
+        'salle ; « Reduire la salle » garde l appel, la garde de fermeture '
+        'reste armee jusqu a la vraie sortie', (WidgetTester tester) async {
+      addTearDown(GardeFermeture.remettre);
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      final FauxServiceVideo video = FauxServiceVideo(
+        acces0: _acces('student'),
+      );
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: video,
+          moteur: moteur,
+          preVol: FauxServicePreVol(),
+        ),
+      );
+      moteur.poser(EtatSalle.connecte);
+      await tester.pumpAndSettle();
+      expect(GardeFermeture.armee, isTrue, reason: 'appel tenu : onglet garde');
+      final int departs = moteur.departs;
+
+      await tester.tap(_commande(t.salle.seance.sortir));
+      await tester.pumpAndSettle();
+      expect(find.text(t.salle.sortie.eleveReduire), findsOneWidget);
+      verifierUnSeulBoutonPlein(tester);
+      await tester.tap(find.byKey(const ValueKey<String>('sortie-reduire')));
+      await tester.pumpAndSettle();
+      expect(find.byType(SallePage), findsNothing);
+      expect(moteur.departs, departs, reason: 'reduire ne coupe pas');
+      expect(video.sorties, isEmpty);
+      expect(GardeFermeture.armee, isTrue);
+
+      // Retour dans la salle, puis la vraie sortie : la garde tombe.
+      await tester.binding.handlePushRoute(Routes.salle);
+      await tester.pumpAndSettle();
+      await tester.tap(_commande(t.salle.seance.sortir));
+      await tester.pumpAndSettle();
+      await tester.tap(_sortieQuitter);
+      await tester.pumpAndSettle();
+      expect(video.sorties, <String>[_seance]);
+      expect(GardeFermeture.armee, isFalse);
     });
   });
 
@@ -2016,9 +2627,9 @@ void main() {
       // actions asymetriques (S0 : la question du dock de la salle de seance,
       // posee une seule fois).
       expect(find.text(t.salle.seance.quitterQuestion), findsWidgets);
-      expect(find.text(t.salle.seance.quitterConsequence), findsOneWidget);
+      expect(find.text(t.salle.sortie.eleveReduire), findsOneWidget);
 
-      await tester.tap(find.text(t.salle.quitter).last);
+      await tester.tap(_sortieQuitter);
       await tester.pumpAndSettle();
 
       expect(video.sorties, <String>[_seance]);
@@ -2055,7 +2666,7 @@ void main() {
       );
       await tester.tap(_commande(t.salle.seance.sortir));
       await tester.pumpAndSettle();
-      await tester.tap(find.text(t.salle.quitter).last);
+      await tester.tap(_sortieQuitter);
       await tester.pumpAndSettle();
       expect(find.text(t.salle.fin.quitteTitre), findsOneWidget);
       final int demandes = video.demandes.length;
@@ -2085,7 +2696,7 @@ void main() {
 
       await tester.tap(_commande(t.salle.seance.sortir));
       await tester.pumpAndSettle();
-      await tester.tap(find.text(t.commun.annuler));
+      await tester.tap(find.text(t.salle.seance.rester));
       await tester.pumpAndSettle();
 
       expect(video.sorties, isEmpty);
@@ -3245,8 +3856,11 @@ void main() {
         final Rect centre = tester.getRect(
           find.byKey(SalleOrdinateur.cleCentre),
         );
-        // De bas en haut de sa zone, centree dans le centre.
-        expect(boite.bottom, closeTo(centre.bottom, 0.5));
+        // CORAN-GRAND (11/11/2026) : toute la hauteur que la largeur permet
+        // (fleches comprises), centree dans le centre.
+        expect(boite.center.dy, closeTo(centre.center.dy, 0.5));
+        expect(boite.top, greaterThanOrEqualTo(centre.top - 0.5));
+        expect(boite.bottom, lessThanOrEqualTo(centre.bottom + 0.5));
         expect(boite.center.dx, closeTo(centre.center.dx, 0.5));
         expect(boite.left, greaterThanOrEqualTo(centre.left - 0.5));
         expect(boite.right, lessThanOrEqualTo(centre.right + 0.5));
@@ -3262,9 +3876,10 @@ void main() {
           );
         }
         // Sa largeur suit la composition du mushaf, plafonnee a 1,4 fois.
-        final Size attendue = boitePagePleinEcran(
+        final Size attendue = boitePageAvecFleches(
           Size(centre.width, boite.height),
           telephone: false,
+          avecFleches: true,
         );
         expect(boite.width, closeTo(attendue.width, 0.5));
         // La page composee remplit la hauteur de sa boite.
@@ -3291,7 +3906,10 @@ void main() {
     }
 
     for (final Size taille in <Size>[
-      const Size(390, 844),
+      // TELEPHONE-REDUIT (11/11/2026) : sous 600, le tableau ne s'ouvre
+      // plus au telephone de l'enseignant ; l'iPad en portrait garde le
+      // tiroir a onglets.
+      const Size(834, 1194),
       const Size(1366, 768),
     ]) {
       final String nom = '${taille.width.toInt()}x${taille.height.toInt()}';
@@ -3301,7 +3919,7 @@ void main() {
         // Plan §4 (PR B) : au telephone, le tableau vit dans l'onglet Outils
         // du tiroir des Commandes ; la pilule ne garde que micro, camera et
         // quitter. Sur ordinateur, la barre du bas le porte.
-        if (taille.width < AppGabarit.seuilTablette) {
+        if (taille.width < 840) {
           // Les commandes se masquent au delai : un toucher les ramene.
           await tester.tapAt(const Offset(10, 10));
           await tester.pumpAndSettle();
@@ -3314,7 +3932,7 @@ void main() {
         await tester.tap(find.byKey(const ValueKey<String>('bouton-tableau')));
         await tester.pumpAndSettle();
         // Le tiroir se referme pour laisser voir le tableau.
-        if (taille.width < AppGabarit.seuilTablette) {
+        if (taille.width < 840) {
           await tester.tap(
             find.byKey(PanneauSeance.cleReduire).hitTestable().first,
           );
@@ -3332,8 +3950,11 @@ void main() {
           final Rect centre = tester.getRect(
             find.byKey(SalleOrdinateur.cleCentre),
           );
+          // CORAN-GRAND (11/11/2026) : ranger et focus dans une marge de
+          // fin, a cote du tableau.
           expect(canevas.left, closeTo(centre.left, 0.5));
-          expect(canevas.right, closeTo(centre.right, 0.5));
+          expect(canevas.right, lessThan(centre.right));
+          expect(canevas.right, greaterThan(centre.right - 80));
           expect(canevas.bottom, closeTo(centre.bottom, 0.5));
         }
         final Rect feuille = tester.getRect(
@@ -3393,6 +4014,16 @@ void main() {
         final Finder plus = find.byKey(
           const ValueKey<String>('salle-zoom-plus'),
         );
+        // Directeur, 11/11/2026 : au telephone, aucun bouton de zoom sur la
+        // page ; le pincement et le double toucher restent.
+        if (taille.shortestSide < 600) {
+          expect(plus, findsNothing);
+          expect(
+            find.byKey(const ValueKey<String>('salle-zoom-moins')),
+            findsNothing,
+          );
+          return;
+        }
         expect(plus, findsOneWidget);
         // Au premier palier, « moins » n'est pas rendu (jamais grise).
         expect(
@@ -3507,11 +4138,11 @@ void main() {
         findsNothing,
       );
       final Rect barre = tester.getRect(find.byKey(BarreOutilsSalle.cle));
+      // CORAN-GRAND (11/11/2026) : la colonne des commandes est sur le bord
+      // de debut ; la palette ne la recouvre pas.
       expect(
-        barre.bottom,
-        lessThanOrEqualTo(
-          tester.getRect(find.byKey(SalleOrdinateur.cleBas)).top,
-        ),
+        barre.overlaps(tester.getRect(find.byKey(SalleOrdinateur.cleBas))),
+        isFalse,
       );
       // Une couleur franche : retenue (anneau et coche, jamais la couleur
       // seule) ; la couleur d'intention ne l'est plus.
@@ -3545,7 +4176,11 @@ void main() {
       expect(find.byKey(SalleOrdinateur.cleGauche), findsOneWidget);
       await touche(tester, LogicalKeyboardKey.keyF);
       expect(find.byKey(SalleOrdinateur.cleGauche), findsNothing);
-      expect(find.byKey(SalleOrdinateur.cleHaut), findsNothing);
+      // Directeur, 11/11/2026 : en focus, le haut ne garde que le support et
+      // ses outils (la sortie du focus y reste) ; la Classe et la pilule
+      // partent.
+      expect(find.byKey(SalleOrdinateur.cleClasse), findsNothing);
+      expect(find.byKey(SalleOrdinateur.cleSupport), findsOneWidget);
       expect(find.byKey(SalleOrdinateur.cleDroite), findsNothing);
       expect(find.byKey(SalleOrdinateur.cleBas), findsOneWidget);
       await touche(tester, LogicalKeyboardKey.keyF);
@@ -3755,7 +4390,10 @@ void main() {
       // Plan de composition du 26/10/2026 : sur ordinateur, la
       // Bibliotheque est le panneau de droite ; le Coran y est seul.
       expect(find.byKey(PanneauBibliothequeSalle.cle), findsOneWidget);
-      expect(find.text(t.salle.supports.coran), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey<String>('bibliotheque-support-coran')),
+        findsOneWidget,
+      );
       await tester.tap(
         find.byKey(const ValueKey<String>('bibliotheque-deplier-coran')),
       );
@@ -4141,6 +4779,176 @@ void main() {
       aucuneIdentite(tester);
     });
   });
+
+  // TRANSITIONS-SALLE (directeur, 11/11/2026) : le moment de l'arche habille
+  // l'attente REELLE de l'entree, jamais en plus.
+  group('TRANSITIONS-SALLE : le moment de l arche', () {
+    setUp(RepriseSalle.oublier);
+
+    /// Monte la salle d'un eleve sur un moteur lent ; [rechargement] : la
+    /// reprise de l'onglet porte deja cette seance (aucune arche).
+    Future<_MoteurLent> monterLente(
+      WidgetTester tester, {
+      bool rechargement = false,
+    }) async {
+      RepriseSalle.oublier();
+      if (rechargement) {
+        RepriseSalle.retenir(
+          BilletSalle(sessionId: _seance, emisA: DateTime.now()),
+        );
+      }
+      final _MoteurLent moteur = _MoteurLent();
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: FauxServiceVideo(acces0: _acces('student')),
+          moteur: moteur,
+          preVol: FauxServicePreVol(),
+        ),
+        auRepos: false,
+      );
+      return moteur;
+    }
+
+    /// Le nombre d'images, depuis la fin de la connexion, avant que la
+    /// salle soit la et recoive les gestes.
+    Future<int> imagesJusquALaSalle(
+      WidgetTester tester,
+      _MoteurLent moteur,
+    ) async {
+      moteur.porte.complete();
+      int images = 0;
+      while (find.byType(SalleSeance).evaluate().isEmpty && images < 20) {
+        await tester.pump();
+        images++;
+      }
+      return images;
+    }
+
+    testWidgets(
+      'pendant la connexion l arche ; la salle prete est utilisable a la '
+      'meme image qu avant, sous un voile qui ne prend aucun geste',
+      (WidgetTester tester) async {
+        // Sans arche (rechargement) : la reference.
+        final _MoteurLent sans = await monterLente(tester, rechargement: true);
+        expect(find.byKey(EntreeArche.cle), findsNothing);
+        final int reference = await imagesJusquALaSalle(tester, sans);
+        expect(find.byKey(PassageSalle.cleVoile), findsNothing);
+
+        // Avec arche.
+        await tester.pumpWidget(const SizedBox.shrink());
+        final _MoteurLent avec = await monterLente(tester);
+        // L'attente reelle : l'arche a la place de l'attente nue.
+        expect(find.byKey(EntreeArche.cle), findsOneWidget);
+        expect(find.byType(SalleSeance), findsNothing);
+        final int images = await imagesJusquALaSalle(tester, avec);
+        // La salle arrive a la MEME image qu'avant : l'arche n'ajoute rien.
+        expect(images, reference);
+        // A cette image-la : plus d'arche, la salle recoit les gestes ; seul
+        // un voile qui ne prend rien s'efface par-dessus.
+        expect(find.byKey(EntreeArche.cle), findsNothing);
+        expect(find.byType(SalleSeance).hitTestable(), findsOneWidget);
+        expect(find.byKey(PassageSalle.cleVoile), findsOneWidget);
+        await tester.pump();
+        await tester.pump(
+          AppMouvement.passageArche + const Duration(milliseconds: 16),
+        );
+        await tester.pump();
+        expect(find.byKey(PassageSalle.cleVoile), findsNothing);
+        RepriseSalle.oublier();
+      },
+    );
+  });
+
+  // TRANSITIONS-SALLE : l'arche a trois instants (la porte fermee, a
+  // mi-ouverture, ouverte et immobile), puis le voile du passage, sur la
+  // VRAIE salle (`SallePage`, moteur lent), 390 et 1440, clair et sombre,
+  // et une en arabe. Captures de test, decor de l'ecran reel.
+  group('TRANSITIONS-SALLE : captures de l arche', () {
+    setUpAll(chargerPolicesDuDepot);
+    tearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
+
+    const Map<String, Size> tailles = <String, Size>{
+      '390': Size(390, 844),
+      '1440': Size(1440, 900),
+    };
+    for (final ThemeMode theme in <ThemeMode>[
+      ThemeMode.light,
+      ThemeMode.dark,
+    ]) {
+      for (final MapEntry<String, Size> taille in tailles.entries) {
+        for (final bool arabe in <bool>[false, true]) {
+          // Une seule en arabe : 390, clair.
+          if (arabe && (theme == ThemeMode.dark || taille.key == '1440')) {
+            continue;
+          }
+          final String mode = theme == ThemeMode.light ? 'clair' : 'sombre';
+          final String fin = '${taille.key}-$mode${arabe ? '-ar' : ''}';
+          testWidgets('arche $fin', (WidgetTester tester) async {
+            masquerRubanDebug();
+            RepriseSalle.oublier();
+            if (arabe) {
+              await tester.runAsync(
+                () => LocaleSettings.setLocale(AppLocale.ar),
+              );
+            }
+            tester.view.physicalSize = taille.value;
+            tester.view.devicePixelRatio = 1;
+            addTearDown(tester.view.reset);
+            final _MoteurLent moteur = _MoteurLent();
+            await _monterSalle(
+              tester,
+              themeMode: theme,
+              direction: arabe ? TextDirection.rtl : null,
+              surcharges: _surcharges(
+                video: FauxServiceVideo(acces0: _acces('student')),
+                moteur: moteur,
+                preVol: FauxServicePreVol(),
+              ),
+              auRepos: false,
+              images: 0,
+            );
+            int garde = 0;
+            while (find.byKey(EntreeArche.cle).evaluate().isEmpty &&
+                garde++ < 10) {
+              await tester.pump();
+            }
+            expect(find.byKey(EntreeArche.cle), findsOneWidget);
+            await tester.pump();
+            await tester.pump(const Duration(milliseconds: 120));
+            await capturerVue(tester, 'arche-1-depart-$fin');
+            await tester.pump(const Duration(milliseconds: 200));
+            await capturerVue(tester, 'arche-2-ouverture-$fin');
+            await tester.pump(const Duration(milliseconds: 500));
+            await capturerVue(tester, 'arche-3-ouverte-$fin');
+            moteur.porte.complete();
+            while (find.byType(SalleSeance).evaluate().isEmpty &&
+                garde++ < 30) {
+              await tester.pump();
+            }
+            await tester.pump();
+            await tester.pump(const Duration(milliseconds: 60));
+            await capturerVue(tester, 'arche-4-passage-$fin');
+            await tester.pump(const Duration(milliseconds: 200));
+            await capturerVue(tester, 'arche-5-salle-$fin');
+            RepriseSalle.oublier();
+          });
+        }
+      }
+    }
+  }, skip: sautSansCapture);
+}
+
+/// TRANSITIONS-SALLE : un moteur dont l'entree attend qu'on lui ouvre la
+/// porte (la connexion reelle prend du temps).
+class _MoteurLent extends FauxMoteurSalle {
+  final Completer<void> porte = Completer<void>();
+
+  @override
+  Future<void> rejoindre(AccesSalle acces) async {
+    await porte.future;
+    return super.rejoindre(acces);
+  }
 }
 
 /// La croix « Ranger dans la bibliotheque » de la salle plein ecran.
@@ -4151,3 +4959,38 @@ class _MoteurOuvertAilleurs extends FauxMoteurSalle implements MotifEchecSalle {
   @override
   bool ouverteAilleurs = false;
 }
+
+/// FERMETURE-SALLE : un moteur qui sait dire que le serveur a ferme la salle,
+/// et qui annonce les droits que le serveur change.
+class _MoteurFermeture extends FauxMoteurSalle
+    implements FermetureParLeServeur, DroitsPublicationVivants {
+  @override
+  bool salleFermee = false;
+
+  @override
+  DateTime? finPorteUtc;
+
+  final StreamController<AccesSalle> _accesChanges =
+      StreamController<AccesSalle>.broadcast();
+
+  @override
+  Stream<AccesSalle> get accesMisAJour => _accesChanges.stream;
+
+  /// Le serveur change les droits du participant local.
+  void accorder(AccesSalle acces) => _accesChanges.add(acces);
+}
+
+ParticipantSalle _participantFermeture(
+  String identite,
+  String role, {
+  bool local = false,
+}) => ParticipantSalle(
+  identite: identite,
+  nom: '',
+  role: role,
+  estLocal: local,
+  micro: false,
+  camera: false,
+  parle: false,
+  qualite: QualiteLien.bonne,
+);

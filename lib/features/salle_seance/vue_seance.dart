@@ -22,6 +22,7 @@ import '../../core/tc_horloge/chrono_seance.dart' show BornesChrono;
 import '../../core/tc_outils/annotation_layer.dart'
     show OutilTrait, TraitVectoriel;
 import '../../core/theme/app_gabarit.dart';
+import '../../core/video/seuils_reseau.dart' show EtatReseau;
 import '../salle/vue_salle.dart';
 
 /// Le role effectif devant l'ecran : colonnes ES, IG et EN de la matrice.
@@ -133,7 +134,40 @@ class EleveSeance {
     this.cleAvatar,
     this.peutEcrire = false,
     this.profilId,
+    this.reseau,
+    this.microOuvert = false,
   });
+
+  /// RESEAU-ELEVES (directeur, 11/11/2026) : le reseau de cet eleve, tel que
+  /// le serveur de visio le mesure, filtre contre le clignotement
+  /// (`SuiviReseau`), ou `null` sans mesure stable : aucun signe, jamais des
+  /// barres inventees. Lu par l'enseignant seul, jamais conserve.
+  final EtatReseau? reseau;
+
+  /// Le micro de cet eleve est publie (LiveKit) : la phrase d'alerte dit
+  /// alors « On entend peut-etre mal Yasmine », sinon « Yasmine entend
+  /// peut-etre mal ».
+  final bool microOuvert;
+
+  /// Le libelle lu du signe de reseau (« Reseau faible »), ou `null` sans
+  /// signe.
+  String? get libelleReseau => switch (reseau?.barres) {
+    3 => t.salle.reseau.bon,
+    2 => t.salle.reseau.correct,
+    1 => t.salle.reseau.faible,
+    0 => t.salle.reseau.perdu,
+    _ => null,
+  };
+
+  /// La phrase courte de la carte quand le reseau est mauvais depuis
+  /// plusieurs secondes, ou `null`. Jamais une alerte : une ligne.
+  String? get phraseReseau {
+    if (statut != StatutEleveSeance.connecte) return null;
+    if (!(reseau?.alerte ?? false)) return null;
+    return microOuvert
+        ? t.salle.reseau.onEntendMal(prenom: prenom)
+        : t.salle.reseau.entendMal(prenom: prenom);
+  }
 
   /// L'identifiant de profil de l'eleve (PHOTOS-2a) : sa photo vient du
   /// fournisseur unique, selon la regle du serveur. `null` en demonstration.
@@ -336,6 +370,7 @@ class SupportPageFixe {
     required this.hauteurCanonique,
     this.mention,
     this.cleImage,
+    this.ratioFixe = false,
   }) : assert(page >= 1 && page <= total),
        assert(largeurCanonique > 0 && hauteurCanonique > 0);
 
@@ -362,6 +397,13 @@ class SupportPageFixe {
   /// livree (demonstration ; fournisseur des pages a BR-1, TB-BR-19).
   final String? cleImage;
 
+  /// PARTAGE-GENERIQUE (11/11/2026) : vrai quand la page est une image aux
+  /// proportions fixes (livre de lecture, page d'un document) : en plein
+  /// ecran elle garde son ratio, centree, jamais etiree, pour que le pointeur
+  /// et les traits tombent au meme endroit de la page sur tous les appareils.
+  /// Faux (le Coran) : la page se compose sur toute la place donnee.
+  final bool ratioFixe;
+
   /// Le ratio largeur sur hauteur, fixe par les donnees.
   double get ratio => largeurCanonique / hauteurCanonique;
 
@@ -376,6 +418,7 @@ class SupportPageFixe {
     hauteurCanonique: hauteurCanonique,
     mention: mention,
     cleImage: cleImage,
+    ratioFixe: ratioFixe,
   );
 }
 
@@ -552,6 +595,8 @@ class VueSeance {
     this.echecPause,
     this.connexion = ConnexionSeance.enLigne,
     this.videoSuspendue = false,
+    this.reseauDansIle = false,
+    this.onVousEntendMal = false,
     this.enregistrementConfirme = true,
     this.visite,
     this.recitation = FileRecitation.vide,
@@ -560,7 +605,10 @@ class VueSeance {
     this.cameraEnseignantActive = true,
     this.cameraAutorisee = true,
     this.microBloque = false,
-    this.signalEnseignant = 3,
+    this.causeMicro,
+    this.microEnAttente = false,
+    this.recitantPrenom,
+    this.signalEnseignant,
     this.eleves = const <EleveSeance>[],
     this.elevesConnus = true,
     this.supports = const <SupportDisponible>[],
@@ -569,6 +617,7 @@ class VueSeance {
     this.notificationsNonLues = 0,
     this.groupeId,
     this.tutoiement,
+    this.releveTenu = false,
     this.affichage = AffichagePartage.avecNotes,
     this.supportPresente,
     this.tableauLibre,
@@ -689,6 +738,22 @@ class VueSeance {
   /// (images reduites ou coupees, la voix continue). La pilule d'etat le dit.
   final bool videoSuspendue;
 
+  /// RESEAU-ELEVES (defaut C6-4 du constat, 11/11/2026) : la salle porte une
+  /// ile ([PiluleEtatSalle]) toujours posee, et c'est elle, seule, qui dit le
+  /// reseau de la personne (reseau faible, reconnexion, « on vous entend
+  /// peut-etre mal ») ; le bandeau de secours ne le redit pas. Vrai dans
+  /// `/salle` la ou l'ile reste posee (eleve, enseignant sur ordinateur) ;
+  /// faux au telephone de l'enseignant (son ile ne vit que dans le profil
+  /// deplie), dans la galerie et les anciennes compositions : le bandeau
+  /// garde alors ces phrases, une seule fois aussi.
+  final bool reseauDansIle;
+
+  /// RESEAU-ELEVES : le lien de la personne devant l'ecran est mauvais
+  /// depuis plusieurs secondes (`tenueAvantAlerte`) et son micro est ouvert :
+  /// on l'entend peut-etre mal. Un indice du serveur de visio, pas une
+  /// preuve que la voix est deformee : la phrase dit « peut-etre ».
+  final bool onVousEntendMal;
+
   /// Le serveur a confirme l'enregistrement (I-1). Sans confirmation, aucune
   /// mention.
   final bool enregistrementConfirme;
@@ -715,9 +780,36 @@ class VueSeance {
   /// la feuille « micro bloque » et le micro reste montre coupe (P09.6).
   final bool microBloque;
 
+  /// SITUATIONS-GRAVES (11/11/2026) : pourquoi le micro ne s'ouvre pas, lu
+  /// dans le refus du navigateur au moment du geste (ou dans sa permission
+  /// avant l'entree) ; `null` tant que rien n'a echoue. La feuille « micro
+  /// bloque » dit alors la vraie cause et quoi faire (K-59).
+  final CauseMicroBloque? causeMicro;
+
+  /// MICRO-AVANT-ENSEIGNANT (directeur, 11/11/2026) : le serveur garde ferme
+  /// le micro (et la camera) de l'eleve tant que son enseignant n'est pas
+  /// dans la salle. Decide par le serveur ; ici, seulement ce qu'on en dit.
+  ///
+  /// RECITATION-MICRO-SEUL (directeur, 11/11/2026) : vrai aussi pendant la
+  /// recitation d'un camarade, ou le serveur ferme le micro SEUL. La camera
+  /// se lit a part ([cameraAutorisee]) : si le serveur la laisse, son bouton
+  /// reste dans le dock et marche.
+  final bool microEnAttente;
+
+  /// GESTES-POINTEUR (directeur, 11/11/2026) : le prenom du camarade qui
+  /// recite pendant que le serveur garde ferme le micro de cet eleve, ou
+  /// `null`. Il ne change que la phrase dite a la place du bouton du micro.
+  final String? recitantPrenom;
+
   /// Barres de signal de la video de l'enseignant (0 a 3), lues seulement
-  /// par l'enseignant.
-  final int signalEnseignant;
+  /// par l'enseignant ; `null` tant que la qualite du lien n'est pas connue.
+  ///
+  /// Constat de la salle, defaut R-1 (11/11/2026) : cette valeur valait 3 par
+  /// defaut et personne ne l'ecrivait ; les barres etaient donc toujours
+  /// pleines, meme sous « Reseau faible ». Elle vient maintenant de la qualite
+  /// que le serveur de visio mesure ([DepuisSalle.barresDuLien]) ; inconnue,
+  /// aucune barre n'est montree, plutot qu'un faux signal.
+  final int? signalEnseignant;
 
   /// Les inscrits : source unique du compteur, du panneau et du
   /// recapitulatif (I-6).
@@ -743,6 +835,11 @@ class VueSeance {
   /// presentation (MA1, deux axes). `null` : le choix par le role (la
   /// guidee tutoie).
   final bool? tutoiement;
+
+  /// RESEAU-PREUVE : vrai quand le serveur tient le releve de qualite de
+  /// connexion (`EnvoiReleve.tenuParLeServeur`). La phrase d'information du
+  /// releve ne s'affiche qu'alors (revue du garde-cap du 11/11/2026).
+  final bool releveTenu;
 
   // --- Supports et tableau (TB-1b, plan V2 §2, §8) : donnees pures ---
   //
@@ -850,11 +947,54 @@ class VueSeance {
 
   /// Le libelle de la pastille de connexion : « En ligne » tant que la room
   /// est connectee, meme en reseau faible (P06.5).
-  String get texteConnexion => videoSuspendue && connexion.etablie
-      ? t.salle.videoSuspendue
-      : connexion.etablie
-      ? t.salle.seance.enLigne
-      : t.salle.seance.reconnexion;
+  ///
+  /// RESEAU-ELEVES : avec l'ile ([reseauDansIle]), le mot dit la situation
+  /// de reseau entiere, une seule a la fois, la plus grave d'abord :
+  /// reconnexion, puis « on vous entend peut-etre mal » (la seule qui demande
+  /// un geste), puis l'image coupee, puis le reseau faible.
+  String get texteConnexion {
+    if (reseauDansIle) {
+      // L'echec et le hors ligne ont leur bloc ([titreEchec]) : l'ile garde
+      // alors son mot court, comme avant.
+      if (connexion == ConnexionSeance.reconnexion) {
+        return _guidee
+            ? t.salle.secours.reconnexionGuidee
+            : t.salle.secours.reconnexion;
+      }
+      if (!connexion.etablie) return t.salle.seance.reconnexion;
+      if (onVousEntendMal) return texteOnVousEntendMal;
+      if (videoSuspendue) return t.salle.videoSuspendue;
+      if (connexion == ConnexionSeance.reseauFaible) {
+        return _guidee
+            ? t.salle.secours.reseauFaibleGuidee
+            : t.salle.secours.reseauFaible;
+      }
+      return t.salle.seance.enLigne;
+    }
+    return videoSuspendue && connexion.etablie
+        ? t.salle.videoSuspendue
+        : connexion.etablie
+        ? t.salle.seance.enLigne
+        : t.salle.seance.reconnexion;
+  }
+
+  /// RESEAU-ELEVES : la phrase a celui qu'on entend peut-etre mal (K-59 : ce
+  /// qui se passe, quoi faire). Tutoiement pour l'enfant, forme courte en
+  /// Interface guidee.
+  String get texteOnVousEntendMal => _guidee
+      ? t.salle.reseau.onTEntendMalGuidee
+      : _tutoie
+      ? t.salle.reseau.onTEntendMal
+      : t.salle.reseau.onVousEntendMal;
+
+  /// RESEAU-ELEVES : une situation de reseau est dite par l'ile (le mot
+  /// d'etat n'est alors pas « En salle »). Connexion etablie seulement ; la
+  /// reconnexion, elle, se lit a `connexion.etablie`.
+  bool get reseauADire =>
+      connexion.etablie &&
+      (videoSuspendue ||
+          (reseauDansIle &&
+              (onVousEntendMal || connexion == ConnexionSeance.reseauFaible)));
 
   // --- Ecrans de secours (lot CL-7, P05, P06, P09 a P12) ---
 
@@ -863,23 +1003,34 @@ class VueSeance {
   /// prend le MEME bandeau, jamais un second (UX_REVIEW_TB, ERR-01).
   String? get texteBandeau => _texteConnexion ?? texteTableau;
 
-  String? get _texteConnexion => switch (connexion) {
-    ConnexionSeance.reseauFaible =>
-      _guidee
-          ? t.salle.secours.reseauFaibleGuidee
-          : t.salle.secours.reseauFaible,
-    ConnexionSeance.reconnexion =>
-      _guidee ? t.salle.secours.reconnexionGuidee : t.salle.secours.reconnexion,
-    ConnexionSeance.enLigne ||
-    ConnexionSeance.retablie ||
-    ConnexionSeance.echec ||
-    ConnexionSeance.horsLigne => null,
-  };
+  String? get _texteConnexion => reseauDansIle
+      ? null
+      // RESEAU-ELEVES : sans ile posee, c'est le bandeau qui dit a celui
+      // qu'on entend peut-etre mal ce qui se passe et quoi faire.
+      : onVousEntendMal && connexion.etablie
+      ? texteOnVousEntendMal
+      : switch (connexion) {
+          ConnexionSeance.reseauFaible =>
+            _guidee
+                ? t.salle.secours.reseauFaibleGuidee
+                : t.salle.secours.reseauFaible,
+          ConnexionSeance.reconnexion =>
+            _guidee
+                ? t.salle.secours.reconnexionGuidee
+                : t.salle.secours.reconnexion,
+          ConnexionSeance.enLigne ||
+          ConnexionSeance.retablie ||
+          ConnexionSeance.echec ||
+          ConnexionSeance.horsLigne => null,
+        };
 
   /// Le sous-texte du bandeau : guidee en reseau faible ; TB-11b, la suite
   /// de l'etat du tableau quand c'est lui que le bandeau dit.
   String? get sousTexteBandeau {
-    if (_guidee && connexion == ConnexionSeance.reseauFaible) {
+    if (_guidee &&
+        !reseauDansIle &&
+        !onVousEntendMal &&
+        connexion == ConnexionSeance.reseauFaible) {
       return t.salle.secours.reseauFaibleGuideeSuite;
     }
     return bandeauDitTableau ? _suiteTableau : null;
@@ -1036,13 +1187,44 @@ class VueSeance {
   /// Le statut non interactif de l'eleve standard sans camera (P10.3), ou
   /// `null`. Guidee : ni bouton ni explication ; enseignant : sans objet.
   String? get texteCameraInterdite =>
-      role == RoleSeance.eleve && !cameraAutorisee && optionQS1
+      role == RoleSeance.eleve &&
+          !cameraAutorisee &&
+          optionQS1 &&
+          // En attente de l'enseignant, la camera est fermee par cette
+          // attente, pas par le profil : la phrase du profil serait fausse.
+          !microEnAttente
       ? t.salle.secours.cameraInterdite
       : null;
 
+  /// MICRO-AVANT-ENSEIGNANT (directeur, 11/11/2026) : la phrase rendue a la
+  /// place du bouton du micro tant que l'enseignant n'est pas dans la salle,
+  /// ou `null`. Un bouton qui ne peut pas aboutir n'est pas rendu, une phrase
+  /// explique. Courte en Interface guidee ; tutoiement selon l'age.
+  String? get texteMicroEnAttente {
+    if (!microEnAttente || _enseignant) return null;
+    // GESTES-POINTEUR : le micro est ferme par la recitation d'un camarade,
+    // pas par l'attente de l'enseignant ; la phrase dit la vraie raison.
+    if (recitantPrenom case final String prenom) {
+      if (_guidee) return t.salle.gestes.microFermeGuidee(prenom: prenom);
+      return _tutoie
+          ? t.salle.gestes.microFermeTutoie(quePrenom: queDevant(prenom))
+          : t.salle.gestes.microFerme(quePrenom: queDevant(prenom));
+    }
+    if (_guidee) return t.salle.microAttente.guidee;
+    return _tutoie
+        ? t.salle.microAttente.phraseTutoie
+        : t.salle.microAttente.phrase;
+  }
+
   /// Le corps de la feuille « micro bloque » (P09).
-  String get texteMicroBloque =>
-      _guidee ? t.salle.secours.microBloqueGuidee : t.salle.secours.microBloque;
+  ///
+  /// SITUATIONS-GRAVES (11/11/2026) : quand le refus du navigateur est connu
+  /// ([causeMicro]), la feuille dit la vraie cause et le geste a faire.
+  String get texteMicroBloque => switch (causeMicro) {
+    final CauseMicroBloque cause => texteCauseMicro(cause),
+    null =>
+      _guidee ? t.salle.secours.microBloqueGuidee : t.salle.secours.microBloque,
+  };
 
   /// Le compte en haut a droite : TOUJOURS celui de la personne devant
   /// l'ecran (I-9). L'enseignant ne voit jamais le compte d'un eleve.
@@ -1260,7 +1442,12 @@ class VueSeance {
             trait.ancrage.resourceVersionId == range.version,
       )
       .length;
-  bool get voitSignalVideo => _enseignant;
+  bool get voitSignalVideo => _enseignant && signalEnseignant != null;
+
+  /// CHRONO-ETAT (11/11/2026) : la personne conduit la seance, c'est elle
+  /// qui tient l'heure. Son chrono prend les teintes d'urgence et sonne ;
+  /// celui des autres reste sobre et muet.
+  bool get conduitLaSeance => _enseignant;
 
   /// Le rail de navigation enseignant : desktop seulement (image CLV-06).
   bool voitRail(Gabarit gabarit) => _enseignant && gabarit == Gabarit.desktop;
@@ -1555,6 +1742,8 @@ class VueSeance {
     String? echecPause,
     ConnexionSeance? connexion,
     bool? videoSuspendue,
+    bool? reseauDansIle,
+    bool? onVousEntendMal,
     VisiteSeance? visite,
     bool sansVisite = false,
     FileRecitation? recitation,
@@ -1564,10 +1753,14 @@ class VueSeance {
     bool? enregistrementConfirme,
     bool? cameraAutorisee,
     bool? microBloque,
+    CauseMicroBloque? causeMicro,
+    bool? microEnAttente,
+    String? recitantPrenom,
     List<EleveSeance>? eleves,
     FinSeance? fin,
     PanneauOuvert? panneau,
     bool? tutoiement,
+    bool? releveTenu,
     AffichagePartage? affichage,
     SupportPageFixe? supportPresente,
     bool sansSupportPresente = false,
@@ -1597,6 +1790,8 @@ class VueSeance {
     echecPause: echecPause ?? this.echecPause,
     connexion: connexion ?? this.connexion,
     videoSuspendue: videoSuspendue ?? this.videoSuspendue,
+    reseauDansIle: reseauDansIle ?? this.reseauDansIle,
+    onVousEntendMal: onVousEntendMal ?? this.onVousEntendMal,
     enregistrementConfirme:
         enregistrementConfirme ?? this.enregistrementConfirme,
     visite: sansVisite ? null : visite ?? this.visite,
@@ -1606,6 +1801,9 @@ class VueSeance {
     cameraEnseignantActive: cameraEnseignantActive,
     cameraAutorisee: cameraAutorisee ?? this.cameraAutorisee,
     microBloque: microBloque ?? this.microBloque,
+    causeMicro: causeMicro ?? this.causeMicro,
+    microEnAttente: microEnAttente ?? this.microEnAttente,
+    recitantPrenom: recitantPrenom ?? this.recitantPrenom,
     signalEnseignant: signalEnseignant,
     eleves: eleves ?? this.eleves,
     elevesConnus: elevesConnus,
@@ -1615,6 +1813,7 @@ class VueSeance {
     notificationsNonLues: notificationsNonLues,
     groupeId: groupeId,
     tutoiement: tutoiement ?? this.tutoiement,
+    releveTenu: releveTenu ?? this.releveTenu,
     affichage: affichage ?? this.affichage,
     supportPresente: sansSupportPresente
         ? null
@@ -1633,3 +1832,54 @@ class VueSeance {
     supportRecu: supportRecu ?? this.supportRecu,
   );
 }
+
+/// SITUATIONS-GRAVES (directeur, 11/11/2026, defaut n° 3 du releve) :
+/// pourquoi le navigateur n'ouvre pas le micro.
+enum CauseMicroBloque {
+  /// La permission du micro est refusee (par la personne ou le navigateur).
+  refuse,
+
+  /// Le micro est deja pris par une autre application ou une autre fenetre.
+  occupe,
+
+  /// Aucun micro n'est trouve sur l'appareil.
+  absent,
+
+  /// Une autre raison, que le navigateur ne nomme pas clairement.
+  autre,
+}
+
+/// La cause probable d'un refus du micro, lue dans la phrase du navigateur
+/// (`getUserMedia`), comme pour la camera (`causeEchecCamera`, D14).
+CauseMicroBloque causeEchecMicro(String erreur) {
+  bool dit(List<String> mots) => mots.any(erreur.contains);
+  if (dit(<String>[
+    'NotAllowedError',
+    'PermissionDenied',
+    'Permission',
+    'permission',
+    'SecurityError',
+  ])) {
+    return CauseMicroBloque.refuse;
+  }
+  if (dit(<String>[
+    'NotReadableError',
+    'TrackStartError',
+    'Could not start',
+    'AbortError',
+  ])) {
+    return CauseMicroBloque.occupe;
+  }
+  if (dit(<String>['NotFoundError', 'DevicesNotFound', 'not found'])) {
+    return CauseMicroBloque.absent;
+  }
+  return CauseMicroBloque.autre;
+}
+
+/// Ce qui se passe et quoi faire, en mots simples (K-59).
+String texteCauseMicro(CauseMicroBloque cause) => switch (cause) {
+  CauseMicroBloque.refuse => t.salle.situations.microRefuse,
+  CauseMicroBloque.occupe => t.salle.situations.microOccupe,
+  CauseMicroBloque.absent => t.salle.situations.microAbsent,
+  CauseMicroBloque.autre => t.salle.situations.microAutre,
+};

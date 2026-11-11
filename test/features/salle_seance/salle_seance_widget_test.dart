@@ -188,10 +188,21 @@ void main() {
     await tester.tap(find.byTooltip('Quitter'));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 400));
+    // SORTIE-SALLE (11/11/2026) : la question dit la consequence avant le
+    // choix, et propose de reduire la salle, de quitter ou de rester.
     expect(
-      find.text('Vous pourrez revenir si la séance est encore ouverte.'),
+      find.byKey(const ValueKey<String>('sortie-consequence')),
       findsOneWidget,
     );
+    expect(
+      find.byKey(const ValueKey<String>('sortie-reduire')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey<String>('sortie-quitter')),
+      findsOneWidget,
+    );
+    expect(find.byKey(const ValueKey<String>('sortie-rester')), findsOneWidget);
   });
 
   testWidgets('agrandi : le bouton devient « Reduire »', (

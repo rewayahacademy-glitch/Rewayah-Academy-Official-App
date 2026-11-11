@@ -20,3 +20,11 @@ typedef SignalRappel = void Function();
 final Provider<SignalRappel> signalRappelProvider = Provider<SignalRappel>(
   (Ref _) => plateforme.signalerRappel,
 );
+
+/// CHRONO-ETAT (directeur, 11/11/2026) : le signal sonore du chrono, cinq
+/// minutes avant la fin et a la fin prevue, **chez qui conduit la seance
+/// seulement** (un bip chez l'eleve pourrait tomber au milieu d'un verset).
+/// Les tests le remplacent par un compteur.
+final Provider<SignalRappel> signalChronoProvider = Provider<SignalRappel>(
+  (Ref _) => plateforme.signalerChrono,
+);
