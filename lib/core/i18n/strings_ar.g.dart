@@ -4026,7 +4026,7 @@ class _Traductions$enseignant$cahier$ar extends Traductions$enseignant$cahier$fr
 	@override String statutEnRetard({required Object nombre}) => 'المتأخرون ⁨${nombre}⁩';
 	@override String get performance => 'الأداء';
 	@override String get faiblesses => 'نقاط الضعف';
-	@override String get niveauARevoir => 'للمراجعة';
+	@override String get niveauARevoir => 'يحتاج إلى تقوية';
 	@override String get niveauEnProgres => 'في تقدم';
 	@override String get niveauAcquis => 'مكتسَب';
 	@override String get niveauMaitrise => 'متقَن';
@@ -5445,9 +5445,9 @@ class _Traductions$admin$evaluations$ar extends Traductions$admin$evaluations$fr
 	@override String get statutPlanifiee => 'مجدول';
 	@override String get statutRealisee => 'منجز';
 	@override String get statutAnnulee => 'ملغى';
-	@override String get resultatReussi => 'ناجح';
-	@override String get resultatEchec => 'راسب';
-	@override String get resultatARevoir => 'للمراجعة';
+	@override String get resultatReussi => 'اعتُمدت المرحلة';
+	@override String get resultatEchec => 'يلزم تحقّق جديد';
+	@override String get resultatARevoir => 'بعض النقاط تحتاج إلى تقوية';
 	@override String get planifier => 'جدولة تقييم';
 	@override String get planifierTitre => 'جدولة تقييم';
 	@override String get champNiveau => 'المستوى المقيَّم';
@@ -25462,7 +25462,7 @@ extension on TraductionsAr {
 			'enseignant.cahier.statutEnRetard' => ({required Object nombre}) => 'المتأخرون ⁨${nombre}⁩',
 			'enseignant.cahier.performance' => 'الأداء',
 			'enseignant.cahier.faiblesses' => 'نقاط الضعف',
-			'enseignant.cahier.niveauARevoir' => 'للمراجعة',
+			'enseignant.cahier.niveauARevoir' => 'يحتاج إلى تقوية',
 			'enseignant.cahier.niveauEnProgres' => 'في تقدم',
 			'enseignant.cahier.niveauAcquis' => 'مكتسَب',
 			'enseignant.cahier.niveauMaitrise' => 'متقَن',
@@ -28866,9 +28866,9 @@ extension on TraductionsAr {
 			'admin.evaluations.statutPlanifiee' => 'مجدول',
 			'admin.evaluations.statutRealisee' => 'منجز',
 			'admin.evaluations.statutAnnulee' => 'ملغى',
-			'admin.evaluations.resultatReussi' => 'ناجح',
-			'admin.evaluations.resultatEchec' => 'راسب',
-			'admin.evaluations.resultatARevoir' => 'للمراجعة',
+			'admin.evaluations.resultatReussi' => 'اعتُمدت المرحلة',
+			'admin.evaluations.resultatEchec' => 'يلزم تحقّق جديد',
+			'admin.evaluations.resultatARevoir' => 'بعض النقاط تحتاج إلى تقوية',
 			'admin.evaluations.planifier' => 'جدولة تقييم',
 			'admin.evaluations.planifierTitre' => 'جدولة تقييم',
 			'admin.evaluations.champNiveau' => 'المستوى المقيَّم',
