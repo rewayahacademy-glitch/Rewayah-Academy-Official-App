@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart' show SemanticsNode;
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/theme/app_mouvement.dart';
 import 'package:rewayah_academy/core/widgets/avatar_nom.dart';
 import 'package:rewayah_academy/core/widgets/pays_enseignant.dart';
 import 'package:rewayah_academy/features/profil_enseignant/declaration_choix.dart';
@@ -31,8 +32,11 @@ Future<void> _monter(
   );
   await stabiliser(tester);
   // GOUTTE D'HUILE (11/11/2026) : a la premiere apparition, le contenu de
-  // l'Accueil famille tombe (380 ms) ; on mesure une fois la chute finie.
-  await tester.pump(const Duration(seconds: 1));
+  // l'Accueil famille tombe (`AppMouvement.chuteContenu`) ; on mesure une fois
+  // la chute reellement finie, duree tiree du jeton : si elle change, le test
+  // suit, il n'est pas affaibli.
+  await tester.pump(AppMouvement.chuteContenu);
+  await tester.pump(const Duration(milliseconds: 16));
   if (e.toucher != null) {
     await tester.tap(find.text(e.toucher!).first);
     await stabiliser(tester);
