@@ -10,8 +10,10 @@
 //    mise en page).
 // 2. Entre le profil et son contenu : une goutte tombe du rond choisi et
 //    s'etale en devenant la carte de contenu (un cou entre le rond et le bord
-//    haut du contenu, puis rupture). Au changement de profil, l'ancien contenu
-//    est d'abord aspire vers son rond, puis le nouveau tombe du nouveau rond.
+//    haut du contenu, puis rupture). Le contenu n'est JAMAIS retarde
+//    (DECISION-FLUIDITE-2026-11-07) : au changement de profil, le nouveau
+//    contenu est la tout de suite (des que ses donnees le sont) et la goutte se
+//    joue sur lui.
 //
 // Regles : « reduire les animations » = changement immediat, sans goutte ;
 // aucun retard au toucher (la selection est prise tout de suite, c'est
@@ -96,17 +98,16 @@ class GoutteProfils extends StatefulWidget {
     );
   }
 
-  /// La chute ou l'aspiration du contenu en cours au-dessus de [context], ou
-  /// `null` au repos (tests) : l'avancement de 0 a 1, et si c'est une
-  /// aspiration.
+  /// La chute du contenu en cours au-dessus de [context], ou `null` au repos
+  /// (tests) : l'avancement de 0 a 1.
   @visibleForTesting
-  static ({double avancement, bool aspiration})? chuteDe(BuildContext context) {
+  static ({double avancement})? chuteDe(BuildContext context) {
     final _EtatGoutteProfils? e = context
         .getInheritedWidgetOfExactType<_PorteeGoutte>()
         ?.etat;
     final _ChuteEnCours? c = e?._chute;
     if (c == null) return null;
-    return (avancement: c.valeur(), aspiration: c.aspiration);
+    return (avancement: c.valeur());
   }
 
   /// Pour les tests : le haut du disque d'ou part le cou du contenu du profil
@@ -131,11 +132,10 @@ class GoutteProfils extends StatefulWidget {
   State<GoutteProfils> createState() => _EtatGoutteProfils();
 }
 
-/// Le contenu qui tombe ou est aspire, vu par la portee pour peindre son cou.
+/// Le contenu qui tombe, vu par la portee pour peindre son cou.
 class _ChuteEnCours {
   _ChuteEnCours({
     required this.valeur,
-    required this.aspiration,
     required this.idRond,
     required this.cleContenu,
     required this.ancre,
@@ -144,9 +144,8 @@ class _ChuteEnCours {
 
   /// L'avancement, de 0 a 1.
   final double Function() valeur;
-  final bool aspiration;
 
-  /// Le rond d'ou le contenu tombe, ou vers lequel il est aspire.
+  /// Le rond d'ou le contenu tombe.
   final String idRond;
   final GlobalKey cleContenu;
 
@@ -185,10 +184,6 @@ class _EtatGoutteProfils extends State<GoutteProfils>
 
   late final Listenable _tout = Listenable.merge(<Listenable>[_p, _tick]);
 
-  /// Vrai tant que le cou entre deux ronds n'est pas rompu : le contenu
-  /// n'engage pas sa chute avant (une seule goutte a la fois).
-  final ValueNotifier<bool> occupe = ValueNotifier<bool>(false);
-
   bool _actif = false;
   bool _rompu = false;
   bool _arrive = false;
@@ -218,10 +213,7 @@ class _EtatGoutteProfils extends State<GoutteProfils>
       _finir();
       return;
     }
-    // Occupe des maintenant : le contenu, qui decide dans la meme image,
-    // attend la rupture du cou. Les ronds ne sont mesurables qu'apres la mise
-    // en page de la selection.
-    occupe.value = true;
+    // Les ronds ne sont mesurables qu'apres la mise en page de la selection.
     WidgetsBinding.instance.addPostFrameCallback((_) => _lancer(de, vers));
   }
 
@@ -229,10 +221,8 @@ class _EtatGoutteProfils extends State<GoutteProfils>
     if (!mounted) return;
     // Une seule goutte : la precedente s'acheve sur-le-champ.
     if (_actif) _finir();
-    occupe.value = true;
     if (_disque(de) == null || _disque(vers) == null) {
-      // Un rond hors ecran : pas de cou, le contenu peut commencer.
-      occupe.value = false;
+      // Un rond hors ecran : pas de cou.
       return;
     }
     _de = de;
@@ -241,7 +231,6 @@ class _EtatGoutteProfils extends State<GoutteProfils>
     _arrive = false;
     _fondu.value = 0;
     _p.value = 0;
-    occupe.value = true;
     setState(() => _actif = true);
     _p.animateWith(SpringSimulation(AppMouvement.ressortGouttePro, 0, 1, 0));
   }
@@ -254,7 +243,6 @@ class _EtatGoutteProfils extends State<GoutteProfils>
       // Le cou se rompt : les deux ronds reprennent leur forme d'un petit
       // rebond, et le rond choisi prend la selection.
       _rompu = true;
-      occupe.value = false;
       _rebondir(_rebondQuitte);
       _rebondir(_rebondChoisi);
       _fondu.forward(from: 0);
@@ -282,7 +270,6 @@ class _EtatGoutteProfils extends State<GoutteProfils>
   void _finir() {
     _p.stop();
     _fondu.value = 1;
-    occupe.value = false;
     if (_actif && mounted) setState(() => _actif = false);
     _actif = false;
   }
@@ -347,7 +334,6 @@ class _EtatGoutteProfils extends State<GoutteProfils>
       c.dispose();
     }
     _tick.dispose();
-    occupe.dispose();
     super.dispose();
   }
 
@@ -477,9 +463,8 @@ class RondGoutte extends StatelessWidget {
 }
 
 /// Le contenu d'un profil : il tombe du rond choisi et s'etale en devenant la
-/// carte ; au changement de profil, l'ancien contenu est d'abord aspire vers
-/// son rond. Hors portee, ou sous « reduire les animations », l'enfant tel
-/// quel.
+/// carte, tout de suite, au changement de profil. Hors portee, ou sous
+/// « reduire les animations », l'enfant tel quel.
 ///
 /// [profilId] est le profil dont [child] montre le contenu : il ne change que
 /// quand les nouvelles donnees sont la (la porte unique de l'Accueil), jamais
@@ -498,35 +483,15 @@ class ContenuGoutte extends StatefulWidget {
   State<ContenuGoutte> createState() => _EtatContenuGoutte();
 }
 
-/// `attente` : l'ancien contenu reste affiche, immobile, tant qu'un cou entre
-/// deux ronds tient (une seule goutte a la fois).
-enum _Phase { repos, attente, aspire, tombe }
+enum _Phase { repos, tombe }
 
 class _EtatContenuGoutte extends State<ContenuGoutte>
     with SingleTickerProviderStateMixin {
   late final AnimationController _c = AnimationController(vsync: this);
   final GlobalKey _cleContenu = GlobalKey();
   _Phase _phase = _Phase.repos;
-  Widget? _ancien;
-  String? _idAncien;
-  bool _initialise = false;
   int _generation = 0;
   _EtatGoutteProfils? _scope;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    if (_initialise) return;
-    _initialise = true;
-    // La premiere apparition est aussi une chute : la goutte tombe du rond
-    // choisi (sans portee ou en mouvement reduit, rien).
-    if (GoutteProfils._portee(context) != null &&
-        !AppMouvement.mouvementReduit(context)) {
-      _phase = _Phase.tombe;
-      _c.value = 0;
-      WidgetsBinding.instance.addPostFrameCallback((_) => _tomber());
-    }
-  }
 
   @override
   void didUpdateWidget(ContenuGoutte ancien) {
@@ -537,72 +502,31 @@ class _EtatContenuGoutte extends State<ContenuGoutte>
       _terminer();
       return;
     }
-    // L'ancien contenu reste affiche le temps d'etre aspire vers son rond.
-    final bool enCours = _phase == _Phase.aspire || _phase == _Phase.attente;
-    _ancien = enCours ? _ancien : ancien.child;
-    _idAncien = enCours ? _idAncien : ancien.profilId;
-    _aspirer();
+    // DECISION-FLUIDITE (07/11/2026) : changer de profil est une action
+    // courante, le nouveau contenu est la tout de suite ; la goutte se joue
+    // SUR lui, jamais avant. Il ne vient que quand ses donnees sont la (la
+    // porte unique de l'Accueil) ; la lecture, elle, part au toucher.
+    _tomber();
   }
 
   void _terminer() {
     _generation++;
     _c.stop();
-    _ancien = null;
-    _idAncien = null;
     if (_phase != _Phase.repos) setState(() => _phase = _Phase.repos);
+    _depublier();
   }
 
-  void _aspirer() {
-    final int g = ++_generation;
-    // Une seule goutte a la fois : l'aspiration attend la rupture du cou entre
-    // les ronds (l'ancien contenu reste affiche, immobile).
-    setState(() => _phase = _Phase.attente);
-    _quandLibre(g, () {
-      setState(() => _phase = _Phase.aspire);
-      _c.duration = AppMouvement.aspirationContenu;
-      _c.forward(from: 0).whenComplete(() {
-        if (mounted && g == _generation) _tomber();
-      });
-      _publier();
-    });
-  }
-
-  /// Appelle [fait] des qu'aucun cou entre deux ronds n'est en cours, si la
-  /// generation [g] est encore la courante.
-  void _quandLibre(int g, VoidCallback fait) {
-    final _EtatGoutteProfils? e = GoutteProfils._portee(context)?.etat;
-    if (e == null || !e.occupe.value) {
-      fait();
-      return;
-    }
-    void attendre() {
-      if (e.occupe.value) return;
-      e.occupe.removeListener(attendre);
-      if (mounted && g == _generation) fait();
-    }
-
-    e.occupe.addListener(attendre);
-  }
-
-  /// La chute commence quand aucun cou entre deux ronds n'est en cours.
+  /// La chute : le contenu, deja en place, s'etale du rond choisi.
   void _tomber() {
-    if (!mounted) return;
-    final int attendue = _generation;
-    _quandLibre(attendue, () {
-      final int g = ++_generation;
-      setState(() {
-        _ancien = null;
-        _idAncien = null;
-        _phase = _Phase.tombe;
-      });
-      _c.duration = AppMouvement.chuteContenu;
-      _c.forward(from: 0).whenComplete(() {
-        if (!mounted || g != _generation) return;
-        setState(() => _phase = _Phase.repos);
-        _depublier();
-      });
-      _publier();
+    final int g = ++_generation;
+    setState(() => _phase = _Phase.tombe);
+    _c.duration = AppMouvement.chuteContenu;
+    _c.forward(from: 0).whenComplete(() {
+      if (!mounted || g != _generation) return;
+      setState(() => _phase = _Phase.repos);
+      _depublier();
     });
+    _publier();
   }
 
   /// Dit a la portee quel cou peindre.
@@ -610,12 +534,9 @@ class _EtatContenuGoutte extends State<ContenuGoutte>
     final _EtatGoutteProfils? e = GoutteProfils._portee(context)?.etat;
     if (e == null) return;
     _scope = e;
-    final bool aspire = _phase == _Phase.aspire;
-    final String id = aspire ? (_idAncien ?? widget.profilId) : widget.profilId;
     e._chute = _ChuteEnCours(
       valeur: () => _c.value,
-      aspiration: aspire,
-      idRond: id,
+      idRond: widget.profilId,
       cleContenu: _cleContenu,
       ancre: _ancre,
       echelle: _echelle,
@@ -636,10 +557,7 @@ class _EtatContenuGoutte extends State<ContenuGoutte>
   Offset _ancre() {
     final _EtatGoutteProfils? e = GoutteProfils._portee(context)?.etat;
     final Rect? contenu = e?._rect(_cleContenu);
-    final String id = _phase == _Phase.aspire
-        ? (_idAncien ?? widget.profilId)
-        : widget.profilId;
-    final ({Offset centre, double rayon})? rond = e?._disque(id);
+    final ({Offset centre, double rayon})? rond = e?._disque(widget.profilId);
     if (contenu == null || rond == null) return Offset.zero;
     return Offset(
       rond.centre.dx.clamp(contenu.left, contenu.right).toDouble(),
@@ -647,22 +565,13 @@ class _EtatContenuGoutte extends State<ContenuGoutte>
     );
   }
 
-  double _echelle() {
-    final double t = _c.value;
-    return switch (_phase) {
-      _Phase.aspire => _lerp(
-        1,
-        AppMouvement.echelleGouttePro,
-        AppMouvement.aspiration.transform(t),
-      ),
-      _Phase.tombe => _lerp(
-        AppMouvement.echelleGouttePro,
-        1,
-        AppMouvement.entree.transform(t),
-      ),
-      _Phase.repos || _Phase.attente => 1,
-    };
-  }
+  double _echelle() => _phase == _Phase.tombe
+      ? _lerp(
+          AppMouvement.echelleGouttePro,
+          1,
+          AppMouvement.entree.transform(_c.value),
+        )
+      : 1;
 
   static double _lerp(double a, double b, double t) => a + (b - a) * t;
 
@@ -681,26 +590,17 @@ class _EtatContenuGoutte extends State<ContenuGoutte>
   Widget build(BuildContext context) {
     final _PorteeGoutte? portee = GoutteProfils._portee(context);
     if (portee == null) return widget.child;
-    final bool ancienAffiche =
-        (_phase == _Phase.aspire || _phase == _Phase.attente) &&
-        _ancien != null;
-    final Widget corps = ancienAffiche
-        ? IgnorePointer(child: _ancien)
-        : widget.child;
     return KeyedSubtree(
       key: _cleContenu,
       child: AnimatedBuilder(
         animation: _c,
-        child: corps,
+        child: widget.child,
         builder: (BuildContext _, Widget? enfant) {
-          if (_phase == _Phase.repos || _phase == _Phase.attente) {
-            return enfant!;
-          }
+          if (_phase == _Phase.repos) return enfant!;
           final double t = _c.value.clamp(0, 1).toDouble();
           final double echelle = _echelle();
-          final double opacite = _phase == _Phase.aspire
-              ? 1 - math.pow(t, 1.5).toDouble()
-              : (t / 0.5).clamp(0, 1).toDouble();
+          // Il apparait tout de suite : plein des la moitie de la chute.
+          final double opacite = (t / 0.5).clamp(0, 1).toDouble();
           // Le contenu reste accroche a l'aplomb du rond, par son bord haut.
           final Rect? r = portee.etat._rect(_cleContenu);
           final Offset a = _ancre();
@@ -789,16 +689,10 @@ class _PeintreGoutte extends CustomPainter {
     final ({Offset centre, double rayon}) rond =
         etat._departContenu(c.idRond) ?? rondDuProfil;
     final double t = c.valeur().clamp(0, 1).toDouble();
-    // Le cou : a la chute, plein puis de plus en plus fin jusqu'a la rupture ;
-    // a l'aspiration, il se forme a mesure que le contenu approche du rond.
-    final double v;
-    if (c.aspiration) {
-      v = _fin + (_plein - _fin) * t;
-    } else {
-      const double rupture = AppMouvement.ruptureChuteContenu;
-      if (t >= rupture) return;
-      v = _plein - (_plein - _fin) * (t / rupture);
-    }
+    // Le cou : plein puis de plus en plus fin jusqu'a la rupture.
+    const double rupture = AppMouvement.ruptureChuteContenu;
+    if (t >= rupture) return;
+    final double v = _plein - (_plein - _fin) * (t / rupture);
     // Le contenu, a l'echelle courante, accroche par son bord haut a l'aplomb
     // du rond.
     final double e = c.echelle();

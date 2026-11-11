@@ -114,8 +114,7 @@ void main() {
     );
     final int contenuPendant = contenu[0] - contenuDebut;
     final int restePendant = reste[0] - resteDebut;
-    // Le contenu est reconstruit a la bascule de phase (aspire, tombe,
-    // repos), jamais a chaque image ; le voisin jamais.
+    // Le contenu est reconstruit a la bascule de phase (tombe, repos), jamais a chaque image ; le voisin jamais.
     expect(
       contenuPendant,
       lessThanOrEqualTo(6),

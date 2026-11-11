@@ -2,8 +2,8 @@
 // le garde-cap) : planches en plusieurs temps.
 //   - aller : d'un profil a l'autre, le cou entre les deux ronds ;
 //   - retour : le detachement part du profil qu'on quitte ;
-//   - contenu : l'ancien contenu aspire vers son rond, puis le nouveau qui
-//     tombe du nouveau rond.
+//   - contenu : le nouveau contenu est la tout de suite (jamais retarde), et la
+//     goutte tombe du nouveau rond sur lui.
 // Clair, sombre et arabe (miroir), 390 de large, rangee de profils et cartes de
 // contenu fictives.
 //
@@ -100,8 +100,7 @@ class _Hote {
 
   ({double avancement, bool rompu, String de, String vers})? get goutte =>
       GoutteProfils.goutteDe(contexte!);
-  ({double avancement, bool aspiration})? get chute =>
-      GoutteProfils.chuteDe(contexte!);
+  ({double avancement})? get chute => GoutteProfils.chuteDe(contexte!);
 }
 
 /// Avance le temps, 2 ms a la fois, jusqu'a ce que [arret] soit vrai.
@@ -265,7 +264,7 @@ void main() {
           await rangeeAller(vers: 'a', suffixe: 'retour'),
         );
 
-        // Le contenu : l'ancien aspire, puis le nouveau qui tombe.
+        // Le contenu : le nouveau est la tout de suite, la goutte se joue sur lui.
         final List<String> contenu = <String>[];
         Future<void> prendreContenu(String temps) async {
           contenu.add(await capturer(tester, 'goutte_contenu_${nom}_$temps'));
@@ -276,17 +275,9 @@ void main() {
         h.affiche.value = 'b';
         await tester.pump();
         await tester.pump();
-        await _jusqua(
-          tester,
-          () => (h.chute?.aspiration ?? false) && h.chute!.avancement >= 0.5,
-        );
-        await prendreContenu('2_aspire');
-        await _jusqua(
-          tester,
-          () =>
-              (h.chute != null && !h.chute!.aspiration) &&
-              h.chute!.avancement >= 0.08,
-        );
+        // Le contenu est la tout de suite ; la goutte se joue sur lui.
+        await prendreContenu('2_toucher');
+        await _jusqua(tester, () => (h.chute?.avancement ?? 1) >= 0.12);
         await prendreContenu('3_tombe_debut');
         await _jusqua(tester, () => (h.chute?.avancement ?? 1) >= 0.3);
         await prendreContenu('4_tombe_cou');

@@ -189,10 +189,6 @@ abstract final class AppMouvement {
   /// Tout ce qui sort.
   static const Curve sortie = Curves.easeInCubic;
 
-  /// L'aspiration du contenu vers son rond (goutte d'huile des profils) : il
-  /// part doucement puis s'accelere.
-  static const Curve aspiration = Curves.easeIn;
-
   /// Reserve aux rotations continues et aux barres de progression
   /// indeterminees. Interdit partout ailleurs.
   static const Curve progressionIndeterminee = Curves.linear;
@@ -264,9 +260,6 @@ abstract final class AppMouvement {
   /// rond choisi reprennent leur forme d'un petit rebond, et le rond choisi
   /// prend la selection.
   static const double ruptureGouttePro = 0.9;
-
-  /// L'aspiration de l'ancien contenu vers son rond (changement de profil).
-  static const Duration aspirationContenu = Duration(milliseconds: 180);
 
   /// La chute du contenu depuis le rond choisi : la goutte s'etale en devenant
   /// la carte.

@@ -73,7 +73,7 @@ class _Hote {
 
   ({double avancement, bool rompu, String de, String vers})? get goutte =>
       GoutteProfils.goutteDe(contexteContenu!);
-  ({double avancement, bool aspiration})? get chute =>
+  ({double avancement})? get chute =>
       GoutteProfils.chuteDe(contexteContenu!);
 }
 
@@ -212,22 +212,19 @@ void main() {
   });
 
   group('du profil a son contenu', () {
-    testWidgets('la premiere apparition : le contenu tombe du rond choisi', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('la premiere apparition : le contenu est la tout de suite, '
+        'sans chute', (WidgetTester tester) async {
       final _Hote h = _Hote();
       await tester.pumpWidget(h.monter());
       await tester.pump();
-      await tester.pump();
-      expect(h.chute, isNotNull);
-      expect(h.chute!.aspiration, isFalse);
-      await _avancer(tester, 700);
       expect(h.chute, isNull);
       expect(find.text('contenu a'), findsOneWidget);
     });
 
-    testWidgets('changement de profil : l ancien contenu est aspire, puis le '
-        'nouveau tombe', (WidgetTester tester) async {
+    testWidgets('changement de profil : le nouveau contenu est la dans la '
+        'meme image que ses donnees, la chute se joue sur lui', (
+      WidgetTester tester,
+    ) async {
       final _Hote h = _Hote();
       await tester.pumpWidget(h.monter());
       await _avancer(tester, 900);
@@ -235,32 +232,21 @@ void main() {
 
       h.selection.value = 'b';
       await _avancer(tester, 1200);
-      // Les donnees du nouveau profil arrivent : le contenu change.
+      // Les donnees du nouveau profil arrivent : le contenu change, tout de
+      // suite, sans attendre ni cou ni aspiration.
       h.affiche.value = 'b';
       await tester.pump();
-      await tester.pump();
-      expect(h.chute, isNotNull);
-      expect(h.chute!.aspiration, isTrue);
-      // L'ancien contenu reste affiche le temps de l'aspiration.
-      expect(find.text('contenu a'), findsOneWidget);
-      expect(find.text('contenu b'), findsNothing);
-
-      bool tombe = false;
-      for (int i = 0; i < 60 && !tombe; i++) {
-        await tester.pump(const Duration(milliseconds: 16));
-        tombe = h.chute != null && !h.chute!.aspiration;
-      }
-      expect(tombe, isTrue);
       expect(find.text('contenu b'), findsOneWidget);
       expect(find.text('contenu a'), findsNothing);
+      await tester.pump();
+      expect(h.chute, isNotNull);
       await _avancer(tester, 700);
       expect(h.chute, isNull);
+      expect(find.text('contenu b'), findsOneWidget);
     });
 
     testWidgets('tant que les donnees ne sont pas la, l affichage precedent '
-        'reste : aucune aspiration, aucun etat vide', (
-      WidgetTester tester,
-    ) async {
+        'reste, sans etat vide', (WidgetTester tester) async {
       final _Hote h = _Hote();
       await tester.pumpWidget(h.monter());
       await _avancer(tester, 900);
@@ -270,44 +256,28 @@ void main() {
       expect(find.text('contenu a'), findsOneWidget);
     });
 
-    testWidgets(
-      'l aspiration et la chute attendent la rupture du cou entre les '
-      'ronds : une seule goutte a la fois',
-      (WidgetTester tester) async {
-        final _Hote h = _Hote();
-        await tester.pumpWidget(h.monter());
-        await _avancer(tester, 900);
-        // Selection ET donnees dans la meme image (donnees deja en memoire).
-        h.selection.value = 'b';
-        h.affiche.value = 'b';
-        await tester.pump();
-        await tester.pump();
-        // Le cou entre les ronds n'est pas rompu : ni aspiration ni chute, et
-        // l'ancien contenu reste affiche.
-        expect(h.goutte, isNotNull);
-        expect(h.chute, isNull);
-        expect(find.text('contenu a'), findsOneWidget);
-        bool aspire = false;
-        for (int i = 0; i < 200; i++) {
-          await tester.pump(const Duration(milliseconds: 16));
-          if (h.goutte != null && !h.goutte!.rompu) {
-            expect(
-              h.chute,
-              isNull,
-              reason: 'jamais de goutte du contenu pendant que le cou tient',
-            );
-          }
-          if (h.chute?.aspiration ?? false) aspire = true;
-        }
-        // Apres la rupture : l'aspiration a bien eu lieu, puis la chute.
-        expect(aspire, isTrue);
-        await _avancer(tester, 1500);
-        expect(h.goutte, isNull);
-        expect(h.chute, isNull);
-        expect(find.text('contenu b'), findsOneWidget);
-        expect(find.text('contenu a'), findsNothing);
-      },
-    );
+    testWidgets('le contenu n attend JAMAIS le cou entre les ronds '
+        '(DECISION-FLUIDITE) : visible des l image du toucher', (
+      WidgetTester tester,
+    ) async {
+      final _Hote h = _Hote();
+      await tester.pumpWidget(h.monter());
+      await _avancer(tester, 900);
+      // Selection ET donnees dans la meme image (donnees deja en memoire).
+      h.selection.value = 'b';
+      h.affiche.value = 'b';
+      await tester.pump();
+      expect(find.text('contenu b'), findsOneWidget);
+      expect(find.text('contenu a'), findsNothing);
+      await tester.pump();
+      // Le cou entre les ronds tient encore, et le contenu est deja la.
+      expect(h.goutte, isNotNull);
+      expect(h.chute, isNotNull);
+      await _avancer(tester, 1500);
+      expect(h.goutte, isNull);
+      expect(h.chute, isNull);
+      expect(find.text('contenu b'), findsOneWidget);
+    });
 
     testWidgets('mouvement reduit : le contenu change aussitot', (
       WidgetTester tester,
