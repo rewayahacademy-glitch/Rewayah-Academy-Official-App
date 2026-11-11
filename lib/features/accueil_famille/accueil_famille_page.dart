@@ -612,6 +612,7 @@ class _CorpsAccueil extends ConsumerWidget {
     final List<SignalAccueil<MotifFamille>> signaux = signauxFamille(
       // Le blocage n'est la tuile du haut que si la salle n'est pas
       // rejoignable : sinon la tuile est le bouton « Rejoindre ».
+      salleRejoignable: salle.rejoignable,
       accesBloque:
           !salle.rejoignable &&
           (fermees ? bandeauPlace != null : (bandeauPlace == null && blocage)),
@@ -733,8 +734,13 @@ class _CorpsAccueil extends ConsumerWidget {
                     etendue: EtendueBento.large,
                     etendueLarge: const EtendueBento(4, 1),
                     child: LumiereAutour(
-                      nature: lumierePourFamille(signaux, MotifFamille.acces),
-                      child: bandeau,
+                      nature:
+                          lumierePourFamille(signaux, MotifFamille.acces) ??
+                          lumierePourFamille(signaux, MotifFamille.salle),
+                      // Pleine largeur : sinon la lueur, calee sur la tuile,
+                      // se voit a cote d'une carte plus etroite (« Rejoindre »
+                      // est une carte au contenu).
+                      child: SizedBox(width: double.infinity, child: bandeau),
                     ),
                   ),
                 TuileBento(

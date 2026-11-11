@@ -1692,7 +1692,10 @@ void main() {
   group('LUMIERE-ACCUEILS : accueil de la famille', () {
     int halos(WidgetTester tester, NatureHalo nature) => tester
         .widgetList<HaloLumiere>(find.byType(HaloLumiere))
-        .where((HaloLumiere h) => h.nature == nature)
+        .where(
+          (HaloLumiere h) =>
+              h.nature == nature && h.forme == FormeHalo.rectangle,
+        )
         .length;
 
     SeanceFamille recente() => seanceFictive(
@@ -1750,12 +1753,35 @@ void main() {
       expect(halos(tester, NatureHalo.urgent), 0);
     });
 
+    testWidgets('salle ouverte : lueur verte sur « Rejoindre la salle »', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester);
+      await _ouvrirAccueilParLaBarre(tester);
+      expect(halos(tester, NatureHalo.salle), 1);
+      // La lueur n'est jamais coupee (LUMIERE-DOUCE, 11/11/2026).
+      verifierLumieresEntieres(tester);
+    });
+
+    testWidgets('salle fermee (seance dans 3 h) : pas de vert', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester, seances: _salleFermee);
+      await _ouvrirAccueilParLaBarre(tester);
+      expect(halos(tester, NatureHalo.salle), 0);
+    });
+
     testWidgets('un appareil pret, rien a signaler : aucune lumiere', (
       WidgetTester tester,
     ) async {
       await _monter(tester, seances: _salleFermee);
       await _ouvrirAccueilParLaBarre(tester);
-      expect(find.byType(HaloLumiere), findsNothing);
+      expect(
+        tester
+            .widgetList<HaloLumiere>(find.byType(HaloLumiere))
+            .where((HaloLumiere h) => h.forme == FormeHalo.rectangle),
+        isEmpty,
+      );
     });
 
     testWidgets('seance dans 50 min avec du travail : orange', (
@@ -1877,6 +1903,34 @@ void main() {
           );
           await stabiliser(tester);
           await capturerVue(tester, 'lumieres-$nom-profil-2');
+          await tester.pumpWidget(const SizedBox());
+        });
+      }
+
+      // Vert : la salle est rejoignable (seance dans 10 min, fenetre ouverte).
+      for (final (String nom, Size taille, double echelle, ThemeMode theme)
+          in <(String, Size, double, ThemeMode)>[
+            ('320-x1-clair', const Size(320, 2000), 1, ThemeMode.light),
+            ('320-x2-clair', const Size(320, 3200), 2, ThemeMode.light),
+            ('320-x1-sombre', const Size(320, 2000), 1, ThemeMode.dark),
+            ('1440-x1-clair', const Size(1440, 1200), 1, ThemeMode.light),
+            ('1440-x1-sombre', const Size(1440, 1200), 1, ThemeMode.dark),
+          ]) {
+        testWidgets('vert, salle rejoignable : $nom', (
+          WidgetTester tester,
+        ) async {
+          await _monter(
+            tester,
+            depart: Routes.tuteurAccueil,
+            taille: taille,
+            echelle: echelle,
+            theme: theme,
+          );
+          if (find.byKey(NavShell.barreBasseKey).evaluate().isNotEmpty) {
+            await _ouvrirAccueilParLaBarre(tester);
+          }
+          expect(tester.takeException(), isNull);
+          await capturerVue(tester, 'lumiere-verte-$nom');
           await tester.pumpWidget(const SizedBox());
         });
       }
