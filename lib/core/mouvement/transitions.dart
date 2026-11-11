@@ -1,18 +1,21 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
 import '../widgets/selection_si_visible.dart';
+import 'app_transitions.dart';
 import 'mouvement.dart';
 
-/// Page empilee : glisse court depuis le bord de lecture et fondu. Le sens
-/// suit la direction du texte (arabe : depuis la gauche). Duree nulle quand
-/// les animations sont reduites.
+/// Page empilee : la descente du catalogue (`AppTransitions.descente`, axe
+/// partage horizontal, en miroir en arabe). Duree nulle quand les animations
+/// sont reduites ; sur le web, le retour est un fondu court.
 Page<void> pageGlissee(
   BuildContext context,
   GoRouterState etat,
   Widget enfant,
 ) {
   final bool reduit = Mouvement.reduit(context);
+  final Duration entree = AppTransitions.dureeDescente(context);
   return CustomTransitionPage<void>(
     key: etat.pageKey,
     name: etat.name ?? etat.path,
@@ -21,9 +24,11 @@ Page<void> pageGlissee(
       ...etat.uri.queryParameters,
     },
     restorationId: etat.pageKey.value,
-    transitionDuration: reduit ? Duration.zero : Mouvement.long,
-    reverseTransitionDuration: reduit ? Duration.zero : Mouvement.moyen,
-    transitionsBuilder: _glisseEtFondu,
+    transitionDuration: reduit ? Duration.zero : entree,
+    reverseTransitionDuration: reduit
+        ? Duration.zero
+        : AppTransitions.sortieDe(entree),
+    transitionsBuilder: _descente,
     child: enfant,
   );
 }
@@ -36,16 +41,9 @@ GoRouterPageBuilder glissee(Widget Function(GoRouterState etat) ecran) =>
 
 /// Part de la transition pendant laquelle la page recouverte s'efface,
 /// avant que la nouvelle n'apparaisse (fondu en passage, LG-FLASH).
-const double partEffacement = 0.3;
+const double partEffacement = AppTransitions.partEffacement;
 
-/// LG-FLASH : un fondu **en passage**, jamais un fondu enchaine. Avant, la
-/// nouvelle page apparaissait par transparence au-dessus de l'ancienne : les
-/// deux textes se superposaient le temps de la transition, « un autre
-/// contenu qui s'affiche d'un coup et disparait ». Desormais la page
-/// recouverte s'efface d'abord (animation secondaire, debut de la courbe),
-/// puis la nouvelle apparait (fin de la courbe) ; au retour, l'inverse. Entre
-/// les deux, le fond opaque du theme pose par `RewayahApp`.
-Widget _glisseEtFondu(
+Widget _descente(
   BuildContext context,
   Animation<double> animation,
   Animation<double> secondaire,
@@ -53,40 +51,10 @@ Widget _glisseEtFondu(
 ) {
   // Selection du texte : une page masquee n'inscrit rien (07/11/2026).
   final Widget child = SelectionSiVisible(child: enfantRoute);
-  final CurvedAnimation courbe = CurvedAnimation(
-    parent: animation,
-    curve: Mouvement.accentuee,
-    reverseCurve: Mouvement.sortie,
-  );
-  final CurvedAnimation apparition = CurvedAnimation(
-    parent: animation,
-    curve: const Interval(partEffacement, 1, curve: Mouvement.accentuee),
-    reverseCurve: const Interval(partEffacement, 1, curve: Mouvement.sortie),
-  );
-  final Animation<double> effacement = ReverseAnimation(
-    CurvedAnimation(
-      parent: secondaire,
-      curve: const Interval(0, partEffacement),
-    ),
-  );
-  final double dx = Directionality.of(context) == TextDirection.rtl
-      ? -0.06
-      : 0.06;
-  return RepaintBoundary(
-    child: FadeTransition(
-      opacity: effacement,
-      child: FadeTransition(
-        opacity: apparition,
-        child: SlideTransition(
-          position: Tween<Offset>(
-            begin: Offset(dx, 0),
-            end: Offset.zero,
-          ).animate(courbe),
-          child: child,
-        ),
-      ),
-    ),
-  );
+  if (kIsWeb && animation.status == AnimationStatus.reverse) {
+    return AppTransitions.fonduCourt(animation, child);
+  }
+  return AppTransitions.descente(context, animation, secondaire, child);
 }
 
 /// Fondu simple quand l'onglet actif d'une barre change ([index]). L'enfant

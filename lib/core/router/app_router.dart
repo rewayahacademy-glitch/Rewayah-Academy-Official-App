@@ -62,6 +62,8 @@ import '../../features/admin_observations/observations_admin_page.dart'
     deferred as d_observations_admin_page;
 import '../../features/admin_offres/admin_offres_page.dart'
     deferred as d_admin_offres_page;
+import '../../features/admin_offres/nouvelle_offre_page.dart'
+    deferred as d_nouvelle_offre_page;
 import '../../features/admin_pedagogie_bibliotheque/attribution/attribution_page.dart'
     deferred as d_attribution_page;
 import '../../features/admin_pedagogie_bibliotheque/catalogue/catalogue_page.dart'
@@ -307,6 +309,7 @@ import 'routes.dart';
 final List<MorceauDiffere> morceauxDifferesRouteur = <MorceauDiffere>[
   ('d_acces_agents_page', d_acces_agents_page.loadLibrary),
   ('d_admin_offres_page', d_admin_offres_page.loadLibrary),
+  ('d_nouvelle_offre_page', d_nouvelle_offre_page.loadLibrary),
   ('d_admissions_page', d_admissions_page.loadLibrary),
   (
     'd_administration_communications_page',
@@ -2006,6 +2009,20 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
             cle: 'd_admin_offres_page',
             charger: d_admin_offres_page.loadLibrary,
             construire: () => d_admin_offres_page.AdminOffresPage(),
+          ),
+        ),
+      ),
+      // TRANSITIONS (11/11/2026) : « Nouvelle offre », une page du routeur
+      // (descente du catalogue, retour du navigateur), plus une page poussee
+      // a la main. Elle rend `true` a la page des offres quand elle cree.
+      GoRouteSure(
+        path: Routes.adminOperationsOffresNouvelle,
+        builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
+          domaine: AdminDomaine.operations,
+          child: PageDifferee(
+            cle: 'd_nouvelle_offre_page',
+            charger: d_nouvelle_offre_page.loadLibrary,
+            construire: () => d_nouvelle_offre_page.NouvelleOffrePage(),
           ),
         ),
       ),

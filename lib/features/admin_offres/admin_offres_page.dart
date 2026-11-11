@@ -23,6 +23,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/i18n/strings.g.dart';
@@ -30,6 +31,7 @@ import '../../core/icons/app_icons.dart';
 import '../../core/offres/port_offres_admin.dart';
 import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/router/routes.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
@@ -63,11 +65,17 @@ class _AdminOffresPageEtat extends ConsumerState<AdminOffresPage> {
   void _relire() => ref.invalidate(offresAdminProvider);
 
   Future<void> _creer() async {
-    final bool? creee = await Navigator.of(context).push<bool>(
-      MaterialPageRoute<bool>(
-        builder: (BuildContext _) => const NouvelleOffrePage(),
-      ),
-    );
+    // TRANSITIONS (11/11/2026) : une page du routeur. Sans routeur (hote de
+    // test, demonstration), la meme page est poussee sur le navigateur ; les
+    // deux suivent le catalogue (`AppTransitions`, par le theme).
+    final GoRouter? routeur = GoRouter.maybeOf(context);
+    final bool? creee = routeur != null
+        ? await routeur.push<bool>(Routes.adminOperationsOffresNouvelle)
+        : await Navigator.of(context).push<bool>(
+            MaterialPageRoute<bool>(
+              builder: (BuildContext _) => const NouvelleOffrePage(),
+            ),
+          );
     if (!mounted || creee != true) return;
     _relire();
     setState(() => _message = t.admin.offres.creee);
