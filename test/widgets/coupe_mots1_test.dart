@@ -103,8 +103,10 @@ void main() {
   group('navigation', () {
     for (final double echelle in <double>[1, 2]) {
       testWidgets(
-        'barre basse enseignant a 320, x$echelle : « Disponibilites » '
-        'entier, une seule echelle',
+        // NAV-REFONTE (09/11/2026) : seul l'onglet ouvert montre son nom ; il
+        // reste entier et dans l'ecran. Plus d'echelle commune a comparer :
+        // il n'y a plus qu'un libelle visible.
+        'barre basse enseignant a 320, x$echelle : le nom ouvert entier',
         (WidgetTester tester) async {
           _vue(tester, const Size(320, 700), echelle);
           await tester.pumpWidget(hote(_coquille(AppRole.teacher)));
@@ -112,8 +114,7 @@ void main() {
           expect(tester.takeException(), isNull);
           final Finder barre = find.byKey(NavShell.barreBasseKey);
           verifierAucunMotCoupe(tester, barre);
-          expect(_echelles(tester, barre), hasLength(1));
-          // Les quatre libelles dans l'ecran.
+          // Les libelles visibles dans l'ecran.
           for (final Element e
               in find
                   .descendant(of: barre, matching: find.byType(Text))
@@ -153,7 +154,9 @@ void main() {
 
     // Revue COUPE-MOTS-1-R (M1) : texte agrandi, le rail enseignant ne
     // ramene plus ses libelles sous la taille du theme (0,877 auparavant,
-    // a x1 comme a x2) ; il s'elargit pour tenir « Disponibilites ».
+    // a x1 comme a x2). NAV-REFONTE (09/11/2026) : « Disponibilites » a
+    // quitte la navigation de l'enseignant ; l'elargissement du rail pour un
+    // mot long reste prouve par « plancher de reduction » ci-dessous.
     for (final TextDirection sens in TextDirection.values) {
       testWidgets('rail enseignant a 768, x2, ${sens.name} : libelles jamais '
           'sous la taille du theme, rail elargi', (WidgetTester tester) async {
@@ -166,7 +169,6 @@ void main() {
         final Set<double> echelles = _echelles(tester, rail);
         expect(echelles, hasLength(1));
         expect(echelles.single, greaterThanOrEqualTo(1));
-        expect(tester.getSize(rail).width, greaterThan(AppGabarit.largeurRail));
       });
     }
 
@@ -294,12 +296,18 @@ void main() {
         await tester.pumpAndSettle();
         expect(tester.takeException(), isNull);
         final Finder barre = find.byKey(NavShell.barreBasseKey);
+        // NAV-REFONTE (09/11/2026) : seul le nom ouvert se voit ; il ne se
+        // coupe jamais (il passe sous l'icone) et reste dans l'ecran. Plus de
+        // rangee qui defile : les onglets fermes n'ont que leur icone.
         verifierAucunMotCoupe(tester, barre);
-        final Set<double> echelles = _echelles(tester, barre);
-        expect(echelles, hasLength(1));
-        expect(echelles.single, greaterThanOrEqualTo(echelleMinimaleLisible));
-        // Au plancher, ils ne tiennent pas ensemble : la rangee defile.
-        expect(find.byKey(NavShell.barreBasseDefileKey), findsOneWidget);
+        for (final Element e
+            in find
+                .descendant(of: barre, matching: find.byType(Text))
+                .evaluate()) {
+          final Rect r = tester.getRect(find.byWidget(e.widget));
+          expect(r.left, greaterThanOrEqualTo(0));
+          expect(r.right, lessThanOrEqualTo(280));
+        }
       });
     }
 

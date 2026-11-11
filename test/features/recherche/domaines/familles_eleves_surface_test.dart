@@ -13,9 +13,9 @@ import 'package:rewayah_academy/core/recherche/port_recherche.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/widgets/section_header.dart';
 import 'package:rewayah_academy/core/widgets/setting_row.dart';
+import 'package:rewayah_academy/features/demo/recherche/resolution_ra_demo.dart';
 import 'package:rewayah_academy/features/recherche/domaines/familles_eleves/moteurs_familles_eleves.dart';
 import 'package:rewayah_academy/features/recherche/domaines/familles_eleves/port_resolution_ra.dart';
-import 'package:rewayah_academy/features/recherche/domaines/familles_eleves/resolution_ra_demo.dart';
 import 'package:rewayah_academy/features/recherche/ecran/ecran_recherche.dart'
     show cleChampRecherche;
 

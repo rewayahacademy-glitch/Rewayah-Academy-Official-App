@@ -270,11 +270,12 @@ void main() {
         );
         expect(_chemin(routeur), Routes.enseignantMessages);
         expect(find.byType(ListeFils), findsOneWidget);
-        // Aucune destination ajoutee : la pose garde Classes allumee.
+        // NAV-REFONTE (09/11/2026) : Messages est la troisieme destination
+        // de l'enseignant ; elle s'allume.
         final NavShell coquille = tester.widget<NavShell>(
           find.byType(NavShell),
         );
-        expect(coquille.indexActif, 1);
+        expect(coquille.indexActif, 2);
         expect(coquille.destinations, hasLength(4));
         expect(tester.takeException(), isNull);
       });
@@ -327,7 +328,8 @@ void main() {
         expect(_chemin(routeur), Routes.enseignantFilPour('fil-adam'));
         expect(find.byType(FilDiscussion), findsOneWidget);
         expect(find.byType(EnteteFilContexte), findsOneWidget);
-        expect(tester.widget<NavShell>(find.byType(NavShell)).indexActif, 1);
+        // Un fil vit sous Messages (NAV-REFONTE, 09/11/2026).
+        expect(tester.widget<NavShell>(find.byType(NavShell)).indexActif, 2);
         expect(tester.takeException(), isNull);
       });
     }

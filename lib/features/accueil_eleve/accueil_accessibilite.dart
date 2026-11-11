@@ -418,6 +418,14 @@ class _Haut extends StatelessWidget {
         Ecart.vMd,
         CarteSession(
           espace: espace,
+          // NAV-REFONTE 2c : la meme fonction pure, avec les entrees de cet
+          // ecran (dette ecrite : sa lecture n'est pas encore celle de
+          // `entreeGroupeProvider`).
+          emplacement: CarteSession.emplacementPour(
+            espace: espace,
+            horsLigne: horsLigne,
+            tutoiement: tutoiement,
+          ),
           entreeRetiree: accesFerme,
           // Seances fermees : `entreeRetiree` retire le bouton, jamais grise.
           onRejoindre: onRejoindre,

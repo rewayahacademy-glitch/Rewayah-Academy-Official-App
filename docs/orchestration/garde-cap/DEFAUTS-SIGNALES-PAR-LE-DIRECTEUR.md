@@ -243,3 +243,42 @@ Faits relus en production (lecture seule, 08/11 10:40 UTC) :
   reste derrière `app_role() = 'guardian'` : un adulte dont le jeton porte `student` est refusé.
 Rien n'est codé tant que le directeur n'a pas répondu. Le point 7 d'A (ligne de progression par
 `progression_famille(soi)`, sans migration) ne s'appuie que sur l'existant.
+
+## Réponses du directeur aux sept questions (08/11/2026, vers 11:50 UTC)
+
+1. **Versements (PR 368)** : « J'avais bien dit de fermer tous les risques. […] comment on fait le jour où on voudra
+   un montant personnalisé ? C'est à toi de voir. » Décision déléguée au garde-cap : l'écriture directe du client sur
+   `payouts` et `payout_methods` est fermée. Les chemins serveur existent (`versement_paie_noter`,
+   `versement_paie_annuler`, `enregistrer_mes_coordonnees_versement`, `valider_coordonnees_versement`). Un montant
+   personnalisé passera par une RPC serveur dédiée, avec motif et journal (lot futur).
+2. **Compte désactivé (PR 365)** : oui. C'est sa règle du 14/10 (dossier maître des spécifications, l. 7194) ;
+   le garde-cap n'aurait pas dû la redemander.
+3. **Conservation des pièces d'identité (PR 374)** : oui.
+4. **Résultats d'évaluation (PR 371)** : oui, la famille et l'élève voient le résultat, accompagné du nom de l'élève
+   (« une famille qui a plusieurs enfants doit savoir que ce résultat appartient à cet enfant »).
+5. **Progression vue par l'élève** : oui (« c'est fait pour lui et sa famille »). Il faut un lot neuf : lecture
+   élève et famille de la page de reprise et de la vitesse.
+6. **Bouton d'essai des notifications** : non (« pas de nouvelle fonctionnalité juste pour tester ; je le ferai après »).
+7. **Règle de genre sur les photos des enseignants** : non, la dette est rayée. Les femmes qui portent le niqab ne
+   déposent pas de photo de leur visage. Le rappel « Une photo avec le niqab est acceptée. »
+   (`t.enseignant.photo.voile`) est déjà affiché près de la photo (`photo_publique.dart`:398 et 424).
+
+## Décisions et règles du 08/11 après-midi (consignées par le garde-cap)
+
+- **Suppression des 18 fichiers non branchés** (directeur, 08/11 vers 18:20 UTC, mot pour mot) : « pour la suppression
+  je ne connais pas les détails mais tu peux y aller ». Le garde-cap le lit comme un feu vert sur la liste précise de
+  `docs/current/PREUVES-SUPPRESSION-2026-11-08.md` (PR 383), geste par geste : les fichiers de démonstration sont
+  déplacés sous `lib/features/demo/`, `acces_foyer_depuis_eleves` part sous `test/support/` (pilote). Restent exclus :
+  `mon_espace_adulte`, `port_capacite_payout` et les deux moteurs de recherche de la finance. Aucune branche ni mémoire
+  n'est supprimée. L'écriture dans `CONSIGNES-DIRECTEUR-EN-VIGUEUR.md` a été refusée au pilote et à A ; la décision est
+  donc consignée ici.
+- **Règle i18n** (pilote, approuvée par le garde-cap) : une PR qui touche `assets/i18n` ou les fichiers générés ne se
+  fusionne que si sa tête contient le `main` actuel et que slang y a été relancé.
+- **Préflight calé sur la production** : un md5 relevé sur une base rejouée depuis le dépôt ne suffit pas (cas de la 372 :
+  la production portait une rédaction plus ancienne des commentaires). Le garde-cap relit chaque préflight en production
+  avant l'installation.
+- **MA-PROGRESSION** (correction de la ligne 20261122300000) : `ma_progression` appelle `suivi_pedagogique_eleve`, sans
+  branche dans `position_reprise_classe` ni `rythme_classe` (arbitrage du pilote, 13:10). L'installation attend que le
+  directeur publie le programme ; ses références visuelles arrivent après jeudi.
+- **Curseur sur le web** (directeur) : la sélection de texte du 07/11 ne doit pas imposer le curseur texte sur les liens
+  et les boutons ; correction confiée à B (core seulement, test du curseur exigé).

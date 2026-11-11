@@ -272,6 +272,7 @@ class MaClasseAdultePage extends ConsumerWidget {
                 }
                 final Widget lecteur = LecteurGroupe(
                   groupeId: groupeId,
+                  seanceParServeur: onRejoindre != null,
                   construire: (BuildContext _, LectureGroupe lecture) =>
                       _Sections(
                         vue: vue,
@@ -425,11 +426,7 @@ class _Sections extends StatelessWidget {
     return ColonnesParRangees(
       rangees: <(List<Widget>, List<Widget>)>[
         (
-          lecture.identiteEtCarte(
-            onRejoindre: onRejoindre,
-            accesFerme: acces.ferme,
-            accesEnLecture: acces.enLecture,
-          ),
+          lecture.identiteEtCarte(onRejoindre: onRejoindre),
           bloc(<List<Widget>>[aPropos, cartes]),
         ),
         if (participants.isEmpty)

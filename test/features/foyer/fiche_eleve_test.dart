@@ -221,7 +221,7 @@ Future<void> _ouvrirFicheA1(WidgetTester tester) async {
   await tester.tap(
     find.descendant(
       of: find.byKey(NavShell.barreBasseKey),
-      matching: find.text(t.nav.tuteur.foyer),
+      matching: find.bySemanticsLabel(t.nav.tuteur.foyer),
     ),
   );
   await stabiliser(tester);
@@ -1043,7 +1043,7 @@ void main() {
       await tester.tap(
         find.descendant(
           of: find.byKey(NavShell.barreBasseKey),
-          matching: find.text(t.nav.tuteur.foyer),
+          matching: find.bySemanticsLabel(t.nav.tuteur.foyer),
         ),
       );
       await stabiliser(tester);

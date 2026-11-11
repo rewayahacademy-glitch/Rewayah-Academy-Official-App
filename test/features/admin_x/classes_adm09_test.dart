@@ -365,13 +365,17 @@ void main() {
     // La feuille de creation non plus.
     await tester.tap(find.byKey(GroupesPage.cleCreer));
     await tester.pumpAndSettle();
-    expect(find.text(t.admin.groupes.champLibelle), findsWidgets);
+    // NOMS-CLASSES (08/11/2026) : la feuille ne demande plus de nom ; sa
+    // phrase « nom choisi automatiquement » sert de repere.
+    final Finder repere = find.byKey(
+      const ValueKey<String>('classe-nom-automatique'),
+    );
+    expect(repere, findsOneWidget);
     expect(
       _textesVisibles(tester).where((String x) => x.contains('groupe')),
       isEmpty,
     );
-    Navigator.of(tester.element(find.text(t.admin.groupes.champLibelle).first))
-        .pop();
+    Navigator.of(tester.element(repere)).pop();
     await tester.pumpAndSettle();
 
     await tester.tap(find.text('Classe An-Nour'));

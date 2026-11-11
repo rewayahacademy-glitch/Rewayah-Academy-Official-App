@@ -40,7 +40,7 @@ Deno.test('l IP : un en-tete vide donne inconnue', () => {
 
 const demande: Demande = { type: 'foyer', code: 'ABCD-EFGH-JKMN', adresse: 'ami@example.com' }
 
-function porte(debit: boolean, autorise: boolean, creation: 'cree' | 'existe' | 'echec') {
+function porte(debit: boolean, autorise: boolean, creation: 'cree' | 'existe' | 'echec', consomme = true) {
   const appels: string[] = []
   const p: PorteInvitation = {
     debit: (_a, ip) => {
@@ -54,6 +54,10 @@ function porte(debit: boolean, autorise: boolean, creation: 'cree' | 'existe' | 
     creerCompte: (a) => {
       appels.push(`creer:${a}`)
       return Promise.resolve(creation)
+    },
+    consommer: (d) => {
+      appels.push(`consommer:${d.type}`)
+      return Promise.resolve(consomme)
     },
   }
   return { p, appels }
@@ -71,13 +75,25 @@ Deno.test('adresse non invitee ou code faux : aucun compte cree', async () => {
   assertEquals(appels, ['debit:203.0.113.7', 'autoriser:foyer'])
 })
 
-Deno.test('l adresse invitee : compte cree', async () => {
+Deno.test('l adresse invitee : compte cree, puis code consomme', async () => {
   const { p, appels } = porte(true, true, 'cree')
   assertEquals(await traiter(demande, '203.0.113.7', p), 'cree')
+  assertEquals(appels, ['debit:203.0.113.7', 'autoriser:foyer', 'creer:ami@example.com', 'consommer:foyer'])
+})
+
+Deno.test('compte deja la : meme issue que tout echec, code non consomme', async () => {
+  const { p, appels } = porte(true, true, 'existe')
+  assertEquals(await traiter(demande, '203.0.113.7', p), 'rien')
+  assertEquals(appels.includes('consommer:foyer'), false)
+})
+
+Deno.test('createUser echoue : le code n est pas consomme (il resservira)', async () => {
+  const { p, appels } = porte(true, true, 'echec')
+  assertEquals(await traiter(demande, '203.0.113.7', p), 'rien')
   assertEquals(appels, ['debit:203.0.113.7', 'autoriser:foyer', 'creer:ami@example.com'])
 })
 
-Deno.test('compte deja la : meme issue que tout echec', async () => {
-  const { p } = porte(true, true, 'existe')
-  assertEquals(await traiter(demande, '203.0.113.7', p), 'rien')
+Deno.test('compte cree mais consommation refusee : le compte reste cree', async () => {
+  const { p } = porte(true, true, 'cree', false)
+  assertEquals(await traiter(demande, '203.0.113.7', p), 'cree')
 })

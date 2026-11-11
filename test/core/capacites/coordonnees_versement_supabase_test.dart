@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
 import 'package:rewayah_academy/core/capacites/coordonnees_versement_supabase.dart';
 import 'package:rewayah_academy/core/capacites/port_coordonnees_versement.dart';
+import 'package:rewayah_academy/core/finance/montant.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 void main() {
@@ -154,6 +155,41 @@ void main() {
     expect(e.lignes.single, <String>['Mamadou Diallo', '31.74']);
     expect(e.manquants.single.aucune, isFalse);
     expect(fichierCsvWise(e), 'Name,Amount\r\nMamadou Diallo,31.74\r\n');
+  });
+
+  // HYGIENE-2 (08/11/2026) : injection de formule dans le tableur.
+  test('CSV Wise : une cellule qui commence par = + - @ tab CR est '
+      'neutralisee par une apostrophe, un montant reste tel quel', () {
+    ExportWise export(List<String> ligne) => ExportWise(
+      exportId: 'x1',
+      mois: DateTime(2026, 10),
+      colonnes: const <String>['Name', 'Amount'],
+      lignes: <List<String>>[ligne],
+      manquants: const <EnseignantSansCoordonnees>[],
+      total: const Montant(1234, 'USD'),
+    );
+    expect(
+      fichierCsvWise(export(<String>['=HYPERLINK("x")', '12.34'])),
+      'Name,Amount\r\n"\'=HYPERLINK(""x"")",12.34\r\n',
+    );
+    for (final String debut in <String>['+', '-', '@', '\t', ' =', '  @']) {
+      expect(
+        fichierCsvWise(export(<String>['${debut}1+1', '12.34'])),
+        "Name,Amount\r\n'${debut}1+1,12.34\r\n",
+      );
+    }
+    expect(
+      fichierCsvWise(export(<String>['\r1', '12.34'])),
+      'Name,Amount\r\n"\'\r1",12.34\r\n',
+    );
+    expect(
+      fichierCsvWise(export(<String>['Nom Test', '12.34'])),
+      'Name,Amount\r\nNom Test,12.34\r\n',
+    );
+    expect(
+      fichierCsvWise(export(<String>['Nom-Test', '12.34'])),
+      'Name,Amount\r\nNom-Test,12.34\r\n',
+    );
   });
 
   test('pays du compte indisponible : PaysVersementIndisponible', () async {

@@ -59,6 +59,7 @@ import '../../fixtures/tuteur/faux_seances_famille.dart';
 import '../../parcours/faux_service_offres.dart';
 import '../../router/support_routeur.dart';
 import '../../support/harnais.dart';
+import '../../support/titre_de_page.dart';
 import '../a/faux/faux_groupes.dart';
 import '../e/faux/faux_classe.dart';
 import 'faux/faux_observation.dart';
@@ -220,10 +221,11 @@ final String _classe = Routes.classePour('classe-a', eleveId: 'e1');
 
 /// « Historique » dans la barre basse de la coquille (telephone) : la
 /// navigation est la. Le titre de l'Historique et le lien de la classe
-/// portent le meme mot, d'ou la barre comme repere.
+/// portent le meme mot, d'ou la barre comme repere. Depuis NAV-REFONTE
+/// (09/11/2026), un onglet ferme n'ecrit plus son nom : on le lit.
 final Finder _navHistorique = find.descendant(
   of: find.byKey(NavShell.barreBasseKey),
-  matching: find.text(t.nav.tuteur.historique),
+  matching: find.bySemanticsLabel(t.nav.tuteur.historique),
 );
 
 /// De l'Accueil reel a la classe (« Voir la classe »), puis « Observer la
@@ -253,7 +255,7 @@ void main() {
     // La porte d'observation de CETTE seance, hors coquille (tache
     // focalisee) : l'explication de premiere utilisation, un disque retour.
     expect(lieu(routeur), startsWith(Routes.tcObservation('s1')));
-    expect(find.text(t.tc.observation.explication.titre), findsOneWidget);
+    expect(titreDePage(t.tc.observation.explication.titre), findsOneWidget);
     expect(find.byType(DisqueRetour), findsOneWidget);
     expect(_navHistorique, findsNothing);
     expect(visites.rolesDemandes, isEmpty);
@@ -362,7 +364,7 @@ void main() {
       expect(find.text(t.nav.tuteur.historique), findsOneWidget);
       await _ouvrirObservation(tester);
       expect(lieu(routeur), startsWith(Routes.tcObservation('s1')));
-      expect(find.text(t.tc.observation.explication.titre), findsOneWidget);
+      expect(titreDePage(t.tc.observation.explication.titre), findsOneWidget);
       expect(visites.rolesDemandes, isEmpty);
 
       await _presser(tester, find.text(t.tc.observation.explication.observer));

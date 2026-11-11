@@ -50,7 +50,10 @@ const String _phraseProvisoire =
 /// L'onglet de la barre portant [libelle] (le titre de la page peut le
 /// reprendre : on vise le dernier, celui de la barre).
 Finder _onglet(String libelle) => find
-    .descendant(of: find.byType(NavShell), matching: find.text(libelle))
+    .descendant(
+      of: find.byType(NavShell),
+      matching: find.bySemanticsLabel(libelle),
+    )
     .last;
 
 int? _actif(WidgetTester tester) =>

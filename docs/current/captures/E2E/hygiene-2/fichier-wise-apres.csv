@@ -1,0 +1,9 @@
+Name,Amount
+Nom Test,31.74
+"'=HYPERLINK(""http://exemple.test"",""Cliquer"")",12.34
+'+1+1,10.00
+'-2+3,10.00
+'@SUM(A1),10.00
+'	Tab,10.00
+' =1+1,10.00
+Nom-Test,10.00

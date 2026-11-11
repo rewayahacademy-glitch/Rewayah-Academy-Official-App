@@ -6,21 +6,33 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/admin/service_admin.dart';
+import 'package:rewayah_academy/core/alertes/alerte.dart';
+import 'package:rewayah_academy/core/alertes/port_alertes.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/dossier/service_validation.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/journal/service_journal.dart';
 import 'package:rewayah_academy/core/matching/service_matching.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/grille_bento.dart';
+import 'package:rewayah_academy/core/widgets/halo_lumiere.dart';
 import 'package:rewayah_academy/core/widgets/pressable.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
+import 'package:rewayah_academy/features/admin_tableau/activite_recente.dart';
 import 'package:rewayah_academy/features/admin_tableau/tableau_de_bord_page.dart';
 import 'package:rewayah_academy/features/admin_tableau/tuiles_compteur.dart';
 
-import '../capture/outil_capture.dart' show chargerPolicesDuDepot;
+import '../capture/outil_capture.dart'
+    show
+        capturer,
+        chargerPolicesDuDepot,
+        fixerVueCapture,
+        hoteCapture,
+        sautSansCapture;
 import '../support/aucun_mot_coupe.dart';
+import '../support/garde_lumiere.dart';
 import '../support/harnais.dart';
 
 /// Un mardi de septembre, a dix-sept heures.
@@ -640,6 +652,144 @@ void main() {
             findsOneWidget,
           );
           verifierAucunMotCoupe(tester, grille);
+        });
+      }
+    }
+  });
+
+  group('LUMIERE-ACCUEILS 4 : les lumieres des tuiles, depuis le serveur', () {
+    testWidgets('tout a zero : aucune lumiere', (WidgetTester tester) async {
+      await _monter(tester, admin: FauxServiceAdmin());
+      expect(find.byType(HaloLumiere), findsNothing);
+    });
+
+    testWidgets('dossiers, demandes et incidents : orange sur leurs tuiles', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        admin: FauxServiceAdmin()
+          ..indicateursRendus = _indicateurs(
+            dossiers: 2,
+            demandes: 1,
+            incidents: 3,
+            rapports: 4,
+          ),
+        // La tuile compte les dossiers d'enseignants de la file : deux ici.
+        validation: FauxServiceValidation()
+          ..file = <DossierAValider>[_dossier(id: 'd1'), _dossier(id: 'd2')],
+      );
+      final Iterable<HaloLumiere> halos = tester.widgetList<HaloLumiere>(
+        find.byType(HaloLumiere),
+      );
+      expect(halos, hasLength(3));
+      expect(
+        halos.every((HaloLumiere h) => h.nature == NatureHalo.aPreparer),
+        isTrue,
+      );
+    });
+  });
+
+  // LUMIERE-DOUCE (11/11/2026) : les tuiles allumees de l'accueil de la
+  // direction ne sont coupees ni par les bords ni par un parent.
+  testWidgets(
+    'LUMIERE-DOUCE : lumieres des tuiles jamais coupees, 320 et 390',
+    (WidgetTester tester) async {
+      for (final double largeur in <double>[320, 390]) {
+        tester.view
+          ..devicePixelRatio = 1
+          ..physicalSize = Size(largeur, 1600);
+        addTearDown(tester.view.reset);
+        await _monter(
+          tester,
+          admin: FauxServiceAdmin()
+            ..indicateursRendus = _indicateurs(
+              dossiers: 2,
+              demandes: 1,
+              incidents: 3,
+            ),
+          validation: FauxServiceValidation()
+            ..file = <DossierAValider>[_dossier(id: 'd1'), _dossier(id: 'd2')],
+        );
+        await tester.pump(const Duration(milliseconds: 600));
+        verifierLumieresEntieres(tester, auMoins: 3);
+        await tester.pumpAndSettle();
+        verifierLumieresEntieres(tester, auMoins: 3);
+      }
+    },
+  );
+
+  // LUMIERE-ACCUEILS 4 (captures R3) : un signalement urgent (rouge, la seule
+  // qui tourne sous l'arbitre de la coque) et des dossiers, demandes et
+  // incidents en attente (orange).
+  testWidgets(
+    'LUMIERE-ACCUEILS 4 : compteur serveur a 2, aucun dossier d enseignant '
+    'dans la file : la tuile dit 0, aucune lumiere sur elle',
+    (WidgetTester tester) async {
+      await _monter(
+        tester,
+        admin: FauxServiceAdmin()
+          ..indicateursRendus = _indicateurs(dossiers: 2),
+      );
+      expect(find.byType(HaloLumiere), findsNothing);
+    },
+  );
+
+  group('LUMIERE-ACCUEILS 4 : captures', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    for (final (String l, Size taille, double densite)
+        in <(String, Size, double)>[
+          ('390', const Size(390, 1600), 3),
+          ('1440', const Size(1440, 1100), 1),
+        ]) {
+      for (final (String m, ThemeMode mode) in <(String, ThemeMode)>[
+        ('clair', ThemeMode.light),
+        ('sombre', ThemeMode.dark),
+      ]) {
+        testWidgets('lumiere_direction_${l}_$m', (WidgetTester tester) async {
+          fixerVueCapture(tester, taille, densite);
+          await tester.pumpWidget(
+            hoteCapture(
+              TableauDeBordPage(horloge: () => _maintenant),
+              surcharges: <Override>[
+                serviceAdminProvider.overrideWithValue(
+                  FauxServiceAdmin()
+                    ..indicateursRendus = _indicateurs(
+                      dossiers: 2,
+                      demandes: 1,
+                      incidents: 3,
+                      rapports: 4,
+                    ),
+                ),
+                serviceValidationProvider.overrideWithValue(
+                  FauxServiceValidation()
+                    ..file = <DossierAValider>[
+                      _dossier(id: 'd1'),
+                      _dossier(id: 'd2', prenom: 'Ibrahima'),
+                    ],
+                ),
+                activiteRecenteProvider.overrideWith(
+                  (Ref _) async => const <EntreeJournal>[],
+                ),
+                alertesProvider.overrideWith(
+                  (Ref _) => Stream<List<Alerte>>.value(<Alerte>[
+                    Alerte(
+                      id: 'a1',
+                      gravite: GraviteAlerte.urgent,
+                      titre: 'Signalement : securite d un enfant (test)',
+                      creeeLe: DateTime(2026, 9, 8, 16),
+                    ),
+                  ]),
+                ),
+              ],
+              themeMode: mode,
+            ),
+          );
+          await tester.pumpAndSettle();
+          expect(tester.takeException(), isNull);
+          debugPrint(
+            'PNG ${await capturer(tester, 'lumiere_direction_${l}_$m')}',
+          );
         });
       }
     }

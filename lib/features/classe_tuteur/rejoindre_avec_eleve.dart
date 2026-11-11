@@ -89,9 +89,33 @@ class BoutonRejoindreAvecEleve extends StatelessWidget {
   Widget build(BuildContext context) => _boutonRejoindre(
     cle: cle,
     eleve: eleve,
-    onPress: () => _entrer(context, seance.seanceId, seance.groupeId, eleve),
+    onPress: () => entrerAvecEleve(context, seance, eleve),
   );
 }
+
+/// Le geste de « Rejoindre la salle avec {prenom} » par la seance [seance] :
+/// le meme pour le bouton de l'Accueil et la feuille « En ce moment » du halo
+/// vert (NAV-REFONTE 2b).
+void entrerAvecEleve(
+  BuildContext context,
+  SeanceFamille seance,
+  ProfilEleveFoyer eleve,
+) => _entrer(context, seance.seanceId, seance.groupeId, eleve);
+
+/// Le geste de « Rejoindre la salle avec {prenom} » par l'horloge de la
+/// Classe [groupeId] (concierge (a)) : le meme pour le bouton et la feuille
+/// du halo vert. Un refus se range dans `refusEntreeProvider`.
+Future<void> rejoindreClasseAvecEleve(
+  BuildContext context, {
+  required String groupeId,
+  required String? sessionId,
+  required ProfilEleveFoyer eleve,
+}) => rejoindreClasse(
+  context,
+  groupeId: groupeId,
+  sessionId: sessionId,
+  entrer: (String id) => _entrer(context, id, groupeId, eleve),
+);
 
 /// Le seul bouton « Rejoindre la salle avec {prenom} » (un bouton plein).
 Widget _boutonRejoindre({
@@ -163,11 +187,11 @@ class BoutonRejoindreClasseAvecEleve extends ConsumerWidget {
     final Widget bouton = _boutonRejoindre(
       cle: cle,
       eleve: eleve,
-      onPress: () => rejoindreClasse(
+      onPress: () => rejoindreClasseAvecEleve(
         context,
         groupeId: groupeId,
         sessionId: sessionId,
-        entrer: (String id) => _entrer(context, id, groupeId, eleve),
+        eleve: eleve,
       ),
     );
     if (refus == null) return bouton;

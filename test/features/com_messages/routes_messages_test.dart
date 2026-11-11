@@ -92,8 +92,8 @@ void main() {
     expect(find.byType(FilDiscussion), findsOneWidget);
     expect(
       tester.widget<NavShell>(find.byType(NavShell)).indexActif,
-      1,
-      reason: 'la pose garde la destination Classes',
+      2,
+      reason: 'le fil vit sous la destination Messages (NAV-REFONTE)',
     );
 
     await tester.tap(find.byType(DisqueRetour));

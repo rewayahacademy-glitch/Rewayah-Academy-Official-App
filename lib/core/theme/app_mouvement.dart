@@ -107,6 +107,53 @@ abstract final class AppMouvement {
   /// Posee sur le halo seul, jamais sur le texte.
   static const double opaciteHaloDirect = 0.45;
 
+  /// NAV-REFONTE (09/11/2026), halo du cercle Compte : un tour de lumiere
+  /// d'une alerte urgente (rapide). **Hors du budget de transition**, comme
+  /// [pulsationDirect] : il signale un etat. [toursHaloUrgent] tours, 4,8 s,
+  /// sous les cinq secondes de WCAG 2.2.2, puis une lueur fixe.
+  static const Duration tourHaloUrgent = Duration(milliseconds: 1200);
+
+  /// Nombre de tours de la lumiere d'une alerte urgente.
+  static const int toursHaloUrgent = 4;
+
+  /// Halo d'une nouveaute a lire : un seul tour, qui ralentit, puis une lueur
+  /// fixe.
+  static const Duration tourHaloNouveau = Duration(milliseconds: 2000);
+
+  /// Halo de la salle ouverte (etape 2b, 10/11/2026) : une respiration
+  /// lente de la lumiere, [respirationsHalo] fois (4,8 s, sous les cinq
+  /// secondes de WCAG 2.2.2), puis une lueur fixe. Hors du budget de
+  /// transition : il signale un etat.
+  static const Duration respirationHalo = Duration(milliseconds: 2400);
+
+  /// Nombre de respirations de la salle ouverte.
+  static const int respirationsHalo = 2;
+
+  /// Halo « a preparer » (2a-bis, 11/11/2026) : [toursHaloAPreparer] tours
+  /// qui ralentissent, plus lents que l'urgence (3,2 s, sous les cinq
+  /// secondes de WCAG 2.2.2), puis une lueur fixe.
+  static const Duration tourHaloAPreparer = Duration(milliseconds: 1600);
+
+  /// Nombre de tours de la lumiere « a preparer ».
+  static const int toursHaloAPreparer = 2;
+
+  /// LUMIERE-DOUCE (directeur, 11/11/2026) : la lumiere autour d'une carte
+  /// (`LumiereAutour`, `HaloLumiere` en rectangle) tourne deux fois plus
+  /// lentement que le cercle Compte en urgence ([tourHaloUrgent]), quelle que
+  /// soit sa nature, puis reste en lueur fixe tres legere. Le cercle Compte
+  /// garde ses propres durees.
+  static const Duration tourHaloCarte = Duration(milliseconds: 2400);
+
+  /// Nombre de tours de la lumiere d'une carte : moins que le cercle Compte
+  /// ([toursHaloUrgent]) ; 4,8 s en tout, sous les cinq secondes de WCAG
+  /// 2.2.2.
+  static const int toursHaloCarte = 2;
+
+  /// Le retournement unique de la photo vers l'icone d'etat, puis retour
+  /// (decision du directeur du 09/11/2026). Aucun retournement sous mouvement
+  /// reduit : la pastille seule.
+  static const Duration retournementHalo = Duration(milliseconds: 1000);
+
   /// Temps d'affichage d'un retour local, avant sa disparition.
   static const Duration retourLocalMaintien = Duration(seconds: 3);
 
@@ -156,6 +203,47 @@ abstract final class AppMouvement {
     stiffness: 220,
     ratio: 1,
   );
+
+  /// L'effet liquide de la navigation (decisions du directeur du 10/11/2026) :
+  /// le bord de devant de la goutte, raide, qui part le premier. Amortissement
+  /// critique, comme [ressort] : aucun rebond.
+  static final SpringDescription ressortGoutteTete =
+      SpringDescription.withDampingRatio(mass: 1, stiffness: 520, ratio: 1);
+
+  /// Le bord de derriere de la goutte, plus souple, qui suit : l'ecart entre
+  /// les deux etire la goutte dans le sens du mouvement, puis elle se reforme.
+  static final SpringDescription ressortGoutteQueue =
+      SpringDescription.withDampingRatio(mass: 1, stiffness: 170, ratio: 1);
+
+  /// LIQUIDE-MATIERE (corrections du directeur du 11/11/2026) : le cercle
+  /// Compte s'approche de la pilule jusqu'a s'y fondre (une seule forme).
+  /// Amortissement critique : l'approche n'a pas de rebond.
+  static final SpringDescription ressortApproche =
+      SpringDescription.withDampingRatio(mass: 1, stiffness: 600, ratio: 1);
+
+  /// Puis il est TIRE hors de la pilule : le cou s'etire, s'amincit et se
+  /// rompt, et le cercle depasse un peu sa place avant d'y revenir. Second
+  /// ressort sous-amorti du produit, sur decision expresse du directeur
+  /// (« les deux bords reprennent leur forme avec un petit rebond »).
+  static final SpringDescription ressortDetachement =
+      SpringDescription.withDampingRatio(mass: 1, stiffness: 260, ratio: 0.4);
+
+  /// Le cercle qui « recoit » la goutte : le seul ressort sous-amorti du
+  /// produit, sur decision expresse du directeur (11/11/2026, « un leger
+  /// rebond »). Il ne sert qu'a cette reception, d'une amplitude de
+  /// [amplitudeReception].
+  static final SpringDescription ressortReception =
+      SpringDescription.withDampingRatio(mass: 1, stiffness: 400, ratio: 0.4);
+
+  /// L'elan donne au cercle quand la goutte l'atteint (vitesse initiale du
+  /// [ressortReception], en fraction d'echelle par seconde).
+  static const double elanReception = 1;
+
+  /// L'amplitude du rebond du cercle : 1 + cette part de sa taille au plus.
+  static const double amplitudeReception = 0.06;
+
+  /// L'amplitude du rebond du bout de la pilule, en points, au plus.
+  static const double amplitudeBordPilule = 3;
 
   /// Translation verticale d'un element qui entre dans une liste.
   static const double translationAjout = 8;

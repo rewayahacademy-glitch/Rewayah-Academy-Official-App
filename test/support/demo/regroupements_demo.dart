@@ -306,7 +306,13 @@ class RegroupementsDemo
     if (deja != null) return deja;
     final ResultatCreationClasse resultat = _classes.containsKey(regroupementId)
         ? const CreationDejaFaite()
-        : _creer(regroupementId, genre, libelle);
+        : _creer(
+            regroupementId,
+            genre,
+            // NOMS-CLASSES (08/11/2026) : un nom vide est choisi par le
+            // serveur dans la banque des noms ; la doublure en prend un.
+            libelle.trim().isEmpty ? nomDemoBanque(genre) : libelle,
+          );
     _parCle[cleEnvoi] = resultat;
     return resultat;
   }
@@ -332,3 +338,10 @@ class RegroupementsDemo
     return ResultatAffectation.affecte;
   }
 }
+
+/// NOMS-CLASSES : le premier nom de la banque pour [genre], comme le serveur
+/// le choisirait sur une base vide (supabase/donnees/noms_classes.json).
+String nomDemoBanque(GenreClasse genre) => switch (genre) {
+  GenreClasse.hommes => 'Ibrahim',
+  _ => 'Khadija',
+};

@@ -38,6 +38,7 @@ import 'package:rewayah_academy/features/notifications/notifications_page.dart';
 
 import '../../support/demo/adulte_demo.dart';
 import '../../support/demo/demo_adulte_page.dart';
+import '../../support/destination_nav.dart';
 
 /// Un serveur qui rend [etat], avec sa date, a toute reponse.
 class _ReponseDatee implements PortReponseInvitation {
@@ -186,7 +187,7 @@ void main() {
     await monterCoquille(tester, adresse(EtatDemoAdulte.invitationEnAttente));
 
     // La VRAIE destination « Accueil » de la coquille adulte.
-    await taper(tester, find.text(t.adulte.nav.accueil).first);
+    await taper(tester, destinationNav(t.adulte.nav.accueil));
     await ouvrirInvitation(tester);
 
     // Une page d'etape a une etape (UX_REVIEW_07 ligne 10 a).
@@ -694,7 +695,7 @@ void main() {
       );
 
       // Par la cloche : plus de notification d'invitation a rouvrir.
-      await taper(tester, find.text(t.adulte.nav.accueil).first);
+      await taper(tester, destinationNav(t.adulte.nav.accueil));
       await taper(tester, find.byType(ClocheNotifications).first);
       expect(
         find.byKey(

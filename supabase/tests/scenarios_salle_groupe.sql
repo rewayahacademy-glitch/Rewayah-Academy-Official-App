@@ -52,10 +52,20 @@ BEGIN
 END
 $fixture_contrats$;
 
+-- Horloge : une classe active avec son enseignant recoit ses prochaines seances
+-- hebdomadaires (tc_materialiser_apres_creation_groupe, et de nouveau quand on lui
+-- ajoute un eleve). Avec un horaire fixe (lundi 18 h), l'une d'elles chevauchait la
+-- seance « commencee il y a dix minutes » posee plus bas quand la CI tournait le
+-- lundi entre 17 h 15 et 18 h (sessions_no_teacher_overlap, 23P01). L'horaire de la
+-- classe n'est lu par aucun controle : on le place douze heures apres l'instant du
+-- scenario, hors de portee de ses seances.
 INSERT INTO public.groupes
  (id, teacher_id, type_public, seuil_max, libelle, weekday, hour_local, timezone_iana, genre_public)
-VALUES ('5a1e0000-0000-0000-0000-000000000101',
- '5a1e0000-0000-0000-0000-000000000001','enfant',5,'SG classe',1,18,'Europe/Paris','hommes');
+SELECT '5a1e0000-0000-0000-0000-000000000101',
+ '5a1e0000-0000-0000-0000-000000000001','enfant',5,'SG classe',
+ EXTRACT(isodow FROM (now() + interval '12 hours') AT TIME ZONE 'Europe/Paris')::int,
+ EXTRACT(hour FROM (now() + interval '12 hours') AT TIME ZONE 'Europe/Paris')::int,
+ 'Europe/Paris','hommes';
 INSERT INTO public.groupe_membres (groupe_id, student_id) VALUES
  ('5a1e0000-0000-0000-0000-000000000101','5a1e0000-0000-0000-0000-000000000011');
 

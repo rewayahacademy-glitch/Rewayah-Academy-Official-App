@@ -73,7 +73,7 @@ void main() {
       final PlanFil enseignant = planFilPour(_session(AppRole.teacher))!;
       expect(
         _libelles(ancetresFil(plan: enseignant, chemin: Routes.tcBibliotheque)),
-        <String>['${t.nav.enseignant.profil}@${Routes.enseignantProfil}'],
+        <String>['${t.nav.enseignant.compte}@${Routes.enseignantProfil}'],
       );
     });
 

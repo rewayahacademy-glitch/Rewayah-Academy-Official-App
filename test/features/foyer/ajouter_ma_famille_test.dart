@@ -21,6 +21,7 @@ import 'package:rewayah_academy/features/mon_espace_adulte/mon_espace_adulte_pag
 
 import '../../support/demo/adulte_demo.dart';
 import '../../support/demo/demo_adulte_page.dart';
+import '../../support/destination_nav.dart';
 
 void main() {
   void taille(WidgetTester tester, Size s) {
@@ -134,7 +135,7 @@ void main() {
       'nouveau',
     );
     // Sa classe, inchangee.
-    await taper(tester, find.text(t.adulte.nav.maClasse).first);
+    await taper(tester, destinationNav(t.adulte.nav.maClasse));
     expect(find.byType(MaClasseAdultePage), findsOneWidget);
     expect(
       find.textContaining(DonneesAdulteDemo.pageRepriseTitulaire),

@@ -84,8 +84,15 @@ class MenuActions extends StatelessWidget {
     this.points = false,
     this.fermetureNette = false,
     this.icone,
+    this.declencheur,
     super.key,
   });
+
+  /// NAV-REFONTE etape 3 (11/11/2026) : un declencheur dessine par
+  /// l'appelant (le pied Compte du panneau : photo, prenom, chevron), a la
+  /// place du disque d'icone. Recoit l'etat de pression (survol, appui) pour
+  /// se montrer avant le clic. Nul : le disque d'icone de 48.
+  final Widget Function(BuildContext context, EtatPression etat)? declencheur;
 
   /// WEB-BUREAU (P1, 06/11/2026) : l'icone du declencheur quand ce n'est pas
   /// celle du menu (le profil, pour le menu du compte en haut a droite).
@@ -155,30 +162,32 @@ class MenuActions extends StatelessWidget {
           ),
         ],
       ],
-      declencheur: (BuildContext _, EtatPression etat) => SizedBox(
-        width: cible,
-        height: cible,
-        // Un disque doux au survol et a la pression : la cible se voit avant
-        // le clic (le carre d'encre de Material n'avait aucun arrondi).
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: etat.survole || etat.presse
-                ? palette.washAccent.background
-                : null,
+      declencheur:
+          declencheur ??
+          (BuildContext _, EtatPression etat) => SizedBox(
+            width: cible,
+            height: cible,
+            // Un disque doux au survol et a la pression : la cible se voit avant
+            // le clic (le carre d'encre de Material n'avait aucun arrondi).
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: etat.survole || etat.presse
+                    ? palette.washAccent.background
+                    : null,
+              ),
+              // K-54 : le declencheur est centre dans sa cible.
+              child: Center(
+                child: points
+                    ? _TroisPoints(
+                        couleur: palette.inkStrong
+                            .asIconTheme(size: AppSpacing.xs)
+                            .color,
+                      )
+                    : Icon((icone ?? AppIcons.menu).repos),
+              ),
+            ),
           ),
-          // K-54 : le declencheur est centre dans sa cible.
-          child: Center(
-            child: points
-                ? _TroisPoints(
-                    couleur: palette.inkStrong
-                        .asIconTheme(size: AppSpacing.xs)
-                        .color,
-                  )
-                : Icon((icone ?? AppIcons.menu).repos),
-          ),
-        ),
-      ),
     );
   }
 }

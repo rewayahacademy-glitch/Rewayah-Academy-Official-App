@@ -207,3 +207,51 @@ class AppShadowColor {
   @override
   int get hashCode => _value.hashCode;
 }
+
+/// La lumiere du halo du cercle Compte (NAV-REFONTE, decision du directeur du
+/// 09/11/2026 : « seule exception au branding, des couleurs vives, ici et
+/// nulle part ailleurs »).
+///
+/// Comme [AppInkColor], elle n'expose aucune couleur brute : elle ne sait
+/// construire que le pinceau de la lumiere qui tourne ([pinceau]), la pastille
+/// d'etat ([pastille], une paire fond et icone) et l'ombre de la lueur fixe
+/// ([lueur], posee par `app_elevation.dart`).
+@immutable
+class AppHaloColor {
+  /// Cree une lumiere de halo : des teintes et leurs arrets decrivent un balayage
+  /// circulaire asymetrique : c'est l'asymetrie qui rend la rotation lisible.
+  const AppHaloColor(
+    this._teintes,
+    this._arrets, {
+    required this.pastille,
+    required this.lueur,
+  });
+
+  final List<Color> _teintes;
+  final List<double> _arrets;
+
+  /// La pastille d'etat de 18, sur le bord du cercle : fond vif, icone
+  /// contrastee.
+  final AppColorPair pastille;
+
+  /// La couleur de la lueur fixe, apres la rotation ou sous mouvement reduit.
+  final AppShadowColor lueur;
+
+  /// Le pinceau de la lumiere, tourne de [angle] radians autour du centre de
+  /// [zone]. [intensite] (0 a 1) multiplie l'opacite : le theme clair la
+  /// renforce, le theme sombre la garde.
+  Paint pinceau(Rect zone, {required double angle, double intensite = 1}) =>
+      Paint()
+        ..shader = SweepGradient(
+          colors: <Color>[
+            for (final Color c in _teintes)
+              c.withValues(alpha: c.a * intensite.clamp(0, 1)),
+          ],
+          stops: _arrets,
+          transform: GradientRotation(angle),
+        ).createShader(zone);
+
+  /// Valeur brute de la pastille, reservee aux tests de contraste.
+  @visibleForTesting
+  List<Color> get debugTeintes => _teintes;
+}

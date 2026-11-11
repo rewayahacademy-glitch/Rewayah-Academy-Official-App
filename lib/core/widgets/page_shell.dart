@@ -486,6 +486,11 @@ class PageShell extends StatelessWidget {
         ? RelecturePage.de(context)
         : null;
 
+    // La coquille peint la place de sa barre du fond de cette page.
+    FondDeCoquille.publier(
+      context,
+      fond?.background ?? Theme.of(context).scaffoldBackgroundColor,
+    );
     return Scaffold(
       backgroundColor: fond?.background,
       body: SafeArea(
@@ -529,10 +534,12 @@ class PageShell extends StatelessWidget {
                 // (1440x500 : 358 sous le bandeau, fenetre de 500) ; c'est
                 // [_Bascule] qui mesure la tete et ne la fait defiler que si
                 // elle ne laisse plus au corps une cible tactile.
+                gouttiereDedans: !bordABord,
                 child: _tirable(
                   relire,
                   _Bascule(
                     tirable: relire != null,
+                    gouttiere: bordABord ? 0 : gabarit.gouttiere,
                     // SANS-BARRE-FIXE : sur une page defilante, la tete defile
                     // TOUJOURS avec le contenu (DECISION-DEFILEMENT : rien
                     // de gros colle au-dessus du contenu). Les autres regles
@@ -658,6 +665,33 @@ class NavigationDeCoquille extends InheritedWidget {
   bool updateShouldNotify(NavigationDeCoquille ancien) => false;
 }
 
+/// Le fond de la page affichee dans une coquille a barre flottante
+/// (`NavShell` sur telephone) : la page le publie, la coquille en peint la
+/// place reservee a sa barre (decision du directeur du 10/11/2026 : plus de
+/// bande d'une autre couleur sous la pilule, elle flotte sur la page).
+class FondDeCoquille extends InheritedWidget {
+  /// Pose le canal du fond.
+  const FondDeCoquille({required this.fond, required super.child, super.key});
+
+  /// Le fond publie par la page affichee.
+  final ValueNotifier<Color?> fond;
+
+  /// Publie [couleur] comme fond de la page de [context], apres l'image en
+  /// cours ; sans coquille au-dessus, rien.
+  static void publier(BuildContext context, Color couleur) {
+    final ValueNotifier<Color?>? canal = context
+        .getInheritedWidgetOfExactType<FondDeCoquille>()
+        ?.fond;
+    if (canal == null || canal.value == couleur) return;
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      canal.value = couleur;
+    });
+  }
+
+  @override
+  bool updateShouldNotify(FondDeCoquille ancien) => ancien.fond != fond;
+}
+
 /// La bascule entre la tete fixe (`Column(tete, Expanded(corps))`) et le
 /// defilement global (`SingleChildScrollView(Column(tete, corps))`).
 ///
@@ -674,6 +708,7 @@ class NavigationDeCoquille extends InheritedWidget {
 class _Bascule extends StatefulWidget {
   const _Bascule({
     required this.tirable,
+    required this.gouttiere,
     required this.teteDefilante,
     required this.tete,
     required this.corps,
@@ -698,6 +733,12 @@ class _Bascule extends StatefulWidget {
   /// R3 : la page se tire pour rafraichir ; son defilement accepte le geste
   /// meme quand le contenu tient dans l'ecran.
   final bool tirable;
+
+  /// LUMIERE-DOUCE (11/11/2026) : la gouttiere du gabarit, posee autour de
+  /// la tete et du corps, a l'interieur du defilement ; la zone qui defile
+  /// va d'un bord a l'autre et ne coupe plus ce qui deborde d'une carte
+  /// dans la gouttiere. 0 pour une page bord a bord.
+  final double gouttiere;
 
   @override
   State<_Bascule> createState() => _BasculeState();
@@ -933,6 +974,15 @@ class _BasculeState extends State<_Bascule> {
     // La tete garde sa mise en page d'avant : une colonne etiree de hauteur
     // minimale rend ses enfants comme s'ils etaient ceux de la colonne
     // exterieure.
+    // Directionnel : en arabe, la gouttiere de debut est a droite.
+    Widget avecGouttiere(Widget enfant) => widget.gouttiere == 0
+        ? enfant
+        : Padding(
+            padding: EdgeInsetsDirectional.symmetric(
+              horizontal: widget.gouttiere,
+            ),
+            child: enfant,
+          );
     final Widget noyau = KeyedSubtree(
       key: _cleTete,
       child: _MesureTete(
@@ -1005,7 +1055,7 @@ class _BasculeState extends State<_Bascule> {
         // le premier ecran montre la fin du fil et son champ, au lieu d'une
         // tete qui repoussait le champ sous le pli (320 et texte x2).
         if (teteDefilante && !widget.defilante && _relais.pris) {
-          return corpsAvec(confiee: true);
+          return avecGouttiere(corpsAvec(confiee: true));
         }
         final _Mode mode = teteDefilante || forcee
             ? _Mode.defilementGlobal
@@ -1030,7 +1080,10 @@ class _BasculeState extends State<_Bascule> {
               child: widget.defilante
                   ? Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: <Widget>[enTete, corps],
+                      children: <Widget>[
+                        avecGouttiere(enTete),
+                        avecGouttiere(corps),
+                      ],
                     )
                   // PAGESHELL-200-1 : le corps non defilant recoit la
                   // hauteur reellement disponible sous la tete, pas toute
@@ -1041,7 +1094,10 @@ class _BasculeState extends State<_Bascule> {
                   : _TeteEtCorps(
                       hauteurVue: hauteur,
                       manque: _manque,
-                      children: <Widget>[enTete, corps],
+                      children: <Widget>[
+                        avecGouttiere(enTete),
+                        avecGouttiere(corps),
+                      ],
                     ),
             );
 
@@ -1051,7 +1107,7 @@ class _BasculeState extends State<_Bascule> {
           // corps dans la hauteur qui reste, qui defile.
           _Mode.noyauFixe => _TeteFixe(
             children: <Widget>[
-              noyau,
+              avecGouttiere(noyau),
               LayoutBuilder(
                 builder: (BuildContext _, BoxConstraints reste) =>
                     defilement(complement!, reste.maxHeight),
@@ -1064,17 +1120,17 @@ class _BasculeState extends State<_Bascule> {
           // bascule change alors de mode a la fin de l'image).
           _Mode.teteFixe => _TeteFixe(
             children: <Widget>[
-              tete,
+              avecGouttiere(tete),
               if (widget.defilante)
                 SingleChildScrollView(
                   controller: defileur,
                   physics: widget.tirable
                       ? const AlwaysScrollableScrollPhysics()
                       : null,
-                  child: corps,
+                  child: avecGouttiere(corps),
                 )
               else
-                corps,
+                avecGouttiere(corps),
             ],
           ),
         };
@@ -1940,9 +1996,16 @@ class _Colonne extends StatelessWidget {
     required this.child,
     this.bordABord = false,
     this.pleineLargeur = false,
+    this.gouttiereDedans = false,
   });
 
   final double gouttiere;
+
+  /// LUMIERE-DOUCE (11/11/2026) : la gouttiere est posee par l'enfant
+  /// ([_Bascule]) a l'interieur de son defilement, pour que la zone qui
+  /// defile aille d'un bord a l'autre de la colonne et ne coupe pas ce qui
+  /// deborde d'une carte dans la gouttiere (la lumiere de `LumiereAutour`).
+  final bool gouttiereDedans;
   final Widget child;
   final bool bordABord;
 
@@ -1957,14 +2020,18 @@ class _Colonne extends StatelessWidget {
     return Align(
       alignment: AlignmentDirectional.topCenter,
       child: ConstrainedBox(
+        // La largeur maximale compte la gouttiere, qu'elle soit posee ici
+        // ou dedans : le contenu garde sa largeur et sa place.
         constraints: BoxConstraints(
           maxWidth: pleineLargeur ? double.infinity : AppPage.largeurMaxContenu,
         ),
-        child: Padding(
-          // Directionnel : en arabe, la gouttiere de debut est a droite.
-          padding: EdgeInsetsDirectional.symmetric(horizontal: gouttiere),
-          child: child,
-        ),
+        child: gouttiereDedans
+            ? child
+            : Padding(
+                // Directionnel : en arabe, la gouttiere de debut est a droite.
+                padding: EdgeInsetsDirectional.symmetric(horizontal: gouttiere),
+                child: child,
+              ),
       ),
     );
   }

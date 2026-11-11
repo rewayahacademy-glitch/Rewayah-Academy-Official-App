@@ -9,6 +9,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'app.dart';
 import 'core/accessibilite/accueil_accessibilite_supabase.dart';
+import 'core/accessibilite/demande_presentation_supabase.dart';
 import 'core/accessibilite/port_accueil_accessibilite.dart';
 import 'core/accessibilite/port_reponse_presentation.dart';
 import 'core/accessibilite/reponse_presentation_supabase.dart';
@@ -47,6 +48,7 @@ import 'core/candidature/inscription_candidat_supabase.dart';
 import 'core/candidature/invitations_personnelles_supabase.dart';
 import 'core/candidature/ma_candidature_supabase.dart';
 import 'core/candidature/nom_latin_supabase.dart';
+import 'core/candidature/photo_dossier_candidat.dart';
 import 'core/candidature/port_accord_publication.dart';
 import 'core/candidature/port_autres_competences.dart';
 import 'core/candidature/port_candidatures_direction.dart';
@@ -168,6 +170,8 @@ import 'core/photos/photo_personne.dart';
 import 'core/photos/photos_supabase.dart';
 import 'core/preferences/preferences_locales.dart'
     show appliquerPreferenceLangue, langueMemoriseeAuDemarrage;
+import 'core/presence/retard_en_direct.dart' show portRetardEnDirectProvider;
+import 'core/presence/retard_en_direct_supabase.dart';
 import 'core/recherche/port_recherche.dart';
 import 'core/recrutement/invitations_comptable_supabase.dart';
 import 'core/recrutement/invitations_enseignant_supabase.dart';
@@ -219,6 +223,8 @@ import 'features/com_annonces/port_regles_audience.dart';
 import 'features/com_annonces/regles_audience_supabase.dart';
 import 'features/com_messages/messages_metier_supabase.dart';
 import 'features/com_messages/port_messages_metier.dart';
+import 'features/connexion/accueil_invite.dart' show portAccueilInviteProvider;
+import 'features/connexion/accueil_invite_supabase.dart';
 import 'features/controleur/compte_rendu_controle.dart';
 import 'features/controleur/compte_rendu_controle_supabase.dart';
 import 'features/controleur/echanges_controleur.dart';
@@ -232,10 +238,16 @@ import 'features/demo/dossiers_demo.dart';
 import 'features/demo/mode_demonstration.dart';
 import 'features/demo/racine_demonstrable.dart';
 import 'features/demo/repere_demonstration.dart';
+import 'features/enseignant_classes/details_classes_supabase.dart';
+import 'features/enseignant_classes/mes_classes_page.dart'
+    show DetailClasse, detailsClassesProvider;
 import 'features/fiche_groupe/etape_eleve.dart';
 import 'features/fiche_groupe/etape_eleve_supabase.dart';
 import 'features/fiche_groupe/observations_eleve.dart';
 import 'features/fiche_groupe/observations_eleve_supabase.dart';
+import 'features/fiche_groupe/preparation_seance.dart'
+    show portProjectionsElevesProvider;
+import 'features/fiche_groupe/projection_eleves_supabase.dart';
 import 'features/foyer/invitation_conjoint.dart';
 import 'features/foyer/invitation_conjoint_supabase.dart';
 import 'features/foyer/invitation_envoyee.dart';
@@ -505,6 +517,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   portCandidaturesDirectionProvider.overrideWithValue(
     CandidaturesDirectionSupabase(Supabase.instance.client),
   ),
+  // PHOTO-CANDIDATURE-FIGEE (07/11/2026, migration 20261121300000) : la photo
+  // envoyee avec la candidature, lue par la direction.
+  portPhotoDossierProvider.overrideWithValue(
+    PhotoDossierSupabase(Supabase.instance.client),
+  ),
   // V2-a : les entretiens de la direction (ADM-21, bloc Entretien), sur les
   // RPC de V1-a et V1-a-bis.
   portEntretiensDirectionProvider.overrideWithValue(
@@ -704,6 +721,18 @@ List<Override> _surchargesAppReelle() => <Override>[
   reponseRemplacementProvider.overrideWithValue(
     ReponseRemplacementSupabase(Supabase.instance.client),
   ),
+  // Mes classes (MES-CLASSES-ETAPE) : l'etape du programme de chaque Classe,
+  // lue sur le serveur ; en attente ou en panne, la liste reste sans etape.
+  detailsClassesProvider.overrideWith(
+    (Ref ref) =>
+        ref.watch(detailsClassesServeurProvider).value ??
+        const <String, DetailClasse>{},
+  ),
+  // LUMIERE-RETARD : les eleves pas encore entres dans une seance en direct,
+  // au-dela du seuil du serveur (`retard_en_direct`) ; sans lecture, aucune lumiere.
+  portRetardEnDirectProvider.overrideWithValue(
+    RetardEnDirectSupabase(Supabase.instance.client),
+  ),
   // Tableau commun des remplacements (REMPL-1), filtre par le serveur.
   portRemplacementsProvider.overrideWithValue(
     RemplacementsSupabase(Supabase.instance.client),
@@ -723,6 +752,23 @@ List<Override> _surchargesAppReelle() => <Override>[
   // Classe, choisie et datee par le serveur (version publiee seulement).
   portEtapesElevesProvider.overrideWithValue(
     EtapesElevesSupabase(Supabase.instance.client),
+  ),
+  // ACCUEIL-INVITE (09/11/2026) : l'accueil unique des personnes invitees,
+  // devant l'inscription (`mon_invitation_accueil`,
+  // `accepter_invitation_nouveau_compte`, `refuser_invitation_sans_compte`).
+  portAccueilInviteProvider.overrideWithValue(
+    AccueilInviteSupabase(Supabase.instance.client),
+  ),
+  // PROJECTION-ELEVES (08/11/2026) : la page de reprise et le travail en
+  // cours de chaque eleve, pour son enseignant titulaire
+  // (`groupe_roster_enseignant`, migration 0033).
+  portProjectionsElevesProvider.overrideWithValue(
+    ProjectionsElevesSupabase(Supabase.instance.client),
+  ),
+  // Tolere n° 1 et 18 (08/11/2026) : la demande de presentation standard du
+  // mineur a son tuteur (`demander_presentation_standard`, migration 0080).
+  portDemandePresentationProvider.overrideWithValue(
+    DemandePresentationSupabase(Supabase.instance.client),
   ),
   // NON-BRANCHE-LIVRAISON 1 (08/11/2026) : ce que le cahier note pour chaque
   // eleve (points a renforcer, pret pour le petit bilan), lu par

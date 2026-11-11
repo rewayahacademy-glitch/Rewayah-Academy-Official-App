@@ -3,7 +3,6 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/appairage/service_appairage.dart';
-import 'package:rewayah_academy/core/capacites/acces_foyer_depuis_eleves.dart';
 import 'package:rewayah_academy/core/capacites/identite_titulaire_supabase.dart';
 import 'package:rewayah_academy/core/capacites/port_acces_foyer.dart';
 import 'package:rewayah_academy/core/capacites/port_identite_titulaire.dart';
@@ -12,6 +11,7 @@ import 'package:rewayah_academy/core/i18n/villes_fuseau.dart';
 import 'package:rewayah_academy/features/compte/donnees_compte.dart';
 
 import '../../fixtures/tuteur/foyers.dart';
+import '../../support/acces_foyer_depuis_eleves.dart';
 
 EleveDuFoyer _eleve(String id, String prenom, {DateTime? fin}) => EleveDuFoyer(
   id: id,

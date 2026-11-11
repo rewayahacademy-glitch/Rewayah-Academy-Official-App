@@ -1427,6 +1427,7 @@
       "demanderDetail": "Demande à ton tuteur de passer à la présentation standard.",
       "demandeEnCours": "Ta demande est en cours d'envoi.",
       "demandeEnvoyee": "Ta demande a été envoyée à ton tuteur.",
+      "demandeHorsLigne": "Rien n'est parti\u00a0: le réseau est absent. Réessaie dès son retour.",
       "demandeNonConfirmee": "L'envoi n'a pas été confirmé. Touche la ligne pour réessayer. Rien n'a changé en attendant\u00a0: ta présentation reste la même."
     }
   },
@@ -1675,6 +1676,8 @@
       "creePhrase": "Votre compte de tuteur ne change pas. Vous gardez votre foyer et les profils élèves de vos enfants.",
       "dejaTitre": "Vous avez déjà votre profil élève",
       "dejaPhrase": "Votre profil élève existe déjà\u00a0: il n'y a rien à créer.",
+      "dejaOuvertPhrase": "Votre profil élève existe déjà\u00a0: vos cours vous attendent dans votre espace élève.",
+      "dejaAttentePhrase": "Votre espace élève sera disponible dès que la direction aura validé votre demande d'admission.",
       "retour": "Retour au foyer"
     },
     "ajout": {
@@ -2168,6 +2171,17 @@
     }
   },
   "recrutement": {
+    "nomLatin": {
+      "titre": "Votre nom en lettres latines",
+      "explication": "Votre nom est écrit dans une autre écriture. Pour les listes, les attestations et les échanges avec l'académie, nous avons besoin de son écriture en lettres latines.",
+      "libelle": "Votre nom en lettres latines",
+      "aide": "Voici notre proposition. Corrigez-la si votre nom ne s'écrit pas ainsi, puis confirmez.",
+      "origine": "Votre nom tel que vous l'avez écrit\u00a0: {nom}",
+      "confirmer": "Confirmer mon nom",
+      "plusTard": "Plus tard",
+      "erreur": "Écrivez votre nom avec les lettres de l'alphabet latin (a, b, c) pour continuer.",
+      "echec": "Votre nom n'est pas confirmé. Réessayez dans un instant."
+    },
     "invitations": {
       "titre": "Inviter un enseignant",
       "onglet": "Invitations",
@@ -3439,6 +3453,102 @@
   },
   "admin": {
     "candidatures": {
+      "liste": {
+        "titreGesteNonFait": "Geste non fait",
+        "ouvrirDossier": "Ouvrir le dossier",
+        "ouverture": "Lecture du dossier : {nom}",
+        "retourLigne": "{nom}. {retour}",
+        "gestePlusPossible": "Ce geste n'est plus possible depuis l'état « {etat} ». Rien n'a été fait. La liste est actualisée.",
+        "dossierIllisible": "Le dossier n'a pas pu être lu. Rien n'a été fait. Réessayez.",
+        "synthese": {
+          "informationsManquantes": {
+            "one": "{n} information manquante",
+            "other": "{n} informations manquantes"
+          },
+          "confirmeesIndisponibles": {
+            "one": "{n} confirmée indisponible",
+            "other": "{n} confirmées indisponibles"
+          }
+        }
+      },
+      "lot": {
+        "selectionnees": {
+          "one": "{n} sélectionnée",
+          "other": "{n} sélectionnées"
+        },
+        "dontPage": "dont {n} sur cette page",
+        "avecDont": "{selection}, {dont}",
+        "autresGestes": "Les autres gestes se font un par un, depuis la ligne ou le dossier.",
+        "refuser": "Refuser",
+        "plafond": "Vous pouvez retenir au plus {n} candidatures à la fois.",
+        "selectionRetiree": "La sélection a été retirée, parce que la recherche ou les filtres ont changé.",
+        "feuille": {
+          "sousTitre": {
+            "one": "{n} candidature sélectionnée",
+            "other": "{n} candidatures sélectionnées"
+          },
+          "lecture": "Vérification de la sélection en cours.",
+          "seront": {
+            "one": "{n} candidature sera concernée",
+            "other": "{n} candidatures seront concernées"
+          },
+          "neSeront": {
+            "one": "{n} candidature ne sera pas concernée",
+            "other": "{n} candidatures ne seront pas concernées"
+          },
+          "etAutres": "et {n} autres",
+          "effetPause": "Les candidatures concernées n'avancent plus tant que la pause n'est pas levée.",
+          "effetLever": "Les candidatures concernées reprennent là où elles s'étaient arrêtées.",
+          "effetRefuser": "Les candidatures concernées sont fermées. Vous pourrez les rouvrir une à une.",
+          "motifCommun": "Le même motif et le même message valent pour toutes les candidatures concernées.",
+          "nombre": "Nombre de candidatures concernées",
+          "nombreAide": "Saisissez {n} pour confirmer.",
+          "nombreFaux": "Ce n'est pas le bon nombre. Saisissez {n}.",
+          "actualiserApercu": "Actualiser l'aperçu",
+          "terminer": "Terminer",
+          "raisons": {
+            "absente": "Cette candidature n'existe plus.",
+            "horsPortee": "Vous n'y avez pas accès.",
+            "dejaEnPause": "Elle est déjà en pause.",
+            "pasEnPause": "Elle n'est pas en pause.",
+            "pause": "Sa pause ne permet pas ce geste.",
+            "etat": "Ce geste n'est pas possible depuis l'état « {etat} ».",
+            "conflit": "Elle a changé entre-temps.",
+            "erreurServeur": "Le serveur n'a pas pu la traiter. Réessayez depuis son dossier.",
+            "inconnue": "Le serveur a refusé ce geste."
+          },
+          "rapport": {
+            "titre": "Résultat",
+            "reussies": {
+              "one": "{n} candidature traitée",
+              "other": "{n} candidatures traitées"
+            },
+            "exclues": {
+              "one": "{n} exclue",
+              "other": "{n} exclues"
+            },
+            "refusees": {
+              "one": "{n} refusée par le serveur",
+              "other": "{n} refusées par le serveur"
+            },
+            "rejoue": "Ce traitement avait déjà été fait : rien n'a été écrit une seconde fois.",
+            "ligneEtRaison": "{statut} : {raison}",
+            "ligneReussie": "Fait",
+            "ligneExclue": "Exclue",
+            "ligneRefusee": "Refusée",
+            "sansNom": "Candidature sans nom lisible"
+          }
+        },
+        "erreurs": {
+          "titre": "Traitement refusé",
+          "jetonPerime": "Les candidatures ont changé depuis l'aperçu. Rien n'a été fait. Actualisez l'aperçu.",
+          "aucunEligible": "Aucune candidature de la sélection ne peut recevoir ce geste. Rien n'a été fait.",
+          "nonGroupable": "Ce geste ne se fait pas pour plusieurs candidatures à la fois. Ouvrez le dossier de chacune pour le faire.",
+          "cleReutilisee": "Cette demande a déjà servi à une autre action. Fermez cette fenêtre et recommencez.",
+          "horsPortee": "Une candidature de la sélection est hors de votre accès. Rien n'a été fait. Actualisez l'aperçu.",
+          "lectureApercu": "L'aperçu n'a pas pu être lu. Rien n'a été fait. Réessayez."
+        }
+      },
       "titre": "Candidatures",
       "sousTitre": "Les candidatures d'enseignement, de l'invitation à la Salle des prêts à enseigner.",
       "exception": {
@@ -3568,6 +3678,13 @@
       "detail": {
         "retour": "Retour aux candidatures",
         "recue": "Reçue le {date}",
+        "photo": {
+          "titre": "Photo envoyée avec la candidature",
+          "aucune": "Aucune photo n'a été envoyée avec cette candidature.",
+          "figeeLe": "Gardée telle qu'envoyée, le {date}.",
+          "echec": "La photo n'a pas pu être lue.",
+          "alt": "Photo {deNom}, envoyée avec la candidature"
+        },
         "provenance": "Provenance : {provenance}",
         "messagePause": "Message choisi pour la pause : {nom}",
         "messageRefus": "Message choisi pour le refus : {nom}",
@@ -4342,6 +4459,18 @@
       "actionAjouter": "Ajouter un élève",
       "actionRetirer": "Retirer",
       "actionModifierSeuil": "Modifier le seuil",
+      "nomClasse": {
+        "action": "Changer le nom",
+        "titre": "Changer le nom de la classe {nom}",
+        "champ": "Nom de la classe",
+        "aide": "Ce nom s'affiche aux familles, aux élèves et à l'enseignant de la classe.",
+        "manque": "Il manque le nom de la classe\u00a0: écrivez-le dans le champ.",
+        "erreur": "Le nom n'a pas été changé\u00a0: {message} Réessayez dans un instant.",
+        "erreurHoraire": "Le nom n'a pas été changé\u00a0: la liste des classes n'était plus à jour. Fermez cette feuille, puis recommencez.",
+        "dejaPris": "Une autre classe porte déjà ce nom\u00a0: choisissez-en un autre.",
+        "enregistrer": "Enregistrer",
+        "horsLigne": "Le nom pourra être enregistré quand la connexion sera revenue. Votre saisie reste affichée."
+      },
       "actionObservation": "Réglages d'observation",
       "actionCloturer": "Clôturer la classe",
       "actionAjouterCreneau": "Ajouter un créneau",
@@ -4622,13 +4751,11 @@
           "one": "{n} élève",
           "other": "{n} élèves"
         },
-        "titreNom": "Nom de la classe",
-        "nomDetail": "Ce nom est déduit du genre, du public et du créneau\u00a0: vous pouvez le changer.",
+        "nomAutomatique": "Le nom de la classe est choisi automatiquement parmi des noms de personnalités de l'islam\u00a0: un nom de femme pour une classe de femmes, un nom d'homme pour une classe d'hommes. Vous pourrez le changer ensuite.",
         "nomPropose": "{base}, {creneau}",
         "manqueGenre": "Il manque le genre de la classe\u00a0: choisissez l'une des trois cartes.",
         "manqueCreneau": "Il manque le créneau\u00a0: choisissez le jour et l'heure de la classe.",
         "manqueSeuil": "Il manque le seuil maximal\u00a0: choisissez un nombre d'élèves entre 1 et 6.",
-        "manqueNom": "Il manque le nom de la classe\u00a0: écrivez-le dans le dernier champ.",
         "manqueEnseignantHommes": "{nom} ne peut pas prendre une classe d'hommes\u00a0: choisissez un enseignant homme dans la liste.",
         "manqueEnseignantGarcons": "{nom} ne peut pas prendre une classe de garçons\u00a0: choisissez un enseignant homme dans la liste.",
         "manqueEnseignantFemmes": "{nom} ne peut pas prendre une classe de femmes\u00a0: choisissez une enseignante dans la liste.",
@@ -7019,7 +7146,8 @@
       "journee": "Aujourd'hui",
       "classes": "Classes",
       "creneaux": "Disponibilités",
-      "profil": "Profil"
+      "profil": "Profil",
+      "compte": "Compte"
     },
     "controleur": {
       "planning": "Planning",
@@ -7054,6 +7182,24 @@
     "logoAccueil": "Rewayah Academy, accueil",
     "replier": "Replier la navigation",
     "deplier": "Déplier la navigation",
+    "halo": {
+      "enCeMoment": "En ce moment",
+      "monCompte": "Mon compte",
+      "urgentNom": "{compte}, une alerte urgente",
+      "urgentMot": "Urgent",
+      "ouvrirAlerte": "Ouvrir l'alerte",
+      "nouveauNom(plural, param=n)": {
+        "one": "{compte}, {nombre} nouveauté à lire",
+        "other": "{compte}, {nombre} nouveautés à lire"
+      },
+      "nouveauTitre(plural, param=n)": {
+        "one": "{nombre} nouveauté à lire",
+        "other": "{nombre} nouveautés à lire"
+      },
+      "nouveauMot": "À lire",
+      "lire": "Lire",
+      "salleNom": "{compte}, la salle est ouverte"
+    },
     "filAriane": {
       "separateur": "›",
       "suite": "› {libelle}"
@@ -7809,6 +7955,7 @@
       "financesPhrase": "Solde, prochain débit et ce qu'il reste à financer.",
       "foyerVideTitre": "Aucun profil élève pour l'instant",
       "foyerVidePhrase": "Ajoutez un profil élève pour choisir une classe et suivre ses séances.",
+      "ouvrirEspaceEleve": "Ouvrir mon espace élève",
       "ajouterProfil": "Ajouter un profil élève",
       "profilsIllisibles": "Les profils du foyer n'ont pas pu être lus.",
       "blocageAppareilTitre": "Aucun appareil prêt pour {prenom}",
@@ -8171,6 +8318,7 @@
       "erreur": "Vos classes n'ont pas pu être lues. Réessayez dans un instant.",
       "chargement": "Chargement de vos classes.",
       "niveau": "Niveau {niveau}",
+      "etape": "Étape {n} · {nom}",
       "eleveUn": "1 élève",
       "prochaine": "Prochaine séance\u00a0: {jour} à {heure}",
       "sansProchaine": "Aucune séance prévue",
@@ -8334,6 +8482,7 @@
       "erreurPartielle": "Les horaires de prière et vos pauses n'ont pas pu être chargés\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Vos séances affichées sont à jour\u00a0: elles n'en dépendent pas. Réessayez dans un instant.",
       "erreurPartielleTout": "Les horaires de prière, vos pauses et vos cahiers de transmission à terminer n'ont pas pu être chargés\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Vos séances affichées sont à jour\u00a0: elles n'en dépendent pas. Réessayez dans un instant.",
       "absenceDetectee": "{eleve} n'est pas entré en salle.",
+      "pasEncoreRejoint": "{eleve} n'a pas encore rejoint la salle.",
       "coupureDetectee": "{eleve} a perdu la connexion.",
       "revenusDetail": "Votre rémunération estimée du mois, classe par classe.",
       "revenusLecteur": "Voir vos revenus estimés du mois",
@@ -8649,6 +8798,7 @@
       "remuneration": "Rémunération",
       "revenus": "Mes revenus",
       "revenusDetail": "Ce que vous rapportent vos séances, élève par élève",
+      "disponibilitesDetail": "Les jours et heures où vous pouvez enseigner",
       "plafondValeur(param=nombre)": {
         "one": "{nombre} h par semaine",
         "other": "{nombre} h par semaine"
@@ -8795,6 +8945,9 @@
       "periode": "{mois} {annee}",
       "totalEstime": "Revenu estimé du mois",
       "totalDetail": "Ce que rapportent vos séances, hors autres revenus.",
+      "aRecevoir": "À recevoir ce mois-ci",
+      "aRecevoirDetail": "Les séances payées, hors attentes et hors autres revenus.",
+      "attenteCahierTotal": "En attente du cahier de transmission\u00a0: {montant}. Remplissez le cahier de transmission de la semaine pour le débloquer.",
       "heuresAssurees": "Heures assurées",
       "heuresAssureesDetail": "Les séances du mois qui ont rapporté, à leur durée retenue.",
       "classesActives": "Classes",
@@ -8805,35 +8958,40 @@
       "versementValeur": "Du {du} au {au}",
       "versementDetail": "La paie de {mois} est versée entre ces deux dates.",
       "jourMois": "{jour} {mois}",
-      "detailSection": "Détail par classe",
+      "classesSection": "Par classe",
+      "classesDetail": "Touchez une classe pour voir ses séances et ce que chaque élève a rapporté.",
+      "nombreSeances(param=n)": {
+        "one": "{n}\u00a0séance",
+        "other": "{n}\u00a0séances"
+      },
       "classe": "Classe {nom}",
       "capacite": "Capacité",
       "capaciteValeur": "{nombre} places",
       "taux": "Taux horaire effectif",
       "tauxValeur": "{montant} par heure",
-      "montantClasse": "Montant estimé",
-      "classeColonne": "Classe",
       "type": "Type",
       "typeEnfants": "Enfants",
       "typeDebutants": "Enfants débutants",
       "typeAdultes": "Adultes",
       "remplacement": "Remplacement",
-      "tauxColonne": "Taux par heure",
       "tauxMoyen": "Taux horaire moyen",
       "total": "Total",
-      "seancesSection": "Ce que chaque séance a rapporté",
-      "seancesDetail": "Chaque séance tenue du mois\u00a0: chaque élève, présent ou absent, et ce qu'il a rapporté.",
-      "seanceTitre": "Classe {nom}, {date} à {heure}",
+      "seanceDate": "{date} à {heure}",
       "seanceDuree": "Durée retenue",
       "present": "Présent",
       "absent": "Absent",
+      "presentPartiel": "Présent en partie",
+      "partielleNote": "Une présence en partie est payée comme une présence.",
+      "aucunMontant": "Aucun montant pour cette séance.",
+      "partielle": "4. Une présence en partie compte",
+      "partielleDetail": "Un élève présent pendant une partie de la séance est payé comme un élève présent.",
       "montantSeance": "Total de la séance",
       "attenteCahier": "En attente du cahier de transmission de la semaine",
       "attenteCahierDetail": "Rien ne vous est versé pour cette séance tant que le cahier de transmission de la semaine manque. Une fois ce cahier de transmission déposé, ce montant vous est versé.",
       "attenteDirection": "En attente de la direction",
       "attenteDirectionDetail": "La direction doit confirmer la durée de cette séance\u00a0: aucun montant n'est encore fixé.",
       "seancesVide": "Aucune séance tenue ce mois-ci.",
-      "calculSection": "Comment l'estimation se calcule",
+      "calculSection": "Comment c'est calculé",
       "autresSection": "Autres revenus",
       "autresDetail": "L'aide Internet, les primes et les missions que la direction vous attribue pour ce mois, versées avec la paie.",
       "autresVide": "Aucune aide Internet, prime ni mission ce mois-ci.",
@@ -9843,6 +10001,8 @@
       "absence": "Absence",
       "aucuneClasse": "Aucune classe pour le moment.",
       "aucuneClasseDetail": "Votre prochaine séance s'affichera ici dès que votre classe sera ouverte.",
+      "retourFoyerTitre": "Revenir à l'accueil de votre famille",
+      "retourFoyerPhrase": "Retrouvez les Classes et les séances de vos proches.",
       "financesPhrase": "Votre solde, votre période financée et votre mensualité.",
       "sansDonnees": "Votre prochaine séance et vos dernières séances n'ont pas pu être chargées",
       "echec": "Votre prochaine séance et vos dernières séances n'ont pas pu être chargées\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant."
@@ -10455,6 +10615,7 @@
     "retour": "Retour aux demandes",
     "fuseau": "Heures affichées : heure {deVille}.",
     "prevue": "Prévue le {date} à {heure}",
+    "prevueJour": "Prévue le {date}",
     "etapes": {
       "envoyee": "Demande envoyée",
       "enAttente": "En liste d'attente",
@@ -13982,6 +14143,19 @@
     "echecTitre": "Votre inscription n'a pas pu être vérifiée",
     "echecPhrase": "Cause probable\u00a0: la connexion au serveur s'est interrompue (non confirmé). Réessayez dans un instant\u00a0: rien n'est créé en double.",
     "sansDonnees": "La vérification de votre inscription"
+  },
+  "accueilInvite": {
+    "titre": "Votre invitation",
+    "roles": {
+      "foyer": "Rewayah Academy vous invite en tant que tuteur.",
+      "enseignant": "Rewayah Academy vous invite en tant qu'enseignant.",
+      "comptable": "Rewayah Academy vous invite en tant que comptable.",
+      "candidat": "Rewayah Academy vous invite en tant que candidat à l'enseignement."
+    },
+    "invitant": "Personne qui vous invite dans son foyer\u00a0: {prenom}.",
+    "foyerIdentite": "Dites-nous qui vous êtes, puis répondez à l'invitation. Votre compte n'est créé que si vous l'acceptez.",
+    "suite": "Continuez pour créer votre compte.",
+    "champsRequis": "Indiquez votre prénom, votre nom et votre genre."
   },
   "n1": {
     "regles": {

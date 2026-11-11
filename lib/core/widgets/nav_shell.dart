@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -8,11 +9,9 @@ import '../accessibilite/texte_sans_coupure.dart';
 import '../domain/enums.dart';
 import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
-import '../mouvement/mouvement.dart';
 import '../nouveautes/nouveautes.dart';
 import '../preferences/preferences_locales.dart';
 import '../router/routes.dart';
-import '../theme/app_color_pair.dart';
 import '../theme/app_elevation.dart';
 import '../theme/app_gabarit.dart';
 import '../theme/app_metriques.dart';
@@ -20,8 +19,15 @@ import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
 import '../theme/app_typography.dart';
+import 'avatar_compte.dart';
+import 'avatar_tile.dart' show AppAvatar;
 import 'brand_logo.dart';
-import 'page_shell.dart' show NavigationDeCoquille;
+import 'cercle_selectionnable.dart';
+import 'halo_compte.dart';
+import 'halo_lumiere.dart' show ArbitreLumieres;
+import 'indicateur_liquide.dart';
+import 'menu_actions.dart';
+import 'page_shell.dart' show FondDeCoquille, NavigationDeCoquille;
 import 'pressable.dart';
 
 /// Une destination de premier niveau.
@@ -35,7 +41,15 @@ class Destination {
     this.enPied = false,
     this.essentielle = true,
     this.nouveaute,
+    this.compte = false,
   });
+
+  /// NAV-REFONTE (decision du directeur du 09/11/2026) : vrai pour la
+  /// destination du Compte (Compte, Profil, Mon espace selon le role). Sur
+  /// telephone, elle quitte la pilule et devient le cercle a sa fin, avec la
+  /// photo de la personne. Une seule par role ; les autres formes (rail,
+  /// colonne laterale) la gardent dans leur liste.
+  final bool compte;
 
   /// NOUVEAUTES (07/11/2026) : la cle de nouveaute de cet onglet ; le badge
   /// « Nouveau » s'y pose tant que le serveur la signale, et l'appui la
@@ -130,6 +144,7 @@ List<Destination> destinationsPour({
         libelle: t.nav.eleve.profil,
         icone: AppIcons.profil,
         chemin: Routes.compte,
+        compte: true,
       ),
     ],
     // L'ordre est celui des branches de la coquille eleve dans
@@ -158,6 +173,7 @@ List<Destination> destinationsPour({
         libelle: t.nav.eleve.monEspace,
         icone: AppIcons.profil,
         chemin: Routes.compte,
+        compte: true,
       ),
     ],
     // **Accueil, Foyer, Historique, Compte**, dans cet ordre et sur tous les
@@ -189,9 +205,11 @@ List<Destination> destinationsPour({
         icone: AppIcons.profil,
         chemin: Routes.tuteurCompte,
         enPied: true,
+        compte: true,
       ),
     ],
-    // **Aujourd'hui, Classes, Disponibilites, Profil**, dans cet ordre et sur
+    // **Aujourd'hui, Classes, Messages, Compte** depuis NAV-REFONTE (09/11/2026),
+    // auparavant Aujourd'hui, Classes, Disponibilites, Profil, dans cet ordre et sur
     // tous les formats (regle E10). ADR-027 et ses trois destinations sont
     // remplaces par la decision du directeur du 26/09/2026 : Classes devient
     // une destination de premier niveau. « Compte » ne revient pas : `ENS-05`
@@ -209,15 +227,19 @@ List<Destination> destinationsPour({
         icone: AppIcons.classes,
         chemin: Routes.enseignantClasses,
       ),
+      // NAV-REFONTE (decision du directeur du 09/11/2026) : Messages entre
+      // dans la barre ; les disponibilites en sortent (remplies a l'accueil,
+      // salle 3, puis modifiables par « Mes disponibilites » dans Compte).
       Destination(
-        libelle: t.nav.enseignant.creneaux,
-        icone: AppIcons.creneaux,
-        chemin: Routes.enseignantCreneaux,
+        libelle: t.com.socle.lexique.messages,
+        icone: AppIcons.discussion,
+        chemin: Routes.enseignantMessages,
       ),
       Destination(
-        libelle: t.nav.enseignant.profil,
+        libelle: t.nav.enseignant.compte,
         icone: AppIcons.profil,
         chemin: Routes.enseignantProfil,
+        compte: true,
       ),
     ],
     // **Controle, Historique, Echanges, Compte**, dans cet ordre et sur tous
@@ -246,6 +268,7 @@ List<Destination> destinationsPour({
         libelle: t.nav.controleur.compte,
         icone: AppIcons.profil,
         chemin: Routes.compte,
+        compte: true,
       ),
     ],
     // **Aujourd'hui, Paiements, Tresorerie, Compte**, dans cet ordre et sur
@@ -279,6 +302,7 @@ List<Destination> destinationsPour({
         libelle: t.comptable.nav.compte,
         icone: AppIcons.profil,
         chemin: Routes.compte,
+        compte: true,
       ),
     ],
     // **L'admin n'en tient plus aucune ici depuis le lot IA-01** (19 septembre
@@ -381,6 +405,10 @@ class NavShell extends StatelessWidget {
   /// Cle du bouton de repli ou de depli de la colonne laterale.
   static const Key boutonRepliKey = ValueKey<String>('nav-shell-bouton-repli');
 
+  /// Cle du Compte au pied du panneau (photo, prenom, menu), sur tablette et
+  /// ordinateur (NAV-REFONTE etape 3).
+  static const Key piedCompteKey = ValueKey<String>('nav-shell-pied-compte');
+
   /// Cree la coquille de navigation.
   ///
   /// **Volontairement non `const`** : les deux assertions portent sur la
@@ -397,6 +425,9 @@ class NavShell extends StatelessWidget {
     this.onAllerSecondaire,
     this.masquerBarreBasse = false,
     this.libellesDansLeRail = false,
+    this.halo,
+    this.onHaloTouche,
+    this.onDeconnexion,
     super.key,
   }) : assert(
          destinations.length <= maxDestinations,
@@ -449,6 +480,23 @@ class NavShell extends StatelessWidget {
   /// reste visible sur tablette et bureau.
   final bool masquerBarreBasse;
 
+  /// NAV-REFONTE, etape 2a (decision du directeur du 09/11/2026) : ce que le
+  /// halo du cercle Compte signale (alerte urgente, nouveautes a lire), ou
+  /// `null` : aucun halo, le cercle mene directement au Compte. Calcule hors
+  /// du shell par une fonction pure de la source ; jamais deduit d'un role.
+  /// La barre flottante seule le montre (le rail et la colonne a l'etape 3).
+  final EtatHaloCompte? halo;
+
+  /// Appele quand le cercle Compte est touche avec un [halo] : la coquille y
+  /// marque « Nouveau » comme vu (il s'eteint) ; Urgent reste allume tant
+  /// que la situation dure (arbitrage du garde-cap du 09/11/2026).
+  final void Function(EtatHaloCompte halo)? onHaloTouche;
+
+  /// NAV-REFONTE etape 3 (11/11/2026) : « Se deconnecter », dans le menu du
+  /// Compte au pied du panneau (tablette et ordinateur). Nul : l'entree n'est
+  /// pas proposee (un test, une galerie) ; le Compte reste atteint.
+  final VoidCallback? onDeconnexion;
+
   /// Vrai quand le rail replie garde le **nom visible** de chaque
   /// destination, sous son icone, au lieu de l'infobulle seule.
   ///
@@ -466,7 +514,16 @@ class NavShell extends StatelessWidget {
   static const double hauteurBarre = 64;
 
   /// Epaisseur du soulignement de la destination active de la barre basse.
+  /// Gardee pour la colonne laterale ; la barre flottante n'a plus de
+  /// soulignement depuis NAV-REFONTE.
   static const double epaisseurSoulignement = 3;
+
+  /// NAV-REFONTE : l'anneau d'accent du cercle Compte quand il est ouvert.
+  static const double epaisseurAnneauCompte = 3;
+
+  /// NAV-REFONTE : sous cette largeur d'ecran, les marges laterales de la
+  /// barre flottante passent de 16 a 12 (le cercle prend sa place).
+  static const double largeurEtroite = 360;
 
   /// Vrai quand la presentation courante est le Mode Accessibilite (guide) :
   /// lu dans le theme (`AppMetriques`), jamais passe en parametre d'ecran
@@ -493,8 +550,14 @@ class NavShell extends StatelessWidget {
   /// pour ne pas etre un chiffre litteral au milieu du dessin.
   static const double epaisseurContourGuide = 2;
 
+  // HALO 2a-bis (pilote, 11/11/2026) : l'arbitre des lumieres, pose une
+  // seule fois ici, couvre l'ecran et le cercle Compte reunis ; une seule
+  // lumiere y tourne a la fois.
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) =>
+      ArbitreLumieres(child: _construire(context));
+
+  Widget _construire(BuildContext context) {
     // Moins de deux destinations : il n'y a rien a choisir, donc rien a
     // afficher. Une barre a une seule entree n'est pas une navigation, c'est
     // un titre.
@@ -515,6 +578,8 @@ class NavShell extends StatelessWidget {
           destinations: destinations,
           indexActif: indexActif,
           onAller: onAller,
+          halo: halo,
+          onHaloTouche: onHaloTouche,
           child: child,
         ),
       );
@@ -530,6 +595,9 @@ class NavShell extends StatelessWidget {
         onAllerSecondaire: onAllerSecondaire,
         libellesDansLeRail: libellesDansLeRail,
         guide: guide(context),
+        halo: halo,
+        onHaloTouche: onHaloTouche,
+        onDeconnexion: onDeconnexion,
         child: child,
       ),
     );
@@ -552,6 +620,8 @@ class _CoquilleBarreBasse extends StatefulWidget {
     required this.indexActif,
     required this.onAller,
     required this.child,
+    this.halo,
+    this.onHaloTouche,
   });
 
   final bool guide;
@@ -559,6 +629,8 @@ class _CoquilleBarreBasse extends StatefulWidget {
   final int? indexActif;
   final void Function(String chemin) onAller;
   final Widget child;
+  final EtatHaloCompte? halo;
+  final void Function(EtatHaloCompte halo)? onHaloTouche;
 
   @override
   State<_CoquilleBarreBasse> createState() => _CoquilleBarreBasseEtat();
@@ -567,9 +639,16 @@ class _CoquilleBarreBasse extends StatefulWidget {
 class _CoquilleBarreBasseEtat extends State<_CoquilleBarreBasse> {
   final ControleurBarreBasse _controleur = ControleurBarreBasse();
 
+  /// Le fond de la page affichee, publie par elle ([FondDeCoquille]).
+  final ValueNotifier<Color?> _fondDePage = ValueNotifier<Color?>(null);
+
+  /// Les cles de l'effet liquide : stables d'une construction a l'autre.
+  final _ClesLiquide _cles = _ClesLiquide();
+
   @override
   void dispose() {
     _controleur.dispose();
+    _fondDePage.dispose();
     super.dispose();
   }
 
@@ -578,13 +657,23 @@ class _CoquilleBarreBasseEtat extends State<_CoquilleBarreBasse> {
     final AppPalette palette = AppPalette.of(context);
     // Le contenu garde son identite quand la barre s'efface : seul son
     // encart bas change.
-    final Widget contenu = EffacementBarreBasse(
-      controleur: _controleur,
-      child: widget.child,
+    final Widget contenu = FondDeCoquille(
+      fond: _fondDePage,
+      child: EffacementBarreBasse(controleur: _controleur, child: widget.child),
     );
-    return ColoredBox(
-      // Le fond de page passe sous la barre flottante et autour d'elle.
-      color: palette.surfaceCanvas.background,
+    // Decision du directeur du 10/11/2026 (tranchee par le pilote) : plus de
+    // bande d'une autre couleur sous la barre. La place reservee a la barre
+    // prend le fond de la page affichee : la pilule et le cercle flottent sur
+    // la page, avec leur ombre. La place reste reservee : la fin du contenu
+    // n'est jamais cachee, et les feuilles et menus de la page restent
+    // au-dessus de la barre.
+    return ValueListenableBuilder<Color?>(
+      valueListenable: _fondDePage,
+      builder: (BuildContext context, Color? fond, Widget? enfant) =>
+          ColoredBox(
+            color: fond ?? palette.surfaceCanvas.background,
+            child: enfant,
+          ),
       child: ValueListenableBuilder<bool>(
         valueListenable: _controleur,
         child: contenu,
@@ -607,6 +696,9 @@ class _CoquilleBarreBasseEtat extends State<_CoquilleBarreBasse> {
                     destinations: widget.destinations,
                     indexActif: widget.indexActif,
                     onAller: widget.onAller,
+                    halo: widget.halo,
+                    onHaloTouche: widget.onHaloTouche,
+                    cles: _cles,
                   ),
                 ),
             ],
@@ -623,13 +715,36 @@ class _CoquilleBarreBasseEtat extends State<_CoquilleBarreBasse> {
 /// Destination active : icone pleine, libelle en accent et soulignement de
 /// trois points. Inactive : icone au trait et encre attenuee. Jamais la
 /// couleur seule : l'etat « selectionne » est aussi annonce.
+/// Les cles de l'effet liquide de la barre flottante : une par onglet, la
+/// pilule et le cercle Compte.
+class _ClesLiquide {
+  final List<GlobalKey> onglets = List<GlobalKey>.generate(
+    NavShell.maxDestinations,
+    (int i) => GlobalKey(debugLabel: 'onglet-liquide-$i'),
+  );
+  final GlobalKey pilule = GlobalKey(debugLabel: 'pilule-liquide');
+  final GlobalKey cercle = GlobalKey(debugLabel: 'cercle-liquide');
+}
+
 class _BarreFlottante extends StatelessWidget {
   const _BarreFlottante({
     required this.guide,
     required this.destinations,
     required this.indexActif,
     required this.onAller,
+    required this.cles,
+    this.halo,
+    this.onHaloTouche,
   });
+
+  /// Les cles de l'effet liquide.
+  final _ClesLiquide cles;
+
+  /// Le halo du cercle Compte, ou `null`.
+  final EtatHaloCompte? halo;
+
+  /// Le cercle a ete touche avec un halo.
+  final void Function(EtatHaloCompte halo)? onHaloTouche;
 
   /// Mode Accessibilite : barre plus haute, onglets plus larges et espaces,
   /// libelles toujours visibles, contraste renforce (MA-NAV-1).
@@ -637,6 +752,39 @@ class _BarreFlottante extends StatelessWidget {
   final List<Destination> destinations;
   final int? indexActif;
   final void Function(String chemin) onAller;
+
+  /// NAV-REFONTE (09/11/2026) : les onglets de la pilule, toutes les
+  /// destinations sauf celle du cercle Compte ([Destination.compte]).
+  List<Destination> get _onglets => <Destination>[
+    for (final Destination d in destinations)
+      if (!d.compte) d,
+  ];
+
+  /// La destination du cercle Compte, ou nulle (aucune pour ce role).
+  Destination? get _compte {
+    for (final Destination d in destinations) {
+      if (d.compte) return d;
+    }
+    return null;
+  }
+
+  /// L'index de l'onglet actif dans [_onglets], nul si l'actif est le cercle
+  /// ou si aucune destination n'est active.
+  int? get _actifOnglet {
+    final int? i = indexActif;
+    if (i == null || i < 0 || i >= destinations.length) return null;
+    if (destinations[i].compte) return null;
+    return _onglets.indexOf(destinations[i]);
+  }
+
+  /// Vrai quand la destination active est le cercle Compte.
+  bool get _compteActif {
+    final int? i = indexActif;
+    return i != null &&
+        i >= 0 &&
+        i < destinations.length &&
+        destinations[i].compte;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -678,135 +826,204 @@ class _BarreFlottante extends StatelessWidget {
     double ecart,
   ) {
     final bool serre = destinations.length >= 4;
-    return Padding(
-      // Guide : marges laterales de 8 au lieu de 12, pour que les libelles
-      // agrandis gardent leur largeur.
-      padding: EdgeInsetsDirectional.fromSTEB(
-        guide ? margeGuide : AppSpacing.md,
-        AppSpacing.sm,
-        guide ? margeGuide : AppSpacing.md,
-        0,
+    final Destination? compte = _compte;
+    // NAV-REFONTE : marges laterales de 16, 12 sous 360 (le cercle prend sa
+    // place a cote de la pilule) ; 8 en Mode Accessibilite.
+    final double marge = guide
+        ? margeGuide
+        : (MediaQuery.sizeOf(context).width < NavShell.largeurEtroite
+              ? AppSpacing.md
+              : AppSpacing.lg);
+    final Widget pilule = DecoratedBox(
+      decoration: BoxDecoration(
+        // LIQUIDE-MATIERE (directeur, 11/11/2026) : la matiere de la barre,
+        // sans contour (il cassait l'illusion) ; ombre douce en clair,
+        // elevation tonale et ombre en sombre.
+        color: guide
+            ? palette.surfaceRaised.background
+            : palette.surfaceMatiere.background,
+        borderRadius: guide ? metriques.arrondi : AppRadius.arrondiFull,
+        // Guide (sans effet liquide) : contour franc (`borderStrong`), pour
+        // que la barre se detache du fond (MA-NAV-1).
+        border: guide
+            ? Border.fromBorderSide(
+                palette.borderStrong.asBorderSide(
+                  width: NavShell.epaisseurContourGuide,
+                ),
+              )
+            : null,
+        boxShadow: AppElevation.niveau1(palette.ombre),
       ),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          minHeight: guide
+              ? metriques.cibleTactile + AppSpacing.xl
+              : NavShell.hauteurBarre,
+        ),
+        // Guide : la hauteur de la barre suit le libelle, qui passe a la
+        // ligne sans ellipse, plafonne par `echelleTexteMaxGuide`.
+        child: guide
+            ? Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: serre ? 0 : AppSpacing.xs,
+                  vertical: AppSpacing.sm,
+                ),
+                child: MediaQuery.withClampedTextScaling(
+                  maxScaleFactor: NavShell.echelleTexteMaxGuide,
+                  child: LayoutBuilder(
+                    builder: (BuildContext contexte, BoxConstraints c) =>
+                        _rangeesGuide(contexte, metriques, c, ecart),
+                  ),
+                ),
+              )
+            : Padding(
+                // 4 de chaque cote : les icones fermees gardent 16 jusqu'au
+                // bord (cible de 48, icone de 24), et l'onglet ouvert la place
+                // de son nom a 320 en texte x2.
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.xs,
+                  vertical: AppSpacing.sm,
+                ),
+                child: MediaQuery.withClampedTextScaling(
+                  maxScaleFactor: NavShell.echelleTexteMaxBarre,
+                  // La part de la goutte dans la pilule : entre son fond et
+                  // ses onglets.
+                  child: CoucheLiquide(
+                    child: LayoutBuilder(builder: _rangeeStandard),
+                  ),
+                ),
+              ),
+      ),
+    );
+    // Aucune marge au-dessus : l'ombre detache la pilule, et la barre ne
+    // prend pas plus de hauteur que l'ancienne (une publication de la
+    // Communaute se voit encore au premier ecran a 320 en texte x2).
+    return Padding(
+      padding: EdgeInsetsDirectional.symmetric(horizontal: marge),
       child: Semantics(
         container: true,
         explicitChildNodes: true,
         label: t.nav.principale,
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            color: palette.surfaceRaised.background,
-            borderRadius: guide ? metriques.arrondi : AppRadius.arrondiMd,
-            // Guide : contour franc (`borderStrong`) a la place du filet
-            // de carte, pour que la barre se detache du fond.
-            border: Border.fromBorderSide(
-              guide
-                  ? palette.borderStrong.asBorderSide(
-                      width: NavShell.epaisseurContourGuide,
-                    )
-                  : palette.contourCarte.asBorderSide(),
-            ),
-            boxShadow: AppElevation.niveau1(palette.ombre),
-          ),
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              minHeight: guide
-                  ? metriques.cibleTactile + AppSpacing.xl
-                  : NavShell.hauteurBarre,
-            ),
-            // Guide : la hauteur de la barre suit le libelle, qui passe a la
-            // ligne sans ellipse, plafonne par `echelleTexteMaxGuide`.
-            child: guide
-                ? Padding(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: serre ? 0 : AppSpacing.xs,
-                      vertical: AppSpacing.sm,
-                    ),
-                    child: MediaQuery.withClampedTextScaling(
-                      maxScaleFactor: NavShell.echelleTexteMaxGuide,
-                      child: LayoutBuilder(
-                        builder: (BuildContext contexte, BoxConstraints c) =>
-                            _rangeesGuide(contexte, metriques, c, ecart),
+        child: _liquide(
+          context,
+          palette,
+          compte == null
+              ? KeyedSubtree(key: cles.pilule, child: pilule)
+              : Row(
+                  children: <Widget>[
+                    Expanded(
+                      // LIQUIDE-MATIERE : le bout de la pilule reprend sa
+                      // forme d'un petit rebond (mesure, rebond compris).
+                      child: BordLiquide(
+                        child: KeyedSubtree(key: cles.pilule, child: pilule),
                       ),
                     ),
-                  )
-                : MediaQuery.withClampedTextScaling(
-                    maxScaleFactor: NavShell.echelleTexteMaxBarre,
-                    // COUPE-MOTS-1 : chaque onglet recoit son mot le plus long
-                    // (« Disponibilites ») puis une part egale du reste, au
-                    // lieu de parts egales qui coupaient le mot long des 100 % ;
-                    // les quatre libelles partagent une seule echelle.
-                    child: LayoutBuilder(
-                      builder: (BuildContext contexte, BoxConstraints c) {
-                        final ({TextScaler echelle, List<double> largeurs}) r =
-                            repartitionSansCoupure(
-                              contexte,
-                              textes: <String>[
-                                for (final Destination d in destinations)
-                                  d.libelle,
-                              ],
-                              largeur: c.maxWidth,
-                              style: AppTypography.graisse(
-                                Theme.of(contexte).textTheme.labelMedium ??
-                                    const TextStyle(),
-                                FontWeight.w600,
-                              ),
-                              marge: 2 * AppSpacing.xs,
-                              // Reduction bornee : jamais sous 85 % du theme.
-                              plancher: echelleMinimaleLisible,
-                            );
-                        final double total = r.largeurs.fold<double>(
-                          0,
-                          (double a, double b) => a + b,
-                        );
-                        // Au plancher, des libelles qui ne tiennent toujours
-                        // pas ensemble (cinq onglets, langue longue) gardent
-                        // chacun sa largeur et la rangee defile.
-                        final bool defile =
-                            c.maxWidth.isFinite && total > c.maxWidth + 0.5;
-                        final Widget rangee = Row(
-                          mainAxisSize: defile
-                              ? MainAxisSize.min
-                              : MainAxisSize.max,
-                          children: <Widget>[
-                            for (int i = 0; i < destinations.length; i++)
-                              defile
-                                  ? SizedBox(
-                                      width: r.largeurs[i],
-                                      child: _OngletBarre(
-                                        destination: destinations[i],
-                                        actif: i == indexActif,
-                                        onAller: onAller,
-                                      ),
-                                    )
-                                  : _part(
-                                      r.largeurs.isEmpty ||
-                                              i == destinations.length - 1
-                                          ? null
-                                          : r.largeurs[i],
-                                      _OngletBarre(
-                                        destination: destinations[i],
-                                        actif: i == indexActif,
-                                        onAller: onAller,
-                                      ),
-                                    ),
-                          ],
-                        );
-                        return MediaQuery(
-                          data: MediaQuery.of(contexte)
-                              .copyWith(textScaler: r.echelle),
-                          child: defile
-                              ? SingleChildScrollView(
-                                  key: NavShell.barreBasseDefileKey,
-                                  scrollDirection: Axis.horizontal,
-                                  child: rangee,
-                                )
-                              : rangee,
-                        );
-                      },
+                    // MA-CMD-1 : en Mode Accessibilite, quatre cibles de 72
+                    // tiennent a 320 ; l'ecart avec la tuile se resserre a 4,
+                    // comme entre les onglets.
+                    // Le rond reserve deja sa place choisie (64) : 8 jusqu'a la
+                    // pilule, meme ouvert (decision du 10/11/2026).
+                    if (guide && serre) Ecart.hXs else Ecart.hSm,
+                    // LIQUIDE-MATIERE : le cercle se detache de la pilule (ou
+                    // y est absorbe) par un cou de matiere.
+                    ReceptionLiquide(
+                      child: _CercleCompte(
+                        key: cles.cercle,
+                        destination: compte,
+                        actif: _compteActif,
+                        guide: guide,
+                        onAller: onAller,
+                        halo: halo,
+                        onHaloTouche: onHaloTouche,
+                        apparition: indexActif,
+                      ),
                     ),
-                  ),
-          ),
+                  ],
+                ),
         ),
       ),
+    );
+  }
+
+  /// L'effet liquide (decisions du directeur du 10/11/2026) autour de la
+  /// rangee standard : la goutte de l'onglet ouvert, et le pont jusqu'au
+  /// cercle Compte. Le Mode Accessibilite garde ses tuiles, sans goutte.
+  Widget _liquide(BuildContext context, AppPalette palette, Widget rangee) {
+    if (guide) return rangee;
+    final List<Destination> onglets = _onglets;
+    final bool avecCompte = _compte != null;
+    return IndicateurLiquide(
+      cibles: <GlobalKey>[
+        for (int i = 0; i < onglets.length; i++) cles.onglets[i],
+        if (avecCompte) cles.cercle,
+      ],
+      zones: <GlobalKey>[cles.pilule, if (avecCompte) cles.cercle],
+      indexActif: _compteActif ? onglets.length : _actifOnglet,
+      couleur: palette.washAccent.background,
+      // LIQUIDE-MATIERE (directeur, 11/11/2026) : la pilule et le cercle sont
+      // une meme matiere, sans contour ; le cou qui les relie en a le fond et
+      // l'ombre, jamais la couleur de selection.
+      matiere: palette.surfaceMatiere.background,
+      ombres: AppElevation.niveau1(palette.ombre),
+      rapportDisque:
+          MesuresCercle.compte.rondRepos / MesuresCercle.compte.rondChoisi,
+      child: rangee,
+    );
+  }
+
+  /// La rangee de la pilule standard (NAV-REFONTE) : l'onglet actif montre son
+  /// nom a cote de l'icone pleine, sur un fond doux ; les autres n'ont que leur
+  /// icone (cible de 48, nom lu et en infobulle).
+  ///
+  /// Si le nom ne tient pas a cote de l'icone (320 points, texte x2), il passe
+  /// SOUS l'icone, sans ellipse ni coupure (arbitrage du garde-cap du 09/11).
+  Widget _rangeeStandard(BuildContext contexte, BoxConstraints c) {
+    final List<Destination> onglets = _onglets;
+    final int? actif = _actifOnglet;
+    const double cible = AppTouchTarget.standard;
+    bool empile = false;
+    if (actif != null && c.maxWidth.isFinite) {
+      final TextStyle style = AppTypography.graisse(
+        Theme.of(contexte).textTheme.labelLarge ?? const TextStyle(),
+        FontWeight.w700,
+      );
+      final TextPainter p = TextPainter(
+        text: TextSpan(text: onglets[actif].libelle, style: style),
+        textDirection: Directionality.of(contexte),
+        textScaler: MediaQuery.textScalerOf(contexte),
+        maxLines: 1,
+      )..layout();
+      final double besoin =
+          (onglets.length - 1) * cible +
+          AppSpacing.xxl +
+          AppSpacing.sm +
+          p.width +
+          2 * AppSpacing.md;
+      p.dispose();
+      empile = besoin > c.maxWidth;
+    }
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[
+        for (int i = 0; i < onglets.length; i++)
+          i == actif
+              ? Flexible(
+                  child: _OngletBarre(
+                    key: cles.onglets[i],
+                    destination: onglets[i],
+                    actif: true,
+                    empile: empile,
+                    onAller: onAller,
+                  ),
+                )
+              : _OngletBarre(
+                  key: cles.onglets[i],
+                  destination: onglets[i],
+                  actif: false,
+                  empile: false,
+                  onAller: onAller,
+                ),
+      ],
     );
   }
 
@@ -831,6 +1048,7 @@ class _BarreFlottante extends StatelessWidget {
     BoxConstraints c,
     double ecart,
   ) {
+    final List<Destination> destinations = _onglets;
     final int n = destinations.length;
     final double disponible = c.maxWidth - ecart * (n - 1);
     final double facteur = MediaQuery.textScalerOf(contexte).scale(1);
@@ -898,7 +1116,7 @@ class _BarreFlottante extends StatelessWidget {
     );
     Widget onglet(int i) => _OngletBarreGuide(
       destination: destinations[i],
-      actif: i == indexActif,
+      actif: i == _actifOnglet,
       onAller: onAller,
     );
     Widget rangee(int debut, int fin, List<double>? parts) => IntrinsicHeight(
@@ -971,7 +1189,7 @@ class _BarreFlottante extends StatelessWidget {
       ),
     );
     return <double>[
-      for (final Destination d in destinations)
+      for (final Destination d in _onglets)
         math.max(
           metriques.cibleTactile,
           _motLePlusLong(
@@ -1009,13 +1227,18 @@ class _BarreFlottante extends StatelessWidget {
 
 class _OngletBarre extends ConsumerWidget {
   const _OngletBarre({
+    super.key,
     required this.destination,
     required this.actif,
+    required this.empile,
     required this.onAller,
   });
 
   final Destination destination;
   final bool actif;
+
+  /// Le nom passe sous l'icone au lieu d'a cote (place insuffisante).
+  final bool empile;
   final void Function(String chemin) onAller;
 
   @override
@@ -1023,11 +1246,109 @@ class _OngletBarre extends ConsumerWidget {
     final bool nouveau = estNouveau(ref, destination.nouveaute);
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
-    final AppInkColor encre = actif ? palette.inkAccent : palette.inkMuted;
-    final TextStyle base = textes.labelMedium ?? const TextStyle();
+    final Color encre = actif
+        ? palette.washAccent.onBackground
+        : palette.inkMuted.asBorderSide().color;
+    final Widget icone = IconTheme(
+      data: IconThemeData(color: encre, size: AppSpacing.xxl),
+      child: Icon(destination.icone.resoudre(selectionne: actif)),
+    );
+    // NOUVEAUTES : le badge au-dessus de l'icone, a cheval sur le bord de la
+    // pilule : il ne cache ni l'icone ni le nom et ne change pas la hauteur.
+    final Widget iconeEtBadge = Stack(
+      clipBehavior: Clip.none,
+      alignment: Alignment.center,
+      children: <Widget>[
+        icone,
+        if (nouveau)
+          Positioned(
+            top: -AppSpacing.xl,
+            child: BadgeNouveau(cle: destination.nouveaute!),
+          ),
+      ],
+    );
 
-    // Un seul noeud par onglet : bouton, libelle, etat selectionne. Le dessin
-    // (icone, texte, soulignement) ne se relit pas une seconde fois.
+    // NAV-REFONTE : onglet ouvert = fond doux, icone pleine, nom visible
+    // (trois signaux, jamais la couleur seule) ; fermes = icone seule, le nom
+    // lu par le lecteur d'ecran et montre en infobulle.
+    // Pendant que la goutte se deplace, c'est elle qui peint le fond doux.
+    final bool goutte = IndicateurLiquide.enMouvement(context);
+    // LIQUIDE-MATIERE : arrivee depuis le cercle, la couleur gagne l'onglet
+    // en fondu, une fois le pont de matiere rompu.
+    final Animation<double>? fondu = IndicateurLiquide.fonduDestination(
+      context,
+    );
+    Widget fond({required Widget child}) => fondu == null || goutte
+        ? DecoratedBox(
+            decoration: BoxDecoration(
+              color: goutte
+                  ? palette.washAccent.background.withValues(alpha: 0)
+                  : palette.washAccent.background,
+              borderRadius: AppRadius.arrondiFull,
+            ),
+            child: child,
+          )
+        : AnimatedBuilder(
+            animation: fondu,
+            child: child,
+            builder: (BuildContext _, Widget? enfant) => DecoratedBox(
+              decoration: BoxDecoration(
+                color: palette.washAccent.background.withValues(
+                  alpha: palette.washAccent.background.a * fondu.value,
+                ),
+                borderRadius: AppRadius.arrondiFull,
+              ),
+              child: enfant,
+            ),
+          );
+    final Widget dessin = actif
+        ? fond(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(
+                minHeight: AppTouchTarget.standard,
+                minWidth: AppTouchTarget.standard,
+              ),
+              child: Padding(
+                // Empile (place insuffisante) : marges reduites a 4, et le
+                // nom peut descendre jusqu'au plancher de lecture (0,85),
+                // comme l'ancienne barre ; jamais coupe.
+                padding: EdgeInsets.symmetric(
+                  horizontal: empile ? AppSpacing.xs : AppSpacing.md,
+                  vertical: empile ? AppSpacing.xs : 0,
+                ),
+                child: Flex(
+                  direction: empile ? Axis.vertical : Axis.horizontal,
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    iconeEtBadge,
+                    if (empile) Ecart.vXs else Ecart.hSm,
+                    Flexible(
+                      child: TexteSansCoupure(
+                        destination.libelle,
+                        textAlign: TextAlign.center,
+                        plancher: empile ? echelleMinimaleLisible : 1,
+                        style: AppTypography.graisse(
+                          textes.labelLarge ?? const TextStyle(),
+                          FontWeight.w700,
+                        ).copyWith(color: encre),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          )
+        : Tooltip(
+            message: destination.libelle,
+            excludeFromSemantics: true,
+            child: SizedBox.square(
+              dimension: AppTouchTarget.standard,
+              child: Center(child: iconeEtBadge),
+            ),
+          );
+
+    // Un seul noeud par onglet : bouton, libelle, etat selectionne.
     return Semantics(
       container: true,
       selected: actif,
@@ -1037,69 +1358,192 @@ class _OngletBarre extends ConsumerWidget {
           onAller(destination.chemin);
         },
         libelleSemantique: libelleAvecNouveaute(destination.libelle, nouveau),
-        arrondiFocus: AppRadius.arrondiSm,
-        child: ExcludeSemantics(
-          // Le soulignement pose sur le bord bas de la pilule, comme la
-          // maquette de Mon compte mobile (planche 0c2 contre maquette).
+        arrondiFocus: AppRadius.arrondiFull,
+        child: ExcludeSemantics(child: dessin),
+      ),
+    );
+  }
+}
+
+/// Le cercle Compte de la barre flottante (NAV-REFONTE, decision du
+/// directeur du 09/11/2026) : la photo de la personne, ou son initiale, dans
+/// un cercle a cote de la pilule, du cote de la fin (a gauche en arabe). Il
+/// mene toujours au Compte : jamais une action contextuelle.
+///
+/// Ouvert : anneau d'accent de 3 et nom annonce « selectionne ». En Mode
+/// Accessibilite, une tuile nommee (le nom toujours visible, MA-NAV-1), pleine
+/// quand elle est ouverte (trois signaux : fond plein, nom en gras, etat
+/// annonce).
+class _CercleCompte extends StatelessWidget {
+  const _CercleCompte({
+    super.key,
+    required this.destination,
+    required this.actif,
+    required this.guide,
+    required this.onAller,
+    this.halo,
+    this.onHaloTouche,
+    this.apparition,
+  });
+
+  /// Le cercle a ete touche avec un halo.
+  final void Function(EtatHaloCompte halo)? onHaloTouche;
+
+  /// L'ecran affiche : quand il change, la rotation du halo se rejoue.
+  final Object? apparition;
+
+  final Destination destination;
+  final bool actif;
+  final bool guide;
+  final void Function(String chemin) onAller;
+
+  /// Le halo, ou `null` : sans halo, le toucher ouvre le Compte ; avec un
+  /// halo, la feuille « En ce moment » (decision du directeur du 09/11).
+  final EtatHaloCompte? halo;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final EtatHaloCompte? etat = halo;
+    final Widget dessin;
+    if (guide) {
+      final AppMetriques metriques = _metriques(context);
+      final Color encre = actif
+          ? palette.surfacePrimary.onBackground
+          : palette.inkStrong.asBorderSide().color;
+      dessin = DecoratedBox(
+        decoration: BoxDecoration(
+          color: actif
+              ? palette.surfacePrimary.background
+              : palette.surfaceRaised.background,
+          borderRadius: metriques.arrondi,
+          border: Border.fromBorderSide(
+            palette.borderStrong.asBorderSide(
+              width: NavShell.epaisseurContourGuide,
+            ),
+          ),
+          // NAV-REFONTE 2a : la tuile n'est pas un cercle, aucune rotation ;
+          // une lueur fixe de la couleur de l'etat sur son contour.
+          boxShadow: etat == null
+              ? AppElevation.niveau1(palette.ombre)
+              : AppElevation.lueurHaloTuile(etat.couleurs.lueur),
+        ),
+        child: ConstrainedBox(
+          // La meme hauteur minimale que la pilule du Mode Accessibilite.
+          // Une cible de large (72) au moins : la tuile prend la part d'un
+          // onglet, pour que quatre cibles tiennent a 320 (MA-CMD-1).
+          // Revue du pilote du 09/11/2026 : « Compte » touchait le contour
+          // a 320 en texte x2. La tuile garde 4 de chaque cote du nom et
+          // s'elargit d'un palier (8) au plus : les onglets gardent 72.
+          constraints: BoxConstraints(
+            minWidth: metriques.cibleTactile,
+            maxWidth: metriques.cibleTactile + AppSpacing.sm,
+            minHeight: metriques.cibleTactile + AppSpacing.xl,
+          ),
           child: Padding(
-            padding: const EdgeInsets.only(top: AppSpacing.sm),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                // NOUVEAUTES : le badge centre au-dessus de l'icone, a cheval
-                // sur le bord de la barre : il ne cache ni l'icone ni le nom,
-                // et ne change pas la hauteur de la barre.
-                Stack(
-                  clipBehavior: Clip.none,
-                  alignment: Alignment.center,
-                  children: <Widget>[
-                    IconTheme(
-                      data: encre.asIconTheme(size: AppSpacing.xxl),
-                      child: Icon(
-                        destination.icone.resoudre(selectionne: actif),
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.xs,
+              vertical: AppSpacing.sm,
+            ),
+            child: MediaQuery.withClampedTextScaling(
+              maxScaleFactor: NavShell.echelleTexteMaxGuide,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  Stack(
+                    clipBehavior: Clip.none,
+                    children: <Widget>[
+                      AvatarCompte(
+                        repli: destination.libelle,
+                        diametre: AppAvatar.petit,
                       ),
-                    ),
-                    if (nouveau)
-                      Positioned(
-                        top: -AppSpacing.xl,
-                        child: BadgeNouveau(cle: destination.nouveaute!),
-                      ),
-                  ],
-                ),
-                Ecart.vXs,
-                // MA-2 : a 200 %, le nom passe a la ligne au lieu d'etre
-                // tronque (UX_REVIEW_06, ligne 1 c) ; COUPE-MOTS-1 : entre
-                // ses mots, jamais dans un mot, a l'echelle commune de la
-                // barre.
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.xs,
+                      if (etat != null)
+                        PositionedDirectional(
+                          end: -AppSpacing.sm,
+                          top: -AppSpacing.xs,
+                          child: PastilleHaloCompte(etat: etat),
+                        ),
+                    ],
                   ),
-                  child: TexteSansCoupure(
+                  Ecart.vXs,
+                  TexteSansCoupure(
                     destination.libelle,
                     textAlign: TextAlign.center,
-                    style: encre.applyTo(
-                      AppTypography.graisse(
-                        base,
-                        actif ? FontWeight.w600 : FontWeight.w500,
-                      ),
-                    ),
+                    plancher: echelleMinimaleLisible,
+                    style: AppTypography.graisse(
+                      Theme.of(context).textTheme.labelLarge ??
+                          const TextStyle(),
+                      actif ? FontWeight.w700 : FontWeight.w600,
+                    ).copyWith(color: encre),
                   ),
-                ),
-                Ecart.vSm,
-                SizedBox(
-                  width: AppSpacing.section,
-                  height: NavShell.epaisseurSoulignement,
-                  child: actif
-                      ? _SoulignementAnime(
-                          couleur: palette.inkAccent.asBorderSide().color,
-                        )
-                      : null,
-                ),
-              ],
+                  // Le mot d'etat ecrit sous « Compte » (Urgent, A lire).
+                  if (etat != null)
+                    TexteSansCoupure(
+                      etat.motCourt,
+                      textAlign: TextAlign.center,
+                      plancher: echelleMinimaleLisible,
+                      style: AppTypography.graisse(
+                        Theme.of(context).textTheme.labelMedium ??
+                            const TextStyle(),
+                        FontWeight.w700,
+                      ).copyWith(color: encre),
+                    ),
+                ],
+              ),
             ),
           ),
         ),
+      );
+    } else {
+      // Decisions du directeur du 10/11/2026 : non choisi, un rond de 58 et
+      // une photo de 48 dans un bord clair ; choisi, un rond de 64 et une
+      // photo de 52, bord d'accent ; le passage suit un ressort. Jamais la
+      // couleur seule : la taille change, et l'etat « selectionne » est lu.
+      dessin = Tooltip(
+        message: destination.libelle,
+        excludeFromSemantics: true,
+        child: CercleSelectionnable(
+          choisi: actif,
+          // LIQUIDE-MATIERE : un morceau de la meme matiere que la pilule
+          // (son fond, son ombre, aucun contour) ; l'accent n'y vient qu'une
+          // fois le cou rompu.
+          matiere: palette.surfaceMatiere.background,
+          fonduAccent: IndicateurLiquide.fonduDestination(context),
+          // Le halo entoure la photo, a sa taille du moment.
+          photo: (double d) => HaloCompte(
+            etat: etat,
+            apparition: apparition,
+            diametre: d,
+            child: AvatarCompte(repli: destination.libelle, diametre: d),
+          ),
+        ),
+      );
+    }
+    return Semantics(
+      container: true,
+      selected: actif,
+      child: Pressable(
+        onPress: etat == null
+            ? () => onAller(destination.chemin)
+            : () {
+                onHaloTouche?.call(etat);
+                unawaited(
+                  ouvrirFeuilleEnCeMoment(
+                    context,
+                    etat: etat,
+                    cheminCompte: destination.chemin,
+                    onAller: onAller,
+                  ),
+                );
+              },
+        libelleSemantique: etat == null
+            ? destination.libelle
+            : etat.nomAccessible(destination.libelle),
+        arrondiFocus: guide
+            ? _metriques(context).arrondi
+            : AppRadius.arrondiFull,
+        child: ExcludeSemantics(child: dessin),
       ),
     );
   }
@@ -1187,38 +1631,6 @@ class _OngletBarreGuide extends StatelessWidget {
   }
 }
 
-/// Le soulignement de l'onglet actif : il s'etire depuis son centre quand
-/// l'onglet devient actif (P2-16), une seule fois. Plein d'emblee quand les
-/// animations sont reduites.
-class _SoulignementAnime extends StatelessWidget {
-  const _SoulignementAnime({required this.couleur});
-
-  final Color couleur;
-
-  @override
-  Widget build(BuildContext context) {
-    final Widget trait = DecoratedBox(
-      decoration: BoxDecoration(
-        color: couleur,
-        borderRadius: AppRadius.arrondiFull,
-      ),
-    );
-    if (Mouvement.reduit(context)) {
-      return trait;
-    }
-    return RepaintBoundary(
-      child: TweenAnimationBuilder<double>(
-        tween: Tween<double>(begin: 0, end: 1),
-        duration: Mouvement.moyen,
-        curve: Mouvement.accentuee,
-        child: trait,
-        builder: (BuildContext _, double f, Widget? enfant) =>
-            FractionallySizedBox(widthFactor: f, child: enfant),
-      ),
-    );
-  }
-}
-
 /// La colonne laterale et le contenu, cote a cote.
 ///
 /// Repliee (rail de 80, icones seules, infobulles) ou depliee (barre laterale
@@ -1236,8 +1648,14 @@ class _AvecColonne extends ConsumerWidget {
     required this.libellesDansLeRail,
     required this.guide,
     required this.child,
+    this.halo,
+    this.onHaloTouche,
+    this.onDeconnexion,
   });
 
+  final EtatHaloCompte? halo;
+  final void Function(EtatHaloCompte halo)? onHaloTouche;
+  final VoidCallback? onDeconnexion;
   final Gabarit gabarit;
   final List<Destination> destinations;
   final int? indexActif;
@@ -1269,6 +1687,9 @@ class _AvecColonne extends ConsumerWidget {
           onBasculer: () => ref
               .read(navigationReplieeProvider.notifier)
               .choisir(repliee: !repliee),
+          halo: halo,
+          onHaloTouche: onHaloTouche,
+          onDeconnexion: onDeconnexion,
         ),
         Expanded(
           // La colonne consomme l'encart de son cote (debut de lecture) : le
@@ -1305,8 +1726,14 @@ class _Colonne extends StatelessWidget {
     required this.secondaires,
     required this.onAllerSecondaire,
     required this.onBasculer,
+    this.halo,
+    this.onHaloTouche,
+    this.onDeconnexion,
   });
 
+  final EtatHaloCompte? halo;
+  final void Function(EtatHaloCompte halo)? onHaloTouche;
+  final VoidCallback? onDeconnexion;
   final bool repliee;
   final bool libellesDansLeRail;
   final bool guide;
@@ -1340,9 +1767,13 @@ class _Colonne extends StatelessWidget {
             );
     }
 
+    // NAV-REFONTE etape 3 (09/11/2026) : la destination du Compte (Compte,
+    // Profil, Mon espace) quitte la liste ; elle vit au pied du panneau, en
+    // photo, prenom et menu ([PiedComptePanneau]).
+    final int iCompte = destinations.indexWhere((Destination d) => d.compte);
     final List<Widget> haut = <Widget>[
       for (int i = 0; i < destinations.length; i++)
-        if (!destinations[i].enPied)
+        if (!destinations[i].enPied && i != iCompte)
           item(destinations[i], actif: i == indexActif, entree: false),
       if (secondaires.isNotEmpty) ...<Widget>[
         const Padding(
@@ -1358,8 +1789,26 @@ class _Colonne extends StatelessWidget {
     ];
     final List<Widget> pied = <Widget>[
       for (int i = 0; i < destinations.length; i++)
-        if (destinations[i].enPied)
+        if (destinations[i].enPied && i != iCompte)
           item(destinations[i], actif: i == indexActif, entree: false),
+      if (iCompte != -1)
+        // COUPE-MOTS-1 : la meme echelle que les libelles de la colonne (une
+        // seule echelle par rail), initiale de la photo comprise.
+        MediaQuery(
+          data: commune == null
+              ? MediaQuery.of(context)
+              : MediaQuery.of(context).copyWith(textScaler: commune),
+          child: PiedComptePanneau(
+            destination: destinations[iCompte],
+            actif: iCompte == indexActif,
+            repliee: repliee,
+            guide: guide,
+            halo: halo,
+            onHaloTouche: onHaloTouche,
+            onAller: onAller,
+            onDeconnexion: onDeconnexion,
+          ),
+        ),
     ];
 
     return SizedBox(
@@ -1546,11 +1995,89 @@ TextScaler _commune(
   return f < d ? TextScaler.linear(f) : depart;
 }
 
-/// La tete de la colonne : logo horizontal et bouton de repli quand elle est
-/// depliee, symbole et bouton de depli quand elle est repliee (LOGO-APP,
-/// README du logo : en-tete large `logo-horizontal`, barre etroite
-/// `symbole-plein`). Seul logo de l'ecran, seul cliquable : il ramene a
-/// l'accueil du role. Au debut de ligne, jamais retourne en arabe.
+/// Le bouton du panneau de navigation (NAV-REFONTE etape 3, brief du
+/// 09/11/2026) : un seul carre a icone de panneau, toujours a la meme place,
+/// panneau ouvert ou replie ; les deux fleches d'avant disparaissent. Le seul
+/// composant de sa fonction : `NavShell` et `AdminShell` le posent tous deux.
+class BoutonPanneau extends StatelessWidget {
+  /// Cree le bouton.
+  const BoutonPanneau({
+    required this.repliee,
+    required this.onBasculer,
+    this.cleBouton,
+    super.key,
+  });
+
+  /// La cle posee sur le bouton lui-meme (le noeud lu par le lecteur
+  /// d'ecran), pour les tests et les robots.
+  final Key? cleBouton;
+
+  /// Vrai quand le panneau est replie : le bouton dit « Deplier ».
+  final bool repliee;
+
+  /// Ouvre ou replie le panneau.
+  final VoidCallback onBasculer;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final String libelle = repliee ? t.nav.deplier : t.nav.replier;
+    return Tooltip(
+      message: libelle,
+      // Une seule annonce : le bouton porte deja le libelle ; sans cela le
+      // lecteur d'ecran lisait « Replier la navigation » deux fois.
+      excludeFromSemantics: true,
+      child: Semantics(
+        expanded: !repliee,
+        child: Pressable.selon(
+          key: cleBouton,
+          onPress: onBasculer,
+          libelleSemantique: libelle,
+          arrondiFocus: AppRadius.arrondiSm,
+          // Un carre de 40 dans une cible de 48 (manifeste 3.4 : cible
+          // jamais sous 48) ; maquette Panneau du 09/11 : fond creuse, filet.
+          constructeur: (BuildContext _, EtatPression etat) => SizedBox.square(
+            dimension: AppTouchTarget.standard,
+            child: Center(
+              child: SizedBox.square(
+                dimension: AppSpacing.section,
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    borderRadius: AppRadius.arrondiSm,
+                    color: etat.survole || etat.presse
+                        ? palette.washAccent.background
+                        : palette.surfaceSunken.background,
+                    border: Border.fromBorderSide(
+                      palette.contourCarte.asBorderSide(),
+                    ),
+                  ),
+                  child: Center(
+                    child: IconTheme(
+                      data: palette.inkStrong.asIconTheme(size: AppSpacing.xl),
+                      child: Icon(AppIcons.panneauNavigation.repos),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// La tete du panneau (NAV-REFONTE etape 3, brief du 09/11/2026) : **un seul
+/// bouton carre**, icone de panneau, toujours a la meme place en haut, le
+/// panneau ouvert ou replie (les deux fleches de l'ancien bouton rond
+/// disparaissent) ; ouvert, le logo horizontal le suit. Replie, le bouton
+/// reste seul en tete du rail : son bord de debut tombe a 16 dans les deux
+/// formes (16 de marge ouverte, cible de 48 centree dans le rail de 80).
+///
+/// Le logo (LOGO-APP, README du logo : en-tete large `logo-horizontal`) est
+/// le seul de l'ecran et ramene a l'accueil du role ; au debut de ligne,
+/// jamais retourne en arabe. Le bouton, lui, suit la `Directionality` : son
+/// trait de panneau passe a droite avec le panneau.
 class _EnteteColonne extends StatelessWidget {
   const _EnteteColonne({
     required this.repliee,
@@ -1564,82 +2091,53 @@ class _EnteteColonne extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
-    final String libelle = repliee ? t.nav.deplier : t.nav.replier;
-
-    final Widget bouton = Tooltip(
-      message: libelle,
-      // Une seule annonce : le bouton porte deja le libelle ; sans cela le
-      // lecteur d'ecran lisait « Replier la navigation » deux fois.
-      excludeFromSemantics: true,
-      child: Pressable(
-        key: NavShell.boutonRepliKey,
-        onPress: onBasculer,
-        libelleSemantique: libelle,
-        arrondiFocus: AppRadius.arrondiFull,
-        // Un disque de 40 dans une cible de 48 (maquette V2 : bouton rond
-        // cercle, manifeste 3.4 : cible jamais sous 48).
-        child: SizedBox.square(
-          dimension: AppTouchTarget.standard,
-          child: Center(
-            child: SizedBox.square(
-              dimension: AppSpacing.section,
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: palette.surfaceOverlay.background,
-                  border: Border.fromBorderSide(
-                    palette.contourCarte.asBorderSide(),
-                  ),
-                ),
-                child: Center(
-                  child: IconTheme(
-                    data: palette.inkMuted.asIconTheme(size: AppSpacing.xl),
-                    child: Icon(
-                      repliee
-                          ? AppIcons.deplierNavigation.repos
-                          : AppIcons.replierNavigation.repos,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      ),
+    final Widget bouton = BoutonPanneau(
+      cleBouton: NavShell.boutonRepliKey,
+      repliee: repliee,
+      onBasculer: onBasculer,
     );
 
     if (repliee) {
-      // Le symbole (32, zone de protection de 8 comprise dans ses 48), puis
-      // le bouton de depli.
+      // Le bouton en tete, a sa place ; puis le symbole (32, zone de
+      // protection de 8 comprise dans ses 48), seul logo du rail (LOGO-APP,
+      // `symbole-plein` en barre etroite).
       return Padding(
-        padding: const EdgeInsets.only(top: AppSpacing.sm),
+        padding: const EdgeInsets.only(top: AppSpacing.md),
         child: Column(
           children: <Widget>[
+            // A 16 du bord de debut, comme ouvert, meme quand le rail
+            // s'elargit pour un nom (COUPE-MOTS-1) : il ne bouge jamais.
+            Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: Padding(
+                padding: const EdgeInsetsDirectional.only(start: AppSpacing.lg),
+                child: bouton,
+              ),
+            ),
+            Ecart.vSm,
             BrandLogo(
               variante: VarianteLogo.symbole,
               hauteur: AppSpacing.xxxl,
               onAccueil: onAccueil,
             ),
-            Ecart.vSm,
-            bouton,
           ],
         ),
       );
     }
-    // Le logo porte sa zone de protection (8) : 12 + 8 alignent son bord sur
-    // les 20 de l'ancien mot-symbole. Il ne grandit pas avec le texte (un
-    // logo n'est pas un texte) ; s'il manquait de place, il passerait au
-    // symbole plutot que de descendre sous 28 (BrandLogo).
+    // Le logo porte sa zone de protection (8). Il ne grandit pas avec le
+    // texte (un logo n'est pas un texte) ; s'il manquait de place, il
+    // passerait au symbole plutot que de descendre sous 28 (BrandLogo).
     return Padding(
       padding: const EdgeInsetsDirectional.fromSTEB(
+        AppSpacing.lg,
         AppSpacing.md,
-        AppSpacing.sm,
-        AppSpacing.sm,
+        AppSpacing.md,
         0,
       ),
       child: Row(
         children: <Widget>[
+          bouton,
+          Ecart.hSm,
           Expanded(
             child: Align(
               alignment: AlignmentDirectional.centerStart,
@@ -1650,8 +2148,231 @@ class _EnteteColonne extends StatelessWidget {
               ),
             ),
           ),
-          bouton,
         ],
+      ),
+    );
+  }
+}
+
+/// Le Compte au pied du panneau (NAV-REFONTE etape 3, brief du 09/11/2026) :
+/// la photo de la personne (ou son initiale), son prenom quand le panneau
+/// est ouvert, et un menu : le Compte du role (Compte, Profil, Mon espace),
+/// le theme, « Se deconnecter ». Replie : la photo seule, et son nom en
+/// infobulle. Le halo du cercle Compte du telephone l'entoure ; il ajoute en
+/// tete du menu l'entree « En ce moment », qui ouvre la meme feuille.
+///
+/// Mode Accessibilite (MA-NAV-1) : le nom de la destination reste ecrit sous
+/// la photo dans le rail replie, cible de 72.
+class PiedComptePanneau extends ConsumerWidget {
+  /// Cree le pied.
+  const PiedComptePanneau({
+    super.key,
+    required this.destination,
+    required this.actif,
+    required this.repliee,
+    required this.guide,
+    required this.onAller,
+    this.halo,
+    this.onHaloTouche,
+    this.onDeconnexion,
+  });
+
+  final Destination destination;
+  final bool actif;
+  final bool repliee;
+  final bool guide;
+  final void Function(String chemin) onAller;
+  final EtatHaloCompte? halo;
+  final void Function(EtatHaloCompte halo)? onHaloTouche;
+  final VoidCallback? onDeconnexion;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    final AppMetriques metriques = _metriques(context);
+    final bool sombre = Theme.of(context).brightness == Brightness.dark;
+    final EtatHaloCompte? etat = halo;
+    final String? prenom = ref.watch(prenomDuCompteProvider).value?.trim();
+    final String nom = prenom == null || prenom.isEmpty
+        ? destination.libelle
+        : prenom;
+    final double diametre = guide ? AppAvatar.moyen : AppAvatar.petit;
+
+    final Widget photo = HaloCompte(
+      etat: etat,
+      diametre: diametre,
+      child: AvatarCompte(repli: destination.libelle, diametre: diametre),
+    );
+
+    final List<EntreeAction> actions = <EntreeAction>[
+      if (etat != null)
+        EntreeAction(
+          libelle: t.nav.halo.enCeMoment,
+          icone: AppIcons.notifications,
+          onChoix: () {
+            onHaloTouche?.call(etat);
+            unawaited(
+              ouvrirFeuilleEnCeMoment(
+                context,
+                etat: etat,
+                cheminCompte: destination.chemin,
+                onAller: onAller,
+              ),
+            );
+          },
+        ),
+      EntreeAction(
+        libelle: destination.libelle,
+        icone: destination.icone,
+        separateurAvant: etat != null,
+        onChoix: () => onAller(destination.chemin),
+      ),
+      // Le theme affiche bascule vers l'autre (la meme preference que la
+      // page Apparence et la bascule de l'en-tete).
+      EntreeAction(
+        libelle: sombre ? t.commun.theme.clair : t.commun.theme.sombre,
+        icone: sombre ? AppIcons.themeClair : AppIcons.themeSombre,
+        onChoix: () => ref
+            .read(preferencesLocalesProvider.notifier)
+            .theme(sombre ? PreferenceTheme.clair : PreferenceTheme.sombre),
+      ),
+      if (onDeconnexion case final VoidCallback sortir)
+        EntreeAction(
+          libelle: t.compte.deconnexion,
+          icone: AppIcons.sortie,
+          separateurAvant: true,
+          onChoix: sortir,
+        ),
+    ];
+
+    final String libelleLu = etat == null
+        ? '$nom, ${destination.libelle}'
+        : '$nom, ${etat.nomAccessible(destination.libelle)}';
+
+    Widget declencheur(BuildContext _, EtatPression pression) {
+      final Color? fond = actif
+          ? palette.washAccent.background
+          : pression.survole || pression.presse
+          ? palette.surfaceSunken.background
+          : null;
+      if (repliee) {
+        return Tooltip(
+          message: nom,
+          excludeFromSemantics: true,
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              color: fond,
+              borderRadius: guide
+                  ? metriques.arrondiInterieur
+                  : AppRadius.arrondiSm,
+            ),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minWidth: metriques.cibleTactile,
+                minHeight: metriques.cibleTactile,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(AppSpacing.xs),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    photo,
+                    if (guide) ...<Widget>[
+                      Ecart.vXs,
+                      TexteSansCoupure(
+                        destination.libelle,
+                        textAlign: TextAlign.center,
+                        style:
+                            AppTypography.graisse(
+                              textes.labelLarge ?? const TextStyle(),
+                              FontWeight.w700,
+                            ).copyWith(
+                              color: palette.inkStrong.asBorderSide().color,
+                            ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      }
+      return DecoratedBox(
+        decoration: BoxDecoration(
+          color: fond,
+          borderRadius: AppRadius.arrondiSm,
+        ),
+        child: ConstrainedBox(
+          constraints: BoxConstraints(minHeight: metriques.cibleTactile),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.sm,
+              vertical: AppSpacing.xs,
+            ),
+            child: Row(
+              children: <Widget>[
+                photo,
+                Ecart.hMd,
+                Expanded(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      // COUPE-MOTS-1 : le nom passe a la ligne entre ses mots ;
+                      // un mot trop long reduit le texte, jamais sous 1.
+                      TexteSansCoupure(
+                        nom,
+                        style:
+                            AppTypography.graisse(
+                              textes.bodyLarge ?? const TextStyle(),
+                              FontWeight.w600,
+                            ).copyWith(
+                              color: palette.inkStrong.asBorderSide().color,
+                            ),
+                      ),
+                      if (etat != null)
+                        Text(
+                          etat.motCourt,
+                          style: palette.inkMuted.applyTo(
+                            textes.bodySmall ?? const TextStyle(),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+                Ecart.hSm,
+                IconTheme(
+                  data: palette.inkMuted.asIconTheme(size: AppSpacing.xl),
+                  child: Icon(AppIcons.menuCompte.repos),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: repliee ? AppSpacing.xs : AppSpacing.md,
+        vertical: AppSpacing.xs,
+      ),
+      // Le panneau n'a pas de Material au-dessus de lui : le menu en a besoin
+      // (comme le cercle Compte du telephone, revue du pilote du 09/11).
+      child: Material(
+        type: MaterialType.transparency,
+        child: Semantics(
+          selected: actif,
+          child: MenuActions(
+            key: NavShell.piedCompteKey,
+            libelle: libelleLu,
+            actions: actions,
+            declencheur: declencheur,
+          ),
+        ),
       ),
     );
   }

@@ -115,7 +115,7 @@ void main() {
     }
   });
 
-  testWidgets('barre basse : quatre onglets, l actif annonce et souligne', (
+  testWidgets('barre basse : quatre onglets, l actif se nomme et s annonce', (
     WidgetTester tester,
   ) async {
     _vue(tester, const Size(390, 844));
@@ -123,8 +123,16 @@ void main() {
     await tester.pumpWidget(hote(_shell(onAller: (_) {}, indexActif: 2)));
     await tester.pump();
 
+    // NAV-REFONTE (09/11/2026) : seul l'onglet ouvert ecrit son nom ; tous
+    // restent lus par le lecteur d'ecran. Plus de soulignement.
+    final Finder barre = find.byKey(NavShell.barreBasseKey);
     for (final Destination d in _destinations) {
-      expect(find.text(d.libelle), findsOneWidget, reason: d.libelle);
+      expect(
+        find.descendant(of: barre, matching: find.text(d.libelle)),
+        d.libelle == 'Réglages' ? findsOneWidget : findsNothing,
+        reason: d.libelle,
+      );
+      expect(find.bySemanticsLabel(d.libelle), findsOneWidget);
     }
     expect(
       tester.getSemantics(find.bySemanticsLabel('Réglages')),
@@ -134,12 +142,6 @@ void main() {
       tester.getSemantics(find.bySemanticsLabel('Accueil')),
       isSemantics(isSelected: false, isButton: true),
     );
-    // Le soulignement de trois points n'existe que sous l'onglet actif.
-    final Iterable<SizedBox> soulignements = tester
-        .widgetList<SizedBox>(find.byType(SizedBox))
-        .where((SizedBox s) => s.height == NavShell.epaisseurSoulignement);
-    expect(soulignements, hasLength(_destinations.length));
-    expect(soulignements.where((SizedBox s) => s.child != null), hasLength(1));
     semantique.dispose();
   });
 

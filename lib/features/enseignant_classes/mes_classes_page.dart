@@ -50,13 +50,26 @@ import '../journee/journee_page.dart'
 @immutable
 class DetailClasse {
   /// Cree le detail.
-  const DetailClasse({this.niveau, this.langue, this.remplacement = false});
+  const DetailClasse({
+    this.niveau,
+    this.langue,
+    this.remplacement = false,
+    this.etapeOrdre,
+    this.etapeNom,
+  });
 
   /// Le niveau de la Classe, s'il est connu.
   final int? niveau;
 
   /// La langue d'enseignement, lisible.
   final String? langue;
+
+  /// L'ordre de l'etape du programme de la Classe (version publiee), ou
+  /// `null` : etape inconnue, rien n'est affiche a sa place.
+  final int? etapeOrdre;
+
+  /// Le nom de l'etape, rendu par le serveur ; `null` avec [etapeOrdre].
+  final String? etapeNom;
 
   /// Vrai quand l'enseignant assure cette Classe en remplacement. Un
   /// remplacement modifie une seance, jamais le titulaire (E1).
@@ -335,6 +348,16 @@ String _effectif(ClasseListee l) => l.groupe.nbMembres == 1
     ? t.enseignant.classes.eleveUn
     : t.enseignant.classes.eleves(nombre: l.groupe.nbMembres);
 
+/// « Etape 2 · Lire avec les voyelles », ou `null` quand le serveur ne dit
+/// pas l'etape (programme non publie, Classe sans etape) : rien n'est
+/// affiche a sa place, pas de « Etape ? ».
+String? _etape(ClasseListee l) {
+  final int? ordre = l.detail.etapeOrdre;
+  final String? nom = l.detail.etapeNom;
+  if (ordre == null || nom == null || nom.trim().isEmpty) return null;
+  return isolerSens(t.enseignant.classes.etape(n: ordre, nom: nom));
+}
+
 /// Une Classe, une ligne (Mes classes, 30/10/2026) : son nom, sa prochaine
 /// seance (« jeudi 18:00 · dans 6 jours ») et son effectif. En fin de ligne,
 /// seulement les exceptions : « En direct », le cahier a valider (K-45) et
@@ -352,7 +375,8 @@ LigneRubrique _ligne(
     icone: AppIcons.classes,
     legende:
         '${isolerSens(enDirect ? _effectif(l) : _quand(l, maintenant))}'
-        '${enDirect ? '' : '\n${isolerSens(_effectif(l))}'}',
+        '${enDirect ? '' : '\n${isolerSens(_effectif(l))}'}'
+        '${_etape(l) == null ? '' : '\n${_etape(l)}'}',
     onPress: onPress,
     marque: enDirect || l.cahierAValider || l.detail.remplacement
         ? MarquesClasse(
@@ -446,6 +470,15 @@ class ClasseALaUne extends StatelessWidget {
               textes.bodyMedium ?? const TextStyle(),
             ),
           ),
+          if (_etape(classe) != null) ...<Widget>[
+            Ecart.vXs,
+            Text(
+              _etape(classe)!,
+              style: palette.inkMuted.applyTo(
+                textes.bodyMedium ?? const TextStyle(),
+              ),
+            ),
+          ],
           if (classe.cahierAValider || classe.detail.remplacement) ...<Widget>[
             Ecart.vSm,
             MarquesClasse(

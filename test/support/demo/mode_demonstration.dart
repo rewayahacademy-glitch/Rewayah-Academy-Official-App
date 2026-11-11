@@ -45,7 +45,6 @@ import 'package:rewayah_academy/core/dossier/selecteur_fichier.dart';
 import 'package:rewayah_academy/core/dossier/service_dossier.dart';
 import 'package:rewayah_academy/core/dossier/service_validation.dart';
 import 'package:rewayah_academy/core/finance/finances_profil.dart';
-import 'package:rewayah_academy/core/identite/matricule_demo.dart';
 import 'package:rewayah_academy/core/identite/port_matricule.dart';
 import 'package:rewayah_academy/core/offres/offre_horaire.dart';
 import 'package:rewayah_academy/core/offres/page_regroupements.dart'
@@ -55,7 +54,6 @@ import 'package:rewayah_academy/core/offres/service_offres.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart';
 import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/profil/service_acceptations.dart';
-import 'package:rewayah_academy/core/recherche/moteurs_demo_recherche.dart';
 import 'package:rewayah_academy/core/recherche/port_recherche.dart';
 import 'package:rewayah_academy/core/recrutement/port_invitations_enseignant.dart';
 import 'package:rewayah_academy/core/recrutement/port_statuts_signature.dart';
@@ -77,9 +75,11 @@ import 'package:rewayah_academy/core/theme/accent_profil.dart';
 import 'package:rewayah_academy/features/admin_tableau/activite_recente.dart';
 import 'package:rewayah_academy/features/compte/donnees_compte.dart'
     show identiteTitulaireProvider;
+import 'package:rewayah_academy/features/demo/identite/matricule_demo.dart';
+import 'package:rewayah_academy/features/demo/recherche/moteurs_demo_recherche.dart';
+import 'package:rewayah_academy/features/demo/recherche/resolution_ra_demo.dart';
 import 'package:rewayah_academy/features/recherche/domaines/familles_eleves/moteurs_familles_eleves.dart';
 import 'package:rewayah_academy/features/recherche/domaines/familles_eleves/port_resolution_ra.dart';
-import 'package:rewayah_academy/features/recherche/domaines/familles_eleves/resolution_ra_demo.dart';
 
 import 'admin_x_demo.dart';
 import 'adulte_demo.dart';

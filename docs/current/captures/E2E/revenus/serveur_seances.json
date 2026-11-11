@@ -1,0 +1,78 @@
+fc0303cc-e88f-422d-a838-29059e2d765e|{"sub" : "fc0303cc-e88f-422d-a838-29059e2d765e", "role" : "authenticated", "app_metadata" : {"role" : "teacher"}}
+SET
+[
+    {
+        "type": "enfants",
+        "debut": "2026-11-06T11:00:00+00:00",
+        "classe": "An-Nasr E2E",
+        "eleves": [
+            {
+                "prenom": "Lina",
+                "eleveId": "ae400000-0000-4000-8000-0000000000e2",
+                "montant": {
+                    "devise": "USD",
+                    "mineur": 199
+                },
+                "present": true,
+                "presence": "partielle"
+            },
+            {
+                "prenom": "Yasmine",
+                "eleveId": "ae400000-0000-4000-8000-0000000000e1",
+                "montant": {
+                    "devise": "USD",
+                    "mineur": 199
+                },
+                "present": true,
+                "presence": "presente"
+            },
+            {
+                "prenom": "Nour",
+                "eleveId": "ae400000-0000-4000-8000-0000000000e3",
+                "montant": {
+                    "devise": "USD",
+                    "mineur": 0
+                },
+                "present": false,
+                "presence": "absente"
+            }
+        ],
+        "attente": null,
+        "minutes": 60,
+        "montant": {
+            "devise": "USD",
+            "mineur": 398
+        },
+        "payable": true,
+        "classeId": "ae400000-0000-4000-8000-000000000c01",
+        "seanceId": "ae400000-0000-4000-8000-000000000501",
+        "enRemplacement": false
+    },
+    {
+        "type": "enfants",
+        "debut": "2026-11-05T11:00:00+00:00",
+        "classe": "An-Nasr E2E",
+        "eleves": [
+            {
+                "prenom": "Nour",
+                "eleveId": "ae400000-0000-4000-8000-0000000000e3",
+                "montant": {
+                    "devise": "USD",
+                    "mineur": 0
+                },
+                "present": false,
+                "presence": "absente"
+            }
+        ],
+        "attente": null,
+        "minutes": 60,
+        "montant": {
+            "devise": "USD",
+            "mineur": 0
+        },
+        "payable": false,
+        "classeId": "ae400000-0000-4000-8000-000000000c01",
+        "seanceId": "ae400000-0000-4000-8000-000000000502",
+        "enRemplacement": false
+    }
+]

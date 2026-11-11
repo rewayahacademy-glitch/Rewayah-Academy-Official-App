@@ -4,7 +4,6 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/seance_famille/seance_famille.dart';
 import 'package:rewayah_academy/core/theme/app_palette.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
-import 'package:rewayah_academy/core/widgets/child_card.dart';
 import 'package:rewayah_academy/core/widgets/ligne_cle_valeur.dart';
 import 'package:rewayah_academy/core/widgets/pastille_etat_seance.dart';
 import 'package:rewayah_academy/core/widgets/selecteur_profils.dart';
@@ -218,35 +217,6 @@ void main() {
         findsOneWidget,
       );
       poignee.dispose();
-    });
-
-    testWidgets('carte famille annulee : pastille, surface enfoncee, '
-        'pourquoi et suite sur une ligne', (WidgetTester tester) async {
-      await tester.pumpWidget(
-        _hote(
-          const ChildCard(
-            prenom: 'Amina',
-            etat: EnfantSeanceAnnulee(
-              motif: 'Aucun remplaçant trouvé',
-              propose: 'séance non facturée',
-            ),
-          ),
-        ),
-      );
-      expect(find.text(t.etat.seanceAnnulee), findsOneWidget);
-      expect(
-        find.byKey(const ValueKey<String>('pastille-annulee-icone')),
-        findsOneWidget,
-      );
-      expect(
-        find.text('Aucun remplaçant trouvé · séance non facturée'),
-        findsOneWidget,
-      );
-      final BuildContext contexte = tester.element(find.byType(ChildCard));
-      expect(
-        tester.widgetList<AppCard>(find.byType(AppCard)).first.surface,
-        AppPalette.of(contexte).surfaceSunken,
-      );
     });
 
     testWidgets('le selecteur de profils : une seance annulee montre '

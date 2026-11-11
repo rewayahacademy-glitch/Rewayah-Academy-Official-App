@@ -1,3 +1,5 @@
+> **Périmé : le relevé à jour est `INVENTAIRE-NON-BRANCHE-2026-11-11.md` (11/11/2026).**
+
 # Code présent mais non branché, relevé du pilote du 31/10/2026
 
 Relevé fait sur `main` (3194965b6) par graphe d'imports depuis `lib/main.dart` (démo et
@@ -304,3 +306,22 @@ par celles d'usage quotidien :
 - « Séance annulée » sur la fiche de classe de l'enseignant (voir la ligne ci-dessus).
 - Finances de la direction et du comptable, alertes urgentes, modération, Studio, recherche :
   serveur à écrire.
+
+## F. Dette du halo vert, lot NAV-REFONTE 2c (garde-cap, 11/11/2026)
+
+La carte de séance (`CarteSession`) reçoit son entrée (« Rejoindre » ou une ligne d'état), calculée
+hors d'elle et sans repli. Trois écrans la lisent dans `entreeGroupeProvider`, la même source que le
+halo vert du cercle Compte de l'élève adulte : Espace de la Classe, Ma classe adulte, Accueil adulte.
+
+Deux écrans la calculent encore par la même fonction pure (`CarteSession.emplacementPour`), mais
+avec leurs propres sources :
+
+- **Accueil élève, Mode Accessibilité** (`lib/features/accueil_eleve/accueil_accessibilite.dart`) :
+  sa classe et son horloge ne viennent pas de `groupeProvider` ni de `horlogeGroupeProvider`.
+- **Fiche de groupe de l'enseignant** (`lib/features/fiche_groupe/fiche_groupe_page.dart`) : sa
+  classe vient de sa propre lecture, et son horloge de `horlogeGroupeProvider` ou, à défaut, de
+  `horlogeClasseLueProvider`.
+
+**À faire avant tout halo sur ces deux écrans** : ramener leur lecture sur `entreeGroupeProvider`.
+Sinon, un cercle pourrait dire « salle ouverte » quand la carte ne le dit pas. Contrôle :
+`test/widgets/entree_groupe_test.dart` (« les cinq écrans réels fournissent l'emplacement »).

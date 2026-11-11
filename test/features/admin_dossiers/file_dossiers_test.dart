@@ -19,6 +19,7 @@ import 'package:rewayah_academy/features/admin_dossiers/dossiers_page.dart';
 import '../../support/demo/dossiers_demo.dart';
 import '../../support/demo/mode_demonstration.dart';
 import '../../support/demo/repere_demonstration.dart';
+import '../../support/titre_de_page.dart';
 
 Future<void> _stabiliser(WidgetTester tester) async {
   for (int i = 0; i < 8; i++) {
@@ -101,7 +102,7 @@ void main() {
     await _stabiliser(tester);
     expect(_chemin(routeur), Routes.adminPersonnesDossiers);
     // AD-6 : le titre de page porte le nom.
-    expect(find.text("Dossier d'Amina Benali"), findsOneWidget);
+    expect(titreDePage("Dossier d'Amina Benali"), findsOneWidget);
     expect(find.byKey(DossiersPage.cleFile), findsNothing);
     expect(
       tester.getSize(find.byType(DetailDossier)).width,
@@ -208,7 +209,7 @@ void main() {
     await tester.tap(_ligne('Amina'));
     await _stabiliser(tester);
     expect(find.text('Dossier d’Amina Benali'), findsNothing);
-    expect(find.text("Dossier d'Amina Benali"), findsOneWidget);
+    expect(titreDePage("Dossier d'Amina Benali"), findsOneWidget);
     expect(_chemin(routeur), Routes.adminPersonnesDossiers);
 
     // Retour systeme : la liste revient, la route ne change pas.

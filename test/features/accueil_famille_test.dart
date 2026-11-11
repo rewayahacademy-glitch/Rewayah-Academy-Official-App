@@ -4,6 +4,8 @@
 // Donnees : fixtures isolees de `test/fixtures/tuteur/` (deux foyers fictifs,
 // seances et classes fictives, horloge serveur figee). Aucun service reel.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart' show RenderParagraph;
 import 'package:flutter/semantics.dart' show SemanticsNode;
@@ -15,6 +17,8 @@ import 'package:rewayah_academy/core/appairage/service_appairage.dart';
 import 'package:rewayah_academy/core/capacites/classes_foyer_supabase.dart';
 import 'package:rewayah_academy/core/capacites/consentements_supabase.dart';
 import 'package:rewayah_academy/core/capacites/port_classes_foyer.dart';
+import 'package:rewayah_academy/core/capacites/port_partage_pedagogique.dart'
+    show CompteRenduFamille, EtatCompteRendu;
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
@@ -39,6 +43,7 @@ import 'package:rewayah_academy/core/widgets/app_card.dart';
 import 'package:rewayah_academy/core/widgets/avatar_nom.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/core/widgets/grille_bento.dart';
+import 'package:rewayah_academy/core/widgets/halo_lumiere.dart';
 import 'package:rewayah_academy/core/widgets/ligne_presence.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/core/widgets/selecteur_profils.dart';
@@ -51,6 +56,8 @@ import 'package:rewayah_academy/features/accueil_famille/carte_classe_seance.dar
 import 'package:rewayah_academy/features/accueil_famille/carte_horaire.dart';
 import 'package:rewayah_academy/features/accueil_famille/ligne_derniere_seance.dart';
 import 'package:rewayah_academy/features/classe_tuteur/classe_tuteur_page.dart';
+import 'package:rewayah_academy/features/suivi_foyer/bloc_compte_rendu.dart'
+    show CleCompteRendu, compteRenduFamilleProvider;
 
 import '../capture/outil_capture.dart'
     show capturerVue, chargerPolicesDuDepot, masquerRubanDebug, sautSansCapture;
@@ -60,6 +67,7 @@ import '../fixtures/tuteur/foyers.dart';
 import '../parcours/faux_service_offres.dart';
 import '../router/support_routeur.dart';
 import '../support/aucun_mot_coupe.dart';
+import '../support/garde_lumiere.dart';
 import '../support/harnais.dart';
 import '../support/port_horloge_simule.dart';
 import '../teaching_core/a/faux/faux_groupes.dart' show PortHorlogeMuet;
@@ -164,6 +172,29 @@ class _FauxTravail implements PortTravailAVenir {
   }) async => actions;
 }
 
+/// Des classes dont la lecture se retient : une fois pour un eleve, ou pour la
+/// prochaine lecture seulement. Le reste vient tout de suite.
+class _ClassesRetenues implements PortClassesFoyer {
+  _ClassesRetenues(this.classes);
+
+  final List<ClasseFoyer> classes;
+
+  /// Les lectures retenues par eleve : la lecture attend le completeur.
+  final Map<String, Completer<void>> retenues = <String, Completer<void>>{};
+
+  @override
+  Future<List<ClasseFoyer>> classesDe(String eleveId) async {
+    await retenues[eleveId]?.future;
+    return classes.where((ClasseFoyer c) => c.eleveId == eleveId).toList();
+  }
+
+  @override
+  Future<ClasseFoyer?> classe({
+    required String groupeId,
+    required String eleveId,
+  }) async => null;
+}
+
 /// Monte l'application sur son vrai routeur, avec un tuteur actif et le
 /// foyer fictif A, puis va a [depart].
 Future<GoRouter> _monter(
@@ -183,6 +214,7 @@ Future<GoRouter> _monter(
   PortHorlogeSeance? horloges,
   double echelle = 1,
   TextDirection? direction,
+  ThemeMode theme = ThemeMode.light,
   // ACCUEIL-HORAIRE : un faux des offres et du parcours fourni par le test.
   ServiceOffres? offres,
 }) async {
@@ -230,6 +262,8 @@ Future<GoRouter> _monter(
             routeur = ref.read(routeurProvider);
             return MaterialApp.router(
               theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+              darkTheme: AppTheme.pour(InterfaceMode.standard, Brightness.dark),
+              themeMode: theme,
               // Sans echelle ni sens demandes, l'application reste telle quelle.
               builder: echelle == 1 && direction == null
                   ? null
@@ -259,7 +293,7 @@ Future<void> _ouvrirAccueilParLaBarre(WidgetTester tester) async {
   await tester.tap(
     find.descendant(
       of: find.byKey(NavShell.barreBasseKey),
-      matching: find.text(t.nav.tuteur.accueil),
+      matching: find.bySemanticsLabel(t.nav.tuteur.accueil),
     ),
   );
   await stabiliser(tester);
@@ -1650,6 +1684,437 @@ void main() {
       await _ouvrirAccueilParLaBarre(tester);
       expect(find.byType(CarteHoraireAccueil), findsNothing);
       expect(find.text(t.parcours.aucuneOffre), findsNothing);
+    });
+  });
+
+  // LUMIERE-ACCUEILS 1 : les lumieres viennent des etats rendus par le
+  // serveur, sur l'instant du serveur (voir `signauxFamille`).
+  group('LUMIERE-ACCUEILS : accueil de la famille', () {
+    int halos(WidgetTester tester, NatureHalo nature) => tester
+        .widgetList<HaloLumiere>(find.byType(HaloLumiere))
+        .where(
+          (HaloLumiere h) =>
+              h.nature == nature && h.forme == FormeHalo.rectangle,
+        )
+        .length;
+
+    SeanceFamille recente() => seanceFictive(
+      seanceId: 's0',
+      eleveId: _a1,
+      debutUtc: instantServeurFige.subtract(const Duration(hours: 2)),
+      statut: StatutSeance.terminee,
+      heureFoyer: heureRendue('Europe/Paris', 'Paris', '18:00'),
+    );
+
+    testWidgets('aucun appareil pret : lueur rouge sur le blocage', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        seances: _salleFermee,
+        appareils: <AppareilAppaire>[],
+      );
+      await _ouvrirAccueilParLaBarre(tester);
+      expect(halos(tester, NatureHalo.urgent), 1);
+    });
+
+    // LUMIERE-DOUCE (directeur, 11/11/2026, vu en production) : la carte
+    // rouge « Aucun appareil pret » n'est coupee ni par les bords ni par un
+    // parent, a 320 et 390, texte x1 et x2, pendant et apres la rotation.
+    testWidgets('aucun appareil pret : la lumiere rouge n est jamais coupee', (
+      WidgetTester tester,
+    ) async {
+      for (final Size taille in <Size>[
+        const Size(320, 900),
+        const Size(390, 844),
+      ]) {
+        for (final double echelle in <double>[1, 2]) {
+          await _monter(
+            tester,
+            seances: _salleFermee,
+            appareils: <AppareilAppaire>[],
+            taille: taille,
+            echelle: echelle,
+            depart: Routes.tuteurAccueil,
+          );
+          await tester.pump(const Duration(milliseconds: 600));
+          expect(halos(tester, NatureHalo.urgent), 1);
+          verifierLumieresEntieres(tester);
+          await tester.pumpAndSettle();
+          verifierLumieresEntieres(tester);
+        }
+      }
+    });
+
+    testWidgets('salle ouverte sans appareil : la tuile est « Rejoindre », '
+        'aucune lueur rouge', (WidgetTester tester) async {
+      await _monter(tester, appareils: <AppareilAppaire>[]);
+      await _ouvrirAccueilParLaBarre(tester);
+      expect(halos(tester, NatureHalo.urgent), 0);
+    });
+
+    testWidgets('salle ouverte : lueur verte sur « Rejoindre la salle »', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester);
+      await _ouvrirAccueilParLaBarre(tester);
+      expect(halos(tester, NatureHalo.salle), 1);
+      // La lueur n'est jamais coupee (LUMIERE-DOUCE, 11/11/2026).
+      verifierLumieresEntieres(tester);
+    });
+
+    testWidgets('salle fermee (seance dans 3 h) : pas de vert', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester, seances: _salleFermee);
+      await _ouvrirAccueilParLaBarre(tester);
+      expect(halos(tester, NatureHalo.salle), 0);
+    });
+
+    testWidgets('un appareil pret, rien a signaler : aucune lumiere', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester, seances: _salleFermee);
+      await _ouvrirAccueilParLaBarre(tester);
+      expect(
+        tester
+            .widgetList<HaloLumiere>(find.byType(HaloLumiere))
+            .where((HaloLumiere h) => h.forme == FormeHalo.rectangle),
+        isEmpty,
+      );
+    });
+
+    testWidgets('seance dans 50 min avec du travail : orange', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        seances: <SeanceFamille>[
+          _prochaine(avant: const Duration(minutes: 50)),
+          _passee(),
+        ],
+        travail: const _FauxTravail(<SlotAction>[
+          SlotAction(id: 'a', libelle: 'Action fictive 1'),
+        ]),
+      );
+      await _ouvrirAccueilParLaBarre(tester);
+      expect(halos(tester, NatureHalo.aPreparer), 1);
+    });
+
+    testWidgets('seance dans 3 h avec du travail : pas d orange', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        seances: _salleFermee,
+        travail: const _FauxTravail(<SlotAction>[
+          SlotAction(id: 'a', libelle: 'Action fictive 1'),
+        ]),
+      );
+      await _ouvrirAccueilParLaBarre(tester);
+      expect(halos(tester, NatureHalo.aPreparer), 0);
+    });
+
+    testWidgets('cahier partage de la seance d il y a 2 h : bleu', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        seances: <SeanceFamille>[
+          _prochaine(avant: const Duration(hours: 3)),
+          recente(),
+        ],
+        autres: <Override>[
+          compteRenduFamilleProvider.overrideWith(
+            (Ref ref, CleCompteRendu cle) async =>
+                const CompteRenduFamille(etat: EtatCompteRendu.partage),
+          ),
+        ],
+      );
+      await _ouvrirAccueilParLaBarre(tester);
+      expect(halos(tester, NatureHalo.nouveau), 1);
+    });
+
+    testWidgets('cahier en attente : jamais de bleu', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        seances: <SeanceFamille>[
+          _prochaine(avant: const Duration(hours: 3)),
+          recente(),
+        ],
+        autres: <Override>[
+          compteRenduFamilleProvider.overrideWith(
+            (Ref ref, CleCompteRendu cle) async =>
+                const CompteRenduFamille(etat: EtatCompteRendu.enAttente),
+          ),
+        ],
+      );
+      await _ouvrirAccueilParLaBarre(tester);
+      expect(halos(tester, NatureHalo.nouveau), 0);
+    });
+
+    group('captures R3', skip: sautSansCapture, () {
+      setUpAll(chargerPolicesDuDepot);
+      setUp(masquerRubanDebug);
+      for (final (String nom, Size taille, double echelle, ThemeMode theme)
+          in <(String, Size, double, ThemeMode)>[
+            ('320-x1-clair', const Size(320, 2400), 1, ThemeMode.light),
+            ('320-x2-clair', const Size(320, 3600), 2, ThemeMode.light),
+            ('320-x1-sombre', const Size(320, 2400), 1, ThemeMode.dark),
+            ('1440-x1-clair', const Size(1440, 1200), 1, ThemeMode.light),
+            ('1440-x1-sombre', const Size(1440, 1200), 1, ThemeMode.dark),
+          ]) {
+        testWidgets('rouge, orange et bleu ensemble : $nom, puis un autre '
+            'profil', (WidgetTester tester) async {
+          await _monter(
+            tester,
+            depart: Routes.tuteurAccueil,
+            taille: taille,
+            echelle: echelle,
+            theme: theme,
+            appareils: <AppareilAppaire>[],
+            seances: <SeanceFamille>[
+              _prochaine(avant: const Duration(minutes: 50)),
+              recente(),
+            ],
+            travail: const _FauxTravail(<SlotAction>[
+              SlotAction(id: 'a', libelle: 'Action fictive 1'),
+            ]),
+            autres: <Override>[
+              compteRenduFamilleProvider.overrideWith(
+                (Ref ref, CleCompteRendu cle) async =>
+                    const CompteRenduFamille(etat: EtatCompteRendu.partage),
+              ),
+            ],
+          );
+          if (find.byKey(NavShell.barreBasseKey).evaluate().isNotEmpty) {
+            await _ouvrirAccueilParLaBarre(tester);
+          }
+          expect(find.byType(AccueilFamillePage), findsOneWidget);
+          expect(tester.takeException(), isNull);
+          await capturerVue(tester, 'lumieres-$nom-profil-1');
+          await tester.tap(
+            find.descendant(
+              of: find.byType(SelecteurProfils),
+              matching: find.textContaining('A2'),
+            ),
+          );
+          await stabiliser(tester);
+          await capturerVue(tester, 'lumieres-$nom-profil-2');
+          await tester.pumpWidget(const SizedBox());
+        });
+      }
+
+      // Vert : la salle est rejoignable (seance dans 10 min, fenetre ouverte).
+      for (final (String nom, Size taille, double echelle, ThemeMode theme)
+          in <(String, Size, double, ThemeMode)>[
+            ('320-x1-clair', const Size(320, 2000), 1, ThemeMode.light),
+            ('320-x2-clair', const Size(320, 3200), 2, ThemeMode.light),
+            ('320-x1-sombre', const Size(320, 2000), 1, ThemeMode.dark),
+            ('1440-x1-clair', const Size(1440, 1200), 1, ThemeMode.light),
+            ('1440-x1-sombre', const Size(1440, 1200), 1, ThemeMode.dark),
+          ]) {
+        testWidgets('vert, salle rejoignable : $nom', (
+          WidgetTester tester,
+        ) async {
+          await _monter(
+            tester,
+            depart: Routes.tuteurAccueil,
+            taille: taille,
+            echelle: echelle,
+            theme: theme,
+          );
+          if (find.byKey(NavShell.barreBasseKey).evaluate().isNotEmpty) {
+            await _ouvrirAccueilParLaBarre(tester);
+          }
+          expect(tester.takeException(), isNull);
+          await capturerVue(tester, 'lumiere-verte-$nom');
+          await tester.pumpWidget(const SizedBox());
+        });
+      }
+    });
+  });
+
+  // DEFAUT DU 11/11/2026 : l'Accueil ne montre plus un squelette, puis un etat
+  // vide, puis des cartes, puis le contenu. Une seule porte (`_Contenu`).
+  group('Chargement unique de l Accueil', () {
+    final ClasseFoyer classeA1 = ClasseFoyer(
+      eleveId: _a1,
+      classe: classeFictive(),
+    );
+
+    // Le squelette de la page, pas ceux qui reservent la place d'une tuile.
+    int squelettes(WidgetTester tester) =>
+        find.byKey(AccueilFamillePage.squeletteKey).evaluate().length;
+
+    testWidgets('premiere arrivee : un seul squelette tant que la classe n est '
+        'pas lue, aucune carte ni etat vide, puis le contenu', (
+      WidgetTester tester,
+    ) async {
+      final _ClassesRetenues port = _ClassesRetenues(<ClasseFoyer>[classeA1])
+        ..retenues[_a1] = Completer<void>();
+      await _monter(tester, portClasses: port);
+      await _ouvrirAccueilParLaBarre(tester);
+
+      expect(squelettes(tester), greaterThan(0));
+      expect(find.byType(CarteClasseSeance), findsNothing);
+      expect(find.byType(EtatSysteme), findsNothing);
+      expect(find.byType(SelecteurProfils), findsNothing);
+
+      port.retenues[_a1]!.complete();
+      // L'horloge de la classe se lit apres la classe, puis le fondu.
+      await stabiliser(tester);
+      await stabiliser(tester);
+      expect(find.byType(CarteClasseSeance), findsOneWidget);
+      expect(find.byType(EtatSysteme), findsNothing);
+      expect(squelettes(tester), 0);
+    });
+
+    testWidgets('profil sans classe : aucun « Aucune classe » avant que les '
+        'regles de l academie soient lues', (WidgetTester tester) async {
+      final Completer<ReglesAcademie> regles = Completer<ReglesAcademie>();
+      await _monter(
+        tester,
+        foyer: FoyersFictifs.foyerA,
+        seances: <SeanceFamille>[],
+        classes: <ClasseFoyer>[],
+        autres: <Override>[
+          reglesAcademieProvider.overrideWith((Ref ref) => regles.future),
+        ],
+      );
+      await _ouvrirAccueilParLaBarre(tester);
+
+      expect(squelettes(tester), greaterThan(0));
+      expect(find.byType(EtatSysteme), findsNothing);
+      expect(
+        find.text(t.tuteur.accueil.sansClasseTitre(prenom: 'Élève A1')),
+        findsNothing,
+      );
+
+      regles.complete(FauxServiceOffres().reglesRendues);
+      await stabiliser(tester);
+      await stabiliser(tester);
+      expect(
+        find.text(t.tuteur.accueil.sansClasseTitre(prenom: 'Élève A1')),
+        findsOneWidget,
+      );
+      expect(squelettes(tester), 0);
+    });
+
+    testWidgets('changement de profil : l affichage precedent reste, jamais le '
+        'squelette, et le selecteur suit le geste', (
+      WidgetTester tester,
+    ) async {
+      // La classe d'A2 est retenue des le depart (le halo du cercle Compte lit
+      // deja la classe de chaque profil : une lecture en cache ne se retient
+      // pas) ; A1, choisi, n'attend rien.
+      final _ClassesRetenues port = _ClassesRetenues(<ClasseFoyer>[classeA1])
+        ..retenues[_a2] = Completer<void>();
+      await _monter(tester, portClasses: port);
+      await _ouvrirAccueilParLaBarre(tester);
+      expect(find.byType(CarteClasseSeance), findsOneWidget);
+
+      await tester.tap(
+        find.descendant(
+          of: find.byType(SelecteurProfils),
+          matching: find.textContaining('A2'),
+        ),
+      );
+      await stabiliser(tester);
+
+      // Le contenu d'A1 reste, aucun squelette ne revient, et le selecteur
+      // montre deja A2 choisi.
+      expect(find.byType(CarteClasseSeance), findsOneWidget);
+      expect(squelettes(tester), 0);
+      expect(
+        tester
+            .widget<SelecteurProfils>(find.byType(SelecteurProfils))
+            .selectionId,
+        _a2,
+      );
+
+      port.retenues[_a2]!.complete();
+      await stabiliser(tester);
+      expect(squelettes(tester), 0);
+      expect(find.byType(CarteClasseSeance), findsNothing);
+    });
+
+    testWidgets('rafraichissement : la classe se relit, le contenu reste', (
+      WidgetTester tester,
+    ) async {
+      final _ClassesRetenues port = _ClassesRetenues(<ClasseFoyer>[classeA1]);
+      await _monter(tester, portClasses: port);
+      await _ouvrirAccueilParLaBarre(tester);
+      expect(find.byType(CarteClasseSeance), findsOneWidget);
+
+      port.retenues[_a1] = Completer<void>();
+      ProviderScope.containerOf(tester.element(find.byType(AccueilFamillePage)))
+          .invalidate(classeDeLEleveProvider(_a1));
+      await stabiliser(tester);
+
+      expect(find.byType(CarteClasseSeance), findsOneWidget);
+      expect(squelettes(tester), 0);
+      port.retenues[_a1]!.complete();
+      await stabiliser(tester);
+      expect(find.byType(CarteClasseSeance), findsOneWidget);
+    });
+
+    group('captures R3 du chargement', skip: sautSansCapture, () {
+      setUpAll(chargerPolicesDuDepot);
+      setUp(masquerRubanDebug);
+      for (final (String taille, Size dim, ThemeMode theme, String th)
+          in <(String, Size, ThemeMode, String)>[
+            ('320', const Size(320, 1800), ThemeMode.light, 'clair'),
+            ('320', const Size(320, 1800), ThemeMode.dark, 'sombre'),
+            ('1440', const Size(1440, 1000), ThemeMode.light, 'clair'),
+            ('1440', const Size(1440, 1000), ThemeMode.dark, 'sombre'),
+          ]) {
+        for (final bool avecClasse in <bool>[true, false]) {
+          final String profil = avecClasse ? 'avec-classe' : 'sans-classe';
+          testWidgets('chargement $profil, $taille $th', (
+            WidgetTester tester,
+          ) async {
+            final _ClassesRetenues port = _ClassesRetenues(
+              avecClasse
+                  ? <ClasseFoyer>[
+                      ClasseFoyer(eleveId: _a1, classe: classeFictive()),
+                    ]
+                  : <ClasseFoyer>[],
+            )..retenues[_a1] = Completer<void>();
+            final Completer<ReglesAcademie> regles =
+                Completer<ReglesAcademie>();
+            await _monter(
+              tester,
+              portClasses: port,
+              taille: dim,
+              theme: theme,
+              seances: avecClasse ? null : <SeanceFamille>[],
+              autres: <Override>[
+                reglesAcademieProvider.overrideWith((Ref ref) => regles.future),
+              ],
+            );
+            if (find.byKey(NavShell.barreBasseKey).evaluate().isNotEmpty) {
+              await _ouvrirAccueilParLaBarre(tester);
+            }
+            await capturerVue(
+              tester,
+              'chargement-$profil-$taille-$th-1-profils',
+            );
+            port.retenues[_a1]!.complete();
+            await stabiliser(tester);
+            await capturerVue(
+              tester,
+              'chargement-$profil-$taille-$th-2-classe',
+            );
+            regles.complete(FauxServiceOffres().reglesRendues);
+            await stabiliser(tester);
+            await capturerVue(tester, 'chargement-$profil-$taille-$th-3-fin');
+            await tester.pumpWidget(const SizedBox());
+          });
+        }
+      }
     });
   });
 }

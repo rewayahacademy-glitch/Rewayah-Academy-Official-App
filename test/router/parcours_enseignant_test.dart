@@ -30,6 +30,7 @@ import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/features/bienvenue_enseignant/bienvenue_page.dart';
 import 'package:rewayah_academy/features/cahier/cahier_page.dart';
+import 'package:rewayah_academy/features/com_messages/messages_page.dart';
 import 'package:rewayah_academy/features/creneaux/creneaux_page.dart';
 import 'package:rewayah_academy/features/enseignant_classes/mes_classes_page.dart';
 import 'package:rewayah_academy/features/fiche_groupe/fiche_groupe_page.dart';
@@ -196,20 +197,28 @@ void main() {
     ) async {
       await monter(tester, Routes.enseignantJournee);
 
-      // Quatre destinations, dans l'ordre E10 : Aujourd'hui, Classes,
-      // Disponibilites, Profil (decision du directeur du 26/09/2026, qui
-      // remplace ADR-027). « Compte » ne revient pas : Profil le porte.
+      // Quatre destinations : Aujourd'hui, Classes, Messages, Compte
+      // (NAV-REFONTE, decision du directeur du 09/11/2026, qui remplace
+      // l'ordre E10 du 26/09 : les disponibilites s'ouvrent depuis Compte).
       // A cette largeur (tablette), le rail est replie mais garde ses
       // libelles visibles, comme avant le chantier Tuteur V1 : le rail a
       // icones seules est reserve au tuteur (revue phase 0, jetons D2).
       final NavShell coquille = tester.widget<NavShell>(find.byType(NavShell));
       expect(coquille.destinations, hasLength(4));
       expect(coquille.libellesDansLeRail, isTrue);
+      // NAV-REFONTE etape 3 (11/11/2026) : le Compte quitte la liste et vit
+      // au pied du panneau (photo, menu) ; les trois autres gardent leur nom.
+      expect(
+        find.descendant(
+          of: find.byKey(NavShell.railKey),
+          matching: find.byKey(NavShell.piedCompteKey),
+        ),
+        findsOneWidget,
+      );
       for (final String libelle in <String>[
         t.nav.enseignant.journee,
         t.nav.enseignant.classes,
-        t.nav.enseignant.creneaux,
-        t.nav.enseignant.profil,
+        t.com.socle.lexique.messages,
       ]) {
         expect(
           find.descendant(
@@ -231,20 +240,27 @@ void main() {
       // l'ordre E10 : la branche doit s'ouvrir sur son chemin et sa page.
       final Map<String, (String, Type)> destinations = <String, (String, Type)>{
         t.nav.enseignant.classes: (Routes.enseignantClasses, MesClassesPage),
-        t.nav.enseignant.creneaux: (Routes.enseignantCreneaux, CreneauxPage),
-        t.nav.enseignant.profil: (
+        t.com.socle.lexique.messages: (Routes.enseignantMessages, MessagesPage),
+        t.nav.enseignant.compte: (
           Routes.enseignantProfil,
           ProfilEnseignantPage,
         ),
         t.nav.enseignant.journee: (Routes.enseignantJournee, JourneePage),
       };
       for (final MapEntry<String, (String, Type)> d in destinations.entries) {
-        await tester.tap(
-          find.descendant(
-            of: find.byKey(NavShell.railKey),
-            matching: find.text(d.key),
-          ),
-        );
+        if (d.key == t.nav.enseignant.compte) {
+          // NAV-REFONTE etape 3 : le Compte s'ouvre par le menu du pied.
+          await tester.tap(find.byKey(NavShell.piedCompteKey));
+          await tester.pumpAndSettle();
+          await tester.tap(find.text(d.key).last);
+        } else {
+          await tester.tap(
+            find.descendant(
+              of: find.byKey(NavShell.railKey),
+              matching: find.text(d.key),
+            ),
+          );
+        }
         await tester.pumpAndSettle();
         expect(routeur.state.matchedLocation, d.value.$1, reason: d.key);
         expect(find.byType(d.value.$2), findsOneWidget, reason: d.key);

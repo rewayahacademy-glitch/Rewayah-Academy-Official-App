@@ -14,114 +14,18 @@
 //    role : signaler que la correction a eu lieu, pour qu'on ajuste le
 //    contrat au lieu de la decouvrir six mois plus tard.
 
+// Suppression du 08/11/2026 (feu vert du directeur) : le groupe sur
+// `dureeAcademique` est retire avec le fichier ; le serveur fait foi
+// (`etat_presence`).
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/presence/vue_presence.dart';
-import 'package:rewayah_academy/core/tc_horloge/duree_academique.dart';
 import 'package:rewayah_academy/core/tc_horloge/session_clock_vm.dart';
 
 import '../fixtures/fixtures_horloge.dart';
 
 void main() {
-  group('Q-02 : l attente avant T0 ne consomme aucun temps academique', () {
-    test('a T-20, la salle est ouverte et le temps academique vaut zero', () {
-      final DateTime maintenant = instantDe(MomentSeance.tMoins20);
-      final SessionClockVM horloge = horlogeSeance(maintenant: maintenant);
-
-      expect(horloge.phase, PhaseSeance.salleOuverte);
-      expect(horloge.rejoindreOuvert, isTrue);
-      expect(
-        dureeAcademique(
-          entreLe: null,
-          debutSeance: horloge.debutUtc,
-          maintenant: maintenant,
-        ),
-        Duration.zero,
-      );
-    });
-
-    test('connecte a T-20, a T-10 : phase d attente, zero minute creditee', () {
-      final DateTime entree = instantDe(MomentSeance.tMoins20);
-      final DateTime maintenant = instantDe(MomentSeance.attenteConnecte);
-      final SessionClockVM horloge = horlogeSeance(
-        maintenant: maintenant,
-        connecte: true,
-      );
-
-      expect(horloge.phase, PhaseSeance.attenteAvantT0);
-      expect(
-        dureeAcademique(
-          entreLe: entree,
-          debutSeance: horloge.debutUtc,
-          maintenant: maintenant,
-        ),
-        Duration.zero,
-        reason: 'attendre avant le cours n est pas assister au cours',
-      );
-    });
-
-    test('entre a T-20, dix-huit minutes apres T0 : dix-huit, pas trente-huit', () {
-      // Le chiffre de la decision D-13, mot pour mot : « un eleve entre a
-      // T-20 verrait en salle depuis 38 min pour un cours commence il y a
-      // 18 min ».
-      final DateTime debut = debutSeanceAvantDst;
-      final DateTime entree = debut.subtract(const Duration(minutes: 20));
-      final DateTime maintenant = debut.add(const Duration(minutes: 18));
-
-      final Duration creditee = dureeAcademique(
-        entreLe: entree,
-        debutSeance: debut,
-        maintenant: maintenant,
-      );
-
-      expect(creditee, const Duration(minutes: 18));
-      expect(creditee, isNot(const Duration(minutes: 38)));
-    });
-
-    test('entre en retard : la duree part de l entree, pas du debut', () {
-      final DateTime debut = debutSeanceAvantDst;
-      final DateTime entree = debut.add(const Duration(minutes: 12));
-      final DateTime maintenant = debut.add(const Duration(minutes: 30));
-
-      expect(
-        dureeAcademique(
-          entreLe: entree,
-          debutSeance: debut,
-          maintenant: maintenant,
-        ),
-        const Duration(minutes: 18),
-      );
-    });
-
-    test('la duree ne depasse jamais la fin de la seance', () {
-      final DateTime debut = debutSeanceAvantDst;
-      final DateTime fin = debut.add(dureeSeance);
-
-      expect(
-        dureeAcademique(
-          entreLe: debut,
-          debutSeance: debut,
-          maintenant: fin.add(const Duration(minutes: 40)),
-          finSeance: fin,
-        ),
-        dureeSeance,
-      );
-    });
-
-    test('une duree ne s affiche jamais a l envers', () {
-      // Une horloge d appareil en avance ne doit pas produire « -10 min ».
-      final DateTime debut = debutSeanceAvantDst;
-      expect(
-        dureeAcademique(
-          entreLe: debut,
-          debutSeance: debut,
-          maintenant: debut.subtract(const Duration(minutes: 10)),
-        ),
-        Duration.zero,
-      );
-    });
-  });
-
   group('Q-02 : la fenetre d acces est une donnee, jamais une constante', () {
     test('changer la fenetre deplace joinOpensAt d autant', () {
       // Si `fenetreAcces` etait codee en dur cote client, ce test ne bougerait

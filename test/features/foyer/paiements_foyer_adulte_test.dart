@@ -9,30 +9,19 @@
 // des soldes, qui reste un composant (chargement, erreur, hors ligne, vide,
 // indisponible).
 
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
-import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
-import 'package:rewayah_academy/core/capacites/port_paiements_foyer.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/finance/finances_profil.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
-import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
-import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/core/widgets/resume_soldes.dart';
-import 'package:rewayah_academy/core/widgets/skeleton.dart';
-import 'package:rewayah_academy/core/widgets/status_pill.dart';
-import 'package:rewayah_academy/features/compte/donnees_compte.dart';
 import 'package:rewayah_academy/features/compte/paiements_page.dart';
-import 'package:rewayah_academy/features/compte/soldes_foyer.dart';
 import 'package:rewayah_academy/features/foyer/fiche_eleve_page.dart';
 import 'package:rewayah_academy/features/foyer/finances_foyer.dart';
 import 'package:rewayah_academy/features/foyer/foyer_page.dart';
@@ -43,7 +32,7 @@ import 'package:rewayah_academy/features/mon_espace_adulte/mon_espace_adulte_pag
 
 import '../../support/demo/adulte_demo.dart';
 import '../../support/demo/demo_adulte_page.dart';
-import '../../support/hors_ligne_une_fois.dart';
+import '../../support/destination_nav.dart';
 
 void main() {
   void taille(WidgetTester tester, Size s) {
@@ -51,20 +40,6 @@ void main() {
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
   }
-
-  Widget app({required Widget home, List<Override> overrides = const []}) =>
-      ProviderScope(
-        overrides: overrides,
-        child: TranslationProvider(
-          child: MaterialApp(
-            theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
-            locale: AppLocale.fr.flutterLocale,
-            supportedLocales: AppLocaleUtils.supportedLocales,
-            localizationsDelegates: GlobalMaterialLocalizations.delegates,
-            home: Scaffold(body: SingleChildScrollView(child: home)),
-          ),
-        ),
-      );
 
   Future<GoRouter> monterCoquille(WidgetTester tester, String depart) async {
     final GoRouter routeur = GoRouter(
@@ -112,7 +87,7 @@ void main() {
     taille(tester, const Size(390, 844));
     await monterCoquille(tester, adresseDemoAdulte(EcranDemoAdulte.accueil));
 
-    await tester.tap(find.text(t.adulte.nav.monEspace).first);
+    await tester.tap(destinationNav(t.adulte.nav.monEspace));
     await tester.pumpAndSettle();
     final Finder famille = find.descendant(
       of: find.byKey(MonEspaceAdultePage.ligneFamilleKey),
@@ -136,7 +111,6 @@ void main() {
 
     // Les soldes ne sont plus repetes ici (E-11, revue FI-VAGUE-R R1-06) :
     // la synthese et les cartes de Ma famille les portent.
-    expect(find.byKey(SoldesFoyerSection.cle), findsNothing);
     expect(find.byType(ResumeSoldes), findsNothing);
     // Un seul bouton : « Recharger », raccourci vers LA recharge (FI-7).
     expect(find.byType(ActionPrincipale), findsOneWidget);
@@ -225,7 +199,6 @@ void main() {
       ),
     );
     expect(find.byType(PaiementsComptePage), findsOneWidget);
-    expect(find.byKey(SoldesFoyerSection.cle), findsNothing);
     expect(find.text(t.adulte.paiements.recharger), findsNothing);
     expect(find.text('Aïcha'), findsNothing);
     expect(find.text('Oumar'), findsNothing);
@@ -254,8 +227,6 @@ void main() {
       final bool bureau = ecran.width >= 1200;
 
       // Aucune section de soldes repetee : la synthese les porte.
-      expect(find.byKey(SoldesFoyerSection.cle), findsNothing);
-      expect(find.byKey(SoldesFoyerSection.rechargerKey), findsNothing);
       // « Soldes et paiements » en sous-titre (R1-09), la synthese en tete
       // des profils.
       expect(find.text(t.foyer.finances.titre), findsOneWidget);
@@ -338,150 +309,6 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(RechargeFoyerPage), findsOneWidget);
     expect(find.byType(FicheElevePage), findsNothing);
-  });
-
-  group('etats de la section des soldes', () {
-    const SoldesFoyer exemple = SoldesFoyer(
-      beneficiaires: <SoldeBeneficiaire>[
-        SoldeBeneficiaire(
-          id: 'b1',
-          prenom: 'Yusuf',
-          soldeRendu: 'valeur rendue',
-          exception: ExceptionSolde.inactif,
-        ),
-      ],
-    );
-
-    Future<void> monter(
-      WidgetTester tester,
-      Future<SoldesFoyer> Function() lecture, {
-      bool horsLigne = false,
-      VoidCallback? onRecharger,
-    }) async {
-      taille(tester, const Size(390, 844));
-      await tester.pumpWidget(
-        app(
-          overrides: <Override>[
-            soldesFoyerProvider.overrideWith((Ref _) => lecture()),
-            horsLigneProvider.overrideWith(
-              (Ref _) => Stream<bool>.value(horsLigne),
-            ),
-          ],
-          home: SoldesFoyerSection(onRecharger: onRecharger),
-        ),
-      );
-      await tester.pump();
-      await tester.pump();
-    }
-
-    EtatSysteme? etat(WidgetTester tester) {
-      final Iterable<EtatSysteme> e = tester.widgetList<EtatSysteme>(
-        find.byType(EtatSysteme),
-      );
-      return e.isEmpty ? null : e.first;
-    }
-
-    testWidgets('chargement : le squelette, sans faux nom ni faux solde', (
-      WidgetTester tester,
-    ) async {
-      final Completer<SoldesFoyer> jamais = Completer<SoldesFoyer>();
-      await monter(tester, () => jamais.future);
-      expect(find.byType(Skeleton), findsWidgets);
-      expect(find.text(t.adulte.paiements.beneficiaires), findsOneWidget);
-      expect(find.byType(StatusPill), findsNothing);
-      expect(find.byKey(SoldesFoyerSection.rechargerKey), findsNothing);
-      await tester.pumpWidget(const SizedBox.shrink());
-    });
-
-    testWidgets('erreur : dite, avec « Reessayer », sans bouton de recharge', (
-      WidgetTester tester,
-    ) async {
-      await monter(
-        tester,
-        () => Future<SoldesFoyer>.error(StateError('panne')),
-        onRecharger: () {},
-      );
-      await tester.pumpAndSettle();
-      expect(etat(tester)?.nature, NatureEtat.echecServeur);
-      expect(find.byKey(SoldesFoyerSection.rechargerKey), findsNothing);
-    });
-
-    testWidgets('hors ligne : dit comme tel', (WidgetTester tester) async {
-      await monter(
-        tester,
-        () => Future<SoldesFoyer>.error(StateError('coupure')),
-        horsLigne: true,
-      );
-      await tester.pumpAndSettle();
-      expect(etat(tester)?.nature, NatureEtat.horsLigne);
-      // EA-HL-DOUBLE-1 : le bloc dit ce qui manque, sans redire le reseau.
-      expectSansDonnees(t.adulte.paiements.soldesSansDonnees, bandeau: false);
-    });
-
-    // Revue EA-HL-DOUBLE-1 (m1) : des soldes deja lus, relus en echec hors
-    // ligne, restent affiches, sans bloc ni echec.
-    testWidgets('hors ligne, soldes deja lus puis relus en echec : ils '
-        'restent', (WidgetTester tester) async {
-      int lectures = 0;
-      await monter(
-        tester,
-        () => ++lectures == 1
-            ? Future<SoldesFoyer>.value(exemple)
-            : Future<SoldesFoyer>.error(StateError('coupure')),
-        horsLigne: true,
-      );
-      await tester.pumpAndSettle();
-      final ProviderContainer conteneur = ProviderScope.containerOf(
-        tester.element(find.byType(SoldesFoyerSection)),
-      )..invalidate(soldesFoyerProvider);
-      await tester.pumpAndSettle();
-      final AsyncValue<SoldesFoyer> lus = conteneur.read(soldesFoyerProvider);
-      expect(lus.hasError && lus.hasValue, isTrue);
-      expect(find.text('valeur rendue'), findsOneWidget);
-      expect(etat(tester), isNull);
-      expectHorsLigneUneFois(bandeau: false);
-    });
-
-    testWidgets('indisponible : la dependance FI-BR-03, sans « Reessayer »', (
-      WidgetTester tester,
-    ) async {
-      await monter(
-        tester,
-        () => Future<SoldesFoyer>.error(const CapaciteIndisponible('FI-BR-03')),
-      );
-      await tester.pumpAndSettle();
-      final EtatSysteme? e = etat(tester);
-      expect(e?.nature, NatureEtat.indisponible);
-      expect(e?.dependance, 'FI-BR-03');
-      expect(e?.titre, t.adulte.paiements.soldesIndisponiblesTitre);
-    });
-
-    testWidgets('vide : aucun beneficiaire, aucun bouton', (
-      WidgetTester tester,
-    ) async {
-      await monter(
-        tester,
-        () async => const SoldesFoyer(beneficiaires: <SoldeBeneficiaire>[]),
-        onRecharger: () {},
-      );
-      await tester.pumpAndSettle();
-      expect(etat(tester)?.nature, NatureEtat.aucunResultat);
-      expect(find.byKey(SoldesFoyerSection.rechargerKey), findsNothing);
-    });
-
-    testWidgets('contenu : le solde tel que rendu, l\'exception « Inactif » '
-        'en pastille neutre, sans recapitulatif quand il n\'est pas rendu', (
-      WidgetTester tester,
-    ) async {
-      await monter(tester, () async => exemple, onRecharger: () {});
-      await tester.pumpAndSettle();
-      expect(find.text('valeur rendue'), findsOneWidget);
-      final StatusPill p = tester.widget<StatusPill>(find.byType(StatusPill));
-      expect(p.libelle, t.adulte.paiements.inactif);
-      expect(p.ton, TonEtat.neutre);
-      expect(find.byKey(SoldesFoyerSection.recapitulatifKey), findsNothing);
-      expect(find.byKey(SoldesFoyerSection.rechargerKey), findsOneWidget);
-    });
   });
 }
 

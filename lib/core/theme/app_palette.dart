@@ -345,6 +345,22 @@ class AppPalette extends ThemeExtension<AppPalette> {
 
   bool get estSombre => surfaceCanvas.background.computeLuminance() < 0.5;
 
+  /// Le fin liseré clair autour d'une photo ronde : le cercle Compte de la
+  /// barre et les profils du selecteur de l'Accueil (decision du directeur du
+  /// 09/11/2026, « un fin liseré blanc »). Blanc en clair ; en sombre, le
+  /// blanc casse de l'encre forte, jamais la couleur de la carte (arbitrage
+  /// du garde-cap du 10/11/2026).
+  BorderSide lisereClair({required double epaisseur}) => estSombre
+      ? inkStrong.asBorderSide(width: epaisseur)
+      : BorderSide(color: surfaceRaised.background, width: epaisseur);
+
+  /// LIQUIDE-MATIERE (directeur, 11/11/2026) : la matiere de la barre
+  /// flottante (la pilule et le cercle Compte), sans contour. En clair, la
+  /// carte, detachee par une ombre douce ; en sombre, ou une ombre ne se voit
+  /// presque pas, une elevation TONALE (Material 3) : la surface un ton plus
+  /// clair que la carte, plus l'ombre.
+  AppColorPair get surfaceMatiere => estSombre ? surfaceOverlay : surfaceRaised;
+
   /// Le filet de contour d'une carte. A-12 (directeur, 17/10/2026) : la carte
   /// se lisait a 1,07 (clair) et 1,10 (sombre) contre le fond ; le filet passe
   /// de 0,08 a 0,14 (clair) et 0,12 (sombre) d'opacite, la carte reste blanche
@@ -941,4 +957,93 @@ abstract final class AppNuancierTrait {
   static const AppInkColor orange = AppInkColor(Color(0xFFB83E0B));
   static const AppInkColor rose = AppInkColor(Color(0xFFB0175F));
   static const AppInkColor marron = AppInkColor(Color(0xFF7A4A1E));
+}
+
+/// Les lumieres du halo du cercle Compte (NAV-REFONTE, decision du directeur
+/// du 09/11/2026). **Seule exception au branding** : des couleurs vives, ici et
+/// nulle part ailleurs ; identiques dans les deux themes (le clair renforce
+/// l'intensite, `HaloCompte`). Les teintes de chaque etat sont voisines ; les
+/// etats se distinguent aussi par la vitesse, la pastille et le nom lu, jamais
+/// par la couleur seule. Le rouge est sombre, le bleu ne bouge presque pas.
+abstract final class CouleursHalo {
+  /// LUMIERE-DOUCE (directeur, 11/11/2026) : la lumiere qui tourne autour
+  /// d'une carte n'a qu'une fraction de l'opacite du cercle Compte, en une
+  /// seule couche dans les deux themes. Le cercle Compte garde la sienne.
+  static const double intensiteCarte = 0.45;
+
+  /// Urgent : rouge, orange et magenta.
+  static const AppHaloColor urgent = AppHaloColor(
+    <Color>[
+      Color(0xFFFF1F3D),
+      Color(0xFFFF7A1A),
+      Color(0xFFFF2D9A),
+      Color(0xFFFF1F3D),
+      Color(0x26FF1F3D),
+      Color(0xFFFF7A1A),
+      Color(0xFFFF1F3D),
+    ],
+    <double>[0, 1 / 6, 130 / 360, 175 / 360, 250 / 360, 320 / 360, 1],
+    pastille: AppColorPair(
+      background: Color(0xFFE0122B),
+      onBackground: Color(0xFFFFFFFF),
+    ),
+    lueur: AppShadowColor(Color(0xFFFF283C)),
+  );
+
+  /// Nouveau, a lire : bleu, cyan et violet.
+  static const AppHaloColor nouveau = AppHaloColor(
+    <Color>[
+      Color(0xFF2F7BFF),
+      Color(0xFF22D3EE),
+      Color(0xFF8B5CF6),
+      Color(0x262F7BFF),
+      Color(0xFF2F7BFF),
+    ],
+    <double>[0, 70 / 360, 150 / 360, 240 / 360, 1],
+    pastille: AppColorPair(
+      background: Color(0xFF1F5BD6),
+      onBackground: Color(0xFFFFFFFF),
+    ),
+    lueur: AppShadowColor(Color(0xFF2F7BFF)),
+  );
+
+  /// A preparer (2a-bis, pilote, 11/11/2026) : orange, ambre et corail. La
+  /// pastille est sombre a icone blanche, comme l'urgence, dont elle se
+  /// distingue par la teinte, la vitesse (un seul tour qui ralentit) et le
+  /// texte de l'ecran qui la porte.
+  static const AppHaloColor aPreparer = AppHaloColor(
+    <Color>[
+      Color(0xFFFF8A00),
+      Color(0xFFFFB020),
+      Color(0xFFFF6A3D),
+      Color(0x26FF8A00),
+      Color(0xFFFF8A00),
+    ],
+    <double>[0, 70 / 360, 150 / 360, 240 / 360, 1],
+    pastille: AppColorPair(
+      background: Color(0xFFC2410C),
+      onBackground: Color(0xFFFFFFFF),
+    ),
+    lueur: AppShadowColor(Color(0xFFFF8A00)),
+  );
+
+  /// Salle ouverte, a rejoindre (etape 2b, 10/11/2026) : vert, menthe et
+  /// citron, sans creux (la lumiere respire, elle ne tourne pas). La pastille
+  /// est **claire** a icone sombre, quand celle de l'urgence est sombre a
+  /// icone blanche : rouge et vert se distinguent aussi par la clarte, pour
+  /// un daltonien (planche du 09/11).
+  static const AppHaloColor salle = AppHaloColor(
+    <Color>[
+      Color(0xFF22C55E),
+      Color(0xFF34D399),
+      Color(0xFFA3E635),
+      Color(0xFF22C55E),
+    ],
+    <double>[0, 1 / 3, 2 / 3, 1],
+    pastille: AppColorPair(
+      background: Color(0xFF86EFAC),
+      onBackground: Color(0xFF052E16),
+    ),
+    lueur: AppShadowColor(Color(0xFF22C55E)),
+  );
 }

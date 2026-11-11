@@ -67,10 +67,12 @@ import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
 import '../acces_finance/acces_finance.dart';
 import '../acces_finance/carte_acces_finance.dart';
+import '../accueil_famille/carte_entree_espace.dart';
 import '../tc_espace_groupe/emplacements_groupe.dart';
 import '../tc_espace_groupe/espace_groupe_page.dart'
     show LecteurGroupe, LectureGroupe;
 import 'port_espace_adulte.dart';
+import 'retour_accueil_famille.dart' show retourAccueilFamilleKey;
 
 /// Une seance passee, telle que le serveur la rendrait : la seance, sa date
 /// deja rendue, et l'absence seule (une presence est l'etat normal et ne
@@ -179,7 +181,12 @@ class AccueilAdultePage extends ConsumerWidget {
     this.onVoirDernieresSeances,
     this.onVoirMaClasse,
     this.onMesFinances,
+    this.onRetourAccueilFamille,
   });
+
+  /// Revient a l'Accueil famille (ONBOARDING-TUTEUR, 09/11/2026) : le tuteur qui
+  /// suit aussi des cours a un foyer a retrouver. Nul : pas de carte (D9).
+  final VoidCallback? onRetourAccueilFamille;
 
   /// Ouvre ses finances (`/eleve/finances`, lot F1). Nul : pas de carte (D9).
   /// La carte reste sous tous les etats de l'accueil : ses finances ne
@@ -262,6 +269,7 @@ class AccueilAdultePage extends ConsumerWidget {
           : const <Widget>[],
       child: _AvecFinances(
         onMesFinances: onMesFinances,
+        onRetourAccueilFamille: onRetourAccueilFamille,
         child: echecHorsLigne
             ? EtatSansDonnees(
                 key: sansDonneesKey,
@@ -291,27 +299,45 @@ class AccueilAdultePage extends ConsumerWidget {
 /// destination. Pleine largeur, sous la grille : jamais deux cartes de meme
 /// taille cote a cote.
 class _AvecFinances extends StatelessWidget {
-  const _AvecFinances({required this.child, required this.onMesFinances});
+  const _AvecFinances({
+    required this.child,
+    required this.onMesFinances,
+    required this.onRetourAccueilFamille,
+  });
 
   final Widget child;
   final VoidCallback? onMesFinances;
+  final VoidCallback? onRetourAccueilFamille;
 
   @override
   Widget build(BuildContext context) {
     final VoidCallback? ouvrir = onMesFinances;
-    if (ouvrir == null) return child;
+    final VoidCallback? retour = onRetourAccueilFamille;
+    if (ouvrir == null && retour == null) return child;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         child,
-        Ecart.vSection,
-        CarteAccesFinance(
-          key: AccueilAdultePage.financesKey,
-          titre: t.adulte.monEspace.paiements,
-          phrase: t.adulte.accueil.financesPhrase,
-          onPress: ouvrir,
-        ),
+        if (ouvrir != null) ...<Widget>[
+          Ecart.vSection,
+          CarteAccesFinance(
+            key: AccueilAdultePage.financesKey,
+            titre: t.adulte.monEspace.paiements,
+            phrase: t.adulte.accueil.financesPhrase,
+            onPress: ouvrir,
+          ),
+        ],
+        if (retour != null) ...<Widget>[
+          Ecart.vSection,
+          CarteEntreeEspace(
+            key: retourAccueilFamilleKey,
+            icone: AppIcons.accueil,
+            titre: t.adulte.accueil.retourFoyerTitre,
+            phrase: t.adulte.accueil.retourFoyerPhrase,
+            onPress: retour,
+          ),
+        ],
       ],
     );
   }
@@ -392,6 +418,7 @@ class _Corps extends StatelessWidget {
 
     return LecteurGroupe(
       groupeId: groupeId,
+      seanceParServeur: onRejoindre != null,
       squelette: const SqueletteAccueilAdulte(),
       construire: (BuildContext contexte, LectureGroupe lecture) => _Sections(
         vue: vue,
@@ -446,11 +473,7 @@ class _Sections extends StatelessWidget {
         titre: t.adulte.accueil.prochaineSeance,
       ),
       Ecart.vMd,
-      ...lecture.identiteEtCarte(
-        onRejoindre: onRejoindre,
-        accesFerme: acces.ferme,
-        accesEnLecture: acces.enLecture,
-      ),
+      ...lecture.identiteEtCarte(onRejoindre: onRejoindre),
       // N2 (E1) : Ma classe, en lien sous la carte de la Classe.
       if (onVoirMaClasse != null) ...<Widget>[
         Ecart.vMd,

@@ -11,7 +11,10 @@ import '../../features/accueil_adulte/accueil_adulte_page.dart'
     show capaciteAccueilAdulteProvider;
 import '../../features/accueil_adulte/routes_accueil_adulte.dart';
 import '../../features/accueil_eleve/accueil_eleve_selon_presentation.dart';
-import '../../features/accueil_famille/accueil_famille_page.dart';
+import '../../features/accueil_eleve/mon_espace_accessibilite.dart';
+import '../../features/accueil_famille/accueil_famille_relie.dart';
+import '../../features/accueil_famille/ancre_horloge_serveur.dart'
+    show HorlogeServeurPartagee;
 import '../../features/accueil_inscrits/accueil_inscrits_page.dart';
 import '../../features/admin_acces_agents/acces_agents_page.dart'
     deferred as d_acces_agents_page;
@@ -168,6 +171,7 @@ import '../../features/compte/mes_donnees_page.dart';
 import '../../features/compte/paiements_page.dart';
 import '../../features/compte/preferences_page.dart';
 import '../../features/compte/securite_page.dart';
+import '../../features/connexion/accueil_invite.dart';
 import '../../features/connexion/connexion_page.dart';
 import '../../features/connexion/invitation_foyer_ouverte.dart';
 import '../../features/connexion/ordre_entree.dart';
@@ -228,6 +232,7 @@ import '../../features/journee/journee_page.dart';
 import '../../features/juridique/juridique_pages.dart';
 import '../../features/juridique/textes_juridiques.dart';
 import '../../features/mfa_controleur/mfa_controleur_page.dart';
+import '../../features/notifications/halo_salle.dart';
 import '../../features/notifications/non_lues.dart';
 import '../../features/notifications/notifications_page.dart';
 import '../../features/paiements_recus/recevoir_paiements_page.dart';
@@ -257,6 +262,7 @@ import '../../features/tc_mes_groupes/routes_tc_a.dart';
 import '../../features/tc_mushaf/mushaf_page.dart' deferred as d_mushaf_page;
 import '../../features/tc_mushaf/routes_tc_c.dart';
 import '../../features/tc_observation_ui/routes_tc_g.dart';
+import '../accessibilite/mode_accessibilite.dart';
 import '../admin/admin_domaine.dart';
 import '../admin/port_classes_admin.dart' as classes_admin show ClasseListee;
 import '../admission/port_admissions_direction.dart'
@@ -286,7 +292,7 @@ import '../widgets/admin_shell.dart';
 import '../widgets/bascule_theme.dart';
 import '../widgets/bouton_icone.dart';
 import '../widgets/entete_page.dart';
-import '../widgets/menu_actions.dart';
+import '../widgets/halo_compte.dart';
 import '../widgets/nav_shell.dart';
 import '../widgets/page_shell.dart';
 import 'billet_salle.dart';
@@ -530,7 +536,11 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ),
       GoRouteSure(
         path: Routes.inscription,
-        builder: (BuildContext _, GoRouterState _) => const InscriptionPage(),
+        // ACCUEIL-INVITE (09/11/2026) : une adresse invitee (foyer, equipe,
+        // candidat) est d'abord accueillie ; sans invitation, l'inscription
+        // habituelle, inchangee.
+        builder: (BuildContext _, GoRouterState _) =>
+            const PorteAccueilInvite(enfant: InscriptionPage()),
       ),
       // Les quatre etapes de l'inscription, sous la porte `inscription` (R4).
       // `/inscription` garde son ecran existant tant que le lot A n'a pas
@@ -704,8 +714,10 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // navigateur.
       GoRouteSure(
         path: Routes.compte,
+        // Tolere n° 18 (08/11/2026) : en Mode Accessibilite, « Mon espace »
+        // de l'Interface guidee (demande de presentation standard du mineur).
         builder: (BuildContext _, GoRouterState _) =>
-            const _CoquilleSecondaire(child: ComptePage()),
+            const _CoquilleSecondaire(child: _CompteSelonMode()),
       ),
       // RECH-1 : la recherche transversale, une seule route pour tous les
       // espaces (spec RECH-03 §1). L'espace et le domaine d'ouverture sont
@@ -949,7 +961,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
               GoRouteSure(
                 path: Routes.tuteurAccueil,
                 pageBuilder: glissee(
-                  (GoRouterState _) => const AccueilFamillePage(),
+                  (GoRouterState _) => const AccueilFamilleRelie(),
                 ),
                 routes: <RouteBase>[
                   GoRouteSure(
@@ -1542,16 +1554,18 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                 builder: (BuildContext _, GoRouterState _) =>
                     const MesClassesPage(),
               ),
-              // COM-F : les Messages metier de l'enseignant, une pose de la
-              // branche Classes (aucune destination ajoutee, E10).
+            ],
+          ),
+          // NAV-REFONTE (decision du directeur du 09/11/2026) : Messages,
+          // troisieme branche et troisieme destination de l'enseignant.
+          StatefulShellBranch(
+            routes: <GoRoute>[
               GoRouteSure(
                 path: Routes.enseignantMessages,
                 builder: (BuildContext _, GoRouterState _) => PageDifferee(
                   cle: 'd_messages_page',
                   charger: d_messages_page.loadLibrary,
-                  construire: () => d_messages_page.MessagesPage(
-                    cheminRetour: Routes.enseignantClasses,
-                  ),
+                  construire: () => d_messages_page.MessagesPage(),
                 ),
                 routes: <RouteBase>[
                   GoRouteSure(
@@ -1573,18 +1587,17 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           StatefulShellBranch(
             routes: <GoRoute>[
               GoRouteSure(
-                path: Routes.enseignantCreneaux,
-                builder: (BuildContext _, GoRouterState _) =>
-                    const CreneauxPage(),
-              ),
-            ],
-          ),
-          StatefulShellBranch(
-            routes: <GoRoute>[
-              GoRouteSure(
                 path: Routes.enseignantProfil,
                 builder: (BuildContext _, GoRouterState _) =>
                     const ProfilEnseignantPage(),
+              ),
+              // NAV-REFONTE (decision du directeur du 09/11/2026) : les
+              // disponibilites quittent la barre ; « Mes disponibilites » s'ouvre
+              // depuis Compte, une pose de sa branche (meme adresse).
+              GoRouteSure(
+                path: Routes.enseignantCreneaux,
+                builder: (BuildContext _, GoRouterState _) =>
+                    const CreneauxPage(),
               ),
               // Mes revenus (FI-10) : une pose de la branche Profil, ou elle
               // s'ouvre ; la barre garde Profil actif. Ouverte depuis
@@ -2079,8 +2092,8 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // ADM-20 : la file des candidatures, au rang de l'ancien onglet
       // Invitations. Une ligne ouvre ADM-21 (la reference dans l'adresse,
       // l'identifiant en `extra` : il evite une recherche, et l'adresse
-      // survit au rechargement). L'action groupee (ADM-22) n'est pas encore
-      // construite : aucune destination n'est donnee, la page le dit.
+      // survit au rechargement). Le traitement groupe (LISTES-1, ex ADM-22)
+      // vit dans la page depuis REPRISE-CAND-1 (08/11/2026).
       GoRouteSure(
         path: Routes.adminPersonnesCandidatures,
         builder: (BuildContext contexte, GoRouterState _) => _CoquilleAdmin(
@@ -3087,44 +3100,6 @@ RoleEspaceGroupe _roleEspaceGroupePour(AppRole? role) => switch (role) {
 ///
 /// Aucune destination n'est active ici : `indexActif` est nul, et le chrome
 /// rend alors ses entrees sans en surligner aucune.
-/// WEB-BUREAU (P1, directeur, 06/11/2026) : le menu du compte, en haut a
-/// droite a partir de 600, le meme pour tous les roles : « Mon compte », puis
-/// « Se deconnecter ». Au telephone, la deconnexion reste en bas du Compte.
-/// Google Classroom fait de meme (« En haut a droite, cliquez sur votre photo
-/// de profil > Se deconnecter », Centre d'aide, page 15653883).
-Widget _menuCompte(BuildContext context, WidgetRef ref, String compte) =>
-    MenuActions(
-      icone: AppIcons.profil,
-      libelle: t.nav.compte,
-      actions: <EntreeAction>[
-        EntreeAction(
-          libelle: t.compte.titre,
-          icone: AppIcons.profil,
-          onChoix: () => GoRouter.of(context).go(compte),
-        ),
-        EntreeAction(
-          libelle: t.compte.deconnexion,
-          icone: AppIcons.sortie,
-          separateurAvant: true,
-          onChoix: () => unawaited(seDeconnecter(context, ref)),
-        ),
-      ],
-    );
-
-/// La page Compte d'un role, parmi ses destinations (`/compte`, ou le Compte
-/// du tuteur, ou le Profil de l'enseignant).
-String _compteDe(List<Destination> destinations) =>
-    destinations
-        .map((Destination d) => d.chemin)
-        .where(
-          (String c) =>
-              c == Routes.compte ||
-              c == Routes.tuteurCompte ||
-              c == Routes.enseignantProfil,
-        )
-        .firstOrNull ??
-    Routes.compte;
-
 class _CoquilleSecondaire extends ConsumerWidget {
   const _CoquilleSecondaire({
     required this.child,
@@ -3240,7 +3215,6 @@ class _CoquilleSecondaire extends ConsumerWidget {
     final bool rechercheServie =
         espaceRecherche != null &&
         (ref.watch(rechercheServieProvider(espaceRecherche)).value ?? false);
-    final bool large = AppGabarit.de(context).estLarge;
     return RaccourciRecherche(
       actif: rechercheServie && avecRaccourciRecherche,
       child: NavShell(
@@ -3251,19 +3225,10 @@ class _CoquilleSecondaire extends ConsumerWidget {
         onAllerSecondaire: aller,
         // Rail a libelles hors tuteur, comme avant le chantier Tuteur V1.
         libellesDansLeRail: effectif != AppRole.guardian,
-        // P1 : le menu du compte en haut a droite, a partir de 600.
-        child: large
-            ? Builder(
-                builder: (BuildContext contexte) => ActionsEnteteCoquille(
-                  actions: <Widget>[
-                    ...ActionsEnteteCoquille.de(contexte),
-                    _menuCompte(contexte, ref, _compteDe(destinations)),
-                  ],
-                  onRetour: ActionsEnteteCoquille.retourDe(contexte),
-                  child: child,
-                ),
-              )
-            : child,
+        // NAV-REFONTE etape 3 : le menu du Compte (Compte, theme, sortie) vit
+        // au pied du panneau, a partir de 600 ; il quitte l'en-tete (P1).
+        onDeconnexion: () => unawaited(seDeconnecter(context, ref)),
+        child: child,
       ),
     );
   }
@@ -3323,71 +3288,101 @@ class _CoquilleNavigation extends ConsumerWidget {
         ? Routes.eleveNotifications
         : Routes.notificationsPour(role);
     final bool surNotifications = chemin == cheminCloche;
+    // NAV-REFONTE 2a : le halo du cercle Compte, tire de la meme liste que la
+    // cloche ; sans cloche (l'eleve mineur), aucune lecture, aucun halo.
+    final EtatHaloCompte? haloCloche = cheminCloche == null
+        ? null
+        : haloDepuisNotifications(
+            ref.watch(notificationsTuteurProvider),
+            cheminNotifications: cheminCloche,
+            vues: ref.watch(nouveautesVuesProvider),
+          );
 
-    final Widget coquille = NavShell(
-      destinations: visibles,
-      indexActif: surNotifications
-          ? null
-          : indexDansBarre(
-              visibles: visibles,
-              completes: destinations,
-              indexComplet: navigationShell.currentIndex < destinations.length
-                  ? navigationShell.currentIndex
-                  : null,
-            ),
-      masquerBarreBasse:
-          Routes.estTacheFocalisee(chemin) ||
-          Routes.estTacheFocaliseeComptable(chemin),
-      // Le rail replie a icones seules est la maquette du tuteur ; l'eleve et
-      // l'enseignant gardent leurs libelles visibles sur tablette, comme avant
-      // le chantier (revue phase 0, jetons D2, routes D3).
-      libellesDansLeRail: role != AppRole.guardian,
-      onAller: (String destination) {
-        final int index = destinations.indexWhere(
-          (Destination d) => d.chemin == destination,
-        );
-        if (index == -1) {
-          return;
-        }
-        // Une destination sans branche (le Compte de l'eleve, `/compte`) se
-        // rejoint par `go` : `goBranch` sur un index absent violait
-        // l'assertion de go_router puis lisait hors de la liste (C01, 3.3-6).
-        if (index >= navigationShell.route.branches.length) {
-          GoRouter.of(context).go(destination);
-          return;
-        }
-        // R3 (30/10/2026) : revenir sur un onglet relit ses donnees (au plus
-        // toutes les 10 s, `intervalleRelectureAutomatique`).
-        if (index != navigationShell.currentIndex) {
-          RelecturePage.auRetourDe(context)?.call();
-        }
-        navigationShell.goBranch(
-          index,
-          // Retaper la destination courante la reprend a sa racine.
-          //
-          // FOYER-PARCOURS (directeur et garde-cap, 07/11/2026) : l'onglet
-          // Foyer ouvre TOUJOURS la liste des profils. Sans cela, `goBranch`
-          // rendait la derniere page de la branche, et le parcours d'un profil
-          // (tache de la branche Foyer) revenait a la place de la liste.
-          initialLocation:
-              index == navigationShell.currentIndex ||
-              destination == Routes.tuteurFoyer,
-        );
+    // NAV-REFONTE 2b : le halo vert de la salle ouverte s'ajoute, lu dans le
+    // calcul unique du role ; un seul halo, Urgent puis salle puis Nouveau.
+    final Widget coquille = HaloVivant(
+      source: switch (role) {
+        AppRole.guardian => SourceSalle.foyer,
+        AppRole.teacher => SourceSalle.journee,
+        // NAV-REFONTE 2c : l'eleve adulte (capacite « eleve autonome »).
+        AppRole.student when eleveAdulte => SourceSalle.adulte,
+        _ => null,
       },
-      secondaires: secondairesPour(role: role),
-      // Les entrees secondaires sont des routes de premier niveau **hors** de
-      // la coquille : elles se rejoignent par `go`, jamais par `goBranch`, qui
-      // ne connait que les branches.
-      onAllerSecondaire: (String destination) =>
-          GoRouter.of(context).go(destination),
-      // Fondu court entre les onglets du tuteur (P2-16) ; l'eleve et
-      // l'enseignant gardent la bascule seche.
-      child: role == AppRole.guardian
-          ? FonduOnglet(
-              index: navigationShell.currentIndex,
-              child: navigationShell,
-            )
-          : navigationShell,
+      notifications: haloCloche,
+      construire: (BuildContext _, EtatHaloCompte? halo) => NavShell(
+        halo: halo,
+        // NAV-REFONTE etape 3 : « Se deconnecter », au menu du pied du panneau.
+        onDeconnexion: () => unawaited(seDeconnecter(context, ref)),
+        // Toucher le cercle : « Nouveau » est vu et s'eteint ; Urgent reste.
+        onHaloTouche: (EtatHaloCompte h) {
+          if (h.nature == NatureHalo.nouveau) {
+            ref.read(nouveautesVuesProvider.notifier).marquer(h.idsNonLus);
+          }
+        },
+        destinations: visibles,
+        indexActif: surNotifications
+            ? null
+            : indexDansBarre(
+                visibles: visibles,
+                completes: destinations,
+                indexComplet: navigationShell.currentIndex < destinations.length
+                    ? navigationShell.currentIndex
+                    : null,
+              ),
+        masquerBarreBasse:
+            Routes.estTacheFocalisee(chemin) ||
+            Routes.estTacheFocaliseeComptable(chemin),
+        // Le rail replie a icones seules est la maquette du tuteur ; l'eleve et
+        // l'enseignant gardent leurs libelles visibles sur tablette, comme avant
+        // le chantier (revue phase 0, jetons D2, routes D3).
+        libellesDansLeRail: role != AppRole.guardian,
+        onAller: (String destination) {
+          final int index = destinations.indexWhere(
+            (Destination d) => d.chemin == destination,
+          );
+          if (index == -1) {
+            return;
+          }
+          // Une destination sans branche (le Compte de l'eleve, `/compte`) se
+          // rejoint par `go` : `goBranch` sur un index absent violait
+          // l'assertion de go_router puis lisait hors de la liste (C01, 3.3-6).
+          if (index >= navigationShell.route.branches.length) {
+            GoRouter.of(context).go(destination);
+            return;
+          }
+          // R3 (30/10/2026) : revenir sur un onglet relit ses donnees (au plus
+          // toutes les 10 s, `intervalleRelectureAutomatique`).
+          if (index != navigationShell.currentIndex) {
+            RelecturePage.auRetourDe(context)?.call();
+          }
+          navigationShell.goBranch(
+            index,
+            // Retaper la destination courante la reprend a sa racine.
+            //
+            // FOYER-PARCOURS (directeur et garde-cap, 07/11/2026) : l'onglet
+            // Foyer ouvre TOUJOURS la liste des profils. Sans cela, `goBranch`
+            // rendait la derniere page de la branche, et le parcours d'un profil
+            // (tache de la branche Foyer) revenait a la place de la liste.
+            initialLocation:
+                index == navigationShell.currentIndex ||
+                destination == Routes.tuteurFoyer,
+          );
+        },
+        secondaires: secondairesPour(role: role),
+        // Les entrees secondaires sont des routes de premier niveau **hors** de
+        // la coquille : elles se rejoignent par `go`, jamais par `goBranch`, qui
+        // ne connait que les branches.
+        onAllerSecondaire: (String destination) =>
+            GoRouter.of(context).go(destination),
+        // Fondu court entre les onglets du tuteur (P2-16) ; l'eleve et
+        // l'enseignant gardent la bascule seche.
+        child: role == AppRole.guardian
+            ? FonduOnglet(
+                index: navigationShell.currentIndex,
+                child: navigationShell,
+              )
+            : navigationShell,
+      ),
     );
 
     // RECH-D5 : une seule loupe par coque, quel que soit le role, rendue
@@ -3410,10 +3405,9 @@ class _CoquilleNavigation extends ConsumerWidget {
       // `nonLuesProvider` (fiche du 27/10, ligne 12) ; sans source, pas de
       // point, comme le tuteur. Elle s'ajoute, en dernier, aux actions deja posees au-dessus
       // (le raccourci Espaces de CT-9), et se montre active sur sa page.
-      // P1 : le menu du compte en haut a droite, a partir de 600.
-      final bool largeRole = AppGabarit.de(context).estLarge;
-      final Widget avecCloche =
-          cheminCloche == null && !rechercheServie && !largeRole
+      // NAV-REFONTE etape 3 : le menu du compte a quitte l'en-tete (P1) pour
+      // le pied du panneau.
+      final Widget avecCloche = cheminCloche == null && !rechercheServie
           ? coquille
           : Builder(
               builder: (BuildContext contexte) => ActionsEnteteCoquille(
@@ -3425,8 +3419,6 @@ class _CoquilleNavigation extends ConsumerWidget {
                       actif: surNotifications,
                       onPress: () => GoRouter.of(contexte).go(cheminCloche),
                     ),
-                  if (largeRole)
-                    _menuCompte(contexte, ref, _compteDe(destinations)),
                 ],
                 onRetour: ActionsEnteteCoquille.retourDe(contexte),
                 child: coquille,
@@ -3459,10 +3451,10 @@ class _CoquilleNavigation extends ConsumerWidget {
             actif: surNotifications,
             onPress: () => GoRouter.of(context).go(Routes.tuteurNotifications),
           ),
-          // P1 : le menu du compte en haut a droite, a partir de 600.
-          if (large) _menuCompte(context, ref, Routes.tuteurCompte),
         ],
-        child: coquille,
+        // NAV-REFONTE 2b : un seul instant serveur pour toute la coquille du
+        // tuteur ; l'Accueil, la Classe et le halo vert le lisent ensemble.
+        child: HorlogeServeurPartagee(child: coquille),
       ),
     );
   }
@@ -3613,4 +3605,21 @@ class _CoquilleAdmin extends ConsumerWidget {
       ),
     );
   }
+}
+
+/// `/compte` : « Mon espace » de l'Interface guidee quand le Mode
+/// Accessibilite est actif, sinon le Compte commun.
+class _CompteSelonMode extends ConsumerWidget {
+  const _CompteSelonMode();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) =>
+      // Garde-cap, 08/11/2026 : seul le compte qui peut demander la
+      // presentation standard (eleve mineur) voit « Mon espace » guide ;
+      // tout autre compte en Interface guidee garde le Compte entier
+      // (« Mes donnees », espaces, bascule du mode).
+      ref.watch(modeAccessibiliteActifProvider) &&
+          ref.watch(sessionProvider).peutDemanderPresentationStandard
+      ? const MonEspaceAccessibiliteBranche()
+      : const ComptePage();
 }

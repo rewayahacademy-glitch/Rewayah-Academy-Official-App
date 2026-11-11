@@ -42,9 +42,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/accueil/signaux_accueils.dart';
 import '../../core/controle/service_controle.dart' show graceApresFin;
 import '../../core/domain/enums.dart';
 import '../../core/enseignant/absence_remplacement.dart';
+import '../../core/enseignant/carte_seance.dart';
 import '../../core/enseignant/cta_seance.dart';
 import '../../core/enseignant/depot_cahiers.dart'
     show cahiersEnFileProvider, soumissionCahierProvider;
@@ -57,6 +59,7 @@ import '../../core/icons/app_icons.dart';
 import '../../core/observabilite/journal_dev.dart';
 import '../../core/planning/journee.dart';
 import '../../core/planning/service_planning.dart';
+import '../../core/presence/retard_en_direct.dart';
 import '../../core/presence/service_presence.dart';
 import '../../core/priere/reglages_priere.dart';
 import '../../core/priere/service_priere.dart';
@@ -82,9 +85,11 @@ import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/grille_bento.dart';
 import '../../core/widgets/groupe_reglages.dart';
+import '../../core/widgets/halo_lumiere.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/ligne_cle_valeur.dart';
 import '../../core/widgets/local_feedback.dart';
+import '../../core/widgets/lumiere_autour.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/point_rappel.dart';
@@ -287,13 +292,22 @@ class _Corps extends ConsumerWidget {
     // Les alertes utiles : ce qui change ce que l'enseignant fait aujourd'hui.
     // Toutes sont calculees ; la tuile en montre deux, la page les autres.
     // Un cours sans seance en base n'a pas encore de presence a lire.
-    final List<String> alertes =
-        dominant != null && !dominant.aCreer && dominant.enCoursA(maintenant)
-        ? alertesPresence(
-            ref.watch(presenceSeanceProvider(dominant.id)).value ??
-                const <PresenceParticipant>[],
-          )
-        : const <String>[];
+    final bool enDirect =
+        dominant != null && !dominant.aCreer && dominant.enCoursA(maintenant);
+    final List<PresenceParticipant> presence = enDirect
+        ? ref.watch(presenceSeanceProvider(dominant.id)).value ??
+              const <PresenceParticipant>[]
+        : const <PresenceParticipant>[];
+    // LUMIERE 3 : les eleves pas encore entres, seuil depasse, lus par
+    // `retard_en_direct` (port de H). Illisible ou absent : aucune ligne.
+    final List<EleveEnRetard> pasEntres = enDirect
+        ? ref.watch(retardEnDirectProvider(dominant.id)).value ??
+              const <EleveEnRetard>[]
+        : const <EleveEnRetard>[];
+    final List<String> alertes = <String>[
+      ...alertesPasEntres(pasEntres, presence),
+      ...alertesPresence(presence),
+    ];
     // LIB-ERR-1 : l'echec partiel dit ce qui manque, que les seances sont a
     // jour, et se relance d'un bouton.
     final bool horairesIllisibles = reglages.hasError || pause.hasError;
@@ -323,6 +337,21 @@ class _Corps extends ConsumerWidget {
     );
     final bool offresIllisibles = offresIllisiblesDans(lectureOffres);
 
+    // LUMIERE-ACCUEILS 3 : les lumieres, depuis les seuls etats du serveur
+    // (offres ouvertes, cahiers en retard). L'arbitre de `NavShell` fait
+    // tourner la plus urgente, les autres restent en lueur fixe.
+    final List<SignalAccueil<MotifEnseignant>> signaux = signauxAujourdhui(
+      offresRemplacement: offres.length,
+      cahiersARemplir: aTerminer.length,
+      elevesPasEntres: pasEntres.length,
+    );
+    NatureHalo? lumiere(MotifEnseignant motif) {
+      for (final SignalAccueil<MotifEnseignant> x in signaux) {
+        if (x.motif == motif) return x.nature;
+      }
+      return null;
+    }
+
     // SALLE-3-ACCUEIL : sans Classe (la lecture a repondu et n'en rend aucune),
     // la carte de bienvenue passe avant tout. Une lecture qui echoue ou qui
     // charge encore n'affiche rien : on ne dit pas « sans Classe » a un doute.
@@ -336,12 +365,8 @@ class _Corps extends ConsumerWidget {
       prochaine: _CarteProchaineSeance(
         // CTA-FIN-1 : la seance dont le bouton agit maintenant (salle ouverte,
         // cahier manquant, a venir, cahier depose), pas seulement la suivante.
-        seance: seanceDeLaCarte(
-          toutes,
-          maintenant,
-          fenetreAcces: seuilOuvertureSalle,
-          graceApresFin: graceApresFin,
-        ),
+        // NAV-REFONTE 2b : lue dans le provider unique, celui du halo vert.
+        carte: ref.watch(carteSeanceEnseignantProvider(maintenant)),
         maintenant: maintenant,
       ),
       // D6 : trois au plus, les plus proches d'abord ; au dela, « Voir
@@ -356,6 +381,7 @@ class _Corps extends ConsumerWidget {
           ? null
           : _ATerminer(
               cahiers: aTerminer,
+              lumiere: lumiere(MotifEnseignant.cahier),
               enFile:
                   ref.watch(cahiersEnFileProvider).value ?? const <String>{},
             ),
@@ -373,6 +399,11 @@ class _Corps extends ConsumerWidget {
                   : 0,
               offres: offres,
               offresIllisibles: offresIllisibles,
+              // Les offres d'abord, sinon les eleves pas encore entres : les
+              // deux sont rouges, une seule lumiere sur la carte.
+              lumiere: offres.isNotEmpty
+                  ? lumiere(MotifEnseignant.remplacement)
+                  : lumiere(MotifEnseignant.absents),
               coursAnnule: _retrouverParId(toutes, annulee),
               phrasePartielle: phrasePartielle,
               onReessayerPartiel: partielle
@@ -402,10 +433,34 @@ class _Corps extends ConsumerWidget {
 List<String> alertesPresence(List<PresenceParticipant> lignes) => <String>[
   for (final PresenceParticipant ligne in lignes)
     if (!ligne.estEnseignant && ligne.etat == EtatPresence.absente)
-      t.enseignant.journee.absenceDetectee(eleve: _nommer(ligne))
+      t.enseignant.journee.pasEncoreRejoint(eleve: _nommer(ligne))
     else if (!ligne.estEnseignant && ligne.etat == EtatPresence.deconnectee)
       t.enseignant.journee.coupureDetectee(eleve: _nommer(ligne)),
 ];
+
+/// Les eleves pas encore entres dans la seance en direct (LUMIERE 3), en
+/// phrases, dans l'ordre rendu par le serveur.
+///
+/// [pasEntres] vient de `retard_en_direct` : l'appareil ne compare ni heure
+/// ni seuil. La phrase est neutre, sans accord (« n'a pas encore rejoint la
+/// salle ») : le genre de l'eleve n'est pas servi ici (mots-rewayah du 01/11,
+/// pilote et garde-cap du 11/11/2026). Le prenom est lu dans la presence de
+/// la meme seance ; une ligne
+/// que la presence ne nomme pas (lecture en retard ou illisible) n'est pas
+/// ecrite, plutot que d'afficher un identifiant interne.
+List<String> alertesPasEntres(
+  List<EleveEnRetard> pasEntres,
+  List<PresenceParticipant> presence,
+) {
+  final Map<String, PresenceParticipant> parId = <String, PresenceParticipant>{
+    for (final PresenceParticipant ligne in presence) ligne.profilId: ligne,
+  };
+  return <String>[
+    for (final EleveEnRetard eleve in pasEntres)
+      if (parId[eleve.eleveId] case final PresenceParticipant ligne)
+        t.enseignant.journee.pasEncoreRejoint(eleve: _nommer(ligne)),
+  ];
+}
 
 /// La seance qui domine la journee : la prochaine (ou celle en cours), hors
 /// annulees, retrouvee riche par son identifiant.
@@ -687,16 +742,16 @@ EmplacementEntree emplacementJournee(
 /// La carte « Prochaine seance » : peu de choses (E12), un seul emplacement
 /// (E11), au style de la carte de seance CL-4.
 class _CarteProchaineSeance extends ConsumerWidget {
-  const _CarteProchaineSeance({required this.seance, required this.maintenant});
+  const _CarteProchaineSeance({required this.carte, required this.maintenant});
 
-  final SeanceEnseignant? seance;
+  final CarteSeanceEnseignant? carte;
   final DateTime maintenant;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final TextTheme textes = Theme.of(context).textTheme;
     final AppPalette palette = AppPalette.of(context);
-    final SeanceEnseignant? cours = seance;
+    final SeanceEnseignant? cours = carte?.seance;
 
     if (cours == null) {
       return Column(
@@ -717,12 +772,7 @@ class _CarteProchaineSeance extends ConsumerWidget {
       );
     }
 
-    final CtaSeance cta = ctaDeSeance(
-      cours,
-      maintenant,
-      fenetreAcces: seuilOuvertureSalle,
-      graceApresFin: graceApresFin,
-    );
+    final CtaSeance cta = carte!.cta;
     final bool enCours = cta.enDirect;
     final bool terminee =
         cta.etat == EtatCtaSeance.remplirCahier ||
@@ -981,19 +1031,7 @@ class _CarteProchaineSeance extends ConsumerWidget {
       return;
     }
     if (emplacement.libelle == t.enseignant.journee.rejoindreSalle) {
-      if (!cours.aCreer) {
-        entrerEnSalle(routeur, cours.id, idGroupe);
-        return;
-      }
-      // Le cours du moment n'a pas encore de seance : le concierge la cree,
-      // puis l'enseignant entre avec elle (defaut du 30/10/2026).
-      await rejoindreClasse(
-        context,
-        groupeId: idGroupe,
-        sessionId: null,
-        entrer: (String seance) => entrerEnSalle(routeur, seance, idGroupe),
-      );
-      if (context.mounted) ref.invalidate(seancesEnseignantProvider);
+      await rejoindreSeanceEnseignant(context, cours);
       return;
     }
     // `push` : le retour de l'Espace Classe se referme sur Aujourd'hui (R1).
@@ -1063,9 +1101,16 @@ class _MaJournee extends StatelessWidget {
 
 /// « A terminer » : les cahiers non valides, trois au plus (K-45).
 class _ATerminer extends ConsumerWidget {
-  const _ATerminer({required this.cahiers, this.enFile = const <String>{}});
+  const _ATerminer({
+    required this.cahiers,
+    this.enFile = const <String>{},
+    this.lumiere,
+  });
 
   final List<CahierEnRetard> cahiers;
+
+  /// La lumiere « a preparer » (LUMIERE-ACCUEILS 3), ou `null`.
+  final NatureHalo? lumiere;
 
   /// Les seances dont le cahier valide attend l'envoi (file locale).
   final Set<String> enFile;
@@ -1158,9 +1203,12 @@ class _ATerminer extends ConsumerWidget {
           ),
         ),
         Ecart.vSm,
-        _LignesATerminer(
-          cahiers: tries.take(maximumATerminer).toList(growable: false),
-          enFile: enFile,
+        LumiereAutour(
+          nature: lumiere,
+          child: _LignesATerminer(
+            cahiers: tries.take(maximumATerminer).toList(growable: false),
+            enFile: enFile,
+          ),
         ),
       ],
     );
@@ -1287,9 +1335,17 @@ class ListeAlertesPage extends ConsumerWidget {
               ref.invalidate(presenceSeanceProvider(enDirect!.id)),
         );
       } else {
-        final List<String> alertes = alertesPresence(
-          presence?.value ?? const <PresenceParticipant>[],
-        );
+        final List<PresenceParticipant> lignes =
+            presence?.value ?? const <PresenceParticipant>[];
+        // LUMIERE 3 : les memes lignes que l'Aujourd'hui, sans lumiere ici.
+        final List<EleveEnRetard> pasEntres = enDirect == null
+            ? const <EleveEnRetard>[]
+            : ref.watch(retardEnDirectProvider(enDirect.id)).value ??
+                  const <EleveEnRetard>[];
+        final List<String> alertes = <String>[
+          ...alertesPasEntres(pasEntres, lignes),
+          ...alertesPresence(lignes),
+        ];
         corps =
             alertes.isEmpty &&
                 offres.isEmpty &&
@@ -1435,10 +1491,15 @@ class _AlertesUtiles extends StatelessWidget {
     this.entete = true,
     this.offres = const <OffreRemplacement>[],
     this.offresIllisibles = false,
+    this.lumiere,
     this.coursAnnule,
     this.phrasePartielle,
     this.onReessayerPartiel,
   });
+
+  /// La lumiere de la carte (LUMIERE-ACCUEILS 3 : remplacements, ou eleves
+  /// pas encore entres), choisie par l'appelant, ou `null`.
+  final NatureHalo? lumiere;
 
   /// Combien d'alertes de presence ne sont pas montrees : au-dela de zero,
   /// un lien ouvre la page qui les liste toutes (DASH-ENS-LISTES).
@@ -1483,26 +1544,29 @@ class _AlertesUtiles extends StatelessWidget {
           if (lignes) Ecart.vLg,
         ],
         if (lignes)
-          GroupeReglages(
-            lignes: <LigneRubrique>[
-              // REMPL-1b : une seule source d'offres, une seule destination.
-              // L'appui mene a l'ecran commun meme sans remplacement confirme.
-              for (final OffreRemplacement offre in offres)
-                LigneRubrique(
-                  icone: AppIcons.cours,
-                  libelle: titreRemplacementUrgent(offre.debut),
-                  legende: offre.classe,
-                  onPress: versRemplacements,
-                ),
-              if (offresIllisibles)
-                LigneRubrique(
-                  icone: AppIcons.avertissement,
-                  libelle: t.enseignant.remplacements.sansDonnees,
-                  onPress: versRemplacements,
-                ),
-              for (final String alerte in alertes)
-                LigneRubrique(icone: AppIcons.avertissement, libelle: alerte),
-            ],
+          LumiereAutour(
+            nature: lumiere,
+            child: GroupeReglages(
+              lignes: <LigneRubrique>[
+                // REMPL-1b : une seule source d'offres, une seule destination.
+                // L'appui mene a l'ecran commun meme sans remplacement confirme.
+                for (final OffreRemplacement offre in offres)
+                  LigneRubrique(
+                    icone: AppIcons.cours,
+                    libelle: titreRemplacementUrgent(offre.debut),
+                    legende: offre.classe,
+                    onPress: versRemplacements,
+                  ),
+                if (offresIllisibles)
+                  LigneRubrique(
+                    icone: AppIcons.avertissement,
+                    libelle: t.enseignant.remplacements.sansDonnees,
+                    onPress: versRemplacements,
+                  ),
+                for (final String alerte in alertes)
+                  LigneRubrique(icone: AppIcons.avertissement, libelle: alerte),
+              ],
+            ),
           ),
         // DASH-ENS-LISTES : « et N autres » devient un lien vers la page qui
         // les liste toutes (l'exception D6 b tombe).
@@ -1733,6 +1797,35 @@ bool _memeJour(DateTime a, DateTime b) {
 
 /// L'heure d'un instant, a l'heure du profil ([heureChezMoi]).
 String _hhmm(DateTime quand) => heureChezMoi(quand);
+
+/// « Rejoindre la salle » de la seance [cours] : le seul geste, partage par la
+/// carte de la Journee et la feuille « En ce moment » du halo vert
+/// (NAV-REFONTE 2b). Sans Classe, Mes classes ; une seance en base, la salle ;
+/// le cours du moment sans seance, le concierge la cree, puis l'enseignant
+/// entre avec elle (defaut du 30/10/2026).
+Future<void> rejoindreSeanceEnseignant(
+  BuildContext context,
+  SeanceEnseignant cours,
+) async {
+  final GoRouter routeur = GoRouter.of(context);
+  final String? idGroupe = cours.groupeId;
+  if (idGroupe == null) {
+    routeur.go(Routes.enseignantClasses);
+    return;
+  }
+  if (!cours.aCreer) {
+    entrerEnSalle(routeur, cours.id, idGroupe);
+    return;
+  }
+  final ProviderContainer conteneur = ProviderScope.containerOf(context);
+  await rejoindreClasse(
+    context,
+    groupeId: idGroupe,
+    sessionId: null,
+    entrer: (String seance) => entrerEnSalle(routeur, seance, idGroupe),
+  );
+  conteneur.invalidate(seancesEnseignantProvider);
+}
 
 /// « Rejoindre la salle » entre directement dans la salle (lot salle 3,
 /// pilote, 25/10/2026) : camera et micro y sont fermes, il n'y a plus rien a
