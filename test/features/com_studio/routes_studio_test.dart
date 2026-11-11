@@ -199,17 +199,20 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('sans port branche (production) : le Studio dit « pas encore '
-      'disponible », sans Reessayer ni canal invente', (
+  // PORTS-DIRECTION (pilote, 11/11/2026) : sans serveur, Le Studio n'existe
+  // pas ; une adresse tapee revient a l'Accueil admin, jamais « pas encore
+  // disponible ».
+  testWidgets('sans port branche (production) : /admin/studio revient a '
+      "l'Accueil admin, sans canal invente ni « indisponible »", (
     WidgetTester tester,
   ) async {
-    await _monterAdmin(tester, Routes.adminStudio);
-    expect(find.byType(StudioPage), findsOneWidget);
+    final GoRouter routeur = await _monterAdmin(tester, Routes.adminStudio);
+    expect(_chemin(routeur), Routes.admin);
+    expect(find.byType(StudioPage), findsNothing);
     expect(
       find.text(t.com.socle.composants.etats.indisponibleTitre),
-      findsOneWidget,
+      findsNothing,
     );
-    expect(find.text(t.com.socle.composants.etats.reessayer), findsNothing);
     expect(find.byType(ListeCanaux), findsNothing);
   });
 

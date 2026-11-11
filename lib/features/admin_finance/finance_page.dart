@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/admin/admin_domaine.dart';
+import '../../core/capacites/port_delegation_finance.dart'
+    show reserveDelegationOuverteProvider;
+import '../../core/capacites/port_finance_direction.dart'
+    show vueGlobaleFinanceOuverteProvider;
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
 import '../comptable/paiements/espace_paiements.dart';
@@ -63,7 +68,7 @@ enum OngletFinance {
 /// **Ce fichier est gele apres CPT-F** (`20_comptable/02_DECOUPAGE.md`) :
 /// la voie CPT-DIR ecrit dans `reserve_delegation_page.dart` et son dossier,
 /// jamais ici.
-class FinancePage extends StatelessWidget {
+class FinancePage extends ConsumerWidget {
   /// Cree l'onglet [onglet].
   const FinancePage({required this.onglet, this.onglets, super.key});
 
@@ -76,9 +81,23 @@ class FinancePage extends StatelessWidget {
   final List<({String libelle, String chemin})>? onglets;
 
   @override
-  Widget build(BuildContext context) {
-    final List<({String libelle, String chemin})> liste =
+  Widget build(BuildContext context, WidgetRef ref) {
+    final List<({String libelle, String chemin})> tous =
         onglets ?? ongletsFinance();
+    // PORTS-DIRECTION (pilote, 11/11/2026) : un onglet sans serveur n'est
+    // pas montre, jamais un « indisponible ».
+    final ({List<({String libelle, String chemin})> onglets, int indexActif})
+    ouverts = ongletsOuverts(
+      tous,
+      indexActif: onglet.index,
+      fermes: <int>{
+        if (!ref.watch(vueGlobaleFinanceOuverteProvider))
+          OngletFinance.vueGlobale.index,
+        if (!ref.watch(reserveDelegationOuverteProvider))
+          OngletFinance.reserveDelegation.index,
+      },
+    );
+    final List<({String libelle, String chemin})> liste = ouverts.onglets;
     final Widget? corps = switch (onglet) {
       OngletFinance.vueGlobale => const VueGlobaleFinanceBloc(),
       OngletFinance.politiques => const PolitiquesCommercialesBloc(),
@@ -93,13 +112,16 @@ class FinancePage extends StatelessWidget {
       return paie.PaiementsAEffectuerPage(
         espace: EspacePaiements.direction(
           onglets: liste,
-          indexOnglet: onglet.index,
+          indexOnglet: ouverts.indexActif,
         ),
       );
     }
     return PageShell(
-      titre: liste[onglet.index].libelle,
-      entete: SousNavigationDomaine(onglets: liste, indexActif: onglet.index),
+      titre: liste[ouverts.indexActif].libelle,
+      entete: SousNavigationDomaine(
+        onglets: liste,
+        indexActif: ouverts.indexActif,
+      ),
       child: corps,
     );
   }

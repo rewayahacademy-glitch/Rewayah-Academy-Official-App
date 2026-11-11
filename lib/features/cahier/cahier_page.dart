@@ -42,6 +42,7 @@ import '../../core/widgets/zone_saisie.dart';
 import '../fiche_groupe/etape_eleve.dart';
 import '../fiche_groupe/preparation_seance.dart'
     show ProjectionEleve, projectionElevesProvider;
+import '../fiche_groupe/sourates_classe.dart';
 import '../foyer/photo_eleve.dart';
 import '../presence_correction/presence_correction.dart';
 import '../presence_correction/presence_correction_page.dart';
@@ -262,6 +263,8 @@ class _CahierState extends ConsumerState<_Cahier> {
     // pour que la feuille d'un eleve propose aussitot ses objectifs.
     if (vue.brouillon?.groupeId case final String groupeId) {
       ref.watch(etapesElevesClasseProvider(groupeId));
+      // SOURATES : de meme pour les sourates des bases de chaque eleve.
+      ref.watch(souratesClasseProvider(groupeId));
     }
     final String? classe = widget.classe;
     final String titre = classe == null
@@ -548,6 +551,14 @@ class _CahierState extends ConsumerState<_Cahier> {
                     ?.objectifs ??
                 const <String>[],
           null => const <String>[],
+        },
+        // SOURATES (option A) : les sourates des bases de l'eleve, lues au
+        // serveur ; vide quand rien n'est lu.
+        sourates: switch (brouillon.groupeId) {
+          final String groupeId =>
+            ref.read(souratesClasseProvider(groupeId)).value?[eleveId] ??
+                const <SourateBases>[],
+          null => const <SourateBases>[],
         },
       ),
     );
@@ -1058,12 +1069,17 @@ class FeuilleAjusterCahier extends StatefulWidget {
     required this.brouillon,
     required this.decision,
     this.objectifsEtape = const <String>[],
+    this.sourates = const <SourateBases>[],
     super.key,
   });
 
   /// CAHIER-C3 : les objectifs de l'etape de l'eleve, a toucher pour un
   /// point a renforcer.
   final List<String> objectifsEtape;
+
+  /// SOURATES (option A) : les 17 sourates des bases de l'eleve, dans
+  /// l'ordre d'etude, lues au serveur ; vide sans lecture.
+  final List<SourateBases> sourates;
 
   /// L'eleve regle.
   final ParticipantBrouillon participant;
@@ -1093,6 +1109,7 @@ class _FeuilleAjusterCahierState extends State<FeuilleAjusterCahier> {
   late Set<FaiblesseRecitation> _faiblesses = widget.decision.faiblesses;
   late Set<String> _aRenforcer = widget.decision.objectifsARenforcer.toSet();
   late bool _pretBilan = widget.decision.pretBilan;
+  late Set<int> _sourates = widget.decision.souratesValidees;
 
   /// Le devoir tel qu'il arrive dans la feuille, sans espaces de bord.
   late final String _devoirInitial =
@@ -1200,6 +1217,11 @@ class _FeuilleAjusterCahierState extends State<FeuilleAjusterCahier> {
                 setState(() => _pretBilan = r.valeurs.contains('pret')),
           ),
         ],
+        // SOURATES (directeur, 11/11/2026, option A) : l'enseignant coche la
+        // sourate recitee de memoire, sans erreur de mot. Seules les
+        // sourates pas encore validees se proposent ; une validation n'est
+        // jamais perdue.
+        if (widget.sourates.isNotEmpty) ..._souratesAProposer(textes, discret),
         // Performance et faiblesses (K-45 point 3, N1 du directeur 27/09) :
         // preremplies depuis la seance precedente, l'enseignant les confirme
         // ou les change d'un geste.
@@ -1485,8 +1507,79 @@ class _FeuilleAjusterCahierState extends State<FeuilleAjusterCahier> {
             if (_aRenforcer.contains(o)) o,
         ],
         pretBilan: _pretBilan,
+        souratesValidees: <int>{
+          for (final SourateBases s in widget.sourates)
+            if (!s.validee && _sourates.contains(s.numero)) s.numero,
+        },
       ),
     );
+  }
+
+  /// Le bloc des sourates : ce qui est deja valide, puis les sourates
+  /// encore a valider, a cocher.
+  List<Widget> _souratesAProposer(TextTheme textes, TextStyle discret) {
+    final List<SourateBases> aValider = <SourateBases>[
+      for (final SourateBases s in widget.sourates)
+        if (!s.validee) s,
+    ];
+    final int validees = widget.sourates.length - aValider.length;
+    return <Widget>[
+      Ecart.vLg,
+      Text(t.cahierSourates.titre, style: textes.titleSmall),
+      Ecart.vSm,
+      Text(
+        aValider.isEmpty
+            ? t.cahierSourates.toutes
+            : t.cahierSourates.dejaValidees(
+                n: '$validees',
+                total: '${widget.sourates.length}',
+              ),
+        key: const ValueKey<String>('cahier-sourates-compte'),
+        style: discret,
+      ),
+      if (aValider.isNotEmpty) ...<Widget>[
+        Ecart.vSm,
+        Text(t.cahierSourates.aide, style: discret),
+        Ecart.vSm,
+        // Par deux, en cartes compactes cote a cote (`enLigne`) : quatorze
+        // cartes empilees faisaient une corvee de defilement. Une seule
+        // selection, partagee par les rangees.
+        for (int i = 0; i < aValider.length; i += 2)
+          ChoiceCardGroup(
+            key: ValueKey<String>('cahier-sourates-$i'),
+            enLigne: true,
+            selectionMultiple: true,
+            indicationMultiple: false,
+            autoriserSaisieLibre: false,
+            valeurInitiale: ReponseChoix(
+              valeurs: <String>{
+                for (final SourateBases s in aValider.skip(i).take(2))
+                  if (_sourates.contains(s.numero)) '${s.numero}',
+              },
+            ),
+            options: <OptionChoix>[
+              for (final SourateBases s in aValider.skip(i).take(2))
+                OptionChoix(
+                  valeur: '${s.numero}',
+                  libelle: s.nomPour(
+                    arabe: LocaleSettings.currentLocale == AppLocale.ar,
+                  ),
+                  cle: ValueKey<String>('cahier-sourate-${s.numero}'),
+                ),
+            ],
+            onChange: (ReponseChoix r) => setState(() {
+              final Set<int> rangee = <int>{
+                for (final SourateBases s in aValider.skip(i).take(2)) s.numero,
+              };
+              _sourates = <int>{
+                ..._sourates.difference(rangee),
+                for (final String v in r.valeurs)
+                  if (int.tryParse(v) case final int n) n,
+              };
+            }),
+          ),
+      ],
+    ];
   }
 }
 

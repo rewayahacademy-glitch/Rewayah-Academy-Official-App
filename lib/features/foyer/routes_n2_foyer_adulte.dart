@@ -24,7 +24,7 @@ import '../tc_catalogue/routes_tc_b.dart' show RoutesTcB;
 import '../tc_mes_groupes/routes_tc_a.dart' show preparerSalleEleve;
 import 'invitation_conjoint.dart';
 import 'invitation_envoyee.dart';
-import 'place_adulte.dart' show InvitationEnvoyee;
+import 'place_adulte.dart' show AProposForfaitFamillePage, InvitationEnvoyee;
 import 'role_foyer.dart';
 
 /// Les adresses du lot N2.
@@ -42,6 +42,11 @@ abstract final class RoutesN2 {
   /// (INVITATION-SECOND-ADULTE, 07/11/2026).
   static const String foyerInvitationEnvoyee =
       '${Routes.tuteurFoyer}/invitation-envoyee';
+
+  /// « A propos du forfait famille » (E6) : une page du routeur, plus une
+  /// page poussee a la main (TRANSITIONS, 11/11/2026).
+  static const String foyerAProposForfait =
+      '${Routes.tuteurFoyer}/a-propos-forfait';
 
   /// La demande de reprise, cote second adulte (FA3).
   static const String foyerReprise = '${Routes.tuteurFoyer}/reprise';
@@ -72,7 +77,9 @@ List<GoRoute> routesN2Foyer() => <GoRoute>[
       void foyer() => GoRouter.of(contexte).go(Routes.tuteurFoyer);
       return InvitationRecuePage(
         onRetour: foyer,
-        onMonEspace: (EtatInvitationRecue _) => foyer(),
+        // Le bouton mene au Foyer et le dit (MON-ESPACE-ADULTE-SUPPR).
+        libelleSuite: t.parcours.retourFoyer,
+        onSuite: (EtatInvitationRecue _) => foyer(),
         onRetourApresReponse: (EtatInvitationRecue _) => foyer(),
       );
     },
@@ -85,6 +92,13 @@ List<GoRoute> routesN2Foyer() => <GoRoute>[
     path: 'invitation-envoyee',
     builder: (BuildContext _, GoRouterState _) =>
         const _InvitationEnvoyeeDepuisFoyer(),
+  ),
+  GoRouteSure(
+    path: 'a-propos-forfait',
+    builder: (BuildContext contexte, GoRouterState _) =>
+        AProposForfaitFamillePage(
+          onRetour: () => GoRouter.of(contexte).go(Routes.tuteurFoyer),
+        ),
   ),
   GoRouteSure(
     path: 'reprise',

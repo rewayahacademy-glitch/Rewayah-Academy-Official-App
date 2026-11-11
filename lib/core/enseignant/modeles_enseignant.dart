@@ -712,6 +712,7 @@ class DecisionEleve {
     this.faiblesses = const <FaiblesseRecitation>{},
     this.objectifsARenforcer = const <String>[],
     this.pretBilan = false,
+    this.souratesValidees = const <int>{},
   });
 
   /// La decision de depart d'un eleve : la performance et les faiblesses de
@@ -744,6 +745,12 @@ class DecisionEleve {
   /// CAHIER-C3 : l'enseignant juge l'eleve pret pour le petit bilan ; le
   /// serveur le propose ensuite (C7), l'administration planifie.
   final bool pretBilan;
+
+  /// SOURATES (directeur, 11/11/2026, option A) : les numeros des sourates
+  /// des bases que l'eleve a recitees de memoire, sans erreur de mot, a
+  /// cette seance. Choisies parmi celles que le serveur propose (jamais
+  /// saisies) ; le serveur les valide au depot (`sourates_validees`).
+  final Set<int> souratesValidees;
 
   /// L'eleve concerne.
   final String studentId;
@@ -798,6 +805,8 @@ class DecisionEleve {
     if (objectifsARenforcer.isNotEmpty)
       'objectifs_a_renforcer': objectifsARenforcer,
     if (pretBilan) 'pret_bilan': true,
+    if (souratesValidees.isNotEmpty)
+      'sourates_validees': souratesValidees.toList()..sort(),
   };
 }
 

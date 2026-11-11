@@ -25,7 +25,6 @@ import '../../support/demo/demo_adulte_page.dart';
 const List<EcranDemoAdulte> _ecrans = <EcranDemoAdulte>[
   EcranDemoAdulte.accueil,
   EcranDemoAdulte.maClasse,
-  EcranDemoAdulte.monEspace,
   EcranDemoAdulte.forfaitFamille,
   EcranDemoAdulte.maFamille,
 ];
@@ -81,9 +80,7 @@ Future<void> _monter(
 }
 
 void main() {
-  late String titreFr;
   setUpAll(() async {
-    titreFr = t.adulte.monEspace.monCompte;
     if (dossierCapture != null) {
       await chargerPolicesDuDepot();
       // En capture, l'asynchrone reel ouvre la base locale (Aujourd'hui,
@@ -118,13 +115,4 @@ void main() {
       });
     }
   }
-
-  testWidgets('Mon espace en arabe, plus en francais', (
-    WidgetTester tester,
-  ) async {
-    await _monter(tester, EcranDemoAdulte.monEspace);
-    expect(find.textContaining(t.adulte.monEspace.monCompte), findsWidgets);
-    expect(t.adulte.monEspace.monCompte, isNot(titreFr));
-    expect(find.textContaining(titreFr), findsNothing);
-  });
 }

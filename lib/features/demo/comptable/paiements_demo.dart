@@ -18,7 +18,6 @@
 import 'package:flutter_riverpod/misc.dart' show Override;
 
 import '../../../core/capacites/capacite_indisponible.dart';
-import '../../../core/capacites/port_capacite_payout.dart';
 import '../../../core/capacites/port_obligations_payables.dart';
 import '../../../core/capacites/port_payout.dart';
 import '../../../core/capacites/port_validations_finance.dart';
@@ -496,26 +495,8 @@ RaisonBlocage? _raisonExclusion(ObligationPayable o) {
   return null;
 }
 
-/// Les prestataires neutres du socle ; un corridor GN et SN est pris en
-/// charge, tout autre corridor ne l'est pas.
-class CapacitePayoutDemo implements PortCapacitePayout {
-  /// Cree le double.
-  const CapacitePayoutDemo();
-
-  @override
-  Future<List<PrestataireFinance>> prestataires() async =>
-      SocleComptableDemo.prestataires;
-
-  @override
-  Future<CapacitePayout> capacite(CorridorPayout corridor) async =>
-      switch (corridor.pays) {
-        'GN' || 'SN' => CapacitePayout.prisEnCharge,
-        _ => CapacitePayout.nonPrisEnCharge,
-      };
-}
-
 /// Les surcharges de la demonstration des paiements : un seul etat partage
-/// par les trois doubles, neuf a chaque appel (chaque ouverture de la
+/// par les deux doubles, neuf a chaque appel (chaque ouverture de la
 /// demonstration repart de l'etat de depart).
 List<Override> surchargesDemoPaiements() {
   final EtatDemoPaiements etat = EtatDemoPaiements();
@@ -524,7 +505,6 @@ List<Override> surchargesDemoPaiements() {
       ObligationsPayablesDemo(etat),
     ),
     portPayoutProvider.overrideWithValue(PayoutDemo(etat)),
-    portCapacitePayoutProvider.overrideWithValue(const CapacitePayoutDemo()),
   ];
 }
 

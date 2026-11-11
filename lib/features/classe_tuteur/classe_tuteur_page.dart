@@ -8,6 +8,8 @@ import '../../core/icons/app_icons.dart';
 import '../../core/router/routes.dart';
 import '../../core/seance_famille/port_seances_famille.dart';
 import '../../core/seance_famille/seance_famille.dart';
+import '../../core/tc_groupe/cartes_classe.dart'
+    show cartesClasseOuvertesProvider;
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_spacing.dart';
@@ -182,6 +184,8 @@ class _Contenu extends ConsumerWidget {
     // CARTES-PERSO-1 : les cartes que l'enseignant de la Classe compose, en
     // lecture pour le tuteur (la capacite de modifier vient de leur lecture).
     final Widget cartes = BlocCartesClasse(groupeId: classeId);
+    // PORTS-CARTES-CLASSE : sans serveur, ni bloc de cartes ni son ecart.
+    final bool cartesOuvertes = ref.watch(cartesClasseOuvertesProvider);
 
     // COM-F : les emplacements des Communications, vides tant que leurs
     // voies ne les remplissent pas (annonces de la Classe en tete, entree
@@ -214,8 +218,7 @@ class _Contenu extends ConsumerWidget {
                 Ecart.vLg,
                 rubriques,
                 messages,
-                Ecart.vSection,
-                cartes,
+                if (cartesOuvertes) ...<Widget>[Ecart.vSection, cartes],
               ]
             : <Widget>[
                 annonces,
@@ -223,8 +226,7 @@ class _Contenu extends ConsumerWidget {
                 Ecart.vLg,
                 rubriques,
                 messages,
-                Ecart.vSection,
-                cartes,
+                if (cartesOuvertes) ...<Widget>[Ecart.vSection, cartes],
               ],
       );
     }
@@ -249,8 +251,7 @@ class _Contenu extends ConsumerWidget {
                 children: <Widget>[
                   carte,
                   if (seanceEnTete) annonces,
-                  Ecart.vSection,
-                  cartes,
+                  if (cartesOuvertes) ...<Widget>[Ecart.vSection, cartes],
                 ],
               ),
             ),

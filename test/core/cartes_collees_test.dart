@@ -322,7 +322,10 @@ void main() {
         surcharges: <Override>[
           sourceSessionProvider.overrideWithValue(FausseSourceSession()),
         ],
-        minimumSurfaces: 5,
+        // PROFILS P4 (garde-cap, 11/11/2026) : les interrupteurs que rien ne
+        // lisait et la confidentialite grisee sont retires ; il reste quatre
+        // surfaces sans foyer ni push autorise.
+        minimumSurfaces: 4,
       );
     });
 

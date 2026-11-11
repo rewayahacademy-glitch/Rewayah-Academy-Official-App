@@ -121,6 +121,12 @@ abstract final class AppIcons {
     IconData(0xe4c2, fontFamily: _actif),
   );
 
+  /// Langue du compte (globe).
+  static const AppIcon langue = AppIcon._(
+    IconData(0xe288, fontFamily: _repos),
+    IconData(0xe288, fontFamily: _actif),
+  );
+
   // --- Navigation, controleur et admin -----------------------------------
 
   /// Planning global du controleur.

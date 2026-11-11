@@ -41,7 +41,6 @@ import 'package:rewayah_academy/features/foyer/invitation_conjoint.dart';
 import 'package:rewayah_academy/features/foyer/ligne_membre.dart';
 import 'package:rewayah_academy/features/foyer/photo_eleve.dart';
 import 'package:rewayah_academy/features/foyer/place_adulte.dart';
-import 'package:rewayah_academy/features/mon_espace_adulte/mon_espace_adulte_page.dart';
 
 import '../../capture/outil_capture.dart'
     show capturerVue, chargerPolicesDuDepot, masquerRubanDebug, sautSansCapture;
@@ -49,7 +48,6 @@ import '../../support/aucun_mot_coupe.dart';
 import '../../support/demo/adulte_demo.dart';
 import '../../support/demo/classe_demo.dart';
 import '../../support/demo/demo_adulte_page.dart';
-import '../../support/destination_nav.dart';
 import '../../support/hors_ligne_une_fois.dart';
 import '../../support/sens_et_echelle.dart';
 
@@ -91,22 +89,14 @@ void main() {
   bool placeDit(WidgetTester tester, String texte) =>
       tester.widgetList<Text>(place()).any((Text w) => w.data == texte);
 
-  testWidgets('Mon espace > Ma famille, tapes : carte du titulaire, place, '
+  testWidgets('Ma famille, tapes : carte du titulaire, place, '
       'enfants, un seul bouton, Paiements du foyer', (
     WidgetTester tester,
   ) async {
     taille(tester, const Size(390, 844));
-    await monterCoquille(tester, adresseDemoAdulte(EcranDemoAdulte.accueil));
-
-    await tester.tap(destinationNav(t.adulte.nav.monEspace));
-    await tester.pumpAndSettle();
-    final Finder ligne = find.descendant(
-      of: find.byKey(MonEspaceAdultePage.ligneFamilleKey),
-      matching: find.text(t.adulte.famille.maFamille),
-    );
-    await tester.ensureVisible(ligne);
-    await tester.tap(ligne);
-    await tester.pumpAndSettle();
+    // Ma famille par son adresse (Mon espace est supprime,
+    // MON-ESPACE-ADULTE-SUPPR, 11/11/2026).
+    await monterCoquille(tester, adresseDemoAdulte(EcranDemoAdulte.maFamille));
 
     expect(find.byType(FoyerPage), findsOneWidget);
     // En-tete sobre : « Ma famille », pas « Foyer ».
@@ -352,20 +342,10 @@ void main() {
     WidgetTester tester,
   ) async {
     taille(tester, const Size(390, 844));
-    await monterCoquille(tester, adresseDemoAdulte(EcranDemoAdulte.monEspace));
-    Future<void> versMaFamille() async {
-      final Finder ligne = find.descendant(
-        of: find.byKey(MonEspaceAdultePage.ligneFamilleKey),
-        matching: find.text(t.adulte.famille.maFamille),
-      );
-      await tester.ensureVisible(ligne);
-      await tester.tap(ligne);
-      await tester.pumpAndSettle();
-      expect(find.byType(FoyerPage), findsOneWidget);
-    }
+    await monterCoquille(tester, adresseDemoAdulte(EcranDemoAdulte.maFamille));
+    expect(find.byType(FoyerPage), findsOneWidget);
 
     // « Ajouter un profil eleve » : le formulaire commun, sans proche adulte.
-    await versMaFamille();
     await tester.ensureVisible(find.byKey(FoyerPage.ajouterKey));
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(FoyerPage.ajouterKey));
@@ -655,8 +635,11 @@ void main() {
       await tester.pumpAndSettle();
     }
 
+    // « Compte » ouvrait Mon espace, supprime (MON-ESPACE-ADULTE-SUPPR) : il
+    // ramene desormais a l'Accueil, comme « Accueil » et « Historique ».
     await taper(t.nav.tuteur.compte);
-    expect(find.byType(MonEspaceAdultePage), findsOneWidget);
+    expect(find.byType(AccueilAdultePage), findsOneWidget);
+
     await monterCoquille(tester, adresseDemoAdulte(EcranDemoAdulte.maFamille));
     await taper(t.nav.tuteur.accueil);
     expect(find.byType(AccueilAdultePage), findsOneWidget);

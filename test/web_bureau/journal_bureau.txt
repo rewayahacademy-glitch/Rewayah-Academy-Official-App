@@ -12,7 +12,6 @@ famille /tuteur/presentation -> /tuteur/presentation : B4
 famille /tuteur/demandes -> /tuteur/demandes : B4
 famille /tuteur/demandes/:demandeId -> /tuteur/demandes/id-demandeId : vert
 famille /tuteur/demandes/:demandeId/changement -> /tuteur/demandes/id-demandeId/changement : vert
-famille /tuteur/classes/catalogue -> /tuteur/classes/catalogue : vert
 famille /tuteur/classes/:classeId -> /tuteur/classes/id-classeId : vert
 famille /tuteur/classes/:classeId/planning -> /tuteur/classes/id-classeId/planning : vert
 famille /tuteur/classes/:classeId/travail -> /tuteur/classes/id-classeId/travail : vert

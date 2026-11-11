@@ -33,7 +33,7 @@ class AccueilFamilleRelie extends ConsumerWidget {
           : null,
       // Le profil eleve du titulaire est SA propre ligne : son identifiant est
       // celui de son compte (student_profiles.titulaire_profile_id = lui).
-      titulaireId: eleveAutonome ? profil : null,
+      titulaireId: profil,
     );
   }
 }

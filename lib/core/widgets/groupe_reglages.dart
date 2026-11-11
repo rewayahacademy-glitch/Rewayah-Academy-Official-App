@@ -37,7 +37,18 @@ class LigneRubrique {
     this.cochee,
     this.focusNode,
     this.protegee = false,
+    this.destructive = false,
+    this.cle,
   });
+
+  /// La cle de la ligne rendue, pour qu'un test ou le robot la retrouve
+  /// (`compte-securite`, `rubrique-mes-donnees`). Facultative.
+  final Key? cle;
+
+  /// Vrai : le geste de la ligne retire quelque chose (« Se déconnecter »,
+  /// PROFILS P1, pilote du 11/11/2026) : libelle et icone en encre d'alerte.
+  /// Le geste reste celui de la ligne ; la confirmation est a l'ecran.
+  final bool destructive;
 
   /// Vrai : la valeur et la légende de la rubrique sont hors de la sélection
   /// du texte (`TexteProtege` : code, coordonnée bancaire, coordonnée
@@ -130,24 +141,12 @@ class GroupeReglages extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
-    final TextTheme textes = Theme.of(context).textTheme;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        if (titre != null) ...<Widget>[
-          Semantics(
-            header: true,
-            child: TexteSansCoupure(
-              titre!,
-              style: palette.inkStrong.applyTo(
-                textes.titleMedium ?? const TextStyle(),
-              ),
-            ),
-          ),
-          Ecart.vSm,
-        ],
+        if (titre != null) ...<Widget>[TitreGroupeReglages(titre!), Ecart.vSm],
         DecoratedBox(
           decoration: AppElevation.avecFilet(
             surface: palette.surfaceRaised,
@@ -162,7 +161,11 @@ class GroupeReglages extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 for (int i = 0; i < lignes.length; i++)
-                  _Ligne(ligne: lignes[i], filet: i < lignes.length - 1),
+                  _Ligne(
+                    key: lignes[i].cle,
+                    ligne: lignes[i],
+                    filet: i < lignes.length - 1,
+                  ),
               ],
             ),
           ),
@@ -172,8 +175,30 @@ class GroupeReglages extends StatelessWidget {
   }
 }
 
+/// Le titre d'un [GroupeReglages], annonce comme en-tete. Public pour
+/// qu'une section qui pose autre chose qu'un groupe sous son titre (les
+/// preferences du Compte, PROFILS P1) garde exactement le meme titre.
+class TitreGroupeReglages extends StatelessWidget {
+  /// Cree le titre.
+  const TitreGroupeReglages(this.titre, {super.key});
+
+  /// Le texte du titre.
+  final String titre;
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+    header: true,
+    child: TexteSansCoupure(
+      titre,
+      style: AppPalette.of(context).inkStrong.applyTo(
+        Theme.of(context).textTheme.titleMedium ?? const TextStyle(),
+      ),
+    ),
+  );
+}
+
 class _Ligne extends StatelessWidget {
-  const _Ligne({required this.ligne, required this.filet});
+  const _Ligne({required this.ligne, required this.filet, super.key});
 
   final LigneRubrique ligne;
   final bool filet;
@@ -222,7 +247,8 @@ class _Ligne extends StatelessWidget {
         (ligne.icone == null
             ? null
             : IconTheme(
-                data: palette.inkAccent.asIconTheme(size: AppSpacing.xxl),
+                data: (ligne.destructive ? palette.inkAlert : palette.inkAccent)
+                    .asIconTheme(size: AppSpacing.xxl),
                 child: Icon(ligne.icone!.repos),
               ));
 
@@ -397,12 +423,14 @@ class _Ligne extends StatelessWidget {
                 key: const ValueKey<String>('groupe-reglages-libelle'),
                 // labelLarge : meme taille que bodyLarge dans les deux
                 // echelles, graisse 600 portee par le theme.
-                style: palette.inkStrong.applyTo(
-                  ((ligne.selectionnee ?? false)
-                          ? textes.labelLarge
-                          : textes.bodyLarge) ??
-                      const TextStyle(),
-                ),
+                style:
+                    (ligne.destructive ? palette.inkAlert : palette.inkStrong)
+                        .applyTo(
+                          ((ligne.selectionnee ?? false)
+                                  ? textes.labelLarge
+                                  : textes.bodyLarge) ??
+                              const TextStyle(),
+                        ),
               ),
               if (ligne.pastille != null && ligne.pastilleSousLibelle != true)
                 ligne.pastille!,

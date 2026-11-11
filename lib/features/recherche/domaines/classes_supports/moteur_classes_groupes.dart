@@ -9,7 +9,7 @@ import 'pagination_domaine.dart';
 /// Le moteur « Classes » (RECH-D1, spec RECH-03 §3 « Classes inscrites ») :
 /// les classes **de la personne**, lues sur `PortGroupes.mesGroupes()`, le
 /// port que l'Accueil et l'Espace Classe lisent deja. Aucune classe d'autrui,
-/// aucun catalogue d'offres (celui-ci reste distinct, `PortCatalogueClasses`).
+/// aucun catalogue d'offres.
 ///
 /// Champs cherches : le nom de la classe, le cours, le niveau et le nom
 /// d'affichage de l'enseignant ; rien d'autre n'est lu (ni effectif, ni

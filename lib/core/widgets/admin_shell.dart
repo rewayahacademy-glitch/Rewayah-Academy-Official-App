@@ -263,6 +263,7 @@ class AdminShell extends StatelessWidget {
           _BoutonRecherche(
             onRecherche: onAller,
             onRechercheMetier: onRechercheMetier,
+            studio: studio != null,
           ),
           if (studio != null) _BoutonStudio(onStudio: studio),
           const BasculeTheme(),
@@ -355,6 +356,7 @@ class AdminShell extends StatelessWidget {
                 onRecherche: onAller,
                 onCompte: onCompte,
                 cloche: cloche,
+                studio: studio != null,
               ),
               // La barre a deja pose la zone sure du haut (encoche, barre
               // d'etat) : la page en dessous ne la repose pas, sinon un vide
@@ -542,13 +544,17 @@ class _RangeeActions extends StatelessWidget {
 /// liste fixe de moins de dix libelles. Pas de classement ni de tolerance aux
 /// fautes de frappe -- une liste de cette taille n'en a pas besoin, et aucune
 /// donnee n'est interrogee, seulement des libelles et leurs routes.
-String? _cheminRecherche(String saisie) {
+///
+/// [studio] faux retire Le Studio des cibles quand il n'a pas de serveur
+/// (PORTS-DIRECTION) : la recherche ne mene jamais a un « indisponible ».
+String? _cheminRecherche(String saisie, {required bool studio}) {
   final String requete = saisie.trim().toLowerCase();
   if (requete.isEmpty) {
     return null;
   }
   for (final ({String libelle, String chemin}) cible in ciblesRechercheAdmin(
     voitDirection: false,
+    studio: studio,
   )) {
     if (cible.libelle.toLowerCase().contains(requete)) {
       return cible.chemin;
@@ -1188,9 +1194,16 @@ class _BoutonCompte extends StatelessWidget {
 /// La recherche a partir de 600 : un bouton qui ouvre le champ existant dans
 /// une feuille (Q-S2). Aucune largeur inventee dans l'en-tete.
 class _BoutonRecherche extends StatelessWidget {
-  const _BoutonRecherche({required this.onRecherche, this.onRechercheMetier});
+  const _BoutonRecherche({
+    required this.onRecherche,
+    required this.studio,
+    this.onRechercheMetier,
+  });
 
   final void Function(String chemin) onRecherche;
+
+  /// Vrai quand Le Studio a un serveur, et peut donc etre une cible.
+  final bool studio;
 
   /// RECH-D5 : le lien vers la recherche metier, quand un domaine est servi.
   final VoidCallback? onRechercheMetier;
@@ -1207,7 +1220,7 @@ class _BoutonRecherche extends StatelessWidget {
           TextField(
             autofocus: true,
             onSubmitted: (String saisie) {
-              final String? cible = _cheminRecherche(saisie);
+              final String? cible = _cheminRecherche(saisie, studio: studio);
               if (cible != null) {
                 Navigator.of(contexte).pop(cible);
               }
@@ -1256,12 +1269,16 @@ class _BarreMobile extends StatefulWidget {
   const _BarreMobile({
     required this.onRecherche,
     required this.onCompte,
+    required this.studio,
     this.cloche,
   });
 
   final void Function(String chemin) onRecherche;
   final VoidCallback onCompte;
   final Widget? cloche;
+
+  /// Vrai quand Le Studio a un serveur, et peut donc etre une cible.
+  final bool studio;
 
   @override
   State<_BarreMobile> createState() => _BarreMobileState();
@@ -1277,7 +1294,7 @@ class _BarreMobileState extends State<_BarreMobile> {
   }
 
   void _lancer(String saisie) {
-    final String? chemin = _cheminRecherche(saisie);
+    final String? chemin = _cheminRecherche(saisie, studio: widget.studio);
     if (chemin != null) {
       widget.onRecherche(chemin);
       _recherche.clear();
@@ -1367,7 +1384,10 @@ class _BarreMobileState extends State<_BarreMobile> {
           ecart,
           if (texteAgrandi) ...<Widget>[
             const Spacer(),
-            _BoutonRecherche(onRecherche: widget.onRecherche),
+            _BoutonRecherche(
+              onRecherche: widget.onRecherche,
+              studio: widget.studio,
+            ),
           ] else
             Expanded(
               // ALERTE-1b (lecon 8) : avec la cloche, le champ peut ne
@@ -1382,6 +1402,7 @@ class _BarreMobileState extends State<_BarreMobile> {
                         alignment: AlignmentDirectional.centerEnd,
                         child: _BoutonRecherche(
                           onRecherche: widget.onRecherche,
+                          studio: widget.studio,
                         ),
                       )
                     : ConstrainedBox(

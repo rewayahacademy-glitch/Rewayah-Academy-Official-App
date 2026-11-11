@@ -50,7 +50,10 @@ String? deciderRedirection({
   // La salle de demonstration passe sans session hors production : donnees
   // fictives, aucun appel serveur (K-28). En production, la route n'existe
   // pas et cette porte reste fermee.
-  if (environnementAutoriseDemo(environnement) &&
+  // `Env.demoCompilee` d'abord : en production, dart2js retire la porte
+  // (NETTOYAGE-1).
+  if (Env.demoCompilee &&
+      environnementAutoriseDemo(environnement) &&
       (cheminDemande == Routes.demoSalle ||
           cheminDemande.startsWith('${Routes.demoSalle}/') ||
           cheminDemande == Routes.demoClasse ||

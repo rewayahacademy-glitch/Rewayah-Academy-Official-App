@@ -14,6 +14,7 @@ import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/page_shell.dart';
 import '../notifications/reglages_push.dart';
 import 'carte_rubriques.dart';
+import 'lignes_compte.dart';
 
 /// Les preferences du titulaire sur cet appareil
 /// (`/tuteur/compte/preferences`, maquette V4 « Reglages », ecran 01).
@@ -44,8 +45,8 @@ class PreferencesComptePage extends ConsumerWidget {
   /// Ouvre l'Apparence ; par defaut, la route du tuteur.
   final VoidCallback? onApparence;
 
-  /// Ouvre la langue des e-mails et des messages (COURRIELS-2) ; par defaut,
-  /// la route du tuteur.
+  /// Ouvre le choix de la langue du compte (interface ET e-mails, garde-cap,
+  /// 11/11/2026) ; par defaut, la feuille de la ligne « Langue » du Compte.
   final VoidCallback? onLangue;
 
   /// Ouvre les Reglages des notifications ; par defaut, la feuille de PUSH-1.
@@ -79,11 +80,10 @@ class PreferencesComptePage extends ConsumerWidget {
               icone: AppIcons.direction,
               libelle: t.compte.tuteur.pagePreferences.langue,
               legende: langue,
+              // PROFILS P4 : la langue du compte, une seule (la page « Langue
+              // des e-mails » est supprimee).
               onPress:
-                  onLangue ??
-                  () =>
-                      GoRouter.of(context)
-                          .go(Routes.tuteurCompteLangueCourriels),
+                  onLangue ?? () => unawaited(ouvrirLangueCompte(context)),
             ),
             LigneRubrique(
               icone: AppIcons.notifications,

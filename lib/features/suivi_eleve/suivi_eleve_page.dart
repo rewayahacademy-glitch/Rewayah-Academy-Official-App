@@ -3,12 +3,16 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/planning/service_planning.dart';
 import '../../core/presence/service_presence.dart';
 import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/router/routes.dart';
+import '../../core/session/session_controleur.dart';
+import '../../core/session/session_state.dart';
 import '../../core/suivi/service_suivi.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -16,6 +20,7 @@ import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/data_collection.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/ligne_presence.dart';
+import '../../core/widgets/nav_shell.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/pays_enseignant.dart';
@@ -25,6 +30,7 @@ import '../suivi_foyer/carte_messages_academie.dart';
 import '../suivi_foyer/carte_suivi_pedagogique.dart';
 import '../suivi_foyer/filtres_historique.dart' show libelleStatut, statutDe;
 import '../suivi_foyer/vue_suivi_foyer.dart';
+import 'entree_bibliotheque.dart';
 
 /// Le suivi de l'eleve : une lecture de la meme projection que `TUT-06`.
 ///
@@ -83,8 +89,13 @@ class _SuiviElevePageEtat extends ConsumerState<SuiviElevePage> {
     );
 
     return PageShell(
-      titre: t.eleve.suivi.titre,
+      // Le titre de la page est le libelle de son onglet, lu dans la meme
+      // fonction que la barre (garde-cap, 11/11/2026) : une seule source.
+      titre: titreOngletSuivi(ref.watch(sessionProvider)),
       defilante: false,
+      // BANDE-SUITE (11/11/2026) : la liste passe sous la barre flottante ;
+      // `DataCollection` et `_VideDefilant` ajoutent l'encart a leur fin.
+      encartBasDansLeCorps: true,
       // Plus d'`Expanded` ici : `PageShell` borne desormais la hauteur de son
       // contenu en mode `defilante: false`.
       child: _Corps(
@@ -99,6 +110,22 @@ class _SuiviElevePageEtat extends ConsumerState<SuiviElevePage> {
       ),
     );
   }
+}
+
+/// Le libelle de l'onglet qui mene a cette page, lu dans [destinationsPour],
+/// la fonction qui construit la barre (« Ma classe » pour l'eleve, « Suivi »
+/// pour l'eleve adulte). Repli sur « Ma classe » hors coquille eleve.
+String titreOngletSuivi(SessionState session) {
+  final AppRole? role = session.role;
+  if (role == null) return t.nav.eleve.maClasse;
+  for (final Destination d in destinationsPour(
+    role: role,
+    mode: InterfaceMode.standard,
+    eleveAdulte: session.barreEleveAdulte,
+  )) {
+    if (d.chemin == Routes.eleveSuivi) return d.libelle;
+  }
+  return t.nav.eleve.maClasse;
 }
 
 class _Corps extends StatelessWidget {
@@ -123,10 +150,16 @@ class _Corps extends StatelessWidget {
     // SUIVI-ELEVE (07/11/2026) : « Où j'en suis » en tete, dans tous les
     // etats de la liste des seances (un eleve sans seance passee a deja une
     // etape), puis les messages de l'academie (D1-ter). Defile avec la page.
+    // La Bibliotheque passe avant tout (garde-cap, 11/11/2026).
     const Widget tete = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
-      children: <Widget>[CarteSuiviPedagogique(), CarteMessagesAcademie()],
+      children: <Widget>[
+        // La Bibliotheque en tete de « Ma classe » (garde-cap, 11/11/2026).
+        EntreeBibliothequeMaClasse(),
+        CarteSuiviPedagogique(),
+        CarteMessagesAcademie(),
+      ],
     );
 
     if (erreur && vue.total == 0) {
@@ -357,6 +390,10 @@ class _VideDefilant extends StatelessWidget {
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints contraintes) {
         return SingleChildScrollView(
+          // BANDE-SUITE : la fin s'arrete au-dessus de la barre flottante.
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.paddingOf(context).bottom,
+          ),
           child: ConstrainedBox(
             constraints: BoxConstraints(
               minHeight: contraintes.hasBoundedHeight

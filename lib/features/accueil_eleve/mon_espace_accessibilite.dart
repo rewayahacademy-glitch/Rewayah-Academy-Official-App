@@ -32,6 +32,7 @@ import '../../core/session/deconnexion.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/session/session_state.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/version/ligne_version.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/groupe_reglages.dart';
@@ -84,6 +85,9 @@ class MonEspaceAccessibilite extends StatefulWidget {
 
   /// La cle de la ligne « Se deconnecter ».
   static const Key deconnexionKey = ValueKey<String>('mon-espace-deconnexion');
+
+  /// La ligne de version, en bas.
+  static const Key versionKey = ValueKey<String>('mon-espace-version');
 
   /// Ouvre « Mes donnees », comme le Compte ; nul : la rubrique n'est pas
   /// montree. La rubrique suit sa propre capacite (`mesDonneesDisponibles`).
@@ -259,6 +263,15 @@ class _MonEspaceAccessibiliteEtat extends State<MonEspaceAccessibilite> {
               onPress: sortir,
             ),
           ],
+          // La ligne de version, comme dans le Compte de tous les roles
+          // (directeur, 11/11/2026) ; rien si `version.json` est illisible.
+          Ecart.vLg,
+          const Center(
+            child: KeyedSubtree(
+              key: MonEspaceAccessibilite.versionKey,
+              child: LigneVersion(),
+            ),
+          ),
         ],
       ),
     );

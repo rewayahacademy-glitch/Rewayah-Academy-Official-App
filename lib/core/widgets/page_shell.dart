@@ -81,6 +81,7 @@ class PageShell extends StatelessWidget {
     this.enteteSecondaire,
     this.actions,
     this.defilante = true,
+    this.encartBasDansLeCorps = false,
     this.actionsCoquille = true,
     this.focusTitre,
     this.bandeauHorsLigne = const OfflineBanner(),
@@ -193,6 +194,15 @@ class PageShell extends StatelessWidget {
   /// Faux quand le corps gere son propre defilement, par exemple une liste
   /// paresseuse ou une grille de semaine defilante horizontalement.
   final bool defilante;
+
+  /// BANDE-SUITE (directeur et pilote, 11/11/2026) : une page qui porte son
+  /// propre defilement ([defilante] faux) laisse l'encart bas (la barre
+  /// flottante de `NavShell`, la zone sure) a son corps, au lieu de s'arreter
+  /// au-dessus : sa liste passe sous la barre et ajoute
+  /// `MediaQuery.paddingOf(context).bottom` a sa fin ; un champ fixe en bas
+  /// se pose au-dessus de la barre. A n'activer que si TOUT ce que le corps
+  /// fait defiler, et tout ce qu'il fixe en bas, lit cet encart.
+  final bool encartBasDansLeCorps;
 
   /// Le titre simple (sans retour, sous-titre ni action), pour les tests et
   /// les captures.
@@ -468,6 +478,10 @@ class PageShell extends StatelessWidget {
               // La respiration de bas de page : sans elle, le dernier element
               // colle au bord de l'ecran.
               Ecart.vSection,
+              // BANDE-BARRE (11/11/2026) : la page defile jusqu'au bord de
+              // l'ecran, sous la barre flottante de `NavShell` et la zone
+              // sure ; sa fin s'arrete au-dessus d'elles.
+              SizedBox(height: MediaQuery.paddingOf(context).bottom),
             ],
           )
         : child;
@@ -494,6 +508,10 @@ class PageShell extends StatelessWidget {
     return Scaffold(
       backgroundColor: fond?.background,
       body: SafeArea(
+        // BANDE-BARRE : une page qui defile garde l'encart bas DANS son
+        // defilement (voir `corps`) : son contenu passe sous la barre
+        // flottante au lieu de s'arreter net au bord d'un rectangle.
+        bottom: !defilante && !encartBasDansLeCorps,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[

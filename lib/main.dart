@@ -151,6 +151,7 @@ import 'core/import_inscriptions/import_inscriptions_supabase.dart';
 import 'core/import_inscriptions/port_import_inscriptions.dart';
 import 'core/import_inscriptions/port_reclamation_preinscription.dart';
 import 'core/import_inscriptions/reclamation_preinscription_supabase.dart';
+import 'core/mouvement/retour_navigateur.dart';
 import 'core/nouveautes/nouveautes.dart';
 import 'core/observabilite/journal_dev.dart';
 import 'core/observabilite/supervision.dart';
@@ -170,8 +171,10 @@ import 'core/pause_seance/pause_seance_supabase.dart';
 import 'core/pause_seance/port_pause_seance.dart';
 import 'core/photos/photo_personne.dart';
 import 'core/photos/photos_supabase.dart';
+import 'core/preferences/preferences_compte.dart' show portThemeCompteProvider;
 import 'core/preferences/preferences_locales.dart'
     show appliquerPreferenceLangue, langueMemoriseeAuDemarrage;
+import 'core/preferences/theme_compte_supabase.dart';
 import 'core/presence/retard_en_direct.dart' show portRetardEnDirectProvider;
 import 'core/presence/retard_en_direct_supabase.dart';
 import 'core/recherche/port_recherche.dart';
@@ -252,6 +255,8 @@ import 'features/fiche_groupe/observations_eleve_supabase.dart';
 import 'features/fiche_groupe/preparation_seance.dart'
     show portProjectionsElevesProvider;
 import 'features/fiche_groupe/projection_eleves_supabase.dart';
+import 'features/fiche_groupe/sourates_classe.dart';
+import 'features/fiche_groupe/sourates_classe_supabase.dart';
 import 'features/foyer/invitation_conjoint.dart';
 import 'features/foyer/invitation_conjoint_supabase.dart';
 import 'features/foyer/invitation_envoyee.dart';
@@ -583,6 +588,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   portLanguesCommunicationProvider.overrideWithValue(
     LanguesCommunicationSupabase(Supabase.instance.client),
   ),
+  // Le theme porte par le compte (PREFERENCES-PAR-COMPTE, migration
+  // 20261123200000) ; la langue du compte est la langue ci-dessus.
+  portThemeCompteProvider.overrideWithValue(
+    ThemeCompteSupabase(Supabase.instance.client),
+  ),
   portSeriesTresorerieProvider.overrideWithValue(
     SeriesTresorerieSupabase(Supabase.instance.client),
   ),
@@ -770,6 +780,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   portEtapesElevesProvider.overrideWithValue(
     EtapesElevesSupabase(Supabase.instance.client),
   ),
+  // SOURATES (11/11/2026, option A) : les 17 sourates des bases de chaque
+  // eleve d'une Classe et celles deja validees, pour le cahier.
+  portSouratesClasseProvider.overrideWithValue(
+    SouratesClasseSupabase(Supabase.instance.client),
+  ),
   // ACCUEIL-INVITE (09/11/2026) : l'accueil unique des personnes invitees,
   // devant l'inscription (`mon_invitation_accueil`,
   // `accepter_invitation_nouveau_compte`, `refuser_invitation_sans_compte`).
@@ -952,6 +967,10 @@ List<Override> _surchargesAppReelle() => <Override>[
 /// demarrage par plateforme.
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // TRANSITIONS, regle 9 : sur le web, un retour demande par le navigateur se
+  // distingue de la fleche de l'application (hors web, rien n'est ecoute).
+  RetourNavigateur.ecouter();
 
   // La supervision avant tout le reste : une erreur du demarrage lui-meme doit
   // remonter comme les autres, y compris l'ecran de configuration absente.

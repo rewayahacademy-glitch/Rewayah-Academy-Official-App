@@ -4,6 +4,7 @@
 // des appareils et des profils que l'eleve ne gere pas (releve du 04/11).
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show SemanticsAction, SemanticsNode;
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
@@ -37,6 +38,10 @@ List<Override> _session(
 // notifications du foyer, dans les Reglages, que ce lot ne touche pas.
 Finder _ligneFoyer() =>
     find.widgetWithText(SettingRow, t.compte.appareilsDetail);
+
+/// PROFILS P4 : le Compte partage est compose dans `PageCompte` ; sa ligne
+/// « Foyer » (appareils) est une `LigneRubrique`, trouvee par sa legende.
+Finder _ligneFoyerCompte() => find.text(t.compte.appareilsDetail);
 
 Future<void> _monter(
   WidgetTester tester,
@@ -72,17 +77,21 @@ void main() {
         ]) {
       testWidgets('$cas : pas de ligne « Foyer »', (WidgetTester tester) async {
         await _monter(tester, const ComptePage(), role, mode: mode);
-        expect(find.text(t.compte.appareilsDetail), findsNothing);
-        expect(_ligneFoyer(), findsNothing);
+        expect(_ligneFoyerCompte(), findsNothing);
       });
     }
 
     testWidgets('qui tient un foyer : la ligne est la, et active', (
       WidgetTester tester,
     ) async {
+      final SemanticsHandle semantique = tester.ensureSemantics();
       await _monter(tester, const ComptePage(), AppRole.guardian);
-      expect(_ligneFoyer(), findsOneWidget);
-      expect(tester.widget<SettingRow>(_ligneFoyer()).onPress, isNotNull);
+      expect(_ligneFoyerCompte(), findsOneWidget);
+      // Active : la ligne est un bouton qui se presse.
+      final SemanticsNode noeud = tester.getSemantics(_ligneFoyerCompte());
+      expect(noeud.flagsCollection.isButton, isTrue);
+      expect(noeud.getSemanticsData().hasAction(SemanticsAction.tap), isTrue);
+      semantique.dispose();
     });
   });
 
@@ -115,8 +124,9 @@ void main() {
       await _monter(tester, const ReglagesComptePage(), AppRole.guardian);
       expect(_ligneFoyer(), findsOneWidget);
       expect(tester.widget<SettingRow>(_ligneFoyer()).onPress, isNotNull);
-      // Et l'interrupteur des notifications du foyer.
-      expect(find.text(t.compte.notificationsFoyerDetail), findsOneWidget);
+      // PROFILS P4 (garde-cap, 11/11/2026) : l'interrupteur des
+      // notifications du foyer, que rien ne lisait, est retire.
+      expect(find.text(t.compte.notificationsFoyerDetail), findsNothing);
     });
   });
 }

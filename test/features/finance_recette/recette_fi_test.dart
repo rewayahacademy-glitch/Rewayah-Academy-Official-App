@@ -80,7 +80,6 @@ import 'package:rewayah_academy/features/foyer/photo_eleve.dart';
 import 'package:rewayah_academy/features/foyer/transactions_foyer.dart';
 import 'package:rewayah_academy/features/ma_classe_adulte/ma_classe_adulte_page.dart';
 import 'package:rewayah_academy/features/mon_espace_adulte/mes_finances_page.dart';
-import 'package:rewayah_academy/features/mon_espace_adulte/mon_espace_adulte_page.dart';
 import 'package:rewayah_academy/features/suivi_eleve/suivi_eleve_page.dart';
 import 'package:rewayah_academy/features/tc_mes_groupes/mes_groupes_page.dart';
 import 'package:rewayah_academy/features/tc_mushaf/mushaf_page.dart';
@@ -1568,7 +1567,7 @@ void main() {
 
     testWidgets('10 ter. un impaye ne ferme pas le compte de l adulte '
         'autonome : dans sa coquille, chaque destination reste ouverte ; '
-        'Mon espace et Paiements disent le manque et proposent la recharge', (
+        'Paiements dit le manque et propose la recharge', (
       WidgetTester tester,
     ) async {
       String adresse(EcranDemoAdulte ecran) => adresseDemoAdulte(
@@ -1582,13 +1581,11 @@ void main() {
         aRegulariser: true,
       );
       expect(impaye.etat, EtatFinancier.aRegulariser);
-      final String manque = messageRegularisation(impaye);
       for (final (EcranDemoAdulte ecran, Finder page)
           in <(EcranDemoAdulte, Finder)>[
             (EcranDemoAdulte.accueil, find.byType(AccueilAdultePage)),
             (EcranDemoAdulte.maClasse, find.byType(MaClasseAdultePage)),
             (EcranDemoAdulte.coran, find.byType(CoranDemoAdulte)),
-            (EcranDemoAdulte.monEspace, find.byType(MonEspaceAdultePage)),
             (EcranDemoAdulte.paiements, find.byType(MesFinancesPage)),
             (EcranDemoAdulte.mesMouvements, find.byType(MesMouvementsPage)),
             (EcranDemoAdulte.maRecharge, find.byType(RechargeFoyerPage)),
@@ -1598,9 +1595,6 @@ void main() {
         expect(find.byType(NavShell), findsOneWidget, reason: ecran.name);
         expect(tester.takeException(), isNull, reason: ecran.name);
         switch (ecran) {
-          case EcranDemoAdulte.monEspace:
-            expect(find.byKey(BandeauRegularisation.cle), findsOneWidget);
-            expect(find.text(manque), findsOneWidget);
           case EcranDemoAdulte.paiements:
             expect(find.byKey(FinancesElevePage.bandeauKey), findsOneWidget);
             expect(find.byKey(FinancesElevePage.rechargerKey), findsOneWidget);

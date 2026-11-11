@@ -71,12 +71,9 @@ final indicateursReserveProvider =
       dependencies: <ProviderOrFamily>[portPolitiqueReserveProvider],
     );
 
-/// La politique en vigueur (lecture, CPT-BR-12).
-final politiqueReserveProvider = FutureProvider.autoDispose<PolitiqueReserve>(
-  (Ref ref) => ref.watch(portPolitiqueReserveProvider).politique(),
-  retry: _sansRetentative,
-  dependencies: <ProviderOrFamily>[portPolitiqueReserveProvider],
-);
+// La politique en vigueur (lecture, CPT-BR-12) : `politiqueReserveProvider`,
+// defini une seule fois dans `core/capacites/port_politique_reserve.dart`
+// (NETTOYAGE-1).
 
 /// Relit tout ce que l'ecran affiche, apres un mouvement ou sur
 /// « Reessayer » de la page.

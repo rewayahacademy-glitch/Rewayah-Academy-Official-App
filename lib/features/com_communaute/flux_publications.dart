@@ -296,7 +296,13 @@ class FluxPublications extends ConsumerWidget {
             Expanded(
               child: SingleChildScrollView(
                 key: cleDefilement,
-                padding: const EdgeInsets.only(bottom: AppSpacing.lg),
+                // BANDE-SUITE : sans entree fixe, la fin s'arrete au-dessus
+                // de la barre flottante ; avec elle, l'entree s'y pose.
+                padding: EdgeInsets.only(
+                  bottom:
+                      AppSpacing.lg +
+                      (entreeFixe ? 0 : MediaQuery.paddingOf(context).bottom),
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
@@ -314,7 +320,12 @@ class FluxPublications extends ConsumerWidget {
                 ),
               ),
             ),
-            if (entreeFixe) ...<Widget>[Ecart.vMd, entree, Ecart.vLg],
+            if (entreeFixe) ...<Widget>[
+              Ecart.vMd,
+              entree,
+              Ecart.vLg,
+              SizedBox(height: MediaQuery.paddingOf(context).bottom),
+            ],
           ],
         );
       },

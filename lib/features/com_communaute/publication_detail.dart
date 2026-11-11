@@ -295,7 +295,12 @@ class _PublicationDetailState extends ConsumerState<PublicationDetail> {
         Expanded(
           child: BlocAsynchrone<PublicationCommunaute>(
             valeur: lue,
-            squelette: const SingleChildScrollView(child: Skeleton.liste()),
+            squelette: SingleChildScrollView(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.paddingOf(context).bottom,
+              ),
+              child: const Skeleton.liste(),
+            ),
             titreEchec: t.com.socle.composants.etats.erreurTitre,
             onReessayer: () =>
                 ref.invalidate(publicationCommunauteProvider(_id)),
@@ -323,7 +328,11 @@ class _PublicationDetailState extends ConsumerState<PublicationDetail> {
             construire: (PublicationCommunaute publication) =>
                 SingleChildScrollView(
                   key: PublicationDetail.cleDefilement,
-                  padding: const EdgeInsets.only(bottom: AppSpacing.xxl),
+                  // BANDE-SUITE : la fin s'arrete au-dessus de la barre.
+                  padding: EdgeInsets.only(
+                    bottom:
+                        AppSpacing.xxl + MediaQuery.paddingOf(context).bottom,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[

@@ -48,8 +48,17 @@ void main() {
     final SousNavigationDomaine onglets = tester.widget<SousNavigationDomaine>(
       find.byType(SousNavigationDomaine),
     );
-    expect(onglets.onglets, ongletsFinance());
-    expect(onglets.indexActif, ongletsFinance().length - 1);
+    // PORTS-DIRECTION (pilote, 11/11/2026) : sans serveur, ni « Vue
+    // globale » ni « Reserve et delegation » ne sont montrees.
+    final List<({String libelle, String chemin})> montres =
+        <({String libelle, String chemin})>[
+          for (final ({String libelle, String chemin}) o in ongletsFinance())
+            if (o.chemin != Routes.adminFinance &&
+                o.chemin != Routes.adminFinanceReserveDelegation)
+              o,
+        ];
+    expect(onglets.onglets, montres);
+    expect(onglets.indexActif, montres.length - 1);
     expect(find.text(t.admin.finance.paieEnseignants), findsWidgets);
   });
 

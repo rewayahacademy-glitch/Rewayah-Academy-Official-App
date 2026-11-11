@@ -8,7 +8,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
-import 'package:rewayah_academy/core/capacites/port_capacite_payout.dart';
 import 'package:rewayah_academy/core/capacites/port_obligations_payables.dart';
 import 'package:rewayah_academy/core/capacites/port_payout.dart';
 import 'package:rewayah_academy/core/comptable/statuts_comptable.dart';
@@ -401,10 +400,6 @@ void main() {
   test('le port neutre reste indisponible (CPT-BR-02, 10)', () {
     expect(
       const PayoutIndisponible().preflight(const <ObligationChoisie>[]),
-      throwsA(anything),
-    );
-    expect(
-      const CapacitePayoutIndisponible().prestataires(),
       throwsA(anything),
     );
     expect(

@@ -1,0 +1,29 @@
+# Barre flottante : captures avant et apres la goutte des profils
+# avant = main 0dd621d36 ; apres = main 0dd621d36 + la goutte (indicateur_liquide.dart et nav_shell.dart non modifies)
+# test/capture/nav_liquide_matiere_capture_test.dart, 25 images, comparaison octet a octet : 0 difference.
+
+matiere_arabe_clair_1_repos.png avant=7235d7318e52d24d apres=7235d7318e52d24d identique
+matiere_arabe_clair_2_cou_forme.png avant=1e2b13f05bec2f26 apres=1e2b13f05bec2f26 identique
+matiere_arabe_clair_3_cou_aminci.png avant=b3fdfe4cb6e66476 apres=b3fdfe4cb6e66476 identique
+matiere_arabe_clair_4_rupture.png avant=5aecb8cad706dae5 apres=5aecb8cad706dae5 identique
+matiere_arabe_clair_5_rebond.png avant=c3fd340254cece74 apres=c3fd340254cece74 identique
+matiere_arabe_sombre_1_repos.png avant=9983ff019033aa04 apres=9983ff019033aa04 identique
+matiere_arabe_sombre_2_cou_forme.png avant=37da7f1db2a8667b apres=37da7f1db2a8667b identique
+matiere_arabe_sombre_3_cou_aminci.png avant=1cdbba7702bcefff apres=1cdbba7702bcefff identique
+matiere_arabe_sombre_4_rupture.png avant=a6edf579b0d3f97f apres=a6edf579b0d3f97f identique
+matiere_arabe_sombre_5_rebond.png avant=8f3a4656686fe1f8 apres=8f3a4656686fe1f8 identique
+matiere_clair_1_repos.png avant=40dd46793e8005d1 apres=40dd46793e8005d1 identique
+matiere_clair_2_cou_forme.png avant=cc46287d3a508bef apres=cc46287d3a508bef identique
+matiere_clair_3_cou_aminci.png avant=fa8997e4f2712118 apres=fa8997e4f2712118 identique
+matiere_clair_4_rupture.png avant=bc8f3afde3344f97 apres=bc8f3afde3344f97 identique
+matiere_clair_5_rebond.png avant=31d9523d1ff184b6 apres=31d9523d1ff184b6 identique
+matiere_retour_clair_1_repos.png avant=fb5b239563fa341c apres=fb5b239563fa341c identique
+matiere_retour_clair_2_cou_forme.png avant=6e96b38f6e8d765d apres=6e96b38f6e8d765d identique
+matiere_retour_clair_3_absorbe.png avant=b6edd70c0065654e apres=b6edd70c0065654e identique
+matiere_retour_clair_4_repos.png avant=93e54feb4f311844 apres=93e54feb4f311844 identique
+matiere_sombre_1_repos.png avant=88f81718c161ec5e apres=88f81718c161ec5e identique
+matiere_sombre_2_cou_forme.png avant=25b17c86acf262e6 apres=25b17c86acf262e6 identique
+matiere_sombre_3_cou_aminci.png avant=ff14e8f2faaa76fc apres=ff14e8f2faaa76fc identique
+matiere_sombre_4_rupture.png avant=4027dd6424886b0e apres=4027dd6424886b0e identique
+matiere_sombre_5_rebond.png avant=da687c2e9e492031 apres=da687c2e9e492031 identique
+planche_matiere_5_temps.png avant=2d76b1257164f9b7 apres=2d76b1257164f9b7 identique

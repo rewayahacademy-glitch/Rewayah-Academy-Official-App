@@ -80,3 +80,15 @@ final Provider<bool> exportDisponibleProvider = Provider<bool>(
       ref.watch(portExportRapportsProvider) is! ExportRapportsIndisponible,
   dependencies: <ProviderOrFamily>[portExportRapportsProvider],
 );
+
+/// PORTS-DIRECTION (pilote, 11/11/2026) : vrai quand l'export d'une sélection ou d'un rapport a un serveur,
+/// c'est-a-dire quand [portExportRapportsProvider] n'est plus [ExportRapportsIndisponible]. Faux en production
+/// tant qu'aucun adaptateur n'est branche dans `lib/main.dart` : l'entree
+/// n'est pas montree, jamais un « indisponible ». La demonstration le
+/// surcharge et la garde ouverte.
+final Provider<bool> exportRapportsOuvertProvider = Provider<bool>(
+  (Ref ref) =>
+      ref.watch(portExportRapportsProvider) is! ExportRapportsIndisponible,
+  // Lue sous la portee de la demonstration, qui surcharge le port.
+  dependencies: <ProviderOrFamily>[portExportRapportsProvider],
+);

@@ -404,6 +404,7 @@ declare
     'admin_courriel_envoyer(uuid,text,text,text,text,uuid)',
     'admin_courriel_reessayer(uuid)',
     'ma_langue_communication_regler(text)',
+    'ma_preference_theme_regler(text)',
     -- COURRIELS-1 : la desinscription par le lien d'un e-mail, sans compte
     -- (jeton a usage unique, seule son empreinte sha256 est gardee).
     'courriel_desinscrire(text)',

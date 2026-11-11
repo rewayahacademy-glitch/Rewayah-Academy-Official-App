@@ -166,14 +166,17 @@ void main() {
       ),
     );
     await tester.pump();
+    await tester.pump();
 
-    // Le contenu garde l'encart haut (barre d'etat) et ne recoit plus le bas,
-    // deja consomme par la barre : aucun encart applique deux fois (C11 5.6).
-    expect(encartContenu.top, 47);
-    expect(encartContenu.bottom, 0);
     final double hauteurBarre = tester
         .getSize(find.byKey(NavShell.barreBasseKey))
         .height;
+    // Le contenu garde l'encart haut (barre d'etat). BANDE-BARRE
+    // (11/11/2026) : la barre flotte sur le contenu ; l'encart bas du contenu
+    // est exactement la hauteur de la barre, qui contient deja l'encart bas
+    // de l'appareil : aucun encart applique deux fois (C11 5.6).
+    expect(encartContenu.top, 47);
+    expect(encartContenu.bottom, hauteurBarre);
     // Hauteur de la pilule + marges + encart bas, sans l'encart haut.
     expect(hauteurBarre, lessThan(NavShell.hauteurBarre + 47 + 34));
     expect(tester.getBottomLeft(find.byKey(NavShell.barreBasseKey)).dy, 844);

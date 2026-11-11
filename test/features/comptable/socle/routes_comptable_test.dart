@@ -207,7 +207,13 @@ void main() {
               .widget<SousNavigationDomaine>(
                 find.byType(SousNavigationDomaine),
               );
-          expect(nav.indexActif, onglet);
+          // PORTS-COMPTABLE : les onglets sans serveur ne sont pas montres ;
+          // l'onglet actif reste le meme, a sa place dans la liste montree.
+          final List<({String libelle, String chemin})> tous =
+              destination == 1
+              ? ongletsPaiementsComptable()
+              : ongletsTresorerieComptable();
+          expect(nav.onglets[nav.indexActif], tous[onglet]);
         }
         if (chemin != Routes.comptableContractuelsNouvelle) {
           expect(find.byType(BasculeMontants), findsOneWidget);
@@ -413,18 +419,24 @@ void main() {
   });
 
   group('Delta Direction', () {
+    // PORTS-DIRECTION (pilote, 11/11/2026) : sans ses deux serveurs (ports
+    // de production « indisponibles »), l'onglet n'existe pas : l'adresse
+    // revient a Politiques commerciales, dans la coquille admin. L'onglet
+    // reste defini, troisieme, pour le jour ou ses serveurs existent.
     testWidgets('/admin/finance/reserve-delegation : troisieme onglet, '
-        'coquille admin', (WidgetTester tester) async {
+        'coquille admin ; sans serveur, Politiques commerciales', (
+      WidgetTester tester,
+    ) async {
       final GoRouter routeur = await monterRouteur(
         tester,
         Routes.adminFinanceReserveDelegation,
         source: FausseSourceSession(sessionActive(AppRole.admin)),
         taille: const Size(1440, 900),
       );
-      expect(_chemin(routeur), Routes.adminFinanceReserveDelegation);
+      expect(_chemin(routeur), Routes.adminFinancePolitiques);
       expect(find.byType(AdminShell), findsOneWidget);
       expect(find.byType(FinancePage), findsOneWidget);
-      expect(find.byType(ReserveDelegationPage), findsOneWidget);
+      expect(find.byType(ReserveDelegationPage), findsNothing);
       // Troisieme onglet ; « A valider » (CPT-VAL-1) vient en quatrieme,
       // « Paiements » (FAC-C-01) en cinquieme, « Paie des enseignants »
       // (directeur, 31/10/2026) en sixieme.
@@ -433,7 +445,7 @@ void main() {
       expect(ongletsFinance()[3].chemin, Routes.adminFinanceAValider);
       expect(ongletsFinance()[4].chemin, Routes.adminFinancePaiements);
       expect(ongletsFinance().last.chemin, Routes.adminFinancePaie);
-      expect(find.text(t.admin.finance.reserveDelegation), findsWidgets);
+      expect(find.text(t.admin.finance.reserveDelegation), findsNothing);
     });
 
     testWidgets('un Comptable n ouvre pas le delta Direction', (

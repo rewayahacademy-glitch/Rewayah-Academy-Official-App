@@ -15,6 +15,7 @@ import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/widgets/selecteur_theme.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/compte/compte_page.dart';
+import 'package:rewayah_academy/features/compte/lignes_compte.dart';
 
 import '../support/harnais.dart';
 
@@ -70,12 +71,40 @@ void main() {
 
     expect(find.text(t.compte.apparence), findsOneWidget);
     expect(find.text(t.compte.accessibilite), findsOneWidget);
-    expect(find.text(t.compte.notifications), findsOneWidget);
-    expect(find.text(t.compte.economieDonnees), findsOneWidget);
-    // FOYER-ELEVE (04/11/2026) : la session par defaut ne tient pas de foyer,
-    // l'interrupteur des notifications du foyer n'y est donc pas (7 avec).
-    expect(find.byType(Switch), findsNWidgets(6));
+    // PROFILS P4 (garde-cap, 11/11/2026) : plus d'interrupteurs que rien ne
+    // lisait (notifications Cours et Foyer, economie de donnees). Les
+    // notifications sont la ligne PUSH-1, seulement si le serveur l'autorise
+    // (pas ici : aucune capacite push dans ce test).
+    expect(find.text(t.compte.notifications), findsNothing);
+    expect(find.text(t.compte.economieDonnees), findsNothing);
+    expect(find.text(t.compte.notificationsCours), findsNothing);
+    // Mouvement reduit, effets reduits, raccourcis de la salle, lecture en
+    // grand texte : les quatre interrupteurs qui agissent.
+    expect(find.byType(Switch), findsNWidgets(4));
     expect(find.byType(SelecteurTheme), findsOneWidget);
+  });
+
+  testWidgets('les reglages : push autorise, la ligne Notifications PUSH-1', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      hote(
+        const ReglagesComptePage(),
+        surcharges: <Override>[
+          sourceSessionProvider.overrideWithValue(FausseSourceSession()),
+          notificationsAutoriseesProvider.overrideWith((Ref _) async => true),
+        ],
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(
+      find.byKey(const ValueKey<String>('reglage-notifications-push')),
+      findsOneWidget,
+    );
+    expect(
+      find.text(t.compte.tuteur.pagePreferences.notifications),
+      findsOneWidget,
+    );
   });
 
   testWidgets('les reglages restent lisibles en RTL a 200 pour cent', (
@@ -106,8 +135,8 @@ void main() {
     await tester.pump();
 
     expect(tester.takeException(), isNull);
-    // Sans foyer : 6 interrupteurs (FOYER-ELEVE).
-    expect(find.byType(Switch), findsNWidgets(6));
+    // Les quatre interrupteurs qui agissent (PROFILS P4).
+    expect(find.byType(Switch), findsNWidgets(4));
     expect(find.byType(SelecteurTheme), findsOneWidget);
   });
 
@@ -184,7 +213,7 @@ void main() {
         ],
       ),
     );
-    await tester.pump();
+    await tester.pumpAndSettle();
 
     expect(find.text(t.compte.roles.admin), findsWidgets);
     expect(find.text(t.compte.roles.teacher), findsNothing);

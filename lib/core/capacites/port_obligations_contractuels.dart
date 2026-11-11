@@ -11,6 +11,7 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show ProviderOrFamily;
 
 import '../comptable/modeles_comptable.dart';
 import '../comptable/statuts_comptable.dart';
@@ -273,4 +274,16 @@ class ObligationsContractuelsIndisponibles
 final Provider<PortObligationsContractuels>
 portObligationsContractuelsProvider = Provider<PortObligationsContractuels>(
   (Ref _) => const ObligationsContractuelsIndisponibles(),
+);
+
+/// PORTS-COMPTABLE (pilote, 11/11/2026) : vrai quand l'onglet « Contractuels » du comptable a un serveur,
+/// c'est-a-dire quand [portObligationsContractuelsProvider] n'est plus [ObligationsContractuelsIndisponibles]. Faux en production
+/// tant qu'aucun adaptateur n'est branche : l'entree n'est pas montree,
+/// jamais un « indisponible ». La demonstration le surcharge.
+final Provider<bool> contractuelsOuvertsProvider = Provider<bool>(
+  (Ref ref) =>
+      ref.watch(portObligationsContractuelsProvider)
+          is! ObligationsContractuelsIndisponibles,
+  // Lue sous la portee de la demonstration, qui surcharge le port.
+  dependencies: <ProviderOrFamily>[portObligationsContractuelsProvider],
 );

@@ -1,6 +1,7 @@
 // EA-HL-DOUBLE-1 : captures de preuve de « hors ligne dit une seule fois ».
 // Le bandeau de PageShell est le seul signal ; sans donnees, le bloc dit ce
-// qui manque (Accueil, Ma classe, Mon espace) ; avec donnees, aucun bloc.
+// qui manque (Accueil, Ma classe ; Mon espace, supprime le 11/11/2026 par
+// MON-ESPACE-ADULTE-SUPPR, n'y est plus) ; avec donnees, aucun bloc.
 //
 // Saute sans CAPTURE_DIR : la CI ne l'execute jamais et n'ecrit rien.
 // Chaque capture verifie aussi qu'aucun mot n'est coupe ni tronque, et que
@@ -9,27 +10,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
-import 'package:rewayah_academy/core/capacites/port_identite_titulaire.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/etat_sans_donnees.dart';
-import 'package:rewayah_academy/core/reseau/service_reseau.dart';
-import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/offline_banner.dart';
-import 'package:rewayah_academy/features/compte/donnees_compte.dart'
-    show identiteTitulaireProvider;
-import 'package:rewayah_academy/features/mon_espace_adulte/mon_espace_adulte_page.dart';
 
-import '../router/support_routeur.dart' show sessionActive;
 import '../support/aucun_mot_coupe.dart';
-import '../support/demo/adulte_demo.dart';
 import '../support/demo/classe_demo.dart';
 import '../support/demo/demo_adulte_page.dart';
-import '../support/harnais.dart';
 import '../support/hors_ligne_une_fois.dart';
 import 'outil_capture.dart';
 
@@ -324,100 +315,6 @@ void main() {
           interface: cas.$5,
           sansDonnees: cas.$6,
         );
-      });
-    }
-
-    // Mon espace avec donnees : identite et famille lues, le bandeau seul.
-    for (final (String, Size, ThemeMode, InterfaceMode) cas
-        in <(String, Size, ThemeMode, InterfaceMode)>[
-          (
-            'mon_espace_avec_donnees_390_sombre',
-            const Size(390, 844),
-            ThemeMode.dark,
-            InterfaceMode.standard,
-          ),
-          (
-            'mon_espace_avec_donnees_1440_clair',
-            const Size(1440, 900),
-            ThemeMode.light,
-            InterfaceMode.standard,
-          ),
-          (
-            'mon_espace_avec_donnees_390_guidee',
-            const Size(390, 844),
-            ThemeMode.light,
-            InterfaceMode.enfant,
-          ),
-        ]) {
-      testWidgets(cas.$1, (WidgetTester tester) async {
-        fixerVueCapture(tester, cas.$2, 1);
-        await tester.pumpWidget(
-          hoteCapture(
-            const MonEspaceAdultePage(),
-            surcharges: <Override>[
-              horsLigneProvider.overrideWith(
-                (Ref _) => Stream<bool>.value(true),
-              ),
-              // L11 : la session lue en memoire, jamais le vrai client.
-              sourceSessionProvider.overrideWithValue(
-                FausseSourceSession(sessionActive(AppRole.guardian)),
-              ),
-              identiteTitulaireProvider.overrideWith(
-                (Ref _) async => DonneesAdulteDemo.identite(
-                  GenreTitulaireDemo.homme,
-                  VueDemoAdulte.titulaire,
-                ),
-              ),
-              monEspaceAdulteProvider.overrideWith(
-                (Ref _) async => const MonEspaceAdulteVM(
-                  ligneFamille: LigneFamilleAdulte.maFamille,
-                ),
-              ),
-            ],
-            themeMode: cas.$3,
-            interfaceMode: cas.$4,
-          ),
-        );
-        await stabiliser(tester);
-        await _verifier(tester, sansDonnees: false);
-        // L'adresse ne se coupe pas, meme en Interface guidee.
-        verifierAucunMotCoupe(tester, find.byType(MonEspaceAdultePage));
-        debugPrint('PNG ${await capturer(tester, 'ea_hl_double1_${cas.$1}')}');
-      });
-    }
-
-    // Mon espace : l'identite et la ligne famille en echec, un seul bloc.
-    for (final (String, Size, double) cas in <(String, Size, double)>[
-      ('mon_espace_sans_donnees_390_clair', const Size(390, 844), 1),
-      ('mon_espace_sans_donnees_320x2_clair', const Size(320, 900), 2),
-    ]) {
-      testWidgets(cas.$1, (WidgetTester tester) async {
-        fixerVueCapture(tester, cas.$2, 1);
-        await tester.pumpWidget(
-          hoteCapture(
-            const MonEspaceAdultePage(),
-            surcharges: <Override>[
-              horsLigneProvider.overrideWith(
-                (Ref _) => Stream<bool>.value(true),
-              ),
-              // L11 : la session lue en memoire, jamais le vrai client.
-              sourceSessionProvider.overrideWithValue(
-                FausseSourceSession(sessionActive(AppRole.guardian)),
-              ),
-              identiteTitulaireProvider.overrideWith(
-                (Ref _) => Future<IdentiteTitulaire>.error(StateError('x')),
-              ),
-              monEspaceAdulteProvider.overrideWith(
-                (Ref _) => Future<MonEspaceAdulteVM>.error(StateError('x')),
-              ),
-            ],
-            echelleTexte: cas.$3,
-          ),
-        );
-        await stabiliser(tester);
-        await _verifier(tester, sansDonnees: true);
-        expect(find.text(t.adulte.monEspace.sansDonneesCompte), findsOneWidget);
-        debugPrint('PNG ${await capturer(tester, 'ea_hl_double1_${cas.$1}')}');
       });
     }
   });

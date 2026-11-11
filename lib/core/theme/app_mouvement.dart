@@ -33,6 +33,11 @@ abstract final class AppMouvement {
   /// Passage d'une page a l'autre.
   static const Duration navigation = Duration(milliseconds: 220);
 
+  /// TRANSITIONS (11/11/2026) : descente vers un detail sur telephone (axe
+  /// partage, 250 a 300 ms) ; sur ordinateur, [navigation]. Sortie environ
+  /// 2/3 (`AppTransitions.sortieDe`).
+  static const Duration descente = Duration(milliseconds: 280);
+
   /// Ouverture d'une feuille de bas d'ecran.
   static const Duration feuilleOuverture = Duration(milliseconds: 180);
 
@@ -363,8 +368,12 @@ abstract final class AppMouvement {
 
   /// Le cercle qui « recoit » la goutte : le seul ressort sous-amorti du
   /// produit, sur decision expresse du directeur (11/11/2026, « un leger
-  /// rebond »). Il ne sert qu'a cette reception, d'une amplitude de
-  /// [amplitudeReception].
+  /// rebond »). Il ne sert qu'a cette reception, sur le cercle Compte de la
+  /// barre et, meme decision et meme style de goutte (directeur, 11/11/2026),
+  /// sur les ronds de profil a la rupture du cou entre deux profils
+  /// (`GoutteProfils`) ; d'une amplitude de [amplitudeReception]. Le rebond des
+  /// ronds de profil dure [rebondGouttePro] puis s'acheve (residu a la coupe :
+  /// 0,03 % d'echelle ; pic de depassement : 0,18 %).
   static final SpringDescription ressortReception =
       SpringDescription.withDampingRatio(mass: 1, stiffness: 400, ratio: 0.4);
 
@@ -385,6 +394,39 @@ abstract final class AppMouvement {
   /// range rien.
   static const double elanRangement = 700;
 
+  /// GOUTTE D'HUILE DES PROFILS (directeur, 11/11/2026) : la goutte qui part
+  /// du rond quitte vers le rond choisi. Amortissement critique : le
+  /// mouvement n'a pas de rebond ; les rebonds sont ceux de
+  /// [ressortReception], a la rupture du cou.
+  static final SpringDescription ressortGouttePro =
+      SpringDescription.withDampingRatio(mass: 1, stiffness: 700, ratio: 1);
+
+  /// Avancement (de la goutte, 0 a 1) ou elle atteint le rond choisi : le cou
+  /// entre les deux ronds commence alors a s'amincir.
+  static const double arriveeGouttePro = 0.5;
+
+  /// Avancement ou le cou entre les deux ronds se rompt : le rond quitte et le
+  /// rond choisi reprennent leur forme d'un petit rebond, et le rond choisi
+  /// prend la selection.
+  static const double ruptureGouttePro = 0.9;
+
+  /// Le temps que les deux ronds rebondissent apres la rupture du cou, puis la
+  /// goutte est finie. Le mouvement ENTIER (cou jusqu'a la rupture, environ
+  /// 150 ms, puis ce rebond) tient sous [plafond] : choisir un profil est une
+  /// action instantanee (DECISION-FLUIDITE, garde-cap 11/11/2026).
+  static const Duration rebondGouttePro = Duration(milliseconds: 200);
+
+  /// La chute du contenu depuis le rond choisi : la goutte s'etale en devenant
+  /// la carte.
+  static const Duration chuteContenu = Duration(milliseconds: 340);
+
+  /// Part de la chute (0 a 1) ou le cou entre le rond et le contenu se rompt.
+  static const double ruptureChuteContenu = 0.55;
+
+  /// La taille de depart du contenu qui tombe, et d'arrivee de celui qui est
+  /// aspire (fraction de sa taille).
+  static const double echelleGouttePro = 0.15;
+
   /// Translation verticale d'un element qui entre dans une liste.
   static const double translationAjout = 8;
 
@@ -395,6 +437,13 @@ abstract final class AppMouvement {
   /// RTL** : une page qui entre par la droite en francais entre par la gauche
   /// en arabe.
   static const double translationNavigation = 16;
+
+  /// TRANSITIONS (11/11/2026) : course de l'axe partage horizontal sur
+  /// telephone, et sur ecran large (24 a 32). Le sens s'inverse en RTL.
+  static const double courseAxePartage = 30;
+
+  /// Course de l'axe partage sur ecran large (classe etendue ou plus).
+  static const double courseAxePartageLarge = 24;
 
   /// Opacite du voile sous une feuille de bas d'ecran.
   static const double opaciteVoile = 0.32;

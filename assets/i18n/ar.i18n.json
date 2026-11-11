@@ -729,7 +729,6 @@
       "indisponibleCourt": "تعذّر تحميل معلومات الحصة",
       "indisponibleInvitation": "ربما لم يصل الطلب إلى رواية. أعد المحاولة بعد لحظة."
     },
-    "catalogue": "اختيار فصل",
     "planning": "الجدول",
     "travail": "قبل الدرس القادم",
     "ressources": "المكتبة",
@@ -824,59 +823,6 @@
       "jalons": "المراحل المنجزة",
       "aucune": "لا مرحلة مُشارَكة حتى الآن",
       "aucuneDetail": "سيظهر هنا التقدم الذي يشاركه المعلم مع الأسرة."
-    },
-    "pageCatalogue": {
-      "pour": "لـ⁨{prenom}⁩",
-      "proposees": "الفصول المقترحة",
-      "indisponible": "اختيار الفصل عبر الإنترنت غير مفتوح بعد.",
-      "aucune": "لا فصل مناسب الآن",
-      "aucuneDetail": "لا فصل مفتوح يناسب ملف ⁨{dePrenom}⁩ حاليًا.",
-      "eleveInconnuTitre": "هذا الملف ليس في أسرتك",
-      "eleveInconnuPhrase": "عد إلى الرئيسية واختر ملف الطالب المعني.",
-      "horairesAbsents": "أيام هذا الفصل وساعاته لا تظهر هنا بعد.",
-      "seanceHebdo": "⁨{jour}⁩ الساعة ⁨{heure}⁩ · ⁨{duree}⁩ د",
-      "fuseauClasse": "توقيت الفصل (⁨{fuseau}⁩)",
-      "placeUne": "مقعد واحد متبقٍّ",
-      "etat": {
-        "ouverte": "مفتوح",
-        "complete": "مكتمل",
-        "listeAttente": "قائمة الانتظار"
-      },
-      "choisir": "اختيار هذا الفصل",
-      "rejoindreAttente": "الانضمام إلى قائمة الانتظار",
-      "precisionsTitre": "قبل الاختيار",
-      "precisionEnseignant": "يحتفظ الفصل بالمعلم نفسه في كل حصصه.",
-      "precisionPlaces": "المقاعد المعروضة هي مقاعد الأكاديمية لحظة القراءة.",
-      "precisionReserve": "لا شيء محجوز قبل تأكيدك.",
-      "confirmerTitre": "تأكيد الفصل",
-      "confirmerPhrase": "أنت تسجّل ⁨{prenom}⁩ في هذا الفصل.",
-      "confirmerAttentePhrase": "أنت تسجّل ⁨{prenom}⁩ في قائمة انتظار هذا الفصل.",
-      "memeEnseignant": "الفصل نفسه والمعلم نفسه في كل حصص الأسبوع: ⁨{enseignant}⁩.",
-      "confirmer": "تأكيد التسجيل",
-      "confirmerAttente": "تأكيد قائمة الانتظار",
-      "envoiIncertain": "لم يصل رد الأكاديمية. إعادة المحاولة لا تنشئ تسجيلًا ثانيًا.",
-      "envoiIndisponible": "التسجيل عبر الإنترنت غير مفتوح بعد: لم يُحجز أي مقعد.",
-      "resultat": {
-        "inscritTitre": "تم تأكيد التسجيل",
-        "inscritPhrase": "ينضم ⁨{prenom}⁩ إلى ⁨{classe}⁩.",
-        "voirClasse": "عرض الفصل",
-        "validationTitre": "أُرسل الطلب",
-        "validationPhrase": "ما زال على الأكاديمية اعتماد تسجيل ⁨{dePrenom}⁩ في ⁨{classe}⁩.",
-        "listeAttenteTitre": "التسجيل في قائمة الانتظار",
-        "listeAttentePhrase": "⁨{prenom}⁩ في قائمة انتظار ⁨{deClasse}⁩. لم يُحجز أي مقعد حتى الآن.",
-        "refuseTitre": "لم يُقبل التسجيل",
-        "refusePhrase": "لم يُحجز أي مقعد لـ⁨{prenom}⁩. يمكنك اختيار فصل آخر.",
-        "autresClasses": "عرض الفصول الأخرى",
-        "retourAccueil": "العودة إلى الرئيسية"
-      },
-      "places(param=nombre)": {
-        "zero": "لا مقعد متبقٍّ",
-        "one": "مقعد واحد متبقٍّ",
-        "two": "مقعدان متبقيان",
-        "few": "⁨{nombre}⁩ مقاعد متبقية",
-        "many": "⁨{nombre}⁩ مقعدًا متبقيًا",
-        "other": "⁨{nombre}⁩ مقعد متبقٍّ"
-      }
     },
     "cartes": {
       "titre": "بطاقات الفصل",
@@ -1749,7 +1695,6 @@
   },
   "eleve": {
     "suivi": {
-      "titre": "متابعة دروسي",
       "colonneDate": "التاريخ",
       "colonneCours": "الدرس",
       "colonneEnseignant": "المعلم",
@@ -1986,7 +1931,6 @@
       "preflightIndisponible": "لم يكتمل التحقق من الأجهزة. أعد المحاولة قبل بدء الدرس.",
       "lancerHorsLigne": "دون شبكة، لا يمكن فتح القاعة. أعد الاتصال لبدء الدرس.",
       "erreurPartielle": "تعذّر تحميل أوقات الصلاة واستراحاتك (اتصال غير مستقر أو خدمة غير متاحة مؤقتًا). الحصص المعروضة محدَّثة: يمكنك بدؤها بشكل عادي.",
-      "absenceDetectee": "لم يدخل ⁨{eleve}⁩ القاعة.",
       "pasEncoreRejoint": "لم يُسجَّل انضمام ⁨{eleve}⁩ إلى القاعة بعد.",
       "coupureDetectee": "انقطع اتصال ⁨{eleve}⁩.",
       "revenusDetail": "راتبك التقديري لهذا الشهر، فصلًا بفصل.",
@@ -2192,6 +2136,7 @@
         "intro": "حسابك كمدرّس مفتوح. هذا ما بقي لتهيئته قبل فصلك الأول.",
         "aConfigurer": "ما بقي لتهيئته",
         "toutPret": "كل شيء جاهز. لم يبقَ إلا انتظار فصلك الأول.",
+        "voirPremiersPas": "عرض خطواتي الأولى",
         "remplacementTitre": "الاستبدال",
         "remplacement": "عندما يحتاج فصل إلى مدرّس، يظهر العرض في هذه الصفحة. تفقّدها باستمرار وأجب بسرعة: على الأكاديمية أن تضمن دائمًا الدروس التي وعدت بها."
       },
@@ -2343,7 +2288,7 @@
       "statutEnRetard": "المتأخرون ⁨{nombre}⁩",
       "performance": "الأداء",
       "faiblesses": "نقاط الضعف",
-      "niveauARevoir": "للمراجعة",
+      "niveauARevoir": "يحتاج إلى تقوية",
       "niveauEnProgres": "في تقدم",
       "niveauAcquis": "مكتسَب",
       "niveauMaitrise": "متقَن",
@@ -2496,6 +2441,24 @@
     }
   },
   "compte": {
+    "page": {
+      "sections": {
+        "monEspace": "مساحتي",
+        "paiements": "المدفوعات",
+        "preferences": "التفضيلات",
+        "compteSecurite": "الحساب والأمان",
+        "aide": "المساعدة والمعلومات"
+      },
+      "langue": {
+        "legende": "للتطبيق ولرسائل الأكاديمية الإلكترونية",
+        "refus": "تغيّرت لغة التطبيق، لكن لغة رسائلك الإلكترونية لم تُؤكَّد بعد. أعد المحاولة بعد قليل."
+      },
+      "accessibiliteLegende": "الحركات والمؤثرات واختصارات لوحة المفاتيح في القاعة",
+      "changerPhoto": "تغيير الصورة",
+      "matricule": "رقم التسجيل ⁨{valeur}⁩",
+      "identiteVide": "معلوماتك غير متاحة بعد. تبقى تفضيلاتك وتسجيل الخروج متاحة.",
+      "identiteEchec": "تعذّرت قراءة معلوماتك."
+    },
     "donnees": {
       "titre": "بياناتي",
       "sousTitre": "نسخة من بياناتك، أو حذف حسابك.",
@@ -2559,13 +2522,10 @@
         "refuse": "لا يمكن لهذا الحساب طلب حذفه من هنا."
       }
     },
-    "themeContexte": "اختر مظهر التطبيق. يتم التغيير فورًا ويبقى على هذا الجهاز، ويمكنك تعديله في أي وقت.",
+    "themeContexte": "يتبع حسابك أينما كنت.",
     "themeSysteme": "النظام",
-    "themeSystemeDetail": "يتبع إعداد جهازك",
     "themeClair": "فاتح",
-    "themeClairDetail": "خلفية فاتحة مهما كان إعداد جهازك",
     "themeSombre": "داكن",
-    "themeSombreDetail": "خلفية داكنة مهما كان إعداد جهازك",
     "titre": "حسابي",
     "intro": "معلوماتك وتفضيلاتك وصلاحياتك، في مكان واحد.",
     "informations": "المعلومات",
@@ -2619,7 +2579,7 @@
     "securite": "الأمان",
     "statut": "الحالة",
     "reglagesTitre": "الإعدادات",
-    "reglagesIntro": "تبقى هذه التفضيلات على هذا الجهاز وتُطبَّق فورًا.",
+    "reglagesIntro": "تُطبَّق هذه التفضيلات فورًا.",
     "apparence": "المظهر",
     "accessibilite": "إمكانية الوصول",
     "animations": "تقليل الحركة",
@@ -2628,27 +2588,6 @@
     "effetsDetail": "يحدّ من الشفافية والظلال",
     "lisibiliteDetail": "حجم النص يتبع إعداد جهازك.",
     "langueRegion": "اللغة والمنطقة",
-    "langueCourriels": {
-      "titre": "لغة البريد الإلكتروني والرسائل",
-      "ligneDetail": "اختر اللغة التي تكتب بها الإدارة إليك",
-      "sousTitre": "تصلك رسائل البريد الإلكتروني من الأكاديمية ورسائل الإدارة بهذه اللغة. الرسالة المكتوبة بلغة أخرى تُترجم تلقائيًا.",
-      "choix": "لغتك",
-      "parDefaut": "إن لم تختر لغة، يصلك كل شيء بالفرنسية.",
-      "optionDetail": "تصلك رسائل البريد الإلكتروني والرسائل بلغة ⁨{langue}⁩.",
-      "enregistrer": "حفظ اللغة",
-      "retour": {
-        "enregistre": "تم تسجيل اختيارك. ستصلك رسائل البريد الإلكتروني والرسائل القادمة بلغة ⁨{langue}⁩.",
-        "refusee": "لم تعد هذه اللغة متاحة. اختر لغة أخرى من القائمة.",
-        "refus": "يمكن لمن سجّل الدخول بملفه الشخصي فقط أن يختار لغته. أعد تسجيل الدخول ثم أعد المحاولة.",
-        "echec": "لم يتأكد التغيير: قد لا يكون وصل إلى رواية. أعد المحاولة؛ تبقى لغتك السابقة قائمة ما دام التغيير غير مؤكد.",
-        "horsLigne": "لم يُحفظ شيء: الشبكة غير متاحة. أعد المحاولة عند عودتها."
-      },
-      "erreurLangues": "تعذّر تحميل اللغات. أعد المحاولة.",
-      "sansDonnees": "تعذّر تحميل اللغات",
-      "vide": "لا توجد لغة متاحة حاليًا. تبقى رسائلك الإلكترونية ورسائلك بالفرنسية.",
-      "indisponibleTitre": "اختيار اللغة غير متاح",
-      "indisponiblePhrase": "ستتوفر هذه الخاصية عند ربط الخادم."
-    },
     "francaisDetail": "لغة الواجهة",
     "actif": "مفعَّل",
     "arabe": "العربية",
@@ -2907,6 +2846,7 @@
       "foyerVideTitre": "لا ملف طالب حتى الآن",
       "foyerVidePhrase": "أضف ملف طالب لاختيار فصل ومتابعة حصصه.",
       "ouvrirEspaceEleve": "فتح مساحتي كطالب",
+      "autreAppareil": "استخدام جهاز آخر",
       "ajouterProfil": "إضافة ملف طالب",
       "profilsIllisibles": "تعذّرت قراءة ملفات الأسرة.",
       "blocageAppareilTitre": "لا جهاز جاهز لـ⁨{prenom}⁩",
@@ -6720,9 +6660,9 @@
       "statutPlanifiee": "مجدول",
       "statutRealisee": "منجز",
       "statutAnnulee": "ملغى",
-      "resultatReussi": "ناجح",
-      "resultatEchec": "راسب",
-      "resultatARevoir": "للمراجعة",
+      "resultatReussi": "اعتُمدت المرحلة",
+      "resultatEchec": "يلزم تحقّق جديد",
+      "resultatARevoir": "بعض النقاط تحتاج إلى تقوية",
       "planifier": "جدولة تقييم",
       "planifierTitre": "جدولة تقييم",
       "champNiveau": "المستوى المقيَّم",
@@ -10159,6 +10099,7 @@
     "correctionImpossible": "لا يمكن تعديل هذا الملف الآن.",
     "actualiser": "تحديث حالة الملف",
     "suspenduDetail": "يمكنك التواصل مع الأكاديمية لمعرفة الخطوات المطلوبة.",
+    "copieDonnees": "للحصول على نسخة من بياناتك، راسل الأكاديمية.",
     "seDeconnecter": "تسجيل الخروج",
     "titreDossier": "ملفك",
     "titreCompte": "حسابك",
@@ -10532,8 +10473,7 @@
     "nav": {
       "accueil": "الرئيسية",
       "maClasse": "فصلي",
-      "coran": "القرآن",
-      "monEspace": "مساحتي"
+      "coran": "القرآن"
     },
     "accueil": {
       "salutation": "مرحبًا ⁨{prenom}⁩",
@@ -10563,24 +10503,8 @@
       "aucuneClasseDetail": "سيظهر فصلك ومشاركوه وموارده هنا بمجرد فتحه."
     },
     "monEspace": {
-      "role": "طالب بالغ",
-      "monCompte": "حسابي",
       "informations": "معلوماتي",
-      "coursAcces": "الدروس والوصول",
-      "coursAccesLegende": "الفصل والحصص والوصول",
-      "paiements": "المدفوعات",
-      "paiementsLegende": "السجل والإيصالات",
-      "accords": "موافقاتي",
-      "accordsLegende": "الموافقات الممنوحة للأكاديمية",
-      "securiteLegende": "طريقة الدخول وعنوانه",
-      "pageAccords": {
-        "indisponibleTitre": "موافقاتك غير قابلة للاطلاع بعد",
-        "indisponiblePhrase": "قبول كل موافقة أو رفضها أو سحبها غير ممكن في التطبيق بعد. لا تُطلب منك أي موافقة هنا."
-      },
-      "pageCoursAcces": {
-        "indisponibleTitre": "الدروس والوصول غير قابلة للاطلاع بعد",
-        "indisponiblePhrase": "تفاصيل دروسك وحصصك ووصولك غير متاحة في التطبيق بعد."
-      }
+      "paiements": "المدفوعات"
     },
     "coranDemo": {
       "titre": "متاح بعد تسجيل الدخول",
@@ -10648,7 +10572,6 @@
       "inscrireEnfant": "تسجيل طفل",
       "maFamille": "أسرتي",
       "forfaitFamille": "باقة الأسرة",
-      "retourMonEspace": "العودة إلى مساحتي",
       "titulaire": "أنت صاحب حساب الأسرة",
       "paiementsFoyer": "مدفوعات الأسرة",
       "aProposForfait": "عن باقة الأسرة",
@@ -10766,7 +10689,6 @@
       "refuseeTitre": "رُفضت الدعوة",
       "impossible": "لا يمكن لهذا الحساب الانضمام إلى هذه الباقة حاليًا.",
       "perimee": "هذه الدعوة لم تعد صالحة.",
-      "monEspace": "الذهاب إلى مساحتي",
       "recu": "سُجِّل الرد في ⁨{date}⁩.",
       "titreNeutre": "دعوة إلى باقة الأسرة",
       "sansCompteTitre": "دعوة إلى باقة الأسرة",
@@ -14003,6 +13925,12 @@
     "renforcerAide": "المس فقط هدف المرحلة الذي يحتاج هذا الطالب إلى تعزيزه. وما سواه يبقى «كما هو مقرر».",
     "pretBilan": "مستعد للتقييم القصير",
     "pretBilanDetail": "تخطط الإدارة للتقييم القصير؛ لا شيء تلقائي."
+  },
+  "cahierSourates": {
+    "titre": "السور المسمَّعة",
+    "aide": "اختر السورة فقط إذا سمَّعها هذا الطالب حفظًا دون خطأ في كلمة. السورة المختارة تُعتمد وتبقى معتمدة.",
+    "dejaValidees": "سور الأساسيات المعتمدة: ⁨{n}⁩ من ⁨{total}⁩",
+    "toutes": "اعتُمدت كل سور الأساسيات."
   },
   "accueilHoraire": {
     "demandeTitre": "تم تسجيل الطلب",

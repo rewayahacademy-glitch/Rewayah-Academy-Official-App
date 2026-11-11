@@ -53,6 +53,9 @@ const List<String> composantsDuCatalogue = <String>[
   'IndicateurLiquide',
   // ILE-SALLE (directeur, 11/11/2026) : l'ile liquide de la salle.
   'IleLiquide',
+  // GOUTTE D'HUILE DES PROFILS (11/11/2026).
+  'LiaisonLiquide',
+  'GoutteProfils',
   'AvatarNom',
   // FI-2 (decision du directeur du 04/10, K-62) : l'identite d'un profil,
   // son bandeau de couleur choisi par le tuteur derriere l'avatar.
@@ -201,6 +204,9 @@ const List<String> composantsDuCatalogue = <String>[
   'BasculeTheme',
   // THEME-SW-1 : le choix du theme (un rectangle, trois bascules).
   'SelecteurTheme',
+  'EnteteCompte',
+  'GroupePreferences',
+  'PageCompte',
   // Le gabarit d'etape partage (demandes B-3 et A-2, 25/09/2026).
   'PageEtape',
   // EN-3 : le point de rappel des cahiers (K-45), sorti de la Journee parce

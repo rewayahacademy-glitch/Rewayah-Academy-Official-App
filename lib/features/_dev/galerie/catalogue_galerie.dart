@@ -70,13 +70,16 @@ import '../../../core/widgets/couverture_support.dart';
 import '../../../core/widgets/data_collection.dart';
 import '../../../core/widgets/ecran_resultat.dart';
 import '../../../core/widgets/empty_state.dart';
+import '../../../core/widgets/entete_compte.dart';
 import '../../../core/widgets/entree_arche.dart';
 import '../../../core/widgets/espace_travail_adaptatif.dart';
 import '../../../core/widgets/fil_ariane.dart';
 import '../../../core/widgets/fil_discussion.dart';
 import '../../../core/widgets/filter_pill.dart';
+import '../../../core/widgets/goutte_profils.dart';
 import '../../../core/widgets/grille_bento.dart';
 import '../../../core/widgets/grille_visages.dart';
+import '../../../core/widgets/groupe_preferences.dart';
 import '../../../core/widgets/groupe_reglages.dart';
 import '../../../core/widgets/halo_compte.dart';
 import '../../../core/widgets/halo_lumiere.dart';
@@ -84,6 +87,7 @@ import '../../../core/widgets/identite_profil.dart';
 import '../../../core/widgets/ile_liquide.dart';
 import '../../../core/widgets/indicateur_liquide.dart';
 import '../../../core/widgets/languette_bord.dart';
+import '../../../core/widgets/liaison_liquide.dart';
 import '../../../core/widgets/lien_fleche.dart';
 import '../../../core/widgets/ligne_allocation.dart';
 import '../../../core/widgets/ligne_cle_valeur.dart';
@@ -103,6 +107,7 @@ import '../../../core/widgets/nav_shell.dart';
 import '../../../core/widgets/note_etoiles.dart';
 import '../../../core/widgets/offline_banner.dart';
 import '../../../core/widgets/ornement_marque.dart';
+import '../../../core/widgets/page_compte.dart';
 import '../../../core/widgets/page_etape.dart';
 import '../../../core/widgets/page_immersive.dart';
 import '../../../core/widgets/page_parcours.dart';
@@ -130,6 +135,7 @@ import '../../../core/widgets/selecteur_mois.dart';
 import '../../../core/widgets/selecteur_motif.dart';
 import '../../../core/widgets/selecteur_niveau_programme.dart';
 import '../../../core/widgets/selecteur_personne.dart';
+import '../../../core/widgets/selecteur_profils.dart';
 import '../../../core/widgets/selecteur_section.dart';
 import '../../../core/widgets/selecteur_theme.dart';
 import '../../../core/widgets/selection_racine.dart';
@@ -1191,6 +1197,36 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
   // Decisions du directeur du 10/11/2026 : l'effet liquide de la barre ;
   // au repos, la destination ouverte garde son fond (la goutte ne se
   // dessine qu'en mouvement).
+  // GOUTTE D'HUILE DES PROFILS (11/11/2026) : le cou entre deux silhouettes,
+  // puis la goutte qui relie les ronds de profils et fait tomber le contenu.
+  EntreeGalerie(
+    nom: 'LiaisonLiquide',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'cou plein entre un rond et une carte',
+        (BuildContext _) => const _DemoLiaisonLiquide(v: 0.5),
+      ),
+      EtatGalerie(
+        'cou aminci, a l\'approche de la rupture',
+        (BuildContext _) => const _DemoLiaisonLiquide(v: 0.1),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'GoutteProfils',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'au repos, premier profil choisi',
+        (BuildContext _) => const _DemoGoutteProfils(choisi: 'a'),
+      ),
+      EtatGalerie(
+        'au repos, second profil choisi',
+        (BuildContext _) => const _DemoGoutteProfils(choisi: 'b'),
+      ),
+    ],
+  ),
   EntreeGalerie(
     nom: 'IndicateurLiquide',
     famille: FamilleComposant.composantEtat,
@@ -4524,6 +4560,76 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
       ),
     ],
   ),
+  // PROFILS P1 (pilote du 11/11/2026) : le gabarit commun du Compte, avec
+  // des lignes fictives. Aucune page de role n'y est encore branchee.
+  EntreeGalerie(
+    nom: 'EnteteCompte',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'complet, photo a changer',
+        (BuildContext _) => const EnteteCompte(
+          identite: _identiteExemple,
+          onChangerPhoto: _rien,
+        ),
+      ),
+      EtatGalerie(
+        'sans matricule ni statut, photo fixe',
+        (BuildContext _) => const EnteteCompte(
+          identite: IdentiteCompte(nom: 'Amina Diallo', role: 'Tuteur'),
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'GroupePreferences',
+    famille: FamilleComposant.structure,
+    etats: <EtatGalerie>[
+      EtatGalerie('theme seul', (BuildContext _) => const GroupePreferences()),
+      EtatGalerie(
+        'toutes les lignes',
+        (BuildContext _) => _preferencesExemple(),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'PageCompte',
+    famille: FamilleComposant.zoneDeDonnees,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'loading',
+        (BuildContext _) =>
+            _pageCompteExemple(const AsyncValue<IdentiteCompte?>.loading()),
+      ),
+      EtatGalerie(
+        'content',
+        (BuildContext _) => _pageCompteExemple(
+          const AsyncValue<IdentiteCompte?>.data(_identiteExemple),
+        ),
+      ),
+      EtatGalerie(
+        'empty',
+        (BuildContext _) =>
+            _pageCompteExemple(const AsyncValue<IdentiteCompte?>.data(null)),
+      ),
+      EtatGalerie(
+        'error',
+        (BuildContext _) => _pageCompteExemple(
+          AsyncValue<IdentiteCompte?>.error(
+            StateError('lecture refusee'),
+            StackTrace.empty,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'offline',
+        (BuildContext _) => _pageCompteExemple(
+          const AsyncValue<IdentiteCompte?>.data(_identiteExemple),
+          horsLigne: true,
+        ),
+      ),
+    ],
+  ),
   ...entreesEtatsTuteur(),
   ...entreesEtatsComptable(),
 ];
@@ -4805,6 +4911,80 @@ class _SousMaterial extends StatelessWidget {
 
 void _rien() {}
 
+/// Une identite fictive pour le gabarit du Compte (PROFILS P1).
+const IdentiteCompte _identiteExemple = IdentiteCompte(
+  nom: 'Amina Diallo',
+  role: 'Élève',
+  matricule: 'RA-26-4817',
+  statut: 'Compte actif',
+);
+
+/// Les trois lignes des preferences, fictives.
+GroupePreferences _preferencesExemple() => const GroupePreferences(
+  langue: LigneRubrique(
+    icone: AppIcons.reglages,
+    libelle: 'Langue',
+    valeur: 'Français',
+    onPress: _rien,
+  ),
+  notifications: LigneRubrique(
+    icone: AppIcons.notifications,
+    libelle: 'Notifications',
+    onPress: _rien,
+  ),
+  accessibilite: LigneRubrique(
+    icone: AppIcons.profil,
+    libelle: 'Accessibilité',
+    onPress: _rien,
+  ),
+);
+
+Future<void> _deconnexionFictive() async {}
+
+/// Le gabarit du Compte, avec des lignes fictives dans chaque section.
+Widget _pageCompteExemple(
+  AsyncValue<IdentiteCompte?> identite, {
+  bool horsLigne = false,
+}) => SizedBox(
+  height: _hauteurPage,
+  child: PageCompte(
+    identite: identite,
+    onDeconnecter: _deconnexionFictive,
+    onReessayer: _rien,
+    onChangerPhoto: _rien,
+    bandeauHorsLigne: horsLigne
+        ? OfflineBanner.message(message: t.reseau.horsLigne)
+        : null,
+    preferences: _preferencesExemple(),
+    sections: const <SectionCompte, List<LigneRubrique>>{
+      SectionCompte.monEspace: <LigneRubrique>[
+        LigneRubrique(
+          icone: AppIcons.classes,
+          libelle: 'Ma classe',
+          onPress: _rien,
+        ),
+      ],
+      SectionCompte.paiements: <LigneRubrique>[
+        LigneRubrique(
+          icone: AppIcons.paiements,
+          libelle: 'Mes paiements',
+          onPress: _rien,
+        ),
+      ],
+      SectionCompte.compteSecurite: <LigneRubrique>[
+        LigneRubrique(
+          icone: AppIcons.verrou,
+          libelle: 'Connexion et sécurité',
+          onPress: _rien,
+        ),
+      ],
+      SectionCompte.aide: <LigneRubrique>[
+        LigneRubrique(icone: AppIcons.info, libelle: 'Aide', onPress: _rien),
+      ],
+    },
+  ),
+);
+
 void _allerNullePart(String chemin) {}
 
 void _acteurIgnore(String? acteur) {}
@@ -4916,6 +5096,75 @@ void _tailleIgnoree(int taille) {}
 
 /// La carte de demonstration de la lumiere rectangulaire (galerie).
 const Size _carteDemoHalo = Size(240, 96);
+
+/// Le cou entre un rond et une carte, peint a l'arret (galerie).
+class _DemoLiaisonLiquide extends StatelessWidget {
+  const _DemoLiaisonLiquide({required this.v});
+
+  final double v;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    return CustomPaint(
+      size: const Size(240, 120),
+      painter: _PeintreDemoLiaison(palette.inkAccent.asBorderSide().color, v),
+    );
+  }
+}
+
+class _PeintreDemoLiaison extends CustomPainter {
+  const _PeintreDemoLiaison(this.couleur, this.v);
+
+  final Color couleur;
+  final double v;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final SilhouetteLiquide rond = SilhouetteLiquide.disque(
+      const Offset(40, 24),
+      20,
+    );
+    final SilhouetteLiquide carte = SilhouetteLiquide.rectangle(
+      const Rect.fromLTWH(8, 72, 224, 40),
+      AppRadius.lg,
+    );
+    canvas.drawPath(
+      pontEntreSilhouettes(rond, carte, v: v),
+      Paint()..color = couleur,
+    );
+  }
+
+  @override
+  bool shouldRepaint(_PeintreDemoLiaison ancien) =>
+      ancien.couleur != couleur || ancien.v != v;
+}
+
+/// La rangee de profils et son contenu, au repos (galerie).
+class _DemoGoutteProfils extends StatelessWidget {
+  const _DemoGoutteProfils({required this.choisi});
+
+  final String choisi;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    return GoutteProfils(
+      selectionId: choisi,
+      matiere: palette.inkAccent.asBorderSide().color,
+      matiereContenu: palette.surfaceRaised.background,
+      rayonContenu: AppRadius.lg,
+      child: SelecteurProfils(
+        profils: const <ProfilSelectionnable>[
+          ProfilSelectionnable(id: 'a', prenom: 'Amina', etat: 'Dans 3 h'),
+          ProfilSelectionnable(id: 'b', prenom: 'Bilal', etat: 'Aucune séance'),
+        ],
+        selectionId: choisi,
+        onSelection: (String _) {},
+      ),
+    );
+  }
+}
 
 /// La demonstration de l'effet liquide pour la galerie : trois pastilles,
 /// celle de [actif] porte le fond doux.

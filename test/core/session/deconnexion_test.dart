@@ -18,6 +18,7 @@ import 'package:rewayah_academy/core/auth/service_auth.dart';
 import 'package:rewayah_academy/core/cache/db/app_database.dart';
 import 'package:rewayah_academy/core/cache/sync/file_rapports.dart';
 import 'package:rewayah_academy/core/enseignant/depot_cahiers.dart';
+import 'package:rewayah_academy/core/preferences/preferences_locales.dart';
 import 'package:rewayah_academy/core/session/deconnexion.dart';
 
 import '../../support/harnais.dart' show FauxServiceAuth;
@@ -550,7 +551,20 @@ void main() {
       expect(auth.deconnexions, 1);
       expect(ouvertures, 1);
       expect((await _lignes(base))['profils_foyer'], 0);
-      expect((await _lignes(base))['preference_locale'], 1);
+      // PREFERENCES-PAR-COMPTE (11/11/2026) : la table des reglages reste,
+      // mais le theme et la langue de l'appareil reviennent a « Systeme » et
+      // le pointeur vers le compte sorti est efface.
+      final Map<String, String> reglages = <String, String>{
+        for (final PreferenceLocaleData l
+            in await base.select(base.preferenceLocale).get())
+          l.clef: l.valeur,
+      };
+      expect(reglages, <String, String>{
+        clefPreferenceTheme: 'systeme',
+        clefPreferenceLangue: 'systeme',
+        clefPointeurCompte: '',
+        clefVersionPreferences: versionPreferences,
+      });
       expect(remises, 1);
     },
   );

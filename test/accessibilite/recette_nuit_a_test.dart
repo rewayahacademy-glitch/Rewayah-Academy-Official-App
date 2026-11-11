@@ -57,7 +57,6 @@ void main() {
       Routes.tuteurFoyerRecharge,
       Routes.tuteurSuivi,
       Routes.tuteurClasses,
-      Routes.tuteurClassesCatalogue,
       Routes.tuteurCompte,
       Routes.tuteurComptePreferences,
       Routes.tuteurCompteApparence,
