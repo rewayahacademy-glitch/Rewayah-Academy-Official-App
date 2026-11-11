@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/theme/app_mouvement.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/goutte_profils.dart';
 import 'package:rewayah_academy/core/widgets/selecteur_profils.dart';
@@ -33,6 +34,8 @@ class _Sonde extends StatelessWidget {
 }
 
 void main() {
+  mesureSousLePlafond();
+
   testWidgets('pendant le cou et la chute, ni le contenu ni le reste de '
       'l ecran ne sont reconstruits a chaque image', (
     WidgetTester tester,
@@ -133,6 +136,80 @@ void main() {
       'CADENCE images=$images contenu_pendant=$contenuPendant '
       'voisin_pendant=$restePendant contenu_au_toucher=$contenuAuToucher '
       'voisin_au_toucher=$resteAuToucher',
+    );
+  });
+}
+
+// GARDE-CAP (11/11/2026) : choisir un profil est une action « instantanee »
+// (DECISION-FLUIDITE §1) ; le mouvement ENTIER (cou entre les ronds, chute du
+// contenu) tient sous `AppMouvement.plafond`. Mesure en images, de pump a pump ;
+// la duree vient du plafond, jamais d'un nombre ecrit a la main.
+void mesureSousLePlafond() {
+  testWidgets('le mouvement entier tient sous le plafond de mouvement', (
+    WidgetTester tester,
+  ) async {
+    final ValueNotifier<String> selection = ValueNotifier<String>('a');
+    final ValueNotifier<String> affiche = ValueNotifier<String>('a');
+    BuildContext? ctx;
+    await tester.pumpWidget(
+      TranslationProvider(
+        child: MaterialApp(
+          theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+          home: Scaffold(
+            body: ListenableBuilder(
+              listenable: Listenable.merge(<Listenable>[selection, affiche]),
+              builder: (BuildContext context, Widget? _) => GoutteProfils(
+                selectionId: selection.value,
+                matiere: const Color(0xFF6B3FD0),
+                matiereContenu: const Color(0xFFFFFFFF),
+                rayonContenu: 16,
+                child: Builder(
+                  builder: (BuildContext c) {
+                    ctx = c;
+                    return Column(
+                      children: <Widget>[
+                        SelecteurProfils(
+                          profils: _profils,
+                          selectionId: selection.value,
+                          onSelection: (String id) => selection.value = id,
+                        ),
+                        ContenuGoutte(
+                          profilId: affiche.value,
+                          child: const Text('contenu'),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pump(const Duration(seconds: 2));
+
+    // Le toucher : selection et donnees (deja en memoire) dans la meme image.
+    selection.value = 'c';
+    affiche.value = 'c';
+    await tester.pump();
+    const Duration image = Duration(milliseconds: 8);
+    Duration ecoule = Duration.zero;
+    bool encore = true;
+    while (encore && ecoule <= AppMouvement.plafond * 3) {
+      await tester.pump(image);
+      ecoule += image;
+      encore =
+          GoutteProfils.goutteDe(ctx!) != null ||
+          GoutteProfils.chuteDe(ctx!) != null;
+    }
+    debugPrint('PLAFOND mouvement entier = ${ecoule.inMilliseconds} ms');
+    expect(
+      ecoule,
+      lessThanOrEqualTo(AppMouvement.plafond),
+      reason:
+          'le mouvement entier dure ${ecoule.inMilliseconds} ms, '
+          'au-dela du plafond ${AppMouvement.plafond.inMilliseconds} ms',
     );
   });
 }

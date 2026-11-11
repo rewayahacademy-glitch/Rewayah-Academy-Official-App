@@ -250,7 +250,7 @@ abstract final class AppMouvement {
   /// mouvement n'a pas de rebond ; les rebonds sont ceux de
   /// [ressortReception], a la rupture du cou.
   static final SpringDescription ressortGouttePro =
-      SpringDescription.withDampingRatio(mass: 1, stiffness: 260, ratio: 1);
+      SpringDescription.withDampingRatio(mass: 1, stiffness: 700, ratio: 1);
 
   /// Avancement (de la goutte, 0 a 1) ou elle atteint le rond choisi : le cou
   /// entre les deux ronds commence alors a s'amincir.
@@ -261,9 +261,15 @@ abstract final class AppMouvement {
   /// prend la selection.
   static const double ruptureGouttePro = 0.9;
 
+  /// Le temps que les deux ronds rebondissent apres la rupture du cou, puis la
+  /// goutte est finie. Le mouvement ENTIER (cou jusqu'a la rupture, environ
+  /// 150 ms, puis ce rebond) tient sous [plafond] : choisir un profil est une
+  /// action instantanee (DECISION-FLUIDITE, garde-cap 11/11/2026).
+  static const Duration rebondGouttePro = Duration(milliseconds: 200);
+
   /// La chute du contenu depuis le rond choisi : la goutte s'etale en devenant
   /// la carte.
-  static const Duration chuteContenu = Duration(milliseconds: 380);
+  static const Duration chuteContenu = Duration(milliseconds: 340);
 
   /// Part de la chute (0 a 1) ou le cou entre le rond et le contenu se rompt.
   static const double ruptureChuteContenu = 0.55;

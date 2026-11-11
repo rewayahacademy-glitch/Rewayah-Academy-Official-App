@@ -25,6 +25,7 @@
 // portee, rien ne change (l'Historique garde son selecteur tel quel).
 library;
 
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/physics.dart';
@@ -184,6 +185,7 @@ class _EtatGoutteProfils extends State<GoutteProfils>
 
   late final Listenable _tout = Listenable.merge(<Listenable>[_p, _tick]);
 
+  Timer? _fin;
   bool _actif = false;
   bool _rompu = false;
   bool _arrive = false;
@@ -243,9 +245,16 @@ class _EtatGoutteProfils extends State<GoutteProfils>
       // Le cou se rompt : les deux ronds reprennent leur forme d'un petit
       // rebond, et le rond choisi prend la selection.
       _rompu = true;
+      _p.stop();
       _rebondir(_rebondQuitte);
       _rebondir(_rebondChoisi);
       _fondu.forward(from: 0);
+      // Le mouvement entier tient sous le plafond : la goutte s'acheve au bout
+      // du rebond, sans attendre que le ressort se pose.
+      _fin?.cancel();
+      _fin = Timer(AppMouvement.rebondGouttePro, () {
+        if (mounted && _actif) _finir();
+      });
     }
   }
 
@@ -268,6 +277,7 @@ class _EtatGoutteProfils extends State<GoutteProfils>
 
   /// Termine la goutte : plus de cou, la selection est celle du rond choisi.
   void _finir() {
+    _fin?.cancel();
     _p.stop();
     _fondu.value = 1;
     if (_actif && mounted) setState(() => _actif = false);
@@ -325,6 +335,7 @@ class _EtatGoutteProfils extends State<GoutteProfils>
 
   @override
   void dispose() {
+    _fin?.cancel();
     for (final AnimationController c in <AnimationController>[
       _p,
       _fondu,
