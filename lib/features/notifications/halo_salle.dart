@@ -11,19 +11,22 @@ import 'package:go_router/go_router.dart';
 import '../../core/domain/enums.dart';
 import '../../core/enseignant/carte_seance.dart';
 import '../../core/enseignant/cta_seance.dart';
+import '../../core/enseignant/modeles_enseignant.dart';
+import '../../core/enseignant/service_enseignant.dart';
 import '../../core/foyer/selection_eleve.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/router/routes.dart';
+import '../../core/tc_horloge/cadence_seance.dart';
 import '../../core/widgets/halo_compte.dart';
 import '../accueil_famille/ancre_horloge_serveur.dart';
 import '../accueil_famille/salle_rejoignable.dart';
 import '../journee/journee_page.dart'
     show maintenantJourneeProvider, rejoindreSeanceEnseignant;
 
-/// Le halo du cercle Compte, vivant : il se relit toutes les
-/// [AncreHorlogeServeur.cadence] (l'instant serveur du tuteur, celui de la
-/// Journee de l'enseignant), pour s'allumer et s'eteindre seul quand la salle
-/// ouvre ou ferme. [notifications] est le halo de la cloche (Urgent, Nouveau) ;
+/// Le halo du cercle Compte, vivant : il s'allume et s'eteint seul quand la
+/// salle ouvre ou ferme, au meme instant que le bouton de l'ecran (tuteur :
+/// l'instant serveur partage de la coquille ; enseignant : la cadence de la
+/// Journee). [notifications] est le halo de la cloche (Urgent, Nouveau) ;
 /// [construire] recoit le halo retenu.
 ///
 /// Le minuteur vit dans ce widget, comme celui de l'Accueil : il s'arrete avec
@@ -60,19 +63,29 @@ class _EtatHaloVivant extends ConsumerState<HaloVivant>
   DateTime Function() get horlogeAppareil => widget.horlogeAppareil;
 
   @override
-  Widget build(BuildContext context) => widget.construire(
-    context,
-    haloPrioritaire(
-      notifications: widget.notifications,
-      salle: switch (widget.role) {
-        AppRole.guardian => _haloTuteur(ref, maintenantServeur()),
-        AppRole.teacher => _haloEnseignant(
-          ref,
-          ref.watch(maintenantJourneeProvider)(),
-        ),
-        _ => null,
-      },
+  Widget build(BuildContext context) => switch (widget.role) {
+    // Le tuteur : l'instant de l'HorlogeServeurPartagee de la coquille, celui
+    // de l'Accueil et de la Classe.
+    AppRole.guardian => _avec(_haloTuteur(ref, maintenantServeur())),
+    // L'enseignant : la cadence de la Journee (meme horloge, memes bascules
+    // a l'instant exact, chaque minute pleine), jamais un autre battement.
+    AppRole.teacher => CadenceSeance(
+      lire: ref.watch(maintenantJourneeProvider),
+      instants: <DateTime>[
+        for (final SeanceEnseignant s
+            in ref.watch(seancesEnseignantProvider).value ??
+                const <SeanceEnseignant>[])
+          ...basculesSeance(s.debut, s.fin),
+      ],
+      constructeur: (DateTime maintenant) =>
+          _avec(_haloEnseignant(ref, maintenant)),
     ),
+    _ => _avec(null),
+  };
+
+  Widget _avec(EtatHaloCompte? salle) => widget.construire(
+    context,
+    haloPrioritaire(notifications: widget.notifications, salle: salle),
   );
 }
 
