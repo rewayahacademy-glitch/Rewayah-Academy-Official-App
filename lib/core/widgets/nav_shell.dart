@@ -836,17 +836,22 @@ class _BarreFlottante extends StatelessWidget {
               : AppSpacing.lg);
     final Widget pilule = DecoratedBox(
       decoration: BoxDecoration(
-        color: palette.surfaceRaised.background,
+        // LIQUIDE-MATIERE (directeur, 11/11/2026) : la matiere de la barre,
+        // sans contour (il cassait l'illusion) ; ombre douce en clair,
+        // elevation tonale et ombre en sombre.
+        color: guide
+            ? palette.surfaceRaised.background
+            : palette.surfaceMatiere.background,
         borderRadius: guide ? metriques.arrondi : AppRadius.arrondiFull,
-        // Guide : contour franc (`borderStrong`) a la place du filet
-        // de carte, pour que la barre se detache du fond.
-        border: Border.fromBorderSide(
-          guide
-              ? palette.borderStrong.asBorderSide(
+        // Guide (sans effet liquide) : contour franc (`borderStrong`), pour
+        // que la barre se detache du fond (MA-NAV-1).
+        border: guide
+            ? Border.fromBorderSide(
+                palette.borderStrong.asBorderSide(
                   width: NavShell.epaisseurContourGuide,
-                )
-              : palette.contourCarte.asBorderSide(),
-        ),
+                ),
+              )
+            : null,
         boxShadow: AppElevation.niveau1(palette.ombre),
       ),
       child: ConstrainedBox(
@@ -907,7 +912,11 @@ class _BarreFlottante extends StatelessWidget {
               : Row(
                   children: <Widget>[
                     Expanded(
-                      child: KeyedSubtree(key: cles.pilule, child: pilule),
+                      // LIQUIDE-MATIERE : le bout de la pilule reprend sa
+                      // forme d'un petit rebond (mesure, rebond compris).
+                      child: BordLiquide(
+                        child: KeyedSubtree(key: cles.pilule, child: pilule),
+                      ),
                     ),
                     // MA-CMD-1 : en Mode Accessibilite, quatre cibles de 72
                     // tiennent a 320 ; l'ecart avec la tuile se resserre a 4,
@@ -915,8 +924,8 @@ class _BarreFlottante extends StatelessWidget {
                     // Le rond reserve deja sa place choisie (64) : 8 jusqu'a la
                     // pilule, meme ouvert (decision du 10/11/2026).
                     if (guide && serre) Ecart.hXs else Ecart.hSm,
-                    // LIQUIDE-MATIERE : le cercle recoit la goutte de matiere
-                    // d'un leger rebond.
+                    // LIQUIDE-MATIERE : le cercle se detache de la pilule (ou
+                    // y est absorbe) par un cou de matiere.
                     ReceptionLiquide(
                       child: _CercleCompte(
                         key: cles.cercle,
@@ -952,11 +961,12 @@ class _BarreFlottante extends StatelessWidget {
       indexActif: _compteActif ? onglets.length : _actifOnglet,
       couleur: palette.washAccent.background,
       // LIQUIDE-MATIERE (directeur, 11/11/2026) : la pilule et le cercle sont
-      // une meme matiere ; le pont qui les relie en a le fond, le contour et
+      // une meme matiere, sans contour ; le cou qui les relie en a le fond et
       // l'ombre, jamais la couleur de selection.
-      matiere: palette.surfaceRaised.background,
-      contour: palette.contourCarte.asBorderSide(),
+      matiere: palette.surfaceMatiere.background,
       ombres: AppElevation.niveau1(palette.ombre),
+      rapportDisque:
+          MesuresCercle.compte.rondRepos / MesuresCercle.compte.rondChoisi,
       child: rangee,
     );
   }
@@ -1496,10 +1506,9 @@ class _CercleCompte extends StatelessWidget {
         child: CercleSelectionnable(
           choisi: actif,
           // LIQUIDE-MATIERE : un morceau de la meme matiere que la pilule
-          // (son fond, son contour, son ombre) ; l'accent n'y vient qu'une
-          // fois le pont rompu, au ressort.
-          matiere: palette.surfaceRaised.background,
-          contour: palette.contourCarte.asBorderSide(),
+          // (son fond, son ombre, aucun contour) ; l'accent n'y vient qu'une
+          // fois le cou rompu.
+          matiere: palette.surfaceMatiere.background,
           fonduAccent: IndicateurLiquide.fonduDestination(context),
           // Le halo entoure la photo, a sa taille du moment.
           photo: (double d) => HaloCompte(

@@ -78,23 +78,21 @@ class CercleSelectionnable extends StatefulWidget {
     this.mesures = MesuresCercle.compte,
     this.ombre = true,
     this.matiere,
-    this.contour,
     this.fonduAccent,
     super.key,
   });
 
-  /// LIQUIDE-MATIERE : le fondu de la couleur d'accent quand le rond devient
-  /// choisi (la goutte de matiere l'a rejoint) ; la taille, elle, suit le
-  /// ressort des le toucher. Nul : l'accent suit la taille.
+  /// LIQUIDE-MATIERE : le fondu de la couleur de selection sur la
+  /// destination (0 pendant le detachement, puis 1). Choisi, l'accent
+  /// l'attend ; quitte, il disparait des que le fondu retombe a 0. La
+  /// taille suit le ressort des le toucher. Nul : l'accent suit la taille.
   final Animation<double>? fonduAccent;
 
   /// LIQUIDE-MATIERE (directeur, 11/11/2026) : le fond du rond au repos,
-  /// celui de la pilule dont il est un morceau (la barre flottante). Nul : le
-  /// fin liseré clair (les profils de l'Accueil).
+  /// celui de la pilule dont il est un morceau (la barre flottante), sans
+  /// contour ; la photo garde son fin liseré clair, qui est son bord a elle.
+  /// Nul : le fond du rond est lui-meme le liseré (les profils de l'Accueil).
   final Color? matiere;
-
-  /// Le contour du rond, celui de la pilule (nul : aucun).
-  final BorderSide? contour;
 
   /// Vrai quand le rond est choisi (la destination ou le profil ouvert).
   final bool choisi;
@@ -112,6 +110,9 @@ class CercleSelectionnable extends StatefulWidget {
   @override
   State<CercleSelectionnable> createState() => _EtatCercleSelectionnable();
 }
+
+/// L'epaisseur du liseré de la photo, quand le rond est de matiere.
+const double _lisere = 1.5;
 
 class _EtatCercleSelectionnable extends State<CercleSelectionnable>
     with SingleTickerProviderStateMixin {
@@ -162,25 +163,38 @@ class _EtatCercleSelectionnable extends State<CercleSelectionnable>
             final Color clair =
                 widget.matiere ?? palette.lisereClair(epaisseur: 1).color;
             final Color accent = palette.inkAccent.asBorderSide().color;
-            // Choisi : la couleur attend la goutte (le fondu), la taille non.
+            // Choisi : la couleur attend la rupture du cou (le fondu), la
+            // taille non. Quitte : la couleur part des le toucher, pour que
+            // le rond rejoigne la pilule en simple matiere.
             final Animation<double>? fondu = widget.fonduAccent;
-            final double tCouleur = widget.choisi && fondu != null
+            final double tCouleur = fondu != null
                 ? math.min(t, fondu.value)
                 : t;
             return DecoratedBox(
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color: Color.lerp(clair, accent, tCouleur),
-                border: widget.contour == null
-                    ? null
-                    : Border.fromBorderSide(widget.contour!),
                 boxShadow: widget.ombre
                     ? AppElevation.niveau1(palette.ombre)
                     : null,
               ),
               child: SizedBox.square(
                 dimension: rond,
-                child: Center(child: widget.photo(photo)),
+                child: Center(
+                  child: widget.matiere == null
+                      ? widget.photo(photo)
+                      : DecoratedBox(
+                          // Le liseré de la photo : son bord, pas la matiere.
+                          position: DecorationPosition.foreground,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.fromBorderSide(
+                              palette.lisereClair(epaisseur: _lisere),
+                            ),
+                          ),
+                          child: widget.photo(photo),
+                        ),
+                ),
               ),
             );
           },
