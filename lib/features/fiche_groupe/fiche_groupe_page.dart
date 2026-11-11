@@ -594,11 +594,23 @@ class _Seance extends ConsumerWidget {
     final void Function(String sessionId) preparer =
         onPreparer ?? _versPreparation(context, groupeId);
 
+    final bool annulee = ref.watch(seanceAnnuleeProvider(groupeId));
+    final bool lectureEchouee = flux.hasError && tic == null;
     return CarteSession(
       espace: espace,
+      // NAV-REFONTE 2c : la meme fonction pure, avec les entrees de la fiche
+      // (dette ecrite : sa classe et son horloge ne viennent pas encore de
+      // `entreeGroupeProvider`).
+      emplacement: CarteSession.emplacementPour(
+        espace: espace,
+        horsLigne: horsLigne,
+        annulee: annulee,
+        lectureEchouee: lectureEchouee,
+        seanceParServeur: true,
+      ),
       horsLigne: horsLigne,
-      annulee: ref.watch(seanceAnnuleeProvider(groupeId)),
-      lectureEchouee: flux.hasError && tic == null,
+      annulee: annulee,
+      lectureEchouee: lectureEchouee,
       onReessayer: () => ref
         ..invalidate(horsLigneProvider)
         ..invalidate(horlogeGroupeProvider(groupeId))

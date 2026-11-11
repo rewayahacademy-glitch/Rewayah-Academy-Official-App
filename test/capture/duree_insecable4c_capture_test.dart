@@ -26,6 +26,7 @@ import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/features/tc_espace_groupe/carte_session.dart';
 
 import '../features/classe_tuteur/support_classe.dart' as classe;
+import '../support/carte_session_fournie.dart';
 import '../support/demo/classe_demo.dart';
 import 'outil_capture.dart';
 
@@ -185,7 +186,7 @@ void main() {
               home: Scaffold(
                 body: SingleChildScrollView(
                   padding: const EdgeInsets.all(16),
-                  child: CarteSession(
+                  child: carteSessionDeTest(
                     espace: _espaceAttente(),
                     onRejoindre: () {},
                   ),
