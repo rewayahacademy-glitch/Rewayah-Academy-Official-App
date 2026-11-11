@@ -9,6 +9,8 @@ import '../../core/planning/service_planning.dart';
 import '../../core/presence/service_presence.dart';
 import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/session/session_controleur.dart';
+import '../../core/session/session_state.dart';
 import '../../core/suivi/service_suivi.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -84,8 +86,15 @@ class _SuiviElevePageEtat extends ConsumerState<SuiviElevePage> {
     );
 
     return PageShell(
-      // Le titre de la page est celui de l'onglet (garde-cap, 11/11/2026).
-      titre: t.nav.eleve.maClasse,
+      // Le titre de la page est celui de l'onglet actif (garde-cap,
+      // 11/11/2026) : « Suivi » dans la barre de l'eleve adulte, « Ma classe »
+      // sinon. Meme capacite que la barre.
+      titre:
+          ref.watch(
+            sessionProvider.select((SessionState s) => s.barreEleveAdulte),
+          )
+          ? t.nav.eleve.suivi
+          : t.nav.eleve.maClasse,
       defilante: false,
       // Plus d'`Expanded` ici : `PageShell` borne desormais la hauteur de son
       // contenu en mode `defilante: false`.

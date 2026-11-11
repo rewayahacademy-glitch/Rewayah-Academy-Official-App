@@ -183,6 +183,11 @@ class SessionState {
   /// Compte (garde-cap, 11/11/2026).
   bool get aUneAideEleve => role == AppRole.student;
 
+  /// La barre de l'eleve adulte (lot B2 : Aujourd'hui, Apprendre, Suivi,
+  /// Profil), la meme condition que la coquille eleve d'`app_router.dart`. Une
+  /// page de la barre s'intitule comme son onglet en la lisant.
+  bool get barreEleveAdulte => role == AppRole.student && eleveAutonome;
+
   /// La capacite de lire le Coran dans le lecteur dedie : l'eleve, et
   /// l'adulte eleve autonome servi par le serveur (C-24).
   bool get peutLireLeCoran => role == AppRole.student || eleveAutonome;

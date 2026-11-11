@@ -21,6 +21,7 @@ import 'package:rewayah_academy/core/identite/port_matricule.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart';
 import 'package:rewayah_academy/core/preferences/preferences_locales.dart';
 import 'package:rewayah_academy/core/presence/service_presence.dart';
+import 'package:rewayah_academy/core/session/port_capacite_eleve.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/suivi/service_suivi.dart';
@@ -396,6 +397,12 @@ void capturesP4() {
         SuiviElevePage(horloge: () => DateTime(2026, 11, 11, 10)),
         AppRole.student,
       ),
+      // L'eleve adulte : la meme page s'intitule « Suivi », comme son onglet.
+      (
+        'ma_classe_adulte',
+        SuiviElevePage(horloge: () => DateTime(2026, 11, 11, 10)),
+        AppRole.student,
+      ),
       (
         'interface_guidee',
         MonEspaceAccessibilite(
@@ -430,6 +437,10 @@ void capturesP4() {
                 echelleTexte: echelle,
                 surcharges: <Override>[
                   ..._surcharges(appRole),
+                  if (role == 'ma_classe_adulte')
+                    portCapaciteEleveProvider.overrideWithValue(
+                      const PortCapaciteEleveFactice(autonomes: <String>{'p1'}),
+                    ),
                   // « Ma classe » : aucune seance passee (donnees de test).
                   seancesDeMonSuiviProvider.overrideWith(
                     (Ref _) async => const <Seance>[],
