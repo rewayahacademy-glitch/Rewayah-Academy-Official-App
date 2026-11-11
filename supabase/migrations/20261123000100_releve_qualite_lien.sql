@@ -1,14 +1,17 @@
 -- ############################################################################
 -- ##  BROUILLON. NE PAS INSTALLER avant :                                    ##
--- ##    (1) la phrase d'information affichee dans l'application ;            ##
--- ##    (2) la relecture d'un juriste (§10 du dossier                        ##
--- ##        docs/current/salle/DROIT-RELEVE-QUALITE.md).                     ##
+-- ##   (a) la phrase d'information affichee dans l'application, les mentions ##
+-- ##       de la politique de confidentialite en ligne, et l'avis de sa      ##
+-- ##       modification diffuse aux personnes ;                              ##
+-- ##   (b) chaque point de droit tranche par le texte, consequence codee     ##
+-- ##       (docs/current/salle/DROIT-RELEVE-QUALITE.md §10) ;                ##
+-- ##   (c) la page a coller par le directeur (un effacement, dans la purge). ##
 -- ##  Installer cette migration commence la collecte le jour meme.           ##
 -- ############################################################################
 --
 -- RESEAU-PREUVE (directeur, 11/11/2026 ; cahier de la salle §6, defaut R-2) :
--- le releve de la qualite de connexion de chaque participant d'une seance,
--- garde comme preuve pendant DEUX ANS (730 jours), lu par la direction seule.
+-- le releve de la qualite de connexion de l'enseignant et des eleves adultes
+-- d'une seance, garde comme preuve pendant 180 jours, lu par la direction seule.
 --
 -- Ce fichier n'est installe nulle part (ni production, ni base de test, ni
 -- pile locale partagee). Il a ete rejoue sur un Postgres nu a part, comme la
@@ -21,14 +24,15 @@
 -- Sans BEGIN ni COMMIT de premier niveau.
 --
 -- Decisions : `docs/current/salle/JOURNAL-DECISIONS.md` D-004 (proposition),
--- D-024 (ce qui est code). Duree : 180 jours decides le matin du 11/11/2026 ;
--- revue l'apres-midi par le pilote, sur delegation du directeur : deux ans,
--- pour pouvoir retrouver une seance d'il y a un an.
+-- D-024 (ce qui est code). Duree, le 11/11/2026 : 180 jours le matin ; deux ans
+-- en debut d'apres-midi, sur une question du directeur mal comprise par le
+-- pilote ; retour a 180 jours en fin d'apres-midi.
 --
 -- CE QUI EST GARDE, et rien d'autre (minimisation, RGPD art. 5(1)(c), loi
 -- P-39.1 art. 5) : une ligne quand l'etat du lien d'un participant change.
 --   session_id   : de quelle seance on parle (la contestation porte sur une seance).
---   profile_id   : de qui est ce lien (l'enseignant ou un eleve ; jamais un observateur).
+--   profile_id   : de qui est ce lien (l'enseignant ou un eleve ADULTE ; jamais
+--                  un eleve mineur, jamais un observateur).
 --   etat         : bon, faible ou perdu. Trois mots, pas une mesure : assez pour
 --                  repondre a « a-t-on pu s'entendre ? ».
 --   micro_ouvert : au moment du changement, ce participant parlait-il a la classe ?
@@ -41,40 +45,54 @@
 -- lecture le calcule a partir des lignes et des entrees et sorties que le
 -- serveur de visio a deja annoncees (`session_events`).
 --
+-- RIEN N'EST GARDE POUR UN ELEVE MINEUR. Trois textes le commandent
+-- (`DROIT-RELEVE-QUALITE.md` §10, point 3) : au Quebec, les renseignements d'un
+-- mineur de moins de 14 ans ne se recueillent pas aupres de lui sans le
+-- consentement du titulaire de l'autorite parentale (loi P-39.1, art. 4.1) ;
+-- le code britannique des enfants ne laisse garder que le minimum necessaire
+-- au service auquel l'enfant prend part (norme 8) ; le RGPD protege davantage
+-- l'enfant dans la mise en balance (art. 6(1)(f)). La base ne connait ni l'age
+-- ni le pays d'un eleve, seulement « mineur » ou « autonome »
+-- (`student_profiles.student_type`) : la garde est donc « aucun eleve qui
+-- n'est pas autonome », dans la fonction d'ecriture, et elle ne se leve que
+-- par une migration datee, quand l'accord du parent existera.
+--
 -- QUI ECRIT : l'application du participant, par `noter_qualite_lien`. Le
 -- serveur de visio ne dit la qualite d'un lien qu'aux applications connectees
 -- (message de signalisation) : elle n'est ni dans ses webhooks ni dans la liste
 -- des participants que le serveur peut lui demander (verifie dans les
 -- definitions du protocole employees par les fonctions Edge, version 1.53.4).
 -- La fonction verifie : compte valide ; l'appelant ecrit SA ligne (ou celle
--- d'un eleve de son foyer, quand l'enfant suit le cours depuis le compte de son
+-- d'un eleve adulte de son foyer qui suit le cours depuis le compte de son
 -- tuteur) ; le serveur lui a bien delivre un jeton d'enseignant ou d'eleve pour
--- cette seance ; la seance est en cours (60 minutes avant, 60 minutes apres) ;
--- l'etat est un des trois mots ; pas plus d'une ligne toutes les 8 secondes,
--- jamais deux fois le meme etat, 400 lignes au plus par participant et par seance.
+-- cette seance ; un eleve est autonome ; la seance est en cours (60 minutes
+-- avant, 60 minutes apres) ; l'etat est un des trois mots ; pas plus d'une
+-- ligne toutes les 8 secondes, jamais deux fois le meme etat, 400 lignes au
+-- plus par participant et par seance.
 --
 -- QUI LIT : la direction seule (`releve_qualite_seance`), chaque lecture ecrite
 -- au journal d'audit. Ni l'enseignant, ni la famille, ni le controleur, ni la
 -- comptabilite. Aucun acces direct a la table (aucune politique, aucun droit).
+-- Une personne qui veut ses donnees les demande a la direction (droit d'acces,
+-- RGPD art. 15) : aucune lecture directe n'est codee pour elle.
 --
--- LA LECTURE PAR UN PARENT EST PREPAREE, ET FERMEE : `releve_qualite_enfant`
--- (le tuteur, pour un eleve de son foyer : la frise de son enfant, et pour
--- l'enseignant seulement « present » ou « absent », jamais la qualite de son
--- lien) existe et est testee, mais AUCUN role client n'a le droit de l'executer.
--- Elle ne s'ouvre que par une decision datee, apres le juriste
--- (`DROIT-RELEVE-QUALITE.md` §11.10) : une ligne de GRANT, dans une autre migration.
+-- L'OPPOSITION (RGPD art. 21) : `releve_qualite_oppositions` porte les personnes
+-- dont l'opposition a ete acceptee par la direction ; la fonction d'ecriture
+-- refuse alors toute ligne pour elles. Aucun ecran : la ligne s'ajoute par une
+-- migration datee, sur decision de la direction.
 --
 -- NON MODIFIABLE : aucune fonction ne modifie une ligne, et un declencheur
 -- refuse toute modification, meme par une fonction du serveur.
 --
--- DEUX ANS : `private.purger_releve_qualite()`, chaque jour a 03:41 UTC par
+-- 180 JOURS : `private.purger_releve_qualite()`, chaque jour a 03:41 UTC par
 -- pg_cron quand elle existe (meme mecanisme que la purge du journal des taches,
 -- 20261120200100). Le releve d'une seance part en entier, quand sa derniere
--- ligne a plus de 730 jours.
+-- ligne a plus de 180 jours.
 
 DO $preflight$
 BEGIN
-  IF pg_catalog.to_regclass('public.releve_qualite_lien') IS NOT NULL THEN
+  IF pg_catalog.to_regclass('public.releve_qualite_lien') IS NOT NULL
+     OR pg_catalog.to_regclass('public.releve_qualite_oppositions') IS NOT NULL THEN
     RAISE EXCEPTION 'RESEAU-PREUVE : deja installee';
   END IF;
   IF pg_catalog.to_regprocedure('public.app_account_valid()') IS NULL
@@ -91,8 +109,8 @@ BEGIN
            ('video_token_grants', 'role'), ('video_token_grants', 'emis_le'),
            ('session_events', 'session_id'), ('session_events', 'profile_id'),
            ('session_events', 'event_type'), ('session_events', 'server_ts'),
-           ('session_participants', 'session_id'), ('session_participants', 'profile_id'),
-           ('session_participants', 'role'))) <> 15 THEN
+           ('student_profiles', 'profile_id'), ('student_profiles', 'student_type'),
+           ('student_profiles', 'deleted_at'))) <> 15 THEN
     RAISE EXCEPTION 'RESEAU-PREUVE : une colonne lue est absente';
   END IF;
 END
@@ -117,9 +135,9 @@ CREATE INDEX releve_qualite_lien_dernier_ix
 
 COMMENT ON TABLE public.releve_qualite_lien IS
   'RESEAU-PREUVE (11/11/2026) : l''etat du lien (bon, faible, perdu) de l''enseignant et des eleves '
-  'pendant une seance, une ligne par changement, heure du serveur. Donnee personnelle, dont des '
-  'enfants : aucun son, aucune image, aucune adresse IP. Ecrite par noter_qualite_lien, lue par la '
-  'direction seule (releve_qualite_seance), purgee apres deux ans (private.purger_releve_qualite). '
+  'adultes pendant une seance, une ligne par changement, heure du serveur. Donnee personnelle ; rien '
+  'pour un eleve mineur ; aucun son, aucune image, aucune adresse IP. Ecrite par noter_qualite_lien, lue par la '
+  'direction seule (releve_qualite_seance), purgee apres 180 jours (private.purger_releve_qualite). '
   'Ajout seul, aucun acces direct.';
 COMMENT ON COLUMN public.releve_qualite_lien.etat IS
   'bon, faible ou perdu : la note du serveur de visio, filtree par l''application (3 s tenues).';
@@ -150,6 +168,23 @@ CREATE TRIGGER releve_qualite_lien_sans_modification
   FOR EACH ROW EXECUTE FUNCTION private.releve_qualite_sans_modification();
 
 -- ---------------------------------------------------------------------------
+-- 1 bis. Les oppositions acceptees : plus aucune ligne pour ces personnes
+-- ---------------------------------------------------------------------------
+CREATE TABLE public.releve_qualite_oppositions (
+  profile_id uuid PRIMARY KEY REFERENCES public.profiles(id),
+  notee_le   timestamptz NOT NULL DEFAULT pg_catalog.now()
+);
+ALTER TABLE public.releve_qualite_oppositions OWNER TO postgres;
+
+COMMENT ON TABLE public.releve_qualite_oppositions IS
+  'RESEAU-PREUVE (11/11/2026) : les personnes dont l''opposition au releve de qualite a ete acceptee '
+  'par la direction (RGPD art. 21). noter_qualite_lien refuse toute ligne pour elles. Aucun acces '
+  'direct ; une ligne s''ajoute par une migration datee.';
+
+ALTER TABLE public.releve_qualite_oppositions ENABLE ROW LEVEL SECURITY;
+REVOKE ALL ON public.releve_qualite_oppositions FROM PUBLIC, anon, authenticated, service_role, agent_ro;
+
+-- ---------------------------------------------------------------------------
 -- 2. L'ecriture : chacun sa ligne, pendant la seance, a un rythme borne
 -- ---------------------------------------------------------------------------
 CREATE FUNCTION public.noter_qualite_lien(
@@ -169,7 +204,9 @@ DECLARE
   v_nombre  integer;
 BEGIN
   -- Qui : un compte valide, pour lui-meme ; ou un tuteur pour un eleve de son
-  -- foyer (l'enfant suit le cours depuis le compte de son tuteur, D6 du 24/10).
+  -- foyer qui suit le cours depuis le compte du tuteur (D6 du 24/10). Plus bas,
+  -- un eleve mineur est refuse : par ce chemin, seul un eleve adulte du foyer
+  -- peut avoir une ligne.
   IF NOT coalesce(
     public.app_account_valid()
     AND p_session_id IS NOT NULL
@@ -198,6 +235,26 @@ BEGIN
     v_role = 'student' OR (v_role = 'teacher' AND p_profile_id = auth.uid()),
     false
   ) THEN
+    RAISE EXCEPTION 'releve refuse' USING errcode = '42501';
+  END IF;
+
+  -- Une opposition acceptee par la direction : plus aucune ligne.
+  IF EXISTS (
+    SELECT 1 FROM public.releve_qualite_oppositions o WHERE o.profile_id = p_profile_id
+  ) THEN
+    RAISE EXCEPTION 'releve refuse' USING errcode = '42501';
+  END IF;
+
+  -- RIEN POUR UN ELEVE MINEUR : seul un eleve « autonome » (adulte) a une
+  -- ligne. Un eleve mineur, ou dont le profil d'eleve ne se lit pas, est refuse
+  -- avant toute ecriture (loi P-39.1 art. 4.1, code britannique des enfants
+  -- norme 8, RGPD art. 6(1)(f)). Exigence positive : sans « autonome », refus.
+  IF v_role = 'student' AND NOT coalesce((
+    SELECT sp.student_type = 'autonomous'
+      FROM public.student_profiles sp
+     WHERE sp.profile_id = p_profile_id
+       AND sp.deleted_at IS NULL
+  ), false) THEN
     RAISE EXCEPTION 'releve refuse' USING errcode = '42501';
   END IF;
 
@@ -265,13 +322,15 @@ GRANT EXECUTE ON FUNCTION public.noter_qualite_lien(uuid, uuid, text, boolean) T
 
 COMMENT ON FUNCTION public.noter_qualite_lien(uuid, uuid, text, boolean) IS
   'RESEAU-PREUVE (11/11/2026) : ecrit une ligne du releve de qualite (bon, faible, perdu ; micro '
-  'ouvert ou non) pour le participant lui-meme, ou pour un eleve du foyer du tuteur appelant. '
-  'Exige un jeton video d''enseignant ou d''eleve delivre pour la seance et la fenetre de la seance '
-  '(42501 sinon). Rend false sans rien ecrire : etat inconnu, moins de 8 s depuis la derniere ligne, '
+  'ouvert ou non) pour le participant lui-meme, ou pour un eleve adulte du foyer du tuteur appelant. '
+  'Exige un jeton video d''enseignant ou d''eleve delivre pour la seance et la fenetre de la seance ; '
+  'refuse tout eleve mineur (student_type autre que autonomous) et toute personne dont l''opposition '
+  'a ete acceptee (releve_qualite_oppositions) : 42501 dans tous ces cas. '
+  'Rend false sans rien ecrire : etat inconnu, moins de 8 s depuis la derniere ligne, '
   'etat inchange, 400 lignes atteintes. Heure du serveur.';
 
 -- ---------------------------------------------------------------------------
--- 3. La frise d'une seance : une seule requete, sans garde, sans droit client
+-- 3. La lecture : la direction seule, chaque lecture au journal d'audit
 -- ---------------------------------------------------------------------------
 -- Une ligne par evenement, dans l'ordre : les changements d'etat ecrits par
 -- les appareils, et les entrees et sorties que le serveur de visio a annoncees
@@ -280,8 +339,7 @@ COMMENT ON FUNCTION public.noter_qualite_lien(uuid, uuid, text, boolean) IS
 -- avant le premier releve), `duree_secondes` le temps jusqu'a la ligne suivante
 -- de la meme personne (ou jusqu'a la fin prevue de la seance). Le resume se
 -- calcule de la : somme des durees par etat, nombre de sorties.
--- Les deux lectures ci-dessous l'appellent ; chacune porte sa garde et sa trace.
-CREATE FUNCTION private.releve_qualite_frise(p_session_id uuid)
+CREATE FUNCTION public.releve_qualite_seance(p_session_id uuid)
 RETURNS TABLE (
   profile_id uuid,
   role_seance text,
@@ -292,11 +350,25 @@ RETURNS TABLE (
   etat_courant text,
   duree_secondes integer
 )
-LANGUAGE sql
-STABLE
+LANGUAGE plpgsql
+VOLATILE
 SECURITY DEFINER
 SET search_path = ''
 AS $function$
+#variable_conflict use_column
+BEGIN
+  IF NOT coalesce(public.app_account_valid() AND public.app_role() = 'admin', false) THEN
+    RAISE EXCEPTION 'lecture du releve reservee a la direction' USING errcode = '42501';
+  END IF;
+  IF p_session_id IS NULL THEN
+    RETURN;
+  END IF;
+
+  -- Tracabilite des acces : chaque lecture est ecrite au journal d'audit.
+  PERFORM public.log_sensitive_access(
+    'lecture_releve_qualite', 'releve_qualite_lien', p_session_id::text, '{}'::jsonb);
+
+  RETURN QUERY
   WITH lignes AS (
     SELECT r.profile_id AS qui, r.releve_le AS quand, r.etat AS quoi,
            r.micro_ouvert AS micro, 'appareil'::text AS origine, r.id AS rang
@@ -353,48 +425,7 @@ AS $function$
          END
     FROM avec_etat a
     LEFT JOIN public.sessions s ON s.id = p_session_id
-   ORDER BY a.quand, a.qui, a.origine DESC, a.rang
-$function$;
-ALTER FUNCTION private.releve_qualite_frise(uuid) OWNER TO postgres;
-REVOKE ALL ON FUNCTION private.releve_qualite_frise(uuid) FROM PUBLIC, anon, authenticated, service_role, agent_ro;
-
-COMMENT ON FUNCTION private.releve_qualite_frise(uuid) IS
-  'RESEAU-PREUVE (11/11/2026) : la frise du releve de qualite d''une seance (changements d''etat, '
-  'entrees et sorties, etat en vigueur et sa duree). Sans garde : aucun EXECUTE client ; appelee par '
-  'releve_qualite_seance (direction) et releve_qualite_enfant (tuteur, fermee).';
-
--- ---------------------------------------------------------------------------
--- 4. La lecture de la direction, chaque lecture au journal d'audit
--- ---------------------------------------------------------------------------
-CREATE FUNCTION public.releve_qualite_seance(p_session_id uuid)
-RETURNS TABLE (
-  profile_id uuid,
-  role_seance text,
-  instant timestamp with time zone,
-  evenement text,
-  micro_ouvert boolean,
-  source text,
-  etat_courant text,
-  duree_secondes integer
-)
-LANGUAGE plpgsql
-VOLATILE
-SECURITY DEFINER
-SET search_path = ''
-AS $function$
-BEGIN
-  IF NOT coalesce(public.app_account_valid() AND public.app_role() = 'admin', false) THEN
-    RAISE EXCEPTION 'lecture du releve reservee a la direction' USING errcode = '42501';
-  END IF;
-  IF p_session_id IS NULL THEN
-    RETURN;
-  END IF;
-
-  -- Tracabilite des acces (CNIL, guide des durees : archive a acces restreint).
-  PERFORM public.log_sensitive_access(
-    'lecture_releve_qualite', 'releve_qualite_lien', p_session_id::text, '{}'::jsonb);
-
-  RETURN QUERY SELECT f.* FROM private.releve_qualite_frise(p_session_id) f;
+   ORDER BY a.quand, a.qui, a.origine DESC, a.rang;
 END;
 $function$;
 ALTER FUNCTION public.releve_qualite_seance(uuid) OWNER TO postgres;
@@ -408,109 +439,11 @@ COMMENT ON FUNCTION public.releve_qualite_seance(uuid) IS
   'au journal d''audit (lecture_releve_qualite).';
 
 -- ---------------------------------------------------------------------------
--- 5. La lecture par un parent : PREPAREE, FERMEE (aucun EXECUTE client)
--- ---------------------------------------------------------------------------
--- Demande du directeur (11/11/2026) : « permettre a un parent ou un admin de
--- chercher le rapport d'il y a 1 an pour un eleve un jour precis ». Ce que le
--- parent verrait, au plus sobre (`DROIT-RELEVE-QUALITE.md` §11.10) :
---   * la frise de SON enfant (eleve de son foyer, inscrit a cette seance) ;
---   * pour l'enseignant, seulement ses entrees et ses sorties annoncees par le
---     serveur de visio (present ou absent). JAMAIS l'etat de son lien ni son
---     micro : c'est une donnee de l'enseignant (RGPD art. 15(4)) ;
---   * rien sur les autres eleves.
--- La fonction ne rend aucun identifiant : `qui` vaut 'eleve' ou 'enseignant'.
--- Chaque lecture est ecrite au journal d'audit.
--- FERMEE : aucun role client ne peut l'executer. Elle attend la decision du
--- directeur et la relecture du juriste (droit d'acces direct d'un parent,
--- donnee de presence de l'enseignant montree a une famille, information des
--- enseignants). L'ouvrir = une ligne de GRANT a `authenticated`, par une
--- migration datee.
-CREATE FUNCTION public.releve_qualite_enfant(p_session_id uuid, p_eleve_id uuid)
-RETURNS TABLE (
-  qui text,
-  instant timestamp with time zone,
-  evenement text,
-  micro_ouvert boolean,
-  etat_courant text,
-  duree_secondes integer
-)
-LANGUAGE plpgsql
-VOLATILE
-SECURITY DEFINER
-SET search_path = ''
-AS $function$
-BEGIN
-  -- Le tuteur, compte valide, pour un eleve de SON foyer inscrit a cette seance.
-  IF NOT coalesce(
-    public.app_account_valid()
-    AND public.app_role() = 'guardian'
-    AND p_session_id IS NOT NULL
-    AND p_eleve_id IS NOT NULL
-    AND public.est_du_foyer(p_eleve_id)
-    AND EXISTS (
-      SELECT 1 FROM public.session_participants sp
-       WHERE sp.session_id = p_session_id
-         AND sp.profile_id = p_eleve_id
-         AND sp.role = 'student'
-    ),
-    false
-  ) THEN
-    RAISE EXCEPTION 'lecture du releve refusee' USING errcode = '42501';
-  END IF;
-
-  PERFORM public.log_sensitive_access(
-    'lecture_releve_qualite_enfant', 'releve_qualite_lien', p_session_id::text,
-    pg_catalog.jsonb_build_object('eleve', p_eleve_id));
-
-  RETURN QUERY
-  WITH enfant AS (
-    SELECT 'eleve'::text AS qui, f.instant, f.evenement, f.micro_ouvert, f.etat_courant, f.duree_secondes
-      FROM private.releve_qualite_frise(p_session_id) f
-     WHERE f.profile_id = p_eleve_id
-  ),
-  -- L'enseignant : ceux a qui le serveur a delivre un jeton d'enseignant pour
-  -- cette seance (titulaire ou remplacant) ; leurs entrees et sorties seules.
-  presence_enseignant AS (
-    SELECT e.server_ts AS instant,
-           CASE WHEN e.event_type = 'joined' THEN 'entree' ELSE 'sortie' END AS evenement,
-           pg_catalog.lead(e.server_ts) OVER (ORDER BY e.server_ts, e.id) AS suivant
-      FROM public.session_events e
-     WHERE e.session_id = p_session_id
-       AND e.event_type IN ('joined', 'left')
-       AND e.profile_id IN (
-         SELECT g.profile_id FROM public.video_token_grants g
-          WHERE g.session_id = p_session_id AND g.role = 'teacher')
-  )
-  SELECT x.qui, x.instant, x.evenement, x.micro_ouvert, x.etat_courant, x.duree_secondes
-    FROM (
-      SELECT n.qui, n.instant, n.evenement, n.micro_ouvert, n.etat_courant, n.duree_secondes
-        FROM enfant n
-      UNION ALL
-      SELECT 'enseignant'::text, p.instant, p.evenement, NULL::boolean,
-             CASE WHEN p.evenement = 'sortie' THEN 'absent' ELSE 'present' END,
-             CASE WHEN p.suivant IS NULL THEN NULL
-                  ELSE greatest(0, pg_catalog.floor(extract(epoch FROM (p.suivant - p.instant))))::integer END
-        FROM presence_enseignant p
-    ) x
-   ORDER BY x.instant, x.qui;
-END;
-$function$;
-ALTER FUNCTION public.releve_qualite_enfant(uuid, uuid) OWNER TO postgres;
-REVOKE ALL ON FUNCTION public.releve_qualite_enfant(uuid, uuid)
-  FROM PUBLIC, anon, authenticated, service_role, agent_ro;
-
-COMMENT ON FUNCTION public.releve_qualite_enfant(uuid, uuid) IS
-  'RESEAU-PREUVE (11/11/2026) : PREPAREE, FERMEE (aucun EXECUTE client). Pour un tuteur : la frise du '
-  'releve de qualite d''un eleve de son foyer dans une seance, et pour l''enseignant seulement ses '
-  'entrees et sorties (jamais l''etat de son lien). Lecture ecrite au journal d''audit '
-  '(lecture_releve_qualite_enfant). A ouvrir par une migration datee, apres le juriste.';
-
--- ---------------------------------------------------------------------------
--- 6. La purge : deux ans, 730 jours (pilote, sur delegation du directeur, 11/11/2026)
+-- 4. La purge : 180 jours (decision du 11/11/2026)
 -- ---------------------------------------------------------------------------
 -- Sans parametre, et c'est voulu : la duree est une decision datee, elle ne se
 -- change que par une migration. Le releve d'une seance part en entier, des que
--- sa derniere ligne a plus de 730 jours : jamais un releve a moitie purge.
+-- sa derniere ligne a plus de 180 jours : jamais un releve a moitie purge.
 CREATE FUNCTION private.purger_releve_qualite()
 RETURNS integer
 LANGUAGE plpgsql
@@ -525,7 +458,7 @@ BEGIN
      SELECT x.session_id
        FROM public.releve_qualite_lien x
       GROUP BY x.session_id
-     HAVING pg_catalog.max(x.releve_le) < pg_catalog.now() - interval '730 days'
+     HAVING pg_catalog.max(x.releve_le) < pg_catalog.now() - interval '180 days'
    );
   GET DIAGNOSTICS v_n = ROW_COUNT;
   RETURN v_n;
@@ -536,8 +469,8 @@ REVOKE ALL ON FUNCTION private.purger_releve_qualite() FROM PUBLIC, anon, authen
 
 COMMENT ON FUNCTION private.purger_releve_qualite() IS
   'RESEAU-PREUVE (11/11/2026) : purge le releve de qualite des seances dont la derniere ligne a plus '
-  'de 730 jours (deux ans ; pilote, sur delegation du directeur, 11/11/2026) ; rend le nombre de '
-  'lignes purgees. Lancee une fois par jour par la tache purge-releve-qualite. Aucun EXECUTE client.';
+  'de 180 jours (decision du 11/11/2026) ; rend le nombre de lignes purgees. Lancee une '
+  'fois par jour par la tache purge-releve-qualite. Aucun EXECUTE client.';
 
 DO $planification$
 BEGIN
@@ -555,6 +488,15 @@ DECLARE
   v_taches integer;
   v_role text;
 BEGIN
+  IF NOT (SELECT c.relrowsecurity FROM pg_catalog.pg_class c
+           WHERE c.oid = 'public.releve_qualite_oppositions'::pg_catalog.regclass)
+     OR EXISTS (SELECT 1 FROM pg_catalog.pg_policy p
+                 WHERE p.polrelid = 'public.releve_qualite_oppositions'::pg_catalog.regclass)
+     OR pg_catalog.has_table_privilege('authenticated', 'public.releve_qualite_oppositions', 'SELECT, INSERT, UPDATE')
+     OR pg_catalog.has_table_privilege('anon', 'public.releve_qualite_oppositions', 'SELECT, INSERT, UPDATE')
+     OR pg_catalog.has_table_privilege('service_role', 'public.releve_qualite_oppositions', 'SELECT, INSERT, UPDATE') THEN
+    RAISE EXCEPTION 'RESEAU-PREUVE : la table des oppositions est ouverte';
+  END IF;
   IF NOT (SELECT c.relrowsecurity FROM pg_catalog.pg_class c
            WHERE c.oid = 'public.releve_qualite_lien'::pg_catalog.regclass) THEN
     RAISE EXCEPTION 'RESEAU-PREUVE : la securite par ligne n''est pas active';
@@ -577,12 +519,10 @@ BEGIN
      OR pg_catalog.has_function_privilege('agent_ro', 'public.releve_qualite_seance(uuid)', 'EXECUTE') THEN
     RAISE EXCEPTION 'RESEAU-PREUVE : droits d''execution inattendus';
   END IF;
-  -- La purge, la frise et la lecture du parent : aucun role client.
+  -- La purge : aucun role client.
   FOREACH v_role IN ARRAY ARRAY['anon', 'authenticated', 'service_role', 'agent_ro'] LOOP
-    IF pg_catalog.has_function_privilege(v_role, 'private.purger_releve_qualite()', 'EXECUTE')
-       OR pg_catalog.has_function_privilege(v_role, 'private.releve_qualite_frise(uuid)', 'EXECUTE')
-       OR pg_catalog.has_function_privilege(v_role, 'public.releve_qualite_enfant(uuid,uuid)', 'EXECUTE') THEN
-      RAISE EXCEPTION 'RESEAU-PREUVE : la purge, la frise ou la lecture du parent est executable par %', v_role;
+    IF pg_catalog.has_function_privilege(v_role, 'private.purger_releve_qualite()', 'EXECUTE') THEN
+      RAISE EXCEPTION 'RESEAU-PREUVE : la purge est executable par %', v_role;
     END IF;
   END LOOP;
   -- Dynamique : sans pg_cron, cron.job n'existe pas et la requete ne se planifie pas.

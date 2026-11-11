@@ -2,6 +2,11 @@
 // d'information des eleves sur les visites de controle (E-1, E-2), valides
 // par le directeur le 02/10/2026 (pilotage
 // `14_controleur/juridique/INFO_ELEVES_PARENTS.md`).
+//
+// RESEAU-PREUVE (11/11/2026) : la meme lecture porte, a la suite et sous son
+// propre titre, la phrase d'information du releve de qualite de connexion
+// (`docs/current/TEXTES-VALIDES/INFORMATION-RELEVE-QUALITE.md`). Les textes
+// E-1 et E-2 ne changent pas d'un mot.
 
 import 'package:flutter/material.dart';
 
@@ -96,6 +101,7 @@ Future<void> ouvrirInformationControle(
   RoleSeance role, {
   String? contact,
   bool signaler = InformationControle.boutonSignalerEleve,
+  bool tutoie = false,
 }) {
   final bool guidee = role == RoleSeance.guidee;
   return AppBottomSheet.ouvrirLecture<void>(
@@ -112,6 +118,7 @@ Future<void> ouvrirInformationControle(
         role: role,
         contact: contact,
         signaler: signaler,
+        tutoie: tutoie,
       ),
     ),
   );
@@ -124,6 +131,7 @@ class TexteInformationControle extends StatelessWidget {
     required this.role,
     this.contact,
     this.signaler = InformationControle.boutonSignalerEleve,
+    this.tutoie = false,
     super.key,
   });
 
@@ -135,6 +143,22 @@ class TexteInformationControle extends StatelessWidget {
 
   /// Vrai si le bouton « Signaler » existe : la phrase de E-1 est ajoutee.
   final bool signaler;
+
+  /// Vrai quand l'eleve est tutoye (mineur hors Interface guidee) : la phrase
+  /// du releve de qualite suit, comme le reste de la salle.
+  final bool tutoie;
+
+  /// RESEAU-PREUVE (11/11/2026) : le titre et la phrase d'information du
+  /// releve de qualite de connexion pour ce role, mot pour mot ; `null` pour
+  /// l'enseignant, qui n'a pas cette lecture sur son bandeau.
+  ({String titre, String texte})? get releve {
+    final Traductions$salle$releve$fr r = t.salle.releve;
+    return switch (role) {
+      RoleSeance.guidee => (titre: r.titreGuidee, texte: r.guidee),
+      RoleSeance.eleve => (titre: r.titre, texte: tutoie ? r.mineur : r.adulte),
+      RoleSeance.enseignant => null,
+    };
+  }
 
   /// Les paragraphes, dans l'ordre du texte valide.
   List<String> get paragraphes {
@@ -159,8 +183,10 @@ class TexteInformationControle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final TextStyle? style = Theme.of(context).textTheme.bodyLarge;
+    final TextTheme theme = Theme.of(context).textTheme;
+    final TextStyle? style = theme.bodyLarge;
     final List<String> textes = paragraphes;
+    final ({String titre, String texte})? connexion = releve;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
@@ -168,6 +194,15 @@ class TexteInformationControle extends StatelessWidget {
         for (int n = 0; n < textes.length; n++) ...<Widget>[
           if (n > 0) Ecart.vMd,
           Text(textes[n], style: style),
+        ],
+        if (connexion != null) ...<Widget>[
+          Ecart.vXl,
+          Semantics(
+            header: true,
+            child: Text(connexion.titre, style: theme.titleMedium),
+          ),
+          Ecart.vSm,
+          Text(connexion.texte, style: style),
         ],
       ],
     );

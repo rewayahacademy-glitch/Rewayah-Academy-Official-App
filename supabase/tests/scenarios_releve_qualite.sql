@@ -1,11 +1,12 @@
--- RESEAU-PREUVE (11/11/2026) : le releve de qualite de connexion, garde deux ans (730 jours), lu par la
--- direction seule ; la lecture par un parent est preparee et fermee.
+-- RESEAU-PREUVE (11/11/2026) : le releve de qualite de connexion, garde 180 jours, lu par la direction seule ;
+-- rien n'est garde pour un eleve mineur.
 -- Migration 20261123000100_releve_qualite_lien.sql. ROUGE sans la migration (les fonctions n'existent pas) ;
 -- VERT avec. Base NEUVE ; tout est annule a la fin.
---   s1 (en cours) : enseignant b1 ; eleves e1 et e2 (foyer f1), e5 (foyer f2) ; d2 y observe son enfant.
+--   s1 (en cours) : enseignant b1 ; eleves ADULTES e1 et e2 (foyer f1), e5 (foyer f2) ; eleve MINEUR e6
+--      (foyer f1) ; e7 (foyer f1) sans profil d'eleve lisible ; d2 y observe.
 --   s2 (finie depuis 3 heures) : e1 y avait un jeton.
 --   s3 (finie depuis 10 minutes) : la frise de e3, ecrite a la main, pour prouver les durees.
---   s4, s5, s6 : releves anciens, pour la purge (731 jours, 729 jours, un an).
+--   s4, s5 : releves anciens, pour la purge.
 \o /dev/null
 BEGIN;
 SET CONSTRAINTS ALL IMMEDIATE;
@@ -79,7 +80,7 @@ GRANT EXECUTE ON FUNCTION pg_temp.qui(uuid, text, uuid), pg_temp.vrai(boolean, t
 -- ------------------------------------------------------------------
 INSERT INTO auth.users(id, email)
 SELECT pg_temp.u(x), 'rq-' || x || '@test.invalid'
-  FROM unnest(ARRAY['a1','a2','a3','b1','b2','d1','d2','e1','e2','e3','e5']) AS x;
+  FROM unnest(ARRAY['a1','a2','a3','b1','b2','d1','d2','e1','e2','e3','e5','e6','e7']) AS x;
 INSERT INTO public.households(id, timezone) VALUES (pg_temp.u('f1'), 'Europe/Paris'), (pg_temp.u('f2'), 'Europe/Paris');
 INSERT INTO public.profiles(id, immutable_id, role, household_id, first_name, last_name, account_status, gender)
 SELECT pg_temp.u(x.id), x.mat, x.role::public.app_role,
@@ -97,10 +98,14 @@ SELECT pg_temp.u(x.id), x.mat, x.role::public.app_role,
    ('e1','RQ-ELV-01','student','f1','Yasmine'),
    ('e2','RQ-ELV-02','student','f1','Nour'),
    ('e3','RQ-ELV-03','student','f1','Safa'),
-   ('e5','RQ-ELV-05','student','f2','Aicha')) AS x(id, mat, role, foyer, prenom);
+   ('e5','RQ-ELV-05','student','f2','Aicha'),
+   ('e6','RQ-ELV-06','student','f1','Mariam'),
+   ('e7','RQ-ELV-07','student','f1','Fatou')) AS x(id, mat, role, foyer, prenom);
 INSERT INTO public.student_profiles(profile_id, student_type, interface_mode)
-SELECT pg_temp.u(x), 'minor'::public.student_type, 'standard'::public.interface_mode
-  FROM unnest(ARRAY['e1','e2','e3','e5']) AS x;
+SELECT pg_temp.u(x.id), x.type::public.student_type, 'standard'::public.interface_mode
+  FROM (VALUES ('e1', 'autonomous'), ('e2', 'autonomous'), ('e3', 'autonomous'), ('e5', 'autonomous'),
+               ('e6', 'minor')) AS x(id, type);
+-- e7 : aucun profil d'eleve (son type ne se lit pas).
 INSERT INTO public.groupes(id, teacher_id, type_public, seuil_max, libelle, weekday, hour_local, timezone_iana) VALUES
  (pg_temp.u('c1'), pg_temp.u('b1'), 'enfant', 6, 'An-Nour RQ', 1, 9, 'Europe/Paris');
 INSERT INTO public.sessions(id, teacher_id, started_at, ended_at, status, groupe_id)
@@ -108,9 +113,8 @@ SELECT pg_temp.u(x.id), pg_temp.u('b1'), now() - x.debut, now() - x.debut + x.du
   FROM (VALUES ('51', interval '10 minutes', interval '60 minutes'),
                ('52', interval '4 hours', interval '60 minutes'),
                ('53', interval '30 minutes', interval '20 minutes'),
-               ('54', interval '731 days 2 hours', interval '60 minutes'),
-               ('55', interval '731 days 5 hours', interval '60 minutes'),
-               ('56', interval '365 days', interval '60 minutes')) AS x(id, debut, duree);
+               ('54', interval '181 days 2 hours', interval '60 minutes'),
+               ('55', interval '181 days 5 hours', interval '60 minutes')) AS x(id, debut, duree);
 -- Les jetons que le serveur a delivres (ecrits par autoriser_jeton_video seule, ici a la main).
 INSERT INTO public.video_token_grants(session_id, profile_id, role, provider, can_publish, can_publish_video,
                                       can_publish_data, hidden, emis_le, expire_le)
@@ -119,13 +123,14 @@ SELECT pg_temp.u(x.s), pg_temp.u(x.p), x.r::public.participant_role, 'cloud'::pu
        now() - interval '5 minutes', now() + interval '55 minutes'
   FROM (VALUES ('51','b1','teacher'), ('51','e1','student'), ('51','e2','student'), ('51','e5','student'),
                ('51','d2','guardian_observer'), ('51','a1','admin_masked'), ('52','e1','student'),
+               ('51','e6','student'), ('51','e7','student'),
                ('53','e3','student')) AS x(s, p, r);
 
 -- ------------------------------------------------------------------
 -- 1. Un participant ecrit sa ligne ; le rythme est borne ; un etat inconnu est ignore
 -- ------------------------------------------------------------------
 SELECT pg_temp.vrai(pg_temp.note(pg_temp.u('e1'), 'student', pg_temp.u('f1'), '51', 'e1', 'faible', true) = 'true',
-  'l''eleve e1 ecrit sa ligne (faible, micro ouvert)');
+  'l''eleve adulte e1 ecrit sa ligne (faible, micro ouvert)');
 SELECT pg_temp.vrai((SELECT r.etat = 'faible' AND r.micro_ouvert AND r.releve_le = now()
                        FROM public.releve_qualite_lien r
                       WHERE r.session_id = pg_temp.u('51') AND r.profile_id = pg_temp.u('e1')),
@@ -172,9 +177,9 @@ SELECT pg_temp.vrai(pg_temp.note(pg_temp.u('a1'), 'admin', NULL, '51', 'b1', 'bo
 SELECT pg_temp.vrai(pg_temp.note(pg_temp.u('b2'), 'teacher', NULL, '51', 'b2', 'bon', true) = 'refus',
   'un enseignant sans jeton pour cette seance n''ecrit rien');
 SELECT pg_temp.vrai(pg_temp.note(pg_temp.u('d1'), 'guardian', pg_temp.u('f1'), '51', 'e2', 'faible', true) = 'true',
-  'le tuteur du foyer f1 ecrit la ligne de son enfant e2 (l''enfant suit le cours depuis le compte du tuteur)');
+  'le tuteur du foyer f1 ecrit la ligne de e2, eleve adulte de son foyer qui suit le cours depuis son compte');
 SELECT pg_temp.vrai(pg_temp.note(pg_temp.u('d1'), 'guardian', pg_temp.u('f1'), '51', 'e5', 'perdu', true) = 'refus',
-  'un tuteur ne peut pas ecrire la ligne d''un enfant d''un autre foyer');
+  'un tuteur ne peut pas ecrire la ligne d''un eleve d''un autre foyer');
 SELECT pg_temp.vrai(pg_temp.note(pg_temp.u('d1'), 'guardian', pg_temp.u('f1'), '51', 'b1', 'perdu', true) = 'refus',
   'un tuteur ne peut pas ecrire la ligne de l''enseignant');
 SELECT pg_temp.vrai(pg_temp.note(pg_temp.u('d2'), 'guardian', pg_temp.u('f2'), '51', 'd2', 'bon', false) = 'refus',
@@ -187,9 +192,44 @@ UPDATE public.profiles SET account_status = 'disabled' WHERE id = pg_temp.u('e5'
 SELECT pg_temp.vrai(pg_temp.note(pg_temp.u('e5'), 'student', pg_temp.u('f2'), '51', 'e5', 'bon', true) = 'refus',
   'compte desactive : refuse');
 UPDATE public.profiles SET account_status = 'active' WHERE id = pg_temp.u('e5');
+
+-- Une opposition acceptee par la direction (RGPD art. 21) : plus aucune ligne pour cette personne.
+SELECT pg_temp.vieillir('51', interval '10 seconds');
+INSERT INTO public.releve_qualite_oppositions(profile_id) VALUES (pg_temp.u('b1'));
+SELECT pg_temp.vrai(pg_temp.note(pg_temp.u('b1'), 'teacher', NULL, '51', 'b1', 'perdu', true) = 'refus'
+  AND pg_temp.lignes('51', 'b1') = 1,
+  'opposition acceptee : l''enseignant b1 n''ecrit plus rien');
+SELECT pg_temp.vrai(pg_temp.note(pg_temp.u('e1'), 'student', pg_temp.u('f1'), '51', 'e1', 'faible', true) = 'true',
+  'l''opposition d''une personne n''arrete pas le releve des autres');
+SET LOCAL session_replication_role = replica;
+DELETE FROM public.releve_qualite_lien
+ WHERE id = (SELECT max(r.id) FROM public.releve_qualite_lien r
+              WHERE r.session_id = pg_temp.u('51') AND r.profile_id = pg_temp.u('e1'));
+SET LOCAL session_replication_role = origin;
+DELETE FROM public.releve_qualite_oppositions WHERE profile_id = pg_temp.u('b1');
+
+-- Rien n'est garde pour un eleve mineur (loi P-39.1 art. 4.1, code britannique des enfants, RGPD art. 6(1)(f)).
+SELECT pg_temp.vrai(pg_temp.note(pg_temp.u('e6'), 'student', pg_temp.u('f1'), '51', 'e6', 'perdu', true) = 'refus'
+  AND pg_temp.lignes('51', 'e6') = 0,
+  'un eleve MINEUR n''ecrit rien : refuse, aucune ligne');
+SELECT pg_temp.vrai(pg_temp.note(pg_temp.u('d1'), 'guardian', pg_temp.u('f1'), '51', 'e6', 'faible', true) = 'refus'
+  AND pg_temp.lignes('51', 'e6') = 0,
+  'son tuteur non plus : refuse, aucune ligne');
+SELECT pg_temp.vrai(pg_temp.note(pg_temp.u('e7'), 'student', pg_temp.u('f1'), '51', 'e7', 'bon', true) = 'refus'
+  AND pg_temp.lignes('51', 'e7') = 0,
+  'un eleve dont le profil d''eleve ne se lit pas (age inconnu) : refuse, aucune ligne');
+UPDATE public.student_profiles SET deleted_at = now() WHERE profile_id = pg_temp.u('e5');
+SELECT pg_temp.vrai(pg_temp.note(pg_temp.u('e5'), 'student', pg_temp.u('f2'), '51', 'e5', 'bon', true) = 'refus',
+  'un profil d''eleve retire : refuse');
+UPDATE public.student_profiles SET deleted_at = NULL WHERE profile_id = pg_temp.u('e5');
+UPDATE public.student_profiles SET student_type = 'autonomous' WHERE profile_id = pg_temp.u('e6');
+SELECT pg_temp.vrai(pg_temp.note(pg_temp.u('e6'), 'student', pg_temp.u('f1'), '51', 'e6', 'bon', true) = 'true',
+  'le meme eleve, une fois adulte (autonome), ecrit sa ligne : la garde tient au type, pas a la personne');
+UPDATE public.student_profiles SET student_type = 'minor' WHERE profile_id = pg_temp.u('e6');
 SELECT pg_temp.vrai(pg_temp.lignes('51', 'b1') = 1 AND pg_temp.lignes('51', 'e1') = 3
   AND pg_temp.lignes('51', 'e2') = 1 AND pg_temp.lignes('51', 'e5') = 0
-  AND (SELECT pg_catalog.count(*) FROM public.releve_qualite_lien) = 5,
+  AND pg_temp.lignes('51', 'e6') = 1 AND pg_temp.lignes('51', 'e7') = 0
+  AND (SELECT pg_catalog.count(*) FROM public.releve_qualite_lien) = 6,
   'aucun refus n''a laisse de ligne');
 
 -- Le plafond : 400 lignes par participant et par seance.
@@ -215,8 +255,8 @@ SELECT pg_temp.vrai(pg_temp.lit(pg_temp.u('a2'), 'controller', NULL, '51') = 're
   'le controleur et la comptabilite ne lisent rien');
 SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM public.audit_logs l WHERE l.action = 'lecture_releve_qualite'),
   'une lecture refusee n''ecrit rien au journal d''audit');
-SELECT pg_temp.vrai(pg_temp.lit(pg_temp.u('a1'), 'admin', NULL, '51') = '405',
-  'la direction lit le releve de la seance (405 lignes)');
+SELECT pg_temp.vrai(pg_temp.lit(pg_temp.u('a1'), 'admin', NULL, '51') = '406',
+  'la direction lit le releve de la seance (406 lignes)');
 SELECT pg_temp.vrai((SELECT pg_catalog.count(*) = 1 FROM public.audit_logs l
                       WHERE l.action = 'lecture_releve_qualite' AND l.actor = pg_temp.u('a1')
                         AND l.row_id = pg_temp.u('51')::text),
@@ -247,7 +287,10 @@ SELECT pg_temp.vrai(
         'INSERT INTO public.releve_qualite_lien(session_id, profile_id, etat, micro_ouvert) VALUES ('''
         || pg_temp.u('51') || ''', ''' || pg_temp.u('b1') || ''', ''perdu'', true)')
   AND pg_temp.table_fermee(pg_temp.u('b1'), 'teacher', 'UPDATE public.releve_qualite_lien SET etat = ''bon''')
-  AND pg_temp.table_fermee(pg_temp.u('b1'), 'teacher', 'SELECT private.purger_releve_qualite()'),
+  AND pg_temp.table_fermee(pg_temp.u('b1'), 'teacher', 'SELECT private.purger_releve_qualite()')
+  AND pg_temp.table_fermee(pg_temp.u('a1'), 'admin', 'SELECT 1 FROM public.releve_qualite_oppositions LIMIT 1')
+  AND pg_temp.table_fermee(pg_temp.u('b1'), 'teacher',
+        'INSERT INTO public.releve_qualite_oppositions(profile_id) VALUES (''' || pg_temp.u('e1') || ''')'),
   'la table est fermee : ni lecture, ni ajout, ni modification, ni purge par un client');
 
 -- Une ligne ecrite ne se modifie pas, meme par le serveur.
@@ -291,133 +334,28 @@ SELECT pg_temp.vrai(
   'le resume se calcule de la frise : 955 s bon, 180 s faible, 60 s absent, 1 coupure, micro ouvert pendant le lien faible');
 
 -- ------------------------------------------------------------------
--- 5. La lecture par un parent : preparee, fermee
+-- 5. La purge : 180 jours, et rien d'autre
 -- ------------------------------------------------------------------
--- s3 : e3 (foyer f1) y est inscrit ; l'enseignant b1 y entre a T + 1 min, en sort a T + 15 min, et son
--- appareil a ecrit « faible » a T + 2 min : le parent ne doit JAMAIS le lire.
-INSERT INTO public.session_participants(session_id, profile_id, role)
-VALUES (pg_temp.u('53'), pg_temp.u('e3'), 'student'::public.participant_role);
-INSERT INTO public.video_token_grants(session_id, profile_id, role, provider, can_publish, can_publish_video,
-                                      can_publish_data, hidden, emis_le, expire_le)
-VALUES (pg_temp.u('53'), pg_temp.u('b1'), 'teacher', 'cloud', true, true, true, false,
-        now() - interval '29 minutes', now() + interval '31 minutes');
-INSERT INTO public.session_events(session_id, profile_id, event_type, server_ts, source)
-SELECT pg_temp.u('53'), pg_temp.u('b1'), x.t::public.session_event_type, s.started_at + x.d, 'livekit_webhook'
-  FROM (VALUES ('joined', interval '1 minute'), ('left', interval '15 minutes')) AS x(t, d)
-  JOIN public.sessions s ON s.id = pg_temp.u('53');
-INSERT INTO public.releve_qualite_lien(session_id, profile_id, etat, micro_ouvert, releve_le)
-SELECT pg_temp.u('53'), pg_temp.u('b1'), 'faible', true, s.started_at + interval '2 minutes'
-  FROM public.sessions s WHERE s.id = pg_temp.u('53');
-
-SELECT pg_temp.vrai(
-  NOT pg_catalog.has_function_privilege('anon', 'public.releve_qualite_enfant(uuid,uuid)', 'EXECUTE')
-  AND NOT pg_catalog.has_function_privilege('authenticated', 'public.releve_qualite_enfant(uuid,uuid)', 'EXECUTE')
-  AND NOT pg_catalog.has_function_privilege('service_role', 'public.releve_qualite_enfant(uuid,uuid)', 'EXECUTE')
-  AND NOT pg_catalog.has_function_privilege('agent_ro', 'public.releve_qualite_enfant(uuid,uuid)', 'EXECUTE'),
-  'la lecture du parent est FERMEE : aucun role client ne peut l''executer');
-
--- La lecture du parent, telle qu'un client la ferait : le nombre de lignes, ou 'refus'.
-CREATE FUNCTION pg_temp.lit_enfant(p_id uuid, p_role text, p_foyer uuid, p_seance text, p_eleve text) RETURNS text
-LANGUAGE plpgsql AS $$
-DECLARE v integer;
-BEGIN
-  PERFORM pg_temp.qui(p_id, p_role, p_foyer);
-  BEGIN
-    EXECUTE 'SET LOCAL ROLE authenticated';
-    SELECT pg_catalog.count(*)::integer INTO v
-      FROM public.releve_qualite_enfant(pg_temp.u(p_seance), pg_temp.u(p_eleve));
-    EXECUTE 'RESET ROLE';
-  EXCEPTION WHEN insufficient_privilege THEN
-    RETURN 'refus';
-  END;
-  RETURN v::text;
-END $$;
-SELECT pg_temp.vrai(pg_temp.lit_enfant(pg_temp.u('d1'), 'guardian', pg_temp.u('f1'), '53', 'e3') = 'refus',
-  'fermee : meme le tuteur de l''enfant ne lit rien tant qu''elle n''est pas ouverte');
-
--- La garde, prouvee en l'ouvrant le temps du test (annule a la fin).
-GRANT EXECUTE ON FUNCTION public.releve_qualite_enfant(uuid, uuid) TO authenticated;
-SELECT pg_temp.vrai(pg_temp.lit_enfant(pg_temp.u('d2'), 'guardian', pg_temp.u('f2'), '53', 'e3') = 'refus',
-  'ouverte : un tuteur d''un autre foyer ne lit pas l''enfant');
-SELECT pg_temp.vrai(pg_temp.lit_enfant(pg_temp.u('d1'), 'guardian', pg_temp.u('f1'), '51', 'e5') = 'refus',
-  'ouverte : un tuteur ne lit pas un enfant d''un autre foyer');
-SELECT pg_temp.vrai(pg_temp.lit_enfant(pg_temp.u('d1'), 'guardian', pg_temp.u('f1'), '53', 'e1') = 'refus',
-  'ouverte : un enfant de son foyer qui n''est pas inscrit a cette seance : refuse');
-SELECT pg_temp.vrai(pg_temp.lit_enfant(pg_temp.u('d1'), 'guardian', pg_temp.u('f1'), '53', 'b1') = 'refus',
-  'ouverte : jamais le releve de l''enseignant');
-SELECT pg_temp.vrai(
-  pg_temp.lit_enfant(pg_temp.u('b1'), 'teacher', NULL, '53', 'e3') = 'refus'
-  AND pg_temp.lit_enfant(pg_temp.u('e3'), 'student', pg_temp.u('f1'), '53', 'e3') = 'refus'
-  AND pg_temp.lit_enfant(pg_temp.u('a2'), 'controller', NULL, '53', 'e3') = 'refus'
-  AND pg_temp.lit_enfant(pg_temp.u('a1'), 'admin', NULL, '53', 'e3') = 'refus',
-  'ouverte : ni l''enseignant, ni l''eleve, ni le controleur, ni la direction par ce chemin');
-UPDATE public.profiles SET account_status = 'disabled' WHERE id = pg_temp.u('d1');
-SELECT pg_temp.vrai(pg_temp.lit_enfant(pg_temp.u('d1'), 'guardian', pg_temp.u('f1'), '53', 'e3') = 'refus',
-  'ouverte : compte desactive, refuse');
-UPDATE public.profiles SET account_status = 'active' WHERE id = pg_temp.u('d1');
-SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM public.audit_logs l WHERE l.action = 'lecture_releve_qualite_enfant'),
-  'une lecture refusee n''ecrit rien au journal d''audit');
-
-SELECT pg_temp.qui(pg_temp.u('d1'), 'guardian', pg_temp.u('f1'));
-CREATE TEMP TABLE frise_parent AS SELECT * FROM public.releve_qualite_enfant(pg_temp.u('53'), pg_temp.u('e3'));
-SELECT pg_temp.vrai((SELECT pg_catalog.string_agg(f.evenement || '/' || f.etat_courant || '/' || f.duree_secondes, ' ' ORDER BY f.instant)
-                       FROM frise_parent f WHERE f.qui = 'eleve')
-  = 'entree/inconnu/5 bon/bon/595 faible/faible/120 sortie/absent/60 entree/faible/60 bon/bon/360',
-  'le tuteur lit la frise de SON enfant, la meme que celle de la direction');
-SELECT pg_temp.vrai((SELECT pg_catalog.string_agg(f.evenement || '/' || f.etat_courant || '/' || coalesce(f.duree_secondes::text, '-'), ' ' ORDER BY f.instant)
-                       FROM frise_parent f WHERE f.qui = 'enseignant')
-  = 'entree/present/840 sortie/absent/-',
-  'pour l''enseignant : present, puis absent, et rien d''autre');
-SELECT pg_temp.vrai(
-  NOT EXISTS (SELECT 1 FROM frise_parent f WHERE f.qui = 'enseignant'
-               AND (f.micro_ouvert IS NOT NULL OR f.etat_courant IN ('bon', 'faible', 'perdu')
-                    OR f.evenement IN ('bon', 'faible', 'perdu')))
-  AND (SELECT pg_catalog.count(*) FROM frise_parent f WHERE f.qui NOT IN ('eleve', 'enseignant')) = 0
-  AND (SELECT pg_catalog.count(*) FROM frise_parent) = 8,
-  'jamais l''etat du lien ni le micro de l''enseignant (son appareil avait ecrit « faible ») ; personne d''autre');
-SELECT pg_temp.vrai((SELECT pg_catalog.string_agg(a.attname, ',' ORDER BY a.attnum)
-                       FROM pg_catalog.pg_attribute a
-                      WHERE a.attrelid = 'pg_temp.frise_parent'::regclass AND a.attnum > 0 AND NOT a.attisdropped)
-  = 'qui,instant,evenement,micro_ouvert,etat_courant,duree_secondes',
-  'la lecture du parent ne rend aucun identifiant de personne');
-SELECT pg_temp.vrai((SELECT pg_catalog.count(*) = 1 FROM public.audit_logs l
-                      WHERE l.action = 'lecture_releve_qualite_enfant' AND l.actor = pg_temp.u('d1')
-                        AND l.row_id = pg_temp.u('53')::text AND l.payload ->> 'eleve' = pg_temp.u('e3')::text),
-  'la lecture du tuteur est ecrite au journal d''audit, avec l''enfant lu');
-REVOKE EXECUTE ON FUNCTION public.releve_qualite_enfant(uuid, uuid) FROM authenticated;
-
--- ------------------------------------------------------------------
--- 6. La purge : deux ans (730 jours), et rien d'autre
--- ------------------------------------------------------------------
--- s4 : tout a plus de 730 jours. s5 : une ligne de 731 jours et une ligne de 729 jours (le releve reste entier).
--- s6 : une seance d'il y a un an (la demande du directeur : la retrouver).
+-- s4 : tout a plus de 180 jours. s5 : une ligne ancienne et une ligne de 179 jours (le releve reste entier).
 INSERT INTO public.releve_qualite_lien(session_id, profile_id, etat, micro_ouvert, releve_le) VALUES
-  (pg_temp.u('54'), pg_temp.u('e1'), 'faible', true,  now() - interval '731 days'),
-  (pg_temp.u('54'), pg_temp.u('b1'), 'bon',    true,  now() - interval '730 days 1 minute'),
-  (pg_temp.u('55'), pg_temp.u('e1'), 'perdu',  false, now() - interval '731 days'),
-  (pg_temp.u('55'), pg_temp.u('e1'), 'bon',    false, now() - interval '729 days'),
-  (pg_temp.u('56'), pg_temp.u('e1'), 'faible', true,  now() - interval '365 days'),
-  (pg_temp.u('56'), pg_temp.u('b1'), 'bon',    true,  now() - interval '365 days');
-SELECT pg_temp.vrai(private.purger_releve_qualite() = 2, 'la purge retire les 2 lignes de la seance de plus de 730 jours (731 jours)');
+  (pg_temp.u('54'), pg_temp.u('e1'), 'faible', true,  now() - interval '181 days'),
+  (pg_temp.u('54'), pg_temp.u('b1'), 'bon',    true,  now() - interval '180 days 1 minute'),
+  (pg_temp.u('55'), pg_temp.u('e1'), 'perdu',  false, now() - interval '181 days'),
+  (pg_temp.u('55'), pg_temp.u('e1'), 'bon',    false, now() - interval '179 days');
+SELECT pg_temp.vrai(private.purger_releve_qualite() = 2, 'la purge retire les 2 lignes de la seance de plus de 180 jours (181 jours)');
 SELECT pg_temp.vrai(pg_temp.lignes('54', 'e1') = 0 AND pg_temp.lignes('54', 'b1') = 0,
-  'le releve de la seance de plus de 730 jours est parti en entier');
+  'le releve de la seance de plus de 180 jours est parti en entier');
 SELECT pg_temp.vrai(pg_temp.lignes('55', 'e1') = 2,
-  'une seance dont la derniere ligne a 729 jours garde tout son releve');
-SELECT pg_temp.vrai(pg_temp.lignes('56', 'e1') = 1 AND pg_temp.lignes('56', 'b1') = 1,
-  'une seance d''il y a un an est toujours la');
-SELECT pg_temp.qui(pg_temp.u('a1'), 'admin', NULL);
-SELECT pg_temp.vrai((SELECT pg_catalog.count(*) FROM public.releve_qualite_seance(pg_temp.u('56'))) = 2,
-  'la direction retrouve le releve d''une seance d''il y a un an');
-SELECT pg_temp.vrai(pg_temp.lignes('51', 'e1') = 3 AND pg_temp.lignes('51', 'e5') = 400 AND pg_temp.lignes('53', 'e3') = 3
-  AND pg_temp.lignes('53', 'b1') = 1,
+  'une seance dont la derniere ligne a 179 jours garde tout son releve');
+SELECT pg_temp.vrai(pg_temp.lignes('51', 'e1') = 3 AND pg_temp.lignes('51', 'e5') = 400 AND pg_temp.lignes('53', 'e3') = 3,
   'les releves recents ne sont pas touches');
-SELECT pg_temp.vrai((SELECT pg_catalog.count(*) FROM public.session_events e WHERE e.session_id = pg_temp.u('53')) = 5
-  AND (SELECT pg_catalog.count(*) FROM public.sessions s WHERE s.id IN (pg_temp.u('54'), pg_temp.u('55'), pg_temp.u('56'))) = 3,
+SELECT pg_temp.vrai((SELECT pg_catalog.count(*) FROM public.session_events e WHERE e.session_id = pg_temp.u('53')) = 3
+  AND (SELECT pg_catalog.count(*) FROM public.sessions s WHERE s.id IN (pg_temp.u('54'), pg_temp.u('55'))) = 2,
   'la purge ne touche que le releve : ni les seances ni les entrees et sorties');
 SELECT pg_temp.vrai(private.purger_releve_qualite() = 0, 'une seconde purge ne retire rien');
 
 -- ------------------------------------------------------------------
--- 7. Droits et forme
+-- 6. Droits et forme
 -- ------------------------------------------------------------------
 SELECT pg_temp.vrai(
   NOT pg_catalog.has_function_privilege('anon', 'public.noter_qualite_lien(uuid,uuid,text,boolean)', 'EXECUTE')
@@ -433,24 +371,19 @@ SELECT pg_temp.vrai(
   NOT pg_catalog.has_function_privilege('anon', 'private.purger_releve_qualite()', 'EXECUTE')
   AND NOT pg_catalog.has_function_privilege('authenticated', 'private.purger_releve_qualite()', 'EXECUTE')
   AND NOT pg_catalog.has_function_privilege('service_role', 'private.purger_releve_qualite()', 'EXECUTE')
-  AND NOT pg_catalog.has_function_privilege('agent_ro', 'private.purger_releve_qualite()', 'EXECUTE')
-  AND NOT pg_catalog.has_function_privilege('anon', 'private.releve_qualite_frise(uuid)', 'EXECUTE')
-  AND NOT pg_catalog.has_function_privilege('authenticated', 'private.releve_qualite_frise(uuid)', 'EXECUTE')
-  AND NOT pg_catalog.has_function_privilege('service_role', 'private.releve_qualite_frise(uuid)', 'EXECUTE')
-  AND NOT pg_catalog.has_function_privilege('agent_ro', 'private.releve_qualite_frise(uuid)', 'EXECUTE')
-  AND NOT pg_catalog.has_function_privilege('authenticated', 'public.releve_qualite_enfant(uuid,uuid)', 'EXECUTE'),
-  'la purge et la frise ne sont executables par aucun role client ; la lecture du parent est refermee');
+  AND NOT pg_catalog.has_function_privilege('agent_ro', 'private.purger_releve_qualite()', 'EXECUTE'),
+  'la purge n''est executable par aucun role client');
 SELECT pg_temp.vrai((SELECT pg_catalog.bool_and(p.prosecdef AND p.proconfig = ARRAY['search_path=""'])
                        FROM pg_catalog.pg_proc p
                       WHERE p.oid IN ('public.noter_qualite_lien(uuid,uuid,text,boolean)'::regprocedure,
                                       'public.releve_qualite_seance(uuid)'::regprocedure,
-                                      'public.releve_qualite_enfant(uuid,uuid)'::regprocedure,
-                                      'private.releve_qualite_frise(uuid)'::regprocedure,
                                       'private.purger_releve_qualite()'::regprocedure)),
   'SECURITY DEFINER, search_path vide');
-SELECT pg_temp.vrai((SELECT c.relrowsecurity FROM pg_catalog.pg_class c WHERE c.oid = 'public.releve_qualite_lien'::regclass)
-  AND NOT EXISTS (SELECT 1 FROM pg_catalog.pg_policy p WHERE p.polrelid = 'public.releve_qualite_lien'::regclass),
-  'securite par ligne active, aucune politique');
+SELECT pg_temp.vrai((SELECT pg_catalog.bool_and(c.relrowsecurity) FROM pg_catalog.pg_class c
+                      WHERE c.oid IN ('public.releve_qualite_lien'::regclass, 'public.releve_qualite_oppositions'::regclass))
+  AND NOT EXISTS (SELECT 1 FROM pg_catalog.pg_policy p
+                   WHERE p.polrelid IN ('public.releve_qualite_lien'::regclass, 'public.releve_qualite_oppositions'::regclass)),
+  'securite par ligne active sur les deux tables, aucune politique');
 SELECT pg_temp.vrai((SELECT pg_catalog.string_agg(a.attname, ',' ORDER BY a.attnum)
                        FROM pg_catalog.pg_attribute a
                       WHERE a.attrelid = 'public.releve_qualite_lien'::regclass AND a.attnum > 0 AND NOT a.attisdropped)

@@ -72,7 +72,12 @@ class MentionSeance extends StatelessWidget {
       return ligne;
     }
     void ouvrir() => unawaited(
-      ouvrirInformationControle(context, vue.role, contact: contact),
+      ouvrirInformationControle(
+        context,
+        vue.role,
+        contact: contact,
+        tutoie: vue.tutoiement ?? false,
+      ),
     );
     // Q-3 = b (05/10/2026) : sous le seuil, pas de lien (il passerait sous la
     // mention et pousserait le cours) ; la mention ouvre la meme lecture.

@@ -8439,5 +8439,10 @@
   "salle.support.repriseNonRetenue": "directeur, 11/11/2026, salle (lot PARTAGE-GENERIQUE : le partage en direct commun a tout support, CAHIER-SALLE 7)",
   "salle.support.pageIllisible": "directeur, 11/11/2026, salle (lot PARTAGE-GENERIQUE : le partage en direct commun a tout support, CAHIER-SALLE 7)",
   "salle.support.pageIllisibleDetail": "directeur, 11/11/2026, salle (lot PARTAGE-GENERIQUE : le partage en direct commun a tout support, CAHIER-SALLE 7)",
-  "salle.support.reessayerPage": "directeur, 11/11/2026, salle (lot PARTAGE-GENERIQUE : le partage en direct commun a tout support, CAHIER-SALLE 7)"
+  "salle.support.reessayerPage": "directeur, 11/11/2026, salle (lot PARTAGE-GENERIQUE : le partage en direct commun a tout support, CAHIER-SALLE 7)",
+  "salle.releve.titre": "directeur, 11/11/2026, salle (lot RESEAU-PREUVE : information sur le releve de qualite de connexion, 180 jours, rien pour un eleve mineur ; texte du lot, a confirmer par le directeur, docs/current/TEXTES-VALIDES/INFORMATION-RELEVE-QUALITE.md)",
+  "salle.releve.titreGuidee": "directeur, 11/11/2026, salle (lot RESEAU-PREUVE : information sur le releve de qualite de connexion, 180 jours, rien pour un eleve mineur ; texte du lot, a confirmer par le directeur, docs/current/TEXTES-VALIDES/INFORMATION-RELEVE-QUALITE.md)",
+  "salle.releve.adulte": "directeur, 11/11/2026, salle (lot RESEAU-PREUVE : information sur le releve de qualite de connexion, 180 jours, rien pour un eleve mineur ; texte du lot, a confirmer par le directeur, docs/current/TEXTES-VALIDES/INFORMATION-RELEVE-QUALITE.md)",
+  "salle.releve.mineur": "directeur, 11/11/2026, salle (lot RESEAU-PREUVE : information sur le releve de qualite de connexion, 180 jours, rien pour un eleve mineur ; texte du lot, a confirmer par le directeur, docs/current/TEXTES-VALIDES/INFORMATION-RELEVE-QUALITE.md)",
+  "salle.releve.guidee": "directeur, 11/11/2026, salle (lot RESEAU-PREUVE : information sur le releve de qualite de connexion, 180 jours, rien pour un eleve mineur ; texte du lot, a confirmer par le directeur, docs/current/TEXTES-VALIDES/INFORMATION-RELEVE-QUALITE.md)"
 }
