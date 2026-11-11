@@ -3,12 +3,14 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/planning/service_planning.dart';
 import '../../core/presence/service_presence.dart';
 import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/session/session_state.dart';
 import '../../core/suivi/service_suivi.dart';
@@ -18,6 +20,7 @@ import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/data_collection.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/ligne_presence.dart';
+import '../../core/widgets/nav_shell.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/pays_enseignant.dart';
@@ -86,15 +89,9 @@ class _SuiviElevePageEtat extends ConsumerState<SuiviElevePage> {
     );
 
     return PageShell(
-      // Le titre de la page est celui de l'onglet actif (garde-cap,
-      // 11/11/2026) : « Suivi » dans la barre de l'eleve adulte, « Ma classe »
-      // sinon. Meme capacite que la barre.
-      titre:
-          ref.watch(
-            sessionProvider.select((SessionState s) => s.barreEleveAdulte),
-          )
-          ? t.nav.eleve.suivi
-          : t.nav.eleve.maClasse,
+      // Le titre de la page est le libelle de son onglet, lu dans la meme
+      // fonction que la barre (garde-cap, 11/11/2026) : une seule source.
+      titre: titreOngletSuivi(ref.watch(sessionProvider)),
       defilante: false,
       // Plus d'`Expanded` ici : `PageShell` borne desormais la hauteur de son
       // contenu en mode `defilante: false`.
@@ -110,6 +107,22 @@ class _SuiviElevePageEtat extends ConsumerState<SuiviElevePage> {
       ),
     );
   }
+}
+
+/// Le libelle de l'onglet qui mene a cette page, lu dans [destinationsPour],
+/// la fonction qui construit la barre (« Ma classe » pour l'eleve, « Suivi »
+/// pour l'eleve adulte). Repli sur « Ma classe » hors coquille eleve.
+String titreOngletSuivi(SessionState session) {
+  final AppRole? role = session.role;
+  if (role == null) return t.nav.eleve.maClasse;
+  for (final Destination d in destinationsPour(
+    role: role,
+    mode: InterfaceMode.standard,
+    eleveAdulte: session.barreEleveAdulte,
+  )) {
+    if (d.chemin == Routes.eleveSuivi) return d.libelle;
+  }
+  return t.nav.eleve.maClasse;
 }
 
 class _Corps extends StatelessWidget {
