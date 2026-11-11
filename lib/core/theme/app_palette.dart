@@ -951,3 +951,87 @@ abstract final class AppNuancierTrait {
   static const AppInkColor rose = AppInkColor(Color(0xFFB0175F));
   static const AppInkColor marron = AppInkColor(Color(0xFF7A4A1E));
 }
+
+/// Les lumieres du halo du cercle Compte (NAV-REFONTE, decision du directeur
+/// du 09/11/2026). **Seule exception au branding** : des couleurs vives, ici et
+/// nulle part ailleurs ; identiques dans les deux themes (le clair renforce
+/// l'intensite, `HaloCompte`). Les teintes de chaque etat sont voisines ; les
+/// etats se distinguent aussi par la vitesse, la pastille et le nom lu, jamais
+/// par la couleur seule. Le rouge est sombre, le bleu ne bouge presque pas.
+abstract final class CouleursHalo {
+  /// Urgent : rouge, orange et magenta.
+  static const AppHaloColor urgent = AppHaloColor(
+    <Color>[
+      Color(0xFFFF1F3D),
+      Color(0xFFFF7A1A),
+      Color(0xFFFF2D9A),
+      Color(0xFFFF1F3D),
+      Color(0x26FF1F3D),
+      Color(0xFFFF7A1A),
+      Color(0xFFFF1F3D),
+    ],
+    <double>[0, 1 / 6, 130 / 360, 175 / 360, 250 / 360, 320 / 360, 1],
+    pastille: AppColorPair(
+      background: Color(0xFFE0122B),
+      onBackground: Color(0xFFFFFFFF),
+    ),
+    lueur: AppShadowColor(Color(0xFFFF283C)),
+  );
+
+  /// Nouveau, a lire : bleu, cyan et violet.
+  static const AppHaloColor nouveau = AppHaloColor(
+    <Color>[
+      Color(0xFF2F7BFF),
+      Color(0xFF22D3EE),
+      Color(0xFF8B5CF6),
+      Color(0x262F7BFF),
+      Color(0xFF2F7BFF),
+    ],
+    <double>[0, 70 / 360, 150 / 360, 240 / 360, 1],
+    pastille: AppColorPair(
+      background: Color(0xFF1F5BD6),
+      onBackground: Color(0xFFFFFFFF),
+    ),
+    lueur: AppShadowColor(Color(0xFF2F7BFF)),
+  );
+
+  /// A preparer (2a-bis, pilote, 11/11/2026) : orange, ambre et corail. La
+  /// pastille est sombre a icone blanche, comme l'urgence, dont elle se
+  /// distingue par la teinte, la vitesse (un seul tour qui ralentit) et le
+  /// texte de l'ecran qui la porte.
+  static const AppHaloColor aPreparer = AppHaloColor(
+    <Color>[
+      Color(0xFFFF8A00),
+      Color(0xFFFFB020),
+      Color(0xFFFF6A3D),
+      Color(0x26FF8A00),
+      Color(0xFFFF8A00),
+    ],
+    <double>[0, 70 / 360, 150 / 360, 240 / 360, 1],
+    pastille: AppColorPair(
+      background: Color(0xFFC2410C),
+      onBackground: Color(0xFFFFFFFF),
+    ),
+    lueur: AppShadowColor(Color(0xFFFF8A00)),
+  );
+
+  /// Salle ouverte, a rejoindre (etape 2b, 10/11/2026) : vert, menthe et
+  /// citron, sans creux (la lumiere respire, elle ne tourne pas). La pastille
+  /// est **claire** a icone sombre, quand celle de l'urgence est sombre a
+  /// icone blanche : rouge et vert se distinguent aussi par la clarte, pour
+  /// un daltonien (planche du 09/11).
+  static const AppHaloColor salle = AppHaloColor(
+    <Color>[
+      Color(0xFF22C55E),
+      Color(0xFF34D399),
+      Color(0xFFA3E635),
+      Color(0xFF22C55E),
+    ],
+    <double>[0, 1 / 3, 2 / 3, 1],
+    pastille: AppColorPair(
+      background: Color(0xFF86EFAC),
+      onBackground: Color(0xFF052E16),
+    ),
+    lueur: AppShadowColor(Color(0xFF22C55E)),
+  );
+}

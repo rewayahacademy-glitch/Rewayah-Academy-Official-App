@@ -13,6 +13,8 @@ import '../../features/accueil_adulte/routes_accueil_adulte.dart';
 import '../../features/accueil_eleve/accueil_eleve_selon_presentation.dart';
 import '../../features/accueil_eleve/mon_espace_accessibilite.dart';
 import '../../features/accueil_famille/accueil_famille_relie.dart';
+import '../../features/accueil_famille/ancre_horloge_serveur.dart'
+    show HorlogeServeurPartagee;
 import '../../features/accueil_inscrits/accueil_inscrits_page.dart';
 import '../../features/admin_acces_agents/acces_agents_page.dart'
     deferred as d_acces_agents_page;
@@ -230,6 +232,7 @@ import '../../features/journee/journee_page.dart';
 import '../../features/juridique/juridique_pages.dart';
 import '../../features/juridique/textes_juridiques.dart';
 import '../../features/mfa_controleur/mfa_controleur_page.dart';
+import '../../features/notifications/halo_salle.dart';
 import '../../features/notifications/non_lues.dart';
 import '../../features/notifications/notifications_page.dart';
 import '../../features/paiements_recus/recevoir_paiements_page.dart';
@@ -289,6 +292,7 @@ import '../widgets/admin_shell.dart';
 import '../widgets/bascule_theme.dart';
 import '../widgets/bouton_icone.dart';
 import '../widgets/entete_page.dart';
+import '../widgets/halo_compte.dart';
 import '../widgets/menu_actions.dart';
 import '../widgets/nav_shell.dart';
 import '../widgets/page_shell.dart';
@@ -3333,71 +3337,99 @@ class _CoquilleNavigation extends ConsumerWidget {
         ? Routes.eleveNotifications
         : Routes.notificationsPour(role);
     final bool surNotifications = chemin == cheminCloche;
+    // NAV-REFONTE 2a : le halo du cercle Compte, tire de la meme liste que la
+    // cloche ; sans cloche (l'eleve mineur), aucune lecture, aucun halo.
+    final EtatHaloCompte? haloCloche = cheminCloche == null
+        ? null
+        : haloDepuisNotifications(
+            ref.watch(notificationsTuteurProvider),
+            cheminNotifications: cheminCloche,
+            vues: ref.watch(nouveautesVuesProvider),
+          );
 
-    final Widget coquille = NavShell(
-      destinations: visibles,
-      indexActif: surNotifications
-          ? null
-          : indexDansBarre(
-              visibles: visibles,
-              completes: destinations,
-              indexComplet: navigationShell.currentIndex < destinations.length
-                  ? navigationShell.currentIndex
-                  : null,
-            ),
-      masquerBarreBasse:
-          Routes.estTacheFocalisee(chemin) ||
-          Routes.estTacheFocaliseeComptable(chemin),
-      // Le rail replie a icones seules est la maquette du tuteur ; l'eleve et
-      // l'enseignant gardent leurs libelles visibles sur tablette, comme avant
-      // le chantier (revue phase 0, jetons D2, routes D3).
-      libellesDansLeRail: role != AppRole.guardian,
-      onAller: (String destination) {
-        final int index = destinations.indexWhere(
-          (Destination d) => d.chemin == destination,
-        );
-        if (index == -1) {
-          return;
-        }
-        // Une destination sans branche (le Compte de l'eleve, `/compte`) se
-        // rejoint par `go` : `goBranch` sur un index absent violait
-        // l'assertion de go_router puis lisait hors de la liste (C01, 3.3-6).
-        if (index >= navigationShell.route.branches.length) {
-          GoRouter.of(context).go(destination);
-          return;
-        }
-        // R3 (30/10/2026) : revenir sur un onglet relit ses donnees (au plus
-        // toutes les 10 s, `intervalleRelectureAutomatique`).
-        if (index != navigationShell.currentIndex) {
-          RelecturePage.auRetourDe(context)?.call();
-        }
-        navigationShell.goBranch(
-          index,
-          // Retaper la destination courante la reprend a sa racine.
-          //
-          // FOYER-PARCOURS (directeur et garde-cap, 07/11/2026) : l'onglet
-          // Foyer ouvre TOUJOURS la liste des profils. Sans cela, `goBranch`
-          // rendait la derniere page de la branche, et le parcours d'un profil
-          // (tache de la branche Foyer) revenait a la place de la liste.
-          initialLocation:
-              index == navigationShell.currentIndex ||
-              destination == Routes.tuteurFoyer,
-        );
+    // NAV-REFONTE 2b : le halo vert de la salle ouverte s'ajoute, lu dans le
+    // calcul unique du role ; un seul halo, Urgent puis salle puis Nouveau.
+    final Widget coquille = HaloVivant(
+      source: switch (role) {
+        AppRole.guardian => SourceSalle.foyer,
+        AppRole.teacher => SourceSalle.journee,
+        // NAV-REFONTE 2c : l'eleve adulte (capacite « eleve autonome »).
+        AppRole.student when eleveAdulte => SourceSalle.adulte,
+        _ => null,
       },
-      secondaires: secondairesPour(role: role),
-      // Les entrees secondaires sont des routes de premier niveau **hors** de
-      // la coquille : elles se rejoignent par `go`, jamais par `goBranch`, qui
-      // ne connait que les branches.
-      onAllerSecondaire: (String destination) =>
-          GoRouter.of(context).go(destination),
-      // Fondu court entre les onglets du tuteur (P2-16) ; l'eleve et
-      // l'enseignant gardent la bascule seche.
-      child: role == AppRole.guardian
-          ? FonduOnglet(
-              index: navigationShell.currentIndex,
-              child: navigationShell,
-            )
-          : navigationShell,
+      notifications: haloCloche,
+      construire: (BuildContext _, EtatHaloCompte? halo) => NavShell(
+        halo: halo,
+        // Toucher le cercle : « Nouveau » est vu et s'eteint ; Urgent reste.
+        onHaloTouche: (EtatHaloCompte h) {
+          if (h.nature == NatureHalo.nouveau) {
+            ref.read(nouveautesVuesProvider.notifier).marquer(h.idsNonLus);
+          }
+        },
+        destinations: visibles,
+        indexActif: surNotifications
+            ? null
+            : indexDansBarre(
+                visibles: visibles,
+                completes: destinations,
+                indexComplet: navigationShell.currentIndex < destinations.length
+                    ? navigationShell.currentIndex
+                    : null,
+              ),
+        masquerBarreBasse:
+            Routes.estTacheFocalisee(chemin) ||
+            Routes.estTacheFocaliseeComptable(chemin),
+        // Le rail replie a icones seules est la maquette du tuteur ; l'eleve et
+        // l'enseignant gardent leurs libelles visibles sur tablette, comme avant
+        // le chantier (revue phase 0, jetons D2, routes D3).
+        libellesDansLeRail: role != AppRole.guardian,
+        onAller: (String destination) {
+          final int index = destinations.indexWhere(
+            (Destination d) => d.chemin == destination,
+          );
+          if (index == -1) {
+            return;
+          }
+          // Une destination sans branche (le Compte de l'eleve, `/compte`) se
+          // rejoint par `go` : `goBranch` sur un index absent violait
+          // l'assertion de go_router puis lisait hors de la liste (C01, 3.3-6).
+          if (index >= navigationShell.route.branches.length) {
+            GoRouter.of(context).go(destination);
+            return;
+          }
+          // R3 (30/10/2026) : revenir sur un onglet relit ses donnees (au plus
+          // toutes les 10 s, `intervalleRelectureAutomatique`).
+          if (index != navigationShell.currentIndex) {
+            RelecturePage.auRetourDe(context)?.call();
+          }
+          navigationShell.goBranch(
+            index,
+            // Retaper la destination courante la reprend a sa racine.
+            //
+            // FOYER-PARCOURS (directeur et garde-cap, 07/11/2026) : l'onglet
+            // Foyer ouvre TOUJOURS la liste des profils. Sans cela, `goBranch`
+            // rendait la derniere page de la branche, et le parcours d'un profil
+            // (tache de la branche Foyer) revenait a la place de la liste.
+            initialLocation:
+                index == navigationShell.currentIndex ||
+                destination == Routes.tuteurFoyer,
+          );
+        },
+        secondaires: secondairesPour(role: role),
+        // Les entrees secondaires sont des routes de premier niveau **hors** de
+        // la coquille : elles se rejoignent par `go`, jamais par `goBranch`, qui
+        // ne connait que les branches.
+        onAllerSecondaire: (String destination) =>
+            GoRouter.of(context).go(destination),
+        // Fondu court entre les onglets du tuteur (P2-16) ; l'eleve et
+        // l'enseignant gardent la bascule seche.
+        child: role == AppRole.guardian
+            ? FonduOnglet(
+                index: navigationShell.currentIndex,
+                child: navigationShell,
+              )
+            : navigationShell,
+      ),
     );
 
     // RECH-D5 : une seule loupe par coque, quel que soit le role, rendue
@@ -3472,7 +3504,9 @@ class _CoquilleNavigation extends ConsumerWidget {
           // P1 : le menu du compte en haut a droite, a partir de 600.
           if (large) _menuCompte(context, ref, Routes.tuteurCompte),
         ],
-        child: coquille,
+        // NAV-REFONTE 2b : un seul instant serveur pour toute la coquille du
+        // tuteur ; l'Accueil, la Classe et le halo vert le lisent ensemble.
+        child: HorlogeServeurPartagee(child: coquille),
       ),
     );
   }

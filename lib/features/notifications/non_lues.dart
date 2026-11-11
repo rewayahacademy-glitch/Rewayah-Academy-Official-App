@@ -14,6 +14,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/capacites/port_notifications.dart';
 import '../../core/widgets/entete_page.dart';
+import '../../core/widgets/halo_compte.dart';
 import 'notifications_page.dart';
 
 /// Le nombre de notifications non lues de la personne connectee, `null` tant
@@ -30,6 +31,67 @@ int? nonLuesDepuis(AsyncValue<List<NotificationTuteur>> liste) {
 final Provider<int?> nonLuesProvider = Provider<int?>(
   (Ref ref) => nonLuesDepuis(ref.watch(notificationsTuteurProvider)),
 );
+
+/// NAV-REFONTE, etape 2a (decision du directeur du 09/11/2026) : le halo du
+/// cercle Compte, tire de la **meme liste** que la cloche (aucune lecture a
+/// part). Pure et testee.
+///
+/// - Urgent : la plus recente notification de niveau urgent encore a faire
+///   (un geste en attente) ou pas encore lue ; la feuille ouvre sa
+///   destination, sinon le centre de notifications.
+/// - Nouveau : au moins une notification non lue ; la feuille ouvre le centre
+///   de notifications.
+/// - Aucun : rien de cela, aucune liste connue (chargement, echec, capacite
+///   absente : jamais un faux calme affiche comme certain, jamais un faux
+///   halo), ou aucun centre de notifications pour cette personne
+///   ([cheminNotifications] nul, l'eleve mineur).
+EtatHaloCompte? haloDepuisNotifications(
+  AsyncValue<List<NotificationTuteur>> liste, {
+  required String? cheminNotifications,
+  Set<String> vues = const <String>{},
+}) {
+  final List<NotificationTuteur>? valeur = liste.value;
+  if (valeur == null || cheminNotifications == null) return null;
+  for (final NotificationTuteur n in valeur) {
+    if (n.niveau == NiveauAttention.urgent && (n.gesteEnAttente || !n.lue)) {
+      return EtatHaloCompte.urgent(
+        titre: n.titre,
+        detail: n.texte,
+        chemin: n.destination ?? cheminNotifications,
+      );
+    }
+  }
+  final Set<String> ids = <String>{
+    for (final NotificationTuteur n in valeur)
+      if (!n.lue) n.id,
+  };
+  // Toucher le cercle marque « vues » les nouveautes signalees : le halo
+  // s'eteint jusqu'a une nouveaute qui n'a pas encore ete signalee.
+  if (ids.isNotEmpty && !vues.containsAll(ids)) {
+    return EtatHaloCompte.nouveau(
+      nombre: ids.length,
+      chemin: cheminNotifications,
+      idsNonLus: ids,
+    );
+  }
+  return null;
+}
+
+/// Les nouveautes deja signalees par le halo du cercle Compte et vues (le
+/// cercle a ete touche), pour la session de l'application (arbitrage du
+/// garde-cap du 09/11/2026 : « Nouveau s'eteint, vu »). Une nouvelle
+/// notification non lue rallume le halo.
+class NouveautesVues extends Notifier<Set<String>> {
+  @override
+  Set<String> build() => const <String>{};
+
+  /// Marque [ids] vues.
+  void marquer(Set<String> ids) => state = <String>{...state, ...ids};
+}
+
+/// Les nouveautes vues, lues par la coquille de chaque role.
+final NotifierProvider<NouveautesVues, Set<String>> nouveautesVuesProvider =
+    NotifierProvider<NouveautesVues, Set<String>>(NouveautesVues.new);
 
 /// La cloche posee par une coquille de role : la `ClocheNotifications` du
 /// core, avec le point de [nonLuesProvider]. Un seul endroit decide du point ;

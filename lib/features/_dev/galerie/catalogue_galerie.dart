@@ -51,6 +51,7 @@ import '../../../core/widgets/carte_groupee.dart';
 import '../../../core/widgets/carte_lignes.dart';
 import '../../../core/widgets/carte_piece_jointe.dart';
 import '../../../core/widgets/case_a_cocher.dart';
+import '../../../core/widgets/cercle_selectionnable.dart';
 import '../../../core/widgets/champ_date.dart';
 import '../../../core/widgets/champ_etiquete.dart';
 import '../../../core/widgets/champ_recherche.dart';
@@ -71,7 +72,10 @@ import '../../../core/widgets/fil_discussion.dart';
 import '../../../core/widgets/filter_pill.dart';
 import '../../../core/widgets/grille_bento.dart';
 import '../../../core/widgets/groupe_reglages.dart';
+import '../../../core/widgets/halo_compte.dart';
+import '../../../core/widgets/halo_lumiere.dart';
 import '../../../core/widgets/identite_profil.dart';
+import '../../../core/widgets/indicateur_liquide.dart';
 import '../../../core/widgets/lien_fleche.dart';
 import '../../../core/widgets/ligne_allocation.dart';
 import '../../../core/widgets/ligne_cle_valeur.dart';
@@ -1009,6 +1013,134 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
         'petit, dans la tuile du Mode Accessibilite',
         (BuildContext _) =>
             const AvatarCompte(repli: 'Compte', diametre: AppAvatar.petit),
+      ),
+    ],
+  ),
+  // Decisions du directeur du 10/11/2026 : le rond d'une photo qui se
+  // choisit (cercle Compte de la barre, profils de l'Accueil), au ressort.
+  EntreeGalerie(
+    nom: 'CercleSelectionnable',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'au repos : rond de 58, photo de 48',
+        (BuildContext _) => CercleSelectionnable(
+          choisi: false,
+          photo: (double d) => AvatarTile(prenom: 'Amina', diametre: d),
+        ),
+      ),
+      EtatGalerie(
+        'choisi : rond de 64, photo de 52, bord d accent',
+        (BuildContext _) => CercleSelectionnable(
+          choisi: true,
+          photo: (double d) => AvatarTile(prenom: 'Amina', diametre: d),
+        ),
+      ),
+    ],
+  ),
+  // NAV-REFONTE 2a (09/11/2026) : le halo du cercle Compte (urgent, a
+  // lire) ; la seule exception au branding.
+  EntreeGalerie(
+    nom: 'HaloCompte',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'a lire : un seul tour, puis une lueur fixe',
+        (BuildContext _) => HaloCompte(
+          etat: EtatHaloCompte.nouveau(nombre: 2, chemin: '/tuteur'),
+          diametre: AppAvatar.moyen,
+          child: const AvatarCompte(repli: 'Compte', diametre: AppAvatar.moyen),
+        ),
+      ),
+      EtatGalerie(
+        'urgent : quatre tours rapides, puis une lueur fixe',
+        (BuildContext _) => HaloCompte(
+          etat: EtatHaloCompte.urgent(
+            titre: 'Alerte urgente',
+            chemin: '/tuteur',
+          ),
+          diametre: AppAvatar.moyen,
+          child: const AvatarCompte(repli: 'Compte', diametre: AppAvatar.moyen),
+        ),
+      ),
+      // Etape 2b (10/11/2026) : la salle ouverte.
+      EtatGalerie(
+        'salle ouverte : deux respirations, puis une lueur fixe',
+        (BuildContext _) => HaloCompte(
+          etat: EtatHaloCompte.salle(
+            action: 'Rejoindre la salle',
+            chemin: '/tuteur',
+            agir: (BuildContext _) {},
+          ),
+          diametre: AppAvatar.moyen,
+          child: const AvatarCompte(repli: 'Compte', diametre: AppAvatar.moyen),
+        ),
+      ),
+      EtatGalerie(
+        'sans halo : le cercle seul',
+        (BuildContext _) => const HaloCompte(
+          etat: null,
+          diametre: AppAvatar.moyen,
+          child: AvatarCompte(repli: 'Compte', diametre: AppAvatar.moyen),
+        ),
+      ),
+    ],
+  ),
+  // HALO 2a-bis (pilote, 11/11/2026) : la lumiere du halo, cercle ou
+  // rectangle arrondi ; sous un arbitre, une seule tourne.
+  EntreeGalerie(
+    nom: 'HaloLumiere',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'rectangle arrondi, a preparer : deux tours, puis une lueur fixe',
+        (BuildContext _) => Stack(
+          alignment: Alignment.center,
+          children: <Widget>[
+            const HaloLumiere(
+              nature: NatureHalo.aPreparer,
+              forme: FormeHalo.rectangle,
+              taille: _carteDemoHalo,
+            ),
+            SizedBox.fromSize(size: _carteDemoHalo),
+          ],
+        ),
+      ),
+      EtatGalerie(
+        'arbitre : l urgence tourne, la nouveaute reste en lueur fixe',
+        (BuildContext _) => const ArbitreLumieres(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            spacing: AppSpacing.xl,
+            children: <Widget>[
+              HaloLumiere(
+                nature: NatureHalo.nouveau,
+                taille: Size.square(AppAvatar.moyen),
+              ),
+              HaloLumiere(
+                nature: NatureHalo.urgent,
+                taille: Size.square(AppAvatar.moyen),
+              ),
+            ],
+          ),
+        ),
+      ),
+    ],
+  ),
+  // Decisions du directeur du 10/11/2026 : l'effet liquide de la barre ;
+  // au repos, la destination ouverte garde son fond (la goutte ne se
+  // dessine qu'en mouvement).
+  EntreeGalerie(
+    nom: 'IndicateurLiquide',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'au repos, premiere destination ouverte',
+        (BuildContext _) => const _DemoLiquide(actif: 0),
+      ),
+      EtatGalerie(
+        'au repos, troisieme destination ouverte',
+        (BuildContext _) => const _DemoLiquide(actif: 2),
       ),
     ],
   ),
@@ -4466,3 +4598,53 @@ class _PanneauGalerie extends StatelessWidget {
 }
 
 void _tailleIgnoree(int taille) {}
+
+/// La carte de demonstration de la lumiere rectangulaire (galerie).
+const Size _carteDemoHalo = Size(240, 96);
+
+/// La demonstration de l'effet liquide pour la galerie : trois pastilles,
+/// celle de [actif] porte le fond doux.
+class _DemoLiquide extends StatefulWidget {
+  const _DemoLiquide({required this.actif});
+
+  final int actif;
+
+  @override
+  State<_DemoLiquide> createState() => _EtatDemoLiquide();
+}
+
+class _EtatDemoLiquide extends State<_DemoLiquide> {
+  final List<GlobalKey> _cles = List<GlobalKey>.generate(
+    3,
+    (int i) => GlobalKey(debugLabel: 'demo-liquide-$i'),
+  );
+  final GlobalKey _zone = GlobalKey(debugLabel: 'demo-liquide-zone');
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    return IndicateurLiquide(
+      cibles: _cles,
+      zones: <GlobalKey>[_zone],
+      indexActif: widget.actif,
+      couleur: palette.washAccent.background,
+      child: Row(
+        key: _zone,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          for (int i = 0; i < 3; i++)
+            DecoratedBox(
+              key: _cles[i],
+              decoration: BoxDecoration(
+                color: i == widget.actif
+                    ? palette.washAccent.background
+                    : palette.washAccent.background.withValues(alpha: 0),
+                borderRadius: AppRadius.arrondiFull,
+              ),
+              child: const SizedBox.square(dimension: AppTouchTarget.standard),
+            ),
+        ],
+      ),
+    );
+  }
+}

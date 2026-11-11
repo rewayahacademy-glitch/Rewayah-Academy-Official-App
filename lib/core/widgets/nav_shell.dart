@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -14,7 +16,6 @@ import '../router/routes.dart';
 import '../theme/app_elevation.dart';
 import '../theme/app_gabarit.dart';
 import '../theme/app_metriques.dart';
-import '../theme/app_mouvement.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
@@ -22,7 +23,11 @@ import '../theme/app_typography.dart';
 import 'avatar_compte.dart';
 import 'avatar_tile.dart' show AppAvatar;
 import 'brand_logo.dart';
-import 'page_shell.dart' show NavigationDeCoquille;
+import 'cercle_selectionnable.dart';
+import 'halo_compte.dart';
+import 'halo_lumiere.dart' show ArbitreLumieres;
+import 'indicateur_liquide.dart';
+import 'page_shell.dart' show FondDeCoquille, NavigationDeCoquille;
 import 'pressable.dart';
 
 /// Une destination de premier niveau.
@@ -416,6 +421,8 @@ class NavShell extends StatelessWidget {
     this.onAllerSecondaire,
     this.masquerBarreBasse = false,
     this.libellesDansLeRail = false,
+    this.halo,
+    this.onHaloTouche,
     super.key,
   }) : assert(
          destinations.length <= maxDestinations,
@@ -468,6 +475,18 @@ class NavShell extends StatelessWidget {
   /// reste visible sur tablette et bureau.
   final bool masquerBarreBasse;
 
+  /// NAV-REFONTE, etape 2a (decision du directeur du 09/11/2026) : ce que le
+  /// halo du cercle Compte signale (alerte urgente, nouveautes a lire), ou
+  /// `null` : aucun halo, le cercle mene directement au Compte. Calcule hors
+  /// du shell par une fonction pure de la source ; jamais deduit d'un role.
+  /// La barre flottante seule le montre (le rail et la colonne a l'etape 3).
+  final EtatHaloCompte? halo;
+
+  /// Appele quand le cercle Compte est touche avec un [halo] : la coquille y
+  /// marque « Nouveau » comme vu (il s'eteint) ; Urgent reste allume tant
+  /// que la situation dure (arbitrage du garde-cap du 09/11/2026).
+  final void Function(EtatHaloCompte halo)? onHaloTouche;
+
   /// Vrai quand le rail replie garde le **nom visible** de chaque
   /// destination, sous son icone, au lieu de l'infobulle seule.
   ///
@@ -491,16 +510,6 @@ class NavShell extends StatelessWidget {
 
   /// NAV-REFONTE : l'anneau d'accent du cercle Compte quand il est ouvert.
   static const double epaisseurAnneauCompte = 3;
-
-  /// Le fin liseré blanc autour de la photo du cercle Compte (decision du
-  /// directeur du 09/11/2026 : « la photo remplit environ 95 %, un fin liseré
-  /// blanc »).
-  static const double epaisseurLisereCompte = 2;
-
-  /// Le cercle Compte ouvert grandit d'environ 10 % (decision du directeur du
-  /// 09/11/2026), sans toucher le bord de l'ecran ni la pilule : 8 au moins
-  /// restent de chaque cote.
-  static const double agrandissementCompteOuvert = 1.1;
 
   /// NAV-REFONTE : sous cette largeur d'ecran, les marges laterales de la
   /// barre flottante passent de 16 a 12 (le cercle prend sa place).
@@ -531,8 +540,14 @@ class NavShell extends StatelessWidget {
   /// pour ne pas etre un chiffre litteral au milieu du dessin.
   static const double epaisseurContourGuide = 2;
 
+  // HALO 2a-bis (pilote, 11/11/2026) : l'arbitre des lumieres, pose une
+  // seule fois ici, couvre l'ecran et le cercle Compte reunis ; une seule
+  // lumiere y tourne a la fois.
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) =>
+      ArbitreLumieres(child: _construire(context));
+
+  Widget _construire(BuildContext context) {
     // Moins de deux destinations : il n'y a rien a choisir, donc rien a
     // afficher. Une barre a une seule entree n'est pas une navigation, c'est
     // un titre.
@@ -553,6 +568,8 @@ class NavShell extends StatelessWidget {
           destinations: destinations,
           indexActif: indexActif,
           onAller: onAller,
+          halo: halo,
+          onHaloTouche: onHaloTouche,
           child: child,
         ),
       );
@@ -590,6 +607,8 @@ class _CoquilleBarreBasse extends StatefulWidget {
     required this.indexActif,
     required this.onAller,
     required this.child,
+    this.halo,
+    this.onHaloTouche,
   });
 
   final bool guide;
@@ -597,6 +616,8 @@ class _CoquilleBarreBasse extends StatefulWidget {
   final int? indexActif;
   final void Function(String chemin) onAller;
   final Widget child;
+  final EtatHaloCompte? halo;
+  final void Function(EtatHaloCompte halo)? onHaloTouche;
 
   @override
   State<_CoquilleBarreBasse> createState() => _CoquilleBarreBasseEtat();
@@ -605,9 +626,16 @@ class _CoquilleBarreBasse extends StatefulWidget {
 class _CoquilleBarreBasseEtat extends State<_CoquilleBarreBasse> {
   final ControleurBarreBasse _controleur = ControleurBarreBasse();
 
+  /// Le fond de la page affichee, publie par elle ([FondDeCoquille]).
+  final ValueNotifier<Color?> _fondDePage = ValueNotifier<Color?>(null);
+
+  /// Les cles de l'effet liquide : stables d'une construction a l'autre.
+  final _ClesLiquide _cles = _ClesLiquide();
+
   @override
   void dispose() {
     _controleur.dispose();
+    _fondDePage.dispose();
     super.dispose();
   }
 
@@ -616,13 +644,23 @@ class _CoquilleBarreBasseEtat extends State<_CoquilleBarreBasse> {
     final AppPalette palette = AppPalette.of(context);
     // Le contenu garde son identite quand la barre s'efface : seul son
     // encart bas change.
-    final Widget contenu = EffacementBarreBasse(
-      controleur: _controleur,
-      child: widget.child,
+    final Widget contenu = FondDeCoquille(
+      fond: _fondDePage,
+      child: EffacementBarreBasse(controleur: _controleur, child: widget.child),
     );
-    return ColoredBox(
-      // Le fond de page passe sous la barre flottante et autour d'elle.
-      color: palette.surfaceCanvas.background,
+    // Decision du directeur du 10/11/2026 (tranchee par le pilote) : plus de
+    // bande d'une autre couleur sous la barre. La place reservee a la barre
+    // prend le fond de la page affichee : la pilule et le cercle flottent sur
+    // la page, avec leur ombre. La place reste reservee : la fin du contenu
+    // n'est jamais cachee, et les feuilles et menus de la page restent
+    // au-dessus de la barre.
+    return ValueListenableBuilder<Color?>(
+      valueListenable: _fondDePage,
+      builder: (BuildContext context, Color? fond, Widget? enfant) =>
+          ColoredBox(
+            color: fond ?? palette.surfaceCanvas.background,
+            child: enfant,
+          ),
       child: ValueListenableBuilder<bool>(
         valueListenable: _controleur,
         child: contenu,
@@ -645,6 +683,9 @@ class _CoquilleBarreBasseEtat extends State<_CoquilleBarreBasse> {
                     destinations: widget.destinations,
                     indexActif: widget.indexActif,
                     onAller: widget.onAller,
+                    halo: widget.halo,
+                    onHaloTouche: widget.onHaloTouche,
+                    cles: _cles,
                   ),
                 ),
             ],
@@ -661,13 +702,36 @@ class _CoquilleBarreBasseEtat extends State<_CoquilleBarreBasse> {
 /// Destination active : icone pleine, libelle en accent et soulignement de
 /// trois points. Inactive : icone au trait et encre attenuee. Jamais la
 /// couleur seule : l'etat « selectionne » est aussi annonce.
+/// Les cles de l'effet liquide de la barre flottante : une par onglet, la
+/// pilule et le cercle Compte.
+class _ClesLiquide {
+  final List<GlobalKey> onglets = List<GlobalKey>.generate(
+    NavShell.maxDestinations,
+    (int i) => GlobalKey(debugLabel: 'onglet-liquide-$i'),
+  );
+  final GlobalKey pilule = GlobalKey(debugLabel: 'pilule-liquide');
+  final GlobalKey cercle = GlobalKey(debugLabel: 'cercle-liquide');
+}
+
 class _BarreFlottante extends StatelessWidget {
   const _BarreFlottante({
     required this.guide,
     required this.destinations,
     required this.indexActif,
     required this.onAller,
+    required this.cles,
+    this.halo,
+    this.onHaloTouche,
   });
+
+  /// Les cles de l'effet liquide.
+  final _ClesLiquide cles;
+
+  /// Le halo du cercle Compte, ou `null`.
+  final EtatHaloCompte? halo;
+
+  /// Le cercle a ete touche avec un halo.
+  final void Function(EtatHaloCompte halo)? onHaloTouche;
 
   /// Mode Accessibilite : barre plus haute, onglets plus larges et espaces,
   /// libelles toujours visibles, contraste renforce (MA-NAV-1).
@@ -804,7 +868,11 @@ class _BarreFlottante extends StatelessWidget {
                 ),
                 child: MediaQuery.withClampedTextScaling(
                   maxScaleFactor: NavShell.echelleTexteMaxBarre,
-                  child: LayoutBuilder(builder: _rangeeStandard),
+                  // La part de la goutte dans la pilule : entre son fond et
+                  // ses onglets.
+                  child: CoucheLiquide(
+                    child: LayoutBuilder(builder: _rangeeStandard),
+                  ),
                 ),
               ),
       ),
@@ -818,31 +886,55 @@ class _BarreFlottante extends StatelessWidget {
         container: true,
         explicitChildNodes: true,
         label: t.nav.principale,
-        child: compte == null
-            ? pilule
-            : Row(
-                children: <Widget>[
-                  Expanded(child: pilule),
-                  // MA-CMD-1 : en Mode Accessibilite, quatre cibles de 72
-                  // tiennent a 320 ; l'ecart avec la tuile se resserre a 4,
-                  // comme entre les onglets.
-                  // Standard : 12, pour que le cercle ouvert, agrandi de 10 %,
-                  // garde 8 jusqu'a la pilule (decision du 09/11/2026).
-                  if (guide && serre)
-                    Ecart.hXs
-                  else if (guide)
-                    Ecart.hSm
-                  else
-                    Ecart.hMd,
-                  _CercleCompte(
-                    destination: compte,
-                    actif: _compteActif,
-                    guide: guide,
-                    onAller: onAller,
-                  ),
-                ],
-              ),
+        child: _liquide(
+          context,
+          palette,
+          compte == null
+              ? KeyedSubtree(key: cles.pilule, child: pilule)
+              : Row(
+                  children: <Widget>[
+                    Expanded(
+                      child: KeyedSubtree(key: cles.pilule, child: pilule),
+                    ),
+                    // MA-CMD-1 : en Mode Accessibilite, quatre cibles de 72
+                    // tiennent a 320 ; l'ecart avec la tuile se resserre a 4,
+                    // comme entre les onglets.
+                    // Le rond reserve deja sa place choisie (64) : 8 jusqu'a la
+                    // pilule, meme ouvert (decision du 10/11/2026).
+                    if (guide && serre) Ecart.hXs else Ecart.hSm,
+                    _CercleCompte(
+                      key: cles.cercle,
+                      destination: compte,
+                      actif: _compteActif,
+                      guide: guide,
+                      onAller: onAller,
+                      halo: halo,
+                      onHaloTouche: onHaloTouche,
+                      apparition: indexActif,
+                    ),
+                  ],
+                ),
+        ),
       ),
+    );
+  }
+
+  /// L'effet liquide (decisions du directeur du 10/11/2026) autour de la
+  /// rangee standard : la goutte de l'onglet ouvert, et le pont jusqu'au
+  /// cercle Compte. Le Mode Accessibilite garde ses tuiles, sans goutte.
+  Widget _liquide(BuildContext context, AppPalette palette, Widget rangee) {
+    if (guide) return rangee;
+    final List<Destination> onglets = _onglets;
+    final bool avecCompte = _compte != null;
+    return IndicateurLiquide(
+      cibles: <GlobalKey>[
+        for (int i = 0; i < onglets.length; i++) cles.onglets[i],
+        if (avecCompte) cles.cercle,
+      ],
+      zones: <GlobalKey>[cles.pilule, if (avecCompte) cles.cercle],
+      indexActif: _compteActif ? onglets.length : _actifOnglet,
+      couleur: palette.washAccent.background,
+      child: rangee,
     );
   }
 
@@ -884,6 +976,7 @@ class _BarreFlottante extends StatelessWidget {
           i == actif
               ? Flexible(
                   child: _OngletBarre(
+                    key: cles.onglets[i],
                     destination: onglets[i],
                     actif: true,
                     empile: empile,
@@ -891,6 +984,7 @@ class _BarreFlottante extends StatelessWidget {
                   ),
                 )
               : _OngletBarre(
+                  key: cles.onglets[i],
                   destination: onglets[i],
                   actif: false,
                   empile: false,
@@ -1100,6 +1194,7 @@ class _BarreFlottante extends StatelessWidget {
 
 class _OngletBarre extends ConsumerWidget {
   const _OngletBarre({
+    super.key,
     required this.destination,
     required this.actif,
     required this.empile,
@@ -1143,10 +1238,14 @@ class _OngletBarre extends ConsumerWidget {
     // NAV-REFONTE : onglet ouvert = fond doux, icone pleine, nom visible
     // (trois signaux, jamais la couleur seule) ; fermes = icone seule, le nom
     // lu par le lecteur d'ecran et montre en infobulle.
+    // Pendant que la goutte se deplace, c'est elle qui peint le fond doux.
+    final bool goutte = IndicateurLiquide.enMouvement(context);
     final Widget dessin = actif
         ? DecoratedBox(
             decoration: BoxDecoration(
-              color: palette.washAccent.background,
+              color: goutte
+                  ? palette.washAccent.background.withValues(alpha: 0)
+                  : palette.washAccent.background,
               borderRadius: AppRadius.arrondiFull,
             ),
             child: ConstrainedBox(
@@ -1222,28 +1321,35 @@ class _OngletBarre extends ConsumerWidget {
 /// annonce).
 class _CercleCompte extends StatelessWidget {
   const _CercleCompte({
+    super.key,
     required this.destination,
     required this.actif,
     required this.guide,
     required this.onAller,
+    this.halo,
+    this.onHaloTouche,
+    this.apparition,
   });
+
+  /// Le cercle a ete touche avec un halo.
+  final void Function(EtatHaloCompte halo)? onHaloTouche;
+
+  /// L'ecran affiche : quand il change, la rotation du halo se rejoue.
+  final Object? apparition;
 
   final Destination destination;
   final bool actif;
   final bool guide;
   final void Function(String chemin) onAller;
 
-  /// Le diametre du cercle standard : environ 64 (decision du directeur du
-  /// 09/11/2026), la hauteur de la pilule.
-  static const double diametre = AppSpacing.respiration;
-
-  /// La photo remplit le cercle, moins le fin liseré blanc (environ 94 %).
-  static const double _diametrePhoto =
-      diametre - 2 * NavShell.epaisseurLisereCompte;
+  /// Le halo, ou `null` : sans halo, le toucher ouvre le Compte ; avec un
+  /// halo, la feuille « En ce moment » (decision du directeur du 09/11).
+  final EtatHaloCompte? halo;
 
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
+    final EtatHaloCompte? etat = halo;
     final Widget dessin;
     if (guide) {
       final AppMetriques metriques = _metriques(context);
@@ -1261,14 +1367,18 @@ class _CercleCompte extends StatelessWidget {
               width: NavShell.epaisseurContourGuide,
             ),
           ),
-          boxShadow: AppElevation.niveau1(palette.ombre),
+          // NAV-REFONTE 2a : la tuile n'est pas un cercle, aucune rotation ;
+          // une lueur fixe de la couleur de l'etat sur son contour.
+          boxShadow: etat == null
+              ? AppElevation.niveau1(palette.ombre)
+              : AppElevation.lueurHaloTuile(etat.couleurs.lueur),
         ),
         child: ConstrainedBox(
           // La meme hauteur minimale que la pilule du Mode Accessibilite.
           // Une cible de large (72) au moins : la tuile prend la part d'un
           // onglet, pour que quatre cibles tiennent a 320 (MA-CMD-1).
-          // Revue du pilote du 09/11/2026 : « Compte » touchait le contour a
-          // 320 en texte x2. La tuile garde 4 de chaque cote du nom et
+          // Revue du pilote du 09/11/2026 : « Compte » touchait le contour
+          // a 320 en texte x2. La tuile garde 4 de chaque cote du nom et
           // s'elargit d'un palier (8) au plus : les onglets gardent 72.
           constraints: BoxConstraints(
             minWidth: metriques.cibleTactile,
@@ -1286,9 +1396,20 @@ class _CercleCompte extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  AvatarCompte(
-                    repli: destination.libelle,
-                    diametre: AppAvatar.petit,
+                  Stack(
+                    clipBehavior: Clip.none,
+                    children: <Widget>[
+                      AvatarCompte(
+                        repli: destination.libelle,
+                        diametre: AppAvatar.petit,
+                      ),
+                      if (etat != null)
+                        PositionedDirectional(
+                          end: -AppSpacing.sm,
+                          top: -AppSpacing.xs,
+                          child: PastilleHaloCompte(etat: etat),
+                        ),
+                    ],
                   ),
                   Ecart.vXs,
                   TexteSansCoupure(
@@ -1301,6 +1422,18 @@ class _CercleCompte extends StatelessWidget {
                       actif ? FontWeight.w700 : FontWeight.w600,
                     ).copyWith(color: encre),
                   ),
+                  // Le mot d'etat ecrit sous « Compte » (Urgent, A lire).
+                  if (etat != null)
+                    TexteSansCoupure(
+                      etat.motCourt,
+                      textAlign: TextAlign.center,
+                      plancher: echelleMinimaleLisible,
+                      style: AppTypography.graisse(
+                        Theme.of(context).textTheme.labelMedium ??
+                            const TextStyle(),
+                        FontWeight.w700,
+                      ).copyWith(color: encre),
+                    ),
                 ],
               ),
             ),
@@ -1308,39 +1441,21 @@ class _CercleCompte extends StatelessWidget {
         ),
       );
     } else {
-      // Decision du directeur du 09/11/2026 : un cercle d'environ 64, la
-      // photo a environ 95 % dans un fin liseré blanc ; ouvert, il grandit
-      // d'environ 10 % et son liseré prend l'accent (jamais la couleur
-      // seule : la taille change, et l'etat « selectionne » est annonce).
+      // Decisions du directeur du 10/11/2026 : non choisi, un rond de 58 et
+      // une photo de 48 dans un bord clair ; choisi, un rond de 64 et une
+      // photo de 52, bord d'accent ; le passage suit un ressort. Jamais la
+      // couleur seule : la taille change, et l'etat « selectionne » est lu.
       dessin = Tooltip(
         message: destination.libelle,
         excludeFromSemantics: true,
-        child: AnimatedScale(
-          scale: actif ? NavShell.agrandissementCompteOuvert : 1,
-          duration: AppMouvement.duree(context, AppMouvement.navigation),
-          curve: AppMouvement.entree,
-          child: Container(
-            width: diametre,
-            height: diametre,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              color: palette.surfaceRaised.background,
-              shape: BoxShape.circle,
-              border: Border.fromBorderSide(
-                actif
-                    ? palette.inkAccent.asBorderSide(
-                        width: NavShell.epaisseurLisereCompte,
-                      )
-                    : palette.lisereClair(
-                        epaisseur: NavShell.epaisseurLisereCompte,
-                      ),
-              ),
-              boxShadow: AppElevation.niveau1(palette.ombre),
-            ),
-            child: AvatarCompte(
-              repli: destination.libelle,
-              diametre: _diametrePhoto,
-            ),
+        child: CercleSelectionnable(
+          choisi: actif,
+          // Le halo entoure la photo, a sa taille du moment.
+          photo: (double d) => HaloCompte(
+            etat: etat,
+            apparition: apparition,
+            diametre: d,
+            child: AvatarCompte(repli: destination.libelle, diametre: d),
           ),
         ),
       );
@@ -1349,8 +1464,22 @@ class _CercleCompte extends StatelessWidget {
       container: true,
       selected: actif,
       child: Pressable(
-        onPress: () => onAller(destination.chemin),
-        libelleSemantique: destination.libelle,
+        onPress: etat == null
+            ? () => onAller(destination.chemin)
+            : () {
+                onHaloTouche?.call(etat);
+                unawaited(
+                  ouvrirFeuilleEnCeMoment(
+                    context,
+                    etat: etat,
+                    cheminCompte: destination.chemin,
+                    onAller: onAller,
+                  ),
+                );
+              },
+        libelleSemantique: etat == null
+            ? destination.libelle
+            : etat.nomAccessible(destination.libelle),
         arrondiFocus: guide
             ? _metriques(context).arrondi
             : AppRadius.arrondiFull,
