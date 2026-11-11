@@ -38,8 +38,24 @@ Ce qui est montré aujourd'hui, et où :
   les tests (`test/features/salle_enseignant/etagere_supports_test.dart`) et dans les captures
   `docs/current/captures/E2E/supports-etagere/supports_demo_a-valider_*.png`. La salle réelle ne
   montre que le Coran : aucune donnée inventée n'y apparaît.
-- Ces supports n'ont ni page ni partage : leur fiche le dit (« Ce support ne s'ouvre pas encore
+- Ces trois titres n'ont ni page ni partage : leur fiche le dit (« Ce support ne s'ouvre pas encore
   dans la salle. La direction prépare son contenu. ») et ne propose aucun bouton.
+
+### Le support de démonstration qui se partage (lot PARTAGE-GENERIQUE, 11/11/2026)
+
+Pour prouver que le partage ne dépend plus du Coran, un quatrième objet existe, **factice** :
+
+- titre « Les lettres » (le même texte `salle.etagere.demo.lettres`), 4 pages ;
+- chaque page ne porte que : « À valider », le titre, « N / 4 », et « Support de démonstration, à valider
+  par la direction. Son contenu n'est pas encore officiel. » **Aucune lettre, aucun exercice, aucun texte
+  religieux.** Il sert à essayer le partage, jamais à enseigner ;
+- où il existe : sous `PLAYGROUND=true` (que le déploiement force à `false`), dans les tests
+  (`test/features/salle_partage_generique_test.dart`) et dans les captures
+  `docs/current/captures/E2E/partage-generique/`. **Jamais en production, jamais en base** : il est écrit
+  dans le code (`supportDemonstration`, `lib/features/salle_seance/lecteur_support.dart`), pas dans une
+  table ;
+- ce qu'il fait comme le Coran : « Partager », « Afficher », « Partager page N », tourner la page, suivre
+  chez l'élève, pointeur. Sa reprise d'une séance à l'autre attend la migration (brouillon non appliqué).
 
 ## Comment un support entre dans les données (relevé du 11/11)
 
@@ -67,6 +83,39 @@ Ce qui manque pour aller plus loin (à décider par le directeur, pas dans ce lo
 1. le contenu lui-même (pages, lignes numérotées), écrit avec le directeur ;
 2. une insertion de ces lignes (par l'écran de la direction déjà prévu, ou un script appliqué par
    le pilote sur staging d'abord) : rien n'a été écrit ;
-3. le branchement de la Bibliothèque de la salle sur le catalogue (aujourd'hui elle ne liste que
-   le Coran, construit dans `salle_page.dart`), et un partage en direct qui sache transporter un
-   autre support que le Coran (voir `docs/current/UX_REVIEW_SUPPORTS-ETAGERE.md`, relevé).
+3. le branchement de la Bibliothèque de la salle sur le catalogue (aujourd'hui elle liste le Coran,
+   construit dans `salle_page.dart`, et les supports de `supportsDeSalleProvider`, vide en production).
+   Le partage en direct, lui, sait transporter un autre support que le Coran depuis le lot
+   PARTAGE-GENERIQUE (codé, non fusionné, non prouvé en production : voir
+   `docs/current/UX_REVIEW_SUPPORTS-ETAGERE.md` §1).
+
+## Comment un support réel entrera dans la salle (proposition du lot PARTAGE-GENERIQUE, à valider)
+
+Rien de ce qui suit n'est fait. C'est le chemin proposé, écrit pour que le directeur le corrige.
+
+1. **Le format** : une image par page (PNG ou JPEG), toutes aux mêmes dimensions, numérotées de 1 à N.
+   C'est ce que le lecteur simple de la salle sait rendre (`PageImageSupport`). L'application n'a aucun
+   lecteur de PDF : un PDF se convertit en images au moment du dépôt (par la direction ou par un outil,
+   à décider), il ne se partage pas tel quel. Le Coran n'est pas concerné : il garde son lecteur, et
+   n'est jamais une image.
+2. **Où le déposer** : dans la Bibliothèque existante (`library_resource` de type `image`, une
+   `resource_version`, les fichiers dans le stockage privé déjà prévu par CAP-29). Aucune table nouvelle
+   n'est nécessaire pour le contenu. Ce qui manque et n'est pas écrit : le nombre de pages et les
+   dimensions d'une page dans la version (à lire depuis ses fichiers ou à poser dans ses métadonnées :
+   décision technique à prendre avec le premier support), et l'écran de dépôt de la direction.
+3. **Qui le valide** : le directeur. « À valider » = la version reste `brouillon` (la RLS la cache à tout
+   le monde sauf à la direction). « Validé » = la direction publie la version (geste déjà prévu par
+   CAP-29, irréversible). Un support non publié n'apparaît dans aucune salle.
+4. **Ce que la salle fera alors** : l'identifiant de la ressource et celui de sa version publiée
+   deviennent l'identifiant et la version du message de partage ; la Bibliothèque de la salle lira le
+   catalogue au lieu de la liste écrite dans le code (`supportsDeSalleProvider`, aujourd'hui vide en
+   production) ; l'élève qui a le droit de lire la ressource verra ses pages ; celui dont l'application
+   ne la trouve pas lira « Ce support ne peut pas encore s'afficher ici. »
+5. **La reprise** (« La classe s'était arrêtée page N ») : elle demande la migration
+   `20261123000000_partage_generique_position_support.sql`, brouillon non appliqué. Tant qu'elle n'est pas
+   installée, la page n'est retenue que le temps de la séance, et l'enseignant le lit.
+6. **Ligne numérotée** (programme §4 : support, page, ligne) : non traitée. Le partage retient une page,
+   pas une ligne.
+
+Questions au directeur : le format « une image par page » convient-il ? Qui convertit un PDF ? Le nom
+exact et le nombre de pages du livre des lettres ?

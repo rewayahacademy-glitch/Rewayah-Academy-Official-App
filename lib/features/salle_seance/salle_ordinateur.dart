@@ -45,6 +45,7 @@ import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/video/video_session_provider.dart' show ContenuPresente;
 import '../../core/widgets/bouton_icone.dart';
 import '../../core/widgets/commande_salle.dart'
     show SurfaceTuilesSalle, TuileCommandeSalle;
@@ -488,7 +489,10 @@ String? _titreSupport(BuildContext context, VueSeance vue) {
   if (_sceneAuPremierPlan(context, vue)) return null;
   final SupportPageFixe? support = vue.supportPresente;
   if (support != null) {
-    return t.salle.seance.bibliotheque.titreCoranPage(page: support.page);
+    // PARTAGE-GENERIQUE : un autre support que le Coran dit son propre titre.
+    return support.id == ContenuPresente.supportCoran
+        ? t.salle.seance.bibliotheque.titreCoranPage(page: support.page)
+        : t.salle.support.titrePage(titre: support.titre, page: support.page);
   }
   return vue.tableauOuvert ? t.salle.seance.commandes.affichageTableau : null;
 }

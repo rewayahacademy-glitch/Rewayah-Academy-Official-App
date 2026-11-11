@@ -327,10 +327,17 @@ Widget? pageSalle(
             titre: support.titre,
             page: support.page,
             total: support.total,
-            largeurCanonique: math.max(1, boite.width.round()),
-            hauteurCanonique: math.max(1, boite.height.round()),
+            // PARTAGE-GENERIQUE : une page aux proportions fixes garde
+            // les siennes (centree dans la boite, jamais etiree).
+            largeurCanonique: support.ratioFixe
+                ? support.largeurCanonique
+                : math.max(1, boite.width.round()),
+            hauteurCanonique: support.ratioFixe
+                ? support.hauteurCanonique
+                : math.max(1, boite.height.round()),
             mention: support.mention,
             cleImage: support.cleImage,
+            ratioFixe: support.ratioFixe,
           ),
         );
   final bool libre = support == null;
