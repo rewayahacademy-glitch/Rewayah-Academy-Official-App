@@ -45,7 +45,7 @@ existent.
 | Fichier | Importé par | Échéance | Que faire | Zone |
 |---|---|---|---|---|
 | `lib/core/capacites/port_capacite_payout.dart` | seulement la démo (`features/demo/comptable/paiements_demo.dart:21`) et 3 tests (`test/features/comptable/paiements/confirmation_payout_test.dart:11`, `support_paiements.dart:13`, `test/support/demo/comptable/paiements_demo.dart:20`) | 08/11, **dépassée** | **traité par E** (`claude/non-branche-echus-travail`, `86840822c`) : ne pas y toucher | core/capacites (finance) |
-| `lib/features/mon_espace_adulte/mon_espace_adulte_page.dart` | démo seulement ; 24 fichiers de test | 15/11 | **l'étape 3 FN-112 est annulée** (pilote, 11/11/2026) : E le supprime dans P1+P4, fusionnée avant le 15/11 | mon_espace_adulte (E) |
+| `lib/features/mon_espace_adulte/mon_espace_adulte_page.dart` | démo seulement ; 24 fichiers de test | 15/11 | **l'étape 3 FN-112 est annulée** (pilote, 11/11/2026) : **supprimé par MON-ESPACE-ADULTE-SUPPR (E, 11/11, `b48180058`)**, pas encore dans `main`. `INVENTAIRE-NON-BRANCHE-2026-11-11.md` et `RELEVE-NON-BRANCHE-2026-11-08.md` le citent encore | mon_espace_adulte (E) |
 | `lib/features/recherche/domaines/finance_communications/moteur_finances.dart` | `moteurs_finance_communications.dart:8` (toléré aussi) | 30/11 | étape Listes | recherche |
 | `lib/features/recherche/domaines/finance_communications/moteurs_finance_communications.dart` | aucun dans `lib/` ; 2 tests | 30/11 | étape Listes | recherche |
 
