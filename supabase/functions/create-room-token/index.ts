@@ -34,7 +34,13 @@ import {
   urlDe,
   videoConfiguree,
 } from '../_shared/livekit.ts'
-import { type DetailRefusSalle, lireMotifSalle } from '../_shared/motif_salle.ts'
+import {
+  type DetailRefusSalle,
+  estPanne,
+  lireMotifSalle,
+  motifHorsSeance,
+  motifPersonnel,
+} from '../_shared/motif_salle.ts'
 import { doitDifferer, ROLE_QUI_ATTEND } from '../_shared/publication_differee.ts'
 import { seanceDeLaSalle } from '../_shared/seance_salle.ts'
 
@@ -120,6 +126,17 @@ Deno.serve(async (requete: Request) => {
     // n'est pas la sienne n'a pas a apprendre si elle existe, si elle est
     // commencee, ou s'il est simplement en avance.
     console.error('autoriser_jeton_video refuse', { seance, eleve: eleve || null, erreur: error?.message })
+    // SITUATIONS-GRAVES (11/11/2026) : une panne n'est pas un refus ; elle
+    // se dit « la salle n'a pas pu s'ouvrir, reessayez » (statut 500).
+    if (estPanne(error)) {
+      return refus('salle momentanement indisponible', 500)
+    }
+    // SITUATIONS-GRAVES : le refus qui ne concerne que l'appelant dit sa
+    // vraie raison (compte, acces suspendu, sorti, temps d'observation).
+    const personnel = motifPersonnel(error?.message)
+    if (personnel) {
+      return json({ error: 'acces a la salle refuse', ...personnel }, 403)
+    }
     // FN-025 : la raison, a qui y a droit seulement. La base en decide
     // (`motif_refus_salle`, participant, enseignant effectif ou tuteur d'un
     // eleve inscrit) ; pour tout autre appelant elle rend NULL et le refus
@@ -140,6 +157,9 @@ Deno.serve(async (requete: Request) => {
     } catch (e) {
       console.error('motif_refus_salle en echec', { seance, erreur: (e as Error).message })
     }
+    // SITUATIONS-GRAVES : sans motif de la base, une seance qui n'est pas
+    // la sienne se dit « pas inscrit », la meme reponse qu'elle existe ou non.
+    detail = detail ?? motifHorsSeance(error?.message)
     if (detail) {
       // FERMETURE-SALLE : la base vient de dire a quelqu'un qui y a droit
       // (`motif_refus_salle` ne repond qu'a un participant, a l'enseignant

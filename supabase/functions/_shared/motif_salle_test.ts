@@ -1,5 +1,5 @@
 import { assertEquals } from 'jsr:@std/assert@1'
-import { lireMotifSalle } from './motif_salle.ts'
+import { estPanne, lireMotifSalle, motifHorsSeance, motifPersonnel } from './motif_salle.ts'
 
 Deno.test('un motif connu passe, avec les bornes du serveur', () => {
   assertEquals(
@@ -64,4 +64,35 @@ Deno.test('seance_reportee (SNT) passe : la salle d une seance reportee dit pour
     lireMotifSalle({ motif: 'seance_reportee', fin_utc: '2026-11-03T19:00:00+00:00', ouverture_utc: null, grace_minutes: 15 }),
     { motif: 'seance_reportee', fin_utc: '2026-11-03T19:00:00+00:00', ouverture_utc: null, grace_minutes: 15 },
   )
+})
+
+// SITUATIONS-GRAVES (11/11/2026) : chaque refus dit sa vraie raison.
+Deno.test('les refus qui ne concernent que l\'appelant ont leur motif', () => {
+  const vide = { fin_utc: null, ouverture_utc: null, grace_minutes: null }
+  assertEquals(motifPersonnel('compte non valide'), { motif: 'compte_invalide', ...vide })
+  assertEquals(motifPersonnel('acces suspendu pour paiement'), { motif: 'acces_suspendu', ...vide })
+  assertEquals(motifPersonnel("sorti de la seance par l'enseignant"), { motif: 'sorti', ...vide })
+  assertEquals(motifPersonnel("quota d'observation atteint : duree"), { motif: 'observation_terminee', ...vide })
+  for (const r of [null, undefined, '', 'non inscrit a cette seance', 'salle pas encore ouverte']) {
+    assertEquals(motifPersonnel(r), null)
+  }
+})
+
+Deno.test('une seance qui n\'est pas la sienne : la meme reponse, qu\'elle existe ou non', () => {
+  const attendu = { motif: 'non_inscrit', fin_utc: null, ouverture_utc: null, grace_minutes: null }
+  for (const r of ['non inscrit a cette seance', 'seance introuvable', 'seance close', 'eleve hors du foyer']) {
+    assertEquals(motifHorsSeance(r), attendu)
+  }
+  assertEquals(motifHorsSeance('salle pas encore ouverte'), null)
+})
+
+Deno.test('une panne n\'est pas un refus', () => {
+  assertEquals(estPanne(null), true)
+  assertEquals(estPanne({ code: 'PGRST301' }), true)
+  assertEquals(estPanne({ code: '42501' }), false)
+  assertEquals(estPanne({ code: '23514' }), false)
+})
+
+Deno.test('les nouveaux motifs passent aussi par lireMotifSalle', () => {
+  assertEquals(lireMotifSalle({ motif: 'sorti' })?.motif, 'sorti')
 })

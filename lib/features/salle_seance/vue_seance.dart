@@ -596,6 +596,7 @@ class VueSeance {
     this.cameraEnseignantActive = true,
     this.cameraAutorisee = true,
     this.microBloque = false,
+    this.causeMicro,
     this.microEnAttente = false,
     this.recitantPrenom,
     this.signalEnseignant,
@@ -768,6 +769,12 @@ class VueSeance {
   /// moteur (BR-1), jamais detecte par l'ecran. Le geste Micro ouvre alors
   /// la feuille « micro bloque » et le micro reste montre coupe (P09.6).
   final bool microBloque;
+
+  /// SITUATIONS-GRAVES (11/11/2026) : pourquoi le micro ne s'ouvre pas, lu
+  /// dans le refus du navigateur au moment du geste (ou dans sa permission
+  /// avant l'entree) ; `null` tant que rien n'a echoue. La feuille « micro
+  /// bloque » dit alors la vraie cause et quoi faire (K-59).
+  final CauseMicroBloque? causeMicro;
 
   /// MICRO-AVANT-ENSEIGNANT (directeur, 11/11/2026) : le serveur garde ferme
   /// le micro (et la camera) de l'eleve tant que son enseignant n'est pas
@@ -1190,8 +1197,14 @@ class VueSeance {
   }
 
   /// Le corps de la feuille « micro bloque » (P09).
-  String get texteMicroBloque =>
-      _guidee ? t.salle.secours.microBloqueGuidee : t.salle.secours.microBloque;
+  ///
+  /// SITUATIONS-GRAVES (11/11/2026) : quand le refus du navigateur est connu
+  /// ([causeMicro]), la feuille dit la vraie cause et le geste a faire.
+  String get texteMicroBloque => switch (causeMicro) {
+    final CauseMicroBloque cause => texteCauseMicro(cause),
+    null =>
+      _guidee ? t.salle.secours.microBloqueGuidee : t.salle.secours.microBloque,
+  };
 
   /// Le compte en haut a droite : TOUJOURS celui de la personne devant
   /// l'ecran (I-9). L'enseignant ne voit jamais le compte d'un eleve.
@@ -1720,6 +1733,7 @@ class VueSeance {
     bool? enregistrementConfirme,
     bool? cameraAutorisee,
     bool? microBloque,
+    CauseMicroBloque? causeMicro,
     bool? microEnAttente,
     String? recitantPrenom,
     List<EleveSeance>? eleves,
@@ -1766,6 +1780,7 @@ class VueSeance {
     cameraEnseignantActive: cameraEnseignantActive,
     cameraAutorisee: cameraAutorisee ?? this.cameraAutorisee,
     microBloque: microBloque ?? this.microBloque,
+    causeMicro: causeMicro ?? this.causeMicro,
     microEnAttente: microEnAttente ?? this.microEnAttente,
     recitantPrenom: recitantPrenom ?? this.recitantPrenom,
     signalEnseignant: signalEnseignant,
@@ -1795,3 +1810,54 @@ class VueSeance {
     supportRecu: supportRecu ?? this.supportRecu,
   );
 }
+
+/// SITUATIONS-GRAVES (directeur, 11/11/2026, defaut n° 3 du releve) :
+/// pourquoi le navigateur n'ouvre pas le micro.
+enum CauseMicroBloque {
+  /// La permission du micro est refusee (par la personne ou le navigateur).
+  refuse,
+
+  /// Le micro est deja pris par une autre application ou une autre fenetre.
+  occupe,
+
+  /// Aucun micro n'est trouve sur l'appareil.
+  absent,
+
+  /// Une autre raison, que le navigateur ne nomme pas clairement.
+  autre,
+}
+
+/// La cause probable d'un refus du micro, lue dans la phrase du navigateur
+/// (`getUserMedia`), comme pour la camera (`causeEchecCamera`, D14).
+CauseMicroBloque causeEchecMicro(String erreur) {
+  bool dit(List<String> mots) => mots.any(erreur.contains);
+  if (dit(<String>[
+    'NotAllowedError',
+    'PermissionDenied',
+    'Permission',
+    'permission',
+    'SecurityError',
+  ])) {
+    return CauseMicroBloque.refuse;
+  }
+  if (dit(<String>[
+    'NotReadableError',
+    'TrackStartError',
+    'Could not start',
+    'AbortError',
+  ])) {
+    return CauseMicroBloque.occupe;
+  }
+  if (dit(<String>['NotFoundError', 'DevicesNotFound', 'not found'])) {
+    return CauseMicroBloque.absent;
+  }
+  return CauseMicroBloque.autre;
+}
+
+/// Ce qui se passe et quoi faire, en mots simples (K-59).
+String texteCauseMicro(CauseMicroBloque cause) => switch (cause) {
+  CauseMicroBloque.refuse => t.salle.situations.microRefuse,
+  CauseMicroBloque.occupe => t.salle.situations.microOccupe,
+  CauseMicroBloque.absent => t.salle.situations.microAbsent,
+  CauseMicroBloque.autre => t.salle.situations.microAutre,
+};

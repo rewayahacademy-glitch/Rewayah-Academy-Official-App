@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -27,6 +28,7 @@ import '../../core/presence/vue_presence.dart';
 import '../../core/profil/service_profil_enseignant.dart'
     show ProfilEnseignant, profilEnseignantParIdProvider;
 import '../../core/reseau/service_reseau.dart';
+import '../../core/router/billet_salle.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/session/session_state.dart';
@@ -254,6 +256,15 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   /// MICRO-AVANT-ENSEIGNANT (11/11/2026) : les droits de publication que le
   /// serveur change pendant la seance (`DroitsPublicationVivants`).
   StreamSubscription<AccesSalle>? _sAcces;
+
+  /// SITUATIONS-GRAVES (defaut n° 6) : la pause relayee par l'enseignant.
+  StreamSubscription<PaquetDonnees>? _sPause;
+
+  /// SITUATIONS-GRAVES : la pause recue de l'enseignant (eleve, tuteur), ou
+  /// `null`. Chez l'enseignant : la derniere pause diffusee.
+  PauseSeance? _pauseRecue;
+  PauseSeance? _pauseDiffusee;
+  int _participantsVus = 0;
 
   bool _materielPret = false;
 
@@ -551,6 +562,12 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           } else if (etat == EtatSalle.retire) {
             // 30/10/2026 : l'enseignant a fait sortir cet eleve.
             _impasse = CauseImpasse.retire;
+            // SITUATIONS-GRAVES (11/11/2026, defaut n° 7) : un observateur
+            // (sans voix) n'est jamais sorti par l'enseignant ; le serveur
+            // dit pourquoi il l'a retire.
+            if (!(_acces?.capacites.peutPublier ?? true)) {
+              unawaited(Future<void>.microtask(_motifDuRetrait));
+            }
           }
         });
       }
@@ -571,7 +588,16 @@ class _SallePageEtat extends ConsumerState<SallePage> {
         _suiviReseau.mesurer(liste);
       });
       _verifierRecitant(liste);
+      _veillerEnseignant(liste);
+      // SITUATIONS-GRAVES : un arrivant recoit la pause en cours.
+      if (liste.length > _participantsVus && _pauseDiffusee != null) {
+        unawaited(_diffuserPause(_pauseDiffusee!, forcer: true));
+      }
+      _participantsVus = liste.length;
     });
+    _sPause = _moteur.donneesRecues
+        .where((PaquetDonnees p) => p.sujet == sujetPauseSalle)
+        .listen(_pauseRecueDe);
     _sQualite = _moteur.qualite.listen((QualiteLien lien) {
       if (mounted) {
         setState(() {
@@ -682,6 +708,8 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   /// La sortie de l'appel : par le controleur quand il le tient (annonce,
   /// puis deconnexion, la barre se ferme), sinon directement.
   Future<void> _quitterAppel() async {
+    // SITUATIONS-GRAVES : une sortie voulue n'est pas a reprendre.
+    RepriseSalle.oublier();
     if (_tenu) {
       await _session.quitter();
       return;
@@ -699,6 +727,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     unawaited(_sParticipants?.cancel());
     unawaited(_sQualite?.cancel());
     unawaited(_sAcces?.cancel());
+    unawaited(_sPause?.cancel());
     _veilleCamera?.cancel();
     unawaited(_synchro?.liberer());
     // Directeur, 31/10/2026 : un appel ouvert et confie continue hors de
@@ -770,6 +799,11 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       if (!mounted) {
         return;
       }
+      // SITUATIONS-GRAVES (11/11/2026) : la permission du micro, lue avant
+      // l'entree, nomme la cause de l'impasse ; entre sans micro, la feuille
+      // « micro bloque » la dit deja au premier appui.
+      _microRefuseAvant = mesure.permissionRefusee;
+      if (mesure.permissionRefusee) _causeMicro = CauseMicroBloque.refuse;
       if (!mesure.peutEntrer && !_sansMicro) {
         setState(() => _impasse = CauseImpasse.materiel);
         return;
@@ -783,6 +817,9 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           .read(serviceVideoProvider)
           .acces(widget.seanceId, eleveId: widget.eleveId);
     } on EchecSalle catch (echec) {
+      // SITUATIONS-GRAVES : un refus du serveur ne se reprend pas au
+      // prochain rechargement.
+      if (echec.motif == MotifRefusSalle.acces) RepriseSalle.oublier();
       if (mounted) {
         setState(() {
           _impasse = CauseImpasse.depuis(echec.motif);
@@ -819,6 +856,18 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       }
       _confier(acces);
       _armerVeilleCamera(acces);
+      // SITUATIONS-GRAVES (11/11/2026, defaut n° 4) : un rechargement de la
+      // page retrouve cette salle ; seuls la seance, la classe et l'eleve
+      // sont gardes, jamais le jeton (le serveur en rend un neuf).
+      RepriseSalle.retenir(
+        BilletSalle(
+          sessionId: widget.seanceId,
+          emisA: DateTime.now(),
+          groupeId: widget.groupeId,
+          eleveId: widget.eleveId,
+          interfaceGuidee: widget.interfaceGuidee,
+        ),
+      );
     } catch (erreur) {
       // Le moteur a deja pose son etat d'echec et tout libere ; il ne reste
       // qu'a nommer la cause pour l'usager. Aucun detail technique ne remonte
@@ -1421,8 +1470,114 @@ class _SallePageEtat extends ConsumerState<SallePage> {
         .go(role == null ? Routes.racine : Routes.racinePour(role));
   }
 
-  Future<void> _basculerMicro(bool ouvert) =>
-      _moteur.reglerMicro(actif: !ouvert);
+  /// SITUATIONS-GRAVES (11/11/2026, defaut n° 3) : un micro que le
+  /// navigateur refuse n'est plus muet. La cause (refuse, pris, absent) se
+  /// dit tout de suite en tete de la salle, avec quoi faire (K-59), et la
+  /// feuille « micro bloque » la reprend au geste suivant ; un essai reussi
+  /// l'efface. Le micro n'est jamais ouvert sans geste.
+  Future<void> _basculerMicro(bool ouvert) async {
+    try {
+      await _moteur.reglerMicro(actif: !ouvert);
+      if (mounted && !ouvert && _causeMicro != null) {
+        setState(() => _causeMicro = null);
+      }
+    } on Object catch (erreur) {
+      journalDev('micro : $erreur');
+      if (!mounted || ouvert) return;
+      final CauseMicroBloque cause = causeEchecMicro('$erreur');
+      setState(() => _causeMicro = cause);
+      _annoncer(annonceMicroBloque(cause));
+    }
+  }
+
+  /// SITUATIONS-GRAVES (11/11/2026, defaut n° 6) : la pause n'est lue au
+  /// serveur que par l'enseignant (`pause_seance_etat`) ; son poste la
+  /// relaie a la classe sur le canal fiable de la salle, a chaque changement
+  /// et a chaque arrivant. L'etat reste celui du serveur : rien n'est decide
+  /// ici, et aucun micro n'est touche.
+  Future<void> _diffuserPause(PauseSeance pause, {bool forcer = false}) async {
+    if (!forcer && pause == _pauseDiffusee) return;
+    _pauseDiffusee = pause;
+    if (!(_acces?.capacites.peutPublierDonnees ?? false)) return;
+    try {
+      await _moteur.publierDonnees(
+        sujet: sujetPauseSalle,
+        charge: utf8.encode(jsonEncode(chargePause(pause))),
+        fiable: true,
+      );
+    } on Object catch (erreur) {
+      journalDev('pause non relayee : $erreur');
+    }
+  }
+
+  /// SITUATIONS-GRAVES : la pause recue, seulement de qui conduit la seance
+  /// (l'identite du jeton signe) ; dite une fois en tete quand elle commence.
+  void _pauseRecueDe(PaquetDonnees paquet) {
+    if (!mounted || (_acces?.capacites.peutModerer ?? true)) return;
+    final bool deLEnseignant = _participants.any(
+      (ParticipantSalle p) =>
+          p.identite == paquet.emetteurIdentite && p.role == roleQuiConduit,
+    );
+    if (!deLEnseignant) return;
+    final PauseSeance? pause = pauseDepuisCharge(paquet.charge);
+    if (pause == null) return;
+    final bool commence =
+        pause.statut == StatutPause.enCours &&
+        _pauseRecue?.statut != StatutPause.enCours;
+    setState(() => _pauseRecue = pause);
+    if (commence) _annoncer(annoncePause());
+  }
+
+  /// SITUATIONS-GRAVES (11/11/2026, defaut n° 2) : ce que l'eleve sait de
+  /// son enseignant, qu'il soit seul ou avec d'autres eleves.
+  final VeilleEnseignant _veille = VeilleEnseignant();
+
+  /// SITUATIONS-GRAVES (defaut n° 2) : l'eleve est prevenu, en tete de la
+  /// salle (jamais sur la page), des que son enseignant n'est pas dans la
+  /// salle : pas encore arrive, ou parti. Avant, la phrase d'attente ne
+  /// s'affichait que si personne d'autre n'etait visible.
+  void _veillerEnseignant(List<ParticipantSalle> liste) {
+    if (_acces?.role != AccesSalle.roleEleve) return;
+    if (!liste.any((ParticipantSalle p) => p.estLocal)) return;
+    final AnnonceGeste? annonce = _veille.observer(
+      enseignantPresent: enseignantDansLaSalle(liste),
+      tutoie: _tutoieSalle,
+    );
+    if (annonce != null) _annoncer(annonce);
+  }
+
+  /// SITUATIONS-GRAVES (11/11/2026, defaut n° 7) : pourquoi le serveur a
+  /// retire cet observateur. LiveKit ne dit que « participant retire » ; le
+  /// motif vient du serveur : une nouvelle demande d'entree, qu'il refuse
+  /// avec sa vraie raison (« temps d'observation termine »). Aucun jeton
+  /// rendu n'est employe : la salle reste fermee, rien ne se reconnecte.
+  Future<void> _motifDuRetrait() async {
+    try {
+      await ref
+          .read(serviceVideoProvider)
+          .acces(widget.seanceId, eleveId: widget.eleveId);
+    } on EchecSalle catch (echec) {
+      final DetailRefusSalle? detail = echec.detail;
+      if (!mounted ||
+          _impasse != CauseImpasse.retire ||
+          detail == null ||
+          detail.motif == MotifServeurSalle.sorti) {
+        return;
+      }
+      setState(() {
+        _impasse = CauseImpasse.acces;
+        _detailRefus = detail;
+      });
+    } on Object catch (erreur) {
+      journalDev('motif du retrait illisible : $erreur');
+    }
+  }
+
+  /// SITUATIONS-GRAVES : la cause du dernier refus du micro, ou `null`.
+  CauseMicroBloque? _causeMicro;
+
+  /// SITUATIONS-GRAVES : le pre-vol a lu la permission du micro refusee.
+  bool _microRefuseAvant = false;
 
   /// D14 (S0) : un allumage qui echoue n'est plus silencieux. La phrase
   /// exacte du navigateur s'affiche sous l'en-tete, avec sa cause probable et
@@ -1647,14 +1802,26 @@ class _SallePageEtat extends ConsumerState<SallePage> {
             // K4 : la forme fixe de la classe (16:9), ajustee sans
             // etirement sur chaque appareil.
             tableauLibre: TableauLibre.classe,
+            microBloque: _causeMicro != null,
+            causeMicro: _causeMicro,
           )
-        : base.copyWith(panneau: _panneau, contexte: _contexte);
+        : base.copyWith(
+            panneau: _panneau,
+            contexte: _contexte,
+            // SITUATIONS-GRAVES : le vrai refus du micro alimente la feuille.
+            microBloque: _causeMicro != null,
+            causeMicro: _causeMicro,
+          );
     // N3, S2 : la pause programmee de la classe, lue au serveur pour
     // l'enseignant seulement (`pause_seance_etat` refuse les autres roles).
     // Sans reponse, le chrono reste sans pause : jamais une pause inventee.
     final PauseSeance? pause = enseignant
         ? ref.watch(pauseSeanceProvider(widget.seanceId)).value
-        : null;
+        : _pauseRecue;
+    // SITUATIONS-GRAVES (defaut n° 6) : l'enseignant relaie la pause servie.
+    if (enseignant && pause != null && pause != _pauseDiffusee) {
+      unawaited(Future<void>.microtask(() => _diffuserPause(pause)));
+    }
     _tutoieSalle = base.tutoiement ?? base.role == RoleSeance.guidee;
     // GESTES-POINTEUR : chez un camarade du recitant, la phrase du micro dit
     // la vraie raison (le serveur garde son micro ferme le temps de la
@@ -1675,8 +1842,12 @@ class _SallePageEtat extends ConsumerState<SallePage> {
             echecPause: _echecPause,
           )
         : camaradeRecite
-        ? seanceSansFiches.copyWith(recitantPrenom: paroleRecue.prenom)
-        : seanceSansFiches;
+        ? seanceSansFiches.copyWith(
+            recitantPrenom: paroleRecue.prenom,
+            pause: pause,
+          )
+        // SITUATIONS-GRAVES : la pause relayee se lit dans l'ile.
+        : seanceSansFiches.copyWith(pause: pause);
     final VideoSessionProvider moteur = ref.watch(moteurSalleProvider);
     final double? plus = palierSuivant(_zoom);
     final double? moins = palierPrecedent(_zoom);
@@ -2655,6 +2826,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           ? _Impasse(
               cause: vue.cause,
               detail: _detailRefus,
+              microRefuse: _microRefuseAvant,
               onReessayer: _entrer,
               onRentrer: _rentrer,
             )
@@ -2697,6 +2869,103 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     );
   }
 }
+
+/// SITUATIONS-GRAVES (directeur, 11/11/2026, defaut n° 6) : le sujet du
+/// paquet qui relaie la pause de la seance a la classe (canal fiable).
+const String sujetPauseSalle = 'tc.salle.pause';
+
+/// La charge du relais de pause : l'etat servi, sans aucune identite.
+Map<String, Object?> chargePause(PauseSeance pause) => <String, Object?>{
+  'statut': pause.statut.name,
+  'duree': pause.dureePrevueMinutes,
+  'debut': pause.debutUtc?.toUtc().toIso8601String(),
+  'fin': pause.finUtc?.toUtc().toIso8601String(),
+  'debutPrevu': pause.debutPrevuUtc?.toUtc().toIso8601String(),
+};
+
+/// Lit un relais de pause, ou `null` s'il est illisible. Jamais de commande :
+/// `peutPiloter` reste faux chez qui le recoit.
+PauseSeance? pauseDepuisCharge(List<int> charge) {
+  try {
+    final Object? lu = jsonDecode(utf8.decode(charge));
+    if (lu is! Map) return null;
+    final StatutPause? statut = StatutPause.values
+        .where((StatutPause s) => s.name == lu['statut'])
+        .firstOrNull;
+    final Object? duree = lu['duree'];
+    if (statut == null ||
+        duree is! int ||
+        duree < BornesPause.dureeMin ||
+        duree > BornesPause.dureeMax) {
+      return null;
+    }
+    DateTime? instant(Object? v) =>
+        v is String ? DateTime.tryParse(v)?.toUtc() : null;
+    return PauseSeance(
+      statut: statut,
+      dureePrevueMinutes: duree,
+      debutUtc: instant(lu['debut']),
+      finUtc: instant(lu['fin']),
+      debutPrevuUtc: instant(lu['debutPrevu']),
+    );
+  } on Object {
+    return null;
+  }
+}
+
+/// L'annonce de tete d'une pause qui commence.
+AnnonceGeste annoncePause() => AnnonceGeste(
+  cle: const ValueKey<String>('pause-annonce'),
+  titre: t.salle.situations.pauseTitre,
+  message: t.salle.situations.pause,
+);
+
+/// SITUATIONS-GRAVES (directeur, 11/11/2026, defaut n° 2) : ce que l'eleve
+/// sait de son enseignant. Une annonce par changement, jamais en boucle :
+/// « pas encore arrive » a la premiere observation sans lui, « n'est plus
+/// dans la salle » quand il part ; rien quand il est la. Seule la presence
+/// lue dans la salle decide : la fermeture de la salle et les micros restent
+/// au serveur.
+class VeilleEnseignant {
+  bool _vu = false;
+  bool _dit = false;
+
+  /// L'annonce a poser pour cette observation, ou `null`.
+  AnnonceGeste? observer({
+    required bool enseignantPresent,
+    bool tutoie = false,
+  }) {
+    if (enseignantPresent) {
+      _vu = true;
+      _dit = false;
+      return null;
+    }
+    if (_dit) return null;
+    _dit = true;
+    return _vu
+        ? AnnonceGeste(
+            cle: const ValueKey<String>('enseignant-parti'),
+            titre: t.salle.situations.enseignantPartiTitre,
+            message: tutoie
+                ? t.salle.situations.enseignantPartiTutoie
+                : t.salle.situations.enseignantParti,
+          )
+        : AnnonceGeste(
+            cle: const ValueKey<String>('enseignant-attendu'),
+            titre: t.salle.seulEnseignant,
+            message: t.salle.seulEnseignantDetail,
+          );
+  }
+}
+
+/// SITUATIONS-GRAVES (11/11/2026, defaut n° 3) : l'annonce de tete d'un
+/// micro que le navigateur refuse : ce qui se passe, puis quoi faire.
+AnnonceGeste annonceMicroBloque(CauseMicroBloque cause) => AnnonceGeste(
+  cle: const ValueKey<String>('micro-bloque-annonce'),
+  titre: t.salle.situations.microEchecTitre,
+  message: texteCauseMicro(cause),
+  ton: TonEtat.alerte,
+);
 
 /// D14 (S0) : la cause probable d'un refus de camera, lue dans la phrase du
 /// navigateur (`getUserMedia`), et ce qu'il faut faire (K-59).
@@ -4945,9 +5214,14 @@ class _Impasse extends StatelessWidget {
     required this.onReessayer,
     required this.onRentrer,
     this.detail,
+    this.microRefuse = false,
   });
 
   final CauseImpasse cause;
+
+  /// SITUATIONS-GRAVES (11/11/2026) : le navigateur refuse le micro (lu
+  /// avant l'entree) ; l'impasse du materiel dit cette cause-la.
+  final bool microRefuse;
 
   /// FN-025 : le motif servi par le serveur a qui avait droit a la salle.
   final DetailRefusSalle? detail;
@@ -4985,6 +5259,25 @@ class _Impasse extends StatelessWidget {
         t.snt.salle.reporteeTitre,
         t.snt.salle.reportee,
       ),
+      // SITUATIONS-GRAVES (11/11/2026, defaut n° 8) : chaque refus dit sa
+      // vraie raison et quoi faire, sans detail d'argent.
+      MotifServeurSalle.nonInscrit => (
+        t.salle.situations.nonInscritTitre,
+        t.salle.situations.nonInscrit,
+      ),
+      MotifServeurSalle.accesSuspendu => (
+        t.salle.situations.accesSuspenduTitre,
+        t.salle.situations.accesSuspendu,
+      ),
+      MotifServeurSalle.sorti => (t.salle.retire, t.salle.retireDetail),
+      MotifServeurSalle.observationTerminee => (
+        t.salle.situations.observationTermineeTitre,
+        t.salle.situations.observationTerminee,
+      ),
+      MotifServeurSalle.compteInvalide => (
+        t.salle.situations.compteInvalideTitre,
+        t.salle.situations.compteInvalide,
+      ),
       _ => (t.salle.refusAcces, t.salle.refusAccesDetail),
     };
   }
@@ -5000,6 +5293,10 @@ class _Impasse extends StatelessWidget {
     // faute : sur l'appareil, dans l'heure, ou chez nous. Sans cela, l'usager
     // cherche toujours de son cote.
     final (String, String) dit = switch (cause) {
+      CauseImpasse.materiel when microRefuse => (
+        t.salle.situations.microEchecTitre,
+        t.salle.situations.microRefuseEntree,
+      ),
       CauseImpasse.materiel => (
         t.salle.refusMateriel,
         t.salle.refusMaterielDetail,

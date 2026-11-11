@@ -813,3 +813,68 @@ réduire la salle. Rien de cela n'est retiré. Le reste du §9 est appliqué.
 et sombre, français et arabe ; 360 x 640 en texte x2 ; 834 inchangé) ; captures **de test** avant /
 après dans `docs/current/captures/E2E/telephone-reduit/`. Pas essayé sur le banc ni en production.
 Revue : `docs/current/UX_REVIEW_TELEPHONE-REDUIT.md` (questions T1 à T5).
+
+## D-019 (11/11/2026). Les situations graves de la salle (lot SITUATIONS-GRAVES)
+
+**Demande du directeur** : « gérer tout ce qui entoure la salle, toutes les situations avant d'entrer
+à la salle et pendant et après la fin du cours et après qu'on ait coupé, après qu'on ait pris une
+pause. Tout. » Ce lot corrige six défauts du relevé `SITUATIONS-DE-LA-SALLE.md` (§5). Tout est
+**codé et testé localement, rien n'est prouvé en production.**
+
+1. **Micro refusé, pris ou absent (défaut n° 3).** Avant l'entrée, le pré-vol lit la permission du
+   micro sans rien demander ni ouvrir (`navigator.permissions`, `pre_vol.dart`) : un refus déjà
+   donné arrête l'entrée sur « Le micro ne s'ouvre pas » et dit comment l'autoriser. Au geste, un
+   échec n'est plus muet : la cause (refusé, pris, absent, autre) est lue dans la phrase du
+   navigateur, dite tout de suite en tête de la salle, et la feuille « micro bloqué » existante la
+   reprend avec « Réessayer le micro ». Le micro reste fermé à l'entrée (règle du 25/10). Limite :
+   un micro pris par une autre application ne se voit qu'au geste (le détecter avant demanderait
+   d'ouvrir le micro). La caméra avait déjà ce traitement (D14), rien n'y change.
+2. **Rechargement ou plantage (défaut n° 4).** À l'entrée, l'onglet retient la séance, la classe et
+   l'élève (`sessionStorage`, `RepriseSalle` dans `billet_salle.dart`), **jamais un jeton ni un
+   droit**. Après un rechargement sur `/salle`, la personne revient directement dans sa salle : un
+   jeton neuf est demandé à `create-room-token`, qui revérifie tout ; micro et caméra fermés. La
+   reprise meurt avec l'onglet, s'oublie à la sortie volontaire et à tout refus du serveur, et ne
+   dure pas plus de 4 heures. Un autre onglet ou une adresse copiée n'ouvrent toujours rien
+   (ADR-005). **Non fait** : la page présentée, le tableau, les traits et la parole de l'enseignant
+   restent perdus au rechargement (en mémoire seulement : `livekit_session_provider.dart`,
+   `synchro_salle.dart`) ; les rétablir demande une source au serveur, ce n'est ni petit ni sûr.
+   L'enseignant retrouve sa page par « Reprendre page N » (lu au serveur), comme avant.
+3. **Refus d'entrée vrais (défaut n° 8).** `create-room-token` lit la raison levée par la base :
+   compte invalide, accès suspendu, sorti par l'enseignant, temps d'observation épuisé (levées
+   seulement après que la base a reconnu l'appelant, ou ne parlant que de lui) ; puis
+   `motif_refus_salle` ; puis, sans motif, « Ce cours n'est pas dans vos cours », la même réponse
+   que la séance existe ou non. Une panne (code inattendu) n'est plus un refus : statut 500, « La
+   salle n'a pas pu s'ouvrir, Réessayer ». Aucune migration : tout se lit dans les raisons
+   existantes. Aucun mot d'argent : « Accès à cette classe temporairement indisponible » (règle des
+   mots : à l'enfant, on ne parle jamais d'argent).
+4. **Tuteur coupé en fin d'observation (défaut n° 7).** LiveKit ne dit que « participant retiré ».
+   Chez un observateur (sans voix), l'écran redemande l'entrée au serveur, qui refuse avec le motif
+   « observation_terminee » ; l'écran dit alors « Votre temps d'observation est terminé ». Aucun
+   jeton rendu n'est employé. L'élève sorti par l'enseignant garde son écran.
+5. **Enseignant absent ou parti (défaut n° 2).** Chez l'élève, une annonce de tête, une fois par
+   changement : « Votre professeur n'est pas encore arrivé » quand il entre sans lui, « Votre
+   enseignant n'est plus dans la salle » quand il part, avec ou sans camarades. La fermeture de la
+   salle et le retrait des micros restent à l'agent de la fermeture (serveur).
+6. **La pause (défaut n° 6).** Ce qu'elle est, d'après `port_pause_seance.dart` et ses appelants :
+   une pause programmée par l'enseignant sur sa classe (moment et durée), qu'il démarre et termine
+   lui-même depuis le chrono ; le serveur horodate et ne laisse lire l'état qu'à l'enseignant de la
+   séance et à la direction (`pause_seance_etat`). Désormais le poste de l'enseignant relaie l'état
+   servi à la classe sur le canal fiable de la salle (à chaque changement et à chaque arrivant) :
+   élève et tuteur voient la pause dans l'île (le même chrono) et lisent « Pause : la séance reprend
+   dans un instant » en tête. Seul un paquet venu de qui conduit la séance est lu. Rien d'autre ne
+   change : aucun micro n'est touché, la fin prévue ne recule pas.
+
+**Questions au directeur (non tranchées, rien n'est codé) :**
+
+- **La pause repousse-t-elle la fin prévue ?** Recommandation : oui, de la durée réelle de la
+  pause, décidé au serveur (sinon une pause de 10 minutes vole 10 minutes de cours et le dépassement
+  permis se consomme pendant la prière).
+- **La pause ferme-t-elle les micros ?** Recommandation : oui pour les élèves (fermés par le serveur
+  au début, rouvrables par eux à la reprise), jamais pour l'enseignant.
+- **La pause se termine-t-elle seule à l'heure de reprise ?** Recommandation : non ; une note douce
+  à l'enseignant à l'heure de reprise, et c'est lui qui reprend.
+
+**Limites connues.** Le relais de pause dépend du poste de l'enseignant (s'il n'est pas là, rien
+n'est relayé ; un remplaçant ne lit pas la pause : `pause_seance_etat` ne connaît que
+`sessions.teacher_id`). Les tests de la fonction Edge (`motif_salle_test.ts`) sont écrits mais n'ont
+pas tourné ici (Deno absent de la machine).

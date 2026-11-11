@@ -917,7 +917,16 @@ class LiveKitSessionProvider
     if (local == null || !(_acces?.capacites.peutPublier ?? false)) {
       return;
     }
-    await local.setMicrophoneEnabled(actif);
+    try {
+      await local.setMicrophoneEnabled(actif);
+    } catch (e) {
+      // SITUATIONS-GRAVES (11/11/2026) : le navigateur refuse le micro
+      // (permission, micro pris, aucun micro). Rien n'est ouvert : la
+      // reprise ne doit pas le retenter seule, et l'ecran nomme la cause.
+      if (actif) _microVoulu = false;
+      _publierParticipants();
+      rethrow;
+    }
     // ECRAN-EVEILLE : le geste fait foi pour toute reprise a venir.
     _microVoulu = actif;
     _publierParticipants();
