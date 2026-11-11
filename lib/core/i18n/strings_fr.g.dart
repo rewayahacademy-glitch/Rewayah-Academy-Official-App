@@ -15390,9 +15390,6 @@ class Traductions$enseignant$journee$fr {
 	/// fr: 'Les horaires de prière, vos pauses et vos cahiers de transmission à terminer n'ont pas pu être chargés : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Vos séances affichées sont à jour : elles n'en dépendent pas. Réessayez dans un instant.'
 	String get erreurPartielleTout => 'Les horaires de prière, vos pauses et vos cahiers de transmission à terminer n\'ont pas pu être chargés : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Vos séances affichées sont à jour : elles n\'en dépendent pas. Réessayez dans un instant.';
 
-	/// fr: '{eleve} n'est pas entré en salle.'
-	String absenceDetectee({required Object eleve}) => '${eleve} n\'est pas entré en salle.';
-
 	/// fr: '{eleve} n'a pas encore rejoint la salle.'
 	String pasEncoreRejoint({required Object eleve}) => '${eleve} n\'a pas encore rejoint la salle.';
 
@@ -55243,7 +55240,6 @@ extension on Traductions {
 			'enseignant.journee.lancerHorsLigne' => 'Le cours pourra être lancé quand la connexion reviendra.',
 			'enseignant.journee.erreurPartielle' => 'Les horaires de prière et vos pauses n\'ont pas pu être chargés : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Vos séances affichées sont à jour : elles n\'en dépendent pas. Réessayez dans un instant.',
 			'enseignant.journee.erreurPartielleTout' => 'Les horaires de prière, vos pauses et vos cahiers de transmission à terminer n\'ont pas pu être chargés : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Vos séances affichées sont à jour : elles n\'en dépendent pas. Réessayez dans un instant.',
-			'enseignant.journee.absenceDetectee' => ({required Object eleve}) => '${eleve} n\'est pas entré en salle.',
 			'enseignant.journee.pasEncoreRejoint' => ({required Object eleve}) => '${eleve} n\'a pas encore rejoint la salle.',
 			'enseignant.journee.coupureDetectee' => ({required Object eleve}) => '${eleve} a perdu la connexion.',
 			'enseignant.journee.revenusDetail' => 'Votre rémunération estimée du mois, classe par classe.',
@@ -55603,9 +55599,9 @@ extension on Traductions {
 			'enseignant.creneaux.supprimerPlage' => 'Supprimer cette plage',
 			'enseignant.creneaux.plageEnregistree' => ({required Object jours, required Object de, required Object a}) => 'Plage enregistrée : ${jours}, ${de} ${a}.',
 			'enseignant.creneaux.plageInchangee' => ({required Object jours, required Object de, required Object a}) => 'Rien à enregistrer : ${jours}, ${de} ${a}, déjà dans vos disponibilités.',
+			'enseignant.creneaux.plageSupprimee' => ({required Object jour, required Object de, required Object a}) => 'Plage supprimée : ${jour}, ${de} ${a}.',
 			_ => null,
 		} ?? switch (path) {
-			'enseignant.creneaux.plageSupprimee' => ({required Object jour, required Object de, required Object a}) => 'Plage supprimée : ${jour}, ${de} ${a}.',
 			'enseignant.creneaux.seanceContinue' => ({required Object heures}) => 'La séance déjà attribuée sur ${heures} continue : demandez une réaffectation pour l\'arrêter.',
 			'enseignant.creneaux.confirmerRetraitQuestion' => ({required Object heures}) => 'Retirer ${heures} de vos disponibilités ?',
 			'enseignant.creneaux.confirmerRetraitConsequence' => ({required Object heures}) => 'Une classe a lieu sur ${heures}. Retirer cette disponibilité ne met pas fin à la séance : elle continue jusqu\'à une réaffectation.',
@@ -56117,9 +56113,9 @@ extension on Traductions {
 			'tc.coran.mushaf.page15.aProposOuvrir' => 'À propos de cette édition',
 			'tc.coran.mushaf.page15.aProposTitre' => 'À propos de cette édition',
 			'tc.coran.mushaf.page15.aProposPolice' => 'Police : KFGQPC UthmanicHafs v3.0 (Complexe du Roi Fahd)',
+			'tc.coran.mushaf.page15.aProposLicences' => 'Licences : le texte et la police appartiennent au KFGQPC, la mise en page est publiée sous CC BY 4.0 (quran.ws), les quarts de hizb viennent de quran-meta (MIT).',
 			_ => null,
 		} ?? switch (path) {
-			'tc.coran.mushaf.page15.aProposLicences' => 'Licences : le texte et la police appartiennent au KFGQPC, la mise en page est publiée sous CC BY 4.0 (quran.ws), les quarts de hizb viennent de quran-meta (MIT).',
 			'tc.coran.mushaf.page15.aProposTanzil' => 'Tanzil demande que la source soit clairement indiquée et que tanzil.net soit joignable.',
 			'tc.coran.fidelite.approchee' => 'Composition approchée',
 			'tc.coran.fidelite.approcheeDetail' => 'Les versets de cette page sont exactement ceux de la page du Mushaf de Médine. Leur répartition sur les lignes, elle, est celle de cet écran : le découpage en lignes de l\'édition n\'est pas encore importé.',
@@ -56631,9 +56627,9 @@ extension on Traductions {
 			'adulte.famille.profilNonCreePhrase' => 'En démonstration, rien n\'est envoyé. Ma famille reste telle qu\'elle était.',
 			'adulte.famille.profilNonCreePhraseSeul' => 'En démonstration, rien n\'est envoyé. Votre espace élève reste tel qu\'il était.',
 			'adulte.famille.monProfilIndisponibleTitre' => 'Pas encore disponible',
+			'adulte.famille.monProfilIndisponiblePhrase' => 'La création d\'un profil élève séparé n\'est pas encore disponible. Vos cours et Ma famille restent tels qu\'ils sont.',
 			_ => null,
 		} ?? switch (path) {
-			'adulte.famille.monProfilIndisponiblePhrase' => 'La création d\'un profil élève séparé n\'est pas encore disponible. Vos cours et Ma famille restent tels qu\'ils sont.',
 			'adulte.famille.indisponibleTitre' => 'La rubrique famille n\'est pas encore disponible',
 			'adulte.famille.indisponiblePhrase' => 'Votre famille ou votre forfait famille s\'affichera ici dès qu\'il sera disponible.',
 			'adulte.famille.place.ajouterConjointe' => 'Ajouter une conjointe',
@@ -57145,9 +57141,9 @@ extension on Traductions {
 			'alertes.traitement.pasEncoreAffiche' => 'Aucun écran de la famille n\'affiche encore ce message.',
 			'alertes.traitement.motif' => 'Motif de la clôture',
 			'alertes.traitement.motifRequisAide' => 'Obligatoire pour ce signalement. Lu par la direction seulement.',
+			'alertes.traitement.motifFacultatifAide' => 'Facultatif. Lu par la direction seulement.',
 			_ => null,
 		} ?? switch (path) {
-			'alertes.traitement.motifFacultatifAide' => 'Facultatif. Lu par la direction seulement.',
 			'alertes.traitement.motifManque' => 'Écrivez le motif de la clôture.',
 			'alertes.traitement.examiner' => 'Examiner',
 			'alertes.traitement.transmettre' => 'Transmettre',
@@ -57659,9 +57655,9 @@ extension on Traductions {
 			'com.communaute.demo.choisir' => 'Choisissez une situation à essayer, vue par un enseignant.',
 			'com.communaute.demo.aujourdhui' => 'Aujourd\'hui, avec le raccourci',
 			'com.communaute.demo.nominal' => 'Six publications',
+			'com.communaute.demo.publication' => 'Une publication ouverte',
 			_ => null,
 		} ?? switch (path) {
-			'com.communaute.demo.publication' => 'Une publication ouverte',
 			'com.communaute.demo.vide' => 'Aucune publication',
 			'com.communaute.demo.lectureEchouee' => 'Lecture en échec',
 			'com.communaute.demo.indisponible' => 'Service pas encore disponible',
@@ -58173,9 +58169,9 @@ extension on Traductions {
 			'comptable.commun.tresorerieDetenue' => 'Trésorerie détenue',
 			'comptable.commun.fondsProteges' => 'Fonds protégés',
 			'comptable.commun.enTransit' => 'En transit',
+			'comptable.commun.tresorerieLibreDetail' => 'Ce qui reste réellement disponible après les fonds protégés, les obligations et le transit.',
 			_ => null,
 		} ?? switch (path) {
-			'comptable.commun.tresorerieLibreDetail' => 'Ce qui reste réellement disponible après les fonds protégés, les obligations et le transit.',
 			'comptable.commun.objectifFixe' => 'Objectif : montant fixe',
 			'comptable.commun.objectifMois' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Objectif actuel : 1 mois de charges essentielles', other: 'Objectif actuel : ${n} mois de charges essentielles', ), 
 			'comptable.commun.montantActuel' => 'Montant actuel',
@@ -58687,9 +58683,9 @@ extension on Traductions {
 			'comptable.beneficiaires.profil.enAttente' => 'Paiements qui attendent ce profil',
 			'comptable.beneficiaires.profil.proprietaire' => ({required Object nom}) => 'Seul ${nom} peut saisir ou modifier ses coordonnées de paiement. Vous en voyez une version masquée.',
 			'comptable.beneficiaires.profil.historiqueTitre' => 'Historique des paiements',
+			'comptable.beneficiaires.profil.historiqueVide' => 'Aucun paiement versé à ce bénéficiaire pour l\'instant.',
 			_ => null,
 		} ?? switch (path) {
-			'comptable.beneficiaires.profil.historiqueVide' => 'Aucun paiement versé à ce bénéficiaire pour l\'instant.',
 			'comptable.beneficiaires.profil.journalTitre' => 'Journal du profil',
 			'comptable.beneficiaires.profil.journalVide' => 'Aucune modification enregistrée sur ce profil pour l\'instant.',
 			'comptable.beneficiaires.profil.actionsTitre' => 'Que faire pour ce profil',
@@ -59201,9 +59197,9 @@ extension on Traductions {
 			'reprisesAdmin.erreur' => 'Les demandes n\'ont pas pu être chargées. Réessayez.',
 			'reprisesAdmin.sansDonnees' => 'les demandes de reprise',
 			'reprisesAdmin.indisponibleTitre' => 'Reprises de foyer indisponibles',
+			'reprisesAdmin.indisponiblePhrase' => 'Cette fonction sera disponible au branchement serveur.',
 			_ => null,
 		} ?? switch (path) {
-			'reprisesAdmin.indisponiblePhrase' => 'Cette fonction sera disponible au branchement serveur.',
 			'recherche.titre' => 'Rechercher',
 			'recherche.retour' => 'Retour',
 			'recherche.champ.libelle' => 'Rechercher',
@@ -59715,9 +59711,9 @@ extension on Traductions {
 			'admissions.titre' => 'Demandes',
 			'admissions.sousTitre' => 'Les demandes d\'admission des familles et des élèves adultes. Personne n\'entre sans la décision de la direction.',
 			'admissions.population' => 'Population',
+			'admissions.familles' => 'Familles',
 			_ => null,
 		} ?? switch (path) {
-			'admissions.familles' => 'Familles',
 			'admissions.elevesAdultes' => 'Élèves adultes',
 			'admissions.aTraiter' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, zero: 'Aucune demande à traiter', one: '${n} demande à traiter', other: '${n} demandes à traiter', ), 
 			'admissions.rechercher' => 'Rechercher',
@@ -60229,9 +60225,9 @@ extension on Traductions {
 			'candidatsFlux.prevenir.resultat.tout' => 'Plus personne n\'attend le lien : tout le monde est prévenu.',
 			'candidatsFlux.prevenir.resultat.pasDeuxFois' => 'Une même adresse ne reçoit jamais le message deux fois, même si vous envoyez à nouveau.',
 			'candidatsFlux.prevenir.erreurs.titre' => 'Envoi non confirmé',
+			'candidatsFlux.prevenir.erreurs.nonConfirme' => 'Il est possible que l\'envoi ne soit pas parvenu jusqu\'à Rewayah. Réessayez : aucune adresse ne recevra le message en double.',
 			_ => null,
 		} ?? switch (path) {
-			'candidatsFlux.prevenir.erreurs.nonConfirme' => 'Il est possible que l\'envoi ne soit pas parvenu jusqu\'à Rewayah. Réessayez : aucune adresse ne recevra le message en double.',
 			'candidatsFlux.prevenir.erreurs.generique' => 'L\'envoi n\'a pas abouti et rien n\'est confirmé. Réessayez : aucune adresse ne recevra le message en double.',
 			'candidatsFlux.invitationsPersonnelles.aucuneImportee' => 'Aucune réponse de formulaire n\'est encore importée. Importez d\'abord les formulaires : sans eux, les codes ne retrouveraient aucune réponse, et aucun envoi n\'est possible.',
 			'candidatsFlux.invitationsPersonnelles.varianteA' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'dont ${n} personne qui a reçu le courriel d\'attente de fin octobre', other: 'dont ${n} personnes qui ont reçu le courriel d\'attente de fin octobre', ), 

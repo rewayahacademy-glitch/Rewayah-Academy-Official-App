@@ -628,7 +628,6 @@ libelle-sans-source|assets/i18n/fr.i18n.json|enseignant.ficheGroupe.introuvable 
 libelle-sans-source|assets/i18n/fr.i18n.json|enseignant.ficheGroupe.introuvableDetail : Il a peut-être été clôturé, ou il appartient à un autre enseignant.
 libelle-sans-source|assets/i18n/fr.i18n.json|enseignant.ficheGroupe.membresTitre : Les élèves du groupe
 libelle-sans-source|assets/i18n/fr.i18n.json|enseignant.ficheGroupe.niveauIndique : Niveau indiqué : {niveau}
-libelle-sans-source|assets/i18n/fr.i18n.json|enseignant.journee.absenceDetectee : {eleve} n'est pas entré en salle.
 libelle-sans-source|assets/i18n/fr.i18n.json|enseignant.journee.aucunCoursDetail : Prenez un élève en attente : c'est ce qui remplit votre journée.
 libelle-sans-source|assets/i18n/fr.i18n.json|enseignant.journee.autresAbsences : et {nombre} autres élèves.
 libelle-sans-source|assets/i18n/fr.i18n.json|enseignant.journee.coupureDetectee : {eleve} a perdu la connexion.
