@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show RenderParagraph;
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/auth/service_auth.dart';
+import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/theme/app_typography.dart';
@@ -13,6 +15,7 @@ import 'package:rewayah_academy/core/widgets/section_header.dart';
 import 'package:rewayah_academy/features/compte/compte_page.dart';
 import 'package:rewayah_academy/features/connexion/connexion_page.dart';
 
+import '../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../support/garde_interface.dart';
 import '../support/harnais.dart';
 import '../support/hote_theme.dart';
@@ -176,4 +179,85 @@ void main() {
       });
     }
   });
+
+  // EN-TETES AU TELEPHONE (directeur, 10/11/2026 ; arbitrages du pilote et du
+  // garde-cap, 11/11) : la barre compacte du telephone (page de niveau 2, sous
+  // 600) garde le titre un palier au-dessus d'un titre de section (24 contre
+  // 22 en echelle standard, 30 contre 28 en Interface guidee). HIER-1 y reste
+  // STRICT, sauf l'exception ecrite plus bas.
+  group('barre compacte du telephone (EN-TETES AU TELEPHONE, 10/11/2026)', () {
+    setUpAll(chargerPolicesDuDepot);
+
+    double rendue(WidgetTester tester, String texte) {
+      final RenderParagraph p = tester.renderObject<RenderParagraph>(
+        find.byWidgetPredicate(
+          (Widget w) =>
+              w is RichText &&
+              w.text.toPlainText().replaceAll('\u2060', '') == texte,
+        ),
+      );
+      return p.textScaler.scale(p.text.style!.fontSize!);
+    }
+
+    for (final InterfaceMode mode in <InterfaceMode>[
+      InterfaceMode.standard,
+      InterfaceMode.enfant,
+    ]) {
+      testWidgets('un titre : strictement plus grand qu\'un titre de '
+          'section (${mode.name}, 320 px)', (WidgetTester tester) async {
+        fixerVue(tester, const Size(320, 640));
+        const Widget corps = Column(
+          children: <Widget>[
+            EntetePage(titre: 'Mes séances passées', onRetour: _rien),
+            SectionHeader(titre: 'Titre de section'),
+          ],
+        );
+        await tester.pumpWidget(
+          mode == InterfaceMode.standard
+              ? hoteTheme(corps)
+              : hote(const SingleChildScrollView(child: corps), mode: mode),
+        );
+        await tester.pump();
+        expect(
+          rendue(tester, 'Mes séances passées'),
+          greaterThan(rendue(tester, 'Titre de section')),
+        );
+      });
+    }
+
+    // EXCEPTION ECRITE (garde-cap, 11/11/2026) : mot seul plus large que la
+    // ligne : reduction bornee, HIER-1 toleré. Un mot de 23 lettres a 320 px
+    // ne tient pas dans les 236 de la barre ; il recoit la reduction habituelle
+    // et bornee de l'application (`TexteSansCoupure`), jamais l'ellipse. Mesure
+    // du 11/11 : 23,8 au lieu de 24, donc encore au-dessus d'un titre de
+    // section (22) ; le test tolere l'egalite, pas moins. Le mot peut encore se
+    // couper sur deux lignes : cas irrealiste, aucun titre de l'application n'a
+    // un mot de cette longueur.
+    testWidgets('mot seul plus large que la ligne : reduction bornee, HIER-1 '
+        'toleré (jamais sous un titre de section)', (
+      WidgetTester tester,
+    ) async {
+      fixerVue(tester, const Size(320, 640));
+      const String mot = 'Électroencéphalographie';
+      await tester.pumpWidget(
+        hoteTheme(
+          const Column(
+            children: <Widget>[
+              EntetePage(titre: mot, onRetour: _rien),
+              SectionHeader(titre: 'Titre de section'),
+            ],
+          ),
+        ),
+      );
+      await tester.pump();
+      expect(tester.takeException(), isNull);
+      expect(find.byKey(EnteteCompact.barreKey), findsOneWidget);
+      expect(
+        rendue(tester, mot),
+        greaterThanOrEqualTo(rendue(tester, 'Titre de section')),
+      );
+    });
+  });
 }
+
+void _rien() {}

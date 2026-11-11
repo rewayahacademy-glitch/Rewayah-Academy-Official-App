@@ -192,8 +192,14 @@ void main() {
       },
     );
 
-    testWidgets('un mot plus large que la ligne : la barre le garde, avec la '
-        'reduction habituelle et bornee de l\'application', (
+    // EXCEPTION ECRITE (garde-cap, 11/11/2026) : mot seul plus large que la
+    // ligne : reduction bornee, HIER-1 toleré (voir aussi
+    // `test/theme/hierarchie_titres_test.dart`). Un mot de 23 lettres ne tient
+    // pas dans les 236 de la barre a 320 px : la barre le garde, sans ellipse,
+    // avec la reduction habituelle et bornee de l'application ; mesure : 23,8
+    // au lieu de 24, encore au-dessus d'un titre de section (22).
+    testWidgets('mot seul de 23 lettres plus large que la ligne : la barre le '
+        'garde, reduction bornee, jamais sous un titre de section', (
       WidgetTester tester,
     ) async {
       await _poser(
@@ -204,6 +210,11 @@ void main() {
       expect(tester.takeException(), isNull);
       expect(find.byKey(EnteteCompact.barreKey), findsOneWidget);
       expect(find.text('Électroencéphalographie'), findsOneWidget);
+      expect(find.byType(Tooltip), findsNothing, reason: 'jamais d\'ellipse');
+      final double taille = _taille(tester, 'Électroencéphalographie');
+      // Un titre de section est a 22 en echelle standard.
+      expect(taille, greaterThanOrEqualTo(22));
+      expect(taille, lessThanOrEqualTo(24));
     });
 
     testWidgets('la place du titre est mesuree, pas estimee : des actions '

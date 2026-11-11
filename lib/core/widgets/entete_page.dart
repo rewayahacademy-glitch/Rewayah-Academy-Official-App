@@ -138,10 +138,18 @@ class EntetePage extends StatelessWidget {
     // deux lignes au plus. Un titre plus long est abrege en FIN DE MOT sur la
     // deuxieme ligne, suivi de « ... » : aucun mot coupe (COUPE-MOTS-1), le
     // titre entier lu par le lecteur d'ecran et en infobulle a la pression
-    // longue. Seul un mot plus large que la ligne, ou un nom compose qui se
-    // couperait apres son trait d'union, garde l'en-tete d'avant ; au-dela de
-    // 130 % de texte aussi. Le grand titre reste celui des pages racines des
-    // onglets (aucun retour), de la tablette et du bureau.
+    // longue. Au-dela de 130 % de texte, l'en-tete d'avant s'applique. Le
+    // grand titre reste celui des pages racines des onglets (aucun retour), de
+    // la tablette et du bureau.
+    //
+    // EXCEPTION ECRITE (garde-cap, 11/11/2026) : mot seul plus large que la
+    // ligne (ou nom compose qui se couperait apres son trait d'union) : la
+    // barre reste, avec la reduction BORNEE habituelle de l'application
+    // (`TexteSansCoupure`), jamais l'ellipse ; HIER-1 toleré. Mesure d'un mot de
+    // 23 lettres a 320 px : 23,8 au lieu de 24, donc encore au-dessus d'un
+    // titre de section (22) ; le mot peut encore se couper (cas irrealiste).
+    // Gardes : `test/theme/hierarchie_titres_test.dart` et
+    // `test/core/widgets/entete_barre_telephone_test.dart`.
     final bool barreEligible =
         mobile &&
         retour != null &&
