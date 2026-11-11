@@ -160,6 +160,20 @@ abstract final class AppMouvement {
   /// lisible ce temps, puis s'efface.
   static const Duration rappelRecuMaintien = Duration(seconds: 5);
 
+  /// ILE-SALLE (directeur, 11/11/2026 ; D-007, approuvee) : une ile (dans la
+  /// salle ou hors de la salle) qui se deplie d'elle-meme pour dire une phrase
+  /// (un mot d'etat qui change, une situation de reseau, les cinq dernieres
+  /// minutes, la fin prevue atteinte) se replie seule apres ce temps. Un appui
+  /// la redeplie pour le meme temps. Ce qui empeche d'entendre (lien perdu,
+  /// reconnexion) reste deplie tant que ca dure.
+  static const Duration ilePassage = Duration(seconds: 6);
+
+  /// ILE-SALLE : la mention « Visite de controle possible. » reste depliee ce
+  /// temps a l'entree dans la salle, puis se reduit a son point neutre
+  /// permanent (la phrase revient a l'appui et reste lue en entier par le
+  /// lecteur d'ecran).
+  static const Duration ileMention = Duration(seconds: 10);
+
   /// Rappel discret recu : la vibration courte, quand l'appareil la permet.
   static const Duration vibrationRappel = Duration(milliseconds: 200);
 
@@ -203,22 +217,11 @@ abstract final class AppMouvement {
     ratio: 1,
   );
 
-  /// Le ressort du chrono de la salle : il depasse un peu sa cible puis s'y
-  /// pose (amortissement 0,62).
-  ///
-  /// **Exception datee a la regle « aucun rebond visible » de [ressort]**
-  /// (directeur, 10 et 11/11/2026, `docs/current/CAHIER-SALLE.md` §8) : le
-  /// chrono « entre et sort avec un mouvement liquide (un ressort, une forme
-  /// qui se deforme, comme la Dynamic Island) », avec « des effets visuels
-  /// visibles et modernes ». Elle ne vaut que pour la capsule du chrono
-  /// (`ChronoVivant`) ; tout le reste garde [ressort]. Sous reduction du
-  /// mouvement, il n'est pas joue.
-  static final SpringDescription ressortVif =
-      SpringDescription.withDampingRatio(mass: 1, stiffness: 260, ratio: 0.62);
-
   /// L'effet liquide de la navigation (decisions du directeur du 10/11/2026) :
   /// le bord de devant de la goutte, raide, qui part le premier. Amortissement
-  /// critique, comme [ressort] : aucun rebond.
+  /// critique, comme [ressort] : aucun rebond. Il sert aussi a l'ile de la
+  /// salle (`IleLiquide`) et au pouls du chrono (`ChronoVivant`) depuis le
+  /// 11/11/2026 : le ressort a rebond du chrono est retire.
   static final SpringDescription ressortGoutteTete =
       SpringDescription.withDampingRatio(mass: 1, stiffness: 520, ratio: 1);
 

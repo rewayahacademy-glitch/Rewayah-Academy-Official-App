@@ -75,6 +75,7 @@ import '../../../core/widgets/groupe_reglages.dart';
 import '../../../core/widgets/halo_compte.dart';
 import '../../../core/widgets/halo_lumiere.dart';
 import '../../../core/widgets/identite_profil.dart';
+import '../../../core/widgets/ile_liquide.dart';
 import '../../../core/widgets/indicateur_liquide.dart';
 import '../../../core/widgets/lien_fleche.dart';
 import '../../../core/widgets/ligne_allocation.dart';
@@ -219,6 +220,34 @@ Widget _chronoGalerie(Duration depuis, {bool sobre = false}) {
       annonce: 'Chrono de la seance',
       libelleFini: 'Temps prevu ecoule',
       sobre: sobre,
+    ),
+  );
+}
+
+/// L'ile liquide de la galerie, repliee ou depliee.
+Widget _ileGalerie(BuildContext contexte, {required bool deplie}) {
+  final AppPalette palette = AppPalette.of(contexte);
+  return Align(
+    alignment: AlignmentDirectional.topStart,
+    child: IleLiquide(
+      decoration: palette.surfaceRaised.decoration(
+        borderRadius: AppRadius.arrondiLg,
+      ),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.md,
+        vertical: AppSpacing.sm,
+      ),
+      child: FonduLiquide(
+        cle: deplie,
+        child: Text(
+          deplie
+              ? 'Image coupee le temps que la connexion revienne.'
+              : 'En ligne',
+          style: palette.surfaceRaised.applyTo(
+            Theme.of(contexte).textTheme.labelMedium ?? const TextStyle(),
+          ),
+        ),
+      ),
     ),
   );
 }
@@ -1142,6 +1171,21 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
       EtatGalerie(
         'au repos, troisieme destination ouverte',
         (BuildContext _) => const _DemoLiquide(actif: 2),
+      ),
+    ],
+  ),
+  // ILE-SALLE (directeur, 11/11/2026) : l'ile liquide de la salle.
+  EntreeGalerie(
+    nom: 'IleLiquide',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'repliee : un seul mot',
+        (BuildContext c) => _ileGalerie(c, deplie: false),
+      ),
+      EtatGalerie(
+        'depliee : la phrase entiere',
+        (BuildContext c) => _ileGalerie(c, deplie: true),
       ),
     ],
   ),
