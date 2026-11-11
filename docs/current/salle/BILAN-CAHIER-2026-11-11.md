@@ -1,4 +1,4 @@
-# Bilan du cahier de la salle, point par point (11/11/2026, mis à jour en fin de journée)
+# Bilan du cahier de la salle, point par point (11/11/2026, mis à jour le soir)
 
 Demande du directeur du 11/11 : « N'oublie pas de jeter un coup d'œil sur le prompt initial, il y a
 beaucoup de demandes qui ne sont pas encore traitées. »
@@ -47,7 +47,7 @@ partage de tout support), **aucun banc n'a été rejoué sur l'ensemble fusionn�
 | Indicateur réel chez l'enseignant (ses propres barres) | codé, testé | les barres suivent la mesure |
 | La qualité de chaque élève vue par l'enseignant | codé, testé | D-017 ; pas vu sur un vrai réseau dégradé |
 | Dire à quelqu'un « on vous entend mal » | codé, testé | D-017 |
-| Relevé conservé comme preuve, 180 jours (décision du directeur du 11/11) | **codé sur une branche, non fusionné** | D-024, branche `worktree-agent-a068e9993ee530f3d` : table, écriture bornée, lecture par la direction seule, purge à 180 jours, 47 contrôles SQL. **Bloqué** : la phrase d'information aux familles et aux enseignants n'est pas validée ; la migration contient un effacement (la purge), donc une page à coller par le directeur ; pas d'écran pour la direction |
+| Relevé conservé comme preuve, 180 jours (décision du directeur du 11/11) | codé, testé ; **installé nulle part** | D-024, fusionné : l'enseignant et les élèves adultes seulement (rien pour un élève mineur : loi du Québec, art. 4.1, lue ; la base ne connaît ni l'âge ni le pays) ; écriture bornée, lecture par la direction seule et tracée, purge à 180 jours, 54 contrôles SQL ; information affichée dans la salle et dans la politique de confidentialité. **Reste** : la migration contient un effacement (la purge), donc une page à coller par le directeur ; pas d'écran pour la direction ; l'accord du parent, qui permettrait de garder aussi la connexion d'un enfant, n'est pas construit |
 
 ## §7. Le support est générique
 
@@ -65,7 +65,10 @@ partage de tout support), **aucun banc n'a été rejoué sur l'ensemble fusionn�
 | Défaut | État | Preuve ou manque |
 | :--- | :--- | :--- |
 | Vidéo de l'enseignant en double | codé, testé | D-014 |
-| Boutons posés n'importe où, aucun système | codé, testé | D-027, la grille des commandes : une tuile, des cases égales, le même ordre partout, un seul endroit par chose ; téléphone, tablette et ordinateur de l'enseignant. **Restes** : la capsule du haut au téléphone, les en-têtes des deux panneaux de l'ordinateur |
+| Boutons posés n'importe où, aucun système | prouvé sur le banc pour l'ordinateur ; codé, testé au téléphone | D-027, la grille des commandes : une tuile, des cases égales, le même ordre partout, un seul endroit par chose. **Restes, en construction** : la capsule du haut au téléphone, les en-têtes des deux panneaux de l'ordinateur |
+| Vidéos trop grandes, étirées (directeur, 11/11) | prouvé sur le banc | D-028 : cadres carrés au téléphone, 4/3 sur grand écran, jamais étirés, taille bornée, grille centrée, animations ; classe de 3 et de 6 (`captures/E2E/salle-banc/scene-classe-6/`) |
+| Modes d'affichage coordonnés (classe, document, tableau ; directeur, 11/11) | **en partie** | le modèle est écrit (`salle/MODES-AFFICHAGE.md`) et la grille est faite ; le ruban (les visages à côté du document) et les passages entre modes sont en construction : aujourd'hui les visages des élèves disparaissent chez l'enseignant sur ordinateur quand un document s'ouvre |
+| Un enfant vouvoyé dans la salle (garde-cap, 11/11) | codé, testé | l'âge de l'élève devant l'écran est lu sur le serveur ; test « élève enfant : tutoiement dans /salle » |
 | Outils moches et qui ne marchent pas | **en partie** | le pointeur est refait (D-014) ; le tracé n'a pas été revérifié chez l'élève |
 | Messages tantôt en haut, tantôt en bas | **en partie** | l'île et les annonces sont en haut ; « votre micro s'ouvrira… » et « Caméra désactivée pour ce profil » sont encore en bas (la seconde se lit mal sur le texte du Coran) |
 | Changer de page, glisser au doigt | codé, testé | |
@@ -106,12 +109,11 @@ Répondu : non (journal D-001).
 
 ## Ce que le directeur doit trancher (une ligne chacune, avec la recommandation)
 
-1. Relevé de qualité : validez-vous la phrase d'information aux familles (`DROIT-RELEVE-QUALITE.md` §11.6, sur la branche du lot) ? Recommandé : oui, puis relecture par un juriste avant d'installer.
-2. Relevé de qualité : faut-il l'accord du parent à l'inscription pour les moins de 14 ans au Québec ? Recommandé : demander au juriste, ne rien garder avant.
-3. Cours qui déborde avec l'enseignant présent : couper à l'heure ? Recommandé : non, ne pas couper.
-4. Le micro d'un élève se rouvre-t-il seul au retour de l'enseignant ? Recommandé : non, jamais sans son geste.
-5. La pause repousse-t-elle la fin, et ferme-t-elle les micros ? Recommandé : elle ne repousse pas la fin ; les micros restent au choix de chacun.
-6. Téléphone de l'enseignant : garder Élèves et Bibliothèque (contre le §9 du cahier) ? Recommandé : oui.
-7. Au téléphone, au repos, plus aucun bouton en bas (il faut toucher la page) : d'accord ? Recommandé : oui, comme chez l'élève.
-8. Un support réel entre en images, une par page (pas de lecteur de PDF) : d'accord ? Recommandé : oui pour commencer.
-9. Le cahier « Où reprendre » est-il l'écran où la table des sourates semblait dans le désordre ?
+Les questions du matin ont reçu leur réponse (« Je te laisse décider toi-même » : décisions écrites
+au journal, bloc « après-midi »). Restent :
+
+1. Construire l'accord du parent pour garder aussi la connexion des enfants dans le relevé ? Recommandé : commencer sans.
+2. L'académie a-t-elle désigné un représentant dans l'Union européenne (RGPD, art. 27) ? Je ne le sais pas.
+3. Le cadre des visages sur grand écran : un peu plus large que haut (fait), ou carré partout ? Recommandé : garder ce qui est fait.
+4. « Dépassement non payé » : à vérifier dans le calcul de la paie avant toute ligne de code (argent : hors délégation).
+5. Le cahier « Où reprendre » est-il l'écran où la table des sourates semblait dans le désordre ?
