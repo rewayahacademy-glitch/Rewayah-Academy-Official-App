@@ -293,7 +293,6 @@ import '../widgets/bascule_theme.dart';
 import '../widgets/bouton_icone.dart';
 import '../widgets/entete_page.dart';
 import '../widgets/halo_compte.dart';
-import '../widgets/menu_actions.dart';
 import '../widgets/nav_shell.dart';
 import '../widgets/page_shell.dart';
 import 'billet_salle.dart';
@@ -3101,44 +3100,6 @@ RoleEspaceGroupe _roleEspaceGroupePour(AppRole? role) => switch (role) {
 ///
 /// Aucune destination n'est active ici : `indexActif` est nul, et le chrome
 /// rend alors ses entrees sans en surligner aucune.
-/// WEB-BUREAU (P1, directeur, 06/11/2026) : le menu du compte, en haut a
-/// droite a partir de 600, le meme pour tous les roles : « Mon compte », puis
-/// « Se deconnecter ». Au telephone, la deconnexion reste en bas du Compte.
-/// Google Classroom fait de meme (« En haut a droite, cliquez sur votre photo
-/// de profil > Se deconnecter », Centre d'aide, page 15653883).
-Widget _menuCompte(BuildContext context, WidgetRef ref, String compte) =>
-    MenuActions(
-      icone: AppIcons.profil,
-      libelle: t.nav.compte,
-      actions: <EntreeAction>[
-        EntreeAction(
-          libelle: t.compte.titre,
-          icone: AppIcons.profil,
-          onChoix: () => GoRouter.of(context).go(compte),
-        ),
-        EntreeAction(
-          libelle: t.compte.deconnexion,
-          icone: AppIcons.sortie,
-          separateurAvant: true,
-          onChoix: () => unawaited(seDeconnecter(context, ref)),
-        ),
-      ],
-    );
-
-/// La page Compte d'un role, parmi ses destinations (`/compte`, ou le Compte
-/// du tuteur, ou le Profil de l'enseignant).
-String _compteDe(List<Destination> destinations) =>
-    destinations
-        .map((Destination d) => d.chemin)
-        .where(
-          (String c) =>
-              c == Routes.compte ||
-              c == Routes.tuteurCompte ||
-              c == Routes.enseignantProfil,
-        )
-        .firstOrNull ??
-    Routes.compte;
-
 class _CoquilleSecondaire extends ConsumerWidget {
   const _CoquilleSecondaire({
     required this.child,
@@ -3254,7 +3215,6 @@ class _CoquilleSecondaire extends ConsumerWidget {
     final bool rechercheServie =
         espaceRecherche != null &&
         (ref.watch(rechercheServieProvider(espaceRecherche)).value ?? false);
-    final bool large = AppGabarit.de(context).estLarge;
     return RaccourciRecherche(
       actif: rechercheServie && avecRaccourciRecherche,
       child: NavShell(
@@ -3265,19 +3225,10 @@ class _CoquilleSecondaire extends ConsumerWidget {
         onAllerSecondaire: aller,
         // Rail a libelles hors tuteur, comme avant le chantier Tuteur V1.
         libellesDansLeRail: effectif != AppRole.guardian,
-        // P1 : le menu du compte en haut a droite, a partir de 600.
-        child: large
-            ? Builder(
-                builder: (BuildContext contexte) => ActionsEnteteCoquille(
-                  actions: <Widget>[
-                    ...ActionsEnteteCoquille.de(contexte),
-                    _menuCompte(contexte, ref, _compteDe(destinations)),
-                  ],
-                  onRetour: ActionsEnteteCoquille.retourDe(contexte),
-                  child: child,
-                ),
-              )
-            : child,
+        // NAV-REFONTE etape 3 : le menu du Compte (Compte, theme, sortie) vit
+        // au pied du panneau, a partir de 600 ; il quitte l'en-tete (P1).
+        onDeconnexion: () => unawaited(seDeconnecter(context, ref)),
+        child: child,
       ),
     );
   }
@@ -3360,6 +3311,8 @@ class _CoquilleNavigation extends ConsumerWidget {
       notifications: haloCloche,
       construire: (BuildContext _, EtatHaloCompte? halo) => NavShell(
         halo: halo,
+        // NAV-REFONTE etape 3 : « Se deconnecter », au menu du pied du panneau.
+        onDeconnexion: () => unawaited(seDeconnecter(context, ref)),
         // Toucher le cercle : « Nouveau » est vu et s'eteint ; Urgent reste.
         onHaloTouche: (EtatHaloCompte h) {
           if (h.nature == NatureHalo.nouveau) {
@@ -3452,10 +3405,9 @@ class _CoquilleNavigation extends ConsumerWidget {
       // `nonLuesProvider` (fiche du 27/10, ligne 12) ; sans source, pas de
       // point, comme le tuteur. Elle s'ajoute, en dernier, aux actions deja posees au-dessus
       // (le raccourci Espaces de CT-9), et se montre active sur sa page.
-      // P1 : le menu du compte en haut a droite, a partir de 600.
-      final bool largeRole = AppGabarit.de(context).estLarge;
-      final Widget avecCloche =
-          cheminCloche == null && !rechercheServie && !largeRole
+      // NAV-REFONTE etape 3 : le menu du compte a quitte l'en-tete (P1) pour
+      // le pied du panneau.
+      final Widget avecCloche = cheminCloche == null && !rechercheServie
           ? coquille
           : Builder(
               builder: (BuildContext contexte) => ActionsEnteteCoquille(
@@ -3467,8 +3419,6 @@ class _CoquilleNavigation extends ConsumerWidget {
                       actif: surNotifications,
                       onPress: () => GoRouter.of(contexte).go(cheminCloche),
                     ),
-                  if (largeRole)
-                    _menuCompte(contexte, ref, _compteDe(destinations)),
                 ],
                 onRetour: ActionsEnteteCoquille.retourDe(contexte),
                 child: coquille,
@@ -3501,8 +3451,6 @@ class _CoquilleNavigation extends ConsumerWidget {
             actif: surNotifications,
             onPress: () => GoRouter.of(context).go(Routes.tuteurNotifications),
           ),
-          // P1 : le menu du compte en haut a droite, a partir de 600.
-          if (large) _menuCompte(context, ref, Routes.tuteurCompte),
         ],
         // NAV-REFONTE 2b : un seul instant serveur pour toute la coquille du
         // tuteur ; l'Accueil, la Classe et le halo vert le lisent ensemble.

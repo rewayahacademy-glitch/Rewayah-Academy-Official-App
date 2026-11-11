@@ -119,10 +119,19 @@ class EntetePage extends StatelessWidget {
         ligne,
       ] else if (sousTitre != null) ...<Widget>[
         Ecart.vXs,
-        TexteSansCoupure(
-          sousTitre!,
-          key: EnteteCompact.sousTitreKey,
-          style: palette.inkMuted.applyTo(styleSousTitre),
+        // WEB-BUREAU (B4) : un texte suivi ne depasse pas la largeur de
+        // lecture (800), meme quand l'en-tete n'a plus d'action a sa fin
+        // (NAV-REFONTE etape 3 : le menu du compte a quitte l'en-tete).
+        Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: AppPage.largeurLecture),
+            child: TexteSansCoupure(
+              sousTitre!,
+              key: EnteteCompact.sousTitreKey,
+              style: palette.inkMuted.applyTo(styleSousTitre),
+            ),
+          ),
         ),
       ],
     ];

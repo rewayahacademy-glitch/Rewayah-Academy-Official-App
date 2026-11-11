@@ -123,9 +123,14 @@ void main() {
       final Rect colonne = tester.getRect(
         find.byKey(NavShell.barreLateraleKey),
       );
-      // La colonne est a droite, le logo a son bord droit (debut de ligne).
+      final Rect bouton = tester.getRect(find.byKey(NavShell.boutonRepliKey));
+      // La colonne est a droite ; NAV-REFONTE etape 3 (maquette Panneau du
+      // 09/11) : le bouton du panneau ouvre la ligne, a son bord droit, et le
+      // logo le suit, a sa gauche, jamais retourne.
       expect(colonne.right, vueBureau.width);
-      expect(logo.center.dx, greaterThan(colonne.center.dx));
+      expect(bouton.center.dx, greaterThan(logo.center.dx));
+      expect(logo.right, greaterThan(colonne.center.dx));
+      expect(logo.right, lessThanOrEqualTo(bouton.left));
     });
   });
 

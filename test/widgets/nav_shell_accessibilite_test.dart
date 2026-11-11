@@ -24,6 +24,7 @@ import 'package:rewayah_academy/core/theme/app_gabarit.dart';
 import 'package:rewayah_academy/core/theme/app_palette.dart';
 import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/core/widgets/avatar_compte.dart';
 import 'package:rewayah_academy/core/widgets/avatar_tile.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/core/widgets/pressable.dart';
@@ -624,7 +625,10 @@ void main() {
                   .getRect(
                     find.descendant(
                       of: _onglet(x.libelle),
-                      matching: find.byType(Icon),
+                      // NAV-REFONTE etape 3 : le Compte est au pied du
+                      // panneau, la photo de la personne a la place de
+                      // l'icone, son nom dessous.
+                      matching: find.byType(x.compte ? AvatarCompte : Icon),
                     ),
                   )
                   .bottom,
