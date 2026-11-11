@@ -67,6 +67,7 @@ import '../fixtures/tuteur/foyers.dart';
 import '../parcours/faux_service_offres.dart';
 import '../router/support_routeur.dart';
 import '../support/aucun_mot_coupe.dart';
+import '../support/garde_lumiere.dart';
 import '../support/harnais.dart';
 import '../support/port_horloge_simule.dart';
 import '../teaching_core/a/faux/faux_groupes.dart' show PortHorlogeMuet;
@@ -1715,6 +1716,34 @@ void main() {
       );
       await _ouvrirAccueilParLaBarre(tester);
       expect(halos(tester, NatureHalo.urgent), 1);
+    });
+
+    // LUMIERE-DOUCE (directeur, 11/11/2026, vu en production) : la carte
+    // rouge « Aucun appareil pret » n'est coupee ni par les bords ni par un
+    // parent, a 320 et 390, texte x1 et x2, pendant et apres la rotation.
+    testWidgets('aucun appareil pret : la lumiere rouge n est jamais coupee', (
+      WidgetTester tester,
+    ) async {
+      for (final Size taille in <Size>[
+        const Size(320, 900),
+        const Size(390, 844),
+      ]) {
+        for (final double echelle in <double>[1, 2]) {
+          await _monter(
+            tester,
+            seances: _salleFermee,
+            appareils: <AppareilAppaire>[],
+            taille: taille,
+            echelle: echelle,
+            depart: Routes.tuteurAccueil,
+          );
+          await tester.pump(const Duration(milliseconds: 600));
+          expect(halos(tester, NatureHalo.urgent), 1);
+          verifierLumieresEntieres(tester);
+          await tester.pumpAndSettle();
+          verifierLumieresEntieres(tester);
+        }
+      }
     });
 
     testWidgets('salle ouverte sans appareil : la tuile est « Rejoindre », '
