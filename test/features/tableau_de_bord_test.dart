@@ -14,6 +14,7 @@ import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/grille_bento.dart';
+import 'package:rewayah_academy/core/widgets/halo_lumiere.dart';
 import 'package:rewayah_academy/core/widgets/pressable.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/admin_tableau/tableau_de_bord_page.dart';
@@ -643,5 +644,35 @@ void main() {
         });
       }
     }
+  });
+
+  group('LUMIERE-ACCUEILS 4 : les lumieres des tuiles, depuis le serveur', () {
+    testWidgets('tout a zero : aucune lumiere', (WidgetTester tester) async {
+      await _monter(tester, admin: FauxServiceAdmin());
+      expect(find.byType(HaloLumiere), findsNothing);
+    });
+
+    testWidgets('dossiers, demandes et incidents : orange sur leurs tuiles', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        admin: FauxServiceAdmin()
+          ..indicateursRendus = _indicateurs(
+            dossiers: 2,
+            demandes: 1,
+            incidents: 3,
+            rapports: 4,
+          ),
+      );
+      final Iterable<HaloLumiere> halos = tester.widgetList<HaloLumiere>(
+        find.byType(HaloLumiere),
+      );
+      expect(halos, hasLength(3));
+      expect(
+        halos.every((HaloLumiere h) => h.nature == NatureHalo.aPreparer),
+        isTrue,
+      );
+    });
   });
 }

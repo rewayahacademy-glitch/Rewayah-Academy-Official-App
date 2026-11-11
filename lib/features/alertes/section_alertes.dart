@@ -10,6 +10,8 @@ import '../../core/reseau/service_reseau.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/etat_systeme.dart';
+import '../../core/widgets/halo_lumiere.dart';
+import '../../core/widgets/lumiere_autour.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
 import 'ligne_alerte.dart';
@@ -99,8 +101,13 @@ class SectionAlertes extends ConsumerWidget {
   const SectionAlertes({
     required this.onOuvrir,
     required this.onVoirTout,
+    this.lumiere,
     super.key,
   });
+
+  /// La lumiere de la liste (LUMIERE-ACCUEILS 4 : rouge sur un signalement
+  /// prioritaire), ou `null` : aucune.
+  final NatureHalo? lumiere;
 
   /// Ouvre la page ou une alerte se traite.
   final void Function(String chemin) onOuvrir;
@@ -135,9 +142,12 @@ class SectionAlertes extends ConsumerWidget {
             t.alertes.vide,
             style: Theme.of(context).textTheme.bodyMedium,
           ),
-          construire: (List<Alerte> alertes) => ListeAlertes(
-            alertes: alertesDuTableau(alertes),
-            onOuvrir: onOuvrir,
+          construire: (List<Alerte> alertes) => LumiereAutour(
+            nature: lumiere,
+            child: ListeAlertes(
+              alertes: alertesDuTableau(alertes),
+              onOuvrir: onOuvrir,
+            ),
           ),
         ),
       ],

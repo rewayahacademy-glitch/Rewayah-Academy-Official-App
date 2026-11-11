@@ -30,15 +30,7 @@ import 'package:flutter/foundation.dart';
 
 import '../admin/service_admin.dart';
 import '../alertes/alerte.dart';
-
-/// Ce qu'un signal d'accueil demande, par priorite decroissante.
-enum NatureSignal {
-  /// Rouge qui tourne : urgent.
-  urgent,
-
-  /// Orange qui respire : a preparer.
-  aPreparer,
-}
+import '../widgets/halo_lumiere.dart';
 
 /// Ce que signale une lumiere de l'« Aujourd'hui » de l'enseignant.
 enum MotifEnseignant {
@@ -74,8 +66,8 @@ class SignalAccueil<M extends Enum> {
     required this.nombre,
   });
 
-  /// Ce que le signal demande.
-  final NatureSignal nature;
+  /// La lumiere du signal (rouge urgent, orange a preparer : `HaloLumiere`).
+  final NatureHalo nature;
 
   /// Ce qu'il signale.
   final M motif;
@@ -105,13 +97,13 @@ List<SignalAccueil<MotifEnseignant>> signauxAujourdhui({
 }) => <SignalAccueil<MotifEnseignant>>[
   if (offresRemplacement > 0)
     SignalAccueil<MotifEnseignant>(
-      nature: NatureSignal.urgent,
+      nature: NatureHalo.urgent,
       motif: MotifEnseignant.remplacement,
       nombre: offresRemplacement,
     ),
   if (cahiersARemplir > 0)
     SignalAccueil<MotifEnseignant>(
-      nature: NatureSignal.aPreparer,
+      nature: NatureHalo.aPreparer,
       motif: MotifEnseignant.cahier,
       nombre: cahiersARemplir,
     ),
@@ -134,25 +126,25 @@ List<SignalAccueil<MotifDirection>> signauxDirection({
   return <SignalAccueil<MotifDirection>>[
     if (prioritaires > 0)
       SignalAccueil<MotifDirection>(
-        nature: NatureSignal.urgent,
+        nature: NatureHalo.urgent,
         motif: MotifDirection.signalement,
         nombre: prioritaires,
       ),
     if (i != null && i.incidents24h > 0)
       SignalAccueil<MotifDirection>(
-        nature: NatureSignal.aPreparer,
+        nature: NatureHalo.aPreparer,
         motif: MotifDirection.incidents,
         nombre: i.incidents24h,
       ),
     if (i != null && i.dossiersEnAttente > 0)
       SignalAccueil<MotifDirection>(
-        nature: NatureSignal.aPreparer,
+        nature: NatureHalo.aPreparer,
         motif: MotifDirection.dossiers,
         nombre: i.dossiersEnAttente,
       ),
     if (i != null && i.demandesEnAttente > 0)
       SignalAccueil<MotifDirection>(
-        nature: NatureSignal.aPreparer,
+        nature: NatureHalo.aPreparer,
         motif: MotifDirection.demandes,
         nombre: i.demandesEnAttente,
       ),

@@ -6,6 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/accueil/signaux_accueils.dart';
 import 'package:rewayah_academy/core/admin/service_admin.dart';
 import 'package:rewayah_academy/core/alertes/alerte.dart';
+import 'package:rewayah_academy/core/widgets/halo_lumiere.dart';
 
 Alerte _a(GraviteAlerte g) => Alerte(
   id: 'a-${g.name}',
@@ -46,12 +47,12 @@ void main() {
       );
       expect(s, <SignalAccueil<MotifEnseignant>>[
         const SignalAccueil<MotifEnseignant>(
-          nature: NatureSignal.urgent,
+          nature: NatureHalo.urgent,
           motif: MotifEnseignant.remplacement,
           nombre: 2,
         ),
         const SignalAccueil<MotifEnseignant>(
-          nature: NatureSignal.aPreparer,
+          nature: NatureHalo.aPreparer,
           motif: MotifEnseignant.cahier,
           nombre: 3,
         ),
@@ -64,7 +65,7 @@ void main() {
         offresRemplacement: 0,
         cahiersARemplir: 1,
       );
-      expect(signalDominant(s)!.nature, NatureSignal.aPreparer);
+      expect(signalDominant(s)!.nature, NatureHalo.aPreparer);
     });
   });
 
@@ -86,7 +87,7 @@ void main() {
         ],
         indicateurs: _i(),
       );
-      expect(r.single.nature, NatureSignal.urgent);
+      expect(r.single.nature, NatureHalo.urgent);
       expect(r.single.motif, MotifDirection.signalement);
       expect(r.single.nombre, 1);
     });
@@ -112,7 +113,7 @@ void main() {
               .skip(1)
               .every(
                 (SignalAccueil<MotifDirection> x) =>
-                    x.nature == NatureSignal.aPreparer,
+                    x.nature == NatureHalo.aPreparer,
               ),
           isTrue,
         );

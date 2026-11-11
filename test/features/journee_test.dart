@@ -33,6 +33,7 @@ import 'package:rewayah_academy/core/video/pre_vol.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
 import 'package:rewayah_academy/core/widgets/grille_bento.dart';
+import 'package:rewayah_academy/core/widgets/halo_lumiere.dart';
 import 'package:rewayah_academy/core/widgets/pastille_etat_seance.dart';
 import 'package:rewayah_academy/core/widgets/point_rappel.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
@@ -1950,6 +1951,73 @@ void main() {
         findsOneWidget,
       );
       await capturerVue(tester, '2-journee');
+    });
+  });
+
+  group('LUMIERE-ACCUEILS 3 : les lumieres de l\'Aujourd\'hui', () {
+    testWidgets('cahier a remplir : orange autour de « A terminer »', (
+      WidgetTester tester,
+    ) async {
+      _fenetre(tester, const Size(390, 2400));
+      await tester.pumpWidget(
+        hoteRoutant(
+          depart: Routes.enseignantJournee,
+          routes: _routes(),
+          surcharges: _surcharges(
+            maintenant: DateTime(2026, 9, 28, 18, 40),
+            enseignant: FauxServiceEnseignant()
+              ..seancesRendues = <SeanceEnseignant>[
+                _anNour(statut: StatutSeance.terminee),
+              ]
+              ..retardsRendus = <CahierEnRetard>[
+                CahierEnRetard(
+                  seanceId: 'an-nour',
+                  debut: DateTime(2026, 9, 28, 17, 30),
+                  fin: DateTime(2026, 9, 28, 18, 15),
+                  nbParticipants: 4,
+                  heuresDeRetard: 0,
+                  groupeId: 'g-an-nour',
+                  groupeLibelle: 'An-Nour',
+                  parSeance: true,
+                ),
+              ],
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      final Iterable<HaloLumiere> halos = tester.widgetList<HaloLumiere>(
+        find.byType(HaloLumiere),
+      );
+      expect(
+        halos.where((HaloLumiere h) => h.nature == NatureHalo.aPreparer),
+        hasLength(1),
+      );
+    });
+
+    testWidgets('rien a signaler : aucune lumiere d\'ecran', (
+      WidgetTester tester,
+    ) async {
+      _fenetre(tester, const Size(390, 2400));
+      await tester.pumpWidget(
+        hoteRoutant(
+          depart: Routes.enseignantJournee,
+          routes: _routes(),
+          surcharges: _surcharges(
+            maintenant: DateTime(2026, 9, 28, 18, 40),
+            enseignant: FauxServiceEnseignant()
+              ..seancesRendues = <SeanceEnseignant>[
+                _anNour(statut: StatutSeance.terminee),
+              ],
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(
+        tester
+            .widgetList<HaloLumiere>(find.byType(HaloLumiere))
+            .where((HaloLumiere h) => h.forme == FormeHalo.rectangle),
+        isEmpty,
+      );
     });
   });
 }

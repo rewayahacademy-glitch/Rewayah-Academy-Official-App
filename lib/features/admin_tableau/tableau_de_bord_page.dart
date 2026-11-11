@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/accueil/signaux_accueils.dart';
 import '../../core/admin/service_admin.dart';
 import '../../core/alertes/alerte.dart';
 import '../../core/alertes/port_alertes.dart';
@@ -16,6 +17,8 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/carte_lignes.dart';
 import '../../core/widgets/data_collection.dart';
 import '../../core/widgets/grille_bento.dart';
+import '../../core/widgets/halo_lumiere.dart';
+import '../../core/widgets/lumiere_autour.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/setting_row.dart';
 import '../../core/widgets/skeleton.dart';
@@ -96,7 +99,22 @@ class TableauDeBordPage extends ConsumerWidget {
     // des alertes), jamais un role.
     final List<Alerte>? alertes = ref.watch(alertesProvider).value;
     final bool urgence = (ref.watch(alertesUrgentesProvider) ?? 0) > 0;
+    // LUMIERE-ACCUEILS 4 : les lumieres, depuis les seuls etats du serveur
+    // (signalements, indicateurs) ; l'arbitre de `NavShell` fait tourner la
+    // plus urgente, les autres restent en lueur fixe.
+    final List<SignalAccueil<MotifDirection>> signaux = signauxDirection(
+      alertes: alertes,
+      indicateurs: indicateurs.value,
+    );
+    NatureHalo? lumiere(MotifDirection motif) {
+      for (final SignalAccueil<MotifDirection> x in signaux) {
+        if (x.motif == motif) return x.nature;
+      }
+      return null;
+    }
+
     final Widget sectionAlertes = SectionAlertes(
+      lumiere: lumiere(MotifDirection.signalement),
       onOuvrir: (String chemin) => GoRouter.of(context).go(chemin),
       onVoirTout: () => GoRouter.of(context).go(Routes.adminAlertes),
     );
@@ -122,6 +140,10 @@ class TableauDeBordPage extends ConsumerWidget {
     final Widget compteurs = indicateurs.hasValue
         ? _Compteurs(
             indicateurs: indicateurs.requireValue,
+            lumieres: <MotifDirection, NatureHalo?>{
+              for (final MotifDirection m in MotifDirection.values)
+                m: lumiere(m),
+            },
             apercu: apercu,
             // La file passe par `read_kyc_documents()`, qui refuse la lecture
             // quand le genre du lecteur est inconnu. Ce refus n'emporte que
@@ -411,6 +433,7 @@ class _Compteurs extends StatelessWidget {
     this.apercu = const <LigneApercu>[],
     this.apercuErreur,
     this.dossiersEnAttente,
+    this.lumieres = const <MotifDirection, NatureHalo?>{},
   });
 
   final IndicateursAdmin indicateurs;
@@ -419,6 +442,9 @@ class _Compteurs extends StatelessWidget {
   /// seulement, comme la liste « A traiter », m1 d'AD-NETTOYAGE) ; sinon le
   /// compteur du serveur.
   final int? dossiersEnAttente;
+
+  /// Les lumieres des tuiles (LUMIERE-ACCUEILS 4), par motif.
+  final Map<MotifDirection, NatureHalo?> lumieres;
 
   /// Les plus anciens dossiers, nom et delai, chacun vers son dossier.
   final List<LigneApercu> apercu;
@@ -431,20 +457,27 @@ class _Compteurs extends StatelessWidget {
     final List<Widget> contenus = <Widget>[
       // Le plus urgent : la grande tuile. Le chiffre mene a la file, chaque
       // nom a son dossier.
-      TuileCompteur(
-        valeur: dossiersEnAttente ?? indicateurs.dossiersEnAttente,
-        libelle: t.admin.tableau.dossiers,
-        detail: t.admin.tableau.dossiersDetail,
-        apercu: apercu,
-        apercuErreur: apercuErreur,
-        enLigne: true,
-        onPress: () => GoRouter.of(context).go(Routes.adminPersonnesDossiers),
+      LumiereAutour(
+        nature: lumieres[MotifDirection.dossiers],
+        child: TuileCompteur(
+          valeur: dossiersEnAttente ?? indicateurs.dossiersEnAttente,
+          libelle: t.admin.tableau.dossiers,
+          detail: t.admin.tableau.dossiersDetail,
+          apercu: apercu,
+          apercuErreur: apercuErreur,
+          enLigne: true,
+          onPress: () => GoRouter.of(context).go(Routes.adminPersonnesDossiers),
+        ),
       ),
-      TuileCompteur(
-        valeur: indicateurs.demandesEnAttente,
-        libelle: t.admin.tableau.demandes,
-        detail: t.admin.tableau.demandesDetail,
-        onPress: () => GoRouter.of(context).go(Routes.adminOperationsDemandes),
+      LumiereAutour(
+        nature: lumieres[MotifDirection.demandes],
+        child: TuileCompteur(
+          valeur: indicateurs.demandesEnAttente,
+          libelle: t.admin.tableau.demandes,
+          detail: t.admin.tableau.demandesDetail,
+          onPress: () =>
+              GoRouter.of(context).go(Routes.adminOperationsDemandes),
+        ),
       ),
       TuileCompteur(
         valeur: indicateurs.foyersSansEnseignant,
@@ -459,17 +492,20 @@ class _Compteurs extends StatelessWidget {
         // affiche le groupe « Rapport manquant » ouvert par defaut.
         onPress: () => GoRouter.of(context).go(Routes.adminPedagogieQualite),
       ),
-      TuileDouble(
-        titre: t.admin.tableau.incidentsEtAcces,
-        gauche: (indicateurs.incidents24h, t.admin.tableau.incidents),
-        droite: (indicateurs.comptesEchus, t.admin.tableau.comptes),
-        // DASH-ADM-ECHUS : Comptes s'ouvre filtre sur les acces echus.
-        // DASH-ADM-INC : la page des incidents liste les seances que compte
-        // le chiffre (D9).
-        onPressGauche: () =>
-            GoRouter.of(context).go(Routes.adminSecuriteAuditIncidents),
-        onPressDroite: () =>
-            GoRouter.of(context).go(Routes.adminPersonnesComptesEchus),
+      LumiereAutour(
+        nature: lumieres[MotifDirection.incidents],
+        child: TuileDouble(
+          titre: t.admin.tableau.incidentsEtAcces,
+          gauche: (indicateurs.incidents24h, t.admin.tableau.incidents),
+          droite: (indicateurs.comptesEchus, t.admin.tableau.comptes),
+          // DASH-ADM-ECHUS : Comptes s'ouvre filtre sur les acces echus.
+          // DASH-ADM-INC : la page des incidents liste les seances que compte
+          // le chiffre (D9).
+          onPressGauche: () =>
+              GoRouter.of(context).go(Routes.adminSecuriteAuditIncidents),
+          onPressDroite: () =>
+              GoRouter.of(context).go(Routes.adminPersonnesComptesEchus),
+        ),
       ),
     ];
     return GrilleBento(
