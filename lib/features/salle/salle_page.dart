@@ -57,11 +57,13 @@ import '../../core/theme/app_mouvement.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/video/fermeture_salle.dart';
 import '../../core/video/garde_fermeture.dart';
 import '../../core/video/gestes_salle.dart';
 import '../../core/video/livekit_session_provider.dart';
 import '../../core/video/politique_camera.dart';
 import '../../core/video/pre_vol.dart';
+import '../../core/video/publication_differee.dart';
 import '../../core/video/repli_audio.dart';
 import '../../core/video/service_video.dart';
 import '../../core/video/signal_rappel.dart';
@@ -220,6 +222,13 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   /// UX-038 : le fournisseur dit-il que la salle a ete ouverte ailleurs ?
   bool get _ouverteAilleurs => switch (_moteur) {
     final MotifEchecSalle motif => motif.ouverteAilleurs,
+    _ => false,
+  };
+
+  /// FERMETURE-SALLE (11/11/2026, D-018) : le serveur a-t-il ferme la salle
+  /// elle-meme (seance finie) ? Ni une panne, ni une exclusion.
+  bool get _salleFermee => switch (_moteur) {
+    final FermetureParLeServeur fermeture => fermeture.salleFermee,
     _ => false,
   };
 
@@ -519,6 +528,12 @@ class _SallePageEtat extends ConsumerState<SallePage> {
             // UX-038 : ouverte ailleurs par le meme compte ; ni panne de
             // reseau, ni fin de seance a verifier.
             _impasse = CauseImpasse.ouverteAilleurs;
+          } else if (etat == EtatSalle.echec && _salleFermee) {
+            // FERMETURE-SALLE : le serveur a ferme la salle, la seance est
+            // terminee. Ni « connexion perdue », ni « votre enseignant vous
+            // a fait sortir » : l'ecran de fin de chaque role le dit.
+            _impasse = CauseImpasse.seanceTerminee;
+            unawaited(Future<void>.microtask(_seanceFermee));
           } else if (etat == EtatSalle.echec && _aEteConnecte) {
             _impasse = CauseImpasse.connexionPerdue;
             // FN-024 : la connexion est tombee ; le serveur dit-il que la
@@ -560,7 +575,29 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     if (_moteur case final DroitsPublicationVivants vivants) {
       _sAcces = vivants.accesMisAJour.listen((AccesSalle acces) {
         if (!mounted || _acces == null) return;
+        final AccesSalle? avant = _acces;
         setState(() => _acces = acces);
+        // FERMETURE-SALLE : le serveur vient de fermer le micro de l'eleve
+        // parce que son enseignant n'est plus dans la salle. Il le lit en
+        // tete de la salle ; la phrase d'attente reste ensuite a la place du
+        // bouton (« Votre micro s'ouvrira quand votre enseignant sera la. »).
+        if (microFermeSansEnseignant(
+          avant: avant,
+          apres: acces,
+          enseignantPresent: enseignantDansLaSalle(_participants),
+        )) {
+          _annoncer(
+            AnnonceGeste(
+              cle: const ValueKey<String>('micro-ferme-sans-enseignant'),
+              titre: _tutoieSalle
+                  ? t.salle.fermeture.sansEnseignantTitreTutoie
+                  : t.salle.fermeture.sansEnseignantTitre,
+              message: _tutoieSalle
+                  ? t.salle.fermeture.microFermeTutoie
+                  : t.salle.fermeture.microFerme,
+            ),
+          );
+        }
         // La barre « Seance toujours en direct » lit le meme acces.
         if (_tenu) _confier(acces);
       });
@@ -823,40 +860,61 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       final DateTime? fin = detail.motif == MotifServeurSalle.terminee
           ? detail.finUtc
           : null;
-      final String? heure = fin == null ? null : DepuisSalle.heure(fin);
-      if (role == RoleSalle.eleve) {
-        setState(() {
-          _heureFinServeur = heure;
-          _sortieEleve = IssueSeance.terminee;
-        });
-        return;
-      }
-      // L'enseignant : l'ecran de fin (CLV-10), puis le cahier, comme apres
-      // « Quitter » ; l'heure est celle du serveur.
-      final VueSeance? vue = DepuisSalle.vue(
-        salle: VueSalle.depuis(
-          materielPret: _materielPret,
-          acces: acces,
-          etatMoteur: _etatMoteur,
-          participants: _participants,
-          qualite: _qualite,
-          impasse: null,
-        ),
-        mode: AppMetriques.of(context).mode,
-        presence: ref.read(presenceSeanceProvider(widget.seanceId)).value,
-        monProfil: ref.read(sessionProvider).profileId,
-        // UX-043 : le serveur a dit la seance terminee.
-        fin: FinSeance(
-          heureFin: heure ?? DepuisSalle.heure(DateTime.now()),
-          cahierACompleter: true,
-        ),
-      );
-      if (vue != null) setState(() => _finEnseignant = vue);
+      _montrerFin(role, fin == null ? null : DepuisSalle.heure(fin));
     } catch (erreur) {
       journalDev('verification de fin impossible : $erreur');
     } finally {
       _verificationFin = false;
     }
+  }
+
+  /// La seance est terminee, le serveur l'a dit : « Seance terminee » pour
+  /// l'eleve ; pour l'enseignant, l'ecran de fin (CLV-10) puis le cahier,
+  /// comme apres « Quitter ». [heure] est celle du serveur quand il l'a
+  /// donnee.
+  void _montrerFin(RoleSalle role, String? heure) {
+    if (!mounted) return;
+    if (role == RoleSalle.eleve) {
+      setState(() {
+        _heureFinServeur = heure;
+        _sortieEleve = IssueSeance.terminee;
+      });
+      return;
+    }
+    final VueSeance? vue = DepuisSalle.vue(
+      salle: VueSalle.depuis(
+        materielPret: _materielPret,
+        acces: _acces,
+        etatMoteur: _etatMoteur,
+        participants: _participants,
+        qualite: _qualite,
+        impasse: null,
+      ),
+      mode: AppMetriques.of(context).mode,
+      presence: ref.read(presenceSeanceProvider(widget.seanceId)).value,
+      monProfil: ref.read(sessionProvider).profileId,
+      // UX-043 : le serveur a dit la seance terminee.
+      fin: FinSeance(
+        heureFin: heure ?? DepuisSalle.heure(DateTime.now()),
+        cahierACompleter: true,
+      ),
+    );
+    if (vue != null) setState(() => _finEnseignant = vue);
+  }
+
+  /// FERMETURE-SALLE (directeur, 11/11/2026, D-018) : le serveur a ferme la
+  /// salle parce que la seance est finie. L'eleve arrive sur « Seance
+  /// terminee » et son retour a l'accueil, l'enseignant sur l'ecran de fin et
+  /// le cahier de transmission, sans rien avoir a toucher. Les autres roles
+  /// (tuteur, controle, direction) lisent « La seance est terminee. » sur
+  /// l'ecran d'impasse, avec le retour.
+  void _seanceFermee() {
+    if (!mounted) return;
+    final RoleSalle role = RoleSalle.depuis(_acces?.role);
+    if (role != RoleSalle.eleve && role != RoleSalle.enseignant) return;
+    _veilleCamera?.cancel();
+    _veilleCamera = null;
+    _montrerFin(role, null);
   }
 
   /// K4 n° 13 (pilote, 30/10/2026) : le jeton d'un eleve fige sa camera a
@@ -2490,6 +2548,12 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           )),
         ),
       );
+      // FERMETURE-SALLE : le moteur apprend la fin du depassement autorise
+      // (servie par le serveur) ; a ce moment, il demande au serveur de
+      // relire la regle. Il ne ferme rien lui-meme.
+      if (_moteur case final FermetureParLeServeur fermeture) {
+        fermeture.finPorteUtc = seance?.chrono?.finDepassementUtc;
+      }
       if (seance != null) {
         return _salleDeSeance(
           vue,
@@ -4924,6 +4988,11 @@ class _Impasse extends StatelessWidget {
       CauseImpasse.connexionPerdue => (t.salle.perdue, t.salle.secours.echec),
       // 30/10/2026 : « Reessayer » rentre des que l'enseignant a readmis.
       CauseImpasse.retire => (t.salle.retire, t.salle.retireDetail),
+      // FERMETURE-SALLE : la seance est finie, le serveur a ferme la salle.
+      CauseImpasse.seanceTerminee => (
+        t.salle.fermeture.seanceTerminee,
+        t.salle.fermeture.seanceTermineeDetail,
+      ),
       // UX-038 (K-59) : ce qui s'est passe, et quoi faire.
       CauseImpasse.ouverteAilleurs => (
         t.salle.ouverteAilleurs,

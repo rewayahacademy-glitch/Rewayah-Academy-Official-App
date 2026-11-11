@@ -7,6 +7,7 @@ import 'package:livekit_client/livekit_client.dart' as lk;
 
 import '../observabilite/journal_dev.dart';
 import 'diagnostic_transport.dart';
+import 'fermeture_salle.dart';
 import 'publication_differee.dart';
 import 'repli_audio.dart';
 import 'service_video.dart';
@@ -151,6 +152,13 @@ bool repriseSansGestePermise(lk.DisconnectReason? raison) => switch (raison) {
   _ => false,
 };
 
+/// FERMETURE-SALLE (11/11/2026, D-018) : vrai quand la deconnexion vient de
+/// la fermeture de la salle par le serveur (`DeleteRoom`, que le serveur
+/// n'appelle que pour une seance finie). Distinct de `participantRemoved`
+/// (l'enseignant a fait sortir quelqu'un, ou une visite a pris fin).
+bool salleFermeeParLeServeur(lk.DisconnectReason? raison) =>
+    raison == lk.DisconnectReason.roomDeleted;
+
 /// Ce qu'une reprise rouvre : **seulement ce que la personne avait ouvert**,
 /// seulement avec le droit du serveur, et seulement si c'est ferme
 /// maintenant. Rien n'est jamais ferme ici : ce calcul ne fait que rendre.
@@ -204,18 +212,37 @@ class LiveKitSessionProvider
         VideoSessionProvider,
         MotifEchecSalle,
         RepriseAutomatique,
-        DroitsPublicationVivants {
+        DroitsPublicationVivants,
+        FermetureParLeServeur {
   /// Cree le fournisseur. [retablirPublication] est l'appel au serveur du
   /// filet de MICRO-AVANT-ENSEIGNANT ([FiletPublication]) ; sans lui, seul le
-  /// webhook du serveur rend ses droits a l'eleve.
+  /// webhook du serveur rend ses droits a l'eleve. [verifierSalle] est
+  /// l'appel au serveur de FERMETURE-SALLE ([VeilleFermeture]) ; sans lui,
+  /// seule la tache planifiee du serveur tient la regle.
   LiveKitSessionProvider({
     Future<void> Function(AccesSalle acces)? retablirPublication,
+    Future<int?> Function(AccesSalle acces)? verifierSalle,
   }) : _filetPublication = FiletPublication(
          retablirPublication ?? (AccesSalle _) async {},
+       ),
+       _veilleFermeture = VeilleFermeture(
+         verifierSalle ?? (AccesSalle _) async => null,
        );
 
   /// MICRO-AVANT-ENSEIGNANT (11/11/2026) : voir [_permissionsChangees].
   final FiletPublication _filetPublication;
+
+  /// FERMETURE-SALLE (11/11/2026, D-018) : demande au serveur de relire la
+  /// regle quand l'enseignant n'est plus la, et a la fin du depassement.
+  final VeilleFermeture _veilleFermeture;
+
+  bool _salleFermee = false;
+
+  @override
+  bool get salleFermee => _salleFermee;
+
+  @override
+  set finPorteUtc(DateTime? fin) => _veilleFermeture.finPorteUtc = fin;
   final StreamController<AccesSalle> _accesMisAJour =
       StreamController<AccesSalle>.broadcast();
 
@@ -426,6 +453,7 @@ class LiveKitSessionProvider
 
     _acces = acces;
     _ouverteAilleurs = false;
+    _salleFermee = false;
     _poser(EtatSalle.connexion);
 
     // `RoomOptions` se pose au CONSTRUCTEUR : le passer a `connect()` est
@@ -524,6 +552,9 @@ class LiveKitSessionProvider
           raison,
         );
         _ouverteAilleurs = issue.ailleurs;
+        // FERMETURE-SALLE : le serveur a ferme la salle elle-meme (seance
+        // finie). Ni une panne, ni une exclusion : la salle le dit.
+        _salleFermee = salleFermeeParLeServeur(raison);
         // ECRAN-EVEILLE (11/11/2026) : le SDK a epuise ses propres essais
         // (une dizaine, environ 45 secondes), souvent parce que l'ecran
         // s'est eteint. Avant de dire « connexion perdue », le moteur
@@ -867,9 +898,16 @@ class LiveKitSessionProvider
     _participants.add(liste);
     // MICRO-AVANT-ENSEIGNANT : l'enseignant est la et mon droit est encore
     // ferme ? Le filet le redemande au serveur.
+    final bool enseignantPresent = enseignantDansLaSalle(liste);
     _filetPublication.observer(
       acces: _acces,
-      enseignantPresent: enseignantDansLaSalle(liste),
+      enseignantPresent: enseignantPresent,
+    );
+    // FERMETURE-SALLE : l'enseignant n'est plus la et mon micro est permis ?
+    // La veille demande au serveur de relire la regle, a l'echeance.
+    _veilleFermeture.observer(
+      acces: _acces,
+      enseignantPresent: enseignantPresent,
     );
   }
 
@@ -1308,6 +1346,7 @@ class LiveKitSessionProvider
     _microVoulu = false;
     _reveiller();
     _filetPublication.arreter();
+    _veilleFermeture.arreter();
     _battementRepli?.cancel();
     _battementRepli = null;
     // L'ordre compte : on cesse d'ecouter AVANT de fermer, sinon la fermeture
@@ -1385,6 +1424,14 @@ final Provider<VideoSessionProvider> moteurSalleProvider =
           if (service case final RetablissementPublication filet) {
             await filet.retablirPublication(acces);
           }
+        },
+        // FERMETURE-SALLE : la verification passe par le meme service.
+        verifierSalle: (AccesSalle acces) async {
+          final ServiceVideo service = ref.read(serviceVideoProvider);
+          if (service case final VerificationSalle verification) {
+            return verification.verifierSalle(acces);
+          }
+          return null;
         },
       );
       ref.onDispose(() => unawaited(moteur.liberer()));

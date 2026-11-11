@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -2237,6 +2238,158 @@ void main() {
       await tester.tap(find.text(t.commun.reessayer));
       await tester.pumpAndSettle();
       expect(video.demandes, hasLength(2));
+    });
+
+    // FERMETURE-SALLE (directeur, 11/11/2026, D-018) : le serveur ferme la
+    // salle quand la seance est finie. Ni « La connexion au cours est
+    // perdue », ni « Votre enseignant vous a fait sortir du cours ».
+    testWidgets('FERMETURE-SALLE : salle fermee par le serveur, l eleve '
+        'arrive sur « Seance terminee », sans « Reessayer »', (
+      WidgetTester tester,
+    ) async {
+      final _MoteurFermeture moteur = _MoteurFermeture();
+      final FauxServiceVideo video = FauxServiceVideo(
+        acces0: _acces('student'),
+      );
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: video,
+          moteur: moteur,
+          preVol: FauxServicePreVol(),
+        ),
+      );
+      moteur.poser(EtatSalle.connecte);
+      await tester.pumpAndSettle();
+      moteur.salleFermee = true;
+      moteur.poser(EtatSalle.echec);
+      await tester.pumpAndSettle();
+      expect(find.byType(ResultatSeance), findsOneWidget);
+      expect(find.text(t.salle.fin.titre), findsOneWidget);
+      expect(find.text(t.salle.retire), findsNothing);
+      expect(find.text(t.salle.perdue), findsNothing);
+      expect(find.text(t.commun.reessayer), findsNothing);
+      // Aucun jeton n'est redemande : le serveur a deja tout dit.
+      expect(video.demandes, hasLength(1));
+    });
+
+    testWidgets('FERMETURE-SALLE : en Interface guidee, l eleve lit « La '
+        'seance est terminee. »', (WidgetTester tester) async {
+      final _MoteurFermeture moteur = _MoteurFermeture();
+      await _monterSalle(
+        tester,
+        mode: InterfaceMode.enfant,
+        surcharges: _surcharges(
+          video: FauxServiceVideo(acces0: _acces('student')),
+          moteur: moteur,
+          preVol: FauxServicePreVol(),
+        ),
+      );
+      moteur.poser(EtatSalle.connecte);
+      await tester.pumpAndSettle();
+      moteur.salleFermee = true;
+      moteur.poser(EtatSalle.echec);
+      await tester.pumpAndSettle();
+      expect(find.text(t.salle.fin.titreGuidee), findsOneWidget);
+      expect(find.text(t.salle.retire), findsNothing);
+    });
+
+    testWidgets('FERMETURE-SALLE : le tuteur qui observe lit « La seance est '
+        'terminee. », pas « Votre enseignant vous a fait sortir »', (
+      WidgetTester tester,
+    ) async {
+      final _MoteurFermeture moteur = _MoteurFermeture();
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: FauxServiceVideo(acces0: _acces('guardian_observer')),
+          moteur: moteur,
+          preVol: FauxServicePreVol(),
+          role: AppRole.guardian,
+        ),
+      );
+      moteur.poser(EtatSalle.connecte);
+      await tester.pumpAndSettle();
+      moteur.salleFermee = true;
+      moteur.poser(EtatSalle.echec);
+      await tester.pumpAndSettle();
+      expect(find.text(t.salle.fermeture.seanceTerminee), findsOneWidget);
+      expect(find.text(t.salle.fermeture.seanceTermineeDetail), findsOneWidget);
+      expect(find.text(t.salle.retire), findsNothing);
+      expect(find.text(t.salle.perdue), findsNothing);
+      expect(find.text(t.commun.reessayer), findsNothing);
+    });
+
+    testWidgets('FERMETURE-SALLE : sans la fermeture du serveur, une '
+        'connexion perdue reste une connexion perdue', (
+      WidgetTester tester,
+    ) async {
+      final _MoteurFermeture moteur = _MoteurFermeture();
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: FauxServiceVideo(acces0: _acces('student')),
+          moteur: moteur,
+          preVol: FauxServicePreVol(),
+        ),
+      );
+      moteur.poser(EtatSalle.connecte);
+      await tester.pumpAndSettle();
+      moteur.poser(EtatSalle.echec);
+      await tester.pumpAndSettle();
+      expect(find.text(t.salle.perdue), findsOneWidget);
+      expect(find.text(t.salle.fin.titre), findsNothing);
+    });
+
+    testWidgets('FERMETURE-SALLE : le serveur ferme le micro de l eleve apres '
+        'le depart de l enseignant ; il le lit en tete de la salle', (
+      WidgetTester tester,
+    ) async {
+      final _MoteurFermeture moteur = _MoteurFermeture();
+      final AccesSalle acces = _acces('student');
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: FauxServiceVideo(acces0: acces),
+          moteur: moteur,
+          preVol: FauxServicePreVol(),
+        ),
+      );
+      moteur
+        ..poser(EtatSalle.connecte)
+        ..publier(<ParticipantSalle>[
+          _participantFermeture('p1', 'student', local: true),
+          _participantFermeture('prof', 'teacher'),
+        ]);
+      await tester.pumpAndSettle();
+      // Pendant une recitation, le serveur ferme aussi ce droit, mais
+      // l'enseignant est la : ce n'est pas cette phrase.
+      final AccesSalle ferme = acces.avecPublication(
+        peutPublier: false,
+        peutPublierVideo: false,
+      );
+      moteur.accorder(ferme);
+      await tester.pump();
+      await tester.pump();
+      expect(find.text(t.salle.fermeture.sansEnseignantTitre), findsNothing);
+      moteur.accorder(acces);
+      await tester.pump();
+
+      // L'enseignant sort ; apres le delai, le serveur ferme le droit.
+      moteur.publier(<ParticipantSalle>[
+        _participantFermeture('p1', 'student', local: true),
+      ]);
+      await tester.pump();
+      expect(find.text(t.salle.fermeture.sansEnseignantTitre), findsNothing);
+      moteur.accorder(ferme);
+      await tester.pump();
+      await tester.pump();
+      expect(find.text(t.salle.fermeture.sansEnseignantTitre), findsOneWidget);
+      expect(find.text(t.salle.fermeture.microFerme), findsOneWidget);
+      // L'annonce s'efface seule.
+      await tester.pump(AppMouvement.annonceGesteMaintien);
+      await tester.pumpAndSettle();
+      expect(find.text(t.salle.fermeture.sansEnseignantTitre), findsNothing);
     });
 
     testWidgets('rappel discret recu : l eleve lit « Le professeur vous '
@@ -4592,3 +4745,38 @@ class _MoteurOuvertAilleurs extends FauxMoteurSalle implements MotifEchecSalle {
   @override
   bool ouverteAilleurs = false;
 }
+
+/// FERMETURE-SALLE : un moteur qui sait dire que le serveur a ferme la salle,
+/// et qui annonce les droits que le serveur change.
+class _MoteurFermeture extends FauxMoteurSalle
+    implements FermetureParLeServeur, DroitsPublicationVivants {
+  @override
+  bool salleFermee = false;
+
+  @override
+  DateTime? finPorteUtc;
+
+  final StreamController<AccesSalle> _accesChanges =
+      StreamController<AccesSalle>.broadcast();
+
+  @override
+  Stream<AccesSalle> get accesMisAJour => _accesChanges.stream;
+
+  /// Le serveur change les droits du participant local.
+  void accorder(AccesSalle acces) => _accesChanges.add(acces);
+}
+
+ParticipantSalle _participantFermeture(
+  String identite,
+  String role, {
+  bool local = false,
+}) => ParticipantSalle(
+  identite: identite,
+  nom: '',
+  role: role,
+  estLocal: local,
+  micro: false,
+  camera: false,
+  parle: false,
+  qualite: QualiteLien.bonne,
+);

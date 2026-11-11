@@ -29,6 +29,14 @@ import {
   type PresenceEnseignant,
 } from './publication_differee.ts'
 import {
+  deciderSalle,
+  type DecisionSalle,
+  ecrireSansEnseignant,
+  lireSansEnseignant,
+  type SalleASurveiller,
+  type SeanceVue,
+} from './fermeture_salle.ts'
+import {
   ecrireRecitation,
   elevePresent,
   elevesAFermer,
@@ -646,4 +654,196 @@ export async function terminerRecitation(route: RouteSalle): Promise<BilanRecita
 export async function recitantEnCours(route: RouteSalle): Promise<string | null> {
   const enCours = await recitationDe(serviceSalle(route), route.room_name)
   return enCours?.recitation.recitant ?? null
+}
+
+// ---------------------------------------------------------------------------
+// FERMETURE-SALLE (directeur, 11/11/2026, seconde moitie de SEC-1, D-018).
+//
+// Les decisions sont dans `fermeture_salle.ts` ; ici, seulement les appels a
+// l'API serveur de LiveKit qu'elles demandent.
+// ---------------------------------------------------------------------------
+
+/// Ce qu'a fait [tenirFermeture] dans une salle.
+export interface BilanFermeture {
+  /// Ce qui a ete decide (et applique, sauf [echecs]).
+  action: DecisionSalle['action']
+  /// Pour `fermer_salle` : la seance close en base, ou le depassement passe.
+  motif?: 'depassement' | 'cloture'
+  /// Les eleves dont le droit de publier vient d'etre ferme.
+  fermes: string[]
+  /// Ce que LiveKit a refuse ou n'a pas fait a temps.
+  echecs: string[]
+  /// Le temps qui reste avant l'echeance (salle sans enseignant, delai en
+  /// cours), en millisecondes.
+  resteMs?: number
+}
+
+/// Tient la regle de FERMETURE-SALLE dans une salle : lit qui est la et la
+/// marque `sans_enseignant`, decide (`deciderSalle`), applique.
+///
+/// [seance] : ce que la base sait de la seance, ou `null` si elle ne se lit
+/// pas (la salle n'est alors jamais fermee ; seuls les micros des eleves
+/// peuvent l'etre, apres le delai sans enseignant).
+///
+/// Une panne de LiveKit a la lecture remonte en erreur : l'appelant la
+/// consigne et ne ferme rien. Dans le doute, la salle reste comme elle est.
+export async function tenirFermeture(
+  route: RouteSalle,
+  seance: SeanceVue | null,
+  options: { departEnseignant?: boolean; maintenantMs?: number } = {},
+): Promise<BilanFermeture> {
+  const service = serviceSalle(route)
+  const participants = await participantsDe(service, route.room_name)
+  const bilan: BilanFermeture = { action: 'rien', fermes: [], echecs: [] }
+  if (participants.length === 0) return bilan
+
+  const salles = await borne(service.listRooms([route.room_name]), 'lecture de la salle')
+  const metadonnees = salles.find((r) => r.name === route.room_name)?.metadata ?? ''
+  const decision = deciderSalle({
+    maintenantMs: options.maintenantMs ?? Date.now(),
+    participants: participants.map(vu),
+    marque: lireSansEnseignant(metadonnees),
+    seance,
+    departEnseignant: options.departEnseignant,
+  })
+  bilan.action = decision.action
+
+  switch (decision.action) {
+    case 'rien':
+      bilan.resteMs = decision.resteMs
+      break
+    case 'poser_echeance':
+      bilan.resteMs = decision.resteMs
+      await ecrireMarque(service, route.room_name, metadonnees, { depuis: decision.depuis }, bilan)
+      break
+    case 'lever_echeance':
+      await ecrireMarque(service, route.room_name, metadonnees, null, bilan)
+      break
+    case 'fermer_micros': {
+      const fermes = await fermerPublication(
+        service,
+        route.room_name,
+        participants,
+        decision.eleves,
+      )
+      bilan.fermes = fermes.faits
+      bilan.echecs.push(...fermes.echecs)
+      break
+    }
+    case 'fermer_salle':
+      bilan.motif = decision.motif
+      try {
+        // `DeleteRoom` deconnecte tous les participants (raison
+        // `ROOM_DELETED` chez chacun) : c'est ce que l'application lit pour
+        // dire « La seance est terminee. ».
+        await borne(service.deleteRoom(route.room_name), 'fermeture de la salle')
+      } catch (e) {
+        // Deja fermee : rien a faire. Tout autre refus est note ; le
+        // prochain passage recommencera.
+        if (!introuvable(e)) {
+          bilan.echecs.push(route.room_name)
+          console.error('fermeture de la salle impossible', {
+            salle: route.room_name,
+            erreur: (e as Error).message,
+          })
+        }
+      }
+      break
+  }
+  return bilan
+}
+
+/// Ecrit ou leve la marque `sans_enseignant`. Un echec est note dans le
+/// bilan : la marque non posee repousse seulement l'echeance (le prochain
+/// passage la posera), la marque non levee le sera au prochain passage.
+async function ecrireMarque(
+  service: RoomServiceClient,
+  salle: string,
+  metadonnees: string,
+  marque: { depuis: number } | null,
+  bilan: BilanFermeture,
+): Promise<void> {
+  try {
+    await borne(
+      service.updateRoomMetadata(salle, ecrireSansEnseignant(metadonnees, marque)),
+      'marque sans enseignant',
+    )
+  } catch (e) {
+    if (!introuvable(e)) {
+      bilan.echecs.push(salle)
+      console.error('marque sans enseignant non ecrite', {
+        salle,
+        erreur: (e as Error).message,
+      })
+    }
+  }
+}
+
+/// Ce qu'a fait [surveillerSalles].
+export interface BilanSurveillance {
+  /// Les salles ouvertes chez LiveKit qui ont ete examinees.
+  examinees: number
+  /// Les salles dont les micros des eleves viennent d'etre fermes.
+  microsFermes: number
+  /// Les salles fermees pour tous.
+  sallesFermees: number
+  /// Les salles ou LiveKit a refuse ou n'a pas repondu.
+  echecs: number
+}
+
+/// Le passage de la tache planifiee : parmi les [salles] que la base connait,
+/// celles qui sont ouvertes chez LiveKit sont examinees une a une
+/// ([tenirFermeture]). Une liste des salles ouvertes par serveur LiveKit, puis
+/// seulement les salles ouvertes : une seance sans personne ne coute aucun
+/// appel.
+///
+/// L'echec d'une salle n'arrete pas les autres.
+export async function surveillerSalles(
+  salles: readonly SalleASurveiller[],
+  maintenantMs = Date.now(),
+): Promise<BilanSurveillance> {
+  const bilan: BilanSurveillance = { examinees: 0, microsFermes: 0, sallesFermees: 0, echecs: 0 }
+  const parServeur = new Map<string, SalleASurveiller[]>()
+  for (const s of salles) {
+    const cle = `${s.provider} ${s.ws_url}`
+    parServeur.set(cle, [...(parServeur.get(cle) ?? []), s])
+  }
+  for (const groupe of parServeur.values()) {
+    let ouvertes: Set<string>
+    try {
+      const liste = await borne(serviceSalle(groupe[0]).listRooms(), 'liste des salles')
+      ouvertes = new Set(liste.filter((r) => r.numParticipants > 0).map((r) => r.name))
+    } catch (e) {
+      bilan.echecs++
+      console.error('liste des salles illisible', {
+        serveur: groupe[0].ws_url,
+        erreur: (e as Error).message,
+      })
+      continue
+    }
+    for (const s of groupe) {
+      if (!ouvertes.has(s.room_name)) continue
+      bilan.examinees++
+      try {
+        const r = await tenirFermeture(s, s.seance, { maintenantMs })
+        if (r.action === 'fermer_micros' && r.fermes.length > 0) bilan.microsFermes++
+        if (r.action === 'fermer_salle' && r.echecs.length === 0) bilan.sallesFermees++
+        if (r.echecs.length > 0) bilan.echecs++
+      } catch (e) {
+        bilan.echecs++
+        console.error('surveillance de la salle en echec', {
+          salle: s.room_name,
+          erreur: (e as Error).message,
+        })
+      }
+    }
+  }
+  return bilan
+}
+
+/// Vrai quand ces metadonnees signees sont celles de celui qui conduit la
+/// seance. Sert au webhook : le depart de l'enseignant fait repartir le delai
+/// de zero.
+export function conduitLaSeance(metadonnees: string | null | undefined): boolean {
+  return enseignantPresent([{ identity: '', metadata: metadonnees }])
 }

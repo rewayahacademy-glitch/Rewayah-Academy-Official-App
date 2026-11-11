@@ -112,7 +112,12 @@ enum CauseImpasse {
   /// UX-038 : le meme compte a ouvert la salle sur un autre onglet ou
   /// appareil, et le serveur a ferme celle-ci. Se reessaie : « Reessayer »
   /// reprend la salle ici (et la ferme la-bas).
-  ouverteAilleurs;
+  ouverteAilleurs,
+
+  /// FERMETURE-SALLE (11/11/2026, D-018) : la seance est finie et le serveur
+  /// a ferme la salle pour tous. Ne se reessaie pas : la base refuse tout
+  /// jeton. Distinct de [retire] (l'enseignant a fait sortir quelqu'un).
+  seanceTerminee;
 
   /// Traduit le refus du backend en ce que l'usager peut comprendre.
   static CauseImpasse depuis(MotifRefusSalle motif) => switch (motif) {
