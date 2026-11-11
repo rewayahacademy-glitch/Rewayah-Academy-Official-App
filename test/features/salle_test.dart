@@ -1605,7 +1605,12 @@ void main() {
       );
 
       moteur.publierContenu(_contenu());
-      await tester.pumpAndSettle();
+      // RUBAN-TELEPHONE : le passage de la classe a la page dure plus que le
+      // delai du squelette, et la page de ce test ne se charge jamais (son
+      // squelette boucle) : on laisse passer le passage, sans attendre le
+      // repos.
+      await tester.pump();
+      await tester.pump(AppMouvement.deplacementEntree);
 
       // L'abonnement arrive APRES la publication, et il recoit quand meme.
       final ContenuPresente vu = await moteur.contenusPresentes.first;

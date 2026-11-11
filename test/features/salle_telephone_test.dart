@@ -26,6 +26,8 @@ import 'package:rewayah_academy/core/video/livekit_session_provider.dart';
 import 'package:rewayah_academy/core/video/pre_vol.dart';
 import 'package:rewayah_academy/core/video/service_video.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
+import 'package:rewayah_academy/core/widgets/bouton_icone.dart';
+import 'package:rewayah_academy/core/widgets/cadre_visage.dart';
 import 'package:rewayah_academy/core/widgets/menu_filtre.dart';
 import 'package:rewayah_academy/core/widgets/pressable.dart';
 import 'package:rewayah_academy/features/salle/salle_page.dart';
@@ -432,8 +434,8 @@ void main() {
             expect(tester.takeException(), isNull);
           });
 
-          testWidgets('$nom : ligne 2, la capsule : vignette, point vert, '
-              'oeil', (WidgetTester tester) async {
+          testWidgets('$nom : ligne 2, la capsule : reduire, cadre, voir la '
+              'classe (RUBAN-TELEPHONE)', (WidgetTester tester) async {
             await _monter(tester, taille: taille, texte: texte);
             await _attendreLeRepos(tester);
             final Finder capsule = find.byKey(CapsuleVideoTelephone.cle);
@@ -452,32 +454,28 @@ void main() {
             final Finder vignette = dans(
               find.byKey(const ValueKey<String>('vignette-video')),
             );
-            final Finder point = dans(find.byKey(PointEtatTelephone.cle));
             final Finder oeil = dans(find.byKey(CapsuleVideoTelephone.cleVoir));
             expect(vignette, findsOneWidget);
-            expect(point, findsOneWidget);
-            expect(oeil, findsOneWidget);
-            // De gauche a droite (de droite a gauche en arabe).
-            final double xv = tester.getCenter(vignette).dx;
-            final double xp = tester.getCenter(point).dx;
-            final double xo = tester.getCenter(oeil).dx;
-            expect(_ltr() ? xv < xp && xp < xo : xv > xp && xp > xo, isTrue);
-            // Vert : aucun enregistrement reel (A-01).
-            final BuildContext ctx = tester.element(point);
-            final BoxDecoration deco =
-                tester
-                        .widget<DecoratedBox>(
-                          find.descendant(
-                            of: point,
-                            matching: find.byType(DecoratedBox),
-                          ),
-                        )
-                        .decoration
-                    as BoxDecoration;
+            // RUBAN-TELEPHONE : LE cadre de la salle, ses signes dedans.
             expect(
-              deco.color,
-              AppPalette.of(ctx).pointsStatut.succes.debugValue,
+              find.descendant(of: vignette, matching: find.byType(CadreVisage)),
+              findsOneWidget,
             );
+            // Le point vert ne disait rien (A-01) : il ne se pose plus.
+            expect(dans(find.byKey(PointEtatTelephone.cle)), findsNothing);
+            expect(oeil, findsOneWidget);
+            expect(
+              tester.widget<BoutonIcone>(oeil).libelle,
+              t.salle.scene.voirLaClasse,
+            );
+            // Cibles de 48.
+            expect(tester.getSize(oeil).width, greaterThanOrEqualTo(48));
+            expect(tester.getSize(oeil).height, greaterThanOrEqualTo(48));
+            // Cadre puis oeil (de droite a gauche en arabe).
+            final double xv = tester.getCenter(vignette).dx;
+            final double xo = tester.getCenter(oeil).dx;
+            expect(_ltr() ? xv < xo : xv > xo, isTrue);
+            final BuildContext ctx = tester.element(vignette);
             // Sombre : la surface des pilules de la salle.
             final BoxDecoration fond =
                 tester

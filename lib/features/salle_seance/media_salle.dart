@@ -109,8 +109,31 @@ class PorteeMediaSalle extends InheritedWidget {
     this.supports = const <SupportBibliotheque>[],
     this.messageEleves,
     this.pageEnErreur = false,
+    this.cadre,
+    this.identiteRecitant,
     super.key,
   });
+
+  /// RUBAN-TELEPHONE (MODES-AFFICHAGE §2, regle 2) : LE cadre vivant d'une
+  /// personne de la salle par son identite (son image, son micro, sa
+  /// parole), le meme que celui de la grille, ou `null` : la personne n'est
+  /// pas dans la salle. [libelleNom] : ce que le lecteur d'ecran dit a la
+  /// place du nom ; [coin] : un signe pose dans le cadre ; [detache] : le
+  /// filet qui detache un cadre pose seul sur la page. Absent
+  /// (demonstration) : la vignette se compose elle-meme avec [CadreVisage].
+  final Widget? Function(
+    String identite, {
+    String? libelleNom,
+    Widget? coin,
+    bool detache,
+  })?
+  cadre;
+
+  /// RUBAN-TELEPHONE (MODES-AFFICHAGE §4) : l'identite de l'eleve qui
+  /// recite, ou `null`. La capsule de l'enseignant au telephone le montre en
+  /// mode Document ou Tableau ; la bande de cote de l'eleve le montre apres
+  /// l'enseignant.
+  final String? identiteRecitant;
 
   /// Directeur, 26/10/2026 : la photo du profil montre dans la vignette
   /// (URL signee), quand la camera est fermee ; `null` : les initiales.

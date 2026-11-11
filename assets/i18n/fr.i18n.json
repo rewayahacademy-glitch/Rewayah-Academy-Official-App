@@ -924,7 +924,8 @@
     "scene": {
       "parle": "en train de parler",
       "precedents": "Visages précédents",
-      "suivants": "Visages suivants"
+      "suivants": "Visages suivants",
+      "voirLaClasse": "Voir la classe"
     },
     "microCoupe": "Micro coupé",
     "microOuvert": "Micro ouvert",
