@@ -2,8 +2,10 @@
 // `retard_en_direct`. Une lecture qui echoue emet `null` (aucune lumiere), le
 // flux ne s'interrompt pas, et sans personne connectee aucune lecture ne part.
 
+// fake_async est la dependance de flutter_test qui porte son horloge simulee
+// (version fixee par le SDK) ; aucune dependance n'est ajoutee par ce lot.
+// ignore: depend_on_referenced_packages
 import 'package:fake_async/fake_async.dart';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
