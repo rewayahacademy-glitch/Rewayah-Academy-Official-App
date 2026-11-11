@@ -777,6 +777,11 @@ abstract final class Routes {
   /// sous Operations.
   static const String adminOperationsOffres = '/admin/operations/offres';
 
+  /// « Nouvelle offre » : une page du routeur (TRANSITIONS, 11/11/2026), plus
+  /// une page poussee a la main.
+  static const String adminOperationsOffresNouvelle =
+      '/admin/operations/offres/nouvelle';
+
   /// AVIS-PUBLICS : les liens de collecte des avis et leur moderation (publier,
   /// refuser, retirer), sous Operations. Atteint depuis l'Accueil.
   static const String adminOperationsAvis = '/admin/operations/avis';

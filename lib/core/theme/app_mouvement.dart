@@ -31,6 +31,11 @@ abstract final class AppMouvement {
   /// Passage d'une page a l'autre.
   static const Duration navigation = Duration(milliseconds: 220);
 
+  /// TRANSITIONS (11/11/2026) : descente vers un detail sur telephone (axe
+  /// partage, 250 a 300 ms) ; sur ordinateur, [navigation]. Sortie environ
+  /// 2/3 (`AppTransitions.sortieDe`).
+  static const Duration descente = Duration(milliseconds: 280);
+
   /// Ouverture d'une feuille de bas d'ecran.
   static const Duration feuilleOuverture = Duration(milliseconds: 180);
 
@@ -255,6 +260,13 @@ abstract final class AppMouvement {
   /// RTL** : une page qui entre par la droite en francais entre par la gauche
   /// en arabe.
   static const double translationNavigation = 16;
+
+  /// TRANSITIONS (11/11/2026) : course de l'axe partage horizontal sur
+  /// telephone, et sur ecran large (24 a 32). Le sens s'inverse en RTL.
+  static const double courseAxePartage = 30;
+
+  /// Course de l'axe partage sur ecran large (classe etendue ou plus).
+  static const double courseAxePartageLarge = 24;
 
   /// Opacite du voile sous une feuille de bas d'ecran.
   static const double opaciteVoile = 0.32;

@@ -4,10 +4,11 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+
 import '../accessibilite/texte_sans_coupure.dart';
 import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
-
+import '../mouvement/app_transitions.dart';
 import '../theme/app_color_pair.dart';
 import '../theme/app_elevation.dart';
 import '../theme/app_gabarit.dart';
@@ -171,13 +172,17 @@ class AppBottomSheet extends StatefulWidget {
           reverseCurve: AppMouvement.sortie,
           reverseDuration: AppMouvement.feuilleFermeture,
         ),
-        builder: (BuildContext contexte) => _CadreDialogue(
-          child: AppBottomSheet(
-            titre: titre,
-            forme: FormeModale.dialogue,
-            actions: actions?.call(contexte),
-            libelleFermer: libelleFermer,
-            child: constructeur(contexte),
+        // TRANSITIONS : une fenetre au-dessus, zoom leger et fondu.
+        builder: (BuildContext contexte) => AppTransitions.zoomDeFenetre(
+          contexte,
+          _CadreDialogue(
+            child: AppBottomSheet(
+              titre: titre,
+              forme: FormeModale.dialogue,
+              actions: actions?.call(contexte),
+              libelleFermer: libelleFermer,
+              child: constructeur(contexte),
+            ),
           ),
         ),
       );
@@ -281,17 +286,20 @@ class AppBottomSheet extends StatefulWidget {
         if (pleinEcran) {
           return Material(type: MaterialType.transparency, child: surface);
         }
-        return SafeArea(
-          child: Center(
-            child: Padding(
-              padding: const EdgeInsets.all(AppSpacing.xxxl),
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(
-                  maxWidth: AppPage.largeurLecture,
-                ),
-                child: Material(
-                  type: MaterialType.transparency,
-                  child: surface,
+        return AppTransitions.zoomDeFenetre(
+          contexte,
+          SafeArea(
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.all(AppSpacing.xxxl),
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(
+                    maxWidth: AppPage.largeurLecture,
+                  ),
+                  child: Material(
+                    type: MaterialType.transparency,
+                    child: surface,
+                  ),
                 ),
               ),
             ),
