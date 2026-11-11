@@ -526,3 +526,48 @@ retiré. Cas relevés :
    la caméra doit-elle rester ?
 3. **Le pointeur qui suit la souris sans appuyer** : gardé ou retiré ?
 4. **« Appeler »** : le mot convient-il, et faut-il une limite tenue par le serveur ?
+
+## D-015 (11/11/2026). La barre d'outils du bas sur ordinateur (lot BARRE-ORDINATEUR)
+
+**Demande du directeur** : harmoniser la barre du bas, simplifier, atteindre les outils principaux
+en moins de clics, pour les enseignants les moins à l'aise avec la technique.
+
+**Ce qui a été trouvé** (`docs/current/UX_REVIEW_BARRE-ORDINATEUR.md`) : « Plus » n'ouvrait que des
+doublons ; « Tableau » était violet quand il était fermé, donc lu « allumé » ; « Écrire »
+disparaissait sans page et faisait glisser ses voisins ; la palette d'écriture prenait de la hauteur
+à la page ; le même lilas disait à la fois « panneau ouvert » et « outil en main ».
+
+**Ce qui est codé.** Cinq groupes séparés d'un filet, toujours à la même place : ma voix et mon image
+(Micro, Caméra), ma classe (Élèves), sur la page (Pointeur, Écrire), le support (Bibliothèque,
+Tableau), sortir (Réduire, Quitter). Plus de « Plus ». Un panneau ouvert se lit par un trait sous sa
+tuile, un outil en main par l'aplat ; la palette d'écriture se pose à côté de la page, sans la
+réduire ; touches M, V, P, E, T, B, F et Échap, dites dans l'infobulle.
+
+**Dit franchement** : le gain en nombre de clics est faible (les gestes courants étaient déjà à un
+ou deux clics) ; le gain est dans la lisibilité et la stabilité. « Les outils ne marchent pas » n'est
+pas traité par ce lot (le pointeur l'est par D-014 ; le tracé reste à vérifier chez l'élève).
+`lib/CLAUDE.md` décrit encore la barre du 26/10 : à mettre à jour sur décision du directeur.
+
+## D-016 (11/11/2026). L'étagère des supports et leurs couvertures (lot SUPPORTS-ETAGERE)
+
+**Demandes du directeur** : travailler les vignettes des supports ; couvertures aux styles et aux
+couleurs de l'académie ; pour le Coran, une couverture standard, en arabe, familière à tous.
+
+**Ce qui est codé.** Une étagère de livres dans le panneau des supports (ordinateur) et dans l'onglet
+Support (téléphone de l'enseignant). Toucher un livre ouvre sa fiche : « Partager » (la classe le
+voit maintenant, seul bouton plein) ou « Afficher » (je le regarde seul). Les supports de l'académie
+forment une même collection aux violets de la marque, avec l'ornement. Le Coran a sa couverture à
+part : « القرآن الكريم » et « مصحف المدينة », toujours en arabe.
+
+**Sources et limites.** Le Complexe du Roi Fahd ne publie aucune couverture réutilisable (site lu le
+11/11 : droits réservés, aucune licence d'image) : rien n'est copié, la couverture est dessinée. Le
+titre est composé en KFGQPC Uthman Taha Naskh, dont la licence du dépôt autorise l'usage gratuit.
+**Couleurs nouvelles, à valider par le directeur** : bleu nuit et or pour la seule couverture du
+Coran (le vert et or est écarté, la marque le classe comme une identité périmée de l'académie).
+
+**Ce qui n'est pas fait.** L'alphabet ne peut toujours pas se partager : le partage en direct reste
+codé pour le Coran (relevé dans `docs/current/UX_REVIEW_SUPPORTS-ETAGERE.md` §1 ; un lot à part).
+Les supports « à valider » n'existent que dans la galerie et les tests ; leur liste proposée est dans
+`docs/current/salle/SUPPORTS-A-VALIDER.md`, sans aucun contenu inventé. La languette au bord de
+l'écran n'est pas posée : le titre du panneau porte la couleur de la marque ; une vraie languette
+devrait remplacer la tuile de la barre, pas s'y ajouter (au directeur de trancher).

@@ -2,6 +2,14 @@
 
 > **Journal des modifications de ce cahier** (la plus récente en premier)
 >
+> - 11/11/2026 (fin de matinée), Fable : **troisième série de demandes du directeur**, ajoutées au §7
+>   et au §8 : la barre d'outils du bas sur ordinateur à harmoniser et simplifier pour les
+>   enseignants les moins techniques (fait, D-015) ; le Coran de l'élève à corriger (en cours : la
+>   page garde sa pleine taille, les commandes s'effacent) ; les vignettes des supports à travailler
+>   (fait, D-016), couvertures aux couleurs de l'académie et couverture arabe standard pour le Coran ;
+>   « L'île dépliée ne doit jamais réduire la page du Coran » (règle absolue, appliquée partout) ;
+>   relire le cahier initial pour ce qui n'est pas traité. Pointeur, « Faire réciter » et « Appeler »
+>   du §8 : faits, D-014.
 > - 11/11/2026 (matin, suite), Fable : **nouvelles remarques du directeur sur deux captures**, ajoutées
 >   au §8 : (1) au téléphone, retirer le bouton de zoom posé sur la page (on pince) : fait, D-013 ;
 >   (2) la phrase de la pilule doit se replier pour ne laisser que le chrono et le cercle : fait,
