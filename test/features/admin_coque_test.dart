@@ -13,6 +13,7 @@ import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/widgets/admin_shell.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
+import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 
 import '../support/demo/mode_demonstration.dart';
 import '../support/demo/repere_demonstration.dart';
@@ -187,16 +188,18 @@ void main() {
       final GoRouter routeur = await _monter(tester, taille, Routes.admin);
       expect(find.bySemanticsLabel('Mode Démonstration'), findsOneWidget);
 
-      await tester.tap(find.bySemanticsLabel(t.nav.compte));
-      await _stabiliser(tester);
-      // WEB-BUREAU (P1) : a partir de 600, « Mon compte » ouvre le menu du
-      // compte (« Mon compte », « Se deconnecter ») ; au telephone, il mene
-      // au Compte, comme avant.
+      // NAV-REFONTE etape 4 : a partir de 600, le compte vit au pied de la
+      // colonne ; son menu porte « Mon compte » et « Se deconnecter ». Au
+      // telephone, « Mon compte » de la barre mene au Compte, comme avant.
       if (taille.width >= 600) {
-        expect(find.text(t.compte.deconnexion), findsOneWidget);
-        await tester.tap(find.text(t.compte.titre).last);
+        await tester.tap(find.byKey(NavShell.piedCompteKey));
         await _stabiliser(tester);
+        expect(find.text(t.compte.deconnexion), findsOneWidget);
+        await tester.tap(find.text(t.nav.compte).last);
+      } else {
+        await tester.tap(find.bySemanticsLabel(t.nav.compte));
       }
+      await _stabiliser(tester);
       expect(_chemin(routeur), Routes.compte);
       final Finder sortie = find.text(t.compte.deconnexion);
       await tester.scrollUntilVisible(
@@ -216,9 +219,12 @@ void main() {
       const Size(1440, 900),
       Routes.admin,
     );
+    // NAV-REFONTE etape 4 : le pied de la barre ouvre le menu du compte.
     await tester.tap(
-      _dans(AdminShell.barreLateraleKey, find.text(t.compte.roles.admin)),
+      _dans(AdminShell.barreLateraleKey, find.byKey(NavShell.piedCompteKey)),
     );
+    await _stabiliser(tester);
+    await tester.tap(find.text(t.nav.compte).last);
     await _stabiliser(tester);
     expect(_chemin(routeur), Routes.compte);
   });

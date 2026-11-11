@@ -12,7 +12,6 @@
 
 import 'dart:io';
 import 'dart:typed_data';
-import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -30,6 +29,7 @@ import 'package:rewayah_academy/core/widgets/page_shell.dart';
 import '../router/support_routeur.dart' show sessionActive;
 import '../support/harnais.dart'
     show FausseSourceSession, sansPersonneConnectee;
+import 'compte_demonstration.dart';
 import 'outil_capture.dart';
 
 typedef _Cas = ({
@@ -138,7 +138,7 @@ void main() {
       late HttpServer serveur;
       setUpAll(() async {
         await chargerPolicesDuDepot();
-        final Uint8List photo = await _photoDeDemonstration();
+        final Uint8List photo = await photoDeDemonstration();
         serveur = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
         serveur.listen((HttpRequest r) async {
           r.response.headers.contentType = ContentType('image', 'png');
@@ -185,7 +185,7 @@ void main() {
                         FausseSourceSession(sessionActive(AppRole.teacher)),
                       ),
                       prenomDuCompteProvider.overrideWith(
-                        (Ref _) async => 'Yasmine',
+                        (Ref _) async => prenomDeDemonstration,
                       ),
                       photoPersonneProvider.overrideWith(
                         (Ref _, String _) async =>
@@ -226,36 +226,4 @@ void main() {
       }
     },
   );
-}
-
-/// Une photo synthetique (degrade et silhouette), dessinee ici : aucune image
-/// d'une personne reelle.
-Future<Uint8List> _photoDeDemonstration() async {
-  const double t = 256;
-  final ui.PictureRecorder enregistreur = ui.PictureRecorder();
-  final Canvas toile = Canvas(enregistreur);
-  toile.drawRect(
-    const Rect.fromLTWH(0, 0, t, t),
-    Paint()
-      ..shader = ui.Gradient.linear(
-        Offset.zero,
-        const Offset(t, t),
-        const <Color>[Color(0xFFB9A4F2), Color(0xFF6538E4)],
-      ),
-  );
-  final Paint silhouette = Paint()..color = const Color(0xFFF3EEFF);
-  toile.drawCircle(const Offset(t / 2, t * 0.4), t * 0.18, silhouette);
-  toile.drawOval(
-    const Rect.fromLTWH(t * 0.18, t * 0.64, t * 0.64, t * 0.6),
-    silhouette,
-  );
-  final ui.Image image = await enregistreur.endRecording().toImage(
-    t.toInt(),
-    t.toInt(),
-  );
-  final ByteData? octets = await image.toByteData(
-    format: ui.ImageByteFormat.png,
-  );
-  image.dispose();
-  return octets!.buffer.asUint8List();
 }
