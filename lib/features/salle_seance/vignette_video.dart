@@ -108,11 +108,17 @@ class VignetteVideo extends StatelessWidget {
     this.touchable = true,
     this.avecSignal = true,
     this.avecNom = true,
+    this.ratio = MesuresVignette.ratio,
     super.key,
   });
 
   final VueSeance vue;
   final double largeur;
+
+  /// Le rapport largeur sur hauteur ; par defaut celui de la vignette
+  /// ([MesuresVignette.ratio]). Panneau des Eleves de l'ordinateur
+  /// (directeur, 11/11/2026) : 4:3, a la largeur du panneau.
+  final double ratio;
 
   /// Faux dans la capsule du telephone (fiche 1, ligne 5) : toucher la
   /// capsule deplie le profil, l'oeil met la video en grand.
@@ -163,7 +169,7 @@ class VignetteVideo extends StatelessWidget {
         key: const ValueKey<String>('vignette-video'),
         width: largeur,
         child: AspectRatio(
-          aspectRatio: MesuresVignette.ratio,
+          aspectRatio: ratio,
           child: DecoratedBox(
             decoration: avecNom
                 ? palette.surfaceInverse.decoration(

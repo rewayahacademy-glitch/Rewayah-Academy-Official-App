@@ -77,6 +77,7 @@ class PanneauEleves extends StatefulWidget {
     this.large = false,
     this.serre = false,
     this.entete,
+    this.tete,
     this.autorisationEcrire = false,
     super.key,
   });
@@ -94,6 +95,12 @@ class PanneauEleves extends StatefulWidget {
   /// deplie depuis la capsule, en tete du panneau de personnes (une seule
   /// gestion des participants, plan V2 §4.3). `null` : rien.
   final Widget? entete;
+
+  /// Directeur, 11/11/2026 (lot SALLE-ORDINATEUR) : la tete du panneau sur
+  /// ordinateur, la video de l'enseignant et « Eleves 2/3 », premier element
+  /// de la MEME liste (elle defile avec les cartes, elle ne flotte pas).
+  /// `null` : rien.
+  final Widget? tete;
 
   /// La file de recitation (EN-9), en tete du panneau : l'eleve en cours,
   /// puis « A suivre ». `null` : pas de bloc.
@@ -169,7 +176,9 @@ class _PanneauElevesState extends State<PanneauEleves> {
   Widget build(BuildContext context) {
     final FileRecitation? file = widget.recitation;
     final Widget? entete = widget.entete;
-    final int contexte = entete == null ? 0 : 1;
+    final Widget? enTete = widget.tete;
+    final int premier = enTete == null ? 0 : 1;
+    final int contexte = premier + (entete == null ? 0 : 1);
     final int tete = contexte + (file == null ? 0 : 1);
     return ListView.separated(
       key: const ValueKey<String>('panneau-eleves'),
@@ -184,7 +193,8 @@ class _PanneauElevesState extends State<PanneauEleves> {
       itemCount: widget.eleves.length + tete,
       separatorBuilder: (BuildContext _, int _) => Ecart.vLg,
       itemBuilder: (BuildContext _, int index) {
-        if (entete != null && index == 0) return entete;
+        if (enTete != null && index == 0) return enTete;
+        if (entete != null && index == premier) return entete;
         if (file != null && index == contexte) {
           return FileRecitationSeance(file: file, eleves: widget.eleves);
         }

@@ -33,7 +33,14 @@ import 'package:rewayah_academy/features/salle_seance/dock_seance.dart'
     show BoutonPlusAppel;
 import 'package:rewayah_academy/features/salle_seance/panneau_bibliotheque_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/panneau_eleves.dart';
+import 'package:rewayah_academy/features/salle_seance/pilule_etat_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/salle_ordinateur.dart';
+
+import 'package:rewayah_academy/features/salle_seance/telephone_plein_ecran.dart'
+    show TelephonePleinEcran;
+import 'package:rewayah_academy/features/salle_seance/vignette_video.dart';
+import 'package:rewayah_academy/features/tc_mushaf/page_madina_15.dart'
+    show cleLigneMadina15;
 
 import '../capture/outil_capture.dart';
 import '../support/aucun_mot_coupe.dart';
@@ -59,17 +66,21 @@ AccesSalle _acces(String role) => AccesSalle(
   expireLe: DateTime.now().add(const Duration(minutes: 10)),
 );
 
-ParticipantSalle _personne(String id, String role, bool local) =>
-    ParticipantSalle(
-      identite: id,
-      nom: '',
-      role: role,
-      estLocal: local,
-      micro: false,
-      camera: false,
-      parle: false,
-      qualite: QualiteLien.bonne,
-    );
+ParticipantSalle _personne(
+  String id,
+  String role,
+  bool local, {
+  bool camera = false,
+}) => ParticipantSalle(
+  identite: id,
+  nom: '',
+  role: role,
+  estLocal: local,
+  micro: false,
+  camera: camera,
+  parle: false,
+  qualite: QualiteLien.bonne,
+);
 
 PresenceParticipant _ligne(String id, String prenom, String role) =>
     PresenceParticipant(
@@ -144,6 +155,7 @@ Future<void> _monter(
   double texte = 1,
   ThemeMode theme = ThemeMode.light,
   bool pageLisible = true,
+  bool cameraEnseignant = false,
 }) async {
   fixerVueCapture(tester, taille, 1);
   final FauxMoteurSalle moteur = FauxMoteurSalle();
@@ -157,21 +169,33 @@ Future<void> _monter(
   );
   await tester.pumpAndSettle();
   moteur.publier(<ParticipantSalle>[
-    _personne('t1', 'teacher', role == 'teacher'),
+    _personne('t1', 'teacher', role == 'teacher', camera: cameraEnseignant),
     _personne('e1', 'student', role == 'student'),
     _personne('e2', 'student', false),
   ]);
   await tester.pumpAndSettle();
-  await moteur.presenterContenu(
-    ContenuPresente(
-      page: 42,
-      sourate: 2,
-      verset: 255,
-      presentePar: 't1',
-      emisLe: DateTime.now(),
-    ),
+  final ContenuPresente contenu = ContenuPresente(
+    page: 42,
+    sourate: 2,
+    verset: 255,
+    presentePar: 't1',
+    emisLe: DateTime.now(),
   );
+  // L'enseignant presente ; l'eleve recoit (il ne presente rien : le faux
+  // moteur refuse, comme le vrai, faute de capacite).
+  if (role == 'teacher') {
+    await moteur.presenterContenu(contenu);
+  } else {
+    moteur.publierContenu(contenu);
+  }
   await tester.pumpAndSettle();
+}
+
+/// La largeur du texte de la page (une ligne justifiee) et la hauteur du
+/// bloc des quinze lignes : la taille de lecture reelle du Coran.
+Size _texteDeLaPage(WidgetTester tester) {
+  final Size ligne = tester.getSize(find.byKey(cleLigneMadina15(3)));
+  return Size(ligne.width, ligne.height * 15);
 }
 
 bool _carte(Widget w) {
@@ -424,4 +448,290 @@ void main() {
       TonTuileSalle.quitter,
     );
   });
+
+  // Lot SALLE-ORDINATEUR, demandes du directeur du 11/11/2026, sur sa capture
+  // de l'enseignant a 1440 x 900.
+  group('SALLE-ORDINATEUR', () {
+    Finder tuile(String nom) => find.byWidgetPredicate(
+      (Widget w) => w is TuileCommandeSalle && w.nom == nom,
+    );
+    Finder cartesEleves() => find.byWidgetPredicate((Widget w) {
+      final Key? cle = w.key;
+      return cle is ValueKey<String> && cle.value.startsWith('eleve-');
+    });
+
+    for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {
+      group('A ${langue.languageCode}', () {
+        setUp(() => LocaleSettings.setLocale(langue));
+        testWidgets(
+          'A ${langue.languageCode} : la video de l enseignant est en '
+          'tete du panneau des Eleves, a sa largeur, au bord des cartes, en '
+          '4:3 ; aucune autre vignette',
+          (WidgetTester tester) async {
+            await _monter(tester);
+            final Finder panneau = find.byKey(
+              const ValueKey<String>('salle-ordinateur-eleves'),
+            );
+            final Finder video = find.byKey(SalleOrdinateur.cleVideo);
+            expect(
+              find.descendant(of: panneau, matching: video),
+              findsOneWidget,
+            );
+            // Une seule video de l'enseignant a l'ecran : plus rien ne flotte.
+            expect(find.byType(VignetteVideo), findsOneWidget);
+            final Rect v = tester.getRect(video);
+            final Rect carte = tester.getRect(cartesEleves().first);
+            expect(v.left, closeTo(carte.left, 0.5));
+            expect(v.right, closeTo(carte.right, 0.5));
+            expect(v.width / v.height, closeTo(4 / 3, 0.01));
+            // Plus grande qu'une carte d'eleve, et au-dessus d'elles.
+            expect(
+              v.height,
+              greaterThan(tester.getSize(cartesEleves().last).height),
+            );
+            expect(v.bottom, lessThan(carte.top));
+            expect(tester.takeException(), isNull);
+          },
+        );
+      });
+    }
+
+    testWidgets('A : panneau ferme, la video part avec lui (rien ne flotte) ; '
+        'la camera allumee se lit dans la barre du bas', (
+      WidgetTester tester,
+    ) async {
+      // La camera de l'enseignant est allumee.
+      await _monter(tester, cameraEnseignant: true);
+      expect(
+        tester.widget<TuileCommandeSalle>(tuile(t.salle.camera)).ton,
+        TonTuileSalle.repos,
+      );
+      await tester.tap(find.byKey(const ValueKey<String>('salle-eleves')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(SalleOrdinateur.cleGauche), findsNothing);
+      expect(find.byKey(SalleOrdinateur.cleVideo), findsNothing);
+      expect(find.byType(VignetteVideo), findsNothing);
+      // Le signe que la camera tourne : la tuile Camera, au repos (pas le
+      // violet « eteinte »), et son libelle « Eteindre la camera ».
+      final TuileCommandeSalle camera = tester.widget<TuileCommandeSalle>(
+        tuile(t.salle.camera),
+      );
+      expect(camera.ton, TonTuileSalle.repos);
+      expect(camera.libelle, startsWith(t.salle.fermerCamera));
+      if (dossierCapture != null) {
+        await capturerVue(tester, 'enseignant_1440_panneau-ferme');
+      }
+      // Rouvert : la video revient, en tete.
+      await tester.tap(find.byKey(const ValueKey<String>('salle-eleves')));
+      await tester.pumpAndSettle();
+      expect(find.byKey(SalleOrdinateur.cleVideo), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
+    for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {
+      group('B ${langue.languageCode}', () {
+        setUp(() => LocaleSettings.setLocale(langue));
+        for (final Size taille in <Size>[
+          const Size(1280, 800),
+          const Size(1440, 900),
+          const Size(1920, 1080),
+        ]) {
+          for (final double texte in <double>[1, 1.3]) {
+            testWidgets(
+              'B ${langue.languageCode} ${taille.width.toInt()}, texte '
+              'x$texte : une rangee, la Classe au debut, le support et ses '
+              'outils au centre, la pilule a la fin, rien ne se recouvre',
+              (WidgetTester tester) async {
+                await _monter(tester, taille: taille, texte: texte);
+                expect(tester.takeException(), isNull);
+                final Rect classe = tester.getRect(
+                  find.byKey(SalleOrdinateur.cleClasse),
+                );
+                final Rect support = tester.getRect(
+                  find.byKey(SalleOrdinateur.cleSupport),
+                );
+                final Rect pilule = tester.getRect(
+                  find.byType(PiluleEtatSalle),
+                );
+                final Rect haut = tester.getRect(
+                  find.byKey(SalleOrdinateur.cleHaut),
+                );
+                // Une seule rangee : les trois groupes dans la hauteur du haut.
+                for (final Rect r in <Rect>[classe, support, pilule]) {
+                  expect(r.top, greaterThanOrEqualTo(haut.top - 0.5));
+                  expect(r.bottom, lessThanOrEqualTo(haut.bottom + 0.5));
+                }
+                // Le support est au centre de la largeur.
+                expect(support.center.dx, closeTo(taille.width / 2, 1));
+                // Les outils colles au titre du support, dans son groupe.
+                for (final Key cle in <Key>[
+                  SalleOrdinateur.cleTitreSupport,
+                  SalleOrdinateur.cleFocus,
+                  const ValueKey<String>('salle-ranger-support'),
+                ]) {
+                  expect(
+                    find.descendant(
+                      of: find.byKey(SalleOrdinateur.cleSupport),
+                      matching: find.byKey(cle),
+                    ),
+                    findsOneWidget,
+                  );
+                }
+                // Debut et fin suivent le sens de lecture.
+                final bool rtl = langue == AppLocale.ar;
+                if (rtl) {
+                  expect(classe.left, greaterThan(support.right));
+                  expect(pilule.right, lessThan(support.left));
+                } else {
+                  expect(classe.right, lessThan(support.left));
+                  expect(pilule.left, greaterThan(support.right));
+                }
+                verifierSansChevauchement(tester, <Finder>[
+                  find.byKey(SalleOrdinateur.cleClasse),
+                  find.byKey(SalleOrdinateur.cleSupport),
+                  find.byType(PiluleEtatSalle),
+                ]);
+                verifierUnSeulBoutonPlein(tester);
+              },
+            );
+          }
+        }
+      });
+    }
+
+    testWidgets('B : repli, la rangee etroite perd d abord le nom de '
+        'l enseignant, sans debordement', (WidgetTester tester) async {
+      await _monter(tester);
+      expect(find.byKey(SalleOrdinateur.cleEnseignant), findsOneWidget);
+      await _monter(tester, taille: const Size(860, 720), texte: 2);
+      expect(tester.takeException(), isNull);
+      expect(find.byKey(SalleOrdinateur.cleClasse), findsOneWidget);
+      expect(find.byKey(SalleOrdinateur.cleEnseignant), findsNothing);
+      expect(find.byKey(SalleOrdinateur.cleFocus), findsOneWidget);
+      verifierSansChevauchement(tester, <Finder>[
+        find.byKey(SalleOrdinateur.cleClasse),
+        find.byKey(SalleOrdinateur.cleSupport),
+        find.byType(PiluleEtatSalle),
+      ]);
+    });
+
+    testWidgets(
+      'C : la page prend toute la hauteur entre la rangee du haut '
+      'et la barre du bas, panneau ouvert comme ferme (mesure a 1440 x 900)',
+      (WidgetTester tester) async {
+        // Les vraies polices : la largeur du texte se mesure avec elles.
+        await tester.runAsync(() async {
+          await chargerPolicesDuDepot();
+          await chargerPoliceMadina15();
+        });
+        await _monter(tester);
+        final Rect haut = tester.getRect(find.byKey(SalleOrdinateur.cleHaut));
+        final Rect bas = tester.getRect(find.byKey(SalleOrdinateur.cleBas));
+        final Rect boite = tester.getRect(
+          find.byKey(TelephonePleinEcran.clePage),
+        );
+        final Size page = _texteDeLaPage(tester);
+        // ignore: avoid_print
+        print('C 1440x900, panneaux ouverts : boite $boite, texte $page');
+        expect(boite.top, closeTo(haut.bottom + 16, 0.5));
+        expect(boite.bottom, closeTo(bas.top - 16, 0.5));
+        expect(boite.height, greaterThan(690));
+        if (dossierCapture != null) {
+          await capturerVue(tester, 'enseignant_1440_coran-grand');
+        }
+        await tester.tap(find.byKey(const ValueKey<String>('salle-eleves')));
+        await tester.pumpAndSettle();
+        final Rect boiteFermee = tester.getRect(
+          find.byKey(TelephonePleinEcran.clePage),
+        );
+        final Size pageFermee = _texteDeLaPage(tester);
+        // ignore: avoid_print
+        print(
+          'C 1440x900, Eleves ferme : boite $boiteFermee, page $pageFermee',
+        );
+        expect(boiteFermee.height, closeTo(boite.height, 0.5));
+        expect(pageFermee.height, greaterThanOrEqualTo(page.height - 0.5));
+      },
+    );
+
+    testWidgets('C : l eleve sur ordinateur, la page sur toute la hauteur', (
+      WidgetTester tester,
+    ) async {
+      await tester.runAsync(() async {
+        await chargerPolicesDuDepot();
+        await chargerPoliceMadina15();
+      });
+      await _monter(tester, role: 'student');
+      final Rect boite = tester.getRect(
+        find.byKey(TelephonePleinEcran.clePage),
+      );
+      // ignore: avoid_print
+      print('C eleve 1440x900 : boite $boite, texte ${_texteDeLaPage(tester)}');
+      expect(boite.height, closeTo(900, 0.5));
+      if (dossierCapture != null) await capturerVue(tester, 'eleve_1440');
+    });
+  });
+
+  // Captures du lot (CAPTURE_DIR seulement) : enseignant a 1440, clair,
+  // sombre et arabe ; 1280 et 1920 ; eleve a 1440 en sombre.
+  for (final (
+        String nom,
+        Size taille,
+        ThemeMode theme,
+        AppLocale langue,
+        String role,
+      )
+      in <(String, Size, ThemeMode, AppLocale, String)>[
+        (
+          'enseignant_1440_clair',
+          const Size(1440, 900),
+          ThemeMode.light,
+          AppLocale.fr,
+          'teacher',
+        ),
+        (
+          'enseignant_1440_sombre',
+          const Size(1440, 900),
+          ThemeMode.dark,
+          AppLocale.fr,
+          'teacher',
+        ),
+        (
+          'enseignant_1440_arabe',
+          const Size(1440, 900),
+          ThemeMode.light,
+          AppLocale.ar,
+          'teacher',
+        ),
+        (
+          'enseignant_1280_clair',
+          const Size(1280, 800),
+          ThemeMode.light,
+          AppLocale.fr,
+          'teacher',
+        ),
+        (
+          'enseignant_1920_sombre',
+          const Size(1920, 1080),
+          ThemeMode.dark,
+          AppLocale.fr,
+          'teacher',
+        ),
+        (
+          'eleve_1440_sombre',
+          const Size(1440, 900),
+          ThemeMode.dark,
+          AppLocale.fr,
+          'student',
+        ),
+      ]) {
+    group('capture $nom', () {
+      setUp(() => LocaleSettings.setLocale(langue));
+      testWidgets('capture $nom', (WidgetTester tester) async {
+        await _monter(tester, taille: taille, theme: theme, role: role);
+        expect(tester.takeException(), isNull);
+        await capturerVue(tester, nom);
+      }, skip: dossierCapture == null);
+    });
+  }
 }
