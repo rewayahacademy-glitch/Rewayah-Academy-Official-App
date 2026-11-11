@@ -38,6 +38,7 @@ import 'package:rewayah_academy/features/classe_tuteur/classe_tuteur_page.dart';
 
 import '../../fixtures/tuteur/faux_classes_foyer.dart';
 import '../../router/support_routeur.dart';
+import '../../support/attendre_goutte.dart';
 import '../../support/garde_interface.dart';
 import 'support_classe.dart';
 
@@ -114,6 +115,8 @@ Future<void> _ouvrirLeCatalogue(WidgetTester tester, GoRouter routeur) async {
       matching: find.text('Élève A2'),
     ),
   );
+  // Le contenu du profil tombe a la fin du mouvement de la goutte.
+  await attendreGoutteFinie(tester);
   await _toucher(tester, find.text(t.classe.catalogue));
   expect(_lieu(routeur), _catalogueA2);
   expect(find.byType(CatalogueClassesPage), findsOneWidget);

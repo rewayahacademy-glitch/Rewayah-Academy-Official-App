@@ -47,10 +47,13 @@ import '../../core/tc_horloge/session_clock_vm.dart';
 import '../../core/tc_parcours/port_travail_a_venir.dart';
 import '../../core/theme/app_delais.dart';
 import '../../core/theme/app_gabarit.dart';
+import '../../core/theme/app_palette.dart';
+import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/etat_systeme.dart';
+import '../../core/widgets/goutte_profils.dart';
 import '../../core/widgets/grille_bento.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/lumiere_autour.dart';
@@ -517,47 +520,77 @@ class _CorpsAccueil extends ConsumerWidget {
               etapeParcours(p) == EtapeParcours.horaireAChoisir,
         )
         .firstOrNull;
-    if (sansClasse) {
-      return Column(
+    // GOUTTE D'HUILE (directeur, 11/11/2026) : la portee de la goutte entoure
+    // le selecteur et le contenu ; entre deux profils, un cou de matiere ;
+    // entre le rond choisi et son contenu, une goutte qui tombe ou est aspiree.
+    // La porte unique de la 422 reste la regle : `eleveId` (le contenu) ne
+    // change que quand les donnees sont la ; `selectionId` suit le toucher.
+    final AppPalette paletteGoutte = AppPalette.of(context);
+    // 432 (train du 11/11, choix du garde-cap) : le lien discret « Utiliser
+    // un autre appareil » reste fixe avec la rangee, juste apres
+    // lienEspaceEleve ; seul le contenu du profil tombe.
+    Widget goutte(
+      Widget rangee,
+      List<Widget> contenu, {
+      Widget? autreAppareil,
+    }) => GoutteProfils(
+      selectionId: selectionId,
+      matiere: paletteGoutte.inkAccent.asBorderSide().color,
+      matiereContenu: paletteGoutte.surfaceRaised.background,
+      rayonContenu: AppRadius.lg,
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          selecteur,
+          rangee,
           ?lienEspaceEleve,
-          Ecart.vXl,
-          const CarteSuiviDemandes(),
-          const CarteDemandePresentation(),
-          // L9 : les comptes d'avant l'accord des visites y sont conduits.
-          const InviteConsentementObservation(),
-          // Entree transitoire du questionnaire (revue C, M3 ; demande C-7) :
-          // gardee tant que Fiche > Inscription (lot B) n'est pas integree.
-          // Silencieuse quand aucun apprenant n'a de parcours a suivre.
-          if (horaireAChoisir != null)
-            CarteHoraireAccueil(apprenant: horaireAChoisir)
-          else ...<Widget>[
-            const BlocParcours(),
-            EtatSysteme(
-              nature: NatureEtat.aucunResultat,
-              titre: t.tuteur.accueil.sansClasseTitre(prenom: profil.prenom),
-              phrase: t.tuteur.accueil.sansClassePhrase(
-                quePrenom: queDevant(profil.prenom),
-              ),
-              // Tri du 31/10/2026 : catalogue ferme (production), le parcours.
-              libelleAction: catalogueOuvert
-                  ? t.classe.catalogue
-                  : t.parcours.voirHoraires,
-              onAction: () => routeur.go(
-                catalogueOuvert
-                    ? Uri(
-                        path: Routes.tuteurClassesCatalogue,
-                        queryParameters: <String, String>{'eleve': eleveId},
-                      ).toString()
-                    : Routes.parcoursPour(eleveId),
-              ),
+          ?autreAppareil,
+          ContenuGoutte(
+            profilId: eleveId,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: contenu,
             ),
-          ],
+          ),
         ],
-      );
+      ),
+    );
+    if (sansClasse) {
+      return goutte(selecteur, <Widget>[
+        Ecart.vXl,
+        const CarteSuiviDemandes(),
+        const CarteDemandePresentation(),
+        // L9 : les comptes d'avant l'accord des visites y sont conduits.
+        const InviteConsentementObservation(),
+        // Entree transitoire du questionnaire (revue C, M3 ; demande C-7) :
+        // gardee tant que Fiche > Inscription (lot B) n'est pas integree.
+        // Silencieuse quand aucun apprenant n'a de parcours a suivre.
+        if (horaireAChoisir != null)
+          CarteHoraireAccueil(apprenant: horaireAChoisir)
+        else ...<Widget>[
+          const BlocParcours(),
+          EtatSysteme(
+            nature: NatureEtat.aucunResultat,
+            titre: t.tuteur.accueil.sansClasseTitre(prenom: profil.prenom),
+            phrase: t.tuteur.accueil.sansClassePhrase(
+              quePrenom: queDevant(profil.prenom),
+            ),
+            // Tri du 31/10/2026 : catalogue ferme (production), le parcours.
+            libelleAction: catalogueOuvert
+                ? t.classe.catalogue
+                : t.parcours.voirHoraires,
+            onAction: () => routeur.go(
+              catalogueOuvert
+                  ? Uri(
+                      path: Routes.tuteurClassesCatalogue,
+                      queryParameters: <String, String>{'eleve': eleveId},
+                    ).toString()
+                  : Routes.parcoursPour(eleveId),
+            ),
+          ),
+        ],
+      ]);
     }
 
     final bool inscrit = classe.value != null || prochaine.value != null;
@@ -760,77 +793,70 @@ class _CorpsAccueil extends ConsumerWidget {
     // se protege en plus elle-meme (BENTO-2c, `BlocSeance`).
     final double marge = compact ? AppSpacing.lg : AppSpacing.xxl;
     final double echelle = MediaQuery.textScalerOf(context).scale(1);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        selecteurAvec(horlogeClasse),
-        ?lienEspaceEleve,
-        ?autreAppareil,
-        Ecart.vXl,
-        const CarteSuiviDemandes(),
-        const CarteDemandePresentation(),
-        // L9 : les comptes d'avant l'accord des visites y sont conduits.
-        const InviteConsentementObservation(),
-        LayoutBuilder(
-          builder: (BuildContext _, BoxConstraints contraintes) {
-            final bool coteACote =
-                (contraintes.maxWidth - GrilleBento.ecart) / 2 >=
-                largeurMinCarteClasse * math.max(1, echelle);
-            final EtendueBento? pleine = coteACote
-                ? null
-                : const EtendueBento(4, 1);
-            return GrilleBento(
-              hauteurContenu: true,
-              tuiles: <TuileBento>[
-                if (bandeau != null)
-                  TuileBento(
-                    etendue: EtendueBento.large,
-                    etendueLarge: const EtendueBento(4, 1),
-                    child: LumiereAutour(
-                      nature:
-                          lumierePourFamille(signaux, MotifFamille.acces) ??
-                          lumierePourFamille(signaux, MotifFamille.salle),
-                      // Pleine largeur : sinon la lueur, calee sur la tuile,
-                      // se voit a cote d'une carte plus etroite (« Rejoindre »
-                      // est une carte au contenu).
-                      child: SizedBox(width: double.infinity, child: bandeau),
-                    ),
-                  ),
-                TuileBento(
-                  etendue: EtendueBento.grande,
-                  etendueLarge: pleine,
-                  child: carte,
-                ),
-                TuileBento(
-                  etendue: EtendueBento.grande,
-                  etendueLarge: pleine,
-                  child: LumiereAutour(
-                    nature: lumierePourFamille(signaux, MotifFamille.preparer),
-                    child: AppCard(marge: marge, child: preparation),
-                  ),
-                ),
+    return goutte(selecteurAvec(horlogeClasse), <Widget>[
+      Ecart.vXl,
+      const CarteSuiviDemandes(),
+      const CarteDemandePresentation(),
+      // L9 : les comptes d'avant l'accord des visites y sont conduits.
+      const InviteConsentementObservation(),
+      LayoutBuilder(
+        builder: (BuildContext _, BoxConstraints contraintes) {
+          final bool coteACote =
+              (contraintes.maxWidth - GrilleBento.ecart) / 2 >=
+              largeurMinCarteClasse * math.max(1, echelle);
+          final EtendueBento? pleine = coteACote
+              ? null
+              : const EtendueBento(4, 1);
+          return GrilleBento(
+            hauteurContenu: true,
+            tuiles: <TuileBento>[
+              if (bandeau != null)
                 TuileBento(
                   etendue: EtendueBento.large,
                   etendueLarge: const EtendueBento(4, 1),
                   child: LumiereAutour(
-                    nature: lumierePourFamille(signaux, MotifFamille.cahier),
-                    child: AppCard(marge: marge, child: derniereSeance),
+                    nature:
+                        lumierePourFamille(signaux, MotifFamille.acces) ??
+                        lumierePourFamille(signaux, MotifFamille.salle),
+                    // Pleine largeur : sinon la lueur, calee sur la tuile,
+                    // se voit a cote d'une carte plus etroite (« Rejoindre »
+                    // est une carte au contenu).
+                    child: SizedBox(width: double.infinity, child: bandeau),
                   ),
                 ),
-                // Pleine largeur, apres la derniere seance : jamais cote a
-                // cote avec une carte de meme taille.
-                TuileBento(
-                  etendue: EtendueBento.large,
-                  etendueLarge: const EtendueBento(4, 1),
-                  child: finances,
+              TuileBento(
+                etendue: EtendueBento.grande,
+                etendueLarge: pleine,
+                child: carte,
+              ),
+              TuileBento(
+                etendue: EtendueBento.grande,
+                etendueLarge: pleine,
+                child: LumiereAutour(
+                  nature: lumierePourFamille(signaux, MotifFamille.preparer),
+                  child: AppCard(marge: marge, child: preparation),
                 ),
-              ],
-            );
-          },
-        ),
-      ],
-    );
+              ),
+              TuileBento(
+                etendue: EtendueBento.large,
+                etendueLarge: const EtendueBento(4, 1),
+                child: LumiereAutour(
+                  nature: lumierePourFamille(signaux, MotifFamille.cahier),
+                  child: AppCard(marge: marge, child: derniereSeance),
+                ),
+              ),
+              // Pleine largeur, apres la derniere seance : jamais cote a
+              // cote avec une carte de meme taille.
+              TuileBento(
+                etendue: EtendueBento.large,
+                etendueLarge: const EtendueBento(4, 1),
+                child: finances,
+              ),
+            ],
+          );
+        },
+      ),
+    ], autreAppareil: autreAppareil);
   }
 
   /// Un profil du selecteur : prenom, portrait, et l'etat court calcule

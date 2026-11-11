@@ -51,6 +51,9 @@ const List<String> composantsDuCatalogue = <String>[
   'LumiereAutour',
   // Decisions du directeur du 10/11/2026 : l'effet liquide.
   'IndicateurLiquide',
+  // GOUTTE D'HUILE DES PROFILS (11/11/2026).
+  'LiaisonLiquide',
+  'GoutteProfils',
   'AvatarNom',
   // FI-2 (decision du directeur du 04/10, K-62) : l'identite d'un profil,
   // son bandeau de couleur choisi par le tuteur derriere l'avatar.
