@@ -144,7 +144,7 @@ void main() {
     WidgetTester tester,
   ) async {
     await monter(tester, voix: true);
-    expect(find.text(t.tc.groupe.temps.prolongee), findsOneWidget);
+    expect(find.text(t.etat.enDirect), findsOneWidget);
     expect(find.byKey(BarreSeanceEnDirect.cleMicro), findsOneWidget);
     expect(find.byKey(BarreSeanceEnDirect.cleDetail), findsNothing);
 
@@ -154,7 +154,7 @@ void main() {
     expect(find.text('salle'), findsOneWidget);
     expect(billetRecu?.sessionId, 's1');
     expect(billetRecu?.groupeId, 'g1');
-    expect(find.text(t.tc.groupe.temps.prolongee), findsNothing);
+    expect(find.text(t.etat.enDirect), findsNothing);
   });
 
   // UX-011 (31/10/2026) : le tuteur entre par `push` (« Rejoindre la salle
@@ -172,7 +172,7 @@ void main() {
     await tester.pump();
     expect(find.text('salle'), findsOneWidget);
     expect(find.byKey(BarreSeanceEnDirect.cleIle), findsNothing);
-    expect(find.text(t.tc.groupe.temps.prolongee), findsNothing);
+    expect(find.text(t.etat.enDirect), findsNothing);
 
     routeur.pop();
     await tester.pump();
@@ -185,7 +185,7 @@ void main() {
       'deplie et dit la reconnexion ; lien revenu, elle redevient compacte ; '
       'fin d appel, plus d ile', (WidgetTester tester) async {
     await monter(tester, voix: false);
-    expect(find.text(t.tc.groupe.temps.prolongee), findsOneWidget);
+    expect(find.text(t.etat.enDirect), findsOneWidget);
     expect(find.byKey(BarreSeanceEnDirect.cleMicro), findsNothing);
 
     moteur.poser(EtatSalle.reconnexion);
@@ -207,7 +207,7 @@ void main() {
     await tester.pump();
     await tester.pump();
     expect(find.text(t.salle.secours.reconnexion), findsNothing);
-    expect(find.text(t.tc.groupe.temps.prolongee), findsNothing);
+    expect(find.text(t.etat.enDirect), findsNothing);
     expect(find.text('journee'), findsOneWidget);
   });
 

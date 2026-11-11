@@ -281,7 +281,12 @@ class _PiluleEtatSalleEtat extends State<PiluleEtatSalle> {
           Ecart.hSm,
           Semantics(
             label: vue.texteMention,
-            child: PointEnregistrement(clignote: vue.pointClignote),
+            // Le point neutre de la mention permanente ; d'alerte et
+            // clignotant pendant une visite annoncee (MentionSeance).
+            child: PointEnregistrement(
+              clignote: vue.pointClignote,
+              neutre: !vue.visiteVisible,
+            ),
           ),
         ],
       ],

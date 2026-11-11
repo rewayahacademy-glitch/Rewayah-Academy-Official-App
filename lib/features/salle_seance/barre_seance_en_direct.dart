@@ -433,6 +433,9 @@ class _BarreEtat extends ConsumerState<_Barre> {
         crossAxisAlignment: WrapCrossAlignment.center,
         spacing: AppSpacing.sm,
         runSpacing: AppSpacing.xs,
+        // Centree sur la hauteur de la cible (48) : alignee sur le micro et
+        // le chevron.
+        runAlignment: WrapAlignment.center,
         children: <Widget>[
           FonduLiquide(
             cle: horsLigne,
@@ -453,10 +456,9 @@ class _BarreEtat extends ConsumerState<_Barre> {
                       ),
                     ],
                   )
-                : PastilleEtatSeance(
-                    etat: EtatPastilleSeance.enDirect,
-                    libelle: t.tc.groupe.temps.prolongee,
-                  ),
+                // Compacte : le mot court « En direct » ; la phrase
+                // « Seance toujours en direct » vit dans l'ile depliee.
+                : const PastilleEtatSeance(etat: EtatPastilleSeance.enDirect),
           ),
           ?chrono,
         ],
@@ -487,6 +489,7 @@ class _BarreEtat extends ConsumerState<_Barre> {
             padding: const EdgeInsetsDirectional.only(
               top: AppSpacing.sm,
               start: AppSpacing.xs,
+              end: AppSpacing.md,
             ),
             child: Column(
               key: BarreSeanceEnDirect.cleDetail,
@@ -500,10 +503,8 @@ class _BarreEtat extends ConsumerState<_Barre> {
                       textes.titleSmall ?? const TextStyle(),
                     ),
                   ),
-                if (phrase != null) ...<Widget>[
-                  if (nom != null) Ecart.vXs,
-                  Text(phrase, style: style),
-                ],
+                if (nom != null) Ecart.vXs,
+                Text(phrase ?? t.tc.groupe.temps.prolongee, style: style),
                 if (peutParler && !horsLigne) ...<Widget>[
                   Ecart.vXs,
                   _MicroDeLaBarre(moteur: moteur, mot: true, style: style),
