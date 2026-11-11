@@ -72,7 +72,9 @@ List<GoRoute> routesN2Foyer() => <GoRoute>[
       void foyer() => GoRouter.of(contexte).go(Routes.tuteurFoyer);
       return InvitationRecuePage(
         onRetour: foyer,
-        onMonEspace: (EtatInvitationRecue _) => foyer(),
+        // Le bouton mene au Foyer et le dit (MON-ESPACE-ADULTE-SUPPR).
+        libelleSuite: t.parcours.retourFoyer,
+        onSuite: (EtatInvitationRecue _) => foyer(),
         onRetourApresReponse: (EtatInvitationRecue _) => foyer(),
       );
     },

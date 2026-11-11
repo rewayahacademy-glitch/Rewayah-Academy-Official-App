@@ -125,7 +125,8 @@ void main() {
             localizationsDelegates: GlobalMaterialLocalizations.delegates,
             home: InvitationRecuePage(
               onRetour: () {},
-              onMonEspace: (EtatInvitationRecue _) {},
+              libelleSuite: 'Suite',
+              onSuite: (EtatInvitationRecue _) {},
             ),
           ),
         ),
@@ -253,7 +254,7 @@ void main() {
 
     // Le bouton mene a l'Accueil (Mon espace, qui disait « Forfait
     // famille », est supprime : MON-ESPACE-ADULTE-SUPPR).
-    await taper(tester, find.byKey(InvitationRecuePage.monEspaceKey));
+    await taper(tester, find.byKey(InvitationRecuePage.suiteKey));
     expect(find.byType(AccueilAdultePage), findsOneWidget);
   });
 
@@ -473,7 +474,7 @@ void main() {
     expect(find.textContaining('rejoint'), findsNothing);
     // Mon espace, ou se lisait l'absence de « Forfait famille », est
     // supprime (MON-ESPACE-ADULTE-SUPPR) : le bouton mene a l'Accueil.
-    await taper(tester, find.byKey(InvitationRecuePage.monEspaceKey));
+    await taper(tester, find.byKey(InvitationRecuePage.suiteKey));
     expect(find.byType(AccueilAdultePage), findsOneWidget);
   });
 
@@ -675,7 +676,7 @@ void main() {
       // (comme « Invitation envoyee »).
       expect(find.byType(DisqueRetour), findsNothing);
 
-      await taper(tester, find.byKey(InvitationRecuePage.monEspaceKey));
+      await taper(tester, find.byKey(InvitationRecuePage.suiteKey));
       expect(find.byType(AccueilAdultePage), findsOneWidget);
       expect(
         routeur.routerDelegate.currentConfiguration.uri.queryParameters['etat'],

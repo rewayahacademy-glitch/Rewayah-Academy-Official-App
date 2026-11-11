@@ -9989,8 +9989,7 @@
     "nav": {
       "accueil": "Accueil",
       "maClasse": "Ma classe",
-      "coran": "Coran",
-      "monEspace": "Mon espace"
+      "coran": "Coran"
     },
     "accueil": {
       "salutation": "Bonjour {prenom}",
@@ -10023,27 +10022,8 @@
       "aucuneClasseDetail": "Votre classe, ses participants et ses ressources s'afficheront ici dès qu'elle sera ouverte."
     },
     "monEspace": {
-      "role": "Élève adulte",
-      "monCompte": "Mon compte",
       "informations": "Mes informations",
-      "coursAcces": "Cours et accès",
-      "coursAccesLegende": "Classe, séances et accès",
-      "paiements": "Paiements",
-      "paiementsLegende": "Historique et reçus",
-      "accords": "Mes accords",
-      "accordsLegende": "Accords donnés à l'académie",
-      "sansDonneesCompte": "Vos informations de compte n'ont pas pu être chargées",
-      "sansDonneesFamille": "Les informations de votre famille n'ont pas pu être chargées",
-      "securiteLegende": "Méthode et adresse de connexion",
-      "pageAccords": {
-        "indisponibleTitre": "Vos accords ne sont pas encore consultables",
-        "indisponiblePhrase": "Accepter, refuser ou retirer chacun de vos accords n'est pas encore possible dans l'application. Aucun accord ne vous est demandé ici."
-      },
-      "pageCoursAcces": {
-        "indisponibleTitre": "Cours et accès pas encore consultables",
-        "indisponiblePhrase": "Le détail de vos cours, de vos séances et de votre accès n'est pas encore disponible dans l'application."
-      },
-      "paiementsLegendeAutonome": "Solde, période et recharge"
+      "paiements": "Paiements"
     },
     "coranDemo": {
       "titre": "Disponible après connexion",
@@ -10167,7 +10147,6 @@
       "inscrireEnfant": "Inscrire un enfant",
       "maFamille": "Ma famille",
       "forfaitFamille": "Forfait famille",
-      "retourMonEspace": "Revenir à Mon espace",
       "titulaire": "Vous êtes titulaire du foyer",
       "paiementsFoyer": "Paiements du foyer",
       "aProposForfait": "À propos du forfait famille",
@@ -10286,7 +10265,6 @@
       "refuseeTitre": "Invitation refusée",
       "impossible": "Ce compte ne peut pas rejoindre ce forfait actuellement.",
       "perimee": "Cette invitation n'est plus valable.",
-      "monEspace": "Aller à Mon espace",
       "recu": "Réponse enregistrée le {date}.",
       "titreNeutre": "Invitation au forfait famille",
       "sansCompteTitre": "Invitation au forfait famille",

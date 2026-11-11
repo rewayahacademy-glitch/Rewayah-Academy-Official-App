@@ -129,7 +129,7 @@ void main() {
     // ouvre l'Accueil (Mon espace est supprime, MON-ESPACE-ADULTE-SUPPR)
     // dans la situation d'apres : le foyer sans second adulte.
     expect(find.byType(DisqueRetour), findsNothing);
-    await _taper(tester, find.byKey(InvitationRecuePage.monEspaceKey));
+    await _taper(tester, find.byKey(InvitationRecuePage.suiteKey));
     expect(find.byType(AccueilAdultePage), findsOneWidget);
     expect(
       routeur.routerDelegate.currentConfiguration.uri.queryParameters['etat'],

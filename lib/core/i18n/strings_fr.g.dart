@@ -17769,9 +17769,6 @@ class Traductions$adulte$nav$fr {
 
 	/// fr: 'Coran'
 	String get coran => 'Coran';
-
-	/// fr: 'Mon espace'
-	String get monEspace => 'Mon espace';
 }
 
 // Path: adulte.accueil
@@ -17881,47 +17878,11 @@ class Traductions$adulte$monEspace$fr {
 
 	// Translations
 
-	/// fr: 'Élève adulte'
-	String get role => 'Élève adulte';
-
-	/// fr: 'Mon compte'
-	String get monCompte => 'Mon compte';
-
 	/// fr: 'Mes informations'
 	String get informations => 'Mes informations';
 
-	/// fr: 'Cours et accès'
-	String get coursAcces => 'Cours et accès';
-
-	/// fr: 'Classe, séances et accès'
-	String get coursAccesLegende => 'Classe, séances et accès';
-
 	/// fr: 'Paiements'
 	String get paiements => 'Paiements';
-
-	/// fr: 'Historique et reçus'
-	String get paiementsLegende => 'Historique et reçus';
-
-	/// fr: 'Mes accords'
-	String get accords => 'Mes accords';
-
-	/// fr: 'Accords donnés à l'académie'
-	String get accordsLegende => 'Accords donnés à l\'académie';
-
-	/// fr: 'Vos informations de compte n'ont pas pu être chargées'
-	String get sansDonneesCompte => 'Vos informations de compte n\'ont pas pu être chargées';
-
-	/// fr: 'Les informations de votre famille n'ont pas pu être chargées'
-	String get sansDonneesFamille => 'Les informations de votre famille n\'ont pas pu être chargées';
-
-	/// fr: 'Méthode et adresse de connexion'
-	String get securiteLegende => 'Méthode et adresse de connexion';
-
-	late final Traductions$adulte$monEspace$pageAccords$fr pageAccords = Traductions$adulte$monEspace$pageAccords$fr.internal(_root);
-	late final Traductions$adulte$monEspace$pageCoursAcces$fr pageCoursAcces = Traductions$adulte$monEspace$pageCoursAcces$fr.internal(_root);
-
-	/// fr: 'Solde, période et recharge'
-	String get paiementsLegendeAutonome => 'Solde, période et recharge';
 }
 
 // Path: adulte.coranDemo
@@ -18137,9 +18098,6 @@ class Traductions$adulte$famille$fr {
 
 	/// fr: 'Forfait famille'
 	String get forfaitFamille => 'Forfait famille';
-
-	/// fr: 'Revenir à Mon espace'
-	String get retourMonEspace => 'Revenir à Mon espace';
 
 	/// fr: 'Vous êtes titulaire du foyer'
 	String get titulaire => 'Vous êtes titulaire du foyer';
@@ -18454,9 +18412,6 @@ class Traductions$adulte$acceptation$fr {
 
 	/// fr: 'Cette invitation n'est plus valable.'
 	String get perimee => 'Cette invitation n\'est plus valable.';
-
-	/// fr: 'Aller à Mon espace'
-	String get monEspace => 'Aller à Mon espace';
 
 	/// fr: 'Réponse enregistrée le {date}.'
 	String recu({required Object date}) => 'Réponse enregistrée le ${date}.';
@@ -34119,36 +34074,6 @@ class Traductions$tc$parcours$postCours$fr {
 
 	/// fr: 'Cours clôturé.'
 	String get envoye => 'Cours clôturé.';
-}
-
-// Path: adulte.monEspace.pageAccords
-class Traductions$adulte$monEspace$pageAccords$fr {
-	Traductions$adulte$monEspace$pageAccords$fr.internal(this._root);
-
-	final Traductions _root; // ignore: unused_field
-
-	// Translations
-
-	/// fr: 'Vos accords ne sont pas encore consultables'
-	String get indisponibleTitre => 'Vos accords ne sont pas encore consultables';
-
-	/// fr: 'Accepter, refuser ou retirer chacun de vos accords n'est pas encore possible dans l'application. Aucun accord ne vous est demandé ici.'
-	String get indisponiblePhrase => 'Accepter, refuser ou retirer chacun de vos accords n\'est pas encore possible dans l\'application. Aucun accord ne vous est demandé ici.';
-}
-
-// Path: adulte.monEspace.pageCoursAcces
-class Traductions$adulte$monEspace$pageCoursAcces$fr {
-	Traductions$adulte$monEspace$pageCoursAcces$fr.internal(this._root);
-
-	final Traductions _root; // ignore: unused_field
-
-	// Translations
-
-	/// fr: 'Cours et accès pas encore consultables'
-	String get indisponibleTitre => 'Cours et accès pas encore consultables';
-
-	/// fr: 'Le détail de vos cours, de vos séances et de votre accès n'est pas encore disponible dans l'application.'
-	String get indisponiblePhrase => 'Le détail de vos cours, de vos séances et de votre accès n\'est pas encore disponible dans l\'application.';
 }
 
 // Path: adulte.recharge.formules
@@ -56473,7 +56398,6 @@ extension on Traductions {
 			'adulte.nav.accueil' => 'Accueil',
 			'adulte.nav.maClasse' => 'Ma classe',
 			'adulte.nav.coran' => 'Coran',
-			'adulte.nav.monEspace' => 'Mon espace',
 			'adulte.accueil.salutation' => ({required Object prenom}) => 'Bonjour ${prenom}',
 			'adulte.accueil.prochaineSeance' => 'Prochaine séance',
 			'adulte.accueil.parcours' => 'Mon parcours',
@@ -56498,23 +56422,8 @@ extension on Traductions {
 			'adulte.maClasse.progression' => 'Ma progression dans cette classe',
 			'adulte.maClasse.sansDonnees' => 'Votre classe n\'a pas pu être chargée',
 			'adulte.maClasse.aucuneClasseDetail' => 'Votre classe, ses participants et ses ressources s\'afficheront ici dès qu\'elle sera ouverte.',
-			'adulte.monEspace.role' => 'Élève adulte',
-			'adulte.monEspace.monCompte' => 'Mon compte',
 			'adulte.monEspace.informations' => 'Mes informations',
-			'adulte.monEspace.coursAcces' => 'Cours et accès',
-			'adulte.monEspace.coursAccesLegende' => 'Classe, séances et accès',
 			'adulte.monEspace.paiements' => 'Paiements',
-			'adulte.monEspace.paiementsLegende' => 'Historique et reçus',
-			'adulte.monEspace.accords' => 'Mes accords',
-			'adulte.monEspace.accordsLegende' => 'Accords donnés à l\'académie',
-			'adulte.monEspace.sansDonneesCompte' => 'Vos informations de compte n\'ont pas pu être chargées',
-			'adulte.monEspace.sansDonneesFamille' => 'Les informations de votre famille n\'ont pas pu être chargées',
-			'adulte.monEspace.securiteLegende' => 'Méthode et adresse de connexion',
-			'adulte.monEspace.pageAccords.indisponibleTitre' => 'Vos accords ne sont pas encore consultables',
-			'adulte.monEspace.pageAccords.indisponiblePhrase' => 'Accepter, refuser ou retirer chacun de vos accords n\'est pas encore possible dans l\'application. Aucun accord ne vous est demandé ici.',
-			'adulte.monEspace.pageCoursAcces.indisponibleTitre' => 'Cours et accès pas encore consultables',
-			'adulte.monEspace.pageCoursAcces.indisponiblePhrase' => 'Le détail de vos cours, de vos séances et de votre accès n\'est pas encore disponible dans l\'application.',
-			'adulte.monEspace.paiementsLegendeAutonome' => 'Solde, période et recharge',
 			'adulte.coranDemo.titre' => 'Disponible après connexion',
 			'adulte.coranDemo.phrase' => 'Ce n\'est pas une panne : la démonstration ne contient pas le texte du Coran. Après connexion à votre espace élève, il s\'ouvre ici.',
 			'adulte.recharge.titre' => 'Recharge',
@@ -56622,7 +56531,6 @@ extension on Traductions {
 			'adulte.famille.inscrireEnfant' => 'Inscrire un enfant',
 			'adulte.famille.maFamille' => 'Ma famille',
 			'adulte.famille.forfaitFamille' => 'Forfait famille',
-			'adulte.famille.retourMonEspace' => 'Revenir à Mon espace',
 			'adulte.famille.titulaire' => 'Vous êtes titulaire du foyer',
 			'adulte.famille.paiementsFoyer' => 'Paiements du foyer',
 			'adulte.famille.aProposForfait' => 'À propos du forfait famille',
@@ -56631,8 +56539,6 @@ extension on Traductions {
 			'adulte.famille.profilNonCreePhrase' => 'En démonstration, rien n\'est envoyé. Ma famille reste telle qu\'elle était.',
 			'adulte.famille.profilNonCreePhraseSeul' => 'En démonstration, rien n\'est envoyé. Votre espace élève reste tel qu\'il était.',
 			'adulte.famille.monProfilIndisponibleTitre' => 'Pas encore disponible',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.famille.monProfilIndisponiblePhrase' => 'La création d\'un profil élève séparé n\'est pas encore disponible. Vos cours et Ma famille restent tels qu\'ils sont.',
 			'adulte.famille.indisponibleTitre' => 'La rubrique famille n\'est pas encore disponible',
 			'adulte.famille.indisponiblePhrase' => 'Votre famille ou votre forfait famille s\'affichera ici dès qu\'il sera disponible.',
@@ -56650,6 +56556,8 @@ extension on Traductions {
 			'adulte.famille.place.envoyeeA' => ({required Object courriel}) => 'Envoyée à ${courriel}',
 			'adulte.famille.place.expiree' => 'L\'invitation précédente a expiré. Vous pouvez en envoyer une nouvelle.',
 			'adulte.famille.place.annulee' => 'L\'invitation a été annulée et ne peut plus être acceptée. Vous pouvez en envoyer une nouvelle.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.invitation.titreElle' => 'Inviter ma conjointe',
 			'adulte.invitation.titreLui' => 'Inviter mon conjoint',
 			'adulte.invitation.enteteElle' => 'Un compte personnel pour elle',
@@ -56737,7 +56645,6 @@ extension on Traductions {
 			'adulte.acceptation.refuseeTitre' => 'Invitation refusée',
 			'adulte.acceptation.impossible' => 'Ce compte ne peut pas rejoindre ce forfait actuellement.',
 			'adulte.acceptation.perimee' => 'Cette invitation n\'est plus valable.',
-			'adulte.acceptation.monEspace' => 'Aller à Mon espace',
 			'adulte.acceptation.recu' => ({required Object date}) => 'Réponse enregistrée le ${date}.',
 			'adulte.acceptation.titreNeutre' => 'Invitation au forfait famille',
 			'adulte.acceptation.sansCompteTitre' => 'Invitation au forfait famille',
@@ -57145,8 +57052,6 @@ extension on Traductions {
 			'alertes.traitement.pasEncoreAffiche' => 'Aucun écran de la famille n\'affiche encore ce message.',
 			'alertes.traitement.motif' => 'Motif de la clôture',
 			'alertes.traitement.motifRequisAide' => 'Obligatoire pour ce signalement. Lu par la direction seulement.',
-			_ => null,
-		} ?? switch (path) {
 			'alertes.traitement.motifFacultatifAide' => 'Facultatif. Lu par la direction seulement.',
 			'alertes.traitement.motifManque' => 'Écrivez le motif de la clôture.',
 			'alertes.traitement.examiner' => 'Examiner',
@@ -57165,6 +57070,8 @@ extension on Traductions {
 			'alertes.traitement.faitTransmisPhrase' => ({required Object cible}) => 'Enregistré pour ${cible}. Aucun écran de la famille ne l\'affiche encore.',
 			'alertes.traitement.faitClosTitre' => 'Signalement clos',
 			'alertes.traitement.faitClosPhrase' => 'Il a quitté les alertes.',
+			_ => null,
+		} ?? switch (path) {
 			'alertes.traitement.refuseTitre' => 'Ce signalement a changé',
 			'alertes.traitement.refusePhrase' => 'Les alertes ont été relues.',
 			'alertes.traitement.erreurTitre' => 'L\'action n\'a pas abouti',
@@ -57659,8 +57566,6 @@ extension on Traductions {
 			'com.communaute.demo.choisir' => 'Choisissez une situation à essayer, vue par un enseignant.',
 			'com.communaute.demo.aujourdhui' => 'Aujourd\'hui, avec le raccourci',
 			'com.communaute.demo.nominal' => 'Six publications',
-			_ => null,
-		} ?? switch (path) {
 			'com.communaute.demo.publication' => 'Une publication ouverte',
 			'com.communaute.demo.vide' => 'Aucune publication',
 			'com.communaute.demo.lectureEchouee' => 'Lecture en échec',
@@ -57679,6 +57584,8 @@ extension on Traductions {
 			'com.communaute.demo.f.nour' => 'Nour El Idrissi',
 			'com.communaute.demo.f.fonctionNour' => 'Enseignante, classe Al-Fajr',
 			'com.communaute.demo.f.yasmine' => 'Yasmine Haddad',
+			_ => null,
+		} ?? switch (path) {
 			'com.communaute.demo.f.fonctionYasmine' => 'Enseignante, classe Al-Badr',
 			'com.communaute.demo.f.youssef' => 'Youssef Amrani',
 			'com.communaute.demo.f.fonctionYoussef' => 'Enseignant, classe Al-Kawthar',
@@ -58173,8 +58080,6 @@ extension on Traductions {
 			'comptable.commun.tresorerieDetenue' => 'Trésorerie détenue',
 			'comptable.commun.fondsProteges' => 'Fonds protégés',
 			'comptable.commun.enTransit' => 'En transit',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.commun.tresorerieLibreDetail' => 'Ce qui reste réellement disponible après les fonds protégés, les obligations et le transit.',
 			'comptable.commun.objectifFixe' => 'Objectif : montant fixe',
 			'comptable.commun.objectifMois' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Objectif actuel : 1 mois de charges essentielles', other: 'Objectif actuel : ${n} mois de charges essentielles', ), 
@@ -58193,6 +58098,8 @@ extension on Traductions {
 			'comptable.commun.destinationAucune' => 'Aucune méthode de paiement',
 			'comptable.commun.paysDevise' => ({required Object pays, required Object devise}) => '${pays} · ${devise}',
 			'comptable.commun.verification' => 'Vérification',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.commun.activiteInitiateurDate' => ({required Object initiateur, required Object date}) => '${initiateur} · ${date}',
 			'comptable.commun.activiteTransition' => ({required Object avant, required Object apres}) => '${avant} → ${apres}',
 			'comptable.commun.activiteReference' => ({required Object reference}) => 'Réf. ${reference}',
@@ -58687,8 +58594,6 @@ extension on Traductions {
 			'comptable.beneficiaires.profil.enAttente' => 'Paiements qui attendent ce profil',
 			'comptable.beneficiaires.profil.proprietaire' => ({required Object nom}) => 'Seul ${nom} peut saisir ou modifier ses coordonnées de paiement. Vous en voyez une version masquée.',
 			'comptable.beneficiaires.profil.historiqueTitre' => 'Historique des paiements',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.beneficiaires.profil.historiqueVide' => 'Aucun paiement versé à ce bénéficiaire pour l\'instant.',
 			'comptable.beneficiaires.profil.journalTitre' => 'Journal du profil',
 			'comptable.beneficiaires.profil.journalVide' => 'Aucune modification enregistrée sur ce profil pour l\'instant.',
@@ -58707,6 +58612,8 @@ extension on Traductions {
 			'comptable.beneficiaires.profil.miseAJourDemandee' => ({required Object nom}) => 'Demande de mise à jour enregistrée pour ${nom}.',
 			'comptable.beneficiaires.profil.suspendus' => ({required Object nom}) => 'Paiements de ${nom} suspendus : aucun versement ne part tant qu\'ils ne sont pas repris.',
 			'comptable.beneficiaires.profil.repris' => ({required Object nom}) => 'Paiements de ${nom} repris.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.beneficiaires.profil.erreurAction' => 'L\'action n\'est pas confirmée : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'comptable.beneficiaires.profil.erreurIndisponible' => 'Cette action n\'est pas encore branchée sur le service qui la traite. Réessayez plus tard.',
 			'comptable.beneficiaires.profil.suspensionTitre' => ({required Object nom}) => 'Suspendre les paiements de ${nom} ?',
@@ -59201,8 +59108,6 @@ extension on Traductions {
 			'reprisesAdmin.erreur' => 'Les demandes n\'ont pas pu être chargées. Réessayez.',
 			'reprisesAdmin.sansDonnees' => 'les demandes de reprise',
 			'reprisesAdmin.indisponibleTitre' => 'Reprises de foyer indisponibles',
-			_ => null,
-		} ?? switch (path) {
 			'reprisesAdmin.indisponiblePhrase' => 'Cette fonction sera disponible au branchement serveur.',
 			'recherche.titre' => 'Rechercher',
 			'recherche.retour' => 'Retour',
@@ -59221,6 +59126,8 @@ extension on Traductions {
 			'recherche.formeAttendue' => 'Cherchez par matricule exact, par exemple RA-26-4817.',
 			'recherche.chargement' => 'Recherche en cours…',
 			'recherche.lent' => 'La recherche prend plus de temps que prévu. Les résultats déjà reçus restent affichés.',
+			_ => null,
+		} ?? switch (path) {
 			'recherche.resultatsPour' => ({required Object requete}) => 'Résultats pour « ${requete} »',
 			'recherche.categoriesAffichees' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre, one: '${nombre} catégorie affichée', other: '${nombre} catégories affichées', ), 
 			'recherche.domaines.classes' => 'Classes',
@@ -59715,8 +59622,6 @@ extension on Traductions {
 			'admissions.titre' => 'Demandes',
 			'admissions.sousTitre' => 'Les demandes d\'admission des familles et des élèves adultes. Personne n\'entre sans la décision de la direction.',
 			'admissions.population' => 'Population',
-			_ => null,
-		} ?? switch (path) {
 			'admissions.familles' => 'Familles',
 			'admissions.elevesAdultes' => 'Élèves adultes',
 			'admissions.aTraiter' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, zero: 'Aucune demande à traiter', one: '${n} demande à traiter', other: '${n} demandes à traiter', ), 
@@ -59735,6 +59640,8 @@ extension on Traductions {
 			'admissions.courriel' => 'Adresse e‑mail',
 			'admissions.etatLibelle' => 'État',
 			'admissions.titulaire' => ({required Object prenom}) => '${prenom}, pour lui-même ou elle-même',
+			_ => null,
+		} ?? switch (path) {
 			'admissions.enfant' => ({required Object prenom, required Object age}) => '${prenom}, ${age} ans',
 			'admissions.etat.aTraiter' => 'À traiter',
 			'admissions.etat.aCompleter' => 'À compléter',
@@ -60229,8 +60136,6 @@ extension on Traductions {
 			'candidatsFlux.prevenir.resultat.tout' => 'Plus personne n\'attend le lien : tout le monde est prévenu.',
 			'candidatsFlux.prevenir.resultat.pasDeuxFois' => 'Une même adresse ne reçoit jamais le message deux fois, même si vous envoyez à nouveau.',
 			'candidatsFlux.prevenir.erreurs.titre' => 'Envoi non confirmé',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.prevenir.erreurs.nonConfirme' => 'Il est possible que l\'envoi ne soit pas parvenu jusqu\'à Rewayah. Réessayez : aucune adresse ne recevra le message en double.',
 			'candidatsFlux.prevenir.erreurs.generique' => 'L\'envoi n\'a pas abouti et rien n\'est confirmé. Réessayez : aucune adresse ne recevra le message en double.',
 			'candidatsFlux.invitationsPersonnelles.aucuneImportee' => 'Aucune réponse de formulaire n\'est encore importée. Importez d\'abord les formulaires : sans eux, les codes ne retrouveraient aucune réponse, et aucun envoi n\'est possible.',
@@ -60249,6 +60154,8 @@ extension on Traductions {
 			'candidatsFlux.invitationsPersonnelles.lienCopie.nonConfirme' => 'La préparation n\'est pas confirmée. Réessayez avec la même adresse : vous retrouverez le même code.',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.ligneIntrouvable' => 'Cette candidature n\'attend plus de lien : elle a changé entre-temps. Fermez, puis relisez-la.',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.adresseConnue' => 'Cette personne a déjà une adresse : son code part avec l\'envoi des codes personnels.',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.adresseRequise' => 'Saisissez l\'adresse e-mail que la personne utilisera.',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.emailInvalide' => 'Cette adresse n\'a pas la forme d\'une adresse e-mail. Vérifiez-la.',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.dejaInscrit' => 'Un compte existe déjà à cette adresse : la personne peut se connecter avec elle.',

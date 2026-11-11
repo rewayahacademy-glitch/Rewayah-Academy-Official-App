@@ -400,9 +400,6 @@ adulte.finances.voirMouvementsSemantique
 adulte.historique.sansDonnees
 adulte.invitation.nomAidePrerempli
 adulte.maClasse.sansDonnees
-adulte.monEspace.paiementsLegendeAutonome
-adulte.monEspace.sansDonneesCompte
-adulte.monEspace.sansDonneesFamille
 adulte.paiements.soldesSansDonnees
 adulte.recharge.ajouter
 adulte.recharge.augmenter

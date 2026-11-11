@@ -8041,7 +8041,6 @@ class _Traductions$adulte$nav$ar extends Traductions$adulte$nav$fr {
 	@override String get accueil => 'الرئيسية';
 	@override String get maClasse => 'فصلي';
 	@override String get coran => 'القرآن';
-	@override String get monEspace => 'مساحتي';
 }
 
 // Path: adulte.accueil
@@ -8099,18 +8098,8 @@ class _Traductions$adulte$monEspace$ar extends Traductions$adulte$monEspace$fr {
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String get role => 'طالب بالغ';
-	@override String get monCompte => 'حسابي';
 	@override String get informations => 'معلوماتي';
-	@override String get coursAcces => 'الدروس والوصول';
-	@override String get coursAccesLegende => 'الفصل والحصص والوصول';
 	@override String get paiements => 'المدفوعات';
-	@override String get paiementsLegende => 'السجل والإيصالات';
-	@override String get accords => 'موافقاتي';
-	@override String get accordsLegende => 'الموافقات الممنوحة للأكاديمية';
-	@override String get securiteLegende => 'طريقة الدخول وعنوانه';
-	@override late final _Traductions$adulte$monEspace$pageAccords$ar pageAccords = _Traductions$adulte$monEspace$pageAccords$ar._(_root);
-	@override late final _Traductions$adulte$monEspace$pageCoursAcces$ar pageCoursAcces = _Traductions$adulte$monEspace$pageCoursAcces$ar._(_root);
 }
 
 // Path: adulte.coranDemo
@@ -8190,7 +8179,6 @@ class _Traductions$adulte$famille$ar extends Traductions$adulte$famille$fr {
 	@override String get inscrireEnfant => 'تسجيل طفل';
 	@override String get maFamille => 'أسرتي';
 	@override String get forfaitFamille => 'باقة الأسرة';
-	@override String get retourMonEspace => 'العودة إلى مساحتي';
 	@override String get titulaire => 'أنت صاحب حساب الأسرة';
 	@override String get paiementsFoyer => 'مدفوعات الأسرة';
 	@override String get aProposForfait => 'عن باقة الأسرة';
@@ -8307,7 +8295,6 @@ class _Traductions$adulte$acceptation$ar extends Traductions$adulte$acceptation$
 	@override String get refuseeTitre => 'رُفضت الدعوة';
 	@override String get impossible => 'لا يمكن لهذا الحساب الانضمام إلى هذه الباقة حاليًا.';
 	@override String get perimee => 'هذه الدعوة لم تعد صالحة.';
-	@override String get monEspace => 'الذهاب إلى مساحتي';
 	@override String recu({required Object date}) => 'سُجِّل الرد في ⁨${date}⁩.';
 	@override String get titreNeutre => 'دعوة إلى باقة الأسرة';
 	@override String get sansCompteTitre => 'دعوة إلى باقة الأسرة';
@@ -16979,28 +16966,6 @@ class _Traductions$foyer$ajout$incertaine$ar extends Traductions$foyer$ajout$inc
 	@override String get phrase => 'لم يصلنا الرد. تحقّق من الأسرة قبل إعادة المحاولة، كي لا يُنشأ الملف مرتين.';
 	@override String get voirFoyer => 'عرض الأسرة';
 	@override String get reessayer => 'إعادة المحاولة على أي حال';
-}
-
-// Path: adulte.monEspace.pageAccords
-class _Traductions$adulte$monEspace$pageAccords$ar extends Traductions$adulte$monEspace$pageAccords$fr {
-	_Traductions$adulte$monEspace$pageAccords$ar._(TraductionsAr root) : this._root = root, super.internal(root);
-
-	final TraductionsAr _root; // ignore: unused_field
-
-	// Translations
-	@override String get indisponibleTitre => 'موافقاتك غير قابلة للاطلاع بعد';
-	@override String get indisponiblePhrase => 'قبول كل موافقة أو رفضها أو سحبها غير ممكن في التطبيق بعد. لا تُطلب منك أي موافقة هنا.';
-}
-
-// Path: adulte.monEspace.pageCoursAcces
-class _Traductions$adulte$monEspace$pageCoursAcces$ar extends Traductions$adulte$monEspace$pageCoursAcces$fr {
-	_Traductions$adulte$monEspace$pageCoursAcces$ar._(TraductionsAr root) : this._root = root, super.internal(root);
-
-	final TraductionsAr _root; // ignore: unused_field
-
-	// Translations
-	@override String get indisponibleTitre => 'الدروس والوصول غير قابلة للاطلاع بعد';
-	@override String get indisponiblePhrase => 'تفاصيل دروسك وحصصك ووصولك غير متاحة في التطبيق بعد.';
 }
 
 // Path: adulte.recharge.formules
@@ -31900,7 +31865,6 @@ extension on TraductionsAr {
 			'adulte.nav.accueil' => 'الرئيسية',
 			'adulte.nav.maClasse' => 'فصلي',
 			'adulte.nav.coran' => 'القرآن',
-			'adulte.nav.monEspace' => 'مساحتي',
 			'adulte.accueil.salutation' => ({required Object prenom}) => 'مرحبًا ⁨${prenom}⁩',
 			'adulte.accueil.prochaineSeance' => 'الحصة القادمة',
 			'adulte.accueil.parcours' => 'مساري',
@@ -31922,20 +31886,8 @@ extension on TraductionsAr {
 			'adulte.maClasse.vous' => ({required Object prenom}) => '⁨${prenom}⁩ (أنت)',
 			'adulte.maClasse.progression' => 'تقدمي في هذا الفصل',
 			'adulte.maClasse.aucuneClasseDetail' => 'سيظهر فصلك ومشاركوه وموارده هنا بمجرد فتحه.',
-			'adulte.monEspace.role' => 'طالب بالغ',
-			'adulte.monEspace.monCompte' => 'حسابي',
 			'adulte.monEspace.informations' => 'معلوماتي',
-			'adulte.monEspace.coursAcces' => 'الدروس والوصول',
-			'adulte.monEspace.coursAccesLegende' => 'الفصل والحصص والوصول',
 			'adulte.monEspace.paiements' => 'المدفوعات',
-			'adulte.monEspace.paiementsLegende' => 'السجل والإيصالات',
-			'adulte.monEspace.accords' => 'موافقاتي',
-			'adulte.monEspace.accordsLegende' => 'الموافقات الممنوحة للأكاديمية',
-			'adulte.monEspace.securiteLegende' => 'طريقة الدخول وعنوانه',
-			'adulte.monEspace.pageAccords.indisponibleTitre' => 'موافقاتك غير قابلة للاطلاع بعد',
-			'adulte.monEspace.pageAccords.indisponiblePhrase' => 'قبول كل موافقة أو رفضها أو سحبها غير ممكن في التطبيق بعد. لا تُطلب منك أي موافقة هنا.',
-			'adulte.monEspace.pageCoursAcces.indisponibleTitre' => 'الدروس والوصول غير قابلة للاطلاع بعد',
-			'adulte.monEspace.pageCoursAcces.indisponiblePhrase' => 'تفاصيل دروسك وحصصك ووصولك غير متاحة في التطبيق بعد.',
 			'adulte.coranDemo.titre' => 'متاح بعد تسجيل الدخول',
 			'adulte.coranDemo.phrase' => 'ليس هذا عطلًا: العرض التجريبي لا يحتوي على نص القرآن. بعد الدخول إلى مساحتك كطالب، يُفتح هنا.',
 			'adulte.recharge.titre' => 'شحن جديد',
@@ -31970,8 +31922,6 @@ extension on TraductionsAr {
 			'adulte.recharge.source.avantPaiement' => 'بانتظار الدفع',
 			'adulte.recharge.source.motifs.paiementRefuse' => 'رفض البنك أو البطاقة الدفع. لم يُقتطع أي مبلغ.',
 			'adulte.recharge.source.motifs.montantIncoherent' => 'المبلغ المستلم لا يطابق الشحن. لم يُضف شيء إلى الرصيد: الإدارة تتحقق مع مزوّد الدفع.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.recharge.source.motifs.sessionExpiree' => 'انتهت صلاحية صفحة الدفع قبل الدفع. لم يُقتطع أي مبلغ.',
 			'adulte.paiements.beneficiaires' => 'المستفيدون',
 			'adulte.paiements.recharger' => 'شحن',
@@ -31985,11 +31935,12 @@ extension on TraductionsAr {
 			'adulte.paiements.aucunBeneficiairePhrase' => 'لا ملف طالب في أسرتك له رصيد للشحن الآن.',
 			'adulte.famille.ajouter' => 'إضافة أسرتي',
 			'adulte.famille.ajouterLegende' => 'سجّل أطفالك وادعُ زوجك أو زوجتك للانضمام إلى باقة الأسرة.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.famille.ajouterPhrase' => 'يمكنك إضافة أطفالك ودعوة زوجك أو زوجتك للانضمام إلى باقة الأسرة. تبقى مساحتك كطالب كما هي.',
 			'adulte.famille.inscrireEnfant' => 'تسجيل طفل',
 			'adulte.famille.maFamille' => 'أسرتي',
 			'adulte.famille.forfaitFamille' => 'باقة الأسرة',
-			'adulte.famille.retourMonEspace' => 'العودة إلى مساحتي',
 			'adulte.famille.titulaire' => 'أنت صاحب حساب الأسرة',
 			'adulte.famille.paiementsFoyer' => 'مدفوعات الأسرة',
 			'adulte.famille.aProposForfait' => 'عن باقة الأسرة',
@@ -32101,7 +32052,6 @@ extension on TraductionsAr {
 			'adulte.acceptation.refuseeTitre' => 'رُفضت الدعوة',
 			'adulte.acceptation.impossible' => 'لا يمكن لهذا الحساب الانضمام إلى هذه الباقة حاليًا.',
 			'adulte.acceptation.perimee' => 'هذه الدعوة لم تعد صالحة.',
-			'adulte.acceptation.monEspace' => 'الذهاب إلى مساحتي',
 			'adulte.acceptation.recu' => ({required Object date}) => 'سُجِّل الرد في ⁨${date}⁩.',
 			'adulte.acceptation.titreNeutre' => 'دعوة إلى باقة الأسرة',
 			'adulte.acceptation.sansCompteTitre' => 'دعوة إلى باقة الأسرة',
@@ -32484,8 +32434,6 @@ extension on TraductionsAr {
 			'controleur.historique.tousEtats' => 'كل الحالات',
 			'controleur.historique.duree' => ({required Object minutes}) => '⁨${minutes}⁩ د من المتابعة',
 			'controleur.historique.meta' => ({required Object heure, required Object duree}) => '⁨${heure}⁩ · ⁨${duree}⁩',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.historique.dateHeure' => ({required Object date, required Object heure}) => '⁨${date}⁩، ⁨${heure}⁩',
 			'controleur.historique.dateHeureAuteur' => ({required Object date, required Object heure, required Object auteur}) => '⁨${date}⁩، ⁨${heure}⁩ · ⁨${auteur}⁩',
 			'controleur.historique.ligne' => ({required Object date, required Object classe, required Object enseignant, required Object duree, required Object statut}) => '⁨${date}⁩، ⁨${classe}⁩، ⁨${enseignant}⁩، ⁨${duree}⁩، ⁨${statut}⁩',
@@ -32501,6 +32449,8 @@ extension on TraductionsAr {
 			'controleur.historique.cleEnseignant' => 'المعلم',
 			'controleur.historique.cleDate' => 'التاريخ',
 			'controleur.historique.cleDuree' => 'مدة المتابعة',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.historique.cleElevesPresents' => 'الحاضرون',
 			'controleur.historique.cleReponse' => 'الرد',
 			'controleur.historique.sansComplement' => 'لا تكملة.',
@@ -32998,8 +32948,6 @@ extension on TraductionsAr {
 			'recrutement.entretien.notifications.veilleQuand' => ({required Object quand}) => 'مقابلتك غدًا، يوم ${quand}.',
 			'recrutement.entretien.notifications.quinze' => 'تبدأ مقابلتك بعد 15 دقيقة: انضمّ إليها من «لنتعارف».',
 			'recrutement.entretien.notifications.tenu' => 'جرت مقابلتك. تدرس الإدارة ترشحك وتكتب إليك بالخطوة التالية.',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.entretien.notifications.aReplanifier' => 'لم تُعقد مقابلتك. اختر موعدًا آخر.',
 			'recrutement.entretien.notifications.reserveDirection' => 'حجز مترشح مقابلة تُجريها.',
 			'recrutement.entretien.notifications.reserveDirectionQuand' => ({required Object quand}) => 'حجز مترشح مقابلة تُجريها، يوم ${quand}.',
@@ -33015,6 +32963,8 @@ extension on TraductionsAr {
 			'recrutement.partage.enregistrer' => 'حفظ الصورة',
 			'recrutement.partage.copier' => 'نسخ الرابط',
 			'recrutement.partage.lien' => ({required Object lien}) => 'رابط العرض: ⁨${lien}⁩',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.partage.sansMenu' => 'لا يتيح هذا الجهاز المشاركة المباشرة. احفظ الصورة لترسلها بنفسك، أو انسخ الرابط.',
 			'recrutement.partage.lienSeul' => 'يشارك هذا الجهاز الرابط دون الصورة. احفظ الصورة إن أردت إرسالها أيضًا.',
 			'recrutement.partage.fait.partage' => 'تمت مشاركة البطاقة.',
@@ -33512,8 +33462,6 @@ extension on TraductionsAr {
 			'recrutement.talents.c.tests_niveau.exemple' => 'الاستماع إلى تلاوة طالب جديد قبل دخوله فصلًا',
 			'recrutement.talents.c.accompagnement_enfants.libelle' => 'مرافقة الأطفال',
 			'recrutement.talents.c.accompagnement_enfants.description' => 'مساعدة الأطفال الذين يحتاجون إلى عناية خاصة.',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.talents.c.accompagnement_enfants.exemple' => 'علم نفس الطفل، الاحتياجات الخاصة، الأطفال شديدو الخجل',
 			'recrutement.talents.c.developpement.libelle' => 'تطوير الويب أو تطبيقات الجوال',
 			'recrutement.talents.c.developpement.description' => 'تطوير المواقع والتطبيقات.',
@@ -33529,6 +33477,8 @@ extension on TraductionsAr {
 			'recrutement.talents.niveaux.titre' => 'ما مستواك؟',
 			'recrutement.talents.niveaux.explication' => 'لكل مهارة، أخبرنا أين أنت منها. يساعد ذلك الأكاديمية على اقتراح مهمة تناسبك.',
 			'recrutement.talents.niveaux.legende' => 'كيف تختار',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.talents.niveaux.debutant.libelle' => 'أبتدئ',
 			'recrutement.talents.niveaux.debutant.description' => 'تعرف الأساسيات وما زلت تتعلم.',
 			'recrutement.talents.niveaux.experience.libelle' => 'لديّ خبرة',
@@ -34026,8 +33976,6 @@ extension on TraductionsAr {
 			'courriels.admin.file.origine.manuel' => 'يدوي',
 			'courriels.admin.file.messageAuto' => 'رسالة تلقائية',
 			'courriels.admin.file.champs.destinataire' => 'إلى',
-			_ => null,
-		} ?? switch (path) {
 			'courriels.admin.file.champs.categorie' => 'الفئة',
 			'courriels.admin.file.champs.origine' => 'المصدر',
 			'courriels.admin.file.champs.creeLe' => 'وُضعت في الطابور يوم',
@@ -34043,6 +33991,8 @@ extension on TraductionsAr {
 			'courriels.admin.file.retour.relance' => 'أُعيدت إلى الطابور. الإرسال خلال دقيقة.',
 			'courriels.admin.file.retour.introuvable' => 'لم تعد هذه الرسالة قابلة لإعادة المحاولة. تم تحديث القائمة.',
 			'courriels.admin.file.retour.echec' => 'لم تتأكد إعادتها إلى الطابور. أُعيدت قراءة القائمة: تحقق من حالة الرسالة قبل أن تحاول من جديد.',
+			_ => null,
+		} ?? switch (path) {
 			'courriels.admin.file.retour.refus' => 'الإدارة المتصلة وحدها تستطيع إعادة إرسال رسالة.',
 			'courriels.admin.file.retour.horsLigne' => 'لم يُرسل شيء: الشبكة غير متوفرة. أعد المحاولة عند عودتها.',
 			'courriels.admin.adresses.intro' => 'تخرج كل فئة من عنوانها، وتصل الردود إلى الصندوق المذكور. تُقرأ هذه القائمة هنا ولا تُعدَّل داخل التطبيق.',
@@ -34540,8 +34490,6 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.comptes.ignoreesAide' => 'أسطر فارغة أو مكررة.',
 			'candidatsFlux.importFormulaires.comptes.aCorriger' => 'تحتاج إلى تصحيح',
 			'candidatsFlux.importFormulaires.comptes.aCorrigerAide' => 'أسطر غير مقروءة: لا تُستورد.',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.comptes.corrigees' => 'مصحَّحة في مكانها',
 			'candidatsFlux.importFormulaires.comptes.personnes' => 'الأشخاص المعنيّون',
 			'candidatsFlux.importFormulaires.comptes.lignesLues' => 'الأسطر المقروءة',
@@ -34557,6 +34505,8 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.comptes.attendus.aide' => 'عدد صحيح. اتركوا فارغًا ما لا تقارنونه.',
 			'candidatsFlux.importFormulaires.comptes.choisir' => 'حدّدوا الحصيلة التي تقارنون بها للمتابعة.',
 			'candidatsFlux.importFormulaires.comptes.saisirNombre' => 'أدخلوا عددًا واحدًا على الأقل للمتابعة.',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.comptes.ecartTitre' => 'فرق يحتاج إلى تحقق',
 			'candidatsFlux.importFormulaires.comptes.ecart' => ({required Object attendu, required Object lu}) => 'فرق عن الأعداد المتوقعة: المتوقع ⁨${attendu}⁩، المقروء ⁨${lu}⁩. تحققوا قبل التأكيد؛ يمكنكم الاستيراد رغم ذلك.',
 			'candidatsFlux.importFormulaires.comptes.accord' => 'الأعداد تطابق ما كنتم تتوقعونه.',

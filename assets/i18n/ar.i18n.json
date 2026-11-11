@@ -10331,8 +10331,7 @@
     "nav": {
       "accueil": "الرئيسية",
       "maClasse": "فصلي",
-      "coran": "القرآن",
-      "monEspace": "مساحتي"
+      "coran": "القرآن"
     },
     "accueil": {
       "salutation": "مرحبًا ⁨{prenom}⁩",
@@ -10362,24 +10361,8 @@
       "aucuneClasseDetail": "سيظهر فصلك ومشاركوه وموارده هنا بمجرد فتحه."
     },
     "monEspace": {
-      "role": "طالب بالغ",
-      "monCompte": "حسابي",
       "informations": "معلوماتي",
-      "coursAcces": "الدروس والوصول",
-      "coursAccesLegende": "الفصل والحصص والوصول",
-      "paiements": "المدفوعات",
-      "paiementsLegende": "السجل والإيصالات",
-      "accords": "موافقاتي",
-      "accordsLegende": "الموافقات الممنوحة للأكاديمية",
-      "securiteLegende": "طريقة الدخول وعنوانه",
-      "pageAccords": {
-        "indisponibleTitre": "موافقاتك غير قابلة للاطلاع بعد",
-        "indisponiblePhrase": "قبول كل موافقة أو رفضها أو سحبها غير ممكن في التطبيق بعد. لا تُطلب منك أي موافقة هنا."
-      },
-      "pageCoursAcces": {
-        "indisponibleTitre": "الدروس والوصول غير قابلة للاطلاع بعد",
-        "indisponiblePhrase": "تفاصيل دروسك وحصصك ووصولك غير متاحة في التطبيق بعد."
-      }
+      "paiements": "المدفوعات"
     },
     "coranDemo": {
       "titre": "متاح بعد تسجيل الدخول",
@@ -10447,7 +10430,6 @@
       "inscrireEnfant": "تسجيل طفل",
       "maFamille": "أسرتي",
       "forfaitFamille": "باقة الأسرة",
-      "retourMonEspace": "العودة إلى مساحتي",
       "titulaire": "أنت صاحب حساب الأسرة",
       "paiementsFoyer": "مدفوعات الأسرة",
       "aProposForfait": "عن باقة الأسرة",
@@ -10565,7 +10547,6 @@
       "refuseeTitre": "رُفضت الدعوة",
       "impossible": "لا يمكن لهذا الحساب الانضمام إلى هذه الباقة حاليًا.",
       "perimee": "هذه الدعوة لم تعد صالحة.",
-      "monEspace": "الذهاب إلى مساحتي",
       "recu": "سُجِّل الرد في ⁨{date}⁩.",
       "titreNeutre": "دعوة إلى باقة الأسرة",
       "sansCompteTitre": "دعوة إلى باقة الأسرة",

@@ -1242,7 +1242,8 @@ class CoquilleAdulteDemo extends StatelessWidget {
             // rouvriraient l'invitation « a repondre », un etat faux.
             EcranDemoAdulte.invitationRecue => InvitationRecuePage(
               onRetour: versNotifications,
-              onMonEspace: versAccueilApres,
+              libelleSuite: t.commun.etats.actions.retourAccueil,
+              onSuite: versAccueilApres,
               onRetourApresReponse: versAccueilApres,
             ),
             EcranDemoAdulte.invitationSansCompte ||
