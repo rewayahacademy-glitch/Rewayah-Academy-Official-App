@@ -13,6 +13,7 @@ import 'package:rewayah_academy/core/identite/matricule_supabase.dart';
 import 'package:rewayah_academy/core/identite/port_matricule.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
+import 'package:rewayah_academy/core/widgets/entete_compte.dart';
 import 'package:rewayah_academy/features/compte/compte_page.dart';
 import 'package:rewayah_academy/features/compte/donnees_compte.dart';
 import 'package:rewayah_academy/features/compte/ligne_matricule.dart';
@@ -167,8 +168,10 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
+    // PROFILS P4 : dans le Compte partage, le matricule est dans l'en-tete du
+    // gabarit commun (EnteteCompte), avec son geste de copie.
     expect(find.text('RA-26-4817'), findsOneWidget);
-    expect(find.byKey(LigneMatricule.copierKey), findsOneWidget);
+    expect(find.byKey(EnteteCompte.copierKey), findsOneWidget);
   });
 
   testWidgets('fiche de l enfant : le tuteur voit son matricule', (

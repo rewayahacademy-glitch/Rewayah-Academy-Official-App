@@ -173,6 +173,21 @@ class SessionState {
   bool get peutOuvrirBibliotheque =>
       role == AppRole.student || role == AppRole.guardian;
 
+  /// La Bibliotheque s'ouvre depuis « Ma classe » (garde-cap, 11/11/2026) :
+  /// l'eleve l'y trouve en tete, en un toucher depuis la barre ; elle sort
+  /// alors du Compte. Le tuteur, sans « Ma classe », la garde dans le Compte.
+  bool get bibliothequeDansMaClasse =>
+      peutOuvrirBibliotheque && role == AppRole.student;
+
+  /// L'eleve a sa page « Aide et contact » (`/eleve/aide`), ouverte depuis son
+  /// Compte (garde-cap, 11/11/2026).
+  bool get aUneAideEleve => role == AppRole.student;
+
+  /// La barre de l'eleve adulte (lot B2 : Aujourd'hui, Apprendre, Suivi,
+  /// Profil), la meme condition que la coquille eleve d'`app_router.dart`. Une
+  /// page de la barre s'intitule comme son onglet en la lisant.
+  bool get barreEleveAdulte => role == AppRole.student && eleveAutonome;
+
   /// La capacite de lire le Coran dans le lecteur dedie : l'eleve, et
   /// l'adulte eleve autonome servi par le serveur (C-24).
   bool get peutLireLeCoran => role == AppRole.student || eleveAutonome;

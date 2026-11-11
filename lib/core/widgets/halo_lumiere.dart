@@ -15,6 +15,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import '../accessibilite/mode_accessibilite.dart';
 import '../theme/app_color_pair.dart';
 import '../theme/app_elevation.dart';
 import '../theme/app_mouvement.dart';
@@ -216,6 +217,8 @@ class _EtatHaloLumiere extends State<HaloLumiere>
 
   @override
   Widget build(BuildContext context) {
+    // « Reduire les effets » : aucune lumiere, ni tournante ni fixe.
+    if (EffetsReduits.de(context)) return const SizedBox.shrink();
     final bool forte = !AppPalette.of(context).estSombre;
     final AnimationController? tour = _tour;
     // Une lumiere que l'arbitre n'a pas elue reste en lueur fixe, meme si

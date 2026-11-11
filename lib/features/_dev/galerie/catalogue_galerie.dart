@@ -64,12 +64,14 @@ import '../../../core/widgets/controle_segmente.dart';
 import '../../../core/widgets/data_collection.dart';
 import '../../../core/widgets/ecran_resultat.dart';
 import '../../../core/widgets/empty_state.dart';
+import '../../../core/widgets/entete_compte.dart';
 import '../../../core/widgets/espace_travail_adaptatif.dart';
 import '../../../core/widgets/fil_ariane.dart';
 import '../../../core/widgets/fil_discussion.dart';
 import '../../../core/widgets/filter_pill.dart';
 import '../../../core/widgets/goutte_profils.dart';
 import '../../../core/widgets/grille_bento.dart';
+import '../../../core/widgets/groupe_preferences.dart';
 import '../../../core/widgets/groupe_reglages.dart';
 import '../../../core/widgets/halo_compte.dart';
 import '../../../core/widgets/halo_lumiere.dart';
@@ -95,6 +97,7 @@ import '../../../core/widgets/nav_shell.dart';
 import '../../../core/widgets/note_etoiles.dart';
 import '../../../core/widgets/offline_banner.dart';
 import '../../../core/widgets/ornement_marque.dart';
+import '../../../core/widgets/page_compte.dart';
 import '../../../core/widgets/page_etape.dart';
 import '../../../core/widgets/page_immersive.dart';
 import '../../../core/widgets/page_parcours.dart';
@@ -4213,6 +4216,76 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
       ),
     ],
   ),
+  // PROFILS P1 (pilote du 11/11/2026) : le gabarit commun du Compte, avec
+  // des lignes fictives. Aucune page de role n'y est encore branchee.
+  EntreeGalerie(
+    nom: 'EnteteCompte',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'complet, photo a changer',
+        (BuildContext _) => const EnteteCompte(
+          identite: _identiteExemple,
+          onChangerPhoto: _rien,
+        ),
+      ),
+      EtatGalerie(
+        'sans matricule ni statut, photo fixe',
+        (BuildContext _) => const EnteteCompte(
+          identite: IdentiteCompte(nom: 'Amina Diallo', role: 'Tuteur'),
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'GroupePreferences',
+    famille: FamilleComposant.structure,
+    etats: <EtatGalerie>[
+      EtatGalerie('theme seul', (BuildContext _) => const GroupePreferences()),
+      EtatGalerie(
+        'toutes les lignes',
+        (BuildContext _) => _preferencesExemple(),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'PageCompte',
+    famille: FamilleComposant.zoneDeDonnees,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'loading',
+        (BuildContext _) =>
+            _pageCompteExemple(const AsyncValue<IdentiteCompte?>.loading()),
+      ),
+      EtatGalerie(
+        'content',
+        (BuildContext _) => _pageCompteExemple(
+          const AsyncValue<IdentiteCompte?>.data(_identiteExemple),
+        ),
+      ),
+      EtatGalerie(
+        'empty',
+        (BuildContext _) =>
+            _pageCompteExemple(const AsyncValue<IdentiteCompte?>.data(null)),
+      ),
+      EtatGalerie(
+        'error',
+        (BuildContext _) => _pageCompteExemple(
+          AsyncValue<IdentiteCompte?>.error(
+            StateError('lecture refusee'),
+            StackTrace.empty,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'offline',
+        (BuildContext _) => _pageCompteExemple(
+          const AsyncValue<IdentiteCompte?>.data(_identiteExemple),
+          horsLigne: true,
+        ),
+      ),
+    ],
+  ),
   ...entreesEtatsTuteur(),
   ...entreesEtatsComptable(),
 ];
@@ -4493,6 +4566,80 @@ class _SousMaterial extends StatelessWidget {
 }
 
 void _rien() {}
+
+/// Une identite fictive pour le gabarit du Compte (PROFILS P1).
+const IdentiteCompte _identiteExemple = IdentiteCompte(
+  nom: 'Amina Diallo',
+  role: 'Élève',
+  matricule: 'RA-26-4817',
+  statut: 'Compte actif',
+);
+
+/// Les trois lignes des preferences, fictives.
+GroupePreferences _preferencesExemple() => const GroupePreferences(
+  langue: LigneRubrique(
+    icone: AppIcons.reglages,
+    libelle: 'Langue',
+    valeur: 'Français',
+    onPress: _rien,
+  ),
+  notifications: LigneRubrique(
+    icone: AppIcons.notifications,
+    libelle: 'Notifications',
+    onPress: _rien,
+  ),
+  accessibilite: LigneRubrique(
+    icone: AppIcons.profil,
+    libelle: 'Accessibilité',
+    onPress: _rien,
+  ),
+);
+
+Future<void> _deconnexionFictive() async {}
+
+/// Le gabarit du Compte, avec des lignes fictives dans chaque section.
+Widget _pageCompteExemple(
+  AsyncValue<IdentiteCompte?> identite, {
+  bool horsLigne = false,
+}) => SizedBox(
+  height: _hauteurPage,
+  child: PageCompte(
+    identite: identite,
+    onDeconnecter: _deconnexionFictive,
+    onReessayer: _rien,
+    onChangerPhoto: _rien,
+    bandeauHorsLigne: horsLigne
+        ? OfflineBanner.message(message: t.reseau.horsLigne)
+        : null,
+    preferences: _preferencesExemple(),
+    sections: const <SectionCompte, List<LigneRubrique>>{
+      SectionCompte.monEspace: <LigneRubrique>[
+        LigneRubrique(
+          icone: AppIcons.classes,
+          libelle: 'Ma classe',
+          onPress: _rien,
+        ),
+      ],
+      SectionCompte.paiements: <LigneRubrique>[
+        LigneRubrique(
+          icone: AppIcons.paiements,
+          libelle: 'Mes paiements',
+          onPress: _rien,
+        ),
+      ],
+      SectionCompte.compteSecurite: <LigneRubrique>[
+        LigneRubrique(
+          icone: AppIcons.verrou,
+          libelle: 'Connexion et sécurité',
+          onPress: _rien,
+        ),
+      ],
+      SectionCompte.aide: <LigneRubrique>[
+        LigneRubrique(icone: AppIcons.info, libelle: 'Aide', onPress: _rien),
+      ],
+    },
+  ),
+);
 
 void _allerNullePart(String chemin) {}
 

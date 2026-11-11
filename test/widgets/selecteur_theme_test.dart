@@ -13,34 +13,28 @@ PreferenceTheme _theme(WidgetTester tester) =>
         .read(preferencesLocalesProvider)
         .theme;
 
-Finder ligne(String detail) => find.textContaining(detail, findRichText: true);
-
 void main() {
   testWidgets(
-    'phrase de contexte et ligne des trois options toujours visibles',
+    'une seule ligne courte sous le choix, sans les trois definitions',
     (WidgetTester tester) async {
       fixerVue(tester, vueMobile);
       await tester.pumpWidget(hoteTheme(const SelecteurTheme()));
 
-      expect(find.text(t.compte.themeContexte), findsOneWidget);
-      for (final String detail in <String>[
-        t.compte.themeClairDetail,
-        t.compte.themeSystemeDetail,
-        t.compte.themeSombreDetail,
-      ]) {
-        expect(ligne(detail), findsOneWidget, reason: detail);
-      }
+      final Finder ligneCourte = find.text(t.compte.themeContexte);
+      expect(ligneCourte, findsOneWidget);
+      // La ligne est sous le rectangle des trois bascules.
+      expect(
+        tester.getRect(ligneCourte).top,
+        greaterThan(
+          tester.getRect(find.byType(ControleSegmente<PreferenceTheme>)).bottom,
+        ),
+      );
+      // Rien d'autre que les trois libelles et la ligne courte.
+      expect(find.byType(Text), findsNWidgets(4));
 
-      // Les trois lignes restent affichees apres un changement de choix.
       await tester.tap(find.text(t.compte.themeSombre));
       await tester.pump();
-      for (final String detail in <String>[
-        t.compte.themeClairDetail,
-        t.compte.themeSystemeDetail,
-        t.compte.themeSombreDetail,
-      ]) {
-        expect(ligne(detail), findsOneWidget, reason: detail);
-      }
+      expect(ligneCourte, findsOneWidget);
     },
   );
 
@@ -106,7 +100,6 @@ void main() {
 
     expect(_theme(tester), PreferenceTheme.systeme);
     expect(selectionnes(), 1);
-    expect(ligne(t.compte.themeSystemeDetail), findsOneWidget);
 
     await tester.tap(find.text(t.compte.themeSombre));
     await tester.pump();
