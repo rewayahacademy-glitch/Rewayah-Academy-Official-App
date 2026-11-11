@@ -9,6 +9,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/widgets/avatar_compte.dart';
 import 'package:rewayah_academy/core/widgets/indicateur_liquide.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/core/widgets/page_shell.dart';
@@ -109,29 +110,72 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  // LIQUIDE-MATIERE (correction du directeur du 11/11/2026) : de la pilule
+  // au cercle, aucune goutte de couleur ne voyage ; c'est la matiere qui fait
+  // le pont, puis se rompt ; le cercle la recoit d'un leger rebond.
   for (final TextDirection sens in TextDirection.values) {
-    testWidgets('${sens.name} : vers le cercle, la goutte traverse l espace '
-        'entre la pilule et le cercle', (WidgetTester tester) async {
+    testWidgets('${sens.name} : vers le cercle, un pont de matiere, jamais '
+        'de couleur entre les deux', (WidgetTester tester) async {
       _vue(tester);
       await tester.pumpWidget(_barre(sens: sens));
       await tester.pumpAndSettle();
       await tester.tap(find.bySemanticsLabel(t.nav.tuteur.compte));
       await tester.pump();
       await tester.pump();
-      bool pont = false;
-      for (int i = 0; i < 30 && !pont; i++) {
+      final List<double> avancees = <double>[];
+      final Set<double> echelles = <double>{};
+      for (int i = 0; i < 60; i++) {
         await tester.pump(const Duration(milliseconds: 16));
-        final Rect? g = IndicateurLiquide.goutteDe(_ici(tester));
-        final List<Rect> z = IndicateurLiquide.zonesDe(_ici(tester));
+        final BuildContext ici = _ici(tester);
+        // La couleur de selection n'entre jamais dans le pont.
+        final Rect? g = IndicateurLiquide.goutteDe(ici);
+        final List<Rect> z = IndicateurLiquide.zonesDe(ici);
         if (g != null && z.length == 2) {
-          pont = g.overlaps(z[0]) && g.overlaps(z[1]);
+          expect(g.overlaps(z[0]) && g.overlaps(z[1]), isFalse);
+        }
+        final double? e = IndicateurLiquide.pontDe(ici);
+        if (e != null) avancees.add(e);
+        for (final Transform tr in tester.widgetList<Transform>(
+          find.ancestor(
+            of: find.byType(AvatarCompte),
+            matching: find.byType(Transform),
+          ),
+        )) {
+          echelles.add(tr.transform.getMaxScaleOnAxis());
         }
       }
-      expect(pont, isTrue);
+      // Le pont avance, puis se rompt.
+      expect(avancees, isNotEmpty);
+      expect(avancees.first, lessThan(0.5));
+      expect(avancees.any((double e) => e > 0.8), isTrue);
+      // Le cercle recoit la goutte : son echelle depasse 1, un instant.
+      expect(echelles.any((double x) => x > 1.001), isTrue);
       await tester.pumpAndSettle();
+      expect(IndicateurLiquide.pontDe(_ici(tester)), isNull);
       expect(tester.takeException(), isNull);
     });
   }
+
+  testWidgets('retour vers un onglet : la couleur y vient en fondu, apres le '
+      'pont', (WidgetTester tester) async {
+    _vue(tester);
+    await tester.pumpWidget(_barre());
+    await tester.pumpAndSettle();
+    await tester.tap(find.bySemanticsLabel(t.nav.tuteur.compte));
+    await tester.pumpAndSettle();
+    await tester.tap(find.bySemanticsLabel(t.nav.tuteur.accueil));
+    await tester.pump();
+    await tester.pump();
+    final Animation<double>? fondu = IndicateurLiquide.fonduDestination(
+      _ici(tester),
+    );
+    expect(fondu, isNotNull);
+    // Le pont d'abord : la couleur attend.
+    expect(fondu!.value, lessThan(0.01));
+    await tester.pumpAndSettle();
+    expect(fondu.value, 1);
+    expect(IndicateurLiquide.pontDe(_ici(tester)), isNull);
+  });
 
   testWidgets('reduire les animations : changement immediat, aucune goutte', (
     WidgetTester tester,
@@ -144,5 +188,11 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 16));
     expect(IndicateurLiquide.goutteDe(_ici(tester)), isNull);
+    // Ni pont de matiere : la destination change seule.
+    await tester.tap(find.bySemanticsLabel(t.nav.tuteur.compte));
+    await tester.pump();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 16));
+    expect(IndicateurLiquide.pontDe(_ici(tester)), isNull);
   });
 }

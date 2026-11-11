@@ -1,8 +1,15 @@
 // L'effet liquide de la navigation (decisions du directeur du 10/11/2026,
-// relayees par le garde-cap) : quand on change de destination, le fond de
-// l'onglet ouvert est une goutte molle qui se deplace au ressort, s'etire
-// dans le sens du mouvement puis se reforme ; de la pilule au cercle Compte
-// et retour, un pont elastique (metaballe) relie les deux puis se detache.
+// relayees par le garde-cap) : quand on change d'onglet dans la pilule, le
+// fond de l'onglet ouvert est une goutte molle qui se deplace au ressort,
+// s'etire dans le sens du mouvement puis se reforme.
+//
+// LIQUIDE-MATIERE (correction du directeur du 11/11/2026) : la pilule et le
+// cercle Compte sont deux morceaux de la meme matiere (meme fond, meme ombre,
+// meme contour). De l'une a l'autre, c'est le CORPS de la pilule qui s'etire :
+// un pont de matiere (metaballe entre les deux silhouettes) relie les deux,
+// puis se rompt comme une goutte d'huile qui se detache ; le cercle la recoit
+// d'un leger rebond. La couleur de selection n'entre jamais dans le pont :
+// elle ne change que sur la destination, une fois le pont rompu, en fondu.
 //
 // Un composant du core, reutilisable (« la barre est un laboratoire ») :
 // d'abord la barre flottante, ensuite les profils de l'Accueil.
@@ -40,8 +47,21 @@ class IndicateurLiquide extends StatefulWidget {
     required this.indexActif,
     required this.couleur,
     required this.child,
+    this.matiere,
+    this.contour,
+    this.ombres = const <BoxShadow>[],
     super.key,
   });
+
+  /// La matiere des zones (le fond de la pilule et du cercle) : celle du pont
+  /// qui les relie. Nulle : aucun pont, la destination change seule.
+  final Color? matiere;
+
+  /// Le contour des zones, repris sur le bord du pont (nul : aucun).
+  final BorderSide? contour;
+
+  /// L'ombre des zones, reprise sous le pont.
+  final List<BoxShadow> ombres;
 
   /// Une cle par destination, dans l'ordre de [indexActif].
   final List<GlobalKey> cibles;
@@ -78,6 +98,22 @@ class IndicateurLiquide extends StatefulWidget {
       context.getInheritedWidgetOfExactType<_PorteeLiquide>()?.etat.zones ??
       const <Rect>[];
 
+  /// L'avancee du pont de matiere au-dessus de [context] (0 a 1), ou `null`
+  /// sans pont en cours (tests).
+  @visibleForTesting
+  static double? pontDe(BuildContext context) {
+    final _EtatIndicateurLiquide? etat = context
+        .getInheritedWidgetOfExactType<_PorteeLiquide>()
+        ?.etat;
+    return etat == null || !etat._pontActif ? null : etat._pont.value;
+  }
+
+  /// Le fondu de la couleur de selection sur la destination, au-dessus de
+  /// [context] : 0 tant que le pont n'est pas rompu, puis 1. Nul hors d'un
+  /// indicateur.
+  static Animation<double>? fonduDestination(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<_PorteeLiquide>()?.etat._fondu;
+
   @override
   State<IndicateurLiquide> createState() => _EtatIndicateurLiquide();
 }
@@ -102,8 +138,39 @@ class _EtatIndicateurLiquide extends State<IndicateurLiquide>
     _haut,
     _bas,
   ]);
+  // LIQUIDE-MATIERE : l'avancee du pont (0 a 1), la reception du cercle
+  // (le rebond, autour de 0) et le fondu de la couleur sur la destination.
+  late final AnimationController _pont = AnimationController.unbounded(
+    vsync: this,
+  );
+  late final AnimationController _reception = AnimationController.unbounded(
+    vsync: this,
+  );
+  late final AnimationController _fondu = AnimationController(
+    vsync: this,
+    value: 1,
+    duration: AppMouvement.apparition,
+  );
+  late final Listenable _toutPont = Listenable.merge(<Listenable>[
+    _pont,
+    _gauche,
+    _droite,
+    _haut,
+    _bas,
+  ]);
   bool _mesure = false;
   bool _enMouvement = false;
+  bool _pontActif = false;
+  bool _recu = false;
+  int _de = 0;
+  int _vers = 0;
+  int? _ancien;
+
+  /// La part du pont ou la goutte se detache de sa source.
+  static const double _rupture = 0.55;
+
+  /// La part du pont ou le cercle recoit la goutte.
+  static const double _arrivee = 0.8;
 
   @override
   void initState() {
@@ -116,6 +183,10 @@ class _EtatIndicateurLiquide extends State<IndicateurLiquide>
     ]) {
       c.addStatusListener(_statut);
     }
+    _pont
+      ..addListener(_suivrePont)
+      ..addStatusListener(_finPont);
+    _ancien = widget.indexActif;
     WidgetsBinding.instance.addPostFrameCallback((_) => _viser(anime: false));
   }
 
@@ -135,6 +206,49 @@ class _EtatIndicateurLiquide extends State<IndicateurLiquide>
     if (!bouge && _enMouvement && mounted) {
       setState(() => _enMouvement = false);
     }
+  }
+
+  void _suivrePont() {
+    final double e = _pont.value;
+    if (!_recu && e >= _arrivee) {
+      _recu = true;
+      // La goutte rompue : la couleur gagne la destination, en fondu.
+      _fondu.forward(from: 0);
+      // Le cercle (une zone qui n'est pas la pilule) recoit d'un rebond.
+      if (_vers != 0) {
+        _reception.animateWith(
+          SpringSimulation(
+            AppMouvement.ressortReception,
+            0,
+            0,
+            AppMouvement.elanReception,
+          ),
+        );
+      }
+    }
+  }
+
+  void _finPont(AnimationStatus statut) {
+    if (statut != AnimationStatus.completed &&
+        statut != AnimationStatus.dismissed) {
+      return;
+    }
+    if (!_pont.isAnimating && _pontActif && mounted) {
+      if (!_recu) _fondu.value = 1;
+      setState(() => _pontActif = false);
+    }
+  }
+
+  /// La zone de la destination [i] : celle qui contient son centre.
+  int? _zoneDe(int? i) {
+    if (i == null || i < 0 || i >= widget.cibles.length) return null;
+    final Rect? c = _rect(widget.cibles[i]);
+    if (c == null) return null;
+    final List<Rect> z = zones;
+    for (int k = 0; k < z.length; k++) {
+      if (z[k].contains(c.center)) return k;
+    }
+    return null;
   }
 
   @override
@@ -171,15 +285,53 @@ class _EtatIndicateurLiquide extends State<IndicateurLiquide>
     final bool sauter =
         !anime || !_mesure || AppMouvement.mouvementReduit(context);
     _mesure = true;
+    final int? zoneAvant = _zoneDe(_ancien);
+    final int? zoneApres = _zoneDe(i);
+    _ancien = i;
+    // LIQUIDE-MATIERE : d'une zone a l'autre (la pilule, le cercle), aucune
+    // goutte de couleur ne voyage : la goutte saute a sa place, et c'est la
+    // matiere qui fait le pont.
+    if (!sauter &&
+        widget.matiere != null &&
+        zoneAvant != null &&
+        zoneApres != null &&
+        zoneAvant != zoneApres) {
+      _gauche.value = cible.left;
+      _droite.value = cible.right;
+      _haut.value = cible.top;
+      _bas.value = cible.bottom;
+      _de = zoneAvant;
+      _vers = zoneApres;
+      _recu = false;
+      _fondu.value = 0;
+      _pont
+        ..value = 0
+        ..animateWith(SpringSimulation(AppMouvement.ressortPont, 0, 1, 0));
+      setState(() {
+        _enMouvement = false;
+        _pontActif = true;
+      });
+      return;
+    }
+    // Un saut, ou une goutte dans la pilule, arrete un pont en cours.
+    final bool pontEnCours = _pontActif;
+    if (pontEnCours) _pont.stop();
+    _fondu.value = 1;
     if (sauter) {
       _gauche.value = cible.left;
       _droite.value = cible.right;
       _haut.value = cible.top;
       _bas.value = cible.bottom;
       // Un saut arrete une goutte en vol : elle disparait aussitot.
-      if (_enMouvement) setState(() => _enMouvement = false);
+      if (_enMouvement || pontEnCours) {
+        setState(() {
+          _enMouvement = false;
+          _pontActif = false;
+        });
+      }
       return;
     }
+    if (pontEnCours) _pontActif = false;
     // Le bord de devant, plus raide, part le premier ; celui de derriere
     // suit : la goutte s'etire dans le sens du mouvement, puis se reforme.
     final bool versLaDroite =
@@ -222,6 +374,9 @@ class _EtatIndicateurLiquide extends State<IndicateurLiquide>
       _droite,
       _haut,
       _bas,
+      _pont,
+      _reception,
+      _fondu,
     ]) {
       c.dispose();
     }
@@ -249,11 +404,7 @@ class _EtatIndicateurLiquide extends State<IndicateurLiquide>
       child: CustomPaint(
         // La couche du dessous : le pont entre les zones, et la goutte hors
         // des zones opaques (le cercle la recouvre presque toute).
-        painter: _PeintreLiquide(
-          etat: this,
-          repaint: _tout,
-          couleur: widget.couleur,
-        ),
+        painter: _PeintreLiquide(etat: this, repaint: _toutPont),
         child: RepaintBoundary(child: widget.child),
       ),
     ),
@@ -302,50 +453,121 @@ class CoucheLiquide extends StatelessWidget {
   }
 }
 
-/// La couche du dessous : le pont metaballe entre les parts de la goutte qui
-/// tombent dans deux zones, et la part qui tombe dans une zone sans couche
-/// interieure (le cercle, opaque, la recouvre presque toute).
+/// Le cercle (ou toute zone) qui recoit la goutte de matiere d'un leger
+/// rebond (LIQUIDE-MATIERE, directeur, 11/11/2026). Pose autour de la zone,
+/// sous un [IndicateurLiquide] ; ailleurs, l'enfant tel quel.
+class ReceptionLiquide extends StatelessWidget {
+  /// Cree la reception.
+  const ReceptionLiquide({required this.child, super.key});
+
+  /// La zone qui recoit (le cercle Compte).
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final _PorteeLiquide? portee = context
+        .dependOnInheritedWidgetOfExactType<_PorteeLiquide>();
+    if (portee == null) return child;
+    final AnimationController reception = portee.etat._reception;
+    return AnimatedBuilder(
+      animation: reception,
+      child: child,
+      builder: (BuildContext _, Widget? enfant) => Transform.scale(
+        scale:
+            1 +
+            AppMouvement.amplitudeReception *
+                reception.value.clamp(-1, 1).toDouble(),
+        child: enfant,
+      ),
+    );
+  }
+}
+
+/// La couche du dessous : le pont de matiere entre la pilule et le cercle
+/// (LIQUIDE-MATIERE). Il se peint SOUS les zones : seule sa part entre elles
+/// se voit, de leur fond, sous leur ombre, bordee de leur contour.
 class _PeintreLiquide extends CustomPainter {
-  _PeintreLiquide({
-    required this.etat,
-    required this.couleur,
-    required Listenable repaint,
-  }) : super(repaint: repaint);
+  _PeintreLiquide({required this.etat, required Listenable repaint})
+    : super(repaint: repaint);
 
   final _EtatIndicateurLiquide etat;
-  final Color couleur;
+
+  /// Le disque d'une zone, du cote de l'autre : le bout arrondi de la
+  /// pilule, ou le cercle lui-meme.
+  static ({Offset c, double r}) _disque(Rect zone, Rect autre) {
+    final double r = zone.shortestSide / 2;
+    if (zone.width <= zone.height + 1) return (c: zone.center, r: r);
+    final bool versLaDroite = autre.center.dx > zone.center.dx;
+    return (
+      c: Offset(versLaDroite ? zone.right - r : zone.left + r, zone.center.dy),
+      r: r,
+    );
+  }
 
   @override
   void paint(Canvas canvas, Size size) {
-    final Rect? g = etat.goutte;
-    if (g == null) return;
-    final Paint pinceau = Paint()..color = couleur;
-    final List<Rect> parts = <Rect>[
-      for (final Rect z in etat.zones)
-        if (g.overlaps(z)) g.intersect(z),
-    ];
-    for (final Rect p in parts) {
-      canvas.drawRRect(_rond(p), pinceau);
+    final Color? matiere = etat.widget.matiere;
+    final List<Rect> z = etat.zones;
+    if (!etat._pontActif ||
+        matiere == null ||
+        etat._de >= z.length ||
+        etat._vers >= z.length) {
+      return;
     }
-    if (parts.length == 2) {
-      final Rect a = parts[0].center.dx <= parts[1].center.dx
-          ? parts[0]
-          : parts[1];
-      final Rect b = identical(a, parts[0]) ? parts[1] : parts[0];
-      final double ra = a.shortestSide / 2;
-      final double rb = b.shortestSide / 2;
-      final Path pont = pontMetaballe(
-        Offset(a.right - ra, a.center.dy),
-        ra,
-        Offset(b.left + rb, b.center.dy),
-        rb,
+    final double e = etat._pont.value.clamp(0, 1).toDouble();
+    if (e <= 0 || e >= 1) return;
+    final ({Offset c, double r}) s = _disque(z[etat._de], z[etat._vers]);
+    final ({Offset c, double r}) t = _disque(z[etat._vers], z[etat._de]);
+    // La goutte voyage d'un disque a l'autre, plus petite qu'eux.
+    final Offset cb = Offset.lerp(s.c, t.c, e)!;
+    // Assez grosse pour que le pont remplisse l'espace entre les deux
+    // silhouettes (8 points) : c'est le corps de la pilule qui s'etire.
+    final double rb = (s.r + (t.r - s.r) * e) * 0.8;
+    Path forme = Path()..addOval(Rect.fromCircle(center: cb, radius: rb));
+    // Le corps de la source s'etire, s'amincit, puis se rompt.
+    if (e < _EtatIndicateurLiquide._rupture) {
+      final double v = 0.6 * (1 - e / _EtatIndicateurLiquide._rupture);
+      forme = Path.combine(
+        PathOperation.union,
+        forme,
+        pontMetaballe(s.c, s.r, cb, rb, v: v, portee: 6),
       );
-      canvas.drawPath(pont, pinceau);
+    }
+    // La destination l'aspire en fin de course.
+    if (e > 1 - _EtatIndicateurLiquide._rupture) {
+      final double v =
+          0.6 *
+          (e - (1 - _EtatIndicateurLiquide._rupture)) /
+          _EtatIndicateurLiquide._rupture;
+      forme = Path.combine(
+        PathOperation.union,
+        forme,
+        pontMetaballe(cb, rb, t.c, t.r, v: v, portee: 6),
+      );
+    }
+    for (final BoxShadow o in etat.widget.ombres) {
+      canvas.drawPath(
+        forme.shift(o.offset),
+        Paint()
+          ..color = o.color
+          ..maskFilter = MaskFilter.blur(BlurStyle.normal, o.blurSigma),
+      );
+    }
+    canvas.drawPath(forme, Paint()..color = matiere);
+    final BorderSide? bord = etat.widget.contour;
+    if (bord != null && bord.style != BorderStyle.none) {
+      canvas.drawPath(
+        forme,
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = bord.width
+          ..color = bord.color,
+      );
     }
   }
 
   @override
-  bool shouldRepaint(_PeintreLiquide ancien) => ancien.couleur != couleur;
+  bool shouldRepaint(_PeintreLiquide ancien) => true;
 }
 
 class _PeintreInterieur extends CustomPainter {

@@ -203,6 +203,27 @@ abstract final class AppMouvement {
   static final SpringDescription ressortGoutteQueue =
       SpringDescription.withDampingRatio(mass: 1, stiffness: 170, ratio: 1);
 
+  /// LIQUIDE-MATIERE (correction du directeur du 11/11/2026) : le pont de
+  /// matiere entre la pilule et le cercle Compte. Le corps de la pilule
+  /// s'etire, la goutte voyage, puis se detache (0 a 1). Amortissement
+  /// critique : l'etirement et la rupture n'ont pas de rebond.
+  static final SpringDescription ressortPont =
+      SpringDescription.withDampingRatio(mass: 1, stiffness: 120, ratio: 1);
+
+  /// Le cercle qui « recoit » la goutte : le seul ressort sous-amorti du
+  /// produit, sur decision expresse du directeur (11/11/2026, « un leger
+  /// rebond »). Il ne sert qu'a cette reception, d'une amplitude de
+  /// [amplitudeReception].
+  static final SpringDescription ressortReception =
+      SpringDescription.withDampingRatio(mass: 1, stiffness: 400, ratio: 0.4);
+
+  /// L'elan donne au cercle quand la goutte l'atteint (vitesse initiale du
+  /// [ressortReception], en fraction d'echelle par seconde).
+  static const double elanReception = 1;
+
+  /// L'amplitude du rebond du cercle : 1 + cette part de sa taille au plus.
+  static const double amplitudeReception = 0.06;
+
   /// Translation verticale d'un element qui entre dans une liste.
   static const double translationAjout = 8;
 

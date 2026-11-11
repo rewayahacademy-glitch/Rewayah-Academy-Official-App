@@ -915,15 +915,19 @@ class _BarreFlottante extends StatelessWidget {
                     // Le rond reserve deja sa place choisie (64) : 8 jusqu'a la
                     // pilule, meme ouvert (decision du 10/11/2026).
                     if (guide && serre) Ecart.hXs else Ecart.hSm,
-                    _CercleCompte(
-                      key: cles.cercle,
-                      destination: compte,
-                      actif: _compteActif,
-                      guide: guide,
-                      onAller: onAller,
-                      halo: halo,
-                      onHaloTouche: onHaloTouche,
-                      apparition: indexActif,
+                    // LIQUIDE-MATIERE : le cercle recoit la goutte de matiere
+                    // d'un leger rebond.
+                    ReceptionLiquide(
+                      child: _CercleCompte(
+                        key: cles.cercle,
+                        destination: compte,
+                        actif: _compteActif,
+                        guide: guide,
+                        onAller: onAller,
+                        halo: halo,
+                        onHaloTouche: onHaloTouche,
+                        apparition: indexActif,
+                      ),
                     ),
                   ],
                 ),
@@ -947,6 +951,12 @@ class _BarreFlottante extends StatelessWidget {
       zones: <GlobalKey>[cles.pilule, if (avecCompte) cles.cercle],
       indexActif: _compteActif ? onglets.length : _actifOnglet,
       couleur: palette.washAccent.background,
+      // LIQUIDE-MATIERE (directeur, 11/11/2026) : la pilule et le cercle sont
+      // une meme matiere ; le pont qui les relie en a le fond, le contour et
+      // l'ombre, jamais la couleur de selection.
+      matiere: palette.surfaceRaised.background,
+      contour: palette.contourCarte.asBorderSide(),
+      ombres: AppElevation.niveau1(palette.ombre),
       child: rangee,
     );
   }
@@ -1253,7 +1263,12 @@ class _OngletBarre extends ConsumerWidget {
     // lu par le lecteur d'ecran et montre en infobulle.
     // Pendant que la goutte se deplace, c'est elle qui peint le fond doux.
     final bool goutte = IndicateurLiquide.enMouvement(context);
-    final Widget dessin = actif
+    // LIQUIDE-MATIERE : arrivee depuis le cercle, la couleur gagne l'onglet
+    // en fondu, une fois le pont de matiere rompu.
+    final Animation<double>? fondu = IndicateurLiquide.fonduDestination(
+      context,
+    );
+    Widget fond({required Widget child}) => fondu == null || goutte
         ? DecoratedBox(
             decoration: BoxDecoration(
               color: goutte
@@ -1261,6 +1276,23 @@ class _OngletBarre extends ConsumerWidget {
                   : palette.washAccent.background,
               borderRadius: AppRadius.arrondiFull,
             ),
+            child: child,
+          )
+        : AnimatedBuilder(
+            animation: fondu,
+            child: child,
+            builder: (BuildContext _, Widget? enfant) => DecoratedBox(
+              decoration: BoxDecoration(
+                color: palette.washAccent.background.withValues(
+                  alpha: palette.washAccent.background.a * fondu.value,
+                ),
+                borderRadius: AppRadius.arrondiFull,
+              ),
+              child: enfant,
+            ),
+          );
+    final Widget dessin = actif
+        ? fond(
             child: ConstrainedBox(
               constraints: const BoxConstraints(
                 minHeight: AppTouchTarget.standard,
@@ -1463,6 +1495,12 @@ class _CercleCompte extends StatelessWidget {
         excludeFromSemantics: true,
         child: CercleSelectionnable(
           choisi: actif,
+          // LIQUIDE-MATIERE : un morceau de la meme matiere que la pilule
+          // (son fond, son contour, son ombre) ; l'accent n'y vient qu'une
+          // fois le pont rompu, au ressort.
+          matiere: palette.surfaceRaised.background,
+          contour: palette.contourCarte.asBorderSide(),
+          fonduAccent: IndicateurLiquide.fonduDestination(context),
           // Le halo entoure la photo, a sa taille du moment.
           photo: (double d) => HaloCompte(
             etat: etat,
