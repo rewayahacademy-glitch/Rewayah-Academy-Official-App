@@ -21,6 +21,8 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_theme.dart';
+import '../../core/widgets/action_principale.dart';
+import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/bouton_icone.dart';
 import '../../core/widgets/commande_salle.dart'
     show SurfaceTuilesSalle, TonTuileSalle, TuileCommandeSalle;
@@ -67,26 +69,131 @@ enum FondBoutonAppel {
 /// Quitter la seance, apres confirmation : le dock (Quitter) et l'icone de
 /// sortie de l'en-tete guide passent par la meme question.
 ///
-/// Enseignant ([cahier]) : « Quitter et ouvrir le cahier », la suite est le
-/// cahier de transmission (S l.861-863). Jamais « Terminer pour tous » ni
-/// « Prolonger ». Le rail enseignant passe aussi par cette question.
+/// Enseignant ([cahier], celui qui conduit la seance) : « Quitter et ouvrir
+/// le cahier », la suite est le cahier de transmission (S l.861-863). Jamais
+/// « Terminer pour tous » ni « Prolonger ». Le rail enseignant passe aussi par
+/// cette question.
+///
+/// SORTIE-SALLE (directeur, 11/11/2026) : la consequence se dit avant le
+/// choix (K-58). Quand l'appel peut continuer hors de l'ecran ([reduire]
+/// renseigne : la salle l'a confie au controleur de session), la question
+/// propose d'abord « Reduire la salle » (le seul bouton plein, recommande :
+/// la classe continue d'entendre), puis « Quitter » (alerte douce), puis
+/// « Rester ». Sans [reduire], aucun bouton qui ne pourrait pas aboutir :
+/// la confirmation simple d'avant, aux mots precises.
 Future<void> confirmerQuitterSeance(
   BuildContext context,
   VoidCallback quitter, {
   bool cahier = false,
+  VoidCallback? reduire,
 }) async {
-  final bool confirme = await ConfirmDestructive.demander(
+  final String libelleQuitter = cahier
+      ? t.salle.seance.quitterCahier
+      : t.salle.seance.sortir;
+  if (reduire == null) {
+    final bool confirme = await ConfirmDestructive.demander(
+      context,
+      question: t.salle.sortie.question,
+      // Celui qui conduit : ses eleves restent sans lui, dit en premier.
+      // L'eleve : « Vous pourrez revenir si la seance est encore ouverte. »
+      consequence: cahier
+          ? t.salle.sortie.conduite
+          : t.salle.seance.quitterConsequence,
+      libelleConfirmer: cahier ? libelleQuitter : t.salle.quitter,
+      // Spec CLV-06, textes exacts : « Rester » et « Quitter et ouvrir le
+      // cahier ».
+      libelleAnnuler: cahier ? t.salle.seance.rester : null,
+    );
+    if (confirme) quitter();
+    return;
+  }
+  final ChoixSortieSalle? choix = await AppBottomSheet.ouvrir<ChoixSortieSalle>(
     context,
-    question: t.salle.seance.quitterQuestion,
-    consequence: cahier
-        ? t.salle.seance.quitterCahierConsequence
-        : t.salle.seance.quitterConsequence,
-    libelleConfirmer: cahier ? t.salle.seance.quitterCahier : t.salle.quitter,
-    // Spec CLV-06, textes exacts : « Rester » et « Quitter et ouvrir le
-    // cahier ».
-    libelleAnnuler: cahier ? t.salle.seance.rester : null,
+    titre: t.salle.sortie.question,
+    constructeur: (BuildContext contexte) => Text(
+      cahier ? t.salle.sortie.conduiteReduire : t.salle.sortie.eleveReduire,
+      key: const ValueKey<String>('sortie-consequence'),
+      style: AppPalette.of(contexte).surfaceRaised
+          .applyTo(Theme.of(contexte).textTheme.bodyLarge ?? const TextStyle()),
+    ),
+    actions: (BuildContext contexte) => _ActionsSortie(
+      libelleQuitter: libelleQuitter,
+      onChoisir: (ChoixSortieSalle c) => Navigator.of(contexte).pop(c),
+    ),
   );
-  if (confirme) quitter();
+  switch (choix) {
+    case ChoixSortieSalle.reduire:
+      reduire();
+    case ChoixSortieSalle.quitter:
+      quitter();
+    case ChoixSortieSalle.rester:
+    case null:
+      break;
+  }
+}
+
+/// La reponse a la question de sortie ([confirmerQuitterSeance]).
+enum ChoixSortieSalle {
+  /// La salle se reduit : l'appel continue, la barre « Seance toujours en
+  /// direct » y ramene.
+  reduire,
+
+  /// La personne sort de l'appel.
+  quitter,
+
+  /// Rien ne change.
+  rester,
+}
+
+/// Les trois actions de la question de sortie. Un seul bouton plein (K-56) :
+/// « Reduire la salle ». « Quitter » est l'alerte douce de la sortie d'une
+/// salle, ni le premier atteint au doigt (« Rester » est en bas) ni le premier
+/// au clavier (ordre : Reduire, Rester, Quitter), comme [ConfirmDestructive].
+class _ActionsSortie extends StatelessWidget {
+  const _ActionsSortie({required this.libelleQuitter, required this.onChoisir});
+
+  final String libelleQuitter;
+  final ValueChanged<ChoixSortieSalle> onChoisir;
+
+  @override
+  Widget build(BuildContext context) => FocusTraversalGroup(
+    policy: OrderedTraversalPolicy(),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        FocusTraversalOrder(
+          order: const NumericFocusOrder(1),
+          child: ActionPrincipale(
+            key: const ValueKey<String>('sortie-reduire'),
+            libelle: t.salle.sortie.reduire,
+            onPress: () => onChoisir(ChoixSortieSalle.reduire),
+          ),
+        ),
+        Ecart.vMd,
+        FocusTraversalOrder(
+          order: const NumericFocusOrder(3),
+          child: ActionPrincipale(
+            key: const ValueKey<String>('sortie-quitter'),
+            libelle: libelleQuitter,
+            niveau: NiveauAction.destructive,
+            doux: true,
+            onPress: () => onChoisir(ChoixSortieSalle.quitter),
+          ),
+        ),
+        Ecart.vMd,
+        FocusTraversalOrder(
+          order: const NumericFocusOrder(2),
+          child: ActionPrincipale(
+            key: const ValueKey<String>('sortie-rester'),
+            libelle: t.salle.seance.rester,
+            niveau: NiveauAction.secondaire,
+            onPress: () => onChoisir(ChoixSortieSalle.rester),
+          ),
+        ),
+      ],
+    ),
+  );
 }
 
 /// Le diametre des boutons d'appel du standard : 56 au telephone, 48 sur
@@ -367,10 +474,42 @@ class DockSeance extends StatelessWidget {
             context,
             quitter,
             cahier: vue.quitterOuvreCahier,
+            // SORTIE-SALLE : `onRetour` n'est donne par `/salle` que si
+            // l'appel continue hors de l'ecran ; la question propose alors
+            // de reduire la salle plutot que d'en sortir (jamais en
+            // Interface guidee, voir `_boutonReduire`).
+            reduire: vue.role == RoleSeance.guidee ? null : actions.onRetour,
           ),
         );
     }
   }
+
+  /// SORTIE-SALLE (directeur, 11/11/2026) : « Reduire la salle », la seance
+  /// continue et la barre « Seance toujours en direct » y ramene. Seulement
+  /// sur tablette et ordinateur (la barre nommee [nommee], ou la pilule de
+  /// l'eleve) : au telephone, la pilule micro · camera · quitter ne grossit
+  /// pas (fiche 1), et le geste est propose par la question de Quitter et
+  /// par le retour du telephone. Rendu seulement quand l'appel peut
+  /// continuer hors de l'ecran ([ActionsSeance.onRetour] renseigne).
+  Widget? _boutonReduire(BuildContext context) {
+    final VoidCallback? reduire = actions.onRetour;
+    // L'Interface guidee (un mode d'affichage, pas un droit) garde un seul
+    // geste de sortie : un enfant seul ne doit pas laisser l'appel ouvert
+    // sans le voir.
+    if (reduire == null || rond || vue.role == RoleSeance.guidee) return null;
+    if (!nommee && AppGabarit.de(context) == Gabarit.mobile) return null;
+    return BoutonAppel(
+      key: cleReduire,
+      icone: AppIcons.retour,
+      libelle: t.salle.sortie.reduire,
+      libelleSemantique: t.salle.sortie.reduireSemantique,
+      nom: nommee ? t.salle.sortie.reduireNom : null,
+      onPress: reduire,
+    );
+  }
+
+  /// La cle de la commande « Reduire la salle ».
+  static const Key cleReduire = ValueKey<String>('bouton-reduire-salle');
 
   @override
   Widget build(BuildContext context) {
@@ -396,12 +535,15 @@ class DockSeance extends StatelessWidget {
       ],
     ];
     final List<Widget> boutons = <Widget>[...avant];
+    final Widget? reduire = _boutonReduire(context);
     for (final CommandeDock commande in commandesRendues) {
       // Standard : « Plus » est DANS la pilule, juste avant Quitter, et ouvre
       // les Commandes (Bibliotheque, Outils, Eleves).
       if (commande == CommandeDock.quitter) {
         boutons.addAll(avantQuitter);
         if (plus != null) boutons.add(plus!);
+        // SORTIE-SALLE : les deux gestes cote a cote, jamais confondus.
+        if (reduire != null) boutons.add(reduire);
       }
       final Widget? bouton = _bouton(context, commande);
       if (bouton != null) boutons.add(bouton);
