@@ -5,7 +5,6 @@ import 'package:rewayah_academy/core/admin/service_comptes.dart';
 import 'package:rewayah_academy/core/admin/service_groupes.dart';
 import 'package:rewayah_academy/core/appairage/service_appairage.dart';
 import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
-import 'package:rewayah_academy/core/capacites/port_catalogue_classes.dart';
 import 'package:rewayah_academy/core/capacites/port_classes_foyer.dart';
 import 'package:rewayah_academy/core/capacites/port_politique_revue_kyc.dart';
 import 'package:rewayah_academy/core/capacites/port_revue_dossiers.dart';
@@ -295,30 +294,6 @@ void main() {
         expect(await seances.historique(eleveId: id), hasLength(3));
         expect(await seances.prochaine(id), isNotNull);
       }
-    });
-
-    test('catalogue fictif : seances, fuseau et parcours (C-14)', () async {
-      final PortCatalogueClasses catalogue = conteneur.read(
-        portCatalogueClassesProvider,
-      );
-      final List<ClasseOuverte> classes = await catalogue.compatibles(
-        eleveId: DonneesDemo.aichaId,
-        fuseauIana: 'Europe/Paris',
-      );
-      expect(classes, hasLength(3));
-      for (final ClasseOuverte c in classes) {
-        expect(c.seances, isNotEmpty);
-        expect(c.fuseauIana, 'Europe/Paris');
-        expect(c.cours, isNotNull);
-      }
-      expect(
-        (await catalogue.inscrire(
-          classeId: classes.first.classeId,
-          eleveId: DonneesDemo.aichaId,
-          cleIdempotence: 'demo',
-        )).statut,
-        StatutInscription.enAttenteValidation,
-      );
     });
 
     test('lectures tuteur hors serveur', () async {

@@ -418,9 +418,6 @@ abstract final class Routes {
   /// cette adresse : une classe se choisit depuis l'Accueil.
   static const String tuteurClasses = '/tuteur/classes';
 
-  /// Le choix d'une classe, statique et declare avant `:classeId` (R5).
-  static const String tuteurClassesCatalogue = '/tuteur/classes/catalogue';
-
   /// La classe d'un eleve du foyer.
   static String classePour(String classeId, {String? eleveId}) => Uri(
     path: '$tuteurClasses/$classeId',

@@ -16,8 +16,6 @@ import '../../core/admission/profils_demande.dart';
 import '../../core/appairage/service_appairage.dart';
 import '../../core/capacites/consentements_supabase.dart'
     show accordsTitulaireProvider;
-import '../../core/capacites/port_catalogue_classes.dart'
-    show catalogueClassesOuvert, portCatalogueClassesProvider;
 import '../../core/capacites/port_classes_foyer.dart';
 import '../../core/capacites/port_partage_pedagogique.dart'
     show CompteRenduFamille;
@@ -464,9 +462,6 @@ class _CorpsAccueil extends ConsumerWidget {
           )
         : null;
 
-    final bool catalogueOuvert = catalogueClassesOuvert(
-      ref.watch(portCatalogueClassesProvider),
-    );
     final bool sansClasse =
         classe.hasValue &&
         classe.value == null &&
@@ -509,18 +504,9 @@ class _CorpsAccueil extends ConsumerWidget {
               phrase: t.tuteur.accueil.sansClassePhrase(
                 quePrenom: queDevant(profil.prenom),
               ),
-              // Tri du 31/10/2026 : catalogue ferme (production), le parcours.
-              libelleAction: catalogueOuvert
-                  ? t.classe.catalogue
-                  : t.parcours.voirHoraires,
-              onAction: () => routeur.go(
-                catalogueOuvert
-                    ? Uri(
-                        path: Routes.tuteurClassesCatalogue,
-                        queryParameters: <String, String>{'eleve': eleveId},
-                      ).toString()
-                    : Routes.parcoursPour(eleveId),
-              ),
+              // DECISION-OFFRES-GROUPES-2026-10-09 : pas de catalogue.
+              libelleAction: t.parcours.voirHoraires,
+              onAction: () => routeur.go(Routes.parcoursPour(eleveId)),
             ),
           ],
         ],

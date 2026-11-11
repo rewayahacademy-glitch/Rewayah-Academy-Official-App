@@ -110,7 +110,6 @@ import '../../features/cahier/cahier_page.dart';
 import '../../features/candidature/cadre_religieux_page.dart';
 import '../../features/candidature/candidature_page.dart';
 import '../../features/candidature/entretien_candidat_page.dart';
-import '../../features/classe_tuteur/catalogue_classes_page.dart';
 import '../../features/classe_tuteur/classe_tuteur_page.dart';
 import '../../features/classe_tuteur/planning_classe_page.dart';
 import '../../features/classe_tuteur/progression_classe_page.dart';
@@ -1007,13 +1006,6 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                         ),
                       ),
                     ],
-                  ),
-                  GoRouteSure(
-                    path: 'classes/catalogue',
-                    pageBuilder: glissee(
-                      (GoRouterState etat) =>
-                          CatalogueClassesPage(eleveId: _eleve(etat)),
-                    ),
                   ),
                   GoRouteSure(
                     path: 'classes/:classeId',

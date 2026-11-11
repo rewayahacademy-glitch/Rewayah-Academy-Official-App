@@ -20,8 +20,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/accessibilite/texte_sans_coupure.dart';
-import '../../core/capacites/port_catalogue_classes.dart'
-    show catalogueClassesOuvert, portCatalogueClassesProvider;
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
@@ -73,7 +71,7 @@ class CheminsSuivi {
     liste: Routes.tuteurDemandes,
     detail: Routes.tuteurDemande,
     accueil: Routes.tuteurAccueil,
-    demander: Routes.tuteurClassesCatalogue,
+    demander: Routes.tuteurAccueil,
   );
 
   /// L'eleve adulte autonome.
@@ -149,13 +147,8 @@ class SuiviFamillePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
-    // Tri du 31/10/2026 : catalogue ferme (production), l'accueil porte le
-    // parcours de chaque profil eleve (`BlocParcours`).
-    final String? demander =
-        chemins.demander == Routes.tuteurClassesCatalogue &&
-            !catalogueClassesOuvert(ref.watch(portCatalogueClassesProvider))
-        ? Routes.tuteurAccueil
-        : chemins.demander;
+    // L'accueil porte le parcours de chaque profil eleve (`BlocParcours`).
+    final String? demander = chemins.demander;
     return PageShell(
       titre: t.suiviFamille.titre,
       sousTitre: t.suiviFamille.contexte,
