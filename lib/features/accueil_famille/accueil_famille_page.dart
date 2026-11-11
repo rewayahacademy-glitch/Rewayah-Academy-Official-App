@@ -540,6 +540,10 @@ class _CorpsAccueil extends ConsumerWidget {
           rangee,
           ?lienEspaceEleve,
           ?autreAppareil,
+          // GOUTTE, correction du 11/11/2026 (soir) : l'ecart est HORS du
+          // contenu. La nappe de la goutte a les bornes du contenu : son bord
+          // haut est donc celui de la premiere carte, pas 20 points au-dessus.
+          Ecart.vXl,
           ContenuGoutte(
             profilId: eleveId,
             child: Column(
@@ -553,7 +557,6 @@ class _CorpsAccueil extends ConsumerWidget {
     );
     if (sansClasse) {
       return goutte(selecteur, <Widget>[
-        Ecart.vXl,
         const CarteSuiviDemandes(),
         const CarteDemandePresentation(),
         // L9 : les comptes d'avant l'accord des visites y sont conduits.
@@ -780,7 +783,6 @@ class _CorpsAccueil extends ConsumerWidget {
     final double marge = compact ? AppSpacing.lg : AppSpacing.xxl;
     final double echelle = MediaQuery.textScalerOf(context).scale(1);
     return goutte(selecteurAvec(horlogeClasse), <Widget>[
-      Ecart.vXl,
       const CarteSuiviDemandes(),
       const CarteDemandePresentation(),
       // L9 : les comptes d'avant l'accord des visites y sont conduits.
