@@ -7,6 +7,7 @@ import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/widgets/couverture_support.dart';
 
 /// La couverture d'une ressource.
 ///
@@ -123,7 +124,7 @@ class VignetteRessource extends StatelessWidget {
   /// `AppPalette.teintesIdentite` (decision D-18), partagee avec celle des
   /// groupes.
   static AppColorPair teinte(AppPalette palette, int index) =>
-      index == 0 ? palette.surfaceQuran : palette.teinteCouverture(index - 1);
+      CouvertureSupport.teinteDe(palette, index);
 
   /// L'icone de coin d'un type de ressource.
   static AppIcon iconeDe(TypeRessource type) => switch (type) {

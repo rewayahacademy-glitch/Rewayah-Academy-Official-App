@@ -21,6 +21,8 @@ import '../../../core/presence/service_presence.dart';
 import '../../../core/presence/vue_presence.dart';
 import '../../../core/priere/horaires_priere.dart';
 import '../../../core/session/session_state.dart';
+import '../../../core/tc_bibliotheque/couverture_ressource.dart';
+import '../../../core/tc_bibliotheque/library_resource.dart';
 import '../../../core/tc_horloge/chrono_seance.dart';
 import '../../../core/theme/accent_profil.dart';
 import '../../../core/theme/app_palette.dart';
@@ -63,6 +65,7 @@ import '../../../core/widgets/commande_salle.dart';
 import '../../../core/widgets/confirm_destructive.dart';
 import '../../../core/widgets/controle_anti_robot.dart';
 import '../../../core/widgets/controle_segmente.dart';
+import '../../../core/widgets/couverture_support.dart';
 import '../../../core/widgets/data_collection.dart';
 import '../../../core/widgets/ecran_resultat.dart';
 import '../../../core/widgets/empty_state.dart';
@@ -2500,6 +2503,61 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
         (BuildContext _) => const Directionality(
           textDirection: TextDirection.rtl,
           child: OrnementMarque.signature(),
+        ),
+      ),
+    ],
+  ),
+
+  // SUPPORTS-ETAGERE (directeur, 11/11/2026 ; CAHIER-SALLE §7) : la
+  // couverture d'un support, livre de l'etagere de la salle. Les supports
+  // autres que le Coran sont des demonstrations « a valider ».
+  EntreeGalerie(
+    nom: 'CouvertureSupport',
+    famille: FamilleComposant.structure,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'le Coran : double cadre, ornement moyen',
+        (BuildContext _) => SizedBox(
+          width: AppSpacing.respiration * 2,
+          child: CouvertureSupport(
+            titre: t.salle.supports.coran,
+            couverture: CouvertureRessource.coran(t.salle.supports.coran),
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'demonstration a valider : les lettres',
+        (BuildContext _) => SizedBox(
+          width: AppSpacing.respiration * 2,
+          child: CouvertureSupport(
+            titre: t.salle.etagere.demo.lettres,
+            couverture: const CouvertureRessource(
+              indexTeinte: 3,
+              motif: MotifCouverture.lignes,
+              monogramme: 'L',
+              type: TypeRessource.texteStructure,
+            ),
+            mention: t.salle.etagere.aValider,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'en arabe : le dos passe a droite',
+        (BuildContext _) => Directionality(
+          textDirection: TextDirection.rtl,
+          child: SizedBox(
+            width: AppSpacing.respiration * 2,
+            child: CouvertureSupport(
+              titre: t.salle.etagere.demo.voyelles,
+              couverture: const CouvertureRessource(
+                indexTeinte: 9,
+                motif: MotifCouverture.arcs,
+                monogramme: 'V',
+                type: TypeRessource.texteStructure,
+              ),
+              mention: t.salle.etagere.aValider,
+            ),
+          ),
         ),
       ),
     ],
