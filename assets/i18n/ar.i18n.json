@@ -2382,7 +2382,9 @@
       "revenus": "دخلي",
       "revenusDetail": "ما تدرّه عليك حصصك، طالبًا طالبًا",
       "disponibilitesDetail": "الأيام والساعات التي يمكنك التدريس فيها",
-      "revenusHeures": "⁨{heures}⁩ مقدَّمة في ⁨{mois}⁩"
+      "revenusHeures": "⁨{heures}⁩ مقدَّمة في ⁨{mois}⁩",
+      "publicationDonnee": "ممنوحة",
+      "publicationNonDonnee": "غير ممنوحة"
     },
     "creneaux": {
       "heureLibelle": "⁨{jour}⁩ الساعة ⁨{heure}⁩",

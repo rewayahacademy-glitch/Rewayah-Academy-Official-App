@@ -10,6 +10,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/enseignant/depot_cahiers.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/widgets/page_compte.dart';
 import 'package:rewayah_academy/features/suivi_eleve/entree_bibliotheque.dart';
 
 import '../support/demo/demo_enseignant_page.dart';
@@ -70,4 +71,52 @@ void main() {
       });
     }
   });
+
+  // Le Compte de l'enseignant sur PageCompte (points 3 et 4), en vue haute
+  // pour montrer la page entiere jusqu'a la version.
+  group(
+    'Capture : PROFILS P3, Compte de l enseignant',
+    skip: sautSansCapture,
+    () {
+      setUpAll(chargerPolicesDuDepot);
+      setUp(masquerRubanDebug);
+
+      for (final double l in const <double>[390, 1440]) {
+        for (final (String v, ThemeMode mode, AppLocale langue, double e)
+            in <(String, ThemeMode, AppLocale, double)>[
+              ('clair', ThemeMode.light, AppLocale.fr, 1),
+              ('sombre', ThemeMode.dark, AppLocale.fr, 1),
+              ('arabe', ThemeMode.light, AppLocale.ar, 1),
+              ('texte-x2', ThemeMode.light, AppLocale.fr, 2),
+            ]) {
+          final String nom = 'compte-enseignant-${l.toInt()}-$v';
+          testWidgets(nom, (WidgetTester tester) async {
+            await tester.runAsync(() => LocaleSettings.setLocale(langue));
+            addTearDown(() => LocaleSettings.setLocale(AppLocale.fr));
+            final double h = switch ((l < 600, e > 1)) {
+              (true, true) => 4200,
+              (true, false) => 2300,
+              (false, true) => 3400,
+              (false, false) => 1900,
+            };
+            fixerVueCapture(tester, Size(l, h), 1);
+            await tester.pumpWidget(
+              hoteCapture(
+                const CoquilleEnseignantDemo(ecran: EcranDemoEnseignant.profil),
+                surcharges: <Override>[
+                  depotRapportsProvider.overrideWithValue(FauxDepotRapports()),
+                ],
+                themeMode: mode,
+                echelleTexte: e,
+              ),
+            );
+            await stabiliser(tester);
+            expect(tester.takeException(), isNull);
+            expect(find.byType(PageCompte), findsOneWidget);
+            await capturerVue(tester, nom);
+          });
+        }
+      }
+    },
+  );
 }
