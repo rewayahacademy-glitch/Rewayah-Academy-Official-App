@@ -189,6 +189,10 @@ abstract final class AppMouvement {
   /// Tout ce qui sort.
   static const Curve sortie = Curves.easeInCubic;
 
+  /// L'aspiration du contenu vers son rond (goutte d'huile des profils) : il
+  /// part doucement puis s'accelere.
+  static const Curve aspiration = Curves.easeIn;
+
   /// Reserve aux rotations continues et aux barres de progression
   /// indeterminees. Interdit partout ailleurs.
   static const Curve progressionIndeterminee = Curves.linear;

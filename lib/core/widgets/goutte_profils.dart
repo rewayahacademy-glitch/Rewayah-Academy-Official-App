@@ -587,12 +587,12 @@ class _EtatContenuGoutte extends State<ContenuGoutte>
       _Phase.aspire => _lerp(
         1,
         AppMouvement.echelleGouttePro,
-        Curves.easeIn.transform(t),
+        AppMouvement.aspiration.transform(t),
       ),
       _Phase.tombe => _lerp(
         AppMouvement.echelleGouttePro,
         1,
-        Curves.easeOutCubic.transform(t),
+        AppMouvement.entree.transform(t),
       ),
       _Phase.repos || _Phase.attente => 1,
     };
