@@ -23,6 +23,7 @@ import 'package:rewayah_academy/features/notifications/notifications_page.dart';
 import '../../router/support_routeur.dart';
 import '../../support/demo/communications/com_annonces_demo.dart';
 import '../../support/demo/communications/demo_communications_page.dart';
+import '../../support/titre_de_page.dart';
 
 final DateTime _maintenant = DateTime.utc(2026, 10, 4, 12);
 
@@ -232,7 +233,7 @@ void main() {
           ClassesDemoAnnonces.nour,
         ),
       );
-      expect(find.text(t.com.annonces.demo.classeNour), findsWidgets);
+      expect(titreDePage(t.com.annonces.demo.classeNour), findsWidgets);
       expect(find.byType(AnnoncesDeClasse), findsOneWidget);
       expect(
         find.byKey(const ValueKey<String>('annonce-demo-annonce-nour')),

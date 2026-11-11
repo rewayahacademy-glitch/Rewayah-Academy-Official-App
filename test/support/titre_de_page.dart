@@ -12,7 +12,12 @@ import 'package:flutter_test/flutter_test.dart';
 /// ses premiers mots entiers, puis « … ».
 Finder titreDePage(String titre) => find.byWidgetPredicate((Widget w) {
   if (w is! Text) return false;
-  final String? texte = w.data ?? w.textSpan?.toPlainText();
+  // Sans le joint invisible (U+2060) qu'un nom compose recoit pour ne pas se
+  // couper apres son trait d'union (« An-Nour »).
+  final String? texte = (w.data ?? w.textSpan?.toPlainText())?.replaceAll(
+    '\u2060',
+    '',
+  );
   if (texte == null) return false;
   if (texte == titre) return true;
   if (!texte.endsWith('…')) return false;
