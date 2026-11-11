@@ -318,7 +318,7 @@
       "vide": "Aucun support dans la bibliothèque",
       "videDetail": "La direction n'a encore ajouté aucun support. Le Coran reste disponible dès qu'il se charge.",
       "erreurTitre": "La bibliothèque ne s'est pas chargée",
-      "erreurDetail": "La connexion a peut-être été coupée. Réessayez ; si rien ne change, prévenez la direction.",
+      "erreurDetail": "La connexion a peut-être été coupée. Réessayez\u00a0; si rien ne change, prévenez la direction.",
       "horsLigne": "Pas de connexion",
       "horsLigneDetail": "La bibliothèque se chargera dès le retour de la connexion. Ce que la classe voit reste affiché.",
       "demo": {

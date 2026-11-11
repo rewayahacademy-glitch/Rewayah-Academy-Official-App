@@ -3133,20 +3133,20 @@ class _Traductions$salle$etagere$ar extends Traductions$salle$etagere$fr {
 
 	// Translations
 	@override String get intro => 'اختر مادة، ثم اطّلع عليها وحدك أو اعرضها على الفصل.';
-	@override String ouvrirFiche({required Object titre}) => 'فتح بطاقة ${titre}';
+	@override String ouvrirFiche({required Object titre}) => 'فتح بطاقة ⁨${titre}⁩';
 	@override String get revenir => 'العودة إلى المكتبة';
 	@override String get revenirFiche => 'العودة إلى بطاقة المادة';
 	@override String get afficher => 'عرض لي';
-	@override String afficherSemantique({required Object titre}) => 'عرض ${titre} لك وحدك';
+	@override String afficherSemantique({required Object titre}) => 'عرض ⁨${titre}⁩ لك وحدك';
 	@override String get afficherDetail => 'تطّلع عليها وحدك. لا يرى الفصل شيئًا.';
 	@override String get partager => 'مشاركة';
-	@override String partagerSemantique({required Object titre}) => 'مشاركة ${titre} مع الفصل';
+	@override String partagerSemantique({required Object titre}) => 'مشاركة ⁨${titre}⁩ مع الفصل';
 	@override String get partagerDetail => 'يراها الفصل الآن.';
-	@override String partagerPage({required Object page}) => 'مشاركة الصفحة ${page}';
-	@override String partagerPageSemantique({required Object page}) => 'مشاركة الصفحة ${page} مع الفصل';
+	@override String partagerPage({required Object page}) => 'مشاركة الصفحة ⁨${page}⁩';
+	@override String partagerPageSemantique({required Object page}) => 'مشاركة الصفحة ⁨${page}⁩ مع الفصل';
 	@override String get partagerPageDetail => 'يراها الفصل الآن، من الصفحة التي توقّف عندها.';
 	@override String get choisirDebut => 'المشاركة من موضع آخر';
-	@override String reprise({required Object page}) => 'توقّف الفصل عند الصفحة ${page}.';
+	@override String reprise({required Object page}) => 'توقّف الفصل عند الصفحة ⁨${page}⁩.';
 	@override String get seulVous => 'أنت وحدك ترى هذه الصفحة. يبقى الفصل على ما يراه.';
 	@override String get pagePrecedente => 'الصفحة السابقة';
 	@override String get pageSuivante => 'الصفحة التالية';
@@ -24571,20 +24571,20 @@ extension on TraductionsAr {
 			'classe.cartes.feuille.defauts.lienInvalide' => 'هذا الرابط ليس عنوانًا كاملًا. انسخ العنوان كما يظهر في شريط المتصفح والصقه هنا.',
 			'classe.cartes.feuille.defauts.echeanceManquante' => 'يحتاج الواجب إلى موعد نهائي. اختر الموعد النهائي.',
 			'salle.etagere.intro' => 'اختر مادة، ثم اطّلع عليها وحدك أو اعرضها على الفصل.',
-			'salle.etagere.ouvrirFiche' => ({required Object titre}) => 'فتح بطاقة ${titre}',
+			'salle.etagere.ouvrirFiche' => ({required Object titre}) => 'فتح بطاقة ⁨${titre}⁩',
 			'salle.etagere.revenir' => 'العودة إلى المكتبة',
 			'salle.etagere.revenirFiche' => 'العودة إلى بطاقة المادة',
 			'salle.etagere.afficher' => 'عرض لي',
-			'salle.etagere.afficherSemantique' => ({required Object titre}) => 'عرض ${titre} لك وحدك',
+			'salle.etagere.afficherSemantique' => ({required Object titre}) => 'عرض ⁨${titre}⁩ لك وحدك',
 			'salle.etagere.afficherDetail' => 'تطّلع عليها وحدك. لا يرى الفصل شيئًا.',
 			'salle.etagere.partager' => 'مشاركة',
-			'salle.etagere.partagerSemantique' => ({required Object titre}) => 'مشاركة ${titre} مع الفصل',
+			'salle.etagere.partagerSemantique' => ({required Object titre}) => 'مشاركة ⁨${titre}⁩ مع الفصل',
 			'salle.etagere.partagerDetail' => 'يراها الفصل الآن.',
-			'salle.etagere.partagerPage' => ({required Object page}) => 'مشاركة الصفحة ${page}',
-			'salle.etagere.partagerPageSemantique' => ({required Object page}) => 'مشاركة الصفحة ${page} مع الفصل',
+			'salle.etagere.partagerPage' => ({required Object page}) => 'مشاركة الصفحة ⁨${page}⁩',
+			'salle.etagere.partagerPageSemantique' => ({required Object page}) => 'مشاركة الصفحة ⁨${page}⁩ مع الفصل',
 			'salle.etagere.partagerPageDetail' => 'يراها الفصل الآن، من الصفحة التي توقّف عندها.',
 			'salle.etagere.choisirDebut' => 'المشاركة من موضع آخر',
-			'salle.etagere.reprise' => ({required Object page}) => 'توقّف الفصل عند الصفحة ${page}.',
+			'salle.etagere.reprise' => ({required Object page}) => 'توقّف الفصل عند الصفحة ⁨${page}⁩.',
 			'salle.etagere.seulVous' => 'أنت وحدك ترى هذه الصفحة. يبقى الفصل على ما يراه.',
 			'salle.etagere.pagePrecedente' => 'الصفحة السابقة',
 			'salle.etagere.pageSuivante' => 'الصفحة التالية',

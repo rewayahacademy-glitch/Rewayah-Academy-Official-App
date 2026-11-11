@@ -4805,7 +4805,7 @@ class Traductions$salle$etagere$fr {
 	String get erreurTitre => 'La bibliothèque ne s\'est pas chargée';
 
 	/// fr: 'La connexion a peut-être été coupée. Réessayez ; si rien ne change, prévenez la direction.'
-	String get erreurDetail => 'La connexion a peut-être été coupée. Réessayez ; si rien ne change, prévenez la direction.';
+	String get erreurDetail => 'La connexion a peut-être été coupée. Réessayez ; si rien ne change, prévenez la direction.';
 
 	/// fr: 'Pas de connexion'
 	String get horsLigne => 'Pas de connexion';
@@ -48847,7 +48847,7 @@ extension on Traductions {
 			'salle.etagere.vide' => 'Aucun support dans la bibliothèque',
 			'salle.etagere.videDetail' => 'La direction n\'a encore ajouté aucun support. Le Coran reste disponible dès qu\'il se charge.',
 			'salle.etagere.erreurTitre' => 'La bibliothèque ne s\'est pas chargée',
-			'salle.etagere.erreurDetail' => 'La connexion a peut-être été coupée. Réessayez ; si rien ne change, prévenez la direction.',
+			'salle.etagere.erreurDetail' => 'La connexion a peut-être été coupée. Réessayez ; si rien ne change, prévenez la direction.',
 			'salle.etagere.horsLigne' => 'Pas de connexion',
 			'salle.etagere.horsLigneDetail' => 'La bibliothèque se chargera dès le retour de la connexion. Ce que la classe voit reste affiché.',
 			'salle.etagere.demo.lettres' => 'Les lettres',
