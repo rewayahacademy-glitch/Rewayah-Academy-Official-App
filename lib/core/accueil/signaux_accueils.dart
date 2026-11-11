@@ -7,10 +7,11 @@
 // Sources (lues par les ecrans, jamais ici) :
 // * enseignant :
 //   - remplacements : `offres_remplacement()` (DECISION-REMPLACEMENT) -> urgent ;
-//   - eleves absents ou en retard **pendant la seance en cours** :
-//     `presence_seance_v` (etats `absente`, `en_retard`) -> urgent ;
-//     « excusee » (absence annoncee par la famille) reste lisible dans la
-//     presence, sans lumiere propre ;
+//   - eleves absents ou en retard pendant la seance en cours : A VENIR, en
+//     dernier. Ce rouge lira la meme fonction serveur que le rouge « retard »
+//     de H (migration de H, plage 20261122700000 a 799999) ; aucune source
+//     propre ici (arbitrage du pilote du 11/11/2026). « Excusee » reste
+//     lisible dans la presence, sans lumiere propre ;
 //   - cahier a remplir : `mes_rapports_en_attente()` -> a preparer ;
 //   - les messages sont hors de ce lot.
 // * direction :
@@ -29,7 +30,6 @@ import 'package:flutter/foundation.dart';
 
 import '../admin/service_admin.dart';
 import '../alertes/alerte.dart';
-import '../presence/service_presence.dart';
 
 /// Ce qu'un signal d'accueil demande, par priorite decroissante.
 enum NatureSignal {
@@ -44,9 +44,6 @@ enum NatureSignal {
 enum MotifEnseignant {
   /// Une ou plusieurs offres de remplacement.
   remplacement,
-
-  /// Des eleves absents ou en retard pendant la seance en cours.
-  presence,
 
   /// Des cahiers de transmission a remplir.
   cahier,
@@ -101,46 +98,24 @@ class SignalAccueil<M extends Enum> {
 }
 
 /// Les signaux de l'« Aujourd'hui » de l'enseignant, dans l'ordre de
-/// priorite : urgents d'abord (remplacements, puis presence), puis a preparer.
-///
-/// [presenceEnCours] est la presence de la seance **en cours**, ou `null` : pas
-/// de seance en cours, ou presence illisible. Une presence inconnue n'est
-/// jamais une absence (invariant J3) : elle ne fait aucun signal.
+/// priorite : les remplacements (urgent), puis le cahier (a preparer).
 List<SignalAccueil<MotifEnseignant>> signauxAujourdhui({
   required int offresRemplacement,
-  required List<PresenceParticipant>? presenceEnCours,
   required int cahiersARemplir,
-}) {
-  final int absentsOuEnRetard = <PresenceParticipant>[...?presenceEnCours]
-      .where(
-        (PresenceParticipant p) =>
-            !p.estEnseignant && _absentOuEnRetard(p.etat),
-      )
-      .length;
-  return <SignalAccueil<MotifEnseignant>>[
-    if (offresRemplacement > 0)
-      SignalAccueil<MotifEnseignant>(
-        nature: NatureSignal.urgent,
-        motif: MotifEnseignant.remplacement,
-        nombre: offresRemplacement,
-      ),
-    if (absentsOuEnRetard > 0)
-      SignalAccueil<MotifEnseignant>(
-        nature: NatureSignal.urgent,
-        motif: MotifEnseignant.presence,
-        nombre: absentsOuEnRetard,
-      ),
-    if (cahiersARemplir > 0)
-      SignalAccueil<MotifEnseignant>(
-        nature: NatureSignal.aPreparer,
-        motif: MotifEnseignant.cahier,
-        nombre: cahiersARemplir,
-      ),
-  ];
-}
-
-bool _absentOuEnRetard(EtatPresence etat) =>
-    etat == EtatPresence.absente || etat == EtatPresence.enRetard;
+}) => <SignalAccueil<MotifEnseignant>>[
+  if (offresRemplacement > 0)
+    SignalAccueil<MotifEnseignant>(
+      nature: NatureSignal.urgent,
+      motif: MotifEnseignant.remplacement,
+      nombre: offresRemplacement,
+    ),
+  if (cahiersARemplir > 0)
+    SignalAccueil<MotifEnseignant>(
+      nature: NatureSignal.aPreparer,
+      motif: MotifEnseignant.cahier,
+      nombre: cahiersARemplir,
+    ),
+];
 
 /// Les signaux de l'accueil de la direction, dans l'ordre de priorite.
 ///

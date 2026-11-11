@@ -6,17 +6,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/accueil/signaux_accueils.dart';
 import 'package:rewayah_academy/core/admin/service_admin.dart';
 import 'package:rewayah_academy/core/alertes/alerte.dart';
-import 'package:rewayah_academy/core/presence/service_presence.dart';
-
-PresenceParticipant _p(EtatPresence etat, {String role = 'student'}) =>
-    PresenceParticipant(
-      profilId: 'p-${etat.name}-$role',
-      role: role,
-      prenom: 'Eleve',
-      identifiantImmuable: 'RA-26-0001',
-      etat: etat,
-      consolide: false,
-    );
 
 Alerte _a(GraviteAlerte g) => Alerte(
   id: 'a-${g.name}',
@@ -44,32 +33,21 @@ void main() {
     test('rien a signaler : aucun signal, aucune lumiere', () {
       final List<SignalAccueil<MotifEnseignant>> s = signauxAujourdhui(
         offresRemplacement: 0,
-        presenceEnCours: null,
         cahiersARemplir: 0,
       );
       expect(s, isEmpty);
       expect(signalDominant(s), isNull);
     });
 
-    test('ordre : remplacements, presence (urgents), puis cahiers', () {
+    test('ordre : remplacements (urgent), puis cahiers (a preparer)', () {
       final List<SignalAccueil<MotifEnseignant>> s = signauxAujourdhui(
         offresRemplacement: 2,
-        presenceEnCours: <PresenceParticipant>[
-          _p(EtatPresence.absente),
-          _p(EtatPresence.enRetard),
-          _p(EtatPresence.presente),
-        ],
         cahiersARemplir: 3,
       );
       expect(s, <SignalAccueil<MotifEnseignant>>[
         const SignalAccueil<MotifEnseignant>(
           nature: NatureSignal.urgent,
           motif: MotifEnseignant.remplacement,
-          nombre: 2,
-        ),
-        const SignalAccueil<MotifEnseignant>(
-          nature: NatureSignal.urgent,
-          motif: MotifEnseignant.presence,
           nombre: 2,
         ),
         const SignalAccueil<MotifEnseignant>(
@@ -81,24 +59,9 @@ void main() {
       expect(signalDominant(s)!.motif, MotifEnseignant.remplacement);
     });
 
-    test('presence : excusee, inconnue, deconnectee et l\'enseignant ne comptent pas', () {
-      final List<SignalAccueil<MotifEnseignant>> s = signauxAujourdhui(
-        offresRemplacement: 0,
-        presenceEnCours: <PresenceParticipant>[
-          _p(EtatPresence.excusee),
-          _p(EtatPresence.inconnu),
-          _p(EtatPresence.deconnectee),
-          _p(EtatPresence.absente, role: 'teacher'),
-        ],
-        cahiersARemplir: 0,
-      );
-      expect(s, isEmpty);
-    });
-
     test('seul le cahier : la lumiere orange est la dominante', () {
       final List<SignalAccueil<MotifEnseignant>> s = signauxAujourdhui(
         offresRemplacement: 0,
-        presenceEnCours: const <PresenceParticipant>[],
         cahiersARemplir: 1,
       );
       expect(signalDominant(s)!.nature, NatureSignal.aPreparer);
