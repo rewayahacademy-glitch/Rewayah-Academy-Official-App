@@ -228,7 +228,11 @@
       html, body { background-color: #16161E; }
     }
     /* SOMBRE-SANS-ECLAIR (11/11/2026) : le choix fait dans l'application
-       (Clair ou Sombre) l'emporte sur le systeme ; voir le script ci-dessous. */
+       (Clair ou Sombre) l'emporte sur le systeme ; voir le script ci-dessous.
+       Ces deux couleurs DOIVENT rester egales au jeton surfaceCanvas de
+       lib/core/theme/app_palette.dart (clair #F1EFF4, sombre #16161E), comme
+       les deux regles ci-dessus : si le jeton change, ces quatre lignes
+       changent avec lui. */
     html[data-theme="clair"], html[data-theme="clair"] body { background-color: #F1EFF4; }
     html[data-theme="sombre"], html[data-theme="sombre"] body { background-color: #16161E; }
 
