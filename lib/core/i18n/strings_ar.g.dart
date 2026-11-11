@@ -7987,6 +7987,8 @@ class _Traductions$foyer$monProfil$ar extends Traductions$foyer$monProfil$fr {
 	@override String get creePhrase => 'لا يتغير حسابك كولي أمر. تحتفظ بأسرتك وبالملفات الطلابية لأبنائك.';
 	@override String get dejaTitre => 'لديك ملف طلابي بالفعل';
 	@override String get dejaPhrase => 'ملفك كطالب موجود بالفعل: لا شيء لإنشائه.';
+	@override String get dejaOuvertPhrase => 'ملفك كطالب موجود بالفعل: دروسك في انتظارك في مساحتك كطالب.';
+	@override String get dejaAttentePhrase => 'ستكون مساحتك كطالب متاحة فور مصادقة الإدارة على طلب التحاقك.';
 	@override String get retour => 'العودة إلى الأسرة';
 }
 
@@ -31850,6 +31852,8 @@ extension on TraductionsAr {
 			'foyer.monProfil.creePhrase' => 'لا يتغير حسابك كولي أمر. تحتفظ بأسرتك وبالملفات الطلابية لأبنائك.',
 			'foyer.monProfil.dejaTitre' => 'لديك ملف طلابي بالفعل',
 			'foyer.monProfil.dejaPhrase' => 'ملفك كطالب موجود بالفعل: لا شيء لإنشائه.',
+			'foyer.monProfil.dejaOuvertPhrase' => 'ملفك كطالب موجود بالفعل: دروسك في انتظارك في مساحتك كطالب.',
+			'foyer.monProfil.dejaAttentePhrase' => 'ستكون مساحتك كطالب متاحة فور مصادقة الإدارة على طلب التحاقك.',
 			'foyer.monProfil.retour' => 'العودة إلى الأسرة',
 			'foyer.ajout.suivant' => 'التالي',
 			'foyer.ajout.creer' => 'إنشاء الملف',
@@ -31965,10 +31969,10 @@ extension on TraductionsAr {
 			'adulte.recharge.source.motifs.paiementRefuse' => 'رفض البنك أو البطاقة الدفع. لم يُقتطع أي مبلغ.',
 			'adulte.recharge.source.motifs.montantIncoherent' => 'المبلغ المستلم لا يطابق الشحن. لم يُضف شيء إلى الرصيد: الإدارة تتحقق مع مزوّد الدفع.',
 			'adulte.recharge.source.motifs.sessionExpiree' => 'انتهت صلاحية صفحة الدفع قبل الدفع. لم يُقتطع أي مبلغ.',
-			'adulte.paiements.beneficiaires' => 'المستفيدون',
-			'adulte.paiements.recharger' => 'شحن',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.paiements.beneficiaires' => 'المستفيدون',
+			'adulte.paiements.recharger' => 'شحن',
 			'adulte.paiements.recapitulatif' => ({required Object valeur}) => 'ملخص الأسرة: ⁨${valeur}⁩. يبقى كل رصيد خاصًا بمستفيده.',
 			'adulte.paiements.bientotEpuise' => 'على وشك النفاد',
 			'adulte.paiements.inactif' => 'غير نشط',
@@ -32479,10 +32483,10 @@ extension on TraductionsAr {
 			'controleur.historique.duree' => ({required Object minutes}) => '⁨${minutes}⁩ د من المتابعة',
 			'controleur.historique.meta' => ({required Object heure, required Object duree}) => '⁨${heure}⁩ · ⁨${duree}⁩',
 			'controleur.historique.dateHeure' => ({required Object date, required Object heure}) => '⁨${date}⁩، ⁨${heure}⁩',
-			'controleur.historique.dateHeureAuteur' => ({required Object date, required Object heure, required Object auteur}) => '⁨${date}⁩، ⁨${heure}⁩ · ⁨${auteur}⁩',
-			'controleur.historique.ligne' => ({required Object date, required Object classe, required Object enseignant, required Object duree, required Object statut}) => '⁨${date}⁩، ⁨${classe}⁩، ⁨${enseignant}⁩، ⁨${duree}⁩، ⁨${statut}⁩',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.historique.dateHeureAuteur' => ({required Object date, required Object heure, required Object auteur}) => '⁨${date}⁩، ⁨${heure}⁩ · ⁨${auteur}⁩',
+			'controleur.historique.ligne' => ({required Object date, required Object classe, required Object enseignant, required Object duree, required Object statut}) => '⁨${date}⁩، ⁨${classe}⁩، ⁨${enseignant}⁩، ⁨${duree}⁩، ⁨${statut}⁩',
 			'controleur.historique.vide' => 'لا مراقبة حتى الآن.',
 			'controleur.historique.videFiltres' => 'لا مراقبة تطابق هذه المعايير.',
 			'controleur.historique.resultats' => ({required Object n}) => 'عمليات المراقبة المعروضة: ⁨${n}⁩',
@@ -32993,10 +32997,10 @@ extension on TraductionsAr {
 			'recrutement.entretien.notifications.quinze' => 'تبدأ مقابلتك بعد 15 دقيقة: انضمّ إليها من «لنتعارف».',
 			'recrutement.entretien.notifications.tenu' => 'جرت مقابلتك. تدرس الإدارة ترشحك وتكتب إليك بالخطوة التالية.',
 			'recrutement.entretien.notifications.aReplanifier' => 'لم تُعقد مقابلتك. اختر موعدًا آخر.',
-			'recrutement.entretien.notifications.reserveDirection' => 'حجز مترشح مقابلة تُجريها.',
-			'recrutement.entretien.notifications.reserveDirectionQuand' => ({required Object quand}) => 'حجز مترشح مقابلة تُجريها، يوم ${quand}.',
 			_ => null,
 		} ?? switch (path) {
+			'recrutement.entretien.notifications.reserveDirection' => 'حجز مترشح مقابلة تُجريها.',
+			'recrutement.entretien.notifications.reserveDirectionQuand' => ({required Object quand}) => 'حجز مترشح مقابلة تُجريها، يوم ${quand}.',
 			'recrutement.entretien.notifications.rappelDirection' => 'تُجري مقابلة تبدأ قريبًا.',
 			'recrutement.entretien.notifications.rappelDirectionQuand' => ({required Object quand}) => 'تُجري مقابلة يوم ${quand}.',
 			'recrutement.partage.titre' => 'ساعد شخصًا على تعلّم كلام الله',
@@ -33507,10 +33511,10 @@ extension on TraductionsAr {
 			'recrutement.talents.c.accompagnement_enfants.libelle' => 'مرافقة الأطفال',
 			'recrutement.talents.c.accompagnement_enfants.description' => 'مساعدة الأطفال الذين يحتاجون إلى عناية خاصة.',
 			'recrutement.talents.c.accompagnement_enfants.exemple' => 'علم نفس الطفل، الاحتياجات الخاصة، الأطفال شديدو الخجل',
-			'recrutement.talents.c.developpement.libelle' => 'تطوير الويب أو تطبيقات الجوال',
-			'recrutement.talents.c.developpement.description' => 'تطوير المواقع والتطبيقات.',
 			_ => null,
 		} ?? switch (path) {
+			'recrutement.talents.c.developpement.libelle' => 'تطوير الويب أو تطبيقات الجوال',
+			'recrutement.talents.c.developpement.description' => 'تطوير المواقع والتطبيقات.',
 			'recrutement.talents.c.developpement.exemple' => 'موقع، تطبيق، أداة داخلية',
 			'recrutement.talents.c.assistance_technique.libelle' => 'الدعم التقني للأسر والمعلمين',
 			'recrutement.talents.c.assistance_technique.description' => 'حلّ المشكلات التقنية عن بُعد لمن يواجهها.',
@@ -34021,10 +34025,10 @@ extension on TraductionsAr {
 			'courriels.admin.file.messageAuto' => 'رسالة تلقائية',
 			'courriels.admin.file.champs.destinataire' => 'إلى',
 			'courriels.admin.file.champs.categorie' => 'الفئة',
-			'courriels.admin.file.champs.origine' => 'المصدر',
-			'courriels.admin.file.champs.creeLe' => 'وُضعت في الطابور يوم',
 			_ => null,
 		} ?? switch (path) {
+			'courriels.admin.file.champs.origine' => 'المصدر',
+			'courriels.admin.file.champs.creeLe' => 'وُضعت في الطابور يوم',
 			'courriels.admin.file.champs.envoyeLe' => 'أُرسلت يوم',
 			'courriels.admin.file.champs.tentatives' => 'المحاولات',
 			'courriels.admin.file.champs.motifEchec' => 'آخر خطأ',
@@ -34535,10 +34539,10 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.comptes.aCorriger' => 'تحتاج إلى تصحيح',
 			'candidatsFlux.importFormulaires.comptes.aCorrigerAide' => 'أسطر غير مقروءة: لا تُستورد.',
 			'candidatsFlux.importFormulaires.comptes.corrigees' => 'مصحَّحة في مكانها',
-			'candidatsFlux.importFormulaires.comptes.personnes' => 'الأشخاص المعنيّون',
-			'candidatsFlux.importFormulaires.comptes.lignesLues' => 'الأسطر المقروءة',
 			_ => null,
 		} ?? switch (path) {
+			'candidatsFlux.importFormulaires.comptes.personnes' => 'الأشخاص المعنيّون',
+			'candidatsFlux.importFormulaires.comptes.lignesLues' => 'الأسطر المقروءة',
 			'candidatsFlux.importFormulaires.comptes.attendus.question' => 'أي حصيلة كنتم تتوقعون؟',
 			'candidatsFlux.importFormulaires.comptes.attendus.fichier2110.titre' => 'ملف 21 أكتوبر',
 			'candidatsFlux.importFormulaires.comptes.attendus.fichier2110.description' => '440 سطرًا، أي 409 أشخاص بعد ضم التكرارات: الحصيلة المسجَّلة في المصنّف ذلك اليوم.',
