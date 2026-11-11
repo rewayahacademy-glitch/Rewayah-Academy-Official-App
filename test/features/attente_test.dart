@@ -24,10 +24,12 @@ import 'package:rewayah_academy/features/dossier/apprenants_demande.dart';
 import 'package:rewayah_academy/features/dossier/attente_page.dart';
 import 'package:rewayah_academy/features/inscription/brouillon_inscription.dart';
 import 'package:rewayah_academy/features/inscription/questionnaire/questionnaire_inscription.dart';
+import 'package:rewayah_academy/features/juridique/textes_juridiques.dart';
 import 'package:rewayah_academy/features/parcours_offres/libelles_parcours.dart';
 import 'package:rewayah_academy/features/partage_offre/tuile_partage.dart';
 import 'package:rewayah_academy/features/talents/tuile_talents.dart';
 
+import '../support/garde_interface.dart';
 import '../support/harnais.dart';
 
 Future<void> _monter(WidgetTester tester, FauxServiceDossier dossier) async {
@@ -255,6 +257,50 @@ void main() {
 
       expect(find.text(t.attente.suspendu), findsOneWidget);
       expect(find.text(t.attente.titre), findsNothing);
+    });
+
+    testWidgets('suspendu : « Contacter l academie » mene aux mentions '
+        'legales, qui donnent le courriel de contact', (
+      WidgetTester tester,
+    ) async {
+      // COMPTE-SUSPENDU (11/11/2026) : c'etait un texte sans moyen de
+      // contact. Les mentions legales sont la seule page atteignable sans
+      // role (`/juridique`) qui donne le courriel. Aucune raison inventee,
+      // pas de « Mes donnees » (l'export refuse un compte desactive).
+      final FauxServiceDossier dossier = FauxServiceDossier()
+        ..etatRendu = _etat(statut: AccountStatus.disabled);
+      await tester.pumpWidget(
+        hoteRoutant(
+          depart: Routes.attente,
+          surcharges: <Override>[
+            serviceDossierProvider.overrideWithValue(dossier),
+          ],
+          routes: <RouteBase>[
+            GoRoute(
+              path: Routes.attente,
+              builder: (BuildContext _, GoRouterState _) => const AttentePage(),
+            ),
+            GoRoute(
+              path: TexteJuridique.mentions.chemin,
+              builder: (BuildContext _, GoRouterState _) =>
+                  const Text('mentions-legales'),
+            ),
+          ],
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text(t.attente.suspendu), findsOneWidget);
+      expect(find.text(t.attente.seDeconnecter), findsOneWidget);
+      expect(find.text(t.compte.donnees.titre), findsNothing);
+      verifierUnSeulBoutonPlein(tester);
+      final Finder lien = find.byKey(
+        const ValueKey<String>('suspendu-contacter'),
+      );
+      expect(lien, findsOneWidget);
+      await tester.ensureVisible(lien);
+      await tester.tap(lien);
+      await tester.pumpAndSettle();
+      expect(find.text('mentions-legales'), findsOneWidget);
     });
 
     testWidgets('un etat illisible se dit, et laisse reessayer', (
@@ -620,10 +666,7 @@ void main() {
         expect(source.rafraichissements, 1);
         await tester.pumpAndSettle();
         expect(source.rafraichissements, 1);
-        expect(
-          find.text(t.recrutement.sallesCandidat.equipe),
-          findsOneWidget,
-        );
+        expect(find.text(t.recrutement.sallesCandidat.equipe), findsOneWidget);
       },
     );
 
