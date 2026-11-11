@@ -70,6 +70,9 @@ Future<void> _monterDemoSombre(WidgetTester tester) async {
   await tester.tap(entree);
   await stabiliser(tester);
   expect(find.byType(AccueilFamillePage), findsOneWidget);
+  // L'Accueil rend UNE fois, quand ses lectures sont toutes arrivees (porte de
+  // chargement, 11/11/2026) : on attend ce rendu avant de toucher une carte.
+  await stabiliser(tester);
 }
 
 /// Le constat d'une frame : pixels transparents et luminance moyenne de la
@@ -136,9 +139,7 @@ void main() {
       await tester.tap(find.text(onglet).first);
       for (int frame = 0; frame < 20; frame++) {
         await tester.pump(const Duration(milliseconds: 16));
-        final ({int transparents, double luminance}) m = await _mesurer(
-          tester,
-        );
+        final ({int transparents, double luminance}) m = await _mesurer(tester);
         if (m.transparents > 0 || m.luminance > 128) {
           constats.add(
             '$onglet, frame $frame : ${m.transparents} pixels transparents, '
@@ -177,9 +178,7 @@ void main() {
             'nouvelle ${b.toStringAsFixed(2)}',
           );
         }
-        final ({int transparents, double luminance}) m = await _mesurer(
-          tester,
-        );
+        final ({int transparents, double luminance}) m = await _mesurer(tester);
         if (m.transparents > 0) {
           constats.add('$sens, frame $frame : ${m.transparents} transparents');
         }
