@@ -1568,7 +1568,7 @@ void main() {
       );
       expect(find.text(t.enseignant.journee.alertesUtiles), findsOneWidget);
       expect(
-        find.text(t.enseignant.journee.absenceDetectee(eleve: 'Maryam')),
+        find.text(t.enseignant.journee.pasEncoreRejoint(eleve: 'Maryam')),
         findsOneWidget,
       );
     });

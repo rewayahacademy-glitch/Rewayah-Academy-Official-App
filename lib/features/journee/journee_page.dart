@@ -433,7 +433,7 @@ class _Corps extends ConsumerWidget {
 List<String> alertesPresence(List<PresenceParticipant> lignes) => <String>[
   for (final PresenceParticipant ligne in lignes)
     if (!ligne.estEnseignant && ligne.etat == EtatPresence.absente)
-      t.enseignant.journee.absenceDetectee(eleve: _nommer(ligne))
+      t.enseignant.journee.pasEncoreRejoint(eleve: _nommer(ligne))
     else if (!ligne.estEnseignant && ligne.etat == EtatPresence.deconnectee)
       t.enseignant.journee.coupureDetectee(eleve: _nommer(ligne)),
 ];
