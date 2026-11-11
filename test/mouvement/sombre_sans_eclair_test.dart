@@ -80,12 +80,24 @@ void main() {
   setUp(() => ecrireMemoireAppareil(clefCompteConnu, '1'));
   tearDown(() => effacerMemoireAppareil(clefCompteConnu));
 
-  test('le theme enregistre est connu avant toute lecture asynchrone', () {
+  test('le controleur demarre directement sur la preference enregistree, '
+      'jamais sur Systeme puis elle', () async {
     final ProviderContainer conteneur = ProviderContainer(
       overrides: _sombreEnregistre(),
     );
     addTearDown(conteneur.dispose);
-    expect(conteneur.read(modeThemeProvider), ThemeMode.dark);
+    final List<ThemeMode> vus = <ThemeMode>[];
+    conteneur.listen<ThemeMode>(
+      modeThemeProvider,
+      (ThemeMode? _, ThemeMode apres) => vus.add(apres),
+      fireImmediately: true,
+    );
+    // La restauration asynchrone (persistanceApparenceProvider) passe aussi.
+    conteneur.read(persistanceApparenceProvider);
+    for (int i = 0; i < 5; i++) {
+      await Future<void>.delayed(Duration.zero);
+    }
+    expect(vus, <ThemeMode>[ThemeMode.dark]);
   });
 
   test('sans lecture immediate (base locale), le theme part de Systeme', () {

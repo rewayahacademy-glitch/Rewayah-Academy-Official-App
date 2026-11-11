@@ -227,6 +227,10 @@
     @media (prefers-color-scheme: dark) {
       html, body { background-color: #16161E; }
     }
+    /* SOMBRE-SANS-ECLAIR (11/11/2026) : le choix fait dans l'application
+       (Clair ou Sombre) l'emporte sur le systeme ; voir le script ci-dessous. */
+    html[data-theme="clair"], html[data-theme="clair"] body { background-color: #F1EFF4; }
+    html[data-theme="sombre"], html[data-theme="sombre"] body { background-color: #16161E; }
 
     /*
       L'ouverture (lot ouverture rapide, 29/10/2026) : peinte des le premier
@@ -286,6 +290,17 @@
       #ouverture { transition: none; }
     }
   </style>
+  <script>
+    // SOMBRE-SANS-ECLAIR (11/11/2026) : la meme cle que l'application
+    // (lib/core/preferences/preferences_locales.dart, prefixe
+    // `rewayah.preferences.` et cle `apparence.theme`), lue avant Flutter.
+    try {
+      var choix = localStorage.getItem('rewayah.preferences.apparence.theme');
+      if (choix === 'clair' || choix === 'sombre') {
+        document.documentElement.setAttribute('data-theme', choix);
+      }
+    } catch (e) {}
+  </script>
 </head>
 <body>
   <div id="ouverture" role="status" aria-live="polite" aria-label="Ouverture de Rewayah">
