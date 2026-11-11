@@ -41,6 +41,7 @@ import 'package:rewayah_academy/core/tc_realtime/codec_message_pedagogique.dart'
 import 'package:rewayah_academy/core/tc_realtime/types_message.dart';
 import 'package:rewayah_academy/core/theme/app_gabarit.dart';
 import 'package:rewayah_academy/core/theme/app_mouvement.dart';
+import 'package:rewayah_academy/core/video/garde_fermeture.dart';
 import 'package:rewayah_academy/core/video/gestes_salle.dart';
 import 'package:rewayah_academy/core/video/livekit_session_provider.dart';
 import 'package:rewayah_academy/core/video/pre_vol.dart';
@@ -79,6 +80,7 @@ import 'package:rewayah_academy/features/tc_observation_ui/indicateur_observatio
 
 import '../capture/outil_capture.dart';
 import '../support/aucun_mot_coupe.dart';
+import '../support/garde_interface.dart' show verifierUnSeulBoutonPlein;
 import '../support/harnais.dart';
 import '../support/hors_ligne_une_fois.dart';
 import '../support/mushaf_15l.dart'
@@ -361,6 +363,11 @@ Future<void> _deplierProfilSiCapsule(WidgetTester tester) async {
   await tester.pump(const Duration(milliseconds: 400));
 }
 
+/// SORTIE-SALLE (11/11/2026) : « Quitter la seance » de la question de sortie,
+/// quand l'appel tenu propose aussi de reduire la salle.
+final Finder _sortieQuitter = find.byKey(
+  const ValueKey<String>('sortie-quitter'),
+);
 void main() {
   group('L entree en salle, dans ses trois temps', () {
     testWidgets('le pre-vol precede la demande de jeton', (
@@ -689,7 +696,7 @@ void main() {
 
       await tester.tap(_commande(t.salle.seance.sortir));
       await tester.pumpAndSettle();
-      await tester.tap(find.text(t.salle.quitter).last);
+      await tester.tap(_sortieQuitter);
       await tester.pumpAndSettle();
       preVol.cameraDisponible = true;
       await tester.tap(find.byKey(ResultatSeance.revenirKey));
@@ -1981,10 +1988,81 @@ void main() {
       // La sortie volontaire, elle, annonce puis deconnecte.
       await tester.tap(_commande(t.salle.seance.sortir));
       await tester.pumpAndSettle();
-      await tester.tap(find.text(t.salle.quitter).last);
+      await tester.tap(_sortieQuitter);
       await tester.pumpAndSettle();
       expect(video.sorties, <String>[_seance]);
       expect(moteur.departs, greaterThan(departs));
+    });
+
+    // SORTIE-SALLE (directeur, 11/11/2026).
+    testWidgets('SORTIE-SALLE : le retour du telephone, salle seule dans la '
+        'pile, reduit la salle au lieu de fermer l application ; l appel '
+        'continue', (WidgetTester tester) async {
+      addTearDown(GardeFermeture.remettre);
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      final FauxServiceVideo video = FauxServiceVideo(
+        acces0: _acces('student'),
+      );
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: video,
+          moteur: moteur,
+          preVol: FauxServicePreVol(),
+        ),
+      );
+      moteur.poser(EtatSalle.connecte);
+      await tester.pumpAndSettle();
+      final int departs = moteur.departs;
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+      expect(find.byType(SallePage), findsNothing);
+      expect(find.text(t.salle.confirmerSortie), findsNothing);
+      expect(moteur.departs, departs, reason: 'l appel continue');
+      expect(video.sorties, isEmpty);
+    });
+
+    testWidgets('SORTIE-SALLE : la question de Quitter propose de reduire la '
+        'salle ; « Reduire la salle » garde l appel, la garde de fermeture '
+        'reste armee jusqu a la vraie sortie', (WidgetTester tester) async {
+      addTearDown(GardeFermeture.remettre);
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      final FauxServiceVideo video = FauxServiceVideo(
+        acces0: _acces('student'),
+      );
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: video,
+          moteur: moteur,
+          preVol: FauxServicePreVol(),
+        ),
+      );
+      moteur.poser(EtatSalle.connecte);
+      await tester.pumpAndSettle();
+      expect(GardeFermeture.armee, isTrue, reason: 'appel tenu : onglet garde');
+      final int departs = moteur.departs;
+
+      await tester.tap(_commande(t.salle.seance.sortir));
+      await tester.pumpAndSettle();
+      expect(find.text(t.salle.sortie.eleveReduire), findsOneWidget);
+      verifierUnSeulBoutonPlein(tester);
+      await tester.tap(find.byKey(const ValueKey<String>('sortie-reduire')));
+      await tester.pumpAndSettle();
+      expect(find.byType(SallePage), findsNothing);
+      expect(moteur.departs, departs, reason: 'reduire ne coupe pas');
+      expect(video.sorties, isEmpty);
+      expect(GardeFermeture.armee, isTrue);
+
+      // Retour dans la salle, puis la vraie sortie : la garde tombe.
+      await tester.binding.handlePushRoute(Routes.salle);
+      await tester.pumpAndSettle();
+      await tester.tap(_commande(t.salle.seance.sortir));
+      await tester.pumpAndSettle();
+      await tester.tap(_sortieQuitter);
+      await tester.pumpAndSettle();
+      expect(video.sorties, <String>[_seance]);
+      expect(GardeFermeture.armee, isFalse);
     });
   });
 
@@ -2016,9 +2094,9 @@ void main() {
       // actions asymetriques (S0 : la question du dock de la salle de seance,
       // posee une seule fois).
       expect(find.text(t.salle.seance.quitterQuestion), findsWidgets);
-      expect(find.text(t.salle.seance.quitterConsequence), findsOneWidget);
+      expect(find.text(t.salle.sortie.eleveReduire), findsOneWidget);
 
-      await tester.tap(find.text(t.salle.quitter).last);
+      await tester.tap(_sortieQuitter);
       await tester.pumpAndSettle();
 
       expect(video.sorties, <String>[_seance]);
@@ -2055,7 +2133,7 @@ void main() {
       );
       await tester.tap(_commande(t.salle.seance.sortir));
       await tester.pumpAndSettle();
-      await tester.tap(find.text(t.salle.quitter).last);
+      await tester.tap(_sortieQuitter);
       await tester.pumpAndSettle();
       expect(find.text(t.salle.fin.quitteTitre), findsOneWidget);
       final int demandes = video.demandes.length;
@@ -2085,7 +2163,7 @@ void main() {
 
       await tester.tap(_commande(t.salle.seance.sortir));
       await tester.pumpAndSettle();
-      await tester.tap(find.text(t.commun.annuler));
+      await tester.tap(find.text(t.salle.seance.rester));
       await tester.pumpAndSettle();
 
       expect(video.sorties, isEmpty);

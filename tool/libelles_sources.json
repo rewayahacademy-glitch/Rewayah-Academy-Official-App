@@ -1,4 +1,11 @@
 {
+  "salle.sortie.reduire": "directeur, 11/11/2026, salle (lot SORTIE-SALLE : sortir de l'ecran de la salle sans couper la seance)",
+  "salle.sortie.reduireNom": "directeur, 11/11/2026, salle (lot SORTIE-SALLE : sortir de l'ecran de la salle sans couper la seance)",
+  "salle.sortie.reduireSemantique": "directeur, 11/11/2026, salle (lot SORTIE-SALLE : sortir de l'ecran de la salle sans couper la seance)",
+  "salle.sortie.question": "directeur, 11/11/2026, salle (lot SORTIE-SALLE : sortir de l'ecran de la salle sans couper la seance)",
+  "salle.sortie.conduiteReduire": "directeur, 11/11/2026, salle (lot SORTIE-SALLE : sortir de l'ecran de la salle sans couper la seance)",
+  "salle.sortie.conduite": "directeur, 11/11/2026, salle (lot SORTIE-SALLE : sortir de l'ecran de la salle sans couper la seance)",
+  "salle.sortie.eleveReduire": "directeur, 11/11/2026, salle (lot SORTIE-SALLE : sortir de l'ecran de la salle sans couper la seance)",
   "recrutement.nomLatin.titre": "decision du directeur du 23/10/2026 (DECISION-CANDIDATURES-2026-10-21.md, section « Les noms dans une seule ecriture sur les listes ») : titre de la confirmation du nom latin dans la Salle d'examen (reponses importees ou question ignoree a l'inscription)",
   "recrutement.nomLatin.explication": "decision du directeur du 23/10/2026 (DECISION-CANDIDATURES-2026-10-21.md, section « Les noms dans une seule ecriture sur les listes ») : explication de la confirmation dans la Salle d'examen, avec la meme raison que l'inscription",
   "recrutement.nomLatin.libelle": "decision du directeur du 23/10/2026 (DECISION-CANDIDATURES-2026-10-21.md, section « Les noms dans une seule ecriture sur les listes ») : libelle du champ de confirmation du nom latin dans la Salle d'examen",

@@ -57,6 +57,7 @@ import '../../core/theme/app_mouvement.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/video/garde_fermeture.dart';
 import '../../core/video/gestes_salle.dart';
 import '../../core/video/livekit_session_provider.dart';
 import '../../core/video/politique_camera.dart';
@@ -471,6 +472,14 @@ class _SallePageEtat extends ConsumerState<SallePage> {
         widget.preparation &&
         (role == null || _suitLesCours(session0) || role == AppRole.teacher);
     RelaisRappelSalle.inscrire(_envoyerRappel);
+    // SORTIE-SALLE (11/11/2026) : tant que le controleur tient un appel,
+    // fermer ou recharger l'onglet demande la confirmation du navigateur.
+    if (_confiable) {
+      GardeFermeture.suivre(
+        _session.suivre().map((SessionEnCours? cours) => cours != null),
+        initial: _session.etatCourant.cours != null,
+      );
+    }
     if (_tenu) {
       // Retour par la barre « Seance toujours en direct » : le meme appel,
       // sans pre-vol, sans jeton, sans reconnexion.
@@ -1350,8 +1359,11 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     final int? page = presentee?.page;
     final ActionsSeance actions = ActionsSeance(
       // Directeur, 31/10/2026 : la fleche quitte l'ecran, pas l'appel ; la
-      // barre « Seance toujours en direct » y ramene.
-      onRetour: _quitterLEcran,
+      // barre « Seance toujours en direct » y ramene. SORTIE-SALLE
+      // (11/11/2026) : c'est « Reduire la salle », donne seulement quand
+      // l'appel est confie au controleur ; sinon quitter l'ecran couperait
+      // l'appel, et le geste n'est pas propose.
+      onRetour: _tenu ? _quitterLEcran : null,
       // Le dock de la salle de seance confirme deja la sortie
       // (`confirmerQuitterSeance`) : une seule question.
       onQuitter: () => unawaited(_quitter(vue, confirme: true)),
@@ -1819,7 +1831,20 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   Widget build(BuildContext context) =>
       // Selection du texte (directeur, 07/11/2026) : la salle en entier est
       // hors de la selection, l'appui long y a un role.
-      TexteProtege(child: _construireSalle(context));
+      TexteProtege(
+        // SORTIE-SALLE (11/11/2026) : le retour du telephone quand la salle
+        // est la seule page de la pile (entree par `go`) fermerait
+        // l'application et couperait l'appel ; il reduit la salle a la place.
+        // Le retour du navigateur, lui, change d'adresse sans passer ici : la
+        // page se demonte et l'appel confie continue.
+        child: PopScope<Object?>(
+          canPop: !_tenu || (GoRouter.maybeOf(context)?.canPop() ?? true),
+          onPopInvokedWithResult: (bool fait, Object? _) {
+            if (!fait && _tenu) _quitterLEcran();
+          },
+          child: _construireSalle(context),
+        ),
+      );
 
   Widget _construireSalle(BuildContext context) {
     // La session est **observee**, pas lue au dernier moment : `_rentrer` a
