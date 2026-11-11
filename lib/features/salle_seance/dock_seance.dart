@@ -226,8 +226,25 @@ class BoutonAppel extends StatelessWidget {
     this.nom,
     this.retenu,
     this.pastille,
+    this.ouvert,
+    this.iconePleine = false,
+    this.raccourci,
     super.key,
   });
+
+  /// BARRE-ORDINATEUR (directeur, 11/11/2026), tuile nommee seulement : un
+  /// panneau ouvert ou le tableau montre ([TonTuileSalle.ouvert], un trait
+  /// sous l'icone) ; `null` : ni l'un ni l'autre. L'aplat lilas ([retenu])
+  /// reste a l'outil tenu.
+  final bool? ouvert;
+
+  /// L'icone pleine ([AppIcon.actif]) : deuxieme signal d'un etat tenu ou
+  /// ouvert, apres l'aplat ou le trait (jamais la couleur seule).
+  final bool iconePleine;
+
+  /// La touche du clavier qui fait la meme chose (« M »), montree dans
+  /// l'infobulle et lue apres l'etat ; `null` : aucune.
+  final String? raccourci;
 
   /// Un nombre en pastille au coin de la tuile nommee (Eleves presents).
   final int? pastille;
@@ -290,15 +307,21 @@ class BoutonAppel extends StatelessWidget {
     // Ordinateur (plan du 26/10/2026) : la tuile nommee de la barre sombre.
     final String? leNom = nom;
     if (leNom != null) {
+      final String? touche = raccourci;
       return TuileCommandeSalle(
-        icone: icone.repos,
+        icone: iconePleine ? icone.actif : icone.repos,
         nom: leNom,
-        libelle: lu,
-        infobulle: libelle,
+        libelle: touche == null
+            ? lu
+            : t.salle.barre.infobulle(etat: lu, touche: touche),
+        infobulle: touche == null
+            ? libelle
+            : t.salle.barre.infobulle(etat: libelle, touche: touche),
         ton: switch (ton) {
           TonAppel.quitter => TonTuileSalle.quitter,
           TonAppel.coupe => TonTuileSalle.coupe,
           _ when retenu ?? false => TonTuileSalle.retenu,
+          _ when ouvert ?? false => TonTuileSalle.ouvert,
           _ => TonTuileSalle.repos,
         },
         selectionne: selectionne,
@@ -343,8 +366,13 @@ class DockSeance extends StatelessWidget {
     this.avant = const <Widget>[],
     this.avantQuitter = const <Widget>[],
     this.rond = false,
+    this.raccourcis = false,
     super.key,
   });
+
+  /// BARRE-ORDINATEUR (11/11/2026) : les raccourcis clavier sont actifs ;
+  /// chaque tuile nommee montre sa touche dans l'infobulle (M, V, T).
+  final bool raccourcis;
 
   /// Plan de composition du 26/10/2026 (Q1) : sur ordinateur, chaque bouton
   /// porte son nom dessous ([BoutonAppel.nom]).
@@ -395,6 +423,7 @@ class DockSeance extends StatelessWidget {
           onMicro: micro,
           nom: _nommee ? t.salle.micro : null,
           nomCoupe: rond ? t.salle.microCoupe : null,
+          raccourci: nommee && raccourcis && !vue.microBloque ? 'M' : null,
         );
       case CommandeDock.camera:
         final VoidCallback? camera = actions.onCamera;
@@ -413,6 +442,9 @@ class DockSeance extends StatelessWidget {
           nom: _nommee
               ? (rond && !cameraAllumee ? t.salle.cameraCoupee : t.salle.camera)
               : null,
+          // V coupe la camera, ne l'allume jamais : la touche ne se montre
+          // que camera allumee.
+          raccourci: nommee && raccourcis && cameraAllumee ? 'V' : null,
           onPress: camera,
         );
       case CommandeDock.agrandir:
@@ -448,11 +480,22 @@ class DockSeance extends StatelessWidget {
         final bool ouvert = vue.tableauOuvert;
         // Une bascule comme micro et camera (ETATS-BTN-1) : disque plein
         // quand le tableau est ouvert, mot d'etat dessous.
+        //
+        // BARRE-ORDINATEUR (directeur, 11/11/2026), sur ordinateur : le
+        // tableau n'est plus une bascule « coupee » en violet (le violet,
+        // tableau ferme, se lisait « Tableau allume » sur le Coran) ; c'est
+        // un support montre a la classe : ferme au repos, ouvert avec le
+        // trait, l'icone pleine et l'etat lu. Son icone est celle du
+        // tableau, plus celle d'Ecrire.
         return BoutonAppel(
           key: const ValueKey<String>('bouton-tableau'),
-          icone: AppIcons.annoter,
+          icone: nommee ? AppIcons.tabletteOuOrdinateur : AppIcons.annoter,
           ouvertPrimaire: true,
-          bascule: ouvert,
+          bascule: nommee ? null : ouvert,
+          ouvert: nommee ? ouvert : null,
+          selectionne: nommee ? ouvert : null,
+          iconePleine: nommee && ouvert,
+          raccourci: nommee && raccourcis ? 'T' : null,
           libelle: ouvert
               ? t.salle.seance.tableauOuvert
               : t.salle.seance.tableauFerme,
@@ -762,7 +805,11 @@ class _BoutonMicro extends StatefulWidget {
     required this.onMicro,
     this.nom,
     this.nomCoupe,
+    this.raccourci,
   });
+
+  /// La touche montree dans l'infobulle ([BoutonAppel.raccourci]).
+  final String? raccourci;
 
   final VueSeance vue;
   final ActionsSeance actions;
@@ -822,6 +869,7 @@ class _BoutonMicroState extends State<_BoutonMicro> {
       actif: vue.commandesPublicationActives,
       fond: colore ? FondBoutonAppel.succes : FondBoutonAppel.surface,
       nom: ouvert ? widget.nom : widget.nomCoupe ?? widget.nom,
+      raccourci: widget.raccourci,
       onPress: vue.microBloque ? _ouvrirFeuille : widget.onMicro,
     );
   }

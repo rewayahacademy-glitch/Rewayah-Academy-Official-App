@@ -988,6 +988,17 @@
         "priereDetail": "مادة ثانوية. الرسوم بانتظار الاعتماد."
       }
     },
+    "barre": {
+      "infobulle": "{etat} (المفتاح {touche})",
+      "outilTenu": "{outil} قيد الاستعمال (Échap لإعادته)",
+      "groupes": {
+        "voix": "صوتي وصورتي",
+        "classe": "فصلي",
+        "page": "على الصفحة",
+        "support": "المادة المعروضة",
+        "sortir": "الخروج"
+      }
+    },
     "sortie": {
       "reduire": "تصغير القاعة",
       "reduireNom": "تصغير",

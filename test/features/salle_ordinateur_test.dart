@@ -270,10 +270,10 @@ void main() {
               verifierAucunMotCoupe(tester, find.byKey(SalleOrdinateur.cleBas));
               // Decision du directeur du 26/10/2026 : une tuile se place du
               // cote du panneau qu'elle ouvre, en arabe comme en francais.
+              // BARRE-ORDINATEUR (11/11/2026) : plus de filet unique au
+              // milieu ; le milieu de la barre fait la frontiere.
               final double filet = tester
-                  .getCenter(
-                    find.byKey(const ValueKey<String>('salle-barre-filet')),
-                  )
+                  .getCenter(find.byKey(SalleOrdinateur.cleBas))
                   .dx;
               bool memeCote(String cle, Rect panneau) {
                 final double x = tester
@@ -376,81 +376,345 @@ void main() {
     verifierUnSeulBoutonPlein(tester);
   });
 
-  // Revue de la PR 61 : Plus, puis Bibliotheque. Les Commandes se ferment et
-  // la Bibliotheque prend la droite ; la fermer laisse la droite vide.
-  testWidgets('Commandes ouvertes, Bibliotheque demandee : les Commandes se '
-      'ferment, la Bibliotheque s ouvre', (WidgetTester tester) async {
-    await _monter(tester);
-    const Key commandes = ValueKey<String>('salle-ordinateur-commandes');
-    await tester.tap(find.byKey(BoutonPlusAppel.cle));
-    await tester.pumpAndSettle();
-    expect(find.byKey(commandes), findsOneWidget);
-    expect(find.byType(PanneauBibliothequeSalle), findsNothing);
-
-    await tester.tap(find.byKey(const ValueKey<String>('salle-bibliotheque')));
-    await tester.pumpAndSettle();
-    expect(find.byType(PanneauBibliothequeSalle), findsOneWidget);
-    expect(find.byKey(commandes), findsNothing);
-
-    await tester.tap(find.byKey(const ValueKey<String>('bibliotheque-fermer')));
-    await tester.pumpAndSettle();
-    expect(find.byKey(SalleOrdinateur.cleDroite), findsNothing);
-    expect(tester.takeException(), isNull);
-  });
-
-  testWidgets('barre du bas : une barre sombre, deux groupes de tuiles '
-      'nommees, un filet entre eux, cibles de 48', (WidgetTester tester) async {
-    await _monter(tester);
-    final Rect barre = tester.getRect(find.byKey(SalleOrdinateur.cleBas));
-    expect(barre.width, greaterThan(1440 - 2 * 16 - 1));
-    expect(
-      find.byKey(const ValueKey<String>('salle-barre-filet')),
-      findsOneWidget,
-    );
+  // BARRE-ORDINATEUR (directeur, 11/11/2026) : la barre du bas de
+  // l'enseignant sur ordinateur, simplifiee et regroupee. Remplace les tests
+  // de la barre du 26/10 (deux groupes et « Plus »).
+  group('BARRE-ORDINATEUR', () {
     final Finder tuiles = find.byType(TuileCommandeSalle);
-    // Dix tuiles depuis SORTIE-SALLE (11/11/2026) : « Réduire », avant
-    // « Quitter », quand l'appel continue hors de l'ecran.
-    expect(tuiles, findsNWidgets(10));
-    for (final Element e in tuiles.evaluate()) {
-      final Size taille = tester.getSize(find.byWidget(e.widget));
-      expect(taille.height, greaterThanOrEqualTo(48));
-      expect(taille.width, greaterThanOrEqualTo(48));
-    }
-    final List<TonTuileSalle> tons = <TonTuileSalle>[
-      for (final TuileCommandeSalle t in tester.widgetList(tuiles)) t.ton,
-    ];
-    expect(
-      tons.where((TonTuileSalle t) => t == TonTuileSalle.quitter),
-      hasLength(1),
-    );
-    // Decision du directeur du 26/10/2026 : une tuile se place du cote du
-    // panneau qu'elle ouvre. Quitter reste le dernier.
-    List<String> noms(String groupe) => <String>[
+    TuileCommandeSalle tuile(WidgetTester tester, String nom) =>
+        tester.widget<TuileCommandeSalle>(
+          find.byWidgetPredicate(
+            (Widget w) => w is TuileCommandeSalle && w.nom == nom,
+          ),
+        );
+    List<String> noms(WidgetTester tester, Key groupe) => <String>[
       for (final TuileCommandeSalle t in tester.widgetList(
-        find.descendant(
-          of: find.byKey(ValueKey<String>(groupe)),
-          matching: tuiles,
-        ),
+        find.descendant(of: find.byKey(groupe), matching: tuiles),
       ))
         t.nom,
     ];
-    expect(noms('salle-commandes-gauche'), <String>[
-      t.salle.seance.eleves,
-      t.salle.seance.outils.pointeur,
-      t.salle.seance.outils.ecrire,
-      t.salle.seance.commandes.affichageTableau,
-      t.tc.outils.trait.plus,
-    ]);
-    final List<String> droite = noms('salle-commandes-droite');
-    // SORTIE-SALLE : « Réduire » se pose juste avant « Quitter ».
-    expect(droite, hasLength(5));
-    expect(droite[2], t.salle.seance.commandes.bibliotheque);
-    expect(droite[3], t.salle.sortie.reduireNom);
-    expect(droite.last, t.salle.quitter);
-    expect(
-      tester.widgetList<TuileCommandeSalle>(tuiles).last.ton,
-      TonTuileSalle.quitter,
-    );
+    Map<String, Rect> places(WidgetTester tester) => <String, Rect>{
+      for (final Element e in tuiles.evaluate())
+        (e.widget as TuileCommandeSalle).nom: tester.getRect(
+          find.byWidget(e.widget),
+        ),
+    };
+    List<String> tenues(WidgetTester tester) => <String>[
+      for (final TuileCommandeSalle t in tester.widgetList(tuiles))
+        if (t.ton == TonTuileSalle.retenu) t.nom,
+    ];
+
+    testWidgets('cinq groupes nommes, chaque tuile a sa place, aucun « Plus », '
+        'un seul rouge, cibles de 48', (WidgetTester tester) async {
+      await _monter(tester);
+      expect(find.byKey(BoutonPlusAppel.cle), findsNothing);
+      expect(noms(tester, const ValueKey<String>('salle-barre-voix')), <String>[
+        t.salle.micro,
+        t.salle.camera,
+      ]);
+      expect(
+        noms(tester, const ValueKey<String>('salle-barre-classe')),
+        <String>[t.salle.seance.eleves],
+      );
+      expect(noms(tester, const ValueKey<String>('salle-barre-page')), <String>[
+        t.salle.seance.outils.pointeur,
+        t.salle.seance.outils.ecrire,
+      ]);
+      expect(
+        noms(tester, const ValueKey<String>('salle-barre-support')),
+        <String>[
+          t.salle.seance.commandes.bibliotheque,
+          t.salle.seance.commandes.affichageTableau,
+        ],
+      );
+      expect(
+        noms(tester, const ValueKey<String>('salle-barre-sortir')),
+        <String>[t.salle.sortie.reduireNom, t.salle.quitter],
+      );
+      // Les groupes se lisent par leur nom.
+      for (final String nom in <String>[
+        t.salle.barre.groupes.voix,
+        t.salle.barre.groupes.classe,
+        t.salle.barre.groupes.page,
+        t.salle.barre.groupes.support,
+        t.salle.barre.groupes.sortir,
+      ]) {
+        expect(find.bySemanticsLabel(nom), findsOneWidget);
+      }
+      for (final Element e in tuiles.evaluate()) {
+        final Size taille = tester.getSize(find.byWidget(e.widget));
+        expect(taille.height, greaterThanOrEqualTo(48));
+        expect(taille.width, greaterThanOrEqualTo(48));
+      }
+      expect(
+        tester
+            .widgetList<TuileCommandeSalle>(tuiles)
+            .where((TuileCommandeSalle t) => t.ton == TonTuileSalle.quitter),
+        hasLength(1),
+      );
+      // Au repos, rien n'est tenu et rien n'est violet sans raison : le
+      // tableau ferme est au repos, plus « coupe ».
+      expect(tenues(tester), isEmpty);
+      expect(
+        tuile(tester, t.salle.seance.commandes.affichageTableau).ton,
+        TonTuileSalle.repos,
+      );
+      // Une seule rangee a 1440.
+      final Set<double> hauts = <double>{
+        for (final Rect r in places(tester).values) r.top.roundToDouble(),
+      };
+      expect(hauts, hasLength(1));
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('un seul outil tenu a la fois, dit par trois signaux ; le '
+        'tableau ouvert se lit par le trait ; rien ne bouge', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester);
+      final Map<String, Rect> avant = places(tester);
+      final IconData pointeurAuRepos = tuile(
+        tester,
+        t.salle.seance.outils.pointeur,
+      ).icone;
+      final Rect page = tester.getRect(find.byKey(TelephonePleinEcran.clePage));
+
+      await tester.tap(
+        find.byKey(const ValueKey<String>('salle-outil-pointeur')),
+      );
+      await tester.pumpAndSettle();
+      expect(tenues(tester), <String>[t.salle.seance.outils.pointeur]);
+      final TuileCommandeSalle pointeur = tuile(
+        tester,
+        t.salle.seance.outils.pointeur,
+      );
+      expect(pointeur.selectionne, isTrue);
+      // L'icone pleine : le deuxieme signal, apres l'aplat.
+      expect(pointeur.icone, isNot(pointeurAuRepos));
+      expect(
+        pointeur.infobulle,
+        startsWith(
+          t.salle.barre.outilTenu(outil: t.salle.seance.outils.pointeur),
+        ),
+      );
+
+      await tester.tap(
+        find.byKey(const ValueKey<String>('salle-outil-ecrire')),
+      );
+      await tester.pumpAndSettle();
+      expect(tenues(tester), <String>[t.salle.seance.outils.ecrire]);
+      // La palette se pose contre la page, du cote d'Ecrire ; la page ne
+      // bouge pas d'un point, aucune tuile non plus.
+      final Rect palette = tester.getRect(find.byKey(BarreOutilsSalle.cle));
+      final Rect pageApres = tester.getRect(
+        find.byKey(TelephonePleinEcran.clePage),
+      );
+      expect(pageApres.height, closeTo(page.height, 0.5));
+      expect(pageApres.top, closeTo(page.top, 0.5));
+      expect(palette.right, lessThanOrEqualTo(pageApres.left + 0.5));
+      expect(
+        palette.bottom,
+        lessThanOrEqualTo(
+          tester.getRect(find.byKey(SalleOrdinateur.cleBas)).top,
+        ),
+      );
+      expect(places(tester), avant);
+
+      await tester.tap(find.byKey(const ValueKey<String>('bouton-tableau')));
+      await tester.pumpAndSettle();
+      final TuileCommandeSalle tableau = tuile(
+        tester,
+        t.salle.seance.commandes.affichageTableau,
+      );
+      expect(tableau.ton, TonTuileSalle.ouvert);
+      expect(tableau.selectionne, isTrue);
+      expect(
+        find.descendant(
+          of: find.byKey(const ValueKey<String>('bouton-tableau')),
+          matching: find.byKey(const ValueKey<String>('trait-ouvert')),
+        ),
+        findsOneWidget,
+      );
+      // Le panneau des Eleves se ferme : sa tuile perd son trait, rien ne
+      // glisse dans la barre.
+      await tester.tap(find.byKey(const ValueKey<String>('salle-eleves')));
+      await tester.pumpAndSettle();
+      expect(tuile(tester, t.salle.seance.eleves).ton, TonTuileSalle.repos);
+      expect(places(tester), avant);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('clavier : P, E, T, Echap ; la touche dans l infobulle', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester);
+      expect(
+        tuile(tester, t.salle.seance.outils.pointeur).infobulle,
+        t.salle.barre.infobulle(
+          etat: t.salle.seance.outils.pointeur,
+          touche: 'P',
+        ),
+      );
+      expect(tuile(tester, t.salle.seance.eleves).infobulle, contains('R'));
+      await tester.sendKeyEvent(LogicalKeyboardKey.keyP);
+      await tester.pumpAndSettle();
+      expect(tenues(tester), <String>[t.salle.seance.outils.pointeur]);
+      await tester.sendKeyEvent(LogicalKeyboardKey.keyE);
+      await tester.pumpAndSettle();
+      expect(tenues(tester), <String>[t.salle.seance.outils.ecrire]);
+      expect(find.byKey(BarreOutilsSalle.cle), findsOneWidget);
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.pumpAndSettle();
+      expect(tenues(tester), isEmpty);
+      expect(find.byKey(BarreOutilsSalle.cle), findsNothing);
+      await tester.sendKeyEvent(LogicalKeyboardKey.keyT);
+      await tester.pumpAndSettle();
+      expect(
+        tuile(tester, t.salle.seance.commandes.affichageTableau).ton,
+        TonTuileSalle.ouvert,
+      );
+      expect(tester.takeException(), isNull);
+    });
+
+    for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {
+      group('langue ${langue.languageCode}', () {
+        setUp(() => LocaleSettings.setLocale(langue));
+        for (final Size taille in <Size>[
+          const Size(1280, 800),
+          const Size(1440, 900),
+          const Size(1920, 1080),
+        ]) {
+          for (final double texte in <double>[1, 1.3]) {
+            for (final ThemeMode theme in <ThemeMode>[
+              ThemeMode.light,
+              ThemeMode.dark,
+            ]) {
+              testWidgets('${langue.languageCode} ${taille.width.toInt()}, '
+                  'texte x$texte, ${theme.name} : une rangee, aucun mot coupe, '
+                  'la palette contre la page sans la recouvrir', (
+                WidgetTester tester,
+              ) async {
+                await _monter(
+                  tester,
+                  taille: taille,
+                  texte: texte,
+                  theme: theme,
+                );
+                await tester.tap(
+                  find.byKey(const ValueKey<String>('salle-outil-ecrire')),
+                );
+                await tester.pumpAndSettle();
+                expect(tester.takeException(), isNull);
+                verifierAucunMotCoupe(
+                  tester,
+                  find.byKey(SalleOrdinateur.cleBas),
+                );
+                // Une seule rangee ; texte x1,3 : mesure avec les vraies
+                // polices (plus bas), la police de test est plus large.
+                if (texte == 1) {
+                  final Set<double> hauts = <double>{
+                    for (final Rect r in places(tester).values)
+                      r.top.roundToDouble(),
+                  };
+                  expect(hauts, hasLength(1));
+                }
+                final Rect palette = tester.getRect(
+                  find.byKey(BarreOutilsSalle.cle),
+                );
+                final Rect page = tester.getRect(
+                  find.byKey(TelephonePleinEcran.clePage),
+                );
+                // La palette est du cote du debut de lecture, contre la page.
+                if (langue == AppLocale.ar) {
+                  expect(palette.left, greaterThanOrEqualTo(page.right - 0.5));
+                } else {
+                  expect(palette.right, lessThanOrEqualTo(page.left + 0.5));
+                }
+                verifierSansChevauchement(tester, <Finder>[
+                  find.byKey(SalleOrdinateur.cleHaut),
+                  find.byKey(BarreOutilsSalle.cle),
+                  find.byKey(SalleOrdinateur.cleCentre),
+                  find.byKey(SalleOrdinateur.cleBas),
+                ]);
+                verifierUnSeulBoutonPlein(tester);
+              });
+            }
+          }
+        }
+      });
+    }
+  });
+
+  // Les mots de la palette se mesurent avec les vraies polices (la police
+  // de test peint chaque lettre en carre de 14 : « Moyen » y prend 70).
+  for (final double texte in <double>[1, 1.3]) {
+    testWidgets('BARRE-ORDINATEUR, vraies polices, 1280, texte x$texte : '
+        'aucun mot coupe dans la palette ni dans la barre', (
+      WidgetTester tester,
+    ) async {
+      await tester.runAsync(() async {
+        await chargerPolicesDuDepot();
+        await chargerPoliceMadina15();
+      });
+      await _monter(tester, taille: const Size(1280, 800), texte: texte);
+      await tester.tap(
+        find.byKey(const ValueKey<String>('salle-outil-ecrire')),
+      );
+      await tester.pumpAndSettle();
+      verifierAucunMotCoupe(tester, find.byKey(BarreOutilsSalle.cle));
+      verifierAucunMotCoupe(tester, find.byKey(SalleOrdinateur.cleBas));
+      final Set<double> hauts = <double>{
+        for (final Element e in find.byType(TuileCommandeSalle).evaluate())
+          tester.getRect(find.byWidget(e.widget)).top.roundToDouble(),
+      };
+      expect(hauts, hasLength(1), reason: 'la barre tient sur une rangee');
+      expect(tester.takeException(), isNull);
+    });
+  }
+
+  testWidgets('captures BARRE-ORDINATEUR', (WidgetTester tester) async {
+    final String? dossier = dossierCapture;
+    if (dossier == null) return;
+    for (final ThemeMode theme in <ThemeMode>[
+      ThemeMode.light,
+      ThemeMode.dark,
+    ]) {
+      final String th = theme == ThemeMode.light ? 'clair' : 'sombre';
+      await _monter(tester, theme: theme);
+      await capturerVue(tester, 'barre_1440_repos_$th');
+      await tester.tap(
+        find.byKey(const ValueKey<String>('salle-outil-ecrire')),
+      );
+      await tester.pumpAndSettle();
+      await capturerVue(tester, 'barre_1440_ecrire-tenu_$th');
+      await tester.tap(
+        find.byKey(const ValueKey<String>('salle-outil-ecrire')),
+      );
+      await tester.tap(
+        find.byKey(const ValueKey<String>('salle-outil-pointeur')),
+      );
+      await tester.pumpAndSettle();
+      await capturerVue(tester, 'barre_1440_pointeur-tenu_$th');
+    }
+    await _monter(tester, taille: const Size(1280, 800));
+    await capturerVue(tester, 'barre_1280_repos_clair');
+    await _monter(tester, taille: const Size(1920, 1080), texte: 1.3);
+    await capturerVue(tester, 'barre_1920_texte-1.3_clair');
+  });
+
+  group('captures arabe', () {
+    setUp(() => LocaleSettings.setLocale(AppLocale.ar));
+    testWidgets('captures BARRE-ORDINATEUR en arabe', (
+      WidgetTester tester,
+    ) async {
+      if (dossierCapture == null) return;
+      await _monter(tester);
+      await tester.tap(
+        find.byKey(const ValueKey<String>('salle-outil-ecrire')),
+      );
+      await tester.pumpAndSettle();
+      await capturerVue(tester, 'barre_1440_arabe_ecrire-tenu');
+    });
   });
 
   // Lot SALLE-ORDINATEUR, demandes du directeur du 11/11/2026, sur sa capture

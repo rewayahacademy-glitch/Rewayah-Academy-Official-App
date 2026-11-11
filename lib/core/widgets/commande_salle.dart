@@ -490,6 +490,13 @@ enum TonTuileSalle {
 
   /// Quitter : le seul rouge de la barre.
   quitter,
+
+  /// BARRE-ORDINATEUR (directeur, 11/11/2026) : un panneau ouvert (Eleves,
+  /// Bibliotheque) ou le tableau montre a la classe. Pas d'aplat (l'aplat
+  /// lilas est garde a l'outil tenu, un seul a la fois) : un trait sous
+  /// l'icone, comme l'onglet actif d'une barre d'appel (Teams), l'icone
+  /// pleine choisie par l'appelant et l'etat « selectionne » lu.
+  ouvert,
 }
 
 /// Fiche 1 de la salle au telephone (26/10/2026) : la surface ou se posent
@@ -600,6 +607,7 @@ class TuileCommandeSalle extends StatelessWidget {
       // barree et le nom disent l'etat.
       TonTuileSalle.coupe => rond ? null : claire.surfacePrimary,
       TonTuileSalle.quitter => claire.surfaceAlert,
+      TonTuileSalle.ouvert => null,
     };
     // Disques : seul Quitter est plein ; les autres sont cernes.
     final AppColorPair? disque = rond
@@ -696,33 +704,37 @@ class TuileCommandeSalle extends StatelessWidget {
           decoration: aplat == null || rond
               ? const BoxDecoration()
               : aplat.decoration(borderRadius: AppRadius.arrondiMd),
-          child: Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: rond ? AppSpacing.xs : AppSpacing.md,
-              vertical: rond ? AppSpacing.xs : AppSpacing.sm,
-            ),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                tete,
-                if (!(surface?.sansNom ?? false)) ...<Widget>[
-                  Ecart.vXs,
-                  ExcludeSemantics(
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(
-                        minWidth: _largeurPlusLongMot(context, nom, style),
-                      ),
-                      child: Text(
-                        nom,
-                        key: const ValueKey<String>('nom-commande'),
-                        maxLines: 2,
-                        textAlign: TextAlign.center,
-                        style: style,
+          child: _AvecTraitOuvert(
+            ouvert: ton == TonTuileSalle.ouvert && !rond,
+            encre: encre,
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: rond ? AppSpacing.xs : AppSpacing.md,
+                vertical: rond ? AppSpacing.xs : AppSpacing.sm,
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  tete,
+                  if (!(surface?.sansNom ?? false)) ...<Widget>[
+                    Ecart.vXs,
+                    ExcludeSemantics(
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          minWidth: _largeurPlusLongMot(context, nom, style),
+                        ),
+                        child: Text(
+                          nom,
+                          key: const ValueKey<String>('nom-commande'),
+                          maxLines: 2,
+                          textAlign: TextAlign.center,
+                          style: style,
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                 ],
-              ],
+              ),
             ),
           ),
         ),
@@ -732,5 +744,51 @@ class TuileCommandeSalle extends StatelessWidget {
     return bulle == null
         ? tuile
         : Tooltip(message: bulle, excludeFromSemantics: true, child: tuile);
+  }
+}
+
+/// Le trait de [TonTuileSalle.ouvert] : 24 sur 4, centre dans la marge basse
+/// de la tuile (8). Pose par-dessus, il ne change jamais la hauteur de la
+/// tuile : rien ne bouge dans la barre quand un panneau s'ouvre.
+class _AvecTraitOuvert extends StatelessWidget {
+  const _AvecTraitOuvert({
+    required this.ouvert,
+    required this.encre,
+    required this.child,
+  });
+
+  final bool ouvert;
+  final Color encre;
+  final Widget child;
+
+  /// La cle du trait (tests).
+  static const Key cle = ValueKey<String>('trait-ouvert');
+
+  @override
+  Widget build(BuildContext context) {
+    if (!ouvert) return child;
+    return Stack(
+      children: <Widget>[
+        child,
+        PositionedDirectional(
+          start: 0,
+          end: 0,
+          bottom: 0,
+          child: Center(
+            child: SizedBox(
+              key: cle,
+              width: AppSpacing.xxl,
+              height: AppSpacing.xs,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: encre,
+                  borderRadius: AppRadius.arrondiFull,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }
