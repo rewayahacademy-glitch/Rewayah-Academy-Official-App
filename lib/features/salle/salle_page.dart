@@ -528,7 +528,13 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       cours: SessionEnCours(
         sessionId: widget.seanceId,
         groupeId: widget.groupeId ?? '',
-        libelleGroupe: '',
+        // ILE-SALLE (11/11/2026) : l'ile hors de la salle nomme la Classe,
+        // pour l'eleve comme pour l'enseignant, quand elle est deja lue.
+        libelleGroupe: _nomClasse(
+          ref,
+          RoleSalle.depuis(acces.role),
+          ecoute: false,
+        ),
         eleveId: widget.eleveId,
         interfaceGuidee: widget.interfaceGuidee,
       ),
@@ -1274,11 +1280,16 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   /// Le nom de la Classe de la seance : pour l'enseignant, dans ses Classes
   /// (`mes_groupes_v`) ; pour les familles, la Classe du billet, ou celle de
   /// cette seance ; vide si rien n'est lisible (« Séance en direct »).
-  String _nomClasse(WidgetRef ref, RoleSalle role) {
+  /// [ecoute] faux : lecture seule, hors d'un `build` (l'appel confie a la
+  /// session, pour l'ile hors de la salle).
+  String _nomClasse(WidgetRef ref, RoleSalle role, {bool ecoute = true}) {
     final String? groupe = widget.groupeId;
     if (role == RoleSalle.enseignant) {
       for (final GroupeEnseignant g
-          in ref.watch(groupesEnseignantProvider).value ??
+          in (ecoute
+                      ? ref.watch(groupesEnseignantProvider)
+                      : ref.read(groupesEnseignantProvider))
+                  .value ??
               const <GroupeEnseignant>[]) {
         if (g.id == groupe) return g.libelle;
       }
@@ -1287,15 +1298,27 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       // l'enseignant porte deja le nom de sa Classe (`mes_seances_enseignant_v`),
       // sans nouvelle requete.
       for (final SeanceEnseignant e
-          in ref.watch(seancesEnseignantProvider).value ??
+          in (ecoute
+                      ? ref.watch(seancesEnseignantProvider)
+                      : ref.read(seancesEnseignantProvider))
+                  .value ??
               const <SeanceEnseignant>[]) {
         if (e.id == widget.seanceId) return e.groupeLibelle ?? '';
       }
       return '';
     }
     final GroupSummaryVM? classe = groupe != null
-        ? ref.watch(groupeProvider(groupe)).value
-        : _classeDeLaSeance(ref.watch(mesGroupesProvider).value, null);
+        ? (ecoute
+                  ? ref.watch(groupeProvider(groupe))
+                  : ref.read(groupeProvider(groupe)))
+              .value
+        : _classeDeLaSeance(
+            (ecoute
+                    ? ref.watch(mesGroupesProvider)
+                    : ref.read(mesGroupesProvider))
+                .value,
+            null,
+          );
     return classe?.libelle ?? '';
   }
 
