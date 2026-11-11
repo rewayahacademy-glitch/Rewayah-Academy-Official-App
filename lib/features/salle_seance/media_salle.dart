@@ -38,6 +38,53 @@ double? palierPrecedent(double zoom) {
 double zoomBorne(double zoom) =>
     zoom.clamp(paliersZoom.first, paliersZoom.last).toDouble();
 
+/// SCENE-CLASSE (MODES-AFFICHAGE §2, regle 7) : ce que la scene montre, UN
+/// seul etat pour toute la salle, a la place des drapeaux croises.
+enum ModeScene {
+  /// Les visages, en grille.
+  classe,
+
+  /// Une page (Coran, livret, autre document).
+  document,
+
+  /// Le tableau blanc.
+  tableau,
+}
+
+/// SCENE-CLASSE : la demande « voir la classe » telle que `/salle` la pose
+/// dans [PorteeMediaSalle.scenePremierPlan]. Le tableau ouvert la tient
+/// fermee ; sinon le choix de la personne ([choix], `null` : rien choisi),
+/// et sans choix, la classe quand rien n'est presente ([pagePresentee]).
+/// Comportement inchange (avant : `_scenePremierPlan` de `salle_page.dart`).
+bool voirLaClasse({
+  required bool tableauOuvert,
+  required bool pagePresentee,
+  bool? choix,
+}) => !tableauOuvert && (choix ?? !pagePresentee);
+
+/// SCENE-CLASSE : le mode de la scene, calcule a UN seul endroit.
+///
+/// - [sceneDisponible] : la salle fournit une scene video (`/salle`) ;
+/// - [voirLaClasse] : la classe est demandee au premier plan ([voirLaClasse]) ;
+/// - [tableau] : ce qui est montre est un tableau (libre ou support masque) ;
+/// - [surfaceMontree] : une page ou un tableau est a montrer.
+///
+/// Une scene disponible et demandee, ou rien a montrer : [ModeScene.classe].
+/// Sinon le tableau ou le document. Sans scene ni surface (diapositive de
+/// demonstration, rien de partage), [ModeScene.document] : la zone du
+/// support garde son propre rendu.
+ModeScene calculerModeScene({
+  required bool sceneDisponible,
+  required bool voirLaClasse,
+  required bool surfaceMontree,
+  required bool tableau,
+}) {
+  if (sceneDisponible && (voirLaClasse || !surfaceMontree)) {
+    return ModeScene.classe;
+  }
+  return tableau ? ModeScene.tableau : ModeScene.document;
+}
+
 /// La portee des medias reels de `/salle`.
 class PorteeMediaSalle extends InheritedWidget {
   const PorteeMediaSalle({

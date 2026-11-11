@@ -49,6 +49,7 @@ import '../../../core/widgets/bouton_couleur.dart';
 import '../../../core/widgets/bouton_icone.dart';
 import '../../../core/widgets/bouton_outil.dart';
 import '../../../core/widgets/brand_logo.dart';
+import '../../../core/widgets/cadre_visage.dart';
 import '../../../core/widgets/carte_groupee.dart';
 import '../../../core/widgets/carte_lignes.dart';
 import '../../../core/widgets/carte_piece_jointe.dart';
@@ -75,6 +76,7 @@ import '../../../core/widgets/fil_ariane.dart';
 import '../../../core/widgets/fil_discussion.dart';
 import '../../../core/widgets/filter_pill.dart';
 import '../../../core/widgets/grille_bento.dart';
+import '../../../core/widgets/grille_visages.dart';
 import '../../../core/widgets/groupe_reglages.dart';
 import '../../../core/widgets/halo_compte.dart';
 import '../../../core/widgets/halo_lumiere.dart';
@@ -3199,6 +3201,86 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
         'petite (telephone)',
         (BuildContext _) => const SceneAttente(cote: SceneAttente.coteMinimal),
       ),
+    ],
+  ),
+  // SCENE-CLASSE (directeur, 11/11/2026) : LE cadre d'une personne dans la
+  // salle, et la grille des visages du mode Classe.
+  EntreeGalerie(
+    nom: 'CadreVisage',
+    famille: FamilleComposant.structure,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'camera allumee, micro ferme',
+        (BuildContext contexte) => SizedBox(
+          width: AppSpacing.respiration * 5,
+          height: AppSpacing.respiration * 3.75,
+          child: CadreVisage(
+            nom: 'Khadija',
+            prenom: 'Khadija',
+            microCoupe: true,
+            image: ColoredBox(
+              color: AppPalette.of(contexte).surfaceInverse.background,
+            ),
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'parle',
+        (BuildContext contexte) => SizedBox(
+          width: AppSpacing.respiration * 5,
+          height: AppSpacing.respiration * 3.75,
+          child: CadreVisage(
+            nom: 'Omar',
+            prenom: 'Omar',
+            parle: true,
+            image: ColoredBox(
+              color: AppPalette.of(contexte).surfaceInverse.background,
+            ),
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'camera eteinte, recite',
+        (BuildContext _) => const SizedBox(
+          width: AppSpacing.respiration * 3.75,
+          height: AppSpacing.respiration * 3.75,
+          child: CadreVisage(nom: 'Maryam', prenom: 'Maryam', recite: true),
+        ),
+      ),
+      EtatGalerie(
+        'petit (ruban, 64)',
+        (BuildContext _) => const SizedBox.square(
+          dimension: AppSpacing.respiration,
+          child: CadreVisage(nom: 'Yusuf', prenom: 'Yusuf', microCoupe: true),
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'GrilleVisages',
+    famille: FamilleComposant.structure,
+    etats: <EtatGalerie>[
+      for (final int n in <int>[2, 5])
+        EtatGalerie(
+          '$n visages',
+          (BuildContext _) => SizedBox(
+            width: AppSpacing.respiration * 11.25,
+            height: AppSpacing.respiration * 7,
+            child: GrilleVisages(
+              cadres: <EntreeGrille>[
+                for (int i = 0; i < n; i++)
+                  EntreeGrille(
+                    cle: ValueKey<int>(i),
+                    cadre: CadreVisage(
+                      nom: 'Eleve ${i + 1}',
+                      prenom: 'Eleve',
+                      microCoupe: i.isEven,
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ),
     ],
   ),
   // TRANSITIONS-SALLE (directeur, 11/11/2026) : le moment de l'arche, qui

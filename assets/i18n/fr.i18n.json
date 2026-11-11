@@ -914,6 +914,11 @@
       }
     },
     "micro": "Micro",
+    "scene": {
+      "parle": "en train de parler",
+      "precedents": "Visages précédents",
+      "suivants": "Visages suivants"
+    },
     "microCoupe": "Micro coupé",
     "microOuvert": "Micro ouvert",
     "camera": "Caméra",

@@ -59,7 +59,8 @@ import 'surface_page_fixe.dart';
 import 'telephone_enseignant.dart';
 import 'vignette_video.dart';
 import 'vue_seance.dart';
-import 'zone_support.dart' show ZoneSupport, coteFlechesSalle, surfaceAMontrer;
+import 'zone_support.dart'
+    show ZoneSupport, coteFlechesSalle, modeSceneDe, surfaceAMontrer;
 
 /// K4 (directeur, 25/10/2026, essai en production sur ordinateur) : la loi
 /// du telephone vaut pour l'ordinateur : « full screen, full body, no
@@ -453,6 +454,16 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
   /// l'eleve (rangee du bas) ; la page s'arrete au-dessus.
   double? _hauteurBas;
 
+  /// SCENE-CLASSE : la hauteur mesuree de la barre de l'enseignant au
+  /// telephone ; la grille des visages s'arrete au-dessus (rien ne passe sur
+  /// un visage, MODES-AFFICHAGE §3).
+  double? _hauteurBasScene;
+
+  void _surHauteurBasScene(double h) {
+    if (!mounted || _hauteurBasScene == h) return;
+    setState(() => _hauteurBasScene = h);
+  }
+
   void _surHauteurBas(double h) {
     if (!mounted || _hauteurBas == h) return;
     setState(() => _hauteurBas = h);
@@ -553,6 +564,14 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
     }
   }
 
+  /// SCENE-CLASSE : le haut de la grille de l'enseignant au telephone, sous
+  /// la capsule (zone sure, marge, capsule, petit ecart).
+  double _hautSceneEnseignant(BuildContext context) =>
+      MediaQuery.paddingOf(context).top +
+      AppSpacing.lg +
+      CapsuleVideoTelephone.hauteur(context) +
+      AppSpacing.sm;
+
   /// Un toucher de la page replie le profil (hors de sa carte) et referme le
   /// panneau du bas (lignes 5 et 11).
   void _toucherPage(PointerDownEvent e) {
@@ -574,9 +593,9 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
     final PorteeMediaSalle? media = PorteeMediaSalle.de(context);
     final VueSurface? surface = surfaceAMontrer(vue);
     final Widget? laScene = media?.scene;
+    // SCENE-CLASSE : un seul etat de la scene (MODES-AFFICHAGE §2, regle 7).
     final bool scene =
-        laScene != null &&
-        ((media?.scenePremierPlan ?? false) || surface == null);
+        laScene != null && modeSceneDe(context, vue) == ModeScene.classe;
     final bool panneau = vue.panneau == PanneauOuvert.commandes;
     return Material(
       color: palette.surfaceCanvas.background,
@@ -735,7 +754,17 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
                       size: ecran,
                       child: Stack(
                         children: <Widget>[
+                          // SCENE-CLASSE (MODES-AFFICHAGE §3) : la capsule
+                          // en haut et la barre en bas ont leur place
+                          // reservee ; la grille se calcule dans ce qui
+                          // reste, rien ne passe sur un visage.
                           Positioned.fill(
+                            top: _hautSceneEnseignant(context),
+                            bottom:
+                                MediaQuery.paddingOf(context).bottom +
+                                (_hauteurBasScene ??
+                                    diametreBoutonAppel(context) +
+                                        2 * AppSpacing.lg),
                             child: KeyedSubtree(
                               key: const ValueKey<String>('telephone-scene'),
                               // « Ouvrir le Coran » est pose par la scene,
@@ -852,6 +881,10 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
           );
           return CommandesMasquables(
             delai: AppMouvement.masquageSalle,
+            // SCENE-CLASSE (MODES-AFFICHAGE §3) : sans page, la scene (les
+            // visages) s'arrete au-dessus de la barre : rien ne passe sur un
+            // visage. Sur la page, rien ne change (la page garde l'ecran).
+            margeLecture: page == null,
             maintenir:
                 vue.visioMaintenue ||
                 // Lot CORAN-ELEVE : rien a lire avant qu'un support soit
@@ -1071,7 +1104,15 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
                                       ),
                                     ),
                                   ),
-                                KeyedSubtree(key: _cleBas, child: bas),
+                                KeyedSubtree(
+                                  key: _cleBas,
+                                  child: sceneDevant
+                                      ? _MesureHauteur(
+                                          onHauteur: _surHauteurBasScene,
+                                          child: bas,
+                                        )
+                                      : bas,
+                                ),
                               ],
                             ),
                           ),
