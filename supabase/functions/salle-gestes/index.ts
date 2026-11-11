@@ -5,8 +5,11 @@
 //         | 'faire_reciter' | 'terminer_recitation'
 //
 // GESTES-POINTEUR (directeur, 11/11/2026) : « Faire reciter ». Pendant qu'un
-// eleve recite, le serveur ferme le micro de ses camarades (droit de publier
-// retire chez LiveKit, jamais seulement a l'ecran), et le leur rend a la fin.
+// eleve recite, le serveur ferme le micro de ses camarades (droit retire chez
+// LiveKit, jamais seulement a l'ecran), et le leur rend a la fin.
+// RECITATION-MICRO-SEUL (directeur, 11/11/2026) : le micro seul ; leur camera
+// reste, si leur propre jeton la leur donne. `fermes` compte les camarades
+// dont les droits viennent d'etre regles.
 // Regles et raisons : `_shared/recitation.ts`.
 //
 //   faire_reciter       { session_id, eleve_id }   -> { applique, motif?, fermes, echecs }

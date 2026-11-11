@@ -227,6 +227,16 @@ void main() {
       expect(apres(cameraVoulue: true).micro, isFalse);
     });
 
+    // RECITATION-MICRO-SEUL (11/11/2026) : pendant la recitation d'un
+    // camarade, le serveur ferme le micro seul ; la camera reste permise.
+    test('micro ferme par le serveur, camera permise : seule la camera '
+        'est rendue', () {
+      expect(apres(microVoulu: true, cameraVoulue: true, peutPublier: false), (
+        micro: false,
+        camera: true,
+      ));
+    });
+
     test('sans le droit du serveur, rien n est rouvert', () {
       expect(
         apres(

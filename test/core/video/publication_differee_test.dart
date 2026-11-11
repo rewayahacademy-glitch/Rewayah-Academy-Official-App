@@ -172,6 +172,190 @@ void main() {
     });
   });
 
+  // RECITATION-MICRO-SEUL (directeur, 11/11/2026) : pendant la recitation
+  // d'un camarade, le serveur ferme le micro SEUL ; la camera reste.
+  group('RECITATION-MICRO-SEUL : le droit se lit source par source', () {
+    final AccesSalle ouvert = AccesSalle.depuisJson(_reponse(video: true));
+
+    test('sans liste de sources, LiveKit autorise tout', () {
+      expect(droitsAccordes(peutPublier: true, sources: const <String>[]), (
+        micro: true,
+        camera: true,
+      ));
+    });
+
+    test('borne a la camera : le micro est ferme, la camera reste', () {
+      expect(
+        droitsAccordes(peutPublier: true, sources: const <String>['CAMERA']),
+        (micro: false, camera: true),
+      );
+    });
+
+    test('borne au micro (camera interdite par le profil)', () {
+      expect(
+        droitsAccordes(
+          peutPublier: true,
+          sources: const <String>['MICROPHONE'],
+        ),
+        (micro: true, camera: false),
+      );
+    });
+
+    test('sans droit de publier, la liste ne donne rien', () {
+      expect(
+        droitsAccordes(
+          peutPublier: false,
+          sources: const <String>['MICROPHONE', 'CAMERA'],
+        ),
+        (micro: false, camera: false),
+      );
+    });
+
+    test('un camarade recite : pas de micro, la camera permise, et '
+        'l\'acces dit que le micro attend', () {
+      final AccesSalle? neuf = accesApresPermissions(
+        ouvert,
+        peutPublier: true,
+        micro: false,
+        camera: true,
+      );
+      expect(neuf, isNotNull);
+      expect(neuf!.capacites.peutPublier, isFalse, reason: 'le micro');
+      expect(neuf.capacites.peutPublierVideo, isTrue, reason: 'la camera');
+      expect(neuf.publicationDifferee, isTrue);
+    });
+
+    test('camera interdite par le profil : la recitation ferme tout', () {
+      final AccesSalle sansCamera = AccesSalle.depuisJson(_reponse());
+      final AccesSalle? neuf = accesApresPermissions(
+        sansCamera,
+        peutPublier: false,
+        micro: false,
+        camera: false,
+      );
+      expect(neuf!.capacites.peutPublier, isFalse);
+      expect(neuf.capacites.peutPublierVideo, isFalse);
+      expect(neuf.publicationDifferee, isTrue);
+    });
+
+    test('la recitation se termine : le micro revient, la camera n\'a pas '
+        'bouge', () {
+      final AccesSalle pendant = accesApresPermissions(
+        ouvert,
+        peutPublier: true,
+        micro: false,
+        camera: true,
+      )!;
+      final AccesSalle? apres = accesApresPermissions(
+        pendant,
+        peutPublier: true,
+        micro: true,
+        camera: true,
+      );
+      expect(apres!.capacites.peutPublier, isTrue);
+      expect(apres.capacites.peutPublierVideo, isTrue);
+      expect(apres.publicationDifferee, isFalse);
+    });
+
+    test('sans le parametre (appel d\'avant ce lot) : le micro suit le droit '
+        'de publier', () {
+      final AccesSalle? neuf = accesApresPermissions(
+        AccesSalle.depuisJson(_reponse(video: true, differee: true)),
+        peutPublier: true,
+        camera: true,
+      );
+      expect(neuf!.capacites.peutPublier, isTrue);
+    });
+
+    test('pendant la recitation, la politique de camera ne redemande pas de '
+        'jeton', () {
+      final AccesSalle pendant = accesApresPermissions(
+        ouvert,
+        peutPublier: true,
+        micro: false,
+        camera: true,
+      )!;
+      expect(jetonCameraPerime(pendant, cameraAutorisee: true), isFalse);
+      expect(jetonCameraPerime(pendant, cameraAutorisee: false), isFalse);
+    });
+  });
+
+  group('RECITATION-MICRO-SEUL : le micro ne se rouvre pas seul', () {
+    final AccesSalle ouvert = AccesSalle.depuisJson(_reponse(video: true));
+    final AccesSalle pendant = accesApresPermissions(
+      ouvert,
+      peutPublier: true,
+      micro: false,
+      camera: true,
+    )!;
+
+    test('le serveur ferme le micro devant l\'enseignant : le micro voulu '
+        'est oublie', () {
+      expect(
+        microFermeDevantEnseignant(
+          avant: ouvert,
+          apres: pendant,
+          enseignantPresent: true,
+        ),
+        isTrue,
+      );
+    });
+
+    test('camera interdite, tout se ferme devant l\'enseignant : oublie '
+        'aussi', () {
+      final AccesSalle sansCamera = AccesSalle.depuisJson(_reponse());
+      final AccesSalle ferme = accesApresPermissions(
+        sansCamera,
+        peutPublier: false,
+        camera: false,
+      )!;
+      expect(
+        microFermeDevantEnseignant(
+          avant: sansCamera,
+          apres: ferme,
+          enseignantPresent: true,
+        ),
+        isTrue,
+      );
+    });
+
+    test('sans enseignant dans la salle (apres son depart) : ce n\'est pas '
+        'une recitation, rien n\'est oublie ici', () {
+      final AccesSalle ferme = accesApresPermissions(
+        ouvert,
+        peutPublier: false,
+        camera: false,
+      )!;
+      expect(
+        microFermeDevantEnseignant(
+          avant: ouvert,
+          apres: ferme,
+          enseignantPresent: false,
+        ),
+        isFalse,
+      );
+    });
+
+    test('le micro revient, ou n\'etait deja pas permis : rien a oublier', () {
+      expect(
+        microFermeDevantEnseignant(
+          avant: pendant,
+          apres: ouvert,
+          enseignantPresent: true,
+        ),
+        isFalse,
+      );
+      expect(
+        microFermeDevantEnseignant(
+          avant: pendant,
+          apres: pendant,
+          enseignantPresent: true,
+        ),
+        isFalse,
+      );
+    });
+  });
+
   test('l\'enseignant est dans la salle : par son role, jamais soi-meme', () {
     expect(enseignantDansLaSalle(const <ParticipantSalle>[]), isFalse);
     expect(

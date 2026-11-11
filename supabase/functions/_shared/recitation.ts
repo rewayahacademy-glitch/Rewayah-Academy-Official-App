@@ -6,9 +6,17 @@
 // le micro de ses camarades, pour qu'on n'entende que lui.**
 //
 //   * celui qui conduit la seance choisit un eleve present : le serveur retire
-//     aux AUTRES eleves le droit de publier (micro et camera), et le leur rend
-//     a la fin. Ce n'est jamais seulement a l'ecran : un client modifie n'y
-//     gagne rien, LiveKit refuse sa piste ;
+//     aux AUTRES eleves le droit de publier leur MICRO, et le leur rend a la
+//     fin. Ce n'est jamais seulement a l'ecran : un client modifie n'y gagne
+//     rien, LiveKit refuse sa piste ;
+//   * **RECITATION-MICRO-SEUL (directeur, 11/11/2026) : leur camera reste.**
+//     Le premier jet retirait le droit de publier d'un bloc (micro ET camera).
+//     Depuis cette decision, un camarade garde le droit de publier sa camera
+//     si son propre jeton le lui donne (`pub.camera`, signe par le serveur) et
+//     perd seulement le micro. Un eleve dont la camera est interdite par son
+//     profil n'en gagne jamais une par ce biais : pendant la recitation il n'a
+//     ni micro ni camera. A la fin, chacun retrouve exactement les droits de
+//     son propre jeton ;
 //   * le micro du recitant n'est jamais ouvert de force : il l'ouvre lui-meme ;
 //   * **la recitation ne tient que tant que l'enseignant ET le recitant sont
 //     dans la salle.** Des que l'un des deux n'y est plus, elle se termine
@@ -24,6 +32,8 @@
 // vivent dans `livekit.ts`.
 
 import {
+  type DroitsPublication,
+  droitsEnVigueur,
   type EleveARetablir,
   enseignantPresent,
   lireMetadonnees,
@@ -104,22 +114,50 @@ export function recitationTenue(
     elevePresent(participants, recitation.recitant)
 }
 
-/// Les eleves dont le serveur doit fermer le droit de publier pendant la
-/// recitation : tout eleve present, sauf le recitant, dont le droit n'est pas
-/// deja ferme. L'enseignant, le tuteur, le controleur et l'administration ne
-/// sont jamais touches.
-export function elevesAFermer(
+/// RECITATION-MICRO-SEUL (directeur, 11/11/2026) : ce qu'un camarade a le
+/// droit de publier pendant la recitation d'un autre. **Jamais le micro.** La
+/// camera, seulement si son propre jeton la lui donne ([pub], signe par le
+/// serveur : `camera_policy` du profil y est deja appliquee). Sans droits
+/// lisibles dans son jeton, rien : on ne donne jamais ce qui n'est pas promis.
+export function droitsPendantRecitation(pub: DroitsPublication | null): DroitsPublication {
+  return { micro: false, camera: pub !== null && pub.camera === true }
+}
+
+/// Les camarades dont le serveur doit regler les droits pendant la
+/// recitation : tout eleve present, sauf le recitant, dont les droits en
+/// vigueur ne sont pas deja ceux de [droitsPendantRecitation]. Pour chacun,
+/// les droits a poser.
+///
+/// Le cas ordinaire : micro et camera ouverts, il garde la camera seule.
+/// Camera interdite par le profil : il perd tout. Deja regle : il n'est pas
+/// retouche (un appel rejoue ne change rien). Ferme tout entier par une autre
+/// regle alors que l'enseignant est la (droit pas encore rendu apres son
+/// retour) : il retrouve sa camera, pas son micro.
+///
+/// A n'appeler que pour une recitation qui tient ([recitationTenue]), donc
+/// avec l'enseignant dans la salle : c'est ce qui permet de laisser une
+/// camera. L'enseignant, le tuteur, le controleur et l'administration ne sont
+/// jamais touches.
+export function camaradesARegler(
   participants: readonly ParticipantVu[],
   recitant: string,
-): string[] {
-  return participants
-    .filter((p) => estEleve(p) && p.identity !== recitant && p.peutPublier !== false)
-    .map((p) => p.identity)
+): EleveARetablir[] {
+  const liste: EleveARetablir[] = []
+  for (const p of participants) {
+    if (!estEleve(p) || p.identity === recitant) continue
+    const voulus = droitsPendantRecitation(lireMetadonnees(p.metadata).pub)
+    const actuels = droitsEnVigueur(p)
+    if (actuels.micro === voulus.micro && actuels.camera === voulus.camera) continue
+    liste.push({ identity: p.identity, droits: voulus })
+  }
+  return liste
 }
 
 /// Les eleves a qui rendre leurs droits quand la recitation se termine : tout
-/// eleve present dont le droit de publier est ferme alors que son jeton lui
-/// en promettait un (`pub`, signe par le serveur).
+/// eleve present dont le micro est ferme alors que son jeton lui en
+/// promettait un (`pub`, signe par le serveur). Chacun retrouve exactement
+/// les droits de son propre jeton : le micro, et la camera seulement s'il
+/// l'avait.
 ///
 /// **Que l'enseignant soit la ou non** : si c'est lui qui est parti, les
 /// camarades retrouvent ce qu'ils avaient avant la recitation. Jamais une
@@ -127,7 +165,7 @@ export function elevesAFermer(
 export function elevesARendre(participants: readonly ParticipantVu[]): EleveARetablir[] {
   const liste: EleveARetablir[] = []
   for (const p of participants) {
-    if (!estEleve(p) || p.peutPublier !== false) continue
+    if (!estEleve(p) || droitsEnVigueur(p).micro) continue
     const { pub } = lireMetadonnees(p.metadata)
     if (pub === null || !pub.micro) continue
     liste.push({ identity: p.identity, droits: pub })
