@@ -256,10 +256,20 @@ void main() {
 
         await tester.tap(_boutonDock('Quitter'));
         await stabiliser(tester);
-        final String confirmer = role == RoleSeance.enseignant
-            ? 'Quitter et ouvrir le cahier de transmission'
-            : 'Quitter';
-        await tester.tap(find.text(confirmer).last);
+        // SORTIE-SALLE (11/11/2026) : la question a trois reponses, et
+        // « quitter » y porte sa cle ; l'Interface guidee garde la question
+        // simple.
+        final Finder quitter = find.byKey(
+          const ValueKey<String>('sortie-quitter'),
+        );
+        if (quitter.evaluate().isNotEmpty) {
+          await tester.tap(quitter);
+        } else {
+          final String confirmer = role == RoleSeance.enseignant
+              ? 'Quitter et ouvrir le cahier de transmission'
+              : 'Quitter';
+          await tester.tap(find.text(confirmer).last);
+        }
         await stabiliser(tester);
         expect(journal.quitter, 1);
       });
