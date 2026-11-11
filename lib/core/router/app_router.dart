@@ -126,6 +126,7 @@ import '../../features/com_messages/messages_admin.dart'
     deferred as d_messages_admin;
 import '../../features/com_messages/messages_page.dart'
     deferred as d_messages_page;
+import '../../features/com_studio/port_studio.dart' show studioOuvertProvider;
 import '../../features/com_studio/studio_page.dart';
 import '../../features/comptable/aujourdhui/aujourdhui_page.dart'
     deferred as d_aujourdhui_page;
@@ -270,6 +271,11 @@ import '../admission/port_admissions_direction.dart'
 import '../alertes/port_alertes.dart';
 import '../candidature/modeles_candidatures_direction.dart'
     show LigneCandidature;
+import '../capacites/port_delegation_finance.dart'
+    show reserveDelegationOuverteProvider;
+import '../capacites/port_finance_direction.dart'
+    show vueGlobaleFinanceOuverteProvider;
+import '../communications/moderation.dart' show moderationOuverteProvider;
 import '../config/env.dart';
 import '../domain/enums.dart';
 import '../dossier/resignature_contrat.dart';
@@ -1903,8 +1909,16 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           ),
         ),
       ),
+      // PORTS-DIRECTION : sans serveur de moderation, l'onglet n'existe pas.
       GoRouteSure(
         path: Routes.adminCommunicationsModeration,
+        redirect: (BuildContext contexte, GoRouterState _) =>
+            ProviderScope.containerOf(
+              contexte,
+              listen: false,
+            ).read(moderationOuverteProvider)
+            ? null
+            : Routes.adminCommunicationsAnnonces,
         builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.operations,
           child: PageDifferee(
@@ -1967,8 +1981,17 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // porte la cloche, la bascule clair / sombre et l'acces au compte
       // (`_ActionsStudio`), et son identite « Administrateur » dans sa
       // colonne (`CoquilleStudio.onCompte`).
+      // PORTS-DIRECTION : sans serveur, Le Studio n'existe pas ; une adresse
+      // tapee revient a l'Accueil admin.
       GoRouteSure(
         path: Routes.adminStudio,
+        redirect: (BuildContext contexte, GoRouterState _) =>
+            ProviderScope.containerOf(
+              contexte,
+              listen: false,
+            ).read(studioOuvertProvider)
+            ? null
+            : Routes.admin,
         builder: (BuildContext _, GoRouterState _) =>
             const _ActionsStudio(child: StudioPage()),
       ),
@@ -2334,8 +2357,18 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // canonique « Vue d'ensemble » du contrat metier), jamais une
       // redirection ; Politiques commerciales est son onglet pair
       // (`ongletsFinance()`).
+      // PORTS-DIRECTION (pilote, 11/11/2026) : tant que la Vue globale n'a
+      // pas de serveur, la racine tombe sur Politiques commerciales, un
+      // onglet qui repond.
       GoRouteSure(
         path: Routes.adminFinance,
+        redirect: (BuildContext contexte, GoRouterState _) =>
+            ProviderScope.containerOf(
+              contexte,
+              listen: false,
+            ).read(vueGlobaleFinanceOuverteProvider)
+            ? null
+            : Routes.adminFinancePolitiques,
         builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.finance,
           child: PageDifferee(
@@ -2363,8 +2396,16 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // Reserve et delegation (Comptable V1, CPT-F ; spec Finance
       // operationnelle §37) : le troisieme onglet du meme domaine, jamais un
       // second systeme Finance. La voie CPT-DIR remplit sa page.
+      // PORTS-DIRECTION : sans ses deux serveurs, l'onglet n'existe pas.
       GoRouteSure(
         path: Routes.adminFinanceReserveDelegation,
+        redirect: (BuildContext contexte, GoRouterState _) =>
+            ProviderScope.containerOf(
+              contexte,
+              listen: false,
+            ).read(reserveDelegationOuverteProvider)
+            ? null
+            : Routes.adminFinancePolitiques,
         builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
           domaine: AdminDomaine.finance,
           child: PageDifferee(
@@ -3160,9 +3201,12 @@ class _CoquilleSecondaire extends ConsumerWidget {
         onDeconnexion: () => unawaited(seDeconnecter(context, ref)),
         // Retour vers l'Accueil admin partout (spec section 26 ter, Q14).
         onRetour: () => aller(Routes.admin),
-        // COM-F : la cloche et Le Studio, comme sur toute page admin.
+        // COM-F : la cloche et Le Studio, comme sur toute page admin. Le
+        // Studio n'est montre que s'il a un serveur (PORTS-DIRECTION).
         onNotifications: () => aller(Routes.adminNotifications),
-        onStudio: () => aller(Routes.adminStudio),
+        onStudio: ref.watch(studioOuvertProvider)
+            ? () => aller(Routes.adminStudio)
+            : null,
         child: child,
       );
     }
@@ -3600,7 +3644,10 @@ class _CoquilleAdmin extends ConsumerWidget {
         // role.
         onNotifications: () => aller(Routes.adminNotifications),
         notificationsActives: notificationsOuvertes,
-        onStudio: () => aller(Routes.adminStudio),
+        // PORTS-DIRECTION : le Studio n'est montre que s'il a un serveur.
+        onStudio: ref.watch(studioOuvertProvider)
+            ? () => aller(Routes.adminStudio)
+            : null,
         child: child,
       ),
     );
