@@ -191,6 +191,12 @@ const navigateur = await chromium.launch({
 
 try {
   // ------------------------------------------------------------------ Seance 1
+  // Un eleve qui n'est PAS de cette seance (revue du garde-cap, B1) : son
+  // compte est actif, il connait l'identifiant de la seance, rien de plus.
+  // (Sa propre classe est close par l'amorce suivante : un enseignant n'a pas
+  // deux seances a la meme heure ; le compte, lui, reste.)
+  const ailleurs = amorcerClasse({ n: 1, etiquette: `fermeture-ailleurs-${Date.now() % 100000}` });
+  const etranger = ailleurs.eleves[0];
   const classe = amorcerClasse({ n: 3, etiquette: `fermeture-${Date.now() % 100000}` });
   const [a, b, c] = classe.eleves;
   const verifierSalle = (courriel) => demander(courriel, { session_id: classe.seance, action: 'verifier_salle' });
@@ -237,6 +243,16 @@ try {
     presque.corps.micros_fermes === 0 && presque.corps.reste_s > 0 &&
     (await droits(pageA)).canPublish === true && (await microPublie(pageA)) === true, presque);
   await attendre((presque.corps.reste_s + 1) * 1000);
+  // B1 : le delai est passe, personne de la classe n'a encore rien demande.
+  // Un compte qui n'est pas de cette seance demande la verification : refus
+  // generique, rien sur l'etat de la salle, et RIEN n'est applique.
+  const intrus = await verifierSalle(etranger.courriel);
+  verifier('3. B1 : un eleve d\'une autre classe demande la verification : refus generique, sans rien dire de la salle',
+    intrus.statut === 403 && intrus.corps?.motif === 'non_inscrit' && !('salle' in (intrus.corps ?? {})) &&
+    !('micros_fermes' in (intrus.corps ?? {})), intrus);
+  await attendre(1500);
+  verifier('3. B1 : ... et rien n\'a ete applique : A publie toujours',
+    (await droits(pageA)).canPublish === true && (await microPublie(pageA)) === true);
   const echu = await verifierSalle(b.courriel);
   verifier('3. le delai est passe : a la demande de B, le serveur ferme A ET B',
     echu.statut === 200 && echu.corps.micros_fermes === 2 && echu.corps.salle === 'ouverte', echu);

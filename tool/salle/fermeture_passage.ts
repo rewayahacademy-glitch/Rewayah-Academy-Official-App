@@ -1,8 +1,10 @@
 // Banc de la salle : le passage de la tache planifiee de FERMETURE-SALLE
 // (journal D-018), lance a la main sur la pile LOCALE.
 //
-// En production, `observation-coupure` fait ce passage chaque minute, derriere
-// son secret partage. La pile locale n'a pas ce secret : ce script execute le
+// En production, `observation-coupure` fait ce passage a chaque appel de la
+// tache planifiee, derriere son secret partage ; au 11/11/2026 cette tache ne
+// l'appelle que lorsqu'un tuteur observe une seance (lot FERMETURE-CRON a
+// venir). La pile locale n'a pas ce secret : ce script execute le
 // MEME code (`sallesASurveiller` puis `surveillerSalles`, les deux fonctions
 // que la fonction Edge appelle), contre la base locale et le LiveKit local.
 // Seule la porte HTTP de la fonction n'est pas essayee ici.

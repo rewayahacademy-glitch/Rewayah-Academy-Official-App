@@ -3,6 +3,14 @@
 Recherche du 11/11/2026 (cahier de la salle §6). Chaque règle renvoie au texte officiel relu ce
 jour-là. Ce qui n'a pas pu être relu est dit en §9.
 
+**État au 11/11/2026, nuit (revue du garde-cap, journal D-033).** Là où ce document écrit « ce qui
+est fait : un bloc dans la politique de confidentialité », lire : **préparé, retiré de l'application
+jusqu'à l'installation du relevé**. Les trois blocs attendent, mot pour mot, dans
+`docs/current/TEXTES-VALIDES/INFORMATION-RELEVE-QUALITE.md` ; ils reviennent le jour où la migration
+est installée, avec la montée de version des textes juridiques et l'avis de modification. Dans la
+salle, la phrase d'information ne s'affiche que lorsque le serveur tient le relevé. Tant que la
+migration n'est pas installée, rien n'est collecté et rien n'est annoncé.
+
 **La limite, dite une fois.** Le directeur a écrit le 11/11/2026 : « il n'y a pas de juriste, c'est
 toi qui joue ce rôle car ces lois sont publiques et accessibles, on ne cherche pas à les contourner
 donc on applique ce qui est là. » Les conclusions du §10 sont donc celles d'un lecteur attentif des
@@ -418,7 +426,7 @@ P-39.1.
 ## 11. Ce qui est codé (lot RESEAU-PREUVE, 11/11/2026, journal D-024)
 
 **État : codé, installé nulle part.** La migration
-`supabase/migrations/20261123000100_releve_qualite_lien.sql` est un brouillon. Rien n'est prouvé en
+`supabase/migrations/20261123700100_releve_qualite_lien.sql` est un brouillon. Rien n'est prouvé en
 production.
 
 **NE PAS INSTALLER avant :**

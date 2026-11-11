@@ -617,6 +617,7 @@ class VueSeance {
     this.notificationsNonLues = 0,
     this.groupeId,
     this.tutoiement,
+    this.releveTenu = false,
     this.affichage = AffichagePartage.avecNotes,
     this.supportPresente,
     this.tableauLibre,
@@ -834,6 +835,11 @@ class VueSeance {
   /// presentation (MA1, deux axes). `null` : le choix par le role (la
   /// guidee tutoie).
   final bool? tutoiement;
+
+  /// RESEAU-PREUVE : vrai quand le serveur tient le releve de qualite de
+  /// connexion (`EnvoiReleve.tenuParLeServeur`). La phrase d'information du
+  /// releve ne s'affiche qu'alors (revue du garde-cap du 11/11/2026).
+  final bool releveTenu;
 
   // --- Supports et tableau (TB-1b, plan V2 §2, §8) : donnees pures ---
   //
@@ -1754,6 +1760,7 @@ class VueSeance {
     FinSeance? fin,
     PanneauOuvert? panneau,
     bool? tutoiement,
+    bool? releveTenu,
     AffichagePartage? affichage,
     SupportPageFixe? supportPresente,
     bool sansSupportPresente = false,
@@ -1806,6 +1813,7 @@ class VueSeance {
     notificationsNonLues: notificationsNonLues,
     groupeId: groupeId,
     tutoiement: tutoiement ?? this.tutoiement,
+    releveTenu: releveTenu ?? this.releveTenu,
     affichage: affichage ?? this.affichage,
     supportPresente: sansSupportPresente
         ? null

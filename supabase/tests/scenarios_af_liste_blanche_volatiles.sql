@@ -452,7 +452,7 @@ declare
     -- candidature (garde positive app_role() = 'admin' et app_account_valid(),
     -- genre du lecteur ; journalise l'exception super admin, d'ou VOLATILE).
     'photo_dossier_candidat(uuid)',
-    -- PARTAGE-GENERIQUE (20261123000000, 11/11/2026) : l'enseignant effectif
+    -- PARTAGE-GENERIQUE (20261123700000, 11/11/2026) : l'enseignant effectif
     -- de la seance retient la page presentee d'un support autre que le Coran
     -- (garde positive app_account_valid() ET app_role() = 'teacher' ET
     -- private.c29_enseignant_effectif_session(seance) = auth.uid() ; fenetre
@@ -460,7 +460,7 @@ declare
     -- ligne par Classe et par support). Relue par le pilote de la salle le
     -- 11/11/2026 (la CI l'avait refusee hors liste, a raison).
     'enregistrer_position_support(uuid,text,text,integer,integer)',
-    -- RESEAU-PREUVE (20261123000100, 11/11/2026, BROUILLON non installe) :
+    -- RESEAU-PREUVE (20261123700100, 11/11/2026, BROUILLON non installe) :
     -- un participant ecrit SA ligne du releve de qualite de connexion.
     -- Qui peut appeler : l'enseignant ou un eleve ADULTE de la seance, pour
     -- lui-meme ; un tuteur pour un eleve adulte de son foyer. Garde positive :

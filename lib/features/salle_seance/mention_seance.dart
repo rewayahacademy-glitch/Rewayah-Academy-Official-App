@@ -77,6 +77,7 @@ class MentionSeance extends StatelessWidget {
         vue.role,
         contact: contact,
         tutoie: vue.tutoiement ?? false,
+        avecReleve: vue.releveTenu,
       ),
     );
     // Q-3 = b (05/10/2026) : sous le seuil, pas de lien (il passerait sous la

@@ -1,6 +1,6 @@
 -- RESEAU-PREUVE (11/11/2026) : le releve de qualite de connexion, garde 180 jours, lu par la direction seule ;
 -- rien n'est garde pour un eleve mineur.
--- Migration 20261123000100_releve_qualite_lien.sql. ROUGE sans la migration (les fonctions n'existent pas) ;
+-- Migration 20261123700100_releve_qualite_lien.sql. ROUGE sans la migration (les fonctions n'existent pas) ;
 -- VERT avec. Base NEUVE ; tout est annule a la fin.
 --   s1 (en cours) : enseignant b1 ; eleves ADULTES e1 et e2 (foyer f1), e5 (foyer f2) ; eleve MINEUR e6
 --      (foyer f1) ; e7 (foyer f1) sans profil d'eleve lisible ; d2 y observe.

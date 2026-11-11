@@ -6,10 +6,10 @@ OK    2. filet sans enseignant : rien n'est rendu : {"statut":200,"corps":{"reta
 OK    2. ... et le droit reste ferme chez LiveKit
 OK    3. second eleve : jeton differe
 OK    4. l'enseignant n'est jamais differe : {"statut":200,"role":"teacher"}
-OK    4. le droit de publier est rendu au premier eleve (webhook) : {"ms":2}
+OK    4. le droit de publier est rendu au premier eleve (webhook) : {"ms":3}
 OK    4. il ouvre alors son micro : {"ouvert":true,"erreur":null}
-OK    4. l'enseignant recoit sa voix : ["9a826e16-00ca-401a-9acf-1454144230e8"]
-OK    5. entre apres l'enseignant avec un jeton differe : retabli : {"ms":2}
+OK    4. l'enseignant recoit sa voix : ["576091e4-832b-42a4-a597-414582d03b52"]
+OK    5. entre apres l'enseignant avec un jeton differe : retabli : {"ms":207}
 OK    5. ... et son micro s'ouvre
 OK    6. jeton pris apres l'enseignant : droits ordinaires
 OK    6. ... LiveKit lui accorde le droit de publier

@@ -13,9 +13,17 @@
 //    deja parti n'est pas une erreur.
 //
 // FERMETURE-SALLE (directeur, 11/11/2026, seconde moitie de SEC-1, journal
-// D-018) : le meme passage, chaque minute, tient aussi la regle des salles.
-// C'est la voie qui ne depend de la bonne foi d'aucun client, et elle ne
-// demande aucune migration (la tache planifiee existe deja).
+// D-018) : le meme passage tient aussi la regle des salles, CHAQUE FOIS QUE
+// CETTE FONCTION EST APPELEE. C'est la voie qui ne depend de la bonne foi
+// d'aucun client.
+//
+// VRAI AU 11/11/2026 (revue du garde-cap, B4) : en production, la tache
+// planifiee n'appelle cette fonction que lorsqu'un tuteur observe une seance
+// ou vient d'en etre coupe (clause WHERE de la migration 20261105500000,
+// lignes 266 a 279). Sans tuteur en observation, ce passage n'a donc PAS
+// lieu : la regle des salles tient alors par le webhook et par l'application
+// d'un participant (`create-room-token`, action `verifier_salle`). Elargir
+// cette clause demande une migration (lot FERMETURE-CRON, a venir).
 //
 // 3. Les salles ouvertes chez LiveKit sont relues une a une
 //    (`_shared/fermeture_salle.ts`) : enseignant parti depuis le delai de

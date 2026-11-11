@@ -15,14 +15,18 @@ import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
 
 import '../../capture/outil_capture.dart';
 
-VueSeance _vue(RoleSeance role, {bool? tutoiement}) => VueSeance(
-  role: role,
-  nomClasse: 'Classe',
-  nomEnseignant: 'Sayyid Ibrahim',
-  initialesEnseignant: 'SI',
-  enregistrementConfirme: true,
-  tutoiement: tutoiement,
-);
+// [releveTenu] : le serveur tient le releve (il a repondu a une ligne). La
+// phrase d'information ne s'affiche qu'alors.
+VueSeance _vue(RoleSeance role, {bool? tutoiement, bool releveTenu = true}) =>
+    VueSeance(
+      role: role,
+      nomClasse: 'Classe',
+      nomEnseignant: 'Sayyid Ibrahim',
+      initialesEnseignant: 'SI',
+      enregistrementConfirme: true,
+      tutoiement: tutoiement,
+      releveTenu: releveTenu,
+    );
 
 Future<void> _ouvrir(
   WidgetTester tester,
@@ -68,18 +72,45 @@ void main() {
     }
   });
 
-  test('la politique de confidentialite dit les memes faits, avec la base '
-      'legale et le droit de s opposer', () {
-    final List<String> blocs = t.juridique.confidentialite.s5.blocs;
-    final String tout = blocs.join(' ');
-    expect(tout, contains('Le relevé de connexion'));
-    expect(tout, contains('Pour un élève mineur, elle ne garde rien'));
-    expect(tout, contains('intérêt légitime'));
-    expect(tout, contains('Seule la direction peut le lire'));
-    expect(tout, contains('gardé 180 jours, puis effacé'));
-    expect(tout, contains('aucune décision automatique'));
+  // Revue du garde-cap du 11/11/2026 : une politique de confidentialite ne
+  // decrit que des traitements reels. Tant que le releve n'est installe
+  // nulle part, l'application ne l'annonce pas ; les trois blocs attendent,
+  // mot pour mot, dans le registre des textes valides, et reviennent le jour
+  // de l'installation (avec la version des textes et l'avis de modification).
+  test('la politique de confidentialite n annonce pas le releve tant qu il '
+      'n existe pas ; ses trois blocs attendent au registre, avec la base '
+      'legale et le droit de s opposer', () async {
+    final String registre = File(
+      'docs/current/TEXTES-VALIDES/INFORMATION-RELEVE-QUALITE.md',
+    ).readAsStringSync();
+    for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {
+      await LocaleSettings.setLocale(langue);
+      final String tout = t.juridique.confidentialite.s5.blocs.join(' ');
+      expect(tout, isNot(contains('Le relevé de connexion')));
+      expect(tout, isNot(contains('سجل الاتصال')));
+    }
+    expect(registre, contains('Le relevé de connexion. Pendant une séance'));
+    expect(registre, contains('Pour un élève mineur, elle ne garde rien'));
+    expect(registre, contains('intérêt légitime'));
+    expect(registre, contains('Seule la direction peut le lire'));
+    expect(registre, contains('gardé 180 jours, puis effacé'));
+    expect(registre, contains('aucune décision automatique'));
     // Le droit de s'opposer est dit a part (RGPD, art. 21(4)).
-    expect(blocs.last, startsWith('Vous pouvez vous opposer à ce relevé'));
+    expect(registre, contains('Vous pouvez vous opposer à ce relevé'));
+    expect(registre, contains('سجل الاتصال.'));
+  });
+
+  testWidgets('tant que le serveur ne tient pas le releve : la lecture ne '
+      'l annonce pas (E-2 seul)', (WidgetTester tester) async {
+    await _ouvrir(
+      tester,
+      _vue(RoleSeance.eleve, tutoiement: false, releveTenu: false),
+    );
+    final Traductions$salle$releve$fr r = t.salle.releve;
+    expect(find.text(t.salle.informationControle.e2.p1), findsOneWidget);
+    expect(find.text(r.titre), findsNothing);
+    expect(find.text(r.adulte), findsNothing);
+    expect(find.text(r.mineur), findsNothing);
   });
 
   test('les cles sont, mot pour mot, les textes du registre des textes '
@@ -142,8 +173,23 @@ void main() {
   test('l enseignant n a pas cette lecture sur son bandeau : il lit la '
       'politique de confidentialite', () {
     expect(
-      const TexteInformationControle(role: RoleSeance.enseignant).releve,
+      const TexteInformationControle(
+        role: RoleSeance.enseignant,
+        avecReleve: true,
+      ).releve,
       isNull,
+    );
+    // Et pour un eleve, rien tant que le serveur ne tient pas le releve.
+    expect(
+      const TexteInformationControle(role: RoleSeance.eleve).releve,
+      isNull,
+    );
+    expect(
+      const TexteInformationControle(
+        role: RoleSeance.eleve,
+        avecReleve: true,
+      ).releve,
+      isNotNull,
     );
     expect(InformationControle.texteDisponible(RoleSeance.enseignant), isFalse);
   });

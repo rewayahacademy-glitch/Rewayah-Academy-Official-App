@@ -8,7 +8,7 @@
 // Jamais de son, d'image, d'adresse, de mesure brute, ni l'heure de
 // l'appareil : l'heure est celle du serveur, a l'ecriture. Jamais l'etat d'un
 // autre participant : le serveur refuse d'ecrire la ligne d'un autre
-// (`noter_qualite_lien`, migration 20261123000100).
+// (`noter_qualite_lien`, migration 20261123700100).
 //
 // **Rien n'est garde pour un eleve mineur** : le serveur le refuse (il
 // connait le type de l'eleve, pas l'appareil), et l'appareil se tait pour le
@@ -137,7 +137,22 @@ class EnvoiReleve {
     required this.port,
     DateTime Function()? horloge,
     this.intervalle = intervalleEnvoi,
+    this.quandTenu,
   }) : _horloge = horloge ?? DateTime.now;
+
+  /// Appele une fois, quand le serveur a repondu pour la premiere fois qu'il
+  /// tient le releve ([tenuParLeServeur]).
+  final void Function()? quandTenu;
+
+  /// Vrai des que le serveur a repondu a une ligne (ecrite, ou ignoree par
+  /// sa regle : un eleve mineur) : le releve EXISTE sur ce serveur. Faux tant
+  /// qu'il n'a pas repondu, et pour toujours si la fonction n'existe pas
+  /// (refus). Revue du garde-cap du 11/11/2026 : l'information « l'application
+  /// note la connexion » ne s'affiche que lorsque c'est vrai ; on n'annonce
+  /// pas un releve qui n'existe pas, et il ne peut pas exister sans etre
+  /// annonce.
+  bool get tenuParLeServeur => _tenu;
+  bool _tenu = false;
 
   /// Rend le port du releve (celui de l'application, ou un faux en test).
   final PortReleveQualite Function() port;
@@ -247,6 +262,10 @@ class EnvoiReleve {
       // Ecrite ou ignoree par le serveur : dans les deux cas, rien a refaire.
       _envoyee = situation;
       _echecs = 0;
+      if (!_tenu) {
+        _tenu = true;
+        quandTenu?.call();
+      }
     } on Object catch (e) {
       if (generation != _generation) return;
       journalDev('salle.releve : ligne non ecrite : $e');

@@ -1,5 +1,5 @@
 // Lot RESEAU-PREUVE (11/11/2026) : l'adaptateur Supabase du releve de
-// qualite. Une RPC de la migration 20261123000100 : `noter_qualite_lien`. Le
+// qualite. Une RPC de la migration 20261123700100 : `noter_qualite_lien`. Le
 // serveur porte les gardes (participant de la seance, sa propre ligne, rythme,
 // etats prevus) ; rien n'est decide ici.
 

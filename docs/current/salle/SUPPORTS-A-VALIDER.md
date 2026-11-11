@@ -112,7 +112,7 @@ Rien de ce qui suit n'est fait. C'est le chemin proposé, écrit pour que le dir
    production) ; l'élève qui a le droit de lire la ressource verra ses pages ; celui dont l'application
    ne la trouve pas lira « Ce support ne peut pas encore s'afficher ici. »
 5. **La reprise** (« La classe s'était arrêtée page N ») : elle demande la migration
-   `20261123000000_partage_generique_position_support.sql`, brouillon non appliqué. Tant qu'elle n'est pas
+   `20261123700000_partage_generique_position_support.sql`, brouillon non appliqué. Tant qu'elle n'est pas
    installée, la page n'est retenue que le temps de la séance, et l'enseignant le lit.
 6. **Ligne numérotée** (programme §4 : support, page, ligne) : non traitée. Le partage retient une page,
    pas une ligne.

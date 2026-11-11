@@ -434,14 +434,13 @@ void main() {
             await tester.tap(mention());
             await stabiliser(tester);
             expect(tester.takeException(), isNull);
-            await tester.scrollUntilVisible(
-              find.text(t.salle.informationControle.e1.p5),
-              200,
-              scrollable: find.byType(Scrollable).last,
-            );
-            // RESEAU-PREUVE (11/11/2026) : la lecture finit desormais par la
-            // phrase du releve de connexion, apres le texte E-1.
-            final Finder fin = find.text(t.salle.releve.guidee);
+            // Tant que le serveur ne tient pas le releve de connexion (revue
+            // du garde-cap du 11/11/2026, D-033), la lecture finit par le
+            // texte E-1, comme avant. Avec le releve, sa phrase vient apres :
+            // c'est `information_releve_test.dart` qui le verifie, a 320 en
+            // texte x2 aussi.
+            final Finder fin = find.text(t.salle.informationControle.e1.p5);
+            expect(find.text(t.salle.releve.guidee), findsNothing);
             await tester.scrollUntilVisible(
               fin,
               200,

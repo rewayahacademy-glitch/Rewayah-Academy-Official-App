@@ -36,6 +36,7 @@ abstract final class DepuisSalle {
     String? groupeId,
     FinSeance? fin,
     AgeEleve age = AgeEleve.inconnu,
+    bool releveTenu = false,
     SupportPageFixe? supportPresente,
     bool videoSuspendue = false,
     String? nomEnseignantConnu,
@@ -175,6 +176,7 @@ abstract final class DepuisSalle {
       // MA-TUTOIEMENT-1 : le registre suit l'age, jamais la presentation ;
       // un age inconnu (avant BR-1) vouvoie.
       tutoiement: age.tutoiement,
+      releveTenu: releveTenu,
       // S0 : la page du Coran presentee (canal de donnees, D9), dans la
       // surface a page fixe, au seul affichage « Avec notes ».
       supportPresente: supportPresente,

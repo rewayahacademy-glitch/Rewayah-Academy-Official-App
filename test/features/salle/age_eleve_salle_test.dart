@@ -196,11 +196,14 @@ void main() {
       expect(_tutoiement(tester), isFalse);
     });
 
-    testWidgets("l'enseignant : aucune lecture d'age", (
-      WidgetTester tester,
-    ) async {
+    // Revue du garde-cap du 11/11/2026 (B3) : la page ne lit plus le role.
+    // Le profil d'un enseignant n'a pas de fiche d'eleve : le serveur ne rend
+    // rien, l'age reste inconnu, la salle vouvoie.
+    testWidgets("l'enseignant : vous", (WidgetTester tester) async {
       final _LectureFixe lecture = await _monter(tester, role: 'teacher');
-      expect(lecture.lus, isEmpty);
+      expect(lecture.lus, <String>['t1']);
+      expect(_tutoiement(tester), isFalse);
+      expect(find.text(t.salle.seulEleveDetail), findsOneWidget);
     });
   });
 }

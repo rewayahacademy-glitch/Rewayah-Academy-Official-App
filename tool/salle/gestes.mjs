@@ -280,6 +280,17 @@ try {
   verifier('4. ... son micro reste interdit chez LiveKit, sa camera permise',
     !microPermis(droitsB4) && cameraPermise(droitsB4), droitsB4);
 
+  // B2 (revue du garde-cap) : « Terminer » sans cible, demande par quelqu'un
+  // qui ne conduit pas la seance, PENDANT une recitation : refuse avant toute
+  // lecture. La meme reponse sera rendue sans recitation (etape 9).
+  const intrus4 = await geste(b.courriel, seance, 'terminer_recitation');
+  verifier('4. B2 : un eleve demande « Terminer » sans cible pendant la recitation : 403',
+    intrus4.statut === 403, intrus4);
+  const direction4 = await geste(COMPTES.direction, seance, 'terminer_recitation');
+  verifier('4. B2 : un compte hors de la seance aussi : 403', direction4.statut === 403, direction4);
+  verifier('4. B2 : ... et la recitation tient toujours : B n\'a pas retrouve son micro',
+    !microPermis(await droits(pageB)));
+
   // 5. C entre pendant la recitation.
   const jetonC = await jeton(c.courriel, seance);
   const pageC = await entrer(navigateur, jetonC.corps);
@@ -338,6 +349,12 @@ try {
   const rien = await geste(COMPTES.enseignant, seance, 'terminer_recitation');
   verifier('9. « Terminer » sans recitation en cours ne fait rien',
     rien.statut === 200 && rien.corps?.applique === false, rien);
+  const intrus9 = await geste(b.courriel, seance, 'terminer_recitation');
+  const direction9 = await geste(COMPTES.direction, seance, 'terminer_recitation');
+  verifier('9. B2 : sans recitation, la meme reponse qu\'avec pour qui ne conduit pas la seance (403, meme corps)',
+    intrus9.statut === 403 && direction9.statut === 403 &&
+    JSON.stringify(intrus9.corps) === JSON.stringify(intrus4.corps) &&
+    JSON.stringify(direction9.corps) === JSON.stringify(direction4.corps), { intrus9, direction9 });
   const absent = await geste(COMPTES.enseignant, seance, 'faire_reciter', a.id);
   verifier('9. faire reciter un eleve sorti de la salle est refuse, sans rien fermer',
     absent.statut === 200 && absent.corps?.applique === false && absent.corps?.motif === 'recitant_absent', absent);

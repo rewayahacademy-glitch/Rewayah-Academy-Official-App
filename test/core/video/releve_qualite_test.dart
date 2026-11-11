@@ -319,6 +319,48 @@ void main() {
     },
   );
 
+  // Revue du garde-cap du 11/11/2026 : l'information du releve ne s'affiche
+  // que si le serveur le tient. L'appareil le sait a la premiere reponse.
+  test('le serveur tient le releve : su a la premiere reponse (ecrite ou '
+      'ignoree), jamais apres un refus ni avant toute reponse', () {
+    fakeAsync((FakeAsync async) {
+      for (final (ReponseReleve reponse, bool tenu) in <(ReponseReleve, bool)>[
+        (ReponseReleve.ecrite, true),
+        (ReponseReleve.ignoree, true),
+        (ReponseReleve.refusee, false),
+      ]) {
+        final _FauxPort port = _FauxPort()
+          ..horloge = (() => async.elapsed)
+          ..reponse = reponse;
+        int annonces = 0;
+        final EnvoiReleve envoi = EnvoiReleve(
+          port: () => port,
+          horloge: () => _t0.add(async.elapsed),
+          quandTenu: () => annonces++,
+        );
+        expect(envoi.tenuParLeServeur, isFalse, reason: 'avant toute reponse');
+        void observer(QualiteLien q) {
+          envoi.observer(
+            seanceId: 's1',
+            participants: <ParticipantSalle>[_p('moi', local: true)],
+            etats: <String, EtatReseau>{'moi': _e(q)},
+          );
+          async.flushMicrotasks();
+        }
+
+        observer(QualiteLien.mediocre);
+        expect(envoi.tenuParLeServeur, tenu, reason: reponse.name);
+        async.elapse(const Duration(seconds: 30));
+        observer(QualiteLien.perdue);
+        expect(annonces, tenu ? 1 : 0, reason: 'annonce une seule fois');
+        // Une nouvelle entree en salle ne l'oublie pas : c'est un fait du
+        // serveur, pas de la seance.
+        envoi.remettre();
+        expect(envoi.tenuParLeServeur, tenu);
+      }
+    });
+  });
+
   test('le serveur ignore (rythme, plafond) : rien n est retente', () {
     fakeAsync((FakeAsync async) {
       final m = _monter(async);

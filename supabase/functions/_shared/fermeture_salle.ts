@@ -34,8 +34,10 @@
 // Le delai ne vit pas dans le webhook (LiveKit livre ses webhooks un par un :
 // attendre dedans retarderait le retour de l'enseignant). L'echeance est une
 // date ecrite dans la salle ; elle est appliquee par le prochain appel qui
-// lit la salle : la tache planifiee `observation-coupure` (chaque minute),
-// l'application d'un eleve qui demande au serveur de verifier
+// lit la salle : la tache planifiee `observation-coupure` (en production, au
+// 11/11/2026, seulement quand un tuteur observe une seance : voir l'en-tete
+// de cette fonction), l'application d'un eleve qui demande au serveur de
+// verifier
 // (`create-room-token`, action `verifier_salle`), ou un evenement de la
 // salle. La decision lit toujours l'etat de la salle chez LiveKit, jamais
 // l'ordre des messages ni la parole d'un client.

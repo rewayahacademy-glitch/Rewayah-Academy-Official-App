@@ -93,6 +93,22 @@ export function motifHorsSeance(raison: string | null | undefined): DetailRefusS
     : null
 }
 
+/// FERMETURE-SALLE, revue du garde-cap du 11/11/2026 (B1) : la verification
+/// de la salle, demandee par quelqu'un a qui la porte vient d'etre refusee, ne
+/// se lance que pour un AYANT DROIT, c'est-a-dire quand le motif vient de la
+/// base (`motif_refus_salle` ne repond qu'a un participant, a l'enseignant
+/// effectif ou au tuteur d'un eleve inscrit). Le repli generique
+/// ([motifHorsSeance] : non inscrit, seance inconnue) ne l'ouvre jamais : un
+/// compte qui ne fait que connaitre un identifiant de seance ne fait rien
+/// lire ni rien appliquer dans cette salle, et sa reponse ne dit rien d'elle.
+export function verificationPermise(
+  action: string,
+  actionVerifier: string,
+  motifDeLaBase: DetailRefusSalle | null,
+): boolean {
+  return action === actionVerifier && motifDeLaBase !== null
+}
+
 /// SITUATIONS-GRAVES : une panne (base injoignable, erreur inattendue) n'est
 /// pas un refus. Les refus de `autoriser_jeton_video` sont tous leves avec un
 /// code SQL connu ; toute autre forme est une panne, dite comme telle.

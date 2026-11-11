@@ -1,6 +1,6 @@
 -- PARTAGE-GENERIQUE (11/11/2026) : la page de reprise d'un support qui n'est
 -- pas le Coran, par Classe et par support.
--- Migration 20261123000000 (BROUILLON NON APPLIQUE a distance le 11/11/2026).
+-- Migration 20261123700000 (BROUILLON NON APPLIQUE a distance le 11/11/2026).
 -- Memes fixtures que scenarios_cahier_c1_position_reprise.sql : une Classe c1,
 -- titulaire b1 ; b2 la remplace sur s74 et s72 ; b3 enseignant etranger ; a1
 -- la direction ; e1 un eleve. s71 est en cours (fenetre d'ecriture ouverte).

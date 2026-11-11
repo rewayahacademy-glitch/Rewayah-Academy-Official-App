@@ -1,5 +1,11 @@
 import { assertEquals } from 'jsr:@std/assert@1'
-import { estPanne, lireMotifSalle, motifHorsSeance, motifPersonnel } from './motif_salle.ts'
+import {
+  estPanne,
+  lireMotifSalle,
+  motifHorsSeance,
+  motifPersonnel,
+  verificationPermise,
+} from './motif_salle.ts'
 
 Deno.test('un motif connu passe, avec les bornes du serveur', () => {
   assertEquals(
@@ -79,7 +85,7 @@ Deno.test('les refus qui ne concernent que l\'appelant ont leur motif', () => {
 })
 
 Deno.test('une seance qui n\'est pas la sienne : la meme reponse, qu\'elle existe ou non', () => {
-  const attendu = { motif: 'non_inscrit', fin_utc: null, ouverture_utc: null, grace_minutes: null }
+  const attendu = { motif: 'non_inscrit' as const, fin_utc: null, ouverture_utc: null, grace_minutes: null }
   for (const r of ['non inscrit a cette seance', 'seance introuvable', 'seance close', 'eleve hors du foyer']) {
     assertEquals(motifHorsSeance(r), attendu)
   }
@@ -95,4 +101,19 @@ Deno.test('une panne n\'est pas un refus', () => {
 
 Deno.test('les nouveaux motifs passent aussi par lireMotifSalle', () => {
   assertEquals(lireMotifSalle({ motif: 'sorti' })?.motif, 'sorti')
+})
+
+// Revue du garde-cap du 11/11/2026 (B1) : un non inscrit ne declenche jamais
+// la verification de fermeture d'une salle.
+Deno.test('la verification de la salle : pour un ayant droit seulement', () => {
+  const deLaBase = lireMotifSalle({ motif: 'terminee' })
+  assertEquals(deLaBase?.motif, 'terminee')
+  // La base a repondu : l'appelant est participant, enseignant ou tuteur.
+  assertEquals(verificationPermise('verifier_salle', 'verifier_salle', deLaBase), true)
+  // Le repli generique (non inscrit, seance inconnue) : jamais.
+  assertEquals(motifHorsSeance('non inscrit a cette seance') !== null, true)
+  assertEquals(verificationPermise('verifier_salle', 'verifier_salle', null), false)
+  // Une autre action ne verifie rien, meme pour un ayant droit.
+  assertEquals(verificationPermise('', 'verifier_salle', deLaBase), false)
+  assertEquals(verificationPermise('retablir_publication', 'verifier_salle', deLaBase), false)
 })

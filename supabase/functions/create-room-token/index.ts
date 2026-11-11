@@ -40,6 +40,7 @@ import {
   lireMotifSalle,
   motifHorsSeance,
   motifPersonnel,
+  verificationPermise,
 } from '../_shared/motif_salle.ts'
 import { doitDifferer, ROLE_QUI_ATTEND } from '../_shared/publication_differee.ts'
 import { seanceDeLaSalle } from '../_shared/seance_salle.ts'
@@ -54,8 +55,14 @@ const ACTION_RETABLIR = 'retablir_publication'
 /// la salle chez LiveKit, la marque qu'il y a posee et la seance en base
 /// (`_shared/fermeture_salle.ts`), et applique a TOUTE la salle. Un seul
 /// client honnete suffit donc a fermer les micros de tous ; aucun client ne
-/// peut ni avancer ni retarder l'echeance. Si tous les clients se taisent, la
-/// tache planifiee (`observation-coupure`) fait le meme passage chaque minute.
+/// peut ni avancer ni retarder l'echeance.
+///
+/// VRAI AU 11/11/2026 (revue du garde-cap, B4) : si tous les clients se
+/// taisent, il ne reste que le webhook (un evenement de la salle). La tache
+/// planifiee de production n'appelle `observation-coupure` que lorsqu'un
+/// tuteur observe une seance (clause WHERE de la migration 20261105500000) :
+/// elle ne fait donc PAS ce passage chaque minute tant que cette clause n'est
+/// pas elargie (lot FERMETURE-CRON, a venir).
 const ACTION_VERIFIER = 'verifier_salle'
 
 Deno.serve(async (requete: Request) => {
@@ -157,18 +164,24 @@ Deno.serve(async (requete: Request) => {
     } catch (e) {
       console.error('motif_refus_salle en echec', { seance, erreur: (e as Error).message })
     }
+    // Revue du garde-cap du 11/11/2026 (B1) : seul un motif rendu par la
+    // base designe un ayant droit. Le repli ci-dessous (« pas inscrit ») ne
+    // doit ouvrir aucune verification de la salle.
+    const verifier = verificationPermise(action, ACTION_VERIFIER, detail)
     // SITUATIONS-GRAVES : sans motif de la base, une seance qui n'est pas
     // la sienne se dit « pas inscrit », la meme reponse qu'elle existe ou non.
     detail = detail ?? motifHorsSeance(error?.message)
     if (detail) {
-      // FERMETURE-SALLE : la base vient de dire a quelqu'un qui y a droit
-      // (`motif_refus_salle` ne repond qu'a un participant, a l'enseignant
-      // effectif ou au tuteur d'un eleve inscrit) que la porte de cette
-      // seance est fermee. S'il demandait la verification, c'est le moment de
-      // relire la salle : seance finie et enseignant parti, elle est fermee
-      // pour tous. Un echec ne change pas la reponse.
+      // FERMETURE-SALLE : quand la base vient de dire a quelqu'un qui y a
+      // droit (`motif_refus_salle` ne repond qu'a un participant, a
+      // l'enseignant effectif ou au tuteur d'un eleve inscrit) que la porte
+      // de cette seance est fermee, et qu'il demandait la verification, c'est
+      // le moment de relire la salle : seance finie et enseignant parti, elle
+      // est fermee pour tous. Un echec ne change pas la reponse. Pour tout
+      // autre appelant (non inscrit, seance inconnue) : rien n'est lu, rien
+      // n'est applique, et la reponse ne dit rien de la salle.
       let salleFermee = false
-      if (action === ACTION_VERIFIER) {
+      if (verifier) {
         try {
           const { route, seance: vue } = await seanceDeLaSalle(service, { seanceId: seance })
           if (route) {
@@ -185,7 +198,7 @@ Deno.serve(async (requete: Request) => {
       return json({
         error: 'acces a la salle refuse',
         ...detail,
-        ...(action === ACTION_VERIFIER ? { salle: salleFermee ? 'fermee' : 'ouverte' } : {}),
+        ...(verifier ? { salle: salleFermee ? 'fermee' : 'ouverte' } : {}),
       }, 403)
     }
     return refus('acces a la salle refuse', 403)

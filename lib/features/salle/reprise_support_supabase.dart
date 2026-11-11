@@ -1,6 +1,6 @@
 // Lot PARTAGE-GENERIQUE (11/11/2026) : l'adaptateur Supabase de la page de
 // reprise des supports. Deux fonctions de la migration
-// `20261123000000_partage_generique_position_support.sql` (brouillon non
+// `20261123700000_partage_generique_position_support.sql` (brouillon non
 // applique le 11/11/2026) : `enregistrer_position_support` et
 // `positions_reprise_supports_seance`. Le serveur porte les gardes
 // (enseignant effectif de la seance pour ecrire ; direction, titulaire ou

@@ -663,6 +663,15 @@ L'échéance est une date écrite dans la salle ; elle est appliquée par le pro
 la salle. La décision lit toujours l'état chez LiveKit et la séance en base, jamais l'ordre des
 messages ni la parole d'un client. Trois voies, toutes sans migration :
 
+- **CORRECTION du 11/11 au soir (revue du garde-cap, B4) : ce premier point était FAUX tel
+  qu'écrit.** La tâche planifiée de production n'appelle `observation-coupure` que lorsqu'un tuteur
+  observe une séance ou vient d'en être coupé (clause `WHERE` de la migration `20261105500000`,
+  lignes 266 à 279, que la lecture du matin n'avait pas regardée). Sans tuteur en observation, le
+  passage planifié n'a **pas** lieu. La règle tient donc ce soir par les deux autres voies
+  seulement (l'application d'un participant, le webhook). Limite qui en découle : une salle où
+  aucune application à jour ne tourne et où plus personne n'entre ni ne sort après l'échéance garde
+  ses micros ouverts. Élargir la clause demande une migration (lot FERMETURE-CRON, plage
+  `20261123700200`, inscrit par le garde-cap pour la suite).
 - **La tâche planifiée `observation-coupure`** (chaque minute, déjà installée pour les visites des
   tuteurs) fait aussi le passage sur toutes les salles ouvertes. C'est la voie qui ne dépend de la
   bonne foi d'aucun client. Vérifié en lecture seule en production le 11/11 à 09:47 UTC : la tâche
@@ -1184,7 +1193,7 @@ de démonstration factice se partage, et seulement sous `PLAYGROUND` et dans les
 - **Base, écart à la consigne du lot** : la consigne proposait d'élargir la contrainte
   `support = 'mushaf'`. Non retenu : `classe_position_reprise` a une seule ligne par Classe, donc ouvrir le
   livre des lettres aurait effacé la page du Coran de la Classe. Le brouillon
-  `20261123000000_partage_generique_position_support.sql` crée une table neuve (une ligne par Classe et
+  `20261123700000_partage_generique_position_support.sql` crée une table neuve (une ligne par Classe et
   par support) et deux fonctions, avec les gardes de CAHIER-C1. Aucune instruction d'effacement : pas de
   page à coller. Sans cette migration, la salle marche ; l'enseignant lit « La page de ce support n'est
   pas encore retenue d'une séance à l'autre. À la prochaine séance, choisissez de nouveau la page. »
@@ -1361,7 +1370,7 @@ t'impose que les meilleures pratiques alors à toi de voir ce qui est meilleur p
     élèves) et dans la politique de confidentialité. Textes écrits par le lot, à confirmer par le
     directeur (`docs/current/TEXTES-VALIDES/INFORMATION-RELEVE-QUALITE.md`).
 - **Dit franchement.**
-  - La migration `20261123000100_releve_qualite_lien.sql` est un **brouillon, installé nulle
+  - La migration `20261123700100_releve_qualite_lien.sql` est un **brouillon, installé nulle
     part**. **Ne pas l'installer avant : (a) l'information affichée, les mentions dans la politique
     de confidentialité et l'avis de sa modification diffusé ; (b) chaque point de droit tranché, sa
     conséquence codée ; (c) la page à coller par le directeur (un mot d'effacement, dans la purge).**
@@ -1601,3 +1610,61 @@ scène d'attente et l'annonce de tête tutoient maintenant l'enfant (`salle.seul
 /salle »). **Non tranché** : la phrase des adultes dit « Votre professeur » dans le titre et « votre
 enseignant » dessous ; la version en « tu » dit « enseignant » aux deux endroits (le mot du
 vocabulaire). Au directeur de dire si le titre des adultes doit suivre.
+
+## D-033 (11/11/2026, nuit). Revue du garde-cap avant la mise en ligne : quatre défauts corrigés, le relevé n'est plus annoncé tant qu'il n'existe pas
+
+Le garde-cap a relu la PR 409 (tête `5a143c126`) le 11/11 à 20 h 35 UTC, avant une mise en ligne
+voulue par le directeur dans la nuit. Sa revue n'a trouvé aucun chemin par lequel un élève, un tuteur
+ou un inconnu obtient des droits d'enseignant. Elle a trouvé quatre défauts, tous vérifiés dans le
+code avant correction, tous réels :
+
+- **B1 (sécurité).** `create-room-token`, action `verifier_salle` : un compte **non inscrit** qui
+  connaissait un identifiant de séance faisait relire la salle par le serveur (et appliquer la règle
+  de fermeture si elle était échue), parce que le motif générique « pas inscrit » était traité comme
+  un motif rendu par la base. Corrigé : la vérification ne se lance que si le motif vient de
+  `motif_refus_salle` (un participant, l'enseignant effectif, le tuteur d'un élève inscrit) ; pour
+  tout autre compte, rien n'est lu, rien n'est appliqué, et la réponse ne dit rien de la salle
+  (`verificationPermise`, `_shared/motif_salle.ts`, un test Deno ; deux contrôles ajoutés au banc
+  `fermeture.mjs`).
+- **B2 (sécurité).** `salle-gestes`, `terminer_recitation` sans élève nommé : la route de la salle et
+  LiveKit étaient lus **avant** l'autorisation, et la réponse (200 ou 403) disait à n'importe quel
+  compte connecté si une récitation était en cours. Corrigé : la porte de la salle
+  (`autoriser_jeton_video`) dit d'abord si l'appelant conduit la séance ; sinon 403, la même réponse
+  avec ou sans récitation (quatre contrôles ajoutés au banc `gestes.mjs`). Coût : une ligne de plus
+  dans le journal des autorisations pour ce cas rare (page de l'enseignant rechargée).
+- **B3 (règle « un widget lit une capacité, jamais un rôle »).** `salle_page.dart` lisait
+  `AppRole.student` pour savoir de qui lire l'âge. Retiré : la page lit l'âge de la personne devant
+  l'écran, quelle qu'elle soit ; seul un élève a une fiche d'élève, donc pour tout autre compte le
+  serveur ne rend rien et la salle vouvoie (test « l'enseignant : vous »). D'autres lectures de rôle
+  plus anciennes restent dans cette page (lignes 281, 683, 836, 1495, 2693, 2723) : elles sont dans
+  `main`, hors de cette revue, à reprendre.
+- **B4 (vérité).** J'ai écrit et répété que « `observation-coupure` passe chaque minute et ferme une
+  salle restée sans enseignant ». **C'est faux en production** : voir la correction ajoutée à D-018.
+  Commentaires du code, CONSTAT (SEC-1), bilan et description de la PR corrigés.
+
+**Le relevé de connexion (D-024) n'est plus annoncé tant qu'il n'existe pas.** Décision du garde-cap,
+appliquée : les trois blocs ajoutés à la politique de confidentialité (`juridique.confidentialite.s5`)
+sont retirés de l'application, en français et en arabe ; ils attendent, mot pour mot, dans
+`TEXTES-VALIDES/INFORMATION-RELEVE-QUALITE.md` et reviendront le jour de l'installation de la
+migration, avec la montée de version des textes et l'avis de modification. J'avais recommandé au
+directeur de les laisser ; le garde-cap a tranché dans l'autre sens (une politique ne décrit que des
+traitements réels), et son choix est le plus prudent : le texte juridique en production ne change
+pas cette nuit. **Ajouté de ma propre initiative, pour la même raison** : dans la salle, la phrase
+« l'application note si la connexion… » ne s'affiche plus que lorsque le serveur a répondu qu'il
+tient le relevé (`EnvoiReleve.tenuParLeServeur`, `VueSeance.releveTenu`). Deux effets voulus : on
+n'annonce pas à l'écran une collecte qui n'existe pas, et la collecte ne peut pas commencer sans
+être annoncée à l'écran (l'information apparaît d'elle-même dès que la migration est installée).
+
+**Migrations renumérotées** (collision avec la plage d'un autre lot, dite par le garde-cap) :
+`20261123700000_partage_generique_position_support.sql` et `20261123700100_releve_qualite_lien.sql`.
+Toujours en brouillon, installées nulle part ; l'application marche sans elles ; la fusion ne les
+installe pas (`deploy.yml` n'applique les migrations que sur lancement manuel).
+
+**`lib/CLAUDE.md`** : deux amendements datés décrivent la salle d'aujourd'hui (grille des commandes,
+modes d'affichage, règle d'alignement).
+
+**Inscrit par le garde-cap pour la suite, non fait ici** : la migration FERMETURE-CRON (élargir la
+clause de la tâche planifiée, `20261123700200`) ; les écritures du journal des autorisations à chaque
+vérification pendant une récitation ; une course possible sur les métadonnées de la salle ; les
+jetons émis avant le déploiement ; la question « un compte de la direction visible conduit-il la
+classe ? ».

@@ -39829,9 +39829,6 @@ class Traductions$juridique$confidentialite$s5$fr {
 		'La visio passe par un service spécialisé. L\'accès à une séance est donné par le serveur, pour cette séance seulement et pour peu de temps.',
 		'Aujourd\'hui, l\'application n\'enregistre pas les cours. Si l\'enregistrement revient, nous vous dirons avant pourquoi, combien de temps il est gardé et qui peut y accéder, et nous demanderons votre accord.',
 		'Une mention rappelle dans la salle qu\'une visite de contrôle est possible.',
-		'Le relevé de connexion. Pendant une séance, l\'application note si la connexion de l\'enseignant et celle de chaque élève adulte sont bonnes, faibles ou perdues, et si leur micro est ouvert à ce moment-là. Elle ne garde ni le son, ni l\'image, ni l\'adresse de la connexion. Ce relevé se fait automatiquement, vous n\'avez rien à fournir. Pour un élève mineur, elle ne garde rien.',
-		'Ce relevé sert à vérifier ce qui s\'est passé quand une séance est contestée. Base légale : notre intérêt légitime à répondre, faits à l\'appui, à une contestation. Seule la direction peut le lire, et chaque lecture est notée. Il est gardé 180 jours, puis effacé. Il ne sert jamais à noter une personne, et aucune décision automatique n\'en est tirée.',
-		'Vous pouvez vous opposer à ce relevé : écrivez-nous, nous vous répondrons.',
 	];
 }
 
@@ -60262,9 +60259,6 @@ extension on Traductions {
 			'juridique.confidentialite.s5.blocs.0' => 'La visio passe par un service spécialisé. L\'accès à une séance est donné par le serveur, pour cette séance seulement et pour peu de temps.',
 			'juridique.confidentialite.s5.blocs.1' => 'Aujourd\'hui, l\'application n\'enregistre pas les cours. Si l\'enregistrement revient, nous vous dirons avant pourquoi, combien de temps il est gardé et qui peut y accéder, et nous demanderons votre accord.',
 			'juridique.confidentialite.s5.blocs.2' => 'Une mention rappelle dans la salle qu\'une visite de contrôle est possible.',
-			'juridique.confidentialite.s5.blocs.3' => 'Le relevé de connexion. Pendant une séance, l\'application note si la connexion de l\'enseignant et celle de chaque élève adulte sont bonnes, faibles ou perdues, et si leur micro est ouvert à ce moment-là. Elle ne garde ni le son, ni l\'image, ni l\'adresse de la connexion. Ce relevé se fait automatiquement, vous n\'avez rien à fournir. Pour un élève mineur, elle ne garde rien.',
-			'juridique.confidentialite.s5.blocs.4' => 'Ce relevé sert à vérifier ce qui s\'est passé quand une séance est contestée. Base légale : notre intérêt légitime à répondre, faits à l\'appui, à une contestation. Seule la direction peut le lire, et chaque lecture est notée. Il est gardé 180 jours, puis effacé. Il ne sert jamais à noter une personne, et aucune décision automatique n\'en est tirée.',
-			'juridique.confidentialite.s5.blocs.5' => 'Vous pouvez vous opposer à ce relevé : écrivez-nous, nous vous répondrons.',
 			'juridique.confidentialite.s6.titre' => '6. Où sont vos informations',
 			'juridique.confidentialite.s6.blocs.0' => 'Nous utilisons un hébergeur de pages web, une base de données avec la connexion des comptes, un service de visio, un stockage privé pour les fichiers, un prestataire de paiement et un service de rapports d\'erreurs. Ils traitent vos informations pour nous, pour ces seules raisons.',
 			'juridique.confidentialite.s6.blocs.1' => 'Pour protéger la connexion contre les robots, nous utilisons Cloudflare Turnstile (Cloudflare, Inc.). Au moment de la vérification, Cloudflare traite votre adresse IP et des informations techniques sur votre navigateur, uniquement pour ce contrôle et sans cookie publicitaire. Base légale : notre intérêt légitime à sécuriser le service.',
@@ -60397,11 +60391,11 @@ extension on Traductions {
 			'avis.admin.filtre.retire' => 'Retirés',
 			'avis.admin.attente' => ({required Object n}) => 'Avis en attente : ${n}',
 			'avis.admin.vide' => 'Aucun avis dans cette liste.',
-			_ => null,
-		} ?? switch (path) {
 			'avis.admin.erreur' => 'Les avis n\'ont pas pu être chargés. Réessayez.',
 			'avis.admin.sansDonnees' => 'Les avis n\'ont pas pu être chargés',
 			'avis.admin.refuse' => 'Seule la direction connectée lit et décide des avis. Reconnectez-vous avec le bon compte, puis réessayez.',
+			_ => null,
+		} ?? switch (path) {
 			'avis.admin.indisponibleTitre' => 'Avis indisponibles',
 			'avis.admin.indisponiblePhrase' => 'Cette fonction sera disponible au branchement serveur.',
 			'avis.admin.champs.lien' => 'Lien',
@@ -60911,11 +60905,11 @@ extension on Traductions {
 			'candidatsFlux.importFormulaires.apercu.lignes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} ligne lue', other: '${n} lignes lues', ), 
 			'candidatsFlux.importFormulaires.apercu.colonnesReconnues' => ({required Object reconnues, required Object total}) => 'Colonnes reconnues : ${reconnues} sur ${total}',
 			'candidatsFlux.importFormulaires.apercu.premieres' => 'Les premières lignes',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.apercu.ligne' => ({required Object ligne}) => 'Ligne ${ligne}',
 			'candidatsFlux.importFormulaires.apercu.autres' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} autre ligne n\'est pas montrée ici.', other: '${n} autres lignes ne sont pas montrées ici.', ), 
 			'candidatsFlux.importFormulaires.apercu.sansLignes' => 'Les lignes seront lues dès que les colonnes seront associées.',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.apercu.colonnesATitre' => 'Des colonnes restent à associer',
 			'candidatsFlux.importFormulaires.apercu.mappageIncomplet' => ({required Object champs}) => 'Associez d\'abord ces colonnes : ${champs}.',
 			'candidatsFlux.importFormulaires.apercu.ambiguTitre' => 'Deux colonnes se ressemblent',

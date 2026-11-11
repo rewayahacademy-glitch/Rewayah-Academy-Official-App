@@ -13788,10 +13788,7 @@
         "blocs": [
           "La visio passe par un service spécialisé. L'accès à une séance est donné par le serveur, pour cette séance seulement et pour peu de temps.",
           "Aujourd'hui, l'application n'enregistre pas les cours. Si l'enregistrement revient, nous vous dirons avant pourquoi, combien de temps il est gardé et qui peut y accéder, et nous demanderons votre accord.",
-          "Une mention rappelle dans la salle qu'une visite de contrôle est possible.",
-          "Le relevé de connexion. Pendant une séance, l'application note si la connexion de l'enseignant et celle de chaque élève adulte sont bonnes, faibles ou perdues, et si leur micro est ouvert à ce moment-là. Elle ne garde ni le son, ni l'image, ni l'adresse de la connexion. Ce relevé se fait automatiquement, vous n'avez rien à fournir. Pour un élève mineur, elle ne garde rien.",
-          "Ce relevé sert à vérifier ce qui s'est passé quand une séance est contestée. Base légale\u00a0: notre intérêt légitime à répondre, faits à l'appui, à une contestation. Seule la direction peut le lire, et chaque lecture est notée. Il est gardé 180 jours, puis effacé. Il ne sert jamais à noter une personne, et aucune décision automatique n'en est tirée.",
-          "Vous pouvez vous opposer à ce relevé\u00a0: écrivez-nous, nous vous répondrons."
+          "Une mention rappelle dans la salle qu'une visite de contrôle est possible."
         ]
       },
       "s6": {

@@ -5,6 +5,8 @@ OK    2. ... le droit et le micro de A sont intacts
 OK    2. il revient avant le delai : la marque est levee, rien n'a ete retire : {"statut":200,"corps":{"salle":"ouverte","micros_fermes":0,"reste_s":null}}
 OK    3. depart de l'enseignant : le delai repart de zero : {"statut":200,"corps":{"salle":"ouverte","micros_fermes":0,"reste_s":117}}
 OK    3. juste avant l'echeance : micros toujours ouverts : {"statut":200,"corps":{"salle":"ouverte","micros_fermes":0,"reste_s":20}}
+OK    3. B1 : un eleve d'une autre classe demande la verification : refus generique, sans rien dire de la salle : {"statut":403,"corps":{"error":"acces a la salle refuse","motif":"non_inscrit","fin_utc":null,"ouverture_utc":null,"grace_minutes":null}}
+OK    3. B1 : ... et rien n'a ete applique : A publie toujours
 OK    3. le delai est passe : a la demande de B, le serveur ferme A ET B : {"statut":200,"corps":{"salle":"ouverte","micros_fermes":2,"reste_s":null}}
 OK    3. LiveKit retire a A le droit de publier
 OK    3. ... et a B, qui n'avait pas de micro ouvert
@@ -22,12 +24,12 @@ OK    5. A et B n'ont plus le droit de publier
 OK    6. seance finie, enseignant absent : le passage planifie ferme la salle : {"connues":1,"retenues":1,"examinees":1,"microsFermes":0,"sallesFermees":1,"echecs":0}
 OK    6. A est deconnecte, raison « salle supprimee » : {"raison":5,"nom":"ROOM_DELETED"}
 OK    6. B est deconnecte, raison « salle supprimee » : {"raison":5,"nom":"ROOM_DELETED"}
-OK    6. la base refuse un nouveau jeton : la seance est terminee : {"statut":403,"corps":{"error":"acces a la salle refuse","motif":"terminee","fin_utc":"2026-11-11T20:18:40.324386+00:00","ouverture_utc":"2026-11-11T20:08:21.17047+00:00","grace_minutes":15}}
+OK    6. la base refuse un nouveau jeton : la seance est terminee : {"statut":403,"corps":{"error":"acces a la salle refuse","motif":"terminee","fin_utc":"2026-11-11T20:41:03.453553+00:00","ouverture_utc":"2026-11-11T20:30:43.256906+00:00","grace_minutes":15}}
 OK    7. D ouvre son micro devant son enseignant
-OK    7. depassement passe, enseignant present : la base ferme la porte, la salle reste ouverte : {"statut":403,"corps":{"error":"acces a la salle refuse","motif":"terminee","fin_utc":"2026-11-11T20:14:43.513091+00:00","ouverture_utc":"2026-11-11T20:12:41.04346+00:00","grace_minutes":15,"salle":"ouverte"}}
+OK    7. depassement passe, enseignant present : la base ferme la porte, la salle reste ouverte : {"statut":403,"corps":{"error":"acces a la salle refuse","motif":"terminee","fin_utc":"2026-11-11T20:37:06.470461+00:00","ouverture_utc":"2026-11-11T20:35:03.97166+00:00","grace_minutes":15,"salle":"ouverte"}}
 OK    7. ... personne n'est deconnecte, le micro de D reste ouvert
 OK    8. la cloture automatique a clos la seance en base : {"statut":"ended"}
-OK    8. seance close, enseignant present : la salle n'est pas fermee (question posee au directeur) : {"statut":403,"corps":{"error":"acces a la salle refuse","motif":"terminee","fin_utc":"2026-11-11T20:03:45.616321+00:00","ouverture_utc":"2026-11-11T20:12:41.04346+00:00","grace_minutes":15,"salle":"ouverte"}}
+OK    8. seance close, enseignant present : la salle n'est pas fermee (question posee au directeur) : {"statut":403,"corps":{"error":"acces a la salle refuse","motif":"terminee","fin_utc":"2026-11-11T20:26:08.558695+00:00","ouverture_utc":"2026-11-11T20:35:03.97166+00:00","grace_minutes":15,"salle":"ouverte"}}
 OK    8. ... personne n'est deconnecte
 OK    9. l'enseignant sort d'une seance close : le serveur ferme la salle, D est deconnecte : {"raison":5,"nom":"ROOM_DELETED"}
 

@@ -15,6 +15,11 @@
 //   faire_reciter       { session_id, eleve_id }   -> { applique, motif?, fermes, echecs }
 //   terminer_recitation { session_id, eleve_id? }  -> { applique, rendus, echecs }
 //
+// `terminer_recitation` sans `eleve_id` (page de l'enseignant rechargee) :
+// la porte de la salle (`autoriser_jeton_video`) verifie d'abord que
+// l'appelant conduit la seance, AVANT de lire qui recite ; un autre compte
+// recoit 403, recitation en cours ou non (revue du garde-cap, B2).
+//
 // La porte reste `autoriser_geste_salle()` : enseignant effectif, eleve
 // inscrit, salle ouverte. Elle ne connait que trois gestes ; la recitation y
 // passe sous `couper_micro` (c'est bien ce que le serveur fait aux
@@ -36,15 +41,16 @@
 import { appelant, clientService, enTetesCors, json, refus } from '../_shared/clients.ts'
 import {
   appliquerGeste,
-  type Fournisseur,
   type GesteSalle,
   ouvrirRecitation,
   recitantEnCours,
   type RouteGeste,
   type RouteSalle,
   terminerRecitation,
+  urlDe,
   videoConfiguree,
 } from '../_shared/livekit.ts'
+import { ROLE_QUI_CONDUIT } from '../_shared/publication_differee.ts'
 
 const GESTES: readonly GesteSalle[] = ['couper_micro', 'couper_camera', 'faire_sortir']
 
@@ -80,11 +86,32 @@ Deno.serve(async (requete: Request) => {
 
   if (demande === TERMINER_RECITATION && !eleve && UUID.test(seance)) {
     // L'application de l'enseignant ne sait plus qui recite (page rechargee) :
-    // le serveur le lit dans la salle. Rien n'est change ni rendu a ce stade ;
-    // la porte ci-dessous decide ensuite comme pour tout geste.
+    // le serveur le lit dans la salle.
+    //
+    // Revue du garde-cap du 11/11/2026 (B2) : **l'autorisation passe avant
+    // toute lecture.** La porte des gestes exige une cible, que l'on ne
+    // connait pas encore ; c'est donc la porte de la salle
+    // (`autoriser_jeton_video`, la meme que `create-room-token`) qui dit
+    // d'abord si l'appelant conduit cette seance (role `teacher` : l'enseignant
+    // effectif, remplacant compris). Pour tout autre compte : le meme 403 que
+    // la porte des gestes, qu'une recitation soit en cours ou non, et ni la
+    // route ni LiveKit ne sont lus. Aucun jeton n'est signe ici. La porte des
+    // gestes decide ensuite, avec la vraie cible, comme pour tout geste.
+    const { data: droit, error: refusDroit } = await clientService().rpc('autoriser_jeton_video', {
+      p_session_id: seance,
+      p_profile_id: compte.id,
+      p_ws_url_cloud: urlDe('cloud'),
+      p_ws_url_self_hosted: urlDe('self_hosted'),
+    })
+    const conduit = !refusDroit && droit !== null &&
+      (droit as { role?: unknown }).role === ROLE_QUI_CONDUIT
+    if (!conduit) {
+      console.error('terminer_recitation refuse avant lecture', { seance, erreur: refusDroit?.message })
+      return refus('geste refuse', 403)
+    }
     try {
-      const route = await routeDeLaSeance(seance)
-      eleve = route ? (await recitantEnCours(route)) ?? '' : ''
+      const route = droit as unknown as RouteSalle
+      eleve = route.room_name && route.ws_url ? (await recitantEnCours(route)) ?? '' : ''
     } catch (e) {
       console.error('recitation illisible', { seance, erreur: (e as Error).message })
       return refus('serveur video indisponible', 502)
@@ -142,21 +169,3 @@ Deno.serve(async (requete: Request) => {
     return refus('serveur video indisponible', 502)
   }
 })
-
-/// La salle LiveKit d'une seance, telle que la base l'a figee a la premiere
-/// emission de jeton, ou `null` (salle jamais ouverte). Lue sous la cle de
-/// service, jamais rendue a l'appelant.
-async function routeDeLaSeance(seance: string): Promise<RouteSalle | null> {
-  const { data, error } = await clientService()
-    .from('session_video_route')
-    .select('provider, ws_url, room_name')
-    .eq('session_id', seance)
-    .maybeSingle()
-  if (error) throw new Error(error.message)
-  if (!data?.room_name || !data?.ws_url) return null
-  return {
-    provider: data.provider as Fournisseur,
-    ws_url: String(data.ws_url),
-    room_name: String(data.room_name),
-  }
-}

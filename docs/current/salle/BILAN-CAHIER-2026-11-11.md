@@ -13,12 +13,14 @@ prouvée par lui en production. Les mots employés :
 - **en partie** : une moitié manque, elle est dite ;
 - **pas commencé**.
 
-Rejoué sur l'ensemble fusionné (tête `5a143c126`, le 11/11) : la classe réelle de 6 élèves (grille,
+Rejoué sur l'ensemble fusionné (le 11/11, puis de nouveau après les corrections de la revue du garde-cap, D-033) : la classe réelle de 6 élèves (grille,
 colonne de l'ordinateur, visages à côté du document, bande de l'élève ;
 `captures/E2E/salle-banc/modes-11-11-soir/`), l'attente (`attente-11-11-soir/`), et, à 20 h 30 UTC, les
 trois règles du serveur par les vraies fonctions et le vrai LiveKit de la pile locale
 (`serveur-11-11-nuit/`) : micro des élèves fermé avant l'enseignant (15 contrôles), récitation au
-micro seul (44 sur 44), fermeture de la salle avec le passage planifié (32 contrôles). **Pas rejoués
+micro seul (48 sur 48, dont quatre contrôles « un compte qui ne conduit pas la séance ne termine
+rien et n'apprend rien »), fermeture de la salle avec le passage planifié (34 contrôles, dont deux
+« un élève étranger à la séance ne fait rien vérifier »). **Pas rejoués
 sur l'ensemble fusionné** : la voix sous réseau abîmé (mesures du matin), la reprise après veille.
 
 ## §4. Essais par l'usage réel
@@ -50,7 +52,7 @@ sur l'ensemble fusionné** : la voix sous réseau abîmé (mesures du matin), la
 | Indicateur réel chez l'enseignant (ses propres barres) | codé, testé | les barres suivent la mesure |
 | La qualité de chaque élève vue par l'enseignant | codé, testé | D-017 ; pas vu sur un vrai réseau dégradé |
 | Dire à quelqu'un « on vous entend mal » | codé, testé | D-017 |
-| Relevé conservé comme preuve, 180 jours (décision du directeur du 11/11) | codé, testé ; **installé nulle part** | D-024, fusionné : l'enseignant et les élèves adultes seulement (rien pour un élève mineur : loi du Québec, art. 4.1, lue ; la base ne connaît ni l'âge ni le pays) ; écriture bornée, lecture par la direction seule et tracée, purge à 180 jours, 54 contrôles SQL ; information affichée dans la salle et dans la politique de confidentialité. **Reste** : la migration contient un effacement (la purge), donc une page à coller par le directeur ; pas d'écran pour la direction ; l'accord du parent, qui permettrait de garder aussi la connexion d'un enfant, n'est pas construit |
+| Relevé conservé comme preuve, 180 jours (décision du directeur du 11/11) | codé, testé ; **installé nulle part** | D-024, fusionné : l'enseignant et les élèves adultes seulement (rien pour un élève mineur : loi du Québec, art. 4.1, lue ; la base ne connaît ni l'âge ni le pays) ; écriture bornée, lecture par la direction seule et tracée, purge à 180 jours, 54 contrôles SQL ; l'information de la salle ne s'affiche que lorsque le serveur tient le relevé ; les trois blocs de la politique de confidentialité sont retirés de l'application et attendent au registre des textes validés jusqu'à l'installation (revue du garde-cap, D-033). **Reste** : la migration contient un effacement (la purge), donc une page à coller par le directeur ; pas d'écran pour la direction ; l'accord du parent, qui permettrait de garder aussi la connexion d'un enfant, n'est pas construit |
 
 ## §7. Le support est générique
 
@@ -97,7 +99,7 @@ sur l'ensemble fusionné** : la voix sous réseau abîmé (mesures du matin), la
 | :--- | :--- | :--- |
 | L'écran ne coupe plus la séance | prouvé sur le banc pour la reprise | D-009 ; l'écran tenu allumé reste à prouver sur un vrai téléphone |
 | Micro des élèves fermé avant l'enseignant | prouvé sur le banc | D-008 ; fonctions du serveur à déployer |
-| Après le départ de l'enseignant | prouvé sur le banc pour le serveur | D-018 : micros fermés, puis salle fermée après 120 s ; pas rejoué sur l'ensemble fusionné |
+| Après le départ de l'enseignant | prouvé sur le banc pour le serveur ; **une voie sur trois ne tourne pas en production** | D-018 : micros fermés, puis salle fermée après 120 s ; rejoué sur l'ensemble fusionné le 11/11 au soir (32 contrôles). **Correction** : le passage planifié « chaque minute » n'a lieu en production que lorsqu'un tuteur observe une séance ; la règle tient par l'application d'un participant et par le webhook ; l'élargir demande une migration (lot FERMETURE-CRON) |
 | Sortir sans couper | codé, testé | D-010 |
 | Île à la façon de la Dynamic Island | prouvé sur le banc dans la salle | D-011 ; jamais elle ne pousse ni ne réduit la page |
 | Écran d'attente | prouvé sur le banc | D-012 |

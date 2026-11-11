@@ -49,7 +49,16 @@ Pendant le cours, l'application regarde si ta connexion marche bien. Elle ne gar
 
 Pendant une séance, l'application note si votre connexion est bonne, faible ou perdue, et si votre micro est ouvert à ce moment-là. Elle fait de même pour les élèves adultes, et ne garde rien pour un élève mineur. Elle ne garde ni le son ni l'image, ni l'adresse de votre connexion. Ce relevé sert à comprendre ce qui s'est passé quand une séance est contestée. Il est gardé 180 jours, puis effacé. Seule la direction peut le lire. Vous pouvez demander à la direction les données qui vous concernent, et vous opposer à ce relevé. Il ne sert jamais à vous noter.
 
-### Dans la politique de confidentialité, point 5 (`juridique.confidentialite.s5.blocs`, trois blocs ajoutés)
+### Dans la politique de confidentialité, point 5 (`juridique.confidentialite.s5.blocs`, trois blocs à ajouter)
+
+**État au 11/11/2026 au soir (revue du garde-cap) : ces trois blocs ne sont PAS dans l'application.**
+Ils avaient été ajoutés au point 5 par le lot RESEAU-PREUVE ; ils en sont retirés tant que le relevé
+n'existe pas (une politique de confidentialité ne décrit que des traitements réels, RGPD art. 12 et
+13). Ils reviennent, mot pour mot, le jour où la migration du relevé est installée, avec la montée de
+version des textes juridiques et l'avis de modification. Dans la salle, la phrase d'information
+(`salle.releve.*`) ne s'affiche que lorsque le serveur tient le relevé : il ne peut pas exister sans
+être annoncé à l'écran.
+
 
 Le relevé de connexion. Pendant une séance, l'application note si la connexion de l'enseignant et celle de chaque élève adulte sont bonnes, faibles ou perdues, et si leur micro est ouvert à ce moment-là. Elle ne garde ni le son, ni l'image, ni l'adresse de la connexion. Ce relevé se fait automatiquement, vous n'avez rien à fournir. Pour un élève mineur, elle ne garde rien.
 
@@ -80,6 +89,14 @@ Traduction du lot, non relue par une personne arabophone.
 أثناء الحصة، ينظر التطبيق هل اتصالك يعمل جيدًا. لا يسجّل صوتك ولا صورتك، ولا يحتفظ بشيء عن اتصالك.
 
 ---
+
+### Dans la politique de confidentialité, point 5 (`juridique.confidentialite.s5.blocs`, trois blocs, en arabe)
+
+سجل الاتصال. أثناء الحصة، يدوّن التطبيق هل اتصال المعلم واتصال كل طالب بالغ جيد أم ضعيف أم مقطوع، وهل الميكروفون مفتوح في تلك اللحظة. لا يحتفظ بالصوت ولا بالصورة ولا بعنوان الاتصال. يتم هذا السجل تلقائيًا، ولا يُطلب منكم تقديم شيء. أما الطالب القاصر فلا يحتفظ التطبيق بشيء عنه.
+
+يفيد هذا السجل في التحقق مما حدث حين يُعترض على حصة. الأساس القانوني: مصلحتنا المشروعة في الرد على الاعتراض بالوقائع. لا يقرؤه إلا الإدارة، وتُدوَّن كل قراءة. يُحفظ 180 يومًا ثم يُحذف. لا يُستعمل أبدًا لتقييم شخص، ولا يُبنى عليه أي قرار آلي.
+
+يمكنكم الاعتراض على هذا السجل: اكتبوا إلينا وسنرد عليكم.
 
 ## Reste à faire
 

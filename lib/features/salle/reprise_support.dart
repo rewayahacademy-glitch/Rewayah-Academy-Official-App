@@ -8,7 +8,7 @@
 // par Classe et par support.
 //
 // Le serveur ne sait la retenir qu'apres l'installation de la migration
-// `20261123000000_partage_generique_position_support.sql` (brouillon non
+// `20261123700000_partage_generique_position_support.sql` (brouillon non
 // applique le 11/11/2026). Sans elle, l'application marche : la page est
 // retenue le temps de la seance sur cet appareil, et une phrase dit a
 // l'enseignant qu'elle ne l'est pas encore d'une seance a l'autre.

@@ -315,6 +315,11 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   /// L'appareil n'envoie que SA ligne, a un rythme borne.
   late final EnvoiReleve _envoiReleve = EnvoiReleve(
     port: () => ref.read(portReleveQualiteProvider),
+    // Le serveur vient de repondre qu'il tient le releve : l'information
+    // peut s'afficher.
+    quandTenu: () {
+      if (mounted) setState(() {});
+    },
   );
 
   void _releverQualite() => _envoiReleve.observer(
@@ -1040,14 +1045,18 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   /// enfant etait vouvoye dans la salle). L'eleve connecte, ou l'enfant du
   /// foyer pour qui le tuteur ouvre la salle ([SallePage.eleveId]) : son
   /// type est lu une fois sur le serveur ([ageEleveProvider]). Tant que la
-  /// lecture n'est pas revenue, ou pour les autres roles, l'ancien port
-  /// (inconnu en production : vouvoiement).
+  /// lecture n'est pas revenue, l'ancien port (inconnu en production :
+  /// vouvoiement).
+  ///
+  /// Revue du garde-cap du 11/11/2026 (B3) : aucune lecture de ROLE ici (un
+  /// widget lit une capacite, jamais un role). La personne devant l'ecran,
+  /// quelle qu'elle soit : seul un eleve a une fiche d'eleve, donc pour un
+  /// enseignant, un tuteur ou la direction le serveur ne rend rien (la RLS en
+  /// decide), l'age reste inconnu et la salle vouvoie.
   AgeEleve _ageDeLEleve() {
     final AgeEleve repli = ref.watch(portAgeEleveProvider).ageDeLEleve();
-    final SessionState session = ref.watch(sessionProvider);
     final String? eleve =
-        widget.eleveId ??
-        (session.role == AppRole.student ? session.profileId : null);
+        widget.eleveId ?? ref.watch(sessionProvider).profileId;
     if (eleve == null || repli != AgeEleve.inconnu) return repli;
     return ref.watch(ageEleveProvider(eleve)).value ?? repli;
   }
@@ -3019,6 +3028,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
         annonces: annonces,
         groupeId: widget.groupeId,
         age: _ageDeLEleve(),
+        releveTenu: _envoiReleve.tenuParLeServeur,
         // PARTAGE-GENERIQUE : le support presente, quel qu'il soit.
         supportPresente: presentee == null
             ? null

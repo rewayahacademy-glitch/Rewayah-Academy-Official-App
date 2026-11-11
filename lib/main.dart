@@ -760,7 +760,7 @@ List<Override> _surchargesAppReelle() => <Override>[
     PositionRepriseSupabase(Supabase.instance.client),
   ),
   // PARTAGE-GENERIQUE (11/11/2026) : la page de reprise des supports autres
-  // que le Coran. Sans la migration 20261123000000, le serveur repond que la
+  // que le Coran. Sans la migration 20261123700000, le serveur repond que la
   // fonction n'existe pas : rien n'est retenu, une phrase le dit.
   portRepriseSupportProvider.overrideWithValue(
     RepriseSupportSupabase(Supabase.instance.client),

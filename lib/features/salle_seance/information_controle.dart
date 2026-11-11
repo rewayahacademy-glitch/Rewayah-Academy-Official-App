@@ -102,6 +102,7 @@ Future<void> ouvrirInformationControle(
   String? contact,
   bool signaler = InformationControle.boutonSignalerEleve,
   bool tutoie = false,
+  bool avecReleve = false,
 }) {
   final bool guidee = role == RoleSeance.guidee;
   return AppBottomSheet.ouvrirLecture<void>(
@@ -119,6 +120,7 @@ Future<void> ouvrirInformationControle(
         contact: contact,
         signaler: signaler,
         tutoie: tutoie,
+        avecReleve: avecReleve,
       ),
     ),
   );
@@ -132,8 +134,14 @@ class TexteInformationControle extends StatelessWidget {
     this.contact,
     this.signaler = InformationControle.boutonSignalerEleve,
     this.tutoie = false,
+    this.avecReleve = false,
     super.key,
   });
+
+  /// Vrai quand le serveur tient le releve de qualite de connexion : la
+  /// phrase du releve s'affiche alors, et seulement alors (revue du garde-cap
+  /// du 11/11/2026 : on n'annonce pas une collecte qui n'existe pas).
+  final bool avecReleve;
 
   /// Le role qui lit : guidee (E-1) ou eleve (E-2).
   final RoleSeance role;
@@ -152,6 +160,7 @@ class TexteInformationControle extends StatelessWidget {
   /// releve de qualite de connexion pour ce role, mot pour mot ; `null` pour
   /// l'enseignant, qui n'a pas cette lecture sur son bandeau.
   ({String titre, String texte})? get releve {
+    if (!avecReleve) return null;
     final Traductions$salle$releve$fr r = t.salle.releve;
     return switch (role) {
       RoleSeance.guidee => (titre: r.titreGuidee, texte: r.guidee),
