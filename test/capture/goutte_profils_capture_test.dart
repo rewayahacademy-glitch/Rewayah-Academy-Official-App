@@ -289,6 +289,55 @@ void main() {
       });
     }
 
+    // GOUTTE-NAPPE (garde-cap, 11/11/2026) : les cinq temps t = 0, 1/4, 1/2,
+    // 3/4 et 1 des deux mouvements (entre deux ronds, puis du rond au
+    // contenu), a 390 et a 1440.
+    for (final double largeur in <double>[390, 1440]) {
+      final String l = largeur.toInt().toString();
+      testWidgets('cinq temps a $l', (WidgetTester tester) async {
+        fixerVueCapture(tester, Size(largeur, _vue.height), 2);
+        final _Hote h = _Hote();
+        await tester.pumpWidget(hoteCapture(h.ecran()));
+        await stabiliser(tester);
+        await tester.pump(const Duration(seconds: 1));
+        Future<void> prendre(String quoi, String temps) =>
+            capturer(tester, 'goutte_temps_${l}_${quoi}_$temps');
+
+        // Entre deux ronds (avancement de la goutte, rompue a 0,9).
+        await prendre('ronds', 't0');
+        h.selection.value = 'c';
+        await tester.pump();
+        await tester.pump();
+        for (final (double seuil, String temps) in <(double, String)>[
+          (0.25, 't1_4'),
+          (0.5, 't1_2'),
+          (0.75, 't3_4'),
+        ]) {
+          await _jusqua(tester, () => (h.goutte?.avancement ?? 1) >= seuil);
+          await prendre('ronds', temps);
+        }
+        await tester.pump(const Duration(seconds: 1));
+        await prendre('ronds', 't1');
+
+        // Du rond au contenu (avancement de la chute).
+        await prendre('contenu', 't0');
+        h.selection.value = 'b';
+        h.affiche.value = 'b';
+        await tester.pump();
+        await tester.pump();
+        for (final (double seuil, String temps) in <(double, String)>[
+          (0.25, 't1_4'),
+          (0.5, 't1_2'),
+          (0.75, 't3_4'),
+        ]) {
+          await _jusqua(tester, () => (h.chute?.avancement ?? 1) >= seuil);
+          await prendre('contenu', temps);
+        }
+        await tester.pump(const Duration(seconds: 1));
+        await prendre('contenu', 't1');
+      });
+    }
+
     testWidgets('planches', (WidgetTester tester) async {
       for (final MapEntry<String, List<List<String>>> e in planches.entries) {
         final String c = await _planche(

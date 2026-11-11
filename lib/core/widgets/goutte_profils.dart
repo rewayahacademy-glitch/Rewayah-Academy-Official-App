@@ -9,8 +9,14 @@
 //    deux sens, et en miroir en arabe (les positions sont mesurees sur la
 //    mise en page).
 // 2. Entre le profil et son contenu : une goutte tombe du rond choisi et
-//    s'etale en devenant la carte de contenu (un cou entre le rond et le bord
-//    haut du contenu, puis rupture). Le contenu n'est JAMAIS retarde
+//    s'etale en une NAPPE, le conteneur du contenu (directeur, 11/11/2026 au
+//    soir : « lier la goutte a un conteneur qui contient tout le contenu, pas
+//    au contenu lui-meme »). La nappe est une seule surface, aux bornes du
+//    contenu, peinte par la portee le temps de la chute : la goutte s'y
+//    verse par un cou epais, la nappe prend la couleur des cartes, puis
+//    s'efface en laissant les cartes. Aucune carte n'est posee sur une carte
+//    (regle d'`AppCard`) : la nappe n'existe que pendant le mouvement. Le
+//    contenu n'est JAMAIS retarde
 //    (DECISION-FLUIDITE-2026-11-07) : au changement de profil, le nouveau
 //    contenu est la tout de suite (des que ses donnees le sont) et la goutte se
 //    joue sur lui.
@@ -32,6 +38,7 @@ import 'package:flutter/physics.dart';
 import 'package:flutter/widgets.dart';
 
 import '../theme/app_mouvement.dart';
+import 'indicateur_liquide.dart' show pontMetaballe;
 import 'liaison_liquide.dart';
 
 /// La portee de la goutte : au-dessus du selecteur de profils et de son
@@ -110,6 +117,32 @@ class GoutteProfils extends StatefulWidget {
     if (c == null) return null;
     return (avancement: c.valeur());
   }
+
+  /// Pour les tests : le cou ENTRE deux ronds a l'instant courant (sa largeur
+  /// et le diametre de la goutte), ou `null` hors goutte ou apres la rupture.
+  /// La largeur ne descend jamais sous le tiers du diametre (garde-cap,
+  /// 11/11/2026).
+  @visibleForTesting
+  static ({double largeurCou, double diametreGoutte})? couRondsDe(
+    BuildContext context,
+  ) {
+    final _EtatGoutteProfils? e = context
+        .getInheritedWidgetOfExactType<_PorteeGoutte>()
+        ?.etat;
+    final _GeometrieRonds? g = e == null ? null : _PeintreGoutte.ronds(e);
+    if (g == null) return null;
+    return (largeurCou: g.largeurCou, diametreGoutte: 2 * g.rGoutte);
+  }
+
+  /// Pour les tests : ce que le peintre a peint du contenu a la derniere image,
+  /// ou `null` s'il n'a rien peint : la nappe (`null` une fois effacee), et le
+  /// cou (largeur et diametre de la goutte, `null` apres la rupture).
+  @visibleForTesting
+  static ({Rect? nappe, double? largeurCou, double? diametreGoutte})?
+  peintContenuDe(BuildContext context) => context
+      .getInheritedWidgetOfExactType<_PorteeGoutte>()
+      ?.etat
+      ._peintContenu;
 
   /// Pour les tests : le haut du disque d'ou part le cou du contenu du profil
   /// [id], et le bas de son item (rond et libelle), dans le repere de la
@@ -192,6 +225,11 @@ class _EtatGoutteProfils extends State<GoutteProfils>
   String? _de;
   String? _vers;
   _ChuteEnCours? _chute;
+
+  /// Ce que le peintre a peint du contenu a la derniere image (tests) : la
+  /// nappe (ou `null` si elle n'est pas peinte), et le cou (largeur, diametre
+  /// de la goutte), `null` hors du cou.
+  ({Rect? nappe, double? largeurCou, double? diametreGoutte})? _peintContenu;
 
   GlobalKey cle(String id) => _cles.putIfAbsent(id, GlobalKey.new);
 
@@ -646,7 +684,23 @@ class _PeintreGoutte extends CustomPainter {
   static const double _fin = 0.04;
 
   /// Le rayon de la goutte qui part du bas de l'item, rapporte a celui du rond.
-  static const double _rapportDepartContenu = 0.4;
+  static const double _rapportDepartContenu = 0.5;
+
+  /// Le plus fin du cou du contenu avant sa rupture : jamais un fil (le
+  /// directeur a vu « un fil tres fin » le 11/11/2026).
+  static const double _finContenu = 0.24;
+
+  /// L'epaisseur du cou du contenu, rapportee au diametre de la goutte : au
+  /// depart, puis au plus fin, juste avant la rupture. Le cou est une colonne
+  /// de matiere de cette epaisseur AU MOINS, quelle que soit la distance
+  /// entre le rond et le contenu (un rond de 48 : goutte de 24, cou de 18
+  /// puis de 8 au plus fin, jamais moins).
+  static const double _couPleinSurGoutte = 0.75;
+  static const double _couFinSurGoutte = 1 / 3;
+
+  /// Part de la chute ou la nappe commence a s'effacer (les cartes sont alors
+  /// pleines : voir l'opacite du contenu, pleine a la moitie).
+  static const double _debutEffacementNappe = 0.6;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -654,40 +708,85 @@ class _PeintreGoutte extends CustomPainter {
     _peindreContenu(canvas);
   }
 
-  void _peindreRonds(Canvas canvas) {
-    if (!etat._actif || etat._rompu) return;
+  /// Le cou entre deux ronds : sa largeur pleine au depart, rapportee au
+  /// diametre de la goutte, et sa largeur au plus fin, jusqu'a la rupture
+  /// (jamais un fil : garde-cap, 11/11/2026).
+  static const double _couPlein = 0.75;
+  static const double _couFin = 1 / 3;
+
+  /// La geometrie du cou entre deux ronds a l'instant courant, ou `null` hors
+  /// goutte, apres la rupture ou sans mesure.
+  static _GeometrieRonds? ronds(_EtatGoutteProfils etat) {
+    if (!etat._actif || etat._rompu) return null;
     final ({Offset centre, double rayon})? a = etat._disque(etat._de);
     final ({Offset centre, double rayon})? b = etat._disque(etat._vers);
-    if (a == null || b == null) return;
+    if (a == null || b == null) return null;
     final double p = etat._p.value;
     const double arrivee = AppMouvement.arriveeGouttePro;
     const double rupture = AppMouvement.ruptureGouttePro;
-    // La pointe du rond quitte : elle part vers le rond choisi, s'amincit en
-    // route, puis se fond en lui.
     final double s = (p / arrivee).clamp(0, 1).toDouble();
-    final Offset pointe = Offset.lerp(a.centre, b.centre, s)!;
-    final double rPointe = a.rayon * (1 - 0.3 * math.sin(math.pi * s));
-    // Le cou : plein au depart, de plus en plus fin ; une fois la pointe dans
-    // le rond choisi, il s'amincit jusqu'a la rupture.
+    final double rGoutte = a.rayon * (1 - 0.3 * math.sin(math.pi * s));
+    // La goutte part du rond quitte et s'arrete au BORD du rond choisi : son
+    // centre sur le bord, elle reste visible jusqu'a la rupture.
+    final Offset ab = b.centre - a.centre;
+    final double d = ab.distance;
+    final Offset bord = d <= b.rayon ? b.centre : b.centre - ab * (b.rayon / d);
+    final Offset goutte = Offset.lerp(a.centre, bord, s)!;
+    // De la pleine largeur au tiers du diametre, atteint a l'arrivee puis
+    // tenu jusqu'a la rupture.
+    final double k = p < arrivee ? s : 1.0;
+    final double largeur =
+        2 * rGoutte * (_couPlein + (_couFin - _couPlein) * k);
+    // Le pont de metaballe garde la forme concave ; il s'amincit comme avant.
     final double v = p < arrivee
         ? _plein * (1 - 0.5 * s)
         : _plein * 0.5 -
               (_plein * 0.5 - _fin) *
                   ((p - arrivee) / (rupture - arrivee)).clamp(0, 1).toDouble();
+    return _GeometrieRonds(
+      depart: a.centre,
+      rDepart: a.rayon,
+      goutte: goutte,
+      rGoutte: rGoutte,
+      largeurCou: largeur,
+      v: v,
+    );
+  }
+
+  void _peindreRonds(Canvas canvas) {
+    final _GeometrieRonds? g = ronds(etat);
+    if (g == null) return;
     final Paint peinture = Paint()..color = etat.widget.matiere;
     canvas.drawPath(
       pontEntreSilhouettes(
-        SilhouetteLiquide.disque(a.centre, a.rayon),
-        SilhouetteLiquide.disque(pointe, rPointe),
-        v: v,
+        SilhouetteLiquide.disque(g.depart, g.rDepart),
+        SilhouetteLiquide.disque(g.goutte, g.rGoutte),
+        v: g.v,
         portee: 4,
       ),
       peinture,
     );
-    canvas.drawCircle(pointe, rPointe, peinture);
+    // La colonne du cou : jamais plus fine que le tiers du diametre de la
+    // goutte, du rond quitte a la goutte.
+    final Offset axe = g.goutte - g.depart;
+    if (axe.distance > 0) {
+      final Offset n =
+          Offset(-axe.dy, axe.dx) * (g.largeurCou / 2 / axe.distance);
+      canvas.drawPath(
+        Path()
+          ..moveTo(g.depart.dx + n.dx, g.depart.dy + n.dy)
+          ..lineTo(g.goutte.dx + n.dx, g.goutte.dy + n.dy)
+          ..lineTo(g.goutte.dx - n.dx, g.goutte.dy - n.dy)
+          ..lineTo(g.depart.dx - n.dx, g.depart.dy - n.dy)
+          ..close(),
+        peinture,
+      );
+    }
+    canvas.drawCircle(g.goutte, g.rGoutte, peinture);
   }
 
   void _peindreContenu(Canvas canvas) {
+    etat._peintContenu = null;
     final _ChuteEnCours? c = etat._chute;
     if (c == null) return;
     final ({Offset centre, double rayon})? rondDuProfil = etat._disque(
@@ -695,45 +794,149 @@ class _PeintreGoutte extends CustomPainter {
     );
     final Rect? plein = etat._rect(c.cleContenu);
     if (rondDuProfil == null || plein == null) return;
-    // Le cou part du BAS de l'item (sous le libelle), a l'aplomb du rond : il
-    // ne traverse jamais le prenom ni l'etat. Sans mesure de l'item, du rond.
-    final ({Offset centre, double rayon}) rond =
+    // La goutte part du BAS de l'item (sous le libelle), a l'aplomb du rond :
+    // elle ne traverse jamais le prenom ni l'etat. Sans mesure de l'item, du
+    // rond.
+    final ({Offset centre, double rayon}) depart =
         etat._departContenu(c.idRond) ?? rondDuProfil;
     final double t = c.valeur().clamp(0, 1).toDouble();
-    // Le cou : plein puis de plus en plus fin jusqu'a la rupture.
-    const double rupture = AppMouvement.ruptureChuteContenu;
-    if (t >= rupture) return;
-    final double v = _plein - (_plein - _fin) * (t / rupture);
-    // Le contenu, a l'echelle courante, accroche par son bord haut a l'aplomb
-    // du rond.
+    final Color matiere = etat.widget.matiere;
+    final Color matiereContenu = etat.widget.matiereContenu;
+
+    // 1. LA NAPPE : le conteneur du contenu, une seule surface. Elle a les
+    // bornes du contenu a l'echelle courante, accrochee par son bord haut a
+    // l'aplomb du rond ; elle va de la matiere de la goutte a celle des
+    // cartes, puis s'efface (les cartes restent).
     final double e = c.echelle();
     final Offset a = c.ancre();
-    final Rect visible = Rect.fromLTRB(
+    final Rect nappe = Rect.fromLTRB(
       a.dx + (plein.left - a.dx) * e,
       plein.top,
       a.dx + (plein.right - a.dx) * e,
       plein.top + plein.height * e,
     );
-    final Path cou = pontEntreSilhouettes(
-      SilhouetteLiquide.disque(rond.centre, rond.rayon),
-      SilhouetteLiquide.rectangle(visible, etat.widget.rayonContenu),
+    final double versCarte = AppMouvement.entree.transform(
+      (t / AppMouvement.ruptureChuteContenu).clamp(0, 1).toDouble(),
+    );
+    final double presence =
+        1 -
+        ((t - _debutEffacementNappe) / (1 - _debutEffacementNappe))
+            .clamp(0, 1)
+            .toDouble();
+    final Color couleurNappe = Color.lerp(matiere, matiereContenu, versCarte)!;
+    if (presence > 0 && !nappe.isEmpty) {
+      canvas.drawRRect(
+        RRect.fromRectAndRadius(
+          nappe,
+          Radius.circular(
+            math.min(etat.widget.rayonContenu, nappe.shortestSide / 2),
+          ),
+        ),
+        Paint()..color = couleurNappe.withValues(alpha: presence),
+      );
+      etat._peintContenu = (
+        nappe: nappe,
+        largeurCou: null,
+        diametreGoutte: null,
+      );
+    }
+
+    // 2. LA GOUTTE ET SON COU. La goutte est un disque PEINT sous l'item ; le
+    // cou la relie a un disque de MEME rayon, tangent par l'interieur au bord
+    // haut de la nappe, a l'aplomb : deux disques egaux, donc un cou aussi
+    // large que la goutte au depart, jamais un fil.
+    const double rupture = AppMouvement.ruptureChuteContenu;
+    final double rGoutte = depart.rayon;
+    if (t >= rupture) {
+      // Apres la rupture, la goutte restee en haut se retire dans le rond.
+      final double reste =
+          1 - ((t - rupture) / (1 - rupture) * 2).clamp(0, 1).toDouble();
+      if (reste > 0) {
+        canvas.drawCircle(
+          depart.centre,
+          rGoutte * reste,
+          Paint()..color = matiere,
+        );
+      }
+      return;
+    }
+    final double rAccroche = math.min(rGoutte, nappe.shortestSide / 2);
+    if (rAccroche <= 0) return;
+    final Offset accroche = Offset(
+      nappe.width <= 2 * rAccroche
+          ? nappe.center.dx
+          : a.dx
+                .clamp(nappe.left + rAccroche, nappe.right - rAccroche)
+                .toDouble(),
+      nappe.top + rAccroche,
+    );
+    final double v = _plein - (_plein - _finContenu) * (t / rupture);
+    final Path cou = pontMetaballe(
+      depart.centre,
+      rGoutte,
+      accroche,
+      rAccroche,
       v: v,
-      portee: 6,
+      portee: 8,
     );
-    if (cou.getBounds().isEmpty) return;
-    // La goutte devient la carte : du bord d'accent du rond a la matiere de la
-    // carte.
-    canvas.drawPath(
-      cou,
+    // De la matiere de la goutte (en haut) a celle de la nappe (en bas).
+    final Rect etendue = Rect.fromLTRB(
+      depart.centre.dx - rGoutte,
+      depart.centre.dy - rGoutte,
+      depart.centre.dx + rGoutte,
+      accroche.dy + rAccroche,
+    );
+    final Paint peinture = Paint()
+      ..shader = LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: <Color>[matiere, couleurNappe],
+      ).createShader(etendue);
+    canvas.drawCircle(depart.centre, rGoutte, peinture);
+    // La colonne : l'epaisseur garantie du cou, d'un disque a l'autre.
+    final double epaisseur =
+        2 *
+        rGoutte *
+        (_couPleinSurGoutte -
+            (_couPleinSurGoutte - _couFinSurGoutte) * (t / rupture));
+    final double largeurCou = math.min(epaisseur, 2 * rAccroche);
+    etat._peintContenu = (
+      nappe: etat._peintContenu?.nappe,
+      largeurCou: largeurCou,
+      diametreGoutte: 2 * rGoutte,
+    );
+    canvas.drawLine(
+      depart.centre,
+      accroche,
       Paint()
-        ..shader = LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: <Color>[etat.widget.matiere, etat.widget.matiereContenu],
-        ).createShader(cou.getBounds()),
+        ..shader = peinture.shader
+        ..strokeWidth = largeurCou
+        ..strokeCap = StrokeCap.round,
     );
+    // Les conges du cou (la forme molle aux deux attaches).
+    if (!cou.getBounds().isEmpty) canvas.drawPath(cou, peinture);
+    canvas.drawCircle(accroche, rAccroche, peinture);
   }
 
   @override
   bool shouldRepaint(_PeintreGoutte ancien) => true;
+}
+
+/// Le cou entre deux ronds a un instant donne.
+class _GeometrieRonds {
+  const _GeometrieRonds({
+    required this.depart,
+    required this.rDepart,
+    required this.goutte,
+    required this.rGoutte,
+    required this.largeurCou,
+    required this.v,
+  });
+
+  final Offset depart;
+  final double rDepart;
+  final Offset goutte;
+  final double rGoutte;
+  final double largeurCou;
+  final double v;
 }
