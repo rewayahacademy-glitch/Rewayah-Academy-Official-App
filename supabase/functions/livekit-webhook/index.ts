@@ -31,12 +31,15 @@
 
 import { clientService, json } from '../_shared/clients.ts'
 import {
+  conduitLaSeance,
   type Fournisseur,
   retablirPublication,
   type RouteSalle,
+  tenirFermeture,
   urlDe,
   verifierWebhookSigne,
 } from '../_shared/livekit.ts'
+import { seanceDeLaSalle } from '../_shared/seance_salle.ts'
 import { entrerArchiveSiEgressTermine } from '../_shared/r2/ingestion_archive.ts'
 
 Deno.serve(async (requete: Request) => {
@@ -155,11 +158,24 @@ Deno.serve(async (requete: Request) => {
   // d'elle-meme et les micros fermes pour elle sont rendus
   // (`retablirPublication` lit l'etat de la salle, `_shared/recitation.ts`).
   // Sans recitation, une sortie ne change rien a la regle ci-dessus.
+  // FERMETURE-SALLE (directeur, 11/11/2026, seconde moitie de SEC-1, D-018) :
+  // a chaque entree et a chaque sortie, la regle « pas d'eleves micro ouvert
+  // sans l'enseignant, pas de salle ouverte apres la fin » est relue sur
+  // l'etat de la salle (`_shared/fermeture_salle.ts`).
+  //
+  // **Rien n'attend ici.** Au depart de l'enseignant, le serveur note
+  // seulement l'instant dans la salle ; le delai de grace court ailleurs (la
+  // tache planifiee, ou l'application d'un eleve qui demande la
+  // verification). A son retour, la marque est levee, et les droits ont deja
+  // ete rendus juste au-dessus.
+  //
+  // Meme regle que plus haut : un echec ici est consigne et ne change pas la
+  // reponse.
+  let fermeture: { action: string; fermes: number; echecs: number } | null = null
   if ((type === 'participant_joined' || type === 'participant_left') && salle) {
+    const route = await routeDeLaSalle(service, String(salle), fournisseur)
     try {
-      const bilan = await retablirPublication(
-        await routeDeLaSalle(service, String(salle), fournisseur),
-      )
+      const bilan = await retablirPublication(route)
       publication = { retablis: bilan.retablis.length, echecs: bilan.echecs.length }
     } catch (e) {
       console.error('retablissement de la publication en echec (webhook)', {
@@ -167,9 +183,28 @@ Deno.serve(async (requete: Request) => {
         erreur: (e as Error).message,
       })
     }
+    try {
+      const { seance } = await seanceDeLaSalle(service, { salle: String(salle) })
+      const bilan = await tenirFermeture(route, seance, {
+        // Le depart de celui qui conduit la seance fait repartir le delai de
+        // maintenant (ses metadonnees sont signees par le serveur).
+        departEnseignant: type === 'participant_left' &&
+          conduitLaSeance(participant?.metadata ? String(participant.metadata) : null),
+      })
+      fermeture = {
+        action: bilan.action,
+        fermes: bilan.fermes.length,
+        echecs: bilan.echecs.length,
+      }
+    } catch (e) {
+      console.error('fermeture de la salle en echec (webhook)', {
+        salle,
+        erreur: (e as Error).message,
+      })
+    }
   }
 
-  return json({ applique: data === true, archive, publication })
+  return json({ applique: data === true, archive, publication, fermeture })
 })
 
 /// La route LiveKit de la salle annoncee : celle que la base a figee a la

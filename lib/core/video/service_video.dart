@@ -184,8 +184,26 @@ abstract interface class RetablissementPublication {
   Future<void> retablirPublication(AccesSalle acces);
 }
 
+/// FERMETURE-SALLE (directeur, 11/11/2026, journal D-018) : un participant
+/// demande au serveur de relire la regle dans sa salle (enseignant parti
+/// depuis le delai de grace, seance finie).
+///
+/// **Le client ne decide rien** : le serveur relit lui-meme qui est dans la
+/// salle chez LiveKit et la seance en base, puis ferme les micros des eleves
+/// ou la salle. Le resultat arrive par LiveKit (changement de permissions,
+/// deconnexion), pas par la reponse de cet appel.
+///
+/// Interface a part, comme [RetablissementPublication].
+abstract interface class VerificationSalle {
+  /// Demande la verification pour la seance de [acces]. Rend le temps qui
+  /// reste avant l'echeance, en secondes, quand un delai court ; `null`
+  /// sinon (rien en cours, porte fermee, acces sans seance).
+  Future<int?> verifierSalle(AccesSalle acces);
+}
+
 /// L'implementation reelle.
-class ServiceVideoSupabase implements ServiceVideo, RetablissementPublication {
+class ServiceVideoSupabase
+    implements ServiceVideo, RetablissementPublication, VerificationSalle {
   /// Cree le service.
   const ServiceVideoSupabase(this._client);
 
@@ -235,6 +253,33 @@ class ServiceVideoSupabase implements ServiceVideo, RetablissementPublication {
     );
   }
 
+  @override
+  Future<int?> verifierSalle(AccesSalle acces) async {
+    final String? seanceId = acces.seanceId;
+    if (seanceId == null) {
+      return null;
+    }
+    try {
+      final FunctionResponse reponse = await _client.functions.invoke(
+        'create-room-token',
+        body: <String, dynamic>{
+          'session_id': seanceId,
+          'eleve_id': ?acces.eleveId,
+          'action': 'verifier_salle',
+        },
+      );
+      return resteAvantEcheance(reponse.data);
+    } on FunctionException catch (e) {
+      // 403 : la porte de la seance est fermee (seance finie). Le serveur a
+      // relu la salle ; s'il l'a fermee, LiveKit le dira. Ce n'est pas une
+      // panne.
+      if (e.status == 403) {
+        return null;
+      }
+      rethrow;
+    }
+  }
+
   /// Traduit le refus du backend, sans jamais inventer une raison qu'il n'a
   /// pas donnee.
   MotifRefusSalle _motifDe(int statut, Object? details) {
@@ -277,6 +322,14 @@ class ServiceVideoSupabase implements ServiceVideo, RetablissementPublication {
       journalDev('annonce de sortie impossible : $e');
     }
   }
+}
+
+/// FERMETURE-SALLE : lit `reste_s` dans la reponse de `verifier_salle`, ou
+/// `null` (absent, forme inattendue, valeur negative) : rien n'est invente.
+int? resteAvantEcheance(Object? corps) {
+  if (corps is! Map) return null;
+  final Object? reste = corps['reste_s'];
+  return reste is int && reste >= 0 ? reste : null;
 }
 
 /// Le service video employe par l'application.

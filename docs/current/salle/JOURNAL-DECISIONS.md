@@ -571,3 +571,160 @@ Les supports « à valider » n'existent que dans la galerie et les tests ; leur
 `docs/current/salle/SUPPORTS-A-VALIDER.md`, sans aucun contenu inventé. La languette au bord de
 l'écran n'est pas posée : le titre du panneau porte la couleur de la marque ; une vraie languette
 devrait remplacer la tuile de la barre, pas s'y ajouter (au directeur de trancher).
+
+## D-018 (11/11/2026). Après le départ de l'enseignant, et à la fin : le serveur ferme les micros, puis la salle (lot FERMETURE-SALLE)
+
+**État : codé, pas déployé, pas prouvé en production.** Défaut SEC-1 du constat, seconde moitié
+(situations F1, F2, F11). Aucune migration.
+
+**Décision du directeur (11/11/2026).** Des enfants ne se parlent pas, micro ouvert, sans adulte.
+**La règle absolue de la salle passe avant** : pendant le cours, l'élève et l'enseignant
+s'entendent ; on ne coupe jamais une classe par erreur. Chaque choix ci-dessous en découle.
+
+### La règle retenue
+
+1. **L'enseignant sort : rien n'est retiré sur le moment.** Le serveur note seulement l'instant,
+   dans la salle LiveKit (métadonnées de la salle, qu'aucun participant ne peut écrire ; même
+   endroit que la récitation de D-014, aucune table).
+2. **Deux minutes plus tard, s'il n'est pas revenu**, le serveur retire aux élèves le droit de
+   publier (micro et caméra). LiveKit dépublie lui-même leurs pistes et refuse toute nouvelle
+   piste. La salle reste ouverte : ils attendent, ils ne se parlent pas.
+3. **Il revient** : la marque est levée et le droit est rendu par le mécanisme de D-008 (comme à
+   une entrée). Un micro que l'élève avait fermé reste fermé. Un micro qu'il avait ouvert lui-même
+   avant le départ de l'enseignant est rouvert par l'application au retour du droit, comme après
+   une coupure de réseau (moteur de D-009 : lu dans le code, **non essayé** dans la vraie
+   application ; question 5 plus bas).
+4. **La séance est finie et l'enseignant n'est plus là : la salle est fermée pour tous**
+   (`deleteRoom`). « Finie » veut dire : la fin prévue et le dépassement autorisé
+   (`grace_after_end_minutes`, 15 minutes, le réglage qui ferme déjà la porte d'entrée) sont
+   passés, ou la base a clos la séance (clôture automatique à la fin + 30 minutes, annulation,
+   séance non tenue). Après le dépassement, l'enseignant doit être absent depuis deux minutes (une
+   coupure de son réseau ne ferme pas la salle à la seconde) ; séance close en base, la salle
+   ferme sans attendre.
+5. **Un cours qui se tient encore avec son enseignant n'est jamais coupé**, même après le
+   dépassement, même après la clôture en base. D-003 borne le chrono et ferme la porte d'entrée ;
+   aucune règle écrite ne dit de couper un cours en train de se tenir. **Question posée au
+   directeur** (plus bas) ; l'interrupteur est une constante
+   (`FERMER_A_LA_CLOTURE_MEME_AVEC_ENSEIGNANT`, à faux).
+6. **Dans le doute, rien n'est fermé** : séance illisible ou retirée en base, LiveKit muet. Les
+   entretiens de recrutement et les réunions passent par les mêmes salles sans aucun enseignant :
+   la règle ne les touche pas (`session_type`).
+
+**Pourquoi deux minutes.** Après une coupure, l'application de l'enseignant reprend seule l'appel
+pendant environ 75 secondes (les essais du SDK, puis ceux du moteur : D-009). Fermer avant
+couperait les micros d'une classe dont l'enseignant est en train de revenir, et chaque élève
+devrait rouvrir le sien. Au-delà, c'est du temps où des enfants peuvent se parler sans adulte. La
+valeur est une constante nommée du serveur (`DELAI_SANS_ENSEIGNANT_S`).
+
+### Qui applique l'échéance (le délai ne vit pas dans le webhook)
+
+LiveKit livre ses webhooks un par un : attendre dedans retarderait le retour de l'enseignant.
+L'échéance est une date écrite dans la salle ; elle est appliquée par le prochain passage qui lit
+la salle. La décision lit toujours l'état chez LiveKit et la séance en base, jamais l'ordre des
+messages ni la parole d'un client. Trois voies, toutes sans migration :
+
+- **La tâche planifiée `observation-coupure`** (chaque minute, déjà installée pour les visites des
+  tuteurs) fait aussi le passage sur toutes les salles ouvertes. C'est la voie qui ne dépend de la
+  bonne foi d'aucun client. Vérifié en lecture seule en production le 11/11 à 09:47 UTC : la tâche
+  est planifiée chaque minute, active, ses deux secrets sont posés, son dernier passage est
+  « succeeded » (cela dit que l'appel est parti, pas ce que la fonction a répondu : non vérifié).
+- **L'application d'un participant** (`create-room-token`, action `verifier_salle`) : cinq
+  secondes après avoir vu partir l'enseignant, puis à l'échéance que le serveur annonce ; et à la
+  fin du dépassement. Le serveur applique à **toute** la salle : un seul client honnête suffit, et
+  un client modifié ne garde pas son micro (le droit est retiré chez LiveKit). Aucun client ne
+  peut avancer ni retarder l'échéance.
+- **Le webhook** (entrées et sorties) : pose la marque au départ de l'enseignant (le délai repart
+  alors de zéro, même si une vieille marque traînait), la lève à son retour, et ferme la salle
+  quand il sort d'une séance déjà close.
+
+Au pire (webhook perdu et aucun client honnête) : la marque est posée par la tâche planifiée dans
+la minute, les micros fermés trois à quatre minutes après le départ. Au mieux : deux minutes.
+
+### Ce que lit chacun
+
+- L'élève dont le micro vient d'être fermé, en tête de la salle (annonce, jamais sur la page) :
+  « Votre enseignant n'est plus dans la salle. Votre micro est fermé jusqu'à son retour. »
+  (tutoiement en Interface guidée). La phrase de D-008 reste ensuite à la place du bouton.
+- Salle fermée : l'élève arrive sur « Séance terminée » (« La séance est terminée. » en Interface
+  guidée) avec son retour à l'accueil ; l'enseignant sur l'écran de fin puis le cahier de
+  transmission ; le tuteur, le contrôle et la direction lisent « La séance est terminée. La salle
+  est fermée. Vous pouvez revenir à l'accueil. ». Plus de « La connexion au cours est perdue » ni
+  de « Votre enseignant vous a fait sortir du cours » pour ce cas : la fermeture par le serveur a
+  son propre motif (salle supprimée), distinct de l'exclusion.
+
+### Sources LiveKit
+
+- `DeleteRoom` : « forcibly disconnect all participants currently in the room » (documentation de
+  l'API RoomService, lue le 11/11). Vérifié sur la pile locale : chaque participant est déconnecté
+  avec la raison `ROOM_DELETED`. Côté Flutter, la raison s'appelle `roomDeleted` (lue dans le SDK
+  du dépôt) ; **non essayé** dans la vraie application.
+- `RemoveParticipant` : le participant « can still re-join » (commentaire du SDK serveur). Non
+  employé ici : c'est lui qui fait dire « votre enseignant vous a fait sortir ».
+- Webhooks : `participant_left` part « when a participant leaves a room and all cleanup processes
+  are complete » (documentation). **Non vérifié** : le temps que met LiveKit à annoncer le départ
+  d'un enseignant dont le réseau tombe (sur le banc, un départ voulu est annoncé en moins de trois
+  secondes).
+- `departure_timeout`, `empty_timeout` : la fermeture d'une salle vide par LiveKit lui-même
+  (définitions lues dans le SDK serveur). **Non vérifié** : leurs valeurs en production. La règle
+  n'en dépend pas : une salle vide ne met personne en danger.
+- Une salle supprimée renaît si quelqu'un y entre avec un jeton encore valable (LiveKit crée la
+  salle à l'entrée). L'application ne le fait pas (elle ne reprend jamais seule après une salle
+  supprimée) ; un client modifié le pourrait jusqu'à l'expiration de son jeton, et la base n'en
+  signe plus. Le passage suivant referme.
+
+### Preuves
+
+- Décisions en fonctions pures : 29 tests Deno (`_shared/fermeture_salle_test.ts`).
+- Application : 16 tests Dart (`test/core/video/fermeture_salle_test.dart`), 5 tests d'écran
+  (`test/features/salle_test.dart`).
+- Pile locale, vraies fonctions Edge et vrai LiveKit : `node tool/salle/fermeture.mjs`, 32
+  vérifications sur 32 (départ court sans effet ; délai ; fermeture à la demande d'un seul élève ;
+  micro dépublié et refusé ; retour de l'enseignant ; passage planifié sans aucun client ; salle
+  fermée à la fin ; cours qui déborde non coupé). `micro_avant_enseignant.mjs` et `gestes.mjs`
+  rejoués ensuite.
+
+### Ce qui reste
+
+- **La vraie application dans un navigateur, puis la preuve du directeur en production.**
+- La porte HTTP de `observation-coupure` n'est pas essayée sur la pile (elle n'y a pas son
+  secret) ; son code l'est.
+- L'écran de fin de l'enseignant après une salle fermée passe par le même code que FN-024, sans
+  test d'écran à lui. La barre « Séance toujours en direct » après une salle fermée : non regardée.
+- Le contrôleur lit l'impasse générale, pas son compte rendu.
+- **Autre confusion, non corrigée ici** : un tuteur coupé à la fin de son quota d'observation lit
+  toujours « Votre enseignant vous a fait sortir du cours » (la coupure emploie
+  `removeParticipant`, comme l'exclusion). À traiter avec les refus d'entrée.
+- Journal : la fermeture d'une salle n'écrit que dans le journal des fonctions, pas dans
+  `audit_logs` ; chaque `verifier_salle` d'un participant dont la porte est ouverte écrit une ligne
+  « jeton émis » (même dette que le filet de D-008). Une migration additive donnerait une fonction
+  dédiée et une ligne `salle_fermee`.
+- Deux écritures simultanées dans les métadonnées de la salle (récitation et marque) peuvent se
+  marcher dessus : la marque perdue repousse l'échéance d'un passage, jamais l'inverse.
+- Une application pas encore mise à jour : la règle tient (micro fermé, salle fermée par le
+  serveur), l'explication manque (elle lit « connexion perdue », puis « Séance terminée » par
+  FN-024).
+- Les tests Deno de `_shared/` ne sont pas lancés par la CI. Arabe à relire par un locuteur natif.
+- Captures : `docs/current/captures/E2E/fermeture-salle/` (captures de test ; le décor de
+  démonstration montre encore l'enseignant, et en arabe l'annonce, plus courte, laisse dépasser le
+  haut de la salle : composant existant).
+
+### Ce que le directeur doit trancher
+
+1. **Un cours qui déborde, enseignant présent : le coupe-t-on, et quand ?** Aujourd'hui : jamais.
+   Recommandation : oui, à la clôture en base (fin + 30 minutes), pour tous, avec un avertissement
+   à l'enseignant cinq minutes avant. Après ce moment, la base ne signe plus aucun jeton : un
+   enseignant qui perd son réseau ne peut plus revenir. C'est une ligne côté serveur.
+2. **Deux minutes de grâce** : confirmer. Faut-il un délai plus court (30 secondes) quand
+   l'enseignant a touché « Quitter » ? La base le sait (`quitter_salle`). Recommandation : garder
+   deux minutes partout tant que la vraie application n'a pas été essayée, puis raccourcir le seul
+   départ voulu.
+3. **Après la fermeture des micros, les élèves restent-ils dans la salle** (l'enseignant peut
+   revenir) ou sont-ils renvoyés à l'accueil ? Aujourd'hui : ils restent jusqu'à la fin du
+   dépassement. Recommandation : ils restent.
+4. Comme pour D-008 : la règle vaut aussi pour les élèves adultes, et la direction entrée en
+   visible ne compte pas comme l'enseignant. À confirmer.
+5. **Au retour de l'enseignant, le micro qu'un élève avait ouvert se rouvre-t-il seul ?** C'est ce
+   que fait le moteur aujourd'hui (il rend ce que la personne avait ouvert, D-009). Pour : la
+   classe retrouve son enseignant sans que personne ait rien à toucher. Contre : D-008 dit que
+   rien ne s'ouvre seul. Recommandation : le garder (l'élève l'avait ouvert, devant son
+   enseignant), mais le vérifier d'abord dans la vraie application.

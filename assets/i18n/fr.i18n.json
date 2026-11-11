@@ -884,6 +884,14 @@
     "retireDetail": "Vous pourrez revenir quand votre enseignant vous aura réadmis. Touchez alors «\u00a0Réessayer\u00a0».",
     "ouverteAilleurs": "La salle est ouverte sur un autre onglet ou appareil",
     "ouverteAilleursDetail": "Votre compte ne peut être dans la salle qu'à un seul endroit à la fois. Fermez l'autre onglet, ou touchez «\u00a0Réessayer\u00a0» pour revenir ici.",
+    "fermeture": {
+      "sansEnseignantTitre": "Votre enseignant n'est plus dans la salle",
+      "sansEnseignantTitreTutoie": "Ton enseignant n'est plus dans la salle",
+      "microFerme": "Votre micro est fermé jusqu'à son retour.",
+      "microFermeTutoie": "Ton micro est fermé jusqu'à son retour.",
+      "seanceTerminee": "La séance est terminée.",
+      "seanceTermineeDetail": "La salle est fermée. Vous pouvez revenir à l'accueil."
+    },
     "gestes": {
       "menu": "Gestes pour {prenom}",
       "couperMicro": "Couper le micro {dePrenom}",

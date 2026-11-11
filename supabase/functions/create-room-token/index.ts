@@ -4,6 +4,8 @@
 //                                    publication_differee }
 //   { session_id, eleve_id?, action: 'retablir_publication' }
 //                               ->  { retabli, publication_differee, enseignant_present }
+//   { session_id, eleve_id?, action: 'verifier_salle' }
+//                               ->  { salle: 'ouverte' | 'fermee', micros_fermes, reste_s }
 //
 // C'est ici, et nulle part ailleurs, que le client apprend a quel serveur se
 // connecter. Le contrat de portabilite en decoule : **aucune URL LiveKit
@@ -28,14 +30,27 @@ import {
   retablirPublication,
   type RouteSalle,
   signerJeton,
+  tenirFermeture,
   urlDe,
   videoConfiguree,
 } from '../_shared/livekit.ts'
 import { type DetailRefusSalle, lireMotifSalle } from '../_shared/motif_salle.ts'
 import { doitDifferer, ROLE_QUI_ATTEND } from '../_shared/publication_differee.ts'
+import { seanceDeLaSalle } from '../_shared/seance_salle.ts'
 
 /// Le mode « filet » de MICRO-AVANT-ENSEIGNANT : voir plus bas.
 const ACTION_RETABLIR = 'retablir_publication'
+
+/// FERMETURE-SALLE (directeur, 11/11/2026, D-018) : l'application d'un
+/// participant demande au serveur de relire la regle dans sa salle
+/// (enseignant parti depuis trop longtemps, seance finie). **Le client ne
+/// decide rien et n'affirme rien** : le serveur relit lui-meme qui est dans
+/// la salle chez LiveKit, la marque qu'il y a posee et la seance en base
+/// (`_shared/fermeture_salle.ts`), et applique a TOUTE la salle. Un seul
+/// client honnete suffit donc a fermer les micros de tous ; aucun client ne
+/// peut ni avancer ni retarder l'echeance. Si tous les clients se taisent, la
+/// tache planifiee (`observation-coupure`) fait le meme passage chaque minute.
+const ACTION_VERIFIER = 'verifier_salle'
 
 Deno.serve(async (requete: Request) => {
   if (requete.method === 'OPTIONS') {
@@ -76,7 +91,7 @@ Deno.serve(async (requete: Request) => {
   // de MICRO-AVANT-ENSEIGNANT (plus bas). Toute autre valeur est refusee
   // plutot qu'ignoree : un mode mal ecrit ne doit pas rendre un jeton.
   const action = String(corps.action ?? '').trim()
-  if (action && action !== ACTION_RETABLIR) {
+  if (action && action !== ACTION_RETABLIR && action !== ACTION_VERIFIER) {
     return refus('action inconnue')
   }
 
@@ -126,7 +141,32 @@ Deno.serve(async (requete: Request) => {
       console.error('motif_refus_salle en echec', { seance, erreur: (e as Error).message })
     }
     if (detail) {
-      return json({ error: 'acces a la salle refuse', ...detail }, 403)
+      // FERMETURE-SALLE : la base vient de dire a quelqu'un qui y a droit
+      // (`motif_refus_salle` ne repond qu'a un participant, a l'enseignant
+      // effectif ou au tuteur d'un eleve inscrit) que la porte de cette
+      // seance est fermee. S'il demandait la verification, c'est le moment de
+      // relire la salle : seance finie et enseignant parti, elle est fermee
+      // pour tous. Un echec ne change pas la reponse.
+      let salleFermee = false
+      if (action === ACTION_VERIFIER) {
+        try {
+          const { route, seance: vue } = await seanceDeLaSalle(service, { seanceId: seance })
+          if (route) {
+            const bilan = await tenirFermeture(route, vue)
+            salleFermee = bilan.action === 'fermer_salle' && bilan.echecs.length === 0
+          }
+        } catch (e) {
+          console.error('verification de la salle en echec', {
+            seance,
+            erreur: (e as Error).message,
+          })
+        }
+      }
+      return json({
+        error: 'acces a la salle refuse',
+        ...detail,
+        ...(action === ACTION_VERIFIER ? { salle: salleFermee ? 'fermee' : 'ouverte' } : {}),
+      }, 403)
     }
     return refus('acces a la salle refuse', 403)
   }
@@ -142,6 +182,30 @@ Deno.serve(async (requete: Request) => {
   // roles, LiveKit n'est meme pas interroge.
   const concerne = autorisation.role === ROLE_QUI_ATTEND &&
     autorisation.capabilities.can_publish === true
+
+  // FERMETURE-SALLE : la verification demandee par un participant qui a
+  // encore droit a la salle (porte ouverte). Typiquement : un eleve dont
+  // l'enseignant n'est plus la depuis le delai de grace. Aucun jeton n'est
+  // signe ; la reponse dit seulement ou en est la salle.
+  if (action === ACTION_VERIFIER) {
+    try {
+      const { seance: vue } = await seanceDeLaSalle(service, { seanceId: seance })
+      const bilan = await tenirFermeture(route, vue)
+      return json({
+        salle: bilan.action === 'fermer_salle' && bilan.echecs.length === 0 ? 'fermee' : 'ouverte',
+        micros_fermes: bilan.fermes.length,
+        // Le temps avant l'echeance, quand un delai court : l'application
+        // redemande la verification a ce moment-la.
+        reste_s: bilan.resteMs === undefined ? null : Math.ceil(bilan.resteMs / 1000),
+      })
+    } catch (e) {
+      console.error('verification de la salle en echec', {
+        seance,
+        erreur: (e as Error).message,
+      })
+      return refus('serveur video indisponible', 502)
+    }
+  }
 
   // Le filet : un client qui VOIT son enseignant dans la salle alors que son
   // propre droit de publier est encore ferme (webhook perdu ou en retard)

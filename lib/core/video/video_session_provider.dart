@@ -657,6 +657,27 @@ abstract interface class DroitsPublicationVivants {
   Stream<AccesSalle> get accesMisAJour;
 }
 
+/// FERMETURE-SALLE (directeur, 11/11/2026, seconde moitie de SEC-1, journal
+/// D-018) : le serveur ferme la salle pour tous quand la seance est finie et
+/// que l'enseignant n'y est plus. Meme principe que [MotifEchecSalle] : seul
+/// le moteur qui sait le dire l'implemente.
+///
+/// [EtatSalle] reste `echec` (lu par de nombreux ecrans) ; ce motif s'y
+/// ajoute a cote. Il se distingue de [EtatSalle.retire] (l'enseignant a fait
+/// sortir ce participant) et d'une connexion perdue : ici, personne n'a ete
+/// ecarte et rien n'est en panne, la seance est terminee.
+abstract interface class FermetureParLeServeur {
+  /// Vrai quand le serveur a ferme la salle elle-meme (salle supprimee).
+  /// Remis a faux a chaque entree.
+  bool get salleFermee;
+
+  /// La fin du depassement autorise de la seance en cours (fin prevue +
+  /// `grace_after_end_minutes`, servie par le serveur), ou `null` si elle
+  /// n'est pas connue. Le moteur s'en sert seulement pour demander au serveur,
+  /// a ce moment-la, de relire la regle : il ne ferme rien lui-meme.
+  set finPorteUtc(DateTime? fin);
+}
+
 abstract interface class VideoSessionProvider {
   /// Entre dans la salle avec l'acces emis par le backend.
   Future<void> rejoindre(AccesSalle acces);
