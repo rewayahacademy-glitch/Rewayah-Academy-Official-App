@@ -174,7 +174,6 @@ void main() {
           t.compte.confidentialiteDetail,
           t.compte.fuseau,
           t.compte.habilitation,
-          t.compte.economieDonnees,
           t.compte.notificationsCours,
           t.compte.profilDetail,
           t.compte.reglagesDetail,

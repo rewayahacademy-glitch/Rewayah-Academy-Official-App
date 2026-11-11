@@ -76,7 +76,6 @@ void main() {
     // notifications sont la ligne PUSH-1, seulement si le serveur l'autorise
     // (pas ici : aucune capacite push dans ce test).
     expect(find.text(t.compte.notifications), findsNothing);
-    expect(find.text(t.compte.economieDonnees), findsNothing);
     expect(find.text(t.compte.notificationsCours), findsNothing);
     // Mouvement reduit, effets reduits, raccourcis de la salle, lecture en
     // grand texte : les quatre interrupteurs qui agissent.

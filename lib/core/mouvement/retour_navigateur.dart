@@ -4,6 +4,7 @@
 // retour par la fleche de l'application joue l'axe partage inverse, comme
 // sur les autres plateformes. Ce fichier dit lequel des deux est en cours.
 
+import '../theme/app_mouvement.dart';
 import 'retour_navigateur_aucun.dart'
     if (dart.library.js_interop) 'retour_navigateur_web.dart';
 
@@ -11,7 +12,7 @@ import 'retour_navigateur_aucun.dart'
 abstract final class RetourNavigateur {
   /// Combien de temps un retour du navigateur colore la transition qui le
   /// suit : plus que la plus longue sortie de page (2/3 de 280 ms).
-  static const Duration fenetre = Duration(milliseconds: 600);
+  static const Duration fenetre = AppMouvement.fenetreRetourNavigateur;
 
   static DateTime? _dernier;
   static bool _ecoute = false;

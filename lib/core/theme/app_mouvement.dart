@@ -33,6 +33,10 @@ abstract final class AppMouvement {
   /// Passage d'une page a l'autre.
   static const Duration navigation = Duration(milliseconds: 220);
 
+  /// Combien de temps un retour du navigateur colore la transition qui le
+  /// suit : plus que la plus longue sortie de page (2/3 de 280 ms).
+  static const Duration fenetreRetourNavigateur = Duration(milliseconds: 600);
+
   /// TRANSITIONS (11/11/2026) : descente vers un detail sur telephone (axe
   /// partage, 250 a 300 ms) ; sur ordinateur, [navigation]. Sortie environ
   /// 2/3 (`AppTransitions.sortieDe`).
