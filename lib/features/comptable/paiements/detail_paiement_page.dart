@@ -21,6 +21,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/capacites/capacite_indisponible.dart';
 import '../../../core/capacites/obligations_payables_supabase.dart';
+import '../../../core/capacites/port_beneficiaires_paiement.dart'
+    show beneficiairesOuvertsProvider;
 import '../../../core/capacites/port_obligations_payables.dart';
 import '../../../core/capacites/port_payout.dart' show payoutOuvertProvider;
 import '../../../core/comptable/modeles_comptable.dart';
@@ -158,7 +160,10 @@ class _DetailPaiementPageState extends ConsumerState<DetailPaiementPage> {
           onSignaler: o.permissions.permet(ActionFinance.signalerEcart)
               ? () => _signaler(o)
               : null,
-          onVoirProfil: beneficiaire == null
+          // PORTS-COMPTABLE, point 6 : sans serveur des profils de paiement,
+          // ni « Relancer » ni lien vers le profil.
+          onVoirProfil:
+              beneficiaire == null || !ref.watch(beneficiairesOuvertsProvider)
               ? null
               : () => context.push(beneficiaire(o.beneficiaire.id)),
           onAutresRevenus: () {

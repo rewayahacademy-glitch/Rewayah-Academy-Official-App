@@ -32,7 +32,7 @@ class GestesObligation {
     required this.selection,
     required this.ouvrir,
     required this.basculer,
-    required this.relancer,
+    this.relancer,
     this.payer,
     this.demanderValidation,
     this.horsLigne = false,
@@ -49,7 +49,10 @@ class GestesObligation {
   final void Function(ObligationPayable o, bool retenue) basculer;
 
   /// Ouvre le profil de paiement du beneficiaire (W07), ou vit la relance.
-  final void Function(ObligationPayable o) relancer;
+  ///
+  /// `null` quand le profil de paiement n'a pas de serveur (PORTS-COMPTABLE,
+  /// point 6) : « Relancer » n'est pas montre, jamais grise.
+  final void Function(ObligationPayable o)? relancer;
 
   /// Ouvre la confirmation d'un paiement (CPT-PAY-2), ou `null` tant
   /// qu'elle n'est pas posee.
@@ -277,11 +280,13 @@ class ActionObligation extends StatelessWidget {
           onPress: () => demander(o),
         );
       case ActionLigne.relancer:
+        final void Function(ObligationPayable)? relancer = gestes.relancer;
+        if (relancer == null) return voir();
         return LienFleche(
           key: cleDe(o.id),
           libelle: a.relancer,
           legende: true,
-          onPress: () => gestes.relancer(o),
+          onPress: () => relancer(o),
         );
       case ActionLigne.voir:
         if (raison == RaisonBlocage.autoPaiement) {

@@ -1,11 +1,13 @@
 // PORTS-COMPTABLE (pilote, 11/11/2026) : les onglets du comptable montres,
 // sans ceux dont le serveur manque (Encaissements, Rapprochement,
-// Contractuels). `navigation_comptable.dart` reste tel quel (gele apres
+// Contractuels, Beneficiaires). `navigation_comptable.dart` reste tel quel (gele apres
 // CPT-F) : ses listes et ses index sont filtres ici, par adresse.
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../admin/admin_domaine.dart';
+import '../capacites/port_beneficiaires_paiement.dart'
+    show beneficiairesOuvertsProvider;
 import '../capacites/port_encaissements.dart' show encaissementsOuvertsProvider;
 import '../capacites/port_obligations_contractuels.dart'
     show contractuelsOuvertsProvider;
@@ -25,6 +27,7 @@ ongletsComptableOuverts(
     if (!ref.watch(encaissementsOuvertsProvider)) Routes.comptableEncaissements,
     if (!ref.watch(rapprochementOuvertProvider)) Routes.comptableRapprochement,
     if (!ref.watch(contractuelsOuvertsProvider)) Routes.comptableContractuels,
+    if (!ref.watch(beneficiairesOuvertsProvider)) Routes.comptableBeneficiaires,
   };
   return ongletsOuverts(
     tous,

@@ -52,6 +52,12 @@ class SousNavigationDomaine extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // PORTS-COMPTABLE : quand les onglets sans serveur sont retires, il peut
+    // n'en rester qu'un ; une sous-navigation d'un seul onglet n'en est pas
+    // une, elle n'est pas montree.
+    if (onglets.length < 2) {
+      return const SizedBox.shrink();
+    }
     return SelecteurSection<int>(
       libelle: t.commun.sections.page,
       menuAuContenu: menuAuContenu,

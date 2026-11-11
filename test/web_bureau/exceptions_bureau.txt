@@ -4,7 +4,6 @@
 # B4 texte suivi de plus de 800 px, B5 bouton plein de plus de 640 px,
 # B6 tete de plus de 160 px, B7 pied de plus de 96 px,
 # rendu (ecran qui leve sur des faux).
-comptabilite /comptable/paiements B6
 comptabilite /comptable/paiements/beneficiaires B4
 comptabilite /comptable/paiements/beneficiaires B6
 comptabilite /comptable/paiements/contractuels B6

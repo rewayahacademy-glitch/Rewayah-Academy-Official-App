@@ -23,6 +23,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/capacites/capacite_indisponible.dart';
+import '../../../core/capacites/port_beneficiaires_paiement.dart'
+    show beneficiairesOuvertsProvider;
 import '../../../core/capacites/port_export_rapports.dart';
 import '../../../core/capacites/port_obligations_payables.dart';
 import '../../../core/capacites/port_payout.dart' show payoutOuvertProvider;
@@ -224,7 +226,13 @@ class _PaiementsAEffectuerPageState
       selection: _selection,
       ouvrir: _ouvrir,
       basculer: _basculer,
-      relancer: _relancer,
+      // PORTS-COMPTABLE, point 6 : la relance du Comptable ouvre le profil de
+      // paiement ; sans son serveur, « Relancer » n'est pas montre.
+      relancer:
+          _espace.beneficiaire != null &&
+              !ref.watch(beneficiairesOuvertsProvider)
+          ? null
+          : _relancer,
       payer: payoutOuvert
           ? (ObligationPayable o) => _payer(<ObligationPayable>[o])
           : null,
