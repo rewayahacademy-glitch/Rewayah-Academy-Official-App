@@ -755,8 +755,7 @@ class _Centre extends StatelessWidget {
             // focus, puis le zoom quand la hauteur le permet (Ctrl + molette
             // et le pincement restent).
             final Widget? pile =
-                peutZoomer &&
-                    voie >= _hauteurOutilsSupport(contexte, nombre: 4)
+                peutZoomer && voie >= _hauteurOutilsSupport(contexte, nombre: 4)
                 ? _outilsSupport(
                     contexte,
                     vue: vue,
@@ -1100,6 +1099,21 @@ class _Colonne extends ConsumerWidget {
             onPress: lesEleves,
           ),
         ]),
+      groupe(cleSupport, t.salle.barre.groupes.support, <Widget>[
+        if (livres != null)
+          BoutonAppel(
+            key: const ValueKey<String>('salle-bibliotheque'),
+            icone: AppIcons.bibliotheque,
+            libelle: t.salle.seance.commandes.bibliotheque,
+            nom: t.salle.seance.commandes.bibliotheque,
+            ouvert: bibliotheque,
+            selectionne: bibliotheque,
+            iconePleine: bibliotheque,
+            raccourci: touche('B'),
+            onPress: livres,
+          ),
+        if (tableau) dockSeance(const <CommandeDock>[CommandeDock.tableau]),
+      ]),
       if (outils)
         groupe(clePage, t.salle.barre.groupes.page, <Widget>[
           place(
@@ -1123,21 +1137,6 @@ class _Colonne extends ConsumerWidget {
             ),
           ),
         ]),
-      groupe(cleSupport, t.salle.barre.groupes.support, <Widget>[
-        if (livres != null)
-          BoutonAppel(
-            key: const ValueKey<String>('salle-bibliotheque'),
-            icone: AppIcons.bibliotheque,
-            libelle: t.salle.seance.commandes.bibliotheque,
-            nom: t.salle.seance.commandes.bibliotheque,
-            ouvert: bibliotheque,
-            selectionne: bibliotheque,
-            iconePleine: bibliotheque,
-            raccourci: touche('B'),
-            onPress: livres,
-          ),
-        if (tableau) dockSeance(const <CommandeDock>[CommandeDock.tableau]),
-      ]),
     ];
     final List<Widget> fin = <Widget>[
       groupe(cleSortir, t.salle.barre.groupes.sortir, <Widget>[
@@ -1146,11 +1145,27 @@ class _Colonne extends ConsumerWidget {
         dockSeance(const <CommandeDock>[CommandeDock.quitter]),
       ]),
     ];
+    // GRILLE-COMMANDES (vraie application, 11/11/2026) : sans page ni
+    // tableau, Pointeur et Ecrire ne peuvent pas servir. Leur groupe est le
+    // DERNIER du haut (on ouvre un document, puis on agit sur la page) : sa
+    // place reste, vide, filet compris, et rien ne glisse ; mais elle ne
+    // fait plus un trou au milieu de la colonne.
+    final bool pageUtile = vue.voitOutils || vue.ecritureProposee;
     List<Widget> avecFilets(List<Widget> groupes) => <Widget>[
-      for (int i = 0; i < groupes.length; i++) ...<Widget>[
-        if (i > 0) filet,
-        groupes[i],
-      ],
+      for (int i = 0; i < groupes.length; i++)
+        if (groupes[i].key == clePage && !pageUtile)
+          Visibility(
+            visible: false,
+            maintainSize: true,
+            maintainAnimation: true,
+            maintainState: true,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[if (i > 0) filet, groupes[i]],
+            ),
+          )
+        else ...<Widget>[if (i > 0) filet, groupes[i]],
     ];
 
     return LayoutBuilder(

@@ -1048,9 +1048,14 @@ enseignant.
   3. **Tous les noms, ou aucun** (`TuileCommandeSalle.nomsTiennent`) : si un seul nom ne tient pas
      dans sa case (écran étroit, texte agrandi, arabe), toute la rangée passe en icônes seules ;
      le nom reste dans l'infobulle et pour le lecteur d'écran. Jamais un nom coupé.
-  4. **Le même ordre partout** : ma voix (Micro, Caméra), ma classe (Élèves), la page (Pointeur,
-     Écrire), les supports (Bibliothèque, Tableau), sortir (Réduire, Quitter). Ce qui ne tient pas
-     au téléphone va derrière « Plus », dans le même ordre.
+  4. **Le même ordre partout** : ma voix (Micro, Caméra), ma classe (Élèves), les documents
+     (Bibliothèque, Tableau), la page (Pointeur, Écrire), sortir (Réduire, Quitter). Ce qui ne
+     tient pas au téléphone va derrière « Plus », toujours l'avant-dernière case, à côté de
+     Quitter (le Pointeur y passe donc avant « Plus » : seul écart d'ordre, dit ici).
+     *Corrigé le 11/11 après l'essai dans la vraie application* : la page venait avant les
+     documents ; sans document ouvert, la place vide de Pointeur et Écrire faisait un trou au
+     milieu de la colonne. Elle est maintenant le dernier groupe du haut : la place reste, rien
+     ne glisse, et le trou a disparu.
   5. **Un seul endroit par chose** : les outils de la page (ranger, plein écran, zoom) ensemble, au
      même coin de la page, mêmes boutons ronds ; plus rien de flottant à côté de la barre.
 - **Codé, téléphone et tablette de l'enseignant** (sous 840 points, `BarreCommandesTelephone`) :
@@ -1060,7 +1065,7 @@ enseignant.
   page ; le Pointeur tenu reste seul, à sa place dans la rangée. À 320 points, les écarts se
   resserrent pour garder six cases de 48.
 - **Codé, ordinateur** : le contenu des tuiles « ouvertes » est centré ; quatre groupes en haut
-  (voix, classe, page, supports), « sortir » seul en bas ; la tête de la colonne ne porte plus le
+  (voix, classe, documents, page), « sortir » seul en bas ; la tête de la colonne ne porte plus le
   nom de la Classe (deux lignes coupées dans 110 points), seulement « Coran · Page 42 » sur une
   ligne et l'île ; l'île a une place fixe d'une ligne et, dépliée, passe par-dessus le panneau des
   Élèves au lieu de se plier (elle ne pousse plus la barre) ; ranger, plein écran et zoom sont une

@@ -471,10 +471,14 @@ void main() {
         t.salle.micro,
         t.salle.camera,
         t.salle.seance.eleves,
-        t.salle.seance.outils.pointeur,
-        t.salle.seance.outils.ecrire,
+        // GRILLE-COMMANDES (vraie application, 11/11/2026) : on ouvre un
+        // document, puis on agit sur la page. Pointeur et Ecrire, qui ne
+        // servent pas sans document, sont le dernier groupe du haut : leur
+        // place vide ne fait plus un trou au milieu de la colonne.
         t.salle.seance.commandes.bibliotheque,
         t.salle.seance.commandes.affichageTableau,
+        t.salle.seance.outils.pointeur,
+        t.salle.seance.outils.ecrire,
         t.salle.sortie.reduireNom,
         t.salle.quitter,
       ];
