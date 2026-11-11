@@ -15,6 +15,7 @@
 //     disparu : la liste ne fait que retrecir, la ligne doit en etre retiree
 //     dans la meme PR ;
 //   * une ligne toleree n'a pas d'issue datee (regle R2) ;
+//   * l'echeance d'une ligne toleree est depassee (pilote, 11/11/2026) ;
 //   * le fichier de tolerance a plus de lignes qu'au premier releve
 //     (plafond ecrit en tete du fichier).
 //
@@ -57,6 +58,37 @@ final RegExp litteral = RegExp(r'''(?:'([^']*)'|"([^"]*)")''');
 final RegExp ligneTolere = RegExp(
   r'''^(lib/\S+\.dart)\s*\|\s*((?:branché à l[’']étape|supprimé le)\s+[^|]+?)\s*\|\s*(\d{2}/\d{2}/\d{4})\s*$''',
 );
+
+/// L'echeance d'une ligne toleree (`JJ/MM/AAAA`), ou `null` si la date
+/// n'existe pas (31/02, par exemple).
+DateTime? lireEcheance(String jjmmaaaa) {
+  final parties = jjmmaaaa.split('/');
+  if (parties.length != 3) return null;
+  final jour = int.tryParse(parties[0]);
+  final mois = int.tryParse(parties[1]);
+  final annee = int.tryParse(parties[2]);
+  if (jour == null || mois == null || annee == null) return null;
+  final date = DateTime(annee, mois, jour);
+  if (date.year != annee || date.month != mois || date.day != jour) {
+    return null;
+  }
+  return date;
+}
+
+/// Vrai quand [echeance] est passee : le jour meme de l'echeance compte
+/// encore (decision du pilote du 11/11/2026 : une echeance depassee fait
+/// echouer la verification).
+bool echeanceDepassee(DateTime echeance, DateTime aujourdhui) =>
+    DateTime(aujourdhui.year, aujourdhui.month, aujourdhui.day)
+        .isAfter(DateTime(echeance.year, echeance.month, echeance.day));
+
+/// Le jour du controle : aujourd'hui, ou `BRANCHEMENT_AUJOURDHUI`
+/// (AAAA-MM-JJ) pour rejouer un controle a une date donnee.
+DateTime jourDuControle() {
+  final force = Platform.environment['BRANCHEMENT_AUJOURDHUI'];
+  final lu = force == null ? null : DateTime.tryParse(force);
+  return lu ?? DateTime.now();
+}
 
 /// Le plafond ecrit en tete : `# plafond: N`.
 final RegExp lignePlafond = RegExp(r'^#\s*plafond\s*:\s*(\d+)\s*$');
@@ -145,6 +177,7 @@ void main(List<String> arguments) {
   }
 
   final erreurs = <String>[];
+  final aujourdhui = jourDuControle();
   final tolere = <String>{};
   int? plafond;
   final fichier = File(fichierTolere);
@@ -172,6 +205,18 @@ void main(List<String> arguments) {
       }
       if (!tolere.add(m.group(1)!)) {
         erreurs.add('$fichierTolere:$numero  ligne en double : ${m.group(1)}');
+      }
+      final echeance = lireEcheance(m.group(3)!);
+      if (echeance == null) {
+        erreurs.add(
+          '$fichierTolere:$numero  échéance illisible : ${m.group(3)}',
+        );
+      } else if (echeanceDepassee(echeance, aujourdhui)) {
+        erreurs.add(
+          '$fichierTolere:$numero  échéance dépassée (${m.group(3)}) : '
+          '${m.group(1)} : le brancher, le supprimer, ou une nouvelle date '
+          'décidée par le directeur.',
+        );
       }
     }
     if (plafond == null) {
