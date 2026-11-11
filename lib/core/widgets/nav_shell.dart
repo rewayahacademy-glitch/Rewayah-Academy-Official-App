@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -22,6 +24,7 @@ import 'avatar_compte.dart';
 import 'avatar_tile.dart' show AppAvatar;
 import 'brand_logo.dart';
 import 'cercle_selectionnable.dart';
+import 'halo_compte.dart';
 import 'indicateur_liquide.dart';
 import 'page_shell.dart' show FondDeCoquille, NavigationDeCoquille;
 import 'pressable.dart';
@@ -417,6 +420,8 @@ class NavShell extends StatelessWidget {
     this.onAllerSecondaire,
     this.masquerBarreBasse = false,
     this.libellesDansLeRail = false,
+    this.halo,
+    this.onHaloTouche,
     super.key,
   }) : assert(
          destinations.length <= maxDestinations,
@@ -468,6 +473,18 @@ class NavShell extends StatelessWidget {
   /// (manifeste visuel Tuteur V1 section 4.2 point 5). La colonne laterale
   /// reste visible sur tablette et bureau.
   final bool masquerBarreBasse;
+
+  /// NAV-REFONTE, etape 2a (decision du directeur du 09/11/2026) : ce que le
+  /// halo du cercle Compte signale (alerte urgente, nouveautes a lire), ou
+  /// `null` : aucun halo, le cercle mene directement au Compte. Calcule hors
+  /// du shell par une fonction pure de la source ; jamais deduit d'un role.
+  /// La barre flottante seule le montre (le rail et la colonne a l'etape 3).
+  final EtatHaloCompte? halo;
+
+  /// Appele quand le cercle Compte est touche avec un [halo] : la coquille y
+  /// marque « Nouveau » comme vu (il s'eteint) ; Urgent reste allume tant
+  /// que la situation dure (arbitrage du garde-cap du 09/11/2026).
+  final void Function(EtatHaloCompte halo)? onHaloTouche;
 
   /// Vrai quand le rail replie garde le **nom visible** de chaque
   /// destination, sous son icone, au lieu de l'infobulle seule.
@@ -544,6 +561,8 @@ class NavShell extends StatelessWidget {
           destinations: destinations,
           indexActif: indexActif,
           onAller: onAller,
+          halo: halo,
+          onHaloTouche: onHaloTouche,
           child: child,
         ),
       );
@@ -581,6 +600,8 @@ class _CoquilleBarreBasse extends StatefulWidget {
     required this.indexActif,
     required this.onAller,
     required this.child,
+    this.halo,
+    this.onHaloTouche,
   });
 
   final bool guide;
@@ -588,6 +609,8 @@ class _CoquilleBarreBasse extends StatefulWidget {
   final int? indexActif;
   final void Function(String chemin) onAller;
   final Widget child;
+  final EtatHaloCompte? halo;
+  final void Function(EtatHaloCompte halo)? onHaloTouche;
 
   @override
   State<_CoquilleBarreBasse> createState() => _CoquilleBarreBasseEtat();
@@ -653,6 +676,8 @@ class _CoquilleBarreBasseEtat extends State<_CoquilleBarreBasse> {
                     destinations: widget.destinations,
                     indexActif: widget.indexActif,
                     onAller: widget.onAller,
+                    halo: widget.halo,
+                    onHaloTouche: widget.onHaloTouche,
                     cles: _cles,
                   ),
                 ),
@@ -688,10 +713,18 @@ class _BarreFlottante extends StatelessWidget {
     required this.indexActif,
     required this.onAller,
     required this.cles,
+    this.halo,
+    this.onHaloTouche,
   });
 
   /// Les cles de l'effet liquide.
   final _ClesLiquide cles;
+
+  /// Le halo du cercle Compte, ou `null`.
+  final EtatHaloCompte? halo;
+
+  /// Le cercle a ete touche avec un halo.
+  final void Function(EtatHaloCompte halo)? onHaloTouche;
 
   /// Mode Accessibilite : barre plus haute, onglets plus larges et espaces,
   /// libelles toujours visibles, contraste renforce (MA-NAV-1).
@@ -868,6 +901,9 @@ class _BarreFlottante extends StatelessWidget {
                       actif: _compteActif,
                       guide: guide,
                       onAller: onAller,
+                      halo: halo,
+                      onHaloTouche: onHaloTouche,
+                      apparition: indexActif,
                     ),
                   ],
                 ),
@@ -1283,16 +1319,30 @@ class _CercleCompte extends StatelessWidget {
     required this.actif,
     required this.guide,
     required this.onAller,
+    this.halo,
+    this.onHaloTouche,
+    this.apparition,
   });
+
+  /// Le cercle a ete touche avec un halo.
+  final void Function(EtatHaloCompte halo)? onHaloTouche;
+
+  /// L'ecran affiche : quand il change, la rotation du halo se rejoue.
+  final Object? apparition;
 
   final Destination destination;
   final bool actif;
   final bool guide;
   final void Function(String chemin) onAller;
 
+  /// Le halo, ou `null` : sans halo, le toucher ouvre le Compte ; avec un
+  /// halo, la feuille « En ce moment » (decision du directeur du 09/11).
+  final EtatHaloCompte? halo;
+
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
+    final EtatHaloCompte? etat = halo;
     final Widget dessin;
     if (guide) {
       final AppMetriques metriques = _metriques(context);
@@ -1310,14 +1360,18 @@ class _CercleCompte extends StatelessWidget {
               width: NavShell.epaisseurContourGuide,
             ),
           ),
-          boxShadow: AppElevation.niveau1(palette.ombre),
+          // NAV-REFONTE 2a : la tuile n'est pas un cercle, aucune rotation ;
+          // une lueur fixe de la couleur de l'etat sur son contour.
+          boxShadow: etat == null
+              ? AppElevation.niveau1(palette.ombre)
+              : AppElevation.lueurHaloTuile(etat.couleurs.lueur),
         ),
         child: ConstrainedBox(
           // La meme hauteur minimale que la pilule du Mode Accessibilite.
           // Une cible de large (72) au moins : la tuile prend la part d'un
           // onglet, pour que quatre cibles tiennent a 320 (MA-CMD-1).
-          // Revue du pilote du 09/11/2026 : « Compte » touchait le contour a
-          // 320 en texte x2. La tuile garde 4 de chaque cote du nom et
+          // Revue du pilote du 09/11/2026 : « Compte » touchait le contour
+          // a 320 en texte x2. La tuile garde 4 de chaque cote du nom et
           // s'elargit d'un palier (8) au plus : les onglets gardent 72.
           constraints: BoxConstraints(
             minWidth: metriques.cibleTactile,
@@ -1335,9 +1389,20 @@ class _CercleCompte extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  AvatarCompte(
-                    repli: destination.libelle,
-                    diametre: AppAvatar.petit,
+                  Stack(
+                    clipBehavior: Clip.none,
+                    children: <Widget>[
+                      AvatarCompte(
+                        repli: destination.libelle,
+                        diametre: AppAvatar.petit,
+                      ),
+                      if (etat != null)
+                        PositionedDirectional(
+                          end: -AppSpacing.sm,
+                          top: -AppSpacing.xs,
+                          child: PastilleHaloCompte(etat: etat),
+                        ),
+                    ],
                   ),
                   Ecart.vXs,
                   TexteSansCoupure(
@@ -1350,6 +1415,18 @@ class _CercleCompte extends StatelessWidget {
                       actif ? FontWeight.w700 : FontWeight.w600,
                     ).copyWith(color: encre),
                   ),
+                  // Le mot d'etat ecrit sous « Compte » (Urgent, A lire).
+                  if (etat != null)
+                    TexteSansCoupure(
+                      etat.motCourt,
+                      textAlign: TextAlign.center,
+                      plancher: echelleMinimaleLisible,
+                      style: AppTypography.graisse(
+                        Theme.of(context).textTheme.labelMedium ??
+                            const TextStyle(),
+                        FontWeight.w700,
+                      ).copyWith(color: encre),
+                    ),
                 ],
               ),
             ),
@@ -1366,8 +1443,13 @@ class _CercleCompte extends StatelessWidget {
         excludeFromSemantics: true,
         child: CercleSelectionnable(
           choisi: actif,
-          photo: (double d) =>
-              AvatarCompte(repli: destination.libelle, diametre: d),
+          // Le halo entoure la photo, a sa taille du moment.
+          photo: (double d) => HaloCompte(
+            etat: etat,
+            apparition: apparition,
+            diametre: d,
+            child: AvatarCompte(repli: destination.libelle, diametre: d),
+          ),
         ),
       );
     }
@@ -1375,8 +1457,22 @@ class _CercleCompte extends StatelessWidget {
       container: true,
       selected: actif,
       child: Pressable(
-        onPress: () => onAller(destination.chemin),
-        libelleSemantique: destination.libelle,
+        onPress: etat == null
+            ? () => onAller(destination.chemin)
+            : () {
+                onHaloTouche?.call(etat);
+                unawaited(
+                  ouvrirFeuilleEnCeMoment(
+                    context,
+                    etat: etat,
+                    cheminCompte: destination.chemin,
+                    onAller: onAller,
+                  ),
+                );
+              },
+        libelleSemantique: etat == null
+            ? destination.libelle
+            : etat.nomAccessible(destination.libelle),
         arrondiFocus: guide
             ? _metriques(context).arrondi
             : AppRadius.arrondiFull,

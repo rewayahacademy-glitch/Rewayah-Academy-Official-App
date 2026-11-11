@@ -7180,6 +7180,23 @@
     "logoAccueil": "Rewayah Academy, accueil",
     "replier": "Replier la navigation",
     "deplier": "Déplier la navigation",
+    "halo": {
+      "enCeMoment": "En ce moment",
+      "monCompte": "Mon compte",
+      "urgentNom": "{compte}, une alerte urgente",
+      "urgentMot": "Urgent",
+      "ouvrirAlerte": "Ouvrir l'alerte",
+      "nouveauNom(plural, param=n)": {
+        "one": "{compte}, {nombre} nouveauté à lire",
+        "other": "{compte}, {nombre} nouveautés à lire"
+      },
+      "nouveauTitre(plural, param=n)": {
+        "one": "{nombre} nouveauté à lire",
+        "other": "{nombre} nouveautés à lire"
+      },
+      "nouveauMot": "À lire",
+      "lire": "Lire"
+    },
     "filAriane": {
       "separateur": "›",
       "suite": "› {libelle}"
