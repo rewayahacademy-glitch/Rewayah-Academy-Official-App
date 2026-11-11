@@ -39,7 +39,6 @@ import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/widgets/bouton_icone.dart';
-import '../../core/widgets/commande_salle.dart' show SurfaceTuilesSalle;
 import '../tc_mushaf/fleches_page_mushaf.dart';
 import '../tc_mushaf/page_madina_15.dart' show ratioHauteurPageMadina15;
 import 'actions_seance.dart';
@@ -50,7 +49,6 @@ import 'media_salle.dart';
 import 'palette_tableau.dart';
 import 'panneau_seance.dart' show largeurPanneauSeance;
 import 'pilule_etat_salle.dart';
-import 'salle_ordinateur.dart' show tuileOutilSalle;
 import 'salle_seance.dart' show BandeauSecours, EtatLocalSeance;
 import 'surface_page_fixe.dart';
 import 'telephone_enseignant.dart';
@@ -412,20 +410,12 @@ class TelephonePleinEcran extends StatefulWidget {
   /// La cle de la page bord a bord (tests, captures).
   static const Key clePage = ValueKey<String>('telephone-page');
 
-  /// Plan §4 : « Commandes » au repos (seul en bas) et au toucher (au-dessus
-  /// de la pilule de l'appel).
-  static const Key cleCommandesRepos = ValueKey<String>(
-    'telephone-commandes-repos',
-  );
+  /// GRILLE-COMMANDES (11/11/2026) : « Plus », la case de la barre de
+  /// l'enseignant qui ouvre le tiroir (l'ancien bouton « Commandes »).
+  static const Key cleCommandesToucher = BarreCommandesTelephone.clePlus;
 
-  /// Fiche 1, ligne 3 : « Commandes » au toucher, au-dessus de la pilule,
-  /// au bord de fin.
-  static const Key cleCommandesToucher = ValueKey<String>(
-    'telephone-commandes-toucher',
-  );
-
-  /// Fiche 1, ligne 4 : « Eleves » dans la pilule de l'appel.
-  static const Key cleEleves = ValueKey<String>('telephone-pilule-eleves');
+  /// « Eleves » dans la barre de l'enseignant.
+  static const Key cleEleves = BarreCommandesTelephone.cleEleves;
 
   @override
   State<TelephonePleinEcran> createState() => _EtatTelephonePleinEcran();
@@ -611,8 +601,15 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
             microOuvert: _microOuvertEntendu,
           );
           final Widget bas = Padding(
-            // Standard : marge 16 des bords (et la zone sure).
-            padding: const EdgeInsets.all(AppSpacing.lg),
+            // Standard : marge 16 des bords (et la zone sure). GRILLE-
+            // COMMANDES : sous 360 de large, la barre de l'enseignant
+            // s'approche des bords (8) pour garder ses six cases de 48.
+            padding: enseignant && ecran.width < 360
+                ? const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.sm,
+                    vertical: AppSpacing.lg,
+                  )
+                : const EdgeInsets.all(AppSpacing.lg),
             child: _Bas(
               vue: vue,
               actions: actions,
@@ -909,11 +906,13 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
                       hauteurMax: ecran.height * _partPanneau,
                     ),
                   ),
-                // Plan §4 : au repos, « Commandes » seul en bas ; au toucher,
-                // il remonte au-dessus de la pilule, avec elle.
+                // GRILLE-COMMANDES (directeur, 11/11/2026) : au repos, plus
+                // de bouton « Commandes » ; seul le Pointeur tenu reste, a
+                // sa place dans la barre (l'enseignant voit qu'il l'a en
+                // main, et le repose d'un appui).
                 if (enseignant &&
                     vue.panneau == PanneauOuvert.aucun &&
-                    _declencheur(actions, vue) != null)
+                    BarreCommandesTelephone.aLePointeur(context, vue, actions))
                   Builder(
                     builder: (BuildContext contexte) =>
                         CommandesMasquables.visiblesDe(contexte)
@@ -921,27 +920,13 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
                         : PositionedDirectional(
                             start: 0,
                             end: 0,
-                            bottom: AppSpacing.lg,
+                            bottom: 0,
                             child: SafeArea(
                               top: false,
-                              child: Center(
-                                // Le Pointeur tenu reste visible au repos :
-                                // l'enseignant voit qu'il l'a en main, et le
-                                // repose d'un appui.
-                                child: _AvecPointeur(
-                                  vue: vue,
-                                  actions: actions,
-                                  actif: reduit,
-                                  seulementTenu: true,
-                                  child: CoucheSalle(
-                                    child: DeclencheurCommandes(
-                                      key:
-                                          TelephonePleinEcran.cleCommandesRepos,
-                                      surface: palette.coucheSalle,
-                                      onPress: _declencheur(actions, vue)!,
-                                    ),
-                                  ),
-                                ),
+                              child: _PointeurTenuAuRepos(
+                                vue: vue,
+                                actions: actions,
+                                local: local,
                               ),
                             ),
                           ),
@@ -1070,37 +1055,6 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
                                                   ajuste: large,
                                                   reduit: reduit,
                                                 ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                // Fiche 1, ligne 3 : au toucher,
-                                // « Commandes » remonte au-dessus de la
-                                // pilule, au bord de fin.
-                                if (enseignant &&
-                                    !(panneau || eleves) &&
-                                    _declencheur(actions, vue) != null)
-                                  Padding(
-                                    padding: const EdgeInsetsDirectional.only(
-                                      start: AppSpacing.lg,
-                                      end: AppSpacing.lg,
-                                    ),
-                                    child: Align(
-                                      alignment: AlignmentDirectional.centerEnd,
-                                      child: _AvecPointeur(
-                                        vue: vue,
-                                        actions: actions,
-                                        actif: reduit,
-                                        child: CoucheSalle(
-                                          child: DeclencheurCommandes(
-                                            key: TelephonePleinEcran
-                                                .cleCommandesToucher,
-                                            surface: palette.coucheSalle,
-                                            onPress: _declencheur(
-                                              actions,
-                                              vue,
-                                            )!,
-                                          ),
                                         ),
                                       ),
                                     ),
@@ -1492,82 +1446,70 @@ VoidCallback? _declencheur(ActionsSeance actions, VueSeance vue) =>
     ? actions.onCommandes
     : null;
 
-/// TELEPHONE-REDUIT (cahier de la salle §9 : « le pointeur » reste au
-/// telephone) : le Pointeur de l'enseignant au telephone, a cote de
-/// « Commandes », a un appui de la page ; la meme tuile que sur ordinateur
-/// ([tuileOutilSalle]). Avant ce lot, il n'existait pas au telephone (reponse
-/// L8 du 26/10 : « Pointeur n'est pas au telephone »). Rendu seulement quand
-/// le serveur le permet ([VueSeance.voitOutils]) ; [seulementTenu] : au
-/// repos, seulement s'il est en main.
-class _AvecPointeur extends StatelessWidget {
-  const _AvecPointeur({
+/// GRILLE-COMMANDES : la barre de l'enseignant ([BarreCommandesTelephone]),
+/// a la marge de l'ecran (16), jamais plus large qu'une feuille du bas.
+class _BarreEnseignant extends StatelessWidget {
+  const _BarreEnseignant({
     required this.vue,
     required this.actions,
-    required this.actif,
-    required this.child,
-    this.seulementTenu = false,
+    required this.local,
+    this.seulPointeur = false,
   });
 
   final VueSeance vue;
   final ActionsSeance actions;
-  final bool actif;
-  final bool seulementTenu;
-  final Widget child;
-
-  /// La cle de la case du Pointeur (tests, captures).
-  static const Key cle = ValueKey<String>('telephone-pointeur');
+  final EtatLocalSeance local;
+  final bool seulPointeur;
 
   @override
-  Widget build(BuildContext context) {
-    if (!actif ||
-        !vue.voitOutils ||
-        actions.onOutil == null ||
-        context.findAncestorWidgetOfExactType<UncontrolledProviderScope>() ==
-            null) {
-      return child;
-    }
-    final AppPalette palette = AppPalette.of(context);
-    return Consumer(
-      builder: (BuildContext contexte, WidgetRef ref, Widget? _) {
-        final OutilDock? outil = ref.watch(
-          etatOutilsProvider.select((EtatOutils e) => e.outilActif),
-        );
-        if (seulementTenu && outil != OutilDock.pointeur) return child;
-        return Wrap(
-          alignment: WrapAlignment.end,
-          crossAxisAlignment: WrapCrossAlignment.center,
-          spacing: AppSpacing.sm,
-          runSpacing: AppSpacing.sm,
-          children: <Widget>[
-            CoucheSalle(
-              child: DecoratedBox(
-                key: cle,
-                decoration: palette.coucheSalle.decoration(
-                  borderRadius: AppRadius.arrondiLg,
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(AppSpacing.sm),
-                  child: SurfaceTuilesSalle(
-                    surface: palette.coucheSalle,
-                    rond: true,
-                    // Texte agrandi : le disque seul (le nom reste dans
-                    // l'infobulle et la voix), pour que la rangee tienne
-                    // au-dessus de la pilule sans la pousser.
-                    sansNom: MediaQuery.textScalerOf(contexte).scale(1) > 1.5,
-                    child: tuileOutilSalle(
-                      ref,
-                      actions: actions,
-                      outil: outil,
-                      o: OutilEnseignement.pointeur,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-            child,
-          ],
-        );
-      },
+  Widget build(BuildContext context) => Center(
+    heightFactor: 1,
+    child: ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: largeurMaxFeuille),
+      child: BarreCommandesTelephone(
+        vue: vue,
+        actions: actions,
+        local: local,
+        onPlus: _declencheur(actions, vue),
+        seulPointeur: seulPointeur,
+      ),
+    ),
+  );
+}
+
+/// Au repos (commandes masquees), le Pointeur tenu : seul, a sa place dans
+/// la barre. Rien quand il n'est pas en main.
+class _PointeurTenuAuRepos extends ConsumerWidget {
+  const _PointeurTenuAuRepos({
+    required this.vue,
+    required this.actions,
+    required this.local,
+  });
+
+  final VueSeance vue;
+  final ActionsSeance actions;
+  final EtatLocalSeance local;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final OutilDock? outil = ref.watch(
+      etatOutilsProvider.select((EtatOutils e) => e.outilActif),
+    );
+    if (outil != OutilDock.pointeur) return const SizedBox.shrink();
+    return Padding(
+      // Les memes marges que la barre : le Pointeur ne bouge pas.
+      padding: MediaQuery.sizeOf(context).width < 360
+          ? const EdgeInsets.symmetric(
+              horizontal: AppSpacing.sm,
+              vertical: AppSpacing.lg,
+            )
+          : const EdgeInsets.all(AppSpacing.lg),
+      child: _BarreEnseignant(
+        vue: vue,
+        actions: actions,
+        local: local,
+        seulPointeur: true,
+      ),
     );
   }
 }
@@ -1898,9 +1840,33 @@ class _Bas extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final VoidCallback? commandes = actions.onCommandes;
-    // Fiche 1, ligne 4 : les disques nommes, dans tous les modes (pilote,
-    // 26/10 : un mode d'accessibilite ne retire pas les mots).
-    final bool rond = enseignantTelephone;
+    // GRILLE-COMMANDES (directeur, 11/11/2026) : chez l'enseignant, UNE
+    // barre aux cases egales (Micro, Camera, Eleves, Pointeur, Plus,
+    // Quitter) ; la palette du tableau ouvert reste juste au-dessus.
+    if (enseignantTelephone) {
+      final Widget barre = _BarreEnseignant(
+        vue: vue,
+        actions: actions,
+        local: local,
+      );
+      if (!paletteAuDessus || !vue.tableauOuvert || actions.onTableau == null) {
+        return barre;
+      }
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Center(
+            heightFactor: 1,
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: PaletteTableau(vue: vue, actions: actions),
+            ),
+          ),
+          Ecart.vSm,
+          barre,
+        ],
+      );
+    }
     // Standard des commandes d'appel (24/10/2026) : une seule pilule, « Plus »
     // dedans ; aucun declencheur a cote. S0.3b : tableau ouvert, sa palette
     // juste au-dessus, horizontale.
@@ -1910,37 +1876,8 @@ class _Bas extends StatelessWidget {
       microOuvert: local.microOuvert,
       cameraAllumee: local.cameraAllumee,
       agrandi: local.agrandi,
-      commandes: enseignantTelephone
-          ? const <CommandeDock>[
-              CommandeDock.micro,
-              CommandeDock.camera,
-              CommandeDock.quitter,
-            ]
-          : null,
-      // Fiche 1, ligne 4 : Micro, Camera, Eleves, Quitter, des disques
-      // nommes ; Eleves porte le nombre d'eleves presents.
-      rond: rond,
-      avantQuitter: <Widget>[
-        if (enseignantTelephone && actions.onEleves != null)
-          BoutonAppel(
-            key: TelephonePleinEcran.cleEleves,
-            icone: AppIcons.eleves,
-            libelle: t.salle.seance.compteurEleves(
-              connectes: vue.connectes,
-              inscrits: vue.inscrits,
-            ),
-            libelleSemantique: t.salle.seance.eleves,
-            nom: rond ? t.salle.seance.eleves : null,
-            pastille: vue.connectes,
-            selectionne: vue.panneau == PanneauOuvert.eleves,
-            onPress: actions.onEleves!,
-          ),
-      ],
-      // Fiche 1, ligne 3 : chez l'enseignant au telephone, « Commandes » est
-      // au-dessus de la pilule, jamais dedans.
       plus:
-          !enseignantTelephone &&
-              commandes != null &&
+          commandes != null &&
               CommandesPedagogiques.aDesEntrees(vue, actions) &&
               vue.panneau != PanneauOuvert.commandes
           ? BoutonPlusAppel(onPress: commandes)

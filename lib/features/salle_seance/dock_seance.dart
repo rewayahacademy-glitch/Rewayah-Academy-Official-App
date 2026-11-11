@@ -368,8 +368,19 @@ class DockSeance extends StatelessWidget {
     this.rond = false,
     this.raccourcis = false,
     this.colonne = false,
+    this.avecReduire = true,
+    this.cleDock = const ValueKey<String>('dock-seance'),
     super.key,
   });
+
+  /// La cle du dock (tests, captures). `null` dans la barre du telephone de
+  /// l'enseignant : c'est la barre entiere qui la porte, une seule fois.
+  final Key? cleDock;
+
+  /// GRILLE-COMMANDES (11/11/2026) : faux dans la barre du telephone de
+  /// l'enseignant, ou « Reduire la salle » est en haut (la fleche de retour
+  /// de la capsule) et dans la question de Quitter, jamais dans la barre.
+  final bool avecReduire;
 
   /// CORAN-GRAND (directeur, 11/11/2026), avec [nommee] : les tuiles se
   /// posent l'une sous l'autre, a la largeur de la colonne des commandes de
@@ -546,7 +557,12 @@ class DockSeance extends StatelessWidget {
     // L'Interface guidee (un mode d'affichage, pas un droit) garde un seul
     // geste de sortie : un enfant seul ne doit pas laisser l'appel ouvert
     // sans le voir.
-    if (reduire == null || rond || vue.role == RoleSeance.guidee) return null;
+    if (reduire == null ||
+        rond ||
+        !avecReduire ||
+        vue.role == RoleSeance.guidee) {
+      return null;
+    }
     if (!nommee && AppGabarit.de(context) == Gabarit.mobile) return null;
     return BoutonAppel(
       key: cleReduire,
@@ -646,7 +662,7 @@ class DockSeance extends StatelessWidget {
     }
     if (nommee && colonne) {
       return Column(
-        key: const ValueKey<String>('dock-seance'),
+        key: cleDock,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         spacing: AppSpacing.sm,

@@ -218,7 +218,7 @@ Future<void> _toucher(WidgetTester tester) async {
   await tester.pumpAndSettle();
 }
 
-/// Ouvre le tiroir des Commandes (« Commandes » au toucher, ligne 3).
+/// Ouvre le tiroir (« Plus », dans la barre, au toucher).
 Future<void> _ouvrirTiroir(WidgetTester tester) async {
   await _toucher(tester);
   await tester.tap(find.byKey(TelephonePleinEcran.cleCommandesToucher));
@@ -243,13 +243,27 @@ const String _phase = String.fromEnvironment('PHASE', defaultValue: 'apres');
 /// L'ile de la salle (chrono), posee en haut chez l'enseignant au telephone.
 final Finder _ile = find.byKey(const ValueKey<String>('ligne-etat-telephone'));
 
-/// La pilule de l'appel.
-final Finder _dock = find.byKey(const ValueKey<String>('dock-seance'));
+/// GRILLE-COMMANDES : la barre de l'enseignant, la seule.
+final Finder _dock = find.byKey(BarreCommandesTelephone.cle);
 
-/// La case du Pointeur, a cote de « Commandes ».
-final Finder _pointeur = find.byKey(
-  const ValueKey<String>('telephone-pointeur'),
-);
+/// La case du Pointeur, dans la barre.
+final Finder _pointeur = find.byKey(BarreCommandesTelephone.clePointeur);
+
+/// Les cases de la barre, dans l'ordre de lecture.
+List<Rect> _cases(WidgetTester tester) {
+  final List<Rect> cases = <Rect>[
+    for (final Element e
+        in find
+            .descendant(
+              of: _dock,
+              matching: find.byKey(const ValueKey<String>('tuile-commande')),
+            )
+            .hitTestable()
+            .evaluate())
+      tester.getRect(find.byWidget(e.widget)),
+  ];
+  return cases..sort((Rect a, Rect b) => a.left.compareTo(b.left));
+}
 
 /// Rien ne se recouvre parmi les objets poses sur la page, aucun mot coupe,
 /// cibles de 48 au moins.
@@ -260,11 +274,8 @@ void _verifierPlaces(WidgetTester tester, String etat) {
       _ile,
       find.byKey(CapsuleVideoTelephone.cle),
       _dock,
-      find.byKey(TelephonePleinEcran.cleCommandesRepos),
-      find.byKey(TelephonePleinEcran.cleCommandesToucher),
       find.byKey(TiroirCommandesTelephone.cle),
       find.byKey(FeuilleElevesTelephone.cle),
-      _pointeur,
     ])
       if (f.hitTestable().evaluate().isNotEmpty) f,
   ];
@@ -342,8 +353,7 @@ void main() {
             isTrue,
           );
           _verifierPlaces(tester, '$nom, toucher');
-          // La pilule de l'appel ne grossit pas : Micro, Camera, Eleves,
-          // Quitter.
+          // « Reduire la salle » n'est pas dans la barre : il est en haut.
           expect(
             find.descendant(
               of: _dock,
@@ -389,8 +399,79 @@ void main() {
           _verifierPlaces(tester, '$nom, tiroir');
         });
 
-        testWidgets('$nom : le Pointeur a cote de « Commandes », tenu il reste '
-            'visible au repos', (WidgetTester tester) async {
+        testWidgets('$nom : une seule barre, des cases egales et alignees, '
+            'dans l\'ordre Micro, Camera, Eleves, Pointeur, Plus, Quitter', (
+          WidgetTester tester,
+        ) async {
+          await _monter(tester, theme: theme);
+          await _toucher(tester);
+          // Plus de bouton « Commandes » ni de disque : la tuile commune.
+          expect(
+            find.byKey(const ValueKey<String>('declencheur-commandes')),
+            findsNothing,
+          );
+          expect(
+            find.byKey(const ValueKey<String>('disque-commande')),
+            findsNothing,
+          );
+          final List<Rect> cases = _cases(tester);
+          expect(cases, hasLength(6));
+          for (final Rect c in cases) {
+            expect(c.width, closeTo(cases.first.width, 0.5));
+            expect(c.top, closeTo(cases.first.top, 0.5));
+            expect(c.height, closeTo(cases.first.height, 0.5));
+          }
+          // Les icones sur une meme ligne, a pas regulier.
+          final List<Offset> icones = <Offset>[
+            for (final Element e
+                in find
+                    .descendant(of: _dock, matching: find.byType(Icon))
+                    .hitTestable()
+                    .evaluate())
+              tester.getCenter(find.byWidget(e.widget)),
+          ]..sort((Offset a, Offset b) => a.dx.compareTo(b.dx));
+          expect(icones, hasLength(6));
+          final double pas = icones[1].dx - icones[0].dx;
+          for (int i = 1; i < icones.length; i++) {
+            expect(icones[i].dy, closeTo(icones.first.dy, 0.5));
+            expect(icones[i].dx - icones[i - 1].dx, closeTo(pas, 0.5));
+          }
+          // L'ordre (de la colonne de l'ordinateur).
+          final List<Key> ordre = <Key>[
+            const ValueKey<String>('bouton-micro'),
+            BarreCommandesTelephone.cleEleves,
+            BarreCommandesTelephone.clePointeur,
+            BarreCommandesTelephone.clePlus,
+          ];
+          final bool ltr = langue != AppLocale.ar;
+          for (int i = 1; i < ordre.length; i++) {
+            final double avant = tester.getCenter(find.byKey(ordre[i - 1])).dx;
+            final double apres = tester.getCenter(find.byKey(ordre[i])).dx;
+            expect(ltr ? avant < apres : avant > apres, isTrue, reason: '$i');
+          }
+          // Les noms sont fixes : l'etat ne change pas le mot.
+          if (langue == AppLocale.fr) {
+            for (final String nom in <String>[
+              t.salle.micro,
+              t.salle.camera,
+              t.salle.seance.eleves,
+              t.salle.seance.outils.pointeur,
+              t.salle.seance.commandes.declencheur,
+              t.salle.quitter,
+            ]) {
+              expect(
+                find.descendant(of: _dock, matching: find.text(nom)),
+                findsOneWidget,
+                reason: nom,
+              );
+            }
+            expect(find.text(t.salle.microCoupe), findsNothing);
+          }
+          _verifierPlaces(tester, '$nom, barre');
+        });
+
+        testWidgets('$nom : le Pointeur dans la barre ; tenu, il reste seul '
+            'au repos, a sa place', (WidgetTester tester) async {
           await _monter(tester, theme: theme);
           await _attendreLeRepos(tester);
           expect(_pointeur.hitTestable(), findsNothing);
@@ -403,11 +484,14 @@ void main() {
                 .hitTestable(),
           );
           await tester.pumpAndSettle();
+          final Rect place = tester.getRect(_pointeur.hitTestable());
           await _attendreLeRepos(tester);
           expect(_pointeur.hitTestable(), findsOneWidget);
+          // A sa place, seul : rien n'a bouge, « Plus » n'est plus la.
+          expect(tester.getRect(_pointeur.hitTestable()), place);
           expect(
-            find.byKey(TelephonePleinEcran.cleCommandesRepos).hitTestable(),
-            findsOneWidget,
+            find.byKey(BarreCommandesTelephone.clePlus).hitTestable(),
+            findsNothing,
           );
           _verifierPlaces(tester, '$nom, pointeur tenu au repos');
           // Un appui le repose.
@@ -455,7 +539,8 @@ void main() {
     await _ouvrirTiroir(tester);
     expect(find.byKey(TiroirCommandesTelephone.cleOnglets), findsOneWidget);
     expect(find.text(t.salle.telephone.ecrireAilleurs), findsNothing);
-    expect(_pointeur, findsNothing);
+    // La meme barre que le telephone, Pointeur compris.
+    expect(_pointeur, findsOneWidget);
     expect(
       find.byKey(const ValueKey<String>('bouton-tableau')),
       findsOneWidget,

@@ -33,7 +33,8 @@ import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/bouton_icone.dart';
 import '../../core/widgets/carte_lignes.dart';
-import '../../core/widgets/commande_salle.dart' show SurfaceTuilesSalle;
+import '../../core/widgets/commande_salle.dart'
+    show SurfaceTuilesSalle, TuileCommandeSalle;
 import '../../core/widgets/controle_segmente.dart' show Segment;
 import '../../core/widgets/local_feedback.dart';
 import '../../core/widgets/pressable.dart';
@@ -41,12 +42,14 @@ import '../../core/widgets/selecteur_section.dart';
 import '../../core/widgets/setting_row.dart';
 import 'actions_seance.dart';
 import 'barre_outils_salle.dart';
-import 'dock_seance.dart' show CoucheSalle, diametreBoutonAppel;
+import 'dock_seance.dart'
+    show BoutonAppel, CoucheSalle, DockSeance, diametreBoutonAppel;
 import 'media_salle.dart';
 import 'panneau_bibliotheque_salle.dart';
 import 'panneau_eleves.dart';
 import 'panneau_seance.dart';
 import 'pilule_etat_salle.dart';
+import 'salle_ordinateur.dart' show tuileOutilSalle;
 import 'salle_seance.dart' show EtatLocalSeance;
 import 'vignette_video.dart' show MesuresVignette, SignalVideo, VignetteVideo;
 import 'vue_seance.dart';
@@ -411,8 +414,233 @@ class ProfilTelephone extends StatelessWidget {
   }
 }
 
-/// Le tiroir des Commandes : « Commandes », « Reduire », deux onglets, sur
-/// une seule surface du theme (fiche 1, ligne 7).
+/// GRILLE-COMMANDES (directeur, 11/11/2026 : « aucun patterne, pas bien
+/// aligne, ni coordonne... il faut bien aligner les icones partout ») : LA
+/// barre de l'enseignant sous 840 points de large, la seule. Une surface
+/// sombre, des cases EGALES, dans l'ordre de la colonne de l'ordinateur :
+///
+///     Micro · Camera · Eleves · Pointeur · Plus · Quitter
+///
+/// Chaque case est la tuile commune ([TuileCommandeSalle]) : l'icone, et
+/// dessous un nom FIXE sur une ligne (« Micro », jamais « Micro coupe » :
+/// l'etat se lit par l'icone barree et l'aplat, comme sur ordinateur). Si un
+/// seul nom ne tient pas dans sa case (ecran etroit, texte agrandi), toute
+/// la rangee passe en icones seules : jamais un nom coupe, jamais une case
+/// plus large que sa voisine.
+///
+/// Elle remplace la pilule a disques, le bouton « Commandes » pose au-dessus
+/// d'elle et le Pointeur flottant a cote (trois objets, trois alignements).
+/// « Plus » ouvre le tiroir (la Bibliotheque ; sur tablette, aussi les outils
+/// d'ecriture). « Reduire la salle » reste en haut, a la fleche de retour.
+///
+/// [seulPointeur] : au repos (commandes masquees), le Pointeur tenu reste
+/// seul, A SA PLACE dans la rangee : l'enseignant voit qu'il l'a en main et
+/// le repose d'un appui, sans que rien n'ait bouge.
+class BarreCommandesTelephone extends StatelessWidget {
+  const BarreCommandesTelephone({
+    required this.vue,
+    required this.actions,
+    required this.local,
+    this.onPlus,
+    this.seulPointeur = false,
+    super.key,
+  });
+
+  final VueSeance vue;
+  final ActionsSeance actions;
+  final EtatLocalSeance local;
+
+  /// Ouvre ou referme le tiroir ; `null` : rien a y mettre, pas de case.
+  final VoidCallback? onPlus;
+
+  final bool seulPointeur;
+
+  /// La cle de la barre (tests, captures).
+  static const Key cle = ValueKey<String>('dock-seance');
+
+  /// Les cles des cases propres a cette barre.
+  static const Key cleEleves = ValueKey<String>('telephone-pilule-eleves');
+  static const Key clePointeur = ValueKey<String>('telephone-pointeur');
+  static const Key clePlus = ValueKey<String>('telephone-barre-plus');
+
+  /// Vrai quand le Pointeur a sa case ([VueSeance.voitOutils], donne par le
+  /// serveur).
+  static bool aLePointeur(
+    BuildContext context,
+    VueSeance vue,
+    ActionsSeance actions,
+  ) =>
+      vue.voitOutils &&
+      actions.onOutil != null &&
+      context.findAncestorWidgetOfExactType<UncontrolledProviderScope>() !=
+          null;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    bool dock(CommandeDock c) => vue.commandesDock.contains(c);
+    Widget appel(CommandeDock c) => DockSeance(
+      vue: vue,
+      actions: actions,
+      microOuvert: local.microOuvert,
+      cameraAllumee: local.cameraAllumee,
+      nommee: true,
+      colonne: true,
+      avecReduire: false,
+      cleDock: null,
+      commandes: <CommandeDock>[c],
+    );
+    final VoidCallback? eleves = actions.onEleves;
+    final VoidCallback? plus = onPlus;
+    final bool elevesOuverts = vue.panneau == PanneauOuvert.eleves;
+    final bool plusOuvert = vue.panneau == PanneauOuvert.commandes;
+    final List<({String nom, Widget tuile, bool pointeur})> cases =
+        <({String nom, Widget tuile, bool pointeur})>[
+          if (actions.onMicro != null && dock(CommandeDock.micro))
+            (
+              nom: t.salle.micro,
+              tuile: appel(CommandeDock.micro),
+              pointeur: false,
+            ),
+          if (actions.onCamera != null && dock(CommandeDock.camera))
+            (
+              nom: t.salle.camera,
+              tuile: appel(CommandeDock.camera),
+              pointeur: false,
+            ),
+          if (eleves != null)
+            (
+              nom: t.salle.seance.eleves,
+              tuile: BoutonAppel(
+                key: cleEleves,
+                icone: AppIcons.eleves,
+                libelle: t.salle.seance.compteurEleves(
+                  connectes: vue.connectes,
+                  inscrits: vue.inscrits,
+                ),
+                libelleSemantique: t.salle.seance.eleves,
+                nom: t.salle.seance.eleves,
+                pastille: vue.connectes,
+                ouvert: elevesOuverts,
+                selectionne: elevesOuverts,
+                iconePleine: elevesOuverts,
+                onPress: eleves,
+              ),
+              pointeur: false,
+            ),
+          if (aLePointeur(context, vue, actions))
+            (
+              nom: t.salle.seance.outils.pointeur,
+              tuile: Consumer(
+                builder: (BuildContext _, WidgetRef ref, Widget? _) =>
+                    KeyedSubtree(
+                      key: clePointeur,
+                      child: tuileOutilSalle(
+                        ref,
+                        actions: actions,
+                        outil: ref.watch(
+                          etatOutilsProvider.select(
+                            (EtatOutils e) => e.outilActif,
+                          ),
+                        ),
+                        o: OutilEnseignement.pointeur,
+                      ),
+                    ),
+              ),
+              pointeur: true,
+            ),
+          if (plus != null)
+            (
+              nom: t.salle.seance.commandes.declencheur,
+              tuile: BoutonAppel(
+                key: clePlus,
+                icone: AppIcons.plusCommandes,
+                libelle: t.salle.seance.commandes.declencheur,
+                libelleSemantique:
+                    t.salle.seance.commandes.declencheurSemantique,
+                nom: t.salle.seance.commandes.declencheur,
+                ouvert: plusOuvert,
+                selectionne: plusOuvert,
+                onPress: plus,
+              ),
+              pointeur: false,
+            ),
+          if (actions.onQuitter != null && dock(CommandeDock.quitter))
+            (
+              nom: t.salle.quitter,
+              tuile: appel(CommandeDock.quitter),
+              pointeur: false,
+            ),
+        ];
+    if (cases.isEmpty) return const SizedBox.shrink();
+    return CoucheSalle(
+      child: LayoutBuilder(
+        builder: (BuildContext contexte, BoxConstraints c) {
+          final int n = cases.length;
+          // Ecran tres etroit (320) : les ecarts se resserrent pour que
+          // chaque case garde sa cible de 48 ; les cases restent egales.
+          final bool serre =
+              (c.maxWidth - (n + 1) * AppSpacing.xs) / n <
+              AppTouchTarget.standard;
+          final double ecart = serre ? AppSpacing.xs / 2 : AppSpacing.xs;
+          final double largeurCase = (c.maxWidth - (n + 1) * ecart) / n;
+          final bool noms = TuileCommandeSalle.nomsTiennent(
+            contexte,
+            <String>[for (final e in cases) e.nom],
+            largeurCase: largeurCase,
+          );
+          return DecoratedBox(
+            key: cle,
+            decoration: seulPointeur
+                ? const BoxDecoration()
+                : palette.coucheSalle.decoration(
+                    borderRadius: AppRadius.arrondiLg,
+                  ),
+            child: Padding(
+              padding: EdgeInsets.all(ecart),
+              child: SurfaceTuilesSalle(
+                surface: palette.coucheSalle,
+                egale: true,
+                sansNom: !noms,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  spacing: ecart,
+                  children: <Widget>[
+                    for (final e in cases)
+                      Expanded(
+                        child: !seulPointeur
+                            ? e.tuile
+                            : e.pointeur
+                            ? DecoratedBox(
+                                decoration: palette.coucheSalle.decoration(
+                                  borderRadius: AppRadius.arrondiMd,
+                                ),
+                                child: e.tuile,
+                              )
+                            // Sa place reste, vide : rien a voir, a toucher
+                            // ni a lire.
+                            : Visibility(
+                                visible: false,
+                                maintainSize: true,
+                                maintainAnimation: true,
+                                maintainState: true,
+                                child: e.tuile,
+                              ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
+/// Le tiroir ouvert par « Plus » : la Bibliotheque (et, sur tablette, les
+/// outils d'ecriture en second onglet), sur une seule surface du theme
+/// (fiche 1, ligne 7).
 class TiroirCommandesTelephone extends ConsumerStatefulWidget {
   const TiroirCommandesTelephone({
     required this.vue,
@@ -534,7 +762,11 @@ class _EtatTiroir extends ConsumerState<TiroirCommandesTelephone> {
     return ConstrainedBox(
       constraints: BoxConstraints(maxHeight: widget.hauteur),
       child: PanneauSeance(
-        titre: t.salle.seance.commandes.titre,
+        // GRILLE-COMMANDES : au telephone, le tiroir EST la Bibliotheque ;
+        // il porte son nom (le mot « Commandes » ne disait rien).
+        titre: reduit
+            ? t.salle.seance.commandes.bibliotheque
+            : t.salle.seance.commandes.titreTiroir,
         onFermer: actions.onCommandes,
         libelleFermer: t.salle.seance.commandes.reduire,
         semantiqueFermer: t.salle.seance.commandes.reduireSemantique,

@@ -511,8 +511,18 @@ class SurfaceTuilesSalle extends InheritedWidget {
     required super.child,
     this.rond = false,
     this.sansNom = false,
+    this.egale = false,
     super.key,
   });
+
+  /// GRILLE-COMMANDES (directeur, 11/11/2026 : « il faut bien aligner les
+  /// icones partout ») : les tuiles sont posees dans des cases EGALES,
+  /// donnees par l'appelant (une rangee de `Expanded`). La tuile prend alors
+  /// toute sa case, son nom tient sur UNE ligne, et c'est l'appelant qui
+  /// decide, pour toute la rangee a la fois, si les noms tiennent
+  /// ([TuileCommandeSalle.nomsTiennent]) : jamais un nom coupe, jamais une
+  /// case plus large que sa voisine.
+  final bool egale;
 
   /// Fiche 1, ligne 14 : a 320 en texte x2, les noms des disques se
   /// reduisent a l'icone (l'infobulle et la semantique les gardent).
@@ -532,7 +542,8 @@ class SurfaceTuilesSalle extends InheritedWidget {
   bool updateShouldNotify(SurfaceTuilesSalle ancien) =>
       ancien.surface != surface ||
       ancien.rond != rond ||
-      ancien.sansNom != sansNom;
+      ancien.sansNom != sansNom ||
+      ancien.egale != egale;
 }
 
 /// Plan de composition du 26/10/2026 (Q1, decision du directeur : « oui » ;
@@ -629,6 +640,23 @@ class TuileCommandeSalle extends StatelessWidget {
     );
   }
 
+  /// GRILLE-COMMANDES : vrai quand chacun des [noms] tient sur une ligne
+  /// dans une case large de [largeurCase] ([SurfaceTuilesSalle.egale]). Un
+  /// seul nom trop long, et toute la rangee passe en icones seules (le nom
+  /// reste dans l'infobulle et pour le lecteur d'ecran).
+  static bool nomsTiennent(
+    BuildContext context,
+    Iterable<String> noms, {
+    required double largeurCase,
+  }) {
+    for (final String nom in noms) {
+      if (_mesurerNom(context, nom).width + AppSpacing.xs > largeurCase) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   /// Le nom peint sur une ligne, dans le style de la tuile nommee.
   static Size _mesurerNom(BuildContext context, String nom) {
     final TextPainter peintre = TextPainter(
@@ -648,13 +676,16 @@ class TuileCommandeSalle extends StatelessWidget {
     final AppPalette claire = AppPalette.claire();
     final SurfaceTuilesSalle? surface = SurfaceTuilesSalle.de(context);
     final bool rond = surface?.rond ?? false;
+    final bool egale = !rond && (surface?.egale ?? false);
     // La barre est `surfaceInverse` (ordinateur) ou la surface donnee par
     // [SurfaceTuilesSalle] ; la tuile au repos prend son encre.
     final Color encreSurface =
         (surface?.surface ?? palette.surfaceInverse).onBackground;
     final AppColorPair? aplat = switch (ton) {
       TonTuileSalle.repos => null,
-      TonTuileSalle.retenu => palette.washAccent,
+      // Barre du telephone (toujours sombre) : l'aplat lilas clair, le meme
+      // qu'en theme clair sur ordinateur ; l'outil tenu se voit d'un regard.
+      TonTuileSalle.retenu => egale ? claire.washAccent : palette.washAccent,
       // Telephone (fiche 1, ligne 4) : jamais d'aplat violet ; l'icone
       // barree et le nom disent l'etat.
       TonTuileSalle.coupe => rond ? null : claire.surfacePrimary,
@@ -748,7 +779,11 @@ class TuileCommandeSalle extends StatelessWidget {
       arrondiFocus: AppRadius.arrondiMd,
       child: ConstrainedBox(
         constraints: BoxConstraints(
-          minWidth: rond ? AppTouchTarget.standard : largeurMin,
+          minWidth: egale
+              ? 0
+              : rond
+              ? AppTouchTarget.standard
+              : largeurMin,
           minHeight: AppTouchTarget.standard,
         ),
         child: DecoratedBox(
@@ -761,7 +796,11 @@ class TuileCommandeSalle extends StatelessWidget {
             encre: encre,
             child: Padding(
               padding: EdgeInsets.symmetric(
-                horizontal: rond ? AppSpacing.xs : AppSpacing.md,
+                horizontal: egale
+                    ? AppSpacing.xs / 2
+                    : rond
+                    ? AppSpacing.xs
+                    : AppSpacing.md,
                 vertical: rond ? AppSpacing.xs : AppSpacing.sm,
               ),
               child: Column(
@@ -771,18 +810,34 @@ class TuileCommandeSalle extends StatelessWidget {
                   if (!(surface?.sansNom ?? false)) ...<Widget>[
                     Ecart.vXs,
                     ExcludeSemantics(
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(
-                          minWidth: _largeurPlusLongMot(context, nom, style),
-                        ),
-                        child: Text(
-                          nom,
-                          key: const ValueKey<String>('nom-commande'),
-                          maxLines: 2,
-                          textAlign: TextAlign.center,
-                          style: style,
-                        ),
-                      ),
+                      child: egale
+                          // Case egale : une ligne, l'appelant a verifie
+                          // qu'elle tient ([nomsTiennent]).
+                          ? Text(
+                              nom,
+                              key: const ValueKey<String>('nom-commande'),
+                              maxLines: 1,
+                              softWrap: false,
+                              overflow: TextOverflow.clip,
+                              textAlign: TextAlign.center,
+                              style: style,
+                            )
+                          : ConstrainedBox(
+                              constraints: BoxConstraints(
+                                minWidth: _largeurPlusLongMot(
+                                  context,
+                                  nom,
+                                  style,
+                                ),
+                              ),
+                              child: Text(
+                                nom,
+                                key: const ValueKey<String>('nom-commande'),
+                                maxLines: 2,
+                                textAlign: TextAlign.center,
+                                style: style,
+                              ),
+                            ),
                     ),
                   ],
                 ],
@@ -820,6 +875,10 @@ class _AvecTraitOuvert extends StatelessWidget {
   Widget build(BuildContext context) {
     if (!ouvert) return child;
     return Stack(
+      // GRILLE-COMMANDES : le contenu reste CENTRE dans sa case, comme celui
+      // des tuiles voisines (sans cela, l'icone et le nom d'une tuile
+      // « ouverte » se collaient au bord de debut d'une case large).
+      alignment: Alignment.topCenter,
       children: <Widget>[
         child,
         PositionedDirectional(
