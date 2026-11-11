@@ -107,6 +107,46 @@ la réception ; deux portes écrites en négatif (`video_config_lire`, `quitter_
 les entrées et sorties de toute la classe de son enfant ; liste des sourates sans recherche, sans
 nom arabe ni numéro de page ; priorité réseau de l'audio non réglée (corrigé dans le code avec V-1).
 
+## 2 bis. Vu en séance réelle : une classe pleine (banc, 11/11/2026)
+
+Un enseignant et **6 élèves** dans la même salle, caméras allumées : l'enseignant et trois élèves
+(téléphone, tablette, ordinateur en sombre) sur la vraie application, trois élèves simulés.
+Captures et journal : `docs/current/captures/E2E/salle-banc/classe-6/`.
+
+**À dire d'abord.**
+
+- **Douze élèves, c'est impossible aujourd'hui : la base l'interdit.** Une Classe a 6 élèves au plus
+  (contrainte `groupes_seuil_max_check` ; réglages `groupe.capacite_adulte` 6, `capacite_enfant` 5,
+  `capacite_debutant` 4 ; 7 participants par séance). Le cahier demande un essai à 8 ou 12 : il
+  contredit les règles de l'académie. J'ai donc essayé le vrai maximum. Si le directeur veut des
+  classes plus grandes, c'est une décision à prendre, et la salle devra être essayée à cette
+  taille.
+- **La fluidité mesurée ici ne vaut rien pour un vrai téléphone** : cinq navigateurs tournaient sur
+  une seule machine sans carte graphique (3 à 8 images par seconde avec la galerie). Elle dit
+  seulement que dessiner sept vidéos coûte cher ; il faut un essai sur un téléphone d'entrée de
+  gamme. C'est la mesure qui tranchera la question du langage (journal D-001).
+- La machine saturée a fait passer la salle en « réseau faible » : ce qui suit sur les messages de
+  réseau a donc été vu par accident, mais c'est le vrai comportement de l'application.
+
+Ce qui marche : tout le monde entre, se voit et s'entend ; chaque écran reçoit les six vidéos en
+petite couche (le serveur adapte la taille) ; la page partagée arrive chez les trois élèves ; le
+nouveau chrono et l'état unique s'affichent correctement en séance réelle.
+
+Défauts vus (tous `trouvé`) :
+
+| N° | Écran | Défaut vu | Gravité |
+| :-- | :-- | :-- | :-- |
+| C6-1 | Enseignant, ordinateur, page partagée | **Il ne voit plus aucun élève** : la galerie disparaît, il ne reste que sa propre vidéo en haut à gauche. Il fait réciter des élèves qu'il ne voit pas. | Élevé |
+| C6-2 | Enseignant, ordinateur, page partagée | La page occupe une colonne étroite au milieu d'un grand vide ; la Bibliothèque reste ouverte à droite pour un seul support. | Élevé |
+| C6-3 | Élève, téléphone, page partagée | La pilule d'état (trois lignes quand le message de réseau est long) et la vignette de l'enseignant recouvrent le titre de la sourate et la basmala ; une pilule blanche presque vide (le zoom) flotte sur le texte. | Élevé |
+| C6-4 | Tous | **Le message de réseau est dit deux fois** : dans la pilule (« Image coupée le temps que la connexion revienne. La voix continue. ») et dans un bandeau (« Réseau faible. L'audio est prioritaire. »). | Moyen |
+| C6-5 | Enseignant | Sa vignette affiche **trois barres de réseau pleines et vertes** au moment même où le bandeau dit « Réseau faible » (défaut R-1, vu). | Élevé |
+| C6-6 | Enseignant, galerie | « Ouvrir le Coran » est posé sur la vignette du premier élève ; chaque vignette porte un « … » au milieu de son bord, pas dans un coin ; les prénoms sont écrits en sombre sur la vidéo (illisibles). | Moyen |
+| C6-7 | Enseignant, panneau des élèves | La liste défile dans un cadre de hauteur fixe (le quatrième élève est coupé) : interdit par `DECISION-DEFILEMENT-2026-11-01.md`. | Moyen |
+| C6-8 | Élève, téléphone, galerie | L'enseignant a la même petite case que les cinq camarades ; sa propre image (« Vous ») et la barre des commandes recouvrent les deux dernières cases. Référence : sur téléphone, Meet et Zoom mettent en grand celui qui parle. | Élevé |
+| C6-9 | Tous | Une infobulle (« Micro ouvert », « Caméra éteinte ») reste affichée après le geste. | Faible |
+| C6-10 | Réseau faible | La caméra de chacun est coupée d'office dès que le lien est jugé médiocre. C'est voulu (la voix d'abord), mais personne ne le dit clairement : l'élève voit sa caméra « éteinte » sans savoir pourquoi. | Moyen |
+
 ## 3. Ce qui n'est pas confirmé
 
 - **« La table des sourates n'est pas dans l'ordre officiel »** : non retrouvé. Les données et le

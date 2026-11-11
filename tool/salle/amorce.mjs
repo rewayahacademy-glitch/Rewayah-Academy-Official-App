@@ -26,15 +26,18 @@ function creerCompte(courriel) {
 
 /// Une classe « E2E Banc <etiquette> » de `n` eleves, seance en cours.
 /// `enseignant` : courriel d'un enseignant actif (defaut : celui de amorcer.sh).
+/// `camera` : le tuteur a autorise la camera (sinon l'eleve ne publie que sa voix).
+/// `guidee` : les eleves sont en Interface guidee.
 /// Rend { classe, seance, nom, prof, eleves: [{ id, prenom, courriel, tuteur, courrielTuteur }] }.
-export function amorcerClasse({ n = 12, etiquette = '', enseignant = COMPTES.enseignant, nettoyer = true } = {}) {
+export function amorcerClasse({ n = 12, etiquette = '', enseignant = COMPTES.enseignant, nettoyer = true,
+  camera = true, guidee = false } = {}) {
   if (nettoyer) nettoyerClassesE2E();
   const k = Date.now() % 1000000;
   const prof = sql(`select id from auth.users where email = '${enseignant}'`);
   if (!prof) throw new Error(`enseignant introuvable : ${enseignant} (lancer tool/e2e/amorcer.sh)`);
   const nom = `E2E Banc ${etiquette || k}`;
   const classe = sql(`insert into public.groupes (teacher_id, type_public, seuil_max, libelle, weekday, hour_local, timezone_iana)
-    values ('${prof}', 'enfant', ${Math.max(n, 5)}, '${nom}',
+    values ('${prof}', 'enfant', ${Math.min(6, Math.max(n, 5))}, '${nom}',
             date_part('isodow', now() at time zone 'UTC' + interval '3 days')::smallint, 9, 'UTC')
     returning id`).split('\n')[0];
   const seance = sql(`insert into public.sessions (teacher_id, started_at, ended_at, session_type, groupe_id, join_opens_at, status)
@@ -54,6 +57,9 @@ export function amorcerClasse({ n = 12, etiquette = '', enseignant = COMPTES.ens
       values ('${tuteur}', 'E2E-BANC-T${i}-${k}', 'guardian', '${tuteur}', 'E2E Parent ${prenom}', 'Banc', 'active', 'male'),
              ('${id}', 'E2E-BANC-E${i}-${k}', 'student', '${tuteur}', '${prenom}', 'Banc', 'active', '${i % 2 ? 'male' : 'female'}');
       update public.households set primary_guardian_id = '${tuteur}' where id = '${tuteur}';
+      insert into public.student_profiles (profile_id, student_type, interface_mode, camera_policy)
+      values ('${id}', 'minor', '${guidee ? 'child' : 'standard'}', '${camera ? 'allowed' : 'forbidden'}')
+      on conflict (profile_id) do update set camera_policy = excluded.camera_policy;
       insert into public.groupe_membres (groupe_id, student_id) values ('${classe}', '${id}');
       insert into public.session_participants (session_id, profile_id, role) values ('${seance}', '${id}', 'student') on conflict do nothing;
       commit;`);

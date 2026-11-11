@@ -2,6 +2,11 @@
 
 > **Journal des modifications de ce cahier** (la plus récente en premier)
 >
+> - 11/11/2026, Fable : **§4 contredit par les règles de l'académie.** Le cahier demande un essai à
+>   « 8 à 12 élèves » ; la base interdit plus de 6 élèves par Classe (et 7 participants par séance).
+>   L'essai a donc été fait à 6, le vrai maximum (`salle/CONSTAT.md` §2 bis). Le chiffre du cahier
+>   reste à trancher par le directeur : soit 6 est la règle et le cahier se corrige, soit la règle
+>   change et la salle est essayée à la nouvelle taille.
 > - 11/11/2026, Fable : §8 complété par une remarque du directeur sur la première capture du banc
 >   (élève au téléphone) : « En ligne » et « En salle » font doublon ; le chrono est trop bavard, il
 >   ne doit montrer que ce qui reste ; à zéro il sonne puis compte en croissant ; les minutes
