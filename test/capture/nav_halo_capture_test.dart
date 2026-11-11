@@ -187,6 +187,8 @@ void main() {
             chemin: Routes.tuteurAccueil,
             agir: (BuildContext _) {},
           ),
+          // « A preparer » est une lumiere d'ecran (captures halo-lumiere).
+          NatureHalo.aPreparer => throw UnsupportedError('pas du cercle'),
           NatureHalo.nouveau => EtatHaloCompte.nouveau(
             nombre: 2,
             chemin: Routes.tuteurNotifications,
