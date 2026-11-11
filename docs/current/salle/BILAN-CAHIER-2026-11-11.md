@@ -13,11 +13,13 @@ prouvée par lui en production. Les mots employés :
 - **en partie** : une moitié manque, elle est dite ;
 - **pas commencé**.
 
-Depuis les fusions de l'après-midi, **un seul banc a été rejoué sur l'ensemble fusionné** : la classe
-réelle de 6 élèves (grille, colonne de l'ordinateur, visages à côté du document, bande de l'élève ;
-`captures/E2E/salle-banc/modes-11-11-soir/`). La fermeture de la salle, la récitation et le micro
-avant l'enseignant n'ont pas été rejoués : leurs lignes « prouvé sur le banc » datent d'avant ces
-fusions.
+Rejoué sur l'ensemble fusionné (tête `5a143c126`, le 11/11) : la classe réelle de 6 élèves (grille,
+colonne de l'ordinateur, visages à côté du document, bande de l'élève ;
+`captures/E2E/salle-banc/modes-11-11-soir/`), l'attente (`attente-11-11-soir/`), et, à 20 h 30 UTC, les
+trois règles du serveur par les vraies fonctions et le vrai LiveKit de la pile locale
+(`serveur-11-11-nuit/`) : micro des élèves fermé avant l'enseignant (15 contrôles), récitation au
+micro seul (44 sur 44), fermeture de la salle avec le passage planifié (32 contrôles). **Pas rejoués
+sur l'ensemble fusionné** : la voix sous réseau abîmé (mesures du matin), la reprise après veille.
 
 ## §4. Essais par l'usage réel
 
