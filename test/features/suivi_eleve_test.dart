@@ -5,6 +5,7 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart';
 import 'package:rewayah_academy/core/presence/service_presence.dart';
+import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/suivi/service_suivi.dart';
 import 'package:rewayah_academy/core/widgets/empty_state.dart';
 import 'package:rewayah_academy/core/widgets/ligne_presence.dart';
@@ -12,6 +13,7 @@ import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/core/widgets/status_pill.dart';
 import 'package:rewayah_academy/features/suivi_eleve/suivi_eleve_page.dart';
 
+import '../router/support_routeur.dart' show sessionActive;
 import '../support/harnais.dart';
 
 final DateTime _maintenant = DateTime(2026, 9, 13, 10, 30);
@@ -228,7 +230,11 @@ void main() {
           ),
         ),
         surcharges: <Override>[
-          sansPersonneConnectee(),
+          // Toute la page est mesuree (titre et Bibliotheque compris) : une
+          // session eleve, comme en production (garde-cap, 15:50).
+          sourceSessionProvider.overrideWithValue(
+            FausseSourceSession(sessionActive(AppRole.student)),
+          ),
           serviceSuiviProvider.overrideWithValue(
             FauxServiceSuivi(
               seancesRendues: <Seance>[_seance(id: 's1', ilYAMinutes: 90)],

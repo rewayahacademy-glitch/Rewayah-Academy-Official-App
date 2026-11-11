@@ -18,12 +18,14 @@ import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart';
 import 'package:rewayah_academy/core/presence/service_presence.dart';
+import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/suivi/service_suivi.dart';
 import 'package:rewayah_academy/features/suivi_eleve/suivi_eleve_page.dart';
 
+import '../router/support_routeur.dart' show sessionActive;
 import '../support/balayage_ecrans.dart';
 import '../support/demo/demo_comptable_page.dart';
-import '../support/harnais.dart' show FauxServiceSuivi, sansPersonneConnectee;
+import '../support/harnais.dart' show FausseSourceSession, FauxServiceSuivi;
 
 final DateTime _maintenant = DateTime(2026, 9, 23, 18, 30);
 
@@ -63,9 +65,11 @@ List<EcranBalayage> ecransAppelants() => <EcranBalayage>[
     routeur: null,
     depart: null,
     surcharges: () => <Override>[
-      // La page lit la session (titre de l'onglet, Bibliotheque) : jamais la
-      // source Supabase sous test.
-      sansPersonneConnectee(),
+      // Une session ELEVE (garde-cap, 15:50) : le titre « Ma classe » et la
+      // ligne Bibliotheque sont mesures comme en production.
+      sourceSessionProvider.overrideWithValue(
+        FausseSourceSession(sessionActive(AppRole.student)),
+      ),
       serviceSuiviProvider.overrideWithValue(
         FauxServiceSuivi(
           seancesRendues: <Seance>[_seance('s1', 0), _seance('s2', 7)],
