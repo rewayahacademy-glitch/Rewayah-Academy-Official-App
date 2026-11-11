@@ -97,7 +97,6 @@ class PreferencesLocales {
     this.effetsReduits = false,
     this.notificationsCours = true,
     this.notificationsFoyer = true,
-    this.economieDonnees = false,
     this.lectureGrande = false,
     this.raccourcisSalle = true,
   });
@@ -120,9 +119,6 @@ class PreferencesLocales {
   /// Notifications liees au foyer.
   final bool notificationsFoyer;
 
-  /// Preference de qualite media locale.
-  final bool economieDonnees;
-
   /// Taille de lecture preferee, quand le moteur la supporte.
   final bool lectureGrande;
 
@@ -139,7 +135,6 @@ class PreferencesLocales {
     bool? effetsReduits,
     bool? notificationsCours,
     bool? notificationsFoyer,
-    bool? economieDonnees,
     bool? lectureGrande,
     bool? raccourcisSalle,
   }) => PreferencesLocales(
@@ -149,7 +144,6 @@ class PreferencesLocales {
     effetsReduits: effetsReduits ?? this.effetsReduits,
     notificationsCours: notificationsCours ?? this.notificationsCours,
     notificationsFoyer: notificationsFoyer ?? this.notificationsFoyer,
-    economieDonnees: economieDonnees ?? this.economieDonnees,
     lectureGrande: lectureGrande ?? this.lectureGrande,
     raccourcisSalle: raccourcisSalle ?? this.raccourcisSalle,
   );
@@ -262,10 +256,6 @@ class PreferencesLocalesControleur extends Notifier<PreferencesLocales> {
   /// Change l'abonnement local aux nouvelles du foyer.
   void notificationsFoyer(bool valeur) =>
       state = state.copyWith(notificationsFoyer: valeur);
-
-  /// Active l'economie de donnees locale.
-  void economieDonnees(bool valeur) =>
-      state = state.copyWith(economieDonnees: valeur);
 
   /// Change la taille de lecture locale.
   void lectureGrande(bool valeur) =>

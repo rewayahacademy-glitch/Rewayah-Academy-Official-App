@@ -2443,12 +2443,6 @@ class Traductions$compte$fr {
 	/// fr: 'Cours et données'
 	String get coursDonnees => 'Cours et données';
 
-	/// fr: 'Économie de données'
-	String get economieDonnees => 'Économie de données';
-
-	/// fr: 'Réduit la qualité vidéo sur réseau mobile'
-	String get economieDonneesDetail => 'Réduit la qualité vidéo sur réseau mobile';
-
 	/// fr: 'Lecture en grand texte'
 	String get lectureGrande => 'Lecture en grand texte';
 
@@ -54083,8 +54077,6 @@ extension on Traductions {
 			'compte.notificationsFoyerDetail' => 'Activité des profils de votre foyer',
 			'compte.notificationsEtat' => 'Les notifications dépendent aussi des réglages de votre appareil et de votre navigateur.',
 			'compte.coursDonnees' => 'Cours et données',
-			'compte.economieDonnees' => 'Économie de données',
-			'compte.economieDonneesDetail' => 'Réduit la qualité vidéo sur réseau mobile',
 			'compte.lectureGrande' => 'Lecture en grand texte',
 			'compte.lectureGrandeDetail' => 'Affiche le Coran en plus grand par défaut',
 			'compte.profilsTitre' => 'Profils du foyer',
@@ -54351,10 +54343,10 @@ extension on Traductions {
 			'notifications.evenements.bienvenueEquipe' => 'Bienvenue dans l\'équipe. Il vous reste à configurer votre espace.',
 			'notifications.evenements.retenuEntretien' => 'Vous êtes retenu pour un entretien. Faisons connaissance : choisissez votre horaire dans l\'application.',
 			'notifications.evenements.demandeRecue' => 'Une nouvelle demande de créneau a été reçue.',
-			_ => null,
-		} ?? switch (path) {
 			'notifications.evenements.demandePresentation' => 'Une demande de présentation standard a été reçue.',
 			'notifications.evenements.classeValidee' => 'La classe est prête et attend son enseignant.',
+			_ => null,
+		} ?? switch (path) {
 			'notifications.evenements.enseignantAffecte' => 'Un enseignant a été affecté à la classe.',
 			'notifications.evenements.demandeClose' => 'Une demande de créneau a été clôturée.',
 			'notifications.evenements.remplacementPropose' => 'Un remplacement de cours vous est proposé.',
@@ -54865,10 +54857,10 @@ extension on Traductions {
 			'enseignant.eleve.renforcerNotees' => ({required Object numero, required Object mois, required Object annee}) => 'Noté le ${numero} ${mois} ${annee}',
 			'enseignant.eleve.renforcerAucun' => 'Rien de noté à renforcer dans les cahiers de transmission de cette classe',
 			'enseignant.eleve.renforcerIllisible' => 'Les points à renforcer n\'ont pas pu être lus. Réessayez.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.eleve.etapeNonPubliee' => 'Pas encore d\'étape publiée pour cet élève',
 			'enseignant.signalement.titre' => 'Signaler un besoin',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.signalement.contexte' => ({required Object prenom, required Object classe}) => 'Pour ${prenom} · ${classe}',
 			'enseignant.signalement.categorieTitre' => 'Catégorie',
 			'enseignant.signalement.categories.pedagogique' => 'Problème pédagogique',
@@ -55379,10 +55371,10 @@ extension on Traductions {
 			'enseignant.ficheGroupe.pause.indisponibleTitre' => 'La pause programmée n\'est pas encore disponible',
 			'enseignant.ficheGroupe.pause.indisponiblePhrase' => 'Elle sera proposée ici dès que Rewayah la servira.',
 			'enseignant.ficheGroupe.pause.illisible' => 'Le réglage de la pause n\'a pas pu être lu.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.revue.titre' => 'Revue de la classe',
 			'enseignant.revue.titreClasse' => ({required Object classe}) => 'Revue de la classe ${classe}',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.revue.aucuneAnomalie' => 'Rien ne demande votre attention.',
 			'enseignant.revue.erreur' => 'La revue n\'a pas pu être lue.',
 			'enseignant.revue.erreurDetail' => 'Cette classe n\'est peut-être pas la vôtre, ou la lecture a échoué.',
@@ -55893,10 +55885,10 @@ extension on Traductions {
 			'tc.outils.trait.effacerDernier' => 'Effacer mon dernier trait',
 			'tc.outils.portee.temporaire' => 'Le temps d\'expliquer',
 			'tc.outils.portee.seance' => 'Jusqu\'à la fin du cours',
-			_ => null,
-		} ?? switch (path) {
 			'tc.outils.portee.enregistree' => 'Enregistrer',
 			'tc.outils.portee.aide' => 'Combien de temps garder ces annotations ?',
+			_ => null,
+		} ?? switch (path) {
 			'tc.outils.marquer.titre' => 'Marquer ce passage',
 			'tc.outils.marquer.aide' => 'Choisissez ce que ce passage demande.',
 			'tc.outils.marquer.retirer' => 'Retirer le marqueur',
@@ -56407,10 +56399,10 @@ extension on Traductions {
 			'adulte.invitation.renvoyer' => 'Renvoyer l\'invitation',
 			'adulte.invitation.renvoyeePhrase' => ({required Object courriel}) => 'L\'invitation est repartie vers ${courriel}, avec un nouveau code : celui de l\'e-mail précédent ne sert plus.',
 			'adulte.invitation.renvoisRestants' => ({required Object n}) => 'Renvois encore possibles : ${n}',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.invitation.renvoiLimite' => 'L\'invitation a déjà été renvoyée trois fois. Annulez-la pour en envoyer une nouvelle.',
 			'adulte.invitation.renvoiPerimee' => 'Cette invitation a expiré. Revenez au foyer pour en envoyer une nouvelle.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.invitation.renvoiEchecTitre' => 'Le renvoi n\'a pas été confirmé.',
 			'adulte.invitation.renvoyerSiEchec' => 'Si la personne invitée n\'arrive pas à créer son compte, renvoyez-lui l\'invitation.',
 			'adulte.acceptation.notification' => ({required Object prenom}) => '${prenom} vous invite à rejoindre son forfait famille.',
@@ -56921,10 +56913,10 @@ extension on Traductions {
 			'argent.etat.essaiCompte' => ({required Object n, required Object max}) => 'Essai : ${n}/${max}',
 			'argent.etat.manque' => 'À financer',
 			'argent.etat.enConfirmation' => 'En confirmation',
-			_ => null,
-		} ?? switch (path) {
 			'argent.etat.expire' => 'Accès expiré',
 			'argent.etat.pause' => 'En pause',
+			_ => null,
+		} ?? switch (path) {
 			'argent.etat.aRegulariser' => 'À régulariser',
 			'argent.periode.jusquau' => ({required Object date}) => 'Financé jusqu\'au ${date}',
 			'argent.periode.aucune' => 'Aucune période financée',
@@ -57435,10 +57427,10 @@ extension on Traductions {
 			'com.studio.aujourdhui.indicateurs.nonLus' => 'Non lus',
 			'com.studio.aujourdhui.blocs.aTraiter' => 'À traiter aujourd\'hui',
 			'com.studio.aujourdhui.blocs.mentions' => 'Mentions et réponses',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.aujourdhui.blocs.decisions' => 'Décisions en attente',
 			'com.studio.aujourdhui.blocs.echeances' => 'Échéances proches',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.aujourdhui.blocs.activite' => 'Activité récente',
 			'com.studio.aujourdhui.blocs.brouillons' => 'Brouillons',
 			'com.studio.aujourdhui.blocs.acces' => 'Accès rapides',
@@ -57949,10 +57941,10 @@ extension on Traductions {
 			'comptable.statuts.profil.incomplet' => 'Incomplet',
 			'comptable.statuts.profil.enVerification' => 'En vérification',
 			'comptable.statuts.profil.verifie' => 'Vérifié',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.statuts.profil.suspendu' => 'Suspendu',
 			'comptable.statuts.profil.actionRequise' => 'Action requise',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.statuts.profil.invitationEnvoyee' => 'Invitation envoyée',
 			'comptable.statuts.capacite.prisEnCharge' => 'Pris en charge',
 			'comptable.statuts.capacite.nonPrisEnCharge' => 'Non pris en charge',
@@ -58463,10 +58455,10 @@ extension on Traductions {
 			'comptable.beneficiaires.recevoir.supprimee' => 'Méthode supprimée.',
 			'comptable.beneficiaires.recevoir.prefereeChoisie' => 'Méthode préférée mise à jour.',
 			'comptable.beneficiaires.recevoir.erreurAction' => 'Le changement n\'est pas confirmé : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.beneficiaires.recevoir.erreurIndisponible' => 'Ce changement n\'est pas encore branché sur le service de paiement. Réessayez plus tard.',
 			'comptable.beneficiaires.recevoir.journalTitre' => 'Historique de mes changements',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.beneficiaires.recevoir.journalVide' => 'Aucun changement enregistré pour l\'instant.',
 			'comptable.beneficiaires.recevoir.seulVous' => 'Vous seul pouvez modifier ces informations : ni la comptabilité ni la direction ne peuvent le faire à votre place.',
 			'comptable.beneficiaires.recevoir.titre' => 'Recevoir mes paiements',
@@ -58977,10 +58969,10 @@ extension on Traductions {
 			'recherche.contexte.missionEnseignant' => ({required Object enseignant}) => 'Mission de contrôle · ${enseignant}',
 			'recherche.contexte.eleveDeClasse' => ({required Object classe}) => 'Élève de la classe ${classe}',
 			'recherche.contexte.enseignantDeClasse' => ({required Object classe}) => 'Enseignant de la classe ${classe}',
-			_ => null,
-		} ?? switch (path) {
 			'recherche.contexte.personneFoyer' => 'Profil de votre foyer',
 			'recherche.contexte.personneFoyerClasse' => ({required Object classe}) => 'Profil de votre foyer · ${classe}',
+			_ => null,
+		} ?? switch (path) {
 			'recherche.contexte.personneParIdentifiant' => 'Trouvé par son identifiant',
 			'recherche.contexte.personneParIdentifiantClasse' => ({required Object classe}) => 'Trouvé par son identifiant · ${classe}',
 			'recherche.contexte.canalStudio' => 'Canal du Studio',
@@ -59491,10 +59483,10 @@ extension on Traductions {
 			'admissions.refus.motifRequis' => 'Un motif est nécessaire pour ce geste.',
 			'admissions.refus.adresseInconnue' => 'L\'adresse e‑mail de cette personne n\'est pas connue : aucun message ne peut partir.',
 			'admissions.refus.enfantEnClasse' => 'Un enfant de cette demande est déjà dans une classe : l\'acceptation ne s\'annule plus.',
-			_ => null,
-		} ?? switch (path) {
 			'admissions.refus.autre' => 'Le serveur a refusé ce geste. Rouvrez la demande pour voir son état.',
 			'admissions.modeles.general' => 'Sans précision',
+			_ => null,
+		} ?? switch (path) {
 			'admissions.modeles.generalPhrase' => '« Nous ne pouvons pas donner suite à votre demande pour le moment. »',
 			'admissions.modeles.besoins' => 'Nos classes ne répondent pas à la demande',
 			'admissions.modeles.besoinsPhrase' => '« Nos classes ne répondent pas encore à ce que vous cherchez. »',
@@ -60005,10 +59997,10 @@ extension on Traductions {
 			'candidatsFlux.publication.texte' => 'Votre nom, votre photo et votre pays peuvent apparaître sur le site public de Rewayah Academy. Ce choix est séparé de votre candidature : il ne change rien à son examen.',
 			'candidatsFlux.publication.kCase' => 'J\'accepte que mon nom, ma photo et mon pays soient sur le site public de Rewayah.',
 			'candidatsFlux.publication.signature' => ({required Object nom}) => 'Votre nom vaut signature : ${nom}',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.publication.signe' => ({required Object date, required Object nom}) => 'Accord donné le ${date}, signé ${nom}.',
 			'candidatsFlux.publication.donner' => 'Donner mon accord',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.publication.retirer' => 'Retirer mon accord',
 			'candidatsFlux.publication.retirerQuestion' => 'Retirer votre accord de publication ?',
 			'candidatsFlux.publication.retirerConsequence' => 'Votre nom, votre photo et votre pays ne paraîtront plus sur le site public. Vous pourrez redonner votre accord plus tard.',
