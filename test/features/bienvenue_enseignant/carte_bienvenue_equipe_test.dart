@@ -82,6 +82,11 @@ Future<void> _monter(
           builder: (BuildContext _, GoRouterState _) =>
               const Scaffold(body: Text('page-creneaux')),
         ),
+        GoRoute(
+          path: Routes.enseignantBienvenue,
+          builder: (BuildContext _, GoRouterState _) =>
+              const Scaffold(body: Text('page-premiers-pas')),
+        ),
       ],
       surcharges: <Override>[
         sourceSessionProvider.overrideWithValue(FausseSourceSession(_session)),
@@ -132,6 +137,22 @@ void main() {
     expect(find.text('page-creneaux'), findsOneWidget);
   });
 
+  testWidgets('la carte ouvre la page « Premiers pas » (NETTOYAGE-1)', (
+    WidgetTester tester,
+  ) async {
+    await _monter(tester);
+    final Finder lien = find.byKey(CarteBienvenueEquipe.clePremiersPas);
+    expect(lien, findsOneWidget);
+    expect(
+      find.text(t.enseignant.bienvenue.equipe.voirPremiersPas),
+      findsOneWidget,
+    );
+    await tester.ensureVisible(lien);
+    await tester.tap(lien);
+    await tester.pumpAndSettle();
+    expect(find.text('page-premiers-pas'), findsOneWidget);
+  });
+
   testWidgets('une ligne faite disparait', (WidgetTester tester) async {
     await _monter(
       tester,
@@ -144,6 +165,8 @@ void main() {
     }
     expect(find.text(r.toutPret), findsOneWidget);
     expect(find.text(r.intro), findsNothing);
+    // Tout est fait : le lien vers « Premiers pas » disparait avec la liste.
+    expect(find.byKey(CarteBienvenueEquipe.clePremiersPas), findsNothing);
     // Le rappel des remplacements reste.
     expect(find.text(r.remplacement), findsOneWidget);
   });

@@ -1308,18 +1308,16 @@ abstract final class Routes {
   /// Profils d'enfants du foyer.
   static const String compteProfils = '/compte/profils';
 
-  /// Detail d'un profil enfant.
-  static const String compteProfilEnfant = '/compte/profils';
-
-  /// Chemin d'un profil enfant.
+  /// Chemin du detail d'un profil enfant, sous [compteProfils] (une seule
+  /// constante pour ce chemin, NETTOYAGE-1).
   static String compteProfilEnfantPour(String profilId) =>
-      '$compteProfilEnfant/$profilId';
+      '$compteProfils/$profilId';
 
   // --- Teaching Core, sous le prefixe reserve `/tc/` -----------------------
   //
   // Promues depuis les cinq fichiers de chemins des lots A, B, C, E, G
   // (plan d'integration Teaching Core, etape 7). Les constantes d'origine
-  // (`CheminsTcA`, `RoutesTcB`, `RoutesCoran`, `RoutesTcE`, `RoutesTcG`)
+  // (`CheminsTcA`, `RoutesTcB`, `RoutesTcE`, `RoutesTcG` ; celle du Coran est retiree, NETTOYAGE-1)
   // restent la source geometrique (segments, parametres) ; celles-ci ne
   // duplquent que les chemins qu'un ecran hors Teaching Core a besoin de
   // nommer (navigation, redirection).

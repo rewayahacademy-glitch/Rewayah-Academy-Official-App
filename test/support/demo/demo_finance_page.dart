@@ -23,6 +23,7 @@ import 'package:rewayah_academy/core/widgets/admin_shell.dart';
 import 'package:rewayah_academy/features/admin_finance/finance_page.dart';
 import 'package:rewayah_academy/features/admin_finance/politiques_commerciales.dart';
 import 'package:rewayah_academy/features/admin_finance/vue_globale_finance.dart';
+import 'package:rewayah_academy/features/demo/doubles_demo.dart';
 
 import 'comptable/beneficiaires_demo.dart' show BeneficiairesPaiementDemo;
 import 'comptable/direction_demo.dart';

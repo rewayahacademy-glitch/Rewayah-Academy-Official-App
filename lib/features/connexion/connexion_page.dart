@@ -261,7 +261,10 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
   /// pas sous les pieds d'un ecran deja monte.
   bool get _demo =>
       widget.demoAuth ??
-      (ref.read(demoAuthActiveProvider) &&
+      // NETTOYAGE-1 : la constante d'abord, pour que dart2js retire la
+      // demonstration du paquet de production.
+      (Env.demoCompilee &&
+          ref.read(demoAuthActiveProvider) &&
           environnementAutoriseDemo(ref.read(environnementConnexionProvider)));
 
   /// Le chemin decide de l'action ; le libelle de [_Saisie] lit la meme fonction.
@@ -541,8 +544,9 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
             ),
           ],
         ),
-        // Hors production seulement : sans lanceur, rien.
-        const EntreeDemonstration(),
+        // Hors production seulement : sans lanceur, rien. La constante retire
+        // le bouton du paquet de production (NETTOYAGE-1).
+        if (Env.demoCompilee) const EntreeDemonstration(),
       ],
     );
   }
