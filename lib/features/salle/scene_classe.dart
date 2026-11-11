@@ -428,7 +428,15 @@ class _Seul extends StatelessWidget {
                       aspectRatio: c.maxWidth >= AppGabarit.seuilTablette
                           ? 4 / 3
                           : 1,
-                      child: _CadreParticipant(participant: local, moi: true),
+                      // Pose seul sur une surface de la meme couleur que
+                      // son fond : son bord se dessine (WCAG 1.4.11), pour
+                      // que « Vous » ne flotte jamais sans cadre tant que
+                      // l'image n'est pas arrivee.
+                      child: _CadreParticipant(
+                        participant: local,
+                        moi: true,
+                        detache: true,
+                      ),
                     ),
                   ),
                 ],

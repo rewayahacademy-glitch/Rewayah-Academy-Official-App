@@ -202,9 +202,21 @@ class GeometrieEleve {
       2 * diametre + 3 * AppSpacing.sm;
 
   /// La largeur minimale d'une bande de cote : la pilule de l'appel de quatre
-  /// boutons (micro, camera, reduire, quitter) et ses marges.
+  /// boutons (micro, camera, reduire, quitter) SUR UNE RANGEE, et ses marges.
+  ///
+  /// Directeur, 11/11/2026 (« un arriere-plan deborde qui n'a aucune
+  /// forme ») : l'ancienne mesure comptait des ecarts de 8 et quatre boutons
+  /// egaux ; la pilule reelle a des ecarts de 16 et un « Quitter » plus large
+  /// (16 de plus). Elle ne tenait donc pas dans la bande, passait sur deux
+  /// rangees, et son fond arrondi devenait une tache sans forme. La bande se
+  /// mesure maintenant sur la pilule telle qu'elle est dessinee
+  /// ([DockSeance] : ecart `lg`, marge interieure `sm`, Quitter `+ lg`).
   static double largeurBande(double diametre) =>
-      4 * diametre + 5 * AppSpacing.sm + 2 * AppSpacing.lg;
+      4 * diametre +
+      AppSpacing.lg +
+      3 * AppSpacing.lg +
+      2 * AppSpacing.sm +
+      2 * AppSpacing.lg;
 
   /// [hauteurBas] : la hauteur mesuree des commandes de l'appel (marges
   /// comprises, zone sure exclue) ; `null` avant la premiere mesure.
@@ -1516,11 +1528,18 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
           // sinon couche, dans la rangee du haut, avant la vignette.
           if (zoom)
             cote
+                // Sur l'axe de la bande, comme la vignette et la pilule de
+                // l'appel ; sans fond (les boutons ronds portent le leur) :
+                // plus de pilule blanche a moitie vide quand un seul sens du
+                // zoom est possible.
                 ? PositionedDirectional(
                     top: 0,
                     bottom: 0,
-                    end: AppSpacing.lg,
-                    child: Center(child: PiluleZoomSalle(actions: actions)),
+                    end: 0,
+                    width: geometrie.bande,
+                    child: Center(
+                      child: PiluleZoomSalle(actions: actions, nue: true),
+                    ),
                   )
                 : PositionedDirectional(
                     top: zoneSure.top + AppSpacing.lg,
@@ -2479,8 +2498,14 @@ class PiluleZoomSalle extends StatelessWidget {
     required this.actions,
     this.horizontale = false,
     this.couche = false,
+    this.nue = false,
     super.key,
   });
+
+  /// Directeur, 11/11/2026 : sans fond. Les boutons ronds portent deja le
+  /// leur ; un bouton absent (premier ou dernier palier) garde sa place,
+  /// invisible, et ne laisse plus une pilule a moitie vide.
+  final bool nue;
 
   /// Pilote C2 : la couche sombre de l'enseignant au telephone.
   final bool couche;
@@ -2533,8 +2558,11 @@ class PiluleZoomSalle extends StatelessWidget {
     }
     final Widget pilule = DecoratedBox(
       key: const ValueKey<String>('salle-zoom'),
-      decoration: (couche ? palette.coucheSalle : palette.piluleSalle)
-          .decoration(borderRadius: AppRadius.arrondiFull),
+      decoration: nue
+          ? const BoxDecoration()
+          : (couche ? palette.coucheSalle : palette.piluleSalle).decoration(
+              borderRadius: AppRadius.arrondiFull,
+            ),
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.sm),
         child: Flex(
