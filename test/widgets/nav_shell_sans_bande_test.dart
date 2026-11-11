@@ -134,21 +134,9 @@ void main() {
     await tester.tap(find.byKey(_ouvrir));
     await tester.pumpAndSettle();
     expect(find.text('Feuille'), findsOneWidget);
-    expect(opacite(), 0);
-    // La barre effacee ne prend plus le toucher.
-    expect(
-      tester
-          .widget<IgnorePointer>(
-            find
-                .ancestor(
-                  of: find.byKey(NavShell.barreBasseKey),
-                  matching: find.byType(IgnorePointer),
-                )
-                .first,
-          )
-          .ignoring,
-      isTrue,
-    );
+    // Effacee : apres son fondu, la barre a quitte l'arbre (ni toucher ni
+    // lecteur d'ecran sous la feuille).
+    expect(find.byKey(NavShell.barreBasseKey), findsNothing);
     Navigator.of(tester.element(find.text('Feuille'))).pop();
     await tester.pumpAndSettle();
     expect(opacite(), 1);

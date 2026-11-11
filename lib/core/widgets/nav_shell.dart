@@ -655,6 +655,9 @@ class _CoquilleBarreBasseEtat extends State<_CoquilleBarreBasse> {
     NavShell.hauteurBarre + AppSpacing.md,
   );
 
+  /// Vrai quand la barre effacee a fini son fondu et a quitte l'arbre.
+  bool _barreRetiree = false;
+
   @override
   void dispose() {
     _controleur.dispose();
@@ -696,6 +699,8 @@ class _CoquilleBarreBasseEtat extends State<_CoquilleBarreBasse> {
             valueListenable: _hauteurBarre,
             child: contenu,
             builder: (BuildContext context, double hauteur, Widget? contenu) {
+              // La barre revient : elle rentre dans l'arbre, puis en fondu.
+              if (!effacee) _barreRetiree = false;
               final double encart = effacee
                   ? requete.padding.bottom
                   : math.max(requete.padding.bottom, hauteur);
@@ -723,26 +728,36 @@ class _CoquilleBarreBasseEtat extends State<_CoquilleBarreBasse> {
                           opacity: effacee ? 0 : 1,
                           duration: AppMouvement.feuilleFermeture,
                           curve: AppMouvement.sortie,
-                          child: _MesureHauteur(
-                            onHauteur: (double h) {
-                              if (_hauteurBarre.value != h) {
-                                _hauteurBarre.value = h;
-                              }
-                            },
-                            child: MediaQuery.removePadding(
-                              context: context,
-                              removeTop: true,
-                              child: _BarreFlottante(
-                                guide: widget.guide,
-                                destinations: widget.destinations,
-                                indexActif: widget.indexActif,
-                                onAller: widget.onAller,
-                                halo: widget.halo,
-                                onHaloTouche: widget.onHaloTouche,
-                                cles: _cles,
-                              ),
-                            ),
-                          ),
+                          // Effacee : une fois le fondu fini, la barre quitte
+                          // l'arbre (MA-CMD-1 : elle n'existe plus pour le
+                          // lecteur d'ecran ni pour le toucher).
+                          onEnd: () {
+                            if (mounted && _controleur.value) {
+                              setState(() => _barreRetiree = true);
+                            }
+                          },
+                          child: effacee && _barreRetiree
+                              ? const SizedBox.shrink()
+                              : _MesureHauteur(
+                                  onHauteur: (double h) {
+                                    if (_hauteurBarre.value != h) {
+                                      _hauteurBarre.value = h;
+                                    }
+                                  },
+                                  child: MediaQuery.removePadding(
+                                    context: context,
+                                    removeTop: true,
+                                    child: _BarreFlottante(
+                                      guide: widget.guide,
+                                      destinations: widget.destinations,
+                                      indexActif: widget.indexActif,
+                                      onAller: widget.onAller,
+                                      halo: widget.halo,
+                                      onHaloTouche: widget.onHaloTouche,
+                                      cles: _cles,
+                                    ),
+                                  ),
+                                ),
                         ),
                       ),
                     ),
