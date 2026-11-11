@@ -468,6 +468,10 @@ class PageShell extends StatelessWidget {
               // La respiration de bas de page : sans elle, le dernier element
               // colle au bord de l'ecran.
               Ecart.vSection,
+              // BANDE-BARRE (11/11/2026) : la page defile jusqu'au bord de
+              // l'ecran, sous la barre flottante de `NavShell` et la zone
+              // sure ; sa fin s'arrete au-dessus d'elles.
+              SizedBox(height: MediaQuery.paddingOf(context).bottom),
             ],
           )
         : child;
@@ -494,6 +498,10 @@ class PageShell extends StatelessWidget {
     return Scaffold(
       backgroundColor: fond?.background,
       body: SafeArea(
+        // BANDE-BARRE : une page qui defile garde l'encart bas DANS son
+        // defilement (voir `corps`) : son contenu passe sous la barre
+        // flottante au lieu de s'arreter net au bord d'un rectangle.
+        bottom: !defilante,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[

@@ -4,6 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../accessibilite/effacement_barre_basse.dart';
 import '../accessibilite/texte_sans_coupure.dart';
 import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
@@ -183,7 +184,12 @@ class AppBottomSheet extends StatefulWidget {
       );
     }
 
-    return showModalBottomSheet<T>(
+    // BANDE-BARRE : sous la barre flottante de `NavShell`, la feuille monte
+    // depuis le bord de l'ecran ; la barre s'efface le temps qu'elle reste
+    // ouverte.
+    final VoidCallback? rendreBarre = EffacementBarreBasse.de(context)
+        ?.effacerPourUneFeuille();
+    final Future<T?> resultat = showModalBottomSheet<T>(
       context: context,
       // La feuille peut depasser la moitie de l'ecran : une confirmation
       // destructive qui explique sa consequence prend la place qu'il faut.
@@ -233,6 +239,8 @@ class AppBottomSheet extends StatefulWidget {
         ),
       ),
     );
+    if (rendreBarre == null) return resultat;
+    return resultat.whenComplete(rendreBarre);
   }
 
   /// Ouvre une surface de LECTURE modale (visionneuse de piece, AD-7).
