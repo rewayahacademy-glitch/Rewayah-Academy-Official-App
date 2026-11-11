@@ -67,6 +67,7 @@ import '../fixtures/tuteur/foyers.dart';
 import '../parcours/faux_service_offres.dart';
 import '../router/support_routeur.dart';
 import '../support/aucun_mot_coupe.dart';
+import '../support/garde_lumiere.dart';
 import '../support/harnais.dart';
 import '../support/port_horloge_simule.dart';
 import '../teaching_core/a/faux/faux_groupes.dart' show PortHorlogeMuet;
@@ -1691,7 +1692,10 @@ void main() {
   group('LUMIERE-ACCUEILS : accueil de la famille', () {
     int halos(WidgetTester tester, NatureHalo nature) => tester
         .widgetList<HaloLumiere>(find.byType(HaloLumiere))
-        .where((HaloLumiere h) => h.nature == nature)
+        .where(
+          (HaloLumiere h) =>
+              h.nature == nature && h.forme == FormeHalo.rectangle,
+        )
         .length;
 
     SeanceFamille recente() => seanceFictive(
@@ -1714,6 +1718,34 @@ void main() {
       expect(halos(tester, NatureHalo.urgent), 1);
     });
 
+    // LUMIERE-DOUCE (directeur, 11/11/2026, vu en production) : la carte
+    // rouge « Aucun appareil pret » n'est coupee ni par les bords ni par un
+    // parent, a 320 et 390, texte x1 et x2, pendant et apres la rotation.
+    testWidgets('aucun appareil pret : la lumiere rouge n est jamais coupee', (
+      WidgetTester tester,
+    ) async {
+      for (final Size taille in <Size>[
+        const Size(320, 900),
+        const Size(390, 844),
+      ]) {
+        for (final double echelle in <double>[1, 2]) {
+          await _monter(
+            tester,
+            seances: _salleFermee,
+            appareils: <AppareilAppaire>[],
+            taille: taille,
+            echelle: echelle,
+            depart: Routes.tuteurAccueil,
+          );
+          await tester.pump(const Duration(milliseconds: 600));
+          expect(halos(tester, NatureHalo.urgent), 1);
+          verifierLumieresEntieres(tester);
+          await tester.pumpAndSettle();
+          verifierLumieresEntieres(tester);
+        }
+      }
+    });
+
     testWidgets('salle ouverte sans appareil : la tuile est « Rejoindre », '
         'aucune lueur rouge', (WidgetTester tester) async {
       await _monter(tester, appareils: <AppareilAppaire>[]);
@@ -1721,12 +1753,35 @@ void main() {
       expect(halos(tester, NatureHalo.urgent), 0);
     });
 
+    testWidgets('salle ouverte : lueur verte sur « Rejoindre la salle »', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester);
+      await _ouvrirAccueilParLaBarre(tester);
+      expect(halos(tester, NatureHalo.salle), 1);
+      // La lueur n'est jamais coupee (LUMIERE-DOUCE, 11/11/2026).
+      verifierLumieresEntieres(tester);
+    });
+
+    testWidgets('salle fermee (seance dans 3 h) : pas de vert', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester, seances: _salleFermee);
+      await _ouvrirAccueilParLaBarre(tester);
+      expect(halos(tester, NatureHalo.salle), 0);
+    });
+
     testWidgets('un appareil pret, rien a signaler : aucune lumiere', (
       WidgetTester tester,
     ) async {
       await _monter(tester, seances: _salleFermee);
       await _ouvrirAccueilParLaBarre(tester);
-      expect(find.byType(HaloLumiere), findsNothing);
+      expect(
+        tester
+            .widgetList<HaloLumiere>(find.byType(HaloLumiere))
+            .where((HaloLumiere h) => h.forme == FormeHalo.rectangle),
+        isEmpty,
+      );
     });
 
     testWidgets('seance dans 50 min avec du travail : orange', (
@@ -1848,6 +1903,34 @@ void main() {
           );
           await stabiliser(tester);
           await capturerVue(tester, 'lumieres-$nom-profil-2');
+          await tester.pumpWidget(const SizedBox());
+        });
+      }
+
+      // Vert : la salle est rejoignable (seance dans 10 min, fenetre ouverte).
+      for (final (String nom, Size taille, double echelle, ThemeMode theme)
+          in <(String, Size, double, ThemeMode)>[
+            ('320-x1-clair', const Size(320, 2000), 1, ThemeMode.light),
+            ('320-x2-clair', const Size(320, 3200), 2, ThemeMode.light),
+            ('320-x1-sombre', const Size(320, 2000), 1, ThemeMode.dark),
+            ('1440-x1-clair', const Size(1440, 1200), 1, ThemeMode.light),
+            ('1440-x1-sombre', const Size(1440, 1200), 1, ThemeMode.dark),
+          ]) {
+        testWidgets('vert, salle rejoignable : $nom', (
+          WidgetTester tester,
+        ) async {
+          await _monter(
+            tester,
+            depart: Routes.tuteurAccueil,
+            taille: taille,
+            echelle: echelle,
+            theme: theme,
+          );
+          if (find.byKey(NavShell.barreBasseKey).evaluate().isNotEmpty) {
+            await _ouvrirAccueilParLaBarre(tester);
+          }
+          expect(tester.takeException(), isNull);
+          await capturerVue(tester, 'lumiere-verte-$nom');
           await tester.pumpWidget(const SizedBox());
         });
       }

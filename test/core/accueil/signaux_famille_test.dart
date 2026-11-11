@@ -13,6 +13,7 @@ final DateTime _now = DateTime.utc(2026, 11, 11, 12);
 
 List<SignalAccueil<MotifFamille>> _s({
   bool acces = false,
+  bool salle = false,
   DateTime? now,
   DateTime? prochain,
   bool travail = false,
@@ -20,6 +21,7 @@ List<SignalAccueil<MotifFamille>> _s({
   DateTime? derniere,
 }) => signauxFamille(
   accesBloque: acces,
+  salleRejoignable: salle,
   maintenantServeurUtc: now ?? _now,
   debutProchaineUtc: prochain,
   travailAPreparer: travail,
@@ -63,6 +65,7 @@ void main() {
       expect(
         signauxFamille(
           accesBloque: false,
+          salleRejoignable: false,
           maintenantServeurUtc: null,
           debutProchaineUtc: _now.add(const Duration(minutes: 10)),
           travailAPreparer: true,
@@ -109,9 +112,14 @@ void main() {
     });
   });
 
-  test('ordre de priorite : rouge, orange, bleu', () {
+  test('salle rejoignable : vert', () {
+    expect(_s(salle: true).single.nature, NatureHalo.salle);
+  });
+
+  test('ordre de priorite : rouge, vert, orange, bleu', () {
     final s = _s(
       acces: true,
+      salle: true,
       prochain: _now.add(const Duration(minutes: 20)),
       travail: true,
       cahier: EtatCompteRendu.partage,
@@ -119,6 +127,7 @@ void main() {
     );
     expect(s.map((x) => x.nature).toList(), <NatureHalo>[
       NatureHalo.urgent,
+      NatureHalo.salle,
       NatureHalo.aPreparer,
       NatureHalo.nouveau,
     ]);

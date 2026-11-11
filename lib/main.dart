@@ -170,6 +170,8 @@ import 'core/photos/photo_personne.dart';
 import 'core/photos/photos_supabase.dart';
 import 'core/preferences/preferences_locales.dart'
     show appliquerPreferenceLangue, langueMemoriseeAuDemarrage;
+import 'core/presence/retard_en_direct.dart' show portRetardEnDirectProvider;
+import 'core/presence/retard_en_direct_supabase.dart';
 import 'core/recherche/port_recherche.dart';
 import 'core/recrutement/invitations_comptable_supabase.dart';
 import 'core/recrutement/invitations_enseignant_supabase.dart';
@@ -727,6 +729,11 @@ List<Override> _surchargesAppReelle() => <Override>[
     (Ref ref) =>
         ref.watch(detailsClassesServeurProvider).value ??
         const <String, DetailClasse>{},
+  ),
+  // LUMIERE-RETARD : les eleves pas encore entres dans une seance en direct,
+  // au-dela du seuil du serveur (`retard_en_direct`) ; sans lecture, aucune lumiere.
+  portRetardEnDirectProvider.overrideWithValue(
+    RetardEnDirectSupabase(Supabase.instance.client),
   ),
   // Tableau commun des remplacements (REMPL-1), filtre par le serveur.
   portRemplacementsProvider.overrideWithValue(

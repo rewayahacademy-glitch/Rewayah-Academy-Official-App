@@ -90,6 +90,7 @@
   "salle.sortie.conduiteReduire": "directeur, 11/11/2026, salle (lot SORTIE-SALLE : sortir de l'ecran de la salle sans couper la seance)",
   "salle.sortie.conduite": "directeur, 11/11/2026, salle (lot SORTIE-SALLE : sortir de l'ecran de la salle sans couper la seance)",
   "salle.sortie.eleveReduire": "directeur, 11/11/2026, salle (lot SORTIE-SALLE : sortir de l'ecran de la salle sans couper la seance)",
+  "enseignant.journee.pasEncoreRejoint": "pilote et garde-cap du 11/11/2026 (PR 424, LUMIERE 3), regle mots-rewayah du 01/11/2026 : un eleve pas encore entre dans la seance en direct (retard_en_direct), formule neutre sans accord en francais et en arabe, car le genre de l eleve n est pas servi dans l Aujourd hui de l enseignant ; verbe decide « Rejoindre »",
   "recrutement.nomLatin.titre": "decision du directeur du 23/10/2026 (DECISION-CANDIDATURES-2026-10-21.md, section « Les noms dans une seule ecriture sur les listes ») : titre de la confirmation du nom latin dans la Salle d'examen (reponses importees ou question ignoree a l'inscription)",
   "recrutement.nomLatin.explication": "decision du directeur du 23/10/2026 (DECISION-CANDIDATURES-2026-10-21.md, section « Les noms dans une seule ecriture sur les listes ») : explication de la confirmation dans la Salle d'examen, avec la meme raison que l'inscription",
   "recrutement.nomLatin.libelle": "decision du directeur du 23/10/2026 (DECISION-CANDIDATURES-2026-10-21.md, section « Les noms dans une seule ecriture sur les listes ») : libelle du champ de confirmation du nom latin dans la Salle d'examen",

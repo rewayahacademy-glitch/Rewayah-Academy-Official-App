@@ -32,6 +32,7 @@ import '../capture/outil_capture.dart'
         hoteCapture,
         sautSansCapture;
 import '../support/aucun_mot_coupe.dart';
+import '../support/garde_lumiere.dart';
 import '../support/harnais.dart';
 
 /// Un mardi de septembre, a dix-sept heures.
@@ -688,6 +689,35 @@ void main() {
       );
     });
   });
+
+  // LUMIERE-DOUCE (11/11/2026) : les tuiles allumees de l'accueil de la
+  // direction ne sont coupees ni par les bords ni par un parent.
+  testWidgets(
+    'LUMIERE-DOUCE : lumieres des tuiles jamais coupees, 320 et 390',
+    (WidgetTester tester) async {
+      for (final double largeur in <double>[320, 390]) {
+        tester.view
+          ..devicePixelRatio = 1
+          ..physicalSize = Size(largeur, 1600);
+        addTearDown(tester.view.reset);
+        await _monter(
+          tester,
+          admin: FauxServiceAdmin()
+            ..indicateursRendus = _indicateurs(
+              dossiers: 2,
+              demandes: 1,
+              incidents: 3,
+            ),
+          validation: FauxServiceValidation()
+            ..file = <DossierAValider>[_dossier(id: 'd1'), _dossier(id: 'd2')],
+        );
+        await tester.pump(const Duration(milliseconds: 600));
+        verifierLumieresEntieres(tester, auMoins: 3);
+        await tester.pumpAndSettle();
+        verifierLumieresEntieres(tester, auMoins: 3);
+      }
+    },
+  );
 
   // LUMIERE-ACCUEILS 4 (captures R3) : un signalement urgent (rouge, la seule
   // qui tourne sous l'arbitre de la coque) et des dossiers, demandes et

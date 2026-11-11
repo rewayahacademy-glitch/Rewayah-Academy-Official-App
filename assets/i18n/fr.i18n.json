@@ -8665,6 +8665,7 @@
       "erreurPartielle": "Les horaires de prière et vos pauses n'ont pas pu être chargés\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Vos séances affichées sont à jour\u00a0: elles n'en dépendent pas. Réessayez dans un instant.",
       "erreurPartielleTout": "Les horaires de prière, vos pauses et vos cahiers de transmission à terminer n'ont pas pu être chargés\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Vos séances affichées sont à jour\u00a0: elles n'en dépendent pas. Réessayez dans un instant.",
       "absenceDetectee": "{eleve} n'est pas entré en salle.",
+      "pasEncoreRejoint": "{eleve} n'a pas encore rejoint la salle.",
       "coupureDetectee": "{eleve} a perdu la connexion.",
       "revenusDetail": "Votre rémunération estimée du mois, classe par classe.",
       "revenusLecteur": "Voir vos revenus estimés du mois",
