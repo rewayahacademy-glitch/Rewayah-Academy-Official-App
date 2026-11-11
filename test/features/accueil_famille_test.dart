@@ -4,6 +4,8 @@
 // Donnees : fixtures isolees de `test/fixtures/tuteur/` (deux foyers fictifs,
 // seances et classes fictives, horloge serveur figee). Aucun service reel.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart' show RenderParagraph;
 import 'package:flutter/semantics.dart' show SemanticsNode;
@@ -167,6 +169,29 @@ class _FauxTravail implements PortTravailAVenir {
     required String groupeId,
     String? studentId,
   }) async => actions;
+}
+
+/// Des classes dont la lecture se retient : une fois pour un eleve, ou pour la
+/// prochaine lecture seulement. Le reste vient tout de suite.
+class _ClassesRetenues implements PortClassesFoyer {
+  _ClassesRetenues(this.classes);
+
+  final List<ClasseFoyer> classes;
+
+  /// Les lectures retenues par eleve : la lecture attend le completeur.
+  final Map<String, Completer<void>> retenues = <String, Completer<void>>{};
+
+  @override
+  Future<List<ClasseFoyer>> classesDe(String eleveId) async {
+    await retenues[eleveId]?.future;
+    return classes.where((ClasseFoyer c) => c.eleveId == eleveId).toList();
+  }
+
+  @override
+  Future<ClasseFoyer?> classe({
+    required String groupeId,
+    required String eleveId,
+  }) async => null;
 }
 
 /// Monte l'application sur son vrai routeur, avec un tuteur actif et le
@@ -1825,6 +1850,187 @@ void main() {
           await capturerVue(tester, 'lumieres-$nom-profil-2');
           await tester.pumpWidget(const SizedBox());
         });
+      }
+    });
+  });
+
+  // DEFAUT DU 11/11/2026 : l'Accueil ne montre plus un squelette, puis un etat
+  // vide, puis des cartes, puis le contenu. Une seule porte (`_Contenu`).
+  group('Chargement unique de l Accueil', () {
+    final ClasseFoyer classeA1 = ClasseFoyer(
+      eleveId: _a1,
+      classe: classeFictive(),
+    );
+
+    // Le squelette de la page, pas ceux qui reservent la place d'une tuile.
+    int squelettes(WidgetTester tester) =>
+        find.byKey(AccueilFamillePage.squeletteKey).evaluate().length;
+
+    testWidgets('premiere arrivee : un seul squelette tant que la classe n est '
+        'pas lue, aucune carte ni etat vide, puis le contenu', (
+      WidgetTester tester,
+    ) async {
+      final _ClassesRetenues port = _ClassesRetenues(<ClasseFoyer>[classeA1])
+        ..retenues[_a1] = Completer<void>();
+      await _monter(tester, portClasses: port);
+      await _ouvrirAccueilParLaBarre(tester);
+
+      expect(squelettes(tester), greaterThan(0));
+      expect(find.byType(CarteClasseSeance), findsNothing);
+      expect(find.byType(EtatSysteme), findsNothing);
+      expect(find.byType(SelecteurProfils), findsNothing);
+
+      port.retenues[_a1]!.complete();
+      // L'horloge de la classe se lit apres la classe, puis le fondu.
+      await stabiliser(tester);
+      await stabiliser(tester);
+      expect(find.byType(CarteClasseSeance), findsOneWidget);
+      expect(find.byType(EtatSysteme), findsNothing);
+      expect(squelettes(tester), 0);
+    });
+
+    testWidgets('profil sans classe : aucun « Aucune classe » avant que les '
+        'regles de l academie soient lues', (WidgetTester tester) async {
+      final Completer<ReglesAcademie> regles = Completer<ReglesAcademie>();
+      await _monter(
+        tester,
+        foyer: FoyersFictifs.foyerA,
+        seances: <SeanceFamille>[],
+        classes: <ClasseFoyer>[],
+        autres: <Override>[
+          reglesAcademieProvider.overrideWith((Ref ref) => regles.future),
+        ],
+      );
+      await _ouvrirAccueilParLaBarre(tester);
+
+      expect(squelettes(tester), greaterThan(0));
+      expect(find.byType(EtatSysteme), findsNothing);
+      expect(
+        find.text(t.tuteur.accueil.sansClasseTitre(prenom: 'Élève A1')),
+        findsNothing,
+      );
+
+      regles.complete(FauxServiceOffres().reglesRendues);
+      await stabiliser(tester);
+      await stabiliser(tester);
+      expect(
+        find.text(t.tuteur.accueil.sansClasseTitre(prenom: 'Élève A1')),
+        findsOneWidget,
+      );
+      expect(squelettes(tester), 0);
+    });
+
+    testWidgets('changement de profil : l affichage precedent reste, jamais le '
+        'squelette, et le selecteur suit le geste', (
+      WidgetTester tester,
+    ) async {
+      // La classe d'A2 est retenue des le depart (le halo du cercle Compte lit
+      // deja la classe de chaque profil : une lecture en cache ne se retient
+      // pas) ; A1, choisi, n'attend rien.
+      final _ClassesRetenues port = _ClassesRetenues(<ClasseFoyer>[classeA1])
+        ..retenues[_a2] = Completer<void>();
+      await _monter(tester, portClasses: port);
+      await _ouvrirAccueilParLaBarre(tester);
+      expect(find.byType(CarteClasseSeance), findsOneWidget);
+
+      await tester.tap(
+        find.descendant(
+          of: find.byType(SelecteurProfils),
+          matching: find.textContaining('A2'),
+        ),
+      );
+      await stabiliser(tester);
+
+      // Le contenu d'A1 reste, aucun squelette ne revient, et le selecteur
+      // montre deja A2 choisi.
+      expect(find.byType(CarteClasseSeance), findsOneWidget);
+      expect(squelettes(tester), 0);
+      expect(
+        tester
+            .widget<SelecteurProfils>(find.byType(SelecteurProfils))
+            .selectionId,
+        _a2,
+      );
+
+      port.retenues[_a2]!.complete();
+      await stabiliser(tester);
+      expect(squelettes(tester), 0);
+      expect(find.byType(CarteClasseSeance), findsNothing);
+    });
+
+    testWidgets('rafraichissement : la classe se relit, le contenu reste', (
+      WidgetTester tester,
+    ) async {
+      final _ClassesRetenues port = _ClassesRetenues(<ClasseFoyer>[classeA1]);
+      await _monter(tester, portClasses: port);
+      await _ouvrirAccueilParLaBarre(tester);
+      expect(find.byType(CarteClasseSeance), findsOneWidget);
+
+      port.retenues[_a1] = Completer<void>();
+      ProviderScope.containerOf(tester.element(find.byType(AccueilFamillePage)))
+          .invalidate(classeDeLEleveProvider(_a1));
+      await stabiliser(tester);
+
+      expect(find.byType(CarteClasseSeance), findsOneWidget);
+      expect(squelettes(tester), 0);
+      port.retenues[_a1]!.complete();
+      await stabiliser(tester);
+      expect(find.byType(CarteClasseSeance), findsOneWidget);
+    });
+
+    group('captures R3 du chargement', skip: sautSansCapture, () {
+      setUpAll(chargerPolicesDuDepot);
+      setUp(masquerRubanDebug);
+      for (final (String taille, Size dim, ThemeMode theme, String th)
+          in <(String, Size, ThemeMode, String)>[
+            ('320', const Size(320, 1800), ThemeMode.light, 'clair'),
+            ('320', const Size(320, 1800), ThemeMode.dark, 'sombre'),
+            ('1440', const Size(1440, 1000), ThemeMode.light, 'clair'),
+            ('1440', const Size(1440, 1000), ThemeMode.dark, 'sombre'),
+          ]) {
+        for (final bool avecClasse in <bool>[true, false]) {
+          final String profil = avecClasse ? 'avec-classe' : 'sans-classe';
+          testWidgets('chargement $profil, $taille $th', (
+            WidgetTester tester,
+          ) async {
+            final _ClassesRetenues port = _ClassesRetenues(
+              avecClasse
+                  ? <ClasseFoyer>[
+                      ClasseFoyer(eleveId: _a1, classe: classeFictive()),
+                    ]
+                  : <ClasseFoyer>[],
+            )..retenues[_a1] = Completer<void>();
+            final Completer<ReglesAcademie> regles =
+                Completer<ReglesAcademie>();
+            await _monter(
+              tester,
+              portClasses: port,
+              taille: dim,
+              theme: theme,
+              seances: avecClasse ? null : <SeanceFamille>[],
+              autres: <Override>[
+                reglesAcademieProvider.overrideWith((Ref ref) => regles.future),
+              ],
+            );
+            if (find.byKey(NavShell.barreBasseKey).evaluate().isNotEmpty) {
+              await _ouvrirAccueilParLaBarre(tester);
+            }
+            await capturerVue(
+              tester,
+              'chargement-$profil-$taille-$th-1-profils',
+            );
+            port.retenues[_a1]!.complete();
+            await stabiliser(tester);
+            await capturerVue(
+              tester,
+              'chargement-$profil-$taille-$th-2-classe',
+            );
+            regles.complete(FauxServiceOffres().reglesRendues);
+            await stabiliser(tester);
+            await capturerVue(tester, 'chargement-$profil-$taille-$th-3-fin');
+            await tester.pumpWidget(const SizedBox());
+          });
+        }
       }
     });
   });
