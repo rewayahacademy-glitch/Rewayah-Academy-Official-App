@@ -34,6 +34,7 @@ import 'package:rewayah_academy/features/comptable/encaissements/encaissements_p
 
 import '../../../support/demo/comptable/encaissements_demo.dart';
 import '../../../support/rangee_plus.dart';
+import '../../../support/titre_de_page.dart';
 import 'support_encaissements.dart';
 
 List<Override> _demo() => <Override>[
@@ -391,7 +392,7 @@ void main() {
         taille: const Size(390, 2400),
       );
       final Encaissement bah = _enc(DonneesEncaissementsDemo.encConfirme);
-      expect(find.text(t.comptable.encaissements.detailTitre), findsOneWidget);
+      expect(titreDePage(t.comptable.encaissements.detailTitre), findsOneWidget);
       expect(find.text(formaterMontant(bah.net)), findsNothing);
       expect(find.text('Relié à la mensualité d’octobre'), findsOneWidget);
       expect(find.byType(BasculeMontants), findsOneWidget);

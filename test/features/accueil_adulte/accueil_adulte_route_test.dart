@@ -32,6 +32,7 @@ import '../../support/aucun_mot_coupe.dart';
 import '../../support/demo/adulte_demo.dart';
 import '../../support/garde_interface.dart';
 import '../../support/hors_ligne_une_fois.dart';
+import '../../support/titre_de_page.dart';
 import 'support_accueil_adulte_route.dart';
 
 /// Le lien « Voir tout » des dernieres seances, dans leur tuile.
@@ -151,7 +152,7 @@ void main() {
 
       expect(lieu(routeur), Routes.eleveAdulteSeances);
       expect(find.byType(HistoriqueSeancesAdultePage), findsOneWidget);
-      expect(find.text(t.adulte.historique.titre), findsOneWidget);
+      expect(titreDePage(t.adulte.historique.titre), findsOneWidget);
       expect(tester.widget<NavShell>(find.byType(NavShell)).indexActif, 0);
       for (final SeancePasseeAdulte s
           in DonneesAdulteDemo.historiqueSeances()) {
@@ -354,7 +355,7 @@ void main() {
         depart: Routes.eleveAdulteSeances,
       );
       expect(find.byType(Skeleton), findsOneWidget);
-      expect(find.text(t.adulte.historique.titre), findsOneWidget);
+      expect(titreDePage(t.adulte.historique.titre), findsOneWidget);
     });
 
     testWidgets('vide : phrase et detail, sans bouton', (
