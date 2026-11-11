@@ -30,7 +30,10 @@ import '../../core/offres/offre_horaire.dart';
 import '../../core/offres/port_suivi_demandes.dart'
     show portSuiviDemandesProvider, suiviDemandesProvider;
 import '../../core/offres/service_offres.dart'
-    show parcoursFoyerProvider, reglesAcademieProvider;
+    show
+        offresCompatiblesProvider,
+        parcoursFoyerProvider,
+        reglesAcademieProvider;
 import '../../core/photos/photo_personne.dart' show photoPersonneProvider;
 import '../../core/presence/service_presence.dart';
 import '../../core/presence/vue_presence.dart';
@@ -329,7 +332,33 @@ class _ContenuEtat extends ConsumerState<_Contenu> {
     final bool sansClasse =
         classe.value == null &&
         ref.watch(prochaineSeanceProvider(eleveId)).value == null;
+    if (sansClasse && !_lecturesCarteHoraire(eleveId)) return false;
     return !sansClasse || _arrivee(ref.watch(reglesAcademieProvider));
+  }
+
+  /// DEFAUT DU 11/11/2026 (directeur) : la carte « Horaire a choisir » decide
+  /// de son geste (« Voir les horaires », « Me prevenir », ou rien une fois la
+  /// demande faite) avec deux lectures qu'elle faisait seule : les offres du
+  /// profil, puis, si aucune, la demande deja faite. Elles sont dans la porte :
+  /// la carte arrive avec son geste definitif, jamais un bouton retire ensuite.
+  /// Les memes providers et la meme cle que la carte : aucune lecture en plus.
+  bool _lecturesCarteHoraire(String eleveId) {
+    final ParcoursApprenant? aChoisir = ref
+        .watch(parcoursFoyerProvider)
+        .value
+        ?.where(
+          (ParcoursApprenant p) =>
+              p.eleveId == eleveId &&
+              etapeParcours(p) == EtapeParcours.horaireAChoisir,
+        )
+        .firstOrNull;
+    if (aChoisir == null) return true;
+    final AsyncValue<List<OffreHoraire>> offres = ref.watch(
+      offresCompatiblesProvider(cleOffresCarteHoraire(aChoisir)),
+    );
+    if (!_arrivee(offres)) return false;
+    final bool aucune = offres.hasValue && offres.requireValue.isEmpty;
+    return !aucune || _arrivee(ref.watch(demandesHoraireProvider));
   }
 
   @override
