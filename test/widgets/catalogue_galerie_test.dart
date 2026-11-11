@@ -43,6 +43,8 @@ const List<String> composantsDuCatalogue = <String>[
   'AvatarCompte',
   // Decisions du directeur du 10/11/2026 : le rond qui se choisit.
   'CercleSelectionnable',
+  // NAV-REFONTE 2a (09/11/2026) : le halo du cercle Compte.
+  'HaloCompte',
   // Decisions du directeur du 10/11/2026 : l'effet liquide.
   'IndicateurLiquide',
   'AvatarNom',
