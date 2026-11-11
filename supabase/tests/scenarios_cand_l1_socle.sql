@@ -367,9 +367,11 @@ BEGIN
   PERFORM pg_temp.vrai(r -> 'compteursEtapes' = '{"recue": 1, "invitee": 0, "prequalification": 1,
     "verifications": 0, "confirmee": 1}'::jsonb,
     'direction homme : compteurs d''etape en cours de son cote (la refusee exclue)');
+  -- CAND-ALERTES-2B (20261122800000) : bloquees et entretiensEnRetard sont
+  -- calcules ; detail dans scenarios_cand_alertes_bloquees_retard.sql.
   PERFORM pg_temp.vrai(r -> 'compteursAlertes' = '{"informationsManquantes": 0, "confirmeesIndisponibles": 1,
-    "entretiensEnRetard": null, "bloquees": null}'::jsonb,
-    'direction homme : alertes (la candidature en pause hors compte), deux alertes null et non 0');
+    "entretiensEnRetard": 0, "bloquees": 0}'::jsonb,
+    'direction homme : alertes (la candidature en pause hors compte), les quatre calculees');
   PERFORM pg_temp.vrai(NOT EXISTS (
       SELECT 1 FROM jsonb_array_elements(r -> 'lignes') l
       WHERE (SELECT array_agg(k ORDER BY k) FROM jsonb_object_keys(l) k) IS DISTINCT FROM
@@ -479,8 +481,8 @@ BEGIN
   PERFORM pg_temp.vrai(r -> 'compteursEtapes' = '{"recue": 0, "invitee": 1, "prequalification": 1,
     "verifications": 1, "confirmee": 0}'::jsonb
     AND r -> 'compteursAlertes' = '{"informationsManquantes": 1, "confirmeesIndisponibles": 0,
-    "entretiensEnRetard": null, "bloquees": null}'::jsonb,
-    'direction femme : compteurs de son cote');
+    "entretiensEnRetard": 0, "bloquees": 1}'::jsonb,
+    'direction femme : compteurs de son cote (K7 en salle 2 sans controle de paiement ou de profil vrai : bloquee)');
   PERFORM pg_temp.vrai((SELECT jsonb_object_agg(l ->> 'id', jsonb_build_array(l -> 'courrielAObtenir',
                                  l -> 'indicatifAConfirmer'))
                         FROM jsonb_array_elements(r -> 'lignes') l) =
