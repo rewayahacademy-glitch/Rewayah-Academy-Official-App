@@ -1,11 +1,7 @@
-// CORRECTIF-BARRE (directeur, 11/11/2026, production, enseignant au
-// telephone : « la barre disparait sans raison et on est oblige de fermer
-// l'app »). Une feuille du bas ouverte dans un onglet, puis l'onglet quitte
-// sans fermer la feuille (retour, lien, notification) : la feuille reste
-// montee hors scene dans la pile indexee des onglets. La barre doit revenir
-// dans l'autre onglet, s'effacer de nouveau au retour sur la feuille, et
-// revenir quand la feuille se ferme.
-
+// Directeur, 11/11/2026 (production, enseignant au telephone) : « la barre
+// disparait sans raison et on est oblige de fermer l'app ». Une feuille du bas
+// restee ouverte dans un onglet qu'on quitte (retour du navigateur, lien de la
+// feuille, notification) ne doit pas effacer la barre des autres onglets.
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
@@ -28,33 +24,33 @@ GoRouter _routeur() => GoRouter(
       builder:
           (
             BuildContext context,
-            GoRouterState state,
-            StatefulNavigationShell coquille,
+            GoRouterState etat,
+            StatefulNavigationShell coque,
           ) => NavShell(
             destinations: destinationsPour(
               role: AppRole.teacher,
               mode: InterfaceMode.standard,
             ),
-            indexActif: coquille.currentIndex,
-            onAller: (String _) {},
-            child: coquille,
+            indexActif: coque.currentIndex,
+            onAller: (_) {},
+            child: coque,
           ),
       branches: <StatefulShellBranch>[
         StatefulShellBranch(
           routes: <RouteBase>[
             GoRoute(
               path: '/a',
-              builder: (BuildContext context, GoRouterState state) => Scaffold(
-                body: Builder(
-                  builder: (BuildContext contexte) => TextButton(
+              builder: (BuildContext context, GoRouterState _) => Scaffold(
+                body: Center(
+                  child: TextButton(
                     key: _ouvrir,
                     onPressed: () => AppBottomSheet.ouvrir<void>(
-                      contexte,
+                      context,
                       titre: 'Feuille',
                       constructeur: (BuildContext _) =>
                           const SizedBox(height: 80),
                     ),
-                    child: const Text('Ouvrir'),
+                    child: const Text('Onglet A'),
                   ),
                 ),
               ),
@@ -65,8 +61,8 @@ GoRouter _routeur() => GoRouter(
           routes: <RouteBase>[
             GoRoute(
               path: '/b',
-              builder: (BuildContext context, GoRouterState state) =>
-                  const Scaffold(body: Text('Onglet B')),
+              builder: (BuildContext _, GoRouterState _) =>
+                  const Scaffold(body: Center(child: Text('Onglet B'))),
             ),
           ],
         ),
@@ -76,13 +72,13 @@ GoRouter _routeur() => GoRouter(
 );
 
 void main() {
-  testWidgets('une feuille laissee dans un onglet quitte ne retire pas la '
-      'barre des autres onglets', (WidgetTester tester) async {
+  testWidgets('feuille ouverte dans un onglet, puis on change d onglet sans '
+      'la fermer : la barre revient ; de retour, elle s efface ; feuille '
+      'fermee, elle revient', (WidgetTester tester) async {
     tester.view.physicalSize = const Size(390, 844);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
     final GoRouter routeur = _routeur();
-    addTearDown(routeur.dispose);
     await tester.pumpWidget(
       ProviderScope(
         overrides: <Override>[sansPersonneConnectee()],
@@ -95,35 +91,29 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    final Finder barre = find.byKey(NavShell.barreBasseKey);
-    expect(barre, findsOneWidget);
-
-    // 1. La feuille s'ouvre sur /a : la barre s'efface.
+    expect(find.byKey(NavShell.barreBasseKey), findsOneWidget);
     await tester.tap(find.byKey(_ouvrir));
     await tester.pumpAndSettle();
     expect(find.text('Feuille'), findsOneWidget);
-    expect(barre, findsNothing);
-
-    // 2. On quitte l'onglet sans fermer la feuille : la barre revient, la
-    //    feuille reste montee hors scene.
+    expect(find.byKey(NavShell.barreBasseKey), findsNothing);
     routeur.go('/b');
     await tester.pumpAndSettle();
     expect(find.text('Onglet B'), findsOneWidget);
-    expect(barre, findsOneWidget);
-    expect(find.text('Feuille'), findsNothing);
     expect(find.text('Feuille', skipOffstage: false), findsOneWidget);
-
-    // 3. Retour sur /a : la feuille est la, la barre s'efface.
+    expect(find.text('Feuille'), findsNothing);
+    expect(
+      find.byKey(NavShell.barreBasseKey),
+      findsOneWidget,
+      reason: 'la barre doit revenir quand on quitte l onglet de la feuille',
+    );
     routeur.go('/a');
     await tester.pumpAndSettle();
     expect(find.text('Feuille'), findsOneWidget);
-    expect(barre, findsNothing);
-
-    // 4. La feuille se ferme : la barre revient.
+    expect(find.byKey(NavShell.barreBasseKey), findsNothing);
     Navigator.of(tester.element(find.text('Feuille'))).pop();
     await tester.pumpAndSettle();
-    expect(find.text('Feuille'), findsNothing);
-    expect(barre, findsOneWidget);
+    expect(find.text('Feuille', skipOffstage: false), findsNothing);
+    expect(find.byKey(NavShell.barreBasseKey), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 }
