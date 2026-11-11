@@ -38,6 +38,8 @@ import 'package:rewayah_academy/core/tc_outils/annotation_layer.dart'
     show PointNormalise;
 import 'package:rewayah_academy/core/tc_outils/port_annotations.dart';
 import 'package:rewayah_academy/core/tc_realtime/codec_message_pedagogique.dart';
+import 'package:rewayah_academy/core/tc_realtime/port_realtime_pedagogique.dart'
+    show MessagePedagogique;
 import 'package:rewayah_academy/core/tc_realtime/types_message.dart';
 import 'package:rewayah_academy/core/theme/app_gabarit.dart';
 import 'package:rewayah_academy/core/theme/app_mouvement.dart';
@@ -54,6 +56,8 @@ import 'package:rewayah_academy/core/widgets/bouton_couleur.dart';
 import 'package:rewayah_academy/core/widgets/ligne_presence.dart';
 import 'package:rewayah_academy/core/widgets/permanent_notice.dart';
 import 'package:rewayah_academy/features/salle/salle_page.dart';
+import 'package:rewayah_academy/features/salle/synchro_salle.dart'
+    show typeParoleSalle;
 import 'package:rewayah_academy/features/salle_enseignant/page_coran_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/annonce_geste.dart';
 import 'package:rewayah_academy/features/salle_seance/barre_outils_salle.dart';
@@ -1844,6 +1848,307 @@ void main() {
       expect(gestes.gestes, <(String, GesteSalle)>[
         ('e1', GesteSalle.faireSortir),
       ]);
+    });
+
+    testWidgets('GESTES-POINTEUR : « Faire reciter Yusuf » passe par le '
+        'serveur AVANT d etre annonce a la classe, puis « Terminer la '
+        'recitation » rend les micros', (WidgetTester tester) async {
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      final FauxGestesSalle gestes = FauxGestesSalle();
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: FauxServiceVideo(acces0: _acces('teacher')),
+          moteur: moteur,
+          preVol: FauxServicePreVol(),
+          role: AppRole.teacher,
+          gestes: gestes,
+        ),
+      );
+      moteur.poser(EtatSalle.connecte);
+      moteur.publier(<ParticipantSalle>[
+        _personne(identite: 't1', role: 'teacher', nom: 'Omar', local: true),
+        _personne(identite: 'e1', role: 'student', nom: 'Yusuf', micro: true),
+      ]);
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byKey(const ValueKey<String>('gestes-e1')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(t.salle.gestes.faireReciter(prenom: 'Yusuf')));
+      await tester.pump();
+      await tester.pump();
+      // Le serveur a ferme les micros des camarades ; l'enseignant le lit.
+      expect(gestes.recitations, <String?>['e1']);
+      expect(
+        find.descendant(
+          of: find.byKey(CoucheAnnonceGeste.cle),
+          matching: find.text(
+            t.salle.gestes.recitationOuverte(prenom: 'Yusuf'),
+          ),
+        ),
+        findsOneWidget,
+      );
+      // Puis seulement la classe l'apprend, sur le canal fiable.
+      final MessagePedagogique annonce = messageDepuisOctets(
+        moteur.donneesPubliees.last.charge,
+      )!;
+      expect(annonce.type, typeParoleSalle);
+      expect(annonce.charge['profil'], 'e1');
+      expect(moteur.donneesPubliees.last.fiable, isTrue);
+
+      await tester.pump(AppMouvement.annonceGesteMaintien);
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey<String>('gestes-e1')));
+      await tester.pumpAndSettle();
+      expect(
+        find.text(t.salle.gestes.faireReciter(prenom: 'Yusuf')),
+        findsNothing,
+      );
+      await tester.tap(find.text(t.salle.gestes.terminerRecitation));
+      await tester.pump();
+      await tester.pump();
+      expect(gestes.recitations, <String?>['e1', null]);
+      expect(find.text(t.salle.gestes.recitationTerminee), findsOneWidget);
+      final MessagePedagogique fin = messageDepuisOctets(
+        moteur.donneesPubliees.last.charge,
+      )!;
+      expect(fin.type, typeParoleSalle);
+      expect(fin.charge['profil'], isNull);
+      await tester.pump(AppMouvement.annonceGesteMaintien);
+      await tester.pumpAndSettle();
+    });
+
+    testWidgets('GESTES-POINTEUR : le serveur ne repond pas, rien n est '
+        'annonce a la classe et l enseignant lit pourquoi', (
+      WidgetTester tester,
+    ) async {
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      final FauxGestesSalle gestes = FauxGestesSalle()
+        ..recitationEnPanne = true;
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: FauxServiceVideo(acces0: _acces('teacher')),
+          moteur: moteur,
+          preVol: FauxServicePreVol(),
+          role: AppRole.teacher,
+          gestes: gestes,
+        ),
+      );
+      moteur.poser(EtatSalle.connecte);
+      moteur.publier(<ParticipantSalle>[
+        _personne(identite: 't1', role: 'teacher', nom: 'Omar', local: true),
+        _personne(identite: 'e1', role: 'student', nom: 'Yusuf', micro: true),
+      ]);
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey<String>('gestes-e1')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(t.salle.gestes.faireReciter(prenom: 'Yusuf')));
+      await tester.pump();
+      await tester.pump();
+      expect(find.text(t.salle.gestes.recitationEchecTitre), findsOneWidget);
+      expect(find.text(t.salle.gestes.recitationEchec), findsOneWidget);
+      // Aucune recitation n'a ete dite a la classe.
+      expect(
+        moteur.donneesPubliees.where(
+          (PaquetDonnees p) =>
+              messageDepuisOctets(p.charge)?.type == typeParoleSalle,
+        ),
+        isEmpty,
+      );
+      await tester.pump(AppMouvement.annonceGesteMaintien);
+      await tester.pumpAndSettle();
+    });
+
+    testWidgets('GESTES-POINTEUR : l eleve choisi n est pas dans la salle, '
+        'le serveur refuse et rien ne change', (WidgetTester tester) async {
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      final FauxGestesSalle gestes = FauxGestesSalle()
+        ..issueRecitation = IssueRecitation.recitantAbsent;
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: FauxServiceVideo(acces0: _acces('teacher')),
+          moteur: moteur,
+          preVol: FauxServicePreVol(),
+          role: AppRole.teacher,
+          gestes: gestes,
+        ),
+      );
+      moteur.poser(EtatSalle.connecte);
+      moteur.publier(<ParticipantSalle>[
+        _personne(identite: 't1', role: 'teacher', nom: 'Omar', local: true),
+        _personne(identite: 'e1', role: 'student', nom: 'Yusuf'),
+      ]);
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey<String>('gestes-e1')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(t.salle.gestes.faireReciter(prenom: 'Yusuf')));
+      await tester.pump();
+      await tester.pump();
+      expect(
+        find.text(t.salle.gestes.recitationAbsent(prenom: 'Yusuf')),
+        findsOneWidget,
+      );
+      expect(gestes.recitations, isEmpty);
+      await tester.pump(AppMouvement.annonceGesteMaintien);
+      await tester.pumpAndSettle();
+    });
+
+    testWidgets('GESTES-POINTEUR : le recitant quitte la salle, la '
+        'recitation se termine d elle-meme (jamais une classe muette)', (
+      WidgetTester tester,
+    ) async {
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      final FauxGestesSalle gestes = FauxGestesSalle();
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: FauxServiceVideo(acces0: _acces('teacher')),
+          moteur: moteur,
+          preVol: FauxServicePreVol(),
+          role: AppRole.teacher,
+          gestes: gestes,
+        ),
+      );
+      moteur.poser(EtatSalle.connecte);
+      final ParticipantSalle enseignant = _personne(
+        identite: 't1',
+        role: 'teacher',
+        nom: 'Omar',
+        local: true,
+      );
+      moteur.publier(<ParticipantSalle>[
+        enseignant,
+        _personne(identite: 'e1', role: 'student', nom: 'Yusuf'),
+      ]);
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey<String>('gestes-e1')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(t.salle.gestes.faireReciter(prenom: 'Yusuf')));
+      await tester.pump();
+      await tester.pump();
+      expect(gestes.recitations, <String?>['e1']);
+
+      // Yusuf sort de la salle.
+      moteur.publier(<ParticipantSalle>[enseignant]);
+      await tester.pump();
+      await tester.pump();
+      expect(gestes.recitations, <String?>['e1', null]);
+      expect(
+        find.text(t.salle.gestes.recitationFinieSeule(prenom: 'Yusuf')),
+        findsOneWidget,
+      );
+      final MessagePedagogique fin = messageDepuisOctets(
+        moteur.donneesPubliees.last.charge,
+      )!;
+      expect(fin.type, typeParoleSalle);
+      expect(fin.charge['profil'], isNull);
+      await tester.pump(AppMouvement.annonceGesteMaintien);
+      await tester.pumpAndSettle();
+    });
+
+    testWidgets('GESTES-POINTEUR : chez l eleve, « Aicha recite » dit que '
+        'son micro est ferme et pourquoi ; a la fin, qu il peut le rouvrir', (
+      WidgetTester tester,
+    ) async {
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      int signaux = 0;
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: FauxServiceVideo(acces0: _acces('student')),
+          moteur: moteur,
+          preVol: FauxServicePreVol(),
+          signalRappel: () => signaux++,
+        ),
+      );
+      moteur.poser(EtatSalle.connecte);
+      await tester.pumpAndSettle();
+
+      void recevoirParole(String? profil, String prenom, int ms) {
+        moteur.recevoirDonnees(
+          PaquetDonnees(
+            sujet: sujetProtocolePedagogique,
+            charge: messageVersOctets(
+              MessagePedagogique(
+                type: typeParoleSalle,
+                sessionId: _seance,
+                emetteurProfilId: 't1',
+                charge: profil == null
+                    ? const <String, dynamic>{}
+                    : <String, dynamic>{'profil': profil, 'prenom': prenom},
+                emisLeUtc: DateTime.utc(2026, 11, 11, 10, 0, 0, ms),
+              ),
+            ),
+            fiable: true,
+            emetteurIdentite: 't1',
+          ),
+        );
+      }
+
+      recevoirParole('e2', 'Aicha', 1);
+      await tester.pump();
+      await tester.pump();
+      expect(
+        find.descendant(
+          of: find.byKey(CoucheAnnonceGeste.cle),
+          matching: find.text(t.salle.gestes.autreReciteTitre(prenom: 'Aicha')),
+        ),
+        findsOneWidget,
+      );
+      expect(find.text(t.salle.gestes.autreRecite), findsOneWidget);
+      expect(signaux, 0, reason: 'un camarade recite : aucun son');
+
+      recevoirParole(null, '', 2);
+      await tester.pump();
+      await tester.pump();
+      expect(find.text(t.salle.gestes.finRecitationTitre), findsOneWidget);
+      expect(find.text(t.salle.gestes.finRecitation), findsOneWidget);
+
+      // C'est a lui : il lit « ouvrez votre micro », et son appareil sonne.
+      recevoirParole('p1', 'Moi', 3);
+      await tester.pump();
+      await tester.pump();
+      expect(find.text(t.salle.gestes.aVousTitre), findsOneWidget);
+      expect(find.text(t.salle.gestes.aVous), findsOneWidget);
+      expect(signaux, 1);
+      await tester.pump(AppMouvement.annonceGesteMaintien);
+      await tester.pumpAndSettle();
+    });
+
+    testWidgets('GESTES-POINTEUR : une personne, un cadre. L enseignant, '
+        'camera allumee, ne se voit pas une seconde fois dans la scene', (
+      WidgetTester tester,
+    ) async {
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: FauxServiceVideo(acces0: _acces('teacher')),
+          moteur: moteur,
+          preVol: FauxServicePreVol(),
+          role: AppRole.teacher,
+        ),
+      );
+      moteur.poser(EtatSalle.connecte);
+      moteur.publier(<ParticipantSalle>[
+        _personne(
+          identite: 't1',
+          role: 'teacher',
+          nom: 'Omar',
+          local: true,
+          camera: true,
+        ),
+        _personne(identite: 'e1', role: 'student', nom: 'Yusuf'),
+      ]);
+      await tester.pumpAndSettle();
+      // Son image est sa vignette ; la scene ne porte que l'eleve.
+      expect(
+        find.byKey(const ValueKey<String>('vignette-video')),
+        findsOneWidget,
+      );
+      expect(find.byKey(const ValueKey<String>('t1')), findsNothing);
     });
 
     testWidgets('l eleve n a aucun geste sur ses camarades', (

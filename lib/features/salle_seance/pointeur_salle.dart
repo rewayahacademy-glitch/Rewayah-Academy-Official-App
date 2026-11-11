@@ -132,6 +132,9 @@ class PointeurSalle extends StatefulWidget {
   /// l'enseignant : son point reste sous son doigt.
   final bool rattrapage;
 
+  /// La cle du sillage, present seulement tant qu'il y a une trace a peindre.
+  static const Key cleSillage = ValueKey<String>('pointeur-sillage');
+
   /// Le diametre du point (anneau compris).
   static const double diametre = AppSpacing.xxxl;
 
@@ -270,6 +273,7 @@ class _PointeurSalleState extends State<PointeurSalle>
           children: <Widget>[
             if (_sillage.length > 1 && !_reduit)
               CustomPaint(
+                key: PointeurSalle.cleSillage,
                 painter: _PeintreSillage(
                   traces: List<_Trace>.of(_sillage),
                   maintenant: _maintenant,
