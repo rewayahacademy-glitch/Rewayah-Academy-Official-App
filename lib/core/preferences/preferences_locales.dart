@@ -170,8 +170,21 @@ class PreferencesLocalesControleur extends Notifier<PreferencesLocales> {
   /// Vrai des qu'un choix de langue a ete fait pendant cette session.
   bool _langueChoisie = false;
 
+  /// SOMBRE-SANS-ECLAIR (directeur, 11/11/2026) : le theme choisi est connu
+  /// **avant la premiere image**. Sur le web, le stockage du navigateur se lit
+  /// sans attendre ([lecturePreferencesImmediateProvider]) : le controleur part
+  /// du theme persiste. Hors web, il part de « Systeme », puis
+  /// [persistanceApparenceProvider] le restaure. Sans cela, chaque chargement
+  /// de page peignait ses premieres images en clair avant de basculer.
   @override
-  PreferencesLocales build() => const PreferencesLocales();
+  PreferencesLocales build() {
+    final PreferenceTheme? memorise = _themeImmediat(
+      ref.read(lecturePreferencesImmediateProvider),
+    );
+    return memorise == null
+        ? const PreferencesLocales()
+        : PreferencesLocales(theme: memorise);
+  }
 
   /// Change le theme immediatement (page Apparence : Systeme, Clair, Sombre).
   void theme(PreferenceTheme valeur) {
@@ -254,6 +267,35 @@ class PreferencesLocalesControleur extends Notifier<PreferencesLocales> {
   }
 }
 
+/// Le theme persiste, lu sans attendre quand [lecture] existe ; `null` sinon,
+/// ou si la lecture echoue (la preference reste « Systeme »).
+PreferenceTheme? _themeImmediat(LecturePreferencesImmediate? lecture) {
+  if (lecture == null) {
+    return null;
+  }
+  try {
+    return PreferenceTheme.depuis(lecture.lireImmediat(clefPreferenceTheme));
+  } on Object {
+    return null;
+  }
+}
+
+/// Un stockage qui se lit sans attendre : le navigateur (`localStorage`) et
+/// la memoire des tests. Il permet de connaitre une preference d'affichage
+/// avant la premiere image (SOMBRE-SANS-ECLAIR).
+abstract interface class LecturePreferencesImmediate {
+  /// La valeur de [clef], lue sans attendre, ou `null`.
+  String? lireImmediat(String clef);
+}
+
+/// Le stockage lisible sans attendre de cet appareil : le navigateur sur le
+/// web ; aucun ailleurs (la base locale se lit en asynchrone). Les tests le
+/// surchargent par [StockagePreferencesMemoire].
+final Provider<LecturePreferencesImmediate?>
+lecturePreferencesImmediateProvider = Provider<LecturePreferencesImmediate?>(
+  (Ref _) => kIsWeb ? const StockagePreferencesNavigateur() : null,
+);
+
 /// Clef de la preference de theme dans le stockage local.
 const String clefPreferenceTheme = 'apparence.theme';
 
@@ -301,7 +343,8 @@ class StockagePreferencesDrift implements StockagePreferences {
 }
 
 /// Le stockage en memoire, pour la vie de l'application seulement (tests).
-class StockagePreferencesMemoire implements StockagePreferences {
+class StockagePreferencesMemoire
+    implements StockagePreferences, LecturePreferencesImmediate {
   /// Cree le stockage, avec des valeurs de depart facultatives.
   StockagePreferencesMemoire([Map<String, String>? valeurs])
     : valeurs = <String, String>{...?valeurs};
@@ -311,6 +354,9 @@ class StockagePreferencesMemoire implements StockagePreferences {
 
   @override
   Future<String?> lire(String clef) async => valeurs[clef];
+
+  @override
+  String? lireImmediat(String clef) => valeurs[clef];
 
   @override
   Future<void> ecrire(String clef, String valeur) async {
@@ -326,7 +372,8 @@ class StockagePreferencesMemoire implements StockagePreferences {
 /// (`memoire_appareil`, aucune dependance nouvelle). Jamais rien de sensible.
 /// Hors web, ces fonctions ne sont qu'une memoire de session : seul le web
 /// prend ce stockage.
-class StockagePreferencesNavigateur implements StockagePreferences {
+class StockagePreferencesNavigateur
+    implements StockagePreferences, LecturePreferencesImmediate {
   /// Cree le stockage.
   const StockagePreferencesNavigateur();
 
@@ -336,6 +383,9 @@ class StockagePreferencesNavigateur implements StockagePreferences {
   @override
   Future<String?> lire(String clef) async =>
       lireMemoireAppareil('$prefixe$clef');
+
+  @override
+  String? lireImmediat(String clef) => lireMemoireAppareil('$prefixe$clef');
 
   @override
   Future<void> ecrire(String clef, String valeur) async =>
