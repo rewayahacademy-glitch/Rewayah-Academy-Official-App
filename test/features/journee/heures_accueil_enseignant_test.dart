@@ -153,6 +153,47 @@ void main() {
     });
   }
 
+  // Le cas reel du directeur : l'enseignant a Riyad (UTC+3), l'eleve a
+  // Conakry (UTC+0), la meme seance ; l'appareil dans un TROISIEME fuseau
+  // (preuve : `TZ=America/Montreal flutter test <ce fichier>`). Chacun voit
+  // SON heure dans les deux blocs, exactement 3 h d'ecart entre eux, et
+  // jamais l'heure de l'appareil.
+  testWidgets('Riyad et Conakry, appareil dans un 3e fuseau : chacun son heure '
+      'dans les deux blocs, 3 h d ecart', (WidgetTester tester) async {
+    final Duration appareil = DateTime.now().timeZoneOffset;
+    final bool troisiemeFuseau =
+        appareil != Duration.zero && appareil != const Duration(hours: 3);
+    final String heureAppareil = heureDeLAppareil(_seance.debut.toLocal());
+    final Map<String, String> vu = <String, String>{};
+    for (final (String qui, MonHorloge horloge) in <(String, MonHorloge)>[
+      ('enseignant', _riyad),
+      ('eleve', _conakry),
+    ]) {
+      await _monter(tester, horloge: _fournisseur(() async => horloge));
+      final String debut = heureChezMoi(_seance.debut);
+      final String fin = heureChezMoi(_seance.fin);
+      expect(
+        find.textContaining(plage(debut, fin), findRichText: true),
+        findsNWidgets(2),
+        reason: '$qui : les deux blocs a son heure',
+      );
+      if (troisiemeFuseau) {
+        expect(
+          find.textContaining(heureAppareil, findRichText: true),
+          findsNothing,
+          reason: '$qui : jamais l heure de l appareil ($heureAppareil)',
+        );
+      }
+      vu[qui] = debut;
+      await tester.pumpWidget(const SizedBox());
+    }
+    expect(vu['enseignant'], '19:00');
+    expect(vu['eleve'], '16:00');
+    int minutes(String hhmm) =>
+        int.parse(hhmm.substring(0, 2)) * 60 + int.parse(hhmm.substring(3));
+    expect(minutes(vu['enseignant']!) - minutes(vu['eleve']!), 180);
+  });
+
   testWidgets('compte sans fuseau : les deux blocs a l heure de l appareil', (
     WidgetTester tester,
   ) async {
