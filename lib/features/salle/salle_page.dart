@@ -114,6 +114,7 @@ import '../salle_seance/ecriture_seance.dart'
         diffusionEcritureProvider,
         diffusionPointeurProvider,
         pointeurDistantProvider;
+import '../salle_seance/lecteur_support.dart';
 import '../salle_seance/media_salle.dart';
 import '../salle_seance/notes_deposees.dart';
 import '../salle_seance/panneau_bibliotheque_salle.dart';
@@ -133,6 +134,7 @@ import 'memoire_page_classe.dart';
 import 'position_reprise.dart';
 import 'preparation_eleve.dart';
 import 'preparation_enseignant.dart';
+import 'reprise_support.dart';
 import 'suivi_fiche_seance.dart';
 import 'synchro_salle.dart';
 import 'vue_salle.dart';
@@ -1856,6 +1858,20 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     final double? moins = palierPrecedent(_zoom);
     final ParticipantSalle? moi = vue.moi;
     final int? page = presentee?.page;
+    // PARTAGE-GENERIQUE (11/11/2026) : le support presente, quel qu'il soit.
+    // `pageCoran` ne vaut que pour le Coran (etats de lecture du mushaf).
+    final List<SupportDeSalle> supportsConnus = ref.watch(
+      supportsDeSalleProvider,
+    );
+    final int? pageCoran = (presentee?.estCoran ?? false) ? page : null;
+    final SupportDeSalle? supportOuvert = presentee == null
+        ? null
+        : supportDeSalleDe(presentee, supportsConnus);
+    final int dernierePage = presentee == null
+        ? 0
+        : presentee.estCoran
+        ? pagesMushafMedine
+        : (supportOuvert?.pages ?? 0);
     final ActionsSeance actions = ActionsSeance(
       // Directeur, 31/10/2026 : la fleche quitte l'ecran, pas l'appel ; la
       // barre « Seance toujours en direct » y ramene. SORTIE-SALLE
@@ -1970,15 +1986,15 @@ class _SallePageEtat extends ConsumerState<SallePage> {
         }
       }),
       // D9 : la page tourne pour toute la classe, par le canal de donnees.
-      onPagePrecedente: enseignant && page != null && page > 1
-          ? () => unawaited(
-              ref.read(presentateurCoranProvider).presenterPage(page - 1),
-            )
+      // PARTAGE-GENERIQUE : tourner la page ne sait rien du support ; un
+      // support que cet appareil ne connait pas ne se tourne pas d'ici.
+      onPagePrecedente:
+          enseignant && presentee != null && page != null && page > 1
+          ? () => unawaited(_tournerPage(presentee, supportOuvert, page - 1))
           : null,
-      onPageSuivante: enseignant && page != null && page < pagesMushafMedine
-          ? () => unawaited(
-              ref.read(presentateurCoranProvider).presenterPage(page + 1),
-            )
+      onPageSuivante:
+          enseignant && presentee != null && page != null && page < dernierePage
+          ? () => unawaited(_tournerPage(presentee, supportOuvert, page + 1))
           : null,
     );
     // La scene en grand : choisie, sinon chez l'eleve tant que rien n'est
@@ -1998,12 +2014,18 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       // l'enseignant est sa colonne Eleves.
       pleinCadre: true,
       supports: enseignant && vue.peutPresenter
-          ? <SupportBibliotheque>[_coranDeLaBibliotheque(page)]
+          ? <SupportBibliotheque>[
+              _coranDeLaBibliotheque(pageCoran),
+              // PARTAGE-GENERIQUE : les autres supports que la salle sait
+              // partager (aucun en production le 11/11/2026).
+              for (final SupportDeSalle s in supportsConnus)
+                _supportDeLaBibliotheque(s),
+            ]
           : const <SupportBibliotheque>[],
       messageEleves: enseignant ? (_echecGeste ?? _echecRappel) : null,
       // La page presentee ne se lit pas : rien ne se pose par-dessus son
       // constat ni son « Reessayer » (capsule du telephone).
-      pageEnErreur: page != null && pagePresenteeEnErreur(ref, page),
+      pageEnErreur: pageCoran != null && pagePresenteeEnErreur(ref, pageCoran),
       // Au telephone, l'enseignant n'a pas de colonne : « Eleves » ouvre la
       // presence (J3) et le roster (fiche, rappel) en feuille.
       pastille: enseignant
@@ -2106,7 +2128,16 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       // identiteVignette (l'id), dans VignetteVideo ; plus de cle copiee.
       // L'enseignant garde les etats de lecture de son panneau (page
       // indisponible, texte non installe) ; l'eleve lit la page (D9).
-      page: (SupportPageFixe support) => enseignant && presentee != null
+      // PARTAGE-GENERIQUE : un lecteur par support. Le Coran garde le
+      // sien ; un support connu rend sa page ; un support inconnu de cette
+      // application le dit, jamais une page vide ni une page du Coran.
+      page: (SupportPageFixe support) =>
+          support.id != ContenuPresente.supportCoran
+          ? KeyedSubtree(
+              key: SallePage.pageEleveKey,
+              child: _pageDuSupport(context, supportsConnus, support),
+            )
+          : enseignant && presentee != null
           ? PageCoranPresentee(contenu: presentee, surCarte: true)
           : PageCoranSalle(
               key: SallePage.pageEleveKey,
@@ -2335,6 +2366,100 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   Future<void> _presenterPage(int page) async {
     setState(() => _scenePremierPlan = null);
     await ref.read(presentateurCoranProvider).presenterPage(page);
+  }
+
+  /// PARTAGE-GENERIQUE : la page [support] rendue par le lecteur de son
+  /// support, ou l'etat « ce support ne peut pas encore s'afficher ici ».
+  static Widget _pageDuSupport(
+    BuildContext context,
+    List<SupportDeSalle> connus,
+    SupportPageFixe support,
+  ) {
+    for (final SupportDeSalle s in connus) {
+      if (s.id == support.id && s.version == support.version) {
+        return s.page(context, support.page);
+      }
+    }
+    return const SupportIllisibleIci();
+  }
+
+  /// PARTAGE-GENERIQUE : la page retenue du support [id] pour la Classe :
+  /// celle de cet appareil d'abord, sinon celle du serveur.
+  int? _pageRetenueDe(SupportDeSalle support) {
+    final String? groupe = widget.groupeId;
+    final int? locale = groupe == null
+        ? null
+        : ref.read(memoireRepriseSupportProvider).lire(groupe, support.id);
+    final int? retenue =
+        locale ??
+        ref
+            .read(pagesRepriseSupportsProvider(widget.seanceId))
+            .value?[support.id];
+    return retenue == null || retenue > support.pages ? null : retenue;
+  }
+
+  /// PARTAGE-GENERIQUE : un support de la salle sur l'etagere, avec le meme
+  /// mecanisme que le Coran : « Partager » (a la page retenue, sinon la
+  /// premiere), « Afficher » pour soi, « Partager page N ».
+  SupportBibliotheque _supportDeLaBibliotheque(SupportDeSalle support) {
+    final int? retenue = _pageRetenueDe(support);
+    // Le serveur ne sait pas encore retenir la page de ce support (migration
+    // non installee) : une phrase le dit, jamais une erreur.
+    final bool nonRetenue = ref.watch(repriseSupportNonRetenueProvider);
+    return SupportBibliotheque(
+      id: support.id,
+      titre: support.titre,
+      detail: support.detail ?? t.salle.etagere.jamaisOuvert,
+      note: nonRetenue ? t.salle.support.repriseNonRetenue : null,
+      couverture: support.couverture,
+      aValider: support.aValider,
+      repere: support.repere,
+      onPresenter: () => unawaited(_partagerSupport(support, 1)),
+      pageReprise: retenue,
+      onReprendre: retenue == null
+          ? null
+          : () => unawaited(_partagerSupport(support, retenue)),
+      lecteur: LecteurSupport(
+        pages: support.pages,
+        pageDepart: retenue ?? 1,
+        page: (BuildContext contexte, int numero) => AspectRatio(
+          aspectRatio: support.largeurPage / support.hauteurPage,
+          child: support.page(contexte, numero),
+        ),
+        partagerPage: (int numero) =>
+            unawaited(_partagerSupport(support, numero)),
+      ),
+    );
+  }
+
+  /// PARTAGE-GENERIQUE : partage la page [numero] de [support] a la classe.
+  /// Le droit reste celui du jeton : sans `can_publish_data`, le moteur
+  /// refuse en silence et rien ne part.
+  Future<void> _partagerSupport(SupportDeSalle support, int numero) async {
+    setState(() => _scenePremierPlan = null);
+    await ref
+        .read(moteurSalleProvider)
+        .presenterContenu(
+          support.contenu(
+            numero: numero,
+            presentePar: ref.read(sessionProvider).profileId ?? '',
+            emisLe: DateTime.now(),
+          ),
+        );
+  }
+
+  /// PARTAGE-GENERIQUE : tourne la page du support presente, quel qu'il
+  /// soit. Le Coran passe par son presentateur (il situe sourate et verset).
+  Future<void> _tournerPage(
+    ContenuPresente presentee,
+    SupportDeSalle? support,
+    int numero,
+  ) async {
+    if (presentee.estCoran) {
+      await ref.read(presentateurCoranProvider).presenterPage(numero);
+    } else if (support != null) {
+      await _partagerSupport(support, numero);
+    }
   }
 
   /// S0 : la bibliotheque du Coran, puis la page presentee a la classe ;
@@ -2657,6 +2782,9 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     final ContenuPresente? pageEleve = vue.role == RoleSalle.eleve && !enImpasse
         ? ref.watch(contenuPresenteProvider).value
         : null;
+    // PARTAGE-GENERIQUE : les etats de lecture du mushaf ne valent que pour
+    // le Coran ; un autre support a son lecteur.
+    final bool coranEleve = pageEleve?.estCoran ?? false;
     // D9 : l'enseignant presente une page (le flux qu'il lit lui-meme) : sur
     // telephone, la page prend alors toute la largeur ou toute la hauteur.
     final ContenuPresente? pagePresentee = _panneauEnseignant(vue) && !enImpasse
@@ -2666,6 +2794,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     // (etats de lecture) : la page ne prend la place que si elle est lue.
     final bool pageEnseignant =
         pagePresentee != null &&
+        pagePresentee.estCoran &&
         (ref
                 .watch(pageCoranProvider(pagePresentee.page))
                 .value
@@ -2674,7 +2803,9 @@ class _SallePageEtat extends ConsumerState<SallePage> {
             false) &&
         pageCoranLisible(ref, pagePresentee.page);
     final bool pageEleveLisible =
-        pageEleve != null && pageCoranLisible(ref, pageEleve.page);
+        pageEleve != null &&
+        coranEleve &&
+        pageCoranLisible(ref, pageEleve.page);
 
     // S0 (arbitrage du pilote, 24/10/2026) : une fois dans la salle,
     // l'eleve, la guidee et l'enseignant passent par la salle de seance
@@ -2693,15 +2824,40 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       // preparation de la seance suivante et pour le remplacant ; le serveur
       // retrouve la classe par la seance.
       final String? groupe = widget.groupeId;
+      // PARTAGE-GENERIQUE : la page d'un autre support ne s'ecrit jamais
+      // dans la memoire du Coran (elle ecraserait la page du Coran de la
+      // Classe) ; elle a la sienne, par Classe et par support.
       if (vue.role == RoleSalle.enseignant && presentee != null) {
-        ref
-            .read(memoirePageClasseProvider)
-            .ecrire(groupe, presentee.page, sessionId: widget.seanceId);
+        if (presentee.estCoran) {
+          ref
+              .read(memoirePageClasseProvider)
+              .ecrire(groupe, presentee.page, sessionId: widget.seanceId);
+        } else if (supportDeSalleDe(
+              presentee,
+              ref.read(supportsDeSalleProvider),
+            )
+            case final SupportDeSalle ouvert) {
+          ref
+              .read(memoireRepriseSupportProvider)
+              .ecrire(
+                groupe,
+                support: ouvert.id,
+                version: ouvert.version,
+                page: presentee.page,
+                pages: ouvert.pages,
+                sessionId: widget.seanceId,
+              );
+        }
       }
       // CAHIER-C1 : la page retenue au serveur, lue une fois a l'entree, pour
       // « Reprendre page N » sur un autre appareil.
       if (vue.role == RoleSalle.enseignant) {
         ref.watch(pageRepriseSeanceProvider(widget.seanceId));
+        // PARTAGE-GENERIQUE : les pages retenues des autres supports, lues
+        // seulement quand la salle en connait (aucun en production).
+        if (ref.watch(supportsDeSalleProvider).isNotEmpty) {
+          ref.watch(pagesRepriseSupportsProvider(widget.seanceId));
+        }
       }
       // Plan de composition du 26/10/2026 : le nom de la Classe et le titre
       // de l'enseignant (« Sayyida Amina ») en haut de la salle. Revue de la
@@ -2722,9 +2878,10 @@ class _SallePageEtat extends ConsumerState<SallePage> {
         annonces: annonces,
         groupeId: widget.groupeId,
         age: ref.watch(portAgeEleveProvider).ageDeLEleve(),
+        // PARTAGE-GENERIQUE : le support presente, quel qu'il soit.
         supportPresente: presentee == null
             ? null
-            : DepuisSalle.pageCoran(presentee.page),
+            : supportPresenteDe(presentee, ref.watch(supportsDeSalleProvider)),
         videoSuspendue: _repliAffiche.videoSuspendue,
         // RESEAU-ELEVES : le reseau de chacun, filtre (barres, alerte).
         reseaux: _suiviReseau.etats(),
@@ -2852,10 +3009,22 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           ? _CorpsDocument(
               vue: vue,
               lignes: lignes,
-              document: PageCoranSalle(
-                key: SallePage.pageEleveKey,
-                numero: pageEleve.page,
-              ),
+              document: coranEleve
+                  ? PageCoranSalle(
+                      key: SallePage.pageEleveKey,
+                      numero: pageEleve.page,
+                    )
+                  : KeyedSubtree(
+                      key: SallePage.pageEleveKey,
+                      child: _pageDuSupport(
+                        context,
+                        ref.watch(supportsDeSalleProvider),
+                        supportPresenteDe(
+                          pageEleve,
+                          ref.watch(supportsDeSalleProvider),
+                        ),
+                      ),
+                    ),
               presentationLue: true,
               pageCoran: pageEleveLisible,
             )

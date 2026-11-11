@@ -307,6 +307,17 @@
       "fermerReprise": "Fermer le rappel de la page {page}",
       "pageDeLaClasse": "La page suit celle de l'enseignant. Elle tourne avec la classe."
     },
+    "support": {
+      "inconnuTitre": "Ce support ne peut pas encore s'afficher ici",
+      "inconnuDetail": "L'enseignant partage un support que cette version de l'application ne connaît pas. Le cours continue à la voix. Après le cours, fermer puis rouvrir l'application la met à jour.",
+      "inconnuNom": "Support partagé",
+      "titrePage": "{titre} · Page {page}",
+      "demoDetail": "Support de démonstration. Il sert à essayer le partage.",
+      "repriseNonRetenue": "La page de ce support n'est pas encore retenue d'une séance à l'autre. À la prochaine séance, choisissez de nouveau la page.",
+      "pageIllisible": "Cette page ne s'affiche pas",
+      "pageIllisibleDetail": "Le fichier de la page n'est pas arrivé, la connexion a peut-être été coupée. Réessayez\u00a0: la séance et le son continuent.",
+      "reessayerPage": "Réessayer d'afficher la page {page}"
+    },
     "etagere": {
       "etape": "Étape {numero}",
       "coranCouverture": {

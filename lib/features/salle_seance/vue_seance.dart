@@ -370,6 +370,7 @@ class SupportPageFixe {
     required this.hauteurCanonique,
     this.mention,
     this.cleImage,
+    this.ratioFixe = false,
   }) : assert(page >= 1 && page <= total),
        assert(largeurCanonique > 0 && hauteurCanonique > 0);
 
@@ -396,6 +397,13 @@ class SupportPageFixe {
   /// livree (demonstration ; fournisseur des pages a BR-1, TB-BR-19).
   final String? cleImage;
 
+  /// PARTAGE-GENERIQUE (11/11/2026) : vrai quand la page est une image aux
+  /// proportions fixes (livre de lecture, page d'un document) : en plein
+  /// ecran elle garde son ratio, centree, jamais etiree, pour que le pointeur
+  /// et les traits tombent au meme endroit de la page sur tous les appareils.
+  /// Faux (le Coran) : la page se compose sur toute la place donnee.
+  final bool ratioFixe;
+
   /// Le ratio largeur sur hauteur, fixe par les donnees.
   double get ratio => largeurCanonique / hauteurCanonique;
 
@@ -410,6 +418,7 @@ class SupportPageFixe {
     hauteurCanonique: hauteurCanonique,
     mention: mention,
     cleImage: cleImage,
+    ratioFixe: ratioFixe,
   );
 }
 

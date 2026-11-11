@@ -260,6 +260,8 @@ import 'features/recherche/domaines/familles_eleves/resolution_ra_supabase.dart'
 import 'features/recherche/moteurs_production.dart';
 import 'features/salle/position_reprise.dart';
 import 'features/salle/position_reprise_supabase.dart';
+import 'features/salle/reprise_support.dart';
+import 'features/salle/reprise_support_supabase.dart';
 import 'racine_reelle.dart';
 
 /// Les surcharges de l'application reelle (jamais le mode demonstration) :
@@ -740,6 +742,12 @@ List<Override> _surchargesAppReelle() => <Override>[
   // le serveur (derniere page presentee dans la salle).
   portPositionRepriseProvider.overrideWithValue(
     PositionRepriseSupabase(Supabase.instance.client),
+  ),
+  // PARTAGE-GENERIQUE (11/11/2026) : la page de reprise des supports autres
+  // que le Coran. Sans la migration 20261123000000, le serveur repond que la
+  // fonction n'existe pas : rien n'est retenu, une phrase le dit.
+  portRepriseSupportProvider.overrideWithValue(
+    RepriseSupportSupabase(Supabase.instance.client),
   ),
   // CAHIER-C2 (06/11/2026) : l'etape du programme de chaque eleve d'une
   // Classe, choisie et datee par le serveur (version publiee seulement).

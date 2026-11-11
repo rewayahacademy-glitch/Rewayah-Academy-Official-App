@@ -8426,5 +8426,14 @@
   "salle.gestes.finRecitationTutoie": "directeur, 11/11/2026, salle (lot GESTES-POINTEUR : cahier de la salle, section 8, Faire reciter et Appeler)",
   "salle.gestes.microFerme": "directeur, 11/11/2026, salle (lot GESTES-POINTEUR : cahier de la salle, section 8, Faire reciter et Appeler)",
   "salle.gestes.microFermeTutoie": "directeur, 11/11/2026, salle (lot GESTES-POINTEUR : cahier de la salle, section 8, Faire reciter et Appeler)",
-  "salle.gestes.microFermeGuidee": "directeur, 11/11/2026, salle (lot GESTES-POINTEUR : cahier de la salle, section 8, Faire reciter et Appeler)"
+  "salle.gestes.microFermeGuidee": "directeur, 11/11/2026, salle (lot GESTES-POINTEUR : cahier de la salle, section 8, Faire reciter et Appeler)",
+  "salle.support.inconnuTitre": "directeur, 11/11/2026, salle (lot PARTAGE-GENERIQUE : le partage en direct commun a tout support, CAHIER-SALLE 7)",
+  "salle.support.inconnuDetail": "directeur, 11/11/2026, salle (lot PARTAGE-GENERIQUE : le partage en direct commun a tout support, CAHIER-SALLE 7)",
+  "salle.support.inconnuNom": "directeur, 11/11/2026, salle (lot PARTAGE-GENERIQUE : le partage en direct commun a tout support, CAHIER-SALLE 7)",
+  "salle.support.titrePage": "directeur, 11/11/2026, salle (lot PARTAGE-GENERIQUE : le partage en direct commun a tout support, CAHIER-SALLE 7)",
+  "salle.support.demoDetail": "directeur, 11/11/2026, salle (lot PARTAGE-GENERIQUE : le partage en direct commun a tout support, CAHIER-SALLE 7)",
+  "salle.support.repriseNonRetenue": "directeur, 11/11/2026, salle (lot PARTAGE-GENERIQUE : le partage en direct commun a tout support, CAHIER-SALLE 7)",
+  "salle.support.pageIllisible": "directeur, 11/11/2026, salle (lot PARTAGE-GENERIQUE : le partage en direct commun a tout support, CAHIER-SALLE 7)",
+  "salle.support.pageIllisibleDetail": "directeur, 11/11/2026, salle (lot PARTAGE-GENERIQUE : le partage en direct commun a tout support, CAHIER-SALLE 7)",
+  "salle.support.reessayerPage": "directeur, 11/11/2026, salle (lot PARTAGE-GENERIQUE : le partage en direct commun a tout support, CAHIER-SALLE 7)"
 }

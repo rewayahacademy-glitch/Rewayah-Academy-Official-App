@@ -83,6 +83,7 @@ class SupportBibliotheque {
     this.lecteur,
     this.aValider = false,
     this.repere,
+    this.note,
   });
 
   /// K-56 (pilote, 26/10/2026) : la page presentee est en erreur et son
@@ -120,6 +121,11 @@ class SupportBibliotheque {
   /// Le repere du support dans le parcours (« Etape 1 »), ecrit sur sa
   /// couverture, ou `null`.
   final String? repere;
+
+  /// PARTAGE-GENERIQUE (11/11/2026) : une phrase a dire sur la fiche, sous
+  /// la reprise (« La page de ce support n'est pas encore retenue d'une
+  /// seance a l'autre »), ou `null`. Une information, jamais une erreur.
+  final String? note;
 
   /// Presente dans cette Classe (une page est retenue).
   bool get recent => pageReprise != null;
@@ -661,6 +667,14 @@ class _Fiche extends StatelessWidget {
                         : t.salle.etagere.reprise(page: page),
                     style: style(textes.bodySmall),
                   ),
+                  if (support.note case final String note) ...<Widget>[
+                    Ecart.vSm,
+                    Text(
+                      note,
+                      key: ValueKey<String>('bibliotheque-note-${support.id}'),
+                      style: style(textes.bodySmall),
+                    ),
+                  ],
                   if (support.aValider) ...<Widget>[
                     Ecart.vSm,
                     Text(

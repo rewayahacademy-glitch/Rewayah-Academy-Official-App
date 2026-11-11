@@ -1027,3 +1027,58 @@ enseignant.
 - **Questions au directeur** : Bibliothèque ouverte d'office seulement à 1600 et plus (recommandé) ;
   colonne collée au bord (recommandé, lot suivant) ; palette qui cache les Élèves pendant
   l'écriture (recommandé) ; icônes de 24 dans la colonne pour garder les noms à 720 (à essayer).
+
+## D-026 (11/11/2026). Le partage en direct devient commun à tout support (lot PARTAGE-GENERIQUE)
+
+**État, vérité d'abord** : codé sur une branche, rien n'est fusionné ni déployé, rien n'est prouvé en
+production. La migration est un **brouillon non appliqué**. Aucun support réel n'existe : seul un support
+de démonstration factice se partage, et seulement sous `PLAYGROUND` et dans les tests. Les traits
+(écriture) ne sont pas prouvés par un test sur ce support ; le pointeur l'est.
+
+- **Demande** (cahier §7) : « Le partage en direct (afficher, partager, suivre la page, pointer, écrire)
+  doit être un mécanisme commun à tout support, jamais codé en dur pour le Coran. »
+- **Décidé et codé** :
+  - le message de présentation dit quel support est ouvert : identifiant, version, page, nombre de pages
+    (`ContenuPresente`). Sans identifiant, c'est le Coran ;
+  - un lecteur par support (`lib/features/salle_seance/lecteur_support.dart`) : le Coran garde le sien ;
+    un support à pages d'images a un lecteur simple (`PageImageSupport`) ; un support que l'application ne
+    connaît pas dit « Ce support ne peut pas encore s'afficher ici. », avec la raison et quoi faire ;
+  - la page d'un support aux proportions fixes garde ses proportions, centrée, jamais étirée : le pointeur
+    et les traits tombent au même endroit de la page sur tous les appareils ;
+  - tourner la page, glisser, « la page suit celle de l'enseignant », le pointeur et l'écriture ne
+    savent rien du support (ils ne le savaient déjà pas : relevé dans
+    `docs/current/UX_REVIEW_SUPPORTS-ETAGERE.md` §1) ;
+  - la reprise : la page d'un autre support n'est plus jamais écrite comme une page du Coran (c'était le
+    cas de toute page présentée) ; elle a sa mémoire, par Classe et par support.
+- **Compatibilité entre versions de l'application** : une application nouvelle lit un message ancien
+  comme le Coran. Une application ancienne lit un message nouveau du Coran comme avant. Devant un autre
+  support, une application ancienne lit « rien n'est présenté » : l'élève garde la vidéo de l'enseignant
+  et entend le cours, il ne voit pas le support, et il ne voit jamais la page du Coran de même numéro.
+- **Base, écart à la consigne du lot** : la consigne proposait d'élargir la contrainte
+  `support = 'mushaf'`. Non retenu : `classe_position_reprise` a une seule ligne par Classe, donc ouvrir le
+  livre des lettres aurait effacé la page du Coran de la Classe. Le brouillon
+  `20261123000000_partage_generique_position_support.sql` crée une table neuve (une ligne par Classe et
+  par support) et deux fonctions, avec les gardes de CAHIER-C1. Aucune instruction d'effacement : pas de
+  page à coller. Sans cette migration, la salle marche ; l'enseignant lit « La page de ce support n'est
+  pas encore retenue d'une séance à l'autre. À la prochaine séance, choisissez de nouveau la page. »
+- **Droits** : inchangés. Seul le jeton qui porte le droit de présenter partage ; l'élève ne publie rien
+  (testé).
+- **Le support de démonstration** : « Les lettres », 4 pages qui ne portent que le titre, « N / 4 » et
+  « À valider ». Aucun contenu religieux ni pédagogique. Jamais dans les données de production.
+- **Reste, dit franchement** : sur ordinateur, le titre en tête de colonne dit encore « Coran · Page N »
+  pour tout support (`salle_ordinateur.dart:454`, fichier d'un autre lot ; le texte générique est prêt) ;
+  « Ouvrir le Coran » sur la scène vide et la feuille du raccourci B n'ouvrent que le Coran ; le cahier de
+  transmission ne propose que la page du Coran ; le tuteur et le contrôleur ne suivent pas la présentation
+  (déjà le cas pour le Coran) ; les flèches et le glissement supposent un livre qui se lit de droite à
+  gauche ; la Bibliothèque de la salle ne lit pas encore le catalogue ; aucun lecteur de PDF (un PDF doit
+  être déposé en images, une par page).
+- **Preuves** : `test/features/salle_partage_generique_test.dart` (compatibilité dans les deux sens,
+  support inconnu, partage de bout en bout dans la vraie `SallePage`, reprise, lecteur d'images) ;
+  captures de test, pas de la vraie application : `docs/current/captures/E2E/partage-generique/`.
+  Base : sur un Postgres nu local, le stub, les 422 migrations (le brouillon compris), puis
+  `supabase/tests/scenarios_partage_generique_position_support.sql`, 22 contrôles sur 22 (une page par
+  support, le Coran intact, étranger et élève refusés, remplaçant, direction en lecture seule). Ce
+  scénario n'est pas inscrit dans `ci.yml` (zone interdite aux agents).
+- **Questions au directeur** : le format d'un support réel (une image par page, proposé dans
+  `SUPPORTS-A-VALIDER.md`) ; installer ou non la migration avant le premier support réel ; le nom et le
+  nombre de pages du livre des lettres.
