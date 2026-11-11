@@ -221,6 +221,11 @@ Abréviations des fichiers :
 - Citation : 04/11 04:16 : « Supprime la demo, je l'avais demandé il y'a longtemps »
 - Marque : écrite dans 08 §5 bis (04/11 : « Sa demande d'origine n'avait pas été écrite : elle l'est désormais ») et PASSATION-GC §2.1 (« Il relève les demandes du directeur et en écrit la fiche »).
 
+**V9. Aucun état sans sa preuve du jour.** Un agent n'écrit « fait », « à faire », « non branché » ou « livré » qu'avec sa preuve du jour : un commit dans `main`, un fichier:ligne ou une lecture en production. Sans preuve, il écrit « non vérifié ». Un relais d'un autre agent se signale comme tel.
+- Date : 11/11/2026, ordre urgent du directeur relayé par le garde-cap puis par le pilote (lot REGISTRE).
+- Citation (texte de la consigne, transmis par le pilote) : « un agent n'écrit fait, à faire, non branché ou livré qu'avec sa preuve du jour (commit dans main, fichier:ligne ou lecture en production) ; sans preuve, il écrit non vérifié ; un relais d'un autre agent se signale comme tel. »
+- Marque : écrite ici et dans `docs/current/REGISTRE-LOTS.md`, « Règle de méthode » (5).
+
 ---
 
 ## 3. Périmètre et dispersion
