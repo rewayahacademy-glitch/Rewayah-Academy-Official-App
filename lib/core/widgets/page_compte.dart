@@ -76,7 +76,6 @@ class PageCompte extends StatelessWidget {
     this.piedEntete,
     this.titre,
     this.bandeauHorsLigne,
-    this.version = const LigneVersion(),
   });
 
   /// L'identite de la personne connectee. `null` dans les donnees : vide.
@@ -93,11 +92,6 @@ class PageCompte extends StatelessWidget {
   /// n'est pas une ligne (les espaces). Une section qui n'a ni ligne ni
   /// bloc ne s'affiche pas.
   final Map<SectionCompte, List<Widget>> avantLignes;
-
-  /// La ligne de version, en bas : par defaut la [LigneVersion] de
-  /// l'application (lue dans `version.json`, en anglais dans toutes les
-  /// langues, decision du directeur du 03/11 ; rien si elle est illisible).
-  final Widget version;
 
   /// La photo de l'en-tete, quand l'ecran la lit lui-meme (photo signee de
   /// la personne). Nulle : l'initiale du nom.
@@ -176,8 +170,13 @@ class PageCompte extends StatelessWidget {
           ),
         ],
       ),
-      Center(
-        child: KeyedSubtree(key: versionKey, child: version),
+      // La ligne de version, toujours, pour tous les roles (ordre du
+      // directeur, 11/11/2026 : « La ligne de version de l'app doit aussi
+      // apparaitre pour autres users que l'eleve ») : la LigneVersion de
+      // l'application, lue dans `version.json`, en anglais dans toutes les
+      // langues (decision du 03/11) ; rien seulement si elle est illisible.
+      const Center(
+        child: KeyedSubtree(key: versionKey, child: LigneVersion()),
       ),
     ];
 

@@ -10,7 +10,7 @@
 // - Le matricule de `LigneMatricule` ne se met plus deux fois a l'echelle.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart' show ProviderScope;
+import 'package:flutter_riverpod/flutter_riverpod.dart' show ProviderScope, Ref;
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/capacites/port_langues_communication.dart';
@@ -20,8 +20,10 @@ import 'package:rewayah_academy/core/identite/port_matricule.dart';
 import 'package:rewayah_academy/core/preferences/preferences_locales.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
+import 'package:rewayah_academy/core/version/ligne_version.dart';
 import 'package:rewayah_academy/core/widgets/page_compte.dart';
 import 'package:rewayah_academy/core/widgets/setting_row.dart';
+import 'package:rewayah_academy/features/accueil_eleve/mon_espace_accessibilite.dart';
 import 'package:rewayah_academy/features/compte/compte_page.dart';
 import 'package:rewayah_academy/features/compte/ligne_matricule.dart';
 import 'package:rewayah_academy/features/compte/lignes_compte.dart';
@@ -66,6 +68,10 @@ List<Override> _surcharges(
     ),
   ),
   portLanguesCommunicationProvider.overrideWithValue(langues ?? _FauxLangues()),
+  // La LigneVersion lit `version.json` : une version de test.
+  versionAppliProvider.overrideWith(
+    (Ref _) async => (version: '0.2.0', build: '423'),
+  ),
 ];
 
 Future<void> _monter(
@@ -176,6 +182,14 @@ void main() {
         expect(find.text(t.compte.accessibilite), findsOneWidget);
         expect(find.text(t.compte.tuteur.aide.legal), findsOneWidget);
         expect(find.byKey(PageCompte.deconnecterKey), findsOneWidget);
+        // La ligne de version, pour chaque role (directeur, 11/11/2026).
+        expect(
+          find.descendant(
+            of: find.byKey(PageCompte.versionKey),
+            matching: find.text('Version 0.2.0 (423)'),
+          ),
+          findsOneWidget,
+        );
       });
     }
 
@@ -198,6 +212,34 @@ void main() {
         isTrue,
       );
     });
+  });
+
+  testWidgets('Interface guidee (Mon espace) : la ligne de version', (
+    WidgetTester tester,
+  ) async {
+    tester.view
+      ..physicalSize = const Size(390, 2400)
+      ..devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(
+      hote(
+        MonEspaceAccessibilite(
+          prenom: 'Hakim',
+          modeActif: true,
+          onAide: () {},
+          personneId: 'p1',
+        ),
+        surcharges: _surcharges(AppRole.student),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(
+      find.descendant(
+        of: find.byKey(MonEspaceAccessibilite.versionKey),
+        matching: find.text('Version 0.2.0 (423)'),
+      ),
+      findsOneWidget,
+    );
   });
 
   group('LigneMatricule : une seule mise a l echelle', () {

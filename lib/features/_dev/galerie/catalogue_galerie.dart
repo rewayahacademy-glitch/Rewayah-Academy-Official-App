@@ -4572,7 +4572,6 @@ Widget _pageCompteExemple(
   height: _hauteurPage,
   child: PageCompte(
     identite: identite,
-    version: const Text('Version 1.0.0'),
     onDeconnecter: _deconnexionFictive,
     onReessayer: _rien,
     onChangerPhoto: _rien,

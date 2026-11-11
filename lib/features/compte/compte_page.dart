@@ -405,33 +405,13 @@ class ReglagesComptePage extends ConsumerWidget {
           ),
           Ecart.vSection,
           SectionHeader(titre: t.compte.langueRegion),
-          // Lot 22 a : la langue de l'application se choisit ici et se garde
-          // sur l'appareil (auparavant « Francais, actif » et « Arabe,
-          // non disponible », deux lignes inactives).
-          const SelecteurLangue(),
-          Ecart.vLg,
-          CarteLignes(
-            lignes: <Widget>[
-              SettingRow(
-                key: const ValueKey<String>('reglage-langue-courriels'),
-                title: t.compte.langueCourriels.titre,
-                description: t.compte.langueCourriels.ligneDetail,
-                icon: AppIcons.direction,
-                onPress: () => context.push(Routes.compteLangueCourriels),
-              ),
-              // MA-RC (MA7, K-42) : en Mode Accessibilite, les lignes
-              // inactives (sans effet pour l'eleve) ne sont pas affichees ;
-              // les rubriques et les droits restent les memes.
-              if (!modeAccessibilite) ...<Widget>[
-                SettingRow(
-                  title: t.compte.fuseau,
-                  description: t.compte.fuseauDetail,
-                  value: t.compte.nonDisponible,
-                  icon: AppIcons.reglages,
-                  enabled: false,
-                ),
-              ],
-            ],
+          // PROFILS P4 (garde-cap, 11/11/2026) : une seule langue, celle du
+          // compte, pour l'interface ET les e-mails (`choisirLangueCompte`) ;
+          // plus de ligne « Langue des e-mails » ni de fuseau « Non
+          // disponible » (« 100 % operationnel », directeur, 11/11/2026).
+          GroupeReglages(
+            key: const ValueKey<String>('reglage-langue-compte'),
+            lignes: <LigneRubrique>[ligneLangueCompte(context)],
           ),
           Ecart.vSection,
           SectionHeader(titre: t.compte.notifications),

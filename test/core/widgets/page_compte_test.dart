@@ -15,6 +15,7 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/icons/app_icons.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/theme/app_palette.dart';
+import 'package:rewayah_academy/core/version/ligne_version.dart';
 import 'package:rewayah_academy/core/widgets/entete_compte.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/core/widgets/groupe_preferences.dart';
@@ -101,7 +102,6 @@ Future<_Gestes> _monter(
     hoteCapture(
       PageCompte(
         identite: identite,
-        version: const Text('Version 1.0.0'),
         onDeconnecter: () async => g.deconnexions++,
         onReessayer: () => g.reessais++,
         onChangerPhoto: () => g.photos++,
@@ -113,6 +113,10 @@ Future<_Gestes> _monter(
       surcharges: <Override>[
         serviceReseauProvider.overrideWithValue(
           FauxServiceReseau(horsLigneMaintenant: horsLigne),
+        ),
+        // La LigneVersion lit `version.json` : une version de test.
+        versionAppliProvider.overrideWith(
+          (Ref _) async => (version: '1.0.0', build: null),
         ),
       ],
     ),
@@ -198,7 +202,13 @@ void main() {
                   ),
                   findsOneWidget,
                 );
-                expect(find.text('Version 1.0.0'), findsOneWidget);
+                expect(
+                  find.descendant(
+                    of: find.byKey(PageCompte.versionKey),
+                    matching: find.textContaining('1.0.0'),
+                  ),
+                  findsOneWidget,
+                );
                 expect(
                   Directionality.of(tester.element(find.byType(EnteteCompte))),
                   langue == 'ar' ? TextDirection.rtl : TextDirection.ltr,

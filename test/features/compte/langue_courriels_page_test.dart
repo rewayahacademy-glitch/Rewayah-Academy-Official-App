@@ -65,9 +65,12 @@ void main() {
   setUpAll(chargerPolicesDuDepot);
 
   group('entree', () {
-    testWidgets('les reglages du compte ouvrent la langue des e-mails', (
-      tester,
-    ) async {
+    // PROFILS P4 (garde-cap, 11/11/2026) : une seule langue, celle du
+    // compte. Les reglages du compte n'ouvrent plus « Langue des e-mails » :
+    // ils portent la seule ligne « Langue » (`choisirLangueCompte`). La page
+    // reste atteinte depuis les Preferences du tuteur, jusqu'au lot du role.
+    testWidgets('les reglages du compte : une seule ligne Langue, plus de '
+        'langue des e-mails', (tester) async {
       await monterRecrutement(
         tester,
         chemin: Routes.compteReglages,
@@ -77,16 +80,16 @@ void main() {
           sourceSessionProvider.overrideWithValue(FausseSourceSession()),
         ],
       );
-      final Finder ligne = find.byKey(
-        const ValueKey<String>('reglage-langue-courriels'),
-      );
-      expect(ligne, findsOneWidget);
-      expect(find.text(l.titre), findsOneWidget);
-      await _taper(tester, ligne);
       expect(
-        find.text('temoin:${Routes.compteLangueCourriels}'),
+        find.byKey(const ValueKey<String>('reglage-langue-courriels')),
+        findsNothing,
+      );
+      expect(find.text(l.titre), findsNothing);
+      expect(
+        find.byKey(const ValueKey<String>('reglage-langue-compte')),
         findsOneWidget,
       );
+      expect(find.text(t.compte.langue), findsOneWidget);
     });
   });
 
