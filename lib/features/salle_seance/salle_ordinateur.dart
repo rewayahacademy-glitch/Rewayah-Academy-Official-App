@@ -22,6 +22,7 @@
 // d'appel [DockSeance] et [BoutonAppel].
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/i18n/strings.g.dart';
@@ -69,7 +70,7 @@ const double largeurPanneauGauche =
 const double largeurPanneauDroit = largeurPanneauSeance;
 
 /// La salle de l'enseignant sur ordinateur.
-class SalleOrdinateur extends StatefulWidget {
+class SalleOrdinateur extends ConsumerStatefulWidget {
   const SalleOrdinateur({
     required this.vue,
     required this.actions,
@@ -106,10 +107,10 @@ class SalleOrdinateur extends StatefulWidget {
   );
 
   @override
-  State<SalleOrdinateur> createState() => _EtatSalleOrdinateur();
+  ConsumerState<SalleOrdinateur> createState() => _EtatSalleOrdinateur();
 }
 
-class _EtatSalleOrdinateur extends State<SalleOrdinateur> {
+class _EtatSalleOrdinateur extends ConsumerState<SalleOrdinateur> {
   static const String _cleEleves = 'salle-ordinateur-eleves';
   static const String _cleBibliotheque = 'salle-ordinateur-bibliotheque';
 
@@ -193,6 +194,14 @@ class _EtatSalleOrdinateur extends State<SalleOrdinateur> {
                         width: largeurPanneauGauche,
                         child: _PanneauGauche(vue: vue, actions: actions),
                       ),
+                    // BARRE-ORDINATEUR (11/11/2026) : quand l'enseignant
+                    // ecrit, la palette se pose contre la page, du cote
+                    // d'Ecrire dans la barre ; la page garde sa hauteur.
+                    if (barreOutilsVisible(ref, vue))
+                      Align(
+                        alignment: AlignmentDirectional.topStart,
+                        child: BarreOutilsSalle(vue: vue),
+                      ),
                     Expanded(
                       child: _Centre(vue: vue, local: local),
                     ),
@@ -205,17 +214,6 @@ class _EtatSalleOrdinateur extends State<SalleOrdinateur> {
                   ],
                 ),
               ),
-              // Plan §3 : quand l'enseignant ecrit, la barre d'outils au-dessus
-              // des commandes, tout visible.
-              Consumer(
-                builder: (BuildContext _, WidgetRef ref, Widget? _) =>
-                    barreOutilsVisible(ref, vue)
-                    ? Padding(
-                        padding: const EdgeInsets.only(top: AppSpacing.lg),
-                        child: Center(child: BarreOutilsSalle(vue: vue)),
-                      )
-                    : const SizedBox.shrink(),
-              ),
               Ecart.vLg,
               _Bas(
                 vue: vue,
@@ -223,6 +221,7 @@ class _EtatSalleOrdinateur extends State<SalleOrdinateur> {
                 local: local,
                 eleves: eleves,
                 bibliotheque: bibliotheque && !commandes,
+                raccourcis: widget.raccourcis,
               ),
             ],
           ),
@@ -230,13 +229,135 @@ class _EtatSalleOrdinateur extends State<SalleOrdinateur> {
       ),
     );
     if (!widget.raccourcis) return salle;
-    return RaccourcisPleinEcran(
+    // BARRE-ORDINATEUR (11/11/2026) : P, E et T font ce que font Pointeur,
+    // Ecrire et Tableau ; Echap repose l'outil tenu. Poses AU-DESSUS des
+    // raccourcis M, V, R, B, F de la salle (le focus est sur leur noeud) :
+    // une touche que la salle ne prend pas remonte jusqu'ici.
+    return _RaccourcisOutils(
       vue: vue,
       actions: actions,
-      local: local,
-      onEleves: actions.onEleves,
-      child: salle,
+      child: RaccourcisPleinEcran(
+        vue: vue,
+        actions: actions,
+        local: local,
+        onEleves: actions.onEleves,
+        child: salle,
+      ),
     );
+  }
+}
+
+/// Vrai quand un champ de texte tient le focus : aucune lettre n'est alors
+/// un raccourci (la regle E19 de la salle, jamais pendant une saisie).
+bool _saisieEnCours() {
+  final BuildContext? focus = FocusManager.instance.primaryFocus?.context;
+  if (focus == null) return false;
+  return focus.widget is EditableText ||
+      focus.findAncestorWidgetOfExactType<EditableText>() != null;
+}
+
+/// Les raccourcis des tuiles de la page (BARRE-ORDINATEUR, 11/11/2026) :
+/// P (Pointeur), E (Ecrire), T (Tableau), Echap (reposer l'outil tenu).
+/// Chacun n'agit que si sa tuile est rendue (un geste qui ne peut pas
+/// aboutir ne fait rien), jamais pendant une saisie.
+class _RaccourcisOutils extends ConsumerWidget {
+  const _RaccourcisOutils({
+    required this.vue,
+    required this.actions,
+    required this.child,
+  });
+
+  final VueSeance vue;
+  final ActionsSeance actions;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final bool outils = actions.onOutil != null;
+    // Une touche refusee n'est pas prise : elle reste au champ de texte ou
+    // a la feuille qui l'attend.
+    bool permis(ToucheOutil touche) {
+      if (_saisieEnCours()) return false;
+      return switch (touche) {
+        ToucheOutil.pointeur => outils && vue.voitOutils,
+        ToucheOutil.ecrire => outils && vue.ecritureProposee,
+        ToucheOutil.tableau => actions.onTableau != null,
+        ToucheOutil.reposer => ref.read(etatOutilsProvider).outilActif != null,
+      };
+    }
+
+    void executer(ToucheOutil touche) {
+      switch (touche) {
+        case ToucheOutil.pointeur:
+          basculerOutilSalle(ref, actions, OutilEnseignement.pointeur);
+        case ToucheOutil.ecrire:
+          basculerOutilSalle(ref, actions, OutilEnseignement.ecrire);
+        case ToucheOutil.tableau:
+          actions.onTableau?.call();
+        case ToucheOutil.reposer:
+          ref.read(etatOutilsProvider.notifier).relacherOutil();
+      }
+    }
+
+    return Shortcuts(
+      shortcuts: const <ShortcutActivator, Intent>{
+        SingleActivator(LogicalKeyboardKey.keyP): _IntentOutil(
+          ToucheOutil.pointeur,
+        ),
+        SingleActivator(LogicalKeyboardKey.keyE): _IntentOutil(
+          ToucheOutil.ecrire,
+        ),
+        SingleActivator(LogicalKeyboardKey.keyT): _IntentOutil(
+          ToucheOutil.tableau,
+        ),
+        SingleActivator(LogicalKeyboardKey.escape): _IntentOutil(
+          ToucheOutil.reposer,
+        ),
+      },
+      child: Actions(
+        actions: <Type, Action<Intent>>{
+          _IntentOutil: _ActionOutil(permis: permis, executer: executer),
+        },
+        child: child,
+      ),
+    );
+  }
+}
+
+/// Les touches des tuiles de la page.
+enum ToucheOutil {
+  /// P : prend ou repose le Pointeur.
+  pointeur,
+
+  /// E : prend ou repose Ecrire.
+  ecrire,
+
+  /// T : ouvre ou ferme le tableau pour la classe.
+  tableau,
+
+  /// Echap : repose l'outil tenu.
+  reposer,
+}
+
+class _IntentOutil extends Intent {
+  const _IntentOutil(this.touche);
+
+  final ToucheOutil touche;
+}
+
+class _ActionOutil extends Action<_IntentOutil> {
+  _ActionOutil({required this.permis, required this.executer});
+
+  final bool Function(ToucheOutil) permis;
+  final void Function(ToucheOutil) executer;
+
+  @override
+  bool isEnabled(_IntentOutil intent) => permis(intent.touche);
+
+  @override
+  Object? invoke(_IntentOutil intent) {
+    executer(intent.touche);
+    return null;
   }
 }
 
@@ -602,36 +723,70 @@ class _PanneauCommandes extends StatelessWidget {
   );
 }
 
-/// La tuile nommee d'un outil de l'enseignant (Pointeur, Ecrire) : la barre
-/// de l'ordinateur et l'onglet Outils du tiroir du telephone (plan du
-/// 26/10/2026). [outil] : l'outil retenu.
+/// Prend l'outil [o] (Pointeur, Ecrire), ou le repose s'il etait tenu : la
+/// tuile de la barre et sa touche (P, E) font la meme chose.
+void basculerOutilSalle(
+  WidgetRef ref,
+  ActionsSeance actions,
+  OutilEnseignement o,
+) {
+  if (depotAnnotationsDisponible(ref)) {
+    ref.read(etatOutilsProvider.notifier).choisirOutil(outilDock(o));
+  }
+  actions.onOutil?.call(o);
+}
+
+/// La tuile nommee d'un outil de l'enseignant (Pointeur, Ecrire), dans la
+/// barre de l'ordinateur. [outil] : l'outil tenu.
+///
+/// BARRE-ORDINATEUR (11/11/2026) : l'outil tenu est le SEUL aplat lilas de la
+/// barre, dit par trois signaux : l'aplat, l'icone pleine, l'etat
+/// « selectionne » lu (et l'infobulle « Pointeur en main »). [raccourci] : la
+/// touche, montree dans l'infobulle.
 Widget tuileOutilSalle(
   WidgetRef ref, {
   required ActionsSeance actions,
   required OutilDock? outil,
   required OutilEnseignement o,
-}) => BoutonAppel(
-  key: ValueKey<String>('salle-outil-${o.name}'),
-  // « Ecrire » arme le stylo : son icone, et non celle du tableau, qui est la
-  // meme (`annoter`) et se tient a cote dans la barre.
-  icone: o == OutilEnseignement.ecrire
-      ? AppIcons.stylet
-      : iconeOutilEnseignement(o),
-  libelle: libelleOutilEnseignement(o),
-  nom: libelleOutilEnseignement(o),
-  retenu: outil == outilDock(o),
-  selectionne: outil == outilDock(o),
-  onPress: () {
-    if (depotAnnotationsDisponible(ref)) {
-      ref.read(etatOutilsProvider.notifier).choisirOutil(outilDock(o));
-    }
-    actions.onOutil?.call(o);
-  },
-);
+  String? raccourci,
+}) {
+  final bool tenu = outil == outilDock(o);
+  final String nom = libelleOutilEnseignement(o);
+  return BoutonAppel(
+    key: ValueKey<String>('salle-outil-${o.name}'),
+    // « Ecrire » arme le stylo : son icone, et non celle du tableau.
+    icone: o == OutilEnseignement.ecrire
+        ? AppIcons.stylet
+        : iconeOutilEnseignement(o),
+    libelle: tenu ? t.salle.barre.outilTenu(outil: nom) : nom,
+    nom: nom,
+    retenu: tenu,
+    selectionne: tenu,
+    iconePleine: tenu,
+    raccourci: raccourci,
+    onPress: () => basculerOutilSalle(ref, actions, o),
+  );
+}
 
-/// La barre des commandes, deux groupes, chaque bouton nomme : au debut
-/// Eleves, Pointeur, Ecrire, Tableau, Plus ; a la fin Micro, Camera,
-/// Bibliotheque, Quitter.
+/// La barre des commandes de l'ordinateur.
+///
+/// BARRE-ORDINATEUR (directeur, 11/11/2026, prevaut sur la barre du plan du
+/// 26/10 pour l'ordinateur) : cinq groupes nommes par ce que l'enseignant
+/// veut faire, separes d'un filet ; neuf tuiles, chacune a un clic, toujours
+/// a la meme place.
+///
+/// - au debut : « Ma voix et mon image » (Micro, Camera), « Ma classe »
+///   (Eleves), « Sur la page » (Pointeur, Ecrire) ;
+/// - a la fin : « Le support » (Bibliotheque, Tableau), « Sortir » (Reduire,
+///   Quitter).
+///
+/// Plus de « Plus » sur ordinateur : tout ce qu'il ouvrait est deja a un clic
+/// ailleurs (Bibliotheque, Pointeur, Ecrire dans la barre ; zoom, ranger et
+/// focus contre le titre du support ; la page qui tourne contre la page ; la
+/// palette d'ecriture contre la page). Une tuile du panneau qu'elle ouvre
+/// reste de son cote (directeur, 26/10 : Eleves au debut, Bibliotheque a la
+/// fin). Pointeur et Ecrire gardent leur place quand ils ne peuvent pas
+/// servir (aucune page ni tableau) : la place reste, vide, rien ne glisse.
 class _Bas extends ConsumerWidget {
   const _Bas({
     required this.vue,
@@ -639,6 +794,7 @@ class _Bas extends ConsumerWidget {
     required this.local,
     required this.eleves,
     required this.bibliotheque,
+    required this.raccourcis,
   });
 
   final VueSeance vue;
@@ -647,6 +803,16 @@ class _Bas extends ConsumerWidget {
   final bool eleves;
   final bool bibliotheque;
 
+  /// Les raccourcis clavier sont actifs : chaque tuile montre sa touche.
+  final bool raccourcis;
+
+  /// Les cles des groupes (tests, captures).
+  static const Key cleVoix = ValueKey<String>('salle-barre-voix');
+  static const Key cleClasse = ValueKey<String>('salle-barre-classe');
+  static const Key clePage = ValueKey<String>('salle-barre-page');
+  static const Key cleSupport = ValueKey<String>('salle-barre-support');
+  static const Key cleSortir = ValueKey<String>('salle-barre-sortir');
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final OutilDock? outil = ref.watch(
@@ -654,74 +820,127 @@ class _Bas extends ConsumerWidget {
     );
     final VoidCallback? livres = actions.onBibliotheque;
     final VoidCallback? lesEleves = actions.onEleves;
-    final VoidCallback? commandes = actions.onCommandes;
     final bool outils = actions.onOutil != null;
-    Widget boutonOutil(OutilEnseignement o) =>
-        tuileOutilSalle(ref, actions: actions, outil: outil, o: o);
+    String? touche(String lettre) => raccourcis ? lettre : null;
+    final AppPalette palette = AppPalette.of(context);
 
-    final Widget gauche = DockSeance(
-      key: const ValueKey<String>('salle-commandes-gauche'),
+    // Un groupe nomme : le lecteur d'ecran dit son nom avant ses tuiles.
+    Widget groupe(Key cle, String nom, List<Widget> tuiles) => Semantics(
+      key: cle,
+      container: true,
+      explicitChildNodes: true,
+      label: nom,
+      child: Wrap(
+        crossAxisAlignment: WrapCrossAlignment.center,
+        spacing: AppSpacing.sm,
+        runSpacing: AppSpacing.sm,
+        children: tuiles,
+      ),
+    );
+    // La place d'une tuile qui ne peut pas servir maintenant : sa taille,
+    // rien a voir, rien a toucher, rien a lire.
+    Widget place(bool visible, Widget tuile) => Visibility(
+      visible: visible,
+      maintainSize: true,
+      maintainAnimation: true,
+      maintainState: true,
+      child: tuile,
+    );
+    final Widget filet = Padding(
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+      child: SizedBox(
+        height: AppSpacing.section,
+        child: VerticalDivider(
+          width: 1,
+          thickness: 1,
+          color: palette.surfaceInverse.onBackground.withValues(alpha: 0.3),
+        ),
+      ),
+    );
+    Widget dock(List<CommandeDock> commandes, {Key? key}) => DockSeance(
+      key: key,
       vue: vue,
       actions: actions,
       microOuvert: local.microOuvert,
       cameraAllumee: local.cameraAllumee,
       nommee: true,
-      commandes: const <CommandeDock>[CommandeDock.tableau],
-      avant: <Widget>[
-        if (lesEleves != null)
+      raccourcis: raccourcis,
+      commandes: commandes,
+    );
+
+    final List<Widget> debut = <Widget>[
+      groupe(cleVoix, t.salle.barre.groupes.voix, <Widget>[
+        dock(const <CommandeDock>[CommandeDock.micro, CommandeDock.camera]),
+      ]),
+      if (lesEleves != null)
+        groupe(cleClasse, t.salle.barre.groupes.classe, <Widget>[
           BoutonAppel(
             key: const ValueKey<String>('salle-eleves'),
             icone: AppIcons.eleves,
             libelle: t.salle.seance.eleves,
             nom: t.salle.seance.eleves,
-            retenu: eleves,
+            ouvert: eleves,
             selectionne: eleves,
+            iconePleine: eleves,
+            raccourci: touche('R'),
             onPress: lesEleves,
           ),
-        if (outils) ...<Widget>[
-          boutonOutil(OutilEnseignement.pointeur),
-          if (vue.ecritureProposee) boutonOutil(OutilEnseignement.ecrire),
-        ],
-      ],
-      plus: commandes != null && CommandesPedagogiques.aDesEntrees(vue, actions)
-          ? BoutonPlusAppel(
-              onPress: commandes,
-              ouvert: vue.panneau == PanneauOuvert.commandes,
-              nom: t.tc.outils.trait.plus,
-            )
-          : null,
-    );
-    final Widget droite = DockSeance(
-      key: const ValueKey<String>('salle-commandes-droite'),
-      vue: vue,
-      actions: actions,
-      microOuvert: local.microOuvert,
-      cameraAllumee: local.cameraAllumee,
-      agrandi: local.agrandi,
-      nommee: true,
-      commandes: const <CommandeDock>[
-        CommandeDock.micro,
-        CommandeDock.camera,
-        CommandeDock.quitter,
-      ],
-      avantQuitter: <Widget>[
+        ]),
+      if (outils)
+        groupe(clePage, t.salle.barre.groupes.page, <Widget>[
+          place(
+            vue.voitOutils,
+            tuileOutilSalle(
+              ref,
+              actions: actions,
+              outil: outil,
+              o: OutilEnseignement.pointeur,
+              raccourci: touche('P'),
+            ),
+          ),
+          place(
+            vue.ecritureProposee,
+            tuileOutilSalle(
+              ref,
+              actions: actions,
+              outil: outil,
+              o: OutilEnseignement.ecrire,
+              raccourci: touche('E'),
+            ),
+          ),
+        ]),
+    ];
+    final List<Widget> fin = <Widget>[
+      groupe(cleSupport, t.salle.barre.groupes.support, <Widget>[
         if (livres != null)
           BoutonAppel(
             key: const ValueKey<String>('salle-bibliotheque'),
             icone: AppIcons.bibliotheque,
             libelle: t.salle.seance.commandes.bibliotheque,
             nom: t.salle.seance.commandes.bibliotheque,
-            retenu: bibliotheque,
+            ouvert: bibliotheque,
             selectionne: bibliotheque,
+            iconePleine: bibliotheque,
+            raccourci: touche('B'),
             onPress: livres,
           ),
+        if (actions.onTableau != null &&
+            vue.commandesDock.contains(CommandeDock.tableau))
+          dock(const <CommandeDock>[CommandeDock.tableau]),
+      ]),
+      groupe(cleSortir, t.salle.barre.groupes.sortir, <Widget>[
+        // « Reduire » se pose avant Quitter (SORTIE-SALLE, inchange) ; la
+        // sortie du focus n'y est plus : elle reste contre le titre du
+        // support, en focus aussi (touche F).
+        dock(const <CommandeDock>[CommandeDock.quitter]),
+      ]),
+    ];
+    List<Widget> avecFilets(List<Widget> groupes) => <Widget>[
+      for (int i = 0; i < groupes.length; i++) ...<Widget>[
+        if (i > 0) filet,
+        groupes[i],
       ],
-    );
-    // Maquette du directeur du 26/10/2026 (barre precisee par le pilote) :
-    // UNE barre sombre sur toute la largeur, deux groupes de tuiles, un filet
-    // entre eux. Decision du directeur du 26/10/2026 : une tuile se place du
-    // cote du panneau qu'elle ouvre (Eleves au debut, Bibliotheque a la fin).
-    final AppPalette palette = AppPalette.of(context);
+    ];
     return DecoratedBox(
       key: SalleOrdinateur.cleBas,
       decoration: palette.surfaceInverse.decoration(
@@ -729,37 +948,34 @@ class _Bas extends ConsumerWidget {
       ),
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.sm),
-        child: IntrinsicHeight(
-          child: Row(
-            children: <Widget>[
-              Expanded(
-                child: Align(
-                  alignment: AlignmentDirectional.centerStart,
-                  child: gauche,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          spacing: AppSpacing.lg,
+          children: <Widget>[
+            Expanded(
+              child: Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: Wrap(
+                  key: const ValueKey<String>('salle-commandes-gauche'),
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  runSpacing: AppSpacing.sm,
+                  children: avecFilets(debut),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.sm,
-                  vertical: AppSpacing.sm,
-                ),
-                child: VerticalDivider(
-                  key: const ValueKey<String>('salle-barre-filet'),
-                  width: 1,
-                  thickness: 1,
-                  color: palette.surfaceInverse.onBackground.withValues(
-                    alpha: 0.3,
-                  ),
+            ),
+            Expanded(
+              child: Align(
+                alignment: AlignmentDirectional.centerEnd,
+                child: Wrap(
+                  key: const ValueKey<String>('salle-commandes-droite'),
+                  alignment: WrapAlignment.end,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  runSpacing: AppSpacing.sm,
+                  children: avecFilets(fin),
                 ),
               ),
-              Expanded(
-                child: Align(
-                  alignment: AlignmentDirectional.centerEnd,
-                  child: droite,
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

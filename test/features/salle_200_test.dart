@@ -1076,7 +1076,10 @@ void main() {
   }) async {
     expect(tester.takeException(), isNull);
     final Finder docks = find.byKey(const ValueKey<String>('dock-seance'));
-    expect(docks, findsNWidgets(2));
+    // BARRE-ORDINATEUR (directeur, 11/11/2026) : la barre est faite de
+    // groupes nommes ; les commandes d'appel y sont reparties (voix,
+    // tableau, sortie), chaque groupe garde les memes regles.
+    expect(docks, findsAtLeastNWidgets(2));
     for (final Element dock in docks.evaluate()) {
       final Finder ce = find.byWidget(dock.widget);
       final Finder disques = find.descendant(

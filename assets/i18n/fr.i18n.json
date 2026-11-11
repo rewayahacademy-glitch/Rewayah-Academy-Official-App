@@ -289,6 +289,17 @@
     "saisieVide": "Écrivez le prénom {prenom} pour confirmer"
   },
   "salle": {
+    "barre": {
+      "infobulle": "{etat} (touche {touche})",
+      "outilTenu": "{outil} en main (Échap pour le reposer)",
+      "groupes": {
+        "voix": "Ma voix et mon image",
+        "classe": "Ma classe",
+        "page": "Sur la page",
+        "support": "Le support",
+        "sortir": "Sortir"
+      }
+    },
     "sortie": {
       "reduire": "Réduire la salle",
       "reduireNom": "Réduire",

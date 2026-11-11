@@ -1520,7 +1520,14 @@ void main() {
         find.byKey(const ValueKey<String>('surface-feuille')),
         findsOneWidget,
       );
-      expect(find.byTooltip(t.salle.seance.tableauOuvert), findsOneWidget);
+      // BARRE-ORDINATEUR (11/11/2026) : l'infobulle dit l'etat, puis la
+      // touche (« Tableau ouvert (touche T) »).
+      expect(
+        find.byTooltip(
+          RegExp('^${RegExp.escape(t.salle.seance.tableauOuvert)}'),
+        ),
+        findsOneWidget,
+      );
       // L'ouverture part a la classe, sur le canal fiable.
       expect(moteur.donneesPubliees.last.fiable, isTrue);
 
