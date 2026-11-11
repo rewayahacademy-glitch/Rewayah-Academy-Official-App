@@ -107,9 +107,11 @@ final List<(String, AppRole, String, List<Override> Function())> _ecrans =
         Routes.enseignantMessages,
         () => <Override>[
           portMessagesMetierProvider.overrideWithValue(
-            MessagesMetierDemo(
-              role: RoleDemoCommunications.enseignant,
-              maintenant: DateTime.utc(2026, 10, 4, 12),
+            _MessagesLongs(
+              MessagesMetierDemo(
+                role: RoleDemoCommunications.enseignant,
+                maintenant: DateTime.utc(2026, 10, 4, 12),
+              ),
             ),
           ),
         ],
@@ -127,6 +129,37 @@ final List<(String, AppRole, String, List<Override> Function())> _ecrans =
         _bibliotheque,
       ),
     ];
+
+/// La demonstration des Messages, dans ce seul test, avec une liste trois
+/// fois plus longue (memes fils, identifiants distincts) : a 320, elle doit
+/// passer sous la barre flottante. Les donnees de demonstration de
+/// l'application ne changent pas.
+class _MessagesLongs implements PortMessagesMetier {
+  _MessagesLongs(this._demo);
+
+  final PortMessagesMetier _demo;
+
+  @override
+  Future<List<ResumeFil>> fils() async {
+    final List<ResumeFil> base = await _demo.fils();
+    return <ResumeFil>[
+      for (int k = 0; k < 3; k++)
+        for (final ResumeFil f in base)
+          ResumeFil(
+            id: k == 0 ? f.id : '${f.id}-$k',
+            objet: f.objet,
+            interlocuteurs: f.interlocuteurs,
+            apercu: f.apercu,
+            dernierMessageLe: f.dernierMessageLe,
+            attention: f.attention,
+          ),
+    ];
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) =>
+      throw UnimplementedError('${invocation.memberName}');
+}
 
 Future<void> _monter(
   WidgetTester tester, {
