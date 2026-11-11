@@ -18,9 +18,12 @@ import 'package:rewayah_academy/core/capacites/port_support.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/identite/port_matricule.dart';
+import 'package:rewayah_academy/core/planning/service_planning.dart';
 import 'package:rewayah_academy/core/preferences/preferences_locales.dart';
+import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
+import 'package:rewayah_academy/core/suivi/service_suivi.dart';
 import 'package:rewayah_academy/core/version/ligne_version.dart';
 import 'package:rewayah_academy/core/widgets/page_compte.dart';
 import 'package:rewayah_academy/core/widgets/setting_row.dart';
@@ -29,6 +32,7 @@ import 'package:rewayah_academy/features/compte/compte_page.dart';
 import 'package:rewayah_academy/features/compte/ligne_matricule.dart';
 import 'package:rewayah_academy/features/compte/lignes_compte.dart';
 import 'package:rewayah_academy/features/demo/identite/matricule_demo.dart';
+import 'package:rewayah_academy/features/suivi_eleve/suivi_eleve_page.dart';
 
 import '../../capture/outil_capture.dart';
 import '../../support/harnais.dart';
@@ -386,6 +390,12 @@ void capturesP4() {
       ('controleur', const ComptePage(), AppRole.controller),
       ('comptable', const ComptePage(), AppRole.accountant),
       ('direction', const ComptePage(), AppRole.admin),
+      // La Bibliotheque en tete de « Ma classe » (garde-cap, 11/11/2026).
+      (
+        'ma_classe',
+        SuiviElevePage(horloge: () => DateTime(2026, 11, 11, 10)),
+        AppRole.student,
+      ),
       (
         'interface_guidee',
         MonEspaceAccessibilite(
@@ -420,6 +430,13 @@ void capturesP4() {
                 echelleTexte: echelle,
                 surcharges: <Override>[
                   ..._surcharges(appRole),
+                  // « Ma classe » : aucune seance passee (donnees de test).
+                  seancesDeMonSuiviProvider.overrideWith(
+                    (Ref _) async => const <Seance>[],
+                  ),
+                  presenceDuSuiviProvider.overrideWith(
+                    (Ref _) async => const <PresenceParticipant>[],
+                  ),
                   notificationsAutoriseesProvider.overrideWith(
                     (Ref _) async => true,
                   ),

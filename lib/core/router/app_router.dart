@@ -871,8 +871,12 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         path: Routes.eleveAide,
         builder: (BuildContext contexte, GoRouterState _) =>
             _CoquilleSecondaire(
+              // Ouverte depuis le Compte, le retour y ramene ; sinon l'Accueil.
               child: AideComptePage(
-                onRetour: () => GoRouter.of(contexte).go(Routes.eleve),
+                onRetour: () {
+                  final GoRouter routeur = GoRouter.of(contexte);
+                  routeur.canPop() ? routeur.pop() : routeur.go(Routes.eleve);
+                },
               ),
             ),
       ),

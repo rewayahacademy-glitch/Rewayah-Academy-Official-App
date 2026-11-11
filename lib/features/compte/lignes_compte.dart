@@ -64,7 +64,7 @@ String nomLangueCompte(PreferenceLangue langue) =>
 /// « Langue » : la langue du compte, pour l'interface ET les e-mails
 /// (garde-cap, 11/11/2026). Ouvre le choix entre le francais et l'arabe.
 LigneRubrique ligneLangueCompte(BuildContext context) => LigneRubrique(
-  icone: AppIcons.reglages,
+  icone: AppIcons.langue,
   libelle: t.compte.langue,
   legende: t.compte.page.langue.legende,
   valeur: nomLangueCompte(langueEffective(context)),

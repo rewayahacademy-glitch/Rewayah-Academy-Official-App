@@ -25,6 +25,7 @@ import '../suivi_foyer/carte_messages_academie.dart';
 import '../suivi_foyer/carte_suivi_pedagogique.dart';
 import '../suivi_foyer/filtres_historique.dart' show libelleStatut, statutDe;
 import '../suivi_foyer/vue_suivi_foyer.dart';
+import 'entree_bibliotheque.dart';
 
 /// Le suivi de l'eleve : une lecture de la meme projection que `TUT-06`.
 ///
@@ -123,10 +124,16 @@ class _Corps extends StatelessWidget {
     // SUIVI-ELEVE (07/11/2026) : « Où j'en suis » en tete, dans tous les
     // etats de la liste des seances (un eleve sans seance passee a deja une
     // etape), puis les messages de l'academie (D1-ter). Defile avec la page.
+    // La Bibliotheque passe avant tout (garde-cap, 11/11/2026).
     const Widget tete = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
-      children: <Widget>[CarteSuiviPedagogique(), CarteMessagesAcademie()],
+      children: <Widget>[
+        // La Bibliotheque en tete de « Ma classe » (garde-cap, 11/11/2026).
+        EntreeBibliothequeMaClasse(),
+        CarteSuiviPedagogique(),
+        CarteMessagesAcademie(),
+      ],
     );
 
     if (erreur && vue.total == 0) {

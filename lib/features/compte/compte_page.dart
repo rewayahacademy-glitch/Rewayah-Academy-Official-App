@@ -59,6 +59,9 @@ class ComptePage extends ConsumerStatefulWidget {
   /// Cree le portail du compte.
   const ComptePage({super.key});
 
+  /// La ligne « Aide et contact » de l'eleve.
+  static const Key aideEleveKey = ValueKey<String>('compte-aide-eleve');
+
   @override
   ConsumerState<ComptePage> createState() => _ComptePageState();
 }
@@ -207,7 +210,17 @@ class _ComptePageState extends ConsumerState<ComptePage> {
               ),
           ],
           SectionCompte.aide: <LigneRubrique>[
-            ?aide,
+            // L'eleve : « Aide et contact » ouvre sa page d'aide (garde-cap,
+            // 11/11/2026) ; le canal s'y lit, il n'est pas repete ici.
+            if (session.aUneAideEleve)
+              LigneRubrique(
+                cle: ComptePage.aideEleveKey,
+                icone: AppIcons.lecon,
+                libelle: t.compte.tuteur.aide.ligne,
+                onPress: () => unawaited(context.push(Routes.eleveAide)),
+              )
+            else
+              ?aide,
             ligneInformationsLegales(context),
           ],
         },
@@ -779,7 +792,9 @@ class _CompteProjection {
       espaces: _espacesPour(role),
       afficheFoyer: session.aUnFoyer,
       afficheAppareils: session.peutGererAppareils,
-      afficheBibliotheque: session.peutOuvrirBibliotheque,
+      // Hors du Compte quand « Ma classe » la porte (garde-cap, 11/11/2026).
+      afficheBibliotheque:
+          session.peutOuvrirBibliotheque && !session.bibliothequeDansMaClasse,
       profileId: session.profileId,
     );
   }
