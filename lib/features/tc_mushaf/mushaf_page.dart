@@ -85,6 +85,9 @@ class MushafPage extends ConsumerStatefulWidget {
   /// La cle du bouton qui deplie le choix du rendu, a texte agrandi.
   static const Key optionsKey = ValueKey<String>('mushaf-options');
 
+  /// Le choix du rendu (« Mode de lecture »).
+  static const Key choixModeKey = ValueKey<String>('mushaf-choix-mode');
+
   /// Vrai quand le texte est agrandi jusqu'au seuil des rangees compactes
   /// (CORAN-320-1) : en-tete, mentions et pagination se resserrent alors pour
   /// laisser la hauteur aux versets.
@@ -218,6 +221,9 @@ class _MushafPageEtat extends ConsumerState<MushafPage> {
   @override
   Widget build(BuildContext context) {
     final EtatLectureCoran etat = ref.watch(lectureCoranProvider);
+    // Directeur, 11/11/2026 : un rendu retire du choix (le focus, garde ou
+    // recu de la classe) se montre en page du mushaf, sans erreur.
+    final ModeRenduCoran mode = modeRenduOffert(etat.mode);
     final AsyncValue<PageMushafVM> page = ref.watch(
       pageMushafProvider(etat.page),
     );
@@ -277,7 +283,7 @@ class _MushafPageEtat extends ConsumerState<MushafPage> {
       key: MushafPage.commandesKey,
       compact: compact,
       vue: vue,
-      mode: etat.mode,
+      mode: mode,
       zoom: etat.zoomLocal,
       onPage: (int p) => _allerA(p, origine: OrigineNavigation.personnelle),
       onZoom: zoomer,
@@ -294,8 +300,8 @@ class _MushafPageEtat extends ConsumerState<MushafPage> {
           : _Entete(
               key: MushafPage.enteteKey,
               vue: vue,
-              mode: etat.mode,
-              reglage: madina15 && etat.mode != ModeRenduCoran.mushaf
+              mode: mode,
+              reglage: madina15 && mode != ModeRenduCoran.mushaf
                   ? reglage
                   : null,
               onMenu: madina15 ? ouvrirNavigation : null,
@@ -308,13 +314,13 @@ class _MushafPageEtat extends ConsumerState<MushafPage> {
             _EnteteCompact(
               key: MushafPage.enteteKey,
               vue: vue,
-              mode: etat.mode,
+              mode: mode,
               onMenu: madina15 ? ouvrirNavigation : null,
               zoom: etat.zoomLocal,
-              onReduire: etat.mode == ModeRenduCoran.mushaf
+              onReduire: mode == ModeRenduCoran.mushaf
                   ? null
                   : () => zoomer(-0.2),
-              onAgrandir: etat.mode == ModeRenduCoran.mushaf
+              onAgrandir: mode == ModeRenduCoran.mushaf
                   ? null
                   : () => zoomer(0.2),
             ),
@@ -330,7 +336,7 @@ class _MushafPageEtat extends ConsumerState<MushafPage> {
               children: <Widget>[
                 Positioned.fill(
                   child: _Corps(
-                    mode: etat.mode,
+                    mode: mode,
                     fleches: fleches,
                     balayage: balayage,
                     page: etat.page,
@@ -833,13 +839,17 @@ class _ChoixMode extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Trois rendus exclusifs : un controle segmente (ou un menu quand les
-    // libelles ne tiennent pas), jamais une rangee qui defile (ONGLETS-1).
+    // Les rendus offerts (directeur, 11/11/2026 : le focus du lecteur est
+    // retire) : un controle segmente (ou un menu quand les libelles ne
+    // tiennent pas), jamais une rangee qui defile (ONGLETS-1). Un seul rendu
+    // offert : pas de selecteur.
+    if (modesRenduOfferts.length < 2) return const SizedBox.shrink();
     return SelecteurSection<ModeRenduCoran>(
+      key: MushafPage.choixModeKey,
       libelle: t.tc.coran.modes.choisir,
-      valeur: mode,
+      valeur: modeRenduOffert(mode),
       sections: <Segment<ModeRenduCoran>>[
-        for (final ModeRenduCoran candidat in ModeRenduCoran.values)
+        for (final ModeRenduCoran candidat in modesRenduOfferts)
           Segment<ModeRenduCoran>(
             valeur: candidat,
             libelle: _libelle(candidat),

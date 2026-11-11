@@ -33,9 +33,11 @@ import '../../support/mushaf_15l.dart';
 const Size _telephone = Size(390, 844);
 const Size _bureau = Size(1440, 900);
 
+// Directeur, 11/11/2026 (lot SALLE-ORDINATEUR) : le rendu « Focus » est
+// retire du choix ; un focus garde ou recu de la classe se montre en page du
+// mushaf. Ses cas propres sont remplaces par ce repli.
 const List<ModeRenduCoran> _modes = <ModeRenduCoran>[
   ModeRenduCoran.versetAgrandi,
-  ModeRenduCoran.focus,
 ];
 
 final RegExp _signesKfgqpc = RegExp('[\\u06D6-\\u06DC\\u06DE\\u06E9]');
@@ -466,8 +468,8 @@ void main() {
   }
 
   testWidgets(
-    '(i) focus en classe : la plage designee est surlignee, la page reste '
-    'entiere',
+    '(i) focus recu de la classe (retire du choix le 11/11/2026) : la page du '
+    'mushaf, sans erreur ni surlignage',
     (WidgetTester tester) async {
       final ContentRange plage = ContentRange(
         resourceId: 'hafs',
@@ -488,10 +490,9 @@ void main() {
         taille: _bureau,
         plageFocus: plage,
       );
-      expect(_surlignes(tester), isNotEmpty);
-      expect(find.byType(RosaceVerset).evaluate().length, greaterThan(2));
-      final String tout = tester.widget<RichText>(_texte()).text.toPlainText();
-      expect(tout.length, greaterThan(_surlignes(tester).join().length));
+      expect(find.byType(PageMadina15), findsWidgets);
+      expect(find.byType(ColonneContinueMushaf), findsNothing);
+      expect(tester.takeException(), isNull);
     },
   );
 

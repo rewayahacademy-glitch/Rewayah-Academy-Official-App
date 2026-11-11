@@ -9,12 +9,17 @@
 // la barre du bas reste. Remplace sur ordinateur la loi K4 du 25/10 (tout en
 // surimpression) : la decision du directeur du 26/10 est la plus recente.
 //
+// Demandes du directeur du 11/11/2026 (lot SALLE-ORDINATEUR), qui prevalent
+// sur le plan du 26/10 pour ces points : la video de l'enseignant vit EN TETE
+// du panneau des Eleves (elle part avec lui, elle ne flotte plus) ; le haut
+// est une seule rangee sur toute la largeur (la Classe au debut, le titre du
+// support et ses outils au centre, la pilule d'etat a la fin) ; la page prend
+// toute la hauteur entre cette rangee et la barre du bas.
+//
 // Rien de neuf sous le capot : la page est [pageSalle] (celle du
 // telephone), la scene [ZoneSupport], la video [VignetteVideo], les Eleves
 // [PanneauEleves], les Commandes [CommandesPedagogiques], les commandes
 // d'appel [DockSeance] et [BoutonAppel].
-
-import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -43,7 +48,7 @@ import 'pilule_etat_salle.dart';
 import 'salle_seance.dart'
     show BandeauSecours, EtatLocalSeance, RaccourcisPleinEcran;
 import 'telephone_plein_ecran.dart';
-import 'vignette_video.dart' show MesuresVignette, VignetteVideo;
+import 'vignette_video.dart' show VignetteVideo;
 import 'vue_seance.dart';
 import 'zone_support.dart' show ZoneSupport, surfaceAMontrer;
 
@@ -87,6 +92,18 @@ class SalleOrdinateur extends StatefulWidget {
   static const Key cleDroite = ValueKey<String>('salle-ordinateur-droite');
   static const Key cleBas = ValueKey<String>('salle-ordinateur-bas');
   static const Key cleFocus = ValueKey<String>('salle-ordinateur-focus');
+
+  /// Directeur, 11/11/2026 : la video de l'enseignant, en tete du panneau
+  /// des Eleves ; le support et ses outils, au centre du haut.
+  static const Key cleVideo = ValueKey<String>('salle-ordinateur-video');
+  static const Key cleSupport = ValueKey<String>('salle-ordinateur-support');
+  static const Key cleTitreSupport = ValueKey<String>(
+    'salle-ordinateur-titre-support',
+  );
+  static const Key cleClasse = ValueKey<String>('salle-ordinateur-classe');
+  static const Key cleEnseignant = ValueKey<String>(
+    'salle-ordinateur-enseignant',
+  );
 
   @override
   State<SalleOrdinateur> createState() => _EtatSalleOrdinateur();
@@ -160,27 +177,24 @@ class _EtatSalleOrdinateur extends State<SalleOrdinateur> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              if (!focus) ...<Widget>[
-                _Haut(vue: vue, actions: actions),
-                Ecart.vLg,
-              ],
+              _Haut(vue: vue, actions: actions, local: local, focus: focus),
+              Ecart.vLg,
               Expanded(
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   spacing: AppSpacing.lg,
                   children: <Widget>[
-                    if (!focus)
+                    // Directeur, 11/11/2026 : la video de l'enseignant est
+                    // dans le panneau des Eleves ; panneau ferme ou focus, elle
+                    // part avec lui.
+                    if (!focus && eleves)
                       SizedBox(
                         key: SalleOrdinateur.cleGauche,
                         width: largeurPanneauGauche,
-                        child: _PanneauGauche(
-                          vue: vue,
-                          actions: actions,
-                          eleves: eleves,
-                        ),
+                        child: _PanneauGauche(vue: vue, actions: actions),
                       ),
                     Expanded(
-                      child: _Centre(vue: vue, actions: actions, local: local),
+                      child: _Centre(vue: vue, local: local),
                     ),
                     if (droite != null)
                       SizedBox(
@@ -248,151 +262,144 @@ class _Panneau extends StatelessWidget {
   }
 }
 
-/// Le haut : le nom de la Classe, « Sayyida Prenom », et la pilule d'etat
-/// (« Visite de controle possible. ») au bord de fin.
+/// Le haut, une seule rangee sur toute la largeur (directeur, 11/11/2026 :
+/// « l'ecran est large et ces elements peuvent se distribuer horizontalement
+/// sur toute la largeur ») : au debut, le nom de la Classe et « Sayyida
+/// Prenom » ; au centre, le titre du support et ses outils colles a lui
+/// (zoom, ranger, focus : un outil se pose pres de l'objet sur lequel il
+/// agit) ; a la fin, la pilule d'etat de la seance, posee telle quelle.
+///
+/// Repli quand la rangee ne tient pas (panneaux ouverts a 1280, texte
+/// agrandi) : le nom de l'enseignant part d'abord, puis le nom de la Classe
+/// et le titre du support se coupent par des points de suspension ; les
+/// outils et la pilule gardent leur taille. En focus, la rangee ne garde que
+/// le support et ses outils (la sortie du focus y reste, et dans la barre du
+/// bas).
 class _Haut extends StatelessWidget {
-  const _Haut({required this.vue, required this.actions});
+  const _Haut({
+    required this.vue,
+    required this.actions,
+    required this.local,
+    required this.focus,
+  });
 
   final VueSeance vue;
   final ActionsSeance actions;
+  final EtatLocalSeance local;
+  final bool focus;
 
   @override
   Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
-    final TextTheme textes = Theme.of(context).textTheme;
     final Widget? alerte = PorteeMediaSalle.de(context)?.alerte;
-    final String classe = vue.nomClasse.isEmpty
-        ? t.salle.seance.titre
-        : vue.nomClasse;
-    // « Sayyida Amina » : le nom de l'annuaire de la seance, deja titre
-    // (sans titre connu, le prenom seul, jamais « Le professeur »).
-    final String enseignant = vue.nomEnseignant;
+    final Widget support = _GroupeSupport(
+      vue: vue,
+      actions: actions,
+      local: local,
+    );
+    final Widget rangee = LayoutBuilder(
+      builder: (BuildContext _, BoxConstraints c) => Row(
+        spacing: AppSpacing.lg,
+        children: <Widget>[
+          Expanded(
+            child: focus
+                ? const SizedBox.shrink()
+                : Align(
+                    alignment: AlignmentDirectional.centerStart,
+                    child: _IdentiteClasse(vue: vue),
+                  ),
+          ),
+          ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: c.maxWidth * _partCentre),
+            child: support,
+          ),
+          Expanded(
+            child: focus
+                ? const SizedBox.shrink()
+                : Align(
+                    alignment: AlignmentDirectional.centerEnd,
+                    child: PiluleEtatSalle(
+                      vue: vue,
+                      avecChrono: true,
+                      onPause: actions.onPause,
+                    ),
+                  ),
+          ),
+        ],
+      ),
+    );
     return Column(
       key: SalleOrdinateur.cleHaut,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        Row(
-          spacing: AppSpacing.lg,
-          children: <Widget>[
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Text(
-                    classe,
-                    style: palette.inkStrong.applyTo(
-                      textes.titleMedium ?? const TextStyle(),
-                    ),
-                  ),
-                  if (enseignant.isNotEmpty)
-                    Text(
-                      enseignant,
-                      style: palette.inkMuted.applyTo(
-                        textes.bodyMedium ?? const TextStyle(),
-                      ),
-                    ),
-                ],
-              ),
-            ),
-            Flexible(
-              child: Align(
-                alignment: AlignmentDirectional.centerEnd,
-                child: PiluleEtatSalle(
-                  vue: vue,
-                  avecChrono: true,
-                  onPause: actions.onPause,
-                ),
-              ),
-            ),
-          ],
-        ),
-        BandeauSecours(vue: vue, actions: actions, gouttiere: 0),
-        ?alerte,
+        rangee,
+        if (!focus) ...<Widget>[
+          BandeauSecours(vue: vue, actions: actions, gouttiere: 0),
+          ?alerte,
+        ],
       ],
     );
   }
+
+  /// La part de la largeur que le support et ses outils peuvent prendre au
+  /// plus : les deux bords se partagent le reste, a parts egales, pour que
+  /// le support reste au centre.
+  static const double _partCentre = 0.5;
 }
 
-/// Le panneau de gauche : la video de l'enseignant, fixee, puis « Eleves »
-/// (une carte par eleve, qui se deplie sur place).
-class _PanneauGauche extends StatelessWidget {
-  const _PanneauGauche({
-    required this.vue,
-    required this.actions,
-    required this.eleves,
-  });
+/// Le nom de la Classe, puis « Sayyida Prenom » (le nom de l'annuaire de la
+/// seance, deja titre ; sans titre connu, le prenom seul).
+class _IdentiteClasse extends StatelessWidget {
+  const _IdentiteClasse({required this.vue});
 
   final VueSeance vue;
-  final ActionsSeance actions;
-  final bool eleves;
+
+  /// En dessous de cette largeur (192), le nom de l'enseignant part : c'est
+  /// le premier repli de la rangee du haut.
+  static const double largeurAvecEnseignant = AppSpacing.respiration * 3;
 
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
-    final String? message = PorteeMediaSalle.de(context)?.messageEleves;
+    final String classe = vue.nomClasse.isEmpty
+        ? t.salle.seance.titre
+        : vue.nomClasse;
+    final String enseignant = vue.nomEnseignant;
     return LayoutBuilder(
       builder: (BuildContext _, BoxConstraints c) => Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          // La video garde au plus [_partVideo] de la hauteur : sur un
-          // ordinateur de 768, les cartes des eleves restent visibles.
-          Center(
-            child: VignetteVideo(
-              vue: vue,
-              largeur: math.min(
-                c.maxWidth,
-                c.maxHeight * _partVideo * MesuresVignette.ratio,
-              ),
+          Text(
+            classe,
+            key: SalleOrdinateur.cleClasse,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: palette.inkStrong.applyTo(
+              textes.titleMedium ?? const TextStyle(),
             ),
           ),
-          if (eleves) ...<Widget>[
-            Ecart.vLg,
-            Expanded(
-              child: _Panneau(
-                key: const ValueKey<String>('salle-ordinateur-eleves'),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    Text(
-                      t.salle.seance.compteurEleves(
-                        connectes: vue.connectes,
-                        inscrits: vue.inscrits,
-                      ),
-                      style: palette.inkStrong.applyTo(
-                        textes.titleMedium ?? const TextStyle(),
-                      ),
-                    ),
-                    LocalFeedback(message: message),
-                    Ecart.vSm,
-                    Expanded(
-                      child: PanneauEleves(
-                        eleves: vue.eleves,
-                        actions: actions,
-                        recitation: vue.recitation,
-                        autorisationEcrire: vue.voitAutorisationEcrire,
-                      ),
-                    ),
-                  ],
-                ),
+          if (enseignant.isNotEmpty && c.maxWidth >= largeurAvecEnseignant)
+            Text(
+              enseignant,
+              key: SalleOrdinateur.cleEnseignant,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: palette.inkMuted.applyTo(
+                textes.bodyMedium ?? const TextStyle(),
               ),
             ),
-          ],
         ],
       ),
     );
   }
-
-  /// La part de la hauteur du panneau que prend la video de l'enseignant.
-  static const double _partVideo = 0.3;
 }
 
-/// Le centre : le titre de la page (« Coran · Page 24 »), le zoom et le
-/// focus, puis la page, le tableau ou la scene.
-class _Centre extends StatelessWidget {
-  const _Centre({
+/// Le titre du support (« Coran · Page 24 », « Tableau ») et ses outils, en
+/// un seul groupe : zoom moins et plus, ranger le support, focus.
+class _GroupeSupport extends StatelessWidget {
+  const _GroupeSupport({
     required this.vue,
     required this.actions,
     required this.local,
@@ -406,11 +413,8 @@ class _Centre extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
-    final PorteeMediaSalle? media = PorteeMediaSalle.de(context);
     final SupportPageFixe? support = vue.supportPresente;
-    final bool scene =
-        media?.scene != null &&
-        ((media?.scenePremierPlan ?? false) || surfaceAMontrer(vue) == null);
+    final bool scene = _sceneAuPremierPlan(context, vue);
     final String? titre = scene
         ? null
         : support != null
@@ -420,75 +424,155 @@ class _Centre extends StatelessWidget {
         : null;
     final VoidCallback? agrandir = actions.onAgrandir;
     final NomsFocus noms = nomsFocus(context, agrandi: local.agrandi);
-    return Column(
-      key: SalleOrdinateur.cleCentre,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+    return Row(
+      key: SalleOrdinateur.cleSupport,
+      mainAxisSize: MainAxisSize.min,
+      spacing: AppSpacing.sm,
       children: <Widget>[
-        Row(
-          spacing: AppSpacing.sm,
-          children: <Widget>[
-            Expanded(
-              child: titre == null
-                  ? const SizedBox.shrink()
-                  : Text(
-                      titre,
-                      style: palette.inkStrong.applyTo(
-                        textes.titleSmall ?? const TextStyle(),
-                      ),
-                    ),
+        if (titre != null)
+          Flexible(
+            child: Padding(
+              padding: const EdgeInsetsDirectional.only(end: AppSpacing.sm),
+              child: Text(
+                titre,
+                key: SalleOrdinateur.cleTitreSupport,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: palette.inkStrong.applyTo(
+                  textes.titleSmall ?? const TextStyle(),
+                ),
+              ),
             ),
-            if (support != null &&
-                !scene &&
-                (actions.onZoomPlus != null || actions.onZoomMoins != null))
-              PiluleZoomSalle(actions: actions, horizontale: true),
-            // Lot salle 3 (directeur, 25/10/2026) : un support ouvert se
-            // ferme ; la croix « Ranger dans la bibliotheque ».
-            if (vue.voitRanger && actions.onRanger != null)
-              BoutonIcone(
-                key: const ValueKey<String>('salle-ranger-support'),
-                forme: FormeBoutonIcone.appel,
-                icone: AppIcons.fermer,
-                diametre: diametreBoutonAppel(context),
-                libelle: t.salle.seance.rangement.ranger,
-                infobulle: t.salle.seance.rangement.ranger,
-                onPress: actions.onRanger,
+          ),
+        if (support != null &&
+            !scene &&
+            (actions.onZoomPlus != null || actions.onZoomMoins != null))
+          PiluleZoomSalle(actions: actions, horizontale: true),
+        // Lot salle 3 (directeur, 25/10/2026) : un support ouvert se
+        // ferme ; la croix « Ranger dans la bibliotheque ».
+        if (vue.voitRanger && actions.onRanger != null)
+          BoutonIcone(
+            key: const ValueKey<String>('salle-ranger-support'),
+            forme: FormeBoutonIcone.appel,
+            icone: AppIcons.fermer,
+            diametre: diametreBoutonAppel(context),
+            libelle: t.salle.seance.rangement.ranger,
+            infobulle: t.salle.seance.rangement.ranger,
+            onPress: actions.onRanger,
+          ),
+        if (agrandir != null)
+          BoutonIcone(
+            key: SalleOrdinateur.cleFocus,
+            forme: FormeBoutonIcone.appel,
+            icone: noms.icone,
+            diametre: diametreBoutonAppel(context),
+            libelle: noms.semantique,
+            infobulle: noms.libelle,
+            selectionne: local.agrandi,
+            onPress: agrandir,
+          ),
+      ],
+    );
+  }
+}
+
+/// Vrai quand la scene video prend le centre (aucune page, ou la scene mise
+/// au premier plan).
+bool _sceneAuPremierPlan(BuildContext context, VueSeance vue) {
+  final PorteeMediaSalle? media = PorteeMediaSalle.de(context);
+  return media?.scene != null &&
+      ((media?.scenePremierPlan ?? false) || surfaceAMontrer(vue) == null);
+}
+
+/// Le panneau de gauche, une seule liste (directeur, 11/11/2026) : en tete la
+/// video de l'enseignant, a la largeur du panneau, au rayon des cartes des
+/// eleves ; puis « Eleves 2/3 » ; puis une carte par eleve, qui se deplie
+/// sur place. La video defile avec la liste : elle en fait partie.
+class _PanneauGauche extends StatelessWidget {
+  const _PanneauGauche({required this.vue, required this.actions});
+
+  final VueSeance vue;
+  final ActionsSeance actions;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    final String? message = PorteeMediaSalle.de(context)?.messageEleves;
+    return _Panneau(
+      key: const ValueKey<String>('salle-ordinateur-eleves'),
+      child: PanneauEleves(
+        eleves: vue.eleves,
+        actions: actions,
+        recitation: vue.recitation,
+        autorisationEcrire: vue.voitAutorisationEcrire,
+        tete: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            LayoutBuilder(
+              builder: (BuildContext _, BoxConstraints c) => VignetteVideo(
+                key: SalleOrdinateur.cleVideo,
+                vue: vue,
+                largeur: c.maxWidth,
+                ratio: ratioVideoPanneau,
               ),
-            if (agrandir != null)
-              BoutonIcone(
-                key: SalleOrdinateur.cleFocus,
-                forme: FormeBoutonIcone.appel,
-                icone: noms.icone,
-                diametre: diametreBoutonAppel(context),
-                libelle: noms.semantique,
-                infobulle: noms.libelle,
-                selectionne: local.agrandi,
-                onPress: agrandir,
+            ),
+            Ecart.vLg,
+            Text(
+              t.salle.seance.compteurEleves(
+                connectes: vue.connectes,
+                inscrits: vue.inscrits,
               ),
+              style: palette.inkStrong.applyTo(
+                textes.titleMedium ?? const TextStyle(),
+              ),
+            ),
+            LocalFeedback(message: message),
           ],
         ),
-        Ecart.vSm,
-        Expanded(
-          child: LayoutBuilder(
-            builder: (BuildContext contexte, BoxConstraints c) {
-              final Widget? page = scene
-                  ? null
-                  : pageSalle(
-                      contexte,
-                      vue: vue,
-                      zoom: local.zoom,
-                      ecran: c.biggest,
-                      telephone: false,
-                    );
-              return ClipRRect(
-                borderRadius: AppRadius.arrondiLg,
-                child: page == null
-                    ? ZoneSupport(vue: vue, zoom: local.zoom)
-                    : Center(child: page),
+      ),
+    );
+  }
+}
+
+/// Le rapport largeur sur hauteur de la video de l'enseignant dans le panneau
+/// des Eleves (4:3) : plus haute qu'une carte d'eleve, a la largeur du
+/// panneau.
+const double ratioVideoPanneau = 4 / 3;
+
+/// Le centre : la page, le tableau ou la scene, sur toute la hauteur entre la
+/// rangee du haut et la barre du bas (directeur, 11/11/2026 : « Sur PC, il
+/// faut que le Coran soit grand »). Le titre et les outils du support sont
+/// montes dans la rangee du haut : rien ne prend de hauteur a la page.
+class _Centre extends StatelessWidget {
+  const _Centre({required this.vue, required this.local});
+
+  final VueSeance vue;
+  final EtatLocalSeance local;
+
+  @override
+  Widget build(BuildContext context) {
+    final bool scene = _sceneAuPremierPlan(context, vue);
+    return LayoutBuilder(
+      key: SalleOrdinateur.cleCentre,
+      builder: (BuildContext contexte, BoxConstraints c) {
+        final Widget? page = scene
+            ? null
+            : pageSalle(
+                contexte,
+                vue: vue,
+                zoom: local.zoom,
+                ecran: c.biggest,
+                telephone: false,
               );
-            },
-          ),
-        ),
-      ],
+        return ClipRRect(
+          borderRadius: AppRadius.arrondiLg,
+          child: page == null
+              ? ZoneSupport(vue: vue, zoom: local.zoom)
+              : Center(child: page),
+        );
+      },
     );
   }
 }

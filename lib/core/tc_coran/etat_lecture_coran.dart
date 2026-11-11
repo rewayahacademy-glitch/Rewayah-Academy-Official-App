@@ -69,7 +69,7 @@ class EtatLectureCoran {
   /// Le meme etat, dans un autre rendu.
   EtatLectureCoran versMode(ModeRenduCoran mode) => EtatLectureCoran(
     page: page,
-    mode: mode,
+    mode: modeRenduOffert(mode),
     zoomLocal: zoomLocal,
     origine: origine,
     plageFocus: plageFocus,
@@ -113,7 +113,7 @@ class EtatLectureCoran {
     }
     return EtatLectureCoran(
       page: pagePartagee ?? page,
-      mode: _modeDe(partage.displayMode),
+      mode: modeRenduOffert(_modeDe(partage.displayMode)),
       zoomLocal: zoomLocal,
       origine: OrigineNavigation.groupe,
       plageFocus: partage.contentRange,
