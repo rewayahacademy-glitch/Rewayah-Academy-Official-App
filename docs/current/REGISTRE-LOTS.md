@@ -102,6 +102,28 @@ GARDE-ECHEANCES (wagon 26) est livré : `verifier_branchement` échoue désormai
 | 33 | PARCOURS-PROFIL-CHOISI | `06e030d04` | `2e9e41b06` |  |
 | 34 | correction SEC-GARDE-4 b (`sourates_validees` dans la liste 1) | commit du train | `3a47b69f5` | CI rouge de #435 ; liste 1 seule (choix du garde-cap) |
 
+## État de la production au 11/11, 22:57 UTC (pilote, vérifié en lecture par le garde-cap)
+
+Relais du pilote du 11/11 ; aucune lecture de la production n'est faite par E.
+
+- **Installées** par le pilote (`apply_migration`), CONFORMES pour le garde-cap :
+  - `20261122900000` (sourates_validees), `20261123200000` (preference_theme_compte),
+    `20261123300000` (sec_garde_4_lectures) : avec l'écart PROSRC-SANS-COMMENTAIRES (voir les dettes) ;
+  - `20261123400000` (hook, compte désactivé), `20261123400100` (interrupteur KYC),
+    `20261123500000` (C29 une source), `20261123600000` (coupure C3, au 2026-11-12 00:00 UTC),
+    `20261123700000` (partage générique) : appliquées telles quelles, corps identiques au dépôt (md5 de `prosrc`).
+- **Collée** par le directeur : `20261123300100` (SEC-GARDE-4 b), CONFORME ; inscrite à l'historique par
+  `historique_sec_garde_4_b_editeur_sql` (version `20261123300100`).
+- **Reportées** :
+  - `20261123400200` : DERIVE-GUARD-PROFILE. Cause trouvée par le garde-cap : accents abîmés dans le message
+    d'erreur du corps en production, sans effet sur le comportement. Lot pour B le 12/11 :
+    SEC-GARDE-5-C-RECALIBRAGE (accepter les deux empreintes, avec le constat en commentaire).
+  - `20261123700100` : RESEAU-PREUVE-INSTALLATION, bloquée par les conditions (a), (b) et (c) de
+    `docs/orchestration/garde-cap/RESERVATIONS-MIGRATIONS.md`, en attente de la décision du directeur sur les textes.
+- **À expliquer le 12/11 par une lecture** : 6 comptes « disabled », contre 5 au préflight de 12:40.
+- `public` compte maintenant 190 tables (`classe_position_support`).
+- **Non prouvé** : la connexion réelle après le hook ; la preuve, c'est le directeur.
+
 ## Les PR ouvertes (13, au 11/11)
 
 | PR | Branche | Statut | Preuve |
@@ -188,7 +210,7 @@ PRÉFÉRENCES-PAR-COMPTE de A.
 | 11/11 | SEC-GARDE-4 b et SOURATES : le préflight de SEC-GARDE-4 b exigeait toute table de `public` dans sa liste 1, et SOURATES créait `sourates_validees` (CI rouge de #435) | CORRIGÉ dans le train par `3a47b69f5` (liste 1 seule, avec commentaire ; choix du garde-cap) | train #435 |
 | 07-08/11 | Les 38 PR fermées le 07 et le 08/11 | couvertes selon le garde-cap ; liste à joindre | pilote, 11/11 (liste non relayée) |
 | 11/11 | PROSRC-SANS-COMMENTAIRES : en appliquant `20261122900000`, `20261123200000` et `20261123300000`, le pilote a retiré des commentaires à l'intérieur des corps de fonctions ; le `prosrc` en production diffère donc du dépôt pour ces 3 fichiers (`sourates_eleve`, `sourates_bases_classe`, `ma_preference_theme`, `ma_preference_theme_regler` et les autres fonctions de ces fichiers) ; comportement identique ; depuis, les fichiers sont appliqués tels quels | écart connu (préflights md5 futurs à calibrer sur la production) | pilote, 11/11 |
-| 11/11 | DERIVE-GUARD-PROFILE : en production, `guard_profile_immutable_id()` a le md5 `1fff46e3`, le dépôt rejoué donne `7c0dc793` ; `20261123400200` est bloqué | en attente de l'arbitrage du garde-cap | pilote, 11/11 |
+| 11/11 | DERIVE-GUARD-PROFILE : en production, `guard_profile_immutable_id()` a le md5 `1fff46e3`, le dépôt rejoué donne `7c0dc793` ; `20261123400200` est reportée ; cause (garde-cap) : accents abîmés dans le message d'erreur du corps en production, sans effet sur le comportement | À LIVRER (B, 12/11) : SEC-GARDE-5-C-RECALIBRAGE, accepter les deux empreintes avec le constat en commentaire | pilote et garde-cap, 11/11 22:57 |
 
 ## Branches mortes, à proposer à la suppression au directeur (11/11)
 
