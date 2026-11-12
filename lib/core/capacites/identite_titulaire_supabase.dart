@@ -2,7 +2,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../domain/enums.dart';
 import '../theme/app_delais.dart';
-import 'capacite_indisponible.dart';
 import 'port_identite_titulaire.dart';
 
 /// L'identite du titulaire lue sans backend nouveau (contrat K6, lot E).
@@ -13,8 +12,9 @@ import 'port_identite_titulaire.dart';
 /// - Courriel et methode de connexion : la session Supabase
 ///   (`auth.currentUser`), jamais une requete.
 ///
-/// **Lecture seule.** Aucune ecriture n'existe pour le tuteur : [modifier]
-/// reste indisponible (DB-CPT-01), et l'ecran dit « tenu par l'academie ».
+/// - Ecriture ([modifier], EDIT-INFOS-PERSO, 12/11/2026) : le prenom et le
+///   nom seuls, sur la ligne de soi, par la politique `profiles_self_update` ;
+///   le serveur refuse le changement a un eleve mineur.
 class IdentiteTitulaireSupabase implements PortIdentiteTitulaire {
   /// Cree l'adaptateur.
   ///
@@ -57,8 +57,26 @@ class IdentiteTitulaireSupabase implements PortIdentiteTitulaire {
   }
 
   @override
-  Future<void> modifier({String? prenom, String? nom}) =>
-      Future<void>.error(const CapaciteIndisponible('DB-CPT-01'));
+  Future<void> modifier({String? prenom, String? nom}) async {
+    final User? utilisateur = _client.auth.currentUser;
+    if (utilisateur == null) {
+      throw StateError('Aucune session ouverte : identite non modifiable.');
+    }
+    final Map<String, String> champs = champsIdentite(prenom: prenom, nom: nom);
+    // EDIT-INFOS-PERSO (garde-cap, 12/11/2026) : la ligne de soi, et elle
+    // seule (`profiles_self_update`) ; la garde `guard_profile_privileged_columns`
+    // refuse au serveur le changement de nom d'un eleve mineur. Une ligne non
+    // ecrite (aucune rendue) est un echec, jamais une reussite supposee.
+    final List<Map<String, dynamic>> ecrites = await _client
+        .from('profiles')
+        .update(champs)
+        .eq('id', utilisateur.id)
+        .select('id')
+        .timeout(AppDelais.requeteMax);
+    if (ecrites.isEmpty) {
+      throw StateError('Identite non modifiee : aucune ligne ecrite.');
+    }
+  }
 }
 
 /// L'identite lue depuis une ligne `profiles` et la session. Pure, testee.
