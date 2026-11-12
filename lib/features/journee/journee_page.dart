@@ -181,9 +181,6 @@ class _JourneePageEtat extends ConsumerState<JourneePage> {
 
   @override
   Widget build(BuildContext context) {
-    // HEURES-PROFIL H4 (garde-cap, 12/11/2026) : la journee se redessine
-    // quand le fuseau du profil arrive (heures et mention de repli).
-    ref.watch(monHorlogeProvider);
     final DateTime Function() lire = ref.watch(maintenantJourneeProvider);
     // HEURES-ACCUEIL-ENSEIGNANT (11/11/2026) : les heures de la page passent par
     // `heureChezMoi`, qui lit le fuseau du profil pose par [monHorlogeProvider].
