@@ -32,6 +32,7 @@ import 'package:rewayah_academy/features/compte/compte_tuteur_page.dart';
 import 'package:rewayah_academy/features/compte/informations_page.dart';
 import 'package:rewayah_academy/features/compte/lignes_compte.dart'
     show FeuilleLangueCompte;
+import 'package:rewayah_academy/features/compte/paiements_page.dart';
 import 'package:rewayah_academy/features/compte/securite_page.dart';
 import 'package:rewayah_academy/features/consentements/consentement_observation_page.dart';
 import 'package:rewayah_academy/features/demo/identite/matricule_demo.dart';
@@ -514,14 +515,26 @@ void main() {
       expect(_texte(t.compte.tuteur.pageAcces.aucunTitre), findsOneWidget);
     });
 
-    for (final String ancienne in <String>[
-      'paiements',
-      'informations-legales',
-    ]) {
+    for (final String ancienne in <String>['informations-legales']) {
+      testWidgets(
+        'PAIEMENTS-RECUS-TUTEUR : plus de ligne dans le Compte ; la page '
+        'reste routee et dit la verite',
+        (WidgetTester tester) async {
+          await monterCompte(
+            tester,
+            depart: Routes.compteTuteurSousPage('paiements'),
+          );
+          expect(find.byType(PaiementsComptePage), findsOneWidget);
+          expect(
+            _texte(t.compte.tuteur.pagePaiements.indisponibleTitre),
+            findsOneWidget,
+          );
+          expect(_texte(t.commun.etats.actions.reessayer), findsNothing);
+        },
+      );
+
       testWidgets('PROFILS P2 : /tuteur/compte/$ancienne revient au Compte '
-          '(page supprimee, dette PAIEMENTS-RECUS-TUTEUR)', (
-        WidgetTester tester,
-      ) async {
+          '(page supprimee)', (WidgetTester tester) async {
         final GoRouter routeur = await monterCompte(
           tester,
           depart: Routes.compteTuteurSousPage(ancienne),

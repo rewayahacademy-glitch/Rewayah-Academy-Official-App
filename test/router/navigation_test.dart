@@ -30,6 +30,7 @@ import 'package:rewayah_academy/features/compte/aide_page.dart';
 import 'package:rewayah_academy/features/compte/compte_page.dart';
 import 'package:rewayah_academy/features/compte/compte_tuteur_page.dart';
 import 'package:rewayah_academy/features/compte/informations_page.dart';
+import 'package:rewayah_academy/features/compte/paiements_page.dart';
 import 'package:rewayah_academy/features/compte/securite_page.dart';
 import 'package:rewayah_academy/features/consentements/consentement_observation_page.dart';
 import 'package:rewayah_academy/features/foyer/creer_mon_profil_page.dart';
@@ -283,6 +284,7 @@ void main() {
       (Routes.compteTuteurSousPage('informations'), InformationsComptePage, 3),
       (Routes.compteTuteurSousPage('securite'), SecuriteComptePage, 3),
       (Routes.compteTuteurSousPage('acces'), AccesComptePage, 3),
+      (Routes.compteTuteurSousPage('paiements'), PaiementsComptePage, 3),
       (Routes.compteTuteurSousPage('aide'), AideComptePage, 3),
       (Routes.tuteurCompteConsentements, ConsentementObservationPage, 3),
     ];
@@ -330,6 +332,7 @@ void main() {
       InformationsComptePage: compte,
       SecuriteComptePage: compte,
       AccesComptePage: compte,
+      PaiementsComptePage: compte,
       AideComptePage: compte,
       ConsentementObservationPage: compte,
     };
