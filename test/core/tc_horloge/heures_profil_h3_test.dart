@@ -5,9 +5,12 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/admin/port_planning_direction.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/tc_horloge/mon_horloge.dart';
+import 'package:rewayah_academy/features/admin_candidature/libelles_candidature.dart';
 import 'package:rewayah_academy/features/admin_planning/planning_libelles.dart';
 import 'package:rewayah_academy/features/com_annonces/publieur_annonce.dart';
+import 'package:rewayah_academy/features/foyer/fiche/mouvements_page.dart';
 
 MonHorloge _horloge(Map<String, Object?> moi) => MonHorloge.lire(
   <String, Object?>{'maintenant': '2026-11-12T12:00:00Z', 'moi': moi},
@@ -67,6 +70,21 @@ void main() {
         DateTime(2026, 11, 12, 17, 30),
       );
     });
+  });
+
+  test('jourChezMoi : le jour du profil en DateTime LOCAL (jamais marque '
+      'UTC, que toLocal() decalerait une seconde fois)', () {
+    LocaleSettings.setLocaleSync(AppLocale.fr);
+    poserMonHorlogePourTest(_kolkata);
+    // 19:00 UTC le 12/11 : deja 00:30 le 13/11 a +05:30.
+    final DateTime i = DateTime.utc(2026, 11, 12, 19);
+    final DateTime j = jourChezMoi(i);
+    expect(j.isUtc, isFalse);
+    expect((j.year, j.month, j.day, j.hour), (2026, 11, 13, 0));
+    // Les deux formateurs qui appellent toLocal() recoivent ce jour-la.
+    expect(instantHistorique(i), contains('13'));
+    expect(instantHistorique(i), contains('00:30'));
+    expect(dateHeureMouvement(i), contains('13'));
   });
 
   test('annonces : les creneaux proposes sont a 08:00 et 18:00 au profil', () {

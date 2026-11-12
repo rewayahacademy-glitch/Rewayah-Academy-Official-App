@@ -64,6 +64,16 @@ DateTime chezMoi(DateTime instant) {
 /// « 08:00 » a l'heure de la personne ([chezMoi]).
 String heureChezMoi(DateTime instant) => heureDeLAppareil(chezMoi(instant));
 
+/// Le jour civil de [instant] au fuseau du profil, en `DateTime` LOCAL a
+/// minuit, pour les formateurs de date qui appellent eux-memes `toLocal()`
+/// (dateCourteCandidature, dateEcheance) : [chezMoi] rend un `DateTime`
+/// marque UTC qui porte l'heure murale, et `toLocal()` le decalerait une
+/// seconde fois (constat de B, 12/11/2026).
+DateTime jourChezMoi(DateTime instant) {
+  final DateTime m = chezMoi(instant);
+  return DateTime(m.year, m.month, m.day);
+}
+
 /// L'instant (UTC) dont l'heure murale, au fuseau du profil, est le
 /// [annee]-[mois]-[jour] a [heure]:[minute] : l'inverse de [chezMoi], pour
 /// un choix fait a l'ecran (HEURES-PROFIL H3, 12/11/2026). Sans fuseau de

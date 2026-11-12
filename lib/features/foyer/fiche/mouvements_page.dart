@@ -153,7 +153,8 @@ String dateHeureMouvement(DateTime date) {
   // HEURES-PROFIL H1 : une heure reelle se lit a l'heure du profil.
   final DateTime profil = chezMoi(date);
   return t.ficheEleve.mouvements.dateHeure(
-    date: dateEcheance(profil),
+    // dateEcheance appelle toLocal() : le jour du profil en local.
+    date: dateEcheance(jourChezMoi(date)),
     heure: t.ficheEleve.mouvements.heureChiffres(
       heures: _deuxChiffres(profil.hour),
       minutes: _deuxChiffres(profil.minute),
