@@ -205,8 +205,8 @@ CREATE TABLE public.pauses_eleve (
   CONSTRAINT pauses_eleve_dates CHECK (fin >= debut AND fin - debut <= 365),
   CONSTRAINT pauses_eleve_mois_entier CHECK (
     type <> 'mois'
-    OR (debut = pg_catalog.date_trunc('month', debut)::date
-        AND fin = (pg_catalog.date_trunc('month', debut) + interval '1 month - 1 day')::date)),
+    OR (debut = pg_catalog.date_trunc('month', (debut)::timestamp)::date
+        AND fin = (pg_catalog.date_trunc('month', (debut)::timestamp) + interval '1 month - 1 day')::date)),
   CONSTRAINT pauses_eleve_exception_motivee CHECK (
     type <> 'exception'
     OR (motif IS NOT NULL AND statut IN ('acceptee', 'annulee')
@@ -305,9 +305,9 @@ SET search_path = ''
 AS $function$
   SELECT p_mois IS NOT NULL AND NOT EXISTS (
     SELECT 1
-      FROM pg_catalog.generate_series(0, (pg_catalog.date_trunc('month', p_mois) + interval '1 month - 1 day')::date
-                                         - pg_catalog.date_trunc('month', p_mois)::date) g
-     WHERE NOT private.eleve_en_pause(p_student_id, (pg_catalog.date_trunc('month', p_mois)::date + g)));
+      FROM pg_catalog.generate_series(0, (pg_catalog.date_trunc('month', (p_mois)::timestamp) + interval '1 month - 1 day')::date
+                                         - pg_catalog.date_trunc('month', (p_mois)::timestamp)::date) g
+     WHERE NOT private.eleve_en_pause(p_student_id, (pg_catalog.date_trunc('month', (p_mois)::timestamp)::date + g)));
 $function$;
 
 -- ---------------------------------------------------------------------------
@@ -938,8 +938,8 @@ BEGIN
   END IF;
   PERFORM pg_catalog.pg_advisory_xact_lock(pg_catalog.hashtextextended('pause:' || p_eleve_id::text, 0));
 
-  v_debut := pg_catalog.date_trunc('month', p_mois)::date;
-  v_fin := (pg_catalog.date_trunc('month', p_mois) + interval '1 month - 1 day')::date;
+  v_debut := pg_catalog.date_trunc('month', (p_mois)::timestamp)::date;
+  v_fin := (pg_catalog.date_trunc('month', (p_mois)::timestamp) + interval '1 month - 1 day')::date;
   v_aujourdhui := private.aujourdhui_foyer(p_eleve_id);
   IF v_debut - v_aujourdhui < v_preavis THEN
     RAISE EXCEPTION 'pause_preavis' USING errcode = '22023',
@@ -1097,7 +1097,7 @@ BEGIN
     RAISE EXCEPTION 'pause refusee' USING errcode = '42501';
   END IF;
   v_aujourdhui := private.aujourdhui_foyer(p_eleve_id);
-  v_premier := (pg_catalog.date_trunc('month', v_aujourdhui + v_preavis)::date);
+  v_premier := (pg_catalog.date_trunc('month', (v_aujourdhui + v_preavis)::timestamp)::date);
   IF v_premier < v_aujourdhui + v_preavis THEN
     v_premier := (v_premier + interval '1 month')::date;
   END IF;
@@ -1113,7 +1113,7 @@ BEGIN
     'mois_accordes', (
       SELECT pg_catalog.count(*)::integer FROM public.pauses_eleve p
        WHERE p.student_id = p_eleve_id AND p.type = 'mois' AND p.statut = 'acceptee'
-         AND p.debut >= (pg_catalog.date_trunc('month', v_aujourdhui)
+         AND p.debut >= (pg_catalog.date_trunc('month', (v_aujourdhui)::timestamp)
                          - pg_catalog.make_interval(months => public.app_config_int('pause.fenetre_mois', 12) - 1))::date),
     'mois_proposes', (
       SELECT pg_catalog.jsonb_agg(pg_catalog.jsonb_build_object(
@@ -1165,7 +1165,7 @@ BEGIN
                'mois_accordes', (
                  SELECT pg_catalog.count(*)::integer FROM public.pauses_eleve a
                   WHERE a.student_id = p.student_id AND a.type = 'mois' AND a.statut = 'acceptee'
-                    AND a.debut >= (pg_catalog.date_trunc('month', p.debut)
+                    AND a.debut >= (pg_catalog.date_trunc('month', (p.debut)::timestamp)
                                     - pg_catalog.make_interval(months => public.app_config_int('pause.fenetre_mois', 12) - 1))::date
                     AND a.debut < p.debut + interval '12 months'))
              ORDER BY p.repondre_avant, p.demandee_le)
