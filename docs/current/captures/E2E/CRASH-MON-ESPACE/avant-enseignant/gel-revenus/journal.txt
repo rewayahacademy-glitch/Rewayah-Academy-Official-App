@@ -1,0 +1,34 @@
+== crash-gel : 2026-11-12T08:34:30.087Z ; Chromium 153.0.8010.12 ; http://127.0.0.1:8090
+navigation : http://127.0.0.1:8090/
+console error : Failed to load resource: net::ERR_FAILED
+console debug : Injecting <script> tag. Using callback.
+navigation : http://127.0.0.1:8090/
+navigation : http://127.0.0.1:8090/#/commencer
+navigation : http://127.0.0.1:8090/#/commencer?etape=pourQui
+console warning : [.WebGL-0x844001a1800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
+console warning : [.WebGL-0x844001a1800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
+console warning : [.WebGL-0x844001a1800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels
+navigation : http://127.0.0.1:8090/#/connexion?mode=connexion
+console warning : [.WebGL-0x844001a1800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)
+navigation : http://127.0.0.1:8090/?code=3177e343-268c-433d-8b45-bd0ecb6f2a66
+console error : Failed to load resource: net::ERR_FAILED
+console debug : Injecting <script> tag. Using callback.
+navigation : http://127.0.0.1:8090/
+navigation : http://127.0.0.1:8090/
+navigation : http://127.0.0.1:8090/
+navigation : http://127.0.0.1:8090/#/enseignant/journee
+console log : Using WasmStorageImplementation.sharedIndexedDb due to missing browser features: {MissingBrowserFeature.dedicatedWorkersInSharedWorkers, MissingBrowserFeature.sharedArrayBuffers}
+navigation : http://127.0.0.1:8090/enseignant/profil
+navigation : http://127.0.0.1:8090/#/enseignant/profil
+console error : Failed to load resource: net::ERR_FAILED
+console debug : Injecting <script> tag. Using callback.
+navigation : http://127.0.0.1:8090/#/enseignant/profil
+navigation : http://127.0.0.1:8090/#/enseignant/profil
+t+0s : repond http://127.0.0.1:8090/#/enseignant/profil (2 ms)
+t+5s : repond http://127.0.0.1:8090/#/enseignant/profil (2 ms)
+navigation : http://127.0.0.1:8090/#/enseignant/profil
+t+10s : repond http://127.0.0.1:8090/#/enseignant/profil (56 ms)
+t+15s : repond http://127.0.0.1:8090/#/enseignant/profil (10 ms)
+t+20s : repond http://127.0.0.1:8090/#/enseignant/profil (3 ms)
+t+25s : repond http://127.0.0.1:8090/#/enseignant/profil (2 ms)
+== crash-gel : constat
