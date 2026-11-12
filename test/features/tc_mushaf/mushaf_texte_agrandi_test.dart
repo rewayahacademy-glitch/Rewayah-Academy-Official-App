@@ -15,14 +15,13 @@ import 'package:rewayah_academy/core/tc_coran/layout_lignes_indisponible.dart';
 import 'package:rewayah_academy/core/tc_coran/navigation_coran.dart';
 import 'package:rewayah_academy/core/tc_coran/page_mushaf_vm.dart';
 import 'package:rewayah_academy/core/theme/app_contour.dart';
-import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/core/widgets/selecteur_section.dart';
 import 'package:rewayah_academy/features/tc_mushaf/mushaf_page.dart';
 import 'package:rewayah_academy/features/tc_mushaf/vue_page_mushaf.dart';
 
-import '../../capture/outil_capture.dart'
-    show chargerPolicesDuDepot, stabiliser;
+import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../support/aucun_mot_coupe.dart';
+import '../../support/ouvrir_coran.dart';
 import '../../teaching_core/c/faux/faux_corpus_coran.dart';
 import '../../teaching_core/c/goldens/corpus_reference.dart';
 import '../accueil_adulte/support_accueil_adulte_route.dart';
@@ -83,16 +82,7 @@ void main() {
       ],
       depart: Routes.eleve,
     );
-    await tester.tap(
-      find
-          .descendant(
-            of: find.byType(NavShell),
-            // Lot B2 : la barre de l adulte dit « Apprendre ».
-            matching: find.bySemanticsLabel(t.nav.eleve.apprendre),
-          )
-          .last,
-    );
-    await stabiliser(tester);
+    await ouvrirLeCoranParApprendre(tester);
     expect(find.byType(MushafPage), findsOneWidget);
   }
 

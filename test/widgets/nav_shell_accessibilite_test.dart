@@ -130,7 +130,7 @@ void main() {
           <String>[
             Routes.eleve,
             Routes.eleveSuivi,
-            Routes.eleveCoran,
+            Routes.eleveApprendre,
             Routes.compte,
           ],
         );

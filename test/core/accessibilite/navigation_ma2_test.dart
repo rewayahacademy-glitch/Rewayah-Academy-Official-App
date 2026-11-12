@@ -1,4 +1,4 @@
-// MA-2 : navigation eleve a quatre destinations (Accueil, Ma classe, Coran,
+// MA-2 : navigation eleve a quatre destinations (Accueil, Ma classe, Apprendre (ex-Coran, lot 5),
 // Mon espace) dans les DEUX presentations, standard et Mode Accessibilite,
 // dans ses trois formes (barre 390, rail 768, barre laterale 1440). On ouvre
 // la VRAIE coquille sur le vrai routeur et on TAPE chaque destination ; puis
@@ -128,13 +128,13 @@ void main() {
       expect(d.map((Destination x) => x.libelle).toList(), <String>[
         t.nav.eleve.accueil,
         t.nav.eleve.maClasse,
-        t.nav.eleve.coran,
+        t.nav.eleve.apprendre,
         t.nav.eleve.monEspace,
       ]);
       expect(d.map((Destination x) => x.chemin).toList(), <String>[
         Routes.eleve,
         Routes.eleveSuivi,
-        Routes.eleveCoran,
+        Routes.eleveApprendre,
         Routes.compte,
       ]);
     }
@@ -154,7 +154,7 @@ void main() {
         for (final String l in <String>[
           t.nav.eleve.accueil,
           t.nav.eleve.maClasse,
-          t.nav.eleve.coran,
+          t.nav.eleve.apprendre,
           t.nav.eleve.monEspace,
         ]) {
           expect(
@@ -170,7 +170,7 @@ void main() {
         for (final (String libelle, String chemin, int index)
             in <(String, String, int)>[
               (t.nav.eleve.maClasse, Routes.eleveSuivi, 1),
-              (t.nav.eleve.coran, Routes.eleveCoran, 2),
+              (t.nav.eleve.apprendre, Routes.eleveApprendre, 2),
               (t.nav.eleve.monEspace, Routes.compte, 3),
               (t.nav.eleve.accueil, Routes.eleve, 0),
             ]) {
@@ -232,7 +232,7 @@ void main() {
         expect(find.byType(EspaceGroupePage), findsOneWidget);
         for (final (String libelle, int index) in <(String, int)>[
           (t.nav.eleve.accueil, 0),
-          (t.nav.eleve.coran, 2),
+          (t.nav.eleve.apprendre, 2),
           (t.nav.eleve.monEspace, 3),
           (t.nav.eleve.maClasse, 1),
         ]) {

@@ -10902,7 +10902,6 @@ class _Traductions$apprendre$programme$ar extends Traductions$apprendre$programm
 	@override String get datesEcole => 'مواعيد الأكاديمية';
 	@override String get datesEcoleVide => 'ستظهر مواعيد الأكاديمية هنا';
 	@override late final _Traductions$apprendre$programme$genre$ar genre = _Traductions$apprendre$programme$genre$ar._(_root);
-	@override String dateEcole({required Object libelle, required Object date}) => '⁨${libelle}⁩، ⁨${date}⁩';
 }
 
 // Path: apprendre.livret
@@ -35379,7 +35378,6 @@ extension on TraductionsAr {
 			'apprendre.programme.genre.evaluation' => 'تقييم',
 			'apprendre.programme.genre.fermeture' => 'إغلاق الأكاديمية',
 			'apprendre.programme.genre.rencontre' => 'لقاء التلاوة',
-			'apprendre.programme.dateEcole' => ({required Object libelle, required Object date}) => '⁨${libelle}⁩، ⁨${date}⁩',
 			'apprendre.livret.vide' => 'ستظهر هنا نتائجك وتقاريرك وشهاداتك',
 			'apprendre.livret.videTu' => 'ستظهر هنا نتائجك وتقاريرك وشهاداتك',
 			_ => null,

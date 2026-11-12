@@ -23791,9 +23791,6 @@ class Traductions$apprendre$programme$fr {
 	String get datesEcoleVide => 'Les dates de l\'école seront affichées ici';
 
 	late final Traductions$apprendre$programme$genre$fr genre = Traductions$apprendre$programme$genre$fr.internal(_root);
-
-	/// fr: '{libelle}, {date}'
-	String dateEcole({required Object libelle, required Object date}) => '${libelle}, ${date}';
 }
 
 // Path: apprendre.livret
@@ -61287,7 +61284,6 @@ extension on Traductions {
 			'apprendre.programme.genre.evaluation' => 'Évaluation',
 			'apprendre.programme.genre.fermeture' => 'Fermeture de l\'école',
 			'apprendre.programme.genre.rencontre' => 'Rencontre de récitation',
-			'apprendre.programme.dateEcole' => ({required Object libelle, required Object date}) => '${libelle}, ${date}',
 			'apprendre.livret.vide' => 'Vos résultats, vos bilans et vos attestations apparaîtront ici',
 			'apprendre.livret.videTu' => 'Tes résultats, tes bilans et tes attestations apparaîtront ici',
 			_ => null,

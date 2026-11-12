@@ -14827,8 +14827,7 @@
         "evaluation": "تقييم",
         "fermeture": "إغلاق الأكاديمية",
         "rencontre": "لقاء التلاوة"
-      },
-      "dateEcole": "⁨{libelle}⁩، ⁨{date}⁩"
+      }
     },
     "livret": {
       "vide": "ستظهر هنا نتائجك وتقاريرك وشهاداتك",

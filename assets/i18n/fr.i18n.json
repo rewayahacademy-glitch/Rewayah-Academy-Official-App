@@ -15215,8 +15215,7 @@
         "evaluation": "Évaluation",
         "fermeture": "Fermeture de l'école",
         "rencontre": "Rencontre de récitation"
-      },
-      "dateEcole": "{libelle}, {date}"
+      }
     },
     "livret": {
       "vide": "Vos résultats, vos bilans et vos attestations apparaîtront ici",
