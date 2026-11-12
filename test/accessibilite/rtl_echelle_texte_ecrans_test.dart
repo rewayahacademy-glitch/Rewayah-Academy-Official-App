@@ -52,6 +52,7 @@ import 'package:rewayah_academy/features/revue_groupe/revue_groupe_page.dart';
 import 'package:rewayah_academy/features/suivi_foyer/suivi_foyer_page.dart';
 
 import '../support/harnais.dart';
+import '../support/horloge_fictive.dart';
 
 /// Lot A1 : preuve, pour **chaque ecran reel construit du catalogue**
 /// (`docs/archive/2026-09-pre-remise-a-plat/design/08-catalogue-ecrans.md`), que le rendu arabe (RTL, Bible V2
@@ -88,6 +89,15 @@ import '../support/harnais.dart';
 final DateTime _horlogeFixe = DateTime(2026, 9, 8, 17);
 
 const String _monId = 't1';
+
+/// Un tuteur connecte, autre que l'eleve 'e1' de la page d'appairage.
+const SessionState _sessionTuteur = SessionState(
+  resolue: true,
+  role: AppRole.guardian,
+  profileId: 'tuteur-1',
+  accountStatus: AccountStatus.active,
+  lectureProfil: LectureProfil.presente,
+);
 
 const SessionState _sessionEnseignant = SessionState(
   resolue: true,
@@ -280,6 +290,7 @@ List<_EcranAVerifier> _ecrans() => <_EcranAVerifier>[
       ],
       surcharges: <Override>[
         serviceAppairageProvider.overrideWithValue(FauxServiceAppairage()),
+        monHorlogeDeTest(),
         servicePlanningProvider.overrideWithValue(FauxServicePlanning()),
       ],
     ),
@@ -312,6 +323,11 @@ List<_EcranAVerifier> _ecrans() => <_EcranAVerifier>[
       ),
       surcharges: <Override>[
         serviceAppairageProvider.overrideWithValue(FauxServiceAppairage()),
+        // AUTRE-PROFIL-ELEVE : la page attend le compte connecte (un tuteur,
+        // autre que l'eleve 'e1') avant de demander un code.
+        sourceSessionProvider.overrideWithValue(
+          FausseSourceSession(_sessionTuteur),
+        ),
       ],
     ),
   ),
@@ -370,6 +386,7 @@ List<_EcranAVerifier> _ecrans() => <_EcranAVerifier>[
           FausseSourceSession(_sessionEnseignant),
         ),
         serviceMatchingProvider.overrideWithValue(FauxServiceMatching()),
+        monHorlogeDeTest(),
         servicePlanningProvider.overrideWithValue(FauxServicePlanning()),
         serviceReglesProvider.overrideWithValue(FauxServiceRegles()),
       ],
@@ -384,6 +401,7 @@ List<_EcranAVerifier> _ecrans() => <_EcranAVerifier>[
         echelleTexte: e,
       ),
       surcharges: <Override>[
+        monHorlogeDeTest(),
         servicePlanningProvider.overrideWithValue(FauxServicePlanning()),
         servicePriereProvider.overrideWithValue(FauxServicePriere()),
         serviceReseauProvider.overrideWithValue(FauxServiceReseau()),
@@ -398,6 +416,7 @@ List<_EcranAVerifier> _ecrans() => <_EcranAVerifier>[
         sourceSessionProvider.overrideWithValue(
           FausseSourceSession(_sessionEnseignant),
         ),
+        monHorlogeDeTest(),
         servicePlanningProvider.overrideWithValue(FauxServicePlanning()),
         serviceMatchingProvider.overrideWithValue(FauxServiceMatching()),
         serviceReglesProvider.overrideWithValue(FauxServiceRegles()),

@@ -11,6 +11,7 @@ import '../../core/router/routes.dart';
 import '../../core/suivi/service_suivi.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
@@ -61,6 +62,8 @@ class DetailSeancePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // HEURES-PROFIL H4 : la page se redessine quand le fuseau du profil arrive.
+    ref.watch(monHorlogeProvider);
     final String? eleveDemande = parametreRequete(context, 'eleve');
     final AsyncValue<List<Seance>> seances = ref.watch(seancesDuSuiviProvider);
     final Seance? seance = seances.hasValue && !seances.hasError
@@ -93,7 +96,7 @@ class DetailSeancePage extends ConsumerWidget {
           ? t.historique.detailSeance
           : nomClasseLu ??
                 t.historique.seance.titreSansClasse(
-                  date: dateCourte(seance.debut),
+                  date: dateCourte(chezMoi(seance.debut)),
                 ),
       sousTitre: seance == null
           ? null
@@ -224,7 +227,7 @@ class _Contenu extends ConsumerWidget {
         carte(<Widget>[
           LigneCleValeur(
             cle: t.historique.seance.horaire,
-            valeur: plageHoraire(seance.debut, seance.fin),
+            valeur: plageHoraire(chezMoi(seance.debut), chezMoi(seance.fin)),
             chiffres: true,
             annulee: statut == StatutHistorique.annule,
           ),
@@ -265,7 +268,7 @@ class _Contenu extends ConsumerWidget {
           if (arrivee != null)
             LigneCleValeur(
               cle: t.historique.seance.arrivee,
-              valeur: heureMinute(arrivee),
+              valeur: heureMinute(chezMoi(arrivee)),
               chiffres: true,
             ),
           // PRESENCE-MINUTES (31/10/2026) : sortie et minutes reellement
@@ -274,7 +277,7 @@ class _Contenu extends ConsumerWidget {
           if (arrivee != null && sortie != null)
             LigneCleValeur(
               cle: t.historique.seance.sortie,
-              valeur: heureMinute(sortie),
+              valeur: heureMinute(chezMoi(sortie)),
               chiffres: true,
             ),
           if (minutes != null && prevues != null && arrivee != null)
@@ -318,10 +321,16 @@ class _Contenu extends ConsumerWidget {
             classeId: classe?.groupeId,
           ),
         ],
-        Ecart.vMd,
-        NoteHistorique(
-          t.historique.fuseauDetail(decalage: decalageUtc(seance.debut)),
-        ),
+        // HEURES-PROFIL H4 (garde-cap, 12/11/2026) : la mention ne dit
+        // l'appareil, et son decalage, que s'il sert.
+        if (estHeureDeLAppareil(seance.debut)) ...<Widget>[
+          Ecart.vMd,
+          NoteHistorique(
+            t.historique.fuseauDetail(
+              decalage: decalageUtc(chezMoi(seance.debut)),
+            ),
+          ),
+        ],
       ],
     );
   }

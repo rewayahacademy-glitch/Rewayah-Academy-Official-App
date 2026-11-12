@@ -7,6 +7,7 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/router/etat_routeur_sur.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart' show sessionProvider;
 import '../../core/theme/app_gabarit.dart';
@@ -200,7 +201,7 @@ class _Squelette extends StatelessWidget {
 /// Le chemin de l'ecran courant, `null` hors routeur.
 String? _cheminCourant(BuildContext context) {
   try {
-    return GoRouterState.of(context).uri.path;
+    return adresseRouteurSur(context)?.path;
   } on Object {
     return null;
   }

@@ -9,6 +9,7 @@ import '../../core/planning/service_planning.dart';
 import '../../core/router/routes.dart';
 import '../../core/suivi/service_suivi.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/tc_observation/guardian_session_visit.dart';
 import '../../core/tc_observation/port_historique_observations.dart';
 import '../../core/theme/app_palette.dart';
@@ -57,6 +58,8 @@ class DetailObservationsPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // HEURES-PROFIL H4 : la page se redessine quand le fuseau du profil arrive.
+    ref.watch(monHorlogeProvider);
     final AsyncValue<ObservationsSeance?> valeur = ref.watch(
       detailObservationsProvider((seanceId, eleveId)),
     );
@@ -111,7 +114,7 @@ class DetailObservationsPage extends ConsumerWidget {
           ? t.historique.segments.observations
           : classe?.libelle ??
                 t.historique.observation.titreSansClasse(
-                  date: dateCourte(entree!),
+                  date: dateCourte(chezMoi(entree!)),
                 ),
       sousTitre: lu == null
           ? null
@@ -215,10 +218,14 @@ class _Contenu extends ConsumerWidget {
               _Visite(visite: v),
           ],
         ),
-        Ecart.vMd,
-        NoteHistorique(
-          t.historique.fuseauDetail(decalage: decalageUtc(premiere)),
-        ),
+        // HEURES-PROFIL H4 (garde-cap, 12/11/2026) : la mention ne dit
+        // l'appareil, et son decalage, que s'il sert.
+        if (estHeureDeLAppareil(premiere)) ...<Widget>[
+          Ecart.vMd,
+          NoteHistorique(
+            t.historique.fuseauDetail(decalage: decalageUtc(chezMoi(premiere))),
+          ),
+        ],
       ],
     );
   }
@@ -234,8 +241,10 @@ class _Visite extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
-    final DateTime entree = visite.enteredAtUtc.toLocal();
-    final DateTime? sortie = visite.leftAtUtc?.toLocal();
+    final DateTime entree = chezMoi(visite.enteredAtUtc);
+    final DateTime? sortie = visite.leftAtUtc == null
+        ? null
+        : chezMoi(visite.leftAtUtc!);
     final Duration? duree = visite.durationSeconds;
     final bool terminee = sortie != null && duree != null;
     final String plage = sortie == null

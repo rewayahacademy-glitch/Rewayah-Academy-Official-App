@@ -127,6 +127,9 @@ const Map<String, int> _domaines = <String, int>{
   'suiviPedagogique': 10,
   // SOURATES (11/11/2026) : les sourates des bases au cahier.
   'cahierSourates': 3,
+  // CORRIGER-SOURATE-DIRECTION (12/11/2026) : les sourates retirables d'une
+  // Classe.
+  'souratesRetirables': 7,
 };
 
 /// Les domaines francais venus de ccr sans tranche arabe (reunion du 10/10) :
@@ -195,6 +198,9 @@ const Set<String> _latins = <String>{
   'eleve.coran.sourceLien',
   'connexion.courrielIndice',
   'compte.tuteur.securite.methodeGoogle',
+  // FUSEAU-IDENTITE-PRO (12/11/2026) : « Riyad · UTC+3 », la ville (deja
+  // traduite, parametre) et le decalage sur UTC : un format, rien a traduire.
+  'enseignant.profil.fuseauValeur',
   'agent.jetonExemple',
   // Lot 22 a : chaque langue se nomme dans sa propre langue (« Systeme /
   // Francais / العربية », plan des lots 22 a), pour qu'on retrouve la sienne.
@@ -220,6 +226,9 @@ const Set<String> _latins = <String>{
   // dans toutes les langues (« Version 0.2.0 (423) », lot FOYER-UX).
   'compte.version',
   'compte.versionSeule',
+  // DATE-ARABE-SOURCE (garde-cap, 12/11/2026) : l'heure arabe s'ecrit en
+  // chiffres, « 5:00 », isolee de gauche a droite (U+2066) ; aucun mot.
+  'admin.regroupements.heure',
 };
 
 final RegExp _parametre = RegExp(r'\{\w+\}');
@@ -256,6 +265,10 @@ List<String> defautsIsolation(String texte) {
 /// nom de produit ou un sigle que l'arabe garde tel quel.
 const Set<String> _motsLatinsAdmis = <String>{
   'Rewayah',
+  // FUSEAU-IDENTITE-PRO (12/11/2026) : l'exemple du nom international d'un
+  // fuseau (« Asia/Riyadh »), qui se saisit tel quel, en latin.
+  'Asia',
+  'Riyadh',
   'Academy',
   'PDF',
   // IMM-ACCUEIL-FRONT : le format de fichier de l'import des inscriptions.

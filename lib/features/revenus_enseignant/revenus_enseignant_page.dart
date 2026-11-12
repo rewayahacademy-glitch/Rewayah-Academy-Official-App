@@ -39,6 +39,7 @@ import '../../core/capacites/port_autres_revenus.dart';
 import '../../core/capacites/port_revenus_enseignant.dart';
 import '../../core/finance/format_montant.dart';
 import '../../core/finance/montant.dart';
+import '../../core/i18n/isolat_bidi.dart' show enTeteArabe;
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/mouvement/mouvement.dart';
@@ -476,9 +477,11 @@ class _Resume extends StatelessWidget {
 
 /// « 1er decembre », « 10 decembre ».
 String _jourMois(DateTime d) => LibellesGroupe.insecable(
-  t.enseignant.revenus.jourMois(
-    jour: d.day == 1 ? t.commun.dates.premierJour : '${d.day}',
-    mois: t.commun.dates.mois[d.month - 1],
+  enTeteArabe(
+    t.enseignant.revenus.jourMois(
+      jour: d.day == 1 ? t.commun.dates.premierJour : '${d.day}',
+      mois: t.commun.dates.mois[d.month - 1],
+    ),
   ),
 );
 

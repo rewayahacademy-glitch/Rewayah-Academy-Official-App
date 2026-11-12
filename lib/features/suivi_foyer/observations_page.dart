@@ -9,6 +9,7 @@ import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/router/routes.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/tc_observation/port_historique_observations.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
@@ -41,6 +42,8 @@ class ObservationsPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // HEURES-PROFIL H4 : la page se redessine quand le fuseau du profil arrive.
+    ref.watch(monHorlogeProvider);
     final DateTime maintenant = horloge();
     return PageShell(
       titre: t.historique.titre,
@@ -203,7 +206,10 @@ class _Liste extends ConsumerWidget {
             ],
           ),
           Ecart.vMd,
-          NoteHistorique(t.historique.fuseauListe),
+          // HEURES-PROFIL H4 (garde-cap, 12/11/2026) : les heures sont au
+          // fuseau du profil ; la mention ne dit l'appareil que s'il sert.
+          if (estHeureDeLAppareil(DateTime.now()))
+            NoteHistorique(t.historique.fuseauListe),
         ],
       ],
     );
@@ -219,7 +225,7 @@ class _Liste extends ConsumerWidget {
     final DateTime entree = premiereEntree(o);
     return LigneHistorique(
       key: ValueKey<String>('observation-${o.seanceId}-${o.enfantId}'),
-      date: dateCourte(entree),
+      date: dateCourte(chezMoi(entree)),
       meta: resumeVisites(o),
       titre: nom,
       sousTitre: eleve.prenom,

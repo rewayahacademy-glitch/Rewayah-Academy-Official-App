@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/router/chemin_retour.dart';
+import '../../core/router/etat_routeur_sur.dart';
 import '../../core/router/routes.dart';
 import '../../core/tc_bibliotheque/couverture_ressource.dart';
 import '../../core/tc_bibliotheque/donnees_catalogue.dart';
@@ -102,7 +103,7 @@ class _DetailEtat extends ConsumerState<DetailRessourcePage> {
       return null;
     }
     final String? retour = cheminRetourValide(
-      GoRouterState.of(context).uri.queryParameters['retour'],
+      adresseRouteurSur(context)?.queryParameters['retour'],
     );
     if (retour != null) {
       return () => routeur.go(retour);

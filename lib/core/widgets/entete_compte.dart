@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 import '../accessibilite/texte_sans_coupure.dart';
 import '../i18n/strings.g.dart';
+import '../icons/app_icons.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
@@ -74,6 +75,10 @@ class EnteteCompte extends StatefulWidget {
   /// La photo pressable.
   static const Key photoKey = Key('enteteCompte.photo');
 
+  /// Le petit signe qui dit que la photo se touche (present seulement quand
+  /// le changement de photo est possible).
+  static const Key badgePhotoKey = Key('enteteCompte.badgePhoto');
+
   /// Le geste de copie du matricule.
   static const Key copierKey = Key('enteteCompte.copier');
 
@@ -139,7 +144,24 @@ class _EnteteCompteState extends State<EnteteCompte> {
             child: Tooltip(
               message: t.compte.page.changerPhoto,
               excludeFromSemantics: true,
-              child: ExcludeSemantics(child: avatar),
+              child: ExcludeSemantics(
+                // PHOTO-TOUCHABLE : un petit badge crayon dit que
+                // la photo se touche (directeur, 12/11/2026) ; la zone
+                // touchable ne change pas, le badge est a l'interieur.
+                child: Stack(
+                  children: <Widget>[
+                    avatar,
+                    PositionedDirectional(
+                      end: 0,
+                      bottom: 0,
+                      child: _BadgePhotoTouchable(
+                        key: EnteteCompte.badgePhotoKey,
+                        palette: palette,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
         Ecart.hMd,
@@ -251,4 +273,34 @@ class _EnteteCompteState extends State<EnteteCompte> {
       ),
     );
   }
+}
+
+/// Le petit rond a l'angle de la photo : un crayon, contraste en clair
+/// comme en sombre (aplat d'action et son encre, anneau de la couleur de la
+/// page). Decoratif : le geste se dit par le libelle du bouton de la photo.
+class _BadgePhotoTouchable extends StatelessWidget {
+  const _BadgePhotoTouchable({required this.palette, super.key});
+
+  final AppPalette palette;
+
+  @override
+  Widget build(BuildContext context) => DecoratedBox(
+    decoration: BoxDecoration(
+      color: palette.surfacePrimary.background,
+      shape: BoxShape.circle,
+      border: Border.all(color: palette.surfaceCanvas.background),
+    ),
+    child: SizedBox.square(
+      dimension: AppSpacing.xxl,
+      child: Center(
+        child: IconTheme(
+          data: IconThemeData(
+            color: palette.surfacePrimary.onBackground,
+            size: AppSpacing.lg,
+          ),
+          child: Icon(AppIcons.crayon.repos),
+        ),
+      ),
+    ),
+  );
 }

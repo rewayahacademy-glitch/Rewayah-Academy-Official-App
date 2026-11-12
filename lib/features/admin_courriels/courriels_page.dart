@@ -250,6 +250,12 @@ class _CourrielsAdminPageState extends ConsumerState<CourrielsAdminPage> {
   }
 
   Future<void> _envoyer() async {
+    // ANTI-CRASH : le conteneur, pris avant l'attente, relit la liste meme
+    // si la page a ete quittee (`ref` leverait une StateError).
+    final ProviderContainer conteneur = ProviderScope.containerOf(
+      context,
+      listen: false,
+    );
     if (_envoiEnCours) return;
     setState(() {
       _tente = true;
@@ -291,7 +297,7 @@ class _CourrielsAdminPageState extends ConsumerState<CourrielsAdminPage> {
       // et la meme cle rend la ligne deja creee si on recommence.
       retour = _horsLigne ? RetourEnvoi.horsLigne : RetourEnvoi.echec;
     }
-    ref.invalidate(courrielsFileProvider);
+    conteneur.invalidate(courrielsFileProvider);
     if (!mounted) return;
     setState(() {
       _envoiEnCours = false;
@@ -311,6 +317,12 @@ class _CourrielsAdminPageState extends ConsumerState<CourrielsAdminPage> {
   // --- Envois -------------------------------------------------------------
 
   Future<void> _relancer(CourrielSortant c) async {
+    // ANTI-CRASH : le conteneur, pris avant l'attente, relit la liste meme
+    // si la page a ete quittee (`ref` leverait une StateError).
+    final ProviderContainer conteneur = ProviderScope.containerOf(
+      context,
+      listen: false,
+    );
     if (_relanceEnCours != null) return;
     if (_horsLigne) {
       setState(() => _retourRelance = RetourRelance.horsLigne);
@@ -333,7 +345,7 @@ class _CourrielsAdminPageState extends ConsumerState<CourrielsAdminPage> {
     }
     // Dans tous les cas la file est relue : une relance dont la reponse s'est
     // perdue doit y apparaitre.
-    ref.invalidate(courrielsFileProvider);
+    conteneur.invalidate(courrielsFileProvider);
     if (!mounted) return;
     setState(() {
       _relanceEnCours = null;

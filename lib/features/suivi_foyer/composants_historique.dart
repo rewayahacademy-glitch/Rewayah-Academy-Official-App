@@ -8,6 +8,7 @@ import '../../core/icons/app_icons.dart';
 import '../../core/mouvement/apparition_douce.dart';
 import '../../core/photos/photo_personne.dart' show photoPersonneProvider;
 import '../../core/planning/service_planning.dart';
+import '../../core/router/etat_routeur_sur.dart';
 import '../../core/router/routes.dart';
 import '../../core/suivi/service_suivi.dart';
 import '../../core/theme/app_gabarit.dart';
@@ -521,6 +522,6 @@ String? parametreRequete(BuildContext context, String cle) {
   if (GoRouter.maybeOf(context) == null) {
     return null;
   }
-  final String? valeur = GoRouterState.of(context).uri.queryParameters[cle];
+  final String? valeur = parametreRouteurSur(context, cle);
   return valeur == null || valeur.isEmpty ? null : valeur;
 }

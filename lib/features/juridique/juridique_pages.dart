@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/conformite/representant_ue.dart';
 import '../../core/finance/delai_retractation.dart';
+import '../../core/i18n/isolat_bidi.dart' show enTeteArabe;
 import '../../core/i18n/jour_du_mois.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
@@ -30,10 +31,12 @@ void _retour(BuildContext context) {
 
 String _dateDuTexte() {
   final DateTime d = VersionsJuridiques.date;
-  return t.compte.tuteur.dateLongue(
-    jour: jourDuMois(d.day),
-    mois: t.commun.dates.mois[d.month - 1],
-    annee: d.year,
+  return enTeteArabe(
+    t.compte.tuteur.dateLongue(
+      jour: jourDuMois(d.day),
+      mois: t.commun.dates.mois[d.month - 1],
+      annee: d.year,
+    ),
   );
 }
 

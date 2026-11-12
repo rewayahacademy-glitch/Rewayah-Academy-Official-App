@@ -9,8 +9,6 @@
 library;
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
 
 /// La vitesse de l'eleve sur son etape, calculee par le serveur.
 ///
@@ -57,7 +55,6 @@ class SuiviPedagogique {
     this.semainesEcoulees,
     this.rythme = Rythme.inconnu,
     this.pageReprise,
-    this.sourates,
   });
 
   /// Lit une ligne de `suivi_pedagogique_eleve`. Pure, pour les tests ; nulle
@@ -87,10 +84,6 @@ class SuiviPedagogique {
       pageReprise: pageLue != null && pageLue >= 1 && pageLue <= 604
           ? pageLue
           : null,
-      sourates: SouratesValidees.depuis(
-        ligne['sourates_validees'],
-        ligne['sourates_total'],
-      ),
     );
   }
 
@@ -120,15 +113,10 @@ class SuiviPedagogique {
   /// La derniere page du Mushaf presentee en classe (CAHIER-C1), nulle quand
   /// rien n'a ete presente : la ligne se cache.
   final int? pageReprise;
-
-  /// SOURATES (directeur, 11/11/2026, option A) : les sourates des bases
-  /// validees au cahier, sur leur total ; nulle quand le serveur ne les rend
-  /// pas (jamais un 0 invente : l'anneau reste dore).
-  final SouratesValidees? sourates;
 }
 
 /// Les sourates des bases validees d'un eleve, telles que le serveur les
-/// compte (`suivi_pedagogique_eleve`) : jamais calculees sur l'appareil.
+/// compte (`sourates_eleve`, par `ma_progression`) : jamais calculees sur l'appareil.
 @immutable
 class SouratesValidees {
   /// Cree le compte.
@@ -153,25 +141,3 @@ class SouratesValidees {
   /// Toutes les sourates des bases sont validees.
   bool get toutes => validees == total;
 }
-
-/// Le port.
-abstract interface class PortSuiviPedagogique {
-  /// Le suivi de [eleveId] ; nul quand l'eleve n'a pas de Classe active ou pas
-  /// d'etape publiee.
-  Future<SuiviPedagogique?> pourEleve(String eleveId);
-}
-
-/// Le port : absent tant que `main.dart` ne le pose pas ; sans lui, le bloc
-/// n'est pas pose.
-final Provider<PortSuiviPedagogique?> portSuiviPedagogiqueProvider =
-    Provider<PortSuiviPedagogique?>((Ref _) => null);
-
-/// Le suivi d'un eleve ; `null` sans port ou sans etape.
-final FutureProviderFamily<SuiviPedagogique?, String> suiviPedagogiqueProvider =
-    FutureProvider.family<SuiviPedagogique?, String>((Ref ref, String eleveId) {
-      final PortSuiviPedagogique? port = ref.watch(
-        portSuiviPedagogiqueProvider,
-      );
-      if (port == null) return Future<SuiviPedagogique?>.value();
-      return port.pourEleve(eleveId);
-    }, retry: (int _, Object _) => null);

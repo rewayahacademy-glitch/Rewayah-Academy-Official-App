@@ -36,34 +36,35 @@ void main() {
     });
 
     // Reunion de la ligne arabe (10/10) : les gabarits de date arabes isolent
-    // chaque champ (U+2068 ... U+2069).
+    // chaque champ (U+2068 ... U+2069) ; DATE-ARABE-SOURCE (12/11) : la marque
+    // de lettre arabe (U+061C) en tete donne a la date le sens de l'interface.
     test('arabe : mois et jours arabes, aucun mot francais', () async {
       await LocaleSettings.setLocale(AppLocale.ar);
       expect(
         dateCourte(_le),
-        '\u20684\u2069 \u2068أكتوبر\u2069 \u20682026\u2069',
+        '\u061C\u20684\u2069 \u2068أكتوبر\u2069 \u20682026\u2069',
       );
       expect(
         dateCompacte(_le, _maintenant),
-        '\u20684\u2069 \u2068أكتوبر\u2069',
+        '\u061C\u20684\u2069 \u2068أكتوبر\u2069',
       );
       expect(
         dateLongueHistorique(_le),
-        '\u2068الأحد\u2069 \u20684\u2069 \u2068أكتوبر\u2069 \u20682026\u2069',
+        '\u061C\u2068الأحد\u2069 \u20684\u2069 \u2068أكتوبر\u2069 \u20682026\u2069',
       );
       expect(
         dateMoyenne(_le),
-        'الأحد \u20684\u2069 \u2068أكتوبر\u2069 \u20682026\u2069',
+        'الأحد \u061C\u20684\u2069 \u2068أكتوبر\u2069 \u20682026\u2069',
       );
       expect(
         dateDeLAppareil(_le),
-        '\u2068الأحد\u2069 \u20684\u2069 \u2068أكتوبر\u2069',
+        '\u061C\u2068الأحد\u2069 \u20684\u2069 \u2068أكتوبر\u2069',
       );
       expect(momentCourt(_le, _maintenant), isNot(contains('oct')));
       final String horodatage = horodatageMessage(_le);
       expect(
         horodatage,
-        '\u2068الأحد\u2069 \u20684\u2069\u00A0\u2068أكتوبر\u2069 · 09:05',
+        '\u061C\u2068الأحد\u2069 \u20684\u2069\u00A0\u2068أكتوبر\u2069 · 09:05',
       );
       for (final String texte in <String>[
         dateCourte(_le),

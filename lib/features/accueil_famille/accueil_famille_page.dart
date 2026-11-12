@@ -46,13 +46,11 @@ import '../../core/tc_horloge/session_clock_vm.dart';
 import '../../core/tc_parcours/port_travail_a_venir.dart';
 import '../../core/theme/app_delais.dart';
 import '../../core/theme/app_gabarit.dart';
-import '../../core/theme/app_palette.dart';
-import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/etat_systeme.dart';
-import '../../core/widgets/goutte_profils.dart';
+import '../../core/widgets/fondu_contenu_profil.dart';
 import '../../core/widgets/grille_bento.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/lumiere_autour.dart';
@@ -76,6 +74,7 @@ import 'bandeau_blocage.dart';
 import 'bloc_seance.dart';
 import 'carte_classe_seance.dart';
 import 'carte_horaire.dart';
+import 'feuille_autre_appareil.dart';
 import 'ligne_bibliotheque_classe.dart';
 import 'ligne_derniere_seance.dart';
 import 'liste_preparation.dart';
@@ -520,44 +519,37 @@ class _CorpsAccueil extends ConsumerWidget {
               etapeParcours(p) == EtapeParcours.horaireAChoisir,
         )
         .firstOrNull;
-    // GOUTTE D'HUILE (directeur, 11/11/2026) : la portee de la goutte entoure
-    // le selecteur et le contenu ; entre deux profils, un cou de matiere ;
-    // entre le rond choisi et son contenu, une goutte qui tombe ou est aspiree.
-    // La porte unique de la 422 reste la regle : `eleveId` (le contenu) ne
-    // change que quand les donnees sont la ; `selectionId` suit le toucher.
-    final AppPalette paletteGoutte = AppPalette.of(context);
+    // PROFILS-EFFET (directeur, 12/11/2026) : entre deux profils, le contenu
+    // change par un fondu court (FonduContenuProfil) ; le rond choisi, lui,
+    // est pris des le toucher. La porte unique de la 422 reste la regle :
+    // `eleveId` (le contenu) ne change que quand les donnees sont la ;
+    // `selectionId` suit le toucher.
     // 432 (train du 11/11, choix du garde-cap) : le lien discret « Utiliser
     // un autre appareil » reste fixe avec la rangee, juste apres
-    // lienEspaceEleve ; seul le contenu du profil tombe.
-    Widget goutte(
+    // lienEspaceEleve ; seul le contenu du profil change.
+    Widget contenuProfil(
       Widget rangee,
       List<Widget> contenu, {
       Widget? autreAppareil,
-    }) => GoutteProfils(
-      selectionId: selectionId,
-      matiere: paletteGoutte.inkAccent.asBorderSide().color,
-      matiereContenu: paletteGoutte.surfaceRaised.background,
-      rayonContenu: AppRadius.lg,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          rangee,
-          ?lienEspaceEleve,
-          ?autreAppareil,
-          ContenuGoutte(
-            profilId: eleveId,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              mainAxisSize: MainAxisSize.min,
-              children: contenu,
-            ),
+    }) => Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        rangee,
+        ?lienEspaceEleve,
+        ?autreAppareil,
+        FonduContenuProfil(
+          profilId: eleveId,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: contenu,
           ),
-        ],
-      ),
+        ),
+      ],
     );
     if (sansClasse) {
-      return goutte(selecteur, <Widget>[
+      return contenuProfil(selecteur, <Widget>[
         Ecart.vXl,
         const CarteSuiviDemandes(),
         const CarteDemandePresentation(),
@@ -726,7 +718,10 @@ class _CorpsAccueil extends ConsumerWidget {
             child: LienFleche(
               key: AccueilFamillePage.autreAppareilKey,
               libelle: t.tuteur.accueil.autreAppareil,
-              onPress: () => routeur.go(Routes.appairerPour(eleveId)),
+              // AUTRE-PROFIL-ELEVE (12/11/2026) : le titulaire se connecte a
+              // son propre compte sur l'autre appareil, sans jumelage (le
+              // serveur refuse d'appairer un compte tuteur).
+              onPress: () => unawaited(ouvrirFeuilleAutreAppareil(context)),
               alignerEnDebut: true,
             ),
           )
@@ -784,7 +779,7 @@ class _CorpsAccueil extends ConsumerWidget {
     // se protege en plus elle-meme (BENTO-2c, `BlocSeance`).
     final double marge = compact ? AppSpacing.lg : AppSpacing.xxl;
     final double echelle = MediaQuery.textScalerOf(context).scale(1);
-    return goutte(selecteurAvec(horlogeClasse), <Widget>[
+    return contenuProfil(selecteurAvec(horlogeClasse), <Widget>[
       Ecart.vXl,
       const CarteSuiviDemandes(),
       const CarteDemandePresentation(),

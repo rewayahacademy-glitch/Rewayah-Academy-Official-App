@@ -8,6 +8,7 @@ import '../../core/alertes/alerte.dart';
 import '../../core/alertes/port_alertes.dart';
 import '../../core/capacites/revue_dossiers_depuis_validation.dart';
 import '../../core/dossier/service_validation.dart';
+import '../../core/i18n/isolat_bidi.dart' show enTeteArabe;
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/router/routes.dart';
@@ -377,11 +378,13 @@ class TableauDeBordPage extends ConsumerWidget {
 }
 
 /// « lundi 5 octobre 2026 » : la date du jour de l'en-tete (ADMIN-SHELL-01).
-String _dateDuJour(DateTime jour) => t.historique.dateLongue(
-  jourSemaine: t.commun.dates.jours[jour.weekday - 1].toLowerCase(),
-  jour: jour.day,
-  mois: t.commun.dates.mois[jour.month - 1],
-  annee: jour.year,
+String _dateDuJour(DateTime jour) => enTeteArabe(
+  t.historique.dateLongue(
+    jourSemaine: t.commun.dates.jours[jour.weekday - 1].toLowerCase(),
+    jour: jour.day,
+    mois: t.commun.dates.mois[jour.month - 1],
+    annee: jour.year,
+  ),
 );
 
 /// Les memes tuiles que [_Compteurs], vides, le temps de la premiere lecture

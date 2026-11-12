@@ -373,11 +373,7 @@ abstract final class AppMouvement {
   /// Le cercle qui « recoit » la goutte : le seul ressort sous-amorti du
   /// produit, sur decision expresse du directeur (11/11/2026, « un leger
   /// rebond »). Il ne sert qu'a cette reception, sur le cercle Compte de la
-  /// barre et, meme decision et meme style de goutte (directeur, 11/11/2026),
-  /// sur les ronds de profil a la rupture du cou entre deux profils
-  /// (`GoutteProfils`) ; d'une amplitude de [amplitudeReception]. Le rebond des
-  /// ronds de profil dure [rebondGouttePro] puis s'acheve (residu a la coupe :
-  /// 0,03 % d'echelle ; pic de depassement : 0,18 %).
+  /// barre, d'une amplitude de [amplitudeReception].
   static final SpringDescription ressortReception =
       SpringDescription.withDampingRatio(mass: 1, stiffness: 400, ratio: 0.4);
 
@@ -398,38 +394,15 @@ abstract final class AppMouvement {
   /// range rien.
   static const double elanRangement = 700;
 
-  /// GOUTTE D'HUILE DES PROFILS (directeur, 11/11/2026) : la goutte qui part
-  /// du rond quitte vers le rond choisi. Amortissement critique : le
-  /// mouvement n'a pas de rebond ; les rebonds sont ceux de
-  /// [ressortReception], a la rupture du cou.
-  static final SpringDescription ressortGouttePro =
-      SpringDescription.withDampingRatio(mass: 1, stiffness: 700, ratio: 1);
+  /// PROFILS-EFFET (directeur, 12/11/2026 : « On abandonne la goutte entre
+  /// profils, on ajoute un simple effet pour le contenu du profil et un autre
+  /// qui montre le profil selectionne ») : quand on change de profil, le
+  /// contenu change par un fondu court, avec un leger glissement ; la duree
+  /// tient largement sous [plafond]. Reduction du mouvement : instantane.
+  static const Duration fonduContenuProfil = Duration(milliseconds: 180);
 
-  /// Avancement (de la goutte, 0 a 1) ou elle atteint le rond choisi : le cou
-  /// entre les deux ronds commence alors a s'amincir.
-  static const double arriveeGouttePro = 0.5;
-
-  /// Avancement ou le cou entre les deux ronds se rompt : le rond quitte et le
-  /// rond choisi reprennent leur forme d'un petit rebond, et le rond choisi
-  /// prend la selection.
-  static const double ruptureGouttePro = 0.9;
-
-  /// Le temps que les deux ronds rebondissent apres la rupture du cou, puis la
-  /// goutte est finie. Le mouvement ENTIER (cou jusqu'a la rupture, environ
-  /// 150 ms, puis ce rebond) tient sous [plafond] : choisir un profil est une
-  /// action instantanee (DECISION-FLUIDITE, garde-cap 11/11/2026).
-  static const Duration rebondGouttePro = Duration(milliseconds: 200);
-
-  /// La chute du contenu depuis le rond choisi : la goutte s'etale en devenant
-  /// la carte.
-  static const Duration chuteContenu = Duration(milliseconds: 340);
-
-  /// Part de la chute (0 a 1) ou le cou entre le rond et le contenu se rompt.
-  static const double ruptureChuteContenu = 0.55;
-
-  /// La taille de depart du contenu qui tombe, et d'arrivee de celui qui est
-  /// aspire (fraction de sa taille).
-  static const double echelleGouttePro = 0.15;
+  /// La courbe du fondu et du glissement du contenu d'un profil.
+  static const Curve courbeContenuProfil = Curves.easeOut;
 
   /// Translation verticale d'un element qui entre dans une liste.
   static const double translationAjout = 8;

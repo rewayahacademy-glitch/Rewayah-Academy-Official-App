@@ -11,6 +11,7 @@ import '../../core/cache/secure/stockage_securise.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/router/etat_routeur_sur.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
@@ -111,7 +112,7 @@ class _EleveConnexionPageState extends ConsumerState<EleveConnexionPage> {
   /// `extra` (jamais dans l'adresse). Absent hors de ce parcours.
   ProfilLocal? _profilQuiArrive() {
     try {
-      final Object? extra = GoRouterState.of(context).extra;
+      final Object? extra = etatRouteurSur(context)?.extra;
       return extra is ProfilLocal ? extra : null;
     } on Object {
       return null;

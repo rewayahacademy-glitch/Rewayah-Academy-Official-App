@@ -11,6 +11,7 @@ import '../../core/icons/app_icons.dart';
 import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/chemin_retour.dart';
+import '../../core/router/etat_routeur_sur.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
@@ -68,7 +69,7 @@ class _AppareilsElevePageState extends ConsumerState<AppareilsElevePage> {
 
   Uri? _adresse() {
     try {
-      return GoRouterState.of(context).uri;
+      return adresseRouteurSur(context);
     } on Object {
       return null;
     }

@@ -13,7 +13,10 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/chemin_retour.dart';
+import '../../core/router/etat_routeur_sur.dart';
 import '../../core/router/routes.dart';
+import '../../core/session/session_controleur.dart';
+import '../../core/session/session_state.dart';
 import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_mouvement.dart';
@@ -24,6 +27,7 @@ import '../../core/widgets/ecran_resultat.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
+import '../accueil_famille/feuille_autre_appareil.dart';
 import 'emetteur_qr.dart';
 
 /// L'horloge de l'emetteur, injectable pour les tests (expiration, compte a
@@ -147,6 +151,10 @@ class _AppairagePageState extends ConsumerState<AppairagePage>
   Timer? _horloge;
   Timer? _scrutation;
   ProviderSubscription<AsyncValue<bool>>? _abonnementReseau;
+  ProviderSubscription<String?>? _abonnementSession;
+
+  /// Vrai des que le compte est connu et la page a choisi sa voie.
+  bool _decide = false;
 
   DateTime _lireHorloge() => ref.read(horlogeEmetteurProvider)();
 
@@ -162,8 +170,30 @@ class _AppairagePageState extends ConsumerState<AppairagePage>
           _surReseau(suivant.hasValue && suivant.requireValue),
       fireImmediately: true,
     );
-    unawaited(_demarrer());
+    // AUTRE-PROFIL-ELEVE : rechargee sur son adresse, la page s'ouvre avant
+    // que la session connaisse le compte (mesure du 12/11/2026 sur la pile
+    // locale : `profileId` encore nul a la demande de code). Elle attend donc
+    // le compte, puis decide une seule fois : titulaire, rien ; sinon, le code.
+    _abonnementSession = ref.listenManual<String?>(
+      sessionProvider.select((SessionState s) => s.profileId),
+      (String? _, String? profil) {
+        if (profil == null || _decide) return;
+        _decide = true;
+        if (profil == widget.eleveId) {
+          _poser(() {});
+        } else {
+          unawaited(_demarrer());
+        }
+      },
+      fireImmediately: true,
+    );
   }
+
+  /// AUTRE-PROFIL-ELEVE (12/11/2026) : le profil demande est celui du compte
+  /// connecte, le titulaire. Le serveur n'appaire jamais un compte tuteur
+  /// (`creer_code_appairage` n'accepte qu'un profil eleve) : aucune demande
+  /// de code, la page dit comment se connecter a son propre compte.
+  bool get _titulaire => widget.eleveId == ref.read(sessionProvider).profileId;
 
   @override
   void dispose() {
@@ -171,6 +201,7 @@ class _AppairagePageState extends ConsumerState<AppairagePage>
     _horloge?.cancel();
     _scrutation?.cancel();
     _abonnementReseau?.close();
+    _abonnementSession?.close();
     // Le code quitte la memoire avec l'ecran.
     _code = null;
     super.dispose();
@@ -239,6 +270,13 @@ class _AppairagePageState extends ConsumerState<AppairagePage>
       _code = null;
       _etape = EtapeEmetteur.preparation;
     });
+    // La session a pu arriver apres l'ouverture de la page (rechargement sur
+    // l'adresse d'appairage) : la garde du titulaire se relit ici, au dernier
+    // moment avant la demande de code.
+    if (_titulaire) {
+      _poser(() => _enCours = false);
+      return;
+    }
     try {
       final CodeAppairage code = await ref
           .read(serviceAppairageProvider)
@@ -448,7 +486,7 @@ class _AppairagePageState extends ConsumerState<AppairagePage>
   String _cheminRetour() {
     String? demande;
     try {
-      demande = GoRouterState.of(context).uri.queryParameters['retour'];
+      demande = parametreRouteurSur(context, 'retour');
     } on GoError {
       demande = null;
     }
@@ -468,6 +506,14 @@ class _AppairagePageState extends ConsumerState<AppairagePage>
         ?.where((EleveDuFoyer e) => e.id == widget.eleveId)
         .firstOrNull
         ?.prenom;
+
+    if (_titulaire) {
+      return PageShell(
+        titre: t.tuteur.accueil.autreAppareil,
+        onRetour: _retour,
+        child: const CorpsAutreAppareil(),
+      );
+    }
 
     return PageShell(
       titre: t.appareils.emetteur.titre,

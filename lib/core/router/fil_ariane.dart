@@ -6,6 +6,7 @@ import '../admin/admin_domaine.dart';
 import '../domain/enums.dart';
 import '../session/session_state.dart';
 import '../widgets/nav_shell.dart';
+import 'etat_routeur_sur.dart';
 import 'routes.dart';
 
 /// FIL-ARIANE (directeur, 06/11/2026 : « impossible de sortir de cette page,
@@ -304,10 +305,22 @@ class ContexteFilAriane extends InheritedWidget {
   if (routeur == null) {
     return null;
   }
-  final GoRouterState etat;
-  try {
-    etat = GoRouterState.of(context);
-  } on GoError {
+  // CRASH-MON-ESPACE (12/11/2026) : une page poussee hors du routeur
+  // (`Navigator.push` d'une `MaterialPageRoute`, les sous-pages du Compte de
+  // l'enseignant) n'a pas de `Page` dans ses reglages. `GoRouterState.of`
+  // (go_router 18.0.1, state.dart:139) remonte alors au navigateur de la
+  // coquille, dont la page n'a pas d'etat associe, puis
+  // `Navigator.maybeOf(contexte du navigateur)` lui rend le MEME navigateur :
+  // la boucle `while (true)` ne finit jamais, rien n'est leve, et
+  // l'application gele (en production : « tout plante »). Une telle page n'a
+  // pas de place dans la pile du routeur : pas de fil.
+  if (ModalRoute.of(context)?.settings is! Page<Object?>) {
+    return null;
+  }
+  // GOROUTERSTATE-SUR : la lecture sure, seule permise (page du routeur ici,
+  // donc trouvee au premier tour).
+  final GoRouterState? etat = etatRouteurSur(context);
+  if (etat == null) {
     return null;
   }
   final String chemin = etat.uri.path;

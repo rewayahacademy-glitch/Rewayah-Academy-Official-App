@@ -27,12 +27,12 @@ import '../../core/candidature/entretien_candidat.dart';
 import '../../core/candidature/modeles_candidature.dart';
 import '../../core/dossier/etat_dossier.dart';
 import '../../core/dossier/service_dossier.dart';
-import '../../core/i18n/dates_appareil.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/billet_salle.dart';
 import '../../core/router/routes.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -133,6 +133,8 @@ class _ContenuEntretienEtat extends ConsumerState<ContenuEntretien> {
 
   @override
   Widget build(BuildContext context) {
+    // HEURES-PROFIL H4 : se redessine quand le fuseau du profil arrive.
+    ref.watch(monHorlogeProvider);
     final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
     final AsyncValue<MonEntretien?> lecture = lectureHorsLigne(
       ref.watch(monEntretienProvider),
@@ -189,8 +191,11 @@ class _ContenuEntretienEtat extends ConsumerState<ContenuEntretien> {
                   horaireEntretien(entretien.debut, entretien.fin),
                   style: corps,
                 ),
-                Ecart.vXs,
-                Text(t.recrutement.entretien.heureAppareil, style: muet),
+                // HEURES-PROFIL H4 : la mention seulement quand l'appareil sert.
+                if (estHeureDeLAppareil(entretien.debut)) ...<Widget>[
+                  Ecart.vXs,
+                  Text(t.recrutement.entretien.heureAppareil, style: muet),
+                ],
               ],
             ),
           ),
@@ -208,7 +213,7 @@ class _ContenuEntretienEtat extends ConsumerState<ContenuEntretien> {
                 passe
                     ? t.recrutement.entretien.termine
                     : t.recrutement.entretien.ouvreA(
-                        heure: heureDeLAppareil(
+                        heure: heureChezMoi(
                           entretien.ouvertureLe ?? entretien.debut,
                         ),
                       ),

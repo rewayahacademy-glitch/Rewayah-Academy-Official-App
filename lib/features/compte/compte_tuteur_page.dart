@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/capacites/port_acces_foyer.dart';
 import '../../core/capacites/port_identite_titulaire.dart';
+import '../../core/capacites/port_paiements_foyer.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/identite/port_matricule.dart';
@@ -50,6 +51,9 @@ import 'mes_donnees_page.dart';
 class CompteTuteurPage extends ConsumerStatefulWidget {
   /// Cree la page.
   const CompteTuteurPage({super.key});
+
+  /// La ligne « Paiements » de la section Paiements (PAIEMENTS-TUTEUR).
+  static const Key paiementsKey = ValueKey<String>('compte-paiements');
 
   @override
   ConsumerState<CompteTuteurPage> createState() => _CompteTuteurPageState();
@@ -186,19 +190,25 @@ class _CompteTuteurPageState extends ConsumerState<CompteTuteurPage> {
               valeur: _valeurAcces(acces),
               onPress: () => aller(Routes.compteTuteurSousPage('acces')),
             ),
+            // PAIEMENTS-TUTEUR (garde-cap, 12/11/2026) : l'historique des
+            // paiements du foyer ; « Paiements », jamais « et recus ». Une
+            // capacite, pas un role : absente sans source.
+            if (ref.watch(paiementsFoyerOuvertsProvider))
+              LigneRubrique(
+                cle: CompteTuteurPage.paiementsKey,
+                icone: AppIcons.paiements,
+                libelle: t.compte.tuteur.pagePaiements.titre,
+                onPress: () => aller(Routes.compteTuteurSousPage('paiements')),
+              ),
           ],
           SectionCompte.compteSecurite: <LigneRubrique>[
-            LigneRubrique(
-              icone: AppIcons.profil,
-              libelle: t.compte.tuteur.informations.titre,
+            // Les deux lignes communes du titulaire du compte, tous roles
+            // (COMPTE-ENSEIGNANT-IDENTITE) : rien ne change pour le tuteur.
+            ligneInformationsCompte(
               onPress: () => aller(Routes.compteTuteurSousPage('informations')),
             ),
-            LigneRubrique(
-              icone: AppIcons.verrou,
-              libelle: t.compte.tuteur.securite.methode,
-              valeur: lue == null
-                  ? null
-                  : valeurConnexion(lue.methodeConnexion),
+            ligneConnexionCompte(
+              methode: lue?.methodeConnexion,
               onPress: () => aller(Routes.compteTuteurSousPage('securite')),
             ),
             LigneRubrique(

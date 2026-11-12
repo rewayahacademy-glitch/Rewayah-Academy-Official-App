@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/capacites/port_identite_titulaire.dart';
 import '../../core/capacites/port_support.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
@@ -23,6 +24,7 @@ import '../../core/widgets/controle_segmente.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../notifications/reglages_push.dart';
 import '../salle_seance/libelles_salle_b.dart';
+import 'donnees_compte.dart' show valeurConnexion;
 
 /// Le serveur autorise-t-il les notifications sur cet appareil pour ce compte
 /// (`serveur.autorise`, PUSH-1) ? Une capacite absente ou une lecture qui
@@ -267,4 +269,40 @@ LigneRubrique ligneInformationsLegales(BuildContext context) => LigneRubrique(
   libelle: t.compte.tuteur.aide.legal,
   legende: t.compte.tuteur.pageLegal.textes,
   onPress: () => unawaited(context.push(Routes.juridique)),
+);
+
+/// La cle de la ligne « Informations personnelles ».
+const ValueKey<String> cleLigneInformationsCompte = ValueKey<String>(
+  'compte-informations',
+);
+
+/// La cle de la ligne « Methode de connexion ».
+const ValueKey<String> cleLigneConnexionCompte = ValueKey<String>(
+  'compte-connexion',
+);
+
+/// « Informations personnelles » : le titulaire du compte, tous roles (le
+/// tuteur et l'enseignant, COMPTE-ENSEIGNANT-IDENTITE, 12/11/2026). Ouvre la
+/// page commune (`InformationsComptePage`) a l'adresse de l'espace.
+LigneRubrique ligneInformationsCompte({required VoidCallback onPress}) =>
+    LigneRubrique(
+      cle: cleLigneInformationsCompte,
+      icone: AppIcons.profil,
+      libelle: t.compte.tuteur.informations.titre,
+      onPress: onPress,
+    );
+
+/// « Methode de connexion » : le titulaire du compte, tous roles. La valeur
+/// courte vient de la session (`methode`, `null` tant qu'elle n'est pas lue) ;
+/// une methode inconnue n'est jamais inventee. Ouvre la page commune
+/// (`SecuriteComptePage`).
+LigneRubrique ligneConnexionCompte({
+  required MethodeConnexion? methode,
+  required VoidCallback onPress,
+}) => LigneRubrique(
+  cle: cleLigneConnexionCompte,
+  icone: AppIcons.verrou,
+  libelle: t.compte.tuteur.securite.methode,
+  valeur: methode == null ? null : valeurConnexion(methode),
+  onPress: onPress,
 );

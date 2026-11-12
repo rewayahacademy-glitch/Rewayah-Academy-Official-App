@@ -38,6 +38,7 @@ import '../../../core/communications/port_elements_enregistres.dart';
 import '../../../core/communications/port_pieces_jointes.dart';
 import '../../../core/domain/enums.dart';
 import '../../../core/i18n/strings.g.dart';
+import '../../../core/router/etat_routeur_sur.dart';
 import '../../../core/router/routes.dart';
 import '../../../core/tc_groupe/group_summary_vm.dart'
     show EnseignantVM, TitreEnseignant;
@@ -652,7 +653,7 @@ class ComCommunauteDemo extends StatelessWidget {
     final SituationDemoCommunaute? donnee = situation;
     if (donnee != null) return donnee;
     if (GoRouter.maybeOf(context) == null) return null;
-    final String? nom = GoRouterState.of(context).uri.queryParameters['etat'];
+    final String? nom = parametreRouteurSur(context, 'etat');
     for (final SituationDemoCommunaute s in SituationDemoCommunaute.values) {
       if (s.name == nom) return s;
     }

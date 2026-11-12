@@ -154,6 +154,7 @@ import 'core/import_inscriptions/reclamation_preinscription_supabase.dart';
 import 'core/mouvement/retour_navigateur.dart';
 import 'core/navigation/retour_ferme_feuille.dart';
 import 'core/nouveautes/nouveautes.dart';
+import 'core/observabilite/garde_erreurs.dart';
 import 'core/observabilite/journal_dev.dart';
 import 'core/observabilite/supervision.dart';
 import 'core/offres/demandes_suivi_supabase.dart';
@@ -194,10 +195,10 @@ import 'core/session/session_controleur.dart';
 import 'core/session/session_state.dart';
 import 'core/session/source_session.dart' show terminerSessionRefusee;
 import 'core/session/source_session_agent.dart';
+import 'core/suivi/ma_progression.dart';
+import 'core/suivi/ma_progression_supabase.dart';
 import 'core/suivi/messages_academie_supabase.dart';
 import 'core/suivi/port_messages_academie.dart';
-import 'core/suivi/port_suivi_pedagogique.dart';
-import 'core/suivi/suivi_pedagogique_supabase.dart';
 import 'core/tc_bibliotheque/catalogue_supabase.dart';
 import 'core/tc_bibliotheque/donnees_catalogue.dart';
 import 'core/tc_etat_partage/etat_partage_supabase.dart';
@@ -332,10 +333,16 @@ List<Override> _surchargesAppReelle() => <Override>[
   portMessagesAcademieProvider.overrideWithValue(
     MessagesAcademieSupabase(Supabase.instance.client),
   ),
-  // SUIVI-ELEVE (07/11/2026) : ou en est l'eleve sur le programme
-  // (`suivi_pedagogique_eleve`, migration 20261115000000).
-  portSuiviPedagogiqueProvider.overrideWithValue(
-    SuiviPedagogiqueSupabase(Supabase.instance.client),
+  // MA-PROGRESSION-ECRAN (12/11/2026) : ou en est l'eleve sur le programme,
+  // d'un seul appel (`ma_progression`, migration 20261123830000, qui lit
+  // `suivi_pedagogique_eleve` et `sourates_eleve`).
+  portMaProgressionProvider.overrideWithValue(
+    MaProgressionSupabase(Supabase.instance.client),
+  ),
+  // Le reglage de la direction (heures de revision, repetitions estimees),
+  // dans la feuille du contenu d'une etape.
+  portReglagesProgressionProvider.overrideWithValue(
+    ReglagesProgressionSupabase(Supabase.instance.client),
   ),
   portReprisesAdminProvider.overrideWithValue(
     ReprisesAdminSupabase(Supabase.instance.client),
@@ -982,6 +989,11 @@ Future<void> main() async {
   // Flutter 3.47, `PlatformDispatcher.onError` existe, donc Sentry n'ouvre
   // aucune zone gardee et `appRunner` ne capterait pas une erreur de plus.
   await Supervision.demarrer();
+
+  // ANTI-CRASH (12/11/2026) : apres la supervision, pour ENCHAINER ses
+  // gestionnaires d'erreurs sans les ecraser ; une erreur d'affichage donne
+  // une carte « Reessayer », jamais un rectangle gris.
+  installerGardeErreurs();
 
   // Jamais `LocaleSettings.useDeviceLocale()` : une langue systeme mal formee
   // (« en-US@posix ») y levait et arretait l'application (CLAVIER-ENTREE-1).

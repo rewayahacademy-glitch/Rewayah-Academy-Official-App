@@ -12,6 +12,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/capacites/permission_insuffisante.dart';
 import 'package:rewayah_academy/core/capacites/port_courriels.dart';
 import 'package:rewayah_academy/core/capacites/port_langues_communication.dart';
@@ -696,6 +697,61 @@ void main() {
       }
     }
   });
+
+  // ANTI-CRASH (garde-cap, 12/11/2026) : quitter la page pendant la relance ne
+  // leve rien (`ref` d'une page demontee levait une StateError, meme en
+  // release), et la file est quand meme relue a la reponse.
+  testWidgets('quitter la page pendant la relance : aucune erreur, la file '
+      'est relue', (WidgetTester tester) async {
+    final _RelanceEnAttente p = _RelanceEnAttente(
+      courriels: <CourrielSortant>[
+        _courriel(
+          id: 'c2',
+          statut: StatutCourriel.echec,
+          sujet: 'Rappel',
+          erreur: 'boite pleine',
+          tentatives: 5,
+        ),
+      ],
+      maintenant: () => _maintenant,
+    );
+    _compteur = 0;
+    await monterRecrutement(
+      tester,
+      chemin: '/admin/operations/courriels',
+      ecran: (_) => CourrielsAdminPage(genererCle: () => 'cle-${++_compteur}'),
+      autres: const <String>['/ailleurs'],
+      surcharges: <Override>[portCourrielsProvider.overrideWithValue(p)],
+    );
+    await _section(tester, t.courriels.admin.sections.file);
+    await _taper(tester, find.byKey(CourrielsAdminPage.reessayerKey('c2')));
+    expect(p.relances, 0, reason: 'la relance attend sa reponse');
+
+    GoRouter.of(tester.element(find.byType(CourrielsAdminPage)))
+        .go('/ailleurs');
+    await laisser(tester);
+    expect(find.byType(CourrielsAdminPage), findsNothing);
+    final int avant = p.lecturesFile;
+
+    p.reponse.complete();
+    await laisser(tester);
+    expect(tester.takeException(), isNull);
+    expect(p.relances, 1);
+    expect(p.lecturesFile, greaterThanOrEqualTo(avant));
+  });
+}
+
+/// Un port dont la relance attend [reponse].
+class _RelanceEnAttente extends CourrielsDemonstration {
+  _RelanceEnAttente({super.courriels, super.maintenant});
+
+  final Completer<void> reponse = Completer<void>();
+
+  @override
+  Future<void> reessayer(String id) async {
+    await reponse.future;
+    return super.reessayer(id);
+  }
 }
 
 /// Un port dont la lecture des categories attend.
