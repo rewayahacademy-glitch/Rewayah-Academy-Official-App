@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/auth/service_auth.dart';
+import 'package:rewayah_academy/core/capacites/port_support.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/enseignant/depot_cahiers.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
@@ -14,11 +15,15 @@ import 'package:rewayah_academy/core/profil/service_acceptations.dart';
 import 'package:rewayah_academy/core/profil/service_declaration.dart';
 import 'package:rewayah_academy/core/profil/service_profil_enseignant.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
+import 'package:rewayah_academy/core/session/deconnexion.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
+import 'package:rewayah_academy/core/widgets/page_compte.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/core/widgets/stat_tile.dart';
+import 'package:rewayah_academy/features/compte/lignes_compte.dart';
+import 'package:rewayah_academy/features/compte/mes_donnees_page.dart';
 import 'package:rewayah_academy/features/profil_enseignant/declaration_choix.dart';
 import 'package:rewayah_academy/features/profil_enseignant/profil_enseignant_page.dart';
 
@@ -99,6 +104,7 @@ Future<_Monte> _monter(
   bool echecAcceptations = false,
   bool horsLigne = false,
   Future<List<LangueCours>> Function()? referentiel,
+  List<Override> extra = const <Override>[],
 }) async {
   tester.view.physicalSize = const Size(390, 844);
   tester.view.devicePixelRatio = 1;
@@ -152,6 +158,7 @@ Future<_Monte> _monter(
           }
           return acceptations;
         }),
+        ...extra,
       ],
     ),
   );
@@ -165,12 +172,30 @@ Future<_Monte> _monter(
 /// et c'est justement pourquoi la **deconnexion** n'y est pas -- elle est dans la
 /// zone collee, et se tape donc sans ce detour.
 Future<void> _taperLigne(WidgetTester tester, String titre) async {
+  // PROFILS P3 : la declaration s'ouvre par la ligne « Identité
+  // professionnelle » du Compte ; on l'ouvre si la ligne cherchee n'est pas la.
+  if (find.text(titre).evaluate().isEmpty &&
+      find.byKey(ProfilEnseignantPage.identiteKey).evaluate().isNotEmpty) {
+    await _ouvrir(tester, ProfilEnseignantPage.identiteKey);
+  }
   final Finder cible = find.text(titre);
   await tester.ensureVisible(cible);
   await tester.pumpAndSettle();
   await tester.tap(cible);
   await tester.pumpAndSettle();
 }
+
+/// PROFILS P3 : ouvre la page d'une ligne du Compte (identite
+/// professionnelle, contrats).
+Future<void> _ouvrir(WidgetTester tester, Key ligne) async {
+  await tester.ensureVisible(find.byKey(ligne));
+  await tester.pumpAndSettle();
+  await tester.tap(find.byKey(ligne));
+  await tester.pumpAndSettle();
+}
+
+/// PROFILS P3 : la confirmation commune de la ligne rouge du Compte.
+String get _confirmer => t.compte.tuteur.deconnexion.confirmer;
 
 void main() {
   group('ENS-05 : les six lectures du statut de compte', () {
@@ -209,7 +234,8 @@ void main() {
           );
           await tester.pumpAndSettle();
 
-          expect(find.text(c.attendu), findsOneWidget);
+          // PROFILS P3 : dans l'en-tete du Compte et sur la pastille.
+          expect(find.text(c.attendu), findsWidgets);
         },
       );
     }
@@ -227,7 +253,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text(t.enseignant.profil.compteValide), findsNothing);
-      expect(find.text(t.enseignant.profil.statutInconnu), findsOneWidget);
+      expect(find.text(t.enseignant.profil.statutInconnu), findsWidgets);
     });
 
     testWidgets(
@@ -295,12 +321,12 @@ void main() {
 
       // La feuille est ouverte, et rien n'est encore parti.
       expect(
-        find.text(t.enseignant.profil.deconnexionConsequence),
+        find.text(t.compte.tuteur.deconnexion.consequence),
         findsOneWidget,
       );
       expect(monte.auth.deconnexions, 0);
 
-      await tester.tap(find.text(t.enseignant.profil.deconnexionConfirmer));
+      await tester.tap(find.text(_confirmer));
       await tester.pumpAndSettle();
 
       expect(monte.auth.deconnexions, 1);
@@ -333,14 +359,16 @@ void main() {
       final _Monte monte = await _monter(tester, echecProfil: true);
       await tester.pumpAndSettle();
 
-      expect(find.text(t.enseignant.profil.erreur), findsOneWidget);
+      expect(find.text(t.compte.page.identiteEchec), findsOneWidget);
 
+      await tester.ensureVisible(find.text(t.compte.deconnexion));
+      await tester.pumpAndSettle();
       final Rect zone = tester.getRect(find.text(t.compte.deconnexion));
       expect(zone.bottom, lessThanOrEqualTo(844));
 
       await tester.tap(find.text(t.compte.deconnexion));
       await tester.pumpAndSettle();
-      await tester.tap(find.text(t.enseignant.profil.deconnexionConfirmer));
+      await tester.tap(find.text(_confirmer));
       await tester.pumpAndSettle();
 
       expect(monte.auth.deconnexions, 1);
@@ -358,24 +386,17 @@ void main() {
       expect(find.byType(CircularProgressIndicator), findsNothing);
     });
 
-    testWidgets('la Bibliotheque se rejoint depuis le Compte de l enseignant, '
-        'comme pour l eleve et la famille (FINITION 22 b)', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('PROFILS P3 : la Bibliotheque n est plus dans le Profil, '
+        'elle s ouvre en tete de Mes classes', (WidgetTester tester) async {
+      // Elle a quitte le Profil (PROFILS P3, 11/11/2026) : la ligne vit en
+      // tete de « Mes classes » (`EntreeBibliothequeMaClasse`, teste dans
+      // test/features/enseignant_classes/bibliotheque_classes_test.dart).
       await _monter(tester, profil: _profilDeTest());
       await tester.pumpAndSettle();
-
-      final Finder ligne = find.text(t.tc.bibliotheque.titre);
-      await tester.ensureVisible(ligne);
-      expect(ligne, findsOneWidget);
+      expect(find.text(t.tc.bibliotheque.titre), findsNothing);
       expect(
         find.text(t.tc.bibliotheque.detail.entreeDetailEnseignant),
-        findsOneWidget,
-      );
-      // Sous Profil et Reglages, dans la meme rubrique personnelle.
-      expect(
-        tester.getTopLeft(ligne).dy,
-        greaterThan(tester.getTopLeft(find.text(t.compte.reglages)).dy),
+        findsNothing,
       );
     });
 
@@ -392,6 +413,9 @@ void main() {
 
       expect(find.text('Aicha'), findsOneWidget);
       expect(find.text('RA-ENS-0007'), findsOneWidget);
+      // PROFILS P3 : le detail s'ouvre par la ligne « Identité
+      // professionnelle ».
+      await _ouvrir(tester, ProfilEnseignantPage.identiteKey);
       expect(find.text('GN'), findsOneWidget);
       expect(find.text('Français, Arabe'), findsOneWidget);
       expect(
@@ -425,8 +449,10 @@ void main() {
       await _monter(tester, profilAbsent: true);
       await tester.pumpAndSettle();
 
-      expect(find.text(t.enseignant.profil.vide), findsOneWidget);
+      // PROFILS P3 : l'etat vide de l'en-tete du Compte.
+      expect(find.text(t.compte.page.identiteVide), findsOneWidget);
       expect(find.text(t.commun.reessayer), findsNothing);
+      expect(find.byKey(ProfilEnseignantPage.identiteKey), findsNothing);
     });
 
     testWidgets('error : une phrase et « Reessayer »', (
@@ -435,7 +461,7 @@ void main() {
       await _monter(tester, echecProfil: true);
       await tester.pumpAndSettle();
 
-      expect(find.text(t.enseignant.profil.erreur), findsOneWidget);
+      expect(find.text(t.compte.page.identiteEchec), findsOneWidget);
       expect(find.text(t.commun.reessayer), findsOneWidget);
     });
 
@@ -444,6 +470,7 @@ void main() {
     ) async {
       await _monter(tester, profil: _profilDeTest(), horsLigne: true);
       await tester.pumpAndSettle();
+      await _ouvrir(tester, ProfilEnseignantPage.identiteKey);
 
       expect(find.text(t.enseignant.profil.horsLigne), findsOneWidget);
 
@@ -478,6 +505,7 @@ void main() {
         ],
       );
       await tester.pumpAndSettle();
+      await _ouvrir(tester, ProfilEnseignantPage.contratsKey);
 
       expect(find.text(t.enseignant.profil.contratEnseignant), findsOneWidget);
       expect(find.text(t.enseignant.profil.contratAccuse), findsOneWidget);
@@ -497,6 +525,7 @@ void main() {
     ) async {
       await _monter(tester, profil: _profilDeTest());
       await tester.pumpAndSettle();
+      await _ouvrir(tester, ProfilEnseignantPage.contratsKey);
 
       expect(find.text(t.enseignant.profil.contratAucun), findsOneWidget);
     });
@@ -512,10 +541,15 @@ void main() {
         echecAcceptations: true,
       );
       await tester.pumpAndSettle();
+      await _ouvrir(tester, ProfilEnseignantPage.contratsKey);
 
       expect(find.text(t.enseignant.profil.contratErreur), findsOneWidget);
+      // Retour au Compte : le reste est lisible.
+      Navigator.of(tester.element(find.text(t.enseignant.profil.contratErreur)))
+          .pop();
+      await tester.pumpAndSettle();
       expect(find.text('RA-ENS-0007'), findsOneWidget);
-      expect(find.text(t.enseignant.profil.compteValide), findsOneWidget);
+      expect(find.text(t.enseignant.profil.compteValide), findsWidgets);
 
       // SANS-BARRE-FIXE : la deconnexion suit le contenu (PLAN-TROIS-SALLES
       // §2.2) ; on la fait venir dans la vue.
@@ -523,7 +557,7 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.text(t.compte.deconnexion));
       await tester.pumpAndSettle();
-      await tester.tap(find.text(t.enseignant.profil.deconnexionConfirmer));
+      await tester.tap(find.text(_confirmer));
       await tester.pumpAndSettle();
       expect(monte.auth.deconnexions, 1);
     });
@@ -571,6 +605,7 @@ void main() {
         profil: _profilDeTest(langues: const <String>['Français', 'Arabe']),
       );
       await tester.pumpAndSettle();
+      await _ouvrir(tester, ProfilEnseignantPage.identiteKey);
       expect(find.text('Français, Arabe'), findsOneWidget);
 
       await _taperLigne(tester, t.enseignant.profil.langues);
@@ -638,6 +673,9 @@ void main() {
       );
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 300));
+      await tester.tap(find.byKey(ProfilEnseignantPage.identiteKey));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 600));
 
       expect(find.text(t.enseignant.profil.langues), findsOneWidget);
       expect(find.textContaining('francais'), findsNothing);
@@ -655,11 +693,12 @@ void main() {
             Future<List<LangueCours>>.error(StateError('panne reseau')),
       );
       await tester.pumpAndSettle();
+      // Le reste du profil reste lisible.
+      expect(find.text('RA-ENS-0007'), findsOneWidget);
+      await _ouvrir(tester, ProfilEnseignantPage.identiteKey);
 
       expect(find.text(t.enseignant.profil.languesErreur), findsOneWidget);
       expect(find.textContaining('francais'), findsNothing);
-      // Le reste du profil reste lisible.
-      expect(find.text('RA-ENS-0007'), findsOneWidget);
     });
 
     testWidgets('referentiel illisible, en arabe : la ligne le dit en arabe', (
@@ -685,6 +724,7 @@ void main() {
             Future<List<LangueCours>>.error(StateError('panne reseau')),
       );
       await tester.pumpAndSettle();
+      await _ouvrir(tester, ProfilEnseignantPage.identiteKey);
 
       expect(find.text(t.enseignant.profil.languesErreur), findsOneWidget);
       expect(find.text(francais), findsNothing);
@@ -703,6 +743,7 @@ void main() {
         ],
       );
       await tester.pumpAndSettle();
+      await _ouvrir(tester, ProfilEnseignantPage.identiteKey);
 
       expect(find.text('Poular, Wolof'), findsOneWidget);
       expect(find.textContaining('poular'), findsNothing);
@@ -727,5 +768,172 @@ void main() {
         expect(find.text(t.contrat.politique.s10.titre), findsOneWidget);
       });
     }
+  });
+
+  group('PROFILS P3 : le Compte de l enseignant sur PageCompte', () {
+    testWidgets('deconnexion avec un cahier non envoye : la question, et '
+        'rien n est efface sans reponse', (WidgetTester tester) async {
+      final FauxServiceAuth auth = FauxServiceAuth();
+      int vidages = 0;
+      int remises = 0;
+      await _monter(
+        tester,
+        profil: _profilDeTest(),
+        extra: <Override>[
+          deconnexionProvider.overrideWithValue(
+            Deconnexion(
+              auth: auth,
+              rapportsRestants: () async => 1,
+              viderAppareil: () async => vidages++,
+              remiseAZero: () => remises++,
+            ),
+          ),
+        ],
+      );
+      await tester.pumpAndSettle();
+
+      await tester.ensureVisible(find.text(t.compte.deconnexion));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(t.compte.deconnexion));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(_confirmer));
+      await tester.pumpAndSettle();
+
+      // La question des cahiers non envoyes, et rien n'est encore fait.
+      expect(
+        find.text(t.compte.tuteur.deconnexion.rapportsQuestion),
+        findsOneWidget,
+      );
+      expect((auth.deconnexions, vidages, remises), (0, 0, 0));
+
+      // Annuler : rien n'est touche, la session reste ouverte.
+      await tester.tap(find.text(t.compte.tuteur.deconnexion.rapportsAnnuler));
+      await tester.pumpAndSettle();
+      expect((auth.deconnexions, vidages, remises), (0, 0, 0));
+
+      // Redemander, puis accepter la perte : la session se ferme.
+      await tester.tap(find.text(t.compte.deconnexion));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(_confirmer));
+      await tester.pumpAndSettle();
+      await tester.tap(
+        find.text(t.compte.tuteur.deconnexion.rapportsConfirmer),
+      );
+      await tester.pumpAndSettle();
+      expect(auth.deconnexions, 1);
+      expect(vidages, 1);
+    });
+
+    testWidgets('la page se compose dans PageCompte, sections dans l ordre, '
+        'version en bas', (WidgetTester tester) async {
+      await _monter(tester, profil: _profilDeTest());
+      await tester.pumpAndSettle();
+
+      expect(find.byType(PageCompte), findsOneWidget);
+      final List<double> y = <double>[
+        for (final SectionCompte s in <SectionCompte>[
+          SectionCompte.monEspace,
+          SectionCompte.paiements,
+          SectionCompte.preferences,
+          SectionCompte.compteSecurite,
+          SectionCompte.aide,
+        ])
+          tester.getTopLeft(find.byKey(PageCompte.cleSection(s))).dy,
+      ];
+      for (int i = 1; i < y.length; i++) {
+        expect(y[i], greaterThan(y[i - 1]));
+      }
+      // Lignes sobres : identite professionnelle et publication sont des
+      // lignes de Mon espace ; aucun bouton plein de deconnexion.
+      expect(
+        find.descendant(
+          of: find.byKey(PageCompte.cleSection(SectionCompte.monEspace)),
+          matching: find.byKey(ProfilEnseignantPage.identiteKey),
+        ),
+        findsOneWidget,
+      );
+      // La politique de controle et le code de conduite sont dans Aide et
+      // informations, pas dans Compte et securite.
+      for (final Key k in <Key>[
+        ProfilEnseignantPage.politiqueKey,
+        ProfilEnseignantPage.codeConduiteKey,
+      ]) {
+        expect(
+          find.descendant(
+            of: find.byKey(PageCompte.cleSection(SectionCompte.aide)),
+            matching: find.byKey(k),
+          ),
+          findsOneWidget,
+        );
+      }
+      expect(
+        find.descendant(
+          of: find.byKey(PageCompte.cleSection(SectionCompte.aide)),
+          matching: find.text(t.compte.tuteur.aide.legal),
+        ),
+        findsOneWidget,
+      );
+      expect(find.byKey(PageCompte.versionKey), findsOneWidget);
+      expect(
+        tester.getTopLeft(find.byKey(PageCompte.versionKey)).dy,
+        greaterThan(
+          tester.getTopLeft(find.byKey(PageCompte.deconnecterKey)).dy,
+        ),
+      );
+    });
+
+    testWidgets('theme et langue a un geste (2 au plus)', (
+      WidgetTester tester,
+    ) async {
+      // Le Compte est ouvert (1 geste depuis la barre) ; le theme et la
+      // langue sont des lignes de Preferences, sur la page meme : 2 gestes.
+      await _monter(tester, profil: _profilDeTest());
+      await tester.pumpAndSettle();
+      final Finder prefs = find.byKey(
+        PageCompte.cleSection(SectionCompte.preferences),
+      );
+      expect(
+        find.descendant(of: prefs, matching: find.text(t.compte.langue)),
+        findsWidgets,
+      );
+    });
+
+    for (final bool dispo in <bool>[true, false]) {
+      testWidgets('Mes donnees selon la capacite ($dispo)', (
+        WidgetTester tester,
+      ) async {
+        await _monter(
+          tester,
+          profil: _profilDeTest(),
+          extra: <Override>[
+            mesDonneesDisponiblesProvider.overrideWithValue(dispo),
+          ],
+        );
+        await tester.pumpAndSettle();
+        expect(
+          find.byKey(RubriqueMesDonnees.ligneKey),
+          dispo ? findsOneWidget : findsNothing,
+        );
+      });
+    }
+
+    testWidgets('Aide et contact : le canal publie, sinon pas de ligne', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        profil: _profilDeTest(),
+        extra: <Override>[
+          canalAideCompteProvider.overrideWith(
+            (_) async => const CanalSupport(
+              nature: NatureCanalSupport.lien,
+              adresse: 'https://exemple.invalid/aide',
+            ),
+          ),
+        ],
+      );
+      await tester.pumpAndSettle();
+      expect(find.text(t.compte.tuteur.pageAide.canalLien), findsOneWidget);
+    });
   });
 }

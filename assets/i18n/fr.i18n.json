@@ -8946,7 +8946,9 @@
         "one": "{nombre} h par semaine",
         "other": "{nombre} h par semaine"
       },
-      "revenusHeures": "{heures} assurées en {mois}"
+      "revenusHeures": "{heures} assurées en {mois}",
+      "publicationDonnee": "Donné",
+      "publicationNonDonnee": "Non donné"
     },
     "creneaux": {
       "heureLibelle": "{jour} {heure}\u00a0h",

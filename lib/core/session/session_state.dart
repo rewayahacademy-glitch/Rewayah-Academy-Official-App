@@ -168,16 +168,23 @@ class SessionState {
   bool get aUnFoyer => role == AppRole.guardian;
 
   /// La capacite d'ouvrir la Bibliotheque (`/tc/bibliotheque`) : les comptes a
-  /// qui le routeur l'ouvre, l'eleve et le tuteur (l'adulte eleve autonome est
-  /// un compte tuteur). Un widget lit cette capacite, jamais le role.
+  /// qui le routeur l'ouvre (CAP29-F, `_teachingCoreAutorise`), l'eleve, le
+  /// tuteur (l'adulte eleve autonome est un compte tuteur) et l'enseignant
+  /// (PROFILS P3, 11/11/2026 : la capacite suit enfin le routeur). Un widget
+  /// lit cette capacite, jamais le role.
   bool get peutOuvrirBibliotheque =>
-      role == AppRole.student || role == AppRole.guardian;
+      role == AppRole.student ||
+      role == AppRole.guardian ||
+      role == AppRole.teacher;
 
-  /// La Bibliotheque s'ouvre depuis « Ma classe » (garde-cap, 11/11/2026) :
-  /// l'eleve l'y trouve en tete, en un toucher depuis la barre ; elle sort
-  /// alors du Compte. Le tuteur, sans « Ma classe », la garde dans le Compte.
+  /// La Bibliotheque s'ouvre depuis la page de ses Classes (garde-cap,
+  /// 11/11/2026) : l'eleve la trouve en tete de « Ma classe », l'enseignant en
+  /// tete de « Mes classes » (PROFILS P3), en un toucher depuis la barre ; elle
+  /// sort alors du Compte. Le tuteur, sans page de classe, la garde dans le
+  /// Compte.
   bool get bibliothequeDansMaClasse =>
-      peutOuvrirBibliotheque && role == AppRole.student;
+      peutOuvrirBibliotheque &&
+      (role == AppRole.student || role == AppRole.teacher);
 
   /// L'eleve a sa page « Aide et contact » (`/eleve/aide`), ouverte depuis son
   /// Compte (garde-cap, 11/11/2026).
