@@ -73,7 +73,7 @@ Pour une séance qui commence en `s`, finit en `e` (durée `L` minutes), avec l'
 - **Croisements d'une classe sur 12 mois** : pour chaque créneau de la classe, chaque prière croisée, ses périodes consécutives (« de novembre à mars »), le nombre de séances, combien auront une pause de prière placée et combien la verront tomber dans les dernières minutes (l'enseignant prie après le cours).
 - **Heures sans prière** d'un enseignant pour un jour de la semaine, dans le fuseau de la classe : les heures de début qui ne croisent aucune entrée de prière sur toute l'année.
 - **Vendredi** (P9) : si l'enseignant « assiste à la prière du vendredi », le nombre de séances de l'année qui chevauchent sa plage, en avertissement fort.
-- **Incohérences d'un enseignant** : le fuseau du compte diffère du fuseau du lieu de prière ; le fuseau du lieu de prière ne correspond pas à sa longitude ; le pays du compte ne correspond pas au lieu de prière. Signalement seulement : rien n'est corrigé automatiquement.
+- **Incohérences d'un enseignant** : le fuseau du compte diffère du fuseau du lieu de prière ; le fuseau du lieu de prière ne correspond pas à sa longitude ; le pays du compte ne correspond pas au lieu de prière ; le pays du compte ne correspond pas à son propre fuseau, **même quand aucun lieu n'est posé** (le cas relevé en production : pays Guinée, fuseau Europe/Paris). Signalement seulement : rien n'est corrigé automatiquement. Le contrôle du pays est un contrôle de vraisemblance (vingt pays connus) : un pays hors table ne produit aucun signal.
 
 ## 6. Ce qui est « à valider par le directeur et ses associés »
 
