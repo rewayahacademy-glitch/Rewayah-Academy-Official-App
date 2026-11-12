@@ -786,8 +786,53 @@ abstract interface class FermetureParLeServeur {
   set finPorteUtc(DateTime? fin);
 }
 
+/// ENTREE-ROBUSTE (directeur, 12/11/2026, point 11) : le navigateur bloque la
+/// lecture du son recu (regle de lecture automatique, souvent chez un eleve
+/// entre micro ferme, sans geste dans la page). La personne ne l'entend pas
+/// et ne le sait pas. Piste NON PROUVEE pour le defaut du 12/11 : elle est
+/// rendue visible, pas tenue pour la cause. Meme principe que
+/// [MotifEchecSalle] : seul le moteur qui sait le dire l'implemente.
+abstract interface class SonRecuBloque {
+  /// Vrai quand le navigateur refuse de lire le son recu.
+  bool get sonBloque;
+
+  /// Chaque changement de [sonBloque].
+  Stream<bool> get sonBloqueChange;
+
+  /// Relance la lecture du son recu ; a appeler sur un geste de la personne
+  /// (le navigateur ne l'accepte qu'ainsi).
+  Future<void> activerSon();
+}
+
+/// ENTREE-ROBUSTE : l'entree en salle a ete interrompue par une sortie (ou une
+/// nouvelle entree) pendant ses essais. Ce n'est pas une panne : l'ecran ne
+/// dit rien, rien n'est reste ouvert.
+class EntreeInterrompue implements Exception {
+  /// Cree l'interruption.
+  const EntreeInterrompue();
+
+  @override
+  String toString() => 'EntreeInterrompue';
+}
+
+/// ENTREE-ROBUSTE (directeur, 12/11/2026 au soir) : l'entree a echoue parce
+/// que le meme compte est entre dans la salle depuis un autre appareil ou un
+/// autre onglet (LiveKit : `duplicateIdentity`). Jamais reessaye seul ; la
+/// salle le dit ([MotifEchecSalle.ouverteAilleurs]), jamais « reseau ».
+class EntreeOuverteAilleurs implements Exception {
+  /// Cree l'echec.
+  const EntreeOuverteAilleurs();
+
+  @override
+  String toString() => 'EntreeOuverteAilleurs';
+}
+
 abstract interface class VideoSessionProvider {
   /// Entre dans la salle avec l'acces emis par le backend.
+  ///
+  /// ENTREE-ROBUSTE (12/11/2026) : une coupure du transport est reessayee
+  /// seule, l'etat restant `connexion` ; un refus du serveur jamais. Leve
+  /// [EntreeInterrompue] si la salle est quittee pendant les essais.
   Future<void> rejoindre(AccesSalle acces);
 
   /// Quitte la salle. Libere tout : pistes, rendus, ecouteurs, minuteries.

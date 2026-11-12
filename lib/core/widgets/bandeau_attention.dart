@@ -35,7 +35,8 @@ class BandeauAttention extends StatelessWidget {
   /// Ce qui se passe, en quelques mots.
   final String titre;
 
-  /// La consequence ou la cause utile, en une phrase.
+  /// La consequence ou la cause utile, en une phrase ; vide quand le titre
+  /// et le lien ([action]) disent tout.
   final String message;
 
   /// La famille de l'attention : avertissement par defaut, alerte pour un
@@ -95,13 +96,17 @@ class BandeauAttention extends StatelessWidget {
                         ),
                       ),
                     ),
-                    Ecart.vXs,
-                    TexteSansCoupure(
-                      message,
-                      style: paire.applyTo(
-                        textes.bodyMedium ?? const TextStyle(),
+                    // ENTREE-ROBUSTE (12/11/2026) : un titre qui dit tout et un
+                    // lien qui regle la situation se passent d'une phrase vide.
+                    if (message.isNotEmpty) ...<Widget>[
+                      Ecart.vXs,
+                      TexteSansCoupure(
+                        message,
+                        style: paire.applyTo(
+                          textes.bodyMedium ?? const TextStyle(),
+                        ),
                       ),
-                    ),
+                    ],
                     if (action case final Widget a) ...<Widget>[
                       Ecart.vSm,
                       // Noeud propre : le lien est un bouton a part, nomme
