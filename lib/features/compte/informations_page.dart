@@ -16,6 +16,7 @@ import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import 'carte_rubriques.dart';
 import 'donnees_compte.dart';
+import 'lignes_compte.dart';
 
 /// Les informations personnelles du titulaire (`/tuteur/compte/informations`),
 /// en lecture seule.
@@ -76,7 +77,7 @@ class InformationsComptePage extends ConsumerWidget {
                   LigneRubrique(
                     icone: AppIcons.direction,
                     libelle: t.compte.tuteur.pageInformations.langue,
-                    valeur: t.compte.francais,
+                    valeur: nomLangueCompte(langueEffective(context)),
                   ),
                   LigneRubrique(
                     icone: AppIcons.historique,
