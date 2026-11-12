@@ -325,7 +325,7 @@ Réglages comptés sur les 12 derniers cours prévus pour l'élève (4 semaines)
 | | |
 |---|---|
 | Système | Un message court par semaine, une seule action ; 3 messages par semaine au plus, message de la semaine compris [ARBITRÉ]. |
-| Direction | 3 semaines sans message lu, cours rattrapé ni travail fait [ARBITRÉ, réglage] : appel au tuteur sous 7 jours. |
+| Direction | 3 semaines sans message lu, cours rattrapé ni travail fait (le travail n'est lu que lorsque le marquage « fait » existe ; avant, la condition ne regarde que les messages lus et les cours rattrapés) [ARBITRÉ, réglage] : appel au tuteur sous 7 jours. |
 | Jamais | Faire porter la faute à l'enfant ; lui parler d'argent [DÉCIDÉ]. |
 
 ### 3.19 Le tuteur qui veut imposer un passage

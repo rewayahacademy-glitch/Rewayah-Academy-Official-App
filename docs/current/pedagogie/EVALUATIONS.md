@@ -101,7 +101,7 @@ Une erreur grave que l'élève corrige **seul et aussitôt** compte comme une er
 |---|---|---|
 | **À renforcer** | Une erreur grave non corrigée, ou plus de 2 erreurs importantes sur le passage écouté, ou plus de 2 aides directes **[ARBITRÉ]** | L'enseignant, d'un geste |
 | **Acquis** | Aucune erreur grave non corrigée, au plus 2 erreurs importantes, petites erreurs tolérées **[ARBITRÉ]** ; pour la mémoire : aucune erreur de mot **[DÉCIDÉ 11/11 pour la sourate]** | L'enseignant, d'un geste |
-| **Stable** | Acquis lors de 3 observations, sur au moins 2 semaines, dont une non préparée : un petit bilan, ou un passage que l'enseignant fait lire ou réciter hors de la leçon du jour, tiré au hasard dans ce qui est déjà vu ; la séance de consolidation seule ne compte pas **[DÉCIDÉ 12-13/10 ; non préparé : ARBITRÉ]** | Calculé par l'application, jamais saisi **[ARBITRÉ]** |
+| **Stable** | Acquis lors de 3 observations, sur au moins 2 semaines, dont une non préparée : un petit bilan, ou un passage que l'enseignant fait lire ou réciter hors de la leçon du jour, tiré au hasard dans ce qui est déjà vu ; la séance de consolidation seule ne compte pas, une rencontre de récitation ne compte pas non plus **[DÉCIDÉ 12-13/10 ; non préparé : ARBITRÉ]** | Calculé par l'application, jamais saisi **[ARBITRÉ]** |
 
 L'état d'une compétence est une information pour enseigner : il peut redescendre si l'élève oublie. Une étape validée ou une sourate cochée, elles, ne se perdent jamais. **[ARBITRÉ, d'après la règle du 14/10]**
 
@@ -333,9 +333,9 @@ Ces noms sont décidés ; un certificat Rewayah ne s'appelle jamais « ijaza » 
 | Question | Règle |
 |---|---|
 | **Où** | Dans l'espace de l'élève, onglet « Mon livret » : résultats publiés, bilans, attestations **[ARBITRÉ]** |
-| **À qui** | Mineur : le tuteur reçoit le message ; l'enfant voit son livret. Adulte : lui seul **[ARBITRÉ]**. L'enseignant voit les résultats de ses élèves ; la direction voit tout |
+| **À qui** | Mineur : le tuteur reçoit le message ; l'enfant voit son livret. Un enfant de 6 à 9 ans voit son résultat et sa prochaine étape sans date ; la date est montrée à son tuteur ; à partir de 10 ans, l'élève la voit. Adulte : lui seul **[ARBITRÉ]**. L'enseignant voit les résultats de ses élèves ; la direction voit tout |
 | **Quand** | « Étape validée » : après confirmation de la direction. Les deux autres phrases : dès l'enregistrement, puisque l'étape ne change pas **[ARBITRÉ]** |
-| **Sous quels mots** | Une des trois phrases, puis trois lignes : ce qui est solide ; ce qu'on travaille (3 points au plus) ; la prochaine étape, avec sa date. Jamais de note, de pourcentage ni de comparaison avec d'autres élèves **[ARBITRÉ]** |
+| **Sous quels mots** | Une des trois phrases, puis trois lignes : ce qui est solide ; ce qu'on travaille (3 points au plus) ; la prochaine étape, avec sa date (sans date pour un enfant de 6 à 9 ans : la date est montrée à son tuteur ; à partir de 10 ans, l'élève la voit). Jamais de note, de pourcentage ni de comparaison avec d'autres élèves **[ARBITRÉ]** |
 
 Exemple pour un tuteur : « Étape validée. Aïcha lit les lettres seules et dans les mots. Prochaine étape : lire avec les voyelles, à finir avant le 14 mars. »
 

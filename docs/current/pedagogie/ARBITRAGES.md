@@ -80,7 +80,7 @@ Le directeur a dit le 12/11/2026 : « Je ne réponds plus à aucune question. Je
 | 47 | Signataire de l'attestation des bases | Le directeur, au nom de la direction (confirmé au n° 60) | Deux propositions différentes | « La direction » (évaluations), « le directeur » (ancienne liste des questions) | Relecture | ARBITRÉ (confirmé le 12/11) |
 | 48 | Mot du recours | « Réévaluation » pour le recours, jamais « nouvelle vérification », qui est une phrase de résultat | Un mot par notion | « Nouvelle vérification » demandée par le tuteur (scénarios), « nouvelle évaluation » (charte) | Relecture | ARBITRÉ (confirmé le 12/11) |
 | 49 | Mot de l'épreuve d'entrée | « Entretien de lecture » partout | Un mot par notion | « Vérification d'entrée » (évaluations), « diagnostic » (ancienne liste des questions) | Relecture | ARBITRÉ (confirmé le 12/11) |
-| 50 | Répartition par étape (durée prévue et date limite de chaque étape, C1) | Proportionnels à la durée prévue, arrondis ; l'écart d'arrondi va à l'étape la plus longue (voyelles) ; total égal à la date du niveau | Rendre la somme exacte | Repères des évaluations (somme 47 / 37 / 33 / 20) | Relecture | ARBITRÉ (confirmé le 12/11) |
+| 50 | Répartition par étape (durée prévue et date limite de chaque étape, C1) | Proportionnels à la durée prévue, arrondis ; l'écart d'arrondi va à l'étape la plus longue (voyelles) ; total égal à l'horizon du niveau | Rendre la somme exacte | Repères des évaluations (somme 47 / 37 / 33 / 20) | Relecture | ARBITRÉ (confirmé le 12/11) |
 | 51 | Alerte de rythme et de dépassement | « À surveiller » dès que la date de fin projetée dépasse la date limite du niveau ; alerte de dépassement le lendemain de la date limite | Une seule règle de retard | « Quand il reste un quart du temps de l'étape » et « le jour même » (scénarios) | Relecture | **Remplacé** le 12/11/2026 après audit (partie 8, C1) |
 | 52 | Délai d'un nouveau petit bilan de mémorisation | 4 semaines (comme un examen) ; les autres petits bilans : 3 semaines | 5 juz demandent plus de temps | Rien | Relecture | ARBITRÉ (confirmé le 12/11) |
 | 53 | Responsable de deux événements | « Résultat publié » et « Retour de pause » : le système, pas la direction ni l'enseignant | Aucune corvée pour l'enseignant ; le système publie déjà | Responsable « Direction » et « Enseignant » (catalogue de la charte) | Relecture | ARBITRÉ (confirmé le 12/11) |
@@ -162,7 +162,7 @@ Chaque ligne de l'ancienne liste `QUESTIONS-OUVERTES.md` est close ici. Règle d
 | 19 | Nombre de tentatives | Pas de maximum ; après deux « Une nouvelle vérification est nécessaire » de suite, la direction revoit le plan | Ne jamais fermer la porte |
 | 20 | Délai entre proposition et examen | 14 jours au plus | Ne pas laisser attendre l'élève prêt |
 | 21 | Recours | Demande sous 14 jours, réévaluation dans les 14 jours suivants par une autre personne ; son résultat remplace le premier ; pas de recours contre « Étape validée » | Une seule règle (n° 24) |
-| 22 | Repères par étape | Ceux de `REGLAGES.md`, tableau 1 bis : durée prévue et date limite de chaque étape (C1) | Somme exacte égale à la date du niveau |
+| 22 | Repères par étape | Ceux de `REGLAGES.md`, tableau 1 bis : durée prévue et date limite de chaque étape (C1) | Somme exacte égale à l'horizon du niveau |
 | 23 | Bilan après une date limite dépassée | Sous 7 jours ; plan de soutien avec une nouvelle date ferme de 4 semaines | Agir vite, sans punir |
 | 24 | Pas de classe du niveau réel | L'élève reste dans sa classe avec le plan de soutien et une nouvelle date ferme, jusqu'à l'ouverture d'une classe de son niveau | Il garde ses camarades |
 | 25 | Élève qui sait déjà lire | L'entretien de lecture vaut petit bilan pour les étapes qu'il valide ; date limite de l'étape où il entre, depuis son entrée (C1) ; changement d'étape possible dans les 3 premières semaines | Ne pas refaire ce qui est su |
@@ -254,3 +254,18 @@ Un audit indépendant de la charte a trouvé des erreurs le 12/11/2026. L'archit
 1. Garde-fou et fusions (vérifié par l'architecte dans le code, 12/11/2026) : depuis la décision du directeur du 29/10/2026, `.claude/hooks/garde.py` laisse un agent ouvrir une pull request vers `main` et la fusionner par les outils GitHub, CI verte exigée. La décision du 12/11 (C3) s'applique donc sans modifier le garde-fou. Le rédacteur des corrections avait écrit le contraire en se fiant au texte de `CLAUDE.md`, périmé sur ce point ; l'architecte a corrigé. Écrit en tête du plan.
 2. Le seuil de la présence partielle de la décision du 31/10 est « au moins la moitié de la durée prévue » ; c'est cette forme qui est écrite.
 3. Le rappel des 28 jours et le rappel de proposer l'examen tomberaient le jour de l'entrée dans l'étape pour un adulte (dates limites d'étape de 4 semaines) : ils ne sont pas envoyés ce jour-là (C1, ARBITRÉ).
+
+## Correctifs après contre-vérification (12/11/2026)
+
+Dix correctifs précis, appliqués partout où la règle apparaît.
+
+1. Tuteur qui ne suit pas : le travail n'est lu que lorsque le marquage « fait » existe ; avant, la condition ne regarde que les messages lus et les cours rattrapés (moteur, règle 28 ; scénarios, 3.18 ; comme `REGLAGES.md`).
+2. Genre : le gabarit « quand {prénom} est prêt » a sa forme féminine « est prête », de même que les libellés d'état « Prêt pour un petit bilan » et « Prêt pour l'examen » (forme « Prête ») ; les gabarits du moteur ont été relus, et ceux de la règle 15 (enseignant) et de la règle 21 reçoivent leurs deux formes.
+3. Texte de l'élève adulte : les règles 6, 10, 18, 20, 21 et 29 écrivent désormais la forme adulte (« votre », « vous ») quand elle diffère de celle du tuteur.
+4. Évaluations 7.1 : un enfant de 6 à 9 ans voit son résultat et sa prochaine étape sans date ; la date est montrée à son tuteur ; à partir de 10 ans, l'élève la voit.
+5. Charte, table des objets : « Mon livret » ne parle plus de « Notification du résultat » ; le message va au tuteur pour un mineur, à l'élève pour un adulte ; un mineur ne reçoit aucune notification, il voit son livret en ouvrant l'application.
+6. Moteur, règles communes : tout push envoyé à un tuteur au sujet d'un mineur utilise un texte court sans le prénom ni le nom de l'enfant ; aucun gabarit de push ne contient {prénom}.
+7. Registre : « horizon du niveau » remplace « date du niveau » dans la règle en vigueur (n° 50 et Q22) ; les lignes annulées ou remplacées gardent l'ancien texte.
+8. Évaluations, « Stable » : une rencontre de récitation ne compte pas non plus comme observation non préparée, comme dans la charte et les réglages.
+9. Moteur : « plan d'entrée » devient « plan de reprise », comme dans les autres documents.
+10. Traditions : aucune phrase précise n'est attribuée à an-Nawawi, Ibn Jama'a ni al-Zarnuji, dont le passage n'a pas été relu dans le texte ; la charte écrit seulement que, d'après des présentations secondaires, ces ouvrages insistent sur l'intention, la douceur, l'équité et la gradualité (source secondaire, passage non relu dans le texte). Ibn Khaldun garde sa référence ; scénarios et évaluations vérifiés, aucun autre auteur classique n'y est cité.

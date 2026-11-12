@@ -26,7 +26,7 @@ Il ouvre « Rattraper ce cours » pour chaque absent, compte les absences et pr�
 
 *L'élève B, adulte, manque trois semaines sans prévenir.* À la deuxième absence, un message lui rappelle la règle. À la troisième, l'enseignant trouve un message déjà écrit, qu'il confirme d'un geste. À la quatrième, la direction a sept jours pour l'appeler. À la sixième de suite, l'alerte devient « absence longue » : la direction a trois jours et peut accorder une pause d'exception s'il est malade. Les cours manqués ne s'empilent pas : ils deviennent un seul plan de reprise de deux semaines, ouvert à son retour. Si la direction tarde, l'alerte passe en rouge sur son tableau de bord.
 
-*L'élève C, 12 ans, avance plus vite que sa classe.* L'enseignant marque « prêt pour un petit bilan » dans sa confirmation habituelle, bien avant la durée prévue. Le moteur lui rappelle de tenir ce petit bilan dans les deux semaines, pendant un cours normal. La direction confirme « Étape validée » dans les sept jours. S'il existe une classe plus avancée qui lui convient, elle la propose au début du mois suivant ; sinon, son travail à préparer passe à l'étape suivante dans sa classe. Le tuteur reçoit le résultat. L'enfant voit sa nouvelle étape, jamais une comparaison.
+*L'élève C, 12 ans, avance plus vite que sa classe.* L'enseignant marque « prêt pour un petit bilan » (« prête » pour une élève) dans sa confirmation habituelle, bien avant la durée prévue. Le moteur lui rappelle de tenir ce petit bilan dans les deux semaines, pendant un cours normal. La direction confirme « Étape validée » dans les sept jours. S'il existe une classe plus avancée qui lui convient, elle la propose au début du mois suivant ; sinon, son travail à préparer passe à l'étape suivante dans sa classe. Le tuteur reçoit le résultat. L'enfant voit sa nouvelle étape, jamais une comparaison.
 
 ---
 
@@ -40,7 +40,7 @@ Liste fermée. Le moteur ne lit rien d'autre et ne demande aucune saisie de plus
 | 2 | Séance tenue, reportée, annulée ou sans enseignant | L'application, à la clôture |
 | 3 | Présence, quatre faits : présent (au moins la moitié de la durée prévue ; le retard compte comme présent si ce temps est atteint), partiel (moins de la moitié, plus de zéro), absent (aucune connexion), « Présence pas encore connue » [décision du 31/10, règle retenue par le pilote sur délégation du directeur] | L'application, en salle (la présence partielle est à construire : lot présence) |
 | 4 | Page où la classe s'est arrêtée | L'enseignant, un geste après la séance |
-| 5 | Confirmation : points « À renforcer », « prêt pour un petit bilan », suite (« Continuer », « Renforcer », « Suspendre le nouveau ») | L'enseignant, gestes existants |
+| 5 | Confirmation : points « À renforcer », « prêt pour un petit bilan » (« prête » pour une élève), suite (« Continuer », « Renforcer », « Suspendre le nouveau ») | L'enseignant, gestes existants |
 | 6 | Point « À renforcer » noté au cours qui suit une absence (facultatif) | L'enseignant, par son geste habituel de fin de séance ; aucun geste de plus [ARBITRÉ] |
 | 7 | Sourate validée | L'enseignant, geste existant |
 | 8 | Étape, date d'entrée dans l'étape, durée prévue et date limite de l'étape ; horizon du niveau (somme de la date limite de l'étape en cours et des dates limites des étapes qui restent) | L'application et la direction |
@@ -70,7 +70,7 @@ Liste fermée : 20 états en six familles. Au plus un état par famille ; un él
 | Reprise | En entrée · Retour | Le temps du plan de reprise |
 | Travail et maîtrise | Travail non fait, répété · À soutenir · En avance | « Travail non fait » l'emporte sur « À soutenir » (la cause d'abord) ; « En avance » exclut les deux |
 | Temps | Rythme à surveiller · Date limite dépassée et plan de soutien | Aucun des deux : dans les temps |
-| Évaluation | Prêt pour un petit bilan · Prêt pour l'examen · En attente de résultat · Nouvelle vérification à passer · Fin de niveau et orientation | Un cycle |
+| Évaluation | Prêt pour un petit bilan (F : Prête) · Prêt pour l'examen (F : Prête) · En attente de résultat · Nouvelle vérification à passer · Fin de niveau et orientation | Un cycle |
 
 **Exclusions de plus.** « En avance » ne tient pas avec un état de la famille Temps ; « Absence longue » ne tient pas avec « En entrée » ; « Fin de niveau et orientation » éteint la famille Temps.
 
@@ -100,15 +100,15 @@ Liste fermée : 20 états en six familles. Au plus un état par famille ; un él
 | Travail non fait | (aucun) | Une semaine où tout est fait |
 | (aucun) | À soutenir | Même point « À renforcer » sur 3 semaines (3 confirmations), élève présent, travail fait |
 | À soutenir | (aucun) | Point sorti sur 2 confirmations de suite, ou décision de la direction |
-| (aucun) | En avance | « Prêt pour un petit bilan » avant 75 % de la durée prévue |
+| (aucun) | En avance | « Prêt pour un petit bilan » (F : « Prête ») avant 75 % de la durée prévue |
 | En avance | (aucun) | Résultat posé |
 | (aucun) | Rythme à surveiller | Durée prévue de l'étape en cours écoulée, étape non validée (partie 3.2, en bas) |
 | Rythme à surveiller | (aucun) | Étape validée (une nouvelle étape commence), ou date limite de l'étape dépassée |
 | (aucun) ou à surveiller | Date limite dépassée et plan de soutien | Lendemain de la date limite de l'étape en cours, étape non validée |
 | Date limite dépassée | (aucun) | Étape validée, ou changement de classe |
-| (aucun) | Prêt pour un petit bilan | « Prêt pour un petit bilan » marqué (étapes 1 à 3) |
-| (aucun) | Prêt pour l'examen | Examen de fin des bases proposé |
-| Prêt | En attente de résultat | Évaluation tenue |
+| (aucun) | Prêt pour un petit bilan (F : Prête pour un petit bilan) | « Prêt pour un petit bilan » (F : « Prête pour un petit bilan ») marqué (étapes 1 à 3) |
+| (aucun) | Prêt pour l'examen (F : Prête pour l'examen) | Examen de fin des bases proposé |
+| Prêt (F : Prête) | En attente de résultat | Évaluation tenue |
 | En attente de résultat | (aucun) | « Étape validée » confirmée par la direction (étapes 1 à 3) |
 | En attente de résultat | Nouvelle vérification à passer | « Quelques points sont à renforcer » (points seuls, 2 semaines) ou « Une nouvelle vérification est nécessaire » (épreuve entière, 3 semaines ; 4 pour l'examen) |
 | (aucun) | En attente de résultat | Réévaluation demandée dans les 14 jours après la publication (recours) |
@@ -151,8 +151,9 @@ Liste fermée : 20 états en six familles. Au plus un état par famille ; un él
 - « Tuteur » vaut pour un mineur ; l'adulte reçoit lui-même [ARBITRÉ], le même modèle au « vous » direct, écrit seulement s'il diffère.
 - Canal : application, et push pour le tuteur et l'adulte (catégorie « suivi »). « + courriel » marque une trace [DÉCIDÉ 01/11].
 - **Jamais le prénom d'un mineur dans un push** : il dit « votre enfant » [DÉCIDÉ 01/11]. Un enfant n'a ni push, ni courriel [DÉCIDÉ 01/11], ni liste de notifications : seulement les cartes de son accueil, au tutoiement.
+- **Push d'un tuteur** [ARBITRÉ après contre-vérification, 12/11/2026] : tout push envoyé à un tuteur au sujet d'un mineur utilise un texte court sans le prénom ni le nom de l'enfant (par exemple « Un message de l'académie vous attend ») ; le prénom n'apparaît que dans l'application, une fois ouverte.
 - **Carte de l'enfant** : « Avec ton tuteur » seulement avant 10 ans ; de 10 à 17 ans en Interface guidée, le texte ne parle pas du tuteur.
-- **Genre** [ARBITRÉ, règle de `mots-rewayah` §1] : chaque gabarit existe au masculin et au féminin. Le féminin est employé quand le genre de l'élève est connu (classe de filles ou de femmes) ; sinon, le masculin générique. Les deux formes sont écrites ci-dessous pour chaque gabarit qui contient un pronom ou un accord (« M » : masculin ; « F » : féminin). Dans une classe de filles ou de femmes, l'enseignante est une femme [DÉCIDÉ 10/10] : « son enseignante ».
+- **Genre** [ARBITRÉ, règle de `mots-rewayah` §1] : chaque gabarit existe au masculin et au féminin. Le féminin est employé quand le genre de l'élève est connu (classe de filles ou de femmes) ; sinon, le masculin générique. Les deux formes sont écrites ci-dessous pour chaque gabarit qui contient un pronom ou un accord (« M » : masculin ; « F » : féminin). Dans une classe de filles ou de femmes, l'enseignante est une femme [DÉCIDÉ 10/10] : « son enseignante ». Un libellé d'état montré à une personne et qui s'accorde avec l'élève a aussi ses deux formes : « Prêt pour un petit bilan » / « Prête pour un petit bilan », « Prêt pour l'examen » / « Prête pour l'examen ».
 - Remontée « par défaut » : garde-fou 12.
 - Variables : `{prénom}`, `{date}`, `{page}`, `{nombre}`, `{prévus}`, `{étape}`, `{date_limite}` (la date limite de l'étape en cours), `{jour}`, `{heure}`, `{mois}`, `{action}`.
 
@@ -195,7 +196,7 @@ Liste fermée : 20 états en six familles. Au plus un état par famille ; un él
 ### Règle 6 · Absences répétées, degré 3
 - **Couvre** : 3.2 ; profils 2.3, 2.6. **Condition** : 4 absences ou plus. **Moment** : clôture de la séance.
 - **Système** : alerte direction « Échanger avec la famille de {prénom} », avec les dates et trois décisions : reprendre, demander une pause d'un mois, changer d'horaire au début du mois suivant.
-- **Messages** : « Nous allons vous contacter dans les prochains jours au sujet de la régularité de {prénom}. »
+- **Messages** : « Nous allons vous contacter dans les prochains jours au sujet de la régularité de {prénom}. » Adulte : « Nous allons vous contacter dans les prochains jours au sujet de votre régularité. »
 - **Responsable** : la direction, 7 jours. **Remontée** : par défaut. **Clôture** : décision notée.
 - **Jamais** : une sanction annoncée à l'enfant ; l'argent face à l'enfant.
 
@@ -223,13 +224,13 @@ Liste fermée : 20 états en six familles. Au plus un état par famille ; un él
 ### Règle 10 · Retour de pause ou d'absence longue
 - **Couvre** : 3.3, 3.13. **Condition** : fin de pause, ou présence après absence longue. **Moment** : 3 jours avant la fin de la pause (annonce), puis reprise.
 - **Système** : plan de reprise de 2 semaines dans l'emploi du temps de révision (leçons manquées, lectures enregistrées) ; « reprend après une pause » à côté du nom.
-- **Messages** : « Bon retour à {prénom}. Un plan de reprise de deux semaines l'attend dans son emploi du temps de révision. » Enfant : « Bon retour ! Voici ce que la classe a appris. »
+- **Messages** : « Bon retour à {prénom}. Un plan de reprise de deux semaines l'attend dans son emploi du temps de révision. » Adulte : « Bon retour. Un plan de reprise de deux semaines vous attend dans votre emploi du temps de révision. » Enfant : « Bon retour ! Voici ce que la classe a appris. »
 - **Responsable** : l'enseignant l'écoute dans son tour normal. **Remontée** : règles 14, 23. **Clôture** : 2 semaines.
 - **Jamais** : un entretien de lecture imposé après un mois de pause.
 
 ### Règle 11 · Entrée d'un élève
 - **Couvre** : entrée commune, 2.1 à 2.9, 3.17. **Condition** : inscription dans une Classe. **Moment** : à l'inscription.
-- **Système** : pose l'étape : 1 pour un débutant déclaré [DÉCIDÉ 12/10] ; pour un élève qui dit lire, ou sans cours depuis 3 mois, celle que fixe la direction après l'entretien de lecture [DÉCIDÉ 12/10 et 02/11] ; jamais l'étape de la classe par défaut hors de ces deux cas [ARBITRÉ]. Pose la date limite de l'étape depuis ce jour, et la matière secondaire de l'âge. Classe lancée : d'abord une classe au même stade ; sinon, écart d'une étape au plus, plan d'entrée d'une durée égale à la durée prévue de la partie manquée, avec les lectures enregistrées déjà vues quand elles existent ; au-delà d'une étape d'écart, l'élève attend l'ouverture d'une classe de son niveau (`REGLAGES.md`, placement dans une classe déjà lancée). Élève qui dit lire, ou sans cours depuis 3 mois : direction, « Fixer l'entretien de lecture », 7 jours [ARBITRÉ : étape juste avant le premier mois]. Nouveau converti : direction, « Écrire un mot d'accueil », 3 jours.
+- **Système** : pose l'étape : 1 pour un débutant déclaré [DÉCIDÉ 12/10] ; pour un élève qui dit lire, ou sans cours depuis 3 mois, celle que fixe la direction après l'entretien de lecture [DÉCIDÉ 12/10 et 02/11] ; jamais l'étape de la classe par défaut hors de ces deux cas [ARBITRÉ]. Pose la date limite de l'étape depuis ce jour, et la matière secondaire de l'âge. Classe lancée : d'abord une classe au même stade ; sinon, écart d'une étape au plus, plan de reprise d'une durée égale à la durée prévue de la partie manquée, avec les lectures enregistrées déjà vues quand elles existent ; au-delà d'une étape d'écart, l'élève attend l'ouverture d'une classe de son niveau (`REGLAGES.md`, placement dans une classe déjà lancée). Élève qui dit lire, ou sans cours depuis 3 mois : direction, « Fixer l'entretien de lecture », 7 jours [ARBITRÉ : étape juste avant le premier mois]. Nouveau converti : direction, « Écrire un mot d'accueil », 3 jours.
 - **Messages** : « {prénom} commence l'étape {étape}, à finir avant le {date_limite}. Premier cours le {date}. Son emploi du temps de révision est prêt. » Adulte : « Vous commencez l'étape {étape}, à finir avant le {date_limite}. Premier cours le {date}. Votre emploi du temps de révision est prêt. »
 - **Responsable** : la direction. **Remontée** : par défaut. **Clôture** : étape posée, tâches faites.
 - **Jamais** : faire revenir la classe en arrière ; plus de 4 débutants par classe ; un débutant dans une classe qui a plus d'une étape d'avance sur lui.
@@ -255,7 +256,7 @@ Liste fermée : 20 états en six familles. Au plus un état par famille ; un él
 
 ### Règle 15 · Rythme à surveiller et rappels avant la date limite de l'étape
 - **Couvre** : 3.5. **Condition** : durée prévue de l'étape en cours écoulée, étape non validée (partie 3.2) ; ou rappel à 28, 14 et 7 jours de la date limite de l'étape en cours (un rappel qui tomberait le jour de l'entrée dans l'étape ou avant n'est pas envoyé). **Moment** : chaque nuit.
-- **Système** : « À surveiller » pour le tuteur et l'élève de 10 ans et plus ; renforce l'emploi du temps de révision ; enseignant : « {prénom} : étape {étape} à finir avant le {date_limite}. Proposer un petit bilan ou l'examen si prêt, ou confirmer le plan renforcé. » Au rappel des 7 jours, direction : « Prévoir le bilan avec la famille de {prénom} ».
+- **Système** : « À surveiller » pour le tuteur et l'élève de 10 ans et plus ; renforce l'emploi du temps de révision ; enseignant : « {prénom} : étape {étape} à finir avant le {date_limite}. Proposer un petit bilan ou l'examen si prêt, ou confirmer le plan renforcé. » F : « … si prête, … » Au rappel des 7 jours, direction : « Prévoir le bilan avec la famille de {prénom} ».
 - **Messages** : tuteur (seul porteur de la date de 6 à 9 ans), M : « {prénom} doit finir l'étape {étape} avant le {date_limite}. Son emploi du temps de révision est renforcé : suivez-le avec lui chaque jour. » F : « … suivez-le avec elle chaque jour. » Adulte : « Votre étape {étape} est à finir avant le {date_limite}. Votre emploi du temps de révision est renforcé : quelques minutes chaque jour. » Élève de 10 à 17 ans, carte : « À finir avant le {date_limite}. Ton emploi du temps de révision t'aide à y arriver. »
 - **Responsable** : l'enseignant, 7 jours ; la direction au dernier rappel. **Remontée** : par défaut. **Clôture** : projection revenue dans les temps, évaluation planifiée, ou niveau terminé.
 - **Jamais** : l'étiquette « en retard » ; repousser la date.
@@ -271,15 +272,15 @@ Liste fermée : 20 états en six familles. Au plus un état par famille ; un él
 - **Jamais** : tout recommencer ; perdre un acquis ; montrer le bilan à un enfant de 6 à 9 ans.
 
 ### Règle 17 · En avance
-- **Couvre** : 3.7, 3.8. **Condition** : « prêt pour un petit bilan » avant 75 % de la durée prévue. **Moment** : confirmation.
+- **Couvre** : 3.7, 3.8. **Condition** : « prêt pour un petit bilan » (F : « prête ») avant 75 % de la durée prévue. **Moment** : confirmation.
 - **Système** : montre à l'enseignant les points « Acquis » puis « Stable » ; enchaîne la règle 18. Après « Étape validée », cherche une classe plus avancée (même âge, même genre, horaire possible, place libre) : direction, « Proposer le passage au début du mois suivant », 7 jours ; sinon, travail et lectures enregistrées de l'étape suivante dans sa classe.
 - **Messages** : règle 19. **Responsable** : la direction. **Remontée** : par défaut. **Clôture** : passage, ou étape suivante suivie.
 - **Jamais** : le freiner, sauter une vérification, le donner en exemple.
 
 ### Règle 18 · Prêt pour un petit bilan
-- **Couvre** : 3.5, 3.7, 3.8. **Condition** : « prêt pour un petit bilan » marqué (étapes 1 à 3). **Moment** : confirmation.
+- **Couvre** : 3.5, 3.7, 3.8. **Condition** : « prêt pour un petit bilan » (F : « prête ») marqué (étapes 1 à 3). **Moment** : confirmation.
 - **Système** : enseignant : « Petit bilan de {prénom}, pendant un cours normal », 14 jours. Carte de l'élève : « Petit bilan au cours du {date}. »
-- **Messages** : la carte de l'élève ; au tuteur (à l'adulte), 7 jours avant, ou dès que la date est fixée si c'est plus tard : « Petit bilan de {prénom} au cours du {date}. » **Responsable** : l'enseignant, 14 jours. **Remontée** : par défaut. **Clôture** : bilan tenu.
+- **Messages** : la carte de l'élève ; au tuteur (à l'adulte), 7 jours avant, ou dès que la date est fixée si c'est plus tard : « Petit bilan de {prénom} au cours du {date}. » Adulte : « Votre petit bilan a lieu au cours du {date}. » **Responsable** : l'enseignant, 14 jours. **Remontée** : par défaut. **Clôture** : bilan tenu.
 - **Jamais** : un passage automatique.
 
 ### Règle 19 · Résultat d'une évaluation
@@ -292,14 +293,14 @@ Liste fermée : 20 états en six familles. Au plus un état par famille ; un él
 ### Règle 20 · Nouvelle vérification, réévaluation, panne
 - **Couvre** : 3.16, 3.19. **Condition** : « Quelques points sont à renforcer » ; « Une nouvelle vérification est nécessaire » ; demande de réévaluation (recours) ; panne pendant une épreuve. **Moment** : à l'événement.
 - **Système** : « Quelques points » : la vérification des seuls points concernés est mise 2 semaines plus tard, en cours normal, par le même évaluateur. « Une nouvelle vérification » : plan de soutien, épreuve entière refaite 3 semaines plus tard (4 pour l'examen). Après deux « Une nouvelle vérification est nécessaire » de suite, direction : « Revoir le plan avec l'enseignant et la famille de {prénom} », 7 jours. Réévaluation demandée dans les 14 jours après la publication (pas contre « Étape validée ») : direction, « Désigner une personne habilitée qui n'a pas fait passer l'épreuve », réévaluation dans les 14 jours ; elle joint les points « À renforcer » et le critère ; son résultat remplace le premier. Panne : reprise le jour même où elle s'est arrêtée, sinon reprogrammée dans les 7 jours ; les parties finies restent acquises ; aucun résultat.
-- **Messages** (+ courriel pour un examen) : « La nouvelle vérification de {prénom} aura lieu le {date}. » ou « La réévaluation de {prénom} aura lieu le {date}. »
+- **Messages** (+ courriel pour un examen) : « La nouvelle vérification de {prénom} aura lieu le {date}. » ou « La réévaluation de {prénom} aura lieu le {date}. » Adulte : « Votre nouvelle vérification aura lieu le {date}. » ou « Votre réévaluation aura lieu le {date}. »
 - **Responsable** : l'enseignant pour un petit bilan ; la direction pour un examen et une réévaluation. **Remontée** : par défaut. **Clôture** : vérification ou réévaluation tenue.
 - **Jamais** : un passage imposé par la famille ; un résultat pendant une panne ; une limite au nombre de tentatives.
 
 ### Règle 21 · Examen de fin des bases
 - **Couvre** : 3.21. **Condition** : proposition de l'enseignant ; ou rien à 4 semaines de la date limite de l'étape 4. **Moment** : proposition ; chaque nuit.
-- **Système** : rappel : « Proposer l'examen de fin des bases quand {prénom} est prêt, au plus tard le {date_limite}. » Proposé : direction, « Planifier l'examen et désigner l'évaluateur, autre que l'enseignant de la classe », 14 jours, séance ouverte ou non à la famille. Critères et seuils : `EVALUATIONS.md`, partie 4.6.
-- **Messages** (+ courriel) : « L'examen de fin des bases de {prénom} aura lieu le {date} à {heure}. »
+- **Système** : rappel, M : « Proposer l'examen de fin des bases quand {prénom} est prêt, au plus tard le {date_limite}. » F : « … quand {prénom} est prête, au plus tard le {date_limite}. » Proposé : direction, « Planifier l'examen et désigner l'évaluateur, autre que l'enseignant de la classe », 14 jours, séance ouverte ou non à la famille. Critères et seuils : `EVALUATIONS.md`, partie 4.6.
+- **Messages** (+ courriel) : « L'examen de fin des bases de {prénom} aura lieu le {date} à {heure}. » Adulte : « Votre examen de fin des bases aura lieu le {date} à {heure}. »
 - **Responsable** : l'enseignant, puis la direction. **Remontée** : date limite atteinte : règle 16. **Clôture** : examen tenu.
 - **Jamais** : un examen sans proposition de l'enseignant.
 
@@ -330,7 +331,7 @@ Liste fermée : 20 états en six familles. Au plus un état par famille ; un él
 
 ### Règle 26 · Changement de classe, d'horaire ou d'enseignant
 - **Couvre** : 3.6, 3.9, 3.10, 3.11, 3.17. **Condition** : décision de la direction. **Moment** : au changement.
-- **Système** : garde étape, acquis, date limite de l'étape et tâches ; le nouvel enseignant voit tout. Classe plus avancée : plan d'entrée d'une durée égale à la durée prévue de la partie manquée, si l'écart est d'une étape au plus (règle 11).
+- **Système** : garde étape, acquis, date limite de l'étape et tâches ; le nouvel enseignant voit tout. Classe plus avancée : plan de reprise d'une durée égale à la durée prévue de la partie manquée, si l'écart est d'une étape au plus (règle 11).
 - **Messages** : M : « {prénom} rejoint sa nouvelle Classe le {date}. Son étape et ce qu'il a validé restent les mêmes. » F : « … Son étape et ce qu'elle a validé restent les mêmes. » Adulte : « Vous rejoignez votre nouvelle Classe le {date}. Votre étape et ce que vous avez validé restent les mêmes. »
 - **Responsable** : aucun. **Remontée** : aucune. **Clôture** : premier cours.
 - **Jamais** : changer le contenu de l'étape, effacer un acquis.
@@ -343,7 +344,7 @@ Liste fermée : 20 états en six familles. Au plus un état par famille ; un él
 - **Jamais** : raccourcir une date limite en cours ; changer le contenu.
 
 ### Règle 28 · Le tuteur qui ne suit pas
-- **Couvre** : 3.18 ; profils 2.1, 2.7. **Condition** : 3 semaines sans message lu, cours rattrapé ni travail fait. **Moment** : chaque nuit.
+- **Couvre** : 3.18 ; profils 2.1, 2.7. **Condition** : 3 semaines sans message lu, cours rattrapé ni travail fait (le travail n'est lu que lorsque le marquage « fait » existe ; avant, la condition ne regarde que les messages lus et les cours rattrapés). **Moment** : chaque nuit.
 - **Système** : direction, « Appeler le tuteur de {prénom} », 7 jours.
 - **Messages** : aucun de plus. **Responsable** : la direction. **Remontée** : par défaut. **Clôture** : appel noté, ou le tuteur agit.
 - **Jamais** : faire porter la faute à l'enfant ; parler d'argent.
@@ -351,7 +352,7 @@ Liste fermée : 20 états en six familles. Au plus un état par famille ; un él
 ### Règle 29 · Demande d'arrêt
 - **Couvre** : 3.20. **Condition** : demande du tuteur ou de l'adulte. **Moment** : à la demande.
 - **Système** : direction, « Écouter la raison et proposer : pause d'un mois, autre horaire, classe plus adaptée », 7 jours. Arrêt confirmé : tout gelé, acquis gardés, tâches fermées.
-- **Messages** (+ courriel) : « Votre demande est bien reçue. La direction vous appelle dans les 7 jours. Ce que {prénom} a validé reste acquis. »
+- **Messages** (+ courriel) : « Votre demande est bien reçue. La direction vous appelle dans les 7 jours. Ce que {prénom} a validé reste acquis. » Adulte : « Votre demande est bien reçue. La direction vous appelle dans les 7 jours. Ce que vous avez validé reste acquis. »
 - **Responsable** : la direction ; pour un mineur, le tuteur décide. **Remontée** : par défaut. **Clôture** : arrêt, ou reprise.
 - **Jamais** : culpabiliser ; l'argent face à l'enfant. Le moteur ne dit rien de l'argent : il relève du lot d'harmonisation de l'argent que le directeur s'est réservé le 07/11. « Arrêt » veut dire départ définitif ; une interruption accordée est une pause (règle 8).
 
@@ -495,8 +496,8 @@ Le moteur n'a pas de table à lui : il lit `REGLAGES.md`, seule table des valeur
 | 14 | Même point 3 semaines, travail fait → tâche enseignant, pas de règle 13 |
 | 15 | Durée prévue de l'étape écoulée, étape non validée, enfant de 8 ans → « À surveiller » au tuteur, tâche enseignant, carte sans date ; J-28, J-14, J-7 de la date limite de l'étape → rappels, tâche direction à J-7 ; adulte à l'étape 1 (date limite de 4 semaines) → pas de rappel le jour de l'entrée |
 | 16 | Lendemain de la date limite de l'étape → message court au tuteur, alerte direction ; après bilan, + 4 semaines ; étape validée en avance → l'étape suivante part de l'entrée |
-| 17 | « Prêt » à 50 % → En avance, recherche de classe après validation |
-| 18 | « Prêt » → tâche 14 jours |
+| 17 | « Prêt » (F : « Prête ») à 50 % → En avance, recherche de classe après validation |
+| 18 | « Prêt » (F : « Prête ») → tâche 14 jours |
 | 19 | « Étape validée » non confirmée 8 jours → rouge ; « Quelques points » → publié tout de suite |
 | 20 | « Quelques points » → vérification à J+14 ; deux « nouvelle vérification » de suite → tâche direction ; réévaluation demandée à J+10 → tâche, autre personne ; à J+15 → refusée |
 | 21 | Étape 4 à J-28 → rappel |

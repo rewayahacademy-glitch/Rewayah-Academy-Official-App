@@ -15,7 +15,7 @@
 **Nos valeurs.**
 - **Rigueur et bienveillance** : des dates fermes, un ton ferme, jamais dur.
 - **L'intention** : on apprend le Coran pour Allah. Rien ne doit déplacer l'intention vers une récompense, une note ou un rang.
-- **La douceur** : Ibn Khaldun écrit que la dureté rend l'élève paresseux et dissimulateur (Muqaddima, ch. 6) ; an-Nawawi demande au maître la bienveillance et à l'élève la sincérité. Kluger et DeNisi (1996) constatent que plus d'un tiers des retours font baisser la performance, surtout quand le retour vise la personne plutôt que la tâche ; un retour qui vise la tâche et donne la prochaine étape aide.
+- **La douceur** : Ibn Khaldun écrit que la dureté rend l'élève paresseux et dissimulateur (Muqaddima, ch. 6). Les ouvrages classiques d'an-Nawawi, d'Ibn Jama'a et d'al-Zarnuji, d'après des présentations secondaires, insistent sur l'intention, la douceur, l'équité et la gradualité (source secondaire, passage non relu dans le texte ; aucune phrase précise ne leur est attribuée ici). Kluger et DeNisi (1996) constatent que plus d'un tiers des retours font baisser la performance, surtout quand le retour vise la personne plutôt que la tâche ; un retour qui vise la tâche et donne la prochaine étape aide.
 - **L'équité** : ni classement, ni note brute, ni étiquette. (L'égalité entre enfants est attribuée à Ibn Sahnun et à al-Qabisi par une source secondaire, Günther 2006 ; personne ne l'a vérifiée dans leurs textes.)
 - **Le réalisme** : une donnée n'est demandée que si elle sert (DÉCIDÉ 05/11). L'enseignant confirme, il ne remplit pas de formulaire (ARBITRÉ).
 
@@ -239,7 +239,7 @@ Règles DÉCIDÉES qui restent : la paie d'une séance attend la confirmation de
 | Bibliothèque | Élève, tuteur | Apprendre > Bibliothèque | Accueil (bloc de la classe) | Prix, tant que la vente est fermée |
 | Bibliothèque | Enseignant | Classes > Bibliothèque | Tiroir de la salle, pour afficher | Rien du publié |
 | Bibliothèque | Direction | Pédagogie > Bibliothèque | Aucun | Rien |
-| Mon livret | Élève, tuteur | Apprendre > Mon livret | Notification du résultat | Avis internes des évaluateurs |
+| Mon livret | Élève, tuteur | Apprendre > Mon livret | Le message du résultat va au tuteur pour un mineur, à l'élève pour un adulte ; un mineur ne reçoit aucune notification, il voit son livret en ouvrant l'application | Avis internes des évaluateurs |
 | Mon livret | Enseignant, direction | Profil de l'élève | Fiche de classe | Rien |
 | Fiche de classe | Titulaire | Classes > la classe | Aujourd'hui | Autres classes |
 | Fiche de classe | Remplaçant | La séance remplacée | Salle | Hors fenêtre |
@@ -324,6 +324,6 @@ Les lots codés mais non livrés (progression de l'élève, correction d'une sou
 - Notifications et mineurs : Fitz et al. 2019, https://doi.org/10.1016/j.chb.2019.07.016 ; code de l'ICO adapté à l'âge ; CNIL, 8 recommandations (2021).
 - Attestations : 1EdTech, badges ouverts 3.0. Organisation : Kraft, Blazar et Hogan 2018 ; NHS England, guide de culture juste.
 
-**Tradition** : Ibn Khaldun, Muqaddima, ch. 6 ; an-Nawawi, at-Tibyan ; Ibn Jama'a ; al-Zarnuji. Source secondaire seulement : Ibn Sahnun et al-Qabisi, d'après Günther 2006 (https://doi.org/10.1086/503881), non vérifiés dans un texte primaire. Le découpage de la mémorisation en nouveau, récent et ancien est une pratique répandue, sans source écrite citée ici.
+**Tradition** : Ibn Khaldun, Muqaddima, ch. 6. Source secondaire, passage non relu dans le texte : les ouvrages d'an-Nawawi (at-Tibyan), d'Ibn Jama'a et d'al-Zarnuji, qui, d'après des présentations secondaires, insistent sur l'intention, la douceur, l'équité et la gradualité ; aucune phrase précise ne leur est attribuée. Source secondaire seulement : Ibn Sahnun et al-Qabisi, d'après Günther 2006 (https://doi.org/10.1086/503881), non vérifiés dans un texte primaire. Le découpage de la mémorisation en nouveau, récent et ancien est une pratique répandue, sans source écrite citée ici.
 
 Certains chiffres n'ont été vus qu'en source secondaire ; le rapport de recherche du 12/11/2026 le signale pour chacun.
