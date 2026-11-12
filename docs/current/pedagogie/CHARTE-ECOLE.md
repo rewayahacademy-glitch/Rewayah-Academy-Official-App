@@ -3,7 +3,7 @@
 > **Statut : PROPOSITION de l'architecte pédagogique, à valider par le directeur ; rien n'est construit avant.**
 > Rédigée le 12/11/2026. C'est la référence unique pour le programme, le suivi, les évaluations, les responsabilités et ce que chacun voit.
 > Trois marques : **DÉCIDÉ** (directeur, daté), **ARBITRÉ** (architecte pédagogique, 12/11/2026 ; raisons dans `ARBITRAGES.md`), **OUVERT** (voir `QUESTIONS-OUVERTES.md`). Une valeur sans décision s'écrit « réglage, valeur à fixer », avec un défaut proposé.
-> D'après les relevés du 12/11, la Boucle 1 n'est pas close : construire cette charte demande un ordre daté du directeur.
+> **Boucle 1 (DÉCIDÉ, directeur, 12/11/2026).** L'interdiction de créer de nouveaux écrans visait la coque de l'application. Elle ne s'applique pas à ce projet, qui en est l'âme : les écrans nécessaires à cette charte se construisent, après sa validation.
 
 ## 1. Ce que l'école promet, et ses valeurs
 
