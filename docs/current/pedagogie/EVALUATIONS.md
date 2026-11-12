@@ -6,7 +6,9 @@ Charte de référence, partie « Évaluations ». Version du 12/11/2026, à vali
 
 - **[DÉCIDÉ jj/mm]** : décision datée du directeur ; seule une nouvelle décision datée la change.
 - **[ARBITRÉ]** : arbitrage de l'architecte, 12/11/2026.
-- **[PROPOSÉ]** : à valider par le directeur. Tout chiffre PROPOSÉ est un **réglage**, modifiable par la direction sans toucher au reste.
+- **[PROPOSÉ]** : à valider par le directeur. Tout chiffre est un **réglage**, modifiable par la direction sans toucher au reste (DÉCIDÉ 12/11).
+
+**La seule table des valeurs est `REGLAGES.md`** ; en cas d'écart, elle et la charte font foi. Les questions au directeur sont toutes dans `QUESTIONS-OUVERTES.md`.
 
 ---
 
@@ -45,13 +47,13 @@ Chaque moment a un seul rôle. Aucun ne remplace un autre.
 | | Observation de tous les jours (ajuster le cours) | Petit bilan (fin d'une étape) | Examen (fin d'un niveau) | Rencontre de récitation (encourager) |
 |---|---|---|---|---|
 | **Qui** | L'enseignant de la classe | L'enseignant de la classe | Un évaluateur habilité et un deuxième regard (§6) **[PROPOSÉ]** | Les enseignants, la direction |
-| **Quand** | Pendant la récitation, à chaque cours | Quand l'élève est prêt, au plus tard à la date limite de l'étape | Quand l'enseignant propose l'élève, au plus tard à la date limite **[DÉCIDÉ 12/10]** | 4 fois par an, dont une juste après l'Aïd al-Fitr **[DÉCIDÉ 13/10]** |
+| **Quand** | Pendant la récitation, à chaque cours | Quand l'élève est prêt ; le système le propose à l'approche du repère de l'étape (étapes 1 à 3 seulement) | Quand l'enseignant propose l'élève, au plus tard à la date limite du niveau **[DÉCIDÉ 12/10]** | 4 fois par an, dont une juste après l'Aïd al-Fitr **[DÉCIDÉ 13/10]** |
 | **Durée** | Aucune minute de plus | 5 à 10 minutes par élève selon l'âge (§4) **[PROPOSÉ]** | 20 à 30 minutes selon l'âge (§4) **[PROPOSÉ]** | Selon le calendrier publié |
 | **Où** | En classe | En classe, pendant un cours normal **[DÉCIDÉ 12/10]** | Dans une séance d'évaluation planifiée **[DÉCIDÉ 12/10]** | Séance commune publiée |
 | **Qui décide** | L'enseignant (état de la compétence, sourate cochée) | L'enseignant propose le passage, la direction confirme | L'évaluateur propose le passage, la direction confirme | Personne : aucun passage **[DÉCIDÉ 13/10]** |
 | **Ce qui est enregistré** | Ce que le cahier de séance porte déjà ; les sourates cochées | La phrase de résultat, les points à renforcer, la date de la nouvelle vérification | La même chose, plus les parties de l'épreuve et le nom des évaluateurs | La participation |
 | **L'élève voit** | La sourate cochée ; l'état de ses compétences | La phrase de résultat et sa prochaine étape | Idem | Rien d'autre qu'un mot d'encouragement |
-| **Le tuteur voit** | Idem, dans « Mon livret » de l'enfant | Idem | Idem, plus la date de l'examen | La date et la participation |
+| **Le tuteur voit** | Idem, dans l'onglet Programme de l'enfant (fiche de suivi) | Idem, dans « Mon livret » de l'enfant | Idem, plus la date de l'examen | La date et la participation |
 | **La direction voit** | Les états et les sourates, sans les valider **[DÉCIDÉ 11/11]** | Les propositions à confirmer | Les examens à planifier et à confirmer | Les écarts à vérifier (§6) |
 
 **La sourate validée.** L'enseignant la coche au cahier quand l'élève l'a récitée de mémoire, sans erreur de mot. La direction ne valide pas les sourates : elle voit l'état. On compte en sourates, jamais en versets. Les 17 sourates des bases comptent à toute étape ; le total est 17. **[DÉCIDÉ 08/11 et 11/11]**
@@ -73,7 +75,7 @@ Tout enseignant applique la même grille, à tout âge et à tout niveau.
 | La fluidité | L'élève lit-il sans épeler, d'un rythme régulier, sans revenir en arrière ? | Étape 2 |
 | La mémoire | Récite-t-il de mémoire, sans erreur de mot, sans aide ? | Tout ce qui s'apprend par cœur |
 | Les règles de tajwid | Applique-t-il les règles déjà enseignées ? | À partir de sa couche (§5.3) |
-| La tenue et l'adab | Est-il prêt, attentif, respectueux du Coran et du groupe ? | Toujours ; dit en mots, jamais compté dans le résultat |
+| La tenue et l'adab | Est-il prêt, attentif, respectueux du Coran et de la classe ? | Toujours ; dit en mots, jamais compté dans le résultat |
 
 Une erreur sur une règle **pas encore enseignée** est corrigée, jamais comptée. **[PROPOSÉ, d'après le référentiel]**
 
@@ -95,7 +97,7 @@ Une erreur grave que l'élève corrige **seul et aussitôt** compte comme une er
 |---|---|---|
 | **À renforcer** | Une erreur grave non corrigée, ou plus de 2 erreurs importantes sur le passage écouté, ou plus de 2 aides directes **[PROPOSÉ]** | L'enseignant, d'un geste |
 | **Acquis** | Aucune erreur grave non corrigée, au plus 2 erreurs importantes, petites erreurs tolérées **[PROPOSÉ]** ; pour la mémoire : aucune erreur de mot **[DÉCIDÉ 11/11 pour la sourate]** | L'enseignant, d'un geste |
-| **Stable** | Acquis lors de 3 observations, sur au moins 2 semaines, dont une sur un passage non préparé **[DÉCIDÉ 12-13/10]** | Calculé par l'application, jamais saisi **[ARBITRÉ]** |
+| **Stable** | Acquis lors de 3 observations, sur au moins 2 semaines, dont une sur un passage non préparé (pendant un petit bilan ou une séance de consolidation) **[DÉCIDÉ 12-13/10 ; non préparé : ARBITRÉ]** | Calculé par l'application, jamais saisi **[ARBITRÉ]** |
 
 L'état d'une compétence est une information pour enseigner : il peut redescendre si l'élève oublie. Une étape validée ou une sourate cochée, elles, ne se perdent jamais. **[PROPOSÉ, d'après la règle du 14/10]**
 
@@ -103,9 +105,9 @@ L'état d'une compétence est une information pour enseigner : il peut redescend
 
 | Situation au bilan ou à l'examen | Phrase affichée | Ce qui se passe |
 |---|---|---|
-| Toutes les compétences de l'étape Acquis ou Stable, sur une épreuve non préparée, sans erreur grave non corrigée | « Étape validée » | L'enseignant propose le passage, la direction confirme |
-| Une ou deux compétences À renforcer, les autres Acquis **[PROPOSÉ]** | « Quelques points sont à renforcer » | Renforcement ciblé ; nouvelle vérification de ces seuls points, en cours normal, 2 semaines plus tard **[PROPOSÉ]** |
-| Trois compétences ou plus À renforcer, ou la compétence centrale de l'étape À renforcer avec une erreur grave répétée **[PROPOSÉ]** | « Une nouvelle vérification est nécessaire » | Plan de soutien ; nouvelle épreuve complète, 3 semaines plus tard (4 pour l'examen) **[PROPOSÉ]** |
+| Toutes les compétences de l'étape Acquis ou Stable, sur une épreuve non préparée, sans erreur grave non corrigée | « Étape validée » | Fait passer : l'enseignant propose le passage, la direction confirme |
+| Une ou deux compétences À renforcer, les autres Acquis **[PROPOSÉ]** | « Quelques points sont à renforcer » | Ne fait pas passer : travail ciblé, puis nouvelle vérification limitée à ces seuls points, en cours normal, 2 semaines plus tard **[ARBITRÉ ; délai PROPOSÉ]** |
+| Trois compétences ou plus À renforcer, ou la compétence centrale de l'étape À renforcer avec une erreur grave répétée **[PROPOSÉ]** | « Une nouvelle vérification est nécessaire » | Ne fait pas passer : plan de soutien, puis l'épreuve entière est refaite, 3 semaines plus tard (4 pour l'examen) **[ARBITRÉ ; délais PROPOSÉS]** |
 | L'épreuve n'a pas pu se tenir ou se finir (absence, panne) | Aucune phrase | Elle est reprogrammée (§6) |
 
 La compétence centrale : les lettres (étape 1), la lecture sans épeler (étape 2), la lecture dans le Mushaf (étape 3). À l'examen, la règle se lit par partie (§4.6). **[PROPOSÉ]**
@@ -120,16 +122,7 @@ La compétence centrale : les lettres (étape 1), la lecture sans épeler (étap
 
 Les objectifs mesurés ci-dessous attendent la lecture du directeur **[PROPOSÉ]**. Pour chaque étape, l'enseignant propose le passage et la direction confirme **[DÉCIDÉ 12/10]**. **Le critère ne change jamais selon l'âge** ; seuls changent la durée, la longueur du passage lu, le moment de la matière secondaire, la présence du tuteur et le ton.
 
-**Durées et dates limites.** Les totaux sont décidés **[DÉCIDÉ 14/10]** : durée prévue 37, 28, 24 et 15 semaines ; date limite des bases 48, 36, 31 et 20 semaines (6-9, 10-13, 14-17, adultes). Le découpage par étape est une proposition pré-remplie dans l'application **[PROPOSÉ]** :
-
-| Étape | 6-9 ans | 10-13 ans | 14-17 ans | Adultes |
-|---|---|---|---|---|
-| 1. Les lettres | 8 sem. (limite 10) | 6 (8) | 5 (7) | 3 (4) |
-| 2. Lire avec les voyelles | 14 (18) | 11 (14) | 9 (12) | 6 (8) |
-| 3. Lire dans le Coran | 8 (10) | 6 (8) | 5 (7) | 3 (4) |
-| 4. Les sourates courtes | 7 (9) | 5 (7) | 5 (7) | 3 (4) |
-
-En cas d'écart, la date limite décidée des bases compte. **[PROPOSÉ]**
+**Durées et dates limites.** Les totaux sont décidés **[DÉCIDÉ 14/10]** : durée prévue 37, 28, 24 et 15 semaines ; date limite des bases 48, 36, 31 et 20 semaines (6-9, 10-13, 14-17, adultes). La date limite porte sur le niveau entier. Les repères par étape sont indicatifs et leur somme est égale à la date du niveau : ils sont dans `REGLAGES.md`, tableau 1 bis **[ARBITRÉ ; repères PROPOSÉS]**.
 
 **Ce qui change selon l'âge :**
 
@@ -139,16 +132,16 @@ En cas d'écart, la date limite décidée des bases compte. **[PROPOSÉ]**
 | Durée de l'examen **[PROPOSÉ]** | 20 min, avec une courte pause | 25 min | 25 min | 30 min |
 | Passage non préparé lu **[PROPOSÉ]** | 2 à 3 min | 3 à 5 min | 3 à 5 min | 3 à 5 min |
 | Matière secondaire | Après la chadda : Al-Fatiha, puis An-Nâs, Al-Falaq, Al-Ikhlâs, puis paroles de la prière et ablutions, puis autres invocations **[DÉCIDÉ 13/10]** | Al-Fatiha dès la première semaine **[DÉCIDÉ 13/10]**, puis le même ordre **[PROPOSÉ]** | Idem | Idem |
-| Qui porte la date limite | Le tuteur **[ARBITRÉ]** | L'élève la voit, le tuteur la porte **[PROPOSÉ]** | Idem | L'élève |
+| Qui porte la date limite | Le tuteur ; l'enfant ne la voit pas **[ARBITRÉ]** | L'élève la voit ; le tuteur reçoit les messages **[ARBITRÉ]** | Idem | L'élève |
 | Présence du tuteur à l'examen | Conseillée, si la direction ouvre la séance **[DÉCIDÉ 12/10 pour l'ouverture]** | Possible, si la direction ouvre la séance | Possible, avec l'accord de l'élève **[PROPOSÉ]** | Sans objet |
 | Ton | On tutoie, on encourage, des consignes très courtes | On montre le progrès, on confie une responsabilité | D'égal à égal, jamais infantilisant | On relie au but personnel de l'adulte |
 | Destinataire des messages | Le tuteur **[ARBITRÉ]** | Le tuteur | Le tuteur | L'élève |
 
-**La matière secondaire : quand et comment on la vérifie.** **[PROPOSÉ]**
+**La matière secondaire : quand et comment on la vérifie.** **[principe ARBITRÉ ; modalités PROPOSÉES]**
 
 - Al-Fatiha, An-Nâs, Al-Falaq et Al-Ikhlâs sont cochées par l'enseignant le jour où l'élève les récite de mémoire sans erreur de mot, souvent en séance de consolidation.
 - Les paroles de la prière, les ablutions et les invocations sont observées en séance de consolidation : l'enseignant confirme d'un geste quand l'élève les dit ou les montre dans l'ordre, sans lire. Les ablutions se montrent en pratique, avec les illustrations, sans fiqh détaillé.
-- Elle ne bloque jamais les étapes 1 à 3 (le petit bilan note son état en une ligne) ; elle est exigée en entier à l'examen.
+- Elle ne bloque jamais les étapes 1 à 3 (le petit bilan note son état en une ligne). Elle est exigée à l'examen de fin des bases : Al-Fatiha et les trois sourates font partie des 17 sourates ; les paroles de la prière sont vérifiées à l'examen ; les ablutions et les invocations doivent avoir été confirmées en cours, sinon elles sont vérifiées à l'examen (§4.6).
 - La liste exacte des paroles, des gestes et des invocations attend la validation du directeur (registre, §9).
 
 ### 4.2 Étape 1 : Les lettres
@@ -189,7 +182,7 @@ En cas d'écart, la date limite décidée des bases compte. **[PROPOSÉ]**
 
 ### 4.5 Étape 4 : Les sourates courtes, d'Al-Masad à Az-Zalzalah
 
-L'étape 4 n'a pas de petit bilan à part : ses 13 sourates sont validées une à une par la coche de l'enseignant, et c'est l'examen de fin des bases qui la ferme. **[PROPOSÉ]**
+L'étape 4 n'a pas de petit bilan à part : ses 13 sourates sont validées une à une par la coche de l'enseignant, et c'est l'examen de fin des bases qui ferme le niveau. **[ARBITRÉ]**
 
 | Rubrique | Règle |
 |---|---|
@@ -214,15 +207,15 @@ L'étape 4 n'a pas de petit bilan à part : ses 13 sourates sont validées une �
 | **Validé si** **[PROPOSÉ]** | Lecture : aucune erreur grave non corrigée, au plus 2 erreurs importantes, sans correction mot à mot. Sourates : aucune erreur de mot non corrigée seul. Prière : dans l'ordre, sans oubli, sans texte. Les trois parties sont exigées. |
 | **Qui décide** | L'évaluateur propose, la direction confirme **[DÉCIDÉ 12/10 pour le principe]** |
 | **Étape validée** | Les bases sont finies. L'Attestation des bases est émise (§7). L'orientation est proposée : enfant, mémoriser par défaut si ses acquis sont stables, le tuteur peut demander la lecture ; adulte, il choisit sur conseil de son enseignant **[DÉCIDÉ 13/10]** |
-| **Quelques points à renforcer** | Une seule partie, autre que la lecture, n'est pas atteinte (par exemple une sourate tirée avec une erreur de mot). L'élève reste dans sa classe ; seule cette partie est revérifiée sous 2 semaines par l'évaluateur ; les autres restent acquises. Une sourate cochée reste cochée et se retravaille **[PROPOSÉ]** |
-| **Nouvelle vérification nécessaire** | La lecture n'est pas atteinte, ou deux parties ou plus. Plan de soutien de 4 semaines, puis nouvel examen complet **[PROPOSÉ]** ; date limite dépassée : §4.7 |
+| **Quelques points à renforcer** | Une seule partie, autre que la lecture, n'est pas atteinte (par exemple une sourate tirée avec une erreur de mot). L'élève ne passe pas et reste dans sa classe ; seule cette partie est revérifiée 2 semaines plus tard par l'évaluateur ; les autres restent acquises. Une sourate cochée reste cochée et se retravaille **[PROPOSÉ]** |
+| **Nouvelle vérification nécessaire** | La lecture n'est pas atteinte, ou deux parties ou plus. L'élève ne passe pas : plan de soutien de 4 semaines, puis l'examen entier est refait **[PROPOSÉ]** ; date limite dépassée : §4.7 |
 
 Ablutions et invocations, vérifiées en cours (§4.1), ne sont reprises à l'examen que si l'une n'a jamais été confirmée. **[PROPOSÉ]**
 
 ### 4.7 La date limite dépassée
 
-1. Un bilan avec la famille (ou l'adulte), un plan de rattrapage et une nouvelle date ferme, 4 semaines par défaut. **[DÉCIDÉ 14/10]**
-2. Si cette date est manquée, l'élève passe dans une classe de son niveau réel. Il ne recommence jamais tout et garde tout ce qu'il a validé. **[DÉCIDÉ 14/10]**
+1. Le lendemain de la date limite du niveau, un bilan avec la famille (ou l'adulte), un plan de soutien et une nouvelle date ferme, 4 semaines par défaut. **[DÉCIDÉ 14/10]**
+2. Si cette date est manquée, l'élève passe dans une classe de son niveau réel, sur proposition de l'enseignant et décision de la direction. Il ne recommence jamais tout et garde tout ce qu'il a validé. **[DÉCIDÉ 14/10]** S'il n'existe pas de telle classe : voir la charte, partie 3.1.
 3. La date limite ne recule que pour une fermeture de l'académie ou une pause accordée. **[DÉCIDÉ 14/10]**
 4. L'enfant de 6 à 9 ans ne porte pas la date limite : son tuteur la porte **[ARBITRÉ]** et fait le bilan ; l'enfant entend seulement ce qu'il va travailler **[PROPOSÉ]**.
 
@@ -230,7 +223,7 @@ Ablutions et invocations, vérifiées en cours (§4.1), ne sont reprises à l'ex
 
 ## 5. Après les bases
 
-> **Tout ce chapitre est PROPOSÉ.** Il reprend le référentiel académique du 13/10, qui est une proposition. Il est à valider par le directeur et ses associés détenteurs d'ijaza. Seule l'orientation après les bases est décidée (13/10). Le principe d'une date limite par étape s'applique ; les valeurs seront fixées quand ces niveaux seront écrits (registre, §8 bis).
+> **Tout ce chapitre est PROPOSÉ.** Il reprend le référentiel académique du 13/10, qui est une proposition. Il est à valider par le directeur et ses associés détenteurs d'ijaza. Seule l'orientation après les bases est décidée (13/10). Le principe d'une date limite s'applique, avec la même architecture que les bases (une date ferme par niveau, des repères par étape) ; les valeurs seront fixées quand ces niveaux seront écrits (registre, §8 bis).
 
 ### 5.1 Lire tout le Coran
 
@@ -251,8 +244,8 @@ Ablutions et invocations, vérifiées en cours (§4.1), ne sont reprises à l'ex
 
 | Moment | Étape validée si | Quelques points à renforcer | Nouvelle vérification nécessaire |
 |---|---|---|---|
-| Petit bilan d'étape | Aucune erreur grave non corrigée, au plus 2 erreurs importantes par passage, règles de la couche appliquées | Une règle ou un passage en dessous : travail ciblé, vérification de ce point 2 semaines plus tard | Plusieurs passages en dessous : plan de soutien, nouveau petit bilan 3 semaines plus tard |
-| Examen final | Même critère sur les 3 passages, toutes les couches appliquées, l'élève se corrige seul | Un seul passage en dessous : un nouveau passage tiré sous 2 semaines | Deux passages ou plus : prolongation ciblée de 4 semaines, puis nouvel examen complet ; jamais de reprise de tout le parcours |
+| Petit bilan d'étape | Aucune erreur grave non corrigée, au plus 2 erreurs importantes par passage, règles de la couche appliquées | Une règle ou un passage en dessous : travail ciblé, vérification de ce seul point 2 semaines plus tard | Plusieurs passages en dessous : plan de soutien, nouveau petit bilan 3 semaines plus tard |
+| Examen final | Même critère sur les 3 passages, toutes les couches appliquées, l'élève se corrige seul | Un seul passage en dessous : un nouveau passage tiré 2 semaines plus tard | Deux passages ou plus : prolongation ciblée de 4 semaines, puis nouvel examen complet ; jamais de reprise de tout le parcours |
 
 L'examen final validé ouvre le **Certificat de lecture**.
 
@@ -280,9 +273,9 @@ Le nouveau se mesure en lignes du Mushaf, jamais en versets (référentiel : 3 �
 
 | Moment | Étape validée si | Quelques points à renforcer | Nouvelle vérification nécessaire |
 |---|---|---|---|
-| Vérification d'un juz | 4 passages sans erreur de mot non corrigée seul | Un passage en dessous : le juz passe en « À consolider », nouveau passage tiré sous 2 semaines | Plusieurs passages en dessous : le nouveau ralentit, nouvelle vérification du juz 3 semaines plus tard |
-| Petit bilan d'étape (5 juz) | Passages tirés dans les 5 juz et dans l'ancien, même critère | Un juz en dessous : travail de ce juz, vérification sous 2 semaines | Plusieurs juz en dessous : nouveau suspendu, plan de révision, nouveau petit bilan 4 semaines plus tard |
-| Examen final | Toutes les séances au critère, continuité, aucune dégradation de l'ancien | Une zone en dessous : nouvelle séance sur cette zone sous 2 semaines | Plusieurs zones : nouvelle rotation de révision, puis nouvel examen complet |
+| Vérification d'un juz | 4 passages sans erreur de mot non corrigée seul | Un passage en dessous : le juz passe en « À consolider », nouveau passage tiré 2 semaines plus tard | Plusieurs passages en dessous : le nouveau ralentit, nouvelle vérification du juz 3 semaines plus tard |
+| Petit bilan d'étape (5 juz) | Passages tirés dans les 5 juz et dans l'ancien, même critère | Un juz en dessous : travail de ce juz, vérification 2 semaines plus tard | Plusieurs juz en dessous : nouveau suspendu, plan de révision, nouveau petit bilan 4 semaines plus tard |
+| Examen final | Toutes les séances au critère, continuité, aucune dégradation de l'ancien | Une zone en dessous : nouvelle séance sur cette zone 2 semaines plus tard | Plusieurs zones : nouvelle rotation de révision, puis nouvel examen complet |
 
 Les jalons de 5, 10, 15, 20 et 25 juz sont salués dans « Mon livret », sans certificat. L'examen final validé ouvre le **Certificat de mémorisation**.
 
@@ -304,7 +297,7 @@ Une règle se corrige dès qu'elle apparaît, mais elle n'est exigée qu'à part
 
 | Document | Quand | Signé par |
 |---|---|---|
-| Attestation des bases | Examen de fin des bases validé et confirmé | La direction **[PROPOSÉ]** |
+| Attestation des bases | Examen de fin des bases validé et confirmé | Le directeur, au nom de la direction **[PROPOSÉ]** |
 | Certificat de lecture | Examen final de lecture validé | Le directeur ou un associé détenteur d'une ijaza qui a conduit ou supervisé l'examen **[DÉCIDÉ 14/10 : ils conduisent la certification ; la signature est PROPOSÉE]** |
 | Certificat de mémorisation | Examen final de mémorisation validé | Idem |
 
@@ -316,13 +309,13 @@ Ces noms sont décidés ; un certificat Rewayah ne s'appelle jamais « ijaza » 
 
 | Cas | Règle |
 |---|---|
-| **Élève en avance** | Validation anticipée par petit bilan, à tout moment, sans jamais sauter une vérification **[ARBITRÉ]**. Avance stable sur deux étapes : la direction étudie une classe plus avancée **[PROPOSÉ]** |
-| **Élève qui sait déjà lire** | Un débutant déclaré commence à l'étape 1 sans épreuve ; la vérification d'entrée n'a lieu que s'il dit lire ou revient d'une longue interruption **[DÉCIDÉ 12/10]**. Qui la fait et quand : la direction, au cas par cas **[DÉCIDÉ 02/11]**. Sur quoi : la fin du livre, un passage non préparé du Mushaf, les sourates qu'il dit connaître. Elle vaut petit bilan pour les étapes qu'elle valide ; l'enseignant de la classe coche les sourates dès les premiers cours **[PROPOSÉ]** |
+| **Élève en avance** | Validation anticipée par petit bilan, à tout moment, sans jamais sauter une vérification **[ARBITRÉ]**. Étape validée : s'il existe une classe plus avancée qui lui convient, la direction propose le passage au début du mois suivant ; sinon il avance sur sa propre étape dans sa classe (`SCENARIOS-ELEVES.md` 3.7) **[PROPOSÉ]**. Sa date limite ne change pas |
+| **Élève qui sait déjà lire** | Un débutant déclaré commence à l'étape 1 sans épreuve ; l'entretien de lecture n'a lieu que s'il dit lire ou revient d'une longue interruption (seuil dans `REGLAGES.md`) **[DÉCIDÉ 12/10]**. Qui la fait et quand : la direction, au cas par cas **[DÉCIDÉ 02/11]**. Sur quoi : la fin du livre, un passage non préparé du Mushaf, les sourates qu'il dit connaître. Il vaut petit bilan pour les étapes qu'il valide ; l'enseignant de la classe coche les sourates dès les premiers cours ; sa date limite est calculée sur les étapes qui lui restent **[PROPOSÉ]** |
 | **Absent le jour de l'épreuve** | Pas de résultat. Petit bilan au cours suivant ; examen à la séance d'évaluation suivante. La date limite continue de courir **[PROPOSÉ]** |
 | **Panne technique** | Jamais un résultat **[DÉCIDÉ 12/10]**. Le même jour, l'épreuve reprend où elle s'est arrêtée ; sinon, elle est reprogrammée sous 7 jours et les parties terminées restent acquises. Une panne de l'académie ne coûte rien sur la date limite **[PROPOSÉ]** |
-| **Tentatives et délais** | Pas de nombre maximal. Délai minimal : 2 semaines après « Quelques points sont à renforcer », 3 semaines (4 pour un examen) après « Une nouvelle vérification est nécessaire ». Après deux « nouvelle vérification » de suite, la direction revoit le plan avec l'enseignant **[PROPOSÉ]** |
-| **Recours** | La famille ou l'adulte peut demander une réévaluation par une autre personne, sans pouvoir imposer un passage **[DÉCIDÉ, registre du 14/10]**. Demande sous 7 jours ; réévaluation sous 14 jours par une personne habilitée qui n'a pas fait passer l'épreuve ; son résultat remplace le premier. Pas de recours contre une étape validée **[PROPOSÉ]** |
-| **Sourate cochée par erreur** | Aujourd'hui, la coche est définitive. Proposition : l'enseignant auteur la retire sous 7 jours, avec motif et trace, la direction informée ; ensuite, elle reste validée et se retravaille **[PROPOSÉ]** |
+| **Tentatives et délais** | Pas de nombre maximal. Délai : 2 semaines après « Quelques points sont à renforcer », 3 semaines (4 pour un examen) après « Une nouvelle vérification est nécessaire ». Après deux « Une nouvelle vérification est nécessaire » de suite, la direction revoit le plan avec l'enseignant et la famille **[PROPOSÉ]** |
+| **Recours** | La famille ou l'adulte peut demander une réévaluation par une autre personne, sans pouvoir imposer un passage **[règle retenue au registre du 14/10, venue du référentiel]**. Demande dans les 14 jours après la publication du résultat ; réévaluation dans les 14 jours suivants, par une personne habilitée qui n'a pas fait passer l'épreuve ; son résultat remplace le premier. Pas de recours contre « Étape validée » **[PROPOSÉ, réglages]** |
+| **Sourate cochée par erreur** | Aujourd'hui, la coche est définitive. Proposition : l'enseignant auteur la retire dans les 7 jours, avec motif et trace, la direction informée ; ensuite, elle reste validée et se retravaille **[PROPOSÉ]** |
 | **Épreuve d'un mineur** | Le tuteur peut assister à l'examen si la direction ouvre la séance **[DÉCIDÉ 12/10]** ; il n'évalue pas. Une séance ouverte ne montre ni le résultat ni l'identité complète d'un mineur. Les messages vont au tuteur **[ARBITRÉ]** |
 | **Équité entre enseignants** | Examen : toujours un deuxième regard ; l'évaluateur n'est pas l'enseignant de la classe, qui peut écouter sans décider ; en cas de désaccord, la direction tranche ou désigne une troisième personne. Petit bilan : la direction en réécoute un sur dix, tiré au hasard. Chaque trimestre, les enseignants comparent leurs décisions sur quelques cas **[PROPOSÉ]** |
 | **Ce que la direction suit** | Passages à confirmer, examens à planifier, dates limites proches ou dépassées, élèves à deux « nouvelle vérification » de suite, recours, écarts entre enseignants. Jamais un classement d'élèves ; jamais un indicateur seul pour sanctionner un enseignant **[PROPOSÉ]** |
@@ -369,37 +362,21 @@ Chaque situation a une seule réponse.
 | Comment on compte ? | En sourates pour les bases, en juz après ; jamais en versets |
 | L'étape 4 a-t-elle un petit bilan ? | Non : ses sourates sont cochées une à une, l'examen la ferme |
 | La matière secondaire bloque-t-elle une étape ? | Non pour les étapes 1 à 3 ; elle est exigée à l'examen de fin des bases |
-| « Quelques points sont à renforcer » fait-il passer ? | Non : l'élève reste dans l'étape, seuls ces points sont revérifiés |
+| « Quelques points sont à renforcer » fait-il passer ? | Non : travail ciblé, puis nouvelle vérification limitée aux points concernés |
+| « Une nouvelle vérification est nécessaire » fait-il passer ? | Non : plan de soutien, puis l'épreuve entière est refaite après un délai |
+| Combien de tentatives ? | Pas de maximum ; après deux « Une nouvelle vérification est nécessaire » de suite, la direction revoit le plan |
 | La date limite fait-elle passer ? | Non : elle déclenche un bilan et un soutien |
 | Une rencontre de récitation fait-elle passer ? | Non, jamais |
 | Une panne ou une absence donne-t-elle un résultat ? | Non : l'épreuve est reprogrammée |
 | Un état peut-il redescendre ? | L'état d'une compétence, oui ; une étape validée ou une sourate cochée, jamais |
-| La famille peut-elle imposer un passage ? | Non ; elle peut demander une réévaluation par une autre personne |
+| La famille peut-elle imposer un passage ? | Non ; elle peut demander une réévaluation par une autre personne, dans les 14 jours après la publication ; la réévaluation a lieu dans les 14 jours suivants |
 | Enfant aux acquis pas encore stables à la fin des bases ? | Mémorisation différée ; il lit tout le Coran en attendant **[PROPOSÉ]** |
 | Que se passe-t-il si la nouvelle date ferme est manquée ? | Classe de son niveau réel, sans rien perdre de ce qui est validé |
 
-**Écarts relevés dans les sources, et leur règlement :** les dates limites pré-remplies par étape (somme 47, 37, 33, 20) diffèrent des dates décidées des bases (48, 36, 31, 20) : la date décidée compte. Le référentiel garde « temps variable, sans date » et un autre ordre des quatre premières sourates : les décisions des 13 et 14/10 l'emportent. L'étape 4 compte 13 sourates, le compteur 17 : l'examen exige les 17.
+**Écarts relevés dans les sources, et leur règlement :** les dates limites pré-remplies par étape d'une ancienne migration (somme 47, 37, 33, 20) différaient des dates décidées des bases (48, 36, 31, 20) : la date décidée compte, elle porte sur le niveau entier, et les repères de `REGLAGES.md` ont été recalculés pour que leur somme lui soit égale. Le référentiel garde « temps variable, sans date » et un autre ordre des quatre premières sourates : les décisions des 13 et 14/10 l'emportent. L'étape 4 compte 13 sourates, le compteur 17 : l'examen exige les 17.
 
 ---
 
-## 9. Questions ouvertes pour le directeur
+## 9. Questions pour le directeur
 
-Sans réponse, la réponse par défaut s'applique.
-
-| # | Question | Réponse par défaut proposée |
-|---|---|---|
-| 1 | Validez-vous les objectifs des quatre étapes (§4.2 à §4.5) ? | Oui, tels qu'écrits |
-| 2 | Types d'erreur et seuils (§3.2, §3.3) ? | Ceux écrits ici |
-| 3 | L'étape 4 est-elle fermée par l'examen, sans petit bilan à part ? | Oui |
-| 4 | À l'examen, les 17 sourates en entier ou par tirage ? | Al-Fatiha et 6 sourates tirées, après les 17 cochées |
-| 5 | Ablutions et invocations à l'examen ? | Non, vérifiées en cours ; à l'examen seulement si jamais confirmées |
-| 6 | Qui fait passer l'examen de fin des bases ? | Un évaluateur habilité autre que l'enseignant, avec un deuxième regard |
-| 7 | Durées des épreuves (§4.1) et délais entre deux vérifications (§6) ? | Ceux écrits ici |
-| 8 | Un enfant dont les acquis ne sont pas encore stables à la fin des bases ? | Il commence par lire tout le Coran ; la mémorisation lui est reproposée dès que ses acquis sont stables |
-| 9 | Délais du recours ? | Demande sous 7 jours, réévaluation sous 14 jours |
-| 10 | Retrait d'une sourate cochée par erreur ? | Par l'enseignant auteur, sous 7 jours, avec motif et trace |
-| 11 | Qui signe l'Attestation des bases ? | La direction |
-| 12 | Le chapitre « Après les bases » (§5) ? | Celui du référentiel, relu par vous et vos associés détenteurs d'ijaza |
-| 13 | Dates limites des étapes après les bases ? | À fixer avec ces niveaux ; en attendant, aucune date affichée |
-| 14 | Un élève de 10 à 17 ans voit-il sa date limite ? | Oui, mais c'est le tuteur qui la porte et reçoit les messages |
-| 15 | Liste des paroles de la prière, des ablutions et des invocations ? | En attente de votre validation ; d'ici là, on vérifie ce qui a été enseigné |
+Toutes les questions de ce document sont fondues dans `QUESTIONS-OUVERTES.md`, avec leur proposition par défaut. Ce document n'en garde pas de liste propre.

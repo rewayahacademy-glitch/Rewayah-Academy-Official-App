@@ -2,7 +2,7 @@
 
 Partie « scénarios » de la charte de Rewayah Academy, rédigée le 12/11/2026 à la demande du directeur. Pour chaque type d'élève et chaque situation : qui fait quoi, dans quel délai, et ce qu'on ne fait jamais.
 
-**Les marques.** **[DÉCIDÉ]** : décision du directeur, avec sa date ; elle ne change que par une décision plus récente. **[ARBITRÉ]** : choix de l'architecte du 12/11/2026, dans le cadre des décisions du directeur. **[PROPOSÉ]** : à valider. Tout chiffre nouveau est un **réglage** : la direction le change sans toucher au reste.
+**Les marques.** **[DÉCIDÉ]** : décision du directeur, avec sa date ; elle ne change que par une décision plus récente. **[ARBITRÉ]** : choix de l'architecte du 12/11/2026, dans le cadre des décisions du directeur. **[PROPOSÉ]** : à valider. Tout chiffre est un **réglage** : la direction le change sans toucher au reste (DÉCIDÉ 12/11). **La seule table des valeurs est `REGLAGES.md`** ; en cas d'écart, elle et la charte font foi. Les questions au directeur sont toutes dans `QUESTIONS-OUVERTES.md`.
 
 **État au 12/11/2026, dit franchement.** 3 classes, 5 élèves, tous débutants, surtout des enfants. Aucun programme publié, Bibliothèque vide, aucune lecture enregistrée. Le livre de lecture de Rewayah n'est pas écrit : la position d'une classe est la page montrée en classe, sans ligne [DÉCIDÉ 05/11]. La partie 4.f dit ce qu'on fait en attendant.
 
@@ -10,7 +10,7 @@ Partie « scénarios » de la charte de Rewayah Academy, rédigée le 12/11/2026
 
 ## 1. Le principe en une page
 
-**La classe n'attend personne.** Le cours a lieu à l'heure, avec les présents [DÉCIDÉ 14/10].
+**La classe n'attend personne.** Le cours a lieu à l'heure, avec les présents ; l'élève absent rattrape seul avec la lecture enregistrée [DÉCIDÉ 14/10, redit le 12/11].
 
 **Chacun a un chemin clair.** Chaque élève a une étape, un objectif, une date limite et un travail à préparer. Il sait où il en est, où il va, et pour quand [DÉCIDÉ 14/10].
 
@@ -36,7 +36,7 @@ Même gabarit pour toutes les fiches. Une fiche ne dit que ce qui est propre au 
 
 **Commun à tous, l'entrée.** Un débutant déclaré entre à l'étape 1 sans épreuve [DÉCIDÉ 12/10]. Celui qui dit lire, ou qui revient après une longue interruption, passe un court entretien de lecture ; la direction choisit qui le fait et quand [DÉCIDÉ 02/11]. L'étape est posée automatiquement à l'entrée en classe [ARBITRÉ]. On entre dans une classe déjà lancée au début d'un mois [DÉCIDÉ 30/09].
 
-**Commun à tous, la date limite.** Individuelle, elle part de l'entrée de l'élève dans l'étape [ARBITRÉ]. Bases d'un débutant : prévu 37, 28, 24 ou 15 semaines ; date limite 48, 36, 31 ou 20 (6-9, 10-13, 14-17, adultes) [DÉCIDÉ 14/10]. La part de chaque étape est un réglage dont la somme vaut ces totaux [PROPOSÉ]. Elle ne recule que pour les fermetures de l'académie et une pause accordée [DÉCIDÉ 14/10].
+**Commun à tous, la date limite.** Elle porte sur le **niveau entier** et elle est individuelle : elle part de l'entrée de l'élève dans le niveau [ARBITRÉ]. Bases d'un débutant : prévu 37, 28, 24 ou 15 semaines ; date limite 48, 36, 31 ou 20 (6-9, 10-13, 14-17, adultes) [DÉCIDÉ 14/10]. Les dates par étape sont des repères indicatifs dont la somme reste égale à la date du niveau (`REGLAGES.md`) [PROPOSÉ]. Celui qui entre en cours de route reçoit une date calculée sur les étapes qui lui restent [ARBITRÉ]. Elle ne recule que pour les fermetures de l'académie et une pause accordée [DÉCIDÉ 14/10].
 
 ### 2.1 Enfant débutant, 6 à 9 ans (fille ou garçon)
 
@@ -45,8 +45,8 @@ Même gabarit pour toutes les fiches. Une fiche ne dit que ce qui est propre au 
 | Qui il est | Il découvre les lettres et dépend de son tuteur pour se connecter, réviser et rattraper. |
 | Motive, freine | Motive : rituels courts, encouragement oral, voir ses sourates s'ajouter, un parent présent. Freine : fatigue, consigne longue, honte devant les autres. |
 | Son entrée | Étape 1. Le livre seul jusqu'à la chadda ; puis, en matière secondaire : Al-Fatiha, An-Nâs, Al-Falaq, Al-Ikhlâs, les paroles de la prière et les ablutions, les invocations [DÉCIDÉ 13/10]. |
-| Rythme, date limite | Prévu 37 semaines, limite 48. **Le tuteur porte la date limite, pas l'enfant** [ARBITRÉ]. Séance de 60 minutes avec une courte pause [DÉCIDÉ 12/10]. |
-| Ce qu'il voit | L'Interface guidée par défaut [DÉCIDÉ 12/10] : son étape en images, ses sourates, « Rattraper ce cours ». Jamais de date, d'argent, de note ni de comparaison. |
+| Rythme, date limite | Valeurs des 6-9 ans (commun ci-dessus). **Le tuteur porte la date limite, pas l'enfant** [ARBITRÉ]. Séance de 60 minutes avec une courte pause [DÉCIDÉ 12/10]. |
+| Ce qu'il voit | L'Interface guidée par défaut [retenu au registre du 14/10] : son étape en images, ses sourates, les dates de l'école, « Rattraper ce cours ». Jamais sa date limite ni son rythme, jamais d'argent, de note ni de comparaison. Aucune notification : tout passe par le tuteur. |
 | Le tuteur | Il le connecte au calme, suit l'emploi du temps de révision, fait « Rattraper ce cours » avec lui et confirme. Il veille à la régularité ; il n'enseigne pas. |
 | L'enseignant | Il enseigne, écoute chaque enfant, confirme la position après la séance. |
 | Risques, réponse | Absences liées à l'organisation de la famille : alertes au tuteur (3.2). |
@@ -60,8 +60,8 @@ Même gabarit pour toutes les fiches. Une fiche ne dit que ce qui est propre au 
 | Qui il est | Il doit prier à cet âge et veut devenir autonome. |
 | Motive, freine | Motive : progrès visibles, petites responsabilités, être traité en grand. Freine : être traité en petit, la fatigue du soir. |
 | Son entrée | Étape 1 s'il débute ; Al-Fatiha en matière secondaire dès la première semaine [DÉCIDÉ 13/10, réglage]. |
-| Rythme, date limite | Prévu 28 semaines, limite 36. **Il voit sa date limite** : « à finir avant le… » [ARBITRÉ]. |
-| Ce qu'il voit | Étape, objectif, date limite, sourates, travail à préparer. Il peut demander l'interface standard ; le tuteur décide [DÉCIDÉ 12/10]. |
+| Rythme, date limite | Valeurs des 10-13 ans. **Il voit sa date limite** : « à finir avant le… » [ARBITRÉ]. |
+| Ce qu'il voit | Étape, objectif, date limite, sourates, travail à préparer, dans « Apprendre », sans notification. Il peut demander l'interface standard ; le tuteur décide [retenu au registre du 14/10]. |
 | Le tuteur | Il reçoit les messages [ARBITRÉ] et laisse l'enfant faire seul ce qu'il peut. |
 | L'enseignant | Méthode libre [DÉCIDÉ 13/10] ; il peut confier de petites responsabilités en classe. |
 | Risques, réponse | Travail non fait quand le parent relâche : 3.4. |
@@ -73,7 +73,7 @@ Même gabarit pour toutes les fiches. Une fiche ne dit que ce qui est propre au 
 | Qui il est | Très pris par l'école, parfois inscrit par ses parents plus que par choix. |
 | Motive, freine | Motive : respect, ton d'égal, choix réels, but concret (« prier seul »). Freine : ton infantilisant, surveillance visible. |
 | Son entrée | Étape 1 s'il débute, Al-Fatiha dès la première semaine [DÉCIDÉ 13/10]. |
-| Rythme, date limite | Prévu 24 semaines, limite 31. Il la voit [ARBITRÉ]. |
+| Rythme, date limite | Valeurs des 14-17 ans. Il la voit [ARBITRÉ]. |
 | Ce qu'il voit | L'interface standard. Aucune étiquette de risque, jamais [ARBITRÉ]. |
 | Le tuteur | Il reçoit les messages (élève mineur) [ARBITRÉ] ; il parle avec son enfant plus qu'il ne surveille. |
 | L'enseignant | Il lui parle comme à un jeune adulte. |
@@ -86,7 +86,7 @@ Même gabarit pour toutes les fiches. Une fiche ne dit que ce qui est propre au 
 | Qui il est | Souvent parent et salarié. Il est son propre tuteur. |
 | Motive, freine | Motive : savoir pourquoi, utilité immédiate, autonomie. Freine : manque de temps, gêne de débuter tard. |
 | Son entrée | Étape 1, Al-Fatiha dès la première semaine [DÉCIDÉ 13/10]. Classe d'hommes ou de femmes ; une classe de femmes a une enseignante. |
-| Rythme, date limite | 90 minutes par séance [DÉCIDÉ 12/10]. Prévu 15 semaines, limite 20. |
+| Rythme, date limite | 90 minutes par séance [DÉCIDÉ 12/10]. Valeurs des adultes. |
 | Ce qu'il voit | Aujourd'hui · Apprendre · Suivi · Profil : étape, date limite, emploi du temps de révision, Bibliothèque. |
 | Le tuteur | Aucun : il reçoit ses messages et demande lui-même une pause. |
 | L'enseignant | Il explique le but de chaque étape. |
@@ -99,9 +99,9 @@ Même gabarit pour toutes les fiches. Une fiche ne dit que ce qui est propre au 
 | Qui il est | Il a appris ailleurs, plus ou moins bien. |
 | Motive, freine | Motive : ne pas refaire ce qu'il sait. Freine : être placé trop bas, ou trop haut. |
 | Son entrée | Court entretien de lecture [DÉCIDÉ 12/10 et 02/11] ; la direction pose l'étape. L'entretien tient lieu de vérification pour les étapes d'avant ; l'examen de fin des bases vérifie tout [PROPOSÉ]. |
-| Rythme, date limite | Elle part de son entrée dans l'étape où il est placé, avec la part de cette étape [ARBITRÉ, part PROPOSÉE]. |
+| Rythme, date limite | Calculée sur les étapes qui lui restent, depuis son entrée : somme de leurs repères [ARBITRÉ ; repères PROPOSÉS]. |
 | Voit, tuteur, enseignant | Selon son âge. |
-| Risques, réponse | Mauvais placement : l'enseignant propose un changement d'étape dans les 3 premières semaines, la direction confirme [PROPOSÉ, réglage]. |
+| Risques, réponse | Mauvais placement : l'enseignant propose un changement d'étape dans les premières semaines (réglage), la direction confirme [PROPOSÉ]. |
 
 ### 2.6 Adulte très occupé
 
@@ -111,7 +111,7 @@ Même gabarit pour toutes les fiches. Une fiche ne dit que ce qui est propre au 
 | Motive, freine | Motive : un cadre qui le tient. Freine : la culpabilité après plusieurs absences. |
 | Son entrée | Avant l'inscription, on lui montre la règle : 3 cours par semaine, la classe n'attend pas, il rattrape seul. Il choisit un horaire qui tient dans sa semaine. |
 | Rythme, date limite | Les mêmes que tout adulte. |
-| Ce qu'il voit | Un emploi du temps de révision court et quotidien [PROPOSÉ, réglage : 15 minutes par jour]. |
+| Ce qu'il voit | Un emploi du temps de révision court et quotidien : la révision des adultes en séances de 15 à 20 minutes par jour [PROPOSÉ, réglage]. |
 | Tuteur, enseignant | Aucun tuteur ; rien de plus pour l'enseignant. |
 | Risques, réponse | Absences répétées : 3.2. Voyage connu : demander une pause d'un mois. Jamais un autre créneau, jamais un cours refait [DÉCIDÉ 14/10]. |
 
@@ -132,7 +132,7 @@ Même gabarit pour toutes les fiches. Une fiche ne dit que ce qui est propre au 
 |---|---|
 | Qui il est | Le plus souvent un adulte, qui veut prier vite et ne connaît ni les lettres ni les mots de la pratique. |
 | Motive, freine | Motive : prier seul. Freine : isolement, peur de mal faire. |
-| Son entrée | Étape 1, Al-Fatiha dès la première semaine [DÉCIDÉ 13/10]. Bourse possible de 6 mois [DÉCIDÉ, registre du 14/10]. |
+| Son entrée | Étape 1, Al-Fatiha dès la première semaine [DÉCIDÉ 13/10]. Bourse possible de 6 mois [règle retenue au registre du 14/10, partie finance]. |
 | Ce qu'il voit | Selon son âge ; les illustrations des ablutions et de la prière validées par le directeur, dès qu'elles existent [DÉCIDÉ 14/10]. |
 | L'enseignant | Il montre la prière et les ablutions en pratique, sans fiqh détaillé [DÉCIDÉ 13/10]. |
 | Risques, réponse | Découragement : la direction lui écrit un mot d'accueil et prend de ses nouvelles après un mois [PROPOSÉ]. |
@@ -143,8 +143,8 @@ Même gabarit pour toutes les fiches. Une fiche ne dit que ce qui est propre au 
 |---|---|
 | Qui il est | Un ancien élève, ou quelqu'un qui a appris il y a longtemps. |
 | Motive, freine | Motive : ne pas tout recommencer. Freine : avoir oublié, et en avoir honte. |
-| Son entrée | Court entretien de lecture [DÉCIDÉ 12/10]. « Longue » veut dire 3 mois ou plus sans cours [PROPOSÉ, réglage]. Ce qu'il avait validé chez nous reste validé [DÉCIDÉ 14/10] ; un point oublié passe « À renforcer ». |
-| Rythme, date limite | Nouvelle date limite depuis son entrée dans l'étape posée [ARBITRÉ]. |
+| Son entrée | Court entretien de lecture [DÉCIDÉ 12/10, 02/11]. « Longue » veut dire 3 mois ou plus sans cours [PROPOSÉ, réglage]. Ce qu'il avait validé chez nous reste validé [DÉCIDÉ 14/10] ; un point oublié passe « À renforcer ». |
+| Rythme, date limite | Nouvelle date limite, calculée sur les étapes qui lui restent [ARBITRÉ]. |
 | Voit, tuteur, enseignant | Selon son âge. |
 | Risques, réponse | Retomber dans l'absence : 3.2. |
 
@@ -159,7 +159,7 @@ Même gabarit pour toutes les fiches. Une fiche ne dit que ce qui est propre au 
 | | |
 |---|---|
 | Ce qui se passe | L'élève manque un cours. |
-| Système | Le cours a lieu. Après la séance, il ouvre « Rattraper ce cours » (partie 4) et prévient le tuteur le jour même. |
+| Système | Le cours a lieu. À la fin de la séance, il ouvre « Rattraper ce cours » (partie 4) et prévient le tuteur (l'adulte lui-même). |
 | Élève | Il rattrape seul et le dit. |
 | Tuteur | Il veille à ce que ce soit fait ; avant 10 ans, il le fait avec l'enfant et confirme. |
 | Enseignant | Au cours suivant, il vérifie en une minute (4.b). |
@@ -168,7 +168,7 @@ Même gabarit pour toutes les fiches. Une fiche ne dit que ce qui est propre au 
 
 ### 3.2 Absences répétées
 
-Réglages comptés sur les 4 dernières semaines (12 cours), pauses et fermetures exclues [PROPOSÉ] :
+Réglages comptés sur les 4 dernières semaines (12 cours), pauses et fermetures exclues [PROPOSÉ ; ces trois seuils sont la seule règle des absences répétées, gardée à l'harmonisation du 12/11] :
 
 | Niveau | Seuil par défaut | Responsable | Action | Délai |
 |---|---|---|---|---|
@@ -203,7 +203,7 @@ Réglages comptés sur les 4 dernières semaines (12 cours), pauses et fermeture
 
 | | |
 |---|---|
-| Système | Il compare l'avancement à la durée prévue et signale le retard quand il reste un quart du temps de l'étape [PROPOSÉ, réglage]. |
+| Système | Il projette la date de fin du niveau au rythme actuel : dès qu'elle dépasse la date limite, le tuteur (et l'élève de 10 ans et plus) voit « À surveiller » et l'enseignant est prévenu ; s'y ajoutent les trois rappels avant la date limite [PROPOSÉ, réglages]. |
 | Enseignant | Responsable : il confirme en un geste et propose un petit bilan si l'élève est prêt. |
 | Élève, tuteur | Ils suivent l'emploi du temps de révision renforcé. |
 | Délai | 7 jours. |
@@ -213,8 +213,8 @@ Réglages comptés sur les 4 dernières semaines (12 cours), pauses et fermeture
 
 | | |
 |---|---|
-| Système | Il prévient la direction le jour même. |
-| Direction | Bilan avec la famille et plan pour rattraper, nouvelle date ferme de 4 semaines par défaut ; si elle est manquée, classe de son niveau réel [DÉCIDÉ 14/10]. S'il n'en existe pas : il reste dans sa classe avec son étape réelle et une nouvelle date limite [PROPOSÉ]. |
+| Système | Le lendemain de la date limite du niveau, il prévient la direction, le tuteur et l'enseignant. |
+| Direction | Bilan avec la famille et plan de soutien, nouvelle date ferme de 4 semaines par défaut ; si elle est manquée, classe de son niveau réel, proposée par l'enseignant et décidée par la direction [DÉCIDÉ 14/10]. S'il n'en existe pas : il reste dans sa classe, avance sur son étape réelle avec le plan de soutien et une nouvelle date ferme, jusqu'à l'ouverture d'une classe de son niveau [PROPOSÉ]. |
 | Élève, tuteur, enseignant | Ils participent au bilan ; l'enseignant donne son avis en quelques lignes. |
 | Délai | Bilan sous 7 jours [PROPOSÉ]. |
 | Jamais | Tout recommencer ; perdre un acquis validé [DÉCIDÉ 14/10] ; montrer le bilan à un enfant de 6 à 9 ans. |
@@ -252,7 +252,7 @@ Réglages comptés sur les 4 dernières semaines (12 cours), pauses et fermeture
 
 | | |
 |---|---|
-| Système | Seuils internes, jamais affichés : la classe avance si 4 enfants sur 5 (5 adultes sur 6) ont acquis ; séance de consolidation commune si 40 % ou plus sont « À renforcer » ; un élève ne retarde pas la classe de plus d'une séance [DÉCIDÉ, registre du 14/10]. |
+| Système | Seuils internes, jamais affichés : la classe avance si 4 enfants sur 5 (5 adultes sur 6) ont acquis ; séance de consolidation commune si 40 % ou plus sont « À renforcer » ; un élève ne retarde pas la classe de plus d'une séance [référentiel retenu au registre du 14/10 ; réglages]. |
 | Enseignant | Il avance avec la majorité ; les autres ont un travail à préparer ciblé. |
 | Direction | Écart durable 4 semaines [PROPOSÉ, réglage] : nouvelle répartition par niveau réel au début du mois suivant, si une autre classe le permet. |
 | Jamais | Arrêter toute la classe pour un élève ; un classement. |
@@ -261,7 +261,7 @@ Réglages comptés sur les 4 dernières semaines (12 cours), pauses et fermeture
 
 | | |
 |---|---|
-| Système | L'étape, les acquis et la date limite suivent l'élève sans changer [DÉCIDÉ 14/10, règle de stabilité 6]. Le nouvel enseignant voit tout de suite étape et position. |
+| Système | L'étape, les acquis et la date limite suivent l'élève sans changer : changer de classe, d'horaire ou d'enseignant ne change jamais le contenu [DÉCIDÉ 14/10, règle de stabilité 6]. Le nouvel enseignant voit tout de suite étape et position. |
 | Élève | Nouvelle classe plus loin : il rattrape l'écart comme en 3.17. Moins loin : il garde son étape. |
 | Direction | Elle décide, au début d'un mois sauf urgence. |
 | Jamais | Changer le contenu de l'étape ; effacer un acquis. |
@@ -270,7 +270,7 @@ Réglages comptés sur les 4 dernières semaines (12 cours), pauses et fermeture
 
 | | |
 |---|---|
-| Système | L'étape en cours garde sa date limite ; la durée de la nouvelle tranche vaut dès l'étape suivante [PROPOSÉ, selon les règles de stabilité 2 et 6]. À 10 ans : Al-Fatiha entre en matière secondaire si besoin, et l'élève voit sa date limite. |
+| Système | La date limite du niveau en cours ne change pas : elle ne peut jamais avancer ; les valeurs de la nouvelle tranche valent pour le niveau suivant [ARBITRÉ, selon les règles de stabilité 2 et 6]. À 10 ans : Al-Fatiha entre en matière secondaire si besoin, et l'élève voit sa date limite. |
 | Direction | À 18 ans : classe d'adultes à la fin de l'étape, au plus tard 3 mois après l'anniversaire [PROPOSÉ, réglage] ; les messages vont alors à l'élève. |
 | Jamais | Changer le contenu ; raccourcir une date limite en cours. |
 
@@ -278,7 +278,7 @@ Réglages comptés sur les 4 dernières semaines (12 cours), pauses et fermeture
 
 | | |
 |---|---|
-| Système | Demande au moins 7 jours avant un mois civil entier : acceptée, non facturée, date limite reculée d'un mois [DÉCIDÉ 30/09 et 14/10]. Au retour : plan de reprise de 2 semaines dans l'emploi du temps de révision [PROPOSÉ]. |
+| Système | Demande au moins 7 jours avant un mois civil entier : acceptée, non facturée, date limite reculée d'un mois [DÉCIDÉ 30/09 et 14/10]. Au retour : pas d'entretien de lecture ; plan de reprise de 2 semaines dans l'emploi du temps de révision [PROPOSÉ]. Lien avec l'arrêt temporaire du 07/11 : question au directeur. |
 | Enseignant | Au premier cours, il écoute l'élève dans son tour normal. |
 | Direction | Seulement si l'écart est trop grand : classe plus proche de son niveau. |
 | Jamais | Une pause de quelques jours ; un entretien de lecture imposé après un mois. |
@@ -307,7 +307,7 @@ Réglages comptés sur les 4 dernières semaines (12 cours), pauses et fermeture
 | Système | Tant qu'il ne sait pas : « Présence pas encore connue », jamais une absence. |
 | Panne de l'académie | Elle remplace ou compense [DÉCIDÉ 14/10]. |
 | Panne de l'élève | La partie manquée se rattrape avec « Rattraper ce cours » [PROPOSÉ]. |
-| Pendant un examen | Jamais un résultat : l'état reste technique [DÉCIDÉ 12/10]. La direction replanifie sous 7 jours ; la tentative ne compte pas [PROPOSÉ]. |
+| Pendant une épreuve | Jamais un résultat : l'état reste technique [DÉCIDÉ 12/10]. L'épreuve reprend le jour même où elle s'est arrêtée ; sinon la direction la reprogramme dans les 7 jours, et les parties finies restent acquises [PROPOSÉ]. |
 
 ### 3.17 L'élève qui arrive dans une classe déjà lancée
 
@@ -329,14 +329,14 @@ Réglages comptés sur les 4 dernières semaines (12 cours), pauses et fermeture
 
 | | |
 |---|---|
-| Direction | Elle montre les points « À renforcer » et explique le critère. Le tuteur peut demander une nouvelle vérification par une autre personne ; il ne peut pas imposer un passage [DÉCIDÉ, registre du 14/10]. Réponse sous 14 jours [PROPOSÉ]. |
+| Direction | Elle montre les points « À renforcer » et explique le critère. Le tuteur peut demander une réévaluation par une autre personne ; il ne peut pas imposer un passage [règle retenue au registre du 14/10]. La demande se fait dans les 14 jours après la publication du résultat ; la réévaluation a lieu dans les 14 jours suivants, par une personne habilitée qui n'a pas fait passer l'épreuve [PROPOSÉ, réglages]. |
 | Jamais | Un passage sans maîtrise vérifiée. |
 
 ### 3.20 L'élève qui veut arrêter
 
 | | |
 |---|---|
-| Direction | Elle écoute la raison sous 7 jours et propose : pause d'un mois, autre horaire, classe plus adaptée. Pour un mineur, le tuteur décide. Argent et arrêt temporaire : décision unique en préparation [DÉCIDÉ 07/11, à harmoniser]. |
+| Direction | Elle écoute la raison sous 7 jours et propose : pause d'un mois, autre horaire, classe plus adaptée. Pour un mineur, le tuteur décide. Argent et arrêt temporaire : la décision unique d'harmonisation est attendue (question au directeur dans `QUESTIONS-OUVERTES.md`). |
 | Système | Les acquis restent pour un retour [DÉCIDÉ 14/10]. |
 | Jamais | Culpabiliser ; parler d'argent à l'enfant. |
 
@@ -345,7 +345,7 @@ Réglages comptés sur les 4 dernières semaines (12 cours), pauses et fermeture
 | | |
 |---|---|
 | Enseignant | Il propose l'examen de fin des bases quand l'élève est prêt, au plus tard à la date limite [DÉCIDÉ 12/10]. |
-| Direction | Elle planifie la séance ; la famille peut assister si la direction l'ouvre. Un des trois résultats, puis l'attestation des bases. |
+| Direction | Elle planifie la séance ; la famille peut assister si la direction l'ouvre. Un des trois résultats : « Étape validée » ferme les bases (après confirmation) et ouvre l'attestation des bases ; « Quelques points sont à renforcer » ne fait pas passer, seuls ces points sont revérifiés ; « Une nouvelle vérification est nécessaire » ne fait pas passer, l'examen entier est refait après un délai (`EVALUATIONS.md`). |
 | Orientation | Enfant : mémoriser le Coran par défaut si ses acquis sont stables ; le tuteur peut demander lire tout le Coran. Adulte : il choisit, sur conseil de l'enseignant [DÉCIDÉ 13/10]. |
 | Jamais | « Ijaza » sur un certificat Rewayah [DÉCIDÉ]. |
 
@@ -376,7 +376,7 @@ Exception : dès qu'un élève de 10 ans ou plus est inscrit, Al-Fatiha passe ju
 4. **Quoi répéter, combien de fois** : écouter puis répéter à voix haute ; réglage, 3 écoutes et 5 répétitions par défaut [PROPOSÉ].
 5. **Le travail à préparer** de la classe, le même pour lui.
 6. **Il le dit** : bouton « J'ai rattrapé ce cours ». Avant 10 ans, le tuteur confirme [PROPOSÉ].
-7. **Au cours suivant**, l'enseignant voit à côté du nom « a manqué le dernier cours ». Dans le tour normal de lecture, il lui fait lire 2 ou 3 lignes de la leçon manquée, une minute au plus (réglage). Un geste : « Entendu » ou « À renforcer » [PROPOSÉ]. Il ne saisit rien.
+7. **Au cours suivant**, l'enseignant voit à côté du nom « a manqué le dernier cours ». Dans le tour normal de lecture, il lui fait lire 2 ou 3 lignes de la leçon manquée, une minute au plus (réglage). Il ne signale que ce qui est à renforcer, avec le geste habituel de fin de séance ; aucun geste de plus [PROPOSÉ]. Il ne saisit rien.
 8. **La classe ne s'arrête pas.** Si une minute ne suffit pas, le reste devient travail à préparer.
 
 ### 4.c S'il ne rattrape pas
@@ -416,13 +416,14 @@ Une règle, une réponse, partout. « Tous » : les 9 profils.
 | L'académie qui manque remplace ou compense | DÉCIDÉ 14/10 | Tous | 3.15, 3.16 |
 | Une étape par élève, posée à l'entrée | ARBITRÉ | Tous | 3.7, 3.11, 3.17 |
 | Passage : l'enseignant propose, la direction confirme, sur maîtrise | DÉCIDÉ 12/10 | Tous | 3.5, 3.7, 3.8, 3.19, 3.21 |
-| Échelle unique : À renforcer, Acquis, Stable | DÉCIDÉ | Tous | 3.4, 3.7, 3.9, 3.10, 4.c |
-| Trois mots du résultat seulement | DÉCIDÉ 12/10 | Tous | 3.6, 3.7, 3.16, 3.21 |
-| Date limite individuelle, depuis l'entrée dans l'étape | ARBITRÉ | Tous | 3.5, 3.6, 3.11, 3.12, 3.17 |
+| Échelle unique : À renforcer, Acquis, Stable | Trois états DÉCIDÉS ; échelle unique ARBITRÉE | Tous | 3.4, 3.7, 3.9, 3.10, 4.c |
+| Trois mots du résultat seulement ; seul « Étape validée » fait passer | DÉCIDÉ 12/10 ; suite ARBITRÉE | Tous | 3.6, 3.7, 3.16, 3.21 |
+| Recours : demande dans les 14 jours, réévaluation dans les 14 jours suivants, par une autre personne | Règle retenue au registre du 14/10 ; délais PROPOSÉS | Tous | 3.19 |
+| Date limite individuelle, sur le niveau entier ; repères par étape indicatifs | ARBITRÉ | Tous | 3.5, 3.6, 3.11, 3.12, 3.17 |
 | Recul seulement pour fermeture et pause accordée | DÉCIDÉ 14/10 | Tous | 3.3, 3.5, 3.9, 3.13, 3.14 |
 | Dépassement : bilan, 4 semaines, classe de niveau réel | DÉCIDÉ 14/10 | Tous | 3.6, 3.9 |
 | Ce qui est validé n'est jamais perdu | DÉCIDÉ 14/10 | Tous, surtout 2.5 et 2.9 | 3.6, 3.11, 3.20 |
-| Pause : mois entier, 7 jours avant, non facturé | DÉCIDÉ 30/09 | Tous | 3.3, 3.13, 3.14, 3.20 |
+| Pause : mois entier, 7 jours avant, non facturé | DÉCIDÉ 30/09 et 14/10 | Tous | 3.3, 3.13, 3.14, 3.20 |
 | Avant 10 ans, le tuteur porte la date limite ; dès 10 ans, l'élève la voit | ARBITRÉ | 2.1 à 2.3, 2.7 | 3.5, 3.6, 3.12 |
 | Mineur : messages au tuteur ; jamais d'argent face à l'enfant | ARBITRÉ, DÉCIDÉ | 2.1 à 2.3, 2.7 | 3.1 à 3.6, 3.18, 3.20 |
 | Ni classement, ni note brute, ni récompense matérielle, ni série punitive | ARBITRÉ | Tous | 3.2, 3.4, 3.7, 3.10 |
@@ -439,20 +440,6 @@ Deux points proches, tranchés une fois : après une pause d'un mois, pas d'entr
 
 ---
 
-## 6. Questions ouvertes pour le directeur
+## 6. Questions pour le directeur
 
-Chaque réponse par défaut s'applique tant que le directeur n'a pas tranché.
-
-1. **Part de chaque étape dans la date limite des bases.** Défaut : proportionnelle à la durée prévue de chaque étape, somme égale à 48, 36, 31 ou 20 semaines.
-2. **Seuils des absences répétées.** Défaut : 2, 3 et 4 absences sur 4 semaines.
-3. **Pause d'exception pour maladie soudaine.** Défaut : accordée par la direction, mois non facturé, date limite reculée.
-4. **Écoutes et répétitions pour rattraper.** Défaut : 3 et 5.
-5. **Le geste « Entendu » ou « À renforcer »** au cours qui suit une absence. Défaut : un seul geste, ajouté dans la refonte du cahier en cours.
-6. **Al-Fatiha avant les voyelles** dans les enregistrements dès qu'un élève de 10 ans ou plus est inscrit. Défaut : oui.
-7. **Liste validée des paroles de la prière et des invocations.** Défaut : on enregistre d'abord lettres et voyelles.
-8. **Passage d'un jeune de 18 ans en classe d'adultes.** Défaut : fin de l'étape, au plus tard 3 mois ; tarif selon la politique en vigueur.
-9. **Pauses répétées.** Défaut : au-delà de 2 mois sur 12, la direction décide.
-10. **Classe de niveau réel inexistante.** Défaut : l'élève reste dans sa classe avec son étape réelle et une nouvelle date limite.
-11. **Délai de la nouvelle vérification demandée par un tuteur.** Défaut : 14 jours, par une autre personne que l'enseignant de la classe.
-12. **Place pendant une pause.** Défaut : gardée pendant le mois de pause.
-13. **Pause d'un mois et arrêt temporaire (07/11)** : deux règles à fondre. Défaut : la pause d'un mois reste la seule forme de vacances ; l'arrêt suit la décision unique d'harmonisation.
+Toutes les questions de ce document sont fondues dans `QUESTIONS-OUVERTES.md`, avec leur proposition par défaut. Ce document n'en garde pas de liste propre.
