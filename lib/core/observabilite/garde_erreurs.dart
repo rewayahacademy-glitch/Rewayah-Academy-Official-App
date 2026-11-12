@@ -26,6 +26,7 @@ import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
 import '../widgets/action_principale.dart';
+import 'journal_dev.dart';
 
 /// Pose les trois portes. Idempotent : un second appel ne rechaine rien.
 void installerGardeErreurs() {
@@ -48,7 +49,7 @@ void installerGardeErreurs() {
       PlatformDispatcher.instance.onError;
   PlatformDispatcher.instance.onError = (Object erreur, StackTrace pile) {
     precedentPlateforme?.call(erreur, pile);
-    debugPrint('Erreur non attrapee : $erreur');
+    journalDev('Erreur non attrapee : ${erreur.runtimeType}');
     // Journalisee (et remontee par Sentry, chaine ci-dessus) : jamais un
     // arret de l'application.
     return true;

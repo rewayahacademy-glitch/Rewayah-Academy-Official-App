@@ -225,7 +225,7 @@ class _Traductions$commun$ar extends Traductions$commun$fr {
 	@override late final _Traductions$commun$sections$ar sections = _Traductions$commun$sections$ar._(_root);
 	@override late final _Traductions$commun$fuseaux$ar fuseaux = _Traductions$commun$fuseaux$ar._(_root);
 	@override late final _Traductions$commun$dates$ar dates = _Traductions$commun$dates$ar._(_root);
-	@override String get erreurElement => 'تعذّر عرض هذا العنصر.';
+	@override String get erreurElement => 'تعذّر عرض هذا العنصر. أعد المحاولة بعد لحظة.';
 	@override String get reessayer => 'إعادة المحاولة';
 	@override String get annuler => 'إلغاء';
 	@override late final _Traductions$commun$choix$ar choix = _Traductions$commun$choix$ar._(_root);
@@ -24291,7 +24291,7 @@ extension on TraductionsAr {
 			'commun.dates.mois.10' => 'نوفمبر',
 			'commun.dates.mois.11' => 'ديسمبر',
 			'commun.dates.jourDate' => ({required Object jour, required Object numero, required Object mois}) => '⁨${jour}⁩ ⁨${numero}⁩ ⁨${mois}⁩',
-			'commun.erreurElement' => 'تعذّر عرض هذا العنصر.',
+			'commun.erreurElement' => 'تعذّر عرض هذا العنصر. أعد المحاولة بعد لحظة.',
 			'commun.reessayer' => 'إعادة المحاولة',
 			'commun.annuler' => 'إلغاء',
 			'commun.choix.indisponible' => 'غير متاح',

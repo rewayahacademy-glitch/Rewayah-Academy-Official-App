@@ -154,8 +154,8 @@ class Traductions$commun$fr {
 	/// fr: 'Fermer'
 	String get fermer => 'Fermer';
 
-	/// fr: 'Cet élément n'a pas pu s'afficher.'
-	String get erreurElement => 'Cet élément n\'a pas pu s\'afficher.';
+	/// fr: 'Cet élément n'a pas pu s'afficher. Réessayez dans un instant.'
+	String get erreurElement => 'Cet élément n\'a pas pu s\'afficher. Réessayez dans un instant.';
 
 	/// fr: 'Réessayer'
 	String get reessayer => 'Réessayer';
@@ -48810,7 +48810,7 @@ extension on Traductions {
 			'commun.valider' => 'Valider',
 			'commun.annuler' => 'Annuler',
 			'commun.fermer' => 'Fermer',
-			'commun.erreurElement' => 'Cet élément n\'a pas pu s\'afficher.',
+			'commun.erreurElement' => 'Cet élément n\'a pas pu s\'afficher. Réessayez dans un instant.',
 			'commun.reessayer' => 'Réessayer',
 			'commun.chargement' => 'Chargement',
 			'commun.reussite' => 'C\'est fait.',

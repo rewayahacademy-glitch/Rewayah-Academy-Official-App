@@ -29,7 +29,7 @@
     "valider": "Valider",
     "annuler": "Annuler",
     "fermer": "Fermer",
-    "erreurElement": "Cet élément n'a pas pu s'afficher.",
+    "erreurElement": "Cet élément n'a pas pu s'afficher. Réessayez dans un instant.",
     "reessayer": "Réessayer",
     "chargement": "Chargement",
     "reussite": "C'est fait.",
