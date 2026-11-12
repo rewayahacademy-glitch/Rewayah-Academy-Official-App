@@ -49,6 +49,7 @@ import '../presence_correction/presence_correction_page.dart';
 import '../salle/position_reprise.dart';
 import 'emplacement_evaluation.dart';
 import 'makharij.dart';
+import 'retrait_sourate.dart';
 import 'selecteur_reprise.dart';
 import 'vue_cahier.dart';
 
@@ -265,6 +266,8 @@ class _CahierState extends ConsumerState<_Cahier> {
       ref.watch(etapesElevesClasseProvider(groupeId));
       // SOURATES : de meme pour les sourates des bases de chaque eleve.
       ref.watch(souratesClasseProvider(groupeId));
+      // CORRIGER-SOURATE : et celles que la personne connectee peut retirer.
+      ref.watch(souratesRetirablesProvider(groupeId));
     }
     final String? classe = widget.classe;
     final String titre = classe == null
@@ -559,6 +562,24 @@ class _CahierState extends ConsumerState<_Cahier> {
             ref.read(souratesClasseProvider(groupeId)).value?[eleveId] ??
                 const <SourateBases>[],
           null => const <SourateBases>[],
+        },
+        // CORRIGER-SOURATE : le serveur dit ce qui se retire, et par qui.
+        retirables: switch (brouillon.groupeId) {
+          final String groupeId =>
+            ref.read(souratesRetirablesProvider(groupeId)).value?[eleveId] ??
+                const <int, DateTime?>{},
+          null => const <int, DateTime?>{},
+        },
+        onRetirer: switch (brouillon.groupeId) {
+          final String groupeId => (int numero, String? motif) async {
+            await ref
+                .read(portSouratesClasseProvider)
+                .retirer(eleveId: eleveId, numero: numero, motif: motif);
+            ref
+              ..invalidate(souratesClasseProvider(groupeId))
+              ..invalidate(souratesRetirablesProvider(groupeId));
+          },
+          null => null,
         },
       ),
     );
@@ -1070,6 +1091,8 @@ class FeuilleAjusterCahier extends StatefulWidget {
     required this.decision,
     this.objectifsEtape = const <String>[],
     this.sourates = const <SourateBases>[],
+    this.retirables = const <int, DateTime?>{},
+    this.onRetirer,
     super.key,
   });
 
@@ -1080,6 +1103,14 @@ class FeuilleAjusterCahier extends StatefulWidget {
   /// SOURATES (option A) : les 17 sourates des bases de l'eleve, dans
   /// l'ordre d'etude, lues au serveur ; vide sans lecture.
   final List<SourateBases> sourates;
+
+  /// CORRIGER-SOURATE : les sourates validees de l'eleve que le serveur dit
+  /// retirables par la personne connectee, par numero, avec leur limite
+  /// (`null` : sans limite). Vide : aucun geste « Retirer ».
+  final Map<int, DateTime?> retirables;
+
+  /// Le retrait au serveur ; sans lui, aucun geste « Retirer ».
+  final Future<void> Function(int numero, String? motif)? onRetirer;
 
   /// L'eleve regle.
   final ParticipantBrouillon participant;
@@ -1110,6 +1141,14 @@ class _FeuilleAjusterCahierState extends State<FeuilleAjusterCahier> {
   late Set<String> _aRenforcer = widget.decision.objectifsARenforcer.toSet();
   late bool _pretBilan = widget.decision.pretBilan;
   late Set<int> _sourates = widget.decision.souratesValidees;
+
+  /// CORRIGER-SOURATE : les sourates telles que la feuille les montre ; une
+  /// sourate retiree ici redevient a valider sans attendre une relecture.
+  late List<SourateBases> _vues = widget.sourates;
+  late Map<int, DateTime?> _retirables = widget.retirables;
+
+  /// Le nom de la derniere sourate retiree, pour le dire.
+  String? _retireeFaite;
 
   /// Le devoir tel qu'il arrive dans la feuille, sans espaces de bord.
   late final String _devoirInitial =
@@ -1221,7 +1260,7 @@ class _FeuilleAjusterCahierState extends State<FeuilleAjusterCahier> {
         // sourate recitee de memoire, sans erreur de mot. Seules les
         // sourates pas encore validees se proposent ; une validation n'est
         // jamais perdue.
-        if (widget.sourates.isNotEmpty) ..._souratesAProposer(textes, discret),
+        if (_vues.isNotEmpty) ..._souratesAProposer(textes, discret),
         // Performance et faiblesses (K-45 point 3, N1 du directeur 27/09) :
         // preremplies depuis la seance precedente, l'enseignant les confirme
         // ou les change d'un geste.
@@ -1508,21 +1547,63 @@ class _FeuilleAjusterCahierState extends State<FeuilleAjusterCahier> {
         ],
         pretBilan: _pretBilan,
         souratesValidees: <int>{
-          for (final SourateBases s in widget.sourates)
+          for (final SourateBases s in _vues)
             if (!s.validee && _sourates.contains(s.numero)) s.numero,
         },
       ),
     );
   }
 
+  /// CORRIGER-SOURATE : demande confirmation, retire [s] au serveur, puis la
+  /// montre a valider de nouveau. Rien ne change avant la reponse.
+  Future<void> _retirer(
+    SourateBases s,
+    Future<void> Function(int, String?) onRetirer,
+  ) async {
+    final String nom = s.nomPour(
+      arabe: LocaleSettings.currentLocale == AppLocale.ar,
+    );
+    final bool fait = await confirmerRetraitSourate(
+      context,
+      nom: nom,
+      retirer: (String? motif) => onRetirer(s.numero, motif),
+    );
+    if (!fait || !mounted) return;
+    setState(() {
+      _vues = <SourateBases>[
+        for (final SourateBases v in _vues)
+          if (v.numero == s.numero)
+            SourateBases(
+              ordre: v.ordre,
+              numero: v.numero,
+              nom: v.nom,
+              nomArabe: v.nomArabe,
+              validee: false,
+            )
+          else
+            v,
+      ];
+      _retirables = <int, DateTime?>{..._retirables}..remove(s.numero);
+      _sourates = <int>{..._sourates}..remove(s.numero);
+      _retireeFaite = nom;
+    });
+  }
+
   /// Le bloc des sourates : ce qui est deja valide, puis les sourates
   /// encore a valider, a cocher.
   List<Widget> _souratesAProposer(TextTheme textes, TextStyle discret) {
     final List<SourateBases> aValider = <SourateBases>[
-      for (final SourateBases s in widget.sourates)
+      for (final SourateBases s in _vues)
         if (!s.validee) s,
     ];
-    final int validees = widget.sourates.length - aValider.length;
+    final int validees = _vues.length - aValider.length;
+    final Future<void> Function(int, String?)? onRetirer = widget.onRetirer;
+    final List<SourateBases> aRetirer = <SourateBases>[
+      if (onRetirer != null)
+        for (final SourateBases s in _vues)
+          if (s.validee && _retirables.containsKey(s.numero)) s,
+    ];
+    final bool arabe = LocaleSettings.currentLocale == AppLocale.ar;
     return <Widget>[
       Ecart.vLg,
       Text(t.cahierSourates.titre, style: textes.titleSmall),
@@ -1532,11 +1613,44 @@ class _FeuilleAjusterCahierState extends State<FeuilleAjusterCahier> {
             ? t.cahierSourates.toutes
             : t.cahierSourates.dejaValidees(
                 n: '$validees',
-                total: '${widget.sourates.length}',
+                total: '${_vues.length}',
               ),
         key: const ValueKey<String>('cahier-sourates-compte'),
         style: discret,
       ),
+      if (_retireeFaite case final String nom) ...<Widget>[
+        Ecart.vSm,
+        Text(
+          t.cahierSourates.retirerFait(nom: nom),
+          key: const ValueKey<String>('cahier-sourate-retiree'),
+          style: discret,
+        ),
+      ],
+      // CORRIGER-SOURATE : une sourate validee par erreur se retire, si le
+      // serveur le permet a la personne connectee (capacite par ligne).
+      if (onRetirer != null && aRetirer.isNotEmpty) ...<Widget>[
+        Ecart.vSm,
+        Text(t.cahierSourates.retirerTitre, style: textes.labelLarge),
+        Text(t.cahierSourates.retirerAide, style: discret),
+        for (final SourateBases s in aRetirer)
+          Row(
+            key: ValueKey<String>('cahier-retirable-${s.numero}'),
+            children: <Widget>[
+              Expanded(child: Text(s.nomPour(arabe: arabe))),
+              ActionPrincipale(
+                key: ValueKey<String>('cahier-retirer-${s.numero}'),
+                libelle: t.cahierSourates.retirer,
+                libelleSemantique: t.cahierSourates.retirerLibelle(
+                  nom: s.nomPour(arabe: arabe),
+                ),
+                niveau: NiveauAction.destructive,
+                compacte: true,
+                pleineLargeur: false,
+                onPress: () => _retirer(s, onRetirer),
+              ),
+            ],
+          ),
+      ],
       if (aValider.isNotEmpty) ...<Widget>[
         Ecart.vSm,
         Text(t.cahierSourates.aide, style: discret),
@@ -1561,9 +1675,7 @@ class _FeuilleAjusterCahierState extends State<FeuilleAjusterCahier> {
               for (final SourateBases s in aValider.skip(i).take(2))
                 OptionChoix(
                   valeur: '${s.numero}',
-                  libelle: s.nomPour(
-                    arabe: LocaleSettings.currentLocale == AppLocale.ar,
-                  ),
+                  libelle: s.nomPour(arabe: arabe),
                   cle: ValueKey<String>('cahier-sourate-${s.numero}'),
                 ),
             ],

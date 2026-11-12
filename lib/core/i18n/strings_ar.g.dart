@@ -2056,9 +2056,19 @@ class _Traductions$cahierSourates$ar extends Traductions$cahierSourates$fr {
 
 	// Translations
 	@override String get titre => 'السور المسمَّعة';
-	@override String get aide => 'اختر السورة فقط إذا سمَّعها هذا الطالب حفظًا دون خطأ في كلمة. السورة المختارة تُعتمد وتبقى معتمدة.';
+	@override String get aide => 'اختر السورة فقط إذا سمَّعها هذا الطالب حفظًا دون خطأ في كلمة. السورة المختارة تُعتمد.';
 	@override String dejaValidees({required Object n, required Object total}) => 'سور الأساسيات المعتمدة: ⁨${n}⁩ من ⁨${total}⁩';
 	@override String get toutes => 'اعتُمدت كل سور الأساسيات.';
+	@override String get retirerTitre => 'اخترتها خطأً؟';
+	@override String get retirerAide => 'السورة التي اعتمدتَها يمكن سحبها خلال 24 ساعة.';
+	@override String get retirer => 'سحب';
+	@override String retirerLibelle({required Object nom}) => 'سحب ⁨${nom}⁩ من السور المعتمدة';
+	@override String retirerQuestion({required Object nom}) => 'سحب ⁨${nom}⁩ من السور المعتمدة؟';
+	@override String get retirerConsequence => 'لن تُحسب بعد الآن معتمدة لهذا الطالب.';
+	@override String get retirerMotif => 'السبب (اختياري)';
+	@override String retirerFait({required Object nom}) => 'لم تعد ⁨${nom}⁩ معتمدة.';
+	@override String get retirerRefus => 'انقضت مهلة 24 ساعة: لا يسحبها الآن إلا الإدارة.';
+	@override String get retirerEchec => 'لم تُسحب السورة. أعد المحاولة.';
 }
 
 // Path: accueilHoraire
@@ -34675,9 +34685,19 @@ extension on TraductionsAr {
 			'cahierC3.pretBilan' => 'مستعد للتقييم القصير',
 			'cahierC3.pretBilanDetail' => 'تخطط الإدارة للتقييم القصير؛ لا شيء تلقائي.',
 			'cahierSourates.titre' => 'السور المسمَّعة',
-			'cahierSourates.aide' => 'اختر السورة فقط إذا سمَّعها هذا الطالب حفظًا دون خطأ في كلمة. السورة المختارة تُعتمد وتبقى معتمدة.',
+			'cahierSourates.aide' => 'اختر السورة فقط إذا سمَّعها هذا الطالب حفظًا دون خطأ في كلمة. السورة المختارة تُعتمد.',
 			'cahierSourates.dejaValidees' => ({required Object n, required Object total}) => 'سور الأساسيات المعتمدة: ⁨${n}⁩ من ⁨${total}⁩',
 			'cahierSourates.toutes' => 'اعتُمدت كل سور الأساسيات.',
+			'cahierSourates.retirerTitre' => 'اخترتها خطأً؟',
+			'cahierSourates.retirerAide' => 'السورة التي اعتمدتَها يمكن سحبها خلال 24 ساعة.',
+			'cahierSourates.retirer' => 'سحب',
+			'cahierSourates.retirerLibelle' => ({required Object nom}) => 'سحب ⁨${nom}⁩ من السور المعتمدة',
+			'cahierSourates.retirerQuestion' => ({required Object nom}) => 'سحب ⁨${nom}⁩ من السور المعتمدة؟',
+			'cahierSourates.retirerConsequence' => 'لن تُحسب بعد الآن معتمدة لهذا الطالب.',
+			'cahierSourates.retirerMotif' => 'السبب (اختياري)',
+			'cahierSourates.retirerFait' => ({required Object nom}) => 'لم تعد ⁨${nom}⁩ معتمدة.',
+			'cahierSourates.retirerRefus' => 'انقضت مهلة 24 ساعة: لا يسحبها الآن إلا الإدارة.',
+			'cahierSourates.retirerEchec' => 'لم تُسحب السورة. أعد المحاولة.',
 			'accueilHoraire.demandeTitre' => 'تم تسجيل الطلب',
 			'accueilHoraire.demandeDetail' => ({required Object prenom}) => 'سنعلمك فور فتح موعد مناسب لـ⁨${prenom}⁩.',
 			'accueilHoraire.erreurEnvoi' => 'لم يُؤكَّد طلبك. أعد المحاولة بعد قليل.',
@@ -34776,6 +34796,8 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.doublons.etat.distinctes' => 'أشخاص مختلفون',
 			'candidatsFlux.importFormulaires.doublons.etat.enregistre' => 'اختيار مسجَّل سابقًا',
 			'candidatsFlux.importFormulaires.doublons.option.recente.titre' => ({required Object ligne}) => 'الاحتفاظ بالأحدث (السطر ⁨${ligne}⁩)',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.doublons.option.recente.description' => 'تبقى الأسطر الأخرى في السجل ولا يُمحى شيء. هذا ما تفعله رواية بلا اختياركم.',
 			'candidatsFlux.importFormulaires.doublons.option.base.titre' => 'الاحتفاظ بالسطر المسجَّل سابقًا',
 			'candidatsFlux.importFormulaires.doublons.option.base.description' => 'اعتمد استيراد سابق سطرًا لهذا الشخص. وتبقى أسطر هذا الملف في السجل.',
@@ -34786,8 +34808,6 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.doublons.option.ligne.description' => 'يصبح هذا السطر رد الشخص. وتنتقل الأسطر الأخرى إلى السجل.',
 			'candidatsFlux.importFormulaires.doublons.option.distinctes.titre' => 'أشخاص مختلفون',
 			'candidatsFlux.importFormulaires.doublons.option.distinctes.description' => 'اختاروا هذا إن كانت الأسطر لأشخاص مختلفين يتشاركون وسيلة اتصال. يحتفظ كل منهم برده.',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.doublons.option.distinctes.exemple' => 'شخصان من العائلة نفسها ردا بالرقم نفسه',
 			'candidatsFlux.importFormulaires.analyse.echec' => 'لم يكتمل التحليل.',
 			'candidatsFlux.importFormulaires.analyse.echecPhrase' => 'لم يُسجَّل شيء. أعيدوا المحاولة بعد قليل.',
