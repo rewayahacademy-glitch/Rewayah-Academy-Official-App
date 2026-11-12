@@ -16,6 +16,7 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/observabilite/journal_dev.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/router/etat_routeur_sur.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
@@ -240,7 +241,7 @@ class _SaisieCodePageState extends ConsumerState<SaisieCodePage> {
   void _retour() {
     String? depuis;
     try {
-      depuis = GoRouterState.of(context).uri.queryParameters['depuis'];
+      depuis = parametreRouteurSur(context, 'depuis');
     } on Object {
       depuis = null;
     }

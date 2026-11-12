@@ -21,6 +21,7 @@ import '../../core/icons/app_icons.dart';
 import '../../core/profil/service_acceptations.dart';
 import '../../core/recrutement/port_signature_contrat.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/router/etat_routeur_sur.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_mouvement.dart';
@@ -206,7 +207,7 @@ class _AccordsPageState extends ConsumerState<AccordsPage> {
   VarianteObservation _variante() {
     String? pour;
     try {
-      pour = GoRouterState.of(context).uri.queryParameters['pour'];
+      pour = parametreRouteurSur(context, 'pour');
     } on Object {
       pour = null;
     }

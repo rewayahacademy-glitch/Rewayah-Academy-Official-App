@@ -12,6 +12,7 @@ import '../../core/domain/enums.dart';
 import '../../core/dossier/versions_contrat.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/profil/service_acceptations.dart';
+import '../../core/router/etat_routeur_sur.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -64,7 +65,7 @@ class _ConsentementObservationPageState
   VarianteObservation get _variante {
     String? pour;
     try {
-      pour = GoRouterState.of(context).uri.queryParameters['pour'];
+      pour = parametreRouteurSur(context, 'pour');
     } on Object {
       pour = null;
     }

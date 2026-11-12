@@ -22,6 +22,7 @@ import '../../../core/communications/lecture_fil_communication.dart'
     show texteDuMessage;
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/reseau/service_reseau.dart';
+import '../../../core/router/etat_routeur_sur.dart';
 import '../../../core/router/routes.dart';
 import '../../../core/tc_groupe/group_summary_vm.dart';
 import '../../../core/tc_groupe/libelles_tc_groupe.dart';
@@ -87,9 +88,7 @@ class ComMessagesDemo extends StatelessWidget {
     if (GoRouter.maybeOf(context) == null) {
       return SituationDemoMessages.normale;
     }
-    final String? nom = GoRouterState.of(context)
-        .uri
-        .queryParameters['situation'];
+    final String? nom = parametreRouteurSur(context, 'situation');
     for (final SituationDemoMessages s in SituationDemoMessages.values) {
       if (s.name == nom) return s;
     }

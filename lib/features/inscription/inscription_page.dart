@@ -8,6 +8,7 @@ import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/import_inscriptions/accueil_inscrits.dart';
 import '../../core/import_inscriptions/port_reclamation_preinscription.dart';
+import '../../core/router/etat_routeur_sur.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/deconnexion.dart';
 import '../../core/theme/app_gabarit.dart';
@@ -180,8 +181,10 @@ void avancerDepuis(
   BrouillonInscription brouillon,
   String route,
 ) {
-  final bool modifier = GoRouterState.of(context).uri.queryParameters
-      .containsKey(parametreModifier);
+  final bool modifier =
+      adresseRouteurSur(context)?.queryParameters
+          .containsKey(parametreModifier) ??
+      false;
   final List<String> etapes = etapesPour(brouillon);
   final int rang = rangEtape(brouillon, route);
   context.go(
@@ -198,8 +201,10 @@ VoidCallback? reculerDepuis(
   BrouillonInscription brouillon,
   String route,
 ) {
-  final bool modifier = GoRouterState.of(context).uri.queryParameters
-      .containsKey(parametreModifier);
+  final bool modifier =
+      adresseRouteurSur(context)?.queryParameters
+          .containsKey(parametreModifier) ??
+      false;
   final int rang = rangEtape(brouillon, route);
   if (!modifier && rang < 2) {
     return null;
