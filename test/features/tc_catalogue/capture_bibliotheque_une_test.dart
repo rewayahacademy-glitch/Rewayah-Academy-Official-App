@@ -97,7 +97,9 @@ List<Override> _surcharges({
     lecteurArtefactProvider.overrideWithValue(artefacts),
     depotOctetsProvider.overrideWithValue(FauxCacheMedia()),
     horsLigneProvider.overrideWith((Ref _) => Stream<bool>.value(horsLigne)),
-    ouvreurOngletProvider.overrideWithValue(navigateur ? (Uri _) => true : null),
+    ouvreurOngletProvider.overrideWithValue(
+      navigateur ? (Uri _) => true : null,
+    ),
     portCapaciteEleveProvider.overrideWithValue(
       const PortCapaciteEleveFactice(autonomes: <String>{}),
     ),
@@ -130,108 +132,96 @@ void main() {
   setUp(masquerRubanDebug);
   tearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
 
-  group('captures', skip: sautSansCapture, () {
-    testWidgets('bibliothèque de l\'élève', (tester) async {
-      await _eleve(
-        tester,
-        '01-bibliotheque-fr-clair-390',
-        Routes.tcBibliotheque,
-        _surcharges(),
-      );
-      await _eleve(
-        tester,
-        '02-bibliotheque-fr-sombre-390',
-        Routes.tcBibliotheque,
-        _surcharges(),
-        mode: ThemeMode.dark,
-      );
-      await _eleve(
-        tester,
-        '03-bibliotheque-fr-clair-1440',
-        Routes.tcBibliotheque,
-        _surcharges(),
-        taille: const Size(1440, 1100),
-      );
-      await _eleve(
-        tester,
-        '04-bibliotheque-vide-390',
-        Routes.tcBibliotheque,
-        _surcharges(ressources: const <LibraryResource>[]),
-      );
-      await _eleve(
-        tester,
-        '05-bibliotheque-erreur-390',
-        Routes.tcBibliotheque,
-        _surcharges(catalogue: CatalogueEnEchec()),
-      );
-      await _eleve(
-        tester,
-        '06-bibliotheque-hors-ligne-390',
-        Routes.tcBibliotheque,
-        _surcharges(horsLigne: true),
-      );
-    });
-
-    testWidgets('bibliothèque en arabe', (tester) async {
-      await tester.runAsync(() => LocaleSettings.setLocale(AppLocale.ar));
-      await _eleve(
-        tester,
-        '07-bibliotheque-ar-clair-390',
-        Routes.tcBibliotheque,
-        _surcharges(),
-        direction: TextDirection.rtl,
-      );
-    });
-
-    testWidgets('fiches', (tester) async {
-      await _eleve(
-        tester,
-        '08-fiche-lien-externe-web-390',
-        '${Routes.tcBibliotheque}/lien',
-        _surcharges(navigateur: true),
-      );
-      await _eleve(
-        tester,
-        '09-fiche-lien-externe-sans-navigateur-390',
-        '${Routes.tcBibliotheque}/lien',
-        _surcharges(),
-      );
-      await _eleve(
-        tester,
-        '10-fiche-audio-web-390',
-        '${Routes.tcBibliotheque}/audio',
-        _surcharges(navigateur: true),
-      );
-      await _eleve(
-        tester,
-        '11-fiche-audio-sans-lecteur-390',
-        '${Routes.tcBibliotheque}/audio',
-        _surcharges(),
-      );
-      await _eleve(
-        tester,
-        '12-fiche-coran-390',
-        '${Routes.tcBibliotheque}/coran',
-        _surcharges(),
-      );
-    });
-
-    testWidgets('formulaire de la direction', (tester) async {
-      Future<void> direction(String nom, Size taille) async {
-        await admin.monterAdminDemo(
-          tester,
-          route: Routes.adminPedagogieBibliothequeNouveau,
-          bibliotheque: BibliothequeAdminDemo(),
-          taille: taille,
-          plus: <Override>[
-            portCatalogueProvider.overrideWithValue(CatalogueLocal()),
-          ],
-        );
-        await capturerVue(tester, nom);
+  // Une capture par test : chaque ecran monte sa propre application (monter
+  // plusieurs fois dans un meme test laisse des flux de reseau se refermer
+  // sous les pas du test suivant).
+  void capture(
+    String nom,
+    String adresse,
+    List<Override> Function() surcharges, {
+    Size taille = const Size(390, 900),
+    ThemeMode mode = ThemeMode.light,
+    bool arabe = false,
+  }) {
+    testWidgets(nom, (tester) async {
+      if (arabe) {
+        await tester.runAsync(() => LocaleSettings.setLocale(AppLocale.ar));
       }
+      await _eleve(
+        tester,
+        nom,
+        adresse,
+        surcharges(),
+        taille: taille,
+        mode: mode,
+        direction: arabe ? TextDirection.rtl : null,
+      );
+    }, skip: sautSansCapture != false);
+  }
 
-      await direction('13-direction-formulaire-1440', const Size(1440, 2000));
-      await direction('14-direction-formulaire-390', const Size(390, 3000));
-    });
-  });
+  const String bib = Routes.tcBibliotheque;
+  capture('01-bibliotheque-fr-clair-390', bib, _surcharges);
+  capture(
+    '02-bibliotheque-fr-sombre-390',
+    bib,
+    _surcharges,
+    mode: ThemeMode.dark,
+  );
+  capture(
+    '03-bibliotheque-fr-clair-1440',
+    bib,
+    _surcharges,
+    taille: const Size(1440, 1100),
+  );
+  capture(
+    '04-bibliotheque-vide-390',
+    bib,
+    () => _surcharges(ressources: const <LibraryResource>[]),
+  );
+  capture(
+    '05-bibliotheque-erreur-390',
+    bib,
+    () => _surcharges(catalogue: CatalogueEnEchec()),
+  );
+  capture(
+    '06-bibliotheque-hors-ligne-390',
+    bib,
+    () => _surcharges(horsLigne: true),
+  );
+  capture('07-bibliotheque-ar-clair-390', bib, _surcharges, arabe: true);
+  capture(
+    '08-fiche-lien-externe-web-390',
+    '$bib/lien',
+    () => _surcharges(navigateur: true),
+  );
+  capture(
+    '09-fiche-lien-externe-sans-navigateur-390',
+    '$bib/lien',
+    _surcharges,
+  );
+  capture(
+    '10-fiche-audio-web-390',
+    '$bib/audio',
+    () => _surcharges(navigateur: true),
+  );
+  capture('11-fiche-audio-sans-lecteur-390', '$bib/audio', _surcharges);
+  capture('12-fiche-coran-390', '$bib/coran', _surcharges);
+
+  for (final (String nom, Size taille) in <(String, Size)>[
+    ('13-direction-formulaire-1440', const Size(1440, 2000)),
+    ('14-direction-formulaire-390', const Size(390, 3000)),
+  ]) {
+    testWidgets(nom, (tester) async {
+      await admin.monterAdminDemo(
+        tester,
+        route: Routes.adminPedagogieBibliothequeNouveau,
+        bibliotheque: BibliothequeAdminDemo(),
+        taille: taille,
+        plus: <Override>[
+          portCatalogueProvider.overrideWithValue(CatalogueLocal()),
+        ],
+      );
+      await capturerVue(tester, nom);
+    }, skip: sautSansCapture != false);
+  }
 }

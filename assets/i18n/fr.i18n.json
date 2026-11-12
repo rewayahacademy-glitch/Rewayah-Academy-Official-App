@@ -7058,9 +7058,9 @@
         "choisirVignette": "Choisir une vignette",
         "choisirAutreVignette": "Choisir une autre vignette",
         "vignetteAide": "Une image (PNG, JPEG ou WebP, 2 Mo au plus), facultative. Sans vignette, l'écran montre une couverture selon le type.",
-        "completerLien": "Renseignez l'adresse du lien (https) : un lien externe ou une vidéo la demande, et un lien externe demande aussi sa description.",
-        "lienInvalide": "Cette adresse n'est pas acceptée : elle doit commencer par https et mener à un site.",
-        "sansFichierAide": "Rien à déposer pour ce type : renseignez l'adresse du lien, puis poursuivez.",
+        "completerLien": "Renseignez l'adresse du lien (https) : un lien externe ou une vidéo la demande, et un lien externe demande aussi sa description.",
+        "lienInvalide": "Cette adresse n'est pas acceptée : elle doit commencer par https et mener à un site.",
+        "sansFichierAide": "Rien à déposer pour ce type : renseignez l'adresse du lien, puis poursuivez.",
         "completer": "Compléter le document",
         "sections": {
           "ressource": "Ressource",
@@ -7072,7 +7072,7 @@
           "description": "Description courte (montrée sur la carte)",
           "rayon": "Rayon",
           "ordre": "Ordre d'affichage (facultatif)",
-          "etapes": "Étapes du programme (codes, séparés par des virgules ; facultatif)",
+          "etapes": "Étapes du programme (codes, séparés par des virgules ; facultatif)",
           "lien": "Adresse du lien (https)",
           "categorie": "Catégorie",
           "type": "Type",
@@ -7088,8 +7088,8 @@
           "pdf": "Format accepté : PDF.",
           "image": "Formats acceptés : PNG, JPEG, WebP.",
           "json": "Format accepté : JSON structuré.",
-          "audio": "Formats acceptés : MP3, M4A, OGG.",
-          "lien": "Ce document se donne par un lien : aucun fichier à déposer. Une vidéo se donne par son lien.",
+          "audio": "Formats acceptés : MP3, M4A, OGG.",
+          "lien": "Ce document se donne par un lien : aucun fichier à déposer. Une vidéo se donne par son lien.",
           "aucun": "Ce type n'accepte pas de fichier."
         },
         "etats": {

@@ -267,6 +267,13 @@ void main() {
       expect(ouverts, <Uri>[Uri.parse('https://exemple.org/page')]);
     });
 
+    testWidgets('un lien n\'a aucun fichier : pas de bouton hors ligne', (
+      tester,
+    ) async {
+      await _monter(tester, '${Routes.tcBibliotheque}/lien', _surcharges());
+      expect(find.text(t.tc.bibliotheque.action.telecharger), findsNothing);
+    });
+
     testWidgets('lien externe hors navigateur : la phrase, aucun bouton', (
       tester,
     ) async {

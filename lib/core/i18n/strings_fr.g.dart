@@ -31250,13 +31250,13 @@ class Traductions$admin$bibliotheque$import$fr {
 	String get vignetteAide => 'Une image (PNG, JPEG ou WebP, 2 Mo au plus), facultative. Sans vignette, l\'écran montre une couverture selon le type.';
 
 	/// fr: 'Renseignez l'adresse du lien (https) : un lien externe ou une vidéo la demande, et un lien externe demande aussi sa description.'
-	String get completerLien => 'Renseignez l\'adresse du lien (https) : un lien externe ou une vidéo la demande, et un lien externe demande aussi sa description.';
+	String get completerLien => 'Renseignez l\'adresse du lien (https) : un lien externe ou une vidéo la demande, et un lien externe demande aussi sa description.';
 
 	/// fr: 'Cette adresse n'est pas acceptée : elle doit commencer par https et mener à un site.'
-	String get lienInvalide => 'Cette adresse n\'est pas acceptée : elle doit commencer par https et mener à un site.';
+	String get lienInvalide => 'Cette adresse n\'est pas acceptée : elle doit commencer par https et mener à un site.';
 
 	/// fr: 'Rien à déposer pour ce type : renseignez l'adresse du lien, puis poursuivez.'
-	String get sansFichierAide => 'Rien à déposer pour ce type : renseignez l\'adresse du lien, puis poursuivez.';
+	String get sansFichierAide => 'Rien à déposer pour ce type : renseignez l\'adresse du lien, puis poursuivez.';
 
 	/// fr: 'Compléter le document'
 	String get completer => 'Compléter le document';
@@ -44618,7 +44618,7 @@ class Traductions$admin$bibliotheque$import$champs$fr {
 	String get ordre => 'Ordre d\'affichage (facultatif)';
 
 	/// fr: 'Étapes du programme (codes, séparés par des virgules ; facultatif)'
-	String get etapes => 'Étapes du programme (codes, séparés par des virgules ; facultatif)';
+	String get etapes => 'Étapes du programme (codes, séparés par des virgules ; facultatif)';
 
 	/// fr: 'Adresse du lien (https)'
 	String get lien => 'Adresse du lien (https)';
@@ -44654,10 +44654,10 @@ class Traductions$admin$bibliotheque$import$formats$fr {
 	String get json => 'Format accepté : JSON structuré.';
 
 	/// fr: 'Formats acceptés : MP3, M4A, OGG.'
-	String get audio => 'Formats acceptés : MP3, M4A, OGG.';
+	String get audio => 'Formats acceptés : MP3, M4A, OGG.';
 
 	/// fr: 'Ce document se donne par un lien : aucun fichier à déposer. Une vidéo se donne par son lien.'
-	String get lien => 'Ce document se donne par un lien : aucun fichier à déposer. Une vidéo se donne par son lien.';
+	String get lien => 'Ce document se donne par un lien : aucun fichier à déposer. Une vidéo se donne par son lien.';
 
 	/// fr: 'Ce type n'accepte pas de fichier.'
 	String get aucun => 'Ce type n\'accepte pas de fichier.';
@@ -54616,9 +54616,9 @@ extension on Traductions {
 			'admin.bibliotheque.import.choisirVignette' => 'Choisir une vignette',
 			'admin.bibliotheque.import.choisirAutreVignette' => 'Choisir une autre vignette',
 			'admin.bibliotheque.import.vignetteAide' => 'Une image (PNG, JPEG ou WebP, 2 Mo au plus), facultative. Sans vignette, l\'écran montre une couverture selon le type.',
-			'admin.bibliotheque.import.completerLien' => 'Renseignez l\'adresse du lien (https) : un lien externe ou une vidéo la demande, et un lien externe demande aussi sa description.',
-			'admin.bibliotheque.import.lienInvalide' => 'Cette adresse n\'est pas acceptée : elle doit commencer par https et mener à un site.',
-			'admin.bibliotheque.import.sansFichierAide' => 'Rien à déposer pour ce type : renseignez l\'adresse du lien, puis poursuivez.',
+			'admin.bibliotheque.import.completerLien' => 'Renseignez l\'adresse du lien (https) : un lien externe ou une vidéo la demande, et un lien externe demande aussi sa description.',
+			'admin.bibliotheque.import.lienInvalide' => 'Cette adresse n\'est pas acceptée : elle doit commencer par https et mener à un site.',
+			'admin.bibliotheque.import.sansFichierAide' => 'Rien à déposer pour ce type : renseignez l\'adresse du lien, puis poursuivez.',
 			'admin.bibliotheque.import.completer' => 'Compléter le document',
 			'admin.bibliotheque.import.sections.ressource' => 'Ressource',
 			'admin.bibliotheque.import.sections.fichier' => 'Fichier',
@@ -54627,7 +54627,7 @@ extension on Traductions {
 			'admin.bibliotheque.import.champs.description' => 'Description courte (montrée sur la carte)',
 			'admin.bibliotheque.import.champs.rayon' => 'Rayon',
 			'admin.bibliotheque.import.champs.ordre' => 'Ordre d\'affichage (facultatif)',
-			'admin.bibliotheque.import.champs.etapes' => 'Étapes du programme (codes, séparés par des virgules ; facultatif)',
+			'admin.bibliotheque.import.champs.etapes' => 'Étapes du programme (codes, séparés par des virgules ; facultatif)',
 			'admin.bibliotheque.import.champs.lien' => 'Adresse du lien (https)',
 			'admin.bibliotheque.import.champs.categorie' => 'Catégorie',
 			'admin.bibliotheque.import.champs.type' => 'Type',
@@ -54641,8 +54641,8 @@ extension on Traductions {
 			'admin.bibliotheque.import.formats.pdf' => 'Format accepté : PDF.',
 			'admin.bibliotheque.import.formats.image' => 'Formats acceptés : PNG, JPEG, WebP.',
 			'admin.bibliotheque.import.formats.json' => 'Format accepté : JSON structuré.',
-			'admin.bibliotheque.import.formats.audio' => 'Formats acceptés : MP3, M4A, OGG.',
-			'admin.bibliotheque.import.formats.lien' => 'Ce document se donne par un lien : aucun fichier à déposer. Une vidéo se donne par son lien.',
+			'admin.bibliotheque.import.formats.audio' => 'Formats acceptés : MP3, M4A, OGG.',
+			'admin.bibliotheque.import.formats.lien' => 'Ce document se donne par un lien : aucun fichier à déposer. Une vidéo se donne par son lien.',
 			'admin.bibliotheque.import.formats.aucun' => 'Ce type n\'accepte pas de fichier.',
 			'admin.bibliotheque.import.etats.attente' => 'Préparation du dépôt…',
 			'admin.bibliotheque.import.etats.envoi' => ({required Object pourcent}) => 'Envoi en cours : ${pourcent} %',
