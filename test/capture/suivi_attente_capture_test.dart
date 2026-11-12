@@ -164,9 +164,9 @@ final List<_Ecran> _ecrans = <_Ecran>[
   ),
   (
     nom: '14_carte_accueil',
-    ecran: () => Scaffold(
+    ecran: () => const Scaffold(
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(16),
         child: CarteSuiviAttente(chemins: CheminsAttente.tuteur),
       ),
     ),

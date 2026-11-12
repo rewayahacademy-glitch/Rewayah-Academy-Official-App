@@ -541,6 +541,28 @@ $sans_delai$;
 RESET ROLE;
 
 -- ---------------------------------------------------------------------------
+-- 8 bis. L'effacement du compte efface aussi ce que l'enseignant montrait
+-- ---------------------------------------------------------------------------
+SELECT pg_temp.moi('5a000000-0000-0000-0000-000000000003', 'teacher', NULL);
+SET LOCAL ROLE authenticated;
+SELECT public.regler_presentation_aux_familles(true, 'GN', 'FR', 'Un mot a effacer.');
+RESET ROLE;
+UPDATE public.profiles
+   SET first_name = 'Compte', last_name = 'supprimé', account_status = 'disabled'
+ WHERE id = '5a000000-0000-0000-0000-000000000003';
+DO $anonymisation$
+DECLARE r record;
+BEGIN
+  SELECT * INTO r FROM public.teacher_profiles
+   WHERE profile_id = '5a000000-0000-0000-0000-000000000003';
+  IF r.pays_origine IS NOT NULL OR r.pays_residence IS NOT NULL
+     OR r.mot_presentation IS NOT NULL OR r.montre_aux_familles THEN
+    RAISE EXCEPTION 'SUIVI-ATTENTE : le compte efface ne montre plus rien aux familles : %', r;
+  END IF;
+END
+$anonymisation$;
+
+-- ---------------------------------------------------------------------------
 -- 9. Droits : fonctions et declencheur
 -- ---------------------------------------------------------------------------
 DO $droits$

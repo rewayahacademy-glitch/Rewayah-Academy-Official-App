@@ -482,7 +482,14 @@ declare
     -- 'admin' ; 42501 sinon. VOLATILE parce qu'elle ecrit chaque lecture au
     -- journal d'audit (log_sensitive_access, action lecture_releve_qualite) :
     -- c'est sa seule ecriture. Relue par l'agent du lot le 11/11/2026.
-    'releve_qualite_seance(uuid)'
+    'releve_qualite_seance(uuid)',
+    -- SUIVI-ATTENTE (12/11/2026, migration 20261123960000) : l'enseignant
+    -- regle ce que les familles de ses classes voient de lui (visibilite, deux
+    -- pays, mot de presentation). Garde positive app_account_valid() ET
+    -- app_role() = 'teacher' ; 42501 sinon ; une seule ligne ecrite, la
+    -- sienne (profile_id = auth.uid()). VOLATILE : elle ecrit. Relue par
+    -- l'agent du lot le 12/11/2026.
+    'regler_presentation_aux_familles(boolean,text,text,text)'
   ];
   -- Ouvertes a anon par choix : la desinscription d'un e-mail et le depot d'un
   -- avis se font sans compte.

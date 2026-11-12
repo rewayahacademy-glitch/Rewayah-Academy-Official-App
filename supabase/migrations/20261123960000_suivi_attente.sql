@@ -392,13 +392,14 @@ $function$;
 -- 4. La notification de l'enseignant a l'affectation
 -- ---------------------------------------------------------------------------
 -- Meme evenement `enseignant_affecte`, portee `classe` : celle que
--- private.notifier_classe pose deja pour l'enseignant, ici enrichie. Le
--- declencheur est immediat et se nomme apres le declencheur de
--- materialisation des seances (ordre alphabetique) : le premier cours est
--- deja connu. Pose la ligne AVANT le declencheur differe de notifier_classe,
--- qui la voit et n'en ajoute pas une seconde (meme destinataire, meme
--- evenement, meme classe, meme transaction). Un message n'est jamais ecrit
--- a un eleve : seul l'enseignant de la classe est destinataire.
+-- private.notifier_classe pose deja pour l'enseignant, ici enrichie. Comme
+-- notifier_classe, le declencheur est DIFFERE a la validation de la
+-- transaction : il lit l'etat final (eleves presents, premiere seance
+-- materialisee). Son nom precede `notifications_classe_groupes` : il pose sa
+-- ligne AVANT le declencheur de notifier_classe, qui la voit et n'en ajoute pas
+-- une seconde (meme destinataire, meme evenement, meme classe, meme
+-- transaction). Un message n'est jamais ecrit a un eleve : seul l'enseignant
+-- de la classe est destinataire.
 CREATE OR REPLACE FUNCTION private.suivi_attente_notifier_enseignant()
 RETURNS trigger
 LANGUAGE plpgsql
@@ -407,24 +408,30 @@ SECURITY DEFINER
 SET search_path = ''
 AS $function$
 DECLARE
+  v_g public.groupes%ROWTYPE;
   v_fuseau text;
   v_premier timestamptz;
   v_eleves integer;
   v_tranche text;
 BEGIN
-  IF NEW.teacher_id IS NULL OR OLD.teacher_id IS NOT NULL
-     OR NEW.ended_at IS NOT NULL OR NEW.etat <> 'active' THEN
+  IF OLD.teacher_id IS NOT NULL OR NEW.teacher_id IS NULL THEN
     RETURN NULL;
   END IF;
-  SELECT coalesce(tp.timezone_iana, NEW.timezone_iana) INTO v_fuseau
-    FROM public.teacher_profiles tp WHERE tp.profile_id = NEW.teacher_id;
-  v_fuseau := coalesce(v_fuseau, NEW.timezone_iana, 'UTC');
+  -- L'etat final de la classe : fermee ou reprise avant la validation, rien.
+  SELECT * INTO v_g FROM public.groupes g WHERE g.id = NEW.id;
+  IF NOT FOUND OR v_g.teacher_id IS DISTINCT FROM NEW.teacher_id
+     OR v_g.ended_at IS NOT NULL OR v_g.etat <> 'active' THEN
+    RETURN NULL;
+  END IF;
+  SELECT coalesce(tp.timezone_iana, v_g.timezone_iana) INTO v_fuseau
+    FROM public.teacher_profiles tp WHERE tp.profile_id = v_g.teacher_id;
+  v_fuseau := coalesce(v_fuseau, v_g.timezone_iana, 'UTC');
   SELECT min(s.started_at) INTO v_premier
     FROM public.sessions s
-   WHERE s.groupe_id = NEW.id AND s.deleted_at IS NULL AND s.started_at > pg_catalog.now();
+   WHERE s.groupe_id = v_g.id AND s.deleted_at IS NULL AND s.started_at > pg_catalog.now();
   SELECT count(*)::integer INTO v_eleves
     FROM public.groupe_membres gm
-   WHERE gm.groupe_id = NEW.id AND gm.left_at IS NULL;
+   WHERE gm.groupe_id = v_g.id AND gm.left_at IS NULL;
   -- La tranche d'age : celles des eleves presents, dans l'ordre de la table.
   SELECT pg_catalog.string_agg(x.nom_humain, ', ' ORDER BY x.ordre) INTO v_tranche
     FROM (
@@ -432,25 +439,25 @@ BEGIN
         FROM public.groupe_membres gm
         JOIN public.student_profiles sp ON sp.profile_id = gm.student_id
         JOIN public.cohortes_age ca ON ca.code = sp.cohorte
-       WHERE gm.groupe_id = NEW.id AND gm.left_at IS NULL
+       WHERE gm.groupe_id = v_g.id AND gm.left_at IS NULL
     ) x;
 
   INSERT INTO public.notifications (destinataire, foyer_id, evenement, params, destination)
   SELECT p.id, NULL, 'enseignant_affecte',
          pg_catalog.jsonb_strip_nulls(pg_catalog.jsonb_build_object(
-           'groupe_id', NEW.id,
+           'groupe_id', v_g.id,
            'portee', 'classe',
-           'classe', NEW.libelle,
+           'classe', v_g.libelle,
            'fuseau', v_fuseau,
            'eleves_n', v_eleves,
-           'public', NEW.type_public,
+           'public', v_g.type_public,
            'tranche', v_tranche,
            'debut_local', CASE WHEN v_premier IS NULL THEN NULL
                                ELSE pg_catalog.to_char(v_premier AT TIME ZONE v_fuseau,
                                                        'YYYY-MM-DD"T"HH24:MI:SS') END)),
          '/enseignant/classes'
     FROM public.profiles p
-   WHERE p.id = NEW.teacher_id AND p.deleted_at IS NULL;
+   WHERE p.id = v_g.teacher_id AND p.deleted_at IS NULL;
   RETURN NULL;
 END;
 $function$;
@@ -463,15 +470,57 @@ BEGIN
   IF NOT EXISTS (
     SELECT 1 FROM pg_catalog.pg_trigger t
      WHERE t.tgrelid = 'public.groupes'::regclass
-       AND t.tgname = 'zz_suivi_attente_enseignant_affecte'
+       AND t.tgname = 'a_suivi_attente_enseignant_affecte'
        AND NOT t.tgisinternal
   ) THEN
-    CREATE TRIGGER zz_suivi_attente_enseignant_affecte
+    CREATE CONSTRAINT TRIGGER a_suivi_attente_enseignant_affecte
       AFTER UPDATE OF teacher_id ON public.groupes
+      DEFERRABLE INITIALLY DEFERRED
       FOR EACH ROW EXECUTE FUNCTION private.suivi_attente_notifier_enseignant();
   END IF;
 END
 $declencheur$;
+
+-- Effacement du compte : `private.cpt_anonymiser` (20261018150000) efface la
+-- photo, le pays et le titre, pas les colonnes de ce lot. La remplacer n'est
+-- pas possible sans recopier ses effacements de lignes ; comme PHOTOS-1
+-- (20261107300000), un declencheur reconnait la marque d'anonymisation du
+-- profil et efface les pays et le mot de l'enseignant, qui ne montre plus rien.
+CREATE OR REPLACE FUNCTION private.suivi_attente_effacer_si_anonymise()
+RETURNS trigger
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = ''
+AS $function$
+BEGIN
+  IF NEW.first_name = 'Compte' AND NEW.last_name = 'supprimé'
+     AND NEW.account_status = 'disabled' THEN
+    UPDATE public.teacher_profiles tp
+       SET pays_origine = NULL, pays_residence = NULL,
+           mot_presentation = NULL, montre_aux_familles = false
+     WHERE tp.profile_id = NEW.id;
+  END IF;
+  RETURN NULL;
+END;
+$function$;
+
+REVOKE ALL ON FUNCTION private.suivi_attente_effacer_si_anonymise()
+  FROM PUBLIC, anon, authenticated, service_role, agent_ro;
+
+DO $declencheur_anonymisation$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_catalog.pg_trigger t
+     WHERE t.tgrelid = 'public.profiles'::regclass
+       AND t.tgname = 'profiles_suivi_attente_anonymisation'
+       AND NOT t.tgisinternal
+  ) THEN
+    CREATE TRIGGER profiles_suivi_attente_anonymisation
+      AFTER UPDATE OF first_name, last_name, account_status ON public.profiles
+      FOR EACH ROW EXECUTE FUNCTION private.suivi_attente_effacer_si_anonymise();
+  END IF;
+END
+$declencheur_anonymisation$;
 
 -- ---------------------------------------------------------------------------
 -- 5. Le courriel de `enseignant_affecte` : famille et enseignant (trace)
@@ -537,6 +586,10 @@ BEGIN
       RAISE EXCEPTION 'SUIVI-ATTENTE postflight : % absente, non DEFINER, search_path ou ACL invalide', v_sig;
     END IF;
   END LOOP;
+  IF pg_catalog.has_function_privilege('authenticated',
+       'private.suivi_attente_effacer_si_anonymise()'::regprocedure, 'EXECUTE') THEN
+    RAISE EXCEPTION 'SUIVI-ATTENTE postflight : le declencheur d anonymisation est executable par authenticated';
+  END IF;
   IF pg_catalog.has_function_privilege('authenticated',
        'private.suivi_attente_notifier_enseignant()'::regprocedure, 'EXECUTE') THEN
     RAISE EXCEPTION 'SUIVI-ATTENTE postflight : le declencheur est executable par authenticated';
