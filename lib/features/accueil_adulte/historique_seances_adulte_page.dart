@@ -20,6 +20,7 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/page_shell.dart';
@@ -56,6 +57,9 @@ class HistoriqueSeancesAdultePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // HEURES-PROFIL H1 (12/11/2026) : la page ecoute le fuseau du profil ;
+    // quand il arrive apres son premier rendu, ses heures se redessinent.
+    ref.watch(monHorlogeProvider);
     final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
     // Hors ligne se dit une fois (EA-HL-DOUBLE-1), comme l'Accueil : le
     // bandeau de `PageShell` le dit ; des seances deja lues restent

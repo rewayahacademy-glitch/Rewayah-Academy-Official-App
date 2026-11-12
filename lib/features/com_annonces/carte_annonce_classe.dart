@@ -21,6 +21,7 @@ import '../../core/accessibilite/sens_du_contenu.dart';
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/communications/modeles_communication.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/badge_non_lu.dart';
@@ -92,7 +93,7 @@ class CarteAnnonceClasse extends StatelessWidget {
   /// La ligne de l'auteur et de la date (« Enseignante de la Classe, le 3
   /// oct. a 18:00 »).
   static String ligneAuteur(AnnonceClasse annonce) {
-    final DateTime quand = annonce.publieeLe.toLocal();
+    final DateTime quand = chezMoi(annonce.publieeLe);
     final String date = dateLongueHistorique(quand);
     final String heure = heureMinute(quand);
     final a = t.com.annonces;

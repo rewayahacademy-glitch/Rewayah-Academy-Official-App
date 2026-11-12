@@ -5,6 +5,7 @@ import '../../core/alertes/alerte.dart';
 import '../../core/alertes/traitement_signalement.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
@@ -36,9 +37,9 @@ TonEtat tonGravite(GraviteAlerte gravite) => switch (gravite) {
 /// titre d'origine.
 String titreAffiche(String titre) => titre.replaceAll('-', '\u2011');
 
-/// « Le 5 oct. 2026 à 17:35 », en heure locale.
+/// « Le 5 oct. 2026 à 17:35 », a l'heure du profil (HEURES-PROFIL H1).
 String quandAlerte(Alerte alerte) {
-  final DateTime local = alerte.creeeLe.toLocal();
+  final DateTime local = chezMoi(alerte.creeeLe);
   return t.alertes.creeeLe(date: dateCourte(local), heure: heureMinute(local));
 }
 
@@ -95,7 +96,7 @@ class LigneAlerte extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final DateTime local = alerte.creeeLe.toLocal();
+    final DateTime local = chezMoi(alerte.creeeLe);
     final String semantique = t.alertes.ligne(
       gravite: libelleGravite(alerte.gravite),
       titre: alerte.titre,

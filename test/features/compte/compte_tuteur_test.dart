@@ -3,6 +3,7 @@
 // section 5 bis) ; composition telephone et bureau ; etats ; aucune impasse.
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -13,25 +14,31 @@ import 'package:rewayah_academy/core/capacites/port_identite_titulaire.dart';
 import 'package:rewayah_academy/core/capacites/port_profil_eleve_titulaire.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/icons/app_icons.dart';
+import 'package:rewayah_academy/core/identite/port_matricule.dart';
 import 'package:rewayah_academy/core/preferences/preferences_locales.dart';
-import 'package:rewayah_academy/core/profil/service_acceptations.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/session/session_controleur.dart';
+import 'package:rewayah_academy/core/version/ligne_version.dart';
+import 'package:rewayah_academy/core/widgets/entete_compte.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
+import 'package:rewayah_academy/core/widgets/page_compte.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/compte/acces_page.dart';
 import 'package:rewayah_academy/features/compte/aide_page.dart';
-import 'package:rewayah_academy/features/compte/apparence_page.dart';
 import 'package:rewayah_academy/features/compte/compte_tuteur_page.dart';
-import 'package:rewayah_academy/features/compte/informations_legales_page.dart';
 import 'package:rewayah_academy/features/compte/informations_page.dart';
+import 'package:rewayah_academy/features/compte/lignes_compte.dart'
+    show FeuilleLangueCompte;
 import 'package:rewayah_academy/features/compte/paiements_page.dart';
-import 'package:rewayah_academy/features/compte/preferences_page.dart';
 import 'package:rewayah_academy/features/compte/securite_page.dart';
 import 'package:rewayah_academy/features/consentements/consentement_observation_page.dart';
+import 'package:rewayah_academy/features/demo/identite/matricule_demo.dart';
 import 'package:rewayah_academy/features/foyer/creer_mon_profil_page.dart';
 import 'package:rewayah_academy/features/foyer/foyer_page.dart';
+import 'package:rewayah_academy/features/juridique/juridique_pages.dart';
 
 import '../../fixtures/tuteur/faux_capacites.dart';
 import '../../fixtures/tuteur/foyers.dart';
@@ -96,22 +103,21 @@ void main() {
       expect(_texte('Titulaire A Foyer A'), findsOneWidget);
       expect(_texte(t.compte.roles.guardian), findsOneWidget);
       expect(_texte(t.compte.tuteur.identite.statutValide), findsOneWidget);
-      expect(_texte('titulaire.a@exemple.test'), findsOneWidget);
-      expect(_texte(t.compte.tuteur.identite.connexionLien), findsOneWidget);
       expect(_texte('p-guardian'), findsNothing);
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('les cartes suivent l ordre de la maquette sur telephone', (
+    testWidgets('les sections suivent l ordre fixe du Compte sur telephone', (
       WidgetTester tester,
     ) async {
       await monterCompte(tester);
+      // PROFILS P2 : l'ordre fixe des sections, puis la sortie.
       final List<String> titres = <String>[
-        t.compte.tuteur.acces.titre,
-        t.compte.tuteur.securite.titre,
-        t.compte.tuteur.informations.titre,
-        t.compte.tuteur.foyer.titre,
-        t.compte.tuteur.aide.titre,
+        t.compte.page.sections.monEspace,
+        t.compte.page.sections.paiements,
+        t.compte.page.sections.preferences,
+        t.compte.page.sections.compteSecurite,
+        t.compte.page.sections.aide,
         t.compte.deconnexion,
       ];
       double precedent = tester.getTopLeft(_texte('Titulaire A Foyer A')).dy;
@@ -122,42 +128,12 @@ void main() {
       }
     });
 
-    testWidgets('sur bureau, deux colonnes comme la maquette 1440', (
-      WidgetTester tester,
-    ) async {
-      await monterCompte(tester, taille: const Size(1440, 900));
-      final Offset acces = tester.getTopLeft(
-        _texte(t.compte.tuteur.acces.titre),
-      );
-      final Offset securite = tester.getTopLeft(
-        _texte(t.compte.tuteur.securite.titre),
-      );
-      final Offset informations = tester.getTopLeft(
-        _texte(t.compte.tuteur.informations.titre),
-      );
-      final Offset foyer = tester.getTopLeft(
-        _texte(t.compte.tuteur.foyer.titre),
-      );
-      // Colonne gauche : Acces puis Securite ; colonne droite : Informations,
-      // Foyer, Aide, a la meme hauteur de depart que la gauche.
-      expect(informations.dx, greaterThan(acces.dx + 200));
-      expect((informations.dy - acces.dy).abs(), lessThan(1));
-      expect(securite.dx, acces.dx);
-      expect(securite.dy, greaterThan(acces.dy));
-      expect(foyer.dx, informations.dx);
-      // La deconnexion reste une bande pleine largeur, sous les colonnes.
-      expect(
-        tester.getSize(find.bySemanticsLabel(t.compte.deconnexion)).width,
-        greaterThan(1000),
-      );
-      expect(tester.takeException(), isNull);
-    });
-
     testWidgets('aucune fonction sans service n est rendue ni doublee', (
       WidgetTester tester,
     ) async {
       await monterCompte(tester, taille: const Size(1440, 900));
       for (final String absent in <String>[
+        t.compte.tuteur.acces.paiements,
         'Modifier',
         'Gérer les paiements',
         'Historique et reçus',
@@ -172,20 +148,16 @@ void main() {
       // fois.
       for (final String unique in <String>[
         t.compte.tuteur.acces.ligne,
-        t.compte.tuteur.acces.paiements,
         t.compte.tuteur.securite.methode,
-        t.compte.tuteur.informations.consulter,
+        t.compte.tuteur.informations.titre,
         t.compte.profils,
         t.compte.tuteur.foyer.creerMonProfil,
-        t.compte.tuteur.aide.ligne,
         t.compte.tuteur.aide.legal,
       ]) {
         expect(_texte(unique), findsOneWidget, reason: unique);
       }
-      expect(
-        find.bySemanticsLabel(t.compte.tuteur.preferences),
-        findsOneWidget,
-      );
+      // Plus d'engrenage : les preferences sont dans la page.
+      expect(find.byIcon(AppIcons.reglages.repos), findsNothing);
     });
   });
 
@@ -197,29 +169,14 @@ void main() {
         AccesComptePage,
       ),
       (
-        t.compte.tuteur.acces.paiements,
-        Routes.compteTuteurSousPage('paiements'),
-        PaiementsComptePage,
-      ),
-      (
         t.compte.tuteur.securite.methode,
         Routes.compteTuteurSousPage('securite'),
         SecuriteComptePage,
       ),
       (
-        t.compte.tuteur.informations.consulter,
+        t.compte.tuteur.informations.titre,
         Routes.compteTuteurSousPage('informations'),
         InformationsComptePage,
-      ),
-      (
-        t.compte.tuteur.aide.ligne,
-        Routes.compteTuteurSousPage('aide'),
-        AideComptePage,
-      ),
-      (
-        t.compte.tuteur.aide.legal,
-        Routes.compteTuteurSousPage('informations-legales'),
-        InformationsLegalesComptePage,
       ),
     ];
 
@@ -266,6 +223,15 @@ void main() {
       });
     }
 
+    testWidgets('« Informations légales » ouvre les textes juridiques', (
+      WidgetTester tester,
+    ) async {
+      final GoRouter routeur = await monterCompte(tester);
+      await toucher(tester, _texte(t.compte.tuteur.aide.legal));
+      expect(find.byType(JuridiquePage), findsOneWidget);
+      expect(routeur, isNotNull);
+    });
+
     testWidgets('« Gérer mon foyer » allume la destination Foyer', (
       WidgetTester tester,
     ) async {
@@ -304,83 +270,93 @@ void main() {
     });
   });
 
-  group('Preferences et Apparence', () {
-    testWidgets(
-      'engrenage, Apparence, Sombre : le theme change, retours en chaine',
-      (WidgetTester tester) async {
-        final GoRouter routeur = await monterCompte(tester);
-        await toucher(
-          tester,
-          find.bySemanticsLabel(t.compte.tuteur.preferences),
-        );
-        expect(lieu(routeur), Routes.tuteurComptePreferences);
-        expect(find.byType(PreferencesComptePage), findsOneWidget);
-        // Tache focalisee : pas de barre basse sur telephone, un disque retour.
-        expect(find.byKey(NavShell.barreBasseKey), findsNothing);
-        expect(find.byType(DisqueRetour), findsOneWidget);
-        expect(
-          _texte(t.compte.tuteur.pagePreferences.notificationsDetail),
-          findsOneWidget,
-        );
+  group('Preferences dans la page (PROFILS P2)', () {
+    testWidgets('le theme se choisit en un geste, sans autre page', (
+      WidgetTester tester,
+    ) async {
+      final GoRouter routeur = await monterCompte(tester);
+      expect(find.byKey(NavShell.barreBasseKey), findsOneWidget);
+      await toucher(tester, _texte(t.compte.themeSombre));
+      expect(
+        _conteneur(tester).read(preferencesLocalesProvider).theme,
+        PreferenceTheme.sombre,
+      );
+      expect(lieu(routeur), Routes.tuteurCompte);
+    });
 
-        // NOTIF-DEFAUT : la rubrique Notifications ouvrait sur rien (aucun
-        // onPress) ; elle ouvre maintenant les Reglages de l'appareil.
-        await toucher(
-          tester,
-          _texte(t.compte.tuteur.pagePreferences.notifications),
-        );
-        expect(_texte(t.push1.reglages.titre), findsWidgets);
-        await tester.tapAt(const Offset(5, 5));
-        await tester.pumpAndSettle();
+    testWidgets('la langue et l accessibilite sont des lignes de la page', (
+      WidgetTester tester,
+    ) async {
+      await monterCompte(tester);
+      expect(_texte(t.compte.langue), findsOneWidget);
+    });
 
-        await toucher(
-          tester,
-          _texte(t.compte.tuteur.pagePreferences.apparence),
-        );
-        expect(lieu(routeur), Routes.tuteurCompteApparence);
-        expect(find.byType(ApparenceComptePage), findsOneWidget);
-        // Aucun interrupteur sans effet (C08 section 2.3).
-        expect(find.byType(Switch), findsNothing);
+    testWidgets('la langue s ouvre en un geste depuis la page', (
+      WidgetTester tester,
+    ) async {
+      await monterCompte(tester);
+      await toucher(tester, _texte(t.compte.langue));
+      expect(find.byKey(FeuilleLangueCompte.choixKey), findsOneWidget);
+    });
+  });
 
-        await toucher(tester, _texte(t.compte.themeSombre));
-        expect(
-          _conteneur(tester).read(preferencesLocalesProvider).theme,
-          PreferenceTheme.sombre,
-        );
+  group('En-tete et pied du Compte : matricule avec Copier, version', () {
+    testWidgets('le matricule s affiche avec « Copier », la version en bas, '
+        'quand la donnee existe', (WidgetTester tester) async {
+      String? copie;
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        SystemChannels.platform,
+        (MethodCall appel) async {
+          if (appel.method == 'Clipboard.setData') {
+            copie =
+                (appel.arguments as Map<Object?, Object?>)['text'] as String?;
+          }
+          return null;
+        },
+      );
+      addTearDown(
+        () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+          SystemChannels.platform,
+          null,
+        ),
+      );
+      await monterCompte(
+        tester,
+        surcharges: <Override>[
+          portMatriculeProvider.overrideWithValue(
+            const MatriculeDemo(<String, Matricule>{
+              'p-guardian': Matricule(
+                valeur: 'RA-26-4817',
+                role: RoleAffiche.tuteur,
+              ),
+            }),
+          ),
+          versionAppliProvider.overrideWith(
+            (Ref _) async => (version: '1.0.0', build: '423'),
+          ),
+        ],
+      );
+      expect(_texte('RA-26-4817'), findsOneWidget);
+      await tester.tap(find.byKey(EnteteCompte.copierKey));
+      await stabiliser(tester);
+      expect(copie, 'RA-26-4817');
+      final Finder version = find.byKey(PageCompte.versionKey);
+      await tester.ensureVisible(version);
+      expect(
+        find.descendant(
+          of: version,
+          matching: _texte(t.compte.version(version: '1.0.0', build: '423')),
+        ),
+        findsOneWidget,
+      );
+    });
 
-        // SANS-BARRE-FIXE : la tete (et son disque retour) defile avec le
-        // contenu (PLAN-TROIS-SALLES §2.2) ; on la fait revenir dans la vue.
-        await toucher(tester, find.byType(DisqueRetour));
-        expect(lieu(routeur), Routes.tuteurComptePreferences);
-        // Le choix survit au retour : c'est la preference de l'application.
-        expect(
-          _conteneur(tester).read(preferencesLocalesProvider).theme,
-          PreferenceTheme.sombre,
-        );
-
-        await tester.tap(find.byType(DisqueRetour));
-        await stabiliser(tester);
-        expect(lieu(routeur), Routes.tuteurCompte);
-        expect(find.byKey(NavShell.barreBasseKey), findsOneWidget);
-        expect(tester.takeException(), isNull);
-      },
-    );
-
-    testWidgets(
-      'sur bureau, les preferences gardent la colonne de navigation',
-      (WidgetTester tester) async {
-        final GoRouter routeur = await monterCompte(
-          tester,
-          taille: const Size(1440, 900),
-        );
-        await toucher(
-          tester,
-          find.bySemanticsLabel(t.compte.tuteur.preferences),
-        );
-        expect(lieu(routeur), Routes.tuteurComptePreferences);
-        expect(tester.widget<NavShell>(find.byType(NavShell)).indexActif, 3);
-      },
-    );
+    testWidgets('sans matricule servi : aucune ligne, jamais un faux', (
+      WidgetTester tester,
+    ) async {
+      await monterCompte(tester);
+      expect(find.byKey(EnteteCompte.copierKey), findsNothing);
+    });
   });
 
   group('Se deconnecter', () {
@@ -424,6 +400,7 @@ void main() {
         const CompteTuteurPage(),
         surcharges: <Override>[
           ...surchargesCompte(),
+          sourceSessionProvider.overrideWithValue(FausseSourceSession()),
           serviceAuthProvider.overrideWithValue(auth),
           serviceAppairageProvider.overrideWithValue(FauxServiceAppairage()),
           serviceReseauProvider.overrideWithValue(FauxServiceReseau()),
@@ -459,7 +436,7 @@ void main() {
     ) async {
       final IdentiteEnEchec identite = IdentiteEnEchec();
       await monterCompte(tester, identite: identite);
-      expect(_texte(t.commun.etats.echecServeur.titre), findsOneWidget);
+      expect(_texte(t.compte.page.identiteEchec), findsOneWidget);
       final int avant = identite.lectures;
       await tester.tap(_texte(t.commun.etats.actions.reessayer));
       await stabiliser(tester);
@@ -471,32 +448,7 @@ void main() {
     ) async {
       await monterCompte(tester, identite: IdentiteEnAttente());
       expect(find.byType(Skeleton), findsWidgets);
-      expect(_texte(t.compte.tuteur.acces.titre), findsOneWidget);
-    });
-
-    testWidgets('foyer vide : aucun profil, aucun compteur invente', (
-      WidgetTester tester,
-    ) async {
-      await monterCompte(tester, eleves: FoyersFictifs.foyerVide);
-      expect(_texte(t.compte.tuteur.foyer.aucun), findsOneWidget);
-      expect(_texte(t.compte.tuteur.acces.pastilleActif), findsNothing);
-    });
-
-    testWidgets('UX-023 : foyer vide de l adulte qui suit les cours : « Vous '
-        'suivez les cours », jamais « Aucun profil élève »', (
-      WidgetTester tester,
-    ) async {
-      await monterCompte(
-        tester,
-        eleves: FoyersFictifs.foyerVide,
-        surcharges: <Override>[
-          portProfilEleveTitulaireProvider.overrideWithValue(
-            FauxProfilEleveTitulaire()..present = true,
-          ),
-        ],
-      );
-      expect(_texte(t.foyer.vide.moiTitre), findsOneWidget);
-      expect(_texte(t.compte.tuteur.foyer.aucun), findsNothing);
+      expect(_texte(t.compte.page.sections.paiements), findsOneWidget);
     });
 
     testWidgets('hors ligne : le bandeau le dit sur Mon compte', (
@@ -507,6 +459,7 @@ void main() {
         const CompteTuteurPage(),
         surcharges: <Override>[
           ...surchargesCompte(),
+          sourceSessionProvider.overrideWithValue(FausseSourceSession()),
           serviceAuthProvider.overrideWithValue(FauxServiceAuth()),
           serviceAppairageProvider.overrideWithValue(FauxServiceAppairage()),
           serviceReseauProvider.overrideWithValue(
@@ -562,56 +515,45 @@ void main() {
       expect(_texte(t.compte.tuteur.pageAcces.aucunTitre), findsOneWidget);
     });
 
-    testWidgets('Paiements : indisponible, sans aucune action', (
-      WidgetTester tester,
-    ) async {
-      await monterCompte(
-        tester,
-        depart: Routes.compteTuteurSousPage('paiements'),
+    for (final String ancienne in <String>['informations-legales']) {
+      testWidgets(
+        'PAIEMENTS-RECUS-TUTEUR : plus de ligne dans le Compte ; la page '
+        'reste routee et dit la verite',
+        (WidgetTester tester) async {
+          await monterCompte(
+            tester,
+            depart: Routes.compteTuteurSousPage('paiements'),
+          );
+          expect(find.byType(PaiementsComptePage), findsOneWidget);
+          expect(
+            _texte(t.compte.tuteur.pagePaiements.indisponibleTitre),
+            findsOneWidget,
+          );
+          expect(_texte(t.commun.etats.actions.reessayer), findsNothing);
+        },
       );
-      expect(
-        _texte(t.compte.tuteur.pagePaiements.indisponibleTitre),
-        findsOneWidget,
-      );
-      expect(_texte(t.commun.etats.actions.reessayer), findsNothing);
-    });
+
+      testWidgets('PROFILS P2 : /tuteur/compte/$ancienne revient au Compte '
+          '(page supprimee)', (WidgetTester tester) async {
+        final GoRouter routeur = await monterCompte(
+          tester,
+          depart: Routes.compteTuteurSousPage(ancienne),
+        );
+        expect(lieu(routeur), Routes.tuteurCompte);
+        expect(find.byType(CompteTuteurPage), findsOneWidget);
+      });
+    }
 
     testWidgets('Aide : indisponible, aucun faux contact', (
       WidgetTester tester,
     ) async {
       await monterCompte(tester, depart: Routes.compteTuteurSousPage('aide'));
+      expect(find.byType(AideComptePage), findsOneWidget);
       expect(
         _texte(t.compte.tuteur.pageAide.indisponibleTitre),
         findsOneWidget,
       );
       expect(find.textContaining('@'), findsNothing);
-    });
-
-    testWidgets('Informations legales : documents acceptes, textes absents', (
-      WidgetTester tester,
-    ) async {
-      await monterCompte(
-        tester,
-        depart: Routes.compteTuteurSousPage('informations-legales'),
-        acceptations: FauxServiceAcceptations(
-          rendues: <Acceptation>[
-            Acceptation(
-              sorte: SorteContrat.conditionsTuteur,
-              version: '2026-09',
-              accepteeLe: DateTime(2026, 9, 12, 10),
-            ),
-          ],
-        ),
-      );
-      expect(
-        _texte(t.compte.tuteur.pageLegal.conditionsTuteur),
-        findsOneWidget,
-      );
-      expect(
-        _texte('Version 2026-09, acceptée le 12 septembre 2026'),
-        findsOneWidget,
-      );
-      expect(_texte(t.compte.tuteur.pageLegal.textes), findsOneWidget);
     });
 
     testWidgets('Informations : lecture seule, fuseau des seances', (

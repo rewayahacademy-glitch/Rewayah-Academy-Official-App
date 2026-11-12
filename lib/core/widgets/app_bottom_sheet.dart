@@ -11,6 +11,7 @@ import '../accessibilite/texte_sans_coupure.dart';
 import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
 import '../mouvement/app_transitions.dart';
+import '../navigation/retour_ferme_feuille.dart';
 import '../theme/app_color_pair.dart';
 import '../theme/app_elevation.dart';
 import '../theme/app_gabarit.dart';
@@ -656,10 +657,19 @@ class _BarreEffaceeTantQueVisibleEtat
   ValueListenable<TickerModeData>? _scene;
   bool _libere = false;
 
+  /// RETOUR-FERME-FEUILLE : la feuille dans le registre des feuilles
+  /// ouvertes, pour que le retour du navigateur la ferme d'abord. Elle en
+  /// sort a son demontage, quel que soit le chemin de fermeture.
+  late final FeuilleInscrite _inscrite = FeuillesOuvertes.inscrire(
+    contexte: () => context,
+    enScene: () => !_libere && mounted && (_scene?.value.enabled ?? true),
+  );
+
   @override
   void initState() {
     super.initState();
     _bail = widget.premierBail;
+    _inscrite;
   }
 
   @override
@@ -698,6 +708,7 @@ class _BarreEffaceeTantQueVisibleEtat
   @override
   void dispose() {
     _libere = true;
+    _inscrite.retirer();
     _scene?.removeListener(_surScene);
     // Differe : l'arbre est verrouille pendant la fermeture.
     final VoidCallback? bail = _bail;

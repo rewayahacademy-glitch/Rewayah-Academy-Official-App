@@ -41,6 +41,7 @@ import '../../core/seance_famille/seance_famille.dart';
 import '../../core/tc_groupe/group_home_vm.dart';
 import '../../core/tc_groupe/group_summary_vm.dart' show EnseignantVM;
 import '../../core/tc_horloge/horloge_vivante.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/tc_horloge/session_clock_vm.dart';
 import '../../core/tc_parcours/port_travail_a_venir.dart';
 import '../../core/theme/app_delais.dart';
@@ -75,6 +76,7 @@ import 'bandeau_blocage.dart';
 import 'bloc_seance.dart';
 import 'carte_classe_seance.dart';
 import 'carte_horaire.dart';
+import 'ligne_bibliotheque_classe.dart';
 import 'ligne_derniere_seance.dart';
 import 'liste_preparation.dart';
 import 'parcours_du_profil_choisi.dart';
@@ -430,6 +432,9 @@ class _CorpsAccueil extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // HEURES-PROFIL H1 (12/11/2026) : la page ecoute le fuseau du profil ;
+    // quand il arrive apres son premier rendu, ses heures se redessinent.
+    ref.watch(monHorlogeProvider);
     final Gabarit gabarit = AppGabarit.de(context);
     final bool compact = gabarit == Gabarit.mobile;
     final ProfilEleveFoyer profil = profils.firstWhere(
@@ -813,7 +818,12 @@ class _CorpsAccueil extends ConsumerWidget {
               TuileBento(
                 etendue: EtendueBento.grande,
                 etendueLarge: pleine,
-                child: carte,
+                // PROFILS P2 : la Bibliotheque, sous la classe du profil choisi.
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[carte, const LigneBibliothequeClasse()],
+                ),
               ),
               TuileBento(
                 etendue: EtendueBento.grande,

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
 import '../session/session_state.dart';
+import '../tc_horloge/mon_horloge.dart';
 import '../theme/app_color_pair.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_spacing.dart';
@@ -54,9 +55,8 @@ class BandeauObservation extends StatelessWidget {
       texte.write(' . ');
       texte.write(
         t.agent.bandeauExpire(
-          heure:
-              '${fin.hour.toString().padLeft(2, '0')}:'
-              '${fin.minute.toString().padLeft(2, '0')}',
+          // HEURES-PROFIL H1 : a l'heure du profil.
+          heure: heureChezMoi(fin),
         ),
       );
     }

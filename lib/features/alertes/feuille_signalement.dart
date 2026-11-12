@@ -29,6 +29,7 @@ import '../../core/alertes/traitement_signalement.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -396,8 +397,8 @@ class _FeuilleSignalementState extends ConsumerState<FeuilleSignalement> {
       LigneCleValeur(
         cle: tr.recu,
         valeur: t.alertes.creeeLe(
-          date: dateCourte(s.recuLe.toLocal()),
-          heure: heureMinute(s.recuLe.toLocal()),
+          date: dateCourte(chezMoi(s.recuLe)),
+          heure: heureMinute(chezMoi(s.recuLe)),
         ),
       ),
       Ecart.vMd,

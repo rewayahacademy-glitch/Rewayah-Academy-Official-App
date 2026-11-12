@@ -15,6 +15,7 @@ import '../../core/capacites/port_notifications.dart';
 import '../../core/communications/modeles_communication.dart'
     show IndicateurAttention;
 import '../../core/i18n/strings.g.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/badge_non_lu.dart';
@@ -107,7 +108,8 @@ class DetailNotification extends StatelessWidget {
     }
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
-    final DateTime quand = notification.date.toLocal();
+    // HEURES-PROFIL H1 : a l'heure du profil.
+    final DateTime quand = chezMoi(notification.date);
     final IndicateurAttention indicateur = indicateurNotification(notification);
     final String? texte = notification.texte;
     final VoidCallback? ouvrir = onOuvrir;

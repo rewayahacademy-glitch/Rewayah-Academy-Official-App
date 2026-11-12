@@ -37,6 +37,7 @@ import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/core/widgets/entete_compte.dart';
 import 'package:rewayah_academy/features/cahier/cahier_page.dart';
 import 'package:rewayah_academy/features/fiche_groupe/fiche_eleve_enseignant.dart';
 import 'package:rewayah_academy/features/fiche_groupe/fiche_groupe_page.dart';
@@ -230,7 +231,9 @@ void main() {
       await monter(tester, Routes.enseignantProfil);
       expect(find.byType(ProfilEnseignantPage), findsOneWidget);
 
-      final Finder bouton = find.text(t.enseignant.photo.choisir);
+      // PROFILS P3 : la photo de l'en-tete du Compte se touche pour la
+      // changer (plus de lien separe).
+      final Finder bouton = find.byKey(EnteteCompte.photoKey);
       await tester.ensureVisible(bouton);
       await tester.tap(bouton);
       await tester.pumpAndSettle();

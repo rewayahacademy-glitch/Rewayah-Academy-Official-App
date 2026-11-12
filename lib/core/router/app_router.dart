@@ -161,16 +161,13 @@ import '../../features/comptable/tresorerie/tresorerie_page.dart'
     deferred as d_tresorerie_page;
 import '../../features/compte/acces_page.dart';
 import '../../features/compte/aide_page.dart';
-import '../../features/compte/apparence_page.dart';
 import '../../features/compte/compte_page.dart';
 import '../../features/compte/compte_tuteur_page.dart';
 import '../../features/compte/double_verification_page.dart';
 import '../../features/compte/espaces_compte.dart';
-import '../../features/compte/informations_legales_page.dart';
 import '../../features/compte/informations_page.dart';
 import '../../features/compte/mes_donnees_page.dart';
 import '../../features/compte/paiements_page.dart';
-import '../../features/compte/preferences_page.dart';
 import '../../features/compte/securite_page.dart';
 import '../../features/connexion/accueil_invite.dart';
 import '../../features/connexion/connexion_page.dart';
@@ -746,9 +743,9 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         ),
       ),
       GoRouteSure(
+        // PROFILS P2 : la page « Profil » n'existe plus, le Compte la remplace.
         path: Routes.compteProfil,
-        builder: (BuildContext _, GoRouterState _) =>
-            const _CoquilleSecondaire(child: ProfilPersonnelPage()),
+        redirect: (BuildContext _, GoRouterState _) => Routes.compte,
       ),
       GoRouteSure(
         path: Routes.compteReglages,
@@ -767,16 +764,11 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       ),
       GoRouteSure(
         path: Routes.compteProfils,
-        builder: (BuildContext _, GoRouterState _) =>
-            const _CoquilleSecondaire(child: ProfilsComptePage()),
+        redirect: (BuildContext _, GoRouterState _) => Routes.compte,
       ),
       GoRouteSure(
         path: '${Routes.compteProfils}/:profilId',
-        builder: (BuildContext _, GoRouterState etat) => _CoquilleSecondaire(
-          child: ProfilEnfantPage(
-            profilId: etat.pathParameters['profilId'] ?? '',
-          ),
-        ),
+        redirect: (BuildContext _, GoRouterState _) => Routes.compte,
       ),
       // « Recevoir mes paiements » (Comptable V1, CPT-F ; spec Finance
       // operationnelle §17, §38) : la surface personnelle de tout
@@ -1393,6 +1385,9 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                       (GoRouterState _) => const AccesComptePage(),
                     ),
                   ),
+                  // PAIEMENTS-RECUS-TUTEUR : plus aucune ligne du Compte n'y mene ;
+                  // la page reste routee car PaiementsComptePage porte aussi les
+                  // parcours du foyer de l'adulte (demonstration et tests FI).
                   GoRouteSure(
                     path: 'paiements',
                     // « Recharger » ouvre LA recharge du Foyer (FI-7,
@@ -1409,16 +1404,21 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                     ),
                   ),
                   GoRouteSure(
+                    path: 'informations-legales',
+                    redirect: (BuildContext _, GoRouterState _) =>
+                        Routes.tuteurCompte,
+                  ),
+                  // PROFILS P2 : les preferences sont dans le Compte ; les
+                  // anciennes adresses y reviennent.
+                  GoRouteSure(
                     path: 'preferences',
-                    pageBuilder: glissee(
-                      (GoRouterState _) => const PreferencesComptePage(),
-                    ),
+                    redirect: (BuildContext _, GoRouterState _) =>
+                        Routes.tuteurCompte,
                     routes: <RouteBase>[
                       GoRouteSure(
                         path: 'apparence',
-                        pageBuilder: glissee(
-                          (GoRouterState _) => const ApparenceComptePage(),
-                        ),
+                        redirect: (BuildContext _, GoRouterState _) =>
+                            Routes.tuteurCompte,
                       ),
                     ],
                   ),
@@ -1426,13 +1426,6 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                     path: 'aide',
                     pageBuilder: glissee(
                       (GoRouterState _) => const AideComptePage(),
-                    ),
-                  ),
-                  GoRouteSure(
-                    path: 'informations-legales',
-                    pageBuilder: glissee(
-                      (GoRouterState _) =>
-                          const InformationsLegalesComptePage(),
                     ),
                   ),
                   GoRouteSure(

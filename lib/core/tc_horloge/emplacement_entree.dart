@@ -4,6 +4,7 @@ import '../i18n/elision.dart';
 import '../i18n/isolat_bidi.dart';
 import '../i18n/strings.g.dart';
 import '../tc_groupe/libelles_tc_groupe.dart';
+import 'mon_horloge.dart';
 import 'session_clock_vm.dart';
 
 /// Qui regarde l'emplacement d'entree (CL-4.2).
@@ -134,7 +135,7 @@ class EmplacementEntree {
           libelle: imminent
               ? t.classe.entree.coursImminent
               : role == RoleEntree.enseignant
-              ? _dansEnseignant(reste, horloge.debutUtc.toLocal())
+              ? _dansEnseignant(reste, chezMoi(horloge.debutUtc))
               // RTL-ISOL-1 : « الدرس بعد 3 h 28 », jamais « h 28 3 ».
               : phraseAvecValeur(
                   (String d) => t.classe.entree.coursDans(duree: d),

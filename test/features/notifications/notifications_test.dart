@@ -150,7 +150,9 @@ void main() {
       expect(n2, findsOneWidget);
       expect(tester.getTopLeft(n1).dy, lessThan(tester.getTopLeft(n2).dy));
       expect(find.text('Compte rendu de la séance disponible'), findsOneWidget);
-      expect(find.text(t.historique.fuseauListe), findsOneWidget);
+      // HEURES-PROFIL H1 : plus de note « heure de cet appareil », les heures
+      // sont celles du profil.
+      expect(find.text(t.historique.fuseauListe), findsNothing);
       // La ligne sans destination (lien externe rejete) ouvre son detail :
       // aucune ligne inerte (revue COM-R, R-06 ; contre-preuve : elle
       // n'etait pas une cible).

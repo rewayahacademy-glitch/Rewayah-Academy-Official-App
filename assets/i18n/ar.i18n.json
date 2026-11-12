@@ -315,14 +315,9 @@
   },
   "commun": {
     "langue": {
-      "groupe": "لغة التطبيق",
-      "contexte": "اختر لغة التطبيق. يتم التغيير فورًا ويبقى على هذا الجهاز. لا يغيّر لغة الدروس ولا لغة الرسائل الإلكترونية.",
       "systeme": "النظام",
-      "systemeDetail": "يتبع لغة جهازك",
       "francais": "Français",
-      "francaisDetail": "التطبيق بالفرنسية، مهما كانت لغة جهازك",
-      "arabe": "العربية",
-      "arabeDetail": "التطبيق بالعربية، من اليمين إلى اليسار"
+      "arabe": "العربية"
     },
     "formats": {
       "dateHeure": "⁨{date}⁩ في ⁨{heure}⁩",
@@ -2381,7 +2376,9 @@
       "revenus": "دخلي",
       "revenusDetail": "ما تدرّه عليك حصصك، طالبًا طالبًا",
       "disponibilitesDetail": "الأيام والساعات التي يمكنك التدريس فيها",
-      "revenusHeures": "⁨{heures}⁩ مقدَّمة في ⁨{mois}⁩"
+      "revenusHeures": "⁨{heures}⁩ مقدَّمة في ⁨{mois}⁩",
+      "publicationDonnee": "ممنوحة",
+      "publicationNonDonnee": "غير ممنوحة"
     },
     "creneaux": {
       "heureLibelle": "⁨{jour}⁩ الساعة ⁨{heure}⁩",
@@ -2570,7 +2567,6 @@
     "identifiant": "المعرّف",
     "nonDisponible": "غير متاح",
     "contact": "التواصل",
-    "contactDetail": "تديره الأكاديمية",
     "langue": "اللغة",
     "francais": "الفرنسية",
     "fuseau": "المنطقة الزمنية",
@@ -2601,25 +2597,14 @@
     "coursDonnees": "الدروس والبيانات",
     "lectureGrande": "القراءة بنص كبير",
     "lectureGrandeDetail": "يعرض القرآن بحجم أكبر افتراضيًا",
-    "profilsTitre": "ملفات الأسرة",
-    "profilsIntro": "الأطفال المرتبطون بأسرتك.",
-    "erreurProfils": "تعذّرت قراءة الملفات.",
     "reessayer": "إعادة المحاولة",
-    "aucunProfil": "لا ملفات حتى الآن",
-    "aucunProfilDetail": "أضف طفلًا للبدء",
     "ajouterEnfant": "إضافة طفل",
-    "ouvrirProfil": "فتح الملف",
     "modeEnfant": "الواجهة الموجَّهة",
     "modeStandard": "الوضع العادي",
-    "cameraLabel": "الكاميرا",
     "cameraAutorisee": "مسموح بها",
     "cameraInterdite": "ممنوعة",
-    "accesSansFin": "وصول دون تاريخ انتهاء",
-    "accesJusqua": "وصول حتى ⁨{date}⁩",
     "statutActif": "مفعَّل",
     "statutProvisoire": "مفعَّل مؤقتًا",
-    "profilEnfant": "ملف ⁨{dePrenom}⁩",
-    "identifiantEnfant": "المعرّف: ⁨{identifiant}⁩",
     "matricule": "رقم التسجيل \u2068{valeur}\u2069 · \u2068{role}\u2069",
     "copier": "نسخ",
     "copierMatricule": "نسخ رقم التسجيل",
@@ -2641,7 +2626,6 @@
       "student": "يتابع دروسه وقراءته للقرآن"
     },
     "tuteur": {
-      "preferences": "التفضيلات",
       "dateLongue": "⁨{jour}⁩ ⁨{mois}⁩ ⁨{annee}⁩",
       "identite": {
         "statutValide": "الحساب معتمَد",
@@ -2653,8 +2637,6 @@
         "connexionInconnue": "طريقة الدخول غير محددة"
       },
       "acces": {
-        "titre": "الوصول والمدفوعات",
-        "resume": "حالة كل ملف طالب وموعد انتهائه",
         "pastilleActif": "الوصول ساري",
         "pastilleExpire": "انتهى الوصول",
         "ligne": "وصول ملفات الطلاب",
@@ -2669,14 +2651,9 @@
       },
       "informations": {
         "titre": "المعلومات الشخصية",
-        "resume": "الاسم وعنوان الدخول واللغة والمنطقة الزمنية",
-        "langueFuseau": "العربية · ⁨{ville}⁩",
-        "consulter": "عرض معلوماتي"
+        "langueFuseau": "العربية · ⁨{ville}⁩"
       },
       "foyer": {
-        "titre": "أسرتي",
-        "aucun": "لا ملف طالب حتى الآن",
-        "un": "ملف طالب واحد",
         "plusieurs(param=nombre)": {
           "zero": "لا ملف طالب",
           "one": "ملف طالب واحد",
@@ -2685,11 +2662,9 @@
           "many": "⁨{nombre}⁩ ملفًا لطلاب",
           "other": "⁨{nombre}⁩ ملف طالب"
         },
-        "legende": "ملفات الطلاب وأجهزة الأسرة",
         "creerMonProfil": "إنشاء ملفي كطالب"
       },
       "aide": {
-        "titre": "المساعدة والدعم",
         "ligne": "المساعدة والتواصل",
         "legal": "المعلومات القانونية"
       },
@@ -2750,24 +2725,8 @@
         "justificatif": "الإيصال متاح"
       },
       "pagePreferences": {
-        "titre": "التفضيلات",
-        "sousTitre": "خصّص تجربتك على هذا الجهاز.",
-        "apparence": "المظهر",
-        "apparenceDetail": "المظهر والراحة البصرية",
-        "langue": "اللغة والمنطقة",
         "notifications": "الإشعارات",
         "notificationsDetail": "هذا الجهاز وما تستقبلونه"
-      },
-      "pageApparence": {
-        "titre": "المظهر",
-        "sousTitre": "مطبَّق على هذا الجهاز.",
-        "theme": "مظهر التطبيق",
-        "themeDetail": "خصّص مظهر Rewayah.",
-        "confort": "الراحة البصرية",
-        "animations": "الحركة",
-        "animationsDetail": "تقلّ حين يطلب جهازك ذلك",
-        "texte": "حجم النص",
-        "texteDetail": "يتبع حجم النظام"
       },
       "pageAide": {
         "titre": "المساعدة والدعم",
@@ -2778,15 +2737,9 @@
         "aucunCanal": "لا قناة مساعدة منشورة الآن."
       },
       "pageLegal": {
-        "titre": "المعلومات القانونية",
-        "documents": "الوثائق المقبولة",
         "conditionsTuteur": "شروط وليّ الأمر",
         "contratEnseignant": "عقد المعلم",
         "accuseEnregistrement": "الإقرار بتسجيل الدروس",
-        "acceptation": "الإصدار ⁨{version}⁩، مقبول في ⁨{date}⁩",
-        "aucunTitre": "لا وثيقة مقبولة",
-        "aucun": "لا وثيقة مقبولة مسجَّلة لهذا الحساب.",
-        "lectureSeule": "الوثيقة المقبولة لا تُعدَّل.",
         "textes": "الشروط والخصوصية"
       }
     }

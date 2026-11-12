@@ -40,6 +40,7 @@ import '../../core/widgets/status_pill.dart';
 import '../com_messages/entree_messages_contexte.dart';
 import '../journee/journee_page.dart'
     show entrerEnSalle, maintenantJourneeProvider;
+import '../suivi_eleve/entree_bibliotheque.dart';
 
 /// Ce que `mes_groupes_v` ne porte pas encore d'une Classe : son niveau, sa
 /// langue, et le fait que l'enseignant l'assure en remplacement.
@@ -177,6 +178,9 @@ class MesClassesPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // HEURES-PROFIL H1 (12/11/2026) : la page ecoute le fuseau du profil ;
+    // quand il arrive apres son premier rendu, ses heures se redessinent.
+    ref.watch(monHorlogeProvider);
     final AsyncValue<List<GroupeEnseignant>> groupes = ref.watch(
       groupesEnseignantProvider,
     );
@@ -290,6 +294,12 @@ class MesClassesPage extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
+              // PROFILS P3 (11/11/2026) : la Bibliotheque en tete des Classes,
+              // comme « Ma classe » de l'eleve ; elle sort du Profil. Rendue
+              // selon la capacite `bibliothequeDansMaClasse`.
+              EntreeBibliothequeMaClasse(
+                legende: t.tc.bibliotheque.detail.entreeDetailEnseignant,
+              ),
               corps,
               const EntreeMessagesContexte(ecartAvant: Ecart.vSection),
             ],
