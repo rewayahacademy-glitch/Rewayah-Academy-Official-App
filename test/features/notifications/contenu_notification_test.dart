@@ -456,4 +456,93 @@ void main() {
       expect(evenementsNotificationConnus, contains(e));
     }
   });
+
+  group('HORLOGE-ET-LIEU : l annonce du changement d heure', () {
+    const Map<String, dynamic> un = <String, dynamic>{
+      'portee': 'soi',
+      'motif': 'changement_heure',
+      'palier': 'j14',
+      'date_changement': '2027-03-28',
+      'changements': <Map<String, dynamic>>[
+        <String, dynamic>{
+          'jour_avant': 3,
+          'avant': '19:00',
+          'jour_apres': 3,
+          'apres': '20:00',
+        },
+      ],
+    };
+
+    test('un cours : l heure exacte avant et apres, le jour du changement', () {
+      expect(
+        contenuNotificationPour('creneau_change', un).titre,
+        'À partir du dimanche 28 mars 2027, votre cours du mercredi passe '
+        'de 19:00 à 20:00.',
+      );
+    });
+
+    test('un tuteur lit le cours de la classe, sans nom d eleve', () {
+      final String titre = contenuNotificationPour(
+        'creneau_change',
+        <String, dynamic>{...un, 'portee': 'foyer'},
+      ).titre;
+      expect(titre, contains('le cours de la classe du mercredi'));
+      expect(titre, isNot(contains('votre cours')));
+    });
+
+    test('plusieurs cours : chaque jour avec ses deux heures', () {
+      final String titre = contenuNotificationPour(
+        'creneau_change',
+        <String, dynamic>{
+          ...un,
+          'portee': 'classe',
+          'changements': <Map<String, dynamic>>[
+            <String, dynamic>{
+              'jour_avant': 3,
+              'avant': '19:00',
+              'jour_apres': 3,
+              'apres': '20:00',
+            },
+            <String, dynamic>{
+              'jour_avant': 4,
+              'avant': '18:00',
+              'jour_apres': 4,
+              'apres': '19:00',
+            },
+          ],
+        },
+      ).titre;
+      expect(
+        titre,
+        'À partir du dimanche 28 mars 2027, l\'heure de vos cours change : '
+        'le mercredi de 19:00 à 20:00 ; le jeudi de 18:00 à 19:00.',
+      );
+    });
+
+    test('en arabe, la meme annonce', () async {
+      await LocaleSettings.setLocale(AppLocale.ar);
+      final String titre = contenuNotificationPour('creneau_change', un).titre;
+      expect(titre, contains('19:00'));
+      expect(titre, contains('20:00'));
+      expect(titre, isNot(contains('{')));
+    });
+
+    test('un changement de creneau ordinaire garde la phrase generale', () {
+      expect(
+        contenuNotificationPour('creneau_change', const <String, dynamic>{
+          'portee': 'soi',
+        }).titre,
+        t.notifications.evenements.creneauChange,
+      );
+      // Une annonce illisible ne plante pas : la phrase generale.
+      expect(
+        contenuNotificationPour('creneau_change', const <String, dynamic>{
+          'portee': 'soi',
+          'motif': 'changement_heure',
+          'changements': 'x',
+        }).titre,
+        t.notifications.evenements.creneauChange,
+      );
+    });
+  });
 }

@@ -664,3 +664,23 @@ Deno.test('lien_inscription : le lien porte le code du candidat, cinq langues', 
     donnees: { code: '"><b>' } })).html
   assert(!sansCode.includes('code=') && !sansCode.includes('<b>'), sansCode)
 })
+
+// HORLOGE-ET-LIEU (12/11/2026, H3) : l'annonce du changement d'heure dit l'heure
+// exacte avant et apres, le jour du changement, dans chaque langue, sans prenom
+// d'eleve ; un autre changement de creneau garde la phrase generale.
+Deno.test('creneau_change : l annonce du changement d heure, cinq langues', () => {
+  const donnees = { motif: 'changement_heure', portee: 'soi', date_changement: '2027-03-28',
+    changements: [{ jour_avant: 3, avant: '19:00', jour_apres: 3, apres: '20:00' }] }
+  for (const langue of ['fr', 'en', 'es', 'pt', 'ar'] as const) {
+    const c = contenuPour({ modele: 'creneau_change', categorie: 'classes', essentielle: true, donnees }, langue)
+    const texte = c.blocs.map((b) => b.type === 'texte' ? b.texte : '').join(' ')
+    assert(texte.includes('19:00') && texte.includes('20:00'), `${langue} : ${texte}`)
+    assert(!texte.includes('undefined') && !texte.includes('${'), `${langue} : ${texte}`)
+  }
+  const fr = contenuPour({ modele: 'creneau_change', categorie: 'classes', essentielle: true, donnees })
+  assert(fr.blocs.some((b) => b.type === 'texte' && b.texte.startsWith('À partir du dimanche 28 mars 2027, votre cours du mercredi passe de 19:00 à 20:00.')),
+    JSON.stringify(fr.blocs))
+  const ordinaire = contenuPour({ modele: 'creneau_change', categorie: 'classes', essentielle: true, donnees: { portee: 'foyer' } })
+  assert(ordinaire.blocs.some((b) => b.type === 'texte' && b.texte.startsWith('L’horaire de la classe change.')),
+    JSON.stringify(ordinaire.blocs))
+})

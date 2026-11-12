@@ -3,7 +3,7 @@
 
 import { APP } from './gabarit.ts'
 import { avec, avisDans, bonjour, dateLongue, type Fabrique, type LangueEcrite, libre, type Parole, montantLisible,
-  precisions, type Precisions } from './outils.ts'
+  precisions, type Precisions, phraseChangementHeure, type MotsChangementHeure} from './outils.ts'
 import { quandSeance, codeCandidat } from './modeles_fr.ts'
 
 const PAROLE: Parole = {
@@ -32,6 +32,14 @@ const RAISON: Record<string, string> = {
   recrutement: 'Recibe este correo electrónico porque está en contacto con nuestro equipo de selección.',
   direction: 'Recibe este correo electrónico de la dirección de Rewayah Academy.',
   nouvelles: 'Recibe este correo electrónico porque sigue las novedades de Rewayah Academy.',
+}
+
+export const MOTS_CHANGEMENT_HEURE_ES: MotsChangementHeure = {
+  locale: 'es-ES',
+  un: (date, jour, avant, apres, foyer) => `A partir del ${date}, ${foyer ? 'la clase del grupo' : 'su clase'} del ${jour} pasa de las ${avant} a las ${apres}.`,
+  plusieurs: (date, liste, foyer) => `A partir del ${date}, cambia la hora de ${foyer ? 'las clases del grupo' : 'sus clases'}: ${liste}.`,
+  ligne: (jour, avant, apres) => `el ${jour}, de las ${avant} a las ${apres}`,
+  separateur: '; ',
 }
 
 const MODELES: Record<string, Fabrique> = {
@@ -86,9 +94,16 @@ const MODELES: Record<string, Fabrique> = {
   eleve_retire: (d) => avis(d, 'Un alumno deja su clase', 'Un alumno deja su clase',
     'Un alumno deja su clase. La lista actualizada está en la aplicación.',
     'Ver mis clases', '/enseignant/classes'),
-  creneau_change: (d) => avis(d, 'El horario de la clase cambia', 'El horario de la clase cambia',
-    'El horario de la clase cambia. El nuevo horario está en la aplicación.',
-    'Ver el nuevo horario', '/tuteur'),
+  creneau_change: (d) => {
+    const annonce = phraseChangementHeure(d, MOTS_CHANGEMENT_HEURE_ES)
+    if (annonce) {
+      return avis(d, 'La hora de su clase cambia', 'La hora de su clase cambia', `${annonce} La clase se mantiene a la misma hora en La Meca: lo que cambia es la hora de su país.`,
+        'Ver mi horario', '/tuteur')
+    }
+    return avis(d, 'El horario de la clase cambia', 'El horario de la clase cambia',
+      'El horario de la clase cambia. El nuevo horario está en la aplicación.',
+      'Ver el nuevo horario', '/tuteur')
+  },
   seance_annulee: (d) => {
     const quand = quandSeance(d, 'es-ES', 'a las')
     return avis(d, 'Una sesión está anulada', 'Una sesión está anulada',

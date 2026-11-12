@@ -4,7 +4,7 @@
 
 import { APP } from './gabarit.ts'
 import { avec, avisDans, bonjour, dateLongue, type Fabrique, type LangueEcrite, libre, type Parole, montantLisible,
-  precisions, type Precisions } from './outils.ts'
+  precisions, type Precisions, phraseChangementHeure, type MotsChangementHeure} from './outils.ts'
 import { quandSeance, codeCandidat } from './modeles_fr.ts'
 
 const PAROLE: Parole = {
@@ -33,6 +33,14 @@ const RAISON: Record<string, string> = {
   recrutement: 'Recebe este e-mail porque está em contacto com o nosso recrutamento.',
   direction: 'Recebe este e-mail da direção da Rewayah Academy.',
   nouvelles: 'Recebe este e-mail porque acompanha as novidades da Rewayah Academy.',
+}
+
+export const MOTS_CHANGEMENT_HEURE_PT: MotsChangementHeure = {
+  locale: 'pt-PT',
+  un: (date, jour, avant, apres, foyer) => `A partir de ${date}, ${foyer ? 'a aula da turma' : 'a sua aula'} de ${jour} passa das ${avant} para as ${apres}.`,
+  plusieurs: (date, liste, foyer) => `A partir de ${date}, a hora ${foyer ? 'das aulas da turma' : 'das suas aulas'} muda: ${liste}.`,
+  ligne: (jour, avant, apres) => `${jour}, das ${avant} às ${apres}`,
+  separateur: '; ',
 }
 
 const MODELES: Record<string, Fabrique> = {
@@ -87,9 +95,16 @@ const MODELES: Record<string, Fabrique> = {
   eleve_retire: (d) => avis(d, 'Um aluno deixa a sua turma', 'Um aluno deixa a sua turma',
     'Um aluno deixa a sua turma. A lista atualizada está na aplicação.',
     'Ver as minhas turmas', '/enseignant/classes'),
-  creneau_change: (d) => avis(d, 'O horário da turma muda', 'O horário da turma muda',
-    'O horário da turma muda. O novo horário está na aplicação.',
-    'Ver o novo horário', '/tuteur'),
+  creneau_change: (d) => {
+    const annonce = phraseChangementHeure(d, MOTS_CHANGEMENT_HEURE_PT)
+    if (annonce) {
+      return avis(d, 'A hora da sua aula muda', 'A hora da sua aula muda', `${annonce} A aula mantém-se à mesma hora em Meca: é a hora do seu país que muda.`,
+        'Ver o meu horário', '/tuteur')
+    }
+    return avis(d, 'O horário da turma muda', 'O horário da turma muda',
+      'O horário da turma muda. O novo horário está na aplicação.',
+      'Ver o novo horário', '/tuteur')
+  },
   seance_annulee: (d) => {
     const quand = quandSeance(d, 'pt-PT', 'às')
     return avis(d, 'Uma sessão está anulada', 'Uma sessão está anulada',

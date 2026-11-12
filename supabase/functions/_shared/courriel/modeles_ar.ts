@@ -6,7 +6,7 @@
 
 import { APP } from './gabarit.ts'
 import { avec, avisDans, bonjour, dateLongue, type Fabrique, type LangueEcrite, libre, type Parole, montantLisible,
-  precisions, type Precisions } from './outils.ts'
+  precisions, type Precisions, phraseChangementHeure, type MotsChangementHeure} from './outils.ts'
 import { quandSeance, codeCandidat } from './modeles_fr.ts'
 
 const PAROLE: Parole = {
@@ -44,6 +44,14 @@ const REFUS_ADMISSION: Record<string, string> = {
   refus_niveau: 'لا يمكننا متابعة طلبك: المستوى المطلوب غير متاح بعد.',
   refus_besoins: 'لا يمكننا متابعة طلبك: فصولنا لا تلبي بعد ما تبحث عنه.',
   refus_sans_reponse: 'لا يمكننا متابعة طلبك: لم يصلنا رد على رسالتنا الأخيرة.',
+}
+
+export const MOTS_CHANGEMENT_HEURE_AR: MotsChangementHeure = {
+  locale: 'ar',
+  un: (date, jour, avant, apres, foyer) => `ابتداءً من ${date}، يتغيّر موعد ${foyer ? 'حصة الفصل' : 'حصتكم'} يوم ${jour} من الساعة ${avant} إلى الساعة ${apres}.`,
+  plusieurs: (date, liste, foyer) => `ابتداءً من ${date}، يتغيّر توقيت ${foyer ? 'حصص الفصل' : 'حصصكم'}: ${liste}.`,
+  ligne: (jour, avant, apres) => `يوم ${jour} من ${avant} إلى ${apres}`,
+  separateur: '، ',
 }
 
 const MODELES: Record<string, Fabrique> = {
@@ -157,9 +165,16 @@ const MODELES: Record<string, Fabrique> = {
   eleve_retire: (d) => avis(d, 'يغادر طالب فصلك', 'يغادر طالب فصلك',
     'يغادر طالب فصلك. القائمة المحدّثة في التطبيق.',
     'عرض فصولي', '/enseignant/classes'),
-  creneau_change: (d) => avis(d, 'يتغيّر موعد الفصل', 'يتغيّر موعد الفصل',
-    'يتغيّر موعد الفصل. الموعد الجديد في التطبيق.',
-    'عرض الموعد الجديد', '/tuteur'),
+  creneau_change: (d) => {
+    const annonce = phraseChangementHeure(d, MOTS_CHANGEMENT_HEURE_AR)
+    if (annonce) {
+      return avis(d, 'يتغيّر موعد حصتكم', 'يتغيّر موعد حصتكم', `${annonce} تبقى الحصة في الساعة نفسها بتوقيت مكة المكرمة؛ الذي يتغيّر هو توقيت بلدكم.`,
+        'عرض جدولي', '/tuteur')
+    }
+    return avis(d, 'يتغيّر موعد الفصل', 'يتغيّر موعد الفصل',
+      'يتغيّر موعد الفصل. الموعد الجديد في التطبيق.',
+      'عرض الموعد الجديد', '/tuteur')
+  },
   seance_annulee: (d) => {
     const quand = quandSeance(d, 'ar', 'الساعة')
     return avis(d, 'أُلغيت حصة', 'أُلغيت حصة',

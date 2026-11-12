@@ -3,7 +3,7 @@
 
 import { APP } from './gabarit.ts'
 import { avec, avisDans, bonjour, dateLongue, type Fabrique, type LangueEcrite, libre, type Parole, montantLisible,
-  precisions, type Precisions } from './outils.ts'
+  precisions, type Precisions, phraseChangementHeure, type MotsChangementHeure} from './outils.ts'
 import { quandSeance, codeCandidat } from './modeles_fr.ts'
 
 const PAROLE: Parole = {
@@ -32,6 +32,14 @@ const RAISON: Record<string, string> = {
   recrutement: 'You are receiving this e-mail because you are in contact with our recruitment team.',
   direction: 'You are receiving this e-mail from the management of Rewayah Academy.',
   nouvelles: 'You are receiving this e-mail because you follow the news from Rewayah Academy.',
+}
+
+export const MOTS_CHANGEMENT_HEURE_EN: MotsChangementHeure = {
+  locale: 'en-GB',
+  un: (date, jour, avant, apres, foyer) => `From ${date}, ${foyer ? 'the class session' : 'your class'} on ${jour} moves from ${avant} to ${apres}.`,
+  plusieurs: (date, liste, foyer) => `From ${date}, the time of ${foyer ? 'the class sessions' : 'your classes'} changes: ${liste}.`,
+  ligne: (jour, avant, apres) => `${jour}, from ${avant} to ${apres}`,
+  separateur: '; ',
 }
 
 const MODELES: Record<string, Fabrique> = {
@@ -86,9 +94,16 @@ const MODELES: Record<string, Fabrique> = {
   eleve_retire: (d) => avis(d, 'A student leaves your class', 'A student leaves your class',
     'A student leaves your class. The updated list is in the app.',
     'View my classes', '/enseignant/classes'),
-  creneau_change: (d) => avis(d, 'The class schedule is changing', 'The class schedule is changing',
-    'The class schedule is changing. The new schedule is in the app.',
-    'View the new schedule', '/tuteur'),
+  creneau_change: (d) => {
+    const annonce = phraseChangementHeure(d, MOTS_CHANGEMENT_HEURE_EN)
+    if (annonce) {
+      return avis(d, 'The time of your class changes', 'The time of your class changes', `${annonce} The class stays at the same time in Mecca: it is the time in your country that changes.`,
+        'View my schedule', '/tuteur')
+    }
+    return avis(d, 'The class schedule is changing', 'The class schedule is changing',
+      'The class schedule is changing. The new schedule is in the app.',
+      'View the new schedule', '/tuteur')
+  },
   seance_annulee: (d) => {
     const quand = quandSeance(d, 'en-GB', 'at')
     return avis(d, 'A session is cancelled', 'A session is cancelled',

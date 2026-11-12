@@ -27,6 +27,67 @@ String? quandDepuis(Map<String, dynamic> params) {
   );
 }
 
+/// L'annonce d'un changement d'heure (notification `creneau_change` de motif
+/// `changement_heure`, posee par la tache quotidienne de la base) : « A partir
+/// du dimanche 28 mars 2027, votre cours du mercredi passe de 19:00 a 20:00. »
+/// `null` quand la notification n'est pas une annonce ou ne se lit pas : la
+/// phrase generale s'applique alors.
+String? changementHeureDepuis(Map<String, dynamic> params, String portee) {
+  if (params['motif'] != 'changement_heure') return null;
+  final dynamic brut = params['changements'];
+  final dynamic jourBrut = params['date_changement'];
+  if (brut is! List<dynamic> || brut.isEmpty || jourBrut is! String) {
+    return null;
+  }
+  final DateTime? jour = DateTime.tryParse(jourBrut);
+  if (jour == null) return null;
+  final evenements = t.notifications.evenements;
+  final bool foyer = portee == 'foyer';
+  final List<({String jour, String avant, String apres})> lignes =
+      <({String jour, String avant, String apres})>[];
+  for (final dynamic c in brut) {
+    if (c is! Map<String, dynamic>) return null;
+    final dynamic j = c['jour_avant'];
+    final dynamic avant = c['avant'];
+    final dynamic apres = c['apres'];
+    if (j is! int || j < 1 || j > 7 || avant is! String || apres is! String) {
+      return null;
+    }
+    lignes.add((
+      jour: t.commun.dates.jours[j - 1].toLowerCase(),
+      avant: avant,
+      apres: apres,
+    ));
+  }
+  final String date = dateLongueHistorique(jour);
+  if (lignes.length == 1) {
+    return evenements.changementHeureUn(
+      date: date,
+      cours: foyer
+          ? evenements.changementHeureCoursUnFoyer
+          : evenements.changementHeureCoursUn,
+      jour: lignes.single.jour,
+      avant: lignes.single.avant,
+      apres: lignes.single.apres,
+    );
+  }
+  return evenements.changementHeurePlusieurs(
+    date: date,
+    cours: foyer
+        ? evenements.changementHeureCoursPlusieursFoyer
+        : evenements.changementHeureCoursPlusieurs,
+    liste: lignes
+        .map(
+          (l) => evenements.changementHeureLigne(
+            jour: l.jour,
+            avant: l.avant,
+            apres: l.apres,
+          ),
+        )
+        .join(' ; '),
+  );
+}
+
 /// Résout uniquement des libellés traduits; les paramètres SQL restent cachés.
 NotificationContenu contenuNotificationPour(
   String evenement,
@@ -134,7 +195,11 @@ NotificationContenu contenuNotificationPour(
       classe: evenements.eleveRetireClasse,
       sinon: evenements.eleveRetire,
     ),
-    'creneau_change' => evenements.creneauChange,
+    // HORLOGE-ET-LIEU (12/11/2026, H3) : l'annonce du changement d'heure du
+    // pays de la personne dit l'heure exacte avant et apres ; un autre
+    // changement de creneau garde la phrase generale.
+    'creneau_change' =>
+        changementHeureDepuis(params, portee) ?? evenements.creneauChange,
     'seance_annulee' =>
       quand == null
           ? evenements.seanceAnnulee

@@ -148,6 +148,58 @@ export function quandLocal(d: Donnees, cle: string, locale = 'fr-FR', a = 'à'):
   return `${jour} ${a} ${v.slice(11, 16)}${zone ? ` (${zone})` : ''}`
 }
 
+/// Les mots d'une langue pour l'annonce d'un changement d'heure (HORLOGE-ET-LIEU,
+/// 12/11/2026, H3) : « A partir du dimanche 28 mars, votre cours du mercredi passe de
+/// 19:00 a 20:00. » L'heure de La Mecque ne change pas ; c'est l'heure du pays
+/// de la personne qui change.
+export interface MotsChangementHeure {
+  locale: string
+  un: (date: string, jour: string, avant: string, apres: string, foyer: boolean) => string
+  plusieurs: (date: string, liste: string, foyer: boolean) => string
+  ligne: (jour: string, avant: string, apres: string) => string
+  separateur: string
+}
+
+/// Le nom d'un jour ISO (1 lundi a 7 dimanche) dans la langue `locale`.
+export function nomDuJour(jourIso: number, locale: string): string {
+  // Le 1er janvier 2024 etait un lundi.
+  return new Intl.DateTimeFormat(locale, { weekday: 'long', timeZone: 'UTC' })
+    .format(new Date(Date.UTC(2024, 0, jourIso)))
+}
+
+/// « dimanche 28 mars 2027 » a partir de « 2027-03-28 ».
+function jourDuChangement(v: string, locale: string): string | null {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(v)) return null
+  const t = new Date(`${v}T00:00:00Z`)
+  if (Number.isNaN(t.getTime())) return null
+  return new Intl.DateTimeFormat(locale, {
+    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC',
+  }).format(t)
+}
+
+/// La phrase de l'annonce, ou `null` quand la notification n'en est pas une (ou
+/// ne se lit pas) : le modele garde alors sa phrase generale. Aucun prenom
+/// d'eleve : seules des heures et un jour.
+export function phraseChangementHeure(d: Donnees, m: MotsChangementHeure): string | null {
+  if (d.motif !== 'changement_heure') return null
+  const brut = d.changements
+  if (!Array.isArray(brut) || brut.length === 0 || typeof d.date_changement !== 'string') return null
+  const date = jourDuChangement(d.date_changement, m.locale)
+  if (!date) return null
+  const lignes: { jour: string; avant: string; apres: string }[] = []
+  for (const c of brut) {
+    if (typeof c !== 'object' || c === null) return null
+    const j = (c as Record<string, unknown>).jour_avant
+    const avant = (c as Record<string, unknown>).avant
+    const apres = (c as Record<string, unknown>).apres
+    if (typeof j !== 'number' || j < 1 || j > 7 || typeof avant !== 'string' || typeof apres !== 'string') return null
+    lignes.push({ jour: nomDuJour(j, m.locale), avant, apres })
+  }
+  const foyer = d.portee === 'foyer'
+  if (lignes.length === 1) return m.un(date, lignes[0].jour, lignes[0].avant, lignes[0].apres, foyer)
+  return m.plusieurs(date, lignes.map((l) => m.ligne(l.jour, l.avant, l.apres)).join(m.separateur), foyer)
+}
+
 /// Les precisions d'un avis de classe, en phrases courtes : la classe, les
 /// eleves du foyer, la prochaine seance. Chaine vide quand rien n'est connu.
 export function precisions(

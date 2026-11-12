@@ -25,6 +25,8 @@ import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart' show horsLigneProvider;
 import '../../core/router/routes.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
+import '../../core/tc_horloge/apercu_creneau.dart';
+import '../../core/tc_horloge/mon_horloge.dart' show horlogeAcademie;
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
@@ -1372,15 +1374,13 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
       );
     }
     final String? propre = enseignant?.fuseauIana;
+    // HORLOGE-ET-LIEU (12/11/2026, H1) : sans fuseau connu pour l'enseignant,
+    // les heures se lisent a l'heure de l'academie (La Mecque), jamais a une
+    // heure de Paris inventee.
     return propre == null
         ? (
-            fuseau: fuseauServeurParDefaut,
-            phrase: c1.fuseauDefaut(
-              deVille: deFuseau(
-                fuseauServeurParDefaut,
-                cle: 'admin.groupes.c1.fuseauDefaut',
-              ),
-            ),
+            fuseau: horlogeAcademie?.fuseau ?? fuseauAcademieDefaut,
+            phrase: c1.fuseauAcademie,
           )
         : (
             fuseau: propre,
@@ -1759,6 +1759,15 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
         ),
         Ecart.vSm,
         TexteSansCoupure(fuseau.phrase, style: textes.bodySmall),
+        // H3 : a quelle heure de La Mecque le creneau sera enregistre, et ce que
+        // devient l'heure de l'enseignant au prochain changement d'heure.
+        if (jour != null && heure != null && choisi != null)
+          if (choisi.enseignant.fuseauIana case final String fuseauEnseignant)
+            LigneApercuClasse(
+              fuseauEnseignant: fuseauEnseignant,
+              jour: jour,
+              heure: heure,
+            ),
         Ecart.vXl,
 
         // 4 bis. Les autres creneaux de la semaine (D2, 29/10/2026).

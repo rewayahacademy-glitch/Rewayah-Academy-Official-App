@@ -22,9 +22,13 @@ import 'fuseaux_interlocuteurs.dart';
 /// Le fuseau du profil de la personne connectee, tel que le serveur le rend.
 class MonHorloge {
   /// Cree la lecture.
-  const MonHorloge({required this.maintenantServeur, this.moi});
+  const MonHorloge({
+    required this.maintenantServeur,
+    this.moi,
+    this.academie,
+  });
 
-  /// Lit `{maintenant, moi}`.
+  /// Lit `{maintenant, moi, academie}`.
   factory MonHorloge.lire(Object? brut) {
     if (brut is! Map) throw const FormatException('mon_horloge : objet');
     final Object? m = brut['maintenant'];
@@ -37,6 +41,7 @@ class MonHorloge {
     return MonHorloge(
       maintenantServeur: maintenant,
       moi: FuseauVu.lire(brut['moi']),
+      academie: FuseauVu.lire(brut['academie']),
     );
   }
 
@@ -45,6 +50,12 @@ class MonHorloge {
 
   /// Le fuseau du profil, `null` quand le profil n'en a pas.
   final FuseauVu? moi;
+
+  /// L'horloge de l'academie (La Mecque, `Asia/Riyadh`, +3 h sans changement
+  /// d'heure), montree en second apres l'heure de la personne (HORLOGE-ET-LIEU,
+  /// H1 et H2, 12/11/2026). `null` tant que le serveur ne la rend pas (fonction
+  /// pas encore installee) : l'ecran ne montre alors pas de seconde heure.
+  final FuseauVu? academie;
 }
 
 /// La derniere lecture, pour les formateurs appeles hors d'un widget (une
@@ -100,6 +111,22 @@ DateTime instantChezMoi(
     }
   }
   return DateTime(annee, mois, jour, heure, minute);
+}
+
+/// L'horloge de l'academie (La Mecque) lue par [monHorlogeProvider], ou
+/// `null`. Pour [lignesInterlocuteurs] et les ecrans qui montrent une seconde
+/// heure.
+FuseauVu? get horlogeAcademie => _derniere?.academie;
+
+/// « 21:00 » a l'heure de l'academie (La Mecque) pour [instant], ou `null`
+/// quand l'academie n'est pas lue, ou quand la personne vit deja a l'heure de
+/// l'academie (une seconde ligne qui redirait la meme heure).
+String? heureMecqueSiDifferente(DateTime instant) {
+  final FuseauVu? a = _derniere?.academie;
+  if (a == null) return null;
+  final FuseauVu? moi = _derniere?.moi;
+  if (moi != null && a.memeHeureQue(moi)) return null;
+  return a.heureA(instant.toUtc());
 }
 
 /// Vrai quand [chezMoi] retombe sur l'heure de l'appareil : l'ecran qui en a
