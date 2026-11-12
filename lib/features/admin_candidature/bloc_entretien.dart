@@ -150,7 +150,7 @@ class SectionEntretien extends ConsumerWidget {
               dernier == null
                   ? e.aucun
                   : e.dernier(
-                      date: _dateChezMoi(dernier.debut),
+                      date: dateCourteCandidature(jourChezMoi(dernier.debut)),
                       issue: libelleIssueEntretien(dernier.issue!),
                     ),
             ),
@@ -472,7 +472,7 @@ class _EntretienOuvert extends ConsumerWidget {
         TexteSansCoupure(
           LibellesGroupe.insecable(
             (estHeureDeLAppareil(entretien.debut) ? e.quand : e.quandProfil)(
-              date: _dateChezMoi(entretien.debut),
+              date: dateCourteCandidature(jourChezMoi(entretien.debut)),
               heure: heureDeLAppareil(local),
               duree: '${entretien.dureeMinutes}',
             ),
@@ -580,17 +580,6 @@ String messageRefusEntretien(Object refus, {bool retrait = false}) {
   };
 }
 
-/// HEURES-PROFIL H4 : la date courte d'un instant, au jour du PROFIL.
-///
-/// [chezMoi] rend l'heure murale dans un DateTime marque UTC (muraleA) ;
-/// [dateCourteCandidature] appelle `toLocal()`, qui la decalerait une seconde
-/// fois du fuseau de l'appareil. On ne lui passe donc que le jour, dans un
-/// DateTime local, ou `toLocal()` ne change rien.
-String _dateChezMoi(DateTime instant) {
-  final DateTime m = chezMoi(instant);
-  return dateCourteCandidature(DateTime(m.year, m.month, m.day));
-}
-
 /// V1-c : « {nom} a deja une seance ou un entretien le {date}, de {debut} a
 /// {fin} », a l'heure du profil (HEURES-PROFIL H4), l'appareil en repli. Sans heure rendue,
 /// la phrase ne dit que le nom ; sans nom, « une personne choisie ».
@@ -603,7 +592,7 @@ String _messageOccupee(String nom, DateTime? debut, DateTime? fin) {
   return LibellesGroupe.insecable(
     (estHeureDeLAppareil(debut) ? r.personneOccupee : r.personneOccupeeProfil)(
       nom: qui,
-      date: _dateChezMoi(debut),
+      date: dateCourteCandidature(jourChezMoi(debut)),
       debut: heureChezMoi(debut),
       fin: heureChezMoi(fin),
     ),
@@ -832,7 +821,9 @@ class _EtatPlanifier extends ConsumerState<FeuillePlanifierEntretien>
       return;
     }
     final DateTime j = _jour!;
-    final DateTime debut = DateTime(
+    // HEURES-PROFIL H3 (12/11/2026) : le jour et l'heure choisis sont ceux du
+    // fuseau du PROFIL ; l'instant envoye en est l'inverse exact.
+    final DateTime debut = instantChezMoi(
       j.year,
       j.month,
       j.day,
@@ -856,7 +847,8 @@ class _EtatPlanifier extends ConsumerState<FeuillePlanifierEntretien>
   Widget build(BuildContext context) {
     final e = t.admin.candidatures.entretien;
     final f = e.feuille;
-    final DateTime maintenant = ref.read(horlogeFormulairesProvider)();
+    // Aujourd'hui au fuseau du profil (HEURES-PROFIL H3).
+    final DateTime maintenant = chezMoi(ref.read(horlogeFormulairesProvider)());
     final DateTime aujourdhui = DateTime(
       maintenant.year,
       maintenant.month,
@@ -917,8 +909,6 @@ class _EtatPlanifier extends ConsumerState<FeuillePlanifierEntretien>
           ),
         ),
         if (tente && _heure == null) _erreurChamp(context, f.heureManquante),
-        Ecart.vSm,
-        _Muet(f.heureAide),
         Ecart.vMd,
         Align(
           alignment: AlignmentDirectional.centerStart,

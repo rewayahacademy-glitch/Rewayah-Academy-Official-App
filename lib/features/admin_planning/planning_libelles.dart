@@ -78,15 +78,23 @@ String libelleStatutPlanning(StatutSeance statut) => switch (statut) {
   StatutSeance.annulee || StatutSeance.annuleeTard => t.etat.seanceAnnulee,
 };
 
-/// Les seances de la semaine regroupees par jour (minuit local), dans
+/// Les seances de la semaine regroupees par jour du profil, dans
 /// l'ordre des jours puis des heures.
+///
+/// **La semaine reste celle de l'appareil jusqu'a H5** (H5-SEMAINE-PROFIL,
+/// registre, garde-cap 12/11/2026) : la lecture serveur se fait encore au
+/// lundi de l'appareil (lundiDe, PortPlanningDirection.semaine). Seul le
+/// regroupement par jour est au fuseau du profil.
 Map<DateTime, List<SeancePlanning>> parJour(List<SeancePlanning> seances) {
   final List<SeancePlanning> triees = <SeancePlanning>[...seances]
     ..sort((SeancePlanning a, SeancePlanning b) => a.debut.compareTo(b.debut));
   final Map<DateTime, List<SeancePlanning>> jours =
       <DateTime, List<SeancePlanning>>{};
   for (final SeancePlanning s in triees) {
-    final DateTime jour = DateTime(s.debut.year, s.debut.month, s.debut.day);
+    // HEURES-PROFIL H3 (12/11/2026) : le jour du fuseau du PROFIL, pas celui
+    // de l'appareil (une seance a 23:30 UTC est deja le lendemain a +05:30).
+    final DateTime l = chezMoi(s.debut);
+    final DateTime jour = DateTime(l.year, l.month, l.day);
     (jours[jour] ??= <SeancePlanning>[]).add(s);
   }
   return jours;
