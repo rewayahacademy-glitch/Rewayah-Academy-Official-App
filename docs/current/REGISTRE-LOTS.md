@@ -170,6 +170,7 @@ par `git ls-remote` le 11/11. « non poussée » : aucune branche distante au mo
 | en cours | SEC-GARDE-5 (les manques de TRI-CODEX A) | B | en production le 11/11 (`f30527be4`) | migrations réservées 20261123400000–499999 ; branche non écrite |
 | après SEC-GARDE-5 | Écran « Compte suspendu » | B | en production le 11/11 (`f30527be4`) | pilote, 11/11 ; branche non écrite |
 | créneau de 00:40 | NON-BRANCHÉ-ÉCHUS (suppression de `port_capacite_payout.dart`) | E | en production le 11/11 (`f30527be4`) | `claude/non-branche-echus-travail` (`86840822c`), poussée le 11/11 ; suite complète : 21 741 verts, 0 rouge, en deux passes |
+| 12/11, nuit | SOMMAIRE-SOURATES (la table des 114 sourates : numéro, nom arabe, nom translittéré, page ; lecteur de l'élève et salle) | Fable | À LIVRER : présent dans le code, testé localement ; ni sur staging ni en production | `claude/zealous-tesla-ewstzw` ; demande du directeur du 11/11 à 23:25 UTC, relayée par le garde-cap ; `docs/current/salle/JOURNAL-DECISIONS.md` D-034 |
 
 **Remplacé** : `claude/profils-p1-travail-a` (`5fe00c834`), le P1 fait en parallèle par A, est
 REMPLACÉ par le P1 de E (`claude/profils-p1-travail`, `ec427b9f3`). Décision du pilote, 11/11

@@ -1668,3 +1668,52 @@ clause de la tâche planifiée, `20261123700200`) ; les écritures du journal de
 vérification pendant une récitation ; une course possible sur les métadonnées de la salle ; les
 jetons émis avant le déploiement ; la question « un compte de la direction visible conduit-il la
 classe ? ».
+
+## D-034 (12/11/2026, nuit). La table des sourates, une seule, dans le lecteur de l'élève et dans la salle (lot SOMMAIRE-SOURATES)
+
+**La demande.** Directeur, 11/11/2026 à 23:25 UTC, relayée par le garde-cap : dans le Coran de
+l'élève, on ne retrouve une sourate que par le numéro de page ; « la table des sourates manque,
+alors qu'elle est standard depuis 14 siècles » ; la table de 1 Al-Fatiha à 114 An-Nas, de haut en
+bas, le nom arabe visible, la translittération en plus, le numéro d'ordre ; « ne bricolez pas le
+Coran, prenez le standard ».
+
+**Ce qui existait (lu avant d'écrire).** La salle avait déjà une liste des sourates
+(`panneau_enseignant.dart`, « Choisir une sourate ») : nom translittéré, numéro, nombre de versets ;
+ni nom arabe, ni page. Le lecteur de l'élève n'avait que la feuille « Aller à » et son champ de
+recherche : rien à parcourir.
+
+**Ce qui est fait.**
+- Un seul composant, `SommaireSourates` (`lib/core/coran/sommaire_sourates.dart`) : 114 lignes dans
+  l'ordre du mushaf ; sur chaque ligne le numéro, le nom arabe (police arabe des documents, de
+  droite à gauche), le nom translittéré, la page de départ. La ligne entière se touche.
+- Lecteur de l'élève (et Mushaf, qui emploie la même feuille) : la table est dans la feuille
+  « Aller à », sous le champ, dès l'ouverture. Deux gestes : le bouton du lecteur, puis la sourate.
+  Dès qu'on tape dans le champ, la table laisse la place aux résultats. Le clavier ne s'ouvre plus
+  d'office : il cachait la table au téléphone.
+- Salle : « Choisir une sourate » emploie la même table (l'ancienne liste est retirée). Le geste ne
+  change pas : toucher une sourate présente son début à la classe.
+- Défilement : la table ne défile pas elle-même ; c'est la feuille qui défile, et elle prend tout
+  l'écran quand le contenu ne tient pas (règle DEFIL-FEUILLE de `AppBottomSheet`). Une seule barre
+  de défilement.
+
+**D'où viennent les données (aucune n'est tapée de mémoire).**
+- Les noms (arabe et translittéré) sont lus du corpus en base, comme avant (`souratesProvider`,
+  table `sourate`, source Tanzil).
+- La page de départ de chaque sourate est une constante de 114 nombres
+  (`lib/core/coran/pages_depart_sourates.dart`), tirée par un script du corpus du dépôt
+  (`supabase/migrations/0013_corpus_coranique.sql`, le fichier que la base a reçu). Un test relit ce
+  corpus et refuse tout écart. Pourquoi une constante : la pagination du Mushaf de Médine ne change
+  pas ; la lire demanderait 114 requêtes ou une lecture nouvelle côté serveur, pour une table que le
+  lecteur attend tout de suite.
+
+**Ce qui n'est pas fait, dit franchement.**
+- Le corpus n'a **pas de nom français** des sourates (« L'Ouverture », « La Vache ») : il a une
+  translittération de style anglais (« Al-Faatiha », « Yaseen »). Elle est affichée telle quelle.
+  Écrire 114 noms français serait un contenu nouveau : à décider et à valider par le directeur.
+- Je n'ai pas comparé moi-même le corpus du dépôt à la base de production (ma demande de lecture est
+  restée sans réponse) ; le garde-cap a lu en production 114 sourates, 6 236 versets, 604 pages.
+- Dans la salle, seul l'enseignant choisit la sourate (il présente à la classe) ; l'élève suit la
+  page présentée et n'a pas de table dans la salle.
+- Prouvé par tests et par captures de test (390 et 1440, clair et sombre,
+  `docs/current/captures/E2E/sommaire-sourates/`) ; pas sur la pile locale, pas sur un vrai
+  téléphone, pas en production.

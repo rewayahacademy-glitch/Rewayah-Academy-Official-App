@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/coran/service_coran.dart';
+import '../../core/coran/sommaire_sourates.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/tc_coran/navigation_coran.dart';
@@ -12,8 +14,10 @@ import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/empty_state.dart';
+import '../../core/widgets/section_header.dart';
 
-/// La feuille « Aller a » : page, sourate, juz, reference.
+/// La feuille « Aller a » : la table des sourates, et la recherche par page,
+/// sourate, juz ou reference.
 ///
 /// **Une seule entree pour les quatre navigations**, parce qu'un lecteur qui
 /// cherche « Al-Kahf », « 18 », « juz 15 » ou « 2:255 » fait le meme geste. Le
@@ -96,7 +100,9 @@ class _FeuilleNavigationCoranEtat
       children: <Widget>[
         TextField(
           controller: _saisie,
-          autofocus: true,
+          // SOMMAIRE-SOURATES : plus de clavier ouvert d'office, il cachait
+          // la table des sourates au telephone. On touche le champ pour
+          // chercher, ou une sourate pour y aller.
           textInputAction: TextInputAction.search,
           decoration: InputDecoration(
             labelText: t.tc.coran.navigation.champ,
@@ -141,6 +147,26 @@ class _FeuilleNavigationCoranEtat
               widget.onAPropos!();
             },
           ),
+        // SOMMAIRE-SOURATES (directeur, 11/11/2026) : tant que rien n'est
+        // cherche, la table des 114 sourates est la, de 1 a 114. Deux gestes
+        // depuis le lecteur : ouvrir « Aller a », toucher la sourate. La
+        // feuille entiere defile (DEFIL-FEUILLE), la table n'a pas de cadre.
+        if (!_aCherche) ...<Widget>[
+          const SizedBox(height: AppSpacing.lg),
+          SectionHeader(titre: t.tc.coran.sommaire.titre),
+          const SizedBox(height: AppSpacing.sm),
+          SommaireSourates(
+            libelleSemantique: (Sourate sourate, int page) => t
+                .tc
+                .coran
+                .sommaire
+                .allerA(sourate: sourate.nomTranslittere, page: page),
+            onChoisir: (Sourate _, int page) {
+              widget.onAller(page);
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
       ],
     );
   }

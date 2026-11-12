@@ -3268,6 +3268,14 @@
         "aucunResultatDetail": "جرّب رقم صفحة، أو اسم سورة، أو مرجعًا مثل 2:255.",
         "pageNumero": "الصفحة ⁨{page}⁩"
       },
+      "sommaire": {
+        "titre": "السور",
+        "allerA": "الانتقال إلى سورة ⁨{sourate}⁩، الصفحة ⁨{page}⁩",
+        "indisponible": "تعذّرت قراءة قائمة السور",
+        "indisponibleDetail": "ربما انقطع الاتصال.",
+        "absent": "نص القرآن غير مثبَّت",
+        "absentDetail": "لا شيء للعرض."
+      },
       "reprise": {
         "groupe": "استئناف الدرس",
         "groupeDetail": "كان الفصل في الصفحة ⁨{page}⁩"

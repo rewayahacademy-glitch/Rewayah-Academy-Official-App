@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/coran/service_coran.dart';
+import '../../core/coran/sommaire_sourates.dart';
 import '../../core/coran/vue_lecteur.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
@@ -18,7 +19,6 @@ import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/barre_precedent_suivant.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/local_feedback.dart';
-import '../../core/widgets/pressable.dart';
 import '../../core/widgets/skeleton.dart';
 import 'page_coran_salle.dart';
 import 'presentation_coran.dart';
@@ -497,102 +497,26 @@ class _Commandes extends StatelessWidget {
   }
 }
 
-/// La bibliotheque : les sourates, pour presenter un debut de sourate.
+/// La bibliotheque : la table des sourates, pour presenter un debut de sourate.
 ///
 /// Elle rend une reference, pas une page : c'est le presentateur qui situe
 /// « 2:1 » dans le mushaf, et lui seul, parce qu'une page ne se devine pas d'un
 /// numero de sourate.
-class _Bibliotheque extends ConsumerWidget {
+///
+/// SOMMAIRE-SOURATES (directeur, 11/11/2026) : la table est celle du core
+/// (`SommaireSourates`), la meme que dans le lecteur de l'eleve : numero, nom
+/// arabe, nom translittere, page de depart.
+class _Bibliotheque extends StatelessWidget {
   const _Bibliotheque();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final AsyncValue<List<Sourate>?> sourates = ref.watch(souratesProvider);
-    final List<Sourate>? liste = sourates.value;
-
-    if (liste == null) {
-      return sourates.isLoading
-          ? const Skeleton.liste(lignes: 6)
-          : EmptyState(
-              message: t.enseignant.salle.souratesIndisponibles,
-              invitation: t.enseignant.salle.souratesIndisponiblesDetail,
-              icone: AppIcons.horsLigne,
-              libelleAction: t.commun.reessayer,
-              onAction: () => ref.invalidate(souratesProvider),
-            );
-    }
-    if (liste.isEmpty) {
-      return EmptyState(
-        message: t.enseignant.salle.corpusAbsent,
-        invitation: t.enseignant.salle.corpusAbsentDetail,
-        icone: AppIcons.rienAAfficher,
-        registre: RegistreVide.subi,
-      );
-    }
-
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        for (final Sourate sourate in liste) _LigneSourate(sourate: sourate),
-      ],
-    );
-  }
-}
-
-/// Une sourate de la bibliotheque.
-class _LigneSourate extends StatelessWidget {
-  const _LigneSourate({required this.sourate});
-
-  final Sourate sourate;
-
-  @override
-  Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
-    final TextTheme textes = Theme.of(context).textTheme;
-
-    return Pressable(
-      // Le libelle parle dit l'ACTE, parce qu'un element se lit par ce qu'il
-      // declenche : ici, presenter le debut de cette sourate a tout le groupe.
-      libelleSemantique: t.enseignant.salle.presenterSourate(
-        deSourate: deDevant(sourate.nomTranslittere),
-      ),
-      onPress: () =>
-          Navigator.of(context).pop((sourate: sourate.numero, verset: 1)),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
-        child: Row(
-          children: <Widget>[
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  Text(
-                    sourate.nomTranslittere,
-                    style: palette.surfaceRaised.applyTo(
-                      textes.labelLarge ?? const TextStyle(),
-                    ),
-                  ),
-                  Text(
-                    t.enseignant.salle.sourateDetail(
-                      numero: '${sourate.numero}',
-                      versets: '${sourate.nombreVersets}',
-                    ),
-                    style: palette.inkMuted.applyTo(
-                      AppTypography.tabulaire(
-                        textes.bodySmall ?? const TextStyle(),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Ecart.hSm,
-            Icon(AppIcons.chevron.repos, size: AppSpacing.lg),
-          ],
-        ),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => SommaireSourates(
+    invitationIndisponible: t.enseignant.salle.souratesIndisponiblesDetail,
+    // Le libelle parle dit l'ACTE, parce qu'un element se lit par ce qu'il
+    // declenche : ici, presenter le debut de cette sourate a tout le groupe.
+    libelleSemantique: (Sourate sourate, int _) => t.enseignant.salle
+        .presenterSourate(deSourate: deDevant(sourate.nomTranslittere)),
+    onChoisir: (Sourate sourate, int _) =>
+        Navigator.of(context).pop((sourate: sourate.numero, verset: 1)),
+  );
 }
