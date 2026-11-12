@@ -7,6 +7,7 @@ import '../../core/admin/port_classes_admin.dart';
 import '../../core/admin/port_pilotage.dart';
 import '../../core/admin/service_groupes.dart' show TypePublicGroupe;
 import '../../core/capacites/port_enseignants_classe.dart' show GenreClasse;
+import '../../core/i18n/isolat_bidi.dart' show enTeteArabe;
 import '../../core/i18n/strings.g.dart';
 import '../../core/i18n/villes_fuseau.dart';
 import '../../core/offres/offre_horaire.dart' show PublicOffre;
@@ -19,10 +20,12 @@ import '../creneaux/plages.dart' show jourCapitalise;
 
 /// « Lundi · 18 h · Paris » : l'horaire d'une ligne, sans ambiguite sur le
 /// fuseau.
-String libelleHoraire(Creneau c) => t.admin.pilotage.horaire(
-  jour: jourCapitalise(c.jour),
-  heure: libelleHeureMinute(c.heure, 0),
-  ville: villeDuFuseauLibelle(c.fuseau),
+String libelleHoraire(Creneau c) => enTeteArabe(
+  t.admin.pilotage.horaire(
+    jour: jourCapitalise(c.jour),
+    heure: libelleHeureMinute(c.heure, 0),
+    ville: villeDuFuseauLibelle(c.fuseau),
+  ),
 );
 
 /// « Enfants », « Adultes ».

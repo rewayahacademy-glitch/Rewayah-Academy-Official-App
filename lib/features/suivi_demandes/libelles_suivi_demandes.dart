@@ -7,6 +7,7 @@
 library;
 
 import '../../core/i18n/elision.dart';
+import '../../core/i18n/isolat_bidi.dart' show enTeteArabe;
 import '../../core/i18n/strings.g.dart';
 import '../../core/i18n/villes_fuseau.dart';
 import '../../core/offres/port_suivi_demandes.dart';
@@ -82,9 +83,13 @@ String joursEtHeuresDemande(CreneauDemande c) {
   final List<String> noms = t.commun.dates.jours;
   return <String>[
     for (final (int i, OccurrenceCreneau o) in c.occurrences.indexed)
-      t.suiviDemandes.jourHeure(
-        jour: i == 0 ? noms[o.jourIso - 1] : noms[o.jourIso - 1].toLowerCase(),
-        heure: hhmmDemande(o.heure, o.minute),
+      enTeteArabe(
+        t.suiviDemandes.jourHeure(
+          jour: i == 0
+              ? noms[o.jourIso - 1]
+              : noms[o.jourIso - 1].toLowerCase(),
+          heure: hhmmDemande(o.heure, o.minute),
+        ),
       ),
   ].join(', ');
 }
@@ -106,10 +111,12 @@ String? debutCoursDemande(SuiviDemande d) {
     return null;
   }
   return t.suiviDemandes.debutValeur(
-    date: t.commun.dates.jourDate(
-      jour: t.commun.dates.jours[debut.weekday - 1],
-      numero: debut.day,
-      mois: t.commun.dates.mois[debut.month - 1],
+    date: enTeteArabe(
+      t.commun.dates.jourDate(
+        jour: t.commun.dates.jours[debut.weekday - 1],
+        numero: debut.day,
+        mois: t.commun.dates.mois[debut.month - 1],
+      ),
     ),
     heure: hhmmDemande(debut.hour, debut.minute),
     deVille: deFuseau(d.fuseauIana, cle: 'suiviDemandes.debutValeur'),
@@ -248,10 +255,12 @@ String titreNotificationChangement(SuiviDemande d) {
 }
 
 /// « Lundi 19 octobre » : le jour d'une heure murale du foyer, lu tel quel.
-String jourDateDemande(DateTime quand) => t.commun.dates.jourDate(
-  jour: t.commun.dates.jours[quand.weekday - 1],
-  numero: quand.day,
-  mois: t.commun.dates.mois[quand.month - 1],
+String jourDateDemande(DateTime quand) => enTeteArabe(
+  t.commun.dates.jourDate(
+    jour: t.commun.dates.jours[quand.weekday - 1],
+    numero: quand.day,
+    mois: t.commun.dates.mois[quand.month - 1],
+  ),
 );
 
 /// « 2 jours plus tard », « 3 heures plus tard », « 12 minutes plus tard »,

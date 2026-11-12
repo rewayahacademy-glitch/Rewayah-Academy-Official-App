@@ -352,9 +352,7 @@ admin.regroupements.erreur
 admin.regroupements.famillesClasseValidee
 admin.regroupements.famillesPrevenues
 admin.regroupements.fuseauValeur
-admin.regroupements.heure
 admin.regroupements.heureFuseau
-admin.regroupements.heureMinutes
 admin.regroupements.incomplete
 admin.regroupements.indisponiblePhrase
 admin.regroupements.indisponibleTitre
