@@ -338,10 +338,9 @@ abstract final class DepuisSalle {
       ? LibellesGroupe.joindre(heure(moment), t.tuteur.accueil.heureAppareil)
       : heure(moment);
 
-  /// Une phrase qui dit l'heure de [moment], suivie de « A l'heure de cet
-  /// appareil. » en repli seulement.
-  static String phraseDite(String phrase, DateTime moment) =>
-      estHeureDeLAppareil(moment)
-      ? '$phrase ${t.snt.planning.heureAppareil}'
-      : phrase;
+  /// « Heure de cet appareil » quand l'heure de [moment] n'est pas celle du
+  /// profil (repli), sinon `null`. Une seule cle pour toute la salle ; elle
+  /// se pose sur sa propre petite ligne, sous la phrase qui dit l'heure.
+  static String? mentionAppareil(DateTime moment) =>
+      estHeureDeLAppareil(moment) ? t.tuteur.accueil.heureAppareil : null;
 }

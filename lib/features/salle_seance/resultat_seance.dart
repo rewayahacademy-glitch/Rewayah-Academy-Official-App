@@ -104,14 +104,17 @@ class ResultatSeance extends StatelessWidget {
             IssueSeance.terminee =>
               finA == null
                   ? t.salle.fin.phrase
-                  : DepuisSalle.phraseDite(
-                      t.salle.fin.phraseHeure(heure: DepuisSalle.heure(finA!)),
-                      finA!,
-                    ),
+                  : t.salle.fin.phraseHeure(heure: DepuisSalle.heure(finA!)),
             IssueSeance.quittee => t.salle.fin.quittePhrase,
             // S l.673 : un titre seul, aucune phrase.
             IssueSeance.accesRetire => null,
           };
+    // HEURE-PROFIL : sans fuseau de profil lu, l'heure dite est celle de
+    // l'appareil ; une petite ligne le dit, sous la phrase.
+    final String? mention =
+        !guidee && issue == IssueSeance.terminee && finA != null
+        ? DepuisSalle.mentionAppareil(finA!)
+        : null;
     return Material(
       key: const ValueKey<String>('resultat-seance'),
       color: palette.surfaceCanvas.background,
@@ -140,6 +143,7 @@ class ResultatSeance extends StatelessWidget {
                         ton: fin ? TonEtat.succes : TonEtat.neutre,
                         titre: titre,
                         phrase: phrase,
+                        mention: mention,
                         libelleAction: revenir
                             ? t.salle.retourner
                             : guidee

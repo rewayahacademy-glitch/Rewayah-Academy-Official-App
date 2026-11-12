@@ -5080,6 +5080,17 @@ class _Impasse extends StatelessWidget {
   /// FN-025 : le motif servi par le serveur a qui avait droit a la salle.
   final DetailRefusSalle? detail;
 
+  /// HEURE-PROFIL : « Heure de cet appareil », sur une petite ligne sous un
+  /// refus qui dit une heure, quand cette heure n'est pas celle du profil.
+  static String? _mentionAcces(DetailRefusSalle? detail) =>
+      switch (detail?.motif) {
+        MotifServeurSalle.terminee when detail?.finUtc != null =>
+          DepuisSalle.mentionAppareil(detail!.finUtc!),
+        MotifServeurSalle.pasEncoreOuverte when detail?.ouvertureUtc != null =>
+          DepuisSalle.mentionAppareil(detail!.ouvertureUtc!),
+        _ => null,
+      };
+
   /// FN-025 : le refus dit sa raison et l'heure du serveur, quand le serveur
   /// les donne ; sinon le refus generique.
   static (String, String) _ditAcces(DetailRefusSalle? detail) {
@@ -5088,17 +5099,11 @@ class _Impasse extends StatelessWidget {
     return switch (detail?.motif) {
       MotifServeurSalle.terminee when fin != null => (
         t.salle.fin.titre,
-        DepuisSalle.phraseDite(
-          t.salle.refusTerminee(heure: DepuisSalle.heure(fin)),
-          fin,
-        ),
+        t.salle.refusTerminee(heure: DepuisSalle.heure(fin)),
       ),
       MotifServeurSalle.pasEncoreOuverte when ouverture != null => (
         t.salle.refusAcces,
-        DepuisSalle.phraseDite(
-          t.salle.refusPasEncoreOuverte(heure: DepuisSalle.heure(ouverture)),
-          ouverture,
-        ),
+        t.salle.refusPasEncoreOuverte(heure: DepuisSalle.heure(ouverture)),
       ),
       MotifServeurSalle.annulee => (t.salle.refusAcces, t.salle.refusAnnulee),
       MotifServeurSalle.accesPerdu => (
@@ -5203,6 +5208,15 @@ class _Impasse extends StatelessWidget {
               textAlign: TextAlign.center,
               style: _encreSalle(context, textes.bodyMedium),
             ),
+            if (cause == CauseImpasse.acces)
+              if (_mentionAcces(detail) case final String mention) ...<Widget>[
+                Ecart.vXs,
+                Text(
+                  mention,
+                  textAlign: TextAlign.center,
+                  style: _encreSalle(context, textes.bodySmall),
+                ),
+              ],
             Ecart.vXxl,
             // Une seule action principale : reessayer quand cela a un sens,
             // rentrer sinon. Un refus d'acces ne se reessaye pas, l'heure

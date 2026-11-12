@@ -56,18 +56,12 @@ void main() {
       DepuisSalle.heureDite(_fin),
       contains(t.tuteur.accueil.heureAppareil),
     );
-    expect(
-      DepuisSalle.phraseDite('La salle ouvrira.', _fin),
-      'La salle ouvrira. ${t.snt.planning.heureAppareil}',
-    );
+    expect(DepuisSalle.mentionAppareil(_fin), t.tuteur.accueil.heureAppareil);
   });
 
   test('avec le fuseau du profil : aucune mention', () {
     poserMonHorlogePourTest(_riyad);
-    expect(
-      DepuisSalle.phraseDite('La salle ouvrira.', _fin),
-      'La salle ouvrira.',
-    );
+    expect(DepuisSalle.mentionAppareil(_fin), isNull);
   });
 
   testWidgets('l ecran de fin de l eleve dit l heure du profil, formee au '
@@ -77,15 +71,22 @@ void main() {
     );
     await tester.pumpWidget(ecran());
     expect(
-      find.textContaining(t.snt.planning.heureAppareil),
+      find.text(t.tuteur.accueil.heureAppareil),
       findsOneWidget,
-      reason: 'sans fuseau : la mention',
+      reason: 'sans fuseau : la mention, sur sa propre ligne',
+    );
+    expect(
+      find.text(
+        t.salle.fin.phraseHeure(heure: heureDeLAppareil(_fin.toLocal())),
+      ),
+      findsOneWidget,
+      reason: 'la phrase reste entiere, sans mention collee',
     );
     poserMonHorlogePourTest(_riyad);
     await tester.pumpWidget(hote(const SizedBox.shrink()));
     await tester.pumpWidget(ecran());
     expect(find.text(t.salle.fin.phraseHeure(heure: '17:30')), findsOneWidget);
-    expect(find.textContaining(t.snt.planning.heureAppareil), findsNothing);
+    expect(find.text(t.tuteur.accueil.heureAppareil), findsNothing);
   });
 
   test('garde de source : dans les trois dossiers de la salle, aucune heure '

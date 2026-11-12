@@ -824,11 +824,11 @@ void main() {
       // de l'appareil, et la phrase le dit.
       expect(
         find.text(
-          '${t.salle.fin.phraseHeure(heure: heureDeLAppareil(fin.toLocal()))} '
-          '${t.snt.planning.heureAppareil}',
+          t.salle.fin.phraseHeure(heure: heureDeLAppareil(fin.toLocal())),
         ),
         findsOneWidget,
       );
+      expect(find.text(t.tuteur.accueil.heureAppareil), findsOneWidget);
       expect(find.text(t.salle.perdue), findsNothing);
     });
 
@@ -881,7 +881,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byType(ResultatSeance), findsOneWidget);
       // Avant la lecture : l'heure de l'appareil, dite comme telle.
-      expect(find.textContaining(t.snt.planning.heureAppareil), findsOneWidget);
+      expect(find.text(t.tuteur.accueil.heureAppareil), findsOneWidget);
       // Le profil est en Arabie saoudite (UTC+3) ; l'appareil ailleurs.
       arrivee.complete(
         MonHorloge.lire(<String, Object?>{
@@ -904,7 +904,7 @@ void main() {
         findsOneWidget,
         reason: 'l heure de fin passe a celle du profil, sans mention',
       );
-      expect(find.textContaining(t.snt.planning.heureAppareil), findsNothing);
+      expect(find.text(t.tuteur.accueil.heureAppareil), findsNothing);
     });
 
     testWidgets('FN-024 : connexion perdue avant la fin prevue : rien '
@@ -1766,10 +1766,7 @@ void main() {
               graceMinutes: 15,
             ),
             t.salle.fin.titre,
-            DepuisSalle.phraseDite(
-              t.salle.refusTerminee(heure: DepuisSalle.heure(finServeur)),
-              finServeur,
-            ),
+            t.salle.refusTerminee(heure: DepuisSalle.heure(finServeur)),
           ),
           (
             DetailRefusSalle(
@@ -1777,11 +1774,8 @@ void main() {
               ouvertureUtc: ouvertureServeur,
             ),
             t.salle.refusAcces,
-            DepuisSalle.phraseDite(
-              t.salle.refusPasEncoreOuverte(
-                heure: DepuisSalle.heure(ouvertureServeur),
-              ),
-              ouvertureServeur,
+            t.salle.refusPasEncoreOuverte(
+              heure: DepuisSalle.heure(ouvertureServeur),
             ),
           ),
           (
