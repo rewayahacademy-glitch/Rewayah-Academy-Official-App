@@ -3180,7 +3180,15 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           // L'eleve lit SON etat, et lui seul : la section 6.6 le dit deux fois,
           // et la vue en base le lui impose de toute facon. L'observateur, lui,
           // n'a aucun etat pedagogique a lire -- il assiste.
-          mienne: vue.role == RoleSalle.eleve ? mienne : null,
+          // ENTREE-ROBUSTE (relecture du 12/11) : quand ce compte est deja
+          // dans la salle sur un autre appareil, « Votre presence : a quitte
+          // le cours » contredirait le message de l'impasse (la personne EST
+          // dans la salle, ailleurs) : l'etat n'est pas affiche.
+          mienne:
+              vue.role == RoleSalle.eleve &&
+                  _impasse != CauseImpasse.ouverteAilleurs
+              ? mienne
+              : null,
           // Le bouton n'existe que pour qui a droit a la liste ET n'a pas la
           // place de la garder ouverte. Ailleurs il ferait doublon avec la
           // colonne, et un doublon finit par diverger.

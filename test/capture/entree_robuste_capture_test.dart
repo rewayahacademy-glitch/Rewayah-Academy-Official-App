@@ -167,6 +167,9 @@ void main() {
         await stabiliser(tester);
         expect(find.text(t.salle.ouverteAilleurs), findsOneWidget);
         expect(find.text(t.commun.reessayer), findsOneWidget);
+        // « Votre presence : a quitte le cours » ne contredit plus le
+        // message : l'etat de presence n'est pas affiche dans cette impasse.
+        expect(find.text(t.presence.mienne), findsNothing);
         expect(moteur.essaisFaits, 1);
         debugPrint('PNG ${await capturer(tester, nom)}');
       });
