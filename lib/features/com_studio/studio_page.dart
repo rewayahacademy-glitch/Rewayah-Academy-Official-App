@@ -65,6 +65,7 @@ import '../../core/communications/port_elements_enregistres.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/router/etat_routeur_sur.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_spacing.dart';
@@ -150,7 +151,7 @@ class StudioPage extends StatelessWidget {
     final String? canal = canalId;
     final VueStudio vue = canal != null
         ? VueStudio.canaux
-        : vueStudioDepuis(GoRouterState.of(context).uri.queryParameters['vue']);
+        : vueStudioDepuis(parametreRouteurSur(context, 'vue'));
     return CoquilleStudio(
       vue: vue,
       onAllerVue: (VueStudio v) => routeur.go(adresseVueStudio(v)),

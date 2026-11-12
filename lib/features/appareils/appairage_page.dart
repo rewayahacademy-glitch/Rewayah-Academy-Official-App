@@ -13,6 +13,7 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/chemin_retour.dart';
+import '../../core/router/etat_routeur_sur.dart';
 import '../../core/router/routes.dart';
 import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_gabarit.dart';
@@ -448,7 +449,7 @@ class _AppairagePageState extends ConsumerState<AppairagePage>
   String _cheminRetour() {
     String? demande;
     try {
-      demande = GoRouterState.of(context).uri.queryParameters['retour'];
+      demande = parametreRouteurSur(context, 'retour');
     } on GoError {
       demande = null;
     }

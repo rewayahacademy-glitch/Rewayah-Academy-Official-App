@@ -39,6 +39,7 @@ import '../../../core/communications/port_brouillons.dart';
 import '../../../core/communications/port_elements_enregistres.dart';
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/reseau/service_reseau.dart';
+import '../../../core/router/etat_routeur_sur.dart';
 import '../../../core/router/routes.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -130,9 +131,7 @@ class ComStudioDemo extends StatelessWidget {
     final SituationDemoStudio? donnee = situation;
     if (donnee != null) return donnee;
     if (GoRouter.maybeOf(context) == null) return null;
-    final String? nom = GoRouterState.of(context)
-        .uri
-        .queryParameters['situation'];
+    final String? nom = parametreRouteurSur(context, 'situation');
     for (final SituationDemoStudio s in SituationDemoStudio.values) {
       if (s.name == nom) return s;
     }

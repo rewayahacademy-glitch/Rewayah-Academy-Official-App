@@ -9,6 +9,7 @@ import '../../core/icons/app_icons.dart';
 import '../../core/observabilite/journal_dev.dart';
 import '../../core/preferences/preferences_locales.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/router/etat_routeur_sur.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/session/session_state.dart';
@@ -330,7 +331,8 @@ class _EntreeObservationPageEtat extends ConsumerState<EntreeObservationPage> {
   /// identifiants seulement**, filtres par [_identifiant] : aucun ne vaut
   /// autorisation, la RLS decide.
   void _lireNavigation(BuildContext context) {
-    final GoRouterState etat = GoRouterState.of(context);
+    final GoRouterState? etat = etatRouteurSur(context);
+    if (etat == null) return;
     final Map<String, String> requete = etat.uri.queryParameters;
     String? identifiant(String cle) {
       final String? valeur = requete[cle];

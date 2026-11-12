@@ -13,6 +13,7 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/profil/service_acceptations.dart';
 import '../../core/recrutement/port_signature_contrat.dart';
+import '../../core/router/etat_routeur_sur.dart';
 import '../../core/router/routes.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_palette.dart';
@@ -127,7 +128,7 @@ class ContratPage extends ConsumerWidget {
     }
     String? pour;
     try {
-      pour = GoRouterState.of(context).uri.queryParameters['pour'];
+      pour = parametreRouteurSur(context, 'pour');
     } on Object {
       pour = null;
     }

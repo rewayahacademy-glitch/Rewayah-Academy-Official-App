@@ -43,6 +43,7 @@ import '../../core/communications/capacites_communication.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/router/etat_routeur_sur.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/badge_non_lu.dart';
@@ -217,7 +218,7 @@ class _EntreeMessagesContexteState
     if (GoRouter.maybeOf(context) == null) return null;
     final String chemin;
     try {
-      chemin = GoRouterState.of(context).uri.path;
+      chemin = adresseRouteurSur(context)?.path ?? '';
     } on Object {
       return null;
     }
