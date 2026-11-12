@@ -316,6 +316,52 @@ END
 $etape45$;
 RESET ROLE;
 
+-- La premiere seance reste la premiere : passee depuis 3 jours, le suivi est
+-- encore en tete de l'accueil ; passee depuis 10 jours, il en disparait.
+-- (Les faits du journal sont recules de 20 jours, sans declencheur : le test
+-- rejoue une demande ancienne ; en production le journal est en ajout seul.)
+SET LOCAL session_replication_role = replica;
+UPDATE public.demande_evenements SET survenu_le = survenu_le - interval '20 days'
+ WHERE demande_id = '5afffff0-0000-0000-0000-0000000000d1';
+SET LOCAL session_replication_role = origin;
+UPDATE public.sessions
+   SET started_at = pg_catalog.now() - interval '3 days',
+       ended_at = pg_catalog.now() - interval '3 days' + interval '1 hour'
+ WHERE id = '5afffff0-0000-0000-0000-0000000000b1';
+SELECT pg_temp.moi('5a000000-0000-0000-0000-000000000001', 'guardian', '5afffff0-0000-0000-0000-000000000001');
+SET LOCAL ROLE authenticated;
+DO $accueil_3j$
+DECLARE r record;
+BEGIN
+  SELECT * INTO r FROM public.suivi_attente_foyer();
+  IF NOT r.premier_cours_passe OR NOT r.visible_accueil OR r.premier_cours IS NULL THEN
+    RAISE EXCEPTION 'SUIVI-ATTENTE : 3 jours apres le premier cours, le suivi reste en tete : %', r;
+  END IF;
+END
+$accueil_3j$;
+RESET ROLE;
+UPDATE public.sessions
+   SET started_at = pg_catalog.now() - interval '10 days',
+       ended_at = pg_catalog.now() - interval '10 days' + interval '1 hour'
+ WHERE id = '5afffff0-0000-0000-0000-0000000000b1';
+SELECT pg_temp.moi('5a000000-0000-0000-0000-000000000001', 'guardian', '5afffff0-0000-0000-0000-000000000001');
+SET LOCAL ROLE authenticated;
+DO $accueil_10j$
+DECLARE r record;
+BEGIN
+  SELECT * INTO r FROM public.suivi_attente_foyer();
+  IF r.visible_accueil OR NOT r.premier_cours_passe THEN
+    RAISE EXCEPTION 'SUIVI-ATTENTE : 10 jours apres le premier cours, le suivi quitte l accueil : %', r;
+  END IF;
+END
+$accueil_10j$;
+RESET ROLE;
+-- Retour au futur pour la suite.
+UPDATE public.sessions
+   SET started_at = pg_catalog.now() + interval '3 days',
+       ended_at = pg_catalog.now() + interval '3 days' + interval '1 hour'
+ WHERE id = '5afffff0-0000-0000-0000-0000000000b1';
+
 -- L'enseignant qui refuse : nom et langue du cours seulement.
 SELECT pg_temp.moi('5a000000-0000-0000-0000-000000000003', 'teacher', NULL);
 SET LOCAL ROLE authenticated;
@@ -387,6 +433,7 @@ BEGIN
      AND evenement = 'enseignant_affecte';
   IF p ->> 'portee' <> 'classe' OR p ->> 'classe' <> 'Classe Al-Fatiha'
      OR (p ->> 'eleves_n')::int <> 1 OR p ->> 'public' <> 'enfant'
+     OR (p ->> 'tranche') IS NULL
      OR (p ->> 'debut_local') IS NULL OR (p ->> 'fuseau') IS NULL THEN
     RAISE EXCEPTION 'SUIVI-ATTENTE : notification de l enseignant incomplete : %', p;
   END IF;

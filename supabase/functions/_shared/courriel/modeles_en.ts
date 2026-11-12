@@ -44,9 +44,24 @@ const MODELES: Record<string, Fabrique> = {
   classe_validee: (d) => avis(d, 'Your class is ready', 'Your class is ready',
     'The class matching your request is ready. A teacher still has to be assigned to it; you will be notified.',
     'View the class', '/tuteur/demandes'),
-  enseignant_affecte: (d) => avis(d, 'A teacher has been assigned to the class', 'Your class has a teacher',
+  // SUIVI-ATTENTE (12/11/2026) : courriel de l'enseignant a l'affectation.
+  enseignant_affecte: (d) => {
+    if (d.portee === 'classe') {
+      const P = PRECISIONS_EN
+      const n = Number(d.eleves_n)
+      const tranche = d.public === 'adulte' ? 'adults' : d.public === 'enfant' ? 'children' : ''
+      const eleves = Number.isInteger(n) && n > 0 ? `Students: ${n}${tranche ? ` (${tranche})` : ''}.` : ''
+      const q = quandSeance(d, P.locale, P.a)
+      const detail = [typeof d.classe === 'string' && d.classe ? P.classe(d.classe) : '', eleves, q ? `First class: ${q}.` : ''].filter(Boolean).join(' ')
+      return avis(d, 'A class is entrusted to you', 'A class is entrusted to you',
+        avec('A class is entrusted to you.', detail)
+          + ' Introduce yourself to the families from the app: a message is already written, and you can edit it.',
+        'Introduce myself', '/enseignant/classes')
+    }
+    return avis(d, 'A teacher has been assigned to the class', 'Your class has a teacher',
     'A teacher has been assigned to the class. You will find their name and the schedule in the app.',
-    'View the class', '/tuteur/demandes'),
+    'View the class', '/tuteur/demandes')
+  },
   demande_close: (d) => avis(d, 'Your request has been closed', 'Your request has been closed',
     'Your time slot request has been closed. The management’s reply is in the app.',
     'Read the reply', '/tuteur/demandes'),

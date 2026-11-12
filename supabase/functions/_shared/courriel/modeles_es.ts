@@ -44,9 +44,24 @@ const MODELES: Record<string, Fabrique> = {
   classe_validee: (d) => avis(d, 'Su clase está lista', 'Su clase está lista',
     'La clase correspondiente a su solicitud está lista. Falta asignarle su docente; se le avisará.',
     'Ver la clase', '/tuteur/demandes'),
-  enseignant_affecte: (d) => avis(d, 'Se ha asignado un docente a la clase', 'Su clase ya tiene docente',
+  // SUIVI-ATTENTE (12/11/2026) : courriel de l'enseignant a l'affectation.
+  enseignant_affecte: (d) => {
+    if (d.portee === 'classe') {
+      const P = PRECISIONS_ES
+      const n = Number(d.eleves_n)
+      const tranche = d.public === 'adulte' ? 'adultos' : d.public === 'enfant' ? 'niños' : ''
+      const eleves = Number.isInteger(n) && n > 0 ? `Alumnos: ${n}${tranche ? ` (${tranche})` : ''}.` : ''
+      const q = quandSeance(d, P.locale, P.a)
+      const detail = [typeof d.classe === 'string' && d.classe ? P.classe(d.classe) : '', eleves, q ? `Primera clase: ${q}.` : ''].filter(Boolean).join(' ')
+      return avis(d, 'Se le confía una clase', 'Se le confía una clase',
+        avec('Se le confía una clase.', detail)
+          + ' Preséntese a las familias desde la aplicación: ya hay un mensaje redactado y puede modificarlo.',
+        'Presentarme', '/enseignant/classes')
+    }
+    return avis(d, 'Se ha asignado un docente a la clase', 'Su clase ya tiene docente',
     'Se ha asignado un docente a la clase. Encontrará su nombre y los horarios en la aplicación.',
-    'Ver la clase', '/tuteur/demandes'),
+    'Ver la clase', '/tuteur/demandes')
+  },
   demande_close: (d) => avis(d, 'Su solicitud ha sido cerrada', 'Su solicitud ha sido cerrada',
     'Su solicitud de horario ha sido cerrada. La respuesta de la dirección está en la aplicación.',
     'Leer la respuesta', '/tuteur/demandes'),

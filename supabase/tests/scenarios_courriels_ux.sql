@@ -220,15 +220,20 @@ SELECT pg_temp.vrai(
 SET CONSTRAINTS ALL DEFERRED;
 
 -- ------------------------------------------------------------------
--- 4. Enseignant affecte : aucun courriel, a personne (decision du 01/11).
+-- 4. Enseignant affecte : courriel de l'enseignant (SUIVI-ATTENTE, directeur,
+--    12/11/2026 : c'est une trace ; amende la decision du 01/11 sur cette ligne).
 -- ------------------------------------------------------------------
 UPDATE public.groupes SET teacher_id = pg_temp.u('2'), etat = 'active' WHERE id = pg_temp.u('203');
 SET CONSTRAINTS ALL IMMEDIATE;
 SELECT pg_temp.vrai(
   EXISTS (SELECT 1 FROM public.notifications n
            WHERE n.evenement = 'enseignant_affecte' AND n.params ->> 'groupe_id' = pg_temp.u('203')::text)
-  AND NOT EXISTS (SELECT 1 FROM pg_temp.courriels('enseignant_affecte', pg_temp.u('203'))),
-  '4.1 enseignant affecte : notifie dans l''application, aucun courriel');
+  AND EXISTS (SELECT 1 FROM pg_temp.courriels('enseignant_affecte', pg_temp.u('203')) c
+               WHERE c.destinataire_profil = pg_temp.u('2')
+                 AND c.donnees ->> 'portee' = 'classe'
+                 AND c.donnees ->> 'classe' IS NOT NULL
+                 AND c.donnees ? 'eleves_n'),
+  '4.1 enseignant affecte : notifie dans l''application et par courriel (classe, eleves)');
 
 DO $fin$ BEGIN RAISE NOTICE 'COURRIELS-UX : scenario vert'; END $fin$;
 ROLLBACK;

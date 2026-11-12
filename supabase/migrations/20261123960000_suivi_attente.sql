@@ -165,7 +165,9 @@ RETURNS TABLE (
   premier_cours timestamp without time zone,
   creneau_change_le timestamp without time zone,
   enseignant jsonb,
-  peut_choisir_autre_creneau boolean
+  peut_choisir_autre_creneau boolean,
+  premier_cours_passe boolean,
+  visible_accueil boolean
 )
 LANGUAGE plpgsql
 STABLE
@@ -224,18 +226,23 @@ BEGIN
            min(e.survenu_le) FILTER (WHERE e.type = 'enseignant_affecte') AS t_ens,
            min(e.survenu_le) FILTER (WHERE e.type = 'eleve_integre') AS t_integre,
            min(e.survenu_le) FILTER (WHERE e.type = 'en_attente') AS t_attente,
+           min(e.survenu_le) FILTER (WHERE e.type = 'close') AS t_close,
            min(e.motif_attente) FILTER (WHERE e.type = 'en_attente') AS m_attente
       FROM base b
       JOIN public.demande_evenements e ON e.demande_id = b.did
      GROUP BY b.did
   ), calc AS (
     SELECT b.*, ev.t_envoyee, ev.t_classe, ev.t_ens, ev.t_integre, ev.t_attente, ev.m_attente,
+           ev.t_close,
+           -- La premiere seance de CET eleve : la premiere de sa classe apres son
+           -- arrivee, passee ou a venir (elle ne glisse pas sur la suivante).
            CASE WHEN b.etat = 'enseignant_affecte' THEN (
              SELECT min(s.started_at)
                FROM public.sessions s
               WHERE s.groupe_id = b.groupe_id
                 AND s.deleted_at IS NULL
-                AND s.started_at > pg_catalog.now()
+                AND s.status NOT IN ('canceled', 'canceled_late')
+                AND s.started_at > coalesce(ev.t_integre, ev.t_classe, b.created_at)
            ) END AS t_premier,
            (
              SELECT max(n.cree_le)
@@ -364,7 +371,18 @@ BEGIN
     f.etat IN ('refusee', 'retiree')
       AND NOT EXISTS (
         SELECT 1 FROM public.groupe_membres gm
-         WHERE gm.student_id = f.eid AND gm.left_at IS NULL)
+         WHERE gm.student_id = f.eid AND gm.left_at IS NULL),
+    f.t_premier IS NOT NULL AND f.t_premier <= pg_catalog.now(),
+    -- S6 : en tete de l'accueil tant que le suivi n'est pas fini ; il en
+    -- disparait 7 jours apres le premier cours (ou apres la cloture) et reste
+    -- consultable dans le parcours.
+    CASE
+      WHEN f.close_ THEN
+        pg_catalog.now() <= coalesce(f.t_close, f.created_at) + interval '7 days'
+      WHEN f.t_premier IS NOT NULL AND f.t_premier <= pg_catalog.now() THEN
+        pg_catalog.now() <= f.t_premier + interval '7 days'
+      ELSE true
+    END
   FROM fin f
   ORDER BY (f.etat IN ('refusee', 'retiree')), f.created_at DESC, f.did;
 END;
@@ -392,6 +410,7 @@ DECLARE
   v_fuseau text;
   v_premier timestamptz;
   v_eleves integer;
+  v_tranche text;
 BEGIN
   IF NEW.teacher_id IS NULL OR OLD.teacher_id IS NOT NULL
      OR NEW.ended_at IS NOT NULL OR NEW.etat <> 'active' THEN
@@ -406,6 +425,15 @@ BEGIN
   SELECT count(*)::integer INTO v_eleves
     FROM public.groupe_membres gm
    WHERE gm.groupe_id = NEW.id AND gm.left_at IS NULL;
+  -- La tranche d'age : celles des eleves presents, dans l'ordre de la table.
+  SELECT pg_catalog.string_agg(x.nom_humain, ', ' ORDER BY x.ordre) INTO v_tranche
+    FROM (
+      SELECT DISTINCT ca.nom_humain, ca.ordre
+        FROM public.groupe_membres gm
+        JOIN public.student_profiles sp ON sp.profile_id = gm.student_id
+        JOIN public.cohortes_age ca ON ca.code = sp.cohorte
+       WHERE gm.groupe_id = NEW.id AND gm.left_at IS NULL
+    ) x;
 
   INSERT INTO public.notifications (destinataire, foyer_id, evenement, params, destination)
   SELECT p.id, NULL, 'enseignant_affecte',
@@ -416,6 +444,7 @@ BEGIN
            'fuseau', v_fuseau,
            'eleves_n', v_eleves,
            'public', NEW.type_public,
+           'tranche', v_tranche,
            'debut_local', CASE WHEN v_premier IS NULL THEN NULL
                                ELSE pg_catalog.to_char(v_premier AT TIME ZONE v_fuseau,
                                                        'YYYY-MM-DD"T"HH24:MI:SS') END)),
