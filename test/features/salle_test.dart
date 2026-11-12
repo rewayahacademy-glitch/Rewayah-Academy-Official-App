@@ -15,6 +15,7 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/enseignant/modeles_enseignant.dart';
 import 'package:rewayah_academy/core/enseignant/service_enseignant.dart'
     show groupesEnseignantProvider, seancesEnseignantProvider;
+import 'package:rewayah_academy/core/i18n/dates_appareil.dart';
 import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/mouvement/passage_salle.dart';
@@ -36,6 +37,7 @@ import 'package:rewayah_academy/core/tc_coran/moteur_mushaf.dart';
 import 'package:rewayah_academy/core/tc_groupe/group_summary_vm.dart';
 import 'package:rewayah_academy/core/tc_groupe/port_groupes.dart';
 import 'package:rewayah_academy/core/tc_horloge/chrono_seance.dart';
+import 'package:rewayah_academy/core/tc_horloge/mon_horloge.dart';
 import 'package:rewayah_academy/core/tc_observation/port_annonce_observation.dart';
 import 'package:rewayah_academy/core/tc_outils/annotation_layer.dart'
     show PointNormalise;
@@ -818,11 +820,91 @@ void main() {
       expect(video.demandes, hasLength(2), reason: 'le jeton redemande');
       expect(find.byType(ResultatSeance), findsOneWidget);
       expect(find.text(t.salle.fin.titre), findsOneWidget);
+      // HEURE-PROFIL : sans fuseau de profil lu (ce test), l'heure est celle
+      // de l'appareil, et la phrase le dit.
       expect(
-        find.text(t.salle.fin.phraseHeure(heure: DepuisSalle.heure(fin))),
+        find.text(
+          t.salle.fin.phraseHeure(heure: heureDeLAppareil(fin.toLocal())),
+        ),
         findsOneWidget,
       );
+      expect(find.text(t.tuteur.accueil.heureAppareil), findsOneWidget);
       expect(find.text(t.salle.perdue), findsNothing);
+    });
+
+    testWidgets('HEURE-PROFIL : le fuseau du profil arrive APRES l ecran de '
+        'fin ; l heure passe a celle du profil, la mention disparait', (
+      WidgetTester tester,
+    ) async {
+      addTearDown(() => poserMonHorlogePourTest(null));
+      final Completer<MonHorloge?> arrivee = Completer<MonHorloge?>();
+      final DateTime fin = DateTime.now().toUtc().subtract(
+        const Duration(minutes: 20),
+      );
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      final FauxServiceVideo video = FauxServiceVideo(
+        acces0: _acces('student'),
+      );
+      await _monterSalle(
+        tester,
+        surcharges: <Override>[
+          ..._surcharges(
+            video: video,
+            moteur: moteur,
+            preVol: FauxServicePreVol(),
+          ),
+          // Comme en production : le fournisseur pose la lecture, puis la
+          // rend ; ici elle arrive tard.
+          monHorlogeProvider.overrideWith((Ref _) async {
+            final MonHorloge? lu = await arrivee.future;
+            poserMonHorlogePourTest(lu);
+            return lu;
+          }),
+          bornesSalleProvider.overrideWith(
+            (Ref _, CleBornesSalle _) => BornesChrono(
+              debutUtc: fin.subtract(const Duration(hours: 1)),
+              finPrevueUtc: fin,
+            ),
+          ),
+        ],
+      );
+      moteur.poser(EtatSalle.connecte);
+      await tester.pumpAndSettle();
+      video
+        ..motifARefuser = MotifRefusSalle.acces
+        ..detailARefuser = DetailRefusSalle(
+          motif: MotifServeurSalle.terminee,
+          finUtc: fin,
+          graceMinutes: 15,
+        );
+      moteur.poser(EtatSalle.echec);
+      await tester.pumpAndSettle();
+      expect(find.byType(ResultatSeance), findsOneWidget);
+      // Avant la lecture : l'heure de l'appareil, dite comme telle.
+      expect(find.text(t.tuteur.accueil.heureAppareil), findsOneWidget);
+      // Le profil est en Arabie saoudite (UTC+3) ; l'appareil ailleurs.
+      arrivee.complete(
+        MonHorloge.lire(<String, Object?>{
+          'maintenant': DateTime.now().toUtc().toIso8601String(),
+          'moi': <String, Object?>{
+            'fuseau': 'Asia/Riyadh',
+            'decalage_secondes': 10800,
+          },
+        }),
+      );
+      await tester.pumpAndSettle();
+      final DateTime aRiyad = fin.add(const Duration(hours: 3));
+      String deux(int n) => n.toString().padLeft(2, '0');
+      expect(
+        find.text(
+          t.salle.fin.phraseHeure(
+            heure: '${deux(aRiyad.hour)}:${deux(aRiyad.minute)}',
+          ),
+        ),
+        findsOneWidget,
+        reason: 'l heure de fin passe a celle du profil, sans mention',
+      );
+      expect(find.text(t.tuteur.accueil.heureAppareil), findsNothing);
     });
 
     testWidgets('FN-024 : connexion perdue avant la fin prevue : rien '

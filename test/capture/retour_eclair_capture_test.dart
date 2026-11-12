@@ -80,7 +80,7 @@ void main() {
               hoteCapture(
                 ResultatSeance(
                   issue: IssueSeance.terminee,
-                  heureFin: '18:45',
+                  finA: DateTime(2026, 10, 27, 18, 45),
                   onRetour: () {},
                   complement: const CarteFeedbackSeance(sessionId: 's1'),
                 ),

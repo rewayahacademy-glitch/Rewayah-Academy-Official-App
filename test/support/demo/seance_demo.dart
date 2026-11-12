@@ -799,8 +799,10 @@ abstract final class DonneesSeanceDemo {
     suivants: <String>['Yusuf', 'Aïcha'],
   );
 
-  static const FinSeance fin = FinSeance(
-    heureFin: '18:45',
+  // Un instant a l'heure de l'appareil : la demonstration dit « 18:45 »
+  // partout (HEURE-PROFIL : l'heure se forme au dessin).
+  static final FinSeance fin = FinSeance(
+    finA: DateTime(2026, 10, 27, 18, 45),
     cahierACompleter: true,
   );
 
