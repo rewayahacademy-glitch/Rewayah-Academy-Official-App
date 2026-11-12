@@ -7,7 +7,11 @@
 // position toujours, le battement, le lever), le point et son sillage, et
 // « Reduire les animations » (le point seul).
 
+import 'dart:typed_data';
+import 'dart:ui' as ui;
+
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/theme/app_mouvement.dart';
@@ -298,5 +302,91 @@ void main() {
       await tester.pump();
       expect(find.byKey(_clePoint), findsNothing);
     });
+  });
+
+  group('L anneau creux : la tete ne cache pas le mot (directeur, 12/11)', () {
+    const Key cleCadre = ValueKey<String>('cadre-pixels');
+
+    for (final Brightness clarte in Brightness.values) {
+      testWidgets('centre non peint, anneau peint, pointeur immobile '
+          '(${clarte.name})', (WidgetTester tester) async {
+        final ValueNotifier<Offset?> source = ValueNotifier<Offset?>(
+          const Offset(0.5, 0.5),
+        );
+        addTearDown(source.dispose);
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: AppTheme.pour(InterfaceMode.standard, clarte),
+            home: Align(
+              alignment: Alignment.topLeft,
+              child: RepaintBoundary(
+                key: cleCadre,
+                child: SizedBox(
+                  width: 400,
+                  height: 600,
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: <Widget>[
+                      // Le fond : la couleur de la page, comme un mot dessous.
+                      Builder(
+                        builder: (BuildContext c) =>
+                            ColoredBox(color: Theme.of(c).colorScheme.surface),
+                      ),
+                      PointeurSalle(source: source, clePoint: _clePoint),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+        await tester.pump();
+        final RenderRepaintBoundary frontiere = tester.renderObject(
+          find.byKey(cleCadre),
+        );
+        final ByteData? octets = await tester.runAsync<ByteData?>(() async {
+          final ui.Image image = await frontiere.toImage();
+          return image.toByteData();
+        });
+        expect(octets, isNotNull);
+        int pixel(int x, int y) => octets!.getUint32((y * 400 + x) * 4);
+        final int fond = pixel(5, 5);
+        // Le centre (200, 300), et tout le trou de 20 de diametre (rayon 10,
+        // marge d'un pixel pour le lissage) : la couleur du fond.
+        expect(pixel(200, 300), fond, reason: 'le centre n est pas peint');
+        for (final (int, int) d in <(int, int)>[
+          (8, 0),
+          (-8, 0),
+          (0, 8),
+          (0, -8),
+          (6, 6),
+          (-6, -6),
+        ]) {
+          expect(
+            pixel(200 + d.$1, 300 + d.$2),
+            fond,
+            reason: 'le trou reste vide en $d',
+          );
+        }
+        // Le trait de couleur (rayon 11 a 15, milieu 13) est peint, aux
+        // quatre points cardinaux ; il differe du fond.
+        for (final (int, int) d in <(int, int)>[
+          (13, 0),
+          (-13, 0),
+          (0, 13),
+          (0, -13),
+        ]) {
+          expect(
+            pixel(200 + d.$1, 300 + d.$2),
+            isNot(fond),
+            reason: 'l anneau est peint en $d',
+          );
+        }
+        // Hors de l'anneau (rayon 20) : le fond de nouveau.
+        expect(pixel(220, 300), fond);
+        // Diametre exterieur : rien de peint au-dela de 32.
+        expect(pixel(200 + 17, 300), fond);
+      });
+    }
   });
 }
