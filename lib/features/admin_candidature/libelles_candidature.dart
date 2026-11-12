@@ -275,10 +275,11 @@ String? libelleChangement(EvenementCandidature e) {
 /// la personne qui lit.
 String instantHistorique(DateTime instant) {
   // HEURES-PROFIL H2 : le fuseau du profil de la personne qui lit.
-  final DateTime local = chezMoi(instant);
+  // dateCourteCandidature appelle toLocal() : on lui passe le jour du profil
+  // en local ([jourChezMoi]), jamais la valeur de chezMoi (marquee UTC).
   final String heure = heureChezMoi(instant);
   return t.admin.candidatures.historique.le(
-    date: dateCourteCandidature(local),
+    date: dateCourteCandidature(jourChezMoi(instant)),
     heure: isolerSens(heure),
   );
 }
