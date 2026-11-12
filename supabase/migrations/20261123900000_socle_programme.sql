@@ -13,22 +13,27 @@
 --      (`programme_cycles`, code stable `bases`, duree prevue et date limite par
 --      tranche d'age : 37/28/24/15 et 48/36/31/20 semaines) et ses quatre etapes
 --      (`programme_niveaux`, codes stables BASES-1 a BASES-4) avec objectifs,
---      matiere principale et matiere secondaire par tranche d'age, duree prevue
---      et repere (`durees[tranche].limite` = repere du tableau 1 bis, plus jamais
---      une date ferme). La somme des reperes egale la date limite du niveau ;
---      la publication le verifie en base.
+--      matiere principale et matiere secondaire par tranche d'age, et par
+--      tranche une duree prevue et une DATE LIMITE D'ETAPE en semaines
+--      (`durees[tranche]` = {prevue, limite}, tableau 1 bis ; decision du
+--      directeur du 14/10, correction de l'architecte du 12/11 : la date limite
+--      est par etape). La somme des etapes egale le niveau (37/28/24/15 prevues,
+--      48/36/31/20 de date limite) ; la publication le verifie en base.
 --   2. Publier une version archive la precedente ; un index interdit deux
 --      versions publiees.
 --   3. Le fait unique « etape en cours » par eleve (`eleve_etape_en_cours`),
---      pose seul a l'entree en classe et pour les eleves deja presents ; les
+--      pose seul a l'entree en classe et pour les eleves deja presents (un
+--      eleve debutant entre a l'etape 1 ; jamais « l'etape de la classe ») ; les
 --      gestes existants de la direction (decider_placement,
 --      progression_promouvoir) le corrigent par un declencheur. Chaque classe
 --      recoit seule l'etape 1 des bases si elle n'a pas d'etape.
 --   4. `private.etape_eleve` lit ce fait d'abord (meme signature) : toutes ses
 --      lectures rendent la meme etape. `public.etape_eleve_lecture` est LA
 --      lecture unique de l'etape de l'eleve, pour tous les roles.
---   5. Le point d'accroche du lot 2 (fermetures, pauses) : la colonne
---      `recul_jours`, lue a un seul endroit (`private.date_limite_effective`).
+--   5. La date limite d'une etape part de l'entree de l'eleve dans l'etape ;
+--      la fin du niveau (somme des etapes restantes) n'est qu'un horizon. Point
+--      d'accroche du lot 2 (fermetures, pauses) : la colonne `recul_jours`, lue
+--      a un seul endroit (`private.dates_etape`).
 --
 -- A l'installation, sans geste de la direction : la version en brouillon (s'il
 -- y en a une et qu'elle se laisse completer) est completee puis publiee, sinon
@@ -85,8 +90,8 @@ COMMENT ON COLUMN public.programme_niveaux.matieres IS
   'nulle quand il n''y en a pas encore).';
 COMMENT ON COLUMN public.programme_niveaux.durees IS
   'CAHIER-C2, precise par SOCLE-PROGRAMME : par code de cohortes_age, {prevue, limite} en '
-  'semaines ; prevue = duree prevue de l''etape, limite = REPERE de l''etape (REGLAGES.md, '
-  'tableau 1 bis), jamais une date ferme : la date ferme est celle du niveau (programme_cycles).';
+  'semaines ; prevue = duree prevue de l''etape, limite = date limite de l''etape, comptee '
+  'depuis l''entree de l''eleve dans l''etape (REGLAGES.md, tableau 1 bis ; decision du 14/10).';
 
 CREATE TABLE public.programme_cycles (
   version_id uuid NOT NULL REFERENCES public.programme_versions(id),
@@ -100,8 +105,8 @@ CREATE TABLE public.programme_cycles (
 COMMENT ON TABLE public.programme_cycles IS
   'SOCLE-PROGRAMME (12/11/2026) : le niveau d''une version du programme (code stable, nom), '
   'avec par tranche d''age la duree prevue et la date limite du niveau en semaines '
-  '({prevue, limite}). La somme des reperes de ses etapes egale sa date limite (controle a la '
-  'publication). Aucune ecriture directe.';
+  '({prevue, limite}). La somme des durees et des dates limites de ses etapes egale ces valeurs '
+  '(controle a la publication). Aucune ecriture directe.';
 
 ALTER TABLE public.programme_cycles ENABLE ROW LEVEL SECURITY;
 REVOKE ALL ON public.programme_cycles FROM PUBLIC, anon, authenticated, service_role;
@@ -118,11 +123,9 @@ CREATE POLICY programme_cycles_lecture ON public.programme_cycles
 CREATE TABLE public.eleve_etape_en_cours (
   student_id uuid PRIMARY KEY,
   niveau_id uuid NOT NULL REFERENCES public.programme_niveaux(id),
-  etape_entree_id uuid NOT NULL REFERENCES public.programme_niveaux(id),
   cohorte text REFERENCES public.cohortes_age(code),
   entree_etape_le date NOT NULL,
   entree_niveau_le date NOT NULL,
-  date_limite_niveau date,
   recul_jours int NOT NULL DEFAULT 0 CHECK (recul_jours >= 0),
   origine text NOT NULL CHECK (origine IN ('classe', 'decision')),
   maj_le timestamptz NOT NULL DEFAULT pg_catalog.now(),
@@ -131,14 +134,14 @@ CREATE TABLE public.eleve_etape_en_cours (
 
 COMMENT ON TABLE public.eleve_etape_en_cours IS
   'SOCLE-PROGRAMME (12/11/2026, arbitrage n. 1) : UN fait par eleve. niveau_id = son etape, '
-  'dans SA version (il finit son etape dans sa version) ; etape_entree_id = l''etape par '
-  'laquelle il est entre dans le niveau ; cohorte = tranche figee a l''entree dans le niveau '
-  '(un anniversaire ne change pas la date limite) ; date_limite_niveau = entree + reperes des '
-  'etapes restantes ; recul_jours = recul pour fermetures et pauses (lot 2, 0 aujourd''hui). '
+  'dans SA version (il finit son etape dans sa version) ; entree_etape_le = depart de la date '
+  'limite de l''etape ; cohorte = tranche figee a l''entree dans le niveau (un anniversaire ne '
+  'change pas la date limite en cours) ; recul_jours = recul pour fermetures et pauses (lot 2, '
+  '0 aujourd''hui). '
   'Ecrit par les seuls declencheurs et fonctions de ce lot. Aucun acces direct.';
 COMMENT ON COLUMN public.eleve_etape_en_cours.recul_jours IS
   'SOCLE-PROGRAMME : point d''accroche du lot 2 (CALENDRIER-ET-PAUSES). Jours de recul de la '
-  'date limite pour fermetures et pauses accordees ; lu par private.date_limite_effective seul.';
+  'date limite pour fermetures et pauses accordees ; lu par private.dates_etape seul.';
 
 ALTER TABLE public.eleve_etape_en_cours ENABLE ROW LEVEL SECURITY;
 REVOKE ALL ON public.eleve_etape_en_cours FROM PUBLIC, anon, authenticated, service_role;
@@ -153,7 +156,7 @@ ON CONFLICT (key) DO NOTHING;
 -- ---------------------------------------------------------------------------
 -- Les quatre etapes (programme-rewayah §2, charte 3.1). Objectifs : ceux de
 -- EVALUATIONS.md partie 4 (en vigueur) ; repris de C2 quand ils etaient fideles.
--- Durees : REGLAGES.md tableau 1 bis, {prevue, limite = repere}. Matieres :
+-- Durees : REGLAGES.md tableau 1 bis, {prevue, limite} de l'etape. Matieres :
 -- charte 3.1 et EVALUATIONS.md 4.1 (6-9 ans : le livre seul jusqu'a la chadda ;
 -- 10 ans et plus : Al-Fatiha des la premiere semaine, puis le meme ordre ; le
 -- livre valide, le Coran devient la matiere principale).
@@ -323,7 +326,7 @@ END;
 $function$;
 
 -- ---------------------------------------------------------------------------
--- 4. Publication : coherence des reperes, archivage de la precedente
+-- 4. Publication : coherence des durees, archivage de la precedente
 -- ---------------------------------------------------------------------------
 CREATE FUNCTION private.programme_socle_publication()
 RETURNS trigger
@@ -336,8 +339,8 @@ DECLARE
 BEGIN
   IF NEW.statut = 'publiee' AND OLD.statut IS DISTINCT FROM 'publiee' THEN
     -- Pour chaque niveau de la version et chaque tranche active : somme des
-    -- durees prevues des etapes = duree prevue du niveau ; somme des reperes =
-    -- date limite du niveau.
+    -- durees prevues des etapes = duree prevue du niveau ; somme des dates
+    -- limites des etapes = date limite du niveau.
     SELECT cy.nom_humain || ' (' || co.code || ')' INTO v_ecart
       FROM public.programme_cycles cy
      CROSS JOIN public.cohortes_age co
@@ -358,7 +361,7 @@ BEGIN
     IF v_ecart IS NOT NULL THEN
       RAISE EXCEPTION 'programme_incoherent: %', v_ecart
         USING errcode = 'P0001',
-              hint = 'La somme des reperes des etapes doit egaler la date limite du niveau, pour chaque tranche d''age.';
+              hint = 'La somme des durees et des dates limites des etapes doit egaler celles du niveau, pour chaque tranche d''age.';
     END IF;
     -- Une seule version publiee : la precedente est archivee.
     UPDATE public.programme_versions
@@ -425,55 +428,45 @@ AS $function$
     (SELECT 'adulte_18_plus' FROM public.groupes g WHERE g.id = p_groupe_id AND g.type_public = 'adulte'));
 $function$;
 
--- Date limite du niveau pour une entree a l'etape [p_niveau_id] le [p_entree] :
--- l'entree plus les reperes des etapes restantes (celle-ci comprise) du meme
--- niveau, pour la tranche. Une entree a l'etape 1 donne la date du niveau
--- (somme des reperes = date limite du niveau). Nulle si une valeur manque.
-CREATE FUNCTION private.date_limite_depuis(p_niveau_id uuid, p_cohorte text, p_entree date)
-RETURNS date
+-- Les dates d'un eleve, telles qu'elles valent aujourd'hui : la date limite de
+-- son etape (entree dans l'etape + date limite de l'etape pour sa tranche) et
+-- l'horizon du niveau (entree dans l'etape + dates limites de cette etape et des
+-- suivantes du meme niveau), toutes deux reculees de recul_jours (lot 2).
+-- Seul point de calcul. Nulles si une valeur manque (jamais supposees).
+CREATE FUNCTION private.dates_etape(p_student_id uuid)
+RETURNS TABLE (date_limite date, date_limite_semaines int, horizon date)
 LANGUAGE sql
 STABLE
 SECURITY DEFINER
 SET search_path = ''
 AS $function$
-  SELECT CASE
-           WHEN p_cohorte IS NULL OR p_entree IS NULL OR n.cycle_code IS NULL THEN NULL
-           WHEN pg_catalog.bool_and((r.durees -> p_cohorte ->> 'limite') IS NOT NULL) THEN
-             (p_entree + pg_catalog.make_interval(
-                weeks => pg_catalog.sum((r.durees -> p_cohorte ->> 'limite')::int)::int))::date
-         END
-    FROM public.programme_niveaux n
-    JOIN public.programme_niveaux r
-      ON r.version_id = n.version_id AND r.cycle_code = n.cycle_code AND r.ordre >= n.ordre
-   WHERE n.id = p_niveau_id
-   GROUP BY n.cycle_code;
-$function$;
-
--- La date limite d'un eleve, telle qu'elle vaut aujourd'hui : la date posee a
--- l'entree dans le niveau (ou, si la tranche manquait alors, recalculee avec la
--- tranche d'aujourd'hui), reculee de recul_jours (lot 2). Seul point de lecture.
-CREATE FUNCTION private.date_limite_effective(p_student_id uuid)
-RETURNS date
-LANGUAGE sql
-STABLE
-SECURITY DEFINER
-SET search_path = ''
-AS $function$
-  SELECT (coalesce(
-            f.date_limite_niveau,
-            private.date_limite_depuis(
-              f.etape_entree_id,
-              coalesce(f.cohorte, private.cohorte_effective(f.student_id, NULL)),
-              f.entree_niveau_le))
-          + f.recul_jours)::date
-    FROM public.eleve_etape_en_cours f
-   WHERE f.student_id = p_student_id;
+  WITH f AS (
+    SELECT x.*, n.version_id, n.cycle_code, n.ordre, n.durees,
+           coalesce(x.cohorte, private.cohorte_effective(x.student_id, NULL)) AS coh
+      FROM public.eleve_etape_en_cours x
+      JOIN public.programme_niveaux n ON n.id = x.niveau_id
+     WHERE x.student_id = p_student_id
+  )
+  SELECT ((f.entree_etape_le + f.recul_jours)
+            + pg_catalog.make_interval(weeks => (f.durees -> f.coh ->> 'limite')::int))::date,
+         (f.durees -> f.coh ->> 'limite')::int,
+         (SELECT CASE WHEN f.cycle_code IS NOT NULL
+                       AND pg_catalog.bool_and((r.durees -> f.coh ->> 'limite') IS NOT NULL)
+                      THEN ((f.entree_etape_le + f.recul_jours)
+                              + pg_catalog.make_interval(
+                                  weeks => pg_catalog.sum((r.durees -> f.coh ->> 'limite')::int)::int))::date END
+            FROM public.programme_niveaux r
+           WHERE r.version_id = f.version_id AND r.cycle_code = f.cycle_code AND r.ordre >= f.ordre)
+    FROM f;
 $function$;
 
 -- Pose l'etape d'un eleve s'il n'en a pas : sa derniere decision de niveau
--- publiee, sinon l'etape de sa classe (meme code, version publiee), sinon
--- l'etape 1 des bases. Ne remplace jamais un fait existant (l'etape est celle
--- de l'eleve, pas celle de la classe).
+-- publiee ; sinon, s'il est debutant (niveau declare vide, « debut_lettres » ou
+-- « lettres_avec_aide »), l'etape 1 des bases, datee de son entree en classe.
+-- Jamais « l'etape de la classe » (correction de l'architecte, 12/11) ; un eleve
+-- qui declare deja lire attend l'entretien de lecture : la decision de la
+-- direction (decider_placement) pose alors son etape. Ne remplace jamais un
+-- fait existant.
 CREATE FUNCTION private.poser_etape_eleve(p_student_id uuid, p_groupe_id uuid, p_quand timestamptz)
 RETURNS void
 LANGUAGE plpgsql
@@ -500,24 +493,21 @@ BEGIN
    LIMIT 1;
   IF v_niveau IS NOT NULL THEN
     v_origine := 'decision';
-  ELSE
-    SELECT private.etape_publiee_equivalente(g.programme_niveau_id) INTO v_niveau
-      FROM public.groupes g WHERE g.id = p_groupe_id;
-    v_niveau := coalesce(v_niveau, private.etape_par_defaut());
+  ELSIF coalesce((SELECT sp.niveau_declare IS NULL OR sp.niveau_declare IN ('debut_lettres', 'lettres_avec_aide')
+                    FROM public.student_profiles sp WHERE sp.profile_id = p_student_id), true) THEN
+    v_niveau := private.etape_par_defaut();
     v_quand := coalesce(p_quand, pg_catalog.now());
     v_origine := 'classe';
   END IF;
   IF v_niveau IS NULL THEN
-    RETURN; -- aucun programme publie : rien n'est suppose
+    RETURN; -- aucun programme publie, ou eleve qui attend son entretien de lecture
   END IF;
 
   v_cohorte := private.cohorte_effective(p_student_id, p_groupe_id);
   INSERT INTO public.eleve_etape_en_cours
-    (student_id, niveau_id, etape_entree_id, cohorte, entree_etape_le, entree_niveau_le,
-     date_limite_niveau, origine)
+    (student_id, niveau_id, cohorte, entree_etape_le, entree_niveau_le, origine)
   VALUES
-    (p_student_id, v_niveau, v_niveau, v_cohorte, v_quand::date, v_quand::date,
-     private.date_limite_depuis(v_niveau, v_cohorte, v_quand::date), v_origine)
+    (p_student_id, v_niveau, v_cohorte, v_quand::date, v_quand::date, v_origine)
   ON CONFLICT (student_id) DO NOTHING;
 END;
 $function$;
@@ -594,10 +584,9 @@ CREATE TRIGGER groupe_membres_socle_etape
   FOR EACH ROW EXECUTE FUNCTION private.socle_entree_en_classe();
 
 -- Une decision de niveau publiee (diagnostic, promotion, reevaluation,
--- correction) devient l'etape en cours. Dans le meme niveau : la date limite ne
--- change pas, sauf diagnostic ou correction de placement (recalculee sur les
--- etapes restantes depuis l'entree dans le niveau). Nouveau niveau : nouvelle
--- entree, tranche d'aujourd'hui.
+-- correction) devient l'etape en cours, datee du jour de la decision : la date
+-- limite de la nouvelle etape part de la. Nouveau niveau : nouvelle entree dans
+-- le niveau, tranche d'aujourd'hui.
 CREATE FUNCTION private.socle_decision_niveau()
 RETURNS trigger
 LANGUAGE plpgsql
@@ -627,36 +616,23 @@ BEGIN
   SELECT * INTO f FROM public.eleve_etape_en_cours WHERE student_id = NEW.student_id FOR UPDATE;
   IF NOT FOUND THEN
     INSERT INTO public.eleve_etape_en_cours
-      (student_id, niveau_id, etape_entree_id, cohorte, entree_etape_le, entree_niveau_le,
-       date_limite_niveau, origine)
+      (student_id, niveau_id, cohorte, entree_etape_le, entree_niveau_le, origine)
     VALUES
-      (NEW.student_id, NEW.niveau_id, NEW.niveau_id, v_cohorte, v_jour, v_jour,
-       private.date_limite_depuis(NEW.niveau_id, v_cohorte, v_jour), 'decision');
+      (NEW.student_id, NEW.niveau_id, v_cohorte, v_jour, v_jour, 'decision');
     RETURN NEW;
   END IF;
 
   SELECT n.cycle_code INTO v_cycle_actuel FROM public.programme_niveaux n WHERE n.id = f.niveau_id;
   IF v_cycle IS NOT NULL AND v_cycle = v_cycle_actuel THEN
-    IF NEW.type_mouvement IN ('diagnostic_initial', 'correction') THEN
-      UPDATE public.eleve_etape_en_cours
-         SET niveau_id = NEW.niveau_id, etape_entree_id = NEW.niveau_id,
-             entree_etape_le = greatest(v_jour, f.entree_niveau_le),
-             date_limite_niveau = private.date_limite_depuis(
-               NEW.niveau_id, coalesce(f.cohorte, v_cohorte), f.entree_niveau_le),
-             origine = 'decision', maj_le = pg_catalog.now()
-       WHERE student_id = NEW.student_id;
-    ELSE
-      UPDATE public.eleve_etape_en_cours
-         SET niveau_id = NEW.niveau_id,
-             entree_etape_le = greatest(v_jour, f.entree_niveau_le),
-             origine = 'decision', maj_le = pg_catalog.now()
-       WHERE student_id = NEW.student_id;
-    END IF;
+    UPDATE public.eleve_etape_en_cours
+       SET niveau_id = NEW.niveau_id,
+           entree_etape_le = greatest(v_jour, f.entree_niveau_le),
+           origine = 'decision', maj_le = pg_catalog.now()
+     WHERE student_id = NEW.student_id;
   ELSE
     UPDATE public.eleve_etape_en_cours
-       SET niveau_id = NEW.niveau_id, etape_entree_id = NEW.niveau_id, cohorte = v_cohorte,
+       SET niveau_id = NEW.niveau_id, cohorte = v_cohorte,
            entree_etape_le = v_jour, entree_niveau_le = v_jour,
-           date_limite_niveau = private.date_limite_depuis(NEW.niveau_id, v_cohorte, v_jour),
            recul_jours = 0, origine = 'decision', maj_le = pg_catalog.now()
      WHERE student_id = NEW.student_id;
   END IF;
@@ -672,8 +648,8 @@ CREATE TRIGGER progression_historique_socle_etape
 -- 7. private.etape_eleve lit le fait d'abord (meme signature, meme resultat)
 -- ---------------------------------------------------------------------------
 -- Avec un fait : l'etape de l'eleve dans sa version (publiee ou archivee),
--- duree prevue de l'etape pour sa tranche, date limite du NIVEAU en semaines et
--- en date (charte : la seule date ferme), depuis = entree dans l'etape.
+-- duree prevue et date limite de l'etape pour sa tranche (en semaines, et en
+-- date depuis l'entree dans l'etape), depuis = entree dans l'etape.
 -- Sans fait (aucun programme publie a son entree) : l'ancienne regle de C2,
 -- gardee jusqu'au lot 10.
 CREATE OR REPLACE FUNCTION private.etape_eleve(p_student_id uuid, p_groupe_id uuid)
@@ -720,12 +696,11 @@ AS $function$
          n.objectifs,
          c.coh,
          (n.durees -> c.coh ->> 'prevue')::int,
-         (cy.durees -> c.coh ->> 'limite')::int,
+         (n.durees -> c.coh ->> 'limite')::int,
          f.entree_etape_le::timestamptz,
-         private.date_limite_effective(p_student_id)
+         (SELECT d.date_limite FROM private.dates_etape(p_student_id) d)
     FROM f
     JOIN public.programme_niveaux n ON n.id = f.niveau_id
-    LEFT JOIN public.programme_cycles cy ON cy.version_id = n.version_id AND cy.code = n.cycle_code
    CROSS JOIN LATERAL (
      SELECT coalesce(f.cohorte, private.cohorte_effective(p_student_id, p_groupe_id)) AS coh
    ) c
@@ -752,7 +727,7 @@ $function$;
 
 COMMENT ON FUNCTION private.etape_eleve(uuid, uuid) IS
   'SOCLE-PROGRAMME (12/11/2026) : l''etape en cours d''un eleve, lue dans le fait unique '
-  'eleve_etape_en_cours (date limite = celle du niveau) ; sans fait, l''ancienne regle de '
+  'eleve_etape_en_cours (date limite de l''etape depuis l''entree dans l''etape) ; sans fait, l''ancienne regle de '
   'CAHIER-C2 (retiree au lot 10). Appelee par etapes_eleves_classe, rythme_classe, '
   'suivi_pedagogique_eleve, lire_resultats_evaluations. Aucun droit direct.';
 
@@ -764,7 +739,8 @@ COMMENT ON FUNCTION private.etape_eleve(uuid, uuid) IS
 -- l'enseignant effectif d'une seance de cette classe (fenetre de CAHIER-C1) ; la
 -- direction. 42501 sinon. Rend NULL quand l'eleve n'a pas encore d'etape.
 -- L'eleve lui-meme, si sa tranche s'arrete avant `programme.age_voit_date_limite`
--- (10 ans), ne recoit ni la date limite ni le rythme : son tuteur les recoit.
+-- (10 ans), ne recoit ni la date limite de l'etape, ni l'horizon du niveau, ni le
+-- rythme : son tuteur les recoit.
 CREATE FUNCTION public.etape_eleve_lecture(p_eleve_id uuid)
 RETURNS jsonb
 LANGUAGE plpgsql
@@ -784,7 +760,7 @@ DECLARE
   v_coh text;
   v_age_voit int;
   v_masque boolean;
-  v_date_limite date;
+  v_dates record;
   v_chemin jsonb;
   v_sourates jsonb;
   v_page int;
@@ -833,7 +809,7 @@ BEGIN
               AND (v_coh IS NULL
                    OR coalesce((SELECT a.age_max_inclus < v_age_voit FROM public.cohortes_age a
                                  WHERE a.code = v_coh), true));
-  v_date_limite := private.date_limite_effective(p_eleve_id);
+  SELECT * INTO v_dates FROM private.dates_etape(p_eleve_id);
 
   SELECT coalesce(pg_catalog.jsonb_agg(pg_catalog.jsonb_build_object(
            'code', e.code_technique,
@@ -843,7 +819,7 @@ BEGIN
            'matiere_principale', e.matieres -> v_coh ->> 'principale',
            'matiere_secondaire', e.matieres -> v_coh ->> 'secondaire',
            'duree_prevue_semaines', (e.durees -> v_coh ->> 'prevue')::int,
-           'repere_semaines', (e.durees -> v_coh ->> 'limite')::int,
+           'date_limite_semaines', (e.durees -> v_coh ->> 'limite')::int,
            'statut', CASE WHEN e.ordre < n.ordre THEN 'franchie'
                           WHEN e.id = n.id THEN 'en_cours'
                           ELSE 'a_venir' END) ORDER BY e.ordre), '[]'::jsonb)
@@ -879,22 +855,23 @@ BEGIN
       'matiere_principale', n.matieres -> v_coh ->> 'principale',
       'matiere_secondaire', n.matieres -> v_coh ->> 'secondaire',
       'duree_prevue_semaines', (n.durees -> v_coh ->> 'prevue')::int,
-      'repere_semaines', (n.durees -> v_coh ->> 'limite')::int,
+      'date_limite_semaines', (n.durees -> v_coh ->> 'limite')::int,
       'entree_le', f.entree_etape_le,
+      'date_limite', CASE WHEN v_masque THEN NULL ELSE v_dates.date_limite END,
       'semaines_ecoulees', CASE WHEN v_masque THEN NULL
                                 ELSE pg_catalog.floor((pg_catalog.now()::date - f.entree_etape_le) / 7.0)::int END,
       'rythme', CASE WHEN v_masque THEN NULL
                      ELSE private.vitesse_eleve(f.entree_etape_le::timestamptz,
                                                 (n.durees -> v_coh ->> 'prevue')::int,
-                                                v_date_limite, pg_catalog.now()) END),
+                                                v_dates.date_limite, pg_catalog.now()) END),
     'niveau', pg_catalog.jsonb_build_object(
       'code', n.cycle_code,
       'nom', coalesce(v_cy.nom_humain, n.cycle),
       'cohorte', v_coh,
       'duree_prevue_semaines', (v_cy.durees -> v_coh ->> 'prevue')::int,
-      'date_limite_semaines', CASE WHEN v_masque THEN NULL ELSE (v_cy.durees -> v_coh ->> 'limite')::int END,
+      'date_limite_semaines', (v_cy.durees -> v_coh ->> 'limite')::int,
       'entree_le', f.entree_niveau_le,
-      'date_limite', CASE WHEN v_masque THEN NULL ELSE v_date_limite END,
+      'horizon', CASE WHEN v_masque THEN NULL ELSE v_dates.horizon END,
       'date_limite_visible', NOT v_masque),
     'chemin', v_chemin,
     'sourates', v_sourates,
@@ -906,9 +883,10 @@ $function$;
 
 COMMENT ON FUNCTION public.etape_eleve_lecture(uuid) IS
   'SOCLE-PROGRAMME (12/11/2026) : LA lecture de l''etape de l''eleve (etape en cours, chemin de '
-  'son niveau pour sa tranche avec objectifs et matieres, dates d''entree, duree prevue, reperes, '
-  'date limite du niveau, sourates des bases, page de reprise). Eleve, titulaire de son profil, '
-  'tuteur du foyer, enseignant de sa classe (fenetre CAHIER-C1), direction. Date limite et rythme '
+  'son niveau pour sa tranche avec objectifs, matieres, durees prevues et dates limites, date '
+  'd''entree, date limite de l''etape, horizon du niveau, sourates des bases, page de reprise). '
+  'Eleve, titulaire de son profil, tuteur du foyer, enseignant de sa classe (fenetre CAHIER-C1), '
+  'direction. Date limite, horizon et rythme '
   'retenus pour l''eleve de moins de 10 ans qui lit pour lui-meme. 42501 sinon ; NULL sans etape.';
 
 -- ---------------------------------------------------------------------------
@@ -965,8 +943,9 @@ BEGIN
 END;
 $function$;
 
--- La proposition des bases d'un geste : desormais le contenu decide (reperes du
--- tableau 1 bis, matieres, niveau), et plus le decoupage x 1,3 de C2.
+-- La proposition des bases d'un geste : desormais le contenu decide (durees et
+-- dates limites d'etape du tableau 1 bis, matieres, niveau), et plus le
+-- decoupage x 1,3 de C2.
 CREATE OR REPLACE FUNCTION public.preremplir_bases_programme(p_version_id uuid)
 RETURNS integer
 LANGUAGE plpgsql
@@ -1005,7 +984,7 @@ $function$;
 
 COMMENT ON FUNCTION public.preremplir_bases_programme(uuid) IS
   'SOCLE-PROGRAMME (12/11/2026) : insere dans un brouillon vide le contenu decide des bases '
-  '(quatre etapes, objectifs en vigueur, matieres, durees prevues et reperes du tableau 1 bis, '
+  '(quatre etapes, objectifs en vigueur, matieres, durees prevues et dates limites du tableau 1 bis, '
   'niveau et sa date limite). Remplace la proposition de CAHIER-C2.';
 
 -- ---------------------------------------------------------------------------
@@ -1069,8 +1048,7 @@ REVOKE ALL ON FUNCTION private.programme_socle_publication() FROM PUBLIC, anon, 
 REVOKE ALL ON FUNCTION private.etape_publiee_equivalente(uuid) FROM PUBLIC, anon, authenticated, service_role;
 REVOKE ALL ON FUNCTION private.etape_par_defaut() FROM PUBLIC, anon, authenticated, service_role;
 REVOKE ALL ON FUNCTION private.cohorte_effective(uuid, uuid) FROM PUBLIC, anon, authenticated, service_role;
-REVOKE ALL ON FUNCTION private.date_limite_depuis(uuid, text, date) FROM PUBLIC, anon, authenticated, service_role;
-REVOKE ALL ON FUNCTION private.date_limite_effective(uuid) FROM PUBLIC, anon, authenticated, service_role;
+REVOKE ALL ON FUNCTION private.dates_etape(uuid) FROM PUBLIC, anon, authenticated, service_role;
 REVOKE ALL ON FUNCTION private.poser_etape_eleve(uuid, uuid, timestamptz) FROM PUBLIC, anon, authenticated, service_role;
 REVOKE ALL ON FUNCTION private.rattacher_classes_et_eleves() FROM PUBLIC, anon, authenticated, service_role;
 REVOKE ALL ON FUNCTION private.socle_classe_neuve() FROM PUBLIC, anon, authenticated, service_role;
@@ -1141,7 +1119,7 @@ BEGIN
      OR pg_catalog.has_function_privilege('anon', 'public.etape_eleve_lecture(uuid)', 'EXECUTE')
      OR pg_catalog.has_function_privilege('authenticated', 'private.semer_programme_bases(uuid)', 'EXECUTE')
      OR pg_catalog.has_function_privilege('authenticated', 'private.poser_etape_eleve(uuid, uuid, timestamptz)', 'EXECUTE')
-     OR pg_catalog.has_function_privilege('authenticated', 'private.date_limite_effective(uuid)', 'EXECUTE')
+     OR pg_catalog.has_function_privilege('authenticated', 'private.dates_etape(uuid)', 'EXECUTE')
      OR pg_catalog.has_function_privilege('anon', 'public.creer_version_programme(uuid)', 'EXECUTE')
      OR pg_catalog.has_function_privilege('anon', 'public.preremplir_bases_programme(uuid)', 'EXECUTE')
      OR NOT pg_catalog.has_function_privilege('authenticated', 'public.creer_version_programme(uuid)', 'EXECUTE') THEN
@@ -1152,14 +1130,14 @@ BEGIN
        'coalesce(public.app_role() = ''admin'' and public.app_account_valid(), false)') = 0 THEN
     RAISE EXCEPTION 'SOCLE-PROGRAMME : creer_version_programme sans la garde positive';
   END IF;
-  -- Les reperes du contenu decide font exactement la date du niveau, tranche par tranche.
+  -- Les durees et dates limites des etapes font exactement celles du niveau, tranche par tranche.
   IF EXISTS (
     SELECT 1 FROM pg_catalog.jsonb_each(private.durees_niveau_bases()) t(coh, v)
      WHERE (SELECT pg_catalog.sum((c.durees -> t.coh ->> 'limite')::int) FROM private.contenu_bases() c)
            <> (t.v ->> 'limite')::int
         OR (SELECT pg_catalog.sum((c.durees -> t.coh ->> 'prevue')::int) FROM private.contenu_bases() c)
            <> (t.v ->> 'prevue')::int) THEN
-    RAISE EXCEPTION 'SOCLE-PROGRAMME : la somme des reperes ne fait pas la date du niveau';
+    RAISE EXCEPTION 'SOCLE-PROGRAMME : la somme des etapes ne fait pas le niveau';
   END IF;
 END
 $postflight$;

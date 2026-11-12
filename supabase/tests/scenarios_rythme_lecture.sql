@@ -4,9 +4,8 @@
 -- suivi_pedagogique_eleve (SUIVI-ELEVE). Migration 20261122000000_rythme_lecture.sql.
 -- Fixtures reprises de scenarios_suivi_eleve_pedagogique.sql. ROUGE sans la migration
 -- (la fonction n'existe pas) ; VERT avec. Tout est annule a la fin.
--- Adapte par SOCLE-PROGRAMME (12/11/2026) : la decision cree le fait unique « etape en
--- cours » ; la date limite est celle du niveau, sur les etapes restantes (etape 2 en 6-9 ans :
--- reperes 19 + 10 + 9 = 38 semaines) ; e5 est decide il y a 40 semaines pour depasser.
+-- Adapte par SOCLE-PROGRAMME (12/11/2026) : la date limite de l'etape 2 (6-9 ans) est
+-- celle du tableau 1 bis de REGLAGES.md, 19 semaines (plus la regle x 1,3, qui donnait 18).
 \o /dev/null
 \o /dev/null
 BEGIN;
@@ -100,15 +99,15 @@ SELECT public.publier_version_programme((SELECT id FROM se_ids WHERE cle = 'v1')
 RESET ROLE;
 UPDATE public.groupes SET programme_niveau_id = (SELECT id FROM se_ids WHERE cle = 'n1')
  WHERE id = pg_temp.u('c1');
--- Decisions datees : 5, 16 et 20 semaines (etape 2 : 14 prevues, 18 limite).
+-- Decisions datees : 5, 16 et 20 semaines (etape 2 : 14 prevues, 19 limite).
 INSERT INTO public.progression_historique (student_id, niveau_id, type_mouvement, decide_par, motif, created_at)
 SELECT pg_temp.u(x.e), (SELECT id FROM se_ids WHERE cle = 'n2'), 'diagnostic_initial', pg_temp.u('a1'),
        'Diagnostic', pg_catalog.now() - x.semaines * interval '1 week' - interval '1 hour'
-  FROM (VALUES ('e1', 5), ('e4', 16), ('e5', 40)) AS x(e, semaines);
+  FROM (VALUES ('e1', 5), ('e4', 16), ('e5', 20)) AS x(e, semaines);
 SELECT pg_temp.vrai(
   (SELECT (n.durees -> 'enfant_6_9' ->> 'prevue')::int = 14 AND (n.durees -> 'enfant_6_9' ->> 'limite')::int = 19
      FROM public.programme_niveaux n WHERE n.id = (SELECT id FROM se_ids WHERE cle = 'n2')),
-  'fixture : etape 2, 14 semaines prevues, repere de 19 semaines (6-9 ans)');
+  'fixture : etape 2, 14 semaines prevues, date limite a 19 (6-9 ans)');
 
 -- ------------------------------------------------------------------
 -- 1. Le rythme de chaque eleve, pour la direction
@@ -120,7 +119,7 @@ SELECT pg_temp.vrai(
   'direction : une ligne par eleve present de la Classe (e1, e2, e4, e5, g1)');
 SELECT pg_temp.vrai(
   (SELECT r.semaines_ecoulees = 5 AND r.vitesse = 'dans_les_temps' AND r.duree_prevue_semaines = 14
-          AND r.date_limite = (r.depuis + interval '38 weeks')::date
+          AND r.date_limite = (r.depuis + interval '19 weeks')::date
      FROM public.rythme_classe(pg_temp.u('c1')) r WHERE r.student_id = pg_temp.u('e1')),
   'e1, 5 semaines sur 14 : dans_les_temps');
 SELECT pg_temp.vrai(
@@ -130,7 +129,7 @@ SELECT pg_temp.vrai(
 SELECT pg_temp.vrai(
   (SELECT r.vitesse = 'date_limite_depassee'
      FROM public.rythme_classe(pg_temp.u('c1')) r WHERE r.student_id = pg_temp.u('e5')),
-  'e5, 40 semaines : date_limite_depassee');
+  'e5, 20 semaines : date_limite_depassee');
 SELECT pg_temp.vrai(
   (SELECT r.vitesse = 'inconnu' AND r.semaines_ecoulees IS NULL AND r.date_limite IS NULL
      FROM public.rythme_classe(pg_temp.u('c1')) r WHERE r.student_id = pg_temp.u('e2')),

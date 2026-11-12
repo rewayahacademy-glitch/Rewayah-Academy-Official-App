@@ -10,12 +10,11 @@
 --   5. etape des eleves d'une Classe : decision de niveau (e1, avec date
 --      limite de sa tranche), sinon etape de la Classe (e2, sans date
 --      limite) ; une decision sur un brouillon ne compte pas ;
---      (adapte par SOCLE-PROGRAMME, 12/11/2026 : la date limite est celle du
---      niveau, calculee sur les etapes restantes ; les reperes viennent du
---      tableau 1 bis de REGLAGES.md, plus de la regle x 1,3 par etape) ;
 --   6. etranger, eleve : lecture refusee ; droits des fonctions.
 -- Echoue sans la migration (premier ROUGE : la fonction n'existe pas).
 -- Tout est annule a la fin.
+-- Adapte par SOCLE-PROGRAMME (12/11/2026) : la date limite de l'etape 2 (6-9 ans) est
+-- celle du tableau 1 bis de REGLAGES.md, 19 semaines (plus la regle x 1,3, qui donnait 18).
 \o /dev/null
 BEGIN;
 SET CONSTRAINTS ALL IMMEDIATE;
@@ -213,12 +212,12 @@ SET LOCAL ROLE authenticated;
 SELECT pg_temp.vrai(
   (SELECT e.etape_nom = 'Lire avec les voyelles' AND e.etape_ordre = 2
           AND e.cohorte = 'enfant_6_9'
-          AND e.duree_prevue_semaines = 14 AND e.date_limite_semaines = 48
-          AND e.date_limite = (e.depuis + interval '38 weeks')::date
+          AND e.duree_prevue_semaines = 14 AND e.date_limite_semaines = 19
+          AND e.date_limite = (e.depuis + interval '19 weeks')::date
           AND pg_catalog.cardinality(e.objectifs) = 5
      FROM public.etapes_eleves_classe(pg_temp.u('c2')) e
     WHERE e.student_id = pg_temp.u('e1')),
-  'titulaire : e1 a l''etape 2, 14 semaines prevues ; date limite du niveau (48 semaines) calculee sur les etapes restantes : 19 + 10 + 9 = 38 semaines depuis sa decision (SOCLE-PROGRAMME)');
+  'titulaire : e1 a l''etape 2, 14 semaines prevues, date limite a 19 semaines de sa decision');
 SELECT pg_temp.vrai(
   (SELECT e.etape_ordre = 1 AND e.cohorte = 'adulte_18_plus'
           AND e.duree_prevue_semaines = 3 AND e.depuis IS NULL AND e.date_limite IS NULL
