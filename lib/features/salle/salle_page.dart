@@ -10,8 +10,8 @@ import 'package:uuid/uuid.dart';
 
 import '../../core/accessibilite/age_eleve.dart';
 import '../../core/accessibilite/mode_accessibilite.dart';
-import '../../core/coran/service_coran.dart'
-    show pageCoranProvider, pagesMushafMedine;
+import '../../core/coran/service_coran.dart' show pagesMushafMedine;
+import '../../core/coran/vue_lecteur.dart' show EtatLecteur;
 import '../../core/domain/enums.dart';
 import '../../core/enseignant/modeles_enseignant.dart'
     show GroupeEnseignant, SeanceEnseignant;
@@ -2510,8 +2510,9 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       lecteur: LecteurSupport(
         pages: pagesMushafMedine,
         pageDepart: retenue ?? pagePresentee ?? 1,
-        page: (BuildContext _, int numero) =>
-            PageCoranSalle(key: ValueKey<int>(numero), numero: numero),
+        // PAGES-FLUIDES : sans cle par numero, la page lue reste a l'ecran
+        // pendant que la suivante se lit, puis le fondu (`PageCoranSalle`).
+        page: (BuildContext _, int numero) => PageCoranSalle(numero: numero),
         partagerPage: (int numero) => unawaited(_presenterPage(numero)),
       ),
     );
@@ -2531,7 +2532,13 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   ) {
     for (final SupportDeSalle s in connus) {
       if (s.id == support.id && s.version == support.version) {
-        return s.page(context, support.page);
+        // PAGES-FLUIDES (directeur, 12/11/2026) : le meme fondu court que
+        // la page du Coran au changement de page ; rien sous « reduire les
+        // animations » (`FonduAuChangement`).
+        return FonduAuChangement(
+          cle: '${support.id}:${support.page}',
+          child: s.page(context, support.page),
+        );
       }
     }
     return const SupportIllisibleIci();
@@ -3005,17 +3012,13 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     final ContenuPresente? pagePresentee = _panneauEnseignant(vue) && !enImpasse
         ? ref.watch(contenuPresenteProvider).value
         : null;
-    // Le panneau de l'enseignant lit d'abord la page par le service du Coran
-    // (etats de lecture) : la page ne prend la place que si elle est lue.
+    // Le panneau de l'enseignant lit d'abord la page (etats de lecture) : la
+    // page ne prend la place que si elle est lue. PAGES-FLUIDES : dans le
+    // meme cache que le rendu (`etatPagePresentee`), plus de seconde lecture.
     final bool pageEnseignant =
         pagePresentee != null &&
         pagePresentee.estCoran &&
-        (ref
-                .watch(pageCoranProvider(pagePresentee.page))
-                .value
-                ?.versets
-                .isNotEmpty ??
-            false) &&
+        etatPagePresentee(ref, pagePresentee.page) == EtatLecteur.lecture &&
         pageCoranLisible(ref, pagePresentee.page);
     final bool pageEleveLisible =
         pageEleve != null &&

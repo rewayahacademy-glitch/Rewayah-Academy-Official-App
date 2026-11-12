@@ -47,6 +47,7 @@ import 'package:rewayah_academy/core/tc_realtime/port_realtime_pedagogique.dart'
     show MessagePedagogique;
 import 'package:rewayah_academy/core/tc_realtime/types_message.dart';
 import 'package:rewayah_academy/core/theme/app_mouvement.dart';
+import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/video/garde_fermeture.dart';
 import 'package:rewayah_academy/core/video/gestes_salle.dart';
 import 'package:rewayah_academy/core/video/livekit_session_provider.dart';
@@ -4157,9 +4158,16 @@ void main() {
           avecFleches: true,
         );
         expect(boite.width, closeTo(attendue.width, 0.5));
-        // La page composee remplit la hauteur de sa boite.
+        // La page composee remplit la hauteur de sa boite, moins la reserve
+        // du haut et du bas (PAGES-FLUIDES, demande du directeur du
+        // 12/11/2026 : un cadre et des marges ; avant, zero marge).
         final Rect page = tester.getRect(find.byKey(PageCoranSalle.cle));
-        expect(page.height, closeTo(boite.height, 0.5));
+        expect(
+          page.height,
+          closeTo(boite.height - margesPageSalle(boite.size).vertical, 0.5),
+        );
+        expect(page.left - boite.left, greaterThanOrEqualTo(AppSpacing.lg));
+        expect(boite.right - page.right, greaterThanOrEqualTo(AppSpacing.lg));
         // Les quinze lignes se partagent la hauteur de la boite.
         final double ligne = tester
             .getRect(find.byKey(cleLigneMadina15(3)))

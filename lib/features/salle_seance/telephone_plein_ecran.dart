@@ -102,6 +102,41 @@ Size boitePagePleinEcran(Size ecran, {required bool telephone}) {
   );
 }
 
+/// PAGES-FLUIDES (directeur, 12/11/2026 : « les pages du Coran et de tout
+/// document sont trop pres des bords ; il faut un cadre et des marges ») :
+/// la marge autour d'une page de document dans sa [boite] plein cadre. Elle
+/// amende S0.2d et K4 (« zero marge ») : 16 de chaque cote au telephone ;
+/// sur tablette et sur ordinateur, davantage (jusqu'a 24, puis 32) quand la
+/// boite le permet, c'est-a-dire quand la page n'y perd rien de sa largeur
+/// (la hauteur fixe deja sa taille) ; en haut et en bas, une reserve pour
+/// que rien ne colle aux bords.
+EdgeInsets margesPageSalle(Size boite) {
+  final double vertical = boite.width >= AppGabarit.seuilTablette
+      ? AppSpacing.lg
+      : AppSpacing.md;
+  final double plafond = boite.width >= AppGabarit.seuilEtendu
+      ? AppSpacing.xxxl
+      : boite.width >= AppGabarit.seuilTablette
+      ? AppSpacing.xxl
+      : AppSpacing.lg;
+  // La place laissee de chaque cote par une page que la hauteur limite.
+  final double naturelle =
+      math.max(0, boite.height - 2 * vertical) / ratioHauteurPageMadina15;
+  final double libre = (boite.width - naturelle) / 2;
+  double lateral = AppSpacing.lg;
+  for (final double palier in <double>[
+    AppSpacing.xl,
+    AppSpacing.xxl,
+    AppSpacing.xxxl,
+  ]) {
+    if (palier <= plafond && palier <= libre) lateral = palier;
+  }
+  return EdgeInsets.symmetric(horizontal: lateral, vertical: vertical);
+}
+
+/// PAGES-FLUIDES : l'arrondi d'une page de document en plein cadre.
+const BorderRadius arrondiPageSalle = AppRadius.arrondiSm;
+
 /// La marge d'une grande fleche de page, sa place comprise.
 const double margeFlechePage = coteFlechesSalle + AppSpacing.sm;
 
@@ -343,10 +378,20 @@ Widget? pageSalle(
   );
   // S0.2d (directeur, 24/10/2026) : « Full screen, full body, no
   // bezels. » Au telephone, la page n'est plus au ratio A4 : son cadre
-  // EST l'ecran, largeur et hauteur, zero marge. La page Madina se
-  // compose sur cette place (`PageMadina15`, interligne libre). Les
-  // notes gardent le repere de cette page (coordonnees normalisees).
+  // EST l'ecran, largeur et hauteur. La page Madina se compose sur cette
+  // place (`PageMadina15`, interligne libre). Les notes gardent le repere
+  // de cette page (coordonnees normalisees). Amende par la demande du
+  // directeur du 12/11/2026 (PAGES-FLUIDES, cadre et marges) : la page se
+  // pose dans sa boite avec une marge (`margesPageSalle`), sur le fond de
+  // la salle ; le repere des notes est la page, marge exclue.
   final SupportPageFixe? support = vue.supportPresente;
+  final EdgeInsets marges = support == null
+      ? EdgeInsets.zero
+      : margesPageSalle(boite);
+  final Size interieure = Size(
+    math.max(0, boite.width - marges.horizontal),
+    math.max(0, boite.height - marges.vertical),
+  );
   // S0.3, K4 : le tableau blanc prend toute la fenetre ; sa feuille
   // garde la forme fixe de la classe (16:9), ajustee sans etirement
   // ([TableauLibre.classe]).
@@ -363,10 +408,10 @@ Widget? pageSalle(
             // les siennes (centree dans la boite, jamais etiree).
             largeurCanonique: support.ratioFixe
                 ? support.largeurCanonique
-                : math.max(1, boite.width.round()),
+                : math.max(1, interieure.width.round()),
             hauteurCanonique: support.ratioFixe
                 ? support.hauteurCanonique
-                : math.max(1, boite.height.round()),
+                : math.max(1, interieure.height.round()),
             mention: support.mention,
             cleImage: support.cleImage,
             ratioFixe: support.ratioFixe,
@@ -379,10 +424,28 @@ Widget? pageSalle(
     size: libre ? ecran : boite,
     // La page et ses notes restent claires (meme regle que la
     // carte de la surface).
-    child: Theme(
-      data: AppTheme.pour(InterfaceMode.standard, Brightness.light),
-      child: SurfacePageFixe(vue: vuePage, surface: surface, zoom: zoom),
-    ),
+    child: libre
+        ? Theme(
+            data: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+            child: SurfacePageFixe(vue: vuePage, surface: surface, zoom: zoom),
+          )
+        // PAGES-FLUIDES : la marge, puis la page (claire, arrondie, filet
+        // fin : `SurfacePageFixe`). Rien n'est peint dans la marge : on y
+        // voit le fond de la salle lui-meme, clair en theme clair, sombre en
+        // theme sombre. Pas de boite sombre autour de la page : dans une
+        // salle claire elle faisait un cadre noir (relecture du 12/11).
+        : Padding(
+            key: TelephonePleinEcran.cleFondPage,
+            padding: marges,
+            child: Theme(
+              data: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+              child: SurfacePageFixe(
+                vue: vuePage,
+                surface: surface,
+                zoom: zoom,
+              ),
+            ),
+          ),
   );
   // Ordinateur : les grandes fleches de page (reference 4 du
   // directeur) dans les marges vides a cote de la page, quand elles y
@@ -451,8 +514,12 @@ class TelephonePleinEcran extends StatefulWidget {
   final ActionsSeance actions;
   final EtatLocalSeance local;
 
-  /// La cle de la page bord a bord (tests, captures).
+  /// La cle de la boite de la page (tests, captures).
   static const Key clePage = ValueKey<String>('telephone-page');
+
+  /// PAGES-FLUIDES : la marge autour d'une page de document (le fond de la
+  /// salle s'y voit).
+  static const Key cleFondPage = ValueKey<String>('telephone-page-fond');
 
   /// GRILLE-COMMANDES (11/11/2026) : « Plus », la case de la barre de
   /// l'enseignant qui ouvre le tiroir (l'ancien bouton « Commandes »).

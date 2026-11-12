@@ -13,12 +13,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart' show Ref;
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
-import 'package:rewayah_academy/core/coran/service_coran.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
+import 'package:rewayah_academy/core/tc_coran/moteur_mushaf.dart';
+import 'package:rewayah_academy/core/tc_coran/port_corpus_coran.dart';
 import 'package:rewayah_academy/core/tc_observation/port_annonce_observation.dart';
 import 'package:rewayah_academy/core/theme/app_gabarit.dart';
 import 'package:rewayah_academy/core/theme/app_spacing.dart';
@@ -673,9 +674,11 @@ void main() {
           texte,
           hauteur: hauteur,
           enPlus: <Override>[
-            pageCoranProvider.overrideWith(
+            // PAGES-FLUIDES : la salle lit la page dans le cache du rendu
+            // (`pageCorpusProvider`), plus par `pageCoranProvider`.
+            pageCorpusProvider.overrideWith(
               (Ref _, int numero) async =>
-                  PageCoran(numero: numero, versets: const <VersetCoran>[]),
+                  PageCorpus(numero: numero, versets: const <VersetCorpus>[]),
             ),
           ],
         );
@@ -830,9 +833,10 @@ void main() {
   group('SALLE-ERR-320-1 : captures', skip: sautSansCapture, () {
     setUpAll(chargerPolicesDuDepot);
     final List<Override> corpusVide = <Override>[
-      pageCoranProvider.overrideWith(
+      // PAGES-FLUIDES : le cache du rendu (`pageCorpusProvider`).
+      pageCorpusProvider.overrideWith(
         (Ref _, int numero) async =>
-            PageCoran(numero: numero, versets: const <VersetCoran>[]),
+            PageCorpus(numero: numero, versets: const <VersetCorpus>[]),
       ),
     ];
     for (final (String etat, List<Override> enPlus, bool presenter)

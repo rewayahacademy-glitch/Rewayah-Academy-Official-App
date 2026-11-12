@@ -2,6 +2,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/coran/service_coran.dart';
 import '../../core/session/session_controleur.dart';
+import '../../core/tc_coran/moteur_mushaf.dart';
+import '../../core/tc_coran/port_corpus_coran.dart';
 import '../../core/video/livekit_session_provider.dart';
 import '../../core/video/video_session_provider.dart';
 
@@ -101,16 +103,42 @@ class PresentateurCoran {
   /// La page est lue avant d'etre presentee, pour deux raisons : le pointeur
   /// porte aussi une sourate et un verset, et une page sans verset signifie que
   /// le corpus n'est pas installe -- ce qui ne se presente pas.
+  ///
+  /// PAGES-FLUIDES (directeur, 12/11/2026 : « tourner une page donne
+  /// l'impression que ca plante ») : **une seule lecture, celle du rendu**
+  /// ([pageCorpusProvider]). La page lue ici est celle que la salle affiche
+  /// ensuite, sans seconde requete. Deja lue (cas normal : les pages voisines
+  /// sont prechargees par `PageCoranSalle`), elle part tout de suite, sans
+  /// rien attendre. Pas encore lue, [pageEnPreparationProvider] le dit a
+  /// l'ecran de l'enseignant pendant la lecture (l'ancienne page reste) ; la
+  /// classe ne la recoit qu'une fois lue. Une page illisible ou vide ne se
+  /// presente jamais ([SortPresentation.introuvable]).
   Future<SortPresentation> presenterPage(int page) async {
-    final PageCoran? lue = await _ref.read(pageCoranProvider(page).future);
-    final List<VersetCoran> versets = lue?.versets ?? const <VersetCoran>[];
+    final AsyncValue<PageCorpus?> deja = _ref.read(pageCorpusProvider(page));
+    final PageCorpus? lue;
+    if (deja.hasValue && !deja.hasError) {
+      lue = deja.value;
+    } else {
+      final PreparationPage preparation = _ref.read(
+        pageEnPreparationProvider.notifier,
+      )..commencer(page);
+      try {
+        lue = await _ref.read(pageCorpusProvider(page).future);
+      } on Object {
+        // La lecture a echoue : on ne sait pas situer la page, rien ne part.
+        return SortPresentation.introuvable;
+      } finally {
+        preparation.finir(page);
+      }
+    }
+    final List<VersetCorpus> versets = lue?.versets ?? const <VersetCorpus>[];
     if (versets.isEmpty) {
       return SortPresentation.introuvable;
     }
-    final VersetCoran premier = versets.first;
+    final VersetCorpus premier = versets.first;
     return _presenter(
       page: page,
-      sourate: premier.sourateNumero,
+      sourate: premier.sourate,
       verset: premier.numero,
     );
   }
@@ -159,6 +187,28 @@ class PresentateurCoran {
       ),
     );
     return SortPresentation.envoye;
+  }
+}
+
+/// PAGES-FLUIDES (directeur, 12/11/2026) : la page que l'enseignant vient de
+/// demander et qui n'est pas encore lue, ou `null`. L'ecran de l'enseignant
+/// le montre tout de suite (il a compris le geste) ; la page presentee a la
+/// classe, elle, ne change qu'une fois la page lue.
+final NotifierProvider<PreparationPage, int?> pageEnPreparationProvider =
+    NotifierProvider<PreparationPage, int?>(PreparationPage.new);
+
+/// La page en cours de lecture avant d'etre presentee.
+class PreparationPage extends Notifier<int?> {
+  @override
+  int? build() => null;
+
+  /// La lecture de [page] commence.
+  void commencer(int page) => state = page;
+
+  /// La lecture de [page] est finie (lue ou en echec). Une demande plus
+  /// recente garde sa marque.
+  void finir(int page) {
+    if (state == page) state = null;
   }
 }
 

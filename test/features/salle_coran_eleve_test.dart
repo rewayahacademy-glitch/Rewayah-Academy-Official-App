@@ -447,11 +447,18 @@ void main() {
   // a la tablette en portrait, la page garde l'ecran entier et les commandes
   // passent par-dessus au toucher, puis s'effacent. Seule l'Interface guidee
   // en portrait a une page plus petite (entre ses deux rangees).
+  // PAGES-FLUIDES (directeur, 12/11/2026 : « un cadre et des marges, pour
+  // lire sans que ca coince sur les cotes ») : la page se pose dans une
+  // marge (16 de chaque cote au telephone, davantage quand la boite le
+  // permet ; reserve de 12 ou 16 en haut et en bas). Ce que le texte y perd,
+  // mesure ici : 390 : 377 -> 346 (-8 %) ; 820 : 628 -> 611 (-3 %) ;
+  // 1280 : 426 -> 409 (-4 %) ; 1440 : 479 -> 462 (-4 %). La garde suit la
+  // nouvelle taille ; elle reste une garde contre tout autre retrecissement.
   final Map<double, double> lignes = <double, double>{
-    390: 377,
-    820: 628,
-    1280: 426,
-    1440: 479,
+    390: 346,
+    820: 611,
+    1280: 409,
+    1440: 462,
   };
   for (final Size taille in _tailles) {
     testWidgets('mesure, eleve ${taille.width.toInt()} : la ligne du texte '
