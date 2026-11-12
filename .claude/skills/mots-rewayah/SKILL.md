@@ -36,6 +36,9 @@ Sources : les décisions du directeur (annexe 10 du dossier maître, spécificat
 | Votre parent observe le cours (à l'enfant concerné seulement) | Ton tuteur regarde le cours |
 | Accueil · Foyer · Historique · Compte (navigation du tuteur) | Disponibilités, Suivi, Réglages en onglet principal |
 | Aujourd'hui · Apprendre · Suivi · Profil (élève adulte) | la navigation du tuteur recopiée |
+| Apprendre : l'espace de tout l'apprentissage, pour l'élève adulte ET pour l'enfant, en trois onglets Bibliothèque · Programme · Mon livret (directeur, 12/11/2026 ; noms arbitrés le 12/11) | un onglet « Coran » (le Coran est un document de la Bibliothèque), « Apprendre » réservé à l'adulte |
+| Mon livret (سجلّي) : l'onglet des résultats, bilans, attestations et rapports (12/11/2026) | Mes réussites, Mon dossier, Consécration |
+| Pour aller plus loin (للتعمّق أكثر) : le second rayon de la Bibliothèque, sous « Documents des cours » (وثائق الدروس) ; aucun prix tant que la vente n'est pas ouverte (12/11/2026) | Autres documents, Lectures choisies, boutique, un mot d'argent |
 | Aujourd'hui · Classes · Messages, et le cercle Compte (enseignant ; décision du directeur du 09/11/2026, NAV-REFONTE : les disponibilités sortent de la barre, « Mes disponibilités » s'ouvre depuis Compte) | Journée · Créneaux · Profil (caduc depuis le 09/11/2026) |
 | Côté candidat enseignant : « Votre candidature » · « Faisons connaissance » · « Bienvenue dans l'équipe » (directeur, 02/11/2026 ; noms internes de la direction inchangés : Salle d'examen · Salle de vérification et d'entretien · Salle des prêts à enseigner) | un nom de salle, « examen », « vérification », « interrogatoire » ou tout mot technique montré au candidat |
 | Recharger (bouton de l'ouverture de l'application quand elle dépasse 20 s, lot du 29/10/2026) | Actualiser, Rafraîchir |
@@ -66,6 +69,8 @@ Sources : les décisions du directeur (annexe 10 du dossier maître, spécificat
 | petit bilan | contrôle |
 | rencontre de récitation | Majlis |
 | rattraper ce cours (l'élève, seul) | cours de rattrapage offert |
+| « Rattraper ce cours » (la tâche de l'élève absent) · « J'ai rattrapé ce cours » (le bouton de l'élève, ou du tuteur pour un enfant) · « a rattrapé » / « n'a pas rattrapé » (la marque discrète vue par l'enseignant) (12/11/2026) | rattrapage, cours rattrapé par l'enseignant |
+| plan de soutien (ce qui suit une date limite dépassée, ou « Une nouvelle vérification est nécessaire » ; 12/11/2026) | plan de rattrapage, plan pour rattraper |
 | demander une pause d'un mois | geler, suspendre l'abonnement |
 | lecture enregistrée (du programme) | audio du cours, enregistrement du professeur |
 | qiraat (lectures du Coran), pour traduire القراءات : « Institut des qiraat (lectures du Coran) » (directeur, 22/10/2026) | lectures du Coran seul |
