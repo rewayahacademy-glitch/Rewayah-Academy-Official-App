@@ -305,6 +305,8 @@ declare
     'mon_invitation_en_cours()',
     'pause_reglage_ecrire(uuid,boolean,integer,integer,text,text)',
     'pause_seance_demarrer(uuid,text)',
+    -- PAUSE-SERVEUR (12/11/2026) : le Non a la pause proposee ; memes gardes que pause_seance_demarrer (enseignant titulaire, compte valide, seance en cours).
+    'pause_seance_refuser(uuid,text)',
     'pause_seance_terminer(uuid,text)',
     'planifier_evaluation(uuid,uuid,text,date)',
     'poser_exception_progression(uuid,text,text)',

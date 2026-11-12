@@ -54,16 +54,24 @@ class PauseSeanceDemonstration implements PortPauseSeance {
     );
   }
 
-  PauseSeance _courante(String seanceId) =>
-      _seances[seanceId] ??
-      PauseSeance(
-        statut: _reglage.actif ? StatutPause.programmee : StatutPause.nonPrevue,
-        dureePrevueMinutes: _reglage.dureeMinutes,
-        debutPrevuUtc: _maintenant().add(
-          Duration(minutes: _reglage.apresMinutes),
-        ),
-        peutPiloter: true,
-      );
+  /// Le delai de rappel apres un Non, comme `seance.pause_rappel_minutes`.
+  static const Duration rappel = Duration(minutes: 5);
+
+  PauseSeance _courante(String seanceId) {
+    final PauseSeance? connue = _seances[seanceId];
+    if (connue != null) return connue;
+    if (!_reglage.actif) return const PauseSeance.nonPrevue();
+    final DateTime debut = _maintenant().add(
+      Duration(minutes: _reglage.apresMinutes),
+    );
+    return _seances[seanceId] = PauseSeance(
+      statut: StatutPause.programmee,
+      dureePrevueMinutes: _reglage.dureeMinutes,
+      debutPrevuUtc: debut,
+      proposerAUtc: debut,
+      peutPiloter: true,
+    );
+  }
 
   @override
   Future<PauseSeance> etat(String seanceId) async => _courante(seanceId);
@@ -75,12 +83,15 @@ class PauseSeanceDemonstration implements PortPauseSeance {
   }) async {
     final PauseSeance p = _courante(seanceId);
     if (p.statut == StatutPause.enCours) return p;
+    if (p.statut != StatutPause.programmee) return p;
     return _seances[seanceId] = PauseSeance(
       statut: StatutPause.enCours,
       dureePrevueMinutes: p.dureePrevueMinutes,
       debutPrevuUtc: p.debutPrevuUtc,
       debutUtc: _maintenant(),
       peutPiloter: true,
+      refusNombre: p.refusNombre,
+      motif: p.motif,
     );
   }
 
@@ -98,6 +109,30 @@ class PauseSeanceDemonstration implements PortPauseSeance {
       debutUtc: p.debutUtc,
       finUtc: _maintenant(),
       peutPiloter: true,
+      refusNombre: p.refusNombre,
+      motif: p.motif,
+    );
+  }
+
+  @override
+  Future<PauseSeance> refuser({
+    required String seanceId,
+    required String cleIdempotence,
+  }) async {
+    final PauseSeance p = _courante(seanceId);
+    if (_cles[cleIdempotence] == 'refuser:$seanceId') return p;
+    if (p.statut != StatutPause.programmee) {
+      throw StateError('Aucune pause programmee a refuser.');
+    }
+    _cles[cleIdempotence] = 'refuser:$seanceId';
+    return _seances[seanceId] = PauseSeance(
+      statut: StatutPause.programmee,
+      dureePrevueMinutes: p.dureePrevueMinutes,
+      debutPrevuUtc: p.debutPrevuUtc,
+      proposerAUtc: _maintenant().add(rappel),
+      refusNombre: p.refusNombre + 1,
+      peutPiloter: true,
+      motif: p.motif,
     );
   }
 }

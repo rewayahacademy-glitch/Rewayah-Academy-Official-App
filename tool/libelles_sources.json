@@ -8513,5 +8513,18 @@
   "compte.tuteur.pagePaiements.statutConfirme": "garde-cap du 12/11/2026, lot PAIEMENTS-TUTEUR : la page des paiements du tuteur dit le montant rendu par le serveur et son statut en mots, jamais des recus qui n'existent pas (justificatifDisponible toujours faux) ; refus serveur 42501 (second adulte) dit en clair",
   "compte.tuteur.pagePaiements.statutEnConfirmation": "garde-cap du 12/11/2026, lot PAIEMENTS-TUTEUR : la page des paiements du tuteur dit le montant rendu par le serveur et son statut en mots, jamais des recus qui n'existent pas (justificatifDisponible toujours faux) ; refus serveur 42501 (second adulte) dit en clair",
   "compte.tuteur.pagePaiements.refusTitre": "garde-cap du 12/11/2026, lot PAIEMENTS-TUTEUR : la page des paiements du tuteur dit le montant rendu par le serveur et son statut en mots, jamais des recus qui n'existent pas (justificatifDisponible toujours faux) ; refus serveur 42501 (second adulte) dit en clair",
-  "compte.tuteur.pagePaiements.refusPhrase": "garde-cap du 12/11/2026, lot PAIEMENTS-TUTEUR : la page des paiements du tuteur dit le montant rendu par le serveur et son statut en mots, jamais des recus qui n'existent pas (justificatifDisponible toujours faux) ; refus serveur 42501 (second adulte) dit en clair"
+  "compte.tuteur.pagePaiements.refusPhrase": "garde-cap du 12/11/2026, lot PAIEMENTS-TUTEUR : la page des paiements du tuteur dit le montant rendu par le serveur et son statut en mots, jamais des recus qui n'existent pas (justificatifDisponible toujours faux) ; refus serveur 42501 (second adulte) dit en clair",
+  "admin.regles.pause.section": "directeur, 12/11/2026 : la pause est un reglage, rappel reglable par la direction, 5 min par defaut (lot PAUSE-SERVEUR)",
+  "admin.regles.pause.intro": "directeur, 12/11/2026 : la pause est un reglage, rappel reglable par la direction, 5 min par defaut (lot PAUSE-SERVEUR)",
+  "admin.regles.pause.adultes": "directeur, 12/11/2026 : la pause est un reglage, rappel reglable par la direction, 5 min par defaut (lot PAUSE-SERVEUR)",
+  "admin.regles.pause.adultesDetail": "directeur, 12/11/2026 : la pause est un reglage, rappel reglable par la direction, 5 min par defaut (lot PAUSE-SERVEUR)",
+  "admin.regles.pause.enfants": "directeur, 12/11/2026 : la pause est un reglage, rappel reglable par la direction, 5 min par defaut (lot PAUSE-SERVEUR)",
+  "admin.regles.pause.enfantsDetail": "directeur, 12/11/2026 : la pause est un reglage, rappel reglable par la direction, 5 min par defaut (lot PAUSE-SERVEUR)",
+  "admin.regles.pause.rappel": "directeur, 12/11/2026 : la pause est un reglage, rappel reglable par la direction, 5 min par defaut (lot PAUSE-SERVEUR)",
+  "admin.regles.pause.rappelDetail": "directeur, 12/11/2026 : la pause est un reglage, rappel reglable par la direction, 5 min par defaut (lot PAUSE-SERVEUR)",
+  "admin.regles.pause.reste": "directeur, 12/11/2026 : la pause est un reglage, rappel reglable par la direction, 5 min par defaut (lot PAUSE-SERVEUR)",
+  "admin.regles.pause.resteDetail": "directeur, 12/11/2026 : la pause est un reglage, rappel reglable par la direction, 5 min par defaut (lot PAUSE-SERVEUR)",
+  "admin.regles.pause.bornesDuree": "directeur, 12/11/2026 : la pause est un reglage, rappel reglable par la direction, 5 min par defaut (lot PAUSE-SERVEUR)",
+  "admin.regles.pause.bornesRappel": "directeur, 12/11/2026 : la pause est un reglage, rappel reglable par la direction, 5 min par defaut (lot PAUSE-SERVEUR)",
+  "admin.regles.pause.bornesReste": "directeur, 12/11/2026 : la pause est un reglage, rappel reglable par la direction, 5 min par defaut (lot PAUSE-SERVEUR)"
 }
