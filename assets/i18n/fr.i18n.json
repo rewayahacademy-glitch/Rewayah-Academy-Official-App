@@ -15151,6 +15151,6 @@
     "statutPrecedente": "Étape précédente",
     "attenteEntretien": "Votre étape sera fixée après l'entretien de lecture avec la direction.",
     "attenteEntretienTu": "Ton étape sera fixée après l'entretien de lecture avec la direction.",
-    "attenteEntretienPour": "L'étape de {prenom} sera fixée après l'entretien de lecture avec la direction."
+    "attenteEntretienPour": "Pour {prenom}, l'étape sera fixée après l'entretien de lecture avec la direction."
   }
 }

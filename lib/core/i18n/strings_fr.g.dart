@@ -4148,8 +4148,8 @@ class Traductions$suiviPedagogique$fr {
 	/// fr: 'Ton étape sera fixée après l'entretien de lecture avec la direction.'
 	String get attenteEntretienTu => 'Ton étape sera fixée après l\'entretien de lecture avec la direction.';
 
-	/// fr: 'L'étape de {prenom} sera fixée après l'entretien de lecture avec la direction.'
-	String attenteEntretienPour({required Object prenom}) => 'L\'étape de ${prenom} sera fixée après l\'entretien de lecture avec la direction.';
+	/// fr: 'Pour {prenom}, l'étape sera fixée après l'entretien de lecture avec la direction.'
+	String attenteEntretienPour({required Object prenom}) => 'Pour ${prenom}, l\'étape sera fixée après l\'entretien de lecture avec la direction.';
 }
 
 // Path: commun.langue
@@ -60978,7 +60978,7 @@ extension on Traductions {
 			'suiviPedagogique.statutPrecedente' => 'Étape précédente',
 			'suiviPedagogique.attenteEntretien' => 'Votre étape sera fixée après l\'entretien de lecture avec la direction.',
 			'suiviPedagogique.attenteEntretienTu' => 'Ton étape sera fixée après l\'entretien de lecture avec la direction.',
-			'suiviPedagogique.attenteEntretienPour' => ({required Object prenom}) => 'L\'étape de ${prenom} sera fixée après l\'entretien de lecture avec la direction.',
+			'suiviPedagogique.attenteEntretienPour' => ({required Object prenom}) => 'Pour ${prenom}, l\'étape sera fixée après l\'entretien de lecture avec la direction.',
 			_ => null,
 		};
 	}
