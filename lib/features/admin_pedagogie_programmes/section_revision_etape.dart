@@ -12,6 +12,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/i18n/strings.g.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart' show LibellesGroupe;
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -64,10 +65,12 @@ class _SectionRevisionEtapeEtat extends State<SectionRevisionEtape> {
     final String brut = h == h.roundToDouble()
         ? '${h.toInt()}'
         : h.toStringAsFixed(1);
-    return t.admin.programmes.contenu.revisionHeuresValeur(
-      heures: LocaleSettings.currentLocale == AppLocale.ar
-          ? brut.replaceAll('.', '٫')
-          : brut.replaceAll('.', ','),
+    return LibellesGroupe.insecable(
+      t.admin.programmes.contenu.revisionHeuresValeur(
+        heures: LocaleSettings.currentLocale == AppLocale.ar
+            ? brut.replaceAll('.', '٫')
+            : brut.replaceAll('.', ','),
+      ),
     );
   }
 

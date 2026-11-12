@@ -206,7 +206,9 @@ class CarteSuiviPedagogique extends ConsumerWidget {
                   cle: const ValueKey<String>('suivi-pedagogique-revision'),
                   icone: AppIcons.horloge,
                   libelle: s.revision,
-                  legende: s.revisionHeures(heures: _decimal(heures)),
+                  legende: LibellesGroupe.insecable(
+                    s.revisionHeures(heures: _decimal(heures)),
+                  ),
                 ),
               if (reglage?.repetitionsEstimees case final int n)
                 LigneRubrique(
