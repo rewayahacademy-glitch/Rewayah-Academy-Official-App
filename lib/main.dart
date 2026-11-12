@@ -37,6 +37,8 @@ import 'core/agent/amorce_agent.dart';
 import 'core/agent/session_agent.dart';
 import 'core/alertes/alertes_supabase.dart';
 import 'core/alertes/port_alertes.dart';
+import 'core/attente_classe/attente_supabase.dart';
+import 'core/attente_classe/modele_attente.dart';
 import 'core/auth/anti_robot.dart';
 import 'core/auth/anti_robot_supabase.dart';
 import 'core/candidature/autres_competences_supabase.dart';
@@ -488,6 +490,14 @@ List<Override> _surchargesAppReelle() => <Override>[
   ),
   portSuiviDemandesProvider.overrideWithValue(
     DemandesSuiviSupabase(Supabase.instance.client),
+  ),
+  // SUIVI-ATTENTE (12/11/2026) : le suivi de l'attente de la classe, cinq
+  // etapes, et le reglage de l'enseignant (ce que les familles voient de lui).
+  portSuiviAttenteProvider.overrideWithValue(
+    AttenteSupabase(Supabase.instance.client),
+  ),
+  portPresentationEnseignantProvider.overrideWithValue(
+    PresentationEnseignantSupabase(Supabase.instance.client),
   ),
   // Travail a preparer d'une Classe (learning_assignment, RLS 0061) : ecriture
   // enseignante du dock et lecture de la famille.

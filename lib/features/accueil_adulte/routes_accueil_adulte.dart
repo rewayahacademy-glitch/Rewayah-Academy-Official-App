@@ -20,6 +20,7 @@ import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/session/session_state.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
+import '../attente_classe/suivi_attente_page.dart';
 import '../foyer/nos_prix_page.dart';
 import '../foyer/routes_n2_foyer_adulte.dart' show RoutesN2;
 import '../mon_espace_adulte/mes_finances_page.dart';
@@ -96,6 +97,14 @@ List<GoRoute> routesAccueilAdulte() => <GoRoute>[
     builder: (BuildContext _, GoRouterState etat) => FriseDemandePage(
       demandeId: etat.pathParameters['demandeId'] ?? '',
       chemins: CheminsSuivi.adulte,
+    ),
+  ),
+  // SUIVI-ATTENTE : le suivi de l'attente de sa classe, cinq etapes.
+  GoRouteSure(
+    path: '${Routes.eleveAdulteAttente}/:demandeId',
+    builder: (BuildContext _, GoRouterState etat) => SuiviAttentePage(
+      demandeId: etat.pathParameters['demandeId'] ?? '',
+      chemins: CheminsAttente.adulte,
     ),
   ),
   // Lot F1 : ses finances, dans la branche Accueil (la destination reste

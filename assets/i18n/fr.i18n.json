@@ -15136,5 +15136,150 @@
     },
     "dateLimiteDepassee": "Date limite dépassée",
     "erreur": "L'étape du programme n'a pas pu être lue. Réessayez dans un instant."
+  },
+  "suiviAttente": {
+    "titre": "Où en est votre demande",
+    "titreSimple": "Où en est ta demande",
+    "contexte": "L'académie confirme chaque étape. Vous êtes prévenu à chaque passage.",
+    "contexteSimple": "Voici où en est ta demande. L'académie te prévient à chaque étape.",
+    "pour": "Pour {prenom}",
+    "etapeSurTotal": "Étape {n} sur {total} : {etape}",
+    "etapes": {
+      "recue": "Demande reçue",
+      "formation": "Classe en formation",
+      "confirmee": "Classe confirmée",
+      "enseignant": "Enseignant affecté",
+      "pret": "Tout est prêt"
+    },
+    "etats": {
+      "fait": "Fait",
+      "enCours": "En cours",
+      "aVenir": "À venir"
+    },
+    "dit": {
+      "recueFait": "Votre demande est arrivée à l'académie.",
+      "recueFaitSimple": "Ta demande est arrivée à l'académie.",
+      "formationEnCours": "L'académie réunit les élèves de cette classe.",
+      "formationListeAttente": "Toutes les classes de ce créneau sont pleines. Votre demande attend qu'une place s'ouvre.",
+      "formationFait": "Les élèves de la classe sont réunis.",
+      "formationAVenir": "L'académie réunit les élèves de la classe une fois la demande reçue.",
+      "confirmeeFait": "Votre classe est confirmée.",
+      "confirmeeFaitNom": "Votre classe « {classe} » est confirmée.",
+      "confirmeeAVenir": "L'académie confirme la classe quand ses élèves sont réunis.",
+      "enseignantEnCours": "L'académie désigne l'enseignant de la classe.",
+      "enseignantEnAttente": "La classe attend son enseignant. L'académie le désigne et vous prévient.",
+      "enseignantFait": "Votre enseignant est connu.",
+      "enseignantFaitSimple": "Ton enseignant est connu.",
+      "enseignantAVenir": "L'académie désigne l'enseignant une fois la classe confirmée.",
+      "pretFait": "Tout est prêt.",
+      "pretEnCours": "L'académie fixe votre premier cours. Vous êtes prévenu dès que la date est connue.",
+      "pretAVenir": "Votre premier cours est annoncé une fois l'enseignant affecté."
+    },
+    "premierCours": "Votre premier cours : {quand}",
+    "premierCoursSimple": "Ton premier cours : {quand}",
+    "premierCoursPasse": "Votre premier cours a eu lieu le {quand}.",
+    "depuis": "Depuis le {date}",
+    "ensuite": "Ensuite : {etape}",
+    "delai": {
+      "formation(param=jours)": {
+        "one": "Une classe se forme en {jours} jour au plus.",
+        "other": "Une classe se forme en {jours} jours au plus."
+      },
+      "limite": "Date limite : {date}",
+      "point": "Point d'étape : {date}",
+      "pointPasse": "Le point d'étape est passé.",
+      "depasse": "Le délai annoncé est dépassé. Notre règle : la direction ne prolonge l'attente qu'avec votre accord, ou vous propose une autre classe."
+    },
+    "changement": "Le créneau de la classe a changé le {date}. Vous avez reçu l'avis dans vos notifications.",
+    "cloture": {
+      "titreRefusee": "Votre demande n'a pas été retenue",
+      "titreRetiree": "Cette demande est retirée",
+      "titreClose": "Cette demande est close",
+      "motif": {
+        "retraitFamille": "Vous avez retiré cette demande.",
+        "offreRetiree": "L'académie a retiré ce créneau de ses offres.",
+        "classeNonConstituee": "La classe de ce créneau n'a pas pu être constituée.",
+        "refusDirection": "La direction n'a pas retenu cette demande.",
+        "dejaEnClasse": "Cet élève a déjà une place en classe : la demande n'est plus nécessaire.",
+        "inconnu": "Cette demande est close."
+      },
+      "suite": "Vous pouvez choisir un autre créneau.",
+      "autreCreneau": "Choisir un autre créneau",
+      "simple": {
+        "refusee": "Ta demande n'a pas été retenue. Ton tuteur peut choisir un autre créneau.",
+        "retiree": "Cette demande est retirée.",
+        "close": "Cette demande est close."
+      }
+    },
+    "enseignant": {
+      "titre": "Votre enseignant",
+      "titreSimple": "Ton enseignant",
+      "sayyid": "Sayyid",
+      "sayyida": "Sayyida",
+      "nomPlein": "{prenom} {nom}",
+      "nomAvecTitre": "{titre} {prenom} {nom}",
+      "langue": "Langue du cours",
+      "origine": "Pays d'origine",
+      "residence": "Pays de résidence",
+      "mot": "Son mot de présentation",
+      "peutSePresenter": "Votre enseignant peut se présenter aux familles de la classe par un message dans Messages."
+    },
+    "vide": {
+      "message": "Vous n'avez pas encore choisi de classe.",
+      "invitation": "Choisissez une classe : l'académie vous suit ensuite étape par étape.",
+      "action": "Choisir une classe",
+      "messageSimple": "Il n'y a pas encore de demande de classe pour toi.",
+      "invitationSimple": "Ton tuteur peut en faire une."
+    },
+    "erreur": "Nous n'avons pas pu lire le suivi de votre demande. Cela vient souvent de la connexion. Réessayez dans un instant.",
+    "sansDonnees": "Vous êtes hors ligne et le suivi n'a pas encore été lu. Reconnectez-vous pour le voir.",
+    "introuvable": "Cette demande n'existe plus dans votre suivi.",
+    "retour": "Retour",
+    "carte": {
+      "titre": "Votre demande de classe",
+      "titreSimple": "Ta demande de classe",
+      "ligne": "{prenom} : étape {n} sur {total}, {etape}",
+      "suivre": "Suivre ma demande",
+      "pret": "{prenom} : tout est prêt. Premier cours : {quand}"
+    },
+    "presentation": {
+      "titre": "Ce que les familles voient de vous",
+      "phrase": "Les familles de vos classes voient toujours votre nom et la langue du cours. Vous choisissez de montrer aussi votre photo, vos pays et un mot de présentation.",
+      "montrer": "Je montre ma photo et mes pays aux familles de mes classes",
+      "paysOrigine": "Pays d'origine",
+      "paysResidence": "Pays de résidence",
+      "choisirPays": "Choisir un pays",
+      "nonRenseigne": "Non renseigné",
+      "mot": "Mon mot de présentation",
+      "motAide": "500 caractères au plus. Les familles le lisent tel que vous l'écrivez.",
+      "nonConfirme": "Vous n'avez pas encore confirmé ce choix. Tant que vous ne l'avez pas fait, les familles ne voient que votre nom et la langue du cours.",
+      "enregistrer": "Enregistrer",
+      "enregistre": "Enregistré.",
+      "erreur": "Le choix n'a pas pu être enregistré. Réessayez dans un instant.",
+      "effacerPays": "Ne pas renseigner"
+    },
+    "mePresenter": {
+      "lien": "Me présenter aux familles",
+      "titre": "Me présenter",
+      "contexte": "Un message est déjà rédigé. Vous pouvez le modifier avant de l'envoyer. Il part dans Messages, aux familles de la classe et aux élèves adultes.",
+      "messageSayyid": "Bonjour, je suis Sayyid {nom}, votre enseignant de la classe « {classe} ». Je suis heureux de commencer avec vous. Écrivez-moi ici si vous avez une question. À très bientôt.",
+      "messageSayyida": "Bonjour, je suis Sayyida {nom}, votre enseignante de la classe « {classe} ». Je suis heureuse de commencer avec vous. Écrivez-moi ici si vous avez une question. À très bientôt.",
+      "champ": "Votre message",
+      "rappel": "Ce message est lu par les tuteurs des élèves mineurs et par les élèves adultes. Il n'est jamais envoyé à un mineur. N'échangez ni téléphone ni adresse : tout passe par l'application.",
+      "envoyer": "Envoyer aux familles",
+      "envoye(param=n)": {
+        "one": "Message envoyé à {n} famille.",
+        "other": "Message envoyé à {n} familles."
+      },
+      "dejaEcrit(param=n)": {
+        "one": "{n} famille a déjà un échange avec vous : elle ne reçoit pas ce message.",
+        "other": "{n} familles ont déjà un échange avec vous : elles ne reçoivent pas ce message."
+      },
+      "aucune": "Aucune famille de cette classe ne peut recevoir de message pour le moment.",
+      "echec": "Le message n'a pas pu être envoyé à certaines familles. Réessayez : celles qui l'ont reçu ne le reçoivent pas deux fois.",
+      "chargement": "Chargement des familles de la classe",
+      "erreur": "Les familles de la classe n'ont pas pu être lues. Réessayez dans un instant.",
+      "vide": "Écrivez un message avant de l'envoyer."
+    }
   }
 }

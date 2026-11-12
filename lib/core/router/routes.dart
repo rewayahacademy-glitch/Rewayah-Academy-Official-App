@@ -501,6 +501,38 @@ abstract final class Routes {
   /// La frise d'une demande (SUIVI-FAMILLE, R20).
   static String tuteurDemande(String demandeId) => '$tuteurDemandes/$demandeId';
 
+  /// SUIVI-ATTENTE (12/11/2026) : le suivi de l'attente de la classe d'un
+  /// enfant (cinq etapes), sous le tuteur.
+  static const String tuteurAttente = '/tuteur/attente';
+
+  /// Le suivi de l'attente d'une demande, pour le tuteur.
+  static String tuteurAttenteDemande(String demandeId) =>
+      '$tuteurAttente/$demandeId';
+
+  /// SUIVI-ATTENTE : le suivi de l'attente, pour l'eleve adulte autonome.
+  static const String eleveAdulteAttente = '/eleve/adulte/attente';
+
+  /// Le suivi de l'attente d'une demande, pour l'eleve adulte.
+  static String eleveAdulteAttenteDemande(String demandeId) =>
+      '$eleveAdulteAttente/$demandeId';
+
+  /// SUIVI-ATTENTE : le suivi de l'attente, version simple, pour l'eleve de
+  /// moins de 10 ans dans son espace.
+  static const String eleveAttente = '/eleve/attente';
+
+  /// Le suivi de l'attente d'une demande, pour l'eleve (version simple).
+  static String eleveAttenteDemande(String demandeId) =>
+      '$eleveAttente/$demandeId';
+
+  /// SUIVI-ATTENTE : « Me presenter aux familles », pour l'enseignant, sur
+  /// une de ses classes.
+  static String enseignantPresentationClasse(String groupeId) =>
+      '/enseignant/classes/$groupeId/presentation';
+
+  /// SUIVI-ATTENTE : ce que les familles voient de l'enseignant (son profil).
+  static const String enseignantPresentationFamilles =
+      '/enseignant/profil/presentation';
+
   /// ECHELLE-FAM-ETATS-1 : le resultat d'une fusion ou d'un transfert pour une
   /// demande : la nouvelle classe, le titre de l'enseignant, l'horaire.
   static String tuteurChangementPour(String demandeId) =>

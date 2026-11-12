@@ -37,6 +37,7 @@ import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/point_rappel.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
+import '../attente_classe/entree_presentation_classes.dart';
 import '../com_messages/entree_messages_contexte.dart';
 import '../journee/journee_page.dart'
     show entrerEnSalle, maintenantJourneeProvider;
@@ -301,6 +302,9 @@ class MesClassesPage extends ConsumerWidget {
                 legende: t.tc.bibliotheque.detail.entreeDetailEnseignant,
               ),
               corps,
+              // SUIVI-ATTENTE (S5) : « Me presenter aux familles », pour les
+              // classes recentes ; silencieux sinon.
+              const EntreePresentationClasses(ecartAvant: Ecart.vSection),
               const EntreeMessagesContexte(ecartAvant: Ecart.vSection),
             ],
           ),
