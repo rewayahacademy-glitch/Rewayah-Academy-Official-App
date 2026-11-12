@@ -1,7 +1,9 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart' show ValueListenable;
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 
 import '../accessibilite/effacement_barre_basse.dart';
@@ -191,8 +193,18 @@ class AppBottomSheet extends StatefulWidget {
     // BANDE-BARRE : sous la barre flottante de `NavShell`, la feuille monte
     // depuis le bord de l'ecran ; la barre s'efface le temps qu'elle reste
     // ouverte.
-    final VoidCallback? rendreBarre = EffacementBarreBasse.de(context)
-        ?.effacerPourUneFeuille();
+    //
+    // Directeur, 11/11/2026 (production, enseignant au telephone : « la
+    // barre disparait sans raison et on est oblige de fermer l'app ») : la
+    // barre ne dependait que du resultat de la feuille. Or une feuille dont
+    // on quitte l'onglet sans la fermer (retour du navigateur, lien de la
+    // feuille, notification) reste ouverte, hors scene, dans son onglet : son
+    // resultat n'arrive jamais et la barre restait effacee partout. La
+    // feuille tient donc la barre effacee seulement tant qu'elle est A
+    // L'ECRAN ([_BarreEffaceeTantQueVisible]) ; le resultat ne fait que la
+    // rendre plus tot, des que la feuille commence a descendre.
+    final ControleurBarreBasse? barre = EffacementBarreBasse.de(context);
+    final VoidCallback? rendreBarre = barre?.effacerPourUneFeuille();
     final Future<T?> resultat = showModalBottomSheet<T>(
       context: context,
       // La feuille peut depasser la moitie de l'ecran : une confirmation
@@ -232,13 +244,17 @@ class AppBottomSheet extends StatefulWidget {
         padding: EdgeInsetsDirectional.only(
           bottom: MediaQuery.viewInsetsOf(contexte).bottom,
         ),
-        child: _GardeGlissement(
-          child: AppBottomSheet(
-            titre: titre,
-            forme: forme,
-            actions: actions?.call(contexte),
-            libelleFermer: libelleFermer,
-            child: constructeur(contexte),
+        child: _BarreEffaceeTantQueVisible(
+          barre: barre,
+          premierBail: rendreBarre,
+          child: _GardeGlissement(
+            child: AppBottomSheet(
+              titre: titre,
+              forme: forme,
+              actions: actions?.call(contexte),
+              libelleFermer: libelleFermer,
+              child: constructeur(contexte),
+            ),
           ),
         ),
       ),
@@ -608,6 +624,92 @@ class _AppBottomSheetEtat extends State<AppBottomSheet> {
   /// feuille debordait ; toute la feuille defile alors d'un bloc.
   static Widget _defilerSiBasse(bool basse, Widget colonne) =>
       basse ? SingleChildScrollView(child: colonne) : colonne;
+}
+
+/// Tient la barre du bas effacee tant que la feuille est A L'ECRAN, et la
+/// rend des qu'elle ne l'est plus : feuille fermee, feuille retiree avec son
+/// navigateur, ou onglet de la feuille quitte (la pile indexee des onglets
+/// garde la feuille montee mais coupe ses animations : `TickerMode`). Quand
+/// l'onglet revient, la feuille est de nouveau la et la barre s'efface.
+///
+/// [premierBail] est le bail pris a l'ouverture, avant le premier cadre de la
+/// feuille (la barre commence son fondu avec la montee de la feuille).
+class _BarreEffaceeTantQueVisible extends StatefulWidget {
+  const _BarreEffaceeTantQueVisible({
+    required this.barre,
+    required this.premierBail,
+    required this.child,
+  });
+
+  final ControleurBarreBasse? barre;
+  final VoidCallback? premierBail;
+  final Widget child;
+
+  @override
+  State<_BarreEffaceeTantQueVisible> createState() =>
+      _BarreEffaceeTantQueVisibleEtat();
+}
+
+class _BarreEffaceeTantQueVisibleEtat
+    extends State<_BarreEffaceeTantQueVisible> {
+  VoidCallback? _bail;
+  ValueListenable<TickerModeData>? _scene;
+  bool _libere = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _bail = widget.premierBail;
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final ValueListenable<TickerModeData> scene = TickerMode.getValuesNotifier(
+      context,
+    );
+    if (identical(scene, _scene)) return;
+    _scene?.removeListener(_surScene);
+    _scene = scene..addListener(_surScene);
+    _surScene();
+  }
+
+  /// La feuille entre en scene ou en sort : le bail suit, au cadre suivant
+  /// (le controleur previent la coquille, qui ne peut pas se reconstruire
+  /// pendant la construction en cours).
+  void _surScene() {
+    final bool enScene = _scene?.value.enabled ?? true;
+    SchedulerBinding.instance.addPostFrameCallback((Duration _) {
+      if (_libere) return;
+      if (enScene && (_scene?.value.enabled ?? true)) {
+        _bail ??= widget.barre?.effacerPourUneFeuille();
+      } else if (!enScene) {
+        _rendre();
+      }
+    });
+    SchedulerBinding.instance.ensureVisualUpdate();
+  }
+
+  void _rendre() {
+    _bail?.call();
+    _bail = null;
+  }
+
+  @override
+  void dispose() {
+    _libere = true;
+    _scene?.removeListener(_surScene);
+    // Differe : l'arbre est verrouille pendant la fermeture.
+    final VoidCallback? bail = _bail;
+    _bail = null;
+    if (bail != null) {
+      SchedulerBinding.instance.addPostFrameCallback((Duration _) => bail());
+    }
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.child;
 }
 
 /// Retient le glissement d'une feuille qu'une `PopScope` interdit de fermer.
