@@ -56,6 +56,7 @@ import '../../core/widgets/sous_navigation_domaine.dart';
 import '../../core/widgets/status_pill.dart';
 import '../admin_fusion/feuilles_fusion.dart';
 import '../creneaux/plages.dart' show jourCapitalise, nommerHeure;
+import '../priere_serveur/bloc_priere_classe.dart';
 import '../suivi_demandes/libelles_suivi_demandes.dart' show deFuseau;
 import 'bas_de_feuille.dart';
 import 'cahiers_classe.dart';
@@ -2004,6 +2005,10 @@ class _FeuilleDetail extends ConsumerWidget {
         Ecart.vMd,
         // ADM-CAHIER-LECTURE : les cahiers de la classe, en lecture seule.
         LienCahiersClasse(classeId: groupe.id),
+        Ecart.vXl,
+        // PRIERE-1 : ce que les creneaux de la classe croisent des prieres de
+        // l'enseignant, sur 12 mois (lecture seule, un avertissement).
+        BlocPriereClasse(classeId: groupe.id),
         Ecart.vXxl,
         Text(
           t.admin.groupes.detailMembres,

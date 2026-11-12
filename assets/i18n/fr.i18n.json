@@ -2371,7 +2371,8 @@
       "vendredi": "Ce créneau chevauche la prière du vendredi de l'enseignant ({debut} à {fin}) : {n} séances de l'année. Avertissement fort.",
       "libres": "Heures de début sans prière ce jour-là : {heures}.",
       "libresAucune": "Aucune heure de début ce jour-là n'évite toutes les prières de l'année.",
-      "libresInconnues": "Les heures sans prière ne peuvent pas être dites pour cet enseignant."
+      "libresInconnues": "Les heures sans prière ne peuvent pas être dites pour cet enseignant.",
+      "heureCourte": "{h}\u00a0h"
     },
     "regles": {
       "section": "La prière",

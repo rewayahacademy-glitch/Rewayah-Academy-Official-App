@@ -7890,6 +7890,7 @@ class _Traductions$priere$classe$ar extends Traductions$priere$classe$fr {
 	@override String libres({required Object heures}) => 'ساعات البدء بلا صلاة في ذلك اليوم: ⁨${heures}⁩.';
 	@override String get libresAucune => 'لا توجد ساعة بدء في ذلك اليوم تتفادى كل صلوات السنة.';
 	@override String get libresInconnues => 'لا يمكن تحديد الساعات الخالية من الصلاة لهذا المعلم.';
+	@override String heureCourte({required Object h}) => '⁨${h}⁩:00';
 }
 
 // Path: priere.regles
@@ -32069,6 +32070,7 @@ extension on TraductionsAr {
 			'priere.classe.libres' => ({required Object heures}) => 'ساعات البدء بلا صلاة في ذلك اليوم: ⁨${heures}⁩.',
 			'priere.classe.libresAucune' => 'لا توجد ساعة بدء في ذلك اليوم تتفادى كل صلوات السنة.',
 			'priere.classe.libresInconnues' => 'لا يمكن تحديد الساعات الخالية من الصلاة لهذا المعلم.',
+			'priere.classe.heureCourte' => ({required Object h}) => '⁨${h}⁩:00',
 			'priere.regles.section' => 'الصلاة',
 			'priere.regles.intro' => 'يضع الخادم استراحة صلاة المعلم عندما تدخل صلاة أثناء الحصة. تسري هذه الإعدادات على المدرسة كلها.',
 			'priere.regles.methode' => 'طريقة الحساب',
@@ -32402,9 +32404,9 @@ extension on TraductionsAr {
 			'inscription.langue.francaisExplication' => 'يُكتب التطبيق ورسائل الأكاديمية بالفرنسية.',
 			'inscription.langue.francaisExemple' => 'تظهر الأزرار والشروح والرسائل من اليسار إلى اليمين.',
 			'inscription.langue.arabeExplication' => 'يُكتب التطبيق ورسائل الأكاديمية بالعربية.',
-			'inscription.langue.arabeExemple' => 'تظهر الأزرار والشروح والرسائل من اليمين إلى اليسار.',
 			_ => null,
 		} ?? switch (path) {
+			'inscription.langue.arabeExemple' => 'تظهر الأزرار والشروح والرسائل من اليمين إلى اليسار.',
 			'inscription.confidentialite.kCase' => 'قرأت سياسة الخصوصية وأوافق عليها.',
 			'inscription.confidentialite.lire' => 'قراءة سياسة الخصوصية',
 			'inscription.confidentialite.requise' => 'ضع علامة في هذه الخانة لإرسال ترشحك.',
@@ -32916,9 +32918,9 @@ extension on TraductionsAr {
 			'dossiers.revue.etats.accesPerdu' => 'لم يعد لديك وصول إلى هذا الملف.',
 			'dossiers.revue.etats.retourDossiers' => 'العودة إلى الملفات',
 			'dossiers.revue.etats.verificationsIncompletes' => 'أكمل عمليات التحقق المطلوبة.',
-			'dossiers.revue.etats.accordManquant' => 'تنقص هذا الملف موافقة مطلوبة.',
 			_ => null,
 		} ?? switch (path) {
+			'dossiers.revue.etats.accordManquant' => 'تنقص هذا الملف موافقة مطلوبة.',
 			'dossiers.revue.etats.decisionIndisponible' => 'القرار غير متاح الآن.',
 			'dossiers.revue.etats.actualiserDossier' => 'تحديث الملف',
 			'dossiers.revue.etats.refusNonAutorise' => 'لا يمكن رفض هذا الملف في حالته الحالية.',
@@ -33430,9 +33432,9 @@ extension on TraductionsAr {
 			'suiviDemandes.close.motif.dejaEnClasse' => ({required Object prenom}) => 'لدى ⁨${prenom}⁩ مكان في فصل بالفعل: لم يعد هذا الطلب لازمًا.',
 			'suiviDemandes.close.motif.inconnu' => 'أُغلق هذا الطلب.',
 			'suiviDemandes.close.suite' => 'يمكنكم اختيار موعد آخر من المواعيد المقترحة.',
-			'suiviDemandes.close.suiteSansChoix' => 'لا يوجد موعد آخر مقترح حاليًا. عودوا إلى هذه الصفحة لاحقًا.',
 			_ => null,
 		} ?? switch (path) {
+			'suiviDemandes.close.suiteSansChoix' => 'لا يوجد موعد آخر مقترح حاليًا. عودوا إلى هذه الصفحة لاحقًا.',
 			'suiviDemandes.close.choisirAutre' => ({required Object prenom}) => 'اختيار موعد آخر لـ⁨${prenom}⁩',
 			'suiviDemandes.vide' => 'لا طلبات مواعيد جارية.',
 			'suiviDemandes.erreur' => 'تعذّر عرض متابعة طلباتكم: ربما لم تصل القراءة إلى رواية. هذا الإخفاق يخص عرض المتابعة فقط ولا يقول شيئًا عن طلبات مواعيدكم. أعيدوا المحاولة بعد قليل.',
@@ -33944,9 +33946,9 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.experienceDebutants.options.oui.description' => 'سبق أن رافقت طلابًا في بداياتهم.',
 			'recrutement.parcours.q.experienceDebutants.options.oui.explication' => 'تعرف الإدارة ذلك قبل المقابلة.',
 			'recrutement.parcours.q.experienceDebutants.options.oui.exemple' => 'علّمت الأطفال أو الكبار الحروف العربية.',
-			'recrutement.parcours.q.experienceDebutants.options.non.libelle' => 'لا، ليس بعد',
 			_ => null,
 		} ?? switch (path) {
+			'recrutement.parcours.q.experienceDebutants.options.non.libelle' => 'لا، ليس بعد',
 			'recrutement.parcours.q.experienceDebutants.options.non.description' => 'لم تعلّم مبتدئين من قبل.',
 			'recrutement.parcours.q.experienceDebutants.options.non.explication' => 'يمكنك مع ذلك إرسال طلب ترشحك.',
 			'recrutement.parcours.q.experienceDebutants.options.non.exemple' => 'علّمت فقط طلابًا يجيدون القراءة من قبل.',
@@ -34458,9 +34460,9 @@ extension on TraductionsAr {
 			'avis.form.depuis.aide' => 'الشهر والسنة اللذان التحقت فيهما بالأكاديمية.',
 			'avis.form.depuis.mois' => 'الشهر',
 			'avis.form.depuis.annee' => 'السنة',
-			'avis.form.depuis.erreur' => 'اختر شهرًا وسنة، من أبريل 2024 إلى هذا الشهر.',
 			_ => null,
 		} ?? switch (path) {
+			'avis.form.depuis.erreur' => 'اختر شهرًا وسنة، من أبريل 2024 إلى هذا الشهر.',
 			'avis.form.note.libelle' => 'تقييمك',
 			'avis.form.note.aide' => 'المس نجمة: 1 أدنى تقييم و5 أعلاه.',
 			'avis.form.note.etoile' => ({required Object n}) => 'إعطاء التقييم ⁨${n}⁩ من 5',
@@ -34972,9 +34974,9 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.acces.doublePhrase' => 'يتطلب هذا الاستيراد عاملكم الثاني.',
 			'candidatsFlux.importFormulaires.acces.doubleSuite' => 'المسوا «إعادة تسجيل الدخول»: تُغلق جلستكم وتعودون إلى صفحة الدخول لاستعمال عاملكم الثاني. لم يُسجَّل شيء.',
 			'candidatsFlux.importFormulaires.acces.doubleAction' => 'إعادة تسجيل الدخول',
-			'candidatsFlux.importFormulaires.pas.liste' => 'خطوات الاستيراد الثماني',
 			_ => null,
 		} ?? switch (path) {
+			'candidatsFlux.importFormulaires.pas.liste' => 'خطوات الاستيراد الثماني',
 			'candidatsFlux.importFormulaires.pas.depot' => 'إيداع الملف',
 			'candidatsFlux.importFormulaires.pas.apercu' => 'معاينة',
 			'candidatsFlux.importFormulaires.pas.colonnes' => 'الأعمدة',

@@ -96,6 +96,30 @@ reglagesEntiersProposes = <String, ReglageEntierPropose>{
   'recording_retention_days': ReglageEntierPropose(proposees: <int>[7, 15, 30]),
   // Defaut 90 (0004).
   'kyc_retention_days': ReglageEntierPropose(proposees: <int>[30, 60, 90]),
+  // PRIERE-1 (12/11/2026, `docs/current/pedagogie/REGLAGES.md` partie 8) : de
+  // 5 a 20 minutes par pas de 5 (declencheur `app_config_priere`).
+  'priere.pause_minutes': ReglageEntierPropose(
+    proposees: <int>[5, 10, 15, 20],
+    max: 20,
+  ),
+  'priere.pause_ramadan_maghrib_minutes': ReglageEntierPropose(
+    proposees: <int>[5, 10, 15, 20],
+    max: 20,
+  ),
+  // Marge de debut : de 0 a 15 minutes ; marge de fin : de 5 a 30 ; horizon :
+  // de 7 a 30 jours (memes bornes que le declencheur).
+  'priere.debut_marge_minutes': ReglageEntierPropose(
+    proposees: <int>[0, 5, 10, 15],
+    max: 15,
+  ),
+  'priere.fin_marge_minutes': ReglageEntierPropose(
+    proposees: <int>[10, 15, 20, 30],
+    max: 30,
+  ),
+  'priere.horizon_jours': ReglageEntierPropose(
+    proposees: <int>[7, 14, 21, 30],
+    max: 30,
+  ),
   // Defaut 14 (20261018150000) : delai de reflexion avant qu'une demande de
   // suppression de compte puisse etre traitee.
   'compte.suppression_delai_jours': ReglageEntierPropose(
