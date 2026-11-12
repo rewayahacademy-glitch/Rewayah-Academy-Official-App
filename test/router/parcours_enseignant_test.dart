@@ -44,6 +44,7 @@ import '../capture/outil_capture.dart'
     show capturerVue, chargerPolicesDuDepot, masquerRubanDebug, sautSansCapture;
 import '../support/aucun_mot_coupe.dart';
 import '../support/harnais.dart';
+import '../support/horloge_fictive.dart';
 
 /// Le chemin de bout en bout du role Enseignant, prouve sur le **routeur reel**.
 ///
@@ -91,6 +92,7 @@ void main() {
     serviceEnseignantProvider.overrideWithValue(
       enseignant ?? FauxServiceEnseignant(),
     ),
+    monHorlogeDeTest(),
     servicePlanningProvider.overrideWithValue(FauxServicePlanning()),
     // Le profil (ENS-05) nomme les langues par le referentiel : sans cette
     // surcharge, il interrogerait un vrai service Supabase absent du test.

@@ -13,7 +13,6 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/offres/offre_horaire.dart';
 import '../../core/offres/service_offres.dart';
-import '../../core/planning/service_planning.dart';
 import '../../core/profil/service_acceptations.dart';
 import '../../core/profil/service_declaration.dart';
 import '../../core/profil/service_profil_enseignant.dart';
@@ -23,6 +22,7 @@ import '../../core/session/deconnexion.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/session/session_state.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
@@ -46,6 +46,7 @@ import '../revenus_enseignant/revenus_enseignant_page.dart'
     show heuresDuMoisPourProfil, revenusMoisEnCoursProvider;
 import 'accord_publication_profil.dart';
 import 'declaration_choix.dart';
+import 'feuille_fuseau.dart';
 import 'photo_publique.dart';
 
 /// Le nom public de l'enseignant, avec son titre Sayyid ou Sayyida (R18, E16).
@@ -63,6 +64,10 @@ final Provider<String?> nomPublicEnseignantProvider = Provider<String?>((
     titre: profil.titre,
   );
 });
+
+/// FUSEAU-IDENTITE-PRO : la cle de la ligne « Fuseau horaire » de la feuille
+/// « Identite professionnelle ».
+const ValueKey<String> cleLigneFuseau = ValueKey<String>('profil-fuseau');
 
 /// `ENS-05` : le Compte de l'enseignant, compose dans le gabarit unique
 /// [PageCompte] (PROFILS P3, pilote et garde-cap du 11/11/2026).
@@ -552,11 +557,36 @@ class _DeclarationState extends ConsumerState<_Declaration> {
   ServiceDeclarationEnseignant get _service =>
       ref.read(serviceDeclarationProvider);
 
+  /// FUSEAU-IDENTITE-PRO : la feuille du fuseau ecrit elle-meme (le refus du
+  /// serveur s'y dit) ; ici, seulement la confirmation.
+  Future<void> _reglerFuseau(String? pays) async {
+    final bool fait = await ouvrirFeuilleFuseau(context, ref, pays: pays);
+    if (fait && mounted) {
+      setState(() => _message = t.enseignant.profil.enregistre);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final TextTheme textes = Theme.of(context).textTheme;
     final ProfilEnseignant profil = widget.profil;
-    final AsyncValue<String> fuseau = ref.watch(monFuseauProvider);
+    // FUSEAU-IDENTITE-PRO (garde-cap, 12/11/2026) : le fuseau du profil, lu
+    // par `mon_horloge` (sans repli sur Paris), jamais par `mon_fuseau`.
+    final AsyncValue<MonHorloge?> horloge = ref.watch(monHorlogeProvider);
+    final AsyncValue<String?> fuseau = horloge.whenData(
+      (MonHorloge? h) => h?.moi?.fuseau,
+    );
+    // FUSEAU-IDENTITE-PRO : la valeur du serveur, « Riyad · UTC+3 » ; sans
+    // fuseau, « Non renseigne » ; lecture en echec, « Heure de cet appareil »
+    // (les heures retombent alors sur lui).
+    final String valeurFuseau = switch (horloge) {
+      AsyncValue<MonHorloge?>(hasValue: true, :final value) =>
+        fuseauDuProfilAffiche(value) ?? t.enseignant.profil.nonRenseigne,
+      AsyncValue<MonHorloge?>(hasError: true) =>
+        t.enseignant.profil.fuseauAppareil,
+      // Pendant la lecture : « Non chargé », jamais « Non renseigné ».
+      _ => t.compte.tuteur.pageInformations.fuseauIndisponible,
+    };
     final _LanguesLues langues = _LanguesLues.depuis(
       profil.langues,
       ref.watch(referentielLanguesProvider),
@@ -619,14 +649,29 @@ class _DeclarationState extends ConsumerState<_Declaration> {
                       ),
                     ),
             ),
-            LigneRubrique(
-              libelle: t.enseignant.profil.fuseau,
-              legende: t.enseignant.profil.fuseauDetail,
-              valeur: fuseau.hasValue
-                  ? fuseau.requireValue
-                  : t.enseignant.profil.nonRenseigne,
-              icone: AppIcons.horloge,
-            ),
+            // FUSEAU-IDENTITE-PRO : l'enseignant regle lui-meme son fuseau
+            // (`maj_profil_enseignant`, p_timezone). La valeur est celle du
+            // serveur, « Riyad · UTC+3 » ; sans fuseau, « Non renseigne » ; lecture
+            // en echec, « Heure de cet appareil » (les heures retombent sur lui).
+            // Hors ligne, la ligne redevient une lecture (le geste est retire,
+            // jamais grise) ; en ligne, elle ouvre la feuille du fuseau.
+            if (widget.horsLigne)
+              LigneRubrique(
+                cle: cleLigneFuseau,
+                libelle: t.enseignant.profil.fuseau,
+                legende: t.enseignant.profil.fuseauDetail,
+                valeur: valeurFuseau,
+                icone: AppIcons.horloge,
+              )
+            else
+              LigneRubrique(
+                cle: cleLigneFuseau,
+                libelle: t.enseignant.profil.fuseau,
+                legende: t.enseignant.profil.fuseauDetail,
+                valeur: valeurFuseau,
+                icone: AppIcons.horloge,
+                onPress: () => unawaited(_reglerFuseau(profil.pays)),
+              ),
             LigneRubrique(
               libelle: t.enseignant.profil.plafond,
               legende: t.enseignant.profil.plafondDetail,

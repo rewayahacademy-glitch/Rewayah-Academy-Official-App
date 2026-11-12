@@ -17,7 +17,18 @@ abstract interface class ServiceDeclarationEnseignant {
   ///
   /// Un parametre nul signifie « ne touche pas a ce champ », jamais « efface » :
   /// la fonction SQL applique un `coalesce` sur la valeur existante.
-  Future<void> declarer({String? pays, List<String>? langues});
+  ///
+  /// [fuseau] (FUSEAU-IDENTITE-PRO, garde-cap, 12/11/2026) : un nom IANA, que
+  /// le serveur verifie (`p_timezone`). Un nom qu'il ne connait pas leve
+  /// [FuseauInconnu] : l'ecran le dit, il ne l'avale pas.
+  Future<void> declarer({String? pays, List<String>? langues, String? fuseau});
+}
+
+/// Le serveur ne connait pas le nom de fuseau envoye (`fuseau inconnu`,
+/// `maj_profil_enseignant`).
+class FuseauInconnu implements Exception {
+  /// Cree le refus.
+  const FuseauInconnu();
 }
 
 /// Ecriture Supabase, par l'unique porte ouverte au titulaire.
@@ -29,8 +40,13 @@ class ServiceDeclarationEnseignantSupabase
   final SupabaseClient _client;
 
   @override
-  Future<void> declarer({String? pays, List<String>? langues}) =>
-      _client.rpc<void>(
+  Future<void> declarer({
+    String? pays,
+    List<String>? langues,
+    String? fuseau,
+  }) async {
+    try {
+      await _client.rpc<void>(
         'maj_profil_enseignant',
         // Marqueur null-aware plutot qu'un `if` : l'entree disparait quand la
         // valeur est nulle, ce qui est exactement ce que la RPC attend -- un
@@ -38,8 +54,18 @@ class ServiceDeclarationEnseignantSupabase
         params: <String, dynamic>{
           'p_country': ?pays,
           'p_languages': ?langues,
+          'p_timezone': ?fuseau,
         },
       );
+    } on PostgrestException catch (e) {
+      // `raise exception 'fuseau inconnu'` (0027, puis fuseau_connu) : le seul
+      // refus que l'ecran sait dire en clair ; tout autre echec remonte.
+      if (fuseau != null && e.message.contains('fuseau inconnu')) {
+        throw const FuseauInconnu();
+      }
+      rethrow;
+    }
+  }
 }
 
 /// Le service de declaration employe par l'application.
