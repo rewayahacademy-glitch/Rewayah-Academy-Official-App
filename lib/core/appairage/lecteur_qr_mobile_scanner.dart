@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 
+import 'flux_camera_lecteur.dart';
 import 'lecteur_qr.dart';
 
 /// L'adaptateur `mobile_scanner` du port [LecteurQr] (Android, iOS, macOS,
@@ -12,6 +13,9 @@ import 'lecteur_qr.dart';
 ///   (`useAppLifecycleState: false`) : c'est l'ecran qui arrete la camera en
 ///   arriere-plan et la rend a la sortie.
 /// - QR code seulement : un code-barres de produit n'est meme pas lu.
+/// - Sur le web, le paquet n'arrete jamais les pistes de la camera
+///   (CAMERA-JUMELAGE, 12/11/2026) : [CycleCameraLecteur] les ferme a chaque
+///   arret, a la liberation, et quand `start()` finit apres la liberation.
 /// - Aucun message du paquet n'est montre (ils sont en anglais) : les erreurs
 ///   deviennent un [EtatCamera], que l'ecran dit en francais.
 class LecteurQrMobileScanner implements LecteurQr {
@@ -20,13 +24,20 @@ class LecteurQrMobileScanner implements LecteurQr {
     : _controleur = MobileScannerController(
         autoStart: false,
         formats: const <BarcodeFormat>[BarcodeFormat.qrCode],
-      );
+      ) {
+    _cycle = CycleCameraLecteur(
+      demarrerMoteur: _controleur.start,
+      arreterMoteur: _controleur.stop,
+      libererMoteur: _controleur.dispose,
+      prise: priseFluxCameraDeLaPlateforme(),
+    );
+  }
 
   final MobileScannerController _controleur;
+  late final CycleCameraLecteur _cycle;
   final StreamController<String> _lectures =
       StreamController<String>.broadcast();
   StreamSubscription<BarcodeCapture>? _abonnement;
-  bool _libere = false;
 
   /// Les refus d'autorisation deja recus pendant cette visite de l'ecran.
   ///
@@ -52,13 +63,12 @@ class LecteurQrMobileScanner implements LecteurQr {
 
   @override
   Future<EtatCamera> demarrer() async {
-    if (_libere) {
+    if (_cycle.libere) {
       return EtatCamera.erreur;
     }
     _abonnement ??= _controleur.barcodes.listen(_surCapture);
     try {
-      await _controleur.start();
-      return EtatCamera.pret;
+      return await _cycle.demarrer() ? EtatCamera.pret : EtatCamera.erreur;
     } on MobileScannerException catch (erreur) {
       return _etatDepuis(erreur);
     } on Object {
@@ -109,11 +119,8 @@ class LecteurQrMobileScanner implements LecteurQr {
 
   @override
   Future<void> arreter() async {
-    if (_libere) {
-      return;
-    }
     try {
-      await _controleur.stop();
+      await _cycle.arreter();
     } on Object {
       // Une camera deja arretee n'est pas une erreur a montrer.
     }
@@ -121,14 +128,14 @@ class LecteurQrMobileScanner implements LecteurQr {
 
   @override
   Future<void> liberer() async {
-    if (_libere) {
+    if (_cycle.libere) {
       return;
     }
-    _libere = true;
+    final Future<void> liberation = _cycle.liberer();
     await _abonnement?.cancel();
     await _lectures.close();
     try {
-      await _controleur.dispose();
+      await liberation;
     } on Object {
       // Deja rendue.
     }
