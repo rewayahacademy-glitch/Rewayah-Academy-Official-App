@@ -147,7 +147,7 @@ $function$;
 -- Etape 2 n'a pas de date propre : le serveur n'en connait pas (elle se
 -- franchit avec l'etape 3).
 -- Etape 5 : franchie seulement si la classe est confirmee, l'enseignant
--- affecte, l'eleve integre et une premiere seance connue.
+-- affecte, l'eleve membre actif de la classe et une premiere seance connue.
 CREATE OR REPLACE FUNCTION public.suivi_attente_foyer()
 RETURNS TABLE (
   demande_id uuid,
@@ -242,8 +242,19 @@ BEGIN
               WHERE s.groupe_id = b.groupe_id
                 AND s.deleted_at IS NULL
                 AND s.status NOT IN ('canceled', 'canceled_late')
-                AND s.started_at > coalesce(ev.t_integre, ev.t_classe, b.created_at)
+                AND s.started_at > coalesce(
+                  (SELECT min(gm.joined_at) FROM public.groupe_membres gm
+                    WHERE gm.groupe_id = b.groupe_id AND gm.student_id = b.eid
+                      AND gm.left_at IS NULL),
+                  ev.t_classe, b.created_at)
            ) END AS t_premier,
+           -- Eleve integre : un fait de la classe (adhesion active), jamais
+           -- l'evenement `eleve_integre`, que la creation d'une classe depuis un
+           -- regroupement ne laisse pas (les membres entrent avant que la
+           -- demande porte son groupe).
+           (SELECT min(gm.joined_at) FROM public.groupe_membres gm
+             WHERE gm.groupe_id = b.groupe_id AND gm.student_id = b.eid
+               AND gm.left_at IS NULL) AS t_membre,
            (
              SELECT max(n.cree_le)
                FROM public.notifications n
@@ -264,7 +275,7 @@ BEGIN
       FROM calc c
   ), fin AS (
     SELECT e.*,
-           (e.a3 AND e.a4 AND e.t_integre IS NOT NULL AND e.t_premier IS NOT NULL) AS a5
+           (e.a3 AND e.a4 AND e.t_membre IS NOT NULL AND e.t_premier IS NOT NULL) AS a5
       FROM etat e
   )
   SELECT

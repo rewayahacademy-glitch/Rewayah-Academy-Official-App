@@ -55,7 +55,7 @@
 | 2 | Classe en formation | en cours dès l'étape 1 ; franchie à l'étape 3 (pas de date propre : l'écran n'en invente pas) |
 | 3 | Classe confirmée | événement `classe_creee` |
 | 4 | Enseignant affecté | événement `enseignant_affecte` |
-| 5 | Tout est prêt | étapes 3 et 4, élève intégré (`eleve_integre`) et première séance connue ; date = la plus tardive de ces dates |
+| 5 | Tout est prêt | étapes 3 et 4 franchies, l'élève membre actif de la classe (adhésion, **pas** l'événement `eleve_integre`, que la création d'une classe depuis un regroupement n'écrit pas : les membres entrent avant que la demande porte son groupe) et première séance connue. Pas de date propre : l'écran dit « Votre premier cours : le X » |
 
 Cas hors du chemin droit, chacun avec son état et son geste : demande refusée (motif et suite), demande retirée, classe en attente d'enseignant (`en_attente`), liste d'attente, changement de créneau (`creneau_change` récent).
 

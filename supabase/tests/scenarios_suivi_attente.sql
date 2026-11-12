@@ -217,6 +217,11 @@ INSERT INTO public.groupes
 VALUES
   ('5afffff0-0000-0000-0000-0000000000a1', NULL, 'en_attente_enseignant',
    'enfant', 5, 'Classe Al-Fatiha', 1, 18, 'Europe/Paris', 'francais');
+-- Comme la creation d'une classe depuis un regroupement : l'eleve entre dans la
+-- classe AVANT que sa demande porte le groupe. Aucun evenement `eleve_integre`
+-- n'est alors ecrit ; l'etape 5 s'appuie sur l'adhesion, pas sur lui.
+INSERT INTO public.groupe_membres (groupe_id, student_id)
+VALUES ('5afffff0-0000-0000-0000-0000000000a1', '5a000000-0000-0000-0000-000000000002');
 UPDATE public.demandes_horaires_famille
    SET etat = 'classe_validee', groupe_id = '5afffff0-0000-0000-0000-0000000000a1'
  WHERE id = '5afffff0-0000-0000-0000-0000000000d1';
@@ -251,6 +256,16 @@ END
 $etape3$;
 RESET ROLE;
 
+DO $sans_evenement$
+BEGIN
+  IF EXISTS (SELECT 1 FROM public.demande_evenements
+              WHERE demande_id = '5afffff0-0000-0000-0000-0000000000d1'
+                AND type = 'eleve_integre') THEN
+    RAISE EXCEPTION 'SUIVI-ATTENTE : ce scenario rejoue l ordre sans evenement eleve_integre';
+  END IF;
+END
+$sans_evenement$;
+
 -- ---------------------------------------------------------------------------
 -- 4. Enseignant affecte, eleve integre, premier cours connu : etapes 4 et 5
 -- ---------------------------------------------------------------------------
@@ -269,8 +284,6 @@ END
 $reglage$;
 RESET ROLE;
 
-INSERT INTO public.groupe_membres (groupe_id, student_id)
-VALUES ('5afffff0-0000-0000-0000-0000000000a1', '5a000000-0000-0000-0000-000000000002');
 UPDATE public.groupes
    SET teacher_id = '5a000000-0000-0000-0000-000000000003', etat = 'active'
  WHERE id = '5afffff0-0000-0000-0000-0000000000a1';
@@ -323,6 +336,8 @@ RESET ROLE;
 SET LOCAL session_replication_role = replica;
 UPDATE public.demande_evenements SET survenu_le = survenu_le - interval '20 days'
  WHERE demande_id = '5afffff0-0000-0000-0000-0000000000d1';
+UPDATE public.groupe_membres SET joined_at = joined_at - interval '20 days'
+ WHERE groupe_id = '5afffff0-0000-0000-0000-0000000000a1';
 SET LOCAL session_replication_role = origin;
 UPDATE public.sessions
    SET started_at = pg_catalog.now() - interval '3 days',
