@@ -56,7 +56,7 @@ class VignetteDocument extends StatelessWidget {
     final AppPalette palette = AppPalette.of(context);
     final AppColorPair paire = switch (document.type) {
       TypeDocumentPlanche.audio => palette.washAccent,
-      TypeDocumentPlanche.video => palette.washFamily,
+      TypeDocumentPlanche.video => palette.surfaceInverse,
       TypeDocumentPlanche.document ||
       TypeDocumentPlanche.lienExterne => palette.surfaceSunken,
     };
