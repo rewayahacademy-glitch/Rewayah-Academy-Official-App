@@ -2177,7 +2177,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       // choisie prend aussitot l'espace principal.
       actionScene: enseignant && presentee == null && vue.peutPresenter
           ? (
-              libelle: t.salle.ouvrirCoran,
+              libelle: t.salle.seance.commandes.bibliotheque,
               onPress: () => unawaited(_ouvrirCoran()),
             )
           : null,

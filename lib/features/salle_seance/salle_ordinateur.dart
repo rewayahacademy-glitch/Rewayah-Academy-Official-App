@@ -174,6 +174,16 @@ class _EtatSalleOrdinateur extends ConsumerState<SalleOrdinateur> {
     }
   }
 
+  /// BIBLIOTHEQUE-SALLE (directeur, 12/11/2026) : le bouton du milieu de la
+  /// scene ouvre ce meme panneau, sans jamais le refermer (la tuile, elle,
+  /// bascule).
+  void _ouvrirBibliotheque() {
+    if (widget.vue.panneau == PanneauOuvert.commandes) {
+      widget.actions.onCommandes?.call();
+    }
+    _poser(_cleBibliotheque, true);
+  }
+
   /// La Bibliotheque est ouverte d'office quand la page garde au moins la
   /// moitie de la largeur (1200 et plus) ; sinon B ou le bouton l'ouvre.
   bool get _bibliothequeDefaut =>
@@ -303,6 +313,9 @@ class _EtatSalleOrdinateur extends ConsumerState<SalleOrdinateur> {
                               vue: vue,
                               actions: actions,
                               local: local,
+                              ouvrirBibliotheque: peutBibliotheque
+                                  ? _ouvrirBibliotheque
+                                  : null,
                             ),
                           ),
                           PanneauGlissant(
@@ -772,11 +785,16 @@ class _Centre extends StatelessWidget {
     required this.vue,
     required this.actions,
     required this.local,
+    this.ouvrirBibliotheque,
   });
 
   final VueSeance vue;
   final ActionsSeance actions;
   final EtatLocalSeance local;
+
+  /// BIBLIOTHEQUE-SALLE : ouvre le panneau de la Bibliotheque (jamais ne le
+  /// referme) ; le bouton du milieu de la scene le fait.
+  final VoidCallback? ouvrirBibliotheque;
 
   @override
   Widget build(BuildContext context) {
@@ -899,7 +917,7 @@ class _Centre extends StatelessWidget {
               // elle reste une grille ; le tableau, lui, ne se change jamais
               // en grille ([ZoneSupport.sceneIci]).
               child: scene
-                  ? const SceneDeLaClasse()
+                  ? SceneDeLaClasse(geste: ouvrirBibliotheque)
                   : page == null
                   ? ZoneSupport(vue: vue, zoom: local.zoom, sceneIci: false)
                   : Center(child: page),

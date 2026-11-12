@@ -34,6 +34,8 @@ import 'package:rewayah_academy/core/widgets/status_pill.dart';
 import 'package:rewayah_academy/features/salle/salle_page.dart';
 import 'package:rewayah_academy/features/salle_enseignant/panneau_enseignant.dart';
 import 'package:rewayah_academy/features/salle_seance/composition_salle.dart';
+import 'package:rewayah_academy/features/salle_seance/media_salle.dart'
+    show ActionSousLaScene;
 import 'package:rewayah_academy/features/salle_seance/salle_ordinateur.dart';
 import 'package:rewayah_academy/features/salle_seance/zone_support.dart';
 
@@ -693,7 +695,7 @@ void main() {
         expect(tester.takeException(), isNull);
       });
 
-      testWidgets('rien n est presente, $nom : Ouvrir le Coran a l ecran', (
+      testWidgets('rien n est presente, $nom : Bibliotheque a l ecran', (
         WidgetTester tester,
       ) async {
         await _monter(
@@ -707,20 +709,26 @@ void main() {
         expect(tester.takeException(), isNull);
         touchable(
           tester,
-          find.text(t.salle.ouvrirCoran),
+          find.descendant(
+            of: find.byKey(ActionSousLaScene.cleBouton),
+            matching: find.text(t.salle.seance.commandes.bibliotheque),
+          ),
           largeur,
           hauteur,
-          'Ouvrir le Coran',
+          'Bibliotheque',
         );
         // S0 : rien de presente, la scene video est au premier plan et
-        // « Ouvrir le Coran » y est le bouton de l'ecran (plus de panneau
+        // « Bibliotheque » y est le bouton de l'ecran (plus de panneau
         // vide a lire).
         touchable(
           tester,
-          find.text(t.salle.ouvrirCoran),
+          find.descendant(
+            of: find.byKey(ActionSousLaScene.cleBouton),
+            matching: find.text(t.salle.seance.commandes.bibliotheque),
+          ),
           largeur,
           hauteur,
-          'Ouvrir le Coran apres defilement',
+          'Bibliotheque apres defilement',
         );
       });
     }
@@ -788,7 +796,10 @@ void main() {
             expect(zone.bottom, lessThanOrEqualTo(plancher + 0.5));
             expect(zone.right, lessThanOrEqualTo(largeur + 0.5));
             // Le droit refuse ne se grise pas : aucune commande n'existe.
-            expect(find.text(t.salle.ouvrirCoran), findsNothing);
+            expect(
+              find.text(t.salle.seance.commandes.bibliotheque),
+              findsNothing,
+            );
             // Relire la page n'est pas presenter : l'action de l'erreur de
             // lecture reste, a l'ecran et touchable.
             if (presente) {

@@ -35,8 +35,14 @@ class ZoneSupport extends StatelessWidget {
     this.serre = false,
     this.contenu,
     this.sceneIci = true,
+    this.geste,
     super.key,
   });
+
+  /// BIBLIOTHEQUE-SALLE : le geste de la Bibliotheque de cet appareil (le
+  /// panneau sur ordinateur, le tiroir au telephone). Le bouton de la scene
+  /// le fait au lieu de son geste d'origine.
+  final VoidCallback? geste;
 
   final VueSeance vue;
 
@@ -85,7 +91,7 @@ class ZoneSupport extends StatelessWidget {
         return _ScenePremierPlan(
           scene: scene,
           onRevenir: media.onBasculerScene,
-          action: media.actionScene,
+          action: ActionSousLaScene.avecGeste(media.actionScene, geste),
         );
       }
     }
@@ -642,7 +648,10 @@ class _ScenePremierPlan extends StatelessWidget {
 /// jusqu'a la fin de sa sortie. Rien sans scene.
 class SceneDeLaClasse extends StatelessWidget {
   /// Cree la scene.
-  const SceneDeLaClasse({super.key});
+  const SceneDeLaClasse({this.geste, super.key});
+
+  /// Le geste de la Bibliotheque ([ZoneSupport.geste]).
+  final VoidCallback? geste;
 
   @override
   Widget build(BuildContext context) {
@@ -652,7 +661,7 @@ class SceneDeLaClasse extends StatelessWidget {
     return _ScenePremierPlan(
       scene: scene,
       onRevenir: media.onBasculerScene,
-      action: media.actionScene,
+      action: ActionSousLaScene.avecGeste(media.actionScene, geste),
     );
   }
 }
