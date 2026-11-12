@@ -115,6 +115,7 @@ Future<GoRouter> monterCompte(
   PortIdentiteTitulaire? identite,
   PortAccesFoyer? acces,
   ServiceAcceptations? acceptations,
+  TextDirection? direction,
 }) async {
   tester.view.physicalSize = taille;
   tester.view.devicePixelRatio = 1;
@@ -144,6 +145,11 @@ Future<GoRouter> monterCompte(
             return MaterialApp.router(
               theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
               routerConfig: routeur,
+              // Les captures en arabe (PAIEMENTS-TUTEUR) : le sens de lecture.
+              builder: direction == null
+                  ? null
+                  : (BuildContext _, Widget? app) =>
+                        Directionality(textDirection: direction, child: app!),
             );
           },
         ),

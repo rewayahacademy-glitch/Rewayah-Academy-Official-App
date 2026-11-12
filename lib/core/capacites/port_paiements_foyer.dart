@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show ProviderOrFamily;
 
 import '../finance/finances_profil.dart';
 import '../finance/mouvements_profil.dart';
@@ -176,3 +177,14 @@ final Provider<PortPaiementsFoyer> portPaiementsFoyerProvider =
     Provider<PortPaiementsFoyer>(
       (Ref ref) => const PaiementsFoyerIndisponible(),
     );
+
+/// La capacite des paiements du foyer : vraie des qu'une source les sert
+/// (l'adaptateur Supabase en production, un double en demonstration). Le
+/// Compte ne pose sa ligne « Paiements » que si elle est vraie : absente,
+/// jamais grisee (PAIEMENTS-TUTEUR, garde-cap 12/11/2026). Le droit du
+/// titulaire reste verifie par le serveur.
+final Provider<bool> paiementsFoyerOuvertsProvider = Provider<bool>(
+  (Ref ref) =>
+      ref.watch(portPaiementsFoyerProvider) is! PaiementsFoyerIndisponible,
+  dependencies: <ProviderOrFamily>[portPaiementsFoyerProvider],
+);

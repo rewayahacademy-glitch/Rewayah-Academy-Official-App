@@ -7661,13 +7661,17 @@
         "titulaire": "Votre compte de titulaire n'a pas d'échéance propre\u00a0: l'accès se règle profil par profil."
       },
       "pagePaiements": {
-        "titre": "Paiements et reçus",
+        "titre": "Paiements",
         "indisponibleTitre": "Paiements pas encore consultables",
         "indisponiblePhrase": "L'historique des paiements, les reçus et les moyens de paiement ne sont pas encore disponibles dans l'application. Aucun paiement ne vous est demandé ici.",
         "aucunTitre": "Aucun paiement enregistré",
         "aucunePhrase": "Les paiements enregistrés par l'académie s'afficheront ici.",
         "paiementDu": "Paiement du {date}",
-        "justificatif": "Justificatif disponible"
+        "justificatif": "Justificatif disponible",
+        "statutConfirme": "Confirmé",
+        "statutEnConfirmation": "En cours de confirmation",
+        "refusTitre": "Paiements tenus par le titulaire du foyer",
+        "refusPhrase": "Seul le titulaire du foyer voit l'historique des paiements."
       },
       "pagePreferences": {
         "notifications": "Notifications",
