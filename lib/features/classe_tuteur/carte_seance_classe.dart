@@ -13,6 +13,7 @@ import '../../core/tc_groupe/group_summary_vm.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/tc_horloge/heure_double.dart';
 import '../../core/tc_horloge/horloge_vivante.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/tc_horloge/session_clock_vm.dart';
 import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_palette.dart';
@@ -124,6 +125,9 @@ class CarteSeanceClasse extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // HEURES-PROFIL H1 (12/11/2026) : la page ecoute le fuseau du profil ;
+    // quand il arrive apres son premier rendu, ses heures se redessinent.
+    ref.watch(monHorlogeProvider);
     final AppPalette palette = AppPalette.of(context);
     final SeanceFamille? lue = seance.value;
     // Une seance annulee attenue la carte par sa surface (ANNUL-VIS-1).

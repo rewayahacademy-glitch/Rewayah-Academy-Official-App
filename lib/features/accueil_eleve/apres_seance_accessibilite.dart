@@ -30,6 +30,7 @@ import '../../core/tc_groupe/group_home_vm.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/tc_groupe/port_groupes.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/tc_horloge/port_horloge_seance.dart';
 import '../../core/tc_horloge/session_clock_vm.dart';
 import '../../core/tc_parcours/port_travail_a_venir.dart';
@@ -151,10 +152,10 @@ class ApresSeanceAccessibilite extends StatelessWidget {
   /// Etat hors ligne.
   static const Key cleHorsLigne = ValueKey<String>('ma6-hors-ligne');
 
-  /// La prochaine seance, date ET heure de l'appareil (« Lundi 5 octobre a
-  /// 18:00 »), meme format que le reste de l'application.
+  /// La prochaine seance, date ET heure du profil (« Lundi 5 octobre a
+  /// 18:00 »), meme format que le reste de l'application (HEURES-PROFIL H1).
   static String libelleProchaine(DateTime debutUtc) {
-    final DateTime local = debutUtc.toLocal();
+    final DateTime local = chezMoi(debutUtc);
     return t.accessibilite.apres.prochaineDateHeure(
       date: dateDeLAppareil(local),
       heure: heureDeLAppareil(local),
@@ -428,6 +429,9 @@ class ApresSeanceSalle extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // HEURES-PROFIL H1 (12/11/2026) : la page ecoute le fuseau du profil ;
+    // quand il arrive apres son premier rendu, ses heures se redessinent.
+    ref.watch(monHorlogeProvider);
     final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
     final String? id = groupeId;
 

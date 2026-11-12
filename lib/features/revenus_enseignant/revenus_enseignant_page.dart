@@ -46,6 +46,7 @@ import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -144,6 +145,9 @@ class RevenusEnseignantPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // HEURES-PROFIL H1 (12/11/2026) : la page ecoute le fuseau du profil ;
+    // quand il arrive apres son premier rendu, ses heures se redessinent.
+    ref.watch(monHorlogeProvider);
     final AsyncValue<RevenusEnseignant> revenus = ref.watch(
       revenusEnseignantProvider,
     );
@@ -707,10 +711,9 @@ class _SectionSeance extends StatelessWidget {
     final TextTheme textes = Theme.of(context).textTheme;
     final AppPalette palette = AppPalette.of(context);
     final r = t.enseignant.revenus;
-    final DateTime d = seance.debut;
-    final String heure =
-        '${d.hour.toString().padLeft(2, '0')}:'
-        '${d.minute.toString().padLeft(2, '0')}';
+    // HEURES-PROFIL H1 : jour et heure a l'heure du profil.
+    final DateTime d = chezMoi(seance.debut);
+    final String heure = heureChezMoi(seance.debut);
     // Revue du garde-cap (08/11/2026, option i) : le montant que le serveur
     // a ecrit ; nul ou absent, « aucun montant ».
     final bool aUnMontant = seance.aUnMontant;

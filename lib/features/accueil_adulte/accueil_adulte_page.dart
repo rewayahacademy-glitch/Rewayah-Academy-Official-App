@@ -225,6 +225,9 @@ class AccueilAdultePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // HEURES-PROFIL H1 (12/11/2026) : la page ecoute le fuseau du profil ;
+    // quand il arrive apres son premier rendu, ses heures se redessinent.
+    ref.watch(monHorlogeProvider);
     final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
     // Hors ligne se dit une fois (EA-HL-DOUBLE-1) : le bandeau de `PageShell`
     // le dit ; une lecture deja faite reste affichee, et sans elle le bloc dit

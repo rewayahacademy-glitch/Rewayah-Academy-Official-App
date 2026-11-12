@@ -930,9 +930,8 @@ String _heure(DateTime? quand) {
   if (quand == null) {
     return '';
   }
-  final DateTime local = quand.toLocal();
-  return '${local.hour.toString().padLeft(2, '0')}:'
-      '${local.minute.toString().padLeft(2, '0')}';
+  // HEURES-PROFIL H1 : a l'heure du profil.
+  return heureChezMoi(quand);
 }
 
 String _mmss(Duration duree) {
