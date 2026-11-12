@@ -152,3 +152,26 @@ Valeurs propres au moteur, entrées le 12/11/2026 telles que le moteur les fixai
 | Présence pas encore connue | Laisser le temps d'une correction | Signalée au journal de la direction après 48 heures ; jamais comptée comme absence | ARBITRÉ | Direction |
 | Suspension d'une règle pour un élève | Une exception motivée | Motif, date de fin et nom ; 90 jours au plus | ARBITRÉ | Direction |
 | Calcul de nuit | Les règles qui dépendent d'une date | Chaque nuit à 3 h (heure universelle) ; un calcul manqué reprend la nuit suivante, sans doubler un message | ARBITRÉ | Direction |
+
+## 8. La prière (lot PRIERE-1, 12/11/2026)
+
+Décision et contrat : `PRIERE.md`. Les réglages de l'école vivent dans `app_config` (clés `priere.*`), ceux d'un enseignant dans `prayer_settings`. **Statut « valeur par défaut en vigueur, à valider par le directeur et ses associés »** : valeur en service tant que le directeur et ses associés ne l'ont pas validée ou corrigée ; elle relève du fiqh ou d'un choix religieux, pas d'un choix technique.
+
+| Réglage | À quoi il sert | Valeur par défaut | Statut | Qui peut le changer |
+|---|---|---|---|---|
+| Méthode de calcul de l'école (`priere.methode_defaut`) | Les angles du Fajr et de l'Isha pour toute l'école | Ligue islamique mondiale (Fajr 18°, Isha 17°) ; l'une des 12 méthodes connues du serveur | ARBITRÉ ; valeur par défaut en vigueur, **à valider par le directeur et ses associés** | Direction |
+| École pour l'Asr de l'école (`priere.ecole_asr_defaut`) | L'heure d'entrée de l'Asr | Selon la majorité des écoles (l'ombre égale la hauteur de l'objet) ; l'autre choix : ombre double | ARBITRÉ ; valeur par défaut en vigueur, **à valider par le directeur et ses associés** | Direction |
+| Méthode et école d'un enseignant | Un enseignant dont la zone suit une autre pratique | Aucune : il suit celles de l'école ; la direction peut en poser une pour lui | ARBITRÉ | Direction |
+| Lieu de prière d'un enseignant | Calculer ses heures : nom du lieu, latitude, longitude, fuseau | Posé par la direction (les zones des enseignants sont connues de l'académie) ; lu par l'enseignant et la direction seulement, jamais par un élève ni un tuteur ; sans lieu, aucune pause de prière | ARBITRÉ | Direction |
+| Ajustement d'une prière | Rapprocher l'heure calculée de celle de la mosquée de référence | De −30 à +30 minutes, par prière ; 0 par défaut | ARBITRÉ (bornes existantes de `prayer_settings`) | Enseignant, pour lui-même ; direction |
+| Durée de la pause de prière (`priere.pause_minutes`) | Le temps laissé à l'enseignant pour prier | 10 minutes ; de 5 à 20, par pas de 5 | ARBITRÉ ; à valider avec les associés | Direction |
+| Durée de la pause du Maghrib pendant le Ramadan (`priere.pause_ramadan_maghrib_minutes`) | La rupture du jeûne | 20 minutes ; de 5 à 20, par pas de 5 | ARBITRÉ ; à valider avec les associés | Direction |
+| Ramadan en cours (`priere.ramadan_en_cours`) | Appliquer la durée du Ramadan au Maghrib, en attendant le calendrier de l'école (autre lot) | Faux ; posé à la main par la direction | ARBITRÉ | Direction |
+| Marge de début (`priere.debut_marge_minutes`) | Une prière qui entre dans les premières minutes ne coupe pas l'accueil | 5 minutes : la pause est placée à 5 minutes du début ; de 0 à 15 | ARBITRÉ | Direction |
+| Marge de fin (`priere.fin_marge_minutes`) | Une prière qui entre dans les dernières minutes se prie après le cours | 15 minutes : aucune pause de prière, la pause ordinaire s'applique ; de 5 à 30 ; **toujours au moins égale à la durée de la pause** | ARBITRÉ | Direction |
+| Horizon du recalcul de nuit (`priere.horizon_jours`) | Garder les pauses prévues à jour quand la saison change | 14 jours ; de 7 à 30 ; recalcul chaque nuit à 3 h 30 (heure universelle) | ARBITRÉ | Direction |
+| Pause de prière et séance | La pause ne retire rien à personne | Ne réduit ni la présence ni la paie ; ne prolonge pas la séance : l'heure de fin reste celle annoncée aux familles | ARBITRÉ | Direction |
+| Assiste à la prière du vendredi (par enseignant) | Avertir la direction d'un créneau qui chevauche la prière du vendredi | Faux ; posé par la direction ; avertissement fort, jamais un blocage | ARBITRÉ ; **à valider par le directeur et ses associés** | Direction |
+| Plage de la prière du vendredi (par enseignant) | La durée à laisser libre le vendredi | 12 h 30 à 14 h 30, heure de l'enseignant ; réglable | ARBITRÉ ; **à valider par le directeur et ses associés** | Direction |
+| Ce que voient les élèves et les tuteurs | Savoir quand la pause tombe, sans exposer le lieu de l'enseignant | « Pause de prière à HH:MM » dans leur fuseau, avant et pendant le cours ; jamais le lieu ni les ajustements | ARBITRÉ | Direction |
+| Cas où le calcul n'existe pas (très hautes latitudes) | Ne rien deviner | Aucune pause de prière pour la séance, une ligne au journal de la direction | ARBITRÉ | Direction |
