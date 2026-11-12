@@ -42,6 +42,7 @@ class _Etat {
   String? description;
   String? conditions;
   bool fichierDepose;
+  bool vignette = false;
   int revision = 1;
   String? motifRetrait;
   final Set<String> classes = <String>{};
@@ -528,9 +529,22 @@ class BibliothequeAdminDemo implements PortBibliothequeAdmin {
         _depots[uploadId]!;
     // Controles serveur : taille et type reels, jamais ceux que le client dit.
     final TypeRessource type = _trouve(supportId).support.type;
-    final ErreurUpload? refus = finalite == FinaliteUpload.preuve
-        ? null
-        : _controleFichier(type, fichier);
+    final ErreurUpload? refus = switch (finalite) {
+      FinaliteUpload.preuve => null,
+      // La vignette est une image de 2 Mio au plus, quel que soit le type du
+      // document (le serveur le controle de meme).
+      FinaliteUpload.vignette =>
+        fichier.octets > 2 * 1024 * 1024
+            ? ErreurUpload.taille
+            : (const <String>{
+                    'image/png',
+                    'image/jpeg',
+                    'image/webp',
+                  }.contains(fichier.mime)
+                  ? null
+                  : ErreurUpload.type),
+      FinaliteUpload.support => _controleFichier(type, fichier),
+    };
     if (refus != null) {
       yield ProgressionUpload(phase: PhaseUpload.echec, erreur: refus);
       return;
@@ -572,6 +586,9 @@ class BibliothequeAdminDemo implements PortBibliothequeAdmin {
         attribution: e.droits.attribution,
         expireLeUtc: e.droits.expireLeUtc,
       );
+    } else if (finalite == FinaliteUpload.vignette) {
+      // La vignette se rattache au document, pas a une version.
+      e.vignette = true;
     } else {
       e.fichierDepose = true;
       final VersionSupport v = e.versions.first;

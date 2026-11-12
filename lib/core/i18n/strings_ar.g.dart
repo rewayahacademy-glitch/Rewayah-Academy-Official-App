@@ -16057,6 +16057,7 @@ class _Traductions$admin$bibliotheque$fiche$ar extends Traductions$admin$bibliot
 	@override String get recharger => 'إعادة تحميل البطاقة';
 	@override String get echecEnregistrer => 'تعذّر تأكيد التعديلات. أعد المحاولة.';
 	@override String get titreVide => 'العنوان مطلوب.';
+	@override String get retirerVignette => 'إزالة الصورة المصغرة';
 	@override String get figee => 'إصدار منشور ومثبّت: لتعديله أنشئ إصدارًا جديدًا.';
 	@override String retireMotif({required Object motif}) => 'سُحبت من الفهرس. السبب: ⁨${motif}⁩';
 	@override String get retireSansMotif => 'سُحبت من الفهرس.';
@@ -16080,6 +16081,13 @@ class _Traductions$admin$bibliotheque$import$ar extends Traductions$admin$biblio
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
+	@override String get vignette => 'الصورة المصغرة';
+	@override String get choisirVignette => 'اختيار صورة مصغرة';
+	@override String get choisirAutreVignette => 'اختيار صورة مصغرة أخرى';
+	@override String get vignetteAide => 'صورة (PNG أو JPEG أو WebP، حتى 2 ميغابايت)، اختيارية. وبدونها تعرض الشاشة غلافًا بحسب النوع.';
+	@override String get completerLien => 'أدخل عنوان الرابط (https): يطلبه الرابط الخارجي والفيديو، ويطلب الرابط الخارجي وصفه أيضًا.';
+	@override String get lienInvalide => 'هذا العنوان غير مقبول: يجب أن يبدأ بـ https وأن يقود إلى موقع.';
+	@override String get sansFichierAide => 'لا شيء للإيداع لهذا النوع: أدخل عنوان الرابط ثم تابع.';
 	@override String get completer => 'استكمال الوثيقة';
 	@override late final _Traductions$admin$bibliotheque$import$sections$ar sections = _Traductions$admin$bibliotheque$import$sections$ar._(_root);
 	@override late final _Traductions$admin$bibliotheque$import$champs$ar champs = _Traductions$admin$bibliotheque$import$champs$ar._(_root);
@@ -21560,7 +21568,11 @@ class _Traductions$admin$bibliotheque$fiche$champs$ar extends Traductions$admin$
 	@override String get titreCourt => 'عنوان مختصر';
 	@override String get edition => 'الطبعة';
 	@override String get organisme => 'الجهة أو المؤلف أو الناشر';
-	@override String get description => 'الوصف التعليمي';
+	@override String get description => 'وصف مختصر (يظهر على البطاقة)';
+	@override String get rayon => 'الرف';
+	@override String get ordre => 'ترتيب العرض';
+	@override String get etapes => 'مراحل البرنامج (رموز مفصولة بفواصل)';
+	@override String get lien => 'عنوان الرابط (https)';
 	@override String get conditions => 'شروط الإسناد';
 }
 
@@ -21578,6 +21590,12 @@ class _Traductions$admin$bibliotheque$fiche$meta$ar extends Traductions$admin$bi
 	@override String get annee => 'السنة';
 	@override String get visibilite => 'الظهور';
 	@override String get horsLigne => 'القراءة دون إنترنت';
+	@override String get rayon => 'الرف';
+	@override String get etapes => 'مراحل البرنامج';
+	@override String get vignette => 'الصورة المصغرة';
+	@override String get vignetteOui => 'مودعة';
+	@override String get vignetteNon => 'افتراضية بحسب النوع';
+	@override String get lien => 'عنوان الرابط';
 	@override String get nonRenseigne => 'غير مذكور';
 }
 
@@ -21662,6 +21680,11 @@ class _Traductions$admin$bibliotheque$import$champs$ar extends Traductions$admin
 
 	// Translations
 	@override String get titre => 'العنوان';
+	@override String get description => 'وصف مختصر (يظهر على البطاقة)';
+	@override String get rayon => 'الرف';
+	@override String get ordre => 'ترتيب العرض (اختياري)';
+	@override String get etapes => 'مراحل البرنامج (رموز مفصولة بفواصل ؛ اختياري)';
+	@override String get lien => 'عنوان الرابط (https)';
 	@override String get categorie => 'التصنيف';
 	@override String get type => 'النوع';
 	@override String get langue => 'اللغة';
@@ -21678,6 +21701,8 @@ class _Traductions$admin$bibliotheque$import$formats$ar extends Traductions$admi
 	@override String get pdf => 'الصيغة المقبولة: ملف PDF.';
 	@override String get image => 'الصيغ المقبولة: الصور الرقمية الشائعة.';
 	@override String get json => 'الصيغة المقبولة: ملف بيانات منظّم.';
+	@override String get audio => 'الصيغ المقبولة: MP3 وM4A وOGG.';
+	@override String get lien => 'تُعطى هذه الوثيقة برابط: لا ملف للإيداع. ويُعطى الفيديو برابطه.';
 	@override String get aucun => 'هذا النوع لا يقبل ملفًا.';
 }
 
@@ -30229,7 +30254,11 @@ extension on TraductionsAr {
 			'admin.bibliotheque.fiche.champs.titreCourt' => 'عنوان مختصر',
 			'admin.bibliotheque.fiche.champs.edition' => 'الطبعة',
 			'admin.bibliotheque.fiche.champs.organisme' => 'الجهة أو المؤلف أو الناشر',
-			'admin.bibliotheque.fiche.champs.description' => 'الوصف التعليمي',
+			'admin.bibliotheque.fiche.champs.description' => 'وصف مختصر (يظهر على البطاقة)',
+			'admin.bibliotheque.fiche.champs.rayon' => 'الرف',
+			'admin.bibliotheque.fiche.champs.ordre' => 'ترتيب العرض',
+			'admin.bibliotheque.fiche.champs.etapes' => 'مراحل البرنامج (رموز مفصولة بفواصل)',
+			'admin.bibliotheque.fiche.champs.lien' => 'عنوان الرابط (https)',
 			'admin.bibliotheque.fiche.champs.conditions' => 'شروط الإسناد',
 			'admin.bibliotheque.fiche.meta.type' => 'النوع',
 			'admin.bibliotheque.fiche.meta.langue' => 'اللغة',
@@ -30238,6 +30267,12 @@ extension on TraductionsAr {
 			'admin.bibliotheque.fiche.meta.annee' => 'السنة',
 			'admin.bibliotheque.fiche.meta.visibilite' => 'الظهور',
 			'admin.bibliotheque.fiche.meta.horsLigne' => 'القراءة دون إنترنت',
+			'admin.bibliotheque.fiche.meta.rayon' => 'الرف',
+			'admin.bibliotheque.fiche.meta.etapes' => 'مراحل البرنامج',
+			'admin.bibliotheque.fiche.meta.vignette' => 'الصورة المصغرة',
+			'admin.bibliotheque.fiche.meta.vignetteOui' => 'مودعة',
+			'admin.bibliotheque.fiche.meta.vignetteNon' => 'افتراضية بحسب النوع',
+			'admin.bibliotheque.fiche.meta.lien' => 'عنوان الرابط',
 			'admin.bibliotheque.fiche.meta.nonRenseigne' => 'غير مذكور',
 			'admin.bibliotheque.fiche.enregistrer' => 'حفظ التعديلات',
 			'admin.bibliotheque.fiche.enregistre' => 'سُجِّلت التعديلات.',
@@ -30245,6 +30280,7 @@ extension on TraductionsAr {
 			'admin.bibliotheque.fiche.recharger' => 'إعادة تحميل البطاقة',
 			'admin.bibliotheque.fiche.echecEnregistrer' => 'تعذّر تأكيد التعديلات. أعد المحاولة.',
 			'admin.bibliotheque.fiche.titreVide' => 'العنوان مطلوب.',
+			'admin.bibliotheque.fiche.retirerVignette' => 'إزالة الصورة المصغرة',
 			'admin.bibliotheque.fiche.figee' => 'إصدار منشور ومثبّت: لتعديله أنشئ إصدارًا جديدًا.',
 			'admin.bibliotheque.fiche.retireMotif' => ({required Object motif}) => 'سُحبت من الفهرس. السبب: ⁨${motif}⁩',
 			'admin.bibliotheque.fiche.retireSansMotif' => 'سُحبت من الفهرس.',
@@ -30280,11 +30316,23 @@ extension on TraductionsAr {
 			'admin.bibliotheque.fiche.audit.restauration' => 'استُعيدت',
 			'admin.bibliotheque.fiche.auditMotif' => ({required Object motif}) => 'السبب: ⁨${motif}⁩',
 			'admin.bibliotheque.fiche.auditVersion' => ({required Object numero}) => 'الإصدار ⁨${numero}⁩',
+			'admin.bibliotheque.import.vignette' => 'الصورة المصغرة',
+			'admin.bibliotheque.import.choisirVignette' => 'اختيار صورة مصغرة',
+			'admin.bibliotheque.import.choisirAutreVignette' => 'اختيار صورة مصغرة أخرى',
+			'admin.bibliotheque.import.vignetteAide' => 'صورة (PNG أو JPEG أو WebP، حتى 2 ميغابايت)، اختيارية. وبدونها تعرض الشاشة غلافًا بحسب النوع.',
+			'admin.bibliotheque.import.completerLien' => 'أدخل عنوان الرابط (https): يطلبه الرابط الخارجي والفيديو، ويطلب الرابط الخارجي وصفه أيضًا.',
+			'admin.bibliotheque.import.lienInvalide' => 'هذا العنوان غير مقبول: يجب أن يبدأ بـ https وأن يقود إلى موقع.',
+			'admin.bibliotheque.import.sansFichierAide' => 'لا شيء للإيداع لهذا النوع: أدخل عنوان الرابط ثم تابع.',
 			'admin.bibliotheque.import.completer' => 'استكمال الوثيقة',
 			'admin.bibliotheque.import.sections.ressource' => 'الوثيقة',
 			'admin.bibliotheque.import.sections.fichier' => 'الملف',
 			'admin.bibliotheque.import.sections.droits' => 'الحقوق والوصول',
 			'admin.bibliotheque.import.champs.titre' => 'العنوان',
+			'admin.bibliotheque.import.champs.description' => 'وصف مختصر (يظهر على البطاقة)',
+			'admin.bibliotheque.import.champs.rayon' => 'الرف',
+			'admin.bibliotheque.import.champs.ordre' => 'ترتيب العرض (اختياري)',
+			'admin.bibliotheque.import.champs.etapes' => 'مراحل البرنامج (رموز مفصولة بفواصل ؛ اختياري)',
+			'admin.bibliotheque.import.champs.lien' => 'عنوان الرابط (https)',
 			'admin.bibliotheque.import.champs.categorie' => 'التصنيف',
 			'admin.bibliotheque.import.champs.type' => 'النوع',
 			'admin.bibliotheque.import.champs.langue' => 'اللغة',
@@ -30297,6 +30345,8 @@ extension on TraductionsAr {
 			'admin.bibliotheque.import.formats.pdf' => 'الصيغة المقبولة: ملف PDF.',
 			'admin.bibliotheque.import.formats.image' => 'الصيغ المقبولة: الصور الرقمية الشائعة.',
 			'admin.bibliotheque.import.formats.json' => 'الصيغة المقبولة: ملف بيانات منظّم.',
+			'admin.bibliotheque.import.formats.audio' => 'الصيغ المقبولة: MP3 وM4A وOGG.',
+			'admin.bibliotheque.import.formats.lien' => 'تُعطى هذه الوثيقة برابط: لا ملف للإيداع. ويُعطى الفيديو برابطه.',
 			'admin.bibliotheque.import.formats.aucun' => 'هذا النوع لا يقبل ملفًا.',
 			'admin.bibliotheque.import.etats.attente' => 'جارٍ تجهيز الإيداع…',
 			'admin.bibliotheque.import.etats.envoi' => ({required Object pourcent}) => 'الإرسال جارٍ: ⁨${pourcent}⁩٪',
@@ -30677,6 +30727,8 @@ extension on TraductionsAr {
 			'comptable.paiements.filtres.tousStatuts' => 'كل الحالات',
 			'comptable.paiements.filtres.prets' => 'جاهزة',
 			'comptable.paiements.filtres.infos' => 'معلومات ناقصة',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.paiements.filtres.verification' => 'التحقق',
 			'comptable.paiements.filtres.validation' => 'المصادقة',
 			'comptable.paiements.filtres.retard' => 'متأخرة',
@@ -30702,8 +30754,6 @@ extension on TraductionsAr {
 			'comptable.paiements.actions.relancer' => 'تذكير',
 			'comptable.paiements.actions.signalerEcart' => 'الإبلاغ عن فرق',
 			'comptable.paiements.actions.selectionner' => ({required Object nom}) => 'تحديد دفعة ${nom}',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.paiements.actions.selectionnerPrets' => 'تحديد كل المدفوعات الجاهزة',
 			'comptable.paiements.actions.payerSelection' => 'دفع المحدد',
 			'comptable.paiements.actions.viderSelection' => 'إلغاء التحديد',
@@ -31191,6 +31241,8 @@ extension on TraductionsAr {
 			'comptable.validation.videTitre' => 'لا شيء للمصادقة',
 			'comptable.validation.videPhrase' => 'ستظهر هنا طلبات المحاسب القادمة.',
 			'comptable.validation.natures.payoutSensible' => 'دفعة حساسة',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.validation.natures.retraitReserve' => 'السحب من الاحتياطي الاستراتيجي',
 			'comptable.validation.natures.obligationAApprouver' => 'التزام لمرة واحدة',
 			'comptable.validation.natures.payoutDuComptable' => 'راتب المحاسب',
@@ -31216,8 +31268,6 @@ extension on TraductionsAr {
 			'comptable.validation.detail.historiqueErreur' => 'تعذّرت قراءة السجل: هذا لا يعني أنه فارغ. أعد المحاولة بعد لحظة.',
 			'comptable.validation.detail.historiqueReessayer' => 'إعادة قراءة السجل',
 			'comptable.validation.valider' => 'مصادقة',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.validation.refuser' => 'رفض',
 			'comptable.validation.annuler' => 'إلغاء',
 			'comptable.validation.fermer' => 'إغلاق',
@@ -31705,6 +31755,8 @@ extension on TraductionsAr {
 			'parcours.niveauLectureCourante' => 'يقرأ القرآن بطلاقة',
 			'parcours.niveauMemorisationPartielle' => 'حفظ بعضه',
 			'parcours.objectifQuestion' => 'ماذا تريد أولًا؟',
+			_ => null,
+		} ?? switch (path) {
 			'parcours.objectifRaison' => 'يمكنك تغيير الهدف لاحقًا: هو يوجّه عمل المعلم، ولا يُلزمك.',
 			'parcours.objectifApprendreALire' => 'تعلّم القراءة',
 			'parcours.objectifDevenirFluide' => 'القراءة بطلاقة أكبر',
@@ -31730,8 +31782,6 @@ extension on TraductionsAr {
 			'parcours.aucuneOffre' => 'لا موعد مفتوح يناسب بعد',
 			'parcours.aucuneOffreDetail' => 'تفتح الأكاديمية مواعيد جديدة مع توالي التسجيلات. يمكنك إبلاغنا بحاجتك: هذا يساعدنا على تحديد ما نفتحه.',
 			'parcours.refusAucun' => 'لا يناسبني أي من هذه المواعيد',
-			_ => null,
-		} ?? switch (path) {
 			'parcours.refusPrevenir' => 'إعلامي إن فُتحت مواعيد جديدة',
 			'parcours.refusEffet' => 'نسجّل أن الطلب موجود. هذا لا ينشئ فصلًا، ولا يبحث عن معلم، ولا يعد بأي موعد مستقبلي.',
 			'parcours.refusEnregistre' => 'تم التسجيل. سنعلمك إن فُتح موعد مناسب.',
@@ -32219,6 +32269,8 @@ extension on TraductionsAr {
 			'foyer.membre.accesSansEcheance' => 'وصول دون موعد انتهاء',
 			'foyer.membre.accesJusquau' => ({required Object date}) => 'وصول حتى ⁨${date}⁩',
 			'foyer.membre.accesExpire' => ({required Object date}) => 'انتهى الوصول منذ ⁨${date}⁩',
+			_ => null,
+		} ?? switch (path) {
 			'foyer.membre.date' => ({required Object jour, required Object mois, required Object annee}) => '⁨${jour}⁩ ⁨${mois}⁩ ⁨${annee}⁩',
 			'foyer.classesIndisponibles' => 'فصل كل طالب لا يظهر في هذه الصفحة بعد.',
 			'foyer.classesEchec' => 'تعذّرت قراءة فصل بعض الطلاب.',
@@ -32244,8 +32296,6 @@ extension on TraductionsAr {
 			'foyer.monProfil.horsLigne' => 'أنت غير متصل. لم يُنشأ شيء. يمكنك إنشاء ملفك كطالب بنفسك عند عودة الاتصال.',
 			'foyer.monProfil.sansDonnees' => 'تعذر التحقق من ملفك كطالب',
 			'foyer.monProfil.creeTitre' => 'تم إنشاء ملفك كطالب',
-			_ => null,
-		} ?? switch (path) {
 			'foyer.monProfil.creePhrase' => 'لا يتغير حسابك كولي أمر. تحتفظ بأسرتك وبالملفات الطلابية لأبنائك.',
 			'foyer.monProfil.dejaTitre' => 'لديك ملف طلابي بالفعل',
 			'foyer.monProfil.dejaPhrase' => 'ملفك كطالب موجود بالفعل: لا شيء لإنشائه.',
@@ -32733,6 +32783,8 @@ extension on TraductionsAr {
 			'kyc.titreSejour' => 'بطاقة إقامة',
 			'kyc.autrePiece' => 'وثيقة رسمية أخرى',
 			'kyc.explicationCarteIdentite' => 'بطاقة الهوية الوطنية لبلدك، سارية المفعول.',
+			_ => null,
+		} ?? switch (path) {
 			'kyc.explicationPasseport' => 'جواز سفرك الساري المفعول.',
 			'kyc.explicationTitreSejour' => 'بطاقة البلد الذي تقيم فيه دون أن تحمل جنسيته، سارية المفعول.',
 			'kyc.explicationAutre' => 'وثيقة رسمية أخرى تحمل صورتك واسمك.',
@@ -32758,8 +32810,6 @@ extension on TraductionsAr {
 			'protectionEnfants.erreurLecture' => 'لا يظهر اسم المسؤول في الوقت الحالي. أعد المحاولة بعد قليل.',
 			'codeConduite.titre' => 'مدونة سلوك المعلم',
 			'codeConduite.lien' => 'قراءة مدونة السلوك',
-			_ => null,
-		} ?? switch (path) {
 			'codeConduite.intro' => 'تحمي هذه القواعد التلاميذ، وتحميك أنت أيضًا. اقرأها ثم وافق عليها.',
 			'codeConduite.regles.0' => 'تُعقد دروسك في قاعة الأكاديمية. قد يُسجَّل الدرس صوتيًا، ويمكن لشخص مكلّف بالمراقبة أن يتابعه مباشرة دون أن يُعلمك بوقت ذلك. ويمكن لأحد الوالدين أيضًا أن يحضر الدرس مدة محدودة ليرى كيف تسير الحصة، وسيتم إعلامك بذلك. أنت توافق على هذه الإجراءات: فهي تحمي الأطفال وتحميك.',
 			'codeConduite.regles.1' => 'ترى الاسم الأول لتلاميذك. أما اسمهم الكامل فلا يُعرض، حتى تبقى الشاشة قصيرة. ولا ترى أبدًا بيانات التواصل الخاصة بأسرة: لا البريد الإلكتروني ولا الهاتف.',
@@ -33247,6 +33297,8 @@ extension on TraductionsAr {
 			'recherche.etats.horsLigne.phrase' => 'سيستأنف عند عودة الاتصال. لا تُحفظ أي نتيجة خاصة في الانتظار.',
 			'recherche.etats.sessionExpiree.titre' => 'انتهت جلستك.',
 			'recherche.etats.sessionExpiree.phrase' => 'سجّل الدخول من جديد لمتابعة البحث.',
+			_ => null,
+		} ?? switch (path) {
 			'recherche.etats.nonRaccorde.titre' => 'البحث غير متاح حاليًا.',
 			'recherche.etats.nonRaccorde.phrase' => 'هذا البحث لم يُفتح بعد في مساحتك.',
 			'recherche.etats.nonRaccorde.action' => 'رجوع',
@@ -33272,8 +33324,6 @@ extension on TraductionsAr {
 			'recherche.contexte.personneParIdentifiant' => 'وُجد بمعرّفه',
 			'recherche.contexte.personneParIdentifiantClasse' => ({required Object classe}) => 'وُجد بمعرّفه · ⁨${classe}⁩',
 			'recherche.contexte.canalStudio' => 'قناة الاستوديو',
-			_ => null,
-		} ?? switch (path) {
 			'recherche.contexte.encaissement' => ({required Object famille}) => 'تحصيل · ⁨${famille}⁩',
 			'recrutement.nomLatin.titre' => 'اسمك بالأحرف اللاتينية',
 			'recrutement.nomLatin.explication' => 'اسمك مكتوب بكتابة أخرى. من أجل القوائم والشهادات والمراسلات مع الأكاديمية، نحتاج إلى كتابته بالأحرف اللاتينية.',
@@ -33761,6 +33811,8 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.publics.options.adultes.description' => 'يتعلّم الكبار القراءة أولًا بكتاب أكاديمية الرواية. وبعد الأساسيات يختار الطالب بين قراءة القرآن كله وحفظه، بنصيحة المعلّم.',
 			'recrutement.parcours.q.publics.options.adultes.explication' => 'فصول من 6 كبار على الأكثر (4 للمبتدئين)، ثلاث حصص في الأسبوع، مدة كل منها ساعة ونصف. فصول الكبار منفصلة: نساء مع نساء، ورجال مع رجال.',
 			'recrutement.parcours.q.publics.options.adultes.exemple' => 'فصل للنساء، أو فصل للرجال، ثلاث مرات في الأسبوع.',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.q.paysResidence.titre' => 'في أي بلد تقيم؟',
 			'recrutement.parcours.q.paysResidence.explication' => 'اختر البلد الذي تقيم فيه اليوم.',
 			'recrutement.parcours.q.paysResidence.court' => 'بلد الإقامة',
@@ -33786,8 +33838,6 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.moyensAccessibles.court' => 'وسائل الدفع في بلدك',
 			'recrutement.parcours.classes.libelle' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا فصل', one: 'فصل واحد', two: 'فصلان', few: '⁨${n}⁩ فصول', many: '⁨${n}⁩ فصلًا', other: '⁨${n}⁩ فصل', ), 
 			'recrutement.parcours.classes.seances' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا حصص في الأسبوع.', one: 'حصة واحدة في الأسبوع.', two: 'حصتان في الأسبوع.', few: '⁨${n}⁩ حصص في الأسبوع.', many: '⁨${n}⁩ حصة في الأسبوع.', other: '⁨${n}⁩ حصة في الأسبوع.', ), 
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.classes.heuresEnfants' => ({required Object heures}) => 'أي ⁨${heures}⁩ في الأسبوع مع الأطفال.',
 			'recrutement.parcours.classes.heuresAdultes' => ({required Object heures}) => 'أي ⁨${heures}⁩ في الأسبوع مع الكبار.',
 			'recrutement.parcours.classes.heuresLesDeux' => ({required Object enfants, required Object adultes}) => 'أي ⁨${enfants}⁩ في الأسبوع مع الأطفال، أو ⁨${adultes}⁩ مع الكبار.',
@@ -34275,6 +34325,8 @@ extension on TraductionsAr {
 			'avis.admin.indisponiblePhrase' => 'ستتوفر هذه الخاصية عند ربط الخادم.',
 			'avis.admin.champs.lien' => 'الرابط',
 			'avis.admin.champs.pays' => 'البلد',
+			_ => null,
+		} ?? switch (path) {
 			'avis.admin.champs.depuis' => 'معنا منذ',
 			'avis.admin.champs.qualite' => 'الصفة',
 			'avis.admin.champs.depose' => 'تاريخ الإرسال',
@@ -34300,8 +34352,6 @@ extension on TraductionsAr {
 			'avis.admin.retirer.action' => 'سحب الرأي',
 			'avis.admin.retirer.rester' => 'عدم تغيير شيء',
 			'avis.admin.motifs.insulte' => 'إهانة',
-			_ => null,
-		} ?? switch (path) {
 			'avis.admin.motifs.tiers' => 'بيانات شخصية لطرف ثالث',
 			'avis.admin.motifs.publicite' => 'إعلان',
 			'avis.admin.motifs.horsSujet' => 'خارج الموضوع',
@@ -34789,6 +34839,8 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.doublons.casTitre' => ({required Object nature, required Object n, required Object total}) => '⁨${nature}⁩: الحالة ⁨${n}⁩ من ⁨${total}⁩',
 			'candidatsFlux.importFormulaires.doublons.question' => 'هل تعود هذه الأسطر إلى الشخص نفسه؟',
 			'candidatsFlux.importFormulaires.doublons.explication' => 'حين تشترك أسطر في بريد إلكتروني أو هاتف تقترحها رواية على أنها شخص واحد. وبلا اختياركم يُحتفظ بالسطر الأحدث وتبقى الأسطر الأخرى في السجل. لا يُمحى شيء.',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.doublons.aucun' => 'لا تكرار محتمل في هذا الملف.',
 			'candidatsFlux.importFormulaires.doublons.aucunAide' => 'لا يشترك أي سطر مع سطر آخر في بريد إلكتروني أو هاتف.',
 			'candidatsFlux.importFormulaires.doublons.total' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا حالات للفحص', one: 'حالة واحدة للفحص', two: 'حالتان للفحص', few: '⁨${n}⁩ حالات للفحص', many: '⁨${n}⁩ حالة للفحص', other: '⁨${n}⁩ حالة للفحص', ), 
@@ -34814,8 +34866,6 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.doublons.option.enregistre.titre' => 'الاحتفاظ باختياركم السابق',
 			'candidatsFlux.importFormulaires.doublons.option.enregistre.distinctes' => 'سبق أن بيّنتم أنهم أشخاص مختلفون.',
 			'candidatsFlux.importFormulaires.doublons.option.enregistre.ligne' => 'سبق أن اخترتم السطر الذي يُحتفظ به لهذا الشخص.',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.doublons.option.ligne.titre' => ({required Object ligne}) => 'الاحتفاظ بالسطر ⁨${ligne}⁩ بدلًا من ذلك',
 			'candidatsFlux.importFormulaires.doublons.option.ligne.description' => 'يصبح هذا السطر رد الشخص. وتنتقل الأسطر الأخرى إلى السجل.',
 			'candidatsFlux.importFormulaires.doublons.option.distinctes.titre' => 'أشخاص مختلفون',
