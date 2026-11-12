@@ -15,7 +15,9 @@ import '../../core/widgets/skeleton.dart';
 import 'carte_rubriques.dart';
 import 'donnees_compte.dart';
 
-/// Connexion et securite du titulaire (`/tuteur/compte/securite`).
+/// Connexion et securite du titulaire du compte, tous roles : le tuteur
+/// (`/tuteur/compte/securite`) et l'enseignant (`/enseignant/profil/securite`,
+/// COMPTE-ENSEIGNANT-IDENTITE, 12/11/2026).
 ///
 /// Ce qui est vrai en production : on entre par un lien a usage unique ou par
 /// Google (`service_auth.dart`). **Aucun mot de passe** n'est donc rendu, et

@@ -188,17 +188,13 @@ class _CompteTuteurPageState extends ConsumerState<CompteTuteurPage> {
             ),
           ],
           SectionCompte.compteSecurite: <LigneRubrique>[
-            LigneRubrique(
-              icone: AppIcons.profil,
-              libelle: t.compte.tuteur.informations.titre,
+            // Les deux lignes communes du titulaire du compte, tous roles
+            // (COMPTE-ENSEIGNANT-IDENTITE) : rien ne change pour le tuteur.
+            ligneInformationsCompte(
               onPress: () => aller(Routes.compteTuteurSousPage('informations')),
             ),
-            LigneRubrique(
-              icone: AppIcons.verrou,
-              libelle: t.compte.tuteur.securite.methode,
-              valeur: lue == null
-                  ? null
-                  : valeurConnexion(lue.methodeConnexion),
+            ligneConnexionCompte(
+              methode: lue?.methodeConnexion,
               onPress: () => aller(Routes.compteTuteurSousPage('securite')),
             ),
             LigneRubrique(

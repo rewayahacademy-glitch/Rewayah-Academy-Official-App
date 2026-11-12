@@ -31771,6 +31771,9 @@ class Traductions$compte$tuteur$pageInformations$fr {
 	/// fr: 'Non chargé'
 	String get fuseauIndisponible => 'Non chargé';
 
+	/// fr: 'Heure de cet appareil'
+	String get fuseauAppareil => 'Heure de cet appareil';
+
 	/// fr: 'Ces informations sont tenues par l'académie. Elles ne se modifient pas encore depuis l'application.'
 	String get note => 'Ces informations sont tenues par l\'académie. Elles ne se modifient pas encore depuis l\'application.';
 }
@@ -54831,6 +54834,7 @@ extension on Traductions {
 			'compte.tuteur.pageInformations.langue' => 'Langue de l\'interface',
 			'compte.tuteur.pageInformations.fuseau' => 'Fuseau des séances',
 			'compte.tuteur.pageInformations.fuseauIndisponible' => 'Non chargé',
+			'compte.tuteur.pageInformations.fuseauAppareil' => 'Heure de cet appareil',
 			'compte.tuteur.pageInformations.note' => 'Ces informations sont tenues par l\'académie. Elles ne se modifient pas encore depuis l\'application.',
 			'compte.tuteur.pageSecurite.titre' => 'Connexion et sécurité',
 			'compte.tuteur.pageSecurite.sousTitre' => 'Comment vous accédez à votre compte.',
@@ -54875,9 +54879,9 @@ extension on Traductions {
 			'historique.moisCourts.1' => 'févr.',
 			'historique.moisCourts.2' => 'mars',
 			'historique.moisCourts.3' => 'avr.',
-			'historique.moisCourts.4' => 'mai',
 			_ => null,
 		} ?? switch (path) {
+			'historique.moisCourts.4' => 'mai',
 			'historique.moisCourts.5' => 'juin',
 			'historique.moisCourts.6' => 'juil.',
 			'historique.moisCourts.7' => 'août',
@@ -55389,9 +55393,9 @@ extension on Traductions {
 			'classe.pagePlanning.ligne' => ({required Object heure, required Object duree}) => '${heure} · ${duree}',
 			'classe.pagePlanning.ligneFuseau' => ({required Object heure, required Object fuseau, required Object duree}) => '${heure} (${fuseau}) · ${duree}',
 			'classe.pagePlanning.aucune' => 'Aucune séance à venir pour l\'instant',
-			'classe.pagePlanning.aucuneDetail' => ({required Object dePrenom}) => 'Les prochaines séances ${dePrenom} apparaîtront ici dès qu\'elles seront programmées.',
 			_ => null,
 		} ?? switch (path) {
+			'classe.pagePlanning.aucuneDetail' => ({required Object dePrenom}) => 'Les prochaines séances ${dePrenom} apparaîtront ici dès qu\'elles seront programmées.',
 			'classe.pagePlanning.habituelIndisponible' => 'Les jours habituels de la classe ne sont pas encore affichés ici : seules les séances déjà programmées apparaissent.',
 			'classe.pagePlanning.indisponible' => 'Le planning de la classe n\'est pas encore relié à cet espace.',
 			'classe.pageTravail.aucun' => 'Rien à préparer pour l\'instant',
@@ -55903,9 +55907,9 @@ extension on Traductions {
 			'enseignant.profil.revenus' => 'Mes revenus',
 			'enseignant.profil.revenusDetail' => 'Ce que vous rapportent vos séances, élève par élève',
 			'enseignant.profil.disponibilitesDetail' => 'Les jours et heures où vous pouvez enseigner',
-			'enseignant.profil.plafondValeur' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre, one: '${nombre} h par semaine', other: '${nombre} h par semaine', ), 
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.profil.plafondValeur' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre, one: '${nombre} h par semaine', other: '${nombre} h par semaine', ), 
 			'enseignant.profil.revenusHeures' => ({required Object heures, required Object mois}) => '${heures} assurées en ${mois}',
 			'enseignant.profil.publicationDonnee' => 'Donné',
 			'enseignant.profil.publicationNonDonnee' => 'Non donné',
@@ -56417,9 +56421,9 @@ extension on Traductions {
 			'tc.bibliotheque.vide.message' => 'Aucun support publié pour le moment',
 			'tc.bibliotheque.vide.invitation' => 'Vos enseignants déposeront ici les supports de vos cours.',
 			'tc.bibliotheque.aucunResultat.message' => 'Aucun support ne correspond',
-			'tc.bibliotheque.aucunResultat.invitation' => 'Essayez un autre mot, ou relâchez les filtres.',
 			_ => null,
 		} ?? switch (path) {
+			'tc.bibliotheque.aucunResultat.invitation' => 'Essayez un autre mot, ou relâchez les filtres.',
 			'tc.bibliotheque.indisponible.message' => 'La bibliothèque n\'a pas pu être chargée',
 			'tc.bibliotheque.indisponible.invitation' => 'Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'tc.bibliotheque.indisponible.action' => 'Réessayer',
@@ -56931,9 +56935,9 @@ extension on Traductions {
 			'adulte.recharge.resultat.reference' => 'Référence',
 			'adulte.recharge.resultat.date' => 'Date',
 			'adulte.recharge.resultat.moyen' => 'Moyen de paiement',
-			'adulte.recharge.resultat.total' => 'Montant total',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.recharge.resultat.total' => 'Montant total',
 			'adulte.recharge.resultat.repartition' => 'Répartition par profil',
 			'adulte.recharge.resultat.nouveauSolde' => ({required Object montant}) => 'Nouveau solde : ${montant}',
 			'adulte.recharge.resultat.soldesTitre' => 'Soldes mis à jour',
@@ -57445,9 +57449,9 @@ extension on Traductions {
 			'suiviDemandes.jalon.heures' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} heure plus tard', other: '${n} heures plus tard', ), 
 			'suiviDemandes.jalon.jours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} jour plus tard', other: '${n} jours plus tard', ), 
 			'suiviDemandes.changement.titrePage' => 'Changement de classe',
-			'suiviDemandes.changement.titre' => ({required Object dePrenom}) => 'La classe ${dePrenom} a changé',
 			_ => null,
 		} ?? switch (path) {
+			'suiviDemandes.changement.titre' => ({required Object dePrenom}) => 'La classe ${dePrenom} a changé',
 			'suiviDemandes.changement.fusion' => ({required Object prenom}) => 'Votre classe a été réunie avec une autre. ${prenom} a maintenant la classe ci-dessous.',
 			'suiviDemandes.changement.transfert' => ({required Object prenom}) => 'La direction a changé ${prenom} de classe. Voici sa nouvelle classe.',
 			'suiviDemandes.changement.classe' => 'Nouvelle classe',
@@ -57959,9 +57963,9 @@ extension on Traductions {
 			'com.communaute.reponses.champ' => 'Votre réponse',
 			'com.communaute.reponses.aide' => 'Écrire une réponse',
 			'com.communaute.reponses.envoyer' => 'Envoyer la réponse',
-			'com.communaute.reponses.champVide' => 'Écrivez une réponse pour l\'envoyer.',
 			_ => null,
 		} ?? switch (path) {
+			'com.communaute.reponses.champVide' => 'Écrivez une réponse pour l\'envoyer.',
 			'com.communaute.reponses.enCours' => 'Envoi en cours',
 			'com.communaute.reponses.nonConfirmee' => 'Cette réponse n\'est pas encore confirmée : il est possible qu\'elle ne soit pas parvenue jusqu\'à Rewayah. Renvoyez-la dans un instant.',
 			'com.communaute.reponses.refusee' => 'Refusée par la politique de la Communauté',
@@ -58473,9 +58477,9 @@ extension on Traductions {
 			'comptable.nav.paiements' => 'Paiements',
 			'comptable.nav.tresorerie' => 'Trésorerie',
 			'comptable.nav.compte' => 'Compte',
-			'comptable.graphiques.masque' => 'Les montants sont masqués : le graphique ne se dessine pas. Affichez les montants pour le voir.',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.graphiques.masque' => 'Les montants sont masqués : le graphique ne se dessine pas. Affichez les montants pour le voir.',
 			'comptable.graphiques.voirValeurs' => 'Voir les valeurs',
 			'comptable.graphiques.masquerValeurs' => 'Masquer les valeurs',
 			'comptable.graphiques.repartitionTitre' => 'Répartition par coffre',
@@ -58987,9 +58991,9 @@ extension on Traductions {
 			'comptable.encaissements.rap.marquerDoublon' => 'Marquer comme doublon',
 			'comptable.encaissements.rap.resultat' => ({required Object etat}) => 'État rendu par la source : ${etat}',
 			'comptable.encaissements.rap.erreurEnvoi' => 'Nous ne savons pas si l\'opération a été prise en compte. Actualisez la liste avant de réessayer.',
-			'comptable.encaissements.rap.actualiser' => 'Actualiser',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.encaissements.rap.actualiser' => 'Actualiser',
 			'comptable.encaissements.rap.journal' => 'Journal de la transaction',
 			'comptable.encaissements.rap.journalVide' => 'Aucune opération enregistrée pour cette transaction.',
 			'comptable.encaissements.rap.beneficiaire' => 'Bénéficiaire',
@@ -59501,9 +59505,9 @@ extension on Traductions {
 			'comptable.direction.delegationPanneau.sensibleManuelle' => 'Obligation manuelle non approuvée',
 			'comptable.direction.delegationPanneau.sensibleManuelleDetail' => 'Une obligation saisie à la main et pas encore approuvée.',
 			'comptable.direction.titre' => 'Réserve et délégation',
-			'comptable.direction.sousTitre' => 'La politique de la Réserve stratégique et ce que le Comptable peut exécuter seul.',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.direction.sousTitre' => 'La politique de la Réserve stratégique et ce que le Comptable peut exécuter seul.',
 			'comptable.direction.reserve' => 'Politique de la Réserve stratégique',
 			'comptable.direction.delegation' => 'Délégation financière',
 			'comptable.demo.titre' => 'Démonstration Comptable',
@@ -60015,9 +60019,9 @@ extension on Traductions {
 			'courriels.admin.ecrire.champ.sujet' => 'Donnez un sujet de 1 à 120 caractères.',
 			'courriels.admin.ecrire.champ.corps' => 'Écrivez un message de 1 à 5000 caractères.',
 			'courriels.admin.ecrire.champ.destinataireExclu' => 'Cette personne ne peut pas recevoir cet e-mail : compte d\'enfant ou désinscription.',
-			'courriels.admin.ecrire.retour.misEnFile' => 'Envoi dans la minute. Suivez-le dans la liste des envois.',
 			_ => null,
 		} ?? switch (path) {
+			'courriels.admin.ecrire.retour.misEnFile' => 'Envoi dans la minute. Suivez-le dans la liste des envois.',
 			'courriels.admin.ecrire.retour.voir' => 'Voir les envois',
 			'courriels.admin.ecrire.retour.refus' => 'Seule la direction connectée peut écrire un e-mail.',
 			'courriels.admin.ecrire.retour.echec' => 'L\'envoi n\'est pas confirmé. Regardez la liste des envois avant de recommencer : le même e-mail ne sera pas mis en file deux fois.',
@@ -60529,9 +60533,9 @@ extension on Traductions {
 			'candidatsFlux.importFormulaires.comptes.accord' => 'Les nombres correspondent à ce que vous attendiez.',
 			'candidatsFlux.importFormulaires.unite.lignes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} ligne', other: '${n} lignes', ), 
 			'candidatsFlux.importFormulaires.unite.personnes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} personne', other: '${n} personnes', ), 
-			'candidatsFlux.importFormulaires.confirmation.question' => 'Importer ces réponses maintenant ?',
 			_ => null,
 		} ?? switch (path) {
+			'candidatsFlux.importFormulaires.confirmation.question' => 'Importer ces réponses maintenant ?',
 			'candidatsFlux.importFormulaires.confirmation.explication' => 'Relisez ce que l\'import va faire. Il n\'est pas annulable depuis cet écran.',
 			'candidatsFlux.importFormulaires.confirmation.resume.titre' => 'Ce qui sera enregistré',
 			'candidatsFlux.importFormulaires.confirmation.resume.fichier' => 'Fichier',

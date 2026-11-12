@@ -44,13 +44,17 @@ class IdentiteTitulaire {
   final AccountStatus? statut;
 }
 
-/// L'identite du titulaire (contrat K6, consommateur : Compte).
+/// L'identite du titulaire du compte, tous roles (contrat K6, consommateur :
+/// le Compte du tuteur et celui de l'enseignant, COMPTE-ENSEIGNANT-IDENTITE,
+/// 12/11/2026). Rien n'y depend du role : la ligne `profiles` de soi et la
+/// session.
 abstract interface class PortIdentiteTitulaire {
   /// L'identite de la personne connectee.
   Future<IdentiteTitulaire> lire();
 
-  /// Modifie le prenom ou le nom. Aucune ecriture n'existe pour le tuteur
-  /// (DB-CPT-01) : l'ecran dit « modifiable par l'academie ».
+  /// Modifie le prenom ou le nom. Aucune ecriture n'existe pour le titulaire
+  /// (DB-CPT-01), quel que soit son role : l'ecran dit « tenu par
+  /// l'academie ».
   Future<void> modifier({String? prenom, String? nom});
 }
 
