@@ -264,6 +264,16 @@ abstract final class AppMouvement {
   /// lecteur d'ecran).
   static const Duration ileMention = Duration(seconds: 10);
 
+  /// DYNAMIQUE-CHRONO-1 (directeur, 12/11/2026 : « un toucher la deplie ;
+  /// rien ne cache durablement l'essentiel ») : la Dynamique chrono depliee
+  /// d'un toucher se replie seule apres ce temps (ou au second toucher).
+  static const Duration dynamiqueChronoDepliee = Duration(seconds: 5);
+
+  /// DYNAMIQUE-CHRONO-1 : le temps d'une alerte passagere de la Dynamique
+  /// chrono quand son emetteur n'en donne pas (aucune n'est encore emise :
+  /// lot DYNAMIQUE-CHRONO-2). Elle part seule et laisse sa trace en marque.
+  static const Duration alerteChrono = Duration(seconds: 8);
+
   /// Rappel discret recu : la vibration courte, quand l'appareil la permet.
   static const Duration vibrationRappel = Duration(milliseconds: 200);
 

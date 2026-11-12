@@ -35,6 +35,7 @@ import 'package:rewayah_academy/core/widgets/status_pill.dart';
 import 'package:rewayah_academy/features/salle/salle_page.dart';
 import 'package:rewayah_academy/features/salle_enseignant/panneau_enseignant.dart';
 import 'package:rewayah_academy/features/salle_seance/composition_salle.dart';
+import 'package:rewayah_academy/features/salle_seance/dynamique_chrono.dart';
 import 'package:rewayah_academy/features/salle_seance/media_salle.dart'
     show ActionSousLaScene;
 import 'package:rewayah_academy/features/salle_seance/salle_ordinateur.dart';
@@ -481,11 +482,11 @@ void main() {
                 .byType(SalleOrdinateur)
                 .evaluate()
                 .isNotEmpty;
-            final Finder ligne = find.byKey(
-              ValueKey<String>(
-                ordinateur ? 'pilule-etat-salle' : 'ligne-etat-telephone',
-              ),
-            );
+            // DYNAMIQUE-CHRONO-1 : le mot d'etat (presence) quitte la barre
+            // du chrono pour la ligne d'etat, jamais repliee, la meme a toutes
+            // les tailles.
+            final Finder ligne = find.byKey(LigneEtatSalle.cle);
+            expect(ordinateur || ligne.evaluate().isNotEmpty, isTrue);
             if (ligne.evaluate().isNotEmpty) {
               _lisible(
                 tester,

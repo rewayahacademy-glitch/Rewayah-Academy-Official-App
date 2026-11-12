@@ -45,11 +45,11 @@ import 'actions_seance.dart';
 import 'barre_outils_salle.dart';
 import 'dock_seance.dart'
     show BoutonAppel, CoucheSalle, DockSeance, diametreBoutonAppel;
+import 'dynamique_chrono.dart';
 import 'media_salle.dart';
 import 'panneau_bibliotheque_salle.dart';
 import 'panneau_eleves.dart';
 import 'panneau_seance.dart';
-import 'pilule_etat_salle.dart';
 import 'salle_ordinateur.dart' show tuileOutilSalle;
 import 'salle_seance.dart' show EtatLocalSeance;
 import 'vignette_video.dart' show MesuresVignette, SignalVideo, VignetteVideo;
@@ -261,23 +261,19 @@ class PointEtatTelephone extends StatelessWidget {
 }
 
 /// Fiche 1, ligne 5 : la carte du profil, depliee depuis la capsule, en haut :
-/// la video, le nom, le role, le point d'etat et le signal, « Reduire », et
-/// dessous la ligne d'etat de la salle ([PiluleEtatSalle]), qu'on ne lit
-/// nulle part ailleurs au telephone.
+/// la video, le nom, le role, le point d'etat et le signal, « Reduire ».
+/// DYNAMIQUE-CHRONO-1 (12/11/2026) : la ligne d'etat de la salle n'y est plus
+/// redite ; la Dynamique chrono ([DynamiqueChrono]) reste au-dessus, a sa
+/// place reservee.
 class ProfilTelephone extends StatelessWidget {
   const ProfilTelephone({
     required this.vue,
     required this.onReduire,
-    this.onPause,
     super.key = cle,
   });
 
   final VueSeance vue;
   final VoidCallback onReduire;
-
-  /// N3, S2 : demarrer ou terminer la pause programmee, depuis la ligne
-  /// d'etat ; rendue seulement si le serveur a donne `peut_piloter`.
-  final VoidCallback? onPause;
 
   /// La cle de la carte (tests, captures).
   static const Key cle = ValueKey<String>('telephone-profil');
@@ -431,18 +427,8 @@ class ProfilTelephone extends StatelessWidget {
                 );
               },
             ),
-            Ecart.vMd,
-            Align(
-              alignment: AlignmentDirectional.centerStart,
-              child: PiluleEtatSalle(
-                vue: vue,
-                aLaLigne: true,
-                surface: palette.coucheSalle,
-                cle: const ValueKey<String>('ligne-etat-telephone'),
-                avecChrono: true,
-                onPause: onPause,
-              ),
-            ),
+            // DYNAMIQUE-CHRONO-1 : la ligne d'etat n'est plus redite ici ; la
+            // Dynamique chrono reste visible au-dessus, a sa place reservee.
           ],
         ),
       ),

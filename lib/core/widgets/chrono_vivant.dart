@@ -1,11 +1,12 @@
 // CHRONO-ETAT (directeur, 10 et 11/11/2026, `docs/current/CAHIER-SALLE.md` §8) :
 // le chrono de la salle, visible et vivant.
 //
-// - Il ne montre que ce qui reste (`56:44`), dans une capsule, avec un anneau
-//   qui se remplit a mesure que la seance avance.
+// - Il montre ce qui reste, avec son mot (« Reste 56:44 », directeur,
+//   12/11/2026, DYNAMIQUE-CHRONO-1), dans une capsule, avec un anneau qui se
+//   remplit a mesure que la seance avance.
 // - A cinq minutes de la fin, la capsule change de teinte : c'est le moment de
 //   conclure.
-// - A zero, il continue en croissant (`+03:12`) tant que le depassement regle
+// - A zero, il continue en croissant (« Apres la fin +03:12 ») tant que le depassement regle
 //   par la direction n'est pas epuise ([ChronoSeance.enDepassement]) ; ensuite
 //   il dit que le temps prevu est ecoule.
 // - Chaque chiffre qui change roule (le nouveau monte, l'ancien s'efface),
@@ -66,8 +67,29 @@ class ChronoVivant extends StatefulWidget {
     this.sobre = false,
     this.dansUnePilule = false,
     this.onEtat,
+    this.libelleReste,
+    this.libelleApresFin,
+    this.uneLigne = false,
     super.key,
   });
+
+  /// DYNAMIQUE-CHRONO-1 : vrai dans la Dynamique chrono, ou la ligne entiere
+  /// se reduit d'un bloc plutot que de passer a la ligne (aucun element
+  /// flexible : la ligne est mesuree sans borne).
+  final bool uneLigne;
+
+  /// DYNAMIQUE-CHRONO-1 (directeur, 12/11/2026 : « ajouter un mot au chrono,
+  /// Reste 37:51 ») : le mot visible devant le temps restant. `null` : les
+  /// chiffres seuls (planches anciennes).
+  final String? libelleReste;
+
+  /// Le mot visible devant le depassement (« Apres la fin +03:12 ») : il
+  /// garde le sens de l'annonce (seance toujours en direct apres la fin
+  /// prevue). `null` : le plus seul.
+  final String? libelleApresFin;
+
+  /// La cle du mot visible devant les chiffres (tests).
+  static const Key cleMot = ValueKey<String>('chrono-vivant-mot');
 
   /// Le chrono loge deja dans une pilule (celle de l'etat de la salle) : au
   /// calme, il n'a ni fond ni marge a lui, pour ne pas faire une capsule dans
@@ -240,15 +262,42 @@ class _ChronoVivantEtat extends State<ChronoVivant>
         ),
         const SizedBox(width: AppSpacing.sm),
         if (etat == EtatChronoVivant.fini)
-          // Texte agrandi ou place etroite : la phrase passe a la ligne, elle
+          // [uneLigne] (la Dynamique chrono) : une ligne, toujours ; la ligne
+          // entiere de la barre se reduit d'un bloc (`ChronoSalle`). Sinon,
+          // texte agrandi ou place etroite : la phrase passe a la ligne, elle
           // ne deborde jamais.
-          Flexible(child: Text(widget.libelleFini, style: style))
-        else
+          widget.uneLigne
+              ? Text(
+                  widget.libelleFini,
+                  maxLines: 1,
+                  softWrap: false,
+                  style: style,
+                )
+              : Flexible(child: Text(widget.libelleFini, style: style))
+        else ...<Widget>[
+          if (chrono.finPrevueAtteinte
+                  ? widget.libelleApresFin
+                  : widget.libelleReste
+              case final String mot) ...<Widget>[
+            Text(
+              mot,
+              key: ChronoVivant.cleMot,
+              maxLines: 1,
+              softWrap: false,
+              // Le mot, plus discret que les chiffres (c'est eux qu'on cherche
+              // de l'oeil) : la taille des libelles, la meme encre.
+              style: paire.applyTo(
+                Theme.of(context).textTheme.labelLarge ?? const TextStyle(),
+              ),
+            ),
+            const SizedBox(width: AppSpacing.xs),
+          ],
           _ChiffresRoulants(
             key: ChronoVivant.cleChiffres,
             texte: ChronoVivant.chiffresDe(chrono),
             style: style,
           ),
+        ],
       ],
     );
     return Semantics(

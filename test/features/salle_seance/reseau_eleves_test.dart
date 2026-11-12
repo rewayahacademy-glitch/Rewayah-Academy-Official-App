@@ -15,8 +15,8 @@ import 'package:rewayah_academy/core/video/video_session_provider.dart';
 import 'package:rewayah_academy/features/salle/vue_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/actions_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/depuis_salle.dart';
+import 'package:rewayah_academy/features/salle_seance/dynamique_chrono.dart';
 import 'package:rewayah_academy/features/salle_seance/panneau_eleves.dart';
-import 'package:rewayah_academy/features/salle_seance/pilule_etat_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/vignette_video.dart';
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
 
@@ -127,7 +127,10 @@ Future<void> _ile(
             home: Material(
               child: Align(
                 alignment: Alignment.topLeft,
-                child: PiluleEtatSalle(vue: vue, largeurMax: taille.width - 32),
+                // DYNAMIQUE-CHRONO-1 : la phrase de reseau est dite par la
+                // ligne d'etat de la zone de la Dynamique chrono, qui ne se
+                // replie jamais.
+                child: ZoneChrono(vue: vue, largeur: taille.width - 32),
               ),
             ),
           ),
@@ -283,10 +286,14 @@ void main() {
   });
 
   group('celui qu on entend mal le sait, dans l ile', () {
-    testWidgets('la phrase se deplie, puis l ile se replie sur un signe '
-        'court tant que ca dure', (WidgetTester tester) async {
+    // DYNAMIQUE-CHRONO-1 (directeur, 12/11/2026) : la phrase ne se replie
+    // plus sur un signe court ; elle reste ecrite dans la ligne d'etat, a sa
+    // place reservee, tant que ca dure (avant ce lot : l'ile la depliait 6 s,
+    // puis gardait l'onde du reseau).
+    testWidgets('la phrase reste dite tant que ca dure, une seule', (
+      WidgetTester tester,
+    ) async {
       await _ile(tester, _vueEleve(connexion: ConnexionSeance.reseauFaible));
-      await tester.pump(AppMouvement.ileMention);
       await tester.pump(const Duration(milliseconds: 500));
       await _ile(
         tester,
@@ -304,8 +311,7 @@ void main() {
       expect(find.text(t.salle.secours.reseauFaible), findsNothing);
       await tester.pump(AppMouvement.ilePassage);
       await tester.pump(const Duration(milliseconds: 500));
-      expect(find.byKey(PiluleEtatSalle.cleDepliee), findsNothing);
-      expect(find.byKey(PiluleEtatSalle.cleSigneReseau), findsOneWidget);
+      expect(find.text(t.salle.reseau.onVousEntendMal), findsOneWidget);
       expect(
         find.bySemanticsLabel(t.salle.reseau.onVousEntendMal),
         findsOneWidget,

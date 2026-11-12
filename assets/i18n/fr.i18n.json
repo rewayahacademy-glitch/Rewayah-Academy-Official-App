@@ -398,6 +398,7 @@
     "ile": {
       "deplier": "Voir le détail de la séance",
       "deplierEtat": "Voir l'état de la salle",
+      "replierEtat": "Réduire l'état de la salle",
       "replier": "Réduire le détail de la séance",
       "conclure": "Moins de 5 minutes\u00a0: pensez à conclure.",
       "finAtteinte": "Fin prévue atteinte\u00a0: séance toujours en direct."
@@ -569,6 +570,8 @@
         "ecoule": "{temps}\u00a0écoulé",
         "restant": "{temps}\u00a0restant",
         "tempsPrevuEcoule": "Temps prévu écoulé",
+        "reste": "Reste",
+        "apresFin": "Après la fin",
         "annonce": "Séance\u00a0: {ecoule}, {restant}.",
         "minutesEcoulees(plural, param=minutes)": {
           "one": "{minutes} min écoulée",

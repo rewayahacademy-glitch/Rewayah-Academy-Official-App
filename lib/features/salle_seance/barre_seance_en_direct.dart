@@ -533,6 +533,12 @@ class _BarreEtat extends ConsumerState<_Barre> {
             sobre: !conduit,
             sonne: conduit,
             onEtat: (EtatChronoVivant e) => _changerEtat(e, conduit: conduit),
+            // DYNAMIQUE-CHRONO-1 (directeur, 12/11/2026, point 15 : « elle
+            // marche bien aussi quand on reduit la salle ») : la meme ligne
+            // repliee que la Dynamique chrono de la salle (l'anneau,
+            // « Reste 37:51 ») ; le toucher garde son geste, retourner dans
+            // la salle.
+            deplie: false,
           );
 
     final EtatChronoVivant? etatChrono = _etatChrono;

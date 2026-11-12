@@ -32,7 +32,10 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/video/signal_rappel.dart';
 import '../../core/widgets/chrono_vivant.dart';
 import '../../core/widgets/lien_fleche.dart';
+import '../../core/widgets/pressable.dart';
+import '../../core/widgets/status_pill.dart';
 import '../accueil_famille/ancre_horloge_serveur.dart';
+import 'marque_chrono.dart';
 import 'vue_seance.dart' show ConnexionSeance;
 
 /// L'instant courant UTC du chrono : l'horloge serveur lue une fois a
@@ -65,8 +68,41 @@ class ChronoSalle extends StatefulWidget {
     this.dansUnePilule = false,
     this.sonne = false,
     this.onEtat,
+    this.marques = const <MarqueChrono>[],
+    this.deplie = true,
+    this.onBasculer,
+    this.libelleBasculer,
+    this.signes = const <Widget>[],
     super.key,
   });
+
+  /// DYNAMIQUE-CHRONO-1 : les marques posees par la salle (presence,
+  /// recitation) ; la pause y est ajoutee ici, d'apres l'instant.
+  final List<MarqueChrono> marques;
+
+  /// DYNAMIQUE-CHRONO-1 (directeur, 12/11/2026) : faux, la ligne repliee
+  /// (l'anneau, « Reste 37:51 », les marques en points de couleur, lues) ;
+  /// vrai, chaque marque en clair, puis la commande de la pause et son echec.
+  /// Hors de la Dynamique chrono (anciens en-tetes), tout reste visible.
+  final bool deplie;
+
+  /// Un toucher de la ligne du chrono deplie ou replie la Dynamique chrono ;
+  /// `null` : la ligne ne se touche pas (salle reduite : l'appelant porte
+  /// son propre geste).
+  final VoidCallback? onBasculer;
+
+  /// Ce que lit le lecteur d'ecran du toucher [onBasculer].
+  final String? libelleBasculer;
+
+  /// Des signes courts poses au bout de la ligne (le micro ouvert), une
+  /// icone et son libelle lu : jamais la couleur seule.
+  final List<Widget> signes;
+
+  /// La cle de la ligne du chrono (tests de geometrie).
+  static const Key cleLigne = ValueKey<String>('chrono-salle-ligne');
+
+  /// La cle du toucher qui deplie ou replie (tests).
+  static const Key cleBasculer = ValueKey<String>('chrono-salle-basculer');
 
   /// Le chrono loge dans la pilule d'etat : voir [ChronoVivant.dansUnePilule].
   final bool dansUnePilule;
@@ -278,14 +314,16 @@ class _ChronoSalleEtat extends State<ChronoSalle> with WidgetsBindingObserver {
   /// chiffres de gauche a droite.
   static String _heure(DateTime utc) => '\u2066${heureChezMoi(utc)}\u2069';
 
-  /// Ce que la pause dit a cet instant, ou `null` : le texte visible et sa
-  /// version lue.
-  ({String texte, String annonce})? _direPause(ChronoSeance chrono) {
+  /// La marque de la pause a cet instant, ou `null` (DYNAMIQUE-CHRONO-1 : la
+  /// pause est une marque de la barre, son texte n'est plus pose a cote).
+  MarqueChrono? _marquePause(ChronoSeance chrono) {
     final PauseSeance? p = widget.pause;
     if (p == null || chrono.prevuEcoule) {
       return null;
     }
     final d = t.salle.seance.pause;
+    MarqueChrono marque(GenreMarqueChrono genre, String texte, String annonce) =>
+        MarqueChrono.pause(genre: genre, libelle: texte, annonce: annonce);
     switch (p.statut) {
       case StatutPause.nonPrevue:
       case StatutPause.nonPrise:
@@ -293,26 +331,28 @@ class _ChronoSalleEtat extends State<ChronoSalle> with WidgetsBindingObserver {
       case StatutPause.programmee:
         final DateTime? prevue = p.debutPrevuUtc;
         if (prevue == null || !prevue.isAfter(_instant)) {
-          return (texte: d.prevue, annonce: d.prevue);
+          return marque(GenreMarqueChrono.pauseProgrammee, d.prevue, d.prevue);
         }
         final int minutes =
             (prevue.difference(_instant).inSeconds / Duration.secondsPerMinute)
                 .ceil();
-        return (
-          texte: LibellesGroupe.insecable(d.dans(minutes: minutes)),
-          annonce: LibellesGroupe.insecable(d.annonceDans(minutes: minutes)),
+        return marque(
+          GenreMarqueChrono.pauseProgrammee,
+          LibellesGroupe.insecable(d.dans(minutes: minutes)),
+          LibellesGroupe.insecable(d.annonceDans(minutes: minutes)),
         );
       case StatutPause.enCours:
         final DateTime? reprise = p.repriseUtc;
         if (reprise == null) {
-          return (texte: d.prevue, annonce: d.prevue);
+          return marque(GenreMarqueChrono.pauseEnCours, d.prevue, d.prevue);
         }
-        return (
-          texte: d.enCours(heure: _heure(reprise)),
-          annonce: d.annonceEnCours(heure: _heure(reprise)),
+        return marque(
+          GenreMarqueChrono.pauseEnCours,
+          d.enCours(heure: _heure(reprise)),
+          d.annonceEnCours(heure: _heure(reprise)),
         );
       case StatutPause.prise:
-        return (texte: d.prise, annonce: d.prise);
+        return marque(GenreMarqueChrono.pausePrise, d.prise, d.prise);
     }
   }
 
@@ -341,7 +381,7 @@ class _ChronoSalleEtat extends State<ChronoSalle> with WidgetsBindingObserver {
         ? chiffres
         : AppPalette.of(context).inkMuted.applyTo(chiffres);
     final PauseSeance? p = widget.pause;
-    final ({String texte, String annonce})? pause = _direPause(chrono);
+    final MarqueChrono? pause = _marquePause(chrono);
     final VoidCallback? commande = widget.onPause;
     // Un widget lit une capacite, jamais un role : la commande n'existe que si
     // le serveur l'a donnee (`peutPiloter`) et que l'appelant la fournit.
@@ -351,33 +391,114 @@ class _ChronoSalleEtat extends State<ChronoSalle> with WidgetsBindingObserver {
         p.peutPiloter &&
         !chrono.prevuEcoule &&
         (p.statut == StatutPause.programmee || p.statut == StatutPause.enCours);
-    final Widget ligneChrono = ChronoVivant(
+    final Widget vivant = ChronoVivant(
       key: ChronoSalle.cleAnnonce,
       chrono: chrono,
       annonce: annonce,
       libelleFini: d.chrono.tempsPrevuEcoule,
+      libelleReste: d.chrono.reste,
+      libelleApresFin: d.chrono.apresFin,
+      uneLigne: true,
       surface: widget.surfaceCapsule,
       sobre: widget.sobre,
       dansUnePilule: widget.dansUnePilule,
       onEtat: _changerEtat,
     );
-    if (pause == null && !commander) {
-      return ligneChrono;
-    }
-    return Wrap(
-      spacing: AppSpacing.md,
-      runSpacing: AppSpacing.xs,
-      crossAxisAlignment: WrapCrossAlignment.center,
+    final List<MarqueChrono> marques = <MarqueChrono>[
+      ...widget.marques,
+      ?pause,
+    ];
+    final AppPalette palette = AppPalette.of(context);
+    // Le point d'une marque : 8 points, la couleur de son ton ; le mot est lu
+    // (repliee) ou ecrit a cote (depliee).
+    Widget point(MarqueChrono m) => SizedBox.square(
+      dimension: StatusPill.diametrePastille,
+      child: DecoratedBox(decoration: palette.pastilleDe(m.ton)),
+    );
+    Widget lue(MarqueChrono m, Widget enfant) => Semantics(
+      key: m.estPause ? ChronoSalle.cleAnnoncePause : null,
+      container: true,
+      liveRegion: m.estPause,
+      label: m.annonce,
+      child: ExcludeSemantics(child: enfant),
+    );
+    final bool deplie = widget.deplie;
+    // La ligne : l'anneau, « Reste 37:51 », puis (repliee) les marques en
+    // points et les signes. Toujours UNE ligne : sans place, elle se reduit
+    // d'un bloc au lieu de passer a la ligne ou de deborder.
+    Widget ligne = FittedBox(
+      key: ChronoSalle.cleLigne,
+      fit: BoxFit.scaleDown,
+      alignment: AlignmentDirectional.centerStart,
+      child: Row(
+      mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        ligneChrono,
-        if (pause != null)
-          Semantics(
-            key: ChronoSalle.cleAnnoncePause,
-            container: true,
-            liveRegion: true,
-            label: pause.annonce,
-            child: ExcludeSemantics(
-              child: Text(pause.texte, key: ChronoSalle.clePause, style: style),
+        vivant,
+        if (!deplie)
+          for (final MarqueChrono m in marques) ...<Widget>[
+            Ecart.hSm,
+            lue(m, point(m)),
+          ],
+        for (final Widget signe in widget.signes) ...<Widget>[
+          Ecart.hSm,
+          signe,
+        ],
+      ],
+      ),
+    );
+    final VoidCallback? basculer = widget.onBasculer;
+    if (basculer != null) {
+      // La cible fait 48 de haut au moins ; le toucher couvre toute la ligne.
+      ligne = Stack(
+        alignment: AlignmentDirectional.centerStart,
+        children: <Widget>[
+          ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: AppSpacing.titreEcran),
+            child: Align(
+              alignment: AlignmentDirectional.centerStart,
+              widthFactor: 1,
+              heightFactor: 1,
+              child: ligne,
+            ),
+          ),
+          Positioned.fill(
+            child: Pressable(
+              key: ChronoSalle.cleBasculer,
+              onPress: basculer,
+              libelleSemantique: widget.libelleBasculer,
+              respecterCibleTactile: false,
+              child: const SizedBox.expand(),
+            ),
+          ),
+        ],
+      );
+    }
+    if (!deplie) {
+      return ligne;
+    }
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: AppSpacing.xs,
+      children: <Widget>[
+        ligne,
+        // Chaque marque en clair : son point ET son mot.
+        for (final MarqueChrono m in marques)
+          lue(
+            m,
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                point(m),
+                Ecart.hSm,
+                Flexible(
+                  child: Text(
+                    m.libelle,
+                    key: m.estPause ? ChronoSalle.clePause : null,
+                    style: style,
+                  ),
+                ),
+              ],
             ),
           ),
         if (commander)

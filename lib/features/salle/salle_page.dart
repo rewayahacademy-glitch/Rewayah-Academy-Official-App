@@ -116,6 +116,7 @@ import '../salle_seance/ecriture_seance.dart'
         diffusionPointeurProvider,
         pointeurDistantProvider;
 import '../salle_seance/lecteur_support.dart';
+import '../salle_seance/marque_chrono.dart';
 import '../salle_seance/media_salle.dart';
 import '../salle_seance/notes_deposees.dart';
 import '../salle_seance/panneau_bibliotheque_salle.dart';
@@ -2153,9 +2154,11 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       pageEnErreur: pageCoran != null && pagePresenteeEnErreur(ref, pageCoran),
       // Au telephone, l'enseignant n'a pas de colonne : « Eleves » ouvre la
       // presence (J3) et le roster (fiche, rappel) en feuille.
-      pastille: enseignant
-          ? null
-          : _PastillePresence(mienne: mienne, parole: parole),
+      // DYNAMIQUE-CHRONO-1 : la presence et l'eleve qui recite sont des
+      // marques de la Dynamique chrono, plus des pastilles posees a cote.
+      marques: enseignant
+          ? const <MarqueChrono>[]
+          : marquesPresence(mienne: mienne, parole: parole),
       // CHRONO-ETAT (11/11/2026) : presence confirmee, la pilule d'etat le
       // dit elle-meme (« En salle ») et la pastille ne le repete pas.
       presenceEnSalle: !enseignant && mienne.etat == EtatPresence.presente,
@@ -3664,55 +3667,40 @@ class _AvecSynchro extends StatelessWidget {
   }
 }
 
-/// S0.2 : l'etat de presence de l'eleve, en pastille dans l'en-tete de la
-/// salle de seance (section 6.6 : le sien, et aucun autre).
-class _PastillePresence extends StatelessWidget {
-  const _PastillePresence({required this.mienne, this.parole});
-
-  final VuePresence mienne;
-
-  /// Point 2 (30/10/2026) : l'eleve qui recite, dit a toute la classe.
-  final ParoleSalle? parole;
-
-  @override
-  Widget build(BuildContext context) {
-    // CHRONO-ETAT (directeur, 11/11/2026) : « En salle » est deja dit par la
-    // pilule d'etat ; la pastille ne reste que pour ce qui s'en ecarte (« Pas
-    // encore la », « En retard »...).
-    // RESEAU-ELEVES (defaut C6-4) : la reconnexion et la coupure de ma propre
-    // connexion sont dites par l'ile ; la pastille ne les redit pas.
-    final bool ditAilleurs =
-        mienne.etat == EtatPresence.presente ||
-        mienne.etat == EtatPresence.enReconnexion ||
-        mienne.etat == EtatPresence.deconnectee;
-    final Widget presence = MergeSemantics(
-      child: Semantics(
-        label: t.presence.mienne,
-        child: StatusPill(
-          libelle: LignePresence.libelle(mienne.etat),
-          ton: mienne.ton,
-        ),
+/// S0.2 : l'etat de presence de l'eleve dans la salle de seance (section
+/// 6.6 : le sien, et aucun autre), et l'eleve qui recite (point 2 du
+/// 30/10/2026).
+///
+/// DYNAMIQUE-CHRONO-1 (directeur, 12/11/2026 : « le chrono cache le
+/// document ») : ce ne sont plus des pastilles posees a cote de la barre,
+/// sur la page, mais des marques de la Dynamique chrono (point de couleur lu,
+/// en clair quand elle est depliee).
+@visibleForTesting
+List<MarqueChrono> marquesPresence({
+  required VuePresence mienne,
+  ParoleSalle? parole,
+}) {
+  // CHRONO-ETAT (directeur, 11/11/2026) : « En salle » est deja dit par la
+  // ligne d'etat ; la marque ne reste que pour ce qui s'en ecarte (« Pas
+  // encore la », « En retard »...). RESEAU-ELEVES (defaut C6-4) : la
+  // reconnexion et la coupure de ma propre connexion sont dites par la ligne
+  // d'etat ; la marque ne les redit pas.
+  final bool ditAilleurs =
+      mienne.etat == EtatPresence.presente ||
+      mienne.etat == EtatPresence.enReconnexion ||
+      mienne.etat == EtatPresence.deconnectee;
+  final ParoleSalle? p = parole;
+  return <MarqueChrono>[
+    if (!ditAilleurs)
+      MarqueChrono.presence(
+        libelle: LignePresence.libelle(mienne.etat),
+        ton: mienne.ton,
       ),
-    );
-    final ParoleSalle? p = parole;
-    if (p == null || p.prenom.isEmpty) {
-      return ditAilleurs ? const SizedBox.shrink() : presence;
-    }
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      spacing: AppSpacing.sm,
-      children: <Widget>[
-        if (!ditAilleurs) presence,
-        Flexible(
-          child: StatusPill(
-            key: const ValueKey<String>('salle-parole'),
-            libelle: t.tc.classe.recitation.actif(prenom: p.prenom),
-            ton: TonEtat.accent,
-          ),
-        ),
-      ],
-    );
-  }
+    if (p != null && p.prenom.isNotEmpty)
+      MarqueChrono.recitation(
+        libelle: t.tc.classe.recitation.actif(prenom: p.prenom),
+      ),
+  ];
 }
 
 /// D14 : la camera n'a pas pu s'allumer ; sa cause probable et quoi faire

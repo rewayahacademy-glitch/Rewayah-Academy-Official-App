@@ -40,6 +40,7 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/mouvement/panneau_glissant.dart';
 import '../../core/mouvement/passage_scene.dart';
+import '../../core/pause_seance/port_pause_seance.dart';
 import '../../core/tc_outils/etat_outils.dart';
 import '../../core/tc_outils/port_dock_hote.dart' show OutilDock;
 import '../../core/theme/app_gabarit.dart';
@@ -59,12 +60,12 @@ import 'barre_outils_salle.dart';
 import 'barre_support.dart' show NomsFocus, nomsFocus;
 import 'commandes_pedagogiques.dart';
 import 'dock_seance.dart';
+import 'dynamique_chrono.dart';
 import 'media_salle.dart';
 import 'outils_enseignement.dart';
 import 'panneau_bibliotheque_salle.dart';
 import 'panneau_eleves.dart';
 import 'panneau_seance.dart' show largeurPanneauSeance;
-import 'pilule_etat_salle.dart';
 import 'salle_seance.dart'
     show BandeauSecours, EtatLocalSeance, RaccourcisPleinEcran;
 import 'telephone_plein_ecran.dart';
@@ -146,6 +147,16 @@ class SalleOrdinateur extends ConsumerStatefulWidget {
 
 class _EtatSalleOrdinateur extends ConsumerState<SalleOrdinateur> {
   static const String _cleEleves = 'salle-ordinateur-eleves';
+
+  /// DYNAMIQUE-CHRONO-1 : la colonne dit quand le mot d'etat et la mention
+  /// n'y tiennent pas (voir [_Colonne.etatHorsColonne]).
+  final ValueNotifier<bool> _etatHorsColonne = ValueNotifier<bool>(false);
+
+  @override
+  void dispose() {
+    _etatHorsColonne.dispose();
+    super.dispose();
+  }
   static const String _cleBibliotheque = 'salle-ordinateur-bibliotheque';
 
   /// L'etat d'un panneau, garde le temps de la seance (stockage de la
@@ -244,6 +255,20 @@ class _EtatSalleOrdinateur extends ConsumerState<SalleOrdinateur> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: <Widget>[
+                    // DYNAMIQUE-CHRONO-1 : serre, le mot d'etat et la mention
+                    // permanente (ADR-011) ont leur rangee ici, au-dessus du
+                    // contenu, focus compris ; jamais sur la page.
+                    ValueListenableBuilder<bool>(
+                      valueListenable: _etatHorsColonne,
+                      builder: (BuildContext _, bool hors, Widget? _) => hors
+                          ? Padding(
+                              padding: const EdgeInsets.only(
+                                bottom: AppSpacing.sm,
+                              ),
+                              child: LigneEtatSalle(vue: vue),
+                            )
+                          : const SizedBox.shrink(),
+                    ),
                     if (!focus) ...<Widget>[
                       BandeauSecours(vue: vue, actions: actions, gouttiere: 0),
                       ?alerte,
@@ -346,8 +371,10 @@ class _EtatSalleOrdinateur extends ConsumerState<SalleOrdinateur> {
                 focus: focus,
                 eleves: eleves,
                 panneauEleves: gauche != null,
+                panneauDroit: droite != null,
                 bibliotheque: bibliotheque && !commandes,
                 raccourcis: widget.raccourcis,
+                etatHorsColonne: _etatHorsColonne,
               ),
             ],
           ),
@@ -1052,8 +1079,10 @@ class _Colonne extends ConsumerWidget {
     required this.focus,
     required this.eleves,
     required this.panneauEleves,
+    required this.panneauDroit,
     required this.bibliotheque,
     required this.raccourcis,
+    required this.etatHorsColonne,
   });
 
   final VueSeance vue;
@@ -1062,10 +1091,20 @@ class _Colonne extends ConsumerWidget {
   final bool focus;
   final bool eleves;
 
+  /// DYNAMIQUE-CHRONO-1 : vrai quand le mot d'etat et la mention ne tiennent
+  /// pas dans la tete de la colonne (serre) ; la salle les pose alors dans
+  /// une rangee reservee au-dessus du contenu.
+  final ValueNotifier<bool> etatHorsColonne;
+
   /// Le panneau des Eleves est a l'ecran, a cote de la colonne : l'ile
   /// depliee peut passer par-dessus (elle n'y couvre que le haut de la video
   /// de l'enseignant, quelques secondes).
   final bool panneauEleves;
+
+  /// DYNAMIQUE-CHRONO-1 : un panneau est ouvert au bord de fin (Bibliotheque
+  /// ou Commandes) ; la colonne ne s'elargit pour la barre que si la page
+  /// garde sa place.
+  final bool panneauDroit;
   final bool bibliotheque;
 
   /// Les raccourcis clavier sont actifs : chaque tuile montre sa touche.
@@ -1080,6 +1119,10 @@ class _Colonne extends ConsumerWidget {
 
   /// La hauteur d'un filet entre deux groupes, ses marges comprises.
   static const double _filet = 2 * AppSpacing.sm + 1;
+
+  /// DYNAMIQUE-CHRONO-1 : la largeur que le centre (la page et ses fleches)
+  /// garde au moins quand la colonne s'elargit pour la barre.
+  static const double _centreMin = AppSpacing.respiration * 6;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -1303,51 +1346,121 @@ class _Colonne extends ConsumerWidget {
                 (false, true),
                 (false, false),
               ];
-        // RUBAN-ORDINATEUR (vraie application, 11/11/2026 : l'ile repliee
-        // debordait sur le panneau des Eleves) : la colonne est au moins
-        // assez large pour le chrono de l'ile ; quand l'ile repliee et tous
-        // ses signes possibles n'y tiennent pas sur une ligne
-        // ([largeurIleColonne]), ses signes passent sous le chrono (deux
-        // lignes, place reservee) : l'ile ne deborde plus, et la colonne ne
-        // s'elargit pas aux depens de la page du Coran.
-        final double largeurIle = largeurChronoColonne(context);
-        final double ileUneLigne = largeurIleColonne(context, vue);
-        // GRILLE-COMMANDES : la place de l'ile est FIXE (une ligne, l'ile
-        // repliee). Depliee, elle ne pousse rien et ne se plie plus dans la
-        // largeur de la colonne : elle passe par-dessus ce qui est a cote.
-        final double ligneIle = MediaQuery.textScalerOf(context)
-            .scale(AppSpacing.xl);
-        double hauteurIle(double largeur) => ileUneLigne <= largeur
-            ? 2 * AppSpacing.sm + ligneIle
-            : 2 * AppSpacing.sm + 2 * ligneIle + AppSpacing.xs;
+        // DYNAMIQUE-CHRONO-1 (directeur, 12/11/2026 : « le panneau cache le
+        // chrono ») : la tete de la colonne n'a plus de hauteur fixe. Elle
+        // porte la Dynamique chrono (au moins assez large pour sa ligne
+        // repliee : l'anneau, « Reste 37:51 », une marque), puis le mot
+        // d'etat et la mention ; sa hauteur suit son contenu, et la barre
+        // depliee s'y deplie, en poussant les tuiles, jamais par-dessus le
+        // panneau voisin ni dessous la colonne. La hauteur estimee ici ne
+        // sert qu'a choisir le repli (noms des tuiles, titre).
+        // Sans chrono (bornes inconnues), aucune barre a loger : la colonne
+        // garde la largeur de ses tuiles.
+        final double largeurIle = vue.voitChrono
+            ? largeurBarreColonne(context)
+            : 0;
+        final TextStyle styleEtat = palette.inkMuted.applyTo(
+          textes.labelMedium ?? const TextStyle(),
+        );
+        final TextStyle styleMention = palette.inkMuted.applyTo(
+          textes.bodySmall ?? const TextStyle(),
+        );
+        double hauteurTexteLibre(String texte, TextStyle style, double l) {
+          final TextPainter peintre = TextPainter(
+            text: TextSpan(text: texte, style: style),
+            textDirection: Directionality.of(context),
+            textScaler: MediaQuery.textScalerOf(context),
+          )..layout(maxWidth: math.max(1, l - 2 * AppSpacing.md));
+          final double h = peintre.height;
+          peintre.dispose();
+          return h.ceilToDouble();
+        }
+
+        final String? mention = vue.texteMention;
+        final double ligneTexte = MediaQuery.textScalerOf(
+          context,
+        ).scale(AppSpacing.xl);
+        final double hauteurBarreChrono = vue.voitChrono
+            ? math.max(AppSpacing.titreEcran, ligneTexte + 2 * AppSpacing.sm)
+            : 0;
+        double hauteurEtat(double l) =>
+            AppSpacing.xs +
+            hauteurTexteLibre(vue.texteConnexion, styleEtat, l) +
+            (mention == null
+                ? 0
+                : AppSpacing.xs + hauteurTexteLibre(mention, styleMention, l));
+        // Ce que la barre depliee ajoute dans la tete (la pause en clair, sa
+        // commande, la marge du bas). Elle se deplie toujours a sa place,
+        // jamais par-dessus la colonne, un panneau ou la page (directeur,
+        // 12/11/2026) : la tete est choisie pour que la barre depliee y
+        // tienne aussi, les tuiles gardant au moins leurs icones.
+        final PauseSeance? pause = vue.voitPause ? vue.pause : null;
+        final double hauteurDepliee =
+            (pause == null ? 0 : ligneTexte + AppSpacing.xs) +
+            (pause != null && pause.peutPiloter && actions.onPause != null
+                ? AppSpacing.titreEcran + AppSpacing.xs
+                : 0) +
+            (vue.echecPause == null ? 0 : 2 * ligneTexte + AppSpacing.xs) +
+            AppSpacing.md;
+        // Le choix de la tete, du plus complet au plus sobre. La page garde
+        // toute sa hauteur d'abord : le mot d'etat et la mention (jamais
+        // replies) restent dans la tete tant que les tuiles y tiennent, au
+        // besoin sans le titre puis sans leurs noms (icone et infobulle) ;
+        // seulement quand meme les icones n'y tiennent plus (« serre »), ils
+        // passent dans une rangee fine reservee au-dessus du contenu.
+        bool serre = false;
         bool avecNom = false;
         bool avecTitre = false;
         double largeur = TuileCommandeSalle.largeurMin + 2 * AppSpacing.sm;
-        for (final (bool nom, bool ti) in replis) {
-          final double l = math.max(
-            largeurIle,
-            TuileCommandeSalle.largeurColonne(context, tousNoms, avecNom: nom) +
-                2 * AppSpacing.sm,
-          );
-          final bool montreTitre = ti && titre != null;
-          final double tete =
-              (montreTitre
-                  ? hauteurTexte(titre, styleTitre, l) + AppSpacing.xs
-                  : 0) +
-              hauteurIle(l) +
-              AppSpacing.sm;
-          avecNom = nom;
-          avecTitre = montreTitre;
-          largeur = l;
-          if (tete + hauteurBarre(nom) <= c.maxHeight) break;
+        double tete = 0;
+        bool trouve = false;
+        for (final bool essai in <bool>[false, true]) {
+          for (final (bool nom, bool ti) in replis) {
+            final double base =
+                TuileCommandeSalle.largeurColonne(
+                  context,
+                  tousNoms,
+                  avecNom: nom,
+                ) +
+                2 * AppSpacing.sm;
+            // La colonne s'elargit pour la barre repliee, jamais aux depens
+            // de la page : le centre garde au moins [_centreMin] ; au-dela,
+            // la ligne de la barre se reduit d'un bloc (`ChronoSalle`).
+            final double centre =
+                MediaQuery.sizeOf(context).width -
+                3 * AppSpacing.lg -
+                base -
+                (panneauEleves ? largeurPanneauGauche + AppSpacing.lg : 0) -
+                (panneauDroit ? largeurPanneauDroit + AppSpacing.lg : 0);
+            final double l = math.max(
+              base,
+              math.min(largeurIle, base + math.max(0, centre - _centreMin)),
+            );
+            final bool montreTitre = ti && titre != null;
+            tete =
+                (montreTitre
+                    ? hauteurTexte(titre, styleTitre, l) + AppSpacing.xs
+                    : 0) +
+                hauteurBarreChrono +
+                (essai ? 0 : hauteurEtat(l)) +
+                AppSpacing.sm;
+            serre = essai;
+            avecNom = nom;
+            avecTitre = montreTitre;
+            largeur = l;
+            trouve =
+                tete + hauteurBarre(nom) <= c.maxHeight &&
+                tete + hauteurDepliee + hauteurBarre(false) <= c.maxHeight;
+            if (trouve) break;
+          }
+          if (trouve) break;
         }
-        // Jusqu'ou l'ile depliee peut s'etendre : par-dessus le panneau des
-        // Eleves quand il est la ; sinon dans la marge de la page (la place
-        // de sa fleche), jamais sur la page.
-        final double largeurIleDepliee =
-            largeur +
-            AppSpacing.lg +
-            (panneauEleves ? largeurPanneauGauche : coteFlechesSalle);
+        if (etatHorsColonne.value != serre) {
+          final bool valeur = serre;
+          WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+            etatHorsColonne.value = valeur;
+          });
+        }
         return SizedBox(
           width: largeur,
           child: Column(
@@ -1370,28 +1483,12 @@ class _Colonne extends ConsumerWidget {
                           style: styleTitre,
                         ),
                       ),
-                    SizedBox(
-                      height: hauteurIle(largeur),
-                      child: OverflowBox(
-                        alignment: AlignmentDirectional.topStart,
-                        minWidth: 0,
-                        maxWidth: largeurIleDepliee,
-                        minHeight: 0,
-                        maxHeight: double.infinity,
-                        child: Align(
-                          alignment: AlignmentDirectional.topStart,
-                          widthFactor: 1,
-                          heightFactor: 1,
-                          child: PiluleEtatSalle(
-                            vue: vue,
-                            avecChrono: true,
-                            largeurMax: largeurIleDepliee,
-                            largeurRepliee: largeur,
-                            aLaLigne: true,
-                            onPause: actions.onPause,
-                          ),
-                        ),
-                      ),
+                    ZoneChrono(
+                      vue: vue,
+                      largeur: largeur,
+                      enPlace: true,
+                      avecLigneEtat: !serre,
+                      onPause: actions.onPause,
                     ),
                   ],
                 ),
@@ -1455,76 +1552,39 @@ class _Colonne extends ConsumerWidget {
   }
 }
 
-/// La largeur de l'ile repliee dans la colonne des commandes, sur une
-/// ligne : marges de l'ile, anneau et temps restant du chrono (au style du
-/// chrono : `titleMedium`, chiffres tabulaires), point d'etat, signe du
-/// reseau et point de la mention.
-///
-/// RUBAN-ORDINATEUR (vraie application, 11/11/2026 : l'ile repliee
-/// debordait de la colonne sur le panneau des Eleves, et d'autant plus
-/// qu'un signe s'ajoutait) : deux erreurs corrigees. Le temps etait mesure
-/// au style `labelMedium` alors que le chrono s'ecrit en `titleMedium` (il
-/// debordait deja sans aucun signe) ; et la place est maintenant comptee pour
-/// TOUS les signes que l'ile repliee peut porter ici, qu'ils soient la ou
-/// non (rien ne bouge quand un signe arrive) : le signe du reseau (onde ou
-/// camera barree, un seul a la fois, connexion etablie seulement), ou,
-/// connexion perdue, l'avertissement a la place du point (moins large que
-/// le point et le signe ensemble). Le micro ouvert n'y est jamais : la
-/// colonne montre deja la tuile Micro.
-///
-/// Limite connue : dans les dernieres minutes et apres l'heure, le chrono
-/// prend une capsule teintee (24 de plus) ; l'ile depasse alors la colonne
-/// dans l'ecart de 16 et la marge de 12 du panneau voisin, sans toucher son
-/// contenu.
-double largeurIleColonne(BuildContext context, VueSeance vue) {
-  final TextPainter temps = TextPainter(
-    text: TextSpan(
-      text: '00:00',
-      style: (Theme.of(context).textTheme.titleMedium ?? const TextStyle())
-          .copyWith(
-            fontFeatures: const <FontFeature>[FontFeature.tabularFigures()],
-          ),
-    ),
-    textDirection: Directionality.of(context),
-    textScaler: MediaQuery.textScalerOf(context),
-    maxLines: 1,
-  )..layout();
-  final double largeur =
-      // L'ile : ses marges, et l'ecart entre le chrono et les signes.
-      (3 * AppSpacing.md +
-              // Le chrono : l'anneau, son ecart, le temps.
-              AppSpacing.xl +
-              AppSpacing.sm +
-              temps.width +
-              // Le point d'etat.
-              AppSpacing.sm +
-              // Le signe du reseau, son ecart.
-              (AppSpacing.sm + AppSpacing.lg) +
-              // Le point de la mention, son ecart.
-              (vue.texteMention != null ? 2 * AppSpacing.sm : 0))
-          .ceilToDouble();
-  temps.dispose();
-  return largeur;
-}
+/// DYNAMIQUE-CHRONO-1 : la largeur de la Dynamique chrono repliee, sur une
+/// ligne : ses marges, l'anneau, « Reste », le temps (au style du chrono :
+/// `titleMedium`, chiffres tabulaires ; le mot en `labelLarge`). La colonne
+/// des commandes n'est jamais plus etroite : la barre repliee y tient sur une
+/// ligne, sans deborder sur le panneau voisin (RUBAN-ORDINATEUR). Une marque
+/// (la pause), une heure de plus ou un texte tres agrandi : la ligne se
+/// reduit d'un bloc (`ChronoSalle`), elle ne deborde pas, et la colonne ne
+/// s'elargit pas aux depens de la page.
+double largeurBarreColonne(BuildContext context) {
+  final TextStyle style =
+      (Theme.of(context).textTheme.titleMedium ?? const TextStyle()).copyWith(
+        fontFeatures: const <FontFeature>[FontFeature.tabularFigures()],
+      );
+  double mesure(String texte, TextStyle style) {
+    final TextPainter peintre = TextPainter(
+      text: TextSpan(text: texte, style: style),
+      textDirection: Directionality.of(context),
+      textScaler: MediaQuery.textScalerOf(context),
+      maxLines: 1,
+    )..layout();
+    final double l = peintre.width;
+    peintre.dispose();
+    return l;
+  }
 
-/// La largeur du chrono de l'ile (marges de l'ile, anneau, temps) : la
-/// colonne des commandes n'est jamais plus etroite (RUBAN-ORDINATEUR).
-double largeurChronoColonne(BuildContext context) {
-  final TextPainter temps = TextPainter(
-    text: TextSpan(
-      text: '00:00',
-      style: (Theme.of(context).textTheme.titleMedium ?? const TextStyle())
-          .copyWith(
-            fontFeatures: const <FontFeature>[FontFeature.tabularFigures()],
-          ),
-    ),
-    textDirection: Directionality.of(context),
-    textScaler: MediaQuery.textScalerOf(context),
-    maxLines: 1,
-  )..layout();
-  final double largeur =
-      (2 * AppSpacing.md + AppSpacing.xl + AppSpacing.sm + temps.width)
-          .ceilToDouble();
-  temps.dispose();
-  return largeur;
+  return (2 * AppSpacing.md +
+          AppSpacing.xl +
+          AppSpacing.sm +
+          mesure(
+            t.salle.seance.chrono.reste,
+            Theme.of(context).textTheme.labelLarge ?? const TextStyle(),
+          ) +
+          AppSpacing.xs +
+          mesure('00:00', style))
+      .ceilToDouble();
 }

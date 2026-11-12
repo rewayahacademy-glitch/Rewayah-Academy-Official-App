@@ -1004,6 +1004,7 @@
     "ile": {
       "deplier": "عرض تفاصيل الحصة",
       "deplierEtat": "عرض حالة القاعة",
+      "replierEtat": "إخفاء حالة القاعة",
       "replier": "إخفاء تفاصيل الحصة",
       "conclure": "بقيت أقل من 5 دقائق: حان وقت ختم الحصة.",
       "finAtteinte": "بلغت الحصة نهايتها المقرّرة: الحصة ما زالت مباشرة."
@@ -1171,6 +1172,8 @@
         "ecoule": "مضى\u00a0⁨{temps}⁩",
         "restant": "تبقّى\u00a0⁨{temps}⁩",
         "tempsPrevuEcoule": "انقضى الوقت المقرّر",
+        "reste": "تبقّى",
+        "apresFin": "بعد النهاية",
         "annonce": "الحصة: ⁨{ecoule}⁩ و⁨{restant}⁩.",
         "minutesEcoulees(plural, param=minutes)": {
           "zero": "مضى ⁨{minutes}⁩ د",

@@ -3092,8 +3092,14 @@ void main() {
         ),
       );
 
-      // S0.2 : sa pastille dans l'en-tete, lue « Votre presence ».
-      expect(find.bySemanticsLabel(RegExp(t.presence.mienne)), findsOneWidget);
+      // S0.2, DYNAMIQUE-CHRONO-1 (12/11/2026) : son etat est une marque de
+      // la Dynamique chrono (la pastille posee a cote, sur la page, n'existe
+      // plus) : lue « En retard » ; ecrite en clair (ici, sans chrono, la
+      // barre ne porte que ses marques, en mots).
+      expect(
+        find.bySemanticsLabel(RegExp(t.presence.enRetard)),
+        findsOneWidget,
+      );
       expect(find.text(t.presence.enRetard), findsOneWidget);
       // Aucune liste : l'eleve n'y a pas droit, et le bouton qui l'ouvrirait
       // n'existe pas non plus.
@@ -4228,7 +4234,15 @@ void main() {
         // Telephone : la fenetre. Ordinateur (plan du 26/10/2026) : tout le
         // centre, sous la ligne du titre.
         if (taille.width < 840) {
-          expect(canevas, Offset.zero & taille);
+          // DYNAMIQUE-CHRONO-1 (12/11/2026) : la fenetre sous la rangee
+          // reservee de la Dynamique chrono.
+          final double haut = tester
+              .getRect(find.byKey(TelephonePleinEcran.cleRangeeChrono))
+              .bottom;
+          expect(
+            canevas,
+            Rect.fromLTRB(0, haut, taille.width, taille.height),
+          );
         } else {
           final Rect centre = tester.getRect(
             find.byKey(SalleOrdinateur.cleCentre),

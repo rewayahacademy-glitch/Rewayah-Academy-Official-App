@@ -50,11 +50,11 @@ import '../tc_mushaf/page_madina_15.dart' show ratioHauteurPageMadina15;
 import 'actions_seance.dart';
 import 'commandes_pedagogiques.dart';
 import 'dock_seance.dart';
+import 'dynamique_chrono.dart';
 import 'glisser_page.dart';
 import 'media_salle.dart';
 import 'palette_tableau.dart';
 import 'panneau_seance.dart' show largeurPanneauSeance;
-import 'pilule_etat_salle.dart';
 import 'salle_seance.dart' show BandeauSecours, EtatLocalSeance;
 import 'surface_page_fixe.dart';
 import 'telephone_enseignant.dart';
@@ -195,15 +195,16 @@ const Key cleRecitantBande = ValueKey<String>('bande-cadre-recitant');
 ///   commandes de l'appel en bas de la bande de fin ; chaque bande large
 ///   d'au moins [bande].
 /// - **Superposee** ([superposee], telephone et tablette en portrait, pilote
-///   le 11/11/2026 : « sans compacter la page du Coran ») : la page garde sa
-///   pleine taille ; au repos, seule l'ile repliee est posee dessus, en haut ;
-///   au toucher, la pilule de l'appel, la vignette et le zoom passent
-///   par-dessus et s'effacent au delai de [CommandesMasquables].
+///   le 11/11/2026 : « sans compacter la page du Coran ») : la page garde
+///   toute la place sous la rangee reservee de la Dynamique chrono
+///   (DYNAMIQUE-CHRONO-1, 12/11/2026 : plus rien n'est pose dessus au
+///   repos) ; au toucher, la pilule de l'appel, la vignette et le zoom
+///   passent par-dessus et s'effacent au delai de [CommandesMasquables].
 /// - **Haut et bas** (Interface guidee en portrait : un enfant voit toujours
-///   ses boutons) : l'ile repliee, la vignette et le zoom sur une rangee en
-///   haut ; les commandes de l'appel en bas ; la page prend la place libre
-///   entre les deux. L'ile qui se deplie passe par-dessus la page un court
-///   instant, sans la pousser (la rangee garde sa hauteur repliee).
+///   ses boutons) : la vignette et le zoom sur une rangee en haut (la
+///   Dynamique chrono a sa rangee au-dessus, DYNAMIQUE-CHRONO-1) ; les
+///   commandes de l'appel en bas ; la page prend la place libre entre les
+///   deux.
 class GeometrieEleve {
   const GeometrieEleve._({
     required this.cote,
@@ -290,9 +291,11 @@ class GeometrieEleve {
     final double hautVignette = vignette
         ? largeurVignetteTelephone / MesuresVignette.ratio
         : 0;
+    // DYNAMIQUE-CHRONO-1 : la barre a sa propre rangee, au-dessus ; celle-ci
+    // ne porte plus que la vignette et le zoom.
     final double rangee = math.max(
-      hauteurPiluleEtat,
-      math.max(hautVignette, zoom ? diametre + 2 * AppSpacing.sm : 0),
+      hautVignette,
+      zoom ? diametre + 2 * AppSpacing.sm : 0,
     );
     final double finRangee =
         (vignette ? largeurVignetteTelephone + AppSpacing.sm : 0) +
@@ -501,8 +504,25 @@ Widget? pageSalle(
       : page;
 }
 
-/// La salle au telephone : la page est l'ecran.
-class TelephonePleinEcran extends StatefulWidget {
+/// Le micro local est ouvert et entendu (le signe de la Dynamique chrono).
+bool microOuvertEntendu(VueSeance vue, EtatLocalSeance local) =>
+    vue.commandesDock.contains(CommandeDock.micro) &&
+    local.microOuvert &&
+    !vue.microBloque &&
+    !vue.microEnAttente &&
+    vue.commandesPublicationActives;
+
+/// La salle au telephone (et sur tablette, et chez l'eleve sur ordinateur).
+///
+/// DYNAMIQUE-CHRONO-1 (directeur, 12/11/2026 : « le chrono cache le
+/// document ; a refaire pour que rien ne cache rien ») : la Dynamique chrono
+/// a une PLACE RESERVEE ([ZoneChrono]). Au telephone et sur tablette sans
+/// colonne, une rangee de toute la largeur, au-dessus de tout le reste : la
+/// page, la scene, la capsule et les commandes se composent dessous, dans la
+/// place qui reste (la zone sure du haut est deja prise par la rangee). Chez
+/// l'eleve devant une page sur un ecran large (les bandes de cote), la zone
+/// est en haut de la bande de debut, a cote de la page.
+class TelephonePleinEcran extends StatelessWidget {
   const TelephonePleinEcran({
     required this.vue,
     required this.actions,
@@ -528,11 +548,108 @@ class TelephonePleinEcran extends StatefulWidget {
   /// « Eleves » dans la barre de l'enseignant.
   static const Key cleEleves = BarreCommandesTelephone.cleEleves;
 
+  /// La rangee reservee de la Dynamique chrono (tests de geometrie).
+  static const Key cleRangeeChrono = ValueKey<String>('rangee-chrono');
+
+  /// Vrai quand l'eleve (ou le tuteur, le controleur) est devant une page
+  /// qui garde toute la hauteur, ses commandes dans les bandes de cote :
+  /// la zone de la barre va en haut de la bande de debut.
+  static bool zoneDansLaBande(
+    BuildContext context,
+    VueSeance vue,
+    Size ecran,
+  ) {
+    final PorteeMediaSalle? media = PorteeMediaSalle.de(context);
+    final bool scene =
+        media?.scene != null && modeSceneDe(context, vue) == ModeScene.classe;
+    final bool eleve =
+        vue.role != RoleSeance.enseignant &&
+        !scene &&
+        vue.supportPresente != null &&
+        surfaceAMontrer(vue) != null;
+    if (!eleve) return false;
+    return GeometrieEleve.calculer(
+      ecran: ecran,
+      zoneSure: EdgeInsets.zero,
+      diametre: diametreBoutonAppel(context),
+      vignette: false,
+      zoom: false,
+    ).cote;
+  }
+
   @override
-  State<TelephonePleinEcran> createState() => _EtatTelephonePleinEcran();
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    return Material(
+      color: palette.surfaceCanvas.background,
+      child: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints c) {
+          final Widget corps = _CorpsTelephone(
+            vue: vue,
+            actions: actions,
+            local: local,
+            zoneDansBande: zoneDansLaBande(context, vue, c.biggest),
+          );
+          if (zoneDansLaBande(context, vue, c.biggest)) return corps;
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              SafeArea(
+                bottom: false,
+                child: Padding(
+                  key: cleRangeeChrono,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.lg,
+                    vertical: AppSpacing.sm,
+                  ),
+                  child: LayoutBuilder(
+                    builder: (BuildContext _, BoxConstraints z) => ZoneChrono(
+                      vue: vue,
+                      largeur: z.maxWidth,
+                      onPause: actions.onPause,
+                      microOuvert: microOuvertEntendu(vue, local),
+                    ),
+                  ),
+                ),
+              ),
+              Expanded(
+                child: MediaQuery.removePadding(
+                  context: context,
+                  removeTop: true,
+                  child: corps,
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
 }
 
-class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
+/// Le corps de la salle au telephone, sous la rangee de la Dynamique chrono
+/// (ou a cote d'elle, dans la bande de debut).
+class _CorpsTelephone extends StatefulWidget {
+  const _CorpsTelephone({
+    required this.vue,
+    required this.actions,
+    required this.local,
+    required this.zoneDansBande,
+  });
+
+  final VueSeance vue;
+  final ActionsSeance actions;
+  final EtatLocalSeance local;
+
+  /// Vrai : la zone de la Dynamique chrono est en haut de la bande de debut
+  /// (posee par le corps) ; faux : elle est deja au-dessus, dans sa rangee.
+  final bool zoneDansBande;
+
+  @override
+  State<_CorpsTelephone> createState() => _EtatTelephonePleinEcran();
+}
+
+class _EtatTelephonePleinEcran extends State<_CorpsTelephone> {
   VueSeance get vue => widget.vue;
   ActionsSeance get actions => widget.actions;
   EtatLocalSeance get local => widget.local;
@@ -639,13 +756,18 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
     super.dispose();
   }
 
-  /// Le micro local est ouvert et entendu (le signe de l'ile repliee).
-  bool get _microOuvertEntendu =>
-      vue.commandesDock.contains(CommandeDock.micro) &&
-      local.microOuvert &&
-      !vue.microBloque &&
-      !vue.microEnAttente &&
-      vue.commandesPublicationActives;
+  /// Le micro local est ouvert et entendu (le signe de la Dynamique chrono).
+  bool get _microOuvertEntendu => microOuvertEntendu(vue, local);
+
+  /// La hauteur mesuree du haut de la bande de debut (la zone de la
+  /// Dynamique chrono), quand la zone y est : la phrase d'etat se pose
+  /// dessous.
+  double? _hauteurHautBande;
+
+  void _surHauteurHautBande(double h) {
+    if (!mounted || _hauteurHautBande == h) return;
+    setState(() => _hauteurHautBande = h);
+  }
 
   /// Vrai quand [position] tombe dans le widget de [cle].
   bool _dans(GlobalKey cle, Offset position) {
@@ -693,7 +815,7 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
   }
 
   @override
-  void didUpdateWidget(TelephonePleinEcran ancien) {
+  void didUpdateWidget(_CorpsTelephone ancien) {
     super.didUpdateWidget(ancien);
     _suivreMicroAttente(avant: ancien.vue.texteMicroEnAttente != null);
     // Un panneau du bas s'ouvre : le profil se replie (rien ne se recouvre).
@@ -891,14 +1013,27 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
                   top: 0,
                   start: 0,
                   width: largeurHautEleve,
-                  child: _Haut(
-                    vue: vue,
-                    actions: actions,
-                    largeur: largeurHautEleve,
-                    vignette: false,
-                    aCote: false,
-                    microOuvert: _microOuvertEntendu,
-                  ),
+                  child: geometrie.cote && widget.zoneDansBande
+                      ? _MesureHauteur(
+                          onHauteur: _surHauteurHautBande,
+                          child: _Haut(
+                            vue: vue,
+                            actions: actions,
+                            largeur: largeurHautEleve,
+                            vignette: false,
+                            aCote: false,
+                            microOuvert: _microOuvertEntendu,
+                            zone: true,
+                          ),
+                        )
+                      : _Haut(
+                          vue: vue,
+                          actions: actions,
+                          largeur: largeurHautEleve,
+                          vignette: false,
+                          aCote: false,
+                          microOuvert: _microOuvertEntendu,
+                        ),
                 );
           final Widget? pageVue = scene
               ? null
@@ -1009,7 +1144,6 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
                   child: ProfilTelephone(
                     vue: vue,
                     onReduire: _replier,
-                    onPause: actions.onPause,
                   ),
                 )
               : Center(
@@ -1048,38 +1182,10 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
                     if (sceneDevant)
                       laCapsule
                     else
-                      // TELEPHONE-REDUIT (cahier §8 : « le chronometre est
-                      // cache dans une carte depliable au telephone ») : au
-                      // repos, l'ile de la salle (chrono, etat), repliee, a
-                      // la place de la capsule ; au toucher, la capsule (et
-                      // son profil, qui redit la ligne d'etat). Meme place,
-                      // rien ne se pousse.
-                      Stack(
-                        children: <Widget>[
-                          MasqueAvecCommandes(child: laCapsule),
-                          Builder(
-                            builder: (BuildContext contexte) =>
-                                CommandesMasquables.visiblesDe(contexte)
-                                ? const SizedBox.shrink()
-                                : Align(
-                                    alignment: AlignmentDirectional.topStart,
-                                    child: PiluleEtatSalle(
-                                      vue: vue,
-                                      largeurMax: math.max(
-                                        0,
-                                        ecran.width - 2 * AppSpacing.lg,
-                                      ),
-                                      cle: const ValueKey<String>(
-                                        'ligne-etat-telephone',
-                                      ),
-                                      avecChrono: true,
-                                      onPause: actions.onPause,
-                                      microOuvert: _microOuvertEntendu,
-                                    ),
-                                  ),
-                          ),
-                        ],
-                      ),
+                      // DYNAMIQUE-CHRONO-1 : la Dynamique chrono a sa rangee,
+                      // au-dessus ; la capsule (au toucher) se pose dessous,
+                      // elle ne la cache plus.
+                      MasqueAvecCommandes(child: laCapsule),
                   ],
                 ),
               ),
@@ -1182,8 +1288,7 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
                     top: enseignant
                         ? _hautSceneEnseignant(context)
                         : MediaQuery.paddingOf(context).top +
-                              AppSpacing.lg +
-                              hauteurPiluleEtat,
+                              AppSpacing.lg,
                     bottom: enseignant
                         ? MediaQuery.paddingOf(context).bottom +
                               (_hauteurBasScene ??
@@ -1299,9 +1404,7 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
                             haut:
                                 AppSpacing.lg +
                                 (telephone
-                                    ? hauteurPiluleEtat +
-                                          AppSpacing.sm +
-                                          (media?.boutonEleves == null
+                                    ? (media?.boutonEleves == null
                                               ? 0
                                               : AppTouchTarget.standard +
                                                     AppSpacing.sm)
@@ -1459,11 +1562,7 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
               largeur: telephone
                   ? largeurVignetteTelephone
                   : MesuresVignette.largeurPleinCadreLarge,
-              haut:
-                  zoneSure.top +
-                  AppSpacing.lg +
-                  hauteurPiluleEtat +
-                  AppSpacing.sm,
+              haut: zoneSure.top + AppSpacing.lg,
               bas:
                   zoneSure.bottom +
                   AppSpacing.lg +
@@ -1477,11 +1576,7 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
           // RUBAN-TELEPHONE : la phrase d'etat, en haut, sous l'ile, avant la
           // vignette ; elle vient et part avec les commandes.
           PositionedDirectional(
-            top:
-                zoneSure.top +
-                AppSpacing.lg +
-                hauteurPiluleEtat +
-                AppSpacing.sm,
+            top: zoneSure.top + AppSpacing.lg,
             start: AppSpacing.lg,
             width: math.max(
               0,
@@ -1593,11 +1688,13 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
           // bas, dans sa rangee reservee.)
           if (cote)
             PositionedDirectional(
+              // DYNAMIQUE-CHRONO-1 : sous la zone de la barre, mesuree.
               top:
+                  _hauteurHautBande ??
                   zoneSure.top +
-                  AppSpacing.lg +
-                  hauteurPiluleEtat +
-                  AppSpacing.sm,
+                      AppSpacing.lg +
+                      hauteurPiluleEtat +
+                      AppSpacing.sm,
               start: AppSpacing.lg,
               width: math.max(0, geometrie.bande - 2 * AppSpacing.lg),
               child: _StatutEnHaut(vue: vue),
@@ -1748,7 +1845,7 @@ class _StatutEnHaut extends StatelessWidget {
 /// RUBAN-TELEPHONE : la cle de la phrase d'etat posee en haut (tests).
 const Key cleStatutEnHaut = ValueKey<String>('statut-en-haut');
 
-/// La hauteur de la pilule d'etat ([PiluleEtatSalle]).
+/// La hauteur de la pilule d'etat ([DynamiqueChrono]).
 const double hauteurPiluleEtat = AppSpacing.xxxl + AppSpacing.xs;
 
 /// Un coin de la scene ou la vignette s'aimante.
@@ -2364,8 +2461,12 @@ const double largeurMaxFeuille = AppSpacing.respiration * 10;
 /// La part maximale de l'ecran que prend le panneau des Commandes.
 const double _partPanneau = 0.6;
 
-/// Le haut de la scene : la ligne d'etat (En ligne, presence, mention), le
-/// bandeau de secours s'il y a lieu, l'alerte (camera) ; la vignette en coin.
+/// Le haut de la scene : le bandeau de secours s'il y a lieu, l'alerte
+/// (camera) ; « Eleves », la vignette et la croix en coin.
+///
+/// DYNAMIQUE-CHRONO-1 : la Dynamique chrono, la presence et la mention n'y
+/// sont plus (elles ont leur rangee reservee, au-dessus), sauf dans la bande
+/// de debut d'un ecran large ([zone]) : c'est alors la place reservee.
 class _Haut extends StatelessWidget {
   const _Haut({
     required this.vue,
@@ -2374,10 +2475,14 @@ class _Haut extends StatelessWidget {
     required this.vignette,
     required this.aCote,
     this.microOuvert = false,
+    this.zone = false,
   });
 
-  /// Le micro local est ouvert : signe dans l'ile repliee.
+  /// Le micro local est ouvert : signe dans la Dynamique chrono.
   final bool microOuvert;
+
+  /// Vrai : la zone de la Dynamique chrono se pose ici (bande de debut).
+  final bool zone;
 
   final VueSeance vue;
   final ActionsSeance actions;
@@ -2390,13 +2495,6 @@ class _Haut extends StatelessWidget {
     final PorteeMediaSalle? media = PorteeMediaSalle.de(context);
     final Widget? alerte = media?.alerte;
     final ({int nombre, VoidCallback onPress})? eleves = media?.boutonEleves;
-    // Standard des commandes d'appel (24/10/2026) : une pilule translucide en
-    // haut a gauche, hauteur 36 : « ● En ligne · Visite de controle
-    // possible. » (ADR-011), seule sur sa rangee ; dessous, a droite, le
-    // bouton rond « Eleves » et la vignette. Marge 16 des bords.
-    // Section 6.6 : la presence de l'eleve (la sienne seulement), a cote de
-    // la pilule d'etat.
-    final Widget? presence = media?.pastille;
     // Lot salle 3 (directeur, 25/10/2026) : un support ouvert se ferme. La
     // croix « Ranger dans la bibliotheque » se tient au bord de fin, en haut,
     // pour l'enseignant qui presente une page.
@@ -2410,30 +2508,14 @@ class _Haut extends StatelessWidget {
             onPress: ranger,
             forme: FormeBoutonIcone.appel,
           );
-    final Widget pilule = PiluleEtatSalle(
-      vue: vue,
-      largeurMax: math.max(
-        0,
-        aCote
-            // Ordinateur : la pilule partage sa rangee avec « Eleves » et la
-            // vignette.
-            ? largeur / 2
-            : largeur - 2 * AppSpacing.lg,
-      ),
-      cle: const ValueKey<String>('ligne-etat-telephone'),
-      avecChrono: true,
-      onPause: actions.onPause,
-      microOuvert: microOuvert,
-    );
-    final Widget ligne = presence == null
-        ? pilule
-        // Texte agrandi, ecran etroit : la presence passe sous la pilule.
-        : Wrap(
-            spacing: AppSpacing.sm,
-            runSpacing: AppSpacing.sm,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: <Widget>[pilule, presence],
-          );
+    final Widget? ligne = zone
+        ? ZoneChrono(
+            vue: vue,
+            largeur: math.max(0, largeur - 2 * AppSpacing.lg),
+            onPause: actions.onPause,
+            microOuvert: microOuvert,
+          )
+        : null;
     return SafeArea(
       bottom: false,
       child: Padding(
@@ -2450,7 +2532,7 @@ class _Haut extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 spacing: AppSpacing.sm,
                 children: <Widget>[
-                  Flexible(child: ligne),
+                  if (ligne != null) Flexible(child: ligne),
                   if (eleves != null)
                     _BoutonEleves(
                       nombre: eleves.nombre,
@@ -2469,11 +2551,11 @@ class _Haut extends StatelessWidget {
             // la premiere rangee, a gauche, phrase entiere ; Eleves et la
             // vignette descendent sur une seconde rangee, a droite, 8 sous la
             // pilule.
-            else
+            else if (ligne != null)
               Align(alignment: AlignmentDirectional.topStart, child: ligne),
             if (!aCote &&
                 (eleves != null || vignette || fermer != null)) ...<Widget>[
-              Ecart.vSm,
+              if (ligne != null) Ecart.vSm,
               Align(
                 alignment: AlignmentDirectional.topEnd,
                 child: Row(
