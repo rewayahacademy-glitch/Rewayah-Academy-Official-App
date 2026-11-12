@@ -14929,6 +14929,8 @@ class Traductions$tuteur$accueil$fr {
 	/// fr: 'Ouvrir mon espace élève'
 	String get ouvrirEspaceEleve => 'Ouvrir mon espace élève';
 
+	late final Traductions$tuteur$accueil$autreAppareilFeuille$fr autreAppareilFeuille = Traductions$tuteur$accueil$autreAppareilFeuille$fr.internal(_root);
+
 	/// fr: 'Utiliser un autre appareil'
 	String get autreAppareil => 'Utiliser un autre appareil';
 
@@ -32165,6 +32167,33 @@ class Traductions$compte$tuteur$pageLegal$fr {
 
 	/// fr: 'Conditions et confidentialité'
 	String get textes => 'Conditions et confidentialité';
+}
+
+// Path: tuteur.accueil.autreAppareilFeuille
+class Traductions$tuteur$accueil$autreAppareilFeuille$fr {
+	Traductions$tuteur$accueil$autreAppareilFeuille$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Votre compte vous suit sur tous vos appareils. Sur l'autre appareil, ouvrez l'application à cette adresse, puis connectez-vous avec la même adresse de connexion.'
+	String get phrase => 'Votre compte vous suit sur tous vos appareils. Sur l\'autre appareil, ouvrez l\'application à cette adresse, puis connectez-vous avec la même adresse de connexion.';
+
+	/// fr: 'Aucun code à saisir : c'est votre propre compte.'
+	String get aucunCode => 'Aucun code à saisir : c\'est votre propre compte.';
+
+	/// fr: 'Adresse de l'application'
+	String get adresseApplication => 'Adresse de l\'application';
+
+	/// fr: 'Adresse de connexion'
+	String get adresseConnexion => 'Adresse de connexion';
+
+	/// fr: 'Copier le lien de l'application'
+	String get copier => 'Copier le lien de l\'application';
+
+	/// fr: 'Lien copié'
+	String get copie => 'Lien copié';
 }
 
 // Path: tuteur.accueil.etatCourt
@@ -55504,6 +55533,12 @@ extension on Traductions {
 			'tuteur.accueil.foyerVideTitre' => 'Aucun profil élève pour l\'instant',
 			'tuteur.accueil.foyerVidePhrase' => 'Ajoutez un profil élève pour choisir une classe et suivre ses séances.',
 			'tuteur.accueil.ouvrirEspaceEleve' => 'Ouvrir mon espace élève',
+			'tuteur.accueil.autreAppareilFeuille.phrase' => 'Votre compte vous suit sur tous vos appareils. Sur l\'autre appareil, ouvrez l\'application à cette adresse, puis connectez-vous avec la même adresse de connexion.',
+			'tuteur.accueil.autreAppareilFeuille.aucunCode' => 'Aucun code à saisir : c\'est votre propre compte.',
+			'tuteur.accueil.autreAppareilFeuille.adresseApplication' => 'Adresse de l\'application',
+			'tuteur.accueil.autreAppareilFeuille.adresseConnexion' => 'Adresse de connexion',
+			'tuteur.accueil.autreAppareilFeuille.copier' => 'Copier le lien de l\'application',
+			'tuteur.accueil.autreAppareilFeuille.copie' => 'Lien copié',
 			'tuteur.accueil.autreAppareil' => 'Utiliser un autre appareil',
 			'tuteur.accueil.ajouterProfil' => 'Ajouter un profil élève',
 			'tuteur.accueil.profilsIllisibles' => 'Les profils du foyer n\'ont pas pu être lus.',
@@ -55665,6 +55700,8 @@ extension on Traductions {
 			'classe.observation.secondes' => ({required Object secondes}) => '${secondes} s',
 			'classe.observation.motif.visitesEpuisees' => 'Vous avez utilisé vos visites pour cette séance.',
 			'classe.observation.motif.tempsEpuise' => 'Votre temps d\'observation est épuisé pour cette séance.',
+			_ => null,
+		} ?? switch (path) {
 			'classe.observation.motif.seanceNonCommencee' => 'L\'observation ouvre quand la séance commence.',
 			'classe.observation.motif.seanceTerminee' => 'La séance est terminée.',
 			'classe.observation.motif.seanceNonTenue' => 'Cette séance n\'a pas lieu : il n\'y a rien à observer.',
@@ -56179,6 +56216,8 @@ extension on Traductions {
 			'enseignant.profil.erreur' => 'Votre profil n\'a pas pu être lu. Réessayez dans un instant.',
 			'enseignant.profil.vide' => 'Aucun profil enseignant',
 			'enseignant.profil.videDetail' => 'Ce compte n\'a pas de profil enseignant. Seule l\'académie peut en créer un.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.profil.horsLigne' => 'Rien ne peut être modifié ici pour l\'instant.',
 			'enseignant.profil.modifierPays' => 'Modifier le pays',
 			'enseignant.profil.fuseauAppareil' => 'Heure de cet appareil',
@@ -56693,6 +56732,8 @@ extension on Traductions {
 			'tc.groupe.horloges.aConfirmer' => 'Heure à confirmer',
 			'tc.groupe.horloges.enCeMoment' => 'En ce moment',
 			'tc.groupe.dst.j30' => 'Changement d\'heure dans un mois',
+			_ => null,
+		} ?? switch (path) {
 			'tc.groupe.dst.j7' => 'Changement d\'heure la semaine prochaine',
 			'tc.groupe.dst.j1' => 'Changement d\'heure demain',
 			'tc.groupe.dst.detail' => ({required Object avant, required Object apres}) => 'Votre cours passera de ${avant} à ${apres}.',
@@ -57206,6 +57247,8 @@ extension on Traductions {
 			'adulte.recharge.paiementIndisponiblePhrase' => 'Aucun paiement n\'a été effectué. Le paiement en ligne n\'est pas encore ouvert dans l\'application.',
 			'adulte.recharge.formules.trimestriel' => ({required Object montant}) => '${montant} pour 3 mois, payés d\'avance',
 			'adulte.recharge.formules.annuel' => ({required Object montant}) => '${montant} pour 12 mois, payés d\'avance',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.recharge.revenirPaiements' => 'Revenir aux paiements du foyer',
 			'adulte.recharge.phraseUnique' => 'Cochez le profil, puis choisissez le montant.',
 			'adulte.recharge.profils' => 'Profils à recharger',
@@ -57720,6 +57763,8 @@ extension on Traductions {
 			'suiviDemandes.prochaine.listeAttente' => 'Nous vous prévenons dès qu\'une place s\'ouvre. Aucune date n\'est annoncée tant qu\'elle n\'est pas connue.',
 			'suiviDemandes.prochaine.eleveIntegre' => 'Prochaine étape : le début des cours',
 			'suiviDemandes.debutCours' => 'Début des cours',
+			_ => null,
+		} ?? switch (path) {
 			'suiviDemandes.debutValeur' => ({required Object date, required Object heure, required Object deVille}) => '${date} à ${heure}, heure ${deVille}',
 			'suiviDemandes.debutAFixer' => 'La date du premier cours s\'affichera ici dès qu\'elle sera fixée.',
 			'suiviDemandes.enseignant' => 'Enseignant',
@@ -58234,6 +58279,8 @@ extension on Traductions {
 			'com.communaute.lien.commercialInterdit' => 'Lien commercial interdit',
 			'com.communaute.lien.nonVerifie' => 'Lien non vérifié',
 			'com.communaute.lien.semantique' => ({required Object adresse, required Object etat}) => '${adresse}, ${etat}',
+			_ => null,
+		} ?? switch (path) {
 			'com.communaute.sousTitre' => 'Échanges et entraide entre enseignants',
 			'com.communaute.sections' => 'Catégories de la Communauté enseignants',
 			'com.communaute.toutes' => 'Toutes',
@@ -58748,6 +58795,8 @@ extension on Traductions {
 			'com.annonces.demo.classeNour' => 'Classe An-Nour',
 			'com.annonces.demo.classeFajr' => 'Classe Al-Fajr',
 			'com.annonces.demo.enseignante' => 'Enseignante de la classe',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.demo.f.adminStudioMention' => 'Studio : une discussion du canal Programmes vous mentionne',
 			'com.annonces.demo.f.adminStudioReponse' => 'Studio : nouvelle réponse à votre message sur le programme de printemps',
 			'com.annonces.demo.f.adminStudioDecision' => 'Studio : une décision est demandée sur le support de la leçon 4',
@@ -59262,6 +59311,8 @@ extension on Traductions {
 			'comptable.encaissements.foyer' => 'Foyer',
 			'comptable.encaissements.date' => 'Date',
 			'comptable.encaissements.etat' => 'État',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.encaissements.devise' => 'Devise',
 			'comptable.encaissements.affectation' => 'Affectation par profil',
 			'comptable.encaissements.affectationAucune' => 'La source n\'a rendu aucune affectation pour cet encaissement.',
@@ -59776,6 +59827,8 @@ extension on Traductions {
 			'comptable.direction.delegationPanneau.sortieAnnulerPhrase' => ({required Object beneficiaire}) => 'La sortie de ${beneficiaire} ne partira pas. L\'annulation est inscrite au journal.',
 			'comptable.direction.delegationPanneau.sortieAnnulerConfirmer' => 'Annuler la sortie',
 			'comptable.direction.delegationPanneau.sortieGarder' => 'Garder la sortie',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.sortieAnnulee' => 'Sortie annulée.',
 			'comptable.direction.delegationPanneau.sortieAnnulationEchec' => 'L\'annulation n\'est pas confirmée : la demande n\'est peut-être pas parvenue jusqu\'à Rewayah. Relisez la liste avant de réessayer.',
 			'comptable.direction.delegationPanneau.exceptionsTitre' => 'Exceptions',
@@ -60290,6 +60343,8 @@ extension on Traductions {
 			'avis.admin.liens.fermerConsequence' => 'Les personnes qui ouvriront ce lien verront qu\'il est fermé et ne pourront plus envoyer d\'avis. Les avis déjà reçus restent. Un lien fermé ne se rouvre pas.',
 			'avis.admin.liens.fermerAction' => 'Fermer le lien',
 			'avis.admin.liens.fermerRester' => 'Ne rien changer',
+			_ => null,
+		} ?? switch (path) {
 			'avis.admin.liens.fermeOk' => 'Le lien est fermé.',
 			'avis.admin.liens.fermeEchec' => 'La fermeture n\'est pas confirmée. La liste est relue : vérifiez l\'état du lien.',
 			'avis.admin.liens.vide' => 'Aucun lien pour le moment. Créez-en un pour recueillir des avis.',
@@ -60822,6 +60877,8 @@ extension on Traductions {
 			'candidatsFlux.importFormulaires.avertissement.zeroNationalEnTrop' => 'un zéro en trop après l\'indicatif du téléphone',
 			'candidatsFlux.importFormulaires.avertissement.courrielMalforme' => 'le courriel est mal écrit : il est à obtenir',
 			'candidatsFlux.importFormulaires.avertissement.langueMaternelleVersAutre' => 'langue maternelle inconnue, classée en autre langue',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.avertissement.langueInconnueVersAutre' => 'une langue d\'explication inconnue est classée en autre langue',
 			'candidatsFlux.importFormulaires.avertissement.arabeRetire' => 'l\'arabe est retiré des langues d\'explication (ce n\'est pas une langue de cours)',
 			'candidatsFlux.importFormulaires.avertissement.libelleInconnu' => 'une réponse à choix n\'est pas reconnue',

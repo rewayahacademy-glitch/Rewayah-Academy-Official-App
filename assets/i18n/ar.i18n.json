@@ -2832,6 +2832,14 @@
       "foyerVideTitre": "لا ملف طالب حتى الآن",
       "foyerVidePhrase": "أضف ملف طالب لاختيار فصل ومتابعة حصصه.",
       "ouvrirEspaceEleve": "فتح مساحتي كطالب",
+      "autreAppareilFeuille": {
+        "phrase": "يرافقك حسابك على جميع أجهزتك. على الجهاز الآخر، افتح التطبيق على هذا العنوان، ثم سجّل الدخول بعنوان الدخول نفسه.",
+        "aucunCode": "لا حاجة إلى أي رمز: إنه حسابك الخاص.",
+        "adresseApplication": "عنوان التطبيق",
+        "adresseConnexion": "عنوان الدخول",
+        "copier": "نسخ رابط التطبيق",
+        "copie": "تم نسخ الرابط"
+      },
       "autreAppareil": "استخدام جهاز آخر",
       "ajouterProfil": "إضافة ملف طالب",
       "profilsIllisibles": "تعذّرت قراءة ملفات الأسرة.",
