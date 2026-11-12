@@ -16,6 +16,16 @@
 -- le changement de fuseau ne sont plus signales : ils ne le concernent plus.
 -- Aucune donnee n'est ecrite ni modifiee ; la comparaison avec la production
 -- n'a pas ete faite (pas de lecture en production cette nuit-la).
+--
+-- ATTENTION A L'INSTALLATION : CREATE OR REPLACE VIEW ecrase la definition de
+-- production. AVANT d'installer, lire pg_get_viewdef('public.v_parcours_onboarding')
+-- en production et la comparer a celle d'une base rejouee depuis le depot AVANT
+-- ce fichier ; tout ecart autre que la mise en forme = ARRETER. Le preflight des
+-- 22 colonnes ne voit que les noms et l'ordre, pas la definition.
+--
+-- Le choix de la classe est deterministe (entree la plus recente, puis
+-- l'identifiant de la classe) ; l'index unique groupe_membres_actif_uidx interdit
+-- deja deux adhesions actives pour un meme eleve, ce tri n'est qu'une ceinture.
 
 DO $preflight$
 DECLARE
@@ -80,6 +90,7 @@ LEFT JOIN LATERAL (
     FROM public.groupe_membres m
     JOIN public.groupes g ON g.id = m.groupe_id
    WHERE m.student_id = sp.profile_id AND m.left_at IS NULL AND g.ended_at IS NULL
+   ORDER BY m.joined_at DESC, m.groupe_id
    LIMIT 1
 ) gm ON true
 WHERE sp.deleted_at IS NULL AND p.deleted_at IS NULL;

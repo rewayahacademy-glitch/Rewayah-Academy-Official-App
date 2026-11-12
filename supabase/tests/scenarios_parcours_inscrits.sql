@@ -70,7 +70,8 @@ SELECT pg_temp.u(x), 'minor'::public.student_type, 'standard'::public.interface_
   FROM unnest(ARRAY['e1','e2','e3','e4','e5','e6','e7']) AS x;
 INSERT INTO public.groupes(id, teacher_id, type_public, seuil_max, libelle, weekday, hour_local, timezone_iana) VALUES
  (pg_temp.u('c1'), pg_temp.u('tb'), 'enfant', 6, 'Classe vivante PI', 1, 18, 'America/Toronto'),
- (pg_temp.u('c2'), pg_temp.u('tb'), 'enfant', 6, 'Classe finie PI', 2, 18, 'America/Toronto');
+ (pg_temp.u('c2'), pg_temp.u('tb'), 'enfant', 6, 'Classe finie PI', 2, 18, 'America/Toronto'),
+ (pg_temp.u('c3'), pg_temp.u('tb'), 'enfant', 6, 'Classe nouvelle PI', 3, 18, 'America/Toronto');
 INSERT INTO public.groupe_membres(groupe_id, student_id)
 SELECT pg_temp.u('c1'), pg_temp.u(x) FROM unnest(ARRAY['e1','e4','e5','e7']) AS x;
 INSERT INTO public.groupe_membres(groupe_id, student_id) VALUES (pg_temp.u('c2'), pg_temp.u('e6'));
@@ -125,6 +126,25 @@ SELECT pg_catalog.count(*) FILTER (WHERE v.eleve_id = pg_temp.u('e1')) AS voit_e
 RESET ROLE;
 SELECT pg_temp.vrai(:autre_voit_e1 = 0, 'autre foyer : ne voit pas le membre du foyer 1');
 SELECT pg_temp.vrai(:autre_voit_e7 = 1, 'autre foyer : voit son propre membre (affectee)');
+-- 2 bis. Deux adhesions actives : impossible (index unique groupe_membres_actif_uidx), donc la
+-- classe affichee ne peut pas varier d'une lecture a l'autre ; un transfert passe par la sortie
+-- de l'ancienne classe (left_at), apres quoi la nouvelle est celle qui est rendue.
+SELECT pg_temp.vrai(
+  pg_temp.essai(pg_catalog.format(
+    'INSERT INTO public.groupe_membres(groupe_id, student_id) VALUES (%L, %L)',
+    pg_temp.u('c3'), pg_temp.u('e1'))) LIKE '%groupe_membres_actif_uidx%',
+  'deux adhesions actives pour un meme eleve : refusees par l''index unique');
+UPDATE public.groupe_membres SET left_at = pg_catalog.now(), left_by = pg_temp.u('a1'), left_reason = 'transfert'
+ WHERE student_id = pg_temp.u('e1') AND left_at IS NULL;
+INSERT INTO public.groupe_membres(groupe_id, student_id) VALUES (pg_temp.u('c3'), pg_temp.u('e1'));
+SELECT pg_temp.qui(pg_temp.u('t1'), 'guardian', pg_temp.u('f1'));
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai(
+  (SELECT v.groupe_id = pg_temp.u('c3') AND v.intention_etat = 'affectee'
+     FROM public.v_parcours_onboarding v WHERE v.eleve_id = pg_temp.u('e1'))
+  AND (SELECT pg_catalog.count(*) FROM public.v_parcours_onboarding v WHERE v.eleve_id = pg_temp.u('e1')) = 1,
+  'apres transfert : une seule ligne, la nouvelle classe, stable');
+RESET ROLE;
 -- 3. Les colonnes et les droits.
 SELECT pg_temp.vrai(
   (SELECT pg_catalog.count(*) FROM information_schema.columns
