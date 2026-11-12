@@ -12,6 +12,7 @@ import '../../core/enseignant/modeles_enseignant.dart';
 import '../../core/enseignant/service_enseignant.dart';
 import '../../core/formulaires/motifs_proposes.dart';
 import '../../core/i18n/elision.dart';
+import '../../core/i18n/isolat_bidi.dart' show enTeteArabe;
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/presence/vue_presence.dart';
@@ -1824,10 +1825,12 @@ class _ApresDepot extends StatelessWidget {
   }
 
   /// « lundi 28 septembre », par les libelles `commun.dates`.
-  static String _date(DateTime d) => t.commun.dates.jourDate(
-    jour: t.commun.dates.jours[d.weekday - 1].toLowerCase(),
-    numero: d.day,
-    mois: t.commun.dates.mois[d.month - 1],
+  static String _date(DateTime d) => enTeteArabe(
+    t.commun.dates.jourDate(
+      jour: t.commun.dates.jours[d.weekday - 1].toLowerCase(),
+      numero: d.day,
+      mois: t.commun.dates.mois[d.month - 1],
+    ),
   );
 }
 

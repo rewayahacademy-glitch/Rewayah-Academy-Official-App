@@ -211,8 +211,9 @@ class AffichageSeance {
 
   /// « Lundi 21 septembre · 45 min » : la duree suit la date, l'ancre de sens
   /// n'a rien a faire au milieu du libelle (DUREE-INSECABLE-3).
-  String get dateEtDuree =>
-      t.tuteur.accueil.dateEtDuree(date: date, duree: dureeEnPhrase);
+  String get dateEtDuree => enTeteArabe(
+    t.tuteur.accueil.dateEtDuree(date: date, duree: dureeEnPhrase),
+  );
 
   /// L'heure dans le fuseau de la classe quand il differe, sinon `null`.
   final String? heureClasse;

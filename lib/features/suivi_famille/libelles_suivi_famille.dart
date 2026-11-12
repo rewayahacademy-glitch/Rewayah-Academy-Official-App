@@ -5,6 +5,7 @@
 library;
 
 import '../../core/i18n/elision.dart';
+import '../../core/i18n/isolat_bidi.dart' show enTeteArabe;
 import '../../core/i18n/strings.g.dart';
 import '../../core/offres/port_frise_demande.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart' show LibellesGroupe;
@@ -41,10 +42,12 @@ String libelleMotifAttente(MotifAttente motif) => switch (motif) {
 /// en arabe, qui n'a pas de casse.
 String _date(DateTime d, {bool milieu = false}) {
   final String jour = t.commun.dates.jours[d.weekday - 1];
-  return t.commun.dates.jourDate(
-    jour: milieu ? jour.toLowerCase() : jour,
-    numero: d.day,
-    mois: t.commun.dates.mois[d.month - 1],
+  return enTeteArabe(
+    t.commun.dates.jourDate(
+      jour: milieu ? jour.toLowerCase() : jour,
+      numero: d.day,
+      mois: t.commun.dates.mois[d.month - 1],
+    ),
   );
 }
 
