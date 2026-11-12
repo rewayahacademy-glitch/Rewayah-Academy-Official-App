@@ -9615,6 +9615,15 @@
         "aucunResultatDetail": "Essayez un numéro de page, un nom de sourate, ou une référence comme 2:255.",
         "pageNumero": "Page {page}"
       },
+      "sommaire": {
+        "titre": "Sourates",
+        "detail": "{versets} versets · page {page}",
+        "allerA": "Aller à la sourate {sourate}, page {page}",
+        "indisponible": "La liste des sourates n'a pas pu être lue",
+        "indisponibleDetail": "La connexion a peut-être été coupée.",
+        "absent": "Le texte du Coran n'est pas installé",
+        "absentDetail": "Il n'y a rien à afficher."
+      },
       "reprise": {
         "groupe": "Reprendre le cours",
         "groupeDetail": "La classe en était page {page}"
