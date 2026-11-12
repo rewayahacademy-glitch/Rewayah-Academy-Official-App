@@ -222,6 +222,19 @@ void main() {
       expect(find.textContaining('Titulaire'), findsNothing);
     });
 
+    testWidgets('formulaire inchange : la feuille se ferme, rien ne part', (
+      WidgetTester tester,
+    ) async {
+      final _IdentiteModifiable identite = await _monter(tester, adulte: true);
+      // Les memes noms, a des espaces pres.
+      await _saisir(tester, prenom: ' Titulaire ');
+      await tester.pumpAndSettle();
+      expect(identite.ecritures, isEmpty);
+      expect(find.byType(FeuilleNoms), findsNothing);
+      expect(find.byKey(InformationsComptePage.echecKey), findsNothing);
+      expect(_dansLaPage('Titulaire'), findsOneWidget);
+    });
+
     testWidgets('prenom vide : rien ne part, la feuille le dit', (
       WidgetTester tester,
     ) async {

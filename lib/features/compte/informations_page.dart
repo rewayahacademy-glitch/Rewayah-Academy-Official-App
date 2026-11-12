@@ -293,7 +293,7 @@ class FeuilleNoms extends StatefulWidget {
   /// Les noms affiches a l'ouverture.
   final NomsAffiches actuels;
 
-  /// Rend les noms rognes, seulement s'ils peuvent partir.
+  /// Rend les noms rognes, seulement s'ils peuvent partir et ont change.
   final ValueChanged<NomsAffiches> onEnregistrer;
 
   @override
@@ -327,7 +327,18 @@ class _FeuilleNomsState extends State<FeuilleNoms> {
       setState(() => _tente = true);
       return;
     }
-    widget.onEnregistrer((prenom: _prenom.text.trim(), nom: _nom.text.trim()));
+    final NomsAffiches noms = (
+      prenom: _prenom.text.trim(),
+      nom: _nom.text.trim(),
+    );
+    // Rien n'a change : la feuille se ferme, rien ne part (garde-cap,
+    // 12/11/2026).
+    if (noms.prenom == widget.actuels.prenom.trim() &&
+        noms.nom == widget.actuels.nom.trim()) {
+      Navigator.of(context).pop();
+      return;
+    }
+    widget.onEnregistrer(noms);
   }
 
   @override
