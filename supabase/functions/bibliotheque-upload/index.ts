@@ -4,7 +4,9 @@ import { cleDe, verifierCle } from "../_shared/r2/cles.ts";
 import {
   detecterMimeReel,
   mimeAnnonceAutorise,
+  mimeVignetteAutorise,
   sha256Hex,
+  TAILLE_VIGNETTE_MAX_OCTETS,
   TAILLES_UPLOAD_BIBLIOTHEQUE,
 } from "../_shared/r2/bibliotheque_upload.ts";
 import { stockageConfigure } from "../_shared/r2/domaines.ts";
@@ -59,6 +61,24 @@ Deno.serve(async (requete: Request) => {
   }
   if (action === "confirmer") {
     return await confirmerDepot(compte, corps);
+  }
+  if (action === "demander_vignette") {
+    return await demanderVignette(compte, corps);
+  }
+  if (action === "confirmer_vignette") {
+    return await confirmerVignette(compte, corps);
+  }
+  if (action === "annuler_vignette") {
+    const id = typeof corps.upload_id === "string"
+      ? corps.upload_id.trim()
+      : "";
+    if (!UUID.test(id)) return refus("intention invalide");
+    const { data, error } = await compte.sql.rpc(
+      "annuler_vignette_bibliotheque",
+      { p_intention_id: id },
+    );
+    if (error) return refus("annulation refusee", 403);
+    return json({ annule: data === true });
   }
   if (action === "annuler") {
     const id = typeof corps.upload_id === "string"
@@ -291,4 +311,202 @@ function limitePour(mime: string): number {
   if (mime.startsWith("image/")) return TAILLES_UPLOAD_BIBLIOTHEQUE.image;
   if (mime === "application/pdf") return TAILLES_UPLOAD_BIBLIOTHEQUE.pdf;
   return TAILLES_UPLOAD_BIBLIOTHEQUE.audio;
+}
+
+// ---------------------------------------------------------------------------
+// BIBLIOTHEQUE-UNE : la vignette d'un document, deposee en deux temps comme son
+// fichier. Meme chemin (intention en base, depot signe, confirmation par
+// l'Edge avec une signature que la base reverifie), borne a une image de 2 Mio.
+// Le nom de fichier du client n'entre jamais dans la cle : la base la fabrique.
+// ---------------------------------------------------------------------------
+async function demanderVignette(
+  compte: NonNullable<Awaited<ReturnType<typeof appelantR2>>>,
+  corps: Record<string, unknown>,
+): Promise<Response> {
+  if (!stockageConfigure("priveApplicatif")) {
+    return refus("stockage indisponible", 503);
+  }
+  const documentId = typeof corps.support_id === "string"
+    ? corps.support_id.trim()
+    : "";
+  const fichier = corps.fichier && typeof corps.fichier === "object" &&
+      !Array.isArray(corps.fichier)
+    ? corps.fichier as Record<string, unknown>
+    : {};
+  const mime = typeof fichier.mime === "string"
+    ? fichier.mime.trim().toLowerCase()
+    : "";
+  const taille = Number(fichier.octets);
+  const empreinte = typeof fichier.sha256 === "string"
+    ? fichier.sha256.trim().toLowerCase()
+    : "";
+  if (
+    !UUID.test(documentId) || !SHA256.test(empreinte) ||
+    !mimeVignetteAutorise(mime, taille)
+  ) {
+    return refus("vignette invalide : image png, jpeg ou webp de 2 Mio au plus");
+  }
+  const { data, error } = await compte.sql.rpc(
+    "demander_vignette_bibliotheque",
+    {
+      p_resource_id: documentId,
+      p_mime: mime,
+      p_taille: taille,
+      p_sha256: empreinte,
+    },
+  );
+  if (error || !data || typeof data !== "object") {
+    return refus("depot refuse", 403);
+  }
+  const intention = data as Record<string, unknown>;
+  const id = String(intention.id ?? "");
+  if (!UUID.test(id)) return refus("intention invalide", 503);
+  const cle = cleDe("priveApplicatif", "libraryupload", id);
+  if (intention.cle_temporaire !== cle) return refus("intention invalide", 503);
+  try {
+    const signee = await signerDepot(
+      "priveApplicatif",
+      verifierCle("priveApplicatif", cle),
+      {
+        typeMime: mime,
+        tailleOctets: taille,
+        typesAutorises: typesVignette(),
+        tailleMaximaleOctets: TAILLE_VIGNETTE_MAX_OCTETS,
+      },
+    );
+    journaliser({
+      domaine: "priveApplicatif",
+      operation: "depot",
+      statut: "accorde",
+      ressource: id,
+    });
+    return json({
+      upload_id: id,
+      expire_le_utc: intention.expire_le,
+      url: signee.url,
+      methode: "PUT",
+      en_tetes_exiges: signee.enTetesExiges,
+      expire_dans_secondes: signee.expireDansSecondes,
+    });
+  } catch (erreur) {
+    journaliser({
+      domaine: "priveApplicatif",
+      operation: "depot",
+      statut: "echec",
+      ressource: id,
+      classeErreur: (erreur as Error)?.name ?? "inconnue",
+    });
+    return refus("stockage indisponible", 503);
+  }
+}
+
+async function confirmerVignette(
+  compte: NonNullable<Awaited<ReturnType<typeof appelantR2>>>,
+  corps: Record<string, unknown>,
+): Promise<Response> {
+  const id = typeof corps.upload_id === "string" ? corps.upload_id.trim() : "";
+  if (!UUID.test(id)) return refus("intention invalide");
+  let secretConfirmation: string;
+  try {
+    secretConfirmation = Deno.env.get("LIBRARY_UPLOAD_CONFIRMATION_HMAC_KEY") ?? "";
+  } catch {
+    return refus("confirmation indisponible", 503);
+  }
+  if (
+    new TextEncoder().encode(secretConfirmation).byteLength < 32 ||
+    secretConfirmation.trim() !== secretConfirmation
+  ) {
+    return refus("confirmation indisponible", 503);
+  }
+  const debut = Date.now();
+  const { data, error } = await compte.sql.rpc("lire_vignette_bibliotheque", {
+    p_intention_id: id,
+  });
+  if (error || !data || typeof data !== "object") {
+    return refus("intention refusee", 403);
+  }
+  const intention = data as Record<string, unknown>;
+  if (
+    !stockageConfigure("priveApplicatif") || !stockageConfigure("supports")
+  ) {
+    return refus("stockage indisponible", 503);
+  }
+  try {
+    const cleTemp = verifierCle(
+      "priveApplicatif",
+      String(intention.cle_temporaire ?? ""),
+    );
+    const lecture = await signerLecture("priveApplicatif", cleTemp, {
+      dureeSecondes: 60,
+    });
+    const objet = await fetch(lecture.url);
+    if (!objet.ok) return refus("objet depose introuvable", 422);
+    const octets = new Uint8Array(await objet.arrayBuffer());
+    const mimeReel = detecterMimeReel(octets);
+    const empreinte = await sha256Hex(octets);
+    if (
+      octets.byteLength !== Number(intention.taille) ||
+      empreinte !== intention.sha256 ||
+      !mimeReel || mimeReel !== intention.mime ||
+      !mimeVignetteAutorise(mimeReel, octets.byteLength)
+    ) {
+      journaliser({
+        domaine: "priveApplicatif",
+        operation: "depot",
+        statut: "refuse",
+        ressource: id,
+        dureeMs: Date.now() - debut,
+      });
+      return refus("contenu depose invalide", 422);
+    }
+    const cleFinale = verifierCle("supports", String(intention.cle_finale ?? ""));
+    const signee = await signerDepot("supports", cleFinale, {
+      typeMime: mimeReel,
+      tailleOctets: octets.byteLength,
+      typesAutorises: typesVignette(),
+      tailleMaximaleOctets: TAILLE_VIGNETTE_MAX_OCTETS,
+    });
+    const depose = await fetch(signee.url, {
+      method: "PUT",
+      headers: signee.enTetesExiges,
+      body: octets,
+    });
+    if (!depose.ok) throw new Error("ecriture R2 refusee");
+    const confirmationSignature = await signatureConfirmationUpload(
+      secretConfirmation,
+      id,
+      empreinte,
+      octets.byteLength,
+    );
+    const confirme = await compte.sql.rpc("confirmer_vignette_bibliotheque", {
+      p_intention_id: id,
+      p_mime_reel: mimeReel,
+      p_taille_reelle: octets.byteLength,
+      p_sha256_reel: empreinte,
+      p_confirmation_signature: confirmationSignature,
+    });
+    if (confirme.error) return refus("confirmation refusee", 403);
+    journaliser({
+      domaine: "supports",
+      operation: "depot",
+      statut: "accorde",
+      ressource: id,
+      dureeMs: Date.now() - debut,
+    });
+    return json({ phase: "pret", resource_id: intention.resource_id });
+  } catch (erreur) {
+    journaliser({
+      domaine: "priveApplicatif",
+      operation: "depot",
+      statut: "echec",
+      ressource: id,
+      classeErreur: (erreur as Error)?.name ?? "inconnue",
+      dureeMs: Date.now() - debut,
+    });
+    return refus("stockage indisponible", 503);
+  }
+}
+
+function typesVignette(): string[] {
+  return ["image/png", "image/jpeg", "image/webp"];
 }
