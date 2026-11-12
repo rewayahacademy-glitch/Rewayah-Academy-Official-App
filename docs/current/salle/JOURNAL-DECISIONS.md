@@ -1738,9 +1738,13 @@ gardé. (4) « Heure de cet appareil » seulement en repli, avec un texte exista
 fuseau arrive après le premier rendu, et un test avec un profil sans fuseau.
 
 **Ce qui est fait.**
-- `DepuisSalle.heure` rend l'heure du profil (`heureChezMoi`). Deux aides : `heureDite` (l'heure,
-  suivie de « Heure de cet appareil » en repli) et `phraseDite` (une phrase, suivie de « À l'heure
-  de cet appareil. » en repli). Les deux textes existaient déjà.
+- `DepuisSalle.heure` rend l'heure du profil (`heureChezMoi`). En repli, une seule mention pour
+  toute la salle, « Heure de cet appareil » (texte existant, `tuteur.accueil.heureAppareil`) :
+  collée à l'heure sur l'écran de fin de l'enseignant (`heureDite` : « 18:45 · Heure de cet
+  appareil »), et sur une petite ligne à part sous la phrase pour l'écran de fin de l'élève et les
+  deux refus (`mentionAppareil` ; `EcranResultat` reçoit pour cela une mention facultative).
+  Choix du garde-cap (12/11, 02:42 UTC) : l'autre texte, « À l'heure de cet appareil. », est
+  supprimé par le lot H3 du train 4.
 - La salle garde l'INSTANT de fin (`FinSeance.finA`, `ResultatSeance.finA`, `_finServeur`), plus
   un texte ; l'heure est mise en forme au dessin.
 - La page de la salle lit `monHorlogeProvider` dans son dessin : elle se redessine quand le fuseau
@@ -1751,7 +1755,6 @@ fuseau arrive après le premier rendu, et un test avec un profil sans fuseau.
   ni `toLocal()`, ni `.hour`, ni `.minute`.
 
 **Ce qui n'est pas fait.** Le relevé ne porte que sur ces trois dossiers ; les heures affichées
-ailleurs (hors de la salle) relèvent du lot HEURE-PROFIL-PARTOUT. Sur l'écran de fin de l'élève, la
-mention de repli vient en fin de phrase, loin de l'heure : image envoyée au garde-cap, qui tranche.
+ailleurs (hors de la salle) relèvent du lot HEURE-PROFIL-PARTOUT.
 Prouvé par tests et captures de test (`docs/current/captures/E2E/heure-profil-salle/`) ; pas sur la
 pile locale, pas en production.
