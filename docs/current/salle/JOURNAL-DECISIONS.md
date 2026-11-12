@@ -1758,3 +1758,18 @@ fuseau arrive après le premier rendu, et un test avec un profil sans fuseau.
 ailleurs (hors de la salle) relèvent du lot HEURE-PROFIL-PARTOUT.
 Prouvé par tests et captures de test (`docs/current/captures/E2E/heure-profil-salle/`) ; pas sur la
 pile locale, pas en production.
+
+## D-036 (12/11/2026, nuit). Plusieurs parents en visite : l'enseignant lit leur nombre (lot PARENTS-PLURIEL)
+
+**Le manque** (fiche 0 de la salle, ligne 16, relevée le 12/11). Quand deux tuteurs visitaient la
+même séance, l'enseignant lisait encore « Un parent observe cette séance ».
+
+**Ce qui est fait.** Le serveur rend une annonce par visite en cours ; la salle en compte le nombre
+(`VisiteSeance.nombre`, posé dans `DepuisSalle.vue`). Le texte devient un pluriel :
+« Un parent observe cette séance », « 2 parents observent cette séance », toujours sans prénoms ;
+en arabe, les formes du singulier, du duel et du pluriel. L'ancien texte seul
+(`salle.seance.unParentObserve`) est retiré. Rien ne change pour l'élève, qui ne lit que la visite
+de son propre parent.
+
+**Ce qui n'est pas fait.** La fiche demandait aussi que la ligne disparaisse dans les 10 secondes
+après la fin de la dernière visite : non vérifié. Prouvé par tests seulement.

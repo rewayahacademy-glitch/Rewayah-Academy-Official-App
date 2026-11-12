@@ -37,6 +37,7 @@ import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
 import '../code_conduite/code_conduite.dart';
+import '../compte/donnees_compte.dart' show identiteTitulaireProvider;
 import '../compte/lignes_compte.dart';
 import '../compte/mes_donnees_page.dart';
 import '../dossier/politique_controle.dart';
@@ -295,6 +296,21 @@ class ProfilEnseignantPage extends ConsumerWidget {
               titre: t.enseignant.profil.contratSection,
               corps: const _Contrats(),
             ),
+          ),
+          // COMPTE-ENSEIGNANT-IDENTITE (garde-cap, 12/11/2026) : les deux
+          // lignes communes du titulaire du compte, tous roles, comme chez le
+          // tuteur (nom, adresse et methode de connexion, fuseau du profil).
+          ligneInformationsCompte(
+            onPress: () =>
+                unawaited(context.push(Routes.enseignantProfilInformations)),
+          ),
+          ligneConnexionCompte(
+            methode: ref
+                .watch(identiteTitulaireProvider)
+                .value
+                ?.methodeConnexion,
+            onPress: () =>
+                unawaited(context.push(Routes.enseignantProfilSecurite)),
           ),
           // MFA-DIRECTION : la double verification (capacite de la session).
           if (session.peutActiverDoubleVerification)

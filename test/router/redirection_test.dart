@@ -376,6 +376,9 @@ void main() {
       Routes.cahierPour('seance-1'),
       Routes.groupePour('groupe-1'),
       Routes.revuePour('groupe-1'),
+      // COMPTE-ENSEIGNANT-IDENTITE : les pages du titulaire, depuis le Compte.
+      Routes.enseignantProfilInformations,
+      Routes.enseignantProfilSecurite,
     ];
 
     for (final String chemin in poses) {

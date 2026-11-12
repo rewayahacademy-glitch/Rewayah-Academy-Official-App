@@ -6,8 +6,8 @@ import '../../core/capacites/port_identite_titulaire.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/i18n/villes_fuseau.dart';
 import '../../core/icons/app_icons.dart';
-import '../../core/planning/service_planning.dart';
 import '../../core/router/routes.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
@@ -17,14 +17,18 @@ import '../../core/widgets/skeleton.dart';
 import 'carte_rubriques.dart';
 import 'donnees_compte.dart';
 
-/// Les informations personnelles du titulaire (`/tuteur/compte/informations`),
+/// Les informations personnelles du titulaire du compte, tous roles : le
+/// tuteur (`/tuteur/compte/informations`) et l'enseignant
+/// (`/enseignant/profil/informations`, COMPTE-ENSEIGNANT-IDENTITE, 12/11/2026),
 /// en lecture seule.
 ///
 /// Aucune ecriture n'existe pour le tuteur (DB-CPT-01) : pas de formulaire,
 /// pas de bouton « Modifier » qui ne pourrait pas aboutir ; une phrase le dit.
 /// Pas de telephone ni de ville : aucune colonne ne les porte pour le tuteur.
-/// Le fuseau est celui des seances (`mon_fuseau()`), jamais celui de
-/// l'appareil.
+/// Le fuseau est celui du profil, lu par `mon_horloge()` (garde-cap,
+/// 12/11/2026) : sans fuseau de profil, la ligne dit « Heure de cet
+/// appareil », jamais une ville supposee (`mon_fuseau()` se repliait sur
+/// Paris).
 class InformationsComptePage extends ConsumerWidget {
   /// Cree la page.
   const InformationsComptePage({super.key, this.onRetour});
@@ -37,10 +41,18 @@ class InformationsComptePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
-    final AsyncValue<String> fuseau = ref.watch(monFuseauProvider);
-    final String valeurFuseau = fuseau.hasValue && !fuseau.hasError
-        ? villeDuFuseauLibelle(fuseau.requireValue)
-        : t.compte.tuteur.pageInformations.fuseauIndisponible;
+    final AsyncValue<MonHorloge?> horloge = ref.watch(monHorlogeProvider);
+    final String valeurFuseau = switch (horloge) {
+      AsyncValue<MonHorloge?>(hasError: true) =>
+        t.compte.tuteur.pageInformations.fuseauAppareil,
+      AsyncValue<MonHorloge?>(hasValue: true, :final MonHorloge? value) =>
+        switch (value?.moi?.fuseau) {
+          final String fuseau when fuseau.trim().isNotEmpty =>
+            villeDuFuseauLibelle(fuseau),
+          _ => t.compte.tuteur.pageInformations.fuseauAppareil,
+        },
+      _ => t.compte.tuteur.pageInformations.fuseauIndisponible,
+    };
 
     return PageShell(
       titre: t.compte.tuteur.pageInformations.titre,

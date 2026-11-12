@@ -20,6 +20,7 @@ import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
 
 import '../capacites/capacite_indisponible.dart';
 import '../domain/enums.dart' show StatutSeance;
+import '../tc_horloge/mon_horloge.dart';
 
 /// Une seance du planning.
 @immutable
@@ -56,15 +57,23 @@ class SeancePlanning {
   DateTime get fin => debut.add(Duration(minutes: dureeMinutes));
 }
 
-/// Le lundi (a minuit, heure locale) de la semaine qui contient [jour].
+/// Le lundi de la semaine qui contient [jour], **au fuseau du profil**
+/// (HEURES-PROFIL H5, 12/11/2026), sous la forme d'une date civile : un
+/// `DateTime` local a minuit, cle de la semaine et source du libelle. Sans
+/// fuseau de profil servi, le lundi de l'appareil, comme avant.
 DateTime lundiDe(DateTime jour) {
-  final DateTime local = jour.toLocal();
-  return DateTime(
-    local.year,
-    local.month,
-    local.day,
-  ).subtract(Duration(days: local.weekday - DateTime.monday));
+  final DateTime j = jourChezMoi(jour);
+  return DateTime(j.year, j.month, j.day - (j.weekday - DateTime.monday));
 }
+
+/// Les bornes d'une semaine qui commence le [lundi] (date civile, voir
+/// [lundiDe]) : l'instant du lundi 00 h et celui du lundi suivant 00 h, au
+/// fuseau du profil, en UTC (HEURES-PROFIL H5). Une semaine qui contient un
+/// changement d'heure dure 167 ou 169 heures, pas 168.
+({DateTime debut, DateTime fin}) bornesSemaineChezMoi(DateTime lundi) => (
+  debut: instantChezMoi(lundi.year, lundi.month, lundi.day).toUtc(),
+  fin: instantChezMoi(lundi.year, lundi.month, lundi.day + 7).toUtc(),
+);
 
 /// Le port du planning de la direction.
 abstract interface class PortPlanningDirection {

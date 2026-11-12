@@ -1570,6 +1570,27 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                 path: Routes.enseignantProfil,
                 builder: (BuildContext _, GoRouterState _) =>
                     const ProfilEnseignantPage(),
+                // COMPTE-ENSEIGNANT-IDENTITE (garde-cap, 12/11/2026) : les
+                // pages du titulaire du compte, communes au tuteur ; le
+                // retour ramene au Compte de l'enseignant.
+                routes: <RouteBase>[
+                  GoRouteSure(
+                    path: 'informations',
+                    builder: (BuildContext contexte, GoRouterState _) =>
+                        InformationsComptePage(
+                          onRetour: () =>
+                              GoRouter.of(contexte).go(Routes.enseignantProfil),
+                        ),
+                  ),
+                  GoRouteSure(
+                    path: 'securite',
+                    builder: (BuildContext contexte, GoRouterState _) =>
+                        SecuriteComptePage(
+                          onRetour: () =>
+                              GoRouter.of(contexte).go(Routes.enseignantProfil),
+                        ),
+                  ),
+                ],
               ),
               // NAV-REFONTE (decision du directeur du 09/11/2026) : les
               // disponibilites quittent la barre ; « Mes disponibilites » s'ouvre
