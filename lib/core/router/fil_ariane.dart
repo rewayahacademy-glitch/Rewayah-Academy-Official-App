@@ -6,6 +6,7 @@ import '../admin/admin_domaine.dart';
 import '../domain/enums.dart';
 import '../session/session_state.dart';
 import '../widgets/nav_shell.dart';
+import 'etat_routeur_sur.dart';
 import 'routes.dart';
 
 /// FIL-ARIANE (directeur, 06/11/2026 : « impossible de sortir de cette page,
@@ -316,10 +317,10 @@ class ContexteFilAriane extends InheritedWidget {
   if (ModalRoute.of(context)?.settings is! Page<Object?>) {
     return null;
   }
-  final GoRouterState etat;
-  try {
-    etat = GoRouterState.of(context);
-  } on GoError {
+  // GOROUTERSTATE-SUR : la lecture sure, seule permise (page du routeur ici,
+  // donc trouvee au premier tour).
+  final GoRouterState? etat = etatRouteurSur(context);
+  if (etat == null) {
     return null;
   }
   final String chemin = etat.uri.path;

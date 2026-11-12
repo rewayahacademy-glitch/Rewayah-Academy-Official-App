@@ -35,6 +35,7 @@ import '../../core/communications/capacites_communication.dart';
 import '../../core/fluidite/action_anticipee.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/router/etat_routeur_sur.dart';
 import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/espace_travail_adaptatif.dart';
@@ -96,7 +97,7 @@ class MessagesPage extends StatelessWidget {
 
   void _ouvrirFil(BuildContext context, String id) {
     final String liste = cheminListeMessages(
-      GoRouterState.of(context).uri,
+      adresseRouteurSur(context) ?? Uri(),
       filOuvert: filId != null,
     );
     GoRouter.of(context).go('$liste/${Uri.encodeComponent(id)}');
