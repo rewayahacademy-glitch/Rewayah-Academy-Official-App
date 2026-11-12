@@ -41,6 +41,7 @@ import '../../core/seance_famille/seance_famille.dart';
 import '../../core/tc_groupe/group_home_vm.dart';
 import '../../core/tc_groupe/group_summary_vm.dart' show EnseignantVM;
 import '../../core/tc_horloge/horloge_vivante.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/tc_horloge/session_clock_vm.dart';
 import '../../core/tc_parcours/port_travail_a_venir.dart';
 import '../../core/theme/app_delais.dart';
@@ -431,6 +432,9 @@ class _CorpsAccueil extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // HEURES-PROFIL H1 (12/11/2026) : la page ecoute le fuseau du profil ;
+    // quand il arrive apres son premier rendu, ses heures se redessinent.
+    ref.watch(monHorlogeProvider);
     final Gabarit gabarit = AppGabarit.de(context);
     final bool compact = gabarit == Gabarit.mobile;
     final ProfilEleveFoyer profil = profils.firstWhere(

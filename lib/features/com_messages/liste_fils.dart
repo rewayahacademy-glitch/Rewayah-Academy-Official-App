@@ -15,6 +15,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/avatar_tile.dart';
@@ -32,10 +33,10 @@ import 'recherche_fils.dart';
 
 /// Le moment du dernier message, en court : l'heure s'il date du jour de
 /// [maintenant], sinon le jour et le mois (« 12 novembre »). Lu a l'heure
-/// locale de l'appareil.
+/// du profil ([chezMoi], HEURES-PROFIL H1).
 String momentCourt(DateTime instant, DateTime maintenant) {
-  final DateTime local = instant.toLocal();
-  final DateTime ici = maintenant.toLocal();
+  final DateTime local = chezMoi(instant);
+  final DateTime ici = chezMoi(maintenant);
   final bool memeJour =
       local.year == ici.year &&
       local.month == ici.month &&

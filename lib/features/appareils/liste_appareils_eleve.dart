@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/appairage/service_appairage.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -104,13 +105,12 @@ AppIcon iconePlateforme(String plateforme) =>
       _ => AppIcons.appareil,
     };
 
-/// Une date lisible, au fuseau de l'appareil : « 18 septembre 2026, 14:20 ».
+/// Une date lisible, a l'heure du profil ([chezMoi], HEURES-PROFIL H1) :
+/// « 18 septembre 2026, 14:20 ».
 String dateLisible(DateTime quand) {
-  final DateTime local = quand.toLocal();
+  final DateTime local = chezMoi(quand);
   final String mois = t.commun.dates.mois[local.month - 1];
-  final String heure =
-      '${local.hour.toString().padLeft(2, '0')}:'
-      '${local.minute.toString().padLeft(2, '0')}';
+  final String heure = heureChezMoi(quand);
   return '${local.day} $mois ${local.year}, $heure';
 }
 

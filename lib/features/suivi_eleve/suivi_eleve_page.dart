@@ -14,6 +14,7 @@ import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/session/session_state.dart';
 import '../../core/suivi/service_suivi.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -76,6 +77,9 @@ class _SuiviElevePageEtat extends ConsumerState<SuiviElevePage> {
 
   @override
   Widget build(BuildContext context) {
+    // HEURES-PROFIL H1 (12/11/2026) : la page ecoute le fuseau du profil ;
+    // quand il arrive apres son premier rendu, ses heures se redessinent.
+    ref.watch(monHorlogeProvider);
     final AsyncValue<List<Seance>> seances = ref.watch(
       seancesDeMonSuiviProvider,
     );
@@ -345,8 +349,11 @@ String _libelleEtat(LigneSuivi ligne, DateTime maintenant) =>
 String _enseignant(LigneSuivi ligne) =>
     '${ligne.seance.enseignantPrenom} · ${ligne.seance.enseignantIdentifiant}';
 
-String _quand(DateTime debut, DateTime maintenant) {
-  final String heure = _hhmm(debut);
+/// Jour et heure a l'heure du profil ([chezMoi], HEURES-PROFIL H1).
+String _quand(DateTime instant, DateTime maintenantInstant) {
+  final DateTime debut = chezMoi(instant);
+  final DateTime maintenant = chezMoi(maintenantInstant);
+  final String heure = heureChezMoi(instant);
   final DateTime jour = DateTime(debut.year, debut.month, debut.day);
   final DateTime aujourdHui = DateTime(
     maintenant.year,
@@ -367,9 +374,6 @@ String _quand(DateTime debut, DateTime maintenant) {
   }
   return t.eleve.suivi.date(date: _jjmmaaaa(debut), heure: heure);
 }
-
-String _hhmm(DateTime quand) =>
-    '${quand.hour.toString().padLeft(2, '0')}:${quand.minute.toString().padLeft(2, '0')}';
 
 String _jjmmaaaa(DateTime quand) =>
     '${quand.day.toString().padLeft(2, '0')}/${quand.month.toString().padLeft(2, '0')}/${quand.year}';
