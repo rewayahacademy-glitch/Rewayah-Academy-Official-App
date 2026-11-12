@@ -23,8 +23,10 @@
 --   6. la correction par un geste existant de la direction (promotion) : etape 2,
 --      nouvelle date limite depuis la promotion ; etapes_eleves_classe et
 --      suivi_pedagogique_eleve disent la meme chose ; placement d'un lecteur ;
---   7. publier une seconde version archive la premiere ; l'etape de l'eleve
---      reste la meme (meme code) ; un eleve qui entre ensuite recoit la v2 ;
+--   7. publier une seconde version archive la premiere sans deplacer
+--      personne : l'eleve finit son etape dans sa version (objectifs, entree,
+--      date limite), le chemin a venir vient de la v2, le passage d'etape mene
+--      a la v2 ; un code absent refuse le passage ; un brouillon jamais rendu ;
 --   8. publication refusee si les dates limites des etapes ne font pas le niveau ;
 --   9. droits : aucune lecture directe du fait ; anon refuse.
 -- Echoue sans la migration (la fonction de semis n'existe pas). Tout est annule.
@@ -461,8 +463,16 @@ SELECT pg_temp.vrai(
 RESET ROLE;
 
 -- ------------------------------------------------------------------
--- 7. Une seconde version archive la premiere ; l'etape reste la meme
+-- 7. Une seconde version : personne ne bascule (regle 4 du directeur) ;
+--    le changement de version se fait au passage d'etape
 -- ------------------------------------------------------------------
+CREATE TEMP TABLE sp_avant(eleve text PRIMARY KEY, entree date, limite date);
+GRANT ALL ON sp_avant TO authenticated;
+INSERT INTO sp_avant
+SELECT x, f.entree_etape_le, d.date_limite
+  FROM unnest(ARRAY['e1','e2']) x
+  JOIN public.eleve_etape_en_cours f ON f.student_id = pg_temp.u(x)
+  CROSS JOIN LATERAL private.dates_etape(f.student_id) d;
 SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
 SET LOCAL ROLE authenticated;
 INSERT INTO sp_ids VALUES ('v2', public.creer_version_programme((SELECT id FROM sp_ids WHERE cle = 'v1')));
@@ -470,7 +480,17 @@ SELECT pg_temp.vrai(
   (SELECT pg_catalog.count(*) FROM public.programme_contenu_admin((SELECT id FROM sp_ids WHERE cle = 'v2')) c
     WHERE c.complet) = 4,
   'copie de la v1 : les 4 etapes suivent dans le brouillon v2');
+-- La v2 change les objectifs des etapes 1 et 2.
+SELECT public.modifier_contenu_niveau(c.niveau_id,
+         ARRAY['Objectif v2 : un', 'Objectif v2 : deux', 'Objectif v2 : trois'],
+         c.plage_support, c.durees)
+  FROM public.programme_contenu_admin((SELECT id FROM sp_ids WHERE cle = 'v2')) c WHERE c.ordre IN (1, 2);
 SELECT public.publier_version_programme((SELECT id FROM sp_ids WHERE cle = 'v2'), 'Version 2 des bases');
+SELECT pg_temp.vrai(
+  (SELECT e.eleves >= 4 AND e.classes = 3 FROM public.etapes_sur_ancienne_version() e),
+  'direction : la publication ne bloque rien et dit combien d''eleves et de classes restent sur la v1');
+INSERT INTO sp_ids SELECT 'v2n' || n.ordre, n.id FROM public.programme_niveaux n
+ WHERE n.version_id = (SELECT id FROM sp_ids WHERE cle = 'v2');
 RESET ROLE;
 SELECT pg_temp.vrai(
   (SELECT statut FROM public.programme_versions WHERE id = (SELECT id FROM sp_ids WHERE cle = 'v1')) = 'archivee'
@@ -480,38 +500,50 @@ SELECT pg_temp.vrai(
 SELECT pg_temp.qui(pg_temp.u('t1'), 'guardian', pg_temp.u('f1'));
 SET LOCAL ROLE authenticated;
 SELECT pg_temp.vrai(
-  (SELECT j #>> '{etape,code}' = 'BASES-2' AND (j #>> '{version,numero}')::int = 2
-          AND j #>> '{version,statut}' = 'publiee'
-     FROM (SELECT pg_temp.lire('e2') AS j) l)
-  AND (SELECT j #>> '{etape,code}' = 'BASES-1' FROM (SELECT pg_temp.lire('e1') AS j) l),
-  'apres la v2 : e2 a BASES-2 et e1 a BASES-1, dans la version publiee (code stable)');
+  (SELECT j #>> '{etape,code}' = 'BASES-1' AND (j #>> '{version,numero}')::int = 1
+          AND j #>> '{version,statut}' = 'archivee'
+          AND j #>> '{etape,objectifs,0}' = 'Reconnaît chaque lettre dans le désordre'
+          AND (j #>> '{etape,entree_le}')::date = (SELECT entree FROM sp_avant WHERE eleve = 'e1')
+          AND (j #>> '{etape,date_limite}')::date = (SELECT limite FROM sp_avant WHERE eleve = 'e1')
+          AND j #>> '{chemin,0,objectifs,0}' = 'Reconnaît chaque lettre dans le désordre'
+          AND j #>> '{chemin,1,objectifs,0}' = 'Objectif v2 : un'
+     FROM (SELECT pg_temp.lire('e1') AS j) l),
+  'apres la v2 : e1 finit son etape 1 dans la v1 (objectifs, entree, date limite inchanges) ; les etapes a venir du chemin sont celles de la v2');
 RESET ROLE;
-SELECT pg_temp.vrai(
-  NOT EXISTS (SELECT 1 FROM public.eleve_etape_en_cours f
-                JOIN public.programme_niveaux n ON n.id = f.niveau_id
-               WHERE n.version_id <> (SELECT id FROM sp_ids WHERE cle = 'v2'))
-  AND NOT EXISTS (SELECT 1 FROM public.groupes g
-                    JOIN public.programme_niveaux n ON n.id = g.programme_niveau_id
-                   WHERE g.id IN (pg_temp.u('c1'), pg_temp.u('c2'), pg_temp.u('c3'))
-                     AND n.version_id <> (SELECT id FROM sp_ids WHERE cle = 'v2')),
-  'apres la v2 : chaque classe et chaque eleve pointent une etape de la version publiee');
 SELECT pg_temp.qui(pg_temp.u('b1'), 'teacher');
 SET LOCAL ROLE authenticated;
 SELECT pg_temp.vrai(
   (SELECT pg_catalog.count(*) FROM public.etapes_eleves_classe(pg_temp.u('c1'))) = 3
-  AND (SELECT e.etape_ordre = 2 FROM public.etapes_eleves_classe(pg_temp.u('c1')) e
-        WHERE e.student_id = pg_temp.u('e2')),
-  'apres la v2 : etapes_eleves_classe rend toujours l''etape de chaque eleve');
+  AND (SELECT e.etape_ordre = 1 AND e.objectifs[1] = 'Reconnaît chaque lettre dans le désordre'
+         FROM public.etapes_eleves_classe(pg_temp.u('c1')) e WHERE e.student_id = pg_temp.u('e1'))
+  AND (SELECT d.etape_nom IS NOT NULL FROM public.mes_classes_details() d WHERE d.groupe_id = pg_temp.u('c1')),
+  'apres la v2 : etapes_eleves_classe et l''etape de la classe sont toujours rendues (version archivee)');
 RESET ROLE;
+-- Passage d'etape : la direction fait passer e1 a l'etape 2 (meme si elle choisit la ligne de la v1).
+SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
+SET LOCAL ROLE authenticated;
+-- (progression_promouvoir exige une premiere decision : pour un eleve pose
+-- automatiquement, le premier geste de la direction est decider_placement.)
+SELECT public.decider_placement(pg_temp.u('e1'), (SELECT id FROM sp_ids WHERE cle = 'n2'), 'Petit bilan valide');
+SELECT pg_temp.vrai(
+  (SELECT j #>> '{etape,code}' = 'BASES-2' AND (j #>> '{version,numero}')::int = 2
+          AND j #>> '{etape,objectifs,0}' = 'Objectif v2 : un'
+     FROM (SELECT pg_temp.lire('e1') AS j) l),
+  'passage a l''etape 2 : e1 entre dans l''etape 2 de la v2 (version publiee courante)');
+RESET ROLE;
+UPDATE public.groupes SET programme_niveau_id = (SELECT id FROM sp_ids WHERE cle = 'n2') WHERE id = pg_temp.u('c2');
+SELECT pg_temp.vrai(
+  (SELECT programme_niveau_id FROM public.groupes WHERE id = pg_temp.u('c2')) = (SELECT id FROM sp_ids WHERE cle = 'v2n2'),
+  'passage d''etape d''une classe : l''etape 2 de la v2');
 INSERT INTO public.groupe_membres(groupe_id, student_id) VALUES (pg_temp.u('c3'), pg_temp.u('e5'));
 SELECT pg_temp.vrai(
   (SELECT n.code_technique = 'BASES-1' AND n.version_id = (SELECT id FROM sp_ids WHERE cle = 'v2')
      FROM public.eleve_etape_en_cours f JOIN public.programme_niveaux n ON n.id = f.niveau_id
     WHERE f.student_id = pg_temp.u('e5')),
-  'un eleve qui entre apres la v2 recoit BASES-1 de la v2 (classe resolue par son code)');
+  'un eleve qui entre apres la v2 recoit BASES-1 de la v2');
 
 -- ------------------------------------------------------------------
--- 8. Publication refusee si les reperes ne font pas la date du niveau
+-- 8. Publication refusee si les dates limites ne font pas le niveau
 -- ------------------------------------------------------------------
 SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
 SET LOCAL ROLE authenticated;
@@ -523,24 +555,37 @@ SELECT pg_temp.vrai(
   pg_temp.essai(pg_catalog.format('SELECT public.publier_version_programme(%L, %L)',
     (SELECT id FROM sp_ids WHERE cle = 'v3'), 'essai')) LIKE 'programme_incoherent%',
   'dates limites 6-9 ans a 49 semaines au lieu de 48 : publication refusee');
+-- Une decision sur une etape de brouillon n'est jamais rendue.
+SELECT public.progression_promouvoir(pg_temp.u('e1'),
+  (SELECT c.niveau_id FROM public.programme_contenu_admin((SELECT id FROM sp_ids WHERE cle = 'v3')) c WHERE c.ordre = 3),
+  'essai sur un brouillon');
+SELECT pg_temp.vrai(
+  (SELECT j #>> '{etape,code}' = 'BASES-2' AND j #>> '{version,statut}' <> 'brouillon'
+     FROM (SELECT pg_temp.lire('e1') AS j) l),
+  'une decision sur un brouillon ne change rien : jamais une etape de brouillon rendue');
 RESET ROLE;
 SELECT pg_temp.vrai(
   (SELECT statut FROM public.programme_versions WHERE id = (SELECT id FROM sp_ids WHERE cle = 'v2')) = 'publiee',
   'la v2 reste publiee apres le refus');
 
--- Une version qui ne garde pas le code d'une etape occupee : publication refusee.
+-- Une v4 sans le code BASES-3 se publie (rien n'est bloque) ; mais un passage
+-- vers BASES-3 est alors refuse, avec un message clair.
 SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
 SET LOCAL ROLE authenticated;
 INSERT INTO sp_ids VALUES ('v4', public.creer_version_programme((SELECT id FROM sp_ids WHERE cle = 'v2')));
 RESET ROLE;
-UPDATE public.programme_niveaux SET code_technique = 'BASES-2-AUTRE'
- WHERE version_id = (SELECT id FROM sp_ids WHERE cle = 'v4') AND code_technique = 'BASES-2';
+UPDATE public.programme_niveaux SET code_technique = 'BASES-3-AUTRE'
+ WHERE version_id = (SELECT id FROM sp_ids WHERE cle = 'v4') AND code_technique = 'BASES-3';
 SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
 SET LOCAL ROLE authenticated;
+SELECT public.publier_version_programme((SELECT id FROM sp_ids WHERE cle = 'v4'), 'Version 4');
 SELECT pg_temp.vrai(
-  pg_temp.essai(pg_catalog.format('SELECT public.publier_version_programme(%L, %L)',
-    (SELECT id FROM sp_ids WHERE cle = 'v4'), 'essai')) LIKE 'programme_code_absent: BASES-2%',
-  'code BASES-2 absent de la nouvelle version alors qu''un eleve y est : publication refusee');
+  pg_temp.essai(pg_catalog.format('SELECT public.progression_promouvoir(%L, %L, %L)',
+    pg_temp.u('e2'), (SELECT id FROM sp_ids WHERE cle = 'v2n3'), 'essai')) LIKE 'programme_code_absent: BASES-3%',
+  'code BASES-3 absent de la version publiee : le passage est refuse (programme_code_absent)');
+SELECT pg_temp.vrai(
+  (SELECT j #>> '{etape,code}' = 'BASES-2' FROM (SELECT pg_temp.lire('e2') AS j) l),
+  'apres le refus : e2 reste a son etape');
 RESET ROLE;
 
 -- ------------------------------------------------------------------
@@ -576,12 +621,6 @@ SET LOCAL ROLE authenticated;
 SELECT pg_temp.vrai(pg_temp.essai('SELECT pg_temp.lire(''e2'')') = 'refus',
   'remplacant d''une seance finie depuis 25 heures : refus');
 RESET ROLE;
--- 25 heures apres la fin : la fenetre de 24 heures est refermee.
-UPDATE public.app_config SET value = '24'::jsonb WHERE key = 'remplacement.fenetre_lecture_heures';
-SELECT pg_temp.vrai(
-  (SELECT (value #>> '{}')::int = 24 FROM public.app_config WHERE key = 'remplacement.fenetre_lecture_heures'),
-  'reglage de la fenetre du remplacant : 24 heures dans app_config');
-
 -- ------------------------------------------------------------------
 -- 9. Droits
 -- ------------------------------------------------------------------
