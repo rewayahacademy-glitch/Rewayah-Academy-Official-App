@@ -36,8 +36,8 @@ class _Sonde extends StatelessWidget {
 void main() {
   mesureSousLePlafond();
 
-  testWidgets('pendant le cou et la chute, ni le contenu ni le reste de '
-      'l ecran ne sont reconstruits a chaque image', (
+  testWidgets('apres le changement de profil, ni le contenu ni le reste de '
+      'l ecran ne sont reconstruits a chaque image (goutte coupee)', (
     WidgetTester tester,
   ) async {
     final ValueNotifier<String> selection = ValueNotifier<String>('a');
@@ -97,24 +97,17 @@ void main() {
     final int contenuAuToucher = contenu[0] - contenuAvant;
     final int resteAuToucher = reste[0] - resteAvant;
 
-    // Toute l'animation : image par image, 16 ms, jusqu'a la fin (3 s au plus).
+    // GOUTTE-COUPEE (11/11/2026) : plus aucune animation ; 40 images de 16 ms,
+    // sans goutte ni chute a aucune.
     int images = 0;
     final int contenuDebut = contenu[0];
     final int resteDebut = reste[0];
-    while (images < 190) {
+    while (images < 40) {
       await tester.pump(const Duration(milliseconds: 16));
       images++;
-      if (GoutteProfils.goutteDe(ctx!) == null &&
-          GoutteProfils.chuteDe(ctx!) == null &&
-          images > 10) {
-        break;
-      }
+      expect(GoutteProfils.goutteDe(ctx!), isNull);
+      expect(GoutteProfils.chuteDe(ctx!), isNull);
     }
-    expect(
-      images,
-      greaterThan(20),
-      reason: 'l animation doit avoir dure plusieurs images',
-    );
     final int contenuPendant = contenu[0] - contenuDebut;
     final int restePendant = reste[0] - resteDebut;
     // Le contenu est reconstruit a la bascule de phase (tombe, repos), jamais a chaque image ; le voisin jamais.

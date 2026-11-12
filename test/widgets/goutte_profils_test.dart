@@ -73,8 +73,7 @@ class _Hote {
 
   ({double avancement, bool rompu, String de, String vers})? get goutte =>
       GoutteProfils.goutteDe(contexteContenu!);
-  ({double avancement})? get chute =>
-      GoutteProfils.chuteDe(contexteContenu!);
+  ({double avancement})? get chute => GoutteProfils.chuteDe(contexteContenu!);
 }
 
 Future<void> _avancer(WidgetTester tester, int ms) async {
@@ -86,69 +85,43 @@ Future<void> _avancer(WidgetTester tester, int ms) async {
 void main() {
   setUp(() => LocaleSettings.setLocaleSync(AppLocale.fr));
 
-  group('d un profil a l autre', () {
-    testWidgets('la selection est prise tout de suite, la goutte suit, se '
-        'rompt, puis s acheve', (WidgetTester tester) async {
-      final _Hote h = _Hote();
-      await tester.pumpWidget(h.monter());
-      await _avancer(tester, 700);
-      expect(h.goutte, isNull, reason: 'au repos : aucune goutte');
+  // GOUTTE-COUPEE (directeur, 11/11/2026) : la goutte ne peint plus rien,
+  // dans aucun mode ; la selection et le contenu changent tout de suite.
+  group('goutte coupee', () {
+    test('le drapeau du core est eteint', () => expect(goutteActive, isFalse));
 
-      await tester.tap(find.text('Bilal'));
-      // Aucun retard : la selection est deja celle de Bilal, au premier pas.
-      await tester.pump();
-      expect(h.selection.value, 'b');
-      await tester.pump();
-      expect(h.goutte, isNotNull);
-      expect(h.goutte!.de, 'a');
-      expect(h.goutte!.vers, 'b');
-      expect(h.goutte!.rompu, isFalse);
-
-      // Le cou se rompt, puis la goutte s'acheve.
-      bool rompu = false;
-      for (int i = 0; i < 80 && !rompu; i++) {
-        await tester.pump(const Duration(milliseconds: 16));
-        rompu = h.goutte?.rompu ?? true;
+    for (final bool reduit in <bool>[false, true]) {
+      for (final TextDirection direction in TextDirection.values) {
+        testWidgets(
+          'aucune goutte, aucune chute, changement immediat '
+          '(${reduit ? 'mouvement reduit' : 'standard'}, ${direction.name})',
+          (WidgetTester tester) async {
+            final _Hote h = _Hote();
+            await tester.pumpWidget(
+              h.monter(reduit: reduit, direction: direction),
+            );
+            await _avancer(tester, 700);
+            for (final String prenom in <String>['Chaima', 'Amina', 'Bilal']) {
+              await tester.tap(find.text(prenom));
+              await tester.pump();
+              final String id = prenom.substring(0, 1).toLowerCase();
+              expect(h.selection.value, id);
+              h.affiche.value = id;
+              await tester.pump();
+              expect(find.text('contenu $id'), findsOneWidget);
+              for (int i = 0; i < 40; i++) {
+                await tester.pump(const Duration(milliseconds: 16));
+                expect(h.goutte, isNull);
+                expect(h.chute, isNull);
+              }
+            }
+          },
+        );
       }
-      expect(rompu, isTrue);
-      await _avancer(tester, 1500);
-      expect(h.goutte, isNull);
-    });
+    }
+  });
 
-    testWidgets('dans les deux sens : le detachement part toujours du profil '
-        'qu on quitte', (WidgetTester tester) async {
-      final _Hote h = _Hote();
-      await tester.pumpWidget(h.monter());
-      await _avancer(tester, 700);
-      await tester.tap(find.text('Bilal'));
-      await _avancer(tester, 1500);
-      await tester.tap(find.text('Amina'));
-      await tester.pump();
-      await tester.pump();
-      expect(h.goutte!.de, 'b');
-      expect(h.goutte!.vers, 'a');
-      await _avancer(tester, 1500);
-      expect(h.goutte, isNull);
-    });
-
-    testWidgets('une seule goutte a la fois : un second toucher acheve la '
-        'premiere', (WidgetTester tester) async {
-      final _Hote h = _Hote();
-      await tester.pumpWidget(h.monter());
-      await _avancer(tester, 700);
-      await tester.tap(find.text('Bilal'));
-      await _avancer(tester, 80);
-      expect(h.goutte!.vers, 'b');
-      await tester.tap(find.text('Chaima'));
-      await tester.pump();
-      await tester.pump();
-      // Une seule goutte, et c'est celle de Bilal vers Chaima.
-      expect(h.goutte!.de, 'b');
-      expect(h.goutte!.vers, 'c');
-      await _avancer(tester, 1500);
-      expect(h.goutte, isNull);
-    });
-
+  group('d un profil a l autre', () {
     testWidgets('mouvement reduit : changement immediat, aucune goutte', (
       WidgetTester tester,
     ) async {
@@ -162,27 +135,6 @@ void main() {
       expect(h.goutte, isNull);
       expect(h.chute, isNull);
     });
-
-    testWidgets(
-      'en miroir (arabe) : meme goutte, dans l autre sens de lecture',
-      (WidgetTester tester) async {
-        final _Hote h = _Hote();
-        await tester.pumpWidget(h.monter(direction: TextDirection.rtl));
-        await _avancer(tester, 700);
-        // En arabe, Amina est a droite de Bilal.
-        expect(
-          tester.getCenter(find.text('Amina')).dx,
-          greaterThan(tester.getCenter(find.text('Bilal')).dx),
-        );
-        await tester.tap(find.text('Bilal'));
-        await tester.pump();
-        await tester.pump();
-        expect(h.goutte!.de, 'a');
-        expect(h.goutte!.vers, 'b');
-        await _avancer(tester, 1500);
-        expect(h.goutte, isNull);
-      },
-    );
 
     testWidgets('sans portee : le selecteur ne change pas', (
       WidgetTester tester,
@@ -221,30 +173,6 @@ void main() {
       expect(find.text('contenu a'), findsOneWidget);
     });
 
-    testWidgets('changement de profil : le nouveau contenu est la dans la '
-        'meme image que ses donnees, la chute se joue sur lui', (
-      WidgetTester tester,
-    ) async {
-      final _Hote h = _Hote();
-      await tester.pumpWidget(h.monter());
-      await _avancer(tester, 900);
-      expect(h.chute, isNull);
-
-      h.selection.value = 'b';
-      await _avancer(tester, 1200);
-      // Les donnees du nouveau profil arrivent : le contenu change, tout de
-      // suite, sans attendre ni cou ni aspiration.
-      h.affiche.value = 'b';
-      await tester.pump();
-      expect(find.text('contenu b'), findsOneWidget);
-      expect(find.text('contenu a'), findsNothing);
-      await tester.pump();
-      expect(h.chute, isNotNull);
-      await _avancer(tester, 700);
-      expect(h.chute, isNull);
-      expect(find.text('contenu b'), findsOneWidget);
-    });
-
     testWidgets('tant que les donnees ne sont pas la, l affichage precedent '
         'reste, sans etat vide', (WidgetTester tester) async {
       final _Hote h = _Hote();
@@ -254,29 +182,6 @@ void main() {
       await _avancer(tester, 1500);
       expect(h.chute, isNull);
       expect(find.text('contenu a'), findsOneWidget);
-    });
-
-    testWidgets('le contenu n attend JAMAIS le cou entre les ronds '
-        '(DECISION-FLUIDITE) : visible des l image du toucher', (
-      WidgetTester tester,
-    ) async {
-      final _Hote h = _Hote();
-      await tester.pumpWidget(h.monter());
-      await _avancer(tester, 900);
-      // Selection ET donnees dans la meme image (donnees deja en memoire).
-      h.selection.value = 'b';
-      h.affiche.value = 'b';
-      await tester.pump();
-      expect(find.text('contenu b'), findsOneWidget);
-      expect(find.text('contenu a'), findsNothing);
-      await tester.pump();
-      // Le cou entre les ronds tient encore, et le contenu est deja la.
-      expect(h.goutte, isNotNull);
-      expect(h.chute, isNotNull);
-      await _avancer(tester, 1500);
-      expect(h.goutte, isNull);
-      expect(h.chute, isNull);
-      expect(find.text('contenu b'), findsOneWidget);
     });
 
     testWidgets('mouvement reduit : le contenu change aussitot', (
