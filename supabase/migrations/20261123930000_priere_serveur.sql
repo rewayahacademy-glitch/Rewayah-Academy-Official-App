@@ -1151,7 +1151,7 @@ BEGIN
      OR p_longitude IS NULL OR p_longitude NOT BETWEEN -180 AND 180 THEN
     RAISE EXCEPTION 'latitude ou longitude hors bornes' USING ERRCODE = '22023';
   END IF;
-  IF p_fuseau IS NULL OR NOT EXISTS (SELECT 1 FROM pg_catalog.pg_timezone_names WHERE name = p_fuseau) THEN
+  IF p_fuseau IS NULL OR NOT app_private.fuseau_connu(p_fuseau) THEN
     RAISE EXCEPTION 'fuseau inconnu' USING ERRCODE = '22023';
   END IF;
   IF p_methode IS NOT NULL AND NOT EXISTS (SELECT 1 FROM private.priere_methode(p_methode)) THEN
@@ -1535,7 +1535,7 @@ BEGIN
   IF p_weekday IS NULL OR p_weekday NOT BETWEEN 1 AND 7
      OR p_hour_local IS NULL OR p_hour_local NOT BETWEEN 0 AND 23
      OR p_duree_minutes IS NULL OR p_duree_minutes NOT BETWEEN 15 AND 240
-     OR p_timezone IS NULL OR NOT EXISTS (SELECT 1 FROM pg_catalog.pg_timezone_names WHERE name = p_timezone) THEN
+     OR p_timezone IS NULL OR NOT app_private.fuseau_connu(p_timezone) THEN
     RAISE EXCEPTION 'creneau invalide' USING ERRCODE = '22023';
   END IF;
   RETURN private.priere_lecture_creneau(p_enseignant_id, p_weekday, p_hour_local, p_timezone, p_duree_minutes);
@@ -1557,7 +1557,7 @@ BEGIN
   END IF;
   IF p_weekday IS NULL OR p_weekday NOT BETWEEN 1 AND 7
      OR p_duree_minutes IS NULL OR p_duree_minutes NOT BETWEEN 15 AND 240
-     OR p_timezone IS NULL OR NOT EXISTS (SELECT 1 FROM pg_catalog.pg_timezone_names WHERE name = p_timezone) THEN
+     OR p_timezone IS NULL OR NOT app_private.fuseau_connu(p_timezone) THEN
     RAISE EXCEPTION 'creneau invalide' USING ERRCODE = '22023';
   END IF;
   RETURN private.priere_heures_sans_priere(p_enseignant_id, p_weekday, p_timezone, p_duree_minutes);
