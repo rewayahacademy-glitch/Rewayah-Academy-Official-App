@@ -15986,9 +15986,6 @@ class Traductions$enseignant$journee$fr {
 	/// fr: 'Classe'
 	String get classe => 'Classe';
 
-	/// fr: 'Classe {classe}'
-	String classeNommee({required Object classe}) => 'Classe ${classe}';
-
 	/// fr: 'Préparer la séance'
 	String get preparerSeance => 'Préparer la séance';
 
@@ -55872,7 +55869,6 @@ extension on Traductions {
 			'enseignant.journee.heure' => 'Heure',
 			'enseignant.journee.eleves' => 'Élèves',
 			'enseignant.journee.classe' => 'Classe',
-			'enseignant.journee.classeNommee' => ({required Object classe}) => 'Classe ${classe}',
 			'enseignant.journee.preparerSeance' => 'Préparer la séance',
 			'enseignant.journee.preparerSeanceLecteur' => ({required Object classe}) => 'Préparer la séance ${classe}',
 			'enseignant.journee.derniereSeance' => 'Dernière séance',
@@ -56083,9 +56079,9 @@ extension on Traductions {
 			'enseignant.profil.statutSection' => 'Statut du compte',
 			'enseignant.profil.statutValideDetail' => 'Vous pouvez enseigner et déclarer vos heures.',
 			'enseignant.profil.statutEnAttente' => 'Dossier en cours de vérification',
+			'enseignant.profil.statutEnAttenteDetail' => 'L\'académie vérifie vos pièces. Vous n\'avez rien de plus à faire.',
 			_ => null,
 		} ?? switch (path) {
-			'enseignant.profil.statutEnAttenteDetail' => 'L\'académie vérifie vos pièces. Vous n\'avez rien de plus à faire.',
 			'enseignant.profil.statutProvisoire' => 'Accès provisoire',
 			'enseignant.profil.statutProvisoireDetail' => 'Vous enseignez déjà. Votre dossier reste à compléter, sans coupure automatique.',
 			'enseignant.profil.statutSuspendu' => 'Compte suspendu',
@@ -56597,9 +56593,9 @@ extension on Traductions {
 			'tc.groupe.temps.enCours' => ({required Object reste}) => 'Séance en direct · ${reste}',
 			'tc.groupe.temps.enDirect' => 'En direct',
 			'tc.groupe.temps.prolongee' => 'Séance toujours en direct',
+			'tc.groupe.temps.depassement' => 'En dépassement',
 			_ => null,
 		} ?? switch (path) {
-			'tc.groupe.temps.depassement' => 'En dépassement',
 			'tc.groupe.temps.terminee' => 'Cours terminé',
 			'tc.groupe.duree.heures' => ({required Object heures}) => '${heures} h',
 			'tc.groupe.duree.heuresMinutes' => ({required Object heures, required Object minutes}) => '${heures} h ${minutes}',
@@ -57111,9 +57107,9 @@ extension on Traductions {
 			'adulte.recharge.indisponibleTitre' => 'Recharge pas encore disponible',
 			'adulte.recharge.indisponiblePhrase' => 'La recharge n\'est pas encore disponible dans l\'application. Aucun paiement n\'est possible ici pour l\'instant.',
 			'adulte.recharge.verificationEchecTitre' => 'La vérification n\'a pas abouti.',
+			'adulte.recharge.verificationEchecPhrase' => 'Vos choix sont conservés. Vous pouvez réessayer.',
 			_ => null,
 		} ?? switch (path) {
-			'adulte.recharge.verificationEchecPhrase' => 'Vos choix sont conservés. Vous pouvez réessayer.',
 			'adulte.recharge.recapitulatif' => 'Récapitulatif par profil',
 			'adulte.recharge.montantPaye' => 'Montant payé',
 			'adulte.recharge.soldeAttribue' => 'Solde attribué',
@@ -57625,9 +57621,9 @@ extension on Traductions {
 			'suiviDemandes.etapes.eleveIntegre' => 'Élève intégré dans la classe',
 			'suiviDemandes.etapes.coursCommences' => 'Début des cours',
 			'suiviDemandes.etats.fait' => 'Fait',
+			'suiviDemandes.etats.enCours' => 'En cours',
 			_ => null,
 		} ?? switch (path) {
-			'suiviDemandes.etats.enCours' => 'En cours',
 			'suiviDemandes.etats.prochaine' => 'Prochaine étape',
 			'suiviDemandes.etats.aVenir' => 'À venir',
 			'suiviDemandes.situation.envoyee' => 'Votre demande est arrivée à l\'administration',
@@ -58139,9 +58135,9 @@ extension on Traductions {
 			'com.communaute.garde.avertissement' => 'Cette publication semble contenir une promotion commerciale. Retirez le lien, le code ou l\'offre avant de publier.',
 			'com.communaute.garde.bloqueAffilie' => 'Les liens affiliés ne sont pas autorisés dans la Communauté enseignants.',
 			'com.communaute.garde.bloqueVente' => 'La vente de produits ou de services n\'est pas autorisée dans cet espace.',
+			'com.communaute.garde.titreAvertissement' => 'Publication à revoir',
 			_ => null,
 		} ?? switch (path) {
-			'com.communaute.garde.titreAvertissement' => 'Publication à revoir',
 			'com.communaute.garde.titreBlocage' => 'Publication bloquée',
 			'com.communaute.garde.motif' => ({required Object motif}) => 'Motif : ${motif}',
 			'com.communaute.garde.liensTitre' => 'Liens de la publication',
@@ -58653,9 +58649,9 @@ extension on Traductions {
 			'com.annonces.ouvrirClasse' => 'Ouvrir la classe',
 			'com.annonces.ouvrirClasseSemantique' => ({required Object classe}) => 'Ouvrir ${classe}',
 			'com.annonces.marquerLue' => 'Marquer comme lue',
+			'com.annonces.lue' => 'Lue',
 			_ => null,
 		} ?? switch (path) {
-			'com.annonces.lue' => 'Lue',
 			'com.annonces.carteSemantique' => ({required Object classe, required Object titre}) => 'Annonce de ${classe} : ${titre}',
 			'com.annonces.introuvableTitre' => 'Cette annonce n\'est plus disponible',
 			'com.annonces.introuvablePhrase' => 'Elle a peut-être été retirée de la classe. Revenez à vos notifications.',
@@ -59167,9 +59163,9 @@ extension on Traductions {
 			'comptable.encaissements.videTitre' => 'Aucun encaissement pour l\'instant.',
 			'comptable.encaissements.videPhrase' => 'Les paiements des familles apparaîtront ici dès que le prestataire les aura transmis.',
 			'comptable.encaissements.videFiltreTitre' => 'Aucun encaissement ne correspond.',
+			'comptable.encaissements.videFiltrePhrase' => 'Choisissez « Tous » ou effacez la recherche pour revoir toute la liste.',
 			_ => null,
 		} ?? switch (path) {
-			'comptable.encaissements.videFiltrePhrase' => 'Choisissez « Tous » ou effacez la recherche pour revoir toute la liste.',
 			'comptable.encaissements.voirTous' => 'Voir tous les encaissements',
 			'comptable.encaissements.ouvrirDetailLecteur' => ({required Object famille}) => 'Ouvrir le détail de l\'encaissement de ${famille}',
 			'comptable.encaissements.fermerDetail' => 'Fermer le détail',
@@ -59681,9 +59677,9 @@ extension on Traductions {
 			'comptable.direction.delegationPanneau.etatExpiree' => 'Expirée',
 			'comptable.direction.delegationPanneau.renouvelablePour' => ({required Object jours}) => 'Renouvelable pour ${jours} jours',
 			'comptable.direction.delegationPanneau.renouveler' => 'Renouveler la délégation',
+			'comptable.direction.delegationPanneau.renouvelee' => 'Délégation renouvelée.',
 			_ => null,
 		} ?? switch (path) {
-			'comptable.direction.delegationPanneau.renouvelee' => 'Délégation renouvelée.',
 			'comptable.direction.delegationPanneau.renouvelerEchec' => 'Le renouvellement n\'est pas confirmé : la demande n\'est peut-être pas parvenue jusqu\'à Rewayah. Vérifiez la date d\'expiration avant de réessayer.',
 			'comptable.direction.delegationPanneau.sortiesTitre' => 'Sorties en attente',
 			'comptable.direction.delegationPanneau.sortiesDetail' => 'Une sortie au-dessus du plafond par transaction attend un délai de sécurité avant de partir. Vous pouvez l\'annuler d\'ici là.',
@@ -60195,9 +60191,9 @@ extension on Traductions {
 			'avis.admin.liens.creeAdresse' => 'Adresse du lien',
 			'avis.admin.liens.creeValable' => ({required Object date}) => 'Valable jusqu\'au ${date}.',
 			'avis.admin.liens.copier' => 'Copier le lien',
+			'avis.admin.liens.copie' => 'Lien copié.',
 			_ => null,
 		} ?? switch (path) {
-			'avis.admin.liens.copie' => 'Lien copié.',
 			'avis.admin.liens.creeFermer' => 'J\'ai copié le lien',
 			'avis.admin.liens.etat.ouvert' => 'Ouvert',
 			'avis.admin.liens.etat.ferme' => 'Fermé',
@@ -60709,9 +60705,9 @@ extension on Traductions {
 			'candidatsFlux.importFormulaires.motif.ligneVide' => 'ligne vide',
 			'candidatsFlux.importFormulaires.motif.horodatageIllisible' => 'la date de la réponse est illisible',
 			'candidatsFlux.importFormulaires.motif.genreIllisible' => 'le genre n\'est pas reconnu',
+			'candidatsFlux.importFormulaires.motif.nomAbsent' => 'le nom est absent',
 			_ => null,
 		} ?? switch (path) {
-			'candidatsFlux.importFormulaires.motif.nomAbsent' => 'le nom est absent',
 			'candidatsFlux.importFormulaires.motif.nomTropLong' => 'le nom est trop long',
 			'candidatsFlux.importFormulaires.motif.memeReferenceMemeContenu' => 'ligne répétée à l\'identique',
 			'candidatsFlux.importFormulaires.motif.memeReferenceContenuDifferent' => 'même date de réponse qu\'une autre ligne, mais un contenu différent',

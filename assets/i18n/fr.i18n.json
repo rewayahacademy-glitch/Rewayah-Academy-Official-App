@@ -8659,7 +8659,6 @@
       "heure": "Heure",
       "eleves": "Élèves",
       "classe": "Classe",
-      "classeNommee": "Classe {classe}",
       "preparerSeance": "Préparer la séance",
       "preparerSeanceLecteur": "Préparer la séance {classe}",
       "derniereSeance": "Dernière séance",
