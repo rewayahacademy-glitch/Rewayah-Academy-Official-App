@@ -2168,6 +2168,10 @@ class _SallePageEtat extends ConsumerState<SallePage> {
         // l'enseignant est deja sa vignette (en tete du panneau des eleves
         // sur ordinateur, capsule au telephone).
         moiDejaEnCadre: enseignant,
+        // VISAGES (point 8) : LA scene du mode Classe, avec son fond doux ;
+        // elle n'est montree que lorsque ni la page ni le tableau ne
+        // l'occupent (`modeSceneDe`).
+        fond: true,
       ),
       scenePremierPlan: scenePremierPlan,
       onBasculerScene: basculable
@@ -4553,14 +4557,16 @@ class _Corps extends StatelessWidget {
     final Gabarit gabarit = AppGabarit.de(context);
     final bool colonne = gabarit.estLarge && vue.voitLesParticipants;
 
+    // VISAGES (point 8) : rien n'est presente ici, la scene est en mode
+    // Classe : son fond doux.
     if (!colonne) {
-      return SceneClasse(vue: vue);
+      return SceneClasse(vue: vue, fond: true);
     }
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        Expanded(child: SceneClasse(vue: vue)),
+        Expanded(child: SceneClasse(vue: vue, fond: true)),
         _ColonnePresence(vue: vue, lignes: lignes),
       ],
     );

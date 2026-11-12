@@ -24,6 +24,7 @@ import '../../core/video/livekit_session_provider.dart';
 import '../../core/video/video_session_provider.dart';
 import '../../core/widgets/cadre_visage.dart';
 import '../../core/widgets/grille_visages.dart';
+import '../../core/widgets/porte_lumiere.dart';
 import '../../core/widgets/scene_attente.dart';
 import '../salle_seance/media_salle.dart';
 import 'vue_salle.dart';
@@ -44,7 +45,26 @@ class SceneClasse extends StatelessWidget {
     this.menuPour,
     this.moiDejaEnCadre = false,
     this.tutoie = false,
+    this.fond = false,
   });
+
+  /// VISAGES (directeur, 12/11/2026, point 8) : vrai quand cette scene est
+  /// LA scene en mode Classe (`ModeScene.classe`) : le visuel de l'ouverture
+  /// (le symbole et sa porte de lumiere, [PorteLumiere]) se pose en fond,
+  /// a tres faible opacite, SOUS les visages. Faux (par defaut) quand la
+  /// scene vit a cote d'un document ou du tableau : jamais de fond la.
+  final bool fond;
+
+  /// La cle du fond doux de la scene (tests, captures).
+  static const Key cleFond = ValueKey<String>('scene-classe-fond');
+
+  /// L'opacite du fond doux, theme clair : une image decorative, jamais un
+  /// texte (aucune opacite sur du texte).
+  static const double opaciteFondClair = 0.07;
+
+  /// L'opacite du fond doux, theme sombre : le violet du symbole se lit
+  /// moins sur la nuit de la page.
+  static const double opaciteFondSombre = 0.12;
 
   /// AGE-SALLE (garde-cap, 11/11/2026) : l'eleve devant l'ecran est un
   /// enfant, les phrases d'attente lui disent « tu » (l'age est lu sur le
@@ -187,51 +207,88 @@ class SceneClasse extends StatelessWidget {
               // camera allumee, son propre cadre sous la scene d'attente.
               moi: moi,
             )
-          : Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
+          : Stack(
               children: <Widget>[
-                Expanded(
-                  child: GrilleVisages(
-                    cadres: <EntreeGrille>[
-                      for (final ParticipantSalle p in distants)
-                        EntreeGrille(
-                          cle: ValueKey<String>(p.identite),
-                          cadre: _CadreParticipant(
-                            participant: p,
-                            moi: p.estLocal,
-                            recite: p.identite == recitant,
-                            menu: menuPour?.call(
-                              p,
-                              recite: p.identite == recitant,
-                            ),
-                          ),
+                if (fond) const Positioned.fill(child: _FondDoux()),
+                Positioned.fill(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      Expanded(
+                        child: GrilleVisages(
+                          cadres: <EntreeGrille>[
+                            for (final ParticipantSalle p in distants)
+                              EntreeGrille(
+                                cle: ValueKey<String>(p.identite),
+                                cadre: _CadreParticipant(
+                                  participant: p,
+                                  moi: p.estLocal,
+                                  recite: p.identite == recitant,
+                                  menu: menuPour?.call(
+                                    p,
+                                    recite: p.identite == recitant,
+                                  ),
+                                ),
+                              ),
+                            if (moi case final ParticipantSalle local)
+                              EntreeGrille(
+                                cle: ValueKey<String>(local.identite),
+                                // Couper sa camera retire son cadre tout de suite.
+                                attendreAuDepart: false,
+                                cadre: _CadreParticipant(
+                                  participant: local,
+                                  moi: true,
+                                ),
+                              ),
+                          ],
                         ),
-                      if (moi case final ParticipantSalle local)
-                        EntreeGrille(
-                          cle: ValueKey<String>(local.identite),
-                          // Couper sa camera retire son cadre tout de suite.
-                          attendreAuDepart: false,
-                          cadre: _CadreParticipant(
-                            participant: local,
-                            moi: true,
-                          ),
+                      ),
+                      // « Ouvrir le Coran » : sous la grille, centre, jamais sur un
+                      // visage (MODES-AFFICHAGE §3).
+                      if (action != null) ...<Widget>[
+                        Ecart.vLg,
+                        Center(
+                          key: cleAction,
+                          child: ActionSousLaScene.bouton(action),
                         ),
+                      ],
                     ],
                   ),
                 ),
-                // « Ouvrir le Coran » : sous la grille, centre, jamais sur un
-                // visage (MODES-AFFICHAGE §3).
-                if (action != null) ...<Widget>[
-                  Ecart.vLg,
-                  Center(
-                    key: cleAction,
-                    child: ActionSousLaScene.bouton(action),
-                  ),
-                ],
               ],
             ),
     );
   }
+}
+
+/// Le fond doux de la scene en mode Classe (VISAGES, point 8) : le visuel de
+/// l'ouverture, le symbole de la marque et sa porte de lumiere
+/// ([PorteLumiere], qui pose le logo par `BrandLogo`), centre, a tres faible
+/// opacite, derriere la grille. Decoratif : exclu de la semantique, ne recoit
+/// aucun geste. Immobile : rien a reduire sous « Reduire les animations ».
+class _FondDoux extends StatelessWidget {
+  const _FondDoux();
+
+  @override
+  Widget build(BuildContext context) => ExcludeSemantics(
+    child: IgnorePointer(
+      child: RepaintBoundary(
+        child: Opacity(
+          key: SceneClasse.cleFond,
+          opacity: AppPalette.of(context).estSombre
+              ? SceneClasse.opaciteFondSombre
+              : SceneClasse.opaciteFondClair,
+          child: const Center(
+            child: FractionallySizedBox(
+              widthFactor: 0.8,
+              heightFactor: 0.8,
+              child: FittedBox(child: PorteLumiere()),
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
 }
 
 /// Le cadre d'un participant de la salle : [CadreVisage], nourri par le

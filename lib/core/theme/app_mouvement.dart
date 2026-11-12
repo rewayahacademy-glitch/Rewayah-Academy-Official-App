@@ -225,6 +225,14 @@ abstract final class AppMouvement {
   /// garde ses propres durees.
   static const Duration tourHaloCarte = Duration(milliseconds: 2400);
 
+  /// VISAGES (directeur, 12/11/2026, point 9) : une vague de la lumiere de
+  /// l'orateur, du bord du cadre vers son centre (`HaloLumiere.voix`).
+  /// **Hors du budget de transition** : elle dure tant que la personne parle
+  /// (le signal « parle » de la visio), jamais quand elle se tait ; lente,
+  /// sans clignotement (WCAG 2.3.1). Mouvement reduit : aucune vague, une
+  /// bordure `borderStrong` fixe.
+  static const Duration vagueParole = Duration(milliseconds: 1800);
+
   /// Nombre de tours de la lumiere d'une carte : moins que le cercle Compte
   /// ([toursHaloUrgent]) ; 4,8 s en tout, sous les cinq secondes de WCAG
   /// 2.2.2.
