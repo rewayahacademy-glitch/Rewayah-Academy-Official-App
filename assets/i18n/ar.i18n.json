@@ -14764,5 +14764,75 @@
     "attenteEntretien": "ستُحدَّد مرحلتك بعد مقابلة القراءة مع الإدارة.",
     "attenteEntretienTu": "ستُحدَّد مرحلتك بعد مقابلة القراءة مع الإدارة.",
     "attenteEntretienPour": "ستُحدَّد مرحلة ⁨{prenom}⁩ بعد مقابلة القراءة مع الإدارة."
+  },
+  "apprendre": {
+    "sections": {
+      "libelle": "أقسام مساحة التعلّم",
+      "bibliotheque": "المكتبة",
+      "programme": "البرنامج",
+      "livret": "سجلّي"
+    },
+    "bibliotheque": {
+      "rayonCours": "وثائق الدروس",
+      "rayonPlusLoin": "للتعمّق أكثر",
+      "rayonCoursVide": {
+        "message": "ستظهر وثائق الدروس هنا",
+        "invitation": "تظهر بمجرد أن تنشرها الأكاديمية."
+      },
+      "rayonPlusLoinVide": "ستظهر وثائق أخرى هنا",
+      "affichage": {
+        "libelle": "طريقة عرض الوثائق",
+        "grille": "شبكة",
+        "liste": "قائمة"
+      },
+      "filtres": {
+        "libelle": "نوع الوثيقة"
+      },
+      "type": {
+        "document": "وثيقة",
+        "audio": "صوت",
+        "video": "فيديو",
+        "lienExterne": "رابط خارجي"
+      },
+      "aucunResultat": {
+        "message": "لا توجد وثيقة من هذا النوع حاليًا",
+        "invitation": "أزل التصفية لتعرض كل الوثائق من جديد."
+      },
+      "coran": {
+        "titre": "القرآن الكريم",
+        "edition": "طبعة المدينة المنورة"
+      },
+      "carte": {
+        "document": "⁨{titre}⁩، ⁨{type}⁩",
+        "lien": "⁨{titre}⁩، رابط خارجي، يُفتح خارج التطبيق",
+        "lienAdresse": "يُفتح خارج التطبيق: ⁨{adresse}⁩"
+      },
+      "lien": {
+        "titre": "فتح هذا الرابط؟",
+        "corps": "هذا الرابط تنشره الأكاديمية. يُفتح خارج التطبيق.",
+        "corpsTu": "هذا الرابط تنشره الأكاديمية. يُفتح خارج التطبيق، في متصفحك.",
+        "adresse": "العنوان: ⁨{adresse}⁩",
+        "ouvrir": "فتح الرابط",
+        "copie": "نُسخ الرابط: الصقه في متصفحك.",
+        "copieTu": "نُسخ الرابط: الصقه في متصفحك.",
+        "bloque": "منع المتصفح الفتح. حاول مرة أخرى."
+      }
+    },
+    "programme": {
+      "niveau": "مستواي",
+      "etapeSur": "المرحلة ⁨{ordre}⁩ من ⁨{total}⁩",
+      "datesEcole": "مواعيد الأكاديمية",
+      "datesEcoleVide": "ستظهر مواعيد الأكاديمية هنا",
+      "genre": {
+        "evaluation": "تقييم",
+        "fermeture": "إغلاق الأكاديمية",
+        "rencontre": "لقاء التلاوة"
+      },
+      "dateEcole": "⁨{libelle}⁩، ⁨{date}⁩"
+    },
+    "livret": {
+      "vide": "ستظهر هنا نتائجك وتقاريرك وشهاداتك",
+      "videTu": "ستظهر هنا نتائجك وتقاريرك وشهاداتك"
+    }
   }
 }

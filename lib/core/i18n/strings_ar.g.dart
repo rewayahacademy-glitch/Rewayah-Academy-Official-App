@@ -116,6 +116,7 @@ class TraductionsAr extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$push1$ar push1 = _Traductions$push1$ar._(_root);
 	@override late final _Traductions$nouveautes$ar nouveautes = _Traductions$nouveautes$ar._(_root);
 	@override late final _Traductions$suiviPedagogique$ar suiviPedagogique = _Traductions$suiviPedagogique$ar._(_root);
+	@override late final _Traductions$apprendre$ar apprendre = _Traductions$apprendre$ar._(_root);
 }
 
 // Path: notifications
@@ -2153,6 +2154,19 @@ class _Traductions$suiviPedagogique$ar extends Traductions$suiviPedagogique$fr {
 	@override String get attenteEntretien => 'ستُحدَّد مرحلتك بعد مقابلة القراءة مع الإدارة.';
 	@override String get attenteEntretienTu => 'ستُحدَّد مرحلتك بعد مقابلة القراءة مع الإدارة.';
 	@override String attenteEntretienPour({required Object prenom}) => 'ستُحدَّد مرحلة ⁨${prenom}⁩ بعد مقابلة القراءة مع الإدارة.';
+}
+
+// Path: apprendre
+class _Traductions$apprendre$ar extends Traductions$apprendre$fr {
+	_Traductions$apprendre$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$apprendre$sections$ar sections = _Traductions$apprendre$sections$ar._(_root);
+	@override late final _Traductions$apprendre$bibliotheque$ar bibliotheque = _Traductions$apprendre$bibliotheque$ar._(_root);
+	@override late final _Traductions$apprendre$programme$ar programme = _Traductions$apprendre$programme$ar._(_root);
+	@override late final _Traductions$apprendre$livret$ar livret = _Traductions$apprendre$livret$ar._(_root);
 }
 
 // Path: notifications.evenements
@@ -10841,6 +10855,65 @@ class _Traductions$push1$reglages$ar extends Traductions$push1$reglages$fr {
 	@override String get erreur => 'تعذّرت قراءة إعداداتكم: ربما انقطع الاتصال. أعيدوا المحاولة بعد قليل.';
 	@override String get horsLigne => 'تُغيَّر إعدادات الإشعارات حين يعود الاتصال.';
 	@override String get changementNonConfirme => 'لم يتأكد التغيير بعد: ربما انقطع الاتصال. أعيدوا المحاولة بعد قليل.';
+}
+
+// Path: apprendre.sections
+class _Traductions$apprendre$sections$ar extends Traductions$apprendre$sections$fr {
+	_Traductions$apprendre$sections$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'أقسام مساحة التعلّم';
+	@override String get bibliotheque => 'المكتبة';
+	@override String get programme => 'البرنامج';
+	@override String get livret => 'سجلّي';
+}
+
+// Path: apprendre.bibliotheque
+class _Traductions$apprendre$bibliotheque$ar extends Traductions$apprendre$bibliotheque$fr {
+	_Traductions$apprendre$bibliotheque$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get rayonCours => 'وثائق الدروس';
+	@override String get rayonPlusLoin => 'للتعمّق أكثر';
+	@override late final _Traductions$apprendre$bibliotheque$rayonCoursVide$ar rayonCoursVide = _Traductions$apprendre$bibliotheque$rayonCoursVide$ar._(_root);
+	@override String get rayonPlusLoinVide => 'ستظهر وثائق أخرى هنا';
+	@override late final _Traductions$apprendre$bibliotheque$affichage$ar affichage = _Traductions$apprendre$bibliotheque$affichage$ar._(_root);
+	@override late final _Traductions$apprendre$bibliotheque$filtres$ar filtres = _Traductions$apprendre$bibliotheque$filtres$ar._(_root);
+	@override late final _Traductions$apprendre$bibliotheque$type$ar type = _Traductions$apprendre$bibliotheque$type$ar._(_root);
+	@override late final _Traductions$apprendre$bibliotheque$aucunResultat$ar aucunResultat = _Traductions$apprendre$bibliotheque$aucunResultat$ar._(_root);
+	@override late final _Traductions$apprendre$bibliotheque$coran$ar coran = _Traductions$apprendre$bibliotheque$coran$ar._(_root);
+	@override late final _Traductions$apprendre$bibliotheque$carte$ar carte = _Traductions$apprendre$bibliotheque$carte$ar._(_root);
+	@override late final _Traductions$apprendre$bibliotheque$lien$ar lien = _Traductions$apprendre$bibliotheque$lien$ar._(_root);
+}
+
+// Path: apprendre.programme
+class _Traductions$apprendre$programme$ar extends Traductions$apprendre$programme$fr {
+	_Traductions$apprendre$programme$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get niveau => 'مستواي';
+	@override String etapeSur({required Object ordre, required Object total}) => 'المرحلة ⁨${ordre}⁩ من ⁨${total}⁩';
+	@override String get datesEcole => 'مواعيد الأكاديمية';
+	@override String get datesEcoleVide => 'ستظهر مواعيد الأكاديمية هنا';
+	@override late final _Traductions$apprendre$programme$genre$ar genre = _Traductions$apprendre$programme$genre$ar._(_root);
+	@override String dateEcole({required Object libelle, required Object date}) => '⁨${libelle}⁩، ⁨${date}⁩';
+}
+
+// Path: apprendre.livret
+class _Traductions$apprendre$livret$ar extends Traductions$apprendre$livret$fr {
+	_Traductions$apprendre$livret$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get vide => 'ستظهر هنا نتائجك وتقاريرك وشهاداتك';
+	@override String get videTu => 'ستظهر هنا نتائجك وتقاريرك وشهاداتك';
 }
 
 // Path: commun.etats.recharge1
@@ -19846,6 +19919,115 @@ class _Traductions$candidatsFlux$file$reglage$ar extends Traductions$candidatsFl
 	);
 	@override String get invalide => 'اكتبوا عددًا صحيحًا من 1 إلى 2000، دون مسافة.';
 	@override String get echec => 'الإعداد غير مؤكد. السبب المحتمل: انقطع الاتصال بالخادم. أعيدوا المحاولة بعد لحظة.';
+}
+
+// Path: apprendre.bibliotheque.rayonCoursVide
+class _Traductions$apprendre$bibliotheque$rayonCoursVide$ar extends Traductions$apprendre$bibliotheque$rayonCoursVide$fr {
+	_Traductions$apprendre$bibliotheque$rayonCoursVide$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get message => 'ستظهر وثائق الدروس هنا';
+	@override String get invitation => 'تظهر بمجرد أن تنشرها الأكاديمية.';
+}
+
+// Path: apprendre.bibliotheque.affichage
+class _Traductions$apprendre$bibliotheque$affichage$ar extends Traductions$apprendre$bibliotheque$affichage$fr {
+	_Traductions$apprendre$bibliotheque$affichage$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'طريقة عرض الوثائق';
+	@override String get grille => 'شبكة';
+	@override String get liste => 'قائمة';
+}
+
+// Path: apprendre.bibliotheque.filtres
+class _Traductions$apprendre$bibliotheque$filtres$ar extends Traductions$apprendre$bibliotheque$filtres$fr {
+	_Traductions$apprendre$bibliotheque$filtres$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'نوع الوثيقة';
+}
+
+// Path: apprendre.bibliotheque.type
+class _Traductions$apprendre$bibliotheque$type$ar extends Traductions$apprendre$bibliotheque$type$fr {
+	_Traductions$apprendre$bibliotheque$type$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get document => 'وثيقة';
+	@override String get audio => 'صوت';
+	@override String get video => 'فيديو';
+	@override String get lienExterne => 'رابط خارجي';
+}
+
+// Path: apprendre.bibliotheque.aucunResultat
+class _Traductions$apprendre$bibliotheque$aucunResultat$ar extends Traductions$apprendre$bibliotheque$aucunResultat$fr {
+	_Traductions$apprendre$bibliotheque$aucunResultat$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get message => 'لا توجد وثيقة من هذا النوع حاليًا';
+	@override String get invitation => 'أزل التصفية لتعرض كل الوثائق من جديد.';
+}
+
+// Path: apprendre.bibliotheque.coran
+class _Traductions$apprendre$bibliotheque$coran$ar extends Traductions$apprendre$bibliotheque$coran$fr {
+	_Traductions$apprendre$bibliotheque$coran$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'القرآن الكريم';
+	@override String get edition => 'طبعة المدينة المنورة';
+}
+
+// Path: apprendre.bibliotheque.carte
+class _Traductions$apprendre$bibliotheque$carte$ar extends Traductions$apprendre$bibliotheque$carte$fr {
+	_Traductions$apprendre$bibliotheque$carte$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String document({required Object titre, required Object type}) => '⁨${titre}⁩، ⁨${type}⁩';
+	@override String lien({required Object titre}) => '⁨${titre}⁩، رابط خارجي، يُفتح خارج التطبيق';
+	@override String lienAdresse({required Object adresse}) => 'يُفتح خارج التطبيق: ⁨${adresse}⁩';
+}
+
+// Path: apprendre.bibliotheque.lien
+class _Traductions$apprendre$bibliotheque$lien$ar extends Traductions$apprendre$bibliotheque$lien$fr {
+	_Traductions$apprendre$bibliotheque$lien$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'فتح هذا الرابط؟';
+	@override String get corps => 'هذا الرابط تنشره الأكاديمية. يُفتح خارج التطبيق.';
+	@override String get corpsTu => 'هذا الرابط تنشره الأكاديمية. يُفتح خارج التطبيق، في متصفحك.';
+	@override String adresse({required Object adresse}) => 'العنوان: ⁨${adresse}⁩';
+	@override String get ouvrir => 'فتح الرابط';
+	@override String get copie => 'نُسخ الرابط: الصقه في متصفحك.';
+	@override String get copieTu => 'نُسخ الرابط: الصقه في متصفحك.';
+	@override String get bloque => 'منع المتصفح الفتح. حاول مرة أخرى.';
+}
+
+// Path: apprendre.programme.genre
+class _Traductions$apprendre$programme$genre$ar extends Traductions$apprendre$programme$genre$fr {
+	_Traductions$apprendre$programme$genre$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get evaluation => 'تقييم';
+	@override String get fermeture => 'إغلاق الأكاديمية';
+	@override String get rencontre => 'لقاء التلاوة';
 }
 
 // Path: classe.entree.demo.roles
@@ -35158,6 +35340,48 @@ extension on TraductionsAr {
 			'suiviPedagogique.attenteEntretien' => 'ستُحدَّد مرحلتك بعد مقابلة القراءة مع الإدارة.',
 			'suiviPedagogique.attenteEntretienTu' => 'ستُحدَّد مرحلتك بعد مقابلة القراءة مع الإدارة.',
 			'suiviPedagogique.attenteEntretienPour' => ({required Object prenom}) => 'ستُحدَّد مرحلة ⁨${prenom}⁩ بعد مقابلة القراءة مع الإدارة.',
+			'apprendre.sections.libelle' => 'أقسام مساحة التعلّم',
+			'apprendre.sections.bibliotheque' => 'المكتبة',
+			'apprendre.sections.programme' => 'البرنامج',
+			'apprendre.sections.livret' => 'سجلّي',
+			'apprendre.bibliotheque.rayonCours' => 'وثائق الدروس',
+			'apprendre.bibliotheque.rayonPlusLoin' => 'للتعمّق أكثر',
+			'apprendre.bibliotheque.rayonCoursVide.message' => 'ستظهر وثائق الدروس هنا',
+			'apprendre.bibliotheque.rayonCoursVide.invitation' => 'تظهر بمجرد أن تنشرها الأكاديمية.',
+			'apprendre.bibliotheque.rayonPlusLoinVide' => 'ستظهر وثائق أخرى هنا',
+			'apprendre.bibliotheque.affichage.libelle' => 'طريقة عرض الوثائق',
+			'apprendre.bibliotheque.affichage.grille' => 'شبكة',
+			'apprendre.bibliotheque.affichage.liste' => 'قائمة',
+			'apprendre.bibliotheque.filtres.libelle' => 'نوع الوثيقة',
+			'apprendre.bibliotheque.type.document' => 'وثيقة',
+			'apprendre.bibliotheque.type.audio' => 'صوت',
+			'apprendre.bibliotheque.type.video' => 'فيديو',
+			'apprendre.bibliotheque.type.lienExterne' => 'رابط خارجي',
+			'apprendre.bibliotheque.aucunResultat.message' => 'لا توجد وثيقة من هذا النوع حاليًا',
+			'apprendre.bibliotheque.aucunResultat.invitation' => 'أزل التصفية لتعرض كل الوثائق من جديد.',
+			'apprendre.bibliotheque.coran.titre' => 'القرآن الكريم',
+			'apprendre.bibliotheque.coran.edition' => 'طبعة المدينة المنورة',
+			'apprendre.bibliotheque.carte.document' => ({required Object titre, required Object type}) => '⁨${titre}⁩، ⁨${type}⁩',
+			'apprendre.bibliotheque.carte.lien' => ({required Object titre}) => '⁨${titre}⁩، رابط خارجي، يُفتح خارج التطبيق',
+			'apprendre.bibliotheque.carte.lienAdresse' => ({required Object adresse}) => 'يُفتح خارج التطبيق: ⁨${adresse}⁩',
+			'apprendre.bibliotheque.lien.titre' => 'فتح هذا الرابط؟',
+			'apprendre.bibliotheque.lien.corps' => 'هذا الرابط تنشره الأكاديمية. يُفتح خارج التطبيق.',
+			'apprendre.bibliotheque.lien.corpsTu' => 'هذا الرابط تنشره الأكاديمية. يُفتح خارج التطبيق، في متصفحك.',
+			'apprendre.bibliotheque.lien.adresse' => ({required Object adresse}) => 'العنوان: ⁨${adresse}⁩',
+			'apprendre.bibliotheque.lien.ouvrir' => 'فتح الرابط',
+			'apprendre.bibliotheque.lien.copie' => 'نُسخ الرابط: الصقه في متصفحك.',
+			'apprendre.bibliotheque.lien.copieTu' => 'نُسخ الرابط: الصقه في متصفحك.',
+			'apprendre.bibliotheque.lien.bloque' => 'منع المتصفح الفتح. حاول مرة أخرى.',
+			'apprendre.programme.niveau' => 'مستواي',
+			'apprendre.programme.etapeSur' => ({required Object ordre, required Object total}) => 'المرحلة ⁨${ordre}⁩ من ⁨${total}⁩',
+			'apprendre.programme.datesEcole' => 'مواعيد الأكاديمية',
+			'apprendre.programme.datesEcoleVide' => 'ستظهر مواعيد الأكاديمية هنا',
+			'apprendre.programme.genre.evaluation' => 'تقييم',
+			'apprendre.programme.genre.fermeture' => 'إغلاق الأكاديمية',
+			'apprendre.programme.genre.rencontre' => 'لقاء التلاوة',
+			'apprendre.programme.dateEcole' => ({required Object libelle, required Object date}) => '⁨${libelle}⁩، ⁨${date}⁩',
+			'apprendre.livret.vide' => 'ستظهر هنا نتائجك وتقاريرك وشهاداتك',
+			'apprendre.livret.videTu' => 'ستظهر هنا نتائجك وتقاريرك وشهاداتك',
 			_ => null,
 		};
 	}

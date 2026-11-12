@@ -122,6 +122,7 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$push1$fr push1 = Traductions$push1$fr.internal(_root);
 	late final Traductions$nouveautes$fr nouveautes = Traductions$nouveautes$fr.internal(_root);
 	late final Traductions$suiviPedagogique$fr suiviPedagogique = Traductions$suiviPedagogique$fr.internal(_root);
+	late final Traductions$apprendre$fr apprendre = Traductions$apprendre$fr.internal(_root);
 }
 
 // Path: commun
@@ -4150,6 +4151,19 @@ class Traductions$suiviPedagogique$fr {
 
 	/// fr: 'Pour {prenom}, l'étape sera fixée après l'entretien de lecture avec la direction.'
 	String attenteEntretienPour({required Object prenom}) => 'Pour ${prenom}, l\'étape sera fixée après l\'entretien de lecture avec la direction.';
+}
+
+// Path: apprendre
+class Traductions$apprendre$fr {
+	Traductions$apprendre$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$apprendre$sections$fr sections = Traductions$apprendre$sections$fr.internal(_root);
+	late final Traductions$apprendre$bibliotheque$fr bibliotheque = Traductions$apprendre$bibliotheque$fr.internal(_root);
+	late final Traductions$apprendre$programme$fr programme = Traductions$apprendre$programme$fr.internal(_root);
+	late final Traductions$apprendre$livret$fr livret = Traductions$apprendre$livret$fr.internal(_root);
 }
 
 // Path: commun.langue
@@ -23707,6 +23721,96 @@ class Traductions$push1$reglages$fr {
 	String get changementNonConfirme => 'Le changement n\'est pas encore confirmé : la connexion a peut-être été coupée. Réessayez dans un instant.';
 }
 
+// Path: apprendre.sections
+class Traductions$apprendre$sections$fr {
+	Traductions$apprendre$sections$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Sections de l'espace Apprendre'
+	String get libelle => 'Sections de l\'espace Apprendre';
+
+	/// fr: 'Bibliothèque'
+	String get bibliotheque => 'Bibliothèque';
+
+	/// fr: 'Programme'
+	String get programme => 'Programme';
+
+	/// fr: 'Mon livret'
+	String get livret => 'Mon livret';
+}
+
+// Path: apprendre.bibliotheque
+class Traductions$apprendre$bibliotheque$fr {
+	Traductions$apprendre$bibliotheque$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Documents des cours'
+	String get rayonCours => 'Documents des cours';
+
+	/// fr: 'Pour aller plus loin'
+	String get rayonPlusLoin => 'Pour aller plus loin';
+
+	late final Traductions$apprendre$bibliotheque$rayonCoursVide$fr rayonCoursVide = Traductions$apprendre$bibliotheque$rayonCoursVide$fr.internal(_root);
+
+	/// fr: 'D'autres documents arriveront ici'
+	String get rayonPlusLoinVide => 'D\'autres documents arriveront ici';
+
+	late final Traductions$apprendre$bibliotheque$affichage$fr affichage = Traductions$apprendre$bibliotheque$affichage$fr.internal(_root);
+	late final Traductions$apprendre$bibliotheque$filtres$fr filtres = Traductions$apprendre$bibliotheque$filtres$fr.internal(_root);
+	late final Traductions$apprendre$bibliotheque$type$fr type = Traductions$apprendre$bibliotheque$type$fr.internal(_root);
+	late final Traductions$apprendre$bibliotheque$aucunResultat$fr aucunResultat = Traductions$apprendre$bibliotheque$aucunResultat$fr.internal(_root);
+	late final Traductions$apprendre$bibliotheque$coran$fr coran = Traductions$apprendre$bibliotheque$coran$fr.internal(_root);
+	late final Traductions$apprendre$bibliotheque$carte$fr carte = Traductions$apprendre$bibliotheque$carte$fr.internal(_root);
+	late final Traductions$apprendre$bibliotheque$lien$fr lien = Traductions$apprendre$bibliotheque$lien$fr.internal(_root);
+}
+
+// Path: apprendre.programme
+class Traductions$apprendre$programme$fr {
+	Traductions$apprendre$programme$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Mon niveau'
+	String get niveau => 'Mon niveau';
+
+	/// fr: 'Étape {ordre} sur {total}'
+	String etapeSur({required Object ordre, required Object total}) => 'Étape ${ordre} sur ${total}';
+
+	/// fr: 'Dates de l'école'
+	String get datesEcole => 'Dates de l\'école';
+
+	/// fr: 'Les dates de l'école seront affichées ici'
+	String get datesEcoleVide => 'Les dates de l\'école seront affichées ici';
+
+	late final Traductions$apprendre$programme$genre$fr genre = Traductions$apprendre$programme$genre$fr.internal(_root);
+
+	/// fr: '{libelle}, {date}'
+	String dateEcole({required Object libelle, required Object date}) => '${libelle}, ${date}';
+}
+
+// Path: apprendre.livret
+class Traductions$apprendre$livret$fr {
+	Traductions$apprendre$livret$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Vos résultats, vos bilans et vos attestations apparaîtront ici'
+	String get vide => 'Vos résultats, vos bilans et vos attestations apparaîtront ici';
+
+	/// fr: 'Tes résultats, tes bilans et tes attestations apparaîtront ici'
+	String get videTu => 'Tes résultats, tes bilans et tes attestations apparaîtront ici';
+}
+
 // Path: commun.etats.recharge1
 class Traductions$commun$etats$recharge1$fr {
 	Traductions$commun$etats$recharge1$fr.internal(this._root);
@@ -41732,6 +41836,171 @@ class Traductions$candidatsFlux$file$reglage$fr {
 
 	/// fr: 'Réglage non confirmé. Cause probable : la connexion au serveur s'est interrompue. Réessayez dans un instant.'
 	String get echec => 'Réglage non confirmé. Cause probable : la connexion au serveur s\'est interrompue. Réessayez dans un instant.';
+}
+
+// Path: apprendre.bibliotheque.rayonCoursVide
+class Traductions$apprendre$bibliotheque$rayonCoursVide$fr {
+	Traductions$apprendre$bibliotheque$rayonCoursVide$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Les documents des cours arriveront ici'
+	String get message => 'Les documents des cours arriveront ici';
+
+	/// fr: 'Ils apparaissent dès que l'académie les publie.'
+	String get invitation => 'Ils apparaissent dès que l\'académie les publie.';
+}
+
+// Path: apprendre.bibliotheque.affichage
+class Traductions$apprendre$bibliotheque$affichage$fr {
+	Traductions$apprendre$bibliotheque$affichage$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Affichage des documents'
+	String get libelle => 'Affichage des documents';
+
+	/// fr: 'Grille'
+	String get grille => 'Grille';
+
+	/// fr: 'Liste'
+	String get liste => 'Liste';
+}
+
+// Path: apprendre.bibliotheque.filtres
+class Traductions$apprendre$bibliotheque$filtres$fr {
+	Traductions$apprendre$bibliotheque$filtres$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Type de document'
+	String get libelle => 'Type de document';
+}
+
+// Path: apprendre.bibliotheque.type
+class Traductions$apprendre$bibliotheque$type$fr {
+	Traductions$apprendre$bibliotheque$type$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Document'
+	String get document => 'Document';
+
+	/// fr: 'Audio'
+	String get audio => 'Audio';
+
+	/// fr: 'Vidéo'
+	String get video => 'Vidéo';
+
+	/// fr: 'Lien externe'
+	String get lienExterne => 'Lien externe';
+}
+
+// Path: apprendre.bibliotheque.aucunResultat
+class Traductions$apprendre$bibliotheque$aucunResultat$fr {
+	Traductions$apprendre$bibliotheque$aucunResultat$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Aucun document de ce type pour le moment'
+	String get message => 'Aucun document de ce type pour le moment';
+
+	/// fr: 'Retirez le filtre pour revoir tous les documents.'
+	String get invitation => 'Retirez le filtre pour revoir tous les documents.';
+}
+
+// Path: apprendre.bibliotheque.coran
+class Traductions$apprendre$bibliotheque$coran$fr {
+	Traductions$apprendre$bibliotheque$coran$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Le Coran'
+	String get titre => 'Le Coran';
+
+	/// fr: 'Édition de Médine'
+	String get edition => 'Édition de Médine';
+}
+
+// Path: apprendre.bibliotheque.carte
+class Traductions$apprendre$bibliotheque$carte$fr {
+	Traductions$apprendre$bibliotheque$carte$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '{titre}, {type}'
+	String document({required Object titre, required Object type}) => '${titre}, ${type}';
+
+	/// fr: '{titre}, lien externe, s'ouvre hors de l'application'
+	String lien({required Object titre}) => '${titre}, lien externe, s\'ouvre hors de l\'application';
+
+	/// fr: 'S'ouvre hors de l'application : {adresse}'
+	String lienAdresse({required Object adresse}) => 'S\'ouvre hors de l\'application : ${adresse}';
+}
+
+// Path: apprendre.bibliotheque.lien
+class Traductions$apprendre$bibliotheque$lien$fr {
+	Traductions$apprendre$bibliotheque$lien$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ouvrir ce lien ?'
+	String get titre => 'Ouvrir ce lien ?';
+
+	/// fr: 'Ce lien est publié par l'académie. Il s'ouvre hors de l'application.'
+	String get corps => 'Ce lien est publié par l\'académie. Il s\'ouvre hors de l\'application.';
+
+	/// fr: 'Ce lien est publié par l'académie. Il s'ouvre hors de l'application, dans ton navigateur.'
+	String get corpsTu => 'Ce lien est publié par l\'académie. Il s\'ouvre hors de l\'application, dans ton navigateur.';
+
+	/// fr: 'Adresse : {adresse}'
+	String adresse({required Object adresse}) => 'Adresse : ${adresse}';
+
+	/// fr: 'Ouvrir le lien'
+	String get ouvrir => 'Ouvrir le lien';
+
+	/// fr: 'Lien copié : collez-le dans votre navigateur.'
+	String get copie => 'Lien copié : collez-le dans votre navigateur.';
+
+	/// fr: 'Lien copié : colle-le dans ton navigateur.'
+	String get copieTu => 'Lien copié : colle-le dans ton navigateur.';
+
+	/// fr: 'Le navigateur a bloqué l'ouverture. Réessayez.'
+	String get bloque => 'Le navigateur a bloqué l\'ouverture. Réessayez.';
+}
+
+// Path: apprendre.programme.genre
+class Traductions$apprendre$programme$genre$fr {
+	Traductions$apprendre$programme$genre$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Évaluation'
+	String get evaluation => 'Évaluation';
+
+	/// fr: 'Fermeture de l'école'
+	String get fermeture => 'Fermeture de l\'école';
+
+	/// fr: 'Rencontre de récitation'
+	String get rencontre => 'Rencontre de récitation';
 }
 
 // Path: salle.preparation.eleve.guidee
@@ -60979,6 +61248,48 @@ extension on Traductions {
 			'suiviPedagogique.attenteEntretien' => 'Votre étape sera fixée après l\'entretien de lecture avec la direction.',
 			'suiviPedagogique.attenteEntretienTu' => 'Ton étape sera fixée après l\'entretien de lecture avec la direction.',
 			'suiviPedagogique.attenteEntretienPour' => ({required Object prenom}) => 'Pour ${prenom}, l\'étape sera fixée après l\'entretien de lecture avec la direction.',
+			'apprendre.sections.libelle' => 'Sections de l\'espace Apprendre',
+			'apprendre.sections.bibliotheque' => 'Bibliothèque',
+			'apprendre.sections.programme' => 'Programme',
+			'apprendre.sections.livret' => 'Mon livret',
+			'apprendre.bibliotheque.rayonCours' => 'Documents des cours',
+			'apprendre.bibliotheque.rayonPlusLoin' => 'Pour aller plus loin',
+			'apprendre.bibliotheque.rayonCoursVide.message' => 'Les documents des cours arriveront ici',
+			'apprendre.bibliotheque.rayonCoursVide.invitation' => 'Ils apparaissent dès que l\'académie les publie.',
+			'apprendre.bibliotheque.rayonPlusLoinVide' => 'D\'autres documents arriveront ici',
+			'apprendre.bibliotheque.affichage.libelle' => 'Affichage des documents',
+			'apprendre.bibliotheque.affichage.grille' => 'Grille',
+			'apprendre.bibliotheque.affichage.liste' => 'Liste',
+			'apprendre.bibliotheque.filtres.libelle' => 'Type de document',
+			'apprendre.bibliotheque.type.document' => 'Document',
+			'apprendre.bibliotheque.type.audio' => 'Audio',
+			'apprendre.bibliotheque.type.video' => 'Vidéo',
+			'apprendre.bibliotheque.type.lienExterne' => 'Lien externe',
+			'apprendre.bibliotheque.aucunResultat.message' => 'Aucun document de ce type pour le moment',
+			'apprendre.bibliotheque.aucunResultat.invitation' => 'Retirez le filtre pour revoir tous les documents.',
+			'apprendre.bibliotheque.coran.titre' => 'Le Coran',
+			'apprendre.bibliotheque.coran.edition' => 'Édition de Médine',
+			'apprendre.bibliotheque.carte.document' => ({required Object titre, required Object type}) => '${titre}, ${type}',
+			'apprendre.bibliotheque.carte.lien' => ({required Object titre}) => '${titre}, lien externe, s\'ouvre hors de l\'application',
+			'apprendre.bibliotheque.carte.lienAdresse' => ({required Object adresse}) => 'S\'ouvre hors de l\'application : ${adresse}',
+			'apprendre.bibliotheque.lien.titre' => 'Ouvrir ce lien ?',
+			'apprendre.bibliotheque.lien.corps' => 'Ce lien est publié par l\'académie. Il s\'ouvre hors de l\'application.',
+			'apprendre.bibliotheque.lien.corpsTu' => 'Ce lien est publié par l\'académie. Il s\'ouvre hors de l\'application, dans ton navigateur.',
+			'apprendre.bibliotheque.lien.adresse' => ({required Object adresse}) => 'Adresse : ${adresse}',
+			'apprendre.bibliotheque.lien.ouvrir' => 'Ouvrir le lien',
+			'apprendre.bibliotheque.lien.copie' => 'Lien copié : collez-le dans votre navigateur.',
+			'apprendre.bibliotheque.lien.copieTu' => 'Lien copié : colle-le dans ton navigateur.',
+			'apprendre.bibliotheque.lien.bloque' => 'Le navigateur a bloqué l\'ouverture. Réessayez.',
+			'apprendre.programme.niveau' => 'Mon niveau',
+			'apprendre.programme.etapeSur' => ({required Object ordre, required Object total}) => 'Étape ${ordre} sur ${total}',
+			'apprendre.programme.datesEcole' => 'Dates de l\'école',
+			'apprendre.programme.datesEcoleVide' => 'Les dates de l\'école seront affichées ici',
+			'apprendre.programme.genre.evaluation' => 'Évaluation',
+			'apprendre.programme.genre.fermeture' => 'Fermeture de l\'école',
+			'apprendre.programme.genre.rencontre' => 'Rencontre de récitation',
+			'apprendre.programme.dateEcole' => ({required Object libelle, required Object date}) => '${libelle}, ${date}',
+			'apprendre.livret.vide' => 'Vos résultats, vos bilans et vos attestations apparaîtront ici',
+			'apprendre.livret.videTu' => 'Tes résultats, tes bilans et tes attestations apparaîtront ici',
 			_ => null,
 		};
 	}
