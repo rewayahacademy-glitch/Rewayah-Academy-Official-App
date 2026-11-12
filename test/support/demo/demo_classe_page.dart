@@ -111,6 +111,7 @@ String libelleEtatDemoClasse(EtatDemoClasse etat) => switch (etat) {
   EtatDemoClasse.horsLigne => t.classe.entree.demo.etats.horsLigne,
   EtatDemoClasse.indisponible => t.classe.entree.demo.etats.indisponible,
   EtatDemoClasse.changementHeure => t.classe.entree.demo.etats.changementHeure,
+  EtatDemoClasse.dansQuatreJours => t.classe.entree.demo.etats.aVenir,
 };
 
 /// La page : la liste, ou le recapitulatif si [role] et [etat] sont donnes.

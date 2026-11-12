@@ -8195,6 +8195,8 @@
     "entree": {
       "coursDans": "Cours dans {duree}",
       "coursImminent": "Cours dans moins d'une minute",
+      "coursDemainA": "Cours demain à {heure}",
+      "coursDansJours(param=jours)": {"one": "Cours dans {jours} jour", "other": "Cours dans {jours} jours"},
       "revenirAvant": "Ce cours ne vous est pas ouvert en ce moment. Revenez 20 minutes avant l'heure du cours.",
       "rejoindre": "Rejoindre",
       "rejoindreLecteur": "Rejoindre la séance {deClasse}",
