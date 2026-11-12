@@ -35,8 +35,9 @@ class PlaygroundRacine extends StatefulWidget {
 }
 
 class _PlaygroundRacineState extends State<PlaygroundRacine> {
-  late final List<Persona> _personas =
-      personasDuBench(maintenant: DateTime.now());
+  late final List<Persona> _personas = personasDuBench(
+    maintenant: DateTime.now(),
+  );
 
   /// Personne montee, ou null tant que le menu est affiche.
   Persona? _montage;
@@ -54,8 +55,7 @@ class _PlaygroundRacineState extends State<PlaygroundRacine> {
         theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
         home: _Menu(
           personas: _personas,
-          onChoisir: (Persona personne) =>
-              setState(() => _montage = personne),
+          onChoisir: (Persona personne) => setState(() => _montage = personne),
         ),
       );
     }

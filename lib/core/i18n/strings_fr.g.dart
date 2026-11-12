@@ -1652,6 +1652,26 @@ class Traductions$priere$fr {
 
 	/// fr: 'L'enseignant n'a pas encore réglé ses horaires de prière.'
 	String get reglagesAbsents => 'L\'enseignant n\'a pas encore réglé ses horaires de prière.';
+
+	/// fr: 'Pause de prière'
+	String get pauseDePriere => 'Pause de prière';
+
+	/// fr: 'Pause de prière à {heure}'
+	String pauseA({required Object heure}) => 'Pause de prière à ${heure}';
+
+	/// fr: 'Heure approchée : à cette saison, le soleil ne descend pas assez bas pour que l'angle se définisse.'
+	String get approchee => 'Heure approchée : à cette saison, le soleil ne descend pas assez bas pour que l\'angle se définisse.';
+
+	late final Traductions$priere$methodes$fr methodes = Traductions$priere$methodes$fr.internal(_root);
+	late final Traductions$priere$ecoles$fr ecoles = Traductions$priere$ecoles$fr.internal(_root);
+
+	/// fr: 'Valeur par défaut en vigueur, à valider par le directeur et ses associés.'
+	String get aValider => 'Valeur par défaut en vigueur, à valider par le directeur et ses associés.';
+
+	late final Traductions$priere$enseignant$fr enseignant = Traductions$priere$enseignant$fr.internal(_root);
+	late final Traductions$priere$direction$fr direction = Traductions$priere$direction$fr.internal(_root);
+	late final Traductions$priere$classe$fr classe = Traductions$priere$classe$fr.internal(_root);
+	late final Traductions$priere$regles$fr regles = Traductions$priere$regles$fr.internal(_root);
 }
 
 // Path: eleveConnexion
@@ -7937,6 +7957,284 @@ class Traductions$ficheEleve$mouvements$fr {
 
 	/// fr: 'Les mouvements de ce profil n'ont pas pu être chargés'
 	String get sansDonnees => 'Les mouvements de ce profil n\'ont pas pu être chargés';
+}
+
+// Path: priere.methodes
+class Traductions$priere$methodes$fr {
+	Traductions$priere$methodes$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ligue islamique mondiale'
+	String get muslim_world_league => 'Ligue islamique mondiale';
+
+	/// fr: 'Autorité générale égyptienne'
+	String get egyptian => 'Autorité générale égyptienne';
+
+	/// fr: 'Université des sciences islamiques de Karachi'
+	String get karachi => 'Université des sciences islamiques de Karachi';
+
+	/// fr: 'Umm al-Qura (La Mecque)'
+	String get umm_al_qura => 'Umm al-Qura (La Mecque)';
+
+	/// fr: 'Golfe'
+	String get dubai => 'Golfe';
+
+	/// fr: 'Moon Sighting Committee'
+	String get moon_sighting_committee => 'Moon Sighting Committee';
+
+	/// fr: 'ISNA (Amérique du Nord)'
+	String get north_america => 'ISNA (Amérique du Nord)';
+
+	/// fr: 'Koweït'
+	String get kuwait => 'Koweït';
+
+	/// fr: 'Qatar'
+	String get qatar => 'Qatar';
+
+	/// fr: 'Singapour'
+	String get singapore => 'Singapour';
+
+	/// fr: 'Téhéran'
+	String get tehran => 'Téhéran';
+
+	/// fr: 'Diyanet (Turquie)'
+	String get turkey => 'Diyanet (Turquie)';
+}
+
+// Path: priere.ecoles
+class Traductions$priere$ecoles$fr {
+	Traductions$priere$ecoles$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Selon la majorité des écoles (l'ombre égale l'objet)'
+	String get shafi => 'Selon la majorité des écoles (l\'ombre égale l\'objet)';
+
+	/// fr: 'Ombre double (école hanafite)'
+	String get hanafi => 'Ombre double (école hanafite)';
+}
+
+// Path: priere.enseignant
+class Traductions$priere$enseignant$fr {
+	Traductions$priere$enseignant$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Mes heures de prière'
+	String get titre => 'Mes heures de prière';
+
+	/// fr: 'Les heures du jour, calculées par Rewayah pour votre lieu. Vous pouvez ajuster chaque prière de 30 minutes au plus.'
+	String get intro => 'Les heures du jour, calculées par Rewayah pour votre lieu. Vous pouvez ajuster chaque prière de 30 minutes au plus.';
+
+	/// fr: 'Mes heures de prière'
+	String get ligne => 'Mes heures de prière';
+
+	/// fr: 'Voir vos heures du jour et les ajuster'
+	String get ligneDetail => 'Voir vos heures du jour et les ajuster';
+
+	/// fr: 'Votre lieu de prière n'est pas encore posé. La direction le pose : vos heures apparaîtront ici.'
+	String get vide => 'Votre lieu de prière n\'est pas encore posé. La direction le pose : vos heures apparaîtront ici.';
+
+	/// fr: 'Vos heures de prière ne se sont pas affichées. Il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
+	String get erreur => 'Vos heures de prière ne se sont pas affichées. Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
+
+	/// fr: 'Aucun ajustement'
+	String get aucunAjustement => 'Aucun ajustement';
+
+	/// fr: '{minutes} min en plus'
+	String plus({required Object minutes}) => '${minutes} min en plus';
+
+	/// fr: '{minutes} min en moins'
+	String moins({required Object minutes}) => '${minutes} min en moins';
+
+	/// fr: 'De 30 minutes en moins à 30 minutes en plus. L'ajustement déplace aussi la pause de prière de vos cours.'
+	String get feuilleAide => 'De 30 minutes en moins à 30 minutes en plus. L\'ajustement déplace aussi la pause de prière de vos cours.';
+
+	/// fr: 'Ajustement'
+	String get champ => 'Ajustement';
+
+	/// fr: 'Enregistrer'
+	String get enregistrer => 'Enregistrer';
+
+	/// fr: 'L'ajustement n'a pas été enregistré. Il est possible qu'il ne soit pas parvenu jusqu'à Rewayah. Réessayez dans un instant.'
+	String get erreurEnregistrement => 'L\'ajustement n\'a pas été enregistré. Il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Réessayez dans un instant.';
+
+	/// fr: '{n} min'
+	String unite({required Object n}) => '${n} min';
+}
+
+// Path: priere.direction
+class Traductions$priere$direction$fr {
+	Traductions$priere$direction$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Prière'
+	String get onglet => 'Prière';
+
+	/// fr: 'Lieux de prière'
+	String get titre => 'Lieux de prière';
+
+	/// fr: 'Le lieu de prière de chaque enseignant fixe ses heures. Seuls l'enseignant et la direction le voient : les élèves et les tuteurs ne lisent que l'heure de la pause.'
+	String get intro => 'Le lieu de prière de chaque enseignant fixe ses heures. Seuls l\'enseignant et la direction le voient : les élèves et les tuteurs ne lisent que l\'heure de la pause.';
+
+	/// fr: 'Aucun lieu : pas de pause de prière'
+	String get sansLieu => 'Aucun lieu : pas de pause de prière';
+
+	/// fr: 'Aucun enseignant actif pour le moment.'
+	String get vide => 'Aucun enseignant actif pour le moment.';
+
+	/// fr: 'Les lieux de prière ne se sont pas affichés. Il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
+	String get erreur => 'Les lieux de prière ne se sont pas affichés. Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
+
+	/// fr: 'Assiste à la prière du vendredi'
+	String get vendredi => 'Assiste à la prière du vendredi';
+
+	/// fr: 'À vérifier'
+	String get incoherenceTitre => 'À vérifier';
+
+	/// fr: 'Signalement seulement : rien n'est corrigé automatiquement.'
+	String get incoherenceAide => 'Signalement seulement : rien n\'est corrigé automatiquement.';
+
+	/// fr: '{prenom} : le fuseau du compte et celui du lieu de prière diffèrent ({detail}).'
+	String incoherenceFuseauCompte({required Object prenom, required Object detail}) => '${prenom} : le fuseau du compte et celui du lieu de prière diffèrent (${detail}).';
+
+	/// fr: '{prenom} : le fuseau du lieu de prière ne correspond pas à sa longitude ({detail}).'
+	String incoherenceFuseauLieu({required Object prenom, required Object detail}) => '${prenom} : le fuseau du lieu de prière ne correspond pas à sa longitude (${detail}).';
+
+	/// fr: '{prenom} : le pays du compte ({detail}) ne correspond pas au lieu de prière.'
+	String incoherencePays({required Object prenom, required Object detail}) => '${prenom} : le pays du compte (${detail}) ne correspond pas au lieu de prière.';
+
+	late final Traductions$priere$direction$feuille$fr feuille = Traductions$priere$direction$feuille$fr.internal(_root);
+}
+
+// Path: priere.classe
+class Traductions$priere$classe$fr {
+	Traductions$priere$classe$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Prières et créneau'
+	String get titre => 'Prières et créneau';
+
+	/// fr: 'Ce que ce créneau croise, sur les 12 mois à venir, pour l'enseignant de la classe. C'est un avertissement : rien n'est bloqué, et la pause de prière protège de toute façon l'enseignant.'
+	String get intro => 'Ce que ce créneau croise, sur les 12 mois à venir, pour l\'enseignant de la classe. C\'est un avertissement : rien n\'est bloqué, et la pause de prière protège de toute façon l\'enseignant.';
+
+	/// fr: 'L'enseignant de cette classe n'a pas de lieu de prière : aucune pause de prière n'est prévue.'
+	String get sansLieu => 'L\'enseignant de cette classe n\'a pas de lieu de prière : aucune pause de prière n\'est prévue.';
+
+	/// fr: 'Les prières de ce créneau ne se sont pas affichées. Il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
+	String get erreur => 'Les prières de ce créneau ne se sont pas affichées. Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
+
+	/// fr: '{jour}, {heure} h, {duree} min'
+	String creneau({required Object jour, required Object heure, required Object duree}) => '${jour}, ${heure} h, ${duree} min';
+
+	/// fr: 'Ce créneau ne croise aucune prière de l'enseignant sur les 12 mois.'
+	String get aucun => 'Ce créneau ne croise aucune prière de l\'enseignant sur les 12 mois.';
+
+	/// fr: '{priere} : du {du} au {au}, {seances} séances, dont {pause} avec une pause de prière et {apres} où l'enseignant prie après le cours.'
+	String croise({required Object priere, required Object du, required Object au, required Object seances, required Object pause, required Object apres}) => '${priere} : du ${du} au ${au}, ${seances} séances, dont ${pause} avec une pause de prière et ${apres} où l\'enseignant prie après le cours.';
+
+	/// fr: 'Pour une partie de l'année, le soleil ne se lève ou ne se couche pas : aucune pause de prière n'est calculée.'
+	String get indefini => 'Pour une partie de l\'année, le soleil ne se lève ou ne se couche pas : aucune pause de prière n\'est calculée.';
+
+	/// fr: 'Ce créneau chevauche la prière du vendredi de l'enseignant ({debut} à {fin}) : {n} séances de l'année. Avertissement fort.'
+	String vendredi({required Object debut, required Object fin, required Object n}) => 'Ce créneau chevauche la prière du vendredi de l\'enseignant (${debut} à ${fin}) : ${n} séances de l\'année. Avertissement fort.';
+
+	/// fr: 'Heures de début sans prière ce jour-là : {heures}.'
+	String libres({required Object heures}) => 'Heures de début sans prière ce jour-là : ${heures}.';
+
+	/// fr: 'Aucune heure de début ce jour-là n'évite toutes les prières de l'année.'
+	String get libresAucune => 'Aucune heure de début ce jour-là n\'évite toutes les prières de l\'année.';
+
+	/// fr: 'Les heures sans prière ne peuvent pas être dites pour cet enseignant.'
+	String get libresInconnues => 'Les heures sans prière ne peuvent pas être dites pour cet enseignant.';
+}
+
+// Path: priere.regles
+class Traductions$priere$regles$fr {
+	Traductions$priere$regles$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'La prière'
+	String get section => 'La prière';
+
+	/// fr: 'Le serveur place la pause de prière de l'enseignant quand une prière entre pendant la séance. Ces réglages valent pour toute l'école.'
+	String get intro => 'Le serveur place la pause de prière de l\'enseignant quand une prière entre pendant la séance. Ces réglages valent pour toute l\'école.';
+
+	/// fr: 'Méthode de calcul'
+	String get methode => 'Méthode de calcul';
+
+	/// fr: 'Les angles du Fajr et de l'Isha. Un enseignant peut avoir la sienne.'
+	String get methodeDetail => 'Les angles du Fajr et de l\'Isha. Un enseignant peut avoir la sienne.';
+
+	/// fr: 'École pour l'Asr'
+	String get ecole => 'École pour l\'Asr';
+
+	/// fr: 'L'heure d'entrée de l'Asr. Un enseignant peut avoir la sienne.'
+	String get ecoleDetail => 'L\'heure d\'entrée de l\'Asr. Un enseignant peut avoir la sienne.';
+
+	/// fr: 'Durée de la pause de prière'
+	String get pause => 'Durée de la pause de prière';
+
+	/// fr: 'De 5 à 20 minutes, par pas de 5.'
+	String get pauseDetail => 'De 5 à 20 minutes, par pas de 5.';
+
+	/// fr: 'Pause du Maghrib pendant le Ramadan'
+	String get pauseRamadan => 'Pause du Maghrib pendant le Ramadan';
+
+	/// fr: 'La rupture du jeûne : de 5 à 20 minutes, par pas de 5.'
+	String get pauseRamadanDetail => 'La rupture du jeûne : de 5 à 20 minutes, par pas de 5.';
+
+	/// fr: 'Ramadan en cours'
+	String get ramadan => 'Ramadan en cours';
+
+	/// fr: 'En attendant le calendrier de l'école, la direction le pose à la main.'
+	String get ramadanDetail => 'En attendant le calendrier de l\'école, la direction le pose à la main.';
+
+	/// fr: 'Marge au début'
+	String get margeDebut => 'Marge au début';
+
+	/// fr: 'Une prière qui entre dans ces premières minutes place la pause à cette minute du cours.'
+	String get margeDebutDetail => 'Une prière qui entre dans ces premières minutes place la pause à cette minute du cours.';
+
+	/// fr: 'Marge à la fin'
+	String get margeFin => 'Marge à la fin';
+
+	/// fr: 'Une prière qui entre dans ces dernières minutes se prie après le cours.'
+	String get margeFinDetail => 'Une prière qui entre dans ces dernières minutes se prie après le cours.';
+
+	/// fr: 'Recalcul de nuit'
+	String get horizon => 'Recalcul de nuit';
+
+	/// fr: 'Chaque nuit, les pauses des séances de ces prochains jours sont recalculées.'
+	String get horizonDetail => 'Chaque nuit, les pauses des séances de ces prochains jours sont recalculées.';
+
+	/// fr: '{n} min'
+	String unite({required Object n}) => '${n} min';
+
+	/// fr: '{n} jours'
+	String uniteJours({required Object n}) => '${n} jours';
+
+	/// fr: 'Enregistrer'
+	String get choisir => 'Enregistrer';
+
+	/// fr: 'Le réglage n'a pas été enregistré ({message}). Réessayez dans un instant.'
+	String erreurEcriture({required Object message}) => 'Le réglage n\'a pas été enregistré (${message}). Réessayez dans un instant.';
 }
 
 // Path: eleveConnexion.profils
@@ -14574,11 +14872,11 @@ class Traductions$eleve$accueil$fr {
 	/// fr: 'Tu pourras entrer dès que le réseau revient.'
 	String get horsLigneDetail => 'Tu pourras entrer dès que le réseau revient.';
 
-	/// fr: 'Pause pour la prière'
-	String get pausePriere => 'Pause pour la prière';
+	/// fr: 'Pause de prière'
+	String get pausePriere => 'Pause de prière';
 
-	/// fr: '{priere}, vers {heure}'
-	String pausePriereDetail({required Object priere, required Object heure}) => '${priere}, vers ${heure}';
+	/// fr: 'À {heure}'
+	String pausePriereDetail({required Object heure}) => 'À ${heure}';
 
 	/// fr: '(one) {Ton prochain cours est dans {jours} jour.} (other) {Ton prochain cours est dans {jours} jours.}'
 	String prochainDansJours({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours,
@@ -25381,6 +25679,81 @@ class Traductions$ficheEleve$mouvements$recu$fr {
 
 	/// fr: 'Répartition'
 	String get repartition => 'Répartition';
+}
+
+// Path: priere.direction.feuille
+class Traductions$priere$direction$feuille$fr {
+	Traductions$priere$direction$feuille$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Lieu et heures de prière de {prenom}'
+	String titre({required Object prenom}) => 'Lieu et heures de prière de ${prenom}';
+
+	/// fr: 'Nom du lieu'
+	String get nomLieu => 'Nom du lieu';
+
+	/// fr: 'Latitude'
+	String get latitude => 'Latitude';
+
+	/// fr: 'Longitude'
+	String get longitude => 'Longitude';
+
+	/// fr: 'En degrés décimaux, avec un point (par exemple 9.6412 et -13.5784).'
+	String get coordonneesAide => 'En degrés décimaux, avec un point (par exemple 9.6412 et -13.5784).';
+
+	/// fr: 'Fuseau (par exemple Africa/Conakry)'
+	String get fuseau => 'Fuseau (par exemple Africa/Conakry)';
+
+	/// fr: 'Méthode de calcul'
+	String get methode => 'Méthode de calcul';
+
+	/// fr: 'Celle de l'école'
+	String get methodeEcole => 'Celle de l\'école';
+
+	/// fr: 'École pour l'Asr'
+	String get ecole => 'École pour l\'Asr';
+
+	/// fr: 'Celle de l'école'
+	String get ecoleEcole => 'Celle de l\'école';
+
+	/// fr: 'Assiste à la prière du vendredi'
+	String get vendredi => 'Assiste à la prière du vendredi';
+
+	/// fr: 'Oui'
+	String get vendrediOui => 'Oui';
+
+	/// fr: 'Non'
+	String get vendrediNon => 'Non';
+
+	/// fr: 'Début de la plage du vendredi'
+	String get vendrediDebut => 'Début de la plage du vendredi';
+
+	/// fr: 'Fin de la plage du vendredi'
+	String get vendrediFin => 'Fin de la plage du vendredi';
+
+	/// fr: 'Heure de l'enseignant, au format HH:MM. Un créneau qui chevauche cette plage est signalé à la direction, sans blocage.'
+	String get plageAide => 'Heure de l\'enseignant, au format HH:MM. Un créneau qui chevauche cette plage est signalé à la direction, sans blocage.';
+
+	/// fr: 'Heures du jour'
+	String get apercu => 'Heures du jour';
+
+	/// fr: 'Aucune heure à montrer tant que le lieu n'est pas enregistré.'
+	String get apercuVide => 'Aucune heure à montrer tant que le lieu n\'est pas enregistré.';
+
+	/// fr: 'Enregistrer le lieu'
+	String get enregistrer => 'Enregistrer le lieu';
+
+	/// fr: 'Retirer le lieu'
+	String get retirer => 'Retirer le lieu';
+
+	/// fr: 'Vérifiez le nom du lieu, les coordonnées, le fuseau et la plage du vendredi.'
+	String get invalide => 'Vérifiez le nom du lieu, les coordonnées, le fuseau et la plage du vendredi.';
+
+	/// fr: 'Le lieu n'a pas été enregistré. Il est possible qu'il ne soit pas parvenu jusqu'à Rewayah, ou qu'une valeur soit refusée. Réessayez dans un instant.'
+	String get erreurEnregistrement => 'Le lieu n\'a pas été enregistré. Il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah, ou qu\'une valeur soit refusée. Réessayez dans un instant.';
 }
 
 // Path: recrutement.invitations.etat
@@ -50676,6 +51049,106 @@ extension on Traductions {
 			'priere.lieuSansNom' => 'Horaires calculés pour le lieu de l\'enseignant',
 			'priere.ajustee' => ({required Object priere, required Object minutes}) => '${priere} ajustée de ${minutes} min par l\'enseignant',
 			'priere.reglagesAbsents' => 'L\'enseignant n\'a pas encore réglé ses horaires de prière.',
+			'priere.pauseDePriere' => 'Pause de prière',
+			'priere.pauseA' => ({required Object heure}) => 'Pause de prière à ${heure}',
+			'priere.approchee' => 'Heure approchée : à cette saison, le soleil ne descend pas assez bas pour que l\'angle se définisse.',
+			'priere.methodes.muslim_world_league' => 'Ligue islamique mondiale',
+			'priere.methodes.egyptian' => 'Autorité générale égyptienne',
+			'priere.methodes.karachi' => 'Université des sciences islamiques de Karachi',
+			'priere.methodes.umm_al_qura' => 'Umm al-Qura (La Mecque)',
+			'priere.methodes.dubai' => 'Golfe',
+			'priere.methodes.moon_sighting_committee' => 'Moon Sighting Committee',
+			'priere.methodes.north_america' => 'ISNA (Amérique du Nord)',
+			'priere.methodes.kuwait' => 'Koweït',
+			'priere.methodes.qatar' => 'Qatar',
+			'priere.methodes.singapore' => 'Singapour',
+			'priere.methodes.tehran' => 'Téhéran',
+			'priere.methodes.turkey' => 'Diyanet (Turquie)',
+			'priere.ecoles.shafi' => 'Selon la majorité des écoles (l\'ombre égale l\'objet)',
+			'priere.ecoles.hanafi' => 'Ombre double (école hanafite)',
+			'priere.aValider' => 'Valeur par défaut en vigueur, à valider par le directeur et ses associés.',
+			'priere.enseignant.titre' => 'Mes heures de prière',
+			'priere.enseignant.intro' => 'Les heures du jour, calculées par Rewayah pour votre lieu. Vous pouvez ajuster chaque prière de 30 minutes au plus.',
+			'priere.enseignant.ligne' => 'Mes heures de prière',
+			'priere.enseignant.ligneDetail' => 'Voir vos heures du jour et les ajuster',
+			'priere.enseignant.vide' => 'Votre lieu de prière n\'est pas encore posé. La direction le pose : vos heures apparaîtront ici.',
+			'priere.enseignant.erreur' => 'Vos heures de prière ne se sont pas affichées. Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
+			'priere.enseignant.aucunAjustement' => 'Aucun ajustement',
+			'priere.enseignant.plus' => ({required Object minutes}) => '${minutes} min en plus',
+			'priere.enseignant.moins' => ({required Object minutes}) => '${minutes} min en moins',
+			'priere.enseignant.feuilleAide' => 'De 30 minutes en moins à 30 minutes en plus. L\'ajustement déplace aussi la pause de prière de vos cours.',
+			'priere.enseignant.champ' => 'Ajustement',
+			'priere.enseignant.enregistrer' => 'Enregistrer',
+			'priere.enseignant.erreurEnregistrement' => 'L\'ajustement n\'a pas été enregistré. Il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Réessayez dans un instant.',
+			'priere.enseignant.unite' => ({required Object n}) => '${n} min',
+			'priere.direction.onglet' => 'Prière',
+			'priere.direction.titre' => 'Lieux de prière',
+			'priere.direction.intro' => 'Le lieu de prière de chaque enseignant fixe ses heures. Seuls l\'enseignant et la direction le voient : les élèves et les tuteurs ne lisent que l\'heure de la pause.',
+			'priere.direction.sansLieu' => 'Aucun lieu : pas de pause de prière',
+			'priere.direction.vide' => 'Aucun enseignant actif pour le moment.',
+			'priere.direction.erreur' => 'Les lieux de prière ne se sont pas affichés. Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
+			'priere.direction.vendredi' => 'Assiste à la prière du vendredi',
+			'priere.direction.incoherenceTitre' => 'À vérifier',
+			'priere.direction.incoherenceAide' => 'Signalement seulement : rien n\'est corrigé automatiquement.',
+			'priere.direction.incoherenceFuseauCompte' => ({required Object prenom, required Object detail}) => '${prenom} : le fuseau du compte et celui du lieu de prière diffèrent (${detail}).',
+			'priere.direction.incoherenceFuseauLieu' => ({required Object prenom, required Object detail}) => '${prenom} : le fuseau du lieu de prière ne correspond pas à sa longitude (${detail}).',
+			'priere.direction.incoherencePays' => ({required Object prenom, required Object detail}) => '${prenom} : le pays du compte (${detail}) ne correspond pas au lieu de prière.',
+			'priere.direction.feuille.titre' => ({required Object prenom}) => 'Lieu et heures de prière de ${prenom}',
+			'priere.direction.feuille.nomLieu' => 'Nom du lieu',
+			'priere.direction.feuille.latitude' => 'Latitude',
+			'priere.direction.feuille.longitude' => 'Longitude',
+			'priere.direction.feuille.coordonneesAide' => 'En degrés décimaux, avec un point (par exemple 9.6412 et -13.5784).',
+			'priere.direction.feuille.fuseau' => 'Fuseau (par exemple Africa/Conakry)',
+			'priere.direction.feuille.methode' => 'Méthode de calcul',
+			'priere.direction.feuille.methodeEcole' => 'Celle de l\'école',
+			'priere.direction.feuille.ecole' => 'École pour l\'Asr',
+			'priere.direction.feuille.ecoleEcole' => 'Celle de l\'école',
+			'priere.direction.feuille.vendredi' => 'Assiste à la prière du vendredi',
+			'priere.direction.feuille.vendrediOui' => 'Oui',
+			'priere.direction.feuille.vendrediNon' => 'Non',
+			'priere.direction.feuille.vendrediDebut' => 'Début de la plage du vendredi',
+			'priere.direction.feuille.vendrediFin' => 'Fin de la plage du vendredi',
+			'priere.direction.feuille.plageAide' => 'Heure de l\'enseignant, au format HH:MM. Un créneau qui chevauche cette plage est signalé à la direction, sans blocage.',
+			'priere.direction.feuille.apercu' => 'Heures du jour',
+			'priere.direction.feuille.apercuVide' => 'Aucune heure à montrer tant que le lieu n\'est pas enregistré.',
+			'priere.direction.feuille.enregistrer' => 'Enregistrer le lieu',
+			'priere.direction.feuille.retirer' => 'Retirer le lieu',
+			'priere.direction.feuille.invalide' => 'Vérifiez le nom du lieu, les coordonnées, le fuseau et la plage du vendredi.',
+			'priere.direction.feuille.erreurEnregistrement' => 'Le lieu n\'a pas été enregistré. Il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah, ou qu\'une valeur soit refusée. Réessayez dans un instant.',
+			'priere.classe.titre' => 'Prières et créneau',
+			'priere.classe.intro' => 'Ce que ce créneau croise, sur les 12 mois à venir, pour l\'enseignant de la classe. C\'est un avertissement : rien n\'est bloqué, et la pause de prière protège de toute façon l\'enseignant.',
+			'priere.classe.sansLieu' => 'L\'enseignant de cette classe n\'a pas de lieu de prière : aucune pause de prière n\'est prévue.',
+			'priere.classe.erreur' => 'Les prières de ce créneau ne se sont pas affichées. Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
+			'priere.classe.creneau' => ({required Object jour, required Object heure, required Object duree}) => '${jour}, ${heure} h, ${duree} min',
+			'priere.classe.aucun' => 'Ce créneau ne croise aucune prière de l\'enseignant sur les 12 mois.',
+			'priere.classe.croise' => ({required Object priere, required Object du, required Object au, required Object seances, required Object pause, required Object apres}) => '${priere} : du ${du} au ${au}, ${seances} séances, dont ${pause} avec une pause de prière et ${apres} où l\'enseignant prie après le cours.',
+			'priere.classe.indefini' => 'Pour une partie de l\'année, le soleil ne se lève ou ne se couche pas : aucune pause de prière n\'est calculée.',
+			'priere.classe.vendredi' => ({required Object debut, required Object fin, required Object n}) => 'Ce créneau chevauche la prière du vendredi de l\'enseignant (${debut} à ${fin}) : ${n} séances de l\'année. Avertissement fort.',
+			'priere.classe.libres' => ({required Object heures}) => 'Heures de début sans prière ce jour-là : ${heures}.',
+			'priere.classe.libresAucune' => 'Aucune heure de début ce jour-là n\'évite toutes les prières de l\'année.',
+			'priere.classe.libresInconnues' => 'Les heures sans prière ne peuvent pas être dites pour cet enseignant.',
+			'priere.regles.section' => 'La prière',
+			'priere.regles.intro' => 'Le serveur place la pause de prière de l\'enseignant quand une prière entre pendant la séance. Ces réglages valent pour toute l\'école.',
+			'priere.regles.methode' => 'Méthode de calcul',
+			'priere.regles.methodeDetail' => 'Les angles du Fajr et de l\'Isha. Un enseignant peut avoir la sienne.',
+			'priere.regles.ecole' => 'École pour l\'Asr',
+			'priere.regles.ecoleDetail' => 'L\'heure d\'entrée de l\'Asr. Un enseignant peut avoir la sienne.',
+			'priere.regles.pause' => 'Durée de la pause de prière',
+			'priere.regles.pauseDetail' => 'De 5 à 20 minutes, par pas de 5.',
+			'priere.regles.pauseRamadan' => 'Pause du Maghrib pendant le Ramadan',
+			'priere.regles.pauseRamadanDetail' => 'La rupture du jeûne : de 5 à 20 minutes, par pas de 5.',
+			'priere.regles.ramadan' => 'Ramadan en cours',
+			'priere.regles.ramadanDetail' => 'En attendant le calendrier de l\'école, la direction le pose à la main.',
+			'priere.regles.margeDebut' => 'Marge au début',
+			'priere.regles.margeDebutDetail' => 'Une prière qui entre dans ces premières minutes place la pause à cette minute du cours.',
+			'priere.regles.margeFin' => 'Marge à la fin',
+			'priere.regles.margeFinDetail' => 'Une prière qui entre dans ces dernières minutes se prie après le cours.',
+			'priere.regles.horizon' => 'Recalcul de nuit',
+			'priere.regles.horizonDetail' => 'Chaque nuit, les pauses des séances de ces prochains jours sont recalculées.',
+			'priere.regles.unite' => ({required Object n}) => '${n} min',
+			'priere.regles.uniteJours' => ({required Object n}) => '${n} jours',
+			'priere.regles.choisir' => 'Enregistrer',
+			'priere.regles.erreurEcriture' => ({required Object message}) => 'Le réglage n\'a pas été enregistré (${message}). Réessayez dans un instant.',
 			'eleveConnexion.entrerCode' => 'J\'ai un code',
 			'eleveConnexion.scanner' => 'Scanner le carré',
 			'eleveConnexion.choisirProfil' => 'Qui es-tu ?',
@@ -50805,6 +51278,8 @@ extension on Traductions {
 			'recrutement.candidat.titre' => 'Votre code',
 			'recrutement.candidat.intro' => 'Pour vous inscrire comme enseignant, saisissez le code d\'invitation reçu de la direction.',
 			'recrutement.candidat.champ' => 'Code d\'invitation',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.candidat.champVide' => 'Saisissez le code d\'invitation reçu.',
 			'recrutement.candidat.verifier' => 'Vérifier le code',
 			'recrutement.candidat.valide' => ({required Object date}) => 'Invitation valide jusqu\'au ${date}.',
@@ -50905,8 +51380,6 @@ extension on Traductions {
 			'recrutement.portail.relire' => 'Relire ma candidature',
 			'recrutement.portail.toutIci' => 'Tout se fait ici. Ce qui est déjà fait est marqué « Fait ».',
 			'recrutement.portail.listeTitre' => 'Ce qu\'il faut pour envoyer',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.portail.etatFait' => 'Fait',
 			'recrutement.portail.etatADeposer' => 'À déposer',
 			'recrutement.portail.elementAccords' => 'Le contrat et nos accords',
@@ -51319,6 +51792,8 @@ extension on Traductions {
 			'recrutement.parcours.q.publics.options.o_14_17.description' => 'Le même contenu que pour les 10 à 13 ans : le livre de lecture, et Al-Fatiha dès la première semaine.',
 			'recrutement.parcours.q.publics.options.o_14_17.explication' => 'Des Classes de 5 adolescents au plus (4 pour des débutants), trois séances d\'une heure par semaine.',
 			'recrutement.parcours.q.publics.options.o_14_17.exemple' => 'une Classe d\'élèves de seize ans, trois fois par semaine.',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.q.publics.options.adultes.libelle' => 'Des adultes (18 ans et plus)',
 			'recrutement.parcours.q.publics.options.adultes.description' => 'Les adultes apprennent d\'abord à lire avec le livre de Rewayah. Après les bases, l\'élève choisit de lire tout le Coran ou de le mémoriser, sur le conseil de l\'enseignant.',
 			'recrutement.parcours.q.publics.options.adultes.explication' => 'Des Classes de 6 adultes au plus (4 pour des débutants), trois séances d\'une heure et demie par semaine. Les Classes d\'adultes sont séparées : des femmes avec des femmes, des hommes avec des hommes.',
@@ -51419,8 +51894,6 @@ extension on Traductions {
 			'recrutement.talents.c.assistanat.exemple' => 'Tenir un agenda, rédiger des courriers, suivre des dossiers',
 			'recrutement.talents.c.coordination_groupe.libelle' => 'Coordination d\'une communauté',
 			'recrutement.talents.c.coordination_groupe.description' => 'Animer et accompagner une communauté de personnes, par exemple celle des sœurs ou celle des parents.',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.talents.c.coordination_groupe.exemple' => 'Accueillir les nouvelles et les nouveaux, répondre aux questions, faire circuler les informations',
 			'recrutement.talents.c.accueil_familles.libelle' => 'Accueil et suivi des familles',
 			'recrutement.talents.c.accueil_familles.description' => 'Être le premier contact des familles qui s\'inscrivent.',
@@ -51833,6 +52306,8 @@ extension on Traductions {
 			'admin.candidatures.detail.contact.aucun' => 'Aucune coordonnée n\'est connue.',
 			'admin.candidatures.detail.contact.aConfirmer' => 'À confirmer',
 			'admin.candidatures.detail.contact.lectureEchec' => 'Le contact n\'a pas pu être lu.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.candidatures.detail.historiqueVide' => 'Aucun événement pour le moment',
 			'admin.candidatures.detail.plusAnciens' => 'Voir les événements plus anciens',
 			'admin.candidatures.detail.historiqueEchec' => 'L\'historique n\'a pas pu être lu.',
@@ -51933,8 +52408,6 @@ extension on Traductions {
 			'admin.candidatures.consequences.cloreComplement' => 'Le complément demandé est clos. La candidature reste dans sa salle.',
 			'admin.candidatures.consequences.mettreEnPause' => 'La candidature n\'avance plus tant que la pause n\'est pas levée.',
 			'admin.candidatures.consequences.leverPause' => 'La candidature reprend là où elle s\'était arrêtée.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.candidatures.consequences.refuser' => 'La candidature est fermée. Vous pourrez la rouvrir.',
 			'admin.candidatures.consequences.retrait' => 'La candidature est fermée à la demande de la personne. Vous pourrez la rouvrir.',
 			'admin.candidatures.consequences.rouvrir' => 'La candidature reprend son étape d\'origine, si les contrôles du serveur le permettent.',
@@ -52347,6 +52820,8 @@ extension on Traductions {
 			'admin.demandes.eleves' => ({required num valeur}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(valeur, one: '${valeur} élève', other: '${valeur} élèves', ), 
 			'admin.groupes.titre' => 'Classes',
 			'admin.groupes.filtreToutes' => 'Toutes les classes',
+			_ => null,
+		} ?? switch (path) {
 			'admin.groupes.filtreActives' => 'Actives',
 			'admin.groupes.filtreCloturees' => 'Clôturées',
 			'admin.groupes.filtrePublic' => 'Public',
@@ -52447,8 +52922,6 @@ extension on Traductions {
 			'admin.groupes.c1.reservee' => 'votre compte n\'a pas le droit de faire cette action. Demandez-la à la direction.',
 			'admin.groupes.c1.refusInconnu' => 'le serveur a refusé cette action sans en dire la raison. Vérifiez vos choix, puis pressez de nouveau.',
 			'admin.groupes.c1.connexion' => 'il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Pressez de nouveau dans un instant.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.groupes.detailTitre' => ({required Object libelle}) => 'Classe ${libelle}',
 			'admin.groupes.detailMembres' => 'Membres',
 			'admin.groupes.detailAucunMembre' => 'Aucun élève dans cette classe pour l\'instant.',
@@ -52861,6 +53334,8 @@ extension on Traductions {
 			'admin.regroupements.liste.rechercheLibelle' => 'Rechercher une demande',
 			'admin.regroupements.liste.rechercheAide' => 'Langue, fuseau ou nom de la classe créée',
 			'admin.regroupements.liste.filtreToutes' => 'Toutes',
+			_ => null,
+		} ?? switch (path) {
 			'admin.regroupements.liste.filtreAFinir' => 'Enseignant à confirmer',
 			'admin.regroupements.liste.filtrePrets' => 'Prêtes',
 			'admin.regroupements.liste.filtreIncompletes' => 'Incomplètes',
@@ -52961,8 +53436,6 @@ extension on Traductions {
 			'admin.regles.remplacementBornesPerte' => ({required Object min, required Object max}) => 'Entre ${min} et ${max} après le début. Pour descendre sous ${min}, baissez d\'abord l\'avertissement. Pour aller au-delà de ${max}, relevez d\'abord l\'objectif.',
 			'admin.regles.remplacementBornesObjectif' => ({required Object min}) => 'Au moins ${min} après le début. Pour descendre sous ${min}, baissez d\'abord la perte de la séance.',
 			'admin.regles.remplacementOrdreRefuse' => 'L\'ordre des délais n\'est plus respecté : un autre réglage a changé entre-temps. Fermez cette fenêtre, puis rouvrez la ligne pour voir les valeurs à jour.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.regles.entretiensSection' => 'Entretiens',
 			'admin.regles.entretiensIntro' => 'Les fondateurs se cochent dans les Comptes, vues Direction et Enseignants.',
 			'admin.regles.regleFondateurs' => 'Exiger des fondateurs',
@@ -53375,6 +53848,8 @@ extension on Traductions {
 			'admin.suppressions.retraits.vide.enCours' => 'Aucun compte supprimé en cours.',
 			'admin.suppressions.retraits.vide.anonymises' => 'Aucun compte anonymisé.',
 			'admin.suppressions.retraits.vide.restaures' => 'Aucun compte restauré.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.suppressions.retraits.vide.tous' => 'Aucun compte supprimé.',
 			'admin.suppressions.retraits.erreur' => 'Les comptes supprimés n\'ont pas pu être chargés. Réessayez.',
 			'admin.suppressions.retraits.sansDonnees' => 'Les comptes supprimés n\'ont pas pu être chargés',
@@ -53475,8 +53950,6 @@ extension on Traductions {
 			'admin.comptes.retrait.raison.soiMeme' => 'c\'est votre propre compte.',
 			'admin.comptes.retrait.raison.compteDirection' => 'un compte de la direction ne se supprime pas ici.',
 			'admin.comptes.retrait.raison.seancesAVenir' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} séance est encore prévue avec cet enseignant. Confiez-la à un autre enseignant, puis réessayez.', other: '${n} séances sont encore prévues avec cet enseignant. Confiez-les à un autre enseignant, puis réessayez.', ), 
-			_ => null,
-		} ?? switch (path) {
 			'admin.comptes.retrait.raison.erreur' => 'le serveur n\'a pas pu le supprimer. Réessayez pour ce compte.',
 			'admin.comptes.retrait.refuse' => 'Cette action demande la double vérification. Activez-la dans Compte > Sécurité.',
 			'admin.comptes.retrait.indisponible' => 'La suppression de comptes n\'est pas encore installée sur le serveur. Rien n\'a été supprimé.',
@@ -53889,6 +54362,8 @@ extension on Traductions {
 			'admin.finance.paieWise.erreurValider' => 'La validation n\'est pas confirmée : les coordonnées ont peut-être changé entre-temps. Fermez, rouvrez la liste, puis réessayez.',
 			'admin.finance.paieWise.manquantAValider' => 'En attente de validation',
 			'admin.finance.paieWise.lien.parent' => 'parent',
+			_ => null,
+		} ?? switch (path) {
 			'admin.finance.paieWise.lien.conjoint' => 'conjoint',
 			'admin.finance.paieWise.lien.frereSoeur' => 'frère ou sœur',
 			'admin.finance.paieWise.lien.autre' => 'autre personne',
@@ -53989,8 +54464,6 @@ extension on Traductions {
 			'admin.finance.pai.demandePhrase' => ({required Object prenom}) => 'Le paiement est transmis à la direction. Il sera crédité à ${prenom} dès qu\'elle l\'aura validé.',
 			'admin.finance.pai.demandeDejaFaite' => 'Ce paiement attend déjà la validation de la direction : rien n\'a été ajouté.',
 			'admin.finance.pai.refuseTitre' => 'Paiement refusé par la direction',
-			_ => null,
-		} ?? switch (path) {
 			'admin.finance.pai.refusePhrase' => ({required Object motif}) => 'Rien n\'a été crédité. Motif : ${motif}',
 			'admin.finance.pai.enAttente' => 'En attente de validation',
 			'admin.finance.pai.refusesRecemment' => 'Refusés récemment',
@@ -54403,6 +54876,8 @@ extension on Traductions {
 			'admin.bibliotheque.catalogue.colonnes.type' => 'Type',
 			'admin.bibliotheque.catalogue.colonnes.langue' => 'Langue',
 			'admin.bibliotheque.catalogue.colonnes.categorie' => 'Catégorie',
+			_ => null,
+		} ?? switch (path) {
 			'admin.bibliotheque.catalogue.colonnes.version' => 'Version',
 			'admin.bibliotheque.catalogue.colonnes.publication' => 'Publication',
 			'admin.bibliotheque.catalogue.colonnes.droits' => 'Droits',
@@ -54503,8 +54978,6 @@ extension on Traductions {
 			'admin.bibliotheque.import.annulerDepot' => 'Annuler le dépôt',
 			'admin.bibliotheque.import.progression' => 'Progression du dépôt',
 			'admin.bibliotheque.import.formats.pdf' => 'Format accepté : PDF.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.bibliotheque.import.formats.image' => 'Formats acceptés : PNG, JPEG, WebP.',
 			'admin.bibliotheque.import.formats.json' => 'Format accepté : JSON structuré.',
 			'admin.bibliotheque.import.formats.aucun' => 'Ce type n\'accepte pas de fichier.',
@@ -54917,6 +55390,8 @@ extension on Traductions {
 			'compte.modeEnfant' => 'Interface guidée',
 			'compte.modeStandard' => 'Mode standard',
 			'compte.cameraAutorisee' => 'Autorisée',
+			_ => null,
+		} ?? switch (path) {
 			'compte.cameraInterdite' => 'Interdite',
 			'compte.statutActif' => 'Actif',
 			'compte.statutProvisoire' => 'Actif, à titre provisoire',
@@ -55017,8 +55492,6 @@ extension on Traductions {
 			'compte.tuteur.pageAide.aucunCanal' => 'Aucun canal d\'aide n\'est publié pour le moment.',
 			'compte.tuteur.pageLegal.conditionsTuteur' => 'Conditions du tuteur',
 			'compte.tuteur.pageLegal.contratEnseignant' => 'Contrat enseignant',
-			_ => null,
-		} ?? switch (path) {
 			'compte.tuteur.pageLegal.accuseEnregistrement' => 'Accusé d\'enregistrement des cours',
 			'compte.tuteur.pageLegal.textes' => 'Conditions et confidentialité',
 			'historique.titre' => 'Historique',
@@ -55294,8 +55767,8 @@ extension on Traductions {
 			'eleve.accueil.annulee' => 'Ce cours n\'aura pas lieu',
 			'eleve.accueil.horsLigne' => 'Entrée en attente',
 			'eleve.accueil.horsLigneDetail' => 'Tu pourras entrer dès que le réseau revient.',
-			'eleve.accueil.pausePriere' => 'Pause pour la prière',
-			'eleve.accueil.pausePriereDetail' => ({required Object priere, required Object heure}) => '${priere}, vers ${heure}',
+			'eleve.accueil.pausePriere' => 'Pause de prière',
+			'eleve.accueil.pausePriereDetail' => ({required Object heure}) => 'À ${heure}',
 			'eleve.accueil.prochainDansJours' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours, one: 'Ton prochain cours est dans ${jours} jour.', other: 'Ton prochain cours est dans ${jours} jours.', ), 
 			'eleve.accueil.entreeSePrepare' => 'Ton entrée se prépare. Réessaie dans un instant.',
 			'eleve.coran.titre' => 'Le Coran',
@@ -55431,6 +55904,8 @@ extension on Traductions {
 			'tuteur.accueil.aucunEnfant' => 'Aucun enfant dans le foyer',
 			'tuteur.accueil.aucunEnfantDetail' => 'Ajoutez votre premier enfant pour commencer.',
 			'tuteur.accueil.erreur' => 'Le foyer n\'a pas pu être lu en entier. Réessayez dans un instant.',
+			_ => null,
+		} ?? switch (path) {
 			'tuteur.reglages.titre' => 'Réglages par enfant',
 			'tuteur.reglages.intro' => 'Ces réglages s\'appliquent à la séance suivante, jamais pendant un cours.',
 			'tuteur.reglages.photo' => 'Photo',
@@ -55531,8 +56006,6 @@ extension on Traductions {
 			'classe.observation.secondes' => ({required Object secondes}) => '${secondes} s',
 			'classe.observation.motif.visitesEpuisees' => 'Vous avez utilisé vos visites pour cette séance.',
 			'classe.observation.motif.tempsEpuise' => 'Votre temps d\'observation est épuisé pour cette séance.',
-			_ => null,
-		} ?? switch (path) {
 			'classe.observation.motif.seanceNonCommencee' => 'L\'observation ouvre quand la séance commence.',
 			'classe.observation.motif.seanceTerminee' => 'La séance est terminée.',
 			'classe.observation.motif.seanceNonTenue' => 'Cette séance n\'a pas lieu : il n\'y a rien à observer.',
@@ -55945,6 +56418,8 @@ extension on Traductions {
 			'enseignant.cahier.exceptionTitre' => 'Signaler une exception',
 			'enseignant.cahier.exceptionCorriger' => 'Corriger la présence',
 			'enseignant.cahier.exceptionExcuser' => 'Excuser l\'absence',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.cahier.exceptionConfirmation' => 'Confirmer l\'exception',
 			'enseignant.cahier.exceptionMotif' => 'Motif',
 			'enseignant.cahier.exceptionMotifRequis' => 'Le motif est obligatoire.',
@@ -56045,8 +56520,6 @@ extension on Traductions {
 			'enseignant.profil.erreur' => 'Votre profil n\'a pas pu être lu. Réessayez dans un instant.',
 			'enseignant.profil.vide' => 'Aucun profil enseignant',
 			'enseignant.profil.videDetail' => 'Ce compte n\'a pas de profil enseignant. Seule l\'académie peut en créer un.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.profil.horsLigne' => 'Rien ne peut être modifié ici pour l\'instant.',
 			'enseignant.profil.modifierPays' => 'Modifier le pays',
 			'enseignant.profil.fuseauAppareil' => 'Heure de cet appareil',
@@ -56459,6 +56932,8 @@ extension on Traductions {
 			'controleur.echanges.envoye' => 'Envoyé.',
 			'controleur.echanges.echec' => 'L\'envoi n\'est pas confirmé : il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
 			'controleur.echanges.reessayer' => 'Réessayer',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.echanges.nouveauMessage' => ({required Object deAuteur, required Object texte}) => 'Nouveau message ${deAuteur} : ${texte}',
 			'controleur.echanges.contexteCompact' => ({required Object heure}) => 'Contexte joint à vos messages : séance de ${heure}',
 			'controleur.demo.titre' => 'Démonstration contrôleur',
@@ -56559,8 +57034,6 @@ extension on Traductions {
 			'tc.groupe.horloges.aConfirmer' => 'Heure à confirmer',
 			'tc.groupe.horloges.enCeMoment' => 'En ce moment',
 			'tc.groupe.dst.j30' => 'Changement d\'heure dans un mois',
-			_ => null,
-		} ?? switch (path) {
 			'tc.groupe.dst.j7' => 'Changement d\'heure la semaine prochaine',
 			'tc.groupe.dst.j1' => 'Changement d\'heure demain',
 			'tc.groupe.dst.detail' => ({required Object avant, required Object apres}) => 'Votre cours passera de ${avant} à ${apres}.',
@@ -56973,6 +57446,8 @@ extension on Traductions {
 			'tc.parcours.feedback.participation.intitule' => 'Avez-vous pu participer ?',
 			'tc.parcours.feedback.participation.intituleTu' => 'As-tu pu participer ?',
 			'tc.parcours.feedback.participation.difficile' => 'Peu',
+			_ => null,
+		} ?? switch (path) {
 			'tc.parcours.feedback.participation.bien' => 'Assez',
 			'tc.parcours.feedback.participation.tresBien' => 'Beaucoup',
 			'tc.parcours.feedback.technique.intitule' => 'Le son et l\'image étaient-ils confortables ?',
@@ -57073,8 +57548,6 @@ extension on Traductions {
 			'adulte.recharge.paiementIndisponiblePhrase' => 'Aucun paiement n\'a été effectué. Le paiement en ligne n\'est pas encore ouvert dans l\'application.',
 			'adulte.recharge.formules.trimestriel' => ({required Object montant}) => '${montant} pour 3 mois, payés d\'avance',
 			'adulte.recharge.formules.annuel' => ({required Object montant}) => '${montant} pour 12 mois, payés d\'avance',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.recharge.revenirPaiements' => 'Revenir aux paiements du foyer',
 			'adulte.recharge.phraseUnique' => 'Cochez le profil, puis choisissez le montant.',
 			'adulte.recharge.profils' => 'Profils à recharger',
@@ -57487,6 +57960,8 @@ extension on Traductions {
 			'motifs.refusDossier.nonTransmise' => 'Pièce requise non transmise',
 			'motifs.refusDossier.accord' => 'Accord requis manquant',
 			'motifs.presenceCorrigee.nonDetectee' => 'Présence non détectée par l\'application',
+			_ => null,
+		} ?? switch (path) {
 			'motifs.presenceCorrigee.reseau' => 'Coupure réseau pendant le cours',
 			'motifs.presenceCorrigee.retard' => 'Arrivée en retard',
 			'motifs.presenceCorrigee.appareil' => 'Connexion depuis un autre appareil',
@@ -57587,8 +58062,6 @@ extension on Traductions {
 			'suiviDemandes.prochaine.listeAttente' => 'Nous vous prévenons dès qu\'une place s\'ouvre. Aucune date n\'est annoncée tant qu\'elle n\'est pas connue.',
 			'suiviDemandes.prochaine.eleveIntegre' => 'Prochaine étape : le début des cours',
 			'suiviDemandes.debutCours' => 'Début des cours',
-			_ => null,
-		} ?? switch (path) {
 			'suiviDemandes.debutValeur' => ({required Object date, required Object heure, required Object deVille}) => '${date} à ${heure}, heure ${deVille}',
 			'suiviDemandes.debutAFixer' => 'La date du premier cours s\'affichera ici dès qu\'elle sera fixée.',
 			'suiviDemandes.enseignant' => 'Enseignant',
@@ -58001,6 +58474,8 @@ extension on Traductions {
 			'com.messages.demo.f.yasmine' => 'Yasmine',
 			'com.messages.demo.f.yusuf' => 'Yusuf',
 			'com.messages.demo.f.dossierAdam' => 'Dossier d\'inscription d\'Adam',
+			_ => null,
+		} ?? switch (path) {
 			'com.messages.demo.f.missionNour' => 'Visite de contrôle, classe An-Nour',
 			'com.messages.demo.f.pieceDevoir' => 'Devoir_semaine_3.pdf',
 			'com.messages.demo.f.pieceAttestation' => 'Attestation_ancienne.pdf',
@@ -58101,8 +58576,6 @@ extension on Traductions {
 			'com.communaute.lien.commercialInterdit' => 'Lien commercial interdit',
 			'com.communaute.lien.nonVerifie' => 'Lien non vérifié',
 			'com.communaute.lien.semantique' => ({required Object adresse, required Object etat}) => '${adresse}, ${etat}',
-			_ => null,
-		} ?? switch (path) {
 			'com.communaute.sousTitre' => 'Échanges et entraide entre enseignants',
 			'com.communaute.sections' => 'Catégories de la Communauté enseignants',
 			'com.communaute.toutes' => 'Toutes',
@@ -58515,6 +58988,8 @@ extension on Traductions {
 			'com.annonces.administration.publiees.legende' => ({required Object cible, required Object date, required Object heure}) => '${cible} · le ${date} à ${heure}',
 			'com.annonces.administration.planifiees.titre' => 'Annonces planifiées',
 			'com.annonces.administration.planifiees.vide' => 'Aucune annonce planifiée.',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.administration.planifiees.pastille' => 'Planifiée',
 			'com.annonces.administration.planifiees.legende' => ({required Object cible, required Object date, required Object heure}) => '${cible} · prévue le ${date} à ${heure}',
 			'com.annonces.administration.matrice.titre' => 'Droits de publication des annonces',
@@ -58615,8 +59090,6 @@ extension on Traductions {
 			'com.annonces.demo.classeNour' => 'Classe An-Nour',
 			'com.annonces.demo.classeFajr' => 'Classe Al-Fajr',
 			'com.annonces.demo.enseignante' => 'Enseignante de la classe',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.demo.f.adminStudioMention' => 'Studio : une discussion du canal Programmes vous mentionne',
 			'com.annonces.demo.f.adminStudioReponse' => 'Studio : nouvelle réponse à votre message sur le programme de printemps',
 			'com.annonces.demo.f.adminStudioDecision' => 'Studio : une décision est demandée sur le support de la leçon 4',
@@ -59029,6 +59502,8 @@ extension on Traductions {
 			'comptable.tresorerie.alimentationAuto' => 'Alimentation automatique',
 			'comptable.tresorerie.regle.desactivee' => 'Désactivée',
 			'comptable.tresorerie.regle.montantFixe' => 'Montant fixe à chaque échéance',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.tresorerie.regle.pourcentage' => ({required Object pourcent}) => '${pourcent} % de chaque encaissement consolidé',
 			'comptable.tresorerie.regle.jusquAObjectif' => 'Compléter jusqu\'au montant visé',
 			'comptable.tresorerie.regle.proposee' => 'Proposition à confirmer par vous',
@@ -59129,8 +59604,6 @@ extension on Traductions {
 			'comptable.encaissements.foyer' => 'Foyer',
 			'comptable.encaissements.date' => 'Date',
 			'comptable.encaissements.etat' => 'État',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.encaissements.devise' => 'Devise',
 			'comptable.encaissements.affectation' => 'Affectation par profil',
 			'comptable.encaissements.affectationAucune' => 'La source n\'a rendu aucune affectation pour cet encaissement.',
@@ -59543,6 +60016,8 @@ extension on Traductions {
 			'comptable.direction.reservePanneau.regle.jusquAObjectif' => 'Jusqu\'à l\'objectif',
 			'comptable.direction.reservePanneau.regle.jusquAObjectifDetail' => 'Compléter ce qui manque pour atteindre l\'objectif.',
 			'comptable.direction.reservePanneau.regle.proposee' => 'Proposée',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.reservePanneau.regle.proposeeDetail' => 'Une proposition que le Comptable confirme.',
 			'comptable.direction.reservePanneau.montantAuto' => 'Montant à affecter',
 			'comptable.direction.reservePanneau.montantAutoDetail' => 'La somme affectée à la Réserve à chaque échéance.',
@@ -59643,8 +60118,6 @@ extension on Traductions {
 			'comptable.direction.delegationPanneau.sortieAnnulerPhrase' => ({required Object beneficiaire}) => 'La sortie de ${beneficiaire} ne partira pas. L\'annulation est inscrite au journal.',
 			'comptable.direction.delegationPanneau.sortieAnnulerConfirmer' => 'Annuler la sortie',
 			'comptable.direction.delegationPanneau.sortieGarder' => 'Garder la sortie',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.sortieAnnulee' => 'Sortie annulée.',
 			'comptable.direction.delegationPanneau.sortieAnnulationEchec' => 'L\'annulation n\'est pas confirmée : la demande n\'est peut-être pas parvenue jusqu\'à Rewayah. Relisez la liste avant de réessayer.',
 			'comptable.direction.delegationPanneau.exceptionsTitre' => 'Exceptions',
@@ -60057,6 +60530,8 @@ extension on Traductions {
 			'avis.form.envoye.titre' => 'Merci pour votre avis',
 			'avis.form.envoye.phrase' => ({required Object courriel}) => 'La direction le lira avant de le publier sur le site, avec votre nom affiché, votre pays et la date. Pour le faire retirer, écrivez à ${courriel}.',
 			'avis.form.erreurChargement' => 'Le formulaire n\'a pas pu s\'ouvrir. Réessayez dans un moment.',
+			_ => null,
+		} ?? switch (path) {
 			'avis.form.sansDonnees' => 'Le formulaire n\'a pas pu s\'ouvrir',
 			'avis.form.indisponibleTitre' => 'Avis indisponibles',
 			'avis.form.indisponiblePhrase' => 'Cette fonction sera disponible au branchement serveur.',
@@ -60157,8 +60632,6 @@ extension on Traductions {
 			'avis.admin.liens.fermerConsequence' => 'Les personnes qui ouvriront ce lien verront qu\'il est fermé et ne pourront plus envoyer d\'avis. Les avis déjà reçus restent. Un lien fermé ne se rouvre pas.',
 			'avis.admin.liens.fermerAction' => 'Fermer le lien',
 			'avis.admin.liens.fermerRester' => 'Ne rien changer',
-			_ => null,
-		} ?? switch (path) {
 			'avis.admin.liens.fermeOk' => 'Le lien est fermé.',
 			'avis.admin.liens.fermeEchec' => 'La fermeture n\'est pas confirmée. La liste est relue : vérifiez l\'état du lien.',
 			'avis.admin.liens.vide' => 'Aucun lien pour le moment. Créez-en un pour recueillir des avis.',
@@ -60571,6 +61044,8 @@ extension on Traductions {
 			'candidatsFlux.importFormulaires.doublons.plus' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Voir ${n} cas de plus', other: 'Voir ${n} cas de plus', ), 
 			'candidatsFlux.importFormulaires.doublons.etat.recente' => 'La plus récente est gardée',
 			'candidatsFlux.importFormulaires.doublons.etat.base' => 'La ligne déjà enregistrée est gardée',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.doublons.etat.ligne' => ({required Object ligne}) => 'Ligne ${ligne} gardée',
 			'candidatsFlux.importFormulaires.doublons.etat.distinctes' => 'Personnes distinctes',
 			'candidatsFlux.importFormulaires.doublons.etat.enregistre' => 'Choix déjà enregistré',
@@ -60671,8 +61146,6 @@ extension on Traductions {
 			'candidatsFlux.importFormulaires.avertissement.zeroNationalEnTrop' => 'un zéro en trop après l\'indicatif du téléphone',
 			'candidatsFlux.importFormulaires.avertissement.courrielMalforme' => 'le courriel est mal écrit : il est à obtenir',
 			'candidatsFlux.importFormulaires.avertissement.langueMaternelleVersAutre' => 'langue maternelle inconnue, classée en autre langue',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.avertissement.langueInconnueVersAutre' => 'une langue d\'explication inconnue est classée en autre langue',
 			'candidatsFlux.importFormulaires.avertissement.arabeRetire' => 'l\'arabe est retiré des langues d\'explication (ce n\'est pas une langue de cours)',
 			'candidatsFlux.importFormulaires.avertissement.libelleInconnu' => 'une réponse à choix n\'est pas reconnue',
