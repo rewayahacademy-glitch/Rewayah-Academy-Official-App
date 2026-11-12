@@ -249,6 +249,18 @@ class _Suivi extends StatelessWidget {
             ),
           ),
         ),
+        if (!suivi.close) ...<Widget>[
+          Ecart.vXs,
+          Text(
+            t.suiviAttente.etapeSurTotal(
+              n: etapeResumee(suivi).numero,
+              total: nombreEtapesAttente,
+              etape: nomEtape(etapeResumee(suivi).numero),
+            ),
+            key: const ValueKey<String>('attente-resume'),
+            style: detail,
+          ),
+        ],
         Ecart.vLg,
         if (suivi.close) ...<Widget>[_Cloture(suivi: suivi), Ecart.vLg],
         FriseAttente(
@@ -263,10 +275,13 @@ class _Suivi extends StatelessWidget {
         ),
         if (creneau != null) ...<Widget>[
           Ecart.vLg,
+          Text(t.suiviDemandes.creneauxChoisis, style: detail),
           Text(
             joursEtHeuresDemande(creneau),
             key: const ValueKey<String>('attente-creneau'),
-            style: detail,
+            style: palette.inkStrong.applyTo(
+              textes.bodyMedium ?? const TextStyle(),
+            ),
           ),
         ],
         Ecart.vSm,

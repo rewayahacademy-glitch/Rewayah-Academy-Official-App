@@ -15171,7 +15171,7 @@
       "enseignantFait": "Votre enseignant est connu.",
       "enseignantFaitSimple": "Ton enseignant est connu.",
       "enseignantAVenir": "L'académie désigne l'enseignant une fois la classe confirmée.",
-      "pretFait": "Tout est prêt.",
+      "pretFait": "La classe, l'enseignant et le premier cours sont connus.",
       "pretEnCours": "L'académie fixe votre premier cours. Vous êtes prévenu dès que la date est connue.",
       "pretAVenir": "Votre premier cours est annoncé une fois l'enseignant affecté."
     },

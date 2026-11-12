@@ -10910,7 +10910,7 @@ class _Traductions$suiviAttente$dit$ar extends Traductions$suiviAttente$dit$fr {
 	@override String get enseignantFait => 'صار معلمك معروفًا.';
 	@override String get enseignantFaitSimple => 'صار معلمك معروفًا.';
 	@override String get enseignantAVenir => 'تعيّن الأكاديمية المعلم بعد تأكيد الفصل.';
-	@override String get pretFait => 'كل شيء جاهز.';
+	@override String get pretFait => 'الفصل والمعلم وموعد أول حصة صارت معروفة.';
 	@override String get pretEnCours => 'تحدد الأكاديمية موعد أول حصة لك. تصلك رسالة حالما يُعرف الموعد.';
 	@override String get pretAVenir => 'يُعلن موعد أول حصة بعد تعيين المعلم.';
 }
@@ -35415,7 +35415,7 @@ extension on TraductionsAr {
 			'suiviAttente.dit.enseignantFait' => 'صار معلمك معروفًا.',
 			'suiviAttente.dit.enseignantFaitSimple' => 'صار معلمك معروفًا.',
 			'suiviAttente.dit.enseignantAVenir' => 'تعيّن الأكاديمية المعلم بعد تأكيد الفصل.',
-			'suiviAttente.dit.pretFait' => 'كل شيء جاهز.',
+			'suiviAttente.dit.pretFait' => 'الفصل والمعلم وموعد أول حصة صارت معروفة.',
 			'suiviAttente.dit.pretEnCours' => 'تحدد الأكاديمية موعد أول حصة لك. تصلك رسالة حالما يُعرف الموعد.',
 			'suiviAttente.dit.pretAVenir' => 'يُعلن موعد أول حصة بعد تعيين المعلم.',
 			'suiviAttente.premierCours' => ({required Object quand}) => 'أول حصة لك: ${quand}',

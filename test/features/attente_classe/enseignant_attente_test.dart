@@ -9,7 +9,6 @@
 //   envoi est la meme a chaque essai) ; vide, erreur, echec partiel ;
 // - l'entree dans Mes classes : seulement les classes recentes, seulement
 //   quand les Messages sont branches.
-import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

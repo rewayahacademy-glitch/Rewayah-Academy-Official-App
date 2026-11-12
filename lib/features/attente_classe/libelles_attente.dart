@@ -9,6 +9,11 @@ import '../../core/i18n/strings.g.dart';
 import '../suivi_demandes/libelles_suivi_demandes.dart'
     show deFuseau, hhmmDemande, jourDateDemande, libelleJalon;
 
+/// La date glissee dans une phrase s'ecrit en minuscule : « depuis le lundi 9
+/// novembre », « le lundi 16 novembre a 18:00 ». Sans effet en arabe.
+String enMinuscule(String texte) =>
+    texte.isEmpty ? texte : texte[0].toLowerCase() + texte.substring(1);
+
 /// Les ecrans qui suivent un enfant de moins de 10 ans parlent a l'enfant :
 /// tutoiement, aucun delai chiffre (S6).
 bool estSimple(SuiviAttente s) => s.versionSimple;
@@ -43,8 +48,9 @@ String? quandCours(SuiviAttente s, DateTime? quand) {
 /// « Votre premier cours : lundi 16 novembre a 18:00, heure de Paris », ou
 /// `null` quand le serveur ne connait pas la date. Passe : « a eu lieu le... ».
 String? phrasePremierCours(SuiviAttente s) {
-  final String? quand = quandCours(s, s.premierCours);
-  if (quand == null) return null;
+  final String? date = quandCours(s, s.premierCours);
+  if (date == null) return null;
+  final String quand = enMinuscule(date);
   if (s.premierCoursPasse) {
     return t.suiviAttente.premierCoursPasse(quand: quand);
   }
@@ -109,7 +115,7 @@ String? depuisEtape(SuiviAttente s, EtapeAttente e) {
   if (e.etat != EtatEtapeAttente.enCours || e.numero < 2) return null;
   final DateTime? depuis = s.etape(e.numero == 2 ? 1 : e.numero - 1).quand;
   if (depuis == null || depuis.isUtc) return null;
-  return t.suiviAttente.depuis(date: jourDateDemande(depuis));
+  return t.suiviAttente.depuis(date: enMinuscule(jourDateDemande(depuis)));
 }
 
 /// Les phrases du delai de formation (S2), seulement quand le serveur l'a
@@ -126,11 +132,13 @@ List<String> phrasesDelai(SuiviAttente s) {
   }
   return <String>[
     t.suiviAttente.delai.formation(jours: d.jours),
-    t.suiviAttente.delai.limite(date: jourDateDemande(d.limite)),
+    t.suiviAttente.delai.limite(date: enMinuscule(jourDateDemande(d.limite))),
     if (d.point != null)
       d.pointPasse
           ? t.suiviAttente.delai.pointPasse
-          : t.suiviAttente.delai.point(date: jourDateDemande(d.point!)),
+          : t.suiviAttente.delai.point(
+              date: enMinuscule(jourDateDemande(d.point!)),
+            ),
   ];
 }
 
@@ -180,7 +188,10 @@ String ligneCarte(SuiviAttente s) {
   if (s.toutEstPret) {
     final String? quand = quandCours(s, s.premierCours);
     if (quand != null && !s.premierCoursPasse) {
-      return t.suiviAttente.carte.pret(prenom: s.prenom, quand: quand);
+      return t.suiviAttente.carte.pret(
+        prenom: s.prenom,
+        quand: enMinuscule(quand),
+      );
     }
   }
   if (s.close) return '${s.prenom} : ${titreCloture(s)}';
@@ -212,5 +223,5 @@ String nomEnseignant(CarteEnseignantAttente e) {
         );
 }
 
-/// « Jeudi 2 octobre » : le jour d'une heure murale du foyer, lu tel quel.
-String jourDateCourt(DateTime quand) => jourDateDemande(quand);
+/// « jeudi 2 octobre » : le jour d'une heure murale du foyer, dans une phrase.
+String jourDateCourt(DateTime quand) => enMinuscule(jourDateDemande(quand));

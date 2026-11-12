@@ -23823,8 +23823,8 @@ class Traductions$suiviAttente$dit$fr {
 	/// fr: 'L'académie désigne l'enseignant une fois la classe confirmée.'
 	String get enseignantAVenir => 'L\'académie désigne l\'enseignant une fois la classe confirmée.';
 
-	/// fr: 'Tout est prêt.'
-	String get pretFait => 'Tout est prêt.';
+	/// fr: 'La classe, l'enseignant et le premier cours sont connus.'
+	String get pretFait => 'La classe, l\'enseignant et le premier cours sont connus.';
 
 	/// fr: 'L'académie fixe votre premier cours. Vous êtes prévenu dès que la date est connue.'
 	String get pretEnCours => 'L\'académie fixe votre premier cours. Vous êtes prévenu dès que la date est connue.';
@@ -61418,7 +61418,7 @@ extension on Traductions {
 			'suiviAttente.dit.enseignantFait' => 'Votre enseignant est connu.',
 			'suiviAttente.dit.enseignantFaitSimple' => 'Ton enseignant est connu.',
 			'suiviAttente.dit.enseignantAVenir' => 'L\'académie désigne l\'enseignant une fois la classe confirmée.',
-			'suiviAttente.dit.pretFait' => 'Tout est prêt.',
+			'suiviAttente.dit.pretFait' => 'La classe, l\'enseignant et le premier cours sont connus.',
 			'suiviAttente.dit.pretEnCours' => 'L\'académie fixe votre premier cours. Vous êtes prévenu dès que la date est connue.',
 			'suiviAttente.dit.pretAVenir' => 'Votre premier cours est annoncé une fois l\'enseignant affecté.',
 			'suiviAttente.premierCours' => ({required Object quand}) => 'Votre premier cours : ${quand}',

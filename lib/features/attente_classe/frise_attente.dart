@@ -182,10 +182,19 @@ class _LigneEtape extends StatelessWidget {
       ],
     );
 
-    final Widget corpsLigne = enCours
+    // La seule etape mise en avant : la courante, en lavis d'accent ; et, quand
+    // tout est franchi, « Tout est pret », en lavis de reussite.
+    final bool prete =
+        etape.numero == nombreEtapesAttente &&
+        etape.etat == EtatEtapeAttente.fait;
+    final Widget corpsLigne = enCours || prete
         ? AppCard(
-            key: ValueKey<String>('attente-en-cours-${etape.numero}'),
-            surface: palette.washAccent,
+            key: ValueKey<String>(
+              prete
+                  ? 'attente-pret-${etape.numero}'
+                  : 'attente-en-cours-${etape.numero}',
+            ),
+            surface: prete ? palette.washSuccess : palette.washAccent,
             child: contenu,
           )
         : contenu;

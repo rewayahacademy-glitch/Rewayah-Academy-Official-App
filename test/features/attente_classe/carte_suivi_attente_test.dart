@@ -9,7 +9,6 @@
 // - une lecture en echec le dit ;
 // - 320 px, texte x2, un seul bouton plein (aucun).
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/attente_classe/modele_attente.dart';

@@ -15,10 +15,8 @@
 // - les cinq etats : chargement, contenu, vide (avec son geste), erreur, hors
 //   ligne (S9) ;
 // - 320 px, texte x2, arabe (RTL), un seul bouton plein, aucun mot coupe.
-import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/attente_classe/modele_attente.dart';
@@ -181,20 +179,29 @@ void main() {
       expect(
         find.text(
           t.suiviAttente.premierCours(
-            quand: t.suiviDemandes.debutValeur(
-              date: t.commun.dates.jourDate(
-                jour: t.commun.dates.jours[0],
-                numero: 16,
-                mois: t.commun.dates.mois[10],
+            // Le jour glisse dans la phrase : en minuscule.
+            quand: enMinuscule(
+              t.suiviDemandes.debutValeur(
+                date: t.commun.dates.jourDate(
+                  jour: t.commun.dates.jours[0],
+                  numero: 16,
+                  mois: t.commun.dates.mois[10],
+                ),
+                heure: '18:00',
+                deVille: 'de Paris',
               ),
-              heure: '18:00',
-              deVille: 'de Paris',
             ),
           ),
         ),
         findsOneWidget,
       );
       expect(_cle('attente-en-cours-5'), findsNothing);
+      expect(
+        _cle('attente-pret-5'),
+        findsOneWidget,
+        reason: 'tout est franchi : « Tout est pret » est mis en avant',
+      );
+      expect(_cle('attente-resume'), findsOneWidget);
     });
 
     testWidgets('l\'etape 5 en cours sans date : l\'ecran n\'en invente pas', (
@@ -643,15 +650,83 @@ void main() {
     ) async {
       final SemanticsHandle poignee = tester.ensureSemantics();
       await _avecSuivi(tester, suiviDeTest(delai: delaiDeTest()));
-      expect(
-        find.bySemanticsLabel(
+      // La ligne de l'etape est un seul nœud : rang, mot, etat, phrase.
+      final Finder etape = find.descendant(
+        of: find.byKey(FriseAttente.cleEtape(2)),
+        matching: find.bySemanticsLabel(
           RegExp(
-            '^${RegExp.escape(t.suiviAttente.etapeSurTotal(n: 2, total: 5, etape: t.suiviAttente.etapes.formation))}',
+            '^${RegExp.escape(t.suiviAttente.etapeSurTotal(n: 2, total: 5, etape: t.suiviAttente.etapes.formation))}, ${RegExp.escape(t.suiviAttente.etats.enCours)}',
           ),
         ),
-        findsOneWidget,
       );
+      expect(etape, findsOneWidget);
       poignee.dispose();
+    });
+  });
+
+  group('en arabe (droite a gauche)', () {
+    setUp(() async {
+      await LocaleSettings.setLocale(AppLocale.ar);
+    });
+    tearDown(() async {
+      await LocaleSettings.setLocale(AppLocale.fr);
+    });
+
+    for (final (String nom, double largeur, double echelle)
+        in <(String, double, double)>[
+          ('320 px, texte x2', 320, 2),
+          ('390 px', 390, 1),
+          ('1440 px', 1440, 1),
+        ]) {
+      testWidgets('les cinq etapes et la carte de l\'enseignant, $nom', (
+        WidgetTester tester,
+      ) async {
+        await _avecSuivi(
+          tester,
+          suiviToutEstPret(),
+          largeur: largeur,
+          echelle: echelle,
+          direction: TextDirection.rtl,
+        );
+        final f = t.suiviAttente.etapes;
+        expect(
+          f.recue,
+          'تم استلام الطلب',
+          reason: 'la langue active est l\'arabe',
+        );
+        for (final String mot in <String>[
+          f.recue,
+          f.formation,
+          f.confirmee,
+          f.enseignant,
+          f.pret,
+        ]) {
+          expect(find.text(mot), findsOneWidget);
+        }
+        expect(_cle('attente-carte-enseignant'), findsOneWidget);
+        expect(tester.takeException(), isNull);
+        expect(
+          motsCoupes(tester, find.byType(Scaffold), traitDUnionPermis: true),
+          isEmpty,
+        );
+      });
+    }
+
+    testWidgets('demande refusee : le motif et le geste en arabe', (
+      WidgetTester tester,
+    ) async {
+      await _avecSuivi(
+        tester,
+        suiviDeTest(
+          cas: CasAttente.refusee,
+          motif: MotifCloture.refusDirection,
+          peutChoisirAutreCreneau: true,
+        ),
+        direction: TextDirection.rtl,
+      );
+      expect(find.text(t.suiviAttente.cloture.titreRefusee), findsOneWidget);
+      expect(find.text(t.suiviAttente.cloture.autreCreneau), findsOneWidget);
+      expect(tester.takeException(), isNull);
     });
   });
 
