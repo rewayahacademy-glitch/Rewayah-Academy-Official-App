@@ -4071,9 +4071,6 @@ class Traductions$souratesRetirables$fr {
 	/// fr: 'Les sourates de cette classe n'ont pas pu être lues. Réessayez.'
 	String get erreur => 'Les sourates de cette classe n\'ont pas pu être lues. Réessayez.';
 
-	/// fr: 'Sans connexion, aucune sourate ne peut être retirée.'
-	String get horsLigne => 'Sans connexion, aucune sourate ne peut être retirée.';
-
 	/// fr: '{eleve} · {sourate}'
 	String ligne({required Object eleve, required Object sourate}) => '${eleve} · ${sourate}';
 
@@ -60569,7 +60566,6 @@ extension on Traductions {
 			'souratesRetirables.aide' => 'Les sourates validées dans cette classe que vous pouvez retirer.',
 			'souratesRetirables.vide' => 'Aucune sourate validée à retirer dans cette classe.',
 			'souratesRetirables.erreur' => 'Les sourates de cette classe n\'ont pas pu être lues. Réessayez.',
-			'souratesRetirables.horsLigne' => 'Sans connexion, aucune sourate ne peut être retirée.',
 			'souratesRetirables.ligne' => ({required Object eleve, required Object sourate}) => '${eleve} · ${sourate}',
 			'souratesRetirables.jusqua' => ({required Object heure}) => 'Possible jusqu\'à ${heure}',
 			'souratesRetirables.jusquaDemain' => ({required Object heure}) => 'Possible jusqu\'à demain, ${heure}',
@@ -60742,9 +60738,9 @@ extension on Traductions {
 			'candidatsFlux.importFormulaires.controle.explication' => 'Une ligne à corriger n\'est pas importée. Corrigez-la dans le classeur, exportez de nouveau le fichier, puis rejouez l\'import : les lignes déjà importées ne sont pas ajoutées deux fois.',
 			'candidatsFlux.importFormulaires.controle.aucune' => 'Aucune erreur ni avertissement dans ce fichier.',
 			'candidatsFlux.importFormulaires.controle.aucuneAide' => 'Chaque ligne a pu être lue.',
+			'candidatsFlux.importFormulaires.controle.aCorriger.titre' => 'À corriger',
 			_ => null,
 		} ?? switch (path) {
-			'candidatsFlux.importFormulaires.controle.aCorriger.titre' => 'À corriger',
 			'candidatsFlux.importFormulaires.controle.aCorriger.aide' => 'Ces lignes ne seront pas importées.',
 			'candidatsFlux.importFormulaires.controle.avertissements.titre' => 'À regarder',
 			'candidatsFlux.importFormulaires.controle.avertissements.aide' => 'Ces lignes sont importées, avec un point à vérifier.',

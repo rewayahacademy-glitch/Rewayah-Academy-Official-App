@@ -2083,7 +2083,6 @@ class _Traductions$souratesRetirables$ar extends Traductions$souratesRetirables$
 	@override String get aide => 'السور المعتمدة في هذا الفصل التي يمكنك سحبها.';
 	@override String get vide => 'لا توجد سورة معتمدة للسحب في هذا الفصل.';
 	@override String get erreur => 'تعذّرت قراءة سور هذا الفصل. أعد المحاولة.';
-	@override String get horsLigne => 'دون اتصال، لا يمكن سحب أي سورة.';
 	@override String ligne({required Object eleve, required Object sourate}) => '⁨${eleve}⁩ · ⁨${sourate}⁩';
 	@override String jusqua({required Object heure}) => 'ممكن حتى ⁨${heure}⁩';
 	@override String jusquaDemain({required Object heure}) => 'ممكن حتى الغد، ⁨${heure}⁩';
@@ -34721,7 +34720,6 @@ extension on TraductionsAr {
 			'souratesRetirables.aide' => 'السور المعتمدة في هذا الفصل التي يمكنك سحبها.',
 			'souratesRetirables.vide' => 'لا توجد سورة معتمدة للسحب في هذا الفصل.',
 			'souratesRetirables.erreur' => 'تعذّرت قراءة سور هذا الفصل. أعد المحاولة.',
-			'souratesRetirables.horsLigne' => 'دون اتصال، لا يمكن سحب أي سورة.',
 			'souratesRetirables.ligne' => ({required Object eleve, required Object sourate}) => '⁨${eleve}⁩ · ⁨${sourate}⁩',
 			'souratesRetirables.jusqua' => ({required Object heure}) => 'ممكن حتى ⁨${heure}⁩',
 			'souratesRetirables.jusquaDemain' => ({required Object heure}) => 'ممكن حتى الغد، ⁨${heure}⁩',
@@ -34815,9 +34813,9 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.doublons.lignes' => ({required Object liste}) => 'الأسطر ⁨${liste}⁩',
 			'candidatsFlux.importFormulaires.doublons.dansLaBase' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'و⁨${n}⁩ سطر مسجَّل سابقًا', one: 'وسطر واحد مسجَّل سابقًا', two: 'وسطران مسجَّلان سابقًا', few: 'و⁨${n}⁩ أسطر مسجَّلة سابقًا', many: 'و⁨${n}⁩ سطرًا مسجَّلًا سابقًا', other: 'و⁨${n}⁩ سطر مسجَّل سابقًا', ), 
 			'candidatsFlux.importFormulaires.doublons.choisirLigne' => 'اختاروا السطر الذي يُحتفظ به، أو بيّنوا أنهم أشخاص مختلفون.',
+			'candidatsFlux.importFormulaires.doublons.ouvrir' => 'عرض خيارات هذه الحالة',
 			_ => null,
 		} ?? switch (path) {
-			'candidatsFlux.importFormulaires.doublons.ouvrir' => 'عرض خيارات هذه الحالة',
 			'candidatsFlux.importFormulaires.doublons.fermer' => 'إغلاق خيارات هذه الحالة',
 			'candidatsFlux.importFormulaires.doublons.plus' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'عرض ⁨${n}⁩ حالة إضافية', one: 'عرض حالة إضافية', two: 'عرض حالتين إضافيتين', few: 'عرض ⁨${n}⁩ حالات إضافية', many: 'عرض ⁨${n}⁩ حالة إضافية', other: 'عرض ⁨${n}⁩ حالة إضافية', ), 
 			'candidatsFlux.importFormulaires.doublons.etat.recente' => 'يُحتفظ بالأحدث',

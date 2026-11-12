@@ -14,7 +14,8 @@
 //   avant la reponse du serveur ;
 // * etats : chargement (squelette), contenu, vide (une phrase, ou rien quand
 //   [afficherSiVide] est faux), erreur (phrase et « Reessayer »), hors ligne
-//   (phrase, aucun geste).
+//   (la liste en lecture, sans geste ; le bandeau commun dit la coupure,
+//   l'ecran ne la redit pas).
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -58,11 +59,6 @@ class SouratesRetirablesClasse extends ConsumerStatefulWidget {
 
   /// La cle de la phrase d'erreur.
   static const Key cleErreur = ValueKey<String>('sourates-retirables-erreur');
-
-  /// La cle de la phrase hors ligne.
-  static const Key cleHorsLigne = ValueKey<String>(
-    'sourates-retirables-hors-ligne',
-  );
 
   /// La cle du geste « Retirer » de la sourate [numero] de [eleveId].
   static Key cleRetirer(String eleveId, int numero) =>
@@ -172,8 +168,6 @@ class _SouratesRetirablesClasseState
           ],
           if (lignes.isEmpty)
             Text(tr.vide, key: SouratesRetirablesClasse.cleVide)
-          else if (horsLigne)
-            Text(tr.horsLigne, key: SouratesRetirablesClasse.cleHorsLigne)
           else ...<Widget>[
             Text(tr.aide, style: discret),
             for (final _Ligne l in lignes)
@@ -192,21 +186,22 @@ class _SouratesRetirablesClasseState
                         ],
                       ),
                     ),
-                    ActionPrincipale(
-                      key: SouratesRetirablesClasse.cleRetirer(
-                        l.eleveId,
-                        l.numero,
+                    if (!horsLigne)
+                      ActionPrincipale(
+                        key: SouratesRetirablesClasse.cleRetirer(
+                          l.eleveId,
+                          l.numero,
+                        ),
+                        libelle: t.cahierSourates.retirer,
+                        libelleSemantique: tr.retirerPour(
+                          sourate: l.sourate,
+                          eleve: l.eleve,
+                        ),
+                        niveau: NiveauAction.destructive,
+                        compacte: true,
+                        pleineLargeur: false,
+                        onPress: () => _retirer(l),
                       ),
-                      libelle: t.cahierSourates.retirer,
-                      libelleSemantique: tr.retirerPour(
-                        sourate: l.sourate,
-                        eleve: l.eleve,
-                      ),
-                      niveau: NiveauAction.destructive,
-                      compacte: true,
-                      pleineLargeur: false,
-                      onPress: () => _retirer(l),
-                    ),
                   ],
                 ),
               ),

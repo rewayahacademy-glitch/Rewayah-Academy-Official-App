@@ -14480,7 +14480,6 @@
     "aide": "Les sourates validées dans cette classe que vous pouvez retirer.",
     "vide": "Aucune sourate validée à retirer dans cette classe.",
     "erreur": "Les sourates de cette classe n'ont pas pu être lues. Réessayez.",
-    "horsLigne": "Sans connexion, aucune sourate ne peut être retirée.",
     "ligne": "{eleve} · {sourate}",
     "jusqua": "Possible jusqu'à {heure}",
     "jusquaDemain": "Possible jusqu'à demain, {heure}",

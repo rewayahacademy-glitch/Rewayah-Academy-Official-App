@@ -227,7 +227,9 @@ void main() {
     );
   });
 
-  testWidgets('hors ligne : dit, aucun geste', (WidgetTester tester) async {
+  testWidgets('hors ligne : la liste en lecture, aucun geste', (
+    WidgetTester tester,
+  ) async {
     fixerVueCapture(tester, const Size(390, 1600), 1);
     await _monter(
       tester,
@@ -236,7 +238,12 @@ void main() {
       }),
       horsLigne: true,
     );
-    expect(find.byKey(SouratesRetirablesClasse.cleHorsLigne), findsOneWidget);
+    expect(
+      find.text(
+        t.souratesRetirables.ligne(eleve: 'Nour', sourate: 'Al-Fatiha'),
+      ),
+      findsOneWidget,
+    );
     expect(find.text(t.cahierSourates.retirer), findsNothing);
   });
 
