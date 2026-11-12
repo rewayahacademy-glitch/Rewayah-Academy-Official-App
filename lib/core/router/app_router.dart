@@ -106,6 +106,7 @@ import '../../features/appareils/ajouter_enfant_page.dart';
 import '../../features/appareils/appairage_page.dart';
 import '../../features/appareils/appareils_eleve_page.dart';
 import '../../features/appareils/appareils_page.dart';
+import '../../features/apprendre/routes_apprendre.dart';
 import '../../features/avis_public/avis_public_page.dart';
 import '../../features/bienvenue_enseignant/bienvenue_page.dart';
 import '../../features/cahier/cahier_page.dart';
@@ -843,6 +844,10 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           ),
           StatefulShellBranch(
             routes: <GoRoute>[
+              // ESPACE-APPRENDRE (lot 5) : l'espace a trois onglets, premiere
+              // route de la branche donc destination de la barre ; le Coran
+              // s'ouvre depuis la carte « Coran » de sa Bibliotheque.
+              ...routesApprendre(),
               GoRouteSure(
                 path: Routes.eleveCoran,
                 // Pointe sur le nouveau moteur Mushaf (Teaching Core, lot C) :

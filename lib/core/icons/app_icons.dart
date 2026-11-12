@@ -1113,6 +1113,13 @@ abstract final class AppIcons {
 
   // --- ESPACE-APPRENDRE (lot 5, 12/11/2026) : la planche de documents -----
 
+  /// La destination « Apprendre » de la barre de l'eleve : Phosphor
+  /// `graduation-cap` (0xe62c).
+  static const AppIcon apprendre = AppIcon._(
+    IconData(0xe62c, fontFamily: _repos),
+    IconData(0xe62c, fontFamily: _actif),
+  );
+
   /// Affichage en grille : Phosphor `squares-four` (0xe464).
   static const AppIcon grille = AppIcon._(
     IconData(0xe464, fontFamily: _repos),

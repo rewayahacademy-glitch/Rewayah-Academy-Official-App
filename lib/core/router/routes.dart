@@ -140,7 +140,15 @@ abstract final class Routes {
   /// Accueil eleve.
   static const String eleve = '/eleve';
 
-  /// Le Coran.
+  /// ESPACE-APPRENDRE (lot 5, 12/11/2026) : « Apprendre », l'espace de tout
+  /// l'apprentissage, a trois onglets (Bibliotheque, Programme, Mon livret).
+  /// Premiere route de la branche Apprendre : la destination de la barre pour
+  /// l'eleve adulte et pour le mineur. L'onglet ouvert se choisit par
+  /// `?onglet=bibliotheque|programme|livret` (Bibliotheque par defaut).
+  static const String eleveApprendre = '/eleve/apprendre';
+
+  /// Le Coran : le lecteur existant, qui s'ouvre depuis la carte « Coran » de
+  /// la Bibliotheque (`eleveApprendre`). L'adresse continue de fonctionner.
   static const String eleveCoran = '/eleve/coran';
 
   /// Suivi et historique de l'eleve.
