@@ -182,6 +182,12 @@ class _JourneePageEtat extends ConsumerState<JourneePage> {
   @override
   Widget build(BuildContext context) {
     final DateTime Function() lire = ref.watch(maintenantJourneeProvider);
+    // HEURES-ACCUEIL-ENSEIGNANT (11/11/2026) : les heures de la page passent par
+    // `heureChezMoi`, qui lit le fuseau du profil pose par [monHorlogeProvider].
+    // La page ecoute ce provider elle-meme : quand le fuseau arrive apres son
+    // premier rendu, elle se redessine, au lieu de garder l'heure de
+    // l'appareil (l'ecoute de `app.dart` ne redessine pas une page `const`).
+    ref.watch(monHorlogeProvider);
     // Un seul `PageShell`, quel que soit l'etat : le titre ne disparait pas
     // pendant une charge, et le bandeau hors ligne du shell coiffe la page.
     // Les bascules de chaque seance (ouverture a T-20, debut, fin) se voient
@@ -1741,7 +1747,7 @@ class _Squelette extends StatelessWidget {
 }
 
 /// La seance d'enseignant, vue comme la `Seance` que la journee partagee sait
-/// lire. `elevePrenom` porte « Classe An-Nour » et `eleveIdentifiant`
+/// lire. `elevePrenom` porte le nom de la Classe et `eleveIdentifiant`
 /// l'effectif, ce que `TimelineRow` doit dire d'une seance de Classe.
 ///
 /// `ponytail:` dette assumee (champ de modele partage employe pour un
@@ -1753,9 +1759,10 @@ Seance _versSeance(SeanceEnseignant seance) => Seance(
   fin: seance.fin,
   statut: seance.statut,
   eleveId: '',
-  elevePrenom: t.enseignant.journee.classeNommee(
-    classe: _nomClasse(seance.groupeLibelle),
-  ),
+  // Le nom de la Classe tel que la carte « Prochaine seance » le dit
+  // ([_nomClasse]) : jamais « Classe » devant un nom qui le porte deja
+  // (« Classe Classe Coran », HEURES-ACCUEIL-ENSEIGNANT, 11/11/2026).
+  elevePrenom: _nomClasse(seance.groupeLibelle),
   eleveIdentifiant: _effectif(seance.nbParticipants),
   enseignantId: '',
   enseignantPrenom: '',

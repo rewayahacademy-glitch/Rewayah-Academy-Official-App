@@ -5,6 +5,7 @@ import '../icons/app_icons.dart';
 import '../planning/journee.dart';
 import '../priere/libelle_priere.dart';
 import '../tc_groupe/libelles_tc_groupe.dart';
+import '../tc_horloge/mon_horloge.dart';
 import '../theme/app_color_pair.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_spacing.dart';
@@ -107,7 +108,8 @@ String _libelle(EntreeJournee entree) => switch (entree.sorte) {
         : libellePriere(entree.interruption!.priere),
 };
 
-/// L'heure locale d'un instant, sur deux chiffres.
-String _hhmm(DateTime quand) =>
-    '${quand.hour.toString().padLeft(2, '0')}:'
-    '${quand.minute.toString().padLeft(2, '0')}';
+/// L'heure d'un instant, a l'heure du profil ([heureChezMoi]) : la meme
+/// source que la carte « Prochaine seance » de la Journee. Lire `quand.hour`
+/// directement donnait l'heure de l'appareil, et deux heures differentes pour
+/// la meme Classe sur le meme ecran (HEURES-ACCUEIL-ENSEIGNANT, 11/11/2026).
+String _hhmm(DateTime quand) => heureChezMoi(quand);
