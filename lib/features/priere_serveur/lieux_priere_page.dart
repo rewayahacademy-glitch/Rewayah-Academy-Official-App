@@ -130,7 +130,7 @@ class LieuxPrierePage extends ConsumerWidget {
                       ? <String>[
                           '${e.lieu}',
                           if (e.assisteVendredi) t.priere.direction.vendredi,
-                        ].join(', ')
+                        ].join('\n')
                       : t.priere.direction.sansLieu,
                   icon: AppIcons.priere,
                   onPress: () => _ouvrir(context, ref, e),

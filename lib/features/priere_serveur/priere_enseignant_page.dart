@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
@@ -9,6 +10,7 @@ import '../../core/icons/app_icons.dart';
 import '../../core/priere/libelle_priere.dart';
 import '../../core/priere/lieu_priere.dart';
 import '../../core/priere/service_priere.dart';
+import '../../core/router/routes.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_spacing.dart';
@@ -76,6 +78,16 @@ class PriereEnseignantPage extends ConsumerWidget {
 
     return PageShell(
       titre: t.priere.enseignant.titre,
+      // Ouverte depuis le Compte : le retour ramene au Compte.
+      onRetour: () {
+        final GoRouter? routeur = GoRouter.maybeOf(context);
+        if (routeur == null) return;
+        if (routeur.canPop()) {
+          routeur.pop();
+        } else {
+          routeur.go(Routes.enseignantProfil);
+        }
+      },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
@@ -121,7 +133,7 @@ class _Heures extends ConsumerWidget {
                   description: <String>[
                     _ajustement(lieu.ajustement(priere)),
                     if (heure.approximee) t.priere.approchee,
-                  ].join(' '),
+                  ].join('\n'),
                   icon: AppIcons.priere,
                   onPress: () => _ouvrir(context, ref, priere),
                 ),

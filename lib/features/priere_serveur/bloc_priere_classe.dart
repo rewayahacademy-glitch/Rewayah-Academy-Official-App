@@ -103,8 +103,8 @@ class BlocPriereClasse extends ConsumerWidget {
       for (final CroisementPriere x in c.croisements)
         t.priere.classe.croise(
           priere: libellePriere(x.priere),
-          du: dates.formatMediumDate(x.du),
-          au: dates.formatMediumDate(x.au),
+          du: dates.formatMonthYear(x.du),
+          au: dates.formatMonthYear(x.au),
           seances: '${x.nbSeances}',
           pause: '${x.nbPause}',
           apres: '${x.nbApresCours}',

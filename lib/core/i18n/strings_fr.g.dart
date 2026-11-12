@@ -8143,8 +8143,8 @@ class Traductions$priere$classe$fr {
 	/// fr: 'Ce créneau ne croise aucune prière de l'enseignant sur les 12 mois.'
 	String get aucun => 'Ce créneau ne croise aucune prière de l\'enseignant sur les 12 mois.';
 
-	/// fr: '{priere} : du {du} au {au}, {seances} séances, dont {pause} avec une pause de prière et {apres} où l'enseignant prie après le cours.'
-	String croise({required Object priere, required Object du, required Object au, required Object seances, required Object pause, required Object apres}) => '${priere} : du ${du} au ${au}, ${seances} séances, dont ${pause} avec une pause de prière et ${apres} où l\'enseignant prie après le cours.';
+	/// fr: '{priere} : de {du} à {au}, {seances} séances, dont {pause} avec une pause de prière et {apres} où l'enseignant prie après le cours.'
+	String croise({required Object priere, required Object du, required Object au, required Object seances, required Object pause, required Object apres}) => '${priere} : de ${du} à ${au}, ${seances} séances, dont ${pause} avec une pause de prière et ${apres} où l\'enseignant prie après le cours.';
 
 	/// fr: 'Pour une partie de l'année, le soleil ne se lève ou ne se couche pas : aucune pause de prière n'est calculée.'
 	String get indefini => 'Pour une partie de l\'année, le soleil ne se lève ou ne se couche pas : aucune pause de prière n\'est calculée.';
@@ -51124,7 +51124,7 @@ extension on Traductions {
 			'priere.classe.erreur' => 'Les prières de ce créneau ne se sont pas affichées. Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'priere.classe.creneau' => ({required Object jour, required Object heure, required Object duree}) => '${jour}, ${heure} h, ${duree} min',
 			'priere.classe.aucun' => 'Ce créneau ne croise aucune prière de l\'enseignant sur les 12 mois.',
-			'priere.classe.croise' => ({required Object priere, required Object du, required Object au, required Object seances, required Object pause, required Object apres}) => '${priere} : du ${du} au ${au}, ${seances} séances, dont ${pause} avec une pause de prière et ${apres} où l\'enseignant prie après le cours.',
+			'priere.classe.croise' => ({required Object priere, required Object du, required Object au, required Object seances, required Object pause, required Object apres}) => '${priere} : de ${du} à ${au}, ${seances} séances, dont ${pause} avec une pause de prière et ${apres} où l\'enseignant prie après le cours.',
 			'priere.classe.indefini' => 'Pour une partie de l\'année, le soleil ne se lève ou ne se couche pas : aucune pause de prière n\'est calculée.',
 			'priere.classe.vendredi' => ({required Object debut, required Object fin, required Object n}) => 'Ce créneau chevauche la prière du vendredi de l\'enseignant (${debut} à ${fin}) : ${n} séances de l\'année. Avertissement fort.',
 			'priere.classe.libres' => ({required Object heures}) => 'Heures de début sans prière ce jour-là : ${heures}.',
