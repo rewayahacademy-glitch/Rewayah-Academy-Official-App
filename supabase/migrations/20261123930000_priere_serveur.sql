@@ -801,7 +801,7 @@ BEGIN
 
   FOR k IN 1..n LOOP
     priere := v_p[c_i[k]]; entree_utc := v_t[c_i[k]]; approximee := v_a[c_i[k]];
-    zone := c_zone[k]; retenue := (k = v_best);
+    zone := c_zone[k]; retenue := coalesce(k = v_best, false);
     debut_prevu_utc := CASE WHEN k = v_best THEN c_deb[k] ELSE NULL END;
     duree_minutes := c_dur[k]; indefini := false;
     RETURN NEXT;
@@ -948,8 +948,9 @@ BEGIN
 END;
 $function$;
 
--- Toutes les seances de l'horizon (recalcul de nuit, changement d'un reglage d'ecole).
-CREATE FUNCTION private.priere_recalculer_horizon()
+-- Les seances de l'horizon (recalcul de nuit) ou, avec p_tout, toutes les seances a
+-- venir (changement d'un reglage d'ecole : un reglage rare, une seule passe).
+CREATE FUNCTION private.priere_recalculer_horizon(p_tout boolean DEFAULT false)
 RETURNS integer
 LANGUAGE plpgsql
 SECURITY DEFINER
@@ -965,7 +966,7 @@ BEGIN
      WHERE s.deleted_at IS NULL AND s.groupe_id IS NOT NULL
        AND s.status IN ('planned', 'preflight')
        AND s.started_at > pg_catalog.now()
-       AND s.started_at < pg_catalog.now() + pg_catalog.make_interval(days => v_horizon)
+       AND (p_tout OR s.started_at < pg_catalog.now() + pg_catalog.make_interval(days => v_horizon))
   LOOP
     BEGIN
       PERFORM private.priere_recalculer_seance(v_id);
@@ -1054,7 +1055,7 @@ SET search_path = ''
 AS $function$
 BEGIN
   BEGIN
-    PERFORM private.priere_recalculer_horizon();
+    PERFORM private.priere_recalculer_horizon(true);
   EXCEPTION WHEN OTHERS THEN
     RAISE WARNING 'PRIERE-1 : recalcul apres changement de reglage impossible : %', SQLERRM;
   END;
@@ -1111,7 +1112,7 @@ REVOKE ALL ON FUNCTION
     integer, integer, boolean, integer, integer),
   private.priere_ecrire_stock(uuid, timestamptz, integer, text, boolean, uuid, date),
   private.priere_recalculer_seance(uuid), private.priere_recalculer_enseignant(uuid),
-  private.priere_recalculer_horizon(), private.priere_trg_seance(), private.priere_trg_remplacement(),
+  private.priere_recalculer_horizon(boolean), private.priere_trg_seance(), private.priere_trg_remplacement(),
   private.priere_trg_reglages_enseignant(), private.priere_trg_reglages_ecole()
   FROM PUBLIC, anon, authenticated, service_role, agent_ro;
 
@@ -1671,7 +1672,7 @@ BEGIN
          b.tz_lieu || ' / longitude ' || pg_catalog.round(b.lon::numeric, 1)::text
     FROM base b
    WHERE pg_catalog.abs(
-           pg_catalog.least(
+           LEAST(
              pg_catalog.date_part('epoch', (TIMESTAMP '2027-01-15 12:00')
                - ((TIMESTAMP '2027-01-15 12:00' AT TIME ZONE b.tz_lieu) AT TIME ZONE 'UTC')) / 3600.0,
              pg_catalog.date_part('epoch', (TIMESTAMP '2027-07-15 12:00')
