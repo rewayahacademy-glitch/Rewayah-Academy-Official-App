@@ -25,6 +25,7 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/router/routes.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -40,8 +41,7 @@ import '../../core/widgets/rangee_filtres.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
-import '../accueil_famille/bloc_seance.dart'
-    show dateDeLAppareil, heureDeLAppareil;
+import '../accueil_famille/bloc_seance.dart' show dateDeLAppareil;
 import '../suivi_foyer/composants_historique.dart'
     show CarteLignes, ColonneHistorique, LigneHistorique;
 import '../suivi_foyer/filtres_historique.dart'
@@ -181,6 +181,9 @@ class _HistoriqueControleurPageState
   Widget build(BuildContext context) => PopScope(
     canPop: _ouvert == null,
     onPopInvokedWithResult: (bool fait, Object? _) {
+      // HEURES-PROFIL H2 (12/11/2026) : la page ecoute le fuseau du profil ;
+      // quand il arrive apres son premier rendu, ses heures se redessinent.
+      ref.watch(monHorlogeProvider);
       if (fait || _enComplement) return;
       setState(() => _ouvert = null);
     },
@@ -325,7 +328,7 @@ class _HistoriqueControleurPageState
 
   Widget _ligne(RapportControle r) {
     final h = t.controleur.historique;
-    final String date = dateDeLAppareil(r.debut);
+    final String date = dateDeLAppareil(chezMoi(r.debut));
     // DUREE-INSECABLE-4 : la duree ne s'affiche jamais seule ici, elle suit
     // l'heure (« 18:00 · 12 min observees ») et la date de la phrase lue :
     // insecable, sans ancre de sens au milieu du libelle.
@@ -336,7 +339,7 @@ class _HistoriqueControleurPageState
     return LigneHistorique(
       key: HistoriqueControleurPage.ligneKey(r.id),
       date: date,
-      meta: h.meta(heure: heureDeLAppareil(r.debut), duree: duree),
+      meta: h.meta(heure: heureChezMoi(r.debut), duree: duree),
       titre: r.classe,
       sousTitre: r.enseignant,
       pays: r.paysEnseignant,
@@ -382,7 +385,10 @@ class _DetailRapport extends StatelessWidget {
         .applyTo(Theme.of(context).textTheme.bodyMedium ?? const TextStyle());
 
     return PageShell(
-      titre: h.titreDetail(classe: r.classe, date: dateDeLAppareil(r.debut)),
+      titre: h.titreDetail(
+        classe: r.classe,
+        date: dateDeLAppareil(chezMoi(r.debut)),
+      ),
       onRetour: onRetour,
       child: ColonneHistorique(
         child: Column(
@@ -410,8 +416,8 @@ class _DetailRapport extends StatelessWidget {
                   cle: h.cleDate,
                   // Ordre et virgule traduisibles (revue CT-R m9).
                   valeur: h.dateHeure(
-                    date: dateDeLAppareil(r.debut),
-                    heure: heureDeLAppareil(r.debut),
+                    date: dateDeLAppareil(chezMoi(r.debut)),
+                    heure: heureChezMoi(r.debut),
                   ),
                   chiffres: true,
                 ),
@@ -485,8 +491,8 @@ class _DetailRapport extends StatelessWidget {
                     LigneCleValeur(
                       // Revue CT-R m4 : qui l'a ecrit, a cote de la date.
                       cle: h.dateHeureAuteur(
-                        date: dateDeLAppareil(c.date),
-                        heure: heureDeLAppareil(c.date),
+                        date: dateDeLAppareil(chezMoi(c.date)),
+                        heure: heureChezMoi(c.date),
                         auteur: c.auteur ?? t.controleur.echanges.auteurVous,
                       ),
                       valeur: c.texte,

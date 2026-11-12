@@ -3221,6 +3221,15 @@
         "aucunResultatDetail": "جرّب رقم صفحة، أو اسم سورة، أو مرجعًا مثل 2:255.",
         "pageNumero": "الصفحة ⁨{page}⁩"
       },
+      "sommaire": {
+        "titre": "السور",
+        "detail": "عدد آياتها ⁨{versets}⁩ · الصفحة ⁨{page}⁩",
+        "allerA": "الانتقال إلى سورة ⁨{sourate}⁩، الصفحة ⁨{page}⁩",
+        "indisponible": "تعذّرت قراءة قائمة السور",
+        "indisponibleDetail": "ربما انقطع الاتصال.",
+        "absent": "نص القرآن غير مثبَّت",
+        "absentDetail": "لا شيء للعرض."
+      },
       "reprise": {
         "groupe": "استئناف الدرس",
         "groupeDetail": "كان الفصل في الصفحة ⁨{page}⁩"
@@ -5400,7 +5409,6 @@
         "feuille": {
           "planifierConsequence": "يتلقى المترشح موعد المقابلة، ويجدها المشاركون ضمن مقابلاتهم.",
           "jourAide": "خلال الأيام التسعين القادمة.",
-          "heureAide": "توقيت هذا الجهاز.",
           "participantsAide": "اختر بحرية من الفريق في هذا الجانب.",
           "fondateursChoisis": "المؤسسون المختارون: \u2068{n}\u2069",
           "jourManquant": "اختر يومًا.",
@@ -13807,7 +13815,6 @@
       "feuilleContexteSansNom": "تُعقد الحصة الجديدة مع معلم الفصل ومدتها \u2068{minutes}\u2069 د مثل الحصة المؤجلة. يُبلَّغ الفصل بالموعد الجديد.",
       "jour": "يوم الحصة الجديدة",
       "heure": "الساعة",
-      "heureAppareil": "بتوقيت هذا الجهاز.",
       "quand": "\u2068{jour}\u2069 الساعة \u2068{heure}\u2069",
       "choixManquant": "اختاروا يوم الحصة الجديدة وساعتها.",
       "confirmer": "تحديد هذا الموعد",

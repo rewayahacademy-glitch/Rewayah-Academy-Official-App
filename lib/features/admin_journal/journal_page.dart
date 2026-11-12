@@ -10,6 +10,7 @@ import '../../core/admin/admin_domaine.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/journal/service_journal.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
@@ -184,6 +185,9 @@ class _JournalPageEtat extends ConsumerState<JournalPage> {
 
   @override
   Widget build(BuildContext context) {
+    // HEURES-PROFIL H2 (12/11/2026) : la page ecoute le fuseau du profil ;
+    // quand il arrive apres son premier rendu, ses heures se redessinent.
+    ref.watch(monHorlogeProvider);
     return PageShell(
       titre: t.admin.journal.titre,
       // La collection defile elle-meme : c'est ce qui laisse l'en-tete de
@@ -545,7 +549,7 @@ List<ColonneDonnees<EntreeJournal>> colonnesJournal() =>
       ColonneDonnees<EntreeJournal>(
         titre: t.admin.journal.colonneQuand,
         texte: (EntreeJournal e) => t.admin.journal.horodatage(
-          date: _date(e.survenuLe),
+          date: _date(chezMoi(e.survenuLe)),
           heure: _heure(e.survenuLe),
         ),
         tabulaire: true,
@@ -670,9 +674,8 @@ String _date(DateTime quand) =>
     '${quand.day.toString().padLeft(2, '0')}/'
     '${quand.month.toString().padLeft(2, '0')}/${quand.year}';
 
-String _heure(DateTime quand) =>
-    '${quand.hour.toString().padLeft(2, '0')}:'
-    '${quand.minute.toString().padLeft(2, '0')}';
+// HEURES-PROFIL H2 : a l'heure du profil.
+String _heure(DateTime quand) => heureChezMoi(quand);
 
 /// La pastille puis la phrase du bandeau de la chaine : cote a cote quand la
 /// pastille et le mot le plus long de la phrase y tiennent, sinon la

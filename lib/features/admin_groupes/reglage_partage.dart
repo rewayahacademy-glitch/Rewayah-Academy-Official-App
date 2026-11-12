@@ -10,6 +10,7 @@ import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/reseau/service_reseau.dart' show horsLigneProvider;
 import '../../core/session/session_controleur.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -22,7 +23,7 @@ import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/local_feedback.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
-import '../suivi_foyer/filtres_historique.dart' show dateCourte, heureMinute;
+import '../suivi_foyer/filtres_historique.dart' show dateCourte;
 import 'apercu_familial.dart';
 import 'partage_commun.dart';
 
@@ -234,7 +235,8 @@ class _GroupePartageClasseEtat extends ConsumerState<GroupePartageClasse> {
       return null;
     }
     final l = t.admin.groupes.partage;
-    final String date = '${dateCourte(quand)} ${heureMinute(quand)}';
+    // HEURES-PROFIL H2 : a l'heure du profil.
+    final String date = '${dateCourte(chezMoi(quand))} ${heureChezMoi(quand)}';
     final String? qui = p.modifiePar;
     return qui == null
         ? l.modifieLe(date: date)
@@ -440,7 +442,9 @@ class _FeuilleExceptionsPartageEtat
   void _ouvrirEleve(PartageEleve eleve) {
     AppBottomSheet.ouvrir<void>(
       context,
-      titre: t.admin.groupes.partage.modifierEleve(dePrenom: deDevant(eleve.libelle)),
+      titre: t.admin.groupes.partage.modifierEleve(
+        dePrenom: deDevant(eleve.libelle),
+      ),
       constructeur: (BuildContext contexte) => FeuilleRegleEleve(
         classeId: widget.classeId,
         eleve: eleve,
@@ -538,9 +542,11 @@ class _FeuilleExceptionsPartageEtat
     final String? modif = quand == null
         ? null
         : (e.modifiePar == null
-              ? l.modifieLe(date: '${dateCourte(quand)} ${heureMinute(quand)}')
+              ? l.modifieLe(
+                  date: '${dateCourte(chezMoi(quand))} ${heureChezMoi(quand)}',
+                )
               : l.modifiePar(
-                  date: '${dateCourte(quand)} ${heureMinute(quand)}',
+                  date: '${dateCourte(chezMoi(quand))} ${heureChezMoi(quand)}',
                   auteur: e.modifiePar!,
                 ));
     final String legende = <String>[

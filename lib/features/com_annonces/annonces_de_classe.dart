@@ -9,6 +9,7 @@ import '../../core/fluidite/action_anticipee.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
@@ -212,6 +213,9 @@ class _AnnoncesDeClasseState extends ConsumerState<AnnoncesDeClasse> {
 
   @override
   Widget build(BuildContext context) {
+    // HEURES-PROFIL H2 (12/11/2026) : la page ecoute le fuseau du profil ;
+    // quand il arrive apres son premier rendu, ses heures se redessinent.
+    ref.watch(monHorlogeProvider);
     final AsyncValue<AnnoncesDeLaClasse> valeur = ref.watch(
       annoncesDeClasseProvider(widget.classeId),
     );

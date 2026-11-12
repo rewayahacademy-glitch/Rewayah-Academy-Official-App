@@ -15,6 +15,7 @@ import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/i18n/dates_appareil.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -190,7 +191,9 @@ class _EtatOuvrir extends ConsumerState<FeuilleOuvrirCreneau>
       return;
     }
     final DateTime j = _jour!;
-    final DateTime debut = DateTime(
+    // HEURES-PROFIL H3 (12/11/2026) : le jour et l'heure choisis sont ceux du
+    // fuseau du PROFIL ; l'instant envoye en est l'inverse exact.
+    final DateTime debut = instantChezMoi(
       j.year,
       j.month,
       j.day,
@@ -217,7 +220,8 @@ class _EtatOuvrir extends ConsumerState<FeuilleOuvrirCreneau>
     final c = t.admin.candidatures.creneaux;
     final e = t.admin.candidatures.entretien;
     final f = e.feuille;
-    final DateTime maintenant = ref.read(horlogeFormulairesProvider)();
+    // Aujourd'hui au fuseau du profil (HEURES-PROFIL H3).
+    final DateTime maintenant = chezMoi(ref.read(horlogeFormulairesProvider)());
     final DateTime aujourdhui = DateTime(
       maintenant.year,
       maintenant.month,
@@ -300,8 +304,6 @@ class _EtatOuvrir extends ConsumerState<FeuilleOuvrirCreneau>
           ),
         ),
         if (tente && _heure == null) erreurChamp(f.heureManquante),
-        Ecart.vSm,
-        muet(f.heureAide),
         Ecart.vMd,
         Align(
           alignment: AlignmentDirectional.centerStart,
