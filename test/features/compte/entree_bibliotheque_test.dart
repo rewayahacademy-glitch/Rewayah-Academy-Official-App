@@ -68,36 +68,10 @@ void main() {
     expect(find.text('Bibliothèque'), findsNothing);
   });
 
-  testWidgets('le tuteur : « Ouvrir la bibliotheque » dans son Compte', (
-    tester,
-  ) async {
-    final GoRouter r = await _monter(
-      tester,
-      AppRole.guardian,
-      Routes.tuteurCompte,
-    );
-    expect(find.text('Ouvrir la bibliothèque'), findsOneWidget);
-    await tester.ensureVisible(find.text('Ouvrir la bibliothèque'));
-    await tester.tap(find.text('Ouvrir la bibliothèque'));
-    await tester.pump(const Duration(milliseconds: 400));
-    await tester.pump(const Duration(milliseconds: 400));
-    expect(_sommet(r), Routes.tcBibliotheque);
-  });
-
-  testWidgets('l\'adulte eleve autonome : la meme entree, par son compte '
-      'tuteur', (tester) async {
-    final GoRouter r = await _monter(
-      tester,
-      AppRole.guardian,
-      Routes.tuteurCompte,
-      autonome: true,
-    );
-    expect(find.text('Ouvrir la bibliothèque'), findsOneWidget);
-    await tester.ensureVisible(find.text('Ouvrir la bibliothèque'));
-    await tester.tap(find.text('Ouvrir la bibliothèque'));
-    await tester.pump(const Duration(milliseconds: 400));
-    await tester.pump(const Duration(milliseconds: 400));
-    expect(_sommet(r), Routes.tcBibliotheque);
+  testWidgets('le tuteur : la Bibliotheque sort de son Compte', (tester) async {
+    await _monter(tester, AppRole.guardian, Routes.tuteurCompte);
+    expect(find.text('Ouvrir la bibliothèque'), findsNothing);
+    expect(find.text('Bibliothèque'), findsNothing);
   });
 
   for (final AppRole role in <AppRole>[

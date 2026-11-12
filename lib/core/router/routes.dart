@@ -461,10 +461,11 @@ abstract final class Routes {
     'mes-donnees',
   ];
 
-  /// Les preferences du titulaire.
+  /// Ancienne page des preferences du titulaire (PROFILS P2) : les
+  /// preferences sont dans le Compte, l'adresse y revient.
   static const String tuteurComptePreferences = '/tuteur/compte/preferences';
 
-  /// L'apparence (Systeme, Clair, Sombre), sous-page des preferences.
+  /// Ancienne sous-page Apparence (PROFILS P2) : l'adresse revient au Compte.
   static const String tuteurCompteApparence =
       '/tuteur/compte/preferences/apparence';
 
@@ -510,14 +511,11 @@ abstract final class Routes {
   /// visuel Tuteur V1 section 4.2 point 5 ; mapping des routes, section 5).
   ///
   /// Une tache focalisee se termine ou s'abandonne : ajout de profil,
-  /// emetteur QR d'appairage, questionnaire du parcours, preferences et leur
-  /// sous-page, consentement.
+  /// emetteur QR d'appairage, questionnaire du parcours, consentement.
   static bool estTacheFocalisee(String chemin) =>
       chemin == tuteurAjouterEnfant ||
       chemin.startsWith('$tuteurAppairer/') ||
       chemin.startsWith('$tuteurParcours/') ||
-      chemin == tuteurComptePreferences ||
-      chemin.startsWith('$tuteurComptePreferences/') ||
       chemin == tuteurCompteConsentements;
 
   // --- Enseignant ---------------------------------------------------------

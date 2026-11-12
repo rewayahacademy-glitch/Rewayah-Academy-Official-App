@@ -295,7 +295,7 @@ void main() {
     final Map<String, String> alias = <String, String>{
       Routes.compte: Routes.tuteurCompte,
       Routes.compteProfil: Routes.compteTuteurSousPage('informations'),
-      Routes.compteReglages: Routes.tuteurComptePreferences,
+      Routes.compteReglages: Routes.tuteurCompte,
       Routes.compteProfils: Routes.tuteurFoyer,
       Routes.compteProfilEnfantPour('e1'): Routes.ficheElevePour('e1'),
       '${Routes.compte}/inconnue': '${Routes.tuteurCompte}/inconnue',

@@ -6,12 +6,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 // `Override` n'est pas exporte par l'entree principale de Riverpod 3.
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
-import 'package:rewayah_academy/core/i18n/selecteur_langue.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/preferences/preferences_locales.dart';
 import 'package:rewayah_academy/features/inscription/questionnaire/memoire_appareil.dart';
 
-import '../../support/hote_theme.dart';
 
 ProviderContainer _conteneur(StockagePreferences stockage) {
   final ProviderContainer c = ProviderContainer(
@@ -101,34 +99,5 @@ void main() {
     expect(lireMemoireAppareil(clefPreferenceTheme), isNull);
     // Hors web, rien n'est lu avant le premier ecran : la base locale le fait.
     expect(langueMemoriseeAuDemarrage(), isNull);
-  });
-
-  testWidgets('le selecteur montre les trois choix et ecrit la preference', (
-    WidgetTester tester,
-  ) async {
-    fixerVue(tester, vueMobile);
-    await tester.pumpWidget(hoteTheme(const SelecteurLangue()));
-
-    expect(find.text(t.commun.langue.contexte), findsOneWidget);
-    for (final String detail in <String>[
-      t.commun.langue.systemeDetail,
-      t.commun.langue.francaisDetail,
-      t.commun.langue.arabeDetail,
-    ]) {
-      expect(
-        find.textContaining(detail, findRichText: true),
-        findsOneWidget,
-        reason: detail,
-      );
-    }
-
-    await tester.tap(find.text('العربية'));
-    await tester.pump();
-    expect(
-      ProviderScope.containerOf(tester.element(find.byType(SelecteurLangue)))
-          .read(preferencesLocalesProvider)
-          .langue,
-      PreferenceLangue.arabe,
-    );
   });
 }

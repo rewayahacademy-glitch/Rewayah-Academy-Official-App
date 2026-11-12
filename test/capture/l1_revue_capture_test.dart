@@ -14,7 +14,6 @@ import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/video/pre_vol.dart';
-import 'package:rewayah_academy/features/compte/apparence_page.dart';
 import 'package:rewayah_academy/features/journee/journee_page.dart';
 import 'package:rewayah_academy/features/salle_seance/actions_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/salle_seance.dart';
@@ -174,22 +173,6 @@ void main() {
             debugPrint('PNG ${await capturer(tester, '${cas.$1}_$l')}');
           });
         }
-
-        testWidgets('apparence, choix du theme, $l px', (
-          WidgetTester tester,
-        ) async {
-          fixerVueCapture(tester, vue, 1);
-          await tester.pumpWidget(
-            hoteCapture(
-              const ApparenceComptePage(),
-              surcharges: <Override>[
-                sourceSessionProvider.overrideWithValue(FausseSourceSession()),
-              ],
-            ),
-          );
-          await stabiliser(tester);
-          debugPrint('PNG ${await capturer(tester, 'apparence_theme_$l')}');
-        });
       }
     },
   );

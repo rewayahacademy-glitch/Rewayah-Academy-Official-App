@@ -58,8 +58,6 @@ void main() {
       Routes.tuteurSuivi,
       Routes.tuteurClasses,
       Routes.tuteurCompte,
-      Routes.tuteurComptePreferences,
-      Routes.tuteurCompteApparence,
       Routes.tuteurCompteConsentements,
       Routes.tuteurNotifications,
       Routes.tuteurMessages,

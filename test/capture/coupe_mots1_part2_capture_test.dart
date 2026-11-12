@@ -32,7 +32,6 @@ import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/app_bottom_sheet.dart';
 import 'package:rewayah_academy/core/widgets/groupe_reglages.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
-import 'package:rewayah_academy/features/compte/apparence_page.dart';
 import 'package:rewayah_academy/features/compte/compte_page.dart';
 import 'package:rewayah_academy/features/controleur/historique_controleur_page.dart';
 import 'package:rewayah_academy/features/journee/absence_remplacement_vue.dart';
@@ -169,23 +168,6 @@ void main() {
           await stabiliser(tester);
           _mesurer(tester, find.byType(ReglagesComptePage));
           debugPrint('PNG ${await capturer(tester, 'reglages_$suffixe')}');
-        });
-
-        testWidgets('apparence $suffixe', (WidgetTester tester) async {
-          fixerVueCapture(tester, const Size(320, 1100), 2);
-          await tester.pumpWidget(
-            hoteCapture(
-              const ApparenceComptePage(),
-              surcharges: <Override>[
-                sourceSessionProvider.overrideWithValue(FausseSourceSession()),
-              ],
-              themeMode: mode,
-              echelleTexte: echelle,
-            ),
-          );
-          await stabiliser(tester);
-          _mesurer(tester, find.byType(ApparenceComptePage));
-          debugPrint('PNG ${await capturer(tester, 'apparence_$suffixe')}');
         });
 
         testWidgets('profil controleur $suffixe', (WidgetTester tester) async {
