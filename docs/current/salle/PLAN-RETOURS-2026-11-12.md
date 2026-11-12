@@ -81,3 +81,18 @@ demandes, quatre captures annotées (`docs/current/captures/directeur/2026-11-12
 Chaque lot : les six vérifications, des tests à travers le vrai `RewayahApp` et le vrai routeur
 quand il touche une page, ses captures sous `docs/current/captures/E2E/<lot>/`, sa ligne au
 registre et au journal de la salle.
+
+## Compléments du directeur, 12/11/2026 à 21:05 et 21:15 UTC (dits par lui, directement)
+
+Captures : `docs/current/captures/directeur/2026-11-12-salle/5-telephone-camera-ne-s-allume-pas.jpg`
+et `6-telephone-compte-deja-connecte.jpg`.
+
+| N° | Ce qu'il a dit | Ce que cela change | État |
+| --: | :-- | :-- | :-- |
+| 9 (corrigé) | « Il faut juste changer l'effet qui existe déjà (un rectangle violet). J'ai pas dit d'adapter au volume de sa voix. » | La lumière de l'orateur suit le seul « parle / ne parle pas ». La force de la voix n'est pas remontée de la visio : cette partie du plan est retirée | Lot VISAGES recadré à 21:09 |
+| 14 | La pause est un réglage ; l'enseignant la gère lui-même. Par défaut, juste après le milieu de la séance (45 min pour une classe d'adultes), la barre du chrono propose une pause de 10 min : Oui ou Non. Oui : tous reçoivent l'alerte dans leur barre, avec l'heure exacte de reprise. Non : rappel après quelques minutes (réglable par la direction, 5 par défaut), « car la pause est un droit ». « À toi de décider et d'arbitrer. » | Lot PAUSE-PROPOSEE, dans la Dynamique chrono. Arbitrages à écrire après le relevé de l'existant (réglages, nombre de rappels, enfants) | Relevé en cours |
+| 15 | La barre du chrono marche bien quand la salle est réduite ; « il faut qu'il soit exploité au max ». | La salle réduite porte la même barre, avec les mêmes événements (pause, appel, arrivées) | À concevoir avec DYNAMIQUE-CHRONO |
+| 16 | L'enseignant qui sort de la salle perd le son et doit revenir vite. « L'enseignant ne doit pas être prisonnier de sa salle » : il peut sortir de l'application et continuer à entendre. Demande déjà faite, non tenue. | Lot HORS-SALLE. Cause à trouver. Limite à dire : sur une application web, c'est le téléphone et le navigateur qui décident de ce qui continue en arrière-plan ; à essayer sur de vrais téléphones | Relevé en cours |
+| 17 | L'élève peut sortir de la salle sans coupure ; s'il sort de l'application, un court délai sans coupure, puis coupure. Toutes ses sorties de l'application sont consignées au rapport (nombre, fréquence, de quand à quand). | Lot HORS-SALLE. Nouvelle donnée relevée sur des mineurs : elle ne commence pas sans information des parents (règle du cahier de la salle) ; texte à valider par le directeur | Relevé en cours |
+| 18 | La caméra de l'élève entré par un appareil jumelé ne s'allume pas ; message long. | Capture 5 : ce n'est pas un refus du serveur. Le téléphone dit que la caméra est déjà prise (« NotReadableError »). Piste à vérifier : le lecteur de code du jumelage garde la caméra. Le message montre une phrase technique en anglais : à retirer de l'écran | Relevé en cours ; message traité dans ENTREE-ROBUSTE |
+| 19 | Rejoindre alors que le même compte est déjà connecté : « c'est bien, mais pas très clair comme signe ». | Capture 6 : l'écran dit « La salle n'a pas pu s'ouvrir, vérifiez votre connexion », un message de réseau pour une cause qui n'est pas le réseau. Le bon message existe (« ouverte ailleurs ») mais n'est pas posé dans ce cas. Piste pour le point 11 : deux appareils du même compte qui se chassent | Traité dans ENTREE-ROBUSTE |
