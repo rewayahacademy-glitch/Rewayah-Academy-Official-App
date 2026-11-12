@@ -762,6 +762,7 @@ DECLARE
   v_id uuid;
   v_classe uuid;
   v_decalage integer := 0;
+  v_classe_permise boolean;
 BEGIN
   IF NOT coalesce(auth.uid() IS NOT NULL AND public.app_account_valid(), false) THEN
     RAISE EXCEPTION 'BibliothequeNonAutorisee' USING ERRCODE = '42501';
@@ -805,13 +806,14 @@ BEGIN
       RAISE EXCEPTION 'BibliothequeFiltreInvalide' USING ERRCODE = '22023';
     END;
     -- Une classe qui n'est pas celle de l'appelant : liste vide, aucun indice.
-    IF NOT (
+    v_classe_permise := coalesce(
       public.app_role() = 'admin'
       OR (public.app_role() = 'teacher'
           AND EXISTS (SELECT 1 FROM public.mes_groupes_v mg WHERE mg.groupe_id = v_classe))
       OR (public.app_role() IN ('guardian', 'student')
-          AND EXISTS (SELECT 1 FROM public.mes_groupes_famille_v mg WHERE mg.groupe_id = v_classe))
-    ) THEN
+          AND EXISTS (SELECT 1 FROM public.mes_groupes_famille_v mg WHERE mg.groupe_id = v_classe)),
+      false);
+    IF v_classe_permise IS NOT TRUE THEN
       RETURN '[]'::jsonb;
     END IF;
   END IF;
