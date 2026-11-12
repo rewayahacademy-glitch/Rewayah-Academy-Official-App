@@ -164,12 +164,16 @@ class _Heures extends ConsumerWidget {
 /// « 3 min en plus », « 2 min en moins », ou « Aucun ajustement ».
 String _ajustement(int minutes) => switch (minutes) {
   0 => t.priere.enseignant.aucunAjustement,
-  > 0 => t.priere.enseignant.plus(minutes: '$minutes'),
-  _ => t.priere.enseignant.moins(minutes: '${-minutes}'),
+  > 0 => LibellesGroupe.insecable(
+    t.priere.enseignant.plus(minutes: '$minutes'),
+  ),
+  _ => LibellesGroupe.insecable(
+    t.priere.enseignant.moins(minutes: '${-minutes}'),
+  ),
 };
 
 /// L'ajustement en minutes, signe, ancre pour s'afficher seul.
-String _minutes(int n) => LibellesGroupe.valeurSeule(
+String _ajustementSigne(int n) => LibellesGroupe.valeurSeule(
   t.priere.enseignant.unite(n: n > 0 ? '+$n' : '$n'),
 );
 
@@ -226,7 +230,7 @@ class _FeuilleAjustementEtat extends ConsumerState<_FeuilleAjustement> {
           valeur: _valeur,
           min: -30,
           max: 30,
-          affichage: _minutes,
+          affichage: _ajustementSigne,
           libelleMoins: t.choix.diminuer,
           libellePlus: t.choix.augmenter,
           onChange: (int v) => setState(() {

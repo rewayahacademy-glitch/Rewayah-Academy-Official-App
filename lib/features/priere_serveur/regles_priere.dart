@@ -40,8 +40,8 @@ List<Widget> sectionReglesPriere({
     return const <Widget>[];
   }
   final r = t.priere.regles;
-  String minutes(int n) => LibellesGroupe.valeurSeule(r.unite(n: '$n'));
-  String jours(int n) => LibellesGroupe.valeurSeule(r.uniteJours(n: '$n'));
+  String enMinutes(int n) => LibellesGroupe.valeurSeule(r.unite(n: '$n'));
+  String enJours(int n) => LibellesGroupe.valeurSeule(r.uniteJours(n: '$n'));
   String refus(String message) => r.erreurEcriture(message: message);
 
   ConfigLigneEntiere ligne({
@@ -115,14 +115,14 @@ List<Widget> sectionReglesPriere({
           description: r.pauseDetail,
           cle: clePrierePause,
           min: 5,
-          affichage: minutes,
+          affichage: enMinutes,
         ),
         ligne(
           titre: r.pauseRamadan,
           description: r.pauseRamadanDetail,
           cle: clePrierePauseRamadan,
           min: 5,
-          affichage: minutes,
+          affichage: enMinutes,
         ),
         ConfigLigneBooleenne(
           key: const ValueKey<String>('regles-priere-ramadan'),
@@ -138,21 +138,21 @@ List<Widget> sectionReglesPriere({
           description: r.margeDebutDetail,
           cle: clePriereMargeDebut,
           min: 0,
-          affichage: minutes,
+          affichage: enMinutes,
         ),
         ligne(
           titre: r.margeFin,
           description: r.margeFinDetail,
           cle: clePriereMargeFin,
           min: 5,
-          affichage: minutes,
+          affichage: enMinutes,
         ),
         ligne(
           titre: r.horizon,
           description: r.horizonDetail,
           cle: clePriereHorizon,
           min: 7,
-          affichage: jours,
+          affichage: enJours,
         ),
       ],
     ),

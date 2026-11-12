@@ -7,6 +7,7 @@ import '../../core/icons/app_icons.dart';
 import '../../core/priere/libelle_priere.dart';
 import '../../core/priere/lieu_priere.dart';
 import '../../core/priere/service_priere.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/carte_lignes.dart';
 import '../../core/widgets/empty_state.dart';
@@ -68,10 +69,12 @@ class BlocPriereClasse extends ConsumerWidget {
         lignes: <Widget>[
           for (final LectureCreneauPriere c in lecture.requireValue)
             SettingRow(
-              title: t.priere.classe.creneau(
-                jour: jourCapitalise(c.jour),
-                heure: '${c.heure}',
-                duree: '${c.dureeMinutes}',
+              title: LibellesGroupe.insecable(
+                t.priere.classe.creneau(
+                  jour: jourCapitalise(c.jour),
+                  heure: '${c.heure}',
+                  duree: '${c.dureeMinutes}',
+                ),
               ),
               description: _lignes(context, c).join('\n'),
               icon: c.vendrediSeances > 0
