@@ -14,6 +14,7 @@ import 'package:rewayah_academy/core/planning/service_planning.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
+import 'package:rewayah_academy/core/suivi/ma_progression.dart';
 import 'package:rewayah_academy/core/suivi/port_suivi_pedagogique.dart';
 import 'package:rewayah_academy/core/suivi/service_suivi.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
@@ -23,20 +24,36 @@ import 'package:rewayah_academy/features/suivi_foyer/carte_suivi_pedagogique.dar
 
 import '../../support/harnais.dart';
 
-class _FauxPort implements PortSuiviPedagogique {
-  _FauxPort({this.rendu, this.erreur, this.attente});
+class _FauxPort implements PortMaProgression {
+  _FauxPort({
+    this.rendu,
+    this.erreur,
+    this.attente,
+    this.cycle = const <EtapeDuCycle>[],
+    this.sourates,
+    this.reglage,
+  });
 
   SuiviPedagogique? rendu;
+  List<EtapeDuCycle> cycle;
+  SouratesValidees? sourates;
+  ReglageEtape? reglage;
   Error? erreur;
   Completer<void>? attente;
   final List<String> lus = <String>[];
 
   @override
-  Future<SuiviPedagogique?> pourEleve(String eleveId) async {
+  Future<MaProgression?> pourEleve(String eleveId) async {
     lus.add(eleveId);
     if (attente case final Completer<void> c) await c.future;
     if (erreur case final Error e) throw e;
-    return rendu;
+    if (rendu == null && sourates == null) return null;
+    return MaProgression(
+      suivi: rendu,
+      cycle: cycle,
+      sourates: sourates,
+      reglage: reglage,
+    );
   }
 }
 
@@ -71,7 +88,7 @@ Future<void> _monter(
         ),
       ),
       surcharges: <Override>[
-        portSuiviPedagogiqueProvider.overrideWithValue(port),
+        portMaProgressionProvider.overrideWithValue(port),
         horsLigneProvider.overrideWith(
           (Ref ref) => Stream<bool>.value(horsLigne),
         ),
@@ -326,6 +343,229 @@ void main() {
     });
   });
 
+  group('MA-PROGRESSION-ECRAN : etapes, sourates, reglage', () {
+    final List<EtapeDuCycle> cycle = <EtapeDuCycle>[
+      EtapeDuCycle(
+        ordre: 1,
+        nom: 'Les lettres',
+        statut: StatutEtape.franchie,
+        atteinteLe: DateTime(2026, 9, 7),
+      ),
+      const EtapeDuCycle(
+        ordre: 2,
+        nom: 'Lire avec les voyelles',
+        statut: StatutEtape.enCours,
+      ),
+      const EtapeDuCycle(
+        ordre: 3,
+        nom: 'Lire sans voyelles',
+        statut: StatutEtape.aVenir,
+      ),
+    ];
+    const ValueKey<String> etape1 = ValueKey<String>(
+      'suivi-pedagogique-etape-1',
+    );
+
+    test('la reponse de ma_progression se lit en entier', () {
+      final MaProgression? p = MaProgression.depuisJson(<String, Object?>{
+        'etape': <String, Object?>{
+          'nom': 'Lire avec les voyelles',
+          'ordre': 2,
+          'objectifs': <Object?>['a'],
+          'duree_prevue_semaines': 14,
+          'date_limite': '2027-03-01',
+          'semaines_ecoulees': 5,
+          'rythme': 'dans_les_temps',
+          'page_reprise': 24,
+        },
+        'etapes_du_cycle': <Object?>[
+          <String, Object?>{
+            'ordre': 1,
+            'nom': 'Les lettres',
+            'statut': 'franchie',
+            'atteinte_le': '2026-09-07T10:00:00Z',
+          },
+          <String, Object?>{'ordre': 2, 'nom': 'Lire', 'statut': 'en_cours'},
+          <String, Object?>{'ordre': 3, 'nom': 'x', 'statut': 'inconnu'},
+          'illisible',
+        ],
+        'sourates': <String, Object?>{
+          'sourates_validees': 3,
+          'sourates_total': 17,
+        },
+        'reglage': <String, Object?>{
+          'heures_revision_semaine': 2.5,
+          'repetitions_estimees': 40,
+        },
+      });
+      expect(p!.suivi!.etapeNom, 'Lire avec les voyelles');
+      expect(p.suivi!.pageReprise, 24);
+      expect(p.cycle.map((EtapeDuCycle e) => e.statut), <StatutEtape>[
+        StatutEtape.franchie,
+        StatutEtape.enCours,
+      ]);
+      expect(p.cycle.first.atteinteLe, isNotNull);
+      expect(p.sourates!.validees, 3);
+      expect(p.reglage!.heuresRevisionSemaine, 2.5);
+      expect(p.reglage!.repetitionsEstimees, 40);
+    });
+
+    test('sans Classe : les sourates seules ; rien du tout : rien', () {
+      final MaProgression? seules = MaProgression.depuisJson(<String, Object?>{
+        'etape': null,
+        'etapes_du_cycle': <Object?>[],
+        'sourates': <String, Object?>{
+          'sourates_validees': 2,
+          'sourates_total': 17,
+        },
+        'reglage': null,
+      });
+      expect(seules!.suivi, isNull);
+      expect(seules.cycle, isEmpty);
+      expect(seules.sourates!.validees, 2);
+      expect(
+        MaProgression.depuisJson(<String, Object?>{
+          'etape': null,
+          'etapes_du_cycle': <Object?>[],
+          'sourates': null,
+          'reglage': null,
+        }),
+        isNull,
+      );
+      expect(MaProgression.depuisJson(null), isNull);
+    });
+
+    test('un reglage vide ou nul n est jamais montre', () {
+      final MaProgression? p = MaProgression.depuisJson(<String, Object?>{
+        'etape': <String, Object?>{'nom': 'x', 'ordre': 1},
+        'reglage': <String, Object?>{
+          'heures_revision_semaine': 0,
+          'repetitions_estimees': null,
+        },
+      });
+      expect(p!.reglage, isNull);
+    });
+
+    testWidgets('les etapes dans l ordre : franchie avec sa date, en cours, '
+        'a venir', (WidgetTester tester) async {
+      await _monter(tester, _FauxPort(rendu: _complet, cycle: cycle));
+      await tester.pumpAndSettle();
+      expect(find.text(t.suiviPedagogique.etapesTitre), findsOneWidget);
+      expect(find.byKey(etape1), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byKey(etape1),
+          matching: find.text('Les lettres'),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.text(
+          t.suiviPedagogique.etapeFranchieLe(
+            numero: '7',
+            mois: t.commun.dates.mois[8],
+            annee: '2026',
+          ),
+        ),
+        findsOneWidget,
+      );
+      expect(find.text(t.suiviPedagogique.etapeEnCours), findsOneWidget);
+      expect(find.text(t.suiviPedagogique.etapeAVenir), findsOneWidget);
+      final double haut = tester.getTopLeft(find.text('Les lettres')).dy;
+      final double bas = tester.getTopLeft(find.text('Lire sans voyelles')).dy;
+      expect(haut, lessThan(bas));
+    });
+
+    testWidgets('les sourates : « n sur 17 » ; cachees quand le serveur ne '
+        'les rend pas', (WidgetTester tester) async {
+      await _monter(
+        tester,
+        _FauxPort(
+          rendu: _complet,
+          sourates: const SouratesValidees(validees: 3, total: 17),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text(t.suiviPedagogique.sourates), findsOneWidget);
+      expect(
+        find.text(t.suiviPedagogique.souratesDe(validees: 3, total: 17)),
+        findsOneWidget,
+      );
+      await _monter(tester, _FauxPort(rendu: _complet));
+      await tester.pumpAndSettle();
+      expect(find.text(t.suiviPedagogique.sourates), findsNothing);
+    });
+
+    testWidgets('sans Classe, les sourates validees restent montrees', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        _FauxPort(sourates: const SouratesValidees(validees: 2, total: 17)),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text(t.suiviPedagogique.titreSoi), findsOneWidget);
+      expect(
+        find.text(t.suiviPedagogique.souratesDe(validees: 2, total: 17)),
+        findsOneWidget,
+      );
+      expect(find.text(t.suiviPedagogique.etape), findsNothing);
+      expect(find.text(t.suiviPedagogique.etapesTitre), findsNothing);
+    });
+
+    testWidgets('le reglage de la direction : montre quand rempli, rien '
+        'sinon, jamais a l enfant en Interface guidee', (
+      WidgetTester tester,
+    ) async {
+      const ReglageEtape regle = ReglageEtape(
+        heuresRevisionSemaine: 2.5,
+        repetitionsEstimees: 40,
+      );
+      await _monter(tester, _FauxPort(rendu: _complet, reglage: regle));
+      await tester.pumpAndSettle();
+      expect(find.text(t.suiviPedagogique.revision), findsOneWidget);
+      expect(find.text(t.suiviPedagogique.repetitions), findsOneWidget);
+      expect(
+        find.text(t.suiviPedagogique.repetitionsNombre(n: 40)),
+        findsOneWidget,
+      );
+      await _monter(tester, _FauxPort(rendu: _complet));
+      await tester.pumpAndSettle();
+      expect(find.text(t.suiviPedagogique.revision), findsNothing);
+      expect(find.text(t.suiviPedagogique.repetitions), findsNothing);
+      await _monter(
+        tester,
+        _FauxPort(rendu: _complet, reglage: regle),
+        mode: InterfaceMode.enfant,
+      );
+      await tester.pumpAndSettle();
+      expect(find.text(t.suiviPedagogique.revision), findsNothing);
+    });
+
+    testWidgets('au moins ce que l ancienne ligne de Ma classe montrait : le '
+        'niveau (etape en cours) et le dernier jalon (derniere etape '
+        'franchie)', (WidgetTester tester) async {
+      await _monter(tester, _FauxPort(rendu: _complet, cycle: cycle));
+      await tester.pumpAndSettle();
+      // Le niveau : l'etape en cours, en toutes lettres.
+      expect(find.text('Lire avec les voyelles'), findsWidgets);
+      // Le dernier jalon : la derniere etape franchie, avec sa date.
+      expect(
+        find.descendant(
+          of: find.byKey(etape1),
+          matching: find.text(
+            t.suiviPedagogique.etapeFranchieLe(
+              numero: '7',
+              mois: t.commun.dates.mois[8],
+              annee: '2026',
+            ),
+          ),
+        ),
+        findsOneWidget,
+      );
+    });
+  });
+
   testWidgets('Suivi de l eleve : le bloc en tete, pour l eleve connecte, '
       'meme sans seance passee', (WidgetTester tester) async {
     tester.view.physicalSize = const Size(1400, 3600);
@@ -340,7 +580,7 @@ void main() {
           serviceSuiviProvider.overrideWithValue(
             FauxServiceSuivi(seancesRendues: const <Seance>[]),
           ),
-          portSuiviPedagogiqueProvider.overrideWithValue(port),
+          portMaProgressionProvider.overrideWithValue(port),
           sourceSessionProvider.overrideWithValue(
             FausseSourceSession(
               const SessionState(

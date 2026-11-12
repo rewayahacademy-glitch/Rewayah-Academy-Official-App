@@ -5531,6 +5531,19 @@
         "dateLimite": "À finir en {semaines} semaines au plus",
         "enregistrer": "Enregistrer l'étape",
         "erreur": "L'enregistrement de l'étape n'est pas confirmé\u00a0: {message}. Vérifiez les objectifs et les pages, puis réessayez.",
+        "revisionTitre": "Révision de l'élève",
+        "revisionAide": "Ce que les familles lisent dans « Où j'en suis ». Laissez « Non réglé » : rien ne s'affiche.",
+        "revisionHeures": "Heures de révision par semaine",
+        "revisionRepetitions": "Répétitions estimées",
+        "revisionNonRegle": "Non réglé",
+        "revisionHeuresValeur": "{heures} h",
+        "revisionHeuresMoins": "Moins d'heures de révision",
+        "revisionHeuresPlus": "Plus d'heures de révision",
+        "revisionRepetitionsMoins": "Moins de répétitions",
+        "revisionRepetitionsPlus": "Plus de répétitions",
+        "revisionEnregistrer": "Enregistrer la révision",
+        "revisionEnregistree": "Révision enregistrée.",
+        "revisionErreur": "La révision n'a pas pu être enregistrée : {message}",
         "manquePages": "Rien n'a été enregistré\u00a0: les pages s'écrivent en nombres entiers, la dernière après la première. Corrigez-les, puis réessayez.",
         "proposition": "Proposition à valider par la direction",
         "propositionDetail": "Les objectifs et les durées de ce brouillon sont une proposition, pas une règle\u00a0: la direction les relit et les modifie avant de publier.",
@@ -10160,7 +10173,6 @@
       "aPropos": "À propos de cette classe",
       "participants": "Participants",
       "vous": "{prenom} (vous)",
-      "progression": "Ma progression dans cette classe",
       "sansDonnees": "Votre classe n'a pas pu être chargée",
       "aucuneClasseDetail": "Votre classe, ses participants et ses ressources s'afficheront ici dès qu'elle sera ouverte."
     },
@@ -15135,6 +15147,20 @@
     "auDelaDuPrevu(param=ecoulees)": {
       "one": "Au-delà de la durée prévue\u00a0: {ecoulees} semaine sur {prevue}, avant la date limite",
       "other": "Au-delà de la durée prévue\u00a0: {ecoulees} semaines sur {prevue}, avant la date limite"
+    },
+    "etapesTitre": "Les étapes",
+    "etapeFranchie": "Franchie",
+    "etapeFranchieLe": "Franchie le {numero} {mois} {annee}",
+    "etapeEnCours": "En cours",
+    "etapeAVenir": "À venir",
+    "sourates": "Sourates des bases validées",
+    "souratesDe": "{validees} sur {total}",
+    "revision": "Révision par semaine",
+    "revisionHeures": "{heures} h",
+    "repetitions": "Répétitions estimées",
+    "repetitionsNombre(param=n)": {
+      "one": "{n} répétition",
+      "other": "{n} répétitions"
     },
     "dateLimiteDepassee": "Date limite dépassée",
     "erreur": "L'étape du programme n'a pas pu être lue. Réessayez dans un instant."
