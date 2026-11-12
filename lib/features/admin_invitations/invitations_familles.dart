@@ -93,6 +93,12 @@ class _InvitationsFamillesState extends ConsumerState<InvitationsFamilles> {
   };
 
   Future<void> _envoyer(PortFamillesImportees port, FoyerImporte f) async {
+    // ANTI-CRASH : le conteneur, pris avant l'attente, relit la liste meme
+    // si la page a ete quittee (`ref` leverait une StateError).
+    final ProviderContainer conteneur = ProviderScope.containerOf(
+      context,
+      listen: false,
+    );
     final r = t.i1.familles;
     setState(() {
       _enCours.add(f.id);
@@ -111,11 +117,17 @@ class _InvitationsFamillesState extends ConsumerState<InvitationsFamilles> {
     }
     // Dans tous les cas la liste est relue : un envoi dont la reponse s'est
     // perdue doit y apparaitre (D5 : « non confirme », pas « non envoye »).
-    ref.invalidate(famillesImporteesProvider);
+    conteneur.invalidate(famillesImporteesProvider);
     if (mounted) setState(() => _enCours.remove(f.id));
   }
 
   Future<void> _envoyerATous(PortFamillesImportees port, int n) async {
+    // ANTI-CRASH : le conteneur, pris avant l'attente, relit la liste meme
+    // si la page a ete quittee (`ref` leverait une StateError).
+    final ProviderContainer conteneur = ProviderScope.containerOf(
+      context,
+      listen: false,
+    );
     final r = t.i1.familles;
     // Un envoi a tous est irreversible : la confirmation dit le nombre.
     final bool oui = await ConfirmDestructive.demander(
@@ -141,7 +153,7 @@ class _InvitationsFamillesState extends ConsumerState<InvitationsFamilles> {
     } on Object catch (e) {
       _dire(_motErreur(e), erreur: true);
     }
-    ref.invalidate(famillesImporteesProvider);
+    conteneur.invalidate(famillesImporteesProvider);
     if (mounted) setState(() => _envoi = false);
   }
 
