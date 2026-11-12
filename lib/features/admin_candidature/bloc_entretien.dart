@@ -818,7 +818,9 @@ class _EtatPlanifier extends ConsumerState<FeuillePlanifierEntretien>
       return;
     }
     final DateTime j = _jour!;
-    final DateTime debut = DateTime(
+    // HEURES-PROFIL H3 (12/11/2026) : le jour et l'heure choisis sont ceux du
+    // fuseau du PROFIL ; l'instant envoye en est l'inverse exact.
+    final DateTime debut = instantChezMoi(
       j.year,
       j.month,
       j.day,
@@ -842,7 +844,8 @@ class _EtatPlanifier extends ConsumerState<FeuillePlanifierEntretien>
   Widget build(BuildContext context) {
     final e = t.admin.candidatures.entretien;
     final f = e.feuille;
-    final DateTime maintenant = ref.read(horlogeFormulairesProvider)();
+    // Aujourd'hui au fuseau du profil (HEURES-PROFIL H3).
+    final DateTime maintenant = chezMoi(ref.read(horlogeFormulairesProvider)());
     final DateTime aujourdhui = DateTime(
       maintenant.year,
       maintenant.month,
@@ -903,8 +906,6 @@ class _EtatPlanifier extends ConsumerState<FeuillePlanifierEntretien>
           ),
         ),
         if (tente && _heure == null) _erreurChamp(context, f.heureManquante),
-        Ecart.vSm,
-        _Muet(f.heureAide),
         Ecart.vMd,
         Align(
           alignment: AlignmentDirectional.centerStart,

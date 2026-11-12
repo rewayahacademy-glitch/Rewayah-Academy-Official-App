@@ -111,7 +111,10 @@ class _FeuilleNouvelleDateEtat extends ConsumerState<FeuilleNouvelleDate> {
       setState(() => _message = p.erreur);
       return;
     }
-    final DateTime debut = DateTime(
+    // HEURES-PROFIL H3 (12/11/2026) : le jour et l'heure choisis sont ceux
+    // du fuseau du PROFIL ; l'instant envoye au serveur en est l'inverse
+    // exact ([instantChezMoi]), jamais l'heure de l'appareil.
+    final DateTime debut = instantChezMoi(
       jour.year,
       jour.month,
       jour.day,
@@ -159,7 +162,11 @@ class _FeuilleNouvelleDateEtat extends ConsumerState<FeuilleNouvelleDate> {
         ),
       );
     }
-    final DateTime aujourdhui = ref.watch(horlogeFormulairesProvider)();
+    ref.watch(monHorlogeProvider);
+    // Le jour d'aujourd'hui au fuseau du profil (HEURES-PROFIL H3).
+    final DateTime aujourdhui = chezMoi(
+      ref.watch(horlogeFormulairesProvider)(),
+    );
     return Column(
       key: const ValueKey<String>('feuille-nouvelle-date'),
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -213,8 +220,8 @@ class _FeuilleNouvelleDateEtat extends ConsumerState<FeuilleNouvelleDate> {
             }),
           ),
         ),
-        Ecart.vXs,
-        TexteSansCoupure(p.heureAppareil, style: textes.bodySmall),
+        // HEURES-PROFIL H3 : plus de « A l'heure de cet appareil » ; le choix
+        // se fait a l'heure du profil, et l'instant en est construit.
         if (_message case final String message) ...<Widget>[
           Ecart.vMd,
           MessageAlerte(
