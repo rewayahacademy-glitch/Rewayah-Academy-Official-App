@@ -147,7 +147,9 @@ L'écran (la barre du chrono qui pose Oui / Non) est un autre lot.
   idempotente (`pause_idempotence`, opération `refuser`).
 - **`proposer_a`** = `debut_prevu_utc` tant qu'il n'y a pas eu de Non, puis l'instant posé
   par le dernier Non ; nul quand `proposer_a + durée + seance.pause_reste_minimum_minutes`
-  (15) dépasse la fin prévue, ou quand le statut n'est plus `programmee`. L'enseignant peut
+  (15) dépasse la fin prévue, ou quand le statut n'est plus `programmee`. Le reste minimum
+  ne vaut que pour la pause ordinaire : une pause à motif (prévue par le serveur) doit
+  seulement finir avant la fin prévue. L'enseignant peut
   toujours démarrer la pause lui-même tant qu'elle est `programmee`.
 - **Fin.** Pas de minuterie serveur : l'écran de l'enseignant appelle `pause_seance_terminer`
   à l'heure de reprise (autre lot).
@@ -156,6 +158,7 @@ L'écran (la barre du chrono qui pose Oui / Non) est un autre lot.
   pas de 5, pause entière dans la séance) donne l'heure, la durée et le `motif` ; elle prime
   sur le milieu et sur le moment choisi par l'enseignant. **Point à confirmer par le
   directeur** : elle est posée même si l'enseignant a désactivé la pause de sa classe.
+  Ses bornes font foi : une fois acceptée, elle reste proposable sans le reste minimum.
 - **Droits.** Inchangés : élève, tuteur, contrôleur et tout autre appelant ne lisent ni
   ne pilotent la pause sur le serveur (le relais par la visio reste).
 - **Réglages de la direction** (Configuration > Règles, section « Pause pendant la

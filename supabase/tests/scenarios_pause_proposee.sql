@@ -342,6 +342,21 @@ BEGIN
      OR (v_e->>'proposer_a')::timestamptz <> now()+interval '5 minutes' THEN
     RAISE EXCEPTION 'PP: refus d''une pause de priere incorrect : %', v_e;
   END IF;
+  -- Le reste minimum ne vaut que pour la pause ordinaire (convenu avec le lot
+  -- priere, 12/11/2026). Pause de 10 min placee a 20 min de la fin prevue
+  -- (now() + 240 min) : a motif, elle reste proposee ; ordinaire, non (10 + 15 > 20).
+  UPDATE public.pause_seances SET prochaine_proposition_utc = now()+interval '220 minutes'
+   WHERE seance_id='c2400000-0000-0000-0000-000000000143';
+  v_e := public.pause_seance_etat('c2400000-0000-0000-0000-000000000143');
+  IF v_e->>'motif'<>'priere' OR (v_e->>'proposer_a')::timestamptz IS DISTINCT FROM now()+interval '220 minutes' THEN
+    RAISE EXCEPTION 'PP: pause de priere a 20 min de la fin non proposee : %', v_e;
+  END IF;
+  UPDATE public.pause_seances SET motif = NULL
+   WHERE seance_id='c2400000-0000-0000-0000-000000000143';
+  v_e := public.pause_seance_etat('c2400000-0000-0000-0000-000000000143');
+  IF v_e->>'motif' IS NOT NULL OR v_e->>'proposer_a' IS NOT NULL THEN
+    RAISE EXCEPTION 'PP: pause ordinaire a 20 min de la fin encore proposee : %', v_e;
+  END IF;
 END;
 $priere$;
 

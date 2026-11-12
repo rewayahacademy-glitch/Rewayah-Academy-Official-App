@@ -38,8 +38,10 @@
 --    compteur de refus, prochaine proposition a now() + rappel ; idempotente.
 -- 6. L'etat rendu (pause_etat_interne, donc pause_seance_etat, demarrer,
 --    terminer et refuser) porte en plus proposer_a et refus_nombre ; proposer_a
---    est nul quand la pause ne tient plus avant la fin prevue (reste minimum
---    compris) ou quand le statut n'est plus programmee.
+--    est nul quand la pause ne tient plus avant la fin prevue ou quand le
+--    statut n'est plus programmee. Le reste minimum ne compte que pour la
+--    pause ordinaire (motif nul) ; une pause a motif doit seulement finir
+--    avant la fin prevue.
 -- 7. pause_reglage_lire rend, pour une classe sans ligne, la verite : la pause
 --    par defaut (actif, milieu de la duree de la classe, duree du public), avec
 --    par_defaut = true. Type de retour inchange (jsonb).
@@ -47,6 +49,8 @@
 --    table public.seance_pause_prevue, qui peut exister ou non) : colonne
 --    pause_seances.motif ; au demarrage, une ligne valide de cette table donne
 --    l'heure, la duree et le motif de la pause ; l'etat rendu porte motif.
+--    Les bornes de l'autre lot font foi : une pause a motif acceptee reste
+--    proposable sans le reste minimum (convenu avec le lot priere).
 --
 -- Aucun droit nouveau a un eleve, un tuteur ou un controleur ; ni la presence
 -- ni la paie ne lisent la pause.
@@ -176,7 +180,8 @@ BEGIN
     'proposer_a', CASE
       WHEN ps.statut = 'programmee'
        AND coalesce(ps.prochaine_proposition_utc, ps.debut_prevu_utc)
-           + pg_catalog.make_interval(mins => ps.duree_prevue_minutes + v_reste) <= s.ended_at
+           + pg_catalog.make_interval(mins => ps.duree_prevue_minutes
+               + CASE WHEN ps.motif IS NULL THEN v_reste ELSE 0 END) <= s.ended_at
       THEN coalesce(ps.prochaine_proposition_utc, ps.debut_prevu_utc)
     END)
     INTO v_result
