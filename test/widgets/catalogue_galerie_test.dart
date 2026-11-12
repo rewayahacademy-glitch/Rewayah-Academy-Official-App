@@ -54,8 +54,7 @@ const List<String> composantsDuCatalogue = <String>[
   // ILE-SALLE (directeur, 11/11/2026) : l'ile liquide de la salle.
   'IleLiquide',
   // GOUTTE D'HUILE DES PROFILS (11/11/2026).
-  'LiaisonLiquide',
-  'GoutteProfils',
+  'FonduContenuProfil',
   'AvatarNom',
   // FI-2 (decision du directeur du 04/10, K-62) : l'identite d'un profil,
   // son bandeau de couleur choisi par le tuteur derriere l'avatar.

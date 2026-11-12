@@ -31,12 +31,11 @@ Future<void> _monter(
     hotePays(e, theme: theme, echelle: echelle, sens: sens),
   );
   await stabiliser(tester);
-  // GOUTTE D'HUILE (11/11/2026) : la premiere apparition du contenu de
-  // l'Accueil famille ne joue PLUS de chute (elle ne joue qu'au changement de
-  // profil) ; cette attente de `AppMouvement.chuteContenu` est donc gardee par
-  // prudence, duree tiree du jeton : si elle change, le test suit, il n'est pas
-  // affaibli.
-  await tester.pump(AppMouvement.chuteContenu);
+  // PROFILS-EFFET (12/11/2026) : la premiere apparition du contenu de
+  // l'Accueil famille ne joue PAS de fondu (il ne joue qu'au changement de
+  // profil) ; cette attente de `AppMouvement.fonduContenuProfil` est gardee par
+  // prudence, duree tiree du jeton : si elle change, le test suit.
+  await tester.pump(AppMouvement.fonduContenuProfil);
   await tester.pump(const Duration(milliseconds: 16));
   if (e.toucher != null) {
     await tester.tap(find.text(e.toucher!).first);
