@@ -97,7 +97,7 @@ et `6-telephone-compte-deja-connecte.jpg`.
 | 18 | La caméra de l'élève entré par un appareil jumelé ne s'allume pas ; message long. | Capture 5 : ce n'est pas un refus du serveur. Le téléphone dit que la caméra est déjà prise (« NotReadableError »). Piste à vérifier : le lecteur de code du jumelage garde la caméra. Le message montre une phrase technique en anglais : à retirer de l'écran | Relevé en cours ; message traité dans ENTREE-ROBUSTE |
 | 19 | Rejoindre alors que le même compte est déjà connecté : « c'est bien, mais pas très clair comme signe ». | Capture 6 : l'écran dit « La salle n'a pas pu s'ouvrir, vérifiez votre connexion », un message de réseau pour une cause qui n'est pas le réseau. Le bon message existe (« ouverte ailleurs ») mais n'est pas posé dans ce cas. Piste pour le point 11 : deux appareils du même compte qui se chassent | Traité dans ENTREE-ROBUSTE |
 
-## Relevés et arbitrages du 12/11/2026, 21:40 UTC (points 14 à 19)
+## Relevés et arbitrages du 12/11/2026, 21:18 UTC (points 14 à 19)
 
 ### La caméra de l'appareil jumelé (18) : cause vérifiée dans le code
 
