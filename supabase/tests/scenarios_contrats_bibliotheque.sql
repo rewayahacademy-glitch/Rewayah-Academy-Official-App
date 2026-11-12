@@ -144,7 +144,7 @@ SELECT pg_temp.vrai(public.library_admin_capacites() = '{"peutLire": true, "peut
   'direction : capacites d''ecriture rendues');
 SELECT pg_temp.vrai(public.library_get_catalogue() = '{"elements": [], "curseur": null}'::jsonb,
   'catalogue vide : repond sans 42P01 ni 42501');
-SELECT pg_temp.refus($$SELECT public.library_creer_brouillon('{"titre":"x","type":"video","langue":"fr","categorie":"c"}')$$, '22023', 'type inconnu refuse');
+SELECT pg_temp.refus($$SELECT public.library_creer_brouillon('{"titre":"x","type":"hologramme","langue":"fr","categorie":"c"}')$$, '22023', 'type inconnu refuse');
 SELECT pg_temp.refus($$SELECT public.library_creer_brouillon('{"titre":"x","type":"pdf","langue":"fr","categorie":"c","cle":"s3"}')$$, '22023', 'champ inconnu refuse');
 DO $brouillon$
 DECLARE v jsonb; w jsonb; p jsonb;
