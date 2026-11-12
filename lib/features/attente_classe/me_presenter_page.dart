@@ -91,8 +91,10 @@ class _MePresenterEtat extends ConsumerState<MePresenterPage> {
   bool _prerempli = false;
   _Phase _phase = _Phase.saisie;
   bool _vide = false;
-  int _envoyes = 0;
   bool _echec = false;
+
+  /// Les conversations deja servies : un nouvel essai ne les renvoie pas.
+  final Set<String> _servies = <String>{};
 
   /// Une cle d'idempotence par conversation, la meme a chaque essai.
   final Map<String, String> _cles = <String, String>{};
@@ -125,9 +127,9 @@ class _MePresenterEtat extends ConsumerState<MePresenterPage> {
       _vide = false;
     });
     final PortMessagesMetier port = ref.read(portMessagesMetierProvider);
-    int envoyes = 0;
     bool echec = false;
     for (final ConversationPossible c in cibles) {
+      if (_servies.contains(c.cle)) continue;
       try {
         final FilMetier? fil = await port.ouvrirConversation(c);
         if (fil == null) {
@@ -139,14 +141,13 @@ class _MePresenterEtat extends ConsumerState<MePresenterPage> {
           texte,
           _cles.putIfAbsent(c.cle, () => const Uuid().v4()),
         );
-        envoyes++;
+        _servies.add(c.cle);
       } on Object {
         echec = true;
       }
     }
     if (!mounted) return;
     setState(() {
-      _envoyes += envoyes;
       _echec = echec;
       _phase = echec ? _Phase.saisie : _Phase.fait;
     });
@@ -221,7 +222,7 @@ class _MePresenterEtat extends ConsumerState<MePresenterPage> {
                     Semantics(
                       liveRegion: true,
                       child: Text(
-                        t.suiviAttente.mePresenter.envoye(n: _envoyes),
+                        t.suiviAttente.mePresenter.envoye(n: _servies.length),
                         key: const ValueKey<String>('presenter-envoye'),
                         style: palette.inkSuccess.applyTo(
                           textes.titleMedium ?? const TextStyle(),

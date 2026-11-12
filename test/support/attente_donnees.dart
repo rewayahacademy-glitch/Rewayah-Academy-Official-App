@@ -138,9 +138,11 @@ DelaiFormation delaiDeTest({bool depasse = false, bool pointPasse = false}) =>
 
 /// Les cinq etapes franchies, avec enseignant, classe et premier cours.
 SuiviAttente suiviToutEstPret({
+  String id = 'd1',
   CarteEnseignantAttente enseignant = enseignantVisible,
   bool versionSimple = false,
 }) => suiviDeTest(
+  id: id,
   etapes: etapesJusqua(4, tout: true),
   classe: 'Classe Al-Fatiha',
   premierCours: DateTime(2026, 11, 16, 18, 0),
