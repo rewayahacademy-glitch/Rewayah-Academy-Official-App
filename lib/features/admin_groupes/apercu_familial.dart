@@ -10,6 +10,7 @@ import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/reseau/service_reseau.dart' show horsLigneProvider;
 import '../../core/session/session_controleur.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -24,7 +25,7 @@ import '../../core/widgets/status_pill.dart';
 import '../classe_tuteur/contexte_classe.dart' show nomClasseInsecable;
 import '../compte/carte_rubriques.dart';
 import '../suivi_foyer/bloc_compte_rendu.dart';
-import '../suivi_foyer/filtres_historique.dart' show dateCourte, heureMinute;
+import '../suivi_foyer/filtres_historique.dart' show dateCourte;
 import 'partage_commun.dart';
 
 /// Les comptes rendus d'un eleve dans une classe.
@@ -100,7 +101,9 @@ TonEtat tonEtatDiffusion(EtatDiffusion etat) => switch (etat) {
   _ => TonEtat.neutre,
 };
 
-String _quand(DateTime quand) => '${dateCourte(quand)} ${heureMinute(quand)}';
+// HEURES-PROFIL H2 : a l'heure du profil.
+String _quand(DateTime quand) =>
+    '${dateCourte(chezMoi(quand))} ${heureChezMoi(quand)}';
 
 /// La liste des comptes rendus d'un eleve (les seances, du plus recent au plus
 /// ancien). **Point d'entree provisoire d'ADM-PED-APR-03** : aucune lecture

@@ -15,6 +15,7 @@ import 'package:rewayah_academy/core/offres/service_offres.dart';
 import 'package:rewayah_academy/core/widgets/choice_card_group.dart';
 import 'package:rewayah_academy/features/parcours_offres/libelles_parcours.dart';
 import 'package:rewayah_academy/features/profil_enseignant/declaration_choix.dart';
+import 'package:rewayah_academy/features/profil_enseignant/profil_enseignant_page.dart';
 
 import '../../capture/outil_capture.dart';
 import '../../support/demo/demo_enseignant_page.dart';
@@ -29,7 +30,11 @@ Future<void> _monterProfil(WidgetTester tester) async {
       const CoquilleEnseignantDemo(ecran: EcranDemoEnseignant.profil),
     ),
   );
-  await stabiliser(tester);
+  await stabiliser(
+    tester,
+  ); // PROFILS P3 : la declaration s'ouvre par la ligne « Identité
+  // professionnelle » du Compte.
+  await _toucher(tester, find.byKey(ProfilEnseignantPage.identiteKey));
 }
 
 Future<void> _toucher(WidgetTester tester, Finder cible) async {

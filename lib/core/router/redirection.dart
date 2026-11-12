@@ -448,7 +448,7 @@ String? _aliasTuteur(String chemin) {
     return Routes.compteTuteurSousPage('informations');
   }
   if (chemin == Routes.compteReglages) {
-    return Routes.tuteurComptePreferences;
+    return Routes.tuteurCompte;
   }
   if (chemin == Routes.compteProfils) {
     return Routes.tuteurFoyer;

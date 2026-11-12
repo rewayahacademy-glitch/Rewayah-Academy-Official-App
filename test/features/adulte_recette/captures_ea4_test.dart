@@ -120,7 +120,6 @@ void main() {
     }
     for (final EcranDemoAdulte ecran in <EcranDemoAdulte>[
       EcranDemoAdulte.paiements,
-      EcranDemoAdulte.preferences,
     ]) {
       final String fichier = 'ea4_${ecran.name}_390_light';
       testWidgets(fichier, (WidgetTester tester) async {

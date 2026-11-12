@@ -42,6 +42,7 @@ import 'package:uuid/uuid.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -73,30 +74,34 @@ enum EtapePublication {
   publication,
 }
 
-/// Les heures des creneaux proposes, en heure locale.
+/// Les heures des creneaux proposes, a l'heure du profil (HEURES-PROFIL H3).
 const int _heureMatin = 8;
 const int _heureSoir = 18;
 
-/// Les creneaux de diffusion proposes a partir de [maintenant] (heure
-/// locale) : demain matin, demain soir, lundi matin suivant (le lundi d'apres
-/// si demain est deja lundi). Fonction pure, testee seule.
-List<DateTime> creneauxProgrammation(DateTime maintenant) {
-  final DateTime demain = DateTime(
+/// Les creneaux de diffusion proposes a partir de l'instant [instant] :
+/// demain matin, demain soir, lundi matin suivant (le lundi d'apres si demain
+/// est deja lundi). Les jours et les heures sont ceux du fuseau du PROFIL
+/// ([chezMoi]) ; les instants rendus en sont l'inverse exact
+/// ([instantChezMoi], HEURES-PROFIL H3, 12/11/2026). Fonction pure, testee
+/// seule.
+List<DateTime> creneauxProgrammation(DateTime instant) {
+  final DateTime maintenant = chezMoi(instant);
+  final DateTime demain = DateTime.utc(
     maintenant.year,
     maintenant.month,
     maintenant.day + 1,
   );
   int ecart = (DateTime.monday - demain.weekday) % DateTime.daysPerWeek;
   if (ecart == 0) ecart = DateTime.daysPerWeek;
-  final DateTime lundi = DateTime(
+  final DateTime lundi = DateTime.utc(
     demain.year,
     demain.month,
     demain.day + ecart,
   );
   return <DateTime>[
-    DateTime(demain.year, demain.month, demain.day, _heureMatin),
-    DateTime(demain.year, demain.month, demain.day, _heureSoir),
-    DateTime(lundi.year, lundi.month, lundi.day, _heureMatin),
+    instantChezMoi(demain.year, demain.month, demain.day, _heureMatin),
+    instantChezMoi(demain.year, demain.month, demain.day, _heureSoir),
+    instantChezMoi(lundi.year, lundi.month, lundi.day, _heureMatin),
   ];
 }
 
@@ -107,8 +112,9 @@ String messageConfirmationAnnonce(AnnonceConfirmee c) {
   return switch (c.etat) {
     EtatAnnonce.publiee => p.publiee,
     EtatAnnonce.planifiee => p.planifiee(
-      date: dateCourte(c.le.toLocal()),
-      heure: heureMinute(c.le.toLocal()),
+      // HEURES-PROFIL H2 : a l'heure du profil.
+      date: dateCourte(chezMoi(c.le)),
+      heure: heureMinute(chezMoi(c.le)),
     ),
   };
 }
@@ -564,8 +570,8 @@ class _PublieurAnnonceState extends ConsumerState<PublieurAnnonce> {
             cle: PublieurAnnonce.cleQuand('creneau-$i'),
             valeur: 'creneau-$i',
             libelle: q.creneau(
-              date: dateMoyenne(_creneaux[i]),
-              heure: heureMinute(_creneaux[i]),
+              date: dateMoyenne(chezMoi(_creneaux[i])),
+              heure: heureMinute(chezMoi(_creneaux[i])),
             ),
             description: q.creneauDetail,
           ),
@@ -587,7 +593,10 @@ class _PublieurAnnonceState extends ConsumerState<PublieurAnnonce> {
     final DateTime? le = _programmeeLe;
     return le == null
         ? a.diffusionMaintenant
-        : a.diffusionLe(date: dateMoyenne(le), heure: heureMinute(le));
+        : a.diffusionLe(
+            date: dateMoyenne(chezMoi(le)),
+            heure: heureMinute(chezMoi(le)),
+          );
   }
 
   Widget _apercu(BuildContext context) {

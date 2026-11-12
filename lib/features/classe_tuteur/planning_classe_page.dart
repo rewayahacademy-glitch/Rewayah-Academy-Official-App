@@ -15,6 +15,7 @@ import '../../core/router/routes.dart';
 import '../../core/seance_famille/port_seances_famille.dart';
 import '../../core/seance_famille/seance_famille.dart';
 import '../../core/tc_horloge/heure_double.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
@@ -151,6 +152,9 @@ class _Planning extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // HEURES-PROFIL H1 (12/11/2026) : la page ecoute le fuseau du profil ;
+    // quand il arrive apres son premier rendu, ses heures se redessinent.
+    ref.watch(monHorlogeProvider);
     final CleEleveClasse cle = (
       classeId: contexte.classeId,
       eleveId: contexte.eleveId,

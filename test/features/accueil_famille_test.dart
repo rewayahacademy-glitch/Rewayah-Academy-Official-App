@@ -54,6 +54,7 @@ import 'package:rewayah_academy/features/accueil_famille/bandeau_blocage.dart';
 import 'package:rewayah_academy/features/accueil_famille/bloc_seance.dart';
 import 'package:rewayah_academy/features/accueil_famille/carte_classe_seance.dart';
 import 'package:rewayah_academy/features/accueil_famille/carte_horaire.dart';
+import 'package:rewayah_academy/features/accueil_famille/ligne_bibliotheque_classe.dart';
 import 'package:rewayah_academy/features/accueil_famille/ligne_derniere_seance.dart';
 import 'package:rewayah_academy/features/classe_tuteur/classe_tuteur_page.dart';
 import 'package:rewayah_academy/features/suivi_foyer/bloc_compte_rendu.dart'
@@ -355,6 +356,47 @@ void main() {
       expect(_lieu(routeur), Routes.classePour('classe-a', eleveId: _a1));
       expect(find.byType(ClasseTuteurPage), findsOneWidget);
       expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('PROFILS P2 : la Bibliotheque est sous la classe du profil '
+        'choisi, a un toucher de l Accueil, et absente sans classe', (
+      WidgetTester tester,
+    ) async {
+      final GoRouter routeur = await _monter(tester);
+      await _ouvrirAccueilParLaBarre(tester);
+      final Finder ligne = find.byKey(LigneBibliothequeClasse.ligneKey);
+      expect(ligne, findsOneWidget);
+      expect(
+        tester.getTopLeft(ligne).dy,
+        greaterThan(tester.getTopLeft(find.text('Classe fictive A')).dy),
+      );
+
+      await _toucher(
+        tester,
+        find.descendant(
+          of: find.byType(SelecteurProfils),
+          matching: find.text('Élève A2'),
+        ),
+      );
+      expect(ligne, findsNothing);
+
+      await _toucher(
+        tester,
+        find.descendant(
+          of: find.byType(SelecteurProfils),
+          matching: find.text('Élève A1'),
+        ),
+      );
+      await _toucher(tester, find.byKey(LigneBibliothequeClasse.ligneKey));
+      expect(
+        routeur
+            .routerDelegate
+            .currentConfiguration
+            .matches
+            .last
+            .matchedLocation,
+        Routes.tcBibliotheque,
+      );
     });
 
     testWidgets('changer de profil met a jour la carte ; sans classe, '

@@ -64,6 +64,44 @@ DateTime chezMoi(DateTime instant) {
 /// « 08:00 » a l'heure de la personne ([chezMoi]).
 String heureChezMoi(DateTime instant) => heureDeLAppareil(chezMoi(instant));
 
+/// Le jour civil de [instant] au fuseau du profil, en `DateTime` LOCAL a
+/// minuit, pour les formateurs de date qui appellent eux-memes `toLocal()`
+/// (dateCourteCandidature, dateEcheance) : [chezMoi] rend un `DateTime`
+/// marque UTC qui porte l'heure murale, et `toLocal()` le decalerait une
+/// seconde fois (constat de B, 12/11/2026).
+DateTime jourChezMoi(DateTime instant) {
+  final DateTime m = chezMoi(instant);
+  return DateTime(m.year, m.month, m.day);
+}
+
+/// L'instant (UTC) dont l'heure murale, au fuseau du profil, est le
+/// [annee]-[mois]-[jour] a [heure]:[minute] : l'inverse de [chezMoi], pour
+/// un choix fait a l'ecran (HEURES-PROFIL H3, 12/11/2026). Sans fuseau de
+/// profil, ou quand le decalage a cette date n'est pas sur, l'heure de
+/// l'appareil (`DateTime` local), comme [chezMoi].
+DateTime instantChezMoi(
+  int annee,
+  int mois,
+  int jour, [
+  int heure = 0,
+  int minute = 0,
+]) {
+  final FuseauVu? moi = _derniere?.moi;
+  final DateTime murale = DateTime.utc(annee, mois, jour, heure, minute);
+  if (moi != null) {
+    // Deux passes : le decalage en vigueur a l'instant trouve, puis la
+    // verification que cet instant rend bien l'heure murale demandee.
+    final Duration? d = moi.decalageA(murale.subtract(moi.decalage));
+    if (d != null) {
+      DateTime utc = murale.subtract(d);
+      final Duration? d2 = moi.decalageA(utc);
+      if (d2 != null && d2 != d) utc = murale.subtract(d2);
+      if (moi.muraleA(utc) == murale) return utc;
+    }
+  }
+  return DateTime(annee, mois, jour, heure, minute);
+}
+
 /// Vrai quand [chezMoi] retombe sur l'heure de l'appareil : l'ecran qui en a
 /// la place le dit (« Heure de cet appareil »).
 bool estHeureDeLAppareil(DateTime instant) =>

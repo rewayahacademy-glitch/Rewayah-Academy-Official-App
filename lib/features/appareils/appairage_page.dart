@@ -14,6 +14,7 @@ import '../../core/icons/app_icons.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/chemin_retour.dart';
 import '../../core/router/routes.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_mouvement.dart';
 import '../../core/theme/app_palette.dart';
@@ -458,6 +459,9 @@ class _AppairagePageState extends ConsumerState<AppairagePage>
 
   @override
   Widget build(BuildContext context) {
+    // HEURES-PROFIL H2 (12/11/2026) : la page ecoute le fuseau du profil ;
+    // quand il arrive apres son premier rendu, ses heures se redessinent.
+    ref.watch(monHorlogeProvider);
     final String? prenom = ref
         .watch(elevesDuFoyerProvider)
         .value
@@ -926,9 +930,8 @@ String _heure(DateTime? quand) {
   if (quand == null) {
     return '';
   }
-  final DateTime local = quand.toLocal();
-  return '${local.hour.toString().padLeft(2, '0')}:'
-      '${local.minute.toString().padLeft(2, '0')}';
+  // HEURES-PROFIL H1 : a l'heure du profil.
+  return heureChezMoi(quand);
 }
 
 String _mmss(Duration duree) {

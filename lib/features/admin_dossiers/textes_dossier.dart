@@ -1,6 +1,7 @@
 import '../../core/domain/enums.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 
 /// Vrai quand « de » s'elide devant [nom] : la regle unique de
 /// `core/i18n/elision.dart` (voyelle, accentuee ou non ; jamais devant h,
@@ -53,7 +54,8 @@ String _heure(DateTime local) => '${_deux(local.hour)}:${_deux(local.minute)}';
 /// Sans date (valeur absente), « Date de dépôt indisponible » (AD-11).
 String dateRevue(DateTime? instant) {
   if (instant == null) return t.dossiers.revue.dateIndisponible;
-  final DateTime l = instant.toLocal();
+  // HEURES-PROFIL H2 : a l'heure du profil.
+  final DateTime l = chezMoi(instant);
   final String date = t.dossiers.file.dateChiffres(
     jour: _deux(l.day),
     mois: _deux(l.month),
@@ -75,11 +77,12 @@ String dateRevue(DateTime? instant) {
 
 /// Depuis quand un dossier ou une demande attend, dans une liste :
 /// « Aujourd'hui · 14:05 », « Hier · 09:12 », sinon « 31 oct. · 22:32 »
-/// (« 31 oct. 2025 · 22:32 » une autre annee). A l'heure de l'appareil,
-/// comme [dateRevue] : la liste et le dossier disent la meme heure (L5).
+/// (« 31 oct. 2025 · 22:32 » une autre annee). A l'heure du profil
+/// (HEURES-PROFIL H2), comme [dateRevue] : la liste et le dossier disent la
+/// meme heure (L5).
 String quandDepuis(DateTime instant, DateTime maintenant) {
-  final DateTime l = instant.toLocal();
-  final DateTime m = maintenant.toLocal();
+  final DateTime l = chezMoi(instant);
+  final DateTime m = chezMoi(maintenant);
   // Des jours de calendrier, comptes en UTC : un passage a l'heure d'ete
   // (une journee de 23 heures) ne fait pas d'« Hier » un « Aujourd'hui ».
   final int ecart = DateTime.utc(

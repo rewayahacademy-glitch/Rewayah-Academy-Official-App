@@ -186,7 +186,15 @@ class _EnteteCompteState extends State<EnteteCompte> {
     TextStyle secondaire,
     String valeur,
   ) {
-    final String phrase = t.compte.page.matricule(valeur: _marque);
+    // Les isolants bidirectionnels (U+2068, U+2069) qui entourent la valeur
+    // dans la phrase arabe sont retires : la valeur a deja sa propre
+    // direction (le `Directionality` du WidgetSpan), et l'isolant colle au
+    // WidgetSpan en faisait un seul « mot », coupe en deux quand la valeur
+    // passait a la ligne (balayage coupe-mots, arabe a 320 x2, PROFILS P3).
+    final String phrase = t.compte.page
+        .matricule(valeur: _marque)
+        .replaceAll('\u2068', '')
+        .replaceAll('\u2069', '');
     final int coupe = phrase.indexOf(_marque);
     final String avant = coupe < 0 ? phrase : phrase.substring(0, coupe);
     final String apres = coupe < 0

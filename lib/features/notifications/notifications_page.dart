@@ -465,6 +465,9 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
 
   @override
   Widget build(BuildContext context) {
+    // HEURES-PROFIL H1 (12/11/2026) : la page ecoute le fuseau du profil ;
+    // quand il arrive apres son premier rendu, ses heures se redessinent.
+    ref.watch(monHorlogeProvider);
     final AsyncValue<List<NotificationTuteur>> valeur = ref.watch(
       notificationsTuteurProvider,
     );
@@ -802,8 +805,8 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                     children: blocs,
                   ),
           ),
-          Ecart.vMd,
-          NoteHistorique(t.historique.fuseauListe),
+          // HEURES-PROFIL H1 (12/11/2026) : les heures sont celles du profil ;
+          // la note « heure de cet appareil » est retiree (garde-cap).
         ],
       ),
     );

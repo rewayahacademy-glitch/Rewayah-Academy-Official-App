@@ -15,8 +15,6 @@ import 'package:rewayah_academy/core/push/invitation_push.dart';
 import 'package:rewayah_academy/core/push/port_push.dart';
 import 'package:rewayah_academy/core/push/reglages_push.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
-import 'package:rewayah_academy/features/compte/preferences_page.dart';
-import 'package:rewayah_academy/features/notifications/reglages_push.dart';
 
 import 'outil_capture.dart';
 
@@ -84,47 +82,12 @@ class _Serveur implements PortPush {
   }) async {}
 }
 
-
 void main() {
   group('Capture NOTIF-DEFAUT', skip: sautSansCapture, () {
     setUpAll(chargerPolicesDuDepot);
     int rang = 0;
     for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {
       final String code = langue.languageCode;
-      testWidgets('$code : Preferences, puis Notifications', (
-        WidgetTester tester,
-      ) async {
-        await tester.runAsync(() => LocaleSettings.setLocale(langue));
-        fixerVueCapture(tester, const Size(390, 844), 2);
-        await tester.pumpWidget(
-          hoteCapture(
-            const PreferencesComptePage(),
-            surcharges: <Override>[
-              navigateurPushProvider.overrideWithValue(
-                _Navigateur(EtatAppareilPush.inactif),
-              ),
-              portPushProvider.overrideWithValue(_Serveur(inscrit: false)),
-              horsLigneProvider.overrideWith(
-                (Ref ref) => Stream<bool>.value(false),
-              ),
-            ],
-          ),
-        );
-        await stabiliser(tester);
-        rang++;
-        debugPrint(
-          'PNG ${await capturer(tester, '0${rang}_${code}_390_preferences')}',
-        );
-        await tester.tap(
-          find.text(t.compte.tuteur.pagePreferences.notifications),
-        );
-        await stabiliser(tester);
-        expect(find.byKey(ReglagesPushVue.cleActiver), findsOneWidget);
-        rang++;
-        debugPrint(
-          'PNG ${await capturer(tester, '0${rang}_${code}_390_reglages_ouverts')}',
-        );
-      });
       testWidgets('$code : la fenetre de premiere connexion', (
         WidgetTester tester,
       ) async {
@@ -135,7 +98,7 @@ void main() {
             const Column(
               children: <Widget>[
                 BandeauInvitationPush(),
-                Expanded(child: PreferencesComptePage()),
+                Expanded(child: SizedBox.shrink()),
               ],
             ),
             surcharges: <Override>[

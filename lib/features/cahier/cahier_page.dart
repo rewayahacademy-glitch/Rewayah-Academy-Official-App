@@ -20,6 +20,7 @@ import '../../core/router/routes.dart';
 import '../../core/tc_coran/moteur_mushaf.dart' show souratesCoranProvider;
 import '../../core/tc_coran/port_corpus_coran.dart' show SourateVM;
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
@@ -82,6 +83,9 @@ class CahierPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // HEURES-PROFIL H1 (12/11/2026) : la page ecoute le fuseau du profil ;
+    // quand il arrive apres son premier rendu, ses heures se redessinent.
+    ref.watch(monHorlogeProvider);
     final AsyncValue<BrouillonCahier?> lecture = ref.watch(
       brouillonCahierProvider(seanceId),
     );
@@ -1769,14 +1773,17 @@ class _Borne extends StatelessWidget {
 }
 
 /// « Seance du {jour} {numero} {mois} a {heure} » (libelle de « A terminer »).
-String _seanceDu(DateTime debut) => t.enseignant.journee.cahierDetail(
-  jour: t.commun.dates.jours[debut.weekday - 1].toLowerCase(),
-  numero: '${debut.day}',
-  mois: t.commun.dates.mois[debut.month - 1],
-  heure:
-      '${debut.hour.toString().padLeft(2, '0')}:'
-      '${debut.minute.toString().padLeft(2, '0')}',
-);
+///
+/// Jour et heure a l'heure du profil ([chezMoi], HEURES-PROFIL H1).
+String _seanceDu(DateTime instant) {
+  final DateTime debut = chezMoi(instant);
+  return t.enseignant.journee.cahierDetail(
+    jour: t.commun.dates.jours[debut.weekday - 1].toLowerCase(),
+    numero: '${debut.day}',
+    mois: t.commun.dates.mois[debut.month - 1],
+    heure: heureChezMoi(instant),
+  );
+}
 
 /// LIB-CAHIER-1 : la pastille « Obligatoire » (composant partage
 /// [StatusPill]), le sous-titre et ce que le cahier de transmission sert a

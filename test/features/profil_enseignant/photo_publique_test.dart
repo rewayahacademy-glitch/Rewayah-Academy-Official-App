@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
+import 'package:rewayah_academy/core/widgets/entete_compte.dart';
 import 'package:rewayah_academy/features/bienvenue_enseignant/bienvenue_page.dart';
 import 'package:rewayah_academy/features/profil_enseignant/photo_publique.dart';
 
@@ -39,7 +40,7 @@ void main() {
     WidgetTester tester,
   ) async {
     await _monterDemo(tester, EcranDemoEnseignant.profil);
-    await _toucher(tester, find.text(t.enseignant.photo.choisir).first);
+    await _toucher(tester, find.byKey(EnteteCompte.photoKey));
 
     expect(find.text(t.enseignant.photo.titre), findsOneWidget);
     expect(find.text(t.enseignant.photo.aide), findsOneWidget);
@@ -51,7 +52,7 @@ void main() {
     WidgetTester tester,
   ) async {
     await _monterDemo(tester, EcranDemoEnseignant.profil);
-    await _toucher(tester, find.text(t.enseignant.photo.choisir).first);
+    await _toucher(tester, find.byKey(EnteteCompte.photoKey));
     await _toucher(tester, find.byKey(EditeurPhotoPublique.choisirKey));
 
     expect(find.byKey(EditeurPhotoPublique.apercuKey), findsOneWidget);

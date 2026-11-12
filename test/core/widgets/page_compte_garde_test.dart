@@ -5,8 +5,9 @@
 // 1. Aucune page Compte hors `PageCompte`. Une page Compte est le hub du
 //    Compte d'un role : `ComptePage`, ou `Compte<Role>Page` (Tuteur, Eleve,
 //    Adulte, Enseignant, Administration, Controleur, Comptable), ou
-//    `MonEspaceAdultePage` (le Compte de l'eleve adulte). Les pages ouvertes
-//    depuis une ligne du Compte (Aide, Securite...), la liste des comptes de
+//    `MonEspaceAdultePage` (le Compte de l'eleve adulte), ou
+//    `ProfilEnseignantPage` (le Compte de l'enseignant, PROFILS P3). Les
+//    pages ouvertes depuis une ligne du Compte (Aide, Securite...), la liste des comptes de
 //    l'administration ou un compte rendu n'en sont pas.
 // 2. Aucun `Medaillon` dans le Compte : ni directement, ni par
 //    `CarteRubriques`, dans lib/features/compte, lib/features/mon_espace_adulte
@@ -38,7 +39,8 @@ String _chemin(File f) => f.path.replaceAll(r'\', '/');
 
 final RegExp _classePage = RegExp(
   r'^class\s+(Compte(?:Tuteur|Eleve|Adulte|Enseignant|Administration|'
-  r'Controleur|Comptable)?Page|MonEspaceAdultePage)\s+extends',
+  r'Controleur|Comptable)?Page|MonEspaceAdultePage|ProfilEnseignantPage)'
+  r'\s+extends',
   multiLine: true,
 );
 final RegExp _medaillon = RegExp(r'\b(Medaillon|CarteRubriques)\b');

@@ -11,6 +11,7 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/router/routes.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
@@ -234,6 +235,9 @@ class _AccesAgentsPageEtat extends ConsumerState<AccesAgentsPage> {
 
   @override
   Widget build(BuildContext context) {
+    // HEURES-PROFIL H2 (12/11/2026) : la page ecoute le fuseau du profil ;
+    // quand il arrive apres son premier rendu, ses heures se redessinent.
+    ref.watch(monHorlogeProvider);
     return PageShell(
       titre: t.admin.agents.titre,
       defilante: false,
@@ -512,11 +516,13 @@ class _AccesAgentsPageEtat extends ConsumerState<AccesAgentsPage> {
     null => t.admin.agents.parcoursInconnu,
   };
 
-  String _quand(DateTime date) =>
-      '${date.day.toString().padLeft(2, '0')}/'
-      '${date.month.toString().padLeft(2, '0')} '
-      '${date.hour.toString().padLeft(2, '0')}:'
-      '${date.minute.toString().padLeft(2, '0')}';
+  // HEURES-PROFIL H2 : a l'heure du profil.
+  String _quand(DateTime instant) {
+    final DateTime date = chezMoi(instant);
+    return '${date.day.toString().padLeft(2, '0')}/'
+        '${date.month.toString().padLeft(2, '0')} '
+        '${heureChezMoi(instant)}';
+  }
 }
 
 /// Ce que le jeton ouvre, et ce qu'il n'ouvre pas, de rang egal.

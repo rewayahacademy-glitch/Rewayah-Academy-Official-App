@@ -76,6 +76,7 @@ class PageCompte extends StatelessWidget {
     this.piedEntete,
     this.titre,
     this.bandeauHorsLigne,
+    this.sousDeconnexion,
   });
 
   /// L'identite de la personne connectee. `null` dans les donnees : vide.
@@ -115,6 +116,10 @@ class PageCompte extends StatelessWidget {
 
   /// Le bandeau hors ligne de la page. Nul : celui de [PageShell].
   final Widget? bandeauHorsLigne;
+
+  /// Ce qui se lit sous « Se déconnecter » : l'échec d'une déconnexion, dit
+  /// tel quel (rien n'est prétendu).
+  final Widget? sousDeconnexion;
 
   /// La ligne « Se déconnecter ».
   static const Key deconnecterKey = Key('pageCompte.deconnecter');
@@ -170,6 +175,7 @@ class PageCompte extends StatelessWidget {
           ),
         ],
       ),
+      ?sousDeconnexion,
       // La ligne de version, toujours, pour tous les roles (ordre du
       // directeur, 11/11/2026 : « La ligne de version de l'app doit aussi
       // apparaitre pour autres users que l'eleve ») : la LigneVersion de

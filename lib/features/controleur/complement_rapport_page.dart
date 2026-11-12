@@ -26,6 +26,7 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/mouvement/apparition_douce.dart';
 import '../../core/mouvement/mouvement.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_delais.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -208,6 +209,9 @@ class _ComplementRapportPageState extends ConsumerState<ComplementRapportPage> {
   Widget build(BuildContext context) => PopScope(
     canPop: false,
     onPopInvokedWithResult: (bool fait, Object? _) {
+      // HEURES-PROFIL H2 (12/11/2026) : la page ecoute le fuseau du profil ;
+      // quand il arrive apres son premier rendu, ses heures se redessinent.
+      ref.watch(monHorlogeProvider);
       if (!fait) _retourSysteme();
     },
     child: _corps(context),
@@ -356,7 +360,7 @@ class _ComplementRapportPageState extends ConsumerState<ComplementRapportPage> {
           cle: c.cleRapport,
           valeur: c.rapportInchange(
             classe: r.classe,
-            date: dateDeLAppareil(r.debut),
+            date: dateDeLAppareil(chezMoi(r.debut)),
           ),
         ),
         LigneCleValeur(

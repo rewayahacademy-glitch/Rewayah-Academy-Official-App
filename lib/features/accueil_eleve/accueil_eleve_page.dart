@@ -177,6 +177,9 @@ class _AccueilElevePageEtat extends ConsumerState<AccueilElevePage>
 
   @override
   Widget build(BuildContext context) {
+    // HEURES-PROFIL H1 (12/11/2026) : la page ecoute le fuseau du profil ;
+    // quand il arrive apres son premier rendu, ses heures se redessinent.
+    ref.watch(monHorlogeProvider);
     final AsyncValue<List<Seance>> seances = ref.watch(seancesProvider);
     // Defaut du 30/10/2026 : le cours du moment d'une Classe dont la seance
     // n'existe pas encore (Classe nee pendant son creneau). Une lecture
@@ -1029,10 +1032,9 @@ int joursCivilsEntre(DateTime debut, DateTime fin) => DateTime.utc(
   fin.day,
 ).difference(DateTime.utc(debut.year, debut.month, debut.day)).inDays;
 
-/// L'heure locale d'un instant, sur deux chiffres.
-String _hhmm(DateTime quand) =>
-    '${quand.hour.toString().padLeft(2, '0')}:'
-    '${quand.minute.toString().padLeft(2, '0')}';
+/// L'heure d'un instant, a l'heure du profil ([heureChezMoi], HEURES-PROFIL
+/// H1, 12/11/2026).
+String _hhmm(DateTime quand) => heureChezMoi(quand);
 
 /// Vrai quand deux instants tombent le meme jour civil local.
 bool _memeJour(DateTime a, DateTime b) =>

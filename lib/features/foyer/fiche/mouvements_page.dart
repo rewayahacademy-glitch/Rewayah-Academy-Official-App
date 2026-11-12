@@ -18,6 +18,7 @@ import '../../../core/reseau/etat_sans_donnees.dart';
 import '../../../core/reseau/service_reseau.dart';
 import '../../../core/router/routes.dart';
 import '../../../core/session/session_controleur.dart';
+import '../../../core/tc_horloge/mon_horloge.dart';
 import '../../../core/theme/app_gabarit.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -85,6 +86,9 @@ class MouvementsElevePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // HEURES-PROFIL H2 (12/11/2026) : la page ecoute le fuseau du profil ;
+    // quand il arrive apres son premier rendu, ses heures se redessinent.
+    ref.watch(monHorlogeProvider);
     return PageFiche(
       eleveId: eleveId,
       titre: t.ficheEleve.mouvements.titre,
@@ -146,11 +150,14 @@ String dateHeureMouvement(DateTime date) {
       locale.microsecond == 0) {
     return dateEcheance(locale);
   }
+  // HEURES-PROFIL H1 : une heure reelle se lit a l'heure du profil.
+  final DateTime profil = chezMoi(date);
   return t.ficheEleve.mouvements.dateHeure(
-    date: dateEcheance(locale),
+    // dateEcheance appelle toLocal() : le jour du profil en local.
+    date: dateEcheance(jourChezMoi(date)),
     heure: t.ficheEleve.mouvements.heureChiffres(
-      heures: _deuxChiffres(locale.hour),
-      minutes: _deuxChiffres(locale.minute),
+      heures: _deuxChiffres(profil.hour),
+      minutes: _deuxChiffres(profil.minute),
     ),
   );
 }
@@ -245,6 +252,9 @@ class HistoriqueMouvements extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // HEURES-PROFIL H2 (12/11/2026) : la page ecoute le fuseau du profil ;
+    // quand il arrive apres son premier rendu, ses heures se redessinent.
+    ref.watch(monHorlogeProvider);
     final Object? erreur = lecture.hasError ? lecture.error : null;
     final Widget corps;
     if (erreur is CapaciteIndisponible) {
