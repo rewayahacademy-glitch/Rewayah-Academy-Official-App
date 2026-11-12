@@ -23,6 +23,8 @@ Au-dessus de ces fichiers : les décisions datées du directeur (compétences `p
 | 7 | `ARBITRAGES.md` | Le registre de tous les arbitrages, avec leur raison et leur origine, la clôture de chacune des 53 anciennes questions, et les corrections après audit (partie 8) |
 | 8 | `CONTENUS-ATTENDUS.md` | Les quatre dépôts de contenu attendus du directeur (livre de lecture, enregistrements, paroles de la prière et invocations, adab), ce que l'école fait en attendant, où les déposer |
 | 9 | `PLAN-DE-CONSTRUCTION.md` | Les dix lots, dans l'ordre, pour passer de l'existant à la charte ; qui livre en tête (l'architecte ouvre la pull request et fusionne, CI verte exigée, après revue indépendante ; le directeur installe les migrations) |
+| 10 | `ANGLES-MORTS.md` | Le registre des sujets que la charte ne couvre pas encore (19 fiches en trois groupes), tenu par l'architecte ; il se complète à chaque sujet nouveau |
+| 11 | `STRATEGIE-FORMATION-DES-CLASSES.md` | La stratégie des classes vitrines (l'ancien « matching des classes ») : ce qui existe, ce qui a été perdu, les règles F1 à F16, les angles morts et les quatre lots |
 
 ## Les marques
 
