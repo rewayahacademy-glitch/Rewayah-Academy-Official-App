@@ -150,7 +150,7 @@ class SectionEntretien extends ConsumerWidget {
               dernier == null
                   ? e.aucun
                   : e.dernier(
-                      date: dateCourteCandidature(dernier.debut),
+                      date: _dateChezMoi(dernier.debut),
                       issue: libelleIssueEntretien(dernier.issue!),
                     ),
             ),
@@ -250,9 +250,12 @@ class _EntretienOuvert extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // HEURES-PROFIL H4 (garde-cap, 12/11/2026) : l'heure du profil ; la
+    // mention de l'appareil seulement en repli. Redessine a l'arrivee du fuseau.
+    ref.watch(monHorlogeProvider);
     final e = t.admin.candidatures.entretien;
     final TextTheme textes = Theme.of(context).textTheme;
-    final DateTime local = entretien.debut.toLocal();
+    final DateTime local = chezMoi(entretien.debut);
     final bool choisir =
         !horsLigne &&
         capacites.peutDecider &&
@@ -468,8 +471,8 @@ class _EntretienOuvert extends ConsumerWidget {
       children: <Widget>[
         TexteSansCoupure(
           LibellesGroupe.insecable(
-            e.quand(
-              date: dateCourteCandidature(entretien.debut),
+            (estHeureDeLAppareil(entretien.debut) ? e.quand : e.quandProfil)(
+              date: _dateChezMoi(entretien.debut),
               heure: heureDeLAppareil(local),
               duree: '${entretien.dureeMinutes}',
             ),
@@ -577,8 +580,19 @@ String messageRefusEntretien(Object refus, {bool retrait = false}) {
   };
 }
 
+/// HEURES-PROFIL H4 : la date courte d'un instant, au jour du PROFIL.
+///
+/// [chezMoi] rend l'heure murale dans un DateTime marque UTC (muraleA) ;
+/// [dateCourteCandidature] appelle `toLocal()`, qui la decalerait une seconde
+/// fois du fuseau de l'appareil. On ne lui passe donc que le jour, dans un
+/// DateTime local, ou `toLocal()` ne change rien.
+String _dateChezMoi(DateTime instant) {
+  final DateTime m = chezMoi(instant);
+  return dateCourteCandidature(DateTime(m.year, m.month, m.day));
+}
+
 /// V1-c : « {nom} a deja une seance ou un entretien le {date}, de {debut} a
-/// {fin} », l'heure remise dans le fuseau de l'appareil. Sans heure rendue,
+/// {fin} », a l'heure du profil (HEURES-PROFIL H4), l'appareil en repli. Sans heure rendue,
 /// la phrase ne dit que le nom ; sans nom, « une personne choisie ».
 String _messageOccupee(String nom, DateTime? debut, DateTime? fin) {
   final r = t.admin.candidatures.entretien.refus;
@@ -587,11 +601,11 @@ String _messageOccupee(String nom, DateTime? debut, DateTime? fin) {
     return r.personneOccupeeSansHeure(nom: qui);
   }
   return LibellesGroupe.insecable(
-    r.personneOccupee(
+    (estHeureDeLAppareil(debut) ? r.personneOccupee : r.personneOccupeeProfil)(
       nom: qui,
-      date: dateCourteCandidature(debut),
-      debut: heureDeLAppareil(debut.toLocal()),
-      fin: heureDeLAppareil(fin.toLocal()),
+      date: _dateChezMoi(debut),
+      debut: heureChezMoi(debut),
+      fin: heureChezMoi(fin),
     ),
   );
 }

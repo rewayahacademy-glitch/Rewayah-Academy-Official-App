@@ -8,6 +8,7 @@ import '../../core/admin/admin_domaine.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/tc_observation/guardian_session_visit.dart';
 import '../../core/tc_observation/port_historique_observations.dart';
 import '../../core/theme/app_elevation.dart';
@@ -90,8 +91,9 @@ class VisiteAdmin {
   /// Vrai tant que le serveur n'a pas ecrit de sortie.
   bool get ouverte => visite.enCours;
 
-  /// L'entree, en heure de l'appareil.
-  DateTime get entree => visite.enteredAtUtc.toLocal();
+  /// L'entree, a l'heure du profil (HEURES-PROFIL H4, garde-cap, 12/11/2026),
+  /// l'appareil seulement en repli. Pour l'affichage seulement.
+  DateTime get entree => chezMoi(visite.enteredAtUtc);
 }
 
 class _ObservationsAdminPageEtat extends ConsumerState<ObservationsAdminPage> {
@@ -259,6 +261,8 @@ class _ObservationsAdminPageEtat extends ConsumerState<ObservationsAdminPage> {
 
   @override
   Widget build(BuildContext context) {
+    // HEURES-PROFIL H4 : la page se redessine quand le fuseau du profil arrive.
+    ref.watch(monHorlogeProvider);
     final List<({String libelle, String chemin})> onglets = ongletsSecurite();
     return PageShell(
       titre: t.admin.observations.titrePage,
@@ -341,7 +345,11 @@ class _ObservationsAdminPageEtat extends ConsumerState<ObservationsAdminPage> {
       fin: _fin,
       erreur: _erreur,
       onSuite: _suite,
-      decalage: decalageUtc(widget.horloge()),
+      // HEURES-PROFIL H4 : la mention ne dit l'appareil, et son decalage,
+      // que s'il sert.
+      decalage: estHeureDeLAppareil(widget.horloge())
+          ? decalageUtc(widget.horloge().toLocal())
+          : null,
     );
     // Tableau dense au bureau ; ailleurs UNE carte a filets (decision du
     // directeur : jamais un rectangle par ligne).
@@ -675,7 +683,7 @@ String heureSecondes(DateTime d) =>
 
 /// La sortie d'une visite, ou « Non enregistree ».
 String sortieDe(VisiteAdmin l) => switch (l.visite.leftAtUtc) {
-  final DateTime s => heureSecondes(s.toLocal()),
+  final DateTime s => heureSecondes(chezMoi(s)),
   null => t.admin.observations.sortieAbsente,
 };
 
@@ -787,7 +795,7 @@ class _LigneVisite extends StatelessWidget {
     final String plage = switch (ligne.visite.leftAtUtc) {
       final DateTime s => t.admin.observations.plage(
         entree: heureMinute(ligne.entree),
-        sortie: heureMinute(s.toLocal()),
+        sortie: heureMinute(chezMoi(s)),
       ),
       null => heureMinute(ligne.entree),
     };
@@ -937,7 +945,10 @@ class _PiedDePage extends StatelessWidget {
   final bool fin;
   final Object? erreur;
   final Future<void> Function() onSuite;
-  final String decalage;
+
+  /// Le decalage de l'appareil, quand il sert ; nul quand le profil a un
+  /// fuseau (aucune mention).
+  final String? decalage;
 
   @override
   Widget build(BuildContext context) {
@@ -966,8 +977,10 @@ class _PiedDePage extends StatelessWidget {
               onPress: chargement ? null : () => unawaited(onSuite()),
             ),
           ],
-          Ecart.vMd,
-          Text(t.admin.observations.fuseau(decalage: decalage), style: doux),
+          if (decalage case final String d) ...<Widget>[
+            Ecart.vMd,
+            Text(t.admin.observations.fuseau(decalage: d), style: doux),
+          ],
           Ecart.vLg,
         ],
       ),

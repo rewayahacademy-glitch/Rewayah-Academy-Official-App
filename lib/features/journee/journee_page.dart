@@ -181,6 +181,9 @@ class _JourneePageEtat extends ConsumerState<JourneePage> {
 
   @override
   Widget build(BuildContext context) {
+    // HEURES-PROFIL H4 (garde-cap, 12/11/2026) : la journee se redessine
+    // quand le fuseau du profil arrive (heures et mention de repli).
+    ref.watch(monHorlogeProvider);
     final DateTime Function() lire = ref.watch(maintenantJourneeProvider);
     // Un seul `PageShell`, quel que soit l'etat : le titre ne disparait pas
     // pendant une charge, et le bandeau hors ligne du shell coiffe la page.

@@ -4187,6 +4187,7 @@
         "aucun": "Aucun entretien planifié.",
         "planifier": "Planifier l'entretien",
         "quand": "Le {date} à {heure} (heure de cet appareil), pour {duree} min.",
+        "quandProfil": "Le {date} à {heure}, pour {duree} min.",
         "fondateurs": "Fondateurs parmi les participants\u00a0: {n}",
         "minimum": "Minimum exigé\u00a0: {n}",
         "regleInactive": "La règle des fondateurs est désactivée.",
@@ -4269,6 +4270,7 @@
           "compteRendu": "«\u00a0Entretien tenu\u00a0» demande au moins un compte rendu d'un participant.",
           "introuvable": "Cet entretien n'existe plus de ce côté.",
           "personneOccupee": "\u2068{nom}\u2069 a déjà une séance ou un entretien le {date}, de {debut} à {fin} (heure de cet appareil). Choisissez une autre heure ou une autre personne.",
+          "personneOccupeeProfil": "\u2068{nom}\u2069 a déjà une séance ou un entretien le {date}, de {debut} à {fin}. Choisissez une autre heure ou une autre personne.",
           "personneOccupeeSansHeure": "\u2068{nom}\u2069 a déjà une séance ou un entretien à ce moment. Choisissez une autre heure ou une autre personne.",
           "personneChoisie": "Une personne choisie"
         },
