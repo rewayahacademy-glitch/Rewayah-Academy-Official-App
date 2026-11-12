@@ -116,7 +116,10 @@ class PaiementsComptePage extends ConsumerWidget {
                     cle: ValueKey<String>('paiement-${p.id}'),
                     icone: AppIcons.paiements,
                     libelle: t.compte.tuteur.pagePaiements.paiementDu(
-                      date: dateLongue(jourChezMoi(p.date)),
+                      date: dateDansLeSens(
+                        dateLongue(jourChezMoi(p.date)),
+                        Directionality.of(context),
+                      ),
                     ),
                     valeur: formaterMontant(Montant(p.montantMineur, p.devise)),
                     legende: legendePaiement(p),
@@ -180,3 +183,14 @@ String? legendePaiement(PaiementFoyer p) {
   ];
   return morceaux.isEmpty ? null : morceaux.join(' · ');
 }
+
+/// La date longue posee dans « Paiement du {date} », dans le sens de lecture
+/// de l'interface. En arabe, le gabarit isole la date (FSI) et chacun de ses
+/// morceaux (jour, mois, annee) : l'isolat exterieur, qui ne voit aucune
+/// lettre forte hors des isolats imbriques, prenait le sens gauche a droite,
+/// et la date se lisait a l'envers (« دفعة 2026 نوفمبر 13 », garde-cap,
+/// 12/11/2026). La marque de lettre arabe (U+061C, forte de droite a gauche)
+/// en tete lui donne le sens de l'interface ; de gauche a droite, rien ne
+/// change.
+String dateDansLeSens(String date, TextDirection sens) =>
+    sens == TextDirection.rtl ? '\u061C$date' : date;

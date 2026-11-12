@@ -6,6 +6,7 @@
 // second adulte) se dit en clair, sans « Reessayer ».
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show RenderParagraph;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -183,6 +184,48 @@ void main() {
         expect(_texte(t.commun.etats.actions.reessayer), findsNothing);
       },
     );
+  });
+
+  testWidgets('arabe : « دفعة » d abord (a droite), puis le jour, le mois et '
+      'l annee dans l ordre de lecture', (WidgetTester tester) async {
+    await tester.runAsync(() => LocaleSettings.setLocale(AppLocale.ar));
+    addTearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
+    await monterCompte(
+      tester,
+      depart: Routes.compteTuteurSousPage('paiements'),
+      direction: TextDirection.rtl,
+      surcharges: _avec(
+        FauxPaiementsFoyer(paiements: <PaiementFoyer>[_deux.last]),
+      ),
+    );
+    // « دفعة 3 أكتوبر 2026 » : de droite a gauche, le mot, puis 3, puis 2026.
+    final Finder ligne = find.byKey(const ValueKey<String>('paiement-1'));
+    RenderParagraph? titre;
+    for (final Element e
+        in find
+            .descendant(of: ligne, matching: find.byType(RichText))
+            .evaluate()) {
+      final RenderParagraph p = e.renderObject! as RenderParagraph;
+      if (p.text.toPlainText().contains('2026')) titre = p;
+    }
+    expect(titre, isNotNull);
+    final RenderParagraph p = titre!;
+    final String s = p.text.toPlainText();
+    expect(p.textDirection, TextDirection.rtl);
+    double x(String morceau) => p
+        .getBoxesForSelection(
+          TextSelection(
+            baseOffset: s.indexOf(morceau),
+            extentOffset: s.indexOf(morceau) + morceau.length,
+          ),
+        )
+        .first
+        .left;
+    final double mot = x('دفعة');
+    final double jour = x('3');
+    final double annee = x('2026');
+    expect(mot, greaterThan(jour), reason: 'le mot avant la date');
+    expect(jour, greaterThan(annee), reason: 'le jour avant l annee');
   });
 
   test('statut inconnu : jamais affiche brut', () {
