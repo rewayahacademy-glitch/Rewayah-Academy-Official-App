@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/admin/service_programme.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart'
+    show LibellesGroupe;
 import 'package:rewayah_academy/features/admin_pedagogie_programmes/feuille_contenu_niveau.dart';
 import 'package:rewayah_academy/features/admin_pedagogie_programmes/section_revision_etape.dart';
 
@@ -77,7 +79,12 @@ void main() {
     WidgetTester tester,
   ) async {
     await _monter(tester, heures: 2.5, repetitions: 40);
-    expect(find.text(c.revisionHeuresValeur(heures: '2,5')), findsOneWidget);
+    expect(
+      find.text(
+        LibellesGroupe.insecable(c.revisionHeuresValeur(heures: '2,5')),
+      ),
+      findsOneWidget,
+    );
     expect(find.text('40'), findsOneWidget);
   });
 
@@ -87,7 +94,12 @@ void main() {
     final _Appels appels = await _monter(tester);
     await _plus(tester, c.revisionHeuresPlus, 5);
     await _plus(tester, c.revisionRepetitionsPlus, 3);
-    expect(find.text(c.revisionHeuresValeur(heures: '2,5')), findsOneWidget);
+    expect(
+      find.text(
+        LibellesGroupe.insecable(c.revisionHeuresValeur(heures: '2,5')),
+      ),
+      findsOneWidget,
+    );
     await _enregistrer(tester);
     expect(appels.faits.single, (heures: 2.5, repetitions: 3));
     expect(find.text(c.revisionEnregistree), findsOneWidget);
