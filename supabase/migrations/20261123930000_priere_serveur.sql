@@ -1652,6 +1652,23 @@ BEGIN
       JOIN public.profiles p ON p.id = ps.teacher_id AND p.deleted_at IS NULL
       LEFT JOIN public.teacher_profiles tp ON tp.profile_id = ps.teacher_id
      WHERE ps.actif
+  ), comptes AS (
+    SELECT tp.profile_id, p.first_name, tp.timezone_iana AS tz_compte,
+           CASE WHEN pg_catalog.length(pg_catalog.btrim(tp.country)) = 2
+                  THEN pg_catalog.upper(pg_catalog.btrim(tp.country))
+                ELSE (SELECT n.code FROM (VALUES
+                        ('guinee', 'GN'), ('guinée', 'GN'), ('senegal', 'SN'), ('sénégal', 'SN'),
+                        ('france', 'FR'), ('maroc', 'MA'), ('algerie', 'DZ'), ('algérie', 'DZ'),
+                        ('tunisie', 'TN'), ('egypte', 'EG'), ('égypte', 'EG'), ('mali', 'ML'),
+                        ('mauritanie', 'MR'), ('cote d''ivoire', 'CI'), ('côte d''ivoire', 'CI'),
+                        ('arabie saoudite', 'SA'), ('royaume-uni', 'GB'), ('belgique', 'BE'),
+                        ('canada', 'CA'), ('suisse', 'CH'), ('allemagne', 'DE'), ('gambie', 'GM'),
+                        ('burkina faso', 'BF'), ('niger', 'NE'), ('etats-unis', 'US'), ('états-unis', 'US'))
+                        AS n(nom, code)
+                       WHERE n.nom = pg_catalog.lower(pg_catalog.btrim(tp.country))) END AS pays
+      FROM public.teacher_profiles tp
+      JOIN public.profiles p ON p.id = tp.profile_id AND p.deleted_at IS NULL
+     WHERE p.role = 'teacher' AND tp.timezone_iana IS NOT NULL
   ), boites(code, lat_min, lat_max, lon_min, lon_max) AS (VALUES
     ('GN', 7.19, 12.68, -15.08, -7.64), ('SN', 12.30, 16.69, -17.54, -11.35),
     ('FR', 41.30, 51.15, -5.15, 9.56), ('MA', 27.60, 35.93, -13.20, -0.99),
@@ -1681,7 +1698,22 @@ BEGIN
   UNION ALL
   SELECT b.teacher_id, b.first_name, 'pays_lieu_incoherent'::text, b.pays
     FROM base b JOIN boites x ON x.code = b.pays
-   WHERE NOT (b.lat BETWEEN x.lat_min AND x.lat_max AND b.lon BETWEEN x.lon_min AND x.lon_max);
+   WHERE NOT (b.lat BETWEEN x.lat_min AND x.lat_max AND b.lon BETWEEN x.lon_min AND x.lon_max)
+  UNION ALL
+  -- Le pays et le fuseau du compte, meme sans lieu de priere pose : c'est le cas
+  -- releve en production (pays Guinee, fuseau Europe/Paris). Seuls les pays qui
+  -- tiennent dans une bande de 30 degres de longitude sont juges.
+  SELECT c.profile_id, c.first_name, 'pays_fuseau_incoherent'::text,
+         c.pays || ' / ' || c.tz_compte
+    FROM comptes c JOIN boites x ON x.code = c.pays
+   WHERE x.lon_max - x.lon_min <= 30
+     AND pg_catalog.abs(
+           LEAST(
+             pg_catalog.date_part('epoch', (TIMESTAMP '2027-01-15 12:00')
+               - ((TIMESTAMP '2027-01-15 12:00' AT TIME ZONE c.tz_compte) AT TIME ZONE 'UTC')) / 3600.0,
+             pg_catalog.date_part('epoch', (TIMESTAMP '2027-07-15 12:00')
+               - ((TIMESTAMP '2027-07-15 12:00' AT TIME ZONE c.tz_compte) AT TIME ZONE 'UTC')) / 3600.0)
+           - ((x.lon_min + x.lon_max) / 2) / 15.0) > 1.5;
 END;
 $function$;
 

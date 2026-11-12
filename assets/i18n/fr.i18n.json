@@ -2334,6 +2334,7 @@
       "incoherenceFuseauCompte": "{prenom} : le fuseau du compte et celui du lieu de prière diffèrent ({detail}).",
       "incoherenceFuseauLieu": "{prenom} : le fuseau du lieu de prière ne correspond pas à sa longitude ({detail}).",
       "incoherencePays": "{prenom} : le pays du compte ({detail}) ne correspond pas au lieu de prière.",
+    "incoherencePaysFuseau": "{prenom} : le pays du compte et son fuseau ne se correspondent pas ({detail}).",
       "feuille": {
         "titre": "Lieu et heures de prière de {prenom}",
         "nomLieu": "Nom du lieu",

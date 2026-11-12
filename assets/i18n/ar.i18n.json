@@ -9941,6 +9941,7 @@
       "incoherenceFuseauCompte": "⁨{prenom}⁩: المنطقة الزمنية للحساب تختلف عن منطقة مكان الصلاة (⁨{detail}⁩).",
       "incoherenceFuseauLieu": "⁨{prenom}⁩: المنطقة الزمنية لمكان الصلاة لا تطابق خط طوله (⁨{detail}⁩).",
       "incoherencePays": "⁨{prenom}⁩: بلد الحساب (⁨{detail}⁩) لا يطابق مكان الصلاة.",
+    "incoherencePaysFuseau": "⁨{prenom}⁩: بلد الحساب ومنطقته الزمنية لا يتطابقان (⁨{detail}⁩).",
       "feuille": {
         "titre": "مكان وأوقات صلاة ⁨{prenom}⁩",
         "nomLieu": "اسم المكان",

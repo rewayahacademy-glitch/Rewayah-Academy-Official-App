@@ -782,6 +782,20 @@ SELECT pg_temp.vrai((SELECT count(*) FROM public.priere_incoherences_enseignants
                       WHERE enseignant_id = '9e000000-0000-4000-8000-000000000001' AND motif = 'pays_lieu_incoherent') = 1,
   'incoherence : pays FR et lieu a Conakry sont signales');
 SELECT pg_temp.personne();
+-- Le cas releve en production : pays Guinee, fuseau Europe/Paris, AUCUN lieu pose.
+UPDATE public.teacher_profiles SET country = 'GN' WHERE profile_id = '9e000000-0000-4000-8000-000000000003';
+SELECT pg_temp.en_tant_que('9e000000-0000-4000-8000-000000000010', 'admin');
+SELECT pg_temp.vrai((SELECT count(*) FROM public.priere_incoherences_enseignants()
+                      WHERE enseignant_id = '9e000000-0000-4000-8000-000000000003'
+                        AND motif = 'pays_fuseau_incoherent' AND detail = 'GN / Europe/Paris') = 1,
+  'incoherence : pays GN et fuseau Europe/Paris, meme sans lieu de priere, est signale (le cas de la production)');
+SELECT pg_temp.vrai((SELECT count(*) FROM public.priere_incoherences_enseignants()
+                      WHERE enseignant_id = '9e000000-0000-4000-8000-000000000005'
+                        AND motif = 'pays_fuseau_incoherent') = 0,
+  'incoherence : pays FR et fuseau Europe/Paris concordent');
+SELECT pg_temp.personne();
+UPDATE public.teacher_profiles SET country = 'FR' WHERE profile_id = '9e000000-0000-4000-8000-000000000003';
+
 -- Rien n'est corrige automatiquement : le lieu et le fuseau enregistres n'ont pas bouge.
 SELECT pg_temp.vrai((SELECT timezone_iana FROM public.teacher_profiles WHERE profile_id = '9e000000-0000-4000-8000-000000000001') = 'Europe/Paris'
                     AND (SELECT timezone_iana FROM public.prayer_settings WHERE teacher_id = '9e000000-0000-4000-8000-000000000001') = 'Africa/Conakry',

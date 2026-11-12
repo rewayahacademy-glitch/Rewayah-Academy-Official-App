@@ -180,6 +180,10 @@ String _phrase(IncoherencePriere i) => switch (i.motif) {
     prenom: i.prenom,
     detail: i.detail,
   ),
+  'pays_fuseau_incoherent' => t.priere.direction.incoherencePaysFuseau(
+    prenom: i.prenom,
+    detail: i.detail,
+  ),
   _ => t.priere.direction.incoherencePays(prenom: i.prenom, detail: i.detail),
 };
 
