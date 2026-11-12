@@ -20,6 +20,7 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/theme/app_palette.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
@@ -77,6 +78,11 @@ Future<void> _monter(
     ProviderScope(
       overrides: <Override>[
         serviceAppairageProvider.overrideWithValue(service),
+        // AUTRE-PROFIL-ELEVE : la page attend le compte connecte (un tuteur,
+        // autre que l'eleve affiche) avant de demander un code.
+        sourceSessionProvider.overrideWithValue(
+          FausseSourceSession(sessionActive(AppRole.guardian)),
+        ),
         portStatutCodeAppairageProvider.overrideWithValue(statut),
         serviceReseauProvider.overrideWithValue(reseau ?? FauxServiceReseau()),
         horlogeEmetteurProvider.overrideWithValue(h.lire),
@@ -417,10 +423,7 @@ void main() {
         // UX-021 (WCAG 2.2 AA 4.1.2) : le bouton a son propre noeud, nomme,
         // de role bouton, distinct du titre et de la phrase.
         final SemanticsHandle semantique = tester.ensureSemantics();
-        expect(
-          find.semantics.byLabel(t.appareils.regenerer),
-          findsOne,
-        );
+        expect(find.semantics.byLabel(t.appareils.regenerer), findsOne);
         expect(
           tester.getSemantics(find.text(t.appareils.regenerer)),
           isSemantics(

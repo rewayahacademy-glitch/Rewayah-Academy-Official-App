@@ -74,6 +74,7 @@ import 'bandeau_blocage.dart';
 import 'bloc_seance.dart';
 import 'carte_classe_seance.dart';
 import 'carte_horaire.dart';
+import 'feuille_autre_appareil.dart';
 import 'ligne_bibliotheque_classe.dart';
 import 'ligne_derniere_seance.dart';
 import 'liste_preparation.dart';
@@ -717,7 +718,10 @@ class _CorpsAccueil extends ConsumerWidget {
             child: LienFleche(
               key: AccueilFamillePage.autreAppareilKey,
               libelle: t.tuteur.accueil.autreAppareil,
-              onPress: () => routeur.go(Routes.appairerPour(eleveId)),
+              // AUTRE-PROFIL-ELEVE (12/11/2026) : le titulaire se connecte a
+              // son propre compte sur l'autre appareil, sans jumelage (le
+              // serveur refuse d'appairer un compte tuteur).
+              onPress: () => unawaited(ouvrirFeuilleAutreAppareil(context)),
               alignerEnDebut: true,
             ),
           )
