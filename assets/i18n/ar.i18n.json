@@ -13939,6 +13939,17 @@
     "retirerRefus": "انقضت مهلة 24 ساعة: لا يسحبها الآن إلا الإدارة.",
     "retirerEchec": "لم تُسحب السورة. أعد المحاولة."
   },
+  "souratesRetirables": {
+    "titre": "سور اختيرت خطأً",
+    "aide": "السور المعتمدة في هذا الفصل التي يمكنك سحبها.",
+    "vide": "لا توجد سورة معتمدة للسحب في هذا الفصل.",
+    "erreur": "تعذّرت قراءة سور هذا الفصل. أعد المحاولة.",
+    "horsLigne": "دون اتصال، لا يمكن سحب أي سورة.",
+    "ligne": "⁨{eleve}⁩ · ⁨{sourate}⁩",
+    "jusqua": "ممكن حتى ⁨{heure}⁩",
+    "jusquaDemain": "ممكن حتى الغد، ⁨{heure}⁩",
+    "retirerPour": "سحب ⁨{sourate}⁩ لـ ⁨{eleve}⁩"
+  },
   "accueilHoraire": {
     "demandeTitre": "تم تسجيل الطلب",
     "demandeDetail": "سنعلمك فور فتح موعد مناسب لـ⁨{prenom}⁩.",

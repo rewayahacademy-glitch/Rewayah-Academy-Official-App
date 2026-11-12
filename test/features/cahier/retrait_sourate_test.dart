@@ -11,7 +11,7 @@ import 'package:rewayah_academy/core/enseignant/modeles_enseignant.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/widgets/app_bottom_sheet.dart';
 import 'package:rewayah_academy/features/cahier/cahier_page.dart';
-import 'package:rewayah_academy/features/cahier/retrait_sourate.dart';
+import 'package:rewayah_academy/features/fiche_groupe/retrait_sourate.dart';
 import 'package:rewayah_academy/features/fiche_groupe/sourates_classe.dart';
 
 import '../../capture/outil_capture.dart';

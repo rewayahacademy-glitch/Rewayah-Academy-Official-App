@@ -14475,6 +14475,17 @@
     "retirerRefus": "Le délai de 24 heures est passé : seule la direction peut encore la retirer.",
     "retirerEchec": "La sourate n'a pas été retirée. Réessayez."
   },
+  "souratesRetirables": {
+    "titre": "Sourates cochées par erreur",
+    "aide": "Les sourates validées dans cette classe que vous pouvez retirer.",
+    "vide": "Aucune sourate validée à retirer dans cette classe.",
+    "erreur": "Les sourates de cette classe n'ont pas pu être lues. Réessayez.",
+    "horsLigne": "Sans connexion, aucune sourate ne peut être retirée.",
+    "ligne": "{eleve} · {sourate}",
+    "jusqua": "Possible jusqu'à {heure}",
+    "jusquaDemain": "Possible jusqu'à demain, {heure}",
+    "retirerPour": "Retirer {sourate} pour {eleve}"
+  },
   "accueilHoraire": {
     "demandeTitre": "Demande enregistrée",
     "demandeDetail": "Nous vous prévenons dès qu'un horaire ouvre pour {prenom}.",

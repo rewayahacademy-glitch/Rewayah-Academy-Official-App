@@ -23,7 +23,7 @@ import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/bandeau_attention.dart';
 import '../../core/widgets/status_pill.dart';
 import '../../core/widgets/zone_saisie.dart';
-import '../fiche_groupe/sourates_classe.dart';
+import 'sourates_classe.dart';
 
 /// Demande confirmation, puis retire la sourate [nom] par [retirer], qui
 /// recoit le motif (ou `null`). Rend `true` quand le serveur a retire la

@@ -42,6 +42,7 @@ import '../../core/widgets/zone_saisie.dart';
 import '../fiche_groupe/etape_eleve.dart';
 import '../fiche_groupe/preparation_seance.dart'
     show ProjectionEleve, projectionElevesProvider;
+import '../fiche_groupe/retrait_sourate.dart';
 import '../fiche_groupe/sourates_classe.dart';
 import '../foyer/photo_eleve.dart';
 import '../presence_correction/presence_correction.dart';
@@ -49,7 +50,6 @@ import '../presence_correction/presence_correction_page.dart';
 import '../salle/position_reprise.dart';
 import 'emplacement_evaluation.dart';
 import 'makharij.dart';
-import 'retrait_sourate.dart';
 import 'selecteur_reprise.dart';
 import 'vue_cahier.dart';
 

@@ -117,6 +117,7 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$cahierC1$fr cahierC1 = Traductions$cahierC1$fr.internal(_root);
 	late final Traductions$cahierC3$fr cahierC3 = Traductions$cahierC3$fr.internal(_root);
 	late final Traductions$cahierSourates$fr cahierSourates = Traductions$cahierSourates$fr.internal(_root);
+	late final Traductions$souratesRetirables$fr souratesRetirables = Traductions$souratesRetirables$fr.internal(_root);
 	late final Traductions$accueilHoraire$fr accueilHoraire = Traductions$accueilHoraire$fr.internal(_root);
 	late final Traductions$candidatsFlux$fr candidatsFlux = Traductions$candidatsFlux$fr.internal(_root);
 	late final Traductions$push1$fr push1 = Traductions$push1$fr.internal(_root);
@@ -4048,6 +4049,42 @@ class Traductions$cahierSourates$fr {
 
 	/// fr: 'La sourate n'a pas été retirée. Réessayez.'
 	String get retirerEchec => 'La sourate n\'a pas été retirée. Réessayez.';
+}
+
+// Path: souratesRetirables
+class Traductions$souratesRetirables$fr {
+	Traductions$souratesRetirables$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Sourates cochées par erreur'
+	String get titre => 'Sourates cochées par erreur';
+
+	/// fr: 'Les sourates validées dans cette classe que vous pouvez retirer.'
+	String get aide => 'Les sourates validées dans cette classe que vous pouvez retirer.';
+
+	/// fr: 'Aucune sourate validée à retirer dans cette classe.'
+	String get vide => 'Aucune sourate validée à retirer dans cette classe.';
+
+	/// fr: 'Les sourates de cette classe n'ont pas pu être lues. Réessayez.'
+	String get erreur => 'Les sourates de cette classe n\'ont pas pu être lues. Réessayez.';
+
+	/// fr: 'Sans connexion, aucune sourate ne peut être retirée.'
+	String get horsLigne => 'Sans connexion, aucune sourate ne peut être retirée.';
+
+	/// fr: '{eleve} · {sourate}'
+	String ligne({required Object eleve, required Object sourate}) => '${eleve} · ${sourate}';
+
+	/// fr: 'Possible jusqu'à {heure}'
+	String jusqua({required Object heure}) => 'Possible jusqu\'à ${heure}';
+
+	/// fr: 'Possible jusqu'à demain, {heure}'
+	String jusquaDemain({required Object heure}) => 'Possible jusqu\'à demain, ${heure}';
+
+	/// fr: 'Retirer {sourate} pour {eleve}'
+	String retirerPour({required Object sourate, required Object eleve}) => 'Retirer ${sourate} pour ${eleve}';
 }
 
 // Path: accueilHoraire
@@ -60528,6 +60565,15 @@ extension on Traductions {
 			'cahierSourates.retirerFait' => ({required Object nom}) => '${nom} n\'est plus validée.',
 			'cahierSourates.retirerRefus' => 'Le délai de 24 heures est passé : seule la direction peut encore la retirer.',
 			'cahierSourates.retirerEchec' => 'La sourate n\'a pas été retirée. Réessayez.',
+			'souratesRetirables.titre' => 'Sourates cochées par erreur',
+			'souratesRetirables.aide' => 'Les sourates validées dans cette classe que vous pouvez retirer.',
+			'souratesRetirables.vide' => 'Aucune sourate validée à retirer dans cette classe.',
+			'souratesRetirables.erreur' => 'Les sourates de cette classe n\'ont pas pu être lues. Réessayez.',
+			'souratesRetirables.horsLigne' => 'Sans connexion, aucune sourate ne peut être retirée.',
+			'souratesRetirables.ligne' => ({required Object eleve, required Object sourate}) => '${eleve} · ${sourate}',
+			'souratesRetirables.jusqua' => ({required Object heure}) => 'Possible jusqu\'à ${heure}',
+			'souratesRetirables.jusquaDemain' => ({required Object heure}) => 'Possible jusqu\'à demain, ${heure}',
+			'souratesRetirables.retirerPour' => ({required Object sourate, required Object eleve}) => 'Retirer ${sourate} pour ${eleve}',
 			'accueilHoraire.demandeTitre' => 'Demande enregistrée',
 			'accueilHoraire.demandeDetail' => ({required Object prenom}) => 'Nous vous prévenons dès qu\'un horaire ouvre pour ${prenom}.',
 			'accueilHoraire.erreurEnvoi' => 'Votre demande n\'a pas été confirmée. Réessayez dans un instant.',
@@ -60696,6 +60742,8 @@ extension on Traductions {
 			'candidatsFlux.importFormulaires.controle.explication' => 'Une ligne à corriger n\'est pas importée. Corrigez-la dans le classeur, exportez de nouveau le fichier, puis rejouez l\'import : les lignes déjà importées ne sont pas ajoutées deux fois.',
 			'candidatsFlux.importFormulaires.controle.aucune' => 'Aucune erreur ni avertissement dans ce fichier.',
 			'candidatsFlux.importFormulaires.controle.aucuneAide' => 'Chaque ligne a pu être lue.',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.controle.aCorriger.titre' => 'À corriger',
 			'candidatsFlux.importFormulaires.controle.aCorriger.aide' => 'Ces lignes ne seront pas importées.',
 			'candidatsFlux.importFormulaires.controle.avertissements.titre' => 'À regarder',
@@ -60705,8 +60753,6 @@ extension on Traductions {
 			'candidatsFlux.importFormulaires.controle.ligne' => ({required Object ligne, required Object motif}) => 'Ligne ${ligne} : ${motif}',
 			'candidatsFlux.importFormulaires.controle.plus' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Voir ${n} ligne de plus', other: 'Voir ${n} lignes de plus', ), 
 			'candidatsFlux.importFormulaires.motif.ligneVide' => 'ligne vide',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.motif.horodatageIllisible' => 'la date de la réponse est illisible',
 			'candidatsFlux.importFormulaires.motif.genreIllisible' => 'le genre n\'est pas reconnu',
 			'candidatsFlux.importFormulaires.motif.nomAbsent' => 'le nom est absent',
