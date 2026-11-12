@@ -105,7 +105,6 @@ void main() {
         throwsA(isA<FonctionIndisponible>()),
       );
     });
-
   });
 
   group('la salle ne plante pas sans serveur', () {
@@ -167,6 +166,5 @@ void main() {
       expect(find.byType(CarteFeedbackSeance), findsOneWidget);
       expect(find.byType(Card), findsNothing);
     });
-
   });
 }

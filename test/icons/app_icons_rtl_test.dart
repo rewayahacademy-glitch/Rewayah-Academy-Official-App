@@ -14,58 +14,49 @@ import 'package:rewayah_academy/core/icons/app_icons.dart';
 /// miroitent pas.
 void main() {
   group('Le miroir RTL des icones directionnelles', () {
-    test(
-      'chevron se miroite en RTL, sur ses deux graisses',
-      () {
-        expect(AppIcons.chevron.repos.matchTextDirection, isTrue);
-        expect(AppIcons.chevron.actif.matchTextDirection, isTrue);
-      },
-    );
+    test('chevron se miroite en RTL, sur ses deux graisses', () {
+      expect(AppIcons.chevron.repos.matchTextDirection, isTrue);
+      expect(AppIcons.chevron.actif.matchTextDirection, isTrue);
+    });
 
-    test(
-      'suivant (meme dessin que chevron) ne se miroite pas : '
-      'c est la progression du temps, pas une ligne qui mene ailleurs',
-      () {
-        expect(AppIcons.suivant.repos.matchTextDirection, isFalse);
-        expect(AppIcons.suivant.actif.matchTextDirection, isFalse);
-        // Le meme point de code que chevron, pour documenter que la
-        // distinction est un choix de miroir et non un dessin different.
-        expect(AppIcons.suivant.repos.codePoint, AppIcons.chevron.repos.codePoint);
-      },
-    );
+    test('suivant (meme dessin que chevron) ne se miroite pas : '
+        'c est la progression du temps, pas une ligne qui mene ailleurs', () {
+      expect(AppIcons.suivant.repos.matchTextDirection, isFalse);
+      expect(AppIcons.suivant.actif.matchTextDirection, isFalse);
+      // Le meme point de code que chevron, pour documenter que la
+      // distinction est un choix de miroir et non un dessin different.
+      expect(
+        AppIcons.suivant.repos.codePoint,
+        AppIcons.chevron.repos.codePoint,
+      );
+    });
 
-    test(
-      'menuDeroulant ne se miroite pas : un menu s ouvre vers le bas, '
-      'et le bas est le meme dans les deux sens de lecture',
-      () {
-        expect(AppIcons.menuDeroulant.repos.matchTextDirection, isFalse);
-        expect(AppIcons.menuDeroulant.actif.matchTextDirection, isFalse);
-        // Et ce n'est pas le meme dessin que chevron : la distinction porte
-        // ici sur la direction, pas seulement sur le miroir.
-        expect(
-          AppIcons.menuDeroulant.repos.codePoint,
-          isNot(AppIcons.chevron.repos.codePoint),
-        );
-      },
-    );
+    test('menuDeroulant ne se miroite pas : un menu s ouvre vers le bas, '
+        'et le bas est le meme dans les deux sens de lecture', () {
+      expect(AppIcons.menuDeroulant.repos.matchTextDirection, isFalse);
+      expect(AppIcons.menuDeroulant.actif.matchTextDirection, isFalse);
+      // Et ce n'est pas le meme dessin que chevron : la distinction porte
+      // ici sur la direction, pas seulement sur le miroir.
+      expect(
+        AppIcons.menuDeroulant.repos.codePoint,
+        isNot(AppIcons.chevron.repos.codePoint),
+      );
+    });
 
-    test(
-      'les icones de media et l heure ne se miroitent jamais '
-      '(docs/archive/2026-09-pre-remise-a-plat/design/06-accessibilite.md section 5)',
-      () {
-        for (final AppIcon icone in <AppIcon>[
-          AppIcons.micro,
-          AppIcons.microCoupe,
-          AppIcons.camera,
-          AppIcons.cameraCoupee,
-          AppIcons.suivant,
-          AppIcons.pause,
-          AppIcons.cours,
-        ]) {
-          expect(icone.repos.matchTextDirection, isFalse);
-          expect(icone.actif.matchTextDirection, isFalse);
-        }
-      },
-    );
+    test('les icones de media et l heure ne se miroitent jamais '
+        '(docs/archive/2026-09-pre-remise-a-plat/design/06-accessibilite.md section 5)', () {
+      for (final AppIcon icone in <AppIcon>[
+        AppIcons.micro,
+        AppIcons.microCoupe,
+        AppIcons.camera,
+        AppIcons.cameraCoupee,
+        AppIcons.suivant,
+        AppIcons.pause,
+        AppIcons.cours,
+      ]) {
+        expect(icone.repos.matchTextDirection, isFalse);
+        expect(icone.actif.matchTextDirection, isFalse);
+      }
+    });
   });
 }

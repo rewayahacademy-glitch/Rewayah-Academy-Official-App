@@ -66,7 +66,7 @@ class ServicePriereSupabase implements ServicePriere {
     final List<dynamic> lignes = await _client.rpc<List<dynamic>>(
       'pause_prevue_seance',
       params: <String, dynamic>{'p_session_id': seanceId},
-    ) as List<dynamic>;
+    );
     if (lignes.isEmpty) {
       return null;
     }
@@ -98,7 +98,7 @@ class ServicePriereSupabase implements ServicePriere {
         'p_enseignant_id': enseignantId,
         'p_jour': jour == null ? null : _date(jour),
       },
-    ) as List<dynamic>;
+    );
     return <HeurePriere>[
       for (final Object? ligne in lignes)
         if (ligne is Map<dynamic, dynamic>)

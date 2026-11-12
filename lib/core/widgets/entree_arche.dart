@@ -119,11 +119,10 @@ class _EtatEntreeArche extends State<EntreeArche>
                     ),
                   ],
                 ),
-                builder: (BuildContext context, Widget? interieur) =>
-                    ClipPath(
-                      clipper: _Ouverture(ouverture: _ouverture),
-                      child: interieur,
-                    ),
+                builder: (BuildContext context, Widget? interieur) => ClipPath(
+                  clipper: _Ouverture(ouverture: _ouverture),
+                  child: interieur,
+                ),
               ),
             );
             return AnimatedBuilder(
@@ -152,8 +151,9 @@ class _EtatEntreeArche extends State<EntreeArche>
   }
 
   /// La part du temps [debut]-[fin], sur la courbe du fondu.
-  double _temps(double debut, double fin) => AppMouvement.courbeFondu
-      .transform(((_c.value - debut) / (fin - debut)).clamp(0.0, 1.0));
+  double _temps(double debut, double fin) => AppMouvement.courbeFondu.transform(
+    ((_c.value - debut) / (fin - debut)).clamp(0.0, 1.0),
+  );
 
   /// L'ouverture de la porte, de 0 (fermee) a 1 (grande ouverte), sur le
   /// ressort sans rebond : elle part vite et se pose.
@@ -172,10 +172,7 @@ Path _arche(Size taille, {Offset decalage = Offset.zero}) {
   return Path()
     ..moveTo(boite.left, boite.bottom)
     ..lineTo(boite.left, boite.top + r)
-    ..arcToPoint(
-      Offset(boite.right, boite.top + r),
-      radius: Radius.circular(r),
-    )
+    ..arcToPoint(Offset(boite.right, boite.top + r), radius: Radius.circular(r))
     ..lineTo(boite.right, boite.bottom)
     ..close();
 }
@@ -272,14 +269,18 @@ class _Seuil extends CustomPainter {
       cadre.center,
       porte.height * 0.75,
       Paint()
-        ..shader = RadialGradient(
-          colors: <Color>[
-            teinte.withValues(alpha: 0.22 * ouverture),
-            teinte.withValues(alpha: 0),
-          ],
-        ).createShader(
-          Rect.fromCircle(center: cadre.center, radius: porte.height * 0.75),
-        ),
+        ..shader =
+            RadialGradient(
+              colors: <Color>[
+                teinte.withValues(alpha: 0.22 * ouverture),
+                teinte.withValues(alpha: 0),
+              ],
+            ).createShader(
+              Rect.fromCircle(
+                center: cadre.center,
+                radius: porte.height * 0.75,
+              ),
+            ),
     );
     // La lumiere au sol : elle sort de la porte et s'etire vers la personne.
     if (sol > 0) {

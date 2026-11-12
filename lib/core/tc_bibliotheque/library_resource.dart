@@ -204,9 +204,9 @@ class LibraryResource {
       edition: json['edition'] as String?,
       language: json['language'] as String? ?? 'fr',
       category: json['category'] as String? ?? '',
-      levelScope: niveaux.map((dynamic n) => n.toString()).toList(
-        growable: false,
-      ),
+      levelScope: niveaux
+          .map((dynamic n) => n.toString())
+          .toList(growable: false),
       accessPolicy:
           PolitiqueAcces.depuisSql(json['access_policy'] as String?) ??
           PolitiqueAcces.admin,

@@ -69,9 +69,8 @@ class ResourceVersion {
         resourceId: json['resource_id'] as String,
         numeroVersion: (json['numero_version'] as num?)?.toInt() ?? 0,
         statut: StatutVersionRessource.depuisSql(json['statut'] as String?),
-        publieeLeUtc: DateTime.tryParse(
-          json['publiee_le'] as String? ?? '',
-        )?.toUtc(),
+        publieeLeUtc: DateTime.tryParse(json['publiee_le'] as String? ?? '')
+            ?.toUtc(),
         publieePar: json['publiee_par'] as String?,
         downloadAssetId: json['download_asset_id'] as String?,
         empreinte: json['empreinte'] as String?,

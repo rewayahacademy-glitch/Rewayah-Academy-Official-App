@@ -63,24 +63,27 @@ void main() {
     );
   });
 
-  test('« Avant le prochain cours » ne rend jamais plus de trois actions', () async {
-    for (int i = 0; i < 7; i++) {
-      await depot.creerDepuisSelection(
-        groupId: 'groupe-1',
-        resourceId: ressourceTest,
-        purpose: IntentionPedagogique.aRevoir,
-        dueAtUtc: DateTime.utc(2026, 9, 21 + i),
-      );
-    }
+  test(
+    '« Avant le prochain cours » ne rend jamais plus de trois actions',
+    () async {
+      for (int i = 0; i < 7; i++) {
+        await depot.creerDepuisSelection(
+          groupId: 'groupe-1',
+          resourceId: ressourceTest,
+          purpose: IntentionPedagogique.aRevoir,
+          dueAtUtc: DateTime.utc(2026, 9, 21 + i),
+        );
+      }
 
-    final List<LearningAssignment> aVenir = await depot.aVenir(
-      groupId: 'groupe-1',
-    );
-    expect(aVenir.length, 3);
-    // Le plus urgent d'abord.
-    expect(aVenir.first.dueAtUtc, DateTime.utc(2026, 9, 21));
-    expect(aVenir.last.dueAtUtc, DateTime.utc(2026, 9, 23));
-  });
+      final List<LearningAssignment> aVenir = await depot.aVenir(
+        groupId: 'groupe-1',
+      );
+      expect(aVenir.length, 3);
+      // Le plus urgent d'abord.
+      expect(aVenir.first.dueAtUtc, DateTime.utc(2026, 9, 21));
+      expect(aVenir.last.dueAtUtc, DateTime.utc(2026, 9, 23));
+    },
+  );
 
   test('un travail sans echeance passe apres ceux qui en ont une', () async {
     await depot.creerDepuisSelection(

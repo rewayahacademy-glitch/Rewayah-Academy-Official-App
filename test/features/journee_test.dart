@@ -16,9 +16,7 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/matching/service_matching.dart';
 import 'package:rewayah_academy/core/presence/retard_en_direct.dart';
 import 'package:rewayah_academy/core/presence/service_presence.dart';
-import 'package:rewayah_academy/core/priere/horaires_priere.dart';
-import 'package:rewayah_academy/core/priere/libelle_priere.dart';
-import 'package:rewayah_academy/core/priere/reglages_priere.dart';
+import 'package:rewayah_academy/core/priere/pause_prevue.dart';
 import 'package:rewayah_academy/core/priere/service_priere.dart';
 import 'package:rewayah_academy/core/regles/service_regles.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
@@ -71,15 +69,6 @@ const SessionState _sessionEnseignant = SessionState(
   profileId: _monId,
   accountStatus: AccountStatus.active,
   lectureProfil: LectureProfil.presente,
-);
-
-const ReglagesPriere _paris = ReglagesPriere(
-  enseignantId: _monId,
-  latitude: 48.85341,
-  longitude: 2.34880,
-  methode: MethodeCalcul.ligueMondiale,
-  madhab: Madhab.shafi,
-  lieu: 'Paris',
 );
 
 PresenceParticipant _presence({
@@ -240,7 +229,7 @@ class _EnseignantRetardsEnEchec extends FauxServiceEnseignant {
 /// Un service dont seule la lecture des horaires de priere echoue.
 class _PriereEnEchec extends FauxServicePriere {
   @override
-  Future<ReglagesPriere?> reglages(String enseignantId) async =>
+  Future<PausePrevue?> pausePrevue(String seanceId) async =>
       throw StateError('horaires de priere indisponibles');
 }
 
@@ -274,6 +263,20 @@ Future<void> _ouvrir(
   );
   await tester.pumpAndSettle();
 }
+
+/// Une journee avec une seance : la pause de priere se lit pour une seance du
+/// jour, donc l'echec de sa lecture ne se voit que s'il y en a une.
+T _avecUneSeance<T extends FauxServiceEnseignant>(T enseignant) => enseignant
+  ..groupesRendus = DonneesEnseignantDemo.groupes()
+  ..seancesRendues = <SeanceEnseignant>[
+    seanceDeTest(
+      debut: DateTime(2026, 9, 28, 9),
+      duree: const Duration(hours: 1),
+      groupeId: 'g1',
+      groupeLibelle: 'An-Nour',
+      nbParticipants: 4,
+    ),
+  ];
 
 void main() {
   group('SALLE-3-ACCUEIL : la carte « Bienvenue dans l\'equipe »', () {
@@ -656,7 +659,12 @@ void main() {
 
     testWidgets('seuls les horaires de priere echouent : le texte les nomme, '
         'pas les cahiers', (WidgetTester tester) async {
-      await _ouvrir(tester, priere: _PriereEnEchec());
+      await _ouvrir(
+        tester,
+        enseignant: _avecUneSeance(FauxServiceEnseignant()),
+        priere: _PriereEnEchec(),
+        maintenant: DateTime(2026, 9, 28, 8),
+      );
       expect(message, findsOneWidget);
       expect(
         tester.widget<Text>(message).data,
@@ -671,8 +679,9 @@ void main() {
     ) async {
       await _ouvrir(
         tester,
-        enseignant: _EnseignantRetardsEnEchec(),
+        enseignant: _avecUneSeance(_EnseignantRetardsEnEchec()),
         priere: _PriereEnEchec(),
+        maintenant: DateTime(2026, 9, 28, 8),
       );
       expect(
         tester.widget<Text>(message).data,
@@ -1413,8 +1422,15 @@ void main() {
             nbParticipants: 3,
           ),
         ];
+      // La pause de priere que le serveur a placee dans la seance du milieu de
+      // matinee : la colonne la lit, elle ne la calcule plus (PRIERE-1).
       final FauxServicePriere priere = FauxServicePriere()
-        ..parEnseignant[_monId] = _paris;
+        ..pauses['s2'] = PausePrevue(
+          seanceId: 's2',
+          debut: DateTime(2026, 9, 28, 11),
+          duree: const Duration(minutes: 10),
+          priere: Priere.dhuhr,
+        );
       await _ouvrir(
         tester,
         maintenant: DateTime(2026, 9, 28, 8),
@@ -1430,15 +1446,7 @@ void main() {
         findsWidgets,
       );
       expect(find.text(t.enseignant.journee.lignePause), findsOneWidget);
-      final List<InterruptionPriere> interruptions = interruptionsEntre(
-        reglages: _paris,
-        debut: DateTime(2026, 9, 28),
-        fin: DateTime(2026, 9, 29),
-      );
-      expect(interruptions, isNotEmpty);
-      for (final InterruptionPriere interruption in interruptions) {
-        expect(find.text(libellePriere(interruption.priere)), findsWidgets);
-      }
+      expect(find.text(t.priere.pauseDePriere), findsOneWidget);
     });
   });
 
@@ -2359,8 +2367,8 @@ void main() {
 /// Les horaires de priere ne se lisent pas : l'echec partiel de la Journee.
 class _PriereEnPanne extends FauxServicePriere {
   @override
-  Future<ReglagesPriere?> reglages(String enseignantId) async =>
-      throw StateError('lecture des reglages impossible');
+  Future<PausePrevue?> pausePrevue(String seanceId) async =>
+      throw StateError('lecture des pauses impossible');
 }
 
 /// Les cahiers de transmission en retard ne se lisent pas : l'echec

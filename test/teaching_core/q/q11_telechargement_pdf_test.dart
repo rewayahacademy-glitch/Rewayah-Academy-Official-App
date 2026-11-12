@@ -83,26 +83,29 @@ void main() {
   });
 
   group('Q-11 : on persiste la CLE, jamais l URL signee', () {
-    test('chaque URL est differente, la cle ne bouge pas, rien ne regenere', () {
-      final DownloadAsset asset = depot.publier(
-        resourceVersionId: 'ver-pdf-2',
-        cleStockage: 'supports/res-pdf/ver-pdf-2.pdf',
-        tailleOctets: 1_482_112,
-      );
+    test(
+      'chaque URL est differente, la cle ne bouge pas, rien ne regenere',
+      () {
+        final DownloadAsset asset = depot.publier(
+          resourceVersionId: 'ver-pdf-2',
+          cleStockage: 'supports/res-pdf/ver-pdf-2.pdf',
+          tailleOctets: 1_482_112,
+        );
 
-      final List<Uri> urls = <Uri>[
-        for (int i = 0; i < 5; i++) depot.urlEphemere(asset),
-      ];
+        final List<Uri> urls = <Uri>[
+          for (int i = 0; i < 5; i++) depot.urlEphemere(asset),
+        ];
 
-      expect(urls.toSet(), hasLength(5), reason: 'une URL signee est unique');
-      expect(depot.signatures, 5);
-      expect(depot.generations, 1);
-      // La cle, elle, n a pas bouge d un caractere.
-      expect(asset.cleStockage, 'supports/res-pdf/ver-pdf-2.pdf');
-      for (final Uri u in urls) {
-        expect(u.path.contains(asset.cleStockage), isTrue);
-      }
-    });
+        expect(urls.toSet(), hasLength(5), reason: 'une URL signee est unique');
+        expect(depot.signatures, 5);
+        expect(depot.generations, 1);
+        // La cle, elle, n a pas bouge d un caractere.
+        expect(asset.cleStockage, 'supports/res-pdf/ver-pdf-2.pdf');
+        for (final Uri u in urls) {
+          expect(u.path.contains(asset.cleStockage), isTrue);
+        }
+      },
+    );
 
     test('aucune cle d artefact des fixtures ne ressemble a une URL', () {
       for (final DownloadAsset a in <DownloadAsset>[
@@ -129,21 +132,24 @@ void main() {
   });
 
   group('Q-11 : enregistrer une copie passe par le selecteur systeme', () {
-    test('le chemin rendu vient de l usager, jamais d un /sdcard bricole', () async {
-      final FauxEnregistrementFichier selecteur = FauxEnregistrementFichier();
+    test(
+      'le chemin rendu vient de l usager, jamais d un /sdcard bricole',
+      () async {
+        final FauxEnregistrementFichier selecteur = FauxEnregistrementFichier();
 
-      final String? chemin = await selecteur.enregistrerCopie(
-        octets: const <int>[37, 80, 68, 70],
-        nomFichierPropose: 'ajurrumiyya-v2.pdf',
-        typeMime: 'application/pdf',
-      );
+        final String? chemin = await selecteur.enregistrerCopie(
+          octets: const <int>[37, 80, 68, 70],
+          nomFichierPropose: 'ajurrumiyya-v2.pdf',
+          typeMime: 'application/pdf',
+        );
 
-      expect(selecteur.ouverturesSelecteur, 1);
-      expect(chemin, isNotNull);
-      expect(chemin!.contains('/sdcard'), isFalse);
-      expect(chemin.contains('Download'), isFalse);
-      expect(selecteur.propositions.single, 'ajurrumiyya-v2.pdf');
-    });
+        expect(selecteur.ouverturesSelecteur, 1);
+        expect(chemin, isNotNull);
+        expect(chemin!.contains('/sdcard'), isFalse);
+        expect(chemin.contains('Download'), isFalse);
+        expect(selecteur.propositions.single, 'ajurrumiyya-v2.pdf');
+      },
+    );
 
     test('une annulation rend null, et ce n est pas une erreur', () async {
       final FauxEnregistrementFichier selecteur = FauxEnregistrementFichier(

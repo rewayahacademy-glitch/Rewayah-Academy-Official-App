@@ -96,8 +96,7 @@ EtatAffiche? libelleEtatDansEtape(EtatCandidature? etat) {
 }
 
 /// Le mot d'un etat dans l'etape (menu « Etat »).
-String libelleEtat(EtatCandidature etat) =>
-    libelleEtatDansEtape(etat)!.libelle;
+String libelleEtat(EtatCandidature etat) => libelleEtatDansEtape(etat)!.libelle;
 
 /// Le mot d'une issue (menu « Issue »).
 String libelleIssue(IssueCandidature issue) => switch (issue) {

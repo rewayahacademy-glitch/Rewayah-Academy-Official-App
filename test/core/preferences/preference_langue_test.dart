@@ -10,7 +10,6 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/preferences/preferences_locales.dart';
 import 'package:rewayah_academy/features/inscription/questionnaire/memoire_appareil.dart';
 
-
 ProviderContainer _conteneur(StockagePreferences stockage) {
   final ProviderContainer c = ProviderContainer(
     overrides: <Override>[

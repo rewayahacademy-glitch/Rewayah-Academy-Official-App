@@ -71,7 +71,8 @@ void main() {
         expect(
           resultat.degrade,
           isTrue,
-          reason: "c'est le point que la spec signale comme souvent rate : "
+          reason:
+              "c'est le point que la spec signale comme souvent rate : "
               "l'annotation se decalera, et l'appelant doit le savoir",
         );
       },
@@ -127,27 +128,28 @@ void main() {
       // Et il ne recouvre plus le verset qu'il annotait : c'est le decalage
       // que l'ancrage semantique evite.
       final Rect blocApres = apres.rectDe(ayah1)!;
-      expect(
-        resoudreTrait(trait, apres)!.every(blocApres.contains),
-        isFalse,
-      );
+      expect(resoudreTrait(trait, apres)!.every(blocApres.contains), isFalse);
     });
 
-    test('un trait dont l ancrage n est pas rendu n est pas peint ailleurs', () {
-      final TraitVectoriel trait = traitSur(
-        const ContentPosition.ayah(
-          resourceId: ressourceTest,
-          sourate: 2,
-          ayah: 255,
-        ),
-      );
-      expect(
-        resoudreTrait(trait, avant),
-        isNull,
-        reason: "le verset n'est pas a l'ecran : on ne peint rien, plutot que "
-            'de peindre au mauvais endroit',
-      );
-    });
+    test(
+      'un trait dont l ancrage n est pas rendu n est pas peint ailleurs',
+      () {
+        final TraitVectoriel trait = traitSur(
+          const ContentPosition.ayah(
+            resourceId: ressourceTest,
+            sourate: 2,
+            ayah: 255,
+          ),
+        );
+        expect(
+          resoudreTrait(trait, avant),
+          isNull,
+          reason:
+              "le verset n'est pas a l'ecran : on ne peint rien, plutot que "
+              'de peindre au mauvais endroit',
+        );
+      },
+    );
 
     test('le zoom ne change rien aux donnees, seulement au rendu', () {
       final TraitVectoriel trait = traitSur(ayah1);

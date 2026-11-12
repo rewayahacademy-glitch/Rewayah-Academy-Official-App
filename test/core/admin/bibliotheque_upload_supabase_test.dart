@@ -74,22 +74,22 @@ void main() {
       fichier: fichier,
     );
     final List<ProgressionUpload> progression = await port
-        .deposer(uploadId: intention.id, octets: Uint8List.fromList(<int>[1, 2, 3, 4]))
+        .deposer(
+          uploadId: intention.id,
+          octets: Uint8List.fromList(<int>[1, 2, 3, 4]),
+        )
         .toList();
 
     expect(intention.expireLeUtc.isUtc, isTrue);
     expect(transport.url, Uri.parse('https://r2.example.test/signe'));
     expect(transport.methode, 'PUT');
     expect(transport.octets, <int>[1, 2, 3, 4]);
-    expect(
-      progression.map((ProgressionUpload p) => p.phase),
-      <PhaseUpload>[
-        PhaseUpload.envoi,
-        PhaseUpload.enAttenteConfirmation,
-        PhaseUpload.verification,
-        PhaseUpload.pret,
-      ],
-    );
+    expect(progression.map((ProgressionUpload p) => p.phase), <PhaseUpload>[
+      PhaseUpload.envoi,
+      PhaseUpload.enAttenteConfirmation,
+      PhaseUpload.verification,
+      PhaseUpload.pret,
+    ]);
     expect(actions.map((Map<String, dynamic> a) => a['action']), [
       'demander',
       'confirmer',
@@ -135,6 +135,9 @@ class _TransportEnregistre extends http.BaseClient {
     url = request.url;
     methode = request.method;
     octets = await request.finalize().toBytes();
-    return http.StreamedResponse(const Stream<List<int>>.empty(), HttpStatus.ok);
+    return http.StreamedResponse(
+      const Stream<List<int>>.empty(),
+      HttpStatus.ok,
+    );
   }
 }

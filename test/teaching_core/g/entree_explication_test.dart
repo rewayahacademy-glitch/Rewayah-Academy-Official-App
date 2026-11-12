@@ -183,8 +183,7 @@ Future<void> _presser(WidgetTester tester, Finder cible) async {
   await tester.pumpAndSettle();
 }
 
-Finder get _titreExplication =>
-    titreDePage(t.tc.observation.explication.titre);
+Finder get _titreExplication => titreDePage(t.tc.observation.explication.titre);
 Finder get _observerMaintenant =>
     find.text(t.tc.observation.explication.observer);
 Finder get _pasMaintenant =>

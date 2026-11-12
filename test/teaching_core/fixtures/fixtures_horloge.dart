@@ -143,7 +143,6 @@ Duration? restantDe({
   PhaseSeance.prolongee || PhaseSeance.terminee => null,
 };
 
-
 /// Une horloge affichee, telle que le serveur la rend.
 ///
 /// Les quatre chaines sont des **donnees de fixture**. Rien ici ne convertit

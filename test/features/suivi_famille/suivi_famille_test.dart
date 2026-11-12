@@ -64,10 +64,7 @@ Future<void> _liste(
   tester,
   chemin: '/tuteur/demandes',
   ecran: (_) => const SuiviDemandesEntree(),
-  autres: <String>[
-    '/tuteur/demandes/:id',
-    '/tuteur',
-  ],
+  autres: <String>['/tuteur/demandes/:id', '/tuteur'],
   surcharges: surcharges,
   horsLigne: horsLigne,
   largeur: largeur,

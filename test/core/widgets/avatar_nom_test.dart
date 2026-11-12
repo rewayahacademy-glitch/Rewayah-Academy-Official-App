@@ -119,10 +119,7 @@ void main() {
           expect(
             find.descendant(
               of: find.byType(AvatarNom),
-              matching: find.ancestor(
-                of: tuile,
-                matching: find.byType(t),
-              ),
+              matching: find.ancestor(of: tuile, matching: find.byType(t)),
             ),
             findsNothing,
             reason: '$t derriere l avatar',
@@ -157,43 +154,40 @@ void main() {
       const Size(176, 126),
     ]) {
       for (final double echelle in <double>[1, 2]) {
-        testWidgets(
-          '${cadre.width.toInt()}x${cadre.height.toInt()}, '
-          'texte x${echelle.toInt()}',
-          (WidgetTester tester) async {
-            fixerVue(tester, const Size(320, 640));
-            await tester.pumpWidget(
-              hoteTheme(
-                Center(
-                  child: SizedBox.fromSize(
-                    size: cadre,
-                    child: const DecoratedBox(
-                      key: Key('cadre'),
-                      decoration: BoxDecoration(),
-                      child: AvatarSansImage(
-                        prenom: 'Abderrahmane',
-                        legende: 'Sans image',
-                      ),
+        testWidgets('${cadre.width.toInt()}x${cadre.height.toInt()}, '
+            'texte x${echelle.toInt()}', (WidgetTester tester) async {
+          fixerVue(tester, const Size(320, 640));
+          await tester.pumpWidget(
+            hoteTheme(
+              Center(
+                child: SizedBox.fromSize(
+                  size: cadre,
+                  child: const DecoratedBox(
+                    key: Key('cadre'),
+                    decoration: BoxDecoration(),
+                    child: AvatarSansImage(
+                      prenom: 'Abderrahmane',
+                      legende: 'Sans image',
                     ),
                   ),
                 ),
-                echelleTexte: echelle,
-                defilant: false,
               ),
-            );
-            expect(tester.takeException(), isNull, reason: 'debordement');
-            verifierContenu(
-              tester,
-              find.byType(AvatarTile),
-              find.byKey(const Key('cadre')),
-            );
-            verifierMemeAxe(
-              tester,
-              find.byType(AvatarTile),
-              find.text('Sans image'),
-            );
-          },
-        );
+              echelleTexte: echelle,
+              defilant: false,
+            ),
+          );
+          expect(tester.takeException(), isNull, reason: 'debordement');
+          verifierContenu(
+            tester,
+            find.byType(AvatarTile),
+            find.byKey(const Key('cadre')),
+          );
+          verifierMemeAxe(
+            tester,
+            find.byType(AvatarTile),
+            find.text('Sans image'),
+          );
+        });
       }
     }
   });

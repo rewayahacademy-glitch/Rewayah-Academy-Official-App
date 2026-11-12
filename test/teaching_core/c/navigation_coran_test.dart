@@ -213,9 +213,8 @@ void main() {
 
     test('un etat partage sans reprise de groupe ne rend rien', () async {
       expect(
-        await navigation(partage: _FauxEtatPartage(null)).positionDeGroupe(
-          'seance-1',
-        ),
+        await navigation(partage: _FauxEtatPartage(null))
+            .positionDeGroupe('seance-1'),
         isNull,
       );
     });
@@ -241,18 +240,18 @@ void main() {
 
   group('lecture de reference, sans reseau', () {
     test('« 2:255 » se lit comme une reference', () {
-      expect(
-        CorpusDepuisServiceCoran.lireReference('2:255'),
-        (sourate: 2, ayah: 255),
-      );
-      expect(
-        CorpusDepuisServiceCoran.lireReference('2 255'),
-        (sourate: 2, ayah: 255),
-      );
-      expect(
-        CorpusDepuisServiceCoran.lireReference('2.255'),
-        (sourate: 2, ayah: 255),
-      );
+      expect(CorpusDepuisServiceCoran.lireReference('2:255'), (
+        sourate: 2,
+        ayah: 255,
+      ));
+      expect(CorpusDepuisServiceCoran.lireReference('2 255'), (
+        sourate: 2,
+        ayah: 255,
+      ));
+      expect(CorpusDepuisServiceCoran.lireReference('2.255'), (
+        sourate: 2,
+        ayah: 255,
+      ));
     });
 
     test('une sourate hors bornes n est pas une reference', () {

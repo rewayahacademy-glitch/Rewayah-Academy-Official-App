@@ -113,10 +113,8 @@ class _EtatHorlogeServeurPartagee extends ConsumerState<HorlogeServeurPartagee>
   DateTime Function() get horlogeAppareil => widget.horlogeAppareil;
 
   @override
-  Widget build(BuildContext context) => _PorteeHorlogeServeur(
-    instant: maintenantServeur(),
-    child: widget.child,
-  );
+  Widget build(BuildContext context) =>
+      _PorteeHorlogeServeur(instant: maintenantServeur(), child: widget.child);
 }
 
 class _PorteeHorlogeServeur extends InheritedWidget {
