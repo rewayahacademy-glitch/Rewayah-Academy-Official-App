@@ -18,7 +18,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
-import 'package:rewayah_academy/core/reseau/service_reseau.dart' show horsLigneProvider;
+import 'package:rewayah_academy/core/reseau/service_reseau.dart'
+    show horsLigneProvider;
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/port_capacite_eleve.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/catalogue_local.dart';
@@ -121,9 +122,7 @@ List<Override> _surcharges({
     portTelechargementProvider.overrideWithValue(artefacts),
     lecteurArtefactProvider.overrideWithValue(artefacts),
     depotOctetsProvider.overrideWithValue(FauxCacheMedia()),
-    horsLigneProvider.overrideWith(
-      (Ref _) => Stream<bool>.value(horsLigne),
-    ),
+    horsLigneProvider.overrideWith((Ref _) => Stream<bool>.value(horsLigne)),
     ouvreurOngletProvider.overrideWithValue(ouvreur),
     portCapaciteEleveProvider.overrideWithValue(
       const PortCapaciteEleveFactice(autonomes: <String>{}),
@@ -175,17 +174,24 @@ void main() {
       ]) {
         expect(find.text(titre), findsOneWidget, reason: titre);
       }
-      expect(find.text('La voix de la direction, lettre par lettre.'), findsOne);
+      expect(
+        find.text('La voix de la direction, lettre par lettre.'),
+        findsOne,
+      );
       expect(find.text('Un site pour aller plus loin.'), findsOne);
       expect(find.textContaining('Audio'), findsWidgets);
       expect(find.textContaining('Vidéo'), findsWidgets);
       expect(find.textContaining('Lien externe'), findsWidgets);
       // Le Coran est un document comme les autres : une carte du catalogue.
       expect(find.text('Le Coran en entier, page par page.'), findsOne);
-      final List<String> fautes = _textes(
-        tester,
-      ).where(_motSupport.hasMatch).toList();
-      expect(fautes, isEmpty, reason: 'Le mot « support » s\'affiche : $fautes');
+      final List<String> fautes = _textes(tester)
+          .where(_motSupport.hasMatch)
+          .toList();
+      expect(
+        fautes,
+        isEmpty,
+        reason: 'Le mot « support » s\'affiche : $fautes',
+      );
     });
 
     testWidgets('contenu en arabe : aucun mot « support », libelles arabes', (
@@ -201,10 +207,7 @@ void main() {
       expect(find.text('Le Coran'), findsOneWidget);
       expect(find.text(t.tc.bibliotheque.type.audio), findsWidgets);
       expect(t.tc.bibliotheque.type.audio, 'صوت');
-      expect(
-        _textes(tester).where(_motSupport.hasMatch),
-        isEmpty,
-      );
+      expect(_textes(tester).where(_motSupport.hasMatch), isEmpty);
     });
 
     testWidgets('vide : une phrase, sans le mot « support »', (tester) async {
@@ -214,21 +217,25 @@ void main() {
         _surcharges(ressources: const <LibraryResource>[]),
       );
       expect(find.text(t.tc.bibliotheque.vide.message), findsOneWidget);
-      expect(t.tc.bibliotheque.vide.message, 'Aucun document publié pour le moment');
+      expect(
+        t.tc.bibliotheque.vide.message,
+        'Aucun document publié pour le moment',
+      );
       expect(_motSupport.hasMatch(t.tc.bibliotheque.vide.invitation), isFalse);
     });
 
-    testWidgets('erreur : la bibliotheque dit qu\'elle n\'a pas pu etre chargee', (
-      tester,
-    ) async {
-      await _monter(
-        tester,
-        Routes.tcBibliotheque,
-        _surcharges(catalogue: CatalogueEnEchec()),
-      );
-      expect(find.text(t.tc.bibliotheque.indisponible.message), findsOne);
-      expect(find.text(t.tc.bibliotheque.indisponible.action), findsOne);
-    });
+    testWidgets(
+      'erreur : la bibliotheque dit qu\'elle n\'a pas pu etre chargee',
+      (tester) async {
+        await _monter(
+          tester,
+          Routes.tcBibliotheque,
+          _surcharges(catalogue: CatalogueEnEchec()),
+        );
+        expect(find.text(t.tc.bibliotheque.indisponible.message), findsOne);
+        expect(find.text(t.tc.bibliotheque.indisponible.action), findsOne);
+      },
+    );
 
     testWidgets('hors ligne : les cartes restent, aucune n\'est retiree', (
       tester,
@@ -244,9 +251,56 @@ void main() {
   });
 
   group('la fiche d\'un document, par le routeur reel', () {
-    testWidgets('lien externe : l\'adresse https, ouverte seulement sur le web', (
+    testWidgets(
+      'lien externe : l\'adresse https, ouverte seulement sur le web',
+      (tester) async {
+        final List<Uri> ouverts = <Uri>[];
+        await _monter(
+          tester,
+          '${Routes.tcBibliotheque}/lien',
+          _surcharges(
+            ouvreur: (Uri u) {
+              ouverts.add(u);
+              return true;
+            },
+          ),
+        );
+        expect(_cle('rendu-lien'), findsOneWidget);
+        expect(find.text('https://exemple.org/page'), findsOneWidget);
+        expect(
+          find.text(t.tc.bibliotheque.rendu.lienAutreSite),
+          findsOneWidget,
+        );
+        expect(find.text('Un site pour aller plus loin.'), findsOneWidget);
+        // D1 : on demande toujours avant de quitter l'application.
+        await tester.tap(_cle('rendu-ouvrir-lien'));
+        await tester.pumpAndSettle();
+        expect(_cle('rendu-lien-confirmation'), findsOneWidget);
+        expect(find.text(t.tc.bibliotheque.rendu.confirmerTitre), findsWidgets);
+        expect(ouverts, isEmpty);
+        // « Rester » : rien ne s'ouvre.
+        await tester.tap(_cle('rendu-lien-confirmer-rester'));
+        await tester.pumpAndSettle();
+        expect(ouverts, isEmpty);
+        expect(_cle('rendu-lien-confirmation'), findsNothing);
+        // « Ouvrir le lien » : il s'ouvre, une seule fois.
+        await tester.tap(_cle('rendu-ouvrir-lien'));
+        await tester.pumpAndSettle();
+        await tester.tap(_cle('rendu-lien-confirmer-ouvrir'));
+        await tester.pumpAndSettle();
+        expect(ouverts, <Uri>[Uri.parse('https://exemple.org/page')]);
+        // Et chaque ouverture redemande.
+        await tester.tap(_cle('rendu-ouvrir-lien'));
+        await tester.pumpAndSettle();
+        expect(_cle('rendu-lien-confirmation'), findsOneWidget);
+        expect(ouverts, hasLength(1));
+      },
+    );
+
+    testWidgets('la confirmation d\'un lien se lit aussi en arabe', (
       tester,
     ) async {
+      await tester.runAsync(() => LocaleSettings.setLocale(AppLocale.ar));
       final List<Uri> ouverts = <Uri>[];
       await _monter(
         tester,
@@ -257,14 +311,51 @@ void main() {
             return true;
           },
         ),
+        direction: TextDirection.rtl,
       );
-      expect(_cle('rendu-lien'), findsOneWidget);
-      expect(find.text('https://exemple.org/page'), findsOneWidget);
-      expect(find.text(t.tc.bibliotheque.rendu.lienAutreSite), findsOneWidget);
-      expect(find.text('Un site pour aller plus loin.'), findsOneWidget);
       await tester.tap(_cle('rendu-ouvrir-lien'));
       await tester.pumpAndSettle();
-      expect(ouverts, <Uri>[Uri.parse('https://exemple.org/page')]);
+      expect(
+        find.text(t.tc.bibliotheque.rendu.confirmerPhrase),
+        findsOneWidget,
+      );
+      expect(_textes(tester).where(_motSupport.hasMatch), isEmpty);
+      await tester.tap(_cle('rendu-lien-confirmer-ouvrir'));
+      await tester.pumpAndSettle();
+      expect(ouverts, hasLength(1));
+    });
+
+    testWidgets('D2 : la lecture du Coran et l\'ecole suivie, quand elles '
+        'sont renseignees', (tester) async {
+      await _monter(
+        tester,
+        '${Routes.tcBibliotheque}/lien',
+        _surcharges(
+          ressources: <LibraryResource>[
+            ressource(
+              id: 'lien',
+              titre: 'Les ablutions',
+              type: TypeRessource.lienExterne,
+              description: 'Les gestes, un par un.',
+              lienExterne: 'https://exemple.org/page',
+              lectureCoran: 'warsh',
+              ecolePriere: 'Ecole malikite',
+            ),
+          ],
+        ),
+      );
+      expect(_cle('detail-lecture-coran'), findsOneWidget);
+      expect(find.text('Warsh'), findsOneWidget);
+      expect(_cle('detail-ecole-priere'), findsOneWidget);
+      expect(find.text('Ecole malikite'), findsOneWidget);
+    });
+
+    testWidgets('D2 : rien n\'est affiche quand rien n\'est renseigne', (
+      tester,
+    ) async {
+      await _monter(tester, '${Routes.tcBibliotheque}/lien', _surcharges());
+      expect(_cle('detail-lecture-coran'), findsNothing);
+      expect(_cle('detail-ecole-priere'), findsNothing);
     });
 
     testWidgets('un lien n\'a aucun fichier : pas de bouton hors ligne', (
@@ -309,27 +400,28 @@ void main() {
       expect(_cle('rendu-ouvrir-lien'), findsNothing);
     });
 
-    testWidgets('audio : « Ouvrir » demande le lien de lecture a chaque ouverture', (
-      tester,
-    ) async {
-      final _Liens depot = _Liens();
-      final List<Uri> ouverts = <Uri>[];
-      await _monter(
-        tester,
-        '${Routes.tcBibliotheque}/audio',
-        _surcharges(
-          depot: depot,
-          ouvreur: (Uri u) {
-            ouverts.add(u);
-            return true;
-          },
-        ),
-      );
-      await tester.tap(_cle('rendu-ouvrir'));
-      await tester.pumpAndSettle();
-      expect(depot.demandes, 1);
-      expect(ouverts, <Uri>[_lecture]);
-    });
+    testWidgets(
+      'audio : « Ouvrir » demande le lien de lecture a chaque ouverture',
+      (tester) async {
+        final _Liens depot = _Liens();
+        final List<Uri> ouverts = <Uri>[];
+        await _monter(
+          tester,
+          '${Routes.tcBibliotheque}/audio',
+          _surcharges(
+            depot: depot,
+            ouvreur: (Uri u) {
+              ouverts.add(u);
+              return true;
+            },
+          ),
+        );
+        await tester.tap(_cle('rendu-ouvrir'));
+        await tester.pumpAndSettle();
+        expect(depot.demandes, 1);
+        expect(ouverts, <Uri>[_lecture]);
+      },
+    );
 
     testWidgets('audio hors navigateur : l\'etat honnete, aucun bouton', (
       tester,
@@ -356,7 +448,10 @@ void main() {
       // lecteur du Coran branche dans rendu_lecture_test.dart ; ici, par le
       // routeur reel, on prouve que le Coran est un document du catalogue qui
       // propose ce geste.
-      expect(r.routerDelegate.currentConfiguration.uri.path, endsWith('/coran'));
+      expect(
+        r.routerDelegate.currentConfiguration.uri.path,
+        endsWith('/coran'),
+      );
     });
 
     testWidgets('sans version publiee : rien a ouvrir, dit tel quel', (
@@ -382,28 +477,30 @@ void main() {
 
   group('sans ecran : ce que dit le serveur', () {
     test('le manifeste porte description, rayon, etapes, lien et vignette', () {
-      final LibraryResource r = LibraryResource.depuisJson(const <String, dynamic>{
-        'id': 'r1',
-        'title': 'Les lettres',
-        'short_title': 'Lettres',
-        'resource_type': 'audio',
-        'language': 'ar',
-        'category': 'lecture',
-        'access_policy': 'inscrits',
-        'offline_policy': 'jamais',
-        'current_version_id': 'v1',
-        'description': 'La voix de la direction.',
-        'lien_externe': null,
-        'ordre': 3,
-        'rayon': <String, dynamic>{
-          'code': 'plus_loin',
-          'titre_fr': 'Pour aller plus loin',
-          'titre_ar': 'للتعمّق أكثر',
-          'ordre': 2,
+      final LibraryResource r = LibraryResource.depuisJson(
+        const <String, dynamic>{
+          'id': 'r1',
+          'title': 'Les lettres',
+          'short_title': 'Lettres',
+          'resource_type': 'audio',
+          'language': 'ar',
+          'category': 'lecture',
+          'access_policy': 'inscrits',
+          'offline_policy': 'jamais',
+          'current_version_id': 'v1',
+          'description': 'La voix de la direction.',
+          'lien_externe': null,
+          'ordre': 3,
+          'rayon': <String, dynamic>{
+            'code': 'plus_loin',
+            'titre_fr': 'Pour aller plus loin',
+            'titre_ar': 'للتعمّق أكثر',
+            'ordre': 2,
+          },
+          'etapes': <String>['E_LETTRES', 'E_VOYELLES'],
+          'vignette': true,
         },
-        'etapes': <String>['E_LETTRES', 'E_VOYELLES'],
-        'vignette': true,
-      });
+      );
       expect(r.resourceType, TypeRessource.audio);
       expect(r.description, 'La voix de la direction.');
       expect(r.ordre, 3);
@@ -414,10 +511,9 @@ void main() {
     });
 
     test('un ancien manifeste (sans les cles neuves) se lit encore', () {
-      final LibraryResource r = LibraryResource.depuisJson(const <String, dynamic>{
-        'id': 'r1',
-        'resource_type': 'pdf',
-      });
+      final LibraryResource r = LibraryResource.depuisJson(
+        const <String, dynamic>{'id': 'r1', 'resource_type': 'pdf'},
+      );
       expect(r.rayon, codeRayonCours);
       expect(r.etapes, isEmpty);
       expect(r.aVignette, isFalse);
@@ -483,9 +579,10 @@ void main() {
         ressource(id: 'b', titre: 'Autre'),
       ];
       expect(
-        RechercheCatalogue.chercher(ressources, 'voix').map(
-          (LibraryResource r) => r.id,
-        ),
+        RechercheCatalogue.chercher(
+          ressources,
+          'voix',
+        ).map((LibraryResource r) => r.id),
         <String>['a'],
       );
     });

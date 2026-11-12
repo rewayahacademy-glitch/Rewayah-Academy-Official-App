@@ -1,6 +1,6 @@
 # Lot 3 · BIBLIOTHEQUE-UNE
 
-Branche `claude/bibliotheque-une`. Agent du lot 3, sous l'autorité de l'architecte pédagogique, qui ouvre la pull request, fusionne et déploie. Écrit le 12/11/2026, mis à jour à la fin du lot (section « Ce qui est réellement fait »).
+Branche `claude/bibliotheque-une`. Agent du lot 3, sous l'autorité de l'architecte pédagogique, qui ouvre la pull request, fusionne et déploie. Écrit le 12/11/2026, complété le même jour après les décisions D1 à D5 et les corrections C1 à C6 de l'architecte pédagogique.
 
 Demande du directeur (12/11/2026) : la bibliothèque est pour chaque profil élève, adulte ou enfant. Le Coran est **un document** de la bibliothèque, pas la bibliothèque. En haut, les documents fournis gratuitement par l'académie ; en bas, une autre partie pour les autres documents, vendus plus tard : on prépare la place, **sans vente**.
 
@@ -32,7 +32,11 @@ Ce qui est faux, bloqué, non testé ou non prouvé est dans la dernière sectio
 - dépôt de vignette en deux temps (`demander_`, `lire_`, `confirmer_`, `annuler_vignette_bibliotheque`), avec la même confirmation signée que le fichier d'un document ;
 - trois lectures du lecteur : `bibliotheque_rayons_lecteur()`, `bibliotheque_version_lecteur(uuid)` (version publiée courante et fichier décrit, **sans clé de stockage**), `bibliotheque_vignettes_autorisees(uuid[])` (clés à signer, pour la seule fonction Edge) ;
 - le contrôle de publication (`app_private.library_controle_version`) tient compte d'un document donné par lien (pas de fichier à sonder ni d'empreinte), et d'une étape comme rattachement au programme ;
-- le Coran, semé par `app_private.library_semer_coran()` (idempotente) : document du rayon des cours, publié, visible des inscrits.
+- le Coran, semé par `app_private.library_semer_coran()` (idempotente) : document du rayon des cours, publié, visible des inscrits, lecture `hafs` ;
+- **D1, tranches d'âge** : `library_resource.tranches` (6-9, 10-13, 14-17, adultes ; les quatre par défaut, le lien externe sans les 6-9 ans par défaut). Le filtre vit **dans la base** : la règle de lecture de `library_resource`, `private.n4_ressource_lisible`, `bibliotheque_catalogue_lecteur` (et son filtre `eleve`) et la chaîne de lecture d'un fichier (`autoriser_lecture_version`) lisent la même fonction `private.tranche_autorisee`. L'élève voit sa tranche (un mineur sans tranche : la plus jeune, par prudence) ; le tuteur voit ce que voit un enfant de son foyer, ou ce qui s'adresse aux adultes ; l'enseignant et la direction voient tout ce que leur visibilité permet ;
+- **D2** : `lecture_coran` (`hafs`, `warsh`, `qalun`, `shuba`, le vocabulaire des candidatures) et `ecole_priere` (texte libre, 80 caractères au plus), facultatifs, filtrables côté direction (`lectureCoran`, `ecolePriere`), montrés sur la fiche quand ils sont remplis ;
+- **D3** : `bibliotheque_etapes_publiees()` (direction seulement) lit les étapes du programme publié de la branche `claude/socle-programme` (`programme_niveaux.code_technique`, `nom_humain`, `cycle`, `ordre`, version `publiee`) **si ses tables existent** (`to_regclass`), sinon rend une liste vide. Les codes restent du texte en base ; la direction les coche, elle ne les tape plus. Sans programme publié : « Les étapes apparaîtront quand le programme sera publié » ;
+- **C2** : `bibliotheque_depot_actif()` (direction seulement) dit si le secret de confirmation existe en base, jamais sa valeur.
 
 **Fonctions Edge** : `bibliotheque-upload` (actions `demander_vignette`, `confirmer_vignette`, `annuler_vignette` ; image de 2 Mio au plus) ; `bibliotheque-lecture` (action `vignettes` : URL signées pour les seuls documents que l'appelant lit).
 
@@ -42,7 +46,11 @@ Ce qui est faux, bloqué, non testé ou non prouvé est dans la dernière sectio
 - `CatalogueSupabase` : lit tout le catalogue par pages de 200 (`decalage`), les rayons ; `VersionsSupabase`, `TelechargementSupabase` (version, URL de lecture, octets) et `VignettesSupabase` (appels regroupés, un seul par écran), branchés dans `lib/main.dart` ;
 - fiche d'un document : un audio s'ouvre par l'URL signée (web) ; un lien externe ou une vidéo par lien s'affiche en petite carte (adresse https, phrase « s'ouvre sur un autre site », bouton seulement sur le web) ; sans lecteur, la phrase le dit, jamais un bouton qui ferait semblant ; le Coran propose « Ouvrir le mushaf » ;
 - la vignette déposée se pose par-dessus la couverture par défaut du type ;
-- direction : le formulaire existant porte type (audio, vidéo, lien externe), description, rayon (choisi parmi ceux du serveur), ordre, étapes (codes séparés par des virgules), adresse du lien, vignette ; la fiche les édite et retire la vignette ;
+- direction : le formulaire existant porte type (audio, vidéo, lien externe), description, rayon (choisi parmi ceux du serveur), ordre, **tranches d'âge** (cases ; le lien externe décoche les 6-9 ans d'emblée et le dit), **étapes du programme publié** (cases), **lecture du Coran** (menu) et **école suivie** (texte court), adresse du lien, vignette ; la fiche les édite et retire la vignette ; le catalogue se filtre par lecture. Les mêmes champs (`classement_document.dart`) servent « Ajouter un document » et la fiche ;
+- **D4** : pour une vidéo, le formulaire écrit « Pour une vidéo, collez son lien. » ;
+- **C2** : tant que le secret n'est pas posé, l'écran « Ajouter un document » dit « Le dépôt de fichiers n'est pas encore activé. Vous pouvez déjà ajouter un document par son lien. », ne rend aucun bouton de fichier, de vignette ni de preuve, et le lien externe se poursuit normalement ; si le serveur répond 503 au dépôt, la même idée s'affiche (« rien n'a été envoyé ») au lieu d'un code ;
+- l'ouverture d'un lien externe passe **toujours** par une feuille de confirmation (« Ce lien quitte l'application » : Ouvrir le lien / Rester dans l'application) ;
+- la fiche d'un document montre « Lecture du Coran » et « École juridique suivie » quand elles sont remplies, rien sinon ;
 - textes : le mot « support » ne s'affiche plus dans `tc.bibliotheque.*` ni `admin.bibliotheque.*` (fr et ar : « document » / وثيقة).
 
 ## Mes choix
@@ -51,8 +59,8 @@ Ce qui est faux, bloqué, non testé ou non prouvé est dans la dernière sectio
 2. **« Document »** n'est pas une valeur d'enum de plus : c'est la famille `pdf` + `structured_text` (+ `lesson`), exposée côté Flutter par `TypeRessource.estDocument`. Le filtre de l'élève (lot 5) groupe ainsi sans doubler une valeur.
 3. **Aucune colonne de prix.** Le plan permettait « une colonne invisible » ; je n'en prépare aucune : le second rayon est une place, rien de plus. Le contrôle de sortie de la migration refuse toute colonne dont le nom évoque un prix, et le scénario refuse une clé `prix` en entrée.
 4. **Vidéo : par lien seulement.** La fonction Edge charge le fichier entier en mémoire pour en vérifier l'empreinte et le type réel ; l'audio (100 Mio) est déjà à la limite, une vidéo ne tient pas. Un document `video` porte donc `lien_externe`. Si un dépôt de vidéo est voulu un jour, il faut un dépôt fractionné ou un autre hébergeur : décision à part.
-5. **Étapes en texte libre pour l'instant.** Le code est saisi par la direction ; une liste fermée viendra des étapes du lot 1.
-6. **Le Coran n'a pas de fichier** : sa version est publiée sans artefact, et la fiche ouvre le lecteur du Coran existant. Sa ligne de droits est un amorçage technique qui renvoie à « À propos de l'édition » du lecteur : la direction doit la confirmer, je n'affirme aucune licence.
+5. **Étapes : codes en texte, choisis et non tapés (D3).** Aucune clé étrangère vers une version du programme (le code est stable d'une version à l'autre) ; la direction coche dans la liste des étapes du programme publié. Une étape déjà rattachée mais absente de la liste reste visible et décochable : rien ne se perd en silence.
+6. **Le Coran n'a pas de fichier** : sa version est publiée sans artefact, et la fiche ouvre le lecteur du Coran existant. Sa ligne de droits est un amorçage technique (C6) : voir « Le Coran et ses droits » plus bas.
 7. **Rattachement à une classe** : le circuit existant (publication, puis attribution) est inchangé. Une version publiée passe de `admin` à `groupe_assigne` ; pour qu'un document de l'académie soit lu de tous les inscrits, la direction le met en visibilité « inscrits » depuis sa fiche.
 
 ## Écarts entre le plan et le code, et avec la demande
@@ -74,9 +82,75 @@ Corrections de tests existants dues au lot : `scenarios_contrats_bibliotheque.sq
 - État de la production relevé le même jour : 0 document, 5 types (avant le lot), 1 compte direction actif (le Coran sera donc semé à l'installation), les sept fonctions que le lot remplace ou étend présentes.
 - **Rien n'est prouvé en production.** Rien n'est installé ni déployé. Les fonctions Edge ne sont testées qu'au type (deno check) et sur leurs fonctions pures ; **ni R2, ni la signature d'URL, ni la confirmation signée de la vignette n'ont tourné de bout en bout** (aucun stockage ici).
 - **Ouverture d'un lien et d'un audio : navigateur seulement.** L'application n'a pas de paquet pour ouvrir un lien hors navigateur (`url_launcher` n'est pas une dépendance directe, et `pubspec.yaml` est protégé par le garde-fou, que je n'ai pas contourné). Sur un appareil sans navigateur, la fiche montre l'adresse et le dit ; aucun bouton.
-- **Lien externe et enfants** : aucune règle n'est décidée sur le fait qu'un compte enfant voie un lien vers un autre site. Le serveur applique la même visibilité qu'aux autres documents. À trancher par l'architecte.
+- **Lien externe et enfants** : tranché par l'architecte (D1) et appliqué : les 6-9 ans sont exclus par défaut d'un lien externe, la direction doit les cocher explicitement, et l'ouverture demande toujours une confirmation. Non prouvé en production.
 - **`ressources_du_groupe`** (l'onglet de la classe) n'est pas étendue : ses cartes n'ont ni description, ni vignette, ni rayon tant que cette lecture n'est pas reprise.
-- **Mot « support »** : il reste dans `recherche.*` (domaine « Supports » de la recherche, quatre libellés), `classe.*`, `enseignant.ficheGroupe`, `tc.realtime`, `tc.observation`, `com.*`, `accessibilite.apres`, `compte.tuteur.pageAide` (« Aide et support » : sens différent, à garder) : hors de la bibliothèque ou dans la zone d'une autre session ; non touchés.
+- **Mot « support »** : il reste dans 29 textes visibles, hors de la bibliothèque ou dans la zone d'une autre session (liste exacte dans « Mot support, liste exacte » plus bas) ; non touchés, comme demandé (D5).
 - **Vignette remplacée ou retirée** : l'ancien objet reste dans R2 (aucune purge).
-- **Arabe** : traduit sans relecture par un locuteur natif.
+- **Arabe** : relu deux fois par moi, jamais par un locuteur natif ; les textes incertains sont signalés dans « Arabe : relecture ».
 - **Captures** : voir le rapport.
+
+## Installation et secret, en mots simples (C1)
+
+Rien de ce qui suit n'a été fait par un agent : aucun secret n'a été posé, aucune fonction déployée, aucune migration installée.
+
+**1. Les fonctions Edge se déploient toutes seules à la fusion dans `main`.** Le fichier `.github/workflows/deploy.yml` a un travail « Edge Functions » : à chaque poussée sur `main` (et sur les étiquettes `v*`), il déploie **toutes** les fonctions du dossier `supabase/functions/` sur le projet de production, donc `bibliotheque-upload` et `bibliotheque-lecture` modifiées par ce lot, puis vérifie que chacune est en ligne. Il refuse de partir si le secret GitHub `SUPABASE_ACCESS_TOKEN` manque. **Je n'ai pas pu vérifier** que ce secret GitHub existe ni que ce travail a tourné avec succès récemment (je n'ai pas accès à GitHub Actions) : le fichier le dit, la preuve est à lire dans l'onglet Actions après la fusion. L'ouverture d'une fonction se règle par fonction dans `supabase/config.toml` : les deux fonctions du lot y sont déjà en `verify_jwt = true`, rien à changer.
+
+**2. Les migrations ne partent pas toutes seules.** Dans `deploy.yml`, le travail « Migrations » ne se lance qu'à la main (`workflow_dispatch`, case « appliquer les migrations »), et la base de production enregistre des versions horodatées : c'est le pilote qui installe, comme pour les autres lots. Les deux fichiers de ce lot ne contiennent ni `DROP`, ni `DELETE`, ni `TRUNCATE` (compte : 0), donc l'outil d'installation ne demande pas de seconde confirmation.
+
+**3. Le secret du dépôt de fichiers : à poser par le directeur, une seule fois, en deux endroits qui doivent porter la même valeur.**
+
+- **Côté fonctions (Edge)** : Supabase, projet de production, Edge Functions, Secrets. Nom exact : `LIBRARY_UPLOAD_CONFIRMATION_HMAC_KEY`. Valeur : une longue chaîne aléatoire, 32 caractères au moins, sans espace au début ni à la fin (la fonction refuse sinon). C'est le même écran que pour les secrets des courriels (`docs/current/COURRIELS.md` §3).
+- **Côté base** : Supabase, SQL Editor, une seule instruction, avec **la même valeur** à la place de `LA_MEME_VALEUR` : `insert into private.library_upload_confirmation_secrets (secret) values ('LA_MEME_VALEUR') on conflict (singleton) do update set secret = excluded.secret, changed_at = clock_timestamp();`. La table n'est lisible de personne (aucun droit pour l'application ni l'agent) ; la valeur ne s'écrit jamais dans un fichier du dépôt ni dans une conversation.
+
+**Ordre conseillé.** (a) le pilote installe `20261123920000_bibliotheque_une_types.sql`, puis `20261123921000_bibliotheque_une.sql` ; (b) la fusion dans `main` déploie les fonctions ; (c) le directeur pose le secret des deux côtés ; (d) il ouvre « Ajouter un document » : la phrase « Le dépôt de fichiers n'est pas encore activé » doit avoir disparu. Si l'on fusionne avant (a), les fonctions neuves répondent par une erreur aux seules actions de vignette tant que les migrations manquent ; les anciennes actions ne changent pas. Si l'on pose le secret avant (b), rien ne casse : le dépôt reste simplement refusé par l'ancienne version.
+
+**Ce que l'écran sait et ne sait pas.** La phrase « pas encore activé » se lit dans la base (la ligne du secret existe-t-elle ?). Si la base l'a mais que la fonction n'a pas son secret, le dépôt est refusé par un 503 et l'écran dit alors « le dépôt de fichiers n'est pas encore activé : rien n'a été envoyé » au moment du dépôt, jamais un code brut. Dans les deux cas, le lien externe et la vidéo par lien marchent. **Aucun dépôt de fichier n'a tourné de bout en bout** : ni R2 ni la signature n'ont été essayés ici.
+
+## Le Coran et ses droits (C6)
+
+« Droits du Coran = amorçage technique » veut dire : pour que le Coran soit un document publié comme les autres, la base devait avoir une ligne de droits ; je l'ai remplie d'une phrase qui renvoie à « À propos de l'édition » dans le lecteur du Coran, **sans nommer de licence ni d'éditeur**. Ce n'est pas une preuve juridique : la direction doit confirmer, depuis la fiche du Coran, que la source et le titulaire des droits du texte et de la police affichés sont bien ceux de cette page, ou corriger la ligne.
+
+Le semis est sûr et rejouable : `app_private.library_semer_coran()` ne crée rien si un document de type Coran existe déjà (elle rend son identifiant), ne fait rien et le dit s'il n'y a aucun compte direction actif (elle se rappelle ensuite), n'écrit aucun fichier, n'efface rien (zéro `DROP`, `DELETE`, `TRUNCATE`) et n'est exécutable que par la base (droits retirés à tous les rôles). Rejouée, elle laisse un seul Coran, une seule version publiée et une seule ligne de droits (scénario `scenarios_bibliotheque_une.sql`).
+
+## Corrections de tests existants (C4)
+
+Aucune garde de sécurité n'a été relâchée ; chaque test existant touché l'a été pour une raison précise :
+
+- `supabase/tests/scenarios_contrats_bibliotheque.sql` : le test « type inconnu refusé » employait `"video"` comme exemple de type inconnu. `video` devient un type valide (c'est le but du lot) ; l'exemple devient `"hologramme"`. La garde (un type hors liste est refusé avec `22023`) est inchangée et reste vérifiée.
+- `test/teaching_core/b/contrats_test.dart` : même exemple (`depuisSql('video')` rendait `null`) ; `hologramme` rend toujours `null`, et trois lignes vérifient que `video`, `audio` et `external_link` sont lus.
+- `supabase/tests/scenarios_af_liste_blanche_volatiles.sql` : ce test impose que toute fonction exécutable par `authenticated` et marquée volatile soit nommée dans une liste blanche avec sa raison. J'y ai **ajouté quatre noms** (les fonctions de vignette), avec leur justification en commentaire. Le contrôle reste entier : toute autre fonction volatile non nommée le fait toujours échouer.
+- Le contrôle B18 (« garde négative résiduelle dans une fonction SECURITY DEFINER ») était rouge sur ma première version : c'est **ma fonction** que j'ai corrigée (la permission de classe s'écrit `IS NOT TRUE` sur une valeur jamais nulle), pas le test.
+- `test/i18n/ar_domaines_test.dart` : huit mots latins admis ajoutés (`https`, `MP3`, `MP`, `M4A`, `OGG`, `PNG`, `JPEG`, `WebP`, formats et protocole que l'arabe garde tels quels) ; le contrôle (aucun autre mot latin dans l'arabe) est inchangé.
+- Aides de test : `fiche_test.dart` (le défilement vise la vraie page, pas le premier défilement venu, conforme à la décision du 01/11/2026), `support_classe.dart` (un double de port reçoit la méthode `rayons()` ajoutée à l'interface), doubles de démonstration de la direction (nouveaux champs). Aucune attente n'a été supprimée.
+
+## Mot « support », liste exacte (D5)
+
+Textes visibles qui contiennent encore « support » ou « supports » (fr), 29 au total, non touchés : `accessibilite.apres.revoirSupport`, `.revoirSupportDetail`, `.revoirSupportDetailVous` ; `recrutement.talents.c.conception_programmes.libelle`, `.description` ; `compte.tuteur.pageAide.titre` (« Aide et support », autre sens) ; `classe.pageRessources.aucuneDetail`, `classe.cartes.typesDetail.lien`, `classe.cartes.modeles.lien` ; `enseignant.ficheGroupe.supportPrevu`, `.supportsTitre` ; `controleur.observation.pedagogieAide` ; `tc.realtime.transport.partage_indisponible`, `tc.realtime.etat.restauration_impossible` ; `tc.observation.visite.supportIndisponible` ; `tc.parcours.plage.ressource` ; `com.communaute.demo.f.memorisationTexte`, `com.studio.sections.support`, `com.studio.demo.f.messageSupports`, `com.annonces.demo.f.adminStudioDecision`, `.adminStudioAssigne`, `.adminStudioContexte` ; `recherche.initial.phrase`, `recherche.domaines.supports`, `recherche.guide.titre`, `recherche.guide.initial.titre`, `.initial.phrase`, `recherche.guide.limite`, `recherche.entree.supports`.
+
+`ressources_du_groupe` (l'onglet de la classe) est laissé au lot 5.
+
+Les valeurs de `tc.bibliotheque.actif.*` que j'ai changées (le mot « support » devient « document » ; en arabe, « مادة » devient « وثيقة ») :
+
+| Clé | Avant (fr) | Après (fr) |
+|---|---|---|
+| `aucun` | Aucun support présenté | Aucun document présenté |
+| `aucunDetail` | Quand votre enseignant présentera un support, il apparaîtra ici sans rien faire de votre part. | Quand votre enseignant présentera un document, il apparaîtra ici sans rien faire de votre part. |
+| `erreur` | Le support présenté n'a pas pu être chargé. Réessayez. | Le document présenté n'a pas pu être chargé. Réessayez. |
+| `indisponible` | Le suivi du support présenté s'ouvrira au branchement serveur. | Le suivi du document présenté s'ouvrira au branchement serveur. |
+| `indisponibleTitre` | Support présenté pas encore ouvert | Document présenté pas encore ouvert |
+| `ouvrirFiche` | Ouvrir la fiche du support | Ouvrir la fiche du document |
+| `retireDetail` | Votre enseignant a retiré ce support de la séance. Il n'est plus accessible. | Votre enseignant a retiré ce document de la séance. Il n'est plus accessible. |
+| `sansDonnees` | le support présenté | le document présenté |
+| `titre` | Support présenté | Document présenté |
+
+Arabe, avant puis après : `titre` « المادة المعروضة » puis « الوثيقة المعروضة » ; `aucun` « لا توجد مادة معروضة » puis « لا توجد وثيقة معروضة » ; `ouvrirFiche` « فتح بطاقة المادة » puis « فتح بطاقة الوثيقة » ; même remplacement de « مادة » par « وثيقة » dans `aucunDetail`, `erreur`, `indisponible`, `indisponibleTitre`, `retireDetail`, `sansDonnees`.
+
+## Arabe : relecture (C5)
+
+Seconde relecture de tous les textes arabes du lot (sens, accord, sens d'écriture). Une correction : `ecoleLibelle` devient « المذهب الفقهي المتّبع (للصلاة والوضوء؛ اختياري) » (la liste « الصلاة، الوضوء » n'était pas une construction naturelle). Textes **incertains**, à faire relire par une personne arabophone :
+
+1. « قراءة القرآن » pour « Lecture du Coran » : les quatre valeurs (حفص، ورش، قالون، شعبة) sont des **روايات** (riwayat), et le reste de l'application dit « رواية حفص ». « رواية » serait plus exact pour un lecteur averti ; « قراءة » reste fidèle au mot français décidé. À arbitrer.
+2. « حدِّد » pour « Cochez » (cases à cocher) : correct et courant, mais « ضع علامة على » est plus explicite ; je garde « حدِّد » par concision.
+3. « أكاديمية رواية » (nom de l'académie dans la feuille de confirmation d'un lien) : le reste de l'application dit « رواية » seul ; vérifier la graphie voulue du nom.
+4. « المذهب الفقهي » pour « école juridique » : terme standard, à confirmer qu'il convient au public visé.
+5. L'accord des phrases (« الفصول المسندة إليها الوثيقة », « فئة عمرية واحدة ») et le sens d'écriture (320 px, texte ×2, sens inversé) sont relus et testés ; les chiffres 6 et 9 sont écrits en chiffres occidentaux, comme ailleurs dans l'application.

@@ -43,6 +43,7 @@ import '../../../core/widgets/page_shell.dart';
 import '../../../core/widgets/sous_navigation_domaine.dart';
 import '../../../core/widgets/zone_saisie.dart';
 import '../catalogue/catalogue_page.dart' show rangBibliotheque;
+import '../classement_document.dart';
 import '../libelles_bibliotheque.dart';
 import '../porte_bibliotheque.dart';
 import 'selecteur_support.dart';
@@ -144,7 +145,7 @@ class _ImportEtat extends ConsumerState<_Import> {
   final TextEditingController _attribution = TextEditingController();
   final TextEditingController _description = TextEditingController();
   final TextEditingController _ordre = TextEditingController();
-  final TextEditingController _etapes = TextEditingController();
+  final TextEditingController _ecole = TextEditingController();
   final TextEditingController _lien = TextEditingController();
 
   TypeRessource? _type;
@@ -154,6 +155,16 @@ class _ImportEtat extends ConsumerState<_Import> {
   String? _niveau;
   FacettesCatalogue _facettes = const FacettesCatalogue();
   final Set<UsageDroit> _usages = <UsageDroit>{};
+
+  /// Les tranches cochees ; `null` tant que la direction n'y a pas touche : la
+  /// valeur par defaut suit alors le type (D1).
+  Set<String>? _tranches;
+  final Set<String> _etapesChoisies = <String>{};
+  String? _lecture;
+
+  /// Faux : le depot de fichiers n'est pas encore active sur le serveur (C2).
+  /// `null` tant que la reponse n'est pas la : rien n'est cache.
+  bool? _depotActif;
 
   String? _supportId;
   FicheSupport? _existante;
@@ -188,6 +199,12 @@ class _ImportEtat extends ConsumerState<_Import> {
     } on Object {
       // Sans rayons, le document va au rayon des cours (par defaut serveur).
     }
+    try {
+      final bool actif = await widget.port.depotActif();
+      if (mounted) setState(() => _depotActif = actif);
+    } on Object {
+      // Sans reponse, le depot reste propose : le serveur dira non au besoin.
+    }
     final String? id = _supportId;
     if (id == null) return;
     try {
@@ -219,7 +236,7 @@ class _ImportEtat extends ConsumerState<_Import> {
       _attribution,
       _description,
       _ordre,
-      _etapes,
+      _ecole,
       _lien,
     ]) {
       c.dispose();
@@ -227,13 +244,17 @@ class _ImportEtat extends ConsumerState<_Import> {
     super.dispose();
   }
 
+  bool get _depotInactif => _depotActif == false;
+
   bool get _ressourceComplete =>
       _existante != null ||
       (_titre.text.trim().isNotEmpty &&
           _type != null &&
           _langue != null &&
           _categorie.text.trim().isNotEmpty &&
-          _lienComplet);
+          _lienComplet &&
+          _tranchesEffectives.isNotEmpty &&
+          ecoleValide(_ecole.text));
 
   /// L'adresse d'un lien est une URL https dont l'hote est un nom de domaine ;
   /// la base la revalide (la regle y est ecrite une fois).
@@ -257,11 +278,13 @@ class _ImportEtat extends ConsumerState<_Import> {
         _description.text.trim().isNotEmpty;
   }
 
-  /// Les codes d'etapes saisis, separes par des virgules, sans doublon.
-  List<String> get _codesEtapes => <String>{
-    for (final String c in _etapes.text.split(','))
-      if (c.trim().isNotEmpty) c.trim(),
-  }.toList();
+  /// Les tranches retenues : celles que la direction a cochees, sinon le
+  /// defaut du type (un lien exclut les 6 a 9 ans, D1).
+  Set<String> get _tranchesEffectives =>
+      _tranches ??
+      (_type == TypeRessource.lienExterne
+          ? tranchesLienParDefaut
+          : tranchesTout);
 
   /// Cree le brouillon si besoin : il faut un brouillon pour deposer.
   Future<String?> _assurerBrouillon() async {
@@ -282,7 +305,13 @@ class _ImportEtat extends ConsumerState<_Import> {
           rayon: _rayon,
           ordre: int.tryParse(_ordre.text.trim()) ?? 0,
           lienExterne: typeParLien(_type) ? _lien.text.trim() : null,
-          etapes: _codesEtapes,
+          etapes: _etapesChoisies.toList(),
+          tranches: <String>[
+            for (final String c in tranchesProposees)
+              if (_tranchesEffectives.contains(c)) c,
+          ],
+          lectureCoran: _lecture,
+          ecolePriere: _ecole.text.trim().isEmpty ? null : _ecole.text.trim(),
         ),
       );
       if (mounted) setState(() => _supportId = id);
@@ -557,13 +586,19 @@ class _ImportEtat extends ConsumerState<_Import> {
                 ),
                 if (typeParLien(_type)) ...<Widget>[
                   Ecart.vMd,
+                  if (_type == TypeRessource.video) ...<Widget>[
+                    Text(
+                      t.admin.bibliotheque.import.classement.videoLien,
+                      key: const ValueKey<String>('import-video-lien'),
+                    ),
+                    Ecart.vSm,
+                  ],
                   ZoneSaisie(
                     controleur: _lien,
                     cleChamp: const ValueKey<String>('import-lien'),
                     libelle: c.lien,
                     maxLignes: 1,
-                    erreur:
-                        _lien.text.trim().isNotEmpty && !_lienValide
+                    erreur: _lien.text.trim().isNotEmpty && !_lienValide
                         ? t.admin.bibliotheque.import.lienInvalide
                         : null,
                     onChanged: (_) => setState(() {}),
@@ -599,12 +634,25 @@ class _ImportEtat extends ConsumerState<_Import> {
                   actionClavier: TextInputAction.next,
                 ),
                 Ecart.vMd,
-                ZoneSaisie(
-                  controleur: _etapes,
-                  cleChamp: const ValueKey<String>('import-etapes'),
-                  libelle: c.etapes,
-                  maxLignes: 1,
-                  actionClavier: TextInputAction.done,
+                ChoixTranches(
+                  choisies: _tranchesEffectives,
+                  lien: _type == TypeRessource.lienExterne,
+                  onChoix: (Set<String> v) => setState(() => _tranches = v),
+                ),
+                Ecart.vMd,
+                ChoixEtapes(
+                  choisies: _etapesChoisies,
+                  onChoix: (Set<String> v) => setState(() {
+                    _etapesChoisies
+                      ..clear()
+                      ..addAll(v);
+                  }),
+                ),
+                Ecart.vMd,
+                ChampsLectureEcole(
+                  lecture: _lecture,
+                  onLecture: (String? v) => setState(() => _lecture = v),
+                  ecole: _ecole,
                 ),
                 if (_incomplet && !_ressourceComplete) ...<Widget>[
                   Ecart.vSm,
@@ -627,6 +675,9 @@ class _ImportEtat extends ConsumerState<_Import> {
     required String libelleAutre,
   }) {
     final i = t.admin.bibliotheque.import;
+    // Depot non active : pas de bouton qui ne pourrait pas aboutir, la phrase
+    // de la section Fichier le dit une fois (C2).
+    if (_depotInactif) return const SizedBox.shrink();
     final ProgressionUpload? p = depot.progression;
     final bool enEnvoi =
         p != null &&
@@ -650,6 +701,7 @@ class _ImportEtat extends ConsumerState<_Import> {
         ErreurUpload.reseau || null => i.erreurs.reseau,
         ErreurUpload.refuse => i.erreurs.refuse,
         ErreurUpload.empreinte => i.erreurs.empreinte,
+        ErreurUpload.nonActive => i.erreurs.nonActive,
       },
     };
     final String suffixe = finalite.name;
@@ -737,6 +789,13 @@ class _ImportEtat extends ConsumerState<_Import> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           if (type != null) ...<Widget>[Text(formats), Ecart.vMd],
+          if (_depotInactif) ...<Widget>[
+            Text(
+              f.classement.depotInactif,
+              key: const ValueKey<String>('import-depot-inactif'),
+            ),
+            Ecart.vMd,
+          ],
           // Un document par lien n'a aucun fichier : pas de bouton qui ne
           // pourrait pas aboutir.
           if (!typeParLien(type))
@@ -746,17 +805,19 @@ class _ImportEtat extends ConsumerState<_Import> {
               libelleChoisir: f.choisirFichier,
               libelleAutre: f.choisirAutre,
             ),
-          Ecart.vLg,
-          Text(f.vignette, style: Theme.of(context).textTheme.titleSmall),
-          Ecart.vXs,
-          Text(f.vignetteAide),
-          Ecart.vSm,
-          _blocDepot(
-            _vignette,
-            FinaliteUpload.vignette,
-            libelleChoisir: f.choisirVignette,
-            libelleAutre: f.choisirAutreVignette,
-          ),
+          if (!_depotInactif) ...<Widget>[
+            Ecart.vLg,
+            Text(f.vignette, style: Theme.of(context).textTheme.titleSmall),
+            Ecart.vXs,
+            Text(f.vignetteAide),
+            Ecart.vSm,
+            _blocDepot(
+              _vignette,
+              FinaliteUpload.vignette,
+              libelleChoisir: f.choisirVignette,
+              libelleAutre: f.choisirAutreVignette,
+            ),
+          ],
         ],
       ),
     );
@@ -820,14 +881,16 @@ class _ImportEtat extends ConsumerState<_Import> {
                 }),
               ),
             ),
-          Ecart.vMd,
-          Text(d.preuve, style: Theme.of(context).textTheme.titleSmall),
-          _blocDepot(
-            _preuve,
-            FinaliteUpload.preuve,
-            libelleChoisir: d.deposerPreuve,
-            libelleAutre: f.choisirAutre,
-          ),
+          if (!_depotInactif) ...<Widget>[
+            Ecart.vMd,
+            Text(d.preuve, style: Theme.of(context).textTheme.titleSmall),
+            _blocDepot(
+              _preuve,
+              FinaliteUpload.preuve,
+              libelleChoisir: d.deposerPreuve,
+              libelleAutre: f.choisirAutre,
+            ),
+          ],
           if (_existante?.droits.preuveFournie ?? false) ...<Widget>[
             Ecart.vSm,
             Text(d.preuveDeposee),

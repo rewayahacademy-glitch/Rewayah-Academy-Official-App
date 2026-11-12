@@ -207,6 +207,59 @@ void main() {
   capture('11-fiche-audio-sans-lecteur-390', '$bib/audio', _surcharges);
   capture('12-fiche-coran-390', '$bib/coran', _surcharges);
 
+  // D1 : la confirmation avant d'ouvrir un lien (la feuille, ouverte au toucher).
+  testWidgets('15-lien-confirmation-390', (tester) async {
+    await monterRouteur(
+      tester,
+      '$bib/lien',
+      source: FausseSourceSession(sessionActive(AppRole.student)),
+      taille: const Size(390, 900),
+      surcharges: _surcharges(navigateur: true),
+    );
+    await tester.tap(find.byKey(const ValueKey<String>('rendu-ouvrir-lien')));
+    await tester.pumpAndSettle();
+    await capturerVue(tester, '15-lien-confirmation-390');
+  }, skip: sautSansCapture != false);
+
+  // D2 : lecture du Coran et ecole suivie sur la fiche.
+  capture(
+    '16-fiche-lecture-ecole-390',
+    '$bib/priere',
+    () => _surcharges(
+      ressources: <LibraryResource>[
+        ressource(
+          id: 'priere',
+          titre: 'Les ablutions, pas à pas',
+          type: TypeRessource.lienExterne,
+          description: 'Les gestes, un par un.',
+          lienExterne: 'https://exemple.org/ablutions',
+          lectureCoran: 'warsh',
+          ecolePriere: 'École malikite',
+        ),
+      ],
+      navigateur: true,
+    ),
+  );
+
+  // D1, D2, D3 et C2 : le formulaire de la direction, dépôt pas encore activé.
+  for (final (String nom, bool depotActif) in <(String, bool)>[
+    ('17-direction-depot-non-active-1440', false),
+    ('18-direction-tranches-lecture-1440', true),
+  ]) {
+    testWidgets(nom, (tester) async {
+      await admin.monterAdminDemo(
+        tester,
+        route: Routes.adminPedagogieBibliothequeNouveau,
+        bibliotheque: BibliothequeAdminDemo()..depotActifServeur = depotActif,
+        taille: const Size(1440, 3000),
+        plus: <Override>[
+          portCatalogueProvider.overrideWithValue(CatalogueLocal()),
+        ],
+      );
+      await capturerVue(tester, nom);
+    }, skip: sautSansCapture != false);
+  }
+
   for (final (String nom, Size taille) in <(String, Size)>[
     ('13-direction-formulaire-1440', const Size(1440, 2000)),
     ('14-direction-formulaire-390', const Size(390, 3000)),

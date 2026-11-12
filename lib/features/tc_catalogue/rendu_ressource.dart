@@ -19,6 +19,7 @@
 ///   version publiee courante.
 library;
 
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -40,6 +41,7 @@ import '../../core/tc_telechargement/port_telechargement.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
+import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/skeleton.dart';
 
 /// Le rendu du support de [detail].
@@ -80,9 +82,8 @@ class RenduRessource extends ConsumerWidget {
       // Video et lien externe : une petite carte avec l'adresse, qui s'ouvre
       // sur un autre site. La video ne se depose pas (poids) : elle se donne
       // par lien.
-      TypeRessource.video || TypeRessource.lienExterne => _RenduLien(
-        lien: r.lienExterne,
-      ),
+      TypeRessource.video ||
+      TypeRessource.lienExterne => _RenduLien(lien: r.lienExterne),
     };
   }
 }
@@ -237,6 +238,45 @@ class _RenduLien extends ConsumerStatefulWidget {
 class _EtatRenduLien extends ConsumerState<_RenduLien> {
   _EtatLecture _etat = _EtatLecture.repos;
 
+  /// Un lien mene hors de l'application : on le dit et on demande avant
+  /// d'ouvrir, a chaque fois (BIBLIOTHEQUE-UNE, D1).
+  Future<void> _confirmer(Uri adresse) async {
+    final r = t.tc.bibliotheque.rendu;
+    final bool? accord = await AppBottomSheet.ouvrir<bool>(
+      context,
+      titre: r.confirmerTitre,
+      constructeur: (BuildContext feuille) => Column(
+        key: const ValueKey<String>('rendu-lien-confirmation'),
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          TexteSansCoupure(r.confirmerPhrase),
+          Ecart.vSm,
+          SelectableText(adresse.toString()),
+        ],
+      ),
+      actions: (BuildContext feuille) => Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          ActionPrincipale(
+            key: const ValueKey<String>('rendu-lien-confirmer-ouvrir'),
+            libelle: r.confirmerOuvrir,
+            onPress: () => Navigator.of(feuille).pop(true),
+          ),
+          Ecart.vSm,
+          ActionPrincipale(
+            key: const ValueKey<String>('rendu-lien-confirmer-rester'),
+            libelle: r.confirmerRester,
+            niveau: NiveauAction.tertiaire,
+            onPress: () => Navigator.of(feuille).pop(false),
+          ),
+        ],
+      ),
+    );
+    if (accord == true && mounted) _ouvrir(adresse);
+  }
+
   void _ouvrir(Uri adresse) {
     final OuvreurOnglet? ouvreur = ref.read(ouvreurOngletProvider);
     if (ouvreur == null) return;
@@ -251,7 +291,9 @@ class _EtatRenduLien extends ConsumerState<_RenduLien> {
   @override
   Widget build(BuildContext context) {
     final TextTheme textes = Theme.of(context).textTheme;
-    final Uri? adresse = widget.lien == null ? null : Uri.tryParse(widget.lien!);
+    final Uri? adresse = widget.lien == null
+        ? null
+        : Uri.tryParse(widget.lien!);
     // Une adresse qui n'est pas de l'https n'est jamais ouverte, meme si elle
     // arrivait (la base ne l'accepte pas ; l'ecran ne s'y fie pas seul).
     if (adresse == null || adresse.scheme != 'https' || adresse.host.isEmpty) {
@@ -298,7 +340,7 @@ class _EtatRenduLien extends ConsumerState<_RenduLien> {
             libelle: t.tc.bibliotheque.rendu.ouvrirLien,
             niveau: NiveauAction.secondaire,
             pleineLargeur: false,
-            onPress: () => _ouvrir(adresse),
+            onPress: () => unawaited(_confirmer(adresse)),
           ),
         ],
       ],

@@ -212,7 +212,13 @@ LibraryResource ressource({
   int ordre = 0,
   List<String> etapes = const <String>[],
   bool aVignette = false,
+  List<String> tranches = tranchesToutes,
+  String? lectureCoran,
+  String? ecolePriere,
 }) => LibraryResource(
+  tranches: tranches,
+  lectureCoran: lectureCoran,
+  ecolePriere: ecolePriere,
   description: description,
   lienExterne: lienExterne,
   rayon: rayon,

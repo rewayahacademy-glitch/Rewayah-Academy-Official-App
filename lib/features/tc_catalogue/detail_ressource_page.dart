@@ -9,6 +9,7 @@ import '../../core/router/etat_routeur_sur.dart';
 import '../../core/router/routes.dart';
 import '../../core/tc_bibliotheque/couverture_ressource.dart';
 import '../../core/tc_bibliotheque/donnees_catalogue.dart';
+import '../../core/tc_bibliotheque/lecture_coran.dart';
 import '../../core/tc_bibliotheque/library_resource.dart';
 import '../../core/tc_telechargement/download_asset.dart';
 import '../../core/tc_telechargement/port_enregistrement_fichier.dart';
@@ -18,6 +19,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/empty_state.dart';
+import '../../core/widgets/ligne_cle_valeur.dart';
 import '../../core/widgets/local_feedback.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/section_header.dart';
@@ -260,6 +262,24 @@ class _Corps extends StatelessWidget {
         ),
         Ecart.vXl,
         RenduRessource(detail: detail),
+        // La lecture du Coran et l'ecole suivie, quand la direction les a
+        // precisees (BIBLIOTHEQUE-UNE, D2) ; rien n'est affiche sinon.
+        if (r.lectureCoran != null || r.ecolePriere != null) ...<Widget>[
+          Ecart.vSection,
+          if (r.lectureCoran != null)
+            LigneCleValeur(
+              key: const ValueKey<String>('detail-lecture-coran'),
+              cle: t.tc.bibliotheque.detail.lecture,
+              valeur: libelleLectureCoran(r.lectureCoran!),
+            ),
+          if (r.lectureCoran != null && r.ecolePriere != null) Ecart.vSm,
+          if (r.ecolePriere != null)
+            LigneCleValeur(
+              key: const ValueKey<String>('detail-ecole-priere'),
+              cle: t.tc.bibliotheque.detail.ecole,
+              valeur: r.ecolePriere!,
+            ),
+        ],
         if (r.levelScope.isNotEmpty) ...<Widget>[
           Ecart.vSection,
           SectionHeader(titre: t.tc.bibliotheque.detail.niveaux),

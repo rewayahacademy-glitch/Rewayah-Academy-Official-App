@@ -16,6 +16,7 @@ import 'dart:typed_data';
 import '../../core/admin/modeles_bibliotheque_admin.dart';
 import '../../core/admin/port_bibliotheque_admin.dart';
 import '../../core/mouvement/mouvement.dart';
+import '../../core/tc_bibliotheque/library_resource.dart';
 
 /// Un support tel que le serveur simule le connait.
 class _Etat {
@@ -47,6 +48,10 @@ class _Etat {
   String? motifRetrait;
   final Set<String> classes = <String>{};
   bool epingle = false;
+  List<String> etapes = <String>[];
+  List<String> tranches = tranchesToutes;
+  String? lectureCoran;
+  String? ecolePriere;
 }
 
 /// Le double de demonstration du port.
@@ -146,7 +151,8 @@ class BibliothequeAdminDemo implements PortBibliothequeAdmin {
   static const List<String> _langues = <String>['fr', 'ar', 'en'];
 
   _Etat _generer(int i) {
-    final TypeRessource type = TypeRessource.values[i % TypeRessource.values.length];
+    final TypeRessource type =
+        TypeRessource.values[i % TypeRessource.values.length];
     // Repartition des etats : 0 brouillon, 1 a verifier, 2 publie, 3 publie,
     // 4 retire, 5 droits expires.
     final int cas = i % 6;
@@ -305,6 +311,15 @@ class BibliothequeAdminDemo implements PortBibliothequeAdmin {
     return droitsServeur;
   }
 
+  /// Faux : le depot de fichiers n'est pas active (le lien reste possible).
+  bool depotActifServeur = true;
+
+  @override
+  Future<bool> depotActif() async {
+    if (panne) throw const BibliothequeHorsLigne();
+    return depotActifServeur;
+  }
+
   @override
   Future<FacettesCatalogue> facettes() async {
     _garde();
@@ -328,7 +343,10 @@ class BibliothequeAdminDemo implements PortBibliothequeAdmin {
     final List<SupportAdmin> tous =
         <SupportAdmin>[
           for (final _Etat e in _supports.values)
-            if (_correspond(e.support, filtre, q)) e.support,
+            if (_correspond(e.support, filtre, q) &&
+                (filtre.lectureCoran == null ||
+                    e.lectureCoran == filtre.lectureCoran))
+              e.support,
         ]..sort((SupportAdmin a, SupportAdmin b) {
           final int c = b.modifieLeUtc.compareTo(a.modifieLeUtc);
           return c != 0 ? c : a.id.compareTo(b.id);
@@ -384,6 +402,10 @@ class BibliothequeAdminDemo implements PortBibliothequeAdmin {
       capacites: _capacitesDe(e),
       classesServies: e.classes.length,
       motifRetrait: e.motifRetrait,
+      etapes: List<String>.of(e.etapes),
+      tranches: List<String>.of(e.tranches),
+      lectureCoran: e.lectureCoran,
+      ecolePriere: e.ecolePriere,
     );
   }
 
@@ -400,32 +422,41 @@ class BibliothequeAdminDemo implements PortBibliothequeAdmin {
       statut: StatutVersionRessource.brouillon,
       revueDroits: RevueDroits.aVerifier,
     );
-    _supports[id] = _Etat(
-      support: SupportAdmin(
-        id: id,
-        titre: saisie.titre,
-        type: saisie.type,
-        langue: saisie.langue,
-        categorie: saisie.categorie,
-        niveau: saisie.niveau,
-        numeroVersion: 1,
-        statutVersion: StatutVersionRessource.brouillon,
-        revueDroits: RevueDroits.aVerifier,
-        visibilite: PolitiqueAcces.admin,
-        modifieLeUtc: quand,
-      ),
-      versions: <VersionSupport>[v],
-      droits: DroitsSupport(revue: RevueDroits.aVerifier),
-      historique: <EvenementAudit>[
-        EvenementAudit(
-          action: ActionAudit.creation,
-          acteur: 'Administration',
-          quandUtc: quand,
-          numeroVersion: 1,
-        ),
-      ],
-      titreCourt: saisie.titre,
-    );
+    _supports[id] =
+        _Etat(
+            support: SupportAdmin(
+              id: id,
+              titre: saisie.titre,
+              type: saisie.type,
+              langue: saisie.langue,
+              categorie: saisie.categorie,
+              niveau: saisie.niveau,
+              numeroVersion: 1,
+              statutVersion: StatutVersionRessource.brouillon,
+              revueDroits: RevueDroits.aVerifier,
+              visibilite: PolitiqueAcces.admin,
+              modifieLeUtc: quand,
+            ),
+            versions: <VersionSupport>[v],
+            droits: DroitsSupport(revue: RevueDroits.aVerifier),
+            historique: <EvenementAudit>[
+              EvenementAudit(
+                action: ActionAudit.creation,
+                acteur: 'Administration',
+                quandUtc: quand,
+                numeroVersion: 1,
+              ),
+            ],
+            titreCourt: saisie.titre,
+          )
+          ..tranches =
+              saisie.tranches ??
+              (saisie.type == TypeRessource.lienExterne
+                  ? tranchesParDefautLien
+                  : tranchesToutes)
+          ..etapes = List<String>.of(saisie.etapes)
+          ..lectureCoran = saisie.lectureCoran
+          ..ecolePriere = saisie.ecolePriere;
     return id;
   }
 
@@ -461,6 +492,14 @@ class BibliothequeAdminDemo implements PortBibliothequeAdmin {
     e.organisme = m.organisme ?? e.organisme;
     e.description = m.description ?? e.description;
     e.conditions = m.conditionsAttribution ?? e.conditions;
+    e.etapes = m.etapes ?? e.etapes;
+    e.tranches = m.tranches ?? e.tranches;
+    if (m.lectureCoran != null) {
+      e.lectureCoran = m.lectureCoran!.isEmpty ? null : m.lectureCoran;
+    }
+    if (m.ecolePriere != null) {
+      e.ecolePriere = m.ecolePriere!.isEmpty ? null : m.ecolePriere;
+    }
     _toucher(e);
     return EcritureFaite(revision: e.revision);
   }

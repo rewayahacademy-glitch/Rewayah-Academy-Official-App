@@ -201,6 +201,8 @@ import 'core/suivi/port_suivi_pedagogique.dart';
 import 'core/suivi/suivi_pedagogique_supabase.dart';
 import 'core/tc_bibliotheque/catalogue_supabase.dart';
 import 'core/tc_bibliotheque/donnees_catalogue.dart';
+import 'core/tc_bibliotheque/etapes_programme.dart';
+import 'core/tc_bibliotheque/etapes_programme_supabase.dart';
 import 'core/tc_bibliotheque/versions_supabase.dart';
 import 'core/tc_bibliotheque/vignettes_ressource.dart';
 import 'core/tc_bibliotheque/vignettes_supabase.dart';
@@ -408,6 +410,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   // BIBLIOTHEQUE-UNE : les vignettes deposees, URL signee par le serveur.
   portVignettesProvider.overrideWithValue(
     VignettesSupabase(Supabase.instance.client),
+  ),
+  // BIBLIOTHEQUE-UNE (D3) : les etapes du programme publie, que la direction
+  // coche au lieu de taper un code (liste vide tant que rien n'est publie).
+  portEtapesProgrammeProvider.overrideWithValue(
+    EtapesProgrammeSupabase(Supabase.instance.client),
   ),
   // RECHERCHE-LIVRAISON (directeur, 08/11/2026) : la recherche est servie en
   // production. Les moteurs lisent les ports reels (classes, Bibliotheque,

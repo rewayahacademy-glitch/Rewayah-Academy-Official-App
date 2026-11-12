@@ -67,6 +67,21 @@ class BibliothequeAdminSupabase implements PortBibliothequeAdmin {
   }
 
   @override
+  Future<bool> depotActif() async {
+    try {
+      final Object? v = await _client.rpc<Object?>('bibliotheque_depot_actif');
+      return v == true;
+    } on PostgrestException catch (e) {
+      throw switch (e.code) {
+        '42501' => const BibliothequeNonAutorisee(),
+        _ => e,
+      };
+    } on Exception {
+      throw const BibliothequeHorsLigne();
+    }
+  }
+
+  @override
   Future<FacettesCatalogue> facettes() async {
     final Map<String, dynamic> f = await _rpc('library_get_catalogue_facettes');
     return FacettesCatalogue(
@@ -91,6 +106,7 @@ class BibliothequeAdminSupabase implements PortBibliothequeAdmin {
           if (filtre.niveau != null) 'niveau': filtre.niveau,
           if (filtre.langue != null) 'langue': filtre.langue,
           if (recherche.isNotEmpty) 'recherche': recherche,
+          if (filtre.lectureCoran != null) 'lectureCoran': filtre.lectureCoran,
         },
         'p_curseur': curseur,
         'p_limite': limite,
@@ -174,27 +190,29 @@ class BibliothequeAdminSupabase implements PortBibliothequeAdmin {
   @override
   Future<String> creerBrouillon(NouveauSupport saisie) async {
     final String? niveau = saisie.niveau?.trim();
-    final Map<String, dynamic> r = await _rpc(
-      'library_creer_brouillon',
-      <String, dynamic>{
-        'p_saisie': <String, dynamic>{
-          'titre': saisie.titre.trim(),
-          'type': saisie.type.valeurSql,
-          'langue': saisie.langue.trim(),
-          'categorie': saisie.categorie.trim(),
-          if (niveau != null && niveau.isNotEmpty) 'niveau': niveau,
-          if (saisie.description != null &&
-              saisie.description!.trim().isNotEmpty)
-            'description': saisie.description!.trim(),
-          'rayon': saisie.rayon,
-          'ordre': saisie.ordre,
-          if (saisie.lienExterne != null &&
-              saisie.lienExterne!.trim().isNotEmpty)
-            'lienExterne': saisie.lienExterne!.trim(),
-          if (saisie.etapes.isNotEmpty) 'etapes': saisie.etapes,
-        },
+    final Map<String, dynamic>
+    r = await _rpc('library_creer_brouillon', <String, dynamic>{
+      'p_saisie': <String, dynamic>{
+        'titre': saisie.titre.trim(),
+        'type': saisie.type.valeurSql,
+        'langue': saisie.langue.trim(),
+        'categorie': saisie.categorie.trim(),
+        if (niveau != null && niveau.isNotEmpty) 'niveau': niveau,
+        if (saisie.description != null && saisie.description!.trim().isNotEmpty)
+          'description': saisie.description!.trim(),
+        'rayon': saisie.rayon,
+        'ordre': saisie.ordre,
+        if (saisie.lienExterne != null && saisie.lienExterne!.trim().isNotEmpty)
+          'lienExterne': saisie.lienExterne!.trim(),
+        if (saisie.etapes.isNotEmpty) 'etapes': saisie.etapes,
+        if (saisie.tranches != null) 'tranches': saisie.tranches,
+        if (saisie.lectureCoran != null &&
+            saisie.lectureCoran!.trim().isNotEmpty)
+          'lectureCoran': saisie.lectureCoran!.trim(),
+        if (saisie.ecolePriere != null && saisie.ecolePriere!.trim().isNotEmpty)
+          'ecolePriere': saisie.ecolePriere!.trim(),
       },
-    );
+    });
     return _texte(r, 'id');
   }
 
@@ -370,6 +388,9 @@ Map<String, dynamic> modificationJson(ModificationSupport m) =>
       if (m.lienExterne != null) 'lienExterne': m.lienExterne,
       if (m.etapes != null) 'etapes': m.etapes,
       if (m.retirerVignette) 'vignette': null,
+      if (m.tranches != null) 'tranches': m.tranches,
+      if (m.lectureCoran != null) 'lectureCoran': m.lectureCoran,
+      if (m.ecolePriere != null) 'ecolePriere': m.ecolePriere,
     };
 
 /// Une ligne du catalogue rendue par `library_get_catalogue`.
@@ -450,6 +471,17 @@ FicheSupport ficheSupportJson(
         if (e is String) e,
     ],
     aVignette: s['vignette'] == true,
+    // Une reponse sans tranches (serveur plus ancien) vaut les quatre : on
+    // n'invente jamais une restriction.
+    tranches: switch (<String>[
+      for (final Object? e in _liste(s['tranches']))
+        if (e is String) e,
+    ]) {
+      final List<String> lues when lues.isNotEmpty => lues,
+      _ => tranchesToutes,
+    },
+    lectureCoran: _optionnel(s['lectureCoran']),
+    ecolePriere: _optionnel(s['ecolePriere']),
     politiqueHorsLigne:
         PolitiqueOffline.depuisSql(s['politiqueHorsLigne'] as String?) ??
         PolitiqueOffline.jamais,

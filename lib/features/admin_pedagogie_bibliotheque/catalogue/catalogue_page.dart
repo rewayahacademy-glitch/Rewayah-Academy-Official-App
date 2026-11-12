@@ -34,6 +34,7 @@ import '../../../core/mouvement/mouvement.dart';
 import '../../../core/reseau/etat_sans_donnees.dart';
 import '../../../core/reseau/service_reseau.dart';
 import '../../../core/router/routes.dart';
+import '../../../core/tc_bibliotheque/lecture_coran.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/action_principale.dart';
 import '../../../core/widgets/bandeau_attention.dart';
@@ -492,6 +493,20 @@ class _Filtres extends StatelessWidget {
             onChoix: (String? v) =>
                 onChange(filtre.avec(langue: v, retirerLangue: v == null)),
           ),
+        // La lecture du Coran (D2) : un axe ferme, quatre valeurs.
+        MenuFiltre<String>(
+          key: const ValueKey<String>('filtre-lecture'),
+          libelle: t.admin.bibliotheque.import.classement.lectureTitre,
+          valeur: filtre.lectureCoran,
+          entrees: <EntreeFiltre<String>>[
+            EntreeFiltre<String>(valeur: null, libelle: f.tous),
+            for (final String l in lecturesCoran)
+              EntreeFiltre<String>(valeur: l, libelle: libelleLectureCoran(l)),
+          ],
+          onChoix: (String? v) => onChange(
+            filtre.avec(lectureCoran: v, retirerLectureCoran: v == null),
+          ),
+        ),
       ],
     );
   }

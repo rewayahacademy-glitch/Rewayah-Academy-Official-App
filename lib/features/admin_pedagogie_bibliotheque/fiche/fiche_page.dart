@@ -53,6 +53,7 @@ import '../../../core/widgets/sous_navigation_domaine.dart';
 import '../../../core/widgets/status_pill.dart';
 import '../../../core/widgets/zone_saisie.dart';
 import '../catalogue/catalogue_page.dart' show rangBibliotheque;
+import '../classement_document.dart';
 import '../libelles_bibliotheque.dart';
 import '../porte_bibliotheque.dart';
 
@@ -112,7 +113,10 @@ class _FicheEtat extends ConsumerState<_Fiche> {
   final TextEditingController _description = TextEditingController();
   final TextEditingController _conditions = TextEditingController();
   final TextEditingController _ordre = TextEditingController();
-  final TextEditingController _etapes = TextEditingController();
+  final TextEditingController _ecole = TextEditingController();
+  Set<String> _tranches = <String>{...tranchesTout};
+  final Set<String> _etapesChoisies = <String>{};
+  String? _lecture;
   final TextEditingController _lien = TextEditingController();
   String _rayon = codeRayonCours;
   List<RayonBibliotheque> _rayons = const <RayonBibliotheque>[];
@@ -146,7 +150,7 @@ class _FicheEtat extends ConsumerState<_Fiche> {
       _description,
       _conditions,
       _ordre,
-      _etapes,
+      _ecole,
       _lien,
     ]) {
       c.dispose();
@@ -169,7 +173,12 @@ class _FicheEtat extends ConsumerState<_Fiche> {
       _description.text = f.description ?? '';
       _conditions.text = f.conditionsAttribution ?? '';
       _ordre.text = '${f.ordre}';
-      _etapes.text = f.etapes.join(', ');
+      _ecole.text = f.ecolePriere ?? '';
+      _tranches = <String>{...f.tranches};
+      _etapesChoisies
+        ..clear()
+        ..addAll(f.etapes);
+      _lecture = f.lectureCoran;
       _lien.text = f.lienExterne ?? '';
       setState(() {
         _rayon = f.rayon;
@@ -193,6 +202,9 @@ class _FicheEtat extends ConsumerState<_Fiche> {
       setState(() => _erreurTitre = a.titreVide);
       return;
     }
+    // Au moins une tranche, et une ecole qui tient dans la base : l'ecran le
+    // dit deja sous les champs, rien ne part.
+    if (_tranches.isEmpty || !ecoleValide(_ecole.text)) return;
     setState(() {
       _envoi = true;
       _erreurTitre = null;
@@ -211,10 +223,14 @@ class _FicheEtat extends ConsumerState<_Fiche> {
           conditionsAttribution: _conditions.text.trim(),
           rayon: _rayon,
           ordre: int.tryParse(_ordre.text.trim()) ?? f.ordre,
-          etapes: <String>{
-            for (final String c in _etapes.text.split(','))
-              if (c.trim().isNotEmpty) c.trim(),
-          }.toList(),
+          etapes: _etapesChoisies.toList(),
+          tranches: <String>[
+            for (final String c in tranchesProposees)
+              if (_tranches.contains(c)) c,
+          ],
+          // Une chaine vide retire la valeur (le serveur la remet a null).
+          lectureCoran: _lecture ?? '',
+          ecolePriere: _ecole.text.trim(),
           // Le lien ne part que pour un document qui en porte un.
           lienExterne: f.lienExterne == null ? null : _lien.text.trim(),
         ),
@@ -371,12 +387,22 @@ class _FicheEtat extends ConsumerState<_Fiche> {
             'description': _description,
             'conditions': _conditions,
             'ordre': _ordre,
-            'etapes': _etapes,
+            'ecole': _ecole,
             'lien': _lien,
           },
           rayon: _rayon,
           rayons: _rayons,
           onRayon: (String? v) => setState(() => _rayon = v ?? _rayon),
+          tranches: _tranches,
+          onTranches: (Set<String> v) => setState(() => _tranches = v),
+          etapes: _etapesChoisies,
+          onEtapes: (Set<String> v) => setState(() {
+            _etapesChoisies
+              ..clear()
+              ..addAll(v);
+          }),
+          lecture: _lecture,
+          onLecture: (String? v) => setState(() => _lecture = v),
           onRetirerVignette: () => unawaited(_retirerVignette(f)),
           erreurTitre: _erreurTitre,
           envoi: _envoi,
@@ -622,7 +648,20 @@ class _Edition extends StatelessWidget {
     required this.rayons,
     required this.onRayon,
     required this.onRetirerVignette,
+    required this.tranches,
+    required this.onTranches,
+    required this.etapes,
+    required this.onEtapes,
+    required this.lecture,
+    required this.onLecture,
   });
+
+  final Set<String> tranches;
+  final ValueChanged<Set<String>> onTranches;
+  final Set<String> etapes;
+  final ValueChanged<Set<String>> onEtapes;
+  final String? lecture;
+  final ValueChanged<String?> onLecture;
 
   final String rayon;
   final List<RayonBibliotheque> rayons;
@@ -710,7 +749,19 @@ class _Edition extends StatelessWidget {
         Ecart.vMd,
         champ('ordre', a.champs.ordre),
         Ecart.vMd,
-        champ('etapes', a.champs.etapes),
+        ChoixTranches(
+          choisies: tranches,
+          lien: fiche.support.type == TypeRessource.lienExterne,
+          onChoix: onTranches,
+        ),
+        Ecart.vMd,
+        ChoixEtapes(choisies: etapes, onChoix: onEtapes),
+        Ecart.vMd,
+        ChampsLectureEcole(
+          lecture: lecture,
+          onLecture: onLecture,
+          ecole: champs['ecole']!,
+        ),
         if (fiche.aVignette) ...<Widget>[
           Ecart.vMd,
           Align(

@@ -135,7 +135,7 @@ class BibliothequeUploadSupabase {
       _depots.remove(uploadId);
       yield ProgressionUpload(
         phase: PhaseUpload.echec,
-        erreur: _erreurUpload(erreur.status, erreur.details),
+        erreur: erreurPourStatut(erreur.status, erreur.details),
       );
     } catch (_) {
       _depots.remove(uploadId);
@@ -190,10 +190,13 @@ class BibliothequeUploadSupabase {
     return const BibliothequeHorsLigne();
   }
 
-  static ErreurUpload _erreurUpload(int statut, Object? details) {
+  /// La cause d'un echec de depot, selon le statut rendu par la fonction Edge :
+  /// 503 = le depot n'est pas encore active (secret de confirmation absent).
+  static ErreurUpload erreurPourStatut(int statut, Object? details) {
     if (statut == 401 || statut == 403) return ErreurUpload.refuse;
     if (statut == 422) return ErreurUpload.empreinte;
     if (statut == 400) return ErreurUpload.type;
+    if (statut == 503) return ErreurUpload.nonActive;
     return ErreurUpload.reseau;
   }
 }

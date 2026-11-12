@@ -6982,7 +6982,6 @@
           "description": "Description courte (montrée sur la carte)",
           "rayon": "Rayon",
           "ordre": "Ordre d'affichage",
-          "etapes": "Étapes du programme (codes, séparés par des virgules)",
           "lien": "Adresse du lien (https)",
           "conditions": "Conditions d'attribution"
         },
@@ -7054,6 +7053,22 @@
         "auditVersion": "Version {numero}"
       },
       "import": {
+        "classement": {
+          "tranchesTitre": "Pour quels âges ?",
+          "tranchesAide": "Un élève ne voit que les documents de sa tranche d'âge. Cochez toutes les tranches concernées.",
+          "tranchesAideLien": "Un lien mène hors de l'application : la tranche des 6 à 9 ans n'est pas cochée d'emblée. Cochez-la seulement si vous êtes sûr du site.",
+          "tranchesAucune": "Cochez au moins une tranche d'âge.",
+          "etapesTitre": "Étapes du programme",
+          "etapesAide": "Rattachez le document aux étapes où il sert (facultatif).",
+          "etapesVide": "Les étapes apparaîtront quand le programme sera publié.",
+          "etapesIndisponible": "Les étapes n'ont pas pu être lues pour le moment. Le document peut être enregistré sans étape.",
+          "lectureTitre": "Lecture du Coran",
+          "lectureAucune": "Aucune lecture précisée",
+          "ecoleLibelle": "École juridique suivie (prière, ablutions ; facultatif)",
+          "ecoleTrop": "L'école suivie tient en 80 caractères au plus.",
+          "depotInactif": "Le dépôt de fichiers n'est pas encore activé. Vous pouvez déjà ajouter un document par son lien.",
+          "videoLien": "Pour une vidéo, collez son lien."
+        },
         "vignette": "Vignette",
         "choisirVignette": "Choisir une vignette",
         "choisirAutreVignette": "Choisir une autre vignette",
@@ -7072,7 +7087,6 @@
           "description": "Description courte (montrée sur la carte)",
           "rayon": "Rayon",
           "ordre": "Ordre d'affichage (facultatif)",
-          "etapes": "Étapes du programme (codes, séparés par des virgules ; facultatif)",
           "lien": "Adresse du lien (https)",
           "categorie": "Catégorie",
           "type": "Type",
@@ -7106,6 +7120,7 @@
           "reseau": "La connexion s'est interrompue. Le dépôt n'est pas confirmé : réessayez.",
           "refuse": "Le serveur a refusé ce dépôt. Réessayez ou choisissez un autre fichier.",
           "empreinte": "Le fichier reçu ne correspond pas à celui envoyé. Réessayez.",
+          "nonActive": "Le dépôt de fichiers n'est pas encore activé : rien n'a été envoyé. En attendant, vous pouvez ajouter un document par son lien.",
           "creation": "Le brouillon n'a pas pu être créé. Réessayez.",
           "droits": "Les droits n'ont pas pu être enregistrés. Réessayez."
         },
@@ -9589,6 +9604,8 @@
       },
       "detail": {
         "titre": "Document",
+        "lecture": "Lecture du Coran",
+        "ecole": "École juridique suivie",
         "capacites": "Ce que ce document permet",
         "niveaux": "Niveaux",
         "sansVersion": "Aucune version publiée\u00a0: rien à ouvrir pour le moment.",
@@ -9616,6 +9633,10 @@
       },
       "rendu": {
         "sansLecteur": "Ce type de document n'a pas encore de lecteur dans l'application.",
+        "confirmerTitre": "Ce lien quitte l'application",
+        "confirmerPhrase": "Il ouvre un autre site, en dehors de Rewayah Academy. Vous pouvez revenir ici ensuite.",
+        "confirmerOuvrir": "Ouvrir le lien",
+        "confirmerRester": "Rester dans l'application",
         "ouvrirLien": "Ouvrir le lien",
         "lienAutreSite": "Ce lien s'ouvre sur un autre site.",
         "lienSansNavigateur": "Ce lien s'ouvre depuis la version web de l'application.",
