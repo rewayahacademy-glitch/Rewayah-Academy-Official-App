@@ -5382,8 +5382,11 @@ class Traductions$salle$seance$fr {
 	/// fr: 'Tuteur {dePrenom} observe.'
 	String tuteurDeObserve({required Object dePrenom}) => 'Tuteur ${dePrenom} observe.';
 
-	/// fr: 'Un parent observe cette séance'
-	String get unParentObserve => 'Un parent observe cette séance';
+	/// fr: '(one) {Un parent observe cette séance} (other) {{n} parents observent cette séance}'
+	String parentsObservent({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: 'Un parent observe cette séance',
+		other: '${n} parents observent cette séance',
+	);
 
 	/// fr: 'Le tuteur {dePrenom} observe la séance.'
 	String leTuteurDeObserve({required Object dePrenom}) => 'Le tuteur ${dePrenom} observe la séance.';
@@ -49186,7 +49189,7 @@ extension on Traductions {
 			'salle.seance.votreParentObserve' => 'Votre parent observe la séance.',
 			'salle.seance.tonParentObserve' => 'Ton parent observe la séance.',
 			'salle.seance.tuteurDeObserve' => ({required Object dePrenom}) => 'Tuteur ${dePrenom} observe.',
-			'salle.seance.unParentObserve' => 'Un parent observe cette séance',
+			'salle.seance.parentsObservent' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Un parent observe cette séance', other: '${n} parents observent cette séance', ), 
 			'salle.seance.leTuteurDeObserve' => ({required Object dePrenom}) => 'Le tuteur ${dePrenom} observe la séance.',
 			'salle.seance.mentionEtNotice' => ({required Object mention, required Object notice}) => '${mention} ${notice}',
 			'salle.seance.retour' => 'Retour',

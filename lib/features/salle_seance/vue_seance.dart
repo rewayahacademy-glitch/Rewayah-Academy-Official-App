@@ -200,7 +200,16 @@ class EleveSeance {
 /// Une visite d'observation en cours.
 @immutable
 class VisiteSeance {
-  const VisiteSeance({required this.prenomEnfant, required this.concerneMoi});
+  const VisiteSeance({
+    required this.prenomEnfant,
+    required this.concerneMoi,
+    this.nombre = 1,
+  });
+
+  /// Le nombre de visites en cours annoncees a l'enseignant (fiche 0 de la
+  /// salle, ligne 16) : « Un parent observe », ou « {n} parents observent »,
+  /// sans prenoms. Toujours 1 pour l'eleve, qui ne lit que la sienne.
+  final int nombre;
 
   /// Le prenom de l'enfant dont le tuteur observe.
   final String prenomEnfant;
@@ -1282,7 +1291,11 @@ class VueSeance {
             : t.salle.seance.votreParentObserve,
       // Vague Enseignant : « Un parent observe cette seance », sans prenom
       // (02_DECOUPAGE, detail EN-9 ; choix provisoire consigne au directeur).
-      RoleSeance.enseignant => t.salle.seance.unParentObserve,
+      // Plusieurs visites en meme temps : « {n} parents observent cette
+      // seance » (fiche 0, ligne 16), toujours sans prenoms.
+      RoleSeance.enseignant => t.salle.seance.parentsObservent(
+        n: visite!.nombre,
+      ),
     };
   }
 

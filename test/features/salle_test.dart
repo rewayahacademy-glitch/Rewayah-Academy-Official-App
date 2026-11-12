@@ -3157,7 +3157,10 @@ void main() {
 
         // S0 : la notice de la salle de seance, sans prenom (EN-9).
         await _deplierProfilSiCapsule(tester);
-        expect(find.text(t.salle.seance.unParentObserve), findsOneWidget);
+        expect(
+          find.text(t.salle.seance.parentsObservent(n: 1)),
+          findsOneWidget,
+        );
       },
     );
 
@@ -3184,7 +3187,7 @@ void main() {
 
         // Elle porte le prenom d'un enfant qui n'est pas forcement le sien.
         expect(find.byType(IndicateurObservation), findsNothing);
-        expect(find.text(t.salle.seance.unParentObserve), findsNothing);
+        expect(find.text(t.salle.seance.parentsObservent(n: 1)), findsNothing);
         expect(find.text("Tuteur d'Amina observe"), findsNothing);
       },
     );

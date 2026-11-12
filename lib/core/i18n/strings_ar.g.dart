@@ -3431,7 +3431,14 @@ class _Traductions$salle$seance$ar extends Traductions$salle$seance$fr {
 	@override String get votreParentObserve => 'وليّ أمرك يتابع الحصة.';
 	@override String get tonParentObserve => 'وليّ أمرك يتابع الحصة.';
 	@override String tuteurDeObserve({required Object dePrenom}) => 'وليّ أمر ⁨${dePrenom}⁩ يتابع.';
-	@override String get unParentObserve => 'وليّ أمر يتابع هذه الحصة';
+	@override String parentsObservent({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: '⁨${n}⁩ وليّ أمر يتابعون هذه الحصة',
+		one: 'وليّ أمر يتابع هذه الحصة',
+		two: 'وليّا أمر يتابعان هذه الحصة',
+		few: '⁨${n}⁩ أولياء أمور يتابعون هذه الحصة',
+		many: '⁨${n}⁩ وليّ أمر يتابعون هذه الحصة',
+		other: '⁨${n}⁩ وليّ أمر يتابعون هذه الحصة',
+	);
 	@override String leTuteurDeObserve({required Object dePrenom}) => 'وليّ أمر ⁨${dePrenom}⁩ يتابع الحصة.';
 	@override String mentionEtNotice({required Object mention, required Object notice}) => '⁨${mention}⁩ ⁨${notice}⁩';
 	@override String get retour => 'رجوع';
@@ -24874,7 +24881,7 @@ extension on TraductionsAr {
 			'salle.seance.votreParentObserve' => 'وليّ أمرك يتابع الحصة.',
 			'salle.seance.tonParentObserve' => 'وليّ أمرك يتابع الحصة.',
 			'salle.seance.tuteurDeObserve' => ({required Object dePrenom}) => 'وليّ أمر ⁨${dePrenom}⁩ يتابع.',
-			'salle.seance.unParentObserve' => 'وليّ أمر يتابع هذه الحصة',
+			'salle.seance.parentsObservent' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: '⁨${n}⁩ وليّ أمر يتابعون هذه الحصة', one: 'وليّ أمر يتابع هذه الحصة', two: 'وليّا أمر يتابعان هذه الحصة', few: '⁨${n}⁩ أولياء أمور يتابعون هذه الحصة', many: '⁨${n}⁩ وليّ أمر يتابعون هذه الحصة', other: '⁨${n}⁩ وليّ أمر يتابعون هذه الحصة', ), 
 			'salle.seance.leTuteurDeObserve' => ({required Object dePrenom}) => 'وليّ أمر ⁨${dePrenom}⁩ يتابع الحصة.',
 			'salle.seance.mentionEtNotice' => ({required Object mention, required Object notice}) => '⁨${mention}⁩ ⁨${notice}⁩',
 			'salle.seance.retour' => 'رجوع',

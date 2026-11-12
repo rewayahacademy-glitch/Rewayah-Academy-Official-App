@@ -88,6 +88,8 @@ abstract final class DepuisSalle {
       visite = VisiteSeance(
         prenomEnfant: annonces.first.prenomEnfant,
         concerneMoi: false,
+        // Une annonce par visite en cours (serveur) : leur nombre.
+        nombre: annonces.length,
       );
     } else if (!enseignant && monTuteurObserve) {
       visite = VisiteSeance(prenomEnfant: prenomEleve ?? '', concerneMoi: true);
