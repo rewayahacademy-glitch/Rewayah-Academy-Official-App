@@ -8,6 +8,7 @@ import 'package:rewayah_academy/core/capacites/port_support.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/enseignant/depot_cahiers.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/i18n/villes_fuseau.dart';
 import 'package:rewayah_academy/core/offres/offre_horaire.dart';
 import 'package:rewayah_academy/core/offres/service_offres.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart';
@@ -25,9 +26,11 @@ import 'package:rewayah_academy/core/widgets/stat_tile.dart';
 import 'package:rewayah_academy/features/compte/lignes_compte.dart';
 import 'package:rewayah_academy/features/compte/mes_donnees_page.dart';
 import 'package:rewayah_academy/features/profil_enseignant/declaration_choix.dart';
+import 'package:rewayah_academy/features/profil_enseignant/feuille_fuseau.dart';
 import 'package:rewayah_academy/features/profil_enseignant/profil_enseignant_page.dart';
 
 import '../support/harnais.dart';
+import '../support/horloge_fictive.dart';
 
 /// La declaration du profil, en memoire.
 ///
@@ -41,15 +44,26 @@ class _FauxDeclaration implements ServiceDeclarationEnseignant {
   final List<({String? pays, List<String>? langues})> ecritures =
       <({String? pays, List<String>? langues})>[];
 
+  /// Les fuseaux demandes (FUSEAU-IDENTITE-PRO), dans l'ordre.
+  final List<String> fuseaux = <String>[];
+
   /// Ce que la prochaine ecriture doit jeter.
   Object? erreurAJeter;
 
   @override
-  Future<void> declarer({String? pays, List<String>? langues}) async {
+  Future<void> declarer({
+    String? pays,
+    List<String>? langues,
+    String? fuseau,
+  }) async {
     final Object? erreur = erreurAJeter;
     if (erreur != null) {
       // ignore: only_throw_errors
       throw erreur;
+    }
+    if (fuseau != null) {
+      fuseaux.add(fuseau);
+      return;
     }
     ecritures.add((pays: pays, langues: langues));
   }
@@ -934,6 +948,101 @@ void main() {
       );
       await tester.pumpAndSettle();
       expect(find.text(t.compte.tuteur.pageAide.canalLien), findsOneWidget);
+    });
+  });
+
+  // FUSEAU-IDENTITE-PRO (garde-cap, 12/11/2026) : l'enseignant regle lui-meme
+  // son fuseau dans « Identite professionnelle » ; la ligne ecrit le fuseau
+  // (p_timezone), et un nom refuse par le serveur est dit.
+  group('FUSEAU-IDENTITE-PRO : la ligne Fuseau', () {
+    testWidgets('la valeur du serveur : « Riyadh · UTC+3 »', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        profil: _profilDeTest(),
+        extra: <Override>[
+          monHorlogeDeTest(
+            fuseau: 'Asia/Riyadh',
+            decalage: const Duration(hours: 3),
+          ),
+        ],
+      );
+      await tester.pumpAndSettle();
+      await _ouvrir(tester, ProfilEnseignantPage.identiteKey);
+      expect(
+        find.descendant(
+          of: find.byKey(cleLigneFuseau),
+          matching: find.text(
+            t.enseignant.profil.fuseauValeur(
+              ville: villeDuFuseauLibelle('Asia/Riyadh'),
+              decalage: '+3',
+            ),
+          ),
+        ),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('la ligne ecrit le fuseau, et seulement lui', (
+      WidgetTester tester,
+    ) async {
+      final _Monte monte = await _monter(
+        tester,
+        profil: _profilDeTest(),
+        extra: <Override>[monHorlogeDeTest()],
+      );
+      await tester.pumpAndSettle();
+      await _ouvrir(tester, ProfilEnseignantPage.identiteKey);
+      await tester.ensureVisible(find.byKey(cleLigneFuseau));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(cleLigneFuseau));
+      await tester.pumpAndSettle();
+      await tester.enterText(
+        find.descendant(
+          of: find.byKey(FeuilleFuseau.expertKey),
+          matching: find.byType(EditableText),
+        ),
+        'Asia/Riyadh',
+      );
+      await tester.ensureVisible(find.byKey(FeuilleFuseau.enregistrerKey));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(FeuilleFuseau.enregistrerKey));
+      await tester.pumpAndSettle();
+      expect(monte.declaration.fuseaux, <String>['Asia/Riyadh']);
+      expect(monte.declaration.ecritures, isEmpty);
+      expect(find.text(t.enseignant.profil.enregistre), findsOneWidget);
+    });
+
+    testWidgets('un nom refuse par le serveur est dit, pas avale', (
+      WidgetTester tester,
+    ) async {
+      final _Monte monte = await _monter(
+        tester,
+        profil: _profilDeTest(),
+        extra: <Override>[monHorlogeDeTest()],
+      );
+      monte.declaration.erreurAJeter = const FuseauInconnu();
+      await tester.pumpAndSettle();
+      await _ouvrir(tester, ProfilEnseignantPage.identiteKey);
+      await tester.ensureVisible(find.byKey(cleLigneFuseau));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(cleLigneFuseau));
+      await tester.pumpAndSettle();
+      await tester.enterText(
+        find.descendant(
+          of: find.byKey(FeuilleFuseau.expertKey),
+          matching: find.byType(EditableText),
+        ),
+        'Asia/Riad',
+      );
+      await tester.ensureVisible(find.byKey(FeuilleFuseau.enregistrerKey));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(FeuilleFuseau.enregistrerKey));
+      await tester.pumpAndSettle();
+      expect(find.text(t.enseignant.profil.fuseauInconnu), findsOneWidget);
+      expect(find.byType(FeuilleFuseau), findsOneWidget);
+      expect(find.text(t.enseignant.profil.enregistre), findsNothing);
     });
   });
 }

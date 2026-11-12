@@ -17,12 +17,16 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/i18n/villes_fuseau.dart';
 import 'package:rewayah_academy/core/matching/service_matching.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart';
+import 'package:rewayah_academy/core/profil/service_declaration.dart';
 import 'package:rewayah_academy/core/regles/service_regles.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
+import 'package:rewayah_academy/core/tc_horloge/fuseaux_interlocuteurs.dart';
+import 'package:rewayah_academy/core/tc_horloge/mon_horloge.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/groupe_reglages.dart';
 import 'package:rewayah_academy/core/widgets/pressable.dart';
@@ -30,7 +34,9 @@ import 'package:rewayah_academy/features/creneaux/creneaux_page.dart';
 import 'package:rewayah_academy/features/creneaux/feuille_plage.dart';
 import 'package:rewayah_academy/features/creneaux/plages.dart';
 import 'package:rewayah_academy/features/creneaux/plages_disponibilite.dart';
+import 'package:rewayah_academy/features/profil_enseignant/feuille_fuseau.dart';
 
+import '../../capture/outil_capture.dart';
 import '../../support/aucun_mot_coupe.dart';
 import '../../support/garde_interface.dart';
 import '../../support/harnais.dart';
@@ -74,6 +80,8 @@ Widget _hote(
   bool horsLigne = false,
   ThemeMode theme = ThemeMode.light,
   double echelle = 1,
+  String? fuseauProfil = 'Europe/Paris',
+  List<Override> extra = const <Override>[],
 }) => ProviderScope(
   overrides: <Override>[
     sourceSessionProvider.overrideWithValue(FausseSourceSession(_session)),
@@ -83,6 +91,20 @@ Widget _hote(
     serviceReseauProvider.overrideWithValue(
       FauxServiceReseau(horsLigneRendu: horsLigne),
     ),
+    // FUSEAU-IDENTITE-PRO : le fuseau du profil vient de `mon_horloge`
+    // (donnees de test ; `null` : un profil sans fuseau).
+    monHorlogeProvider.overrideWith(
+      (_) async => MonHorloge(
+        maintenantServeur: DateTime.utc(2026, 11, 12, 9),
+        moi: fuseauProfil == null
+            ? null
+            : FuseauVu(
+                fuseau: fuseauProfil,
+                decalage: const Duration(hours: 1),
+              ),
+      ),
+    ),
+    ...extra,
   ],
   child: TranslationProvider(
     child: MaterialApp(
@@ -110,12 +132,21 @@ Future<void> _monter(
   bool horsLigne = false,
   ThemeMode theme = ThemeMode.light,
   double echelle = 1,
+  String? fuseauProfil = 'Europe/Paris',
+  List<Override> extra = const <Override>[],
 }) async {
   tester.view.physicalSize = vue;
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
   await tester.pumpWidget(
-    _hote(planning, horsLigne: horsLigne, theme: theme, echelle: echelle),
+    _hote(
+      planning,
+      horsLigne: horsLigne,
+      theme: theme,
+      echelle: echelle,
+      fuseauProfil: fuseauProfil,
+      extra: extra,
+    ),
   );
   await tester.pumpAndSettle();
 }
@@ -721,4 +752,113 @@ void main() {
       }
     }
   });
+
+  // FUSEAU-IDENTITE-PRO (garde-cap, 12/11/2026) : sans fuseau du profil,
+  // aucune disponibilite ne se pose ; la phrase le dit et mene au reglage.
+  // R3 : les disponibilites sans fuseau du profil, 390, clair, sombre et
+  // arabe. Donnees fictives. Jamais sans CAPTURE_DIR.
+  group('Capture : disponibilites sans fuseau', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    for (final (String nom, AppLocale langue, ThemeMode theme)
+        in <(String, AppLocale, ThemeMode)>[
+          ('clair', AppLocale.fr, ThemeMode.light),
+          ('sombre', AppLocale.fr, ThemeMode.dark),
+          ('arabe', AppLocale.ar, ThemeMode.light),
+        ]) {
+      testWidgets(nom, (WidgetTester tester) async {
+        await tester.runAsync(() => LocaleSettings.setLocale(langue));
+        addTearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
+        final FauxServicePlanning planning = FauxServicePlanning()
+          ..creneaux[_monId] = _plage(1, 17, 19);
+        await _monter(
+          tester,
+          planning,
+          vue: const Size(390, 900),
+          theme: theme,
+          fuseauProfil: null,
+        );
+        expect(tester.takeException(), isNull);
+        debugPrint(
+          'PNG ${await capturerVue(tester, 'disponibilites_sans_fuseau_390_$nom')}',
+        );
+      });
+    }
+  });
+
+  group('FUSEAU-IDENTITE-PRO : le fuseau du profil', () {
+    testWidgets(
+      'sans fuseau : la phrase, le reglage, aucun ajout ni retouche',
+      (WidgetTester tester) async {
+        final FauxServicePlanning planning = FauxServicePlanning()
+          ..creneaux[_monId] = _plage(1, 17, 19);
+        await _monter(
+          tester,
+          planning,
+          fuseauProfil: null,
+          extra: <Override>[
+            serviceDeclarationProvider.overrideWithValue(_DeclarationMuette()),
+          ],
+        );
+        expect(
+          find.byKey(const ValueKey<String>('plages-fuseau-manquant')),
+          findsOneWidget,
+        );
+        expect(find.text(t.enseignant.creneaux.ajouterPlage), findsNothing);
+        // La plage deja posee reste lisible, dans son fuseau, mais inerte :
+        // plus une ligne pressable, et la toucher n'ouvre rien.
+        expect(find.text(_de(17)), findsOneWidget);
+        expect(_ligne('Lundi', 17, 19), findsNothing);
+        await tester.tap(find.text(_de(17)), warnIfMissed: false);
+        await tester.pumpAndSettle();
+        expect(_feuille, findsNothing);
+        // Le lien : la feuille du fuseau, la meme qu'Identite professionnelle.
+        await _toucher(
+          tester,
+          find.byKey(const ValueKey<String>('plages-regler-fuseau')),
+        );
+        expect(find.byType(FeuilleFuseau), findsOneWidget);
+        expect(planning.poses, isEmpty);
+      },
+    );
+
+    testWidgets('avec fuseau : aucune phrase de fuseau manquant', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester, FauxServicePlanning());
+      expect(
+        find.byKey(const ValueKey<String>('plages-fuseau-manquant')),
+        findsNothing,
+      );
+      expect(find.text(t.enseignant.creneaux.ajouterPlage), findsOneWidget);
+    });
+
+    testWidgets('plages posees dans un autre fuseau : la phrase les nomme', (
+      WidgetTester tester,
+    ) async {
+      final FauxServicePlanning planning = FauxServicePlanning()
+        ..creneaux[_monId] = <Creneau>[
+          for (int h = 17; h < 19; h++)
+            Creneau(jour: 1, heure: h, fuseau: 'Africa/Conakry'),
+        ];
+      await _monter(tester, planning);
+      expect(
+        find.text(
+          t.enseignant.creneaux.plagesDansFuseau(
+            villes: villeDuFuseauLibelle('Africa/Conakry'),
+          ),
+        ),
+        findsOneWidget,
+      );
+    });
+  });
+}
+
+/// Une declaration qui n'ecrit rien : le test ne va pas jusqu'a l'ecriture.
+class _DeclarationMuette implements ServiceDeclarationEnseignant {
+  @override
+  Future<void> declarer({
+    String? pays,
+    List<String>? langues,
+    String? fuseau,
+  }) async {}
 }

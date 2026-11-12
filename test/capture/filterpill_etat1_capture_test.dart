@@ -26,6 +26,7 @@ import 'package:rewayah_academy/features/admin_comptes/comptes_page.dart';
 import 'package:rewayah_academy/features/creneaux/creneaux_page.dart';
 
 import '../support/harnais.dart';
+import '../support/horloge_fictive.dart';
 import 'outil_capture.dart';
 
 const String _monId = 't1';
@@ -48,6 +49,7 @@ List<Override> _surcharges() => <Override>[
     ),
   ),
   serviceMatchingProvider.overrideWithValue(FauxServiceMatching()),
+  monHorlogeDeTest(),
   servicePlanningProvider.overrideWithValue(
     FauxServicePlanning()
       ..creneaux[_monId] = <Creneau>[

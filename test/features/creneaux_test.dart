@@ -11,6 +11,8 @@ import 'package:rewayah_academy/core/regles/service_regles.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
+import 'package:rewayah_academy/core/tc_horloge/fuseaux_interlocuteurs.dart';
+import 'package:rewayah_academy/core/tc_horloge/mon_horloge.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/creneaux/creneaux_page.dart';
 
@@ -80,12 +82,19 @@ void _telephone(WidgetTester tester) {
   addTearDown(tester.view.reset);
 }
 
+/// Le fuseau du profil a Paris, comme le serveur le rendrait (donnees de test).
+final MonHorloge _horlogeParis = MonHorloge(
+  maintenantServeur: DateTime.utc(2026, 11, 12, 9),
+  moi: const FuseauVu(fuseau: 'Europe/Paris', decalage: Duration(hours: 1)),
+);
+
 Future<void> _monter(
   WidgetTester tester, {
   FauxServiceMatching? matching,
   FauxServicePlanning? planning,
   FauxServiceRegles? regles,
   bool horsLigne = false,
+  Future<MonHorloge?> Function()? horloge,
   List<Override> extra = const <Override>[],
 }) async {
   _telephone(tester);
@@ -98,6 +107,11 @@ Future<void> _monter(
           planning: planning ?? FauxServicePlanning(),
           regles: regles ?? _reglesAvecPlafond(5),
           horsLigne: horsLigne,
+        ),
+        // FUSEAU-IDENTITE-PRO : le fuseau du profil vient de `mon_horloge` ;
+        // par defaut celui que le faux planning rendait (Paris).
+        monHorlogeProvider.overrideWith(
+          (_) => horloge?.call() ?? Future<MonHorloge?>.value(_horlogeParis),
         ),
         ...extra,
       ],
@@ -262,12 +276,9 @@ void main() {
     ) async {
       // La grille se repliait sur 'Europe/Paris' code en dur : un enseignant de
       // Conakry lisait ses heures en heure de Paris, puis les voyait changer.
-      final Completer<String> jamais = Completer<String>();
+      final Completer<MonHorloge?> jamais = Completer<MonHorloge?>();
 
-      await _monter(
-        tester,
-        extra: <Override>[monFuseauProvider.overrideWith((_) => jamais.future)],
-      );
+      await _monter(tester, horloge: () => jamais.future);
 
       expect(find.byType(Skeleton), findsWidgets);
       expect(
@@ -280,12 +291,7 @@ void main() {
     testWidgets('error : la grille dit son echec et propose la relecture', (
       WidgetTester tester,
     ) async {
-      await _monter(
-        tester,
-        extra: <Override>[
-          monFuseauProvider.overrideWith((_) async => throw StateError('fix')),
-        ],
-      );
+      await _monter(tester, horloge: () async => throw StateError('fix'));
 
       expect(find.text(t.enseignant.creneaux.grilleErreur), findsOneWidget);
       expect(find.text(t.commun.reessayer), findsOneWidget);

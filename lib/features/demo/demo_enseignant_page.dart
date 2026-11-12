@@ -38,6 +38,8 @@ import '../../core/session/session_controleur.dart';
 import '../../core/session/session_state.dart';
 import '../../core/tc_groupe/group_summary_vm.dart' show TitreEnseignant;
 import '../../core/tc_horloge/emplacement_entree.dart' show RoleEntree;
+import '../../core/tc_horloge/fuseaux_interlocuteurs.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/video/pre_vol.dart';
@@ -227,6 +229,18 @@ List<Override> surchargesCoquilleEnseignantDemo(EtatDemoEnseignant etat) {
     // Disponibilites (ENS-06), hebdomadaires et sans date (E15).
     monFuseauProvider.overrideWith(
       (Ref _) async => DonneesEnseignantDemo.fuseau,
+    ),
+    // FUSEAU-IDENTITE-PRO : le fuseau du profil des ecrans de l'enseignant
+    // (Identite professionnelle, disponibilites) vient de `mon_horloge`.
+    // Demonstration : fuseau et decalage fictifs, poses ici, jamais lus.
+    monHorlogeProvider.overrideWith(
+      (Ref _) async => MonHorloge(
+        maintenantServeur: DateTime.now().toUtc(),
+        moi: const FuseauVu(
+          fuseau: DonneesEnseignantDemo.fuseau,
+          decalage: Duration(hours: 1),
+        ),
+      ),
     ),
     disponibilitesProvider(id).overrideWith(
       (Ref _) async =>
@@ -584,7 +598,11 @@ class DeclarationEnseignantDemo implements ServiceDeclarationEnseignant {
   }
 
   @override
-  Future<void> declarer({String? pays, List<String>? langues}) async {
+  Future<void> declarer({
+    String? pays,
+    List<String>? langues,
+    String? fuseau,
+  }) async {
     _pays = pays ?? _pays;
     _langues = langues ?? _langues;
   }
