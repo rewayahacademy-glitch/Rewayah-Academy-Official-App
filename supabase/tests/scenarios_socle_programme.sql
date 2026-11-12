@@ -85,7 +85,7 @@ SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM public.programme_versions WHERE st
 -- ------------------------------------------------------------------
 INSERT INTO auth.users(id, email)
 SELECT pg_temp.u(x), 'sp-' || x || '@test.invalid'
-  FROM unnest(ARRAY['a1','b1','b2','b3','t1','t2','e1','e2','e3','e4','e5','e6']) AS x;
+  FROM unnest(ARRAY['a1','b1','b2','b3','b4','t1','t2','e1','e2','e3','e4','e5','e6','e7','e9']) AS x;
 INSERT INTO public.households(id, timezone) VALUES
   (pg_temp.u('f1'), 'America/Toronto'), (pg_temp.u('f2'), 'America/Toronto'),
   (pg_temp.u('f3'), 'America/Toronto');
@@ -99,6 +99,7 @@ SELECT pg_temp.u(x.id), x.mat, x.role::public.app_role,
    ('b1','SP-ENS-01','teacher',NULL,'Titulaire un'),
    ('b2','SP-ENS-02','teacher',NULL,'Titulaire deux'),
    ('b3','SP-ENS-03','teacher',NULL,'Etrangere'),
+   ('b4','SP-ENS-04','teacher',NULL,'Remplacante ancienne'),
    ('t1','SP-TUT-01','guardian','f1','Tutrice'),
    ('t2','SP-TUT-02','guardian','f2','Autre'),
    ('e1','SP-ELV-01','student','f1','Eleve un'),
@@ -106,12 +107,16 @@ SELECT pg_temp.u(x.id), x.mat, x.role::public.app_role,
    ('e3','SP-TIT-03','guardian','f3','Adulte'),
    ('e4','SP-ELV-04','student','f2','Eleve quatre'),
    ('e5','SP-ELV-05','student','f2','Eleve cinq'),
-   ('e6','SP-ELV-06','student','f2','Eleve six')) AS x(id, mat, role, foyer, prenom);
+   ('e6','SP-ELV-06','student','f2','Eleve six'),
+   ('e7','SP-ELV-07','student','f1','Eleve sept'),
+   ('e9','SP-ELV-09','student','f3','Adulte eleve')) AS x(id, mat, role, foyer, prenom);
 INSERT INTO public.student_profiles(profile_id, student_type, interface_mode, cohorte) VALUES
   (pg_temp.u('e1'), 'minor', 'child', 'enfant_6_9'),
   (pg_temp.u('e2'), 'minor', 'standard', 'enfant_10_13'),
   (pg_temp.u('e4'), 'minor', 'child', 'enfant_6_9'),
-  (pg_temp.u('e5'), 'minor', 'child', 'enfant_6_9');
+  (pg_temp.u('e5'), 'minor', 'child', 'enfant_6_9'),
+  (pg_temp.u('e7'), 'minor', 'standard', 'enfant_10_13'),
+  (pg_temp.u('e9'), 'autonomous', 'standard', 'adulte_18_plus');
 INSERT INTO public.student_profiles(profile_id, student_type, interface_mode, cohorte, niveau_declare)
 VALUES (pg_temp.u('e6'), 'autonomous', 'standard', 'adulte_18_plus', 'lecture_courante');
 INSERT INTO public.student_profiles(profile_id, titulaire_profile_id, student_type, interface_mode, cohorte)
@@ -133,12 +138,14 @@ INSERT INTO public.groupes(id, teacher_id, type_public, seuil_max, libelle, week
 INSERT INTO public.groupe_membres(groupe_id, student_id, joined_at) VALUES
  (pg_temp.u('c1'), pg_temp.u('e1'), pg_catalog.now() - interval '3 weeks'),
  (pg_temp.u('c1'), pg_temp.u('e2'), pg_catalog.now() - interval '3 weeks'),
- (pg_temp.u('c2'), pg_temp.u('e3'), pg_catalog.now() - interval '3 weeks');
+ (pg_temp.u('c2'), pg_temp.u('e3'), pg_catalog.now() - interval '3 weeks'),
+ (pg_temp.u('c1'), pg_temp.u('e7'), pg_catalog.now() - interval '12 weeks'),
+ (pg_temp.u('c2'), pg_temp.u('e9'), pg_catalog.now() - interval '3 weeks');
 SELECT pg_temp.vrai(
   (SELECT pg_catalog.count(*) FROM public.groupes WHERE id IN (pg_temp.u('c1'), pg_temp.u('c2'))
       AND programme_niveau_id IS NULL) = 2
   AND NOT EXISTS (SELECT 1 FROM public.eleve_etape_en_cours
-                   WHERE student_id IN (pg_temp.u('e1'), pg_temp.u('e2'), pg_temp.u('e3'))),
+                   WHERE student_id IN (pg_temp.u('e1'), pg_temp.u('e2'), pg_temp.u('e3'), pg_temp.u('e7'))),
   'avant le semis : classes sans etape, eleves sans etape (etat de production)');
 
 -- ------------------------------------------------------------------
@@ -230,19 +237,19 @@ SELECT pg_temp.vrai(
   (SELECT pg_catalog.count(*) FROM public.eleve_etape_en_cours f
     WHERE f.student_id IN (pg_temp.u('e1'), pg_temp.u('e2'), pg_temp.u('e3'))
       AND f.niveau_id = (SELECT id FROM sp_ids WHERE cle = 'n1')
-      AND f.entree_etape_le = (pg_catalog.now() - interval '3 weeks')::date
+      AND f.entree_etape_le = pg_catalog.now()::date
       AND f.entree_niveau_le = f.entree_etape_le AND f.origine = 'classe' AND f.recul_jours = 0) = 3,
-  'eleves deja presents : etape 1, entree = date d''entree en classe');
+  'eleves deja presents (entres il y a 3 semaines) : etape 1, entree = jour de l''installation');
 SELECT pg_temp.vrai(
-  (SELECT d.date_limite = (pg_catalog.now() - interval '3 weeks' + interval '10 weeks')::date
+  (SELECT d.date_limite = (pg_catalog.now() + interval '10 weeks')::date
           AND d.date_limite_semaines = 10
-          AND d.horizon = (pg_catalog.now() - interval '3 weeks' + interval '48 weeks')::date
+          AND d.horizon = (pg_catalog.now() + interval '48 weeks')::date
      FROM private.dates_etape(pg_temp.u('e1')) d)
-  AND (SELECT d.date_limite = (pg_catalog.now() - interval '3 weeks' + interval '8 weeks')::date
-          AND d.horizon = (pg_catalog.now() - interval '3 weeks' + interval '36 weeks')::date
+  AND (SELECT d.date_limite = (pg_catalog.now() + interval '8 weeks')::date
+          AND d.horizon = (pg_catalog.now() + interval '36 weeks')::date
      FROM private.dates_etape(pg_temp.u('e2')) d)
-  AND (SELECT d.date_limite = (pg_catalog.now() - interval '3 weeks' + interval '4 weeks')::date
-          AND d.horizon = (pg_catalog.now() - interval '3 weeks' + interval '20 weeks')::date
+  AND (SELECT d.date_limite = (pg_catalog.now() + interval '4 weeks')::date
+          AND d.horizon = (pg_catalog.now() + interval '20 weeks')::date
      FROM private.dates_etape(pg_temp.u('e3')) d),
   'date limite de l''etape 1 depuis l''entree : 10 (6-9), 8 (10-13), 4 semaines (adulte) ; horizon du niveau 48, 36, 20');
 -- La classe c3 est portee a l'etape 3 : un nouvel eleve debutant y entre quand meme a l'etape 1.
@@ -257,6 +264,24 @@ INSERT INTO public.groupe_membres(groupe_id, student_id) VALUES (pg_temp.u('c2')
 SELECT pg_temp.vrai(
   NOT EXISTS (SELECT 1 FROM public.eleve_etape_en_cours WHERE student_id = pg_temp.u('e6')),
   'eleve qui declare deja lire : aucune etape supposee, il attend la decision de la direction');
+SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai(
+  (SELECT j ->> 'attente' = 'entretien_de_lecture' AND j -> 'etape' IS NULL
+     FROM (SELECT pg_temp.lire('e6') AS j) l)
+  AND pg_temp.lire('e5') IS NULL,
+  'lecture : « attente de l''entretien de lecture » pour le lecteur en classe ; rien pour un eleve sans classe');
+RESET ROLE;
+
+-- Entre en classe il y a 12 semaines, avant l'installation : rien n'est depasse.
+SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai(
+  (SELECT j #>> '{etape,rythme}' = 'dans_les_temps' AND (j #>> '{etape,entree_le}')::date = pg_catalog.now()::date
+     FROM (SELECT pg_temp.lire('e7') AS j) l)
+  AND NOT EXISTS (SELECT 1 FROM public.rythme_classe(pg_temp.u('c1')) r WHERE r.vitesse = 'date_limite_depassee'),
+  'eleve entre il y a 12 semaines : etape datee de l''installation, personne n''est « date limite depassee »');
+RESET ROLE;
 
 -- ------------------------------------------------------------------
 -- 5. La lecture unique, pour tous les roles
@@ -286,11 +311,11 @@ SELECT pg_temp.vrai(
   (SELECT j #>> '{etape,code}' = 'BASES-1' AND (j #>> '{etape,ordre}')::int = 1
           AND j #>> '{niveau,cohorte}' = 'enfant_10_13'
           AND (j #>> '{niveau,date_limite_semaines}')::int = 36
-          AND (j #>> '{niveau,horizon}')::date = (pg_catalog.now() - interval '3 weeks' + interval '36 weeks')::date
-          AND (j #>> '{etape,date_limite}')::date = (pg_catalog.now() - interval '3 weeks' + interval '8 weeks')::date
+          AND (j #>> '{niveau,horizon}')::date = (pg_catalog.now() + interval '36 weeks')::date
+          AND (j #>> '{etape,date_limite}')::date = (pg_catalog.now() + interval '8 weeks')::date
           AND (j #>> '{niveau,date_limite_visible}')::boolean
           AND (j #>> '{etape,duree_prevue_semaines}')::int = 6 AND (j #>> '{etape,date_limite_semaines}')::int = 8
-          AND (j #>> '{etape,entree_le}')::date = (pg_catalog.now() - interval '3 weeks')::date
+          AND (j #>> '{etape,entree_le}')::date = pg_catalog.now()::date
           AND pg_catalog.jsonb_array_length(j -> 'chemin') = 4
           AND j #>> '{chemin,0,statut}' = 'en_cours' AND j #>> '{chemin,3,statut}' = 'a_venir'
           AND (SELECT pg_catalog.sum((x ->> 'date_limite_semaines')::int)
@@ -311,15 +336,27 @@ SELECT pg_temp.vrai(
           AND j #> '{niveau,horizon}' = 'null'::jsonb
           AND NOT (j #>> '{niveau,date_limite_visible}')::boolean
           AND j #> '{etape,rythme}' = 'null'::jsonb
+          AND j #> '{etape,semaines_ecoulees}' = 'null'::jsonb
+          AND j #> '{etape,duree_prevue_semaines}' = 'null'::jsonb
+          AND j #> '{etape,date_limite_semaines}' = 'null'::jsonb
+          AND j #> '{niveau,duree_prevue_semaines}' = 'null'::jsonb
+          AND j #> '{niveau,date_limite_semaines}' = 'null'::jsonb
+          AND NOT EXISTS (SELECT 1 FROM pg_catalog.jsonb_array_elements(j -> 'chemin') x
+                           WHERE x -> 'duree_prevue_semaines' <> 'null'::jsonb
+                              OR x -> 'date_limite_semaines' <> 'null'::jsonb)
+          AND NOT (j #>> '{eleve_voit_dates}')::boolean
+          AND j #>> '{etape,entree_le}' IS NOT NULL
           AND pg_catalog.jsonb_array_length(j -> 'chemin') = 4
      FROM (SELECT pg_temp.lire('e1') AS j) l),
-  'enfant de 6-9 ans : son etape et son chemin, ni date limite d''etape, ni horizon, ni rythme');
+  'enfant de 6-9 ans : son etape et son chemin, aucune date ni aucun nombre de semaines (etape, chemin, niveau)');
 RESET ROLE;
 SELECT pg_temp.qui(pg_temp.u('t1'), 'guardian', pg_temp.u('f1'));
 SET LOCAL ROLE authenticated;
 SELECT pg_temp.vrai(
-  (SELECT (j #>> '{etape,date_limite}')::date = (pg_catalog.now() - interval '3 weeks' + interval '10 weeks')::date
-          AND (j #>> '{niveau,horizon}')::date = (pg_catalog.now() - interval '3 weeks' + interval '48 weeks')::date
+  (SELECT (j #>> '{etape,date_limite}')::date = (pg_catalog.now() + interval '10 weeks')::date
+          AND (j #>> '{niveau,horizon}')::date = (pg_catalog.now() + interval '48 weeks')::date
+          AND NOT (j #>> '{eleve_voit_dates}')::boolean
+          AND (j #>> '{chemin,0,date_limite_semaines}')::int = 10
      FROM (SELECT pg_temp.lire('e1') AS j) l),
   'son tuteur recoit la date limite de l''etape (10 semaines) et l''horizon (48)');
 RESET ROLE;
@@ -331,6 +368,25 @@ SELECT pg_temp.vrai(
           AND (j #>> '{niveau,date_limite_visible}')::boolean
      FROM (SELECT pg_temp.lire('e3') AS j) l),
   'adulte titulaire de son profil : la date limite de son etape (4 semaines)');
+RESET ROLE;
+
+-- Un adulte au role eleve, qui lit pour lui-meme : ses dates et son rythme.
+SELECT pg_temp.qui(pg_temp.u('e9'), 'student', pg_temp.u('f3'));
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai(
+  (SELECT (j #>> '{etape,date_limite}')::date = (pg_catalog.now() + interval '4 weeks')::date
+          AND (j #>> '{niveau,horizon}')::date = (pg_catalog.now() + interval '20 weeks')::date
+          AND j #>> '{etape,rythme}' = 'dans_les_temps'
+          AND (j #>> '{etape,duree_prevue_semaines}')::int = 3
+          AND (j #>> '{eleve_voit_dates}')::boolean
+     FROM (SELECT pg_temp.lire('e9') AS j) l),
+  'adulte au role eleve, pour lui-meme : date limite, horizon, rythme et durees presents');
+RESET ROLE;
+SELECT pg_temp.qui(pg_temp.u('e2'), 'student', pg_temp.u('f1'));
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai(
+  (SELECT (j #>> '{eleve_voit_dates}')::boolean FROM (SELECT pg_temp.lire('e2') AS j) l),
+  'eleve de 10-13 ans : eleve_voit_dates vrai');
 RESET ROLE;
 
 -- Refus pour un etranger.
@@ -376,7 +432,7 @@ SELECT pg_temp.vrai(
   (SELECT j #>> '{etape,code}' = 'BASES-2' AND (j #>> '{etape,entree_le}')::date = pg_catalog.now()::date
           AND (j #>> '{etape,date_limite}')::date = (pg_catalog.now() + interval '14 weeks')::date
           AND (j #>> '{niveau,horizon}')::date = (pg_catalog.now() + interval '28 weeks')::date
-          AND j #>> '{chemin,0,statut}' = 'franchie' AND j #>> '{chemin,1,statut}' = 'en_cours'
+          AND j #>> '{chemin,0,statut}' = 'precedente' AND j #>> '{chemin,1,statut}' = 'en_cours'
      FROM (SELECT pg_temp.lire('e2') AS j) l),
   'promotion par la direction : etape 2 des aujourd''hui, date limite de l''etape a 14 semaines, horizon 14 + 8 + 6 = 28');
 SELECT pg_temp.vrai(
@@ -424,11 +480,28 @@ SELECT pg_temp.vrai(
 SELECT pg_temp.qui(pg_temp.u('t1'), 'guardian', pg_temp.u('f1'));
 SET LOCAL ROLE authenticated;
 SELECT pg_temp.vrai(
-  (SELECT j #>> '{etape,code}' = 'BASES-2' AND (j #>> '{version,numero}')::int = 1
-          AND j #>> '{version,statut}' = 'archivee'
+  (SELECT j #>> '{etape,code}' = 'BASES-2' AND (j #>> '{version,numero}')::int = 2
+          AND j #>> '{version,statut}' = 'publiee'
      FROM (SELECT pg_temp.lire('e2') AS j) l)
   AND (SELECT j #>> '{etape,code}' = 'BASES-1' FROM (SELECT pg_temp.lire('e1') AS j) l),
-  'apres la v2 : e2 reste a BASES-2 et e1 a BASES-1, dans leur version (code stable)');
+  'apres la v2 : e2 a BASES-2 et e1 a BASES-1, dans la version publiee (code stable)');
+RESET ROLE;
+SELECT pg_temp.vrai(
+  NOT EXISTS (SELECT 1 FROM public.eleve_etape_en_cours f
+                JOIN public.programme_niveaux n ON n.id = f.niveau_id
+               WHERE n.version_id <> (SELECT id FROM sp_ids WHERE cle = 'v2'))
+  AND NOT EXISTS (SELECT 1 FROM public.groupes g
+                    JOIN public.programme_niveaux n ON n.id = g.programme_niveau_id
+                   WHERE g.id IN (pg_temp.u('c1'), pg_temp.u('c2'), pg_temp.u('c3'))
+                     AND n.version_id <> (SELECT id FROM sp_ids WHERE cle = 'v2')),
+  'apres la v2 : chaque classe et chaque eleve pointent une etape de la version publiee');
+SELECT pg_temp.qui(pg_temp.u('b1'), 'teacher');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai(
+  (SELECT pg_catalog.count(*) FROM public.etapes_eleves_classe(pg_temp.u('c1'))) = 3
+  AND (SELECT e.etape_ordre = 2 FROM public.etapes_eleves_classe(pg_temp.u('c1')) e
+        WHERE e.student_id = pg_temp.u('e2')),
+  'apres la v2 : etapes_eleves_classe rend toujours l''etape de chaque eleve');
 RESET ROLE;
 INSERT INTO public.groupe_membres(groupe_id, student_id) VALUES (pg_temp.u('c3'), pg_temp.u('e5'));
 SELECT pg_temp.vrai(
@@ -454,6 +527,60 @@ RESET ROLE;
 SELECT pg_temp.vrai(
   (SELECT statut FROM public.programme_versions WHERE id = (SELECT id FROM sp_ids WHERE cle = 'v2')) = 'publiee',
   'la v2 reste publiee apres le refus');
+
+-- Une version qui ne garde pas le code d'une etape occupee : publication refusee.
+SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
+SET LOCAL ROLE authenticated;
+INSERT INTO sp_ids VALUES ('v4', public.creer_version_programme((SELECT id FROM sp_ids WHERE cle = 'v2')));
+RESET ROLE;
+UPDATE public.programme_niveaux SET code_technique = 'BASES-2-AUTRE'
+ WHERE version_id = (SELECT id FROM sp_ids WHERE cle = 'v4') AND code_technique = 'BASES-2';
+SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai(
+  pg_temp.essai(pg_catalog.format('SELECT public.publier_version_programme(%L, %L)',
+    (SELECT id FROM sp_ids WHERE cle = 'v4'), 'essai')) LIKE 'programme_code_absent: BASES-2%',
+  'code BASES-2 absent de la nouvelle version alors qu''un eleve y est : publication refusee');
+RESET ROLE;
+
+-- ------------------------------------------------------------------
+-- 8 bis. Le remplacant
+-- ------------------------------------------------------------------
+-- Seance de c1 dans 1 h (fin dans 2 h) ; avant acceptation, b3 est refuse.
+INSERT INTO public.sessions(id, teacher_id, started_at, ended_at, status, groupe_id)
+VALUES (pg_temp.u('s-future'), pg_temp.u('b1'), pg_catalog.now() + interval '1 hour',
+        pg_catalog.now() + interval '2 hours', 'planned', pg_temp.u('c1')),
+       (pg_temp.u('s-vieille'), pg_temp.u('b1'), pg_catalog.now() - interval '26 hours',
+        pg_catalog.now() - interval '25 hours', 'planned', pg_temp.u('c1'));
+SELECT pg_temp.qui(pg_temp.u('b3'), 'teacher');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai(pg_temp.essai('SELECT pg_temp.lire(''e2'')') = 'refus',
+  'remplacant avant acceptation : refus');
+RESET ROLE;
+INSERT INTO public.remplacements_seance(session_id, evenement, enseignant_titulaire_id, enseignant_remplacant_id,
+                                        acteur_id, cle_idempotence, cree_le)
+VALUES (pg_temp.u('s-future'), 'remplacement_pris', pg_temp.u('b1'), pg_temp.u('b3'), pg_temp.u('b3'),
+        pg_temp.u('k1'), pg_catalog.now() - interval '1 minute'),
+       (pg_temp.u('s-vieille'), 'remplacement_pris', pg_temp.u('b1'), pg_temp.u('b4'), pg_temp.u('b4'),
+        pg_temp.u('k2'), pg_catalog.now() - interval '30 hours');
+SELECT pg_temp.qui(pg_temp.u('b3'), 'teacher');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai(
+  (SELECT j #>> '{etape,code}' = 'BASES-2' FROM (SELECT pg_temp.lire('e2') AS j) l),
+  'remplacement accepte, avant la seance : le remplacant lit l''etape');
+SELECT pg_temp.vrai(pg_temp.essai('SELECT pg_temp.lire(''e3'')') = 'refus',
+  'remplacant : un eleve d''une autre classe, refus');
+RESET ROLE;
+SELECT pg_temp.qui(pg_temp.u('b4'), 'teacher');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai(pg_temp.essai('SELECT pg_temp.lire(''e2'')') = 'refus',
+  'remplacant d''une seance finie depuis 25 heures : refus');
+RESET ROLE;
+-- 25 heures apres la fin : la fenetre de 24 heures est refermee.
+UPDATE public.app_config SET value = '24'::jsonb WHERE key = 'remplacement.fenetre_lecture_heures';
+SELECT pg_temp.vrai(
+  (SELECT (value #>> '{}')::int = 24 FROM public.app_config WHERE key = 'remplacement.fenetre_lecture_heures'),
+  'reglage de la fenetre du remplacant : 24 heures dans app_config');
 
 -- ------------------------------------------------------------------
 -- 9. Droits
