@@ -10,6 +10,7 @@
 import 'package:flutter/widgets.dart';
 
 import '../../core/widgets/action_principale.dart';
+import 'marque_chrono.dart';
 import 'panneau_bibliotheque_salle.dart' show SupportBibliotheque;
 import 'vue_seance.dart';
 
@@ -98,7 +99,7 @@ class PorteeMediaSalle extends InheritedWidget {
     this.scenePremierPlan = false,
     this.onBasculerScene,
     this.actionScene,
-    this.pastille,
+    this.marques = const <MarqueChrono>[],
     this.presenceEnSalle = false,
     this.boutonEleves,
     this.alerte,
@@ -174,14 +175,16 @@ class PorteeMediaSalle extends InheritedWidget {
   /// en haut a droite a cote de la vignette, ou `null`.
   final ({int nombre, VoidCallback onPress})? boutonEleves;
 
-  /// S0.2 : la pastille posee dans la ligne de l'en-tete (la presence de
-  /// l'eleve, section 6.6), ou `null`.
-  final Widget? pastille;
+  /// DYNAMIQUE-CHRONO-1 (directeur, 12/11/2026 : « le chrono cache le
+  /// document ») : ce qui flottait en pastilles a cote de la barre (sa propre
+  /// presence quand elle s'ecarte de « En salle », section 6.6 ; l'eleve qui
+  /// recite) rentre dans la Dynamique chrono, en marques.
+  final List<MarqueChrono> marques;
 
   /// CHRONO-ETAT (directeur, 11/11/2026 : « en ligne / en salle =
   /// doublon ») : la presence de la personne est confirmee par le serveur.
   /// La pilule d'etat dit alors « En salle » a la place de « En ligne », et
-  /// [pastille] ne le repete pas : un seul mot pour un seul etat.
+  /// [marques] ne le repetent pas : un seul mot pour un seul etat.
   final bool presenceEnSalle;
 
   /// S0.2 : ce qui se dit sous l'en-tete, seulement quand il y a lieu (le

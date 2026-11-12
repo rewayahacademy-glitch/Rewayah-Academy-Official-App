@@ -750,7 +750,7 @@ class VueSeance {
   final bool videoSuspendue;
 
   /// RESEAU-ELEVES (defaut C6-4 du constat, 11/11/2026) : la salle porte une
-  /// ile ([PiluleEtatSalle]) toujours posee, et c'est elle, seule, qui dit le
+  /// ile ([DynamiqueChrono]) toujours posee, et c'est elle, seule, qui dit le
   /// reseau de la personne (reseau faible, reconnexion, « on vous entend
   /// peut-etre mal ») ; le bandeau de secours ne le redit pas. Vrai dans
   /// `/salle` la ou l'ile reste posee (eleve, enseignant sur ordinateur) ;

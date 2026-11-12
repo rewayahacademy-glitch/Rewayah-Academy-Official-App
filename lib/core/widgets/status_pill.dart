@@ -46,6 +46,20 @@ extension PaireDeTonEtat on AppPalette {
     TonEtat.avertissement => washWarning,
     TonEtat.alerte => washAlert,
   };
+
+  /// Le point de 8 d'un ton (celui de [StatusPill]) : un seul calcul, repris
+  /// par les marques de la Dynamique chrono de la salle (DYNAMIQUE-CHRONO-1),
+  /// toujours accompagne d'un mot.
+  BoxDecoration pastilleDe(TonEtat ton) => switch (ton) {
+    TonEtat.neutre => pointsStatut.neutre.pastille(),
+    TonEtat.accent => BoxDecoration(
+      shape: BoxShape.circle,
+      color: surfacePrimary.background,
+    ),
+    TonEtat.succes => pointsStatut.succes.pastille(),
+    TonEtat.avertissement => pointsStatut.attention.pastille(),
+    TonEtat.alerte => pointsStatut.alerte.pastille(),
+  };
 }
 
 /// Un etat nomme : une pastille de couleur **et** un mot.
@@ -166,14 +180,5 @@ class StatusPill extends StatelessWidget {
   /// surfaces par `test/theme` : l'aplat `surfaceSuccess` clair (`#70EE9C`)
   /// ne mesurait que 1,28:1 sur `washSuccess` (revue phase 0, jetons D8).
   /// L'accent, sans point dedie, garde `surfacePrimary`.
-  BoxDecoration _pastille(AppPalette palette) => switch (ton) {
-    TonEtat.neutre => palette.pointsStatut.neutre.pastille(),
-    TonEtat.accent => BoxDecoration(
-      shape: BoxShape.circle,
-      color: palette.surfacePrimary.background,
-    ),
-    TonEtat.succes => palette.pointsStatut.succes.pastille(),
-    TonEtat.avertissement => palette.pointsStatut.attention.pastille(),
-    TonEtat.alerte => palette.pointsStatut.alerte.pastille(),
-  };
+  BoxDecoration _pastille(AppPalette palette) => palette.pastilleDe(ton);
 }

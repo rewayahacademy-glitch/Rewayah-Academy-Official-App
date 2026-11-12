@@ -13,8 +13,8 @@ import 'package:rewayah_academy/core/theme/app_palette.dart';
 import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/video/signal_rappel.dart';
 import 'package:rewayah_academy/features/salle_seance/chrono_salle.dart';
+import 'package:rewayah_academy/features/salle_seance/dynamique_chrono.dart';
 import 'package:rewayah_academy/features/salle_seance/media_salle.dart';
-import 'package:rewayah_academy/features/salle_seance/pilule_etat_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
 
 import '../support/demo/seance_demo.dart';
@@ -51,7 +51,7 @@ Widget _scene(VueSeance vue, {required bool enSalle}) => Builder(
         child: PorteeMediaSalle(
           presenceEnSalle: enSalle,
           child: Builder(
-            builder: (BuildContext c) => PiluleEtatSalle(
+            builder: (BuildContext c) => DynamiqueChrono(
               vue: vue,
               avecChrono: true,
               largeurMax: MediaQuery.sizeOf(c).width - 2 * AppSpacing.lg,

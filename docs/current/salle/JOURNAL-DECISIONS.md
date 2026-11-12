@@ -1787,3 +1787,47 @@ supprimée : le sillage s'efface en 350 ms, et sans tête un pointeur immobile d
 **Ce qui n'est pas fait.** Prouvé par tests (pixels du centre laissés à la page) et captures de
 test (`docs/current/captures/E2E/pointeur-anneau/`) ; pas sur un vrai téléphone, pas en production.
 Le plan des treize retours est dans `PLAN-RETOURS-2026-11-12.md`.
+
+## D-038 (12/11/2026, nuit). La « Dynamique chrono » : une barre d'état, une place réservée (lot DYNAMIQUE-CHRONO-1, retours 2, 3, 5 et 15 du directeur)
+
+**Le défaut** (séance du directeur du 12/11). Au téléphone, le chrono, les pastilles « En retard »,
+« X récite » et « En salle · Visite de contrôle possible » flottaient sur la page ; sur tablette et
+ordinateur, la colonne des commandes cachait le texte de la pause et « Démarrer la pause » (tête de
+colonne de hauteur fixe). Les chiffres du chrono n'avaient pas de mot.
+
+**Ce qui est fait.**
+- Une seule barre, la « Dynamique chrono » (`DynamiqueChrono`, l'ancienne `PiluleEtatSalle`
+  renommée et refaite) : repliée, une ligne, l'anneau, « Reste 37:51 » (mot visible ; « Après la
+  fin +03:12 » pendant le dépassement), et des marques en points de couleur lus (`MarqueChrono`,
+  type fermé : présence, récitation, pause). Un toucher la déplie (chaque marque en point et mot,
+  « Démarrer / Terminer la pause » chez qui a `peutPiloter`), elle se replie seule après 5 s
+  (`AppMouvement.dynamiqueChronoDepliee`) ou au second toucher.
+- Une place réservée (`ZoneChrono`) : au téléphone et sur tablette sans colonne, une rangée de
+  toute la largeur au-dessus de la page, de la scène et de la capsule ; chez l'élève sur grand
+  écran, le haut de la bande de début ; sur ordinateur, la tête de la colonne, hauteur suivant son
+  contenu. Repliée, elle ne passe sur rien ; dépliée, elle passe un instant par-dessus au
+  téléphone ; sur ordinateur et tablette (840 et plus), jamais par-dessus : elle se déplie dans
+  la tête de la colonne (les tuiles perdent au besoin leurs noms le temps du dépliage).
+- Ordinateur (directeur, 12/11/2026, sur les captures : « le dynamique timing posé sur les
+  panneaux et la barre ») : la cause était réelle, pas l'hôte de test. L'île se dépliait d'elle-même
+  10 s à l'entrée (la mention) et 6 s à chaque mot d'état, dans un `OverflowBox` large de la
+  colonne plus le panneau voisin (`salle_ordinateur.dart`, base 908b59fc, l. 1373-1394) : elle
+  passait sur le panneau des Élèves ; la pause dépliée débordait sous la colonne (hauteur fixe).
+  Maintenant : la colonne s'élargit pour la barre repliée seulement si la page garde 384 points ;
+  le choix de la tête garde d'abord les noms des tuiles ; pour cela, le mot d'état et la mention
+  passent au besoin dans une rangée fine au-dessus du contenu (jamais sur un panneau). Prouvé
+  par la géométrie à 1024 x 768, 1180 x 820, 1280 x 800 et 1440 x 900, dans quatre
+  compositions (deux panneaux, Élèves seul, Bibliothèque seule, focus).
+- Le mot d'état du lien et la mention permanente (`PermanentNotice`, ADR-011, texte inchangé) ne se
+  replient plus : `LigneEtatSalle`, dans la même zone (même rangée si elle tient). Colonne trop
+  serrée (texte agrandi, petit écran) : une rangée réservée au-dessus du contenu.
+- La salle réduite (`BarreSeanceEnDirect`) pose la même ligne repliée ; son toucher ramène toujours
+  à la salle.
+- L'alerte passagère (`AlerteChrono` : titre, une ou deux actions, départ seul, trace en marque)
+  existe dans l'API ; aucune n'est émise (lot DYNAMIQUE-CHRONO-2).
+
+**Ce qui n'est pas fait.** La salle réduite n'a pas de marques (aucune source hors de la salle).
+L'Interface guidée reste sans chrono (règle inchangée) : sa barre ne montre que ses marques. La
+page perd la hauteur de la rangée (environ 80 points au téléphone, 64 sur tablette ; à 820 de
+large, la ligne du texte passe de 611 à 577). Prouvé par tests et captures de test
+(`docs/current/captures/E2E/dynamique-chrono-1/`) ; pas sur un vrai appareil, pas en production.

@@ -34,11 +34,10 @@ import 'package:rewayah_academy/features/salle/salle_page.dart';
 import 'package:rewayah_academy/features/salle_seance/barre_outils_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/dock_seance.dart'
     show BoutonPlusAppel;
+import 'package:rewayah_academy/features/salle_seance/dynamique_chrono.dart';
 import 'package:rewayah_academy/features/salle_seance/panneau_bibliotheque_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/panneau_eleves.dart';
-import 'package:rewayah_academy/features/salle_seance/pilule_etat_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/salle_ordinateur.dart';
-
 import 'package:rewayah_academy/features/salle_seance/telephone_plein_ecran.dart'
     show TelephonePleinEcran, margeFlechePage;
 import 'package:rewayah_academy/features/salle_seance/vignette_video.dart';
@@ -1043,7 +1042,7 @@ void main() {
       expect(find.byKey(SalleOrdinateur.cleDroite), findsNothing);
       expect(find.byKey(SalleOrdinateur.cleClasse), findsNothing);
       expect(find.byKey(SalleOrdinateur.cleTitreSupport), findsNothing);
-      expect(find.byType(PiluleEtatSalle), findsOneWidget);
+      expect(find.byType(DynamiqueChrono), findsOneWidget);
       expect(find.byKey(SalleOrdinateur.cleFocus), findsOneWidget);
       expect(find.byKey(const ValueKey<String>('nom-commande')), findsNothing);
       expect(find.byType(TuileCommandeSalle), findsNWidgets(9));

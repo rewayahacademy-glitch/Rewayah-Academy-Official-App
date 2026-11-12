@@ -1,4 +1,7 @@
 {
+  "salle.seance.chrono.reste": "directeur, 12/11/2026 : ajouter un mot au chrono, Reste 37:51 (lot DYNAMIQUE-CHRONO-1, retours sur la salle, points 3 et 5) ; mot visible devant le temps restant",
+  "salle.seance.chrono.apresFin": "directeur, 12/11/2026 : ajouter un mot au chrono, Reste 37:51 (lot DYNAMIQUE-CHRONO-1, retours sur la salle, points 3 et 5) ; apres la fin prevue, le mot garde le sens actuel (seance toujours en direct apres la fin prevue)",
+  "salle.ile.replierEtat": "directeur, 12/11/2026 : ajouter un mot au chrono, Reste 37:51 (lot DYNAMIQUE-CHRONO-1, retours sur la salle, points 3 et 5) ; libelle lu du second toucher qui replie la Dynamique chrono",
   "salle.sonBloque": "Directeur, 12/11/2026 (retours sur la salle, point 11 : le deuxième élève entre mal) ; piste du son bloqué par le navigateur, lot ENTREE-ROBUSTE",
   "salle.activerSon": "Directeur, 12/11/2026 (retours sur la salle, point 11 : le deuxième élève entre mal) ; piste du son bloqué par le navigateur, lot ENTREE-ROBUSTE",
   "enseignant.profil.fuseauAppareil": "Garde-cap, 12/11/2026, lot FUSEAU-IDENTITE-PRO (A) : l enseignant regle lui-meme son fuseau dans Identite professionnelle (maj_profil_enseignant, p_timezone) ; fuseaux du pays, fuseaux proposes, puis le nom IANA en champ d expert avec l exemple Asia/Riyadh ; sans fuseau du profil, aucune disponibilite ne se pose",
