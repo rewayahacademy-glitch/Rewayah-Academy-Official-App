@@ -13,10 +13,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/admin/service_programme.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/suivi/port_suivi_pedagogique.dart';
+import 'package:rewayah_academy/core/widgets/menu_actions.dart';
 
 import '../features/historique/support_historique.dart';
 import '../router/support_routeur.dart';
@@ -104,6 +107,95 @@ Map<String, Object?> _reponse({required bool dateLimite}) => <String, Object?>{
   'page_reprise': 3,
 };
 
+class _Programme implements ServiceProgramme, ServiceContenuProgramme {
+  const _Programme();
+
+  @override
+  Future<List<VersionProgramme>> versions() async => <VersionProgramme>[
+    VersionProgramme(
+      id: 'v2',
+      statut: StatutVersionProgramme.brouillon,
+      numeroVersion: 2,
+      creeParIdentifiant: 'x',
+      creeParPrenom: null,
+      creeParNom: null,
+      publieeAt: null,
+      nombreNiveaux: 1,
+      createdAt: DateTime.utc(2026, 11, 12),
+    ),
+  ];
+
+  @override
+  Future<List<NiveauProgramme>> niveaux(String versionId) async =>
+      const <NiveauProgramme>[
+        NiveauProgramme(
+          id: 'n2',
+          codeTechnique: 'BASES-2',
+          nomHumain: 'Lire avec les voyelles',
+          cycle: 'Les bases',
+          ordre: 2,
+          description: null,
+          objectifs: <String>[
+            'Lit une lettre avec chacune des trois voyelles',
+            'Lit le tanwin',
+            'Lit la chadda',
+          ],
+          durees: <String, DureeEtape>{
+            'enfant_6_9': DureeEtape(prevue: 14, limite: 19),
+            'enfant_10_13': DureeEtape(prevue: 11, limite: 14),
+            'ado_14_17': DureeEtape(prevue: 9, limite: 13),
+            'adulte_18_plus': DureeEtape(prevue: 6, limite: 8),
+          },
+          complet: true,
+        ),
+      ];
+
+  @override
+  Future<String> creerVersion({String? versionSourceId}) async => 'v3';
+
+  @override
+  Future<String> ajouterNiveau({
+    required String versionId,
+    required String codeTechnique,
+    required String nomHumain,
+    required String cycle,
+    required int ordre,
+    String? description,
+  }) async => 'n';
+
+  @override
+  Future<void> modifierNiveau({
+    required String niveauId,
+    required String nomHumain,
+    required String cycle,
+    required int ordre,
+    String? description,
+  }) async {}
+
+  @override
+  Future<void> supprimerNiveau({
+    required String niveauId,
+    required String motif,
+  }) async {}
+
+  @override
+  Future<void> publierVersion({
+    required String versionId,
+    required String motif,
+  }) async {}
+
+  @override
+  Future<void> modifierContenu({
+    required String niveauId,
+    required List<String> objectifs,
+    required PlageSupport? plage,
+    required Map<String, DureeEtape> durees,
+  }) async {}
+
+  @override
+  Future<void> preremplirBases(String versionId) async {}
+}
+
 class _Port implements PortSuiviPedagogique {
   const _Port(this.brut);
 
@@ -165,6 +257,37 @@ void main() {
           );
           await tester.pump(const Duration(milliseconds: 600));
           debugPrint('PNG ${await capturerVue(tester, 'enfant-$l-$nomTheme')}');
+        });
+        testWidgets('direction, feuille d une etape $l $nomTheme', (
+          WidgetTester tester,
+        ) async {
+          await monterRouteur(
+            tester,
+            Routes.adminPedagogieProgrammes,
+            source: FausseSourceSession(sessionActive(AppRole.admin)),
+            taille: Size(largeur, 2000),
+            themeMode: theme,
+            surcharges: <Override>[
+              serviceProgrammeProvider.overrideWithValue(const _Programme()),
+              serviceContenuProgrammeProvider.overrideWithValue(
+                const _Programme(),
+              ),
+            ],
+          );
+          await stabiliser(tester);
+          await tester.tap(
+            find.byWidgetPredicate(
+              (Widget w) =>
+                  w is MenuActions &&
+                  (w.objet ?? '').contains('Lire avec les voyelles'),
+            ),
+          );
+          await stabiliser(tester);
+          await tester.tap(find.text(t.admin.programmes.contenu.ouvrir).last);
+          await stabiliser(tester);
+          debugPrint(
+            'PNG ${await capturerVue(tester, 'direction-etape-$l-$nomTheme')}',
+          );
         });
         testWidgets('tuteur $l $nomTheme', (WidgetTester tester) async {
           await monterHistorique(

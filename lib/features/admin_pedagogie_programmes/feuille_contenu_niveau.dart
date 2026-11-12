@@ -3,8 +3,10 @@
 //
 // Ce que la direction decide ici, une fois par version : les objectifs
 // observables de l'etape (3 a 5), le livre ou elle se lit et ses pages, la
-// duree prevue par tranche d'age. La date limite n'est jamais saisie : elle se
-// deduit de la duree prevue (x 1,3, arrondie, regle du 14/10). Le serveur
+// duree prevue par tranche d'age et la date limite de l'etape (SOCLE-PROGRAMME,
+// 12/11/2026 : une valeur saisie et rendue par le serveur, tableau 1 bis des
+// reglages, jamais deduite de la duree prevue ; l'ancienne regle x 1,3 donnait
+// 18 au lieu de 19 et rendait la version impubliable). Le serveur
 // refuse la publication d'une version dont une etape est incomplete
 // (migration 20261110600000) ; l'ecran ne decide rien.
 //
@@ -89,6 +91,15 @@ class _FeuilleContenuNiveauEtat extends State<FeuilleContenuNiveau> {
     for (final String code in tranchesProgramme)
       code: widget.niveau.durees[code]?.prevue ?? _dureeParDefaut,
   };
+  // La date limite rendue par le serveur, telle quelle ; sans valeur, la duree
+  // prevue (la plus petite date limite admise), que la direction ajuste.
+  late final Map<String, int> _limites = <String, int>{
+    for (final String code in tranchesProgramme)
+      code:
+          widget.niveau.durees[code]?.limite ??
+          widget.niveau.durees[code]?.prevue ??
+          _dureeParDefaut,
+  };
   bool _envoi = false;
   String? _erreur;
 
@@ -147,7 +158,9 @@ class _FeuilleContenuNiveauEtat extends State<FeuilleContenuNiveau> {
           for (final MapEntry<String, int> e in _prevues.entries)
             e.key: DureeEtape(
               prevue: e.value,
-              limite: dateLimiteDeduite(e.value),
+              limite: (_limites[e.key] ?? e.value) < e.value
+                  ? e.value
+                  : (_limites[e.key] ?? e.value),
             ),
         },
       );
@@ -289,7 +302,10 @@ class _FeuilleContenuNiveauEtat extends State<FeuilleContenuNiveau> {
                 libellePlus: t.admin.programmes.contenu.dureePlus(
                   tranche: libelleTranche(code),
                 ),
-                onChange: (int v) => setState(() => _prevues[code] = v),
+                onChange: (int v) => setState(() {
+                  _prevues[code] = v;
+                  if ((_limites[code] ?? v) < v) _limites[code] = v;
+                }),
               )
             else
               Text(
@@ -302,16 +318,32 @@ class _FeuilleContenuNiveauEtat extends State<FeuilleContenuNiveau> {
                 style: textes.bodyMedium,
               ),
             Ecart.vSm,
-            Text(
-              LibellesGroupe.insecable(
-                t.admin.programmes.contenu.dateLimite(
-                  semaines: modifiable
-                      ? '${dateLimiteDeduite(_prevues[code] ?? _dureeParDefaut)}'
-                      : '${widget.niveau.durees[code]?.limite}',
+            if (modifiable)
+              ChoixNombre(
+                key: ValueKey<String>('contenu-limite-$code'),
+                libelle: t.admin.programmes.contenu.limiteTranche(
+                  tranche: libelleTranche(code),
                 ),
+                valeur: _limites[code] ?? _prevues[code] ?? _dureeParDefaut,
+                min: _prevues[code] ?? 1,
+                max: 520,
+                libelleMoins: t.admin.programmes.contenu.limiteMoins(
+                  tranche: libelleTranche(code),
+                ),
+                libellePlus: t.admin.programmes.contenu.limitePlus(
+                  tranche: libelleTranche(code),
+                ),
+                onChange: (int v) => setState(() => _limites[code] = v),
+              )
+            else
+              Text(
+                LibellesGroupe.insecable(
+                  t.admin.programmes.contenu.dateLimite(
+                    semaines: '${widget.niveau.durees[code]?.limite}',
+                  ),
+                ),
+                style: aide,
               ),
-              style: aide,
-            ),
             Ecart.vLg,
           ],
         if (_erreur != null) ...<Widget>[
