@@ -4,6 +4,7 @@
 // re-exporte) pour que le socle des communications (`core/communications`)
 // les lise sans dependre d'une fonctionnalite (revue COM-R, R-07).
 
+import 'isolat_bidi.dart' show enTeteArabe;
 import 'strings.g.dart';
 
 /// L'heure locale de l'appareil, « 13:45 ».
@@ -17,8 +18,10 @@ String heureDeLAppareil(DateTime local) =>
 
 /// La date locale de l'appareil, « Lundi 21 septembre », par les libelles
 /// `commun.dates` (jamais une liste de noms en dur).
-String dateDeLAppareil(DateTime local) => t.commun.dates.jourDate(
-  jour: t.commun.dates.jours[local.weekday - 1],
-  numero: local.day,
-  mois: t.commun.dates.mois[local.month - 1],
+String dateDeLAppareil(DateTime local) => enTeteArabe(
+  t.commun.dates.jourDate(
+    jour: t.commun.dates.jours[local.weekday - 1],
+    numero: local.day,
+    mois: t.commun.dates.mois[local.month - 1],
+  ),
 );
