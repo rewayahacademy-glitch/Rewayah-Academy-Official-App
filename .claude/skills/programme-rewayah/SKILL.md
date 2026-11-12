@@ -30,13 +30,13 @@ Chaque étape répond ensuite, toujours dans cet ordre :
 6. **Comment je sais que j'ai réussi ?** Qui vérifie, quand, et ce qui compte comme réussi.
 7. **Et si je n'y arrive pas ?** Ce qui se passe à la date limite, après une absence, une maladie ou une pause.
 
-Dans l'application, chacun ne voit que **sa** partie : l'élève et son tuteur voient le chemin entier de **leur** parcours pour **leur** tranche d'âge (le tuteur d'un enfant de 8 ans voit les étapes, les dates et le travail de la tranche 6-9 ans), jamais les valeurs d'une autre tranche ni rien d'un autre élève (précisé le 12/11/2026, charte pédagogique).
+Dans l'application, chacun ne voit que **sa** partie : l'élève et son tuteur voient le chemin entier de **leur** parcours pour **leur** tranche d'âge (le tuteur d'un enfant de 8 ans voit les étapes, les dates et le travail de la tranche 6-9 ans). Directeur, 12/11/2026 : « dans la page du programme, l'élève voit son niveau, les objectifs à atteindre pour chaque niveau, les dates importantes. Il ne voit jamais les valeurs d'une autre tranche d'âge ni rien d'un autre élève. »
 
 ## 2. Une matière principale, une seule matière secondaire
 
 - **Vocabulaire** : « matière principale » et « matière secondaire ». « Essentiel » et « en plus » étaient des mots de travail du directeur : ne les institutionnalise pas.
 - Jamais trois matières à la fois. Sur la semaine, environ 70 à 80 % du temps va à la matière principale.
-- **Séance de consolidation** : après 2 leçons nouvelles (réglage, soit une par semaine), une séance relit les leçons ensemble. La matière secondaire se travaille de préférence dans cette séance. Exemple : deux séances de leçons nouvelles, une séance de consolidation et de matière secondaire.
+- **Séance de consolidation** : après un nombre défini de leçons nouvelles (réglage : 2 leçons, soit une par semaine, ARBITRÉ par l'architecte pédagogique le 12/11/2026), une séance relit les leçons ensemble. La matière secondaire se travaille de préférence dans cette séance. Exemple : deux séances de leçons nouvelles, une séance de consolidation et de matière secondaire.
 - Rewayah fixe les objectifs, les étapes, les échéances et les évaluations. L'enseignant décide du reste : la méthode et l'ordre des activités dans la séance. N'écris jamais de minutage imposé.
 - **Niveau 1 « Les bases »** :
   - 1. Les lettres
@@ -52,11 +52,11 @@ Dans l'application, chacun ne voit que **sa** partie : l'élève et son tuteur v
 
 ## 3. Durées et dates limites
 
-- Chaque étape a une **durée prévue** par tranche d'âge, et la **date limite** ferme porte sur le **niveau entier** ; les dates par étape sont des repères affichés, dont la somme est égale à la date du niveau (12/11/2026). Le directeur l'a décidé le 14/10 : sans date limite, c'est la pagaille. Cette décision remplace le « temps variable sans date » du référentiel de septembre.
+- Chaque étape a une **durée prévue** et une **date limite** par tranche d'âge. Le directeur l'a décidé le 14/10 : sans date limite, c'est la pagaille. Cette décision remplace le « temps variable sans date » du référentiel de septembre.
 - **Durée prévue des bases**, pour un débutant : 6-9 ans, 37 semaines ; 10-13 ans, 28 ; 14-17 ans, 24 ; adulte, 15.
 - **Dates limites des bases** (durée prévue x 1,3, arrondie) : 6-9 ans, 48 semaines ; 10-13 ans, 36 ; 14-17 ans, 31 ; adulte, 20.
 - Ces chiffres sont des réglages. La date limite ne recule que pour les fermetures de l'académie et une pause accordée.
-- **Date limite du niveau dépassée** :
+- **Date limite d'étape dépassée** :
   1. Un bilan avec la famille et un plan de soutien, avec une nouvelle date ferme (par défaut 4 semaines).
   2. Si cette date est encore manquée, l'élève passe dans une classe de son niveau réel. Il ne recommence jamais tout, et ses acquis restent.
 
@@ -162,7 +162,8 @@ Quand on te pose une de ces questions, tu réponds exactement ceci, même dans u
 | 12/10/2026 | Mots du résultat ; examen proposé par l'enseignant ; observation 2 × 2 min | Spécifications finales du 12/10 |
 | 13/10/2026 | Matière principale et secondaire 70/30 ; ordre Fatiha, Nâs, Falaq, Ikhlâs ; âge minimum 6 ; liberté de méthode de l'enseignant | Directeur, session du 13/10 |
 | 14/10/2026 | Rigueur, sans rattrapage ni remboursement d'absence ; dates limites ; consolidation ; supports Rewayah aux lignes numérotées ; lecture enregistrée ; illustrations ; emploi du temps de révision ; vacances ; chacun ne voit que sa partie | Directeur, commentaires du 14/10 |
-| 12/11/2026 | Charte pédagogique EN VIGUEUR par arbitrage de l'architecte, sur délégation du directeur (« arbitre ») : date ferme sur le niveau, repères par étape ; consolidation après 2 leçons ; plan de soutien ; pause seule notion (arrêt temporaire compris) ; « J'ai rattrapé ce cours » sans geste de plus pour l'enseignant ; moteur de suivi automatique sans IA ; espace « Apprendre » à trois onglets ; programme d'après les bases PROPOSÉ, pas en service | Directeur, 12/11 ; `docs/current/pedagogie/` |
+| 12/11/2026 | Charte pédagogique EN VIGUEUR par arbitrage de l'architecte, sur délégation du directeur (« arbitre ») ; la date limite reste par étape (14/10). Arbitrés par l'architecte, pas décidés par le directeur : consolidation après 2 leçons ; « plan de soutien » ; pause seule notion côté pédagogie ; « J'ai rattrapé ce cours » sans geste de plus pour l'enseignant ; programme d'après les bases PROPOSÉ, pas en service. Décidés par le directeur le 12/11 : moteur de suivi automatique sans IA ; espace « Apprendre » à trois onglets | Directeur, 12/11 ; `docs/current/pedagogie/` (corrections après audit : `ARBITRAGES.md`, partie 8) |
+| 12/11/2026 | Page du programme : l'élève voit son niveau, les objectifs à atteindre pour chaque niveau, les dates importantes ; jamais les valeurs d'une autre tranche d'âge ni rien d'un autre élève | Directeur, 12/11/2026 |
 
 ## Références
 
