@@ -147,7 +147,8 @@ class LieuxPrierePage extends ConsumerWidget {
         onglets: ongletsConfiguration(
           politiqueRevueKyc: ref.watch(peutReglerPolitiqueKycProvider),
         ),
-        indexActif: 3,
+        // Ouverte depuis la section « La prière » de Règles.
+        indexActif: 0,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,

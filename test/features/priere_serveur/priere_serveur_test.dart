@@ -35,6 +35,7 @@ import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
+import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/choix_nombre.dart';
 import 'package:rewayah_academy/core/widgets/empty_state.dart';
@@ -280,7 +281,9 @@ void main() {
       }
       expect(find.textContaining('18:30'), findsOneWidget);
       expect(
-        find.textContaining(t.priere.enseignant.plus(minutes: '3')),
+        find.textContaining(
+          LibellesGroupe.insecable(t.priere.enseignant.plus(minutes: '3')),
+        ),
         findsOneWidget,
       );
       expect(find.textContaining(t.priere.approchee), findsOneWidget);

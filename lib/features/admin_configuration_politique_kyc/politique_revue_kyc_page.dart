@@ -116,7 +116,7 @@ class _PolitiqueRevueKycPageState extends ConsumerState<PolitiqueRevueKycPage> {
         titre: t.admin.politiqueRevueKyc.titre,
         entete: SousNavigationDomaine(
           onglets: ongletsConfiguration(politiqueRevueKyc: true),
-          indexActif: 4,
+          indexActif: 3,
         ),
         // Une seule colonne bornee, calee au debut : jamais un mobile etire
         // sur bureau (STYLE-REFERENCE regle 6).

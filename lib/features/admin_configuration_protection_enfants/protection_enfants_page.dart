@@ -68,7 +68,7 @@ class ProtectionEnfantsPage extends ConsumerWidget {
 
   /// Les onglets de Configuration, avec celui-ci en dernier.
   static int indexOnglet({required bool politiqueRevueKyc}) =>
-      politiqueRevueKyc ? 5 : 4;
+      politiqueRevueKyc ? 4 : 3;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

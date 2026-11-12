@@ -2394,6 +2394,8 @@
       "margeFinDetail": "Une prière qui entre dans ces dernières minutes se prie après le cours.",
       "horizon": "Recalcul de nuit",
       "horizonDetail": "Chaque nuit, les pauses des séances de ces prochains jours sont recalculées.",
+      "lieux": "Lieux de prière des enseignants",
+      "lieuxDetail": "Le lieu de chaque enseignant, la prière du vendredi, les heures du jour.",
       "unite": "{n} min",
       "uniteJours": "{n} jours",
       "choisir": "Enregistrer",

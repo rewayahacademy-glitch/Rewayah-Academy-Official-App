@@ -24,7 +24,7 @@ Branche `claude/priere-serveur`, migration réservée `20261123930000_priere_ser
 
 **Preuve** : `tool/priere/generer_reference.dart` (référence `adhan`, 1 368 combinaisons : 8 lieux, 24 dates, 3 méthodes, 2 écoles d'Asr, plus les douze méthodes sur 3 lieux et 4 dates), `supabase/tests/fixtures/priere_reference_adhan.csv`, `supabase/tests/scenarios_priere_serveur.sql`.
 
-**Application** (`lib/core/priere/pause_prevue.dart`, `lieu_priere.dart`, `service_priere.dart` ; `lib/features/priere_serveur/`) : « Mes heures de prière » (Compte de l'enseignant), « Lieux de prière » (onglet de Configuration), le bloc « Prières et créneau » (fiche d'une classe), la section « La prière » de Configuration > Règles ; la journée de l'enseignant et l'accueil de l'élève lisent `pause_prevue_seance` ; textes fr et ar sous `priere.*`.
+**Application** (`lib/core/priere/pause_prevue.dart`, `lieu_priere.dart`, `service_priere.dart` ; `lib/features/priere_serveur/`) : « Mes heures de prière » (Compte de l'enseignant), « Lieux de prière » (page de la direction, ouverte depuis la section « La prière » de Configuration > Règles), le bloc « Prières et créneau » (fiche d'une classe), la section « La prière » de Configuration > Règles ; la journée de l'enseignant et l'accueil de l'élève lisent `pause_prevue_seance` ; textes fr et ar sous `priere.*`.
 
 ## Choix pris seul, écarts
 
@@ -38,7 +38,7 @@ Branche `claude/priere-serveur`, migration réservée `20261123930000_priere_ser
 8. **Contrôle du pays** (incohérences) : boîtes englobantes de 20 pays ; un pays hors table ne produit aucun signal. Le pays du compte est comparé au lieu de prière **et** à son propre fuseau (pour les pays de 30 degrés de longitude au plus, écart de plus d'une heure et demie), pour signaler le cas de la production (Guinée, Europe/Paris) avant même qu'un lieu soit posé. C'est un contrôle de vraisemblance, pas une vérité.
 9. **Aperçu et « Pause de prière »** : l'écran de l'élève dit « Pause de prière / À HH:MM » (deux lignes) ; la journée de l'enseignant dit « Pause de prière » ; le nom de la prière reste dans « Mes heures de prière ».
 10. **Heures lues dans le fuseau de la personne** par `heureChezMoi` (comme les autres lecteurs), pas dans le fuseau du lieu.
-11. **L'onglet « Prière »** de Configuration est inséré en 4e position : l'indice de l'onglet « Politique KYC » (3 vers 4) et de « Protection des enfants » (4 ou 3 vers 5 ou 4) est décalé.
+11. **Pas de nouvel onglet dans Configuration** : un onglet « Prière » décalait la barre de sections et cassait `admin_ad11` (AD-9, politique KYC, 400 % de texte, 1280x1024). La page « Lieux de prière » est donc une page à part (`/admin/configuration/priere`), ouverte par une ligne de la section « La prière » de Règles ; la barre y montre « Règles » comme actif.
 
 ## Ce qui reste faux, limité ou non prouvé
 

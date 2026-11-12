@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/admin/config_edition.dart';
 import '../../core/admin/service_configuration.dart';
@@ -9,6 +10,7 @@ import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/priere/libelle_priere.dart';
+import '../../core/router/routes.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
@@ -49,6 +51,8 @@ List<Widget> sectionReglesPriere({
     required String description,
     required String cle,
     required int min,
+    required int max,
+    required List<int> proposees,
     required String Function(int) affichage,
   }) => ConfigLigneEntiere(
     key: ValueKey<String>('regles-$cle'),
@@ -57,6 +61,8 @@ List<Widget> sectionReglesPriere({
     cle: cle,
     valeur: v(cle)!.versEntier,
     min: min,
+    max: max,
+    proposition: ReglageEntierPropose(proposees: proposees, max: max),
     affichage: affichage,
     champValeur: t.admin.regles.champValeur,
     envoyer: t.admin.regles.envoyer,
@@ -84,6 +90,19 @@ List<Widget> sectionReglesPriere({
     Ecart.vMd,
     CarteLignes(
       lignes: <Widget>[
+        // Le lieu de chaque enseignant : une page de la direction, ouverte d'ici.
+        Builder(
+          builder: (BuildContext context) => SettingRow(
+            key: const ValueKey<String>('regles-priere-lieux'),
+            title: r.lieux,
+            description: r.lieuxDetail,
+            icon: AppIcons.priere,
+            lien: true,
+            onPress: () => unawaited(
+              GoRouter.of(context).push(Routes.adminConfigurationPriere),
+            ),
+          ),
+        ),
         _LigneChoixTexte(
           cle: clePriereMethode,
           titre: r.methode,
@@ -115,6 +134,8 @@ List<Widget> sectionReglesPriere({
           description: r.pauseDetail,
           cle: clePrierePause,
           min: 5,
+          max: 20,
+          proposees: <int>[5, 10, 15, 20],
           affichage: enMinutes,
         ),
         ligne(
@@ -122,6 +143,8 @@ List<Widget> sectionReglesPriere({
           description: r.pauseRamadanDetail,
           cle: clePrierePauseRamadan,
           min: 5,
+          max: 20,
+          proposees: <int>[5, 10, 15, 20],
           affichage: enMinutes,
         ),
         ConfigLigneBooleenne(
@@ -138,6 +161,8 @@ List<Widget> sectionReglesPriere({
           description: r.margeDebutDetail,
           cle: clePriereMargeDebut,
           min: 0,
+          max: 15,
+          proposees: <int>[0, 5, 10, 15],
           affichage: enMinutes,
         ),
         ligne(
@@ -145,6 +170,8 @@ List<Widget> sectionReglesPriere({
           description: r.margeFinDetail,
           cle: clePriereMargeFin,
           min: 5,
+          max: 30,
+          proposees: <int>[10, 15, 20, 30],
           affichage: enMinutes,
         ),
         ligne(
@@ -152,6 +179,8 @@ List<Widget> sectionReglesPriere({
           description: r.horizonDetail,
           cle: clePriereHorizon,
           min: 7,
+          max: 30,
+          proposees: <int>[7, 14, 21, 30],
           affichage: enJours,
         ),
       ],

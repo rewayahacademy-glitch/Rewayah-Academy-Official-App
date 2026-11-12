@@ -244,9 +244,6 @@ List<({String libelle, String chemin})> ongletsConfiguration({
     libelle: t.admin.conservationDonnees.titre,
     chemin: Routes.adminConfigurationConservationDonnees,
   ),
-  // PRIERE-1 : les lieux de priere des enseignants, apres la conservation des
-  // donnees (indice 3) ; la politique KYC et la protection des enfants suivent.
-  (libelle: t.priere.direction.onglet, chemin: Routes.adminConfigurationPriere),
   if (politiqueRevueKyc)
     (
       libelle: t.admin.politiqueRevueKyc.titre,
