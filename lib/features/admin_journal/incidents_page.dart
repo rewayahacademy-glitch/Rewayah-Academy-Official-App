@@ -23,6 +23,7 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/carte_lignes.dart';
@@ -48,6 +49,9 @@ class IncidentsPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // HEURES-PROFIL H2 (12/11/2026) : la page ecoute le fuseau du profil ;
+    // quand il arrive apres son premier rendu, ses heures se redessinent.
+    ref.watch(monHorlogeProvider);
     final l = t.admin.incidents;
     final AsyncValue<List<IncidentSeance>> lecture = ref.watch(
       incidentsSeancesProvider,
@@ -108,7 +112,7 @@ class IncidentsPage extends ConsumerWidget {
                         key: ValueKey<String>('incident-${i.id}'),
                         classe: i.classe,
                         detail:
-                            '${l.survenu(date: libelleJour(i.survenuLe), heure: libelleHeure(i.survenuLe))}\n'
+                            '${l.survenu(date: libelleJour(chezMoi(i.survenuLe)), heure: libelleHeure(i.survenuLe))}\n'
                             '${libelleEnseignantPlanning(i.enseignant)}',
                         statut: i.statut,
                         mot: libelleNatureIncident(i.statut),

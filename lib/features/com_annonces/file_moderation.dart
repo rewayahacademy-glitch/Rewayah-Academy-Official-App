@@ -47,6 +47,7 @@ import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/communications/moderation.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -245,6 +246,9 @@ class _FileModerationState extends ConsumerState<FileModeration> {
 
   @override
   Widget build(BuildContext context) {
+    // HEURES-PROFIL H2 (12/11/2026) : la page ecoute le fuseau du profil ;
+    // quand il arrive apres son premier rendu, ses heures se redessinent.
+    ref.watch(monHorlogeProvider);
     final m = t.com.annonces.administration.moderation;
     final AsyncValue<CapacitesModeration> capacitesLues = ref.watch(
       capacitesModerationProvider,
@@ -374,7 +378,8 @@ class _FileModerationState extends ConsumerState<FileModeration> {
 
   LigneRubrique _ligne(ElementModeration e, {bool? selectionnee}) {
     final m = t.com.annonces.administration.moderation;
-    final DateTime le = e.signaleLe.toLocal();
+    // HEURES-PROFIL H2 : a l'heure du profil.
+    final DateTime le = chezMoi(e.signaleLe);
     final ActionModeration? decision = _decisions[e.id];
     return LigneRubrique(
       libelle: e.objet.libelle,
@@ -458,7 +463,7 @@ class _Detail extends StatelessWidget {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
     final m = t.com.annonces.administration.moderation;
-    final DateTime le = element.signaleLe.toLocal();
+    final DateTime le = chezMoi(element.signaleLe);
     final String? regle = regleVisee(element.motif);
     final String? destination = element.objet.destination;
     final TextStyle titre = palette.inkStrong.applyTo(

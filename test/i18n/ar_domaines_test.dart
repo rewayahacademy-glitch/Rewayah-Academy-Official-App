@@ -102,8 +102,10 @@ const Map<String, int> _domaines = <String, int>{
   'i1': 40,
   // A3-bis (02/11/2026) : remplacement sans perte de seance, page Regles.
   'a3bis': 13,
-  // SNT (03/11/2026) : seance non tenue, reportee.
-  'snt': 33,
+  // SNT (03/11/2026) : seance non tenue, reportee. HEURES-PROFIL H3
+  // (12/11/2026) : snt.planning.heureAppareil retiree (l'heure est celle du
+  // profil).
+  'snt': 32,
   // D1-ter (03/11/2026) : messages de l'academie a la famille.
   'd1ter': 8,
   // PAY-UX, la page de paiement (02/11/2026).

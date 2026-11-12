@@ -459,6 +459,9 @@ class _AppairagePageState extends ConsumerState<AppairagePage>
 
   @override
   Widget build(BuildContext context) {
+    // HEURES-PROFIL H2 (12/11/2026) : la page ecoute le fuseau du profil ;
+    // quand il arrive apres son premier rendu, ses heures se redessinent.
+    ref.watch(monHorlogeProvider);
     final String? prenom = ref
         .watch(elevesDuFoyerProvider)
         .value

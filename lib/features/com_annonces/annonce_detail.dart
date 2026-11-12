@@ -12,6 +12,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/i18n/strings.g.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/vue_etat_communication.dart';
 import 'carte_annonce_classe.dart';
@@ -28,6 +29,9 @@ class AnnonceDetail extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // HEURES-PROFIL H2 (12/11/2026) : la page ecoute le fuseau du profil ;
+    // quand il arrive apres son premier rendu, ses heures se redessinent.
+    ref.watch(monHorlogeProvider);
     final AsyncValue<AnnonceClasse?> valeur = ref.watch(
       annonceProvider(annonceId),
     );

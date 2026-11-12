@@ -35,6 +35,7 @@ import '../../core/communications/capacites_communication.dart';
 import '../../core/fluidite/action_anticipee.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/espace_travail_adaptatif.dart';
 import '../../core/widgets/page_shell.dart';
@@ -342,6 +343,9 @@ class _EspaceMessagesMetierState extends ConsumerState<EspaceMessagesMetier> {
 
   @override
   Widget build(BuildContext context) {
+    // HEURES-PROFIL H2 (12/11/2026) : la page ecoute le fuseau du profil ;
+    // quand il arrive apres son premier rendu, ses heures se redessinent.
+    ref.watch(monHorlogeProvider);
     final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
     final RechercheFilsControleur recherche = ref
         .watch(memoireMessagesProvider)

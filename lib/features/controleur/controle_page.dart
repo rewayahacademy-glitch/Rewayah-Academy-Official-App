@@ -11,6 +11,7 @@ import '../../core/mouvement/apparition_douce.dart';
 import '../../core/router/billet_salle.dart';
 import '../../core/router/routes.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_delais.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
@@ -23,7 +24,6 @@ import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/skeleton.dart';
-import '../accueil_famille/bloc_seance.dart' show heureDeLAppareil;
 import 'compte_rendu_controle.dart';
 import 'compte_rendu_controle_page.dart' show LigneTransmissionVisite;
 import 'mission_controle.dart';
@@ -74,6 +74,9 @@ class ControleControleurPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // HEURES-PROFIL H2 (12/11/2026) : la page ecoute le fuseau du profil ;
+    // quand il arrive apres son premier rendu, ses heures se redessinent.
+    ref.watch(monHorlogeProvider);
     final AsyncValue<MissionControle?> mission = ref.watch(
       missionControleProvider,
     );
@@ -179,7 +182,7 @@ class _BlocATerminer extends StatelessWidget {
           Text(
             t.controleur.compteRendu.sousTitre(
               classe: visite.classe,
-              heure: heureDeLAppareil(visite.debut),
+              heure: heureChezMoi(visite.debut),
             ),
             style: palette.inkMuted.applyTo(
               textes.bodyMedium ?? const TextStyle(),
@@ -288,8 +291,8 @@ class _CarteMission extends StatelessWidget {
     );
     final String details = <String>[
       t.controleur.controle.horaire(
-        debut: heureDeLAppareil(mission.debut),
-        fin: heureDeLAppareil(mission.finPrevue),
+        debut: heureChezMoi(mission.debut),
+        fin: heureChezMoi(mission.finPrevue),
       ),
       // DUREE-INSECABLE-1 : la duree prevue n'est jamais scindee.
       LibellesGroupe.insecable(

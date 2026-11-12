@@ -10,6 +10,7 @@ import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/reseau/service_reseau.dart' show horsLigneProvider;
 import '../../core/session/session_controleur.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
@@ -20,7 +21,7 @@ import '../../core/widgets/menu_filtre.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
 import '../compte/carte_rubriques.dart';
-import '../suivi_foyer/filtres_historique.dart' show dateCourte, heureMinute;
+import '../suivi_foyer/filtres_historique.dart' show dateCourte;
 import 'apercu_familial.dart';
 
 /// Le cahier brut d'un eleve pour une seance, lu par la direction.
@@ -370,7 +371,8 @@ class FeuilleCahierAdmin extends ConsumerWidget {
                 LigneCleValeur(
                   cle: t.historique.seance.date,
                   valeur:
-                      '${dateCourte(c.seanceLe)} ${heureMinute(c.seanceLe)}',
+                      // HEURES-PROFIL H2 : a l'heure du profil.
+                      '${dateCourte(chezMoi(c.seanceLe))} ${heureChezMoi(c.seanceLe)}',
                 ),
                 if (c.enseignant != null)
                   LigneCleValeur(cle: l.enseignant, valeur: c.enseignant!),

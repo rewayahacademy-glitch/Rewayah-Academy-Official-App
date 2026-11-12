@@ -4230,7 +4230,6 @@
         "feuille": {
           "planifierConsequence": "La personne reçoit la date de l'entretien. Les participants le retrouvent parmi leurs entretiens.",
           "jourAide": "Dans les 90 prochains jours.",
-          "heureAide": "Heure de cet appareil.",
           "participantsAide": "Choisissez librement dans le personnel de ce côté.",
           "fondateursChoisis": "Fondateurs choisis\u00a0: {n}",
           "jourManquant": "Choisissez un jour.",
@@ -9616,6 +9615,15 @@
         "aucunResultatDetail": "Essayez un numéro de page, un nom de sourate, ou une référence comme 2:255.",
         "pageNumero": "Page {page}"
       },
+      "sommaire": {
+        "titre": "Sourates",
+        "detail": "{versets} versets · page {page}",
+        "allerA": "Aller à la sourate {sourate}, page {page}",
+        "indisponible": "La liste des sourates n'a pas pu être lue",
+        "indisponibleDetail": "La connexion a peut-être été coupée.",
+        "absent": "Le texte du Coran n'est pas installé",
+        "absentDetail": "Il n'y a rien à afficher."
+      },
       "reprise": {
         "groupe": "Reprendre le cours",
         "groupeDetail": "La classe en était page {page}"
@@ -14346,7 +14354,6 @@
       "feuilleContexteSansNom": "La nouvelle séance se tient avec l'enseignant de la classe et dure {minutes}\u00a0minutes, comme la séance reportée. La classe est prévenue de la nouvelle date.",
       "jour": "Jour de la nouvelle séance",
       "heure": "Heure",
-      "heureAppareil": "À l'heure de cet appareil.",
       "quand": "{jour} à {heure}",
       "choixManquant": "Choisissez le jour et l'heure de la nouvelle séance.",
       "confirmer": "Fixer cette date",

@@ -27,6 +27,7 @@ import '../../core/mouvement/apparition_douce.dart';
 import '../../core/mouvement/mouvement.dart';
 import '../../core/router/routes.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_delais.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
@@ -39,7 +40,6 @@ import '../../core/widgets/ligne_cle_valeur.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pressable.dart';
 import '../../core/widgets/status_pill.dart' show TonEtat;
-import '../accueil_famille/bloc_seance.dart' show heureDeLAppareil;
 import 'compte_rendu_controle.dart';
 
 enum _Etape { choix, envoye }
@@ -172,6 +172,9 @@ class _CompteRenduControlePageState
 
   @override
   Widget build(BuildContext context) {
+    // HEURES-PROFIL H2 (12/11/2026) : la page ecoute le fuseau du profil ;
+    // quand il arrive apres son premier rendu, ses heures se redessinent.
+    ref.watch(monHorlogeProvider);
     final CompteRenduEnSuspens? visite = _visite;
     if (visite == null) {
       // Seance inconnue (rechargement, lien direct) : la visite n'est plus en
@@ -186,7 +189,7 @@ class _CompteRenduControlePageState
     }
     final String sousTitre = t.controleur.compteRendu.sousTitre(
       classe: visite.classe,
-      heure: heureDeLAppareil(visite.debut),
+      heure: heureChezMoi(visite.debut),
     );
 
     // Une mission devenue indisponible (seance finie) ne bloque pas le
@@ -644,7 +647,7 @@ class LignesFaitsVisite extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final int retard = faits.minutesDeRetard;
-    final String debutReel = heureDeLAppareil(faits.debutReel);
+    final String debutReel = heureChezMoi(faits.debutReel);
     final DateTime? fin = faits.finReelle;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -653,8 +656,8 @@ class LignesFaitsVisite extends StatelessWidget {
         LigneCleValeur(
           cle: t.controleur.compteRendu.cleHoraire,
           valeur: t.controleur.compteRendu.horaire(
-            debut: heureDeLAppareil(faits.debutPrevu),
-            fin: heureDeLAppareil(faits.finPrevue),
+            debut: heureChezMoi(faits.debutPrevu),
+            fin: heureChezMoi(faits.finPrevue),
           ),
           chiffres: true,
         ),
@@ -675,7 +678,7 @@ class LignesFaitsVisite extends StatelessWidget {
           cle: t.controleur.compteRendu.cleFin,
           valeur: fin == null
               ? t.controleur.compteRendu.enCours
-              : heureDeLAppareil(fin),
+              : heureChezMoi(fin),
           chiffres: true,
         ),
         LigneCleValeur(

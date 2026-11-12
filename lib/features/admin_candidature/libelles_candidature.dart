@@ -11,6 +11,7 @@ import '../../core/candidature/modeles_candidature.dart';
 import '../../core/candidature/modeles_candidature_detail.dart';
 import '../../core/i18n/isolat_bidi.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../admin_candidatures/libelles_candidatures.dart';
 
 /// Le libelle d'un geste : le verbe et son objet.
@@ -273,12 +274,12 @@ String? libelleChangement(EvenementCandidature e) {
 /// Un instant de l'historique : « Le 20 oct. 2026 a 09:00 », dans le fuseau de
 /// la personne qui lit.
 String instantHistorique(DateTime instant) {
-  final DateTime local = instant.toLocal();
-  final String heure =
-      '${local.hour.toString().padLeft(2, '0')}:'
-      '${local.minute.toString().padLeft(2, '0')}';
+  // HEURES-PROFIL H2 : le fuseau du profil de la personne qui lit.
+  // dateCourteCandidature appelle toLocal() : on lui passe le jour du profil
+  // en local ([jourChezMoi]), jamais la valeur de chezMoi (marquee UTC).
+  final String heure = heureChezMoi(instant);
   return t.admin.candidatures.historique.le(
-    date: dateCourteCandidature(local),
+    date: dateCourteCandidature(jourChezMoi(instant)),
     heure: isolerSens(heure),
   );
 }
