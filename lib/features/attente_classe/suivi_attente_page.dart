@@ -189,7 +189,9 @@ class _Vide extends StatelessWidget {
           ? t.suiviAttente.vide.invitationSimple
           : t.suiviAttente.vide.invitation,
       icone: AppIcons.creneaux,
-      registre: RegistreVide.subi,
+      // Un vide « subi » ne propose rien : le geste de choisir une classe
+      // n'existe que pour qui peut le faire (pas l'enfant).
+      registre: enfant ? RegistreVide.subi : RegistreVide.actionnable,
       libelleAction: enfant ? null : t.suiviAttente.vide.action,
       onAction: enfant ? null : () => GoRouter.maybeOf(context)?.go(choisir),
     );
@@ -206,7 +208,7 @@ class _Introuvable extends StatelessWidget {
     key: const ValueKey<String>('attente-introuvable'),
     message: t.suiviAttente.introuvable,
     icone: AppIcons.creneaux,
-    registre: RegistreVide.subi,
+    registre: RegistreVide.actionnable,
     libelleAction: t.suiviAttente.retour,
     onAction: () => GoRouter.maybeOf(context)?.go(chemins.accueil),
   );
