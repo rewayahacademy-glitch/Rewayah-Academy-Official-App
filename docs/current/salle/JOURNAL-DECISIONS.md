@@ -1773,3 +1773,17 @@ de son propre parent.
 
 **Ce qui n'est pas fait.** La fiche demandait aussi que la ligne disparaisse dans les 10 secondes
 après la fin de la dernière visite : non vérifié. Prouvé par tests seulement.
+
+## D-037 (12/11/2026, soir). La tête du pointeur devient un anneau (lot POINTEUR, retour 1 du directeur)
+
+**Le défaut** (séance du directeur du 12/11). La tête du pointeur était un disque plein de 32
+points : elle cachait le mot qu'elle montrait.
+
+**Ce qui est fait.** La tête est un anneau creux (diamètre 32, trou de 20) : un trait de la couleur
+de la marque entre deux filets clairs, pour rester visible sur une page claire comme sur une page
+sombre. Le mot se lit à travers le trou. Le sillage est gardé tel quel. La tête n'est pas
+supprimée : le sillage s'efface en 350 ms, et sans tête un pointeur immobile disparaîtrait.
+
+**Ce qui n'est pas fait.** Prouvé par tests (pixels du centre laissés à la page) et captures de
+test (`docs/current/captures/E2E/pointeur-anneau/`) ; pas sur un vrai téléphone, pas en production.
+Le plan des treize retours est dans `PLAN-RETOURS-2026-11-12.md`.
