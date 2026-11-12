@@ -90,6 +90,15 @@ final DateTime _horlogeFixe = DateTime(2026, 9, 8, 17);
 
 const String _monId = 't1';
 
+/// Un tuteur connecte, autre que l'eleve 'e1' de la page d'appairage.
+const SessionState _sessionTuteur = SessionState(
+  resolue: true,
+  role: AppRole.guardian,
+  profileId: 'tuteur-1',
+  accountStatus: AccountStatus.active,
+  lectureProfil: LectureProfil.presente,
+);
+
 const SessionState _sessionEnseignant = SessionState(
   resolue: true,
   role: AppRole.teacher,
@@ -314,6 +323,11 @@ List<_EcranAVerifier> _ecrans() => <_EcranAVerifier>[
       ),
       surcharges: <Override>[
         serviceAppairageProvider.overrideWithValue(FauxServiceAppairage()),
+        // AUTRE-PROFIL-ELEVE : la page attend le compte connecte (un tuteur,
+        // autre que l'eleve 'e1') avant de demander un code.
+        sourceSessionProvider.overrideWithValue(
+          FausseSourceSession(_sessionTuteur),
+        ),
       ],
     ),
   ),

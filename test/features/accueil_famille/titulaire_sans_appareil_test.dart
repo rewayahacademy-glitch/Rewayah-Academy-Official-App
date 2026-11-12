@@ -2,9 +2,12 @@
 // l'Accueil famille, « Aucun appareil prêt » ne s'affiche JAMAIS pour le profil
 // du titulaire (celui dont l'identifiant est celui de son compte) : ni bandeau
 // d'alerte, ni lumiere rouge « acces bloque ». Un lien discret et facultatif,
-// « Utiliser un autre appareil », mene a l'appairage existant. Le profil d'un
-// enfant garde son alerte. Garde : ces tests echouent si l'alerte revient pour
-// le titulaire.
+// « Utiliser un autre appareil », ouvre une feuille : le titulaire se connecte
+// a son propre compte sur l'autre appareil, sans code (AUTRE-PROFIL-ELEVE,
+// garde-cap, 12/11/2026 : le serveur refuse d'appairer un compte tuteur, la
+// page d'appairage disait « Profil eleve introuvable »). Le profil d'un enfant
+// garde son alerte et son appairage. Garde : ces tests echouent si l'alerte
+// revient pour le titulaire, ou si un code est demande pour lui.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -28,6 +31,7 @@ import 'package:rewayah_academy/core/widgets/lumiere_autour.dart';
 import 'package:rewayah_academy/core/widgets/selecteur_profils.dart';
 import 'package:rewayah_academy/features/accueil_famille/accueil_famille_page.dart';
 import 'package:rewayah_academy/features/accueil_famille/bandeau_blocage.dart';
+import 'package:rewayah_academy/features/accueil_famille/feuille_autre_appareil.dart';
 
 import '../../capture/outil_capture.dart'
     show
@@ -66,6 +70,8 @@ const EleveDuFoyer _enfant = EleveDuFoyer(
   camera: CameraPolicy.forbidden,
 );
 
+FauxServiceAppairage _appairage = FauxServiceAppairage();
+
 Future<GoRouter> _monter(
   WidgetTester tester, {
   bool autonome = true,
@@ -79,7 +85,7 @@ Future<GoRouter> _monter(
   tester.view.physicalSize = taille;
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
-  final FauxServiceAppairage appairage = FauxServiceAppairage()
+  final FauxServiceAppairage appairage = _appairage = FauxServiceAppairage()
     ..elevesRendus = const <EleveDuFoyer>[_titulaire, _enfant]
     ..appareilsRendus = <AppareilAppaire>[];
   late GoRouter routeur;
@@ -170,7 +176,9 @@ void _aucuneLumiereRouge(WidgetTester tester) {
 void main() {
   group('Le titulaire sans appareil jumele : jamais d alerte', () {
     testWidgets('titulaire choisi : ni bandeau, ni alerte, ni lumiere rouge ; '
-        'un lien discret mene a l appairage', (WidgetTester tester) async {
+        'un lien discret ouvre la feuille, sans code', (
+      WidgetTester tester,
+    ) async {
       final GoRouter routeur = await _monter(tester);
       expect(find.byType(AccueilFamillePage), findsOneWidget);
       expect(find.byType(BandeauBlocage), findsNothing);
@@ -184,7 +192,33 @@ void main() {
       expect(find.text(t.tuteur.accueil.autreAppareil), findsOneWidget);
       await tester.tap(_lien);
       await stabiliser(tester);
-      expect(lieu(routeur), Routes.appairerPour(_titulaireId));
+      expect(find.byType(CorpsAutreAppareil), findsOneWidget);
+      expect(
+        find.text(t.tuteur.accueil.autreAppareilFeuille.copier),
+        findsOneWidget,
+      );
+      expect(lieu(routeur), Routes.tuteurAccueil);
+      expect(_appairage.codesDemandes, isEmpty);
+    });
+
+    testWidgets('la page d appairage ne demande jamais de code pour le '
+        'titulaire : elle montre comment se connecter', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester, depart: Routes.appairerPour(_titulaireId));
+      expect(find.byType(CorpsAutreAppareil), findsOneWidget);
+      expect(
+        find.text(t.appareils.emetteur.erreur.horsFoyerTitre),
+        findsNothing,
+      );
+      expect(_appairage.codesDemandes, isEmpty);
+    });
+
+    testWidgets('la page d appairage d un enfant demande son code, comme '
+        'avant', (WidgetTester tester) async {
+      await _monter(tester, depart: Routes.appairerPour(_enfantId));
+      expect(find.byType(CorpsAutreAppareil), findsNothing);
+      expect(_appairage.codesDemandes, <String>[_enfantId]);
     });
 
     testWidgets('meme sans la capacite « eleve autonome » : l identifiant du '
