@@ -8114,6 +8114,14 @@
       "foyerVideTitre": "Aucun profil élève pour l'instant",
       "foyerVidePhrase": "Ajoutez un profil élève pour choisir une classe et suivre ses séances.",
       "ouvrirEspaceEleve": "Ouvrir mon espace élève",
+      "autreAppareilFeuille": {
+        "phrase": "Votre compte vous suit sur tous vos appareils. Sur l'autre appareil, ouvrez l'application à cette adresse, puis connectez-vous avec la même adresse de connexion.",
+        "aucunCode": "Aucun code à saisir\u00a0: c'est votre propre compte.",
+        "adresseApplication": "Adresse de l'application",
+        "adresseConnexion": "Adresse de connexion",
+        "copier": "Copier le lien de l'application",
+        "copie": "Lien copié"
+      },
       "autreAppareil": "Utiliser un autre appareil",
       "ajouterProfil": "Ajouter un profil élève",
       "profilsIllisibles": "Les profils du foyer n'ont pas pu être lus.",
