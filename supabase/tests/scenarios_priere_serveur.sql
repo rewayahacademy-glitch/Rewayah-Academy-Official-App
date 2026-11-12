@@ -800,4 +800,20 @@ SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM public.seance_pause_prevue
 SELECT pg_temp.vrai(private.priere_lecture_creneau('9e000000-0000-4000-8000-000000000001', 4, 19, 'Europe/Paris', 60)
                     = '{"sans_lieu": true}'::jsonb, 'lieu retire : la lecture dit « sans lieu »');
 
+-- La liste des enseignants et de leur lieu (ecran « Lieux de priere » de la direction).
+SELECT pg_temp.en_tant_que('9e000000-0000-4000-8000-000000000010', 'admin');
+SELECT pg_temp.vrai((SELECT count(*) FROM public.priere_enseignants_liste()) = 5
+                    AND (SELECT count(*) FROM public.priere_enseignants_liste() WHERE a_un_lieu) = 3
+                    AND (SELECT NOT a_un_lieu AND lieu IS NULL FROM public.priere_enseignants_liste()
+                          WHERE enseignant_id = '9e000000-0000-4000-8000-000000000001'),
+  'liste des enseignants : cinq enseignants, trois lieux, celui dont le lieu est retire n''en montre aucun');
+SELECT pg_temp.en_tant_que('9e000000-0000-4000-8000-000000000001', 'teacher');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai(pg_temp.refuse($q$SELECT * FROM public.priere_enseignants_liste()$q$), 'enseignant : liste refusee');
+RESET ROLE;
+SELECT pg_temp.personne();
+SET LOCAL ROLE anon;
+SELECT pg_temp.vrai(pg_temp.refuse($q$SELECT * FROM public.priere_enseignants_liste()$q$), 'anonyme : liste refusee');
+RESET ROLE;
+
 ROLLBACK;

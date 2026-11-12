@@ -1685,6 +1685,34 @@ BEGIN
 END;
 $function$;
 
+-- La direction : les enseignants et l'etat de leur lieu de priere (pour l'ecran
+-- « Lieux de priere »). Un enseignant sans lieu y figure : c'est ce qu'il faut voir.
+CREATE FUNCTION public.priere_enseignants_liste()
+RETURNS TABLE (enseignant_id uuid, prenom text, lieu text, fuseau text,
+               assiste_vendredi boolean, a_un_lieu boolean)
+LANGUAGE plpgsql
+STABLE
+SECURITY DEFINER
+SET search_path = ''
+AS $function$
+BEGIN
+  IF NOT coalesce(public.app_account_valid() AND public.app_role() = 'admin', false) THEN
+    RAISE EXCEPTION 'lecture reservee a la direction' USING ERRCODE = '42501';
+  END IF;
+  RETURN QUERY
+    SELECT p.id, p.first_name,
+           CASE WHEN ps.actif THEN ps.place_label END,
+           CASE WHEN ps.actif THEN ps.timezone_iana END,
+           coalesce(ps.actif AND ps.assiste_vendredi, false),
+           coalesce(ps.actif, false)
+      FROM public.profiles p
+      LEFT JOIN public.prayer_settings ps ON ps.teacher_id = p.id
+     WHERE p.role = 'teacher' AND p.deleted_at IS NULL
+       AND p.account_status IN ('active', 'provisional_active')
+     ORDER BY p.first_name, p.id;
+END;
+$function$;
+
 -- ===========================================================================
 -- 9. Droits
 -- ===========================================================================
@@ -1697,6 +1725,7 @@ ALTER FUNCTION public.priere_lecture_creneau(uuid, integer, integer, text, integ
 ALTER FUNCTION public.priere_creneaux_sans_priere(uuid, integer, text, integer) OWNER TO postgres;
 ALTER FUNCTION public.priere_lecture_classe(uuid) OWNER TO postgres;
 ALTER FUNCTION public.priere_incoherences_enseignants() OWNER TO postgres;
+ALTER FUNCTION public.priere_enseignants_liste() OWNER TO postgres;
 
 REVOKE ALL ON FUNCTION
   public.priere_lieu_definir(uuid, text, numeric, numeric, text, text, text, boolean, time, time),
@@ -1704,7 +1733,8 @@ REVOKE ALL ON FUNCTION
   public.priere_reglages_lire(uuid), public.priere_horaires_jour(uuid, date),
   public.priere_lecture_creneau(uuid, integer, integer, text, integer),
   public.priere_creneaux_sans_priere(uuid, integer, text, integer),
-  public.priere_lecture_classe(uuid), public.priere_incoherences_enseignants()
+  public.priere_lecture_classe(uuid), public.priere_incoherences_enseignants(),
+  public.priere_enseignants_liste()
   FROM PUBLIC, anon, service_role, agent_ro;
 GRANT EXECUTE ON FUNCTION
   public.priere_lieu_definir(uuid, text, numeric, numeric, text, text, text, boolean, time, time),
@@ -1712,7 +1742,8 @@ GRANT EXECUTE ON FUNCTION
   public.priere_reglages_lire(uuid), public.priere_horaires_jour(uuid, date),
   public.priere_lecture_creneau(uuid, integer, integer, text, integer),
   public.priere_creneaux_sans_priere(uuid, integer, text, integer),
-  public.priere_lecture_classe(uuid), public.priere_incoherences_enseignants()
+  public.priere_lecture_classe(uuid), public.priere_incoherences_enseignants(),
+  public.priere_enseignants_liste()
   TO authenticated;
 
 REVOKE ALL ON FUNCTION
@@ -1740,6 +1771,7 @@ BEGIN
     'public.priere_creneaux_sans_priere(uuid, integer, text, integer)'::regprocedure,
     'public.priere_lecture_classe(uuid)'::regprocedure,
     'public.priere_incoherences_enseignants()'::regprocedure,
+    'public.priere_enseignants_liste()'::regprocedure,
     'public.priere_recalculer_maintenant()'::regprocedure] LOOP
     IF NOT EXISTS (SELECT 1 FROM pg_catalog.pg_proc p
                     WHERE p.oid = v_oid AND p.prosecdef
