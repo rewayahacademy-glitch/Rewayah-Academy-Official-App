@@ -897,6 +897,20 @@
       "quitteTitre": "Vous avez quitté la séance.",
       "quittePhrase": "Vous pourrez revenir tant qu'elle reste ouverte.",
       "accesRetireTitre": "Votre accès à cette séance a pris fin.",
+      "horsApplication": {
+        "titre": "Vous êtes sorti de la salle.",
+        "titreGuidee": "Tu es sorti de la salle.",
+        "phrase": {
+          "one": "Vous avez quitté l'application plus de {n} seconde pendant la séance. Vous pouvez revenir tant qu'elle reste ouverte.",
+          "other": "Vous avez quitté l'application plus de {n} secondes pendant la séance. Vous pouvez revenir tant qu'elle reste ouverte."
+        },
+        "phraseGuidee": {
+          "one": "Tu as quitté l'application plus de {n} seconde pendant la séance. Tu peux revenir tant qu'elle reste ouverte.",
+          "other": "Tu as quitté l'application plus de {n} secondes pendant la séance. Tu peux revenir tant qu'elle reste ouverte."
+        },
+        "phraseSansDelai": "Vous avez quitté l'application trop longtemps pendant la séance. Vous pouvez revenir tant qu'elle reste ouverte.",
+        "phraseGuideeSansDelai": "Tu as quitté l'application trop longtemps pendant la séance. Tu peux revenir tant qu'elle reste ouverte."
+      },
       "titreGuidee": "La séance est terminée.",
       "retourAccueil": "Retour à l'accueil",
       "enseignant": {

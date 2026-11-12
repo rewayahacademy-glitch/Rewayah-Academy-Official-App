@@ -8527,5 +8527,11 @@
   "admin.regles.pause.resteDetail": "directeur, 12/11/2026 : la pause est un reglage, rappel reglable par la direction, 5 min par defaut (lot PAUSE-SERVEUR)",
   "admin.regles.pause.bornesDuree": "directeur, 12/11/2026 : la pause est un reglage, rappel reglable par la direction, 5 min par defaut (lot PAUSE-SERVEUR)",
   "admin.regles.pause.bornesRappel": "directeur, 12/11/2026 : la pause est un reglage, rappel reglable par la direction, 5 min par defaut (lot PAUSE-SERVEUR)",
-  "admin.regles.pause.bornesReste": "directeur, 12/11/2026 : la pause est un reglage, rappel reglable par la direction, 5 min par defaut (lot PAUSE-SERVEUR)"
+  "admin.regles.pause.bornesReste": "directeur, 12/11/2026 : la pause est un reglage, rappel reglable par la direction, 5 min par defaut (lot PAUSE-SERVEUR)",
+  "salle.fin.horsApplication.titre": "directeur, 12/11/2026 au soir : l'élève qui sort de l'application a un court délai, puis il sort de la salle (lot HORS-SALLE-1)",
+  "salle.fin.horsApplication.titreGuidee": "directeur, 12/11/2026 au soir : l'élève qui sort de l'application a un court délai, puis il sort de la salle (lot HORS-SALLE-1)",
+  "salle.fin.horsApplication.phrase": "directeur, 12/11/2026 au soir : l'élève qui sort de l'application a un court délai, puis il sort de la salle (lot HORS-SALLE-1)",
+  "salle.fin.horsApplication.phraseGuidee": "directeur, 12/11/2026 au soir : l'élève qui sort de l'application a un court délai, puis il sort de la salle (lot HORS-SALLE-1)",
+  "salle.fin.horsApplication.phraseSansDelai": "directeur, 12/11/2026 au soir : l'élève qui sort de l'application a un court délai, puis il sort de la salle (lot HORS-SALLE-1)",
+  "salle.fin.horsApplication.phraseGuideeSansDelai": "directeur, 12/11/2026 au soir : l'élève qui sort de l'application a un court délai, puis il sort de la salle (lot HORS-SALLE-1)"
 }

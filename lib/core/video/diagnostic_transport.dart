@@ -257,6 +257,27 @@ void signalerTransport(String evenement, Map<String, Object?> donnees) {
   );
 }
 
+/// HORS-SALLE-1 (directeur, 12/11/2026 au soir : « quand je sortais de la
+/// salle en tant qu'enseignant, le reseau se coupait ») : ce que le telephone
+/// a fait de l'appel de qui conduit la seance pendant que la page etait
+/// cachee. **Pour celui qui modere seulement, jamais pour un eleve.**
+///
+/// `page_cachee` (l'etat de la connexion a ce moment) part en miette ;
+/// `page_revenue` (duree cachee en secondes, etat de la connexion au retour,
+/// reprises pendant l'absence, son bloque) part tout de suite en
+/// avertissement, avec les miettes : c'est la preuve de la prochaine seance.
+/// [donnees] ne porte que le nom opaque de la salle, jamais une identite.
+void signalerAbsencePage(String evenement, Map<String, Object?> donnees) {
+  signalerTransport(evenement, donnees);
+  if (evenement == 'page_revenue') {
+    Supervision.signaler(
+      categorie: categorieTransport,
+      message: evenement,
+      donnees: donnees,
+    );
+  }
+}
+
 /// ENTREE-ROBUSTE (directeur, 12/11/2026, point 11 : « l'eleve suivant a du
 /// mal a rejoindre ») : un essai d'entree en salle qui echoue. Jusqu'ici, cet
 /// echec n'etait ecrit nulle part en production (`journalDev` n'ecrit qu'en

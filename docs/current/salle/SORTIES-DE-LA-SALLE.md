@@ -81,6 +81,30 @@ Tests : `test/features/salle_seance/sortie_salle_test.dart` (commande, question,
 SORTIE-SALLE : retour du téléphone, Réduire puis vraie sortie). Le test du retour du téléphone
 échoue sans le `PopScope` (vérifié). Captures : `docs/current/captures/E2E/sortie-salle/`.
 
+## 2 bis. Sortir de l'application (lot HORS-SALLE-1, 12/11/2026)
+
+Demande du directeur (12/11/2026 au soir) : l'enseignant n'est pas prisonnier de sa salle, il
+peut sortir de l'application et continuer à entendre ; l'élève peut sortir de la salle sans
+coupure, mais s'il sort de l'application, il a un court délai, puis il sort de la salle.
+
+- **Celui qui modère la séance** (capacité `peutModerer`, jamais un rôle) : rien n'est coupé, ni
+  en quittant la salle, ni en quittant l'application. Le son reçu est relancé après toute reprise
+  de la connexion, et non plus seulement au retour à l'écran ; si le navigateur le refuse,
+  « Activer le son » s'affiche dès que la page est visible, salle réduite comprise (bandeau en tête
+  de l'écran). Deux traces sans identité (`page_cachee`, `page_revenue`) mesurent ce que le
+  téléphone a fait de l'appel pendant l'absence.
+- **L'élève** qui quitte l'écran de la salle en restant dans l'application : rien n'est coupé.
+  S'il quitte l'**application** (autre application, autre onglet, écran verrouillé) : 30 secondes
+  sans coupure (`AppDelais.horsApplicationEleve`, lu par `delaiHorsApplicationProvider`), puis il
+  sort de la salle par le chemin de « Quitter » (annonce, puis déconnexion). À son retour :
+  « Vous êtes sorti de la salle. » et « Retourner dans la salle ». Si le navigateur a gelé la
+  minuterie, l'horloge tranche au retour. Avant 30 secondes : rien.
+- Un tuteur témoin ou un contrôleur (sans voix, ou invisible) n'est pas concerné. Rien n'est
+  enregistré sur l'élève (le journal des sorties est un autre lot, soumis à l'information des
+  parents).
+- Logique : `lib/core/tc_classe/garde_hors_application.dart`. Rien n'est essayé sur un vrai
+  téléphone.
+
 ## 3. À décider par le directeur
 
 | # | Question | Recommandation |
