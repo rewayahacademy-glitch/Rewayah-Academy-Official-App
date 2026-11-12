@@ -209,3 +209,28 @@ Numéros de migration : la migration réservée est `20261123940000_horloge_lieu
 - **Q6. PRIERE-1.** Je livre `mon_lieu()` (ville, pays, fuseau, latitude, longitude de la personne seule) ; le lot PRIERE-1 le lira au lieu de ressaisir. Pouvez-vous le lui dire ? Je ne touche pas `prayer_settings`.
 - **Q7. Ajout à la CI.** Je ne peux pas modifier `.github/workflows/ci.yml` : vous y ajoutez `scenarios_horloge_lieu.sql` ?
 - **Q8. Mention GeoNames.** Où affichez-vous les crédits et licences de l'application ? Je n'ai pas trouvé d'écran (non relevé).
+
+## 8. Réponses de l'architecte (12/11/2026) et état de la construction
+
+**Accord pour le temps 2, en deux parties livrables séparément.** Partie A « horloge » (conversion, création de créneau, deux heures, annonces, disponibilités), puis partie B « lieu » (villes, étape à l'inscription et pour les inscrits, signalements). Les réponses suivantes priment sur le plan du §6.
+
+| Question | Réponse |
+|---|---|
+| Q1 numéros | `20261123940000` à `20261123949999` sont à ce lot |
+| Q2 ordre d'installation | migrations avant le client ; le client déjà en production continue de marcher : toute fonction qui reçoit une heure murale garde sa signature et son sens, et convertit à l'intérieur ; test « ancien client » obligatoire |
+| Q3 regroupement | demandes dans le fuseau de la famille ; normaliser la clé vers le fuseau de référence si c'est petit, sinon décrire le défaut dans le rapport |
+| Q4 disponibilités | elles gardent leurs instants réels au changement de ville ; l'écran demande de les relire |
+| Q5 candidat | la ville remplace l'étape du fuseau et devient le lieu de l'enseignant, vérifiée par la direction |
+| Q6 PRIERE-1 | `mon_lieu()` pour la personne, et une lecture réservée à la direction et aux fonctions serveur ; ni `prayer_settings` ni `lib/core/priere` |
+| Q7 CI | personne parmi les agents ne modifie `.github/` : le scénario est rejoué en local, son résultat exact est dans le rapport, le directeur seul l'ajoute à la CI |
+| Q8 crédit GeoNames | une ligne discrète sous le champ de recherche de la ville (« Liste des villes : GeoNames, CC BY 4.0 », fr et ar) et un fichier de mentions à côté des données |
+
+Conditions de l'architecte : drapeau de conversion posé seulement par la migration et local à la transaction, avec un test qui prouve 0 notification, 0 push, 0 courriel et qu'un vrai changement notifie encore ; photographie des séances avant et après dans la même transaction ; refus de s'installer à moins de 28 jours d'un changement d'heure ; minutes justes (Delhi 23 h 30, Katmandou 23 h 45) ; annonces jamais vers un mineur, 14 jours avant et la veille, courriel compris, sans prénom d'enfant ; poids exact de chaque morceau de villes et une variante de secours en un seul fichier (plus de 50 000 habitants) ; rejouer tous les scénarios après la partie A.
+
+### Partie A : ce qui a été construit (écarts au plan en gras)
+
+- `supabase/migrations/20261123940000_horloge_lieu.sql` : réglage `fuseau_academie`, journal `private.conversions_horloge` (**le « drapeau » est ce journal, pas un réglage de session** : une ligne écrite par la seule fonction de conversion, lue par les cinq déclencheurs, qui ne se taisent que si leurs anciennes et nouvelles valeurs sont exactement celles du journal pour la même transaction et la même classe ; aucun utilisateur ne peut l'écrire), conversion des classes existantes, tâche de nuit pour l'ancien client (**à la place d'une conversion à l'enregistrement de la transaction : aucune surprise au commit, aucune signature publique modifiée, aucun md5 F86 à mettre à jour**), `mon_horloge()` qui rend aussi `academie`.
+- `supabase/migrations/20261123940100_horloge_annonces.sql` : calcul de l'heure locale avant et après un changement d'heure, aperçu pour l'écran, annonce quotidienne (**l'événement `creneau_change` existant est réutilisé, avec `motif = changement_heure` : la contrainte des événements n'est pas modifiée, donc aucun DROP**).
+- Client : « Heure de La Mecque » en second dans le composant à deux heures existant, annonce dans l'application (fr, ar) et dans le courriel (fr, en, es, pt, ar), ligne d'aperçu à la création d'une classe, deux défauts de jour de la Journée corrigés, `GroupeAdmin` lit le fuseau réel de la classe.
+
+Écarts et limites : voir le rapport de la partie A.

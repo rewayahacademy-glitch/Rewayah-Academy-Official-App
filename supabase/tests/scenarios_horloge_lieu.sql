@@ -210,6 +210,19 @@ BEGIN
   -- Les declencheurs de notification sont differes : ils parlent a la section (B).
   RAISE NOTICE 'HL OK : 0 notification, 0 push, 0 courriel, 0 seance creee (avant le commit simule)';
 
+  -- Les disponibilites de l'enseignante (lignes a l'heure de Paris, instants
+  -- inchanges) couvrent toujours les classes converties : le predicat qui exige
+  -- la couverture passe, avant comme apres (aucune ligne n'a ete touchee).
+  PERFORM app_private.verifier_affectation_enseignant_base(
+    'd1000000-0000-4000-8000-0000000000c1', 'd1000000-0000-4000-8000-0000000000e1', true);
+  PERFORM app_private.verifier_affectation_enseignant_base(
+    'd1000000-0000-4000-8000-0000000000c2', 'd1000000-0000-4000-8000-0000000000e1', true);
+  IF (SELECT pg_catalog.count(*) FROM public.weekly_availability
+       WHERE profile_id = 'd1000000-0000-4000-8000-0000000000e1' AND timezone_iana = 'Europe/Paris') <> 168 THEN
+    RAISE EXCEPTION 'HL ROUGE : les disponibilites de l''enseignante ont change pendant la conversion';
+  END IF;
+  RAISE NOTICE 'HL OK : les 168 disponibilites gardent leurs instants (lignes a l''heure de Paris) et couvrent les classes converties';
+
   -- Rejouer la conversion : rien a faire.
   IF private.convertir_classes_hors_academie(v_ref) <> 0 THEN
     RAISE EXCEPTION 'HL ROUGE : la conversion rejouee a converti quelque chose';

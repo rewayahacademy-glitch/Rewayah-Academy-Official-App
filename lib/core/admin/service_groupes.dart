@@ -69,7 +69,10 @@ class GroupeAdmin {
       creneau: Creneau(
         jour: entier('weekday'),
         heure: entier('hour_local'),
-        fuseau: 'Europe/Paris',
+        // `groupes_admin()` rend le fuseau de la classe : depuis HORLOGE-ET-LIEU
+        // (12/11/2026) c'est celui de l'academie, plus Paris. Paris reste le repli
+        // d'un serveur qui ne le rendrait pas.
+        fuseau: json['timezone_iana'] as String? ?? 'Europe/Paris',
       ),
       nombreMembres: entier('nombre_membres'),
       actif: json['actif'] as bool? ?? false,
