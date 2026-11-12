@@ -18,6 +18,7 @@ import '../../../core/reseau/etat_sans_donnees.dart';
 import '../../../core/reseau/service_reseau.dart';
 import '../../../core/router/routes.dart';
 import '../../../core/session/session_controleur.dart';
+import '../../../core/tc_horloge/mon_horloge.dart';
 import '../../../core/theme/app_gabarit.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -146,11 +147,13 @@ String dateHeureMouvement(DateTime date) {
       locale.microsecond == 0) {
     return dateEcheance(locale);
   }
+  // HEURES-PROFIL H1 : une heure reelle se lit a l'heure du profil.
+  final DateTime profil = chezMoi(date);
   return t.ficheEleve.mouvements.dateHeure(
-    date: dateEcheance(locale),
+    date: dateEcheance(profil),
     heure: t.ficheEleve.mouvements.heureChiffres(
-      heures: _deuxChiffres(locale.hour),
-      minutes: _deuxChiffres(locale.minute),
+      heures: _deuxChiffres(profil.hour),
+      minutes: _deuxChiffres(profil.minute),
     ),
   );
 }

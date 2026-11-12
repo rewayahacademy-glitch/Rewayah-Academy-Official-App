@@ -21,6 +21,7 @@ import '../../core/enseignant/absence_remplacement.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/router/routes.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -379,7 +380,6 @@ class _ActionsEnvoiEtat<T> extends State<_ActionsEnvoi<T>> {
   }
 }
 
-/// L'heure locale d'un instant, sur deux chiffres.
-String hhmmAbsence(DateTime quand) =>
-    '${quand.hour.toString().padLeft(2, '0')}:'
-    '${quand.minute.toString().padLeft(2, '0')}';
+/// L'heure d'un instant, a l'heure du profil ([heureChezMoi], HEURES-PROFIL
+/// H1, 12/11/2026) : `quand.hour` donnait l'heure de l'appareil.
+String hhmmAbsence(DateTime quand) => heureChezMoi(quand);

@@ -1,5 +1,6 @@
 import '../i18n/dates_appareil.dart';
 import '../i18n/strings.g.dart';
+import '../tc_horloge/mon_horloge.dart';
 import '../tc_horloge/session_clock_vm.dart';
 import 'group_summary_vm.dart';
 
@@ -454,7 +455,7 @@ abstract final class LibellesGroupe {
             ? prochainCours
             : compteARebours(
                 restant,
-                debut: horloge.debutUtc.toLocal(),
+                debut: chezMoi(horloge.debutUtc),
                 heureRendue: horloge.horlogeUtilisateur.heureLocaleRendue,
               ),
       PhaseSeance.salleOuverte => salleOuverte(

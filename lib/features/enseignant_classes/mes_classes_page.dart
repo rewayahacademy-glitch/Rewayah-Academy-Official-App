@@ -177,6 +177,9 @@ class MesClassesPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // HEURES-PROFIL H1 (12/11/2026) : la page ecoute le fuseau du profil ;
+    // quand il arrive apres son premier rendu, ses heures se redessinent.
+    ref.watch(monHorlogeProvider);
     final AsyncValue<List<GroupeEnseignant>> groupes = ref.watch(
       groupesEnseignantProvider,
     );
