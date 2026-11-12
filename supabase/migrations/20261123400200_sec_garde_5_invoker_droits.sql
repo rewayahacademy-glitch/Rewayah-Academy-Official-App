@@ -41,6 +41,18 @@
 -- production par le pilote (lecture seule). Un ecart, sans que la fonction
 -- soit deja INVOKER, arrete le fichier.
 --
+-- SEC-GARDE-5-C-RECALIBRAGE (12/11/2026) : guard_profile_immutable_id()
+-- accepte DEUX empreintes. 7c0dc793... est celle de la base rejouee depuis
+-- le depot ; 1fff46e3... est celle de la production (mesure du pilote,
+-- 11/11/2026). Constat du garde-cap, lecture du corps de production : meme
+-- logique que le depot, SECURITY DEFINER, search_path vide, sans retour
+-- chariot ; seul le message d'erreur differe, ses accents abimes a
+-- l'installation (« ne peut pas ?tre modifi? » : le caractere de
+-- remplacement U+FFFD a la place des lettres accentuees). Ce fichier ne
+-- reecrit pas le corps (ALTER FUNCTION ... SECURITY INVOKER seulement) :
+-- les accents du message de production restent abimes, a reparer dans un
+-- lot a part s'il le faut.
+--
 -- Sans BEGIN ni COMMIT de premier niveau. Aucun mot d'effacement :
 -- applicable par apply_migration.
 
@@ -51,15 +63,16 @@ BEGIN
   FOR v IN
     SELECT f.sig, f.attendu, p.prosecdef, pg_catalog.pg_get_functiondef(f.sig::regprocedure) AS def
       FROM (VALUES
-        ('public.guard_audit_logs_immutable()', 'a582efceb101d5541fd511cb7c0c7a91'),
-        ('public.guard_contract_acceptances_immutable()', '572baa09d163a0b386a7a98d7006b02b'),
-        ('public.guard_profile_immutable_id()', '7c0dc793af8980d6a630e54d8ca2d2ac'),
-        ('public.guard_rule_override_immutable()', '624f5c6506008961e77bca25fec678df'),
-        ('public.guard_prayer_adjustments()', 'fd9e6e37ca557cfc4a79f1c86f0fd7d4')
+        ('public.guard_audit_logs_immutable()', ARRAY['a582efceb101d5541fd511cb7c0c7a91']),
+        ('public.guard_contract_acceptances_immutable()', ARRAY['572baa09d163a0b386a7a98d7006b02b']),
+        ('public.guard_profile_immutable_id()', ARRAY['7c0dc793af8980d6a630e54d8ca2d2ac',
+                                                    '1fff46e37cbb5c465e4109b910b76d1d']),
+        ('public.guard_rule_override_immutable()', ARRAY['624f5c6506008961e77bca25fec678df']),
+        ('public.guard_prayer_adjustments()', ARRAY['fd9e6e37ca557cfc4a79f1c86f0fd7d4'])
       ) AS f(sig, attendu)
       JOIN pg_catalog.pg_proc p ON p.oid = f.sig::regprocedure
   LOOP
-    IF v.prosecdef AND pg_catalog.md5(v.def) <> v.attendu THEN
+    IF v.prosecdef AND NOT (pg_catalog.md5(v.def) = ANY (v.attendu)) THEN
       RAISE EXCEPTION 'SEC-GARDE-5 c : % a change (md5 %), rien n''est change',
         v.sig, pg_catalog.md5(v.def);
     END IF;
