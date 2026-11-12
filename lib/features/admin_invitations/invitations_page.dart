@@ -129,6 +129,12 @@ class _InvitationsPageState extends ConsumerState<InvitationsPage> {
   }
 
   Future<void> _inviter(PortInvitationsEnseignant port, RoleInvite role) async {
+    // ANTI-CRASH : le conteneur, pris avant l'attente, relit la liste meme
+    // si la page a ete quittee (`ref` leverait une StateError).
+    final ProviderContainer conteneur = ProviderScope.containerOf(
+      context,
+      listen: false,
+    );
     final r = t.recrutement.invitations;
     final bool comptable = role == RoleInvite.comptable;
     setState(() {
@@ -172,7 +178,7 @@ class _InvitationsPageState extends ConsumerState<InvitationsPage> {
     }
     // Dans tous les cas la liste est relue : une creation dont la reponse
     // s'est perdue doit y apparaitre (D5 : « non confirme », pas « non envoye »).
-    ref.invalidate(_liste(role));
+    conteneur.invalidate(_liste(role));
     if (!mounted) return;
     setState(() {
       _envoi = false;

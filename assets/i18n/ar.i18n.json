@@ -397,6 +397,7 @@
       ],
       "jourDate": "⁨{jour}⁩ ⁨{numero}⁩ ⁨{mois}⁩"
     },
+    "erreurElement": "تعذّر عرض هذا العنصر. أعد المحاولة بعد لحظة.",
     "reessayer": "إعادة المحاولة",
     "annuler": "إلغاء",
     "choix": {

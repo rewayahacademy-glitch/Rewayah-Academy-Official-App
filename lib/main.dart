@@ -154,6 +154,7 @@ import 'core/import_inscriptions/reclamation_preinscription_supabase.dart';
 import 'core/mouvement/retour_navigateur.dart';
 import 'core/navigation/retour_ferme_feuille.dart';
 import 'core/nouveautes/nouveautes.dart';
+import 'core/observabilite/garde_erreurs.dart';
 import 'core/observabilite/journal_dev.dart';
 import 'core/observabilite/supervision.dart';
 import 'core/offres/demandes_suivi_supabase.dart';
@@ -982,6 +983,11 @@ Future<void> main() async {
   // Flutter 3.47, `PlatformDispatcher.onError` existe, donc Sentry n'ouvre
   // aucune zone gardee et `appRunner` ne capterait pas une erreur de plus.
   await Supervision.demarrer();
+
+  // ANTI-CRASH (12/11/2026) : apres la supervision, pour ENCHAINER ses
+  // gestionnaires d'erreurs sans les ecraser ; une erreur d'affichage donne
+  // une carte « Reessayer », jamais un rectangle gris.
+  installerGardeErreurs();
 
   // Jamais `LocaleSettings.useDeviceLocale()` : une langue systeme mal formee
   // (« en-US@posix ») y levait et arretait l'application (CLAVIER-ENTREE-1).
