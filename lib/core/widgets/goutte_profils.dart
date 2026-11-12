@@ -34,6 +34,15 @@ import 'package:flutter/widgets.dart';
 import '../theme/app_mouvement.dart';
 import 'liaison_liquide.dart';
 
+/// GOUTTE-COUPEE (directeur, 11/11/2026, relaye par le garde-cap) : le
+/// directeur refuse le dessin de la goutte (« immonde ») ; elle ne peint plus
+/// rien, ni cou, ni goutte, ni nappe. La selection et le contenu changent tout
+/// de suite. [GoutteProfils], [RondGoutte], [ItemGoutte] et [ContenuGoutte]
+/// restent en place pour une refonte future (base : la branche
+/// `claude/goutte-nappe-travail`) ; remettre ce drapeau a `true` ne se fait
+/// que sur decision datee du directeur.
+const bool goutteActive = false;
+
 /// La portee de la goutte : au-dessus du selecteur de profils et de son
 /// contenu. Elle mesure les ronds, peint les cous sous eux, et commande le
 /// fondu de la couleur de selection du rond choisi.
@@ -211,7 +220,7 @@ class _EtatGoutteProfils extends State<GoutteProfils>
     final String? de = ancien.selectionId;
     final String? vers = widget.selectionId;
     if (de == null || vers == null || de == vers) return;
-    if (AppMouvement.mouvementReduit(context)) {
+    if (!goutteActive || AppMouvement.mouvementReduit(context)) {
       _finir();
       return;
     }
@@ -508,7 +517,8 @@ class _EtatContenuGoutte extends State<ContenuGoutte>
   void didUpdateWidget(ContenuGoutte ancien) {
     super.didUpdateWidget(ancien);
     if (ancien.profilId == widget.profilId) return;
-    if (GoutteProfils._portee(context) == null ||
+    if (!goutteActive ||
+        GoutteProfils._portee(context) == null ||
         AppMouvement.mouvementReduit(context)) {
       _terminer();
       return;
@@ -650,6 +660,7 @@ class _PeintreGoutte extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    if (!goutteActive) return;
     _peindreRonds(canvas);
     _peindreContenu(canvas);
   }

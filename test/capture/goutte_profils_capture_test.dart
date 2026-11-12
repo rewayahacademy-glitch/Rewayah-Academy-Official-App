@@ -1,3 +1,5 @@
+// GOUTTE-COUPEE (11/11/2026) : la goutte ne peint plus rien ; seule la
+// planche « coupee » est produite. Ancien en-tete :
 // Captures de la GOUTTE D'HUILE DES PROFILS (directeur, 11/11/2026, relayee par
 // le garde-cap) : planches en plusieurs temps.
 //   - aller : d'un profil a l'autre, le cou entre les deux ronds ;
@@ -15,7 +17,6 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/theme/app_palette.dart';
 import 'package:rewayah_academy/core/theme/app_radius.dart';
@@ -103,15 +104,6 @@ class _Hote {
   ({double avancement})? get chute => GoutteProfils.chuteDe(contexte!);
 }
 
-/// Avance le temps, 2 ms a la fois, jusqu'a ce que [arret] soit vrai.
-Future<void> _jusqua(WidgetTester tester, bool Function() arret) async {
-  for (int i = 0; i < 1000; i++) {
-    if (arret()) return;
-    await tester.pump(const Duration(milliseconds: 2));
-  }
-  fail('etat de la goutte jamais atteint');
-}
-
 /// La planche : le haut de chaque capture (la rangee des profils et le haut du
 /// contenu), une rangee par variante, une colonne par temps.
 Future<String> _planche(
@@ -181,123 +173,44 @@ Future<String> _planche(
 }
 
 void main() {
-  group('Capture : goutte des profils', skip: sautSansCapture, () {
+  // GOUTTE-COUPEE (directeur, 11/11/2026) : la goutte ne peint plus rien. La
+  // planche montre le changement de profil propre : avant, a l'image du
+  // toucher (selection et contenu deja changes), puis 300 ms apres.
+  group('Capture : goutte coupee', skip: sautSansCapture, () {
     setUpAll(chargerPolicesDuDepot);
-    final Map<String, List<List<String>>> planches =
-        <String, List<List<String>>>{
-          'aller': <List<String>>[],
-          'retour': <List<String>>[],
-          'contenu': <List<String>>[],
-        };
+    final List<List<String>> rangees = <List<String>>[];
 
-    for (final (
-          String nom,
-          AppLocale langue,
-          ThemeMode theme,
-          double echelle,
-          InterfaceMode mode,
-        )
-        in <(String, AppLocale, ThemeMode, double, InterfaceMode)>[
-          ('clair', AppLocale.fr, ThemeMode.light, 1, InterfaceMode.standard),
-          ('sombre', AppLocale.fr, ThemeMode.dark, 1, InterfaceMode.standard),
-          ('arabe', AppLocale.ar, ThemeMode.light, 1, InterfaceMode.standard),
-          // Garde-cap (11/11/2026) : texte x2 et Interface guidee.
-          (
-            'texte_x2',
-            AppLocale.fr,
-            ThemeMode.light,
-            2,
-            InterfaceMode.standard,
-          ),
-          ('guidee', AppLocale.fr, ThemeMode.light, 1, InterfaceMode.enfant),
+    for (final (String nom, AppLocale langue, ThemeMode theme)
+        in <(String, AppLocale, ThemeMode)>[
+          ('clair', AppLocale.fr, ThemeMode.light),
+          ('sombre', AppLocale.fr, ThemeMode.dark),
+          ('arabe', AppLocale.ar, ThemeMode.light),
         ]) {
       testWidgets(nom, (WidgetTester tester) async {
         await tester.runAsync(() => LocaleSettings.setLocale(langue));
         addTearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
         fixerVueCapture(tester, _vue, _densite);
         final _Hote h = _Hote();
-        await tester.pumpWidget(
-          hoteCapture(
-            h.ecran(),
-            themeMode: theme,
-            echelleTexte: echelle,
-            interfaceMode: mode,
-          ),
-        );
+        await tester.pumpWidget(hoteCapture(h.ecran(), themeMode: theme));
         await stabiliser(tester);
         await tester.pump(const Duration(seconds: 1));
-
-        Future<List<String>> rangeeAller({
-          required String vers,
-          required String suffixe,
-        }) async {
-          final List<String> rangee = <String>[];
-          Future<void> prendre(String temps) async {
-            final String c = await capturer(
-              tester,
-              'goutte_${suffixe}_${nom}_$temps',
-            );
-            rangee.add(c);
-          }
-
-          await prendre('1_repos');
-          h.selection.value = vers;
-          await tester.pump();
-          await tester.pump();
-          await _jusqua(tester, () => (h.goutte?.avancement ?? 0) >= 0.12);
-          await prendre('2_depart');
-          await _jusqua(tester, () => (h.goutte?.avancement ?? 0) >= 0.4);
-          await prendre('3_vers_le_rond_choisi');
-          await _jusqua(tester, () => (h.goutte?.avancement ?? 0) >= 0.7);
-          await prendre('4_cou_aminci');
-          await _jusqua(tester, () => h.goutte?.rompu ?? true);
-          await prendre('5_rupture');
-          await tester.pump(const Duration(milliseconds: 60));
-          await prendre('6_rebond');
-          await tester.pump(const Duration(seconds: 1));
-          return rangee;
-        }
-
-        planches['aller']!.add(await rangeeAller(vers: 'c', suffixe: 'aller'));
-        // Le retour : le detachement part du profil qu'on quitte (c).
-        planches['retour']!.add(
-          await rangeeAller(vers: 'a', suffixe: 'retour'),
-        );
-
-        // Le contenu : le nouveau est la tout de suite, la goutte se joue sur lui.
-        final List<String> contenu = <String>[];
-        Future<void> prendreContenu(String temps) async {
-          contenu.add(await capturer(tester, 'goutte_contenu_${nom}_$temps'));
-        }
-
-        await prendreContenu('1_repos');
-        h.selection.value = 'b';
-        h.affiche.value = 'b';
+        final List<String> rangee = <String>[];
+        rangee.add(await capturer(tester, 'goutte_coupee_${nom}_1_avant'));
+        h.selection.value = 'c';
+        h.affiche.value = 'c';
         await tester.pump();
-        await tester.pump();
-        // Le contenu est la tout de suite ; la goutte se joue sur lui.
-        await prendreContenu('2_toucher');
-        await _jusqua(tester, () => (h.chute?.avancement ?? 1) >= 0.12);
-        await prendreContenu('3_tombe_debut');
-        await _jusqua(tester, () => (h.chute?.avancement ?? 1) >= 0.3);
-        await prendreContenu('4_tombe_cou');
-        await _jusqua(tester, () => (h.chute?.avancement ?? 1) >= 0.6);
-        await prendreContenu('5_s_etale');
-        await tester.pump(const Duration(seconds: 1));
-        await prendreContenu('6_fin');
-        planches['contenu']!.add(contenu);
+        expect(h.goutte, isNull);
+        expect(h.chute, isNull);
+        rangee.add(await capturer(tester, 'goutte_coupee_${nom}_2_toucher'));
+        await tester.pump(const Duration(milliseconds: 300));
+        rangee.add(await capturer(tester, 'goutte_coupee_${nom}_3_apres'));
+        rangees.add(rangee);
       });
     }
 
-    testWidgets('planches', (WidgetTester tester) async {
-      for (final MapEntry<String, List<List<String>>> e in planches.entries) {
-        final String c = await _planche(
-          tester,
-          'goutte_planche_${e.key}',
-          e.value,
-        );
-        debugPrint('PLANCHE $c');
-      }
+    testWidgets('planche', (WidgetTester tester) async {
+      final String c = await _planche(tester, 'goutte_planche_coupee', rangees);
+      debugPrint('PLANCHE $c');
     });
   });
 }
