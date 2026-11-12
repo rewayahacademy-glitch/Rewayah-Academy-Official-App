@@ -29164,19 +29164,19 @@ class Traductions$admin$regles$pause$fr {
 	String get adultes => 'Pause des classes d\'adultes';
 
 	/// fr: 'La durée de la pause par défaut d'une classe d'adultes. 0 : pas de pause. Arrondie aux 5 minutes, de 5 à 30.'
-	String get adultesDetail => 'La durée de la pause par défaut d\'une classe d\'adultes. 0 : pas de pause. Arrondie aux 5 minutes, de 5 à 30.';
+	String get adultesDetail => 'La durée de la pause par défaut d\'une classe d\'adultes. 0 : pas de pause. Arrondie aux 5 minutes, de 5 à 30.';
 
 	/// fr: 'Pause des classes d'enfants'
 	String get enfants => 'Pause des classes d\'enfants';
 
 	/// fr: 'La durée de la pause par défaut d'une classe d'enfants. 0 : pas de pause. Arrondie aux 5 minutes, de 5 à 30.'
-	String get enfantsDetail => 'La durée de la pause par défaut d\'une classe d\'enfants. 0 : pas de pause. Arrondie aux 5 minutes, de 5 à 30.';
+	String get enfantsDetail => 'La durée de la pause par défaut d\'une classe d\'enfants. 0 : pas de pause. Arrondie aux 5 minutes, de 5 à 30.';
 
 	/// fr: 'Rappel après un refus'
 	String get rappel => 'Rappel après un refus';
 
 	/// fr: 'Si l'enseignant refuse la pause, elle lui est proposée de nouveau après ce délai : la pause est un droit.'
-	String get rappelDetail => 'Si l\'enseignant refuse la pause, elle lui est proposée de nouveau après ce délai : la pause est un droit.';
+	String get rappelDetail => 'Si l\'enseignant refuse la pause, elle lui est proposée de nouveau après ce délai : la pause est un droit.';
 
 	/// fr: 'Cours restant après la pause'
 	String get reste => 'Cours restant après la pause';
@@ -53178,11 +53178,11 @@ extension on Traductions {
 			'admin.regles.pause.section' => 'Pause pendant la séance',
 			'admin.regles.pause.intro' => 'Par défaut, chaque séance d\'une classe a une pause, juste après le milieu. La barre du chrono la propose à l\'enseignant, qui accepte ou refuse. L\'enseignant peut aussi régler la pause de sa classe.',
 			'admin.regles.pause.adultes' => 'Pause des classes d\'adultes',
-			'admin.regles.pause.adultesDetail' => 'La durée de la pause par défaut d\'une classe d\'adultes. 0 : pas de pause. Arrondie aux 5 minutes, de 5 à 30.',
+			'admin.regles.pause.adultesDetail' => 'La durée de la pause par défaut d\'une classe d\'adultes. 0 : pas de pause. Arrondie aux 5 minutes, de 5 à 30.',
 			'admin.regles.pause.enfants' => 'Pause des classes d\'enfants',
-			'admin.regles.pause.enfantsDetail' => 'La durée de la pause par défaut d\'une classe d\'enfants. 0 : pas de pause. Arrondie aux 5 minutes, de 5 à 30.',
+			'admin.regles.pause.enfantsDetail' => 'La durée de la pause par défaut d\'une classe d\'enfants. 0 : pas de pause. Arrondie aux 5 minutes, de 5 à 30.',
 			'admin.regles.pause.rappel' => 'Rappel après un refus',
-			'admin.regles.pause.rappelDetail' => 'Si l\'enseignant refuse la pause, elle lui est proposée de nouveau après ce délai : la pause est un droit.',
+			'admin.regles.pause.rappelDetail' => 'Si l\'enseignant refuse la pause, elle lui est proposée de nouveau après ce délai : la pause est un droit.',
 			'admin.regles.pause.reste' => 'Cours restant après la pause',
 			'admin.regles.pause.resteDetail' => 'La pause n\'est plus proposée s\'il restait, après elle, moins que ce temps de cours.',
 			'admin.regles.pause.bornesDuree' => 'De 0 à 30 minutes.',
