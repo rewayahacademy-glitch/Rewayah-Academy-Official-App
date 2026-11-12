@@ -415,6 +415,11 @@ class FicheSupport {
     this.politiqueHorsLigne = PolitiqueOffline.jamais,
     this.classesServies = 0,
     this.motifRetrait,
+    this.rayon = codeRayonCours,
+    this.ordre = 0,
+    this.lienExterne,
+    this.etapes = const <String>[],
+    this.aVignette = false,
   });
 
   /// La ligne de catalogue (titre, type, etats).
@@ -463,6 +468,21 @@ class FicheSupport {
   /// Le motif d'un retrait.
   final String? motifRetrait;
 
+  /// Le code du rayon (`codeRayonCours`, `codeRayonPlusLoin`).
+  final String rayon;
+
+  /// L'ordre d'affichage dans le rayon.
+  final int ordre;
+
+  /// L'adresse https d'un lien externe ou d'une video par lien.
+  final String? lienExterne;
+
+  /// Les codes stables des etapes rattachees.
+  final List<String> etapes;
+
+  /// Vrai quand une vignette a ete deposee.
+  final bool aVignette;
+
   /// La derniere version, ou `null` si aucune.
   VersionSupport? get derniereVersion =>
       versions.isEmpty ? null : versions.first;
@@ -478,6 +498,11 @@ class NouveauSupport {
     required this.langue,
     required this.categorie,
     this.niveau,
+    this.description,
+    this.rayon = codeRayonCours,
+    this.ordre = 0,
+    this.lienExterne,
+    this.etapes = const <String>[],
   });
 
   /// Le titre.
@@ -494,6 +519,22 @@ class NouveauSupport {
 
   /// Le niveau.
   final String? niveau;
+
+  /// La description courte, montree sur la carte. Obligatoire pour un lien
+  /// externe (le serveur refuse sans elle).
+  final String? description;
+
+  /// Le code du rayon.
+  final String rayon;
+
+  /// L'ordre d'affichage dans le rayon.
+  final int ordre;
+
+  /// L'adresse https d'un lien externe ou d'une video par lien.
+  final String? lienExterne;
+
+  /// Les codes stables des etapes auxquelles le document se rattache.
+  final List<String> etapes;
 }
 
 /// Les champs modifiables d'un brouillon : `null` = inchange.
@@ -509,7 +550,28 @@ class ModificationSupport {
     this.conditionsAttribution,
     this.visibilite,
     this.politiqueHorsLigne,
+    this.rayon,
+    this.ordre,
+    this.lienExterne,
+    this.etapes,
+    this.retirerVignette = false,
   });
+
+  /// Le code du rayon.
+  final String? rayon;
+
+  /// L'ordre d'affichage.
+  final int? ordre;
+
+  /// L'adresse du lien (une chaine vide la retire : le serveur refuse pour un
+  /// lien externe, qui en exige une).
+  final String? lienExterne;
+
+  /// Les etapes rattachees (la liste complete remplace la precedente).
+  final List<String>? etapes;
+
+  /// Vrai pour retirer la vignette deposee.
+  final bool retirerVignette;
 
   /// Le titre.
   final String? titre;
@@ -682,6 +744,11 @@ enum FinaliteUpload {
 
   /// La preuve d'autorisation (spec §4.3).
   preuve,
+
+  /// La vignette (image de couverture) du document : 2 Mio au plus, deposee
+  /// par la meme voie en deux temps, mais rattachee au document et non a une
+  /// version.
+  vignette,
 }
 
 /// Les phases d'un depot (spec §3.4, §7).

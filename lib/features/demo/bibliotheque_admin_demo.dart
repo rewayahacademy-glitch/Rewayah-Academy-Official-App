@@ -145,7 +145,7 @@ class BibliothequeAdminDemo implements PortBibliothequeAdmin {
   static const List<String> _langues = <String>['fr', 'ar', 'en'];
 
   _Etat _generer(int i) {
-    final TypeRessource type = TypeRessource.values[i % 5];
+    final TypeRessource type = TypeRessource.values[i % TypeRessource.values.length];
     // Repartition des etats : 0 brouillon, 1 a verifier, 2 publie, 3 publie,
     // 4 retire, 5 droits expires.
     final int cas = i % 6;
@@ -602,6 +602,13 @@ class BibliothequeAdminDemo implements PortBibliothequeAdmin {
       }.contains(f.mime),
       TypeRessource.texteStructure ||
       TypeRessource.lecon => f.mime == 'application/json',
+      TypeRessource.audio => const <String>{
+        'audio/mpeg',
+        'audio/mp4',
+        'audio/ogg',
+      }.contains(f.mime),
+      TypeRessource.video ||
+      TypeRessource.lienExterne ||
       TypeRessource.quran => false,
     };
     return ok ? null : ErreurUpload.type;

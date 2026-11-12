@@ -13303,20 +13303,20 @@ class Traductions$admin$bibliotheque$fr {
 	/// fr: 'Bibliothèque'
 	String get titre => 'Bibliothèque';
 
-	/// fr: 'Les supports pédagogiques : les déposer, vérifier leurs droits, publier une version, les attribuer aux classes.'
-	String get intro => 'Les supports pédagogiques : les déposer, vérifier leurs droits, publier une version, les attribuer aux classes.';
+	/// fr: 'Les documents pédagogiques : les déposer, vérifier leurs droits, publier une version, les attribuer aux classes.'
+	String get intro => 'Les documents pédagogiques : les déposer, vérifier leurs droits, publier une version, les attribuer aux classes.';
 
 	/// fr: 'Un brouillon ne donne aucun accès aux élèves ni aux enseignants.'
 	String get brouillonAlerte => 'Un brouillon ne donne aucun accès aux élèves ni aux enseignants.';
 
-	/// fr: 'Ajouter un support'
-	String get ajouter => 'Ajouter un support';
+	/// fr: 'Ajouter un document'
+	String get ajouter => 'Ajouter un document';
 
-	/// fr: 'Aucun support'
-	String get vide => 'Aucun support';
+	/// fr: 'Aucun document'
+	String get vide => 'Aucun document';
 
-	/// fr: 'Ajoutez un premier support pour le préparer, vérifier ses droits, puis le publier.'
-	String get videDetail => 'Ajoutez un premier support pour le préparer, vérifier ses droits, puis le publier.';
+	/// fr: 'Ajoutez un premier document pour le préparer, vérifier ses droits, puis le publier.'
+	String get videDetail => 'Ajoutez un premier document pour le préparer, vérifier ses droits, puis le publier.';
 
 	/// fr: 'Le catalogue n'a pas pu être chargé. Réessayez.'
 	String get erreur => 'Le catalogue n\'a pas pu être chargé. Réessayez.';
@@ -13333,14 +13333,14 @@ class Traductions$admin$bibliotheque$fr {
 	/// fr: 'le catalogue'
 	String get sansDonnees => 'le catalogue';
 
-	/// fr: 'Support'
-	String get ficheTitre => 'Support';
+	/// fr: 'Document'
+	String get ficheTitre => 'Document';
 
 	/// fr: 'Retour au catalogue'
 	String get retourCatalogue => 'Retour au catalogue';
 
-	/// fr: 'Ce support n'existe pas ou n'est pas accessible.'
-	String get introuvable => 'Ce support n\'existe pas ou n\'est pas accessible.';
+	/// fr: 'Ce document n'existe pas ou n'est pas accessible.'
+	String get introuvable => 'Ce document n\'existe pas ou n\'est pas accessible.';
 
 	late final Traductions$admin$bibliotheque$libelles$fr libelles = Traductions$admin$bibliotheque$libelles$fr.internal(_root);
 	late final Traductions$admin$bibliotheque$catalogue$fr catalogue = Traductions$admin$bibliotheque$catalogue$fr.internal(_root);
@@ -18131,8 +18131,8 @@ class Traductions$tc$bibliotheque$fr {
 	/// fr: 'Titre, niveau, sourate ou page'
 	String get rechercheIndication => 'Titre, niveau, sourate ou page';
 
-	/// fr: 'Rechercher un support'
-	String get rechercheLibelle => 'Rechercher un support';
+	/// fr: 'Rechercher un document'
+	String get rechercheLibelle => 'Rechercher un document';
 
 	/// fr: 'Tout afficher'
 	String get effacerRecherche => 'Tout afficher';
@@ -31112,20 +31112,20 @@ class Traductions$admin$bibliotheque$catalogue$fr {
 	/// fr: 'Aucun résultat'
 	String get videRecherche => 'Aucun résultat';
 
-	/// fr: 'Aucun support ne correspond à votre recherche ou à vos filtres.'
-	String get videRechercheDetail => 'Aucun support ne correspond à votre recherche ou à vos filtres.';
+	/// fr: 'Aucun document ne correspond à votre recherche ou à vos filtres.'
+	String get videRechercheDetail => 'Aucun document ne correspond à votre recherche ou à vos filtres.';
 
 	/// fr: 'Effacer les filtres'
 	String get effacerFiltres => 'Effacer les filtres';
 
-	/// fr: 'Voir plus de supports'
-	String get voirPlus => 'Voir plus de supports';
+	/// fr: 'Voir plus de documents'
+	String get voirPlus => 'Voir plus de documents';
 
 	/// fr: 'La suite du catalogue n'a pas pu être chargée.'
 	String get pageErreur => 'La suite du catalogue n\'a pas pu être chargée.';
 
-	/// fr: 'Ouvrir le support {titre}'
-	String ouvrir({required Object titre}) => 'Ouvrir le support ${titre}';
+	/// fr: 'Ouvrir le document {titre}'
+	String ouvrir({required Object titre}) => 'Ouvrir le document ${titre}';
 
 	/// fr: 'Droits échus'
 	String get droitsEchus => 'Droits échus';
@@ -31176,8 +31176,8 @@ class Traductions$admin$bibliotheque$fiche$fr {
 	/// fr: 'Modifications enregistrées.'
 	String get enregistre => 'Modifications enregistrées.';
 
-	/// fr: 'Un autre administrateur a modifié ce support. Rechargez la fiche avant de continuer.'
-	String get conflit => 'Un autre administrateur a modifié ce support. Rechargez la fiche avant de continuer.';
+	/// fr: 'Un autre administrateur a modifié ce document. Rechargez la fiche avant de continuer.'
+	String get conflit => 'Un autre administrateur a modifié ce document. Rechargez la fiche avant de continuer.';
 
 	/// fr: 'Recharger la fiche'
 	String get recharger => 'Recharger la fiche';
@@ -31234,8 +31234,8 @@ class Traductions$admin$bibliotheque$import$fr {
 
 	// Translations
 
-	/// fr: 'Compléter le support'
-	String get completer => 'Compléter le support';
+	/// fr: 'Compléter le document'
+	String get completer => 'Compléter le document';
 
 	late final Traductions$admin$bibliotheque$import$sections$fr sections = Traductions$admin$bibliotheque$import$sections$fr.internal(_root);
 	late final Traductions$admin$bibliotheque$import$champs$fr champs = Traductions$admin$bibliotheque$import$champs$fr.internal(_root);
@@ -31336,8 +31336,8 @@ class Traductions$admin$bibliotheque$publication$fr {
 	/// fr: 'Publier la version {numero} ?'
 	String confirmerTitre({required Object numero}) => 'Publier la version ${numero} ?';
 
-	/// fr: 'La version devient immuable et visible des classes auxquelles le support est attribué. Pour la modifier, vous créerez une nouvelle version.'
-	String get confirmerEffet => 'La version devient immuable et visible des classes auxquelles le support est attribué. Pour la modifier, vous créerez une nouvelle version.';
+	/// fr: 'La version devient immuable et visible des classes auxquelles le document est attribué. Pour la modifier, vous créerez une nouvelle version.'
+	String get confirmerEffet => 'La version devient immuable et visible des classes auxquelles le document est attribué. Pour la modifier, vous créerez une nouvelle version.';
 
 	/// fr: 'Publier'
 	String get confirmerBouton => 'Publier';
@@ -31393,8 +31393,8 @@ class Traductions$admin$bibliotheque$attribution$fr {
 	/// fr: 'Chargement…'
 	String get chargementPlus => 'Chargement…';
 
-	/// fr: 'Ce support n'est pas publié. Publiez une version avant de l'attribuer à des classes.'
-	String get nonPublie => 'Ce support n\'est pas publié. Publiez une version avant de l\'attribuer à des classes.';
+	/// fr: 'Ce document n'est pas publié. Publiez une version avant de l'attribuer à des classes.'
+	String get nonPublie => 'Ce document n\'est pas publié. Publiez une version avant de l\'attribuer à des classes.';
 
 	/// fr: 'Les classes n'ont pas pu être chargées. Réessayez.'
 	String get erreur => 'Les classes n\'ont pas pu être chargées. Réessayez.';
@@ -31405,8 +31405,8 @@ class Traductions$admin$bibliotheque$attribution$fr {
 	/// fr: 'Choisissez au moins une classe avant d'attribuer.'
 	String get attribuerAucune => 'Choisissez au moins une classe avant d\'attribuer.';
 
-	/// fr: 'Support attribué. Les classes choisies le voient maintenant.'
-	String get attribuee => 'Support attribué. Les classes choisies le voient maintenant.';
+	/// fr: 'Document attribué. Les classes choisies le voient maintenant.'
+	String get attribuee => 'Document attribué. Les classes choisies le voient maintenant.';
 
 	/// fr: 'L'attribution n'a pas abouti. Réessayez dans un instant.'
 	String get attribueEchec => 'L\'attribution n\'a pas abouti. Réessayez dans un instant.';
@@ -31414,8 +31414,8 @@ class Traductions$admin$bibliotheque$attribution$fr {
 	/// fr: 'Retirer du catalogue'
 	String get retraitTitre => 'Retirer du catalogue';
 
-	/// fr: 'Un retrait masque le support de toutes les classes. Il ne supprime rien : le fichier et l'historique restent conservés.'
-	String get retraitIntro => 'Un retrait masque le support de toutes les classes. Il ne supprime rien : le fichier et l\'historique restent conservés.';
+	/// fr: 'Un retrait masque le document de toutes les classes. Il ne supprime rien : le fichier et l'historique restent conservés.'
+	String get retraitIntro => 'Un retrait masque le document de toutes les classes. Il ne supprime rien : le fichier et l\'historique restent conservés.';
 
 	/// fr: 'Motif du retrait'
 	String get motif => 'Motif du retrait';
@@ -31423,8 +31423,8 @@ class Traductions$admin$bibliotheque$attribution$fr {
 	/// fr: 'Écrivez le motif du retrait avant de continuer : il est conservé dans l'historique.'
 	String get motifRequis => 'Écrivez le motif du retrait avant de continuer : il est conservé dans l\'historique.';
 
-	/// fr: 'Retirer ce support'
-	String get retirer => 'Retirer ce support';
+	/// fr: 'Retirer ce document'
+	String get retirer => 'Retirer ce document';
 
 	/// fr: 'Retirer « {titre} » du catalogue ?'
 	String retraitConfirmerTitre({required Object titre}) => 'Retirer « ${titre} » du catalogue ?';
@@ -31432,17 +31432,17 @@ class Traductions$admin$bibliotheque$attribution$fr {
 	/// fr: 'Les classes ne le verront plus, y compris celles qui l'utilisent déjà. Le motif est conservé dans l'historique.'
 	String get retraitConfirmerEffet => 'Les classes ne le verront plus, y compris celles qui l\'utilisent déjà. Le motif est conservé dans l\'historique.';
 
-	/// fr: 'Retirer le support'
-	String get retraitConfirmerBouton => 'Retirer le support';
+	/// fr: 'Retirer le document'
+	String get retraitConfirmerBouton => 'Retirer le document';
 
-	/// fr: 'Support retiré du catalogue.'
-	String get retire => 'Support retiré du catalogue.';
+	/// fr: 'Document retiré du catalogue.'
+	String get retire => 'Document retiré du catalogue.';
 
 	/// fr: 'Le retrait n'a pas abouti. Réessayez dans un instant.'
 	String get retraitEchec => 'Le retrait n\'a pas abouti. Réessayez dans un instant.';
 
-	/// fr: 'Quelqu'un a modifié ce support entre-temps. Rechargez avant de continuer.'
-	String get conflit => 'Quelqu\'un a modifié ce support entre-temps. Rechargez avant de continuer.';
+	/// fr: 'Quelqu'un a modifié ce document entre-temps. Rechargez avant de continuer.'
+	String get conflit => 'Quelqu\'un a modifié ce document entre-temps. Rechargez avant de continuer.';
 }
 
 // Path: compte.page.sections
@@ -32885,14 +32885,14 @@ class Traductions$tc$bibliotheque$sections$fr {
 	/// fr: 'Pour cette classe'
 	String get pourCeGroupe => 'Pour cette classe';
 
-	/// fr: 'Supports à afficher'
-	String get groupe => 'Supports à afficher';
+	/// fr: 'Documents à afficher'
+	String get groupe => 'Documents à afficher';
 
 	/// fr: 'Récents'
 	String get recents => 'Récents';
 
-	/// fr: 'Tous les supports'
-	String get tousLesSupports => 'Tous les supports';
+	/// fr: 'Tous les documents'
+	String get tousLesSupports => 'Tous les documents';
 
 	/// fr: 'Résultats'
 	String get resultats => 'Résultats';
@@ -32906,11 +32906,11 @@ class Traductions$tc$bibliotheque$vide$fr {
 
 	// Translations
 
-	/// fr: 'Aucun support publié pour le moment'
-	String get message => 'Aucun support publié pour le moment';
+	/// fr: 'Aucun document publié pour le moment'
+	String get message => 'Aucun document publié pour le moment';
 
-	/// fr: 'Vos enseignants déposeront ici les supports de vos cours.'
-	String get invitation => 'Vos enseignants déposeront ici les supports de vos cours.';
+	/// fr: 'Vos enseignants déposeront ici les documents de vos cours.'
+	String get invitation => 'Vos enseignants déposeront ici les documents de vos cours.';
 }
 
 // Path: tc.bibliotheque.aucunResultat
@@ -32921,8 +32921,8 @@ class Traductions$tc$bibliotheque$aucunResultat$fr {
 
 	// Translations
 
-	/// fr: 'Aucun support ne correspond'
-	String get message => 'Aucun support ne correspond';
+	/// fr: 'Aucun document ne correspond'
+	String get message => 'Aucun document ne correspond';
 
 	/// fr: 'Essayez un autre mot, ou relâchez les filtres.'
 	String get invitation => 'Essayez un autre mot, ou relâchez les filtres.';
@@ -32954,8 +32954,8 @@ class Traductions$tc$bibliotheque$introuvable$fr {
 
 	// Translations
 
-	/// fr: 'Ce support ne vous est pas ouvert'
-	String get message => 'Ce support ne vous est pas ouvert';
+	/// fr: 'Ce document ne vous est pas ouvert'
+	String get message => 'Ce document ne vous est pas ouvert';
 
 	/// fr: 'Il a peut-être été retiré, ou il est réservé à une autre classe. Votre enseignant peut vous le rouvrir.'
 	String get invitation => 'Il a peut-être été retiré, ou il est réservé à une autre classe. Votre enseignant peut vous le rouvrir.';
@@ -32993,6 +32993,15 @@ class Traductions$tc$bibliotheque$type$fr {
 
 	// Translations
 
+	/// fr: 'Audio'
+	String get audio => 'Audio';
+
+	/// fr: 'Vidéo'
+	String get video => 'Vidéo';
+
+	/// fr: 'Lien externe'
+	String get lienExterne => 'Lien externe';
+
 	/// fr: 'Coran'
 	String get quran => 'Coran';
 
@@ -33017,11 +33026,11 @@ class Traductions$tc$bibliotheque$detail$fr {
 
 	// Translations
 
-	/// fr: 'Support'
-	String get titre => 'Support';
+	/// fr: 'Document'
+	String get titre => 'Document';
 
-	/// fr: 'Ce que ce support permet'
-	String get capacites => 'Ce que ce support permet';
+	/// fr: 'Ce que ce document permet'
+	String get capacites => 'Ce que ce document permet';
 
 	/// fr: 'Niveaux'
 	String get niveaux => 'Niveaux';
@@ -33077,8 +33086,8 @@ class Traductions$tc$bibliotheque$message$fr {
 	/// fr: 'La copie n’a pas pu être préparée. Réessayez dans un instant.'
 	String get copieImpossible => 'La copie n’a pas pu être préparée. Réessayez dans un instant.';
 
-	/// fr: 'Ce support n’est pas encore disponible hors ligne'
-	String get telechargementImpossible => 'Ce support n’est pas encore disponible hors ligne';
+	/// fr: 'Ce document n’est pas encore disponible hors ligne'
+	String get telechargementImpossible => 'Ce document n’est pas encore disponible hors ligne';
 
 	/// fr: 'Disponible une fois téléchargé ou de retour en ligne'
 	String get horsLigneNonTelecharge => 'Disponible une fois téléchargé ou de retour en ligne';
@@ -33095,11 +33104,11 @@ class Traductions$tc$bibliotheque$classe$fr {
 
 	// Translations
 
-	/// fr: 'Choisir un support'
-	String get titre => 'Choisir un support';
+	/// fr: 'Choisir un document'
+	String get titre => 'Choisir un document';
 
-	/// fr: 'Le support choisi remplace celui affiché. Le cours continue.'
-	String get sousTitre => 'Le support choisi remplace celui affiché. Le cours continue.';
+	/// fr: 'Le document choisi remplace celui affiché. Le cours continue.'
+	String get sousTitre => 'Le document choisi remplace celui affiché. Le cours continue.';
 }
 
 // Path: tc.bibliotheque.rendu
@@ -33109,6 +33118,21 @@ class Traductions$tc$bibliotheque$rendu$fr {
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
+
+	/// fr: 'Ce type de document n'a pas encore de lecteur dans l'application.'
+	String get sansLecteur => 'Ce type de document n\'a pas encore de lecteur dans l\'application.';
+
+	/// fr: 'Ouvrir le lien'
+	String get ouvrirLien => 'Ouvrir le lien';
+
+	/// fr: 'Ce lien s'ouvre sur un autre site.'
+	String get lienAutreSite => 'Ce lien s\'ouvre sur un autre site.';
+
+	/// fr: 'Ce lien s'ouvre depuis la version web de l'application.'
+	String get lienSansNavigateur => 'Ce lien s\'ouvre depuis la version web de l\'application.';
+
+	/// fr: 'Ce document n'a pas encore de contenu à ouvrir.'
+	String get lienAbsent => 'Ce document n\'a pas encore de contenu à ouvrir.';
 
 	/// fr: 'L'image n'a pas pu être chargée pour le moment.'
 	String get imageInaccessible => 'L\'image n\'a pas pu être chargée pour le moment.';
@@ -33128,8 +33152,8 @@ class Traductions$tc$bibliotheque$rendu$fr {
 	/// fr: 'Le lien de lecture n'a pas pu être obtenu pour le moment.'
 	String get lienEchec => 'Le lien de lecture n\'a pas pu être obtenu pour le moment.';
 
-	/// fr: 'L'ouverture n'est pas disponible pour ce support.'
-	String get lienIndisponible => 'L\'ouverture n\'est pas disponible pour ce support.';
+	/// fr: 'L'ouverture n'est pas disponible pour ce document.'
+	String get lienIndisponible => 'L\'ouverture n\'est pas disponible pour ce document.';
 
 	/// fr: 'L'ouverture pourra se faire quand la connexion reviendra.'
 	String get lienHorsLigne => 'L\'ouverture pourra se faire quand la connexion reviendra.';
@@ -33146,26 +33170,26 @@ class Traductions$tc$bibliotheque$actif$fr {
 
 	// Translations
 
-	/// fr: 'Support présenté pas encore ouvert'
-	String get indisponibleTitre => 'Support présenté pas encore ouvert';
+	/// fr: 'Document présenté pas encore ouvert'
+	String get indisponibleTitre => 'Document présenté pas encore ouvert';
 
-	/// fr: 'Le suivi du support présenté s'ouvrira au branchement serveur.'
-	String get indisponible => 'Le suivi du support présenté s\'ouvrira au branchement serveur.';
+	/// fr: 'Le suivi du document présenté s'ouvrira au branchement serveur.'
+	String get indisponible => 'Le suivi du document présenté s\'ouvrira au branchement serveur.';
 
-	/// fr: 'le support présenté'
-	String get sansDonnees => 'le support présenté';
+	/// fr: 'le document présenté'
+	String get sansDonnees => 'le document présenté';
 
-	/// fr: 'Le support présenté n'a pas pu être chargé. Réessayez.'
-	String get erreur => 'Le support présenté n\'a pas pu être chargé. Réessayez.';
+	/// fr: 'Le document présenté n'a pas pu être chargé. Réessayez.'
+	String get erreur => 'Le document présenté n\'a pas pu être chargé. Réessayez.';
 
-	/// fr: 'Aucun support présenté'
-	String get aucun => 'Aucun support présenté';
+	/// fr: 'Aucun document présenté'
+	String get aucun => 'Aucun document présenté';
 
-	/// fr: 'Quand votre enseignant présentera un support, il apparaîtra ici sans rien faire de votre part.'
-	String get aucunDetail => 'Quand votre enseignant présentera un support, il apparaîtra ici sans rien faire de votre part.';
+	/// fr: 'Quand votre enseignant présentera un document, il apparaîtra ici sans rien faire de votre part.'
+	String get aucunDetail => 'Quand votre enseignant présentera un document, il apparaîtra ici sans rien faire de votre part.';
 
-	/// fr: 'Support présenté'
-	String get titre => 'Support présenté';
+	/// fr: 'Document présenté'
+	String get titre => 'Document présenté';
 
 	/// fr: 'Version {numero}'
 	String version({required Object numero}) => 'Version ${numero}';
@@ -33173,8 +33197,8 @@ class Traductions$tc$bibliotheque$actif$fr {
 	/// fr: 'Page {page}'
 	String page({required Object page}) => 'Page ${page}';
 
-	/// fr: 'Ouvrir la fiche du support'
-	String get ouvrirFiche => 'Ouvrir la fiche du support';
+	/// fr: 'Ouvrir la fiche du document'
+	String get ouvrirFiche => 'Ouvrir la fiche du document';
 
 	/// fr: 'Ouvrir dans le lecteur du Coran'
 	String get ouvrirCoran => 'Ouvrir dans le lecteur du Coran';
@@ -33182,8 +33206,8 @@ class Traductions$tc$bibliotheque$actif$fr {
 	/// fr: '« {titre} » a été retiré'
 	String retire({required Object titre}) => '« ${titre} » a été retiré';
 
-	/// fr: 'Votre enseignant a retiré ce support de la séance. Il n'est plus accessible.'
-	String get retireDetail => 'Votre enseignant a retiré ce support de la séance. Il n\'est plus accessible.';
+	/// fr: 'Votre enseignant a retiré ce document de la séance. Il n'est plus accessible.'
+	String get retireDetail => 'Votre enseignant a retiré ce document de la séance. Il n\'est plus accessible.';
 }
 
 // Path: tc.coran.modes
@@ -44059,6 +44083,15 @@ class Traductions$admin$bibliotheque$libelles$type$fr {
 
 	// Translations
 
+	/// fr: 'Audio'
+	String get audio => 'Audio';
+
+	/// fr: 'Vidéo'
+	String get video => 'Vidéo';
+
+	/// fr: 'Lien externe'
+	String get lienExterne => 'Lien externe';
+
 	/// fr: 'Coran'
 	String get quran => 'Coran';
 
@@ -44260,8 +44293,8 @@ class Traductions$admin$bibliotheque$catalogue$colonnes$fr {
 
 	// Translations
 
-	/// fr: 'Support'
-	String get support => 'Support';
+	/// fr: 'Document'
+	String get support => 'Document';
 
 	/// fr: 'Type'
 	String get type => 'Type';
@@ -44593,8 +44626,8 @@ class Traductions$admin$bibliotheque$import$erreurs$fr {
 	/// fr: 'Ce fichier est trop volumineux. Choisissez un fichier plus léger.'
 	String get taille => 'Ce fichier est trop volumineux. Choisissez un fichier plus léger.';
 
-	/// fr: 'Ce type de fichier n'est pas pris en charge pour ce support. Choisissez un autre fichier.'
-	String get type => 'Ce type de fichier n\'est pas pris en charge pour ce support. Choisissez un autre fichier.';
+	/// fr: 'Ce type de fichier n'est pas pris en charge pour ce document. Choisissez un autre fichier.'
+	String get type => 'Ce type de fichier n\'est pas pris en charge pour ce document. Choisissez un autre fichier.';
 
 	/// fr: 'La connexion s'est interrompue. Le dépôt n'est pas confirmé : réessayez.'
 	String get reseau => 'La connexion s\'est interrompue. Le dépôt n\'est pas confirmé : réessayez.';
@@ -54345,19 +54378,22 @@ extension on Traductions {
 			'admin.tirage.suivante' => 'Page suivante de l\'historique des tirages',
 			'admin.tirage.resume' => ({required Object debut, required Object fin, required Object total}) => 'Tirages ${debut} à ${fin} sur ${total}',
 			'admin.bibliotheque.titre' => 'Bibliothèque',
-			'admin.bibliotheque.intro' => 'Les supports pédagogiques : les déposer, vérifier leurs droits, publier une version, les attribuer aux classes.',
+			'admin.bibliotheque.intro' => 'Les documents pédagogiques : les déposer, vérifier leurs droits, publier une version, les attribuer aux classes.',
 			'admin.bibliotheque.brouillonAlerte' => 'Un brouillon ne donne aucun accès aux élèves ni aux enseignants.',
-			'admin.bibliotheque.ajouter' => 'Ajouter un support',
-			'admin.bibliotheque.vide' => 'Aucun support',
-			'admin.bibliotheque.videDetail' => 'Ajoutez un premier support pour le préparer, vérifier ses droits, puis le publier.',
+			'admin.bibliotheque.ajouter' => 'Ajouter un document',
+			'admin.bibliotheque.vide' => 'Aucun document',
+			'admin.bibliotheque.videDetail' => 'Ajoutez un premier document pour le préparer, vérifier ses droits, puis le publier.',
 			'admin.bibliotheque.erreur' => 'Le catalogue n\'a pas pu être chargé. Réessayez.',
 			'admin.bibliotheque.nonAutorise' => 'Vous n\'avez pas accès à la bibliothèque d\'administration.',
 			'admin.bibliotheque.indisponibleTitre' => 'Bibliothèque pas encore ouverte',
 			'admin.bibliotheque.indisponiblePhrase' => 'Cette fonction sera disponible au branchement serveur.',
 			'admin.bibliotheque.sansDonnees' => 'le catalogue',
-			'admin.bibliotheque.ficheTitre' => 'Support',
+			'admin.bibliotheque.ficheTitre' => 'Document',
 			'admin.bibliotheque.retourCatalogue' => 'Retour au catalogue',
-			'admin.bibliotheque.introuvable' => 'Ce support n\'existe pas ou n\'est pas accessible.',
+			'admin.bibliotheque.introuvable' => 'Ce document n\'existe pas ou n\'est pas accessible.',
+			'admin.bibliotheque.libelles.type.audio' => 'Audio',
+			'admin.bibliotheque.libelles.type.video' => 'Vidéo',
+			'admin.bibliotheque.libelles.type.lienExterne' => 'Lien externe',
 			'admin.bibliotheque.libelles.type.quran' => 'Coran',
 			'admin.bibliotheque.libelles.type.texteStructure' => 'Texte structuré',
 			'admin.bibliotheque.libelles.type.pdf' => 'PDF',
@@ -54399,7 +54435,7 @@ extension on Traductions {
 			'admin.bibliotheque.catalogue.filtres.niveau' => 'Niveau',
 			'admin.bibliotheque.catalogue.filtres.langue' => 'Langue',
 			'admin.bibliotheque.catalogue.filtres.tous' => 'Tous',
-			'admin.bibliotheque.catalogue.colonnes.support' => 'Support',
+			'admin.bibliotheque.catalogue.colonnes.support' => 'Document',
 			'admin.bibliotheque.catalogue.colonnes.type' => 'Type',
 			'admin.bibliotheque.catalogue.colonnes.langue' => 'Langue',
 			'admin.bibliotheque.catalogue.colonnes.categorie' => 'Catégorie',
@@ -54410,11 +54446,11 @@ extension on Traductions {
 			'admin.bibliotheque.catalogue.colonnes.modifie' => 'Modifié',
 			'admin.bibliotheque.catalogue.modifieLe' => ({required Object date}) => 'Modifié le ${date}',
 			'admin.bibliotheque.catalogue.videRecherche' => 'Aucun résultat',
-			'admin.bibliotheque.catalogue.videRechercheDetail' => 'Aucun support ne correspond à votre recherche ou à vos filtres.',
+			'admin.bibliotheque.catalogue.videRechercheDetail' => 'Aucun document ne correspond à votre recherche ou à vos filtres.',
 			'admin.bibliotheque.catalogue.effacerFiltres' => 'Effacer les filtres',
-			'admin.bibliotheque.catalogue.voirPlus' => 'Voir plus de supports',
+			'admin.bibliotheque.catalogue.voirPlus' => 'Voir plus de documents',
 			'admin.bibliotheque.catalogue.pageErreur' => 'La suite du catalogue n\'a pas pu être chargée.',
-			'admin.bibliotheque.catalogue.ouvrir' => ({required Object titre}) => 'Ouvrir le support ${titre}',
+			'admin.bibliotheque.catalogue.ouvrir' => ({required Object titre}) => 'Ouvrir le document ${titre}',
 			'admin.bibliotheque.catalogue.droitsEchus' => 'Droits échus',
 			'admin.bibliotheque.catalogue.alerteTitre' => 'Brouillons',
 			'admin.bibliotheque.catalogue.pasDeAcces' => 'Vous ne pouvez pas modifier la bibliothèque.',
@@ -54449,7 +54485,7 @@ extension on Traductions {
 			'admin.bibliotheque.fiche.meta.nonRenseigne' => 'Non renseigné',
 			'admin.bibliotheque.fiche.enregistrer' => 'Enregistrer les modifications',
 			'admin.bibliotheque.fiche.enregistre' => 'Modifications enregistrées.',
-			'admin.bibliotheque.fiche.conflit' => 'Un autre administrateur a modifié ce support. Rechargez la fiche avant de continuer.',
+			'admin.bibliotheque.fiche.conflit' => 'Un autre administrateur a modifié ce document. Rechargez la fiche avant de continuer.',
 			'admin.bibliotheque.fiche.recharger' => 'Recharger la fiche',
 			'admin.bibliotheque.fiche.echecEnregistrer' => 'Les modifications n\'ont pas pu être confirmées. Réessayez.',
 			'admin.bibliotheque.fiche.titreVide' => 'Le titre est obligatoire.',
@@ -54488,7 +54524,7 @@ extension on Traductions {
 			'admin.bibliotheque.fiche.audit.restauration' => 'Restauré',
 			'admin.bibliotheque.fiche.auditMotif' => ({required Object motif}) => 'Motif : ${motif}',
 			'admin.bibliotheque.fiche.auditVersion' => ({required Object numero}) => 'Version ${numero}',
-			'admin.bibliotheque.import.completer' => 'Compléter le support',
+			'admin.bibliotheque.import.completer' => 'Compléter le document',
 			'admin.bibliotheque.import.sections.ressource' => 'Ressource',
 			'admin.bibliotheque.import.sections.fichier' => 'Fichier',
 			'admin.bibliotheque.import.sections.droits' => 'Droits et accès',
@@ -54500,11 +54536,11 @@ extension on Traductions {
 			'admin.bibliotheque.import.completerDabord' => 'Renseignez d\'abord le titre, le type, la langue et la catégorie.',
 			'admin.bibliotheque.import.choisirFichier' => 'Choisir un fichier',
 			'admin.bibliotheque.import.choisirAutre' => 'Choisir un autre fichier',
+			_ => null,
+		} ?? switch (path) {
 			'admin.bibliotheque.import.annulerDepot' => 'Annuler le dépôt',
 			'admin.bibliotheque.import.progression' => 'Progression du dépôt',
 			'admin.bibliotheque.import.formats.pdf' => 'Format accepté : PDF.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.bibliotheque.import.formats.image' => 'Formats acceptés : PNG, JPEG, WebP.',
 			'admin.bibliotheque.import.formats.json' => 'Format accepté : JSON structuré.',
 			'admin.bibliotheque.import.formats.aucun' => 'Ce type n\'accepte pas de fichier.',
@@ -54515,7 +54551,7 @@ extension on Traductions {
 			'admin.bibliotheque.import.etats.pret' => 'Fichier vérifié. Passez aux droits.',
 			'admin.bibliotheque.import.etats.annule' => 'Dépôt annulé.',
 			'admin.bibliotheque.import.erreurs.taille' => 'Ce fichier est trop volumineux. Choisissez un fichier plus léger.',
-			'admin.bibliotheque.import.erreurs.type' => 'Ce type de fichier n\'est pas pris en charge pour ce support. Choisissez un autre fichier.',
+			'admin.bibliotheque.import.erreurs.type' => 'Ce type de fichier n\'est pas pris en charge pour ce document. Choisissez un autre fichier.',
 			'admin.bibliotheque.import.erreurs.reseau' => 'La connexion s\'est interrompue. Le dépôt n\'est pas confirmé : réessayez.',
 			'admin.bibliotheque.import.erreurs.refuse' => 'Le serveur a refusé ce dépôt. Réessayez ou choisissez un autre fichier.',
 			'admin.bibliotheque.import.erreurs.empreinte' => 'Le fichier reçu ne correspond pas à celui envoyé. Réessayez.',
@@ -54575,7 +54611,7 @@ extension on Traductions {
 			'admin.bibliotheque.publication.publier' => 'Publier la version',
 			'admin.bibliotheque.publication.bloque' => 'Cette version ne peut pas être publiée tant que le serveur n\'a pas validé tous les points du contrôle.',
 			'admin.bibliotheque.publication.confirmerTitre' => ({required Object numero}) => 'Publier la version ${numero} ?',
-			'admin.bibliotheque.publication.confirmerEffet' => 'La version devient immuable et visible des classes auxquelles le support est attribué. Pour la modifier, vous créerez une nouvelle version.',
+			'admin.bibliotheque.publication.confirmerEffet' => 'La version devient immuable et visible des classes auxquelles le document est attribué. Pour la modifier, vous créerez une nouvelle version.',
 			'admin.bibliotheque.publication.confirmerBouton' => 'Publier',
 			'admin.bibliotheque.publication.publiee' => 'Version publiée.',
 			'admin.bibliotheque.publication.dejaPubliee' => 'Cette version est déjà publiée.',
@@ -54591,23 +54627,23 @@ extension on Traductions {
 			'admin.bibliotheque.attribution.aucune' => 'Aucune classe n\'est ouverte à l\'attribution pour le moment.',
 			'admin.bibliotheque.attribution.plusDeClasses' => 'Voir plus de classes',
 			'admin.bibliotheque.attribution.chargementPlus' => 'Chargement…',
-			'admin.bibliotheque.attribution.nonPublie' => 'Ce support n\'est pas publié. Publiez une version avant de l\'attribuer à des classes.',
+			'admin.bibliotheque.attribution.nonPublie' => 'Ce document n\'est pas publié. Publiez une version avant de l\'attribuer à des classes.',
 			'admin.bibliotheque.attribution.erreur' => 'Les classes n\'ont pas pu être chargées. Réessayez.',
 			'admin.bibliotheque.attribution.attribuer' => ({required Object nombre}) => 'Attribuer à ${nombre} classe(s)',
 			'admin.bibliotheque.attribution.attribuerAucune' => 'Choisissez au moins une classe avant d\'attribuer.',
-			'admin.bibliotheque.attribution.attribuee' => 'Support attribué. Les classes choisies le voient maintenant.',
+			'admin.bibliotheque.attribution.attribuee' => 'Document attribué. Les classes choisies le voient maintenant.',
 			'admin.bibliotheque.attribution.attribueEchec' => 'L\'attribution n\'a pas abouti. Réessayez dans un instant.',
 			'admin.bibliotheque.attribution.retraitTitre' => 'Retirer du catalogue',
-			'admin.bibliotheque.attribution.retraitIntro' => 'Un retrait masque le support de toutes les classes. Il ne supprime rien : le fichier et l\'historique restent conservés.',
+			'admin.bibliotheque.attribution.retraitIntro' => 'Un retrait masque le document de toutes les classes. Il ne supprime rien : le fichier et l\'historique restent conservés.',
 			'admin.bibliotheque.attribution.motif' => 'Motif du retrait',
 			'admin.bibliotheque.attribution.motifRequis' => 'Écrivez le motif du retrait avant de continuer : il est conservé dans l\'historique.',
-			'admin.bibliotheque.attribution.retirer' => 'Retirer ce support',
+			'admin.bibliotheque.attribution.retirer' => 'Retirer ce document',
 			'admin.bibliotheque.attribution.retraitConfirmerTitre' => ({required Object titre}) => 'Retirer « ${titre} » du catalogue ?',
 			'admin.bibliotheque.attribution.retraitConfirmerEffet' => 'Les classes ne le verront plus, y compris celles qui l\'utilisent déjà. Le motif est conservé dans l\'historique.',
-			'admin.bibliotheque.attribution.retraitConfirmerBouton' => 'Retirer le support',
-			'admin.bibliotheque.attribution.retire' => 'Support retiré du catalogue.',
+			'admin.bibliotheque.attribution.retraitConfirmerBouton' => 'Retirer le document',
+			'admin.bibliotheque.attribution.retire' => 'Document retiré du catalogue.',
 			'admin.bibliotheque.attribution.retraitEchec' => 'Le retrait n\'a pas abouti. Réessayez dans un instant.',
-			'admin.bibliotheque.attribution.conflit' => 'Quelqu\'un a modifié ce support entre-temps. Rechargez avant de continuer.',
+			'admin.bibliotheque.attribution.conflit' => 'Quelqu\'un a modifié ce document entre-temps. Rechargez avant de continuer.',
 			'agent.titre' => 'Entrée d\'un agent',
 			'agent.intro' => 'Cette page ouvre l\'application en lecture seule, avec le jeton remis par l\'académie.',
 			'agent.jeton' => 'Jeton d\'observation',
@@ -55014,11 +55050,11 @@ extension on Traductions {
 			'compte.tuteur.pageAide.indisponiblePhrase' => 'Les questions fréquentes et le contact de l\'académie ne sont pas encore ouverts dans l\'application.',
 			'compte.tuteur.pageAide.canalCourriel' => 'Courriel de l\'académie',
 			'compte.tuteur.pageAide.canalLien' => 'Page d\'aide de l\'académie',
+			_ => null,
+		} ?? switch (path) {
 			'compte.tuteur.pageAide.aucunCanal' => 'Aucun canal d\'aide n\'est publié pour le moment.',
 			'compte.tuteur.pageLegal.conditionsTuteur' => 'Conditions du tuteur',
 			'compte.tuteur.pageLegal.contratEnseignant' => 'Contrat enseignant',
-			_ => null,
-		} ?? switch (path) {
 			'compte.tuteur.pageLegal.accuseEnregistrement' => 'Accusé d\'enregistrement des cours',
 			'compte.tuteur.pageLegal.textes' => 'Conditions et confidentialité',
 			'historique.titre' => 'Historique',
@@ -55528,11 +55564,11 @@ extension on Traductions {
 			'classe.observation.restanteAucune' => 'Aucune visite restante pour cette séance',
 			'classe.observation.restanteUne' => '1 visite restante pour cette séance',
 			'classe.observation.minutesSecondes' => ({required Object minutes, required Object secondes}) => '${minutes} min ${secondes} s',
+			_ => null,
+		} ?? switch (path) {
 			'classe.observation.secondes' => ({required Object secondes}) => '${secondes} s',
 			'classe.observation.motif.visitesEpuisees' => 'Vous avez utilisé vos visites pour cette séance.',
 			'classe.observation.motif.tempsEpuise' => 'Votre temps d\'observation est épuisé pour cette séance.',
-			_ => null,
-		} ?? switch (path) {
 			'classe.observation.motif.seanceNonCommencee' => 'L\'observation ouvre quand la séance commence.',
 			'classe.observation.motif.seanceTerminee' => 'La séance est terminée.',
 			'classe.observation.motif.seanceNonTenue' => 'Cette séance n\'a pas lieu : il n\'y a rien à observer.',
@@ -56042,11 +56078,11 @@ extension on Traductions {
 			'enseignant.profil.deconnexionQuestion' => 'Se déconnecter de cet appareil ?',
 			'enseignant.profil.deconnexionConfirmer' => 'Me déconnecter maintenant',
 			'enseignant.profil.deconnexionConsequence' => 'Votre journée, vos créneaux et vos cahiers de transmission restent enregistrés. Il faudra un nouveau lien de connexion pour revenir.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.profil.erreur' => 'Votre profil n\'a pas pu être lu. Réessayez dans un instant.',
 			'enseignant.profil.vide' => 'Aucun profil enseignant',
 			'enseignant.profil.videDetail' => 'Ce compte n\'a pas de profil enseignant. Seule l\'académie peut en créer un.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.profil.horsLigne' => 'Rien ne peut être modifié ici pour l\'instant.',
 			'enseignant.profil.modifierPays' => 'Modifier le pays',
 			'enseignant.profil.fuseauAppareil' => 'Heure de cet appareil',
@@ -56556,11 +56592,11 @@ extension on Traductions {
 			'tc.groupe.horloges.chezVous' => 'Chez vous',
 			'tc.groupe.horloges.chezEnseignantAnonyme' => 'Chez votre enseignant',
 			'tc.groupe.horloges.familles' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} famille', other: '${n} familles', ), 
+			_ => null,
+		} ?? switch (path) {
 			'tc.groupe.horloges.aConfirmer' => 'Heure à confirmer',
 			'tc.groupe.horloges.enCeMoment' => 'En ce moment',
 			'tc.groupe.dst.j30' => 'Changement d\'heure dans un mois',
-			_ => null,
-		} ?? switch (path) {
 			'tc.groupe.dst.j7' => 'Changement d\'heure la semaine prochaine',
 			'tc.groupe.dst.j1' => 'Changement d\'heure demain',
 			'tc.groupe.dst.detail' => ({required Object avant, required Object apres}) => 'Votre cours passera de ${avant} à ${apres}.',
@@ -56579,37 +56615,40 @@ extension on Traductions {
 			'tc.groupe.emplacement.nonBrancheDetail' => 'Ce contenu sera rattaché à cet espace prochainement.',
 			'tc.bibliotheque.titre' => 'Bibliothèque',
 			'tc.bibliotheque.rechercheIndication' => 'Titre, niveau, sourate ou page',
-			'tc.bibliotheque.rechercheLibelle' => 'Rechercher un support',
+			'tc.bibliotheque.rechercheLibelle' => 'Rechercher un document',
 			'tc.bibliotheque.effacerRecherche' => 'Tout afficher',
 			'tc.bibliotheque.filtre.type' => 'Type',
 			'tc.bibliotheque.filtre.disponibilite' => 'Disponibilité',
 			'tc.bibliotheque.sections.continuer' => 'Continuer',
 			'tc.bibliotheque.sections.pourCeGroupe' => 'Pour cette classe',
-			'tc.bibliotheque.sections.groupe' => 'Supports à afficher',
+			'tc.bibliotheque.sections.groupe' => 'Documents à afficher',
 			'tc.bibliotheque.sections.recents' => 'Récents',
-			'tc.bibliotheque.sections.tousLesSupports' => 'Tous les supports',
+			'tc.bibliotheque.sections.tousLesSupports' => 'Tous les documents',
 			'tc.bibliotheque.sections.resultats' => 'Résultats',
-			'tc.bibliotheque.vide.message' => 'Aucun support publié pour le moment',
-			'tc.bibliotheque.vide.invitation' => 'Vos enseignants déposeront ici les supports de vos cours.',
-			'tc.bibliotheque.aucunResultat.message' => 'Aucun support ne correspond',
+			'tc.bibliotheque.vide.message' => 'Aucun document publié pour le moment',
+			'tc.bibliotheque.vide.invitation' => 'Vos enseignants déposeront ici les documents de vos cours.',
+			'tc.bibliotheque.aucunResultat.message' => 'Aucun document ne correspond',
 			'tc.bibliotheque.aucunResultat.invitation' => 'Essayez un autre mot, ou relâchez les filtres.',
 			'tc.bibliotheque.indisponible.message' => 'La bibliothèque n\'a pas pu être chargée',
 			'tc.bibliotheque.indisponible.invitation' => 'Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'tc.bibliotheque.indisponible.action' => 'Réessayer',
-			'tc.bibliotheque.introuvable.message' => 'Ce support ne vous est pas ouvert',
+			'tc.bibliotheque.introuvable.message' => 'Ce document ne vous est pas ouvert',
 			'tc.bibliotheque.introuvable.invitation' => 'Il a peut-être été retiré, ou il est réservé à une autre classe. Votre enseignant peut vous le rouvrir.',
 			'tc.bibliotheque.offline.aTelecharger' => 'À télécharger',
 			'tc.bibliotheque.offline.enCours' => 'Téléchargement',
 			'tc.bibliotheque.offline.enCache' => 'En cache',
 			'tc.bibliotheque.offline.telecharge' => 'Téléchargé',
 			'tc.bibliotheque.offline.indisponible' => 'Hors ligne indisponible',
+			'tc.bibliotheque.type.audio' => 'Audio',
+			'tc.bibliotheque.type.video' => 'Vidéo',
+			'tc.bibliotheque.type.lienExterne' => 'Lien externe',
 			'tc.bibliotheque.type.quran' => 'Coran',
 			'tc.bibliotheque.type.texteStructure' => 'Texte',
 			'tc.bibliotheque.type.pdf' => 'PDF',
 			'tc.bibliotheque.type.image' => 'Image',
 			'tc.bibliotheque.type.lecon' => 'Leçon',
-			'tc.bibliotheque.detail.titre' => 'Support',
-			'tc.bibliotheque.detail.capacites' => 'Ce que ce support permet',
+			'tc.bibliotheque.detail.titre' => 'Document',
+			'tc.bibliotheque.detail.capacites' => 'Ce que ce document permet',
 			'tc.bibliotheque.detail.niveaux' => 'Niveaux',
 			'tc.bibliotheque.detail.sansVersion' => 'Aucune version publiée : rien à ouvrir pour le moment.',
 			'tc.bibliotheque.detail.apercuIndisponible' => 'L’aperçu de ce format n’est pas encore disponible dans l’application. Vous pouvez en enregistrer une copie.',
@@ -56622,33 +56661,38 @@ extension on Traductions {
 			'tc.bibliotheque.action.enregistrerCopie' => 'Enregistrer une copie',
 			'tc.bibliotheque.message.copieEnregistree' => 'Copie enregistrée',
 			'tc.bibliotheque.message.copieImpossible' => 'La copie n’a pas pu être préparée. Réessayez dans un instant.',
-			'tc.bibliotheque.message.telechargementImpossible' => 'Ce support n’est pas encore disponible hors ligne',
+			'tc.bibliotheque.message.telechargementImpossible' => 'Ce document n’est pas encore disponible hors ligne',
 			'tc.bibliotheque.message.horsLigneNonTelecharge' => 'Disponible une fois téléchargé ou de retour en ligne',
 			'tc.bibliotheque.message.aucunTelechargement' => 'Aucun fichier à télécharger pour cette version.',
-			'tc.bibliotheque.classe.titre' => 'Choisir un support',
-			'tc.bibliotheque.classe.sousTitre' => 'Le support choisi remplace celui affiché. Le cours continue.',
+			'tc.bibliotheque.classe.titre' => 'Choisir un document',
+			'tc.bibliotheque.classe.sousTitre' => 'Le document choisi remplace celui affiché. Le cours continue.',
+			'tc.bibliotheque.rendu.sansLecteur' => 'Ce type de document n\'a pas encore de lecteur dans l\'application.',
+			'tc.bibliotheque.rendu.ouvrirLien' => 'Ouvrir le lien',
+			'tc.bibliotheque.rendu.lienAutreSite' => 'Ce lien s\'ouvre sur un autre site.',
+			'tc.bibliotheque.rendu.lienSansNavigateur' => 'Ce lien s\'ouvre depuis la version web de l\'application.',
+			'tc.bibliotheque.rendu.lienAbsent' => 'Ce document n\'a pas encore de contenu à ouvrir.',
 			'tc.bibliotheque.rendu.imageInaccessible' => 'L\'image n\'a pas pu être chargée pour le moment.',
 			'tc.bibliotheque.rendu.imageIllisible' => 'Ce fichier image ne peut pas être affiché.',
 			'tc.bibliotheque.rendu.reessayer' => 'Réessayer',
 			'tc.bibliotheque.rendu.ouvrir' => 'Ouvrir',
 			'tc.bibliotheque.rendu.ouvrirMushaf' => 'Ouvrir le mushaf',
 			'tc.bibliotheque.rendu.lienEchec' => 'Le lien de lecture n\'a pas pu être obtenu pour le moment.',
-			'tc.bibliotheque.rendu.lienIndisponible' => 'L\'ouverture n\'est pas disponible pour ce support.',
+			'tc.bibliotheque.rendu.lienIndisponible' => 'L\'ouverture n\'est pas disponible pour ce document.',
 			'tc.bibliotheque.rendu.lienHorsLigne' => 'L\'ouverture pourra se faire quand la connexion reviendra.',
 			'tc.bibliotheque.rendu.lienBloque' => 'Votre navigateur a bloqué l\'ouverture. Autorisez les fenêtres de ce site, puis réessayez.',
-			'tc.bibliotheque.actif.indisponibleTitre' => 'Support présenté pas encore ouvert',
-			'tc.bibliotheque.actif.indisponible' => 'Le suivi du support présenté s\'ouvrira au branchement serveur.',
-			'tc.bibliotheque.actif.sansDonnees' => 'le support présenté',
-			'tc.bibliotheque.actif.erreur' => 'Le support présenté n\'a pas pu être chargé. Réessayez.',
-			'tc.bibliotheque.actif.aucun' => 'Aucun support présenté',
-			'tc.bibliotheque.actif.aucunDetail' => 'Quand votre enseignant présentera un support, il apparaîtra ici sans rien faire de votre part.',
-			'tc.bibliotheque.actif.titre' => 'Support présenté',
+			'tc.bibliotheque.actif.indisponibleTitre' => 'Document présenté pas encore ouvert',
+			'tc.bibliotheque.actif.indisponible' => 'Le suivi du document présenté s\'ouvrira au branchement serveur.',
+			'tc.bibliotheque.actif.sansDonnees' => 'le document présenté',
+			'tc.bibliotheque.actif.erreur' => 'Le document présenté n\'a pas pu être chargé. Réessayez.',
+			'tc.bibliotheque.actif.aucun' => 'Aucun document présenté',
+			'tc.bibliotheque.actif.aucunDetail' => 'Quand votre enseignant présentera un document, il apparaîtra ici sans rien faire de votre part.',
+			'tc.bibliotheque.actif.titre' => 'Document présenté',
 			'tc.bibliotheque.actif.version' => ({required Object numero}) => 'Version ${numero}',
 			'tc.bibliotheque.actif.page' => ({required Object page}) => 'Page ${page}',
-			'tc.bibliotheque.actif.ouvrirFiche' => 'Ouvrir la fiche du support',
+			'tc.bibliotheque.actif.ouvrirFiche' => 'Ouvrir la fiche du document',
 			'tc.bibliotheque.actif.ouvrirCoran' => 'Ouvrir dans le lecteur du Coran',
 			'tc.bibliotheque.actif.retire' => ({required Object titre}) => '« ${titre} » a été retiré',
-			'tc.bibliotheque.actif.retireDetail' => 'Votre enseignant a retiré ce support de la séance. Il n\'est plus accessible.',
+			'tc.bibliotheque.actif.retireDetail' => 'Votre enseignant a retiré ce document de la séance. Il n\'est plus accessible.',
 			'tc.coran.modes.mushaf' => 'Page du mushaf',
 			'tc.coran.modes.verset' => 'Lecture agrandie',
 			'tc.coran.modes.focus' => 'Focus',
@@ -57062,6 +57106,8 @@ extension on Traductions {
 			'adulte.recharge.verificationEchecPhrase' => 'Vos choix sont conservés. Vous pouvez réessayer.',
 			'adulte.recharge.recapitulatif' => 'Récapitulatif par profil',
 			'adulte.recharge.montantPaye' => 'Montant payé',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.recharge.soldeAttribue' => 'Solde attribué',
 			'adulte.recharge.statut' => 'Statut de l\'attribution',
 			'adulte.recharge.total' => 'Total à payer',
@@ -57073,8 +57119,6 @@ extension on Traductions {
 			'adulte.recharge.paiementIndisponiblePhrase' => 'Aucun paiement n\'a été effectué. Le paiement en ligne n\'est pas encore ouvert dans l\'application.',
 			'adulte.recharge.formules.trimestriel' => ({required Object montant}) => '${montant} pour 3 mois, payés d\'avance',
 			'adulte.recharge.formules.annuel' => ({required Object montant}) => '${montant} pour 12 mois, payés d\'avance',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.recharge.revenirPaiements' => 'Revenir aux paiements du foyer',
 			'adulte.recharge.phraseUnique' => 'Cochez le profil, puis choisissez le montant.',
 			'adulte.recharge.profils' => 'Profils à recharger',
@@ -57576,6 +57620,8 @@ extension on Traductions {
 			'suiviDemandes.etats.enCours' => 'En cours',
 			'suiviDemandes.etats.prochaine' => 'Prochaine étape',
 			'suiviDemandes.etats.aVenir' => 'À venir',
+			_ => null,
+		} ?? switch (path) {
 			'suiviDemandes.situation.envoyee' => 'Votre demande est arrivée à l\'administration',
 			'suiviDemandes.situation.classeValidee' => 'Votre classe est prête : elle attend son enseignant',
 			'suiviDemandes.situation.enseignantAffecte' => 'Classe validée · enseignant affecté',
@@ -57587,8 +57633,6 @@ extension on Traductions {
 			'suiviDemandes.prochaine.listeAttente' => 'Nous vous prévenons dès qu\'une place s\'ouvre. Aucune date n\'est annoncée tant qu\'elle n\'est pas connue.',
 			'suiviDemandes.prochaine.eleveIntegre' => 'Prochaine étape : le début des cours',
 			'suiviDemandes.debutCours' => 'Début des cours',
-			_ => null,
-		} ?? switch (path) {
 			'suiviDemandes.debutValeur' => ({required Object date, required Object heure, required Object deVille}) => '${date} à ${heure}, heure ${deVille}',
 			'suiviDemandes.debutAFixer' => 'La date du premier cours s\'affichera ici dès qu\'elle sera fixée.',
 			'suiviDemandes.enseignant' => 'Enseignant',
@@ -58090,6 +58134,8 @@ extension on Traductions {
 			'com.communaute.garde.titreAvertissement' => 'Publication à revoir',
 			'com.communaute.garde.titreBlocage' => 'Publication bloquée',
 			'com.communaute.garde.motif' => ({required Object motif}) => 'Motif : ${motif}',
+			_ => null,
+		} ?? switch (path) {
 			'com.communaute.garde.liensTitre' => 'Liens de la publication',
 			'com.communaute.garde.consigneBlocage' => 'Modifiez la publication, puis publiez-la de nouveau.',
 			'com.communaute.garde.panne' => 'La vérification de ce contenu n\'est pas confirmée : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Rien n\'a été publié ; réessayez dans un instant.',
@@ -58101,8 +58147,6 @@ extension on Traductions {
 			'com.communaute.lien.commercialInterdit' => 'Lien commercial interdit',
 			'com.communaute.lien.nonVerifie' => 'Lien non vérifié',
 			'com.communaute.lien.semantique' => ({required Object adresse, required Object etat}) => '${adresse}, ${etat}',
-			_ => null,
-		} ?? switch (path) {
 			'com.communaute.sousTitre' => 'Échanges et entraide entre enseignants',
 			'com.communaute.sections' => 'Catégories de la Communauté enseignants',
 			'com.communaute.toutes' => 'Toutes',
@@ -58604,6 +58648,8 @@ extension on Traductions {
 			'com.annonces.lue' => 'Lue',
 			'com.annonces.carteSemantique' => ({required Object classe, required Object titre}) => 'Annonce de ${classe} : ${titre}',
 			'com.annonces.introuvableTitre' => 'Cette annonce n\'est plus disponible',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.introuvablePhrase' => 'Elle a peut-être été retirée de la classe. Revenez à vos notifications.',
 			'com.annonces.demo.detail' => 'Démonstration hors production : données fictives, rien n\'est envoyé.',
 			'com.annonces.demo.choisirRole' => 'Choisissez le rôle à montrer',
@@ -58615,8 +58661,6 @@ extension on Traductions {
 			'com.annonces.demo.classeNour' => 'Classe An-Nour',
 			'com.annonces.demo.classeFajr' => 'Classe Al-Fajr',
 			'com.annonces.demo.enseignante' => 'Enseignante de la classe',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.demo.f.adminStudioMention' => 'Studio : une discussion du canal Programmes vous mentionne',
 			'com.annonces.demo.f.adminStudioReponse' => 'Studio : nouvelle réponse à votre message sur le programme de printemps',
 			'com.annonces.demo.f.adminStudioDecision' => 'Studio : une décision est demandée sur le support de la leçon 4',
@@ -59118,6 +59162,8 @@ extension on Traductions {
 			'comptable.encaissements.videFiltrePhrase' => 'Choisissez « Tous » ou effacez la recherche pour revoir toute la liste.',
 			'comptable.encaissements.voirTous' => 'Voir tous les encaissements',
 			'comptable.encaissements.ouvrirDetailLecteur' => ({required Object famille}) => 'Ouvrir le détail de l\'encaissement de ${famille}',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.encaissements.fermerDetail' => 'Fermer le détail',
 			'comptable.encaissements.brut' => 'Montant brut',
 			'comptable.encaissements.frais' => 'Frais du prestataire',
@@ -59129,8 +59175,6 @@ extension on Traductions {
 			'comptable.encaissements.foyer' => 'Foyer',
 			'comptable.encaissements.date' => 'Date',
 			'comptable.encaissements.etat' => 'État',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.encaissements.devise' => 'Devise',
 			'comptable.encaissements.affectation' => 'Affectation par profil',
 			'comptable.encaissements.affectationAucune' => 'La source n\'a rendu aucune affectation pour cet encaissement.',
@@ -59632,6 +59676,8 @@ extension on Traductions {
 			'comptable.direction.delegationPanneau.renouvelee' => 'Délégation renouvelée.',
 			'comptable.direction.delegationPanneau.renouvelerEchec' => 'Le renouvellement n\'est pas confirmé : la demande n\'est peut-être pas parvenue jusqu\'à Rewayah. Vérifiez la date d\'expiration avant de réessayer.',
 			'comptable.direction.delegationPanneau.sortiesTitre' => 'Sorties en attente',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.sortiesDetail' => 'Une sortie au-dessus du plafond par transaction attend un délai de sécurité avant de partir. Vous pouvez l\'annuler d\'ici là.',
 			'comptable.direction.delegationPanneau.sortiesDelai' => ({required Object heures}) => 'Délai de sécurité : ${heures} h',
 			'comptable.direction.delegationPanneau.sortiesVide' => 'Aucune sortie en attente.',
@@ -59643,8 +59689,6 @@ extension on Traductions {
 			'comptable.direction.delegationPanneau.sortieAnnulerPhrase' => ({required Object beneficiaire}) => 'La sortie de ${beneficiaire} ne partira pas. L\'annulation est inscrite au journal.',
 			'comptable.direction.delegationPanneau.sortieAnnulerConfirmer' => 'Annuler la sortie',
 			'comptable.direction.delegationPanneau.sortieGarder' => 'Garder la sortie',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.sortieAnnulee' => 'Sortie annulée.',
 			'comptable.direction.delegationPanneau.sortieAnnulationEchec' => 'L\'annulation n\'est pas confirmée : la demande n\'est peut-être pas parvenue jusqu\'à Rewayah. Relisez la liste avant de réessayer.',
 			'comptable.direction.delegationPanneau.exceptionsTitre' => 'Exceptions',
@@ -60146,6 +60190,8 @@ extension on Traductions {
 			'avis.admin.liens.copie' => 'Lien copié.',
 			'avis.admin.liens.creeFermer' => 'J\'ai copié le lien',
 			'avis.admin.liens.etat.ouvert' => 'Ouvert',
+			_ => null,
+		} ?? switch (path) {
 			'avis.admin.liens.etat.ferme' => 'Fermé',
 			'avis.admin.liens.etat.expire' => 'Expiré',
 			'avis.admin.liens.etat.plein' => 'Complet',
@@ -60157,8 +60203,6 @@ extension on Traductions {
 			'avis.admin.liens.fermerConsequence' => 'Les personnes qui ouvriront ce lien verront qu\'il est fermé et ne pourront plus envoyer d\'avis. Les avis déjà reçus restent. Un lien fermé ne se rouvre pas.',
 			'avis.admin.liens.fermerAction' => 'Fermer le lien',
 			'avis.admin.liens.fermerRester' => 'Ne rien changer',
-			_ => null,
-		} ?? switch (path) {
 			'avis.admin.liens.fermeOk' => 'Le lien est fermé.',
 			'avis.admin.liens.fermeEchec' => 'La fermeture n\'est pas confirmée. La liste est relue : vérifiez l\'état du lien.',
 			'avis.admin.liens.vide' => 'Aucun lien pour le moment. Créez-en un pour recueillir des avis.',
@@ -60660,6 +60704,8 @@ extension on Traductions {
 			'candidatsFlux.importFormulaires.motif.nomTropLong' => 'le nom est trop long',
 			'candidatsFlux.importFormulaires.motif.memeReferenceMemeContenu' => 'ligne répétée à l\'identique',
 			'candidatsFlux.importFormulaires.motif.memeReferenceContenuDifferent' => 'même date de réponse qu\'une autre ligne, mais un contenu différent',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.motif.genreChangeSurLigneSuivie' => 'le genre a changé alors que la personne est suivie : il fixe son côté',
 			'candidatsFlux.importFormulaires.motif.inscription1210' => 'déjà connue par l\'import des inscriptions',
 			'candidatsFlux.importFormulaires.motif.inconnu' => 'un point est à vérifier dans cette ligne',
@@ -60671,8 +60717,6 @@ extension on Traductions {
 			'candidatsFlux.importFormulaires.avertissement.zeroNationalEnTrop' => 'un zéro en trop après l\'indicatif du téléphone',
 			'candidatsFlux.importFormulaires.avertissement.courrielMalforme' => 'le courriel est mal écrit : il est à obtenir',
 			'candidatsFlux.importFormulaires.avertissement.langueMaternelleVersAutre' => 'langue maternelle inconnue, classée en autre langue',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.avertissement.langueInconnueVersAutre' => 'une langue d\'explication inconnue est classée en autre langue',
 			'candidatsFlux.importFormulaires.avertissement.arabeRetire' => 'l\'arabe est retiré des langues d\'explication (ce n\'est pas une langue de cours)',
 			'candidatsFlux.importFormulaires.avertissement.libelleInconnu' => 'une réponse à choix n\'est pas reconnue',

@@ -214,6 +214,9 @@ class _Corps extends StatelessWidget {
                 width: CarteRessource.largeurVignettePour(context),
                 child: VignetteRessource(
                   couverture: CouvertureRessource.pour(r),
+                  image: r.aVignette
+                      ? ImageVignetteDeposee(resourceId: r.id)
+                      : null,
                 ),
               ),
               Ecart.hLg,
@@ -237,6 +240,10 @@ class _Corps extends StatelessWidget {
                         textes.bodySmall ?? const TextStyle(),
                       ),
                     ),
+                    if ((r.description ?? '').trim().isNotEmpty) ...<Widget>[
+                      Ecart.vSm,
+                      Text(r.description!.trim(), style: textes.bodyMedium),
+                    ],
                     Ecart.vSm,
                     Align(
                       alignment: AlignmentDirectional.centerStart,

@@ -19,6 +19,10 @@ class BibliothequeUploadSupabase {
   final bool _possedeTransport;
   final Map<String, _DepotSigne> _depots = <String, _DepotSigne>{};
 
+  /// Les depots de vignette en cours : leur confirmation et leur annulation
+  /// prennent les actions `*_vignette` de la fonction Edge.
+  final Set<String> _vignettes = <String>{};
+
   /// Demande une URL PUT pour un brouillon que l'Edge autorise.
   Future<IntentionUpload> demanderUpload({
     required String supportId,
@@ -29,15 +33,18 @@ class BibliothequeUploadSupabase {
         !RegExp(r'^[0-9a-f]{64}$').hasMatch(fichier.sha256)) {
       throw const BibliothequeHorsLigne();
     }
+    final bool vignette = finalite == FinaliteUpload.vignette;
     try {
       final FunctionResponse reponse = await _supabase.functions.invoke(
         'bibliotheque-upload',
         body: <String, Object?>{
-          'action': 'demander',
+          'action': vignette ? 'demander_vignette' : 'demander',
           'support_id': supportId,
-          'finalite': finalite.name,
+          // La vignette n'a pas de finalite : l'action la designe, et le nom
+          // du fichier du client n'entre jamais dans sa cle.
+          if (!vignette) 'finalite': finalite.name,
           'fichier': <String, Object?>{
-            'nom': fichier.nom,
+            if (!vignette) 'nom': fichier.nom,
             'octets': fichier.octets,
             'mime': fichier.mime,
             'sha256': fichier.sha256,
@@ -63,6 +70,7 @@ class BibliothequeUploadSupabase {
         throw const BibliothequeHorsLigne();
       }
       _depots[id] = _DepotSigne(url: url, entetes: headers);
+      if (vignette) _vignettes.add(id);
       return IntentionUpload(id: id, expireLeUtc: expiration);
     } on FunctionException catch (erreur) {
       throw _traduire(erreur.status, erreur.details);
@@ -109,13 +117,19 @@ class BibliothequeUploadSupabase {
       yield const ProgressionUpload(phase: PhaseUpload.verification);
       final FunctionResponse confirmation = await _supabase.functions.invoke(
         'bibliotheque-upload',
-        body: <String, Object?>{'action': 'confirmer', 'upload_id': uploadId},
+        body: <String, Object?>{
+          'action': _vignettes.contains(uploadId)
+              ? 'confirmer_vignette'
+              : 'confirmer',
+          'upload_id': uploadId,
+        },
       );
       final Map<String, dynamic> resultat = _objet(confirmation.data);
       if (resultat['phase'] != 'pret') {
         throw const BibliothequeHorsLigne();
       }
       _depots.remove(uploadId);
+      _vignettes.remove(uploadId);
       yield const ProgressionUpload(phase: PhaseUpload.pret, partie: 1);
     } on FunctionException catch (erreur) {
       _depots.remove(uploadId);
@@ -137,9 +151,15 @@ class BibliothequeUploadSupabase {
     try {
       await _supabase.functions.invoke(
         'bibliotheque-upload',
-        body: <String, Object?>{'action': 'annuler', 'upload_id': uploadId},
+        body: <String, Object?>{
+          'action': _vignettes.contains(uploadId)
+              ? 'annuler_vignette'
+              : 'annuler',
+          'upload_id': uploadId,
+        },
       );
       _depots.remove(uploadId);
+      _vignettes.remove(uploadId);
     } on FunctionException catch (erreur) {
       throw _traduire(erreur.status, erreur.details);
     } catch (_) {
@@ -151,6 +171,7 @@ class BibliothequeUploadSupabase {
   void dispose() {
     if (_possedeTransport) _transport.close();
     _depots.clear();
+    _vignettes.clear();
   }
 
   static Map<String, dynamic> _objet(Object? valeur) {

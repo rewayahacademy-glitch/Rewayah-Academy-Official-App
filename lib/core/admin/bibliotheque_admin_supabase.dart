@@ -19,6 +19,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../classes/nom_classe_distinct.dart';
 import '../i18n/strings.g.dart';
+import '../tc_bibliotheque/library_resource.dart';
 import 'bibliotheque_upload_supabase.dart';
 import 'modeles_bibliotheque_admin.dart';
 import 'port_bibliotheque_admin.dart';
@@ -182,6 +183,15 @@ class BibliothequeAdminSupabase implements PortBibliothequeAdmin {
           'langue': saisie.langue.trim(),
           'categorie': saisie.categorie.trim(),
           if (niveau != null && niveau.isNotEmpty) 'niveau': niveau,
+          if (saisie.description != null &&
+              saisie.description!.trim().isNotEmpty)
+            'description': saisie.description!.trim(),
+          'rayon': saisie.rayon,
+          'ordre': saisie.ordre,
+          if (saisie.lienExterne != null &&
+              saisie.lienExterne!.trim().isNotEmpty)
+            'lienExterne': saisie.lienExterne!.trim(),
+          if (saisie.etapes.isNotEmpty) 'etapes': saisie.etapes,
         },
       },
     );
@@ -355,6 +365,11 @@ Map<String, dynamic> modificationJson(ModificationSupport m) =>
       if (m.visibilite != null) 'visibilite': m.visibilite!.valeurSql,
       if (m.politiqueHorsLigne != null)
         'politiqueHorsLigne': m.politiqueHorsLigne!.valeurSql,
+      if (m.rayon != null) 'rayon': m.rayon,
+      if (m.ordre != null) 'ordre': m.ordre,
+      if (m.lienExterne != null) 'lienExterne': m.lienExterne,
+      if (m.etapes != null) 'etapes': m.etapes,
+      if (m.retirerVignette) 'vignette': null,
     };
 
 /// Une ligne du catalogue rendue par `library_get_catalogue`.
@@ -427,6 +442,14 @@ FicheSupport ficheSupportJson(
     organisme: _optionnel(s['organisme']),
     description: _optionnel(s['description']),
     conditionsAttribution: _optionnel(s['conditionsAttribution']),
+    rayon: s['rayon'] is String ? s['rayon'] as String : codeRayonCours,
+    ordre: (s['ordre'] as num?)?.toInt() ?? 0,
+    lienExterne: _optionnel(s['lienExterne']),
+    etapes: <String>[
+      for (final Object? e in _liste(s['etapes']))
+        if (e is String) e,
+    ],
+    aVignette: s['vignette'] == true,
     politiqueHorsLigne:
         PolitiqueOffline.depuisSql(s['politiqueHorsLigne'] as String?) ??
         PolitiqueOffline.jamais,

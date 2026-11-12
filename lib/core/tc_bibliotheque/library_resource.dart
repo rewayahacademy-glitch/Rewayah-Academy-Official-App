@@ -20,7 +20,17 @@ enum TypeRessource {
   image('image'),
 
   /// Lecon Rewayah structuree en blocs.
-  lecon('lesson');
+  lecon('lesson'),
+
+  /// Un enregistrement audio (la voix de la direction, une recitation).
+  audio('audio'),
+
+  /// Une video. Elle se depose par lien (le poids des fichiers video depasse ce
+  /// que le depot accepte) : voir `LibraryResource.lienExterne`.
+  video('video'),
+
+  /// Un lien externe, montre en petite carte avec sa description.
+  lienExterne('external_link');
 
   const TypeRessource(this.valeurSql);
 
@@ -35,7 +45,72 @@ enum TypeRessource {
     }
     return null;
   }
+
+  /// Vrai pour la famille « document » du filtre de l'eleve : un PDF, un texte
+  /// ou une lecon. Le filtre par type (document, audio, video, lien externe)
+  /// regroupe ainsi les valeurs de la base sans en doubler aucune.
+  bool get estDocument =>
+      this == TypeRessource.pdf ||
+      this == TypeRessource.texteStructure ||
+      this == TypeRessource.lecon;
 }
+
+/// Un rayon de la Bibliotheque : une place du catalogue, en donnee (« Documents
+/// des cours », « Pour aller plus loin »). Le serveur en tient la liste ; aucun
+/// ecran n'en code le nom. **Aucun prix** : le second rayon est une place
+/// preparee, rien n'y est vendu (directeur, 12/11/2026).
+@immutable
+class RayonBibliotheque {
+  /// Cree un rayon.
+  const RayonBibliotheque({
+    required this.code,
+    required this.titreFr,
+    required this.titreAr,
+    required this.ordre,
+  });
+
+  /// Lit un rayon rendu par le serveur.
+  factory RayonBibliotheque.depuisJson(Map<String, dynamic> json) =>
+      RayonBibliotheque(
+        code: json['code'] as String? ?? codeRayonCours,
+        titreFr: json['titre_fr'] as String? ?? '',
+        titreAr: json['titre_ar'] as String? ?? '',
+        ordre: (json['ordre'] as num?)?.toInt() ?? 1,
+      );
+
+  /// Le code stable du rayon.
+  final String code;
+
+  /// Son intitule en francais.
+  final String titreFr;
+
+  /// Son intitule en arabe.
+  final String titreAr;
+
+  /// Sa place : les rayons s'affichent par ordre croissant.
+  final int ordre;
+
+  /// L'intitule dans la langue demandee (`ar` ou, par defaut, `fr`).
+  String titrePour(String langue) =>
+      langue == 'ar' && titreAr.isNotEmpty ? titreAr : titreFr;
+
+  @override
+  bool operator ==(Object other) =>
+      other is RayonBibliotheque &&
+      other.code == code &&
+      other.titreFr == titreFr &&
+      other.titreAr == titreAr &&
+      other.ordre == ordre;
+
+  @override
+  int get hashCode => Object.hash(code, titreFr, titreAr, ordre);
+}
+
+/// Le rayon des documents fournis avec les cours.
+const String codeRayonCours = 'cours';
+
+/// Le second rayon : une place preparee, sans vente.
+const String codeRayonPlusLoin = 'plus_loin';
 
 /// Les dix capacites du manifeste (spec section 6.4).
 ///
@@ -176,6 +251,12 @@ class LibraryResource {
     this.levelScope = const <String>[],
     this.currentVersionId,
     this.capabilities = const <CapaciteRessource>{},
+    this.description,
+    this.lienExterne,
+    this.ordre = 0,
+    this.rayon = codeRayonCours,
+    this.etapes = const <String>[],
+    this.aVignette = false,
   });
 
   /// Lit un manifeste rendu par la couche serveur.
@@ -189,6 +270,8 @@ class LibraryResource {
         json['capabilities'] as List<dynamic>? ?? const <dynamic>[];
     final List<dynamic> niveaux =
         json['level_scope'] as List<dynamic>? ?? const <dynamic>[];
+    final List<dynamic> etapes =
+        json['etapes'] as List<dynamic>? ?? const <dynamic>[];
 
     return LibraryResource(
       id: json['id'] as String,
@@ -218,7 +301,23 @@ class LibraryResource {
           .map((dynamic c) => CapaciteRessource.depuisSql(c.toString()))
           .whereType<CapaciteRessource>()
           .toSet(),
+      description: json['description'] as String?,
+      lienExterne: json['lien_externe'] as String?,
+      ordre: (json['ordre'] as num?)?.toInt() ?? 0,
+      rayon: _codeRayon(json['rayon']),
+      etapes: etapes
+          .map((dynamic e) => e.toString())
+          .toList(growable: false),
+      aVignette: json['vignette'] == true,
     );
+  }
+
+  /// Le code du rayon, rendu par le serveur sous forme d'objet
+  /// (`{code, titre_fr, titre_ar, ordre}`) ou de simple code.
+  static String _codeRayon(Object? brut) {
+    if (brut is Map) return brut['code'] as String? ?? codeRayonCours;
+    if (brut is String && brut.isNotEmpty) return brut;
+    return codeRayonCours;
   }
 
   /// L'identifiant de la ressource (uuid).
@@ -262,6 +361,30 @@ class LibraryResource {
 
   /// Les capacites offertes.
   final Set<CapaciteRessource> capabilities;
+
+  /// La description courte, montree sur la carte. Obligatoire pour un lien
+  /// externe (la base l'exige).
+  final String? description;
+
+  /// L'adresse https d'un lien externe ou d'une video par lien. Validee par la
+  /// base ; `null` pour tout autre document.
+  final String? lienExterne;
+
+  /// L'ordre d'affichage dans le rayon (croissant).
+  final int ordre;
+
+  /// Le code du rayon : [codeRayonCours] ou [codeRayonPlusLoin]. Les intitules
+  /// viennent de `PortCatalogue.rayons()`, jamais d'un ecran.
+  final String rayon;
+
+  /// Les codes stables des etapes du programme auxquelles le document se
+  /// rattache (aucune cle vers une version du programme).
+  final List<String> etapes;
+
+  /// Vrai quand une vignette a ete deposee. L'URL signee ne vient jamais du
+  /// manifeste : elle se demande au serveur (`PortVignettes`). Sans vignette,
+  /// la couverture par defaut du type s'applique.
+  final bool aVignette;
 
   /// Vrai quand la ressource porte la capacite demandee.
   bool peut(CapaciteRessource capacite) => capabilities.contains(capacite);

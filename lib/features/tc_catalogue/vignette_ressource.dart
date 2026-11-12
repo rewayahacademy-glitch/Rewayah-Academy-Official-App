@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/icons/app_icons.dart';
 import '../../core/tc_bibliotheque/couverture_ressource.dart';
 import '../../core/tc_bibliotheque/library_resource.dart';
+import '../../core/tc_bibliotheque/vignettes_ressource.dart';
 import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
@@ -23,10 +25,10 @@ import '../../core/widgets/couverture_support.dart';
 /// groupes, decision D-18 -- est demandee a Agent Z dans
 /// `docs/archive/2026-09-pre-remise-a-plat/teaching-core/TC_CONTRACT_REQUEST_B.md`.
 ///
-/// [image] est le point d'entree de la couverture **deposee**, celle que
-/// `cover_asset` designe. Elle est fournie par l'appelant et non chargee ici :
-/// aucun bucket Storage de supports n'existe, et une vignette qui tenterait de
-/// signer une URL inventerait un service.
+/// [image] est le point d'entree de la vignette **deposee** par la direction
+/// (BIBLIOTHEQUE-UNE). Elle est fournie par l'appelant (`ImageVignetteDeposee`
+/// demande l'URL signee au serveur) et se pose PAR-DESSUS le dessin par defaut :
+/// tant qu'elle ne vient pas, ou si elle echoue, la couverture du type reste.
 class VignetteRessource extends StatelessWidget {
   /// Cree une vignette.
   const VignetteRessource({
@@ -67,8 +69,9 @@ class VignetteRessource extends StatelessWidget {
           // ligne sont lus a cote par la carte. Un lecteur d'ecran qui
           // epellerait « CO » avant le titre ne dirait rien de plus.
           child: ExcludeSemantics(
-            child:
-                image ??
+            child: Stack(
+              fit: StackFit.expand,
+              children: <Widget>[
                 Stack(
                   fit: StackFit.expand,
                   children: <Widget>[
@@ -109,6 +112,9 @@ class VignetteRessource extends StatelessWidget {
                     ),
                   ],
                 ),
+                ?image,
+              ],
+            ),
           ),
         ),
       ),
@@ -133,6 +139,9 @@ class VignetteRessource extends StatelessWidget {
     TypeRessource.pdf => AppIcons.fichierPdf,
     TypeRessource.image => AppIcons.image,
     TypeRessource.lecon => AppIcons.lecon,
+    TypeRessource.audio => AppIcons.audio,
+    TypeRessource.video => AppIcons.video,
+    TypeRessource.lienExterne => AppIcons.lien,
   };
 }
 
@@ -195,4 +204,29 @@ class _MotifPeintre extends CustomPainter {
   @override
   bool shouldRepaint(_MotifPeintre ancien) =>
       ancien.motif != motif || ancien.encre != encre;
+}
+
+/// La vignette deposee d'un document : l'URL signee est demandee au serveur
+/// (`vignetteUrlProvider`, un seul appel regroupe pour toutes les cartes d'un
+/// ecran). Tant qu'elle ne vient pas, ou si elle echoue, rien n'est peint : la
+/// couverture par defaut, dessous, reste visible.
+class ImageVignetteDeposee extends ConsumerWidget {
+  /// Cree l'image de la vignette de [resourceId].
+  const ImageVignetteDeposee({required this.resourceId, super.key});
+
+  /// Le document dont on montre la vignette.
+  final String resourceId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final Uri? url = ref.watch(vignetteUrlProvider(resourceId)).value;
+    if (url == null) return const SizedBox.shrink();
+    return Image.network(
+      url.toString(),
+      fit: BoxFit.cover,
+      excludeFromSemantics: true,
+      errorBuilder: (BuildContext _, Object _, StackTrace? _) =>
+          const SizedBox.shrink(),
+    );
+  }
 }
