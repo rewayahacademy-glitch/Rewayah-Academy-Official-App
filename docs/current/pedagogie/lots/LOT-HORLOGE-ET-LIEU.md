@@ -102,6 +102,15 @@ Le changement d'heure de Paris est le dimanche 28/03/2027. Annonce à 14 jours :
 - **Aucune source d'anomalie de données n'existe** : les alertes de la direction sont les signalements d'enseignants (`signalements_ouverts_direction()`), l'Espace de traitement n'a que dossiers et demandes. À créer (étape 6).
 - Confidentialité : ENS-PAYS-1 montre le pays de l'enseignant (jamais une ville ni une adresse : `20261109400000:12-13`). **Les coordonnées et la ville d'un enseignant ne doivent jamais entrer dans ces vues.**
 
+### 3.6 L'affichage à deux heures existe déjà : on le réutilise (fait signalé par l'architecte, revérifié)
+
+Chaîne complète, de la base à l'écran (vérifiée par lecture, pas exécutée) :
+- **Serveur** : `public.horloge_seance(p_session_id)` (`0033_tc_vues_rpc.sql:427`, seule définition) rend `tz_utilisateur`, `heure_utilisateur`, `tz_groupe`, `heure_groupe` (jour et date aussi). `tz_utilisateur` vient de `mon_fuseau()` **avec repli sur Paris** ; `tz_groupe` vient de `groupes.timezone_iana`. Mêmes colonnes dans `public.horloge_classe` (`20261025040000:27`, `heure_groupe` ligne 144) et `prochaine_seance_groupe` (`20261016102000:26`).
+- **Adaptateur** : `lib/core/tc_horloge/horloge_supabase.dart:56` (`heure_utilisateur`) et `:65` (`heure_groupe`) → `SessionClockVM` (`horlogeUtilisateur`, `horlogeContrepartie`).
+- **Affichage** : `lib/core/tc_horloge/heure_double.dart` (`HeureDouble`, `lignesInterlocuteurs`), texte `tc.groupe.horloges.heureGroupe` = « Heure de la classe » et `chezVous` (`fr.i18n.json:9487-9492`). Employé par `tc_espace_groupe/carte_session.dart`, `tc_espace_groupe/bloc_cartes_classe.dart`, `tc_mes_groupes/carte_groupe.dart`, `accueil_famille/bloc_seance.dart`, `classe_tuteur/planning_classe_page.dart`, `classe_tuteur/carte_seance_classe.dart`.
+- **Ce qui change avec le lot** : après l'étape 1, `tz_groupe` vaut `Asia/Riyadh` sans toucher à ces fonctions, donc `heure_groupe` est déjà l'heure de La Mecque ; seul le sens du libellé change (« Heure de la classe » devient « Heure de La Mecque », en second). **Aucun second composant n'est créé** : on améliore `HeureDouble`.
+- **Deux faits à traiter dans l'étape 3** : (1) la salle, le chrono et la pause ne lisent ni `timezone_iana` ni `hour_local`, seulement des instants rendus à l'heure de la personne (`heureChezMoi`) : rien à y changer, et ces zones ne sont pas touchées ; (2) `horloge_seance` donne « mon heure » par `mon_fuseau()` (repli Paris) alors que `mon_horloge()` n'a pas de repli : deux sources pour « mon heure ». Le lot les aligne sur le lieu de la personne (sans lieu, la ligne « chez vous » est omise et l'on dit « heure de cet appareil », comme `mon_horloge` le fait déjà), sans modifier `mon_fuseau()` qui sert d'autres appelants.
+
 ## 4. La source des villes : proposition précise
 
 **Fichier : GeoNames `cities15000`.** Mesuré aujourd'hui (téléchargement réussi depuis cet environnement, `download.geonames.org`) :
@@ -159,7 +168,7 @@ Numéros de migration : la migration réservée est `20261123940000_horloge_lieu
 - **Preuve** : tests de widgets (320 et 1440, texte ×1 et ×2, clair et sombre) ; test de non-régression `classe_form_1_test.dart`, `service_groupes_supabase_test.dart` mis à jour ; passage par le vrai routeur.
 
 **Étape 3. Affichage à deux heures** (Flutter, très peu de SQL)
-- `mon_horloge` rend aussi l'horloge de l'académie (`academie`). Un seul point du core formate « 19 h · 21 h à La Mecque » ; `HeureDouble` (`lib/core/tc_horloge/heure_double.dart`, 5 écrans) et la ligne « Heure de la classe » deviennent « heure de La Mecque » ; les 63 fichiers qui appellent `chezMoi` n'ont rien à changer sauf les endroits qui composent eux-mêmes une phrase d'heure.
+- `mon_horloge` rend aussi l'horloge de l'académie (`academie`). Fichiers et chaîne du §3.6 : `horloge_seance` / `horloge_classe` (copie complète, sans suppression), `horloge_supabase.dart`, `heure_double.dart`, `fr.i18n.json` `tc.groupe.horloges.*`. Un seul point du core formate « 19 h · 21 h à La Mecque » ; `HeureDouble` (`lib/core/tc_horloge/heure_double.dart`, 5 écrans) et la ligne « Heure de la classe » deviennent « heure de La Mecque » ; les 63 fichiers qui appellent `chezMoi` n'ont rien à changer sauf les endroits qui composent eux-mêmes une phrase d'heure.
 - Correction des défauts `journee_page.dart:1466,1722`, `observations_admin_page.dart:797,800` ; limite HEURE-PROFIL-PARTOUT résolue par un seul fournisseur qui écoute `monHorlogeProvider`.
 - Notifications et courriels : ajout de `debut_academie` à `private.notifier_classe` et aux gabarits de courriel (`modeles_fr.ts`, etc.).
 - Textes fr et ar par le vocabulaire (« heure de La Mecque » ajouté à la compétence `mots-rewayah` dans le même commit).
