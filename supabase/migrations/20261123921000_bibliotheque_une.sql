@@ -68,7 +68,15 @@ ALTER TABLE public.library_resource
   ADD COLUMN ordre integer NOT NULL DEFAULT 0 CHECK (ordre BETWEEN 0 AND 100000),
   ADD COLUMN lien_externe text,
   ADD COLUMN vignette_cle text,
-  ADD COLUMN etapes text[] NOT NULL DEFAULT '{}';
+  ADD COLUMN etapes text[] NOT NULL DEFAULT '{}',
+  -- D1 (architecte, 12/11/2026) : les tranches d'age auxquelles le document
+  -- s'adresse (codes de cohortes_age), fixees par la direction au depot.
+  ADD COLUMN tranches text[] NOT NULL
+    DEFAULT ARRAY['enfant_6_9', 'enfant_10_13', 'ado_14_17', 'adulte_18_plus'],
+  -- D2 : la lecture du Coran concernee, et l'ecole suivie pour un document de
+  -- priere ou d'ablutions. Facultatifs, affiches sur la fiche, filtrables.
+  ADD COLUMN lecture_coran text,
+  ADD COLUMN ecole_priere text;
 
 -- Un lien externe est une URL https dont l'hote est un nom de domaine (pas une
 -- adresse IP, pas d'identifiants devant l'hote), sans espace ni guillemet.
@@ -95,6 +103,16 @@ ALTER TABLE public.library_resource
   ADD CONSTRAINT library_resource_vignette_cle_forme CHECK (
     vignette_cle IS NULL OR vignette_cle ~ '^supports/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/[1-9][0-9]{0,8}/[A-Za-z0-9][A-Za-z0-9._-]{0,127}$'
   ),
+  ADD CONSTRAINT library_resource_tranches_valides CHECK (
+    pg_catalog.cardinality(tranches) BETWEEN 1 AND 4
+    AND tranches <@ ARRAY['enfant_6_9', 'enfant_10_13', 'ado_14_17', 'adulte_18_plus']
+  ),
+  ADD CONSTRAINT library_resource_lecture_coran_valide CHECK (
+    lecture_coran IS NULL OR lecture_coran IN ('hafs', 'warsh', 'qalun', 'shuba')
+  ),
+  ADD CONSTRAINT library_resource_ecole_priere_forme CHECK (
+    ecole_priere IS NULL OR pg_catalog.length(pg_catalog.btrim(ecole_priere)) BETWEEN 1 AND 80
+  ),
   ADD CONSTRAINT library_resource_etapes_forme CHECK (
     pg_catalog.cardinality(etapes) <= 20
     AND pg_catalog.array_to_string(etapes, ',') ~ '^([A-Za-z0-9][A-Za-z0-9_.-]{0,63}(,[A-Za-z0-9][A-Za-z0-9_.-]{0,63})*)?$'
@@ -102,6 +120,8 @@ ALTER TABLE public.library_resource
 
 CREATE INDEX library_resource_rayon_ordre_idx
   ON public.library_resource (rayon, ordre, title);
+CREATE INDEX library_resource_lecture_coran_idx
+  ON public.library_resource (lecture_coran) WHERE lecture_coran IS NOT NULL;
 CREATE INDEX library_resource_etapes_idx
   ON public.library_resource USING gin (etapes);
 
@@ -140,6 +160,94 @@ END;
 $function$;
 REVOKE ALL ON FUNCTION app_private.library_etapes_normalisees(jsonb)
   FROM PUBLIC, anon, authenticated, service_role, agent_ro;
+
+-- Les tranches saisies : un tableau JSON de codes de cohortes_age actives,
+-- sans doublon, au moins une. Le defaut s'applique quand la cle est absente.
+CREATE FUNCTION app_private.library_tranches_normalisees(p_valeur jsonb, p_defaut text[])
+RETURNS text[]
+LANGUAGE plpgsql
+STABLE
+SECURITY INVOKER
+SET search_path = ''
+AS $function$
+DECLARE
+  v_codes text[];
+BEGIN
+  IF p_valeur IS NULL THEN
+    RETURN p_defaut;
+  END IF;
+  IF pg_catalog.jsonb_typeof(p_valeur) <> 'array'
+     OR pg_catalog.jsonb_array_length(p_valeur) NOT BETWEEN 1 AND 4
+     OR EXISTS (SELECT 1 FROM pg_catalog.jsonb_array_elements(p_valeur) e
+                 WHERE pg_catalog.jsonb_typeof(e.value) <> 'string') THEN
+    RAISE EXCEPTION 'BibliothequeSaisieInvalide' USING ERRCODE = '22023';
+  END IF;
+  SELECT pg_catalog.array_agg(DISTINCT e.value ORDER BY e.value)
+    INTO v_codes FROM pg_catalog.jsonb_array_elements_text(p_valeur) e(value);
+  IF EXISTS (SELECT 1 FROM pg_catalog.unnest(v_codes) c
+              WHERE NOT EXISTS (SELECT 1 FROM public.cohortes_age a
+                                 WHERE a.code = c AND a.actif)) THEN
+    RAISE EXCEPTION 'BibliothequeSaisieInvalide' USING ERRCODE = '22023';
+  END IF;
+  RETURN v_codes;
+END;
+$function$;
+REVOKE ALL ON FUNCTION app_private.library_tranches_normalisees(jsonb, text[])
+  FROM PUBLIC, anon, authenticated, service_role, agent_ro;
+
+-- Un document est-il ouvert a la tranche d'age de l'appelant ? (D1)
+--   eleve   : sa propre tranche (student_profiles.cohorte ; adulte sans tranche
+--             = adulte ; mineur sans tranche = la plus jeune, par prudence) ;
+--   tuteur  : l'adulte qu'il est, ou la tranche d'un enfant de son foyer (il
+--             voit au moins ce que voit son enfant) ;
+--   enseignant, direction et autres roles : tout (leur visibilite decide).
+-- Une seule regle, lue par la policy de library_resource, par la lecture du
+-- lecteur et par la chaine de lecture d'un fichier.
+CREATE FUNCTION private.tranche_autorisee(p_tranches text[])
+RETURNS boolean
+LANGUAGE sql
+STABLE
+SECURITY DEFINER
+SET search_path = ''
+AS $function$
+  SELECT coalesce(
+    CASE public.app_role()::text
+      WHEN 'student' THEN p_tranches @> ARRAY[coalesce((
+        SELECT coalesce(sp.cohorte,
+                        CASE WHEN sp.student_type::text = 'adult' THEN 'adulte_18_plus' ELSE 'enfant_6_9' END)
+          FROM public.student_profiles sp WHERE sp.profile_id = auth.uid()), 'enfant_6_9')]
+      WHEN 'guardian' THEN p_tranches @> ARRAY['adulte_18_plus']
+        OR EXISTS (
+          SELECT 1 FROM public.student_profiles sp
+           WHERE public.est_du_foyer(sp.profile_id)
+             AND p_tranches @> ARRAY[coalesce(sp.cohorte,
+                   CASE WHEN sp.student_type::text = 'adult' THEN 'adulte_18_plus' ELSE 'enfant_6_9' END)])
+      ELSE true
+    END, false);
+$function$;
+ALTER FUNCTION private.tranche_autorisee(text[]) OWNER TO postgres;
+REVOKE ALL ON FUNCTION private.tranche_autorisee(text[])
+  FROM PUBLIC, anon, authenticated, service_role, agent_ro;
+GRANT EXECUTE ON FUNCTION private.tranche_autorisee(text[]) TO authenticated;
+
+-- Le meme controle pour une version (la chaine de lecture d'un fichier).
+CREATE FUNCTION private.tranche_autorisee_version(p_resource_version_id uuid)
+RETURNS boolean
+LANGUAGE sql
+STABLE
+SECURITY DEFINER
+SET search_path = ''
+AS $function$
+  SELECT coalesce((
+    SELECT private.tranche_autorisee(r.tranches)
+      FROM public.resource_version v
+      JOIN public.library_resource r ON r.id = v.resource_id
+     WHERE v.id = p_resource_version_id), false);
+$function$;
+ALTER FUNCTION private.tranche_autorisee_version(uuid) OWNER TO postgres;
+REVOKE ALL ON FUNCTION private.tranche_autorisee_version(uuid)
+  FROM PUBLIC, anon, authenticated, service_role, agent_ro;
+GRANT EXECUTE ON FUNCTION private.tranche_autorisee_version(uuid) TO authenticated;
 
 -- Le controle d'une version avant publication, etendu : un document sans
 -- fichier mais avec un lien (lien externe, video par lien) n'a ni fichier a
@@ -216,6 +324,9 @@ DECLARE
   v_ordre integer := 0;
   v_lien text;
   v_etapes text[];
+  v_tranches text[];
+  v_lecture text;
+  v_ecole text;
   v_id uuid;
   v_version uuid;
   v_revision integer;
@@ -225,10 +336,11 @@ BEGIN
   END IF;
   IF p_saisie IS NULL OR pg_catalog.jsonb_typeof(p_saisie) <> 'object'
      OR (p_saisie - ARRAY['titre', 'type', 'langue', 'categorie', 'niveau', 'description',
-                          'rayon', 'ordre', 'lienExterne', 'etapes']) <> '{}'::jsonb THEN
+                          'rayon', 'ordre', 'lienExterne', 'etapes', 'tranches',
+                          'lectureCoran', 'ecolePriere']) <> '{}'::jsonb THEN
     RAISE EXCEPTION 'BibliothequeSaisieInvalide' USING ERRCODE = '22023';
   END IF;
-  IF EXISTS (SELECT 1 FROM pg_catalog.jsonb_each(p_saisie - ARRAY['etapes', 'ordre']) e
+  IF EXISTS (SELECT 1 FROM pg_catalog.jsonb_each(p_saisie - ARRAY['etapes', 'ordre', 'tranches']) e
               WHERE pg_catalog.jsonb_typeof(e.value) NOT IN ('string', 'null'))
      OR (p_saisie ? 'ordre' AND pg_catalog.jsonb_typeof(p_saisie -> 'ordre') NOT IN ('number', 'null')) THEN
     RAISE EXCEPTION 'BibliothequeSaisieInvalide' USING ERRCODE = '22023';
@@ -248,6 +360,15 @@ BEGIN
     v_ordre := (p_saisie ->> 'ordre')::integer;
   END IF;
   v_etapes := app_private.library_etapes_normalisees(p_saisie -> 'etapes');
+  v_lecture := nullif(pg_catalog.btrim(coalesce(p_saisie ->> 'lectureCoran', '')), '');
+  v_ecole := nullif(pg_catalog.btrim(coalesce(p_saisie ->> 'ecolePriere', '')), '');
+  -- D1 : un document donne par un lien exclut par defaut la tranche 6-9 ; la
+  -- direction la coche expressement pour qu'un enfant de 6 a 9 ans le voie.
+  v_tranches := app_private.library_tranches_normalisees(
+    p_saisie -> 'tranches',
+    CASE WHEN v_lien IS NOT NULL
+         THEN ARRAY['enfant_10_13', 'ado_14_17', 'adulte_18_plus']
+         ELSE ARRAY['enfant_6_9', 'enfant_10_13', 'ado_14_17', 'adulte_18_plus'] END);
   IF pg_catalog.length(v_titre) NOT BETWEEN 1 AND 200
      OR pg_catalog.length(v_langue) NOT BETWEEN 2 AND 16
      OR pg_catalog.length(v_categorie) > 80
@@ -264,10 +385,11 @@ BEGIN
   BEGIN
     INSERT INTO public.library_resource
       (title, short_title, resource_type, language, category, level_scope, access_policy, offline_policy,
-       description, rayon, ordre, lien_externe, etapes)
+       description, rayon, ordre, lien_externe, etapes, tranches, lecture_coran, ecole_priere)
     VALUES (v_titre, pg_catalog.left(v_titre, 60), v_type::public.library_resource_type, v_langue,
             v_categorie, CASE WHEN v_niveau IS NULL THEN '{}'::text[] ELSE ARRAY[v_niveau] END,
-            'admin', 'jamais', v_description, v_rayon, v_ordre, v_lien, v_etapes)
+            'admin', 'jamais', v_description, v_rayon, v_ordre, v_lien, v_etapes,
+            v_tranches, v_lecture, v_ecole)
     RETURNING id, revision INTO v_id, v_revision;
   EXCEPTION WHEN check_violation OR string_data_right_truncation THEN
     RAISE EXCEPTION 'BibliothequeSaisieInvalide' USING ERRCODE = '22023';
@@ -302,11 +424,12 @@ BEGIN
   IF p_modification IS NULL OR pg_catalog.jsonb_typeof(p_modification) <> 'object'
      OR (p_modification - ARRAY['titre', 'titreCourt', 'edition', 'organisme', 'description',
                                 'conditionsAttribution', 'visibilite', 'politiqueHorsLigne',
-                                'rayon', 'ordre', 'lienExterne', 'etapes', 'vignette']) <> '{}'::jsonb
+                                'rayon', 'ordre', 'lienExterne', 'etapes', 'vignette', 'tranches',
+                                'lectureCoran', 'ecolePriere']) <> '{}'::jsonb
      OR p_revision_attendue IS NULL THEN
     RAISE EXCEPTION 'BibliothequeSaisieInvalide' USING ERRCODE = '22023';
   END IF;
-  IF EXISTS (SELECT 1 FROM pg_catalog.jsonb_each(p_modification - ARRAY['etapes', 'ordre']) e
+  IF EXISTS (SELECT 1 FROM pg_catalog.jsonb_each(p_modification - ARRAY['etapes', 'ordre', 'tranches']) e
               WHERE pg_catalog.jsonb_typeof(e.value) NOT IN ('string', 'null'))
      OR (p_modification ? 'ordre' AND pg_catalog.jsonb_typeof(p_modification -> 'ordre') <> 'number')
      OR (p_modification ? 'ordre' AND (p_modification ->> 'ordre') !~ '^[0-9]{1,6}$')
@@ -385,7 +508,16 @@ BEGIN
       etapes = CASE WHEN p_modification ? 'etapes'
                     THEN app_private.library_etapes_normalisees(p_modification -> 'etapes')
                     ELSE r.etapes END,
-      vignette_cle = CASE WHEN p_modification ? 'vignette' THEN NULL ELSE r.vignette_cle END
+      vignette_cle = CASE WHEN p_modification ? 'vignette' THEN NULL ELSE r.vignette_cle END,
+      tranches = CASE WHEN p_modification ? 'tranches'
+                      THEN app_private.library_tranches_normalisees(p_modification -> 'tranches', r.tranches)
+                      ELSE r.tranches END,
+      lecture_coran = CASE WHEN p_modification ? 'lectureCoran'
+                           THEN nullif(pg_catalog.btrim(coalesce(p_modification ->> 'lectureCoran', '')), '')
+                           ELSE r.lecture_coran END,
+      ecole_priere = CASE WHEN p_modification ? 'ecolePriere'
+                          THEN nullif(pg_catalog.btrim(coalesce(p_modification ->> 'ecolePriere', '')), '')
+                          ELSE r.ecole_priere END
      WHERE r.id = p_resource_id
     RETURNING r.revision INTO v_revision;
   EXCEPTION WHEN check_violation OR string_data_right_truncation THEN
@@ -522,7 +654,10 @@ BEGIN
       'ordre', v_resource.ordre,
       'lienExterne', v_resource.lien_externe,
       'etapes', v_resource.etapes,
-      'vignette', v_resource.vignette_cle IS NOT NULL
+      'vignette', v_resource.vignette_cle IS NOT NULL,
+      'tranches', v_resource.tranches,
+      'lectureCoran', v_resource.lecture_coran,
+      'ecolePriere', v_resource.ecole_priere
     ),
     'revision', v_resource.revision,
     'versions', v_versions,
@@ -537,6 +672,194 @@ BEGIN
   );
 END;
 $function$;
+
+-- La liste de la direction : memes reponses, et les filtres rayon, lecture du
+-- Coran et ecole de priere (D2, filtrables cote direction). Le corps est celui
+-- de 20261016100600 (garde positive, DEFINER, aucune cle de stockage).
+create or replace function public.library_get_catalogue(
+  p_filtre jsonb default '{}'::jsonb,
+  p_curseur text default null,
+  p_limite integer default 25
+)
+returns jsonb
+language plpgsql
+stable
+security definer
+set search_path = ''
+as $$
+declare
+  v_etat text := coalesce(p_filtre ->> 'etat', 'tous');
+  v_type text := p_filtre ->> 'type';
+  v_niveau text := p_filtre ->> 'niveau';
+  v_langue text := p_filtre ->> 'langue';
+  v_lecture text := p_filtre ->> 'lectureCoran';
+  v_ecole text := nullif(btrim(p_filtre ->> 'ecolePriere'), '');
+  v_rayon text := p_filtre ->> 'rayon';
+  v_recherche text := nullif(btrim(p_filtre ->> 'recherche'), '');
+  v_cursor jsonb;
+  v_cursor_date timestamptz;
+  v_cursor_id uuid;
+  v_items jsonb;
+  v_has_more boolean;
+  v_next_cursor text;
+begin
+  if auth.uid() is null
+     or not coalesce(public.app_role() = 'admin' and public.app_account_valid(), false) then
+    raise exception 'BibliothequeNonAutorisee' using errcode = '42501';
+  end if;
+  if p_filtre is null
+     or jsonb_typeof(p_filtre) <> 'object'
+     or exists (
+       select 1 from jsonb_object_keys(p_filtre) as keys(key)
+        where key not in ('etat', 'type', 'niveau', 'langue', 'recherche', 'lectureCoran',
+                          'ecolePriere', 'rayon')
+     ) then
+    raise exception 'BibliothequeFiltreInvalide' using errcode = '22023';
+  end if;
+  if v_etat not in ('tous', 'brouillons', 'aVerifier', 'publies', 'retires', 'droitsExpires')
+     or (v_type is not null and not exists (
+       select 1 from pg_catalog.pg_enum e
+       join pg_catalog.pg_type t on t.oid = e.enumtypid
+       join pg_catalog.pg_namespace n on n.oid = t.typnamespace
+       where n.nspname = 'public' and t.typname = 'library_resource_type'
+         and e.enumlabel = v_type
+     ))
+     or coalesce(length(v_niveau), 0) > 80
+     or coalesce(length(v_langue), 0) > 16
+     or coalesce(length(v_recherche), 0) > 120
+     or (v_lecture is not null and v_lecture not in ('hafs', 'warsh', 'qalun', 'shuba'))
+     or coalesce(length(v_ecole), 0) > 80
+     or (v_rayon is not null and v_rayon !~ '^[a-z][a-z0-9_]{1,31}$')
+     or (v_recherche is not null and length(v_recherche) < 3) then
+    raise exception 'BibliothequeFiltreInvalide' using errcode = '22023';
+  end if;
+  if v_etat = 'droitsExpires' then
+    raise exception 'BibliothequeControleDroitsIndisponible'
+      using errcode = '0A000';
+  end if;
+  if p_limite is null or p_limite < 1 or p_limite > 100 then
+    raise exception 'BibliothequeLimiteInvalide' using errcode = '22023';
+  end if;
+
+  if p_curseur is not null then
+    if length(p_curseur) > 256 or p_curseur !~ '^[A-Za-z0-9_-]+$' then
+      raise exception 'BibliothequeCurseurInvalide' using errcode = '22023';
+    end if;
+    begin
+      v_cursor := convert_from(
+        decode(
+          translate(p_curseur, '-_', '+/')
+            || repeat('=', (4 - length(p_curseur) % 4) % 4),
+          'base64'
+        ),
+        'UTF8'
+      )::jsonb;
+      v_cursor_date := (v_cursor ->> 'updated_at')::timestamptz;
+      v_cursor_id := (v_cursor ->> 'id')::uuid;
+    exception when others then
+      raise exception 'BibliothequeCurseurInvalide' using errcode = '22023';
+    end;
+    if jsonb_typeof(v_cursor) <> 'object'
+       or v_cursor_date is null or v_cursor_id is null then
+      raise exception 'BibliothequeCurseurInvalide' using errcode = '22023';
+    end if;
+  end if;
+
+  with lignes as materialized (
+    select
+      r.id,
+      r.title,
+      r.short_title,
+      r.resource_type::text as resource_type,
+      r.language,
+      r.category,
+      r.level_scope,
+      r.access_policy::text as access_policy,
+      r.rayon,
+      r.lecture_coran,
+      r.updated_at,
+      r.archived_at,
+      v.id as version_id,
+      v.numero_version,
+      v.statut::text as statut_version,
+      v.publiee_le
+    from public.library_resource r
+    left join lateral (
+      select rv.id, rv.numero_version, rv.statut, rv.publiee_le
+        from public.resource_version rv
+       where rv.resource_id = r.id
+       order by rv.numero_version desc
+       limit 1
+    ) v on true
+    where (v_type is null or r.resource_type::text = v_type)
+      and (v_niveau is null or r.level_scope @> array[v_niveau]::text[])
+      and (v_langue is null or r.language = v_langue)
+      and (v_lecture is null or r.lecture_coran = v_lecture)
+      and (v_ecole is null or lower(coalesce(r.ecole_priere, '')) like '%' || lower(v_ecole) || '%')
+      and (v_rayon is null or r.rayon = v_rayon)
+      and case v_etat
+        when 'brouillons' then coalesce(v.statut::text, 'brouillon') = 'brouillon'
+        when 'publies' then r.archived_at is null and v.statut::text = 'publiee'
+        when 'retires' then r.archived_at is not null
+        else true
+      end
+      and (
+        v_recherche is null
+        or concat_ws(
+          ' ', lower(r.title), lower(r.short_title),
+          lower(coalesce(r.edition, '')), lower(r.category)
+        ) operator(extensions.%) lower(v_recherche)
+      )
+      and (
+        v_cursor_date is null
+        or (r.updated_at, r.id) < (v_cursor_date, v_cursor_id)
+      )
+    order by r.updated_at desc, r.id desc
+    limit p_limite + 1
+  ), page as (
+    select * from lignes order by updated_at desc, id desc limit p_limite
+  ), dernier as (
+    select updated_at, id from page order by updated_at asc, id asc limit 1
+  )
+  select
+    coalesce((
+      select jsonb_agg(jsonb_build_object(
+        'id', p.id,
+        'titre', p.title,
+        'type', p.resource_type,
+        'langue', p.language,
+        'categorie', p.category,
+        'niveau', p.level_scope[1],
+        'numeroVersion', p.numero_version,
+        'statutVersion', coalesce(p.statut_version, 'brouillon'),
+        'revueDroits', 'aVerifier',
+        'visibilite', p.access_policy,
+        'rayon', p.rayon,
+        'lectureCoran', p.lecture_coran,
+        'modifieLeUtc', p.updated_at,
+        'retire', p.archived_at is not null
+      ) order by p.updated_at desc, p.id desc)
+      from page p
+    ), '[]'::jsonb),
+    (select count(*) > p_limite from lignes),
+    (select jsonb_build_object('updated_at', d.updated_at, 'id', d.id)::text from dernier d)
+  into v_items, v_has_more, v_next_cursor;
+
+  if v_has_more and v_next_cursor is not null then
+    v_next_cursor := rtrim(translate(
+      encode(convert_to(v_next_cursor, 'UTF8'), 'base64'), E'\n', ''
+    ), '=');
+    v_next_cursor := translate(v_next_cursor, '+/', '-_');
+  else
+    v_next_cursor := null;
+  end if;
+
+  return jsonb_build_object(
+    'elements', v_items,
+    'curseur', v_next_cursor
+  );
+end;
+$$;
 
 -- ---------------------------------------------------------------------------
 -- 5. La vignette : une intention a deux temps (comme le fichier d'un document)
@@ -713,6 +1036,100 @@ $function$;
 -- ---------------------------------------------------------------------------
 -- 6. Les lectures du lecteur (eleve, tuteur, enseignant)
 -- ---------------------------------------------------------------------------
+-- La porte de lecture d'un document, transcription de la policy
+-- library_resource_lecture (20261011113000, puis l'acces paye de 20261104600000)
+-- AVEC la tranche d'age (D1). La policy est modifiee ici, a l'identique, par
+-- ALTER POLICY ; le scenario compare toujours la fonction a la RLS reelle.
+CREATE OR REPLACE FUNCTION private.n4_ressource_lisible(p_resource_id uuid)
+RETURNS boolean
+LANGUAGE sql STABLE SECURITY DEFINER SET search_path = ''
+AS $function$
+  SELECT coalesce((
+    SELECT public.app_account_valid()
+       AND (
+         public.app_role() = 'admin'
+         OR (
+           r.archived_at IS NULL
+           AND r.current_version_id IS NOT NULL
+           AND (
+             r.access_policy IN ('publique', 'inscrits')
+             OR (
+               r.access_policy IN ('groupe_assigne', 'enseignant_seul')
+               AND EXISTS (
+                 SELECT 1
+                   FROM public.library_resource_groupe lrg
+                  WHERE lrg.resource_id = r.id
+                    AND private.acces_paye_groupe(lrg.groupe_id)
+                    AND (
+                      (
+                        public.app_role() = 'teacher'
+                        AND EXISTS (
+                          SELECT 1 FROM public.mes_groupes_v mg
+                           WHERE mg.groupe_id = lrg.groupe_id
+                        )
+                      )
+                      OR (
+                        public.app_role() IN ('guardian', 'student')
+                        AND r.access_policy = 'groupe_assigne'
+                        AND EXISTS (
+                          SELECT 1 FROM public.mes_groupes_famille_v mg
+                           WHERE mg.groupe_id = lrg.groupe_id
+                        )
+                      )
+                    )
+               )
+             )
+           )
+         )
+       )
+       AND private.acces_paye_appelant()
+       AND private.tranche_autorisee(r.tranches)
+      FROM public.library_resource r
+     WHERE r.id = p_resource_id
+  ), false);
+$function$;
+
+ALTER POLICY library_resource_lecture ON public.library_resource
+  USING (
+    (SELECT public.app_account_valid()) AND (
+      (SELECT public.app_role()) = 'admin'
+      OR (
+        archived_at IS NULL
+        AND current_version_id IS NOT NULL
+        AND (
+          access_policy IN ('publique', 'inscrits')
+          OR (
+            access_policy IN ('groupe_assigne', 'enseignant_seul')
+            AND EXISTS (
+              SELECT 1
+                FROM public.library_resource_groupe lrg
+               WHERE lrg.resource_id = library_resource.id
+                 AND (
+                   (
+                     (SELECT public.app_role()) = 'teacher'
+                     AND EXISTS (
+                       SELECT 1 FROM public.mes_groupes_v mg
+                        WHERE mg.groupe_id = lrg.groupe_id
+                     )
+                   )
+                   OR (
+                     (SELECT public.app_role()) IN ('guardian', 'student')
+                     AND library_resource.access_policy = 'groupe_assigne'
+                     AND EXISTS (
+                       SELECT 1 FROM public.mes_groupes_famille_v mg
+                        WHERE mg.groupe_id = lrg.groupe_id
+                     )
+                   )
+                 )
+            )
+          )
+        )
+      )
+    )
+    AND private.acces_paye_appelant()
+    AND private.tranche_autorisee(library_resource.tranches)
+  );
+
 -- Le manifeste : les cles d'origine (LibraryResource.depuisJson) et, en plus,
 -- description, lien_externe, ordre, rayon, etapes, vignette (indicateur, jamais
 -- la cle de stockage). Aucune colonne de prix n'existe ; aucune n'est rendue.
@@ -734,7 +1151,10 @@ AS $function$
     'rayon', pg_catalog.jsonb_build_object(
       'code', y.code, 'titre_fr', y.titre_fr, 'titre_ar', y.titre_ar, 'ordre', y.ordre),
     'etapes', pg_catalog.to_jsonb(r.etapes),
-    'vignette', r.vignette_cle IS NOT NULL)
+    'vignette', r.vignette_cle IS NOT NULL,
+    'tranches', pg_catalog.to_jsonb(r.tranches),
+    'lecture_coran', r.lecture_coran,
+    'ecole_priere', r.ecole_priere)
     FROM public.library_resource r
     JOIN public.library_rayon y ON y.code = r.rayon
    WHERE r.id = p_resource_id;
@@ -761,6 +1181,8 @@ DECLARE
   v_recherche text := nullif(pg_catalog.btrim(p_filtre ->> 'recherche'), '');
   v_id uuid;
   v_classe uuid;
+  v_eleve uuid;
+  v_cohorte_eleve text;
   v_decalage integer := 0;
   v_classe_permise boolean;
 BEGIN
@@ -770,7 +1192,7 @@ BEGIN
   IF p_filtre IS NULL OR pg_catalog.jsonb_typeof(p_filtre) <> 'object'
      OR EXISTS (SELECT 1 FROM pg_catalog.jsonb_object_keys(p_filtre) k(cle)
                  WHERE k.cle NOT IN ('types', 'langue', 'categorie', 'niveau', 'recherche', 'id',
-                                     'rayon', 'etape', 'classe', 'decalage'))
+                                     'rayon', 'etape', 'classe', 'decalage', 'eleve'))
      OR (p_filtre ? 'types' AND pg_catalog.jsonb_typeof(p_filtre -> 'types') <> 'array')
      OR coalesce(pg_catalog.length(v_langue), 0) > 16
      OR coalesce(pg_catalog.length(v_categorie), 0) > 80
@@ -798,6 +1220,24 @@ BEGIN
       RAISE EXCEPTION 'BibliothequeFiltreInvalide' USING ERRCODE = '22023';
     END IF;
     v_decalage := (p_filtre ->> 'decalage')::integer;
+  END IF;
+  -- Un tuteur qui regarde POUR son enfant : la liste est celle de la tranche
+  -- d'age de cet enfant (D1). Un autre role, ou un enfant d'un autre foyer :
+  -- liste vide, aucun indice.
+  IF p_filtre ? 'eleve' THEN
+    BEGIN
+      v_eleve := (p_filtre ->> 'eleve')::uuid;
+    EXCEPTION WHEN invalid_text_representation THEN
+      RAISE EXCEPTION 'BibliothequeFiltreInvalide' USING ERRCODE = '22023';
+    END;
+    IF NOT coalesce(public.app_role() = 'guardian' AND public.est_du_foyer(v_eleve), false) THEN
+      RETURN '[]'::jsonb;
+    END IF;
+    SELECT coalesce(sp.cohorte,
+                    CASE WHEN sp.student_type::text = 'adult' THEN 'adulte_18_plus' ELSE 'enfant_6_9' END)
+      INTO v_cohorte_eleve
+      FROM public.student_profiles sp WHERE sp.profile_id = v_eleve;
+    v_cohorte_eleve := coalesce(v_cohorte_eleve, 'enfant_6_9');
   END IF;
   IF p_filtre ? 'classe' THEN
     BEGIN
@@ -830,6 +1270,7 @@ BEGIN
            AND (v_langue IS NULL OR r.language = v_langue)
            AND (v_categorie IS NULL OR r.category = v_categorie)
            AND (v_niveau IS NULL OR r.level_scope @> ARRAY[v_niveau])
+           AND (v_cohorte_eleve IS NULL OR r.tranches @> ARRAY[v_cohorte_eleve])
            AND (v_rayon IS NULL OR r.rayon = v_rayon)
            AND (v_etape IS NULL OR r.etapes @> ARRAY[v_etape])
            AND (v_classe IS NULL OR EXISTS (
@@ -958,10 +1399,10 @@ BEGIN
 
   INSERT INTO public.library_resource
     (title, short_title, resource_type, edition, language, category, access_policy, offline_policy,
-     capabilities, description, rayon, ordre)
+     capabilities, description, rayon, ordre, lecture_coran)
   VALUES ('Le Coran', 'Coran', 'quran'::public.library_resource_type, 'madina-hafs-604', 'ar', 'coran',
           'inscrits', 'jamais', ARRAY['pageable', 'searchable', 'zoomable'],
-          'Le Coran en entier, page par page, dans le lecteur de l''académie.', 'cours', 0)
+          'Le Coran en entier, page par page, dans le lecteur de l''académie.', 'cours', 0, 'hafs')
   RETURNING id INTO v_id;
   INSERT INTO public.resource_version (resource_id, numero_version, statut)
   VALUES (v_id, 1, 'brouillon') RETURNING id INTO v_version;
@@ -982,6 +1423,104 @@ REVOKE ALL ON FUNCTION app_private.library_semer_coran()
   FROM PUBLIC, anon, authenticated, service_role, agent_ro;
 
 SELECT app_private.library_semer_coran();
+
+-- ---------------------------------------------------------------------------
+-- 7 bis. La tranche d'age dans la chaine de lecture d'un fichier ; l'etat du
+--        depot
+-- ---------------------------------------------------------------------------
+-- autoriser_lecture_version recoit, apres l'acces paye (20261104600000), la
+-- meme regle de tranche que la lecture du lecteur : un enfant ne recoit pas la
+-- cle d'un fichier destine a une autre tranche, meme s'il connait l'identifiant
+-- de sa version. Un seul passage, ancre sur la ligne du role, qui echoue si le
+-- texte de la fonction a change depuis.
+CREATE FUNCTION pg_temp.ajouter_apres(p_fonction regprocedure, p_ancre text, p_ajout text)
+RETURNS void LANGUAGE plpgsql AS $$
+DECLARE
+  v_def text := pg_catalog.pg_get_functiondef(p_fonction);
+  v_n integer;
+BEGIN
+  v_n := (pg_catalog.length(v_def) - pg_catalog.length(pg_catalog.replace(v_def, p_ancre, '')))
+         / pg_catalog.length(p_ancre);
+  IF v_n <> 1 THEN
+    RAISE EXCEPTION 'BIBLIOTHEQUE-UNE : ancre trouvee % fois dans %', v_n, p_fonction;
+  END IF;
+  EXECUTE pg_catalog.replace(v_def, p_ancre, p_ancre || p_ajout);
+END;
+$$;
+SELECT pg_temp.ajouter_apres(
+  'public.autoriser_lecture_version(uuid)'::regprocedure,
+  $a$  v_role := public.app_role();
+$a$,
+  $b$
+  -- BIBLIOTHEQUE-UNE (D1) : la tranche d'age du document.
+  if not private.tranche_autorisee_version(p_resource_version_id) then
+    raise exception 'lecture refusee' using errcode = '42501';
+  end if;
+$b$);
+DO $empreinte_lecture$
+DECLARE
+  f regprocedure := 'public.autoriser_lecture_version(uuid)'::regprocedure;
+  v_com text := pg_catalog.obj_description(f, 'pg_proc');
+BEGIN
+  IF v_com LIKE '%md5_functiondef=%' THEN
+    v_com := pg_catalog.regexp_replace(v_com, 'md5_functiondef=[0-9A-Za-z_]+',
+      'md5_functiondef=' || pg_catalog.md5(pg_catalog.pg_get_functiondef(f)));
+    EXECUTE pg_catalog.format('COMMENT ON FUNCTION %s IS %L', f, v_com);
+  END IF;
+END;
+$empreinte_lecture$;
+
+-- Les etapes du programme PUBLIE, avec leur code stable, pour que la direction
+-- RATTACHE un document par un choix et ne tape jamais un code (une faute de
+-- frappe detacherait le document). Lit les tables du programme si elles
+-- existent (to_regclass), rend une liste vide sinon ou tant qu'aucune version
+-- n'est publiee. Le code d'une etape est stable d'une version a l'autre.
+CREATE FUNCTION public.bibliotheque_etapes_publiees()
+RETURNS jsonb
+LANGUAGE plpgsql STABLE SECURITY DEFINER SET search_path = ''
+AS $function$
+BEGIN
+  IF NOT coalesce(public.app_account_valid() AND public.app_role() = 'admin', false) THEN
+    RAISE EXCEPTION 'BibliothequeNonAutorisee' USING ERRCODE = '42501';
+  END IF;
+  IF pg_catalog.to_regclass('public.programme_versions') IS NULL
+     OR pg_catalog.to_regclass('public.programme_niveaux') IS NULL THEN
+    RETURN '[]'::jsonb;
+  END IF;
+  RETURN coalesce((
+    SELECT pg_catalog.jsonb_agg(pg_catalog.jsonb_build_object(
+      'code', n.code_technique, 'nom', n.nom_humain, 'cycle', n.cycle, 'ordre', n.ordre)
+      ORDER BY n.ordre, n.code_technique)
+      FROM public.programme_niveaux n
+      JOIN public.programme_versions v ON v.id = n.version_id
+     WHERE v.statut = 'publiee'
+  ), '[]'::jsonb);
+END;
+$function$;
+ALTER FUNCTION public.bibliotheque_etapes_publiees() OWNER TO postgres;
+REVOKE ALL ON FUNCTION public.bibliotheque_etapes_publiees() FROM PUBLIC, anon, service_role, agent_ro;
+GRANT EXECUTE ON FUNCTION public.bibliotheque_etapes_publiees() TO authenticated;
+
+-- Le depot de fichiers est-il active ? Il ne l'est que si le secret de
+-- confirmation existe en base (il se pose hors depot, avec le meme secret cote
+-- fonction Edge). La direction le lit pour dire, en mots simples, que le depot
+-- n'est pas encore active, au lieu d'echouer au dernier temps. Jamais la valeur.
+CREATE FUNCTION public.bibliotheque_depot_actif()
+RETURNS boolean
+LANGUAGE plpgsql STABLE SECURITY DEFINER SET search_path = ''
+AS $function$
+BEGIN
+  IF NOT coalesce(public.app_account_valid() AND public.app_role() = 'admin', false) THEN
+    RAISE EXCEPTION 'BibliothequeNonAutorisee' USING ERRCODE = '42501';
+  END IF;
+  RETURN EXISTS (
+    SELECT 1 FROM private.library_upload_confirmation_secrets s
+     WHERE s.singleton AND pg_catalog.length(s.secret) >= 32);
+END;
+$function$;
+ALTER FUNCTION public.bibliotheque_depot_actif() OWNER TO postgres;
+REVOKE ALL ON FUNCTION public.bibliotheque_depot_actif() FROM PUBLIC, anon, service_role, agent_ro;
+GRANT EXECUTE ON FUNCTION public.bibliotheque_depot_actif() TO authenticated;
 
 -- ---------------------------------------------------------------------------
 -- 8. Droits d'execution, proprietaire, empreintes
@@ -1024,6 +1563,8 @@ REVOKE ALL ON FUNCTION public.library_mettre_a_jour(uuid, jsonb, integer) FROM P
 GRANT EXECUTE ON FUNCTION public.library_mettre_a_jour(uuid, jsonb, integer) TO authenticated;
 REVOKE ALL ON FUNCTION public.library_get_detail(uuid) FROM PUBLIC, anon, service_role, agent_ro;
 GRANT EXECUTE ON FUNCTION public.library_get_detail(uuid) TO authenticated;
+REVOKE ALL ON FUNCTION public.library_get_catalogue(jsonb, text, integer) FROM PUBLIC, anon, service_role, agent_ro;
+GRANT EXECUTE ON FUNCTION public.library_get_catalogue(jsonb, text, integer) TO authenticated;
 REVOKE ALL ON FUNCTION public.bibliotheque_catalogue_lecteur(jsonb, integer) FROM PUBLIC, anon, service_role, agent_ro;
 GRANT EXECUTE ON FUNCTION public.bibliotheque_catalogue_lecteur(jsonb, integer) TO authenticated;
 REVOKE ALL ON FUNCTION private.n4_manifeste(uuid) FROM PUBLIC, anon, authenticated, service_role, agent_ro;
@@ -1040,6 +1581,9 @@ BEGIN
     'public.library_creer_brouillon(jsonb)'::regprocedure,
     'public.library_mettre_a_jour(uuid,jsonb,integer)'::regprocedure,
     'public.library_get_detail(uuid)'::regprocedure,
+    'public.library_get_catalogue(jsonb,text,integer)'::regprocedure,
+    'public.bibliotheque_depot_actif()'::regprocedure,
+    'public.bibliotheque_etapes_publiees()'::regprocedure,
     'public.demander_vignette_bibliotheque(uuid,text,bigint,text)'::regprocedure,
     'public.lire_vignette_bibliotheque(uuid)'::regprocedure,
     'public.confirmer_vignette_bibliotheque(uuid,text,bigint,text,text)'::regprocedure,
@@ -1070,6 +1614,9 @@ BEGIN
     'public.library_creer_brouillon(jsonb)',
     'public.library_mettre_a_jour(uuid,jsonb,integer)',
     'public.library_get_detail(uuid)',
+    'public.library_get_catalogue(jsonb,text,integer)',
+    'public.bibliotheque_depot_actif()',
+    'public.bibliotheque_etapes_publiees()',
     'public.demander_vignette_bibliotheque(uuid,text,bigint,text)',
     'public.lire_vignette_bibliotheque(uuid)',
     'public.confirmer_vignette_bibliotheque(uuid,text,bigint,text,text)',
@@ -1098,7 +1645,10 @@ BEGIN
   IF pg_catalog.has_function_privilege('authenticated', 'private.n4_manifeste(uuid)', 'EXECUTE')
      OR pg_catalog.has_function_privilege('authenticated', 'app_private.library_controle_version(uuid)', 'EXECUTE')
      OR pg_catalog.has_function_privilege('authenticated', 'app_private.library_semer_coran()', 'EXECUTE')
-     OR pg_catalog.has_function_privilege('authenticated', 'app_private.library_etapes_normalisees(jsonb)', 'EXECUTE') THEN
+     OR pg_catalog.has_function_privilege('authenticated', 'app_private.library_etapes_normalisees(jsonb)', 'EXECUTE')
+     OR pg_catalog.has_function_privilege('authenticated', 'app_private.library_tranches_normalisees(jsonb,text[])', 'EXECUTE')
+     OR pg_catalog.has_function_privilege('anon', 'private.tranche_autorisee(text[])', 'EXECUTE')
+     OR pg_catalog.has_function_privilege('anon', 'private.tranche_autorisee_version(uuid)', 'EXECUTE') THEN
     RAISE EXCEPTION 'BIBLIOTHEQUE-UNE : une fonction interne est executable par un client';
   END IF;
   IF NOT (SELECT c.relrowsecurity FROM pg_catalog.pg_class c WHERE c.oid = 'public.library_rayon'::regclass)

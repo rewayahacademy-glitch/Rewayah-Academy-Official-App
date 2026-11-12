@@ -51,6 +51,11 @@ INSERT INTO public.groupe_membres (groupe_id, student_id) VALUES
   ('b3100000-0000-0000-0000-000000000021', 'b3100000-0000-0000-0000-000000000002'),
   ('b3100000-0000-0000-0000-000000000022', 'b3100000-0000-0000-0000-000000000006');
 
+-- Les tranches d'age des trois enfants (D1) : 6-9, 10-13, 14-17.
+UPDATE public.student_profiles SET cohorte = 'enfant_6_9' WHERE profile_id = 'b3100000-0000-0000-0000-000000000002';
+UPDATE public.student_profiles SET cohorte = 'enfant_10_13' WHERE profile_id = 'b3100000-0000-0000-0000-000000000003';
+UPDATE public.student_profiles SET cohorte = 'ado_14_17' WHERE profile_id = 'b3100000-0000-0000-0000-000000000006';
+
 CREATE FUNCTION pg_temp.qui(p_uid text, p_role text, p_foyer text DEFAULT NULL) RETURNS void
 LANGUAGE sql AS $$
   SELECT set_config('request.jwt.claim.sub', p_uid, true),
@@ -171,11 +176,15 @@ VALUES
   ('b3100000-0000-0000-0000-000000000107', 'Doc classe deux', 'Doc classe deux', 'pdf', 'groupe_assigne', 'jamais', 'lecture', 'fr',
    'cours', 6, NULL, NULL, '{}', NULL),
   ('b3100000-0000-0000-0000-000000000108', 'Image', 'Image', 'image', 'inscrits', 'jamais', 'lecture', 'fr',
-   'cours', 4, 'Une image.', NULL, '{}', 'supports/b3100000-0000-0000-0000-0000000001a8/1/vignette.png');
+   'cours', 4, 'Une image.', NULL, '{}', 'supports/b3100000-0000-0000-0000-0000000001a8/1/vignette.png'),
+  ('b3100000-0000-0000-0000-000000000109', 'Doc adultes', 'Doc adultes', 'pdf', 'inscrits', 'jamais', 'lecture', 'fr',
+   'cours', 7, 'Un document pour les adultes.', NULL, '{}', NULL);
+UPDATE public.library_resource SET tranches = ARRAY['adulte_18_plus'], lecture_coran = 'warsh', ecole_priere = 'malikite'
+ WHERE id = 'b3100000-0000-0000-0000-000000000109';
 INSERT INTO public.resource_version (id, resource_id, numero_version, statut)
 SELECT ('b3100000-0000-0000-0000-000000000' || (200 + n))::uuid,
        ('b3100000-0000-0000-0000-000000000' || (100 + n))::uuid, 1, 'brouillon'
-  FROM generate_series(1, 8) n;
+  FROM generate_series(1, 9) n;
 -- Un fichier pour les PDF 101, 105 et 107 (cle conforme a la convention).
 INSERT INTO public.download_asset (id, resource_version_id, format, cle_stockage, taille_octets, empreinte, origine) VALUES
   ('b3100000-0000-0000-0000-0000000003a1', 'b3100000-0000-0000-0000-000000000201', 'pdf',
@@ -186,14 +195,17 @@ INSERT INTO public.download_asset (id, resource_version_id, format, cle_stockage
    'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb', 'importe_tel_quel'),
   ('b3100000-0000-0000-0000-0000000003a7', 'b3100000-0000-0000-0000-000000000207', 'pdf',
    'supports/b3100000-0000-0000-0000-0000000003a7/1/deux.pdf', 3456,
-   'cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc', 'importe_tel_quel');
+   'cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc', 'importe_tel_quel'),
+  ('b3100000-0000-0000-0000-0000000003a9', 'b3100000-0000-0000-0000-000000000209', 'pdf',
+   'supports/b3100000-0000-0000-0000-0000000003a9/1/adultes.pdf', 4567,
+   'dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd', 'importe_tel_quel');
 UPDATE public.resource_version v SET download_asset_id = a.id, empreinte = a.empreinte
   FROM public.download_asset a WHERE a.resource_version_id = v.id;
 INSERT INTO public.library_version_rights
   (resource_version_id, source_titre, titulaire, usages, attribution, approuve, revu_par, revu_le)
 SELECT ('b3100000-0000-0000-0000-000000000' || (200 + n))::uuid, 'Source B31', 'Titulaire B31',
        ARRAY['application', 'classe'], 'Attribution B31', true, 'b3100000-0000-0000-0000-000000000001', now()
-  FROM generate_series(1, 8) n;
+  FROM generate_series(1, 9) n;
 INSERT INTO public.library_resource_groupe (resource_id, groupe_id) VALUES
   ('b3100000-0000-0000-0000-000000000105', 'b3100000-0000-0000-0000-000000000021'),
   ('b3100000-0000-0000-0000-000000000107', 'b3100000-0000-0000-0000-000000000022');
@@ -242,10 +254,10 @@ BEGIN
   m := v -> 2;
   FOREACH k IN ARRAY ARRAY['id','title','short_title','cover_asset','resource_type','edition','language','category',
       'level_scope','access_policy','offline_policy','current_version_id','capabilities','description','lien_externe',
-      'ordre','rayon','etapes','vignette'] LOOP
+      'ordre','rayon','etapes','vignette','tranches','lecture_coran','ecole_priere'] LOOP
     IF NOT m ? k THEN RAISE EXCEPTION 'B31 ROUGE : cle % absente du manifeste', k; END IF;
   END LOOP;
-  IF (SELECT count(*) FROM jsonb_object_keys(m)) <> 19 THEN
+  IF (SELECT count(*) FROM jsonb_object_keys(m)) <> 22 THEN
     RAISE EXCEPTION 'B31 ROUGE : le manifeste porte des cles en trop : %', (SELECT string_agg(x, ',') FROM jsonb_object_keys(m) x);
   END IF;
   IF m::text ~* '(prix|price|montant|amount|cents|tarif)' THEN
@@ -416,7 +428,7 @@ SELECT pg_temp.meme_regle('autre classe');
 SELECT pg_temp.qui('b3100000-0000-0000-0000-000000000004', 'guardian', 'b31fffff-0000-0000-0000-000000000001');
 DO $tuteur$
 BEGIN
-  IF pg_temp.titres(public.bibliotheque_catalogue_lecteur()) <> 'Le Coran,Audio lettres,Doc cours,Doc classe,Image,Video,Lien externe' THEN
+  IF pg_temp.titres(public.bibliotheque_catalogue_lecteur()) <> 'Le Coran,Audio lettres,Doc cours,Doc classe,Image,Doc adultes,Video,Lien externe' THEN
     RAISE EXCEPTION 'B31 ROUGE : tuteur du foyer, catalogue %', pg_temp.titres(public.bibliotheque_catalogue_lecteur());
   END IF;
   IF pg_temp.titres(public.bibliotheque_catalogue_lecteur('{"classe":"b3100000-0000-0000-0000-000000000021"}')) <> 'Doc classe' THEN
@@ -429,7 +441,7 @@ SELECT pg_temp.meme_regle('tuteur');
 SELECT pg_temp.qui('b3100000-0000-0000-0000-000000000005', 'teacher', NULL);
 DO $enseignant$
 BEGIN
-  IF pg_temp.titres(public.bibliotheque_catalogue_lecteur()) <> 'Le Coran,Audio lettres,Doc cours,Doc classe,Image,Video,Lien externe' THEN
+  IF pg_temp.titres(public.bibliotheque_catalogue_lecteur()) <> 'Le Coran,Audio lettres,Doc cours,Doc classe,Image,Doc adultes,Video,Lien externe' THEN
     RAISE EXCEPTION 'B31 ROUGE : enseignant, catalogue %', pg_temp.titres(public.bibliotheque_catalogue_lecteur());
   END IF;
   IF pg_temp.titres(public.bibliotheque_catalogue_lecteur('{"classe":"b3100000-0000-0000-0000-000000000021"}')) <> 'Doc classe' THEN
@@ -617,6 +629,213 @@ $apres_visibilite$;
 SELECT pg_temp.meme_regle('apres visibilite');
 
 -- ---------------------------------------------------------------------------
+-- 5 bis. Les tranches d'age (D1), la lecture du Coran et l'ecole (D2)
+-- ---------------------------------------------------------------------------
+-- Un lien externe exclut par defaut la tranche 6-9 : l'enfant de 6 a 9 ans ne
+-- voit pas le lien de la direction, ni la video par lien ; un adulte seul ne
+-- se montre qu'aux adultes (et au tuteur, enseignant et direction).
+SELECT pg_temp.qui('b3100000-0000-0000-0000-000000000002', 'student', 'b31fffff-0000-0000-0000-000000000001');
+DO $tranche_6_9$
+DECLARE v jsonb;
+BEGIN
+  v := public.bibliotheque_catalogue_lecteur();
+  IF pg_temp.titres_tries(v) ~ 'Lien de la direction|Doc adultes' THEN
+    RAISE EXCEPTION 'B31 ROUGE : un enfant de 6 a 9 ans voit un lien par defaut ou un document d''adultes : %', pg_temp.titres_tries(v);
+  END IF;
+  IF pg_temp.titres_tries(v) !~ 'Lien externe' THEN
+    RAISE EXCEPTION 'B31 ROUGE : un document a toutes les tranches disparait pour un enfant de 6 a 9 ans';
+  END IF;
+  IF public.bibliotheque_catalogue_lecteur('{"id":"b3100000-0000-0000-0000-000000000109"}') <> '[]'::jsonb THEN
+    RAISE EXCEPTION 'B31 ROUGE : le document d''adultes est rendu par id a un enfant';
+  END IF;
+  IF public.bibliotheque_version_lecteur('b3100000-0000-0000-0000-000000000109') IS NOT NULL THEN
+    RAISE EXCEPTION 'B31 ROUGE : la version d''un document d''adultes est rendue a un enfant';
+  END IF;
+  BEGIN
+    PERFORM public.autoriser_lecture_version('b3100000-0000-0000-0000-000000000209');
+    RAISE EXCEPTION 'B31 ROUGE : un enfant recoit la cle d''un fichier d''adultes';
+  EXCEPTION WHEN insufficient_privilege THEN NULL;
+  END;
+END;
+$tranche_6_9$;
+SELECT pg_temp.meme_regle('enfant 6-9');
+
+-- Un adolescent de 14 a 17 ans voit le lien, pas le document d'adultes.
+SELECT pg_temp.qui('b3100000-0000-0000-0000-000000000006', 'student', 'b31fffff-0000-0000-0000-000000000003');
+DO $tranche_14_17$
+DECLARE v jsonb;
+BEGIN
+  v := public.bibliotheque_catalogue_lecteur();
+  IF pg_temp.titres_tries(v) !~ 'Lien de la direction' OR pg_temp.titres_tries(v) ~ 'Doc adultes' THEN
+    RAISE EXCEPTION 'B31 ROUGE : un adolescent de 14 a 17 ans : %', pg_temp.titres_tries(v);
+  END IF;
+END;
+$tranche_14_17$;
+SELECT pg_temp.meme_regle('ado 14-17');
+
+-- Le tuteur : au moins ce que voit son enfant (et l'adulte qu'il est) ; pour
+-- un enfant de son foyer, exactement la liste de la tranche de cet enfant.
+SELECT pg_temp.qui('b3100000-0000-0000-0000-000000000004', 'guardian', 'b31fffff-0000-0000-0000-000000000001');
+DO $tuteur_tranches$
+DECLARE v jsonb;
+BEGIN
+  v := public.bibliotheque_catalogue_lecteur();
+  IF pg_temp.titres_tries(v) !~ 'Doc adultes' OR pg_temp.titres_tries(v) !~ 'Lien de la direction' THEN
+    RAISE EXCEPTION 'B31 ROUGE : le tuteur adulte ne voit pas ce qu''un adulte voit : %', pg_temp.titres_tries(v);
+  END IF;
+  v := public.bibliotheque_catalogue_lecteur('{"eleve":"b3100000-0000-0000-0000-000000000002"}');
+  IF pg_temp.titres_tries(v) ~ 'Lien de la direction|Doc adultes' OR pg_temp.titres_tries(v) !~ 'Lien externe' THEN
+    RAISE EXCEPTION 'B31 ROUGE : le tuteur qui regarde pour son enfant de 6 a 9 ans : %', pg_temp.titres_tries(v);
+  END IF;
+  IF public.bibliotheque_catalogue_lecteur('{"eleve":"b3100000-0000-0000-0000-000000000003"}') <> '[]'::jsonb THEN
+    RAISE EXCEPTION 'B31 ROUGE : le tuteur regarde pour l''enfant d''un autre foyer';
+  END IF;
+  BEGIN PERFORM public.bibliotheque_catalogue_lecteur('{"eleve":"pas-un-uuid"}'); RAISE EXCEPTION 'B31 ROUGE : eleve invalide accepte';
+  EXCEPTION WHEN invalid_parameter_value THEN NULL; END;
+END;
+$tuteur_tranches$;
+SELECT pg_temp.meme_regle('tuteur tranches');
+
+-- Les autres roles : ni tranche ni « regarder pour » un enfant.
+SELECT pg_temp.qui('b3100000-0000-0000-0000-000000000005', 'teacher', NULL);
+DO $enseignant_tranches$
+BEGIN
+  IF public.bibliotheque_catalogue_lecteur('{"eleve":"b3100000-0000-0000-0000-000000000002"}') <> '[]'::jsonb THEN
+    RAISE EXCEPTION 'B31 ROUGE : un enseignant regarde pour un enfant';
+  END IF;
+  IF pg_temp.titres_tries(public.bibliotheque_catalogue_lecteur()) !~ 'Lien de la direction' THEN
+    RAISE EXCEPTION 'B31 ROUGE : l''enseignant ne voit pas tout ce que sa visibilite permet';
+  END IF;
+END;
+$enseignant_tranches$;
+
+-- La direction : les tranches au depot, la lecture du Coran, l'ecole, les filtres.
+SELECT pg_temp.qui('b3100000-0000-0000-0000-000000000001', 'admin', NULL);
+DO $direction_tranches$
+DECLARE c jsonb; d jsonb; r jsonb; v_rev integer; v_id uuid;
+BEGIN
+  -- Defaut : un lien et une video par lien excluent 6-9 ; un audio garde les quatre.
+  d := public.library_get_detail(current_setting('b31.lien_id')::uuid);
+  IF d -> 'support' -> 'tranches' <> '["enfant_10_13","ado_14_17","adulte_18_plus"]'::jsonb THEN
+    RAISE EXCEPTION 'B31 ROUGE : tranches par defaut d''un lien : %', d -> 'support' -> 'tranches';
+  END IF;
+  d := public.library_get_detail(current_setting('b31.audio_id')::uuid);
+  IF jsonb_array_length(d -> 'support' -> 'tranches') <> 4 THEN
+    RAISE EXCEPTION 'B31 ROUGE : tranches par defaut d''un audio : %', d -> 'support' -> 'tranches';
+  END IF;
+  c := public.library_creer_brouillon('{"titre":"Video 6-9","type":"video","langue":"fr","lienExterne":"https://video.exemple.org/v/7","tranches":["enfant_6_9","adulte_18_plus"]}');
+  v_id := (c ->> 'id')::uuid;
+  IF (SELECT tranches FROM public.library_resource WHERE id = v_id) <> ARRAY['adulte_18_plus','enfant_6_9'] THEN
+    RAISE EXCEPTION 'B31 ROUGE : tranches choisies par la direction : %', (SELECT tranches FROM public.library_resource WHERE id = v_id);
+  END IF;
+  -- Refus : liste vide, code inconnu, valeur qui n'est pas une liste, nulle.
+  BEGIN PERFORM public.library_creer_brouillon('{"titre":"x","type":"audio","langue":"fr","tranches":[]}');
+    RAISE EXCEPTION 'B31 ROUGE : tranches vides acceptees'; EXCEPTION WHEN invalid_parameter_value THEN NULL; END;
+  BEGIN PERFORM public.library_creer_brouillon('{"titre":"x","type":"audio","langue":"fr","tranches":["bebe"]}');
+    RAISE EXCEPTION 'B31 ROUGE : tranche inconnue acceptee'; EXCEPTION WHEN invalid_parameter_value THEN NULL; END;
+  BEGIN PERFORM public.library_creer_brouillon('{"titre":"x","type":"audio","langue":"fr","tranches":"adulte_18_plus"}');
+    RAISE EXCEPTION 'B31 ROUGE : tranches texte acceptees'; EXCEPTION WHEN invalid_parameter_value THEN NULL; END;
+  -- Lecture du Coran et ecole.
+  BEGIN PERFORM public.library_creer_brouillon('{"titre":"x","type":"audio","langue":"fr","lectureCoran":"inconnue"}');
+    RAISE EXCEPTION 'B31 ROUGE : lecture inconnue acceptee'; EXCEPTION WHEN invalid_parameter_value THEN NULL; END;
+  SELECT revision INTO v_rev FROM public.library_resource WHERE id = current_setting('b31.audio_id')::uuid;
+  BEGIN PERFORM public.library_mettre_a_jour(current_setting('b31.audio_id')::uuid, '{"lectureCoran":"abc"}', v_rev);
+    RAISE EXCEPTION 'B31 ROUGE : lecture inconnue acceptee en mise a jour'; EXCEPTION WHEN invalid_parameter_value THEN NULL; END;
+  BEGIN PERFORM public.library_mettre_a_jour(current_setting('b31.audio_id')::uuid, jsonb_build_object('ecolePriere', repeat('x', 81)), v_rev);
+    RAISE EXCEPTION 'B31 ROUGE : ecole trop longue acceptee'; EXCEPTION WHEN invalid_parameter_value THEN NULL; END;
+  r := public.library_mettre_a_jour(current_setting('b31.audio_id')::uuid,
+        '{"lectureCoran":"qalun","ecolePriere":"Ecole suivie en classe","tranches":["ado_14_17","adulte_18_plus"]}', v_rev);
+  IF r ->> 'resultat' <> 'EcritureFaite' THEN RAISE EXCEPTION 'B31 ROUGE : mise a jour lecture et ecole %', r; END IF;
+  d := public.library_get_detail(current_setting('b31.audio_id')::uuid);
+  IF d -> 'support' ->> 'lectureCoran' <> 'qalun' OR d -> 'support' ->> 'ecolePriere' <> 'Ecole suivie en classe'
+     OR d -> 'support' -> 'tranches' <> '["ado_14_17","adulte_18_plus"]'::jsonb THEN
+    RAISE EXCEPTION 'B31 ROUGE : fiche de la direction (lecture, ecole, tranches) %', d -> 'support';
+  END IF;
+  -- Le Coran seme porte la lecture hafs.
+  IF (SELECT lecture_coran FROM public.library_resource WHERE resource_type::text = 'quran') <> 'hafs' THEN
+    RAISE EXCEPTION 'B31 ROUGE : le Coran seme ne porte pas la lecture hafs';
+  END IF;
+  -- Les filtres de la direction.
+  r := public.library_get_catalogue('{"lectureCoran":"hafs"}');
+  IF jsonb_array_length(r -> 'elements') <> 1 OR r -> 'elements' -> 0 ->> 'titre' <> 'Le Coran'
+     OR r -> 'elements' -> 0 ->> 'lectureCoran' <> 'hafs' THEN
+    RAISE EXCEPTION 'B31 ROUGE : filtre de la direction par lecture du Coran : %', r;
+  END IF;
+  r := public.library_get_catalogue('{"lectureCoran":"warsh"}');
+  IF jsonb_array_length(r -> 'elements') <> 1 OR r -> 'elements' -> 0 ->> 'titre' <> 'Doc adultes' THEN
+    RAISE EXCEPTION 'B31 ROUGE : filtre warsh : %', r;
+  END IF;
+  r := public.library_get_catalogue('{"ecolePriere":"MALIK"}');
+  IF jsonb_array_length(r -> 'elements') <> 1 OR r -> 'elements' -> 0 ->> 'titre' <> 'Doc adultes' THEN
+    RAISE EXCEPTION 'B31 ROUGE : filtre ecole : %', r;
+  END IF;
+  r := public.library_get_catalogue('{"rayon":"plus_loin"}');
+  IF jsonb_array_length(r -> 'elements') < 2 THEN RAISE EXCEPTION 'B31 ROUGE : filtre rayon de la direction'; END IF;
+  BEGIN PERFORM public.library_get_catalogue('{"lectureCoran":"autre"}'); RAISE EXCEPTION 'B31 ROUGE : filtre de lecture invalide accepte';
+  EXCEPTION WHEN invalid_parameter_value THEN NULL; END;
+  -- Le lien : la direction coche expressement 6-9 ; l'enfant le voit alors.
+  SELECT revision INTO v_rev FROM public.library_resource WHERE id = current_setting('b31.lien_id')::uuid;
+  r := public.library_mettre_a_jour(current_setting('b31.lien_id')::uuid,
+        '{"tranches":["enfant_6_9","enfant_10_13","ado_14_17","adulte_18_plus"]}', v_rev);
+  IF r ->> 'resultat' <> 'EcritureFaite' THEN RAISE EXCEPTION 'B31 ROUGE : tranches du lien %', r; END IF;
+  -- Les etapes du programme publie : liste vide sans version publiee, puis les
+  -- etapes de la version publiee avec leur code stable.
+  IF public.bibliotheque_etapes_publiees() <> '[]'::jsonb THEN
+    RAISE EXCEPTION 'B31 ROUGE : des etapes sans programme publie : %', public.bibliotheque_etapes_publiees();
+  END IF;
+  -- Le depot de fichiers n'est pas active tant que le secret n'est pas pose.
+  IF public.bibliotheque_depot_actif() IS NOT FALSE THEN
+    RAISE EXCEPTION 'B31 ROUGE : le depot est dit actif sans secret';
+  END IF;
+END;
+$direction_tranches$;
+SELECT pg_temp.qui('b3100000-0000-0000-0000-000000000002', 'student', 'b31fffff-0000-0000-0000-000000000001');
+DO $tranche_cochee$
+BEGIN
+  IF pg_temp.titres_tries(public.bibliotheque_catalogue_lecteur()) !~ 'Lien de la direction' THEN
+    RAISE EXCEPTION 'B31 ROUGE : la tranche 6-9 cochee n''ouvre pas le lien';
+  END IF;
+  BEGIN PERFORM public.bibliotheque_depot_actif(); RAISE EXCEPTION 'B31 ROUGE : un eleve lit l''etat du depot';
+  EXCEPTION WHEN insufficient_privilege THEN NULL; END;
+END;
+$tranche_cochee$;
+SELECT pg_temp.meme_regle('tranche cochee');
+
+-- Les etapes publiees (D3) : une version publiee du programme les rend, par code
+-- stable ; un compte qui n'est pas la direction ne les lit pas.
+RESET ROLE;
+INSERT INTO public.programme_versions (id, statut, numero_version, cree_par)
+VALUES ('b3100000-0000-0000-0000-0000000004a1', 'brouillon', 9901, 'b3100000-0000-0000-0000-000000000001');
+INSERT INTO public.programme_niveaux (version_id, code_technique, nom_humain, cycle, ordre) VALUES
+  ('b3100000-0000-0000-0000-0000000004a1', 'E_LETTRES', 'Les lettres', 'Les bases', 1),
+  ('b3100000-0000-0000-0000-0000000004a1', 'E_VOYELLES', 'Les voyelles', 'Les bases', 2);
+-- La publication d'un programme exige un contenu complet (objectifs, durees) :
+-- sans rapport avec ce scenario, qui ne lit que les codes. Declencheurs coupes
+-- le temps de cette seule ecriture (le scenario tourne en super-utilisateur).
+SET LOCAL session_replication_role = replica;
+UPDATE public.programme_versions SET statut = 'publiee', publiee_par = 'b3100000-0000-0000-0000-000000000001', publiee_at = now()
+ WHERE id = 'b3100000-0000-0000-0000-0000000004a1';
+SET LOCAL session_replication_role = origin;
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.qui('b3100000-0000-0000-0000-000000000001', 'admin', NULL);
+DO $etapes_publiees$
+DECLARE v jsonb;
+BEGIN
+  v := public.bibliotheque_etapes_publiees();
+  IF jsonb_array_length(v) <> 2 OR v -> 0 ->> 'code' <> 'E_LETTRES' OR v -> 1 ->> 'nom' <> 'Les voyelles' THEN
+    RAISE EXCEPTION 'B31 ROUGE : etapes publiees : %', v;
+  END IF;
+END;
+$etapes_publiees$;
+SELECT pg_temp.qui('b3100000-0000-0000-0000-000000000002', 'student', 'b31fffff-0000-0000-0000-000000000001');
+DO $etapes_refus$
+BEGIN
+  BEGIN PERFORM public.bibliotheque_etapes_publiees(); RAISE EXCEPTION 'B31 ROUGE : un eleve lit les etapes du programme';
+  EXCEPTION WHEN insufficient_privilege THEN NULL; END;
+END;
+$etapes_refus$;
+
+-- ---------------------------------------------------------------------------
 -- 6. La vignette : une intention a deux temps, confirmation signee par l'Edge
 -- ---------------------------------------------------------------------------
 RESET ROLE;
@@ -624,6 +843,13 @@ INSERT INTO private.library_upload_confirmation_secrets(singleton, secret)
 VALUES (true, 'test-only-b31-vignette-confirmation-key-32-bytes');
 SET LOCAL ROLE authenticated;
 SELECT pg_temp.qui('b3100000-0000-0000-0000-000000000001', 'admin', NULL);
+DO $depot_actif$
+BEGIN
+  IF public.bibliotheque_depot_actif() IS NOT TRUE THEN
+    RAISE EXCEPTION 'B31 ROUGE : le depot n''est pas dit actif avec un secret';
+  END IF;
+END;
+$depot_actif$;
 DO $vignette$
 DECLARE
   i jsonb; sig text; r jsonb; v_sha text := repeat('d', 64); v jsonb;
@@ -699,7 +925,8 @@ BEGIN
     'public.demander_vignette_bibliotheque(uuid,text,bigint,text)', 'public.lire_vignette_bibliotheque(uuid)',
     'public.confirmer_vignette_bibliotheque(uuid,text,bigint,text,text)', 'public.annuler_vignette_bibliotheque(uuid)',
     'public.library_creer_brouillon(jsonb)', 'public.library_mettre_a_jour(uuid,jsonb,integer)',
-    'public.library_get_detail(uuid)'
+    'public.library_get_detail(uuid)', 'public.library_get_catalogue(jsonb,text,integer)',
+    'public.bibliotheque_depot_actif()', 'public.bibliotheque_etapes_publiees()'
   ] LOOP
     IF has_function_privilege('anon', v_signature, 'EXECUTE') OR has_function_privilege('agent_ro', v_signature, 'EXECUTE')
        OR has_function_privilege('service_role', v_signature, 'EXECUTE')
