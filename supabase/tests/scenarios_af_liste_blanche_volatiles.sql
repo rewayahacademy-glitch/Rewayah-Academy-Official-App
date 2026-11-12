@@ -348,6 +348,9 @@ declare
     'refuser_demande_horaire(uuid,text)',
     'refuser_demande_presentation(uuid)',
     'refuser_reprise_foyer(uuid)',
+    -- MA-PROGRESSION (08/11) : la direction regle les sourates, les heures de revision et les
+    -- repetitions d'une etape (garde positive app_role() = 'admin' et app_account_valid()).
+    'regler_etape_progression(text,numeric,integer)',
     'rejoindre_observation(uuid)',
     'renoncer_intention_horaire(uuid,text)',
     'repondre_invitation_conjoint(text,uuid)',
