@@ -25,6 +25,7 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/profil/service_acceptations.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 
 import '../../fixtures/tuteur/faux_identite_titulaire.dart';
@@ -116,6 +117,7 @@ Future<GoRouter> monterCompte(
   PortAccesFoyer? acces,
   ServiceAcceptations? acceptations,
   TextDirection? direction,
+  SessionState? session,
 }) async {
   tester.view.physicalSize = taille;
   tester.view.devicePixelRatio = 1;
@@ -127,7 +129,7 @@ Future<GoRouter> monterCompte(
     ProviderScope(
       overrides: <Override>[
         ...surchargesRouteur(
-          FausseSourceSession(sessionActive(AppRole.guardian)),
+          FausseSourceSession(session ?? sessionActive(AppRole.guardian)),
           appairage: appairage,
         ),
         ...surchargesCompte(

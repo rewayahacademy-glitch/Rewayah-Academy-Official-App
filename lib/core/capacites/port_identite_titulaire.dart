@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart' show StringCharacters;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../domain/enums.dart';
@@ -52,10 +53,45 @@ abstract interface class PortIdentiteTitulaire {
   /// L'identite de la personne connectee.
   Future<IdentiteTitulaire> lire();
 
-  /// Modifie le prenom ou le nom. Aucune ecriture n'existe pour le titulaire
-  /// (DB-CPT-01), quel que soit son role : l'ecran dit « tenu par
-  /// l'academie ».
+  /// Modifie le prenom et le nom de la personne connectee (EDIT-INFOS-PERSO,
+  /// 12/11/2026). Le serveur reste seul juge : il refuse le changement a un
+  /// eleve mineur. Une erreur, quelle qu'elle soit, est un echec.
   Future<void> modifier({String? prenom, String? nom});
+}
+
+/// La longueur maximale d'un prenom ou d'un nom saisi.
+const int longueurMaxNom = 80;
+
+/// Pourquoi un prenom ou un nom saisi n'est pas envoye.
+enum DefautNom {
+  /// Vide, ou fait seulement d'espaces.
+  vide,
+
+  /// Plus long que [longueurMaxNom].
+  tropLong,
+}
+
+/// Le defaut d'un prenom ou d'un nom saisi, ou `null` s'il peut partir. Pure.
+DefautNom? defautNom(String? valeur) {
+  final String texte = valeur?.trim() ?? '';
+  if (texte.isEmpty) return DefautNom.vide;
+  if (texte.characters.length > longueurMaxNom) return DefautNom.tropLong;
+  return null;
+}
+
+/// Les seules colonnes ecrites (`first_name`, `last_name`), rognees. Leve une
+/// [ArgumentError] si l'une manque ou depasse : rien ne part alors. Pure.
+Map<String, String> champsIdentite({String? prenom, String? nom}) {
+  if (defautNom(prenom) case final DefautNom defaut) {
+    throw ArgumentError.value(prenom, 'prenom', defaut.name);
+  }
+  if (defautNom(nom) case final DefautNom defaut) {
+    throw ArgumentError.value(nom, 'nom', defaut.name);
+  }
+  return <String, String>{
+    'first_name': prenom!.trim(),
+    'last_name': nom!.trim(),
+  };
 }
 
 /// L'identite tant que son adaptateur n'est pas livre.
@@ -64,8 +100,7 @@ abstract interface class PortIdentiteTitulaire {
 /// (`profiles_self_select`) et `auth.currentUser` (courriel, fournisseur).
 /// L'adaptateur reel `lib/core/capacites/identite_titulaire_supabase.dart` est
 /// ecrit par le **lot E** (`00_OWNERSHIP.md` section 3), qui remplace alors
-/// l'implementation du provider ci-dessous. La modification reste
-/// indisponible (DB-CPT-01).
+/// l'implementation du provider ci-dessous.
 class IdentiteTitulaireIndisponible implements PortIdentiteTitulaire {
   /// Cree l'implementation.
   const IdentiteTitulaireIndisponible();
