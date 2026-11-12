@@ -162,6 +162,20 @@ void main() {
       WidgetTester tester,
     ) async {
       await _monter(tester, taille);
+      if (ordinateur) {
+        // A 1440 la Bibliotheque est deja ouverte a droite : le bouton du
+        // milieu n'aurait rien a ouvrir, il n'est pas rendu. Il revient
+        // quand le panneau est ferme.
+        expect(find.byType(PanneauBibliothequeSalle), findsOneWidget);
+        expect(bouton, findsNothing);
+        if (dossierCapture != null) {
+          await capturerVue(tester, 'avant-$nom');
+        }
+        await tester.tap(
+          find.byKey(const ValueKey<String>('bibliotheque-fermer')),
+        );
+        await tester.pumpAndSettle();
+      }
       expect(bouton, findsOneWidget);
       expect(
         find.descendant(
@@ -174,7 +188,7 @@ void main() {
       expect(find.text(t.salle.ouvrirCoran), findsNothing);
       verifierUnSeulBoutonPlein(tester);
       expect(tester.takeException(), isNull);
-      if (dossierCapture != null) {
+      if (dossierCapture != null && !ordinateur) {
         await capturerVue(tester, 'avant-$nom');
       }
     });
@@ -198,6 +212,10 @@ void main() {
       }
       await tester.tap(bouton);
       await tester.pumpAndSettle();
+      if (ordinateur) {
+        // Le panneau rouvert, le bouton du milieu s'efface de nouveau.
+        expect(bouton, findsNothing);
+      }
       // L'etagere existante, au bon endroit : panneau (ordinateur) ou tiroir
       // (telephone).
       expect(find.byType(PanneauBibliothequeSalle), findsOneWidget);

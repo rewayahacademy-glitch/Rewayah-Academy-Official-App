@@ -648,10 +648,15 @@ class _ScenePremierPlan extends StatelessWidget {
 /// jusqu'a la fin de sa sortie. Rien sans scene.
 class SceneDeLaClasse extends StatelessWidget {
   /// Cree la scene.
-  const SceneDeLaClasse({this.geste, super.key});
+  const SceneDeLaClasse({this.geste, this.sansAction = false, super.key});
 
   /// Le geste de la Bibliotheque ([ZoneSupport.geste]).
   final VoidCallback? geste;
+
+  /// Vrai quand la Bibliotheque est deja ouverte a cote de la scene : le
+  /// bouton du milieu n'aurait rien a ouvrir, il n'est donc pas rendu (un
+  /// bouton qui ne peut pas aboutir n'est pas affiche).
+  final bool sansAction;
 
   @override
   Widget build(BuildContext context) {
@@ -661,7 +666,9 @@ class SceneDeLaClasse extends StatelessWidget {
     return _ScenePremierPlan(
       scene: scene,
       onRevenir: media.onBasculerScene,
-      action: ActionSousLaScene.avecGeste(media.actionScene, geste),
+      action: sansAction
+          ? null
+          : ActionSousLaScene.avecGeste(media.actionScene, geste),
     );
   }
 }

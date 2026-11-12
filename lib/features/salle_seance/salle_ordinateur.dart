@@ -316,6 +316,8 @@ class _EtatSalleOrdinateur extends ConsumerState<SalleOrdinateur> {
                               ouvrirBibliotheque: peutBibliotheque
                                   ? _ouvrirBibliotheque
                                   : null,
+                              bibliothequeOuverte:
+                                  droite is PanneauBibliothequeSalle,
                             ),
                           ),
                           PanneauGlissant(
@@ -786,6 +788,7 @@ class _Centre extends StatelessWidget {
     required this.actions,
     required this.local,
     this.ouvrirBibliotheque,
+    this.bibliothequeOuverte = false,
   });
 
   final VueSeance vue;
@@ -795,6 +798,10 @@ class _Centre extends StatelessWidget {
   /// BIBLIOTHEQUE-SALLE : ouvre le panneau de la Bibliotheque (jamais ne le
   /// referme) ; le bouton du milieu de la scene le fait.
   final VoidCallback? ouvrirBibliotheque;
+
+  /// Vrai quand le panneau de la Bibliotheque est deja ouvert a droite : le
+  /// bouton du milieu n'est alors pas rendu.
+  final bool bibliothequeOuverte;
 
   @override
   Widget build(BuildContext context) {
@@ -917,7 +924,10 @@ class _Centre extends StatelessWidget {
               // elle reste une grille ; le tableau, lui, ne se change jamais
               // en grille ([ZoneSupport.sceneIci]).
               child: scene
-                  ? SceneDeLaClasse(geste: ouvrirBibliotheque)
+                  ? SceneDeLaClasse(
+                      geste: ouvrirBibliotheque,
+                      sansAction: bibliothequeOuverte,
+                    )
                   : page == null
                   ? ZoneSupport(vue: vue, zoom: local.zoom, sceneIci: false)
                   : Center(child: page),

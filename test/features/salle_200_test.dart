@@ -707,6 +707,17 @@ void main() {
           presenter: false,
         );
         expect(tester.takeException(), isNull);
+        if (largeur >= 1200) {
+          // BIBLIOTHEQUE-SALLE : a 1200 et plus la Bibliotheque est deja
+          // ouverte a droite ; le bouton du milieu n'aurait rien a ouvrir,
+          // il n'est pas rendu, et l'etagere elle-meme est a l'ecran.
+          expect(
+            find.byKey(const ValueKey<String>('bibliotheque-fermer')),
+            findsOneWidget,
+          );
+          expect(find.byKey(ActionSousLaScene.cleBouton), findsNothing);
+          return;
+        }
         touchable(
           tester,
           find.descendant(
