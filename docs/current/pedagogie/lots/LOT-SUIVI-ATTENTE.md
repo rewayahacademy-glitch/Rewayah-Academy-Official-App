@@ -9,7 +9,7 @@
 3. **« Entrée en début de mois » n'est pas construite** (`STRATEGIE-FORMATION-DES-CLASSES.md`, tableau de la partie 2). L'écran ne la promet donc pas. Il ne promet que le délai de 14 jours et le point à 7 jours, lus dans `app_config` (clés posées par ce lot, valeurs décidées le 30/09).
 4. **Pays d'origine et pays de résidence de l'enseignant n'existaient pas** dans le compte d'un enseignant (`teacher_profiles.country` seul, sens ambigu ; `pays_residence` n'existe que sur la candidature). Ce lot ajoute deux colonnes, que l'enseignant remplit dans son profil. **Tant qu'il ne l'a pas fait, la carte ne montre ni l'un ni l'autre** (jamais « inconnu »).
 5. **La photo reste visible ailleurs.** Le réglage « je montre ma photo et mes pays aux familles de mes classes » gouverne la carte de l'étape 4 et la lecture serveur de ce lot. La règle existante `private.photo_visible_par` (photos des personnes) laisse déjà un foyer voir la photo de l'enseignant de ses enfants sur les autres écrans ; ce lot ne la change pas. Un enseignant qui refuse n'est donc pas encore masqué partout : à arbitrer.
-6. **Âge de l'enfant** : aucune date de naissance n'est en base. « Sans délai chiffré avant 10 ans » s'appuie sur `student_profiles.cohorte` (`enfant_5_7`, `enfant_8_10`), ce qui masque aussi les délais d'un enfant de 10 ans : par prudence.
+6. **Âge de l'enfant** : aucune date de naissance n'est en base. « Sans délai chiffré avant 10 ans » s'appuie sur `student_profiles.cohorte = 'enfant_6_9'` (la tranche 6-9 ans, lue en production comme dans `libelleTranche`) : exact tant que la tranche est tenue à jour.
 7. **Heures** : le serveur rend l'heure murale du foyer (`AT TIME ZONE households.timezone`, même expression que `suivi_demandes_horaires_foyer`), et l'écran la dit par les fonctions d'affichage existantes (`libelleJalon`, `deFuseau`). Aucune conversion de fuseau nouvelle ; le lot HORLOGE n'est pas touché.
 8. **Deux écrans de suivi coexistent** tant que l'architecte n'a pas tranché : l'ancienne frise à six étapes (`lib/features/suivi_famille`, `suivi_demandes`), que ce lot ne modifie pas (zone `suivi_*` interdite), et le nouvel écran. Les cartes d'accueil de ce lot mènent au nouveau ; l'ancien reste joignable par `/tuteur/demandes`. Recommandation : rediriger `/tuteur/demandes/:id` vers le nouvel écran, puis retirer l'ancien.
 
@@ -64,7 +64,7 @@ Cas hors du chemin droit, chacun avec son état et son geste : demande refusée 
 ## 5. Angles morts découverts
 
 - Le gabarit de courriel `enseignant_affecte` n'avait pas de branche pour l'enseignant : s'il était parti, l'enseignant aurait lu le texte écrit pour la famille (« Voir la classe », `/tuteur/demandes`).
-- Les codes de tranche d'âge diffèrent : `cohortes_age` en base (`enfant_5_7`, `enfant_8_10`, `ado_11_14`, `ado_15_17`) et `libelleTranche` en Dart (`enfant_6_9`, `enfant_10_13`, `ado_14_17`).
+- La migration `0043` pose des tranches (`enfant_5_7`, `enfant_8_10`...) que des migrations ultérieures ont remplacées (`enfant_6_9`, `enfant_10_13`, `ado_14_17`) : lire la base rejouée, pas `0043`.
 - L'accord de publication existant (CAND-PHOTO) vise le site public ; il n'est pas le réglage de ce lot et n'a pas été réutilisé.
 
 ## 6. Preuves (mises à jour à la fin)
