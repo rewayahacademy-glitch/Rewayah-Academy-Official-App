@@ -75,14 +75,29 @@ final FutureProvider<bool> profilEleveTitulaireExisteProvider =
 
 /// Une date en toutes lettres : « 30 octobre 2026 », « 1er novembre 2026 »
 /// (R8-05), en heure locale.
+///
+/// DATE-ARABE-ISOLAT (garde-cap, 12/11/2026) : en arabe, le gabarit isole
+/// chaque morceau (jour, mois, annee) ; une phrase qui isole a son tour la
+/// date entiere (« Paiement du {date} », « expire le {date} ») donnait un isolat
+/// exterieur sans lettre forte, donc de gauche a droite, et la date se lisait
+/// a l'envers (annee, mois, jour). La marque de lettre arabe (U+061C, forte
+/// de droite a gauche) en tete lui donne le sens de l'interface. Une seule
+/// solution, a la source.
 String dateLongue(DateTime date) {
   final DateTime locale = date.toLocal();
-  return t.compte.tuteur.dateLongue(
+  final String texte = t.compte.tuteur.dateLongue(
     jour: jourDuMois(locale.day),
     mois: t.commun.dates.mois[locale.month - 1],
     annee: locale.year,
   );
+  return LocaleSettings.currentLocale == AppLocale.ar
+      ? '$marqueLettreArabe$texte'
+      : texte;
 }
+
+/// La marque de lettre arabe (U+061C), invisible et forte de droite a
+/// gauche : en tete d'une date arabe ([dateLongue]).
+const String marqueLettreArabe = '\u061C';
 
 /// Le nom complet du titulaire, ou `null` quand ni prenom ni nom ne sont
 /// renseignes.

@@ -2716,13 +2716,17 @@
         "titulaire": "حسابك الرئيسي ليس له موعد انتهاء خاص: يُضبط الوصول لكل ملف على حدة."
       },
       "pagePaiements": {
-        "titre": "المدفوعات والإيصالات",
+        "titre": "المدفوعات",
         "indisponibleTitre": "المدفوعات غير قابلة للاطلاع بعد",
         "indisponiblePhrase": "سجل المدفوعات والإيصالات ووسائل الدفع غير متاحة في التطبيق بعد. لا يُطلب منك أي دفع هنا.",
         "aucunTitre": "لا دفعة مسجَّلة",
         "aucunePhrase": "ستظهر هنا المدفوعات التي تسجّلها الأكاديمية.",
         "paiementDu": "دفعة ⁨{date}⁩",
-        "justificatif": "الإيصال متاح"
+        "justificatif": "الإيصال متاح",
+        "statutConfirme": "مؤكَّد",
+        "statutEnConfirmation": "قيد التأكيد",
+        "refusTitre": "المدفوعات يتولاها صاحب حساب الأسرة",
+        "refusPhrase": "صاحب حساب الأسرة وحده يرى سجل المدفوعات."
       },
       "pagePreferences": {
         "notifications": "الإشعارات",
