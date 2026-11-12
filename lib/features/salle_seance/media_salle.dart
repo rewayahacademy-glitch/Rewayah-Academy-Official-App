@@ -269,6 +269,15 @@ class ActionSousLaScene extends InheritedWidget {
         onPress: action.onPress,
       );
 
+  /// BIBLIOTHEQUE-SALLE : [action] avec le geste de la Bibliotheque de
+  /// l'appareil quand il existe ; le libelle reste celui de la salle.
+  static ({String libelle, VoidCallback onPress})? avecGeste(
+    ({String libelle, VoidCallback onPress})? action,
+    VoidCallback? geste,
+  ) => action == null || geste == null
+      ? action
+      : (libelle: action.libelle, onPress: geste);
+
   /// L'action fournie au-dessus de [context], ou `null`.
   static ({String libelle, VoidCallback onPress})? de(BuildContext context) =>
       context.dependOnInheritedWidgetOfExactType<ActionSousLaScene>()?.action;

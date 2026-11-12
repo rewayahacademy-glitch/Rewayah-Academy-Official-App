@@ -850,7 +850,12 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
           // regles ; la capsule y est sans oeil, et « Ouvrir le Coran » reste
           // le seul bouton plein, au centre de la scene.
           final ({String libelle, VoidCallback onPress})? actionScene =
-              sceneDevant ? media?.actionScene : null;
+              sceneDevant
+              ? ActionSousLaScene.avecGeste(
+                  media?.actionScene,
+                  _declencheur(actions, vue),
+                )
+              : null;
           final VoidCallback? revenirPage =
               sceneDevant &&
                   (media?.scenePremierPlan ?? false) &&
@@ -1058,7 +1063,11 @@ class _EtatTelephonePleinEcran extends State<TelephonePleinEcran> {
                             duree: AppMouvement.deplacementSortie,
                             alignement: placeRuban,
                             echelle: echelleRuban,
-                            child: ZoneSupport(vue: vue, zoom: local.zoom),
+                            child: ZoneSupport(
+                              vue: vue,
+                              zoom: local.zoom,
+                              geste: _declencheur(actions, vue),
+                            ),
                           ),
                         ),
                       ),
