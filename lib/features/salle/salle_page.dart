@@ -45,6 +45,7 @@ import '../../core/tc_classe/teacher_student_projection.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
 import '../../core/tc_groupe/port_groupes.dart';
 import '../../core/tc_horloge/chrono_seance.dart' show BornesChrono;
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/tc_observation/port_annonce_observation.dart';
 import '../../core/tc_outils/etat_outils.dart';
 import '../../core/tc_outils/operations_personnelles.dart';
@@ -342,7 +343,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
 
   /// FN-024 : l'heure de fin servie par le serveur, dite par l'ecran de fin
   /// de l'eleve (« La seance s'est terminee a 18:00. »).
-  String? _heureFinServeur;
+  DateTime? _finServeur;
 
   /// FN-025 : le motif du dernier refus d'acces, quand le serveur l'a donne.
   DetailRefusSalle? _detailRefus;
@@ -968,7 +969,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       final DateTime? fin = detail.motif == MotifServeurSalle.terminee
           ? detail.finUtc
           : null;
-      _montrerFin(role, fin == null ? null : DepuisSalle.heure(fin));
+      _montrerFin(role, fin);
     } catch (erreur) {
       journalDev('verification de fin impossible : $erreur');
     } finally {
@@ -978,13 +979,13 @@ class _SallePageEtat extends ConsumerState<SallePage> {
 
   /// La seance est terminee, le serveur l'a dit : « Seance terminee » pour
   /// l'eleve ; pour l'enseignant, l'ecran de fin (CLV-10) puis le cahier,
-  /// comme apres « Quitter ». [heure] est celle du serveur quand il l'a
-  /// donnee.
-  void _montrerFin(RoleSalle role, String? heure) {
+  /// comme apres « Quitter ». [fin] est l'instant du serveur quand il l'a
+  /// donne ; l'heure se forme au dessin (HEURE-PROFIL).
+  void _montrerFin(RoleSalle role, DateTime? fin) {
     if (!mounted) return;
     if (role == RoleSalle.eleve) {
       setState(() {
-        _heureFinServeur = heure;
+        _finServeur = fin;
         _sortieEleve = IssueSeance.terminee;
       });
       return;
@@ -1002,10 +1003,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       presence: ref.read(presenceSeanceProvider(widget.seanceId)).value,
       monProfil: ref.read(sessionProvider).profileId,
       // UX-043 : le serveur a dit la seance terminee.
-      fin: FinSeance(
-        heureFin: heure ?? DepuisSalle.heure(DateTime.now()),
-        cahierACompleter: true,
-      ),
+      fin: FinSeance(finA: fin ?? DateTime.now(), cahierACompleter: true),
     );
     if (vue != null) setState(() => _finEnseignant = vue);
   }
@@ -1168,7 +1166,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
             monProfil: ref.read(sessionProvider).profileId,
             // UX-040 : apres « Quitter », la seance continue (FN-006).
             fin: FinSeance(
-              heureFin: DepuisSalle.heure(DateTime.now()),
+              finA: DateTime.now(),
               cahierACompleter: true,
               close: false,
             ),
@@ -2610,7 +2608,15 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   });
 
   @override
-  Widget build(BuildContext context) =>
+  Widget build(BuildContext context) {
+    // HEURE-PROFIL (12/11/2026) : la salle se redessine quand le fuseau du
+    // profil arrive ; chaque heure (fin de seance, refus) est formee au
+    // dessin par `DepuisSalle.heure`, a partir d'un instant garde.
+    ref.watch(monHorlogeProvider);
+    return _dessiner(context);
+  }
+
+  Widget _dessiner(BuildContext context) =>
       // Selection du texte (directeur, 07/11/2026) : la salle en entier est
       // hors de la selection, l'appui long y a un role.
       TexteProtege(
@@ -2792,7 +2798,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       }
       return ResultatSeance(
         issue: sortie,
-        heureFin: _heureFinServeur,
+        finA: _finServeur,
         // NON-BRANCHE-LIVRAISON 5 : le Retour eclair apres une seance
         // terminee. Le serveur decide s'il pose une question (une seance sur
         // quatre en moyenne) ; sans question, la carte n'occupe aucune place.
@@ -5074,6 +5080,17 @@ class _Impasse extends StatelessWidget {
   /// FN-025 : le motif servi par le serveur a qui avait droit a la salle.
   final DetailRefusSalle? detail;
 
+  /// HEURE-PROFIL : « Heure de cet appareil », sur une petite ligne sous un
+  /// refus qui dit une heure, quand cette heure n'est pas celle du profil.
+  static String? _mentionAcces(DetailRefusSalle? detail) =>
+      switch (detail?.motif) {
+        MotifServeurSalle.terminee when detail?.finUtc != null =>
+          DepuisSalle.mentionAppareil(detail!.finUtc!),
+        MotifServeurSalle.pasEncoreOuverte when detail?.ouvertureUtc != null =>
+          DepuisSalle.mentionAppareil(detail!.ouvertureUtc!),
+        _ => null,
+      };
+
   /// FN-025 : le refus dit sa raison et l'heure du serveur, quand le serveur
   /// les donne ; sinon le refus generique.
   static (String, String) _ditAcces(DetailRefusSalle? detail) {
@@ -5191,6 +5208,15 @@ class _Impasse extends StatelessWidget {
               textAlign: TextAlign.center,
               style: _encreSalle(context, textes.bodyMedium),
             ),
+            if (cause == CauseImpasse.acces)
+              if (_mentionAcces(detail) case final String mention) ...<Widget>[
+                Ecart.vXs,
+                Text(
+                  mention,
+                  textAlign: TextAlign.center,
+                  style: _encreSalle(context, textes.bodySmall),
+                ),
+              ],
             Ecart.vXxl,
             // Une seule action principale : reessayer quand cela a un sens,
             // rentrer sinon. Un refus d'acces ne se reessaye pas, l'heure

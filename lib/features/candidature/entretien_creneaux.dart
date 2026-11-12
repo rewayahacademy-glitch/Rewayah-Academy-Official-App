@@ -17,6 +17,7 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -24,13 +25,14 @@ import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/skeleton.dart';
 
-/// L'horaire d'un moment, heure de l'appareil : « Lundi 10 novembre, de
-/// 18:00 a 18:45 ».
+/// L'horaire d'un moment : « Lundi 10 novembre, de 18:00 a 18:45 », a l'heure
+/// du PROFIL, l'appareil seulement en repli (HEURES-PROFIL H4, garde-cap,
+/// 12/11/2026). Les formateurs ne lisent que les champs : sur [chezMoi].
 String horaireEntretien(DateTime debut, DateTime fin) =>
     t.recrutement.entretien.horaire(
-      date: dateDeLAppareil(debut),
-      debut: heureDeLAppareil(debut),
-      fin: heureDeLAppareil(fin),
+      date: dateDeLAppareil(chezMoi(debut)),
+      debut: heureChezMoi(debut),
+      fin: heureChezMoi(fin),
     );
 
 /// Les moments ouverts, un choix, puis « Reserver ce moment ».
@@ -126,6 +128,8 @@ class _ChoixEtat extends ConsumerState<ChoixCreneauEntretien> {
 
   @override
   Widget build(BuildContext context) {
+    // HEURES-PROFIL H4 : se redessine quand le fuseau du profil arrive.
+    ref.watch(monHorlogeProvider);
     final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
     final AsyncValue<List<CreneauOuvert>> lecture = lectureHorsLigne(
       ref.watch(creneauxOuvertsProvider),
@@ -170,7 +174,10 @@ class _ChoixEtat extends ConsumerState<ChoixCreneauEntretien> {
       children: <Widget>[
         GroupeReglages(
           key: ChoixCreneauEntretien.listeKey,
-          titre: t.recrutement.entretien.heureAppareil,
+          // La mention seulement quand l'appareil sert (aucun fuseau servi).
+          titre: estHeureDeLAppareil(creneaux.first.debut)
+              ? t.recrutement.entretien.heureAppareil
+              : null,
           lignes: <LigneRubrique>[
             for (final CreneauOuvert c in creneaux)
               LigneRubrique(

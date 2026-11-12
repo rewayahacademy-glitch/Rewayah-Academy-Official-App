@@ -276,11 +276,7 @@ class _ChronoSalleEtat extends State<ChronoSalle> with WidgetsBindingObserver {
 
   /// L'heure du profil ([chezMoi], sinon celle de l'appareil), `HH:MM`, en
   /// chiffres de gauche a droite.
-  static String _heure(DateTime utc) {
-    final DateTime l = chezMoi(utc);
-    String deux(int n) => n.toString().padLeft(2, '0');
-    return '\u2066${deux(l.hour)}:${deux(l.minute)}\u2069';
-  }
+  static String _heure(DateTime utc) => '\u2066${heureChezMoi(utc)}\u2069';
 
   /// Ce que la pause dit a cet instant, ou `null` : le texte visible et sa
   /// version lue.

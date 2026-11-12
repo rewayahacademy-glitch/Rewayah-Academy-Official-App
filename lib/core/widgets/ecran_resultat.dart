@@ -36,6 +36,7 @@ class EcranResultat extends StatelessWidget {
     required this.titre,
     super.key,
     this.phrase,
+    this.mention,
     this.encart,
     this.ton = TonEtat.accent,
     this.libelleAction,
@@ -68,6 +69,11 @@ class EcranResultat extends StatelessWidget {
 
   /// La phrase utile qui suit : ce qui s'est passe, ce qu'on peut faire.
   final String? phrase;
+
+  /// Une mention courte et discrete, sur sa propre ligne sous la phrase :
+  /// ce qui precise la phrase sans en faire partie (« Heure de cet
+  /// appareil », quand l'heure dite n'est pas celle du profil). Facultative.
+  final String? mention;
 
   /// Un encart doux sous la phrase (rappel, consequence), facultatif.
   final String? encart;
@@ -114,26 +120,28 @@ class EcranResultat extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             Center(
-              child: illustration ?? ExcludeSemantics(
-                child: SizedBox.square(
-                  dimension: diametreHeros,
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: cercle.background,
-                    ),
-                    child: Center(
-                      child: IconTheme(
-                        data: IconThemeData(
-                          color: cercle.onBackground,
-                          size: tailleIcone,
+              child:
+                  illustration ??
+                  ExcludeSemantics(
+                    child: SizedBox.square(
+                      dimension: diametreHeros,
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: cercle.background,
                         ),
-                        child: Icon(icone.actif),
+                        child: Center(
+                          child: IconTheme(
+                            data: IconThemeData(
+                              color: cercle.onBackground,
+                              size: tailleIcone,
+                            ),
+                            child: Icon(icone.actif),
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ),
             ),
             Ecart.vXxl,
             Semantics(
@@ -153,6 +161,16 @@ class EcranResultat extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: palette.inkMuted.applyTo(
                   textes.bodyLarge ?? const TextStyle(),
+                ),
+              ),
+            ],
+            if (mention != null) ...<Widget>[
+              Ecart.vXs,
+              Text(
+                mention!,
+                textAlign: TextAlign.center,
+                style: palette.inkMuted.applyTo(
+                  textes.bodySmall ?? const TextStyle(),
                 ),
               ),
             ],

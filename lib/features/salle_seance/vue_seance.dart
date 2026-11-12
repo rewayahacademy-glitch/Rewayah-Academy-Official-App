@@ -520,12 +520,14 @@ class SupportDisponible {
 @immutable
 class FinSeance {
   const FinSeance({
-    required this.heureFin,
+    required this.finA,
     required this.cahierACompleter,
     this.close = true,
   });
 
-  final String heureFin;
+  /// L'INSTANT de la fin (HEURE-PROFIL, 12/11/2026) : l'heure se forme au
+  /// dessin (`DepuisSalle.heureDite`), jamais une fois pour toutes.
+  final DateTime finA;
   final bool cahierACompleter;
 
   /// UX-040, UX-043 : vrai quand le serveur a dit la seance terminee ; faux

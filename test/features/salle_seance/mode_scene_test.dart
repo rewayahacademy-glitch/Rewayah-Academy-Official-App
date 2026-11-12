@@ -18,14 +18,21 @@ void main() {
         isTrue,
       );
     });
-    test('le tableau ouvert tient la classe fermee, quel que soit le choix', () {
-      for (final bool? choix in <bool?>[null, true, false]) {
-        expect(
-          voirLaClasse(tableauOuvert: true, pagePresentee: false, choix: choix),
-          isFalse,
-        );
-      }
-    });
+    test(
+      'le tableau ouvert tient la classe fermee, quel que soit le choix',
+      () {
+        for (final bool? choix in <bool?>[null, true, false]) {
+          expect(
+            voirLaClasse(
+              tableauOuvert: true,
+              pagePresentee: false,
+              choix: choix,
+            ),
+            isFalse,
+          );
+        }
+      },
+    );
   });
 
   group('calculerModeScene', () {

@@ -14,6 +14,7 @@ import '../../core/router/routes.dart';
 import '../../core/suivi/groupes_seances.dart';
 import '../../core/suivi/service_suivi.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/etat_systeme.dart';
@@ -94,6 +95,8 @@ class _SuiviFoyerPageEtat extends ConsumerState<SuiviFoyerPage> {
 
   @override
   Widget build(BuildContext context) {
+    // HEURES-PROFIL H4 : la page se redessine quand le fuseau du profil arrive.
+    ref.watch(monHorlogeProvider);
     final DateTime maintenant = widget.horloge();
     final FiltresHistorique<StatutHistorique> filtres = ref.watch(
       filtresSeancesProvider,
@@ -294,7 +297,10 @@ class _Liste extends ConsumerWidget {
             ],
           ),
           Ecart.vMd,
-          NoteHistorique(t.historique.fuseauListe),
+          // HEURES-PROFIL H4 (garde-cap, 12/11/2026) : les heures sont au
+          // fuseau du profil ; la mention ne dit l'appareil que s'il sert.
+          if (estHeureDeLAppareil(DateTime.now()))
+            NoteHistorique(t.historique.fuseauListe),
           if (seances.length >= plafondSuiviFoyer) ...<Widget>[
             Ecart.vXs,
             NoteHistorique(
@@ -316,8 +322,8 @@ class _Liste extends ConsumerWidget {
     final String statut = libelleStatut(l);
     return LigneHistorique(
       key: ValueKey<String>('seance-${l.seance.id}-${l.seance.eleveId}'),
-      date: dateCourte(l.seance.debut),
-      meta: plageHoraire(l.seance.debut, l.seance.fin),
+      date: dateCourte(chezMoi(l.seance.debut)),
+      meta: plageHoraire(chezMoi(l.seance.debut), chezMoi(l.seance.fin)),
       titre: nom,
       sousTitre: enseignantAffiche(l.seance, classe),
       pays: paysEnseignantAffiche(l.seance, classe),

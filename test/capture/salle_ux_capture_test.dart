@@ -32,7 +32,7 @@ VueSeance _vueFin({required bool close}) {
   );
   return base.copyWith(
     fin: FinSeance(
-      heureFin: base.fin!.heureFin,
+      finA: base.fin!.finA,
       cahierACompleter: true,
       close: close,
     ),
