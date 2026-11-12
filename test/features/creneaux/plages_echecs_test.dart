@@ -29,7 +29,7 @@ import 'package:rewayah_academy/features/creneaux/feuille_plage.dart';
 import 'package:rewayah_academy/features/creneaux/plages.dart';
 
 import '../../support/harnais.dart';
-import '../../support/horloge_de_test.dart';
+import '../../support/horloge_fictive.dart';
 
 const String _monId = 't1';
 

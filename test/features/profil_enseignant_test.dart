@@ -30,7 +30,7 @@ import 'package:rewayah_academy/features/profil_enseignant/feuille_fuseau.dart';
 import 'package:rewayah_academy/features/profil_enseignant/profil_enseignant_page.dart';
 
 import '../support/harnais.dart';
-import '../support/horloge_de_test.dart';
+import '../support/horloge_fictive.dart';
 
 /// La declaration du profil, en memoire.
 ///

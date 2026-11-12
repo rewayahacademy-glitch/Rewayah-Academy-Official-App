@@ -44,7 +44,7 @@ import '../capture/outil_capture.dart'
     show capturerVue, chargerPolicesDuDepot, masquerRubanDebug, sautSansCapture;
 import '../support/aucun_mot_coupe.dart';
 import '../support/harnais.dart';
-import '../support/horloge_de_test.dart';
+import '../support/horloge_fictive.dart';
 
 /// Le chemin de bout en bout du role Enseignant, prouve sur le **routeur reel**.
 ///

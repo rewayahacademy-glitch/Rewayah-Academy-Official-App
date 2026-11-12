@@ -557,7 +557,20 @@ class _DeclarationState extends ConsumerState<_Declaration> {
     // FUSEAU-IDENTITE-PRO (garde-cap, 12/11/2026) : le fuseau du profil, lu
     // par `mon_horloge` (sans repli sur Paris), jamais par `mon_fuseau`.
     final AsyncValue<MonHorloge?> horloge = ref.watch(monHorlogeProvider);
-    final String? fuseauProfil = horloge.value?.moi?.fuseau;
+    final AsyncValue<String?> fuseau = horloge.whenData(
+      (MonHorloge? h) => h?.moi?.fuseau,
+    );
+    // FUSEAU-IDENTITE-PRO : la valeur du serveur, « Riyad · UTC+3 » ; sans
+    // fuseau, « Non renseigne » ; lecture en echec, « Heure de cet appareil »
+    // (les heures retombent alors sur lui).
+    final String valeurFuseau = switch (horloge) {
+      AsyncValue<MonHorloge?>(hasValue: true, :final value) =>
+        fuseauDuProfilAffiche(value) ?? t.enseignant.profil.nonRenseigne,
+      AsyncValue<MonHorloge?>(hasError: true) =>
+        t.enseignant.profil.fuseauAppareil,
+      // Pendant la lecture : « Non chargé », jamais « Non renseigné ».
+      _ => t.compte.tuteur.pageInformations.fuseauIndisponible,
+    };
     final _LanguesLues langues = _LanguesLues.depuis(
       profil.langues,
       ref.watch(referentielLanguesProvider),
@@ -590,7 +603,7 @@ class _DeclarationState extends ConsumerState<_Declaration> {
                         // qu'il n'est pas la, la liste reste dans son ordre.
                         feuille: () => FeuillePays(
                           paysDeclare: profil.pays,
-                          fuseau: fuseauProfil,
+                          fuseau: fuseau.value,
                         ),
                         ecrire: (String pays) => _service.declarer(pays: pays),
                       ),
@@ -624,23 +637,25 @@ class _DeclarationState extends ConsumerState<_Declaration> {
             // (`maj_profil_enseignant`, p_timezone). La valeur est celle du
             // serveur, « Riyad · UTC+3 » ; sans fuseau, « Non renseigne » ; lecture
             // en echec, « Heure de cet appareil » (les heures retombent sur lui).
-            LigneRubrique(
-              cle: cleLigneFuseau,
-              libelle: t.enseignant.profil.fuseau,
-              legende: t.enseignant.profil.fuseauDetail,
-              valeur: switch (horloge) {
-                AsyncValue<MonHorloge?>(hasValue: true, :final value) =>
-                  fuseauDuProfilAffiche(value) ??
-                      t.enseignant.profil.nonRenseigne,
-                AsyncValue<MonHorloge?>(hasError: true) =>
-                  t.enseignant.profil.fuseauAppareil,
-                _ => t.enseignant.profil.nonRenseigne,
-              },
-              icone: AppIcons.horloge,
-              onPress: widget.horsLigne
-                  ? null
-                  : () => unawaited(_reglerFuseau(profil.pays)),
-            ),
+            // Hors ligne, la ligne redevient une lecture (le geste est retire,
+            // jamais grise) ; en ligne, elle ouvre la feuille du fuseau.
+            if (widget.horsLigne)
+              LigneRubrique(
+                cle: cleLigneFuseau,
+                libelle: t.enseignant.profil.fuseau,
+                legende: t.enseignant.profil.fuseauDetail,
+                valeur: valeurFuseau,
+                icone: AppIcons.horloge,
+              )
+            else
+              LigneRubrique(
+                cle: cleLigneFuseau,
+                libelle: t.enseignant.profil.fuseau,
+                legende: t.enseignant.profil.fuseauDetail,
+                valeur: valeurFuseau,
+                icone: AppIcons.horloge,
+                onPress: () => unawaited(_reglerFuseau(profil.pays)),
+              ),
             LigneRubrique(
               libelle: t.enseignant.profil.plafond,
               legende: t.enseignant.profil.plafondDetail,

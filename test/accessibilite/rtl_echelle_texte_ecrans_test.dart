@@ -52,7 +52,7 @@ import 'package:rewayah_academy/features/revue_groupe/revue_groupe_page.dart';
 import 'package:rewayah_academy/features/suivi_foyer/suivi_foyer_page.dart';
 
 import '../support/harnais.dart';
-import '../support/horloge_de_test.dart';
+import '../support/horloge_fictive.dart';
 
 /// Lot A1 : preuve, pour **chaque ecran reel construit du catalogue**
 /// (`docs/archive/2026-09-pre-remise-a-plat/design/08-catalogue-ecrans.md`), que le rendu arabe (RTL, Bible V2
