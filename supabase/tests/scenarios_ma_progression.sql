@@ -290,6 +290,43 @@ SELECT pg_temp.vrai(
   AND pg_temp.essai('SELECT * FROM public.reglages_progression_admin()') = 'refus',
   'enseignant : ni ecriture ni lecture du reglage');
 RESET ROLE;
+-- Un eleve SANS Classe (e3) : dans cette branche, c'est sourates_eleve seul qui garde la porte.
+SELECT pg_temp.qui(pg_temp.u('t1'), 'guardian', pg_temp.u('f1'));
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai(
+  pg_temp.essai(pg_catalog.format('SELECT public.ma_progression(%L)', pg_temp.u('e3'))) = 'ok',
+  'eleve sans Classe : son tuteur lit');
+RESET ROLE;
+SELECT pg_temp.qui(pg_temp.u('t2'), 'guardian', pg_temp.u('f2'));
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai(
+  pg_temp.essai(pg_catalog.format('SELECT public.ma_progression(%L)', pg_temp.u('e3'))) = 'refus',
+  'eleve sans Classe : le tuteur d''un autre foyer est refuse');
+RESET ROLE;
+SELECT pg_temp.qui(pg_temp.u('b1'), 'teacher');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai(
+  pg_temp.essai(pg_catalog.format('SELECT public.ma_progression(%L)', pg_temp.u('e3'))) = 'refus',
+  'eleve sans Classe : un enseignant est refuse');
+RESET ROLE;
+SELECT pg_temp.qui(pg_temp.u('b3'), 'teacher');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai(
+  pg_temp.essai(pg_catalog.format('SELECT public.ma_progression(%L)', pg_temp.u('e3'))) = 'refus',
+  'eleve sans Classe : l''enseignant d''aucune Classe de lui est refuse');
+RESET ROLE;
+SELECT pg_temp.qui(pg_temp.u('e4'), 'student', pg_temp.u('f1'));
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai(
+  pg_temp.essai(pg_catalog.format('SELECT public.ma_progression(%L)', pg_temp.u('e3'))) = 'refus',
+  'eleve sans Classe : un autre eleve, meme du foyer, est refuse');
+RESET ROLE;
+SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai(
+  pg_temp.essai(pg_catalog.format('SELECT public.ma_progression(%L)', pg_temp.u('e3'))) = 'refus',
+  'eleve sans Classe : la direction est refusee comme pour les autres');
+RESET ROLE;
 SELECT pg_temp.qui(pg_temp.u('e1'), 'student', pg_temp.u('f1'));
 SET LOCAL ROLE authenticated;
 SELECT pg_temp.vrai(
