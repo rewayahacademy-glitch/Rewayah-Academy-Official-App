@@ -7367,8 +7367,8 @@
       }
     },
     "regroupements": {
-      "heure": "{heure}:00",
-      "heureMinutes": "{heure}:{minutes}",
+      "heure": "\u2066\u2068{heure}\u2069:00\u2069",
+      "heureMinutes": "\u2066\u2068{heure}\u2069:\u2068{minutes}\u2069\u2069",
       "refusAffectation": {
         "reservee": "لم يُؤكَّد المعلم: لا يملك حسابكم صلاحية تأكيد معلم.",
         "classeIndisponible": "لم يُؤكَّد المعلم: لم يعد هذا الفصل بانتظار معلم. أغلقوا هذه الورقة لرؤية القائمة المحدّثة.",

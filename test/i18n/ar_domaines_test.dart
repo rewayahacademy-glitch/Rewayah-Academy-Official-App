@@ -220,6 +220,9 @@ const Set<String> _latins = <String>{
   // dans toutes les langues (« Version 0.2.0 (423) », lot FOYER-UX).
   'compte.version',
   'compte.versionSeule',
+  // DATE-ARABE-SOURCE (garde-cap, 12/11/2026) : l'heure arabe s'ecrit en
+  // chiffres, « 5:00 », isolee de gauche a droite (U+2066) ; aucun mot.
+  'admin.regroupements.heure',
 };
 
 final RegExp _parametre = RegExp(r'\{\w+\}');

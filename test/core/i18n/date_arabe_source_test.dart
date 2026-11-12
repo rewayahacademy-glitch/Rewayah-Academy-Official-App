@@ -231,12 +231,25 @@ void main() {
   });
 
   group('(4) l heure arabe', () {
-    test('« 5:45 » et « 5:00 » en arabe, « 5 h 45 » en francais', () {
+    test('« 5:45 » et « 5:00 » en arabe (isolees de gauche a droite), '
+        '« 5 h 45 » en francais', () {
       LocaleSettings.setLocaleSync(AppLocale.ar);
-      expect(libelleHeureMinute(5, 45), '5:45');
-      expect(libelleHeureMinute(5, 0), '5:00');
+      expect(
+        libelleHeureMinute(5, 45),
+        '\u2066\u20685\u2069:\u206845\u2069\u2069',
+      );
+      expect(libelleHeureMinute(5, 0), '\u2066\u20685\u2069:00\u2069');
       LocaleSettings.setLocaleSync(AppLocale.fr);
-      expect(libelleHeureMinute(5, 45), '5 h 45');
+      expect(libelleHeureMinute(5, 45), '5\u00a0h\u00a045');
+    });
+
+    testWidgets('l heure seule, dans une interface de droite a gauche, se '
+        'lit « 5:00 » et non « 00:5 »', (WidgetTester tester) async {
+      await tester.runAsync(() => LocaleSettings.setLocale(AppLocale.ar));
+      final String heure = libelleHeureMinute(5, 0);
+      await _peindre(tester, <String>[heure]);
+      final _Positions p = _Positions(tester, 0);
+      expect(p.x('5'), lessThan(p.x('00')));
     });
 
     testWidgets('planning : « من 5:00 إلى 5:45 » dans l ordre de lecture', (
@@ -261,13 +274,22 @@ void main() {
           statut: StatutSeance.planifiee,
         ),
       );
-      expect(horaire, contains('5:00'));
-      expect(horaire, contains('5:45'));
+      final String debut = libelleHeureMinute(5, 0);
+      final String fin = libelleHeureMinute(5, 45);
+      expect(horaire, contains(debut));
+      expect(horaire, contains(fin));
       await _peindre(tester, <String>[horaire]);
       final _Positions p = _Positions(tester, 0);
-      expect(p.x('من'), greaterThan(p.x('5:00')));
-      expect(p.x('5:00'), greaterThan(p.x('إلى')));
-      expect(p.x('إلى'), greaterThan(p.x('5:45')));
+      // De droite a gauche : « من », puis 5:00, puis « إلى », puis 5:45.
+      expect(p.x('من'), greaterThan(p.x(debut)));
+      expect(p.x(debut), greaterThan(p.x('إلى')));
+      expect(p.x('إلى'), greaterThan(p.x(fin)));
+      // Et chaque heure garde son ordre : l'heure a gauche des minutes.
+      expect(p.xA(horaire.indexOf(debut) + 2), lessThan(p.x(':00')));
+      expect(
+        p.xA(horaire.indexOf(fin) + 2),
+        lessThan(p.xA(horaire.indexOf(fin) + 6)),
+      );
     });
   });
 }
@@ -297,6 +319,12 @@ class _Positions {
     : _p = tester.renderObject<RenderParagraph>(find.byType(RichText).at(rang));
 
   final RenderParagraph _p;
+
+  /// La position du caractere de rang [i] dans la ligne.
+  double xA(int i) => _p
+      .getBoxesForSelection(TextSelection(baseOffset: i, extentOffset: i + 1))
+      .first
+      .left;
 
   double x(String morceau) {
     final String s = _p.text.toPlainText();
