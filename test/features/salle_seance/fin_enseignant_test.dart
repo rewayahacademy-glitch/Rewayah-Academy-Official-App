@@ -376,7 +376,44 @@ void main() {
           AnnonceObservation(libelle: 'x', prenomEnfant: 'Mariam'),
         ],
       );
-      expect(vue?.texteNotice, t.salle.seance.unParentObserve);
+      expect(vue?.texteNotice, t.salle.seance.parentsObservent(n: 1));
+      expect(vue?.texteNotice, 'Un parent observe cette séance');
+    });
+
+    // Fiche 0 de la salle, ligne 16 (relevee le 12/11/2026) : a plusieurs
+    // visites en meme temps, le nombre, sans prenoms.
+    test('deux parents regardent : « 2 parents observent cette seance », '
+        'sans prenoms', () {
+      final VueSeance? vue = DepuisSalle.vue(
+        salle: _salle('teacher'),
+        mode: InterfaceMode.standard,
+        annonces: const <AnnonceObservation>[
+          AnnonceObservation(libelle: 'x', prenomEnfant: 'Mariam'),
+          AnnonceObservation(libelle: 'y', prenomEnfant: 'Yusuf'),
+        ],
+      );
+      expect(vue?.visite?.nombre, 2);
+      expect(vue?.texteNotice, t.salle.seance.parentsObservent(n: 2));
+      expect(vue?.texteNotice, '2 parents observent cette séance');
+      expect(vue?.texteNotice, isNot(contains('Mariam')));
+      expect(vue?.texteNotice, isNot(contains('Yusuf')));
+    });
+
+    test('en arabe : un, deux (duel), trois parents', () async {
+      // L'arabe est une langue chargee a la demande : on l'attend.
+      await LocaleSettings.setLocale(AppLocale.ar);
+      addTearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
+      final String un = t.salle.seance.parentsObservent(n: 1);
+      final String deux = t.salle.seance.parentsObservent(n: 2);
+      final String trois = t.salle.seance.parentsObservent(n: 3);
+      expect(<String>{un, deux, trois}, hasLength(3));
+      expect(un, isNot(contains('1')));
+      expect(
+        deux,
+        isNot(contains('2')),
+        reason: 'le duel ne dit pas le chiffre',
+      );
+      expect(trois, contains('3'));
     });
 
     test('l eleve non observe ne lit rien', () {

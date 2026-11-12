@@ -1206,7 +1206,14 @@
       "votreParentObserve": "وليّ أمرك يتابع الحصة.",
       "tonParentObserve": "وليّ أمرك يتابع الحصة.",
       "tuteurDeObserve": "وليّ أمر ⁨{dePrenom}⁩ يتابع.",
-      "unParentObserve": "وليّ أمر يتابع هذه الحصة",
+      "parentsObservent(plural, param=n)": {
+        "zero": "⁨{n}⁩ وليّ أمر يتابعون هذه الحصة",
+        "one": "وليّ أمر يتابع هذه الحصة",
+        "two": "وليّا أمر يتابعان هذه الحصة",
+        "few": "⁨{n}⁩ أولياء أمور يتابعون هذه الحصة",
+        "many": "⁨{n}⁩ وليّ أمر يتابعون هذه الحصة",
+        "other": "⁨{n}⁩ وليّ أمر يتابعون هذه الحصة"
+      },
       "leTuteurDeObserve": "وليّ أمر ⁨{dePrenom}⁩ يتابع الحصة.",
       "mentionEtNotice": "⁨{mention}⁩ ⁨{notice}⁩",
       "retour": "رجوع",

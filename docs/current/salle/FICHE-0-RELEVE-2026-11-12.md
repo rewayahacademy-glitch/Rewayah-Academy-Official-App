@@ -68,7 +68,7 @@
 | --: | :-- | :-- | :-- |
 | 14 | Un tuteur en visite est invisible et muet | **dans main** (règle du serveur) | migration 0040 |
 | 15 | Son enfant seul lit « Ton parent observe la séance. » | **dans main** (`salle.seance.tonParentObserve`, `votreParentObserve`) | textes de la salle |
-| 16 | L'enseignant lit « Un parent observe. », et « {n} parents observent. » à plusieurs | **en partie** : le singulier existe (`salle.seance.unParentObserve`) ; **le pluriel manque** | textes de la salle |
+| 16 | L'enseignant lit « Un parent observe. », et « {n} parents observent. » à plusieurs | **fait le 12/11 dans le lot PARENTS-PLURIEL** (D-036), sur la branche, pas encore dans `main` : « Un parent observe cette séance », « 2 parents observent cette séance », sans prénoms, en français et en arabe (`salle.seance.parentsObservent`). Non vérifié : la disparition de la ligne dans les 10 s après la dernière visite | `vue_seance.dart` (`texteNotice`), `depuis_salle.dart` |
 | 17 | Le tuteur voit ce que voit son enfant, avec le temps de visite restant | non revérifié cette nuit ; D-026 note qu'il ne voit pas le support | D-026 |
 | 18 | Contrôleur et direction invisibles, mention générale permanente | **dans main** (« Visite de contrôle possible. ») | `lib/CLAUDE.md`, ADR-011 |
 
@@ -111,7 +111,7 @@
 1. Ne pas fusionner la fiche 0. Ce relevé la remplace comme point d'entrée : il dit ce qui est tenu,
    ce qui a été décidé autrement, et ce qui manque.
 2. Mettre devant le directeur, en une ligne chacun : la ligne 11 (les élèves se voient-ils entre
-   eux ?), la ligne 16 (le pluriel « parents observent »), les lignes 29 et 30 (les écrans du journal
+   eux ?), les lignes 29 et 30 (les écrans du journal
    de présence, et ce qu'un parent a le droit de lire sur un enseignant).
 3. Aucun code pour 27, 29 et 30 avant sa décision (garde-cap, 12/11).
 4. Revérifier sur le banc local, ligne par ligne, celles marquées « non revérifié cette nuit » (3,

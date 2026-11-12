@@ -597,7 +597,10 @@
       "votreParentObserve": "Votre parent observe la séance.",
       "tonParentObserve": "Ton parent observe la séance.",
       "tuteurDeObserve": "Tuteur {dePrenom} observe.",
-      "unParentObserve": "Un parent observe cette séance",
+      "parentsObservent(plural, param=n)": {
+        "one": "Un parent observe cette séance",
+        "other": "{n} parents observent cette séance"
+      },
       "leTuteurDeObserve": "Le tuteur {dePrenom} observe la séance.",
       "mentionEtNotice": "{mention} {notice}",
       "retour": "Retour",
