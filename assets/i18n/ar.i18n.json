@@ -2736,15 +2736,9 @@
         "aucunCanal": "لا قناة مساعدة منشورة الآن."
       },
       "pageLegal": {
-        "titre": "المعلومات القانونية",
-        "documents": "الوثائق المقبولة",
         "conditionsTuteur": "شروط وليّ الأمر",
         "contratEnseignant": "عقد المعلم",
         "accuseEnregistrement": "الإقرار بتسجيل الدروس",
-        "acceptation": "الإصدار ⁨{version}⁩، مقبول في ⁨{date}⁩",
-        "aucunTitre": "لا وثيقة مقبولة",
-        "aucun": "لا وثيقة مقبولة مسجَّلة لهذا الحساب.",
-        "lectureSeule": "الوثيقة المقبولة لا تُعدَّل.",
         "textes": "الشروط والخصوصية"
       }
     }

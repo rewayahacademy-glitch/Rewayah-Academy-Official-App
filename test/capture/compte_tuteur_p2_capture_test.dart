@@ -14,10 +14,13 @@ import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/appairage/service_appairage.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/identite/port_matricule.dart';
 import 'package:rewayah_academy/core/profil/service_acceptations.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/core/version/ligne_version.dart';
+import 'package:rewayah_academy/features/demo/identite/matricule_demo.dart';
 
 import '../features/compte/support_compte.dart';
 import '../fixtures/tuteur/foyers.dart';
@@ -53,6 +56,19 @@ Future<void> _monter(
         ...surchargesRouteur(
           FausseSourceSession(sessionActive(AppRole.guardian)),
           appairage: appairage,
+        ),
+        // Les donnees d'essai portent un matricule et une version, pour les
+        // montrer (la capture ne les invente pas en production).
+        portMatriculeProvider.overrideWithValue(
+          const MatriculeDemo(<String, Matricule>{
+            'p-guardian': Matricule(
+              valeur: 'RA-26-4817',
+              role: RoleAffiche.tuteur,
+            ),
+          }),
+        ),
+        versionAppliProvider.overrideWith(
+          (Ref _) async => (version: '1.0.0', build: '423'),
         ),
         ...surchargesCompte(
           eleves: _eleves,

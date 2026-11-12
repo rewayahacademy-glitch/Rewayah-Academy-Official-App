@@ -7683,15 +7683,9 @@
         "aucunCanal": "Aucun canal d'aide n'est publié pour le moment."
       },
       "pageLegal": {
-        "titre": "Informations légales",
-        "documents": "Documents acceptés",
         "conditionsTuteur": "Conditions du tuteur",
         "contratEnseignant": "Contrat enseignant",
         "accuseEnregistrement": "Accusé d'enregistrement des cours",
-        "acceptation": "Version {version}, acceptée le {date}",
-        "aucunTitre": "Aucun document accepté",
-        "aucun": "Aucun document accepté n'est enregistré pour ce compte.",
-        "lectureSeule": "Un document accepté ne se modifie pas.",
         "textes": "Conditions et confidentialité"
       }
     }

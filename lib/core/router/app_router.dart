@@ -165,10 +165,8 @@ import '../../features/compte/compte_page.dart';
 import '../../features/compte/compte_tuteur_page.dart';
 import '../../features/compte/double_verification_page.dart';
 import '../../features/compte/espaces_compte.dart';
-import '../../features/compte/informations_legales_page.dart';
 import '../../features/compte/informations_page.dart';
 import '../../features/compte/mes_donnees_page.dart';
-import '../../features/compte/paiements_page.dart';
 import '../../features/compte/securite_page.dart';
 import '../../features/connexion/accueil_invite.dart';
 import '../../features/connexion/connexion_page.dart';
@@ -1386,20 +1384,18 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                       (GoRouterState _) => const AccesComptePage(),
                     ),
                   ),
+                  // PROFILS P2 : la page indisponible des paiements du tuteur et
+                  // le doublon de /juridique n'existent plus (dette
+                  // PAIEMENTS-RECUS-TUTEUR) ; leurs adresses reviennent au Compte.
                   GoRouteSure(
                     path: 'paiements',
-                    // « Recharger » ouvre LA recharge du Foyer (FI-7,
-                    // guide V4 §4) : jamais un second centre de paiement.
-                    pageBuilder: glissee(
-                      (GoRouterState _) => Builder(
-                        builder: (BuildContext context) => PaiementsComptePage(
-                          // `?depuis=compte` : l'abandon revient ici.
-                          onRecharger: () =>
-                              GoRouter.of(context)
-                                  .go(Routes.rechargeDepuisCompte),
-                        ),
-                      ),
-                    ),
+                    redirect: (BuildContext _, GoRouterState _) =>
+                        Routes.tuteurCompte,
+                  ),
+                  GoRouteSure(
+                    path: 'informations-legales',
+                    redirect: (BuildContext _, GoRouterState _) =>
+                        Routes.tuteurCompte,
                   ),
                   // PROFILS P2 : les preferences sont dans le Compte ; les
                   // anciennes adresses y reviennent.
@@ -1419,13 +1415,6 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                     path: 'aide',
                     pageBuilder: glissee(
                       (GoRouterState _) => const AideComptePage(),
-                    ),
-                  ),
-                  GoRouteSure(
-                    path: 'informations-legales',
-                    pageBuilder: glissee(
-                      (GoRouterState _) =>
-                          const InformationsLegalesComptePage(),
                     ),
                   ),
                   GoRouteSure(

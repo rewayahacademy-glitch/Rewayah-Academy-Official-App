@@ -3,6 +3,7 @@
 // section 5 bis) ; composition telephone et bureau ; etats ; aucune impasse.
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -14,24 +15,26 @@ import 'package:rewayah_academy/core/capacites/port_profil_eleve_titulaire.dart'
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/icons/app_icons.dart';
+import 'package:rewayah_academy/core/identite/port_matricule.dart';
 import 'package:rewayah_academy/core/preferences/preferences_locales.dart';
-import 'package:rewayah_academy/core/profil/service_acceptations.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
+import 'package:rewayah_academy/core/version/ligne_version.dart';
+import 'package:rewayah_academy/core/widgets/entete_compte.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
+import 'package:rewayah_academy/core/widgets/page_compte.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/compte/acces_page.dart';
 import 'package:rewayah_academy/features/compte/aide_page.dart';
 import 'package:rewayah_academy/features/compte/compte_tuteur_page.dart';
-import 'package:rewayah_academy/features/compte/informations_legales_page.dart';
 import 'package:rewayah_academy/features/compte/informations_page.dart';
 import 'package:rewayah_academy/features/compte/lignes_compte.dart'
     show FeuilleLangueCompte;
-import 'package:rewayah_academy/features/compte/paiements_page.dart';
 import 'package:rewayah_academy/features/compte/securite_page.dart';
 import 'package:rewayah_academy/features/consentements/consentement_observation_page.dart';
+import 'package:rewayah_academy/features/demo/identite/matricule_demo.dart';
 import 'package:rewayah_academy/features/foyer/creer_mon_profil_page.dart';
 import 'package:rewayah_academy/features/foyer/foyer_page.dart';
 import 'package:rewayah_academy/features/juridique/juridique_pages.dart';
@@ -296,6 +299,65 @@ void main() {
     });
   });
 
+  group('En-tete et pied du Compte : matricule avec Copier, version', () {
+    testWidgets('le matricule s affiche avec « Copier », la version en bas, '
+        'quand la donnee existe', (WidgetTester tester) async {
+      String? copie;
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        SystemChannels.platform,
+        (MethodCall appel) async {
+          if (appel.method == 'Clipboard.setData') {
+            copie =
+                (appel.arguments as Map<Object?, Object?>)['text'] as String?;
+          }
+          return null;
+        },
+      );
+      addTearDown(
+        () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+          SystemChannels.platform,
+          null,
+        ),
+      );
+      await monterCompte(
+        tester,
+        surcharges: <Override>[
+          portMatriculeProvider.overrideWithValue(
+            const MatriculeDemo(<String, Matricule>{
+              'p-guardian': Matricule(
+                valeur: 'RA-26-4817',
+                role: RoleAffiche.tuteur,
+              ),
+            }),
+          ),
+          versionAppliProvider.overrideWith(
+            (Ref _) async => (version: '1.0.0', build: '423'),
+          ),
+        ],
+      );
+      expect(_texte('RA-26-4817'), findsOneWidget);
+      await tester.tap(find.byKey(EnteteCompte.copierKey));
+      await stabiliser(tester);
+      expect(copie, 'RA-26-4817');
+      final Finder version = find.byKey(PageCompte.versionKey);
+      await tester.ensureVisible(version);
+      expect(
+        find.descendant(
+          of: version,
+          matching: _texte(t.compte.version(version: '1.0.0', build: '423')),
+        ),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('sans matricule servi : aucune ligne, jamais un faux', (
+      WidgetTester tester,
+    ) async {
+      await monterCompte(tester);
+      expect(find.byKey(EnteteCompte.copierKey), findsNothing);
+    });
+  });
+
   group('Se deconnecter', () {
     testWidgets('Annuler ne deconnecte pas ; confirmer deconnecte', (
       WidgetTester tester,
@@ -452,22 +514,22 @@ void main() {
       expect(_texte(t.compte.tuteur.pageAcces.aucunTitre), findsOneWidget);
     });
 
-    testWidgets('Paiements : indisponible, sans aucune action', (
-      WidgetTester tester,
-    ) async {
-      await monterCompte(
-        tester,
-        depart: Routes.compteTuteurSousPage('paiements'),
-      );
-      // La ligne a quitte le Compte (dette PAIEMENTS-RECUS-TUTEUR) ; la page
-      // reste atteignable par son adresse et dit la verite.
-      expect(find.byType(PaiementsComptePage), findsOneWidget);
-      expect(
-        _texte(t.compte.tuteur.pagePaiements.indisponibleTitre),
-        findsOneWidget,
-      );
-      expect(_texte(t.commun.etats.actions.reessayer), findsNothing);
-    });
+    for (final String ancienne in <String>[
+      'paiements',
+      'informations-legales',
+    ]) {
+      testWidgets('PROFILS P2 : /tuteur/compte/$ancienne revient au Compte '
+          '(page supprimee, dette PAIEMENTS-RECUS-TUTEUR)', (
+        WidgetTester tester,
+      ) async {
+        final GoRouter routeur = await monterCompte(
+          tester,
+          depart: Routes.compteTuteurSousPage(ancienne),
+        );
+        expect(lieu(routeur), Routes.tuteurCompte);
+        expect(find.byType(CompteTuteurPage), findsOneWidget);
+      });
+    }
 
     testWidgets('Aide : indisponible, aucun faux contact', (
       WidgetTester tester,
@@ -479,34 +541,6 @@ void main() {
         findsOneWidget,
       );
       expect(find.textContaining('@'), findsNothing);
-    });
-
-    testWidgets('Informations legales : documents acceptes, textes absents', (
-      WidgetTester tester,
-    ) async {
-      await monterCompte(
-        tester,
-        depart: Routes.compteTuteurSousPage('informations-legales'),
-        acceptations: FauxServiceAcceptations(
-          rendues: <Acceptation>[
-            Acceptation(
-              sorte: SorteContrat.conditionsTuteur,
-              version: '2026-09',
-              accepteeLe: DateTime(2026, 9, 12, 10),
-            ),
-          ],
-        ),
-      );
-      expect(find.byType(InformationsLegalesComptePage), findsOneWidget);
-      expect(
-        _texte(t.compte.tuteur.pageLegal.conditionsTuteur),
-        findsOneWidget,
-      );
-      expect(
-        _texte('Version 2026-09, acceptée le 12 septembre 2026'),
-        findsOneWidget,
-      );
-      expect(_texte(t.compte.tuteur.pageLegal.textes), findsOneWidget);
     });
 
     testWidgets('Informations : lecture seule, fuseau des seances', (

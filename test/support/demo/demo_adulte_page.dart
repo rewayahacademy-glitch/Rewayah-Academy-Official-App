@@ -83,7 +83,6 @@ import 'package:rewayah_academy/features/compte/donnees_compte.dart'
         identiteTitulaireProvider,
         paiementsFoyerProvider,
         profilEleveTitulaireExisteProvider;
-import 'package:rewayah_academy/features/compte/informations_legales_page.dart';
 import 'package:rewayah_academy/features/compte/informations_page.dart';
 import 'package:rewayah_academy/features/compte/paiements_page.dart';
 import 'package:rewayah_academy/features/compte/securite_page.dart';
@@ -140,9 +139,6 @@ enum EcranDemoAdulte {
 
   /// Aide et contact (EA-4).
   aide,
-
-  /// Informations legales (EA-4).
-  informationsLegales,
 
   /// Paiements du foyer, ouverts depuis Ma famille (EA-5) : les soldes, le
   /// bouton « Recharger » et l'historique pour le titulaire (EA-9).
@@ -452,7 +448,6 @@ String libelleEcranDemoAdulte(EcranDemoAdulte ecran) => switch (ecran) {
   EcranDemoAdulte.informations => t.adulte.monEspace.informations,
   EcranDemoAdulte.securite => t.compte.tuteur.securite.titre,
   EcranDemoAdulte.aide => t.compte.tuteur.aide.ligne,
-  EcranDemoAdulte.informationsLegales => t.compte.tuteur.aide.legal,
   EcranDemoAdulte.paiementsFoyer => t.adulte.famille.paiementsFoyer,
   EcranDemoAdulte.recharge => t.adulte.paiements.recharger,
   EcranDemoAdulte.placeAdulte => t.adulte.famille.forfaitFamille,
@@ -1143,8 +1138,6 @@ class CoquilleAdulteDemo extends StatelessWidget {
               onRetour: versAccueil,
             ),
             EcranDemoAdulte.aide => AideComptePage(onRetour: versAccueil),
-            EcranDemoAdulte.informationsLegales =>
-              InformationsLegalesComptePage(onRetour: versAccueil),
             // Apres « Compris », l'Accueil relu : le second adulte n'est
             // plus rattache (« Ajouter ma famille »).
             EcranDemoAdulte.forfaitFamille => ForfaitFamillePage(
