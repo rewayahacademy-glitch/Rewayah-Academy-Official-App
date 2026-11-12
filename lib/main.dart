@@ -152,6 +152,7 @@ import 'core/import_inscriptions/port_import_inscriptions.dart';
 import 'core/import_inscriptions/port_reclamation_preinscription.dart';
 import 'core/import_inscriptions/reclamation_preinscription_supabase.dart';
 import 'core/mouvement/retour_navigateur.dart';
+import 'core/navigation/retour_ferme_feuille.dart';
 import 'core/nouveautes/nouveautes.dart';
 import 'core/observabilite/journal_dev.dart';
 import 'core/observabilite/supervision.dart';
@@ -967,6 +968,9 @@ List<Override> _surchargesAppReelle() => <Override>[
 /// demarrage par plateforme.
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  // RETOUR-FERME-FEUILLE : avant `runApp`, donc avant l'observateur du
+  // routeur : le retour du navigateur ferme d'abord la feuille ouverte.
+  RetourFermeFeuille.installer();
 
   // TRANSITIONS, regle 9 : sur le web, un retour demande par le navigateur se
   // distingue de la fleche de l'application (hors web, rien n'est ecoute).
