@@ -113,6 +113,10 @@ enum EtatDemoClasse {
 
   /// Avis de changement d'heure.
   changementHeure,
+
+  /// Cours dans 110 h 14 : plus d'un jour avant le debut
+  /// (COMPTE-A-REBOURS-JOURS, tests seulement).
+  dansQuatreJours,
 }
 
 /// Le jeu de donnees de l'entree en classe.
@@ -256,6 +260,9 @@ abstract final class DonneesClasseDemo {
     EtatDemoClasse.indisponible ||
     EtatDemoClasse.changementHeure => debutUtc.subtract(
       const Duration(hours: 3, minutes: 28),
+    ),
+    EtatDemoClasse.dansQuatreJours => debutUtc.subtract(
+      const Duration(hours: 110, minutes: 14),
     ),
     EtatDemoClasse.fenetreOuverte ||
     EtatDemoClasse.preparation ||
