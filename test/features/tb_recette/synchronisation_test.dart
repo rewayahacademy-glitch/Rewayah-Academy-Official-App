@@ -1149,8 +1149,6 @@ void main() {
       'ficheEleve.informations.succes': 'photo de la fiche eleve enregistree',
       'parcours.finTitre': 'preference du parcours enregistree',
       'consentement.compte.merci': 'consentement du compte enregistre',
-      'admin.programmes.contenu.revisionEnregistree':
-          'reglage de revision d une etape enregistre (la direction)',
     };
 
     final Map<String, Map<String, String>> valeurs =

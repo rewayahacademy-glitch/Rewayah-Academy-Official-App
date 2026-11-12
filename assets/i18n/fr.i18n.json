@@ -5542,7 +5542,6 @@
         "revisionRepetitionsMoins": "Moins de répétitions",
         "revisionRepetitionsPlus": "Plus de répétitions",
         "revisionEnregistrer": "Enregistrer la révision",
-        "revisionEnregistree": "Révision enregistrée.",
         "revisionErreur": "La révision n'a pas pu être enregistrée\u00a0: {message}",
         "manquePages": "Rien n'a été enregistré\u00a0: les pages s'écrivent en nombres entiers, la dernière après la première. Corrigez-les, puis réessayez.",
         "proposition": "Proposition à valider par la direction",

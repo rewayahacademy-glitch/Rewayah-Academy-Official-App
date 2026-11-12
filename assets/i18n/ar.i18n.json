@@ -6822,7 +6822,6 @@
         "revisionRepetitionsMoins": "تكرارات أقل",
         "revisionRepetitionsPlus": "تكرارات أكثر",
         "revisionEnregistrer": "حفظ المراجعة",
-        "revisionEnregistree": "تم حفظ المراجعة.",
         "revisionErreur": "تعذّر حفظ المراجعة: ⁨{message}⁩",
         "manquePages": "لم يحفظ شيء: تكتب الصفحات بأعداد صحيحة، والأخيرة بعد الأولى. صححها، ثم أعد المحاولة.",
         "proposition": "اقتراح تصادق عليه الإدارة",

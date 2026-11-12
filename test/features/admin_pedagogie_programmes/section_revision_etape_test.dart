@@ -102,7 +102,14 @@ void main() {
     );
     await _enregistrer(tester);
     expect(appels.faits.single, (heures: 2.5, repetitions: 3));
-    expect(find.text(c.revisionEnregistree), findsOneWidget);
+    // Aucun message de reussite : la valeur affichee est la confirmation.
+    expect(find.textContaining('enregistr'), findsNothing);
+    expect(
+      find.text(
+        LibellesGroupe.insecable(c.revisionHeuresValeur(heures: '2,5')),
+      ),
+      findsOneWidget,
+    );
   });
 
   testWidgets('revenir a « Non regle » vide la valeur', (
@@ -115,15 +122,44 @@ void main() {
     expect(appels.faits.single, (heures: null, repetitions: null));
   });
 
-  testWidgets('un echec du serveur est dit, rien n est pretendu', (
+  testWidgets('un echec du serveur : la valeur revient a l ancienne, '
+      'l erreur est dite, aucun message de reussite', (
     WidgetTester tester,
   ) async {
-    final _Appels appels = await _monter(tester)
+    final _Appels appels = await _monter(tester, heures: 1, repetitions: 2)
       ..echec = Exception('reglage reserve a l administration');
+    await _plus(tester, c.revisionHeuresPlus, 3);
+    await _plus(tester, c.revisionRepetitionsPlus, 4);
+    expect(
+      find.text(
+        LibellesGroupe.insecable(c.revisionHeuresValeur(heures: '2,5')),
+      ),
+      findsOneWidget,
+    );
+    expect(find.text('6'), findsOneWidget);
     await _enregistrer(tester);
     expect(appels.faits, isEmpty);
-    expect(find.textContaining(c.revisionEnregistree), findsNothing);
+    // Les anciennes valeurs (1 h, 2 repetitions) sont revenues.
+    expect(
+      find.text(LibellesGroupe.insecable(c.revisionHeuresValeur(heures: '1'))),
+      findsOneWidget,
+    );
+    expect(find.text('2'), findsOneWidget);
     expect(find.textContaining('reserve a l administration'), findsOneWidget);
+    expect(find.textContaining('Révision enregistrée'), findsNothing);
+    // Le serveur repond de nouveau : l'erreur disparait, la valeur nouvelle
+    // reste, sans message.
+    appels.echec = null;
+    await _plus(tester, c.revisionHeuresPlus, 1);
+    await _enregistrer(tester);
+    expect(appels.faits.single, (heures: 1.5, repetitions: 2));
+    expect(find.textContaining('reserve a l administration'), findsNothing);
+    expect(
+      find.text(
+        LibellesGroupe.insecable(c.revisionHeuresValeur(heures: '1,5')),
+      ),
+      findsOneWidget,
+    );
   });
 
   testWidgets('dans la feuille du contenu : posee a la fin, absente sans '

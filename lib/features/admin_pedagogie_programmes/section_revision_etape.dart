@@ -55,8 +55,15 @@ class _SectionRevisionEtapeEtat extends State<SectionRevisionEtape> {
   // Les heures se comptent en demi-heures : 0 = non regle, 5 = 2,5 h.
   late int _demiHeures = ((widget.heuresInitiales ?? 0) * 2).round();
   late int _repetitions = widget.repetitionsInitiales ?? 0;
+  // Ce que le serveur a confirme : la valeur a laquelle on revient en cas
+  // d'echec (DECISION-FLUIDITE : pas de message de reussite, la valeur
+  // affichee qui change est la confirmation).
+  // Calculees depuis les valeurs initiales, jamais depuis l'etat courant
+  // (un `late` lu apres une modification prendrait la valeur modifiee).
+  late int _demiHeuresEnregistrees = ((widget.heuresInitiales ?? 0) * 2)
+      .round();
+  late int _repetitionsEnregistrees = widget.repetitionsInitiales ?? 0;
   bool _envoi = false;
-  bool _fait = false;
   String? _erreur;
 
   String _heures(int demi) {
@@ -78,21 +85,25 @@ class _SectionRevisionEtapeEtat extends State<SectionRevisionEtape> {
     setState(() {
       _envoi = true;
       _erreur = null;
-      _fait = false;
     });
     try {
       await widget.onRegler(
         heures: _demiHeures == 0 ? null : _demiHeures / 2,
         repetitions: _repetitions == 0 ? null : _repetitions,
       );
-      if (mounted) setState(() => _fait = true);
+      _demiHeuresEnregistrees = _demiHeures;
+      _repetitionsEnregistrees = _repetitions;
     } catch (erreur) {
       if (!mounted) return;
-      setState(
-        () => _erreur = t.admin.programmes.contenu.revisionErreur(
+      // L'echec : la valeur revient a ce que le serveur a confirme, et
+      // l'erreur est dite.
+      setState(() {
+        _demiHeures = _demiHeuresEnregistrees;
+        _repetitions = _repetitionsEnregistrees;
+        _erreur = t.admin.programmes.contenu.revisionErreur(
           message: messageMetier(erreur),
-        ),
-      );
+        );
+      });
     } finally {
       if (mounted) setState(() => _envoi = false);
     }
@@ -125,10 +136,7 @@ class _SectionRevisionEtapeEtat extends State<SectionRevisionEtape> {
           affichage: _heures,
           libelleMoins: c.revisionHeuresMoins,
           libellePlus: c.revisionHeuresPlus,
-          onChange: (int v) => setState(() {
-            _demiHeures = v;
-            _fait = false;
-          }),
+          onChange: (int v) => setState(() => _demiHeures = v),
         ),
         Ecart.vMd,
         ChoixNombre(
@@ -139,10 +147,7 @@ class _SectionRevisionEtapeEtat extends State<SectionRevisionEtape> {
           affichage: (int v) => v == 0 ? c.revisionNonRegle : '$v',
           libelleMoins: c.revisionRepetitionsMoins,
           libellePlus: c.revisionRepetitionsPlus,
-          onChange: (int v) => setState(() {
-            _repetitions = v;
-            _fait = false;
-          }),
+          onChange: (int v) => setState(() => _repetitions = v),
         ),
         Ecart.vMd,
         if (_erreur != null) ...<Widget>[
@@ -154,13 +159,6 @@ class _SectionRevisionEtapeEtat extends State<SectionRevisionEtape> {
                 textes.bodyMedium ?? const TextStyle(),
               ),
             ),
-          ),
-          Ecart.vMd,
-        ],
-        if (_fait) ...<Widget>[
-          Semantics(
-            liveRegion: true,
-            child: Text(c.revisionEnregistree, style: textes.bodyMedium),
           ),
           Ecart.vMd,
         ],
