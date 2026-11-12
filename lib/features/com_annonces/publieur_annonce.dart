@@ -42,6 +42,7 @@ import 'package:uuid/uuid.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -107,8 +108,9 @@ String messageConfirmationAnnonce(AnnonceConfirmee c) {
   return switch (c.etat) {
     EtatAnnonce.publiee => p.publiee,
     EtatAnnonce.planifiee => p.planifiee(
-      date: dateCourte(c.le.toLocal()),
-      heure: heureMinute(c.le.toLocal()),
+      // HEURES-PROFIL H2 : a l'heure du profil.
+      date: dateCourte(chezMoi(c.le)),
+      heure: heureMinute(chezMoi(c.le)),
     ),
   };
 }

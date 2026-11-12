@@ -23,6 +23,7 @@ import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/admin/port_planning_direction.dart';
 import '../../core/admin/port_seances_reportees.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/champ_date.dart';
@@ -66,10 +67,11 @@ String phraseRefusNouvelleDate(NouvelleDateRefusee refus) {
 
 /// « lundi 12 octobre 2026 à 18 h » : un instant, a l'heure de l'appareil.
 String quandSeanceReportee(DateTime instant) {
-  final DateTime local = instant.toLocal();
+  // HEURES-PROFIL H2 : jour et heure a l'heure du profil ([libelleHeure]
+  // convertit lui-meme : jamais deux fois).
   return t.snt.planning.quand(
-    jour: libelleJour(local),
-    heure: libelleHeure(local),
+    jour: libelleJour(chezMoi(instant)),
+    heure: libelleHeure(instant),
   );
 }
 

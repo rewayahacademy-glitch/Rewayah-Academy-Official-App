@@ -23,6 +23,7 @@ import '../../core/admin/port_planning_direction.dart';
 import '../../core/admin/port_remplacements_direction.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/selecteur_personne.dart';
@@ -129,7 +130,7 @@ class _FeuilleRemplacantEtat extends ConsumerState<FeuilleRemplacant> {
     final TextTheme textes = Theme.of(context).textTheme;
     final r = t.admin.planning.remplacement;
     final String quand = r.quand(
-      jour: libelleJour(widget.seance.debut),
+      jour: libelleJour(chezMoi(widget.seance.debut)),
       horaire: libelleHorairePlanning(widget.seance),
     );
     if (_designe case final String nom) {

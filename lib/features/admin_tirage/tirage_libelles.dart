@@ -4,12 +4,14 @@ library;
 
 import '../../core/controle/port_tirage_controle.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 
 String _deuxChiffres(int n) => n.toString().padLeft(2, '0');
 
 /// « 10/10/2026 à 18:05 », en heure locale.
 String libelleQuandTirage(DateTime date) {
-  final DateTime d = date.toLocal();
+  // HEURES-PROFIL H2 : a l'heure du profil.
+  final DateTime d = chezMoi(date);
   return t.commun.formats.dateHeure(
     date: '${_deuxChiffres(d.day)}/${_deuxChiffres(d.month)}/${d.year}',
     heure: '${_deuxChiffres(d.hour)}:${_deuxChiffres(d.minute)}',

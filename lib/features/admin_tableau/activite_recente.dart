@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/journal/service_journal.dart';
 import '../../core/router/routes.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/carte_lignes.dart';
@@ -45,6 +46,9 @@ class ActiviteRecente extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // HEURES-PROFIL H2 (12/11/2026) : la page ecoute le fuseau du profil ;
+    // quand il arrive apres son premier rendu, ses heures se redessinent.
+    ref.watch(monHorlogeProvider);
     final TextTheme textes = Theme.of(context).textTheme;
     final AsyncValue<List<EntreeJournal>> entrees = ref.watch(
       activiteRecenteProvider,
@@ -69,7 +73,7 @@ class ActiviteRecente extends ConsumerWidget {
                   description: t.admin.tableau.activite.ligne(
                     qui: _qui(e),
                     quand: t.admin.journal.horodatage(
-                      date: _date(e.survenuLe),
+                      date: _date(chezMoi(e.survenuLe)),
                       heure: _heure(e.survenuLe),
                     ),
                   ),
@@ -108,4 +112,5 @@ String _deux(int n) => n.toString().padLeft(2, '0');
 String _date(DateTime quand) =>
     '${_deux(quand.day)}/${_deux(quand.month)}/${quand.year}';
 
-String _heure(DateTime quand) => '${_deux(quand.hour)}:${_deux(quand.minute)}';
+// HEURES-PROFIL H2 : a l'heure du profil.
+String _heure(DateTime quand) => heureChezMoi(quand);

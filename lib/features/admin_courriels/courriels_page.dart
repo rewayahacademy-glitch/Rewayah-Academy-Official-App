@@ -35,6 +35,7 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -415,6 +416,9 @@ class _CourrielsAdminPageState extends ConsumerState<CourrielsAdminPage> {
 
   @override
   Widget build(BuildContext context) {
+    // HEURES-PROFIL H2 (12/11/2026) : la page ecoute le fuseau du profil ;
+    // quand il arrive apres son premier rendu, ses heures se redessinent.
+    ref.watch(monHorlogeProvider);
     final a = t.courriels.admin;
     // Suit le reseau pour que l'etat « sans donnees » se redessine.
     ref.watch(horsLigneProvider);
@@ -768,8 +772,9 @@ class _CourrielsAdminPageState extends ConsumerState<CourrielsAdminPage> {
   }
 }
 
+// HEURES-PROFIL H2 : a l'heure du profil.
 String _dateHeure(DateTime d) =>
-    '${dateDeLAppareil(d)} · ${heureDeLAppareil(d)}';
+    '${dateDeLAppareil(chezMoi(d))} · ${heureChezMoi(d)}';
 
 class _CarteCourriel extends StatelessWidget {
   const _CarteCourriel({

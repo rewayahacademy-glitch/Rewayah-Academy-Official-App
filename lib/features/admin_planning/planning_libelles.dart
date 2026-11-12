@@ -7,14 +7,18 @@ import '../../core/admin/port_planning_direction.dart';
 import '../../core/admin/port_remplacements_direction.dart';
 import '../../core/domain/enums.dart' show StatutSeance;
 import '../../core/i18n/strings.g.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/widgets/pastille_etat_seance.dart' show EtatPastilleSeance;
 import '../admin_regroupements/regroupements_libelles.dart'
     show libelleHeureMinute;
 import '../suivi_foyer/filtres_historique.dart' show dateLongueHistorique;
 
-/// « 18 h » ou « 18 h 30 » : l'heure d'un instant local.
-String libelleHeure(DateTime instant) =>
-    libelleHeureMinute(instant.hour, instant.minute);
+/// « 18 h » ou « 18 h 30 » : l'heure d'un instant, a l'heure du profil
+/// ([chezMoi], HEURES-PROFIL H2, 12/11/2026).
+String libelleHeure(DateTime instant) {
+  final DateTime l = chezMoi(instant);
+  return libelleHeureMinute(l.hour, l.minute);
+}
 
 /// « lundi 12 octobre 2026 » : le jour d'un instant local.
 String libelleJour(DateTime instant) => dateLongueHistorique(instant);

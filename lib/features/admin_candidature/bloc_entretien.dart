@@ -45,6 +45,7 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/router/billet_salle.dart';
 import '../../core/router/routes.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -437,14 +438,8 @@ class _EntretienOuvert extends ConsumerWidget {
           for (final PresenceEntretien p in d.presences)
             _Muet(
               p.arrivee
-                  ? e.entree(
-                      nom: nom(p.profilId),
-                      heure: heureDeLAppareil(p.le.toLocal()),
-                    )
-                  : e.sortie(
-                      nom: nom(p.profilId),
-                      heure: heureDeLAppareil(p.le.toLocal()),
-                    ),
+                  ? e.entree(nom: nom(p.profilId), heure: heureChezMoi(p.le))
+                  : e.sortie(nom: nom(p.profilId), heure: heureChezMoi(p.le)),
             ),
       ];
     } else if (valeur.hasError) {
