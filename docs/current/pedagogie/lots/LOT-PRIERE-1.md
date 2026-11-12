@@ -39,10 +39,12 @@ Branche `claude/priere-serveur`, migration réservée `20261123930000_priere_ser
 9. **Aperçu et « Pause de prière »** : l'écran de l'élève dit « Pause de prière / À HH:MM » (deux lignes) ; la journée de l'enseignant dit « Pause de prière » ; le nom de la prière reste dans « Mes heures de prière ».
 10. **Heures lues dans le fuseau de la personne** par `heureChezMoi` (comme les autres lecteurs), pas dans le fuseau du lieu.
 11. **Pas de nouvel onglet dans Configuration** : un onglet « Prière » décalait la barre de sections et cassait `admin_ad11` (AD-9, politique KYC, 400 % de texte, 1280x1024). La page « Lieux de prière » est donc une page à part (`/admin/configuration/priere`), ouverte par une ligne de la section « La prière » de Règles ; la barre y montre « Règles » comme actif.
+12. **Contrat durci à la demande de l'architecte** : durée en multiple de 5 (CHECK), propriétaire `postgres` explicite, vue non `security_invoker`, droits retirés aussi à `agent_ro`, contrôle final de l'installation ; tests `has_table_privilege`, lecture par une fonction SECURITY DEFINER à `search_path` vide, bornes, tenue avant la fin.
+13. **Fuseau de la classe** : tests avec `Europe/Paris` et `Asia/Riyadh` (schéma stable avec un enseignant sans changement d'heure) ; scénario d'emboîtement avec la migration de la salle (`scenarios_priere_emboitement_salle.sql`, sauté tant qu'elle n'est pas installée).
 
 ## Ce qui reste faux, limité ou non prouvé
 
-- **Aucun test sur staging ni en production.** La migration n'a jamais été appliquée à distance ; la salle n'a pas encore lu le contrat.
+- **Aucun test sur staging ni en production.** La migration n'a jamais été appliquée à distance ; l'emboîtement avec la migration de la salle (branche zealous-tesla, tête 908b59fc) est prouvé en local seulement, sur un Postgres nu.
 - **`pg_cron`** : absent des Postgres de test, donc la planification de nuit n'a pas tourné ; seule la fonction (`priere_recalculer_horizon`) est testée.
 - **Le Ramadan** n'est qu'un booléen posé à la main.
 - **Une prière dont le temps se termine pendant la séance** n'est pas traitée (seule l'entrée l'est).

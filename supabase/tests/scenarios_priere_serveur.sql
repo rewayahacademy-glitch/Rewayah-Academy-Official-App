@@ -830,4 +830,176 @@ SET LOCAL ROLE anon;
 SELECT pg_temp.vrai(pg_temp.refuse($q$SELECT * FROM public.priere_enseignants_liste()$q$), 'anonyme : liste refusee');
 RESET ROLE;
 
+-- ===========================================================================
+-- 8. Le contrat de la salle : droits, proprietaire, lecture par une fonction
+--    SECURITY DEFINER, bornes de duree, tenue avant la fin, fuseau de la classe
+-- ===========================================================================
+-- Le lieu de T1 est rendu (la section 7 l'a retire) : la seance 11 reprend sa pause.
+SELECT pg_temp.en_tant_que('9e000000-0000-4000-8000-000000000010', 'admin');
+SELECT public.priere_lieu_definir('9e000000-0000-4000-8000-000000000001', 'Conakry', 9.6412, -13.5784, 'Africa/Conakry');
+SELECT pg_temp.personne();
+SELECT pg_temp.vrai(EXISTS (SELECT 1 FROM public.seance_pause_prevue WHERE session_id = '9e0000e0-0000-4000-8000-000000000011'),
+  'contrat : la seance 11 reprend sa pause quand le lieu est rendu');
+
+-- (1) Aucun droit direct : ni PUBLIC, ni anon, ni authenticated, ni service_role, ni agent_ro.
+SELECT pg_temp.vrai(NOT EXISTS (
+    SELECT 1
+      FROM (VALUES ('public.seance_pause_prevue'), ('public.seance_pause_prevue_stock')) r(rel),
+           (SELECT rolname FROM pg_roles WHERE rolname IN ('anon', 'authenticated', 'service_role', 'agent_ro')) ro,
+           (VALUES ('SELECT'), ('INSERT'), ('UPDATE'), ('DELETE'), ('TRUNCATE'), ('REFERENCES'), ('TRIGGER')) d(priv)
+     WHERE pg_catalog.has_table_privilege(ro.rolname, r.rel, d.priv)),
+  'contrat : has_table_privilege faux, pour anon, authenticated, service_role et agent_ro, sur la vue ET sur le stock, quel que soit le droit');
+SELECT pg_temp.vrai(NOT EXISTS (
+    SELECT 1
+      FROM pg_class c, LATERAL pg_catalog.aclexplode(c.relacl) a
+     WHERE c.oid IN ('public.seance_pause_prevue'::regclass, 'public.seance_pause_prevue_stock'::regclass)
+       AND a.grantee <> c.relowner),
+  'contrat : aucune ligne d''ACL autre que celle du proprietaire (donc rien pour PUBLIC)');
+SELECT pg_temp.vrai((SELECT count(*) FROM pg_class
+                      WHERE oid IN ('public.seance_pause_prevue'::regclass, 'public.seance_pause_prevue_stock'::regclass)
+                        AND relacl IS NOT NULL) = 2,
+  'contrat : les deux objets portent une ACL explicite (pas le defaut)');
+
+-- (2) Proprietaire, security_invoker, RLS du stock.
+SELECT pg_temp.vrai((SELECT pg_get_userbyid(relowner) = 'postgres' FROM pg_class WHERE oid = 'public.seance_pause_prevue'::regclass)
+                    AND (SELECT pg_get_userbyid(relowner) = 'postgres' FROM pg_class WHERE oid = 'public.seance_pause_prevue_stock'::regclass),
+  'contrat : la vue et le stock appartiennent a postgres');
+SELECT pg_temp.vrai((SELECT NOT ('security_invoker=true' = ANY (coalesce(reloptions, ARRAY[]::text[])))
+                       FROM pg_class WHERE oid = 'public.seance_pause_prevue'::regclass),
+  'contrat : la vue n''est pas security_invoker (elle lit avec les droits de postgres, sans droit pour personne d''autre)');
+SELECT pg_temp.vrai((SELECT relrowsecurity FROM pg_class WHERE oid = 'public.seance_pause_prevue_stock'::regclass)
+                    AND (SELECT count(*) FROM pg_policy WHERE polrelid = 'public.seance_pause_prevue_stock'::regclass) = 0,
+  'contrat : le stock a la RLS et aucune politique : personne d''autre que le proprietaire ne passe');
+SELECT pg_temp.vrai((SELECT count(*) FROM information_schema.view_table_usage
+                      WHERE view_name = 'seance_pause_prevue' AND view_schema = 'public') >= 1
+                    AND (SELECT count(*) FROM (SELECT session_id FROM public.seance_pause_prevue GROUP BY session_id HAVING count(*) > 1) q) = 0,
+  'contrat : la vue lit le stock, au plus une ligne par seance');
+
+-- (3) Une fonction SECURITY DEFINER a search_path vide, proprietaire postgres, lit la ligne
+--     avec la requete exacte du declencheur de la salle ; l'appelant, lui, n'a aucun droit.
+CREATE FUNCTION public.zz_salle_lit_pause(p_session uuid)
+RETURNS TABLE (debut_prevu_utc timestamptz, duree_minutes integer, motif text)
+LANGUAGE plpgsql SECURITY DEFINER SET search_path = '' AS $$
+BEGIN
+  RETURN QUERY
+    SELECT p.debut_prevu_utc, p.duree_minutes, p.motif
+      FROM public.seance_pause_prevue p
+     WHERE p.session_id = p_session
+     ORDER BY p.debut_prevu_utc LIMIT 1;
+END $$;
+ALTER FUNCTION public.zz_salle_lit_pause(uuid) OWNER TO postgres;
+REVOKE ALL ON FUNCTION public.zz_salle_lit_pause(uuid) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.zz_salle_lit_pause(uuid) TO authenticated;
+SELECT pg_temp.en_tant_que('9e000000-0000-4000-8000-000000000020', 'student', '9e0000f1-0000-4000-8000-000000000001');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai((SELECT count(*) = 1 AND bool_and(duree_minutes = 10 AND motif = 'priere')
+                       FROM public.zz_salle_lit_pause('9e0000e0-0000-4000-8000-000000000011')),
+  'salle : une fonction SECURITY DEFINER a search_path vide lit la ligne (heure, duree 10, motif priere)');
+SELECT pg_temp.vrai(pg_temp.refuse($q$SELECT * FROM public.seance_pause_prevue$q$)
+                    AND pg_temp.refuse($q$SELECT * FROM public.seance_pause_prevue_stock$q$),
+  'salle : le meme appelant, sans la fonction, ne lit ni la vue ni le stock');
+RESET ROLE;
+SELECT pg_temp.personne();
+SELECT pg_temp.vrai((SELECT z.debut_prevu_utc = p.debut_prevu_utc AND z.duree_minutes = p.duree_minutes AND z.motif = p.motif
+                       FROM public.zz_salle_lit_pause('9e0000e0-0000-4000-8000-000000000011') z,
+                            public.seance_pause_prevue p
+                      WHERE p.session_id = '9e0000e0-0000-4000-8000-000000000011'),
+  'salle : la ligne lue est celle de la vue');
+
+-- (4) Durees : 5, 10, 15 ou 20 seulement, au stockage comme dans les reglages.
+SELECT pg_temp.vrai(pg_temp.refuse($q$INSERT INTO public.seance_pause_prevue_stock (session_id, debut_prevu_utc, duree_minutes, motif, priere)
+  VALUES (gen_random_uuid(), now(), 7, 'priere', 'asr')$q$), 'stock : 7 minutes refuse');
+SELECT pg_temp.vrai(pg_temp.refuse($q$INSERT INTO public.seance_pause_prevue_stock (session_id, debut_prevu_utc, duree_minutes, motif, priere)
+  VALUES (gen_random_uuid(), now(), 12, 'priere', 'asr')$q$), 'stock : 12 minutes refuse');
+SELECT pg_temp.vrai(pg_temp.refuse($q$INSERT INTO public.seance_pause_prevue_stock (session_id, debut_prevu_utc, duree_minutes, motif, priere)
+  VALUES (gen_random_uuid(), now(), 25, 'priere', 'asr')$q$), 'stock : 25 minutes refuse (borne haute 20)');
+SELECT pg_temp.vrai(pg_temp.refuse($q$INSERT INTO public.seance_pause_prevue_stock (session_id, debut_prevu_utc, duree_minutes, motif, priere)
+  VALUES (gen_random_uuid(), now(), 0, 'priere', 'asr')$q$), 'stock : 0 minute refuse');
+SELECT pg_temp.vrai((SELECT bool_and(duree_minutes IN (5, 10, 15, 20)) FROM public.seance_pause_prevue_stock WHERE retiree_le IS NULL),
+  'stock : toutes les durees calculees sont 5, 10, 15 ou 20');
+SELECT pg_temp.vrai(pg_temp.refuse($q$UPDATE public.app_config SET value = '12'::jsonb WHERE key = 'priere.pause_minutes'$q$)
+                    AND pg_temp.refuse($q$UPDATE public.app_config SET value = '25'::jsonb WHERE key = 'priere.pause_ramadan_maghrib_minutes'$q$)
+                    AND pg_temp.refuse($q$UPDATE public.app_config SET value = '3'::jsonb WHERE key = 'priere.pause_ramadan_maghrib_minutes'$q$),
+  'reglages : 12, 25 et 3 minutes refuses (bornes 5 a 20, pas de 5)');
+
+-- (5) La pause entiere tient avant la fin prevue : entree 16 minutes avant la fin avec une
+--     pause de 20 minutes (Ramadan) : aucune ligne ; avec 10 minutes : aucune non plus (zone de fin).
+CREATE TEMP TABLE h_conakry_20 AS
+  SELECT priere, instant_utc FROM private.priere_calculer(9.6412, -13.5784, DATE '2027-01-20',
+                                  'muslim_world_league', 'shafi', '{}');
+INSERT INTO public.sessions (id, teacher_id, started_at, ended_at, status, session_type, groupe_id)
+SELECT '9e0000e0-0000-4000-8000-000000000061', '9e000000-0000-4000-8000-000000000001',
+       instant_utc - interval '74 minutes', instant_utc + interval '16 minutes', 'planned', 'standard',
+       '9e0000c0-0000-4000-8000-000000000001'
+  FROM h_conakry_20 WHERE priere = 'maghrib';
+UPDATE public.app_config SET value = 'true'::jsonb WHERE key = 'priere.ramadan_en_cours';
+SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM public.seance_pause_prevue WHERE session_id = '9e0000e0-0000-4000-8000-000000000061'),
+  'pause de 20 minutes, priere 16 minutes avant la fin : aucune ligne (elle depasserait)');
+UPDATE public.app_config SET value = 'false'::jsonb WHERE key = 'priere.ramadan_en_cours';
+SELECT pg_temp.vrai((SELECT p.duree_minutes = 10
+                            AND p.debut_prevu_utc + interval '10 minutes' <= x.ended_at
+                       FROM public.seance_pause_prevue p JOIN public.sessions x ON x.id = p.session_id
+                      WHERE p.session_id = '9e0000e0-0000-4000-8000-000000000061'),
+  'pause de 10 minutes, priere 16 minutes avant la fin : la pause tient (elle finit 6 minutes avant la fin), une ligne');
+-- Invariant sur toutes les lignes du contrat, en Ramadan comme hors Ramadan.
+SELECT pg_temp.vrai((SELECT bool_and(p.debut_prevu_utc >= s.started_at
+                                     AND p.debut_prevu_utc + make_interval(mins => p.duree_minutes) <= s.ended_at)
+                       FROM public.seance_pause_prevue p JOIN public.sessions s ON s.id = p.session_id)
+                    AND (SELECT count(*) FROM public.seance_pause_prevue) >= 4,
+  'toutes les lignes : debut >= debut prevu et debut + duree <= fin prevue (hors Ramadan)');
+UPDATE public.app_config SET value = 'true'::jsonb WHERE key = 'priere.ramadan_en_cours';
+SELECT pg_temp.vrai((SELECT bool_and(p.debut_prevu_utc >= s.started_at
+                                     AND p.debut_prevu_utc + make_interval(mins => p.duree_minutes) <= s.ended_at)
+                       FROM public.seance_pause_prevue p JOIN public.sessions s ON s.id = p.session_id),
+  'toutes les lignes : meme invariant en Ramadan (20 minutes)');
+UPDATE public.app_config SET value = 'false'::jsonb WHERE key = 'priere.ramadan_en_cours';
+
+-- (6) Le fuseau de la classe ne compte pas : seul l'instant reel de la seance et le lieu
+--     de l'enseignant qui enseigne. Une classe en Asia/Riyadh (mardi 21 h = 18 h UTC).
+CREATE TEMP TABLE h_conakry_21 AS
+  SELECT priere, instant_utc FROM private.priere_calculer(9.6412, -13.5784, DATE '2027-01-21',
+                                  'muslim_world_league', 'shafi', '{}');
+INSERT INTO public.groupes (id, teacher_id, type_public, seuil_max, libelle, weekday, hour_local, timezone_iana, genre_public)
+VALUES ('9e0000c0-0000-4000-8000-000000000006', '9e000000-0000-4000-8000-000000000001', 'enfant', 5,
+        'PRI classe Riyadh', 2, 21, 'Asia/Riyadh', 'indetermine');
+INSERT INTO public.sessions (id, teacher_id, started_at, ended_at, status, session_type, groupe_id)
+SELECT '9e0000e0-0000-4000-8000-000000000062', '9e000000-0000-4000-8000-000000000001',
+       instant_utc - interval '25 minutes', instant_utc + interval '35 minutes', 'planned', 'standard',
+       '9e0000c0-0000-4000-8000-000000000006'
+  FROM h_conakry_21 WHERE priere = 'maghrib';
+SELECT pg_temp.vrai((SELECT p.debut_prevu_utc = h.instant_utc AND p.duree_minutes = 10 AND p.priere = 'maghrib'
+                       FROM public.seance_pause_prevue p, h_conakry_21 h
+                      WHERE p.session_id = '9e0000e0-0000-4000-8000-000000000062' AND h.priere = 'maghrib'),
+  'classe en Asia/Riyadh : la pause est a l''entree du Maghrib de l''enseignant, comme pour une classe de Paris');
+
+-- Croisements sur 12 mois, classe en Asia/Riyadh, enseignant a Conakry (pas de changement d'heure).
+-- Mercredi (isodow 3) 10 h Riyadh = 07 h UTC : aucune priere, toute l'annee (schema stable).
+CREATE TEMP TABLE lecture_riyadh AS
+  SELECT private.priere_lecture_creneau('9e000000-0000-4000-8000-000000000001', 3, 10, 'Asia/Riyadh', 60) AS j;
+SELECT pg_temp.vrai((SELECT (j ->> 'seances')::int BETWEEN 51 AND 54 AND NOT (j ->> 'sans_lieu')::boolean
+                            AND jsonb_array_length(j -> 'croisements') = 0
+                       FROM lecture_riyadh),
+  'Asia/Riyadh, Conakry : le creneau de 10 h (07 h UTC) ne croise rien, toute l''annee');
+SELECT pg_temp.vrai(10 = ANY (private.priere_heures_sans_priere('9e000000-0000-4000-8000-000000000001', 3, 'Asia/Riyadh', 60)),
+  'Asia/Riyadh, Conakry : 10 h figure dans les heures sans priere');
+-- Le meme instant, deux fuseaux : mercredi 10 h Riyadh = 08 h Paris l'hiver. Meme lecture, jour par jour.
+SELECT pg_temp.vrai((SELECT count(*) > 10 AND bool_and(a.zone IS NOT DISTINCT FROM b.zone AND a.priere IS NOT DISTINCT FROM b.priere)
+                       FROM private.priere_projection('9e000000-0000-4000-8000-000000000001', 3, 10, 'Asia/Riyadh', 60) a
+                       JOIN private.priere_projection('9e000000-0000-4000-8000-000000000001', 3, 8, 'Europe/Paris', 60) b
+                         ON b.jour_local = a.jour_local
+                      WHERE a.jour_local < DATE '2027-03-01' OR a.jour_local > DATE '2027-11-15'),
+  'meme instant reel (10 h Riyadh = 8 h Paris l''hiver) : la meme lecture, jour par jour, dans les deux fuseaux');
+-- Mardi 21 h Riyadh = 18 h UTC, 60 minutes : le Maghrib de Conakry (18 h 10 a 18 h 55 UTC) croise
+-- le creneau toute l'annee ; un creneau de Paris a l'heure equivalente l'hiver n'a pas ce schema.
+SELECT pg_temp.vrai((SELECT count(*) > 50 AND bool_and(priere = 'maghrib')
+                       FROM private.priere_projection('9e000000-0000-4000-8000-000000000001', 2, 21, 'Asia/Riyadh', 60)),
+  'Asia/Riyadh, Conakry : le creneau de 21 h croise le Maghrib a chaque seance de l''annee (schema stable)');
+SELECT pg_temp.vrai((SELECT count(*) FROM private.priere_projection('9e000000-0000-4000-8000-000000000001', 2, 19, 'Europe/Paris', 60)
+                      WHERE priere IS NULL) > 0,
+  'meme creneau en Europe/Paris (19 h) : des seances d''ete ne croisent rien, le schema change avec l''heure d''ete');
+-- Un enseignant a Paris (avec changement d'heure) et une classe en Asia/Riyadh : le calcul part de
+-- l'instant reel, jamais de l'idee que le fuseau de la classe serait celui de l'enseignant.
+SELECT pg_temp.vrai((SELECT count(*) > 50 FROM private.priere_projection('9e000000-0000-4000-8000-000000000002', 2, 20, 'Asia/Riyadh', 60)),
+  'enseignant a Paris, classe en Asia/Riyadh : la projection couvre toute l''annee');
+
 ROLLBACK;

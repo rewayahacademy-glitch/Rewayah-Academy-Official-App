@@ -32,7 +32,8 @@
 CREATE TABLE public.seance_pause_prevue_stock (
   session_id uuid PRIMARY KEY,
   debut_prevu_utc timestamptz,
-  duree_minutes integer CHECK (duree_minutes BETWEEN 5 AND 20),
+  -- 5, 10, 15 ou 20 : le contrat de la salle ignore toute autre duree.
+  duree_minutes integer CHECK (duree_minutes BETWEEN 5 AND 20 AND duree_minutes % 5 = 0),
   motif text CHECK (motif = 'priere'),
   priere text CHECK (priere IN ('fajr', 'dhuhr', 'asr', 'maghrib', 'isha')),
   calcule_le timestamptz NOT NULL DEFAULT pg_catalog.now(),
@@ -50,6 +51,10 @@ COMMENT ON TABLE public.seance_pause_prevue_stock IS
 
 ALTER TABLE public.seance_pause_prevue_stock ENABLE ROW LEVEL SECURITY;
 REVOKE ALL ON public.seance_pause_prevue_stock FROM PUBLIC, anon, authenticated, service_role;
+-- Proprietaire : postgres (le role qui joue les migrations). RLS active, sans
+-- aucune politique et sans FORCE : seul le proprietaire lit ou ecrit le stock,
+-- et il le fait par les fonctions SECURITY DEFINER de ce fichier.
+ALTER TABLE public.seance_pause_prevue_stock OWNER TO postgres;
 
 -- Le contrat, tel que la salle le lit : une ligne quand une priere entre
 -- pendant la seance, aucune sinon. Aucun droit direct.
@@ -68,6 +73,24 @@ COMMENT ON VIEW public.seance_pause_prevue IS
   'PRIERE-1, contrat avec la salle : la pause de priere prevue d''une seance. Aucune ligne quand aucune priere n''entre pendant la seance. Remplie par le serveur ; aucun droit direct ; lecture client par pause_prevue_seance(uuid).';
 
 REVOKE ALL ON public.seance_pause_prevue FROM PUBLIC, anon, authenticated, service_role;
+-- La vue appartient a postgres et n'est PAS `security_invoker` : elle lit le stock
+-- avec les droits de son proprietaire. Cela n'ouvre aucune porte derobee autour
+-- de la RLS du stock parce qu'aucun role de l'application (PUBLIC, anon,
+-- authenticated, service_role, agent_ro) n'a de droit sur la vue ni sur le
+-- stock : le controle final de ce fichier et le scenario (has_table_privilege,
+-- liste des droits) le prouvent. Seules des fonctions SECURITY DEFINER
+-- proprietaires de postgres la traversent : pause_prevue_seance, qui decide QUI
+-- lit, et le declencheur de la salle, qui ne sert que le demarrage d'une seance.
+ALTER VIEW public.seance_pause_prevue OWNER TO postgres;
+ALTER VIEW public.seance_pause_prevue SET (security_invoker = false);
+DO $acl$
+BEGIN
+  IF EXISTS (SELECT 1 FROM pg_catalog.pg_roles WHERE rolname = 'agent_ro') THEN
+    EXECUTE 'REVOKE ALL ON public.seance_pause_prevue FROM agent_ro';
+    EXECUTE 'REVOKE ALL ON public.seance_pause_prevue_stock FROM agent_ro';
+  END IF;
+END
+$acl$;
 
 -- Lecture : la direction, l'enseignant qui enseigne reellement (titulaire, ou
 -- remplacant accepte), les eleves de la classe et leur foyer. Jamais un lieu :
@@ -1821,6 +1844,22 @@ BEGIN
      OR pg_catalog.has_table_privilege('authenticated', 'public.prayer_settings', 'UPDATE')
      OR pg_catalog.has_table_privilege('authenticated', 'public.prayer_settings', 'INSERT') THEN
     RAISE EXCEPTION 'PRIERE-1 : un droit direct reste ouvert';
+  END IF;
+
+  -- Le contrat de la salle : proprietaire postgres, vue sans security_invoker,
+  -- aucun droit pour personne d'autre que le proprietaire.
+  IF EXISTS (SELECT 1
+               FROM pg_catalog.pg_class c
+               JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
+              WHERE n.nspname = 'public'
+                AND c.relname IN ('seance_pause_prevue', 'seance_pause_prevue_stock')
+                AND (pg_catalog.pg_get_userbyid(c.relowner) <> 'postgres'
+                     OR EXISTS (SELECT 1
+                                  FROM pg_catalog.aclexplode(c.relacl) a
+                                 WHERE a.grantee <> c.relowner)
+                     OR (c.relkind = 'v'
+                         AND 'security_invoker=true' = ANY (coalesce(c.reloptions, ARRAY[]::text[]))))) THEN
+    RAISE EXCEPTION 'PRIERE-1 : proprietaire ou droits de la vue du contrat inattendus';
   END IF;
 END;
 $postflight$;
