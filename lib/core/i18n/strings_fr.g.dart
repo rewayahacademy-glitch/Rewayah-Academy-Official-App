@@ -4010,14 +4010,44 @@ class Traductions$cahierSourates$fr {
 	/// fr: 'Sourates récitées'
 	String get titre => 'Sourates récitées';
 
-	/// fr: 'Cochez une sourate seulement si cet élève l'a récitée de mémoire, sans erreur de mot. Une sourate cochée est validée et le reste.'
-	String get aide => 'Cochez une sourate seulement si cet élève l\'a récitée de mémoire, sans erreur de mot. Une sourate cochée est validée et le reste.';
+	/// fr: 'Cochez une sourate seulement si cet élève l'a récitée de mémoire, sans erreur de mot. Une sourate cochée est validée.'
+	String get aide => 'Cochez une sourate seulement si cet élève l\'a récitée de mémoire, sans erreur de mot. Une sourate cochée est validée.';
 
 	/// fr: 'Sourates des bases déjà validées : {n} sur {total}'
 	String dejaValidees({required Object n, required Object total}) => 'Sourates des bases déjà validées : ${n} sur ${total}';
 
 	/// fr: 'Toutes les sourates des bases sont validées.'
 	String get toutes => 'Toutes les sourates des bases sont validées.';
+
+	/// fr: 'Cochée par erreur ?'
+	String get retirerTitre => 'Cochée par erreur ?';
+
+	/// fr: 'Une sourate que vous avez validée se retire pendant 24 heures.'
+	String get retirerAide => 'Une sourate que vous avez validée se retire pendant 24 heures.';
+
+	/// fr: 'Retirer'
+	String get retirer => 'Retirer';
+
+	/// fr: 'Retirer {nom} des sourates validées'
+	String retirerLibelle({required Object nom}) => 'Retirer ${nom} des sourates validées';
+
+	/// fr: 'Retirer {nom} des sourates validées ?'
+	String retirerQuestion({required Object nom}) => 'Retirer ${nom} des sourates validées ?';
+
+	/// fr: 'Elle ne comptera plus comme validée pour cet élève.'
+	String get retirerConsequence => 'Elle ne comptera plus comme validée pour cet élève.';
+
+	/// fr: 'Motif (facultatif)'
+	String get retirerMotif => 'Motif (facultatif)';
+
+	/// fr: '{nom} n'est plus validée.'
+	String retirerFait({required Object nom}) => '${nom} n\'est plus validée.';
+
+	/// fr: 'Le délai de 24 heures est passé : seule la direction peut encore la retirer.'
+	String get retirerRefus => 'Le délai de 24 heures est passé : seule la direction peut encore la retirer.';
+
+	/// fr: 'La sourate n'a pas été retirée. Réessayez.'
+	String get retirerEchec => 'La sourate n\'a pas été retirée. Réessayez.';
 }
 
 // Path: accueilHoraire
@@ -60489,9 +60519,19 @@ extension on Traductions {
 			'cahierC3.pretBilan' => 'Prêt pour le petit bilan',
 			'cahierC3.pretBilanDetail' => 'L\'administration planifie le petit bilan ; rien n\'est automatique.',
 			'cahierSourates.titre' => 'Sourates récitées',
-			'cahierSourates.aide' => 'Cochez une sourate seulement si cet élève l\'a récitée de mémoire, sans erreur de mot. Une sourate cochée est validée et le reste.',
+			'cahierSourates.aide' => 'Cochez une sourate seulement si cet élève l\'a récitée de mémoire, sans erreur de mot. Une sourate cochée est validée.',
 			'cahierSourates.dejaValidees' => ({required Object n, required Object total}) => 'Sourates des bases déjà validées : ${n} sur ${total}',
 			'cahierSourates.toutes' => 'Toutes les sourates des bases sont validées.',
+			'cahierSourates.retirerTitre' => 'Cochée par erreur ?',
+			'cahierSourates.retirerAide' => 'Une sourate que vous avez validée se retire pendant 24 heures.',
+			'cahierSourates.retirer' => 'Retirer',
+			'cahierSourates.retirerLibelle' => ({required Object nom}) => 'Retirer ${nom} des sourates validées',
+			'cahierSourates.retirerQuestion' => ({required Object nom}) => 'Retirer ${nom} des sourates validées ?',
+			'cahierSourates.retirerConsequence' => 'Elle ne comptera plus comme validée pour cet élève.',
+			'cahierSourates.retirerMotif' => 'Motif (facultatif)',
+			'cahierSourates.retirerFait' => ({required Object nom}) => '${nom} n\'est plus validée.',
+			'cahierSourates.retirerRefus' => 'Le délai de 24 heures est passé : seule la direction peut encore la retirer.',
+			'cahierSourates.retirerEchec' => 'La sourate n\'a pas été retirée. Réessayez.',
 			'accueilHoraire.demandeTitre' => 'Demande enregistrée',
 			'accueilHoraire.demandeDetail' => ({required Object prenom}) => 'Nous vous prévenons dès qu\'un horaire ouvre pour ${prenom}.',
 			'accueilHoraire.erreurEnvoi' => 'Votre demande n\'a pas été confirmée. Réessayez dans un instant.',
@@ -60668,6 +60708,8 @@ extension on Traductions {
 			'candidatsFlux.importFormulaires.controle.ignorees.aide' => 'Lignes vides ou répétées à l\'identique.',
 			'candidatsFlux.importFormulaires.controle.ligne' => ({required Object ligne, required Object motif}) => 'Ligne ${ligne} : ${motif}',
 			'candidatsFlux.importFormulaires.controle.plus' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Voir ${n} ligne de plus', other: 'Voir ${n} lignes de plus', ), 
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.motif.ligneVide' => 'ligne vide',
 			'candidatsFlux.importFormulaires.motif.horodatageIllisible' => 'la date de la réponse est illisible',
 			'candidatsFlux.importFormulaires.motif.genreIllisible' => 'le genre n\'est pas reconnu',
@@ -60678,8 +60720,6 @@ extension on Traductions {
 			'candidatsFlux.importFormulaires.motif.genreChangeSurLigneSuivie' => 'le genre a changé alors que la personne est suivie : il fixe son côté',
 			'candidatsFlux.importFormulaires.motif.inscription1210' => 'déjà connue par l\'import des inscriptions',
 			'candidatsFlux.importFormulaires.motif.inconnu' => 'un point est à vérifier dans cette ligne',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.avertissement.telephoneIllisible' => 'le téléphone est illisible',
 			'candidatsFlux.importFormulaires.avertissement.formatNational' => 'le téléphone n\'a pas l\'indicatif du pays',
 			'candidatsFlux.importFormulaires.avertissement.indicatifInconnu' => 'l\'indicatif du téléphone est inconnu',
