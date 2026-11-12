@@ -15,6 +15,9 @@
 --   4. etapes_eleves_classe rend toujours la meme chose (source unique).
 -- Echoue sans la migration (premier ROUGE : la fonction n'existe pas).
 -- Tout est annule a la fin.
+-- Adapte par SOCLE-PROGRAMME (12/11/2026) : la decision cree le fait unique « etape en
+-- cours » ; la date limite est celle du niveau, sur les etapes restantes (etape 2 en 6-9 ans :
+-- reperes 19 + 10 + 9 = 38 semaines) ; e5 est decide il y a 40 semaines pour depasser.
 \o /dev/null
 BEGIN;
 SET CONSTRAINTS ALL IMMEDIATE;
@@ -111,11 +114,11 @@ UPDATE public.groupes SET programme_niveau_id = (SELECT id FROM se_ids WHERE cle
 INSERT INTO public.progression_historique (student_id, niveau_id, type_mouvement, decide_par, motif, created_at)
 SELECT pg_temp.u(x.e), (SELECT id FROM se_ids WHERE cle = 'n2'), 'diagnostic_initial', pg_temp.u('a1'),
        'Diagnostic', pg_catalog.now() - x.semaines * interval '1 week' - interval '1 hour'
-  FROM (VALUES ('e1', 5), ('e4', 16), ('e5', 20)) AS x(e, semaines);
+  FROM (VALUES ('e1', 5), ('e4', 16), ('e5', 40)) AS x(e, semaines);
 SELECT pg_temp.vrai(
-  (SELECT (n.durees -> 'enfant_6_9' ->> 'prevue')::int = 14 AND (n.durees -> 'enfant_6_9' ->> 'limite')::int = 18
+  (SELECT (n.durees -> 'enfant_6_9' ->> 'prevue')::int = 14 AND (n.durees -> 'enfant_6_9' ->> 'limite')::int = 19
      FROM public.programme_niveaux n WHERE n.id = (SELECT id FROM se_ids WHERE cle = 'n2')),
-  'fixture : etape 2, 14 semaines prevues, date limite a 18 (6-9 ans)');
+  'fixture : etape 2, 14 semaines prevues, repere de 19 semaines (6-9 ans)');
 
 -- ------------------------------------------------------------------
 -- 1. La vitesse, calculee en base
@@ -125,10 +128,10 @@ SET LOCAL ROLE authenticated;
 SELECT pg_temp.vrai(
   (SELECT s.etape_ordre = 2 AND s.duree_prevue_semaines = 14 AND s.semaines_ecoulees = 5
           AND s.rythme = 'dans_les_temps'
-          AND s.date_limite = (s.depuis + interval '18 weeks')::date
+          AND s.date_limite = (s.depuis + interval '38 weeks')::date
           AND pg_catalog.cardinality(s.objectifs) BETWEEN 3 AND 5
      FROM public.suivi_pedagogique_eleve(pg_temp.u('e1')) s),
-  'eleve e1, 5 semaines sur 14 prevues : dans_les_temps, date limite a 18 semaines');
+  'eleve e1, 5 semaines sur 14 prevues : dans_les_temps, date limite du niveau a 38 semaines de sa decision');
 SELECT pg_temp.vrai(
   pg_temp.essai(pg_catalog.format('SELECT * FROM public.suivi_pedagogique_eleve(%L)', pg_temp.u('e4'))) = 'refus',
   'eleve e1 : le suivi d''un autre eleve, meme du foyer, est refuse');
@@ -147,7 +150,7 @@ SET LOCAL ROLE authenticated;
 SELECT pg_temp.vrai(
   (SELECT s.rythme = 'date_limite_depassee' AND s.date_limite < pg_catalog.now()::date
      FROM public.suivi_pedagogique_eleve(pg_temp.u('e5')) s),
-  'eleve e5, 20 semaines : date_limite_depassee');
+  'eleve e5, 40 semaines : date_limite_depassee');
 RESET ROLE;
 
 SELECT pg_temp.qui(pg_temp.u('e2'), 'student', pg_temp.u('f1'));
@@ -230,8 +233,8 @@ SELECT pg_temp.vrai(
 -- Source unique : etapes_eleves_classe rend la meme etape et la meme date.
 SELECT pg_temp.vrai(
   (SELECT pg_catalog.count(*) FROM public.etapes_eleves_classe(pg_temp.u('c1'))) = 5
-  AND (SELECT e.etape_ordre = 2 AND e.duree_prevue_semaines = 14 AND e.date_limite_semaines = 18
-              AND e.date_limite = (e.depuis + interval '18 weeks')::date
+  AND (SELECT e.etape_ordre = 2 AND e.duree_prevue_semaines = 14 AND e.date_limite_semaines = 48
+              AND e.date_limite = (e.depuis + interval '38 weeks')::date
          FROM public.etapes_eleves_classe(pg_temp.u('c1')) e WHERE e.student_id = pg_temp.u('e1'))
   AND (SELECT e.etape_ordre = 1 AND e.depuis IS NULL AND e.date_limite IS NULL
          FROM public.etapes_eleves_classe(pg_temp.u('c1')) e WHERE e.student_id = pg_temp.u('e2')),
