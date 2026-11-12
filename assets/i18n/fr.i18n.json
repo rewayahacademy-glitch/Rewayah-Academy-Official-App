@@ -7643,6 +7643,7 @@
         "langue": "Langue de l'interface",
         "fuseau": "Fuseau des séances",
         "fuseauIndisponible": "Non chargé",
+        "fuseauAppareil": "Heure de cet appareil",
         "note": "Ces informations sont tenues par l'académie. Elles ne se modifient pas encore depuis l'application."
       },
       "pageSecurite": {

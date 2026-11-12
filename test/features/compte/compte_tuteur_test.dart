@@ -20,6 +20,8 @@ import 'package:rewayah_academy/core/preferences/preferences_locales.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
+import 'package:rewayah_academy/core/tc_horloge/fuseaux_interlocuteurs.dart';
+import 'package:rewayah_academy/core/tc_horloge/mon_horloge.dart';
 import 'package:rewayah_academy/core/version/ligne_version.dart';
 import 'package:rewayah_academy/core/widgets/entete_compte.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
@@ -556,12 +558,26 @@ void main() {
       expect(find.textContaining('@'), findsNothing);
     });
 
-    testWidgets('Informations : lecture seule, fuseau des seances', (
+    testWidgets('Informations : lecture seule, fuseau du profil', (
       WidgetTester tester,
     ) async {
+      // COMPTE-ENSEIGNANT-IDENTITE (garde-cap, 12/11/2026) : le fuseau vient
+      // de `mon_horloge` (fuseau du profil, sans repli sur Paris), plus de
+      // `mon_fuseau`.
       await monterCompte(
         tester,
         depart: Routes.compteTuteurSousPage('informations'),
+        surcharges: <Override>[
+          monHorlogeProvider.overrideWith(
+            (Ref _) async => MonHorloge(
+              maintenantServeur: DateTime.utc(2026, 11, 12, 9),
+              moi: const FuseauVu(
+                fuseau: 'Europe/Paris',
+                decalage: Duration(hours: 1),
+              ),
+            ),
+          ),
+        ],
       );
       expect(_texte('Titulaire A'), findsOneWidget);
       expect(_texte('Foyer A'), findsOneWidget);

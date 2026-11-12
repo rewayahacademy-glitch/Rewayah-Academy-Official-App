@@ -546,6 +546,17 @@ abstract final class Routes {
   /// Profil de l'enseignant.
   static const String enseignantProfil = '/enseignant/profil';
 
+  /// Les informations personnelles du titulaire du compte, ouvertes depuis
+  /// le Compte de l'enseignant (COMPTE-ENSEIGNANT-IDENTITE, 12/11/2026) : la
+  /// page commune au tuteur, dans la branche Profil.
+  static const String enseignantProfilInformations =
+      '$enseignantProfil/informations';
+
+  /// Connexion et securite du titulaire, depuis le Compte de l'enseignant
+  /// (meme lot) : la page commune au tuteur. La double verification reste a
+  /// [compteSecurite].
+  static const String enseignantProfilSecurite = '$enseignantProfil/securite';
+
   /// Mes revenus (FI-10, guide Finance V4 §4 et §5.5) : l'estimation du mois,
   /// atteinte depuis le Profil (le Compte de l'enseignant), dans sa branche.
   static const String enseignantRevenus = '/enseignant/revenus';
