@@ -44,7 +44,6 @@ import 'package:rewayah_academy/features/controleur/observation_controle.dart';
 import 'package:rewayah_academy/features/controleur/observation_controle_page.dart';
 
 import '../capture/outil_capture.dart';
-import '../support/demo/adulte_demo.dart';
 import '../support/demo/classe_demo.dart';
 import '../support/demo/demo_adulte_page.dart';
 import '../support/demo/demo_classe_page.dart';
@@ -397,26 +396,6 @@ void main() {
         precedent: 'enseignant',
         suivant: '.',
       );
-    });
-
-    testWidgets('Ma classe : la ligne de progression est isolee en arabe '
-        '($cas)', (WidgetTester tester) async {
-      await _monterRoutes(
-        tester,
-        langue,
-        adresseDemoAdulte(EcranDemoAdulte.maClasse),
-        routesDemoAdulte('dev'),
-      );
-      final String ligne = DonneesAdulteDemo.ligneProgressionClasse;
-      expect(ligne, 'Chapitre 1 · Page 24');
-      final RenderParagraph p = _paragraphe(tester, ligne);
-      // L'ordre visuel d'une ligne toute latine ne change pas : le texte
-      // rendu porte l'isolat en arabe, et reste nu en francais.
-      expect(p.text.toPlainText(), arabe ? isolerSens(ligne) : ligne);
-      _suit(p, precedent: 'Chapitre', suivant: '1');
-      _suit(p, precedent: '1', suivant: '·');
-      _suit(p, precedent: '·', suivant: 'Page');
-      _suit(p, precedent: 'Page', suivant: '24');
     });
 
     testWidgets('Espace Classe eleve : la duree avant le cours se lit dans '

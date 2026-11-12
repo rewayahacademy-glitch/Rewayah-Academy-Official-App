@@ -851,7 +851,6 @@ abstract final class DonneesAdulteDemo {
       : MaClasseAdulteVM(
           groupeId: DonneesClasseDemo.groupeId,
           aPropos: aProposClasse,
-          ligneProgression: ligneProgressionClasse,
           participants: <ParticipantClasseAdulte>[
             ParticipantClasseAdulte(
               id: idTitulaire(genre),

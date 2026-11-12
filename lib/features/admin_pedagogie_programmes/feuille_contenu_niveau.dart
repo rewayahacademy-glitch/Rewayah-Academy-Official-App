@@ -40,6 +40,7 @@ class FeuilleContenuNiveau extends StatefulWidget {
     required this.onEnvoyer,
     required this.onSucces,
     super.key,
+    this.sectionRevision,
   });
 
   /// L'etape.
@@ -58,6 +59,10 @@ class FeuilleContenuNiveau extends StatefulWidget {
 
   /// Apres un enregistrement confirme.
   final VoidCallback onSucces;
+
+  /// Le reglage de la revision de l'etape (MA-PROGRESSION-ECRAN), a part du
+  /// contenu : sans lui, la saisie n'est pas proposee.
+  final Widget? sectionRevision;
 
   /// La cle du bouton d'enregistrement.
   static const Key enregistrerKey = ValueKey<String>('contenu-enregistrer');
@@ -333,6 +338,7 @@ class _FeuilleContenuNiveauEtat extends State<FeuilleContenuNiveau> {
             enCours: _envoi,
             onPress: _envoyer,
           ),
+        ?widget.sectionRevision,
       ],
     );
   }
