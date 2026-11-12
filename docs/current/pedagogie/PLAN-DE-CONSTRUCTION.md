@@ -4,7 +4,7 @@
 
 > **Qui livre (directeur, 12/11/2026).** « Je ferai les migrations, pour le reste c'est à toi, y compris les fusions. » L'architecte ouvre la pull request et fusionne, CI verte exigée, après revue indépendante du lot ; le directeur installe les migrations, à partir d'une page à coller (`tool/page_migrations/generer.py`) ; « fait » reste ce que le directeur voit en production (`ARBITRAGES.md`, partie 8, C3).
 >
-> **Fait à connaître.** Le garde-fou du dépôt (`.claude/hooks/garde.py`, décrit dans `CLAUDE.md`) refuse aujourd'hui aux agents toute pull request vers `main` et toute fusion ; il ne se modifie que sur ordre du directeur. Tant qu'il n'est pas adapté, l'architecte prépare les lots sur des branches, un par lot, prêts à fusionner.
+> **Fait à connaître (lu dans le code du garde-fou le 12/11/2026).** Depuis la décision du directeur du 29/10/2026, `.claude/hooks/garde.py` laisse un agent ouvrir une pull request vers `main` et la fusionner par les outils GitHub, CI verte exigée. Il refuse toujours : tout push direct vers `main`, tout push forcé, la fusion automatique, le déclenchement d'un workflow, et les écritures dans `.github/`, `pubspec.yaml`, `vercel.json` et le garde-fou lui-même. Le texte de `CLAUDE.md` qui dit « toute PR vers main ou fusion de PR » est périmé sur ce point. Le garde-fou n'a pas été modifié pour ce projet.
 
 Ce plan découpe en dix lots, dans l'ordre, le passage de l'application d'aujourd'hui à la charte (`CHARTE-ECOLE.md`, `REGLAGES.md`, `SCENARIOS-ELEVES.md`, `EVALUATIONS.md`, `MOTEUR-DE-SUIVI.md`). L'ordre est imposé par l'architecte.
 

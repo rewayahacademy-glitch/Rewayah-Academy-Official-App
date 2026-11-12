@@ -251,6 +251,6 @@ Un audit indépendant de la charte a trouvé des erreurs le 12/11/2026. L'archit
 
 ### Écarts trouvés en corrigeant
 
-1. Le garde-fou du dépôt (`.claude/hooks/garde.py`, `CLAUDE.md`) refuse aujourd'hui aux agents toute pull request vers `main` et toute fusion ; il ne se modifie que sur ordre du directeur. La décision du 12/11 (C3) ne peut donc s'appliquer qu'une fois le garde-fou adapté par le directeur. Écrit en tête du plan.
+1. Garde-fou et fusions (vérifié par l'architecte dans le code, 12/11/2026) : depuis la décision du directeur du 29/10/2026, `.claude/hooks/garde.py` laisse un agent ouvrir une pull request vers `main` et la fusionner par les outils GitHub, CI verte exigée. La décision du 12/11 (C3) s'applique donc sans modifier le garde-fou. Le rédacteur des corrections avait écrit le contraire en se fiant au texte de `CLAUDE.md`, périmé sur ce point ; l'architecte a corrigé. Écrit en tête du plan.
 2. Le seuil de la présence partielle de la décision du 31/10 est « au moins la moitié de la durée prévue » ; c'est cette forme qui est écrite.
 3. Le rappel des 28 jours et le rappel de proposer l'examen tomberaient le jour de l'entrée dans l'étape pour un adulte (dates limites d'étape de 4 semaines) : ils ne sont pas envoyés ce jour-là (C1, ARBITRÉ).
