@@ -3,9 +3,10 @@
 // standard depuis 14 siecles »).
 //
 // LA table des sourates, une seule pour toute l'application : de 1, Al-Fatiha,
-// a 114, An-Nas, dans l'ordre du mushaf. Chaque ligne porte le numero d'ordre,
-// le nom ARABE (lu du corpus, jamais recopie), le nom translittere du corpus,
-// et la page ou la sourate commence dans le Mushaf de Medine.
+// a 114, An-Nas, dans l'ordre du mushaf. Chaque ligne porte le nom ARABE en
+// premier et en grand (lu du corpus, jamais recopie) ; en dessous le numero
+// d'ordre, le nom translittere du corpus, le nombre de versets et la page ou
+// la sourate commence dans le Mushaf de Medine.
 //
 // Deux lecteurs l'emploient : la feuille « Aller a » du lecteur de l'eleve
 // (`navigation_coran_feuille.dart`) et la bibliotheque de la salle
@@ -102,7 +103,8 @@ class SommaireSourates extends ConsumerWidget {
   }
 }
 
-/// Une sourate de la table : numero, nom arabe, nom translittere, page.
+/// Une sourate de la table : nom arabe, puis numero, nom translittere,
+/// nombre de versets et page.
 class _LigneSourate extends StatelessWidget {
   const _LigneSourate({
     required this.sourate,
@@ -132,26 +134,15 @@ class _LigneSourate extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
         child: Row(
           children: <Widget>[
-            // Le numero d'ordre, sur une colonne de largeur egale de 1 a 114.
-            ConstrainedBox(
-              constraints: const BoxConstraints(minWidth: AppSpacing.xxxl),
-              child: Text(
-                '${sourate.numero}',
-                style: palette.inkMuted.applyTo(
-                  AppTypography.tabulaire(
-                    textes.labelLarge ?? const TextStyle(),
-                  ),
-                ),
-              ),
-            ),
-            Ecart.hSm,
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  // Le nom arabe, en premier : la police arabe des documents,
-                  // de droite a gauche, quelle que soit la langue de l'ecran.
+                  // Le nom arabe, en premier et en grand (directeur : « on
+                  // doit lire le nom de la sourate, surtout en arabe ») : la
+                  // police arabe des documents coraniques, de droite a
+                  // gauche, quelle que soit la langue de l'ecran.
                   Text(
                     sourate.nomArabe,
                     textDirection: TextDirection.rtl,
@@ -162,17 +153,41 @@ class _LigneSourate extends StatelessWidget {
                       ),
                     ),
                   ),
+                  // En dessous : le numero d'ordre et le nom translittere du
+                  // corpus, tel quel.
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Text(
+                        '${sourate.numero}',
+                        style: palette.inkMuted.applyTo(
+                          AppTypography.tabulaire(
+                            textes.labelLarge ?? const TextStyle(),
+                          ),
+                        ),
+                      ),
+                      Ecart.hSm,
+                      Flexible(
+                        child: Text(
+                          sourate.nomTranslittere,
+                          style: palette.surfaceRaised.applyTo(
+                            textes.labelLarge ?? const TextStyle(),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  // Puis le nombre de versets et la page ou elle commence.
                   Text(
-                    sourate.nomTranslittere,
-                    style: palette.surfaceRaised.applyTo(
-                      textes.labelLarge ?? const TextStyle(),
+                    t.tc.coran.sommaire.detail(
+                      versets: sourate.nombreVersets,
+                      page: page,
                     ),
+                    style: discret,
                   ),
                 ],
               ),
             ),
-            Ecart.hSm,
-            Text(t.tc.coran.navigation.pageNumero(page: page), style: discret),
             Ecart.hSm,
             Icon(AppIcons.chevron.repos, size: AppSpacing.lg),
           ],
@@ -182,6 +197,6 @@ class _LigneSourate extends StatelessWidget {
   }
 
   /// Le nom arabe se lit d'abord : un cran au-dessus du nom translittere.
-  static const double _tailleNomArabe = 24;
+  static const double _tailleNomArabe = 28;
   static const double _interligneNomArabe = 1.5;
 }

@@ -1684,8 +1684,12 @@ recherche : rien à parcourir.
 
 **Ce qui est fait.**
 - Un seul composant, `SommaireSourates` (`lib/core/coran/sommaire_sourates.dart`) : 114 lignes dans
-  l'ordre du mushaf ; sur chaque ligne le numéro, le nom arabe (police arabe des documents, de
-  droite à gauche), le nom translittéré, la page de départ. La ligne entière se touche.
+  l'ordre du mushaf ; sur chaque ligne le nom arabe en premier et en grand (police arabe des
+  documents coraniques, de droite à gauche), puis en dessous le numéro, le nom translittéré, le
+  nombre de versets et la page de départ (précision du garde-cap, 12/11 à 01:18 UTC : « on doit
+  lire le nom de la sourate, surtout en arabe »). La ligne entière se touche. La police est
+  UthmanTahaNaskh, celle des textes coraniques de l'application ; UthmanicHafs, la police de la
+  page du Mushaf, ne dessine correctement que le texte codé de l'édition, pas un nom en arabe simple.
 - Lecteur de l'élève (et Mushaf, qui emploie la même feuille) : la table est dans la feuille
   « Aller à », sous le champ, dès l'ouverture. Deux gestes : le bouton du lecteur, puis la sourate.
   Dès qu'on tape dans le champ, la table laisse la place aux résultats. Le clavier ne s'ouvre plus
@@ -1702,7 +1706,7 @@ recherche : rien à parcourir.
 - La page de départ de chaque sourate est une constante de 114 nombres
   (`lib/core/coran/pages_depart_sourates.dart`), tirée par un script du corpus du dépôt
   (`supabase/migrations/0013_corpus_coranique.sql`, le fichier que la base a reçu). Un test relit ce
-  corpus et refuse tout écart. Pourquoi une constante : la pagination du Mushaf de Médine ne change
+  corpus et refuse tout écart ; il y compte aussi 114 sourates et 6 236 versets. Pourquoi une constante : la pagination du Mushaf de Médine ne change
   pas ; la lire demanderait 114 requêtes ou une lecture nouvelle côté serveur, pour une table que le
   lecteur attend tout de suite.
 

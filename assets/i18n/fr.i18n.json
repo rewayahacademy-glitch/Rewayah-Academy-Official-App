@@ -9666,6 +9666,7 @@
       },
       "sommaire": {
         "titre": "Sourates",
+        "detail": "{versets} versets · page {page}",
         "allerA": "Aller à la sourate {sourate}, page {page}",
         "indisponible": "La liste des sourates n'a pas pu être lue",
         "indisponibleDetail": "La connexion a peut-être été coupée.",

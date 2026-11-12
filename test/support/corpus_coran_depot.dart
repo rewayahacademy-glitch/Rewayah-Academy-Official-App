@@ -29,11 +29,30 @@ List<Sourate> souratesDuCorpus() {
   ];
 }
 
+/// Le nombre de versets que le corpus du depot porte pour chaque sourate.
+/// Cle : le numero de la sourate.
+Map<int, int> versetsParSourateDuCorpus() {
+  final Map<int, int> comptes = <int, int>{};
+  for (final (int sourate, int _) in _versets()) {
+    comptes[sourate] = (comptes[sourate] ?? 0) + 1;
+  }
+  return comptes;
+}
+
 /// La plus petite page de chaque sourate dans le corpus du depot : la page ou
 /// elle commence. Cle : le numero de la sourate.
 Map<int, int> pagesDeDepartDuCorpus() {
-  final RegExp verset = RegExp(r"^\s*\((\d+), (\d+), '.*', (\d+)\)[,;]?\s*$");
   final Map<int, int> pages = <int, int>{};
+  for (final (int sourate, int page) in _versets()) {
+    final int? connue = pages[sourate];
+    if (connue == null || page < connue) pages[sourate] = page;
+  }
+  return pages;
+}
+
+/// Chaque verset du corpus : sa sourate et sa page.
+Iterable<(int, int)> _versets() sync* {
+  final RegExp verset = RegExp(r"^\s*\((\d+), (\d+), '.*', (\d+)\)[,;]?\s*$");
   bool dansLesVersets = false;
   for (final String l in File(_fichier).readAsLinesSync()) {
     if (l.startsWith('insert into public.verset')) {
@@ -43,10 +62,6 @@ Map<int, int> pagesDeDepartDuCorpus() {
     if (!dansLesVersets) continue;
     final RegExpMatch? m = verset.firstMatch(l);
     if (m == null) continue;
-    final int sourate = int.parse(m.group(1)!);
-    final int page = int.parse(m.group(3)!);
-    final int? connue = pages[sourate];
-    if (connue == null || page < connue) pages[sourate] = page;
+    yield (int.parse(m.group(1)!), int.parse(m.group(3)!));
   }
-  return pages;
 }

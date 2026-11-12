@@ -3270,6 +3270,7 @@
       },
       "sommaire": {
         "titre": "السور",
+        "detail": "عدد آياتها ⁨{versets}⁩ · الصفحة ⁨{page}⁩",
         "allerA": "الانتقال إلى سورة ⁨{sourate}⁩، الصفحة ⁨{page}⁩",
         "indisponible": "تعذّرت قراءة قائمة السور",
         "indisponibleDetail": "ربما انقطع الاتصال.",

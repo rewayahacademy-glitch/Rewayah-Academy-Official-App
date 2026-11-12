@@ -85,7 +85,8 @@ void main() {
       expect(
         dans(
           find.text(
-            t.tc.coran.navigation.pageNumero(
+            t.tc.coran.sommaire.detail(
+              versets: s.nombreVersets,
               page: pagesDeDepartDesSourates[s.numero - 1],
             ),
           ),
@@ -153,31 +154,32 @@ void main() {
     semantique.dispose();
   });
 
-  testWidgets('en arabe, la ligne se retourne : le numero passe a droite', (
-    WidgetTester tester,
-  ) async {
-    await tester.pumpWidget(
-      hote(
-        _ecran(direction: TextDirection.rtl),
-        surcharges: <Override>[_sourates(() async => corpus)],
-      ),
-    );
-    await tester.pump();
-    final Finder ligne = find.byKey(SommaireSourates.cleLigne(1));
-    final double numero = tester
-        .getCenter(find.descendant(of: ligne, matching: find.text('1')))
-        .dx;
-    final double nom = tester
-        .getCenter(
-          find.descendant(
-            of: ligne,
-            matching: find.text(corpus.first.nomArabe),
-          ),
-        )
-        .dx;
-    expect(numero, greaterThan(nom));
-    expect(tester.takeException(), isNull);
-  });
+  testWidgets(
+    'en arabe, la ligne se retourne : le numero passe a droite du nom translittere',
+    (WidgetTester tester) async {
+      await tester.pumpWidget(
+        hote(
+          _ecran(direction: TextDirection.rtl),
+          surcharges: <Override>[_sourates(() async => corpus)],
+        ),
+      );
+      await tester.pump();
+      final Finder ligne = find.byKey(SommaireSourates.cleLigne(1));
+      final double numero = tester
+          .getCenter(find.descendant(of: ligne, matching: find.text('1')))
+          .dx;
+      final double nom = tester
+          .getCenter(
+            find.descendant(
+              of: ligne,
+              matching: find.text(corpus.first.nomArabe),
+            ),
+          )
+          .dx;
+      expect(numero, greaterThan(nom));
+      expect(tester.takeException(), isNull);
+    },
+  );
 
   testWidgets('lecture impossible : on le dit, avec « Reessayer » ; aucune '
       'sourate inventee', (WidgetTester tester) async {

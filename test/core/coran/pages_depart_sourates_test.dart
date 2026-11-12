@@ -34,6 +34,17 @@ void main() {
     }
   });
 
+  test('le corpus du depot : 114 sourates, 6 236 versets, et pour chaque '
+      'sourate le nombre de versets qu elle declare', () {
+    final List<Sourate> sourates = souratesDuCorpus();
+    final Map<int, int> versets = versetsParSourateDuCorpus();
+    expect(sourates, hasLength(114));
+    expect(versets.values.fold<int>(0, (int a, int b) => a + b), 6236);
+    for (final Sourate s in sourates) {
+      expect(versets[s.numero], s.nombreVersets, reason: 'sourate ${s.numero}');
+    }
+  });
+
   test('hors de 1 a 114 : aucune page', () {
     expect(pageDeDepartDeLaSourate(0), isNull);
     expect(pageDeDepartDeLaSourate(115), isNull);
