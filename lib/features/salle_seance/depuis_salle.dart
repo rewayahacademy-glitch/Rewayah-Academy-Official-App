@@ -12,7 +12,9 @@ import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/presence/service_presence.dart';
 import '../../core/tc_groupe/group_summary_vm.dart' show TitreEnseignant;
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/tc_horloge/chrono_seance.dart' show BornesChrono;
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/tc_observation/port_annonce_observation.dart';
 import '../../core/video/seuils_reseau.dart' show EtatReseau;
 import '../../core/video/video_session_provider.dart'
@@ -324,10 +326,22 @@ abstract final class DepuisSalle {
     return mots.take(2).map((String m) => m[0].toUpperCase()).join();
   }
 
-  /// « 15:16 », heure locale.
-  static String heure(DateTime moment) {
-    final DateTime l = moment.toLocal();
-    return '${l.hour.toString().padLeft(2, '0')}:'
-        '${l.minute.toString().padLeft(2, '0')}';
-  }
+  /// « 15:16 », a l'heure du profil de la personne ([heureChezMoi]), sinon
+  /// a celle de l'appareil. HEURE-PROFIL (12/11/2026) : [moment] est un
+  /// INSTANT reel (jamais une valeur deja convertie), et ce texte se forme au
+  /// dessin, a partir de l'instant garde : il suit le fuseau quand il arrive.
+  static String heure(DateTime moment) => heureChezMoi(moment);
+
+  /// [heure], suivie de « Heure de cet appareil » quand le fuseau du profil
+  /// n'est pas lu (repli) : la personne sait de quelle heure on parle.
+  static String heureDite(DateTime moment) => estHeureDeLAppareil(moment)
+      ? LibellesGroupe.joindre(heure(moment), t.tuteur.accueil.heureAppareil)
+      : heure(moment);
+
+  /// Une phrase qui dit l'heure de [moment], suivie de « A l'heure de cet
+  /// appareil. » en repli seulement.
+  static String phraseDite(String phrase, DateTime moment) =>
+      estHeureDeLAppareil(moment)
+      ? '$phrase ${t.snt.planning.heureAppareil}'
+      : phrase;
 }

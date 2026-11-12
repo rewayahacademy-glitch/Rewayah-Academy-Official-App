@@ -26,6 +26,7 @@ import '../../core/widgets/nav_shell.dart';
 import '../../core/widgets/status_pill.dart';
 import 'actions_seance.dart';
 import 'chrome_seance.dart';
+import 'depuis_salle.dart';
 import 'vue_seance.dart';
 
 /// Pourquoi l'eleve quitte la salle.
@@ -47,7 +48,7 @@ class ResultatSeance extends StatelessWidget {
     required this.onRetour,
     this.onRevenir,
     this.onAccueil,
-    this.heureFin,
+    this.finA,
     this.complement,
     super.key,
   });
@@ -58,9 +59,10 @@ class ResultatSeance extends StatelessWidget {
   /// (le Retour eclair, quand le serveur pose une question). `null` : rien.
   final Widget? complement;
 
-  /// FN-024 : l'heure de fin servie par le serveur (« 18:00 »), dite avec
-  /// « Séance terminée » ; `null` : la phrase sans heure.
-  final String? heureFin;
+  /// FN-024 : l'instant de fin servi par le serveur, dit avec « Séance
+  /// terminée » a l'heure du profil ; `null` : la phrase sans heure.
+  /// HEURE-PROFIL (12/11/2026) : un instant, mis en forme au dessin.
+  final DateTime? finA;
 
   /// Retour a la Classe (standard) ou a l'accueil (guidee).
   final VoidCallback onRetour;
@@ -100,9 +102,12 @@ class ResultatSeance extends StatelessWidget {
         ? null
         : switch (issue) {
             IssueSeance.terminee =>
-              heureFin == null
+              finA == null
                   ? t.salle.fin.phrase
-                  : t.salle.fin.phraseHeure(heure: heureFin!),
+                  : DepuisSalle.phraseDite(
+                      t.salle.fin.phraseHeure(heure: DepuisSalle.heure(finA!)),
+                      finA!,
+                    ),
             IssueSeance.quittee => t.salle.fin.quittePhrase,
             // S l.673 : un titre seul, aucune phrase.
             IssueSeance.accesRetire => null,
@@ -689,7 +694,7 @@ class _CarteRecapitulatif extends StatelessWidget {
       _LigneRecap(
         icone: AppIcons.horloge,
         haut: Text(t.salle.fin.enseignant.fin, style: simple),
-        bas: Text(fin.heureFin, style: fort),
+        bas: Text(DepuisSalle.heureDite(fin.finA), style: fort),
       ),
       _LigneRecap(
         icone: AppIcons.eleves,

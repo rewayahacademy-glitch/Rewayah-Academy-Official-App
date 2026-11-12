@@ -1721,3 +1721,37 @@ recherche : rien à parcourir.
 - Prouvé par tests et par captures de test (390 et 1440, clair et sombre,
   `docs/current/captures/E2E/sommaire-sourates/`) ; pas sur la pile locale, pas sur un vrai
   téléphone, pas en production.
+
+## D-035 (12/11/2026, nuit). La salle dit l'heure du profil, jamais celle de l'appareil (lot HEURE-PROFIL, partie salle)
+
+**Le défaut.** `DepuisSalle.heure` lisait l'heure de l'appareil (`toLocal()`). Cinq endroits de la
+salle l'employaient : l'heure de fin sur l'écran de fin de l'élève et sur celui de l'enseignant,
+et les deux refus « La séance s'est terminée à … » et « La salle ouvrira à … ». Un enseignant dont
+le profil est en Arabie saoudite et le téléphone réglé ailleurs lisait donc une autre heure que
+sur sa page « Aujourd'hui ». En plus, l'heure de fin était écrite une fois pour toutes, en texte,
+à l'instant de la fin : si le fuseau du profil arrivait après, elle ne se corrigeait pas.
+
+**Les règles (garde-cap, 12/11, lots H).** (1) Une heure se lit par `chezMoi` ou `heureChezMoi`,
+d'un instant réel. (2) Jamais une valeur déjà convertie passée à ces fonctions. (3) La page écoute
+`monHorlogeProvider` à sa racine, et un texte d'heure se forme au dessin, à partir d'un instant
+gardé. (4) « Heure de cet appareil » seulement en repli, avec un texte existant. (5) Un test où le
+fuseau arrive après le premier rendu, et un test avec un profil sans fuseau.
+
+**Ce qui est fait.**
+- `DepuisSalle.heure` rend l'heure du profil (`heureChezMoi`). Deux aides : `heureDite` (l'heure,
+  suivie de « Heure de cet appareil » en repli) et `phraseDite` (une phrase, suivie de « À l'heure
+  de cet appareil. » en repli). Les deux textes existaient déjà.
+- La salle garde l'INSTANT de fin (`FinSeance.finA`, `ResultatSeance.finA`, `_finServeur`), plus
+  un texte ; l'heure est mise en forme au dessin.
+- La page de la salle lit `monHorlogeProvider` dans son dessin : elle se redessine quand le fuseau
+  arrive.
+- Le chrono (heure de reprise d'une pause) passait déjà par `chezMoi` ; il emploie maintenant
+  `heureChezMoi`, pour qu'aucune heure d'appareil nue ne reste dans le code de la salle.
+- Une garde de source le tient : dans `lib/features/salle`, `salle_seance` et `salle_enseignant`,
+  ni `toLocal()`, ni `.hour`, ni `.minute`.
+
+**Ce qui n'est pas fait.** Le relevé ne porte que sur ces trois dossiers ; les heures affichées
+ailleurs (hors de la salle) relèvent du lot HEURE-PROFIL-PARTOUT. Sur l'écran de fin de l'élève, la
+mention de repli vient en fin de phrase, loin de l'heure : image envoyée au garde-cap, qui tranche.
+Prouvé par tests et captures de test (`docs/current/captures/E2E/heure-profil-salle/`) ; pas sur la
+pile locale, pas en production.

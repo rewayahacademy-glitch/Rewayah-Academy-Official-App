@@ -164,7 +164,7 @@ void main() {
           taille.value,
           vue: base.copyWith(
             fin: FinSeance(
-              heureFin: base.fin!.heureFin,
+              finA: base.fin!.finA,
               cahierACompleter: true,
               close: false,
             ),
@@ -190,7 +190,9 @@ void main() {
           'Le cahier de transmission est prêt avec les informations de la séance.',
           'Sayyid Ibrahim',
           'Fin',
-          '18:45',
+          // HEURE-PROFIL : sans fuseau de profil lu (ce test), l'heure est
+          // celle de l'appareil, et l'ecran le dit.
+          '18:45 · Heure de cet appareil',
           '2 élèves connectés',
           'sur 3 inscrits',
           'Cahier de transmission',
