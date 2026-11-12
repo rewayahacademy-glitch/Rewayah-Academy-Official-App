@@ -114,6 +114,8 @@ INSERT INTO public.progression_historique (student_id, niveau_id, type_mouvement
 SELECT pg_temp.u(x.e), (SELECT id FROM se_ids WHERE cle = 'n2'), 'diagnostic_initial', pg_temp.u('a1'),
        'Diagnostic', pg_catalog.now() - x.semaines * interval '1 week' - interval '1 hour'
   FROM (VALUES ('e1', 5), ('e4', 16), ('e5', 20)) AS x(e, semaines);
+-- SOCLE-PROGRAMME : comme a l'installation, chaque membre sans etape recoit l'etape 1.
+SELECT private.rattacher_classes_et_eleves();
 SELECT pg_temp.vrai(
   (SELECT (n.durees -> 'enfant_6_9' ->> 'prevue')::int = 14 AND (n.durees -> 'enfant_6_9' ->> 'limite')::int = 19
      FROM public.programme_niveaux n WHERE n.id = (SELECT id FROM se_ids WHERE cle = 'n2')),
@@ -122,7 +124,20 @@ SELECT pg_temp.vrai(
 -- ------------------------------------------------------------------
 -- 1. La vitesse, calculee en base
 -- ------------------------------------------------------------------
+-- SOCLE-PROGRAMME : l'enfant de 6 a 9 ans qui lit pour lui-meme ne recoit ni duree, ni date,
+-- ni rythme ; la vitesse se verifie par la lecture de son tuteur.
 SELECT pg_temp.qui(pg_temp.u('e1'), 'student', pg_temp.u('f1'));
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai(
+  (SELECT s.etape_ordre = 2 AND s.duree_prevue_semaines IS NULL AND s.date_limite IS NULL
+          AND s.depuis IS NULL AND s.semaines_ecoulees IS NULL AND s.rythme IS NULL
+     FROM public.suivi_pedagogique_eleve(pg_temp.u('e1')) s),
+  'eleve e1 (6-9 ans) pour lui-meme : son etape, ni duree, ni date, ni rythme');
+SELECT pg_temp.vrai(
+  pg_temp.essai(pg_catalog.format('SELECT * FROM public.suivi_pedagogique_eleve(%L)', pg_temp.u('e4'))) = 'refus',
+  'eleve e1 : le suivi d''un autre eleve, meme du foyer, est refuse');
+RESET ROLE;
+SELECT pg_temp.qui(pg_temp.u('t1'), 'guardian', pg_temp.u('f1'));
 SET LOCAL ROLE authenticated;
 SELECT pg_temp.vrai(
   (SELECT s.etape_ordre = 2 AND s.duree_prevue_semaines = 14 AND s.semaines_ecoulees = 5
@@ -131,12 +146,9 @@ SELECT pg_temp.vrai(
           AND pg_catalog.cardinality(s.objectifs) BETWEEN 3 AND 5
      FROM public.suivi_pedagogique_eleve(pg_temp.u('e1')) s),
   'eleve e1, 5 semaines sur 14 prevues : dans_les_temps, date limite a 19 semaines');
-SELECT pg_temp.vrai(
-  pg_temp.essai(pg_catalog.format('SELECT * FROM public.suivi_pedagogique_eleve(%L)', pg_temp.u('e4'))) = 'refus',
-  'eleve e1 : le suivi d''un autre eleve, meme du foyer, est refuse');
 RESET ROLE;
 
-SELECT pg_temp.qui(pg_temp.u('e4'), 'student', pg_temp.u('f1'));
+SELECT pg_temp.qui(pg_temp.u('t1'), 'guardian', pg_temp.u('f1'));
 SET LOCAL ROLE authenticated;
 SELECT pg_temp.vrai(
   (SELECT s.rythme = 'au_dela_du_prevu' AND s.semaines_ecoulees = 16
@@ -144,7 +156,7 @@ SELECT pg_temp.vrai(
   'eleve e4, 16 semaines : au_dela_du_prevu (entre la duree prevue et la date limite)');
 RESET ROLE;
 
-SELECT pg_temp.qui(pg_temp.u('e5'), 'student', pg_temp.u('f1'));
+SELECT pg_temp.qui(pg_temp.u('t1'), 'guardian', pg_temp.u('f1'));
 SET LOCAL ROLE authenticated;
 SELECT pg_temp.vrai(
   (SELECT s.rythme = 'date_limite_depassee' AND s.date_limite < pg_catalog.now()::date
@@ -152,13 +164,13 @@ SELECT pg_temp.vrai(
   'eleve e5, 20 semaines : date_limite_depassee');
 RESET ROLE;
 
-SELECT pg_temp.qui(pg_temp.u('e2'), 'student', pg_temp.u('f1'));
+SELECT pg_temp.qui(pg_temp.u('t1'), 'guardian', pg_temp.u('f1'));
 SET LOCAL ROLE authenticated;
 SELECT pg_temp.vrai(
-  (SELECT s.etape_ordre = 1 AND s.rythme = 'inconnu' AND s.depuis IS NULL AND s.date_limite IS NULL
-          AND s.semaines_ecoulees IS NULL
+  (SELECT s.etape_ordre = 1 AND s.rythme = 'dans_les_temps' AND s.depuis::date = pg_catalog.now()::date
+          AND s.date_limite = (pg_catalog.now() + interval '10 weeks')::date AND s.semaines_ecoulees = 0
      FROM public.suivi_pedagogique_eleve(pg_temp.u('e2')) s),
-  'eleve e2 sans decision : etape de la Classe, vitesse inconnue, aucune date limite supposee');
+  'eleve e2 sans decision : etape 1 posee a l''installation, datee du jour (SOCLE-PROGRAMME)');
 RESET ROLE;
 
 SELECT pg_temp.qui(pg_temp.u('e3'), 'student', pg_temp.u('f1'));
@@ -212,7 +224,7 @@ RESET ROLE;
 SELECT pg_temp.qui(pg_temp.u('g1'), 'guardian', pg_temp.u('f3'));
 SET LOCAL ROLE authenticated;
 SELECT pg_temp.vrai(
-  (SELECT s.etape_ordre = 1 AND s.rythme = 'inconnu' AND s.page_reprise = 42
+  (SELECT s.etape_ordre = 1 AND s.rythme = 'dans_les_temps' AND s.page_reprise = 42
      FROM public.suivi_pedagogique_eleve(pg_temp.u('g1')) s),
   'titulaire de son propre profil eleve (role guardian) : lit son suivi');
 RESET ROLE;
@@ -235,7 +247,7 @@ SELECT pg_temp.vrai(
   AND (SELECT e.etape_ordre = 2 AND e.duree_prevue_semaines = 14 AND e.date_limite_semaines = 19
               AND e.date_limite = (e.depuis + interval '19 weeks')::date
          FROM public.etapes_eleves_classe(pg_temp.u('c1')) e WHERE e.student_id = pg_temp.u('e1'))
-  AND (SELECT e.etape_ordre = 1 AND e.depuis IS NULL AND e.date_limite IS NULL
+  AND (SELECT e.etape_ordre = 1 AND e.depuis IS NOT NULL
          FROM public.etapes_eleves_classe(pg_temp.u('c1')) e WHERE e.student_id = pg_temp.u('e2')),
   'titulaire : etapes_eleves_classe inchangee (source unique)');
 RESET ROLE;
