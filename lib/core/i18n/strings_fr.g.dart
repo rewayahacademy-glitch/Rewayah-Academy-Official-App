@@ -29219,7 +29219,7 @@ class Traductions$admin$programmes$contenu$fr {
 	String get revisionTitre => 'Révision de l\'élève';
 
 	/// fr: 'Ce que les familles lisent dans « Où j'en suis ». Laissez « Non réglé » : rien ne s'affiche.'
-	String get revisionAide => 'Ce que les familles lisent dans « Où j\'en suis ». Laissez « Non réglé » : rien ne s\'affiche.';
+	String get revisionAide => 'Ce que les familles lisent dans « Où j\'en suis ». Laissez « Non réglé » : rien ne s\'affiche.';
 
 	/// fr: 'Heures de révision par semaine'
 	String get revisionHeures => 'Heures de révision par semaine';
@@ -29252,7 +29252,7 @@ class Traductions$admin$programmes$contenu$fr {
 	String get revisionEnregistree => 'Révision enregistrée.';
 
 	/// fr: 'La révision n'a pas pu être enregistrée : {message}'
-	String revisionErreur({required Object message}) => 'La révision n\'a pas pu être enregistrée : ${message}';
+	String revisionErreur({required Object message}) => 'La révision n\'a pas pu être enregistrée : ${message}';
 
 	/// fr: 'Rien n'a été enregistré : les pages s'écrivent en nombres entiers, la dernière après la première. Corrigez-les, puis réessayez.'
 	String get manquePages => 'Rien n\'a été enregistré : les pages s\'écrivent en nombres entiers, la dernière après la première. Corrigez-les, puis réessayez.';
@@ -53293,7 +53293,7 @@ extension on Traductions {
 			'admin.programmes.contenu.enregistrer' => 'Enregistrer l\'étape',
 			'admin.programmes.contenu.erreur' => ({required Object message}) => 'L\'enregistrement de l\'étape n\'est pas confirmé : ${message}. Vérifiez les objectifs et les pages, puis réessayez.',
 			'admin.programmes.contenu.revisionTitre' => 'Révision de l\'élève',
-			'admin.programmes.contenu.revisionAide' => 'Ce que les familles lisent dans « Où j\'en suis ». Laissez « Non réglé » : rien ne s\'affiche.',
+			'admin.programmes.contenu.revisionAide' => 'Ce que les familles lisent dans « Où j\'en suis ». Laissez « Non réglé » : rien ne s\'affiche.',
 			'admin.programmes.contenu.revisionHeures' => 'Heures de révision par semaine',
 			'admin.programmes.contenu.revisionRepetitions' => 'Répétitions estimées',
 			'admin.programmes.contenu.revisionNonRegle' => 'Non réglé',
@@ -53304,7 +53304,7 @@ extension on Traductions {
 			'admin.programmes.contenu.revisionRepetitionsPlus' => 'Plus de répétitions',
 			'admin.programmes.contenu.revisionEnregistrer' => 'Enregistrer la révision',
 			'admin.programmes.contenu.revisionEnregistree' => 'Révision enregistrée.',
-			'admin.programmes.contenu.revisionErreur' => ({required Object message}) => 'La révision n\'a pas pu être enregistrée : ${message}',
+			'admin.programmes.contenu.revisionErreur' => ({required Object message}) => 'La révision n\'a pas pu être enregistrée : ${message}',
 			'admin.programmes.contenu.manquePages' => 'Rien n\'a été enregistré : les pages s\'écrivent en nombres entiers, la dernière après la première. Corrigez-les, puis réessayez.',
 			'admin.programmes.contenu.proposition' => 'Proposition à valider par la direction',
 			'admin.programmes.contenu.propositionDetail' => 'Les objectifs et les durées de ce brouillon sont une proposition, pas une règle : la direction les relit et les modifie avant de publier.',
