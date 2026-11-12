@@ -8116,7 +8116,7 @@
       "ouvrirEspaceEleve": "Ouvrir mon espace élève",
       "autreAppareilFeuille": {
         "phrase": "Votre compte vous suit sur tous vos appareils. Sur l'autre appareil, ouvrez l'application à cette adresse, puis connectez-vous avec la même adresse de connexion.",
-        "aucunCode": "Aucun code à saisir : c'est votre propre compte.",
+        "aucunCode": "Aucun code à saisir\u00a0: c'est votre propre compte.",
         "adresseApplication": "Adresse de l'application",
         "adresseConnexion": "Adresse de connexion",
         "copier": "Copier le lien de l'application",

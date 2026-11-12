@@ -32030,7 +32030,7 @@ class Traductions$tuteur$accueil$autreAppareilFeuille$fr {
 	String get phrase => 'Votre compte vous suit sur tous vos appareils. Sur l\'autre appareil, ouvrez l\'application à cette adresse, puis connectez-vous avec la même adresse de connexion.';
 
 	/// fr: 'Aucun code à saisir : c'est votre propre compte.'
-	String get aucunCode => 'Aucun code à saisir : c\'est votre propre compte.';
+	String get aucunCode => 'Aucun code à saisir : c\'est votre propre compte.';
 
 	/// fr: 'Adresse de l'application'
 	String get adresseApplication => 'Adresse de l\'application';
@@ -55367,7 +55367,7 @@ extension on Traductions {
 			'tuteur.accueil.foyerVidePhrase' => 'Ajoutez un profil élève pour choisir une classe et suivre ses séances.',
 			'tuteur.accueil.ouvrirEspaceEleve' => 'Ouvrir mon espace élève',
 			'tuteur.accueil.autreAppareilFeuille.phrase' => 'Votre compte vous suit sur tous vos appareils. Sur l\'autre appareil, ouvrez l\'application à cette adresse, puis connectez-vous avec la même adresse de connexion.',
-			'tuteur.accueil.autreAppareilFeuille.aucunCode' => 'Aucun code à saisir : c\'est votre propre compte.',
+			'tuteur.accueil.autreAppareilFeuille.aucunCode' => 'Aucun code à saisir : c\'est votre propre compte.',
 			'tuteur.accueil.autreAppareilFeuille.adresseApplication' => 'Adresse de l\'application',
 			'tuteur.accueil.autreAppareilFeuille.adresseConnexion' => 'Adresse de connexion',
 			'tuteur.accueil.autreAppareilFeuille.copier' => 'Copier le lien de l\'application',
