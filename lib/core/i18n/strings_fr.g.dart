@@ -14396,7 +14396,7 @@ class Traductions$notifications$evenements$fr {
 	String changementHeureUn({required Object date, required Object cours, required Object jour, required Object avant, required Object apres}) => 'À partir du ${date}, ${cours} du ${jour} passe de ${avant} à ${apres}.';
 
 	/// fr: 'À partir du {date}, l'heure {cours} change : {liste}.'
-	String changementHeurePlusieurs({required Object date, required Object cours, required Object liste}) => 'À partir du ${date}, l\'heure ${cours} change : ${liste}.';
+	String changementHeurePlusieurs({required Object date, required Object cours, required Object liste}) => 'À partir du ${date}, l\'heure ${cours} change : ${liste}.';
 
 	/// fr: 'le {jour} de {avant} à {apres}'
 	String changementHeureLigne({required Object jour, required Object avant, required Object apres}) => 'le ${jour} de ${avant} à ${apres}';
@@ -32925,17 +32925,17 @@ class Traductions$tc$groupe$horloges$fr {
 	/// fr: 'Heure de La Mecque'
 	String get heureMecque => 'Heure de La Mecque';
 
-	/// fr: 'Enregistrée à l'heure de La Mecque : {jour} {heure}.'
-	String apercuClasse({required Object jour, required Object heure}) => 'Enregistrée à l\'heure de La Mecque : ${jour} ${heure}.';
+	/// fr: 'À l'heure de La Mecque, la classe aura lieu le {jour} à {heure}.'
+	String apercuClasse({required Object jour, required Object heure}) => 'À l\'heure de La Mecque, la classe aura lieu le ${jour} à ${heure}.';
 
 	/// fr: 'Chez l'enseignant ({ville})'
 	String apercuOuEnseignant({required Object ville}) => 'Chez l\'enseignant (${ville})';
 
 	/// fr: '{ou} : {heure} toute l'année.'
-	String apercuChez({required Object ou, required Object heure}) => '${ou} : ${heure} toute l\'année.';
+	String apercuChez({required Object ou, required Object heure}) => '${ou} : ${heure} toute l\'année.';
 
 	/// fr: '{ou} : {heure}, puis {apres} à partir du {date}.'
-	String apercuChezPuis({required Object ou, required Object heure, required Object apres, required Object date}) => '${ou} : ${heure}, puis ${apres} à partir du ${date}.';
+	String apercuChezPuis({required Object ou, required Object heure, required Object apres, required Object date}) => '${ou} : ${heure}, puis ${apres} à partir du ${date}.';
 
 	/// fr: '{heure} {ville}'
 	String heureEtVille({required Object heure, required Object ville}) => '${heure} ${ville}';
@@ -55394,7 +55394,7 @@ extension on Traductions {
 			'notifications.evenements.eleveRetireClasse' => 'Un élève quitte une de vos classes.',
 			'notifications.evenements.creneauChange' => 'L\'horaire de la classe a changé.',
 			'notifications.evenements.changementHeureUn' => ({required Object date, required Object cours, required Object jour, required Object avant, required Object apres}) => 'À partir du ${date}, ${cours} du ${jour} passe de ${avant} à ${apres}.',
-			'notifications.evenements.changementHeurePlusieurs' => ({required Object date, required Object cours, required Object liste}) => 'À partir du ${date}, l\'heure ${cours} change : ${liste}.',
+			'notifications.evenements.changementHeurePlusieurs' => ({required Object date, required Object cours, required Object liste}) => 'À partir du ${date}, l\'heure ${cours} change : ${liste}.',
 			'notifications.evenements.changementHeureLigne' => ({required Object jour, required Object avant, required Object apres}) => 'le ${jour} de ${avant} à ${apres}',
 			'notifications.evenements.changementHeureCoursUn' => 'votre cours',
 			'notifications.evenements.changementHeureCoursUnFoyer' => 'le cours de la classe',
@@ -56769,10 +56769,10 @@ extension on Traductions {
 			'tc.groupe.horloges.chezEnseignant' => ({required Object nomme}) => 'Chez ${nomme}',
 			'tc.groupe.horloges.heureGroupe' => 'Heure de la classe',
 			'tc.groupe.horloges.heureMecque' => 'Heure de La Mecque',
-			'tc.groupe.horloges.apercuClasse' => ({required Object jour, required Object heure}) => 'Enregistrée à l\'heure de La Mecque : ${jour} ${heure}.',
+			'tc.groupe.horloges.apercuClasse' => ({required Object jour, required Object heure}) => 'À l\'heure de La Mecque, la classe aura lieu le ${jour} à ${heure}.',
 			'tc.groupe.horloges.apercuOuEnseignant' => ({required Object ville}) => 'Chez l\'enseignant (${ville})',
-			'tc.groupe.horloges.apercuChez' => ({required Object ou, required Object heure}) => '${ou} : ${heure} toute l\'année.',
-			'tc.groupe.horloges.apercuChezPuis' => ({required Object ou, required Object heure, required Object apres, required Object date}) => '${ou} : ${heure}, puis ${apres} à partir du ${date}.',
+			'tc.groupe.horloges.apercuChez' => ({required Object ou, required Object heure}) => '${ou} : ${heure} toute l\'année.',
+			'tc.groupe.horloges.apercuChezPuis' => ({required Object ou, required Object heure, required Object apres, required Object date}) => '${ou} : ${heure}, puis ${apres} à partir du ${date}.',
 			'tc.groupe.horloges.heureEtVille' => ({required Object heure, required Object ville}) => '${heure} ${ville}',
 			'tc.groupe.horloges.chezVous' => 'Chez vous',
 			'tc.groupe.horloges.chezEnseignantAnonyme' => 'Chez votre enseignant',

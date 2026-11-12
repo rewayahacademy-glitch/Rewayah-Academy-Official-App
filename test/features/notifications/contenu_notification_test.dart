@@ -514,7 +514,7 @@ void main() {
       ).titre;
       expect(
         titre,
-        'À partir du dimanche 28 mars 2027, l\'heure de vos cours change : '
+        'À partir du dimanche 28 mars 2027, l\'heure de vos cours change\u00a0: '
         'le mercredi de 19:00 à 20:00 ; le jeudi de 18:00 à 19:00.',
       );
     });

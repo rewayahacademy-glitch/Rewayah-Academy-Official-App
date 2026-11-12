@@ -77,8 +77,8 @@ void main() {
     );
     expect(
       phraseResumeCreneau(r, 'Europe/Paris'),
-      'Enregistrée à l\'heure de La Mecque : mercredi 21:00. '
-      'Chez l\'enseignant (Paris) : 19:00, puis 20:00 à partir du '
+      'À l\'heure de La Mecque, la classe aura lieu le mercredi à 21:00. '
+      'Chez l\'enseignant (Paris)\u00a0: 19:00, puis 20:00 à partir du '
       'dimanche 28 mars 2027.',
     );
   });
@@ -94,7 +94,7 @@ void main() {
       })!,
     );
     final String phrase = phraseResumeCreneau(r, 'Asia/Kolkata');
-    expect(phrase, contains('mercredi 21:00'));
+    expect(phrase, contains('le mercredi à 21:00'));
     expect(phrase, contains('23:30 toute l\'année'));
   });
 
@@ -169,7 +169,7 @@ void main() {
         await tester.pump();
         await tester.pump();
         expect(find.byKey(LigneApercuClasse.cle), findsOneWidget);
-        expect(find.textContaining('mercredi 21:00'), findsOneWidget);
+        expect(find.textContaining('le mercredi à 21:00'), findsOneWidget);
         expect(find.textContaining('puis 20:00'), findsOneWidget);
         expect(tester.takeException(), isNull);
       });

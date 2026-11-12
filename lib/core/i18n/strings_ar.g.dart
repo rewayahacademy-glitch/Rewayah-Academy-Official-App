@@ -2237,9 +2237,9 @@ class _Traductions$notifications$evenements$ar extends Traductions$notifications
 	@override String get eleveRetireFoyer => 'لم يعد أحد طلاب أسرتك ضمن فصله.';
 	@override String get eleveRetireClasse => 'غادر طالب أحد فصولك.';
 	@override String get creneauChange => 'تغيّر موعد الفصل.';
-	@override String changementHeureUn({required Object date, required Object cours, required Object jour, required Object avant, required Object apres}) => 'ابتداءً من ${date}، يتغيّر موعد ${cours} يوم ${jour} من الساعة ${avant} إلى الساعة ${apres}.';
-	@override String changementHeurePlusieurs({required Object date, required Object cours, required Object liste}) => 'ابتداءً من ${date}، يتغيّر توقيت ${cours}: ${liste}.';
-	@override String changementHeureLigne({required Object jour, required Object avant, required Object apres}) => 'يوم ${jour} من ${avant} إلى ${apres}';
+	@override String changementHeureUn({required Object date, required Object cours, required Object jour, required Object avant, required Object apres}) => 'ابتداءً من ⁨${date}⁩، يتغيّر موعد ⁨${cours}⁩ في يوم ⁨${jour}⁩ من الساعة ⁨${avant}⁩ إلى الساعة ⁨${apres}⁩.';
+	@override String changementHeurePlusieurs({required Object date, required Object cours, required Object liste}) => 'ابتداءً من ⁨${date}⁩، يتغيّر توقيت ⁨${cours}⁩: ⁨${liste}⁩.';
+	@override String changementHeureLigne({required Object jour, required Object avant, required Object apres}) => 'يوم ⁨${jour}⁩ من ⁨${avant}⁩ إلى ⁨${apres}⁩';
 	@override String get changementHeureCoursUn => 'حصتكم';
 	@override String get changementHeureCoursUnFoyer => 'حصة الفصل';
 	@override String get changementHeureCoursPlusieurs => 'حصصكم';
@@ -12256,10 +12256,10 @@ class _Traductions$tc$groupe$horloges$ar extends Traductions$tc$groupe$horloges$
 	@override String chezEnseignant({required Object nomme}) => 'عند ⁨${nomme}⁩';
 	@override String get heureGroupe => 'توقيت الفصل';
 	@override String get heureMecque => 'توقيت مكة المكرمة';
-	@override String apercuClasse({required Object jour, required Object heure}) => 'تُسجَّل بتوقيت مكة المكرمة: يوم ${jour} الساعة ${heure}.';
-	@override String apercuOuEnseignant({required Object ville}) => 'عند المعلّم (${ville})';
-	@override String apercuChez({required Object ou, required Object heure}) => '${ou}: الساعة ${heure} طوال السنة.';
-	@override String apercuChezPuis({required Object ou, required Object heure, required Object apres, required Object date}) => '${ou}: الساعة ${heure}، ثم الساعة ${apres} ابتداءً من ${date}.';
+	@override String apercuClasse({required Object jour, required Object heure}) => 'تكون الحصة بتوقيت مكة المكرمة يوم ⁨${jour}⁩ الساعة ⁨${heure}⁩.';
+	@override String apercuOuEnseignant({required Object ville}) => 'عند المعلّم (⁨${ville}⁩)';
+	@override String apercuChez({required Object ou, required Object heure}) => '⁨${ou}⁩: الساعة ⁨${heure}⁩ طوال السنة.';
+	@override String apercuChezPuis({required Object ou, required Object heure, required Object apres, required Object date}) => '⁨${ou}⁩: الساعة ⁨${heure}⁩، ثم الساعة ⁨${apres}⁩ ابتداءً من ⁨${date}⁩.';
 	@override String heureEtVille({required Object heure, required Object ville}) => '⁨${heure}⁩ ⁨${ville}⁩';
 	@override String get chezVous => 'عندكم';
 	@override String get chezEnseignantAnonyme => 'عند معلّمكم';
@@ -24132,9 +24132,9 @@ extension on TraductionsAr {
 			'notifications.evenements.eleveRetireFoyer' => 'لم يعد أحد طلاب أسرتك ضمن فصله.',
 			'notifications.evenements.eleveRetireClasse' => 'غادر طالب أحد فصولك.',
 			'notifications.evenements.creneauChange' => 'تغيّر موعد الفصل.',
-			'notifications.evenements.changementHeureUn' => ({required Object date, required Object cours, required Object jour, required Object avant, required Object apres}) => 'ابتداءً من ${date}، يتغيّر موعد ${cours} يوم ${jour} من الساعة ${avant} إلى الساعة ${apres}.',
-			'notifications.evenements.changementHeurePlusieurs' => ({required Object date, required Object cours, required Object liste}) => 'ابتداءً من ${date}، يتغيّر توقيت ${cours}: ${liste}.',
-			'notifications.evenements.changementHeureLigne' => ({required Object jour, required Object avant, required Object apres}) => 'يوم ${jour} من ${avant} إلى ${apres}',
+			'notifications.evenements.changementHeureUn' => ({required Object date, required Object cours, required Object jour, required Object avant, required Object apres}) => 'ابتداءً من ⁨${date}⁩، يتغيّر موعد ⁨${cours}⁩ في يوم ⁨${jour}⁩ من الساعة ⁨${avant}⁩ إلى الساعة ⁨${apres}⁩.',
+			'notifications.evenements.changementHeurePlusieurs' => ({required Object date, required Object cours, required Object liste}) => 'ابتداءً من ⁨${date}⁩، يتغيّر توقيت ⁨${cours}⁩: ⁨${liste}⁩.',
+			'notifications.evenements.changementHeureLigne' => ({required Object jour, required Object avant, required Object apres}) => 'يوم ⁨${jour}⁩ من ⁨${avant}⁩ إلى ⁨${apres}⁩',
 			'notifications.evenements.changementHeureCoursUn' => 'حصتكم',
 			'notifications.evenements.changementHeureCoursUnFoyer' => 'حصة الفصل',
 			'notifications.evenements.changementHeureCoursPlusieurs' => 'حصصكم',
@@ -26525,10 +26525,10 @@ extension on TraductionsAr {
 			'tc.groupe.horloges.chezEnseignant' => ({required Object nomme}) => 'عند ⁨${nomme}⁩',
 			'tc.groupe.horloges.heureGroupe' => 'توقيت الفصل',
 			'tc.groupe.horloges.heureMecque' => 'توقيت مكة المكرمة',
-			'tc.groupe.horloges.apercuClasse' => ({required Object jour, required Object heure}) => 'تُسجَّل بتوقيت مكة المكرمة: يوم ${jour} الساعة ${heure}.',
-			'tc.groupe.horloges.apercuOuEnseignant' => ({required Object ville}) => 'عند المعلّم (${ville})',
-			'tc.groupe.horloges.apercuChez' => ({required Object ou, required Object heure}) => '${ou}: الساعة ${heure} طوال السنة.',
-			'tc.groupe.horloges.apercuChezPuis' => ({required Object ou, required Object heure, required Object apres, required Object date}) => '${ou}: الساعة ${heure}، ثم الساعة ${apres} ابتداءً من ${date}.',
+			'tc.groupe.horloges.apercuClasse' => ({required Object jour, required Object heure}) => 'تكون الحصة بتوقيت مكة المكرمة يوم ⁨${jour}⁩ الساعة ⁨${heure}⁩.',
+			'tc.groupe.horloges.apercuOuEnseignant' => ({required Object ville}) => 'عند المعلّم (⁨${ville}⁩)',
+			'tc.groupe.horloges.apercuChez' => ({required Object ou, required Object heure}) => '⁨${ou}⁩: الساعة ⁨${heure}⁩ طوال السنة.',
+			'tc.groupe.horloges.apercuChezPuis' => ({required Object ou, required Object heure, required Object apres, required Object date}) => '⁨${ou}⁩: الساعة ⁨${heure}⁩، ثم الساعة ⁨${apres}⁩ ابتداءً من ⁨${date}⁩.',
 			'tc.groupe.horloges.heureEtVille' => ({required Object heure, required Object ville}) => '⁨${heure}⁩ ⁨${ville}⁩',
 			'tc.groupe.horloges.chezVous' => 'عندكم',
 			'tc.groupe.horloges.chezEnseignantAnonyme' => 'عند معلّمكم',
