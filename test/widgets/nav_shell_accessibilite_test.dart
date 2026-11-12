@@ -204,6 +204,7 @@ void main() {
             );
             expect(find.byKey(NavShell.barreBasseKey), findsOneWidget);
             double? finPrecedent;
+            double? hautPrecedent;
             for (final Destination x in d) {
               // Libelle toujours visible.
               expect(find.text(x.libelle), findsOneWidget, reason: x.libelle);
@@ -234,8 +235,14 @@ void main() {
               // Tout reste dans l'ecran.
               expect(onglet.left, greaterThanOrEqualTo(0));
               expect(onglet.right, lessThanOrEqualTo(320));
-              // Onglets espaces.
-              if (finPrecedent != null) {
+              // Onglets espaces, sur une meme rangee. ESPACE-APPRENDRE (lot 5) :
+              // l'onglet « Apprendre » (mot de 101 points, au lieu de « Coran »)
+              // ne tient plus avec les trois autres sur une rangee a 320 : la
+              // barre passe alors sur deux rangees (son repli prevu), et
+              // l'ecart se mesure entre onglets d'une meme rangee.
+              if (finPrecedent != null &&
+                  hautPrecedent != null &&
+                  (onglet.top - hautPrecedent).abs() < 1) {
                 expect(
                   onglet.left - finPrecedent,
                   // MA-CMD-1 : quatre onglets de 72 a 320, l'ecart se
@@ -247,6 +254,7 @@ void main() {
                 );
               }
               finPrecedent = onglet.right;
+              hautPrecedent = onglet.top;
             }
             expect(tester.takeException(), isNull);
           },

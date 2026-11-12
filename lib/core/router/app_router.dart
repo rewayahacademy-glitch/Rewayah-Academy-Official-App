@@ -3422,9 +3422,16 @@ class _CoquilleNavigation extends ConsumerWidget {
             // Foyer ouvre TOUJOURS la liste des profils. Sans cela, `goBranch`
             // rendait la derniere page de la branche, et le parcours d'un profil
             // (tache de la branche Foyer) revenait a la place de la liste.
+            //
+            // ESPACE-APPRENDRE (lot 5, 12/11/2026) : de meme pour Apprendre. Le
+            // Coran s'ouvre depuis la Bibliotheque, dans la meme branche ; sans
+            // cela, toucher Apprendre depuis un autre onglet rendait la
+            // derniere page de la branche (le lecteur du Coran) au lieu de
+            // l'espace a trois onglets.
             initialLocation:
                 index == navigationShell.currentIndex ||
-                destination == Routes.tuteurFoyer,
+                destination == Routes.tuteurFoyer ||
+                destination == Routes.eleveApprendre,
           );
         },
         secondaires: secondairesPour(role: role),

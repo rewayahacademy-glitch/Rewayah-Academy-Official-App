@@ -168,6 +168,26 @@ void main() {
       expect(find.byType(EspaceApprendrePage), findsOneWidget);
     });
 
+    testWidgets('toucher Apprendre rend toujours l espace, jamais le dernier '
+        'lecteur ouvert', (WidgetTester tester) async {
+      final GoRouter routeur = await monterApprendre(
+        tester,
+        profil: ProfilApprendre.mineurGuide,
+        documents: documentsComplets(),
+      );
+      await tester.tap(find.byKey(PlancheDocuments.cleDocument('coran')));
+      await stabiliser(tester);
+      expect(lieu(routeur), Routes.eleveCoran);
+      await tester.tap(_onglet(t.nav.eleve.maClasse));
+      await stabiliser(tester);
+      expect(lieu(routeur), Routes.eleveSuivi);
+      // Sans retour a la racine de la branche, la barre rendrait le Coran.
+      await tester.tap(_onglet(t.nav.eleve.apprendre));
+      await stabiliser(tester);
+      expect(lieu(routeur), Routes.eleveApprendre);
+      expect(find.byType(EspaceApprendrePage), findsOneWidget);
+    });
+
     testWidgets('l ancienne adresse /eleve/coran fonctionne encore, dans la '
         'branche Apprendre', (WidgetTester tester) async {
       final GoRouter routeur = await monterApprendre(
