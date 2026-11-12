@@ -162,7 +162,7 @@ void main() {
     expect(plateforme, 1);
     expect(traitee, isTrue);
     expect(
-      ErrorWidget.builder(FlutterErrorDetails(exception: 'x')),
+      ErrorWidget.builder(const FlutterErrorDetails(exception: 'x')),
       isA<CarteErreurElement>(),
     );
   });
