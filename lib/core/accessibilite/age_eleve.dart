@@ -72,7 +72,9 @@ class LectureAgeEleveInconnue implements PortLectureAgeEleve {
 
 /// Le port de lecture employe par l'application (Supabase en production).
 final Provider<PortLectureAgeEleve> portLectureAgeEleveProvider =
-    Provider<PortLectureAgeEleve>((Ref ref) => const LectureAgeEleveInconnue());
+    Provider<PortLectureAgeEleve>(
+      (Ref ref) => const LectureAgeEleveInconnue(),
+    );
 
 /// L'age de l'eleve [eleveId], lu une fois puis garde.
 final ageEleveProvider = FutureProvider.family<AgeEleve, String>(

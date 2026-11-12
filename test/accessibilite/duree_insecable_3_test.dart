@@ -92,30 +92,23 @@ void main() {
       );
     });
 
-    test(
-      'DUREE-FOND-1 : la parite de l\'arabe releve une espace ordinaire',
-      () {
-        final Directory dossier = Directory.systemTemp.createTempSync('parite');
-        addTearDown(() => dossier.deleteSync(recursive: true));
-        final File fr = File('${dossier.path}/fr.json')
-          ..writeAsStringSync('{"p":{"ko":"{taille}\u00A0Ko","n":"{n} min"}}');
-        final File ar = File('${dossier.path}/ar.json')
-          ..writeAsStringSync(
-            '{"p":{"ko":"{taille} كيلوبايت","n":"{n} دقيقة"}}',
-          );
-        expect(
-          unitesSecablesEnArabe(francais: fr.path, arabe: ar.path),
-          <String>['p.ko {taille} : {taille} كيلوبايت'],
+    test('DUREE-FOND-1 : la parite de l\'arabe releve une espace ordinaire', () {
+      final Directory dossier = Directory.systemTemp.createTempSync('parite');
+      addTearDown(() => dossier.deleteSync(recursive: true));
+      final File fr = File('${dossier.path}/fr.json')
+        ..writeAsStringSync('{"p":{"ko":"{taille}\u00A0Ko","n":"{n} min"}}');
+      final File ar = File('${dossier.path}/ar.json')
+        ..writeAsStringSync(
+          '{"p":{"ko":"{taille} كيلوبايت","n":"{n} دقيقة"}}',
         );
-        ar.writeAsStringSync(
-          '{"p":{"ko":"{taille}\u00A0كيلوبايت","n":"{n} دقيقة"}}',
-        );
-        expect(
-          unitesSecablesEnArabe(francais: fr.path, arabe: ar.path),
-          isEmpty,
-        );
-      },
-    );
+      expect(unitesSecablesEnArabe(francais: fr.path, arabe: ar.path), <String>[
+        'p.ko {taille} : {taille} كيلوبايت',
+      ]);
+      ar.writeAsStringSync(
+        '{"p":{"ko":"{taille}\u00A0كيلوبايت","n":"{n} دقيقة"}}',
+      );
+      expect(unitesSecablesEnArabe(francais: fr.path, arabe: ar.path), isEmpty);
+    });
 
     test('la garde suit les alias (final h = t.controleur.historique)', () {
       final Directory dossier = Directory.systemTemp.createTempSync('garde');

@@ -221,4 +221,6 @@ class AssignationsIndisponibles implements PortAssignations, PortIndisponible {
 /// de lever. Agent Z le surcharge a l'integration (`AssignationsMemoire` pour
 /// les tests et la demonstration).
 final Provider<PortAssignations> portAssignationsProvider =
-    Provider<PortAssignations>((Ref ref) => const AssignationsIndisponibles());
+    Provider<PortAssignations>(
+      (Ref ref) => const AssignationsIndisponibles(),
+    );

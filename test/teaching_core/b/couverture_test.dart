@@ -59,23 +59,20 @@ void main() {
       expect(combinaisons.length, greaterThanOrEqualTo(10));
     });
 
-    test(
-      'le Coran garde sa teinte reservee, les autres ne la prennent pas',
-      () {
+    test('le Coran garde sa teinte reservee, les autres ne la prennent pas', () {
+      expect(
+        CouvertureRessource.pour(
+          ressource(id: 'coran', type: TypeRessource.quran),
+        ).indexTeinte,
+        0,
+      );
+      for (int i = 0; i < 40; i++) {
         expect(
-          CouvertureRessource.pour(
-            ressource(id: 'coran', type: TypeRessource.quran),
-          ).indexTeinte,
-          0,
+          CouvertureRessource.pour(ressource(id: 'x$i')).indexTeinte,
+          greaterThan(0),
         );
-        for (int i = 0; i < 40; i++) {
-          expect(
-            CouvertureRessource.pour(ressource(id: 'x$i')).indexTeinte,
-            greaterThan(0),
-          );
-        }
-      },
-    );
+      }
+    });
 
     test('le monogramme prend deux initiales, jamais la ponctuation', () {
       expect(
@@ -85,8 +82,9 @@ void main() {
         'MS',
       );
       expect(
-        CouvertureRessource.pour(ressource(id: 'r1', titreCourt: '"Alphabet"'))
-            .monogramme,
+        CouvertureRessource.pour(
+          ressource(id: 'r1', titreCourt: '"Alphabet"'),
+        ).monogramme,
         'A',
       );
     });
@@ -114,7 +112,10 @@ void main() {
     });
 
     test('une couverture deposee est signalee comme telle', () {
-      expect(CouvertureRessource.pour(ressource(id: 'r1')).calculee, isTrue);
+      expect(
+        CouvertureRessource.pour(ressource(id: 'r1')).calculee,
+        isTrue,
+      );
       expect(
         CouvertureRessource.pour(
           ressource(id: 'r1', couverture: 'supports/r1.png'),

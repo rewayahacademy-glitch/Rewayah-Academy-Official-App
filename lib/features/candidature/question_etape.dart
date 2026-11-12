@@ -243,21 +243,21 @@ class _Langues extends StatelessWidget {
       for (final OptionQuestionnaire o in champ.options)
         if (!languesRetirees.contains(o.code))
           if (nomDeLangue(o.code) case final String nom)
-            ElementChoix(
-              code: o.code,
-              libelle: nom,
-              // Dire quelles langues Rewayah enseigne n'a de sens que pour les
-              // langues d'explication ; la langue maternelle peut etre toute
-              // autre langue, sans commentaire.
-              description: o.code == 'autre'
-                  ? r.autreDescription
-                  : !multiple
-                  ? null
-                  : o.horsReferentiel
-                  ? r.horsReferentiel
-                  : r.dansReferentiel,
-              cle: ValueKey<String>('option-${champ.code}-${o.code}'),
-            ),
+          ElementChoix(
+            code: o.code,
+            libelle: nom,
+            // Dire quelles langues Rewayah enseigne n'a de sens que pour les
+            // langues d'explication ; la langue maternelle peut etre toute
+            // autre langue, sans commentaire.
+            description: o.code == 'autre'
+                ? r.autreDescription
+                : !multiple
+                ? null
+                : o.horsReferentiel
+                ? r.horsReferentiel
+                : r.dansReferentiel,
+            cle: ValueKey<String>('option-${champ.code}-${o.code}'),
+          ),
     ];
     final Map<String, ElementChoix> parCode = <String, ElementChoix>{
       for (final ElementChoix e in tous) e.code: e,
@@ -392,9 +392,7 @@ class _MoyensAccessibles extends StatelessWidget {
           key: ValueKey<String>('q-${champ.code}'),
           autoriserSaisieLibre: false,
           selectionMultiple: true,
-          valeurInitiale: choisis.isEmpty
-              ? null
-              : ReponseChoix(valeurs: choisis),
+          valeurInitiale: choisis.isEmpty ? null : ReponseChoix(valeurs: choisis),
           options: <OptionChoix>[
             for (final OptionQuestionnaire o in moyens)
               OptionChoix(

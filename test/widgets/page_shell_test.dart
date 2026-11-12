@@ -92,8 +92,7 @@ void main() {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
-              for (int i = 0; i < 40; i++)
-                SizedBox(height: 40, child: Text('ligne $i')),
+              for (int i = 0; i < 40; i++) SizedBox(height: 40, child: Text('ligne $i')),
             ],
           ),
         ),

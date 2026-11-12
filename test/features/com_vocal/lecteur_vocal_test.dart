@@ -190,9 +190,7 @@ void main() {
     expect(
       find.bySemanticsLabel(
         RegExp(
-          RegExp.escape(
-            l.libelleAuteur(auteur: 'Sayyida Mariam', duree: '0:28'),
-          ),
+          RegExp.escape(l.libelleAuteur(auteur: 'Sayyida Mariam', duree: '0:28')),
         ),
       ),
       findsWidgets,

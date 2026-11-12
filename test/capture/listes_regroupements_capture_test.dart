@@ -112,9 +112,7 @@ void main() {
 
     // Le panneau des filtres deplie (bureau), puis la page apres defilement :
     // seules la barre de l'application et la rangee d'en-tetes restent.
-    testWidgets('regroupements 1440_filtres_ouverts', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('regroupements 1440_filtres_ouverts', (WidgetTester tester) async {
       fixerVueCapture(tester, b1440, 1);
       await _monter(tester, mode: ThemeMode.light);
       await tester.tap(

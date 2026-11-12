@@ -436,9 +436,9 @@ Future<void> ouvrirFeuilleEnCeMoment(
       children: <Widget>[
         ActionPrincipale(
           libelle: etat.action,
-          onPress: () =>
-              Navigator.of(contexte)
-                  .pop(etat.agir == null ? etat.chemin : _agirIci),
+          onPress: () => Navigator.of(
+            contexte,
+          ).pop(etat.agir == null ? etat.chemin : _agirIci),
         ),
         Ecart.vMd,
         LienFleche(

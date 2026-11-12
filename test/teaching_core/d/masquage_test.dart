@@ -6,8 +6,11 @@ import 'package:rewayah_academy/core/tc_outils/masquage.dart';
 import 'support/hote_d.dart';
 
 void main() {
-  ContentPosition ayah(int numero) =>
-      ContentPosition.ayah(resourceId: ressourceTest, sourate: 1, ayah: numero);
+  ContentPosition ayah(int numero) => ContentPosition.ayah(
+    resourceId: ressourceTest,
+    sourate: 1,
+    ayah: numero,
+  );
 
   ContentRange plage(int debut, int fin) => ContentRange(
     resourceId: ressourceTest,
@@ -38,8 +41,7 @@ void main() {
       expect(
         revele.plages,
         masque.plages,
-        reason:
-            'la plage reste masquee, elle est seulement ouverte : '
+        reason: 'la plage reste masquee, elle est seulement ouverte : '
             'refermer ne doit pas obliger a la redesigner',
       );
 

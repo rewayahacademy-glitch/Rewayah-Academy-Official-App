@@ -133,8 +133,8 @@ class _EtatPassageSalle extends State<PassageSalle>
           builder: (BuildContext context, Widget? enfant) {
             final double v = _c.value;
             final double opacite = switch (facon) {
-              FaconPassage.fondu ||
-              FaconPassage.depuisIle => AppMouvement.courbeFondu.transform(v),
+              FaconPassage.fondu || FaconPassage.depuisIle =>
+                AppMouvement.courbeFondu.transform(v),
               FaconPassage.voile || FaconPassage.aucune => 1,
             };
             final double echelle = facon == FaconPassage.depuisIle

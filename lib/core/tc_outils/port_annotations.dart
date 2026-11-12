@@ -127,11 +127,12 @@ class AnnotationsMemoire implements PortAnnotations {
       });
 
   @override
-  Future<void> retirerTrait(String coucheId, String traitId) async => _muter(
-    coucheId,
-    (AnnotationLayer couche) =>
-        couche.sansTrait(traitId, majAUtc: _maintenant()),
-  );
+  Future<void> retirerTrait(String coucheId, String traitId) async =>
+      _muter(
+        coucheId,
+        (AnnotationLayer couche) =>
+            couche.sansTrait(traitId, majAUtc: _maintenant()),
+      );
 
   @override
   Future<void> poserMarqueur(
@@ -256,4 +257,6 @@ class AnnotationsIndisponibles implements PortAnnotations, PortIndisponible {
 /// de lever. Agent Z le surcharge a l'integration (`AnnotationsMemoire` pour
 /// les tests et la demonstration).
 final Provider<PortAnnotations> portAnnotationsProvider =
-    Provider<PortAnnotations>((Ref ref) => const AnnotationsIndisponibles());
+    Provider<PortAnnotations>(
+      (Ref ref) => const AnnotationsIndisponibles(),
+    );

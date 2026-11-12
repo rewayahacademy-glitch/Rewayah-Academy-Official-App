@@ -97,30 +97,26 @@ void main() {
       expect(annonce.gestes, isEmpty);
     });
 
-    testWidgets(
-      'la barre « Seance toujours en direct » suit sur chaque ecran',
-      (WidgetTester tester) async {
-        final GoRouter routeur = routeurDeTest();
-        addTearDown(routeur.dispose);
+    testWidgets('la barre « Seance toujours en direct » suit sur chaque ecran', (
+      WidgetTester tester,
+    ) async {
+      final GoRouter routeur = routeurDeTest();
+      addTearDown(routeur.dispose);
 
-        await tester.pumpWidget(appDeTest(session: session, routeur: routeur));
+      await tester.pumpWidget(appDeTest(session: session, routeur: routeur));
+      await tester.pumpAndSettle();
+
+      for (final String destination in _parcours) {
+        routeur.go(destination);
         await tester.pumpAndSettle();
-
-        for (final String destination in _parcours) {
-          routeur.go(destination);
-          await tester.pumpAndSettle();
-          expect(
-            find.byKey(const Key('barre-cours-en-cours')),
-            findsOneWidget,
-            reason: 'pas de retour possible depuis $destination',
-          );
-          expect(
-            find.text('Seance toujours en direct - Les Lanternes'),
-            findsOneWidget,
-          );
-        }
-      },
-    );
+        expect(
+          find.byKey(const Key('barre-cours-en-cours')),
+          findsOneWidget,
+          reason: 'pas de retour possible depuis $destination',
+        );
+        expect(find.text('Seance toujours en direct - Les Lanternes'), findsOneWidget);
+      }
+    });
   });
 
   group('Q-12 : le test sait reconnaitre une vraie coupure', () {

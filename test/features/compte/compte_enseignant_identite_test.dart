@@ -204,7 +204,10 @@ void main() {
   group('Informations : le fuseau du profil, jamais suppose', () {
     testWidgets('fuseau du profil : sa ville', (WidgetTester tester) async {
       await _monterInformations(tester, () => _horloge('Africa/Conakry'));
-      expect(find.text(villeDuFuseauLibelle('Africa/Conakry')), findsOneWidget);
+      expect(
+        find.text(villeDuFuseauLibelle('Africa/Conakry')),
+        findsOneWidget,
+      );
     });
 
     testWidgets('profil sans fuseau : « Heure de cet appareil », pas Paris', (
