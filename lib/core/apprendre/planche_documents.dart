@@ -278,7 +278,9 @@ class _PlancheEtat extends ConsumerState<PlancheDocuments> {
     }
     switch (document.ouverture) {
       case OuvrirDansLApplication(:final String chemin):
-        unawaited(context.push(chemin));
+        // `go`, comme la Bibliotheque d'origine et l'accueil : l'adresse
+        // change, le retour est celui de la fiche (`?retour=`).
+        context.go(chemin);
       case OuvrirHorsApplication(:final Uri adresse):
         await _confirmerEtOuvrir(adresse);
     }
@@ -387,27 +389,39 @@ class _Commandes extends ConsumerWidget {
     if (presents.isEmpty) {
       return Align(alignment: AlignmentDirectional.centerEnd, child: bascule);
     }
+    final Widget filtres = Semantics(
+      container: true,
+      label: c.filtres.libelle,
+      child: RangeeFiltres(
+        filtres: <Widget>[
+          for (final TypeDocumentPlanche type in presents)
+            FilterPill(
+              libelle: libelleTypeDocument(type),
+              retenue: retenus.contains(type),
+              onPress: () =>
+                  ref.read(typesRetenusPlancheProvider.notifier).basculer(type),
+            ),
+        ],
+      ),
+    );
+    // Au telephone, les filtres gardent toute la largeur (a cote de la bascule
+    // il ne resterait de place que pour une puce) ; la bascule passe au-dessus,
+    // a la fin de la ligne. Des la tablette, tout tient sur une rangee.
+    if (AppGabarit.de(context) == Gabarit.mobile) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Align(alignment: AlignmentDirectional.centerEnd, child: bascule),
+          Ecart.vSm,
+          filtres,
+        ],
+      );
+    }
     return Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
-        Expanded(
-          child: Semantics(
-            container: true,
-            label: c.filtres.libelle,
-            child: RangeeFiltres(
-              filtres: <Widget>[
-                for (final TypeDocumentPlanche type in presents)
-                  FilterPill(
-                    libelle: libelleTypeDocument(type),
-                    retenue: retenus.contains(type),
-                    onPress: () => ref
-                        .read(typesRetenusPlancheProvider.notifier)
-                        .basculer(type),
-                  ),
-              ],
-            ),
-          ),
-        ),
+        Expanded(child: filtres),
         Ecart.hMd,
         bascule,
       ],
@@ -439,7 +453,7 @@ class _CorpsRayon extends StatelessWidget {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
-        spacing: AppSpacing.md,
+        spacing: AppSpacing.lg,
         children: <Widget>[
           for (final (int i, DocumentPlanche d) in documents.indexed)
             ElementEchelonne(

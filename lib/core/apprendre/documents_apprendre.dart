@@ -33,11 +33,15 @@ import 'document_planche.dart';
 /// L'identifiant de la carte du Coran.
 const String idDocumentCoran = 'coran';
 
-/// Le chemin de la fiche d'un document du catalogue. Ecrit ici pour ne pas
-/// importer `features/` depuis le core ; il doit rester egal a
+/// Le chemin de la fiche d'un document du catalogue, avec le retour vers
+/// l'espace Apprendre (`?retour=`, que la fiche existante sait lire : son
+/// disque retour ramene ici, jamais a l'ancienne liste). Ecrit ici pour ne pas
+/// importer `features/` depuis le core ; le chemin doit rester egal a
 /// `RoutesTcB.versRessource` (un test le verifie).
-String cheminFicheDocument(String resourceId) =>
-    '${Routes.tcBibliotheque}/$resourceId';
+String cheminFicheDocument(String resourceId) => Uri(
+  path: '${Routes.tcBibliotheque}/$resourceId',
+  queryParameters: <String, String>{'retour': Routes.eleveApprendre},
+).toString();
 
 /// Les documents de l'espace Apprendre, tels que la planche les montre.
 ///
