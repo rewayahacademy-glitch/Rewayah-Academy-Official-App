@@ -96,3 +96,59 @@ et `6-telephone-compte-deja-connecte.jpg`.
 | 17 | L'élève peut sortir de la salle sans coupure ; s'il sort de l'application, un court délai sans coupure, puis coupure. Toutes ses sorties de l'application sont consignées au rapport (nombre, fréquence, de quand à quand). | Lot HORS-SALLE. Nouvelle donnée relevée sur des mineurs : elle ne commence pas sans information des parents (règle du cahier de la salle) ; texte à valider par le directeur | Relevé en cours |
 | 18 | La caméra de l'élève entré par un appareil jumelé ne s'allume pas ; message long. | Capture 5 : ce n'est pas un refus du serveur. Le téléphone dit que la caméra est déjà prise (« NotReadableError »). Piste à vérifier : le lecteur de code du jumelage garde la caméra. Le message montre une phrase technique en anglais : à retirer de l'écran | Relevé en cours ; message traité dans ENTREE-ROBUSTE |
 | 19 | Rejoindre alors que le même compte est déjà connecté : « c'est bien, mais pas très clair comme signe ». | Capture 6 : l'écran dit « La salle n'a pas pu s'ouvrir, vérifiez votre connexion », un message de réseau pour une cause qui n'est pas le réseau. Le bon message existe (« ouverte ailleurs ») mais n'est pas posé dans ce cas. Piste pour le point 11 : deux appareils du même compte qui se chassent | Traité dans ENTREE-ROBUSTE |
+
+## Relevés et arbitrages du 12/11/2026, 21:40 UTC (points 14 à 19)
+
+### La caméra de l'appareil jumelé (18) : cause vérifiée dans le code
+
+Le lecteur de code du jumelage (`mobile_scanner` 7.4.2) ne ferme jamais la caméra dans un navigateur :
+son arrêt oublie le flux sans arrêter ses pistes (`polling_barcode_reader.dart` l. 151-159,
+`mobile_scanner_web.dart` l. 587-594 et 614-618, lus par moi). L'application est à page unique : la
+caméra arrière reste donc ouverte jusqu'à la salle, et la caméra avant ne peut plus s'ouvrir. Que
+ce soit bien la cause sur le téléphone du directeur reste à prouver sur ce téléphone ; que le flux
+ne soit pas fermé est prouvé. Autres faits : l'enseignant n'a aucun geste « allumer la caméra d'un
+élève » (il peut seulement la couper) ; le droit de l'élève jumelé est le même que celui d'un élève
+à compte propre. Lot CAMERA-JUMELAGE : notre code ferme lui-même le flux, preuve dans un vrai
+navigateur.
+
+### La pause (14) : l'existant et les arbitrages
+
+L'existant : la pause n'existe que si l'enseignant l'a activée dans la fiche de sa classe (inactive
+par défaut), à un moment fixe compté depuis son entrée ; un lien « Démarrer la pause » ; les élèves
+l'apprennent par un message de la visio ; rien ne la propose, rien ne la rappelle, rien ne la finit
+à l'heure. Les réglages « pause adulte / enfant » de la base (0 et 5) ne pilotent rien.
+
+| Sujet | Arbitrage |
+| :-- | :-- |
+| Par défaut | La pause est active pour toute classe. Le réglage de la fiche de classe reste à l'enseignant et prime (il peut la déplacer, l'allonger, la couper) |
+| Moment | Le milieu de la durée prévue, compté depuis l'heure prévue de début : 45 min sur 90, 30 min sur 60 |
+| Durée | Réglage de la direction : 10 min adultes (la décision du 18/10 n'était pas appliquée : 0 en base), 5 min enfants |
+| Oui / Non | Oui : la pause commence, tous reçoivent l'alerte et l'heure exacte de reprise. Non : rappel après 5 min (réglage de la direction) |
+| Combien de rappels | Tant que la pause tient encore : on ne propose plus si, après elle, il resterait moins de 15 min de cours (réglage de la direction). Ensuite, « pause non prise » au récapitulatif |
+| L'enseignant décide | Il peut démarrer la pause lui-même à tout moment, proposée ou non, et la finir plus tôt |
+| Fin | À l'heure annoncée, la pause finit seule ; la barre le dit à tous |
+| Argent, présence | Rien ne change : la pause est comprise dans la séance (« pause comprise », décision des tarifs) |
+| Élèves | Ils ne lisent toujours rien sur le serveur : le message de la visio reste la voie |
+
+Lots : PAUSE-SERVEUR (base, réglages de la direction, port ; lancé), puis l'écran dans la Dynamique
+chrono (DYNAMIQUE-CHRONO-2).
+
+### Hors de la salle (16, 17) : l'existant
+
+Le code actuel ne coupe rien quand on quitte l'écran de la salle (la visio vit hors de la page
+depuis le 31/10 et le 11/11), ni quand l'application passe en arrière-plan. Trois pistes pour la
+coupure vécue par le directeur, aucune prouvée : le téléphone lui-même suspend le réseau d'une
+application web en arrière-plan ; le son reçu reste bloqué par le navigateur après une reprise
+(personne n'écoute ce blocage, le son n'est relancé qu'au retour à l'écran) ; la version essayée
+n'avait pas ces corrections. Rien n'est écrit au serveur quand l'application passe en arrière-plan
+ou en revient : une sortie d'application ne se distingue pas d'une coupure de réseau.
+
+| Sujet | Arbitrage |
+| :-- | :-- |
+| Enseignant | Rien n'est jamais coupé par l'application. Le son reçu est relancé après toute reprise, pas seulement au retour à l'écran. Ce que le téléphone coupe lui-même est mesuré et écrit au relevé de connexion, pour le prouver à l'essai suivant |
+| Élève hors de la salle, dans l'application | Rien n'est coupé (déjà le cas) |
+| Élève hors de l'application | 30 secondes sans coupure (réglage de la direction), puis sa place est rendue ; il rentre d'un geste à son retour |
+| Journal des sorties | Chaque sortie de l'application : de quand à quand ; au rapport de séance : nombre et durée totale. Lisible par la direction, l'enseignant de la séance et le parent de l'élève |
+| Information des parents | Le journal reste éteint (réglage de la direction) tant que le directeur n'a pas validé la phrase d'information aux familles : rien n'est relevé sur un mineur sans information |
+
+Lot HORS-SALLE : après ENTREE-ROBUSTE (mêmes fichiers).
