@@ -76,7 +76,7 @@ import '../../../core/widgets/espace_travail_adaptatif.dart';
 import '../../../core/widgets/fil_ariane.dart';
 import '../../../core/widgets/fil_discussion.dart';
 import '../../../core/widgets/filter_pill.dart';
-import '../../../core/widgets/goutte_profils.dart';
+import '../../../core/widgets/fondu_contenu_profil.dart';
 import '../../../core/widgets/grille_bento.dart';
 import '../../../core/widgets/grille_visages.dart';
 import '../../../core/widgets/groupe_preferences.dart';
@@ -87,7 +87,6 @@ import '../../../core/widgets/identite_profil.dart';
 import '../../../core/widgets/ile_liquide.dart';
 import '../../../core/widgets/indicateur_liquide.dart';
 import '../../../core/widgets/languette_bord.dart';
-import '../../../core/widgets/liaison_liquide.dart';
 import '../../../core/widgets/lien_fleche.dart';
 import '../../../core/widgets/ligne_allocation.dart';
 import '../../../core/widgets/ligne_cle_valeur.dart';
@@ -1197,33 +1196,19 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
   // Decisions du directeur du 10/11/2026 : l'effet liquide de la barre ;
   // au repos, la destination ouverte garde son fond (la goutte ne se
   // dessine qu'en mouvement).
-  // GOUTTE D'HUILE DES PROFILS (11/11/2026) : le cou entre deux silhouettes,
-  // puis la goutte qui relie les ronds de profils et fait tomber le contenu.
+  // PROFILS-EFFET (directeur, 12/11/2026) : le contenu d'un profil change par
+  // un fondu court ; le rond choisi grandit et son anneau prend l'accent.
   EntreeGalerie(
-    nom: 'LiaisonLiquide',
-    famille: FamilleComposant.composantEtat,
-    etats: <EtatGalerie>[
-      EtatGalerie(
-        'cou plein entre un rond et une carte',
-        (BuildContext _) => const _DemoLiaisonLiquide(v: 0.5),
-      ),
-      EtatGalerie(
-        'cou aminci, a l\'approche de la rupture',
-        (BuildContext _) => const _DemoLiaisonLiquide(v: 0.1),
-      ),
-    ],
-  ),
-  EntreeGalerie(
-    nom: 'GoutteProfils',
+    nom: 'FonduContenuProfil',
     famille: FamilleComposant.composantEtat,
     etats: <EtatGalerie>[
       EtatGalerie(
         'au repos, premier profil choisi',
-        (BuildContext _) => const _DemoGoutteProfils(choisi: 'a'),
+        (BuildContext _) => const _DemoFonduProfil(choisi: 'a'),
       ),
       EtatGalerie(
         'au repos, second profil choisi',
-        (BuildContext _) => const _DemoGoutteProfils(choisi: 'b'),
+        (BuildContext _) => const _DemoFonduProfil(choisi: 'b'),
       ),
     ],
   ),
@@ -5097,64 +5082,18 @@ void _tailleIgnoree(int taille) {}
 /// La carte de demonstration de la lumiere rectangulaire (galerie).
 const Size _carteDemoHalo = Size(240, 96);
 
-/// Le cou entre un rond et une carte, peint a l'arret (galerie).
-class _DemoLiaisonLiquide extends StatelessWidget {
-  const _DemoLiaisonLiquide({required this.v});
-
-  final double v;
-
-  @override
-  Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
-    return CustomPaint(
-      size: const Size(240, 120),
-      painter: _PeintreDemoLiaison(palette.inkAccent.asBorderSide().color, v),
-    );
-  }
-}
-
-class _PeintreDemoLiaison extends CustomPainter {
-  const _PeintreDemoLiaison(this.couleur, this.v);
-
-  final Color couleur;
-  final double v;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final SilhouetteLiquide rond = SilhouetteLiquide.disque(
-      const Offset(40, 24),
-      20,
-    );
-    final SilhouetteLiquide carte = SilhouetteLiquide.rectangle(
-      const Rect.fromLTWH(8, 72, 224, 40),
-      AppRadius.lg,
-    );
-    canvas.drawPath(
-      pontEntreSilhouettes(rond, carte, v: v),
-      Paint()..color = couleur,
-    );
-  }
-
-  @override
-  bool shouldRepaint(_PeintreDemoLiaison ancien) =>
-      ancien.couleur != couleur || ancien.v != v;
-}
-
 /// La rangee de profils et son contenu, au repos (galerie).
-class _DemoGoutteProfils extends StatelessWidget {
-  const _DemoGoutteProfils({required this.choisi});
+class _DemoFonduProfil extends StatelessWidget {
+  const _DemoFonduProfil({required this.choisi});
 
   final String choisi;
 
   @override
-  Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
-    return GoutteProfils(
-      selectionId: choisi,
-      matiere: palette.inkAccent.asBorderSide().color,
-      matiereContenu: palette.surfaceRaised.background,
-      rayonContenu: AppRadius.lg,
-      child: SelecteurProfils(
+  Widget build(BuildContext context) => Column(
+    mainAxisSize: MainAxisSize.min,
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: <Widget>[
+      SelecteurProfils(
         profils: const <ProfilSelectionnable>[
           ProfilSelectionnable(id: 'a', prenom: 'Amina', etat: 'Dans 3 h'),
           ProfilSelectionnable(id: 'b', prenom: 'Bilal', etat: 'Aucune séance'),
@@ -5162,8 +5101,15 @@ class _DemoGoutteProfils extends StatelessWidget {
         selectionId: choisi,
         onSelection: (String _) {},
       ),
-    );
-  }
+      FonduContenuProfil(
+        profilId: choisi,
+        child: Padding(
+          padding: const EdgeInsets.all(AppSpacing.lg),
+          child: Text(choisi == 'a' ? 'Contenu d\'Amina' : 'Contenu de Bilal'),
+        ),
+      ),
+    ],
+  );
 }
 
 /// La demonstration de l'effet liquide pour la galerie : trois pastilles,

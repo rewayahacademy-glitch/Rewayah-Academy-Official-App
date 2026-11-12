@@ -281,6 +281,12 @@ class _AvisAdminPageState extends ConsumerState<AvisAdminPage> {
   }
 
   Future<void> _moderer(AvisAdmin a, StatutAvis statut, String? motif) async {
+    // ANTI-CRASH : le conteneur, pris avant l'attente, relit la liste meme
+    // si la page a ete quittee (`ref` leverait une StateError).
+    final ProviderContainer conteneur = ProviderScope.containerOf(
+      context,
+      listen: false,
+    );
     // Hors ligne, rien ne part.
     if (_horsLigne) {
       setState(() => _retour = RetourAvisAdmin.horsLigne);
@@ -313,7 +319,7 @@ class _AvisAdminPageState extends ConsumerState<AvisAdminPage> {
     }
     // Dans tous les cas la liste est relue : une decision dont la reponse s'est
     // perdue doit y apparaitre, jamais « non envoyee ».
-    ref.invalidate(avisAdminProvider);
+    conteneur.invalidate(avisAdminProvider);
     if (!mounted) return;
     setState(() {
       _enCours = null;
@@ -329,6 +335,12 @@ class _AvisAdminPageState extends ConsumerState<AvisAdminPage> {
   }
 
   Future<void> _creer() async {
+    // ANTI-CRASH : le conteneur, pris avant l'attente, relit la liste meme
+    // si la page a ete quittee (`ref` leverait une StateError).
+    final ProviderContainer conteneur = ProviderScope.containerOf(
+      context,
+      listen: false,
+    );
     if (_creationEnCours) return;
     final String libelle = _libelle.text.trim();
     final int? jours = _entier(_jours, 1, 365);
@@ -355,7 +367,7 @@ class _AvisAdminPageState extends ConsumerState<AvisAdminPage> {
       retour = _horsLigne ? RetourLien.horsLigne : RetourLien.echecCreation;
     }
     // La liste est relue aussi apres un echec : un lien a pu etre cree.
-    ref.invalidate(avisLiensProvider);
+    conteneur.invalidate(avisLiensProvider);
     if (!mounted) return;
     setState(() {
       _creationEnCours = false;
@@ -378,6 +390,12 @@ class _AvisAdminPageState extends ConsumerState<AvisAdminPage> {
   }
 
   Future<void> _fermer(LienAvis l) async {
+    // ANTI-CRASH : le conteneur, pris avant l'attente, relit la liste meme
+    // si la page a ete quittee (`ref` leverait une StateError).
+    final ProviderContainer conteneur = ProviderScope.containerOf(
+      context,
+      listen: false,
+    );
     final f = t.avis.admin.liens;
     final bool oui = await ConfirmDestructive.demander(
       context,
@@ -405,7 +423,7 @@ class _AvisAdminPageState extends ConsumerState<AvisAdminPage> {
     } on Object {
       retour = _horsLigne ? RetourLien.horsLigne : RetourLien.echecFermeture;
     }
-    ref.invalidate(avisLiensProvider);
+    conteneur.invalidate(avisLiensProvider);
     if (!mounted) return;
     setState(() {
       _enCours = null;

@@ -397,6 +397,7 @@
       ],
       "jourDate": "⁨{jour}⁩ ⁨{numero}⁩ ⁨{mois}⁩"
     },
+    "erreurElement": "تعذّر عرض هذا العنصر. أعد المحاولة بعد لحظة.",
     "reessayer": "إعادة المحاولة",
     "annuler": "إلغاء",
     "choix": {
@@ -667,6 +668,8 @@
     "entree": {
       "coursDans": "الدرس بعد ⁨{duree}⁩",
       "coursImminent": "الدرس بعد أقل من دقيقة",
+      "coursDemainA": "الدرس غدًا الساعة ⁨{heure}⁩",
+      "coursDansJours(param=jours)": {"zero": "الدرس اليوم", "one": "الدرس بعد يوم واحد", "two": "الدرس بعد يومين", "few": "الدرس بعد ⁨{jours}⁩ أيام", "many": "الدرس بعد ⁨{jours}⁩ يومًا", "other": "الدرس بعد ⁨{jours}⁩ يوم"},
       "revenirAvant": "هذا الدرس غير مفتوح لك الآن. عُد قبل موعد الدرس بعشرين دقيقة.",
       "rejoindre": "انضمام",
       "rejoindreLecteur": "الانضمام إلى حصة ⁨{deClasse}⁩",

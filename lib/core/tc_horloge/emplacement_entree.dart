@@ -136,11 +136,7 @@ class EmplacementEntree {
               ? t.classe.entree.coursImminent
               : role == RoleEntree.enseignant
               ? _dansEnseignant(reste, chezMoi(horloge.debutUtc))
-              // RTL-ISOL-1 : « الدرس بعد 3 h 28 », jamais « h 28 3 ».
-              : phraseAvecValeur(
-                  (String d) => t.classe.entree.coursDans(duree: d),
-                  duree,
-                ),
+              : _coursDans(reste, chezMoi(horloge.debutUtc)),
           annonce: t.classe.entree.annonce.aVenir,
           avisDst: dst,
         );
@@ -335,6 +331,35 @@ class EmplacementEntree {
           avant: notice.heureAvantRendue,
           apres: notice.heureApresRendue,
         );
+}
+
+/// Le compte a rebours de l'eleve et du tuteur : « Cours dans 3 h 28 », puis,
+/// au-dela du jour, « Cours demain a 19:00 » ou « Cours dans 4 jours », jamais
+/// « Cours dans 110 h 14 » (directeur, 12/11/2026). [debut] : l'heure du
+/// profil, jamais celle de l'appareil. RTL-ISOL-1 : chaque valeur passe par
+/// [phraseAvecValeur] (« الدرس بعد 3 h 28 », jamais « h 28 3 »).
+String _coursDans(Duration reste, DateTime debut) {
+  // Sous le jour, la duree reste celle d'avant (a la minute, tronquee) : seul
+  // le franchissement du jour change de mot.
+  final String duree = LibellesGroupe.dureeLisible(reste);
+  String sousLeJour() => phraseAvecValeur(
+    (String d) => t.classe.entree.coursDans(duree: d),
+    duree,
+  );
+  return LibellesGroupe.compteAReboursAvec(
+    reste,
+    debut: debut,
+    textes: (
+      imminent: () => t.classe.entree.coursImminent,
+      minutes: (int _) => sousLeJour(),
+      heures: (int _, String _) => sousLeJour(),
+      demain: (String heure) => phraseAvecValeur(
+        (String h) => t.classe.entree.coursDemainA(heure: h),
+        heure,
+      ),
+      jours: (int j) => t.classe.entree.coursDansJours(jours: j),
+    ),
+  );
 }
 
 /// La ligne de contexte de l'enseignant, au format d'E11 : « Dans 1 h 24 »

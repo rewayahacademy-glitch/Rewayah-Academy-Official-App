@@ -405,6 +405,12 @@ Abréviations des fichiers :
   - 02/11 18:49 : « Que dit la loi et que font les compagnies comme anthopic, Google »
 - Marque : **NON ÉCRITE**. Voir la contradiction C3 avec la « question groupée » de PLAN-LOTS §8.
 
+**A14. La goutte entre profils est abandonnée ; deux effets simples la remplacent (contenu du profil, profil sélectionné).**
+- Date : 12/11.
+- Citation : 12/11/2026, 07:11 UTC : « On abandonne la goutte entre profils, on ajoute un simple effet pour le contenu du profil et un autre qui montre le profil sélectionné. »
+- Elle remplace GOUTTE-COUPEE du 11/11. La branche `claude/goutte-nappe-travail` est gardée comme archive, jamais rebranchée.
+- Marque : **écrite** : `lib/core/widgets/fondu_contenu_profil.dart` (durées et courbe dans `AppMouvement`), `REGISTRE-LOTS.md` (ligne du 12/11), branche `claude/profils-effet`.
+
 ---
 
 ## 5. Rythme, budget et nuit
