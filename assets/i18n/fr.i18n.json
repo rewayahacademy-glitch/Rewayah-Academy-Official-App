@@ -5269,6 +5269,21 @@
       "fondateursMinimum": "Fondateurs au minimum",
       "fondateursMinimumDetail": "Le nombre de fondateurs exigé parmi les participants d'un entretien.",
       "fondateursBornes": "De 1 à 99.",
+      "pause": {
+        "section": "Pause pendant la séance",
+        "intro": "Par défaut, chaque séance d'une classe a une pause, juste après le milieu. La barre du chrono la propose à l'enseignant, qui accepte ou refuse. L'enseignant peut aussi régler la pause de sa classe.",
+        "adultes": "Pause des classes d'adultes",
+        "adultesDetail": "La durée de la pause par défaut d'une classe d'adultes. 0 : pas de pause. Arrondie aux 5 minutes, de 5 à 30.",
+        "enfants": "Pause des classes d'enfants",
+        "enfantsDetail": "La durée de la pause par défaut d'une classe d'enfants. 0 : pas de pause. Arrondie aux 5 minutes, de 5 à 30.",
+        "rappel": "Rappel après un refus",
+        "rappelDetail": "Si l'enseignant refuse la pause, elle lui est proposée de nouveau après ce délai : la pause est un droit.",
+        "reste": "Cours restant après la pause",
+        "resteDetail": "La pause n'est plus proposée s'il restait, après elle, moins que ce temps de cours.",
+        "bornesDuree": "De 0 à 30 minutes.",
+        "bornesRappel": "De 1 à 60 minutes.",
+        "bornesReste": "De 0 à 60 minutes."
+      },
       "paie": {
         "section": "Paie des enseignants",
         "intro": "La paie d'un mois est versée entre ces deux jours du mois suivant. Les enseignants voient ces dates sur «\u00a0Mes revenus\u00a0».",

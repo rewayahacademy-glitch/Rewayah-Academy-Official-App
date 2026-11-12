@@ -5,6 +5,12 @@
 //   pause_reglage_lire, pause_reglage_ecrire,
 //   pause_seance_etat, pause_seance_demarrer, pause_seance_terminer.
 //
+// PAUSE-SERVEUR (12/11/2026) : plus `pause_seance_refuser` (le Non a la pause
+// proposee, `20261124100000_pause_proposee.sql`), et trois champs de l'etat :
+// `proposer_a`, `refus_nombre`, `motif`. Un serveur d'avant cette migration ne
+// les rend pas : l'etat se lit sans proposition (ordinaire, zero refus), et un
+// Non envoye a ce serveur relit l'etat au lieu de casser l'ecran.
+//
 // Contrat : `docs/current/CONTRAT_PORT_PAUSE_SEANCE.md`. Le serveur decide de
 // tout : qui lit, qui ecrit (`peut_modifier`, `peut_piloter`), l'horodatage du
 // debut et de la fin. Le client n'envoie jamais d'heure.
@@ -97,7 +103,32 @@ class PauseSeanceSupabase implements PortPauseSeance {
       'p_cle_idempotence': cleIdempotence,
     }),
   );
+
+  @override
+  Future<PauseSeance> refuser({
+    required String seanceId,
+    required String cleIdempotence,
+  }) async {
+    try {
+      return pauseDepuis(
+        await _appeler('pause_seance_refuser', <String, dynamic>{
+          'p_seance_id': seanceId,
+          'p_cle_idempotence': cleIdempotence,
+        }),
+      );
+    } on PostgrestException catch (e) {
+      // Serveur d'avant PAUSE-SERVEUR : la fonction n'existe pas. Repli sur
+      // l'etat ancien, qui ne porte aucune proposition.
+      if (!fonctionAbsente(e)) rethrow;
+      return etat(seanceId);
+    }
+  }
 }
+
+/// Vrai quand l'erreur dit que la fonction appelee n'existe pas sur ce
+/// serveur (PostgREST `PGRST202`, Postgres `42883`).
+bool fonctionAbsente(PostgrestException e) =>
+    e.code == 'PGRST202' || e.code == '42883';
 
 /// Le reglage lu dans la reponse du serveur. Une valeur hors bornes leve
 /// `FormatException` plutot qu'une assertion.
@@ -141,8 +172,20 @@ PauseSeance pauseDepuis(Map<String, dynamic> ligne) {
     debutUtc: _date(ligne['debut_utc']),
     finUtc: _date(ligne['fin_utc']),
     peutPiloter: ligne['peut_piloter'] == true,
+    proposerAUtc: statut == StatutPause.programmee
+        ? _date(ligne['proposer_a'])
+        : null,
+    refusNombre: ligne['refus_nombre'] == null
+        ? 0
+        : _entier(ligne, 'refus_nombre'),
+    motif: motifDepuis(ligne['motif']),
   );
 }
+
+/// Le motif lu du serveur : `priere`, sinon la pause ordinaire (nul, ou une
+/// valeur que ce client ne connait pas).
+MotifPause motifDepuis(Object? brut) =>
+    brut == 'priere' ? MotifPause.priere : MotifPause.ordinaire;
 
 int _entier(Map<String, dynamic> ligne, String cle) {
   final Object? v = ligne[cle];

@@ -2,6 +2,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/pause_seance/pause_seance_supabase.dart';
 import 'package:rewayah_academy/core/pause_seance/port_pause_seance.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' show PostgrestException;
 
 void main() {
   group('N3 S2 : reglage', () {
@@ -71,6 +72,76 @@ void main() {
       expect(p.debutUtc, DateTime.utc(2026, 11, 3, 14, 31));
       expect(p.repriseUtc, DateTime.utc(2026, 11, 3, 14, 41));
       expect(p.peutPiloter, isTrue);
+    });
+
+    test('PAUSE-SERVEUR : proposition, refus et motif lus du serveur', () {
+      final PauseSeance p = pauseDepuis(<String, dynamic>{
+        'statut': 'programmee',
+        'duree_prevue_minutes': 10,
+        'debut_prevu_utc': '2026-11-12T18:45:00+00:00',
+        'proposer_a': '2026-11-12T18:50:00+00:00',
+        'refus_nombre': 1,
+        'motif': 'priere',
+        'peut_piloter': true,
+      });
+      expect(p.proposerAUtc, DateTime.utc(2026, 11, 12, 18, 50));
+      expect(p.refusNombre, 1);
+      expect(p.motif, MotifPause.priere);
+    });
+
+    test('PAUSE-SERVEUR : serveur ancien, sans les champs : aucune '
+        'proposition, zero refus, pause ordinaire', () {
+      final PauseSeance p = pauseDepuis(<String, dynamic>{
+        'statut': 'programmee',
+        'duree_prevue_minutes': 10,
+        'debut_prevu_utc': '2026-11-12T18:45:00+00:00',
+        'peut_piloter': true,
+      });
+      expect(p.proposerAUtc, isNull);
+      expect(p.refusNombre, 0);
+      expect(p.motif, MotifPause.ordinaire);
+    });
+
+    test('PAUSE-SERVEUR : plus de proposition ; motif inconnu = ordinaire', () {
+      final PauseSeance p = pauseDepuis(<String, dynamic>{
+        'statut': 'programmee',
+        'duree_prevue_minutes': 10,
+        'debut_prevu_utc': '2026-11-12T18:45:00+00:00',
+        'proposer_a': null,
+        'refus_nombre': '3',
+        'motif': 'autre',
+      });
+      expect(p.proposerAUtc, isNull);
+      expect(p.refusNombre, 3);
+      expect(p.motif, MotifPause.ordinaire);
+    });
+
+    test('PAUSE-SERVEUR : une pause en cours ne se propose plus', () {
+      final PauseSeance p = pauseDepuis(<String, dynamic>{
+        'statut': 'en_cours',
+        'duree_prevue_minutes': 10,
+        'debut_prevu_utc': '2026-11-12T18:45:00+00:00',
+        'debut_utc': '2026-11-12T18:46:00+00:00',
+        'proposer_a': '2026-11-12T18:45:00+00:00',
+      });
+      expect(p.proposerAUtc, isNull);
+    });
+
+    test('PAUSE-SERVEUR : fonction absente reconnue (PostgREST, Postgres)', () {
+      expect(
+        fonctionAbsente(
+          const PostgrestException(message: '', code: 'PGRST202'),
+        ),
+        isTrue,
+      );
+      expect(
+        fonctionAbsente(const PostgrestException(message: '', code: '42883')),
+        isTrue,
+      );
+      expect(
+        fonctionAbsente(const PostgrestException(message: '', code: '42501')),
+        isFalse,
+      );
     });
 
     test('statut inconnu : refuse', () {

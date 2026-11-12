@@ -31,6 +31,7 @@ void main() {
             'terminer',
             () => port.terminer(seanceId: 's1', cleIdempotence: 'k'),
           ),
+          ('refuser', () => port.refuser(seanceId: 's1', cleIdempotence: 'k')),
         ]) {
       test(nom, () async {
         await expectLater(
@@ -164,6 +165,38 @@ void main() {
       );
       expect(fin.statut, StatutPause.prise);
       expect(fin.dureeReelle, const Duration(minutes: 10));
+    });
+
+    test('PAUSE-SERVEUR : proposee a l\'heure prevue, Non puis rappel, '
+        'puis Oui', () async {
+      final PauseSeance p = await port.etat('s1');
+      expect(p.proposerAUtc, p.debutPrevuUtc);
+      expect(p.refusNombre, 0);
+      expect(p.motif, MotifPause.ordinaire);
+      final PauseSeance non = await port.refuser(
+        seanceId: 's1',
+        cleIdempotence: 'n1',
+      );
+      expect(non.statut, StatutPause.programmee);
+      expect(non.refusNombre, 1);
+      expect(non.proposerAUtc, maintenant.add(PauseSeanceDemonstration.rappel));
+      // Rejouer la meme cle ne compte pas un second refus.
+      expect(
+        (await port.refuser(seanceId: 's1', cleIdempotence: 'n1')).refusNombre,
+        1,
+      );
+      final PauseSeance oui = await port.demarrer(
+        seanceId: 's1',
+        cleIdempotence: 'o1',
+      );
+      expect(oui.statut, StatutPause.enCours);
+      expect(oui.proposerAUtc, isNull);
+      expect(oui.refusNombre, 1);
+      // Une pause en cours ne se refuse pas.
+      await expectLater(
+        port.refuser(seanceId: 's1', cleIdempotence: 'n2'),
+        throwsStateError,
+      );
     });
 
     test(

@@ -631,4 +631,104 @@ void main() {
       expect(fenetreVersementDe(null), isNull);
     });
   });
+
+  // PAUSE-SERVEUR (directeur, 12/11/2026) : la pause est un reglage ; le
+  // rappel apres un Non est reglable par la direction, 5 min par defaut.
+  group('PAUSE-SERVEUR : pause pendant la seance', () {
+    const Map<String, Object?> pause = <String, Object?>{
+      'seance.pause_minutes_adulte': 10,
+      'seance.pause_minutes_enfant': 5,
+      'seance.pause_rappel_minutes': 5,
+      'seance.pause_reste_minimum_minutes': 15,
+    };
+
+    testWidgets('la section montre les quatre reglages, en minutes', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        _Config(<String, Object?>{..._toutesLesCles(), ...pause}),
+        taille: const Size(1440, 2400),
+      );
+      final p = t.admin.regles.pause;
+      expect(
+        find.byKey(const ValueKey<String>('regles-pause')),
+        findsOneWidget,
+      );
+      for (final String texte in <String>[
+        p.section,
+        p.intro,
+        p.adultes,
+        p.adultesDetail,
+        p.enfants,
+        p.enfantsDetail,
+        p.rappel,
+        p.rappelDetail,
+        p.reste,
+        p.resteDetail,
+      ]) {
+        expect(find.text(texte), findsOneWidget, reason: texte);
+      }
+      expect(clesPause, <String>[
+        'seance.pause_minutes_adulte',
+        'seance.pause_minutes_enfant',
+        'seance.pause_rappel_minutes',
+        'seance.pause_reste_minimum_minutes',
+      ]);
+      expect(clesRegles, containsAll(clesPause));
+    });
+
+    testWidgets('un serveur d avant le lot : la section n est pas montree', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        _Config(<String, Object?>{
+          ..._toutesLesCles(),
+          'seance.pause_minutes_adulte': 0,
+          'seance.pause_minutes_enfant': 5,
+        }),
+        taille: const Size(1440, 2400),
+      );
+      expect(find.text(t.admin.regles.pause.section), findsNothing);
+      expect(find.text(t.admin.regles.dureeSeance), findsOneWidget);
+    });
+
+    testWidgets('modifier le rappel l ecrit sous sa cle, dans ses bornes', (
+      WidgetTester tester,
+    ) async {
+      final _Config config = _Config(<String, Object?>{
+        ..._toutesLesCles(),
+        ...pause,
+      });
+      await _monter(tester, config, taille: const Size(1440, 2400));
+      final Finder f = find.text(t.admin.regles.pause.rappel);
+      await tester.ensureVisible(f);
+      await tester.pump();
+      await tester.tap(f);
+      await tester.pumpAndSettle();
+      expect(find.text(t.admin.regles.pause.bornesRappel), findsOneWidget);
+      await tester.tap(find.byKey(ChoixNombre.clePlus));
+      await tester.pump();
+      await tester.tap(find.text(t.admin.regles.envoyer));
+      await tester.pumpAndSettle();
+      expect(config.ecritures, <(String, Object)>[
+        ('seance.pause_rappel_minutes', 6),
+      ]);
+    });
+
+    testWidgets('en arabe, la section a ses textes', (
+      WidgetTester tester,
+    ) async {
+      await tester.runAsync(() => LocaleSettings.setLocale(AppLocale.ar));
+      await _monter(
+        tester,
+        _Config(<String, Object?>{..._toutesLesCles(), ...pause}),
+        taille: const Size(1440, 2400),
+      );
+      expect(find.text(t.admin.regles.pause.rappel), findsOneWidget);
+      expect(t.admin.regles.pause.rappel, isNot(contains('Rappel')));
+      expect(tester.takeException(), isNull);
+    });
+  });
 }

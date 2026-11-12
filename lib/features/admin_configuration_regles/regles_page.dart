@@ -265,12 +265,18 @@ class _Corps extends StatelessWidget {
     final List<Widget> paie = fenetre == null
         ? const <Widget>[]
         : _sectionPaie(textes, fenetre, erreurEcriture, onEcrit);
+    // PAUSE-SERVEUR (12/11/2026) : la pause pendant la seance. Un serveur
+    // d'avant le lot ne rend pas toutes les cles : la section n'est pas
+    // montree.
+    final List<Widget> pause = clesPause.any(absentes.contains)
+        ? const <Widget>[]
+        : _sectionPause(textes, v, erreurEcriture, onEcrit);
     // A3 : un serveur d'avant la regle ne rend pas ces cles ; alors la section
     // n'est pas montree, plutot qu'un « 0 min » que rien n'ecrirait.
     if (clesRemplacement.any(absentes.contains)) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[generales, ...entretiens, ...paie],
+        children: <Widget>[generales, ...pause, ...entretiens, ...paie],
       );
     }
     final int avertissement = v[cleRemplacementAvertissement]!;
@@ -406,11 +412,96 @@ class _Corps extends StatelessWidget {
               ),
           ],
         ),
+        ...pause,
         ...entretiens,
         ...paie,
       ],
     );
   }
+}
+
+/// La section « Pause pendant la seance » (PAUSE-SERVEUR, directeur,
+/// 12/11/2026 : « la pause est un reglage » ; rappel apres un Non reglable
+/// par la direction, 5 min par defaut). Quatre lignes ; le serveur ramene une
+/// duree de pause au multiple de 5 le plus proche, de 5 a 30 (0 : pas de
+/// pause).
+List<Widget> _sectionPause(
+  TextTheme textes,
+  Map<String, int> v,
+  String Function(String message) erreurEcriture,
+  VoidCallback onEcrit,
+) {
+  final p = t.admin.regles.pause;
+  ConfigLigneEntiere ligne({
+    required String titre,
+    required String description,
+    required String cle,
+    required int min,
+    required int max,
+    required String aide,
+  }) => ConfigLigneEntiere(
+    key: ValueKey<String>('regles-pause-$cle'),
+    titre: titre,
+    description: description,
+    cle: cle,
+    valeur: v[cle] ?? 0,
+    min: min,
+    max: max,
+    aideBornes: aide,
+    affichage: uniteMinutesRegle,
+    champValeur: t.admin.regles.champValeur,
+    envoyer: t.admin.regles.envoyer,
+    valeurInvalide: t.admin.regles.valeurInvalide,
+    erreurEcriture: erreurEcriture,
+    onEcrit: onEcrit,
+  );
+  return <Widget>[
+    Ecart.vXl,
+    Text(
+      p.section,
+      key: const ValueKey<String>('regles-pause'),
+      style: textes.titleMedium,
+    ),
+    Ecart.vSm,
+    Text(p.intro, style: textes.bodyMedium),
+    Ecart.vMd,
+    CarteLignes(
+      lignes: <Widget>[
+        ligne(
+          titre: p.adultes,
+          description: p.adultesDetail,
+          cle: clePauseAdultes,
+          min: 0,
+          max: 30,
+          aide: p.bornesDuree,
+        ),
+        ligne(
+          titre: p.enfants,
+          description: p.enfantsDetail,
+          cle: clePauseEnfants,
+          min: 0,
+          max: 30,
+          aide: p.bornesDuree,
+        ),
+        ligne(
+          titre: p.rappel,
+          description: p.rappelDetail,
+          cle: clePauseRappel,
+          min: 1,
+          max: 60,
+          aide: p.bornesRappel,
+        ),
+        ligne(
+          titre: p.reste,
+          description: p.resteDetail,
+          cle: clePauseResteMinimum,
+          min: 0,
+          max: 60,
+          aide: p.bornesReste,
+        ),
+      ],
+    ),
+  ];
 }
 
 /// « le 1er », « le 10 » : un jour du mois suivant.
