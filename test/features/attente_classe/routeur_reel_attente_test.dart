@@ -33,6 +33,8 @@ import 'package:rewayah_academy/features/attente_classe/me_presenter_page.dart';
 import 'package:rewayah_academy/features/attente_classe/presentation_familles_page.dart';
 import 'package:rewayah_academy/features/com_messages/port_messages_metier.dart';
 import 'package:rewayah_academy/features/profil_enseignant/profil_enseignant_page.dart';
+import 'package:rewayah_academy/features/suivi_famille/suivi_famille_page.dart'
+    show FriseDemandePage;
 
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../router/support_routeur.dart';
@@ -138,6 +140,29 @@ void main() {
       expect(lieu(routeur), Routes.tuteurAttenteDemande('d1'));
       expect(_cle('attente-carte-enseignant'), findsOneWidget);
     });
+
+    testWidgets(
+      'l\'adresse historique d\'une demande ouvre le meme ecran de suivi',
+      (WidgetTester tester) async {
+        final GoRouter routeur = await monterRouteur(
+          tester,
+          Routes.tuteurDemande('d1'),
+          surcharges: _suivi(<SuiviAttente>[suiviDeTest(delai: delaiDeTest())]),
+        );
+        expect(lieu(routeur), Routes.tuteurDemande('d1'));
+        expect(find.byKey(FriseAttente.cleEtape(5)), findsOneWidget);
+        expect(find.byType(FriseDemandePage), findsNothing);
+      },
+    );
+
+    testWidgets(
+      'sans port : l\'ancienne frise reste le detail (production avant branchement)',
+      (WidgetTester tester) async {
+        await monterRouteur(tester, Routes.tuteurDemande('d1'));
+        expect(find.byType(FriseDemandePage), findsOneWidget);
+        expect(find.byKey(FriseAttente.cleEtape(5)), findsNothing);
+      },
+    );
 
     testWidgets('une demande inconnue : on le dit, jamais un suivi devine', (
       WidgetTester tester,

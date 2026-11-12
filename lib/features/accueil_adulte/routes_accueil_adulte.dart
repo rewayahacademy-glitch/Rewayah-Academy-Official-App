@@ -94,9 +94,11 @@ List<GoRoute> routesAccueilAdulte() => <GoRoute>[
   ),
   GoRouteSure(
     path: '${Routes.eleveAdulteDemandes}/:demandeId',
-    builder: (BuildContext _, GoRouterState etat) => FriseDemandePage(
+    // SUIVI-ATTENTE : un seul ecran de suivi ; l'ancienne frise reste le repli.
+    builder: (BuildContext _, GoRouterState etat) => DetailDemandeEntree(
       demandeId: etat.pathParameters['demandeId'] ?? '',
-      chemins: CheminsSuivi.adulte,
+      attente: CheminsAttente.adulte,
+      ancien: CheminsSuivi.adulte,
     ),
   ),
   // SUIVI-ATTENTE : le suivi de l'attente de sa classe, cinq etapes.

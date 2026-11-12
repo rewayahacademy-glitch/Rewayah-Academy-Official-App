@@ -1014,8 +1014,11 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                       GoRouteSure(
                         path: ':demandeId',
                         pageBuilder: glissee(
-                          (GoRouterState etat) => FriseDemandePage(
+                          // SUIVI-ATTENTE : un seul ecran de suivi ; l'ancienne
+                          // frise reste le repli sans port.
+                          (GoRouterState etat) => DetailDemandeEntree(
                             demandeId: _parametre(etat, 'demandeId'),
+                            attente: CheminsAttente.tuteur,
                           ),
                         ),
                       ),

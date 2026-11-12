@@ -43,6 +43,8 @@ import '../../core/widgets/pile_cartes.dart';
 import '../../core/widgets/skeleton.dart';
 import '../suivi_demandes/libelles_suivi_demandes.dart'
     show deFuseau, joursEtHeuresDemande;
+import '../suivi_famille/suivi_famille_page.dart'
+    show CheminsSuivi, FriseDemandePage;
 import 'carte_enseignant_attente.dart';
 import 'frise_attente.dart';
 import 'libelles_attente.dart';
@@ -364,4 +366,35 @@ class _Cloture extends StatelessWidget {
       ],
     );
   }
+}
+
+/// Le detail d'une demande : **un seul ecran de suivi** (S6). Quand le suivi
+/// de l'attente est branche, l'adresse historique d'une demande
+/// (`/tuteur/demandes/:id`, `/eleve/adulte/demandes/:id`, ouverte par la liste
+/// des demandes et par les anciens avis) ouvre l'ecran a cinq etapes ; sans
+/// port (production avant branchement), l'ancienne frise reste en place,
+/// inchangee. L'ancienne liste devient ainsi une liste de raccourcis.
+class DetailDemandeEntree extends ConsumerWidget {
+  /// Cree l'entree du detail de [demandeId].
+  const DetailDemandeEntree({
+    required this.demandeId,
+    required this.attente,
+    this.ancien = CheminsSuivi.tuteur,
+    super.key,
+  });
+
+  /// La demande ouverte.
+  final String demandeId;
+
+  /// Les destinations du suivi a cinq etapes.
+  final CheminsAttente attente;
+
+  /// Les destinations de l'ancienne frise (repli).
+  final CheminsSuivi ancien;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) =>
+      ref.watch(portSuiviAttenteProvider) == null
+      ? FriseDemandePage(demandeId: demandeId, chemins: ancien)
+      : SuiviAttentePage(demandeId: demandeId, chemins: attente);
 }
