@@ -111,6 +111,7 @@ class TraductionsAr extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$cahierC1$ar cahierC1 = _Traductions$cahierC1$ar._(_root);
 	@override late final _Traductions$cahierC3$ar cahierC3 = _Traductions$cahierC3$ar._(_root);
 	@override late final _Traductions$cahierSourates$ar cahierSourates = _Traductions$cahierSourates$ar._(_root);
+	@override late final _Traductions$souratesRetirables$ar souratesRetirables = _Traductions$souratesRetirables$ar._(_root);
 	@override late final _Traductions$accueilHoraire$ar accueilHoraire = _Traductions$accueilHoraire$ar._(_root);
 	@override late final _Traductions$candidatsFlux$ar candidatsFlux = _Traductions$candidatsFlux$ar._(_root);
 	@override late final _Traductions$push1$ar push1 = _Traductions$push1$ar._(_root);
@@ -2045,9 +2046,36 @@ class _Traductions$cahierSourates$ar extends Traductions$cahierSourates$fr {
 
 	// Translations
 	@override String get titre => 'السور المسمَّعة';
-	@override String get aide => 'اختر السورة فقط إذا سمَّعها هذا الطالب حفظًا دون خطأ في كلمة. السورة المختارة تُعتمد وتبقى معتمدة.';
+	@override String get aide => 'اختر السورة فقط إذا سمَّعها هذا الطالب حفظًا دون خطأ في كلمة. السورة المختارة تُعتمد.';
 	@override String dejaValidees({required Object n, required Object total}) => 'سور الأساسيات المعتمدة: ⁨${n}⁩ من ⁨${total}⁩';
 	@override String get toutes => 'اعتُمدت كل سور الأساسيات.';
+	@override String get retirerTitre => 'اخترتها خطأً؟';
+	@override String get retirerAide => 'السورة التي اعتمدتَها يمكن سحبها خلال 24 ساعة.';
+	@override String get retirer => 'سحب';
+	@override String retirerLibelle({required Object nom}) => 'سحب ⁨${nom}⁩ من السور المعتمدة';
+	@override String retirerQuestion({required Object nom}) => 'سحب ⁨${nom}⁩ من السور المعتمدة؟';
+	@override String get retirerConsequence => 'لن تُحسب بعد الآن معتمدة لهذا الطالب.';
+	@override String get retirerMotif => 'السبب (اختياري)';
+	@override String retirerFait({required Object nom}) => 'لم تعد ⁨${nom}⁩ معتمدة.';
+	@override String get retirerRefus => 'انقضت مهلة 24 ساعة: لا يسحبها الآن إلا الإدارة.';
+	@override String get retirerEchec => 'لم تُسحب السورة. أعد المحاولة.';
+}
+
+// Path: souratesRetirables
+class _Traductions$souratesRetirables$ar extends Traductions$souratesRetirables$fr {
+	_Traductions$souratesRetirables$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'سور اختيرت خطأً';
+	@override String get aide => 'السور المعتمدة في هذا الفصل التي يمكنك سحبها.';
+	@override String get vide => 'لا توجد سورة معتمدة للسحب في هذا الفصل.';
+	@override String get erreur => 'تعذّرت قراءة سور هذا الفصل. أعد المحاولة.';
+	@override String ligne({required Object eleve, required Object sourate}) => '⁨${eleve}⁩ · ⁨${sourate}⁩';
+	@override String jusqua({required Object heure}) => 'ممكن حتى ⁨${heure}⁩';
+	@override String jusquaDemain({required Object heure}) => 'ممكن حتى الغد، ⁨${heure}⁩';
+	@override String retirerPour({required Object sourate, required Object eleve}) => 'سحب ⁨${sourate}⁩ لـ ⁨${eleve}⁩';
 }
 
 // Path: accueilHoraire
@@ -34663,9 +34691,27 @@ extension on TraductionsAr {
 			'cahierC3.pretBilan' => 'مستعد للتقييم القصير',
 			'cahierC3.pretBilanDetail' => 'تخطط الإدارة للتقييم القصير؛ لا شيء تلقائي.',
 			'cahierSourates.titre' => 'السور المسمَّعة',
-			'cahierSourates.aide' => 'اختر السورة فقط إذا سمَّعها هذا الطالب حفظًا دون خطأ في كلمة. السورة المختارة تُعتمد وتبقى معتمدة.',
+			'cahierSourates.aide' => 'اختر السورة فقط إذا سمَّعها هذا الطالب حفظًا دون خطأ في كلمة. السورة المختارة تُعتمد.',
 			'cahierSourates.dejaValidees' => ({required Object n, required Object total}) => 'سور الأساسيات المعتمدة: ⁨${n}⁩ من ⁨${total}⁩',
 			'cahierSourates.toutes' => 'اعتُمدت كل سور الأساسيات.',
+			'cahierSourates.retirerTitre' => 'اخترتها خطأً؟',
+			'cahierSourates.retirerAide' => 'السورة التي اعتمدتَها يمكن سحبها خلال 24 ساعة.',
+			'cahierSourates.retirer' => 'سحب',
+			'cahierSourates.retirerLibelle' => ({required Object nom}) => 'سحب ⁨${nom}⁩ من السور المعتمدة',
+			'cahierSourates.retirerQuestion' => ({required Object nom}) => 'سحب ⁨${nom}⁩ من السور المعتمدة؟',
+			'cahierSourates.retirerConsequence' => 'لن تُحسب بعد الآن معتمدة لهذا الطالب.',
+			'cahierSourates.retirerMotif' => 'السبب (اختياري)',
+			'cahierSourates.retirerFait' => ({required Object nom}) => 'لم تعد ⁨${nom}⁩ معتمدة.',
+			'cahierSourates.retirerRefus' => 'انقضت مهلة 24 ساعة: لا يسحبها الآن إلا الإدارة.',
+			'cahierSourates.retirerEchec' => 'لم تُسحب السورة. أعد المحاولة.',
+			'souratesRetirables.titre' => 'سور اختيرت خطأً',
+			'souratesRetirables.aide' => 'السور المعتمدة في هذا الفصل التي يمكنك سحبها.',
+			'souratesRetirables.vide' => 'لا توجد سورة معتمدة للسحب في هذا الفصل.',
+			'souratesRetirables.erreur' => 'تعذّرت قراءة سور هذا الفصل. أعد المحاولة.',
+			'souratesRetirables.ligne' => ({required Object eleve, required Object sourate}) => '⁨${eleve}⁩ · ⁨${sourate}⁩',
+			'souratesRetirables.jusqua' => ({required Object heure}) => 'ممكن حتى ⁨${heure}⁩',
+			'souratesRetirables.jusquaDemain' => ({required Object heure}) => 'ممكن حتى الغد، ⁨${heure}⁩',
+			'souratesRetirables.retirerPour' => ({required Object sourate, required Object eleve}) => 'سحب ⁨${sourate}⁩ لـ ⁨${eleve}⁩',
 			'accueilHoraire.demandeTitre' => 'تم تسجيل الطلب',
 			'accueilHoraire.demandeDetail' => ({required Object prenom}) => 'سنعلمك فور فتح موعد مناسب لـ⁨${prenom}⁩.',
 			'accueilHoraire.erreurEnvoi' => 'لم يُؤكَّد طلبك. أعد المحاولة بعد قليل.',
@@ -34769,6 +34815,8 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.doublons.option.base.description' => 'اعتمد استيراد سابق سطرًا لهذا الشخص. وتبقى أسطر هذا الملف في السجل.',
 			'candidatsFlux.importFormulaires.doublons.option.enregistre.titre' => 'الاحتفاظ باختياركم السابق',
 			'candidatsFlux.importFormulaires.doublons.option.enregistre.distinctes' => 'سبق أن بيّنتم أنهم أشخاص مختلفون.',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.doublons.option.enregistre.ligne' => 'سبق أن اخترتم السطر الذي يُحتفظ به لهذا الشخص.',
 			'candidatsFlux.importFormulaires.doublons.option.ligne.titre' => ({required Object ligne}) => 'الاحتفاظ بالسطر ⁨${ligne}⁩ بدلًا من ذلك',
 			'candidatsFlux.importFormulaires.doublons.option.ligne.description' => 'يصبح هذا السطر رد الشخص. وتنتقل الأسطر الأخرى إلى السجل.',
@@ -34787,8 +34835,6 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.apercu.premieres' => 'الأسطر الأولى',
 			'candidatsFlux.importFormulaires.apercu.ligne' => ({required Object ligne}) => 'السطر ⁨${ligne}⁩',
 			'candidatsFlux.importFormulaires.apercu.autres' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا أسطر أخرى', one: 'سطر آخر واحد غير معروض هنا.', two: 'سطران آخران غير معروضين هنا.', few: '⁨${n}⁩ أسطر أخرى غير معروضة هنا.', many: '⁨${n}⁩ سطرًا آخر غير معروض هنا.', other: '⁨${n}⁩ سطر آخر غير معروض هنا.', ), 
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.apercu.sansLignes' => 'ستُقرأ الأسطر بمجرد ربط الأعمدة.',
 			'candidatsFlux.importFormulaires.apercu.colonnesATitre' => 'ما زالت أعمدة تحتاج إلى ربط',
 			'candidatsFlux.importFormulaires.apercu.mappageIncomplet' => ({required Object champs}) => 'اربطوا هذه الأعمدة أولًا: ⁨${champs}⁩.',

@@ -14451,9 +14451,29 @@
   },
   "cahierSourates": {
     "titre": "Sourates récitées",
-    "aide": "Cochez une sourate seulement si cet élève l'a récitée de mémoire, sans erreur de mot. Une sourate cochée est validée et le reste.",
+    "aide": "Cochez une sourate seulement si cet élève l'a récitée de mémoire, sans erreur de mot. Une sourate cochée est validée.",
     "dejaValidees": "Sourates des bases déjà validées\u00a0: {n} sur {total}",
-    "toutes": "Toutes les sourates des bases sont validées."
+    "toutes": "Toutes les sourates des bases sont validées.",
+    "retirerTitre": "Cochée par erreur ?",
+    "retirerAide": "Une sourate que vous avez validée se retire pendant 24 heures.",
+    "retirer": "Retirer",
+    "retirerLibelle": "Retirer {nom} des sourates validées",
+    "retirerQuestion": "Retirer {nom} des sourates validées ?",
+    "retirerConsequence": "Elle ne comptera plus comme validée pour cet élève.",
+    "retirerMotif": "Motif (facultatif)",
+    "retirerFait": "{nom} n'est plus validée.",
+    "retirerRefus": "Le délai de 24 heures est passé : seule la direction peut encore la retirer.",
+    "retirerEchec": "La sourate n'a pas été retirée. Réessayez."
+  },
+  "souratesRetirables": {
+    "titre": "Sourates cochées par erreur",
+    "aide": "Les sourates validées dans cette classe que vous pouvez retirer.",
+    "vide": "Aucune sourate validée à retirer dans cette classe.",
+    "erreur": "Les sourates de cette classe n'ont pas pu être lues. Réessayez.",
+    "ligne": "{eleve} · {sourate}",
+    "jusqua": "Possible jusqu'à {heure}",
+    "jusquaDemain": "Possible jusqu'à demain, {heure}",
+    "retirerPour": "Retirer {sourate} pour {eleve}"
   },
   "accueilHoraire": {
     "demandeTitre": "Demande enregistrée",
