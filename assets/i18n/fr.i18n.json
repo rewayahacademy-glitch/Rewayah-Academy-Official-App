@@ -15144,10 +15144,13 @@
     "dureePrevue": "Durée de l'étape",
     "chemin": "{niveau}, étape par étape",
     "etapeNumero": "Étape {ordre}\u00a0: {nom}",
-    "statutValidee": "Étape validée",
     "statutEnCours": "Étape en cours",
     "statutAVenir": "À venir",
     "dureesEtape": "{prevue} semaines prévues, {limite} au plus",
-    "horizonNiveau": "{niveau}\u00a0: fin au plus tard le"
+    "horizonNiveau": "{niveau}\u00a0: fin au plus tard le",
+    "statutPrecedente": "Étape précédente",
+    "attenteEntretien": "Votre étape sera fixée après l'entretien de lecture avec la direction.",
+    "attenteEntretienTu": "Ton étape sera fixée après l'entretien de lecture avec la direction.",
+    "attenteEntretienPour": "L'étape de {prenom} sera fixée après l'entretien de lecture avec la direction."
   }
 }

@@ -41,6 +41,7 @@ Map<String, Object?> _etape(
 };
 
 Map<String, Object?> _reponse({required bool dateLimite}) => <String, Object?>{
+  'eleve_voit_dates': dateLimite,
   'etape': <String, Object?>{
     'code': 'BASES-1',
     'ordre': 1,

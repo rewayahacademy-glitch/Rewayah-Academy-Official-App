@@ -226,28 +226,23 @@ void main() {
       expect(find.text(t.suiviPedagogique.rythme), findsOneWidget);
     });
 
-    testWidgets('Interface guidee (eleve mineur) : etape, objectifs, reprise ; '
-        'ni rythme ni date limite', (WidgetTester tester) async {
-      await _monter(
-        tester,
-        _FauxPort(rendu: _toutRenseigne()),
-        mode: InterfaceMode.enfant,
-      );
-      await tester.pumpAndSettle();
-      expect(find.text(_complet.etapeNom), findsOneWidget);
-      expect(find.text(t.suiviPedagogique.objectifs), findsOneWidget);
-      expect(
-        find.text(t.suiviPedagogique.reprisePage(page: '42')),
-        findsOneWidget,
-      );
-      expect(find.text(t.suiviPedagogique.aFinirAvant), findsNothing);
-      expect(find.text(t.suiviPedagogique.rythme), findsNothing);
-      expect(
-        find.text(t.suiviPedagogique.dansLesTemps(ecoulees: 5, prevue: '14')),
-        findsNothing,
-      );
-      expect(tester.takeException(), isNull);
-    });
+    testWidgets(
+      'Interface guidee, bloc lu pour un enfant choisi (cote '
+      'tuteur) : le mode ne decide plus rien, la date reste (SOCLE-PROGRAMME, '
+      '12/11/2026 ; la regle de l eleve est dans socle_programme_suivi_test)',
+      (WidgetTester tester) async {
+        await _monter(
+          tester,
+          _FauxPort(rendu: _toutRenseigne()),
+          mode: InterfaceMode.enfant,
+        );
+        await tester.pumpAndSettle();
+        expect(find.text(_complet.etapeNom), findsOneWidget);
+        expect(find.text(t.suiviPedagogique.objectifs), findsOneWidget);
+        expect(find.text(t.suiviPedagogique.aFinirAvant), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      },
+    );
 
     testWidgets('sans page, sans date, rythme inconnu : lignes cachees', (
       WidgetTester tester,
@@ -267,7 +262,7 @@ void main() {
       expect(find.text(t.suiviPedagogique.rythme), findsNothing);
     });
 
-    testWidgets('vide : sans Classe ni etape, rien n est pose', (
+    testWidgets('vide : sans Classe ni etape, une ligne le dit', (
       WidgetTester tester,
     ) async {
       await _monter(tester, _FauxPort());
@@ -275,6 +270,10 @@ void main() {
       expect(
         find.byKey(const ValueKey<String>('suivi-pedagogique')),
         findsNothing,
+      );
+      expect(
+        find.byKey(const ValueKey<String>('suivi-pedagogique-vide')),
+        findsOneWidget,
       );
       expect(find.byType(EtatSysteme), findsNothing);
     });

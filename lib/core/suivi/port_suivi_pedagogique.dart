@@ -69,13 +69,40 @@ class SuiviPedagogique {
     this.dateLimiteSemaines,
     this.horizon,
     this.chemin = const <EtapeDuChemin>[],
+    this.eleveVoitDates = false,
+    this.enAttenteEntretien = false,
   });
+
+  /// L'eleve est en classe, mais son etape attend l'entretien de lecture avec
+  /// la direction (il a declare savoir lire) : aucune etape n'est supposee.
+  const SuiviPedagogique.attenteEntretien()
+    : etapeNom = '',
+      etapeOrdre = null,
+      objectifs = const <String>[],
+      dureePrevueSemaines = null,
+      dateLimite = null,
+      semainesEcoulees = null,
+      rythme = Rythme.inconnu,
+      pageReprise = null,
+      sourates = null,
+      niveauNom = null,
+      matierePrincipale = null,
+      matiereSecondaire = null,
+      entreeLe = null,
+      dateLimiteSemaines = null,
+      horizon = null,
+      chemin = const <EtapeDuChemin>[],
+      eleveVoitDates = false,
+      enAttenteEntretien = true;
 
   /// Lit la reponse de `etape_eleve_lecture` (jsonb). Pure, pour les tests ;
   /// nulle quand l'eleve n'a pas encore d'etape ou que la reponse est
   /// illisible. Une valeur absente reste absente : jamais supposee.
   static SuiviPedagogique? depuisLecture(Object? brut) {
     if (brut is! Map) return null;
+    if (brut['attente'] == 'entretien_de_lecture') {
+      return const SuiviPedagogique.attenteEntretien();
+    }
     final Object? etape = brut['etape'];
     if (etape is! Map) return null;
     final String nom = '${etape['nom'] ?? ''}'.trim();
@@ -118,6 +145,7 @@ class SuiviPedagogique {
         for (final Object? e in chemin is List ? chemin : const <Object?>[])
           if (EtapeDuChemin.depuis(e) case final EtapeDuChemin lue) lue,
       ],
+      eleveVoitDates: brut['eleve_voit_dates'] == true,
     );
   }
 
@@ -220,12 +248,21 @@ class SuiviPedagogique {
 
   /// Le chemin des etapes du niveau, dans l'ordre, la sienne marquee.
   final List<EtapeDuChemin> chemin;
+
+  /// Rendu par le serveur, independant de qui lit : l'eleve lui-meme voit-il
+  /// ses dates et ses durees ? Faux de 6 a 9 ans et quand la tranche est
+  /// inconnue ; vrai des 10 ans et pour un adulte.
+  final bool eleveVoitDates;
+
+  /// L'etape attend l'entretien de lecture avec la direction.
+  final bool enAttenteEntretien;
 }
 
 /// Ou en est une etape du chemin, pour l'eleve.
 enum StatutEtape {
-  /// Une etape d'avant la sienne.
-  franchie('franchie'),
+  /// Une etape d'avant la sienne (jamais « Etape validee » : ce mot est
+  /// reserve au resultat d'une evaluation).
+  precedente('precedente'),
 
   /// Son etape.
   enCours('en_cours'),

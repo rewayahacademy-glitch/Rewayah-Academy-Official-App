@@ -8,17 +8,15 @@
 /// base, jamais ici. Aucune saisie : ce sont les donnees deja posees par la
 /// salle et le programme.
 ///
-/// En Interface guidee, ni le rythme ni la date limite (garde-cap, 07/11) :
-/// la situation face a l'echeance est l'affaire du tuteur.
-///
 /// SOCLE-PROGRAMME (lot 1 de la charte, 12/11/2026) : lu par la lecture unique
 /// `etape_eleve_lecture` ; le bloc montre aussi les matieres de l'etape, la
 /// date d'entree dans l'etape, sa duree prevue et sa date limite en semaines,
 /// la date limite de l'etape (depuis l'entree dans l'etape), l'horizon du
 /// niveau et le chemin des etapes du niveau pour la tranche d'age de l'eleve,
-/// la sienne mise en avant. En Interface guidee, ni date limite, ni horizon, ni
-/// rythme, ni durees ; le serveur retient deja date limite, horizon et rythme
-/// pour l'enfant de 6 a 9 ans qui lit pour lui-meme.
+/// la sienne mise en avant. Dans l'espace de l'eleve, dates, durees et rythme
+/// seulement si le serveur dit `eleve_voit_dates` (des 10 ans, ou adulte) ;
+/// le serveur retient deja ces valeurs pour l'enfant de 6 a 9 ans qui lit avec
+/// son propre compte. Chez le tuteur, toujours.
 ///
 /// Le bloc n'est pas pose sans port ; sans etape (pas encore de classe), il dit
 /// en une ligne que l'etape apparaitra a l'entree en classe ; chaque ligne se
@@ -103,7 +101,14 @@ class CarteSuiviPedagogique extends ConsumerWidget {
     final Widget titre = SectionHeader(
       titre: p == null ? s.titreSoi : s.titre(prenom: p),
     );
-    if (suivi == null) {
+    if (suivi == null || suivi.enAttenteEntretien) {
+      final String phrase = suivi == null
+          ? s.vide
+          : (p != null
+                ? s.attenteEntretienPour(prenom: p)
+                : (AppMetriques.of(context).estEnfant
+                      ? s.attenteEntretienTu
+                      : s.attenteEntretien));
       return Padding(
         padding: const EdgeInsets.only(bottom: AppSpacing.xl),
         child: Column(
@@ -118,7 +123,7 @@ class CarteSuiviPedagogique extends ConsumerWidget {
                 LigneRubrique(
                   icone: AppIcons.coran,
                   libelle: s.etape,
-                  legende: s.vide,
+                  legende: phrase,
                 ),
               ],
             ),
@@ -127,14 +132,15 @@ class CarteSuiviPedagogique extends ConsumerWidget {
       );
     }
 
-    // Interface guidee (garde-cap, 07/11/2026 ; charte, partie 10) : l'enfant
-    // voit son etape, ses objectifs, ses matieres, le chemin et l'endroit ou la
-    // Classe s'est arretee ; ni le rythme, ni la date limite, ni les reperes,
-    // que son tuteur lit dans son Historique.
-    final bool guidee = AppMetriques.of(context).estEnfant;
-    final String? rythme = guidee ? null : libelleRythme(suivi);
-    final DateTime? date = guidee ? null : suivi.dateLimite;
-    final DateTime? horizon = guidee ? null : suivi.horizon;
+    // Qui voit les dates (correction de l'architecte, 12/11) : le mode
+    // d'interface ne decide rien. Dans l'espace de l'eleve (eleveId nul : il
+    // lit pour lui-meme), dates, durees et rythme seulement si le serveur dit
+    // `eleve_voit_dates` (des 10 ans, ou adulte, meme en Interface guidee) ;
+    // dans les ecrans du tuteur, toujours.
+    final bool dates = this.eleveId != null || suivi.eleveVoitDates;
+    final String? rythme = dates ? libelleRythme(suivi) : null;
+    final DateTime? date = dates ? suivi.dateLimite : null;
+    final DateTime? horizon = dates ? suivi.horizon : null;
     final DateTime? entree = suivi.entreeLe;
     final String niveau = suivi.niveauNom ?? '';
     String jour(DateTime d) => LibellesGroupe.insecable(
@@ -190,15 +196,16 @@ class CarteSuiviPedagogique extends ConsumerWidget {
                   libelle: s.depuis,
                   legende: jour(entree),
                 ),
-              if (!guidee && suivi.dureePrevueSemaines != null)
+              if (dates &&
+                  suivi.dureePrevueSemaines != null &&
+                  suivi.dateLimiteSemaines != null)
                 LigneRubrique(
                   icone: AppIcons.attente,
                   libelle: s.dureePrevue,
                   legende: LibellesGroupe.insecable(
                     s.dureesEtape(
                       prevue: '${suivi.dureePrevueSemaines}',
-                      limite:
-                          '${suivi.dateLimiteSemaines ?? suivi.dureePrevueSemaines}',
+                      limite: '${suivi.dateLimiteSemaines}',
                     ),
                   ),
                 ),
@@ -234,18 +241,18 @@ class CarteSuiviPedagogique extends ConsumerWidget {
                 for (final EtapeDuChemin e in suivi.chemin)
                   LigneRubrique(
                     icone: switch (e.statut) {
-                      StatutEtape.franchie => AppIcons.succes,
+                      StatutEtape.precedente => AppIcons.historique,
                       StatutEtape.enCours => AppIcons.signet,
                       StatutEtape.aVenir => AppIcons.attente,
                     },
                     libelle: s.etapeNumero(ordre: '${e.ordre}', nom: e.nom),
                     legende: <String>[
                       switch (e.statut) {
-                        StatutEtape.franchie => s.statutValidee,
+                        StatutEtape.precedente => s.statutPrecedente,
                         StatutEtape.enCours => s.statutEnCours,
                         StatutEtape.aVenir => s.statutAVenir,
                       },
-                      if (!guidee &&
+                      if (dates &&
                           e.dureePrevueSemaines != null &&
                           e.dateLimiteSemaines != null)
                         LibellesGroupe.insecable(

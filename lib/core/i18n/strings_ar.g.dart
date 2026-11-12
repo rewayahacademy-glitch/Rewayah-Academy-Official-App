@@ -2145,11 +2145,14 @@ class _Traductions$suiviPedagogique$ar extends Traductions$suiviPedagogique$fr {
 	@override String get dureePrevue => 'مدة المرحلة';
 	@override String chemin({required Object niveau}) => '⁨${niveau}⁩، مرحلة بعد مرحلة';
 	@override String etapeNumero({required Object ordre, required Object nom}) => 'المرحلة ⁨${ordre}⁩: ⁨${nom}⁩';
-	@override String get statutValidee => 'اعتُمدت المرحلة';
 	@override String get statutEnCours => 'المرحلة الحالية';
 	@override String get statutAVenir => 'قادمة';
 	@override String dureesEtape({required Object prevue, required Object limite}) => 'عدد الأسابيع المقررة: ⁨${prevue}⁩، والحد الأقصى: ⁨${limite}⁩';
 	@override String horizonNiveau({required Object niveau}) => '⁨${niveau}⁩: النهاية في موعد أقصاه';
+	@override String get statutPrecedente => 'المرحلة السابقة';
+	@override String get attenteEntretien => 'ستُحدَّد مرحلتك بعد مقابلة القراءة مع الإدارة.';
+	@override String get attenteEntretienTu => 'ستُحدَّد مرحلتك بعد مقابلة القراءة مع الإدارة.';
+	@override String attenteEntretienPour({required Object prenom}) => 'ستُحدَّد مرحلة ⁨${prenom}⁩ بعد مقابلة القراءة مع الإدارة.';
 }
 
 // Path: notifications.evenements
@@ -35147,11 +35150,14 @@ extension on TraductionsAr {
 			'suiviPedagogique.dureePrevue' => 'مدة المرحلة',
 			'suiviPedagogique.chemin' => ({required Object niveau}) => '⁨${niveau}⁩، مرحلة بعد مرحلة',
 			'suiviPedagogique.etapeNumero' => ({required Object ordre, required Object nom}) => 'المرحلة ⁨${ordre}⁩: ⁨${nom}⁩',
-			'suiviPedagogique.statutValidee' => 'اعتُمدت المرحلة',
 			'suiviPedagogique.statutEnCours' => 'المرحلة الحالية',
 			'suiviPedagogique.statutAVenir' => 'قادمة',
 			'suiviPedagogique.dureesEtape' => ({required Object prevue, required Object limite}) => 'عدد الأسابيع المقررة: ⁨${prevue}⁩، والحد الأقصى: ⁨${limite}⁩',
 			'suiviPedagogique.horizonNiveau' => ({required Object niveau}) => '⁨${niveau}⁩: النهاية في موعد أقصاه',
+			'suiviPedagogique.statutPrecedente' => 'المرحلة السابقة',
+			'suiviPedagogique.attenteEntretien' => 'ستُحدَّد مرحلتك بعد مقابلة القراءة مع الإدارة.',
+			'suiviPedagogique.attenteEntretienTu' => 'ستُحدَّد مرحلتك بعد مقابلة القراءة مع الإدارة.',
+			'suiviPedagogique.attenteEntretienPour' => ({required Object prenom}) => 'ستُحدَّد مرحلة ⁨${prenom}⁩ بعد مقابلة القراءة مع الإدارة.',
 			_ => null,
 		};
 	}

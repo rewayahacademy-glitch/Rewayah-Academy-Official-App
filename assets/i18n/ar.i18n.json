@@ -14756,10 +14756,13 @@
     "dureePrevue": "مدة المرحلة",
     "chemin": "⁨{niveau}⁩، مرحلة بعد مرحلة",
     "etapeNumero": "المرحلة ⁨{ordre}⁩: ⁨{nom}⁩",
-    "statutValidee": "اعتُمدت المرحلة",
     "statutEnCours": "المرحلة الحالية",
     "statutAVenir": "قادمة",
     "dureesEtape": "عدد الأسابيع المقررة: ⁨{prevue}⁩، والحد الأقصى: ⁨{limite}⁩",
-    "horizonNiveau": "⁨{niveau}⁩: النهاية في موعد أقصاه"
+    "horizonNiveau": "⁨{niveau}⁩: النهاية في موعد أقصاه",
+    "statutPrecedente": "المرحلة السابقة",
+    "attenteEntretien": "ستُحدَّد مرحلتك بعد مقابلة القراءة مع الإدارة.",
+    "attenteEntretienTu": "ستُحدَّد مرحلتك بعد مقابلة القراءة مع الإدارة.",
+    "attenteEntretienPour": "ستُحدَّد مرحلة ⁨{prenom}⁩ بعد مقابلة القراءة مع الإدارة."
   }
 }

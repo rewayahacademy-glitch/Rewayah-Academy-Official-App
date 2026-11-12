@@ -4127,9 +4127,6 @@ class Traductions$suiviPedagogique$fr {
 	/// fr: 'Étape {ordre} : {nom}'
 	String etapeNumero({required Object ordre, required Object nom}) => 'Étape ${ordre} : ${nom}';
 
-	/// fr: 'Étape validée'
-	String get statutValidee => 'Étape validée';
-
 	/// fr: 'Étape en cours'
 	String get statutEnCours => 'Étape en cours';
 
@@ -4141,6 +4138,18 @@ class Traductions$suiviPedagogique$fr {
 
 	/// fr: '{niveau} : fin au plus tard le'
 	String horizonNiveau({required Object niveau}) => '${niveau} : fin au plus tard le';
+
+	/// fr: 'Étape précédente'
+	String get statutPrecedente => 'Étape précédente';
+
+	/// fr: 'Votre étape sera fixée après l'entretien de lecture avec la direction.'
+	String get attenteEntretien => 'Votre étape sera fixée après l\'entretien de lecture avec la direction.';
+
+	/// fr: 'Ton étape sera fixée après l'entretien de lecture avec la direction.'
+	String get attenteEntretienTu => 'Ton étape sera fixée après l\'entretien de lecture avec la direction.';
+
+	/// fr: 'L'étape de {prenom} sera fixée après l'entretien de lecture avec la direction.'
+	String attenteEntretienPour({required Object prenom}) => 'L\'étape de ${prenom} sera fixée après l\'entretien de lecture avec la direction.';
 }
 
 // Path: commun.langue
@@ -60962,11 +60971,14 @@ extension on Traductions {
 			'suiviPedagogique.dureePrevue' => 'Durée de l\'étape',
 			'suiviPedagogique.chemin' => ({required Object niveau}) => '${niveau}, étape par étape',
 			'suiviPedagogique.etapeNumero' => ({required Object ordre, required Object nom}) => 'Étape ${ordre} : ${nom}',
-			'suiviPedagogique.statutValidee' => 'Étape validée',
 			'suiviPedagogique.statutEnCours' => 'Étape en cours',
 			'suiviPedagogique.statutAVenir' => 'À venir',
 			'suiviPedagogique.dureesEtape' => ({required Object prevue, required Object limite}) => '${prevue} semaines prévues, ${limite} au plus',
 			'suiviPedagogique.horizonNiveau' => ({required Object niveau}) => '${niveau} : fin au plus tard le',
+			'suiviPedagogique.statutPrecedente' => 'Étape précédente',
+			'suiviPedagogique.attenteEntretien' => 'Votre étape sera fixée après l\'entretien de lecture avec la direction.',
+			'suiviPedagogique.attenteEntretienTu' => 'Ton étape sera fixée après l\'entretien de lecture avec la direction.',
+			'suiviPedagogique.attenteEntretienPour' => ({required Object prenom}) => 'L\'étape de ${prenom} sera fixée après l\'entretien de lecture avec la direction.',
 			_ => null,
 		};
 	}
