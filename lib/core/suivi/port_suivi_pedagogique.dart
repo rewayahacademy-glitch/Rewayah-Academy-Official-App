@@ -1,11 +1,15 @@
 /// SUIVI-ELEVE (07/11/2026) : ou en est l'eleve sur le programme, pour lui ou
 /// pour sa famille.
 ///
-/// Le serveur decide de tout (`suivi_pedagogique_eleve`, migration
-/// 20261115000000) : qui lit (l'eleve lui-meme, le titulaire de son profil,
-/// le tuteur de son foyer), l'etape en cours, la date limite et la vitesse.
-/// **La vitesse n'est jamais calculee ici** : le client lit [Rythme] tel que
-/// la base le rend.
+/// SOCLE-PROGRAMME (lot 1 de la charte, 12/11/2026) : le serveur decide de
+/// tout par LA lecture unique de l'etape de l'eleve (`etape_eleve_lecture`,
+/// migration 20261123900000) : qui lit, l'etape en cours, le chemin des
+/// etapes de son niveau pour sa tranche d'age, la date d'entree dans l'etape,
+/// sa duree prevue et SA date limite (depuis l'entree dans l'etape), l'horizon
+/// du niveau (somme des etapes restantes) et la vitesse ; date limite, horizon
+/// et vitesse sont retenus pour l'enfant de 6 a 9 ans qui lit pour lui-meme. **Rien n'est calcule ici** :
+/// le client lit [Rythme] et les dates tels que la base les rend.
+/// `suivi_pedagogique_eleve` reste en base jusqu'au lot 10, plus appelee.
 library;
 
 import 'package:flutter/foundation.dart';
@@ -58,7 +62,74 @@ class SuiviPedagogique {
     this.rythme = Rythme.inconnu,
     this.pageReprise,
     this.sourates,
+    this.niveauNom,
+    this.matierePrincipale,
+    this.matiereSecondaire,
+    this.entreeLe,
+    this.dateLimiteSemaines,
+    this.horizon,
+    this.chemin = const <EtapeDuChemin>[],
   });
+
+  /// Lit la reponse de `etape_eleve_lecture` (jsonb). Pure, pour les tests ;
+  /// nulle quand l'eleve n'a pas encore d'etape ou que la reponse est
+  /// illisible. Une valeur absente reste absente : jamais supposee.
+  static SuiviPedagogique? depuisLecture(Object? brut) {
+    if (brut is! Map) return null;
+    final Object? etape = brut['etape'];
+    if (etape is! Map) return null;
+    final String nom = '${etape['nom'] ?? ''}'.trim();
+    if (nom.isEmpty) return null;
+    final Object? niveau = brut['niveau'];
+    final Map<Object?, Object?> n = niveau is Map
+        ? niveau
+        : const <Object?, Object?>{};
+    final Object? page = brut['page_reprise'];
+    final int? pageLue = page is num ? page.toInt() : null;
+    final Object? sourates = brut['sourates'];
+    final Object? chemin = brut['chemin'];
+    return SuiviPedagogique(
+      etapeNom: nom,
+      etapeOrdre: _entier(etape['ordre']),
+      objectifs: _textes(etape['objectifs']),
+      dureePrevueSemaines: _entier(etape['duree_prevue_semaines']),
+      dateLimite: etape['date_limite'] is String
+          ? DateTime.tryParse('${etape['date_limite']}')
+          : null,
+      semainesEcoulees: _entier(etape['semaines_ecoulees']),
+      rythme: Rythme.depuisSql(etape['rythme']),
+      pageReprise: pageLue != null && pageLue >= 1 && pageLue <= 604
+          ? pageLue
+          : null,
+      sourates: sourates is Map
+          ? SouratesValidees.depuis(sourates['validees'], sourates['total'])
+          : null,
+      niveauNom: _texte(n['nom']),
+      matierePrincipale: _texte(etape['matiere_principale']),
+      matiereSecondaire: _texte(etape['matiere_secondaire']),
+      entreeLe: etape['entree_le'] is String
+          ? DateTime.tryParse('${etape['entree_le']}')
+          : null,
+      dateLimiteSemaines: _entier(etape['date_limite_semaines']),
+      horizon: n['horizon'] is String
+          ? DateTime.tryParse('${n['horizon']}')
+          : null,
+      chemin: <EtapeDuChemin>[
+        for (final Object? e in chemin is List ? chemin : const <Object?>[])
+          if (EtapeDuChemin.depuis(e) case final EtapeDuChemin lue) lue,
+      ],
+    );
+  }
+
+  static String? _texte(Object? v) {
+    final String lu = '${v ?? ''}'.trim();
+    return lu.isEmpty ? null : lu;
+  }
+
+  static List<String> _textes(Object? v) => <String>[
+    for (final Object? o in v is List ? v : const <Object?>[])
+      if ('${o ?? ''}'.trim().isNotEmpty) '$o'.trim(),
+  ];
 
   /// Lit une ligne de `suivi_pedagogique_eleve`. Pure, pour les tests ; nulle
   /// quand la ligne est illisible (aucune etape).
@@ -108,7 +179,8 @@ class SuiviPedagogique {
   /// La duree prevue pour la tranche d'age de l'eleve, en semaines.
   final int? dureePrevueSemaines;
 
-  /// La date limite (la prochaine echeance), nulle sans date de debut.
+  /// La date limite de l'etape (entree dans l'etape + sa date limite), nulle
+  /// quand le serveur la retient (enfant de 6 a 9 ans) ou ne la connait pas.
   final DateTime? dateLimite;
 
   /// Les semaines ecoulees depuis le debut de l'etape.
@@ -125,6 +197,105 @@ class SuiviPedagogique {
   /// validees au cahier, sur leur total ; nulle quand le serveur ne les rend
   /// pas (jamais un 0 invente : l'anneau reste dore).
   final SouratesValidees? sourates;
+
+  /// SOCLE-PROGRAMME : le nom du niveau (« Les bases »), nul s'il manque.
+  final String? niveauNom;
+
+  /// La matiere principale de l'etape pour la tranche d'age de l'eleve.
+  final String? matierePrincipale;
+
+  /// La matiere secondaire, nulle quand il n'y en a pas encore (6-9 ans,
+  /// avant la chadda : le livre seul).
+  final String? matiereSecondaire;
+
+  /// Le jour d'entree dans l'etape.
+  final DateTime? entreeLe;
+
+  /// La date limite de l'etape, en semaines depuis l'entree dans l'etape.
+  final int? dateLimiteSemaines;
+
+  /// L'horizon du niveau : la fin au plus tard des etapes restantes (simple
+  /// horizon, pas une date de plus a tenir). Nul quand le serveur le retient.
+  final DateTime? horizon;
+
+  /// Le chemin des etapes du niveau, dans l'ordre, la sienne marquee.
+  final List<EtapeDuChemin> chemin;
+}
+
+/// Ou en est une etape du chemin, pour l'eleve.
+enum StatutEtape {
+  /// Une etape d'avant la sienne.
+  franchie('franchie'),
+
+  /// Son etape.
+  enCours('en_cours'),
+
+  /// Une etape d'apres.
+  aVenir('a_venir');
+
+  const StatutEtape(this.valeurSql);
+
+  /// La valeur rendue par la base.
+  final String valeurSql;
+}
+
+/// Une etape du chemin de l'eleve, telle que la base la rend.
+@immutable
+class EtapeDuChemin {
+  /// Cree une etape du chemin.
+  const EtapeDuChemin({
+    required this.ordre,
+    required this.nom,
+    required this.statut,
+    this.objectifs = const <String>[],
+    this.dureePrevueSemaines,
+    this.dateLimiteSemaines,
+  });
+
+  /// Lit une etape ; nulle si elle est illisible (nom ou statut inconnu).
+  static EtapeDuChemin? depuis(Object? brut) {
+    if (brut is! Map) return null;
+    final String nom = '${brut['nom'] ?? ''}'.trim();
+    final Object? ordre = brut['ordre'];
+    StatutEtape? statut;
+    for (final StatutEtape s in StatutEtape.values) {
+      if (s.valeurSql == brut['statut']) statut = s;
+    }
+    if (nom.isEmpty || ordre is! num || statut == null) return null;
+    final Object? objectifs = brut['objectifs'];
+    final Object? prevue = brut['duree_prevue_semaines'];
+    final Object? limite = brut['date_limite_semaines'];
+    return EtapeDuChemin(
+      ordre: ordre.toInt(),
+      nom: nom,
+      statut: statut,
+      objectifs: <String>[
+        for (final Object? o
+            in objectifs is List ? objectifs : const <Object?>[])
+          if ('${o ?? ''}'.trim().isNotEmpty) '$o'.trim(),
+      ],
+      dureePrevueSemaines: prevue is num ? prevue.toInt() : null,
+      dateLimiteSemaines: limite is num ? limite.toInt() : null,
+    );
+  }
+
+  /// Son rang dans le niveau.
+  final int ordre;
+
+  /// Son nom.
+  final String nom;
+
+  /// Franchie, en cours ou a venir.
+  final StatutEtape statut;
+
+  /// Ses objectifs, dans l'ordre.
+  final List<String> objectifs;
+
+  /// Sa duree prevue en semaines, pour la tranche d'age de l'eleve.
+  final int? dureePrevueSemaines;
+
+  /// Sa date limite en semaines depuis l'entree dans l'etape.
+  final int? dateLimiteSemaines;
 }
 
 /// Les sourates des bases validees d'un eleve, telles que le serveur les

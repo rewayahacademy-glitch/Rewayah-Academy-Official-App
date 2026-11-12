@@ -11,9 +11,18 @@
 /// En Interface guidee, ni le rythme ni la date limite (garde-cap, 07/11) :
 /// la situation face a l'echeance est l'affaire du tuteur.
 ///
-/// Le bloc n'est pas pose sans port, sans Classe active ou sans etape publiee
-/// (l'etat vide de la page couvre ce cas) ; chaque ligne se cache quand sa
-/// donnee manque. Une lecture en echec le dit, avec « Reessayer » (K-59),
+/// SOCLE-PROGRAMME (lot 1 de la charte, 12/11/2026) : lu par la lecture unique
+/// `etape_eleve_lecture` ; le bloc montre aussi les matieres de l'etape, la
+/// date d'entree dans l'etape, sa duree prevue et sa date limite en semaines,
+/// la date limite de l'etape (depuis l'entree dans l'etape), l'horizon du
+/// niveau et le chemin des etapes du niveau pour la tranche d'age de l'eleve,
+/// la sienne mise en avant. En Interface guidee, ni date limite, ni horizon, ni
+/// rythme, ni durees ; le serveur retient deja date limite, horizon et rythme
+/// pour l'enfant de 6 a 9 ans qui lit pour lui-meme.
+///
+/// Le bloc n'est pas pose sans port ; sans etape (pas encore de classe), il dit
+/// en une ligne que l'etape apparaitra a l'entree en classe ; chaque ligne se
+/// cache quand sa donnee manque. Une lecture en echec le dit, avec « Reessayer » (K-59),
 /// hors ligne compris ; pendant la lecture, un squelette tient la place.
 library;
 
@@ -90,15 +99,51 @@ class CarteSuiviPedagogique extends ConsumerWidget {
       );
     }
     final SuiviPedagogique? suivi = lecture.value;
-    if (suivi == null) return const SizedBox.shrink();
-
     final String? p = prenom;
-    // Interface guidee (garde-cap, 07/11/2026) : l'enfant voit son etape, ses
-    // objectifs et l'endroit ou la Classe s'est arretee ; ni le rythme ni la
-    // date limite, que son tuteur lit dans son Historique.
+    final Widget titre = SectionHeader(
+      titre: p == null ? s.titreSoi : s.titre(prenom: p),
+    );
+    if (suivi == null) {
+      return Padding(
+        padding: const EdgeInsets.only(bottom: AppSpacing.xl),
+        child: Column(
+          key: const ValueKey<String>('suivi-pedagogique-vide'),
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            titre,
+            Ecart.vMd,
+            GroupeReglages(
+              lignes: <LigneRubrique>[
+                LigneRubrique(
+                  icone: AppIcons.coran,
+                  libelle: s.etape,
+                  legende: s.vide,
+                ),
+              ],
+            ),
+          ],
+        ),
+      );
+    }
+
+    // Interface guidee (garde-cap, 07/11/2026 ; charte, partie 10) : l'enfant
+    // voit son etape, ses objectifs, ses matieres, le chemin et l'endroit ou la
+    // Classe s'est arretee ; ni le rythme, ni la date limite, ni les reperes,
+    // que son tuteur lit dans son Historique.
     final bool guidee = AppMetriques.of(context).estEnfant;
     final String? rythme = guidee ? null : libelleRythme(suivi);
     final DateTime? date = guidee ? null : suivi.dateLimite;
+    final DateTime? horizon = guidee ? null : suivi.horizon;
+    final DateTime? entree = suivi.entreeLe;
+    final String niveau = suivi.niveauNom ?? '';
+    String jour(DateTime d) => LibellesGroupe.insecable(
+      s.dateJour(
+        numero: '${d.day}',
+        mois: t.commun.dates.mois[d.month - 1],
+        annee: '${d.year}',
+      ),
+    );
     return Padding(
       padding: const EdgeInsets.only(bottom: AppSpacing.xl),
       child: Column(
@@ -106,7 +151,7 @@ class CarteSuiviPedagogique extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          SectionHeader(titre: p == null ? s.titreSoi : s.titre(prenom: p)),
+          titre,
           Ecart.vMd,
           GroupeReglages(
             lignes: <LigneRubrique>[
@@ -127,18 +172,47 @@ class CarteSuiviPedagogique extends ConsumerWidget {
                   libelle: s.objectifs,
                   legende: suivi.objectifs.join('\n'),
                 ),
+              if (suivi.matierePrincipale case final String principale)
+                LigneRubrique(
+                  icone: AppIcons.livreOuvert,
+                  libelle: s.matierePrincipale,
+                  legende: principale,
+                ),
+              if (suivi.matiereSecondaire case final String secondaire)
+                LigneRubrique(
+                  icone: AppIcons.lecon,
+                  libelle: s.matiereSecondaire,
+                  legende: secondaire,
+                ),
+              if (entree != null)
+                LigneRubrique(
+                  icone: AppIcons.historique,
+                  libelle: s.depuis,
+                  legende: jour(entree),
+                ),
+              if (!guidee && suivi.dureePrevueSemaines != null)
+                LigneRubrique(
+                  icone: AppIcons.attente,
+                  libelle: s.dureePrevue,
+                  legende: LibellesGroupe.insecable(
+                    s.dureesEtape(
+                      prevue: '${suivi.dureePrevueSemaines}',
+                      limite:
+                          '${suivi.dateLimiteSemaines ?? suivi.dureePrevueSemaines}',
+                    ),
+                  ),
+                ),
               if (date != null)
                 LigneRubrique(
                   icone: AppIcons.journee,
                   libelle: s.aFinirAvant,
-                  legende: LibellesGroupe.insecable(
-                    s.aFinirAvantDate(
-                      numero: '${date.day}',
-                      mois: t.commun.dates.mois[date.month - 1],
-                      annee: '${date.year}',
-                      prevue: '${suivi.dureePrevueSemaines ?? ''}',
-                    ),
-                  ),
+                  legende: jour(date),
+                ),
+              if (horizon != null && niveau.isNotEmpty)
+                LigneRubrique(
+                  icone: AppIcons.echeance,
+                  libelle: s.horizonNiveau(niveau: niveau),
+                  legende: jour(horizon),
                 ),
               if (rythme != null)
                 LigneRubrique(
@@ -148,6 +222,44 @@ class CarteSuiviPedagogique extends ConsumerWidget {
                 ),
             ],
           ),
+          if (suivi.chemin.isNotEmpty) ...<Widget>[
+            Ecart.vLg,
+            SectionHeader(
+              key: const ValueKey<String>('suivi-pedagogique-chemin'),
+              titre: niveau.isEmpty ? s.etape : s.chemin(niveau: niveau),
+            ),
+            Ecart.vMd,
+            GroupeReglages(
+              lignes: <LigneRubrique>[
+                for (final EtapeDuChemin e in suivi.chemin)
+                  LigneRubrique(
+                    icone: switch (e.statut) {
+                      StatutEtape.franchie => AppIcons.succes,
+                      StatutEtape.enCours => AppIcons.signet,
+                      StatutEtape.aVenir => AppIcons.attente,
+                    },
+                    libelle: s.etapeNumero(ordre: '${e.ordre}', nom: e.nom),
+                    legende: <String>[
+                      switch (e.statut) {
+                        StatutEtape.franchie => s.statutValidee,
+                        StatutEtape.enCours => s.statutEnCours,
+                        StatutEtape.aVenir => s.statutAVenir,
+                      },
+                      if (!guidee &&
+                          e.dureePrevueSemaines != null &&
+                          e.dateLimiteSemaines != null)
+                        LibellesGroupe.insecable(
+                          s.dureesEtape(
+                            prevue: '${e.dureePrevueSemaines}',
+                            limite: '${e.dateLimiteSemaines}',
+                          ),
+                        ),
+                      ...e.objectifs,
+                    ].join('\n'),
+                  ),
+              ],
+            ),
+          ],
         ],
       ),
     );

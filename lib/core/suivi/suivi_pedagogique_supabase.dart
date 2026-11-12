@@ -1,12 +1,12 @@
-// SUIVI-ELEVE (07/11/2026) : l'adaptateur Supabase du suivi pedagogique, sur
-// la RPC `suivi_pedagogique_eleve` (migration 20261115000000, lecture seule).
-// Le serveur porte la garde et calcule la vitesse ; l'adaptateur ne fait que
-// lire.
+// SUIVI-ELEVE (07/11/2026) : l'adaptateur Supabase du suivi pedagogique.
 //
-// SOURATES (11/11/2026, option A) : le compte des sourates des bases vient
-// d'une seconde RPC, `sourates_eleve` (migration 20261122900000), avec la
-// meme porte. Si elle echoue (pas encore installee, refus), le suivi reste
-// lisible sans sourates : jamais un 0 invente.
+// SOCLE-PROGRAMME (lot 1 de la charte, 12/11/2026) : une seule RPC,
+// `etape_eleve_lecture` (migration 20261123900000, lecture seule), LA lecture
+// de l'etape de l'eleve pour tous les roles : etape, chemin, dates, reperes,
+// sourates des bases et page de reprise. Le serveur porte la garde, retient la
+// date limite pour l'enfant de 6 a 9 ans et calcule la vitesse ; l'adaptateur
+// ne fait que lire. `suivi_pedagogique_eleve` et `sourates_eleve` ne sont plus
+// appelees d'ici (elles restent en base jusqu'au lot 10).
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -21,23 +21,15 @@ class SuiviPedagogiqueSupabase implements PortSuiviPedagogique {
 
   @override
   Future<SuiviPedagogique?> pourEleve(String eleveId) async {
-    final Object? suivi = await _client.rpc<Object?>(
-      'suivi_pedagogique_eleve',
+    final Object? lecture = await _client.rpc<Object?>(
+      'etape_eleve_lecture',
       params: <String, Object?>{'p_eleve_id': eleveId},
     );
-    Object? sourates;
-    try {
-      sourates = await _client.rpc<Object?>(
-        'sourates_eleve',
-        params: <String, Object?>{'p_student_id': eleveId},
-      );
-    } on Object {
-      sourates = null;
-    }
-    return SuiviPedagogique.depuisJson(avecSourates(suivi, sourates));
+    return SuiviPedagogique.depuisLecture(lecture);
   }
 }
 
+/// (Ancienne lecture, plus appelee depuis SOCLE-PROGRAMME ; retiree au lot 10.)
 /// La ligne du suivi completee des cles de `sourates_eleve`
 /// (`sourates_validees`, `sourates_total`) ; la ligne telle quelle si l'une
 /// des deux reponses est illisible. Pure, pour les tests.

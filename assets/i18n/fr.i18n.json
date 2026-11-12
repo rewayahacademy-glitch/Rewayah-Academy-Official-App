@@ -15135,6 +15135,19 @@
       "other": "Au-delà de la durée prévue\u00a0: {ecoulees} semaines sur {prevue}, avant la date limite"
     },
     "dateLimiteDepassee": "Date limite dépassée",
-    "erreur": "L'étape du programme n'a pas pu être lue. Réessayez dans un instant."
+    "erreur": "L'étape du programme n'a pas pu être lue. Réessayez dans un instant.",
+    "vide": "L'étape apparaîtra dès l'entrée dans une classe.",
+    "matierePrincipale": "Matière principale",
+    "matiereSecondaire": "Matière secondaire",
+    "depuis": "Dans cette étape depuis le",
+    "dateJour": "{numero} {mois} {annee}",
+    "dureePrevue": "Durée de l'étape",
+    "chemin": "{niveau}, étape par étape",
+    "etapeNumero": "Étape {ordre}\u00a0: {nom}",
+    "statutValidee": "Étape validée",
+    "statutEnCours": "Étape en cours",
+    "statutAVenir": "À venir",
+    "dureesEtape": "{prevue} semaines prévues, {limite} au plus",
+    "horizonNiveau": "{niveau}\u00a0: fin au plus tard le"
   }
 }

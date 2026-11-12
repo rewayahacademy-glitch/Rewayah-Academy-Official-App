@@ -14747,6 +14747,19 @@
       "other": "تجاوز المدة المقررة: ⁨{ecoulees}⁩ من ⁨{prevue}⁩ أسابيع، قبل الموعد النهائي"
     },
     "dateLimiteDepassee": "تجاوز الموعد النهائي",
-    "erreur": "تعذرت قراءة مرحلة البرنامج. حاول مرة أخرى بعد قليل."
+    "erreur": "تعذرت قراءة مرحلة البرنامج. حاول مرة أخرى بعد قليل.",
+    "vide": "تظهر المرحلة عند الالتحاق بفصل.",
+    "matierePrincipale": "المادة الأساسية",
+    "matiereSecondaire": "المادة الثانوية",
+    "depuis": "في هذه المرحلة منذ",
+    "dateJour": "⁨{numero}⁩ ⁨{mois}⁩ ⁨{annee}⁩",
+    "dureePrevue": "مدة المرحلة",
+    "chemin": "⁨{niveau}⁩، مرحلة بعد مرحلة",
+    "etapeNumero": "المرحلة ⁨{ordre}⁩: ⁨{nom}⁩",
+    "statutValidee": "اعتُمدت المرحلة",
+    "statutEnCours": "المرحلة الحالية",
+    "statutAVenir": "قادمة",
+    "dureesEtape": "عدد الأسابيع المقررة: ⁨{prevue}⁩، والحد الأقصى: ⁨{limite}⁩",
+    "horizonNiveau": "⁨{niveau}⁩: النهاية في موعد أقصاه"
   }
 }

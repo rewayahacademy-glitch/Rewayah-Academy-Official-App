@@ -4102,6 +4102,45 @@ class Traductions$suiviPedagogique$fr {
 
 	/// fr: 'L'étape du programme n'a pas pu être lue. Réessayez dans un instant.'
 	String get erreur => 'L\'étape du programme n\'a pas pu être lue. Réessayez dans un instant.';
+
+	/// fr: 'L'étape apparaîtra dès l'entrée dans une classe.'
+	String get vide => 'L\'étape apparaîtra dès l\'entrée dans une classe.';
+
+	/// fr: 'Matière principale'
+	String get matierePrincipale => 'Matière principale';
+
+	/// fr: 'Matière secondaire'
+	String get matiereSecondaire => 'Matière secondaire';
+
+	/// fr: 'Dans cette étape depuis le'
+	String get depuis => 'Dans cette étape depuis le';
+
+	/// fr: '{numero} {mois} {annee}'
+	String dateJour({required Object numero, required Object mois, required Object annee}) => '${numero} ${mois} ${annee}';
+
+	/// fr: 'Durée de l'étape'
+	String get dureePrevue => 'Durée de l\'étape';
+
+	/// fr: '{niveau}, étape par étape'
+	String chemin({required Object niveau}) => '${niveau}, étape par étape';
+
+	/// fr: 'Étape {ordre} : {nom}'
+	String etapeNumero({required Object ordre, required Object nom}) => 'Étape ${ordre} : ${nom}';
+
+	/// fr: 'Étape validée'
+	String get statutValidee => 'Étape validée';
+
+	/// fr: 'Étape en cours'
+	String get statutEnCours => 'Étape en cours';
+
+	/// fr: 'À venir'
+	String get statutAVenir => 'À venir';
+
+	/// fr: '{prevue} semaines prévues, {limite} au plus'
+	String dureesEtape({required Object prevue, required Object limite}) => '${prevue} semaines prévues, ${limite} au plus';
+
+	/// fr: '{niveau} : fin au plus tard le'
+	String horizonNiveau({required Object niveau}) => '${niveau} : fin au plus tard le';
 }
 
 // Path: commun.langue
@@ -60915,6 +60954,19 @@ extension on Traductions {
 			'suiviPedagogique.auDelaDuPrevu' => ({required num ecoulees, required Object prevue}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(ecoulees, one: 'Au-delà de la durée prévue : ${ecoulees} semaine sur ${prevue}, avant la date limite', other: 'Au-delà de la durée prévue : ${ecoulees} semaines sur ${prevue}, avant la date limite', ), 
 			'suiviPedagogique.dateLimiteDepassee' => 'Date limite dépassée',
 			'suiviPedagogique.erreur' => 'L\'étape du programme n\'a pas pu être lue. Réessayez dans un instant.',
+			'suiviPedagogique.vide' => 'L\'étape apparaîtra dès l\'entrée dans une classe.',
+			'suiviPedagogique.matierePrincipale' => 'Matière principale',
+			'suiviPedagogique.matiereSecondaire' => 'Matière secondaire',
+			'suiviPedagogique.depuis' => 'Dans cette étape depuis le',
+			'suiviPedagogique.dateJour' => ({required Object numero, required Object mois, required Object annee}) => '${numero} ${mois} ${annee}',
+			'suiviPedagogique.dureePrevue' => 'Durée de l\'étape',
+			'suiviPedagogique.chemin' => ({required Object niveau}) => '${niveau}, étape par étape',
+			'suiviPedagogique.etapeNumero' => ({required Object ordre, required Object nom}) => 'Étape ${ordre} : ${nom}',
+			'suiviPedagogique.statutValidee' => 'Étape validée',
+			'suiviPedagogique.statutEnCours' => 'Étape en cours',
+			'suiviPedagogique.statutAVenir' => 'À venir',
+			'suiviPedagogique.dureesEtape' => ({required Object prevue, required Object limite}) => '${prevue} semaines prévues, ${limite} au plus',
+			'suiviPedagogique.horizonNiveau' => ({required Object niveau}) => '${niveau} : fin au plus tard le',
 			_ => null,
 		};
 	}

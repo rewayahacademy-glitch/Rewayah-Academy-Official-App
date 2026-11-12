@@ -2137,6 +2137,19 @@ class _Traductions$suiviPedagogique$ar extends Traductions$suiviPedagogique$fr {
 	);
 	@override String get dateLimiteDepassee => 'تجاوز الموعد النهائي';
 	@override String get erreur => 'تعذرت قراءة مرحلة البرنامج. حاول مرة أخرى بعد قليل.';
+	@override String get vide => 'تظهر المرحلة عند الالتحاق بفصل.';
+	@override String get matierePrincipale => 'المادة الأساسية';
+	@override String get matiereSecondaire => 'المادة الثانوية';
+	@override String get depuis => 'في هذه المرحلة منذ';
+	@override String dateJour({required Object numero, required Object mois, required Object annee}) => '⁨${numero}⁩ ⁨${mois}⁩ ⁨${annee}⁩';
+	@override String get dureePrevue => 'مدة المرحلة';
+	@override String chemin({required Object niveau}) => '⁨${niveau}⁩، مرحلة بعد مرحلة';
+	@override String etapeNumero({required Object ordre, required Object nom}) => 'المرحلة ⁨${ordre}⁩: ⁨${nom}⁩';
+	@override String get statutValidee => 'اعتُمدت المرحلة';
+	@override String get statutEnCours => 'المرحلة الحالية';
+	@override String get statutAVenir => 'قادمة';
+	@override String dureesEtape({required Object prevue, required Object limite}) => 'عدد الأسابيع المقررة: ⁨${prevue}⁩، والحد الأقصى: ⁨${limite}⁩';
+	@override String horizonNiveau({required Object niveau}) => '⁨${niveau}⁩: النهاية في موعد أقصاه';
 }
 
 // Path: notifications.evenements
@@ -35126,6 +35139,19 @@ extension on TraductionsAr {
 			'suiviPedagogique.auDelaDuPrevu' => ({required num ecoulees, required Object prevue}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(ecoulees, zero: 'تجاوز المدة المقررة: ⁨${ecoulees}⁩ من ⁨${prevue}⁩ أسابيع، قبل الموعد النهائي', one: 'تجاوز المدة المقررة: ⁨${ecoulees}⁩ من ⁨${prevue}⁩ أسابيع، قبل الموعد النهائي', two: 'تجاوز المدة المقررة: ⁨${ecoulees}⁩ من ⁨${prevue}⁩ أسابيع، قبل الموعد النهائي', few: 'تجاوز المدة المقررة: ⁨${ecoulees}⁩ من ⁨${prevue}⁩ أسابيع، قبل الموعد النهائي', many: 'تجاوز المدة المقررة: ⁨${ecoulees}⁩ من ⁨${prevue}⁩ أسابيع، قبل الموعد النهائي', other: 'تجاوز المدة المقررة: ⁨${ecoulees}⁩ من ⁨${prevue}⁩ أسابيع، قبل الموعد النهائي', ), 
 			'suiviPedagogique.dateLimiteDepassee' => 'تجاوز الموعد النهائي',
 			'suiviPedagogique.erreur' => 'تعذرت قراءة مرحلة البرنامج. حاول مرة أخرى بعد قليل.',
+			'suiviPedagogique.vide' => 'تظهر المرحلة عند الالتحاق بفصل.',
+			'suiviPedagogique.matierePrincipale' => 'المادة الأساسية',
+			'suiviPedagogique.matiereSecondaire' => 'المادة الثانوية',
+			'suiviPedagogique.depuis' => 'في هذه المرحلة منذ',
+			'suiviPedagogique.dateJour' => ({required Object numero, required Object mois, required Object annee}) => '⁨${numero}⁩ ⁨${mois}⁩ ⁨${annee}⁩',
+			'suiviPedagogique.dureePrevue' => 'مدة المرحلة',
+			'suiviPedagogique.chemin' => ({required Object niveau}) => '⁨${niveau}⁩، مرحلة بعد مرحلة',
+			'suiviPedagogique.etapeNumero' => ({required Object ordre, required Object nom}) => 'المرحلة ⁨${ordre}⁩: ⁨${nom}⁩',
+			'suiviPedagogique.statutValidee' => 'اعتُمدت المرحلة',
+			'suiviPedagogique.statutEnCours' => 'المرحلة الحالية',
+			'suiviPedagogique.statutAVenir' => 'قادمة',
+			'suiviPedagogique.dureesEtape' => ({required Object prevue, required Object limite}) => 'عدد الأسابيع المقررة: ⁨${prevue}⁩، والحد الأقصى: ⁨${limite}⁩',
+			'suiviPedagogique.horizonNiveau' => ({required Object niveau}) => '⁨${niveau}⁩: النهاية في موعد أقصاه',
 			_ => null,
 		};
 	}
