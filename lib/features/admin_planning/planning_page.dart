@@ -66,15 +66,13 @@ class PlanningPage extends ConsumerStatefulWidget {
 }
 
 class _PlanningPageEtat extends ConsumerState<PlanningPage> {
-  late final DateTime _courante = lundiDe(
-    widget.semaineInitiale ?? DateTime.now(),
-  );
-  late DateTime _lundi = _courante;
+  // HEURES-PROFIL H5 (12/11/2026) : un ecart en semaines, et non un lundi
+  // fige au premier rendu. Le lundi courant se recalcule a chaque rendu, au
+  // fuseau du profil : quand ce fuseau arrive apres le premier rendu, la
+  // semaine affichee suit.
+  int _ecart = 0;
 
-  void _aller(int semaines) => setState(
-    () =>
-        _lundi = DateTime(_lundi.year, _lundi.month, _lundi.day + 7 * semaines),
-  );
+  void _aller(int semaines) => setState(() => _ecart += semaines);
 
   void _relire() => ref
     ..invalidate(planningSemaineProvider)
@@ -86,17 +84,23 @@ class _PlanningPageEtat extends ConsumerState<PlanningPage> {
     // HEURES-PROFIL H2 (12/11/2026) : la page ecoute le fuseau du profil ;
     // quand il arrive apres son premier rendu, ses heures se redessinent.
     ref.watch(monHorlogeProvider);
+    final DateTime courante = lundiDe(widget.semaineInitiale ?? DateTime.now());
+    final DateTime lundi = DateTime(
+      courante.year,
+      courante.month,
+      courante.day + 7 * _ecart,
+    );
     final l = t.admin.planning;
     final AsyncValue<List<SeancePlanning>> lecture = ref.watch(
-      planningSemaineProvider(_lundi),
+      planningSemaineProvider(lundi),
     );
     final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
-    final String semaine = libelleSemaine(_lundi);
+    final String semaine = libelleSemaine(lundi);
     // Sans port, aucun geste ni bilan : rien n'est invente.
     final bool remplacementsBranches =
         ref.watch(portRemplacementsDirectionProvider) != null;
     final AsyncValue<BilanRemplacements?> bilan = ref.watch(
-      remplacementsSemaineProvider(_lundi),
+      remplacementsSemaineProvider(lundi),
     );
     return PageShell(
       titre: l.titre,
@@ -115,13 +119,13 @@ class _PlanningPageEtat extends ConsumerState<PlanningPage> {
             onPrecedent: () => _aller(-1),
             onSuivant: () => _aller(1),
           ),
-          if (_lundi != _courante) ...<Widget>[
+          if (lundi != courante) ...<Widget>[
             Ecart.vSm,
             LienFleche(
               key: const ValueKey<String>('planning-cette-semaine'),
               libelle: l.cetteSemaine,
               alignerEnDebut: true,
-              onPress: () => setState(() => _lundi = _courante),
+              onPress: () => setState(() => _ecart = 0),
             ),
           ],
           Ecart.vXl,

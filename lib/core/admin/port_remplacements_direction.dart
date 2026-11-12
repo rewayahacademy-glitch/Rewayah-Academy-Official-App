@@ -17,6 +17,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
 
+import 'port_planning_direction.dart' show bornesSemaineChezMoi;
+
 /// L'etat d'une seance qui a un evenement de remplacement.
 enum EtatRemplacementSeance {
   /// Le titulaire a declare son absence ; personne ne l'a encore remplace.
@@ -210,10 +212,10 @@ remplacementsSemaineProvider =
         portRemplacementsDirectionProvider,
       );
       if (port == null) return Future<BilanRemplacements?>.value();
-      return port.periode(
-        lundi,
-        DateTime(lundi.year, lundi.month, lundi.day + 7),
-      );
+      // HEURES-PROFIL H5 : les lundis 00 h au fuseau du profil, pas a
+      // celui de l'appareil.
+      final ({DateTime debut, DateTime fin}) b = bornesSemaineChezMoi(lundi);
+      return port.periode(b.debut, b.fin);
     }, retry: (int _, Object _) => null);
 
 /// Les remplacants possibles d'une seance.
