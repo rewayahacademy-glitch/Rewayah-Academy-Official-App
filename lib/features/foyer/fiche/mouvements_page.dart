@@ -86,6 +86,9 @@ class MouvementsElevePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // HEURES-PROFIL H2 (12/11/2026) : la page ecoute le fuseau du profil ;
+    // quand il arrive apres son premier rendu, ses heures se redessinent.
+    ref.watch(monHorlogeProvider);
     return PageFiche(
       eleveId: eleveId,
       titre: t.ficheEleve.mouvements.titre,
@@ -248,6 +251,9 @@ class HistoriqueMouvements extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // HEURES-PROFIL H2 (12/11/2026) : la page ecoute le fuseau du profil ;
+    // quand il arrive apres son premier rendu, ses heures se redessinent.
+    ref.watch(monHorlogeProvider);
     final Object? erreur = lecture.hasError ? lecture.error : null;
     final Widget corps;
     if (erreur is CapaciteIndisponible) {

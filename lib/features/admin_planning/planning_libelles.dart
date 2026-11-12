@@ -7,14 +7,18 @@ import '../../core/admin/port_planning_direction.dart';
 import '../../core/admin/port_remplacements_direction.dart';
 import '../../core/domain/enums.dart' show StatutSeance;
 import '../../core/i18n/strings.g.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/widgets/pastille_etat_seance.dart' show EtatPastilleSeance;
 import '../admin_regroupements/regroupements_libelles.dart'
     show libelleHeureMinute;
 import '../suivi_foyer/filtres_historique.dart' show dateLongueHistorique;
 
-/// « 18 h » ou « 18 h 30 » : l'heure d'un instant local.
-String libelleHeure(DateTime instant) =>
-    libelleHeureMinute(instant.hour, instant.minute);
+/// « 18 h » ou « 18 h 30 » : l'heure d'un instant, a l'heure du profil
+/// ([chezMoi], HEURES-PROFIL H2, 12/11/2026).
+String libelleHeure(DateTime instant) {
+  final DateTime l = chezMoi(instant);
+  return libelleHeureMinute(l.hour, l.minute);
+}
 
 /// « lundi 12 octobre 2026 » : le jour d'un instant local.
 String libelleJour(DateTime instant) => dateLongueHistorique(instant);
@@ -74,7 +78,7 @@ String libelleStatutPlanning(StatutSeance statut) => switch (statut) {
   StatutSeance.annulee || StatutSeance.annuleeTard => t.etat.seanceAnnulee,
 };
 
-/// Les seances de la semaine regroupees par jour (minuit local), dans
+/// Les seances de la semaine regroupees par jour du profil, dans
 /// l'ordre des jours puis des heures.
 Map<DateTime, List<SeancePlanning>> parJour(List<SeancePlanning> seances) {
   final List<SeancePlanning> triees = <SeancePlanning>[...seances]
@@ -82,7 +86,10 @@ Map<DateTime, List<SeancePlanning>> parJour(List<SeancePlanning> seances) {
   final Map<DateTime, List<SeancePlanning>> jours =
       <DateTime, List<SeancePlanning>>{};
   for (final SeancePlanning s in triees) {
-    final DateTime jour = DateTime(s.debut.year, s.debut.month, s.debut.day);
+    // HEURES-PROFIL H3 (12/11/2026) : le jour du fuseau du PROFIL, pas celui
+    // de l'appareil (une seance a 23:30 UTC est deja le lendemain a +05:30).
+    final DateTime l = chezMoi(s.debut);
+    final DateTime jour = DateTime(l.year, l.month, l.day);
     (jours[jour] ??= <SeancePlanning>[]).add(s);
   }
   return jours;

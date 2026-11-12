@@ -5,6 +5,7 @@ import '../../core/alertes/alerte.dart';
 import '../../core/alertes/port_alertes.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/signal_row.dart';
 import '../../core/widgets/status_pill.dart';
@@ -60,6 +61,9 @@ class BandeauAlerteUrgente extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // HEURES-PROFIL H2 (12/11/2026) : la page ecoute le fuseau du profil ;
+    // quand il arrive apres son premier rendu, ses heures se redessinent.
+    ref.watch(monHorlogeProvider);
     final AsyncValue<List<Alerte>> alertes = ref.watch(alertesProvider);
     final List<Alerte> urgentes = alertes.hasValue
         ? alertes.requireValue.where((Alerte a) => a.urgente).toList()

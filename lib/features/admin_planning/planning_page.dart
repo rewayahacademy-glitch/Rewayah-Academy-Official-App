@@ -32,6 +32,7 @@ import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/barre_precedent_suivant.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
@@ -82,6 +83,9 @@ class _PlanningPageEtat extends ConsumerState<PlanningPage> {
 
   @override
   Widget build(BuildContext context) {
+    // HEURES-PROFIL H2 (12/11/2026) : la page ecoute le fuseau du profil ;
+    // quand il arrive apres son premier rendu, ses heures se redessinent.
+    ref.watch(monHorlogeProvider);
     final l = t.admin.planning;
     final AsyncValue<List<SeancePlanning>> lecture = ref.watch(
       planningSemaineProvider(_lundi),

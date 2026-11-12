@@ -23,6 +23,7 @@ import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/admin/port_planning_direction.dart';
 import '../../core/admin/port_seances_reportees.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/champ_date.dart';
@@ -66,10 +67,11 @@ String phraseRefusNouvelleDate(NouvelleDateRefusee refus) {
 
 /// « lundi 12 octobre 2026 à 18 h » : un instant, a l'heure de l'appareil.
 String quandSeanceReportee(DateTime instant) {
-  final DateTime local = instant.toLocal();
+  // HEURES-PROFIL H2 : jour et heure a l'heure du profil ([libelleHeure]
+  // convertit lui-meme : jamais deux fois).
   return t.snt.planning.quand(
-    jour: libelleJour(local),
-    heure: libelleHeure(local),
+    jour: libelleJour(chezMoi(instant)),
+    heure: libelleHeure(instant),
   );
 }
 
@@ -109,7 +111,10 @@ class _FeuilleNouvelleDateEtat extends ConsumerState<FeuilleNouvelleDate> {
       setState(() => _message = p.erreur);
       return;
     }
-    final DateTime debut = DateTime(
+    // HEURES-PROFIL H3 (12/11/2026) : le jour et l'heure choisis sont ceux
+    // du fuseau du PROFIL ; l'instant envoye au serveur en est l'inverse
+    // exact ([instantChezMoi]), jamais l'heure de l'appareil.
+    final DateTime debut = instantChezMoi(
       jour.year,
       jour.month,
       jour.day,
@@ -157,7 +162,11 @@ class _FeuilleNouvelleDateEtat extends ConsumerState<FeuilleNouvelleDate> {
         ),
       );
     }
-    final DateTime aujourdhui = ref.watch(horlogeFormulairesProvider)();
+    ref.watch(monHorlogeProvider);
+    // Le jour d'aujourd'hui au fuseau du profil (HEURES-PROFIL H3).
+    final DateTime aujourdhui = chezMoi(
+      ref.watch(horlogeFormulairesProvider)(),
+    );
     return Column(
       key: const ValueKey<String>('feuille-nouvelle-date'),
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -211,8 +220,8 @@ class _FeuilleNouvelleDateEtat extends ConsumerState<FeuilleNouvelleDate> {
             }),
           ),
         ),
-        Ecart.vXs,
-        TexteSansCoupure(p.heureAppareil, style: textes.bodySmall),
+        // HEURES-PROFIL H3 : plus de « A l'heure de cet appareil » ; le choix
+        // se fait a l'heure du profil, et l'instant en est construit.
         if (_message case final String message) ...<Widget>[
           Ecart.vMd,
           MessageAlerte(

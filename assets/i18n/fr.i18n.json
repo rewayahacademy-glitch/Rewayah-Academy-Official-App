@@ -4230,7 +4230,6 @@
         "feuille": {
           "planifierConsequence": "La personne reçoit la date de l'entretien. Les participants le retrouvent parmi leurs entretiens.",
           "jourAide": "Dans les 90 prochains jours.",
-          "heureAide": "Heure de cet appareil.",
           "participantsAide": "Choisissez librement dans le personnel de ce côté.",
           "fondateursChoisis": "Fondateurs choisis\u00a0: {n}",
           "jourManquant": "Choisissez un jour.",
@@ -14346,7 +14345,6 @@
       "feuilleContexteSansNom": "La nouvelle séance se tient avec l'enseignant de la classe et dure {minutes}\u00a0minutes, comme la séance reportée. La classe est prévenue de la nouvelle date.",
       "jour": "Jour de la nouvelle séance",
       "heure": "Heure",
-      "heureAppareil": "À l'heure de cet appareil.",
       "quand": "{jour} à {heure}",
       "choixManquant": "Choisissez le jour et l'heure de la nouvelle séance.",
       "confirmer": "Fixer cette date",

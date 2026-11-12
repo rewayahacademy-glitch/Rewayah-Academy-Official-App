@@ -13,6 +13,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_delais.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -25,14 +26,13 @@ import '../../core/widgets/ligne_cle_valeur.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
-import '../accueil_famille/bloc_seance.dart'
-    show dateDeLAppareil, heureDeLAppareil;
+import '../accueil_famille/bloc_seance.dart' show dateDeLAppareil;
 import 'echanges_controleur.dart';
 
 /// Le titre humain d'un fil : la Classe et la date de la mission.
 String titreFilEchange(FilEchange fil) => t.controleur.echanges.titreFil(
   classe: fil.classe,
-  date: dateDeLAppareil(fil.debutMission),
+  date: dateDeLAppareil(chezMoi(fil.debutMission)),
 );
 
 /// La page Echanges du controleur : la liste des fils, ou le fil ouvert.
@@ -98,6 +98,9 @@ class _EchangesControleurPageState
 
   @override
   Widget build(BuildContext context) {
+    // HEURES-PROFIL H2 (12/11/2026) : la page ecoute le fuseau du profil ;
+    // quand il arrive apres son premier rendu, ses heures se redessinent.
+    ref.watch(monHorlogeProvider);
     final String? mission = _mission;
     return mission == null ? _vueListe() : _vueFil(mission);
   }
@@ -124,7 +127,7 @@ class _EchangesControleurPageState
                   icone: AppIcons.discussion,
                   libelle: titreFilEchange(f),
                   legende: e.derniereActivite(
-                    date: dateDeLAppareil(f.derniereActivite),
+                    date: dateDeLAppareil(chezMoi(f.derniereActivite)),
                   ),
                   marque: _pastille(f.etat),
                   onPress: () => _ouvrir(f.missionId),
@@ -162,8 +165,8 @@ class _EchangesControleurPageState
                   texte: m.texte,
                   // Meme cle que l'Historique (revue CT-R m9).
                   horodatage: t.controleur.historique.dateHeure(
-                    date: dateDeLAppareil(m.date),
-                    heure: heureDeLAppareil(m.date),
+                    date: dateDeLAppareil(chezMoi(m.date)),
+                    heure: heureChezMoi(m.date),
                   ),
                   deSoi: m.auteur == AuteurEchange.controleur,
                 ),
@@ -240,7 +243,7 @@ class _ContexteEpingle extends StatelessWidget {
         key: EchangesControleurPage.contexteCompactKey,
         container: true,
         child: Text(
-          e.contexteCompact(heure: heureDeLAppareil(fil.debutMission)),
+          e.contexteCompact(heure: heureChezMoi(fil.debutMission)),
           style: palette.inkMuted.applyTo(
             textes.bodyMedium ?? const TextStyle(),
           ),
@@ -257,11 +260,11 @@ class _ContexteEpingle extends StatelessWidget {
           LigneCleValeur(cle: e.cleClasse, valeur: fil.classe),
           LigneCleValeur(
             cle: e.cleDate,
-            valeur: dateDeLAppareil(fil.debutMission),
+            valeur: dateDeLAppareil(chezMoi(fil.debutMission)),
           ),
           LigneCleValeur(
             cle: e.cleHeure,
-            valeur: heureDeLAppareil(fil.debutMission),
+            valeur: heureChezMoi(fil.debutMission),
             chiffres: true,
           ),
         ],

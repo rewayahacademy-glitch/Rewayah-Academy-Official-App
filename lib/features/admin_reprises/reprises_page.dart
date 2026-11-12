@@ -25,6 +25,7 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -39,7 +40,6 @@ import '../../core/widgets/pile_cartes.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
 import '../../core/widgets/status_pill.dart';
-import '../suivi_demandes/libelles_suivi_demandes.dart' show hhmmDemande;
 
 String _date(DateTime d) => t.commun.dates.jourDate(
   jour: t.commun.dates.jours[d.weekday - 1],
@@ -117,6 +117,9 @@ class _ReprisesPageState extends ConsumerState<ReprisesPage> {
 
   @override
   Widget build(BuildContext context) {
+    // HEURES-PROFIL H2 (12/11/2026) : la page ecoute le fuseau du profil ;
+    // quand il arrive apres son premier rendu, ses heures se redessinent.
+    ref.watch(monHorlogeProvider);
     final a = t.reprisesAdmin;
     final AsyncValue<List<RepriseAdmin>> valeur = ref.watch(
       reprisesAdminProvider,
@@ -269,7 +272,8 @@ class _CarteReprise extends StatelessWidget {
             LigneCleValeur(
               cle: a.deposeeLe,
               valeur:
-                  '${_date(depot)} ${hhmmDemande(depot.hour, depot.minute)}',
+                  // HEURES-PROFIL H2 : a l'heure du profil.
+                  '${_date(chezMoi(depot))} ${heureChezMoi(depot)}',
             ),
           ],
           Ecart.vLg,

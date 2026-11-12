@@ -20,6 +20,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
@@ -147,6 +148,9 @@ class SectionAnnoncesAdministration extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // HEURES-PROFIL H2 (12/11/2026) : la page ecoute le fuseau du profil ;
+    // quand il arrive apres son premier rendu, ses heures se redessinent.
+    ref.watch(monHorlogeProvider);
     final a = t.com.annonces.administration;
     final String titre = switch (etat) {
       EtatAnnonce.publiee => a.publiees.titre,
@@ -206,7 +210,8 @@ class SectionAnnoncesAdministration extends ConsumerWidget {
 /// date ».
 LigneRubrique ligneAnnonceAdministration(AnnonceAdministration annonce) {
   final a = t.com.annonces.administration;
-  final DateTime le = annonce.le.toLocal();
+  // HEURES-PROFIL H2 : a l'heure du profil.
+  final DateTime le = chezMoi(annonce.le);
   final String date = dateCourte(le);
   final String heure = heureMinute(le);
   return switch (annonce.etat) {
