@@ -8,6 +8,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/capacites/port_progression_famille.dart';
+import 'package:rewayah_academy/core/capacites/progression_famille_supabase.dart'
+    show dateDernierJalon;
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart';
@@ -57,6 +60,19 @@ class _FauxPort implements PortMaProgression {
   }
 }
 
+class _FauxFamille implements PortProgressionFamille {
+  const _FauxFamille({this.rendu, this.refus = false});
+
+  final ProgressionEleve? rendu;
+  final bool refus;
+
+  @override
+  Future<ProgressionEleve> progression(String eleveId) async {
+    if (refus) throw StateError('progression indisponible');
+    return rendu!;
+  }
+}
+
 const SuiviPedagogique _complet = SuiviPedagogique(
   etapeNom: 'Lire avec les voyelles',
   etapeOrdre: 2,
@@ -75,6 +91,7 @@ Future<void> _monter(
   String? prenom,
   bool horsLigne = false,
   InterfaceMode mode = InterfaceMode.standard,
+  List<Override> autres = const <Override>[],
 }) async {
   tester.view.physicalSize = const Size(1400, 2400);
   tester.view.devicePixelRatio = 1;
@@ -89,6 +106,7 @@ Future<void> _monter(
       ),
       surcharges: <Override>[
         portMaProgressionProvider.overrideWithValue(port),
+        ...autres,
         horsLigneProvider.overrideWith(
           (Ref ref) => Stream<bool>.value(horsLigne),
         ),
@@ -540,6 +558,92 @@ void main() {
       );
       await tester.pumpAndSettle();
       expect(find.text(t.suiviPedagogique.revision), findsNothing);
+    });
+
+    final ProgressionEleve niveauEtJalon = ProgressionEleve(
+      eleveId: 'eleve-1',
+      niveauHumain: 'Les bases',
+      jalons: const <String>['Les lettres', 'Les voyelles'],
+      dernierJalonLe: DateTime(2026, 10, 14),
+    );
+    List<Override> famille(PortProgressionFamille p) => <Override>[
+      portProgressionFamilleProvider.overrideWithValue(p),
+    ];
+
+    testWidgets('l ancien cas : adulte sans Classe ni etape, avec un niveau '
+        'et un jalon : les deux se lisent', (WidgetTester tester) async {
+      await _monter(
+        tester,
+        _FauxPort(),
+        autres: famille(_FauxFamille(rendu: niveauEtJalon)),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text(t.suiviPedagogique.titreSoi), findsOneWidget);
+      expect(find.text(t.suiviPedagogique.niveauDeclare), findsOneWidget);
+      expect(find.text('Les bases'), findsOneWidget);
+      expect(find.text(t.suiviPedagogique.dernierJalon), findsOneWidget);
+      expect(
+        find.text('Les lettres · 14 ${t.commun.dates.mois[9]} 2026'),
+        findsOneWidget,
+      );
+      expect(find.text(t.suiviPedagogique.etape), findsNothing);
+    });
+
+    testWidgets('avec une etape : le dernier jalon, pas le niveau declare', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        _FauxPort(rendu: _complet),
+        autres: famille(_FauxFamille(rendu: niveauEtJalon)),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text(t.suiviPedagogique.dernierJalon), findsOneWidget);
+      expect(find.text(t.suiviPedagogique.niveauDeclare), findsNothing);
+      expect(find.text(_complet.etapeNom), findsOneWidget);
+    });
+
+    testWidgets('lecture refusee (eleve mineur) ou en echec : ni niveau ni '
+        'jalon, le bloc reste', (WidgetTester tester) async {
+      await _monter(
+        tester,
+        _FauxPort(rendu: _complet),
+        autres: famille(const _FauxFamille(refus: true)),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text(t.suiviPedagogique.dernierJalon), findsNothing);
+      expect(find.text(t.suiviPedagogique.niveauDeclare), findsNothing);
+      expect(find.text(_complet.etapeNom), findsOneWidget);
+      // Sans etape et refuse : rien du tout.
+      await _monter(
+        tester,
+        _FauxPort(),
+        autres: famille(const _FauxFamille(refus: true)),
+      );
+      await tester.pumpAndSettle();
+      expect(
+        find.byKey(const ValueKey<String>('suivi-pedagogique')),
+        findsNothing,
+      );
+    });
+
+    test('la date du dernier jalon : la premiere seance qui en porte un', () {
+      expect(
+        dateDernierJalon(<Object?>[
+          <String, Object?>{'publie_le': '2026-11-01T10:00:00Z'},
+          <String, Object?>{
+            'jalon_humain': 'Les lettres',
+            'publie_le': '2026-10-14T10:00:00Z',
+          },
+          <String, Object?>{
+            'jalon_humain': 'Avant',
+            'publie_le': '2026-09-01T10:00:00Z',
+          },
+        ]),
+        DateTime.parse('2026-10-14T10:00:00Z'),
+      );
+      expect(dateDernierJalon(<Object?>[]), isNull);
+      expect(dateDernierJalon(null), isNull);
     });
 
     testWidgets('au moins ce que l ancienne ligne de Ma classe montrait : le '

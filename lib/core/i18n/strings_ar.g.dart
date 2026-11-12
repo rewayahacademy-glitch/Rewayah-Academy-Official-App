@@ -2164,6 +2164,8 @@ class _Traductions$suiviPedagogique$ar extends Traductions$suiviPedagogique$fr {
 		many: '⁨${n}⁩ تكرارًا',
 		other: '⁨${n}⁩ تكرار',
 	);
+	@override String get dernierJalon => 'آخر محطة';
+	@override String get niveauDeclare => 'المستوى المصرّح به';
 	@override String get dateLimiteDepassee => 'تجاوز الموعد النهائي';
 	@override String get erreur => 'تعذرت قراءة مرحلة البرنامج. حاول مرة أخرى بعد قليل.';
 }
@@ -35167,6 +35169,8 @@ extension on TraductionsAr {
 			'suiviPedagogique.revisionHeures' => ({required Object heures}) => '⁨${heures}⁩ س',
 			'suiviPedagogique.repetitions' => 'التكرارات المقدّرة',
 			'suiviPedagogique.repetitionsNombre' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: '⁨${n}⁩ تكرار', one: '⁨${n}⁩ تكرار', two: '⁨${n}⁩ تكرار', few: '⁨${n}⁩ تكرارات', many: '⁨${n}⁩ تكرارًا', other: '⁨${n}⁩ تكرار', ), 
+			'suiviPedagogique.dernierJalon' => 'آخر محطة',
+			'suiviPedagogique.niveauDeclare' => 'المستوى المصرّح به',
 			'suiviPedagogique.dateLimiteDepassee' => 'تجاوز الموعد النهائي',
 			'suiviPedagogique.erreur' => 'تعذرت قراءة مرحلة البرنامج. حاول مرة أخرى بعد قليل.',
 			_ => null,

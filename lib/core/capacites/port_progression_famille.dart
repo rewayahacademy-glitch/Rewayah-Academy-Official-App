@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
 
 import 'capacite_indisponible.dart';
 
@@ -15,6 +16,7 @@ class ProgressionEleve {
     required this.eleveId,
     this.niveauHumain,
     this.jalons = const <String>[],
+    this.dernierJalonLe,
   });
 
   /// L'eleve.
@@ -25,6 +27,10 @@ class ProgressionEleve {
 
   /// Les jalons franchis, deja rediges par le serveur.
   final List<String> jalons;
+
+  /// Le jour ou le dernier jalon a ete publie dans un resume de seance ;
+  /// nul quand le serveur ne le dit pas.
+  final DateTime? dernierJalonLe;
 }
 
 /// La progression d'un eleve (contrat K6).
@@ -50,3 +56,22 @@ final Provider<PortProgressionFamille> portProgressionFamilleProvider =
     Provider<PortProgressionFamille>(
       (Ref ref) => const ProgressionFamilleIndisponible(),
     );
+
+/// La progression lue pour completer « Ou j'en suis » (MA-PROGRESSION-ECRAN) :
+/// le niveau declare et le dernier jalon que l'enseignant a publie. Une
+/// lecture refusee ou en echec ne fait jamais tomber le bloc : `null`, et ses
+/// deux lignes se cachent. Sans nouvelle tentative automatique.
+final FutureProviderFamily<ProgressionEleve?, String>
+progressionFamilleLueProvider =
+    FutureProvider.family<ProgressionEleve?, String>((
+      Ref ref,
+      String eleveId,
+    ) async {
+      try {
+        return await ref
+            .watch(portProgressionFamilleProvider)
+            .progression(eleveId);
+      } on Object {
+        return null;
+      }
+    }, retry: (int _, Object _) => null);

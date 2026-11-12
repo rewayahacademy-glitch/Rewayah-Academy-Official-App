@@ -4166,6 +4166,12 @@ class Traductions$suiviPedagogique$fr {
 		other: '${n} répétitions',
 	);
 
+	/// fr: 'Dernier jalon'
+	String get dernierJalon => 'Dernier jalon';
+
+	/// fr: 'Niveau déclaré'
+	String get niveauDeclare => 'Niveau déclaré';
+
 	/// fr: 'Date limite dépassée'
 	String get dateLimiteDepassee => 'Date limite dépassée';
 
@@ -61019,6 +61025,8 @@ extension on Traductions {
 			'suiviPedagogique.revisionHeures' => ({required Object heures}) => '${heures} h',
 			'suiviPedagogique.repetitions' => 'Répétitions estimées',
 			'suiviPedagogique.repetitionsNombre' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} répétition', other: '${n} répétitions', ), 
+			'suiviPedagogique.dernierJalon' => 'Dernier jalon',
+			'suiviPedagogique.niveauDeclare' => 'Niveau déclaré',
 			'suiviPedagogique.dateLimiteDepassee' => 'Date limite dépassée',
 			'suiviPedagogique.erreur' => 'L\'étape du programme n\'a pas pu être lue. Réessayez dans un instant.',
 			_ => null,

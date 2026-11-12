@@ -9,6 +9,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/capacites/port_progression_famille.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/suivi/ma_progression.dart';
 import 'package:rewayah_academy/core/suivi/port_suivi_pedagogique.dart';
@@ -61,6 +62,19 @@ class _Port implements PortMaProgression {
   );
 }
 
+class _Famille implements PortProgressionFamille {
+  const _Famille();
+
+  @override
+  Future<ProgressionEleve> progression(String eleveId) async =>
+      ProgressionEleve(
+        eleveId: eleveId,
+        niveauHumain: 'Les bases',
+        jalons: const <String>['Les lettres'],
+        dernierJalonLe: DateTime(2026, 10, 14),
+      );
+}
+
 void main() {
   tearDown(() async => LocaleSettings.setLocale(AppLocale.fr));
 
@@ -104,6 +118,9 @@ void main() {
                   ),
                   surcharges: <Override>[
                     portMaProgressionProvider.overrideWithValue(const _Port()),
+                    portProgressionFamilleProvider.overrideWithValue(
+                      const _Famille(),
+                    ),
                   ],
                   themeMode: mode,
                   echelleTexte: echelle,

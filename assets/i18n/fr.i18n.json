@@ -15162,6 +15162,8 @@
       "one": "{n} répétition",
       "other": "{n} répétitions"
     },
+    "dernierJalon": "Dernier jalon",
+    "niveauDeclare": "Niveau déclaré",
     "dateLimiteDepassee": "Date limite dépassée",
     "erreur": "L'étape du programme n'a pas pu être lue. Réessayez dans un instant."
   }

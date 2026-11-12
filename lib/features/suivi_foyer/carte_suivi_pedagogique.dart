@@ -20,6 +20,7 @@ library;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/capacites/port_progression_famille.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/etat_sans_donnees.dart';
@@ -90,8 +91,23 @@ class CarteSuiviPedagogique extends ConsumerWidget {
         ),
       );
     }
-    final MaProgression? progression = lecture.value;
-    if (progression == null) return const SizedBox.shrink();
+    // Ce que l'enseignant a saisi et que la famille lisait deja : le niveau
+    // declare et le dernier jalon publie. Un refus ou un echec le cache, sans
+    // faire tomber le bloc.
+    final ProgressionEleve? famille = ref
+        .watch(progressionFamilleLueProvider(eleveId))
+        .value;
+    final String? jalon = famille?.jalons.isEmpty ?? true
+        ? null
+        : famille!.jalons.first;
+    final String? niveau = famille?.niveauHumain?.trim().isNotEmpty ?? false
+        ? famille!.niveauHumain!.trim()
+        : null;
+    final MaProgression? lue = lecture.value;
+    if (lue == null && jalon == null && niveau == null) {
+      return const SizedBox.shrink();
+    }
+    final MaProgression progression = lue ?? const MaProgression();
     final SuiviPedagogique? suivi = progression.suivi;
 
     final String? p = prenom;
@@ -130,6 +146,27 @@ class CarteSuiviPedagogique extends ConsumerWidget {
                   legende: s.souratesDe(
                     validees: sourates.validees,
                     total: sourates.total,
+                  ),
+                ),
+              // Sans etape publiee, le niveau declare tient lieu de niveau ;
+              // avec une etape, c'est elle qui le dit.
+              if (suivi == null && niveau != null)
+                LigneRubrique(
+                  cle: const ValueKey<String>('suivi-pedagogique-niveau'),
+                  icone: AppIcons.coran,
+                  libelle: s.niveauDeclare,
+                  legende: niveau,
+                ),
+              if (jalon != null)
+                LigneRubrique(
+                  cle: const ValueKey<String>('suivi-pedagogique-jalon'),
+                  icone: AppIcons.signet,
+                  libelle: s.dernierJalon,
+                  legende: LibellesGroupe.joindre(
+                    jalon,
+                    famille?.dernierJalonLe == null
+                        ? null
+                        : _jour(famille!.dernierJalonLe!.toLocal()),
                   ),
                 ),
               if (suivi?.pageReprise case final int page)
@@ -225,6 +262,10 @@ String libelleStatutEtape(EtapeDuCycle e, {bool avecDate = true}) {
     StatutEtape.aVenir => s.etapeAVenir,
   };
 }
+
+/// Un jour ecrit en toutes lettres : « 7 septembre 2026 ». Pur.
+String _jour(DateTime d) =>
+    '${d.day} ${t.commun.dates.mois[d.month - 1]} ${d.year}';
 
 /// Un nombre d'heures ecrit comme on le lit : « 2 » ou « 2,5 » (virgule en
 /// francais). Pur.
