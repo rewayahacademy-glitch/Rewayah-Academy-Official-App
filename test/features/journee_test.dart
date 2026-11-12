@@ -615,8 +615,17 @@ void main() {
       );
       expect(find.text(t.enseignant.journee.enAttenteTitre), findsNothing);
       expect(find.text(t.enseignant.journee.coursIndividuel), findsNothing);
-      // Une seance sans nom de Classe dit « Classe », rien d'autre.
-      expect(find.text(t.enseignant.journee.classe), findsOneWidget);
+      // Une seance sans nom de Classe dit « Classe », rien d'autre : la carte,
+      // et la ligne de « Ma journee » a l'identique (meme source).
+      expect(
+        tester
+            .widget<Text>(
+              find.byKey(const ValueKey<String>('journee-carte-classe')),
+            )
+            .data,
+        t.enseignant.journee.classe,
+      );
+      expect(find.text(t.enseignant.journee.classe), findsNWidgets(2));
     });
   });
 
@@ -692,7 +701,16 @@ void main() {
           ..seancesRendues = <SeanceEnseignant>[_anNour()],
       );
       expect(find.text(t.enseignant.journee.prochaineSeance), findsOneWidget);
-      expect(find.text('An-Nour'), findsOneWidget);
+      // Le nom sur la carte ; « Ma journee » le dit a l'identique (meme source).
+      expect(
+        tester
+            .widget<Text>(
+              find.byKey(const ValueKey<String>('journee-carte-classe')),
+            )
+            .data,
+        'An-Nour',
+      );
+      expect(find.text('An-Nour'), findsNWidgets(2));
       expect(
         find.text(t.enseignant.journee.plage(debut: '17:30', fin: '18:15')),
         findsWidgets,
@@ -1407,8 +1425,9 @@ void main() {
 
       expect(find.text(t.enseignant.journee.maJournee), findsOneWidget);
       expect(
-        find.text(t.enseignant.journee.classeNommee(classe: 'Al-Badr')),
-        findsOneWidget,
+        // Le nom de la Classe seul, comme la carte (HEURES-ACCUEIL-ENSEIGNANT).
+        find.text('Al-Badr'),
+        findsWidgets,
       );
       expect(find.text(t.enseignant.journee.lignePause), findsOneWidget);
       final List<InterruptionPriere> interruptions = interruptionsEntre(
@@ -1731,7 +1750,9 @@ void main() {
       WidgetTester tester,
     ) async {
       await journeeComplete(tester, const Size(1440, 1000));
-      final Offset carte = tester.getTopLeft(find.text('An-Nour'));
+      final Offset carte = tester.getTopLeft(
+        find.byKey(const ValueKey<String>('journee-carte-classe')),
+      );
       final double xJournee = tester
           .getTopLeft(find.text(t.enseignant.journee.maJournee))
           .dx;

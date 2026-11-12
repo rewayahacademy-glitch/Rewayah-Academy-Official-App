@@ -1962,7 +1962,6 @@
       "heure": "الساعة",
       "eleves": "الطلاب",
       "classe": "الفصل",
-      "classeNommee": "الفصل ⁨{classe}⁩",
       "preparerSeance": "تحضير الحصة",
       "preparerSeanceLecteur": "تحضير حصة ⁨{classe}⁩",
       "voirClasse": "عرض الفصل",
