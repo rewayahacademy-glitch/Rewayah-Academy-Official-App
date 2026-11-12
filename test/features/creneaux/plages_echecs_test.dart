@@ -29,6 +29,7 @@ import 'package:rewayah_academy/features/creneaux/feuille_plage.dart';
 import 'package:rewayah_academy/features/creneaux/plages.dart';
 
 import '../../support/harnais.dart';
+import '../../support/horloge_de_test.dart';
 
 const String _monId = 't1';
 
@@ -91,6 +92,7 @@ Future<void> _monter(
       overrides: <Override>[
         sourceSessionProvider.overrideWithValue(FausseSourceSession(_session)),
         serviceMatchingProvider.overrideWithValue(FauxServiceMatching()),
+        monHorlogeDeTest(),
         servicePlanningProvider.overrideWithValue(planning),
         serviceReglesProvider.overrideWithValue(FauxServiceRegles()),
         serviceReseauProvider.overrideWithValue(reseau ?? FauxServiceReseau()),

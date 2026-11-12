@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -5,11 +6,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/i18n/villes_fuseau.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/planning/service_planning.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -19,6 +22,7 @@ import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/local_feedback.dart';
 import '../../core/widgets/skeleton.dart';
+import '../profil_enseignant/feuille_fuseau.dart' show ouvrirFeuilleFuseau;
 import 'feuille_plage.dart';
 import 'plages.dart';
 
@@ -80,7 +84,10 @@ class _PlagesDisponibiliteEtat extends ConsumerState<PlagesDisponibilite> {
       return const Skeleton.liste(lignes: 6);
     }
 
-    final AsyncValue<String> fuseau = ref.watch(monFuseauProvider);
+    // FUSEAU-IDENTITE-PRO (garde-cap, 12/11/2026) : le fuseau du profil, lu
+    // par `mon_horloge`, sans repli. Sans lui, aucune disponibilite ne se
+    // pose : on n'ecrit jamais Paris sans le dire.
+    final AsyncValue<MonHorloge?> horloge = ref.watch(monHorlogeProvider);
     final AsyncValue<List<Creneau>> creneaux = ref.watch(
       disponibilitesProvider(monId),
     );
@@ -89,8 +96,8 @@ class _PlagesDisponibiliteEtat extends ConsumerState<PlagesDisponibilite> {
     final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
 
     // Jamais par le type d'execution de l'`AsyncValue` (Riverpod 3).
-    final bool lisible = fuseau.hasValue && creneaux.hasValue;
-    final bool echec = fuseau.hasError || creneaux.hasError;
+    final bool lisible = horloge.hasValue && creneaux.hasValue;
+    final bool echec = horloge.hasError || creneaux.hasError;
 
     if (!lisible) {
       if (echec) {
@@ -100,7 +107,7 @@ class _PlagesDisponibiliteEtat extends ConsumerState<PlagesDisponibilite> {
           icone: AppIcons.avertissement,
           libelleAction: t.commun.reessayer,
           onAction: () {
-            ref.invalidate(monFuseauProvider);
+            ref.invalidate(monHorlogeProvider);
             ref.invalidate(disponibilitesProvider(monId));
           },
         );
@@ -111,13 +118,25 @@ class _PlagesDisponibiliteEtat extends ConsumerState<PlagesDisponibilite> {
     }
 
     final List<Creneau> poses = creneaux.requireValue;
+    final String? fuseauProfil = switch (horloge.requireValue?.moi?.fuseau) {
+      final String f when f.trim().isNotEmpty => f.trim(),
+      _ => null,
+    };
+    // Les plages se lisent dans LEUR fuseau enregistre : quand il n'est pas
+    // celui du profil (ou que le profil n'en a pas), la phrase le nomme.
+    final List<String> autresFuseaux = <String>{
+      for (final Creneau c in poses)
+        if (c.fuseau != fuseauProfil) c.fuseau,
+    }.toList();
+    // Ecrire demande le reseau ET un fuseau de profil.
+    final bool ecriture = !horsLigne && fuseauProfil != null;
     final Set<HeureSemaine> existantes = heuresDe(poses);
     final List<Plage> plages = deduirePlages(existantes);
     final bool bureau = AppGabarit.de(context) == Gabarit.desktop;
 
     void ouvrir([Plage? plage]) => _ouvrir(
       monId: monId,
-      fuseau: fuseau.requireValue,
+      fuseau: fuseauProfil!,
       existantes: existantes,
       plage: plage,
     );
@@ -143,7 +162,7 @@ class _PlagesDisponibiliteEtat extends ConsumerState<PlagesDisponibilite> {
             plages: plages,
             // Hors ligne, la liste reste CONSULTABLE mais inerte : une plage
             // touchee sans reseau echouerait apres le geste.
-            onToucher: horsLigne ? null : ouvrir,
+            onToucher: ecriture ? ouvrir : null,
           ),
           Ecart.vSm,
           TexteSansCoupure(switch (poses.length) {
@@ -152,6 +171,41 @@ class _PlagesDisponibiliteEtat extends ConsumerState<PlagesDisponibilite> {
               t.disponibilites.posees(nombre: poses.length),
             ),
           }, style: textes.bodySmall),
+        ],
+        if (autresFuseaux.isNotEmpty) ...<Widget>[
+          Ecart.vSm,
+          TexteSansCoupure(
+            t.enseignant.creneaux.plagesDansFuseau(
+              villes: autresFuseaux.map(villeDuFuseauLibelle).join(', '),
+            ),
+            key: const ValueKey<String>('plages-autre-fuseau'),
+            style: textes.bodySmall,
+          ),
+        ],
+        // Sans fuseau de profil : la phrase dit pourquoi rien ne se pose, et
+        // mene au reglage (la meme feuille que « Identite professionnelle »).
+        if (fuseauProfil == null && !horsLigne) ...<Widget>[
+          Ecart.vMd,
+          TexteSansCoupure(
+            t.enseignant.creneaux.fuseauManquant,
+            key: const ValueKey<String>('plages-fuseau-manquant'),
+            style: palette.inkWarning.applyTo(
+              textes.bodyMedium ?? const TextStyle(),
+            ),
+          ),
+          Ecart.vMd,
+          Align(
+            alignment: AlignmentDirectional.centerEnd,
+            child: ActionPrincipale(
+              key: const ValueKey<String>('plages-regler-fuseau'),
+              libelle: t.enseignant.creneaux.reglerFuseau,
+              // « Ajouter une plage » reste la seule action pleine de l'ecran
+              // (les deux ne sont jamais rendues ensemble).
+              niveau: NiveauAction.secondaire,
+              pleineLargeur: !bureau,
+              onPress: () => unawaited(ouvrirFeuilleFuseau(context, ref)),
+            ),
+          ),
         ],
         if (horsLigne) ...<Widget>[
           Ecart.vSm,
@@ -169,7 +223,7 @@ class _PlagesDisponibiliteEtat extends ConsumerState<PlagesDisponibilite> {
         // fin ; pleine largeur sur telephone seulement (contrat B). Hors
         // ligne, elle n'est pas rendue (jamais grisee) : la phrase ci-dessus
         // dit pourquoi.
-        if (!horsLigne) ...<Widget>[
+        if (ecriture) ...<Widget>[
           Ecart.vLg,
           Align(
             alignment: AlignmentDirectional.centerEnd,

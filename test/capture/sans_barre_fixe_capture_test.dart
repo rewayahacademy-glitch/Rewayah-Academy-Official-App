@@ -221,7 +221,11 @@ PieceAEnvoyer _pieceFictive() => PieceAEnvoyer(
 /// La declaration du profil enseignant, en memoire (rien n'est ecrit).
 class _FausseDeclaration implements ServiceDeclarationEnseignant {
   @override
-  Future<void> declarer({String? pays, List<String>? langues}) async {}
+  Future<void> declarer({
+    String? pays,
+    List<String>? langues,
+    String? fuseau,
+  }) async {}
 }
 
 const ProfilEnseignant _profilFictif = ProfilEnseignant(

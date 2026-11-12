@@ -28,7 +28,9 @@ class Creneau {
   factory Creneau.depuisJson(Map<String, dynamic> json) => Creneau(
     jour: (json['weekday'] as num).toInt(),
     heure: (json['hour_local'] as num).toInt(),
-    fuseau: json['timezone_iana'] as String? ?? 'Europe/Paris',
+    // `weekly_availability.timezone_iana` est NOT NULL (0005) : aucun repli
+    // (FUSEAU-IDENTITE-PRO, garde-cap, 12/11/2026 ; il disait Paris).
+    fuseau: json['timezone_iana'] as String,
     poseLe: DateTime.tryParse(json['created_at'] as String? ?? '')?.toLocal(),
   );
 

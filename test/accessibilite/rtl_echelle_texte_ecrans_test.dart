@@ -52,6 +52,7 @@ import 'package:rewayah_academy/features/revue_groupe/revue_groupe_page.dart';
 import 'package:rewayah_academy/features/suivi_foyer/suivi_foyer_page.dart';
 
 import '../support/harnais.dart';
+import '../support/horloge_de_test.dart';
 
 /// Lot A1 : preuve, pour **chaque ecran reel construit du catalogue**
 /// (`docs/archive/2026-09-pre-remise-a-plat/design/08-catalogue-ecrans.md`), que le rendu arabe (RTL, Bible V2
@@ -280,6 +281,7 @@ List<_EcranAVerifier> _ecrans() => <_EcranAVerifier>[
       ],
       surcharges: <Override>[
         serviceAppairageProvider.overrideWithValue(FauxServiceAppairage()),
+        monHorlogeDeTest(),
         servicePlanningProvider.overrideWithValue(FauxServicePlanning()),
       ],
     ),
@@ -370,6 +372,7 @@ List<_EcranAVerifier> _ecrans() => <_EcranAVerifier>[
           FausseSourceSession(_sessionEnseignant),
         ),
         serviceMatchingProvider.overrideWithValue(FauxServiceMatching()),
+        monHorlogeDeTest(),
         servicePlanningProvider.overrideWithValue(FauxServicePlanning()),
         serviceReglesProvider.overrideWithValue(FauxServiceRegles()),
       ],
@@ -384,6 +387,7 @@ List<_EcranAVerifier> _ecrans() => <_EcranAVerifier>[
         echelleTexte: e,
       ),
       surcharges: <Override>[
+        monHorlogeDeTest(),
         servicePlanningProvider.overrideWithValue(FauxServicePlanning()),
         servicePriereProvider.overrideWithValue(FauxServicePriere()),
         serviceReseauProvider.overrideWithValue(FauxServiceReseau()),
@@ -398,6 +402,7 @@ List<_EcranAVerifier> _ecrans() => <_EcranAVerifier>[
         sourceSessionProvider.overrideWithValue(
           FausseSourceSession(_sessionEnseignant),
         ),
+        monHorlogeDeTest(),
         servicePlanningProvider.overrideWithValue(FauxServicePlanning()),
         serviceMatchingProvider.overrideWithValue(FauxServiceMatching()),
         serviceReglesProvider.overrideWithValue(FauxServiceRegles()),
