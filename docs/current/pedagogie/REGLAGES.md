@@ -7,6 +7,8 @@
 **Comment lire la table.**
 - **DÉCIDÉ (date)** : décision datée du directeur. La valeur ne change que sur une nouvelle décision datée du directeur.
 - **ARBITRÉ** : valeur fixée par l'architecte le 12/11/2026 (raison dans `ARBITRAGES.md`). Elle s'applique ; la direction peut la changer.
+- **PROPOSÉ** : valeur du programme d'après les bases, pas en service.
+- Corrections après l'audit du 12/11/2026 : listées dans `ARBITRAGES.md`, partie 8.
 - Une seule valeur par réglage. Le moteur de suivi (`MOTEUR-DE-SUIVI.md`) lit ces valeurs telles quelles ; ce qu'il précisait de plus y est entré le 12/11/2026 (partie 7).
 
 ## 1. Le programme et ses durées
@@ -20,19 +22,20 @@
 | Âge minimum | Entrée à l'académie | 6 ans ; avant, seulement par exception de la direction | DÉCIDÉ 13/10 | Directeur |
 | Part de la matière principale | Équilibre de la semaine | 70 à 80 % du temps | DÉCIDÉ 13/10 | Directeur |
 | Al-Fatiha dès la première semaine | Permettre de prier tôt | Oui à partir de 10 ans ; pour les 6-9 ans, après la chadda | DÉCIDÉ 13/10 | Directeur |
-| Durée prévue des bases | Ce qu'on vise pour un débutant | 37 semaines (6-9 ans), 28 (10-13), 24 (14-17), 15 (adultes) | DÉCIDÉ 14/10 | Directeur |
-| **Date limite des bases** | La seule date ferme : elle porte sur le **niveau entier** | 48 semaines (6-9 ans), 36 (10-13), 31 (14-17), 20 (adultes) | DÉCIDÉ 14/10 | Directeur |
-| Repères par étape | Des repères **affichés** pour suivre le rythme, jamais une date ferme ; leur somme est égale à la date limite du niveau ; un élève qui entre en cours de route reçoit une date calculée sur les étapes qui lui restent | Voir le tableau 1 bis | ARBITRÉ | Direction |
-| Nouvelle date ferme après une date limite dépassée | Le plan de soutien | 4 semaines | DÉCIDÉ 14/10 | Directeur |
-| Bilan avec la famille après une date limite dépassée | Délai pour le tenir | 7 jours ; avis écrit de l'enseignant sous 3 jours | ARBITRÉ | Direction |
+| Durée prévue des bases (total) | Ce qu'on vise pour un débutant | 37 semaines (6-9 ans), 28 (10-13), 24 (14-17), 15 (adultes) | DÉCIDÉ 14/10 | Directeur |
+| Date limite des bases (total) | La somme des dates limites des quatre étapes ; affichée comme **horizon** du niveau, jamais comme une date ferme de plus | 48 semaines (6-9 ans), 36 (10-13), 31 (14-17), 20 (adultes) | DÉCIDÉ 14/10 | Directeur |
+| **Durée prévue et date limite de chaque étape** | Chaque étape a sa durée prévue et sa **date limite** par tranche d'âge (DÉCIDÉ 14/10). La date limite d'une étape part de l'entrée de l'élève dans cette étape et ne recule que pour les fermetures de l'académie et une pause accordée (DÉCIDÉ 14/10). Un élève qui valide une étape en avance garde le temps gagné : la date de l'étape suivante part de son entrée dans cette étape | Voir le tableau 1 bis | Principe et totaux DÉCIDÉS 14/10 ; répartition par étape ARBITRÉE | Directeur (principe, totaux) ; direction (répartition) |
+| Nouvelle date ferme après la date limite d'une étape dépassée | Le plan de soutien | 4 semaines | DÉCIDÉ 14/10 | Directeur |
+| Bilan avec la famille après la date limite d'une étape dépassée | Délai pour le tenir | 7 jours ; avis écrit de l'enseignant sous 3 jours | ARBITRÉ | Direction |
+| Confirmation de la séance par l'enseignant | Où la classe s'est arrêtée, et les exceptions ; la paie de la séance l'attend | Moins de 20 secondes, après chaque séance | DÉCIDÉ 05/11 (le directeur : « en quelques secondes » ; les 20 secondes et le rythme par séance : arbitrage du garde-cap du même jour) | Directeur |
 | Leçons nouvelles avant une séance de consolidation | Relire ensemble ce qui a été vu | 2, soit une séance de consolidation par semaine (2 leçons + 1 consolidation) | ARBITRÉ | Direction |
 | Actions dans « Avant le prochain cours » | Un travail court et clair | 3 au plus | DÉCIDÉ 12/10 | Directeur |
 | Révision à la maison par semaine | L'emploi du temps de révision | 6-9 ans : 1 h ; 10-13 : 1 h 30 ; 14-17 : 2 h ; adultes : 2 h, en séances courtes (15 à 20 minutes par jour pour un adulte très occupé) | ARBITRÉ | Direction |
 | Nouveau en mémorisation, par séance | Avancer sans abîmer la révision (programme d'après les bases, PROPOSÉ, pas en service) | 3 à 8 lignes pour un enfant, 2 à 7 pour un adulte | PROPOSÉ (après les bases) | Directeur et associés détenteurs d'ijaza |
 
-### 1 bis. Repères par étape des bases (semaines)
+### 1 bis. Durée prévue et date limite de chaque étape des bases (semaines)
 
-Calcul : proportionnel à la durée prévue, arrondi ; l'écart d'arrondi va à l'étape la plus longue (Lire avec les voyelles). Chaque case : durée prévue (repère).
+Chaque case : durée prévue (date limite de l'étape), comptées depuis l'entrée de l'élève dans l'étape. Les totaux sont DÉCIDÉS (14/10) ; la répartition par étape est ARBITRÉE (12/11/2026) : proportionnelle à la durée prévue, arrondie, l'écart d'arrondi allant à l'étape la plus longue (Lire avec les voyelles), pour que la somme égale exactement les totaux. La ligne « Total » est l'horizon du niveau.
 
 | Étape | 6-9 ans | 10-13 ans | 14-17 ans | Adultes |
 |---|---|---|---|---|
@@ -49,22 +52,23 @@ Calcul : proportionnel à la durée prévue, arrondi ; l'écart d'arrondi va à 
 | Fermeture du Ramadan | Repos de fin de mois | Du 20 Ramadan au 7 Shawwal inclus, 20 jours au plus ; dates grégoriennes publiées chaque année | DÉCIDÉ 30/09 | Directeur ; la direction publie les dates |
 | Fermeture de l'Aïd al-Adha | Fête | Du 9 au 18 Dhu al-Hijja inclus | DÉCIDÉ 30/09 | Directeur ; la direction publie les dates |
 | Rencontres de récitation | Encourager, jamais faire passer | 4 par an, dont une juste après l'Aïd al-Fitr ; une heure par tranche d'âge, en ligne ; dates fixées chaque année par la direction | DÉCIDÉ 13/10 (nombre) ; ARBITRÉ (format) | Directeur pour le nombre ; direction pour dates et format |
-| Pause | Les vacances de la famille ; seule notion côté pédagogie, qui couvre aussi l'arrêt temporaire du 07/11 | Un mois civil entier, demandé au moins 7 jours avant, non facturé ; la date limite recule d'autant ; la place est gardée. La facturation d'un arrêt temporaire suit la décision du directeur du 07/11 | DÉCIDÉ 30/09, 14/10 et 07/11 | Directeur |
+| Pause | Les vacances de la famille | Un mois civil entier, demandé au moins 7 jours avant ; la date limite de l'étape en cours recule d'autant ; la place est gardée. Côté pédagogie, une interruption temporaire accordée (07/11) est une pause : la date limite recule de la durée accordée. Le mot « arrêt » est réservé au départ définitif. L'argent (facturation, remboursement) n'est pas du ressort de cette table : lot d'harmonisation de l'argent réservé par le directeur le 07/11 | Pause : DÉCIDÉ 30/09 et 14/10 ; une seule notion côté pédagogie : ARBITRÉ | Directeur |
 | Pauses sur 12 mois sans accord particulier | Éviter un programme qui s'étire | 2 mois sur 12 mois glissants ; au-delà, la direction décide sous 3 jours ; sans réponse, l'élève reste inscrit | ARBITRÉ | Direction |
-| Pause d'exception pour maladie soudaine | Un cas grave, sans préavis | Accordée par la direction avec motif, date de fin et nom ; mois non facturé ; date limite reculée ; réponse sous 3 jours | ARBITRÉ | Direction |
+| Pause d'exception pour maladie soudaine | Un cas grave, sans préavis | Accordée par la direction avec motif, date de fin et nom ; date limite reculée de la durée accordée ; réponse sous 3 jours | ARBITRÉ | Direction |
 | Plan de reprise après une pause ou une absence longue | Revenir sans honte | 2 semaines dans l'emploi du temps de révision | ARBITRÉ | Direction |
 | Interruption longue | Seuil qui demande un entretien de lecture au retour | 3 mois ou plus sans cours ; après une pause d'un mois, jamais d'entretien | ARBITRÉ | Direction |
 | Entrée dans une classe déjà lancée | Ne pas désorganiser la classe | Au début d'un mois | DÉCIDÉ 30/09 | Directeur |
-| Plan de reprise à l'entrée dans une classe déjà lancée | Rattraper les leçons déjà vues | 4 semaines, avec la lecture enregistrée | ARBITRÉ | Direction |
+| Placement dans une classe déjà lancée | Ne pas mettre un élève trop loin de sa classe | D'abord une classe au même stade que l'élève ; sinon, si l'écart est d'une étape au plus, plan de reprise d'une durée égale à la durée prévue de la partie manquée (tableau 1 bis ; pour une étape commencée, le temps que la classe y a déjà passé, sans dépasser sa durée prévue), avec la lecture enregistrée quand elle existe ; au-delà d'une étape d'écart, l'élève attend l'ouverture d'une classe de son niveau. Une classe ne reçoit pas un débutant si elle a plus d'une étape d'avance sur lui | ARBITRÉ | Direction |
 | Correction d'un mauvais placement | Changer d'étape après un entretien de lecture mal ajusté | Dans les 3 premières semaines ; question posée à l'enseignant au 14ᵉ jour | ARBITRÉ | Direction |
 | Passage en classe d'adultes à 18 ans | Changer de classe sans casser l'étape | À la fin de l'étape, au plus tard 3 mois après l'anniversaire ; tarif selon la politique en vigueur | ARBITRÉ | Direction |
-| Anniversaire en cours de niveau | Ne jamais raccourcir une date | La date limite en cours ne change pas ; les valeurs de la nouvelle tranche valent pour le niveau suivant | ARBITRÉ | Direction |
+| Anniversaire en cours de niveau | Ne jamais raccourcir une date | La date limite de l'étape en cours ne change pas, ni les valeurs des étapes qui restent dans ce niveau ; les valeurs de la nouvelle tranche valent pour le niveau suivant | ARBITRÉ | Direction |
 
 ## 3. Absences, travail et suivi
 
 | Réglage | À quoi il sert | Valeur par défaut | Statut | Qui peut le changer |
 |---|---|---|---|---|
 | Fenêtre de comptage des absences | Base des trois seuils ci-dessous | Les 12 derniers cours prévus pour l'élève (4 semaines), séances tenues seulement : pauses, fermetures, séances reportées ou sans enseignant ne comptent pas | ARBITRÉ | Direction |
+| Présence partielle | Quatre faits de présence : présent, partiel, absent, pas encore connu | Présent : au moins la moitié de la durée prévue de la séance ; partiel : moins de la moitié, plus de zéro ; absent : aucune connexion. Un partiel ouvre « Rattraper ce cours », sans message d'absence ; deux présences partielles dans la fenêtre comptent comme une absence pour les trois seuils ; un partiel interrompt les « absences de suite » | Seuil de la moitié : décision du 31/10 (règle retenue par le pilote, sur délégation du directeur) ; deux partiels = une absence : ARBITRÉ | Direction |
 | Absences, premier seuil | Message du système au tuteur (ou à l'adulte), le jour même | 2 absences dans la fenêtre ; le même message pas avant 14 jours | ARBITRÉ | Direction |
 | Absences, deuxième seuil | L'enseignant confirme d'un geste un message préparé, avant le cours suivant ; sans geste, le système l'envoie | 3 absences dans la fenêtre, ou 2 cours de suite non rattrapés | ARBITRÉ | Direction |
 | Absences, troisième seuil | La direction échange avec la famille et décide | 4 absences ou plus dans la fenêtre ; échange dans les 7 jours | ARBITRÉ | Direction |
@@ -72,26 +76,27 @@ Calcul : proportionnel à la durée prévue, arrondi ; l'écart d'arrondi va à 
 | Rattraper ce cours | Ce que l'élève fait seul | 3 écoutes et 5 répétitions à voix haute ; avant 10 ans, le tuteur marque « J'ai rattrapé ce cours » | ARBITRÉ | Direction |
 | Fermeture de la tâche « Rattraper ce cours » | Savoir sans saisie si le cours est rattrapé | Quand l'élève (ou le tuteur) a marqué ; sinon au deuxième cours suivi sans marquage, et elle compte alors « non rattrapé » | ARBITRÉ | Direction |
 | Écoute de l'élève absent au cours suivant | Vérifier sans arrêter la classe | Une minute au plus, dans son tour normal de lecture ; l'enseignant ne saisit rien, sauf un point « À renforcer » par son geste habituel | ARBITRÉ | Direction |
-| Travail non fait | Message de la direction à la famille | Une semaine compte quand 2 travaux sur 3 au moins ne sont pas marqués faits avant le cours suivant ; 3 semaines de suite : la direction écrit à la famille dans les 7 jours ; rien de plus pour l'enseignant | ARBITRÉ | Direction |
-| Grande difficulté (« À soutenir ») | Le système signale à l'enseignant ; la direction rencontre la famille | Même point « À renforcer » sur 3 semaines (3 confirmations), élève présent et travail fait ; l'enseignant choisit la suite sous 7 jours ; point encore là 2 semaines après, ou signalé : rencontre de la direction dans les 14 jours | ARBITRÉ | Direction |
-| Tuteur qui ne suit pas | Appel de la direction | 3 semaines sans message lu, cours rattrapé ni travail fait ; appel dans les 7 jours | ARBITRÉ | Direction |
+| Travail non fait | Message de la direction à la famille | Une semaine compte quand 2 travaux sur 3 au moins ne sont pas marqués faits avant le cours suivant ; 3 semaines de suite : la direction écrit à la famille dans les 7 jours ; rien de plus pour l'enseignant. **Éteinte tant que le marquage « fait » n'existe pas** : aucun autre signe ne la remplace, et aucun message ne dit qu'un travail n'a pas été fait | ARBITRÉ | Direction |
+| Grande difficulté (« À soutenir ») | Le système signale à l'enseignant ; la direction rencontre la famille | Même point « À renforcer » sur 3 semaines (3 confirmations), élève présent et travail fait (tant que le marquage « fait » n'existe pas, la condition du travail n'est pas lue) ; l'enseignant choisit la suite sous 7 jours ; point encore là 2 semaines après, ou signalé : rencontre de la direction dans les 14 jours | ARBITRÉ | Direction |
+| Tuteur qui ne suit pas | Appel de la direction | 3 semaines sans message lu, cours rattrapé ni travail fait (le travail n'est lu que lorsque le marquage « fait » existe) ; appel dans les 7 jours | ARBITRÉ | Direction |
 | Écart durable dans une classe | Nouvelle répartition au début du mois suivant | 4 semaines ; la direction étudie sous 14 jours | ARBITRÉ | Direction |
 | La classe avance | Seuil interne, jamais affiché | 4 enfants sur 5 (5 adultes sur 6) ont acquis | ARBITRÉ (référentiel, retenu au registre du 14/10) | Direction |
 | Consolidation commune | Seuil interne, jamais affiché | 40 % des présents ou plus « À renforcer » sur le même point à la dernière confirmation ; fin sous 40 % sur 2 confirmations | ARBITRÉ (référentiel, retenu au registre du 14/10) | Direction |
 | Retard qu'un élève peut causer à la classe | Seuil interne | Une séance au plus | ARBITRÉ (référentiel, retenu au registre du 14/10) | Direction |
-| « Stable » | Calculé par le serveur, jamais saisi | 3 observations « Acquis » sur au moins 2 semaines, dont une non préparée (petit bilan ou séance de consolidation) | DÉCIDÉ (référentiel confirmé les 12 et 13/10) | Directeur |
+| « Stable » | Calculé par le serveur, jamais saisi | 3 observations « Acquis » sur au moins 2 semaines, dont une non préparée | DÉCIDÉ (référentiel confirmé les 12 et 13/10) | Directeur |
+| Observation « non préparée » | Ce qui compte pour « Stable » | Un petit bilan, ou un passage que l'enseignant fait lire ou réciter hors de la leçon du jour, tiré au hasard dans ce qui est déjà vu ; la séance de consolidation seule ne compte pas ; une rencontre de récitation ne compte pas | ARBITRÉ | Direction |
 | Élève « en avance » | Proposer tôt le petit bilan | « Prêt pour un petit bilan » marqué avant 75 % de la durée prévue de l'étape (tableau 1 bis) | ARBITRÉ | Direction |
 
 ## 4. Alertes et messages
 
 | Réglage | À quoi il sert | Valeur par défaut | Statut | Qui peut le changer |
 |---|---|---|---|---|
-| Rythme « À surveiller » | Mot montré au tuteur et à l'élève de 10 ans et plus ; l'enseignant est prévenu | Dès que la date de fin projetée au rythme actuel dépasse la date limite du niveau (calcul : `MOTEUR-DE-SUIVI.md`, partie 3.2) | ARBITRÉ | Direction |
-| Rappels avant la date limite du niveau | Prévenir avant qu'il soit trop tard | 28, 14 et 7 jours avant ; l'enseignant agit sous 7 jours ; au rappel des 7 jours, la direction prévoit le bilan | ARBITRÉ | Direction |
-| Date limite dépassée | Alerte à la direction, au tuteur et à l'enseignant | Le lendemain de la date limite | ARBITRÉ | Direction |
+| Rythme « À surveiller » | Mot montré au tuteur et à l'élève de 10 ans et plus ; l'enseignant est prévenu | Dès que la durée prévue de l'étape en cours est écoulée (comptée depuis l'entrée dans l'étape, fermetures et pause accordée ajoutées) sans que l'étape soit validée : il reste alors la marge jusqu'à la date limite de l'étape (calcul : `MOTEUR-DE-SUIVI.md`, partie 3.2) | ARBITRÉ | Direction |
+| Rappels avant la date limite de l'étape | Prévenir avant qu'il soit trop tard | 28, 14 et 7 jours avant la date limite de l'étape en cours ; un rappel qui tomberait le jour de l'entrée dans l'étape ou avant n'est pas envoyé (le message d'entrée donne déjà la date) ; l'enseignant agit sous 7 jours ; au rappel des 7 jours, la direction prévoit le bilan | ARBITRÉ | Direction |
+| Date limite d'une étape dépassée | Alerte à la direction et à l'enseignant ; message court au tuteur (ou à l'adulte), sans reproche, qui annonce le bilan | Le lendemain de la date limite de l'étape en cours | ARBITRÉ | Direction |
 | Séance non confirmée | Relances quand la position n'est pas confirmée | Rappel à l'enseignant 2 heures après la séance ; la direction 24 heures après, et agit sous 2 jours ; 3 retards sur 4 semaines : une conversation | ARBITRÉ | Direction |
-| Messages pédagogiques par semaine | Ne pas noyer les familles | 3 au plus par famille, message de la semaine compris ; hors plafond : le circuit des séances, une date d'évaluation fixée, un résultat ; au-delà, le message attend le message de la semaine | ARBITRÉ | Direction |
-| Message de la semaine | Un rendez-vous calme, une seule action | Le samedi à 10 h, heure du foyer | ARBITRÉ | Direction |
+| Messages pédagogiques par semaine | Ne pas noyer les familles | 3 au plus par famille, message de la semaine compris ; hors plafond : le circuit des séances, une date d'évaluation fixée, un résultat, la date limite d'une étape dépassée, la tâche « Rattraper ce cours » (elle doit arriver avant le cours suivant), la réponse à une demande de pause ; au-delà, le message attend le message de la semaine | ARBITRÉ | Direction |
+| Message de la semaine | Un rendez-vous calme, une seule action | Le samedi à 10 h, heure du foyer ; il dit « {nombre} cours sur {prévus} », où « prévus » exclut fermetures, pauses et séances reportées ; une semaine sans cours prévu, pas de ligne de présence | ARBITRÉ | Direction |
 | Heures calmes | Aucun message la nuit | De 21 h à 8 h, dans le fuseau du destinataire ; « le jour même » veut dire avant 21 h, sinon le lendemain à 8 h | ARBITRÉ | Direction |
 | Annonce d'un petit bilan | Laisser le temps de réviser | 7 jours avant (ou dès qu'il est fixé, si c'est plus tard) | ARBITRÉ | Direction |
 | Annonce d'une fermeture | Prévoir la révision | 7 jours avant ; rappel la veille de la reprise | ARBITRÉ | Direction |
@@ -115,14 +120,14 @@ Calcul : proportionnel à la durée prévue, arrondi ; l'écart d'arrondi va à 
 | Après « Quelques points sont à renforcer » | Travail ciblé, puis nouvelle vérification **des seuls points concernés** | 2 semaines plus tard | ARBITRÉ | Direction |
 | Après « Une nouvelle vérification est nécessaire » | Plan de soutien, puis **l'épreuve entière refaite** | 3 semaines plus tard pour un petit bilan ; 4 semaines pour un examen | ARBITRÉ | Direction |
 | Nombre de tentatives | Ne jamais fermer la porte, sans boucle sans fin | Pas de maximum ; après deux « Une nouvelle vérification est nécessaire » de suite, la direction revoit le plan avec l'enseignant et la famille | ARBITRÉ | Direction |
-| Rappel de proposer l'examen | Ne pas arriver à la date limite sans examen | 4 semaines avant la date limite du niveau, si l'examen n'est pas proposé | ARBITRÉ | Direction |
+| Rappel de proposer l'examen | Ne pas arriver à la date limite sans examen | 4 semaines avant la date limite de l'étape 4, si l'examen n'est pas proposé (pas de rappel le jour de l'entrée dans l'étape ou avant) | ARBITRÉ | Direction |
 | Délai entre la proposition d'examen et l'examen | Ne pas laisser attendre l'élève prêt | 14 jours au plus | ARBITRÉ | Direction |
 | Panne pendant une épreuve | Jamais un résultat | Reprise le jour même où elle s'est arrêtée ; sinon reprogrammée dans les 7 jours, les parties finies restent acquises | ARBITRÉ | Direction |
 | **Recours : demande** | La famille (ou l'adulte) demande une réévaluation par une autre personne | Dans les 14 jours après la publication du résultat | ARBITRÉ | Direction |
 | **Recours : réévaluation** | Une personne habilitée qui n'a pas fait passer l'épreuve | Dans les 14 jours suivant la demande | ARBITRÉ | Direction |
-| Choix de la suite par un adulte, après les bases | Ne pas laisser l'orientation en suspens | 14 jours ; sans choix, la direction l'appelle | ARBITRÉ | Direction |
+| Choix de la suite par un adulte, après les bases | Ne pas laisser l'orientation en suspens, quand le programme d'après les bases sera en service | 14 jours ; sans choix, la direction l'appelle | PROPOSÉ (avec le programme d'après les bases) | Directeur et associés détenteurs d'ijaza |
 | Retrait d'une sourate cochée par erreur | Corriger une coche, avec motif et trace | Par l'enseignant auteur, dans les 7 jours ; la direction est informée | ARBITRÉ | Direction |
-| Petits bilans réécoutés par la direction | Équité entre enseignants | Un sur dix, tiré au hasard | ARBITRÉ | Direction |
+| Petits bilans suivis en direct | Équité entre enseignants | La direction, ou un évaluateur qu'elle désigne, assiste en direct à un petit bilan sur dix, tiré au hasard ; aucun enregistrement de voix d'élève n'existe ni n'est créé | ARBITRÉ | Direction |
 | Seuils de correction (types d'erreur, 90 % de justesse, 2 aides au plus) | Critères d'« Acquis » et de chaque étape | Ceux de `EVALUATIONS.md`, parties 3 et 4 | ARBITRÉ | Direction, sur avis du directeur |
 
 ## 6. Âge et visibilité
@@ -141,6 +146,7 @@ Valeurs propres au moteur, entrées le 12/11/2026 telles que le moteur les fixai
 |---|---|---|---|---|
 | Entretien de lecture | Placer juste un élève qui dit lire, ou qui revient de 3 mois ou plus | Fixé par la direction sous 7 jours, avant le premier mois | ARBITRÉ | Direction |
 | Nouveau converti | L'accueillir et ne pas le perdre | Mot d'accueil de la direction sous 3 jours ; nouvelles prises à 1 mois, sous 7 jours | ARBITRÉ | Direction |
+| Classe en retard sur le programme | Prévenir l'enseignant quand une classe entière glisse | La moitié au moins des élèves actifs de la classe sont « À surveiller » ou ont dépassé la date limite de leur étape ; examiné une fois par semaine ; l'enseignant choisit la suite sous 7 jours (règle 34 du moteur) | ARBITRÉ (12/11/2026, après audit) | Direction |
 | Délai d'une tâche de la direction sans délai propre | Une alerte a toujours un délai | 7 jours | ARBITRÉ | Direction |
 | Remontée | Ce qui n'est pas fait à temps monte d'un cran | Hors délai : de l'enseignant à la direction ; pour la direction, l'alerte passe en rouge et entre dans le résumé du jour du directeur | ARBITRÉ | Direction |
 | Présence pas encore connue | Laisser le temps d'une correction | Signalée au journal de la direction après 48 heures ; jamais comptée comme absence | ARBITRÉ | Direction |
