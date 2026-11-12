@@ -41,6 +41,8 @@ import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/session/source_session.dart';
 import 'package:rewayah_academy/core/suivi/service_suivi.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/core/video/livekit_session_provider.dart'
+    show NatureEchecEntree, essayerEntree;
 import 'package:rewayah_academy/core/video/pre_vol.dart';
 import 'package:rewayah_academy/core/video/service_video.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
@@ -1076,7 +1078,7 @@ class FauxServicePresence implements ServicePresence {
 /// a dire trois flux et une liste. C'est tout ce dont la salle depend, et c'est
 /// pourquoi elle se verifie sans SDK, sans reseau et sans compte LiveKit --
 /// lequel n'existe pas encore.
-class FauxMoteurSalle implements VideoSessionProvider {
+class FauxMoteurSalle implements VideoSessionProvider, SonRecuBloque {
   final StreamController<EtatSalle> _etats =
       StreamController<EtatSalle>.broadcast();
   final StreamController<List<ParticipantSalle>> _participants =
@@ -1118,6 +1120,47 @@ class FauxMoteurSalle implements VideoSessionProvider {
 
   /// Ce que `rejoindre` doit lever, quand on teste un echec de connexion.
   Object? erreurEntree;
+
+  /// ENTREE-ROBUSTE : les erreurs des essais d'entree successifs, une par
+  /// essai, rejouees par la VRAIE logique des essais du moteur
+  /// ([essayerEntree], memes attentes : immediat, 2 s, 4 s). Vide : l'essai
+  /// reussit.
+  final List<Object> erreursDesEssais = <Object>[];
+
+  /// ENTREE-ROBUSTE : le nombre d'essais d'entree faits.
+  int essaisFaits = 0;
+
+  /// ENTREE-ROBUSTE : les echecs signales a la supervision, dans l'ordre
+  /// (numero de l'essai, nature, definitif).
+  final List<({int essai, NatureEchecEntree nature, bool definitif})>
+  echecsSignales = <({int essai, NatureEchecEntree nature, bool definitif})>[];
+
+  int _generation = 0;
+
+  // ENTREE-ROBUSTE : le son recu bloque par le navigateur.
+  final StreamController<bool> _sonBloque = StreamController<bool>.broadcast();
+  bool _sonEstBloque = false;
+
+  /// Le nombre d'appels a [activerSon].
+  int activationsSon = 0;
+
+  /// Le navigateur bloque (ou rend) le son recu, comme le vrai moteur.
+  void bloquerSon({required bool bloque}) {
+    _sonEstBloque = bloque;
+    _sonBloque.add(bloque);
+  }
+
+  @override
+  bool get sonBloque => _sonEstBloque;
+
+  @override
+  Stream<bool> get sonBloqueChange => _sonBloque.stream;
+
+  @override
+  Future<void> activerSon() async {
+    activationsSon++;
+    bloquerSon(bloque: false);
+  }
 
   /// Les identites pour lesquelles une image existe.
   final Set<String> avecImage = <String>{};
@@ -1237,12 +1280,43 @@ class FauxMoteurSalle implements VideoSessionProvider {
       // ignore: only_throw_errors
       throw erreur;
     }
+    final int generation = ++_generation;
+    try {
+      await essayerEntree(
+        essayer: (int _) async {
+          essaisFaits++;
+          if (erreursDesEssais.isNotEmpty) {
+            // ignore: only_throw_errors
+            throw erreursDesEssais.removeAt(0);
+          }
+        },
+        interrompue: () => generation != _generation,
+        attendre: Future<void>.delayed,
+        signaler:
+            (
+              int essai,
+              NatureEchecEntree nature,
+              Object _, {
+              required bool definitif,
+            }) => echecsSignales.add((
+              essai: essai,
+              nature: nature,
+              definitif: definitif,
+            )),
+      );
+    } on EntreeInterrompue {
+      rethrow;
+    } catch (_) {
+      poser(EtatSalle.echec);
+      rethrow;
+    }
     entrees.add(acces);
     poser(EtatSalle.connecte);
   }
 
   @override
   Future<void> quitter() async {
+    _generation++;
     departs++;
     // Comme le vrai moteur : quitter efface l'etat pedagogique, une coupure ne
     // l'efface pas.
@@ -1282,6 +1356,7 @@ class FauxMoteurSalle implements VideoSessionProvider {
     await _qualite.close();
     await _contenus.close();
     await _donnees.close();
+    await _sonBloque.close();
   }
 }
 

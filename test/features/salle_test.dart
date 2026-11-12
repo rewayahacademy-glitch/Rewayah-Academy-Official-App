@@ -614,41 +614,43 @@ void main() {
       expect(_commande(t.salle.ouvrirCamera), findsOneWidget);
     });
 
-    testWidgets('D14 : un refus de camera dit la phrase du navigateur', (
-      WidgetTester tester,
-    ) async {
-      // Le directeur a touche « Camera » cinquante fois sans que rien ne se
-      // passe : l'echec ne doit plus etre silencieux (K-59).
-      final FauxMoteurSalle moteur = FauxMoteurSalle()
-        ..erreurCamera = StateError(
-          'NotReadableError: Could not start video source',
+    testWidgets(
+      'D14 : un refus de camera dit sa cause, sans la phrase du navigateur',
+      (WidgetTester tester) async {
+        // Le directeur a touche « Camera » cinquante fois sans que rien ne se
+        // passe : l'echec ne doit plus etre silencieux (K-59).
+        final FauxMoteurSalle moteur = FauxMoteurSalle()
+          ..erreurCamera = StateError(
+            'NotReadableError: Could not start video source',
+          );
+        await _monterSalle(
+          tester,
+          surcharges: _surcharges(
+            video: FauxServiceVideo(acces0: _acces('student', camera: true)),
+            moteur: moteur,
+            preVol: FauxServicePreVol(),
+          ),
         );
-      await _monterSalle(
-        tester,
-        surcharges: _surcharges(
-          video: FauxServiceVideo(acces0: _acces('student', camera: true)),
-          moteur: moteur,
-          preVol: FauxServicePreVol(),
-        ),
-      );
 
-      await tester.tap(_commande(t.salle.ouvrirCamera));
-      await tester.pumpAndSettle();
+        await tester.tap(_commande(t.salle.ouvrirCamera));
+        await tester.pumpAndSettle();
 
-      expect(moteur.cameraDemandee, <bool>[true]);
-      expect(find.text(t.salle.cameraEchec), findsOneWidget);
-      expect(find.text(t.salle.cameraEchecOccupee), findsOneWidget);
-      expect(
-        find.textContaining('NotReadableError: Could not start video source'),
-        findsOneWidget,
-      );
+        expect(moteur.cameraDemandee, <bool>[true]);
+        expect(find.text(t.salle.cameraEchec), findsOneWidget);
+        expect(find.text(t.salle.cameraEchecOccupee), findsOneWidget);
+        // ENTREE-ROBUSTE (directeur, 12/11/2026 au soir) : la phrase technique
+        // du navigateur ne s'affiche plus a l'eleve (elle part a la
+        // supervision) ; la cause probable et quoi faire restent.
+        expect(find.textContaining('NotReadableError'), findsNothing);
+        expect(find.textContaining('Could not start'), findsNothing);
 
-      // Un essai qui aboutit efface le message.
-      moteur.erreurCamera = null;
-      await tester.tap(_commande(t.salle.ouvrirCamera));
-      await tester.pumpAndSettle();
-      expect(find.text(t.salle.cameraEchec), findsNothing);
-    });
+        // Un essai qui aboutit efface le message.
+        moteur.erreurCamera = null;
+        await tester.tap(_commande(t.salle.ouvrirCamera));
+        await tester.pumpAndSettle();
+        expect(find.text(t.salle.cameraEchec), findsNothing);
+      },
+    );
 
     testWidgets('Lot salle 3 : le message de la camera se ferme, et revient '
         'si un nouvel essai echoue', (WidgetTester tester) async {
@@ -1888,6 +1890,194 @@ void main() {
       expect(preVol.verifications, 2);
       expect(find.text(t.salle.refusReseau), findsNothing);
       expect(find.text(t.salle.bandeauPermanent), findsOneWidget);
+    });
+
+    // ENTREE-ROBUSTE (directeur, 12/11/2026, point 11 : « l'eleve suivant a
+    // du mal a rejoindre ; ca marche, mais apres plusieurs tentatives ») :
+    // le moteur reessaie seul la premiere connexion (immediat, 2 s, 4 s),
+    // sans ecran d'echec entre deux essais ; un refus n'est jamais reessaye.
+    group('ENTREE-ROBUSTE', () {
+      List<Override> surcharges(FauxMoteurSalle moteur) => _surcharges(
+        video: FauxServiceVideo(acces0: _acces('student')),
+        moteur: moteur,
+        preVol: FauxServicePreVol(),
+      );
+
+      testWidgets('(a) un essai manque puis la connexion : l eleve entre '
+          'sans toucher « Reessayer »', (WidgetTester tester) async {
+        final FauxMoteurSalle moteur = FauxMoteurSalle()
+          ..erreursDesEssais.add(StateError('coupure'));
+        await _monterSalle(
+          tester,
+          surcharges: surcharges(moteur),
+          auRepos: false,
+          images: 1,
+        );
+        expect(moteur.essaisFaits, 1);
+        // Entre deux essais : aucun ecran d'echec.
+        expect(find.text(t.salle.refusReseau), findsNothing);
+        expect(find.text(t.commun.reessayer), findsNothing);
+
+        await tester.pump(const Duration(seconds: 2));
+        await tester.pumpAndSettle();
+
+        expect(moteur.essaisFaits, 2);
+        expect(moteur.entrees, hasLength(1));
+        expect(find.text(t.salle.refusReseau), findsNothing);
+        expect(find.text(t.commun.reessayer), findsNothing);
+        expect(find.text(t.salle.bandeauPermanent), findsOneWidget);
+        expect(
+          moteur.echecsSignales,
+          <({int essai, NatureEchecEntree nature, bool definitif})>[
+            (essai: 1, nature: NatureEchecEntree.transport, definitif: false),
+          ],
+        );
+      });
+
+      testWidgets('(b) trois coupures : l ecran d echec arrive, avec '
+          '« Reessayer »', (WidgetTester tester) async {
+        final FauxMoteurSalle moteur = FauxMoteurSalle()
+          ..erreursDesEssais.addAll(<Object>[
+            StateError('premiere'),
+            StateError('deuxieme'),
+            StateError('troisieme'),
+          ]);
+        await _monterSalle(
+          tester,
+          surcharges: surcharges(moteur),
+          auRepos: false,
+          images: 1,
+        );
+        await tester.pump(const Duration(seconds: 2));
+        expect(moteur.essaisFaits, 2);
+        expect(find.text(t.commun.reessayer), findsNothing);
+
+        await tester.pump(const Duration(seconds: 4));
+        await tester.pumpAndSettle();
+
+        expect(moteur.essaisFaits, 3);
+        expect(moteur.entrees, isEmpty);
+        expect(find.text(t.salle.refusReseau), findsOneWidget);
+        expect(find.text(t.commun.reessayer), findsOneWidget);
+        expect(
+          moteur.echecsSignales.map(
+            (({int essai, NatureEchecEntree nature, bool definitif}) e) =>
+                e.definitif,
+          ),
+          <bool>[false, false, true],
+        );
+      });
+
+      testWidgets('(c) un refus du serveur : aucun essai de plus', (
+        WidgetTester tester,
+      ) async {
+        final FauxMoteurSalle moteur = FauxMoteurSalle()
+          ..erreursDesEssais.add(const EchecSalle(MotifRefusSalle.acces));
+        await _monterSalle(
+          tester,
+          surcharges: surcharges(moteur),
+          auRepos: false,
+          images: 1,
+        );
+        await tester.pump(const Duration(seconds: 10));
+        await tester.pumpAndSettle();
+
+        expect(moteur.essaisFaits, 1);
+        expect(
+          moteur.echecsSignales,
+          <({int essai, NatureEchecEntree nature, bool definitif})>[
+            (essai: 1, nature: NatureEchecEntree.refus, definitif: true),
+          ],
+        );
+        expect(find.text(t.commun.reessayer), findsOneWidget);
+      });
+
+      testWidgets('(d) la salle quittee pendant l attente : aucun essai '
+          'apres, aucune connexion fantome', (WidgetTester tester) async {
+        final FauxMoteurSalle moteur = FauxMoteurSalle()
+          ..erreursDesEssais.add(StateError('coupure'));
+        await _monterSalle(
+          tester,
+          surcharges: surcharges(moteur),
+          auRepos: false,
+          images: 1,
+        );
+        expect(moteur.essaisFaits, 1);
+        final int departsAvant = moteur.departs;
+
+        // L'ecran se ferme pendant l'attente du deuxieme essai.
+        await tester.pumpWidget(const SizedBox.shrink());
+        expect(moteur.departs, greaterThan(departsAvant));
+        await tester.pump(const Duration(seconds: 10));
+
+        expect(moteur.essaisFaits, 1);
+        expect(moteur.entrees, isEmpty);
+        expect(moteur.echecsSignales, hasLength(1));
+      });
+
+      testWidgets('(e) le son recu bloque par le navigateur : « Activer le '
+          'son » apparait, le toucher le relance, et l annonce disparait', (
+        WidgetTester tester,
+      ) async {
+        final FauxMoteurSalle moteur = FauxMoteurSalle();
+        await _monterSalle(tester, surcharges: surcharges(moteur));
+        expect(find.byKey(SallePage.sonBloqueKey), findsNothing);
+
+        moteur.bloquerSon(bloque: true);
+        await tester.pumpAndSettle();
+
+        expect(find.byKey(SallePage.sonBloqueKey), findsOneWidget);
+        expect(find.text(t.salle.sonBloque), findsOneWidget);
+        expect(find.text(t.salle.activerSon), findsOneWidget);
+
+        await tester.tap(find.text(t.salle.activerSon));
+        await tester.pumpAndSettle();
+
+        expect(moteur.activationsSon, 1);
+        expect(find.byKey(SallePage.sonBloqueKey), findsNothing);
+        expect(find.text(t.salle.activerSon), findsNothing);
+      });
+
+      // Directeur, 12/11/2026 au soir : le meme compte deja dans la salle sur
+      // un autre appareil affichait le message de reseau. Jamais un essai
+      // seul apres lui (deux appareils se chasseraient sans fin) ; la salle
+      // dit « ouverte ailleurs », et seul « Reessayer » entre ici.
+      testWidgets('(f) le meme compte deja dans la salle ailleurs : zero '
+          'nouvel essai, « ouverte ailleurs » et non « reseau »', (
+        WidgetTester tester,
+      ) async {
+        final FauxMoteurSalle moteur = FauxMoteurSalle()
+          ..erreursDesEssais.add(const EntreeOuverteAilleurs());
+        await _monterSalle(
+          tester,
+          surcharges: surcharges(moteur),
+          auRepos: false,
+          images: 1,
+        );
+        await tester.pump(const Duration(seconds: 10));
+        await tester.pumpAndSettle();
+
+        expect(moteur.essaisFaits, 1);
+        expect(
+          moteur.echecsSignales,
+          <({int essai, NatureEchecEntree nature, bool definitif})>[
+            (
+              essai: 1,
+              nature: NatureEchecEntree.ouverteAilleurs,
+              definitif: true,
+            ),
+          ],
+        );
+        expect(find.text(t.salle.ouverteAilleurs), findsOneWidget);
+        expect(find.text(t.salle.ouverteAilleursDetail), findsOneWidget);
+        expect(find.text(t.salle.refusReseau), findsNothing);
+
+        // Seul le geste de la personne reprend la salle ici.
+        await tester.tap(find.text(t.commun.reessayer));
+        await tester.pumpAndSettle();
+        expect(moteur.essaisFaits, 2);
+        expect(moteur.entrees, hasLength(1));
+      });
     });
 
     testWidgets('rentrer mene a la racine de son role', (

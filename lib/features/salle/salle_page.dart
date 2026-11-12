@@ -210,6 +210,12 @@ class SallePage extends ConsumerStatefulWidget {
   /// La tuile « Coran » du choix des supports (lot salle 2).
   static const Key supportCoranKey = ValueKey<String>('salle-support-coran');
 
+  /// ENTREE-ROBUSTE : l'annonce du son recu bloque par le navigateur.
+  static const Key sonBloqueKey = ValueKey<String>('salle-son-bloque');
+
+  /// ENTREE-ROBUSTE : le lien « Activer le son » de cette annonce.
+  static const Key activerSonKey = ValueKey<String>('salle-activer-son');
+
   /// La seance visee, lue dans le billet d'entree (ADR-005). Elle ne transite
   /// jamais par l'URL : une adresse copiee arrive sans billet et repart.
   final String seanceId;
@@ -263,6 +269,38 @@ class _SallePageEtat extends ConsumerState<SallePage> {
 
   /// SITUATIONS-GRAVES (defaut n° 6) : la pause relayee par l'enseignant.
   StreamSubscription<PaquetDonnees>? _sPause;
+
+  /// ENTREE-ROBUSTE (12/11/2026) : le navigateur bloque le son recu
+  /// (`SonRecuBloque` du moteur).
+  StreamSubscription<bool>? _sSon;
+  bool _sonBloque = false;
+
+  /// ENTREE-ROBUSTE : l'annonce « Le son est coupe par le navigateur », avec
+  /// « Activer le son », tant que le son recu est bloque dans une salle
+  /// ouverte ; `null` sinon. Elle reste a la place des annonces de geste
+  /// (en tete de la salle) : ne rien entendre passe avant tout.
+  AnnonceGeste? get _annonceSon => _sonBloque && _impasse == null
+      ? AnnonceGeste(
+          cle: SallePage.sonBloqueKey,
+          titre: t.salle.sonBloque,
+          message: '',
+          ton: TonEtat.avertissement,
+          action: LienFleche(
+            key: SallePage.activerSonKey,
+            libelle: t.salle.activerSon,
+            onPress: () => unawaited(_activerSon()),
+          ),
+        )
+      : null;
+
+  /// ENTREE-ROBUSTE : « Activer le son », sur le geste de la personne (le
+  /// navigateur ne relance la lecture que sur un geste).
+  Future<void> _activerSon() async {
+    if (_moteur case final SonRecuBloque son) {
+      await son.activerSon();
+      if (mounted) setState(() => _sonBloque = son.sonBloque);
+    }
+  }
 
   /// SITUATIONS-GRAVES : la pause recue de l'enseignant (eleve, tuteur), ou
   /// `null`. Chez l'enseignant : la derniere pause diffusee.
@@ -636,6 +674,14 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     _sPause = _moteur.donneesRecues
         .where((PaquetDonnees p) => p.sujet == sujetPauseSalle)
         .listen(_pauseRecueDe);
+    // ENTREE-ROBUSTE (12/11/2026) : le son recu bloque par le navigateur se
+    // dit en tete de la salle, avec son geste (« Activer le son »).
+    if (_moteur case final SonRecuBloque son) {
+      _sonBloque = son.sonBloque;
+      _sSon = son.sonBloqueChange.listen((bool bloque) {
+        if (mounted) setState(() => _sonBloque = bloque);
+      });
+    }
     _sQualite = _moteur.qualite.listen((QualiteLien lien) {
       if (mounted) {
         setState(() {
@@ -773,6 +819,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     unawaited(_sQualite?.cancel());
     unawaited(_sAcces?.cancel());
     unawaited(_sPause?.cancel());
+    unawaited(_sSon?.cancel());
     _veilleCamera?.cancel();
     unawaited(_synchro?.liberer());
     // Directeur, 31/10/2026 : un appel ouvert et confie continue hors de
@@ -914,13 +961,24 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           interfaceGuidee: widget.interfaceGuidee,
         ),
       );
+    } on EntreeInterrompue {
+      // ENTREE-ROBUSTE : la salle a ete quittee pendant les essais du moteur
+      // (sortie, ecran ferme) : ce n'est pas une panne, rien a dire.
+      return;
     } catch (erreur) {
-      // Le moteur a deja pose son etat d'echec et tout libere ; il ne reste
+      // Le moteur a deja pose son etat d'echec et tout libere, apres ses
+      // essais (ENTREE-ROBUSTE : jusqu'a trois, sans geste) ; il ne reste
       // qu'a nommer la cause pour l'usager. Aucun detail technique ne remonte
       // a l'ecran : « ICE failed » ne se lit pas devant un enfant.
       journalDev('entree en salle impossible : $erreur');
       if (mounted) {
-        setState(() => _impasse = CauseImpasse.reseau);
+        // ENTREE-ROBUSTE (directeur, 12/11/2026 au soir) : le meme compte est
+        // dans la salle sur un autre appareil ; ce n'est pas le reseau.
+        setState(
+          () => _impasse = erreur is EntreeOuverteAilleurs || _ouverteAilleurs
+              ? CauseImpasse.ouverteAilleurs
+              : CauseImpasse.reseau,
+        );
       }
     }
   }
@@ -2240,7 +2298,8 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       child: _AvecSynchro(
         synchro: synchro,
         child: CoucheAnnonceGeste(
-          annonce: _annonce,
+          // ENTREE-ROBUSTE : le son bloque passe avant l'annonce d'un geste.
+          annonce: _annonceSon ?? _annonce,
           child: SalleSeance(
             key: const ValueKey<String>('salle-de-seance'),
             vue: seance,
@@ -3081,15 +3140,125 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     // support (CTRL-AGRANDIR-1). Aucune commande interdite n'est rendue, pas
     // meme grisee (UX_REVIEW_08 n° 4 f).
     if (vue.role == RoleSalle.controleur && !enImpasse) {
-      return PageImmersive(
-        registre: RegistreImmersif.salle,
-        entete: _EnteteControle(
-          vue: vue,
-          onQuitter: () => unawaited(_quitter(vue)),
+      return CoucheAnnonceGeste(
+        annonce: _annonceSon,
+        child: PageImmersive(
+          registre: RegistreImmersif.salle,
+          entete: _EnteteControle(
+            vue: vue,
+            onQuitter: () => unawaited(_quitter(vue)),
+          ),
+          bandeau: _Bandeaux(vue: vue),
+          child: arche
+              ? const _ArcheDeLAttente()
+              : presentation != null
+              ? _CorpsDocument(
+                  vue: vue,
+                  lignes: lignes,
+                  document: _PresentationLue(vue: presentation),
+                  presentationLue: true,
+                )
+              : _Corps(vue: vue, lignes: lignes),
         ),
-        bandeau: _Bandeaux(vue: vue),
-        child: arche
+      );
+    }
+
+    // ENTREE-ROBUSTE : la meme annonce du son bloque que dans la salle de
+    // seance (tuteur observateur, autres roles).
+    return CoucheAnnonceGeste(
+      annonce: _annonceSon,
+      child: PageImmersive(
+        registre: RegistreImmersif.salle,
+        lateraleEnPaysage: pageEleveLisible || pageEnseignant,
+        entete: _Entete(
+          vue: vue,
+          monTuteurObserve: monTuteurObserve,
+          annonces: annonces,
+          // L'eleve lit SON etat, et lui seul : la section 6.6 le dit deux fois,
+          // et la vue en base le lui impose de toute facon. L'observateur, lui,
+          // n'a aucun etat pedagogique a lire -- il assiste.
+          mienne: vue.role == RoleSalle.eleve ? mienne : null,
+          // Le bouton n'existe que pour qui a droit a la liste ET n'a pas la
+          // place de la garder ouverte. Ailleurs il ferait doublon avec la
+          // colonne, et un doublon finit par diverger.
+          onVoirPresence:
+              vue.voitLesParticipants && !_colonneDePresence(context, vue)
+              ? () => unawaited(_voirPresence(lignes))
+              : null,
+          // La fiche de seance n'est qu'a l'enseignant, et seulement quand le
+          // roster pedagogique se lit (jamais un compteur invente).
+          eleves: vue.role == RoleSalle.enseignant && !enImpasse
+              ? _roster(ref)
+              : null,
+          onVoirEleves: () => unawaited(_voirEleves()),
+        ),
+        // Le bandeau disparait dans la seule situation ou il serait faux : une
+        // impasse n'est pas une salle, rien n'y est enregistre. Partout ailleurs
+        // il est present, y compris pendant l'attente : la regle se lit donc
+        // AVANT que le micro puisse s'ouvrir.
+        bandeau: enImpasse
+            ? null
+            : _Bandeaux(vue: vue, encreAccessible: encreAccessible),
+        commandes: enImpasse
+            ? null
+            : _Commandes(
+                vue: vue,
+                onMicro: _basculerMicro,
+                onCamera: _basculerCamera,
+                onQuitter: () => _quitter(vue),
+              ),
+        child: enImpasse
+            ? _Impasse(
+                cause: vue.cause,
+                detail: _detailRefus,
+                microRefuse: _microRefuseAvant,
+                onReessayer: _entrer,
+                onRentrer: _rentrer,
+              )
+            // TRANSITIONS-SALLE : le moment de l'arche, pendant l'attente
+            // reelle seulement.
+            : arche
             ? const _ArcheDeLAttente()
+            // `ENS-03` : la surface de presentation de l'enseignant, en UN SEUL
+            // point. Les deux conditions comptent. Le role vient du **jeton**
+            // (`vue.role`), jamais de `sessionProvider.role` : c'est le jeton qui
+            // decide ce qu'on peut faire dans une salle. Et `peutPresenter`
+            // conditionne l'affichage, plutot que de montrer des commandes que le
+            // moteur refuserait en silence -- `presenterContenu` refuse sans rien
+            // dire quand `can_publish_data` est absent.
+            : _panneauEnseignant(vue)
+            ? _CorpsDocument(
+                vue: vue,
+                lignes: lignes,
+                document: PanneauEnseignantSalle(seanceId: widget.seanceId),
+                pageCoran: pageEnseignant,
+              )
+            // D9 : l'eleve voit la page du Coran presentee.
+            : pageEleve != null
+            ? _CorpsDocument(
+                vue: vue,
+                lignes: lignes,
+                document: coranEleve
+                    ? PageCoranSalle(
+                        key: SallePage.pageEleveKey,
+                        numero: pageEleve.page,
+                      )
+                    : KeyedSubtree(
+                        key: SallePage.pageEleveKey,
+                        child: _pageDuSupport(
+                          context,
+                          ref.watch(supportsDeSalleProvider),
+                          supportPresenteDe(
+                            pageEleve,
+                            ref.watch(supportsDeSalleProvider),
+                          ),
+                        ),
+                      ),
+                presentationLue: true,
+                pageCoran: pageEleveLisible,
+              )
+            // TB-11a : le tuteur observateur lit la presentation, meme
+            // composition (le document d'abord, la scene ensuite).
             : presentation != null
             ? _CorpsDocument(
                 vue: vue,
@@ -3098,109 +3267,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
                 presentationLue: true,
               )
             : _Corps(vue: vue, lignes: lignes),
-      );
-    }
-
-    return PageImmersive(
-      registre: RegistreImmersif.salle,
-      lateraleEnPaysage: pageEleveLisible || pageEnseignant,
-      entete: _Entete(
-        vue: vue,
-        monTuteurObserve: monTuteurObserve,
-        annonces: annonces,
-        // L'eleve lit SON etat, et lui seul : la section 6.6 le dit deux fois,
-        // et la vue en base le lui impose de toute facon. L'observateur, lui,
-        // n'a aucun etat pedagogique a lire -- il assiste.
-        mienne: vue.role == RoleSalle.eleve ? mienne : null,
-        // Le bouton n'existe que pour qui a droit a la liste ET n'a pas la
-        // place de la garder ouverte. Ailleurs il ferait doublon avec la
-        // colonne, et un doublon finit par diverger.
-        onVoirPresence:
-            vue.voitLesParticipants && !_colonneDePresence(context, vue)
-            ? () => unawaited(_voirPresence(lignes))
-            : null,
-        // La fiche de seance n'est qu'a l'enseignant, et seulement quand le
-        // roster pedagogique se lit (jamais un compteur invente).
-        eleves: vue.role == RoleSalle.enseignant && !enImpasse
-            ? _roster(ref)
-            : null,
-        onVoirEleves: () => unawaited(_voirEleves()),
       ),
-      // Le bandeau disparait dans la seule situation ou il serait faux : une
-      // impasse n'est pas une salle, rien n'y est enregistre. Partout ailleurs
-      // il est present, y compris pendant l'attente : la regle se lit donc
-      // AVANT que le micro puisse s'ouvrir.
-      bandeau: enImpasse
-          ? null
-          : _Bandeaux(vue: vue, encreAccessible: encreAccessible),
-      commandes: enImpasse
-          ? null
-          : _Commandes(
-              vue: vue,
-              onMicro: _basculerMicro,
-              onCamera: _basculerCamera,
-              onQuitter: () => _quitter(vue),
-            ),
-      child: enImpasse
-          ? _Impasse(
-              cause: vue.cause,
-              detail: _detailRefus,
-              microRefuse: _microRefuseAvant,
-              onReessayer: _entrer,
-              onRentrer: _rentrer,
-            )
-          // TRANSITIONS-SALLE : le moment de l'arche, pendant l'attente
-          // reelle seulement.
-          : arche
-          ? const _ArcheDeLAttente()
-          // `ENS-03` : la surface de presentation de l'enseignant, en UN SEUL
-          // point. Les deux conditions comptent. Le role vient du **jeton**
-          // (`vue.role`), jamais de `sessionProvider.role` : c'est le jeton qui
-          // decide ce qu'on peut faire dans une salle. Et `peutPresenter`
-          // conditionne l'affichage, plutot que de montrer des commandes que le
-          // moteur refuserait en silence -- `presenterContenu` refuse sans rien
-          // dire quand `can_publish_data` est absent.
-          : _panneauEnseignant(vue)
-          ? _CorpsDocument(
-              vue: vue,
-              lignes: lignes,
-              document: PanneauEnseignantSalle(seanceId: widget.seanceId),
-              pageCoran: pageEnseignant,
-            )
-          // D9 : l'eleve voit la page du Coran presentee.
-          : pageEleve != null
-          ? _CorpsDocument(
-              vue: vue,
-              lignes: lignes,
-              document: coranEleve
-                  ? PageCoranSalle(
-                      key: SallePage.pageEleveKey,
-                      numero: pageEleve.page,
-                    )
-                  : KeyedSubtree(
-                      key: SallePage.pageEleveKey,
-                      child: _pageDuSupport(
-                        context,
-                        ref.watch(supportsDeSalleProvider),
-                        supportPresenteDe(
-                          pageEleve,
-                          ref.watch(supportsDeSalleProvider),
-                        ),
-                      ),
-                    ),
-              presentationLue: true,
-              pageCoran: pageEleveLisible,
-            )
-          // TB-11a : le tuteur observateur lit la presentation, meme
-          // composition (le document d'abord, la scene ensuite).
-          : presentation != null
-          ? _CorpsDocument(
-              vue: vue,
-              lignes: lignes,
-              document: _PresentationLue(vue: presentation),
-              presentationLue: true,
-            )
-          : _Corps(vue: vue, lignes: lignes),
     );
   }
 }
@@ -3633,8 +3700,11 @@ class _PastillePresence extends StatelessWidget {
   }
 }
 
-/// D14 : la camera n'a pas pu s'allumer ; la phrase exacte du navigateur, sa
-/// cause probable et quoi faire (K-59), sous l'en-tete.
+/// D14 : la camera n'a pas pu s'allumer ; sa cause probable et quoi faire
+/// (K-59), sous l'en-tete. La phrase exacte du navigateur ne s'affiche plus
+/// (directeur, 12/11/2026 au soir : un eleve ne lit jamais un message
+/// technique en anglais) ; le moteur l'envoie a la supervision
+/// (`signalerMediaImpossible`).
 ///
 /// Lot salle 3 (directeur, 25/10/2026) : le message se ferme (croix au bord
 /// de fin, cible de 48, « Fermer »).
@@ -3657,7 +3727,7 @@ class _ErreurCamera extends StatelessWidget {
     // K4 (directeur, 25/10/2026) : l'erreur de camera est une pilule
     // translucente sous la ligne d'etat, dans la couche qui se masque, jamais
     // un bloc qui pousse la page. Ce qui manque, la cause et quoi faire
-    // (K-59), puis le message exact du navigateur (D14).
+    // (K-59) ; le message du navigateur va a la supervision, pas a l'ecran.
     final TextStyle style = palette.piluleSalle.applyTo(
       textes.bodySmall ?? const TextStyle(),
     );
@@ -3697,11 +3767,6 @@ class _ErreurCamera extends StatelessWidget {
                             ),
                           ),
                           Text(cause, style: style),
-                          if (navigateur != null)
-                            Text(
-                              t.salle.cameraEchecMessage(erreur: navigateur),
-                              style: style,
-                            ),
                         ],
                       ),
                     ),

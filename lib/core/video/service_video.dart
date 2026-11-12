@@ -1,9 +1,21 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../observabilite/journal_dev.dart';
+import 'diagnostic_transport.dart';
 import 'video_session_provider.dart';
+
+/// ENTREE-ROBUSTE (directeur, 12/11/2026, retours sur la salle, point 11 :
+/// « l'eleve suivant a du mal a rejoindre ») : le temps au-dela duquel la
+/// demande du jeton (`create-room-token`) est tenue pour perdue. Sans lui, une
+/// reponse qui n'arrive jamais laissait la salle sur « connexion » sans fin.
+/// 15 secondes : bien plus qu'un demarrage a froid de la fonction, bien moins
+/// que la patience d'un eleve devant un ecran qui attend. Un delai depasse
+/// n'est pas un refus : la salle propose « Reessayer » ([EchecSalle.delaiDepasse]).
+const Duration delaiJetonSalle = Duration(seconds: 15);
 
 /// Pourquoi une salle refuse d'ouvrir.
 ///
@@ -146,7 +158,7 @@ class DetailRefusSalle {
 /// L'echec d'une entree en salle.
 class EchecSalle implements Exception {
   /// Cree un echec.
-  const EchecSalle(this.motif, {this.detail});
+  const EchecSalle(this.motif, {this.detail, this.delaiDepasse = false});
 
   /// Ce qui a empeche l'entree.
   final MotifRefusSalle motif;
@@ -154,8 +166,14 @@ class EchecSalle implements Exception {
   /// FN-025 : le motif du serveur, seulement s'il l'a donne.
   final DetailRefusSalle? detail;
 
+  /// ENTREE-ROBUSTE : vrai quand le serveur n'a pas repondu dans
+  /// [delaiJetonSalle] (motif `reseau`). Distingue, pour la supervision, un
+  /// delai depasse d'une panne qui repond et d'un refus.
+  final bool delaiDepasse;
+
   @override
-  String toString() => 'EchecSalle($motif, ${detail?.motif})';
+  String toString() =>
+      'EchecSalle($motif, ${detail?.motif}${delaiDepasse ? ', delai' : ''})';
 }
 
 /// L'acces a la salle, l'inscription des temoins, et la sortie volontaire.
@@ -235,19 +253,33 @@ class ServiceVideoSupabase
   Future<AccesSalle> acces(String seanceId, {String? eleveId}) async {
     final FunctionResponse reponse;
     try {
-      reponse = await _client.functions.invoke(
-        'create-room-token',
-        body: <String, dynamic>{'session_id': seanceId, 'eleve_id': ?eleveId},
-      );
+      reponse = await _client.functions
+          .invoke(
+            'create-room-token',
+            body: <String, dynamic>{
+              'session_id': seanceId,
+              'eleve_id': ?eleveId,
+            },
+          )
+          .timeout(delaiJetonSalle);
     } on FunctionException catch (e) {
       final MotifRefusSalle motif = _motifDe(e.status, e.details);
+      // ENTREE-ROBUSTE : un refus est une reponse normale du serveur, rien a
+      // superviser ; une panne qui repond (5xx), si.
+      if (motif != MotifRefusSalle.acces) {
+        signalerJetonImpossible(nature: 'statut', statut: e.status);
+      }
       throw EchecSalle(
         motif,
         detail: motif == MotifRefusSalle.acces
             ? DetailRefusSalle.depuis(e.details)
             : null,
       );
-    } catch (_) {
+    } on TimeoutException {
+      signalerJetonImpossible(nature: 'delai');
+      throw const EchecSalle(MotifRefusSalle.reseau, delaiDepasse: true);
+    } catch (e) {
+      signalerJetonImpossible(nature: e.runtimeType.toString());
       throw const EchecSalle(MotifRefusSalle.reseau);
     }
 

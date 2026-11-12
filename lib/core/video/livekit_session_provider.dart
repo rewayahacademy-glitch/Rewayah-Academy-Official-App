@@ -127,6 +127,114 @@ const List<Duration> delaisRepriseSansGeste = <Duration>[
   Duration(seconds: 16),
 ];
 
+/// ENTREE-ROBUSTE (directeur, 12/11/2026, retours sur la salle, point 11 :
+/// « quand l'enseignant est deja en classe avec un eleve, l'eleve suivant a
+/// du mal a rejoindre ; ca marche, mais apres plusieurs tentatives ») : le
+/// nombre d'essais de la PREMIERE connexion a la salle, aux attentes des
+/// [delaisRepriseSansGeste] (immediat, puis 2 s, puis 4 s). Avant ce lot, un
+/// seul essai : le moindre accroc menait a « Reessayer ». La raison reelle des
+/// echecs du 12/11 reste INCONNUE ; chaque essai manque est supervise
+/// ([signalerEntreeImpossible]).
+const int essaisEntree = 3;
+
+/// ENTREE-ROBUSTE : la nature d'un echec d'entree, pour decider d'insister et
+/// pour la supervision.
+enum NatureEchecEntree {
+  /// Le serveur refuse (jeton refuse, 401/403, motif d'acces) : on n'insiste
+  /// JAMAIS, ce serait rentrer contre sa decision.
+  refus,
+
+  /// Le serveur n'a pas repondu a temps : on reessaie.
+  delai,
+
+  /// Toute autre coupure du transport (reseau, signalisation, ICE) : on
+  /// reessaie.
+  transport,
+
+  /// Le meme compte est entre dans la salle depuis un autre appareil ou un
+  /// autre onglet (LiveKit : `duplicateIdentity`). On n'insiste JAMAIS :
+  /// deux appareils qui reessaient seuls se chasseraient sans fin. Seul le
+  /// geste de la personne (« Reessayer ») reprend la salle ici.
+  ouverteAilleurs,
+}
+
+/// ENTREE-ROBUSTE : classe l'erreur d'un essai d'entree ([NatureEchecEntree]).
+/// Dans `livekit_client` 2.12.0, un jeton refuse par LiveKit leve une
+/// `ConnectException` portant le statut HTTP de la validation (401 ou 403).
+NatureEchecEntree natureEchecEntree(Object erreur) => switch (erreur) {
+  EntreeOuverteAilleurs() => NatureEchecEntree.ouverteAilleurs,
+  lk.ConnectException(statusCode: 401 || 403) => NatureEchecEntree.refus,
+  EchecSalle(motif: MotifRefusSalle.reseau, delaiDepasse: true) =>
+    NatureEchecEntree.delai,
+  EchecSalle(motif: MotifRefusSalle.reseau) => NatureEchecEntree.transport,
+  EchecSalle() => NatureEchecEntree.refus,
+  lk.ConnectException(reason: lk.ConnectionErrorReason.Timeout) ||
+  lk.TimeoutException() ||
+  TimeoutException() => NatureEchecEntree.delai,
+  _ => NatureEchecEntree.transport,
+};
+
+/// ENTREE-ROBUSTE : le statut HTTP porte par l'erreur, s'il y en a un.
+int? statutEchecEntree(Object erreur) => switch (erreur) {
+  lk.ConnectException(statusCode: final int s) when s != 0 => s,
+  _ => null,
+};
+
+/// ENTREE-ROBUSTE : la logique des essais de la premiere entree, isolee pour
+/// etre tenue par les tests (et par le moteur de test de la salle).
+///
+/// [essayer] fait l'essai numero `essai` (0 pour le premier) ; il ferme
+/// lui-meme ce qu'il a ouvert s'il echoue. Entre deux essais, [attendre] le
+/// delai suivant de [delaisRepriseSansGeste] (le premier essai part tout de
+/// suite). Un refus ([NatureEchecEntree.refus]) ou le meme compte ouvert
+/// ailleurs ([NatureEchecEntree.ouverteAilleurs]) arrete tout ; apres
+/// [essais] echecs, la derniere erreur est relevee. [signaler] est appele a
+/// chaque echec, avec le numero de l'essai (a partir de 1) et `definitif`
+/// vrai pour le dernier. Des que [interrompue] est vrai (sortie pendant
+/// l'attente ou pendant un essai), plus aucun essai : [EntreeInterrompue].
+Future<void> essayerEntree({
+  required Future<void> Function(int essai) essayer,
+  required bool Function() interrompue,
+  required Future<void> Function(Duration delai) attendre,
+  required void Function(
+    int essai,
+    NatureEchecEntree nature,
+    Object erreur, {
+    required bool definitif,
+  })
+  signaler,
+  int essais = essaisEntree,
+}) async {
+  assert(essais >= 1 && essais <= delaisRepriseSansGeste.length);
+  for (int essai = 0; ; essai++) {
+    if (essai > 0) {
+      await attendre(delaisRepriseSansGeste[essai]);
+    }
+    if (interrompue()) {
+      throw const EntreeInterrompue();
+    }
+    try {
+      await essayer(essai);
+      return;
+    } on EntreeInterrompue {
+      rethrow;
+    } catch (erreur) {
+      if (interrompue()) {
+        throw const EntreeInterrompue();
+      }
+      final NatureEchecEntree nature = natureEchecEntree(erreur);
+      final bool definitif =
+          nature == NatureEchecEntree.refus ||
+          nature == NatureEchecEntree.ouverteAilleurs ||
+          essai + 1 >= essais;
+      signaler(essai + 1, nature, erreur, definitif: definitif);
+      if (definitif) {
+        rethrow;
+      }
+    }
+  }
+}
+
 /// Marge sous laquelle un jeton est tenu pour expire : LiveKit le refuserait
 /// pendant la connexion.
 const Duration margeJetonReprise = Duration(seconds: 30);
@@ -213,7 +321,8 @@ class LiveKitSessionProvider
         MotifEchecSalle,
         RepriseAutomatique,
         DroitsPublicationVivants,
-        FermetureParLeServeur {
+        FermetureParLeServeur,
+        SonRecuBloque {
   /// Cree le fournisseur. [retablirPublication] est l'appel au serveur du
   /// filet de MICRO-AVANT-ENSEIGNANT ([FiletPublication]) ; sans lui, seul le
   /// webhook du serveur rend ses droits a l'eleve. [verifierSalle] est
@@ -385,6 +494,57 @@ class LiveKitSessionProvider
 
   bool _repriseEnCours = false;
 
+  /// ENTREE-ROBUSTE : vrai pendant les essais de la premiere entree. Une
+  /// deconnexion recue alors (essai manque) ne lance pas la reprise sans
+  /// geste : les essais de l'entree s'en chargent, un seul mecanisme a la
+  /// fois.
+  bool _entreeEnCours = false;
+
+  /// ENTREE-ROBUSTE : une deconnexion est arrivee pendant l'essai d'entree en
+  /// cours, avec sa raison ([_essaiEntree] et [rejoindre] la traitent).
+  bool _tombeePendantEntree = false;
+  lk.DisconnectReason? _raisonPendantEntree;
+
+  /// ENTREE-ROBUSTE : le navigateur bloque-t-il le son recu ?
+  bool _sonBloque = false;
+
+  final StreamController<bool> _sonBloqueFlux =
+      StreamController<bool>.broadcast();
+
+  @override
+  bool get sonBloque => _sonBloque;
+
+  @override
+  Stream<bool> get sonBloqueChange => _sonBloqueFlux.stream;
+
+  void _poserSonBloque(bool bloque) {
+    if (_sonBloque == bloque) {
+      return;
+    }
+    _sonBloque = bloque;
+    signalerTransport('son_bloque', <String, Object?>{
+      'salle': _acces?.nomSalle,
+      'bloque': bloque,
+    });
+    if (!_sonBloqueFlux.isClosed) {
+      _sonBloqueFlux.add(bloque);
+    }
+  }
+
+  @override
+  Future<void> activerSon() async {
+    final lk.Room? salle = _salle;
+    if (salle == null) {
+      return;
+    }
+    try {
+      await salle.startAudio();
+    } catch (e) {
+      journalDev('son recu non relance : $e');
+    }
+    _poserSonBloque(!salle.canPlaybackAudio);
+  }
+
   /// Vrai quand l'application est au premier plan (voir [premierPlan]).
   bool _auPremierPlan = true;
 
@@ -480,28 +640,83 @@ class LiveKitSessionProvider
     // doublerait. On ferme avant d'ouvrir, toujours.
     await quitter();
 
+    final int generation = _generation;
     _acces = acces;
     _ouverteAilleurs = false;
     _salleFermee = false;
     _poser(EtatSalle.connexion);
 
-    // `RoomOptions` se pose au CONSTRUCTEUR : le passer a `connect()` est
-    // deprecie depuis livekit_client 2.x et sera ignore un jour.
-    final lk.Room salle = lk.Room(roomOptions: optionsSalle());
-    _salle = salle;
-
-    final lk.EventsListener<lk.RoomEvent> ecouteur = salle.createListener();
-    _ecouteur = ecouteur;
-    _brancher(ecouteur);
-
+    // ENTREE-ROBUSTE (12/11/2026) : jusqu'a [essaisEntree] essais, une salle
+    // neuve a chaque fois, l'etat restant `connexion` entre deux essais
+    // (aucun ecran d'echec). Le jeton de l'entree sert tant qu'il vaut. Un
+    // refus du serveur n'est jamais reessaye ; une sortie pendant l'attente
+    // arrete tout ([quitter] change la generation et reveille l'attente).
+    _entreeEnCours = true;
     try {
-      await salle.connect(acces.urlServeur, acces.jeton);
+      await essayerEntree(
+        essayer: (int essai) async {
+          final AccesSalle courant = essai == 0
+              ? acces
+              : await _accesPourEssaiEntree();
+          await _essaiEntree(courant, generation);
+        },
+        interrompue: () => generation != _generation,
+        attendre: _attendre,
+        signaler:
+            (
+              int essai,
+              NatureEchecEntree nature,
+              Object erreur, {
+              required bool definitif,
+            }) => signalerEntreeImpossible(
+              salleOpaque: acces.nomSalle,
+              essai: essai,
+              nature: nature.name,
+              erreur: erreur.runtimeType.toString(),
+              statut: statutEchecEntree(erreur),
+              definitif: definitif,
+            ),
+      );
+    } on EntreeInterrompue {
+      // La salle a ete quittee (ou rejointe a nouveau) pendant les essais :
+      // [quitter] a deja tout ferme ; rien a poser, rien a fermer de plus.
+      rethrow;
     } catch (e) {
       journalDev('connexion a la salle impossible : $e');
       _poser(EtatSalle.echec);
       await quitter();
       rethrow;
+    } finally {
+      if (generation == _generation) {
+        _entreeEnCours = false;
+      }
     }
+    // Une deconnexion arrivee entre la fin de l'essai et ici (quelques
+    // micro-taches) : elle suit le chemin d'une salle ouverte.
+    if (_tombeePendantEntree) {
+      _tombeePendantEntree = false;
+      if (_ouverteAilleurs) {
+        signalerEntreeImpossible(
+          salleOpaque: acces.nomSalle,
+          essai: 0,
+          nature: NatureEchecEntree.ouverteAilleurs.name,
+          erreur: 'duplicateIdentity',
+          definitif: true,
+        );
+        _poser(EtatSalle.echec);
+        await quitter();
+        throw const EntreeOuverteAilleurs();
+      }
+      _traiterDeconnexion(_raisonPendantEntree);
+      return;
+    }
+    final lk.Room? salle = _salle;
+    if (salle == null) {
+      // Impossible en pratique : l'essai reussi a pose la salle, et une sortie
+      // aurait leve [EntreeInterrompue].
+      throw const EntreeInterrompue();
+    }
+    _poserSonBloque(!salle.canPlaybackAudio);
 
     // **Rien ne publie a l'entree, et c'est un invariant, pas une preference.**
     // Le catalogue d'ecrans le porte depuis la refonte et la fiche produit
@@ -577,26 +792,19 @@ class LiveKitSessionProvider
           'salle': _acces?.nomSalle,
           'raison': raison?.name ?? 'inconnue',
         });
-        final ({EtatSalle etat, bool ailleurs}) issue = issueDeconnexion(
-          raison,
-        );
-        _ouverteAilleurs = issue.ailleurs;
-        // FERMETURE-SALLE : le serveur a ferme la salle elle-meme (seance
-        // finie). Ni une panne, ni une exclusion : la salle le dit.
-        _salleFermee = salleFermeeParLeServeur(raison);
-        // ECRAN-EVEILLE (11/11/2026) : le SDK a epuise ses propres essais
-        // (une dizaine, environ 45 secondes), souvent parce que l'ecran
-        // s'est eteint. Avant de dire « connexion perdue », le moteur
-        // reprend lui-meme l'appel, sans geste ([_reprendreSansGeste]).
-        if (issue.etat == EtatSalle.echec &&
-            repriseSansGestePermise(raison) &&
-            _acces != null) {
-          _poser(EtatSalle.reconnexion);
-          unawaited(_reprendreSansGeste());
+        // ENTREE-ROBUSTE : pendant les essais de l'entree, ce sont eux qui
+        // decident ; la raison est gardee pour eux ([_essaiEntree]). Le meme
+        // compte ouvert ailleurs se retient tout de suite : jamais un essai
+        // de plus apres lui.
+        if (_entreeEnCours) {
+          _tombeePendantEntree = true;
+          _raisonPendantEntree = raison;
+          if (raison == lk.DisconnectReason.duplicateIdentity) {
+            _ouverteAilleurs = true;
+          }
           return;
         }
-        _poser(issue.etat);
-        _publierParticipants();
+        _traiterDeconnexion(raison);
       })
       ..on<lk.ParticipantConnectedEvent>((_) => _publierParticipants())
       ..on<lk.ParticipantDisconnectedEvent>((_) => _publierParticipants())
@@ -618,6 +826,11 @@ class LiveKitSessionProvider
       })
       ..on<lk.TrackUnmutedEvent>((_) => _publierParticipants())
       ..on<lk.ActiveSpeakersChangedEvent>((_) => _publierParticipants())
+      // ENTREE-ROBUSTE : le navigateur bloque (ou rend) la lecture du son
+      // recu ; la salle montre alors « Activer le son ».
+      ..on<lk.AudioPlaybackStatusChanged>(
+        (lk.AudioPlaybackStatusChanged e) => _poserSonBloque(!e.isPlaying),
+      )
       ..on<lk.DataReceivedEvent>(_recevoirDonnees)
       ..on<lk.ParticipantPermissionsUpdatedEvent>(_permissionsChangees)
       ..on<lk.ParticipantConnectionQualityUpdatedEvent>((
@@ -642,6 +855,29 @@ class LiveKitSessionProvider
         }
         _publierParticipants();
       });
+  }
+
+  /// Une deconnexion non voulue d'une salle ouverte, selon sa raison.
+  void _traiterDeconnexion(lk.DisconnectReason? raison) {
+    final ({EtatSalle etat, bool ailleurs}) issue = issueDeconnexion(raison);
+    _ouverteAilleurs = issue.ailleurs;
+    // FERMETURE-SALLE : le serveur a ferme la salle elle-meme (seance
+    // finie). Ni une panne, ni une exclusion : la salle le dit.
+    _salleFermee = salleFermeeParLeServeur(raison);
+    // ECRAN-EVEILLE (11/11/2026) : le SDK a epuise ses propres essais
+    // (une dizaine, environ 45 secondes), souvent parce que l'ecran
+    // s'est eteint. Avant de dire « connexion perdue », le moteur
+    // reprend lui-meme l'appel, sans geste ([_reprendreSansGeste]).
+    // `duplicateIdentity` n'en est jamais ([repriseSansGestePermise]).
+    if (issue.etat == EtatSalle.echec &&
+        repriseSansGestePermise(raison) &&
+        _acces != null) {
+      _poser(EtatSalle.reconnexion);
+      unawaited(_reprendreSansGeste());
+      return;
+    }
+    _poser(issue.etat);
+    _publierParticipants();
   }
 
   /// Traduit la qualite du lien en etat de salle, quand elle change d'etage.
@@ -952,7 +1188,14 @@ class LiveKitSessionProvider
       // SITUATIONS-GRAVES (11/11/2026) : le navigateur refuse le micro
       // (permission, micro pris, aucun micro). Rien n'est ouvert : la
       // reprise ne doit pas le retenter seule, et l'ecran nomme la cause.
-      if (actif) _microVoulu = false;
+      if (actif) {
+        _microVoulu = false;
+        signalerMediaImpossible(
+          salleOpaque: _acces?.nomSalle,
+          source: 'micro',
+          phrase: '$e',
+        );
+      }
       _publierParticipants();
       rethrow;
     }
@@ -982,7 +1225,21 @@ class LiveKitSessionProvider
     if (actif && _audioSeul) {
       return;
     }
-    await local.setCameraEnabled(actif);
+    try {
+      await local.setCameraEnabled(actif);
+    } catch (e) {
+      // ENTREE-ROBUSTE (directeur, 12/11/2026 au soir) : la phrase du
+      // navigateur part a la supervision, plus a l'ecran (un eleve ne lit
+      // jamais « NotReadableError »).
+      if (actif) {
+        signalerMediaImpossible(
+          salleOpaque: _acces?.nomSalle,
+          source: 'camera',
+          phrase: '$e',
+        );
+      }
+      rethrow;
+    }
     _erreurCameraEntree = null;
     // Un geste explicite de l'usager redefinit ce que la degradation devra
     // restaurer : sans cela, un retour de reseau rouvrirait une camera qu'il
@@ -1307,6 +1564,67 @@ class LiveKitSessionProvider
     }
   }
 
+  /// ENTREE-ROBUSTE : le jeton d'un nouvel essai d'entree, par le meme chemin
+  /// que la reprise ([_jetonPourReprise]) : celui de l'entree tant qu'il vaut.
+  /// Un refus du serveur devient un refus d'entree (jamais reessaye) ; un
+  /// jeton neuf impossible pour cause de reseau, une coupure (reessayee).
+  Future<AccesSalle> _accesPourEssaiEntree() async {
+    final ({AccesSalle? acces, bool definitif}) jeton =
+        await _jetonPourReprise();
+    if (jeton.definitif) {
+      throw const EchecSalle(MotifRefusSalle.acces);
+    }
+    final AccesSalle? acces = jeton.acces;
+    if (acces == null) {
+      throw const EchecSalle(MotifRefusSalle.reseau);
+    }
+    return acces;
+  }
+
+  /// ENTREE-ROBUSTE : un essai d'entree, dans une salle NEUVE. En cas
+  /// d'echec, cette salle est fermee avant de relever l'erreur ; si la salle
+  /// a ete quittee pendant l'essai ([generation] changee), [quitter] l'a deja
+  /// fermee : [EntreeInterrompue].
+  Future<void> _essaiEntree(AccesSalle acces, int generation) async {
+    // `RoomOptions` se pose au CONSTRUCTEUR : le passer a `connect()` est
+    // deprecie depuis livekit_client 2.x et sera ignore un jour.
+    _tombeePendantEntree = false;
+    _raisonPendantEntree = null;
+    final lk.Room salle = lk.Room(roomOptions: optionsSalle());
+    _salle = salle;
+    _acces = acces;
+    final lk.EventsListener<lk.RoomEvent> ecouteur = salle.createListener();
+    _ecouteur = ecouteur;
+    _brancher(ecouteur);
+    try {
+      await salle.connect(acces.urlServeur, acces.jeton);
+    } catch (_) {
+      if (generation != _generation) {
+        throw const EntreeInterrompue();
+      }
+      await _fermerSalleSeule();
+      // Le meme compte est entre ailleurs pendant cette connexion : ni
+      // « reseau », ni un essai de plus.
+      if (_ouverteAilleurs) {
+        throw const EntreeOuverteAilleurs();
+      }
+      rethrow;
+    }
+    if (generation != _generation) {
+      throw const EntreeInterrompue();
+    }
+    // Connectee puis aussitot tombee, pendant l'essai : un essai manque, ou
+    // le meme compte ouvert ailleurs (jamais reessaye).
+    if (_tombeePendantEntree) {
+      final lk.DisconnectReason? raison = _raisonPendantEntree;
+      await _fermerSalleSeule();
+      if (_ouverteAilleurs) {
+        throw const EntreeOuverteAilleurs();
+      }
+      throw StateError('salle tombee pendant l entree (${raison?.name})');
+    }
+  }
+
   /// Ferme la salle tombee sans rien oublier de la seance (contenu, acces,
   /// memoire du micro) : ce n'est pas une sortie.
   Future<void> _fermerSalleSeule() async {
@@ -1356,6 +1674,7 @@ class LiveKitSessionProvider
     final lk.EventsListener<lk.RoomEvent> ecouteur = salle.createListener();
     _ecouteur = ecouteur;
     _brancher(ecouteur);
+    _poserSonBloque(!salle.canPlaybackAudio);
     // MICRO-AVANT-ENSEIGNANT : la salle rouverte dit ce que le serveur
     // accorde maintenant (le jeton de l'entree peut etre un jeton differe) ;
     // les ecrans le lisent, et le filet redemande le droit si l'enseignant
@@ -1387,6 +1706,8 @@ class LiveKitSessionProvider
     // ECRAN-EVEILLE : une reprise en route se tait, et la memoire du micro
     // ne survit pas a la seance.
     _generation++;
+    _entreeEnCours = false;
+    _tombeePendantEntree = false;
     _microVoulu = false;
     _reveiller();
     _filetPublication.arreter();
@@ -1428,6 +1749,7 @@ class LiveKitSessionProvider
     // c'est toute la difference entre « la seance est terminee » et « le
     // reseau a lache ».
     _dernierContenu = null;
+    _poserSonBloque(false);
     _poser(EtatSalle.absent);
   }
 
@@ -1440,6 +1762,7 @@ class LiveKitSessionProvider
     await _contenus.close();
     await _donnees.close();
     await _accesMisAJour.close();
+    await _sonBloqueFlux.close();
   }
 }
 
