@@ -39,6 +39,11 @@ enum IssueSeance {
 
   /// Le serveur a retire l'acces (P12) : aucune reconnexion tentee.
   accesRetire,
+
+  /// HORS-SALLE-1 (directeur, 12/11/2026 au soir) : l'eleve a quitte
+  /// l'application plus longtemps que le delai permis ; l'application l'a
+  /// fait sortir de la salle. Il peut y revenir, comme apres « Quitter ».
+  horsApplication,
 }
 
 /// L'ecran de fin de l'eleve : standard ou guide, fin ou sortie.
@@ -50,10 +55,16 @@ class ResultatSeance extends StatelessWidget {
     this.onAccueil,
     this.finA,
     this.complement,
+    this.secondesHorsApplication,
     super.key,
   });
 
   final IssueSeance issue;
+
+  /// HORS-SALLE-1 : le delai permis hors de l'application, en secondes, dit
+  /// par la phrase de [IssueSeance.horsApplication] (lu par l'appelant a
+  /// travers `delaiHorsApplicationProvider`). `null` : la phrase sans nombre.
+  final int? secondesHorsApplication;
 
   /// NON-BRANCHE-LIVRAISON 5 : ce qui suit le resultat d'une seance terminee
   /// (le Retour eclair, quand le serveur pose une question). `null` : rien.
@@ -87,7 +98,10 @@ class ResultatSeance extends StatelessWidget {
     // UX-039 (31/10/2026) : apres « Quitter », la seance continue pour les
     // autres ; meme en Interface guidee, l'ecran ne dit jamais qu'elle est
     // terminee et propose d'y revenir tant que le serveur l'ouvre.
-    final bool quittee = issue == IssueSeance.quittee;
+    // HORS-SALLE-1 : sorti apres une absence hors de l'application, il
+    // revient comme apres « Quitter » (la seance continue pour les autres).
+    final bool horsApplication = issue == IssueSeance.horsApplication;
+    final bool quittee = issue == IssueSeance.quittee || horsApplication;
     final bool fin = !quittee && (guidee || issue == IssueSeance.terminee);
     final bool revenir = quittee && onRevenir != null;
     // Guidee : une phrase courte, sans suite (S CLV-09, moins de 10 mots).
@@ -97,8 +111,24 @@ class ResultatSeance extends StatelessWidget {
             IssueSeance.terminee => t.salle.fin.titre,
             IssueSeance.quittee => t.salle.fin.quitteTitre,
             IssueSeance.accesRetire => t.salle.fin.accesRetireTitre,
+            IssueSeance.horsApplication =>
+              guidee
+                  ? t.salle.fin.horsApplication.titreGuidee
+                  : t.salle.fin.horsApplication.titre,
           };
-    final String? phrase = guidee
+    // HORS-SALLE-1 (K-59) : ce qui s'est passe et quoi faire, sans reproche,
+    // en Interface guidee aussi (tutoiement).
+    final int? secondes = secondesHorsApplication;
+    final String? phrase = horsApplication
+        ? switch ((guidee, secondes)) {
+            (true, final int n) => t.salle.fin.horsApplication.phraseGuidee(
+              n: n,
+            ),
+            (false, final int n) => t.salle.fin.horsApplication.phrase(n: n),
+            (true, null) => t.salle.fin.horsApplication.phraseGuideeSansDelai,
+            (false, null) => t.salle.fin.horsApplication.phraseSansDelai,
+          }
+        : guidee
         ? null
         : switch (issue) {
             IssueSeance.terminee =>
@@ -108,6 +138,7 @@ class ResultatSeance extends StatelessWidget {
             IssueSeance.quittee => t.salle.fin.quittePhrase,
             // S l.673 : un titre seul, aucune phrase.
             IssueSeance.accesRetire => null,
+            IssueSeance.horsApplication => null,
           };
     // HEURE-PROFIL : sans fuseau de profil lu, l'heure dite est celle de
     // l'appareil ; une petite ligne le dit, sous la phrase.

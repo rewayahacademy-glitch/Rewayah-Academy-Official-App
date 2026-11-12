@@ -34,6 +34,7 @@ import '../../core/session/session_controleur.dart';
 import '../../core/session/session_state.dart';
 import '../../core/tc_bibliotheque/couverture_ressource.dart';
 import '../../core/tc_classe/controleur_recitation.dart';
+import '../../core/tc_classe/garde_hors_application.dart';
 import '../../core/tc_classe/port_rappel_discret.dart';
 import '../../core/tc_classe/port_session_persistante.dart';
 import '../../core/tc_classe/rappel_discret.dart'
@@ -274,6 +275,27 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   /// (`SonRecuBloque` du moteur).
   StreamSubscription<bool>? _sSon;
   bool _sonBloque = false;
+
+  /// HORS-SALLE-1 (directeur, 12/11/2026 au soir) : le controleur de session
+  /// dit que l'eleve est sorti de la salle apres une absence hors de
+  /// l'application ([EtatSessionPersistante.sortieHorsApplication]).
+  StreamSubscription<EtatSessionPersistante>? _sHorsApplication;
+
+  /// HORS-SALLE-1 : l'ecran du retour, si la sortie vise cette seance. Vrai
+  /// quand il est pose.
+  bool _lireSortieHorsApplication(EtatSessionPersistante etat) {
+    if (etat.sortieHorsApplication?.sessionId != widget.seanceId) {
+      return false;
+    }
+    _session.oublierSortieHorsApplication();
+    _veilleCamera?.cancel();
+    _veilleCamera = null;
+    unawaited(_synchro?.liberer());
+    _synchro = null;
+    _enPreparation = false;
+    _sortieEleve = IssueSeance.horsApplication;
+    return true;
+  }
 
   /// ENTREE-ROBUSTE : l'annonce « Le son est coupe par le navigateur », avec
   /// « Activer le son », tant que le son recu est bloque dans une salle
@@ -742,6 +764,17 @@ class _SallePageEtat extends ConsumerState<SallePage> {
         initial: _session.etatCourant.cours != null,
       );
     }
+    // HORS-SALLE-1 : l'eleve sorti pendant son absence hors de
+    // l'application trouve l'ecran du retour, ici comme salle ouverte.
+    if (_confiable) {
+      _sHorsApplication = _session.etats.listen((EtatSessionPersistante e) {
+        if (!mounted) return;
+        if (_lireSortieHorsApplication(e)) setState(() {});
+      });
+      if (_lireSortieHorsApplication(_session.etatCourant)) {
+        return;
+      }
+    }
     // TRANSITIONS-SALLE : l'arche ne se joue ni au retour depuis l'ile, ni
     // apres un rechargement de cette meme seance.
     _depuisIle = _tenu;
@@ -820,6 +853,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     unawaited(_sAcces?.cancel());
     unawaited(_sPause?.cancel());
     unawaited(_sSon?.cancel());
+    unawaited(_sHorsApplication?.cancel());
     _veilleCamera?.cancel();
     unawaited(_synchro?.liberer());
     // Directeur, 31/10/2026 : un appel ouvert et confie continue hors de
@@ -2843,7 +2877,11 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     if (sortie != null) {
       // MA-APRES-1 (decision A7 = a) : en Mode Accessibilite, UN SEUL ecran
       // de fin, celui de MA-6, monte ici par la vraie salle.
-      if (ref.watch(modeAccessibiliteActifProvider)) {
+      // HORS-SALLE-1 : l'ecran du retour apres une absence hors de
+      // l'application n'est pas une fin de seance ; il garde sa phrase et
+      // son « Retourner dans la salle » en Mode Accessibilite aussi.
+      if (sortie != IssueSeance.horsApplication &&
+          ref.watch(modeAccessibiliteActifProvider)) {
         final String? groupe = widget.groupeId;
         return ApresSeanceSalle(
           groupeId: groupe,
@@ -2878,7 +2916,12 @@ class _SallePageEtat extends ConsumerState<SallePage> {
         onRetour: _retourClasse,
         // Lot salle 2 : apres « Quitter », revenir par le meme chemin que
         // l'entree (pre-vol, jeton, salle).
-        onRevenir: sortie == IssueSeance.quittee
+        secondesHorsApplication: ref
+            .read(delaiHorsApplicationProvider)
+            .inSeconds,
+        onRevenir:
+            sortie == IssueSeance.quittee ||
+                sortie == IssueSeance.horsApplication
             ? () {
                 setState(() => _sortieEleve = null);
                 unawaited(_entrer());

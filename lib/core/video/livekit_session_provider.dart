@@ -137,6 +137,31 @@ const List<Duration> delaisRepriseSansGeste = <Duration>[
 /// ([signalerEntreeImpossible]).
 const int essaisEntree = 3;
 
+/// HORS-SALLE-1 (directeur, 12/11/2026 au soir : « je dois revenir vite pour
+/// que le son revienne ») : relance le son recu apres TOUTE reprise de
+/// l'appel (reprise du SDK, reprise sans geste dans une salle neuve, retour
+/// a l'ecran), et non plus seulement au retour visible.
+///
+/// [demarrer] est `Room.startAudio` : dans `livekit_client` 2.12.0
+/// (`lib/src/core/room.dart`, `startAudio`), il relance chaque element audio
+/// de la page (`_audio_html.dart`, `startAllAudioElement`, `audio.play()`) et
+/// pose `canPlaybackAudio` ; un navigateur qui refuse faute de geste le met a
+/// faux. [peutJouer] relit `canPlaybackAudio` apres l'essai, et [poser] le
+/// dit au moteur (`sonBloque`) : l'annonce « Activer le son » apparait des que
+/// la page est visible. Une erreur de l'essai n'arrete jamais la reprise.
+Future<void> relancerSonRecu({
+  required Future<void> Function() demarrer,
+  required bool Function() peutJouer,
+  required void Function(bool bloque) poser,
+}) async {
+  try {
+    await demarrer();
+  } catch (e) {
+    journalDev('son recu non relance apres reprise : $e');
+  }
+  poser(!peutJouer());
+}
+
 /// ENTREE-ROBUSTE : la nature d'un echec d'entree, pour decider d'insister et
 /// pour la supervision.
 enum NatureEchecEntree {
@@ -545,6 +570,22 @@ class LiveKitSessionProvider
     _poserSonBloque(!salle.canPlaybackAudio);
   }
 
+  /// HORS-SALLE-1 : [relancerSonRecu] sur la salle ouverte.
+  Future<void> _relancerSon() async {
+    final lk.Room? salle = _salle;
+    if (salle == null) {
+      return;
+    }
+    await relancerSonRecu(
+      demarrer: salle.startAudio,
+      peutJouer: () => salle.canPlaybackAudio,
+      poser: (bool bloque) {
+        // La salle a change entre-temps (sortie, autre reprise) : rien a dire.
+        if (identical(_salle, salle)) _poserSonBloque(bloque);
+      },
+    );
+  }
+
   /// Vrai quand l'application est au premier plan (voir [premierPlan]).
   bool _auPremierPlan = true;
 
@@ -779,6 +820,9 @@ class LiveKitSessionProvider
         unawaited(_republierContenu());
         // ECRAN-EVEILLE : une piste perdue pendant la coupure est rendue.
         unawaited(_restaurerMedias());
+        // HORS-SALLE-1 : le son recu est relance apres la reprise, meme page
+        // cachee ; un refus du navigateur se dit (« Activer le son »).
+        unawaited(_relancerSon());
       })
       ..on<lk.RoomDisconnectedEvent>((lk.RoomDisconnectedEvent e) {
         // Lot salle 3 (audit reseau du 25/10/2026) : `quitter` cesse
@@ -1449,11 +1493,7 @@ class LiveKitSessionProvider
       // `retabli` (voir le gestionnaire de `RoomReconnectedEvent`).
       return;
     }
-    try {
-      await salle.startAudio();
-    } catch (e) {
-      journalDev('reprise : son recu non relance ($e)');
-    }
+    await _relancerSon();
     await _restaurerMedias();
     await _relancerPistesMuettes();
   }
@@ -1696,6 +1736,9 @@ class LiveKitSessionProvider
     // « Seance toujours en direct » le lisent deja.
     _poser(EtatSalle.retabli);
     _publierParticipants();
+    // HORS-SALLE-1 : la salle neuve relance le son recu tout de suite, sans
+    // attendre le retour a l'ecran.
+    await _relancerSon();
     await _restaurerMedias();
     unawaited(_republierContenu());
     return true;

@@ -2872,6 +2872,108 @@ void main() {
     });
   });
 
+  // HORS-SALLE-1 (directeur, 12/11/2026 au soir).
+  group('HORS-SALLE-1 : l eleve hors de l application', () {
+    Future<(FauxMoteurSalle, FauxServiceVideo)> entrer(
+      WidgetTester tester, {
+      String role = 'student',
+    }) async {
+      addTearDown(GardeFermeture.remettre);
+      addTearDown(
+        () => tester.binding.handleAppLifecycleStateChanged(
+          AppLifecycleState.resumed,
+        ),
+      );
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      final FauxServiceVideo video = FauxServiceVideo(acces0: _acces(role));
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: video,
+          moteur: moteur,
+          preVol: FauxServicePreVol(),
+          role: role == 'teacher' ? AppRole.teacher : AppRole.student,
+        ),
+      );
+      moteur.poser(EtatSalle.connecte);
+      await tester.pumpAndSettle();
+      return (moteur, video);
+    }
+
+    void cacher(WidgetTester tester) {
+      tester.binding
+        ..handleAppLifecycleStateChanged(AppLifecycleState.inactive)
+        ..handleAppLifecycleStateChanged(AppLifecycleState.hidden);
+    }
+
+    Future<void> montrer(WidgetTester tester) async {
+      tester.binding
+        ..handleAppLifecycleStateChanged(AppLifecycleState.inactive)
+        ..handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('revenu avant 30 s : rien n est coupe, rien ne s affiche', (
+      WidgetTester tester,
+    ) async {
+      final (FauxMoteurSalle moteur, FauxServiceVideo video) = await entrer(
+        tester,
+      );
+      final int departs = moteur.departs;
+      cacher(tester);
+      await tester.pump(const Duration(seconds: 29));
+      await montrer(tester);
+      expect(video.sorties, isEmpty);
+      expect(moteur.departs, departs);
+      expect(
+        find.byKey(const ValueKey<String>('resultat-seance')),
+        findsNothing,
+      );
+    });
+
+    testWidgets('plus de 30 s : sorti par le chemin de « Quitter », l ecran '
+        'du retour le dit, et « Retourner dans la salle » y ramene', (
+      WidgetTester tester,
+    ) async {
+      final (FauxMoteurSalle moteur, FauxServiceVideo video) = await entrer(
+        tester,
+      );
+      final int departs = moteur.departs;
+      cacher(tester);
+      await tester.pump(const Duration(seconds: 31));
+      await montrer(tester);
+      expect(video.sorties, <String>[_seance], reason: 'annonce de sortie');
+      expect(moteur.departs, departs + 1, reason: 'puis deconnexion');
+      expect(find.text(t.salle.fin.horsApplication.titre), findsOneWidget);
+      expect(
+        find.text(t.salle.fin.horsApplication.phrase(n: 30)),
+        findsOneWidget,
+      );
+      verifierUnSeulBoutonPlein(tester);
+
+      final int entrees = video.demandes.length;
+      await tester.tap(find.byKey(ResultatSeance.revenirKey));
+      await tester.pumpAndSettle();
+      expect(video.demandes.length, entrees + 1, reason: 'le chemin d entree');
+      expect(find.text(t.salle.fin.horsApplication.titre), findsNothing);
+    });
+
+    testWidgets('qui modere la seance (l enseignant) : cache 10 min, jamais '
+        'coupe', (WidgetTester tester) async {
+      final (FauxMoteurSalle moteur, FauxServiceVideo video) = await entrer(
+        tester,
+        role: 'teacher',
+      );
+      final int departs = moteur.departs;
+      cacher(tester);
+      await tester.pump(const Duration(minutes: 10));
+      await montrer(tester);
+      expect(video.sorties, isEmpty);
+      expect(moteur.departs, departs);
+      expect(find.text(t.salle.fin.horsApplication.titre), findsNothing);
+    });
+  });
+
   group('La sortie volontaire', () {
     testWidgets('elle se confirme, et s annonce AVANT de se deconnecter', (
       WidgetTester tester,
