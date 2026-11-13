@@ -15,7 +15,6 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
-import '../../core/widgets/champ_date.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/page_shell.dart';
@@ -24,7 +23,7 @@ import '../../core/widgets/selecteur_niveau_programme.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
 import '../admin_groupes/niveau_classe.dart'
-    show premierJourCalendrier, refusPlanClasse;
+    show ApercuLimite, ChampJourDebut, refusPlanClasse;
 import 'placements_a_faire.dart';
 
 /// `ADM-10` : Pedagogie > Diagnostics, fonction primaire du domaine.
@@ -336,33 +335,25 @@ class _Decision extends StatelessWidget {
           _ => const Skeleton.liste(lignes: 2),
         },
         Ecart.vXxl,
-        Consumer(
-          builder: (BuildContext context, WidgetRef ref, Widget? _) {
-            final DateTime aujourdhui = ref.read(horlogeFormulairesProvider)();
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                ChampDate(
-                  libelle: t.admin.planClasse.debutChamp,
-                  aide: t.admin.planClasse.debutAide,
-                  valeur: depuis,
-                  aujourdhui: aujourdhui,
-                  premier: premierJourCalendrier(aujourdhui),
-                  dernier: aujourdhui,
-                  onChoix: onDepuis,
-                ),
-                if (depuis != null) ...<Widget>[
-                  Ecart.vSm,
-                  LienFleche(
-                    libelle: t.admin.planClasse.debutRetirer,
-                    onPress: () => onDepuis(null),
-                  ),
-                ],
-              ],
-            );
-          },
+        ChampJourDebut(
+          libelle: t.admin.planClasse.debutChamp,
+          aide: t.admin.planClasse.debutAide,
+          valeur: depuis,
+          onChoix: onDepuis,
         ),
+        if (depuis != null) ...<Widget>[
+          Ecart.vSm,
+          LienFleche(
+            libelle: t.admin.planClasse.debutRetirer,
+            onPress: () => onDepuis(null),
+          ),
+          if (niveauId != null)
+            ApercuLimite(
+              studentId: eleve.studentId,
+              jour: depuis!,
+              niveauId: niveauId,
+            ),
+        ],
         Ecart.vXxl,
         Text(t.admin.diagnostics.champMotif, style: textes.titleMedium),
         Ecart.vSm,

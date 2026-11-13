@@ -422,14 +422,15 @@ SELECT pg_temp.vrai(
   'la date limite (10 semaines, 6-9 ans) se calcule depuis cette date, et le geste la rend');
 SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
 SET LOCAL ROLE authenticated;
--- Une seconde date plus recente : l'entree dans l'etape recule, celle du niveau reste.
+-- Une date reposee REMPLACE la precedente : l'entree dans le niveau suit quand
+-- elle coincide avec l'entree dans l'etape (elle n'est pas collante).
 SELECT public.dater_entree_etape(pg_temp.u('e1'), (pg_catalog.now() AT TIME ZONE 'Asia/Riyadh')::date - 5, 'Date corrigee');
 RESET ROLE;
 SELECT pg_temp.vrai(
   (SELECT f.entree_etape_le = (pg_catalog.now() AT TIME ZONE 'Asia/Riyadh')::date - 5
-          AND f.entree_niveau_le = (pg_catalog.now() AT TIME ZONE 'Asia/Riyadh')::date - 20
+          AND f.entree_niveau_le = (pg_catalog.now() AT TIME ZONE 'Asia/Riyadh')::date - 5
      FROM public.eleve_etape_en_cours f WHERE f.student_id = pg_temp.u('e1')),
-  'une date plus recente : l''entree dans l''etape change, l''entree dans le niveau reste la plus ancienne');
+  'une date reposee remplace la premiere : etape et niveau suivent (jamais une date fausse collee)');
 SET LOCAL ROLE authenticated;
 -- Bornes
 SELECT pg_temp.vrai(pg_temp.essai('SELECT public.dater_entree_etape(''' || pg_temp.u('e1') || ''', ((now() AT TIME ZONE ''Asia/Riyadh'')::date + 1), ''x'')') = 'date_future',
@@ -588,6 +589,739 @@ SELECT pg_temp.vrai(pg_temp.essai('SELECT public.dater_entree_etape(''' || pg_te
   'plancher regle a un an : un jour de il y a 400 jours est refuse');
 SELECT pg_temp.vrai(pg_temp.essai('SELECT public.dater_entree_etape(''' || pg_temp.u('e1') || ''', ((now() AT TIME ZONE ''Asia/Riyadh'')::date - 300), ''x'')') = 'ok',
   'plancher regle a un an : un jour de il y a 300 jours est accepte');;
+RESET ROLE;
+
+ROLLBACK;
+
+-- ======================================================================
+-- 3 ter. Une date reposee remplace la precedente, dans les deux sens
+-- ======================================================================
+BEGIN;
+SET CONSTRAINTS ALL IMMEDIATE;
+
+CREATE FUNCTION pg_temp.qui(p_id uuid, p_role text, p_foyer uuid DEFAULT NULL) RETURNS void
+LANGUAGE plpgsql AS $$
+DECLARE v_jwt text := pg_catalog.json_build_object('aal', 'aal1', 'app_metadata',
+                        pg_catalog.json_build_object('role', p_role, 'household_id', p_foyer))::text;
+BEGIN
+  PERFORM pg_catalog.set_config('request.jwt.claim.sub', p_id::text, true);
+  PERFORM pg_catalog.set_config('test.uid', p_id::text, true);
+  PERFORM pg_catalog.set_config('request.jwt.claims', v_jwt, true);
+  PERFORM pg_catalog.set_config('test.jwt', v_jwt, true);
+END $$;
+CREATE FUNCTION pg_temp.vrai(p_condition boolean, p_label text) RETURNS void
+LANGUAGE plpgsql AS $$
+BEGIN
+  IF p_condition IS NOT TRUE THEN
+    RAISE EXCEPTION 'ROUGE : %', p_label;
+  END IF;
+  RAISE NOTICE 'OK %', p_label;
+END $$;
+CREATE FUNCTION pg_temp.u(p text) RETURNS uuid LANGUAGE sql AS
+  $$ SELECT pg_catalog.md5('plan-classe-a-' || p)::uuid $$;
+CREATE FUNCTION pg_temp.essai(p_sql text) RETURNS text
+LANGUAGE plpgsql AS $$
+BEGIN
+  EXECUTE p_sql;
+  RETURN 'ok';
+EXCEPTION
+  WHEN insufficient_privilege THEN RETURN 'refus';
+  WHEN OTHERS THEN RETURN SQLERRM;
+END $$;
+CREATE TEMP TABLE pc_ids(cle text PRIMARY KEY, id uuid);
+GRANT ALL ON pc_ids TO authenticated, anon;
+GRANT EXECUTE ON FUNCTION pg_temp.qui(uuid, text, uuid), pg_temp.vrai(boolean, text), pg_temp.u(text),
+  pg_temp.essai(text) TO authenticated, anon;
+
+INSERT INTO auth.users(id, email)
+SELECT pg_temp.u(x), 'pc-' || x || '@test.invalid'
+  FROM unnest(ARRAY['a1','b1','t1','e1','e2','e3','e5','e6','x1']) AS x;
+INSERT INTO public.households(id, timezone) VALUES
+  (pg_temp.u('f1'), 'America/Toronto'), (pg_temp.u('f3'), 'America/Toronto');
+INSERT INTO public.profiles(id, immutable_id, role, household_id, first_name, last_name, account_status, gender)
+SELECT pg_temp.u(x.id), x.mat, x.role::public.app_role,
+       CASE WHEN x.foyer IS NOT NULL THEN pg_temp.u(x.foyer) END,
+       x.prenom, 'PC', (CASE x.role WHEN 'teacher' THEN 'provisional_active' ELSE 'active' END)::public.account_status,
+       'female'::public.gender
+  FROM (VALUES
+   ('a1','PC-ADM-01','admin',NULL,'Direction'),
+   ('b1','PC-ENS-01','teacher',NULL,'Titulaire'),
+   ('t1','PC-TUT-01','guardian','f1','Tutrice'),
+   ('x1','PC-ENS-02','teacher',NULL,'Autre'),
+   ('e1','PC-ELV-01','student','f1','Eleve un'),
+   ('e2','PC-ELV-02','student','f1','Eleve deux'),
+   ('e3','PC-TIT-03','guardian','f3','Adulte'),
+   ('e5','PC-ELV-05','student','f1','Eleve cinq'),
+   ('e6','PC-ELV-06','student','f1','Eleve six')) AS x(id, mat, role, foyer, prenom);
+INSERT INTO public.student_profiles(profile_id, student_type, interface_mode, cohorte) VALUES
+  (pg_temp.u('e1'), 'minor', 'child', 'enfant_6_9'),
+  (pg_temp.u('e2'), 'minor', 'standard', 'enfant_10_13'),
+  (pg_temp.u('e5'), 'minor', 'child', 'enfant_6_9'),
+  (pg_temp.u('e6'), 'minor', 'child', 'enfant_6_9');
+INSERT INTO public.student_profiles(profile_id, titulaire_profile_id, student_type, interface_mode, cohorte, niveau_declare)
+VALUES (pg_temp.u('e3'), pg_temp.u('e3'), 'autonomous', 'standard', 'adulte_18_plus', 'lecture_courante');
+-- Inscrits depuis 60 jours (les bornes de la date d'entree en dependent).
+UPDATE public.profiles SET created_at = pg_catalog.now() - interval '60 days'
+ WHERE id IN (pg_temp.u('e1'), pg_temp.u('e2'), pg_temp.u('e3'), pg_temp.u('e5'), pg_temp.u('e6'));
+
+-- Trois classes ouvertes sans etape (avant toute publication), des membres
+-- deja la ; e6 est sorti de sa classe.
+INSERT INTO public.groupes(id, teacher_id, type_public, seuil_max, libelle, weekday, hour_local, timezone_iana) VALUES
+ (pg_temp.u('c1'), pg_temp.u('b1'), 'enfant', 5, 'An-Nour PC', 1, 18, 'America/Toronto'),
+ (pg_temp.u('c2'), pg_temp.u('b1'), 'adulte', 6, 'Al-Huda PC', 2, 19, 'America/Toronto'),
+ (pg_temp.u('c3'), pg_temp.u('b1'), 'enfant', 5, 'Ar-Rahma PC', 3, 17, 'America/Toronto');
+INSERT INTO public.groupe_membres(groupe_id, student_id, joined_at) VALUES
+ (pg_temp.u('c1'), pg_temp.u('e1'), pg_catalog.now() - interval '30 days'),
+ (pg_temp.u('c1'), pg_temp.u('e2'), pg_catalog.now() - interval '30 days'),
+ (pg_temp.u('c2'), pg_temp.u('e3'), pg_catalog.now() - interval '30 days'),
+ (pg_temp.u('c1'), pg_temp.u('e6'), pg_catalog.now() - interval '40 days');
+UPDATE public.groupe_membres SET left_at = pg_catalog.now() - interval '10 days',
+       left_by = pg_temp.u('a1'), left_reason = 'depart'
+ WHERE student_id = pg_temp.u('e6');
+
+-- Programme publie par la direction (les bases d'un geste, puis la publication).
+SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
+SET LOCAL ROLE authenticated;
+INSERT INTO pc_ids VALUES ('v1', public.repartir_des_bases_programme());
+SELECT public.publier_version_programme((SELECT id FROM pc_ids WHERE cle = 'v1'), 'fixture');
+RESET ROLE;
+INSERT INTO pc_ids SELECT 'n' || n.ordre, n.id FROM public.programme_niveaux n
+ WHERE n.version_id = (SELECT id FROM pc_ids WHERE cle = 'v1');
+CREATE TEMP TABLE pc_notif AS SELECT pg_catalog.count(*) AS n FROM public.notifications;
+SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
+SET LOCAL ROLE authenticated;
+SELECT public.donner_niveau_classe(pg_temp.u('c1'), (SELECT id FROM pc_ids WHERE cle='n1'), 'Premiere etape');
+SELECT public.dater_entree_etape(pg_temp.u('e1'), (pg_catalog.now() AT TIME ZONE 'Asia/Riyadh')::date - 100, 'Faute de frappe');
+SELECT public.dater_entree_etape(pg_temp.u('e1'), (pg_catalog.now() AT TIME ZONE 'Asia/Riyadh')::date - 10, 'Corrigee');
+RESET ROLE;
+SELECT pg_temp.vrai(
+  (SELECT f.entree_etape_le = (pg_catalog.now() AT TIME ZONE 'Asia/Riyadh')::date - 10
+          AND f.entree_niveau_le = (pg_catalog.now() AT TIME ZONE 'Asia/Riyadh')::date - 10
+     FROM public.eleve_etape_en_cours f WHERE f.student_id = pg_temp.u('e1')),
+  'pose a -100 puis corrigee a -10 : l''entree dans le niveau n''est plus a -100');
+SET LOCAL ROLE authenticated;
+SELECT public.dater_entree_etape(pg_temp.u('e1'), (pg_catalog.now() AT TIME ZONE 'Asia/Riyadh')::date - 200, 'Dans l''autre sens');
+SELECT public.dater_entree_etape(pg_temp.u('e1'), (pg_catalog.now() AT TIME ZONE 'Asia/Riyadh')::date - 5, 'Et revenue');
+RESET ROLE;
+SELECT pg_temp.vrai(
+  (SELECT f.entree_etape_le = (pg_catalog.now() AT TIME ZONE 'Asia/Riyadh')::date - 5
+          AND f.entree_niveau_le = (pg_catalog.now() AT TIME ZONE 'Asia/Riyadh')::date - 5
+     FROM public.eleve_etape_en_cours f WHERE f.student_id = pg_temp.u('e1')),
+  'dans l''autre sens aussi : -200 puis -5, l''entree dans le niveau suit');;
+RESET ROLE;
+
+-- Un eleve monte d'une etape precedente du niveau (entree dans le niveau plus
+-- ancienne que l'entree dans l'etape) et un recul du lot 2.
+UPDATE public.eleve_etape_en_cours
+   SET entree_niveau_le = (pg_catalog.now() AT TIME ZONE 'Asia/Riyadh')::date - 300,
+       entree_etape_le = (pg_catalog.now() AT TIME ZONE 'Asia/Riyadh')::date - 20,
+       recul_jours = 7
+ WHERE student_id = pg_temp.u('e1');
+SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
+SET LOCAL ROLE authenticated;
+SELECT public.dater_entree_etape(pg_temp.u('e1'), (pg_catalog.now() AT TIME ZONE 'Asia/Riyadh')::date - 5, 'Date de la montee');
+RESET ROLE;
+SELECT pg_temp.vrai(
+  (SELECT f.entree_etape_le = (pg_catalog.now() AT TIME ZONE 'Asia/Riyadh')::date - 5
+          AND f.entree_niveau_le = (pg_catalog.now() AT TIME ZONE 'Asia/Riyadh')::date - 300
+          AND f.recul_jours = 7
+     FROM public.eleve_etape_en_cours f WHERE f.student_id = pg_temp.u('e1')),
+  'monte d''une etape precedente : l''entree dans le niveau reste, le recul du lot 2 est conserve');
+SET LOCAL ROLE authenticated;
+SELECT public.dater_entree_etape(pg_temp.u('e1'), (pg_catalog.now() AT TIME ZONE 'Asia/Riyadh')::date - 400, 'Avant la montee');
+RESET ROLE;
+SELECT pg_temp.vrai(
+  (SELECT f.entree_niveau_le = (pg_catalog.now() AT TIME ZONE 'Asia/Riyadh')::date - 400 FROM public.eleve_etape_en_cours f WHERE f.student_id = pg_temp.u('e1')),
+  'une date qui precede l''entree dans le niveau l''abaisse (jamais d''etape avant son niveau)');;
+RESET ROLE;
+
+ROLLBACK;
+
+-- ======================================================================
+-- 4 bis. Adulte titulaire a placer, apercu de la date limite, jour de l'academie
+-- ======================================================================
+BEGIN;
+SET CONSTRAINTS ALL IMMEDIATE;
+
+CREATE FUNCTION pg_temp.qui(p_id uuid, p_role text, p_foyer uuid DEFAULT NULL) RETURNS void
+LANGUAGE plpgsql AS $$
+DECLARE v_jwt text := pg_catalog.json_build_object('aal', 'aal1', 'app_metadata',
+                        pg_catalog.json_build_object('role', p_role, 'household_id', p_foyer))::text;
+BEGIN
+  PERFORM pg_catalog.set_config('request.jwt.claim.sub', p_id::text, true);
+  PERFORM pg_catalog.set_config('test.uid', p_id::text, true);
+  PERFORM pg_catalog.set_config('request.jwt.claims', v_jwt, true);
+  PERFORM pg_catalog.set_config('test.jwt', v_jwt, true);
+END $$;
+CREATE FUNCTION pg_temp.vrai(p_condition boolean, p_label text) RETURNS void
+LANGUAGE plpgsql AS $$
+BEGIN
+  IF p_condition IS NOT TRUE THEN
+    RAISE EXCEPTION 'ROUGE : %', p_label;
+  END IF;
+  RAISE NOTICE 'OK %', p_label;
+END $$;
+CREATE FUNCTION pg_temp.u(p text) RETURNS uuid LANGUAGE sql AS
+  $$ SELECT pg_catalog.md5('plan-classe-a-' || p)::uuid $$;
+CREATE FUNCTION pg_temp.essai(p_sql text) RETURNS text
+LANGUAGE plpgsql AS $$
+BEGIN
+  EXECUTE p_sql;
+  RETURN 'ok';
+EXCEPTION
+  WHEN insufficient_privilege THEN RETURN 'refus';
+  WHEN OTHERS THEN RETURN SQLERRM;
+END $$;
+CREATE TEMP TABLE pc_ids(cle text PRIMARY KEY, id uuid);
+GRANT ALL ON pc_ids TO authenticated, anon;
+GRANT EXECUTE ON FUNCTION pg_temp.qui(uuid, text, uuid), pg_temp.vrai(boolean, text), pg_temp.u(text),
+  pg_temp.essai(text) TO authenticated, anon;
+
+INSERT INTO auth.users(id, email)
+SELECT pg_temp.u(x), 'pc-' || x || '@test.invalid'
+  FROM unnest(ARRAY['a1','b1','t1','e1','e2','e3','e5','e6','x1']) AS x;
+INSERT INTO public.households(id, timezone) VALUES
+  (pg_temp.u('f1'), 'America/Toronto'), (pg_temp.u('f3'), 'America/Toronto');
+INSERT INTO public.profiles(id, immutable_id, role, household_id, first_name, last_name, account_status, gender)
+SELECT pg_temp.u(x.id), x.mat, x.role::public.app_role,
+       CASE WHEN x.foyer IS NOT NULL THEN pg_temp.u(x.foyer) END,
+       x.prenom, 'PC', (CASE x.role WHEN 'teacher' THEN 'provisional_active' ELSE 'active' END)::public.account_status,
+       'female'::public.gender
+  FROM (VALUES
+   ('a1','PC-ADM-01','admin',NULL,'Direction'),
+   ('b1','PC-ENS-01','teacher',NULL,'Titulaire'),
+   ('t1','PC-TUT-01','guardian','f1','Tutrice'),
+   ('x1','PC-ENS-02','teacher',NULL,'Autre'),
+   ('e1','PC-ELV-01','student','f1','Eleve un'),
+   ('e2','PC-ELV-02','student','f1','Eleve deux'),
+   ('e3','PC-TIT-03','guardian','f3','Adulte'),
+   ('e5','PC-ELV-05','student','f1','Eleve cinq'),
+   ('e6','PC-ELV-06','student','f1','Eleve six')) AS x(id, mat, role, foyer, prenom);
+INSERT INTO public.student_profiles(profile_id, student_type, interface_mode, cohorte) VALUES
+  (pg_temp.u('e1'), 'minor', 'child', 'enfant_6_9'),
+  (pg_temp.u('e2'), 'minor', 'standard', 'enfant_10_13'),
+  (pg_temp.u('e5'), 'minor', 'child', 'enfant_6_9'),
+  (pg_temp.u('e6'), 'minor', 'child', 'enfant_6_9');
+INSERT INTO public.student_profiles(profile_id, titulaire_profile_id, student_type, interface_mode, cohorte, niveau_declare)
+VALUES (pg_temp.u('e3'), pg_temp.u('e3'), 'autonomous', 'standard', 'adulte_18_plus', 'lecture_courante');
+-- Inscrits depuis 60 jours (les bornes de la date d'entree en dependent).
+UPDATE public.profiles SET created_at = pg_catalog.now() - interval '60 days'
+ WHERE id IN (pg_temp.u('e1'), pg_temp.u('e2'), pg_temp.u('e3'), pg_temp.u('e5'), pg_temp.u('e6'));
+
+-- Trois classes ouvertes sans etape (avant toute publication), des membres
+-- deja la ; e6 est sorti de sa classe.
+INSERT INTO public.groupes(id, teacher_id, type_public, seuil_max, libelle, weekday, hour_local, timezone_iana) VALUES
+ (pg_temp.u('c1'), pg_temp.u('b1'), 'enfant', 5, 'An-Nour PC', 1, 18, 'America/Toronto'),
+ (pg_temp.u('c2'), pg_temp.u('b1'), 'adulte', 6, 'Al-Huda PC', 2, 19, 'America/Toronto'),
+ (pg_temp.u('c3'), pg_temp.u('b1'), 'enfant', 5, 'Ar-Rahma PC', 3, 17, 'America/Toronto');
+INSERT INTO public.groupe_membres(groupe_id, student_id, joined_at) VALUES
+ (pg_temp.u('c1'), pg_temp.u('e1'), pg_catalog.now() - interval '30 days'),
+ (pg_temp.u('c1'), pg_temp.u('e2'), pg_catalog.now() - interval '30 days'),
+ (pg_temp.u('c2'), pg_temp.u('e3'), pg_catalog.now() - interval '30 days'),
+ (pg_temp.u('c1'), pg_temp.u('e6'), pg_catalog.now() - interval '40 days');
+UPDATE public.groupe_membres SET left_at = pg_catalog.now() - interval '10 days',
+       left_by = pg_temp.u('a1'), left_reason = 'depart'
+ WHERE student_id = pg_temp.u('e6');
+
+-- Programme publie par la direction (les bases d'un geste, puis la publication).
+SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
+SET LOCAL ROLE authenticated;
+INSERT INTO pc_ids VALUES ('v1', public.repartir_des_bases_programme());
+SELECT public.publier_version_programme((SELECT id FROM pc_ids WHERE cle = 'v1'), 'fixture');
+RESET ROLE;
+INSERT INTO pc_ids SELECT 'n' || n.ordre, n.id FROM public.programme_niveaux n
+ WHERE n.version_id = (SELECT id FROM pc_ids WHERE cle = 'v1');
+CREATE TEMP TABLE pc_notif AS SELECT pg_catalog.count(*) AS n FROM public.notifications;
+SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
+RESET ROLE;
+SELECT pg_temp.vrai(
+  (SELECT x ->> 'raison' FROM jsonb_array_elements(public.eleves_sans_etape() -> 'eleves') x
+    WHERE x ->> 'student_id' = pg_temp.u('e3')::text) = 'attente_entretien',
+  'l''adulte titulaire en attente d''entretien est dans la liste');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai(pg_temp.essai('SELECT public.decider_placement_depuis(''' || pg_temp.u('t1') || ''', ''' || (SELECT id FROM pc_ids WHERE cle='n2') || ''', ''Essai'', NULL)') = 'cet eleve n''existe pas ou son compte n''est pas valide',
+  'un tuteur qui n''est pas eleve ne se place jamais');
+SELECT pg_temp.vrai(pg_temp.essai('SELECT public.decider_placement(''' || pg_temp.u('e3') || ''', ''' || (SELECT id FROM pc_ids WHERE cle='n2') || ''', ''Essai'')') = 'cet eleve n''existe pas ou son compte n''est pas valide',
+  'la fonction de main reste inchangee : elle ne place que le role eleve');
+INSERT INTO pc_ids VALUES ('p3', public.decider_placement_depuis(pg_temp.u('e3'), (SELECT id FROM pc_ids WHERE cle='n2'), 'Entretien de lecture', (pg_catalog.now() AT TIME ZONE 'Asia/Riyadh')::date - 30));
+RESET ROLE;
+SELECT pg_temp.vrai(
+  (SELECT f.niveau_id = (SELECT id FROM pc_ids WHERE cle='n2') AND f.origine = 'decision'
+          AND f.entree_etape_le = (pg_catalog.now() AT TIME ZONE 'Asia/Riyadh')::date - 30
+     FROM public.eleve_etape_en_cours f WHERE f.student_id = pg_temp.u('e3'))
+  AND NOT EXISTS (SELECT 1 FROM jsonb_array_elements(public.eleves_sans_etape() -> 'eleves') x
+                   WHERE x ->> 'student_id' = pg_temp.u('e3')::text),
+  'l''adulte titulaire est place a l''etape 2, date de son vrai debut, et sort de la liste');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai(pg_temp.essai('SELECT public.decider_placement_depuis(''' || pg_temp.u('e3') || ''', ''' || (SELECT id FROM pc_ids WHERE cle='n1') || ''', ''Encore'', NULL)') LIKE '%deja un niveau decide%',
+  'une seconde decision passe par Progression');
+SELECT pg_temp.vrai(pg_temp.essai('SELECT public.decider_placement_depuis(''' || pg_temp.u('e5') || ''', ''' || (SELECT id FROM pc_ids WHERE cle='n1') || ''', '' '', NULL)') = 'un motif est requis pour decider un placement',
+  'motif obligatoire, meme phrase que la fonction de main');
+RESET ROLE;
+SELECT pg_temp.vrai(
+  (SELECT pg_catalog.count(*) FROM public.audit_logs WHERE action = 'placement_decide') = 1,
+  'le placement de l''adulte est trace comme celui d''un eleve');
+SET LOCAL ROLE authenticated;
+-- Apercu de la date limite : le serveur calcule, le client non.
+SELECT public.donner_niveau_classe(pg_temp.u('c1'), (SELECT id FROM pc_ids WHERE cle='n1'), 'Premiere etape');
+CREATE TEMP TABLE pc_r(cle text PRIMARY KEY, j jsonb);
+GRANT ALL ON pc_r TO authenticated;
+INSERT INTO pc_r VALUES ('passee', public.apercu_date_limite(pg_temp.u('e1'), ((now() AT TIME ZONE 'Asia/Riyadh')::date - interval '3 years')::date));
+INSERT INTO pc_r VALUES ('future', public.apercu_date_limite(pg_temp.u('e1'), (now() AT TIME ZONE 'Asia/Riyadh')::date));
+INSERT INTO pc_r VALUES ('placement', public.apercu_date_limite(pg_temp.u('e5'), (now() AT TIME ZONE 'Asia/Riyadh')::date, (SELECT id FROM pc_ids WHERE cle='n3')));
+RESET ROLE;
+SELECT pg_temp.vrai(
+  (SELECT (j ->> 'deja_passee')::boolean AND (j ->> 'semaines')::int = 10
+          AND (j ->> 'date_limite')::date = (((now() AT TIME ZONE 'Asia/Riyadh')::date - interval '3 years')::date) + 70
+     FROM pc_r WHERE cle = 'passee'),
+  'trois ans en arriere sur un 6-9 ans : la date limite resultante est dite deja passee (calculee par le serveur)');
+SELECT pg_temp.vrai(
+  (SELECT NOT (j ->> 'deja_passee')::boolean AND (j ->> 'date_limite')::date = (now() AT TIME ZONE 'Asia/Riyadh')::date + 70 FROM pc_r WHERE cle = 'future'),
+  'un debut aujourd''hui : date limite dans dix semaines, pas passee');
+SELECT pg_temp.vrai(
+  (SELECT (j ->> 'semaines')::int = (SELECT (n.durees -> 'enfant_6_9' ->> 'limite')::int FROM public.programme_niveaux n WHERE n.id = (SELECT id FROM pc_ids WHERE cle='n3'))
+     FROM pc_r WHERE cle = 'placement'),
+  'l''apercu d''un placement lit la duree de l''etape choisie, pour la tranche de l''eleve');
+SELECT pg_temp.vrai(
+  public.apercu_date_limite(pg_temp.u('e5'), NULL) ->> 'date_limite' IS NULL,
+  'sans etape ni date : pas de date limite, pas d''erreur');
+SELECT pg_temp.vrai(public.jour_academie_direction() = (now() AT TIME ZONE 'Asia/Riyadh')::date,
+  'le jour de reference est celui de La Mecque, rendu par le serveur');
+SELECT pg_temp.vrai(
+  (SELECT pg_catalog.count(*) FROM public.audit_logs WHERE action = 'entree_etape_datee') = 1,
+  'un apercu n''ecrit rien (ni date, ni journal : seul le placement date a ecrit)');;
+RESET ROLE;
+
+SELECT pg_temp.qui(pg_temp.u('x1'), 'teacher');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai(pg_temp.essai('SELECT public.apercu_date_limite(''' || pg_temp.u('e1') || ''', current_date)') = 'refus'
+  AND pg_temp.essai('SELECT public.jour_academie_direction()') = 'refus',
+  'un enseignant ne lit ni l''apercu ni le jour de la direction');
+RESET ROLE;
+UPDATE public.profiles SET deleted_at = pg_catalog.now() WHERE id = pg_temp.u('e5');
+SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai(pg_temp.essai('SELECT public.decider_placement_depuis(''' || pg_temp.u('e5') || ''', ''' || (SELECT id FROM pc_ids WHERE cle='n1') || ''', ''x'', NULL)') = 'cet eleve n''existe pas ou son compte n''est pas valide',
+  'un compte supprime ne se place pas');
+SELECT pg_temp.vrai(pg_temp.essai('SELECT public.dater_entree_etape(''' || pg_temp.u('e1') || ''', (now() AT TIME ZONE ''Asia/Riyadh'')::date, ''x'')') = 'ok',
+  'avant la suppression de e1, la datation marche');;
+RESET ROLE;
+
+UPDATE public.profiles SET deleted_at = pg_catalog.now() WHERE id = pg_temp.u('e1');
+SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai(pg_temp.essai('SELECT public.dater_entree_etape(''' || pg_temp.u('e1') || ''', (now() AT TIME ZONE ''Asia/Riyadh'')::date, ''x'')') = 'eleve_introuvable',
+  'un compte supprime ne se date pas');;
+RESET ROLE;
+
+ROLLBACK;
+
+-- ======================================================================
+-- 3 quater. Le reglage du plancher se lit sans jamais echouer
+-- ======================================================================
+BEGIN;
+SET CONSTRAINTS ALL IMMEDIATE;
+
+CREATE FUNCTION pg_temp.qui(p_id uuid, p_role text, p_foyer uuid DEFAULT NULL) RETURNS void
+LANGUAGE plpgsql AS $$
+DECLARE v_jwt text := pg_catalog.json_build_object('aal', 'aal1', 'app_metadata',
+                        pg_catalog.json_build_object('role', p_role, 'household_id', p_foyer))::text;
+BEGIN
+  PERFORM pg_catalog.set_config('request.jwt.claim.sub', p_id::text, true);
+  PERFORM pg_catalog.set_config('test.uid', p_id::text, true);
+  PERFORM pg_catalog.set_config('request.jwt.claims', v_jwt, true);
+  PERFORM pg_catalog.set_config('test.jwt', v_jwt, true);
+END $$;
+CREATE FUNCTION pg_temp.vrai(p_condition boolean, p_label text) RETURNS void
+LANGUAGE plpgsql AS $$
+BEGIN
+  IF p_condition IS NOT TRUE THEN
+    RAISE EXCEPTION 'ROUGE : %', p_label;
+  END IF;
+  RAISE NOTICE 'OK %', p_label;
+END $$;
+CREATE FUNCTION pg_temp.u(p text) RETURNS uuid LANGUAGE sql AS
+  $$ SELECT pg_catalog.md5('plan-classe-a-' || p)::uuid $$;
+CREATE FUNCTION pg_temp.essai(p_sql text) RETURNS text
+LANGUAGE plpgsql AS $$
+BEGIN
+  EXECUTE p_sql;
+  RETURN 'ok';
+EXCEPTION
+  WHEN insufficient_privilege THEN RETURN 'refus';
+  WHEN OTHERS THEN RETURN SQLERRM;
+END $$;
+CREATE TEMP TABLE pc_ids(cle text PRIMARY KEY, id uuid);
+GRANT ALL ON pc_ids TO authenticated, anon;
+GRANT EXECUTE ON FUNCTION pg_temp.qui(uuid, text, uuid), pg_temp.vrai(boolean, text), pg_temp.u(text),
+  pg_temp.essai(text) TO authenticated, anon;
+
+INSERT INTO auth.users(id, email)
+SELECT pg_temp.u(x), 'pc-' || x || '@test.invalid'
+  FROM unnest(ARRAY['a1','b1','t1','e1','e2','e3','e5','e6','x1']) AS x;
+INSERT INTO public.households(id, timezone) VALUES
+  (pg_temp.u('f1'), 'America/Toronto'), (pg_temp.u('f3'), 'America/Toronto');
+INSERT INTO public.profiles(id, immutable_id, role, household_id, first_name, last_name, account_status, gender)
+SELECT pg_temp.u(x.id), x.mat, x.role::public.app_role,
+       CASE WHEN x.foyer IS NOT NULL THEN pg_temp.u(x.foyer) END,
+       x.prenom, 'PC', (CASE x.role WHEN 'teacher' THEN 'provisional_active' ELSE 'active' END)::public.account_status,
+       'female'::public.gender
+  FROM (VALUES
+   ('a1','PC-ADM-01','admin',NULL,'Direction'),
+   ('b1','PC-ENS-01','teacher',NULL,'Titulaire'),
+   ('t1','PC-TUT-01','guardian','f1','Tutrice'),
+   ('x1','PC-ENS-02','teacher',NULL,'Autre'),
+   ('e1','PC-ELV-01','student','f1','Eleve un'),
+   ('e2','PC-ELV-02','student','f1','Eleve deux'),
+   ('e3','PC-TIT-03','guardian','f3','Adulte'),
+   ('e5','PC-ELV-05','student','f1','Eleve cinq'),
+   ('e6','PC-ELV-06','student','f1','Eleve six')) AS x(id, mat, role, foyer, prenom);
+INSERT INTO public.student_profiles(profile_id, student_type, interface_mode, cohorte) VALUES
+  (pg_temp.u('e1'), 'minor', 'child', 'enfant_6_9'),
+  (pg_temp.u('e2'), 'minor', 'standard', 'enfant_10_13'),
+  (pg_temp.u('e5'), 'minor', 'child', 'enfant_6_9'),
+  (pg_temp.u('e6'), 'minor', 'child', 'enfant_6_9');
+INSERT INTO public.student_profiles(profile_id, titulaire_profile_id, student_type, interface_mode, cohorte, niveau_declare)
+VALUES (pg_temp.u('e3'), pg_temp.u('e3'), 'autonomous', 'standard', 'adulte_18_plus', 'lecture_courante');
+-- Inscrits depuis 60 jours (les bornes de la date d'entree en dependent).
+UPDATE public.profiles SET created_at = pg_catalog.now() - interval '60 days'
+ WHERE id IN (pg_temp.u('e1'), pg_temp.u('e2'), pg_temp.u('e3'), pg_temp.u('e5'), pg_temp.u('e6'));
+
+-- Trois classes ouvertes sans etape (avant toute publication), des membres
+-- deja la ; e6 est sorti de sa classe.
+INSERT INTO public.groupes(id, teacher_id, type_public, seuil_max, libelle, weekday, hour_local, timezone_iana) VALUES
+ (pg_temp.u('c1'), pg_temp.u('b1'), 'enfant', 5, 'An-Nour PC', 1, 18, 'America/Toronto'),
+ (pg_temp.u('c2'), pg_temp.u('b1'), 'adulte', 6, 'Al-Huda PC', 2, 19, 'America/Toronto'),
+ (pg_temp.u('c3'), pg_temp.u('b1'), 'enfant', 5, 'Ar-Rahma PC', 3, 17, 'America/Toronto');
+INSERT INTO public.groupe_membres(groupe_id, student_id, joined_at) VALUES
+ (pg_temp.u('c1'), pg_temp.u('e1'), pg_catalog.now() - interval '30 days'),
+ (pg_temp.u('c1'), pg_temp.u('e2'), pg_catalog.now() - interval '30 days'),
+ (pg_temp.u('c2'), pg_temp.u('e3'), pg_catalog.now() - interval '30 days'),
+ (pg_temp.u('c1'), pg_temp.u('e6'), pg_catalog.now() - interval '40 days');
+UPDATE public.groupe_membres SET left_at = pg_catalog.now() - interval '10 days',
+       left_by = pg_temp.u('a1'), left_reason = 'depart'
+ WHERE student_id = pg_temp.u('e6');
+
+-- Programme publie par la direction (les bases d'un geste, puis la publication).
+SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
+SET LOCAL ROLE authenticated;
+INSERT INTO pc_ids VALUES ('v1', public.repartir_des_bases_programme());
+SELECT public.publier_version_programme((SELECT id FROM pc_ids WHERE cle = 'v1'), 'fixture');
+RESET ROLE;
+INSERT INTO pc_ids SELECT 'n' || n.ordre, n.id FROM public.programme_niveaux n
+ WHERE n.version_id = (SELECT id FROM pc_ids WHERE cle = 'v1');
+CREATE TEMP TABLE pc_notif AS SELECT pg_catalog.count(*) AS n FROM public.notifications;
+SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
+SET LOCAL ROLE authenticated;
+SELECT public.donner_niveau_classe(pg_temp.u('c1'), (SELECT id FROM pc_ids WHERE cle='n1'), 'Premiere etape');;
+RESET ROLE;
+UPDATE public.app_config SET value = '0'::jsonb WHERE key = 'programme.date_debut_plancher_annees';
+SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai(pg_temp.essai('SELECT public.dater_entree_etape(''' || pg_temp.u('e1') || ''', ((now() AT TIME ZONE ''Asia/Riyadh'')::date - interval ''9 years'')::date, ''x'')') = 'ok'
+  AND pg_temp.essai('SELECT public.dater_entree_etape(''' || pg_temp.u('e1') || ''', ((now() AT TIME ZONE ''Asia/Riyadh'')::date - interval ''11 years'')::date, ''x'')') LIKE 'date_sous_plancher: %',
+  'reglage zero : dix ans par defaut, jamais d''erreur brute');;
+RESET ROLE;
+UPDATE public.app_config SET value = '-5'::jsonb WHERE key = 'programme.date_debut_plancher_annees';
+SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai(pg_temp.essai('SELECT public.dater_entree_etape(''' || pg_temp.u('e1') || ''', ((now() AT TIME ZONE ''Asia/Riyadh'')::date - interval ''9 years'')::date, ''x'')') = 'ok'
+  AND pg_temp.essai('SELECT public.dater_entree_etape(''' || pg_temp.u('e1') || ''', ((now() AT TIME ZONE ''Asia/Riyadh'')::date - interval ''11 years'')::date, ''x'')') LIKE 'date_sous_plancher: %',
+  'reglage negatif : dix ans par defaut, jamais d''erreur brute');;
+RESET ROLE;
+UPDATE public.app_config SET value = '"abc"'::jsonb WHERE key = 'programme.date_debut_plancher_annees';
+SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai(pg_temp.essai('SELECT public.dater_entree_etape(''' || pg_temp.u('e1') || ''', ((now() AT TIME ZONE ''Asia/Riyadh'')::date - interval ''9 years'')::date, ''x'')') = 'ok'
+  AND pg_temp.essai('SELECT public.dater_entree_etape(''' || pg_temp.u('e1') || ''', ((now() AT TIME ZONE ''Asia/Riyadh'')::date - interval ''11 years'')::date, ''x'')') LIKE 'date_sous_plancher: %',
+  'reglage texte : dix ans par defaut, jamais d''erreur brute');;
+RESET ROLE;
+UPDATE public.app_config SET value = '2.5'::jsonb WHERE key = 'programme.date_debut_plancher_annees';
+SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai(pg_temp.essai('SELECT public.dater_entree_etape(''' || pg_temp.u('e1') || ''', ((now() AT TIME ZONE ''Asia/Riyadh'')::date - interval ''9 years'')::date, ''x'')') = 'ok'
+  AND pg_temp.essai('SELECT public.dater_entree_etape(''' || pg_temp.u('e1') || ''', ((now() AT TIME ZONE ''Asia/Riyadh'')::date - interval ''11 years'')::date, ''x'')') LIKE 'date_sous_plancher: %',
+  'reglage decimal : dix ans par defaut, jamais d''erreur brute');;
+RESET ROLE;
+UPDATE public.app_config SET value = 'true'::jsonb WHERE key = 'programme.date_debut_plancher_annees';
+SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai(pg_temp.essai('SELECT public.dater_entree_etape(''' || pg_temp.u('e1') || ''', ((now() AT TIME ZONE ''Asia/Riyadh'')::date - interval ''9 years'')::date, ''x'')') = 'ok'
+  AND pg_temp.essai('SELECT public.dater_entree_etape(''' || pg_temp.u('e1') || ''', ((now() AT TIME ZONE ''Asia/Riyadh'')::date - interval ''11 years'')::date, ''x'')') LIKE 'date_sous_plancher: %',
+  'reglage booleen : dix ans par defaut, jamais d''erreur brute');;
+RESET ROLE;
+UPDATE public.app_config SET value = '100000'::jsonb WHERE key = 'programme.date_debut_plancher_annees';
+SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai(pg_temp.essai('SELECT public.dater_entree_etape(''' || pg_temp.u('e1') || ''', ((now() AT TIME ZONE ''Asia/Riyadh'')::date - interval ''9 years'')::date, ''x'')') = 'ok'
+  AND pg_temp.essai('SELECT public.dater_entree_etape(''' || pg_temp.u('e1') || ''', ((now() AT TIME ZONE ''Asia/Riyadh'')::date - interval ''11 years'')::date, ''x'')') LIKE 'date_sous_plancher: %',
+  'reglage enorme : dix ans par defaut, jamais d''erreur brute');;
+RESET ROLE;
+UPDATE public.app_config SET value = 'null'::jsonb WHERE key = 'programme.date_debut_plancher_annees';
+SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai(pg_temp.essai('SELECT public.dater_entree_etape(''' || pg_temp.u('e1') || ''', ((now() AT TIME ZONE ''Asia/Riyadh'')::date - interval ''9 years'')::date, ''x'')') = 'ok'
+  AND pg_temp.essai('SELECT public.dater_entree_etape(''' || pg_temp.u('e1') || ''', ((now() AT TIME ZONE ''Asia/Riyadh'')::date - interval ''11 years'')::date, ''x'')') LIKE 'date_sous_plancher: %',
+  'reglage json null : dix ans par defaut, jamais d''erreur brute');;
+RESET ROLE;
+UPDATE public.app_config SET value = '51'::jsonb WHERE key = 'programme.date_debut_plancher_annees';
+SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai(pg_temp.essai('SELECT public.dater_entree_etape(''' || pg_temp.u('e1') || ''', ((now() AT TIME ZONE ''Asia/Riyadh'')::date - interval ''9 years'')::date, ''x'')') = 'ok'
+  AND pg_temp.essai('SELECT public.dater_entree_etape(''' || pg_temp.u('e1') || ''', ((now() AT TIME ZONE ''Asia/Riyadh'')::date - interval ''11 years'')::date, ''x'')') LIKE 'date_sous_plancher: %',
+  'reglage au-dessus de 50 : dix ans par defaut, jamais d''erreur brute');;
+RESET ROLE;
+UPDATE public.app_config SET value = '1e400'::jsonb WHERE key = 'programme.date_debut_plancher_annees';
+SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai(pg_temp.essai('SELECT public.dater_entree_etape(''' || pg_temp.u('e1') || ''', ((now() AT TIME ZONE ''Asia/Riyadh'')::date - interval ''9 years'')::date, ''x'')') = 'ok'
+  AND pg_temp.essai('SELECT public.dater_entree_etape(''' || pg_temp.u('e1') || ''', ((now() AT TIME ZONE ''Asia/Riyadh'')::date - interval ''11 years'')::date, ''x'')') LIKE 'date_sous_plancher: %',
+  'reglage exposant enorme : dix ans par defaut, jamais d''erreur brute');;
+RESET ROLE;
+
+ROLLBACK;
+
+-- ======================================================================
+-- 3 quinquies. Bornes valides du reglage : 1 et 50
+-- ======================================================================
+BEGIN;
+SET CONSTRAINTS ALL IMMEDIATE;
+
+CREATE FUNCTION pg_temp.qui(p_id uuid, p_role text, p_foyer uuid DEFAULT NULL) RETURNS void
+LANGUAGE plpgsql AS $$
+DECLARE v_jwt text := pg_catalog.json_build_object('aal', 'aal1', 'app_metadata',
+                        pg_catalog.json_build_object('role', p_role, 'household_id', p_foyer))::text;
+BEGIN
+  PERFORM pg_catalog.set_config('request.jwt.claim.sub', p_id::text, true);
+  PERFORM pg_catalog.set_config('test.uid', p_id::text, true);
+  PERFORM pg_catalog.set_config('request.jwt.claims', v_jwt, true);
+  PERFORM pg_catalog.set_config('test.jwt', v_jwt, true);
+END $$;
+CREATE FUNCTION pg_temp.vrai(p_condition boolean, p_label text) RETURNS void
+LANGUAGE plpgsql AS $$
+BEGIN
+  IF p_condition IS NOT TRUE THEN
+    RAISE EXCEPTION 'ROUGE : %', p_label;
+  END IF;
+  RAISE NOTICE 'OK %', p_label;
+END $$;
+CREATE FUNCTION pg_temp.u(p text) RETURNS uuid LANGUAGE sql AS
+  $$ SELECT pg_catalog.md5('plan-classe-a-' || p)::uuid $$;
+CREATE FUNCTION pg_temp.essai(p_sql text) RETURNS text
+LANGUAGE plpgsql AS $$
+BEGIN
+  EXECUTE p_sql;
+  RETURN 'ok';
+EXCEPTION
+  WHEN insufficient_privilege THEN RETURN 'refus';
+  WHEN OTHERS THEN RETURN SQLERRM;
+END $$;
+CREATE TEMP TABLE pc_ids(cle text PRIMARY KEY, id uuid);
+GRANT ALL ON pc_ids TO authenticated, anon;
+GRANT EXECUTE ON FUNCTION pg_temp.qui(uuid, text, uuid), pg_temp.vrai(boolean, text), pg_temp.u(text),
+  pg_temp.essai(text) TO authenticated, anon;
+
+INSERT INTO auth.users(id, email)
+SELECT pg_temp.u(x), 'pc-' || x || '@test.invalid'
+  FROM unnest(ARRAY['a1','b1','t1','e1','e2','e3','e5','e6','x1']) AS x;
+INSERT INTO public.households(id, timezone) VALUES
+  (pg_temp.u('f1'), 'America/Toronto'), (pg_temp.u('f3'), 'America/Toronto');
+INSERT INTO public.profiles(id, immutable_id, role, household_id, first_name, last_name, account_status, gender)
+SELECT pg_temp.u(x.id), x.mat, x.role::public.app_role,
+       CASE WHEN x.foyer IS NOT NULL THEN pg_temp.u(x.foyer) END,
+       x.prenom, 'PC', (CASE x.role WHEN 'teacher' THEN 'provisional_active' ELSE 'active' END)::public.account_status,
+       'female'::public.gender
+  FROM (VALUES
+   ('a1','PC-ADM-01','admin',NULL,'Direction'),
+   ('b1','PC-ENS-01','teacher',NULL,'Titulaire'),
+   ('t1','PC-TUT-01','guardian','f1','Tutrice'),
+   ('x1','PC-ENS-02','teacher',NULL,'Autre'),
+   ('e1','PC-ELV-01','student','f1','Eleve un'),
+   ('e2','PC-ELV-02','student','f1','Eleve deux'),
+   ('e3','PC-TIT-03','guardian','f3','Adulte'),
+   ('e5','PC-ELV-05','student','f1','Eleve cinq'),
+   ('e6','PC-ELV-06','student','f1','Eleve six')) AS x(id, mat, role, foyer, prenom);
+INSERT INTO public.student_profiles(profile_id, student_type, interface_mode, cohorte) VALUES
+  (pg_temp.u('e1'), 'minor', 'child', 'enfant_6_9'),
+  (pg_temp.u('e2'), 'minor', 'standard', 'enfant_10_13'),
+  (pg_temp.u('e5'), 'minor', 'child', 'enfant_6_9'),
+  (pg_temp.u('e6'), 'minor', 'child', 'enfant_6_9');
+INSERT INTO public.student_profiles(profile_id, titulaire_profile_id, student_type, interface_mode, cohorte, niveau_declare)
+VALUES (pg_temp.u('e3'), pg_temp.u('e3'), 'autonomous', 'standard', 'adulte_18_plus', 'lecture_courante');
+-- Inscrits depuis 60 jours (les bornes de la date d'entree en dependent).
+UPDATE public.profiles SET created_at = pg_catalog.now() - interval '60 days'
+ WHERE id IN (pg_temp.u('e1'), pg_temp.u('e2'), pg_temp.u('e3'), pg_temp.u('e5'), pg_temp.u('e6'));
+
+-- Trois classes ouvertes sans etape (avant toute publication), des membres
+-- deja la ; e6 est sorti de sa classe.
+INSERT INTO public.groupes(id, teacher_id, type_public, seuil_max, libelle, weekday, hour_local, timezone_iana) VALUES
+ (pg_temp.u('c1'), pg_temp.u('b1'), 'enfant', 5, 'An-Nour PC', 1, 18, 'America/Toronto'),
+ (pg_temp.u('c2'), pg_temp.u('b1'), 'adulte', 6, 'Al-Huda PC', 2, 19, 'America/Toronto'),
+ (pg_temp.u('c3'), pg_temp.u('b1'), 'enfant', 5, 'Ar-Rahma PC', 3, 17, 'America/Toronto');
+INSERT INTO public.groupe_membres(groupe_id, student_id, joined_at) VALUES
+ (pg_temp.u('c1'), pg_temp.u('e1'), pg_catalog.now() - interval '30 days'),
+ (pg_temp.u('c1'), pg_temp.u('e2'), pg_catalog.now() - interval '30 days'),
+ (pg_temp.u('c2'), pg_temp.u('e3'), pg_catalog.now() - interval '30 days'),
+ (pg_temp.u('c1'), pg_temp.u('e6'), pg_catalog.now() - interval '40 days');
+UPDATE public.groupe_membres SET left_at = pg_catalog.now() - interval '10 days',
+       left_by = pg_temp.u('a1'), left_reason = 'depart'
+ WHERE student_id = pg_temp.u('e6');
+
+-- Programme publie par la direction (les bases d'un geste, puis la publication).
+SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
+SET LOCAL ROLE authenticated;
+INSERT INTO pc_ids VALUES ('v1', public.repartir_des_bases_programme());
+SELECT public.publier_version_programme((SELECT id FROM pc_ids WHERE cle = 'v1'), 'fixture');
+RESET ROLE;
+INSERT INTO pc_ids SELECT 'n' || n.ordre, n.id FROM public.programme_niveaux n
+ WHERE n.version_id = (SELECT id FROM pc_ids WHERE cle = 'v1');
+CREATE TEMP TABLE pc_notif AS SELECT pg_catalog.count(*) AS n FROM public.notifications;
+SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
+SET LOCAL ROLE authenticated;
+SELECT public.donner_niveau_classe(pg_temp.u('c1'), (SELECT id FROM pc_ids WHERE cle='n1'), 'Premiere etape');;
+RESET ROLE;
+UPDATE public.app_config SET value = '50'::jsonb WHERE key = 'programme.date_debut_plancher_annees';
+SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai(pg_temp.essai('SELECT public.dater_entree_etape(''' || pg_temp.u('e1') || ''', ((now() AT TIME ZONE ''Asia/Riyadh'')::date - interval ''49 years'')::date, ''x'')') = 'ok',
+  '50 ans : accepte');;
+RESET ROLE;
+UPDATE public.app_config SET value = '1'::jsonb WHERE key = 'programme.date_debut_plancher_annees';
+SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai(pg_temp.essai('SELECT public.dater_entree_etape(''' || pg_temp.u('e1') || ''', ((now() AT TIME ZONE ''Asia/Riyadh'')::date - interval ''2 years'')::date, ''x'')') LIKE 'date_sous_plancher: %',
+  '1 an : refuse au-dela');;
+RESET ROLE;
+
+ROLLBACK;
+
+-- ======================================================================
+-- 6 ter. Repartir des bases deux fois ne cree qu'un brouillon
+-- ======================================================================
+BEGIN;
+SET CONSTRAINTS ALL IMMEDIATE;
+
+CREATE FUNCTION pg_temp.qui(p_id uuid, p_role text, p_foyer uuid DEFAULT NULL) RETURNS void
+LANGUAGE plpgsql AS $$
+DECLARE v_jwt text := pg_catalog.json_build_object('aal', 'aal1', 'app_metadata',
+                        pg_catalog.json_build_object('role', p_role, 'household_id', p_foyer))::text;
+BEGIN
+  PERFORM pg_catalog.set_config('request.jwt.claim.sub', p_id::text, true);
+  PERFORM pg_catalog.set_config('test.uid', p_id::text, true);
+  PERFORM pg_catalog.set_config('request.jwt.claims', v_jwt, true);
+  PERFORM pg_catalog.set_config('test.jwt', v_jwt, true);
+END $$;
+CREATE FUNCTION pg_temp.vrai(p_condition boolean, p_label text) RETURNS void
+LANGUAGE plpgsql AS $$
+BEGIN
+  IF p_condition IS NOT TRUE THEN
+    RAISE EXCEPTION 'ROUGE : %', p_label;
+  END IF;
+  RAISE NOTICE 'OK %', p_label;
+END $$;
+CREATE FUNCTION pg_temp.u(p text) RETURNS uuid LANGUAGE sql AS
+  $$ SELECT pg_catalog.md5('plan-classe-a-' || p)::uuid $$;
+CREATE FUNCTION pg_temp.essai(p_sql text) RETURNS text
+LANGUAGE plpgsql AS $$
+BEGIN
+  EXECUTE p_sql;
+  RETURN 'ok';
+EXCEPTION
+  WHEN insufficient_privilege THEN RETURN 'refus';
+  WHEN OTHERS THEN RETURN SQLERRM;
+END $$;
+CREATE TEMP TABLE pc_ids(cle text PRIMARY KEY, id uuid);
+GRANT ALL ON pc_ids TO authenticated, anon;
+GRANT EXECUTE ON FUNCTION pg_temp.qui(uuid, text, uuid), pg_temp.vrai(boolean, text), pg_temp.u(text),
+  pg_temp.essai(text) TO authenticated, anon;
+
+INSERT INTO auth.users(id, email)
+SELECT pg_temp.u(x), 'pc-' || x || '@test.invalid'
+  FROM unnest(ARRAY['a1','b1','t1','e1','e2','e3','e5','e6','x1']) AS x;
+INSERT INTO public.households(id, timezone) VALUES
+  (pg_temp.u('f1'), 'America/Toronto'), (pg_temp.u('f3'), 'America/Toronto');
+INSERT INTO public.profiles(id, immutable_id, role, household_id, first_name, last_name, account_status, gender)
+SELECT pg_temp.u(x.id), x.mat, x.role::public.app_role,
+       CASE WHEN x.foyer IS NOT NULL THEN pg_temp.u(x.foyer) END,
+       x.prenom, 'PC', (CASE x.role WHEN 'teacher' THEN 'provisional_active' ELSE 'active' END)::public.account_status,
+       'female'::public.gender
+  FROM (VALUES
+   ('a1','PC-ADM-01','admin',NULL,'Direction'),
+   ('b1','PC-ENS-01','teacher',NULL,'Titulaire'),
+   ('t1','PC-TUT-01','guardian','f1','Tutrice'),
+   ('x1','PC-ENS-02','teacher',NULL,'Autre'),
+   ('e1','PC-ELV-01','student','f1','Eleve un'),
+   ('e2','PC-ELV-02','student','f1','Eleve deux'),
+   ('e3','PC-TIT-03','guardian','f3','Adulte'),
+   ('e5','PC-ELV-05','student','f1','Eleve cinq'),
+   ('e6','PC-ELV-06','student','f1','Eleve six')) AS x(id, mat, role, foyer, prenom);
+INSERT INTO public.student_profiles(profile_id, student_type, interface_mode, cohorte) VALUES
+  (pg_temp.u('e1'), 'minor', 'child', 'enfant_6_9'),
+  (pg_temp.u('e2'), 'minor', 'standard', 'enfant_10_13'),
+  (pg_temp.u('e5'), 'minor', 'child', 'enfant_6_9'),
+  (pg_temp.u('e6'), 'minor', 'child', 'enfant_6_9');
+INSERT INTO public.student_profiles(profile_id, titulaire_profile_id, student_type, interface_mode, cohorte, niveau_declare)
+VALUES (pg_temp.u('e3'), pg_temp.u('e3'), 'autonomous', 'standard', 'adulte_18_plus', 'lecture_courante');
+-- Inscrits depuis 60 jours (les bornes de la date d'entree en dependent).
+UPDATE public.profiles SET created_at = pg_catalog.now() - interval '60 days'
+ WHERE id IN (pg_temp.u('e1'), pg_temp.u('e2'), pg_temp.u('e3'), pg_temp.u('e5'), pg_temp.u('e6'));
+
+-- Trois classes ouvertes sans etape (avant toute publication), des membres
+-- deja la ; e6 est sorti de sa classe.
+INSERT INTO public.groupes(id, teacher_id, type_public, seuil_max, libelle, weekday, hour_local, timezone_iana) VALUES
+ (pg_temp.u('c1'), pg_temp.u('b1'), 'enfant', 5, 'An-Nour PC', 1, 18, 'America/Toronto'),
+ (pg_temp.u('c2'), pg_temp.u('b1'), 'adulte', 6, 'Al-Huda PC', 2, 19, 'America/Toronto'),
+ (pg_temp.u('c3'), pg_temp.u('b1'), 'enfant', 5, 'Ar-Rahma PC', 3, 17, 'America/Toronto');
+INSERT INTO public.groupe_membres(groupe_id, student_id, joined_at) VALUES
+ (pg_temp.u('c1'), pg_temp.u('e1'), pg_catalog.now() - interval '30 days'),
+ (pg_temp.u('c1'), pg_temp.u('e2'), pg_catalog.now() - interval '30 days'),
+ (pg_temp.u('c2'), pg_temp.u('e3'), pg_catalog.now() - interval '30 days'),
+ (pg_temp.u('c1'), pg_temp.u('e6'), pg_catalog.now() - interval '40 days');
+UPDATE public.groupe_membres SET left_at = pg_catalog.now() - interval '10 days',
+       left_by = pg_temp.u('a1'), left_reason = 'depart'
+ WHERE student_id = pg_temp.u('e6');
+
+-- Programme publie par la direction (les bases d'un geste, puis la publication).
+SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
+SET LOCAL ROLE authenticated;
+INSERT INTO pc_ids VALUES ('v1', public.repartir_des_bases_programme());
+SELECT public.publier_version_programme((SELECT id FROM pc_ids WHERE cle = 'v1'), 'fixture');
+RESET ROLE;
+INSERT INTO pc_ids SELECT 'n' || n.ordre, n.id FROM public.programme_niveaux n
+ WHERE n.version_id = (SELECT id FROM pc_ids WHERE cle = 'v1');
+CREATE TEMP TABLE pc_notif AS SELECT pg_catalog.count(*) AS n FROM public.notifications;
+SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
+SET LOCAL ROLE authenticated;
+INSERT INTO pc_ids VALUES ('b1', public.repartir_des_bases_programme());
+INSERT INTO pc_ids VALUES ('b2', public.repartir_des_bases_programme());
+RESET ROLE;
+SELECT pg_temp.vrai(
+  (SELECT id FROM pc_ids WHERE cle = 'b1') = (SELECT id FROM pc_ids WHERE cle = 'b2')
+  AND (SELECT pg_catalog.count(*) FROM public.programme_versions WHERE statut = 'brouillon') = 1,
+  'deux appels : le meme brouillon, aucun doublon');;
+RESET ROLE;
+
+UPDATE public.programme_niveaux SET objectifs = objectifs || ARRAY['un objectif de plus']
+ WHERE version_id = (SELECT id FROM pc_ids WHERE cle = 'b1') AND code_technique = 'BASES-1';
+SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
+SET LOCAL ROLE authenticated;
+INSERT INTO pc_ids VALUES ('b3', public.repartir_des_bases_programme());
+RESET ROLE;
+SELECT pg_temp.vrai(
+  (SELECT id FROM pc_ids WHERE cle = 'b3') <> (SELECT id FROM pc_ids WHERE cle = 'b1')
+  AND (SELECT pg_catalog.count(*) FROM public.programme_versions WHERE statut = 'brouillon') = 2,
+  'un brouillon des bases MODIFIE n''est pas rendu : on en cree un neuf');;
+RESET ROLE;
+
+UPDATE public.programme_cycles SET durees = jsonb_set(durees, '{adulte_18_plus,limite}', '21'::jsonb)
+ WHERE version_id = (SELECT id FROM pc_ids WHERE cle = 'b3');
+SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
+SET LOCAL ROLE authenticated;
+INSERT INTO pc_ids VALUES ('b4', public.repartir_des_bases_programme());
+RESET ROLE;
+SELECT pg_temp.vrai(
+  (SELECT id FROM pc_ids WHERE cle = 'b4') NOT IN (SELECT id FROM pc_ids WHERE cle IN ('b1','b3')),
+  'un niveau modifie compte aussi : le brouillon n''est pas « intact »');;
 RESET ROLE;
 
 ROLLBACK;
@@ -1370,8 +2104,10 @@ SELECT pg_temp.vrai((
      'public.eleves_sans_etape()'::regprocedure,
      'public.rattacher_eleves_et_classes()'::regprocedure,
      'public.etat_publication_brouillon(uuid)'::regprocedure,
-     'public.repartir_des_bases_programme()'::regprocedure])),
-  'huit fonctions : DEFINER, search_path vide, rien pour anon ni PUBLIC, EXECUTE a authenticated');
+     'public.repartir_des_bases_programme()'::regprocedure,
+     'public.apercu_date_limite(uuid, date, uuid)'::regprocedure,
+     'public.jour_academie_direction()'::regprocedure])),
+  'dix fonctions : DEFINER, search_path vide, rien pour anon ni PUBLIC, EXECUTE a authenticated');
 SELECT pg_temp.vrai((
   SELECT NOT pg_catalog.has_function_privilege('authenticated', 'private.fixer_entree_etape(uuid, date)', 'EXECUTE')
      AND NOT pg_catalog.has_function_privilege('anon', 'private.fixer_entree_etape(uuid, date)', 'EXECUTE')),
@@ -1379,7 +2115,9 @@ SELECT pg_temp.vrai((
 SELECT pg_temp.vrai((
   SELECT NOT pg_catalog.has_function_privilege('authenticated', 'private.jour_academie()', 'EXECUTE')
      AND NOT pg_catalog.has_function_privilege('authenticated', 'private.plancher_date_debut()', 'EXECUTE')
-     AND NOT pg_catalog.has_function_privilege('anon', 'private.jour_academie()', 'EXECUTE')),
+     AND NOT pg_catalog.has_function_privilege('anon', 'private.jour_academie()', 'EXECUTE')
+     AND NOT pg_catalog.has_function_privilege('authenticated', 'private.eleve_placable(uuid)', 'EXECUTE')
+     AND NOT pg_catalog.has_function_privilege('authenticated', 'private.version_bases_intacte(uuid)', 'EXECUTE')),
   'le jour de l''academie et le plancher ne sont ouverts a personne');
 
 ROLLBACK;

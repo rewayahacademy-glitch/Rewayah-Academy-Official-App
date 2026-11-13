@@ -204,6 +204,9 @@ void main() {
       await _presser(tester, find.text(p.dateEnvoyer));
       expect(plan.datations.length, 1);
       expect(plan.datations.single.$1, 'demo-classe-1-Mariam');
+      // Le calendrier borne sur le jour du serveur (La Mecque), pas sur celui
+      // de l'appareil : « OK » choisit le dernier jour permis.
+      expect(plan.datations.single.$2, FauxPlanClasse.jour);
       expect(plan.datations.single.$3, p.dateMotifs.avant);
       expect(find.text(p.dateEnvoyer), findsNothing);
     });
@@ -226,6 +229,55 @@ void main() {
         );
       },
     );
+  });
+
+  group('jour de debut : la date limite qui en resulte, dite avant', () {
+    Future<void> choisirJour(WidgetTester tester, FauxPlanClasse plan) async {
+      await _fiche(tester, plan);
+      final Finder ligne = find.descendant(
+        of: find.widgetWithText(ListTile, 'Mariam Exemple'),
+        matching: find.byType(MenuActions),
+      );
+      await _presser(tester, ligne);
+      await _presser(tester, find.text(p.dateAction).last);
+      await _presser(tester, _cle('champ-date'));
+      await _presser(tester, find.text('OK'));
+    }
+
+    testWidgets('une date limite a venir : le serveur la calcule, la feuille '
+        'la dit', (tester) async {
+      final FauxPlanClasse plan = FauxPlanClasse();
+      await choisirJour(tester, plan);
+      expect(plan.apercusDemandes.single.jour, FauxPlanClasse.jour);
+      expect(find.text(p.apercuLimite(date: '22/01/2027')), findsOneWidget);
+    });
+
+    testWidgets('une date limite deja passee : phrase claire, aucun message, '
+        'la direction confirme', (tester) async {
+      final FauxPlanClasse plan = FauxPlanClasse(
+        apercu: ApercuDateLimite(
+          dateLimite: DateTime(2024, 1, 20),
+          dejaPassee: true,
+        ),
+      );
+      await choisirJour(tester, plan);
+      expect(find.text(p.apercuPassee(date: '20/01/2024')), findsOneWidget);
+      // La direction confirme en connaissance de cause : le geste reste
+      // possible (le bouton n'est pas retire).
+      await _presser(tester, find.text(p.dateMotifs.avant));
+      await _presser(tester, find.text(p.dateEnvoyer));
+      expect(plan.datations.length, 1);
+    });
+
+    testWidgets('duree inconnue : la phrase le dit, sans date inventee', (
+      tester,
+    ) async {
+      final FauxPlanClasse plan = FauxPlanClasse(
+        apercu: const ApercuDateLimite(dateLimite: null, dejaPassee: false),
+      );
+      await choisirJour(tester, plan);
+      expect(find.text(p.apercuInconnue), findsOneWidget);
+    });
   });
 
   group('Diagnostics : qui n\'a pas d\'etape', () {
@@ -278,6 +330,45 @@ void main() {
       await _presser(tester, find.text(p.sansEtape.rattacherEnvoyer));
       expect(find.text(p.refus.aucunProgrammePublie), findsOneWidget);
       expect(find.text(p.sansEtape.rattacherFait), findsNothing);
+    });
+
+    testWidgets('un lecteur en attente d\'entretien se place depuis la liste', (
+      tester,
+    ) async {
+      final FauxDiagnostics diag = FauxDiagnostics();
+      await monter(tester, FauxPlanClasse(), diag);
+      // Seule la ligne « attente d'entretien » offre le geste.
+      expect(_cle('placer-e3'), findsOneWidget);
+      expect(_cle('placer-e1'), findsNothing);
+      await _presser(tester, _cle('placer-e3'));
+      expect(find.textContaining(p.placerIntro), findsOneWidget);
+      await _presser(tester, find.text(p.placerEnvoyer).last);
+      expect(find.text(p.placerManque), findsOneWidget);
+      expect(diag.decisions, isEmpty);
+      await _presser(tester, find.text('Sourates').last);
+      await _presser(tester, find.text(t.motifs.placement.lecture).last);
+      await _presser(tester, find.text(p.placerEnvoyer).last);
+      expect(diag.decisions.length, 1);
+      expect(diag.decisions.single.$1, 'e3');
+      expect(diag.decisions.single.$2, 'n3');
+      expect(diag.decisions.single.$4, isNull);
+    });
+
+    testWidgets('le placement d\'un lecteur dit la date limite qui resulte du '
+        'jour de debut', (tester) async {
+      final FauxPlanClasse plan = FauxPlanClasse(
+        apercu: ApercuDateLimite(
+          dateLimite: DateTime(2023, 5, 1),
+          dejaPassee: true,
+        ),
+      );
+      await monter(tester, plan, FauxDiagnostics());
+      await _presser(tester, _cle('placer-e3'));
+      await _presser(tester, find.text('Sourates').last);
+      await _presser(tester, _cle('champ-date').last);
+      await _presser(tester, find.text('OK'));
+      expect(find.text(p.apercuPassee(date: '01/05/2023')), findsOneWidget);
+      expect(plan.apercusDemandes.last.niveauId, 'n3');
     });
 
     testWidgets('le placement envoie le jour de debut quand on en donne un', (

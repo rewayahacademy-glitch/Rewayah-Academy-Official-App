@@ -132,7 +132,7 @@ class EleveSansEtape {
   /// Pourquoi il n'a pas d'etape.
   final RaisonSansEtape raison;
 
-  /// Sa date d'inscription, qui borne la date d'entree qu'on peut lui donner.
+  /// Sa date d'inscription (information : elle ne borne aucune date de debut).
   final DateTime? inscritLe;
 
   /// Ce qui s'affiche pour le nommer.
@@ -290,6 +290,31 @@ class EtatPublication {
   final String? detail;
 }
 
+/// Ce que donnerait un jour de debut, calcule par le serveur AVANT de confirmer :
+/// la date limite de l'etape qui en resulte, et si elle est deja passee.
+@immutable
+class ApercuDateLimite {
+  /// Cree l'apercu.
+  const ApercuDateLimite({required this.dateLimite, required this.dejaPassee});
+
+  /// Lit la reponse de `apercu_date_limite`.
+  factory ApercuDateLimite.depuisJson(Map<String, dynamic> json) =>
+      ApercuDateLimite(
+        dateLimite: DateTime.tryParse(json['date_limite'] as String? ?? ''),
+        dejaPassee: json['deja_passee'] as bool? ?? false,
+      );
+
+  /// La date limite qui en resulte, nulle quand le serveur ne peut pas la
+  /// calculer (duree ou tranche d'age inconnue).
+  final DateTime? dateLimite;
+
+  /// Vrai quand cette date limite est deja passee.
+  final bool dejaPassee;
+}
+
+/// Un apercu se demande pour un eleve, un jour et, pour un placement, une etape.
+typedef CleApercu = ({String studentId, DateTime jour, String? niveauId});
+
 /// Les gestes de la direction du lot PLAN-DE-CLASSE A. Chaque appel est un
 /// geste serveur, reserve a la direction et trace au journal.
 abstract interface class ServicePlanClasse {
@@ -319,8 +344,19 @@ abstract interface class ServicePlanClasse {
   /// Pourquoi un brouillon se publie ou non.
   Future<EtatPublication> etatPublication(String versionId);
 
-  /// Cree une version neuve remplie des bases ; rend son identifiant.
+  /// Cree une version neuve remplie des bases ; rend son identifiant (celui du
+  /// brouillon des bases jamais modifie, s'il existe deja).
   Future<String> repartirDesBases();
+
+  /// La date limite qui resulterait d'un jour de debut (le serveur la calcule).
+  Future<ApercuDateLimite> apercuDateLimite({
+    required String studentId,
+    required DateTime jour,
+    String? niveauId,
+  });
+
+  /// Le jour de reference de l'academie (La Mecque), rendu par le serveur.
+  Future<DateTime> jourAcademie();
 }
 
 /// Un jour de calendrier ecrit `AAAA-MM-JJ`, comme le serveur le lit.
@@ -398,6 +434,28 @@ class ServicePlanClasseSupabase implements ServicePlanClasse {
       );
 
   @override
+  Future<ApercuDateLimite> apercuDateLimite({
+    required String studentId,
+    required DateTime jour,
+    String? niveauId,
+  }) async => ApercuDateLimite.depuisJson(
+    await _client.rpc<Map<String, dynamic>>(
+      'apercu_date_limite',
+      params: <String, dynamic>{
+        'p_student_id': studentId,
+        'p_date': jourPourServeur(jour),
+        'p_niveau_id': niveauId,
+      },
+    ),
+  );
+
+  @override
+  Future<DateTime> jourAcademie() async {
+    final String brut = await _client.rpc<String>('jour_academie_direction');
+    return DateTime.parse(brut);
+  }
+
+  @override
   Future<String> repartirDesBases() =>
       _client.rpc<String>('repartir_des_bases_programme');
 }
@@ -414,6 +472,24 @@ final FutureProviderFamily<EtapeClasse?, String> etapeClasseProvider =
       ref.watch(personnesModifieesProvider);
       return ref.watch(servicePlanClasseProvider).etapeClasse(groupeId);
     });
+
+/// Le jour de reference de l'academie, lu du serveur : les calendriers de la
+/// direction bornent sur CE jour, jamais sur celui de l'appareil.
+final FutureProvider<DateTime> jourAcademieProvider = FutureProvider<DateTime>(
+  (Ref ref) => ref.watch(servicePlanClasseProvider).jourAcademie(),
+);
+
+/// L'apercu de la date limite d'un jour de debut (calcule par le serveur).
+final FutureProviderFamily<ApercuDateLimite, CleApercu>
+apercuDateLimiteProvider = FutureProvider.family<ApercuDateLimite, CleApercu>(
+  (Ref ref, CleApercu cle) => ref
+      .watch(servicePlanClasseProvider)
+      .apercuDateLimite(
+        studentId: cle.studentId,
+        jour: cle.jour,
+        niveauId: cle.niveauId,
+      ),
+);
 
 /// Qui n'a pas d'etape, pour l'ecran Diagnostics.
 final FutureProvider<PlacementsAFaire> placementsAFaireProvider =

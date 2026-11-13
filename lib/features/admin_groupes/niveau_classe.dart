@@ -67,11 +67,132 @@ class LigneEtapeClasse extends ConsumerWidget {
   }
 }
 
-/// Le plus ancien jour que le calendrier propose : large a dessein. Le plancher
-/// (un reglage, dix ans par defaut) est decide et dit par le serveur, jamais
-/// recopie ici ; un jour plus ancien que lui est refuse avec sa date.
-DateTime premierJourCalendrier(DateTime aujourdhui) =>
-    DateTime(aujourdhui.year - 30, aujourdhui.month, aujourdhui.day);
+/// Le champ « jour de debut » : le calendrier borne sur le jour de reference de
+/// l'academie lu du serveur (La Mecque), jamais sur celui de l'appareil. Il
+/// remonte large (30 ans) a dessein : le plancher (un reglage, dix ans par
+/// defaut) est decide et dit par le serveur, jamais recopie ici.
+class ChampJourDebut extends ConsumerWidget {
+  /// Cree le champ.
+  const ChampJourDebut({
+    required this.libelle,
+    required this.aide,
+    required this.valeur,
+    required this.onChoix,
+    super.key,
+  });
+
+  /// Le nom du champ.
+  final String libelle;
+
+  /// La phrase sous le champ.
+  final String aide;
+
+  /// Le jour choisi, nul tant que rien n'est choisi.
+  final DateTime? valeur;
+
+  /// Appele avec le jour choisi.
+  final ValueChanged<DateTime> onChoix;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final AsyncValue<DateTime> jour = ref.watch(jourAcademieProvider);
+    if (jour.hasError) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Text(t.admin.planClasse.jourErreur),
+          Ecart.vMd,
+          LienFleche(
+            libelle: t.admin.planClasse.jourRelire,
+            onPress: () => ref.invalidate(jourAcademieProvider),
+          ),
+        ],
+      );
+    }
+    if (!jour.hasValue) return const Skeleton.liste(lignes: 1);
+    final DateTime aujourdhui = jour.requireValue;
+    return ChampDate(
+      libelle: libelle,
+      aide: aide,
+      valeur: valeur,
+      aujourdhui: aujourdhui,
+      premier: DateTime(aujourdhui.year - 30, aujourdhui.month, aujourdhui.day),
+      dernier: aujourdhui,
+      onChoix: onChoix,
+    );
+  }
+}
+
+/// Ce que donnerait le jour de debut choisi : la date limite de l'etape qui en
+/// resulte, calculee par le serveur, et une phrase claire quand elle est deja
+/// passee. Aucun message n'est envoye ; la direction confirme en connaissance de
+/// cause.
+class ApercuLimite extends ConsumerWidget {
+  /// Cree l'apercu.
+  const ApercuLimite({
+    required this.studentId,
+    required this.jour,
+    this.niveauId,
+    super.key,
+  });
+
+  /// L'eleve.
+  final String studentId;
+
+  /// Le jour de debut choisi.
+  final DateTime jour;
+
+  /// L'etape d'un placement a decider ; nulle : l'etape en cours de l'eleve.
+  final String? niveauId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final AsyncValue<ApercuDateLimite> apercu = ref.watch(
+      apercuDateLimiteProvider((
+        studentId: studentId,
+        jour: jour,
+        niveauId: niveauId,
+      )),
+    );
+    final TextTheme textes = Theme.of(context).textTheme;
+    final Widget contenu = switch (apercu) {
+      AsyncValue<ApercuDateLimite>(hasError: true) => Text(
+        t.admin.planClasse.apercuErreur,
+        style: textes.bodySmall,
+      ),
+      AsyncValue<ApercuDateLimite>(hasValue: true) =>
+        switch (apercu.requireValue) {
+          ApercuDateLimite(dateLimite: null) => Text(
+            t.admin.planClasse.apercuInconnue,
+            style: textes.bodySmall,
+          ),
+          final ApercuDateLimite a when a.dejaPassee => Text(
+            t.admin.planClasse.apercuPassee(
+              date: ChampDate.ecrire(a.dateLimite!),
+            ),
+            style: AppPalette.of(context).inkAlert
+                .applyTo(textes.bodyMedium ?? const TextStyle()),
+          ),
+          final ApercuDateLimite a => Text(
+            t.admin.planClasse.apercuLimite(
+              date: ChampDate.ecrire(a.dateLimite!),
+            ),
+            style: textes.bodySmall,
+          ),
+        },
+      _ => const SizedBox.shrink(),
+    };
+    return Semantics(
+      liveRegion: true,
+      container: true,
+      child: Padding(
+        padding: const EdgeInsetsDirectional.only(top: AppSpacing.md),
+        child: contenu,
+      ),
+    );
+  }
+}
 
 /// Le texte d'un refus du serveur, en mots simples : ce qui s'est passe et ce
 /// qu'il reste a faire (K-59). Le message brut n'est repris que pour un refus
@@ -374,8 +495,8 @@ class _Echec extends StatelessWidget {
 }
 
 /// Ouvre « Dire quand il a commence » pour un eleve deja en cours : un jour
-/// passe, apres l'inscription ; le serveur refuse le reste et la feuille dit
-/// pourquoi.
+/// passe, meme avant la creation de son compte ; le serveur refuse le futur et
+/// ce qui est sous le plancher, et la feuille dit pourquoi.
 void ouvrirDaterEntreeEtape(
   BuildContext context,
   WidgetRef ref, {
@@ -414,20 +535,17 @@ class _FeuilleDaterEtat extends ConsumerState<_FeuilleDater> {
 
   @override
   Widget build(BuildContext context) {
-    final DateTime aujourdhui = ref.read(horlogeFormulairesProvider)();
-
     return FeuilleGesteDirection(
       intro: '${widget.libelleEleve}\n${t.admin.planClasse.dateIntro}',
       champs: <Widget>[
-        ChampDate(
+        ChampJourDebut(
           libelle: t.admin.planClasse.dateChamp,
           aide: t.admin.planClasse.dateAide,
           valeur: _jour,
-          aujourdhui: aujourdhui,
-          premier: premierJourCalendrier(aujourdhui),
-          dernier: aujourdhui,
           onChoix: (DateTime j) => setState(() => _jour = j),
         ),
+        if (_jour != null)
+          ApercuLimite(studentId: widget.studentId, jour: _jour!),
       ],
       manque: () => _jour == null ? t.admin.planClasse.dateManque : null,
       motifs: <String>[

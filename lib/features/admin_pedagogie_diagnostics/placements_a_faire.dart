@@ -3,15 +3,20 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/admin/service_diagnostics.dart';
 import '../../core/admin/service_plan_classe.dart';
+import '../../core/admin/service_programme.dart';
+import '../../core/formulaires/motifs_proposes.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/lien_fleche.dart';
+import '../../core/widgets/selecteur_niveau_programme.dart';
 import '../../core/widgets/skeleton.dart';
-import '../admin_groupes/niveau_classe.dart' show refusPlanClasse;
+import '../admin_groupes/niveau_classe.dart'
+    show ApercuLimite, ChampJourDebut, FeuilleGesteDirection, refusPlanClasse;
 
 /// PLAN-DE-CLASSE A : qui n'a pas d'etape, et pourquoi, d'un seul regard, avec
 /// le geste de rattachement. Le serveur dit la raison de chaque eleve
@@ -129,6 +134,17 @@ class _Liste extends ConsumerWidget {
                     '${e.classe}. ${_raison(e.raison)}',
                     style: textes.bodySmall,
                   ),
+                  // Un lecteur en attente d'entretien ne se place par aucune
+                  // file : la direction decide son etape ici.
+                  if (e.raison == RaisonSansEtape.attenteEntretien)
+                    LienFleche(
+                      key: ValueKey<String>('placer-${e.studentId}'),
+                      libelle: t.admin.planClasse.placerAction,
+                      libelleSemantique:
+                          '${t.admin.planClasse.placerAction} : ${e.libelle}',
+                      alignerEnDebut: true,
+                      onPress: () => _ouvrirPlacement(context, ref, e),
+                    ),
                   Ecart.vSm,
                 ],
               ],
@@ -151,6 +167,18 @@ class _Liste extends ConsumerWidget {
           ),
         ],
       ],
+    );
+  }
+
+  void _ouvrirPlacement(
+    BuildContext context,
+    WidgetRef ref,
+    EleveSansEtape eleve,
+  ) {
+    AppBottomSheet.ouvrir<void>(
+      context,
+      titre: t.admin.planClasse.placerTitre,
+      constructeur: (BuildContext contexte) => _FeuillePlacer(eleve: eleve),
     );
   }
 
@@ -232,6 +260,94 @@ class _FeuilleRattachementEtat extends ConsumerState<_FeuilleRattachement> {
           ),
         ],
       ],
+    );
+  }
+}
+
+/// Le placement d'un lecteur en attente d'entretien : etape de la version
+/// publiee, jour de debut s'il etait deja en cours (avec la date limite qui en
+/// resulte, calculee par le serveur), motif, puis le geste.
+class _FeuillePlacer extends ConsumerStatefulWidget {
+  const _FeuillePlacer({required this.eleve});
+
+  final EleveSansEtape eleve;
+
+  @override
+  ConsumerState<_FeuillePlacer> createState() => _FeuillePlacerEtat();
+}
+
+class _FeuillePlacerEtat extends ConsumerState<_FeuillePlacer> {
+  String? _niveauId;
+  DateTime? _depuis;
+
+  @override
+  Widget build(BuildContext context) {
+    final AsyncValue<VersionProgramme?> version = ref.watch(
+      versionActiveProgrammeProvider,
+    );
+    if (version.hasError) {
+      return Text(t.admin.planClasse.programmeErreur);
+    }
+    if (!version.hasValue) return const Skeleton.liste(lignes: 3);
+    final VersionProgramme? publiee = version.requireValue;
+    if (publiee == null) return Text(t.admin.planClasse.aucunProgramme);
+    final AsyncValue<List<NiveauProgramme>> niveaux = ref.watch(
+      niveauxProgrammeProvider(publiee.id),
+    );
+    if (niveaux.hasError) return Text(t.admin.planClasse.programmeErreur);
+    if (!niveaux.hasValue) return const Skeleton.liste(lignes: 3);
+    final TextTheme textes = Theme.of(context).textTheme;
+    return FeuilleGesteDirection(
+      intro: '${widget.eleve.libelle}\n${t.admin.planClasse.placerIntro}',
+      champs: <Widget>[
+        Text(t.admin.planClasse.placerChamp, style: textes.titleMedium),
+        Ecart.vMd,
+        SelecteurNiveauProgramme(
+          niveaux: niveaux.requireValue,
+          selectionne: _niveauId,
+          onSelectionner: (String id) => setState(() => _niveauId = id),
+        ),
+        Ecart.vLg,
+        ChampJourDebut(
+          libelle: t.admin.planClasse.debutChamp,
+          aide: t.admin.planClasse.debutAide,
+          valeur: _depuis,
+          onChoix: (DateTime j) => setState(() => _depuis = j),
+        ),
+        if (_depuis != null) ...<Widget>[
+          Ecart.vSm,
+          LienFleche(
+            libelle: t.admin.planClasse.debutRetirer,
+            onPress: () => setState(() => _depuis = null),
+          ),
+          if (_niveauId != null)
+            ApercuLimite(
+              studentId: widget.eleve.studentId,
+              jour: _depuis!,
+              niveauId: _niveauId,
+            ),
+        ],
+      ],
+      manque: () => _niveauId == null ? t.admin.planClasse.placerManque : null,
+      motifs: MotifsProposes.placement(),
+      libelleEnvoyer: t.admin.planClasse.placerEnvoyer,
+      onEnvoyer: (String motif) => ref
+          .read(serviceDiagnosticsProvider)
+          .deciderPlacement(
+            studentId: widget.eleve.studentId,
+            niveauId: _niveauId!,
+            motif: motif,
+            depuis: _depuis,
+          ),
+      messageErreur: (Object e) => refusPlanClasse(
+        e,
+        (String brut) => t.admin.planClasse.placerErreur(message: brut),
+      ),
+      onSucces: () {
+        ref
+          ..invalidate(placementsAFaireProvider)
+          ..invalidate(diagnosticsATraiterProvider);
+      },
     );
   }
 }

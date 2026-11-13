@@ -72,8 +72,8 @@ abstract interface class ServiceDiagnostics {
   /// Refuse si l'eleve a deja un niveau decide (voir Progression).
   ///
   /// [depuis] : le jour ou l'eleve a vraiment commence, quand il etait deja en
-  /// cours (jamais dans le futur, jamais avant son inscription : le serveur
-  /// refuse). Sans date, l'entree est le jour du geste.
+  /// cours (jamais dans le futur, jamais sous le plancher reglable : le serveur
+  /// refuse et dit la borne). Sans date, l'entree est le jour du geste.
   Future<void> deciderPlacement({
     required String studentId,
     required String niveauId,
@@ -108,24 +108,17 @@ class ServiceDiagnosticsSupabase implements ServiceDiagnostics {
     required String niveauId,
     required String motif,
     DateTime? depuis,
-  }) => depuis == null
-      ? _client.rpc<void>(
-          'decider_placement',
-          params: <String, dynamic>{
-            'p_student_id': studentId,
-            'p_niveau_id': niveauId,
-            'p_motif': motif,
-          },
-        )
-      : _client.rpc<void>(
-          'decider_placement_depuis',
-          params: <String, dynamic>{
-            'p_student_id': studentId,
-            'p_niveau_id': niveauId,
-            'p_motif': motif,
-            'p_depuis': jourPourServeur(depuis),
-          },
-        );
+  }) => _client.rpc<void>(
+    // Toujours le geste du lot PLAN-DE-CLASSE A : il place aussi l'adulte
+    // titulaire qui est lui-meme eleve, ce que decider_placement ne fait pas.
+    'decider_placement_depuis',
+    params: <String, dynamic>{
+      'p_student_id': studentId,
+      'p_niveau_id': niveauId,
+      'p_motif': motif,
+      'p_depuis': depuis == null ? null : jourPourServeur(depuis),
+    },
+  );
 }
 
 /// Le service des diagnostics employe par l'application.

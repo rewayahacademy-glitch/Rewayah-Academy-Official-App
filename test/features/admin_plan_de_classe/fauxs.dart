@@ -46,7 +46,17 @@ class FauxPlanClasse implements ServicePlanClasse {
       ],
     ),
     this.etat = const EtatPublication(raison: RaisonBrouillon.publiable),
+    this.apercu,
   });
+
+  /// Le jour de reference rendu par le « serveur » : fixe, pour que les tests
+  /// ne dependent ni de l'horloge ni du jour de l'appareil.
+  static final DateTime jour = DateTime(2026, 11, 13);
+
+  /// L'apercu rendu (par defaut : une date limite dix semaines apres le jour
+  /// choisi, pas encore passee).
+  ApercuDateLimite? apercu;
+  final List<CleApercu> apercusDemandes = <CleApercu>[];
 
   EtapeClasse etape;
   PlacementsAFaire placements;
@@ -117,6 +127,23 @@ class FauxPlanClasse implements ServicePlanClasse {
 
   @override
   Future<EtatPublication> etatPublication(String versionId) async => etat;
+
+  @override
+  Future<ApercuDateLimite> apercuDateLimite({
+    required String studentId,
+    required DateTime jour,
+    String? niveauId,
+  }) async {
+    apercusDemandes.add((studentId: studentId, jour: jour, niveauId: niveauId));
+    return apercu ??
+        ApercuDateLimite(
+          dateLimite: jour.add(const Duration(days: 70)),
+          dejaPassee: false,
+        );
+  }
+
+  @override
+  Future<DateTime> jourAcademie() async => jour;
 
   @override
   Future<String> repartirDesBases() async {

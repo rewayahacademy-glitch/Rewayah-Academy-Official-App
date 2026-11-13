@@ -18,14 +18,14 @@
 
 ## Migration
 
-`supabase/migrations/20261124600000_plan_de_classe_a_gestes_direction.sql`  : un fichier, additif, zéro DROP, DELETE ni TRUNCATE (grep ; `apply_migration` ne demandera donc pas de seconde confirmation). Pas de `BEGIN;`/`COMMIT;` dans le fichier, comme les migrations du lot 1 : c'est l'enveloppe de collage (`tool/envelopper_pour_editeur_sql.py`) qui l'exécute en une seule transaction. Un bloc de garde (le lot 1 doit être installé, sinon refus net), une fonction privée, huit fonctions publiques, toutes `SECURITY DEFINER`, `search_path` vide, `REVOKE` de PUBLIC, anon et service_role, `EXECUTE` à `authenticated` ; la garde est la direction (`app_role() = 'admin'` et compte valide, exigence positive). Rejouable (`CREATE OR REPLACE`). Aucune table, aucune colonne.
+`supabase/migrations/20261124600000_plan_de_classe_a_gestes_direction.sql`  : un fichier, additif, zéro DROP, DELETE ni TRUNCATE (grep ; `apply_migration` ne demandera donc pas de seconde confirmation). Pas de `BEGIN;`/`COMMIT;` dans le fichier, comme les migrations du lot 1 : c'est l'enveloppe de collage (`tool/envelopper_pour_editeur_sql.py`) qui l'exécute en une seule transaction. Un bloc de garde qui contrôle ce que la migration utilise vraiment (les neuf objets du lot 1 : tout vient de `20261123900000` ; `850000` et `905000` ne sont pas utilisés ici, sinon refus net), cinq fonctions privées (`jour_academie`, `plancher_date_debut`, `eleve_placable`, `fixer_entree_etape`, `version_bases_intacte`, toutes fermées à tous), dix fonctions publiques, toutes `SECURITY DEFINER`, `search_path` vide, `REVOKE` de PUBLIC, anon et service_role, `EXECUTE` à `authenticated` ; la garde est la direction (`app_role() = 'admin'` et compte valide, exigence positive). Rejouable (`CREATE OR REPLACE`). Aucune table, aucune colonne.
 
 **Ordre d'installation** : `20261123850000`, `20261123900000`, `20261123905000` (lot 1), puis cette migration. Entre l'installation de cette migration et la fusion de la branche, rien ne change pour personne : aucun écran de `main` n'appelle ces fonctions.
 
 ## Preuves
 
-- `supabase/tests/scenarios_plan_de_classe_a.sql` : 10 transactions séparées (une par enchaînement de gestes, chacune sur sa fixture), 71 vérifications. Rejoué sur une base neuve (stub d'authentification puis toutes les migrations) : vert. **Contre-épreuve** : 29 mutations (chaque garde de direction, chaque refus métier, chaque borne de date, l'annulation de l'essai de publication, deux `REVOKE`, le `search_path`, l'ouverture de l'aide privée, la protection des étapes existantes, l'exclusion des élèves sortis) : chacune fait rougir le scénario.
-- Tests d'écran par le vrai routeur (`test/features/admin_plan_de_classe/plan_de_classe_a_test.dart`) : 16 tests (geste envoyé, phrase du refus, bouton jamais grisé, motif jamais pré-choisi, états chargement / contenu / vide / erreur de la section).
+- `supabase/tests/scenarios_plan_de_classe_a.sql` : 15 transactions séparées (une par enchaînement de gestes, chacune sur sa fixture), 106 vérifications. Rejoué sur une base neuve (stub d'authentification puis toutes les migrations) : vert. **Contre-épreuve** : 46 mutations (chaque garde de direction, chaque refus métier, chaque borne de date et le plancher, sa lecture sûre, l'adulte titulaire et le tuteur refusé, la date reposée dans les deux sens, le recul conservé, l'aperçu, l'idempotence de « repartir des bases », l'annulation de l'essai de publication, les `REVOKE`, le `search_path`, l'ouverture des aides privées, la protection des étapes existantes, l'exclusion des élèves sortis ou supprimés) : chacune fait rougir le scénario.
+- Tests d'écran par le vrai routeur (`test/features/admin_plan_de_classe/plan_de_classe_a_test.dart`) : 22 tests (geste envoyé, phrase du refus, bouton jamais grisé, motif jamais pré-choisi, états chargement / contenu / vide / erreur de la section).
 - Captures : `test/capture/plan_de_classe_a_capture_test.dart` (390 et 1440, clair et sombre, français et arabe), sautées sans `CAPTURE_DIR`.
 
 ## Hypothèses et arbitrages
@@ -41,6 +41,16 @@ Arbitrés par l'architecte pédagogique le 13/11/2026 (le directeur ne répond p
 7. Écrans de la direction : l'Interface guidée (libellé toujours visible, cibles de 72) ne concerne pas ces écrans.
 
 Le calendrier de l'écran remonte large (30 ans) : le plancher est dit par le serveur, jamais recopié côté Flutter.
+
+## Règles ajoutées après la relecture indépendante du 13/11 (arbitrées par l'architecte)
+
+- **Adulte titulaire.** Un adulte élève autonome a le rôle `guardian` ; `decider_placement` (main) ne le place pas. `decider_placement_depuis` place aussi « un titulaire adulte qui est lui-même élève autonome » (`student_profiles.titulaire_profile_id` = son identifiant, type autonome), jamais un tuteur qui n'est pas élève, jamais un compte supprimé ; elle reprend les refus et la trace de `decider_placement`, qui reste intacte. L'écran Diagnostics offre « Décider son placement » sur chaque ligne « attente de l'entretien ».
+- **Date reposée.** Elle REMPLACE celle qu'on avait posée. L'entrée dans le niveau suit quand elle coïncide avec l'entrée dans l'étape ; si l'élève est monté d'une étape précédente (les deux dates diffèrent), elle reste et n'est abaissée que si la nouvelle date la précède. Limite connue : sans historique des entrées d'étape, un élève monté puis daté avant son entrée dans le niveau n'a plus que la date posée comme entrée dans le niveau.
+- **`recul_jours` est conservé** quand la date est reposée. **Pour le lot 2** : la date limite se recalcule depuis l'entrée dans l'étape + `recul_jours` ; ce lot ne touche jamais `recul_jours`.
+- **Date limite déjà passée à la pose.** Avant de confirmer, la feuille montre la date limite qui en résulte (`apercu_date_limite`, calculée par le serveur) et dit en mots simples quand elle est déjà passée ; aucune notification, la direction confirme en connaissance de cause. **DETTE, question pour le directeur** : faut-il qu'un élève repris en cours reçoive un délai neuf plutôt qu'une limite déjà passée ?
+- **Plancher lu sans sûreté** corrigé : entier de 1 à 50, sinon dix ans, jamais d'erreur brute (0, négatif, texte, décimal, booléen, 100000, null JSON, exposant énorme).
+- **Repartir des bases est idempotent** : un brouillon « des bases » jamais modifié (les quatre étapes et le niveau exactement comme `remplir_version_bases` les écrit) est rendu au lieu d'en créer un autre.
+- **Le calendrier borne sur le jour du serveur** (`jour_academie_direction`, jour de La Mecque), jamais sur celui de l'appareil.
 
 ## Non prouvé, bloqué ou à faire par un autre
 
