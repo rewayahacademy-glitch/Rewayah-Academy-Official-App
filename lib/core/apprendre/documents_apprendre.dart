@@ -8,8 +8,9 @@
 ///
 /// - le **type** de la planche (audio, video, lien externe, sinon document) et
 ///   la **description** telle que la direction l'a ecrite (jamais inventee) ;
-/// - tout document publie est un document **de l'academie** (rien n'est vendu),
-///   donc du premier rayon ; le second rayon reste vide, honnetement ;
+/// - le **rayon** est celui que le serveur donne a la ressource (`cours` ou
+///   `plus_loin`), dans l'ordre de la direction ; rien n'est vendu, le second
+///   rayon est une place, vide tant que rien n'y est range ;
 /// - un lien externe s'ouvre par **sa fiche** (la liste du serveur ne porte pas
 ///   l'adresse, la fiche la relit et demande la confirmation avant de quitter
 ///   l'application : le chemin de la Bibliotheque une, un seul) ;
@@ -31,6 +32,7 @@ import '../tc_bibliotheque/capacite_lecture_coran.dart';
 import '../tc_bibliotheque/couverture_ressource.dart';
 import '../tc_bibliotheque/donnees_catalogue.dart';
 import '../tc_bibliotheque/library_resource.dart';
+import '../tc_bibliotheque/port_catalogue.dart' show EchecCatalogue;
 import 'document_planche.dart';
 
 /// L'identifiant de la carte du Coran.
@@ -103,11 +105,21 @@ List<DocumentPlanche> documentsDepuisCatalogue(
 }) {
   return <DocumentPlanche>[
     if (avecCoran) documentCoran(),
-    for (final LibraryResource r in ressources)
+    // Dans l'ordre que la direction a donne (`ordre`, croissant ; stable).
+    for (final LibraryResource r
+        in <LibraryResource>[...ressources]..sort(
+          (LibraryResource a, LibraryResource b) => a.ordre.compareTo(b.ordre),
+        ))
       if (r.publiee && r.resourceType != TypeRessource.quran)
         _documentDe(r, RayonPlanche.documentsDesCours),
   ];
 }
+
+/// Le rayon de la planche pour le code du rayon du serveur (`rayon` de la
+/// ressource : `cours` ou `plus_loin`).
+RayonPlanche _rayonDe(String code) => code == codeRayonPlusLoin
+    ? RayonPlanche.pourAllerPlusLoin
+    : RayonPlanche.documentsDesCours;
 
 DocumentPlanche _documentDe(LibraryResource r, RayonPlanche rayon) =>
     DocumentPlanche(
@@ -120,22 +132,38 @@ DocumentPlanche _documentDe(LibraryResource r, RayonPlanche rayon) =>
         TypeRessource.lienExterne => TypeDocumentPlanche.lienExterne,
         _ => TypeDocumentPlanche.document,
       },
-      rayon: rayon,
+      rayon: rayon == RayonPlanche.documentsDesCours
+          ? _rayonDe(r.rayon)
+          : rayon,
       ouverture: OuvrirDansLApplication(cheminFicheDocument(r.id)),
       couverture: CouvertureRessource.pour(r),
       aVignetteDeposee: r.aVignette,
     );
 
+/// Les raisons d'un refus d'AUTORISATION du serveur (42501) : celle que rend
+/// l'adaptateur Supabase (`non autorise`) et celle du double de test
+/// (`insufficient_privilege`).
+const Set<String> raisonsRefusClasse = <String>{
+  'non autorise',
+  'insufficient_privilege',
+};
+
 /// Les documents epingles ou assignes a la classe [groupeId] (la rubrique
 /// « Pour cette classe », celle de l'ancienne Bibliotheque que l'eleve ne
 /// voit plus : meme donnee, `PortCatalogue.pourGroupe`).
 ///
-/// **Une lecture qui echoue echoue ici aussi** (revue de l'architecte, 13/11) :
-/// elle ne se confond pas avec « aucun document ». La rubrique dit alors
-/// qu'elle ne s'affiche pas, avec « Reessayer ». Le groupe vient de l'adresse
-/// (`?groupe=`) et le serveur LEVE pour une classe qui n'est pas celle de
-/// l'appelant : seule cette rubrique tombe, jamais le reste de la
-/// Bibliotheque (lu a part, par [documentsApprendreProvider]).
+/// **Deux cas, deux etats** (contre-lecture de l'architecte, 13/11) :
+///
+/// - le serveur REFUSE (42501, `ressources_du_groupe` leve pour une classe qui
+///   n'est pas celle de l'appelant : le groupe vient de l'adresse, donc
+///   falsifiable) : la rubrique **n'existe pas**, sans phrase ni « Reessayer »
+///   (rien a reessayer, rien a dire d'une classe qui n'est pas la sienne) ;
+/// - une PANNE (reseau, serveur) echoue ici aussi : elle ne se confond pas avec
+///   « aucun document », la rubrique dit qu'elle ne s'affiche pas, avec
+///   « Reessayer ».
+///
+/// Dans les deux cas le reste de la Bibliotheque est lu a part
+/// ([documentsApprendreProvider]) et ne tombe jamais avec elle.
 final FutureProviderFamily<List<DocumentPlanche>, String>
 documentsDeLaClasseProvider =
     FutureProvider.family<List<DocumentPlanche>, String>((
@@ -144,10 +172,31 @@ documentsDeLaClasseProvider =
     ) async {
       final List<LibraryResource> ressources = await ref
           .watch(portCatalogueProvider)
-          .pourGroupe(groupeId);
+          .pourGroupe(groupeId)
+          .onError<EchecCatalogue>(
+            (EchecCatalogue e, StackTrace trace) =>
+                raisonsRefusClasse.contains(e.raison)
+                ? const <LibraryResource>[]
+                : Error.throwWithStackTrace(e, trace),
+          );
       return <DocumentPlanche>[
         for (final LibraryResource r in ressources)
           if (r.publiee && r.resourceType != TypeRessource.quran)
             _documentDe(r, RayonPlanche.pourCetteClasse),
       ];
     }, retry: (int _, Object _) => null);
+
+/// Les rayons du catalogue, avec leurs intitules en francais et en arabe
+/// (`PortCatalogue.rayons()`, donnee du serveur : aucun ecran n'en code le
+/// nom). Une lecture qui echoue rend rien : la planche garde alors ses
+/// intitules ecrits (les memes mots), jamais un trou.
+final FutureProvider<List<RayonBibliotheque>> rayonsApprendreProvider =
+    FutureProvider<List<RayonBibliotheque>>(
+      (Ref ref) async => ref
+          .watch(portCatalogueProvider)
+          .rayons()
+          .onError<Object>(
+            (Object _, StackTrace _) => const <RayonBibliotheque>[],
+          ),
+      retry: (int _, Object _) => null,
+    );

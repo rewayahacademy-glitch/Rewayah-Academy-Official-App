@@ -19,6 +19,8 @@ import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/etat_routeur_sur.dart';
 import '../../core/tc_bibliotheque/couverture_ressource.dart';
+import '../../core/tc_bibliotheque/library_resource.dart'
+    show RayonBibliotheque;
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/section_header.dart';
@@ -127,6 +129,9 @@ class OngletBibliotheque extends ConsumerWidget {
     };
     return PlancheDocuments(
       rubriqueClasse: rubrique,
+      rayons:
+          ref.watch(rayonsApprendreProvider).value ??
+          const <RayonBibliotheque>[],
       documents: <DocumentPlanche>[
         for (final DocumentPlanche d in <DocumentPlanche>[
           ...classe,

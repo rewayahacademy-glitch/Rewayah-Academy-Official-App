@@ -42,6 +42,8 @@ import 'package:rewayah_academy/features/apprendre/espace_apprendre_page.dart';
 import 'package:rewayah_academy/features/apprendre/onglet_bibliotheque.dart';
 import 'package:rewayah_academy/features/apprendre/onglet_livret.dart';
 import 'package:rewayah_academy/features/apprendre/onglet_programme.dart';
+import 'package:rewayah_academy/features/compte/compte_page.dart'
+    show ComptePage;
 import 'package:rewayah_academy/features/foyer/routes_n2_foyer_adulte.dart'
     show RoutesN2;
 import 'package:rewayah_academy/features/ma_classe_adulte/ma_classe_adulte_page.dart'
@@ -53,8 +55,6 @@ import 'package:rewayah_academy/features/tc_catalogue/routes_tc_b.dart';
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../router/support_routeur.dart' show lieu, sessionActive, stabiliser;
 import '../../support/garde_interface.dart';
-import '../../teaching_core/b/faux/faux_ports_b.dart'
-    show CatalogueGroupeRefuse;
 import 'support_apprendre.dart';
 
 /// L'onglet de la barre qui porte [libelle] (la barre flottante n'ecrit que le
@@ -693,6 +693,81 @@ void main() {
     });
   });
 
+  group('arabe de contenu : titres et descriptions de la planche', () {
+    const String titreAr = 'تجويد الحروف';
+    const String descAr = 'درس قصير عن مخارج الحروف';
+    final List<DocumentPlanche> documents = <DocumentPlanche>[
+      coranDemo(),
+      documentDe('ar', titreAr, description: descAr),
+      documentDe(
+        'fr',
+        'Le livre de lecture',
+        description: 'Les premiers mots.',
+      ),
+      documentDe(
+        'lien-ar',
+        'موقع مفيد للحروف',
+        type: TypeDocumentPlanche.lienExterne,
+        description: 'صفحة قصيرة عن الحروف',
+        ouverture: OuvrirHorsApplication(Uri.parse('https://exemple.org/x')),
+      ),
+    ];
+
+    String? police(WidgetTester tester, String texte) =>
+        tester.widget<Text>(find.text(texte)).style?.fontFamily;
+
+    for (final AffichagePlanche affichage in AffichagePlanche.values) {
+      testWidgets('${affichage.name} : un titre et une description arabes '
+          'sortent en police du Coran, le francais non', (
+        WidgetTester tester,
+      ) async {
+        await monterApprendre(tester, documents: documents);
+        await preferer(tester, affichage);
+        expect(police(tester, titreAr), AppFontFamily.arabeMushaf);
+        expect(police(tester, descAr), AppFontFamily.arabeMushaf);
+        expect(
+          police(tester, 'Le livre de lecture'),
+          isNot(AppFontFamily.arabeMushaf),
+        );
+        expect(
+          police(tester, 'Les premiers mots.'),
+          isNot(AppFontFamily.arabeMushaf),
+        );
+        // Le titre arabe se lit de droite a gauche, meme dans une interface
+        // francaise.
+        expect(
+          Directionality.of(tester.element(find.text(titreAr))),
+          TextDirection.rtl,
+        );
+        // Le titre francais garde le sens de l'interface.
+        expect(
+          Directionality.of(tester.element(find.text('Le livre de lecture'))),
+          TextDirection.ltr,
+        );
+        // La carte du lien : meme regle.
+        expect(police(tester, 'موقع مفيد للحروف'), AppFontFamily.arabeMushaf);
+        expect(
+          police(tester, 'صفحة قصيرة عن الحروف'),
+          AppFontFamily.arabeMushaf,
+        );
+      });
+    }
+
+    testWidgets('l arabe d interface ne change pas : le nom du type, repli '
+        'quand la description manque, reste en police d interface', (
+      WidgetTester tester,
+    ) async {
+      await monterApprendre(
+        tester,
+        documents: <DocumentPlanche>[documentDe('sans', 'Sans description')],
+      );
+      expect(
+        police(tester, libelleTypeDocument(TypeDocumentPlanche.document)),
+        isNot(AppFontFamily.arabeMushaf),
+      );
+    });
+  });
+
   group('adaptateur du catalogue (types et descriptions du lot 3)', () {
     LibraryResource ressource(
       String id,
@@ -852,6 +927,55 @@ void main() {
         expect(find.byType(BibliothequePage), findsOneWidget);
       });
     }
+
+    // Contre-lecture (13/11) : les pages communes (le Compte, l'espace de la
+    // classe, le retour par defaut d'une fiche) sont-elles dans l'espace ELEVE
+    // du compte a double casquette ? Mesure par le vrai routeur : NON. Le
+    // Profil de la barre de l'eleve (`/compte`) et `/tc/groupes/*` sont
+    // renvoyes par `deciderRedirection` vers l'espace TUTEUR (`/tuteur/*`, sa
+    // barre) ; c'est la que sa Bibliotheque d'origine vit, et elle y reste.
+    testWidgets('double casquette : le Profil de la barre eleve mene au Compte '
+        'du TUTEUR (`/tuteur/compte`), pas a la page commune `ComptePage` '
+        'dont la ligne Bibliotheque menait a l\'ancienne liste', (
+      WidgetTester tester,
+    ) async {
+      final GoRouter routeur = await monterApprendre(
+        tester,
+        profil: ProfilApprendre.adulte,
+        depart: Routes.eleveApprendre,
+        documents: documentsComplets(),
+      );
+      await tester.tap(_onglet(t.nav.eleve.profil));
+      await stabiliser(tester);
+      expect(lieu(routeur), Routes.tuteurCompte);
+      expect(find.byType(ComptePage), findsNothing);
+    });
+
+    testWidgets('double casquette : l\'espace de la classe (`/tc/groupes/*`) '
+        'est celui du tuteur, pas de l\'eleve', (WidgetTester tester) async {
+      final GoRouter routeur = await monterApprendre(
+        tester,
+        profil: ProfilApprendre.adulte,
+        depart: '${Routes.tcGroupes}/g1',
+      );
+      expect(lieu(routeur), startsWith(Routes.tuteurClasses));
+    });
+
+    testWidgets('double casquette, fiche ouverte par un lien direct (sans '
+        'retour) : le retour par defaut est la Bibliotheque du TUTEUR', (
+      WidgetTester tester,
+    ) async {
+      final GoRouter routeur = await monterApprendre(
+        tester,
+        profil: ProfilApprendre.adulte,
+        depart: RoutesTcB.versRessource('livre-lecture'),
+        documents: documentsComplets(),
+      );
+      await tester.tap(find.byType(DisqueRetour).first);
+      await stabiliser(tester);
+      expect(lieu(routeur), Routes.tcBibliotheque);
+      expect(find.byType(BibliothequePage), findsOneWidget);
+    });
 
     // Les entrees de l'espace ELEVE de ce compte (Ma classe adulte, Accueil
     // adulte) menent directement a Apprendre, avec la classe : on appelle le
@@ -1016,22 +1140,21 @@ void main() {
         );
       });
 
+      // Une PANNE (reseau, serveur) : la rubrique le DIT, avec Reessayer ; le
+      // reste de la Bibliotheque tient.
       for (final bool horsLigne in <bool>[false, true]) {
         testWidgets(
-          'lecture refusee ou en echec${horsLigne ? ' (hors ligne)' : ''} : la '
-          'rubrique le DIT (jamais « rien »), avec Reessayer, et le reste de '
-          'la Bibliotheque tient',
+          'panne${horsLigne ? ' (hors ligne)' : ''} : la rubrique le DIT '
+          '(jamais « rien »), avec Reessayer, et le reste tient',
           (WidgetTester tester) async {
             await monterApprendre(
               tester,
               profil: ProfilApprendre.mineurGuide,
-              depart: '${Routes.tcBibliotheque}?groupe=pas-la-mienne',
+              depart: '${Routes.tcBibliotheque}?groupe=g1',
               horsLigne: horsLigne,
               autres: <Override>[
                 portCatalogueProvider.overrideWithValue(
-                  CatalogueGroupeRefuse(
-                    ressources: <LibraryResource>[devoir, autre],
-                  ),
+                  _CatalogueClasseEnPanne(<LibraryResource>[devoir, autre]),
                 ),
               ],
             );
@@ -1058,7 +1181,6 @@ void main() {
               ),
               findsNothing,
             );
-            // Le reste de la Bibliotheque tient, sans son propre echec.
             expect(
               find.byKey(PlancheDocuments.cleDocument('devoir-g1')),
               findsOneWidget,
@@ -1066,6 +1188,43 @@ void main() {
             expect(find.byKey(ClesBibliotheque.erreur), findsNothing);
           },
         );
+      }
+
+      // Un REFUS du serveur (42501 : une classe qui n'est pas la sienne, dans
+      // une adresse falsifiee) : la rubrique n'existe pas, sans phrase ni
+      // Reessayer ; le reste tient.
+      for (final String raison in raisonsRefusClasse) {
+        testWidgets('refus du serveur ($raison) : aucune rubrique, aucune '
+            'phrase, aucun Reessayer, le reste tient', (
+          WidgetTester tester,
+        ) async {
+          await monterApprendre(
+            tester,
+            profil: ProfilApprendre.mineurGuide,
+            depart: '${Routes.tcBibliotheque}?groupe=pas-la-mienne',
+            autres: <Override>[
+              portCatalogueProvider.overrideWithValue(
+                _CatalogueClasseRefusee(<LibraryResource>[
+                  devoir,
+                  autre,
+                ], raison),
+              ),
+            ],
+          );
+          expect(find.byKey(ClesBibliotheque.classeErreur), findsNothing);
+          expect(find.byKey(ClesBibliotheque.classeChargement), findsNothing);
+          expect(
+            find.byKey(PlancheDocuments.cleRayon(RayonPlanche.pourCetteClasse)),
+            findsNothing,
+          );
+          expect(find.text(t.apprendre.bibliotheque.rayonClasse), findsNothing);
+          expect(find.text(t.commun.reessayer), findsNothing);
+          expect(
+            find.byKey(PlancheDocuments.cleDocument('devoir-g1')),
+            findsOneWidget,
+          );
+          expect(find.byKey(ClesBibliotheque.erreur), findsNothing);
+        });
       }
 
       testWidgets('lecture refusee : « Reessayer » relit la rubrique', (
@@ -1830,4 +1989,27 @@ class _CatalogueQuiReussitAuSecondEssai extends CatalogueLocal {
     if (_appels == 1) throw const EchecCatalogue('lecture refusee');
     return _lues;
   }
+}
+
+/// Un catalogue dont la lecture par classe tombe en PANNE (rien du serveur :
+/// reseau coupe), le reste se lisant.
+class _CatalogueClasseEnPanne extends CatalogueLocal {
+  _CatalogueClasseEnPanne(List<LibraryResource> ressources)
+    : super(ressources: ressources);
+
+  @override
+  Future<List<LibraryResource>> pourGroupe(String groupeId) =>
+      Future<List<LibraryResource>>.error(const EchecCatalogue('hors ligne'));
+}
+
+/// Un catalogue dont la lecture par classe est REFUSEE par le serveur (42501).
+class _CatalogueClasseRefusee extends CatalogueLocal {
+  _CatalogueClasseRefusee(List<LibraryResource> ressources, this._raison)
+    : super(ressources: ressources);
+
+  final String _raison;
+
+  @override
+  Future<List<LibraryResource>> pourGroupe(String groupeId) =>
+      Future<List<LibraryResource>>.error(EchecCatalogue(_raison));
 }

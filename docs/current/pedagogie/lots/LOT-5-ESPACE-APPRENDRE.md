@@ -86,3 +86,13 @@ Décision du directeur (13/11) : tout arabe de **contenu** dans la police du Cor
 ## Preuve (ce qui est vérifié, et par quoi)
 
 À remplir à la fin du lot : résultats exacts des six vérifications, captures dans `docs/current/captures/E2E/espace-apprendre/`.
+
+
+## Après la fusion du lot 3 et la contre-lecture du 13/11 (deuxième tour)
+
+- **Planche et lot 3 : un seul style, une seule couverture.** Les types audio, vidéo et lien externe, la description, le rayon (`cours` ou `plus_loin`, avec ses intitulés fr et ar donnés par `PortCatalogue.rayons()`, repli sur le texte écrit) et l'ordre viennent de la ressource. La vignette est celle de la Bibliothèque une (`VignetteRessource`, vignette déposée par-dessus). Un lien externe s'ouvre par sa fiche (le chemin du lot 3, avec la confirmation).
+- **Arabe de contenu de la planche** : titre et description d'un document en police du Coran quand ils contiennent de l'arabe, lus de droite à gauche quand ils commencent par de l'arabe (`styleContenuArabe`, `dirigerContenuArabe`, lot 3), dans la grille, la liste et la carte de lien ; le nom du type (repli) reste de l'interface. Testé.
+- **« Pour cette classe » : deux états.** Un refus du serveur (42501) : la rubrique n'existe pas, sans phrase ni « Réessayer » ; une panne : phrase et « Réessayer », place réservée pendant la lecture.
+- **Compte à double casquette (tuteur et élève autonome)** : mesuré par le vrai routeur, le Profil de sa barre élève mène à `/tuteur/compte`, et `/tc/groupes/*` à `/tuteur/classes/*` : les pages communes (`ComptePage`, espace de la classe) ne sont donc pas dans son espace élève. Sa Bibliothèque d'origine reste dans l'espace tuteur. Ses entrées de l'espace élève (Accueil adulte, Ma classe adulte) mènent à Apprendre.
+- **Barre guidée** : test strict complété (libellé réellement peint : couleur opaque, aucune opacité ni fondu ni hors-scène en ancêtre) et une seule rangée imposée de 480 à 599 (au-delà, c'est le rail).
+- **Repli des dates de la carte** (lot 1, `eleve_voit_dates` absent) : le correctif est côté lot 1 ; le test de la carte s'ajoute quand il est dans `main`.

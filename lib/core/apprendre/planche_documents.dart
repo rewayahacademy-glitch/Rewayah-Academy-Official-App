@@ -37,6 +37,9 @@ import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
 import '../mouvement/apparition_douce.dart';
 import '../recrutement/ouvreur_lien.dart';
+import '../tc_bibliotheque/contenu_arabe.dart';
+import '../tc_bibliotheque/library_resource.dart'
+    show RayonBibliotheque, codeRayonCours, codeRayonPlusLoin;
 import '../tc_bibliotheque/ouvreur_onglet.dart';
 import '../theme/app_gabarit.dart';
 import '../theme/app_metriques.dart';
@@ -76,7 +79,12 @@ class PlancheDocuments extends ConsumerStatefulWidget {
     super.key,
     this.surOuvrir,
     this.rubriqueClasse,
+    this.rayons = const <RayonBibliotheque>[],
   });
+
+  /// Les rayons du serveur, avec leurs intitules (`PortCatalogue.rayons()`).
+  /// Vide : la planche garde ses intitules ecrits.
+  final List<RayonBibliotheque> rayons;
 
   /// L'etat de la rubrique « Pour cette classe » quand elle n'est pas encore
   /// des documents : sa place reservee pendant la lecture (pas de saut de mise
@@ -233,11 +241,28 @@ class _PlancheEtat extends ConsumerState<PlancheDocuments> {
     required int premierRang,
   }) {
     final c = t.apprendre.bibliotheque;
-    final String titre = switch (rayon) {
-      RayonPlanche.pourCetteClasse => c.rayonClasse,
-      RayonPlanche.documentsDesCours => c.rayonCours,
-      RayonPlanche.pourAllerPlusLoin => c.rayonPlusLoin,
+    // L'intitule vient du serveur quand il est connu (donnee, jamais un
+    // ecran), sinon du texte ecrit (les memes mots).
+    final String? code = switch (rayon) {
+      RayonPlanche.pourCetteClasse => null,
+      RayonPlanche.documentsDesCours => codeRayonCours,
+      RayonPlanche.pourAllerPlusLoin => codeRayonPlusLoin,
     };
+    final String langue = LocaleSettings.currentLocale.languageCode;
+    final String? duServeur = code == null
+        ? null
+        : widget.rayons
+              .where((RayonBibliotheque r) => r.code == code)
+              .map((RayonBibliotheque r) => r.titrePour(langue))
+              .where((String titre) => titre.isNotEmpty)
+              .firstOrNull;
+    final String titre =
+        duServeur ??
+        switch (rayon) {
+          RayonPlanche.pourCetteClasse => c.rayonClasse,
+          RayonPlanche.documentsDesCours => c.rayonCours,
+          RayonPlanche.pourAllerPlusLoin => c.rayonPlusLoin,
+        };
     // Un filtre qui laisse un rayon sans document le retire de la page ; un
     // rayon qui n'a jamais eu de document dit la verite.
     if (existeDansCeRayon && dansCeRayon.isEmpty) return const <Widget>[];
@@ -618,19 +643,28 @@ class _TuileDocument extends StatelessWidget {
           children: <Widget>[
             VignetteDocument(document: document),
             Ecart.vSm,
-            TexteSansCoupure(
+            _TexteContenu(
               document.titre,
               style: palette.inkStrong.applyTo(
                 textes.titleSmall ?? const TextStyle(),
               ),
             ),
             Ecart.vXs,
-            TexteSansCoupure(
-              document.description ?? libelleTypeDocument(document.type),
-              style: palette.inkMuted.applyTo(
-                textes.bodySmall ?? const TextStyle(),
-              ),
-            ),
+            // La description est du contenu ; le nom du type, repli quand
+            // elle manque, est de l'interface.
+            document.description == null
+                ? TexteSansCoupure(
+                    libelleTypeDocument(document.type),
+                    style: palette.inkMuted.applyTo(
+                      textes.bodySmall ?? const TextStyle(),
+                    ),
+                  )
+                : _TexteContenu(
+                    document.description!,
+                    style: palette.inkMuted.applyTo(
+                      textes.bodySmall ?? const TextStyle(),
+                    ),
+                  ),
           ],
         ),
       ),
@@ -671,7 +705,7 @@ class _LigneDocument extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  TexteSansCoupure(
+                  _TexteContenu(
                     document.titre,
                     style: palette.surfaceRaised.applyTo(
                       textes.titleMedium ?? const TextStyle(),
@@ -679,7 +713,7 @@ class _LigneDocument extends StatelessWidget {
                   ),
                   if (description != null) ...<Widget>[
                     Ecart.vXs,
-                    TexteSansCoupure(
+                    _TexteContenu(
                       description,
                       style: palette.inkMuted.applyTo(
                         textes.bodyMedium ?? const TextStyle(),
@@ -756,7 +790,7 @@ class _CarteLien extends StatelessWidget {
                 ),
                 Ecart.hMd,
                 Expanded(
-                  child: TexteSansCoupure(
+                  child: _TexteContenu(
                     document.titre,
                     style: palette.surfaceRaised.applyTo(
                       textes.titleMedium ?? const TextStyle(),
@@ -767,7 +801,7 @@ class _CarteLien extends StatelessWidget {
             ),
             if (description != null) ...<Widget>[
               Ecart.vSm,
-              TexteSansCoupure(
+              _TexteContenu(
                 description,
                 style: palette.inkMuted.applyTo(
                   textes.bodyMedium ?? const TextStyle(),
@@ -788,4 +822,21 @@ class _CarteLien extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Un texte de CONTENU de la planche (titre ou description d'un document) :
+/// en police du Coran quand il contient de l'arabe, lu de droite a gauche
+/// quand il commence par de l'arabe (directeur, 13/11/2026 ; style du lot 3,
+/// `styleContenuArabe`). L'arabe d'interface ne passe jamais ici.
+class _TexteContenu extends StatelessWidget {
+  const _TexteContenu(this.texte, {required this.style});
+
+  final String texte;
+  final TextStyle style;
+
+  @override
+  Widget build(BuildContext context) => dirigerContenuArabe(
+    texte,
+    TexteSansCoupure(texte, style: styleContenuArabe(texte, style)),
+  );
 }

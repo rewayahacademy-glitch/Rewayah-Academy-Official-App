@@ -12,7 +12,13 @@
 // - 320 et 1440, texte x1 et x2, clair et sombre, RTL.
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart' show RenderParagraph;
+import 'package:flutter/rendering.dart'
+    show
+        RenderAnimatedOpacity,
+        RenderObject,
+        RenderOffstage,
+        RenderOpacity,
+        RenderParagraph;
 import 'package:flutter/services.dart' show LogicalKeyboardKey;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -93,6 +99,62 @@ double _contraste(Color a, Color b) {
   return (haut + 0.05) / (bas + 0.05);
 }
 
+/// Le libelle est REELLEMENT peint : une couleur opaque, et aucun ancetre qui
+/// le rend transparent (opacite, fondu) ou le sort de l'ecran (hors scene).
+void _verifierPeint(WidgetTester tester, Finder texte, String raison) {
+  final Text t = tester.widget<Text>(texte);
+  final Color? couleur = t.style?.color;
+  expect(couleur, isNotNull, reason: '$raison : couleur posee');
+  expect(couleur!.a, 1, reason: '$raison : couleur opaque');
+  RenderObject? r = tester.renderObject(texte);
+  while (r != null) {
+    if (r is RenderOpacity) {
+      expect(r.opacity, 1, reason: '$raison : opacite');
+    }
+    if (r is RenderAnimatedOpacity) {
+      expect(r.opacity.value, 1, reason: '$raison : fondu');
+    }
+    if (r is RenderOffstage) {
+      expect(r.offstage, isFalse, reason: '$raison : hors scene');
+    }
+    r = r.parent;
+  }
+}
+
+/// Les rangees des onglets de la pilule (sans le cercle du Compte), du haut
+/// vers le bas.
+List<List<Destination>> _rangeesDeLaPilule(
+  WidgetTester tester,
+  List<Destination> d,
+) {
+  final List<(Destination, Rect)> m = <(Destination, Rect)>[
+    for (final Destination x in d)
+      if (!x.compte) (x, tester.getRect(_onglet(x.libelle))),
+  ];
+  final List<List<(Destination, Rect)>> rangees = <List<(Destination, Rect)>>[];
+  for (final (Destination, Rect) e in m) {
+    final List<(Destination, Rect)>? r = rangees
+        .where(
+          (List<(Destination, Rect)> r) =>
+              (r.first.$2.top - e.$2.top).abs() < 1,
+        )
+        .firstOrNull;
+    if (r == null) {
+      rangees.add(<(Destination, Rect)>[e]);
+    } else {
+      r.add(e);
+    }
+  }
+  rangees.sort(
+    (List<(Destination, Rect)> a, List<(Destination, Rect)> b) =>
+        a.first.$2.top.compareTo(b.first.$2.top),
+  );
+  return <List<Destination>>[
+    for (final List<(Destination, Rect)> r in rangees)
+      <Destination>[for (final (Destination, Rect) e in r) e.$1],
+  ];
+}
+
 /// Les controles de la barre guidee a 320 : chaque libelle entier (aucun mot
 /// coupe, jamais tronque, echelle au plancher de lisibilite ou au-dessus),
 /// cibles de 72 en largeur comme en hauteur, ecart de 4 au moins entre deux
@@ -125,6 +187,7 @@ void _verifierBarreGuidee(
       greaterThanOrEqualTo(10 * echelleMinimaleLisible - 0.001),
       reason: '$reason ${x.libelle}',
     );
+    _verifierPeint(tester, texte, '$reason ${x.libelle}');
     final Rect onglet = tester.getRect(_onglet(x.libelle));
     expect(
       onglet.height,
@@ -420,6 +483,57 @@ void main() {
               expect(tester.takeException(), isNull);
             },
           );
+        }
+      }
+    }
+
+    // Des que la largeur le permet (480 a 599, au-dela c'est le rail), la pilule tient sur UNE
+    // seule rangee : le repli a deux rangees n'est que pour ce qui ne tient pas.
+    for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {
+      for (final AppRole role in <AppRole>[
+        AppRole.student,
+        AppRole.guardian,
+        AppRole.teacher,
+        AppRole.controller,
+      ]) {
+        for (final double largeur in <double>[480, 540, 599]) {
+          testWidgets('${langue.name}, ${role.valeurSql}, $largeur, texte x1 : '
+              'UNE seule rangee, libelles peints', (WidgetTester tester) async {
+            LocaleSettings.setLocaleSync(langue);
+            addTearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
+            final List<Destination> d = destinationsPour(
+              role: role,
+              mode: InterfaceMode.enfant,
+            );
+            for (int actif = 0; actif < d.length; actif++) {
+              await _monter(
+                tester,
+                mode: InterfaceMode.enfant,
+                destinations: d,
+                indexActif: actif,
+                taille: Size(largeur, 700),
+                direction: langue == AppLocale.ar
+                    ? TextDirection.rtl
+                    : TextDirection.ltr,
+              );
+              expect(
+                _rangeesDeLaPilule(tester, d).length,
+                1,
+                reason: 'actif $actif',
+              );
+              for (final Destination x in d) {
+                _verifierPeint(
+                  tester,
+                  find.descendant(
+                    of: find.byKey(NavShell.barreBasseKey),
+                    matching: find.text(x.libelle),
+                  ),
+                  'actif $actif ${x.libelle}',
+                );
+              }
+            }
+            expect(tester.takeException(), isNull);
+          });
         }
       }
     }
