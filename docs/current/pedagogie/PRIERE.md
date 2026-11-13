@@ -18,7 +18,7 @@ Ce que le directeur n'a pas à décider ici : le calcul des heures (prouvé cont
 
 **La demande du directeur (12/11/2026, résumé fidèle).** Permettre de prier à l'heure : au minimum l'enseignant de la salle, qui est seul et dans une zone connue de l'académie ; les élèves sont dans des zones éloignées. Trouver un schéma stable pour commencer et finir les cours en évitant les prières, surtout le Maghreb et l'Ichâ, dont l'heure change avec la saison. L'académie doit fonctionner seule, sans lui. Il avait demandé un outil d'heures de prière il y a plus de deux mois.
 
-Les valeurs chiffrées sont dans `REGLAGES.md` (partie 8, « La prière »), qui fait foi ; les arbitrages sont au registre (`ARBITRAGES.md`, partie 9, C34 à C44). Ce document dit la décision, le contrat avec la salle, ce qui reste à valider et ce qui reste à faire.
+Les valeurs chiffrées sont dans `REGLAGES.md` (partie 8, « La prière »), qui fait foi ; les arbitrages sont au registre (`ARBITRAGES.md`, partie 10, C34 à C45). Ce document dit la décision, le contrat avec la salle, ce qui reste à valider et ce qui reste à faire.
 
 ## 1. Ce que l'existant faisait, et pourquoi il ne servait pas (mesuré le 12/11/2026, lecture seule de la production)
 
