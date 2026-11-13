@@ -913,8 +913,15 @@ class _Traductions$lieu$ar extends Traductions$lieu$fr {
 	@override String get verifiee => 'مدينة تمت مراجعتها';
 	@override String get nonVerifiee => 'مدينة تحتاج إلى مراجعة';
 	@override String verifier({required Object nom}) => 'مراجعة مدينة ⁨${nom}⁩';
+	@override String villeVerifiee({required Object nom}) => 'تمت مراجعة مدينة ⁨${nom}⁩.';
 	@override String get verifierEchec => 'لم يتم تأكيد المراجعة. أعيدوا المحاولة بعد قليل.';
 	@override String get incoherencesTitre => 'مدن تحتاج إلى مراجعة';
+	@override String get incSansVille => 'لم يختر مدينته بعد';
+	@override String get incFuseauDifferent => 'التوقيت المسجَّل لا يطابق مدينته';
+	@override String get incPaysDifferent => 'البلد المسجَّل لا يطابق بلد مدينته';
+	@override String get incPaysFuseau => 'البلد والتوقيت المسجَّلان لا يتفقان';
+	@override String villeLigne({required Object ville, required Object pays}) => '⁨${ville}⁩ (⁨${pays}⁩)';
+	@override String incoherencesCompte({required Object n}) => '⁨${n}⁩ تحتاج إلى مراجعة';
 	@override String get incoherencesVide => 'لا توجد مدن تحتاج إلى مراجعة حاليًا.';
 }
 
@@ -31817,8 +31824,15 @@ extension on TraductionsAr {
 			'lieu.verifiee' => 'مدينة تمت مراجعتها',
 			'lieu.nonVerifiee' => 'مدينة تحتاج إلى مراجعة',
 			'lieu.verifier' => ({required Object nom}) => 'مراجعة مدينة ⁨${nom}⁩',
+			'lieu.villeVerifiee' => ({required Object nom}) => 'تمت مراجعة مدينة ⁨${nom}⁩.',
 			'lieu.verifierEchec' => 'لم يتم تأكيد المراجعة. أعيدوا المحاولة بعد قليل.',
 			'lieu.incoherencesTitre' => 'مدن تحتاج إلى مراجعة',
+			'lieu.incSansVille' => 'لم يختر مدينته بعد',
+			'lieu.incFuseauDifferent' => 'التوقيت المسجَّل لا يطابق مدينته',
+			'lieu.incPaysDifferent' => 'البلد المسجَّل لا يطابق بلد مدينته',
+			'lieu.incPaysFuseau' => 'البلد والتوقيت المسجَّلان لا يتفقان',
+			'lieu.villeLigne' => ({required Object ville, required Object pays}) => '⁨${ville}⁩ (⁨${pays}⁩)',
+			'lieu.incoherencesCompte' => ({required Object n}) => '⁨${n}⁩ تحتاج إلى مراجعة',
 			'lieu.incoherencesVide' => 'لا توجد مدن تحتاج إلى مراجعة حاليًا.',
 			'parcours.titre' => ({required Object dePrenom}) => 'مسار ⁨${dePrenom}⁩',
 			'parcours.intro' => 'بعض الأسئلة لتخصيص مسارك. لن ترى بعدها إلا المواعيد والخيارات المناسبة لوضعك.',
@@ -31830,6 +31844,8 @@ extension on TraductionsAr {
 			'parcours.erreur' => 'تعذّر حفظ هذه الإجابة. أعد المحاولة.',
 			'parcours.chargement' => 'نحضّر خياراتك.',
 			'parcours.pourPrenom' => ({required Object prenom}) => 'لـ⁨${prenom}⁩',
+			_ => null,
+		} ?? switch (path) {
 			'parcours.retourAccueil' => 'العودة إلى الرئيسية',
 			'parcours.retourFoyer' => 'العودة إلى الأسرة',
 			'parcours.reessayer' => 'إعادة المحاولة',
@@ -31837,8 +31853,6 @@ extension on TraductionsAr {
 			'parcours.indisponibleDetail' => 'لم تفتح الأكاديمية هذه الخطوة بعد. لا شيء عليك فعله الآن: لم يضِع شيء، ويمكنك تعبئتها بمجرد فتحها.',
 			'parcours.horsLigneTitre' => 'لا اتصال',
 			'parcours.horsLigneDetail' => 'تحقّق من اتصالك، ثم أعد المحاولة. إجاباتك محفوظة.',
-			_ => null,
-		} ?? switch (path) {
 			'parcours.erreurChargement' => 'تعذّر عرض الاستبيان',
 			'parcours.erreurChargementDetail' => 'حدث خطأ من جهتنا. أعد المحاولة بعد لحظة؛ إجاباتك محفوظة.',
 			'parcours.introuvableTitre' => 'لم يُعثر على ملف الطالب هذا',
@@ -32344,6 +32358,8 @@ extension on TraductionsAr {
 			'consentement.texte.caseAdulte' => 'أوافق على هذه الشروط',
 			'consentement.texte.continuer' => 'متابعة',
 			'consentement.texte.retour' => 'رجوع',
+			_ => null,
+		} ?? switch (path) {
 			'consentement.comment.titre' => 'كيف يعمل ذلك؟',
 			'consentement.comment.visites' => ({required num n, required Object minutes}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا زيارة في الحصة.', one: 'زيارة واحدة مدتها ⁨${minutes}⁩ د في كل حصة.', two: 'زيارتان مدة كل منهما ⁨${minutes}⁩ د في كل حصة.', few: '⁨${n}⁩ زيارات مدة كل منها ⁨${minutes}⁩ د في كل حصة.', many: '⁨${n}⁩ زيارةً مدة كل منها ⁨${minutes}⁩ د في كل حصة.', other: '⁨${n}⁩ زيارة مدة كل منها ⁨${minutes}⁩ د في كل حصة.', ), 
 			'consentement.comment.visitesSansDuree' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا زيارة في الحصة.', one: 'زيارة قصيرة واحدة في كل حصة.', two: 'زيارتان قصيرتان في كل حصة.', few: '⁨${n}⁩ زيارات قصيرة في كل حصة.', many: '⁨${n}⁩ زيارةً قصيرة في كل حصة.', other: '⁨${n}⁩ زيارة قصيرة في كل حصة.', ), 
@@ -32351,8 +32367,6 @@ extension on TraductionsAr {
 			'consentement.comment.ecourtee' => 'الزيارة التي تُغادَر قبل نهايتها تُحتسب: لا يبقى إلا التالية، حتى الأخيرة.',
 			'consentement.comment.ecouter' => 'تسمع المعلم والطلاب الذين يتكلمون، ومنهم طفلك.',
 			'consentement.comment.sansMicro' => 'يبقى الميكروفون والكاميرا معطَّلين أثناء الزيارة.',
-			_ => null,
-		} ?? switch (path) {
 			'consentement.comment.valeursIndisponibles' => 'يظهر عدد الزيارات ومدتها من فصل طفلك، حسب قواعد فصله.',
 			'consentement.comment.fermee' => 'زيارات المتابعة غير مفتوحة لهذا الفصل.',
 			'consentement.compte.intro' => 'أضافت الأكاديمية إلى شروطها فقرة عن زيارات أولياء الأمور. لا يُعدّ شيء مقبولًا ما لم تقبله أنت.',
@@ -32858,6 +32872,8 @@ extension on TraductionsAr {
 			'dossiers.refus.envoi' => 'جارٍ الرفض…',
 			'dossiers.refus.erreur' => 'تعذّر رفض الملف.',
 			'dossiers.refus.horsLigne' => 'أنت غير متصل. لم يُرسل الرفض.',
+			_ => null,
+		} ?? switch (path) {
 			'dossiers.refus.inconnu' => 'نتيجة الرفض غير مؤكَّدة بعد.',
 			'dossiers.refus.interdit' => 'لم يعد بإمكانك رفض هذا الملف.',
 			'dossiers.refus.indisponible' => 'الرفض غير متاح الآن.',
@@ -32865,8 +32881,6 @@ extension on TraductionsAr {
 			'dossiers.refus.abandonQuestion' => 'التخلي عن السبب المكتوب؟',
 			'dossiers.refus.continuerSaisie' => 'متابعة الكتابة',
 			'dossiers.refus.abandonner' => 'تخلٍّ',
-			_ => null,
-		} ?? switch (path) {
 			'dossiers.validation.titre' => 'اعتماد هذا الملف؟',
 			'dossiers.validation.corpsActivation' => ({required Object nom}) => 'سيُعتمد ملف ⁨${nom}⁩. سيتمكن حسابه من الوصول إلى مساحته.',
 			'dossiers.validation.corpsDocumentaire' => ({required Object nom}) => 'سيُعتمد ملف ⁨${nom}⁩. تبقى شروط الوصول الأخرى سارية.',
@@ -33372,6 +33386,8 @@ extension on TraductionsAr {
 			'recherche.initial.titre' => 'البحث في مساحتك',
 			'recherche.initial.phrase' => 'اكتب اسمًا أو فصلًا أو مادة. لا يُبحث عن شيء قبل أن تكتب.',
 			'recherche.courte' => 'اكتب ثلاثة أحرف على الأقل.',
+			_ => null,
+		} ?? switch (path) {
 			'recherche.formeAttendue' => 'ابحث برقم التسجيل كاملاً، مثل ⁦RA-26-4817⁩.',
 			'recherche.chargement' => 'جارٍ البحث…',
 			'recherche.lent' => 'يستغرق البحث وقتًا أطول من المتوقع. تبقى النتائج التي وصلت معروضة.',
@@ -33379,8 +33395,6 @@ extension on TraductionsAr {
 			'recherche.categoriesAffichees' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre, zero: 'لا فئة معروضة', one: 'فئة واحدة معروضة', two: 'فئتان معروضتان', few: '⁨${nombre}⁩ فئات معروضة', many: '⁨${nombre}⁩ فئةً معروضة', other: '⁨${nombre}⁩ فئة معروضة', ), 
 			'recherche.domaines.classes' => 'الفصول',
 			'recherche.domaines.supports' => 'المواد',
-			_ => null,
-		} ?? switch (path) {
 			'recherche.domaines.personnes' => 'الأشخاص',
 			'recherche.domaines.enseignants' => 'المعلّمون',
 			'recherche.domaines.pedagogie' => 'الطلاب',
@@ -33886,6 +33900,8 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.debutPossible.explication' => 'يساعد هذا التاريخ الإدارة على معرفة متى تقترح عليك فصلًا.',
 			'recrutement.parcours.q.debutPossible.court' => 'تاريخ البدء',
 			'recrutement.parcours.q.debutPossible.options.immediat.libelle' => 'من الآن',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.q.debutPossible.options.immediat.description' => 'تستطيع البدء فور إسناد فصل إليك.',
 			'recrutement.parcours.q.debutPossible.options.immediat.exemple' => 'لا التزام يشغلك هذا الشهر.',
 			'recrutement.parcours.q.debutPossible.options.mois_prochain.libelle' => 'الشهر القادم',
@@ -33893,8 +33909,6 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.debutPossible.options.mois_prochain.exemple' => 'تنهي عملًا آخر في نهاية هذا الشهر.',
 			'recrutement.parcours.q.debutPossible.options.sous_3_mois.libelle' => 'خلال أقل من ثلاثة أشهر',
 			'recrutement.parcours.q.debutPossible.options.sous_3_mois.description' => 'ستكون متفرغًا خلال الأشهر الثلاثة القادمة.',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.q.debutPossible.options.sous_3_mois.exemple' => 'تكون مسافرًا أو في امتحانات لبضعة أسابيع.',
 			'recrutement.parcours.q.debutPossible.options.inconnu.libelle' => 'لا أعرف بعد',
 			'recrutement.parcours.q.debutPossible.options.inconnu.description' => 'لا تعرف بعد تاريخ بدئك.',
@@ -34400,6 +34414,8 @@ extension on TraductionsAr {
 			'avis.form.ferme.titre' => 'هذا الرابط لم يعد يقبل آراء',
 			'avis.form.ferme.phrase' => ({required Object courriel}) => 'إما أنه أُغلق، أو انتهت مدته، أو بلغ عدد الآراء المقرر. لتشاركنا رأيك اطلب رابطًا جديدًا من الإدارة: ⁨${courriel}⁩.',
 			'avis.form.envoye.titre' => 'شكرًا على رأيك',
+			_ => null,
+		} ?? switch (path) {
 			'avis.form.envoye.phrase' => ({required Object courriel}) => 'ستقرأ الإدارة رأيك قبل نشره على الموقع مع اسمك الظاهر وبلدك والتاريخ. لطلب سحبه، اكتب إلى ⁨${courriel}⁩.',
 			'avis.form.erreurChargement' => 'تعذّر فتح النموذج. أعد المحاولة بعد قليل.',
 			'avis.form.sansDonnees' => 'تعذّر فتح النموذج',
@@ -34407,8 +34423,6 @@ extension on TraductionsAr {
 			'avis.form.indisponiblePhrase' => 'ستتوفر هذه الخاصية عند ربط الخادم.',
 			'avis.admin.titre' => 'الآراء',
 			'avis.admin.sousTitre' => 'آراء الأسر والطلاب. تقرؤها الإدارة وتنشرها أو ترفضها. ولا تعدّل أي نص أبدًا.',
-			_ => null,
-		} ?? switch (path) {
 			'avis.admin.outil' => 'آراء الأسر',
 			'avis.admin.outilDetail' => 'إنشاء رابط لجمع الآراء، وقراءتها، ونشرها أو رفضها',
 			'avis.admin.sections.libelle' => 'أقسام الآراء',
@@ -34914,6 +34928,8 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.pas.aVenir' => 'لاحقًا',
 			'candidatsFlux.importFormulaires.depot.question' => 'أي ملف تريدون استيراده؟',
 			'candidatsFlux.importFormulaires.depot.explication' => 'اختاروا ملف CSV المُصدَّر من جدول النماذج (في جداول بيانات Google: ملف ثم تنزيل ثم قيم مفصولة بفواصل). لا يُرسَل شيء قبل الضغط على «تحليل الملف».',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.depot.carteTitre' => 'اختيار ملف CSV',
 			'candidatsFlux.importFormulaires.depot.carteDescription' => 'يُقرأ الملف على هذا الجهاز. ولا يُرسَل إلى رواية إلا عند الضغط على «تحليل الملف». الحجم الأقصى: 5 ميغابايت.',
 			'candidatsFlux.importFormulaires.depot.carteChoisi' => ({required Object nom}) => 'الملف المختار: ⁨${nom}⁩',
@@ -34921,8 +34937,6 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.depot.autreFichier' => 'اختيار ملف آخر',
 			'candidatsFlux.importFormulaires.depot.noms.titre' => 'سيُسجَّل هذا الملف باسم',
 			'candidatsFlux.importFormulaires.depot.noms.ligne' => ({required Object classeur, required Object onglet}) => 'المصنّف «⁨${classeur}⁩»، الورقة «⁨${onglet}⁩»',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.depot.noms.aide' => 'يُستعمل هذان الاسمان للتعرّف على كل رد. إن أعدتم لاحقًا استيراد الملف نفسه بعد تصحيحه فأبقوا الاسمين كما هما: لن يُضاف أي رد مرتين.',
 			'candidatsFlux.importFormulaires.depot.noms.corriger' => 'تصحيح الاسمين',
 			'candidatsFlux.importFormulaires.depot.noms.garder' => 'إبقاء الاسمين',

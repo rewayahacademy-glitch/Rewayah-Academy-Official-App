@@ -7260,8 +7260,15 @@
     "verifiee": "Ville vérifiée",
     "nonVerifiee": "Ville à vérifier",
     "verifier": "Vérifier la ville de {nom}",
+    "villeVerifiee": "La ville de {nom} est vérifiée.",
     "verifierEchec": "La vérification n'est pas confirmée. Réessayez dans un instant.",
     "incoherencesTitre": "Villes à vérifier",
+    "incSansVille": "n'a pas encore choisi sa ville",
+    "incFuseauDifferent": "son fuseau enregistré ne correspond pas à sa ville",
+    "incPaysDifferent": "son pays enregistré ne correspond pas au pays de sa ville",
+    "incPaysFuseau": "son pays et son fuseau enregistrés ne vont pas ensemble",
+    "villeLigne": "{ville} ({pays})",
+    "incoherencesCompte": "{n} à vérifier",
     "incoherencesVide": "Aucune ville à vérifier pour le moment."
   },
   "parcours": {

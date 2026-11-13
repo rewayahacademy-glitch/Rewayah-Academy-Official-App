@@ -9735,8 +9735,15 @@
     "verifiee": "مدينة تمت مراجعتها",
     "nonVerifiee": "مدينة تحتاج إلى مراجعة",
     "verifier": "مراجعة مدينة ⁨{nom}⁩",
+    "villeVerifiee": "تمت مراجعة مدينة ⁨{nom}⁩.",
     "verifierEchec": "لم يتم تأكيد المراجعة. أعيدوا المحاولة بعد قليل.",
     "incoherencesTitre": "مدن تحتاج إلى مراجعة",
+    "incSansVille": "لم يختر مدينته بعد",
+    "incFuseauDifferent": "التوقيت المسجَّل لا يطابق مدينته",
+    "incPaysDifferent": "البلد المسجَّل لا يطابق بلد مدينته",
+    "incPaysFuseau": "البلد والتوقيت المسجَّلان لا يتفقان",
+    "villeLigne": "⁨{ville}⁩ (⁨{pays}⁩)",
+    "incoherencesCompte": "⁨{n}⁩ تحتاج إلى مراجعة",
     "incoherencesVide": "لا توجد مدن تحتاج إلى مراجعة حاليًا."
   },
   "parcours": {
