@@ -15432,18 +15432,7 @@
       },
       "carte": {
         "document": "{titre}, {type}",
-        "lien": "{titre}, lien externe, s'ouvre hors de l'application",
-        "lienAdresse": "S'ouvre hors de l'application\u00a0: {adresse}"
-      },
-      "lien": {
-        "titre": "Ouvrir ce lien\u00a0?",
-        "corps": "Ce lien est publié par l'académie. Il s'ouvre hors de l'application.",
-        "corpsTu": "Ce lien est publié par l'académie. Il s'ouvre hors de l'application, dans ton navigateur.",
-        "adresse": "Adresse\u00a0: {adresse}",
-        "ouvrir": "Ouvrir le lien",
-        "copie": "Lien copié\u00a0: collez-le dans votre navigateur.",
-        "copieTu": "Lien copié\u00a0: colle-le dans ton navigateur.",
-        "bloque": "Le navigateur a bloqué l'ouverture. Réessayez."
+        "lien": "{titre}, lien externe, s'ouvre hors de l'application"
       }
     },
     "programme": {

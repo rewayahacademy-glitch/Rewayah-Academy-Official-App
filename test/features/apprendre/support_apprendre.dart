@@ -223,7 +223,6 @@ DocumentPlanche lienDemo() => documentDe(
   'Les lettres arabes, en images',
   type: TypeDocumentPlanche.lienExterne,
   description: 'Une présentation courte des lettres, publiée par Rewayah.',
-  ouverture: OuvrirHorsApplication(Uri.parse('https://exemple.org/lettres')),
 );
 
 /// Une bibliotheque complete : le Coran, un document, un audio, une video, un

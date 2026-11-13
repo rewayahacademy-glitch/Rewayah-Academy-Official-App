@@ -15,7 +15,6 @@ import 'package:rewayah_academy/core/capacites/port_progression_famille.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/preferences/preferences_locales.dart';
-import 'package:rewayah_academy/core/recrutement/ouvreur_lien.dart';
 import 'package:rewayah_academy/core/router/fil_ariane.dart' show planFilPour;
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
@@ -23,7 +22,6 @@ import 'package:rewayah_academy/core/tc_bibliotheque/catalogue_local.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/donnees_catalogue.dart'
     show portCatalogueProvider;
 import 'package:rewayah_academy/core/tc_bibliotheque/library_resource.dart';
-import 'package:rewayah_academy/core/tc_bibliotheque/ouvreur_onglet.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/port_catalogue.dart'
     show EchecCatalogue;
 import 'package:rewayah_academy/core/theme/app_typography.dart'
@@ -514,18 +512,12 @@ void main() {
       expectSansArgent(tester);
     });
 
-    testWidgets('liens externes : petite carte avec sa description ; '
-        'confirmation avant ouverture', (WidgetTester tester) async {
-      final List<Uri> ouverts = <Uri>[];
-      await monterApprendre(
+    testWidgets('liens externes : petite carte avec sa description ; elle '
+        's ouvre par SA fiche (la confirmation est celle de la Bibliotheque '
+        'une)', (WidgetTester tester) async {
+      final GoRouter routeur = await monterApprendre(
         tester,
         documents: documentsComplets(),
-        autres: <Override>[
-          ouvreurOngletProvider.overrideWithValue((Uri lien) {
-            ouverts.add(lien);
-            return true;
-          }),
-        ],
       );
       final Finder carte = find.byKey(
         PlancheDocuments.cleDocument('lien-lettres'),
@@ -537,63 +529,7 @@ void main() {
       );
       await _toucher(tester, carte);
       await stabiliser(tester);
-      // La feuille de confirmation : rien n'est ouvert avant l'accord.
-      expect(ouverts, isEmpty);
-      expect(find.text(t.apprendre.bibliotheque.lien.titre), findsOneWidget);
-      expect(find.text(t.apprendre.bibliotheque.lien.corps), findsOneWidget);
-      // Annuler n'ouvre rien.
-      await tester.tap(find.text(t.commun.annuler));
-      await stabiliser(tester);
-      expect(ouverts, isEmpty);
-      // Confirmer ouvre le lien publie par l'academie.
-      await _toucher(tester, carte);
-      await stabiliser(tester);
-      await tester.tap(find.text(t.apprendre.bibliotheque.lien.ouvrir));
-      await stabiliser(tester);
-      expect(ouverts, <Uri>[Uri.parse('https://exemple.org/lettres')]);
-    });
-
-    testWidgets('le mineur tutoie et la confirmation dit que l academie a '
-        'publie le lien', (WidgetTester tester) async {
-      await monterApprendre(
-        tester,
-        profil: ProfilApprendre.mineurGuide,
-        documents: documentsComplets(),
-        autres: <Override>[
-          ouvreurOngletProvider.overrideWithValue((Uri _) => true),
-        ],
-      );
-      await _toucher(
-        tester,
-        find.byKey(PlancheDocuments.cleDocument('lien-lettres')),
-      );
-      await stabiliser(tester);
-      expect(find.text(t.apprendre.bibliotheque.lien.corpsTu), findsOneWidget);
-      expect(find.textContaining('académie'), findsWidgets);
-    });
-
-    testWidgets('sans navigateur, le lien est copie et la phrase le dit', (
-      WidgetTester tester,
-    ) async {
-      await monterApprendre(
-        tester,
-        documents: documentsComplets(),
-        autres: <Override>[
-          ouvreurOngletProvider.overrideWithValue(null),
-          // Le repli copie le lien dans le presse-papiers : ici, sa reponse.
-          ouvreurLienProvider.overrideWithValue(
-            (Uri _) async => ResultatOuverture.copie,
-          ),
-        ],
-      );
-      await _toucher(
-        tester,
-        find.byKey(PlancheDocuments.cleDocument('lien-lettres')),
-      );
-      await stabiliser(tester);
-      await tester.tap(find.text(t.apprendre.bibliotheque.lien.ouvrir));
-      await stabiliser(tester);
-      expect(find.textContaining('Lien copié'), findsOneWidget);
+      expect(lieu(routeur), cheminFicheDocument('lien-lettres'));
     });
 
     testWidgets('liste : un lien montre sa description en entier', (
@@ -709,7 +645,6 @@ void main() {
         'موقع مفيد للحروف',
         type: TypeDocumentPlanche.lienExterne,
         description: 'صفحة قصيرة عن الحروف',
-        ouverture: OuvrirHorsApplication(Uri.parse('https://exemple.org/x')),
       ),
     ];
 

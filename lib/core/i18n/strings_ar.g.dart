@@ -11088,7 +11088,6 @@ class _Traductions$apprendre$bibliotheque$ar extends Traductions$apprendre$bibli
 	@override late final _Traductions$apprendre$bibliotheque$aucunResultat$ar aucunResultat = _Traductions$apprendre$bibliotheque$aucunResultat$ar._(_root);
 	@override late final _Traductions$apprendre$bibliotheque$coran$ar coran = _Traductions$apprendre$bibliotheque$coran$ar._(_root);
 	@override late final _Traductions$apprendre$bibliotheque$carte$ar carte = _Traductions$apprendre$bibliotheque$carte$ar._(_root);
-	@override late final _Traductions$apprendre$bibliotheque$lien$ar lien = _Traductions$apprendre$bibliotheque$lien$ar._(_root);
 }
 
 // Path: apprendre.programme
@@ -20283,24 +20282,6 @@ class _Traductions$apprendre$bibliotheque$carte$ar extends Traductions$apprendre
 	// Translations
 	@override String document({required Object titre, required Object type}) => '⁨${titre}⁩، ⁨${type}⁩';
 	@override String lien({required Object titre}) => '⁨${titre}⁩، رابط خارجي، يُفتح خارج التطبيق';
-	@override String lienAdresse({required Object adresse}) => 'يُفتح خارج التطبيق: ⁨${adresse}⁩';
-}
-
-// Path: apprendre.bibliotheque.lien
-class _Traductions$apprendre$bibliotheque$lien$ar extends Traductions$apprendre$bibliotheque$lien$fr {
-	_Traductions$apprendre$bibliotheque$lien$ar._(TraductionsAr root) : this._root = root, super.internal(root);
-
-	final TraductionsAr _root; // ignore: unused_field
-
-	// Translations
-	@override String get titre => 'فتح هذا الرابط؟';
-	@override String get corps => 'هذا الرابط تنشره الأكاديمية. يُفتح خارج التطبيق.';
-	@override String get corpsTu => 'هذا الرابط تنشره الأكاديمية. يُفتح خارج التطبيق، في متصفحك.';
-	@override String adresse({required Object adresse}) => 'العنوان: ⁨${adresse}⁩';
-	@override String get ouvrir => 'فتح الرابط';
-	@override String get copie => 'نُسخ الرابط: الصقه في متصفحك.';
-	@override String get copieTu => 'نُسخ الرابط: الصقه في متصفحك.';
-	@override String get bloque => 'منع المتصفح الفتح. حاول مرة أخرى.';
 }
 
 // Path: apprendre.programme.genre
@@ -35909,15 +35890,6 @@ extension on TraductionsAr {
 			'apprendre.bibliotheque.coran.edition' => 'طبعة المدينة المنورة',
 			'apprendre.bibliotheque.carte.document' => ({required Object titre, required Object type}) => '⁨${titre}⁩، ⁨${type}⁩',
 			'apprendre.bibliotheque.carte.lien' => ({required Object titre}) => '⁨${titre}⁩، رابط خارجي، يُفتح خارج التطبيق',
-			'apprendre.bibliotheque.carte.lienAdresse' => ({required Object adresse}) => 'يُفتح خارج التطبيق: ⁨${adresse}⁩',
-			'apprendre.bibliotheque.lien.titre' => 'فتح هذا الرابط؟',
-			'apprendre.bibliotheque.lien.corps' => 'هذا الرابط تنشره الأكاديمية. يُفتح خارج التطبيق.',
-			'apprendre.bibliotheque.lien.corpsTu' => 'هذا الرابط تنشره الأكاديمية. يُفتح خارج التطبيق، في متصفحك.',
-			'apprendre.bibliotheque.lien.adresse' => ({required Object adresse}) => 'العنوان: ⁨${adresse}⁩',
-			'apprendre.bibliotheque.lien.ouvrir' => 'فتح الرابط',
-			'apprendre.bibliotheque.lien.copie' => 'نُسخ الرابط: الصقه في متصفحك.',
-			'apprendre.bibliotheque.lien.copieTu' => 'نُسخ الرابط: الصقه في متصفحك.',
-			'apprendre.bibliotheque.lien.bloque' => 'منع المتصفح الفتح. حاول مرة أخرى.',
 			'apprendre.programme.vide' => 'تظهر المرحلة عند الالتحاق بفصل',
 			'apprendre.programme.datesEcole' => 'مواعيد الأكاديمية',
 			'apprendre.programme.datesEcoleVide' => 'ستظهر مواعيد الأكاديمية هنا',

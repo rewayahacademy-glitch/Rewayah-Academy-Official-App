@@ -62,16 +62,6 @@ class OuvrirDansLApplication extends OuvertureDocument {
   final String chemin;
 }
 
-/// S'ouvre hors de l'application, apres une confirmation.
-@immutable
-class OuvrirHorsApplication extends OuvertureDocument {
-  /// Cree l'ouverture.
-  const OuvrirHorsApplication(this.adresse);
-
-  /// L'adresse du lien, publiee par l'academie.
-  final Uri adresse;
-}
-
 /// Un document de la planche.
 @immutable
 class DocumentPlanche {

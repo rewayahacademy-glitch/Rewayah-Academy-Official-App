@@ -12,12 +12,10 @@
 ///   effacer ».
 /// - **Le second rayon vide dit la verite** : « D'autres documents arriveront
 ///   ici », sans prix ni mot d'argent (la vente n'est pas ouverte).
-/// - **Un lien externe** est une petite carte avec sa description ; il s'ouvre
-///   hors de l'application **apres une confirmation** qui dit que l'academie
-///   l'a publie (jamais de lien d'un autre auteur : aucun type de document ne
-///   permet a un tiers d'en poser un). Dans un navigateur il s'ouvre dans un
-///   nouvel onglet ; ailleurs `url_launcher` n'est pas une dependance du
-///   projet, le lien est copie et la phrase le dit.
+/// - **Un lien externe** est une petite carte avec sa description ; il
+///   s'ouvre par **sa fiche** (la Bibliotheque une, lot 3) : la fiche relit
+///   l'adresse et demande la confirmation avant de quitter l'application. La
+///   planche n'a aucun chemin de sortie qui lui soit propre.
 /// - **La page defile, la planche ne defile pas** : un seul defilement par
 ///   ecran (DECISION-DEFILEMENT-2026-11-01). Les rangees de la grille sont des
 ///   `Row` de cellules egales, jamais une grille a hauteur fixe qui deborde a
@@ -36,22 +34,17 @@ import '../accessibilite/texte_sans_coupure.dart';
 import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
 import '../mouvement/apparition_douce.dart';
-import '../recrutement/ouvreur_lien.dart';
 import '../tc_bibliotheque/contenu_arabe.dart';
 import '../tc_bibliotheque/library_resource.dart'
     show RayonBibliotheque, codeRayonCours, codeRayonPlusLoin;
-import '../tc_bibliotheque/ouvreur_onglet.dart';
 import '../theme/app_gabarit.dart';
 import '../theme/app_metriques.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_spacing.dart';
-import '../widgets/action_principale.dart';
-import '../widgets/app_bottom_sheet.dart';
 import '../widgets/app_card.dart';
 import '../widgets/bouton_icone.dart';
 import '../widgets/empty_state.dart';
 import '../widgets/filter_pill.dart';
-import '../widgets/local_feedback.dart';
 import '../widgets/pressable.dart';
 import '../widgets/puce_filtre_actif.dart';
 import '../widgets/rangee_filtres.dart';
@@ -95,7 +88,7 @@ class PlancheDocuments extends ConsumerStatefulWidget {
   final List<DocumentPlanche> documents;
 
   /// Ce qui se passe quand un document est ouvert. Par defaut : l'adresse du
-  /// routeur, ou le lien apres confirmation.
+  /// routeur (sa fiche, ou le lecteur du Coran).
   final ValueChanged<DocumentPlanche>? surOuvrir;
 
   /// Les cles des tests.
@@ -130,8 +123,6 @@ class PlancheDocuments extends ConsumerStatefulWidget {
 }
 
 class _PlancheEtat extends ConsumerState<PlancheDocuments> {
-  String? _message;
-
   @override
   Widget build(BuildContext context) {
     final AffichagePlanche affichage = ref.watch(affichagePlancheProvider);
@@ -208,10 +199,6 @@ class _PlancheEtat extends ConsumerState<PlancheDocuments> {
             onToutEffacer: () =>
                 ref.read(typesRetenusPlancheProvider.notifier).toutEffacer(),
           ),
-        ],
-        if (_message != null) ...<Widget>[
-          Ecart.vMd,
-          LocalFeedback(message: _message),
         ],
         Ecart.vLg,
         if (aucunResultat)
@@ -324,71 +311,12 @@ class _PlancheEtat extends ConsumerState<PlancheDocuments> {
     switch (document.ouverture) {
       case OuvrirDansLApplication(:final String chemin):
         // `go`, comme la Bibliotheque d'origine et l'accueil : l'adresse
-        // change, le retour est celui de la fiche (`?retour=`).
+        // change, le retour est celui de la fiche (`?retour=`). Un lien
+        // externe s'ouvre aussi par SA fiche : elle relit l'adresse et
+        // demande la confirmation avant de quitter l'application (le chemin
+        // de la Bibliotheque une, un seul).
         context.go(chemin);
-      case OuvrirHorsApplication(:final Uri adresse):
-        await _confirmerEtOuvrir(adresse);
     }
-  }
-
-  Future<void> _confirmerEtOuvrir(Uri adresse) async {
-    final bool tutoiement = AppMetriques.of(context).estEnfant;
-    final c = t.apprendre.bibliotheque.lien;
-    final bool? accord = await AppBottomSheet.ouvrir<bool>(
-      context,
-      titre: c.titre,
-      constructeur: (BuildContext contexte) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Text(tutoiement ? c.corpsTu : c.corps),
-          Ecart.vMd,
-          Text(
-            c.adresse(adresse: _adresseCourte(adresse)),
-            style: AppPalette.of(contexte).inkMuted.applyTo(
-              Theme.of(contexte).textTheme.bodySmall ?? const TextStyle(),
-            ),
-          ),
-        ],
-      ),
-      actions: (BuildContext contexte) => Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          ActionPrincipale(
-            libelle: c.ouvrir,
-            onPress: () => Navigator.of(contexte).pop(true),
-          ),
-          Ecart.vSm,
-          ActionPrincipale(
-            libelle: t.commun.annuler,
-            niveau: NiveauAction.tertiaire,
-            onPress: () => Navigator.of(contexte).pop(false),
-          ),
-        ],
-      ),
-    );
-    if (accord != true || !mounted) return;
-    final OuvreurOnglet? onglet = ref.read(ouvreurOngletProvider);
-    String? message;
-    if (onglet != null) {
-      if (!onglet(adresse)) message = c.bloque;
-    } else {
-      final ResultatOuverture resultat = await ref.read(ouvreurLienProvider)(
-        adresse,
-      );
-      if (resultat == ResultatOuverture.copie) {
-        message = tutoiement ? c.copieTu : c.copie;
-      }
-    }
-    if (mounted && message != null) setState(() => _message = message);
-  }
-
-  /// L'adresse montree : l'hote et le chemin, sans le schema ni la requete (un
-  /// lien n'est ni garde ni journalise).
-  static String _adresseCourte(Uri adresse) {
-    final String chemin = adresse.path == '/' ? '' : adresse.path;
-    return '${adresse.host}$chemin';
   }
 }
 
@@ -751,8 +679,8 @@ class _LigneDocument extends StatelessWidget {
   }
 }
 
-/// La petite carte d'un lien externe : l'icone, le titre, la description et
-/// l'adresse ; elle s'ouvre apres une confirmation.
+/// La petite carte d'un lien externe : l'icone, le titre et la description ;
+/// elle s'ouvre par sa fiche, qui demande la confirmation.
 class _CarteLien extends StatelessWidget {
   const _CarteLien({required this.document, required this.ouvrir});
 
@@ -764,10 +692,6 @@ class _CarteLien extends StatelessWidget {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
     final String? description = document.description;
-    final OuvertureDocument ouverture = document.ouverture;
-    final String? hote = ouverture is OuvrirHorsApplication
-        ? ouverture.adresse.host
-        : null;
     final String semantique = <String>[
       t.apprendre.bibliotheque.carte.lien(titre: document.titre),
       ?description,
@@ -805,15 +729,6 @@ class _CarteLien extends StatelessWidget {
                 description,
                 style: palette.inkMuted.applyTo(
                   textes.bodyMedium ?? const TextStyle(),
-                ),
-              ),
-            ],
-            if (hote != null) ...<Widget>[
-              Ecart.vSm,
-              TexteSansCoupure(
-                t.apprendre.bibliotheque.carte.lienAdresse(adresse: hote),
-                style: palette.inkMuted.applyTo(
-                  textes.bodySmall ?? const TextStyle(),
                 ),
               ),
             ],

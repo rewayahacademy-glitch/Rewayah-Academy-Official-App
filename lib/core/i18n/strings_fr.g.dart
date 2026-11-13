@@ -24188,7 +24188,6 @@ class Traductions$apprendre$bibliotheque$fr {
 	late final Traductions$apprendre$bibliotheque$aucunResultat$fr aucunResultat = Traductions$apprendre$bibliotheque$aucunResultat$fr.internal(_root);
 	late final Traductions$apprendre$bibliotheque$coran$fr coran = Traductions$apprendre$bibliotheque$coran$fr.internal(_root);
 	late final Traductions$apprendre$bibliotheque$carte$fr carte = Traductions$apprendre$bibliotheque$carte$fr.internal(_root);
-	late final Traductions$apprendre$bibliotheque$lien$fr lien = Traductions$apprendre$bibliotheque$lien$fr.internal(_root);
 }
 
 // Path: apprendre.programme
@@ -42582,42 +42581,6 @@ class Traductions$apprendre$bibliotheque$carte$fr {
 
 	/// fr: '{titre}, lien externe, s'ouvre hors de l'application'
 	String lien({required Object titre}) => '${titre}, lien externe, s\'ouvre hors de l\'application';
-
-	/// fr: 'S'ouvre hors de l'application : {adresse}'
-	String lienAdresse({required Object adresse}) => 'S\'ouvre hors de l\'application : ${adresse}';
-}
-
-// Path: apprendre.bibliotheque.lien
-class Traductions$apprendre$bibliotheque$lien$fr {
-	Traductions$apprendre$bibliotheque$lien$fr.internal(this._root);
-
-	final Traductions _root; // ignore: unused_field
-
-	// Translations
-
-	/// fr: 'Ouvrir ce lien ?'
-	String get titre => 'Ouvrir ce lien ?';
-
-	/// fr: 'Ce lien est publié par l'académie. Il s'ouvre hors de l'application.'
-	String get corps => 'Ce lien est publié par l\'académie. Il s\'ouvre hors de l\'application.';
-
-	/// fr: 'Ce lien est publié par l'académie. Il s'ouvre hors de l'application, dans ton navigateur.'
-	String get corpsTu => 'Ce lien est publié par l\'académie. Il s\'ouvre hors de l\'application, dans ton navigateur.';
-
-	/// fr: 'Adresse : {adresse}'
-	String adresse({required Object adresse}) => 'Adresse : ${adresse}';
-
-	/// fr: 'Ouvrir le lien'
-	String get ouvrir => 'Ouvrir le lien';
-
-	/// fr: 'Lien copié : collez-le dans votre navigateur.'
-	String get copie => 'Lien copié : collez-le dans votre navigateur.';
-
-	/// fr: 'Lien copié : colle-le dans ton navigateur.'
-	String get copieTu => 'Lien copié : colle-le dans ton navigateur.';
-
-	/// fr: 'Le navigateur a bloqué l'ouverture. Réessayez.'
-	String get bloque => 'Le navigateur a bloqué l\'ouverture. Réessayez.';
 }
 
 // Path: apprendre.programme.genre
@@ -62231,15 +62194,6 @@ extension on Traductions {
 			'apprendre.bibliotheque.coran.edition' => 'Édition de Médine',
 			'apprendre.bibliotheque.carte.document' => ({required Object titre, required Object type}) => '${titre}, ${type}',
 			'apprendre.bibliotheque.carte.lien' => ({required Object titre}) => '${titre}, lien externe, s\'ouvre hors de l\'application',
-			'apprendre.bibliotheque.carte.lienAdresse' => ({required Object adresse}) => 'S\'ouvre hors de l\'application : ${adresse}',
-			'apprendre.bibliotheque.lien.titre' => 'Ouvrir ce lien ?',
-			'apprendre.bibliotheque.lien.corps' => 'Ce lien est publié par l\'académie. Il s\'ouvre hors de l\'application.',
-			'apprendre.bibliotheque.lien.corpsTu' => 'Ce lien est publié par l\'académie. Il s\'ouvre hors de l\'application, dans ton navigateur.',
-			'apprendre.bibliotheque.lien.adresse' => ({required Object adresse}) => 'Adresse : ${adresse}',
-			'apprendre.bibliotheque.lien.ouvrir' => 'Ouvrir le lien',
-			'apprendre.bibliotheque.lien.copie' => 'Lien copié : collez-le dans votre navigateur.',
-			'apprendre.bibliotheque.lien.copieTu' => 'Lien copié : colle-le dans ton navigateur.',
-			'apprendre.bibliotheque.lien.bloque' => 'Le navigateur a bloqué l\'ouverture. Réessayez.',
 			'apprendre.programme.vide' => 'L\'étape apparaîtra dès l\'entrée dans une classe',
 			'apprendre.programme.datesEcole' => 'Dates de l\'académie',
 			'apprendre.programme.datesEcoleVide' => 'Les dates de l\'académie seront affichées ici',
