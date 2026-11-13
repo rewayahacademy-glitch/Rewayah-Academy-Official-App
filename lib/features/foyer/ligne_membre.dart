@@ -6,6 +6,7 @@ import '../../core/capacites/port_acces_foyer.dart';
 import '../../core/capacites/port_classes_foyer.dart';
 import '../../core/finance/finances_profil.dart';
 import '../../core/foyer/selection_eleve.dart';
+import '../../core/i18n/isolat_bidi.dart' show enTeteArabe;
 import '../../core/i18n/jour_du_mois.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
@@ -73,10 +74,12 @@ final class _Classes extends ClasseMembre {
 /// « 1er novembre 2026 » (R8-05).
 String dateEcheance(DateTime date) {
   final DateTime locale = date.toLocal();
-  return t.foyer.membre.date(
-    jour: jourDuMois(locale.day),
-    mois: t.commun.dates.mois[locale.month - 1],
-    annee: locale.year.toString(),
+  return enTeteArabe(
+    t.foyer.membre.date(
+      jour: jourDuMois(locale.day),
+      mois: t.commun.dates.mois[locale.month - 1],
+      annee: locale.year.toString(),
+    ),
   );
 }
 

@@ -6,6 +6,7 @@ import '../../core/admin/admin_domaine.dart';
 import '../../core/admin/service_programme.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/suivi/ma_progression.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -25,6 +26,7 @@ import '../../core/widgets/sous_navigation_domaine.dart';
 import '../../core/widgets/status_pill.dart';
 import '../../core/widgets/zone_saisie.dart';
 import 'feuille_contenu_niveau.dart';
+import 'section_revision_etape.dart';
 
 /// `ADM-13` : Pedagogie > Programmes.
 ///
@@ -766,6 +768,37 @@ void _ouvrirContenu(
                 durees: durees,
               ),
       onSucces: () => ref.invalidate(niveauxProgrammeProvider(version.id)),
+      sectionRevision: Consumer(
+        builder: (BuildContext _, WidgetRef lecteur, Widget? _) {
+          final PortReglagesProgression? port = lecteur.watch(
+            portReglagesProgressionProvider,
+          );
+          final AsyncValue<List<ReglageParEtape>?> lus = lecteur.watch(
+            reglagesProgressionProvider,
+          );
+          // Une saisie qui ne marche pas n'est pas proposee : sans port, ou
+          // tant que les reglages ne sont pas lus, rien.
+          if (port == null || !lus.hasValue || lus.hasError) {
+            return const SizedBox.shrink();
+          }
+          ReglageParEtape? regle;
+          for (final ReglageParEtape r in lus.value ?? <ReglageParEtape>[]) {
+            if (r.codeTechnique == niveau.codeTechnique) regle = r;
+          }
+          return SectionRevisionEtape(
+            heuresInitiales: regle?.heuresRevisionSemaine,
+            repetitionsInitiales: regle?.repetitionsEstimees,
+            onRegler: ({double? heures, int? repetitions}) async {
+              await port.regler(
+                codeTechnique: niveau.codeTechnique,
+                heuresRevisionSemaine: heures,
+                repetitionsEstimees: repetitions,
+              );
+              lecteur.invalidate(reglagesProgressionProvider);
+            },
+          );
+        },
+      ),
     ),
   );
 }

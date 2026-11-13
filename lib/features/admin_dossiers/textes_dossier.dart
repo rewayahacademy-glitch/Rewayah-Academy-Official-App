@@ -1,5 +1,6 @@
 import '../../core/domain/enums.dart';
 import '../../core/i18n/elision.dart';
+import '../../core/i18n/isolat_bidi.dart' show enTeteArabe;
 import '../../core/i18n/strings.g.dart';
 import '../../core/tc_horloge/mon_horloge.dart';
 
@@ -94,11 +95,12 @@ String quandDepuis(DateTime instant, DateTime maintenant) {
   final String jour = switch (ecart) {
     <= 0 => t.admin.traitement.groupeAujourdhui,
     1 => t.admin.traitement.groupeHier,
-    _ when l.year == m.year => t.historique.dateCourteSansAnnee(
-      jour: l.day,
-      mois: mois,
+    _ when l.year == m.year => enTeteArabe(
+      t.historique.dateCourteSansAnnee(jour: l.day, mois: mois),
     ),
-    _ => t.historique.dateCourte(jour: l.day, mois: mois, annee: l.year),
+    _ => enTeteArabe(
+      t.historique.dateCourte(jour: l.day, mois: mois, annee: l.year),
+    ),
   };
   return '$jour · ${_heure(l)}';
 }
