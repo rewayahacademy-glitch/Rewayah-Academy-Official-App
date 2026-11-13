@@ -507,17 +507,38 @@ SELECT pg_temp.remplacer('public.materialiser_seances_groupe(uuid)'::pg_catalog.
       INSERT INTO public.sessions
         (teacher_id, started_at, ended_at, session_type, groupe_id, join_opens_at)$b$, 1);
 
--- L'empreinte F86 de la fonction suit son nouveau corps.
+-- Le concierge (seance_a_rejoindre) cree la seance du cours en cours quand une
+-- personne de la classe appuie sur « Rejoindre » : jamais un jour de fermeture
+-- publiee. Une seance deja creee est rendue telle quelle (inchange).
+SELECT pg_temp.remplacer('public.seance_a_rejoindre(uuid)'::pg_catalog.regprocedure,
+  $a$    INSERT INTO public.sessions
+      (teacher_id, started_at, ended_at, session_type, groupe_id, join_opens_at)$a$,
+  $b$    -- CALENDRIER-ET-PAUSES (13/11/2026) : aucune seance n'est creee un jour de
+    -- fermeture publiee.
+    IF private.jour_ferme_pour_classe((v_debut AT TIME ZONE v_g.timezone_iana)::date, p_groupe_id) THEN
+      CONTINUE;
+    END IF;
+
+    INSERT INTO public.sessions
+      (teacher_id, started_at, ended_at, session_type, groupe_id, join_opens_at)$b$, 1);
+
+-- Les empreintes F86 des deux fonctions suivent leur nouveau corps.
 DO $empreinte$
 DECLARE
-  v_f CONSTANT pg_catalog.regprocedure := 'public.materialiser_seances_groupe(uuid)'::pg_catalog.regprocedure;
-  v_com text := pg_catalog.obj_description(v_f, 'pg_proc');
+  v_f pg_catalog.regprocedure;
+  v_com text;
 BEGIN
-  IF v_com ~ 'md5_functiondef=[0-9a-f]{32}' THEN
-    EXECUTE pg_catalog.format('COMMENT ON FUNCTION %s IS %L', v_f,
-      pg_catalog.regexp_replace(v_com, 'md5_functiondef=[0-9a-f]{32}',
-        'md5_functiondef=' || pg_catalog.md5(pg_catalog.pg_get_functiondef(v_f))));
-  END IF;
+  FOREACH v_f IN ARRAY ARRAY[
+    'public.materialiser_seances_groupe(uuid)'::pg_catalog.regprocedure,
+    'public.seance_a_rejoindre(uuid)'::pg_catalog.regprocedure
+  ] LOOP
+    v_com := pg_catalog.obj_description(v_f, 'pg_proc');
+    IF v_com ~ 'md5_functiondef=[0-9a-f]{32}' THEN
+      EXECUTE pg_catalog.format('COMMENT ON FUNCTION %s IS %L', v_f,
+        pg_catalog.regexp_replace(v_com, 'md5_functiondef=[0-9a-f]{32}',
+          'md5_functiondef=' || pg_catalog.md5(pg_catalog.pg_get_functiondef(v_f))));
+    END IF;
+  END LOOP;
 END
 $empreinte$;
 
@@ -1301,6 +1322,9 @@ BEGIN
   END IF;
   IF pg_catalog.strpos(
        pg_catalog.pg_get_functiondef('public.materialiser_seances_groupe(uuid)'::pg_catalog.regprocedure),
+       'private.jour_ferme_pour_classe') = 0
+     OR pg_catalog.strpos(
+       pg_catalog.pg_get_functiondef('public.seance_a_rejoindre(uuid)'::pg_catalog.regprocedure),
        'private.jour_ferme_pour_classe') = 0
      OR pg_catalog.strpos(
        pg_catalog.pg_get_functiondef('public.etape_eleve_lecture(uuid)'::pg_catalog.regprocedure),

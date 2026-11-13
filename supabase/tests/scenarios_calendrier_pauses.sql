@@ -82,7 +82,7 @@ GRANT ALL ON cp_ids TO authenticated;
 -- ------------------------------------------------------------------
 INSERT INTO auth.users(id, email)
 SELECT pg_temp.u(x), 'cp-' || x || '@test.invalid'
-  FROM unnest(ARRAY['a1','b1','b3','t1','t2','t3','e1','e2','e4','e9']) AS x;
+  FROM unnest(ARRAY['a1','b1','b3','b5','b6','t1','t2','t3','e1','e2','e4','e9']) AS x;
 INSERT INTO public.households(id, timezone) VALUES
   (pg_temp.u('f1'), 'UTC'), (pg_temp.u('f2'), 'UTC'), (pg_temp.u('f3'), 'UTC');
 INSERT INTO public.profiles(id, immutable_id, role, household_id, first_name, last_name, account_status, gender)
@@ -94,6 +94,8 @@ SELECT pg_temp.u(x.id), x.mat, x.role::public.app_role,
    ('a1','CP-ADM-01','admin',NULL,'Direction'),
    ('b1','CP-ENS-01','teacher',NULL,'Titulaire un'),
    ('b3','CP-ENS-03','teacher',NULL,'Titulaire trois'),
+   ('b5','CP-ENS-05','teacher',NULL,'Titulaire cinq'),
+   ('b6','CP-ENS-06','teacher',NULL,'Titulaire six'),
    ('t1','CP-TUT-01','guardian','f1','Tutrice un'),
    ('t2','CP-TUT-02','guardian','f2','Tutrice deux'),
    ('t3','CP-TUT-03','guardian','f3','Tutrice trois'),
@@ -658,6 +660,48 @@ SELECT pg_temp.vrai(
 SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
 SET LOCAL ROLE authenticated;
 SELECT pg_temp.publier('tr69', false);
+RESET ROLE;
+
+-- Le concierge (seance_a_rejoindre) cree la seance du cours en cours quand la
+-- personne appuie sur « Rejoindre » : jamais un jour de fermeture publiee.
+-- c7 (temoin) et c8 ont leur creneau a l'heure en cours d'aujourd'hui : leur
+-- cours a commence, il n'est pas fini, aucune seance n'existe encore.
+INSERT INTO public.groupes(id, teacher_id, type_public, seuil_max, libelle, weekday, hour_local, timezone_iana) VALUES
+ (pg_temp.u('c7'), pg_temp.u('b5'), 'enfant', 5, 'Temoin CP', EXTRACT(isodow FROM pg_catalog.now() AT TIME ZONE 'UTC')::int,
+  EXTRACT(hour FROM pg_catalog.now() AT TIME ZONE 'UTC')::int, 'UTC'),
+ (pg_temp.u('c8'), pg_temp.u('b6'), 'enfant', 5, 'Ferme CP', EXTRACT(isodow FROM pg_catalog.now() AT TIME ZONE 'UTC')::int,
+  EXTRACT(hour FROM pg_catalog.now() AT TIME ZONE 'UTC')::int, 'UTC');
+SELECT pg_temp.qui(pg_temp.u('b5'), 'teacher');
+SET LOCAL ROLE authenticated;
+SELECT public.seance_a_rejoindre(pg_temp.u('c7')) AS temoin \gset r50_
+RESET ROLE;
+SELECT pg_temp.vrai(:'r50_temoin' IS NOT NULL
+                    AND (SELECT pg_catalog.count(*) FROM public.sessions WHERE groupe_id = pg_temp.u('c7')
+                           AND started_at <= pg_catalog.now()) = 1,
+  'temoin : sans fermeture, le concierge cree la seance du cours en cours');
+SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.fermer('aujourdhui', 'autre', 0, 0);
+SELECT pg_temp.publier('aujourdhui', true);
+RESET ROLE;
+SELECT pg_temp.qui(pg_temp.u('b6'), 'teacher');
+SET LOCAL ROLE authenticated;
+SELECT coalesce(public.seance_a_rejoindre(pg_temp.u('c8'))::text, 'NUL') AS ferme \gset r51_
+RESET ROLE;
+SELECT pg_temp.vrai(:'r51_ferme' = 'NUL'
+                    AND (SELECT pg_catalog.count(*) FROM public.sessions WHERE groupe_id = pg_temp.u('c8')
+                           AND started_at <= pg_catalog.now()) = 0,
+  'un jour de fermeture publiee, le concierge ne cree aucune seance (« Rejoindre » ne trouve rien)');
+-- Une seance deja creee ce jour-la n'est pas touchee : le concierge la rend telle quelle.
+SELECT pg_temp.qui(pg_temp.u('b5'), 'teacher');
+SET LOCAL ROLE authenticated;
+SELECT public.seance_a_rejoindre(pg_temp.u('c7')) AS existante \gset r52_
+RESET ROLE;
+SELECT pg_temp.vrai(:'r52_existante' = :'r50_temoin',
+  'une seance deja creee pendant la fermeture n''est ni supprimee ni remplacee');
+SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.publier('aujourdhui', false);
 RESET ROLE;
 
 -- ------------------------------------------------------------------
