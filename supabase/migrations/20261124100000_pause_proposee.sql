@@ -41,7 +41,11 @@
 --    est nul quand la pause ne tient plus avant la fin prevue ou quand le
 --    statut n'est plus programmee. Le reste minimum ne compte que pour la
 --    pause ordinaire (motif nul) ; une pause a motif doit seulement finir
---    avant la fin prevue.
+--    avant la fin prevue. L'etat porte aussi rappel_minutes
+--    (seance.pause_rappel_minutes, au moins 1, meme lecture que le Non) :
+--    l'application reprend la proposition restee sans reponse apres ce delai
+--    de la direction, et non plus apres une constante (SERVEUR-PETITS,
+--    13/11/2026, D-042).
 -- 7. pause_reglage_lire rend, pour une classe sans ligne, la verite : la pause
 --    par defaut (actif, milieu de la duree de la classe, duree du public), avec
 --    par_defaut = true. Type de retour inchange (jsonb).
@@ -168,14 +172,18 @@ AS $function$
 DECLARE
   v_result jsonb;
   v_reste integer;
+  v_rappel integer;
 BEGIN
   v_reste := GREATEST(0, coalesce(public.app_config_int('seance.pause_reste_minimum_minutes', 15), 15));
+  -- Meme lecture et meme borne que pause_seance_refuser : au moins 1 minute.
+  v_rappel := GREATEST(1, coalesce(public.app_config_int('seance.pause_rappel_minutes', 5), 5));
   SELECT jsonb_build_object(
     'statut', coalesce(ps.statut,'non_prevue'),
     'duree_prevue_minutes', coalesce(ps.duree_prevue_minutes,5),
     'debut_prevu_utc',ps.debut_prevu_utc,'debut_utc',ps.debut_utc,'fin_utc',ps.fin_utc,
     'peut_piloter', coalesce(s.teacher_id = p_uid AND s.status = 'in_progress',false),
     'refus_nombre', coalesce(ps.refus_nombre, 0),
+    'rappel_minutes', v_rappel,
     'motif', ps.motif,
     'proposer_a', CASE
       WHEN ps.statut = 'programmee'
@@ -373,6 +381,10 @@ BEGIN
      OR public.app_config_int('seance.pause_rappel_minutes', -1) < 0
      OR public.app_config_int('seance.pause_reste_minimum_minutes', -1) < 0 THEN
     RAISE EXCEPTION 'PAUSE-SERVEUR : colonnes ou reglages absents';
+  END IF;
+  IF pg_catalog.strpos(pg_catalog.pg_get_functiondef('public.pause_etat_interne(uuid,uuid)'::pg_catalog.regprocedure),
+                       '''rappel_minutes''') = 0 THEN
+    RAISE EXCEPTION 'PAUSE-SERVEUR : pause_etat_interne ne rend pas rappel_minutes';
   END IF;
 END;
 $acl$;

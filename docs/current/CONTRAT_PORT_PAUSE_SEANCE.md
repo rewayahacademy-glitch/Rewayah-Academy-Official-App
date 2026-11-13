@@ -58,6 +58,7 @@ démarre.
 | `peut_piloter` | bool | calculé côté serveur : l'enseignant de la séance, séance en cours |
 | `proposer_a` | timestamptz | PAUSE-SERVEUR (§7) : quand la barre du chrono propose la pause ; nul s'il n'y a plus de proposition |
 | `refus_nombre` | int | PAUSE-SERVEUR : nombre de Non |
+| `rappel_minutes` | int | SERVEUR-PETITS (13/11/2026, D-042) : `seance.pause_rappel_minutes` de la direction, au moins 1 ; délai après lequel l'application repropose une pause restée sans réponse |
 | `motif` | text | PAUSE-SERVEUR : nul (ordinaire) ou `priere` (pause prévue par le serveur) |
 
 Transitions :
@@ -109,7 +110,8 @@ servis (`debut_utc`, `fin_utc`).
 
 `PortPauseSeance` : `reglage`, `enregistrerReglage` (erreur `ReglagePauseObsolete`),
 `etat`, `demarrer`, `terminer`, `refuser` (PAUSE-SERVEUR). `PauseSeance` porte en plus
-`proposerAUtc`, `refusNombre` et `motif` (`MotifPause.ordinaire` / `priere`, valeur
+`proposerAUtc`, `refusNombre`, `rappelMinutes` (nul si le serveur ne rend pas
+`rappel_minutes` : serveur ancien) et `motif` (`MotifPause.ordinaire` / `priere`, valeur
 inconnue lue `ordinaire`). L'adaptateur `*_supabase.dart` associe `reglage_obsolete`
 à `ReglagePauseObsolete`, toute autre erreur reste une erreur ordinaire (l'écran dit
 « échec »). Tant que l'adaptateur n'est pas câblé, `PauseSeanceIndisponible`.
@@ -151,6 +153,11 @@ L'écran (la barre du chrono qui pose Oui / Non) est un autre lot.
   ne vaut que pour la pause ordinaire : une pause à motif (prévue par le serveur) doit
   seulement finir avant la fin prévue. L'enseignant peut
   toujours démarrer la pause lui-même tant qu'elle est `programmee`.
+- **Sans réponse** (SERVEUR-PETITS, 13/11/2026, D-042). Quand l'enseignant ne répond ni
+  Oui ni Non, c'est la barre du chrono qui remontre la proposition ; elle attend
+  `rappel_minutes` (rendu par l'état, même lecture et même borne que le Non :
+  `seance.pause_rappel_minutes`, au moins 1). Serveur ancien sans ce champ : la constante
+  de l'application (5 min).
 - **Fin.** Pas de minuterie serveur : l'écran de l'enseignant appelle `pause_seance_terminer`
   à l'heure de reprise (autre lot).
 - **Pause prévue par le serveur** (lot de la prière, objet `public.seance_pause_prevue`,

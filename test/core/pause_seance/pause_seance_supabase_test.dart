@@ -81,11 +81,13 @@ void main() {
         'debut_prevu_utc': '2026-11-12T18:45:00+00:00',
         'proposer_a': '2026-11-12T18:50:00+00:00',
         'refus_nombre': 1,
+        'rappel_minutes': 3,
         'motif': 'priere',
         'peut_piloter': true,
       });
       expect(p.proposerAUtc, DateTime.utc(2026, 11, 12, 18, 50));
       expect(p.refusNombre, 1);
+      expect(p.rappelMinutes, 3);
       expect(p.motif, MotifPause.priere);
     });
 
@@ -99,7 +101,22 @@ void main() {
       });
       expect(p.proposerAUtc, isNull);
       expect(p.refusNombre, 0);
+      expect(p.rappelMinutes, isNull);
       expect(p.motif, MotifPause.ordinaire);
+    });
+
+    test('SERVEUR-PETITS (D-042) : rappel_minutes en texte lu ; invalide ou '
+        'inferieur a 1 lu nul (la constante de l application reste)', () {
+      Map<String, dynamic> ligne(Object? rappel) => <String, dynamic>{
+        'statut': 'programmee',
+        'duree_prevue_minutes': 10,
+        'debut_prevu_utc': '2026-11-12T18:45:00+00:00',
+        'rappel_minutes': rappel,
+      };
+      expect(pauseDepuis(ligne('7')).rappelMinutes, 7);
+      expect(pauseDepuis(ligne(0)).rappelMinutes, isNull);
+      expect(pauseDepuis(ligne('x')).rappelMinutes, isNull);
+      expect(pauseDepuis(ligne(null)).rappelMinutes, isNull);
     });
 
     test('PAUSE-SERVEUR : plus de proposition ; motif inconnu = ordinaire', () {

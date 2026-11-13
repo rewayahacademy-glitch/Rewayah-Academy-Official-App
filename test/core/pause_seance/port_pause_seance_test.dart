@@ -173,12 +173,15 @@ void main() {
       expect(p.proposerAUtc, p.debutPrevuUtc);
       expect(p.refusNombre, 0);
       expect(p.motif, MotifPause.ordinaire);
+      // Le delai de rappel est rendu, comme par le serveur (D-042).
+      expect(p.rappelMinutes, PauseSeanceDemonstration.rappel.inMinutes);
       final PauseSeance non = await port.refuser(
         seanceId: 's1',
         cleIdempotence: 'n1',
       );
       expect(non.statut, StatutPause.programmee);
       expect(non.refusNombre, 1);
+      expect(non.rappelMinutes, 5);
       expect(non.proposerAUtc, maintenant.add(PauseSeanceDemonstration.rappel));
       // Rejouer la meme cle ne compte pas un second refus.
       expect(

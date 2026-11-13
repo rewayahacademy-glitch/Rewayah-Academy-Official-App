@@ -54,7 +54,8 @@ class PauseSeanceDemonstration implements PortPauseSeance {
     );
   }
 
-  /// Le delai de rappel apres un Non, comme `seance.pause_rappel_minutes`.
+  /// Le delai de rappel apres un Non, et d'une proposition restee sans
+  /// reponse, comme `seance.pause_rappel_minutes` (rendu en `rappelMinutes`).
   static const Duration rappel = Duration(minutes: 5);
 
   PauseSeance _courante(String seanceId) {
@@ -70,6 +71,7 @@ class PauseSeanceDemonstration implements PortPauseSeance {
       debutPrevuUtc: debut,
       proposerAUtc: debut,
       peutPiloter: true,
+      rappelMinutes: rappel.inMinutes,
     );
   }
 
@@ -91,6 +93,7 @@ class PauseSeanceDemonstration implements PortPauseSeance {
       debutUtc: _maintenant(),
       peutPiloter: true,
       refusNombre: p.refusNombre,
+      rappelMinutes: rappel.inMinutes,
       motif: p.motif,
     );
   }
@@ -110,6 +113,7 @@ class PauseSeanceDemonstration implements PortPauseSeance {
       finUtc: _maintenant(),
       peutPiloter: true,
       refusNombre: p.refusNombre,
+      rappelMinutes: rappel.inMinutes,
       motif: p.motif,
     );
   }
@@ -132,6 +136,7 @@ class PauseSeanceDemonstration implements PortPauseSeance {
       proposerAUtc: _maintenant().add(rappel),
       refusNombre: p.refusNombre + 1,
       peutPiloter: true,
+      rappelMinutes: rappel.inMinutes,
       motif: p.motif,
     );
   }

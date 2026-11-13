@@ -6,7 +6,7 @@
 -- PREVU, un reglage actif = faux respecte, la pause qui ne tient pas dans une
 -- seance trop courte, le Non (compteur, prochaine proposition a + 5 min), la fin
 -- des propositions quand la pause ne tient plus, le Oui apres un Non,
--- l'idempotence, les refus (eleve, tuteur, autre enseignant, direction, anon) et
+-- l'idempotence, le delai de rappel rendu (rappel_minutes, D-042), les refus (eleve, tuteur, autre enseignant, direction, anon) et
 -- les droits (has_function_privilege). Tout est annule par le ROLLBACK final.
 BEGIN;
 
@@ -111,6 +111,22 @@ BEGIN
      OR NOT (v_e ? 'motif') OR v_e->>'motif' IS NOT NULL THEN
     RAISE EXCEPTION 'PP: pause par defaut adulte incorrecte : %', v_e;
   END IF;
+  -- 3 bis. Le delai de rappel de la direction est rendu (D-042) : 5 par defaut,
+  -- la valeur reglee ensuite (3), et jamais moins de 1 (reglage a 0).
+  IF v_e->>'rappel_minutes' IS DISTINCT FROM '5' THEN
+    RAISE EXCEPTION 'PP: rappel_minutes par defaut absent ou faux : %', v_e;
+  END IF;
+  UPDATE public.app_config SET value=to_jsonb(3) WHERE key='seance.pause_rappel_minutes';
+  v_e := public.pause_seance_etat('c2400000-0000-0000-0000-000000000131');
+  IF v_e->>'rappel_minutes' IS DISTINCT FROM '3' THEN
+    RAISE EXCEPTION 'PP: rappel_minutes regle a 3 non rendu : %', v_e;
+  END IF;
+  UPDATE public.app_config SET value=to_jsonb(0) WHERE key='seance.pause_rappel_minutes';
+  v_e := public.pause_seance_etat('c2400000-0000-0000-0000-000000000131');
+  IF v_e->>'rappel_minutes' IS DISTINCT FROM '1' THEN
+    RAISE EXCEPTION 'PP: rappel_minutes non borne a 1 : %', v_e;
+  END IF;
+  UPDATE public.app_config SET value=to_jsonb(5) WHERE key='seance.pause_rappel_minutes';
   -- Table de la pause prevue absente (lot priere non installe) : regle ordinaire.
   IF pg_catalog.to_regclass('public.seance_pause_prevue') IS NOT NULL THEN
     RAISE EXCEPTION 'PP: la table seance_pause_prevue existe deja, le cas « absente » ne prouve rien';
@@ -188,7 +204,8 @@ BEGIN
   -- minimum (15) ne tiennent plus avant la fin prevue (now() + 100 min).
   UPDATE public.app_config SET value=to_jsonb(80) WHERE key='seance.pause_rappel_minutes';
   v_e := public.pause_seance_refuser('c2400000-0000-0000-0000-000000000131','pp-non-2');
-  IF v_e->>'statut'<>'programmee' OR v_e->>'refus_nombre'<>'2' OR v_e->>'proposer_a' IS NOT NULL THEN
+  IF v_e->>'statut'<>'programmee' OR v_e->>'refus_nombre'<>'2' OR v_e->>'proposer_a' IS NOT NULL
+     OR v_e->>'rappel_minutes' IS DISTINCT FROM '80' THEN
     RAISE EXCEPTION 'PP: proposition maintenue alors que la pause ne tient plus : %', v_e;
   END IF;
   UPDATE public.app_config SET value=to_jsonb(5) WHERE key='seance.pause_rappel_minutes';

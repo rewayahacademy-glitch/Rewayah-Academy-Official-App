@@ -7,7 +7,8 @@
 //
 // PAUSE-SERVEUR (12/11/2026) : plus `pause_seance_refuser` (le Non a la pause
 // proposee, `20261124100000_pause_proposee.sql`), et trois champs de l'etat :
-// `proposer_a`, `refus_nombre`, `motif`. Un serveur d'avant cette migration ne
+// `proposer_a`, `refus_nombre`, `motif` ; plus `rappel_minutes` (SERVEUR-PETITS,
+// D-042 : le delai de rappel de la direction). Un serveur d'avant cette migration ne
 // les rend pas : l'etat se lit sans proposition (ordinaire, zero refus), et un
 // Non envoye a ce serveur relit l'etat au lieu de casser l'ecran.
 //
@@ -178,6 +179,7 @@ PauseSeance pauseDepuis(Map<String, dynamic> ligne) {
     refusNombre: ligne['refus_nombre'] == null
         ? 0
         : _entier(ligne, 'refus_nombre'),
+    rappelMinutes: _rappelMinutes(ligne['rappel_minutes']),
     motif: motifDepuis(ligne['motif']),
   );
 }
@@ -186,6 +188,19 @@ PauseSeance pauseDepuis(Map<String, dynamic> ligne) {
 /// valeur que ce client ne connait pas).
 MotifPause motifDepuis(Object? brut) =>
     brut == 'priere' ? MotifPause.priere : MotifPause.ordinaire;
+
+/// Le delai de rappel lu du serveur (SERVEUR-PETITS, D-042) : `null` s'il
+/// manque (serveur ancien) ou s'il n'est pas un entier positif, pour que
+/// l'application garde sa constante plutot que de reproposer en boucle.
+int? _rappelMinutes(Object? brut) {
+  final int? n = switch (brut) {
+    final int v => v,
+    final num v => v.toInt(),
+    final String v => int.tryParse(v),
+    _ => null,
+  };
+  return n != null && n >= 1 ? n : null;
+}
 
 int _entier(Map<String, dynamic> ligne, String cle) {
   final Object? v = ligne[cle];
