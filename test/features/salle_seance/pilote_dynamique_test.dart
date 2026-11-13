@@ -10,7 +10,6 @@
 //   pause de priere (avance, decalage, depart seul), fin automatique (une
 //   fois, reessai apres un echec), debut et fin dits a tous, reprise passee.
 
-import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
@@ -139,7 +138,7 @@ void main() {
         AlerteChrono(
           id: 'prop',
           titre: 'Pause ?',
-          trace: MarqueChrono.evenement(libelle: 'Pause proposee'),
+          trace: const MarqueChrono.evenement(libelle: 'Pause proposee'),
           rouvrable: true,
         ),
       );

@@ -65,13 +65,12 @@ import 'package:rewayah_academy/features/salle/salle_page.dart';
 import 'package:rewayah_academy/features/salle/synchro_salle.dart'
     show typeParoleSalle;
 import 'package:rewayah_academy/features/salle_enseignant/page_coran_salle.dart';
-import 'package:rewayah_academy/features/salle_seance/annonce_geste.dart';
-import 'package:rewayah_academy/features/salle_seance/dynamique_chrono.dart';
 import 'package:rewayah_academy/features/salle_seance/barre_outils_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/bornes_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/commandes_pedagogiques.dart'
     show DeclencheurCommandes;
 import 'package:rewayah_academy/features/salle_seance/depuis_salle.dart';
+import 'package:rewayah_academy/features/salle_seance/dynamique_chrono.dart';
 import 'package:rewayah_academy/features/salle_seance/ecriture_seance.dart'
     show diffusionEcritureProvider;
 import 'package:rewayah_academy/features/salle_seance/media_salle.dart';
