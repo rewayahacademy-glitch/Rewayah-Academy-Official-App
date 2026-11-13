@@ -141,24 +141,26 @@ const Map<String, int> _domaines = <String, int>{
   // HORS-SALLE-2 (13/11/2026) : le journal des sorties de l'application
   // (accord du parent, rapport, reglages).
   'journalSorties': 40,
+  // LANGUES-1 (13/11/2026) : les domaines venus de ccr, traduits.
+  'presentationTuteur': 13,
+  'reprisesAdmin': 22,
+  'recrutement': 700,
+  'formulaire': 9,
+  'motifs': 72,
+  'suiviDemandes': 76,
+  'alertes': 58,
+  'argent': 71,
+  'identiteProfil': 5,
 };
 
-/// Les domaines francais venus de ccr sans tranche arabe (reunion du 10/10) :
+/// Les domaines francais venus de ccr sans tranche arabe (reunion du 10/10) ;
+/// LANGUES-1 (13/11/2026) n'y laisse que `com` et `comptable` :
 /// entierement dans le socle, ou traduits par les voies Communications et
 /// Comptabilite selon leurs propres regles (`com`, `comptable`), pas encore
 /// relus par la ligne arabe. Un domaine en sort quand sa tranche arabe entre
 /// dans [_domaines].
 const Set<String> _enAttente = <String>{
   // RECRUT-ECRANS : arabe non prioritaire au lancement (REPRISE.md).
-  'presentationTuteur',
-  'reprisesAdmin',
-  'recrutement',
-  'formulaire',
-  'motifs',
-  'suiviDemandes',
-  'alertes',
-  'argent',
-  'identiteProfil',
   'com',
   'comptable',
 };
@@ -240,6 +242,14 @@ const Set<String> _latins = <String>{
   // dans toutes les langues (« Version 0.2.0 (423) », lot FOYER-UX).
   'compte.version',
   'compte.versionSeule',
+  // LANGUES-1 (13/11/2026) : une puce typographique, le numero d'une sourate
+  // suivi d'un point, et le bloc de coordonnees de la societe : ponctuation
+  // et noms propres, rien a traduire.
+  'contrat.politique.puce',
+  'enseignant.cahier.repriseSourate',
+  'contrat.politique.s10.texte',
+  // L'heure d'un creneau, « {h}:00 » : un format, sans mot.
+  'recrutement.parcours.creneaux.heure',
   // DATE-ARABE-SOURCE (garde-cap, 12/11/2026) : l'heure arabe s'ecrit en
   // chiffres, « 5:00 », isolee de gauche a droite (U+2066) ; aucun mot.
   'admin.regroupements.heure',
@@ -315,6 +325,17 @@ const Set<String> _motsLatinsAdmis = <String>{
   // Decision du directeur du 03/11/2026 : la ligne de version reste en
   // anglais (compte.version, compte.versionSeule).
   'Version',
+  // LANGUES-1 (13/11/2026) : sigles juridiques cites par la politique de
+  // controle (DPA 2018, UK GDPR, ICO) et noms de produits de paiement.
+  'DPA',
+  'UK',
+  'GDPR',
+  'ICO',
+  'Stripe',
+  'iOS',
+  'Play',
+  'App',
+  'Store',
 };
 
 /// Les codes de situation de demonstration (SAL-00, PED-01...) et les
