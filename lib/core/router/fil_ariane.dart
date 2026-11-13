@@ -258,6 +258,13 @@ PlanFil? planFilPour(SessionState session) {
   }
   final Map<String, String> racines = <String, String>{
     for (final Destination d in destinations) d.chemin: d.libelle,
+    // ESPACE-APPRENDRE (lot 5) : le lecteur du Coran vit dans la branche
+    // Apprendre (la barre y allume Apprendre) ; il reste une page de premier
+    // niveau, comme quand il etait lui-meme la destination : pas de fil.
+    if (destinations.any((Destination d) => d.chemin == Routes.eleveApprendre))
+      Routes.eleveCoran: destinations
+          .firstWhere((Destination d) => d.chemin == Routes.eleveApprendre)
+          .libelle,
   };
   final String? compte = <String>[
     Routes.tuteurCompte,
