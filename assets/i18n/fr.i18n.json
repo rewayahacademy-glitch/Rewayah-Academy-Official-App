@@ -7056,7 +7056,7 @@
         "classement": {
           "tranchesTitre": "Pour quels âges ?",
           "tranchesAide": "Un élève ne voit que les documents de sa tranche d'âge. Cochez toutes les tranches concernées.",
-          "tranchesAideLien": "Un lien mène hors de l'application : la tranche des 6 à 9 ans n'est pas cochée d'emblée. Cochez-la seulement si vous êtes sûr du site.",
+          "tranchesAideLien": "Un lien mène hors de l'application : la tranche des 6 à 9 ans n'est pas cochée d'emblée. Cochez-la seulement si vous êtes sûr du site.",
           "tranchesAucune": "Cochez au moins une tranche d'âge.",
           "etapesTitre": "Étapes du programme",
           "etapesAide": "Rattachez le document aux étapes où il sert (facultatif).",
@@ -7120,7 +7120,7 @@
           "reseau": "La connexion s'est interrompue. Le dépôt n'est pas confirmé : réessayez.",
           "refuse": "Le serveur a refusé ce dépôt. Réessayez ou choisissez un autre fichier.",
           "empreinte": "Le fichier reçu ne correspond pas à celui envoyé. Réessayez.",
-          "nonActive": "Le dépôt de fichiers n'est pas encore activé : rien n'a été envoyé. En attendant, vous pouvez ajouter un document par son lien.",
+          "nonActive": "Le dépôt de fichiers n'est pas encore activé : rien n'a été envoyé. En attendant, vous pouvez ajouter un document par son lien.",
           "creation": "Le brouillon n'a pas pu être créé. Réessayez.",
           "droits": "Les droits n'ont pas pu être enregistrés. Réessayez."
         },

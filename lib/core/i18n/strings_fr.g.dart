@@ -44610,7 +44610,7 @@ class Traductions$admin$bibliotheque$import$classement$fr {
 	String get tranchesAide => 'Un élève ne voit que les documents de sa tranche d\'âge. Cochez toutes les tranches concernées.';
 
 	/// fr: 'Un lien mène hors de l'application : la tranche des 6 à 9 ans n'est pas cochée d'emblée. Cochez-la seulement si vous êtes sûr du site.'
-	String get tranchesAideLien => 'Un lien mène hors de l\'application : la tranche des 6 à 9 ans n\'est pas cochée d\'emblée. Cochez-la seulement si vous êtes sûr du site.';
+	String get tranchesAideLien => 'Un lien mène hors de l\'application : la tranche des 6 à 9 ans n\'est pas cochée d\'emblée. Cochez-la seulement si vous êtes sûr du site.';
 
 	/// fr: 'Cochez au moins une tranche d'âge.'
 	String get tranchesAucune => 'Cochez au moins une tranche d\'âge.';
@@ -44778,7 +44778,7 @@ class Traductions$admin$bibliotheque$import$erreurs$fr {
 	String get empreinte => 'Le fichier reçu ne correspond pas à celui envoyé. Réessayez.';
 
 	/// fr: 'Le dépôt de fichiers n'est pas encore activé : rien n'a été envoyé. En attendant, vous pouvez ajouter un document par son lien.'
-	String get nonActive => 'Le dépôt de fichiers n\'est pas encore activé : rien n\'a été envoyé. En attendant, vous pouvez ajouter un document par son lien.';
+	String get nonActive => 'Le dépôt de fichiers n\'est pas encore activé : rien n\'a été envoyé. En attendant, vous pouvez ajouter un document par son lien.';
 
 	/// fr: 'Le brouillon n'a pas pu être créé. Réessayez.'
 	String get creation => 'Le brouillon n\'a pas pu être créé. Réessayez.';
@@ -54680,7 +54680,7 @@ extension on Traductions {
 			'admin.bibliotheque.import.classement.tranchesAide' => 'Un élève ne voit que les documents de sa tranche d\'âge. Cochez toutes les tranches concernées.',
 			_ => null,
 		} ?? switch (path) {
-			'admin.bibliotheque.import.classement.tranchesAideLien' => 'Un lien mène hors de l\'application : la tranche des 6 à 9 ans n\'est pas cochée d\'emblée. Cochez-la seulement si vous êtes sûr du site.',
+			'admin.bibliotheque.import.classement.tranchesAideLien' => 'Un lien mène hors de l\'application : la tranche des 6 à 9 ans n\'est pas cochée d\'emblée. Cochez-la seulement si vous êtes sûr du site.',
 			'admin.bibliotheque.import.classement.tranchesAucune' => 'Cochez au moins une tranche d\'âge.',
 			'admin.bibliotheque.import.classement.etapesTitre' => 'Étapes du programme',
 			'admin.bibliotheque.import.classement.etapesAide' => 'Rattachez le document aux étapes où il sert (facultatif).',
@@ -54734,7 +54734,7 @@ extension on Traductions {
 			'admin.bibliotheque.import.erreurs.reseau' => 'La connexion s\'est interrompue. Le dépôt n\'est pas confirmé : réessayez.',
 			'admin.bibliotheque.import.erreurs.refuse' => 'Le serveur a refusé ce dépôt. Réessayez ou choisissez un autre fichier.',
 			'admin.bibliotheque.import.erreurs.empreinte' => 'Le fichier reçu ne correspond pas à celui envoyé. Réessayez.',
-			'admin.bibliotheque.import.erreurs.nonActive' => 'Le dépôt de fichiers n\'est pas encore activé : rien n\'a été envoyé. En attendant, vous pouvez ajouter un document par son lien.',
+			'admin.bibliotheque.import.erreurs.nonActive' => 'Le dépôt de fichiers n\'est pas encore activé : rien n\'a été envoyé. En attendant, vous pouvez ajouter un document par son lien.',
 			'admin.bibliotheque.import.erreurs.creation' => 'Le brouillon n\'a pas pu être créé. Réessayez.',
 			'admin.bibliotheque.import.erreurs.droits' => 'Les droits n\'ont pas pu être enregistrés. Réessayez.',
 			'admin.bibliotheque.import.droits.aide' => 'Aucun droit n\'est présumé : une valeur inconnue bloque la publication.',
