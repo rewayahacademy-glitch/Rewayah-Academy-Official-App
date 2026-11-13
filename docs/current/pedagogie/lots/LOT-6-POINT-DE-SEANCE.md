@@ -4,6 +4,12 @@
 > Plan : `PLAN-DE-CONSTRUCTION.md`, section « Lot 6 ». Charte, partie 5 ; moteur, règle 35 ; arbitrages n° 96, 97, 101, 104, 105, 107.
 > Statut : **présent dans le code, testé localement, NON installé, NON prouvé en production.**
 
+## Où le travail s'est arrêté (13/11/2026, arrêt demandé par le pilote : budget)
+
+- **Décision qui attend le directeur** : le point de fin de séance tient-il lieu de cahier pour libérer la paie d'une séance ? Effets (a) à (d) : section « La paie » plus bas.
+- **NON construit** : le réglage `point_seance.tient_lieu_de_cahier` (éteint par défaut) demandé par le pilote, ses scénarios dans les deux positions, la correction de l'avis « séance terminée » (aujourd'hui `private.avis_seance_terminee_famille` écrit aussi une ligne pour l'élève lui-même, mineur compris), et la phrase à l'écran « le cahier reste à remplir » (l'écran montre seulement un lien vers le cahier après l'envoi).
+- **NON prouvé** : la suite Flutter complète a été lancée puis coupée avant son résultat ; seuls les 23 tests du lot, l'analyse, les trois contrôles du dépôt et 8 scénarios SQL ont été exécutés.
+
 ## D'abord : ce qui est faux, bloqué ou non prouvé
 
 1. **La paie attend toujours le cahier.** En production depuis le 12/11 (coupure C3), la paie d'une séance attend un `lesson_reports` de cette séance (`private.cahier_semaine_couvert`). Ce lot n'écrit rien dans `lesson_reports` et ne touche aucune fonction de paie : tant que le raccord n'est pas décidé, l'enseignant fait le point **et** le cahier. Le raccord proposé (non codé) est décrit plus bas.
