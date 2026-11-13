@@ -79,6 +79,10 @@ declare
     'autre_revenu_annuler(uuid)',
     -- REVENUS-VERITE point 5 (20261110210000, 06/11/2026) : la direction attribue une aide Internet, une prime ou une mission du mois ; garde admin et compte valide ; idempotence par clé ; journalisé ; relue deux fois.
     'autre_revenu_attribuer(uuid,date,text,text,bigint,text)',
+    -- CALENDRIER-ET-PAUSES (12/11) : la direction saisit une date du calendrier de l'ecole ; garde positive admin et app_account_valid().
+    'calendrier_ecole_enregistrer(uuid,text,text,text,date,date,text,text,uuid)',
+    -- CALENDRIER-ET-PAUSES (12/11) : la direction publie ou retire de la publication ; garde positive admin et app_account_valid().
+    'calendrier_ecole_publier(uuid,boolean)',
     'changer_affichage_evaluation(uuid,text)',
     -- COULEUR-PROFIL 22 i (20261110500000, 06/11/2026) : couleur d'un profil, garde tuteur du foyer ou adulte autonome ; relue deux fois.
     'choisir_accent_profil(uuid,text)',
@@ -116,7 +120,31 @@ declare
     'ajouter_creneau_classe_admin(uuid,integer,integer,integer)',
     -- Surcharge a 3 arguments (20261025020000), toujours presente a cote de celle a 4 : direction active seulement (app_account_valid ET admin).
     'ajouter_creneau_classe_admin(uuid,integer,integer)',
+    -- CALENDRIER-ET-PAUSES (12/11) : le tuteur, l'adulte ou la direction annule une pause avant son debut ; garde private.pause_famille_peut ou admin, compte valide.
+    'pause_annuler(uuid)',
+    -- CALENDRIER-ET-PAUSES (12/11) : la direction accepte ou refuse une pause au-dela du plafond ; garde positive admin et app_account_valid().
+    'pause_decider(uuid,boolean,text)',
+    -- CALENDRIER-ET-PAUSES (12/11) : le tuteur (enfant) ou l'adulte autonome demande une pause d'un mois ; garde private.pause_famille_peut (foyer ou soi, jamais l'enfant), compte valide.
+    'pause_demander(uuid,date)',
+    -- CALENDRIER-ET-PAUSES (12/11) : la direction accorde une pause d'exception (motif, fin, nom) ; garde positive admin et app_account_valid().
+    'pause_exception_accorder(uuid,date,date,text)',
+    -- CALENDRIER-ET-PAUSES (13/11) : la direction termine une pause d'exception plus tot (geste trace) ; garde positive admin et app_account_valid().
+    'pause_exception_terminer(uuid,date)',
+    -- CALENDRIER-ET-PAUSES (13/11) : la direction retire une fermeture, en confirmant au besoin d'abandonner des seances qui ne se retablissent pas (geste trace) ; garde positive admin et app_account_valid().
+    'calendrier_ecole_retirer(uuid,integer)',
+    -- CALENDRIER-ET-PAUSES (13/11) : la liste des conflits d'un retrait simule le retablissement puis le defait (aucune ecriture ne subsiste) ; garde positive admin et app_account_valid().
+    'calendrier_retrait_conflits(uuid)',
     'retirer_creneau_classe_admin(uuid,integer,integer,text)',
+    -- HORLOGE-ET-LIEU (13/11/2026) : l'heure saisie avec son fuseau, direction active
+    -- seulement (app_account_valid ET admin), le serveur convertit vers le fuseau de la classe.
+    'ajouter_creneau_classe_fuseau(uuid,integer,integer,integer,text)',
+    'modifier_creneau_classe_fuseau(uuid,integer,integer,integer,integer,integer,text,text)',
+    'modifier_groupe_fuseau(uuid,text,smallint,smallint,smallint,text,smallint)',
+    -- HORLOGE-ET-LIEU (13/11/2026) : la ville de la personne (tuteur ou enseignant, compte valide,
+    -- identifiant lu dans le JWT), et la verification de la ville d'un enseignant (direction active).
+    'enregistrer_ma_ville(bigint)',
+    'reporter_ma_ville()',
+    'verifier_lieu_enseignant(uuid)',
     'regler_genre_classe_admin(uuid,text,text)',
     'creer_jeton_agent(text,uuid,integer,boolean)',
     'creer_offre_horaire(text,text,text,smallint[],smallint,smallint)',
@@ -324,6 +352,8 @@ declare
     'priere_ajuster(text,integer)',
     'priere_lieu_definir(uuid,text,numeric,numeric,text,text,text,boolean,time without time zone,time without time zone)',
     'priere_lieu_retirer(uuid)',
+    'priere_ma_position(numeric,numeric,text)',
+    'priere_corriger(uuid,text,text,boolean,time without time zone,time without time zone)',
     'priere_recalculer_maintenant()',
     'preparer_depot_piece_identite(uuid,text)',
     -- CAHIER-C2 (06/11) : direction seulement, compte valide, brouillon vide.
@@ -499,6 +529,13 @@ declare
     -- journal d'audit (log_sensitive_access, action lecture_releve_qualite) :
     -- c'est sa seule ecriture. Relue par l'agent du lot le 11/11/2026.
     'releve_qualite_seance(uuid)',
+    -- SUIVI-ATTENTE (12/11/2026, migration 20261123960000) : l'enseignant
+    -- regle ce que les familles de ses classes voient de lui (visibilite, deux
+    -- pays, mot de presentation). Garde positive app_account_valid() ET
+    -- app_role() = 'teacher' ; 42501 sinon ; une seule ligne ecrite, la
+    -- sienne (profile_id = auth.uid()). VOLATILE : elle ecrit. Relue par
+    -- l'agent du lot le 12/11/2026.
+    'regler_presentation_aux_familles(boolean,text,text,text)',
     -- CORRIGER-SOURATE (migration 20261123820000) : retirer une sourate
     -- validee par erreur. Garde positive app_account_valid() ET (app_role() =
     -- 'admin', ou app_role() = 'teacher' ET auteur de la validation dans les

@@ -68,13 +68,17 @@ SELECT pg_temp.vrai((SELECT count(*) = 1 AND bool_and(categorie = 'inscription' 
                        AND destinataire_adresse = 'tutrice@test.invalid' AND donnees->>'prenom' = 'Khadija'
                        AND statut = 'en_attente' AND origine = 'auto')
                        FROM public.courriels_sortants), '1 notification mise en file, adresse normalisee, prenom joint');
--- FN-114a (directeur, 01/11/2026 16:12 UTC) : enseignant_affecte n'est pas
--- dans la liste blanche, il reste dans l'application ; creneau_change y est
--- (urgent) et part de la categorie « classes ».
+-- FN-114a (directeur, 01/11/2026 16:12 UTC) : enseignant_affecte restait dans
+-- l'application ; SUIVI-ATTENTE (directeur, 12/11/2026, S8) l'amende : le
+-- courriel « Enseignant affecte » part (trace), pour la famille, l'enseignant et
+-- l'eleve adulte, jamais pour un mineur. Une notification sans portee (ancien
+-- chemin des demandes) suit la ligne « * ». creneau_change est urgent et part de
+-- la categorie « classes ».
 INSERT INTO public.notifications(destinataire, evenement, destination)
 VALUES ('c0e10000-0000-4000-8000-0000000000b1', 'enseignant_affecte', '/tuteur/demandes');
-SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM public.courriels_sortants WHERE modele = 'enseignant_affecte'),
-                    '1 enseignant affecte : application seulement, aucun e-mail');
+SELECT pg_temp.vrai((SELECT count(*) = 1 AND bool_and(categorie = 'classes')
+                       FROM public.courriels_sortants WHERE modele = 'enseignant_affecte'),
+                    '1 enseignant affecte : un e-mail a la famille (SUIVI-ATTENTE, S8), categorie classes');
 INSERT INTO public.notifications(destinataire, evenement, destination)
 VALUES ('c0e10000-0000-4000-8000-0000000000b1', 'creneau_change', '/tuteur/demandes');
 SELECT pg_temp.vrai((SELECT categorie FROM public.courriels_sortants WHERE modele = 'creneau_change') = 'classes',

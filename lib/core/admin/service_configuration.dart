@@ -223,6 +223,9 @@ const String clePriereMargeAvant = 'priere.marge_avant_cours_minutes';
 /// Le debut de cette pause, apres le debut du cours.
 const String clePriereDelaiFermeture = 'priere.delai_fermeture_minutes';
 
+/// La methode usuelle du pays du lieu s'applique (PRIERE-2, vrai par defaut).
+const String clePriereMethodeSelonPays = 'priere.methode_selon_pays';
+
 /// Toutes les cles de la priere de l'academie.
 const List<String> clesPriere = <String>[
   clePriereMethode,
@@ -235,6 +238,7 @@ const List<String> clesPriere = <String>[
   clePriereHorizon,
   clePriereMargeAvant,
   clePriereDelaiFermeture,
+  clePriereMethodeSelonPays,
 ];
 
 /// REVENUS-VERITE : la fenetre du jour de paie, du jour `jourDebut` au jour

@@ -98,14 +98,14 @@ class BoutonOutil extends StatelessWidget {
     final TextTheme textes = Theme.of(context).textTheme;
     final bool tuile = forme == FormeBoutonOutil.tuile;
     final double taille =
-        tailleIcone ??
-        (metriques.estEnfant ? AppSpacing.xxxl : AppSpacing.xxl);
+        tailleIcone ?? (metriques.estEnfant ? AppSpacing.xxxl : AppSpacing.xxl);
 
     // Doc 04 §28 et §33 n. 13 : sans libelle visible, ou quand l'agrandissement
     // du texte le coupe, une infobulle le montre (comme `nav_shell`).
     final bool infobulle =
         !avecLibelle ||
-        MediaQuery.textScalerOf(context).scale(1) > AppContour.seuilTexteAgrandi;
+        MediaQuery.textScalerOf(context).scale(1) >
+            AppContour.seuilTexteAgrandi;
 
     final TextStyle base = textes.labelSmall ?? const TextStyle();
     final TextStyle styleLibelle = tuile
@@ -117,7 +117,10 @@ class BoutonOutil extends StatelessWidget {
         ? (retenu || iconeActive ? palette.inkAccent : palette.inkStrong)
               .asIconTheme(size: taille)
         : retenu
-        ? IconThemeData(color: palette.surfaceInverse.onBackground, size: taille)
+        ? IconThemeData(
+            color: palette.surfaceInverse.onBackground,
+            size: taille,
+          )
         : (iconeActive ? palette.inkAccent : palette.inkStrong).asIconTheme(
             size: taille,
           );
@@ -173,10 +176,11 @@ class BoutonOutil extends StatelessWidget {
       child: ExcludeSemantics(
         child: DecoratedBox(
           decoration: tuile
-              ? (retenu ? palette.washAccent : palette.surfaceRaised).decoration(
-                  borderRadius: AppRadius.arrondiMd,
-                  side: palette.borderHairline.asBorderSide(),
-                )
+              ? (retenu ? palette.washAccent : palette.surfaceRaised)
+                    .decoration(
+                      borderRadius: AppRadius.arrondiMd,
+                      side: palette.borderHairline.asBorderSide(),
+                    )
               : retenu
               // ETATS-BTN-1 : l'outil arme est un aplat plein et contraste ;
               // l'outil inactif garde un contour seul (jamais l'absence de

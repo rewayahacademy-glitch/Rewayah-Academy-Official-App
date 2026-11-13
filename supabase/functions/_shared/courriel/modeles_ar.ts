@@ -5,8 +5,9 @@
 // Chiffres latins, comme dans l'application ; dates en `ar-u-nu-latn`.
 
 import { APP } from './gabarit.ts'
+import { causeConversionRefusee, nomClasse, type MotsConversionRefusee } from './outils.ts'
 import { avec, avisDans, bonjour, dateLongue, type Fabrique, type LangueEcrite, libre, type Parole, montantLisible,
-  precisions, type Precisions } from './outils.ts'
+  precisions, type Precisions, phraseChangementHeure, type MotsChangementHeure} from './outils.ts'
 import { quandSeance, codeCandidat } from './modeles_fr.ts'
 
 const PAROLE: Parole = {
@@ -44,6 +45,28 @@ const REFUS_ADMISSION: Record<string, string> = {
   refus_niveau: 'لا يمكننا متابعة طلبك: المستوى المطلوب غير متاح بعد.',
   refus_besoins: 'لا يمكننا متابعة طلبك: فصولنا لا تلبي بعد ما تبحث عنه.',
   refus_sans_reponse: 'لا يمكننا متابعة طلبك: لم يصلنا رد على رسالتنا الأخيرة.',
+}
+
+export const MOTS_CHANGEMENT_HEURE_AR: MotsChangementHeure = {
+  locale: 'ar',
+  un: (date, jour, avant, apres, foyer) => `ابتداءً من ${date}، يتغيّر موعد ${foyer ? 'حصة الفصل' : 'حصتكم'} يوم ${jour} من الساعة ${avant} إلى الساعة ${apres}.`,
+  plusieurs: (date, liste, foyer) => `ابتداءً من ${date}، يتغيّر توقيت ${foyer ? 'حصص الفصل' : 'حصصكم'}: ${liste}.`,
+  ligne: (jour, avant, apres) => `يوم ${jour} من ${avant} إلى ${apres}`,
+  unJour: (date, ja, avant, jb, apres, foyer) => `ابتداءً من ${date}، يتغيّر موعد ${foyer ? 'حصة الفصل' : 'حصتكم'} من يوم ${ja} الساعة ${avant} إلى يوم ${jb} الساعة ${apres}.`,
+  ligneJour: (ja, avant, jb, apres) => `من يوم ${ja} الساعة ${avant} إلى يوم ${jb} الساعة ${apres}`,
+  mecque: 'تبقى الحصة في الساعة نفسها بتوقيت مكة المكرمة؛ الذي يتغيّر هو توقيت مدينتكم.',
+  separateur: '، ',
+}
+
+/// Avis a la direction : une classe que la tache de nuit refuse de convertir
+/// (HORLOGE-ET-LIEU, I5). Cause fermee, jamais le texte SQL ni un identifiant.
+export const MOTS_CONVERSION_REFUSEE_AR: MotsConversionRefusee = {
+  sujet: 'تعذّر نقل فصل إلى توقيت مكة المكرمة',
+  phrase: (classe, cause) => {
+    const raison = { proche: 'يقترب تغيير الساعة (أقل من 28 يومًا)', demi_heure: 'أحد مواعيده لا يقع على ساعة كاملة بتوقيت مكة المكرمة', autre: 'فشل أحد التحقّقات، راجعوا الفصل' }[cause]
+    return classe ? `تعذّر نقل الفصل ${classe} إلى توقيت مكة المكرمة: ${raison}. لم يتغيّر أي موعد، وستُعاد المحاولة هذه الليلة.` : 'تعذّر نقل فصل إلى توقيت مكة المكرمة. لم يتغيّر أي موعد، وستُعاد المحاولة هذه الليلة.'
+  },
+  bouton: 'عرض الجدول',
 }
 
 const MODELES: Record<string, Fabrique> = {
@@ -115,9 +138,39 @@ const MODELES: Record<string, Fabrique> = {
   classe_validee: (d) => avis(d, 'فصلك جاهز', 'فصلك جاهز',
     'الفصل المطابق لطلبك جاهز. بقي أن يُعيَّن له معلمه، وسنُعلمك بذلك.',
     'عرض الفصل', '/tuteur/demandes'),
-  enseignant_affecte: (d) => avis(d, 'عُيّن معلم للفصل', 'صار لفصلك معلم',
+  // SUIVI-ATTENTE (12/11/2026) : courriel de l'enseignant a l'affectation.
+  enseignant_affecte: (d) => {
+    if (d.portee === 'classe') {
+      const P = PRECISIONS_AR
+      const n = Number(d.eleves_n)
+      const tranche = d.public === 'adulte' ? 'بالغون' : d.public === 'enfant' ? 'أطفال' : ''
+      const eleves = Number.isInteger(n) && n > 0 ? `عدد الطلاب: ${n}${tranche ? ` (${tranche})` : ''}.` : ''
+      const q = quandSeance(d, P.locale, P.a)
+      const detail = [typeof d.classe === 'string' && d.classe ? P.classe(d.classe) : '', eleves, q ? `أول حصة: ${q}.` : ''].filter(Boolean).join(' ')
+      return avis(d, 'أُسند إليك فصل', 'أُسند إليك فصل',
+        avec('أُسند إليك فصل.', detail)
+          + ' عرّف بنفسك للأسر من التطبيق: رسالة جاهزة يمكنك تعديلها.',
+        'أعرّف بنفسي', '/enseignant/classes')
+    }
+    return avis(d, 'عُيّن معلم للفصل', 'صار لفصلك معلم',
     'عُيّن معلم للفصل. تجد اسمه ومواعيده في التطبيق.',
-    'عرض الفصل', '/tuteur/demandes'),
+    'عرض الفصل', '/tuteur/demandes')
+  },
+  // SUIVI-ATTENTE (12/11/2026) : « Tout est pret » (etape 5), a la famille ou a l'eleve
+  // adulte, jamais a un enfant.
+  tout_est_pret: (d) => {
+    const P = PRECISIONS_AR
+    if (d.portee === 'soi') {
+      return avis(d, 'كل شيء جاهز لحصتك الأولى', 'كل شيء جاهز',
+        avec('كل شيء جاهز: فصلك ومعلمك وموعدك مؤكَّدة.', precisions(d, P, { premiere: true }))
+          + ' تابع التفاصيل في التطبيق.',
+        'عرض المتابعة', '/eleve')
+    }
+    return avis(d, 'كل شيء جاهز للحصة الأولى', 'كل شيء جاهز',
+      avec('كل شيء جاهز: الفصل والمعلم والموعد مؤكَّدة.', precisions(d, P, { premiere: true }))
+        + ' تابع التفاصيل في التطبيق.',
+      'عرض المتابعة', '/tuteur/demandes')
+  },
   demande_close: (d) => avis(d, 'أُغلق طلبك', 'أُغلق طلبك',
     'أُغلق طلبك لحجز موعد. ردّ الإدارة في التطبيق.',
     'قراءة الرد', '/tuteur/demandes'),
@@ -157,9 +210,23 @@ const MODELES: Record<string, Fabrique> = {
   eleve_retire: (d) => avis(d, 'يغادر طالب فصلك', 'يغادر طالب فصلك',
     'يغادر طالب فصلك. القائمة المحدّثة في التطبيق.',
     'عرض فصولي', '/enseignant/classes'),
-  creneau_change: (d) => avis(d, 'يتغيّر موعد الفصل', 'يتغيّر موعد الفصل',
-    'يتغيّر موعد الفصل. الموعد الجديد في التطبيق.',
-    'عرض الموعد الجديد', '/tuteur'),
+  creneau_change: (d) => {
+    // I5 (13/11/2026) : l'avis de la direction n'est pas celui d'une famille.
+    const cause = causeConversionRefusee(d)
+    if (cause) {
+      return avis(d, MOTS_CONVERSION_REFUSEE_AR.sujet, MOTS_CONVERSION_REFUSEE_AR.sujet,
+        MOTS_CONVERSION_REFUSEE_AR.phrase(nomClasse(d), cause), MOTS_CONVERSION_REFUSEE_AR.bouton,
+        '/admin/operations/planning')
+    }
+    const annonce = phraseChangementHeure(d, MOTS_CHANGEMENT_HEURE_AR)
+    if (annonce) {
+      return avis(d, 'يتغيّر موعد حصتكم', 'يتغيّر موعد حصتكم', annonce,
+        'عرض جدولي', '/tuteur')
+    }
+    return avis(d, 'يتغيّر موعد الفصل', 'يتغيّر موعد الفصل',
+      'يتغيّر موعد الفصل. الموعد الجديد في التطبيق.',
+      'عرض الموعد الجديد', '/tuteur')
+  },
   seance_annulee: (d) => {
     const quand = quandSeance(d, 'ar', 'الساعة')
     return avis(d, 'أُلغيت حصة', 'أُلغيت حصة',

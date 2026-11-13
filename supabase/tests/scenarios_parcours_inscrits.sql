@@ -45,7 +45,7 @@ GRANT EXECUTE ON FUNCTION pg_temp.qui(uuid, text, uuid), pg_temp.vrai(boolean, t
 
 INSERT INTO auth.users(id, email)
 SELECT pg_temp.u(x), 'pi-' || x || '@test.invalid'
-  FROM unnest(ARRAY['a1','t1','t2','tb','e1','e2','e3','e4','e5','e6','e7']) AS x;
+  FROM unnest(ARRAY['a1','t1','t2','tb','e1','e2','e3','e4','e5','e6','e7','e8']) AS x;
 INSERT INTO public.households(id, timezone) VALUES
   (pg_temp.u('f1'), 'America/Toronto'), (pg_temp.u('f2'), 'America/Toronto');
 INSERT INTO public.profiles(id, immutable_id, role, household_id, first_name, last_name, account_status, gender)
@@ -64,10 +64,11 @@ SELECT pg_temp.u(x.id), x.mat, x.role::public.app_role,
    ('e4','PI-ELV-04','student','f1','Intention et membre'),
    ('e5','PI-ELV-05','student','f1','Sorti'),
    ('e6','PI-ELV-06','student','f1','Classe terminee'),
-   ('e7','PI-ELV-07','student','f2','Autre foyer')) AS x(id, mat, role, foyer, prenom);
+   ('e7','PI-ELV-07','student','f2','Autre foyer'),
+   ('e8','PI-ELV-08','student','f1','Membre de A, inscription vers B')) AS x(id, mat, role, foyer, prenom);
 INSERT INTO public.student_profiles(profile_id, student_type, interface_mode, cohorte)
 SELECT pg_temp.u(x), 'minor'::public.student_type, 'standard'::public.interface_mode, 'enfant_6_9'
-  FROM unnest(ARRAY['e1','e2','e3','e4','e5','e6','e7']) AS x;
+  FROM unnest(ARRAY['e1','e2','e3','e4','e5','e6','e7','e8']) AS x;
 INSERT INTO public.groupes(id, teacher_id, type_public, seuil_max, libelle, weekday, hour_local, timezone_iana) VALUES
  (pg_temp.u('c1'), pg_temp.u('tb'), 'enfant', 6, 'Classe vivante PI', 1, 18, 'America/Toronto'),
  (pg_temp.u('c2'), pg_temp.u('tb'), 'enfant', 6, 'Classe finie PI', 2, 18, 'America/Toronto'),
@@ -144,6 +145,20 @@ SELECT pg_temp.vrai(
      FROM public.v_parcours_onboarding v WHERE v.eleve_id = pg_temp.u('e1'))
   AND (SELECT pg_catalog.count(*) FROM public.v_parcours_onboarding v WHERE v.eleve_id = pg_temp.u('e1')) = 1,
   'apres transfert : une seule ligne, la nouvelle classe, stable');
+RESET ROLE;
+-- 2 ter. Revue du lot 1 (12/11) : un membre actif de la classe A dont l'inscription pointe la
+-- classe B. L'etat « affectee » vient de l'adhesion : la classe rendue doit etre A, pas B.
+INSERT INTO public.groupe_membres(groupe_id, student_id) VALUES (pg_temp.u('c1'), pg_temp.u('e8'));
+INSERT INTO public.intentions_horaire(eleve_id, offre_id, fuseau_affiche, heure_affichee, jours_affiches, etat,
+                                      groupe_id, created_by)
+VALUES (pg_temp.u('e8'), pg_temp.u('o1'), 'America/Toronto', 18, ARRAY[1,3]::smallint[], 'affectee',
+        pg_temp.u('c3'), pg_temp.u('t1'));
+SELECT pg_temp.qui(pg_temp.u('t1'), 'guardian', pg_temp.u('f1'));
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai(
+  (SELECT v.intention_etat = 'affectee' AND v.groupe_id = pg_temp.u('c1')
+     FROM public.v_parcours_onboarding v WHERE v.eleve_id = pg_temp.u('e8')),
+  'membre actif de A avec une inscription vers B : affectee, classe A (celle de l''adhesion)');
 RESET ROLE;
 -- 3. Les colonnes et les droits.
 SELECT pg_temp.vrai(

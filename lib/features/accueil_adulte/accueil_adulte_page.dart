@@ -68,6 +68,8 @@ import '../../core/widgets/status_pill.dart';
 import '../acces_finance/acces_finance.dart';
 import '../acces_finance/carte_acces_finance.dart';
 import '../accueil_famille/carte_entree_espace.dart';
+import '../attente_classe/carte_suivi_attente.dart';
+import '../attente_classe/suivi_attente_page.dart' show CheminsAttente;
 import '../tc_espace_groupe/emplacements_groupe.dart';
 import '../tc_espace_groupe/espace_groupe_page.dart'
     show LecteurGroupe, LectureGroupe;
@@ -273,29 +275,49 @@ class AccueilAdultePage extends ConsumerWidget {
       child: _AvecFinances(
         onMesFinances: onMesFinances,
         onRetourAccueilFamille: onRetourAccueilFamille,
-        child: echecHorsLigne
-            ? EtatSansDonnees(
-                key: sansDonneesKey,
-                quoi: t.adulte.accueil.sansDonnees,
-                onAction: relire,
-              )
-            : BlocAsynchrone<AccueilAdulteVM>(
-                valeur: lecture,
-                squelette: const SqueletteAccueilAdulte(),
-                titreEchec: t.adulte.accueil.echec,
-                onReessayer: relire,
-                construire: (AccueilAdulteVM vue) => _Corps(
-                  vue: vue,
-                  acces: acces,
-                  onRejoindre: onRejoindre,
-                  onVoirRessources: onVoirRessources,
-                  onVoirDernieresSeances: onVoirDernieresSeances,
-                  onVoirMaClasse: onVoirMaClasse,
+        child: _AvecSuiviAttente(
+          child: echecHorsLigne
+              ? EtatSansDonnees(
+                  key: sansDonneesKey,
+                  quoi: t.adulte.accueil.sansDonnees,
+                  onAction: relire,
+                )
+              : BlocAsynchrone<AccueilAdulteVM>(
+                  valeur: lecture,
+                  squelette: const SqueletteAccueilAdulte(),
+                  titreEchec: t.adulte.accueil.echec,
+                  onReessayer: relire,
+                  construire: (AccueilAdulteVM vue) => _Corps(
+                    vue: vue,
+                    acces: acces,
+                    onRejoindre: onRejoindre,
+                    onVoirRessources: onVoirRessources,
+                    onVoirDernieresSeances: onVoirDernieresSeances,
+                    onVoirMaClasse: onVoirMaClasse,
+                  ),
                 ),
-              ),
+        ),
       ),
     );
   }
+}
+
+/// SUIVI-ATTENTE (S6) : le suivi de l'attente de la classe en tete de
+/// l'accueil, tant qu'il n'est pas termine ; silencieux sans demande.
+class _AvecSuiviAttente extends StatelessWidget {
+  const _AvecSuiviAttente({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    mainAxisSize: MainAxisSize.min,
+    children: <Widget>[
+      const CarteSuiviAttente(chemins: CheminsAttente.adulte),
+      child,
+    ],
+  );
 }
 
 /// L'accueil, suivi de la carte de ses finances quand elle a une

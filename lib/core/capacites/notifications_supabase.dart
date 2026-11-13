@@ -38,6 +38,9 @@ const Set<String> evenementsNotificationConnus = <String>{
   'controle_mission_non_controlee',
   // Fusion ou transfert de l'eleve vers une classe parallele (R9, R10).
   'classe_changee',
+  // SUIVI-ATTENTE (13/11/2026, migration 20261123961000) : tout est pret pour
+  // le premier cours, au tuteur d'un mineur ou a l'eleve adulte.
+  'tout_est_pret',
   // Relance avant echeance, acces suspendu pour paiement, acces retabli
   // (FAC-F-01, migration 20261018170000).
   'paiement_relance',
@@ -83,6 +86,18 @@ const Set<String> evenementsNotificationConnus = <String>{
   // SALLE-3-ACCUEIL (07/11/2026, migrations 20261119000000 et 20261119000100) :
   // la direction accueille un enseignant dans l'equipe.
   'bienvenue_equipe',
+  // CALENDRIER-ET-PAUSES (12/11/2026, migration 20261123911000) : la reponse de
+  // la direction a une demande de pause, au tuteur ou a l'adulte (jamais a un
+  // mineur).
+  'pause_repondue',
+  // CALENDRIER-ET-PAUSES (13/11/2026, migration 20261123911000) : une fermeture
+  // de l'academie met des seances de cote, ou est retiree : une notification par
+  // classe, au tuteur, a l'adulte autonome et a l'enseignant (jamais un mineur).
+  'fermeture_annoncee',
+  'fermeture_levee',
+  // La cloche de nuit ne peut pas retablir une seance qui n'est plus sous une
+  // fermeture : la direction est avertie, un humain tranche.
+  'fermeture_conflit',
 };
 
 const Set<String> _destinationsAutorisees = <String>{
@@ -485,6 +500,10 @@ Map<String, dynamic> _parametresAffichables(Map<dynamic, dynamic> bruts) {
     // SALLE-2-ENTRETIEN : le moment de l'avis (`reserve`, `veille`,
     // `quinze`, `tenu`, `a_replanifier`).
     'sorte',
+    // SUIVI-ATTENTE : « Tout est pret » nomme l'enfant au tuteur (un tuteur de
+    // deux enfants dans la meme classe recoit deux avis). Un prenom, jamais un
+    // identifiant ; jamais pose pour l'eleve adulte lui-meme.
+    'eleve_prenom',
   };
   // FN-028 : des comptes et un drapeau, jamais un identifiant.
   const Set<String> clesNombres = <String>{'presents', 'inscrits'};
@@ -510,6 +529,7 @@ TypeNotification _typePour(String evenement) => switch (evenement) {
   'demande_recue' => TypeNotification.messageMetier,
   'classe_validee' ||
   'enseignant_affecte' ||
+  'tout_est_pret' ||
   'classe_changee' ||
   'classe_creee' ||
   'enseignant_change' ||

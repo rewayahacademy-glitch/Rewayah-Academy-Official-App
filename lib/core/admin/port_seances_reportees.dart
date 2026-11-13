@@ -67,6 +67,10 @@ enum MotifNouvelleDateRefusee {
   /// La classe est close.
   classeClose,
 
+  /// Le jour choisi est un jour de fermeture publiee pour la classe
+  /// (CALENDRIER-ET-PAUSES).
+  jourFerme,
+
   /// La personne connectee ne peut pas fixer de date.
   nonAutorisee,
 

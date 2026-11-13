@@ -29,6 +29,7 @@ import '../theme/app_typography.dart';
 import '../widgets/pastille_etat_seance.dart';
 import '../widgets/pays_enseignant.dart';
 import 'fuseaux_interlocuteurs.dart';
+import 'mon_horloge.dart';
 import 'port_interlocuteurs.dart';
 import 'session_clock_vm.dart';
 
@@ -41,7 +42,12 @@ class LigneHeure {
     required this.heure,
     required this.ville,
     this.pays,
+    this.fuseau,
   });
+
+  /// L'identifiant IANA de la ligne, quand on le connait : sert a ne jamais
+  /// montrer deux fois la meme heure de La Mecque.
+  final String? fuseau;
 
   /// « Chez vous », « Chez Sayyid Karim », « 2 familles ».
   final String libelle;
@@ -67,8 +73,20 @@ String _nommeEnseignant(EnseignantInterlocuteur e) {
   return <String>[?titre, ?e.prenom].join(' ');
 }
 
+/// « Heure de La Mecque » quand le fuseau de la classe est celui de l'academie
+/// (toute classe l'est depuis HORLOGE-ET-LIEU), sinon « Heure de la classe »
+/// (une classe pas encore convertie : jamais un faux nom).
+String libelleHeureDeLaClasse(String? fuseauClasse) {
+  final String? academie = horlogeAcademie?.fuseau;
+  return academie != null && fuseauClasse == academie
+      ? t.tc.groupe.horloges.heureMecque
+      : LibellesGroupe.heureGroupe;
+}
+
 /// Les lignes des interlocuteurs a l'instant [instantUtc], sans celles qui
-/// donneraient la meme heure que [moi].
+/// donneraient la meme heure que [moi], puis, en second et discretement,
+/// « Heure de La Mecque » (l'horloge de l'academie, H2) quand elle differe de
+/// celle de la personne et qu'aucune ligne ne la donne deja.
 List<LigneHeure> lignesInterlocuteurs(
   InterlocuteursClasse lus,
   DateTime instantUtc,
@@ -83,13 +101,14 @@ List<LigneHeure> lignesInterlocuteurs(
     lignes.add(
       LigneHeure(
         libelle: e.fuseauDeLaClasse
-            ? LibellesGroupe.heureGroupe
+            ? libelleHeureDeLaClasse(fe.fuseau)
             : nomme.isEmpty
             ? t.tc.groupe.horloges.chezEnseignantAnonyme
             : LibellesGroupe.chezEnseignant(nomme),
         heure: fe.heureA(instantUtc),
         ville: villeDuFuseauLibelle(fe.fuseau),
         pays: e.fuseauDeLaClasse ? null : e.pays,
+        fuseau: fe.fuseau,
       ),
     );
   }
@@ -101,10 +120,39 @@ List<LigneHeure> lignesInterlocuteurs(
         libelle: t.tc.groupe.horloges.familles(n: g.familles),
         heure: f.heureA(instantUtc),
         ville: villeDuFuseauLibelle(f.fuseau),
+        fuseau: f.fuseau,
       ),
     );
   }
+  final LigneHeure? mecque = _ligneMecque(
+    instantUtc,
+    moi: moi,
+    dejaDonnees: lignes,
+  );
+  if (mecque != null) lignes.add(mecque);
   return lignes;
+}
+
+/// La ligne « Heure de La Mecque » a l'instant [instantUtc], ou `null` : pas
+/// d'horloge d'academie lue, la personne vit deja a l'heure de l'academie, une
+/// ligne de [dejaDonnees] la donne deja, ou l'heure n'est pas sure.
+LigneHeure? _ligneMecque(
+  DateTime instantUtc, {
+  required FuseauVu? moi,
+  required List<LigneHeure> dejaDonnees,
+}) {
+  final FuseauVu? a = horlogeAcademie;
+  if (a == null) return null;
+  if (moi != null && a.memeHeureQue(moi)) return null;
+  if (dejaDonnees.any((LigneHeure l) => l.fuseau == a.fuseau)) return null;
+  final String? heure = a.heureA(instantUtc);
+  if (heure == null) return null;
+  return LigneHeure(
+    libelle: t.tc.groupe.horloges.heureMecque,
+    heure: heure,
+    ville: '',
+    fuseau: a.fuseau,
+  );
 }
 
 /// L'heure d'une seance (ou de maintenant) pour soi et pour chaque
@@ -190,11 +238,28 @@ class HeureDouble extends StatelessWidget {
         : <LigneHeure>[
             if (classe != null && classe!.fuseauIana != moi?.fuseauIana)
               LigneHeure(
-                libelle: LibellesGroupe.heureGroupe,
+                libelle: libelleHeureDeLaClasse(classe!.fuseauIana),
                 heure: classe!.heureLocaleRendue,
                 ville: classe!.libelleVille,
+                fuseau: classe!.fuseauIana,
               ),
           ];
+    if (lus == null) {
+      final LigneHeure? mecque = _ligneMecque(
+        instantUtc,
+        moi: null,
+        dejaDonnees: autres,
+      );
+      // Sans fuseau de profil lu, la seule comparaison possible est celle du
+      // fuseau de la sienne rendue par le serveur.
+      if (mecque != null &&
+          moi?.fuseauIana != horlogeAcademie?.fuseau &&
+          !(horlogeAcademie != null &&
+              fm != null &&
+              fm.memeHeureQue(horlogeAcademie!))) {
+        autres.add(mecque);
+      }
+    }
     return Column(
       key: cle,
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -367,7 +432,9 @@ class _Ligne extends StatelessWidget {
       textes.bodySmall ?? const TextStyle(),
     );
     final String valeur = ligne.heure == null
-        ? '${t.tc.groupe.horloges.aConfirmer} ${ligne.ville}'
+        ? '${t.tc.groupe.horloges.aConfirmer} ${ligne.ville}'.trim()
+        : ligne.ville.isEmpty
+        ? ligne.heure!
         : LibellesGroupe.heureEtVille(heure: ligne.heure!, ville: ligne.ville);
     final Widget heure = TexteHeureSeance(
       key: vivante ? ValueKey<String>(valeur) : null,

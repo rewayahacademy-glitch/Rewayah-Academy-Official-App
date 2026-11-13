@@ -17,8 +17,10 @@ import '../../core/capacites/port_retraits_comptes.dart';
 import '../../core/domain/enums.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/identifiant_insecable.dart';
+import '../../core/i18n/pays_iso.dart' show nomDuPays;
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/lieu/lieu_direction.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
@@ -51,6 +53,7 @@ import '../../core/widgets/sous_navigation_domaine.dart';
 import '../../core/widgets/status_pill.dart';
 import '../foyer/photo_eleve.dart';
 import '../mfa_controleur/double_verification.dart';
+import 'changements_heure.dart';
 import 'liste_comptes.dart';
 
 /// `ADM-08` : les comptes du produit.
@@ -193,6 +196,12 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
   /// V2-e : les fondateurs connus au dernier rendu, ou `null` tant que le
   /// serveur ne les a pas rendus (alors la coche n'est pas proposee).
   Set<String>? _fondateurs;
+
+  /// Les villes des enseignants et ce qui ne concorde pas (HORLOGE-ET-LIEU) :
+  /// lues seulement dans la vue des enseignants.
+  Map<String, LieuEnseignantDirection> _lieux =
+      const <String, LieuEnseignantDirection>{};
+  List<IncoherenceLieu> _incoherences = const <IncoherenceLieu>[];
 
   /// V2-e : le retour local de la coche fondateur.
   String? _retour;
@@ -395,6 +404,15 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
     // La selection se recale sur la liste lue avant que la barre (collee en
     // bas, hors du corps) ne la dise.
     if (comptes.hasValue) _tranche(comptes.requireValue);
+    // HORLOGE-ET-LIEU : la vue n'est connue qu'apres `_tranche`.
+    if (_vue == VueComptes.enseignants) {
+      _lieux =
+          ref.watch(lieuxEnseignantsProvider).value ??
+          const <String, LieuEnseignantDirection>{};
+      _incoherences =
+          ref.watch(incoherencesLieuProvider).value ??
+          const <IncoherenceLieu>[];
+    }
 
     final bool barreCollee = _barreCollee(context);
     return PageShell(
@@ -618,6 +636,29 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
             key: const ValueKey<String>('comptes-details-absents'),
             titre: t.admin.comptes.detailsAbsentsTitre,
             message: t.admin.comptes.detailsAbsentsMessage,
+            ton: TonEtat.avertissement,
+          ),
+          Ecart.vSm,
+        ],
+        if (_vue == VueComptes.familles ||
+            _vue == VueComptes.enseignants) ...<Widget>[
+          // I7 : les changements d'heure a venir de leurs fuseaux.
+          const BlocChangementsHeure(),
+        ],
+        if (_vue == VueComptes.enseignants &&
+            _incoherences.isNotEmpty) ...<Widget>[
+          BandeauAttention(
+            key: const ValueKey<String>('comptes-villes-a-verifier'),
+            titre:
+                '${t.lieu.incoherencesTitre} \u00b7 '
+                '${t.lieu.incoherencesCompte(n: _incoherences.length)}',
+            message: _incoherences
+                .take(5)
+                .map(
+                  (IncoherenceLieu i) =>
+                      '${i.enseignant}\u00a0: ${_texteIncoherence(i.type)}',
+                )
+                .join('\n'),
             ton: TonEtat.avertissement,
           ),
           Ecart.vSm,
@@ -1185,6 +1226,10 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
             rendu: (BuildContext _, CompteAdmin c) =>
                 PaysEnseignant(pays: c.paysEnseignant),
           ),
+        ColonneDonnees<CompteAdmin>(
+          titre: t.lieu.colonneVille,
+          texte: _villeTexte,
+        ),
         ?etat,
         ColonneDonnees<CompteAdmin>(
           titre: t.admin.comptes.colonnePiece,
@@ -1222,6 +1267,42 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
         : nom;
   }
 
+  /// La ville d'un enseignant, et si la direction l'a verifiee.
+  String _villeTexte(CompteAdmin c) {
+    final LieuEnseignantDirection? l = _lieux[c.profilId];
+    if (l == null) return t.lieu.villeAbsente;
+    final String ligne = t.lieu.villeLigne(
+      ville: l.ville,
+      pays: nomDuPays(l.paysCode),
+    );
+    return l.verifie ? ligne : '$ligne \u00b7 ${t.lieu.nonVerifiee}';
+  }
+
+  /// Vrai quand la ville d'un enseignant attend la verification de la
+  /// direction.
+  bool _villeAVerifier(CompteAdmin c) =>
+      _vue == VueComptes.enseignants &&
+      c.role == AppRole.teacher &&
+      (_lieux[c.profilId]?.verifie ?? true) == false;
+
+  Future<void> _verifierVille(CompteAdmin c) async {
+    String message;
+    try {
+      await ref.read(portLieuDirectionProvider).verifier(c.profilId);
+      ref
+        ..invalidate(lieuxEnseignantsProvider)
+        ..invalidate(incoherencesLieuProvider);
+      message = t.lieu.villeVerifiee(deNom: deDevant(c.libelle));
+    } on Object {
+      message = t.lieu.verifierEchec;
+    }
+    if (!mounted) return;
+    setState(() => _retour = null);
+    WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+      if (mounted) setState(() => _retour = message);
+    });
+  }
+
   /// Vrai quand un dossier d'identite est a verifier : seule action
   /// **existante** qu'une ligne de compte peut porter (la meme navigation que
   /// le tableau de bord, l'identifiant du profil en `extra`, jamais dans
@@ -1236,6 +1317,7 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
   /// Vrai quand la ligne a au moins une action.
   bool _aUneAction(CompteAdmin c) =>
       _ouvreUnDossier(c) ||
+      _villeAVerifier(c) ||
       _ouvreUneDemande(c) ||
       _supprimableIci(c) ||
       _porteLaCoche(c);
@@ -1481,6 +1563,12 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
                 GoRouter.of(context)
                     .go(Routes.adminPersonnesDossiers, extra: c.profilId),
           ),
+        if (_villeAVerifier(c))
+          EntreeAction(
+            libelle: t.lieu.verifier(deNom: deDevant(c.libelle)),
+            icone: AppIcons.controleQualite,
+            onChoix: () => unawaited(_verifierVille(c)),
+          ),
         if (_porteLaCoche(c))
           if (_fondateurs!.contains(c.profilId))
             EntreeAction(
@@ -1504,6 +1592,13 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
       ],
     );
   }
+
+  static String _texteIncoherence(TypeIncoherenceLieu type) => switch (type) {
+    TypeIncoherenceLieu.sansVille => t.lieu.incSansVille,
+    TypeIncoherenceLieu.fuseauDifferentVille => t.lieu.incFuseauDifferent,
+    TypeIncoherenceLieu.paysDifferentVille => t.lieu.incPaysDifferent,
+    TypeIncoherenceLieu.paysFuseau => t.lieu.incPaysFuseau,
+  };
 
   static String _attente(int jours) => switch (jours) {
     0 => t.admin.comptes.attendAujourdhui,

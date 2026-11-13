@@ -52,6 +52,10 @@ abstract final class AppMouvement {
   /// Decalage entre deux elements d'une liste echelonnee (A-13, 17/10/2026).
   static const Duration echelon = Duration(milliseconds: 35);
 
+  /// Attente entre la derniere frappe d'un champ de recherche et la requete
+  /// (HORLOGE-ET-LIEU, choix de la ville) : le temps de finir un mot.
+  static const Duration delaiFrappe = Duration(milliseconds: 300);
+
   /// Plafond absolu. Une animation plus longue que ca n'explique plus, elle
   /// fait attendre.
   static const Duration plafond = Duration(milliseconds: 400);

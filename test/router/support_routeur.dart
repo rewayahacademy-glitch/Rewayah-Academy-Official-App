@@ -98,6 +98,8 @@ List<Override> surchargesRouteur(
   PortHorlogeSeance horloges = const PortHorlogeMuet(),
   // NIV1 : un faux des offres fourni par le test (sinon, un faux neuf).
   ServiceOffres? offres,
+  // HORLOGE-ET-LIEU : un faux de l'enseignant fourni par le test (ses classes).
+  ServiceEnseignant? enseignant,
 }) => <Override>[
   sourceSessionProvider.overrideWithValue(source),
   serviceReseauProvider.overrideWithValue(FauxServiceReseau()),
@@ -110,7 +112,9 @@ List<Override> surchargesRouteur(
   serviceMatchingProvider.overrideWithValue(FauxServiceMatching()),
   serviceReglesProvider.overrideWithValue(FauxServiceRegles()),
   servicePriereProvider.overrideWithValue(FauxServicePriere()),
-  serviceEnseignantProvider.overrideWithValue(FauxServiceEnseignant()),
+  serviceEnseignantProvider.overrideWithValue(
+    enseignant ?? FauxServiceEnseignant(),
+  ),
   serviceDossierProvider.overrideWithValue(FauxServiceDossier()),
   servicePresenceProvider.overrideWithValue(FauxServicePresence()),
   serviceVideoProvider.overrideWithValue(FauxServiceVideo()),
@@ -140,6 +144,7 @@ Future<GoRouter> monterRouteur(
   SourceSession? source,
   Size taille = const Size(390, 844),
   List<Override> surcharges = const <Override>[],
+  ServiceEnseignant? enseignant,
   ThemeMode themeMode = ThemeMode.light,
   InterfaceMode interface = InterfaceMode.standard,
   TextDirection? direction,
@@ -157,6 +162,7 @@ Future<GoRouter> monterRouteur(
       overrides: <Override>[
         ...surchargesRouteur(
           source ?? FausseSourceSession(sessionActive(AppRole.guardian)),
+          enseignant: enseignant,
         ),
         // Le port K6 est branche sur Supabase en production (revue C, M2) :
         // le routeur des tests transverses garde l'etat « pas encore relie ».

@@ -329,9 +329,15 @@ UPDATE public.groupes
 SET CONSTRAINTS ALL IMMEDIATE;
 SELECT pg_temp.vrai(
   pg_temp.lignes('enseignant_change', 'f27b0000-0000-0000-0000-000000000206')
+    = ARRAY['0001=/enseignant/classes',
+            '0011=/tuteur/classes/f27b0000-0000-0000-0000-000000000206', '0015=/eleve']
+  -- SUIVI-ATTENTE (13/11/2026) : le nouvel enseignant est prevenu une seule
+  -- fois, par sa notification d'affectation enrichie, pas aussi par
+  -- enseignant_change.
+  AND pg_temp.lignes('enseignant_affecte', 'f27b0000-0000-0000-0000-000000000206')
     = ARRAY['0001=/enseignant/classes', '0002=/enseignant/classes',
-            '0011=/tuteur/classes/f27b0000-0000-0000-0000-000000000206', '0015=/eleve'],
-  '4.2 enseignant change : l''ancien et le nouvel enseignant, le tuteur, l''eleve');
+            '0011=/tuteur/demandes', '0015=/eleve'],
+  '4.2 enseignant change : l''ancien enseignant, le tuteur et l''eleve ; le nouvel enseignant par son affectation');
 SET CONSTRAINTS ALL DEFERRED;
 
 -- ------------------------------------------------------------------
@@ -501,6 +507,10 @@ SELECT pg_temp.vrai(
        AND (SELECT pg_catalog.count(*) FROM public.courriels_sortants c
              WHERE c.cle_idempotence = 'notification:' || n.id::text)
            <> CASE WHEN private.notification_avec_courriel(n.evenement, n.params ->> 'portee')
+                        -- SUIVI-ATTENTE (13/11/2026, revue B1) : jamais a un mineur.
+                        AND NOT EXISTS (SELECT 1 FROM public.student_profiles sp
+                                         WHERE sp.profile_id = n.destinataire
+                                           AND sp.student_type = 'minor')
                    THEN 1 ELSE 0 END)
   AND NOT EXISTS (
     SELECT 1 FROM public.courriels_sortants c

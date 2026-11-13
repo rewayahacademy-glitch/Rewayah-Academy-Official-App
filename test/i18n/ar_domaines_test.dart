@@ -23,6 +23,8 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 /// Les domaines entierement traduits, et leur nombre minimal de cles.
 const Map<String, int> _domaines = <String, int>{
   'salle': 300,
+  // HORLOGE-ET-LIEU, partie B (H5) : la ville de chacun.
+  'lieu': 30,
   'tc': 450,
   'enseignant': 400,
   // AR-TRANSVERSE-1.
@@ -80,6 +82,10 @@ const Map<String, int> _domaines = <String, int>{
   'admin': 590,
   // RECH-1, RECH-2 : la surface de recherche, arabe des l'origine.
   'recherche': 55,
+  // CALENDRIER-ET-PAUSES (12/11/2026) : le calendrier de l'ecole et la pause
+  // d'un mois, arabes des l'origine (texte propose, a valider).
+  'calendrier': 121,
+  'pause': 37,
   // AR-SUIVI-FAMILLE.
   'suiviFamille': 40,
   // EA-HL-DOUBLE-1 etendu (17/10) : ce qui manque, hors ligne, par ecran.
@@ -130,6 +136,8 @@ const Map<String, int> _domaines = <String, int>{
   // CORRIGER-SOURATE-DIRECTION (12/11/2026) : les sourates retirables d'une
   // Classe.
   'souratesRetirables': 7,
+  // SUIVI-ATTENTE (12/11/2026) : le suivi de l'attente de la classe.
+  'suiviAttente': 100,
   // HORS-SALLE-2 (13/11/2026) : le journal des sorties de l'application
   // (accord du parent, rapport, reglages).
   'journalSorties': 40,
@@ -189,6 +197,9 @@ Map<String, String> _domaine(String langue, String domaine) => _aplatir(
 
 /// Les textes gardes en latin (marque, format de fichier).
 const Set<String> _latins = <String>{
+  // HORLOGE-ET-LIEU : le credit de la liste des villes porte le nom propre de
+  // la source et son adresse, tels que la licence les demande.
+  'lieu.credit',
   // CAND-04 : le nom de chaque langue, ecrit dans cette langue, identique
   // dans les deux fichiers, sur les cartes de choix de la langue du candidat.
   'inscription.langue.francais',
