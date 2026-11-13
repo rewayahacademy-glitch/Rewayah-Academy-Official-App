@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 
 import '../domain/enums.dart';
 import '../priere/horaires_priere.dart';
-import '../priere/reglages_priere.dart';
+import '../priere/pause_prevue.dart';
 import 'service_planning.dart';
 
 /// Ce qu'une entree de journee peut etre.
@@ -72,6 +72,10 @@ class EntreeJournee {
 /// La journee telle que les trois roles la lisent, cours, pauses et prieres
 /// dans une seule liste triee.
 ///
+/// [pauses] sont les pauses de priere que le **serveur** a placees dans les
+/// seances du jour (`pause_prevue_seance`) : l'application ne calcule plus
+/// aucune heure de priere (PRIERE-1). Une seance sans pause n'en porte aucune.
+///
 /// [pauseMaximale] vient de `regle_effective()`, jamais d'une constante : c'est
 /// elle qui dit a partir de quand un trou entre deux cours cesse d'etre une
 /// pause pour devenir du temps libre, et elle peut differer d'un profil a
@@ -82,7 +86,7 @@ class EntreeJournee {
 /// l'ecran de l'eleve, pas dans cette colonne.
 List<EntreeJournee> construireJournee({
   required List<Seance> seances,
-  required ReglagesPriere? reglages,
+  required List<PausePrevue> pauses,
   required DateTime debut,
   required DateTime fin,
   required Duration pauseMaximale,
@@ -113,14 +117,13 @@ List<EntreeJournee> construireJournee({
     }
   }
 
-  if (reglages != null) {
-    entrees.addAll(
-      interruptionsEntre(
-        reglages: reglages,
-        debut: debut,
-        fin: fin,
-      ).map(EntreeJournee.priere),
-    );
+  for (final PausePrevue pause in pauses) {
+    final InterruptionPriere? interruption = pause.versInterruption();
+    if (interruption != null &&
+        interruption.debut.isBefore(fin) &&
+        interruption.fin.isAfter(debut)) {
+      entrees.add(EntreeJournee.priere(interruption));
+    }
   }
 
   entrees.sort((EntreeJournee a, EntreeJournee b) {
@@ -206,14 +209,11 @@ Seance? seanceAnnuleeDuJour(List<Seance> seances, DateTime maintenant) {
 /// Les interruptions prevues pendant une seance.
 ///
 /// C'est ce que `ELV-02` annonce avant le cours : l'eleve et son tuteur voient
-/// les interruptions a l'avance, pas au moment ou elles arrivent.
-List<InterruptionPriere> interruptionsDe(
-  Seance seance,
-  ReglagesPriere? reglages,
-) => reglages == null
-    ? const <InterruptionPriere>[]
-    : interruptionsEntre(
-        reglages: reglages,
-        debut: seance.debut,
-        fin: seance.fin,
-      );
+/// les interruptions a l'avance, pas au moment ou elles arrivent. La pause est
+/// celle que le serveur a placee ; aucune heure n'est calculee ici.
+List<InterruptionPriere> interruptionsDe(PausePrevue? pause) {
+  final InterruptionPriere? interruption = pause?.versInterruption();
+  return interruption == null
+      ? const <InterruptionPriere>[]
+      : <InterruptionPriere>[interruption];
+}

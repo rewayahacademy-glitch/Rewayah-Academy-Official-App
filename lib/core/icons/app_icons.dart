@@ -926,6 +926,20 @@ abstract final class AppIcons {
     IconData(0xe3e2, fontFamily: _actif),
   );
 
+  /// Bibliotheque (BIBLIOTHEQUE-UNE) : vignette d'un enregistrement audio.
+  /// Phosphor `speaker-high` (0xe44a).
+  static const AppIcon audio = AppIcon._(
+    IconData(0xe44a, fontFamily: _repos),
+    IconData(0xe44a, fontFamily: _actif),
+  );
+
+  /// Bibliotheque (BIBLIOTHEQUE-UNE) : vignette d'une video.
+  /// Phosphor `video-camera` (0xe4da).
+  static const AppIcon video = AppIcon._(
+    IconData(0xe4da, fontFamily: _repos),
+    IconData(0xe4da, fontFamily: _actif),
+  );
+
   /// Lien partage dans un fil ou une publication (COM-MSG, COM-COMU, COM-STU).
   /// Phosphor `link-simple` (0xe2e6).
   static const AppIcon lien = AppIcon._(
@@ -1132,17 +1146,8 @@ abstract final class AppIcons {
     IconData(0xe2f2, fontFamily: _actif),
   );
 
-  /// Un document audio : Phosphor `headphones` (0xe2a6).
-  static const AppIcon audio = AppIcon._(
-    IconData(0xe2a6, fontFamily: _repos),
-    IconData(0xe2a6, fontFamily: _actif),
-  );
-
-  /// Un document video : Phosphor `video-camera` (0xe4da).
-  static const AppIcon video = AppIcon._(
-    IconData(0xe4da, fontFamily: _repos),
-    IconData(0xe4da, fontFamily: _actif),
-  );
+  // `audio` et `video` : ceux de la Bibliotheque une (BIBLIOTHEQUE-UNE, lot 3),
+  // une seule icone par type (ESPACE-APPRENDRE les reprend).
 
   /// Un lien qui s'ouvre hors de l'application : Phosphor `arrow-square-out`
   /// (0xe5de).

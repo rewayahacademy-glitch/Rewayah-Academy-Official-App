@@ -5,10 +5,11 @@
 /// garde la sienne) pour un document, sinon une vignette par defaut **selon le
 /// type** (audio, video, lien externe : une surface douce et l'icone du type).
 ///
-/// Pourquoi un composant de plus : `VignetteRessource` (features/tc_catalogue)
-/// ne connait que les cinq types du catalogue d'aujourd'hui, ni audio, ni
-/// video, ni lien ; et un composant du core ne depend pas d'un ecran. Quand le
-/// lot 3 etendra les types, cette vignette rejoindra la couverture de livre.
+/// Dans l'application, la vignette COMPLETE vient de la couche des ecrans :
+/// la couverture de la Bibliotheque une (`VignetteRessource`, lot 3, vignette
+/// deposee par-dessus) est posee dans [DocumentPlanche.vignette] ; un composant
+/// du core ne depend pas d'un ecran. La vignette par defaut de ce fichier ne
+/// sert qu'a un document que cette couche n'a pas habille (demonstration, test).
 library;
 
 import 'package:flutter/material.dart';

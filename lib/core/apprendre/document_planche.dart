@@ -1,10 +1,9 @@
 /// ESPACE-APPRENDRE (lot 5, 12/11/2026) : le modele d'affichage de la planche
 /// de documents, a part du catalogue.
 ///
-/// Le catalogue d'aujourd'hui (`LibraryResource`) ne distingue ni les rayons,
-/// ni les types audio, video et lien externe, ni les vignettes, ni les
-/// descriptions : le lot 3 (BIBLIOTHEQUE-UNE) les ajoute. La planche s'ecrit
-/// donc contre ce petit modele, que remplit un adaptateur
+/// La planche s'ecrit contre ce petit modele, a part du catalogue
+/// (`LibraryResource`, qui porte depuis le lot 3 les types audio, video et lien
+/// externe, la description et la vignette deposee), que remplit un adaptateur
 /// ([documentsApprendreProvider]). **Un champ absent reste absent** : pas de
 /// description inventee, pas de vignette inventee (la couverture par defaut
 /// vient du type), pas de prix (aucun mot d'argent dans ce modele).
@@ -86,6 +85,7 @@ class DocumentPlanche {
     this.description,
     this.vignette,
     this.couverture,
+    this.aVignetteDeposee = false,
   });
 
   /// Son identifiant, stable (cle des widgets et des tests).
@@ -106,10 +106,28 @@ class DocumentPlanche {
   /// Ce qui se passe quand on l'ouvre.
   final OuvertureDocument ouverture;
 
-  /// La vignette deposee, quand l'appelant sait la charger. Aujourd'hui
-  /// personne : le catalogue ne rend pas encore de vignette ni de service
-  /// pour la charger. `null` : la vignette par defaut du type.
+  /// La vignette COMPLETE, posee par l'appelant (la couche des ecrans, qui
+  /// connait `VignetteRessource` et la vignette deposee du lot 3) : couverture
+  /// par defaut et image deposee par-dessus. `null` : la vignette par defaut
+  /// du type.
   final Widget? vignette;
+
+  /// Vrai quand la direction a depose une vignette pour ce document (le
+  /// manifeste le dit ; l'image se demande au serveur, par l'appelant).
+  final bool aVignetteDeposee;
+
+  /// Ce document avec sa vignette complete [widget].
+  DocumentPlanche avecVignette(Widget widget) => DocumentPlanche(
+    id: id,
+    titre: titre,
+    type: type,
+    rayon: rayon,
+    ouverture: ouverture,
+    description: description,
+    vignette: widget,
+    couverture: couverture,
+    aVignetteDeposee: aVignetteDeposee,
+  );
 
   /// La couverture calculee d'un document, pour la vignette par defaut d'un
   /// livre (le Coran garde la sienne). `null` : la vignette par defaut du type

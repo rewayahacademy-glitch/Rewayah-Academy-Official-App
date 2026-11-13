@@ -58,8 +58,24 @@ Future<void> _toucher(WidgetTester tester, String k) async {
   await stabiliser(tester, fois: 2);
   // ensureVisible peut laisser l'element sous l'en-tete fixe : on le descend
   // dans la zone libre avant de toucher.
-  if (tester.getCenter(_cle(k)).dy < 300) {
-    await tester.drag(find.byType(Scrollable).first, const Offset(0, 300));
+  final double haut = tester.getCenter(_cle(k)).dy;
+  if (haut < 300) {
+    // Remonter la page, de juste assez pour passer sous l'en-tete : la page
+    // est le seul contenu qui defile (decision du 01/11/2026), on remonte
+    // celle-la et pas le premier defilement venu.
+    final ScrollableState page = tester
+        .stateList<ScrollableState>(find.byType(Scrollable))
+        .firstWhere(
+          (ScrollableState s) =>
+              s.position.axis == Axis.vertical &&
+              s.position.maxScrollExtent > 0,
+        );
+    page.position.jumpTo(
+      (page.position.pixels - (300 - haut)).clamp(
+        0,
+        page.position.maxScrollExtent,
+      ),
+    );
     await stabiliser(tester, fois: 2);
   }
   await tester.tap(_cle(k));

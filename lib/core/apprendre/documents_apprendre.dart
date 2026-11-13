@@ -1,16 +1,18 @@
 /// ESPACE-APPRENDRE (lot 5) : l'adaptateur qui remplit la planche de documents
 /// depuis le port du catalogue **existant**, et place le Coran en premier.
 ///
-/// Ce que le catalogue sait dire aujourd'hui : un titre, un type parmi
-/// Coran, texte, PDF, image, lecon, une version publiee ou non. Il ne dit ni
-/// rayon, ni audio, ni video, ni lien externe, ni vignette, ni description : le
-/// lot 3 (BIBLIOTHEQUE-UNE) les ajoute. D'ici la :
+/// Ce que le catalogue dit (lot 3, BIBLIOTHEQUE-UNE, en production) : un
+/// titre, un type (Coran, texte, PDF, image, lecon, audio, video, lien
+/// externe), une description, une vignette deposee ou non, une version
+/// publiee ou non. L'adaptateur en tire :
 ///
-/// - tout document publie est un document **de l'academie** (rien n'est vendu,
-///   la vente n'est pas ouverte), donc du premier rayon ; le second rayon reste
-///   vide, honnetement ;
-/// - tout type du catalogue est un « document » (le Coran, un PDF, une image,
-///   une lecon) ;
+/// - le **type** de la planche (audio, video, lien externe, sinon document) et
+///   la **description** telle que la direction l'a ecrite (jamais inventee) ;
+/// - tout document publie est un document **de l'academie** (rien n'est vendu),
+///   donc du premier rayon ; le second rayon reste vide, honnetement ;
+/// - un lien externe s'ouvre par **sa fiche** (la liste du serveur ne porte pas
+///   l'adresse, la fiche la relit et demande la confirmation avant de quitter
+///   l'application : le chemin de la Bibliotheque une, un seul) ;
 /// - une ressource sans version publiee n'est pas listee : il n'y a rien a
 ///   ouvrir ;
 /// - le Coran est une carte posee en tete, qui ouvre le lecteur existant
@@ -111,10 +113,17 @@ DocumentPlanche _documentDe(LibraryResource r, RayonPlanche rayon) =>
     DocumentPlanche(
       id: r.id,
       titre: r.title,
-      type: TypeDocumentPlanche.document,
+      description: r.description,
+      type: switch (r.resourceType) {
+        TypeRessource.audio => TypeDocumentPlanche.audio,
+        TypeRessource.video => TypeDocumentPlanche.video,
+        TypeRessource.lienExterne => TypeDocumentPlanche.lienExterne,
+        _ => TypeDocumentPlanche.document,
+      },
       rayon: rayon,
       ouverture: OuvrirDansLApplication(cheminFicheDocument(r.id)),
       couverture: CouvertureRessource.pour(r),
+      aVignetteDeposee: r.aVignette,
     );
 
 /// Les documents epingles ou assignes a la classe [groupeId] (la rubrique

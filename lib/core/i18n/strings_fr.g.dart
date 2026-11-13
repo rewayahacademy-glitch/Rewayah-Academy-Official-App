@@ -1654,6 +1654,26 @@ class Traductions$priere$fr {
 
 	/// fr: 'L'enseignant n'a pas encore réglé ses horaires de prière.'
 	String get reglagesAbsents => 'L\'enseignant n\'a pas encore réglé ses horaires de prière.';
+
+	/// fr: 'Pause de prière'
+	String get pauseDePriere => 'Pause de prière';
+
+	/// fr: 'Pause de prière à {heure}'
+	String pauseA({required Object heure}) => 'Pause de prière à ${heure}';
+
+	/// fr: 'Heure approchée : à cette saison, le soleil ne descend pas assez bas pour que l'angle se définisse.'
+	String get approchee => 'Heure approchée : à cette saison, le soleil ne descend pas assez bas pour que l\'angle se définisse.';
+
+	late final Traductions$priere$methodes$fr methodes = Traductions$priere$methodes$fr.internal(_root);
+	late final Traductions$priere$ecoles$fr ecoles = Traductions$priere$ecoles$fr.internal(_root);
+
+	/// fr: 'Valeur par défaut en vigueur, à valider par le directeur et ses associés.'
+	String get aValider => 'Valeur par défaut en vigueur, à valider par le directeur et ses associés.';
+
+	late final Traductions$priere$enseignant$fr enseignant = Traductions$priere$enseignant$fr.internal(_root);
+	late final Traductions$priere$direction$fr direction = Traductions$priere$direction$fr.internal(_root);
+	late final Traductions$priere$classe$fr classe = Traductions$priere$classe$fr.internal(_root);
+	late final Traductions$priere$regles$fr regles = Traductions$priere$regles$fr.internal(_root);
 }
 
 // Path: eleveConnexion
@@ -8092,6 +8112,311 @@ class Traductions$ficheEleve$mouvements$fr {
 	String get sansDonnees => 'Les mouvements de ce profil n\'ont pas pu être chargés';
 }
 
+// Path: priere.methodes
+class Traductions$priere$methodes$fr {
+	Traductions$priere$methodes$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ligue islamique mondiale'
+	String get muslim_world_league => 'Ligue islamique mondiale';
+
+	/// fr: 'Autorité générale égyptienne'
+	String get egyptian => 'Autorité générale égyptienne';
+
+	/// fr: 'Université des sciences islamiques de Karachi'
+	String get karachi => 'Université des sciences islamiques de Karachi';
+
+	/// fr: 'Umm al-Qura (La Mecque)'
+	String get umm_al_qura => 'Umm al-Qura (La Mecque)';
+
+	/// fr: 'Golfe'
+	String get dubai => 'Golfe';
+
+	/// fr: 'Moon Sighting Committee'
+	String get moon_sighting_committee => 'Moon Sighting Committee';
+
+	/// fr: 'ISNA (Amérique du Nord)'
+	String get north_america => 'ISNA (Amérique du Nord)';
+
+	/// fr: 'Koweït'
+	String get kuwait => 'Koweït';
+
+	/// fr: 'Qatar'
+	String get qatar => 'Qatar';
+
+	/// fr: 'Singapour'
+	String get singapore => 'Singapour';
+
+	/// fr: 'Téhéran'
+	String get tehran => 'Téhéran';
+
+	/// fr: 'Diyanet (Turquie)'
+	String get turkey => 'Diyanet (Turquie)';
+}
+
+// Path: priere.ecoles
+class Traductions$priere$ecoles$fr {
+	Traductions$priere$ecoles$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Selon la majorité des écoles (l'ombre égale l'objet)'
+	String get shafi => 'Selon la majorité des écoles (l\'ombre égale l\'objet)';
+
+	/// fr: 'Ombre double (école hanafite)'
+	String get hanafi => 'Ombre double (école hanafite)';
+}
+
+// Path: priere.enseignant
+class Traductions$priere$enseignant$fr {
+	Traductions$priere$enseignant$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Mes heures de prière'
+	String get titre => 'Mes heures de prière';
+
+	/// fr: 'Les heures du jour, calculées par Rewayah pour votre lieu. Vous pouvez ajuster chaque prière de 30 minutes au plus.'
+	String get intro => 'Les heures du jour, calculées par Rewayah pour votre lieu. Vous pouvez ajuster chaque prière de 30 minutes au plus.';
+
+	/// fr: 'Mes heures de prière'
+	String get ligne => 'Mes heures de prière';
+
+	/// fr: 'Voir vos heures du jour et les ajuster'
+	String get ligneDetail => 'Voir vos heures du jour et les ajuster';
+
+	/// fr: 'Votre lieu de prière n'est pas encore posé. La direction le pose : vos heures apparaîtront ici.'
+	String get vide => 'Votre lieu de prière n\'est pas encore posé. La direction le pose : vos heures apparaîtront ici.';
+
+	/// fr: 'Vos heures de prière ne se sont pas affichées. Il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
+	String get erreur => 'Vos heures de prière ne se sont pas affichées. Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
+
+	/// fr: 'Aucun ajustement'
+	String get aucunAjustement => 'Aucun ajustement';
+
+	/// fr: '{minutes} min en plus'
+	String plus({required Object minutes}) => '${minutes} min en plus';
+
+	/// fr: '{minutes} min en moins'
+	String moins({required Object minutes}) => '${minutes} min en moins';
+
+	/// fr: 'De 30 minutes en moins à 30 minutes en plus. L'ajustement déplace aussi la pause de prière de vos cours.'
+	String get feuilleAide => 'De 30 minutes en moins à 30 minutes en plus. L\'ajustement déplace aussi la pause de prière de vos cours.';
+
+	/// fr: 'Ajustement'
+	String get champ => 'Ajustement';
+
+	/// fr: 'Enregistrer'
+	String get enregistrer => 'Enregistrer';
+
+	/// fr: 'Il est possible que l'ajustement ne soit pas parvenu jusqu'à Rewayah. Vérifiez vos heures, puis réessayez dans un instant.'
+	String get erreurEnregistrement => 'Il est possible que l\'ajustement ne soit pas parvenu jusqu\'à Rewayah. Vérifiez vos heures, puis réessayez dans un instant.';
+
+	/// fr: '{n} min'
+	String unite({required Object n}) => '${n} min';
+}
+
+// Path: priere.direction
+class Traductions$priere$direction$fr {
+	Traductions$priere$direction$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Prière'
+	String get onglet => 'Prière';
+
+	/// fr: 'Lieux de prière'
+	String get titre => 'Lieux de prière';
+
+	/// fr: 'Le lieu de prière de chaque enseignant fixe ses heures. Seuls l'enseignant et la direction le voient : les élèves et les tuteurs ne lisent que l'heure de la pause.'
+	String get intro => 'Le lieu de prière de chaque enseignant fixe ses heures. Seuls l\'enseignant et la direction le voient : les élèves et les tuteurs ne lisent que l\'heure de la pause.';
+
+	/// fr: 'Aucun lieu : pas de pause de prière'
+	String get sansLieu => 'Aucun lieu : pas de pause de prière';
+
+	/// fr: 'Aucun enseignant actif pour le moment.'
+	String get vide => 'Aucun enseignant actif pour le moment.';
+
+	/// fr: 'Les lieux de prière ne se sont pas affichés. Il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
+	String get erreur => 'Les lieux de prière ne se sont pas affichés. Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
+
+	/// fr: 'Assiste à la prière du vendredi'
+	String get vendredi => 'Assiste à la prière du vendredi';
+
+	/// fr: 'À vérifier'
+	String get incoherenceTitre => 'À vérifier';
+
+	/// fr: 'Signalement seulement : rien n'est corrigé automatiquement.'
+	String get incoherenceAide => 'Signalement seulement : rien n\'est corrigé automatiquement.';
+
+	/// fr: '{prenom} : le fuseau du compte et celui du lieu de prière diffèrent ({detail}).'
+	String incoherenceFuseauCompte({required Object prenom, required Object detail}) => '${prenom} : le fuseau du compte et celui du lieu de prière diffèrent (${detail}).';
+
+	/// fr: '{prenom} : le fuseau du lieu de prière ne correspond pas à sa longitude ({detail}).'
+	String incoherenceFuseauLieu({required Object prenom, required Object detail}) => '${prenom} : le fuseau du lieu de prière ne correspond pas à sa longitude (${detail}).';
+
+	/// fr: '{prenom} : le pays du compte ({detail}) ne correspond pas au lieu de prière.'
+	String incoherencePays({required Object prenom, required Object detail}) => '${prenom} : le pays du compte (${detail}) ne correspond pas au lieu de prière.';
+
+	/// fr: '{prenom} : le pays du compte et son fuseau ne se correspondent pas ({detail}).'
+	String incoherencePaysFuseau({required Object prenom, required Object detail}) => '${prenom} : le pays du compte et son fuseau ne se correspondent pas (${detail}).';
+
+	late final Traductions$priere$direction$feuille$fr feuille = Traductions$priere$direction$feuille$fr.internal(_root);
+}
+
+// Path: priere.classe
+class Traductions$priere$classe$fr {
+	Traductions$priere$classe$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Prières et créneau'
+	String get titre => 'Prières et créneau';
+
+	/// fr: 'Ce que ce créneau croise, sur les 12 mois à venir, pour l'enseignant de la classe. C'est un avertissement : rien n'est bloqué, et la pause de prière protège de toute façon l'enseignant.'
+	String get intro => 'Ce que ce créneau croise, sur les 12 mois à venir, pour l\'enseignant de la classe. C\'est un avertissement : rien n\'est bloqué, et la pause de prière protège de toute façon l\'enseignant.';
+
+	/// fr: 'L'enseignant de cette classe n'a pas de lieu de prière : aucune pause de prière n'est prévue.'
+	String get sansLieu => 'L\'enseignant de cette classe n\'a pas de lieu de prière : aucune pause de prière n\'est prévue.';
+
+	/// fr: 'Les prières de ce créneau ne se sont pas affichées. Il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
+	String get erreur => 'Les prières de ce créneau ne se sont pas affichées. Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
+
+	/// fr: '{jour}, {heure} h, {duree} min'
+	String creneau({required Object jour, required Object heure, required Object duree}) => '${jour}, ${heure} h, ${duree} min';
+
+	/// fr: 'Ce créneau ne croise aucune prière de l'enseignant sur les 12 mois.'
+	String get aucun => 'Ce créneau ne croise aucune prière de l\'enseignant sur les 12 mois.';
+
+	/// fr: '{priere} : de {du} à {au}, {seances} séances, dont {pause} avec une pause de prière et {apres} où l'enseignant prie après le cours.'
+	String croise({required Object priere, required Object du, required Object au, required Object seances, required Object pause, required Object apres}) => '${priere} : de ${du} à ${au}, ${seances} séances, dont ${pause} avec une pause de prière et ${apres} où l\'enseignant prie après le cours.';
+
+	/// fr: 'Pour une partie de l'année, le soleil ne se lève ou ne se couche pas : aucune pause de prière n'est calculée.'
+	String get indefini => 'Pour une partie de l\'année, le soleil ne se lève ou ne se couche pas : aucune pause de prière n\'est calculée.';
+
+	/// fr: 'Ce créneau chevauche la prière du vendredi de l'enseignant ({debut} à {fin}) : {n} séances de l'année. Avertissement fort.'
+	String vendredi({required Object debut, required Object fin, required Object n}) => 'Ce créneau chevauche la prière du vendredi de l\'enseignant (${debut} à ${fin}) : ${n} séances de l\'année. Avertissement fort.';
+
+	/// fr: 'Heures de début sans prière ce jour-là : {heures}.'
+	String libres({required Object heures}) => 'Heures de début sans prière ce jour-là : ${heures}.';
+
+	/// fr: 'Aucune heure de début ce jour-là n'évite toutes les prières de l'année.'
+	String get libresAucune => 'Aucune heure de début ce jour-là n\'évite toutes les prières de l\'année.';
+
+	/// fr: 'Les heures sans prière ne peuvent pas être dites pour cet enseignant.'
+	String get libresInconnues => 'Les heures sans prière ne peuvent pas être dites pour cet enseignant.';
+
+	/// fr: '{h} h'
+	String heureCourte({required Object h}) => '${h} h';
+}
+
+// Path: priere.regles
+class Traductions$priere$regles$fr {
+	Traductions$priere$regles$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'La prière'
+	String get section => 'La prière';
+
+	/// fr: 'Le serveur place la pause de prière de l'enseignant quand une prière entre pendant la séance. Ces réglages valent pour toute l'académie.'
+	String get intro => 'Le serveur place la pause de prière de l\'enseignant quand une prière entre pendant la séance. Ces réglages valent pour toute l\'académie.';
+
+	/// fr: 'Méthode de calcul'
+	String get methode => 'Méthode de calcul';
+
+	/// fr: 'Les angles du Fajr et de l'Isha. Un enseignant peut avoir la sienne.'
+	String get methodeDetail => 'Les angles du Fajr et de l\'Isha. Un enseignant peut avoir la sienne.';
+
+	/// fr: 'École pour l'Asr'
+	String get ecole => 'École pour l\'Asr';
+
+	/// fr: 'L'heure d'entrée de l'Asr. Un enseignant peut avoir la sienne.'
+	String get ecoleDetail => 'L\'heure d\'entrée de l\'Asr. Un enseignant peut avoir la sienne.';
+
+	/// fr: 'Durée de la pause de prière'
+	String get pause => 'Durée de la pause de prière';
+
+	/// fr: 'De 5 à 20 minutes, par pas de 5.'
+	String get pauseDetail => 'De 5 à 20 minutes, par pas de 5.';
+
+	/// fr: 'Pause du Maghrib pendant le Ramadan'
+	String get pauseRamadan => 'Pause du Maghrib pendant le Ramadan';
+
+	/// fr: 'La rupture du jeûne : de 5 à 20 minutes, par pas de 5.'
+	String get pauseRamadanDetail => 'La rupture du jeûne : de 5 à 20 minutes, par pas de 5.';
+
+	/// fr: 'Ramadan en cours'
+	String get ramadan => 'Ramadan en cours';
+
+	/// fr: 'En attendant le calendrier de l'académie, la direction le pose à la main.'
+	String get ramadanDetail => 'En attendant le calendrier de l\'académie, la direction le pose à la main.';
+
+	/// fr: 'Marge au début'
+	String get margeDebut => 'Marge au début';
+
+	/// fr: 'Une prière qui entre dans ces premières minutes place la pause à cette minute du cours.'
+	String get margeDebutDetail => 'Une prière qui entre dans ces premières minutes place la pause à cette minute du cours.';
+
+	/// fr: 'Marge à la fin'
+	String get margeFin => 'Marge à la fin';
+
+	/// fr: 'Une prière qui entre dans ces dernières minutes se prie après le cours.'
+	String get margeFinDetail => 'Une prière qui entre dans ces dernières minutes se prie après le cours.';
+
+	/// fr: 'Prière entrée juste avant le cours'
+	String get margeAvant => 'Prière entrée juste avant le cours';
+
+	/// fr: 'Une prière entrée depuis moins de ce temps avant le début du cours, et dont le temps se ferme pendant le cours, a sa pause. À valider par le directeur.'
+	String get margeAvantDetail => 'Une prière entrée depuis moins de ce temps avant le début du cours, et dont le temps se ferme pendant le cours, a sa pause. À valider par le directeur.';
+
+	/// fr: 'Début de la pause d'une prière qui se ferme'
+	String get delaiFermeture => 'Début de la pause d\'une prière qui se ferme';
+
+	/// fr: 'Cette pause commence ce temps après le début du cours.'
+	String get delaiFermetureDetail => 'Cette pause commence ce temps après le début du cours.';
+
+	/// fr: 'Recalcul de nuit'
+	String get horizon => 'Recalcul de nuit';
+
+	/// fr: 'Chaque nuit, les pauses des séances de ces prochains jours sont recalculées.'
+	String get horizonDetail => 'Chaque nuit, les pauses des séances de ces prochains jours sont recalculées.';
+
+	/// fr: 'Lieux de prière des enseignants'
+	String get lieux => 'Lieux de prière des enseignants';
+
+	/// fr: 'Le lieu de chaque enseignant, la prière du vendredi, les heures du jour.'
+	String get lieuxDetail => 'Le lieu de chaque enseignant, la prière du vendredi, les heures du jour.';
+
+	/// fr: '{n} min'
+	String unite({required Object n}) => '${n} min';
+
+	/// fr: '(one) {{n} jour} (other) {{n} jours}'
+	String uniteJours({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} jour',
+		other: '${n} jours',
+	);
+
+	/// fr: 'Enregistrer'
+	String get choisir => 'Enregistrer';
+
+	/// fr: 'Le réglage n'est pas confirmé ({message}). Vérifiez sa valeur, puis réessayez dans un instant.'
+	String erreurEcriture({required Object message}) => 'Le réglage n\'est pas confirmé (${message}). Vérifiez sa valeur, puis réessayez dans un instant.';
+}
+
 // Path: eleveConnexion.profils
 class Traductions$eleveConnexion$profils$fr {
 	Traductions$eleveConnexion$profils$fr.internal(this._root);
@@ -13456,20 +13781,20 @@ class Traductions$admin$bibliotheque$fr {
 	/// fr: 'Bibliothèque'
 	String get titre => 'Bibliothèque';
 
-	/// fr: 'Les supports pédagogiques : les déposer, vérifier leurs droits, publier une version, les attribuer aux classes.'
-	String get intro => 'Les supports pédagogiques : les déposer, vérifier leurs droits, publier une version, les attribuer aux classes.';
+	/// fr: 'Les documents pédagogiques : les déposer, vérifier leurs droits, publier une version, les attribuer aux classes.'
+	String get intro => 'Les documents pédagogiques : les déposer, vérifier leurs droits, publier une version, les attribuer aux classes.';
 
 	/// fr: 'Un brouillon ne donne aucun accès aux élèves ni aux enseignants.'
 	String get brouillonAlerte => 'Un brouillon ne donne aucun accès aux élèves ni aux enseignants.';
 
-	/// fr: 'Ajouter un support'
-	String get ajouter => 'Ajouter un support';
+	/// fr: 'Ajouter un document'
+	String get ajouter => 'Ajouter un document';
 
-	/// fr: 'Aucun support'
-	String get vide => 'Aucun support';
+	/// fr: 'Aucun document'
+	String get vide => 'Aucun document';
 
-	/// fr: 'Ajoutez un premier support pour le préparer, vérifier ses droits, puis le publier.'
-	String get videDetail => 'Ajoutez un premier support pour le préparer, vérifier ses droits, puis le publier.';
+	/// fr: 'Ajoutez un premier document pour le préparer, vérifier ses droits, puis le publier.'
+	String get videDetail => 'Ajoutez un premier document pour le préparer, vérifier ses droits, puis le publier.';
 
 	/// fr: 'Le catalogue n'a pas pu être chargé. Réessayez.'
 	String get erreur => 'Le catalogue n\'a pas pu être chargé. Réessayez.';
@@ -13486,14 +13811,14 @@ class Traductions$admin$bibliotheque$fr {
 	/// fr: 'le catalogue'
 	String get sansDonnees => 'le catalogue';
 
-	/// fr: 'Support'
-	String get ficheTitre => 'Support';
+	/// fr: 'Document'
+	String get ficheTitre => 'Document';
 
 	/// fr: 'Retour au catalogue'
 	String get retourCatalogue => 'Retour au catalogue';
 
-	/// fr: 'Ce support n'existe pas ou n'est pas accessible.'
-	String get introuvable => 'Ce support n\'existe pas ou n\'est pas accessible.';
+	/// fr: 'Ce document n'existe pas ou n'est pas accessible.'
+	String get introuvable => 'Ce document n\'existe pas ou n\'est pas accessible.';
 
 	late final Traductions$admin$bibliotheque$libelles$fr libelles = Traductions$admin$bibliotheque$libelles$fr.internal(_root);
 	late final Traductions$admin$bibliotheque$catalogue$fr catalogue = Traductions$admin$bibliotheque$catalogue$fr.internal(_root);
@@ -14727,11 +15052,11 @@ class Traductions$eleve$accueil$fr {
 	/// fr: 'Tu pourras entrer dès que le réseau revient.'
 	String get horsLigneDetail => 'Tu pourras entrer dès que le réseau revient.';
 
-	/// fr: 'Pause pour la prière'
-	String get pausePriere => 'Pause pour la prière';
+	/// fr: 'Pause de prière'
+	String get pausePriere => 'Pause de prière';
 
-	/// fr: '{priere}, vers {heure}'
-	String pausePriereDetail({required Object priere, required Object heure}) => '${priere}, vers ${heure}';
+	/// fr: 'À {heure}'
+	String pausePriereDetail({required Object heure}) => 'À ${heure}';
 
 	/// fr: '(one) {Ton prochain cours est dans {jours} jour.} (other) {Ton prochain cours est dans {jours} jours.}'
 	String prochainDansJours({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours,
@@ -18287,8 +18612,8 @@ class Traductions$tc$bibliotheque$fr {
 	/// fr: 'Titre, niveau, sourate ou page'
 	String get rechercheIndication => 'Titre, niveau, sourate ou page';
 
-	/// fr: 'Rechercher un support'
-	String get rechercheLibelle => 'Rechercher un support';
+	/// fr: 'Rechercher un document'
+	String get rechercheLibelle => 'Rechercher un document';
 
 	/// fr: 'Tout afficher'
 	String get effacerRecherche => 'Tout afficher';
@@ -25625,6 +25950,81 @@ class Traductions$ficheEleve$mouvements$recu$fr {
 	String get repartition => 'Répartition';
 }
 
+// Path: priere.direction.feuille
+class Traductions$priere$direction$feuille$fr {
+	Traductions$priere$direction$feuille$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Lieu et heures de prière {dePrenom}'
+	String titre({required Object dePrenom}) => 'Lieu et heures de prière ${dePrenom}';
+
+	/// fr: 'Nom du lieu'
+	String get nomLieu => 'Nom du lieu';
+
+	/// fr: 'Latitude'
+	String get latitude => 'Latitude';
+
+	/// fr: 'Longitude'
+	String get longitude => 'Longitude';
+
+	/// fr: 'En degrés décimaux, avec un point (par exemple 9.6412 et -13.5784).'
+	String get coordonneesAide => 'En degrés décimaux, avec un point (par exemple 9.6412 et -13.5784).';
+
+	/// fr: 'Fuseau (par exemple {exemple})'
+	String fuseau({required Object exemple}) => 'Fuseau (par exemple ${exemple})';
+
+	/// fr: 'Méthode de calcul'
+	String get methode => 'Méthode de calcul';
+
+	/// fr: 'Celle de l'académie'
+	String get methodeEcole => 'Celle de l\'académie';
+
+	/// fr: 'École pour l'Asr'
+	String get ecole => 'École pour l\'Asr';
+
+	/// fr: 'Celle de l'académie'
+	String get ecoleEcole => 'Celle de l\'académie';
+
+	/// fr: 'Assiste à la prière du vendredi'
+	String get vendredi => 'Assiste à la prière du vendredi';
+
+	/// fr: 'Oui'
+	String get vendrediOui => 'Oui';
+
+	/// fr: 'Non'
+	String get vendrediNon => 'Non';
+
+	/// fr: 'Début de la plage du vendredi'
+	String get vendrediDebut => 'Début de la plage du vendredi';
+
+	/// fr: 'Fin de la plage du vendredi'
+	String get vendrediFin => 'Fin de la plage du vendredi';
+
+	/// fr: 'Heure de l'enseignant, au format HH:MM. Un créneau qui chevauche cette plage est signalé à la direction, sans blocage.'
+	String get plageAide => 'Heure de l\'enseignant, au format HH:MM. Un créneau qui chevauche cette plage est signalé à la direction, sans blocage.';
+
+	/// fr: 'Heures du jour'
+	String get apercu => 'Heures du jour';
+
+	/// fr: 'Aucune heure à montrer tant que le lieu n'est pas enregistré.'
+	String get apercuVide => 'Aucune heure à montrer tant que le lieu n\'est pas enregistré.';
+
+	/// fr: 'Enregistrer le lieu'
+	String get enregistrer => 'Enregistrer le lieu';
+
+	/// fr: 'Retirer le lieu'
+	String get retirer => 'Retirer le lieu';
+
+	/// fr: 'Vérifiez le nom du lieu, les coordonnées, le fuseau et la plage du vendredi.'
+	String get invalide => 'Vérifiez le nom du lieu, les coordonnées, le fuseau et la plage du vendredi.';
+
+	/// fr: 'Il est possible que le lieu ne soit pas parvenu jusqu'à Rewayah, ou qu'une valeur soit refusée. Vérifiez la fiche, puis réessayez dans un instant.'
+	String get erreurEnregistrement => 'Il est possible que le lieu ne soit pas parvenu jusqu\'à Rewayah, ou qu\'une valeur soit refusée. Vérifiez la fiche, puis réessayez dans un instant.';
+}
+
 // Path: recrutement.invitations.etat
 class Traductions$recrutement$invitations$etat$fr {
 	Traductions$recrutement$invitations$etat$fr.internal(this._root);
@@ -31405,20 +31805,20 @@ class Traductions$admin$bibliotheque$catalogue$fr {
 	/// fr: 'Aucun résultat'
 	String get videRecherche => 'Aucun résultat';
 
-	/// fr: 'Aucun support ne correspond à votre recherche ou à vos filtres.'
-	String get videRechercheDetail => 'Aucun support ne correspond à votre recherche ou à vos filtres.';
+	/// fr: 'Aucun document ne correspond à votre recherche ou à vos filtres.'
+	String get videRechercheDetail => 'Aucun document ne correspond à votre recherche ou à vos filtres.';
 
 	/// fr: 'Effacer les filtres'
 	String get effacerFiltres => 'Effacer les filtres';
 
-	/// fr: 'Voir plus de supports'
-	String get voirPlus => 'Voir plus de supports';
+	/// fr: 'Voir plus de documents'
+	String get voirPlus => 'Voir plus de documents';
 
 	/// fr: 'La suite du catalogue n'a pas pu être chargée.'
 	String get pageErreur => 'La suite du catalogue n\'a pas pu être chargée.';
 
-	/// fr: 'Ouvrir le support {titre}'
-	String ouvrir({required Object titre}) => 'Ouvrir le support ${titre}';
+	/// fr: 'Ouvrir le document {titre}'
+	String ouvrir({required Object titre}) => 'Ouvrir le document ${titre}';
 
 	/// fr: 'Droits échus'
 	String get droitsEchus => 'Droits échus';
@@ -31469,8 +31869,8 @@ class Traductions$admin$bibliotheque$fiche$fr {
 	/// fr: 'Modifications enregistrées.'
 	String get enregistre => 'Modifications enregistrées.';
 
-	/// fr: 'Un autre administrateur a modifié ce support. Rechargez la fiche avant de continuer.'
-	String get conflit => 'Un autre administrateur a modifié ce support. Rechargez la fiche avant de continuer.';
+	/// fr: 'Un autre administrateur a modifié ce document. Rechargez la fiche avant de continuer.'
+	String get conflit => 'Un autre administrateur a modifié ce document. Rechargez la fiche avant de continuer.';
 
 	/// fr: 'Recharger la fiche'
 	String get recharger => 'Recharger la fiche';
@@ -31480,6 +31880,9 @@ class Traductions$admin$bibliotheque$fiche$fr {
 
 	/// fr: 'Le titre est obligatoire.'
 	String get titreVide => 'Le titre est obligatoire.';
+
+	/// fr: 'Retirer la vignette'
+	String get retirerVignette => 'Retirer la vignette';
 
 	/// fr: 'Version publiée et figée : pour la modifier, créez une nouvelle version.'
 	String get figee => 'Version publiée et figée : pour la modifier, créez une nouvelle version.';
@@ -31526,9 +31929,31 @@ class Traductions$admin$bibliotheque$import$fr {
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
+	late final Traductions$admin$bibliotheque$import$classement$fr classement = Traductions$admin$bibliotheque$import$classement$fr.internal(_root);
 
-	/// fr: 'Compléter le support'
-	String get completer => 'Compléter le support';
+	/// fr: 'Vignette'
+	String get vignette => 'Vignette';
+
+	/// fr: 'Choisir une vignette'
+	String get choisirVignette => 'Choisir une vignette';
+
+	/// fr: 'Choisir une autre vignette'
+	String get choisirAutreVignette => 'Choisir une autre vignette';
+
+	/// fr: 'Une image (PNG, JPEG ou WebP, 2 Mo au plus), facultative. Sans vignette, l'écran montre une couverture selon le type.'
+	String get vignetteAide => 'Une image (PNG, JPEG ou WebP, 2 Mo au plus), facultative. Sans vignette, l\'écran montre une couverture selon le type.';
+
+	/// fr: 'Renseignez l'adresse du lien (https) : un lien externe ou une vidéo la demande, et un lien externe demande aussi sa description.'
+	String get completerLien => 'Renseignez l\'adresse du lien (https) : un lien externe ou une vidéo la demande, et un lien externe demande aussi sa description.';
+
+	/// fr: 'Cette adresse n'est pas acceptée : elle doit commencer par https et mener à un site.'
+	String get lienInvalide => 'Cette adresse n\'est pas acceptée : elle doit commencer par https et mener à un site.';
+
+	/// fr: 'Rien à déposer pour ce type : renseignez l'adresse du lien, puis poursuivez.'
+	String get sansFichierAide => 'Rien à déposer pour ce type : renseignez l\'adresse du lien, puis poursuivez.';
+
+	/// fr: 'Compléter le document'
+	String get completer => 'Compléter le document';
 
 	late final Traductions$admin$bibliotheque$import$sections$fr sections = Traductions$admin$bibliotheque$import$sections$fr.internal(_root);
 	late final Traductions$admin$bibliotheque$import$champs$fr champs = Traductions$admin$bibliotheque$import$champs$fr.internal(_root);
@@ -31629,8 +32054,8 @@ class Traductions$admin$bibliotheque$publication$fr {
 	/// fr: 'Publier la version {numero} ?'
 	String confirmerTitre({required Object numero}) => 'Publier la version ${numero} ?';
 
-	/// fr: 'La version devient immuable et visible des classes auxquelles le support est attribué. Pour la modifier, vous créerez une nouvelle version.'
-	String get confirmerEffet => 'La version devient immuable et visible des classes auxquelles le support est attribué. Pour la modifier, vous créerez une nouvelle version.';
+	/// fr: 'La version devient immuable et visible des classes auxquelles le document est attribué. Pour la modifier, vous créerez une nouvelle version.'
+	String get confirmerEffet => 'La version devient immuable et visible des classes auxquelles le document est attribué. Pour la modifier, vous créerez une nouvelle version.';
 
 	/// fr: 'Publier'
 	String get confirmerBouton => 'Publier';
@@ -31686,8 +32111,8 @@ class Traductions$admin$bibliotheque$attribution$fr {
 	/// fr: 'Chargement…'
 	String get chargementPlus => 'Chargement…';
 
-	/// fr: 'Ce support n'est pas publié. Publiez une version avant de l'attribuer à des classes.'
-	String get nonPublie => 'Ce support n\'est pas publié. Publiez une version avant de l\'attribuer à des classes.';
+	/// fr: 'Ce document n'est pas publié. Publiez une version avant de l'attribuer à des classes.'
+	String get nonPublie => 'Ce document n\'est pas publié. Publiez une version avant de l\'attribuer à des classes.';
 
 	/// fr: 'Les classes n'ont pas pu être chargées. Réessayez.'
 	String get erreur => 'Les classes n\'ont pas pu être chargées. Réessayez.';
@@ -31698,8 +32123,8 @@ class Traductions$admin$bibliotheque$attribution$fr {
 	/// fr: 'Choisissez au moins une classe avant d'attribuer.'
 	String get attribuerAucune => 'Choisissez au moins une classe avant d\'attribuer.';
 
-	/// fr: 'Support attribué. Les classes choisies le voient maintenant.'
-	String get attribuee => 'Support attribué. Les classes choisies le voient maintenant.';
+	/// fr: 'Document attribué. Les classes choisies le voient maintenant.'
+	String get attribuee => 'Document attribué. Les classes choisies le voient maintenant.';
 
 	/// fr: 'L'attribution n'a pas abouti. Réessayez dans un instant.'
 	String get attribueEchec => 'L\'attribution n\'a pas abouti. Réessayez dans un instant.';
@@ -31707,8 +32132,8 @@ class Traductions$admin$bibliotheque$attribution$fr {
 	/// fr: 'Retirer du catalogue'
 	String get retraitTitre => 'Retirer du catalogue';
 
-	/// fr: 'Un retrait masque le support de toutes les classes. Il ne supprime rien : le fichier et l'historique restent conservés.'
-	String get retraitIntro => 'Un retrait masque le support de toutes les classes. Il ne supprime rien : le fichier et l\'historique restent conservés.';
+	/// fr: 'Un retrait masque le document de toutes les classes. Il ne supprime rien : le fichier et l'historique restent conservés.'
+	String get retraitIntro => 'Un retrait masque le document de toutes les classes. Il ne supprime rien : le fichier et l\'historique restent conservés.';
 
 	/// fr: 'Motif du retrait'
 	String get motif => 'Motif du retrait';
@@ -31716,8 +32141,8 @@ class Traductions$admin$bibliotheque$attribution$fr {
 	/// fr: 'Écrivez le motif du retrait avant de continuer : il est conservé dans l'historique.'
 	String get motifRequis => 'Écrivez le motif du retrait avant de continuer : il est conservé dans l\'historique.';
 
-	/// fr: 'Retirer ce support'
-	String get retirer => 'Retirer ce support';
+	/// fr: 'Retirer ce document'
+	String get retirer => 'Retirer ce document';
 
 	/// fr: 'Retirer « {titre} » du catalogue ?'
 	String retraitConfirmerTitre({required Object titre}) => 'Retirer « ${titre} » du catalogue ?';
@@ -31725,17 +32150,17 @@ class Traductions$admin$bibliotheque$attribution$fr {
 	/// fr: 'Les classes ne le verront plus, y compris celles qui l'utilisent déjà. Le motif est conservé dans l'historique.'
 	String get retraitConfirmerEffet => 'Les classes ne le verront plus, y compris celles qui l\'utilisent déjà. Le motif est conservé dans l\'historique.';
 
-	/// fr: 'Retirer le support'
-	String get retraitConfirmerBouton => 'Retirer le support';
+	/// fr: 'Retirer le document'
+	String get retraitConfirmerBouton => 'Retirer le document';
 
-	/// fr: 'Support retiré du catalogue.'
-	String get retire => 'Support retiré du catalogue.';
+	/// fr: 'Document retiré du catalogue.'
+	String get retire => 'Document retiré du catalogue.';
 
 	/// fr: 'Le retrait n'a pas abouti. Réessayez dans un instant.'
 	String get retraitEchec => 'Le retrait n\'a pas abouti. Réessayez dans un instant.';
 
-	/// fr: 'Quelqu'un a modifié ce support entre-temps. Rechargez avant de continuer.'
-	String get conflit => 'Quelqu\'un a modifié ce support entre-temps. Rechargez avant de continuer.';
+	/// fr: 'Quelqu'un a modifié ce document entre-temps. Rechargez avant de continuer.'
+	String get conflit => 'Quelqu\'un a modifié ce document entre-temps. Rechargez avant de continuer.';
 }
 
 // Path: compte.page.sections
@@ -33190,14 +33615,14 @@ class Traductions$tc$bibliotheque$sections$fr {
 	/// fr: 'Pour cette classe'
 	String get pourCeGroupe => 'Pour cette classe';
 
-	/// fr: 'Supports à afficher'
-	String get groupe => 'Supports à afficher';
+	/// fr: 'Documents à afficher'
+	String get groupe => 'Documents à afficher';
 
 	/// fr: 'Récents'
 	String get recents => 'Récents';
 
-	/// fr: 'Tous les supports'
-	String get tousLesSupports => 'Tous les supports';
+	/// fr: 'Tous les documents'
+	String get tousLesSupports => 'Tous les documents';
 
 	/// fr: 'Résultats'
 	String get resultats => 'Résultats';
@@ -33211,11 +33636,11 @@ class Traductions$tc$bibliotheque$vide$fr {
 
 	// Translations
 
-	/// fr: 'Aucun support publié pour le moment'
-	String get message => 'Aucun support publié pour le moment';
+	/// fr: 'Aucun document publié pour le moment'
+	String get message => 'Aucun document publié pour le moment';
 
-	/// fr: 'Vos enseignants déposeront ici les supports de vos cours.'
-	String get invitation => 'Vos enseignants déposeront ici les supports de vos cours.';
+	/// fr: 'Vos enseignants déposeront ici les documents de vos cours.'
+	String get invitation => 'Vos enseignants déposeront ici les documents de vos cours.';
 }
 
 // Path: tc.bibliotheque.aucunResultat
@@ -33226,8 +33651,8 @@ class Traductions$tc$bibliotheque$aucunResultat$fr {
 
 	// Translations
 
-	/// fr: 'Aucun support ne correspond'
-	String get message => 'Aucun support ne correspond';
+	/// fr: 'Aucun document ne correspond'
+	String get message => 'Aucun document ne correspond';
 
 	/// fr: 'Essayez un autre mot, ou relâchez les filtres.'
 	String get invitation => 'Essayez un autre mot, ou relâchez les filtres.';
@@ -33259,8 +33684,8 @@ class Traductions$tc$bibliotheque$introuvable$fr {
 
 	// Translations
 
-	/// fr: 'Ce support ne vous est pas ouvert'
-	String get message => 'Ce support ne vous est pas ouvert';
+	/// fr: 'Ce document ne vous est pas ouvert'
+	String get message => 'Ce document ne vous est pas ouvert';
 
 	/// fr: 'Il a peut-être été retiré, ou il est réservé à une autre classe. Votre enseignant peut vous le rouvrir.'
 	String get invitation => 'Il a peut-être été retiré, ou il est réservé à une autre classe. Votre enseignant peut vous le rouvrir.';
@@ -33298,6 +33723,15 @@ class Traductions$tc$bibliotheque$type$fr {
 
 	// Translations
 
+	/// fr: 'Audio'
+	String get audio => 'Audio';
+
+	/// fr: 'Vidéo'
+	String get video => 'Vidéo';
+
+	/// fr: 'Lien externe'
+	String get lienExterne => 'Lien externe';
+
 	/// fr: 'Coran'
 	String get quran => 'Coran';
 
@@ -33322,11 +33756,17 @@ class Traductions$tc$bibliotheque$detail$fr {
 
 	// Translations
 
-	/// fr: 'Support'
-	String get titre => 'Support';
+	/// fr: 'Document'
+	String get titre => 'Document';
 
-	/// fr: 'Ce que ce support permet'
-	String get capacites => 'Ce que ce support permet';
+	/// fr: 'Lecture du Coran'
+	String get lecture => 'Lecture du Coran';
+
+	/// fr: 'École juridique suivie'
+	String get ecole => 'École juridique suivie';
+
+	/// fr: 'Ce que ce document permet'
+	String get capacites => 'Ce que ce document permet';
 
 	/// fr: 'Niveaux'
 	String get niveaux => 'Niveaux';
@@ -33382,8 +33822,8 @@ class Traductions$tc$bibliotheque$message$fr {
 	/// fr: 'La copie n’a pas pu être préparée. Réessayez dans un instant.'
 	String get copieImpossible => 'La copie n’a pas pu être préparée. Réessayez dans un instant.';
 
-	/// fr: 'Ce support n’est pas encore disponible hors ligne'
-	String get telechargementImpossible => 'Ce support n’est pas encore disponible hors ligne';
+	/// fr: 'Ce document n’est pas encore disponible hors ligne'
+	String get telechargementImpossible => 'Ce document n’est pas encore disponible hors ligne';
 
 	/// fr: 'Disponible une fois téléchargé ou de retour en ligne'
 	String get horsLigneNonTelecharge => 'Disponible une fois téléchargé ou de retour en ligne';
@@ -33400,11 +33840,11 @@ class Traductions$tc$bibliotheque$classe$fr {
 
 	// Translations
 
-	/// fr: 'Choisir un support'
-	String get titre => 'Choisir un support';
+	/// fr: 'Choisir un document'
+	String get titre => 'Choisir un document';
 
-	/// fr: 'Le support choisi remplace celui affiché. Le cours continue.'
-	String get sousTitre => 'Le support choisi remplace celui affiché. Le cours continue.';
+	/// fr: 'Le document choisi remplace celui affiché. Le cours continue.'
+	String get sousTitre => 'Le document choisi remplace celui affiché. Le cours continue.';
 }
 
 // Path: tc.bibliotheque.rendu
@@ -33414,6 +33854,33 @@ class Traductions$tc$bibliotheque$rendu$fr {
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
+
+	/// fr: 'Ce type de document n'a pas encore de lecteur dans l'application.'
+	String get sansLecteur => 'Ce type de document n\'a pas encore de lecteur dans l\'application.';
+
+	/// fr: 'Ce lien quitte l'application'
+	String get confirmerTitre => 'Ce lien quitte l\'application';
+
+	/// fr: 'Il ouvre un autre site, en dehors de Rewayah Academy. Vous pouvez revenir ici ensuite.'
+	String get confirmerPhrase => 'Il ouvre un autre site, en dehors de Rewayah Academy. Vous pouvez revenir ici ensuite.';
+
+	/// fr: 'Ouvrir le lien'
+	String get confirmerOuvrir => 'Ouvrir le lien';
+
+	/// fr: 'Rester dans l'application'
+	String get confirmerRester => 'Rester dans l\'application';
+
+	/// fr: 'Ouvrir le lien'
+	String get ouvrirLien => 'Ouvrir le lien';
+
+	/// fr: 'Ce lien s'ouvre sur un autre site.'
+	String get lienAutreSite => 'Ce lien s\'ouvre sur un autre site.';
+
+	/// fr: 'Ce lien s'ouvre depuis la version web de l'application.'
+	String get lienSansNavigateur => 'Ce lien s\'ouvre depuis la version web de l\'application.';
+
+	/// fr: 'Ce document n'a pas encore de contenu à ouvrir.'
+	String get lienAbsent => 'Ce document n\'a pas encore de contenu à ouvrir.';
 
 	/// fr: 'L'image n'a pas pu être chargée pour le moment.'
 	String get imageInaccessible => 'L\'image n\'a pas pu être chargée pour le moment.';
@@ -33433,8 +33900,8 @@ class Traductions$tc$bibliotheque$rendu$fr {
 	/// fr: 'Le lien de lecture n'a pas pu être obtenu pour le moment.'
 	String get lienEchec => 'Le lien de lecture n\'a pas pu être obtenu pour le moment.';
 
-	/// fr: 'L'ouverture n'est pas disponible pour ce support.'
-	String get lienIndisponible => 'L\'ouverture n\'est pas disponible pour ce support.';
+	/// fr: 'L'ouverture n'est pas disponible pour ce document.'
+	String get lienIndisponible => 'L\'ouverture n\'est pas disponible pour ce document.';
 
 	/// fr: 'L'ouverture pourra se faire quand la connexion reviendra.'
 	String get lienHorsLigne => 'L\'ouverture pourra se faire quand la connexion reviendra.';
@@ -33451,26 +33918,26 @@ class Traductions$tc$bibliotheque$actif$fr {
 
 	// Translations
 
-	/// fr: 'Support présenté pas encore ouvert'
-	String get indisponibleTitre => 'Support présenté pas encore ouvert';
+	/// fr: 'Document présenté pas encore ouvert'
+	String get indisponibleTitre => 'Document présenté pas encore ouvert';
 
-	/// fr: 'Le suivi du support présenté s'ouvrira au branchement serveur.'
-	String get indisponible => 'Le suivi du support présenté s\'ouvrira au branchement serveur.';
+	/// fr: 'Le suivi du document présenté s'ouvrira au branchement serveur.'
+	String get indisponible => 'Le suivi du document présenté s\'ouvrira au branchement serveur.';
 
-	/// fr: 'le support présenté'
-	String get sansDonnees => 'le support présenté';
+	/// fr: 'le document présenté'
+	String get sansDonnees => 'le document présenté';
 
-	/// fr: 'Le support présenté n'a pas pu être chargé. Réessayez.'
-	String get erreur => 'Le support présenté n\'a pas pu être chargé. Réessayez.';
+	/// fr: 'Le document présenté n'a pas pu être chargé. Réessayez.'
+	String get erreur => 'Le document présenté n\'a pas pu être chargé. Réessayez.';
 
-	/// fr: 'Aucun support présenté'
-	String get aucun => 'Aucun support présenté';
+	/// fr: 'Aucun document présenté'
+	String get aucun => 'Aucun document présenté';
 
-	/// fr: 'Quand votre enseignant présentera un support, il apparaîtra ici sans rien faire de votre part.'
-	String get aucunDetail => 'Quand votre enseignant présentera un support, il apparaîtra ici sans rien faire de votre part.';
+	/// fr: 'Quand votre enseignant présentera un document, il apparaîtra ici sans rien faire de votre part.'
+	String get aucunDetail => 'Quand votre enseignant présentera un document, il apparaîtra ici sans rien faire de votre part.';
 
-	/// fr: 'Support présenté'
-	String get titre => 'Support présenté';
+	/// fr: 'Document présenté'
+	String get titre => 'Document présenté';
 
 	/// fr: 'Version {numero}'
 	String version({required Object numero}) => 'Version ${numero}';
@@ -33478,8 +33945,8 @@ class Traductions$tc$bibliotheque$actif$fr {
 	/// fr: 'Page {page}'
 	String page({required Object page}) => 'Page ${page}';
 
-	/// fr: 'Ouvrir la fiche du support'
-	String get ouvrirFiche => 'Ouvrir la fiche du support';
+	/// fr: 'Ouvrir la fiche du document'
+	String get ouvrirFiche => 'Ouvrir la fiche du document';
 
 	/// fr: 'Ouvrir dans le lecteur du Coran'
 	String get ouvrirCoran => 'Ouvrir dans le lecteur du Coran';
@@ -33487,8 +33954,8 @@ class Traductions$tc$bibliotheque$actif$fr {
 	/// fr: '« {titre} » a été retiré'
 	String retire({required Object titre}) => '« ${titre} » a été retiré';
 
-	/// fr: 'Votre enseignant a retiré ce support de la séance. Il n'est plus accessible.'
-	String get retireDetail => 'Votre enseignant a retiré ce support de la séance. Il n\'est plus accessible.';
+	/// fr: 'Votre enseignant a retiré ce document de la séance. Il n'est plus accessible.'
+	String get retireDetail => 'Votre enseignant a retiré ce document de la séance. Il n\'est plus accessible.';
 }
 
 // Path: tc.coran.modes
@@ -44544,6 +45011,15 @@ class Traductions$admin$bibliotheque$libelles$type$fr {
 
 	// Translations
 
+	/// fr: 'Audio'
+	String get audio => 'Audio';
+
+	/// fr: 'Vidéo'
+	String get video => 'Vidéo';
+
+	/// fr: 'Lien externe'
+	String get lienExterne => 'Lien externe';
+
 	/// fr: 'Coran'
 	String get quran => 'Coran';
 
@@ -44745,8 +45221,8 @@ class Traductions$admin$bibliotheque$catalogue$colonnes$fr {
 
 	// Translations
 
-	/// fr: 'Support'
-	String get support => 'Support';
+	/// fr: 'Document'
+	String get support => 'Document';
 
 	/// fr: 'Type'
 	String get type => 'Type';
@@ -44826,8 +45302,17 @@ class Traductions$admin$bibliotheque$fiche$champs$fr {
 	/// fr: 'Organisme, auteur ou éditeur'
 	String get organisme => 'Organisme, auteur ou éditeur';
 
-	/// fr: 'Description pédagogique'
-	String get description => 'Description pédagogique';
+	/// fr: 'Description courte (montrée sur la carte)'
+	String get description => 'Description courte (montrée sur la carte)';
+
+	/// fr: 'Rayon'
+	String get rayon => 'Rayon';
+
+	/// fr: 'Ordre d'affichage'
+	String get ordre => 'Ordre d\'affichage';
+
+	/// fr: 'Adresse du lien (https)'
+	String get lien => 'Adresse du lien (https)';
 
 	/// fr: 'Conditions d'attribution'
 	String get conditions => 'Conditions d\'attribution';
@@ -44861,6 +45346,24 @@ class Traductions$admin$bibliotheque$fiche$meta$fr {
 
 	/// fr: 'Lecture sans internet'
 	String get horsLigne => 'Lecture sans internet';
+
+	/// fr: 'Rayon'
+	String get rayon => 'Rayon';
+
+	/// fr: 'Étapes du programme'
+	String get etapes => 'Étapes du programme';
+
+	/// fr: 'Vignette'
+	String get vignette => 'Vignette';
+
+	/// fr: 'Déposée'
+	String get vignetteOui => 'Déposée';
+
+	/// fr: 'Par défaut, selon le type'
+	String get vignetteNon => 'Par défaut, selon le type';
+
+	/// fr: 'Adresse du lien'
+	String get lien => 'Adresse du lien';
 
 	/// fr: 'Non renseigné'
 	String get nonRenseigne => 'Non renseigné';
@@ -44977,6 +45480,60 @@ class Traductions$admin$bibliotheque$fiche$audit$fr {
 	String get restauration => 'Restauré';
 }
 
+// Path: admin.bibliotheque.import.classement
+class Traductions$admin$bibliotheque$import$classement$fr {
+	Traductions$admin$bibliotheque$import$classement$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Pour quels âges ?'
+	String get tranchesTitre => 'Pour quels âges ?';
+
+	/// fr: 'Un élève ne voit que les documents de sa tranche d'âge. Cochez toutes les tranches concernées.'
+	String get tranchesAide => 'Un élève ne voit que les documents de sa tranche d\'âge. Cochez toutes les tranches concernées.';
+
+	/// fr: 'Un lien mène hors de l'application : la tranche des 6 à 9 ans n'est pas cochée d'emblée. Cochez-la seulement si vous êtes sûr du site.'
+	String get tranchesAideLien => 'Un lien mène hors de l\'application : la tranche des 6 à 9 ans n\'est pas cochée d\'emblée. Cochez-la seulement si vous êtes sûr du site.';
+
+	/// fr: 'Cochez au moins une tranche d'âge.'
+	String get tranchesAucune => 'Cochez au moins une tranche d\'âge.';
+
+	/// fr: 'Étapes du programme'
+	String get etapesTitre => 'Étapes du programme';
+
+	/// fr: 'Rattachez le document aux étapes où il sert (facultatif).'
+	String get etapesAide => 'Rattachez le document aux étapes où il sert (facultatif).';
+
+	/// fr: 'Les étapes apparaîtront quand le programme sera publié.'
+	String get etapesVide => 'Les étapes apparaîtront quand le programme sera publié.';
+
+	/// fr: 'Les étapes n'ont pas pu être lues pour le moment. Le document peut être enregistré sans étape.'
+	String get etapesIndisponible => 'Les étapes n\'ont pas pu être lues pour le moment. Le document peut être enregistré sans étape.';
+
+	/// fr: 'Lecture du Coran'
+	String get lectureTitre => 'Lecture du Coran';
+
+	/// fr: 'Aucune lecture précisée'
+	String get lectureAucune => 'Aucune lecture précisée';
+
+	/// fr: 'École juridique suivie (prière, ablutions ; facultatif)'
+	String get ecoleLibelle => 'École juridique suivie (prière, ablutions ; facultatif)';
+
+	/// fr: 'Impossible de vérifier pour le moment si le dépôt de fichiers est activé. Vous pouvez déjà ajouter un document par son lien.'
+	String get depotInconnu => 'Impossible de vérifier pour le moment si le dépôt de fichiers est activé. Vous pouvez déjà ajouter un document par son lien.';
+
+	/// fr: 'Le nom de l'école juridique tient en 80 caractères au plus.'
+	String get ecoleTrop => 'Le nom de l\'école juridique tient en 80 caractères au plus.';
+
+	/// fr: 'Le dépôt de fichiers n'est pas encore activé. Vous pouvez déjà ajouter un document par son lien.'
+	String get depotInactif => 'Le dépôt de fichiers n\'est pas encore activé. Vous pouvez déjà ajouter un document par son lien.';
+
+	/// fr: 'Pour une vidéo, collez son lien.'
+	String get videoLien => 'Pour une vidéo, collez son lien.';
+}
+
 // Path: admin.bibliotheque.import.sections
 class Traductions$admin$bibliotheque$import$sections$fr {
 	Traductions$admin$bibliotheque$import$sections$fr.internal(this._root);
@@ -45005,6 +45562,18 @@ class Traductions$admin$bibliotheque$import$champs$fr {
 
 	/// fr: 'Titre'
 	String get titre => 'Titre';
+
+	/// fr: 'Description courte (montrée sur la carte)'
+	String get description => 'Description courte (montrée sur la carte)';
+
+	/// fr: 'Rayon'
+	String get rayon => 'Rayon';
+
+	/// fr: 'Ordre d'affichage (facultatif)'
+	String get ordre => 'Ordre d\'affichage (facultatif)';
+
+	/// fr: 'Adresse du lien (https)'
+	String get lien => 'Adresse du lien (https)';
 
 	/// fr: 'Catégorie'
 	String get categorie => 'Catégorie';
@@ -45035,6 +45604,12 @@ class Traductions$admin$bibliotheque$import$formats$fr {
 
 	/// fr: 'Format accepté : JSON structuré.'
 	String get json => 'Format accepté : JSON structuré.';
+
+	/// fr: 'Formats acceptés : MP3, M4A, OGG.'
+	String get audio => 'Formats acceptés : MP3, M4A, OGG.';
+
+	/// fr: 'Ce document se donne par un lien : aucun fichier à déposer. Une vidéo se donne par son lien.'
+	String get lien => 'Ce document se donne par un lien : aucun fichier à déposer. Une vidéo se donne par son lien.';
 
 	/// fr: 'Ce type n'accepte pas de fichier.'
 	String get aucun => 'Ce type n\'accepte pas de fichier.';
@@ -45078,8 +45653,8 @@ class Traductions$admin$bibliotheque$import$erreurs$fr {
 	/// fr: 'Ce fichier est trop volumineux. Choisissez un fichier plus léger.'
 	String get taille => 'Ce fichier est trop volumineux. Choisissez un fichier plus léger.';
 
-	/// fr: 'Ce type de fichier n'est pas pris en charge pour ce support. Choisissez un autre fichier.'
-	String get type => 'Ce type de fichier n\'est pas pris en charge pour ce support. Choisissez un autre fichier.';
+	/// fr: 'Ce type de fichier n'est pas pris en charge pour ce document. Choisissez un autre fichier.'
+	String get type => 'Ce type de fichier n\'est pas pris en charge pour ce document. Choisissez un autre fichier.';
 
 	/// fr: 'La connexion s'est interrompue. Le dépôt n'est pas confirmé : réessayez.'
 	String get reseau => 'La connexion s\'est interrompue. Le dépôt n\'est pas confirmé : réessayez.';
@@ -45089,6 +45664,9 @@ class Traductions$admin$bibliotheque$import$erreurs$fr {
 
 	/// fr: 'Le fichier reçu ne correspond pas à celui envoyé. Réessayez.'
 	String get empreinte => 'Le fichier reçu ne correspond pas à celui envoyé. Réessayez.';
+
+	/// fr: 'Le dépôt de fichiers n'est pas encore activé : rien n'a été envoyé. En attendant, vous pouvez ajouter un document par son lien.'
+	String get nonActive => 'Le dépôt de fichiers n\'est pas encore activé : rien n\'a été envoyé. En attendant, vous pouvez ajouter un document par son lien.';
 
 	/// fr: 'Le brouillon n'a pas pu être créé. Réessayez.'
 	String get creation => 'Le brouillon n\'a pas pu être créé. Réessayez.';
@@ -51161,6 +51739,114 @@ extension on Traductions {
 			'priere.lieuSansNom' => 'Horaires calculés pour le lieu de l\'enseignant',
 			'priere.ajustee' => ({required Object priere, required Object minutes}) => '${priere} ajustée de ${minutes} min par l\'enseignant',
 			'priere.reglagesAbsents' => 'L\'enseignant n\'a pas encore réglé ses horaires de prière.',
+			'priere.pauseDePriere' => 'Pause de prière',
+			'priere.pauseA' => ({required Object heure}) => 'Pause de prière à ${heure}',
+			'priere.approchee' => 'Heure approchée : à cette saison, le soleil ne descend pas assez bas pour que l\'angle se définisse.',
+			'priere.methodes.muslim_world_league' => 'Ligue islamique mondiale',
+			'priere.methodes.egyptian' => 'Autorité générale égyptienne',
+			'priere.methodes.karachi' => 'Université des sciences islamiques de Karachi',
+			'priere.methodes.umm_al_qura' => 'Umm al-Qura (La Mecque)',
+			'priere.methodes.dubai' => 'Golfe',
+			'priere.methodes.moon_sighting_committee' => 'Moon Sighting Committee',
+			'priere.methodes.north_america' => 'ISNA (Amérique du Nord)',
+			'priere.methodes.kuwait' => 'Koweït',
+			'priere.methodes.qatar' => 'Qatar',
+			'priere.methodes.singapore' => 'Singapour',
+			'priere.methodes.tehran' => 'Téhéran',
+			'priere.methodes.turkey' => 'Diyanet (Turquie)',
+			'priere.ecoles.shafi' => 'Selon la majorité des écoles (l\'ombre égale l\'objet)',
+			'priere.ecoles.hanafi' => 'Ombre double (école hanafite)',
+			'priere.aValider' => 'Valeur par défaut en vigueur, à valider par le directeur et ses associés.',
+			'priere.enseignant.titre' => 'Mes heures de prière',
+			'priere.enseignant.intro' => 'Les heures du jour, calculées par Rewayah pour votre lieu. Vous pouvez ajuster chaque prière de 30 minutes au plus.',
+			'priere.enseignant.ligne' => 'Mes heures de prière',
+			'priere.enseignant.ligneDetail' => 'Voir vos heures du jour et les ajuster',
+			'priere.enseignant.vide' => 'Votre lieu de prière n\'est pas encore posé. La direction le pose : vos heures apparaîtront ici.',
+			'priere.enseignant.erreur' => 'Vos heures de prière ne se sont pas affichées. Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
+			'priere.enseignant.aucunAjustement' => 'Aucun ajustement',
+			'priere.enseignant.plus' => ({required Object minutes}) => '${minutes} min en plus',
+			'priere.enseignant.moins' => ({required Object minutes}) => '${minutes} min en moins',
+			'priere.enseignant.feuilleAide' => 'De 30 minutes en moins à 30 minutes en plus. L\'ajustement déplace aussi la pause de prière de vos cours.',
+			'priere.enseignant.champ' => 'Ajustement',
+			'priere.enseignant.enregistrer' => 'Enregistrer',
+			'priere.enseignant.erreurEnregistrement' => 'Il est possible que l\'ajustement ne soit pas parvenu jusqu\'à Rewayah. Vérifiez vos heures, puis réessayez dans un instant.',
+			'priere.enseignant.unite' => ({required Object n}) => '${n} min',
+			'priere.direction.onglet' => 'Prière',
+			'priere.direction.titre' => 'Lieux de prière',
+			'priere.direction.intro' => 'Le lieu de prière de chaque enseignant fixe ses heures. Seuls l\'enseignant et la direction le voient : les élèves et les tuteurs ne lisent que l\'heure de la pause.',
+			'priere.direction.sansLieu' => 'Aucun lieu : pas de pause de prière',
+			'priere.direction.vide' => 'Aucun enseignant actif pour le moment.',
+			'priere.direction.erreur' => 'Les lieux de prière ne se sont pas affichés. Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
+			'priere.direction.vendredi' => 'Assiste à la prière du vendredi',
+			'priere.direction.incoherenceTitre' => 'À vérifier',
+			'priere.direction.incoherenceAide' => 'Signalement seulement : rien n\'est corrigé automatiquement.',
+			'priere.direction.incoherenceFuseauCompte' => ({required Object prenom, required Object detail}) => '${prenom} : le fuseau du compte et celui du lieu de prière diffèrent (${detail}).',
+			'priere.direction.incoherenceFuseauLieu' => ({required Object prenom, required Object detail}) => '${prenom} : le fuseau du lieu de prière ne correspond pas à sa longitude (${detail}).',
+			'priere.direction.incoherencePays' => ({required Object prenom, required Object detail}) => '${prenom} : le pays du compte (${detail}) ne correspond pas au lieu de prière.',
+			'priere.direction.incoherencePaysFuseau' => ({required Object prenom, required Object detail}) => '${prenom} : le pays du compte et son fuseau ne se correspondent pas (${detail}).',
+			'priere.direction.feuille.titre' => ({required Object dePrenom}) => 'Lieu et heures de prière ${dePrenom}',
+			'priere.direction.feuille.nomLieu' => 'Nom du lieu',
+			'priere.direction.feuille.latitude' => 'Latitude',
+			'priere.direction.feuille.longitude' => 'Longitude',
+			'priere.direction.feuille.coordonneesAide' => 'En degrés décimaux, avec un point (par exemple 9.6412 et -13.5784).',
+			'priere.direction.feuille.fuseau' => ({required Object exemple}) => 'Fuseau (par exemple ${exemple})',
+			'priere.direction.feuille.methode' => 'Méthode de calcul',
+			'priere.direction.feuille.methodeEcole' => 'Celle de l\'académie',
+			'priere.direction.feuille.ecole' => 'École pour l\'Asr',
+			'priere.direction.feuille.ecoleEcole' => 'Celle de l\'académie',
+			'priere.direction.feuille.vendredi' => 'Assiste à la prière du vendredi',
+			'priere.direction.feuille.vendrediOui' => 'Oui',
+			'priere.direction.feuille.vendrediNon' => 'Non',
+			'priere.direction.feuille.vendrediDebut' => 'Début de la plage du vendredi',
+			'priere.direction.feuille.vendrediFin' => 'Fin de la plage du vendredi',
+			'priere.direction.feuille.plageAide' => 'Heure de l\'enseignant, au format HH:MM. Un créneau qui chevauche cette plage est signalé à la direction, sans blocage.',
+			'priere.direction.feuille.apercu' => 'Heures du jour',
+			'priere.direction.feuille.apercuVide' => 'Aucune heure à montrer tant que le lieu n\'est pas enregistré.',
+			'priere.direction.feuille.enregistrer' => 'Enregistrer le lieu',
+			'priere.direction.feuille.retirer' => 'Retirer le lieu',
+			'priere.direction.feuille.invalide' => 'Vérifiez le nom du lieu, les coordonnées, le fuseau et la plage du vendredi.',
+			'priere.direction.feuille.erreurEnregistrement' => 'Il est possible que le lieu ne soit pas parvenu jusqu\'à Rewayah, ou qu\'une valeur soit refusée. Vérifiez la fiche, puis réessayez dans un instant.',
+			'priere.classe.titre' => 'Prières et créneau',
+			'priere.classe.intro' => 'Ce que ce créneau croise, sur les 12 mois à venir, pour l\'enseignant de la classe. C\'est un avertissement : rien n\'est bloqué, et la pause de prière protège de toute façon l\'enseignant.',
+			'priere.classe.sansLieu' => 'L\'enseignant de cette classe n\'a pas de lieu de prière : aucune pause de prière n\'est prévue.',
+			'priere.classe.erreur' => 'Les prières de ce créneau ne se sont pas affichées. Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
+			'priere.classe.creneau' => ({required Object jour, required Object heure, required Object duree}) => '${jour}, ${heure} h, ${duree} min',
+			'priere.classe.aucun' => 'Ce créneau ne croise aucune prière de l\'enseignant sur les 12 mois.',
+			'priere.classe.croise' => ({required Object priere, required Object du, required Object au, required Object seances, required Object pause, required Object apres}) => '${priere} : de ${du} à ${au}, ${seances} séances, dont ${pause} avec une pause de prière et ${apres} où l\'enseignant prie après le cours.',
+			'priere.classe.indefini' => 'Pour une partie de l\'année, le soleil ne se lève ou ne se couche pas : aucune pause de prière n\'est calculée.',
+			'priere.classe.vendredi' => ({required Object debut, required Object fin, required Object n}) => 'Ce créneau chevauche la prière du vendredi de l\'enseignant (${debut} à ${fin}) : ${n} séances de l\'année. Avertissement fort.',
+			'priere.classe.libres' => ({required Object heures}) => 'Heures de début sans prière ce jour-là : ${heures}.',
+			'priere.classe.libresAucune' => 'Aucune heure de début ce jour-là n\'évite toutes les prières de l\'année.',
+			'priere.classe.libresInconnues' => 'Les heures sans prière ne peuvent pas être dites pour cet enseignant.',
+			'priere.classe.heureCourte' => ({required Object h}) => '${h} h',
+			'priere.regles.section' => 'La prière',
+			'priere.regles.intro' => 'Le serveur place la pause de prière de l\'enseignant quand une prière entre pendant la séance. Ces réglages valent pour toute l\'académie.',
+			'priere.regles.methode' => 'Méthode de calcul',
+			'priere.regles.methodeDetail' => 'Les angles du Fajr et de l\'Isha. Un enseignant peut avoir la sienne.',
+			'priere.regles.ecole' => 'École pour l\'Asr',
+			'priere.regles.ecoleDetail' => 'L\'heure d\'entrée de l\'Asr. Un enseignant peut avoir la sienne.',
+			'priere.regles.pause' => 'Durée de la pause de prière',
+			'priere.regles.pauseDetail' => 'De 5 à 20 minutes, par pas de 5.',
+			'priere.regles.pauseRamadan' => 'Pause du Maghrib pendant le Ramadan',
+			'priere.regles.pauseRamadanDetail' => 'La rupture du jeûne : de 5 à 20 minutes, par pas de 5.',
+			'priere.regles.ramadan' => 'Ramadan en cours',
+			'priere.regles.ramadanDetail' => 'En attendant le calendrier de l\'académie, la direction le pose à la main.',
+			'priere.regles.margeDebut' => 'Marge au début',
+			'priere.regles.margeDebutDetail' => 'Une prière qui entre dans ces premières minutes place la pause à cette minute du cours.',
+			'priere.regles.margeFin' => 'Marge à la fin',
+			'priere.regles.margeFinDetail' => 'Une prière qui entre dans ces dernières minutes se prie après le cours.',
+			'priere.regles.margeAvant' => 'Prière entrée juste avant le cours',
+			'priere.regles.margeAvantDetail' => 'Une prière entrée depuis moins de ce temps avant le début du cours, et dont le temps se ferme pendant le cours, a sa pause. À valider par le directeur.',
+			'priere.regles.delaiFermeture' => 'Début de la pause d\'une prière qui se ferme',
+			'priere.regles.delaiFermetureDetail' => 'Cette pause commence ce temps après le début du cours.',
+			'priere.regles.horizon' => 'Recalcul de nuit',
+			'priere.regles.horizonDetail' => 'Chaque nuit, les pauses des séances de ces prochains jours sont recalculées.',
+			'priere.regles.lieux' => 'Lieux de prière des enseignants',
+			'priere.regles.lieuxDetail' => 'Le lieu de chaque enseignant, la prière du vendredi, les heures du jour.',
+			'priere.regles.unite' => ({required Object n}) => '${n} min',
+			'priere.regles.uniteJours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} jour', other: '${n} jours', ), 
+			'priere.regles.choisir' => 'Enregistrer',
+			'priere.regles.erreurEcriture' => ({required Object message}) => 'Le réglage n\'est pas confirmé (${message}). Vérifiez sa valeur, puis réessayez dans un instant.',
 			'eleveConnexion.entrerCode' => 'J\'ai un code',
 			'eleveConnexion.scanner' => 'Scanner le carré',
 			'eleveConnexion.choisirProfil' => 'Qui es-tu ?',
@@ -51282,6 +51968,8 @@ extension on Traductions {
 			'recrutement.invitations.comptable.comptableTitre' => 'Un comptable',
 			'recrutement.invitations.comptable.comptableExplication' => 'Il suit les paiements, les encaissements et la trésorerie. Il n\'anime aucune classe.',
 			'recrutement.invitations.comptable.champEmail' => 'Adresse de courriel du comptable',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.invitations.comptable.creee' => ({required Object code}) => 'Invitation créée. Transmettez ce code au comptable : ${code}',
 			'recrutement.invitations.comptable.doubleVerification' => 'Rien n\'est parti : inviter un comptable demande la double vérification. Activez-la dans Compte > Sécurité, puis réessayez.',
 			'recrutement.invitations.comptable.liste' => 'Invitations de comptables',
@@ -51390,8 +52078,6 @@ extension on Traductions {
 			'recrutement.portail.relire' => 'Relire ma candidature',
 			'recrutement.portail.toutIci' => 'Tout se fait ici. Ce qui est déjà fait est marqué « Fait ».',
 			'recrutement.portail.listeTitre' => 'Ce qu\'il faut pour envoyer',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.portail.etatFait' => 'Fait',
 			'recrutement.portail.etatADeposer' => 'À déposer',
 			'recrutement.portail.elementAccords' => 'Le contrat et nos accords',
@@ -51796,6 +52482,8 @@ extension on Traductions {
 			'recrutement.parcours.q.publics.options.o_6_9.description' => 'Ils commencent par le livre de lecture de Rewayah, lettre par lettre, jusqu\'à la chadda. Viennent ensuite les premières sourates courtes, les paroles de la prière et les ablutions.',
 			'recrutement.parcours.q.publics.options.o_6_9.explication' => 'Des Classes de 5 enfants au plus (4 pour des débutants), trois séances d\'une heure par semaine. Les ablutions et la prière se montrent en pratique, avec des illustrations.',
 			'recrutement.parcours.q.publics.options.o_6_9.exemple' => 'une Classe d\'enfants de huit ans, le lundi, le mercredi et le vendredi.',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.q.publics.options.o_10_13.libelle' => 'Des enfants de 10 à 13 ans',
 			'recrutement.parcours.q.publics.options.o_10_13.description' => 'Même départ avec le livre de lecture, et Al-Fatiha dès la première semaine, parce qu\'à cet âge l\'enfant doit prier.',
 			'recrutement.parcours.q.publics.options.o_10_13.explication' => 'Des Classes de 5 enfants au plus (4 pour des débutants), trois séances d\'une heure par semaine.',
@@ -51904,8 +52592,6 @@ extension on Traductions {
 			'recrutement.talents.c.assistanat.exemple' => 'Tenir un agenda, rédiger des courriers, suivre des dossiers',
 			'recrutement.talents.c.coordination_groupe.libelle' => 'Coordination d\'une communauté',
 			'recrutement.talents.c.coordination_groupe.description' => 'Animer et accompagner une communauté de personnes, par exemple celle des sœurs ou celle des parents.',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.talents.c.coordination_groupe.exemple' => 'Accueillir les nouvelles et les nouveaux, répondre aux questions, faire circuler les informations',
 			'recrutement.talents.c.accueil_familles.libelle' => 'Accueil et suivi des familles',
 			'recrutement.talents.c.accueil_familles.description' => 'Être le premier contact des familles qui s\'inscrivent.',
@@ -52310,6 +52996,8 @@ extension on Traductions {
 			'admin.candidatures.detail.ouvrirDossier' => 'Ouvrir dans Dossiers à valider',
 			'admin.candidatures.detail.responsable' => 'Responsable',
 			'admin.candidatures.detail.contact.titre' => 'Contact',
+			_ => null,
+		} ?? switch (path) {
 			'admin.candidatures.detail.contact.masque' => 'Contact masqué',
 			'admin.candidatures.detail.contact.voir' => 'Voir le contact',
 			'admin.candidatures.detail.contact.journal' => 'Cette ouverture est inscrite au journal.',
@@ -52418,8 +53106,6 @@ extension on Traductions {
 			'admin.candidatures.consequences.cloreComplement' => 'Le complément demandé est clos. La candidature reste dans sa salle.',
 			'admin.candidatures.consequences.mettreEnPause' => 'La candidature n\'avance plus tant que la pause n\'est pas levée.',
 			'admin.candidatures.consequences.leverPause' => 'La candidature reprend là où elle s\'était arrêtée.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.candidatures.consequences.refuser' => 'La candidature est fermée. Vous pourrez la rouvrir.',
 			'admin.candidatures.consequences.retrait' => 'La candidature est fermée à la demande de la personne. Vous pourrez la rouvrir.',
 			'admin.candidatures.consequences.rouvrir' => 'La candidature reprend son étape d\'origine, si les contrôles du serveur le permettent.',
@@ -52824,6 +53510,8 @@ extension on Traductions {
 			'admin.demandes.cloreTitre' => ({required Object dePrenom}) => 'Clore la surcharge ${dePrenom}',
 			'admin.demandes.poserMotif' => 'Pourquoi ce changement ?',
 			'admin.demandes.poserMotifRequis' => 'Une règle sans motif ne se relit pas six mois plus tard.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.demandes.manqueValeur' => 'Il manque la valeur : choisissez-en une dans la liste, ou touchez « Autre » et écrivez-la.',
 			'admin.demandes.poserEnvoyer' => 'Poser la règle',
 			'admin.demandes.cloreEnvoyer' => 'Clore la surcharge',
@@ -52932,8 +53620,6 @@ extension on Traductions {
 			'admin.groupes.c1.reservee' => 'votre compte n\'a pas le droit de faire cette action. Demandez-la à la direction.',
 			'admin.groupes.c1.refusInconnu' => 'le serveur a refusé cette action sans en dire la raison. Vérifiez vos choix, puis pressez de nouveau.',
 			'admin.groupes.c1.connexion' => 'il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Pressez de nouveau dans un instant.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.groupes.detailTitre' => ({required Object libelle}) => 'Classe ${libelle}',
 			'admin.groupes.detailMembres' => 'Membres',
 			'admin.groupes.detailAucunMembre' => 'Aucun élève dans cette classe pour l\'instant.',
@@ -53338,6 +54024,8 @@ extension on Traductions {
 			'admin.regroupements.termineDetail' => ({required Object libelle, required Object enseignant}) => 'Classe ${libelle} : ${enseignant} en est l\'enseignant.',
 			'admin.regroupements.decoupagePleines' => ({required num n, required Object taille}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} classe de ${taille}', other: '${n} classes de ${taille}', ), 
 			'admin.regroupements.decoupageAucuneClasse' => 'aucune classe',
+			_ => null,
+		} ?? switch (path) {
 			'admin.regroupements.decoupageDerniere' => ({required Object n}) => 'une dernière classe de ${n}',
 			'admin.regroupements.decoupageAttente' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} élève en attente', other: '${n} élèves en attente', ), 
 			'admin.regroupements.decoupage' => ({required Object detail}) => 'Découpage prévu : ${detail}.',
@@ -53446,8 +54134,6 @@ extension on Traductions {
 			'admin.regles.remplacementBornesPerte' => ({required Object min, required Object max}) => 'Entre ${min} et ${max} après le début. Pour descendre sous ${min}, baissez d\'abord l\'avertissement. Pour aller au-delà de ${max}, relevez d\'abord l\'objectif.',
 			'admin.regles.remplacementBornesObjectif' => ({required Object min}) => 'Au moins ${min} après le début. Pour descendre sous ${min}, baissez d\'abord la perte de la séance.',
 			'admin.regles.remplacementOrdreRefuse' => 'L\'ordre des délais n\'est plus respecté : un autre réglage a changé entre-temps. Fermez cette fenêtre, puis rouvrez la ligne pour voir les valeurs à jour.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.regles.entretiensSection' => 'Entretiens',
 			'admin.regles.entretiensIntro' => 'Les fondateurs se cochent dans les Comptes, vues Direction et Enseignants.',
 			'admin.regles.regleFondateurs' => 'Exiger des fondateurs',
@@ -53852,6 +54538,8 @@ extension on Traductions {
 			'admin.suppressions.seancesTitre' => 'Des séances sont encore prévues',
 			'admin.suppressions.seancesDetail' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} séance est prévue. Annulez-la ou confiez-la à une autre personne. La demande ne peut pas être traitée tant qu\'elle existe.', other: '${n} séances sont prévues. Annulez-les ou confiez-les à une autre personne. La demande ne peut pas être traitée tant qu\'elles existent.', ), 
 			'admin.suppressions.foyerTitre' => 'Des élèves dans ce foyer',
+			_ => null,
+		} ?? switch (path) {
 			'admin.suppressions.foyerDetail' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} élève est dans le foyer de ce tuteur. Vérifiez sa situation avant de continuer.', other: '${n} élèves sont dans le foyer de ce tuteur. Vérifiez leur situation avant de continuer.', ), 
 			'admin.suppressions.traiter' => 'Traiter la demande',
 			'admin.suppressions.confirmerQuestion' => ({required Object nom}) => 'Anonymiser ce compte : ${nom} ?',
@@ -53960,8 +54648,6 @@ extension on Traductions {
 			'admin.comptes.actionVoirDemande' => 'Voir la demande',
 			'admin.comptes.retrait.retenusPage' => ({required num n, required Object p}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} compte choisi, dont ${p} sur cette page', other: '${n} comptes choisis, dont ${p} sur cette page', ), 
 			'admin.comptes.retrait.tropGrand' => ({required Object n}) => 'Une suppression porte sur ${n} comptes au plus. Retirez-en de la sélection.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.comptes.retrait.selectionRetiree' => 'La sélection est retirée : la liste affichée a changé. Choisissez de nouveau les comptes.',
 			'admin.comptes.retrait.actionLigne' => 'Supprimer ce compte',
 			'admin.comptes.retrait.retenus' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} compte choisi', other: '${n} comptes choisis', ), 
@@ -54366,6 +55052,8 @@ extension on Traductions {
 			'admin.finance.pol.apercuPresents' => ({required Object presents, required Object capacite}) => '${presents} sur ${capacite}',
 			'admin.finance.pol.apercuPresentsMoins' => 'Un élève présent de moins',
 			'admin.finance.pol.apercuPresentsPlus' => 'Un élève présent de plus',
+			_ => null,
+		} ?? switch (path) {
 			'admin.finance.pol.apercuParEleve' => 'Par élève présent',
 			'admin.finance.pol.apercuHeure' => 'Pour une heure de séance',
 			'admin.finance.pol.apercuHeureDetail' => ({required Object presents, required Object capacite}) => '${presents} élèves présents sur ${capacite}',
@@ -54474,8 +55162,6 @@ extension on Traductions {
 			'admin.finance.pai.rembReference' => 'Référence',
 			'admin.finance.pai.rembPaiement' => ({required Object date}) => 'Paiement du ${date}',
 			'admin.finance.pai.rembTitre' => ({required Object prenom}) => 'Rembourser ${prenom}',
-			_ => null,
-		} ?? switch (path) {
 			'admin.finance.pai.rembourser' => 'Rembourser',
 			'admin.finance.pai.reessayer' => 'Réessayer',
 			'admin.finance.pai.horsLigne' => 'Rien ne peut être enregistré pour l\'instant. Rouvrez cette fiche quand le réseau sera revenu.',
@@ -54847,19 +55533,22 @@ extension on Traductions {
 			'admin.tirage.suivante' => 'Page suivante de l\'historique des tirages',
 			'admin.tirage.resume' => ({required Object debut, required Object fin, required Object total}) => 'Tirages ${debut} à ${fin} sur ${total}',
 			'admin.bibliotheque.titre' => 'Bibliothèque',
-			'admin.bibliotheque.intro' => 'Les supports pédagogiques : les déposer, vérifier leurs droits, publier une version, les attribuer aux classes.',
+			'admin.bibliotheque.intro' => 'Les documents pédagogiques : les déposer, vérifier leurs droits, publier une version, les attribuer aux classes.',
 			'admin.bibliotheque.brouillonAlerte' => 'Un brouillon ne donne aucun accès aux élèves ni aux enseignants.',
-			'admin.bibliotheque.ajouter' => 'Ajouter un support',
-			'admin.bibliotheque.vide' => 'Aucun support',
-			'admin.bibliotheque.videDetail' => 'Ajoutez un premier support pour le préparer, vérifier ses droits, puis le publier.',
+			'admin.bibliotheque.ajouter' => 'Ajouter un document',
+			'admin.bibliotheque.vide' => 'Aucun document',
+			'admin.bibliotheque.videDetail' => 'Ajoutez un premier document pour le préparer, vérifier ses droits, puis le publier.',
 			'admin.bibliotheque.erreur' => 'Le catalogue n\'a pas pu être chargé. Réessayez.',
 			'admin.bibliotheque.nonAutorise' => 'Vous n\'avez pas accès à la bibliothèque d\'administration.',
 			'admin.bibliotheque.indisponibleTitre' => 'Bibliothèque pas encore ouverte',
 			'admin.bibliotheque.indisponiblePhrase' => 'Cette fonction sera disponible au branchement serveur.',
 			'admin.bibliotheque.sansDonnees' => 'le catalogue',
-			'admin.bibliotheque.ficheTitre' => 'Support',
+			'admin.bibliotheque.ficheTitre' => 'Document',
 			'admin.bibliotheque.retourCatalogue' => 'Retour au catalogue',
-			'admin.bibliotheque.introuvable' => 'Ce support n\'existe pas ou n\'est pas accessible.',
+			'admin.bibliotheque.introuvable' => 'Ce document n\'existe pas ou n\'est pas accessible.',
+			'admin.bibliotheque.libelles.type.audio' => 'Audio',
+			'admin.bibliotheque.libelles.type.video' => 'Vidéo',
+			'admin.bibliotheque.libelles.type.lienExterne' => 'Lien externe',
 			'admin.bibliotheque.libelles.type.quran' => 'Coran',
 			'admin.bibliotheque.libelles.type.texteStructure' => 'Texte structuré',
 			'admin.bibliotheque.libelles.type.pdf' => 'PDF',
@@ -54877,6 +55566,8 @@ extension on Traductions {
 			'admin.bibliotheque.libelles.droits.expire' => 'Expiré',
 			'admin.bibliotheque.libelles.visibilite.publique' => 'Publique',
 			'admin.bibliotheque.libelles.visibilite.inscrits' => 'Inscrits',
+			_ => null,
+		} ?? switch (path) {
 			'admin.bibliotheque.libelles.visibilite.groupeAssigne' => 'Classes attribuées',
 			'admin.bibliotheque.libelles.visibilite.enseignantSeul' => 'Enseignant seul',
 			'admin.bibliotheque.libelles.visibilite.admin' => 'Administration seule',
@@ -54901,7 +55592,7 @@ extension on Traductions {
 			'admin.bibliotheque.catalogue.filtres.niveau' => 'Niveau',
 			'admin.bibliotheque.catalogue.filtres.langue' => 'Langue',
 			'admin.bibliotheque.catalogue.filtres.tous' => 'Tous',
-			'admin.bibliotheque.catalogue.colonnes.support' => 'Support',
+			'admin.bibliotheque.catalogue.colonnes.support' => 'Document',
 			'admin.bibliotheque.catalogue.colonnes.type' => 'Type',
 			'admin.bibliotheque.catalogue.colonnes.langue' => 'Langue',
 			'admin.bibliotheque.catalogue.colonnes.categorie' => 'Catégorie',
@@ -54912,11 +55603,11 @@ extension on Traductions {
 			'admin.bibliotheque.catalogue.colonnes.modifie' => 'Modifié',
 			'admin.bibliotheque.catalogue.modifieLe' => ({required Object date}) => 'Modifié le ${date}',
 			'admin.bibliotheque.catalogue.videRecherche' => 'Aucun résultat',
-			'admin.bibliotheque.catalogue.videRechercheDetail' => 'Aucun support ne correspond à votre recherche ou à vos filtres.',
+			'admin.bibliotheque.catalogue.videRechercheDetail' => 'Aucun document ne correspond à votre recherche ou à vos filtres.',
 			'admin.bibliotheque.catalogue.effacerFiltres' => 'Effacer les filtres',
-			'admin.bibliotheque.catalogue.voirPlus' => 'Voir plus de supports',
+			'admin.bibliotheque.catalogue.voirPlus' => 'Voir plus de documents',
 			'admin.bibliotheque.catalogue.pageErreur' => 'La suite du catalogue n\'a pas pu être chargée.',
-			'admin.bibliotheque.catalogue.ouvrir' => ({required Object titre}) => 'Ouvrir le support ${titre}',
+			'admin.bibliotheque.catalogue.ouvrir' => ({required Object titre}) => 'Ouvrir le document ${titre}',
 			'admin.bibliotheque.catalogue.droitsEchus' => 'Droits échus',
 			'admin.bibliotheque.catalogue.alerteTitre' => 'Brouillons',
 			'admin.bibliotheque.catalogue.pasDeAcces' => 'Vous ne pouvez pas modifier la bibliothèque.',
@@ -54939,7 +55630,10 @@ extension on Traductions {
 			'admin.bibliotheque.fiche.champs.titreCourt' => 'Titre court',
 			'admin.bibliotheque.fiche.champs.edition' => 'Édition',
 			'admin.bibliotheque.fiche.champs.organisme' => 'Organisme, auteur ou éditeur',
-			'admin.bibliotheque.fiche.champs.description' => 'Description pédagogique',
+			'admin.bibliotheque.fiche.champs.description' => 'Description courte (montrée sur la carte)',
+			'admin.bibliotheque.fiche.champs.rayon' => 'Rayon',
+			'admin.bibliotheque.fiche.champs.ordre' => 'Ordre d\'affichage',
+			'admin.bibliotheque.fiche.champs.lien' => 'Adresse du lien (https)',
 			'admin.bibliotheque.fiche.champs.conditions' => 'Conditions d\'attribution',
 			'admin.bibliotheque.fiche.meta.type' => 'Type',
 			'admin.bibliotheque.fiche.meta.langue' => 'Langue',
@@ -54948,13 +55642,20 @@ extension on Traductions {
 			'admin.bibliotheque.fiche.meta.annee' => 'Année',
 			'admin.bibliotheque.fiche.meta.visibilite' => 'Visibilité',
 			'admin.bibliotheque.fiche.meta.horsLigne' => 'Lecture sans internet',
+			'admin.bibliotheque.fiche.meta.rayon' => 'Rayon',
+			'admin.bibliotheque.fiche.meta.etapes' => 'Étapes du programme',
+			'admin.bibliotheque.fiche.meta.vignette' => 'Vignette',
+			'admin.bibliotheque.fiche.meta.vignetteOui' => 'Déposée',
+			'admin.bibliotheque.fiche.meta.vignetteNon' => 'Par défaut, selon le type',
+			'admin.bibliotheque.fiche.meta.lien' => 'Adresse du lien',
 			'admin.bibliotheque.fiche.meta.nonRenseigne' => 'Non renseigné',
 			'admin.bibliotheque.fiche.enregistrer' => 'Enregistrer les modifications',
 			'admin.bibliotheque.fiche.enregistre' => 'Modifications enregistrées.',
-			'admin.bibliotheque.fiche.conflit' => 'Un autre administrateur a modifié ce support. Rechargez la fiche avant de continuer.',
+			'admin.bibliotheque.fiche.conflit' => 'Un autre administrateur a modifié ce document. Rechargez la fiche avant de continuer.',
 			'admin.bibliotheque.fiche.recharger' => 'Recharger la fiche',
 			'admin.bibliotheque.fiche.echecEnregistrer' => 'Les modifications n\'ont pas pu être confirmées. Réessayez.',
 			'admin.bibliotheque.fiche.titreVide' => 'Le titre est obligatoire.',
+			'admin.bibliotheque.fiche.retirerVignette' => 'Retirer la vignette',
 			'admin.bibliotheque.fiche.figee' => 'Version publiée et figée : pour la modifier, créez une nouvelle version.',
 			'admin.bibliotheque.fiche.retireMotif' => ({required Object motif}) => 'Retiré du catalogue. Motif : ${motif}',
 			'admin.bibliotheque.fiche.retireSansMotif' => 'Retiré du catalogue.',
@@ -54988,15 +55689,39 @@ extension on Traductions {
 			'admin.bibliotheque.fiche.audit.attribution' => 'Attribué à des classes',
 			'admin.bibliotheque.fiche.audit.retrait' => 'Retiré du catalogue',
 			'admin.bibliotheque.fiche.audit.restauration' => 'Restauré',
-			_ => null,
-		} ?? switch (path) {
 			'admin.bibliotheque.fiche.auditMotif' => ({required Object motif}) => 'Motif : ${motif}',
 			'admin.bibliotheque.fiche.auditVersion' => ({required Object numero}) => 'Version ${numero}',
-			'admin.bibliotheque.import.completer' => 'Compléter le support',
+			'admin.bibliotheque.import.classement.tranchesTitre' => 'Pour quels âges ?',
+			'admin.bibliotheque.import.classement.tranchesAide' => 'Un élève ne voit que les documents de sa tranche d\'âge. Cochez toutes les tranches concernées.',
+			'admin.bibliotheque.import.classement.tranchesAideLien' => 'Un lien mène hors de l\'application : la tranche des 6 à 9 ans n\'est pas cochée d\'emblée. Cochez-la seulement si vous êtes sûr du site.',
+			'admin.bibliotheque.import.classement.tranchesAucune' => 'Cochez au moins une tranche d\'âge.',
+			'admin.bibliotheque.import.classement.etapesTitre' => 'Étapes du programme',
+			'admin.bibliotheque.import.classement.etapesAide' => 'Rattachez le document aux étapes où il sert (facultatif).',
+			'admin.bibliotheque.import.classement.etapesVide' => 'Les étapes apparaîtront quand le programme sera publié.',
+			'admin.bibliotheque.import.classement.etapesIndisponible' => 'Les étapes n\'ont pas pu être lues pour le moment. Le document peut être enregistré sans étape.',
+			'admin.bibliotheque.import.classement.lectureTitre' => 'Lecture du Coran',
+			'admin.bibliotheque.import.classement.lectureAucune' => 'Aucune lecture précisée',
+			'admin.bibliotheque.import.classement.ecoleLibelle' => 'École juridique suivie (prière, ablutions ; facultatif)',
+			'admin.bibliotheque.import.classement.depotInconnu' => 'Impossible de vérifier pour le moment si le dépôt de fichiers est activé. Vous pouvez déjà ajouter un document par son lien.',
+			'admin.bibliotheque.import.classement.ecoleTrop' => 'Le nom de l\'école juridique tient en 80 caractères au plus.',
+			'admin.bibliotheque.import.classement.depotInactif' => 'Le dépôt de fichiers n\'est pas encore activé. Vous pouvez déjà ajouter un document par son lien.',
+			'admin.bibliotheque.import.classement.videoLien' => 'Pour une vidéo, collez son lien.',
+			'admin.bibliotheque.import.vignette' => 'Vignette',
+			'admin.bibliotheque.import.choisirVignette' => 'Choisir une vignette',
+			'admin.bibliotheque.import.choisirAutreVignette' => 'Choisir une autre vignette',
+			'admin.bibliotheque.import.vignetteAide' => 'Une image (PNG, JPEG ou WebP, 2 Mo au plus), facultative. Sans vignette, l\'écran montre une couverture selon le type.',
+			'admin.bibliotheque.import.completerLien' => 'Renseignez l\'adresse du lien (https) : un lien externe ou une vidéo la demande, et un lien externe demande aussi sa description.',
+			'admin.bibliotheque.import.lienInvalide' => 'Cette adresse n\'est pas acceptée : elle doit commencer par https et mener à un site.',
+			'admin.bibliotheque.import.sansFichierAide' => 'Rien à déposer pour ce type : renseignez l\'adresse du lien, puis poursuivez.',
+			'admin.bibliotheque.import.completer' => 'Compléter le document',
 			'admin.bibliotheque.import.sections.ressource' => 'Ressource',
 			'admin.bibliotheque.import.sections.fichier' => 'Fichier',
 			'admin.bibliotheque.import.sections.droits' => 'Droits et accès',
 			'admin.bibliotheque.import.champs.titre' => 'Titre',
+			'admin.bibliotheque.import.champs.description' => 'Description courte (montrée sur la carte)',
+			'admin.bibliotheque.import.champs.rayon' => 'Rayon',
+			'admin.bibliotheque.import.champs.ordre' => 'Ordre d\'affichage (facultatif)',
+			'admin.bibliotheque.import.champs.lien' => 'Adresse du lien (https)',
 			'admin.bibliotheque.import.champs.categorie' => 'Catégorie',
 			'admin.bibliotheque.import.champs.type' => 'Type',
 			'admin.bibliotheque.import.champs.langue' => 'Langue',
@@ -55009,6 +55734,8 @@ extension on Traductions {
 			'admin.bibliotheque.import.formats.pdf' => 'Format accepté : PDF.',
 			'admin.bibliotheque.import.formats.image' => 'Formats acceptés : PNG, JPEG, WebP.',
 			'admin.bibliotheque.import.formats.json' => 'Format accepté : JSON structuré.',
+			'admin.bibliotheque.import.formats.audio' => 'Formats acceptés : MP3, M4A, OGG.',
+			'admin.bibliotheque.import.formats.lien' => 'Ce document se donne par un lien : aucun fichier à déposer. Une vidéo se donne par son lien.',
 			'admin.bibliotheque.import.formats.aucun' => 'Ce type n\'accepte pas de fichier.',
 			'admin.bibliotheque.import.etats.attente' => 'Préparation du dépôt…',
 			'admin.bibliotheque.import.etats.envoi' => ({required Object pourcent}) => 'Envoi en cours : ${pourcent} %',
@@ -55017,10 +55744,11 @@ extension on Traductions {
 			'admin.bibliotheque.import.etats.pret' => 'Fichier vérifié. Passez aux droits.',
 			'admin.bibliotheque.import.etats.annule' => 'Dépôt annulé.',
 			'admin.bibliotheque.import.erreurs.taille' => 'Ce fichier est trop volumineux. Choisissez un fichier plus léger.',
-			'admin.bibliotheque.import.erreurs.type' => 'Ce type de fichier n\'est pas pris en charge pour ce support. Choisissez un autre fichier.',
+			'admin.bibliotheque.import.erreurs.type' => 'Ce type de fichier n\'est pas pris en charge pour ce document. Choisissez un autre fichier.',
 			'admin.bibliotheque.import.erreurs.reseau' => 'La connexion s\'est interrompue. Le dépôt n\'est pas confirmé : réessayez.',
 			'admin.bibliotheque.import.erreurs.refuse' => 'Le serveur a refusé ce dépôt. Réessayez ou choisissez un autre fichier.',
 			'admin.bibliotheque.import.erreurs.empreinte' => 'Le fichier reçu ne correspond pas à celui envoyé. Réessayez.',
+			'admin.bibliotheque.import.erreurs.nonActive' => 'Le dépôt de fichiers n\'est pas encore activé : rien n\'a été envoyé. En attendant, vous pouvez ajouter un document par son lien.',
 			'admin.bibliotheque.import.erreurs.creation' => 'Le brouillon n\'a pas pu être créé. Réessayez.',
 			'admin.bibliotheque.import.erreurs.droits' => 'Les droits n\'ont pas pu être enregistrés. Réessayez.',
 			'admin.bibliotheque.import.droits.aide' => 'Aucun droit n\'est présumé : une valeur inconnue bloque la publication.',
@@ -55077,7 +55805,7 @@ extension on Traductions {
 			'admin.bibliotheque.publication.publier' => 'Publier la version',
 			'admin.bibliotheque.publication.bloque' => 'Cette version ne peut pas être publiée tant que le serveur n\'a pas validé tous les points du contrôle.',
 			'admin.bibliotheque.publication.confirmerTitre' => ({required Object numero}) => 'Publier la version ${numero} ?',
-			'admin.bibliotheque.publication.confirmerEffet' => 'La version devient immuable et visible des classes auxquelles le support est attribué. Pour la modifier, vous créerez une nouvelle version.',
+			'admin.bibliotheque.publication.confirmerEffet' => 'La version devient immuable et visible des classes auxquelles le document est attribué. Pour la modifier, vous créerez une nouvelle version.',
 			'admin.bibliotheque.publication.confirmerBouton' => 'Publier',
 			'admin.bibliotheque.publication.publiee' => 'Version publiée.',
 			'admin.bibliotheque.publication.dejaPubliee' => 'Cette version est déjà publiée.',
@@ -55093,23 +55821,23 @@ extension on Traductions {
 			'admin.bibliotheque.attribution.aucune' => 'Aucune classe n\'est ouverte à l\'attribution pour le moment.',
 			'admin.bibliotheque.attribution.plusDeClasses' => 'Voir plus de classes',
 			'admin.bibliotheque.attribution.chargementPlus' => 'Chargement…',
-			'admin.bibliotheque.attribution.nonPublie' => 'Ce support n\'est pas publié. Publiez une version avant de l\'attribuer à des classes.',
+			'admin.bibliotheque.attribution.nonPublie' => 'Ce document n\'est pas publié. Publiez une version avant de l\'attribuer à des classes.',
 			'admin.bibliotheque.attribution.erreur' => 'Les classes n\'ont pas pu être chargées. Réessayez.',
 			'admin.bibliotheque.attribution.attribuer' => ({required Object nombre}) => 'Attribuer à ${nombre} classe(s)',
 			'admin.bibliotheque.attribution.attribuerAucune' => 'Choisissez au moins une classe avant d\'attribuer.',
-			'admin.bibliotheque.attribution.attribuee' => 'Support attribué. Les classes choisies le voient maintenant.',
+			'admin.bibliotheque.attribution.attribuee' => 'Document attribué. Les classes choisies le voient maintenant.',
 			'admin.bibliotheque.attribution.attribueEchec' => 'L\'attribution n\'a pas abouti. Réessayez dans un instant.',
 			'admin.bibliotheque.attribution.retraitTitre' => 'Retirer du catalogue',
-			'admin.bibliotheque.attribution.retraitIntro' => 'Un retrait masque le support de toutes les classes. Il ne supprime rien : le fichier et l\'historique restent conservés.',
+			'admin.bibliotheque.attribution.retraitIntro' => 'Un retrait masque le document de toutes les classes. Il ne supprime rien : le fichier et l\'historique restent conservés.',
 			'admin.bibliotheque.attribution.motif' => 'Motif du retrait',
 			'admin.bibliotheque.attribution.motifRequis' => 'Écrivez le motif du retrait avant de continuer : il est conservé dans l\'historique.',
-			'admin.bibliotheque.attribution.retirer' => 'Retirer ce support',
+			'admin.bibliotheque.attribution.retirer' => 'Retirer ce document',
 			'admin.bibliotheque.attribution.retraitConfirmerTitre' => ({required Object titre}) => 'Retirer « ${titre} » du catalogue ?',
 			'admin.bibliotheque.attribution.retraitConfirmerEffet' => 'Les classes ne le verront plus, y compris celles qui l\'utilisent déjà. Le motif est conservé dans l\'historique.',
-			'admin.bibliotheque.attribution.retraitConfirmerBouton' => 'Retirer le support',
-			'admin.bibliotheque.attribution.retire' => 'Support retiré du catalogue.',
+			'admin.bibliotheque.attribution.retraitConfirmerBouton' => 'Retirer le document',
+			'admin.bibliotheque.attribution.retire' => 'Document retiré du catalogue.',
 			'admin.bibliotheque.attribution.retraitEchec' => 'Le retrait n\'a pas abouti. Réessayez dans un instant.',
-			'admin.bibliotheque.attribution.conflit' => 'Quelqu\'un a modifié ce support entre-temps. Rechargez avant de continuer.',
+			'admin.bibliotheque.attribution.conflit' => 'Quelqu\'un a modifié ce document entre-temps. Rechargez avant de continuer.',
 			'agent.titre' => 'Entrée d\'un agent',
 			'agent.intro' => 'Cette page ouvre l\'application en lecture seule, avec le jeton remis par l\'académie.',
 			'agent.jeton' => 'Jeton d\'observation',
@@ -55352,6 +56080,8 @@ extension on Traductions {
 			'compte.appareilsDetail' => 'Les appareils et profils rattachés à votre foyer',
 			'compte.confidentialite' => 'Confidentialité',
 			'compte.confidentialiteDetail' => 'Bientôt disponible',
+			_ => null,
+		} ?? switch (path) {
 			'compte.espaces' => 'Espaces',
 			'compte.espacesDetail' => 'Les espaces auxquels votre compte donne accès',
 			'compte.espacesMissionEnCours' => 'Pour revenir à votre espace principal, quittez d\'abord la visite en cours.',
@@ -55502,8 +56232,6 @@ extension on Traductions {
 			'compte.tuteur.pageAcces.aucunTitre' => 'Aucun profil élève',
 			'compte.tuteur.pageAcces.aucunePhrase' => 'L\'accès de chaque profil élève s\'affichera ici.',
 			'compte.tuteur.pageAcces.titulaire' => 'Votre compte de titulaire n\'a pas d\'échéance propre : l\'accès se règle profil par profil.',
-			_ => null,
-		} ?? switch (path) {
 			'compte.tuteur.pagePaiements.titre' => 'Paiements',
 			'compte.tuteur.pagePaiements.indisponibleTitre' => 'Paiements pas encore consultables',
 			'compte.tuteur.pagePaiements.indisponiblePhrase' => 'L\'historique des paiements, les reçus et les moyens de paiement ne sont pas encore disponibles dans l\'application. Aucun paiement ne vous est demandé ici.',
@@ -55800,8 +56528,8 @@ extension on Traductions {
 			'eleve.accueil.annulee' => 'Ce cours n\'aura pas lieu',
 			'eleve.accueil.horsLigne' => 'Entrée en attente',
 			'eleve.accueil.horsLigneDetail' => 'Tu pourras entrer dès que le réseau revient.',
-			'eleve.accueil.pausePriere' => 'Pause pour la prière',
-			'eleve.accueil.pausePriereDetail' => ({required Object priere, required Object heure}) => '${priere}, vers ${heure}',
+			'eleve.accueil.pausePriere' => 'Pause de prière',
+			'eleve.accueil.pausePriereDetail' => ({required Object heure}) => 'À ${heure}',
 			'eleve.accueil.prochainDansJours' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours, one: 'Ton prochain cours est dans ${jours} jour.', other: 'Ton prochain cours est dans ${jours} jours.', ), 
 			'eleve.accueil.entreeSePrepare' => 'Ton entrée se prépare. Réessaie dans un instant.',
 			'eleve.coran.titre' => 'Le Coran',
@@ -55866,6 +56594,8 @@ extension on Traductions {
 			'tuteur.accueil.classeIndisponible' => 'Le détail de la classe n\'est pas encore disponible ici.',
 			'tuteur.accueil.classeIllisible' => 'La classe n\'a pas pu être lue.',
 			'tuteur.accueil.sansClasseTitre' => ({required Object prenom}) => 'Aucune classe pour ${prenom}',
+			_ => null,
+		} ?? switch (path) {
 			'tuteur.accueil.sansClassePhrase' => ({required Object quePrenom}) => 'Choisissez une classe pour ${quePrenom} puisse commencer les cours.',
 			'tuteur.accueil.financesTitre' => ({required Object dePrenom}) => 'Finances ${dePrenom}',
 			'tuteur.accueil.financesPhrase' => 'Solde, prochain débit et ce qu\'il reste à financer.',
@@ -56016,8 +56746,6 @@ extension on Traductions {
 			'classe.progression' => 'Progression',
 			'classe.observer' => 'Observer la séance',
 			'classe.titre' => 'Classe',
-			_ => null,
-		} ?? switch (path) {
 			'classe.historique' => 'Historique',
 			'classe.sousTitre' => ({required Object prenom, required Object enseignant}) => '${prenom} · ${enseignant}',
 			'classe.indisponiblePhrase' => 'Le détail de la classe n\'est pas encore disponible ici.',
@@ -56380,6 +57108,8 @@ extension on Traductions {
 			'enseignant.salle.attenteSalleDetail' => 'Les commandes de présentation s\'ouvrent dès que le cours est connecté.',
 			'enseignant.salle.lienFaibleDetail' => 'le tour de page peut arriver en retard chez votre classe',
 			'enseignant.salle.presentationConservee' => 'la page présentée est conservée, elle repartira au retour du lien',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.salle.presentationSuspendue' => 'présentation suspendue',
 			'enseignant.salle.precedente' => 'Présenter la page précédente',
 			'enseignant.salle.suivante' => 'Présenter la page suivante',
@@ -56530,8 +57260,6 @@ extension on Traductions {
 			'enseignant.profil.statutSuspenduDetail' => 'Vous pouvez joindre l\'académie pour connaître la marche à suivre.',
 			'enseignant.profil.statutInconnu' => 'Statut non disponible',
 			'enseignant.profil.statutInconnuDetail' => 'Nous n\'avons pas pu lire votre statut.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.profil.statutDivergent' => 'Ce statut vient de changer. Rouvrez l\'application pour que votre accès suive.',
 			'enseignant.profil.verification' => 'Vérification du dossier',
 			'enseignant.profil.verificationEnAttente' => 'En attente',
@@ -56894,6 +57622,8 @@ extension on Traductions {
 			'controleur.compteRendu.aTerminer' => 'Compte rendu à terminer',
 			'controleur.compteRendu.reprendre' => 'Reprendre le compte rendu',
 			'controleur.compteRendu.visiteInconnue' => 'Ce compte rendu ne peut plus être repris ici.',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.compteRendu.visiteInconnueAide' => 'Cet appareil n\'a plus la visite en mémoire, sans doute après un rechargement de la page. Le serveur transmet la visite et son relevé automatique dès la sortie de la salle ; cet écran ne peut pas le confirmer. Pour ajouter une remarque, écrivez à l\'administration.',
 			'controleur.observation.important' => 'Vous signalez un point important : votre texte sera demandé.',
 			'controleur.observation.questionNature' => 'Quelle est la nature de votre observation ?',
@@ -57044,8 +57774,6 @@ extension on Traductions {
 			'tc.groupe.temps.imminent' => 'Cours imminent',
 			'tc.groupe.temps.salleOuverte' => ({required Object reste}) => 'Salle ouverte · ${reste}',
 			'tc.groupe.temps.salleOuverteCourt' => 'Salle ouverte',
-			_ => null,
-		} ?? switch (path) {
 			'tc.groupe.temps.attente' => 'Vous êtes dans la salle. Le cours n\'a pas encore commencé.',
 			'tc.groupe.temps.attenteDetail' => 'Ce temps d\'attente ne compte pas dans votre présence.',
 			'tc.groupe.temps.enSalle' => 'En salle',
@@ -57086,37 +57814,42 @@ extension on Traductions {
 			'tc.groupe.emplacement.nonBrancheDetail' => 'Ce contenu sera rattaché à cet espace prochainement.',
 			'tc.bibliotheque.titre' => 'Bibliothèque',
 			'tc.bibliotheque.rechercheIndication' => 'Titre, niveau, sourate ou page',
-			'tc.bibliotheque.rechercheLibelle' => 'Rechercher un support',
+			'tc.bibliotheque.rechercheLibelle' => 'Rechercher un document',
 			'tc.bibliotheque.effacerRecherche' => 'Tout afficher',
 			'tc.bibliotheque.filtre.type' => 'Type',
 			'tc.bibliotheque.filtre.disponibilite' => 'Disponibilité',
 			'tc.bibliotheque.sections.continuer' => 'Continuer',
 			'tc.bibliotheque.sections.pourCeGroupe' => 'Pour cette classe',
-			'tc.bibliotheque.sections.groupe' => 'Supports à afficher',
+			'tc.bibliotheque.sections.groupe' => 'Documents à afficher',
 			'tc.bibliotheque.sections.recents' => 'Récents',
-			'tc.bibliotheque.sections.tousLesSupports' => 'Tous les supports',
+			'tc.bibliotheque.sections.tousLesSupports' => 'Tous les documents',
 			'tc.bibliotheque.sections.resultats' => 'Résultats',
-			'tc.bibliotheque.vide.message' => 'Aucun support publié pour le moment',
-			'tc.bibliotheque.vide.invitation' => 'Vos enseignants déposeront ici les supports de vos cours.',
-			'tc.bibliotheque.aucunResultat.message' => 'Aucun support ne correspond',
+			'tc.bibliotheque.vide.message' => 'Aucun document publié pour le moment',
+			'tc.bibliotheque.vide.invitation' => 'Vos enseignants déposeront ici les documents de vos cours.',
+			'tc.bibliotheque.aucunResultat.message' => 'Aucun document ne correspond',
 			'tc.bibliotheque.aucunResultat.invitation' => 'Essayez un autre mot, ou relâchez les filtres.',
 			'tc.bibliotheque.indisponible.message' => 'La bibliothèque n\'a pas pu être chargée',
 			'tc.bibliotheque.indisponible.invitation' => 'Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'tc.bibliotheque.indisponible.action' => 'Réessayer',
-			'tc.bibliotheque.introuvable.message' => 'Ce support ne vous est pas ouvert',
+			'tc.bibliotheque.introuvable.message' => 'Ce document ne vous est pas ouvert',
 			'tc.bibliotheque.introuvable.invitation' => 'Il a peut-être été retiré, ou il est réservé à une autre classe. Votre enseignant peut vous le rouvrir.',
 			'tc.bibliotheque.offline.aTelecharger' => 'À télécharger',
 			'tc.bibliotheque.offline.enCours' => 'Téléchargement',
 			'tc.bibliotheque.offline.enCache' => 'En cache',
 			'tc.bibliotheque.offline.telecharge' => 'Téléchargé',
 			'tc.bibliotheque.offline.indisponible' => 'Hors ligne indisponible',
+			'tc.bibliotheque.type.audio' => 'Audio',
+			'tc.bibliotheque.type.video' => 'Vidéo',
+			'tc.bibliotheque.type.lienExterne' => 'Lien externe',
 			'tc.bibliotheque.type.quran' => 'Coran',
 			'tc.bibliotheque.type.texteStructure' => 'Texte',
 			'tc.bibliotheque.type.pdf' => 'PDF',
 			'tc.bibliotheque.type.image' => 'Image',
 			'tc.bibliotheque.type.lecon' => 'Leçon',
-			'tc.bibliotheque.detail.titre' => 'Support',
-			'tc.bibliotheque.detail.capacites' => 'Ce que ce support permet',
+			'tc.bibliotheque.detail.titre' => 'Document',
+			'tc.bibliotheque.detail.lecture' => 'Lecture du Coran',
+			'tc.bibliotheque.detail.ecole' => 'École juridique suivie',
+			'tc.bibliotheque.detail.capacites' => 'Ce que ce document permet',
 			'tc.bibliotheque.detail.niveaux' => 'Niveaux',
 			'tc.bibliotheque.detail.sansVersion' => 'Aucune version publiée : rien à ouvrir pour le moment.',
 			'tc.bibliotheque.detail.apercuIndisponible' => 'L’aperçu de ce format n’est pas encore disponible dans l’application. Vous pouvez en enregistrer une copie.',
@@ -57129,33 +57862,42 @@ extension on Traductions {
 			'tc.bibliotheque.action.enregistrerCopie' => 'Enregistrer une copie',
 			'tc.bibliotheque.message.copieEnregistree' => 'Copie enregistrée',
 			'tc.bibliotheque.message.copieImpossible' => 'La copie n’a pas pu être préparée. Réessayez dans un instant.',
-			'tc.bibliotheque.message.telechargementImpossible' => 'Ce support n’est pas encore disponible hors ligne',
+			'tc.bibliotheque.message.telechargementImpossible' => 'Ce document n’est pas encore disponible hors ligne',
 			'tc.bibliotheque.message.horsLigneNonTelecharge' => 'Disponible une fois téléchargé ou de retour en ligne',
 			'tc.bibliotheque.message.aucunTelechargement' => 'Aucun fichier à télécharger pour cette version.',
-			'tc.bibliotheque.classe.titre' => 'Choisir un support',
-			'tc.bibliotheque.classe.sousTitre' => 'Le support choisi remplace celui affiché. Le cours continue.',
+			'tc.bibliotheque.classe.titre' => 'Choisir un document',
+			'tc.bibliotheque.classe.sousTitre' => 'Le document choisi remplace celui affiché. Le cours continue.',
+			'tc.bibliotheque.rendu.sansLecteur' => 'Ce type de document n\'a pas encore de lecteur dans l\'application.',
+			'tc.bibliotheque.rendu.confirmerTitre' => 'Ce lien quitte l\'application',
+			'tc.bibliotheque.rendu.confirmerPhrase' => 'Il ouvre un autre site, en dehors de Rewayah Academy. Vous pouvez revenir ici ensuite.',
+			'tc.bibliotheque.rendu.confirmerOuvrir' => 'Ouvrir le lien',
+			'tc.bibliotheque.rendu.confirmerRester' => 'Rester dans l\'application',
+			'tc.bibliotheque.rendu.ouvrirLien' => 'Ouvrir le lien',
+			'tc.bibliotheque.rendu.lienAutreSite' => 'Ce lien s\'ouvre sur un autre site.',
+			'tc.bibliotheque.rendu.lienSansNavigateur' => 'Ce lien s\'ouvre depuis la version web de l\'application.',
+			'tc.bibliotheque.rendu.lienAbsent' => 'Ce document n\'a pas encore de contenu à ouvrir.',
 			'tc.bibliotheque.rendu.imageInaccessible' => 'L\'image n\'a pas pu être chargée pour le moment.',
 			'tc.bibliotheque.rendu.imageIllisible' => 'Ce fichier image ne peut pas être affiché.',
 			'tc.bibliotheque.rendu.reessayer' => 'Réessayer',
 			'tc.bibliotheque.rendu.ouvrir' => 'Ouvrir',
 			'tc.bibliotheque.rendu.ouvrirMushaf' => 'Ouvrir le mushaf',
 			'tc.bibliotheque.rendu.lienEchec' => 'Le lien de lecture n\'a pas pu être obtenu pour le moment.',
-			'tc.bibliotheque.rendu.lienIndisponible' => 'L\'ouverture n\'est pas disponible pour ce support.',
+			'tc.bibliotheque.rendu.lienIndisponible' => 'L\'ouverture n\'est pas disponible pour ce document.',
 			'tc.bibliotheque.rendu.lienHorsLigne' => 'L\'ouverture pourra se faire quand la connexion reviendra.',
 			'tc.bibliotheque.rendu.lienBloque' => 'Votre navigateur a bloqué l\'ouverture. Autorisez les fenêtres de ce site, puis réessayez.',
-			'tc.bibliotheque.actif.indisponibleTitre' => 'Support présenté pas encore ouvert',
-			'tc.bibliotheque.actif.indisponible' => 'Le suivi du support présenté s\'ouvrira au branchement serveur.',
-			'tc.bibliotheque.actif.sansDonnees' => 'le support présenté',
-			'tc.bibliotheque.actif.erreur' => 'Le support présenté n\'a pas pu être chargé. Réessayez.',
-			'tc.bibliotheque.actif.aucun' => 'Aucun support présenté',
-			'tc.bibliotheque.actif.aucunDetail' => 'Quand votre enseignant présentera un support, il apparaîtra ici sans rien faire de votre part.',
-			'tc.bibliotheque.actif.titre' => 'Support présenté',
+			'tc.bibliotheque.actif.indisponibleTitre' => 'Document présenté pas encore ouvert',
+			'tc.bibliotheque.actif.indisponible' => 'Le suivi du document présenté s\'ouvrira au branchement serveur.',
+			'tc.bibliotheque.actif.sansDonnees' => 'le document présenté',
+			'tc.bibliotheque.actif.erreur' => 'Le document présenté n\'a pas pu être chargé. Réessayez.',
+			'tc.bibliotheque.actif.aucun' => 'Aucun document présenté',
+			'tc.bibliotheque.actif.aucunDetail' => 'Quand votre enseignant présentera un document, il apparaîtra ici sans rien faire de votre part.',
+			'tc.bibliotheque.actif.titre' => 'Document présenté',
 			'tc.bibliotheque.actif.version' => ({required Object numero}) => 'Version ${numero}',
 			'tc.bibliotheque.actif.page' => ({required Object page}) => 'Page ${page}',
-			'tc.bibliotheque.actif.ouvrirFiche' => 'Ouvrir la fiche du support',
+			'tc.bibliotheque.actif.ouvrirFiche' => 'Ouvrir la fiche du document',
 			'tc.bibliotheque.actif.ouvrirCoran' => 'Ouvrir dans le lecteur du Coran',
 			'tc.bibliotheque.actif.retire' => ({required Object titre}) => '« ${titre} » a été retiré',
-			'tc.bibliotheque.actif.retireDetail' => 'Votre enseignant a retiré ce support de la séance. Il n\'est plus accessible.',
+			'tc.bibliotheque.actif.retireDetail' => 'Votre enseignant a retiré ce document de la séance. Il n\'est plus accessible.',
 			'tc.coran.modes.mushaf' => 'Page du mushaf',
 			'tc.coran.modes.verset' => 'Lecture agrandie',
 			'tc.coran.modes.focus' => 'Focus',
@@ -57394,6 +58136,8 @@ extension on Traductions {
 			'tc.observation.visite.sonRecu' => 'Son reçu',
 			'tc.observation.visite.sonInterrompu' => 'Son interrompu',
 			'tc.observation.visite.agrandir' => 'Agrandir',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.visite.reduire' => 'Réduire',
 			'tc.observation.visite.cameraFermee' => 'Caméra fermée',
 			'tc.observation.visite.pasEncoreLa' => 'Pas encore dans la salle',
@@ -57558,8 +58302,6 @@ extension on Traductions {
 			'adulte.coranDemo.titre' => 'Disponible après connexion',
 			'adulte.coranDemo.phrase' => 'Ce n\'est pas une panne : la démonstration ne contient pas le texte du Coran. Après connexion à votre espace élève, il s\'ouvre ici.',
 			'adulte.recharge.titre' => 'Recharge',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.recharge.phrase' => 'Choisissez les profils et les montants.',
 			'adulte.recharge.verifier' => 'Vérifier la recharge',
 			'adulte.recharge.raisonAucun' => 'Sélectionnez au moins un profil pour continuer.',
@@ -57908,6 +58650,8 @@ extension on Traductions {
 			'adulte.demo.etats.repriseSansReponse' => 'Sans réponse dans le délai, la demande attend l\'administration.',
 			'adulte.demo.etats.repriseValidee' => 'La reprise du foyer a été validée.',
 			'adulte.demo.etats.repriseRefusee' => 'La reprise du foyer a été refusée.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.demo.etats.dejaDansUnAutreFoyer' => 'L\'adulte invité fait déjà partie d\'un autre foyer.',
 			'adulte.demo.etats.erreurReseau' => 'Le réseau a coupé pendant une action.',
 			'adulte.demo.etats.doubleSoumission' => 'La même action a été envoyée deux fois.',
@@ -58072,8 +58816,6 @@ extension on Traductions {
 			'suiviDemandes.jourHeure' => ({required Object jour, required Object heure}) => '${jour} ${heure}',
 			'suiviDemandes.fuseauChoisi' => 'Fuseau horaire',
 			'suiviDemandes.fuseauValeur' => ({required Object deVille}) => 'Heure ${deVille}',
-			_ => null,
-		} ?? switch (path) {
 			'suiviDemandes.etapes.envoyee' => 'Demande envoyée',
 			'suiviDemandes.etapes.classeValidee' => 'Classe validée',
 			'suiviDemandes.etapes.enseignantAffecte' => 'Enseignant affecté',
@@ -58422,6 +59164,8 @@ extension on Traductions {
 			'com.socle.navigation.provisoire.publierAnnonceDetail' => 'La publication d\'une annonce pour une classe arrivera bientôt ici.',
 			'com.socle.navigation.demo.titre' => 'Démonstration des communications',
 			'com.socle.navigation.demo.detail' => 'Données fictives, absentes des versions de production.',
+			_ => null,
+		} ?? switch (path) {
 			'com.socle.navigation.demo.choisir' => 'Choisissez un espace à essayer.',
 			'com.messages.entree.titreClasse' => 'Échanger sur cette classe',
 			'com.messages.entree.titreDossier' => 'Échanger sur ce dossier',
@@ -58586,8 +59330,6 @@ extension on Traductions {
 			'com.vocal.demo.envoyes' => 'Messages vocaux envoyés',
 			'com.vocal.demo.auteurEnseignante' => 'Sayyida Mariam, enseignante',
 			'com.vocal.demo.auteurParent' => 'Ahmed, parent d\'Adam',
-			_ => null,
-		} ?? switch (path) {
 			'com.vocal.demo.messageRecu' => 'Bonjour, voici mes remarques sur la récitation de cette semaine.',
 			'com.vocal.demo.horodatage' => 'Aujourd\'hui, 10:28',
 			'com.vocal.titre' => 'Message vocal',
@@ -58936,6 +59678,8 @@ extension on Traductions {
 			'com.studio.demo.f.partageModeration' => 'Guide de modération',
 			'com.studio.demo.f.epinglePar' => ({required Object nom}) => 'Épinglé par ${nom}',
 			'com.studio.demo.f.partagePar' => ({required Object nom}) => 'Partagé par ${nom}',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.demo.f.lienRemplacements' => 'Remplacements de la semaine',
 			'com.studio.demo.f.lienCharte' => 'Charte de l\'équipe',
 			'com.studio.demo.f.brouillon' => 'Samira, je regarde le dossier de la famille Karim ce soir et je te dis demain matin',
@@ -59100,8 +59844,6 @@ extension on Traductions {
 			'com.annonces.section' => 'Annonces de la classe',
 			'com.annonces.annonce' => 'Annonce',
 			'com.annonces.publier' => 'Publier une annonce',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.videPublier' => 'Aucune annonce pour cette classe. Publiez la première pour toute la classe.',
 			'com.annonces.auteurDate' => ({required Object auteur, required Object date, required Object heure}) => '${auteur}, le ${date} à ${heure}',
 			'com.annonces.date' => ({required Object date, required Object heure}) => 'Le ${date} à ${heure}',
@@ -59450,6 +60192,8 @@ extension on Traductions {
 			'comptable.paiements.colonnes.montant' => 'Montant',
 			'comptable.paiements.colonnes.destination' => 'Destination',
 			'comptable.paiements.colonnes.echeance' => 'Échéance',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.paiements.colonnes.statut' => 'Statut',
 			'comptable.paiements.colonnes.action' => 'Action',
 			'comptable.paiements.types.enseignant' => 'Enseignant',
@@ -59614,8 +60358,6 @@ extension on Traductions {
 			'comptable.encaissements.colBrut' => 'Brut',
 			'comptable.encaissements.colFrais' => 'Frais',
 			'comptable.encaissements.colNet' => 'Net',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.encaissements.colMoyen' => 'Moyen',
 			'comptable.encaissements.colEtat' => 'État',
 			'comptable.encaissements.profilsPour' => ({required Object prenoms}) => 'Pour ${prenoms}',
@@ -59964,6 +60706,8 @@ extension on Traductions {
 			'comptable.validation.votreDemandePhrase' => 'Une autre personne habilitée la décidera : vous ne validez jamais une demande que vous avez faite.',
 			'comptable.validation.detail.titre' => 'Demande de validation',
 			'comptable.validation.detail.nature' => 'Nature',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.validation.detail.objet' => 'Objet',
 			'comptable.validation.detail.demandeur' => 'Demandée par',
 			'comptable.validation.detail.date' => 'Date de la demande',
@@ -60128,8 +60872,6 @@ extension on Traductions {
 			'comptable.direction.delegationPanneau.suspendueEchec' => 'La suspension n\'est pas confirmée : la demande n\'est peut-être pas parvenue jusqu\'à Rewayah. Vérifiez l\'état de la délégation avant de réessayer.',
 			'comptable.direction.delegationPanneau.expirationTitre' => 'Expiration',
 			'comptable.direction.delegationPanneau.expirationDetail' => 'Chaque délégation expire et se renouvelle. Passé la date, le Comptable ne peut plus rien exécuter seul.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.expireLe' => ({required Object date}) => 'Expire le ${date}',
 			'comptable.direction.delegationPanneau.expirationInconnue' => 'Date d\'expiration non communiquée',
 			'comptable.direction.delegationPanneau.etatActive' => 'Active',
@@ -60478,6 +61220,8 @@ extension on Traductions {
 			'juridique.cookies.s2.blocs.2' => '- Un cache limité, que vous pouvez effacer.',
 			'juridique.cookies.s2.blocs.3' => '- Sur l\'appareil d\'un élève, son code personnel, qui ne quitte jamais l\'appareil.',
 			'juridique.cookies.s2.blocs.4' => 'Ces éléments sont nécessaires au fonctionnement de l\'application.',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.cookies.s3.titre' => '3. Ce que nous n\'utilisons pas',
 			'juridique.cookies.s3.blocs.0' => 'À la date de ce texte, ni l\'application ni le site n\'utilisent de cookies publicitaires ni de mesure d\'audience.',
 			'juridique.cookies.s4.titre' => '4. Rapports d\'erreurs',
@@ -60642,8 +61386,6 @@ extension on Traductions {
 			'avis.admin.liens.max' => 'Nombre maximal d\'avis',
 			'avis.admin.liens.maxAide' => '200 par défaut, 2000 au plus.',
 			'avis.admin.liens.maxErreur' => 'Entrez un nombre d\'avis de 1 à 2000.',
-			_ => null,
-		} ?? switch (path) {
 			'avis.admin.liens.creer' => 'Créer le lien',
 			'avis.admin.liens.echecCreation' => 'La création du lien n\'est pas confirmée. Regardez la liste des liens avant de recommencer.',
 			'avis.admin.liens.creeTitre' => 'Lien créé',
@@ -60992,6 +61734,8 @@ extension on Traductions {
 			'cahierSourates.retirerMotif' => 'Motif (facultatif)',
 			'cahierSourates.retirerFait' => ({required Object nom}) => '${nom} n\'est plus validée.',
 			'cahierSourates.retirerRefus' => 'Le délai de 24 heures est passé : seule la direction peut encore la retirer.',
+			_ => null,
+		} ?? switch (path) {
 			'cahierSourates.retirerEchec' => 'La sourate n\'a pas été retirée. Réessayez.',
 			'souratesRetirables.titre' => 'Sourates cochées par erreur',
 			'souratesRetirables.aide' => 'Les sourates validées dans cette classe que vous pouvez retirer.',
@@ -61156,8 +61900,6 @@ extension on Traductions {
 			'candidatsFlux.importFormulaires.champ.experienceAide' => 'Facultatif.',
 			'candidatsFlux.importFormulaires.champ.creneaux' => 'Créneaux (heure de La Mecque)',
 			'candidatsFlux.importFormulaires.champ.creneauxAide' => 'Gardés tels quels, sans jour. Jamais lus comme une disponibilité.',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.champ.heures' => 'Heures par semaine',
 			'candidatsFlux.importFormulaires.champ.heuresAide' => 'Converties en nombre de classes souhaitées.',
 			'candidatsFlux.importFormulaires.champ.debut' => 'Début possible',

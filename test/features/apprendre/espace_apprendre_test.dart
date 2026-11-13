@@ -693,6 +693,110 @@ void main() {
     });
   });
 
+  group('adaptateur du catalogue (types et descriptions du lot 3)', () {
+    LibraryResource ressource(
+      String id,
+      TypeRessource type, {
+      String? description,
+      String? lien,
+      bool vignette = false,
+      bool publiee = true,
+    }) => LibraryResource(
+      id: id,
+      title: 'Titre $id',
+      shortTitle: id,
+      resourceType: type,
+      language: 'fr',
+      category: 'lecture',
+      accessPolicy: PolitiqueAcces.publique,
+      offlinePolicy: PolitiqueOffline.jamais,
+      description: description,
+      lienExterne: lien,
+      aVignette: vignette,
+      currentVersionId: publiee ? 'v-$id' : null,
+    );
+
+    test('types, description, vignette, ouverture ; Coran du catalogue et '
+        'ressources non publiees ecartes ; le Coran de la planche en tete', () {
+      final List<DocumentPlanche> d = documentsDepuisCatalogue(
+        <LibraryResource>[
+          ressource('pdf', TypeRessource.pdf, vignette: true),
+          ressource('voix', TypeRessource.audio, description: 'La voix.'),
+          ressource('film', TypeRessource.video),
+          ressource(
+            'site',
+            TypeRessource.lienExterne,
+            description: 'Un site.',
+            lien: 'https://exemple.org/page',
+          ),
+          ressource('coran-catalogue', TypeRessource.quran),
+          ressource('brouillon', TypeRessource.pdf, publiee: false),
+        ],
+        avecCoran: true,
+      );
+      expect(d.map((DocumentPlanche x) => x.id).toList(), <String>[
+        idDocumentCoran,
+        'pdf',
+        'voix',
+        'film',
+        'site',
+      ]);
+      DocumentPlanche de(String id) =>
+          d.firstWhere((DocumentPlanche x) => x.id == id);
+      expect(de('pdf').type, TypeDocumentPlanche.document);
+      expect(de('pdf').aVignetteDeposee, isTrue);
+      expect(de('pdf').description, isNull);
+      expect(de('voix').type, TypeDocumentPlanche.audio);
+      expect(de('voix').description, 'La voix.');
+      expect(de('film').type, TypeDocumentPlanche.video);
+      expect(de('site').type, TypeDocumentPlanche.lienExterne);
+      expect(de('site').description, 'Un site.');
+      // Un lien s'ouvre par SA fiche (le chemin de la Bibliotheque une : la
+      // fiche relit l'adresse et demande la confirmation), jamais l'adresse
+      // directe.
+      expect(
+        (de('site').ouverture as OuvrirDansLApplication).chemin,
+        cheminFicheDocument('site'),
+      );
+      expect(de('film').rayon, RayonPlanche.documentsDesCours);
+    });
+
+    testWidgets('par le vrai adaptateur : les quatre types se filtrent, le '
+        'lien est une petite carte', (WidgetTester tester) async {
+      await monterApprendre(
+        tester,
+        profil: ProfilApprendre.mineurGuide,
+        autres: <Override>[
+          portCatalogueProvider.overrideWithValue(
+            CatalogueLocal(
+              ressources: <LibraryResource>[
+                ressource('pdf', TypeRessource.pdf),
+                ressource('voix', TypeRessource.audio, description: 'La voix.'),
+                ressource('film', TypeRessource.video),
+                ressource(
+                  'site',
+                  TypeRessource.lienExterne,
+                  description: 'Un site.',
+                ),
+              ],
+            ),
+          ),
+        ],
+      );
+      for (final String id in <String>['pdf', 'voix', 'film', 'site']) {
+        expect(
+          find.byKey(PlancheDocuments.cleDocument(id)),
+          findsOneWidget,
+          reason: id,
+        );
+      }
+      expect(find.text('La voix.'), findsOneWidget);
+      expect(find.text('Un site.'), findsOneWidget);
+      // Les quatre types sont presents : la rangee de filtres est offerte.
+      expect(find.byType(RangeeFiltres), findsOneWidget);
+    });
+  });
+
   group('une seule Bibliotheque pour l eleve', () {
     // Le role `student` (le mineur, et l'adulte dont la barre est celle de
     // l'eleve) n'a qu'une Bibliotheque, celle d'Apprendre.

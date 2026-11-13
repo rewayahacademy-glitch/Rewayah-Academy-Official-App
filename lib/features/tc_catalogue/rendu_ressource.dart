@@ -19,6 +19,7 @@
 ///   version publiee courante.
 library;
 
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -40,6 +41,7 @@ import '../../core/tc_telechargement/port_telechargement.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
+import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/skeleton.dart';
 
 /// Le rendu du support de [detail].
@@ -70,6 +72,18 @@ class RenduRessource extends ConsumerWidget {
       TypeRessource.pdf ||
       TypeRessource.texteStructure ||
       TypeRessource.lecon => _RenduLecture(versionId: detail.version!.id),
+      // Audio : l'URL signee s'ouvre dans le lecteur du navigateur (web). Le
+      // lecteur audio de l'application est le lot LECTEUR : en attendant,
+      // l'ecran le dit, et ne pose aucun bouton qui ferait semblant.
+      TypeRessource.audio => _RenduLecture(
+        versionId: detail.version!.id,
+        phraseSansLecteur: t.tc.bibliotheque.rendu.sansLecteur,
+      ),
+      // Video et lien externe : une petite carte avec l'adresse, qui s'ouvre
+      // sur un autre site. La video ne se depose pas (poids) : elle se donne
+      // par lien.
+      TypeRessource.video ||
+      TypeRessource.lienExterne => _RenduLien(lien: r.lienExterne),
     };
   }
 }
@@ -111,9 +125,13 @@ enum _EtatLecture { repos, chargement, horsLigne, bloque, echec, indisponible }
 /// PDF, texte structure, lecon : « Ouvrir » dans un nouvel onglet, avec un
 /// lien de lecture court demande au port a chaque ouverture (jamais garde).
 class _RenduLecture extends ConsumerStatefulWidget {
-  const _RenduLecture({required this.versionId});
+  const _RenduLecture({required this.versionId, this.phraseSansLecteur});
 
   final String versionId;
+
+  /// La phrase quand aucun lecteur n'est servi ; par defaut celle des formats
+  /// dont on peut enregistrer une copie.
+  final String? phraseSansLecteur;
 
   @override
   ConsumerState<_RenduLecture> createState() => _EtatRenduLecture();
@@ -154,7 +172,7 @@ class _EtatRenduLecture extends ConsumerState<_RenduLecture> {
     final bool navigateur = ref.watch(ouvreurOngletProvider) != null;
     if (!servi || !navigateur) {
       return Text(
-        t.tc.bibliotheque.detail.apercuIndisponible,
+        widget.phraseSansLecteur ?? t.tc.bibliotheque.detail.apercuIndisponible,
         key: const ValueKey<String>('rendu-sans-lecteur'),
         style: textes.bodyMedium,
       );
@@ -199,6 +217,132 @@ class _EtatRenduLecture extends ConsumerState<_RenduLecture> {
             enCours: _etat == _EtatLecture.chargement,
             onPress: _ouvrir,
           ),
+      ],
+    );
+  }
+}
+
+/// Un lien externe (ou une video donnee par lien) : l'adresse, la phrase qui dit
+/// qu'elle mene sur un autre site, et « Ouvrir le lien » quand l'appareil sait
+/// ouvrir un lien (navigateur). Sans cela, la phrase le dit : jamais un bouton
+/// qui echouerait au toucher.
+class _RenduLien extends ConsumerStatefulWidget {
+  const _RenduLien({required this.lien});
+
+  final String? lien;
+
+  @override
+  ConsumerState<_RenduLien> createState() => _EtatRenduLien();
+}
+
+class _EtatRenduLien extends ConsumerState<_RenduLien> {
+  _EtatLecture _etat = _EtatLecture.repos;
+
+  /// Un lien mene hors de l'application : on le dit et on demande avant
+  /// d'ouvrir, a chaque fois (BIBLIOTHEQUE-UNE, D1).
+  Future<void> _confirmer(Uri adresse) async {
+    final r = t.tc.bibliotheque.rendu;
+    final bool? accord = await AppBottomSheet.ouvrir<bool>(
+      context,
+      titre: r.confirmerTitre,
+      constructeur: (BuildContext feuille) => Column(
+        key: const ValueKey<String>('rendu-lien-confirmation'),
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          TexteSansCoupure(r.confirmerPhrase),
+          Ecart.vSm,
+          SelectableText(adresse.toString()),
+        ],
+      ),
+      actions: (BuildContext feuille) => Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          ActionPrincipale(
+            key: const ValueKey<String>('rendu-lien-confirmer-ouvrir'),
+            libelle: r.confirmerOuvrir,
+            onPress: () => Navigator.of(feuille).pop(true),
+          ),
+          Ecart.vSm,
+          ActionPrincipale(
+            key: const ValueKey<String>('rendu-lien-confirmer-rester'),
+            libelle: r.confirmerRester,
+            niveau: NiveauAction.tertiaire,
+            onPress: () => Navigator.of(feuille).pop(false),
+          ),
+        ],
+      ),
+    );
+    if (accord == true && mounted) _ouvrir(adresse);
+  }
+
+  void _ouvrir(Uri adresse) {
+    final OuvreurOnglet? ouvreur = ref.read(ouvreurOngletProvider);
+    if (ouvreur == null) return;
+    if (ref.read(horsLigneProvider).value ?? false) {
+      setState(() => _etat = _EtatLecture.horsLigne);
+      return;
+    }
+    final bool ouvert = ouvreur(adresse);
+    setState(() => _etat = ouvert ? _EtatLecture.repos : _EtatLecture.bloque);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final TextTheme textes = Theme.of(context).textTheme;
+    final Uri? adresse = widget.lien == null
+        ? null
+        : Uri.tryParse(widget.lien!);
+    // Une adresse qui n'est pas de l'https n'est jamais ouverte, meme si elle
+    // arrivait (la base ne l'accepte pas ; l'ecran ne s'y fie pas seul).
+    if (adresse == null || adresse.scheme != 'https' || adresse.host.isEmpty) {
+      return Text(
+        t.tc.bibliotheque.rendu.lienAbsent,
+        key: const ValueKey<String>('rendu-lien-absent'),
+        style: textes.bodyMedium,
+      );
+    }
+    final bool navigateur = ref.watch(ouvreurOngletProvider) != null;
+    final String? phrase = switch (_etat) {
+      _EtatLecture.horsLigne => t.tc.bibliotheque.rendu.lienHorsLigne,
+      _EtatLecture.bloque => t.tc.bibliotheque.rendu.lienBloque,
+      _ => null,
+    };
+    return Column(
+      key: const ValueKey<String>('rendu-lien'),
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        SelectableText(adresse.toString(), style: textes.bodyMedium),
+        Ecart.vXs,
+        TexteSansCoupure(
+          navigateur
+              ? t.tc.bibliotheque.rendu.lienAutreSite
+              : t.tc.bibliotheque.rendu.lienSansNavigateur,
+          style: textes.bodySmall,
+        ),
+        if (phrase != null) ...<Widget>[
+          Ecart.vSm,
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              ExcludeSemantics(child: Icon(AppIcons.avertissement.repos)),
+              Ecart.hSm,
+              Expanded(child: TexteSansCoupure(phrase)),
+            ],
+          ),
+        ],
+        if (navigateur) ...<Widget>[
+          Ecart.vMd,
+          ActionPrincipale(
+            key: const ValueKey<String>('rendu-ouvrir-lien'),
+            libelle: t.tc.bibliotheque.rendu.ouvrirLien,
+            niveau: NiveauAction.secondaire,
+            pleineLargeur: false,
+            onPress: () => unawaited(_confirmer(adresse)),
+          ),
+        ],
       ],
     );
   }

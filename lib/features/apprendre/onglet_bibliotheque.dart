@@ -18,10 +18,12 @@ import '../../core/icons/app_icons.dart';
 import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/etat_routeur_sur.dart';
+import '../../core/tc_bibliotheque/couverture_ressource.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
+import '../tc_catalogue/vignette_ressource.dart';
 
 /// Les cles des tests.
 abstract final class ClesBibliotheque {
@@ -126,13 +128,30 @@ class OngletBibliotheque extends ConsumerWidget {
     return PlancheDocuments(
       rubriqueClasse: rubrique,
       documents: <DocumentPlanche>[
-        ...classe,
-        for (final DocumentPlanche d in documents.requireValue)
-          if (!dansLaClasse.contains(d.id))
-            d.id == idDocumentCoran ? documentCoran() : d,
+        for (final DocumentPlanche d in <DocumentPlanche>[
+          ...classe,
+          for (final DocumentPlanche d in documents.requireValue)
+            if (!dansLaClasse.contains(d.id))
+              d.id == idDocumentCoran ? documentCoran() : d,
+        ])
+          _avecVignette(d),
       ],
     );
   }
+}
+
+/// La vignette de la Bibliotheque une (lot 3) pour [d] : la meme couverture
+/// que les cartes de la liste d'origine (par defaut selon le type, ou la
+/// vignette deposee par-dessus). Une seule couverture pour un document.
+DocumentPlanche _avecVignette(DocumentPlanche d) {
+  final CouvertureRessource? couverture = d.couverture;
+  if (couverture == null) return d;
+  return d.avecVignette(
+    VignetteRessource(
+      couverture: couverture,
+      image: d.aVignetteDeposee ? ImageVignetteDeposee(resourceId: d.id) : null,
+    ),
+  );
 }
 
 /// La rubrique « Pour cette classe » quand elle attend ou ne s'affiche pas :

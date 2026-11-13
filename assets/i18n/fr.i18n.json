@@ -2282,7 +2282,132 @@
     "lieu": "Horaires calculés pour {lieu}",
     "lieuSansNom": "Horaires calculés pour le lieu de l'enseignant",
     "ajustee": "{priere} ajustée de {minutes} min par l'enseignant",
-    "reglagesAbsents": "L'enseignant n'a pas encore réglé ses horaires de prière."
+    "reglagesAbsents": "L'enseignant n'a pas encore réglé ses horaires de prière.",
+    "pauseDePriere": "Pause de prière",
+    "pauseA": "Pause de prière à {heure}",
+    "approchee": "Heure approchée\u00a0: à cette saison, le soleil ne descend pas assez bas pour que l'angle se définisse.",
+    "methodes": {
+      "muslim_world_league": "Ligue islamique mondiale",
+      "egyptian": "Autorité générale égyptienne",
+      "karachi": "Université des sciences islamiques de Karachi",
+      "umm_al_qura": "Umm al-Qura (La Mecque)",
+      "dubai": "Golfe",
+      "moon_sighting_committee": "Moon Sighting Committee",
+      "north_america": "ISNA (Amérique du Nord)",
+      "kuwait": "Koweït",
+      "qatar": "Qatar",
+      "singapore": "Singapour",
+      "tehran": "Téhéran",
+      "turkey": "Diyanet (Turquie)"
+    },
+    "ecoles": {
+      "shafi": "Selon la majorité des écoles (l'ombre égale l'objet)",
+      "hanafi": "Ombre double (école hanafite)"
+    },
+    "aValider": "Valeur par défaut en vigueur, à valider par le directeur et ses associés.",
+    "enseignant": {
+      "titre": "Mes heures de prière",
+      "intro": "Les heures du jour, calculées par Rewayah pour votre lieu. Vous pouvez ajuster chaque prière de 30 minutes au plus.",
+      "ligne": "Mes heures de prière",
+      "ligneDetail": "Voir vos heures du jour et les ajuster",
+      "vide": "Votre lieu de prière n'est pas encore posé. La direction le pose\u00a0: vos heures apparaîtront ici.",
+      "erreur": "Vos heures de prière ne se sont pas affichées. Il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
+      "aucunAjustement": "Aucun ajustement",
+      "plus": "{minutes} min en plus",
+      "moins": "{minutes} min en moins",
+      "feuilleAide": "De 30 minutes en moins à 30 minutes en plus. L'ajustement déplace aussi la pause de prière de vos cours.",
+      "champ": "Ajustement",
+      "enregistrer": "Enregistrer",
+      "erreurEnregistrement": "Il est possible que l'ajustement ne soit pas parvenu jusqu'à Rewayah. Vérifiez vos heures, puis réessayez dans un instant.",
+      "unite": "{n} min"
+    },
+    "direction": {
+      "onglet": "Prière",
+      "titre": "Lieux de prière",
+      "intro": "Le lieu de prière de chaque enseignant fixe ses heures. Seuls l'enseignant et la direction le voient\u00a0: les élèves et les tuteurs ne lisent que l'heure de la pause.",
+      "sansLieu": "Aucun lieu\u00a0: pas de pause de prière",
+      "vide": "Aucun enseignant actif pour le moment.",
+      "erreur": "Les lieux de prière ne se sont pas affichés. Il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
+      "vendredi": "Assiste à la prière du vendredi",
+      "incoherenceTitre": "À vérifier",
+      "incoherenceAide": "Signalement seulement\u00a0: rien n'est corrigé automatiquement.",
+      "incoherenceFuseauCompte": "{prenom}\u00a0: le fuseau du compte et celui du lieu de prière diffèrent ({detail}).",
+      "incoherenceFuseauLieu": "{prenom}\u00a0: le fuseau du lieu de prière ne correspond pas à sa longitude ({detail}).",
+      "incoherencePays": "{prenom}\u00a0: le pays du compte ({detail}) ne correspond pas au lieu de prière.",
+    "incoherencePaysFuseau": "{prenom}\u00a0: le pays du compte et son fuseau ne se correspondent pas ({detail}).",
+      "feuille": {
+        "titre": "Lieu et heures de prière {dePrenom}",
+        "nomLieu": "Nom du lieu",
+        "latitude": "Latitude",
+        "longitude": "Longitude",
+        "coordonneesAide": "En degrés décimaux, avec un point (par exemple 9.6412 et -13.5784).",
+        "fuseau": "Fuseau (par exemple {exemple})",
+        "methode": "Méthode de calcul",
+        "methodeEcole": "Celle de l'académie",
+        "ecole": "École pour l'Asr",
+        "ecoleEcole": "Celle de l'académie",
+        "vendredi": "Assiste à la prière du vendredi",
+        "vendrediOui": "Oui",
+        "vendrediNon": "Non",
+        "vendrediDebut": "Début de la plage du vendredi",
+        "vendrediFin": "Fin de la plage du vendredi",
+        "plageAide": "Heure de l'enseignant, au format HH:MM. Un créneau qui chevauche cette plage est signalé à la direction, sans blocage.",
+        "apercu": "Heures du jour",
+        "apercuVide": "Aucune heure à montrer tant que le lieu n'est pas enregistré.",
+        "enregistrer": "Enregistrer le lieu",
+        "retirer": "Retirer le lieu",
+        "invalide": "Vérifiez le nom du lieu, les coordonnées, le fuseau et la plage du vendredi.",
+        "erreurEnregistrement": "Il est possible que le lieu ne soit pas parvenu jusqu'à Rewayah, ou qu'une valeur soit refusée. Vérifiez la fiche, puis réessayez dans un instant."
+      }
+    },
+    "classe": {
+      "titre": "Prières et créneau",
+      "intro": "Ce que ce créneau croise, sur les 12 mois à venir, pour l'enseignant de la classe. C'est un avertissement\u00a0: rien n'est bloqué, et la pause de prière protège de toute façon l'enseignant.",
+      "sansLieu": "L'enseignant de cette classe n'a pas de lieu de prière\u00a0: aucune pause de prière n'est prévue.",
+      "erreur": "Les prières de ce créneau ne se sont pas affichées. Il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
+      "creneau": "{jour}, {heure} h, {duree} min",
+      "aucun": "Ce créneau ne croise aucune prière de l'enseignant sur les 12 mois.",
+      "croise": "{priere}\u00a0: de {du} à {au}, {seances} séances, dont {pause} avec une pause de prière et {apres} où l'enseignant prie après le cours.",
+      "indefini": "Pour une partie de l'année, le soleil ne se lève ou ne se couche pas\u00a0: aucune pause de prière n'est calculée.",
+      "vendredi": "Ce créneau chevauche la prière du vendredi de l'enseignant ({debut} à {fin})\u00a0: {n} séances de l'année. Avertissement fort.",
+      "libres": "Heures de début sans prière ce jour-là\u00a0: {heures}.",
+      "libresAucune": "Aucune heure de début ce jour-là n'évite toutes les prières de l'année.",
+      "libresInconnues": "Les heures sans prière ne peuvent pas être dites pour cet enseignant.",
+      "heureCourte": "{h}\u00a0h"
+    },
+    "regles": {
+      "section": "La prière",
+      "intro": "Le serveur place la pause de prière de l'enseignant quand une prière entre pendant la séance. Ces réglages valent pour toute l'académie.",
+      "methode": "Méthode de calcul",
+      "methodeDetail": "Les angles du Fajr et de l'Isha. Un enseignant peut avoir la sienne.",
+      "ecole": "École pour l'Asr",
+      "ecoleDetail": "L'heure d'entrée de l'Asr. Un enseignant peut avoir la sienne.",
+      "pause": "Durée de la pause de prière",
+      "pauseDetail": "De 5 à 20 minutes, par pas de 5.",
+      "pauseRamadan": "Pause du Maghrib pendant le Ramadan",
+      "pauseRamadanDetail": "La rupture du jeûne\u00a0: de 5 à 20 minutes, par pas de 5.",
+      "ramadan": "Ramadan en cours",
+      "ramadanDetail": "En attendant le calendrier de l'académie, la direction le pose à la main.",
+      "margeDebut": "Marge au début",
+      "margeDebutDetail": "Une prière qui entre dans ces premières minutes place la pause à cette minute du cours.",
+      "margeFin": "Marge à la fin",
+      "margeFinDetail": "Une prière qui entre dans ces dernières minutes se prie après le cours.",
+      "margeAvant": "Prière entrée juste avant le cours",
+      "margeAvantDetail": "Une prière entrée depuis moins de ce temps avant le début du cours, et dont le temps se ferme pendant le cours, a sa pause. À valider par le directeur.",
+      "delaiFermeture": "Début de la pause d'une prière qui se ferme",
+      "delaiFermetureDetail": "Cette pause commence ce temps après le début du cours.",
+      "horizon": "Recalcul de nuit",
+      "horizonDetail": "Chaque nuit, les pauses des séances de ces prochains jours sont recalculées.",
+      "lieux": "Lieux de prière des enseignants",
+      "lieuxDetail": "Le lieu de chaque enseignant, la prière du vendredi, les heures du jour.",
+      "unite": "{n} min",
+      "uniteJours": {
+        "one": "{n} jour",
+        "other": "{n} jours"
+      },
+      "choisir": "Enregistrer",
+      "erreurEcriture": "Le réglage n'est pas confirmé ({message}). Vérifiez sa valeur, puis réessayez dans un instant."
+    }
   },
   "eleveConnexion": {
     "entrerCode": "J'ai un code",
@@ -6873,21 +6998,24 @@
     },
     "bibliotheque": {
       "titre": "Bibliothèque",
-      "intro": "Les supports pédagogiques : les déposer, vérifier leurs droits, publier une version, les attribuer aux classes.",
+      "intro": "Les documents pédagogiques : les déposer, vérifier leurs droits, publier une version, les attribuer aux classes.",
       "brouillonAlerte": "Un brouillon ne donne aucun accès aux élèves ni aux enseignants.",
-      "ajouter": "Ajouter un support",
-      "vide": "Aucun support",
-      "videDetail": "Ajoutez un premier support pour le préparer, vérifier ses droits, puis le publier.",
+      "ajouter": "Ajouter un document",
+      "vide": "Aucun document",
+      "videDetail": "Ajoutez un premier document pour le préparer, vérifier ses droits, puis le publier.",
       "erreur": "Le catalogue n'a pas pu être chargé. Réessayez.",
       "nonAutorise": "Vous n'avez pas accès à la bibliothèque d'administration.",
       "indisponibleTitre": "Bibliothèque pas encore ouverte",
       "indisponiblePhrase": "Cette fonction sera disponible au branchement serveur.",
       "sansDonnees": "le catalogue",
-      "ficheTitre": "Support",
+      "ficheTitre": "Document",
       "retourCatalogue": "Retour au catalogue",
-      "introuvable": "Ce support n'existe pas ou n'est pas accessible.",
+      "introuvable": "Ce document n'existe pas ou n'est pas accessible.",
       "libelles": {
         "type": {
+          "audio": "Audio",
+          "video": "Vidéo",
+          "lienExterne": "Lien externe",
           "quran": "Coran",
           "texteStructure": "Texte structuré",
           "pdf": "PDF",
@@ -6949,7 +7077,7 @@
           "tous": "Tous"
         },
         "colonnes": {
-          "support": "Support",
+          "support": "Document",
           "type": "Type",
           "langue": "Langue",
           "categorie": "Catégorie",
@@ -6961,11 +7089,11 @@
         },
         "modifieLe": "Modifié le {date}",
         "videRecherche": "Aucun résultat",
-        "videRechercheDetail": "Aucun support ne correspond à votre recherche ou à vos filtres.",
+        "videRechercheDetail": "Aucun document ne correspond à votre recherche ou à vos filtres.",
         "effacerFiltres": "Effacer les filtres",
-        "voirPlus": "Voir plus de supports",
+        "voirPlus": "Voir plus de documents",
         "pageErreur": "La suite du catalogue n'a pas pu être chargée.",
-        "ouvrir": "Ouvrir le support {titre}",
+        "ouvrir": "Ouvrir le document {titre}",
         "droitsEchus": "Droits échus",
         "alerteTitre": "Brouillons",
         "pasDeAcces": "Vous ne pouvez pas modifier la bibliothèque."
@@ -6993,7 +7121,10 @@
           "titreCourt": "Titre court",
           "edition": "Édition",
           "organisme": "Organisme, auteur ou éditeur",
-          "description": "Description pédagogique",
+          "description": "Description courte (montrée sur la carte)",
+          "rayon": "Rayon",
+          "ordre": "Ordre d'affichage",
+          "lien": "Adresse du lien (https)",
           "conditions": "Conditions d'attribution"
         },
         "meta": {
@@ -7004,14 +7135,21 @@
           "annee": "Année",
           "visibilite": "Visibilité",
           "horsLigne": "Lecture sans internet",
+          "rayon": "Rayon",
+          "etapes": "Étapes du programme",
+          "vignette": "Vignette",
+          "vignetteOui": "Déposée",
+          "vignetteNon": "Par défaut, selon le type",
+          "lien": "Adresse du lien",
           "nonRenseigne": "Non renseigné"
         },
         "enregistrer": "Enregistrer les modifications",
         "enregistre": "Modifications enregistrées.",
-        "conflit": "Un autre administrateur a modifié ce support. Rechargez la fiche avant de continuer.",
+        "conflit": "Un autre administrateur a modifié ce document. Rechargez la fiche avant de continuer.",
         "recharger": "Recharger la fiche",
         "echecEnregistrer": "Les modifications n'ont pas pu être confirmées. Réessayez.",
         "titreVide": "Le titre est obligatoire.",
+        "retirerVignette": "Retirer la vignette",
         "figee": "Version publiée et figée : pour la modifier, créez une nouvelle version.",
         "retireMotif": "Retiré du catalogue. Motif : {motif}",
         "retireSansMotif": "Retiré du catalogue.",
@@ -7057,7 +7195,31 @@
         "auditVersion": "Version {numero}"
       },
       "import": {
-        "completer": "Compléter le support",
+        "classement": {
+          "tranchesTitre": "Pour quels âges ?",
+          "tranchesAide": "Un élève ne voit que les documents de sa tranche d'âge. Cochez toutes les tranches concernées.",
+          "tranchesAideLien": "Un lien mène hors de l'application : la tranche des 6 à 9 ans n'est pas cochée d'emblée. Cochez-la seulement si vous êtes sûr du site.",
+          "tranchesAucune": "Cochez au moins une tranche d'âge.",
+          "etapesTitre": "Étapes du programme",
+          "etapesAide": "Rattachez le document aux étapes où il sert (facultatif).",
+          "etapesVide": "Les étapes apparaîtront quand le programme sera publié.",
+          "etapesIndisponible": "Les étapes n'ont pas pu être lues pour le moment. Le document peut être enregistré sans étape.",
+          "lectureTitre": "Lecture du Coran",
+          "lectureAucune": "Aucune lecture précisée",
+          "ecoleLibelle": "École juridique suivie (prière, ablutions ; facultatif)",
+          "depotInconnu": "Impossible de vérifier pour le moment si le dépôt de fichiers est activé. Vous pouvez déjà ajouter un document par son lien.",
+          "ecoleTrop": "Le nom de l'école juridique tient en 80 caractères au plus.",
+          "depotInactif": "Le dépôt de fichiers n'est pas encore activé. Vous pouvez déjà ajouter un document par son lien.",
+          "videoLien": "Pour une vidéo, collez son lien."
+        },
+        "vignette": "Vignette",
+        "choisirVignette": "Choisir une vignette",
+        "choisirAutreVignette": "Choisir une autre vignette",
+        "vignetteAide": "Une image (PNG, JPEG ou WebP, 2 Mo au plus), facultative. Sans vignette, l'écran montre une couverture selon le type.",
+        "completerLien": "Renseignez l'adresse du lien (https) : un lien externe ou une vidéo la demande, et un lien externe demande aussi sa description.",
+        "lienInvalide": "Cette adresse n'est pas acceptée : elle doit commencer par https et mener à un site.",
+        "sansFichierAide": "Rien à déposer pour ce type : renseignez l'adresse du lien, puis poursuivez.",
+        "completer": "Compléter le document",
         "sections": {
           "ressource": "Ressource",
           "fichier": "Fichier",
@@ -7065,6 +7227,10 @@
         },
         "champs": {
           "titre": "Titre",
+          "description": "Description courte (montrée sur la carte)",
+          "rayon": "Rayon",
+          "ordre": "Ordre d'affichage (facultatif)",
+          "lien": "Adresse du lien (https)",
           "categorie": "Catégorie",
           "type": "Type",
           "langue": "Langue",
@@ -7079,6 +7245,8 @@
           "pdf": "Format accepté : PDF.",
           "image": "Formats acceptés : PNG, JPEG, WebP.",
           "json": "Format accepté : JSON structuré.",
+          "audio": "Formats acceptés : MP3, M4A, OGG.",
+          "lien": "Ce document se donne par un lien : aucun fichier à déposer. Une vidéo se donne par son lien.",
           "aucun": "Ce type n'accepte pas de fichier."
         },
         "etats": {
@@ -7091,10 +7259,11 @@
         },
         "erreurs": {
           "taille": "Ce fichier est trop volumineux. Choisissez un fichier plus léger.",
-          "type": "Ce type de fichier n'est pas pris en charge pour ce support. Choisissez un autre fichier.",
+          "type": "Ce type de fichier n'est pas pris en charge pour ce document. Choisissez un autre fichier.",
           "reseau": "La connexion s'est interrompue. Le dépôt n'est pas confirmé : réessayez.",
           "refuse": "Le serveur a refusé ce dépôt. Réessayez ou choisissez un autre fichier.",
           "empreinte": "Le fichier reçu ne correspond pas à celui envoyé. Réessayez.",
+          "nonActive": "Le dépôt de fichiers n'est pas encore activé : rien n'a été envoyé. En attendant, vous pouvez ajouter un document par son lien.",
           "creation": "Le brouillon n'a pas pu être créé. Réessayez.",
           "droits": "Les droits n'ont pas pu être enregistrés. Réessayez."
         },
@@ -7162,7 +7331,7 @@
         "publier": "Publier la version",
         "bloque": "Cette version ne peut pas être publiée tant que le serveur n'a pas validé tous les points du contrôle.",
         "confirmerTitre": "Publier la version {numero} ?",
-        "confirmerEffet": "La version devient immuable et visible des classes auxquelles le support est attribué. Pour la modifier, vous créerez une nouvelle version.",
+        "confirmerEffet": "La version devient immuable et visible des classes auxquelles le document est attribué. Pour la modifier, vous créerez une nouvelle version.",
         "confirmerBouton": "Publier",
         "publiee": "Version publiée.",
         "dejaPubliee": "Cette version est déjà publiée.",
@@ -7180,23 +7349,23 @@
         "aucune": "Aucune classe n'est ouverte à l'attribution pour le moment.",
         "plusDeClasses": "Voir plus de classes",
         "chargementPlus": "Chargement…",
-        "nonPublie": "Ce support n'est pas publié. Publiez une version avant de l'attribuer à des classes.",
+        "nonPublie": "Ce document n'est pas publié. Publiez une version avant de l'attribuer à des classes.",
         "erreur": "Les classes n'ont pas pu être chargées. Réessayez.",
         "attribuer": "Attribuer à {nombre} classe(s)",
         "attribuerAucune": "Choisissez au moins une classe avant d'attribuer.",
-        "attribuee": "Support attribué. Les classes choisies le voient maintenant.",
+        "attribuee": "Document attribué. Les classes choisies le voient maintenant.",
         "attribueEchec": "L'attribution n'a pas abouti. Réessayez dans un instant.",
         "retraitTitre": "Retirer du catalogue",
-        "retraitIntro": "Un retrait masque le support de toutes les classes. Il ne supprime rien : le fichier et l'historique restent conservés.",
+        "retraitIntro": "Un retrait masque le document de toutes les classes. Il ne supprime rien : le fichier et l'historique restent conservés.",
         "motif": "Motif du retrait",
         "motifRequis": "Écrivez le motif du retrait avant de continuer : il est conservé dans l'historique.",
-        "retirer": "Retirer ce support",
+        "retirer": "Retirer ce document",
         "retraitConfirmerTitre": "Retirer « {titre} » du catalogue ?",
         "retraitConfirmerEffet": "Les classes ne le verront plus, y compris celles qui l'utilisent déjà. Le motif est conservé dans l'historique.",
-        "retraitConfirmerBouton": "Retirer le support",
-        "retire": "Support retiré du catalogue.",
+        "retraitConfirmerBouton": "Retirer le document",
+        "retire": "Document retiré du catalogue.",
         "retraitEchec": "Le retrait n'a pas abouti. Réessayez dans un instant.",
-        "conflit": "Quelqu'un a modifié ce support entre-temps. Rechargez avant de continuer."
+        "conflit": "Quelqu'un a modifié ce document entre-temps. Rechargez avant de continuer."
       }
     }
   },
@@ -8049,8 +8218,8 @@
       "annulee": "Ce cours n'aura pas lieu",
       "horsLigne": "Entrée en attente",
       "horsLigneDetail": "Tu pourras entrer dès que le réseau revient.",
-      "pausePriere": "Pause pour la prière",
-      "pausePriereDetail": "{priere}, vers {heure}",
+      "pausePriere": "Pause de prière",
+      "pausePriereDetail": "À {heure}",
       "prochainDansJours(param=jours)": {
         "one": "Ton prochain cours est dans {jours} jour.",
         "other": "Ton prochain cours est dans {jours} jours."
@@ -9533,7 +9702,7 @@
     "bibliotheque": {
       "titre": "Bibliothèque",
       "rechercheIndication": "Titre, niveau, sourate ou page",
-      "rechercheLibelle": "Rechercher un support",
+      "rechercheLibelle": "Rechercher un document",
       "effacerRecherche": "Tout afficher",
       "filtre": {
         "type": "Type",
@@ -9542,17 +9711,17 @@
       "sections": {
         "continuer": "Continuer",
         "pourCeGroupe": "Pour cette classe",
-        "groupe": "Supports à afficher",
+        "groupe": "Documents à afficher",
         "recents": "Récents",
-        "tousLesSupports": "Tous les supports",
+        "tousLesSupports": "Tous les documents",
         "resultats": "Résultats"
       },
       "vide": {
-        "message": "Aucun support publié pour le moment",
-        "invitation": "Vos enseignants déposeront ici les supports de vos cours."
+        "message": "Aucun document publié pour le moment",
+        "invitation": "Vos enseignants déposeront ici les documents de vos cours."
       },
       "aucunResultat": {
-        "message": "Aucun support ne correspond",
+        "message": "Aucun document ne correspond",
         "invitation": "Essayez un autre mot, ou relâchez les filtres."
       },
       "indisponible": {
@@ -9561,7 +9730,7 @@
         "action": "Réessayer"
       },
       "introuvable": {
-        "message": "Ce support ne vous est pas ouvert",
+        "message": "Ce document ne vous est pas ouvert",
         "invitation": "Il a peut-être été retiré, ou il est réservé à une autre classe. Votre enseignant peut vous le rouvrir."
       },
       "offline": {
@@ -9572,6 +9741,9 @@
         "indisponible": "Hors ligne indisponible"
       },
       "type": {
+        "audio": "Audio",
+        "video": "Vidéo",
+        "lienExterne": "Lien externe",
         "quran": "Coran",
         "texteStructure": "Texte",
         "pdf": "PDF",
@@ -9579,8 +9751,10 @@
         "lecon": "Leçon"
       },
       "detail": {
-        "titre": "Support",
-        "capacites": "Ce que ce support permet",
+        "titre": "Document",
+        "lecture": "Lecture du Coran",
+        "ecole": "École juridique suivie",
+        "capacites": "Ce que ce document permet",
         "niveaux": "Niveaux",
         "sansVersion": "Aucune version publiée\u00a0: rien à ouvrir pour le moment.",
         "apercuIndisponible": "L’aperçu de ce format n’est pas encore disponible dans l’application. Vous pouvez en enregistrer une copie.",
@@ -9597,39 +9771,48 @@
       "message": {
         "copieEnregistree": "Copie enregistrée",
         "copieImpossible": "La copie n’a pas pu être préparée. Réessayez dans un instant.",
-        "telechargementImpossible": "Ce support n’est pas encore disponible hors ligne",
+        "telechargementImpossible": "Ce document n’est pas encore disponible hors ligne",
         "horsLigneNonTelecharge": "Disponible une fois téléchargé ou de retour en ligne",
         "aucunTelechargement": "Aucun fichier à télécharger pour cette version."
       },
       "classe": {
-        "titre": "Choisir un support",
-        "sousTitre": "Le support choisi remplace celui affiché. Le cours continue."
+        "titre": "Choisir un document",
+        "sousTitre": "Le document choisi remplace celui affiché. Le cours continue."
       },
       "rendu": {
+        "sansLecteur": "Ce type de document n'a pas encore de lecteur dans l'application.",
+        "confirmerTitre": "Ce lien quitte l'application",
+        "confirmerPhrase": "Il ouvre un autre site, en dehors de Rewayah Academy. Vous pouvez revenir ici ensuite.",
+        "confirmerOuvrir": "Ouvrir le lien",
+        "confirmerRester": "Rester dans l'application",
+        "ouvrirLien": "Ouvrir le lien",
+        "lienAutreSite": "Ce lien s'ouvre sur un autre site.",
+        "lienSansNavigateur": "Ce lien s'ouvre depuis la version web de l'application.",
+        "lienAbsent": "Ce document n'a pas encore de contenu à ouvrir.",
         "imageInaccessible": "L'image n'a pas pu être chargée pour le moment.",
         "imageIllisible": "Ce fichier image ne peut pas être affiché.",
         "reessayer": "Réessayer",
         "ouvrir": "Ouvrir",
         "ouvrirMushaf": "Ouvrir le mushaf",
         "lienEchec": "Le lien de lecture n'a pas pu être obtenu pour le moment.",
-        "lienIndisponible": "L'ouverture n'est pas disponible pour ce support.",
+        "lienIndisponible": "L'ouverture n'est pas disponible pour ce document.",
         "lienHorsLigne": "L'ouverture pourra se faire quand la connexion reviendra.",
         "lienBloque": "Votre navigateur a bloqué l'ouverture. Autorisez les fenêtres de ce site, puis réessayez."
       },
       "actif": {
-        "indisponibleTitre": "Support présenté pas encore ouvert",
-        "indisponible": "Le suivi du support présenté s'ouvrira au branchement serveur.",
-        "sansDonnees": "le support présenté",
-        "erreur": "Le support présenté n'a pas pu être chargé. Réessayez.",
-        "aucun": "Aucun support présenté",
-        "aucunDetail": "Quand votre enseignant présentera un support, il apparaîtra ici sans rien faire de votre part.",
-        "titre": "Support présenté",
+        "indisponibleTitre": "Document présenté pas encore ouvert",
+        "indisponible": "Le suivi du document présenté s'ouvrira au branchement serveur.",
+        "sansDonnees": "le document présenté",
+        "erreur": "Le document présenté n'a pas pu être chargé. Réessayez.",
+        "aucun": "Aucun document présenté",
+        "aucunDetail": "Quand votre enseignant présentera un document, il apparaîtra ici sans rien faire de votre part.",
+        "titre": "Document présenté",
         "version": "Version {numero}",
         "page": "Page {page}",
-        "ouvrirFiche": "Ouvrir la fiche du support",
+        "ouvrirFiche": "Ouvrir la fiche du document",
         "ouvrirCoran": "Ouvrir dans le lecteur du Coran",
         "retire": "« {titre} » a été retiré",
-        "retireDetail": "Votre enseignant a retiré ce support de la séance. Il n'est plus accessible."
+        "retireDetail": "Votre enseignant a retiré ce document de la séance. Il n'est plus accessible."
       }
     },
     "coran": {
