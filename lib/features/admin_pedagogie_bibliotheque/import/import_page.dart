@@ -912,11 +912,14 @@ class _ImportEtat extends ConsumerState<_Import> {
                 ),
         ),
         Ecart.vLg,
-        LienFleche(
-          key: const ValueKey<String>('import-autre'),
-          libelle: s.autre,
-          alignerEnDebut: true,
-          onPress: _recommencer,
+        Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: LienFleche(
+            key: const ValueKey<String>('import-autre'),
+            libelle: s.autre,
+            alignerEnDebut: true,
+            onPress: _recommencer,
+          ),
         ),
         Ecart.vSm,
         Align(
@@ -1011,11 +1014,14 @@ class _ImportEtat extends ConsumerState<_Import> {
             ],
             if (existante == null && !_depotInactif) ...<Widget>[
               Ecart.vSm,
-              LienFleche(
-                key: const ValueKey<String>('import-fichier-a-la-place'),
-                libelle: f.simple.fichierALaPlace,
-                alignerEnDebut: true,
-                onPress: () => setState(() => _parLien = false),
+              Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: LienFleche(
+                  key: const ValueKey<String>('import-fichier-a-la-place'),
+                  libelle: f.simple.fichierALaPlace,
+                  alignerEnDebut: true,
+                  onPress: () => setState(() => _parLien = false),
+                ),
               ),
             ],
           ] else if (dejaLa)
@@ -1045,14 +1051,17 @@ class _ImportEtat extends ConsumerState<_Import> {
                 !_support.pret &&
                 !_enEnvoi(_support)) ...<Widget>[
               Ecart.vSm,
-              LienFleche(
-                key: const ValueKey<String>('import-lien-a-la-place'),
-                libelle: f.simple.lienALaPlace,
-                alignerEnDebut: true,
-                onPress: () => setState(() {
-                  _parLien = true;
-                  _refus = null;
-                }),
+              Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: LienFleche(
+                  key: const ValueKey<String>('import-lien-a-la-place'),
+                  libelle: f.simple.lienALaPlace,
+                  alignerEnDebut: true,
+                  onPress: () => setState(() {
+                    _parLien = true;
+                    _refus = null;
+                  }),
+                ),
               ),
             ],
           ],
@@ -1290,19 +1299,25 @@ class _ImportEtat extends ConsumerState<_Import> {
         ],
         if (!enEnvoi) ...<Widget>[
           Ecart.vSm,
-          LienFleche(
-            key: const ValueKey<String>('import-choisir-vignette'),
-            libelle: _vignettePosee ? a.remplacerVignette : i.choisirVignette,
-            alignerEnDebut: true,
-            onPress: () => unawaited(_choisirVignette()),
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: LienFleche(
+              key: const ValueKey<String>('import-choisir-vignette'),
+              libelle: _vignettePosee ? a.remplacerVignette : i.choisirVignette,
+              alignerEnDebut: true,
+              onPress: () => unawaited(_choisirVignette()),
+            ),
           ),
           if (_vignettePosee)
-            LienFleche(
-              key: const ValueKey<String>('import-retirer-vignette'),
-              libelle: a.retirerVignette,
-              fleche: false,
-              alignerEnDebut: true,
-              onPress: () => unawaited(_retirerVignette()),
+            Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: LienFleche(
+                key: const ValueKey<String>('import-retirer-vignette'),
+                libelle: a.retirerVignette,
+                fleche: false,
+                alignerEnDebut: true,
+                onPress: () => unawaited(_retirerVignette()),
+              ),
             ),
         ],
       ],
@@ -1439,12 +1454,15 @@ class _ImportEtat extends ConsumerState<_Import> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          LienFleche(
-            key: const ValueKey<String>('import-plus-bascule'),
-            libelle: _plus ? s.moins : s.plus,
-            fleche: false,
-            alignerEnDebut: true,
-            onPress: () => setState(() => _plus = !_plus),
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: LienFleche(
+              key: const ValueKey<String>('import-plus-bascule'),
+              libelle: _plus ? s.moins : s.plus,
+              fleche: false,
+              alignerEnDebut: true,
+              onPress: () => setState(() => _plus = !_plus),
+            ),
           ),
           if (!_plus)
             Text(s.plusAide, key: const ValueKey<String>('import-plus-aide'))
@@ -1522,13 +1540,16 @@ class _ImportEtat extends ConsumerState<_Import> {
               ),
               if (!_enEnvoi(_preuve)) ...<Widget>[
                 Ecart.vSm,
-                LienFleche(
-                  key: const ValueKey<String>('import-choisir-preuve'),
-                  libelle: _preuve.fichier == null
-                      ? d.deposerPreuve
-                      : f.choisirAutre,
-                  alignerEnDebut: true,
-                  onPress: () => unawaited(_deposerPreuve()),
+                Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: LienFleche(
+                    key: const ValueKey<String>('import-choisir-preuve'),
+                    libelle: _preuve.fichier == null
+                        ? d.deposerPreuve
+                        : f.choisirAutre,
+                    alignerEnDebut: true,
+                    onPress: () => unawaited(_deposerPreuve()),
+                  ),
                 ),
               ],
             ],

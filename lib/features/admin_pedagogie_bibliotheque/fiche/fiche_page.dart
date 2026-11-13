@@ -860,19 +860,27 @@ class _Edition extends StatelessWidget {
         ],
         if (!vignetteEnCours) ...<Widget>[
           Ecart.vSm,
-          LienFleche(
-            key: const ValueKey<String>('fiche-ajouter-vignette'),
-            libelle: fiche.aVignette ? a.remplacerVignette : a.ajouterVignette,
-            alignerEnDebut: true,
-            onPress: onAjouterVignette,
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: LienFleche(
+              key: const ValueKey<String>('fiche-ajouter-vignette'),
+              libelle: fiche.aVignette
+                  ? a.remplacerVignette
+                  : a.ajouterVignette,
+              alignerEnDebut: true,
+              onPress: onAjouterVignette,
+            ),
           ),
           if (fiche.aVignette)
-            LienFleche(
-              key: const ValueKey<String>('fiche-retirer-vignette'),
-              libelle: a.retirerVignette,
-              fleche: false,
-              alignerEnDebut: true,
-              onPress: onRetirerVignette,
+            Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: LienFleche(
+                key: const ValueKey<String>('fiche-retirer-vignette'),
+                libelle: a.retirerVignette,
+                fleche: false,
+                alignerEnDebut: true,
+                onPress: onRetirerVignette,
+              ),
             ),
         ],
       ],
@@ -954,14 +962,17 @@ class _Edition extends StatelessWidget {
         Ecart.vLg,
         _vignette(context),
         Ecart.vLg,
-        LienFleche(
-          key: const ValueKey<String>('fiche-plus-bascule'),
-          libelle: plus
-              ? t.admin.bibliotheque.import.simple.moins
-              : t.admin.bibliotheque.import.simple.plus,
-          fleche: false,
-          alignerEnDebut: true,
-          onPress: onPlus,
+        Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: LienFleche(
+            key: const ValueKey<String>('fiche-plus-bascule'),
+            libelle: plus
+                ? t.admin.bibliotheque.import.simple.moins
+                : t.admin.bibliotheque.import.simple.plus,
+            fleche: false,
+            alignerEnDebut: true,
+            onPress: onPlus,
+          ),
         ),
         if (!plus)
           Text(

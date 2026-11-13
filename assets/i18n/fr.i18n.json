@@ -7218,7 +7218,7 @@
         "sansFichierAide": "Rien à déposer pour ce type : renseignez l'adresse du lien, puis poursuivez.",
         "completer": "Compléter le document",
         "sections": {
-          "ressource": "Ressource",
+          "ressource": "Document",
           "fichier": "Fichier",
           "droits": "Droits et accès"
         },

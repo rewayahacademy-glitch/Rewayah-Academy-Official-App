@@ -45216,8 +45216,8 @@ class Traductions$admin$bibliotheque$import$sections$fr {
 
 	// Translations
 
-	/// fr: 'Ressource'
-	String get ressource => 'Ressource';
+	/// fr: 'Document'
+	String get ressource => 'Document';
 
 	/// fr: 'Fichier'
 	String get fichier => 'Fichier';
@@ -55662,7 +55662,7 @@ extension on Traductions {
 			'admin.bibliotheque.import.lienInvalide' => 'Cette adresse n\'est pas acceptée : elle doit commencer par https et mener à un site.',
 			'admin.bibliotheque.import.sansFichierAide' => 'Rien à déposer pour ce type : renseignez l\'adresse du lien, puis poursuivez.',
 			'admin.bibliotheque.import.completer' => 'Compléter le document',
-			'admin.bibliotheque.import.sections.ressource' => 'Ressource',
+			'admin.bibliotheque.import.sections.ressource' => 'Document',
 			'admin.bibliotheque.import.sections.fichier' => 'Fichier',
 			'admin.bibliotheque.import.sections.droits' => 'Droits et accès',
 			'admin.bibliotheque.import.champs.titre' => 'Titre',

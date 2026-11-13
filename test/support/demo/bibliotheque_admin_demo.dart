@@ -82,7 +82,7 @@ class BibliothequeAdminDemo implements PortBibliothequeAdmin {
   CapacitesBibliotheque droitsServeur;
 
   /// Le delai simule d'un pas de depot.
-  final Duration pas;
+  Duration pas;
 
   /// Si non nul, le prochain depot echoue avec cette cause (puis se remet a
   /// nul).
