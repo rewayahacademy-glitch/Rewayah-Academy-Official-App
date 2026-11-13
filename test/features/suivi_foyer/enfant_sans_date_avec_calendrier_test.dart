@@ -16,7 +16,6 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/suivi/ma_progression.dart';
-import 'package:rewayah_academy/core/suivi/port_suivi_pedagogique.dart';
 import 'package:rewayah_academy/features/suivi_eleve/suivi_eleve_page.dart';
 
 import '../../router/support_routeur.dart';
