@@ -1036,6 +1036,39 @@ void main() {
       expect(de(RayonPlanche.pourAllerPlusLoin), <String>['loin1', 'loin2']);
     });
 
+    test('a `ordre` egal, l\'ordre rendu par le serveur est garde (stable, '
+        'meme au-dela de la taille ou un tri non stable melange)', () {
+      LibraryResource r(String id, int ordre) => LibraryResource(
+        id: id,
+        title: id,
+        shortTitle: id,
+        resourceType: TypeRessource.pdf,
+        language: 'fr',
+        category: 'lecture',
+        accessPolicy: PolitiqueAcces.publique,
+        offlinePolicy: PolitiqueOffline.jamais,
+        ordre: ordre,
+        currentVersionId: 'v-$id',
+      );
+      // 100 documents, tous au meme `ordre` sauf un, rendus dans un ordre
+      // volontairement non alphabetique.
+      final List<String> rendus = <String>[
+        for (int i = 99; i >= 0; i--) 'doc${i.toString().padLeft(3, '0')}',
+      ];
+      final List<LibraryResource> ressources = <LibraryResource>[
+        for (final String id in rendus) r(id, 5),
+        r('premier', 1),
+      ];
+      final List<String> ids = <String>[
+        for (final DocumentPlanche d in documentsDepuisCatalogue(
+          ressources,
+          avecCoran: false,
+        ))
+          d.id,
+      ];
+      expect(ids, <String>['premier', ...rendus]);
+    });
+
     testWidgets('les intitules des rayons sont ceux du serveur '
         '(PortCatalogue.rayons())', (WidgetTester tester) async {
       await monterApprendre(

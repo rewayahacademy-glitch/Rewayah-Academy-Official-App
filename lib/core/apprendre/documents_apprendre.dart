@@ -109,13 +109,28 @@ List<DocumentPlanche> documentsDepuisCatalogue(
 }) {
   return <DocumentPlanche>[
     if (avecCoran) documentCoran(),
-    // Dans l'ordre que la direction a donne (`ordre`, croissant ; stable).
-    for (final LibraryResource r
-        in <LibraryResource>[...ressources]..sort(
-          (LibraryResource a, LibraryResource b) => a.ordre.compareTo(b.ordre),
-        ))
+    // Dans l'ordre que la direction a donne (`ordre`, croissant ; a `ordre`
+    // egal, l'ordre de lecture est garde : voir [_parOrdre]).
+    for (final LibraryResource r in _parOrdre(ressources))
       if (r.publiee && r.resourceType != TypeRessource.quran)
         _documentDe(r, RayonPlanche.documentsDesCours),
+  ];
+}
+
+/// Les ressources par `ordre` croissant, **stable** : a `ordre` egal elles
+/// gardent l'ordre ou le serveur les a rendues. `List.sort` de Dart n'est pas
+/// stable (au-dela d'une trentaine d'elements), le rang d'origine departage
+/// donc explicitement.
+List<LibraryResource> _parOrdre(List<LibraryResource> ressources) {
+  final List<(int, LibraryResource)> rangees =
+      <(int, LibraryResource)>[
+        for (int i = 0; i < ressources.length; i++) (i, ressources[i]),
+      ]..sort(((int, LibraryResource) a, (int, LibraryResource) b) {
+        final int ordre = a.$2.ordre.compareTo(b.$2.ordre);
+        return ordre != 0 ? ordre : a.$1.compareTo(b.$1);
+      });
+  return <LibraryResource>[
+    for (final (int, LibraryResource) r in rangees) r.$2,
   ];
 }
 
