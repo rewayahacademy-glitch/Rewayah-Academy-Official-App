@@ -43,7 +43,7 @@ List<Widget> sectionReglesPriere({
   }
   final r = t.priere.regles;
   String enMinutes(int n) => LibellesGroupe.valeurSeule(r.unite(n: '$n'));
-  String enJours(int n) => LibellesGroupe.valeurSeule(r.uniteJours(n: '$n'));
+  String enJours(int n) => LibellesGroupe.valeurSeule(r.uniteJours(n: n));
   String refus(String message) => r.erreurEcriture(message: message);
 
   ConfigLigneEntiere ligne({

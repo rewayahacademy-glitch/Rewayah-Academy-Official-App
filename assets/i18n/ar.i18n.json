@@ -9900,7 +9900,7 @@
       "umm_al_qura": "أم القرى (مكة المكرمة)",
       "dubai": "الخليج",
       "moon_sighting_committee": "لجنة رؤية الهلال",
-      "north_america": "أمريكا الشمالية (ISNA)",
+      "north_america": "أمريكا الشمالية (الجمعية الإسلامية)",
       "kuwait": "الكويت",
       "qatar": "قطر",
       "singapore": "سنغافورة",
@@ -9943,12 +9943,12 @@
       "incoherencePays": "⁨{prenom}⁩: بلد الحساب (⁨{detail}⁩) لا يطابق مكان الصلاة.",
     "incoherencePaysFuseau": "⁨{prenom}⁩: بلد الحساب ومنطقته الزمنية لا يتطابقان (⁨{detail}⁩).",
       "feuille": {
-        "titre": "مكان وأوقات صلاة ⁨{prenom}⁩",
+        "titre": "مكان وأوقات صلاة ⁨{dePrenom}⁩",
         "nomLieu": "اسم المكان",
         "latitude": "خط العرض",
         "longitude": "خط الطول",
         "coordonneesAide": "بالدرجات العشرية مع نقطة (مثلًا 9.6412 و -13.5784).",
-        "fuseau": "المنطقة الزمنية (مثلًا Africa/Conakry)",
+        "fuseau": "المنطقة الزمنية (مثلًا ⁨{exemple}⁩)",
         "methode": "طريقة الحساب",
         "methodeEcole": "طريقة المدرسة",
         "ecole": "مذهب العصر",
@@ -9980,7 +9980,7 @@
       "libres": "ساعات البدء بلا صلاة في ذلك اليوم: ⁨{heures}⁩.",
       "libresAucune": "لا توجد ساعة بدء في ذلك اليوم تتفادى كل صلوات السنة.",
       "libresInconnues": "لا يمكن تحديد الساعات الخالية من الصلاة لهذا المعلم.",
-      "heureCourte": "⁨{h}⁩:00"
+      "heureCourte": "⁨{h}⁩ س"
     },
     "regles": {
       "section": "الصلاة",
@@ -10004,7 +10004,14 @@
       "lieux": "أماكن صلاة المعلمين",
       "lieuxDetail": "مكان كل معلم، وصلاة الجمعة، وأوقات اليوم.",
       "unite": "⁨{n}⁩ د",
-      "uniteJours": "⁨{n}⁩ يومًا",
+      "uniteJours": {
+        "zero": "⁨{n}⁩ يوم",
+        "one": "يوم واحد",
+        "two": "يومان",
+        "few": "⁨{n}⁩ أيام",
+        "many": "⁨{n}⁩ يومًا",
+        "other": "⁨{n}⁩ يوم"
+      },
       "choisir": "حفظ",
       "erreurEcriture": "لم يُحفظ الإعداد (⁨{message}⁩). أعد المحاولة بعد قليل."
     }

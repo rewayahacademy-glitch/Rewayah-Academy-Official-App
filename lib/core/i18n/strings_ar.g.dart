@@ -7807,7 +7807,7 @@ class _Traductions$priere$methodes$ar extends Traductions$priere$methodes$fr {
 	@override String get umm_al_qura => 'أم القرى (مكة المكرمة)';
 	@override String get dubai => 'الخليج';
 	@override String get moon_sighting_committee => 'لجنة رؤية الهلال';
-	@override String get north_america => 'أمريكا الشمالية (ISNA)';
+	@override String get north_america => 'أمريكا الشمالية (الجمعية الإسلامية)';
 	@override String get kuwait => 'الكويت';
 	@override String get qatar => 'قطر';
 	@override String get singapore => 'سنغافورة';
@@ -7891,7 +7891,7 @@ class _Traductions$priere$classe$ar extends Traductions$priere$classe$fr {
 	@override String libres({required Object heures}) => 'ساعات البدء بلا صلاة في ذلك اليوم: ⁨${heures}⁩.';
 	@override String get libresAucune => 'لا توجد ساعة بدء في ذلك اليوم تتفادى كل صلوات السنة.';
 	@override String get libresInconnues => 'لا يمكن تحديد الساعات الخالية من الصلاة لهذا المعلم.';
-	@override String heureCourte({required Object h}) => '⁨${h}⁩:00';
+	@override String heureCourte({required Object h}) => '⁨${h}⁩ س';
 }
 
 // Path: priere.regles
@@ -7922,7 +7922,14 @@ class _Traductions$priere$regles$ar extends Traductions$priere$regles$fr {
 	@override String get lieux => 'أماكن صلاة المعلمين';
 	@override String get lieuxDetail => 'مكان كل معلم، وصلاة الجمعة، وأوقات اليوم.';
 	@override String unite({required Object n}) => '⁨${n}⁩ د';
-	@override String uniteJours({required Object n}) => '⁨${n}⁩ يومًا';
+	@override String uniteJours({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: '⁨${n}⁩ يوم',
+		one: 'يوم واحد',
+		two: 'يومان',
+		few: '⁨${n}⁩ أيام',
+		many: '⁨${n}⁩ يومًا',
+		other: '⁨${n}⁩ يوم',
+	);
 	@override String get choisir => 'حفظ';
 	@override String erreurEcriture({required Object message}) => 'لم يُحفظ الإعداد (⁨${message}⁩). أعد المحاولة بعد قليل.';
 }
@@ -17229,12 +17236,12 @@ class _Traductions$priere$direction$feuille$ar extends Traductions$priere$direct
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String titre({required Object prenom}) => 'مكان وأوقات صلاة ⁨${prenom}⁩';
+	@override String titre({required Object dePrenom}) => 'مكان وأوقات صلاة ⁨${dePrenom}⁩';
 	@override String get nomLieu => 'اسم المكان';
 	@override String get latitude => 'خط العرض';
 	@override String get longitude => 'خط الطول';
 	@override String get coordonneesAide => 'بالدرجات العشرية مع نقطة (مثلًا 9.6412 و -13.5784).';
-	@override String get fuseau => 'المنطقة الزمنية (مثلًا Africa/Conakry)';
+	@override String fuseau({required Object exemple}) => 'المنطقة الزمنية (مثلًا ⁨${exemple}⁩)';
 	@override String get methode => 'طريقة الحساب';
 	@override String get methodeEcole => 'طريقة المدرسة';
 	@override String get ecole => 'مذهب العصر';
@@ -32004,7 +32011,7 @@ extension on TraductionsAr {
 			'priere.methodes.umm_al_qura' => 'أم القرى (مكة المكرمة)',
 			'priere.methodes.dubai' => 'الخليج',
 			'priere.methodes.moon_sighting_committee' => 'لجنة رؤية الهلال',
-			'priere.methodes.north_america' => 'أمريكا الشمالية (ISNA)',
+			'priere.methodes.north_america' => 'أمريكا الشمالية (الجمعية الإسلامية)',
 			'priere.methodes.kuwait' => 'الكويت',
 			'priere.methodes.qatar' => 'قطر',
 			'priere.methodes.singapore' => 'سنغافورة',
@@ -32040,12 +32047,12 @@ extension on TraductionsAr {
 			'priere.direction.incoherenceFuseauLieu' => ({required Object prenom, required Object detail}) => '⁨${prenom}⁩: المنطقة الزمنية لمكان الصلاة لا تطابق خط طوله (⁨${detail}⁩).',
 			'priere.direction.incoherencePays' => ({required Object prenom, required Object detail}) => '⁨${prenom}⁩: بلد الحساب (⁨${detail}⁩) لا يطابق مكان الصلاة.',
 			'priere.direction.incoherencePaysFuseau' => ({required Object prenom, required Object detail}) => '⁨${prenom}⁩: بلد الحساب ومنطقته الزمنية لا يتطابقان (⁨${detail}⁩).',
-			'priere.direction.feuille.titre' => ({required Object prenom}) => 'مكان وأوقات صلاة ⁨${prenom}⁩',
+			'priere.direction.feuille.titre' => ({required Object dePrenom}) => 'مكان وأوقات صلاة ⁨${dePrenom}⁩',
 			'priere.direction.feuille.nomLieu' => 'اسم المكان',
 			'priere.direction.feuille.latitude' => 'خط العرض',
 			'priere.direction.feuille.longitude' => 'خط الطول',
 			'priere.direction.feuille.coordonneesAide' => 'بالدرجات العشرية مع نقطة (مثلًا 9.6412 و -13.5784).',
-			'priere.direction.feuille.fuseau' => 'المنطقة الزمنية (مثلًا Africa/Conakry)',
+			'priere.direction.feuille.fuseau' => ({required Object exemple}) => 'المنطقة الزمنية (مثلًا ⁨${exemple}⁩)',
 			'priere.direction.feuille.methode' => 'طريقة الحساب',
 			'priere.direction.feuille.methodeEcole' => 'طريقة المدرسة',
 			'priere.direction.feuille.ecole' => 'مذهب العصر',
@@ -32074,7 +32081,7 @@ extension on TraductionsAr {
 			'priere.classe.libres' => ({required Object heures}) => 'ساعات البدء بلا صلاة في ذلك اليوم: ⁨${heures}⁩.',
 			'priere.classe.libresAucune' => 'لا توجد ساعة بدء في ذلك اليوم تتفادى كل صلوات السنة.',
 			'priere.classe.libresInconnues' => 'لا يمكن تحديد الساعات الخالية من الصلاة لهذا المعلم.',
-			'priere.classe.heureCourte' => ({required Object h}) => '⁨${h}⁩:00',
+			'priere.classe.heureCourte' => ({required Object h}) => '⁨${h}⁩ س',
 			'priere.regles.section' => 'الصلاة',
 			'priere.regles.intro' => 'يضع الخادم استراحة صلاة المعلم عندما تدخل صلاة أثناء الحصة. تسري هذه الإعدادات على المدرسة كلها.',
 			'priere.regles.methode' => 'طريقة الحساب',
@@ -32096,7 +32103,7 @@ extension on TraductionsAr {
 			'priere.regles.lieux' => 'أماكن صلاة المعلمين',
 			'priere.regles.lieuxDetail' => 'مكان كل معلم، وصلاة الجمعة، وأوقات اليوم.',
 			'priere.regles.unite' => ({required Object n}) => '⁨${n}⁩ د',
-			'priere.regles.uniteJours' => ({required Object n}) => '⁨${n}⁩ يومًا',
+			'priere.regles.uniteJours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: '⁨${n}⁩ يوم', one: 'يوم واحد', two: 'يومان', few: '⁨${n}⁩ أيام', many: '⁨${n}⁩ يومًا', other: '⁨${n}⁩ يوم', ), 
 			'priere.regles.choisir' => 'حفظ',
 			'priere.regles.erreurEcriture' => ({required Object message}) => 'لم يُحفظ الإعداد (⁨${message}⁩). أعد المحاولة بعد قليل.',
 			'appareils.titre' => 'الأجهزة',

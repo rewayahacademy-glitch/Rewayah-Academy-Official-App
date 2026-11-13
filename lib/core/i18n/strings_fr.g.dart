@@ -1660,7 +1660,7 @@ class Traductions$priere$fr {
 	String pauseA({required Object heure}) => 'Pause de prière à ${heure}';
 
 	/// fr: 'Heure approchée : à cette saison, le soleil ne descend pas assez bas pour que l'angle se définisse.'
-	String get approchee => 'Heure approchée : à cette saison, le soleil ne descend pas assez bas pour que l\'angle se définisse.';
+	String get approchee => 'Heure approchée : à cette saison, le soleil ne descend pas assez bas pour que l\'angle se définisse.';
 
 	late final Traductions$priere$methodes$fr methodes = Traductions$priere$methodes$fr.internal(_root);
 	late final Traductions$priere$ecoles$fr ecoles = Traductions$priere$ecoles$fr.internal(_root);
@@ -8040,7 +8040,7 @@ class Traductions$priere$enseignant$fr {
 	String get ligneDetail => 'Voir vos heures du jour et les ajuster';
 
 	/// fr: 'Votre lieu de prière n'est pas encore posé. La direction le pose : vos heures apparaîtront ici.'
-	String get vide => 'Votre lieu de prière n\'est pas encore posé. La direction le pose : vos heures apparaîtront ici.';
+	String get vide => 'Votre lieu de prière n\'est pas encore posé. La direction le pose : vos heures apparaîtront ici.';
 
 	/// fr: 'Vos heures de prière ne se sont pas affichées. Il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
 	String get erreur => 'Vos heures de prière ne se sont pas affichées. Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
@@ -8085,10 +8085,10 @@ class Traductions$priere$direction$fr {
 	String get titre => 'Lieux de prière';
 
 	/// fr: 'Le lieu de prière de chaque enseignant fixe ses heures. Seuls l'enseignant et la direction le voient : les élèves et les tuteurs ne lisent que l'heure de la pause.'
-	String get intro => 'Le lieu de prière de chaque enseignant fixe ses heures. Seuls l\'enseignant et la direction le voient : les élèves et les tuteurs ne lisent que l\'heure de la pause.';
+	String get intro => 'Le lieu de prière de chaque enseignant fixe ses heures. Seuls l\'enseignant et la direction le voient : les élèves et les tuteurs ne lisent que l\'heure de la pause.';
 
 	/// fr: 'Aucun lieu : pas de pause de prière'
-	String get sansLieu => 'Aucun lieu : pas de pause de prière';
+	String get sansLieu => 'Aucun lieu : pas de pause de prière';
 
 	/// fr: 'Aucun enseignant actif pour le moment.'
 	String get vide => 'Aucun enseignant actif pour le moment.';
@@ -8103,19 +8103,19 @@ class Traductions$priere$direction$fr {
 	String get incoherenceTitre => 'À vérifier';
 
 	/// fr: 'Signalement seulement : rien n'est corrigé automatiquement.'
-	String get incoherenceAide => 'Signalement seulement : rien n\'est corrigé automatiquement.';
+	String get incoherenceAide => 'Signalement seulement : rien n\'est corrigé automatiquement.';
 
 	/// fr: '{prenom} : le fuseau du compte et celui du lieu de prière diffèrent ({detail}).'
-	String incoherenceFuseauCompte({required Object prenom, required Object detail}) => '${prenom} : le fuseau du compte et celui du lieu de prière diffèrent (${detail}).';
+	String incoherenceFuseauCompte({required Object prenom, required Object detail}) => '${prenom} : le fuseau du compte et celui du lieu de prière diffèrent (${detail}).';
 
 	/// fr: '{prenom} : le fuseau du lieu de prière ne correspond pas à sa longitude ({detail}).'
-	String incoherenceFuseauLieu({required Object prenom, required Object detail}) => '${prenom} : le fuseau du lieu de prière ne correspond pas à sa longitude (${detail}).';
+	String incoherenceFuseauLieu({required Object prenom, required Object detail}) => '${prenom} : le fuseau du lieu de prière ne correspond pas à sa longitude (${detail}).';
 
 	/// fr: '{prenom} : le pays du compte ({detail}) ne correspond pas au lieu de prière.'
-	String incoherencePays({required Object prenom, required Object detail}) => '${prenom} : le pays du compte (${detail}) ne correspond pas au lieu de prière.';
+	String incoherencePays({required Object prenom, required Object detail}) => '${prenom} : le pays du compte (${detail}) ne correspond pas au lieu de prière.';
 
 	/// fr: '{prenom} : le pays du compte et son fuseau ne se correspondent pas ({detail}).'
-	String incoherencePaysFuseau({required Object prenom, required Object detail}) => '${prenom} : le pays du compte et son fuseau ne se correspondent pas (${detail}).';
+	String incoherencePaysFuseau({required Object prenom, required Object detail}) => '${prenom} : le pays du compte et son fuseau ne se correspondent pas (${detail}).';
 
 	late final Traductions$priere$direction$feuille$fr feuille = Traductions$priere$direction$feuille$fr.internal(_root);
 }
@@ -8132,10 +8132,10 @@ class Traductions$priere$classe$fr {
 	String get titre => 'Prières et créneau';
 
 	/// fr: 'Ce que ce créneau croise, sur les 12 mois à venir, pour l'enseignant de la classe. C'est un avertissement : rien n'est bloqué, et la pause de prière protège de toute façon l'enseignant.'
-	String get intro => 'Ce que ce créneau croise, sur les 12 mois à venir, pour l\'enseignant de la classe. C\'est un avertissement : rien n\'est bloqué, et la pause de prière protège de toute façon l\'enseignant.';
+	String get intro => 'Ce que ce créneau croise, sur les 12 mois à venir, pour l\'enseignant de la classe. C\'est un avertissement : rien n\'est bloqué, et la pause de prière protège de toute façon l\'enseignant.';
 
 	/// fr: 'L'enseignant de cette classe n'a pas de lieu de prière : aucune pause de prière n'est prévue.'
-	String get sansLieu => 'L\'enseignant de cette classe n\'a pas de lieu de prière : aucune pause de prière n\'est prévue.';
+	String get sansLieu => 'L\'enseignant de cette classe n\'a pas de lieu de prière : aucune pause de prière n\'est prévue.';
 
 	/// fr: 'Les prières de ce créneau ne se sont pas affichées. Il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
 	String get erreur => 'Les prières de ce créneau ne se sont pas affichées. Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
@@ -8147,16 +8147,16 @@ class Traductions$priere$classe$fr {
 	String get aucun => 'Ce créneau ne croise aucune prière de l\'enseignant sur les 12 mois.';
 
 	/// fr: '{priere} : de {du} à {au}, {seances} séances, dont {pause} avec une pause de prière et {apres} où l'enseignant prie après le cours.'
-	String croise({required Object priere, required Object du, required Object au, required Object seances, required Object pause, required Object apres}) => '${priere} : de ${du} à ${au}, ${seances} séances, dont ${pause} avec une pause de prière et ${apres} où l\'enseignant prie après le cours.';
+	String croise({required Object priere, required Object du, required Object au, required Object seances, required Object pause, required Object apres}) => '${priere} : de ${du} à ${au}, ${seances} séances, dont ${pause} avec une pause de prière et ${apres} où l\'enseignant prie après le cours.';
 
 	/// fr: 'Pour une partie de l'année, le soleil ne se lève ou ne se couche pas : aucune pause de prière n'est calculée.'
-	String get indefini => 'Pour une partie de l\'année, le soleil ne se lève ou ne se couche pas : aucune pause de prière n\'est calculée.';
+	String get indefini => 'Pour une partie de l\'année, le soleil ne se lève ou ne se couche pas : aucune pause de prière n\'est calculée.';
 
 	/// fr: 'Ce créneau chevauche la prière du vendredi de l'enseignant ({debut} à {fin}) : {n} séances de l'année. Avertissement fort.'
-	String vendredi({required Object debut, required Object fin, required Object n}) => 'Ce créneau chevauche la prière du vendredi de l\'enseignant (${debut} à ${fin}) : ${n} séances de l\'année. Avertissement fort.';
+	String vendredi({required Object debut, required Object fin, required Object n}) => 'Ce créneau chevauche la prière du vendredi de l\'enseignant (${debut} à ${fin}) : ${n} séances de l\'année. Avertissement fort.';
 
 	/// fr: 'Heures de début sans prière ce jour-là : {heures}.'
-	String libres({required Object heures}) => 'Heures de début sans prière ce jour-là : ${heures}.';
+	String libres({required Object heures}) => 'Heures de début sans prière ce jour-là : ${heures}.';
 
 	/// fr: 'Aucune heure de début ce jour-là n'évite toutes les prières de l'année.'
 	String get libresAucune => 'Aucune heure de début ce jour-là n\'évite toutes les prières de l\'année.';
@@ -8204,7 +8204,7 @@ class Traductions$priere$regles$fr {
 	String get pauseRamadan => 'Pause du Maghrib pendant le Ramadan';
 
 	/// fr: 'La rupture du jeûne : de 5 à 20 minutes, par pas de 5.'
-	String get pauseRamadanDetail => 'La rupture du jeûne : de 5 à 20 minutes, par pas de 5.';
+	String get pauseRamadanDetail => 'La rupture du jeûne : de 5 à 20 minutes, par pas de 5.';
 
 	/// fr: 'Ramadan en cours'
 	String get ramadan => 'Ramadan en cours';
@@ -8239,8 +8239,11 @@ class Traductions$priere$regles$fr {
 	/// fr: '{n} min'
 	String unite({required Object n}) => '${n} min';
 
-	/// fr: '{n} jours'
-	String uniteJours({required Object n}) => '${n} jours';
+	/// fr: '(one) {{n} jour} (other) {{n} jours}'
+	String uniteJours({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} jour',
+		other: '${n} jours',
+	);
 
 	/// fr: 'Enregistrer'
 	String get choisir => 'Enregistrer';
@@ -25701,8 +25704,8 @@ class Traductions$priere$direction$feuille$fr {
 
 	// Translations
 
-	/// fr: 'Lieu et heures de prière de {prenom}'
-	String titre({required Object prenom}) => 'Lieu et heures de prière de ${prenom}';
+	/// fr: 'Lieu et heures de prière {dePrenom}'
+	String titre({required Object dePrenom}) => 'Lieu et heures de prière ${dePrenom}';
 
 	/// fr: 'Nom du lieu'
 	String get nomLieu => 'Nom du lieu';
@@ -25716,8 +25719,8 @@ class Traductions$priere$direction$feuille$fr {
 	/// fr: 'En degrés décimaux, avec un point (par exemple 9.6412 et -13.5784).'
 	String get coordonneesAide => 'En degrés décimaux, avec un point (par exemple 9.6412 et -13.5784).';
 
-	/// fr: 'Fuseau (par exemple Africa/Conakry)'
-	String get fuseau => 'Fuseau (par exemple Africa/Conakry)';
+	/// fr: 'Fuseau (par exemple {exemple})'
+	String fuseau({required Object exemple}) => 'Fuseau (par exemple ${exemple})';
 
 	/// fr: 'Méthode de calcul'
 	String get methode => 'Méthode de calcul';
@@ -51063,7 +51066,7 @@ extension on Traductions {
 			'priere.reglagesAbsents' => 'L\'enseignant n\'a pas encore réglé ses horaires de prière.',
 			'priere.pauseDePriere' => 'Pause de prière',
 			'priere.pauseA' => ({required Object heure}) => 'Pause de prière à ${heure}',
-			'priere.approchee' => 'Heure approchée : à cette saison, le soleil ne descend pas assez bas pour que l\'angle se définisse.',
+			'priere.approchee' => 'Heure approchée : à cette saison, le soleil ne descend pas assez bas pour que l\'angle se définisse.',
 			'priere.methodes.muslim_world_league' => 'Ligue islamique mondiale',
 			'priere.methodes.egyptian' => 'Autorité générale égyptienne',
 			'priere.methodes.karachi' => 'Université des sciences islamiques de Karachi',
@@ -51083,7 +51086,7 @@ extension on Traductions {
 			'priere.enseignant.intro' => 'Les heures du jour, calculées par Rewayah pour votre lieu. Vous pouvez ajuster chaque prière de 30 minutes au plus.',
 			'priere.enseignant.ligne' => 'Mes heures de prière',
 			'priere.enseignant.ligneDetail' => 'Voir vos heures du jour et les ajuster',
-			'priere.enseignant.vide' => 'Votre lieu de prière n\'est pas encore posé. La direction le pose : vos heures apparaîtront ici.',
+			'priere.enseignant.vide' => 'Votre lieu de prière n\'est pas encore posé. La direction le pose : vos heures apparaîtront ici.',
 			'priere.enseignant.erreur' => 'Vos heures de prière ne se sont pas affichées. Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'priere.enseignant.aucunAjustement' => 'Aucun ajustement',
 			'priere.enseignant.plus' => ({required Object minutes}) => '${minutes} min en plus',
@@ -51095,23 +51098,23 @@ extension on Traductions {
 			'priere.enseignant.unite' => ({required Object n}) => '${n} min',
 			'priere.direction.onglet' => 'Prière',
 			'priere.direction.titre' => 'Lieux de prière',
-			'priere.direction.intro' => 'Le lieu de prière de chaque enseignant fixe ses heures. Seuls l\'enseignant et la direction le voient : les élèves et les tuteurs ne lisent que l\'heure de la pause.',
-			'priere.direction.sansLieu' => 'Aucun lieu : pas de pause de prière',
+			'priere.direction.intro' => 'Le lieu de prière de chaque enseignant fixe ses heures. Seuls l\'enseignant et la direction le voient : les élèves et les tuteurs ne lisent que l\'heure de la pause.',
+			'priere.direction.sansLieu' => 'Aucun lieu : pas de pause de prière',
 			'priere.direction.vide' => 'Aucun enseignant actif pour le moment.',
 			'priere.direction.erreur' => 'Les lieux de prière ne se sont pas affichés. Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'priere.direction.vendredi' => 'Assiste à la prière du vendredi',
 			'priere.direction.incoherenceTitre' => 'À vérifier',
-			'priere.direction.incoherenceAide' => 'Signalement seulement : rien n\'est corrigé automatiquement.',
-			'priere.direction.incoherenceFuseauCompte' => ({required Object prenom, required Object detail}) => '${prenom} : le fuseau du compte et celui du lieu de prière diffèrent (${detail}).',
-			'priere.direction.incoherenceFuseauLieu' => ({required Object prenom, required Object detail}) => '${prenom} : le fuseau du lieu de prière ne correspond pas à sa longitude (${detail}).',
-			'priere.direction.incoherencePays' => ({required Object prenom, required Object detail}) => '${prenom} : le pays du compte (${detail}) ne correspond pas au lieu de prière.',
-			'priere.direction.incoherencePaysFuseau' => ({required Object prenom, required Object detail}) => '${prenom} : le pays du compte et son fuseau ne se correspondent pas (${detail}).',
-			'priere.direction.feuille.titre' => ({required Object prenom}) => 'Lieu et heures de prière de ${prenom}',
+			'priere.direction.incoherenceAide' => 'Signalement seulement : rien n\'est corrigé automatiquement.',
+			'priere.direction.incoherenceFuseauCompte' => ({required Object prenom, required Object detail}) => '${prenom} : le fuseau du compte et celui du lieu de prière diffèrent (${detail}).',
+			'priere.direction.incoherenceFuseauLieu' => ({required Object prenom, required Object detail}) => '${prenom} : le fuseau du lieu de prière ne correspond pas à sa longitude (${detail}).',
+			'priere.direction.incoherencePays' => ({required Object prenom, required Object detail}) => '${prenom} : le pays du compte (${detail}) ne correspond pas au lieu de prière.',
+			'priere.direction.incoherencePaysFuseau' => ({required Object prenom, required Object detail}) => '${prenom} : le pays du compte et son fuseau ne se correspondent pas (${detail}).',
+			'priere.direction.feuille.titre' => ({required Object dePrenom}) => 'Lieu et heures de prière ${dePrenom}',
 			'priere.direction.feuille.nomLieu' => 'Nom du lieu',
 			'priere.direction.feuille.latitude' => 'Latitude',
 			'priere.direction.feuille.longitude' => 'Longitude',
 			'priere.direction.feuille.coordonneesAide' => 'En degrés décimaux, avec un point (par exemple 9.6412 et -13.5784).',
-			'priere.direction.feuille.fuseau' => 'Fuseau (par exemple Africa/Conakry)',
+			'priere.direction.feuille.fuseau' => ({required Object exemple}) => 'Fuseau (par exemple ${exemple})',
 			'priere.direction.feuille.methode' => 'Méthode de calcul',
 			'priere.direction.feuille.methodeEcole' => 'Celle de l\'école',
 			'priere.direction.feuille.ecole' => 'École pour l\'Asr',
@@ -51129,15 +51132,15 @@ extension on Traductions {
 			'priere.direction.feuille.invalide' => 'Vérifiez le nom du lieu, les coordonnées, le fuseau et la plage du vendredi.',
 			'priere.direction.feuille.erreurEnregistrement' => 'Le lieu n\'a pas été enregistré. Il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah, ou qu\'une valeur soit refusée. Réessayez dans un instant.',
 			'priere.classe.titre' => 'Prières et créneau',
-			'priere.classe.intro' => 'Ce que ce créneau croise, sur les 12 mois à venir, pour l\'enseignant de la classe. C\'est un avertissement : rien n\'est bloqué, et la pause de prière protège de toute façon l\'enseignant.',
-			'priere.classe.sansLieu' => 'L\'enseignant de cette classe n\'a pas de lieu de prière : aucune pause de prière n\'est prévue.',
+			'priere.classe.intro' => 'Ce que ce créneau croise, sur les 12 mois à venir, pour l\'enseignant de la classe. C\'est un avertissement : rien n\'est bloqué, et la pause de prière protège de toute façon l\'enseignant.',
+			'priere.classe.sansLieu' => 'L\'enseignant de cette classe n\'a pas de lieu de prière : aucune pause de prière n\'est prévue.',
 			'priere.classe.erreur' => 'Les prières de ce créneau ne se sont pas affichées. Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'priere.classe.creneau' => ({required Object jour, required Object heure, required Object duree}) => '${jour}, ${heure} h, ${duree} min',
 			'priere.classe.aucun' => 'Ce créneau ne croise aucune prière de l\'enseignant sur les 12 mois.',
-			'priere.classe.croise' => ({required Object priere, required Object du, required Object au, required Object seances, required Object pause, required Object apres}) => '${priere} : de ${du} à ${au}, ${seances} séances, dont ${pause} avec une pause de prière et ${apres} où l\'enseignant prie après le cours.',
-			'priere.classe.indefini' => 'Pour une partie de l\'année, le soleil ne se lève ou ne se couche pas : aucune pause de prière n\'est calculée.',
-			'priere.classe.vendredi' => ({required Object debut, required Object fin, required Object n}) => 'Ce créneau chevauche la prière du vendredi de l\'enseignant (${debut} à ${fin}) : ${n} séances de l\'année. Avertissement fort.',
-			'priere.classe.libres' => ({required Object heures}) => 'Heures de début sans prière ce jour-là : ${heures}.',
+			'priere.classe.croise' => ({required Object priere, required Object du, required Object au, required Object seances, required Object pause, required Object apres}) => '${priere} : de ${du} à ${au}, ${seances} séances, dont ${pause} avec une pause de prière et ${apres} où l\'enseignant prie après le cours.',
+			'priere.classe.indefini' => 'Pour une partie de l\'année, le soleil ne se lève ou ne se couche pas : aucune pause de prière n\'est calculée.',
+			'priere.classe.vendredi' => ({required Object debut, required Object fin, required Object n}) => 'Ce créneau chevauche la prière du vendredi de l\'enseignant (${debut} à ${fin}) : ${n} séances de l\'année. Avertissement fort.',
+			'priere.classe.libres' => ({required Object heures}) => 'Heures de début sans prière ce jour-là : ${heures}.',
 			'priere.classe.libresAucune' => 'Aucune heure de début ce jour-là n\'évite toutes les prières de l\'année.',
 			'priere.classe.libresInconnues' => 'Les heures sans prière ne peuvent pas être dites pour cet enseignant.',
 			'priere.classe.heureCourte' => ({required Object h}) => '${h} h',
@@ -51150,7 +51153,7 @@ extension on Traductions {
 			'priere.regles.pause' => 'Durée de la pause de prière',
 			'priere.regles.pauseDetail' => 'De 5 à 20 minutes, par pas de 5.',
 			'priere.regles.pauseRamadan' => 'Pause du Maghrib pendant le Ramadan',
-			'priere.regles.pauseRamadanDetail' => 'La rupture du jeûne : de 5 à 20 minutes, par pas de 5.',
+			'priere.regles.pauseRamadanDetail' => 'La rupture du jeûne : de 5 à 20 minutes, par pas de 5.',
 			'priere.regles.ramadan' => 'Ramadan en cours',
 			'priere.regles.ramadanDetail' => 'En attendant le calendrier de l\'école, la direction le pose à la main.',
 			'priere.regles.margeDebut' => 'Marge au début',
@@ -51162,7 +51165,7 @@ extension on Traductions {
 			'priere.regles.lieux' => 'Lieux de prière des enseignants',
 			'priere.regles.lieuxDetail' => 'Le lieu de chaque enseignant, la prière du vendredi, les heures du jour.',
 			'priere.regles.unite' => ({required Object n}) => '${n} min',
-			'priere.regles.uniteJours' => ({required Object n}) => '${n} jours',
+			'priere.regles.uniteJours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} jour', other: '${n} jours', ), 
 			'priere.regles.choisir' => 'Enregistrer',
 			'priere.regles.erreurEcriture' => ({required Object message}) => 'Le réglage n\'a pas été enregistré (${message}). Réessayez dans un instant.',
 			'eleveConnexion.entrerCode' => 'J\'ai un code',

@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
 import '../../core/admin/admin_domaine.dart';
 import '../../core/capacites/port_politique_revue_kyc.dart';
 import '../../core/domain/enums.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/priere/libelle_priere.dart';
@@ -150,13 +151,20 @@ class LieuxPrierePage extends ConsumerWidget {
         // Ouverte depuis la section « La prière » de Règles.
         indexActif: 0,
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Text(t.priere.direction.intro, style: textes.bodyMedium),
-          Ecart.vXl,
-          corps,
-        ],
+      // Un texte suivi ne s'etire pas sur tout un ecran d'ordinateur (B4, 800 px).
+      child: Align(
+        alignment: AlignmentDirectional.topStart,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 720),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Text(t.priere.direction.intro, style: textes.bodyMedium),
+              Ecart.vXl,
+              corps,
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -165,7 +173,7 @@ class LieuxPrierePage extends ConsumerWidget {
     unawaited(
       AppBottomSheet.ouvrir<void>(
         context,
-        titre: t.priere.direction.feuille.titre(prenom: e.prenom),
+        titre: t.priere.direction.feuille.titre(dePrenom: deDevant(e.prenom)),
         constructeur: (BuildContext _) => FeuilleLieuPriere(enseignant: e),
       ),
     );
@@ -459,7 +467,7 @@ class _FeuilleLieuEtat extends ConsumerState<FeuilleLieuPriere> {
         ),
         Ecart.vMd,
         ChampEtiquete(
-          libelle: f.fuseau,
+          libelle: f.fuseau(exemple: 'Africa/Conakry'),
           controller: _fuseau,
           obligatoire: true,
           autocorrection: false,

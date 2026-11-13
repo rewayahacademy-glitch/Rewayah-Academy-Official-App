@@ -88,13 +88,20 @@ class PriereEnseignantPage extends ConsumerWidget {
           routeur.go(Routes.enseignantProfil);
         }
       },
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Text(t.priere.enseignant.intro, style: textes.bodyMedium),
-          Ecart.vXl,
-          corps,
-        ],
+      // Un texte suivi ne s'etire pas sur tout un ecran d'ordinateur (B4, 800 px).
+      child: Align(
+        alignment: AlignmentDirectional.topStart,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 720),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              Text(t.priere.enseignant.intro, style: textes.bodyMedium),
+              Ecart.vXl,
+              corps,
+            ],
+          ),
+        ),
       ),
     );
   }
