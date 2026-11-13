@@ -338,7 +338,8 @@
     "langue": {
       "systeme": "النظام",
       "francais": "Français",
-      "arabe": "العربية"
+      "arabe": "العربية",
+      "anglais": "English"
     },
     "formats": {
       "dateHeure": "⁨{date}⁩ في ⁨{heure}⁩",

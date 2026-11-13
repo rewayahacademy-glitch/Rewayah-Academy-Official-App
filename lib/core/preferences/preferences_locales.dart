@@ -61,13 +61,15 @@ enum PreferenceTheme {
 enum PreferenceLangue {
   systeme,
   francais,
-  arabe;
+  arabe,
+  anglais;
 
   /// La langue imposee, ou `null` pour suivre l'appareil.
   AppLocale? get langue => switch (this) {
     PreferenceLangue.systeme => null,
     PreferenceLangue.francais => AppLocale.fr,
     PreferenceLangue.arabe => AppLocale.ar,
+    PreferenceLangue.anglais => AppLocale.en,
   };
 
   /// Relit une valeur persistee ; `null` si elle est absente ou inconnue.
@@ -677,17 +679,21 @@ void _persisterParCompte<T extends Enum>({
 }
 
 /// Les langues proposees par la ligne « Langue » du compte, dans l'ordre : le
-/// francais et l'arabe seulement. « Systeme » n'existe pas au serveur : une
+/// francais, l'arabe et (LANGUES-1, 13/11/2026) l'anglais. « Systeme » n'existe pas au serveur : une
 /// fois connecte, la langue est celle du compte (garde-cap et pilote,
 /// 11/11/2026).
 const List<PreferenceLangue> languesDuCompte = <PreferenceLangue>[
   PreferenceLangue.francais,
   PreferenceLangue.arabe,
+  PreferenceLangue.anglais,
 ];
 
 /// Le code serveur d'une langue du compte.
-String codeLangueCompte(PreferenceLangue langue) =>
-    langue == PreferenceLangue.arabe ? 'ar' : 'fr';
+String codeLangueCompte(PreferenceLangue langue) => switch (langue) {
+  PreferenceLangue.arabe => 'ar',
+  PreferenceLangue.anglais => 'en',
+  _ => 'fr',
+};
 
 /// La langue du compte depuis son code serveur (sa langue de communication) ;
 /// `null` pour une langue que l'interface ne parle pas, ou tant que la personne
@@ -695,6 +701,7 @@ String codeLangueCompte(PreferenceLangue langue) =>
 PreferenceLangue? langueCompteDepuis(String? code) => switch (code) {
   'fr' => PreferenceLangue.francais,
   'ar' => PreferenceLangue.arabe,
+  'en' => PreferenceLangue.anglais,
   _ => null,
 };
 

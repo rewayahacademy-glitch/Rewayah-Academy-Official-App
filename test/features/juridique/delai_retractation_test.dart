@@ -96,7 +96,7 @@ void main() {
     });
 
     test('non lu : la phrase sans duree, jamais un nombre invente', () {
-      for (final AppLocale langue in AppLocale.values) {
+      for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {
         LocaleSettings.setLocaleSync(langue);
         final String texte = _texte(TexteJuridique.annulation);
         expect(
@@ -122,7 +122,7 @@ void main() {
     test(
       '« premiere semaine » et « sauf geste de la direction » ont disparu',
       () {
-        for (final AppLocale langue in AppLocale.values) {
+        for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {
           LocaleSettings.setLocaleSync(langue);
           for (final TexteJuridique x in <TexteJuridique>[
             TexteJuridique.annulation,

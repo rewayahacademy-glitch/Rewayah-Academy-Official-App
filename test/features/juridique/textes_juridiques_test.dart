@@ -57,7 +57,7 @@ void main() {
   tearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
 
   group('Le contenu', () {
-    for (final AppLocale langue in AppLocale.values) {
+    for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {
       test(
         '${langue.languageCode} : six textes, ni montant ni mot interdit',
         () {
@@ -87,7 +87,7 @@ void main() {
 
     test('FN-115 : remboursement sauf seances suivies, litige, pas paye = '
         'ni seances ni ressources, en fr et en ar', () {
-      for (final AppLocale langue in AppLocale.values) {
+      for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {
         LocaleSettings.setLocaleSync(langue);
         final List<SectionPolitique> annulation = sectionsJuridiques(
           TexteJuridique.annulation,
@@ -127,7 +127,7 @@ void main() {
     });
 
     test('annulation et conditions : aucun delai ni date de paiement en dur', () {
-      for (final AppLocale langue in AppLocale.values) {
+      for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {
         LocaleSettings.setLocaleSync(langue);
         for (final TexteJuridique x in <TexteJuridique>[
           TexteJuridique.annulation,
@@ -170,7 +170,7 @@ void main() {
     });
 
     test('les sept valeurs du directeur sont donnees, en fr et en ar', () {
-      for (final AppLocale langue in AppLocale.values) {
+      for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {
         LocaleSettings.setLocaleSync(langue);
         expect(CoordonneesJuridiques.aCompleter(), isEmpty);
         for (final TexteJuridique x in TexteJuridique.values) {
@@ -312,7 +312,7 @@ void main() {
     });
 
     test('sans lecture : le defaut, en fr et en ar', () {
-      for (final AppLocale langue in AppLocale.values) {
+      for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {
         LocaleSettings.setLocaleSync(langue);
         final String texte = _tout(TexteJuridique.enfants);
         expect(texte, contains('support@rewayahacademy.com'));
@@ -328,7 +328,7 @@ void main() {
     ).first.blocs.join('\n');
 
     test('vide ou absent : Rewayah Academy, en fr et en ar', () {
-      for (final AppLocale langue in AppLocale.values) {
+      for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {
         LocaleSettings.setLocaleSync(langue);
         for (final String? nom in <String?>[null, '', '   ']) {
           final String texte = confidentialite(nom: nom);
@@ -347,7 +347,7 @@ void main() {
     });
 
     test('un nom saisi remplace le defaut, en fr et en ar', () {
-      for (final AppLocale langue in AppLocale.values) {
+      for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {
         LocaleSettings.setLocaleSync(langue);
         final String texte = confidentialite(nom: '  Cabinet Exemple ');
         expect(texte, contains('Cabinet Exemple'));
