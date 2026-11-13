@@ -392,7 +392,7 @@ DO $lieux$
 BEGIN
   IF pg_catalog.to_regclass('public.lieux') IS NOT NULL
      AND NOT EXISTS (SELECT 1 FROM pg_catalog.pg_trigger t
-                      WHERE t.tgrelid = 'public.lieux'::regclass AND t.tgname = 'lieux_priere_auto') THEN
+                      WHERE t.tgrelid = pg_catalog.to_regclass('public.lieux') AND t.tgname = 'lieux_priere_auto') THEN
     RAISE NOTICE 'PRIERE-2 : public.lieux existe sans declencheur lieux_priere_auto ; le poser avec les noms de ses colonnes (voir le commentaire de private.priere_trg_lieux_auto)';
   END IF;
 END

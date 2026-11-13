@@ -80,11 +80,15 @@ Pour une séance qui commence en `s`, finit en `e` (durée `L` minutes), avec l'
 - **`direction`** : posé à la main (réglage avancé de la feuille « Corriger », replié par défaut). **Il n'est jamais écrasé** ni par l'enseignant (refus « lieu posé par la direction »), ni par l'automatique. La direction garde son pouvoir de corriger et de retirer.
 - **`auto`** : posé depuis la ville de l'enseignant (lot HORLOGE-ET-LIEU). `private.priere_lieu_auto(p_enseignant, p_nom, p_lat, p_lng, p_fuseau)` ne pose le lieu que si la direction n'en a pas posé un à la main **et** si l'enseignant n'a pas partagé sa propre position (la sienne, plus précise, l'emporte : choix pris seul, voir la fiche) ; elle remplace un lieu `auto` plus ancien (changement de ville) et rend vrai quand elle a posé.
 
-**La ligne que le lot HORLOGE-ET-LIEU devra ajouter.** `public.lieux` n'existait pas à l'installation de ce lot (ses colonnes ne sont pas lues ici) : au moment où le lot horloge enregistre la ville d'un enseignant (écriture ou déclencheur sur `public.lieux`), il ajoute, avec les colonnes de sa propre table :
+**Le déclencheur de la ville : `lieux_priere_auto`.** Le nom est le même des deux côtés (ce lot et le lot HORLOGE-ET-LIEU) ; il est idempotent, ne pose rien pour un profil qui n'est pas enseignant, et son échec ne bloque jamais l'enregistrement de la ville (avertissement seulement). `public.lieux` n'existe pas encore dans le dépôt (ni sur `main`, ni dans la branche horloge visible : celle-ci ne porte que `villes_ref`) : ses colonnes ne sont pas devinées. Ce lot livre donc la **fonction** `private.priere_trg_lieux_auto()`, qui reçoit en arguments du déclencheur les **noms** des colonnes, et la prouve sur une table d'essai (ville posée, ville enregistrée deux fois, élève ignoré, ville invalide qui ne bloque rien, lieu de la direction intact). **La ligne exacte à ajouter dès que `public.lieux` existe** (une seule instruction, sans autre modification) :
 
-`PERFORM private.priere_lieu_auto(<profil de l'enseignant>, <nom de la ville>, <latitude du centre>, <longitude du centre>, <fuseau IANA>);`
+```sql
+CREATE TRIGGER lieux_priere_auto AFTER INSERT OR UPDATE ON public.lieux
+FOR EACH ROW EXECUTE FUNCTION private.priere_trg_lieux_auto(
+  '<colonne du profil>', '<colonne du nom>', '<colonne latitude>', '<colonne longitude>', '<colonne fuseau>');
+```
 
-La fonction est `SECURITY DEFINER`, `search_path` vide, sans droit pour `authenticated`, `anon` ni `PUBLIC` : seul un appel serveur la joint. Elle valide elle-même les bornes et le fuseau et rend faux sans rien écrire si l'un est invalide.
+Si `public.lieux` existe sans ce déclencheur à l'installation de la migration, elle l'écrit dans un avis (`NOTICE`) et ne pose rien. La fonction `private.priere_lieu_auto` est `SECURITY DEFINER`, `search_path` vide, sans droit pour `authenticated`, `anon` ni `PUBLIC` ; elle valide les bornes et le fuseau et rend faux sans rien écrire si l'un est invalide.
 
 **La méthode suit le pays du lieu** (`priere.methode_selon_pays`, vrai par défaut ; le pays se déduit du fuseau du lieu, jamais d'une saisie). Ordre : surcharge de la direction, puis méthode usuelle du pays, puis méthode de l'académie (Ligue islamique mondiale). Neuf fuseaux seulement, chacun justifié par la documentation du paquet `adhan` qui nomme la méthode d'après l'institution ou la région du pays :
 
