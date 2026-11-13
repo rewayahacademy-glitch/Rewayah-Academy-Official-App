@@ -254,6 +254,30 @@ void main() {
     });
   });
 
+  group('l\'eleve adulte et l\'adresse des notifications (/tuteur/demandes)', () {
+    // L'ancien chemin des demandes (tc_notification_etape_adulte_autonome) ecrit
+    // pour un adulte une notification dont la destination est
+    // `/tuteur/demandes` (contrainte du serveur) : ce lien doit mener l'adulte
+    // a SON ecran de suivi.
+    testWidgets('mene l\'adulte a son propre suivi', (
+      WidgetTester tester,
+    ) async {
+      final GoRouter routeur = await monterAccueilAdulteReel(
+        tester,
+        surcharges: <Override>[
+          ...surchargesAccueilAdulte(),
+          ..._suivi(<SuiviAttente>[suiviDeTest(typePublic: 'adulte')]),
+        ],
+        depart: Routes.tuteurDemandes,
+      );
+      await stabiliser(tester);
+      expect(lieu(routeur), Routes.eleveAdulteAttenteDemande('d1'));
+      expect(find.byKey(FriseAttente.cleEtape(5)), findsOneWidget);
+      // Les mots de l'adulte, jamais ceux d'un enfant.
+      expect(find.text(t.suiviAttente.titre), findsWidgets);
+    });
+  });
+
   group('l\'eleve de moins de 10 ans', () {
     testWidgets(
       'la carte au tutoiement ouvre sa propre route, version simple',

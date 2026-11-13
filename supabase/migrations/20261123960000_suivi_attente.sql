@@ -612,7 +612,11 @@ ON CONFLICT (evenement, portee) DO UPDATE SET courriel = EXCLUDED.courriel;
 -- transaction (A vers nul puis nul vers B : les declencheurs differes passent
 -- evenement par evenement et celui du premier changement lit deja l'etat final,
 -- ou B est l'enseignant). L'ancien enseignant, l'eleve et les familles gardent
--- `enseignant_change`. Retouche ancree de la requete d'insertion, rejouable.
+-- `enseignant_change`. Quand la classe n'a PLUS d'enseignant (A vers nul),
+-- `v_groupe.teacher_id` est nul : la comparaison est alors nulle, et c'est
+-- `coalesce(..., false)` qui garde l'ancien enseignant parmi les destinataires
+-- (il est prevenu qu'on le retire). Retouche ancree de la requete d'insertion,
+-- rejouable.
 CREATE OR REPLACE FUNCTION pg_temp.remplacer(p_fonction regprocedure, p_ancre text, p_neuf text)
 RETURNS void LANGUAGE plpgsql AS $$
 DECLARE
@@ -633,15 +637,15 @@ BEGIN
   IF pg_catalog.strpos(
        pg_catalog.pg_get_functiondef(
          'private.notifier_classe(uuid,text,uuid,timestamptz,uuid[],uuid[],boolean)'::regprocedure),
-       $q$AND d.destinataire = v_groupe.teacher_id)$q$) > 0 THEN
+       $q$AND d.destinataire = v_groupe.teacher_id, false)$q$) > 0 THEN
     RAISE NOTICE 'notifier_classe : deduplication du nouvel enseignant deja posee, rien a faire';
   ELSE
     PERFORM pg_temp.remplacer(
       'private.notifier_classe(uuid,text,uuid,timestamptz,uuid[],uuid[],boolean)'::regprocedure,
       $a$   WHERE NOT EXISTS ($a$,
-      $b$   WHERE NOT (p_evenement = 'enseignant_change'
-                    AND d.portee = 'classe'
-                    AND d.destinataire = v_groupe.teacher_id)
+      $b$   WHERE NOT coalesce(p_evenement = 'enseignant_change'
+                           AND d.portee = 'classe'
+                           AND d.destinataire = v_groupe.teacher_id, false)
      AND NOT EXISTS ($b$);
   END IF;
 END

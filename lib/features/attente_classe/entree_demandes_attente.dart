@@ -5,7 +5,8 @@
 /// affecte, tout est pret, creneau change...) pointent vers `/tuteur/demandes`,
 /// destination figee par une contrainte du serveur. Quand le foyer n'a qu'**un**
 /// suivi en cours, visible et non clos, cette adresse ouvre directement l'ecran
-/// du suivi (un seul ecran de suivi) ; avec plusieurs, ou aucun, la liste des
+/// du suivi (un seul ecran de suivi ; celui de l'adulte pour une demande
+/// d'adulte, celui du tuteur sinon) ; avec plusieurs, ou aucun, la liste des
 /// demandes reste la liste de raccourcis. Sans port (production avant
 /// branchement), la liste ancienne, inchangee.
 library;
@@ -54,8 +55,12 @@ class EntreeDemandesAttente extends ConsumerWidget {
       // Un seul suivi : on y va, sans empiler l'adresse de la liste.
       WidgetsBinding.instance.addPostFrameCallback((Duration _) {
         if (!context.mounted) return;
-        GoRouter.maybeOf(context)
-            ?.go(Routes.tuteurAttenteDemande(seul.demandeId));
+        // Une demande d'eleve ADULTE : son propre ecran de suivi (l'adulte est un
+        // compte tuteur qui suit sa propre demande) ; sinon, l'ecran du tuteur.
+        final String chemin = seul.typePublic == 'adulte'
+            ? Routes.eleveAdulteAttenteDemande(seul.demandeId)
+            : Routes.tuteurAttenteDemande(seul.demandeId);
+        GoRouter.maybeOf(context)?.go(chemin);
       });
       return const SizedBox.shrink();
     }
