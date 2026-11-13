@@ -2084,7 +2084,8 @@ class _SallePageEtat extends ConsumerState<SallePage> {
             recitantPrenom: paroleRecue.prenom,
             pause: pause,
           )
-        // SITUATIONS-GRAVES : la pause relayee se lit dans l'ile.
+        // SITUATIONS-GRAVES : la pause relayee se lit dans la Dynamique
+        // chrono.
         : seanceSansFiches.copyWith(pause: pause);
     final VideoSessionProvider moteur = ref.watch(moteurSalleProvider);
     final double? plus = palierSuivant(_zoom);
@@ -3268,7 +3269,8 @@ class _SallePageEtat extends ConsumerState<SallePage> {
         videoSuspendue: _repliAffiche.videoSuspendue,
         // RESEAU-ELEVES : le reseau de chacun, filtre (barres, alerte).
         reseaux: _suiviReseau.etats(),
-        // L'ile reste posee partout, sauf au telephone de l'enseignant (moins
+        // La Dynamique chrono dit le reseau partout, sauf au telephone de
+        // l'enseignant (moins
         // de 840 points), ou elle ne vit que dans le profil deplie : le
         // bandeau y garde la phrase de reseau (`salleTelephoneEnseignant`).
         reseauDansIle:

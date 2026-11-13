@@ -1398,8 +1398,7 @@ class LiveKitSessionProvider
       await accorderAbonnementsVideo(
         roleLocal: acces.role,
         recitant: _recitant,
-        videoSuspendue:
-            _audioSeul || _repli.niveau == NiveauRepli.audioSeul,
+        videoSuspendue: _audioSeul || _repli.niveau == NiveauRepli.audioSeul,
         pistes: <PisteDistante>[
           for (final lk.RemoteParticipant distant
               in salle.remoteParticipants.values)
@@ -1478,8 +1477,11 @@ class LiveKitSessionProvider
   void premierPlan({required bool visible}) {
     _auPremierPlan = visible;
     if (!visible) {
-      // Rien n'est coupe en arriere-plan : ni micro, ni son recu, ni
+      // Le moteur ne coupe rien en arriere-plan : ni micro, ni son recu, ni
       // connexion. Le navigateur peut suspendre la camera ; la voix, non.
+      // La regle de l'eleve hors de l'application (HORS-SALLE-1 : 30 s, puis
+      // sortie de la salle) est tenue au-dessus, par le controleur de session
+      // (`GardeHorsApplication`), jamais ici.
       return;
     }
     _reveiller();

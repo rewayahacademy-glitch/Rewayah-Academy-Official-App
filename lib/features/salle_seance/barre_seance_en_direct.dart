@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -465,14 +466,34 @@ class _BarreEtat extends ConsumerState<_Barre> {
   }
 
   /// Une commande de la pause, par le port ; l'etat est relu ensuite.
+  ///
+  /// HARMONIE-SALLE (13/11/2026) : l'etat rendu par le serveur est relaye a
+  /// la classe sur le canal fiable, comme le fait la salle
+  /// (`_diffuserPause`, `salle_page.dart`) : une pause demarree, finie ou
+  /// refusee depuis la salle reduite arrive chez les eleves sur le moment
+  /// (avant : seulement au retour de l'enseignant dans la salle). Rien n'est
+  /// decide ici ; sans droit de publier, rien ne part.
   Future<void> _commanderPause(
     Future<PauseSeance> Function(PortPauseSeance port, String cle) commande,
   ) async {
     try {
-      await commande(
+      final PauseSeance etat = await commande(
         ref.read(portPauseSeanceProvider),
         'ile-${widget.cours.sessionId}-${DateTime.now().microsecondsSinceEpoch}',
       ).timeout(AppDelais.requeteMax);
+      if (widget.etat.acces?.capacites.peutPublierDonnees ?? false) {
+        try {
+          await ref
+              .read(moteurSalleProvider)
+              .publierDonnees(
+                sujet: sujetPauseSalle,
+                charge: utf8.encode(jsonEncode(chargePause(etat))),
+                fiable: true,
+              );
+        } on Object catch (erreur) {
+          journalDev('pause non relayee depuis la salle reduite : $erreur');
+        }
+      }
     } finally {
       if (mounted) {
         ref.invalidate(pauseSeanceProvider(widget.cours.sessionId));

@@ -83,7 +83,7 @@ bool telephonePleinEcran(BuildContext context) =>
 /// fenetre de moins de 840 points de large : telephone et iPad en portrait.
 bool salleTelephoneEnseignant(BuildContext context, VueSeance vue) =>
     pleinEcranSalle(context) &&
-    vue.role == RoleSeance.enseignant &&
+    vue.conduitLaSeance &&
     MediaQuery.sizeOf(context).width < AppGabarit.seuilEtendu;
 
 /// Ordinateur et tablette : la page du Coran se compose sur toute la hauteur
@@ -189,9 +189,10 @@ const Key cleRecitantBande = ValueKey<String>('bande-cadre-recitant');
 ///
 /// - **Cotes** ([cote]) : quand les bandes vides a cote d'une page pleine
 ///   hauteur logent la pilule de l'appel (ordinateur, tablette et telephone
-///   en paysage), la page garde toute la hauteur ; l'ile en haut de la bande
-///   de debut ; la vignette de l'enseignant en haut de la bande de fin
-///   (deplacable en bas de la bande de debut), le zoom au milieu et les
+///   en paysage), la page garde toute la hauteur ; la Dynamique chrono en
+///   haut de la bande de debut ; la vignette de l'enseignant en haut de la
+///   bande de fin (deplacable en bas de la bande de debut), le zoom au
+///   milieu et les
 ///   commandes de l'appel en bas de la bande de fin ; chaque bande large
 ///   d'au moins [bande].
 /// - **Superposee** ([superposee], telephone et tablette en portrait, pilote
@@ -228,8 +229,8 @@ class GeometrieEleve {
   /// La largeur des bandes de cote reservees ([cote]) ; 0 sinon.
   final double bande;
 
-  /// La hauteur de la rangee du haut (ile repliee, vignette, zoom) ; 0 sur
-  /// les cotes.
+  /// La hauteur de la rangee du haut (Dynamique chrono repliee, vignette,
+  /// zoom) ; 0 sur les cotes.
   final double rangee;
 
   /// La place prise au bout de la rangee du haut par la vignette et le zoom.
@@ -490,10 +491,7 @@ Widget? pageSalle(
       // la classe ; il ne la tourne pas. Un glissement le lui dit un court
       // instant (« La page suit celle de l'enseignant »), au lieu de laisser
       // croire a une panne.
-      : !libre &&
-            precedente == null &&
-            suivante == null &&
-            vue.role != RoleSeance.enseignant
+      : !libre && precedente == null && suivante == null && !vue.conduitLaSeance
       ? GlisserPage(
           key: const ValueKey<String>('glisser-page-salle'),
           onPrecedente: null,
@@ -554,16 +552,12 @@ class TelephonePleinEcran extends StatelessWidget {
   /// Vrai quand l'eleve (ou le tuteur, le controleur) est devant une page
   /// qui garde toute la hauteur, ses commandes dans les bandes de cote :
   /// la zone de la barre va en haut de la bande de debut.
-  static bool zoneDansLaBande(
-    BuildContext context,
-    VueSeance vue,
-    Size ecran,
-  ) {
+  static bool zoneDansLaBande(BuildContext context, VueSeance vue, Size ecran) {
     final PorteeMediaSalle? media = PorteeMediaSalle.de(context);
     final bool scene =
         media?.scene != null && modeSceneDe(context, vue) == ModeScene.classe;
     final bool eleve =
-        vue.role != RoleSeance.enseignant &&
+        !vue.conduitLaSeance &&
         !scene &&
         vue.supportPresente != null &&
         surfaceAMontrer(vue) != null;
@@ -879,10 +873,7 @@ class _EtatTelephonePleinEcran extends State<_CorpsTelephone> {
           // au toucher, puis s'effacent (pilote, 11/11) ; en Interface
           // guidee, la page se pose entre deux rangees.
           final bool eleve =
-              vue.role != RoleSeance.enseignant &&
-              !scene &&
-              !libre &&
-              surface != null;
+              !vue.conduitLaSeance && !scene && !libre && surface != null;
           final bool sceneDevant = enseignant && scene;
           // RUBAN-TELEPHONE (MODES-AFFICHAGE §5) : le passage entre modes.
           // La place du ruban : la capsule (enseignant, en haut au centre) ou
@@ -996,10 +987,10 @@ class _EtatTelephonePleinEcran extends State<_CorpsTelephone> {
               statutEnTete: statutEnHaut,
             ),
           );
-          // L'ile de l'eleve : toujours la, repliee (au repos comme au
-          // toucher) ; sur les cotes, dans la bande de debut ; en portrait,
-          // posee en haut de la page (elle est petite) ; avec les rangees,
-          // dans celle du haut.
+          // La Dynamique chrono de l'eleve : toujours la, repliee (au repos
+          // comme au toucher) ; sur les cotes, dans la bande de debut ; en
+          // portrait, posee en haut de la page (elle est petite) ; avec les
+          // rangees, dans celle du haut.
           final double largeurHautEleve = geometrie == null
               ? 0
               : geometrie.cote
@@ -1141,33 +1132,32 @@ class _EtatTelephonePleinEcran extends State<_CorpsTelephone> {
           // DYNAMIQUE-CHRONO-2 (relecture du 13/11/2026) : la capsule ne se
           // rend pas tant que la Dynamique chrono est depliee par-dessus ;
           // elle revient quand la barre se replie.
-          final Widget laCapsule = CacheSousDynamique(child: _profil
-              ? KeyedSubtree(
-                  key: _cleProfil,
-                  child: ProfilTelephone(
-                    vue: vue,
-                    onReduire: _replier,
+          final Widget laCapsule = CacheSousDynamique(
+            child: _profil
+                ? KeyedSubtree(
+                    key: _cleProfil,
+                    child: ProfilTelephone(vue: vue, onReduire: _replier),
+                  )
+                : Center(
+                    child: CapsuleVideoTelephone(
+                      vue: vue,
+                      onDeplier: _deplierProfil,
+                      onRevenirPage: revenirPage,
+                      oeil: !sceneDevant || revenirPage != null,
+                      // RUBAN-TELEPHONE (MODES-AFFICHAGE §4) : en mode
+                      // Document ou Tableau, l'eleve qui recite ; en mode
+                      // Classe il est deja dans la grille (une personne, un
+                      // cadre) : l'enseignant lui-meme.
+                      recitant: sceneDevant ? null : media?.identiteRecitant,
+                      nomRecitant: vue.recitantPrenom,
+                      // SORTIE-SALLE, Q1 : seulement si l'appel continue hors
+                      // de l'ecran ; jamais en Interface guidee.
+                      onReduireSalle: vue.role == RoleSeance.guidee
+                          ? null
+                          : actions.onRetour,
+                    ),
                   ),
-                )
-              : Center(
-                  child: CapsuleVideoTelephone(
-                    vue: vue,
-                    onDeplier: _deplierProfil,
-                    onRevenirPage: revenirPage,
-                    oeil: !sceneDevant || revenirPage != null,
-                    // RUBAN-TELEPHONE (MODES-AFFICHAGE §4) : en mode
-                    // Document ou Tableau, l'eleve qui recite ; en mode
-                    // Classe il est deja dans la grille (une personne, un
-                    // cadre) : l'enseignant lui-meme.
-                    recitant: sceneDevant ? null : media?.identiteRecitant,
-                    nomRecitant: vue.recitantPrenom,
-                    // SORTIE-SALLE, Q1 : seulement si l'appel continue hors
-                    // de l'ecran ; jamais en Interface guidee.
-                    onReduireSalle: vue.role == RoleSeance.guidee
-                        ? null
-                        : actions.onRetour,
-                  ),
-                ));
+          );
           final Widget capsuleEnHaut = PositionedDirectional(
             top: 0,
             start: 0,
@@ -1205,8 +1195,8 @@ class _EtatTelephonePleinEcran extends State<_CorpsTelephone> {
                 // Lot CORAN-ELEVE : rien a lire avant qu'un support soit
                 // presente (scene, videos) ; la phrase du micro en attente ;
                 // l'Interface guidee entre ses deux rangees.
-                (vue.role != RoleSeance.enseignant && page == null) ||
-                (vue.role != RoleSeance.enseignant && _microAttente) ||
+                (!vue.conduitLaSeance && page == null) ||
+                (!vue.conduitLaSeance && _microAttente) ||
                 (geometrie != null &&
                     !geometrie.cote &&
                     !geometrie.superposee) ||
@@ -1290,8 +1280,7 @@ class _EtatTelephonePleinEcran extends State<_CorpsTelephone> {
                   Positioned.fill(
                     top: enseignant
                         ? _hautSceneEnseignant(context)
-                        : MediaQuery.paddingOf(context).top +
-                              AppSpacing.lg,
+                        : MediaQuery.paddingOf(context).top + AppSpacing.lg,
                     bottom: enseignant
                         ? MediaQuery.paddingOf(context).bottom +
                               (_hauteurBasScene ??
@@ -1409,9 +1398,9 @@ class _EtatTelephonePleinEcran extends State<_CorpsTelephone> {
                                 AppSpacing.lg +
                                 (telephone
                                     ? (media?.boutonEleves == null
-                                              ? 0
-                                              : AppTouchTarget.standard +
-                                                    AppSpacing.sm)
+                                          ? 0
+                                          : AppTouchTarget.standard +
+                                                AppSpacing.sm)
                                     : 0),
                             bas:
                                 AppSpacing.lg +
@@ -1548,7 +1537,7 @@ class _EtatTelephonePleinEcran extends State<_CorpsTelephone> {
   /// la page a sa pleine taille ; au toucher, la vignette (deplacable aux
   /// quatre coins, lot salle 2), le zoom et la pilule de l'appel passent
   /// par-dessus, puis s'effacent au delai de [CommandesMasquables] ;
-  /// l'ile reste (posee dans le contenu).
+  /// la Dynamique chrono reste (posee dans le contenu).
   Widget _commandesSuperposees({
     required Size ecran,
     required bool zoom,
@@ -1577,8 +1566,8 @@ class _EtatTelephonePleinEcran extends State<_CorpsTelephone> {
               rangeable: true,
               arrivee: _versRuban,
             ),
-          // RUBAN-TELEPHONE : la phrase d'etat, en haut, sous l'ile, avant la
-          // vignette ; elle vient et part avec les commandes.
+          // RUBAN-TELEPHONE : la phrase d'etat, en haut, sous la Dynamique
+          // chrono, avant la vignette ; elle vient et part avec les commandes.
           PositionedDirectional(
             top: zoneSure.top + AppSpacing.lg,
             start: AppSpacing.lg,
@@ -1660,13 +1649,13 @@ class _EtatTelephonePleinEcran extends State<_CorpsTelephone> {
               rangeable: cote,
               arrivee: _versRuban,
             ),
-          // RUBAN-TELEPHONE (MODES-AFFICHAGE §4) : sur un ecran large, la
-          // bande de cote porte aussi le cadre de l'eleve qui recite, apres
-          // celui de l'enseignant : au milieu de la bande de debut (sous
-          // l'ile, au-dessus du coin bas ou l'on peut poser l'enseignant),
-          // a la meme taille. La page garde toute sa taille, rien ne la
-          // recouvre ; une personne, un cadre (le recitant n'est nulle part
-          // ailleurs dans ce mode).
+          // RUBAN-TELEPHONE (MODES-AFFICHAGE §4) : sur un ecran large, la bande
+          // de cote porte aussi le cadre de l'eleve qui recite, apres celui de
+          // l'enseignant : au milieu de la bande de debut (sous la Dynamique
+          // chrono, au-dessus du coin bas ou l'on peut poser l'enseignant), a
+          // la meme taille. La page garde toute sa taille, rien ne la
+          // recouvre ; une personne, un cadre (le recitant n'est nulle part ailleurs
+          // dans ce mode).
           if (PorteeMediaSalle.de(context)?.identiteRecitant
               case final String recitant when cote)
             PositionedDirectional(
@@ -1687,8 +1676,8 @@ class _EtatTelephonePleinEcran extends State<_CorpsTelephone> {
               ),
             ),
           // RUBAN-TELEPHONE : sur les cotes, la phrase d'etat en haut de la
-          // bande de debut, sous l'ile ; elle vient et part avec les
-          // commandes. (En Interface guidee, elle reste sur la pilule du
+          // bande de debut, sous la Dynamique chrono ; elle vient et part avec
+          // les commandes. (En Interface guidee, elle reste sur la pilule du
           // bas, dans sa rangee reservee.)
           if (cote)
             PositionedDirectional(
@@ -1816,12 +1805,12 @@ class _ZoomFlottant extends StatelessWidget {
 }
 
 /// RUBAN-TELEPHONE (directeur, 11/11/2026, cahier §8 : « messages tantot en
-/// haut, tantot en bas ») : la phrase d'etat de l'eleve posee en haut, sous
-/// l'ile, au lieu d'etre posee sans fond sur la page au-dessus de la pilule.
-/// Elle vit dans la couche des commandes : elle se lit a l'entree (le micro
-/// en attente retient les commandes [AppMouvement.ilePassage]) et a chaque
-/// toucher qui les ramene, puis part avec elles ; jamais posee sur la page
-/// pour de bon. Le lecteur d'ecran l'entend comme avant (zone vivante pour
+/// haut, tantot en bas ») : la phrase d'etat de l'eleve posee en haut, sous la
+/// Dynamique chrono, au lieu d'etre posee sans fond sur la page au-dessus de la
+/// pilule. Elle vit dans la couche des commandes : elle se lit a l'entree (le
+/// micro en attente retient les commandes [AppMouvement.ilePassage]) et a
+/// chaque toucher qui les ramene, puis part avec elles ; jamais posee sur la
+/// page pour de bon. Le lecteur d'ecran l'entend comme avant (zone vivante pour
 /// le micro) ; les commandes restent toujours visibles pour lui.
 class _StatutEnHaut extends StatelessWidget {
   const _StatutEnHaut({required this.vue});
@@ -2270,114 +2259,121 @@ class _EtatVignetteAimantee extends State<VignetteAimantee>
     return Positioned.fill(
       // DYNAMIQUE-CHRONO-2 : pas de vignette sous la barre depliee, au
       // telephone (sur les cotes, elle vit dans la bande, hors de la barre).
-      child: CacheSousDynamique(actif: !widget.rangeable, child: LayoutBuilder(
-        builder: (BuildContext contexte, BoxConstraints c) {
-          _ecran = c.biggest;
-          final _Rangement? r = _rangement;
-          final Offset? mobile = _position;
-          final Offset place = mobile ?? _placeAuRepos();
-          final bool auRepos = mobile == null;
-          final bool gauche = place.dx + widget.largeur / 2 < _ecran.width / 2;
-          final double hautLanguette = _borne(
-            place.dy + _hauteur / 2 - LanguetteBord.hauteur / 2,
-            LanguetteBord.hauteur,
-          );
-          return Stack(
-            clipBehavior: Clip.none,
-            children: <Widget>[
-              if (r == null || !auRepos)
-                _poser(
-                  cle: const ValueKey<String>('pose-vignette'),
-                  x: place.dx,
-                  largeur: widget.largeur,
-                  top: place.dy,
-                  child: _glissable(
-                    KeyedSubtree(
-                      key: VignetteAimantee.cle,
-                      child: PassageVisages(
-                        jouer: widget.arrivee,
-                        facon: FaconVisages.entree,
-                        duree: AppMouvement.deplacementEntree,
-                        alignement: Alignment.center,
-                        echelle: AppMouvement.echelleVersIle,
-                        child: VignetteVideo(
-                          vue: widget.vue,
-                          largeur: widget.largeur,
+      child: CacheSousDynamique(
+        actif: !widget.rangeable,
+        child: LayoutBuilder(
+          builder: (BuildContext contexte, BoxConstraints c) {
+            _ecran = c.biggest;
+            final _Rangement? r = _rangement;
+            final Offset? mobile = _position;
+            final Offset place = mobile ?? _placeAuRepos();
+            final bool auRepos = mobile == null;
+            final bool gauche =
+                place.dx + widget.largeur / 2 < _ecran.width / 2;
+            final double hautLanguette = _borne(
+              place.dy + _hauteur / 2 - LanguetteBord.hauteur / 2,
+              LanguetteBord.hauteur,
+            );
+            return Stack(
+              clipBehavior: Clip.none,
+              children: <Widget>[
+                if (r == null || !auRepos)
+                  _poser(
+                    cle: const ValueKey<String>('pose-vignette'),
+                    x: place.dx,
+                    largeur: widget.largeur,
+                    top: place.dy,
+                    child: _glissable(
+                      KeyedSubtree(
+                        key: VignetteAimantee.cle,
+                        child: PassageVisages(
+                          jouer: widget.arrivee,
+                          facon: FaconVisages.entree,
+                          duree: AppMouvement.deplacementEntree,
+                          alignement: Alignment.center,
+                          echelle: AppMouvement.echelleVersIle,
+                          child: VignetteVideo(
+                            vue: widget.vue,
+                            largeur: widget.largeur,
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-              // La poignee, au bord de la vignette posee : la ranger d'un
-              // appui, sans glisser (WCAG 2.5.7) ; elle se glisse aussi.
-              // Pendant un geste, elle reste dans l'arbre, invisible : un
-              // glisser commence sur elle n'est pas perdu.
-              if (widget.rangeable && r == null)
-                _poser(
-                  cle: const ValueKey<String>('pose-poignee'),
-                  x: gauche ? 0 : _ecran.width - LanguetteBord.cible,
-                  largeur: LanguetteBord.cible,
-                  top: hautLanguette,
-                  child: _pendantGeste(
-                    auRepos: auRepos,
-                    child: _glissable(
-                      LanguetteBord(
-                        key: VignetteAimantee.clePoignee,
-                        bord: gauche
-                            ? BordLanguette.gauche
-                            : BordLanguette.droite,
-                        icone: AppIcons.suivant,
-                        retourner: gauche,
-                        libelle: t.salle.vignette.ranger(deNom: nom),
-                        focusNode: _noeudPoignee,
-                        onPress: () => _rangerParAppui(gauche: gauche),
-                      ),
-                    ),
-                  ),
-                ),
-              // La vignette rangee : la languette sur son bord, en fondu ;
-              // invisible (mais dans l'arbre) pendant qu'on la tire.
-              if (r != null)
-                _poser(
-                  cle: const ValueKey<String>('pose-languette'),
-                  x: r.gauche ? 0 : _ecran.width - LanguetteBord.cible,
-                  largeur: LanguetteBord.cible,
-                  top: _borne(
-                    _borne(r.haut, _hauteur) +
-                        _hauteur / 2 -
-                        LanguetteBord.hauteur / 2,
-                    LanguetteBord.hauteur,
-                  ),
-                  child: TweenAnimationBuilder<double>(
-                    tween: Tween<double>(begin: 0, end: 1),
-                    duration: AppMouvement.duree(
-                      context,
-                      AppMouvement.apparition,
-                    ),
-                    curve: AppMouvement.entree,
-                    builder: (BuildContext _, double opacite, Widget? enfant) =>
-                        Opacity(opacity: opacite, child: enfant),
+                // La poignee, au bord de la vignette posee : la ranger d'un
+                // appui, sans glisser (WCAG 2.5.7) ; elle se glisse aussi.
+                // Pendant un geste, elle reste dans l'arbre, invisible : un
+                // glisser commence sur elle n'est pas perdu.
+                if (widget.rangeable && r == null)
+                  _poser(
+                    cle: const ValueKey<String>('pose-poignee'),
+                    x: gauche ? 0 : _ecran.width - LanguetteBord.cible,
+                    largeur: LanguetteBord.cible,
+                    top: hautLanguette,
                     child: _pendantGeste(
                       auRepos: auRepos,
                       child: _glissable(
                         LanguetteBord(
-                          key: VignetteAimantee.cleLanguette,
-                          bord: r.gauche
+                          key: VignetteAimantee.clePoignee,
+                          bord: gauche
                               ? BordLanguette.gauche
                               : BordLanguette.droite,
-                          icone: AppIcons.camera,
-                          libelle: t.salle.vignette.montrer(deNom: nom),
-                          focusNode: _noeudLanguette,
-                          onPress: () => _montrerParAppui(r),
+                          icone: AppIcons.suivant,
+                          retourner: gauche,
+                          libelle: t.salle.vignette.ranger(deNom: nom),
+                          focusNode: _noeudPoignee,
+                          onPress: () => _rangerParAppui(gauche: gauche),
                         ),
                       ),
                     ),
                   ),
-                ),
-            ],
-          );
-        },
-      )),
+                // La vignette rangee : la languette sur son bord, en fondu ;
+                // invisible (mais dans l'arbre) pendant qu'on la tire.
+                if (r != null)
+                  _poser(
+                    cle: const ValueKey<String>('pose-languette'),
+                    x: r.gauche ? 0 : _ecran.width - LanguetteBord.cible,
+                    largeur: LanguetteBord.cible,
+                    top: _borne(
+                      _borne(r.haut, _hauteur) +
+                          _hauteur / 2 -
+                          LanguetteBord.hauteur / 2,
+                      LanguetteBord.hauteur,
+                    ),
+                    child: TweenAnimationBuilder<double>(
+                      tween: Tween<double>(begin: 0, end: 1),
+                      duration: AppMouvement.duree(
+                        context,
+                        AppMouvement.apparition,
+                      ),
+                      curve: AppMouvement.entree,
+                      builder: (
+                        BuildContext _,
+                        double opacite,
+                        Widget? enfant,
+                      ) => Opacity(opacity: opacite, child: enfant),
+                      child: _pendantGeste(
+                        auRepos: auRepos,
+                        child: _glissable(
+                          LanguetteBord(
+                            key: VignetteAimantee.cleLanguette,
+                            bord: r.gauche
+                                ? BordLanguette.gauche
+                                : BordLanguette.droite,
+                            icone: AppIcons.camera,
+                            libelle: t.salle.vignette.montrer(deNom: nom),
+                            focusNode: _noeudLanguette,
+                            onPress: () => _montrerParAppui(r),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            );
+          },
+        ),
+      ),
     );
   }
 }

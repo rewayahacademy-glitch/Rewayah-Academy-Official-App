@@ -2028,3 +2028,25 @@ l'application en ligne.
   hors de la séance), garde le repli sur la règle ordinaire (une séance doit toujours pouvoir
   commencer) et laisse un avertissement au journal du serveur : identifiant de la séance et
   raison, ou le code d'erreur ; aucune donnée personnelle, aucune écriture.
+
+## D-044 (13/11/2026). La salle relue comme une seule pièce (lot HARMONIE-SALLE, retour 13 du directeur)
+
+**Relevé** : `docs/current/salle/HARMONIE-2026-11-13.md` (40 lignes : 12 corrigées, 27 laissées
+avec leur raison, une sans objet).
+
+**Décidé en chemin.**
+- Sur ordinateur, l'état de repos prime (retour du pilote, 13/11) : la tête de la colonne suit son
+  contenu, sans place réservée pour la barre dépliée. Au repos, aucun vide sous la barre, et les
+  noms des tuiles sont là quand ils tiennent (aux trois tailles mesurées : 1024 x 768,
+  1280 x 800, 1440 x 900). Le temps d'un dépli sur un écran bas, la colonne se tasse (noms, puis
+  icônes), rien ne chevauche ; au repli, la forme de repos revient exactement. Une alerte haute
+  (récitation, prière à deux actions) suit la même règle. Une première version qui réservait la
+  place a été retirée : elle laissait un grand vide et des tuiles sans noms au repos.
+- Celui qui récite : les métadonnées de la salle (écrites par le serveur) font foi ; l'écran lit
+  encore le message de l'enseignant. Aucune fuite possible ; un cadre peut montrer la photo au lieu
+  de la vidéo le temps que les deux s'accordent. Plan écrit, pas fait.
+- La salle réduite relaie aux élèves la pause démarrée hors de la page.
+
+**Ce qui n'est pas fait.** La synchronisation de la salle vit encore dans la page (plan en six
+étapes dans le relevé). Prouvé par tests et captures de test
+(`docs/current/captures/E2E/harmonie-salle/`) ; pas sur un vrai appareil, pas en production.

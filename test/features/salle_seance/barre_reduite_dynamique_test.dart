@@ -37,18 +37,19 @@ import 'package:rewayah_academy/features/salle_seance/relais_salle.dart';
 import '../../capture/outil_capture.dart';
 import '../../support/harnais.dart';
 
-AccesSalle _acces() => AccesSalle(
+AccesSalle _acces({bool enseignant = false}) => AccesSalle(
   urlServeur: 'wss://exemple.invalid',
   jeton: 'jeton.signe',
   nomSalle: 'r_0123456789abcdef0123456789abcdef',
   fournisseur: FournisseurVideo.cloud,
-  role: 'student',
-  capacites: const CapacitesSalle(
+  role: enseignant ? 'teacher' : 'student',
+  capacites: CapacitesSalle(
     peutPublier: true,
     peutPublierVideo: true,
-    peutPublierDonnees: false,
+    peutPublierDonnees: enseignant,
     peutRecevoir: true,
     invisible: false,
+    peutModerer: enseignant,
   ),
   expireLe: DateTime.utc(2030),
 );
@@ -59,6 +60,8 @@ Future<FauxMoteurSalle> _monter(
   required DateTime t0,
   void Function()? signal,
   ThemeMode mode = ThemeMode.light,
+  bool enseignant = false,
+  List<Override> autres = const <Override>[],
 }) async {
   fixerVueCapture(tester, const Size(390, 844), 2);
   final FauxMoteurSalle moteur = FauxMoteurSalle();
@@ -73,8 +76,11 @@ Future<FauxMoteurSalle> _monter(
       groupeId: 'g1',
       libelleGroupe: 'Les sourates courtes, mardi 18 h',
     ),
-    acces: _acces(),
+    acces: _acces(enseignant: enseignant),
   );
+  // Le faux moteur ne publie qu'avec un acces courant (comme le vrai, entre
+  // dans la salle).
+  if (enseignant) moteur.entrees.add(_acces(enseignant: true));
   final GoRouter routeur = GoRouter(
     initialLocation: Routes.eleve,
     routes: <RouteBase>[
@@ -99,10 +105,10 @@ Future<FauxMoteurSalle> _monter(
       surcharges: <Override>[
         sourceSessionProvider.overrideWithValue(
           FausseSourceSession(
-            const SessionState(
+            SessionState(
               resolue: true,
-              role: AppRole.student,
-              profileId: 'e1',
+              role: enseignant ? AppRole.teacher : AppRole.student,
+              profileId: enseignant ? 't1' : 'e1',
               accountStatus: AccountStatus.active,
               lectureProfil: LectureProfil.presente,
             ),
@@ -119,6 +125,7 @@ Future<FauxMoteurSalle> _monter(
             finPrevueUtc: t0.add(const Duration(minutes: 90)),
           ),
         ),
+        ...autres,
       ],
       themeMode: mode,
     ),
@@ -136,6 +143,51 @@ Future<void> _attendre(WidgetTester tester) async {
   await tester.pump();
   await tester.pump();
   await tester.pump(const Duration(milliseconds: 600));
+}
+
+/// HARMONIE-SALLE : le port de la pause de l'enseignant, sans reseau.
+class _PortPause implements PortPauseSeance {
+  _PortPause(this.etatCourant);
+  PauseSeance etatCourant;
+  PauseSeance Function(PauseSeance)? apresDemarrer;
+
+  @override
+  Future<PauseSeance> demarrer({
+    required String seanceId,
+    required String cleIdempotence,
+  }) async {
+    final PauseSeance Function(PauseSeance)? suite = apresDemarrer;
+    if (suite != null) etatCourant = suite(etatCourant);
+    return etatCourant;
+  }
+
+  @override
+  Future<PauseSeance> terminer({
+    required String seanceId,
+    required String cleIdempotence,
+  }) async => etatCourant;
+
+  @override
+  Future<PauseSeance> refuser({
+    required String seanceId,
+    required String cleIdempotence,
+  }) async => etatCourant;
+
+  @override
+  Future<PauseSeance> etat(String seanceId) async => etatCourant;
+
+  @override
+  Future<ReglagePause> reglage(String groupeId) => throw UnimplementedError();
+
+  @override
+  Future<ReglagePause> enregistrerReglage({
+    required String groupeId,
+    required bool actif,
+    required int apresMinutes,
+    required int dureeMinutes,
+    required String versionAttendue,
+    required String cleIdempotence,
+  }) => throw UnimplementedError();
 }
 
 void main() {
@@ -237,5 +289,57 @@ void main() {
     await _attendre(tester);
     expect(find.text(t.salle.dynamique.pauseFinie), findsOneWidget);
     expect(find.text(t.salle.seance.chrono.pause), findsNothing);
+  });
+  // HARMONIE-SALLE (13/11/2026) : une pause demarree depuis la salle reduite
+  // (l'enseignant hors de la page de la salle) est relayee a la classe sur le
+  // moment, sur le canal fiable, avec l'etat rendu par le serveur.
+  testWidgets('salle reduite, enseignant : « Oui » a la pause proposee la '
+      'demarre et la relaie aux eleves', (WidgetTester tester) async {
+    DateTime maintenant = DateTime.now().toUtc();
+    final _PortPause port =
+        _PortPause(
+            PauseSeance(
+              statut: StatutPause.programmee,
+              dureePrevueMinutes: 10,
+              debutPrevuUtc: maintenant.add(const Duration(minutes: 2)),
+              proposerAUtc: maintenant.add(const Duration(minutes: 2)),
+              peutPiloter: true,
+            ),
+          )
+          ..apresDemarrer = (PauseSeance p) => PauseSeance(
+            statut: StatutPause.enCours,
+            dureePrevueMinutes: 10,
+            debutPrevuUtc: p.debutPrevuUtc,
+            debutUtc: maintenant,
+            peutPiloter: true,
+          );
+    final FauxMoteurSalle moteur = await _monter(
+      tester,
+      horloge: () => maintenant,
+      t0: maintenant.subtract(const Duration(minutes: 40)),
+      enseignant: true,
+      autres: <Override>[
+        portPauseSeanceProvider.overrideWithValue(port),
+        pauseSeanceProvider.overrideWith(
+          (Ref _, String _) async => port.etatCourant,
+        ),
+      ],
+    );
+    expect(moteur.donneesPubliees, isEmpty);
+    maintenant = maintenant.add(const Duration(minutes: 2));
+    await tester.pump(AppMouvement.battementDynamique);
+    await _attendre(tester);
+    expect(find.text(t.salle.dynamique.oui), findsOneWidget);
+    await tester.tap(find.text(t.salle.dynamique.oui));
+    await _attendre(tester);
+    final List<PaquetDonnees> pauses = moteur.donneesPubliees
+        .where((PaquetDonnees p) => p.sujet == sujetPauseSalle)
+        .toList();
+    expect(pauses, hasLength(1));
+    expect(pauses.single.fiable, isTrue);
+    expect(
+      pauseDepuisCharge(pauses.single.charge)?.statut,
+      StatutPause.enCours,
+    );
   });
 }
