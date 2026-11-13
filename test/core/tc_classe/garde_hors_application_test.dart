@@ -194,6 +194,65 @@ void main() {
     });
   });
 
+  // HORS-SALLE-2 (directeur, 12/11/2026 au soir) : « Toutes ses sorties de
+  // l'app doivent etre consignees sur le rapport. »
+  group('le journal des sorties, au retour de l eleve', () {
+    test('cache 20 s puis revenu : la sortie part au journal, sans '
+        'sortie de la salle, avec l eleve de l appareil du tuteur', () async {
+      final _Banc b = _Banc.eleve();
+      b.cacher();
+      b.avancer(const Duration(seconds: 20));
+      await b.montrer();
+      expect(b.notes, <(String, int, bool, String?)>[('s1', 20, false, 'e1')]);
+    });
+
+    test('cache 31 s : sorti de la salle, la sortie part au retour avec le '
+        'drapeau', () async {
+      final _Banc b = _Banc.eleve();
+      b.cacher();
+      b.avancer(const Duration(seconds: 31));
+      await _vider();
+      expect(b.notes, isEmpty, reason: 'rien tant qu il n est pas revenu');
+      await b.montrer();
+      expect(b.notes, <(String, int, bool, String?)>[('s1', 31, true, 'e1')]);
+    });
+
+    test('serveur ancien ou sans accord (rien note) : rien ne change pour '
+        'l eleve', () async {
+      final _Banc b = _Banc.eleve(noteAcceptee: false);
+      b.cacher();
+      b.avancer(const Duration(seconds: 10));
+      await b.montrer();
+      expect(b.notes, hasLength(1));
+      expect(b.controleur.etatCourant.cours, isNotNull);
+      expect(b.controleur.etatCourant.sortieHorsApplication, isNull);
+    });
+
+    test('rien pour qui modere, rien sans appel tenu', () async {
+      final _Banc prof = _Banc.enseignant(
+        traces: <(String, Map<String, Object?>)>[],
+      );
+      prof.cacher();
+      prof.avancer(const Duration(minutes: 3));
+      await prof.montrer();
+      expect(prof.notes, isEmpty);
+      final _Banc libre = _Banc.eleve(adopter: false);
+      libre.cacher();
+      libre.horloge = libre.horloge.add(const Duration(minutes: 2));
+      await libre.montrer();
+      expect(libre.notes, isEmpty);
+    });
+
+    test('une sortie voulue pendant l absence : rien n est note', () async {
+      final _Banc b = _Banc.eleve();
+      b.cacher();
+      b.avancer(const Duration(seconds: 10));
+      await b.controleur.quitter();
+      await b.montrer();
+      expect(b.notes, isEmpty);
+    });
+  });
+
   group('qui modere la seance (l enseignant)', () {
     test('cache 10 min : jamais sorti ; deux traces sans identite', () async {
       final List<(String, Map<String, Object?>)> traces =
@@ -280,6 +339,7 @@ class _Banc {
     bool suspendue = false,
     Duration Function()? delai,
     List<(String, Map<String, Object?>)>? traces,
+    bool noteAcceptee = true,
   }) {
     moteur = FauxMoteurClasse(journal: journal);
     video = FauxServiceVideoClasse(
@@ -297,6 +357,16 @@ class _Banc {
       minuterie: minuterie.creer,
       signalerAbsence: (String e, Map<String, Object?> d) =>
           traces?.add((e, d)),
+      noterSortieApp:
+          ({
+            required String seanceId,
+            required int secondes,
+            required bool sortieSalle,
+            String? eleveId,
+          }) async {
+            notes.add((seanceId, secondes, sortieSalle, eleveId));
+            return noteAcceptee;
+          },
     );
     addTearDown(controleur.liberer);
     if (adopter) controleur.adopter(cours: _cours, acces: acces);
@@ -306,11 +376,13 @@ class _Banc {
     bool adopter = true,
     bool suspendue = false,
     Duration Function()? delai,
+    bool noteAcceptee = true,
   }) => _Banc._(
     accesDe('student'),
     adopter: adopter,
     suspendue: suspendue,
     delai: delai,
+    noteAcceptee: noteAcceptee,
   );
 
   factory _Banc.enseignant({
@@ -318,6 +390,10 @@ class _Banc {
   }) => _Banc._(_accesEnseignant(), traces: traces);
 
   final List<String> journal = <String>[];
+
+  /// HORS-SALLE-2 : les sorties envoyees au journal.
+  final List<(String, int, bool, String?)> notes =
+      <(String, int, bool, String?)>[];
   late final FauxMoteurClasse moteur;
   late final FauxServiceVideoClasse video;
   late final ControleurSessionPersistante controleur;
