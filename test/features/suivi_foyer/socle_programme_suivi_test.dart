@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/capacites/port_progression_famille.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
@@ -157,6 +158,7 @@ Future<void> _monterEleve(
   InterfaceMode mode = InterfaceMode.standard,
   bool horsLigne = false,
   bool attendre = true,
+  List<Override> surcharges = const <Override>[],
 }) async {
   await monterRouteur(
     tester,
@@ -166,6 +168,7 @@ Future<void> _monterEleve(
     taille: const Size(390, 3200),
     surcharges: <Override>[
       portMaProgressionProvider.overrideWithValue(port),
+      ...surcharges,
       horsLigneProvider.overrideWith(
         (Ref ref) => Stream<bool>.value(horsLigne),
       ),
@@ -352,6 +355,39 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
+    testWidgets('enfant de 6 a 9 ans : meme si le niveau declare et le dernier '
+        'jalon (avec sa date) sont rendus, aucune date nulle part dans la '
+        'carte, la ligne du jalon comprise', (tester) async {
+      await _monterEleve(
+        tester,
+        _FauxPort(brut: _reponse(masquee: true, voit: false)),
+        surcharges: <Override>[
+          portProgressionFamilleProvider.overrideWithValue(_FamilleAvecJalon()),
+        ],
+      );
+      expect(find.text(t.suiviPedagogique.dernierJalon), findsOneWidget);
+      expect(find.text('Lire avec les voyelles'), findsWidgets);
+      _aucuneDate(tester);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('son tuteur, lui, lit la date du jalon', (tester) async {
+      await monterHistorique(
+        tester,
+        depart: Routes.tuteurSuivi,
+        taille: const Size(390, 3200),
+        autres: <Override>[
+          portMaProgressionProvider.overrideWithValue(
+            _FauxPort(brut: _reponse(voit: false)),
+          ),
+          portProgressionFamilleProvider.overrideWithValue(_FamilleAvecJalon()),
+        ],
+      );
+      expect(find.text(t.suiviPedagogique.dernierJalon), findsOneWidget);
+      expect(find.textContaining('2026'), findsWidgets);
+      expect(tester.takeException(), isNull);
+    });
+
     testWidgets('espace de l eleve, enfant de 6 a 9 ans, reponse NON masquee '
         '(lue avec le jeton du tuteur) : l ecran n affiche toujours aucune '
         'date ni duree, sur eleve_voit_dates', (tester) async {
@@ -489,4 +525,16 @@ void main() {
       findsOneWidget,
     );
   });
+}
+
+/// Le niveau declare et le dernier jalon, avec sa date (ce qu'un adaptateur rendrait a un tuteur).
+class _FamilleAvecJalon implements PortProgressionFamille {
+  @override
+  Future<ProgressionEleve> progression(String eleveId) async =>
+      ProgressionEleve(
+        eleveId: eleveId,
+        niveauHumain: 'Les lettres',
+        jalons: const <String>['Lit chaque lettre'],
+        dernierJalonLe: DateTime(2026, 10, 14),
+      );
 }

@@ -3,6 +3,11 @@
 -- docs/current/pedagogie/REGLAGES.md, tableaux 1 et 1 bis ; bilan du lot :
 -- docs/current/pedagogie/lots/LOT-1-SOCLE-PROGRAMME.md.
 --
+-- A COLLER EN UNE SEULE FOIS dans l'editeur SQL, de la premiere a la derniere
+-- ligne. Ce fichier n'est PAS rejouable (le preflight refuse une seconde
+-- installation) et ne porte ni BEGIN ni COMMIT : ne jamais le decouper, ne
+-- jamais en rejouer un morceau.
+--
 -- Fichier ADDITIF, sans aucun mot d'effacement (zero instruction de retrait :
 -- les retraits sont pour le lot 10). Numero propose par l'agent du lot, a
 -- confirmer par le garde-cap (plage 20261123900000 a 20261123999999, libre au
@@ -26,11 +31,12 @@
 --      au passage d'etape (etape de meme code dans la version publiee courante,
 --      sinon refus `programme_code_absent`).
 --   3. Le fait unique « etape en cours » par eleve (`eleve_etape_en_cours`),
---      pose seul a l'entree en classe et pour les eleves deja presents (un
---      eleve debutant entre a l'etape 1 ; jamais « l'etape de la classe ») ; les
+--      pose seul a l'entree en classe, une fois une version publiee (un eleve
+--      debutant entre a l'etape 1 ; jamais « l'etape de la classe ») ; les
 --      gestes existants de la direction (decider_placement,
---      progression_promouvoir) le corrigent par un declencheur. Chaque classe
---      recoit seule l'etape 1 des bases si elle n'a pas d'etape.
+--      progression_promouvoir) le posent ou le corrigent par un declencheur.
+--      Une classe NEUVE recoit seule l'etape 1 des bases ; les classes et les
+--      eleves DEJA presents ne sont pas touches a l'installation.
 --   4. `private.etape_eleve` lit ce fait d'abord (meme signature) : toutes ses
 --      lectures rendent la meme etape. `public.etape_eleve_lecture` est LA
 --      lecture unique de l'etape de l'eleve, pour tous les roles.
@@ -39,12 +45,14 @@
 --      d'accroche du lot 2 (fermetures, pauses) : la colonne `recul_jours`, lue
 --      a un seul endroit (`private.dates_etape`).
 --
--- A l'installation, sans geste de la direction : la version en brouillon (s'il
--- y en a une et qu'elle se laisse completer) est completee puis publiee, sinon
--- une version neuve est creee et publiee ; auteur = l'auteur du brouillon, ou a
--- defaut le plus ancien compte de la direction. Sur une base sans direction (CI,
--- base nue), rien n'est seme : `private.semer_programme_bases(auteur)` le fait
--- quand on l'appelle.
+-- A l'installation, ce fichier ne PUBLIE rien, ne pose aucun niveau sur une
+-- classe et ne cree aucun fait d'eleve (decision de l'architecte, 13/11) :
+-- publier est un geste de la direction, et un eleve finit son etape dans sa
+-- version. Il complete seulement le brouillon le plus recent quand celui-ci est
+-- VIDE de contenu (aucun objectif, aucune duree : la ligne vide de production) ;
+-- un brouillon deja rempli par la direction n'est jamais touche. Les gestes qui
+-- suivent sont ceux de la direction : publier la version (ecran Programmes),
+-- placer les eleves deja en cours (ecran Diagnostics).
 
 
 -- ---------------------------------------------------------------------------
@@ -589,11 +597,12 @@ BEGIN
 END;
 $function$;
 
--- Chaque classe non terminee sans etape recoit l'etape 1 des bases ; chaque
--- membre actif sans etape recoit la sienne, datee du JOUR DE L'INSTALLATION
--- (correction de l'architecte, 12/11 : un changement vaut pour la suite, jamais
--- pour le passe ; personne ne leur avait annonce de date). Un eleve qui entre en
--- classe ensuite garde sa date d'entree (declencheur d'entree en classe).
+-- OUTIL DE RATTACHEMENT, jamais appele a l'installation (decision de
+-- l'architecte, 13/11) : appele a la main ou par les scenarios, il donne a chaque
+-- classe non terminee sans etape l'etape 1 des bases, et a chaque membre actif
+-- sans etape la sienne, datee du JOUR DE L'APPEL (un changement vaut pour la
+-- suite, jamais pour le passe). Un eleve qui entre en classe ensuite garde sa
+-- date d'entree (declencheur d'entree en classe).
 CREATE FUNCTION private.rattacher_classes_et_eleves()
 RETURNS integer
 LANGUAGE plpgsql
@@ -882,7 +891,8 @@ COMMENT ON FUNCTION private.etape_eleve(uuid, uuid) IS
 -- CAHIER-C1 : le remplacant devient enseignant effectif a l'acceptation, et lit
 -- jusqu'a 24 heures apres la fin prevue de la seance) ; la direction. 42501 sinon.
 -- Rend NULL sans etape ni classe ; {"attente": "entretien_de_lecture"} pour un
--- eleve en classe qui a declare savoir lire et attend la decision de la direction.
+-- eleve en classe qui a declare savoir lire et attend la decision de la direction,
+-- seulement quand une version est publiee (sans version publiee, rien n'attend).
 -- `eleve_voit_dates` (independant de l'appelant) : vrai si la tranche de l'eleve
 -- est connue et que son age maximum atteint `programme.age_voit_date_limite` (10),
 -- ou si c'est une tranche d'adultes ; faux si la tranche est inconnue.
@@ -942,6 +952,7 @@ BEGIN
   SELECT * INTO f FROM public.eleve_etape_en_cours WHERE student_id = p_eleve_id;
   IF NOT FOUND THEN
     IF v_groupe IS NOT NULL
+       AND EXISTS (SELECT 1 FROM public.programme_versions pv WHERE pv.statut = 'publiee')
        AND EXISTS (SELECT 1 FROM public.student_profiles sp
                     WHERE sp.profile_id = p_eleve_id
                       AND sp.niveau_declare IS NOT NULL
@@ -1296,9 +1307,14 @@ COMMENT ON FUNCTION public.preremplir_bases_programme(uuid) IS
   'niveau et sa date limite). Remplace la proposition de CAHIER-C2.';
 
 -- ---------------------------------------------------------------------------
--- 10. Le semis : completer et publier le programme, sans geste de la direction
+-- 10. Completer un brouillon VIDE, jamais publier
 -- ---------------------------------------------------------------------------
-CREATE FUNCTION private.semer_programme_bases(p_auteur uuid)
+-- Le brouillon le plus recent recoit le contenu des bases s'il se laisse completer
+-- sans rien retirer (voir version_bases_convertible) ET s'il est vide de contenu :
+-- aucune de ses etapes n'a d'objectif ni de duree. Un brouillon que la direction a
+-- deja rempli n'est jamais touche. Ne publie rien, ne touche ni classe ni eleve.
+-- Rend l'identifiant du brouillon complete, ou NULL quand il n'y a rien a faire.
+CREATE FUNCTION private.completer_brouillon_bases()
 RETURNS uuid
 LANGUAGE plpgsql
 SECURITY DEFINER
@@ -1306,41 +1322,23 @@ SET search_path = ''
 AS $function$
 DECLARE
   v_version uuid;
-  v_numero int;
 BEGIN
-  -- Deja publie avec son niveau : rien a faire (rejouable).
-  SELECT v.id INTO v_version
-    FROM public.programme_versions v
-   WHERE v.statut = 'publiee'
-     AND EXISTS (SELECT 1 FROM public.programme_cycles c WHERE c.version_id = v.id AND c.code = 'bases');
-  IF v_version IS NOT NULL THEN
-    RETURN v_version;
-  END IF;
-  IF p_auteur IS NULL THEN
-    RAISE EXCEPTION 'semer_programme_bases : un auteur (compte de la direction) est requis';
-  END IF;
-
-  -- Le brouillon le plus recent, s'il se laisse completer ; sinon une version neuve.
   SELECT v.id INTO v_version
     FROM public.programme_versions v
    WHERE v.statut = 'brouillon'
    ORDER BY v.numero_version DESC
    LIMIT 1;
-  IF v_version IS NOT NULL AND NOT private.version_bases_convertible(v_version) THEN
-    v_version := NULL;
-  END IF;
   IF v_version IS NULL THEN
-    SELECT coalesce(max(numero_version), 0) + 1 INTO v_numero FROM public.programme_versions;
-    INSERT INTO public.programme_versions (statut, numero_version, cree_par)
-    VALUES ('brouillon', v_numero, p_auteur)
-    RETURNING id INTO v_version;
+    RETURN NULL;
   END IF;
-
+  IF NOT private.version_bases_convertible(v_version)
+     OR EXISTS (SELECT 1 FROM public.programme_niveaux n
+                 WHERE n.version_id = v_version
+                   AND (pg_catalog.cardinality(n.objectifs) > 0
+                        OR n.durees <> '{}'::jsonb)) THEN
+    RETURN NULL;
+  END IF;
   PERFORM private.remplir_version_bases(v_version);
-
-  UPDATE public.programme_versions
-     SET statut = 'publiee', publiee_at = pg_catalog.now(), publiee_par = p_auteur
-   WHERE id = v_version;
   RETURN v_version;
 END;
 $function$;
@@ -1364,7 +1362,7 @@ REVOKE ALL ON FUNCTION private.rattacher_classes_et_eleves() FROM PUBLIC, anon, 
 REVOKE ALL ON FUNCTION private.socle_classe_neuve() FROM PUBLIC, anon, authenticated, service_role;
 REVOKE ALL ON FUNCTION private.socle_entree_en_classe() FROM PUBLIC, anon, authenticated, service_role;
 REVOKE ALL ON FUNCTION private.socle_decision_niveau() FROM PUBLIC, anon, authenticated, service_role;
-REVOKE ALL ON FUNCTION private.semer_programme_bases(uuid) FROM PUBLIC, anon, authenticated, service_role;
+REVOKE ALL ON FUNCTION private.completer_brouillon_bases() FROM PUBLIC, anon, authenticated, service_role;
 REVOKE ALL ON FUNCTION public.etape_eleve_lecture(uuid) FROM PUBLIC, anon, service_role;
 GRANT EXECUTE ON FUNCTION public.etape_eleve_lecture(uuid) TO authenticated;
 REVOKE ALL ON FUNCTION public.etapes_sur_ancienne_version() FROM PUBLIC, anon, service_role;
@@ -1379,35 +1377,20 @@ END
 $agent$;
 
 -- ---------------------------------------------------------------------------
--- 12. Installation : semer, publier, rattacher les classes et les eleves
+-- 12. Installation : completer un brouillon vide, rien d'autre
 -- ---------------------------------------------------------------------------
-DO $semis$
+DO $completer$
 DECLARE
-  v_auteur uuid;
   v_version uuid;
-  v_eleves integer;
 BEGIN
-  SELECT v.cree_par INTO v_auteur
-    FROM public.programme_versions v
-   WHERE v.statut = 'brouillon'
-   ORDER BY v.numero_version DESC LIMIT 1;
-  IF v_auteur IS NULL THEN
-    SELECT p.id INTO v_auteur
-      FROM public.profiles p
-     WHERE p.role = 'admin' AND p.deleted_at IS NULL
-     ORDER BY p.created_at
-     LIMIT 1;
+  v_version := private.completer_brouillon_bases();
+  IF v_version IS NULL THEN
+    RAISE NOTICE 'SOCLE-PROGRAMME : aucun brouillon vide a completer ; rien n''est publie, aucune classe ni aucun eleve n''est touche';
+  ELSE
+    RAISE NOTICE 'SOCLE-PROGRAMME : brouillon % complete, NON publie ; aucune classe ni aucun eleve n''est touche', v_version;
   END IF;
-  IF v_auteur IS NULL
-     AND NOT EXISTS (SELECT 1 FROM public.programme_versions WHERE statut = 'publiee') THEN
-    RAISE NOTICE 'SOCLE-PROGRAMME : aucun compte de la direction, programme non seme (base nue)';
-    RETURN;
-  END IF;
-  v_version := private.semer_programme_bases(v_auteur);
-  v_eleves := private.rattacher_classes_et_eleves();
-  RAISE NOTICE 'SOCLE-PROGRAMME : version publiee %, % eleve(s) rattache(s)', v_version, v_eleves;
 END
-$semis$;
+$completer$;
 
 -- ---------------------------------------------------------------------------
 -- 13. Postflight
@@ -1428,7 +1411,7 @@ BEGIN
   END IF;
   IF NOT pg_catalog.has_function_privilege('authenticated', 'public.etape_eleve_lecture(uuid)', 'EXECUTE')
      OR pg_catalog.has_function_privilege('anon', 'public.etape_eleve_lecture(uuid)', 'EXECUTE')
-     OR pg_catalog.has_function_privilege('authenticated', 'private.semer_programme_bases(uuid)', 'EXECUTE')
+     OR pg_catalog.has_function_privilege('authenticated', 'private.completer_brouillon_bases()', 'EXECUTE')
      OR pg_catalog.has_function_privilege('authenticated', 'private.poser_etape_eleve(uuid, uuid, timestamptz)', 'EXECUTE')
      OR pg_catalog.has_function_privilege('authenticated', 'private.dates_etape(uuid)', 'EXECUTE')
      OR pg_catalog.has_function_privilege('anon', 'public.creer_version_programme(uuid)', 'EXECUTE')

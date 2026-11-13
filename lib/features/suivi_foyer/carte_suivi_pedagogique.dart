@@ -206,7 +206,8 @@ class CarteSuiviPedagogique extends ConsumerWidget {
                   libelle: s.dernierJalon,
                   legende: LibellesGroupe.joindre(
                     jalon,
-                    famille?.dernierJalonLe == null
+                    // Aucune date pour l'enfant de 6 a 9 ans qui lit pour lui-meme.
+                    !dates || famille?.dernierJalonLe == null
                         ? null
                         : _jour(famille!.dernierJalonLe!.toLocal()),
                   ),
