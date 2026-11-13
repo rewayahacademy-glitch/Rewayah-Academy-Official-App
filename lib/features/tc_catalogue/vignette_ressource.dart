@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
-import '../../core/tc_bibliotheque/contenu_arabe.dart';
 import '../../core/tc_bibliotheque/couverture_ressource.dart';
 import '../../core/tc_bibliotheque/library_resource.dart';
 import '../../core/tc_bibliotheque/vignettes_ressource.dart';
@@ -57,6 +55,27 @@ class VignetteRessource extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Le Coran garde SA couverture standard (celle de l'etagere de la salle,
+    // directeur, 11/11/2026) : double filet, medaillon, « القرآن الكريم » et
+    // l'edition, toujours en arabe, dans la police du Coran ; une vignette
+    // deposee se pose par-dessus, comme pour les autres types.
+    if (couverture.type == TypeRessource.quran) {
+      return AspectRatio(
+        aspectRatio: rapport,
+        child: ClipRRect(
+          borderRadius: AppRadius.arrondiMd,
+          child: ExcludeSemantics(
+            child: Stack(
+              fit: StackFit.expand,
+              children: <Widget>[
+                CouvertureSupport(titre: '', couverture: couverture),
+                ?image,
+              ],
+            ),
+          ),
+        ),
+      );
+    }
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
     final AppColorPair paire = teinte(palette, couverture.indexTeinte);
@@ -88,28 +107,11 @@ class VignetteRessource extends StatelessWidget {
                         padding: const EdgeInsets.all(AppSpacing.sm),
                         child: FittedBox(
                           child: Text(
-                            // Le Coran porte son titre arabe, dans la police
-                            // du Coran (directeur, 13/11/2026) ; les autres
-                            // couvertures gardent leur monogramme.
-                            couverture.type == TypeRessource.quran
-                                ? t.tc.bibliotheque.detail.coranTitreArabe
-                                : couverture.monogramme,
-                            textAlign: TextAlign.center,
+                            couverture.monogramme,
                             style: paire.applyTo(
-                              (couverture.type == TypeRessource.quran
-                                      ? styleContenuArabe(
-                                          t
-                                              .tc
-                                              .bibliotheque
-                                              .detail
-                                              .coranTitreArabe,
-                                          compacte
-                                              ? textes.headlineSmall
-                                              : textes.displaySmall,
-                                        )
-                                      : (compacte
-                                            ? textes.headlineSmall
-                                            : textes.displaySmall)) ??
+                              (compacte
+                                      ? textes.headlineSmall
+                                      : textes.displaySmall) ??
                                   const TextStyle(),
                             ),
                           ),

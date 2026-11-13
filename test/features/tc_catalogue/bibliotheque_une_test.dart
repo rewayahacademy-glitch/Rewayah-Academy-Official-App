@@ -277,13 +277,17 @@ void main() {
       ),
     ];
 
-    testWidgets('la vignette du Coran porte son titre arabe', (tester) async {
+    testWidgets('la vignette du Coran est la couverture standard du Coran, '
+        'titre arabe en police du Coran', (tester) async {
       await _monter(
         tester,
         Routes.tcBibliotheque,
         _surcharges(ressources: arabe),
       );
-      final String titre = t.tc.bibliotheque.detail.coranTitreArabe;
+      // Le texte n'est pas recopie : c'est celui de la couverture partagee
+      // (l'etagere de la salle), la meme dans les deux langues.
+      final String titre = t.salle.etagere.coranCouverture.titre;
+      expect(_cle('couverture-coran-titre'), findsWidgets);
       expect(find.text(titre), findsWidgets);
       expect(police(tester, titre), 'UthmanicHafs');
     });
