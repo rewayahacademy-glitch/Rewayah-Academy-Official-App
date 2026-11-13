@@ -251,10 +251,17 @@ class _FeuilleAjustementEtat extends ConsumerState<_FeuilleAjustement> {
           ),
         ],
         Ecart.vLg,
-        ActionPrincipale(
-          libelle: t.priere.enseignant.enregistrer,
-          enCours: _envoi,
-          onPress: _enregistrer,
+        // Un bouton plein ne s'etire pas sur tout un ecran d'ordinateur (B5, 640 px).
+        Align(
+          alignment: AlignmentDirectional.topStart,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 640),
+            child: ActionPrincipale(
+              libelle: t.priere.enseignant.enregistrer,
+              enCours: _envoi,
+              onPress: _enregistrer,
+            ),
+          ),
         ),
       ],
     );

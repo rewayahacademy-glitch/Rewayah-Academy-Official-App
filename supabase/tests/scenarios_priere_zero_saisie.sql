@@ -355,46 +355,89 @@ SELECT pg_temp.vrai(NOT pg_catalog.has_function_privilege('anon', 'public.priere
   'priere_corriger : ni anon ni PUBLIC');
 
 -- ===========================================================================
--- 7. Le declencheur de la ville (`lieux_priere_auto`), sur une table d'essai
+-- 7. Le rattrapage des villes d'enseignants deja enregistrees (lot HORLOGE-ET-LIEU)
 -- ===========================================================================
--- public.lieux (lot HORLOGE-ET-LIEU) n'existe pas encore : une table d'essai porte le meme
--- declencheur, avec les noms de colonnes en arguments.
-CREATE TABLE public.lieux_essai (
-  id serial PRIMARY KEY, profil uuid, ville text, lat numeric, lng numeric, zone text);
-CREATE TRIGGER lieux_priere_auto AFTER INSERT OR UPDATE ON public.lieux_essai
-FOR EACH ROW EXECUTE FUNCTION private.priere_trg_lieux_auto('profil', 'ville', 'lat', 'lng', 'zone');
--- T4 (sans lieu) : la ville pose le lieu.
-INSERT INTO public.lieux_essai (profil, ville, lat, lng, zone)
-VALUES ('9f000000-0000-4000-8000-000000000004', 'Paris', 48.857, 2.352, 'Europe/Paris');
-SELECT pg_temp.vrai((SELECT place_label = 'Paris' AND lieu_source = 'auto' AND timezone_iana = 'Europe/Paris'
-                       FROM public.prayer_settings WHERE teacher_id = '9f000000-0000-4000-8000-000000000004'),
-  'declencheur : l''enregistrement d''une ville pose le lieu de l''enseignant (source « auto »)');
--- La meme ville enregistree de nouveau : idempotent.
-UPDATE public.lieux_essai SET ville = 'Paris' WHERE profil = '9f000000-0000-4000-8000-000000000004';
-SELECT pg_temp.vrai((SELECT count(*) = 1 FROM public.prayer_settings WHERE teacher_id = '9f000000-0000-4000-8000-000000000004'),
-  'declencheur : une ville enregistree deux fois ne laisse qu''un seul lieu');
--- Un profil qui n'est pas enseignant : rien n'est pose, l'enregistrement de la ville passe.
-INSERT INTO public.lieux_essai (profil, ville, lat, lng, zone)
-VALUES ('9f000000-0000-4000-8000-000000000020', 'Paris', 48.857, 2.352, 'Europe/Paris');
-SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM public.prayer_settings WHERE teacher_id = '9f000000-0000-4000-8000-000000000020')
-                    AND EXISTS (SELECT 1 FROM public.lieux_essai WHERE profil = '9f000000-0000-4000-8000-000000000020'),
-  'declencheur : un eleve n''a aucun lieu de priere, et sa ville s''enregistre quand meme');
--- Une ville invalide : l'enregistrement n'est jamais bloque.
-INSERT INTO public.lieux_essai (profil, ville, lat, lng, zone)
-VALUES ('9f000000-0000-4000-8000-000000000003', 'Nulle part', 95, 0, 'Mars/Olympus');
-SELECT pg_temp.vrai(EXISTS (SELECT 1 FROM public.lieux_essai WHERE ville = 'Nulle part'),
-  'declencheur : une ville invalide ne bloque pas son enregistrement');
--- Un lieu pose par la direction n'est jamais touche par la ville.
+-- Le lot horloge pose lui-meme le declencheur `lieux_priere_auto` ; ce lot rattrape UNE fois les
+-- villes deja la. Si public.lieux n'existe pas dans la base de rejeu, une table de la meme
+-- forme (colonnes de 20261123943000_lieux.sql) la remplace le temps du scenario ; si elle
+-- existe deja, la section est sautee (ses lignes ont leurs propres contraintes).
+SELECT pg_temp.vrai(private.priere_rattraper_villes() >= 0, 'rattrapage : la fonction se joue meme sans table de villes');
+DO $essai$
+BEGIN
+  IF pg_catalog.to_regclass('public.lieux') IS NOT NULL THEN
+    RAISE NOTICE 'SAUTE : public.lieux existe deja, le rattrapage est prouve par la section horloge du lot horloge';
+    PERFORM set_config('test.saute_lieux', 'oui', true);
+  ELSE
+    CREATE TABLE public.lieux (
+      id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+      foyer_id uuid NULL UNIQUE, profil_id uuid NULL UNIQUE,
+      CONSTRAINT lieux_un_seul_proprietaire CHECK ((foyer_id IS NULL) <> (profil_id IS NULL)),
+      ville text NOT NULL, latitude numeric(6,3) NOT NULL, longitude numeric(7,3) NOT NULL,
+      fuseau_iana text NOT NULL);
+  END IF;
+END
+$essai$;
+INSERT INTO auth.users (id, email)
+SELECT ('9f000000-0000-4000-8000-0000000000' || n)::uuid, 'zero-' || n || '@test.invalid' FROM unnest(ARRAY['05','06','07','08']) n;
+INSERT INTO public.profiles (id, immutable_id, role, household_id, first_name, last_name, account_status, gender) VALUES
+ ('9f000000-0000-4000-8000-000000000005','ZER-T5','teacher',NULL,'Emna','Cinq','provisional_active','female'),
+ ('9f000000-0000-4000-8000-000000000006','ZER-T6','teacher',NULL,'Farid','Six','provisional_active','male'),
+ ('9f000000-0000-4000-8000-000000000007','ZER-T7','teacher',NULL,'Ghali','Sept','provisional_active','male'),
+ ('9f000000-0000-4000-8000-000000000008','ZER-T8','teacher',NULL,'Hamza','Huit','provisional_active','male');
+INSERT INTO public.teacher_profiles (profile_id, country, timezone_iana, kyc_status) VALUES
+ ('9f000000-0000-4000-8000-000000000005','GN','Africa/Conakry','approved'),
+ ('9f000000-0000-4000-8000-000000000006','SA','Asia/Riyadh','approved'),
+ ('9f000000-0000-4000-8000-000000000007','FR','Europe/Paris','approved'),
+ ('9f000000-0000-4000-8000-000000000008','FR','Europe/Paris','approved');
+-- T7 : la direction a pose son lieu a la main avant le rattrapage.
 SELECT pg_temp.en_tant_que('9f000000-0000-4000-8000-000000000010', 'admin');
-SELECT public.priere_lieu_definir('9f000000-0000-4000-8000-000000000003', 'Conakry', 9.5370, -13.6773, 'Africa/Conakry');
+SELECT public.priere_lieu_definir('9f000000-0000-4000-8000-000000000007', 'Paris', 48.8566, 2.3522, 'Europe/Paris');
 SELECT pg_temp.personne();
-INSERT INTO public.lieux_essai (profil, ville, lat, lng, zone)
-VALUES ('9f000000-0000-4000-8000-000000000003', 'Kindia', 10.0565, -12.8658, 'Africa/Conakry');
-SELECT pg_temp.vrai((SELECT place_label = 'Conakry' AND lieu_source = 'direction'
-                       FROM public.prayer_settings WHERE teacher_id = '9f000000-0000-4000-8000-000000000003'),
-  'declencheur : le lieu pose par la direction n''est pas remplace par la ville');
-SELECT pg_temp.vrai(NOT pg_catalog.has_function_privilege('authenticated', 'private.priere_trg_lieux_auto()', 'EXECUTE')
-                    AND NOT pg_catalog.has_function_privilege('anon', 'private.priere_trg_lieux_auto()', 'EXECUTE'),
-  'private.priere_trg_lieux_auto : aucun droit pour authenticated ni anon');
+DO $lignes$
+BEGIN
+  IF current_setting('test.saute_lieux', true) = 'oui' THEN RETURN; END IF;
+  -- Deux villes d'enseignants deja la, une ville de foyer, une ville d'eleve, un enseignant dont
+  -- la direction a pose le lieu (T3), un enseignant qui a partage sa position (T1), et une ville
+  -- invalide (T7 : fuseau inconnu) qui ne doit rien bloquer.
+  INSERT INTO public.lieux (profil_id, ville, latitude, longitude, fuseau_iana) VALUES
+    ('9f000000-0000-4000-8000-000000000005', 'Conakry', 9.537, -13.677, 'Africa/Conakry'),
+    ('9f000000-0000-4000-8000-000000000006', 'Riyad', 24.714, 46.675, 'Asia/Riyadh'),
+    ('9f000000-0000-4000-8000-000000000007', 'Lyon', 45.764, 4.836, 'Europe/Paris'),
+    ('9f000000-0000-4000-8000-000000000001', 'Kindia', 10.057, -12.866, 'Africa/Conakry'),
+    ('9f000000-0000-4000-8000-000000000020', 'Paris', 48.857, 2.352, 'Europe/Paris'),
+    ('9f000000-0000-4000-8000-000000000008', 'Nulle part', 10.000, 10.000, 'Mars/Olympus');
+  INSERT INTO public.lieux (foyer_id, ville, latitude, longitude, fuseau_iana)
+  VALUES ('9f0000f1-0000-4000-8000-000000000001', 'Paris', 48.857, 2.352, 'Europe/Paris');
+END
+$lignes$;
+DO $rattrape$
+DECLARE v_n integer;
+BEGIN
+  IF current_setting('test.saute_lieux', true) = 'oui' THEN RETURN; END IF;
+  v_n := private.priere_rattraper_villes();
+  PERFORM pg_temp.vrai(v_n = 2, 'rattrapage : deux lieux poses, ceux des deux enseignants sans lieu (' || v_n || ')');
+  PERFORM pg_temp.vrai((SELECT count(*) = 2 AND bool_and(lieu_source = 'auto')
+                          FROM public.prayer_settings
+                         WHERE teacher_id IN ('9f000000-0000-4000-8000-000000000005', '9f000000-0000-4000-8000-000000000006')),
+    'rattrapage : les deux villes d''enseignants posent un lieu « auto »');
+  PERFORM pg_temp.vrai((SELECT place_label = 'Paris' AND lieu_source = 'direction'
+                          FROM public.prayer_settings WHERE teacher_id = '9f000000-0000-4000-8000-000000000007'),
+    'rattrapage : le lieu pose a la main par la direction n''est pas touche');
+  PERFORM pg_temp.vrai((SELECT lieu_source = 'enseignant' FROM public.prayer_settings
+                         WHERE teacher_id = '9f000000-0000-4000-8000-000000000001'),
+    'rattrapage : la position partagee par l''enseignant n''est pas touchee');
+  PERFORM pg_temp.vrai(NOT EXISTS (SELECT 1 FROM public.prayer_settings
+                         WHERE teacher_id IN ('9f000000-0000-4000-8000-000000000020', '9f000000-0000-4000-8000-000000000008')),
+    'rattrapage : ni un eleve, ni une ville invalide (avertissement, les autres passent) ne posent de lieu');
+  PERFORM pg_temp.vrai(private.priere_rattraper_villes() = 2,
+    'rattrapage : rejouable, une ville inchangee repose le meme lieu auto (aucun doublon)');
+  PERFORM pg_temp.vrai((SELECT count(*) = 2 FROM public.prayer_settings
+                         WHERE teacher_id IN ('9f000000-0000-4000-8000-000000000005', '9f000000-0000-4000-8000-000000000006')),
+    'rattrapage : toujours un seul lieu par enseignant apres le second passage');
+  PERFORM pg_temp.vrai(NOT pg_catalog.has_function_privilege('authenticated', 'private.priere_rattraper_villes()', 'EXECUTE')
+                       AND NOT pg_catalog.has_function_privilege('anon', 'private.priere_rattraper_villes()', 'EXECUTE'),
+    'private.priere_rattraper_villes : aucun droit pour authenticated ni anon');
+END
+$rattrape$;
 
 ROLLBACK;

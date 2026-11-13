@@ -78,13 +78,16 @@ class _SansLieuEtat extends ConsumerState<SansLieuPriere> {
         ],
         Ecart.vLg,
         // Un bouton plein ne s'etire pas sur tout un ecran d'ordinateur (B5, 640 px).
-        ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 640),
-          child: ActionPrincipale(
-            key: const ValueKey<String>('priere-utiliser-position'),
-            libelle: t.priere.enseignant.utiliserPosition,
-            enCours: _enCours,
-            onPress: _enCours ? null : () => unawaited(_partager()),
+        Align(
+          alignment: AlignmentDirectional.topStart,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 640),
+            child: ActionPrincipale(
+              key: const ValueKey<String>('priere-utiliser-position'),
+              libelle: t.priere.enseignant.utiliserPosition,
+              enCours: _enCours,
+              onPress: _enCours ? null : () => unawaited(_partager()),
+            ),
           ),
         ),
       ],

@@ -352,51 +352,60 @@ BEGIN
 END;
 $function$;
 
--- Le declencheur sur la table des villes (lot HORLOGE-ET-LIEU), nomme `lieux_priere_auto` des
--- deux cotes. La table `public.lieux` n'existe pas encore dans le depot : ses colonnes ne
--- sont pas devinees. La fonction recoit donc leurs NOMS en arguments du declencheur
--- (profil de l'enseignant, nom de la ville, latitude, longitude, fuseau) :
+-- Le lot HORLOGE-ET-LIEU pose lui-meme le declencheur `lieux_priere_auto` sur `public.lieux`
+-- (lieux d'enseignant seulement, erreur avalee) et relaie vers la fonction ci-dessus SI elle
+-- existe : ce fichier ne pose AUCUN declencheur du meme nom (il echouerait « already exists »).
 --
---   CREATE TRIGGER lieux_priere_auto AFTER INSERT OR UPDATE ON public.lieux
---   FOR EACH ROW EXECUTE FUNCTION private.priere_trg_lieux_auto(
---     '<colonne profil>', '<colonne nom>', '<colonne latitude>', '<colonne longitude>', '<colonne fuseau>');
---
--- Son echec ne bloque JAMAIS l'enregistrement de la ville (avertissement seulement) ; elle ne
--- pose rien pour un profil qui n'est pas enseignant (priere_lieu_auto le refuse) ; elle est
--- idempotente (une ville inchangee repose le meme lieu `auto`, un lieu de la direction ou de
--- l'enseignant n'est jamais touche).
-CREATE FUNCTION private.priere_trg_lieux_auto()
-RETURNS trigger
+-- Le rattrapage. Si `public.lieux` existe a l'installation, les villes d'ENSEIGNANTS deja
+-- enregistrees posent leur lieu de priere UNE fois (jamais une ville de foyer : `profil_id`
+-- est nul pour un foyer ; jamais par-dessus un lieu pose a la main par la direction ou par
+-- l'enseignant : la fonction le refuse ; l'erreur d'une ligne est avalee avec un
+-- avertissement et les autres lignes passent). La fonction est rejouable sans effet de bord
+-- (une ville inchangee repose le meme lieu `auto`). Les colonnes lues sont celles de
+-- 20261123943000_lieux.sql du lot horloge : profil_id, ville, latitude, longitude,
+-- fuseau_iana. Sans cette table, elle ne fait rien et rend 0.
+CREATE FUNCTION private.priere_rattraper_villes()
+RETURNS integer
 LANGUAGE plpgsql
 SECURITY DEFINER
 SET search_path = ''
 AS $function$
 DECLARE
-  v_ligne jsonb := pg_catalog.to_jsonb(NEW);
+  r record;
+  v_pose integer := 0;
 BEGIN
+  IF pg_catalog.to_regclass('public.lieux') IS NULL THEN
+    RETURN 0;
+  END IF;
   BEGIN
-    IF TG_NARGS = 5 THEN
-      PERFORM private.priere_lieu_auto(
-        (v_ligne ->> TG_ARGV[0])::uuid, v_ligne ->> TG_ARGV[1],
-        (v_ligne ->> TG_ARGV[2])::numeric, (v_ligne ->> TG_ARGV[3])::numeric,
-        v_ligne ->> TG_ARGV[4]);
-    END IF;
+    FOR r IN EXECUTE
+      'SELECT l.profil_id, l.ville, l.latitude, l.longitude, l.fuseau_iana
+         FROM public.lieux l WHERE l.profil_id IS NOT NULL ORDER BY l.profil_id'
+    LOOP
+      BEGIN
+        IF private.priere_lieu_auto(r.profil_id, r.ville, r.latitude, r.longitude, r.fuseau_iana) THEN
+          v_pose := v_pose + 1;
+        END IF;
+      EXCEPTION WHEN OTHERS THEN
+        RAISE WARNING 'PRIERE-2 : ville du profil % non rattrapee : %', r.profil_id, SQLERRM;
+      END;
+    END LOOP;
   EXCEPTION WHEN OTHERS THEN
-    RAISE WARNING 'PRIERE-2 : lieu de priere non pose depuis la ville : %', SQLERRM;
+    RAISE WARNING 'PRIERE-2 : rattrapage des villes impossible : %', SQLERRM;
   END;
-  RETURN NEW;
+  RETURN v_pose;
 END;
 $function$;
 
-DO $lieux$
+DO $rattrapage$
+DECLARE
+  v_pose integer := private.priere_rattraper_villes();
 BEGIN
-  IF pg_catalog.to_regclass('public.lieux') IS NOT NULL
-     AND NOT EXISTS (SELECT 1 FROM pg_catalog.pg_trigger t
-                      WHERE t.tgrelid = pg_catalog.to_regclass('public.lieux') AND t.tgname = 'lieux_priere_auto') THEN
-    RAISE NOTICE 'PRIERE-2 : public.lieux existe sans declencheur lieux_priere_auto ; le poser avec les noms de ses colonnes (voir le commentaire de private.priere_trg_lieux_auto)';
+  IF pg_catalog.to_regclass('public.lieux') IS NOT NULL THEN
+    RAISE NOTICE 'PRIERE-2 : % lieu(x) de priere pose(s) depuis les villes d''enseignants deja enregistrees', v_pose;
   END IF;
 END
-$lieux$;
+$rattrapage$;
 
 -- ===========================================================================
 -- 7. Les reglages lus : la methode appliquee et son origine
@@ -559,7 +568,7 @@ GRANT EXECUTE ON FUNCTION public.priere_ma_position(numeric, numeric, text),
   TO authenticated;
 REVOKE ALL ON FUNCTION
   private.priere_methode_zone(text), private.priere_methode_origine(uuid),
-  private.priere_lieu_auto(uuid, text, numeric, numeric, text), private.priere_trg_lieux_auto()
+  private.priere_lieu_auto(uuid, text, numeric, numeric, text), private.priere_rattraper_villes()
   FROM PUBLIC, anon, authenticated, service_role, agent_ro;
 
 DO $postflight$
