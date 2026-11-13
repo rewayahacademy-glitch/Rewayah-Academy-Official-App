@@ -333,12 +333,12 @@ class _DynamiqueChronoEtat extends State<DynamiqueChrono> {
           )
         : null;
     final Widget? ligneEtat = widget.ligne;
-    if (!avecChrono &&
-        marques.isEmpty &&
-        micro == null &&
-        alerte == null &&
-        ligneEtat == null) {
-      return const SizedBox.shrink();
+    if (!avecChrono && marques.isEmpty && micro == null && alerte == null) {
+      // Rien a dire dans la barre : la ligne d'etat seule (elle ne se replie
+      // jamais), sans capsule vide.
+      return ligneEtat == null
+          ? const SizedBox.shrink()
+          : KeyedSubtree(key: _cleLigne, child: ligneEtat);
     }
     // Une alerte posee sans pilote ne se replie pas d'un toucher (elle part
     // seule) ; avec le pilote, le toucher la replie et laisse sa marque.
