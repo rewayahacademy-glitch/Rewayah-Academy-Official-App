@@ -46,4 +46,4 @@ Chaque jeu : 390 et 1440 de large × clair et sombre × français et arabe (RTL)
   autre lot, `docs/current/captures/E2E/heures-accueil-enseignant/` ; celles-ci montrent l'état « rien
   aujourd'hui » que ce lot a changé.
 - **Courriel** de refus et d'annonce : aucune capture (texte du courriel, voir `courriel_test.ts`, non exécuté).
-- Relues à l'œil : environ 25 captures sur 144, au moins une par écran ; les autres suivent le même montage.
+- Relues à l'œil : environ 25 captures sur 136, au moins une par écran ; les autres suivent le même montage.
