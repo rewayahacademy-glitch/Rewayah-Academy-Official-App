@@ -20,6 +20,8 @@ import 'package:rewayah_academy/core/video/service_video.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
 import 'package:rewayah_academy/features/salle/salle_page.dart';
 import 'package:rewayah_academy/features/salle_seance/bornes_salle.dart';
+import 'package:rewayah_academy/features/salle_seance/chrono_salle.dart'
+    show horlogeChronoProvider;
 
 import '../capture/outil_capture.dart';
 import '../teaching_core/e/faux/faux_classe.dart';
@@ -30,7 +32,7 @@ const String _seance = 's1';
 
 String _profil(String role) => role == 'teacher' ? 't1' : 'e1';
 
-AccesSalle _acces(String role) => AccesSalle(
+AccesSalle _acces(String role, {bool moderer = false}) => AccesSalle(
   urlServeur: 'wss://exemple.invalid',
   jeton: 'jeton.signe',
   nomSalle: 'r_0123456789abcdef0123456789abcdef',
@@ -42,6 +44,7 @@ AccesSalle _acces(String role) => AccesSalle(
     peutPublierDonnees: role == 'teacher',
     peutRecevoir: true,
     invisible: false,
+    peutModerer: moderer,
   ),
   expireLe: DateTime.now().add(const Duration(minutes: 10)),
 );
@@ -81,6 +84,11 @@ List<Override> surchargesSalleChrono(
   FauxMoteurSalle moteur, {
   EtatPresence etatEleve = EtatPresence.presente,
   DateTime? maintenant,
+  PauseSeance Function()? pause,
+  PortPauseSeance? portPause,
+  DateTime Function()? horloge,
+  List<Override> autres = const <Override>[],
+  bool moderer = false,
 }) {
   final DateTime t0 = (maintenant ?? DateTime.now().toUtc()).subtract(
     const Duration(minutes: 52),
@@ -99,7 +107,7 @@ List<Override> surchargesSalleChrono(
     ),
     servicePreVolProvider.overrideWithValue(FauxServicePreVol()),
     serviceVideoProvider.overrideWithValue(
-      FauxServiceVideo(acces0: _acces(role)),
+      FauxServiceVideo(acces0: _acces(role, moderer: moderer)),
     ),
     moteurSalleProvider.overrideWithValue(moteur),
     servicePresenceProvider.overrideWithValue(
@@ -132,15 +140,22 @@ List<Override> surchargesSalleChrono(
         finPrevueUtc: t0.add(const Duration(minutes: 90)),
       ),
     ),
+    // DYNAMIQUE-CHRONO-2 : l'horloge du chrono et de la pause, le port et la
+    // pause servie, au choix du test.
+    if (horloge != null) horlogeChronoProvider.overrideWithValue(horloge),
+    if (portPause != null) portPauseSeanceProvider.overrideWithValue(portPause),
+    ...autres,
     pauseSeanceProvider.overrideWith(
-      (Ref _, String _) async => PauseSeance(
-        statut: StatutPause.programmee,
-        dureePrevueMinutes: 10,
-        debutPrevuUtc: DateTime.now().toUtc().add(
-          const Duration(minutes: 21),
-        ),
-        peutPiloter: true,
-      ),
+      (Ref _, String _) async =>
+          pause?.call() ??
+          PauseSeance(
+            statut: StatutPause.programmee,
+            dureePrevueMinutes: 10,
+            debutPrevuUtc: DateTime.now().toUtc().add(
+              const Duration(minutes: 21),
+            ),
+            peutPiloter: true,
+          ),
     ),
   ];
 }
@@ -158,6 +173,12 @@ Future<FauxMoteurSalle> monterSalleChrono(
   bool page = true,
   EtatPresence etatEleve = EtatPresence.presente,
   EdgeInsets zoneSure = EdgeInsets.zero,
+  PauseSeance Function()? pause,
+  PortPauseSeance? portPause,
+  DateTime Function()? horloge,
+  List<Override> autres = const <Override>[],
+  DateTime? maintenant,
+  bool moderer = false,
 }) async {
   fixerVueCapture(tester, taille, densite, zoneSure: zoneSure);
   final FauxMoteurSalle moteur = FauxMoteurSalle();
@@ -165,13 +186,22 @@ Future<FauxMoteurSalle> monterSalleChrono(
     hoteCapture(
       Builder(
         builder: (BuildContext context) => MediaQuery(
-          data: MediaQuery.of(
-            context,
-          ).copyWith(disableAnimations: mouvementReduit),
+          data: MediaQuery.of(context)
+              .copyWith(disableAnimations: mouvementReduit),
           child: const SallePage(seanceId: _seance),
         ),
       ),
-      surcharges: surchargesSalleChrono(role, moteur, etatEleve: etatEleve),
+      surcharges: surchargesSalleChrono(
+        role,
+        moteur,
+        etatEleve: etatEleve,
+        pause: pause,
+        portPause: portPause,
+        horloge: horloge,
+        autres: autres,
+        maintenant: maintenant,
+        moderer: moderer,
+      ),
       themeMode: theme,
       echelleTexte: echelleTexte,
     ),
