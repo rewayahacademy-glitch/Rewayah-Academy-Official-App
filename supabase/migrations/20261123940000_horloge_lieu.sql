@@ -679,7 +679,7 @@ BEGIN
       FROM public.teacher_profiles tp
      WHERE tp.profile_id = auth.uid() AND tp.deleted_at IS NULL;
   END IF;
-  -- HORLOGE-ET-LIEU : `academie` est l'horloge de reference de l'ecole
+  -- HORLOGE-ET-LIEU : `academie` est l'horloge de reference de l'academie
   -- (La Mecque), montree en second apres l'heure de la personne.
   RETURN pg_catalog.jsonb_build_object(
     'maintenant', pg_catalog.now(),
