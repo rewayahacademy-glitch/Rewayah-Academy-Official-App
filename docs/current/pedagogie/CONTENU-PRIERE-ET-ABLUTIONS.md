@@ -5,6 +5,13 @@
 > **La description suivie** : celle que le cheikh Ibn Baz enseigne dans son épître sur la manière de prier du Prophète ﷺ et dans ses réponses sur les ablutions. L'architecte n'a pas relu l'épître ligne par ligne pour ce fichier : chaque point dont il n'est pas certain porte la marque **« à vérifier par le directeur »**.
 > **Comment on l'enseigne (DÉCIDÉ 13/10).** L'enseignant montre la prière et les ablutions en pratique, avec les illustrations quand elles existent, sans fiqh détaillé. Les gestes se montrent, ils ne s'expliquent pas. Aucune traduction automatique : la translittération et le sens ci-dessous sont faits pour ce fichier.
 
+**À relire par le directeur en cinq minutes : les points marqués « à vérifier ».**
+1. Garder ou non, après les ablutions, le complément « Allâhumma-j'alnî mina-t-tawwâbîn… » (rapporté par at-Tirmidhi) (partie 1).
+2. L'invocation d'ouverture retenue pour les débutants, « Subhânaka-llâhumma… », parmi celles que cite le cheikh Ibn Baz (2.1, point 4).
+3. L'ordre des six demandes du complément de l'assise, « Allâhumma-ghfir lî, wa-rhamnî… » (2.5).
+4. La traduction « prie sur » pour صَلِّ عَلَى dans la prière sur le Prophète ﷺ (2.7).
+5. Les quatre moments où l'on lève les mains : ouverture, inclinaison, redressement, lever après le premier tachahhoud (2.8).
+
 **Comment lire ce fichier.** Chaque parole a trois lignes : l'arabe vocalisé, la translittération (â, î, û pour les voyelles longues ; ' pour la lettre ع), le sens en français. Le sens aide à comprendre ; il ne remplace jamais l'arabe, et on ne prie qu'en arabe.
 
 ---
@@ -45,7 +52,7 @@ Complément, non exigé à l'examen :
 > *Allâhumma-j'alnî mina-t-tawwâbîn, wa-j'alnî mina-l-mutatahhirîn.*
 > Ô Allah, fais de moi l'un de ceux qui se repentent souvent, et fais de moi l'un de ceux qui se purifient.
 
-**À vérifier par le directeur** : garder ou non ce complément (rapporté par at-Tirmidhi) dans ce que l'école enseigne aux débutants.
+**À vérifier par le directeur** : garder ou non ce complément (rapporté par at-Tirmidhi) dans ce que l'académie enseigne aux débutants.
 
 ---
 
@@ -71,7 +78,7 @@ Une prière se compose d'unités (rak'a). Nombre d'unités : l'aube (al-fajr) 2,
 > *Subhânaka-llâhumma wa bihamdik, wa tabâraka-smuk, wa ta'âlâ jadduk, wa lâ ilâha ghayruk.*
 > Gloire à Toi, ô Allah, et louange à Toi. Béni soit Ton nom, élevée soit Ta majesté, et il n'y a de divinité digne d'être adorée que Toi.
 
-**À vérifier par le directeur** : le cheikh Ibn Baz cite plusieurs formules d'ouverture authentiques ; l'école retient celle-ci, la plus courte et la plus connue, pour les débutants.
+**À vérifier par le directeur** : le cheikh Ibn Baz cite plusieurs formules d'ouverture authentiques ; l'académie retient celle-ci, la plus courte et la plus connue, pour les débutants.
 
 5. **La demande de protection et la basmala**, à voix basse :
 
@@ -115,7 +122,7 @@ Trois fois ; une fois suffit.
 > *Rabbanâ wa laka-l-hamd.*
 > Notre Seigneur, à Toi la louange.
 
-D'autres formules authentiques, plus longues, existent ; l'école enseigne d'abord celle-ci.
+D'autres formules authentiques, plus longues, existent ; l'académie enseigne d'abord celle-ci.
 
 ### 2.4 La prosternation (as-sujûd)
 
@@ -205,6 +212,6 @@ Une fois ce fichier relu par le directeur, la partie « paroles de la prière »
 | 4 | Le tachahhoud | Le premier long texte |
 | 5 | La prière sur le Prophète ﷺ | Le plus long |
 
-**À quelle étape, en général.** Pour les 6 à 9 ans, Al-Fatiha et les trois sourates occupent l'étape 3 : les paroles de la prière et les ablutions viennent surtout pendant l'étape 4. Pour les 10 ans et plus, elles viennent pendant les étapes 1 et 2. Dans tous les cas, l'enseignant les fait acquérir avant de proposer l'examen de fin des bases (`EVALUATIONS.md`, partie 4.5, « Prêt pour l'examen »). L'enseignant garde sa méthode et son rythme (DÉCIDÉ 13/10) : seul l'ordre des groupes est fixé.
+**À quelle étape.** Pour les 6 à 9 ans, Al-Fatiha commence à la fin de l'étape 2, juste après la chadda, et les trois sourates occupent l'étape 3 ; les paroles de la prière et les ablutions commencent à la fin de l'étape 3 et s'achèvent pendant l'étape 4. Dès 10 ans, elles viennent pendant les étapes 1 et 2 (pour les adultes, la prière sur le Prophète ﷺ tombe au début de l'étape 3). La séance de chaque groupe est fixée par `PROGRAMME-SEANCE-PAR-SEANCE.md`. Dans tous les cas, l'enseignant les fait acquérir avant de proposer l'examen de fin des bases (`EVALUATIONS.md`, partie 4.5, « Prêt pour l'examen »). L'enseignant garde sa méthode et son rythme (DÉCIDÉ 13/10) : seul l'ordre des groupes est fixé.
 
 **Les enregistrements.** Le directeur enregistre ces paroles dans le même ordre, une fois ce fichier relu (`CONTENUS-ATTENDUS.md`, n° 2).

@@ -39,7 +39,7 @@ Liste fermée. Le moteur ne lit rien d'autre et ne demande aucune saisie de plus
 | 1 | Cours prévu | La direction, au calendrier de la Classe |
 | 2 | Séance tenue, reportée, annulée ou sans enseignant | L'application, à la clôture |
 | 3 | Présence, quatre faits : présent (au moins la moitié de la durée prévue ; le retard compte comme présent si ce temps est atteint), partiel (moins de la moitié, plus de zéro), absent (aucune connexion), « Présence pas encore connue » [décision du 31/10, règle retenue par le pilote sur délégation du directeur] | L'application, en salle (la présence partielle est à construire : lot présence) |
-| 4 | Partie vue et page où la classe s'est arrêtée | Le système propose la partie prévue (programme, position, calendrier) ; l'enseignant la confirme ou la corrige d'un toucher, au point de fin de séance [ARBITRÉ 13/11] |
+| 4 | Séance faite et page où la classe s'est arrêtée | Au point de fin de séance, l'enseignant répond « Vu comme prévu » (par défaut), « On a vu moins » (il touche l'arrêt réel) ou « On a vu plus » [ARBITRÉ 13/11] |
 | 5 | Point de fin de séance : pour chaque présent, « A suivi » (par défaut, vaut une observation « Acquis ») ou « À renforcer » sur l'objectif de la partie ; une note facultative | L'enseignant, une seule page [ARBITRÉ 13/11] |
 | 5 bis | « Prêt pour un petit bilan » (« prête » pour une élève) ; suite (« Continuer », « Renforcer », « Suspendre le nouveau »), seulement quand une règle la demande | Proposé par le système, confirmé d'un geste par l'enseignant, ou marqué par lui depuis la fiche [ARBITRÉ 13/11] |
 | 6 | « À renforcer » touché au point de fin de séance du cours qui suit une absence (facultatif) | L'enseignant ; aucun geste de plus [ARBITRÉ] |
@@ -54,6 +54,8 @@ Liste fermée. Le moteur ne lit rien d'autre et ne demande aucune saisie de plus
 | 15 | Message lu | L'application |
 | 16 | Lecture enregistrée disponible pour une leçon | Le directeur ; la direction la dépose dans la Bibliothèque |
 | 17 | Parties du programme (leçon, page, sourate), leur objectif, les lettres et la règle qu'elles servent ; passage déjà vu tiré au hasard pour la partie prévue | La direction, avec le programme publié ; le système pour le tirage |
+| 18 | Plan de la classe : séance prévue (numéro, contenu, plage, objectifs, règle, coche prévue), sa date calculée ; séance faite ; écart au plan en leçons, qui, quand [DÉCIDÉ 13/11 ; ARBITRÉ 13/11] | Le programme séance par séance (`PROGRAMME-SEANCE-PAR-SEANCE.md`) ; le serveur pour les dates (jours de la classe, fermetures, pauses) et pour l'écart ; jamais une saisie |
+| 19 | Marge restante d'un élève : date limite de son étape moins la date calculée de la dernière séance de l'étape dans le plan, tel qu'il a glissé | Calculée par le serveur |
 
 **Un fait inconnu n'est jamais un fait négatif** [ARBITRÉ : on ne punit pas une panne]. « Présence pas encore connue » n'est jamais une absence ; un travail n'est « non fait » qu'après son délai, et seulement quand le marquage « fait » existe ; un point de fin de séance pas encore fait ne veut dire ni « Acquis » ni « À renforcer », et un élève présent en partie ne reçoit aucune observation.
 
@@ -149,7 +151,7 @@ Liste fermée : 20 états en six familles. Au plus un état par famille ; un él
 
 ## 4. Le catalogue des règles
 
-35 règles, même gabarit (la règle 34 est ajoutée après l'audit du 12/11/2026 ; la règle 35, le 13/11/2026, avec le point de fin de séance). **Conventions** :
+36 règles, même gabarit (la règle 34 est ajoutée après l'audit du 12/11/2026 ; les règles 35 et 36, le 13/11/2026, avec le point de fin de séance et le plan de la classe). **Conventions** :
 - « Tuteur » vaut pour un mineur ; l'adulte reçoit lui-même [ARBITRÉ], le même modèle au « vous » direct, écrit seulement s'il diffère.
 - Canal : application, et push pour le tuteur et l'adulte (catégorie « suivi »). « + courriel » marque une trace [DÉCIDÉ 01/11].
 - **Jamais le prénom d'un mineur dans un push** : il dit « votre enfant » [DÉCIDÉ 01/11]. Un enfant n'a ni push, ni courriel [DÉCIDÉ 01/11], ni liste de notifications : seulement les cartes de son accueil, au tutoiement.
@@ -361,7 +363,7 @@ Liste fermée : 20 états en six familles. Au plus un état par famille ; un él
 ### Règle 30 · Fermeture qui approche et reprise
 - **Couvre** : calendrier, 3.13. **Condition** : fermeture dans 7 jours ; reprise demain. **Moment** : chaque nuit.
 - **Système** : gèle les compteurs ; recule les dates limites d'autant ; annonce dans le message de la semaine ; rappel la veille de la reprise.
-- **Messages** : « L'académie ferme du {date} au {date}. Les dates limites reculent d'autant. Reprise le {date}. » Enfant : « L'école reprend le {date}. »
+- **Messages** : « L'académie ferme du {date} au {date}. Les dates limites reculent d'autant. Reprise le {date}. » Enfant : « L'académie reprend le {date}. »
 - **Responsable** : aucun. **Remontée** : aucune. **Clôture** : reprise.
 - **Jamais** : une fermeture comptée comme absence.
 
@@ -393,10 +395,16 @@ Liste fermée : 20 états en six familles. Au plus un état par famille ; un él
 
 ### Règle 35 · Point de fin de séance
 - **Couvre** : la séance de tous les jours ; 3.4, 3.9, 4.b. Elle remplace le cahier à remplir [ARBITRÉ 13/11, sur la proposition du directeur du 13/11]. **Condition** : séance tenue. **Moment** : fin de la séance.
-- **Système** : affiche à l'enseignant une seule page : la partie prévue ce jour (tirée du programme, de la position et du calendrier, avec, au réglage, un passage déjà vu tiré au hasard) et la liste des présents, tous marqués « A suivi ». L'enseignant confirme « La classe a vu cela » ou corrige d'un toucher, ne touche que les élèves « À renforcer », ajoute s'il veut une note (lue par l'enseignant et la direction seulement). À l'envoi : la position se déduit de la partie vue ; chaque « A suivi » écrit une observation « Acquis » sur l'objectif de la partie (non préparée pour le passage tiré au hasard) ; chaque « À renforcer » écrit une observation « À renforcer », met le travail ciblé dans « Avant le prochain cours » et l'emploi du temps de révision, et compte pour la règle 14 ; le travail de la classe (relire la partie vue) est écrit pour tous ; l'historique des séances s'écrit seul. Les absents et les présents en partie n'y figurent pas : la règle 1 leur ouvre « Rattraper ce cours ».
+- **Système** : affiche à l'enseignant une seule page : la séance prévue par le plan de la classe (avec, au réglage, un passage déjà vu tiré au hasard) et la liste des présents, tous marqués « A suivi ». L'enseignant répond « Vu comme prévu » (par défaut), « On a vu moins » (il touche l'arrêt réel) ou « On a vu plus », ne touche que les élèves « À renforcer », ajoute s'il veut une note (lue par l'enseignant et la direction seulement). À l'envoi : la position se déduit de la séance faite et le plan glisse seul (règle 36) ; chaque « A suivi » écrit une observation « Acquis » sur l'objectif de la partie, au plus une fois par semaine et par objectif quand il est laissé par défaut (non préparée pour le passage tiré au hasard) ; à une séance où la coche d'une sourate était prévue, une sourate non cochée écrit « À renforcer » sur l'objectif 4.1 pour cette sourate, sans message ; chaque « À renforcer » écrit une observation « À renforcer », met le travail ciblé dans « Avant le prochain cours » et l'emploi du temps de révision, et compte pour la règle 14 ; le travail de la classe (relire la partie vue) est écrit pour tous ; l'historique des séances s'écrit seul. Les absents et les présents en partie n'y figurent pas : la règle 1 leur ouvre « Rattraper ce cours ».
 - **Messages**, pour un élève « À renforcer » (message pédagogique, dans le plafond ; au-delà, il attend le message de la semaine, la carte est déjà là) : push : « Un travail ciblé vous attend avant le prochain cours. » Tuteur, M : « Au cours du {date}, {prénom} doit encore renforcer : {partie}. Le travail est dans « Avant le prochain cours » : revoyez-le avec lui. » F : « … revoyez-le avec elle. » Adulte : « Au cours du {date}, un point reste à renforcer : {partie}. Le travail est dans « Avant le prochain cours ». » Carte de l'enfant de moins de 10 ans : « Avant le prochain cours, avec ton tuteur, relis : {partie}. » De 10 à 17 ans : « Avant le prochain cours, relis : {partie}. »
 - **Responsable** : l'enseignant de la séance (le remplaçant pour la sienne). **Remontée** : règle 24. **Clôture** : point envoyé.
 - **Jamais** : un autre champ à remplir ; un « A suivi » pour un absent ou un présent en partie ; un mot qui juge ; montrer la note de l'enseignant à la famille ; la position saisie à la main quand la page affichée la donne.
+
+### Règle 36 · Écart au plan et marge restante
+- **Couvre** : 3.5, 3.10 ; le programme séance par séance [DÉCIDÉ 13/11 ; ARBITRÉ 13/11]. **Condition** : (a) une séance faite autrement que prévu (« On a vu moins », « On a vu plus ») ; (b) écart de la classe au plan au-delà de l'écart libre (`REGLAGES.md`) ; (c) marge restante d'un élève tombée à zéro. **Moment** : (a) à l'envoi du point ; (b) et (c) chaque nuit.
+- **Système** : (a) fait glisser le plan de la classe (ce qui n'a pas été vu ouvre la séance suivante ; ce qui a été vu en plus la retire) et recalcule les dates des séances qui restent, avec les jours de la classe, les fermetures et les pauses ; une fermeture fait de même. (b) la classe apparaît dans la revue de la direction avec son écart, pour le pilotage : aucun message, aucun mot de reproche, rien n'est bloqué. (c) la règle de la date limite s'applique : rappels et plan renforcé de la règle 15, puis, si la date limite de l'étape passe, la règle 16 (soutien, jamais de passage automatique).
+- **Messages** : aucun de plus ; (c) passe par les messages des règles 15 et 16. **Responsable** : le système pour le glissement ; la direction pour le pilotage. **Remontée** : par les règles 15 et 16. **Clôture** : écart revenu dans l'écart libre ; étape validée.
+- **Jamais** : une date de séance saisie à la main ; sauter un objectif pour rattraper le plan ; un reproche à l'enseignant tiré de l'écart seul ; une date de séance montrée à un enfant de 6 à 9 ans.
 
 ---
 
@@ -449,7 +457,7 @@ Le moteur n'a pas de table à lui : il lit `REGLAGES.md`, seule table des valeur
 | Présence | `public.etat_presence`, enum `presence_state` (`absente`, `confirmation_en_attente`, `finalisee`), `session_presence_override`, seuils `app_config` |
 | Séance tenue | `sessions.status` (`ended`, `teacher_absent`), `private.ses_cloturer_seances_echues` (cron `ses_cloture_auto`), `seance_reportee`, `seance_terminee` |
 | Page | `classe_position_reprise`, `position_reprise_classe` |
-| Point de fin de séance | `lesson_reports` → `cahier_observations` (`a_renforcer`, `pret_bilan`) : les tables restent et reçoivent le point ; la saisie du cahier (`features/cahier`) disparaît (lots 11 et 12 du plan) |
+| Point de fin de séance | `lesson_reports` → `cahier_observations` (`a_renforcer`, `pret_bilan`) : les tables restent et reçoivent le point ; la saisie du cahier (`features/cahier`) disparaît (lots 6 et 9 du plan) |
 | Sourates | `sourates_validees` |
 | Étape, date limite | `private.etape_eleve`, `suivi_pedagogique_eleve` (`dans_les_temps`, `au_dela_du_prevu`, `date_limite_depassee`) ; `rythme_classe` sans appelant |
 | Évaluations | `evaluations`, `evaluation_publications`, `publier_evaluation` |
@@ -462,10 +470,10 @@ Le moteur n'a pas de table à lui : il lit `REGLAGES.md`, seule table des valeur
 ### 8.2 Ce qui manque
 
 1. Pauses d'un mois et d'exception : aucune donnée (`pause_seances` est la courte pause en séance) ; `private.etape_eleve` ne recule donc pas la date limite, c'est le seul point à changer.
-2. Calendrier de l'école.
+2. Calendrier de l'académie.
 3. « Travail marqué fait » et « J'ai rattrapé ce cours ». Le cahier écrit `travail_maison`, les écrans lisent `learning_assignment` que rien n'alimente : à réunir avant la règle 13, qui reste éteinte jusque-là.
 4. La marque discrète « a rattrapé » ou « n'a pas rattrapé » en salle, lue depuis `cours_rattrape` (aucun geste nouveau pour l'enseignant).
-5. « Acquis » et « Stable » non stockés. « Acquis » s'écrit au point de fin de séance (« A suivi » par défaut) ; « Stable » est calculé (seuil DÉCIDÉ de `REGLAGES.md` : 3 observations « Acquis » sur au moins 2 semaines, dont une non préparée : un petit bilan, ou un passage lu ou récité hors de la leçon du jour, tiré au hasard dans ce qui est déjà vu ; la séance de consolidation seule ne compte pas). Depuis le 13/11, le système tire lui-même ce passage et l'ajoute à la partie prévue : l'observation est marquée non préparée sans aucun geste (lot 11).
+5. « Acquis » et « Stable » non stockés. « Acquis » s'écrit au point de fin de séance (« A suivi » par défaut) ; « Stable » est calculé (seuil DÉCIDÉ de `REGLAGES.md` : 3 observations « Acquis » sur au moins 2 semaines, dont une non préparée : un petit bilan, ou un passage lu ou récité hors de la leçon du jour, tiré au hasard dans ce qui est déjà vu ; la séance de consolidation seule ne compte pas). Depuis le 13/11, le système tire lui-même ce passage et l'ajoute à la partie prévue : l'observation est marquée non préparée sans aucun geste (lot POINT-DE-SEANCE). Garde-fou [ARBITRÉ 13/11] : un « A suivi » laissé par défaut compte pour une observation « Acquis » au plus une fois par semaine et par objectif, et « Stable » exige toujours l'observation non préparée.
 11. Les parties du programme (leçon, page, sourate), leur objectif, leurs lettres et leur règle : à publier avec le programme (lot 1), pour que le point de fin de séance connaisse la partie prévue et que le chemin remplisse ses collections.
 6. Demande d'arrêt ; drapeaux « nouveau converti », « entrée par entretien ».
 7. `notifier_classe` écrit des lignes `soi` pour un mineur qui ne peut pas les lire ; le moteur n'en écrit jamais.
@@ -524,7 +532,8 @@ Le moteur n'a pas de table à lui : il lit `REGLAGES.md`, seule table des valeur
 | 32 | 4ᵉ message de la semaine (message de la semaine compris) → retenu, repris le samedi ; « Rattraper ce cours » en 4ᵉ → envoyé ; semaine de fermeture → pas de phrase de présence ; 2 cours prévus (une séance reportée) → « sur 2 » |
 | 33 | Deuxième absence non prévenue du titulaire dans le mois → tâche direction, aucune sanction |
 | 34 | 3 élèves sur 5 « À surveiller » → tâche enseignant, rien aux familles ; 2 sur 5 → rien |
-| 35 | Point envoyé sans toucher → une observation « Acquis » par présent, travail « relire la partie vue », historique écrit ; un « À renforcer » → observation, travail ciblé, message au tuteur sans prénom dans le push ; présent en partie → aucune observation ; passage tiré au hasard « A suivi » → observation non préparée ; aucun point à H+2 → règle 24 |
+| 35 | Point envoyé sans toucher → une observation « Acquis » par présent, travail « relire la partie vue », historique écrit ; un « À renforcer » → observation, travail ciblé, message au tuteur sans prénom dans le push ; présent en partie → aucune observation ; passage tiré au hasard « A suivi » → observation non préparée ; aucun point à H+2 → règle 24 ; « On a vu moins » → la partie non vue ouvre la séance suivante ; sourate à coche prévue non cochée → « À renforcer » sur 4.1, sans message ; deux « A suivi » par défaut la même semaine sur le même objectif → une seule observation |
+| 36 | Fermeture d'une semaine → dates des séances restantes décalées d'autant ; écart de 3 leçons → classe dans la revue de la direction, aucun message ; marge restante à zéro → règle 15 |
 | Garde-fous | 23 h → part à 8 h ; règle suspendue → rien, journal « suspendue » |
 
 ---
@@ -570,3 +579,4 @@ Le moteur n'a pas de table à lui : il lit `REGLAGES.md`, seule table des valeur
 | Calendrier | 30, 31 |
 | Message hebdomadaire | 32 |
 | Point de fin de séance | 35, 14, 24 |
+| Plan de la classe, écart, marge | 36, 15, 16 |

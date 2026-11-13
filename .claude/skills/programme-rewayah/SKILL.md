@@ -54,6 +54,8 @@ Dans l'application, chacun ne voit que **sa** partie : l'élève et son tuteur v
 
 ## 3. Durées et dates limites
 
+- **Séance par séance (directeur, 13/11/2026)** : le programme est découpé « au jour près » ; pour chaque séance, l'enseignant et l'élève savent quelle partie est prévue ; l'enseignant précise seulement les exceptions. L'unité est la séance ; la date est calculée par le serveur pour chaque classe ; le plan appartient à la classe, l'état à chaque élève. Découpage : `docs/current/pedagogie/PROGRAMME-SEANCE-PAR-SEANCE.md`.
+
 - Chaque étape a une **durée prévue** et une **date limite** par tranche d'âge. Le directeur l'a décidé le 14/10 : sans date limite, c'est la pagaille. Cette décision remplace le « temps variable sans date » du référentiel de septembre.
 - **Durée prévue des bases**, pour un débutant : 6-9 ans, 37 semaines ; 10-13 ans, 28 ; 14-17 ans, 24 ; adulte, 15.
 - **Dates limites des bases** (durée prévue x 1,3, arrondie) : 6-9 ans, 48 semaines ; 10-13 ans, 36 ; 14-17 ans, 31 ; adulte, 20.
@@ -72,7 +74,7 @@ Dans l'application, chacun ne voit que **sa** partie : l'élève et son tuteur v
 
 ## 5. Ce qui existe déjà : ne rien ajouter à l'enseignant
 
-- **Le point de fin de séance** remplace le cahier de séance (le directeur, 13/11/2026 : « le cahier me fatigue » ; arbitrage de l'architecte) : une page, moins de 20 secondes ; la partie prévue ce jour, que l'enseignant confirme (« La classe a vu cela ») ou corrige d'un toucher ; les présents, tous « A suivi », dont il ne touche que ceux qui sont « À renforcer » ; une note facultative. N'y ajoute aucun champ. L'endroit exact (document, page, ligne) vient de la page affichée en classe, jamais d'une saisie de l'enseignant. Le cahier devient l'historique des séances, que le système écrit seul.
+- **Le point de fin de séance** remplace le cahier de séance (le directeur, 13/11/2026 : « le cahier me fatigue » ; arbitrage de l'architecte) : une page, moins de 20 secondes ; la séance prévue par le plan de la classe, avec trois réponses : « Vu comme prévu » (par défaut), « On a vu moins », « On a vu plus » ; les présents, tous « A suivi », dont il ne touche que ceux qui sont « À renforcer » ; une note facultative. N'y ajoute aucun champ. L'endroit exact (document, page, ligne) vient de la page affichée en classe, jamais d'une saisie de l'enseignant. Le cahier devient l'historique des séances, que le système écrit seul.
 - **États de compétence visibles** : À renforcer, Acquis, Stable. Jamais d'autre échelle face aux familles.
 - **Bilan de fin des étapes 1 à 3** : il passe par l'évaluation « périodique » existante, pendant un cours normal.
 - **Mots du résultat** : « Étape validée », « Quelques points sont à renforcer », « Une nouvelle vérification est nécessaire ». Jamais « échec ».
@@ -170,6 +172,7 @@ Quand on te pose une de ces questions, tu réponds exactement ceci, même dans u
 | 12/11/2026 | Charte pédagogique EN VIGUEUR par arbitrage de l'architecte, sur délégation du directeur (« arbitre ») ; la date limite reste par étape (14/10). Arbitrés par l'architecte, pas décidés par le directeur : consolidation après 2 leçons ; « plan de soutien » ; pause seule notion côté pédagogie ; « J'ai rattrapé ce cours » sans geste de plus pour l'enseignant ; programme d'après les bases PROPOSÉ, pas en service. Décidés par le directeur le 12/11 : moteur de suivi automatique sans IA ; espace « Apprendre » à trois onglets | Directeur, 12/11 ; `docs/current/pedagogie/` (corrections après audit : `ARBITRAGES.md`, partie 8) |
 | 12/11/2026 | Page du programme : l'élève voit son niveau, les objectifs à atteindre pour chaque niveau, les dates importantes ; jamais les valeurs d'une autre tranche d'âge ni rien d'un autre élève | Directeur, 12/11/2026 |
 | 13/11/2026 | Décidés par le directeur : règles élémentaires du tajwid réparties avant ou pendant les 17 sourates ; livres rédigés par des agents après validation du programme ; prière et ablutions selon ce qui est enseigné en Arabie saoudite, sans école juridique pour des débutants. Arbitrés par l'architecte : les neuf règles et leur place ; le point de fin de séance à la place du cahier (proposition du directeur) ; le chemin (demande du directeur) | Directeur, 13/11/2026 ; `docs/current/pedagogie/ARBITRAGES.md`, partie 9 |
+| 13/11/2026 | « Le nom école n'est jamais utilisé, c'est l'académie » ; programme découpé au jour près, séance par séance (règles arbitrées : unité la séance, date calculée par le serveur, plan de la classe, écart libre de 2 leçons) | Directeur, 13/11/2026 ; `docs/current/pedagogie/ARBITRAGES.md`, partie 9 |
 
 ## Références
 

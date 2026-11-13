@@ -16,11 +16,11 @@ Partie « scénarios » de la charte de Rewayah Academy, rédigée le 12/11/2026
 
 **Chacun a un chemin clair.** Chaque élève a une étape, un objectif, une date limite et un travail à préparer. Il sait où il en est, où il va, et pour quand [DÉCIDÉ 14/10].
 
-**L'enseignant ne remplit pas de cahier.** À la fin de chaque séance, le point de fin de séance tient en une page : la partie prévue ce jour, que l'enseignant confirme ou corrige ; les présents, tous « A suivi », dont il ne touche que ceux qui sont « À renforcer » ; une note facultative. Le système en tire seul le travail, les messages et l'historique des séances [ARBITRÉ 13/11 ; charte, partie 5].
+**L'enseignant ne remplit pas de cahier.** À la fin de chaque séance, le point de fin de séance tient en une page : la séance prévue par le plan de la classe, avec trois réponses (« Vu comme prévu », « On a vu moins », « On a vu plus ») ; les présents, tous « A suivi », dont il ne touche que ceux qui sont « À renforcer » ; une note facultative. Le système en tire seul le travail, les messages et l'historique des séances [ARBITRÉ 13/11 ; charte, partie 5].
 
 **Le programme se montre comme un chemin** : quatre étapes et l'examen, les objectifs qui se remplissent, les 28 lettres, les 9 règles du tajwid des bases et les 17 sourates, sans classement ni points [ARBITRÉ 13/11 ; charte, partie 10 bis].
 
-**L'école donne les moyens de rattraper seul** : l'endroit exact où la classe s'est arrêtée, la lecture enregistrée par le directeur, le travail à préparer et l'emploi du temps de révision. L'élève rattrape avant le cours suivant [DÉCIDÉ 14/10].
+**L'académie donne les moyens de rattraper seul** : l'endroit exact où la classe s'est arrêtée, la lecture enregistrée par le directeur, le travail à préparer et l'emploi du temps de révision. L'élève rattrape avant le cours suivant [DÉCIDÉ 14/10].
 
 **Fermeté et douceur.** Rewayah vend la rigueur et l'assiduité que l'élève n'arrive pas à s'imposer seul [DÉCIDÉ 14/10]. On ne promet pas de souplesse. Mais on ne compare jamais deux élèves, on n'humilie jamais, et on peut toujours se rattraper.
 
@@ -52,7 +52,7 @@ Même gabarit pour toutes les fiches. Une fiche ne dit que ce qui est propre au 
 | Motive, freine | Motive : rituels courts, encouragement oral, voir ses sourates s'ajouter, un parent présent. Freine : fatigue, consigne longue, honte devant les autres. |
 | Son entrée | Étape 1. Le livre seul jusqu'à la chadda ; puis, en matière secondaire : Al-Fatiha, An-Nâs, Al-Falaq, Al-Ikhlâs, les paroles de la prière et les ablutions, les invocations [DÉCIDÉ 13/10]. |
 | Rythme, date limite | Valeurs des 6-9 ans (commun ci-dessus). **Le tuteur porte la date limite, pas l'enfant** [ARBITRÉ]. Séance de 60 minutes avec une courte pause [DÉCIDÉ 12/10]. |
-| Ce qu'il voit | L'Interface guidée par défaut [retenu au registre du 14/10] : son étape en images, ses sourates, les dates de l'école, « Rattraper ce cours ». Jamais sa date limite ni son rythme, jamais d'argent, de note ni de comparaison. Aucune notification : tout passe par le tuteur. |
+| Ce qu'il voit | L'Interface guidée par défaut [retenu au registre du 14/10] : son étape en images, ses sourates, les dates de l'académie, « Rattraper ce cours ». Jamais sa date limite ni son rythme, jamais d'argent, de note ni de comparaison. Aucune notification : tout passe par le tuteur. |
 | Le tuteur | Il le connecte au calme, suit l'emploi du temps de révision, fait « Rattraper ce cours » avec lui et marque « J'ai rattrapé ce cours ». Il veille à la régularité ; il n'enseigne pas. |
 | L'enseignant | Il enseigne, écoute chaque enfant, fait le point de fin de séance. |
 | Risques, réponse | Absences liées à l'organisation de la famille : alertes au tuteur (3.2). |
@@ -450,4 +450,4 @@ Deux points proches, tranchés une fois : après une pause d'un mois, pas d'entr
 
 ## 6. Ce qui reste à recevoir
 
-Aucune question n'est posée au directeur : toutes ont été arbitrées le 12/11/2026 (`ARBITRAGES.md`). Ce qu'il déposera quand il le pourra (enregistrements, liste des invocations, illustrations, adab) et ce qu'il relira (`CONTENU-PRIERE-ET-ABLUTIONS.md`, le cahier des charges du livre de lecture) sont dans `CONTENUS-ATTENDUS.md`, avec ce que l'école fait en attendant.
+Aucune question n'est posée au directeur : toutes ont été arbitrées le 12/11/2026 (`ARBITRAGES.md`). Ce qu'il déposera quand il le pourra (enregistrements, liste des invocations, illustrations, adab) et ce qu'il relira (`CONTENU-PRIERE-ET-ABLUTIONS.md`, le cahier des charges du livre de lecture) sont dans `CONTENUS-ATTENDUS.md`, avec ce que l'académie fait en attendant.

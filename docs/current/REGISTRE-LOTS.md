@@ -235,6 +235,27 @@ PRÉFÉRENCES-PAR-COMPTE de A.
 | 11/11 | PROSRC-SANS-COMMENTAIRES : en appliquant `20261122900000`, `20261123200000` et `20261123300000`, le pilote a retiré des commentaires à l'intérieur des corps de fonctions ; le `prosrc` en production diffère donc du dépôt pour ces 3 fichiers (`sourates_eleve`, `sourates_bases_classe`, `ma_preference_theme`, `ma_preference_theme_regler` et les autres fonctions de ces fichiers) ; comportement identique ; depuis, les fichiers sont appliqués tels quels | écart connu (préflights md5 futurs à calibrer sur la production) | pilote, 11/11 |
 | 11/11 | DERIVE-GUARD-PROFILE : en production, `guard_profile_immutable_id()` a le md5 `1fff46e3`, le dépôt rejoué donne `7c0dc793` ; `20261123400200` est reportée ; cause (garde-cap) : accents abîmés dans le message d'erreur du corps en production, sans effet sur le comportement | À LIVRER (B, 12/11) : SEC-GARDE-5-C-RECALIBRAGE, accepter les deux empreintes avec le constat en commentaire | pilote et garde-cap, 11/11 22:57 |
 
+## Lots de la charte pédagogique (architecte, 13/11/2026)
+
+Spécifiés dans `docs/current/pedagogie/PLAN-DE-CONSTRUCTION.md` (branche `claude/charte-ecole`, documentation seule, pas encore dans `main`). Numérotation du 13/11 ; aucun n'a de branche de code.
+
+| N° | Lot | Statut | Preuve |
+| :-- | :-- | :-- | :-- |
+| 1 | SOCLE-PROGRAMME | non commencé, spécifié | `PLAN-DE-CONSTRUCTION.md`, lot 1 ; aucune branche de code au 13/11 |
+| 2 | CALENDRIER-ET-PAUSES | non commencé, spécifié | `PLAN-DE-CONSTRUCTION.md`, lot 2 ; aucune branche de code au 13/11 |
+| 3 | BIBLIOTHEQUE-UNE | non commencé, spécifié | `PLAN-DE-CONSTRUCTION.md`, lot 3 ; aucune branche de code au 13/11 |
+| 4 | LECTEUR | non commencé, spécifié | `PLAN-DE-CONSTRUCTION.md`, lot 4 ; aucune branche de code au 13/11 |
+| 5 | PLAN-DE-CLASSE (ajouté le 13/11) | non commencé, spécifié | `PLAN-DE-CONSTRUCTION.md`, lot 5 ; aucune branche de code au 13/11 |
+| 6 | POINT-DE-SEANCE (ajouté le 13/11) | non commencé, spécifié | `PLAN-DE-CONSTRUCTION.md`, lot 6 ; aucune branche de code au 13/11 |
+| 7 | ESPACE-APPRENDRE | non commencé, spécifié | `PLAN-DE-CONSTRUCTION.md`, lot 7 ; aucune branche de code au 13/11 |
+| 8 | SUIVI-UNIQUE | non commencé, spécifié | `PLAN-DE-CONSTRUCTION.md`, lot 8 ; aucune branche de code au 13/11 |
+| 9 | RETRAIT-CAHIER (ajouté le 13/11) | non commencé, spécifié | `PLAN-DE-CONSTRUCTION.md`, lot 9 ; aucune branche de code au 13/11 |
+| 10 | CHEMIN (ajouté le 13/11) | non commencé, spécifié | `PLAN-DE-CONSTRUCTION.md`, lot 10 ; aucune branche de code au 13/11 |
+| 11 | MOTEUR-1 | non commencé, spécifié | `PLAN-DE-CONSTRUCTION.md`, lot 11 ; aucune branche de code au 13/11 |
+| 12 | EVALUATIONS-ET-LIVRET | non commencé, spécifié | `PLAN-DE-CONSTRUCTION.md`, lot 12 ; aucune branche de code au 13/11 |
+| 13 | MOTEUR-2 | non commencé, spécifié | `PLAN-DE-CONSTRUCTION.md`, lot 13 ; aucune branche de code au 13/11 |
+| 14 | NETTOYAGE | non commencé, spécifié | `PLAN-DE-CONSTRUCTION.md`, lot 14 ; aucune branche de code au 13/11 |
+
 ## Branches mortes, à proposer à la suppression au directeur (11/11)
 
 Proposition seulement : aucune branche n'est supprimée sans le feu vert du directeur sur cette

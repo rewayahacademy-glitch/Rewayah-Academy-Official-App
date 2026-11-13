@@ -1,13 +1,13 @@
-# Charte de l'école Rewayah
+# Charte de l'académie Rewayah
 
 > **EN VIGUEUR par arbitrage de l'architecte pédagogique (12/11/2026), sur délégation du directeur. Le directeur peut corriger toute règle à tout moment ; une correction datée de sa part l'emporte.**
 > Rédigée le 12/11/2026. C'est la référence unique pour le programme, le suivi, les évaluations, les responsabilités et ce que chacun voit.
-> Complétée le 13/11/2026 : règles de tajwid des bases (3.1), point de fin de séance (5), le chemin (10 bis), prière et ablutions (`CONTENU-PRIERE-ET-ABLUTIONS.md`) ; décisions et arbitrages du jour dans `ARBITRAGES.md`, partie 9.
+> Complétée le 13/11/2026 : programme séance par séance (3), règles de tajwid des bases (3.1), point de fin de séance (5), le chemin (10 bis), prière et ablutions (`CONTENU-PRIERE-ET-ABLUTIONS.md`) ; décisions et arbitrages du jour dans `ARBITRAGES.md`, partie 9.
 > Deux marques : **DÉCIDÉ** (directeur, daté) et **ARBITRÉ** (architecte pédagogique, 12/11/2026 ou date indiquée ; raisons dans `ARBITRAGES.md`). **PROPOSÉ** ne marque plus que le programme d'après les bases (partie 3.2). Les corrections faites après l'audit indépendant du 12/11/2026 sont listées dans `ARBITRAGES.md`, partie 8. Aucune question n'est posée au directeur ; les contenus qu'il déposera quand il le pourra sont listés dans `CONTENUS-ATTENDUS.md`.
 > **Toutes les valeurs chiffrées** (durées, délais, seuils) sont dans `REGLAGES.md`, seule table des réglages. En cas d'écart entre deux fichiers, la charte et la table des réglages font foi (`LIRE-D-ABORD.md`).
 > **Boucle 1 (DÉCIDÉ, directeur, 12/11/2026).** L'interdiction de créer de nouveaux écrans visait la coque de l'application. Elle ne s'applique pas à ce projet, qui en est l'âme : les écrans nécessaires à cette charte se construisent, dans l'ordre de `PLAN-DE-CONSTRUCTION.md`.
 
-## 1. Ce que l'école promet, et ses valeurs
+## 1. Ce que l'académie promet, et ses valeurs
 
 **La promesse.** Rewayah vend, outre l'enseignement, la rigueur et l'assiduité que l'élève n'arrive pas à s'imposer seul (DÉCIDÉ 14/10). La rigueur vaut dans les deux sens : la classe n'attend jamais un élève absent, il rattrape seul avec la lecture enregistrée (DÉCIDÉ 14/10, redit le 12/11) ; quand l'académie manque, elle remplace ou compense.
 
@@ -41,6 +41,8 @@
 Un **parcours** (les bases, puis lire tout le Coran ou mémoriser le Coran) se découpe en **niveaux**, et chaque niveau en **étapes**. Chaque étape répond aux questions de l'élève : où suis-je, où dois-je aller, en faisant quoi, pour quand, comment y arriver, comment je sais que j'ai réussi, et si je n'y arrive pas (DÉCIDÉ 14/10).
 
 **Identité stable (ARBITRÉ).** Chaque étape porte un code qui ne change pas entre les versions du programme. Publier une version archive la précédente. L'élève finit son étape dans sa version (DÉCIDÉ 14/10).
+
+**Le programme, séance par séance (DÉCIDÉ 13/11 ; règles ARBITRÉES 13/11).** Le directeur : le programme est découpé « au jour près » ; l'enseignant et l'élève savent, pour chaque séance, quelle partie est prévue, parce que c'est découpé à l'avance ; s'il y a une exception, l'enseignant la précise (ajout ou manque) ; c'est ce découpage qui permet au système de suivre. L'unité est la **séance**, pas la date : pour chaque étape et chaque tranche d'âge, le programme fixe la suite numérotée des séances (3 par semaine, 2 leçons nouvelles puis 1 consolidation ; nombre = durée prévue × 3), chacune avec son contenu, sa plage dans le livre, ses objectifs et sa règle de tajwid (`PROGRAMME-SEANCE-PAR-SEANCE.md`). La date de chaque séance est calculée par le serveur pour chaque classe (jours de la classe, fermetures, pauses de la classe), jamais saisie ; une fermeture décale tout le plan. **Le plan appartient à la classe ; l'état (« A suivi », « À renforcer », « Rattraper ce cours ») appartient à chaque élève.** L'enseignant peut, sans demander, ralentir ou avancer jusqu'à l'écart libre avec le plan (`REGLAGES.md`), changer l'ordre dans la semaine, ajouter une révision, choisir sa méthode (DÉCIDÉ 13/10) ; jamais sauter un objectif. Au-delà de l'écart libre, rien n'est bloqué : la direction le voit, pour le pilotage, sans reproche. La marge entre durée prévue et date limite absorbe les glissements ; quand la marge restante tombe à zéro, la règle de la date limite s'applique (soutien, jamais de passage automatique). Tout est tracé par le système : séance prévue, séance faite, écart, qui, quand.
 
 **Une seule étape en cours (ARBITRÉ).** Chaque élève a un seul fait « étape en cours », tenu par le serveur, créé tout seul à l'entrée en classe, sans autre geste de la direction. Élève, tuteur, enseignant et direction lisent ce même fait. **L'étape d'entrée** : un débutant déclaré entre à l'étape 1 (DÉCIDÉ 12/10) ; un élève qui dit lire, ou qui revient après une longue interruption, entre à l'étape fixée par la direction après l'entretien de lecture (DÉCIDÉ 12/10 et 02/11) ; jamais « l'étape de la classe » par défaut hors de ces deux cas (ARBITRÉ). Une classe ne reçoit pas un débutant si elle a plus d'une étape d'avance sur lui (ARBITRÉ).
 
@@ -76,7 +78,7 @@ Un **parcours** (les bases, puis lire tout le Coran ou mémoriser le Coran) se d
 - **Le tajwid en couches** : sept couches, de la prononciation des lettres aux règles fines, chacune ajoutée à une étape, sans parcours séparé. Les neuf règles des bases (partie 3.1) y sont déjà acquises : les couches les reprennent sur tout le Coran sans les enseigner une seconde fois (`EVALUATIONS.md`, 5.3).
 - Un certificat Rewayah n'est jamais une ijaza (DÉCIDÉ 14/10).
 
-## 4. L'année de l'école
+## 4. L'année de l'académie
 
 Tout est **réglage publié chaque année par la direction**, jamais écrit en dur.
 
@@ -94,18 +96,27 @@ Tout est **réglage publié chaque année par la direction**, jamais écrit en d
 **Une seule position (ARBITRÉ).** Où la classe s'est arrêtée : document, page, et ligne quand les lignes existeront. Elle vient de la page affichée en classe et se confirme au point de fin de séance, ci-dessous ; la paie de la séance attend cette confirmation (DÉCIDÉ 05/11). Remplaçant, élève absent et tuteur lisent cette même position.
 
 **Le point de fin de séance (ARBITRÉ 13/11, sur la proposition du directeur).** Le directeur, 13/11 : « le cahier me fatigue » ; il propose qu'à la fin de la séance le système demande à l'enseignant si l'élève a maîtrisé la partie du programme prévue à cette date, que le système connaît. **Le cahier à remplir disparaît.** Il est remplacé par une seule page, en moins de 20 secondes (DÉCIDÉ 05/11 ; valeur dans `REGLAGES.md`) :
-1. **La partie prévue ce jour.** Le système l'affiche, tirée du programme, de la position et du calendrier. L'enseignant confirme « La classe a vu cela », ou corrige d'un toucher ; la position s'en déduit.
+1. **La séance prévue ce jour**, tirée du plan de la classe (partie 3). Trois réponses : « Vu comme prévu » (par défaut) ; « On a vu moins » (l'enseignant touche l'endroit où la classe s'est vraiment arrêtée) ; « On a vu plus ». La position s'en déduit et le plan glisse seul, sans rien ressaisir.
 2. **Les élèves présents**, tous déjà marqués « A suivi ». L'enseignant ne touche que ceux pour qui c'est « À renforcer ».
 3. **Une note facultative**, lue par l'enseignant et la direction, jamais montrée à la famille (ARBITRÉ 13/11).
 
 Aucune autre saisie. **Les absents** n'ont rien à recevoir de l'enseignant : « Rattraper ce cours » s'ouvre seul. Un élève présent en partie ne figure pas dans la liste : il reçoit « Rattraper ce cours » et aucune observation n'est écrite pour lui (ARBITRÉ 13/11 : un fait inconnu n'est jamais un fait négatif, ni un « A suivi » donné à qui n'a pas tout suivi).
 
-**Une partie du programme** est ce qui est prévu un jour : une leçon du livre, une page, une sourate ou une portion de sourate ; chaque partie sert un objectif de son étape (ARBITRÉ 13/11). Le système tire lui-même, au réglage de `REGLAGES.md`, un passage déjà vu qu'il ajoute à la partie prévue : c'est l'observation non préparée qui compte pour « Stable » (partie 6), sans geste de plus.
+**Une partie du programme** est ce qui est prévu à une séance : une leçon du livre, une page, une sourate ou une portion de sourate ; chaque partie sert un objectif de son étape (ARBITRÉ 13/11). Le système tire lui-même, au réglage de `REGLAGES.md`, un passage déjà vu qu'il ajoute à la partie prévue : c'est l'observation non préparée qui compte pour « Stable » (partie 6), sans geste de plus.
 
 **Ce que le système fait de la réponse (ARBITRÉ 13/11).**
-- « A suivi » compte comme une observation « Acquis » sur l'objectif de la partie.
+- « A suivi » compte comme une observation « Acquis » sur l'objectif de la partie ; laissé par défaut, il compte **au plus une fois par semaine et par objectif** (garde-fou, `REGLAGES.md`). « Stable » exige toujours une observation non préparée : le passage tiré par le système, ou un petit bilan.
 - « À renforcer » crée le travail ciblé dans « Avant le prochain cours », le dit au tuteur ou à l'adulte, et deux « À renforcer » de suite sur la même partie (le même objectif) déclenchent la règle de soutien du moteur (« À soutenir », règle 14 de `MOTEUR-DE-SUIVI.md`).
 - Ce qu'on appelait le cahier devient l'**historique des séances**, que le système écrit seul : la date, la partie vue, la présence, « A suivi » ou « À renforcer », le travail donné. Il se lit par l'élève, le tuteur, l'enseignant et la direction (partie 10) ; personne ne le remplit.
+
+**Comment le système sait « À renforcer » sans cahier (ARBITRÉ 13/11).** Par cinq sources, dont une seule demande un geste :
+1. le toucher de l'enseignant au point de fin de séance, par exception ;
+2. la présence, que le système mesure seul (absent ou présent en partie : « Rattraper ce cours ») ;
+3. « J'ai rattrapé ce cours » non marqué ;
+4. le résultat d'un petit bilan ;
+5. une sourate non cochée à la séance où sa coche était prévue (`PROGRAMME-SEANCE-PAR-SEANCE.md`).
+
+Sans aucun geste, le système suppose « A suivi » pour un élève présent. C'est le défaut voulu ; c'est pourquoi la consolidation de chaque semaine et l'observation non préparée existent : elles rattrapent un « A suivi » trop généreux.
 
 **Ce qui ne passe pas par le point (ARBITRÉ 13/11).** La coche d'une sourate se fait pendant le cours ou depuis la fiche de l'élève, par l'enseignant seul (DÉCIDÉ 11/11). « Prêt pour un petit bilan » est proposé par le système (partie 6) et confirmé d'un geste dans la liste « à faire » de l'enseignant, qui peut aussi le marquer depuis la fiche de l'élève. La suite « Continuer », « Renforcer », « Suspendre le nouveau » n'est demandée que lorsqu'une règle du moteur la demande.
 
@@ -151,7 +162,7 @@ Délais et nombre de tentatives : `REGLAGES.md`. Détail par étape : `EVALUATIO
 | Enseignant | Points de fin de séance faits dans le délai ; séances assurées | Élèves de ses classes dans les temps (jamais seul pour juger) |
 | École | Alertes traitées dans le délai ; présence moyenne | Étapes validées par période ; examens tenus ; élèves qui restent |
 
-**Le rythme du pilotage (ARBITRÉ).** Chaque semaine : l'enseignant voit les élèves à soutenir, la direction traite sa file d'alertes. Chaque mois : revue par classe entre la direction et l'enseignant, pour accompagner. À chaque période : bilan de l'école et révision des réglages.
+**Le rythme du pilotage (ARBITRÉ).** Chaque semaine : l'enseignant voit les élèves à soutenir, la direction traite sa file d'alertes. Chaque mois : revue par classe entre la direction et l'enseignant, pour accompagner. À chaque période : bilan de l'académie et révision des réglages.
 
 ## 8. Le système vivant
 
@@ -238,7 +249,7 @@ Règles DÉCIDÉES qui restent : la paie d'une séance attend le point de fin de
 2. **Programme** : c'est **le chemin** (partie 10 bis), un seul écran : en haut la fiche de suivi (où il en est, son travail, sa date limite) ; puis le chemin entier de son parcours, ses collections et sa régularité ; puis les dates importantes (bilans, examens, fermetures, fêtes, rencontres).
 3. **Mon livret** (سجلّي) : résultats, bilans, y compris un bilan mitigé, attestations et rapports ; pour l'enfant de 10 à 17 ans, l'historique des séances (l'adulte le trouve dans « Suivi » ; avant 10 ans, son tuteur le lit). C'est un mot d'école qui accepte un bilan à renforcer. Écartés : « Mes réussites » (exclut ces bilans), « Mon dossier » (froid), « Consécration » (note de travail).
 
-**Ce que montre le programme.** Directeur, 12/11/2026 : « dans la page du programme, l'élève voit son niveau, les objectifs à atteindre pour chaque niveau, les dates importantes. Il ne voit jamais les valeurs d'une autre tranche d'âge ni rien d'un autre élève. » La règle du 14/10, « chacun ne voit que sa partie », est donc précisée par le directeur : l'élève et son tuteur voient le chemin entier de **leur** parcours pour **leur** tranche d'âge (toutes les étapes et leurs objectifs, la sienne mise en avant). L'enfant de 6 à 9 ans voit le chemin et les dates de l'école ; le tuteur porte sa date limite. Dès 10 ans, l'élève la voit.
+**Ce que montre le programme.** Directeur, 12/11/2026 : « dans la page du programme, l'élève voit son niveau, les objectifs à atteindre pour chaque niveau, les dates importantes. Il ne voit jamais les valeurs d'une autre tranche d'âge ni rien d'un autre élève. » La règle du 14/10, « chacun ne voit que sa partie », est donc précisée par le directeur : l'élève et son tuteur voient le chemin entier de **leur** parcours pour **leur** tranche d'âge (toutes les étapes et leurs objectifs, la sienne mise en avant). L'enfant de 6 à 9 ans voit le chemin et les dates de l'académie ; le tuteur porte sa date limite. Dès 10 ans, l'élève la voit.
 
 **Un objet par notion, un lieu d'origine par rôle, des raccourcis vers ce même objet (ARBITRÉ).**
 
@@ -281,7 +292,7 @@ Le directeur, 13/11 : « un système de gamification pour que tout le monde comp
 
 **Les mots à l'écran.** On écrit « étape », « examen de fin des bases », « À renforcer », « Acquis », « Stable », « Étape validée », « Attestation des bases ». « Station » et « porte » sont des mots de dessin : ils ne s'affichent jamais, et jamais « porte d'Az-Zalzalah » (`mots-rewayah`).
 
-**Interdits.** Aucun classement entre élèves ; aucun point à gagner ni à dépenser ; rien d'un autre élève ; aucune date ni durée sur le chemin d'un enfant de 6 à 9 ans (ni date limite, ni durée prévue, ni horizon, ni rythme) ; aucune notification à un enfant ; rien qui touche l'argent.
+**Interdits.** Aucun classement entre élèves ; aucun point à gagner ni à dépenser ; rien d'un autre élève ; aucune date ni durée sur le chemin d'un enfant de 6 à 9 ans (ni date limite, ni durée prévue, ni horizon, ni rythme, ni date de séance ; confirmé par l'architecte le 13/11) ; aucune notification à un enfant ; rien qui touche l'argent.
 
 **Le même chemin pour tous.**
 
@@ -294,7 +305,7 @@ Le directeur, 13/11 : « un système de gamification pour que tout le monde comp
 
 **D'où viennent les données.** Uniquement de faits que le serveur tient déjà : l'étape en cours, les objectifs et leur état, les sourates cochées, le point de fin de séance, la présence. Aucune saisie de plus, aucune IA. La seule donnée nouvelle vient du programme lui-même, publié par la direction : les lettres et la règle que sert chaque partie.
 
-**Les dates importantes de l'école** (fermetures, fêtes, rencontres de récitation) restent sous le chemin, comme le directeur l'a décidé le 12/11 ; pour l'enfant de 6 à 9 ans, elles ne portent ni date limite ni durée, et son tuteur porte sa date limite (partie 10).
+**Les dates importantes de l'académie** (fermetures, fêtes, rencontres de récitation) restent sous le chemin, comme le directeur l'a décidé le 12/11 ; pour l'enfant de 6 à 9 ans, elles ne portent ni date limite ni durée, et son tuteur porte sa date limite (partie 10).
 
 ## 11. La bibliothèque et le lecteur
 
@@ -334,7 +345,9 @@ Le directeur, 13/11 : « un système de gamification pour que tout le monde comp
 | Étape en cours | Un fait par élève : étape, date d'entrée dans l'étape, date limite de l'étape (individuelle) ; l'horizon du niveau en est déduit |
 | Position de la classe | Une par classe : document, page, ligne ; confirmée au point de fin de séance |
 | Partie du programme | Ce qui est prévu un jour (leçon, page, sourate ou portion) ; un objectif ; les lettres et la règle qu'elle sert ; publiée avec le programme |
-| Point de fin de séance | Séance, partie vue (confirmée ou corrigée), « À renforcer » touchés, note facultative ; la paie l'attend |
+| Plan de la classe | La suite numérotée des séances de son étape (`PROGRAMME-SEANCE-PAR-SEANCE.md`), avec la date de chacune, calculée par le serveur ; il glisse seul |
+| Séance faite | Séance prévue, ce qui a été vu (comme prévu, moins, plus), écart au plan, qui, quand |
+| Point de fin de séance | Séance, réponse (« Vu comme prévu », « On a vu moins », « On a vu plus »), « À renforcer » touchés, note facultative ; la paie l'attend |
 | Observation | Élève, objectif, séance, état (À renforcer ou Acquis), non préparée ou non ; écrite par le point de fin de séance (« A suivi » vaut « Acquis ») ; « Stable » calculé |
 | Historique des séances | Écrit par le système à partir des points de fin de séance et de la présence ; personne ne le remplit |
 | Sourate validée | Élève, sourate, date, enseignant |
@@ -353,7 +366,7 @@ Le directeur, 13/11 : « un système de gamification pour que tout le monde comp
 - les cinq calculs de l'étape (`private.etape_eleve` et son repli remplacés par le fait unique ; `progression_admin`, l'étape de `groupe_roster_enseignant`, `unite_curriculum`, `progression_famille.level`, `seance_resumes.jalon_atteint`, `MembreSeance.niveau`, `student_profiles.level` comme source) ;
 - les six représentations de la reprise ramenées à une (`classe_position_reprise` reste et absorbe `classe_position_support` ; `lesson_reports.content.page_reprise`, la mémoire locale de la salle et `student_reading_position` ne font plus foi pour la classe) ;
 - les quatre échelles d'appréciation (4 niveaux et 6 faiblesses du cahier, projection famille à 2 états) ;
-- la saisie du cahier de séance : ses écrans sont retirés dans un lot nommé, après que le point de fin de séance a fait ses preuves (`PLAN-DE-CONSTRUCTION.md`, lots 11 et 12) ;
+- la saisie du cahier de séance : ses écrans sont retirés dans un lot nommé, après que le point de fin de séance a fait ses preuves (`PLAN-DE-CONSTRUCTION.md`, lots 6 et 9) ;
 - le second circuit du travail (`travail_maison` remplacé par `learning_assignment`, écrit à la confirmation) ;
 - le compte rendu jamais alimenté (`seance_resumes`, `enregistrer_resume_seance`, `resume_seance_famille`), remplacé par le livret et le message hebdomadaire ;
 - la double bibliothèque (`etagere_supports`, `supportsDeSalleProvider` rattachés à `library_resource`, dont les types s'étendent) ;

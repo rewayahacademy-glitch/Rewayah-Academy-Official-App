@@ -2,7 +2,7 @@
 
 > **EN VIGUEUR par arbitrage de l'architecte pédagogique (12/11/2026), sur délégation du directeur. Le directeur peut corriger toute règle à tout moment ; une correction datée de sa part l'emporte.** Mis à jour le 13/11/2026 (prière et ablutions rédigées ; cahier des charges du livre de lecture ; `ARBITRAGES.md`, partie 9).
 
-Ce ne sont **pas des questions**. Aucune question n'est posée au directeur : toutes ont été closes par arbitrage le 12/11/2026 (`ARBITRAGES.md`, partie 7). Voici les contenus que le directeur déposera ou relira quand il le pourra. L'école fonctionne sans eux dès le premier jour, avec les règles provisoires écrites ci-dessous, et les accueille ensuite sans rien changer à la construction. Un texte religieux n'est jamais traduit automatiquement.
+Ce ne sont **pas des questions**. Aucune question n'est posée au directeur : toutes ont été closes par arbitrage le 12/11/2026 (`ARBITRAGES.md`, partie 7). Voici les contenus que le directeur déposera ou relira quand il le pourra. L'académie fonctionne sans eux dès le premier jour, avec les règles provisoires écrites ci-dessous, et les accueille ensuite sans rien changer à la construction. Un texte religieux n'est jamais traduit automatiquement.
 
 **Ce qui a changé le 13/11/2026 (DÉCIDÉ).** Les paroles de la prière et les ablutions sont publiques et connues : l'architecte les a rédigées dans `CONTENU-PRIERE-ET-ABLUTIONS.md`, selon ce qui est enseigné en Arabie saoudite ; le directeur les relit. Les livres seront rédigés par des agents après la validation du programme, découpés selon lui : leur cahier des charges est la partie 2 ci-dessous.
 
@@ -10,7 +10,7 @@ Ce ne sont **pas des questions**. Aucune question n'est posée au directeur : to
 
 ## 1. Les contenus
 
-| N° | Contenu attendu | Ce que l'école fait en attendant | Où le déposer, et ce qui change au dépôt |
+| N° | Contenu attendu | Ce que l'académie fait en attendant | Où le déposer, et ce qui change au dépôt |
 |---|---|---|---|
 | 1 | **Le livre de lecture de Rewayah** : rédigé par des agents après la validation du programme, selon le cahier des charges de la partie 2, puis relu et validé par le directeur (DÉCIDÉ 13/11) ; chaque ligne numérotée (DÉCIDÉ 14/10) | La position de la classe est la page montrée en classe, sans ligne (DÉCIDÉ 05/11). Les leçons portent leur nom. L'élève rattrape avec la page et son tuteur | Bibliothèque, type document, rattaché aux étapes 1 à 4 ; une étape à la fois, au fur et à mesure. Au dépôt, la position devient page et ligne, et les parties du programme (leçons) entrent dans le programme publié |
 | 2 | **Les enregistrements du directeur** : sa voix, pour que l'absent rattrape seul (DÉCIDÉ 12/11), dans cet ordre (`SCENARIOS-ELEVES.md`, 4.a) : les lettres, seules puis dans leurs formes ; les voyelles jusqu'à la chadda ; les paroles de la prière, dans l'ordre de `CONTENU-PRIERE-ET-ABLUTIONS.md` (le plus court d'abord), une fois ce fichier relu ; les invocations, une fois leur liste déposée (n° 3) ; les sourates courtes, Al-Fatiha, An-Nâs, Al-Falaq, Al-Ikhlâs, puis d'Al-Masad à Az-Zalzalah, verset par verset. Al-Fatiha passe juste après les lettres dès qu'un élève de 10 ans ou plus est inscrit. Quand le livre existe : une lecture par leçon | La règle ne change pas : la classe n'attend personne, l'élève rattrape seul avant le cours suivant. « Rattraper ce cours » montre la page et le travail à préparer et dit : « La lecture enregistrée de cette leçon n'est pas encore disponible. » L'enseignant écoute l'élève une minute au cours suivant. Aucun envoi au cas par cas sur WhatsApp | Bibliothèque, type audio, rattaché à l'étape et à la leçon (plus tard à la page et à la ligne), ou à la sourate et au verset. Au dépôt, « Rattraper ce cours » propose l'écoute (3 écoutes, 5 répétitions) |
@@ -18,6 +18,8 @@ Ce ne sont **pas des questions**. Aucune question n'est posée au directeur : to
 | 4 | **Le contenu de l'adab** : 5 à 10 points par tranche d'âge | L'adab se dit en mots par l'enseignant, en classe ; il n'est jamais compté dans un résultat (`EVALUATIONS.md`, 3.1) | Bibliothèque, type document, rattaché à la matière secondaire. Au dépôt, il apparaît dans l'onglet Programme de l'élève, pour sa tranche d'âge |
 
 ## 2. Cahier des charges du livre de lecture (ARBITRÉ 13/11)
+
+**La commande.** Le livre se rédige dans l'ordre de `PROGRAMME-SEANCE-PAR-SEANCE.md` : chaque leçon des 6 à 9 ans de ce fichier est une leçon du livre, et sa colonne « Plage » se remplit quand le livre existe. Ce fichier est la commande du livre (ARBITRÉ 13/11).
 
 **Qui, quand.** Des agents rédigent le livre **après** la validation du programme par le directeur, et le découpent selon lui (DÉCIDÉ 13/11). Le directeur relit et valide chaque étape avant sa publication. Le livre suit la voie d'Ahl as-Sunna ; il s'inspire des meilleurs livres de lecture sans en copier aucun (Nour al-Bayân est protégé par une licence ; compétence `programme-rewayah`, partie 4).
 

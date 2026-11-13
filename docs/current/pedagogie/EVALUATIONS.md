@@ -101,7 +101,7 @@ Une erreur grave que l'élève corrige **seul et aussitôt** compte comme une er
 |---|---|---|
 | **À renforcer** | Une erreur grave non corrigée, ou plus de 2 erreurs importantes sur le passage écouté, ou plus de 2 aides directes **[ARBITRÉ]** | L'enseignant, d'un geste |
 | **Acquis** | Aucune erreur grave non corrigée, au plus 2 erreurs importantes, petites erreurs tolérées **[ARBITRÉ]** ; pour la mémoire : aucune erreur de mot **[DÉCIDÉ 11/11 pour la sourate]** | L'enseignant, d'un geste |
-| **Stable** | Acquis lors de 3 observations, sur au moins 2 semaines, dont une non préparée : un petit bilan, ou un passage que l'enseignant fait lire ou réciter hors de la leçon du jour, tiré au hasard dans ce qui est déjà vu ; la séance de consolidation seule ne compte pas, une rencontre de récitation ne compte pas non plus **[DÉCIDÉ 12-13/10 ; non préparé : ARBITRÉ]** | Calculé par l'application, jamais saisi **[ARBITRÉ]** |
+| **Stable** | Acquis lors de 3 observations, sur au moins 2 semaines, dont une non préparée (un « A suivi » laissé par défaut au point de fin de séance ne compte qu'une fois par semaine et par objectif, **[ARBITRÉ 13/11]**) : un petit bilan, ou un passage que l'enseignant fait lire ou réciter hors de la leçon du jour, tiré au hasard dans ce qui est déjà vu ; la séance de consolidation seule ne compte pas, une rencontre de récitation ne compte pas non plus **[DÉCIDÉ 12-13/10 ; non préparé : ARBITRÉ]** | Calculé par l'application, jamais saisi **[ARBITRÉ]** |
 
 L'état d'une compétence est une information pour enseigner : il peut redescendre si l'élève oublie. Une étape validée ou une sourate cochée, elles, ne se perdent jamais. **[ARBITRÉ, d'après la règle du 14/10]**
 
@@ -158,7 +158,7 @@ Les objectifs mesurés ci-dessous (3 à 5 par étape, **[DÉCIDÉ 05/11]**) ont 
 - **Les règles qui changent le sens d'abord** : la lettre, la voyelle, la longueur, la chadda viennent avant ce qui embellit la lecture.
 - **Avant son étape, une règle est corrigée, jamais comptée** (§3.1). À partir de son étape, elle compte, avec la grille commune (§3.2 et 3.3).
 - **Tout le reste attend l'après-bases** : par exemple le mim sans voyelle (y compris devant ب), le ra épais ou fin, les autres allongements (devant un arrêt, après une hamza), les arrêts au milieu d'un verset et leurs signes. L'enseignant le fait imiter s'il se présente ; il ne l'exige pas.
-- Chaque règle est **un objectif** de son étape (repère entre parenthèses dans les tableaux 4.2 à 4.5). La collection des neuf règles du chemin (charte, partie 10 bis) se remplit avec l'état de ces neuf objectifs.
+- Chaque règle est **un objectif** de son étape (repère entre parenthèses dans les tableaux 4.2 à 4.5). La séance où chaque règle est imitée, puis nommée, est fixée par `PROGRAMME-SEANCE-PAR-SEANCE.md`. La collection des neuf règles du chemin (charte, partie 10 bis) se remplit avec l'état de ces neuf objectifs.
 
 | N° | Nom montré aux familles | Ce que l'élève fait | Étape | Exemple dans les 17 sourates |
 |---|---|---|---|---|
@@ -172,7 +172,7 @@ Les objectifs mesurés ci-dessous (3 à 5 par étape, **[DÉCIDÉ 05/11]**) ont 
 | 8 | Le noun sans voyelle et le tanwin | Les quatre cas : clair devant ء ه ع ح غ خ ; fondu dans la lettre suivante devant ي ن م و (avec nasalisation) et devant ل ر (sans nasalisation) ; changé en mim devant ب ; caché, avec nasalisation, devant les quinze autres lettres | 4. Les sourates courtes | Liste complète ci-dessous |
 | 9 | Les allongements longs | Plus long que deux temps : devant une hamza dans le même mot ou au début du mot suivant, et devant une lettre doublée ; la même longueur partout | 4. Les sourates courtes | Liste complète ci-dessous |
 
-**Longueurs (contenu de la lecture Hafs, pas un réglage de l'école).** Règles 4 et 8 : nasalisation de deux temps. Règle 9 : devant une hamza, quatre ou cinq temps dans la voie habituelle de Hafs, l'élève gardant toujours la même ; devant une lettre doublée, six temps. **À relire par le directeur** : la longueur que l'école retient devant une hamza (quatre ou cinq).
+**Longueurs (contenu de la lecture Hafs, pas un réglage de l'académie).** Règles 4 et 8 : nasalisation de deux temps. Règle 9 : devant une hamza, quatre ou cinq temps dans la voie habituelle de Hafs, l'élève gardant toujours la même ; devant une lettre doublée, six temps. **À relire par le directeur** : la longueur que l'académie retient devant une hamza (quatre ou cinq).
 
 **Les règles 8 et 9 dans les 17 sourates, sourate par sourate [ARBITRÉ 13/11 ; à relire par le directeur].** Cette liste servira aux auteurs du livre (`CONTENUS-ATTENDUS.md`). Elle est établie sur le texte coranique du dépôt (corpus Tanzil, écriture du Mushaf de Médine, lecture Hafs), en s'arrêtant à chaque fin de verset (règle 6), et vérifiée par un relevé automatique de ce texte. Ne sont pas listés : la basmala ; les fins de verset, où le tanwin devient un arrêt ; les liaisons d'un verset au suivant, qui ne s'enseignent pas dans les bases. Dans le Mushaf de Médine, chaque endroit de la règle 9 porte le signe d'allongement (ٓ). Ordre : celui où l'élève les apprend.
 
