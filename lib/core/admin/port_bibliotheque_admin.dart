@@ -82,6 +82,16 @@ final class BibliothequeHorsLigne extends ErreurBibliotheque {
   const BibliothequeHorsLigne();
 }
 
+/// La demande de depot a echoue pour une cause connue : l'ecran dit laquelle,
+/// jamais « la connexion s'est interrompue » a la place (DEPOT-SIMPLE).
+final class DepotImpossible extends ErreurBibliotheque {
+  /// Cree l'erreur.
+  const DepotImpossible(this.cause);
+
+  /// La cause, celle que l'ecran traduit en une phrase vraie.
+  final ErreurUpload cause;
+}
+
 /// Le port de l'administration de la bibliotheque.
 abstract interface class PortBibliothequeAdmin {
   /// Ce que la personne connectee peut faire.

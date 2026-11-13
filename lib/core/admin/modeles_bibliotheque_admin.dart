@@ -835,7 +835,7 @@ enum ErreurUpload {
   /// Connexion perdue.
   reseau,
 
-  /// Le serveur refuse (droit, intention expiree).
+  /// Le compte n'a pas le droit de faire ce depot.
   refuse,
 
   /// Hash different de celui annonce.
@@ -844,6 +844,46 @@ enum ErreurUpload {
   /// Le depot de fichiers n'est pas encore active sur le serveur (BIBLIOTHEQUE-UNE,
   /// C2) : la direction le sait en mots simples, le lien externe reste possible.
   nonActive,
+
+  /// La session a expire : il faut se reconnecter (401).
+  session,
+
+  /// Le stockage des fichiers a repondu non, ou n'est pas regle sur le
+  /// serveur : ce n'est pas la connexion de la personne.
+  stockage,
+
+  /// L'envoi vers le stockage est parti et n'a recu aucune reponse alors que
+  /// le serveur venait de repondre : le stockage n'accepte pas l'envoi depuis
+  /// cette adresse, ou la connexion a coupe pendant l'envoi.
+  envoi,
+
+  /// Le service de depot ne repond pas comme attendu (absent, en erreur).
+  service,
+
+  /// Le serveur est mal regle : sa confirmation est refusee par la base (le
+  /// secret de confirmation n'est pas le meme des deux cotes).
+  reglage,
+
+  /// Le serveur n'a pas fini dans le temps imparti.
+  delai,
+
+  /// Le fichier est vide.
+  vide,
+
+  /// Le document n'est plus un brouillon, ou a ete retire.
+  nonModifiable,
+
+  /// Cette version du document a deja son fichier.
+  dejaDepose,
+
+  /// La demande de depot a expire avant la fin.
+  expire,
+
+  /// Le contenu reel n'est pas du type annonce (un .pdf qui n'en est pas un).
+  contenu,
+
+  /// Le fichier envoye n'a pas ete retrouve dans le stockage.
+  introuvable,
 }
 
 /// La progression d'un depot, diffusee par le port.

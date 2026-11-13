@@ -17,6 +17,7 @@ import 'package:rewayah_academy/core/admin/modeles_bibliotheque_admin.dart';
 import 'package:rewayah_academy/core/admin/port_bibliotheque_admin.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/features/admin_pedagogie_bibliotheque/import/import_page.dart';
 import 'package:rewayah_academy/features/admin_pedagogie_bibliotheque/import/selecteur_support.dart';
 
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
@@ -204,6 +205,49 @@ void main() {
       await stabiliser(tester, fois: 10);
       expect(find.text(i.erreurs.taille), findsOneWidget);
     });
+
+    test('une cause, une phrase : « connexion » n\'a qu\'une cause', () {
+      final Map<ErreurUpload, String> phrases = <ErreurUpload, String>{
+        for (final ErreurUpload e in ErreurUpload.values)
+          e: phraseErreurDepot(e),
+      };
+      expect(phrases.values.toSet().length, ErreurUpload.values.length);
+      for (final MapEntry<ErreurUpload, String> e in phrases.entries) {
+        if (e.key == ErreurUpload.reseau) continue;
+        expect(e.value, isNot(i.erreurs.reseau), reason: e.key.name);
+      }
+      // Une cause inconnue ou imprevue n'est pas « la connexion ».
+      expect(phraseErreurDepot(null), i.erreurs.service);
+      expect(causeDeLaDemande(StateError('x')), ErreurUpload.service);
+      expect(
+        causeDeLaDemande(const DepotImpossible(ErreurUpload.stockage)),
+        ErreurUpload.stockage,
+      );
+      expect(
+        causeDeLaDemande(const BibliothequeHorsLigne()),
+        ErreurUpload.reseau,
+      );
+    });
+
+    for (final ErreurUpload cause in ErreurUpload.values) {
+      testWidgets('la demande de depot echoue (${cause.name}) : sa phrase', (
+        tester,
+      ) async {
+        final BibliothequeAdminDemo port = BibliothequeAdminDemo(nombre: 0)
+          ..echecDemande = cause;
+        await _monter(tester, port: port);
+        await _remplir(tester);
+        await _toucher(tester, _cle('import-choisir-support'));
+        await stabiliser(tester, fois: 10);
+        // Avant le 13/11/2026 : tout refus de la demande disait « la
+        // connexion s'est interrompue ».
+        expect(find.text(phraseErreurDepot(cause)), findsOneWidget);
+        if (cause != ErreurUpload.reseau) {
+          expect(find.text(i.erreurs.reseau), findsNothing);
+        }
+        expect(_cle('import-poursuivre'), findsNothing);
+      });
+    }
 
     testWidgets('connexion perdue : non confirme, on peut reessayer', (
       tester,
