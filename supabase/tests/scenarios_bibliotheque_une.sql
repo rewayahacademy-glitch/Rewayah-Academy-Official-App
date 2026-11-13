@@ -836,6 +836,183 @@ END;
 $etapes_refus$;
 
 -- ---------------------------------------------------------------------------
+-- 5 ter. Correctifs de la revue independante
+-- ---------------------------------------------------------------------------
+-- B1 : l'onglet de la classe (ressources_du_groupe) applique la tranche d'age
+-- et ne rend ni lien externe ni cle de vignette. Quatre documents attribues a
+-- la Classe une : un lien pour tous (103), une image a vignette (108), un
+-- document d'adultes (109), le lien de la direction sans les 6-9 ans.
+RESET ROLE;
+INSERT INTO public.library_resource_groupe (resource_id, groupe_id)
+SELECT r, 'b3100000-0000-0000-0000-000000000021'::uuid
+  FROM unnest(ARRAY['b3100000-0000-0000-0000-000000000103', 'b3100000-0000-0000-0000-000000000108',
+                    'b3100000-0000-0000-0000-000000000109']::uuid[]
+              || current_setting('b31.lien_id')::uuid) r;
+-- Le lien de la direction a ete rouvert aux 6-9 ans plus haut (section 5 bis) :
+-- on le remet sans eux pour ce cas.
+UPDATE public.library_resource SET tranches = ARRAY['enfant_10_13', 'ado_14_17', 'adulte_18_plus']
+ WHERE id = current_setting('b31.lien_id')::uuid;
+SET LOCAL ROLE authenticated;
+
+CREATE FUNCTION pg_temp.groupe_titres() RETURNS text
+LANGUAGE sql AS $$
+  SELECT coalesce(string_agg(g.title, ',' ORDER BY g.title), '')
+    FROM public.ressources_du_groupe('b3100000-0000-0000-0000-000000000021') g $$;
+CREATE FUNCTION pg_temp.groupe_colonnes_ajoutees() RETURNS integer
+LANGUAGE sql AS $$
+  SELECT count(*)::integer FROM public.ressources_du_groupe('b3100000-0000-0000-0000-000000000021') g
+   WHERE g.lien_externe IS NOT NULL OR g.vignette_cle IS NOT NULL OR g.etapes IS NOT NULL
+      OR g.tranches IS NOT NULL OR g.lecture_coran IS NOT NULL OR g.ecole_priere IS NOT NULL
+      OR g.ordre IS NOT NULL OR g.rayon IS NOT NULL $$;
+
+SELECT pg_temp.qui('b3100000-0000-0000-0000-000000000002', 'student', 'b31fffff-0000-0000-0000-000000000001');
+DO $b1_enfant$
+BEGIN
+  -- Un enfant de 6 a 9 ans ne recoit ni le lien de la direction ni le document d'adultes.
+  IF pg_temp.groupe_titres() ~ 'Lien de la direction|Doc adultes' THEN
+    RAISE EXCEPTION 'B31 ROUGE (B1) : l''onglet de la classe rend a un enfant de 6 a 9 ans un document d''une autre tranche : %', pg_temp.groupe_titres();
+  END IF;
+  IF pg_temp.groupe_titres() <> 'Doc classe,Image,Lien externe' THEN
+    RAISE EXCEPTION 'B31 ROUGE (B1) : l''onglet de la classe de l''enfant : %', pg_temp.groupe_titres();
+  END IF;
+  -- Meme pour ce qu'il a le droit de voir : ni adresse, ni cle de vignette.
+  IF pg_temp.groupe_colonnes_ajoutees() <> 0 THEN
+    RAISE EXCEPTION 'B31 ROUGE (B1) : une colonne ajoutee par le lot est rendue par l''onglet de la classe';
+  END IF;
+  IF (SELECT to_jsonb(g)::text FROM public.ressources_du_groupe('b3100000-0000-0000-0000-000000000021') g LIMIT 1)
+       ILIKE '%exemple.org%' OR (SELECT string_agg(to_jsonb(g)::text, '') FROM public.ressources_du_groupe('b3100000-0000-0000-0000-000000000021') g) ILIKE '%supports/%' THEN
+    RAISE EXCEPTION 'B31 ROUGE (B1) : une adresse ou une cle de stockage est rendue par l''onglet de la classe';
+  END IF;
+END;
+$b1_enfant$;
+SELECT pg_temp.qui('b3100000-0000-0000-0000-000000000004', 'guardian', 'b31fffff-0000-0000-0000-000000000001');
+DO $b1_tuteur$
+BEGIN
+  -- Le tuteur est adulte : il voit ce qu'un adulte voit, mais jamais l'adresse ni la cle.
+  IF pg_temp.groupe_titres() !~ 'Doc adultes' OR pg_temp.groupe_titres() !~ 'Lien de la direction' THEN
+    RAISE EXCEPTION 'B31 ROUGE (B1) : le tuteur adulte ne voit pas les documents d''adultes de la classe : %', pg_temp.groupe_titres();
+  END IF;
+  IF pg_temp.groupe_colonnes_ajoutees() <> 0 THEN
+    RAISE EXCEPTION 'B31 ROUGE (B1) : le tuteur recoit une colonne ajoutee par le lot';
+  END IF;
+END;
+$b1_tuteur$;
+SELECT pg_temp.qui('b3100000-0000-0000-0000-000000000005', 'teacher', NULL);
+DO $b1_enseignant$
+BEGIN
+  IF pg_temp.groupe_titres() !~ 'Lien de la direction' OR pg_temp.groupe_colonnes_ajoutees() <> 0 THEN
+    RAISE EXCEPTION 'B31 ROUGE (B1) : l''onglet de la classe de l''enseignant : %', pg_temp.groupe_titres();
+  END IF;
+END;
+$b1_enseignant$;
+SELECT pg_temp.qui('b3100000-0000-0000-0000-000000000003', 'student', 'b31fffff-0000-0000-0000-000000000002');
+DO $b1_etranger$
+BEGIN
+  PERFORM * FROM public.ressources_du_groupe('b3100000-0000-0000-0000-000000000021');
+  RAISE EXCEPTION 'B31 ROUGE (B1) : un eleve d''une autre classe lit l''onglet de la classe';
+EXCEPTION WHEN insufficient_privilege THEN NULL;
+END;
+$b1_etranger$;
+
+-- B1 (suite) : la recherche ne montre pas, a un enfant, le titre d'un document
+-- d'une autre tranche.
+CREATE FUNCTION pg_temp.qui_recherche(p_uid text, p_role text, p_foyer text, p_av bigint) RETURNS void
+LANGUAGE sql AS $$
+  SELECT set_config('request.jwt.claim.sub', p_uid, true),
+         set_config('request.jwt.claims', jsonb_build_object('sub', p_uid,
+           'app_metadata', jsonb_build_object('role', p_role, 'household_id', p_foyer,
+                                              'authorization_version', p_av))::text, true);
+$$;
+RESET ROLE;
+SELECT set_config('b31.av_002', (SELECT authorization_version::text FROM public.profiles WHERE id = 'b3100000-0000-0000-0000-000000000002'), true),
+       set_config('b31.av_004', (SELECT authorization_version::text FROM public.profiles WHERE id = 'b3100000-0000-0000-0000-000000000004'), true);
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.qui_recherche('b3100000-0000-0000-0000-000000000002', 'student', 'b31fffff-0000-0000-0000-000000000001',
+                             current_setting('b31.av_002')::bigint);
+DO $b1_recherche$
+DECLARE v jsonb;
+BEGIN
+  v := public.rech_d1_rechercher_supports('lien');
+  IF v::text ~ 'Lien de la direction' OR v::text !~ 'Lien externe' THEN
+    RAISE EXCEPTION 'B31 ROUGE (B1) : la recherche d''un enfant de 6 a 9 ans : %', v;
+  END IF;
+  IF public.rech_d1_rechercher_supports('adultes')::text ~ 'Doc adultes' THEN
+    RAISE EXCEPTION 'B31 ROUGE (B1) : la recherche rend le titre d''un document d''adultes a un enfant';
+  END IF;
+END;
+$b1_recherche$;
+SELECT pg_temp.qui_recherche('b3100000-0000-0000-0000-000000000004', 'guardian', 'b31fffff-0000-0000-0000-000000000001',
+                             current_setting('b31.av_004')::bigint);
+DO $b1_recherche_tuteur$
+BEGIN
+  IF public.rech_d1_rechercher_supports('adultes')::text !~ 'Doc adultes' THEN
+    RAISE EXCEPTION 'B31 ROUGE (B1) : la recherche du tuteur adulte ne trouve pas un document d''adultes';
+  END IF;
+END;
+$b1_recherche_tuteur$;
+
+-- I3 : un compte dont l'acces est suspendu pour impaye ne lit plus la
+-- Bibliotheque, SAUF le Coran (regle du 04/11/2026), et la fonction reste
+-- identique a la RLS.
+RESET ROLE;
+SET LOCAL session_replication_role = replica;
+INSERT INTO public.acces_suspensions_paiement (id, profile_id, facture_id, jour)
+VALUES ('b3100000-0000-0000-0000-0000000005a1', 'b3100000-0000-0000-0000-000000000003',
+        'b3100000-0000-0000-0000-0000000005f1', current_date);
+SET LOCAL session_replication_role = origin;
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.qui('b3100000-0000-0000-0000-000000000003', 'student', 'b31fffff-0000-0000-0000-000000000002');
+DO $i3_impaye$
+DECLARE v jsonb;
+BEGIN
+  v := public.bibliotheque_catalogue_lecteur();
+  IF pg_temp.titres(v) <> 'Le Coran' THEN
+    RAISE EXCEPTION 'B31 ROUGE (I3) : un compte suspendu pour impaye lit autre chose que le Coran : %', pg_temp.titres(v);
+  END IF;
+  IF (SELECT count(*) FROM public.library_resource WHERE id::text LIKE 'b3100000-%') <> 0
+     OR (SELECT count(*) FROM public.library_resource WHERE resource_type::text = 'quran') <> 1 THEN
+    RAISE EXCEPTION 'B31 ROUGE (I3) : la RLS d''un compte suspendu ne laisse pas exactement le Coran';
+  END IF;
+  IF public.bibliotheque_catalogue_lecteur('{"types":["quran"]}') = '[]'::jsonb THEN
+    RAISE EXCEPTION 'B31 ROUGE (I3) : le Coran est ferme a un compte suspendu';
+  END IF;
+END;
+$i3_impaye$;
+RESET ROLE;
+SET LOCAL session_replication_role = replica;
+UPDATE public.acces_suspensions_paiement SET retabli_le = now(), retabli_motif = 'paiement'
+ WHERE id = 'b3100000-0000-0000-0000-0000000005a1';
+SET LOCAL session_replication_role = origin;
+SET LOCAL ROLE authenticated;
+
+-- I4 : la direction compte les mineurs sans tranche (traites comme des 6-9 ans).
+RESET ROLE;
+UPDATE public.student_profiles SET cohorte = NULL WHERE profile_id = 'b3100000-0000-0000-0000-000000000006';
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.qui('b3100000-0000-0000-0000-000000000001', 'admin', NULL);
+DO $i4_mineurs$
+DECLARE n integer;
+BEGIN
+  n := public.library_mineurs_sans_cohorte();
+  IF n < 1 THEN RAISE EXCEPTION 'B31 ROUGE (I4) : le mineur sans tranche n''est pas compte (%)', n; END IF;
+END;
+$i4_mineurs$;
+SELECT pg_temp.qui('b3100000-0000-0000-0000-000000000006', 'student', 'b31fffff-0000-0000-0000-000000000003');
+DO $i4_prudence$
+BEGIN
+  -- Sans tranche, un mineur est traite comme un 6-9 ans : il ne voit pas le lien par defaut.
+  IF pg_temp.titres_tries(public.bibliotheque_catalogue_lecteur()) ~ 'Lien de la direction|Doc adultes' THEN
+    RAISE EXCEPTION 'B31 ROUGE (I4) : un mineur sans tranche voit un document reserve a d''autres tranches';
+  END IF;
+  BEGIN PERFORM public.library_mineurs_sans_cohorte(); RAISE EXCEPTION 'B31 ROUGE (I4) : un eleve lit le compte des mineurs sans tranche';
+  EXCEPTION WHEN insufficient_privilege THEN NULL; END;
+END;
+$i4_prudence$;
+RESET ROLE;
+UPDATE public.student_profiles SET cohorte = 'ado_14_17' WHERE profile_id = 'b3100000-0000-0000-0000-000000000006';
+SET LOCAL ROLE authenticated;
+
+-- ---------------------------------------------------------------------------
 -- 6. La vignette : une intention a deux temps, confirmation signee par l'Edge
 -- ---------------------------------------------------------------------------
 RESET ROLE;
@@ -872,7 +1049,14 @@ BEGIN
   BEGIN PERFORM public.confirmer_vignette_bibliotheque((i ->> 'id')::uuid, 'image/png', 1000, v_sha, repeat('0', 64));
     RAISE EXCEPTION 'B31 ROUGE : signature de confirmation invalide acceptee';
   EXCEPTION WHEN insufficient_privilege THEN NULL; END;
+  -- Separation de domaine (I7) : une signature calculee comme celle d'un
+  -- FICHIER de document (sans le prefixe de la vignette) est refusee.
   sig := encode(extensions.hmac(convert_to((i ->> 'id') || E'\n' || v_sha || E'\n1000', 'UTF8'),
+          convert_to('test-only-b31-vignette-confirmation-key-32-bytes', 'UTF8'), 'sha256'), 'hex');
+  BEGIN PERFORM public.confirmer_vignette_bibliotheque((i ->> 'id')::uuid, 'image/png', 1000, v_sha, sig);
+    RAISE EXCEPTION 'B31 ROUGE : une signature de fichier confirme une vignette';
+  EXCEPTION WHEN insufficient_privilege THEN NULL; END;
+  sig := encode(extensions.hmac(convert_to('bibliotheque-vignette-v1' || E'\n' || (i ->> 'id') || E'\n' || v_sha || E'\n1000', 'UTF8'),
           convert_to('test-only-b31-vignette-confirmation-key-32-bytes', 'UTF8'), 'sha256'), 'hex');
   -- Un contenu different de celui annonce est refuse meme signe.
   BEGIN PERFORM public.confirmer_vignette_bibliotheque((i ->> 'id')::uuid, 'image/jpeg', 1000, v_sha, sig);

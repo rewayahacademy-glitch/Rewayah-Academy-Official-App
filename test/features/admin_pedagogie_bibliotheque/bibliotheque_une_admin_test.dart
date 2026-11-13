@@ -316,6 +316,31 @@ void main() {
     expect(_cle('import-poursuivre'), findsOneWidget);
   });
 
+  testWidgets('I1 : sans reponse sur le depot, aucun bouton de fichier', (
+    tester,
+  ) async {
+    final BibliothequeAdminDemo demo = BibliothequeAdminDemo()
+      ..panneDepot = true;
+    await _monter(demo: demo, tester, taille: const Size(1440, 2800));
+    await stabiliser(tester, fois: 3);
+    await _choisirDansMenu(tester, i.champs.type, 'PDF');
+    // L'erreur n'est pas avalee en « active » : ni fichier, ni vignette, ni
+    // preuve ; une phrase en mots simples, et le lien reste possible.
+    expect(find.text(cl.depotInconnu), findsOneWidget);
+    expect(find.text(cl.depotInactif), findsNothing);
+    expect(_cle('import-choisir-support'), findsNothing);
+    expect(_cle('import-choisir-vignette'), findsNothing);
+    expect(_cle('import-choisir-preuve'), findsNothing);
+    await tester.enterText(_cle('import-titre'), 'Un site');
+    await tester.enterText(_cle('import-categorie'), 'Lecture');
+    await _choisirDansMenu(tester, 'PDF', 'Lien externe');
+    await _choisirDansMenu(tester, i.champs.langue, 'Français');
+    await tester.enterText(_cle('import-lien'), 'https://exemple.org/a');
+    await tester.enterText(_cle('import-description'), 'Un site.');
+    await stabiliser(tester, fois: 2);
+    expect(_cle('import-poursuivre'), findsOneWidget);
+  });
+
   testWidgets('C2 : depot actif, aucune phrase d\'inactivite', (tester) async {
     await _monter(tester, taille: const Size(1440, 2600));
     await stabiliser(tester, fois: 3);

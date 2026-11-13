@@ -162,9 +162,11 @@ class _ImportEtat extends ConsumerState<_Import> {
   final Set<String> _etapesChoisies = <String>{};
   String? _lecture;
 
-  /// Faux : le depot de fichiers n'est pas encore active sur le serveur (C2).
-  /// `null` tant que la reponse n'est pas la : rien n'est cache.
+  /// Vrai seulement quand le serveur a dit que le depot de fichiers est active.
+  /// Faux : pas encore active (C2). `null` : pas de reponse (en attente ou
+  /// erreur) ; sans reponse, AUCUN bouton de fichier n'est affiche (revue I1).
   bool? _depotActif;
+  bool _depotInconnu = false;
 
   String? _supportId;
   FicheSupport? _existante;
@@ -203,7 +205,9 @@ class _ImportEtat extends ConsumerState<_Import> {
       final bool actif = await widget.port.depotActif();
       if (mounted) setState(() => _depotActif = actif);
     } on Object {
-      // Sans reponse, le depot reste propose : le serveur dira non au besoin.
+      // Sans reponse, on ne propose PAS le depot de fichiers : la phrase dit
+      // que l'etat n'a pas pu etre verifie, le lien reste possible.
+      if (mounted) setState(() => _depotInconnu = true);
     }
     final String? id = _supportId;
     if (id == null) return;
@@ -244,7 +248,8 @@ class _ImportEtat extends ConsumerState<_Import> {
     super.dispose();
   }
 
-  bool get _depotInactif => _depotActif == false;
+  /// Pas de bouton de fichier tant que le serveur n'a pas dit « active ».
+  bool get _depotInactif => _depotActif != true;
 
   bool get _ressourceComplete =>
       _existante != null ||
@@ -789,10 +794,16 @@ class _ImportEtat extends ConsumerState<_Import> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           if (type != null) ...<Widget>[Text(formats), Ecart.vMd],
-          if (_depotInactif) ...<Widget>[
+          if (_depotActif == false) ...<Widget>[
             Text(
               f.classement.depotInactif,
               key: const ValueKey<String>('import-depot-inactif'),
+            ),
+            Ecart.vMd,
+          ] else if (_depotActif == null && _depotInconnu) ...<Widget>[
+            Text(
+              f.classement.depotInconnu,
+              key: const ValueKey<String>('import-depot-inconnu'),
             ),
             Ecart.vMd,
           ],

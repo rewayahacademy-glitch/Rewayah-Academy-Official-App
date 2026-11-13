@@ -314,9 +314,12 @@ class BibliothequeAdminDemo implements PortBibliothequeAdmin {
   /// Faux : le depot de fichiers n'est pas active (le lien reste possible).
   bool depotActifServeur = true;
 
+  /// Vrai : seule la lecture de l'etat du depot echoue (pas de reponse).
+  bool panneDepot = false;
+
   @override
   Future<bool> depotActif() async {
-    if (panne) throw const BibliothequeHorsLigne();
+    if (panne || panneDepot) throw const BibliothequeHorsLigne();
     return depotActifServeur;
   }
 

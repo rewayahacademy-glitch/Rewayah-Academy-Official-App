@@ -5,11 +5,38 @@
 -- ajoute, et une valeur d'enum ajoutee n'est employable qu'une fois sa
 -- transaction validee.
 --
--- FICHIER SANS MOT D'EFFACEMENT NI DE SUPPRESSION D'OBJET : additif. Il
--- remplace six fonctions existantes par `CREATE OR REPLACE` a signature
--- identique (n4_manifeste, bibliotheque_catalogue_lecteur, library_controle_version,
--- library_creer_brouillon, library_mettre_a_jour, library_get_detail) ; il en
--- cree sept (dont trois lectures du lecteur) et deux tables.
+-- FICHIER SANS MOT D'EFFACEMENT NI DE SUPPRESSION D'OBJET : additif.
+--
+-- INVENTAIRE EXACT (revue I6) de ce que ce fichier REMPLACE OU MODIFIE ; tout
+-- le reste est neuf.
+--   Fonctions remplacees par `CREATE OR REPLACE`, signature identique, droits
+--   conserves puis reaffirmes (12) :
+--     app_private.library_controle_version(uuid)        (lien, etape, sans fichier)
+--     public.library_creer_brouillon(jsonb)             (rayon, ordre, lien, etapes, tranches, lecture, ecole)
+--     public.library_mettre_a_jour(uuid,jsonb,integer)  (idem + vignette)
+--     public.library_get_detail(uuid)                   (idem)
+--     public.library_get_catalogue(jsonb,text,integer)  (filtres lecture, ecole, rayon ; nouvelles cles)
+--     private.n4_ressource_lisible(uuid)                (tranche d'age ; exception ecrite pour le Coran sur l'acces paye)
+--     private.n4_manifeste(uuid)                        (cles ajoutees, jamais une cle de stockage)
+--     public.bibliotheque_catalogue_lecteur(jsonb,integer)  (filtres rayon, etape, classe, eleve, decalage)
+--     public.ressources_du_groupe(uuid)                 (correctif B1 : tranche, plus de colonnes ajoutees)
+--   Fonctions existantes modifiees par insertion d'UNE ligne ancree (le texte
+--   installe est lu, l'ancre doit s'y trouver exactement une fois, sinon la
+--   migration echoue ; l'empreinte F86 est recalculee si elle existe) (2) :
+--     public.autoriser_lecture_version(uuid)            (garde de tranche apres le role)
+--     public.rech_d1_rechercher_supports(text,uuid,integer)  (tranche d'age de la recherche)
+--   Politique modifiee par `ALTER POLICY`, a l'identique plus deux conditions :
+--     public.library_resource_lecture                   (tranche d'age ; exception Coran sur l'acces paye)
+--   Table etendue : public.library_resource (colonnes rayon, ordre, lien_externe,
+--     vignette_cle, etapes, tranches, lecture_coran, ecole_priere, avec leurs contraintes).
+--   Donnees semees : deux lignes de library_rayon ; le Coran (voir 7).
+--   Neuf : deux tables (library_rayon, private.library_vignette_intentions),
+--     quinze fonctions : trois lectures du lecteur (rayons, version, vignettes),
+--     quatre fonctions de vignette (demander, lire, confirmer, annuler),
+--     bibliotheque_depot_actif, bibliotheque_etapes_publiees,
+--     library_mineurs_sans_cohorte, library_semer_coran, et quatre aides
+--     internes (library_etapes_normalisees, library_tranches_normalisees,
+--     tranche_autorisee, tranche_autorisee_version).
 --
 -- Ce qu'il fait (BIBLIOTHEQUE-UNE, charte partie 11) :
 --   1. Deux rayons, EN DONNEE : library_rayon (« Documents des cours » et
@@ -981,9 +1008,15 @@ BEGIN
      OR v_empreinte !~ '^[0-9a-f]{64}$' THEN
     RAISE EXCEPTION 'BibliothequeUploadConfirmationNonAutorisee' USING ERRCODE = '42501';
   END IF;
+  -- Separation de domaine (revue I7) : le message signe d'une vignette porte un
+  -- prefixe propre, que celui d'un fichier de document n'a pas. Une signature
+  -- produite pour l'un ne peut donc pas confirmer l'autre. Le meme prefixe est
+  -- ecrit cote Edge (`signatureConfirmationUpload`, domaine « vignette »).
   v_attendue := pg_catalog.encode(
     extensions.hmac(
-      pg_catalog.convert_to(p_intention_id::text || E'\n' || v_empreinte || E'\n' || p_taille_reelle::text, 'UTF8'),
+      pg_catalog.convert_to(
+        'bibliotheque-vignette-v1' || E'\n' || p_intention_id::text || E'\n' || v_empreinte || E'\n' || p_taille_reelle::text,
+        'UTF8'),
       pg_catalog.convert_to(v_secret, 'UTF8'),
       'sha256'
     ),
@@ -1082,7 +1115,10 @@ AS $function$
            )
          )
        )
-       AND private.acces_paye_appelant()
+       -- Le Coran reste ouvert a tout compte valide, paye ou non (regle du
+       -- 04/11/2026, 20261104600000, arbitrage de l'architecte sur la revue I3) :
+       -- l'exception est ecrite pour le seul document de type Coran.
+       AND (private.acces_paye_appelant() OR r.resource_type::text = 'quran')
        AND private.tranche_autorisee(r.tranches)
       FROM public.library_resource r
      WHERE r.id = p_resource_id
@@ -1126,7 +1162,8 @@ ALTER POLICY library_resource_lecture ON public.library_resource
         )
       )
     )
-    AND private.acces_paye_appelant()
+    -- Meme exception ecrite pour le seul document Coran (voir n4_ressource_lisible).
+    AND (private.acces_paye_appelant() OR library_resource.resource_type::text = 'quran')
     AND private.tranche_autorisee(library_resource.tranches)
   );
 
@@ -1341,8 +1378,11 @@ $function$;
 
 -- Les vignettes d'une liste de documents : pour chaque document que l'appelant
 -- lit et qui porte une vignette, la cle a signer. Appelee par la fonction Edge
--- `bibliotheque-lecture` (jeton de l'appelant), qui signe l'URL ; l'application
--- ne voit jamais une cle.
+-- `bibliotheque-lecture` (jeton de l'appelant), qui signe l'URL. L'application
+-- ne l'appelle pas, MAIS tout compte authentifie peut l'appeler directement :
+-- il recoit alors la cle (un chemin d'objet prive, qui n'ouvre rien sans URL
+-- signee) des SEULS documents qu'il peut lire (porte, acces paye et tranche
+-- d'age de n4_ressource_lisible) ; jamais celle d'un document qu'il ne lit pas.
 CREATE FUNCTION public.bibliotheque_vignettes_autorisees(p_ids uuid[])
 RETURNS jsonb
 LANGUAGE plpgsql STABLE SECURITY DEFINER SET search_path = ''
@@ -1523,6 +1563,139 @@ REVOKE ALL ON FUNCTION public.bibliotheque_depot_actif() FROM PUBLIC, anon, serv
 GRANT EXECUTE ON FUNCTION public.bibliotheque_depot_actif() TO authenticated;
 
 -- ---------------------------------------------------------------------------
+-- 7 ter. Correctifs de la revue independante (12/11/2026)
+-- ---------------------------------------------------------------------------
+-- B1 (bloquant, protection des mineurs). `ressources_du_groupe` (l'onglet de la
+-- classe) est SECURITY DEFINER et rendait `r.*` : sans la tranche d'age, et,
+-- depuis les colonnes de ce lot, avec le lien externe et la cle de vignette.
+-- Un enfant de 6 a 9 ans (ou son tuteur) d'une classe a laquelle la direction
+-- attribue un lien externe en recevait l'adresse. Corrige : meme signature,
+-- meme porte, meme ordre ; la liste est en plus bornee par
+-- `private.n4_ressource_lisible` (qui porte la tranche, l'acces paye et la
+-- policy), et les colonnes AJOUTEES par ce lot (lien externe, cle de vignette,
+-- rayon, ordre, etapes, tranches, lecture, ecole) ne sont plus rendues : la
+-- ligne garde ses colonnes d'origine, les autres sont nulles. La lecture
+-- complete d'un document passe par `bibliotheque_catalogue_lecteur`.
+CREATE OR REPLACE FUNCTION public.ressources_du_groupe(p_groupe_id uuid)
+RETURNS SETOF public.library_resource
+LANGUAGE plpgsql
+STABLE
+SECURITY DEFINER
+SET search_path = ''
+AS $function$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM public.groupes g
+     WHERE g.id = p_groupe_id
+       AND public.app_account_valid()
+       AND (
+         g.teacher_id = auth.uid()
+         OR public.app_role() = 'admin'
+         OR EXISTS (
+           SELECT 1 FROM public.groupe_membres m
+            WHERE m.groupe_id = g.id AND m.left_at IS NULL
+              AND (m.student_id = auth.uid() OR public.est_du_foyer(m.student_id))
+         )
+       )
+  ) THEN
+    RAISE EXCEPTION 'groupe introuvable ou acces refuse' USING ERRCODE = 'insufficient_privilege';
+  END IF;
+
+  RETURN QUERY
+    SELECT (pg_catalog.jsonb_populate_record(
+             NULL::public.library_resource,
+             pg_catalog.to_jsonb(r) - ARRAY['lien_externe', 'vignette_cle', 'rayon', 'ordre',
+                                            'etapes', 'tranches', 'lecture_coran', 'ecole_priere']
+           )).*
+      FROM public.library_resource r
+      JOIN public.library_resource_groupe lrg ON lrg.resource_id = r.id
+      JOIN public.resource_version rv ON rv.id = r.current_version_id
+     WHERE lrg.groupe_id = p_groupe_id
+       AND rv.statut = 'publiee'
+       AND r.archived_at IS NULL
+       AND private.n4_ressource_lisible(r.id)
+       AND (
+         public.app_role() = 'admin'
+         OR r.access_policy IN ('publique', 'inscrits')
+         OR (
+           r.access_policy IN ('groupe_assigne', 'enseignant_seul')
+           AND EXISTS (
+             SELECT 1
+               FROM public.library_resource_groupe lrg_policy
+               JOIN public.groupes g ON g.id = lrg_policy.groupe_id
+              WHERE lrg_policy.resource_id = r.id
+                AND (
+                  g.teacher_id = auth.uid()
+                  OR (
+                    r.access_policy = 'groupe_assigne'
+                    AND EXISTS (
+                      SELECT 1 FROM public.groupe_membres m
+                       WHERE m.groupe_id = g.id
+                         AND m.left_at IS NULL
+                         AND (m.student_id = auth.uid() OR public.est_du_foyer(m.student_id))
+                    )
+                  )
+                )
+           )
+         )
+       )
+     ORDER BY lrg.epinglee DESC, r.title ASC;
+END;
+$function$;
+REVOKE EXECUTE ON FUNCTION public.ressources_du_groupe(uuid) FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.ressources_du_groupe(uuid) TO authenticated, agent_ro;
+
+-- B1 (suite). La recherche des documents (`rech_d1_rechercher_supports`) copie
+-- aussi la regle de lecture, sans la tranche d'age : un enfant y trouvait le
+-- titre d'un document destine a d'autres tranches (jamais son adresse ni sa
+-- cle). Une ligne ajoutee, ancree sur la porte de compte, qui echoue si le
+-- texte de la fonction a change depuis.
+SELECT pg_temp.ajouter_apres(
+  'public.rech_d1_rechercher_supports(text,uuid,integer)'::regprocedure,
+  $a$       and public.app_account_valid()
+$a$,
+  $b$       and private.tranche_autorisee(r.tranches)
+$b$);
+DO $empreinte_recherche$
+DECLARE
+  f regprocedure := 'public.rech_d1_rechercher_supports(text,uuid,integer)'::regprocedure;
+  v_com text := pg_catalog.obj_description(f, 'pg_proc');
+BEGIN
+  IF v_com LIKE '%md5_functiondef=%' THEN
+    v_com := pg_catalog.regexp_replace(v_com, 'md5_functiondef=[0-9A-Za-z_]+',
+      'md5_functiondef=' || pg_catalog.md5(pg_catalog.pg_get_functiondef(f)));
+    EXECUTE pg_catalog.format('COMMENT ON FUNCTION %s IS %L', f, v_com);
+  END IF;
+END;
+$empreinte_recherche$;
+
+-- I4. La regle « un mineur sans tranche est traite comme un 6-9 ans » protege
+-- au plus strict ; la direction voit combien d'eleves mineurs n'ont pas encore
+-- de tranche (a renseigner), sans les nommer.
+CREATE FUNCTION public.library_mineurs_sans_cohorte()
+RETURNS integer
+LANGUAGE plpgsql STABLE SECURITY DEFINER SET search_path = ''
+AS $function$
+BEGIN
+  IF NOT coalesce(public.app_account_valid() AND public.app_role() = 'admin', false) THEN
+    RAISE EXCEPTION 'BibliothequeNonAutorisee' USING ERRCODE = '42501';
+  END IF;
+  RETURN (
+    SELECT pg_catalog.count(*)::integer
+      FROM public.student_profiles sp
+      JOIN public.profiles p ON p.id = sp.profile_id
+     WHERE sp.cohorte IS NULL
+       AND sp.student_type::text <> 'adult'
+       AND sp.deleted_at IS NULL
+       AND p.deleted_at IS NULL
+  );
+END;
+$function$;
+ALTER FUNCTION public.library_mineurs_sans_cohorte() OWNER TO postgres;
+REVOKE ALL ON FUNCTION public.library_mineurs_sans_cohorte() FROM PUBLIC, anon, service_role, agent_ro;
+GRANT EXECUTE ON FUNCTION public.library_mineurs_sans_cohorte() TO authenticated;
+
+-- ---------------------------------------------------------------------------
 -- 8. Droits d'execution, proprietaire, empreintes
 -- ---------------------------------------------------------------------------
 ALTER FUNCTION public.demander_vignette_bibliotheque(uuid, text, bigint, text) OWNER TO postgres;
@@ -1584,6 +1757,7 @@ BEGIN
     'public.library_get_catalogue(jsonb,text,integer)'::regprocedure,
     'public.bibliotheque_depot_actif()'::regprocedure,
     'public.bibliotheque_etapes_publiees()'::regprocedure,
+    'public.library_mineurs_sans_cohorte()'::regprocedure,
     'public.demander_vignette_bibliotheque(uuid,text,bigint,text)'::regprocedure,
     'public.lire_vignette_bibliotheque(uuid)'::regprocedure,
     'public.confirmer_vignette_bibliotheque(uuid,text,bigint,text,text)'::regprocedure,
@@ -1617,6 +1791,7 @@ BEGIN
     'public.library_get_catalogue(jsonb,text,integer)',
     'public.bibliotheque_depot_actif()',
     'public.bibliotheque_etapes_publiees()',
+    'public.library_mineurs_sans_cohorte()',
     'public.demander_vignette_bibliotheque(uuid,text,bigint,text)',
     'public.lire_vignette_bibliotheque(uuid)',
     'public.confirmer_vignette_bibliotheque(uuid,text,bigint,text,text)',

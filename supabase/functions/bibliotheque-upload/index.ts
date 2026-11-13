@@ -15,7 +15,10 @@ import {
   signerDepot,
   signerLecture,
 } from "../_shared/r2/signature.ts";
-import { signatureConfirmationUpload } from "../_shared/r2/confirmation_hmac.ts";
+import {
+  DOMAINE_VIGNETTE,
+  signatureConfirmationUpload,
+} from "../_shared/r2/confirmation_hmac.ts";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const SHA256 = /^[0-9a-f]{64}$/;
@@ -477,6 +480,7 @@ async function confirmerVignette(
       id,
       empreinte,
       octets.byteLength,
+      DOMAINE_VIGNETTE,
     );
     const confirme = await compte.sql.rpc("confirmer_vignette_bibliotheque", {
       p_intention_id: id,

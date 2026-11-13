@@ -12425,7 +12425,7 @@ class _Traductions$tc$bibliotheque$detail$ar extends Traductions$tc$bibliotheque
 
 	// Translations
 	@override String get titre => 'الوثيقة';
-	@override String get lecture => 'قراءة القرآن';
+	@override String get lecture => 'الرواية';
 	@override String get ecole => 'المذهب الفقهي المتّبع';
 	@override String get capacites => 'ما تتيحه هذه الوثيقة';
 	@override String get niveaux => 'المستويات';
@@ -21746,9 +21746,10 @@ class _Traductions$admin$bibliotheque$import$classement$ar extends Traductions$a
 	@override String get etapesAide => 'اربط الوثيقة بالمراحل التي تفيد فيها (اختياري).';
 	@override String get etapesVide => 'ستظهر المراحل عند نشر البرنامج.';
 	@override String get etapesIndisponible => 'تعذّرت قراءة المراحل حاليًا. يمكن حفظ الوثيقة دون مرحلة.';
-	@override String get lectureTitre => 'قراءة القرآن';
-	@override String get lectureAucune => 'لم تُحدَّد قراءة';
+	@override String get lectureTitre => 'الرواية';
+	@override String get lectureAucune => 'لم تُحدَّد رواية';
 	@override String get ecoleLibelle => 'المذهب الفقهي المتّبع (للصلاة والوضوء؛ اختياري)';
+	@override String get depotInconnu => 'تعذّر التحقق حاليًا من تفعيل إيداع الملفات. يمكنك الآن إضافة وثيقة عن طريق رابطها.';
 	@override String get ecoleTrop => 'يجب ألا يتجاوز اسم المذهب 80 حرفًا.';
 	@override String get depotInactif => 'لم يُفعَّل بعدُ إيداع الملفات. يمكنك الآن إضافة وثيقة عن طريق رابطها.';
 	@override String get videoLien => 'للفيديو، الصق رابطه.';
@@ -26626,7 +26627,7 @@ extension on TraductionsAr {
 			'tc.bibliotheque.type.image' => 'صورة',
 			'tc.bibliotheque.type.lecon' => 'درس',
 			'tc.bibliotheque.detail.titre' => 'الوثيقة',
-			'tc.bibliotheque.detail.lecture' => 'قراءة القرآن',
+			'tc.bibliotheque.detail.lecture' => 'الرواية',
 			'tc.bibliotheque.detail.ecole' => 'المذهب الفقهي المتّبع',
 			'tc.bibliotheque.detail.capacites' => 'ما تتيحه هذه الوثيقة',
 			'tc.bibliotheque.detail.niveaux' => 'المستويات',
@@ -30441,9 +30442,10 @@ extension on TraductionsAr {
 			'admin.bibliotheque.import.classement.etapesAide' => 'اربط الوثيقة بالمراحل التي تفيد فيها (اختياري).',
 			'admin.bibliotheque.import.classement.etapesVide' => 'ستظهر المراحل عند نشر البرنامج.',
 			'admin.bibliotheque.import.classement.etapesIndisponible' => 'تعذّرت قراءة المراحل حاليًا. يمكن حفظ الوثيقة دون مرحلة.',
-			'admin.bibliotheque.import.classement.lectureTitre' => 'قراءة القرآن',
-			'admin.bibliotheque.import.classement.lectureAucune' => 'لم تُحدَّد قراءة',
+			'admin.bibliotheque.import.classement.lectureTitre' => 'الرواية',
+			'admin.bibliotheque.import.classement.lectureAucune' => 'لم تُحدَّد رواية',
 			'admin.bibliotheque.import.classement.ecoleLibelle' => 'المذهب الفقهي المتّبع (للصلاة والوضوء؛ اختياري)',
+			'admin.bibliotheque.import.classement.depotInconnu' => 'تعذّر التحقق حاليًا من تفعيل إيداع الملفات. يمكنك الآن إضافة وثيقة عن طريق رابطها.',
 			'admin.bibliotheque.import.classement.ecoleTrop' => 'يجب ألا يتجاوز اسم المذهب 80 حرفًا.',
 			'admin.bibliotheque.import.classement.depotInactif' => 'لم يُفعَّل بعدُ إيداع الملفات. يمكنك الآن إضافة وثيقة عن طريق رابطها.',
 			'admin.bibliotheque.import.classement.videoLien' => 'للفيديو، الصق رابطه.',
@@ -30820,9 +30822,9 @@ extension on TraductionsAr {
 			'comptable.paiements.confirmation.total' => 'إجمالي المدفوعات الجاهزة',
 			'comptable.paiements.confirmation.beneficiairesCle' => 'المستفيدون',
 			'comptable.paiements.confirmation.beneficiaires' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, one: 'مستفيد واحد', two: 'مستفيدان', few: '${n} مستفيدين', other: '${n} مستفيدًا', ), 
-			'comptable.paiements.confirmation.devises' => 'العملات',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.paiements.confirmation.devises' => 'العملات',
 			'comptable.paiements.confirmation.prestataires' => 'مزوّدو الدفع',
 			'comptable.paiements.confirmation.plafond' => 'التفويض المتبقي',
 			'comptable.paiements.confirmation.exclusTitre' => 'مستبعدة من هذه الدفعة المجمّعة: لن تُرسَل',
@@ -31334,9 +31336,9 @@ extension on TraductionsAr {
 			'comptable.contractuels.aucunJustificatif' => 'لا يوجد مستند مؤيِّد مرفق',
 			'comptable.contractuels.nonRenseigne' => 'غير محدد',
 			'comptable.contractuels.ligneSource' => ({required Object source}) => 'المصدر: ${source}',
-			'comptable.contractuels.ligneAuteur' => ({required Object auteur}) => 'أضافه ${auteur}',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.contractuels.ligneAuteur' => ({required Object auteur}) => 'أضافه ${auteur}',
 			'comptable.contractuels.ligneValidation' => ({required Object validation}) => 'المصادقة: ${validation}',
 			'comptable.contractuels.payerAide' => 'يُفتح الدفع في تفاصيل الدفعة، بالمبلغ الدقيق.',
 			'comptable.contractuels.approuverAide' => 'بعد الاعتماد، يُثبَّت المبلغ ويصبح الالتزام قابلًا للدفع.',
@@ -31848,9 +31850,9 @@ extension on TraductionsAr {
 			'parcours.intro' => 'بعض الأسئلة لتخصيص مسارك. لن ترى بعدها إلا المواعيد والخيارات المناسبة لوضعك.',
 			'parcours.reprendre' => 'استئناف',
 			'parcours.commencer' => 'تخصيص المسار',
-			'parcours.modifier' => 'تعديل إجاباتي',
 			_ => null,
 		} ?? switch (path) {
+			'parcours.modifier' => 'تعديل إجاباتي',
 			'parcours.recapNiveau' => ({required Object niveau}) => 'المستوى المُعلَن: ⁨${niveau}⁩',
 			'parcours.recapObjectif' => ({required Object objectif}) => 'الهدف: ⁨${objectif}⁩',
 			'parcours.erreur' => 'تعذّر حفظ هذه الإجابة. أعد المحاولة.',
@@ -32362,9 +32364,9 @@ extension on TraductionsAr {
 			'consentement.texte.quiAdulteDetail' => 'يسمعون المعلم والطلاب الذين يتكلمون، ومنهم أنت. يبقى ميكروفونهم وكاميرتهم معطَّلين: لا يستطيعون الكلام ولا الكتابة ولا الظهور على الشاشة.',
 			'consentement.texte.pourquoi' => 'لمتابعة التعلم دون مقاطعة الفصل.',
 			'consentement.texte.pourquoiDetail' => 'يأتي وليّ الأمر ليرى إن كان طفله يشارك، ثم ينصرف. تذكّر القاعة باستمرار بأن الزيارة ممكنة.',
-			'consentement.texte.limites' => 'زيارات قصيرة، بعدد محدود.',
 			_ => null,
 		} ?? switch (path) {
+			'consentement.texte.limites' => 'زيارات قصيرة، بعدد محدود.',
 			'consentement.texte.limitesDetail' => 'لكل وليّ أمر عدد قليل من الزيارات في كل حصة، تحدده الأكاديمية ويُذكَّر به في «كيف يعمل ذلك؟». الزيارة التي تُغادَر قبل نهايتها تُحتسب زيارة.',
 			'consentement.texte.caseResponsable' => 'أوافق على هذه الشروط لطفلي',
 			'consentement.texte.caseAdulte' => 'أوافق على هذه الشروط',
@@ -32876,9 +32878,9 @@ extension on TraductionsAr {
 			'dossiers.refus.nomType' => ({required Object nom, required Object type}) => '⁨${nom}⁩ · ⁨${type}⁩',
 			'dossiers.refus.corps' => 'حدّد السبب الذي سيُعرض على الشخص المعني.',
 			'dossiers.refus.champ' => 'سبب الرفض',
-			'dossiers.refus.aide' => 'اشرح ما يجب تصحيحه، دون بيانات داخلية ولا تعليق شخصي.',
 			_ => null,
 		} ?? switch (path) {
+			'dossiers.refus.aide' => 'اشرح ما يجب تصحيحه، دون بيانات داخلية ولا تعليق شخصي.',
 			'dossiers.refus.erreurVide' => 'حدّد سبب الرفض.',
 			'dossiers.refus.tropLong' => 'السبب يتجاوز الطول المسموح.',
 			'dossiers.refus.envoi' => 'جارٍ الرفض…',
@@ -33390,9 +33392,9 @@ extension on TraductionsAr {
 			'recherche.espace.eleve' => 'في مساحة الطالب',
 			'recherche.espace.eleveGuide' => 'في مساحة الطالب',
 			'recherche.espace.enseignant' => 'في مساحة المعلّم',
-			'recherche.espace.controleur' => 'في مساحة المراقبة',
 			_ => null,
 		} ?? switch (path) {
+			'recherche.espace.controleur' => 'في مساحة المراقبة',
 			'recherche.espace.comptable' => 'في مساحة المحاسبة',
 			'recherche.espace.administration' => 'في مساحة الإدارة',
 			'recherche.initial.titre' => 'البحث في مساحتك',
@@ -33904,9 +33906,9 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.disponibilitesDeclarees.semaine.titre' => 'أسبوعك',
 			'recrutement.parcours.q.disponibilitesDeclarees.semaine.explication' => 'هذه الأوقات التي تستطيع فيها التدريس، بتوقيت مكان إقامتك. راجعها ثم تابع.',
 			'recrutement.parcours.q.classesSouhaitees.titre' => 'كم فصلًا تريد أن تتولّى؟',
-			'recrutement.parcours.q.classesSouhaitees.explication' => 'الفصل طلاب يلتقون ثلاث مرات في الأسبوع، في الأيام نفسها وفي الساعة نفسها، مع المعلّم نفسه. هذه رغبة منك: الأكاديمية هي التي تقرّر الفصول التي تُسندها إليك.',
 			_ => null,
 		} ?? switch (path) {
+			'recrutement.parcours.q.classesSouhaitees.explication' => 'الفصل طلاب يلتقون ثلاث مرات في الأسبوع، في الأيام نفسها وفي الساعة نفسها، مع المعلّم نفسه. هذه رغبة منك: الأكاديمية هي التي تقرّر الفصول التي تُسندها إليك.',
 			'recrutement.parcours.q.classesSouhaitees.court' => 'عدد الفصول',
 			'recrutement.parcours.q.debutPossible.titre' => 'متى تستطيع البدء؟',
 			'recrutement.parcours.q.debutPossible.explication' => 'يساعد هذا التاريخ الإدارة على معرفة متى تقترح عليك فصلًا.',
@@ -34418,9 +34420,9 @@ extension on TraductionsAr {
 			'avis.form.regles.publie' => 'يُنشر الرأي المحترم حتى لو كان ناقدًا. ترفض الإدارة فقط الإهانة، وبيانات طرف ثالث، والإعلان، والكلام خارج الموضوع، والتكرار.',
 			'avis.form.envoyer' => 'إرسال رأيي',
 			'avis.form.aCorriger' => 'بعض الحقول تحتاج إلى تصحيح قبل الإرسال.',
-			'avis.form.erreurChamp' => 'هناك حقل غير مقبول. راجع النموذج ثم أرسل من جديد.',
 			_ => null,
 		} ?? switch (path) {
+			'avis.form.erreurChamp' => 'هناك حقل غير مقبول. راجع النموذج ثم أرسل من جديد.',
 			'avis.form.echec' => 'تعذّر تأكيد وصول رأيك. ربما انقطع الاتصال. تحقق منه ثم المس «إرسال رأيي» من جديد.',
 			'avis.form.horsLigne' => 'لم يُرسل شيء وما كتبته باقٍ على هذه الشاشة. أرسل رأيك عند عودة الشبكة.',
 			'avis.form.ferme.titre' => 'هذا الرابط لم يعد يقبل آراء',
@@ -34932,9 +34934,9 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.pas.confirmation' => 'التأكيد',
 			'candidatsFlux.importFormulaires.pas.rapport' => 'التقرير',
 			'candidatsFlux.importFormulaires.pas.surTotal' => ({required Object n, required Object total}) => 'الخطوة ⁨${n}⁩ من ⁨${total}⁩',
-			'candidatsFlux.importFormulaires.pas.surTotalNomme' => ({required Object n, required Object total, required Object nom}) => 'الخطوة ⁨${n}⁩ من ⁨${total}⁩: ⁨${nom}⁩',
 			_ => null,
 		} ?? switch (path) {
+			'candidatsFlux.importFormulaires.pas.surTotalNomme' => ({required Object n, required Object total, required Object nom}) => 'الخطوة ⁨${n}⁩ من ⁨${total}⁩: ⁨${nom}⁩',
 			'candidatsFlux.importFormulaires.pas.fait' => 'مكتمل',
 			'candidatsFlux.importFormulaires.pas.enCours' => 'الحالية',
 			'candidatsFlux.importFormulaires.pas.aVenir' => 'لاحقًا',
