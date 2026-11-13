@@ -296,7 +296,10 @@ $acl$;
 -- 13. Pause prevue par le serveur (lot priere, 20261123930000, absent de ce
 -- depot) : une table de meme forme, creee ici et annulee par le ROLLBACK.
 -- GP : adultes de T4. SP1 : ligne valide (priere a +40 min, 15 min) ; SP2 :
--- ligne invalide (7 min, hors du pas de 5) ignoree ; SX2 : classe de T3 a la
+-- ligne invalide (7 min, hors du pas de 5) ignoree, la pause ordinaire
+-- s'applique, et le serveur laisse l'avertissement « pause prevue ignoree
+-- pour la seance ... : duree hors pas » (visible dans la sortie de psql ; un
+-- avertissement n'arrete pas ON_ERROR_STOP) ; SX2 : classe de T3 a la
 -- pause desactivee, ligne valide (point a confirmer : la pause est posee).
 CREATE TABLE public.seance_pause_prevue (
   session_id uuid PRIMARY KEY,
