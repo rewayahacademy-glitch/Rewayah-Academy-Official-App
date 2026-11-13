@@ -33863,6 +33863,9 @@ class Traductions$tc$bibliotheque$rendu$fr {
 	/// fr: 'Il ouvre un autre site, en dehors de Rewayah Academy. Vous pouvez revenir ici ensuite.'
 	String get confirmerPhrase => 'Il ouvre un autre site, en dehors de Rewayah Academy. Vous pouvez revenir ici ensuite.';
 
+	/// fr: 'Il ouvre un autre site, en dehors de Rewayah Academy. Tu pourras revenir ici ensuite.'
+	String get confirmerPhraseTu => 'Il ouvre un autre site, en dehors de Rewayah Academy. Tu pourras revenir ici ensuite.';
+
 	/// fr: 'Ouvrir le lien'
 	String get confirmerOuvrir => 'Ouvrir le lien';
 
@@ -57881,6 +57884,7 @@ extension on Traductions {
 			'tc.bibliotheque.rendu.sansLecteur' => 'Ce type de document n\'a pas encore de lecteur dans l\'application.',
 			'tc.bibliotheque.rendu.confirmerTitre' => 'Ce lien quitte l\'application',
 			'tc.bibliotheque.rendu.confirmerPhrase' => 'Il ouvre un autre site, en dehors de Rewayah Academy. Vous pouvez revenir ici ensuite.',
+			'tc.bibliotheque.rendu.confirmerPhraseTu' => 'Il ouvre un autre site, en dehors de Rewayah Academy. Tu pourras revenir ici ensuite.',
 			'tc.bibliotheque.rendu.confirmerOuvrir' => 'Ouvrir le lien',
 			'tc.bibliotheque.rendu.confirmerRester' => 'Rester dans l\'application',
 			'tc.bibliotheque.rendu.ouvrirLien' => 'Ouvrir le lien',
@@ -58134,9 +58138,9 @@ extension on Traductions {
 			'tc.observation.visite.supportIndisponible' => 'Le support partagé par l\'enseignant s\'affiche ici.',
 			'tc.observation.visite.enseignant' => 'Enseignant',
 			'tc.observation.visite.monEnfant' => 'Votre enfant',
-			'tc.observation.visite.budgetIncertain' => 'Temps restant non confirmé par le serveur.',
 			_ => null,
 		} ?? switch (path) {
+			'tc.observation.visite.budgetIncertain' => 'Temps restant non confirmé par le serveur.',
 			'tc.observation.visite.videoIndisponible' => 'La vidéo de la séance n\'a pas pu s\'ouvrir. Votre temps d\'observation continue de s\'écouler.',
 			'tc.observation.visite.sortieNonConfirmee' => 'La fin de votre visite n\'a pas pu être confirmée. Elle sera fermée par le serveur.',
 			'tc.observation.visite.restantes' => 'restantes',
@@ -58648,9 +58652,9 @@ extension on Traductions {
 			'adulte.demo.etats.invitationAnnulee' => 'L\'invitation du second adulte a été annulée.',
 			'adulte.demo.etats.conjointActif' => 'Le second adulte fait partie du foyer.',
 			'adulte.demo.etats.conjointQuitte' => 'Le second adulte a quitté le foyer.',
-			'adulte.demo.etats.conjointRetire' => 'Le second adulte a été retiré du foyer.',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.demo.etats.conjointRetire' => 'Le second adulte a été retiré du foyer.',
 			'adulte.demo.etats.delai60' => 'Un premier délai est en cours.',
 			'adulte.demo.etats.nouvelleDemande' => 'Une nouvelle invitation est possible après le premier délai.',
 			'adulte.demo.etats.validationEnAttente' => 'La validation administrative est en attente.',
@@ -59162,9 +59166,9 @@ extension on Traductions {
 			'com.socle.navigation.ongletAnnonces' => 'Annonces',
 			'com.socle.navigation.ongletModeration' => 'Modération',
 			'com.socle.navigation.ongletMessages' => _root.com.socle.lexique.messages,
-			'com.socle.navigation.bientot' => 'Bientôt disponible',
 			_ => null,
 		} ?? switch (path) {
+			'com.socle.navigation.bientot' => 'Bientôt disponible',
 			'com.socle.navigation.provisoire.messagesTitre' => _root.com.socle.lexique.messages,
 			'com.socle.navigation.provisoire.messagesDetail' => 'Les messages liés à vos classes arriveront bientôt dans cet espace.',
 			'com.socle.navigation.provisoire.communauteTitre' => _root.com.socle.lexique.communaute,
@@ -59676,9 +59680,9 @@ extension on Traductions {
 			'com.studio.demo.f.canalClotureDetail' => 'Préparation de la clôture mensuelle',
 			'com.studio.demo.f.canalDirection' => 'Direction stratégique',
 			'com.studio.demo.f.canalDirectionDetail' => 'Orientations de la direction',
-			'com.studio.demo.f.messagePlanning' => 'Bonjour à toute l\'équipe. Voici le planning du prochain trimestre, dites-moi si quelque chose ne va pas.',
 			_ => null,
 		} ?? switch (path) {
+			'com.studio.demo.f.messagePlanning' => 'Bonjour à toute l\'équipe. Voici le planning du prochain trimestre, dites-moi si quelque chose ne va pas.',
 			'com.studio.demo.f.messageSupports' => 'Je mets à jour les supports du niveau 2 et on fait le point demain.',
 			'com.studio.demo.f.messageMerci' => 'Merci à tous pour la semaine.',
 			'com.studio.demo.f.messageDossiers' => 'Trois dossiers attendent une décision avant vendredi. Nadia, peux-tu regarder le dossier de la famille Karim ?',
@@ -60190,9 +60194,9 @@ extension on Traductions {
 			'comptable.paiements.filtres.prets' => 'Prêts',
 			'comptable.paiements.filtres.infos' => 'Infos manquantes',
 			'comptable.paiements.filtres.verification' => 'Vérification',
-			'comptable.paiements.filtres.validation' => 'Validation',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.paiements.filtres.validation' => 'Validation',
 			'comptable.paiements.filtres.retard' => 'En retard',
 			'comptable.paiements.filtres.classe' => 'Classe',
 			'comptable.paiements.filtres.toutesClasses' => 'Toutes les classes',
@@ -60704,9 +60708,9 @@ extension on Traductions {
 			'comptable.validation.videPhrase' => 'Les prochaines demandes du Comptable apparaîtront ici.',
 			'comptable.validation.natures.payoutSensible' => 'Paiement sensible',
 			'comptable.validation.natures.retraitReserve' => 'Retrait de la Réserve stratégique',
-			'comptable.validation.natures.obligationAApprouver' => 'Obligation ponctuelle',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.validation.natures.obligationAApprouver' => 'Obligation ponctuelle',
 			'comptable.validation.natures.payoutDuComptable' => 'Paie du Comptable',
 			'comptable.validation.natures.sortieCoffreProtege' => 'Sortie d\'un coffre protégé',
 			'comptable.validation.natures.paiementRecu' => 'Paiement reçu d\'une famille',
@@ -61218,9 +61222,9 @@ extension on Traductions {
 			'juridique.confidentialite.s8.blocs.3' => 'Écrivez-nous. Nous vérifions d\'abord que c\'est bien vous, ou le tuteur de l\'élève. Vous pouvez aussi vous adresser à l\'autorité de protection des données de votre pays.',
 			'juridique.confidentialite.s9.titre' => '9. Sécurité',
 			'juridique.confidentialite.s9.blocs.0' => 'Les règles d\'accès sont appliquées par le serveur. Les pièces d\'identité sont dans un espace privé, séparé des photos. Aucune protection n\'est absolue : si vous voyez un problème, écrivez-nous.',
-			'juridique.confidentialite.s10.titre' => '10. Les enfants',
 			_ => null,
 		} ?? switch (path) {
+			'juridique.confidentialite.s10.titre' => '10. Les enfants',
 			'juridique.confidentialite.s10.blocs.0' => 'Les informations d\'un enfant sont données et gérées par son tuteur. Voir le texte Protection des enfants.',
 			'juridique.cookies.titre' => 'Cookies',
 			'juridique.cookies.resume' => 'Ce que l\'application et le site gardent sur votre appareil.',
@@ -61732,9 +61736,9 @@ extension on Traductions {
 			'cahierC3.renforcerAide' => 'Touchez seulement l\'objectif de l\'étape que cet élève doit renforcer. Le reste vaut « comme prévu ».',
 			'cahierC3.pretBilan' => 'Prêt pour le petit bilan',
 			'cahierC3.pretBilanDetail' => 'L\'administration planifie le petit bilan ; rien n\'est automatique.',
-			'cahierSourates.titre' => 'Sourates récitées',
 			_ => null,
 		} ?? switch (path) {
+			'cahierSourates.titre' => 'Sourates récitées',
 			'cahierSourates.aide' => 'Cochez une sourate seulement si cet élève l\'a récitée de mémoire, sans erreur de mot. Une sourate cochée est validée.',
 			'cahierSourates.dejaValidees' => ({required Object n, required Object total}) => 'Sourates des bases déjà validées : ${n} sur ${total}',
 			'cahierSourates.toutes' => 'Toutes les sourates des bases sont validées.',
@@ -62246,9 +62250,9 @@ extension on Traductions {
 			'apprendre.programme.datesEcole' => 'Dates de l\'académie',
 			'apprendre.programme.datesEcoleVide' => 'Les dates de l\'académie seront affichées ici',
 			'apprendre.programme.genre.evaluation' => 'Évaluation',
-			'apprendre.programme.genre.fermeture' => 'Fermeture de l\'académie',
 			_ => null,
 		} ?? switch (path) {
+			'apprendre.programme.genre.fermeture' => 'Fermeture de l\'académie',
 			'apprendre.programme.genre.rencontre' => 'Rencontre de récitation',
 			'apprendre.livret.vide' => 'Vos résultats, vos bilans et vos attestations apparaîtront ici',
 			'apprendre.livret.videTu' => 'Tes résultats, tes bilans et tes attestations apparaîtront ici',

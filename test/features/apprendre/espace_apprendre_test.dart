@@ -24,10 +24,16 @@ import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/catalogue_local.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/content_position.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/donnees_catalogue.dart'
-    show portCatalogueProvider, portEtatOfflineProvider;
+    show
+        portCatalogueProvider,
+        portEtatOfflineProvider,
+        portVersionsRessourceProvider;
 import 'package:rewayah_academy/core/tc_bibliotheque/library_resource.dart';
+import 'package:rewayah_academy/core/tc_bibliotheque/ouvreur_onglet.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/port_catalogue.dart'
     show EchecCatalogue, ReprisLecture;
+import 'package:rewayah_academy/core/tc_bibliotheque/resource_version.dart'
+    show ResourceVersion;
 import 'package:rewayah_academy/core/tc_telechargement/port_etat_offline.dart'
     show EtatOffline, PortEtatOffline;
 import 'package:rewayah_academy/core/theme/app_typography.dart'
@@ -70,6 +76,7 @@ import 'package:rewayah_academy/features/tc_catalogue/routes_tc_b.dart';
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../router/support_routeur.dart' show lieu, sessionActive, stabiliser;
 import '../../support/garde_interface.dart';
+import '../../teaching_core/b/faux/faux_ports_b.dart' show version;
 import 'support_apprendre.dart';
 
 /// L'onglet de la barre qui porte [libelle] (la barre flottante n'ecrit que le
@@ -928,6 +935,109 @@ void main() {
       }
     });
   });
+
+  group(
+    'confirmation de sortie d\'un lien externe : la variante de l\'Interface '
+    'guidee',
+    () {
+      const LibraryResource lien = LibraryResource(
+        id: 'lien',
+        title: 'Un site de reference',
+        shortTitle: 'Un site',
+        resourceType: TypeRessource.lienExterne,
+        language: 'fr',
+        category: 'lecture',
+        accessPolicy: PolitiqueAcces.publique,
+        offlinePolicy: PolitiqueOffline.jamais,
+        description: 'Un site pour aller plus loin.',
+        lienExterne: 'https://exemple.org/page',
+        currentVersionId: 'v-lien',
+      );
+
+      Future<void> ouvrirLaConfirmation(
+        WidgetTester tester,
+        ProfilApprendre profil,
+      ) async {
+        await monterApprendre(
+          tester,
+          profil: profil,
+          depart: cheminFicheDocument('lien'),
+          autres: <Override>[
+            portCatalogueProvider.overrideWithValue(
+              CatalogueLocal(ressources: <LibraryResource>[lien]),
+            ),
+            portVersionsRessourceProvider.overrideWithValue(
+              VersionsLocales(
+                parRessource: <String, List<ResourceVersion>>{
+                  'lien': <ResourceVersion>[
+                    version(id: 'v-lien', resourceId: 'lien'),
+                  ],
+                },
+              ),
+            ),
+            ouvreurOngletProvider.overrideWithValue((Uri _) => true),
+          ],
+        );
+        final Finder ouvrir = find.byKey(
+          const ValueKey<String>('rendu-ouvrir-lien'),
+        );
+        await tester.ensureVisible(ouvrir);
+        await tester.tap(ouvrir);
+        await stabiliser(tester);
+        expect(
+          find.byKey(const ValueKey<String>('rendu-lien-confirmation')),
+          findsOneWidget,
+        );
+      }
+
+      testWidgets('l\'enfant en Interface guidee est tutoye', (
+        WidgetTester tester,
+      ) async {
+        await ouvrirLaConfirmation(tester, ProfilApprendre.mineurGuide);
+        expect(
+          find.text(t.tc.bibliotheque.rendu.confirmerPhraseTu),
+          findsOneWidget,
+        );
+        expect(
+          find.text(t.tc.bibliotheque.rendu.confirmerPhrase),
+          findsNothing,
+        );
+        expect(find.textContaining('Tu pourras'), findsOneWidget);
+        expect(find.textContaining('Vous'), findsNothing);
+      });
+
+      testWidgets(
+        'l\'adulte garde la phrase des autres espaces (vouvoiement)',
+        (WidgetTester tester) async {
+          await ouvrirLaConfirmation(tester, ProfilApprendre.adulte);
+          expect(
+            find.text(t.tc.bibliotheque.rendu.confirmerPhrase),
+            findsOneWidget,
+          );
+          expect(
+            find.text(t.tc.bibliotheque.rendu.confirmerPhraseTu),
+            findsNothing,
+          );
+        },
+      );
+
+      testWidgets('en arabe aussi : la variante de l\'Interface guidee', (
+        WidgetTester tester,
+      ) async {
+        await tester.runAsync(() => LocaleSettings.setLocale(AppLocale.ar));
+        addTearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
+        await ouvrirLaConfirmation(tester, ProfilApprendre.mineurGuide);
+        expect(
+          find.text(t.tc.bibliotheque.rendu.confirmerPhraseTu),
+          findsOneWidget,
+        );
+        expect(
+          find.text(t.tc.bibliotheque.rendu.confirmerPhrase),
+          findsNothing,
+        );
+      });
+    },
+  );
 
   group('adaptateur du catalogue (types et descriptions du lot 3)', () {
     LibraryResource ressource(

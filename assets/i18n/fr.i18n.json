@@ -9795,6 +9795,7 @@
         "sansLecteur": "Ce type de document n'a pas encore de lecteur dans l'application.",
         "confirmerTitre": "Ce lien quitte l'application",
         "confirmerPhrase": "Il ouvre un autre site, en dehors de Rewayah Academy. Vous pouvez revenir ici ensuite.",
+        "confirmerPhraseTu": "Il ouvre un autre site, en dehors de Rewayah Academy. Tu pourras revenir ici ensuite.",
         "confirmerOuvrir": "Ouvrir le lien",
         "confirmerRester": "Rester dans l'application",
         "ouvrirLien": "Ouvrir le lien",
