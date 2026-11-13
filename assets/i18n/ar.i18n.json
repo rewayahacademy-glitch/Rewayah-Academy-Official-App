@@ -2748,13 +2748,17 @@
         "titulaire": "حسابك الرئيسي ليس له موعد انتهاء خاص: يُضبط الوصول لكل ملف على حدة."
       },
       "pagePaiements": {
-        "titre": "المدفوعات والإيصالات",
+        "titre": "المدفوعات",
         "indisponibleTitre": "المدفوعات غير قابلة للاطلاع بعد",
         "indisponiblePhrase": "سجل المدفوعات والإيصالات ووسائل الدفع غير متاحة في التطبيق بعد. لا يُطلب منك أي دفع هنا.",
         "aucunTitre": "لا دفعة مسجَّلة",
         "aucunePhrase": "ستظهر هنا المدفوعات التي تسجّلها الأكاديمية.",
         "paiementDu": "دفعة ⁨{date}⁩",
-        "justificatif": "الإيصال متاح"
+        "justificatif": "الإيصال متاح",
+        "statutConfirme": "مؤكَّد",
+        "statutEnConfirmation": "قيد التأكيد",
+        "refusTitre": "المدفوعات يتولاها صاحب حساب الأسرة",
+        "refusPhrase": "صاحب حساب الأسرة وحده يرى سجل المدفوعات."
       },
       "pagePreferences": {
         "notifications": "الإشعارات",
@@ -6814,6 +6818,18 @@
         "dateLimite": "أقصى عدد من الأسابيع لإنهائها: \u2068{semaines}\u2069",
         "enregistrer": "حفظ المرحلة",
         "erreur": "لم تحفظ المرحلة: \u2068{message}\u2069. تحقق من الأهداف والصفحات، ثم أعد المحاولة.",
+        "revisionTitre": "مراجعة الطالب",
+        "revisionAide": "ما تقرؤه الأسر في «موقعي في البرنامج». اترك «غير محدد» فلا يظهر شيء.",
+        "revisionHeures": "ساعات المراجعة أسبوعيًا",
+        "revisionRepetitions": "التكرارات المقدّرة",
+        "revisionNonRegle": "غير محدد",
+        "revisionHeuresValeur": "⁨{heures}⁩ س",
+        "revisionHeuresMoins": "ساعات مراجعة أقل",
+        "revisionHeuresPlus": "ساعات مراجعة أكثر",
+        "revisionRepetitionsMoins": "تكرارات أقل",
+        "revisionRepetitionsPlus": "تكرارات أكثر",
+        "revisionEnregistrer": "حفظ المراجعة",
+        "revisionErreur": "تعذّر حفظ المراجعة: ⁨{message}⁩",
         "manquePages": "لم يحفظ شيء: تكتب الصفحات بأعداد صحيحة، والأخيرة بعد الأولى. صححها، ثم أعد المحاولة.",
         "proposition": "اقتراح تصادق عليه الإدارة",
         "propositionDetail": "أهداف هذه المسودة ومددها اقتراح وليست قاعدة: تراجعها الإدارة وتعدلها قبل النشر.",
@@ -7403,6 +7419,8 @@
       }
     },
     "regroupements": {
+      "heure": "\u2066\u2068{heure}\u2069:00\u2069",
+      "heureMinutes": "\u2066\u2068{heure}\u2069:\u2068{minutes}\u2069\u2069",
       "refusAffectation": {
         "reservee": "لم يُؤكَّد المعلم: لا يملك حسابكم صلاحية تأكيد معلم.",
         "classeIndisponible": "لم يُؤكَّد المعلم: لم يعد هذا الفصل بانتظار معلم. أغلقوا هذه الورقة لرؤية القائمة المحدّثة.",
@@ -10499,7 +10517,6 @@
       "aPropos": "عن هذا الفصل",
       "participants": "المشاركون",
       "vous": "⁨{prenom}⁩ (أنت)",
-      "progression": "تقدمي في هذا الفصل",
       "aucuneClasseDetail": "سيظهر فصلك ومشاركوه وموارده هنا بمجرد فتحه."
     },
     "monEspace": {
@@ -13927,9 +13944,29 @@
   },
   "cahierSourates": {
     "titre": "السور المسمَّعة",
-    "aide": "اختر السورة فقط إذا سمَّعها هذا الطالب حفظًا دون خطأ في كلمة. السورة المختارة تُعتمد وتبقى معتمدة.",
+    "aide": "اختر السورة فقط إذا سمَّعها هذا الطالب حفظًا دون خطأ في كلمة. السورة المختارة تُعتمد.",
     "dejaValidees": "سور الأساسيات المعتمدة: ⁨{n}⁩ من ⁨{total}⁩",
-    "toutes": "اعتُمدت كل سور الأساسيات."
+    "toutes": "اعتُمدت كل سور الأساسيات.",
+    "retirerTitre": "اخترتها خطأً؟",
+    "retirerAide": "السورة التي اعتمدتَها يمكن سحبها خلال 24 ساعة.",
+    "retirer": "سحب",
+    "retirerLibelle": "سحب ⁨{nom}⁩ من السور المعتمدة",
+    "retirerQuestion": "سحب ⁨{nom}⁩ من السور المعتمدة؟",
+    "retirerConsequence": "لن تُحسب بعد الآن معتمدة لهذا الطالب.",
+    "retirerMotif": "السبب (اختياري)",
+    "retirerFait": "لم تعد ⁨{nom}⁩ معتمدة.",
+    "retirerRefus": "انقضت مهلة 24 ساعة: لا يسحبها الآن إلا الإدارة.",
+    "retirerEchec": "لم تُسحب السورة. أعد المحاولة."
+  },
+  "souratesRetirables": {
+    "titre": "سور اختيرت خطأً",
+    "aide": "السور المعتمدة في هذا الفصل التي يمكنك سحبها.",
+    "vide": "لا توجد سورة معتمدة للسحب في هذا الفصل.",
+    "erreur": "تعذّرت قراءة سور هذا الفصل. أعد المحاولة.",
+    "ligne": "⁨{eleve}⁩ · ⁨{sourate}⁩",
+    "jusqua": "ممكن حتى ⁨{heure}⁩",
+    "jusquaDemain": "ممكن حتى الغد، ⁨{heure}⁩",
+    "retirerPour": "سحب ⁨{sourate}⁩ لـ ⁨{eleve}⁩"
   },
   "accueilHoraire": {
     "demandeTitre": "تم تسجيل الطلب",
@@ -14746,6 +14783,26 @@
       "many": "تجاوز المدة المقررة: ⁨{ecoulees}⁩ من ⁨{prevue}⁩ أسابيع، قبل الموعد النهائي",
       "other": "تجاوز المدة المقررة: ⁨{ecoulees}⁩ من ⁨{prevue}⁩ أسابيع، قبل الموعد النهائي"
     },
+    "etapesTitre": "المراحل",
+    "etapeFranchie": "اجتيزت",
+    "etapeFranchieLe": "اجتيزت في ⁨{numero}⁩ ⁨{mois}⁩ ⁨{annee}⁩",
+    "etapeEnCours": "جارية",
+    "etapeAVenir": "قادمة",
+    "sourates": "سور الأساسيات المعتمدة",
+    "souratesDe": "⁨{validees}⁩ من ⁨{total}⁩",
+    "revision": "المراجعة أسبوعيًا",
+    "revisionHeures": "⁨{heures}⁩ س",
+    "repetitions": "التكرارات المقدّرة",
+    "repetitionsNombre(param=n)": {
+      "zero": "⁨{n}⁩ تكرار",
+      "one": "⁨{n}⁩ تكرار",
+      "two": "⁨{n}⁩ تكرار",
+      "few": "⁨{n}⁩ تكرارات",
+      "many": "⁨{n}⁩ تكرارًا",
+      "other": "⁨{n}⁩ تكرار"
+    },
+    "dernierJalon": "آخر محطة",
+    "niveauDeclare": "المستوى المصرّح به",
     "dateLimiteDepassee": "تجاوز الموعد النهائي",
     "erreur": "تعذرت قراءة مرحلة البرنامج. حاول مرة أخرى بعد قليل."
   }

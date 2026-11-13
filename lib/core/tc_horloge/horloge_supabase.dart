@@ -1,5 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../i18n/isolat_bidi.dart' show enTeteArabe;
 import '../i18n/strings.g.dart';
 import '../i18n/villes_fuseau.dart';
 import 'port_horloge_seance.dart';
@@ -15,10 +16,12 @@ String dateRendue({required int jourIso, required String dateIso}) {
   final List<String> parts = dateIso.split('-');
   final int mois = parts.length > 1 ? int.tryParse(parts[1]) ?? 1 : 1;
   final int jour = parts.length > 2 ? int.tryParse(parts[2]) ?? 1 : 1;
-  return t.commun.dates.jourDate(
-    jour: t.commun.dates.jours[(jourIso - 1).clamp(0, 6)],
-    numero: jour,
-    mois: t.commun.dates.mois[(mois - 1).clamp(0, 11)],
+  return enTeteArabe(
+    t.commun.dates.jourDate(
+      jour: t.commun.dates.jours[(jourIso - 1).clamp(0, 6)],
+      numero: jour,
+      mois: t.commun.dates.mois[(mois - 1).clamp(0, 11)],
+    ),
   );
 }
 

@@ -127,6 +127,9 @@ const Map<String, int> _domaines = <String, int>{
   'suiviPedagogique': 10,
   // SOURATES (11/11/2026) : les sourates des bases au cahier.
   'cahierSourates': 3,
+  // CORRIGER-SOURATE-DIRECTION (12/11/2026) : les sourates retirables d'une
+  // Classe.
+  'souratesRetirables': 7,
 };
 
 /// Les domaines francais venus de ccr sans tranche arabe (reunion du 10/10) :
@@ -223,6 +226,9 @@ const Set<String> _latins = <String>{
   // dans toutes les langues (« Version 0.2.0 (423) », lot FOYER-UX).
   'compte.version',
   'compte.versionSeule',
+  // DATE-ARABE-SOURCE (garde-cap, 12/11/2026) : l'heure arabe s'ecrit en
+  // chiffres, « 5:00 », isolee de gauche a droite (U+2066) ; aucun mot.
+  'admin.regroupements.heure',
 };
 
 final RegExp _parametre = RegExp(r'\{\w+\}');

@@ -342,13 +342,15 @@ String _quand(ClasseListee l, DateTime maintenant) {
   // FUSEAUX (04/11/2026) : le jour et l'heure a l'heure du profil ; la
   // difference d'instants reste sur les vrais instants.
   final DateTime murale = chezMoi(p);
-  return t.enseignant.classes.quand(
-    jour: t.disponibilites.joursLongs[murale.weekday - 1],
-    heure: heureDeLAppareil(murale),
-    reste: LibellesGroupe.compteAReboursAvec(
-      p.difference(maintenant),
-      debut: murale,
-      textes: mots,
+  return enTeteArabe(
+    t.enseignant.classes.quand(
+      jour: t.disponibilites.joursLongs[murale.weekday - 1],
+      heure: heureDeLAppareil(murale),
+      reste: LibellesGroupe.compteAReboursAvec(
+        p.difference(maintenant),
+        debut: murale,
+        textes: mots,
+      ),
     ),
   );
 }
