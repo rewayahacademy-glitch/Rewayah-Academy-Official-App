@@ -23853,8 +23853,8 @@ class Traductions$suiviAttente$tu$fr {
 	/// fr: 'Ta classe « {classe} » est confirmée.'
 	String confirmeeFaitNom({required Object classe}) => 'Ta classe « ${classe} » est confirmée.';
 
-	/// fr: 'La classe attend son enseignant. L'académie le désigne et te prévient.'
-	String get enseignantEnAttente => 'La classe attend son enseignant. L\'académie le désigne et te prévient.';
+	/// fr: 'Ta classe attend son enseignant. L'académie le désigne et te prévient.'
+	String get enseignantEnAttente => 'Ta classe attend son enseignant. L\'académie le désigne et te prévient.';
 
 	/// fr: 'L'académie fixe ton premier cours. Elle te prévient dès que la date est connue.'
 	String get pretEnCours => 'L\'académie fixe ton premier cours. Elle te prévient dès que la date est connue.';
@@ -23973,8 +23973,8 @@ class Traductions$suiviAttente$dit$fr {
 	/// fr: 'L'académie désigne l'enseignant de la classe.'
 	String get enseignantEnCours => 'L\'académie désigne l\'enseignant de la classe.';
 
-	/// fr: 'La classe attend son enseignant. L'académie le désigne et vous prévient.'
-	String get enseignantEnAttente => 'La classe attend son enseignant. L\'académie le désigne et vous prévient.';
+	/// fr: 'Votre classe attend son enseignant. L'académie le désigne et vous prévient.'
+	String get enseignantEnAttente => 'Votre classe attend son enseignant. L\'académie le désigne et vous prévient.';
 
 	/// fr: 'Votre enseignant est connu.'
 	String get enseignantFait => 'Votre enseignant est connu.';
@@ -24002,21 +24002,6 @@ class Traductions$suiviAttente$delai$fr {
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
-
-	/// fr: '(one) {Une classe se forme en {jours} jour au plus.} (other) {Une classe se forme en {jours} jours au plus.}'
-	String formation({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours,
-		one: 'Une classe se forme en ${jours} jour au plus.',
-		other: 'Une classe se forme en ${jours} jours au plus.',
-	);
-
-	/// fr: 'Date limite : {date}'
-	String limite({required Object date}) => 'Date limite : ${date}';
-
-	/// fr: 'Point d'étape : {date}'
-	String point({required Object date}) => 'Point d\'étape : ${date}';
-
-	/// fr: 'Le point d'étape est passé.'
-	String get pointPasse => 'Le point d\'étape est passé.';
 
 	/// fr: 'La formation de votre classe prend plus de temps que prévu. L'académie vous écrit.'
 	String get depasse => 'La formation de votre classe prend plus de temps que prévu. L\'académie vous écrit.';
@@ -24070,11 +24055,11 @@ class Traductions$suiviAttente$enseignant$fr {
 	/// fr: 'Sayyida'
 	String get sayyida => 'Sayyida';
 
-	/// fr: '{prenom} {nom}'
-	String nomPlein({required Object prenom, required Object nom}) => '${prenom} ${nom}';
+	/// fr: '{prenom}'
+	String nomPlein({required Object prenom}) => '${prenom}';
 
-	/// fr: '{titre} {prenom} {nom}'
-	String nomAvecTitre({required Object titre, required Object prenom, required Object nom}) => '${titre} ${prenom} ${nom}';
+	/// fr: '{titre} {prenom}'
+	String nomAvecTitre({required Object titre, required Object prenom}) => '${titre} ${prenom}';
 
 	/// fr: 'Langue du cours'
 	String get langue => 'Langue du cours';
@@ -24154,11 +24139,11 @@ class Traductions$suiviAttente$presentation$fr {
 	/// fr: 'Ce que les familles voient de vous'
 	String get titre => 'Ce que les familles voient de vous';
 
-	/// fr: 'Les familles de vos classes voient toujours votre nom et la langue du cours. Vous choisissez de montrer aussi votre photo, vos pays et un mot de présentation.'
-	String get phrase => 'Les familles de vos classes voient toujours votre nom et la langue du cours. Vous choisissez de montrer aussi votre photo, vos pays et un mot de présentation.';
+	/// fr: 'Avant le premier cours, les familles de vos classes voient votre civilité, votre prénom, la langue du cours et votre photo, la même que partout dans l'application. Vous choisissez de montrer aussi vos pays et un mot de présentation, quand vous les avez saisis.'
+	String get phrase => 'Avant le premier cours, les familles de vos classes voient votre civilité, votre prénom, la langue du cours et votre photo, la même que partout dans l\'application. Vous choisissez de montrer aussi vos pays et un mot de présentation, quand vous les avez saisis.';
 
-	/// fr: 'Je montre ma photo et mes pays aux familles de mes classes'
-	String get montrer => 'Je montre ma photo et mes pays aux familles de mes classes';
+	/// fr: 'Montrer mon pays et mon mot aux familles avant le premier cours'
+	String get montrer => 'Montrer mon pays et mon mot aux familles avant le premier cours';
 
 	/// fr: 'Pays d'origine'
 	String get paysOrigine => 'Pays d\'origine';
@@ -24178,8 +24163,8 @@ class Traductions$suiviAttente$presentation$fr {
 	/// fr: '500 caractères au plus. Les familles le lisent tel que vous l'écrivez.'
 	String get motAide => '500 caractères au plus. Les familles le lisent tel que vous l\'écrivez.';
 
-	/// fr: 'Vous n'avez pas encore confirmé ce choix. Tant que vous ne l'avez pas fait, les familles ne voient que votre nom et la langue du cours.'
-	String get nonConfirme => 'Vous n\'avez pas encore confirmé ce choix. Tant que vous ne l\'avez pas fait, les familles ne voient que votre nom et la langue du cours.';
+	/// fr: 'Vous n'avez pas encore confirmé ce choix. Tant que vous ne l'avez pas fait, vos pays et votre mot, s'ils sont saisis, sont montrés aux familles.'
+	String get nonConfirme => 'Vous n\'avez pas encore confirmé ce choix. Tant que vous ne l\'avez pas fait, vos pays et votre mot, s\'ils sont saisis, sont montrés aux familles.';
 
 	/// fr: 'Enregistrer'
 	String get enregistrer => 'Enregistrer';
@@ -61654,7 +61639,7 @@ extension on Traductions {
 			'suiviAttente.tu.formationListeAttente' => 'Toutes les classes de ce créneau sont pleines. Ta demande attend qu\'une place s\'ouvre.',
 			'suiviAttente.tu.confirmeeFait' => 'Ta classe est confirmée.',
 			'suiviAttente.tu.confirmeeFaitNom' => ({required Object classe}) => 'Ta classe « ${classe} » est confirmée.',
-			'suiviAttente.tu.enseignantEnAttente' => 'La classe attend son enseignant. L\'académie le désigne et te prévient.',
+			'suiviAttente.tu.enseignantEnAttente' => 'Ta classe attend son enseignant. L\'académie le désigne et te prévient.',
 			'suiviAttente.tu.pretEnCours' => 'L\'académie fixe ton premier cours. Elle te prévient dès que la date est connue.',
 			'suiviAttente.tu.pretAVenir' => 'Ton premier cours est annoncé une fois l\'enseignant affecté.',
 			'suiviAttente.tu.premierCoursPasse' => ({required Object quand}) => 'Ton premier cours a eu lieu le ${quand}.',
@@ -61689,7 +61674,7 @@ extension on Traductions {
 			'suiviAttente.dit.confirmeeFaitNom' => ({required Object classe}) => 'Votre classe « ${classe} » est confirmée.',
 			'suiviAttente.dit.confirmeeAVenir' => 'L\'académie confirme la classe quand ses élèves sont réunis.',
 			'suiviAttente.dit.enseignantEnCours' => 'L\'académie désigne l\'enseignant de la classe.',
-			'suiviAttente.dit.enseignantEnAttente' => 'La classe attend son enseignant. L\'académie le désigne et vous prévient.',
+			'suiviAttente.dit.enseignantEnAttente' => 'Votre classe attend son enseignant. L\'académie le désigne et vous prévient.',
 			'suiviAttente.dit.enseignantFait' => 'Votre enseignant est connu.',
 			'suiviAttente.dit.enseignantFaitSimple' => 'Ton enseignant est connu.',
 			'suiviAttente.dit.enseignantAVenir' => 'L\'académie désigne l\'enseignant une fois la classe confirmée.',
@@ -61701,10 +61686,6 @@ extension on Traductions {
 			'suiviAttente.premierCoursPasse' => ({required Object quand}) => 'Votre premier cours a eu lieu le ${quand}.',
 			'suiviAttente.depuis' => ({required Object date}) => 'Depuis le ${date}',
 			'suiviAttente.ensuite' => ({required Object etape}) => 'Ensuite : ${etape}',
-			'suiviAttente.delai.formation' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours, one: 'Une classe se forme en ${jours} jour au plus.', other: 'Une classe se forme en ${jours} jours au plus.', ), 
-			'suiviAttente.delai.limite' => ({required Object date}) => 'Date limite : ${date}',
-			'suiviAttente.delai.point' => ({required Object date}) => 'Point d\'étape : ${date}',
-			'suiviAttente.delai.pointPasse' => 'Le point d\'étape est passé.',
 			'suiviAttente.delai.depasse' => 'La formation de votre classe prend plus de temps que prévu. L\'académie vous écrit.',
 			'suiviAttente.changement' => ({required Object date}) => 'Le créneau de la classe a changé le ${date}. Vous avez reçu l\'avis dans vos notifications.',
 			'suiviAttente.cloture.titreRefusee' => 'Votre demande n\'a pas été retenue',
@@ -61725,8 +61706,8 @@ extension on Traductions {
 			'suiviAttente.enseignant.titreSimple' => 'Ton enseignant',
 			'suiviAttente.enseignant.sayyid' => 'Sayyid',
 			'suiviAttente.enseignant.sayyida' => 'Sayyida',
-			'suiviAttente.enseignant.nomPlein' => ({required Object prenom, required Object nom}) => '${prenom} ${nom}',
-			'suiviAttente.enseignant.nomAvecTitre' => ({required Object titre, required Object prenom, required Object nom}) => '${titre} ${prenom} ${nom}',
+			'suiviAttente.enseignant.nomPlein' => ({required Object prenom}) => '${prenom}',
+			'suiviAttente.enseignant.nomAvecTitre' => ({required Object titre, required Object prenom}) => '${titre} ${prenom}',
 			'suiviAttente.enseignant.langue' => 'Langue du cours',
 			'suiviAttente.enseignant.origine' => 'Pays d\'origine',
 			'suiviAttente.enseignant.residence' => 'Pays de résidence',
@@ -61748,15 +61729,15 @@ extension on Traductions {
 			'suiviAttente.carte.pret' => ({required Object prenom, required Object quand}) => '${prenom} : tout est prêt. Premier cours : ${quand}',
 			'suiviAttente.carte.pretSansDate' => ({required Object prenom}) => '${prenom} : tout est prêt.',
 			'suiviAttente.presentation.titre' => 'Ce que les familles voient de vous',
-			'suiviAttente.presentation.phrase' => 'Les familles de vos classes voient toujours votre nom et la langue du cours. Vous choisissez de montrer aussi votre photo, vos pays et un mot de présentation.',
-			'suiviAttente.presentation.montrer' => 'Je montre ma photo et mes pays aux familles de mes classes',
+			'suiviAttente.presentation.phrase' => 'Avant le premier cours, les familles de vos classes voient votre civilité, votre prénom, la langue du cours et votre photo, la même que partout dans l\'application. Vous choisissez de montrer aussi vos pays et un mot de présentation, quand vous les avez saisis.',
+			'suiviAttente.presentation.montrer' => 'Montrer mon pays et mon mot aux familles avant le premier cours',
 			'suiviAttente.presentation.paysOrigine' => 'Pays d\'origine',
 			'suiviAttente.presentation.paysResidence' => 'Pays de résidence',
 			'suiviAttente.presentation.choisirPays' => 'Choisir un pays',
 			'suiviAttente.presentation.nonRenseigne' => 'Non renseigné',
 			'suiviAttente.presentation.mot' => 'Mon mot de présentation',
 			'suiviAttente.presentation.motAide' => '500 caractères au plus. Les familles le lisent tel que vous l\'écrivez.',
-			'suiviAttente.presentation.nonConfirme' => 'Vous n\'avez pas encore confirmé ce choix. Tant que vous ne l\'avez pas fait, les familles ne voient que votre nom et la langue du cours.',
+			'suiviAttente.presentation.nonConfirme' => 'Vous n\'avez pas encore confirmé ce choix. Tant que vous ne l\'avez pas fait, vos pays et votre mot, s\'ils sont saisis, sont montrés aux familles.',
 			'suiviAttente.presentation.enregistrer' => 'Enregistrer',
 			'suiviAttente.presentation.enregistre' => 'Enregistré.',
 			'suiviAttente.presentation.erreur' => 'Votre choix n\'est pas confirmé : il n\'est peut-être pas parvenu jusqu\'à Rewayah. Réessayez dans un instant.',

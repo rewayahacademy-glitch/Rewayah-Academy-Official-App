@@ -324,17 +324,18 @@ BEGIN
     RAISE EXCEPTION 'SUIVI-ATTENTE : le premier cours est dit quand il est connu';
   END IF;
   IF r.enseignant ->> 'prenom' <> 'Ibrahim' OR r.enseignant ->> 'titre' <> 'sayyid'
+     OR (r.enseignant ->> 'nom') IS NOT NULL
      OR r.enseignant ->> 'pays_origine' <> 'GN' OR r.enseignant ->> 'pays_residence' <> 'FR'
      OR r.enseignant ->> 'mot' <> 'Je suis heureux de vous retrouver.'
      OR r.enseignant ->> 'teacher_id' <> '5a000000-0000-0000-0000-000000000003' THEN
     RAISE EXCEPTION 'SUIVI-ATTENTE : carte de l enseignant inattendue : %', r.enseignant;
   END IF;
   SELECT array_agg(k ORDER BY k) INTO cles FROM jsonb_object_keys(r.enseignant) k;
-  IF NOT (cles @> ARRAY['langue_cours', 'mot', 'montre', 'nom', 'pays_origine',
+  IF NOT (cles @> ARRAY['langue_cours', 'mot', 'montre', 'pays_origine',
                         'pays_residence', 'prenom', 'teacher_id', 'titre']
-          AND cles <@ ARRAY['langue_cours', 'mot', 'montre', 'nom', 'pays_origine',
+          AND cles <@ ARRAY['langue_cours', 'mot', 'montre', 'pays_origine',
                             'pays_residence', 'prenom', 'teacher_id', 'titre']) THEN
-    RAISE EXCEPTION 'SUIVI-ATTENTE : la carte ne porte que ses champs (ni ville, telephone, courriel, naissance, piece) : %', cles;
+    RAISE EXCEPTION 'SUIVI-ATTENTE : la carte ne porte que ses champs (civilite et prenom, ni nom de famille, ville, telephone, courriel, naissance, piece) : %', cles;
   END IF;
 END
 $etape45$;
@@ -399,14 +400,14 @@ DO $refus_visibilite$
 DECLARE r record;
 BEGIN
   SELECT * INTO r FROM public.suivi_attente_foyer();
-  IF r.enseignant ->> 'prenom' <> 'Ibrahim' OR r.enseignant ->> 'nom' <> 'Camara'
+  IF r.enseignant ->> 'prenom' <> 'Ibrahim' OR (r.enseignant ->> 'nom') IS NOT NULL
      OR (r.enseignant ->> 'langue_cours') IS NULL
-     OR (r.enseignant ->> 'teacher_id') IS NOT NULL
+     OR (r.enseignant ->> 'teacher_id') IS NULL
      OR (r.enseignant ->> 'pays_origine') IS NOT NULL
      OR (r.enseignant ->> 'pays_residence') IS NOT NULL
      OR (r.enseignant ->> 'mot') IS NOT NULL
      OR (r.enseignant ->> 'montre')::boolean THEN
-    RAISE EXCEPTION 'SUIVI-ATTENTE : un enseignant qui refuse ne montre que son nom et la langue : %', r.enseignant;
+    RAISE EXCEPTION 'SUIVI-ATTENTE : un enseignant qui refuse ne cache que ses pays et son mot (la photo n est pas masquee par ce reglage) : %', r.enseignant;
   END IF;
 END
 $refus_visibilite$;
@@ -489,9 +490,12 @@ BEGIN
   END IF;
   -- Le courriel part pour l'enseignant et pour la famille (trace).
   IF NOT private.notification_avec_courriel('enseignant_affecte', 'classe')
-     OR NOT private.notification_avec_courriel('enseignant_affecte', 'foyer')
-     OR NOT private.notification_avec_courriel('enseignant_affecte', 'soi') THEN
-    RAISE EXCEPTION 'SUIVI-ATTENTE : le courriel d affectation doit partir';
+     OR NOT private.notification_avec_courriel('enseignant_affecte', 'foyer') THEN
+    RAISE EXCEPTION 'SUIVI-ATTENTE : le courriel d affectation doit partir (enseignant et foyer)';
+  END IF;
+  -- Jamais de courriel a la portee « soi » : un enfant n'est pas destinataire.
+  IF private.notification_avec_courriel('enseignant_affecte', 'soi') THEN
+    RAISE EXCEPTION 'SUIVI-ATTENTE : aucun courriel d affectation a la portee « soi »';
   END IF;
 END
 $notification$;
@@ -729,6 +733,216 @@ BEGIN
   END IF;
 END
 $adulte_pret$;
+
+-- ---------------------------------------------------------------------------
+-- 8 quater. Aucun courriel n'est mis en file pour un mineur, quel que soit le modele
+-- ---------------------------------------------------------------------------
+DO $courriel_mineur$
+DECLARE m text;
+BEGIN
+  FOREACH m IN ARRAY ARRAY['enseignant_affecte', 'classe_creee', 'classe_validee',
+                           'eleve_inscrit', 'tout_est_pret', 'demande_close',
+                           'seance_annulee', 'classe_changee', 'creneau_change'] LOOP
+    PERFORM public.courriel_enfiler('classes', m, 'sa-enfant@example.test',
+      '5a000000-0000-0000-0000-000000000002', '{}'::jsonb, 'sa-mineur-' || m, 'auto');
+    PERFORM public.courriel_enfiler('classes', m, 'sa-enfant-bis@example.test',
+      '5a000000-0000-0000-0000-000000000005', '{}'::jsonb, 'sa-mineur-bis-' || m, 'auto');
+  END LOOP;
+  -- Aucune ligne, ni pour l'enfant de 6 a 9 ans ni pour celui de 10 a 13 ans.
+  IF EXISTS (SELECT 1 FROM public.courriels_sortants cs
+              JOIN public.student_profiles sp ON sp.profile_id = cs.destinataire_profil
+             WHERE sp.student_type = 'minor') THEN
+    RAISE EXCEPTION 'SUIVI-ATTENTE : aucun courriel en file pour un mineur, quel que soit le modele';
+  END IF;
+  -- Le garde ne bloque pas l'adulte ni le tuteur.
+  PERFORM public.courriel_enfiler('classes', 'tout_est_pret', 'sa-adulte@example.test',
+    '5a000000-0000-0000-0000-000000000006', '{}'::jsonb, 'sa-adulte-ok', 'auto');
+  PERFORM public.courriel_enfiler('classes', 'tout_est_pret', 'sa-tuteur@example.test',
+    '5a000000-0000-0000-0000-000000000001', '{}'::jsonb, 'sa-tuteur-ok', 'auto');
+  IF NOT EXISTS (SELECT 1 FROM public.courriels_sortants
+                  WHERE destinataire_profil = '5a000000-0000-0000-0000-000000000006')
+     OR NOT EXISTS (SELECT 1 FROM public.courriels_sortants
+                     WHERE destinataire_profil = '5a000000-0000-0000-0000-000000000001'
+                       AND cle_idempotence = 'sa-tuteur-ok') THEN
+    RAISE EXCEPTION 'SUIVI-ATTENTE : l adulte et le tuteur recoivent leur courriel';
+  END IF;
+  -- Le tuteur recoit son propre courriel par la portee « foyer », pour chaque
+  -- evenement ou l'eleve avait une portee « soi » et pour ceux de ce lot.
+  IF NOT private.notification_avec_courriel('classe_creee', 'foyer')
+     OR NOT private.notification_avec_courriel('classe_validee', 'foyer')
+     OR NOT private.notification_avec_courriel('eleve_inscrit', 'foyer')
+     OR NOT private.notification_avec_courriel('enseignant_affecte', 'foyer')
+     OR NOT private.notification_avec_courriel('tout_est_pret', 'foyer') THEN
+    RAISE EXCEPTION 'SUIVI-ATTENTE : le tuteur recoit son courriel par la portee foyer';
+  END IF;
+  -- Et le courriel du flux reel : le tuteur a recu celui de l'affectation et
+  -- celui de « tout est pret ».
+  IF NOT EXISTS (SELECT 1 FROM public.courriels_sortants
+                  WHERE destinataire_profil = '5a000000-0000-0000-0000-000000000001'
+                    AND modele = 'enseignant_affecte')
+     OR NOT EXISTS (SELECT 1 FROM public.courriels_sortants
+                     WHERE destinataire_profil = '5a000000-0000-0000-0000-000000000001'
+                       AND modele = 'tout_est_pret'
+                       AND cle_idempotence LIKE 'notification:%') THEN
+    RAISE EXCEPTION 'SUIVI-ATTENTE : le tuteur doit recevoir les courriels du flux reel';
+  END IF;
+END
+$courriel_mineur$;
+
+-- ---------------------------------------------------------------------------
+-- 8 sexies. Un remplacement direct (A vers B) previent B une seule fois
+-- ---------------------------------------------------------------------------
+UPDATE public.groupes SET teacher_id = '5a000000-0000-0000-0000-000000000007'
+ WHERE id = '5afffff0-0000-0000-0000-0000000000a1';
+-- Deux ecritures dans la meme transaction : une seule ligne.
+UPDATE public.groupes SET teacher_id = '5a000000-0000-0000-0000-000000000003'
+ WHERE id = '5afffff0-0000-0000-0000-0000000000a1';
+UPDATE public.groupes SET teacher_id = '5a000000-0000-0000-0000-000000000007'
+ WHERE id = '5afffff0-0000-0000-0000-0000000000a1';
+SET CONSTRAINTS ALL IMMEDIATE;
+SET CONSTRAINTS ALL DEFERRED;
+DO $remplacement$
+DECLARE n integer;
+BEGIN
+  SELECT count(*) INTO n FROM public.notifications
+   WHERE destinataire = '5a000000-0000-0000-0000-000000000007'
+     AND evenement = 'enseignant_affecte' AND params ->> 'groupe_id' = '5afffff0-0000-0000-0000-0000000000a1';
+  IF n <> 1 THEN
+    RAISE EXCEPTION 'SUIVI-ATTENTE : B est prevenu UNE fois par enseignant_affecte, % trouvee(s)', n;
+  END IF;
+  IF EXISTS (SELECT 1 FROM public.notifications
+              WHERE destinataire = '5a000000-0000-0000-0000-000000000007'
+                AND evenement = 'enseignant_change' AND params ->> 'groupe_id' = '5afffff0-0000-0000-0000-0000000000a1') THEN
+    RAISE EXCEPTION 'SUIVI-ATTENTE : B n est pas prevenu en plus par enseignant_change';
+  END IF;
+  -- (L'ancien enseignant et la famille gardent `enseignant_change` : ce que
+  -- notifier_classe fait deja, non rejoue ici. Le scenario tient dans UNE
+  -- transaction, ou la deduplication par instant masque la famille, deja
+  -- prevenue de l'affectation, et ou le compte de l'ancien enseignant est
+  -- efface plus haut.)
+  SELECT count(*) INTO n FROM public.courriels_sortants
+   WHERE destinataire_profil = '5a000000-0000-0000-0000-000000000007'
+     AND modele = 'enseignant_affecte' AND donnees ->> 'groupe_id' = '5afffff0-0000-0000-0000-0000000000a1';
+  IF n <> 1 THEN
+    RAISE EXCEPTION 'SUIVI-ATTENTE : un seul courriel pour B sur cette classe, % trouve(s)', n;
+  END IF;
+END
+$remplacement$;
+SELECT pg_temp.moi('5a000000-0000-0000-0000-000000000001', 'guardian', '5afffff0-0000-0000-0000-000000000001');
+SET LOCAL ROLE authenticated;
+DO $carte_b$
+DECLARE r record;
+BEGIN
+  SELECT * INTO r FROM public.suivi_attente_foyer() WHERE demande_id = '5afffff0-0000-0000-0000-0000000000d1';
+  IF r.enseignant ->> 'prenom' <> 'Khadija' THEN
+    RAISE EXCEPTION 'SUIVI-ATTENTE : la carte montre l enseignant en place : %', r.enseignant;
+  END IF;
+END
+$carte_b$;
+RESET ROLE;
+
+-- ---------------------------------------------------------------------------
+-- 8 quinquies. « Me presenter » : jamais un mineur pour destinataire (serveur)
+-- ---------------------------------------------------------------------------
+-- L'enseignant n'ouvre une conversation que sur une paire que le serveur
+-- autorise : jamais avec un eleve mineur.
+SELECT pg_temp.moi('5a000000-0000-0000-0000-000000000007', 'teacher', NULL);
+SET LOCAL ROLE authenticated;
+DO $me_presenter$
+DECLARE r jsonb;
+BEGIN
+  -- Controle positif : la paire autorisee est celle du FOYER (le tuteur),
+  -- jamais celle de l'enfant.
+  r := public.com_ouvrir_conversation('classe', '5afffff0-0000-0000-0000-0000000000a1'::uuid,
+         '5afffff0-0000-0000-0000-000000000001');
+  IF r IS NULL THEN
+    RAISE EXCEPTION 'SUIVI-ATTENTE : l enseignant joint le foyer par la paire du serveur';
+  END IF;
+  r := public.com_ouvrir_conversation('classe', '5afffff0-0000-0000-0000-0000000000a1'::uuid,
+         '5a000000-0000-0000-0000-000000000002');
+  IF r IS NOT NULL THEN
+    RAISE EXCEPTION 'SUIVI-ATTENTE : un enseignant n ouvre aucune conversation avec un eleve mineur : %', r;
+  END IF;
+  r := public.com_ouvrir_conversation('classe', '5afffff0-0000-0000-0000-0000000000a1'::uuid,
+         '5a000000-0000-0000-0000-000000000005');
+  IF r IS NOT NULL THEN
+    RAISE EXCEPTION 'SUIVI-ATTENTE : ni avec un autre eleve mineur : %', r;
+  END IF;
+END
+$me_presenter$;
+RESET ROLE;
+
+-- ---------------------------------------------------------------------------
+-- 8 septies. Enseignant retire apres l'affectation : l'etape 4 n'est plus faite
+-- ---------------------------------------------------------------------------
+UPDATE public.groupes SET teacher_id = NULL, etat = 'en_attente_enseignant'
+ WHERE id = '5afffff0-0000-0000-0000-0000000000a1';
+SET CONSTRAINTS ALL IMMEDIATE;
+SET CONSTRAINTS ALL DEFERRED;
+SELECT pg_temp.moi('5a000000-0000-0000-0000-000000000001', 'guardian', '5afffff0-0000-0000-0000-000000000001');
+SET LOCAL ROLE authenticated;
+DO $enseignant_retire$
+DECLARE r record;
+BEGIN
+  SELECT * INTO r FROM public.suivi_attente_foyer() WHERE demande_id = '5afffff0-0000-0000-0000-0000000000d1';
+  IF (SELECT array_agg(e ->> 'statut' ORDER BY (e ->> 'numero')::int)
+        FROM jsonb_array_elements(r.etapes) e)
+     IS DISTINCT FROM ARRAY['fait', 'fait', 'fait', 'en_cours', 'a_venir'] THEN
+    RAISE EXCEPTION 'SUIVI-ATTENTE : enseignant retire, l etape 4 n est plus faite : %', r.etapes;
+  END IF;
+  IF r.cas <> 'en_attente_enseignant' OR r.enseignant IS NOT NULL THEN
+    RAISE EXCEPTION 'SUIVI-ATTENTE : la classe attend son enseignant, sans carte : % %', r.cas, r.enseignant;
+  END IF;
+END
+$enseignant_retire$;
+RESET ROLE;
+-- La classe retrouve un enseignant : la suite se rejoue.
+UPDATE public.groupes SET teacher_id = '5a000000-0000-0000-0000-000000000007', etat = 'active'
+ WHERE id = '5afffff0-0000-0000-0000-0000000000a1';
+SET CONSTRAINTS ALL IMMEDIATE;
+SET CONSTRAINTS ALL DEFERRED;
+
+-- ---------------------------------------------------------------------------
+-- 8 octies. La carte de l'enseignant n'est rendue qu'a un foyer dont la demande
+-- vit et dont l'enfant est membre actif de la classe
+-- ---------------------------------------------------------------------------
+-- Sonde 1 : la demande est retiree, l'enfant est encore membre.
+UPDATE public.demandes_horaires_famille
+   SET etat = 'retiree', motif = 'retrait_famille'
+ WHERE id = '5afffff0-0000-0000-0000-0000000000d1';
+SELECT pg_temp.moi('5a000000-0000-0000-0000-000000000001', 'guardian', '5afffff0-0000-0000-0000-000000000001');
+SET LOCAL ROLE authenticated;
+DO $sonde_retiree$
+DECLARE r record;
+BEGIN
+  SELECT * INTO r FROM public.suivi_attente_foyer() WHERE demande_id = '5afffff0-0000-0000-0000-0000000000d1';
+  IF r.cas <> 'retiree' OR r.enseignant IS NOT NULL THEN
+    RAISE EXCEPTION 'SUIVI-ATTENTE : une demande retiree ne montre aucun enseignant : % %', r.cas, r.enseignant;
+  END IF;
+END
+$sonde_retiree$;
+RESET ROLE;
+-- Sonde 2 : l'enfant quitte la classe ; la demande retiree, et le remplacant,
+-- ne sont plus rendus.
+UPDATE public.groupe_membres
+   SET left_at = pg_catalog.now(), left_by = '5a000000-0000-0000-0000-000000000001',
+       left_reason = 'sortie de test'
+ WHERE groupe_id = '5afffff0-0000-0000-0000-0000000000a1' AND student_id = '5a000000-0000-0000-0000-000000000002';
+SELECT pg_temp.moi('5a000000-0000-0000-0000-000000000001', 'guardian', '5afffff0-0000-0000-0000-000000000001');
+SET LOCAL ROLE authenticated;
+DO $sonde_quitte$
+DECLARE r record;
+BEGIN
+  SELECT * INTO r FROM public.suivi_attente_foyer() WHERE demande_id = '5afffff0-0000-0000-0000-0000000000d1';
+  IF r.enseignant IS NOT NULL THEN
+    RAISE EXCEPTION 'SUIVI-ATTENTE : un enfant sorti de la classe ne voit pas son enseignant : %', r.enseignant;
+  END IF;
+  IF (r.etapes -> 4 ->> 'statut') = 'fait' THEN
+    RAISE EXCEPTION 'SUIVI-ATTENTE : l etape 5 n est pas faite pour un enfant sorti de la classe';
+  END IF;
+END
+$sonde_quitte$;
+RESET ROLE;
 
 -- ---------------------------------------------------------------------------
 -- 9. Droits : fonctions et declencheur

@@ -10,7 +10,11 @@
 --      relance automatique (lot FC-3, non construit) ;
 --   4. l'export « mes donnees » porte les colonnes ajoutees a teacher_profiles par
 --      20261123960000 (pays, mot, visibilite) ;
---   5. controles apres pose.
+--   5. public.courriel_enfiler : garde serveur, AUCUN courriel n'est mis en file
+--      pour un profil mineur, quel que soit le modele (arbitrage de
+--      l'architecte, 13/11/2026) ; meme signature, memes droits, une seule
+--      garde ajoutee ;
+--   6. controles apres pose.
 --
 -- Ordre : sans 20261123961000, l'evenement est refuse par la contrainte ; la pose
 -- est alors faite dans un sous-bloc qui avertit et n'echoue jamais (une seance, un
@@ -276,7 +280,7 @@ COMMENT ON FUNCTION public.demandes_formation_depassees() IS
 --    20261123960000 (une retouche ancree du corps en place, comme
 --    20261104900000 ; l'empreinte F86 est recalculee).
 -- ---------------------------------------------------------------------------
-CREATE FUNCTION pg_temp.remplacer(p_fonction regprocedure, p_ancre text, p_neuf text)
+CREATE OR REPLACE FUNCTION pg_temp.remplacer(p_fonction regprocedure, p_ancre text, p_neuf text)
 RETURNS void LANGUAGE plpgsql AS $$
 DECLARE
   v_def text := pg_catalog.pg_get_functiondef(p_fonction);
@@ -316,7 +320,39 @@ END
 $export$;
 
 -- ---------------------------------------------------------------------------
--- 5. Controles apres pose
+-- 5. Aucun courriel n'est mis en file pour un mineur
+-- ---------------------------------------------------------------------------
+-- Un compte enfant est deja ecarte quand son compte d'authentification porte
+-- `child_of` (adresse technique). Ce n'est pas une garantie suffisante : un profil
+-- eleve mineur sans cette marque recevrait le courriel de n'importe quel modele
+-- (prouve par la revue du 13/11 : `enseignant_affecte` en portee « soi »).
+-- La garde lit le profil eleve : `student_type = 'minor'`. Elle couvre aussi
+-- les portees « soi » deja ecrites pour des eleves (classe_creee, classe_validee,
+-- eleve_inscrit) : leur tuteur recoit son propre courriel par la portee « foyer ».
+DO $courriel_mineur$
+BEGIN
+  IF pg_catalog.strpos(
+       pg_catalog.pg_get_functiondef(
+         'public.courriel_enfiler(text,text,text,uuid,jsonb,text,text,uuid)'::regprocedure),
+       'sp.student_type') > 0 THEN
+    RAISE NOTICE 'courriel_enfiler : garde des mineurs deja posee, rien a faire';
+  ELSE
+    PERFORM pg_temp.remplacer(
+      'public.courriel_enfiler(text,text,text,uuid,jsonb,text,text,uuid)'::regprocedure,
+      $a$    -- Un compte enfant a une adresse technique : on ne lui ecrit jamais.$a$,
+      $b$    -- Un mineur n'est jamais destinataire d'un courriel, quel que soit le modele
+    -- (SUIVI-ATTENTE, 13/11/2026) : son tuteur est prevenu par la portee « foyer ».
+    IF EXISTS (SELECT 1 FROM public.student_profiles sp
+                WHERE sp.profile_id = p_profil AND sp.student_type = 'minor') THEN
+      RETURN NULL;
+    END IF;
+    -- Un compte enfant a une adresse technique : on ne lui ecrit jamais.$b$);
+  END IF;
+END
+$courriel_mineur$;
+
+-- ---------------------------------------------------------------------------
+-- 6. Controles apres pose
 -- ---------------------------------------------------------------------------
 DO $postflight$
 DECLARE
@@ -344,6 +380,19 @@ BEGIN
      AND pg_catalog.strpos(v_com, pg_catalog.md5(pg_catalog.pg_get_functiondef(
            'public.mes_donnees_export()'::regprocedure))) = 0 THEN
     RAISE EXCEPTION 'SUIVI-ATTENTE : empreinte F86 perimee pour mes_donnees_export';
+  END IF;
+  v_com := pg_catalog.obj_description(
+    'public.courriel_enfiler(text,text,text,uuid,jsonb,text,text,uuid)'::regprocedure, 'pg_proc');
+  IF v_com LIKE '%md5_functiondef=%'
+     AND pg_catalog.strpos(v_com, pg_catalog.md5(pg_catalog.pg_get_functiondef(
+           'public.courriel_enfiler(text,text,text,uuid,jsonb,text,text,uuid)'::regprocedure))) = 0 THEN
+    RAISE EXCEPTION 'SUIVI-ATTENTE : empreinte F86 perimee pour courriel_enfiler';
+  END IF;
+  IF pg_catalog.has_function_privilege('authenticated',
+       'public.courriel_enfiler(text,text,text,uuid,jsonb,text,text,uuid)', 'EXECUTE')
+     OR pg_catalog.has_function_privilege('anon',
+       'public.courriel_enfiler(text,text,text,uuid,jsonb,text,text,uuid)', 'EXECUTE') THEN
+    RAISE EXCEPTION 'SUIVI-ATTENTE : courriel_enfiler doit rester interne';
   END IF;
 END
 $postflight$;

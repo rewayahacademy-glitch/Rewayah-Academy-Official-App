@@ -3,10 +3,13 @@
 -- l'attente de la classe choisie, « comme une livraison ».
 --
 -- Ce que fait ce fichier, et rien d'autre :
---   1. teacher_profiles : le reglage « je montre ma photo et mes pays aux
---      familles de mes classes » (S4), les deux pays et un mot de presentation.
---      Vrai pour les nouveaux enseignants ; FAUX pour ceux qui existent deja,
---      tant qu'ils ne l'ont pas confirme dans leur profil.
+--   1. teacher_profiles : le reglage « montrer mon pays et mon mot de
+--      presentation aux familles avant le premier cours » (S4), les deux pays
+--      et un mot de presentation. Vrai par defaut, pour tous : le pays et le
+--      mot n'apparaissent que si l'enseignant les a saisis. Le reglage ne
+--      masque PAS la photo (les familles de sa classe la voient deja par
+--      ailleurs, `private.photo_visible_par` n'est pas changee) ; aucun texte
+--      ne promet un masquage que le serveur ne fait pas.
 --   2. regler_presentation_aux_familles / ma_presentation_aux_familles :
 --      l'enseignant regle et relit SON reglage, jamais celui d'un autre.
 --   3. suivi_attente_foyer() : UNE lecture du suivi de chaque demande du foyer
@@ -14,20 +17,32 @@
 --      l'enseignant selon S4). Reserve a l'eleve lui-meme et a son tuteur.
 --   4. Une notification de l'enseignant a l'affectation, enrichie (classe,
 --      nombre d'eleves, public, premier cours) : meme evenement
---      `enseignant_affecte`, portee `classe`, aucun evenement cree.
+--      `enseignant_affecte`, portee `classe`, aucun evenement cree. Une seule
+--      par (enseignant, classe, affectation), y compris quand un enseignant en
+--      remplace un autre : il est prevenu une fois, par cette notification, et
+--      non aussi par `enseignant_change`.
 --   5. private.notification_courriel : le courriel de `enseignant_affecte`
---      part pour la famille et pour l'enseignant (c'est une trace, S5 et S8).
---      Cela amende la decision du 01/11/2026 (« application seulement ») sur
---      cette ligne, a la demande du directeur du 12/11/2026.
+--      part pour la famille (portee foyer) et pour l'enseignant (portee
+--      classe) : c'est une trace, S5 et S8. Cela amende la decision du
+--      01/11/2026 (« application seulement ») sur ces lignes, a la demande du
+--      directeur du 12/11/2026. **Aucune ligne pour la portee « soi »** : un
+--      courriel n'est jamais ecrit a un enfant.
 --   6. app_config : formation_delai_jours (14) et formation_point_jours (7),
 --      decides le 30/09, poses si elles manquent. L'entree en debut de mois
 --      n'est PAS construite : aucune valeur n'est posee pour elle.
 --
 -- Ce que ce fichier NE fait pas : aucun evenement de notification n'est cree
--- (« tout est pret » exigerait de remplacer la contrainte
--- notifications_evenement_check, donc un mot d'effacement : interdit a ce
--- lot). Aucun mot d'effacement dans ce fichier. Rejouable. Sans BEGIN ni
--- COMMIT de premier niveau.
+-- (« tout est pret » est dans 20261123961000, qui remplace la contrainte
+-- notifications_evenement_check et que le directeur colle ; sa notification
+-- est posee par 20261123962000). Aucun mot d'effacement dans ce fichier.
+-- Rejouable. Sans BEGIN ni COMMIT de premier niveau.
+--
+-- ORDRE D'INSTALLATION (a respecter) : d'abord la fusion et le deploiement
+-- des fonctions Edge de la branche (gabarits de courriel et de push), PUIS
+-- les migrations 960000, 961000, 962000. Migration d'abord : le courriel de
+-- l'enseignant partirait avec l'ancien gabarit, ecrit pour la famille (« Voir
+-- la classe », /tuteur/demandes) : un message faux. Fonctions d'abord : sans
+-- la migration, aucune ligne de courriel n'est posee, rien ne part.
 
 -- ---------------------------------------------------------------------------
 -- 1. Les colonnes de la presentation aux familles
@@ -49,15 +64,14 @@ BEGIN
       ADD COLUMN mot_presentation text NULL
         CONSTRAINT teacher_profiles_mot_presentation_borne
           CHECK (pg_catalog.length(mot_presentation) BETWEEN 1 AND 500);
-    -- Les enseignants qui existent deja n'ont rien confirme : la carte ne
-    -- montre d'eux que le nom et la langue du cours, jusqu'a leur choix.
-    UPDATE public.teacher_profiles SET montre_aux_familles = false;
+    -- Vrai pour tous, y compris ceux d'avant le lot : leur pays et leur mot
+    -- sont vides tant qu'ils ne les ont pas saisis, la carte n'en montre rien.
   END IF;
 END
 $colonnes$;
 
 COMMENT ON COLUMN public.teacher_profiles.montre_aux_familles IS
-  'SUIVI-ATTENTE (S4) : l''enseignant montre sa photo, ses deux pays et son mot aux familles de ses classes. Vrai pour les nouveaux, faux pour ceux d''avant le lot tant qu''ils n''ont pas confirme (montre_aux_familles_confirme_le).';
+  'SUIVI-ATTENTE (S4) : l''enseignant montre son pays d''origine, son pays de residence et son mot de presentation aux familles de ses classes avant le premier cours. Vrai par defaut ; ne masque pas la photo ; seul ce qu''il a saisi apparait.';
 COMMENT ON COLUMN public.teacher_profiles.pays_origine IS
   'SUIVI-ATTENTE : pays d''origine, code ISO 3166-1 alpha-2 majuscule. Nul = non declare, jamais affiche comme « inconnu ». Distinct de country (sens ambigu avant ce lot).';
 COMMENT ON COLUMN public.teacher_profiles.pays_residence IS
@@ -271,7 +285,14 @@ BEGIN
     SELECT c.*,
            (c.etat IN ('refusee', 'retiree')) AS close_,
            coalesce(c.t_classe IS NOT NULL OR c.etat IN ('classe_validee', 'enseignant_affecte'), false) AS a3,
-           coalesce(c.t_ens IS NOT NULL OR c.etat = 'enseignant_affecte', false) AS a4
+           -- L'enseignant est affecte quand le fait est la ET que la classe a
+           -- encore son enseignant : retire apres l'affectation, l'etape 4
+           -- n'est plus franchie.
+           coalesce((c.t_ens IS NOT NULL OR c.etat = 'enseignant_affecte')
+                    AND c.g_teacher IS NOT NULL, false) AS a4,
+           -- Affecte puis retire : la classe attend de nouveau son enseignant.
+           coalesce((c.t_ens IS NOT NULL OR c.etat = 'enseignant_affecte')
+                    AND c.g_teacher IS NULL, false) AS ens_retire
       FROM calc c
   ), fin AS (
     SELECT e.*,
@@ -291,8 +312,9 @@ BEGIN
              WHEN f.dmotif = 'refus_direction' THEN 'refusee'
              ELSE 'close' END
       WHEN f.etat = 'retiree' THEN 'retiree'
-      WHEN f.a3 AND NOT f.a4 AND f.t_attente IS NOT NULL
-           AND f.m_attente = 'aucun_enseignant_libre' THEN 'en_attente_enseignant'
+      WHEN f.a3 AND NOT f.a4
+           AND ((f.t_attente IS NOT NULL AND f.m_attente = 'aucun_enseignant_libre')
+                OR f.ens_retire) THEN 'en_attente_enseignant'
       WHEN f.t_attente IS NOT NULL AND f.m_attente = 'classes_pleines' AND NOT f.a3 THEN 'liste_attente'
       ELSE 'chemin'
     END,
@@ -361,17 +383,23 @@ BEGIN
     CASE WHEN f.a3 THEN f.g_libelle END,
     f.t_premier AT TIME ZONE f.tz,
     f.t_change AT TIME ZONE f.tz,
-    -- La carte de l'enseignant : seulement a l'etape 4. Photo, pays et mot
-    -- seulement si l'enseignant l'autorise ; jamais ville, telephone,
-    -- courriel, date de naissance ni piece.
-    CASE WHEN f.a4 AND f.g_teacher IS NOT NULL THEN (
+    -- La carte de l'enseignant : seulement a l'etape 4, pour une demande non
+    -- close dont l'eleve est membre ACTIF de la classe (un foyer dont la
+    -- demande est retiree ou dont l'enfant a quitte la classe ne voit jamais
+    -- l'enseignant en place). Civilite et prenom seulement, jamais le nom de
+    -- famille (la famille n'a jamais eu que le prenom), ville, telephone,
+    -- courriel, date de naissance ni piece. La photo n'est pas masquee par le
+    -- reglage (`teacher_id` est toujours rendu : le serveur de photos decide) ;
+    -- pays et mot n'apparaissent que si l'enseignant les montre ET les a
+    -- saisis.
+    CASE WHEN f.a4 AND NOT f.close_ AND f.t_membre IS NOT NULL
+              AND f.g_teacher IS NOT NULL THEN (
       SELECT pg_catalog.jsonb_build_object(
         'prenom', t.first_name,
-        'nom', t.last_name,
         'titre', CASE t.gender WHEN 'female' THEN 'sayyida' WHEN 'male' THEN 'sayyid' END,
         'langue_cours', (SELECT lc.nom_humain FROM public.langues_cours lc WHERE lc.code = f.g_langue),
         'montre', tp.montre_aux_familles,
-        'teacher_id', CASE WHEN tp.montre_aux_familles THEN t.id END,
+        'teacher_id', t.id,
         'pays_origine', CASE WHEN tp.montre_aux_familles THEN tp.pays_origine END,
         'pays_residence', CASE WHEN tp.montre_aux_familles THEN tp.pays_residence END,
         'mot', CASE WHEN tp.montre_aux_familles THEN tp.mot_presentation END)
@@ -411,6 +439,16 @@ $function$;
 -- une seconde (meme destinataire, meme evenement, meme classe, meme
 -- transaction). Un message n'est jamais ecrit a un eleve : seul l'enseignant
 -- de la classe est destinataire.
+--
+-- Une seule notification par (enseignant, classe, affectation) :
+--   - affectation d'une classe sans enseignant (nul vers A) ;
+--   - remplacement direct (A vers B) : B est prevenu, avec cette notification
+--     et son courriel. `enseignant_change` ne lui est pas ecrit en plus
+--     (patch ancre de private.notifier_classe plus bas) ; A et les familles
+--     gardent `enseignant_change`.
+--   - deux ecritures de la meme transaction, ou le declencheur rappele : une
+--     seule ligne (meme destinataire, meme evenement, meme classe, meme
+--     transaction).
 CREATE OR REPLACE FUNCTION private.suivi_attente_notifier_enseignant()
 RETURNS trigger
 LANGUAGE plpgsql
@@ -425,7 +463,7 @@ DECLARE
   v_eleves integer;
   v_tranche text;
 BEGIN
-  IF OLD.teacher_id IS NOT NULL OR NEW.teacher_id IS NULL THEN
+  IF NEW.teacher_id IS NULL OR NEW.teacher_id IS NOT DISTINCT FROM OLD.teacher_id THEN
     RETURN NULL;
   END IF;
   -- L'etat final de la classe : fermee ou reprise avant la validation, rien.
@@ -468,7 +506,13 @@ BEGIN
                                                        'YYYY-MM-DD"T"HH24:MI:SS') END)),
          '/enseignant/classes'
     FROM public.profiles p
-   WHERE p.id = v_g.teacher_id AND p.deleted_at IS NULL;
+   WHERE p.id = v_g.teacher_id AND p.deleted_at IS NULL
+     AND NOT EXISTS (
+       SELECT 1 FROM public.notifications n
+        WHERE n.destinataire = p.id
+          AND n.evenement = 'enseignant_affecte'
+          AND n.cree_le = pg_catalog.now()
+          AND n.params ->> 'groupe_id' = v_g.id::text);
   RETURN NULL;
 END;
 $function$;
@@ -536,11 +580,52 @@ $declencheur_anonymisation$;
 -- ---------------------------------------------------------------------------
 -- 5. Le courriel de `enseignant_affecte` : famille et enseignant (trace)
 -- ---------------------------------------------------------------------------
+-- Pas de ligne pour la portee « soi » : un courriel n'est jamais ecrit a un
+-- enfant (et l'eleve adulte lit l'avancement dans l'application).
 INSERT INTO private.notification_courriel (evenement, portee, courriel) VALUES
   ('enseignant_affecte', 'classe', true),
-  ('enseignant_affecte', 'soi', true),
   ('enseignant_affecte', 'foyer', true)
 ON CONFLICT (evenement, portee) DO UPDATE SET courriel = EXCLUDED.courriel;
+
+-- ---------------------------------------------------------------------------
+-- 5 bis. Un remplacement direct (A vers B) previent B une seule fois
+-- ---------------------------------------------------------------------------
+-- notifier_classe dit « enseignant_change » a l'ancien enseignant, au nouveau
+-- et aux familles. Le nouveau a deja sa notification d'affectation (ci-dessus,
+-- posee avant) : pour lui seul, `enseignant_affecte` vaut `enseignant_change`
+-- (la liste des evenements equivalents deja utilisee pour eviter les doublons
+-- d'une meme transaction). Retouche ancree, rejouable.
+CREATE OR REPLACE FUNCTION pg_temp.remplacer(p_fonction regprocedure, p_ancre text, p_neuf text)
+RETURNS void LANGUAGE plpgsql AS $$
+DECLARE
+  v_def text := pg_catalog.pg_get_functiondef(p_fonction);
+  v_n integer;
+BEGIN
+  v_n := (pg_catalog.length(v_def) - pg_catalog.length(pg_catalog.replace(v_def, p_ancre, '')))
+         / pg_catalog.length(p_ancre);
+  IF v_n <> 1 THEN
+    RAISE EXCEPTION 'SUIVI-ATTENTE : ancre trouvee % fois dans %', v_n, p_fonction;
+  END IF;
+  EXECUTE pg_catalog.replace(v_def, p_ancre, p_neuf);
+END;
+$$;
+
+DO $equivalents$
+BEGIN
+  IF pg_catalog.strpos(
+       pg_catalog.pg_get_functiondef(
+         'private.notifier_classe(uuid,text,uuid,timestamptz,uuid[],uuid[],boolean)'::regprocedure),
+       $q$WHEN 'enseignant_change' THEN ARRAY['enseignant_affecte']$q$) > 0 THEN
+    RAISE NOTICE 'notifier_classe : equivalent deja pose, rien a faire';
+  ELSE
+    PERFORM pg_temp.remplacer(
+      'private.notifier_classe(uuid,text,uuid,timestamptz,uuid[],uuid[],boolean)'::regprocedure,
+      $a$    WHEN 'classe_supprimee'   THEN ARRAY['classe_changee']$a$,
+      $b$    WHEN 'classe_supprimee'   THEN ARRAY['classe_changee']
+    WHEN 'enseignant_change'  THEN ARRAY['enseignant_affecte']$b$);
+  END IF;
+END
+$equivalents$;
 
 -- ---------------------------------------------------------------------------
 -- 6. Les delais lus dans les reglages (decision du 30/09)

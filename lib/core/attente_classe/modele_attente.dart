@@ -136,10 +136,9 @@ class DelaiFormation {
 /// Ni ville, ni telephone, ni courriel, ni date de naissance, ni piece.
 @immutable
 class CarteEnseignantAttente {
-  /// Cree la carte. Quand [montre] est faux, photo, pays et mot sont nuls.
+  /// Cree la carte. Quand [montre] est faux, pays et mot sont nuls.
   const CarteEnseignantAttente({
     required this.prenom,
-    required this.nom,
     required this.montre,
     this.titre,
     this.langueCours,
@@ -149,11 +148,9 @@ class CarteEnseignantAttente {
     this.mot,
   });
 
-  /// Son prenom.
+  /// Son prenom. Jamais son nom de famille : la famille n'a jamais eu que le
+  /// prenom (revue du 13/11/2026).
   final String prenom;
-
-  /// Son nom.
-  final String nom;
 
   /// `sayyid`, `sayyida`, ou nul.
   final String? titre;
@@ -161,11 +158,12 @@ class CarteEnseignantAttente {
   /// La langue du cours, lisible.
   final String? langueCours;
 
-  /// Vrai quand l'enseignant montre sa photo, ses pays et son mot aux
-  /// familles de ses classes.
+  /// Vrai quand l'enseignant montre son pays et son mot de presentation aux
+  /// familles de ses classes. Ne masque pas la photo.
   final bool montre;
 
-  /// Son identifiant, pour la photo : nul s'il ne montre pas.
+  /// Son identifiant, pour la photo : la source unique des photos decide
+  /// seule si l'appelant la voit.
   final String? enseignantId;
 
   /// Pays d'origine (code ISO), nul si non declare ou non montre.

@@ -137,27 +137,16 @@ String? depuisEtape(SuiviAttente s, EtapeAttente e) {
   return t.suiviAttente.depuis(date: enMinuscule(jourDateDemande(depuis)));
 }
 
-/// Les phrases du delai de formation (S2), seulement quand le serveur l'a
-/// rendu et que l'enfant n'est pas dans la version simple. Vide sinon : aucun
-/// delai n'est invente.
+/// La phrase du delai de formation, **seulement quand il est depasse** : une
+/// phrase vraie (« La formation de votre classe prend plus de temps que
+/// prevu. L'academie vous ecrit. »). Aucune duree annoncee, aucune date limite,
+/// aucun point d'etape : rien ne les tient encore (arbitrage du 13/11/2026).
+/// L'enfant de 6 a 9 ans ne lit rien de tel. Vide sinon.
 List<String> phrasesDelai(SuiviAttente s) {
   final DelaiFormation? d = s.delai;
-  if (d == null || estSimple(s)) return const <String>[];
-  if (d.depasse) {
-    return <String>[
-      t.suiviAttente.delai.formation(jours: d.jours),
-      estTu(s) ? t.suiviAttente.tu.depasse : t.suiviAttente.delai.depasse,
-    ];
-  }
+  if (d == null || estSimple(s) || !d.depasse) return const <String>[];
   return <String>[
-    t.suiviAttente.delai.formation(jours: d.jours),
-    t.suiviAttente.delai.limite(date: enMinuscule(jourDateDemande(d.limite))),
-    if (d.point != null)
-      d.pointPasse
-          ? t.suiviAttente.delai.pointPasse
-          : t.suiviAttente.delai.point(
-              date: enMinuscule(jourDateDemande(d.point!)),
-            ),
+    estTu(s) ? t.suiviAttente.tu.depasse : t.suiviAttente.delai.depasse,
   ];
 }
 
@@ -239,16 +228,13 @@ String? titreEnseignant(CarteEnseignantAttente e) => switch (e.titre) {
   _ => null,
 };
 
-/// Le nom de l'enseignant : « Sayyid Ibrahim Camara ».
+/// Le nom de l'enseignant : « Sayyid Ibrahim » (civilite et prenom, jamais le
+/// nom de famille).
 String nomEnseignant(CarteEnseignantAttente e) {
   final String? titre = titreEnseignant(e);
   return titre == null
-      ? t.suiviAttente.enseignant.nomPlein(prenom: e.prenom, nom: e.nom)
-      : t.suiviAttente.enseignant.nomAvecTitre(
-          titre: titre,
-          prenom: e.prenom,
-          nom: e.nom,
-        );
+      ? t.suiviAttente.enseignant.nomPlein(prenom: e.prenom)
+      : t.suiviAttente.enseignant.nomAvecTitre(titre: titre, prenom: e.prenom);
 }
 
 /// « jeudi 2 octobre » : le jour d'une heure murale du foyer, dans une phrase.

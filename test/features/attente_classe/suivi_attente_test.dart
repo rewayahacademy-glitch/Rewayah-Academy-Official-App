@@ -220,32 +220,33 @@ void main() {
     });
   });
 
-  group('le delai honnete (S2)', () {
-    testWidgets('14 jours au plus, la date limite et le point d\'etape', (
+  group('le delai : une phrase vraie, rien d\'autre (13/11)', () {
+    testWidgets('aucune duree, aucune date limite, aucun point d\'etape', (
       WidgetTester tester,
     ) async {
       await _avecSuivi(tester, suiviDeTest(delai: delaiDeTest()));
-      expect(
-        find.text(t.suiviAttente.delai.formation(jours: 14)),
-        findsOneWidget,
-      );
-      expect(find.textContaining('23 novembre'), findsOneWidget);
-      expect(find.textContaining('16 novembre'), findsOneWidget);
+      expect(find.textContaining('jours au plus'), findsNothing);
+      expect(find.textContaining('Date limite'), findsNothing);
+      expect(find.textContaining('Point d'), findsNothing);
+      expect(find.textContaining('23 novembre'), findsNothing);
+      expect(find.textContaining('16 novembre'), findsNothing);
+      expect(find.text(t.suiviAttente.delai.depasse), findsNothing);
     });
 
-    testWidgets('le delai depasse est dit, avec la regle de l\'academie', (
-      WidgetTester tester,
-    ) async {
-      await _avecSuivi(
-        tester,
-        suiviDeTest(delai: delaiDeTest(depasse: true, pointPasse: true)),
-      );
-      expect(find.text(t.suiviAttente.delai.depasse), findsOneWidget);
-      expect(
-        find.textContaining(t.suiviAttente.delai.limite(date: '')),
-        findsNothing,
-      );
-    });
+    testWidgets(
+      'le delai depasse dit la phrase vraie, sans regle ni promesse',
+      (WidgetTester tester) async {
+        await _avecSuivi(
+          tester,
+          suiviDeTest(delai: delaiDeTest(depasse: true, pointPasse: true)),
+        );
+        expect(find.text(t.suiviAttente.delai.depasse), findsOneWidget);
+        expect(find.textContaining('jours au plus'), findsNothing);
+        expect(find.textContaining('Date limite'), findsNothing);
+        expect(find.textContaining('prolonge'), findsNothing);
+        expect(find.textContaining('accord'), findsNothing);
+      },
+    );
 
     testWidgets('sans valeur dans les reglages, l\'ecran ne promet rien', (
       WidgetTester tester,
@@ -381,7 +382,9 @@ void main() {
     ) async {
       await _avecSuivi(tester, suiviToutEstPret());
       expect(_cle('attente-carte-enseignant'), findsOneWidget);
-      expect(find.text('Sayyid Ibrahim Camara'), findsOneWidget);
+      // Civilite et prenom ; jamais le nom de famille (revue du 13/11).
+      expect(find.text('Sayyid Ibrahim'), findsOneWidget);
+      expect(find.textContaining('Camara'), findsNothing);
       expect(_cle('attente-enseignant-langue'), findsOneWidget);
       expect(find.text('Français'), findsOneWidget);
       expect(_cle('attente-enseignant-origine'), findsOneWidget);
@@ -404,17 +407,23 @@ void main() {
       }
     });
 
-    testWidgets('l\'enseignant qui refuse : nom et langue seulement', (
-      WidgetTester tester,
-    ) async {
-      await _avecSuivi(tester, suiviToutEstPret(enseignant: enseignantDiscret));
-      expect(find.text('Sayyida Khadija Diallo'), findsOneWidget);
-      expect(_cle('attente-enseignant-langue'), findsOneWidget);
-      expect(_cle('attente-enseignant-photo'), findsNothing);
-      expect(_cle('attente-enseignant-origine'), findsNothing);
-      expect(_cle('attente-enseignant-residence'), findsNothing);
-      expect(_cle('attente-enseignant-mot'), findsNothing);
-    });
+    testWidgets(
+      'l\'enseignant qui ne montre ni pays ni mot : civilite, prenom, langue, photo',
+      (WidgetTester tester) async {
+        await _avecSuivi(
+          tester,
+          suiviToutEstPret(enseignant: enseignantDiscret),
+        );
+        expect(find.text('Sayyida Khadija'), findsOneWidget);
+        expect(find.textContaining('Diallo'), findsNothing);
+        expect(_cle('attente-enseignant-langue'), findsOneWidget);
+        // Le reglage ne masque pas la photo : la source unique des photos decide.
+        expect(_cle('attente-enseignant-photo'), findsOneWidget);
+        expect(_cle('attente-enseignant-origine'), findsNothing);
+        expect(_cle('attente-enseignant-residence'), findsNothing);
+        expect(_cle('attente-enseignant-mot'), findsNothing);
+      },
+    );
 
     testWidgets('un pays non declare n\'est pas rendu, jamais « inconnu »', (
       WidgetTester tester,
@@ -424,7 +433,6 @@ void main() {
         suiviToutEstPret(
           enseignant: const CarteEnseignantAttente(
             prenom: 'Ibrahim',
-            nom: 'Camara',
             titre: 'sayyid',
             montre: true,
             enseignantId: 'ens-1',

@@ -98,7 +98,7 @@ class CarteEnseignantAttenteVue extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              if (enseignant.montre && id != null) ...<Widget>[
+              if (id != null) ...<Widget>[
                 _Photo(
                   enseignantId: id,
                   prenom: enseignant.prenom,

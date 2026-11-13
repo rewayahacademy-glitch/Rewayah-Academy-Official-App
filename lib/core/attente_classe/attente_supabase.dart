@@ -180,7 +180,6 @@ CarteEnseignantAttente? _enseignant(Object? brut) {
   if (brut is! Map) return null;
   return CarteEnseignantAttente(
     prenom: (brut['prenom'] as String?) ?? '',
-    nom: (brut['nom'] as String?) ?? '',
     titre: brut['titre'] as String?,
     langueCours: brut['langue_cours'] as String?,
     montre: (brut['montre'] as bool?) ?? false,

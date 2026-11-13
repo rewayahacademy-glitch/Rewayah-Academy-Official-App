@@ -194,7 +194,6 @@ void main() {
           etapes: pret,
           enseignant: <String, dynamic>{
             'prenom': 'Ibrahim',
-            'nom': 'Camara',
             'titre': 'sayyid',
             'langue_cours': 'Français',
             'montre': true,
@@ -215,11 +214,10 @@ void main() {
           etapes: pret,
           enseignant: <String, dynamic>{
             'prenom': 'Khadija',
-            'nom': 'Diallo',
             'titre': 'sayyida',
             'langue_cours': 'Français',
             'montre': false,
-            'teacher_id': null,
+            'teacher_id': 'ens-2',
             'pays_origine': null,
             'pays_residence': null,
             'mot': null,
@@ -227,7 +225,8 @@ void main() {
         ),
       ]).single;
       expect(discret.enseignant?.montre, isFalse);
-      expect(discret.enseignant?.enseignantId, isNull);
+      // Le reglage ne masque pas la photo : l'identifiant est toujours rendu.
+      expect(discret.enseignant?.enseignantId, 'ens-2');
       expect(discret.enseignant?.paysOrigine, isNull);
       expect(discret.enseignant?.mot, isNull);
     });

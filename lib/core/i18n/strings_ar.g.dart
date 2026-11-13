@@ -10923,7 +10923,7 @@ class _Traductions$suiviAttente$tu$ar extends Traductions$suiviAttente$tu$fr {
 	@override String get formationListeAttente => 'جميع فصول هذا الموعد ممتلئة. ينتظر طلبك أن يُفتح مقعد.';
 	@override String get confirmeeFait => 'تم تأكيد فصلك.';
 	@override String confirmeeFaitNom({required Object classe}) => 'تم تأكيد فصلك «⁨${classe}⁩».';
-	@override String get enseignantEnAttente => 'الفصل ينتظر معلمه. تعيّنه الأكاديمية وتُخبرك.';
+	@override String get enseignantEnAttente => 'فصلك ينتظر معلمه. تعيّنه الأكاديمية وتُخبرك.';
 	@override String get pretEnCours => 'تحدد الأكاديمية موعد أول حصة لك. تُخبرك حالما يُعرف الموعد.';
 	@override String get pretAVenir => 'يُعلن موعد أول حصة بعد تعيين المعلم.';
 	@override String premierCoursPasse({required Object quand}) => 'كانت أول حصة لك في ⁨${quand}⁩.';
@@ -10981,7 +10981,7 @@ class _Traductions$suiviAttente$dit$ar extends Traductions$suiviAttente$dit$fr {
 	@override String confirmeeFaitNom({required Object classe}) => 'تم تأكيد فصلك «⁨${classe}⁩».';
 	@override String get confirmeeAVenir => 'تؤكد الأكاديمية الفصل عندما يجتمع طلابه.';
 	@override String get enseignantEnCours => 'تعيّن الأكاديمية معلم الفصل.';
-	@override String get enseignantEnAttente => 'الفصل ينتظر معلمه. تعيّنه الأكاديمية وتُخبرك.';
+	@override String get enseignantEnAttente => 'فصلك ينتظر معلمه. تعيّنه الأكاديمية وتُخبرك.';
 	@override String get enseignantFait => 'صار معلمك معروفًا.';
 	@override String get enseignantFaitSimple => 'صار معلمك معروفًا.';
 	@override String get enseignantAVenir => 'تعيّن الأكاديمية المعلم بعد تأكيد الفصل.';
@@ -10997,17 +10997,6 @@ class _Traductions$suiviAttente$delai$ar extends Traductions$suiviAttente$delai$
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String formation({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(jours,
-		zero: 'يُكوَّن الفصل في ⁨${jours}⁩ يومًا على الأكثر.',
-		one: 'يُكوَّن الفصل في يوم واحد على الأكثر.',
-		two: 'يُكوَّن الفصل في يومين على الأكثر.',
-		few: 'يُكوَّن الفصل في ⁨${jours}⁩ أيام على الأكثر.',
-		many: 'يُكوَّن الفصل في ⁨${jours}⁩ يومًا على الأكثر.',
-		other: 'يُكوَّن الفصل في ⁨${jours}⁩ يومًا على الأكثر.',
-	);
-	@override String limite({required Object date}) => 'الموعد الأخير: ⁨${date}⁩';
-	@override String point({required Object date}) => 'وقفة تقييم: ⁨${date}⁩';
-	@override String get pointPasse => 'مرّت وقفة التقييم.';
 	@override String get depasse => 'يستغرق تكوين فصلك وقتًا أطول من المتوقع. تكتب لك الأكاديمية.';
 }
 
@@ -11038,8 +11027,8 @@ class _Traductions$suiviAttente$enseignant$ar extends Traductions$suiviAttente$e
 	@override String get titreSimple => 'معلمك';
 	@override String get sayyid => 'سيّد';
 	@override String get sayyida => 'سيّدة';
-	@override String nomPlein({required Object prenom, required Object nom}) => '⁨${prenom}⁩ ⁨${nom}⁩';
-	@override String nomAvecTitre({required Object titre, required Object prenom, required Object nom}) => '⁨${titre}⁩ ⁨${prenom}⁩ ⁨${nom}⁩';
+	@override String nomPlein({required Object prenom}) => '⁨${prenom}⁩';
+	@override String nomAvecTitre({required Object titre, required Object prenom}) => '⁨${titre}⁩ ⁨${prenom}⁩';
 	@override String get langue => 'لغة الدرس';
 	@override String get origine => 'بلد الأصل';
 	@override String get residence => 'بلد الإقامة';
@@ -11084,15 +11073,15 @@ class _Traductions$suiviAttente$presentation$ar extends Traductions$suiviAttente
 
 	// Translations
 	@override String get titre => 'ما تراه الأسر عنك';
-	@override String get phrase => 'ترى أسر فصولك دائمًا اسمك ولغة الدرس. وتختار أنت إظهار صورتك وبلديك وكلمة تعريف.';
-	@override String get montrer => 'أُظهر صورتي وبلديّ لأسر فصولي';
+	@override String get phrase => 'قبل الحصة الأولى، ترى أسر فصولك لقبك واسمك الأول ولغة الدرس وصورتك، وهي نفسها في كل التطبيق. وتختار أنت إظهار بلديك وكلمة تعريف أيضًا، إن كنت قد كتبتها.';
+	@override String get montrer => 'أُظهر بلدي وكلمة التعريف لأسر فصولي قبل الحصة الأولى';
 	@override String get paysOrigine => 'بلد الأصل';
 	@override String get paysResidence => 'بلد الإقامة';
 	@override String get choisirPays => 'اختيار بلد';
 	@override String get nonRenseigne => 'غير محدد';
 	@override String get mot => 'كلمتي للتعريف';
 	@override String get motAide => 'حتى 500 حرف. تقرؤها الأسر كما كتبتها.';
-	@override String get nonConfirme => 'لم تؤكد هذا الاختيار بعد. إلى أن تؤكده ترى الأسر اسمك ولغة الدرس فقط.';
+	@override String get nonConfirme => 'لم تؤكد هذا الاختيار بعد. إلى أن تؤكده تُعرض بلداك وكلمتك، إن كتبتهما، على الأسر.';
 	@override String get enregistrer => 'حفظ';
 	@override String get enregistre => 'سُجِّل اختيارك.';
 	@override String get erreur => 'تعذّر حفظ الاختيار. حاول مرة أخرى بعد قليل.';
@@ -35532,7 +35521,7 @@ extension on TraductionsAr {
 			'suiviAttente.tu.formationListeAttente' => 'جميع فصول هذا الموعد ممتلئة. ينتظر طلبك أن يُفتح مقعد.',
 			'suiviAttente.tu.confirmeeFait' => 'تم تأكيد فصلك.',
 			'suiviAttente.tu.confirmeeFaitNom' => ({required Object classe}) => 'تم تأكيد فصلك «⁨${classe}⁩».',
-			'suiviAttente.tu.enseignantEnAttente' => 'الفصل ينتظر معلمه. تعيّنه الأكاديمية وتُخبرك.',
+			'suiviAttente.tu.enseignantEnAttente' => 'فصلك ينتظر معلمه. تعيّنه الأكاديمية وتُخبرك.',
 			'suiviAttente.tu.pretEnCours' => 'تحدد الأكاديمية موعد أول حصة لك. تُخبرك حالما يُعرف الموعد.',
 			'suiviAttente.tu.pretAVenir' => 'يُعلن موعد أول حصة بعد تعيين المعلم.',
 			'suiviAttente.tu.premierCoursPasse' => ({required Object quand}) => 'كانت أول حصة لك في ⁨${quand}⁩.',
@@ -35567,7 +35556,7 @@ extension on TraductionsAr {
 			'suiviAttente.dit.confirmeeFaitNom' => ({required Object classe}) => 'تم تأكيد فصلك «⁨${classe}⁩».',
 			'suiviAttente.dit.confirmeeAVenir' => 'تؤكد الأكاديمية الفصل عندما يجتمع طلابه.',
 			'suiviAttente.dit.enseignantEnCours' => 'تعيّن الأكاديمية معلم الفصل.',
-			'suiviAttente.dit.enseignantEnAttente' => 'الفصل ينتظر معلمه. تعيّنه الأكاديمية وتُخبرك.',
+			'suiviAttente.dit.enseignantEnAttente' => 'فصلك ينتظر معلمه. تعيّنه الأكاديمية وتُخبرك.',
 			'suiviAttente.dit.enseignantFait' => 'صار معلمك معروفًا.',
 			'suiviAttente.dit.enseignantFaitSimple' => 'صار معلمك معروفًا.',
 			'suiviAttente.dit.enseignantAVenir' => 'تعيّن الأكاديمية المعلم بعد تأكيد الفصل.',
@@ -35579,10 +35568,6 @@ extension on TraductionsAr {
 			'suiviAttente.premierCoursPasse' => ({required Object quand}) => 'كانت أول حصة لك في ⁨${quand}⁩.',
 			'suiviAttente.depuis' => ({required Object date}) => 'منذ ⁨${date}⁩',
 			'suiviAttente.ensuite' => ({required Object etape}) => 'بعد ذلك: ⁨${etape}⁩',
-			'suiviAttente.delai.formation' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(jours, zero: 'يُكوَّن الفصل في ⁨${jours}⁩ يومًا على الأكثر.', one: 'يُكوَّن الفصل في يوم واحد على الأكثر.', two: 'يُكوَّن الفصل في يومين على الأكثر.', few: 'يُكوَّن الفصل في ⁨${jours}⁩ أيام على الأكثر.', many: 'يُكوَّن الفصل في ⁨${jours}⁩ يومًا على الأكثر.', other: 'يُكوَّن الفصل في ⁨${jours}⁩ يومًا على الأكثر.', ), 
-			'suiviAttente.delai.limite' => ({required Object date}) => 'الموعد الأخير: ⁨${date}⁩',
-			'suiviAttente.delai.point' => ({required Object date}) => 'وقفة تقييم: ⁨${date}⁩',
-			'suiviAttente.delai.pointPasse' => 'مرّت وقفة التقييم.',
 			'suiviAttente.delai.depasse' => 'يستغرق تكوين فصلك وقتًا أطول من المتوقع. تكتب لك الأكاديمية.',
 			'suiviAttente.changement' => ({required Object date}) => 'تغيّر موعد الفصل في ⁨${date}⁩. وصلك إشعار بذلك.',
 			'suiviAttente.cloture.titreRefusee' => 'لم يُقبل طلبك',
@@ -35603,8 +35588,8 @@ extension on TraductionsAr {
 			'suiviAttente.enseignant.titreSimple' => 'معلمك',
 			'suiviAttente.enseignant.sayyid' => 'سيّد',
 			'suiviAttente.enseignant.sayyida' => 'سيّدة',
-			'suiviAttente.enseignant.nomPlein' => ({required Object prenom, required Object nom}) => '⁨${prenom}⁩ ⁨${nom}⁩',
-			'suiviAttente.enseignant.nomAvecTitre' => ({required Object titre, required Object prenom, required Object nom}) => '⁨${titre}⁩ ⁨${prenom}⁩ ⁨${nom}⁩',
+			'suiviAttente.enseignant.nomPlein' => ({required Object prenom}) => '⁨${prenom}⁩',
+			'suiviAttente.enseignant.nomAvecTitre' => ({required Object titre, required Object prenom}) => '⁨${titre}⁩ ⁨${prenom}⁩',
 			'suiviAttente.enseignant.langue' => 'لغة الدرس',
 			'suiviAttente.enseignant.origine' => 'بلد الأصل',
 			'suiviAttente.enseignant.residence' => 'بلد الإقامة',
@@ -35626,15 +35611,15 @@ extension on TraductionsAr {
 			'suiviAttente.carte.pret' => ({required Object prenom, required Object quand}) => '⁨${prenom}⁩: كل شيء جاهز. أول حصة: ⁨${quand}⁩',
 			'suiviAttente.carte.pretSansDate' => ({required Object prenom}) => '⁨${prenom}⁩: كل شيء جاهز.',
 			'suiviAttente.presentation.titre' => 'ما تراه الأسر عنك',
-			'suiviAttente.presentation.phrase' => 'ترى أسر فصولك دائمًا اسمك ولغة الدرس. وتختار أنت إظهار صورتك وبلديك وكلمة تعريف.',
-			'suiviAttente.presentation.montrer' => 'أُظهر صورتي وبلديّ لأسر فصولي',
+			'suiviAttente.presentation.phrase' => 'قبل الحصة الأولى، ترى أسر فصولك لقبك واسمك الأول ولغة الدرس وصورتك، وهي نفسها في كل التطبيق. وتختار أنت إظهار بلديك وكلمة تعريف أيضًا، إن كنت قد كتبتها.',
+			'suiviAttente.presentation.montrer' => 'أُظهر بلدي وكلمة التعريف لأسر فصولي قبل الحصة الأولى',
 			'suiviAttente.presentation.paysOrigine' => 'بلد الأصل',
 			'suiviAttente.presentation.paysResidence' => 'بلد الإقامة',
 			'suiviAttente.presentation.choisirPays' => 'اختيار بلد',
 			'suiviAttente.presentation.nonRenseigne' => 'غير محدد',
 			'suiviAttente.presentation.mot' => 'كلمتي للتعريف',
 			'suiviAttente.presentation.motAide' => 'حتى 500 حرف. تقرؤها الأسر كما كتبتها.',
-			'suiviAttente.presentation.nonConfirme' => 'لم تؤكد هذا الاختيار بعد. إلى أن تؤكده ترى الأسر اسمك ولغة الدرس فقط.',
+			'suiviAttente.presentation.nonConfirme' => 'لم تؤكد هذا الاختيار بعد. إلى أن تؤكده تُعرض بلداك وكلمتك، إن كتبتهما، على الأسر.',
 			'suiviAttente.presentation.enregistrer' => 'حفظ',
 			'suiviAttente.presentation.enregistre' => 'سُجِّل اختيارك.',
 			'suiviAttente.presentation.erreur' => 'تعذّر حفظ الاختيار. حاول مرة أخرى بعد قليل.',

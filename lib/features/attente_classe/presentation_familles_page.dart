@@ -1,12 +1,13 @@
 /// SUIVI-ATTENTE (S4) : « Ce que les familles voient de vous », dans le Compte
 /// de l'enseignant.
 ///
-/// Les familles d'une classe voient toujours le nom de l'enseignant et la
-/// langue du cours. L'enseignant choisit de montrer aussi sa photo (celle de
-/// son profil), son pays d'origine, son pays de residence et un mot de
-/// presentation. Le choix est vrai par defaut pour un nouvel enseignant, faux
-/// pour ceux d'avant le lot tant qu'ils ne l'ont pas confirme : l'ecran le dit
-/// (`nonConfirme`).
+/// Avant le premier cours, les familles d'une classe voient la civilite, le
+/// prenom, la langue du cours et la photo de l'enseignant (la meme que partout
+/// dans l'application : ce reglage ne la masque pas). L'enseignant choisit de
+/// montrer aussi son pays d'origine, son pays de residence et un mot de
+/// presentation, quand il les a saisis. Le choix est vrai par defaut pour tous ;
+/// tant qu'il n'est pas confirme, l'ecran le dit (`nonConfirme`). Aucun texte ne
+/// promet un masquage que le serveur ne fait pas.
 ///
 /// Pays : choisis dans la liste des pays (`ChampRecherche` et `SettingRow`,
 /// comme les coordonnees de versement), jamais saisis. Etats : chargement,

@@ -63,7 +63,6 @@ CreneauDemande creneauDeTest() => CreneauDemande(
 /// La carte d'un enseignant qui montre tout.
 const CarteEnseignantAttente enseignantVisible = CarteEnseignantAttente(
   prenom: 'Ibrahim',
-  nom: 'Camara',
   titre: 'sayyid',
   langueCours: 'Français',
   montre: true,
@@ -76,10 +75,10 @@ const CarteEnseignantAttente enseignantVisible = CarteEnseignantAttente(
 /// La carte d'un enseignant qui ne montre que son nom et la langue du cours.
 const CarteEnseignantAttente enseignantDiscret = CarteEnseignantAttente(
   prenom: 'Khadija',
-  nom: 'Diallo',
   titre: 'sayyida',
   langueCours: 'Français',
   montre: false,
+  enseignantId: 'ens-2',
 );
 
 /// Un suivi de test.
