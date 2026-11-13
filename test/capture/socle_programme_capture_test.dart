@@ -208,7 +208,8 @@ Map<String, Object?> _enHub(Map<String, Object?> lecture) {
   final Map<String, Object?> sourates =
       lecture['sourates']! as Map<String, Object?>;
   return <String, Object?>{
-    'eleve_voit_dates': lecture['eleve_voit_dates'],
+    if (lecture.containsKey('eleve_voit_dates'))
+      'eleve_voit_dates': lecture['eleve_voit_dates'],
     'etape': etape,
     'niveau': lecture['niveau'],
     'etapes_du_cycle': <Object?>[
@@ -267,6 +268,31 @@ void main() {
           );
           await tester.pump(const Duration(milliseconds: 600));
           debugPrint('PNG ${await capturerVue(tester, 'eleve-$l-$nomTheme')}');
+        });
+        // Refus par defaut (13/11) : un serveur d'avant le socle rend les dates mais
+        // pas `eleve_voit_dates` ; l'eleve en presentation standard n'en lit aucune.
+        testWidgets('eleve sans drapeau $l $nomTheme', (
+          WidgetTester tester,
+        ) async {
+          await monterRouteur(
+            tester,
+            Routes.eleveSuivi,
+            source: FausseSourceSession(sessionActive(AppRole.student)),
+            taille: Size(largeur, 2000),
+            themeMode: theme,
+            surcharges: <Override>[
+              portMaProgressionProvider.overrideWithValue(
+                _Port(_reponse(dateLimite: true)..remove('eleve_voit_dates')),
+              ),
+              horsLigneProvider.overrideWith(
+                (Ref ref) => Stream<bool>.value(false),
+              ),
+            ],
+          );
+          await tester.pump(const Duration(milliseconds: 600));
+          debugPrint(
+            'PNG ${await capturerVue(tester, 'eleve-sans-drapeau-$l-$nomTheme')}',
+          );
         });
         testWidgets('enfant guide $l $nomTheme', (WidgetTester tester) async {
           await monterRouteur(
