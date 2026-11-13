@@ -1902,6 +1902,44 @@ SELECT pg_temp.vrai(:'r41_un' = 'planifiee' AND :'r41_deux' = 'planifiee'
                     AND (SELECT pg_catalog.count(*) FROM cron.job) = 1,
   'avec pg_cron : une seule tache fermeture-balayage-nuit apres deux installations, a 02:27, dix minutes apres la cloche (02:17), qui appelle le balayage');
 
+-- ------------------------------------------------------------------
+-- 28. Arbitrage du 13/11 (apres fusion du lot 1) : l'enfant de 6 a 9 ans ne voit aucune date ni duree, MEME avec une fermeture
+-- publiee et une pause acceptee en cours. Les deux lectures de l'espace de l'eleve (etape_eleve_lecture, ma_progression) sont
+-- parcourues en entier : aucune cle de date, de duree, de recul ou de rythme n'a de valeur, aucune valeur n'a la forme d'une date.
+-- Controle positif : l'eleve de 10 ans, lui, en recoit (le parcours n'est donc pas vide).
+-- ------------------------------------------------------------------
+CREATE FUNCTION pg_temp.dates_vues(j jsonb) RETURNS text LANGUAGE sql AS $$
+  WITH RECURSIVE t(k, v) AS (
+    SELECT NULL::text, j
+    UNION ALL
+    SELECT x.k, x.v FROM t CROSS JOIN LATERAL (
+      SELECT e.key AS k, e.value AS v FROM pg_catalog.jsonb_each(CASE WHEN pg_catalog.jsonb_typeof(t.v) = 'object' THEN t.v ELSE '{}'::jsonb END) e
+      UNION ALL
+      SELECT t.k, a.value FROM pg_catalog.jsonb_array_elements(CASE WHEN pg_catalog.jsonb_typeof(t.v) = 'array' THEN t.v ELSE '[]'::jsonb END) a) x)
+  SELECT coalesce(pg_catalog.string_agg(DISTINCT coalesce(k, '?') || '=' || (v #>> '{}'), ',' ORDER BY coalesce(k, '?') || '=' || (v #>> '{}')), '')
+    FROM t
+   WHERE pg_catalog.jsonb_typeof(v) IN ('string', 'number')
+     AND (k ~* '(date|duree|entree|horizon|recul|limite|semaine|vitesse|rythme|jour)'
+          OR (v #>> '{}') ~ '^[0-9]{4}-[0-9]{2}-[0-9]{2}') $$;
+GRANT EXECUTE ON FUNCTION pg_temp.dates_vues(jsonb) TO authenticated;
+SELECT pg_temp.vrai(
+  EXISTS (SELECT 1 FROM public.calendrier_ecole ce WHERE ce.publie AND ce.type = 'fermeture')
+  AND (SELECT pg_catalog.count(*) FROM public.pauses_eleve WHERE student_id = pg_temp.u('e1') AND statut = 'acceptee') >= 1
+  AND pg_temp.recul('e1') > 0,
+  'fixture : e1 (6 a 9 ans) a une fermeture publiee, une pause acceptee et un recul en cours');
+SELECT pg_temp.qui(pg_temp.u('e1'), 'student', pg_temp.u('f1'));
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.dates_vues(public.etape_eleve_lecture(pg_temp.u('e1'))) AS lecture,
+       pg_temp.dates_vues(public.ma_progression(pg_temp.u('e1'))) AS progression,
+       (public.etape_eleve_lecture(pg_temp.u('e1')) -> 'etape') IS NOT NULL AS a_une_etape \gset r50_
+RESET ROLE;
+SELECT pg_temp.qui(pg_temp.u('e2'), 'student', pg_temp.u('f1'));
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.dates_vues(public.etape_eleve_lecture(pg_temp.u('e2'))) AS lecture_dix_ans \gset r50_
+RESET ROLE;
+SELECT pg_temp.vrai(:'r50_a_une_etape'::boolean AND :'r50_lecture' = '' AND :'r50_progression' = '' AND :'r50_lecture_dix_ans' <> '',
+  'l''enfant de 6 a 9 ans en fermeture et en pause : aucune date, duree, recul ni rythme dans ses deux lectures (lue : ' || :'r50_lecture' || ' / ' || :'r50_progression' || ') ; celle de 10 ans en a');
+
 \o
 SELECT 'scenarios_calendrier_pauses : tous les controles sont verts' AS resultat;
 ROLLBACK;
