@@ -1445,15 +1445,13 @@ class _Colonne extends ConsumerWidget {
                 (essai ? 0 : hauteurEtat(l)) +
                 AppSpacing.sm;
             // HARMONIE-SALLE (13/11/2026) : la tete est reservee une fois,
-            // a la hauteur de la barre depliee la plus haute (la pause en
-            // clair, ou une alerte : titre, detail ou deux actions). Plier ou
-            // deplier la barre ne change alors jamais les tuiles : ni leur
-            // place, ni leurs noms (avant : les noms disparaissaient le temps
-            // du depliage, sur un ecran bas).
-            tete += math.max(
-              hauteurDepliee,
-              allongementAlerteEnPlace(context, l),
-            );
+            // a la hauteur de la barre depliee d'un toucher (la pause en
+            // clair, sa commande, son echec). Plier ou deplier la barre ne
+            // change alors ni la place ni les noms des tuiles (avant : les
+            // noms disparaissaient le temps du depliage, sur un ecran bas).
+            // Une alerte plus haute que cette reserve n'y tient pas encore :
+            // limite ecrite dans `docs/current/salle/HARMONIE-2026-11-13.md`.
+            tete += hauteurDepliee;
             serre = essai;
             avecNom = nom;
             avecTitre = montreTitre;

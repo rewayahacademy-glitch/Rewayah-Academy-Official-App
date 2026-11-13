@@ -33,13 +33,11 @@
 // (`BarreSeanceEnDirect`) pose la meme ligne repliee (`ChronoSalle`).
 
 import 'dart:async';
-import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
-import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_elevation.dart';
 import '../../core/theme/app_mouvement.dart';
@@ -56,7 +54,7 @@ import 'chrono_salle.dart';
 import 'marque_chrono.dart';
 import 'media_salle.dart';
 import 'mention_seance.dart';
-import 'pilote_dynamique.dart' show PiloteDynamique, titreRecitation;
+import 'pilote_dynamique.dart' show PiloteDynamique;
 import 'vue_seance.dart';
 
 /// La Dynamique chrono : la barre du temps et des marques de la salle.
@@ -637,76 +635,6 @@ class _DynamiqueChronoEtat extends State<DynamiqueChrono> {
             ),
     );
   }
-}
-
-/// HARMONIE-SALLE (13/11/2026, directeur, point 13 : « comme un seul
-/// ingenieur ») : la hauteur la plus grande que la barre depliee a sa place
-/// ([DynamiqueChrono.enPlace], tete de la colonne de l'ordinateur) ajoute a sa
-/// ligne repliee quand une alerte arrive chez qui conduit la seance.
-///
-/// La colonne reserve cette hauteur une fois, pour une taille d'ecran donnee :
-/// plier ou deplier la barre ne deplace alors jamais les tuiles, et le choix
-/// « noms ou icones seules » ne change pas pendant le depliage (le defaut du
-/// 13/11 : les noms disparaissaient le temps du depliage, sur un ecran bas).
-///
-/// Mesuree sur les vrais textes des alertes de celui qui conduit (titre en
-/// `titleSmall`, detail en `labelMedium`, les marges de [DynamiqueChrono]) :
-/// le titre le plus haut, puis le plus haut entre le detail le plus long et
-/// deux actions l'une sous l'autre (aucune alerte n'a les deux). Un prenom
-/// long sert d'etalon. Une alerte future plus haute que celles-ci pousserait
-/// les tuiles plutot que d'etre coupee : elle s'ajoute ici.
-double allongementAlerteEnPlace(BuildContext context, double largeur) {
-  final TextTheme textes = Theme.of(context).textTheme;
-  final TextScaler echelle = MediaQuery.textScalerOf(context);
-  final TextDirection sens = Directionality.of(context);
-  final double l = math.max(1, largeur - 2 * AppSpacing.md);
-  double hauteur(String texte, TextStyle? style) {
-    final TextPainter peintre = TextPainter(
-      text: TextSpan(text: texte, style: style),
-      textDirection: sens,
-      textScaler: echelle,
-    )..layout(maxWidth: l);
-    final double h = peintre.height;
-    peintre.dispose();
-    return h.ceilToDouble();
-  }
-
-  // Etalon de mesure, jamais affiche : un prenom long, en lettres larges.
-  final String prenom = 'm' * 14;
-  final d = t.salle.dynamique;
-  final g = t.salle.gestes;
-  final List<String> titres = <String>[
-    '+2 ${d.arrivees(n: 2)}',
-    d.arriveePrenom(prenom: prenom),
-    titreRecitation(prenom),
-    g.finRecitationTitre,
-    g.appelEnvoyeTitre(prenom: prenom),
-    LibellesGroupe.insecable(d.pauseDebut(minutes: 10, heure: '00:00')),
-    LibellesGroupe.insecable(d.pausePriereDebut(heure: '00:00')),
-    d.pauseFinie,
-    LibellesGroupe.insecable(d.pauseQuestion(minutes: 10)),
-    LibellesGroupe.insecable(d.priereDans(minutes: 3)),
-  ];
-  final List<String> details = <String>[
-    g.recitationOuverte(prenom: prenom),
-    g.recitationFinieSeule(prenom: prenom),
-    g.recitationTerminee,
-    g.appelEnvoye,
-  ];
-  double plusHaut(List<String> liste, TextStyle? style) =>
-      liste.fold(0, (double m, String s) => math.max(m, hauteur(s, style)));
-  final double titre = plusHaut(titres, textes.titleSmall);
-  final double detail = plusHaut(details, textes.labelMedium);
-  final double action = math.max(
-    AppSpacing.titreEcran,
-    echelle.scale(AppSpacing.xl) + 2 * AppSpacing.md,
-  );
-  final double actions = 2 * action + AppSpacing.xs;
-  return AppSpacing.md +
-      titre +
-      AppSpacing.xs +
-      math.max(detail, actions) +
-      AppSpacing.md;
 }
 
 /// Le mot d'etat du lien (« En salle », « En ligne », « Reconnexion... ») et
