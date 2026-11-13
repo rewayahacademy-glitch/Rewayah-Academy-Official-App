@@ -10923,6 +10923,7 @@ class _Traductions$apprendre$bibliotheque$ar extends Traductions$apprendre$bibli
 
 	// Translations
 	@override String get rayonCours => 'وثائق الدروس';
+	@override String get rayonClasse => 'لهذا الفصل';
 	@override String get rayonPlusLoin => 'للتعمّق أكثر';
 	@override late final _Traductions$apprendre$bibliotheque$rayonCoursVide$ar rayonCoursVide = _Traductions$apprendre$bibliotheque$rayonCoursVide$ar._(_root);
 	@override String get rayonPlusLoinVide => 'ستظهر وثائق أخرى هنا';
@@ -35458,6 +35459,7 @@ extension on TraductionsAr {
 			'apprendre.sections.programme' => 'البرنامج',
 			'apprendre.sections.livret' => 'سجلّي',
 			'apprendre.bibliotheque.rayonCours' => 'وثائق الدروس',
+			'apprendre.bibliotheque.rayonClasse' => 'لهذا الفصل',
 			'apprendre.bibliotheque.rayonPlusLoin' => 'للتعمّق أكثر',
 			'apprendre.bibliotheque.rayonCoursVide.message' => 'ستظهر وثائق الدروس هنا',
 			'apprendre.bibliotheque.rayonCoursVide.invitation' => 'تظهر بمجرد أن تنشرها الأكاديمية.',

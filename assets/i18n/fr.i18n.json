@@ -15214,6 +15214,7 @@
     },
     "bibliotheque": {
       "rayonCours": "Documents des cours",
+      "rayonClasse": "Pour cette classe",
       "rayonPlusLoin": "Pour aller plus loin",
       "rayonCoursVide": {
         "message": "Les documents des cours arriveront ici",

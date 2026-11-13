@@ -1,4 +1,5 @@
 import '../../features/demo/mode_demonstration.dart';
+import '../apprendre/documents_apprendre.dart';
 import '../config/env.dart';
 import '../domain/enums.dart';
 import '../session/session_state.dart';
@@ -302,8 +303,22 @@ String? deciderRedirection({
       // espace de la classe, recherche, retour par defaut d'une fiche) l'y
       // mene ; la fiche d'un document (`/tc/bibliotheque/:id`) reste ouverte.
       // Les autres roles gardent la leur.
+      // La classe d'ou il vient (`?groupe=`, posee par « Voir tout » de Ma
+      // classe et par l'espace de la classe) voyage avec lui : Apprendre en
+      // tire la rubrique « Pour cette classe ».
       if (session.peutLireLeCoran && cheminDemande == Routes.tcBibliotheque) {
-        return Routes.eleveApprendre;
+        final String? groupe = cheminComplet == null
+            ? null
+            : Uri.tryParse(cheminComplet)
+                  ?.queryParameters[parametreGroupeApprendre];
+        return groupe == null || groupe.isEmpty
+            ? Routes.eleveApprendre
+            : Uri(
+                path: Routes.eleveApprendre,
+                queryParameters: <String, String>{
+                  parametreGroupeApprendre: groupe,
+                },
+              ).toString();
       }
 
       // Aucune route ne correspond : la page introuvable le dit, sans rien

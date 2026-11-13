@@ -220,12 +220,18 @@ class _PlancheEtat extends ConsumerState<PlancheDocuments> {
   }) {
     final c = t.apprendre.bibliotheque;
     final String titre = switch (rayon) {
+      RayonPlanche.pourCetteClasse => c.rayonClasse,
       RayonPlanche.documentsDesCours => c.rayonCours,
       RayonPlanche.pourAllerPlusLoin => c.rayonPlusLoin,
     };
     // Un filtre qui laisse un rayon sans document le retire de la page ; un
     // rayon qui n'a jamais eu de document dit la verite.
     if (existeDansCeRayon && dansCeRayon.isEmpty) return const <Widget>[];
+    // « Pour cette classe » n'existe que s'il y a quelque chose a y mettre :
+    // elle disparait, elle ne dit pas « vide ».
+    if (rayon == RayonPlanche.pourCetteClasse && !existeDansCeRayon) {
+      return const <Widget>[];
+    }
 
     final Widget corps;
     if (!existeDansCeRayon) {

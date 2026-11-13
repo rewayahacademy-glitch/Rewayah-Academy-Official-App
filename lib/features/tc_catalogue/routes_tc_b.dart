@@ -1,7 +1,10 @@
 import 'package:flutter/widgets.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/apprendre/documents_apprendre.dart';
 import '../../core/router/go_route_sure.dart';
+import '../../core/session/session_controleur.dart';
 import 'bibliotheque_page.dart';
 import 'detail_ressource_page.dart';
 
@@ -78,8 +81,12 @@ abstract final class RoutesTcB {
 List<RouteBase> routesTcB() => <RouteBase>[
   GoRouteSure(
     path: RoutesTcB.bibliotheque,
+    // ESPACE-APPRENDRE (lot 5) : l'eleve n'a pas cette liste, il a celle
+    // d'Apprendre. `redirection.dart` l'y conduit quand il la demande ; ce
+    // constructeur couvre le retour depuis une fiche (le systeme depile et
+    // retombe ici sans repasser par la redirection).
     builder: (BuildContext context, GoRouterState state) =>
-        BibliothequePage(groupeId: _groupeDe(state)),
+        _ListeOuApprendre(groupeId: _groupeDe(state)),
     routes: <RouteBase>[
       GoRouteSure(
         path: ':${RoutesTcB.parametreRessource}',
@@ -102,4 +109,51 @@ String? _groupeDe(GoRouterState etat) {
   final String? brut = etat.uri.queryParameters[RoutesTcB.parametreGroupe];
   final String? propre = brut?.trim();
   return (propre == null || propre.isEmpty) ? null : propre;
+}
+
+/// La liste d'origine pour l'enseignant et le tuteur ; pour l'eleve, un renvoi
+/// vers Apprendre (qui garde la classe d'ou il vient).
+class _ListeOuApprendre extends ConsumerStatefulWidget {
+  const _ListeOuApprendre({required this.groupeId});
+
+  final String? groupeId;
+
+  @override
+  ConsumerState<_ListeOuApprendre> createState() => _ListeOuApprendreEtat();
+}
+
+class _ListeOuApprendreEtat extends ConsumerState<_ListeOuApprendre> {
+  bool _renvoye = false;
+
+  @override
+  Widget build(BuildContext context) {
+    // Une session illisible (ecran monte sans source de session : test,
+    // galerie) garde la liste d'origine.
+    bool eleve;
+    try {
+      eleve = ref.watch(sessionProvider).peutLireLeCoran;
+    } on Object {
+      eleve = false;
+    }
+    if (!eleve) {
+      return BibliothequePage(groupeId: widget.groupeId);
+    }
+    // Sous une fiche, cette page n'est pas l'ecran courant : elle attend. Elle
+    // renvoie quand la fiche se depile et qu'elle redevient l'ecran courant
+    // (`ModalRoute` previent ses dependants du changement).
+    final bool courant = ModalRoute.of(context)?.isCurrent ?? true;
+    if (!courant) {
+      _renvoye = false;
+      return const SizedBox.shrink();
+    }
+    if (!_renvoye) {
+      _renvoye = true;
+      WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+        if (mounted) {
+          GoRouter.of(context).go(cheminApprendre(groupe: widget.groupeId));
+        }
+      });
+    }
+    return const SizedBox.shrink();
+  }
 }

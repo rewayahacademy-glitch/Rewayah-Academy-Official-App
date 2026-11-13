@@ -21,6 +21,7 @@
 library;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
 
 import '../i18n/strings.g.dart';
 import '../router/routes.dart';
@@ -32,6 +33,23 @@ import 'document_planche.dart';
 
 /// L'identifiant de la carte du Coran.
 const String idDocumentCoran = 'coran';
+
+/// Le parametre de l'adresse qui porte la classe d'ou l'eleve vient
+/// (`/eleve/apprendre?groupe=<id>`), le meme que celui de l'ancienne liste
+/// (`RoutesTcB.parametreGroupe`).
+const String parametreGroupeApprendre = 'groupe';
+
+/// L'adresse d'Apprendre, avec la classe d'ou l'eleve vient quand il y en a
+/// une (valeur vide ou blanche : absence).
+String cheminApprendre({String? groupe}) {
+  final String? propre = groupe?.trim();
+  return propre == null || propre.isEmpty
+      ? Routes.eleveApprendre
+      : Uri(
+          path: Routes.eleveApprendre,
+          queryParameters: <String, String>{parametreGroupeApprendre: propre},
+        ).toString();
+}
 
 /// Le chemin de la fiche d'un document du catalogue, avec le retour vers
 /// l'espace Apprendre (`?retour=`, que la fiche existante sait lire : son
@@ -85,13 +103,44 @@ List<DocumentPlanche> documentsDepuisCatalogue(
     if (avecCoran) documentCoran(),
     for (final LibraryResource r in ressources)
       if (r.publiee && r.resourceType != TypeRessource.quran)
-        DocumentPlanche(
-          id: r.id,
-          titre: r.title,
-          type: TypeDocumentPlanche.document,
-          rayon: RayonPlanche.documentsDesCours,
-          ouverture: OuvrirDansLApplication(cheminFicheDocument(r.id)),
-          couverture: CouvertureRessource.pour(r),
-        ),
+        _documentDe(r, RayonPlanche.documentsDesCours),
   ];
 }
+
+DocumentPlanche _documentDe(LibraryResource r, RayonPlanche rayon) =>
+    DocumentPlanche(
+      id: r.id,
+      titre: r.title,
+      type: TypeDocumentPlanche.document,
+      rayon: rayon,
+      ouverture: OuvrirDansLApplication(cheminFicheDocument(r.id)),
+      couverture: CouvertureRessource.pour(r),
+    );
+
+/// Les documents epingles ou assignes a la classe [groupeId] (la rubrique
+/// « Pour cette classe », celle de l'ancienne Bibliotheque que l'eleve ne
+/// voit plus : meme donnee, `PortCatalogue.pourGroupe`).
+///
+/// **Le groupe vient de l'adresse** (`?groupe=`), donc d'une valeur que
+/// n'importe qui peut ecrire : le serveur LEVE pour une classe qui n'est pas
+/// celle de l'appelant (`ressources_du_groupe`). Cet echec est une absence
+/// ici, comme dans `lireDonneesCatalogue` : la rubrique disparait, le reste
+/// de la Bibliotheque ne tombe pas.
+final FutureProviderFamily<List<DocumentPlanche>, String>
+documentsDeLaClasseProvider =
+    FutureProvider.family<List<DocumentPlanche>, String>((
+      Ref ref,
+      String groupeId,
+    ) async {
+      final List<LibraryResource> ressources = await ref
+          .watch(portCatalogueProvider)
+          .pourGroupe(groupeId)
+          .onError<Object>(
+            (Object _, StackTrace _) => const <LibraryResource>[],
+          );
+      return <DocumentPlanche>[
+        for (final LibraryResource r in ressources)
+          if (r.publiee && r.resourceType != TypeRessource.quran)
+            _documentDe(r, RayonPlanche.pourCetteClasse),
+      ];
+    }, retry: (int _, Object _) => null);

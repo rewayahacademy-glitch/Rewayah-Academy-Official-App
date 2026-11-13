@@ -28,6 +28,10 @@ import 'package:rewayah_academy/core/recrutement/ouvreur_lien.dart';
 import 'package:rewayah_academy/core/router/fil_ariane.dart' show planFilPour;
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
+import 'package:rewayah_academy/core/tc_bibliotheque/catalogue_local.dart';
+import 'package:rewayah_academy/core/tc_bibliotheque/donnees_catalogue.dart'
+    show portCatalogueProvider;
+import 'package:rewayah_academy/core/tc_bibliotheque/library_resource.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/ouvreur_onglet.dart';
 import 'package:rewayah_academy/core/theme/app_typography.dart'
     show AppFontFamily;
@@ -49,6 +53,8 @@ import 'package:rewayah_academy/features/tc_catalogue/routes_tc_b.dart';
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../router/support_routeur.dart' show lieu, sessionActive, stabiliser;
 import '../../support/garde_interface.dart';
+import '../../teaching_core/b/faux/faux_ports_b.dart'
+    show CatalogueGroupeRefuse;
 import 'support_apprendre.dart';
 
 /// L'onglet de la barre qui porte [libelle] (la barre flottante n'ecrit que le
@@ -702,12 +708,231 @@ void main() {
             documents: documentsComplets(),
             depart: adresse,
           );
-          expect(lieu(routeur), Routes.eleveApprendre);
+          // La classe d'ou il vient voyage avec lui (`?groupe=`).
+          expect(
+            lieu(routeur),
+            adresse.contains('groupe=')
+                ? '${Routes.eleveApprendre}?groupe=g1'
+                : Routes.eleveApprendre,
+          );
           expect(find.byType(EspaceApprendrePage), findsOneWidget);
           expect(find.byType(OngletBibliotheque), findsOneWidget);
         });
       }
     }
+
+    group('« Pour cette classe » (la rubrique de l ancienne liste)', () {
+      LibraryResource ressource(String id, String titre) => LibraryResource(
+        id: id,
+        title: titre,
+        shortTitle: titre,
+        resourceType: TypeRessource.pdf,
+        language: 'fr',
+        category: 'lecture',
+        accessPolicy: PolitiqueAcces.groupeAssigne,
+        offlinePolicy: PolitiqueOffline.jamais,
+        currentVersionId: 'v-$id',
+      );
+      final LibraryResource devoir = ressource(
+        'devoir-g1',
+        'Le cahier de la classe',
+      );
+      final LibraryResource autre = ressource('autre', 'Un autre document');
+
+      testWidgets('arrivee de la classe : la rubrique est la, en tete, et le '
+          'document n y est montre qu une fois', (WidgetTester tester) async {
+        await monterApprendre(
+          tester,
+          profil: ProfilApprendre.mineurGuide,
+          depart: '${Routes.tcBibliotheque}?groupe=g1',
+          autres: <Override>[
+            portCatalogueProvider.overrideWithValue(
+              CatalogueLocal(
+                ressources: <LibraryResource>[devoir, autre],
+                assignationsParGroupe: <String, List<String>>{
+                  'g1': <String>['devoir-g1'],
+                },
+              ),
+            ),
+          ],
+        );
+        final Finder rayon = find.byKey(
+          PlancheDocuments.cleRayon(RayonPlanche.pourCetteClasse),
+        );
+        expect(rayon, findsOneWidget);
+        expect(
+          find.descendant(
+            of: rayon,
+            matching: find.text(t.apprendre.bibliotheque.rayonClasse),
+          ),
+          findsOneWidget,
+        );
+        // En tete : au-dessus du rayon des cours.
+        expect(
+          tester.getTopLeft(rayon).dy,
+          lessThan(
+            tester
+                .getTopLeft(
+                  find.byKey(
+                    PlancheDocuments.cleRayon(RayonPlanche.documentsDesCours),
+                  ),
+                )
+                .dy,
+          ),
+        );
+        // Une seule fois, dans la rubrique de la classe.
+        expect(
+          find.byKey(PlancheDocuments.cleDocument('devoir-g1')),
+          findsOneWidget,
+        );
+        expect(
+          find.descendant(
+            of: rayon,
+            matching: find.byKey(PlancheDocuments.cleDocument('devoir-g1')),
+          ),
+          findsOneWidget,
+        );
+        expect(
+          find.byKey(PlancheDocuments.cleDocument('autre')),
+          findsOneWidget,
+        );
+      });
+
+      testWidgets('sans classe dans l adresse : pas de rubrique', (
+        WidgetTester tester,
+      ) async {
+        await monterApprendre(
+          tester,
+          profil: ProfilApprendre.mineurGuide,
+          autres: <Override>[
+            portCatalogueProvider.overrideWithValue(
+              CatalogueLocal(
+                ressources: <LibraryResource>[devoir, autre],
+                assignationsParGroupe: <String, List<String>>{
+                  'g1': <String>['devoir-g1'],
+                },
+              ),
+            ),
+          ],
+        );
+        expect(
+          find.byKey(PlancheDocuments.cleRayon(RayonPlanche.pourCetteClasse)),
+          findsNothing,
+        );
+        expect(
+          find.byKey(PlancheDocuments.cleDocument('devoir-g1')),
+          findsOneWidget,
+        );
+      });
+
+      testWidgets('classe sans document : la rubrique disparait, elle ne dit '
+          'pas vide', (WidgetTester tester) async {
+        await monterApprendre(
+          tester,
+          profil: ProfilApprendre.mineurGuide,
+          depart: '${Routes.tcBibliotheque}?groupe=g2',
+          autres: <Override>[
+            portCatalogueProvider.overrideWithValue(
+              CatalogueLocal(ressources: <LibraryResource>[devoir, autre]),
+            ),
+          ],
+        );
+        expect(
+          find.byKey(PlancheDocuments.cleRayon(RayonPlanche.pourCetteClasse)),
+          findsNothing,
+        );
+        expect(
+          find.byKey(PlancheDocuments.cleDocument('autre')),
+          findsOneWidget,
+        );
+      });
+
+      testWidgets('classe falsifiee (le serveur refuse) : la rubrique est '
+          'absente, le reste de la Bibliotheque tient', (
+        WidgetTester tester,
+      ) async {
+        await monterApprendre(
+          tester,
+          profil: ProfilApprendre.mineurGuide,
+          depart: '${Routes.tcBibliotheque}?groupe=pas-la-mienne',
+          autres: <Override>[
+            portCatalogueProvider.overrideWithValue(
+              CatalogueGroupeRefuse(
+                ressources: <LibraryResource>[devoir, autre],
+              ),
+            ),
+          ],
+        );
+        expect(
+          find.byKey(PlancheDocuments.cleRayon(RayonPlanche.pourCetteClasse)),
+          findsNothing,
+        );
+        expect(
+          find.byKey(PlancheDocuments.cleDocument('devoir-g1')),
+          findsOneWidget,
+        );
+        expect(find.byKey(ClesBibliotheque.erreur), findsNothing);
+      });
+
+      testWidgets('Ma classe adulte, « Voir tout » : meme chemin, la classe '
+          'suit', (WidgetTester tester) async {
+        final GoRouter routeur = await monterApprendre(
+          tester,
+          depart: RoutesTcB.avecGroupe('g1'),
+          autres: <Override>[
+            portCatalogueProvider.overrideWithValue(
+              CatalogueLocal(
+                ressources: <LibraryResource>[devoir, autre],
+                assignationsParGroupe: <String, List<String>>{
+                  'g1': <String>['devoir-g1'],
+                },
+              ),
+            ),
+          ],
+        );
+        expect(lieu(routeur), '${Routes.eleveApprendre}?groupe=g1');
+        expect(
+          find.byKey(PlancheDocuments.cleRayon(RayonPlanche.pourCetteClasse)),
+          findsOneWidget,
+        );
+      });
+    });
+
+    group('retour depuis une fiche (navigateur, bouton du telephone)', () {
+      testWidgets('retour systeme depuis une fiche ouverte d Apprendre : on '
+          'revient a Apprendre, jamais a l ancienne liste', (
+        WidgetTester tester,
+      ) async {
+        final GoRouter routeur = await monterApprendre(
+          tester,
+          profil: ProfilApprendre.mineurGuide,
+          documents: documentsComplets(),
+        );
+        await tester.tap(
+          find.byKey(PlancheDocuments.cleDocument('livre-lecture')),
+        );
+        await stabiliser(tester);
+        expect(lieu(routeur), cheminFicheDocument('livre-lecture'));
+        await tester.binding.handlePopRoute();
+        await stabiliser(tester);
+        expect(lieu(routeur), Routes.eleveApprendre);
+        expect(find.byType(EspaceApprendrePage), findsOneWidget);
+      });
+
+      testWidgets('retour systeme depuis une fiche ouverte par un lien direct '
+          '(sans historique) : Apprendre aussi', (WidgetTester tester) async {
+        final GoRouter routeur = await monterApprendre(
+          tester,
+          profil: ProfilApprendre.mineurGuide,
+          documents: documentsComplets(),
+          depart: RoutesTcB.versRessource('livre-lecture'),
+        );
+        await tester.binding.handlePopRoute();
+        await stabiliser(tester);
+        expect(lieu(routeur), Routes.eleveApprendre);
+        expect(find.byType(EspaceApprendrePage), findsOneWidget);
+      });
+    });
 
     testWidgets('le tuteur garde la Bibliotheque d origine', (
       WidgetTester tester,
@@ -1085,6 +1310,42 @@ void main() {
       expect(find.text(t.suiviPedagogique.sourates), findsOneWidget);
     });
 
+    testWidgets('6 a 9 ans : le dernier jalon est lu SANS sa date, dans l '
+        'onglet comme dans la carte', (WidgetTester tester) async {
+      await monterApprendre(
+        tester,
+        profil: ProfilApprendre.mineurGuide,
+        documents: documentsComplets(),
+        suivi: SuiviLu(lectureDemo(dates: false)),
+        autres: <Override>[
+          portProgressionFamilleProvider.overrideWithValue(_FamilleAvecJalon()),
+        ],
+      );
+      await _ouvrirOnglet(tester, t.apprendre.sections.programme);
+      expect(find.text(t.suiviPedagogique.dernierJalon), findsOneWidget);
+      expect(find.textContaining('Lit chaque lettre'), findsOneWidget);
+      // Aucune date, nulle part dans l'onglet : ni celle du jalon, ni les
+      // dates de l'academie (la section n'existe pas).
+      expect(find.textContaining('2026'), findsNothing);
+      expect(find.byKey(ClesProgramme.datesEcole), findsNothing);
+    });
+
+    testWidgets('des 10 ans ou adulte : la date du jalon est lue', (
+      WidgetTester tester,
+    ) async {
+      await monterApprendre(
+        tester,
+        documents: documentsComplets(),
+        suivi: SuiviLu(lectureDemo(dates: true)),
+        autres: <Override>[
+          portProgressionFamilleProvider.overrideWithValue(_FamilleAvecJalon()),
+        ],
+      );
+      await _ouvrirOnglet(tester, t.apprendre.sections.programme);
+      expect(find.text(t.suiviPedagogique.dernierJalon), findsOneWidget);
+      expect(find.textContaining('2026'), findsWidgets);
+    });
+
     testWidgets('sans port branche : meme etat vide honnete', (
       WidgetTester tester,
     ) async {
@@ -1269,4 +1530,17 @@ void main() {
       }
     }
   });
+}
+
+/// Le niveau declare et le dernier jalon, avec sa date (ce que rendrait un
+/// adaptateur).
+class _FamilleAvecJalon implements PortProgressionFamille {
+  @override
+  Future<ProgressionEleve> progression(String eleveId) async =>
+      ProgressionEleve(
+        eleveId: eleveId,
+        niveauHumain: 'Les lettres',
+        jalons: const <String>['Lit chaque lettre'],
+        dernierJalonLe: DateTime(2026, 10, 14),
+      );
 }

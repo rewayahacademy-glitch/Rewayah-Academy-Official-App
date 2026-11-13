@@ -78,6 +78,13 @@ Future<void> _monter(
 Finder _onglet(String libelle) =>
     find.ancestor(of: find.text(libelle), matching: find.byType(Pressable));
 
+/// L'onglet de la barre basse nomme [libelle], libelle visible ou icone seule
+/// (la barre guidee passe en icones seules quand la largeur manque : le nom
+/// reste celui du lecteur d'ecran et de l'infobulle).
+Finder _ongletBarre(String libelle) => find.byWidgetPredicate(
+  (Widget w) => w is Pressable && w.libelleSemantique == libelle,
+);
+
 List<Destination> _eleve(InterfaceMode mode) =>
     destinationsPour(role: AppRole.student, mode: mode);
 
@@ -90,6 +97,91 @@ double _contraste(Color a, Color b) {
   final double haut = la > lb ? la : lb;
   final double bas = la > lb ? lb : la;
   return (haut + 0.05) / (bas + 0.05);
+}
+
+/// Les controles de la barre guidee : une seule rangee, cibles de 48 au
+/// moins, aucun debordement, chaque destination atteignable et nommee
+/// (libelle pour le lecteur d'ecran), l'onglet choisi avec son libelle.
+void _verifierUneRangee(
+  WidgetTester tester,
+  List<Destination> d, {
+  required int indexActif,
+  double largeur = 320,
+}) {
+  final SemanticsHandle sem = tester.ensureSemantics();
+  double? haut;
+  final List<Rect> rects = <Rect>[];
+  for (int i = 0; i < d.length; i++) {
+    final Destination x = d[i];
+    final bool complet = find.text(x.libelle).evaluate().isNotEmpty;
+    // L'onglet choisi garde toujours son libelle.
+    if (i == indexActif) {
+      expect(complet, isTrue, reason: 'choisi : ${x.libelle}');
+    }
+    // Chaque destination est nommee pour le lecteur d'ecran, libelle visible
+    // ou non.
+    expect(
+      find.bySemanticsLabel(x.libelle),
+      findsWidgets,
+      reason: 'semantique : ${x.libelle}',
+    );
+    // Hors libelle, l'infobulle porte le nom (icone seule).
+    if (!complet) {
+      expect(find.byTooltip(x.libelle), findsOneWidget, reason: x.libelle);
+    }
+    final Rect onglet = tester.getRect(_ongletBarre(x.libelle));
+    expect(
+      onglet.height,
+      greaterThanOrEqualTo(AppTouchTarget.standard),
+      reason: x.libelle,
+    );
+    expect(
+      onglet.width,
+      greaterThanOrEqualTo(AppTouchTarget.standard),
+      reason: x.libelle,
+    );
+    expect(onglet.left, greaterThanOrEqualTo(0), reason: x.libelle);
+    expect(onglet.right, lessThanOrEqualTo(largeur), reason: x.libelle);
+    // Une seule rangee : meme axe horizontal pour tous (le cercle du Compte,
+    // plus haut que les onglets, est centre sur le meme axe).
+    haut ??= onglet.center.dy;
+    expect((onglet.center.dy - haut).abs(), lessThan(2), reason: x.libelle);
+    rects.add(onglet);
+    if (complet) {
+      // Libelle sous l'icone, entier.
+      final Rect icone = tester.getRect(
+        find.descendant(
+          of: _onglet(x.libelle),
+          matching: x.compte ? find.byType(AvatarTile) : find.byType(Icon),
+        ),
+      );
+      expect(
+        tester.getRect(find.text(x.libelle)).top,
+        greaterThanOrEqualTo(icone.bottom),
+        reason: x.libelle,
+      );
+      final RenderParagraph p = tester.renderObject<RenderParagraph>(
+        find.text(x.libelle),
+      );
+      expect(p.didExceedMaxLines, isFalse, reason: x.libelle);
+      // Jamais sous le plancher de lisibilite.
+      expect(
+        p.textScaler.scale(10),
+        greaterThanOrEqualTo(10 * echelleMinimaleLisible - 0.001),
+        reason: x.libelle,
+      );
+    }
+  }
+  // Onglets espaces d'au moins 4, jamais colles (dans l'ordre d'ecran, que la
+  // direction soit LTR ou RTL).
+  rects.sort((Rect a, Rect b) => a.left.compareTo(b.left));
+  for (int i = 1; i < rects.length; i++) {
+    expect(
+      rects[i].left - rects[i - 1].right,
+      greaterThanOrEqualTo(AppSpacing.xs - 0.01),
+    );
+  }
+  sem.dispose();
 }
 
 void main() {
@@ -190,8 +282,8 @@ void main() {
     for (final double echelle in <double>[1, 2]) {
       for (final Brightness luminosite in Brightness.values) {
         testWidgets(
-          '320, texte x${echelle.toInt()}, ${luminosite.name} : onglets de 72, '
-          'libelle sous l icone, espaces, sans debordement',
+          '320, texte x${echelle.toInt()}, ${luminosite.name} : UNE rangee, '
+          'cibles de 48 au moins, onglet choisi lisible, sans debordement',
           (WidgetTester tester) async {
             final List<Destination> d = _eleve(InterfaceMode.enfant);
             await _monter(
@@ -202,65 +294,83 @@ void main() {
               echelle: echelle,
               luminosite: luminosite,
             );
-            expect(find.byKey(NavShell.barreBasseKey), findsOneWidget);
-            double? finPrecedent;
-            double? hautPrecedent;
-            for (final Destination x in d) {
-              // Libelle toujours visible.
-              expect(find.text(x.libelle), findsOneWidget, reason: x.libelle);
-              final Rect onglet = tester.getRect(_onglet(x.libelle));
-              expect(
-                onglet.height,
-                greaterThanOrEqualTo(AppTouchTarget.enfant),
-                reason: x.libelle,
-              );
-              expect(
-                onglet.width,
-                greaterThanOrEqualTo(AppTouchTarget.enfant),
-                reason: x.libelle,
-              );
-              // Libelle sous l'icone.
-              // NAV-REFONTE : la tuile Compte porte l'avatar a la place de
-              // l'icone ; le nom reste dessous.
-              final Rect icone = tester.getRect(
-                find.descendant(
-                  of: _onglet(x.libelle),
-                  matching: x.compte
-                      ? find.byType(AvatarTile)
-                      : find.byType(Icon),
-                ),
-              );
-              final Rect texte = tester.getRect(find.text(x.libelle));
-              expect(texte.top, greaterThanOrEqualTo(icone.bottom));
-              // Tout reste dans l'ecran.
-              expect(onglet.left, greaterThanOrEqualTo(0));
-              expect(onglet.right, lessThanOrEqualTo(320));
-              // Onglets espaces, sur une meme rangee. ESPACE-APPRENDRE (lot 5) :
-              // l'onglet « Apprendre » (mot de 101 points, au lieu de « Coran »)
-              // ne tient plus avec les trois autres sur une rangee a 320 : la
-              // barre passe alors sur deux rangees (son repli prevu), et
-              // l'ecart se mesure entre onglets d'une meme rangee.
-              if (finPrecedent != null &&
-                  hautPrecedent != null &&
-                  (onglet.top - hautPrecedent).abs() < 1) {
-                expect(
-                  onglet.left - finPrecedent,
-                  // MA-CMD-1 : quatre onglets de 72 a 320, l'ecart se
-                  // resserre a 4.
-                  greaterThanOrEqualTo(
-                    d.length >= 4 ? AppSpacing.xs : AppSpacing.sm,
-                  ),
-                  reason: x.libelle,
-                );
-              }
-              finPrecedent = onglet.right;
-              hautPrecedent = onglet.top;
-            }
+            _verifierUneRangee(tester, d, indexActif: 1);
             expect(tester.takeException(), isNull);
           },
         );
       }
     }
+
+    testWidgets(
+      'le choix de l onglet change l onglet qui garde son libelle, la barre '
+      'reste sur une rangee',
+      (WidgetTester tester) async {
+        final List<Destination> d = _eleve(InterfaceMode.enfant);
+        for (int actif = 0; actif < d.length; actif++) {
+          await _monter(
+            tester,
+            mode: InterfaceMode.enfant,
+            destinations: d,
+            indexActif: actif,
+          );
+          _verifierUneRangee(tester, d, indexActif: actif);
+        }
+      },
+    );
+
+    for (final double echelle in <double>[1, 1.5, 2]) {
+      testWidgets(
+        'arabe reel, 320, RTL, texte x$echelle : UNE rangee, choisi lisible, '
+        'rien ne deborde',
+        (WidgetTester tester) async {
+          final List<Destination> base = _eleve(InterfaceMode.enfant);
+          const List<String> mots = <String>[
+            'الرئيسية',
+            'فصلي',
+            'التعلم',
+            'مساحتي',
+          ];
+          final List<Destination> d = <Destination>[
+            for (int i = 0; i < base.length; i++)
+              Destination(
+                libelle: mots[i],
+                icone: base[i].icone,
+                chemin: base[i].chemin,
+                compte: base[i].compte,
+              ),
+          ];
+          for (int actif = 0; actif < d.length; actif++) {
+            await _monter(
+              tester,
+              mode: InterfaceMode.enfant,
+              destinations: d,
+              indexActif: actif,
+              direction: TextDirection.rtl,
+              echelle: echelle,
+            );
+            _verifierUneRangee(tester, d, indexActif: actif);
+          }
+          expect(tester.takeException(), isNull);
+        },
+      );
+    }
+
+    testWidgets('a 480, tout tient : les quatre libelles reviennent', (
+      WidgetTester tester,
+    ) async {
+      final List<Destination> d = _eleve(InterfaceMode.enfant);
+      await _monter(
+        tester,
+        mode: InterfaceMode.enfant,
+        destinations: d,
+        indexActif: 1,
+        taille: const Size(480, 700),
+      );
+      for (final Destination x in d) {
+        expect(find.text(x.libelle), findsOneWidget, reason: x.libelle);
+      }
+      _verifierUneRangee(tester, d, indexActif: 1, largeur: 480);
+    });
 
     testWidgets('aucun libelle n est tronque a 320, texte x2', (
       WidgetTester tester,
@@ -274,6 +384,9 @@ void main() {
         echelle: 2,
       );
       for (final Destination x in d) {
+        // Icone seule (largeur manquante) : le libelle est celui de
+        // l'infobulle, rien a tronquer.
+        if (find.text(x.libelle).evaluate().isEmpty) continue;
         final RenderParagraph p = tester.renderObject<RenderParagraph>(
           find.text(x.libelle),
         );
@@ -397,6 +510,9 @@ void main() {
           destinations: d,
           indexActif: 1,
           luminosite: luminosite,
+          // A 480 les quatre libelles tiennent : les trois signaux se
+          // mesurent sur l'onglet choisi et sur un onglet au repos.
+          taille: const Size(480, 700),
         );
         final AppPalette palette = _palette(tester);
         final Destination active = d[1];
@@ -483,7 +599,7 @@ void main() {
         onAller: rendus.add,
       );
       for (final Destination x in d) {
-        await tester.tap(_onglet(x.libelle));
+        await tester.tap(_ongletBarre(x.libelle));
         await tester.pump();
       }
       final Set<String> standard = _eleve(InterfaceMode.standard)
@@ -505,8 +621,8 @@ void main() {
         direction: TextDirection.rtl,
         echelle: 2,
       );
-      final double premier = tester.getCenter(_onglet(d.first.libelle)).dx;
-      final double dernier = tester.getCenter(_onglet(d.last.libelle)).dx;
+      final double premier = tester.getCenter(_ongletBarre(d.first.libelle)).dx;
+      final double dernier = tester.getCenter(_ongletBarre(d.last.libelle)).dx;
       expect(premier, greaterThan(dernier));
       expect(tester.takeException(), isNull);
     });
@@ -559,13 +675,16 @@ void main() {
           indexActif: 0,
           echelle: 2,
         );
+        // Hauteur de 72 pour tous (l'icone seule garde la hauteur de la
+        // rangee), une seule rangee, chaque destination nommee.
         for (final Destination x in d) {
           expect(
-            tester.getSize(_onglet(x.libelle)).height,
+            tester.getSize(_ongletBarre(x.libelle)).height,
             greaterThanOrEqualTo(AppTouchTarget.enfant),
             reason: x.libelle,
           );
         }
+        _verifierUneRangee(tester, d, indexActif: 0);
         expect(tester.takeException(), isNull);
       });
 

@@ -32,6 +32,11 @@ enum TypeDocumentPlanche {
 
 /// Les deux rayons de la Bibliotheque (charte, partie 11).
 enum RayonPlanche {
+  /// Tout en haut, seulement quand l'eleve vient de sa classe (`?groupe=`) :
+  /// « Pour cette classe », les documents epingles ou assignes a cette classe.
+  /// Disparait quand elle n'en a aucun.
+  pourCetteClasse,
+
   /// En haut : « Documents des cours », fournis par l'academie, sans limite
   /// de nombre. Le Coran en est un.
   documentsDesCours,

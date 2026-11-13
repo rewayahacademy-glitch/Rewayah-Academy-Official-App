@@ -17,6 +17,7 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/router/etat_routeur_sur.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/skeleton.dart';
 
@@ -64,10 +65,27 @@ class OngletBibliotheque extends ConsumerWidget {
     }
     // La carte « Coran » est reecrite ici, dans la langue courante : le
     // fournisseur garde la langue de sa lecture.
+    // « Pour cette classe » : seulement quand l'eleve vient de sa classe
+    // (`?groupe=`) ; ces documents ne sont montres qu'une fois, dans cette
+    // rubrique, et plus dans « Documents des cours ». Une lecture en cours ou
+    // en echec n'ajoute rien : la rubrique est absente, le reste s'affiche.
+    final String? groupe = parametreRouteurSur(
+      context,
+      parametreGroupeApprendre,
+    );
+    final List<DocumentPlanche> classe = groupe == null || groupe.isEmpty
+        ? const <DocumentPlanche>[]
+        : ref.watch(documentsDeLaClasseProvider(groupe)).value ??
+              const <DocumentPlanche>[];
+    final Set<String> dansLaClasse = <String>{
+      for (final DocumentPlanche d in classe) d.id,
+    };
     return PlancheDocuments(
       documents: <DocumentPlanche>[
+        ...classe,
         for (final DocumentPlanche d in documents.requireValue)
-          d.id == idDocumentCoran ? documentCoran() : d,
+          if (!dansLaClasse.contains(d.id))
+            d.id == idDocumentCoran ? documentCoran() : d,
       ],
     );
   }

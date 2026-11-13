@@ -14832,6 +14832,7 @@
     },
     "bibliotheque": {
       "rayonCours": "وثائق الدروس",
+      "rayonClasse": "لهذا الفصل",
       "rayonPlusLoin": "للتعمّق أكثر",
       "rayonCoursVide": {
         "message": "ستظهر وثائق الدروس هنا",

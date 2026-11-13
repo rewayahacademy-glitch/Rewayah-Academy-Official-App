@@ -1139,9 +1139,11 @@ class _BarreFlottante extends StatelessWidget {
   ///    de l'appareil (au plus 1) ;
   /// 2. une rangee, l'echelle reduite jusqu'a [echelleMinimaleLisible]
   ///    (reduction bornee, comme la barre standard) ;
-  /// 3. deux rangees de deux onglets : la barre grandit, chaque onglet a la
-  ///    moitie de la largeur. Toutes les destinations restent visibles
-  ///    (pas de defilement, qui en cacherait une a l'utilisateur guide).
+  /// 3. une rangee, onglets non selectionnes en icone seule (cible de 48,
+  ///    nom en infobulle et pour le lecteur d'ecran), l'onglet selectionne
+  ///    gardant icone et libelle. Toutes les destinations restent visibles
+  ///    (pas de defilement, qui en cacherait une a l'utilisateur guide) et la
+  ///    barre ne grandit jamais en hauteur.
   Widget _rangeesGuide(
     BuildContext contexte,
     AppMetriques metriques,
@@ -1186,23 +1188,35 @@ class _BarreFlottante extends StatelessWidget {
           ) <=
           disponible / n - 2 * AppSpacing.xs,
     );
-    final bool deuxRangees =
+    // ESPACE-APPRENDRE (arbitrage de l'architecte, 13/11/2026) : UNE SEULE
+    // rangee, toujours. Quand ni les minimums, ni l'echelle reduite, ni les
+    // parts egales ne tiennent, les onglets NON selectionnes passent en
+    // icone seule (cible de 48, nom lu par le lecteur d'ecran et en
+    // infobulle) ; l'onglet selectionne garde icone et libelle, a une echelle
+    // qui ne descend jamais sous le plancher de lisibilite. Des que tout
+    // tient, les libelles reviennent.
+    final bool iconesSeules =
         largeurs == null &&
         !motsTiennentEnParts &&
         n > 2 &&
         disponible.isFinite;
-    final int parRangee = deuxRangees ? (n + 1) ~/ 2 : n;
-    final double largeurDeux =
-        (c.maxWidth - ecart * (parRangee - 1)) / parRangee;
+    const double largeurIcone = AppTouchTarget.standard;
+    final double largeurSelectionne = iconesSeules
+        ? c.maxWidth - ecart * (n - 1) - largeurIcone * (n - 1)
+        : 0;
     // COUPE-MOTS-1 point 6 : une seule echelle pour les libelles, celle du
     // plus contraint ; plus un onglet reduit et son voisin non.
+    final List<int> visibles = <int>[
+      for (int i = 0; i < n; i++)
+        if (!iconesSeules || i == _actifOnglet) i,
+    ];
     final TextScaler commune = echelleCommuneSansCoupure(
       contexte,
-      textes: <String>[for (final Destination d in destinations) d.libelle],
+      textes: <String>[for (final int i in visibles) destinations[i].libelle],
       largeurs: <double>[
-        for (int i = 0; i < n; i++)
-          (deuxRangees
-                  ? largeurDeux
+        for (final int i in visibles)
+          (iconesSeules
+                  ? largeurSelectionne
                   : largeurs == null
                   ? disponible / n
                   : largeurs[i]) -
@@ -1217,32 +1231,26 @@ class _BarreFlottante extends StatelessWidget {
     Widget onglet(int i) => _OngletBarreGuide(
       destination: destinations[i],
       actif: i == _actifOnglet,
+      iconeSeule: iconesSeules && i != _actifOnglet,
       onAller: onAller,
     );
-    Widget rangee(int debut, int fin, List<double>? parts) => IntrinsicHeight(
+    Widget rangee(List<double>? parts) => IntrinsicHeight(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          for (int i = debut; i < fin; i++) ...<Widget>[
-            if (i > debut) SizedBox(width: ecart),
-            _part(parts == null || i == fin - 1 ? null : parts[i], onglet(i)),
+          for (int i = 0; i < n; i++) ...<Widget>[
+            if (i > 0) SizedBox(width: ecart),
+            if (iconesSeules)
+              _part(i == _actifOnglet ? null : largeurIcone, onglet(i))
+            else
+              _part(parts == null || i == n - 1 ? null : parts[i], onglet(i)),
           ],
         ],
       ),
     );
     return MediaQuery(
       data: MediaQuery.of(contexte).copyWith(textScaler: commune),
-      child: deuxRangees
-          ? Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                rangee(0, parRangee, null),
-                SizedBox(height: ecart),
-                rangee(parRangee, n, null),
-              ],
-            )
-          : rangee(0, n, largeurs),
+      child: rangee(largeurs),
     );
   }
 
@@ -1664,11 +1672,16 @@ class _OngletBarreGuide extends StatelessWidget {
     required this.destination,
     required this.actif,
     required this.onAller,
+    this.iconeSeule = false,
   });
 
   final Destination destination;
   final bool actif;
   final void Function(String chemin) onAller;
+
+  /// Vrai quand la barre manque de place : l'onglet n'affiche que son icone
+  /// (cible de 48) ; son nom reste lu par le lecteur d'ecran et en infobulle.
+  final bool iconeSeule;
 
   @override
   Widget build(BuildContext context) {
@@ -1678,6 +1691,36 @@ class _OngletBarreGuide extends StatelessWidget {
     final Color encre = actif
         ? palette.surfacePrimary.onBackground
         : palette.inkStrong.asBorderSide().color;
+
+    if (iconeSeule) {
+      return Semantics(
+        container: true,
+        selected: actif,
+        child: Pressable(
+          onPress: () => onAller(destination.chemin),
+          libelleSemantique: destination.libelle,
+          arrondiFocus: metriques.arrondiInterieur,
+          child: ExcludeSemantics(
+            child: Tooltip(
+              message: destination.libelle,
+              excludeFromSemantics: true,
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  minHeight: metriques.cibleTactile,
+                  minWidth: AppTouchTarget.standard,
+                ),
+                child: Center(
+                  child: IconTheme(
+                    data: IconThemeData(color: encre, size: AppSpacing.xxxl),
+                    child: Icon(destination.icone.resoudre(selectionne: false)),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    }
 
     return Semantics(
       container: true,

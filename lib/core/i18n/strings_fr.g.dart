@@ -23844,6 +23844,9 @@ class Traductions$apprendre$bibliotheque$fr {
 	/// fr: 'Documents des cours'
 	String get rayonCours => 'Documents des cours';
 
+	/// fr: 'Pour cette classe'
+	String get rayonClasse => 'Pour cette classe';
+
 	/// fr: 'Pour aller plus loin'
 	String get rayonPlusLoin => 'Pour aller plus loin';
 
@@ -61448,6 +61451,7 @@ extension on Traductions {
 			'apprendre.sections.programme' => 'Programme',
 			'apprendre.sections.livret' => 'Mon livret',
 			'apprendre.bibliotheque.rayonCours' => 'Documents des cours',
+			'apprendre.bibliotheque.rayonClasse' => 'Pour cette classe',
 			'apprendre.bibliotheque.rayonPlusLoin' => 'Pour aller plus loin',
 			'apprendre.bibliotheque.rayonCoursVide.message' => 'Les documents des cours arriveront ici',
 			'apprendre.bibliotheque.rayonCoursVide.invitation' => 'Ils apparaissent dès que l\'académie les publie.',
