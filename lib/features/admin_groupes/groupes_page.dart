@@ -17,7 +17,6 @@ import '../../core/capacites/port_enseignants_classe.dart';
 import '../../core/formulaires/motifs_proposes.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
-import '../../core/i18n/villes_fuseau.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/offres/affectation_refusee.dart';
 import '../../core/planning/service_planning.dart' show Creneau;
@@ -282,7 +281,7 @@ class _GroupesPageEtat extends ConsumerState<GroupesPage> {
           for (final String fuseau in reference?.fuseaux ?? const <String>[])
             EntreeFiltre<String>(
               valeur: fuseau,
-              libelle: villeDuFuseauLibelle(fuseau),
+              libelle: nomFuseauClasse(fuseau),
             ),
         ],
         onChoix: (String? fuseau) =>
@@ -545,7 +544,7 @@ class _GroupesPageEtat extends ConsumerState<GroupesPage> {
         ),
       if (f.fuseau case final String fuseau)
         FiltreActif(
-          libelle: axe(l.filtreFuseau, villeDuFuseauLibelle(fuseau)),
+          libelle: axe(l.filtreFuseau, nomFuseauClasse(fuseau)),
           onRetirer: () => _filtrer(f.avec(fuseau: () => null)),
         ),
       if (f.genre case final GenreClasse genre)
@@ -1447,7 +1446,9 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
         return t.admin.groupes.c1.prisNommee(
           nom: choisi.enseignant.libelle,
           classe: classe,
-          quand: quandConflit(ConflitHoraire(jour: _jour!, heure: _heure!)),
+          quand: quandConflit(
+            ConflitHoraire(jour: _jour!, heure: _heure!, fuseau: _fuseauSaisie),
+          ),
         );
       }
       return manqueEnseignantClasse(choisi, genre, _type);

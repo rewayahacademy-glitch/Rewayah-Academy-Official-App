@@ -295,3 +295,62 @@ class LigneApercuClasse extends ConsumerWidget {
     );
   }
 }
+
+/// L'equivalent a La Mecque d'une heure saisie dans [fuseauSaisie] : « A l'heure
+/// de La Mecque, la classe aura lieu le mercredi a 21:00. », montre AVANT
+/// d'envoyer (HORLOGE-ET-LIEU, correction B2). Rien quand l'heure est deja saisie
+/// a l'heure de La Mecque, ou quand le serveur ne repond pas.
+class LigneEquivalentMecque extends ConsumerWidget {
+  /// Cree la ligne.
+  const LigneEquivalentMecque({
+    required this.fuseauSaisie,
+    required this.jour,
+    required this.heure,
+    super.key,
+  });
+
+  /// Le fuseau dans lequel l'heure est saisie.
+  final String fuseauSaisie;
+
+  /// Le jour (1 a 7) saisi, ou `null` tant qu'il n'est pas choisi.
+  final int? jour;
+
+  /// L'heure saisie, ou `null` tant qu'elle n'est pas choisie.
+  final int? heure;
+
+  /// Cle de la ligne.
+  static const Key cle = ValueKey<String>('equivalent-mecque');
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final String academie = horlogeAcademie?.fuseau ?? fuseauAcademieDefaut;
+    final int? j = jour;
+    final int? h = heure;
+    if (fuseauSaisie == academie || j == null || h == null) {
+      return const SizedBox.shrink();
+    }
+    final ResumeCreneauEnseignant? lu = ref
+        .watch(
+          resumeCreneauEnseignantProvider((
+            fuseauEnseignant: fuseauSaisie,
+            jour: j,
+            heure: h,
+          )),
+        )
+        .value;
+    if (lu == null) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsetsDirectional.only(top: AppSpacing.sm),
+      child: TexteSansCoupure(
+        key: cle,
+        t.tc.groupe.horloges.apercuClasse(
+          jour: t.commun.dates.jours[lu.jourAcademie - 1].toLowerCase(),
+          heure: lu.heureAcademie,
+        ),
+        style: AppTypography.tabulaire(
+          Theme.of(context).textTheme.bodySmall ?? const TextStyle(),
+        ),
+      ),
+    );
+  }
+}

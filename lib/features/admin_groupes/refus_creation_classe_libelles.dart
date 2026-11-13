@@ -14,6 +14,11 @@ import '../../core/admin/creation_classe_refusee.dart';
 import '../../core/i18n/isolat_bidi.dart' show enTeteArabe;
 import '../../core/i18n/strings.g.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
+import '../../core/tc_horloge/apercu_creneau.dart' show fuseauAcademieDefaut;
+import '../../core/tc_horloge/creneau_chez_moi.dart';
+import '../../core/tc_horloge/fuseaux_interlocuteurs.dart' show FuseauVu;
+import '../../core/tc_horloge/mon_horloge.dart'
+    show chezMoi, heureMecqueSiDifferente, horlogeAcademie;
 import '../suivi_demandes/libelles_suivi_demandes.dart' show deFuseau;
 
 /// La phrase du refus [motif].
@@ -65,6 +70,13 @@ String phraseRefusCreationClasse(
 String quandConflit(ConflitHoraire conflit) {
   final c1 = t.admin.groupes.c1;
   final String jourNom = t.disponibilites.joursLongs[conflit.jour - 1];
+  final String? fuseau = conflit.fuseau;
+  // HORLOGE-ET-LIEU (B1) : l'heure du conflit se lit chez la personne, puis a
+  // l'heure de La Mecque ; jamais l'heure enregistree brute, jamais « Riyad ».
+  if (fuseau != null) {
+    final String? lu = _quandChezMoi(conflit, fuseau);
+    if (lu != null) return lu;
+  }
   final String jour = _avecDate(jourNom, conflit.date);
   final String heure = LibellesGroupe.insecable(
     conflit.minute == 0
@@ -74,14 +86,62 @@ String quandConflit(ConflitHoraire conflit) {
             mm: conflit.minute.toString().padLeft(2, '0'),
           ),
   );
-  final String? fuseau = conflit.fuseau;
-  return fuseau == null
-      ? c1.quandSansVille(jour: jour, heure: heure)
+  if (fuseau == null) return c1.quandSansVille(jour: jour, heure: heure);
+  // Sans lecture du fuseau : le fuseau de l'academie se dit « heure de La
+  // Mecque » (jamais le nom d'une ville), tout autre, sa ville.
+  return fuseau == (horlogeAcademie?.fuseau ?? fuseauAcademieDefaut)
+      ? c1.quandMecque(jour: jour, heure: heure)
       : c1.quand(
           jour: jour,
           heure: heure,
           deVille: deFuseau(fuseau, cle: 'admin.groupes.c1.quand'),
         );
+}
+
+/// L'heure d'un conflit chez la personne puis a La Mecque, ou `null` quand le
+/// fuseau n'est pas lu ou que l'heure n'est pas sure.
+String? _quandChezMoi(ConflitHoraire conflit, String fuseau) {
+  final FuseauVu? f = fuseauVuConnu(fuseau);
+  if (f == null) return null;
+  final DateTime? datee = conflit.date == null
+      ? null
+      : DateTime.tryParse(conflit.date!);
+  final DateTime? instant = datee != null
+      ? instantDeMurale(
+          f,
+          DateTime.utc(
+            datee.year,
+            datee.month,
+            datee.day,
+            conflit.heure,
+            conflit.minute,
+          ),
+        )
+      : prochainCoursUtc(
+          jour: conflit.jour,
+          heure: conflit.heure,
+          fuseauCreneau: f,
+          maintenant: DateTime.now(),
+        );
+  if (instant == null) return null;
+  final DateTime chez = chezMoi(instant);
+  final String? mecque = heureMecqueSiDifferente(instant);
+  final String hhmm =
+      '${chez.hour.toString().padLeft(2, '0')}:'
+      '${chez.minute.toString().padLeft(2, '0')}';
+  final String heure = LibellesGroupe.insecable(
+    mecque == null
+        ? hhmm
+        : '$hhmm \u00b7 ${t.tc.groupe.horloges.mecqueEnSecond(heure: mecque)}',
+  );
+  final String jour = _avecDate(
+    t.disponibilites.joursLongs[chez.weekday - 1],
+    datee == null
+        ? null
+        : '${chez.year}-${chez.month.toString().padLeft(2, '0')}-'
+              '${chez.day.toString().padLeft(2, '0')}',
+  );
+  return t.admin.groupes.c1.quandSansVille(jour: jour, heure: heure);
 }
 
 /// « lundi 9 novembre » quand [date] (`AAAA-MM-JJ`) se lit ; sinon le jour

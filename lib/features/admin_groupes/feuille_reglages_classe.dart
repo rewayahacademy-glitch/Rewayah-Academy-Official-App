@@ -20,6 +20,10 @@ import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/offres/affectation_refusee.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
+import '../../core/tc_horloge/apercu_creneau.dart';
+import '../../core/tc_horloge/creneau_chez_moi.dart';
+import '../../core/tc_horloge/fuseaux_interlocuteurs.dart' show FuseauVu;
+import '../../core/tc_horloge/mon_horloge.dart' show monHorlogeProvider;
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
@@ -70,12 +74,22 @@ void ouvrirReglagesClasse(
   );
 }
 
-/// Le libelle d'un creneau : « Mardi 18 h », insecable, suivi de sa duree
-/// quand elle n'est pas celle de la classe (« Mardi 18 h, 45 min »).
-String libelleCreneauClasse(CreneauClasse c) {
+/// Le libelle d'un creneau : l'heure de la personne puis « Heure de La Mecque »
+/// (« Mardi 19:00 · Heure de La Mecque : 21:00 »), insecable, suivi de sa duree
+/// quand elle n'est pas celle de la classe. [fuseaux] : les fuseaux lus
+/// ([fuseauxDesCreneaux]) ; [fuseauClasse] : celui dans lequel le creneau est
+/// enregistre (B1, 13/11/2026 : jamais l'heure enregistree, brute).
+String libelleCreneauClasse(
+  CreneauClasse c, {
+  required Map<String, FuseauVu?> fuseaux,
+  required String fuseauClasse,
+}) {
   final String jourHeure = LibellesGroupe.insecable(
-    '${jourCapitalise(c.jour)} '
-    '${t.admin.groupes.formulaire.heureValeur(heure: '${c.heure}')}',
+    libelleCreneauLu(fuseaux, (
+      jour: c.jour,
+      heure: c.heure,
+      fuseau: fuseauClasse,
+    )),
   );
   final int? duree = c.duree;
   return duree == null
@@ -119,6 +133,11 @@ class _FeuilleReglagesClasseEtat extends ConsumerState<FeuilleReglagesClasse> {
   int? _jour;
   int? _heure;
 
+  /// Le jour et l'heure de depart de la saisie, dans le fuseau de saisie : la
+  /// duree seule change quand ils ne bougent pas.
+  int? _jourInitial;
+  int? _heureInitial;
+
   /// La duree du creneau modifie, en minutes ; nulle pour celle de la classe.
   int? _duree;
   GenreClasse? _genreChoisi;
@@ -134,11 +153,36 @@ class _FeuilleReglagesClasseEtat extends ConsumerState<FeuilleReglagesClasse> {
     super.dispose();
   }
 
+  /// Le creneau enregistre, lu dans le fuseau de saisie (celui de la personne,
+  /// sinon celui de la classe) ; `null` quand il ne peut pas l'etre.
+  ({int jour, int heure})? _enSaisie(CreneauClasse? c) {
+    if (c == null) return null;
+    final String classe = widget.groupe.creneau.fuseau;
+    final String saisie = fuseauDeSaisieLu(
+      ref.read(monHorlogeProvider).value,
+      classe,
+    );
+    if (saisie == classe) return (jour: c.jour, heure: c.heure);
+    final FuseauVu? origine = ref.read(fuseauVuProvider(classe)).value;
+    final FuseauVu? vers = ref.read(fuseauVuProvider(saisie)).value;
+    if (origine == null || vers == null) return null;
+    return creneauDansFuseau(
+      jour: c.jour,
+      heure: c.heure,
+      origine: origine,
+      vers: vers,
+      maintenant: DateTime.now(),
+    );
+  }
+
   void _ouvrir(_Vue vue, {CreneauClasse? cible}) => setState(() {
     _vue = vue;
     _cible = cible;
-    _jour = cible?.jour;
-    _heure = cible?.heure;
+    final ({int jour, int heure})? depart = _enSaisie(cible);
+    _jour = depart?.jour;
+    _heure = depart?.heure;
+    _jourInitial = _jour;
+    _heureInitial = _heure;
     _duree = cible?.duree;
     _genreChoisi = null;
     _motif.clear();
@@ -153,6 +197,8 @@ class _FeuilleReglagesClasseEtat extends ConsumerState<FeuilleReglagesClasse> {
       MotifRefusCreneau.existant => r.refusExistant,
       MotifRefusCreneau.introuvable => r.refusIntrouvable,
       MotifRefusCreneau.classeFermee => r.refusClasseFermee,
+      MotifRefusCreneau.conversionIndisponible => r.refusConversion,
+      MotifRefusCreneau.rechargerApplication => r.refusRecharger,
     };
   }
 
@@ -190,10 +236,15 @@ class _FeuilleReglagesClasseEtat extends ConsumerState<FeuilleReglagesClasse> {
             ancien: cible!,
             nouveau: (jour: jour!, heure: heure!, duree: _duree),
             motif: motif,
+            fuseau: fuseauDeSaisieLu(
+              ref.read(monHorlogeProvider).value,
+              widget.groupe.creneau.fuseau,
+            ),
+            fuseauClasse: widget.groupe.creneau.fuseau,
           );
           // La duree seule : les seances a venir sont realignees, aucune
           // n'est annulee ni creee.
-          fait = jour == cible.jour && heure == cible.heure
+          fait = jour == _jourInitial && heure == _heureInitial
               ? r.faitDuree(n: n)
               : r.faitModifie(n: n);
         case _Vue.retirer:
@@ -252,6 +303,10 @@ class _FeuilleReglagesClasseEtat extends ConsumerState<FeuilleReglagesClasse> {
     );
     final GenreClasse? genre = _genreActuel;
     final bool nonRegle = genre == null || genre == GenreClasse.indetermine;
+    final String fuseauClasse = widget.groupe.creneau.fuseau;
+    final Map<String, FuseauVu?> fuseaux = fuseauxDesCreneaux(ref, <String>[
+      fuseauClasse,
+    ]);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
@@ -270,9 +325,17 @@ class _FeuilleReglagesClasseEtat extends ConsumerState<FeuilleReglagesClasse> {
             lignes: <LigneRubrique>[
               for (final CreneauClasse c in lecture.requireValue)
                 LigneRubrique(
-                  libelle: libelleCreneauClasse(c),
+                  libelle: libelleCreneauClasse(
+                    c,
+                    fuseaux: fuseaux,
+                    fuseauClasse: fuseauClasse,
+                  ),
                   controle: MenuActions(
-                    objet: libelleCreneauClasse(c),
+                    objet: libelleCreneauClasse(
+                      c,
+                      fuseaux: fuseaux,
+                      fuseauClasse: fuseauClasse,
+                    ),
                     actions: <EntreeAction>[
                       EntreeAction(
                         libelle: r.modifierCreneau,
@@ -337,12 +400,22 @@ class _FeuilleReglagesClasseEtat extends ConsumerState<FeuilleReglagesClasse> {
     final r = t.admin.groupes.reglagesClasse;
     final f = t.admin.groupes.formulaire;
     final CreneauClasse? cible = _cible;
+    final String fuseauClasse = widget.groupe.creneau.fuseau;
+    final String fuseauSaisie = fuseauDeSaisie(ref, fuseauClasse);
+    final Map<String, FuseauVu?> fuseaux = fuseauxDesCreneaux(ref, <String>[
+      fuseauClasse,
+      fuseauSaisie,
+    ]);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         if (cible != null) ...<Widget>[
           TexteSansCoupure(
-            libelleCreneauClasse(cible),
+            libelleCreneauClasse(
+              cible,
+              fuseaux: fuseaux,
+              fuseauClasse: fuseauClasse,
+            ),
             style: textes.titleMedium,
           ),
           Ecart.vSm,
@@ -398,6 +471,16 @@ class _FeuilleReglagesClasseEtat extends ConsumerState<FeuilleReglagesClasse> {
                 }
               },
             ),
+          ),
+          Ecart.vSm,
+          TexteSansCoupure(
+            legendeFuseauSaisie(fuseauSaisie),
+            style: textes.bodySmall,
+          ),
+          LigneEquivalentMecque(
+            fuseauSaisie: fuseauSaisie,
+            jour: _jour,
+            heure: _heure,
           ),
           Ecart.vLg,
           TexteSansCoupure(f.duree, style: textes.labelLarge),

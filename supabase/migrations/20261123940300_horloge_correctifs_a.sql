@@ -10,7 +10,10 @@
 -- 3. B2 : l'ancien client ne peut plus deplacer un cours de deux heures. Pour
 --    une classe a l'heure de La Mecque, ajouter_creneau_classe_admin,
 --    modifier_creneau_classe_admin et modifier_groupe SANS fuseau explicite sont
---    REFUSES sans rien modifier (erreur « RechargerPourModifierUnHoraire »).
+--    REFUSES sans rien modifier (erreur « RechargerPourModifierUnHoraire »). Un
+--    appel qui ne deplace aucune heure (renommer, changer le seuil, changer la
+--    duree d'un creneau sans le deplacer) reste accepte : aucune heure n'y est
+--    interpretee.
 --    Trois fonctions nouvelles recoivent le fuseau de l'heure saisie et
 --    convertissent : ajouter_creneau_classe_fuseau, modifier_creneau_classe_fuseau,
 --    modifier_groupe_fuseau.
@@ -294,7 +297,8 @@ DECLARE
   v_n integer;
 BEGIN
   -- HORLOGE-ET-LIEU : une classe a l'heure de La Mecque ne se modifie plus sans fuseau explicite.
-  PERFORM private.refuser_heure_sans_fuseau(p_groupe_id, false);
+  PERFORM private.refuser_heure_sans_fuseau(p_groupe_id,
+    coalesce(p_weekday = p_nouveau_weekday AND p_hour_local = p_nouvelle_heure, false));
   v_g := private.classe_creneau_garde(p_groupe_id, p_motif);
   IF p_nouveau_weekday IS NULL OR p_nouvelle_heure IS NULL
      OR p_nouveau_weekday NOT BETWEEN 1 AND 7 OR p_nouvelle_heure NOT BETWEEN 0 AND 23
@@ -379,7 +383,10 @@ declare
   v_actifs int;
 begin
   -- HORLOGE-ET-LIEU : une classe a l'heure de La Mecque ne se modifie plus sans fuseau explicite.
-  PERFORM private.refuser_heure_sans_fuseau(p_groupe_id, p_timezone_iana IS NOT NULL);
+  PERFORM private.refuser_heure_sans_fuseau(p_groupe_id,
+    p_timezone_iana IS NOT NULL
+    OR EXISTS (SELECT 1 FROM public.groupes g
+                WHERE g.id = p_groupe_id AND g.weekday = p_weekday AND g.hour_local = p_hour_local));
   if not coalesce(public.app_role() = 'admin' and public.app_account_valid(), false) then
     raise exception 'modification de groupe reservee a l''administration';
   end if;

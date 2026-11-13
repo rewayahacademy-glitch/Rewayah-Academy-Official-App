@@ -37,7 +37,6 @@ import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/port_enseignants_classe.dart' show GenreClasse;
 import '../../core/classes/nom_classe_distinct.dart';
 import '../../core/i18n/strings.g.dart';
-import '../../core/i18n/villes_fuseau.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/offres/offre_horaire.dart' show PublicOffre;
 import '../../core/offres/page_regroupements.dart';
@@ -45,6 +44,7 @@ import '../../core/offres/port_regroupements_admin.dart';
 import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
+import '../../core/tc_horloge/creneau_chez_moi.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
@@ -218,7 +218,7 @@ class _RegroupementsPageEtat extends ConsumerState<RegroupementsPage> {
             for (final String fuseau in reference?.fuseaux ?? const <String>[])
               EntreeFiltre<String>(
                 valeur: fuseau,
-                libelle: villeDuFuseauLibelle(fuseau),
+                libelle: nomFuseauClasse(fuseau),
               ),
           ],
           onChoix: (String? fuseau) =>
@@ -313,7 +313,7 @@ class _RegroupementsPageEtat extends ConsumerState<RegroupementsPage> {
         ),
       if (f.fuseau case final String fuseau)
         FiltreActif(
-          libelle: axe(lg.filtreFuseau, villeDuFuseauLibelle(fuseau)),
+          libelle: axe(lg.filtreFuseau, nomFuseauClasse(fuseau)),
           onRetirer: () => _filtrer(f.avec(fuseau: () => null)),
         ),
     ];

@@ -21,6 +21,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../config/env.dart';
 import '../i18n/strings.g.dart';
 import '../i18n/villes_fuseau.dart';
+import 'apercu_creneau.dart' show fuseauAcademieDefaut;
 import 'fuseaux_interlocuteurs.dart';
 import 'mon_horloge.dart';
 
@@ -247,12 +248,35 @@ final Provider<PortFuseauVu> portFuseauVuProvider = Provider<PortFuseauVu>((
   }
 });
 
+/// Les fuseaux deja lus, pour les phrases composees hors d'un widget (le refus
+/// d'un serveur qui nomme un creneau en conflit). Rempli par [fuseauVuProvider].
+final Map<String, FuseauVu> _fuseauxLusMemoire = <String, FuseauVu>{};
+
+/// Le fuseau [fuseau] s'il a deja ete lu, sinon `null`.
+FuseauVu? fuseauVuConnu(String fuseau) => _fuseauxLusMemoire[fuseau];
+
+/// Vide la memoire des fuseaux lus (tests).
+void viderFuseauxLusPourTest() => _fuseauxLusMemoire.clear();
+
 /// Le fuseau d'un creneau, lu une fois par fuseau.
 final FutureProviderFamily<FuseauVu?, String> fuseauVuProvider =
-    FutureProvider.family<FuseauVu?, String>(
-      (Ref ref, String fuseau) => ref.watch(portFuseauVuProvider).lire(fuseau),
-      retry: (int _, Object _) => null,
-    );
+    FutureProvider.family<FuseauVu?, String>((Ref ref, String fuseau) async {
+      final FuseauVu? lu = await ref.watch(portFuseauVuProvider).lire(fuseau);
+      if (lu != null) _fuseauxLusMemoire[fuseau] = lu;
+      return lu;
+    }, retry: (int _, Object _) => null);
+
+/// L'instant (UTC) dont l'heure murale, dans [fuseau], est [murale] (les champs
+/// de `DateTime.utc`) ; `null` quand le decalage n'est pas sur.
+DateTime? instantDeMurale(FuseauVu fuseau, DateTime murale) {
+  final Duration? premier = fuseau.decalageA(murale.subtract(fuseau.decalage));
+  if (premier == null) return null;
+  DateTime instant = murale.subtract(premier);
+  final Duration? second = fuseau.decalageA(instant);
+  if (second == null) return null;
+  if (second != premier) instant = murale.subtract(second);
+  return instant;
+}
 
 /// La cle d'un creneau : son jour, son heure et son fuseau d'origine.
 typedef CleCreneau = ({int jour, int heure, String fuseau});
@@ -329,3 +353,30 @@ String libelleCreneauLu(
   CleCreneau c, {
   bool capitale = true,
 }) => libelleDuCreneau(creneauLu(fuseaux, c), c, capitale: capitale);
+
+/// Le fuseau dans lequel une personne saisit une heure de classe (HORLOGE-ET-LIEU,
+/// correction B2) : le sien (celui de sa ville, quand elle l'a choisie), sinon le
+/// fuseau de la classe. Le serveur convertit vers le fuseau de la classe ; l'ecran
+/// montre l'equivalent a La Mecque avant d'envoyer.
+String fuseauDeSaisie(WidgetRef ref, String fuseauClasse) =>
+    fuseauDeSaisieLu(ref.watch(monHorlogeProvider).value, fuseauClasse);
+
+/// [fuseauDeSaisie] a partir d'une horloge deja lue (dans un geste, `ref.read`).
+String fuseauDeSaisieLu(MonHorloge? h, String fuseauClasse) {
+  final String? moi = h?.moi?.fuseau;
+  return moi != null && h?.lieuChoisi != false ? moi : fuseauClasse;
+}
+
+/// « Heure de La Mecque » quand [fuseau] est celui de l'academie, sinon « Heure
+/// de {ville} » : ce qui dit dans quel fuseau l'heure d'un champ est saisie.
+String legendeFuseauSaisie(String fuseau) =>
+    fuseau == (horlogeAcademie?.fuseau ?? fuseauAcademieDefaut)
+    ? t.tc.groupe.horloges.heureMecque
+    : t.admin.groupes.creneau.fuseauSaisie(ville: villeDuFuseauLibelle(fuseau));
+
+/// Le nom d'un fuseau de classe pour un filtre ou une phrase : « La Mecque »
+/// pour le fuseau de l'academie (jamais « Riyad »), sinon la ville du fuseau.
+String nomFuseauClasse(String fuseau) =>
+    fuseau == (horlogeAcademie?.fuseau ?? fuseauAcademieDefaut)
+    ? t.tc.groupe.horloges.laMecque
+    : villeDuFuseauLibelle(fuseau);

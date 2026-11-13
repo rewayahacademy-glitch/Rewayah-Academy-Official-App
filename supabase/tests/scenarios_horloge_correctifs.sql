@@ -144,13 +144,22 @@ BEGIN
     IF v_msg <> 'RechargerPourModifierUnHoraire' THEN RAISE; END IF;
   END;
 
+  -- Renommer ou changer le seuil SANS deplacer l'heure (ce que fait l'ancien client) reste accepte.
+  PERFORM public.modifier_groupe('d5000000-0000-4000-8000-0000000000a1', 'HLC classe A1 renommee', 4::smallint, v_avant.weekday::smallint, v_avant.hour_local::smallint, NULL, NULL);
+  IF NOT EXISTS (SELECT 1 FROM public.groupes WHERE id = 'd5000000-0000-4000-8000-0000000000a1' AND libelle = 'HLC classe A1 renommee' AND seuil_max = 4) THEN
+    RAISE EXCEPTION 'HLC ROUGE : renommer une classe a La Mecque sans toucher a l''heure doit rester possible';
+  END IF;
+  PERFORM public.modifier_groupe('d5000000-0000-4000-8000-0000000000a1', 'HLC classe A1', 5::smallint, v_avant.weekday::smallint, v_avant.hour_local::smallint, NULL, NULL);
+  -- La duree seule d'un creneau (meme jour, meme heure) reste acceptee aussi.
+  PERFORM public.modifier_creneau_classe_admin('d5000000-0000-4000-8000-0000000000a1', 3, 21, 3, 21, 60, 'duree seule');
+  PERFORM public.modifier_creneau_classe_admin('d5000000-0000-4000-8000-0000000000a1', 3, 21, 3, 21, NULL, 'duree seule');
   SELECT weekday, hour_local INTO v_apres FROM public.groupes WHERE id = 'd5000000-0000-4000-8000-0000000000a1';
   IF v_apres IS DISTINCT FROM v_avant
      OR (SELECT pg_catalog.count(*) FROM public.groupe_creneaux WHERE groupe_id = 'd5000000-0000-4000-8000-0000000000a1') <> v_creneaux_avant
      OR (SELECT pg_catalog.count(*) FROM public.notifications) <> v_notifs THEN
-    RAISE EXCEPTION 'HLC ROUGE : un appel refuse a pourtant change la classe ou envoye une notification';
+    RAISE EXCEPTION 'HLC ROUGE : un appel refuse a pourtant change l''horaire ou envoye une notification';
   END IF;
-  RAISE NOTICE 'HLC OK : une classe a l''heure de La Mecque refuse (RechargerPourModifierUnHoraire) les trois fonctions de l''ancien client, sans rien modifier ni notifier';
+  RAISE NOTICE 'HLC OK : une classe a l''heure de La Mecque refuse (RechargerPourModifierUnHoraire) les trois fonctions de l''ancien client qui deplacent une heure, sans rien modifier ni notifier ; renommer, changer le seuil ou la duree reste accepte';
 END
 $b2$;
 RESET ROLE;

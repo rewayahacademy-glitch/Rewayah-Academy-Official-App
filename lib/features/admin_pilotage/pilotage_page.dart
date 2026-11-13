@@ -31,13 +31,14 @@ import '../../core/admin/port_pilotage.dart';
 import '../../core/admin/service_groupes.dart' show TypePublicGroupe;
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/i18n/strings.g.dart';
-import '../../core/i18n/villes_fuseau.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/offres/port_regroupements_admin.dart'
     show RegroupementDemandes;
 import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
+import '../../core/tc_horloge/creneau_chez_moi.dart';
+import '../../core/tc_horloge/fuseaux_interlocuteurs.dart' show FuseauVu;
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
@@ -192,7 +193,7 @@ class _PilotagePageEtat extends ConsumerState<PilotagePage> {
             for (final String fuseau in reference?.fuseaux ?? const <String>[])
               EntreeFiltre<String>(
                 valeur: fuseau,
-                libelle: villeDuFuseauLibelle(fuseau),
+                libelle: nomFuseauClasse(fuseau),
               ),
           ],
           onChoix: (String? fuseau) =>
@@ -420,7 +421,7 @@ class _SectionAttente extends StatelessWidget {
   }
 }
 
-class _CarteAttente extends StatelessWidget {
+class _CarteAttente extends ConsumerWidget {
   const _CarteAttente({required this.classe, required this.principal});
 
   final ClasseListee classe;
@@ -440,7 +441,7 @@ class _CarteAttente extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final TextTheme textes = Theme.of(context).textTheme;
     final RegroupementDemandes? regroupement = regroupementDeClasse(classe);
     final bool peutAgir = classe.peutAffecterEnseignant && regroupement != null;
@@ -462,7 +463,10 @@ class _CarteAttente extends StatelessWidget {
           : null,
       child: TexteSansCoupure(
         t.admin.pilotage.attenteHoraire(
-          horaire: libelleHoraire(classe.groupe.creneau),
+          horaire: libelleHoraire(
+            classe.groupe.creneau,
+            fuseauxDesCreneaux(ref, <String>[classe.groupe.creneau.fuseau]),
+          ),
         ),
         style: textes.bodyMedium,
       ),
@@ -471,14 +475,18 @@ class _CarteAttente extends StatelessWidget {
 }
 
 /// La liste des horaires, une page, avec sa position et sa navigation.
-class _Tableau extends StatelessWidget {
+class _Tableau extends ConsumerWidget {
   const _Tableau({required this.page, required this.onPage});
 
   final PagePilotage page;
   final ValueChanged<int> onPage;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final Map<String, FuseauVu?> fuseaux = fuseauxDesCreneaux(
+      ref,
+      page.lignes.map((LignePilotage x) => x.creneau.fuseau),
+    );
     final l = t.admin.pilotage;
     if (page.lignes.isEmpty) {
       return EmptyState(
@@ -536,7 +544,7 @@ class _Tableau extends StatelessWidget {
           titre: l.colonneHoraire,
           role: RoleColonne.identifiante,
           flex: 3,
-          texte: (LignePilotage x) => libelleHoraire(x.creneau),
+          texte: (LignePilotage x) => libelleHoraire(x.creneau, fuseaux),
         ),
         ColonneDonnees<LignePilotage>(
           titre: l.colonnePublic,
