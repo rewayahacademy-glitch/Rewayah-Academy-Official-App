@@ -86,6 +86,10 @@ class BibliothequeAdminDemo implements PortBibliothequeAdmin {
   /// nul).
   ErreurUpload? echecDepot;
 
+  /// La prochaine DEMANDE de depot echoue ainsi : l'ecran doit dire cette
+  /// cause, jamais « la connexion a coupe » a sa place.
+  ErreurUpload? echecDemande;
+
   /// « Maintenant », fixe pour des tests deterministes.
   final DateTime maintenant;
 
@@ -544,6 +548,11 @@ class BibliothequeAdminDemo implements PortBibliothequeAdmin {
     if (!droitsServeur.peutImporter) throw const BibliothequeNonAutorisee();
     if (e.versions.first.statut != StatutVersionRessource.brouillon) {
       throw const BibliothequeNonAutorisee();
+    }
+    final ErreurUpload? refus = echecDemande;
+    if (refus != null) {
+      echecDemande = null;
+      throw DepotImpossible(refus);
     }
     final String id = 'demo-upload-${++_compteur}';
     _uploads[id] = supportId;

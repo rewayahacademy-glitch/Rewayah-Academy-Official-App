@@ -132,18 +132,60 @@ void main() {
     );
   });
 
-  test('un depot refuse par un 503 est « pas encore active » (C2)', () {
+  test('un statut de la fonction, une cause : jamais « reseau » (DEPOT-SIMPLE)', () {
+    ErreurUpload cause(int statut, [String? motif]) =>
+        BibliothequeUploadSupabase.erreurPourStatut(
+          statut,
+          motif == null ? null : <String, dynamic>{'error': motif},
+        );
+    // Le secret de confirmation n'est pas pose cote fonction (C2).
+    expect(cause(503, 'confirmation indisponible'), ErreurUpload.nonActive);
+    // Le secret n'est pas le meme des deux cotes : un reglage, pas un refus.
+    expect(cause(503, 'confirmation mal reglee'), ErreurUpload.reglage);
+    // Les variables du stockage manquent, ou le stockage a repondu non.
+    expect(cause(503, 'stockage indisponible'), ErreurUpload.stockage);
+    expect(cause(503), ErreurUpload.service);
+    expect(cause(500), ErreurUpload.service);
+    expect(cause(404), ErreurUpload.service);
+    expect(cause(546), ErreurUpload.delai);
+    expect(cause(504), ErreurUpload.delai);
+    expect(cause(401), ErreurUpload.session);
+    expect(cause(403, 'depot refuse'), ErreurUpload.refuse);
+    // Chaque refus de la base a son motif : un compte sans droit lit un refus,
+    // jamais un reglage ; un document publie ou retire n'est pas « refuse ».
+    expect(cause(403, 'depot non autorise'), ErreurUpload.refuse);
+    expect(cause(409, 'document non modifiable'), ErreurUpload.nonModifiable);
+    expect(cause(409, 'fichier deja depose'), ErreurUpload.dejaDepose);
+    expect(cause(410, 'demande expiree'), ErreurUpload.expire);
+    expect(cause(413, 'fichier trop lourd'), ErreurUpload.taille);
+    expect(cause(400, 'fichier vide'), ErreurUpload.vide);
+    expect(cause(400, 'action inconnue'), ErreurUpload.service);
     expect(
-      BibliothequeUploadSupabase.erreurPourStatut(503, null),
-      ErreurUpload.nonActive,
+      cause(422, 'contenu different du type annonce'),
+      ErreurUpload.contenu,
     );
+    expect(cause(422, 'objet depose introuvable'), ErreurUpload.introuvable);
+    expect(cause(422, 'contenu depose invalide'), ErreurUpload.empreinte);
+    expect(cause(422), ErreurUpload.empreinte);
     expect(
-      BibliothequeUploadSupabase.erreurPourStatut(500, null),
-      ErreurUpload.reseau,
+      cause(400, 'fichier invalide ou format non autorise'),
+      ErreurUpload.type,
     );
-    expect(
-      BibliothequeUploadSupabase.erreurPourStatut(403, null),
-      ErreurUpload.refuse,
-    );
+    // Le serveur a repondu : ce n'est jamais « la connexion ».
+    for (final int statut in <int>[
+      400,
+      401,
+      403,
+      404,
+      413,
+      422,
+      500,
+      502,
+      503,
+      504,
+      546,
+    ]) {
+      expect(cause(statut), isNot(ErreurUpload.reseau), reason: '$statut');
+    }
   });
 }
