@@ -1,0 +1,268 @@
+<title>Programme des bases</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600;700&display=swap">
+<style>
+/* Mise en page : une colonne de lecture ; en tête un sélecteur de tranche d'âge qui règle
+   la frise des quatre étapes (largeurs à l'échelle des semaines), puis une fiche par étape. */
+:root{
+  --bg:#f6f8f8; --surface:#ffffff; --fg:#14232b; --muted:#566a73; --line:#d5dee1;
+  --accent:#0f6b6b; --accent-soft:#dcefee; --warm:#b4670d; --warm-soft:#fbeed9;
+  --wait:#6a5a8c; --wait-soft:#ece8f5;
+  --e1:#0f6b6b; --e2:#2a8a7a; --e3:#5aa58a; --e4:#b4670d; --slack:#c9d4d7;
+  --display:"Space Grotesk","Segoe UI",system-ui,sans-serif;
+  --body:"Inter","Segoe UI",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0f1719; --surface:#172225; --fg:#e6eeef; --muted:#9bafb5; --line:#2b3a3e;
+  --accent:#5fc9bd; --accent-soft:#16383a; --warm:#e9a94e; --warm-soft:#3a2b14;
+  --wait:#b5a6dc; --wait-soft:#2a2540;
+  --e1:#3fa79c; --e2:#5fc0a8; --e3:#8fd3b4; --e4:#e9a94e; --slack:#3a4a4f; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1719; --surface:#172225; --fg:#e6eeef; --muted:#9bafb5; --line:#2b3a3e;
+  --accent:#5fc9bd; --accent-soft:#16383a; --warm:#e9a94e; --warm-soft:#3a2b14;
+  --wait:#b5a6dc; --wait-soft:#2a2540;
+  --e1:#3fa79c; --e2:#5fc0a8; --e3:#8fd3b4; --e4:#e9a94e; --slack:#3a4a4f; color-scheme:dark}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.55;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 56px}
+.page{max-width:820px;margin:0 auto;display:flex;flex-direction:column;gap:36px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0;line-height:1.2}
+h1{font-size:2rem;font-weight:700}
+h2{font-size:1.35rem;font-weight:600}
+h3{font-size:1.1rem;font-weight:600}
+p{margin:0}
+.lead{color:var(--muted);max-width:65ch}
+header{display:flex;flex-direction:column;gap:12px}
+.eyebrow{font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:600}
+.notice{background:var(--warm-soft);border-left:4px solid var(--warm);padding:12px 14px;border-radius:4px;font-size:.95rem}
+section{display:flex;flex-direction:column;gap:14px}
+.tag{display:inline-block;font-size:.7rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;padding:2px 7px;border-radius:3px;white-space:nowrap;vertical-align:middle}
+.tag.d{background:var(--accent-soft);color:var(--accent)}
+.tag.a{background:var(--warm-soft);color:var(--warm)}
+.tag.p{background:var(--wait-soft);color:var(--wait)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:.88rem;color:var(--muted)}
+.seg{display:flex;flex-wrap:wrap;gap:6px}
+.seg button{font:inherit;font-size:.92rem;font-weight:500;padding:8px 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--fg);cursor:pointer}
+.seg button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.seg button:focus-visible{outline:2px solid var(--warm);outline-offset:2px}
+.frise{display:flex;height:34px;border-radius:6px;overflow:hidden;background:var(--slack)}
+.frise div{min-width:0;transition:width .25s}
+@media (prefers-reduced-motion:reduce){.frise div{transition:none}}
+.frise-leg{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:8px 16px;font-size:.9rem}
+.frise-leg span{display:flex;gap:8px;align-items:baseline;min-width:0}
+.dot{width:10px;height:10px;border-radius:2px;flex:none;transform:translateY(1px)}
+.num{font-variant-numeric:tabular-nums;font-weight:600}
+.totaux{display:flex;flex-wrap:wrap;gap:8px 28px;font-size:.95rem}
+.etape{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:18px;display:flex;flex-direction:column;gap:12px}
+.etape-head{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 16px;align-items:baseline}
+.etape-head .duree{font-size:.92rem;color:var(--muted)}
+dl{margin:0;display:grid;grid-template-columns:minmax(120px,170px) 1fr;gap:8px 16px;font-size:.95rem}
+dt{color:var(--muted);font-weight:500}
+dd{margin:0;min-width:0}
+@media (max-width:560px){dl{grid-template-columns:1fr;gap:2px 0}dd{margin-bottom:8px}}
+ul{margin:0;padding-left:1.1em;display:flex;flex-direction:column;gap:4px}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.bloc{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:16px;display:flex;flex-direction:column;gap:8px;font-size:.95rem}
+.attente{border-style:dashed}
+.tw{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.92rem}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:600;color:var(--muted);font-size:.82rem}
+td.n{font-variant-numeric:tabular-nums;white-space:nowrap}
+footer{font-size:.85rem;color:var(--muted);border-top:1px solid var(--line);padding-top:14px}
+</style>
+
+<div class="page">
+<header>
+  <span class="eyebrow">Rewayah Academy · charte pédagogique du 12/11/2026</span>
+  <h1>Le programme des bases</h1>
+  <p class="lead">Ce que l'élève apprend, dans quel ordre, en combien de temps, et comment on sait qu'il a réussi. C'est le programme tel qu'il est écrit dans la charte et réglé dans le lot 1.</p>
+  <p class="notice"><strong>Ce que cette page n'est pas.</strong> Ce n'est pas une capture de l'application : rien de ceci n'est encore en ligne. Les valeurs chiffrées sont des réglages, modifiables par la direction sans recoder.</p>
+  <div class="legend">
+    <span><span class="tag d">Décidé</span> par vous, avec date</span>
+    <span><span class="tag a">Arbitré</span> par l'architecte, à corriger si besoin</span>
+    <span><span class="tag p">Proposé</span> pas en service</span>
+  </div>
+</header>
+
+<section aria-labelledby="t-chemin">
+  <h2 id="t-chemin">Le chemin, selon l'âge</h2>
+  <div class="seg" role="group" aria-label="Tranche d'âge">
+    <button type="button" id="b-0" data-i="0" aria-pressed="true">6 à 9 ans</button>
+    <button type="button" id="b-1" data-i="1" aria-pressed="false">10 à 13 ans</button>
+    <button type="button" id="b-2" data-i="2" aria-pressed="false">14 à 17 ans</button>
+    <button type="button" id="b-3" data-i="3" aria-pressed="false">Adultes</button>
+  </div>
+  <div class="frise" id="frise" role="img" aria-label="Durée prévue de chaque étape, à l'échelle de la somme des dates limites">
+    <div style="background:var(--e1)"></div><div style="background:var(--e2)"></div><div style="background:var(--e3)"></div><div style="background:var(--e4)"></div>
+  </div>
+  <div class="frise-leg" id="leg"></div>
+  <div class="totaux">
+    <span>Durée prévue des bases : <span class="num" id="tot-p"></span> semaines <span class="tag d">Décidé 14/10</span></span>
+    <span>Somme des dates limites : <span class="num" id="tot-l"></span> semaines <span class="tag d">Décidé 14/10</span></span>
+  </div>
+  <p class="lead">La partie grise de la frise est la marge entre la durée prévue et la date limite. La répartition par étape est <span class="tag a">Arbitré</span> : proportionnelle, pour que la somme égale vos totaux. 3 cours par semaine, 60 minutes avant 18 ans, 90 minutes pour les adultes.</p>
+</section>
+
+<section aria-labelledby="t-etapes">
+  <h2 id="t-etapes">Les quatre étapes</h2>
+
+  <article class="etape">
+    <div class="etape-head"><h3>1. Les lettres</h3><span class="duree">Prévu <span class="num" data-p="0"></span> sem. · date limite <span class="num" data-l="0"></span> sem.</span></div>
+    <dl>
+      <dt>Sur quoi</dt><dd>Les lettres de l'alphabet, seules et dans le mot.</dd>
+      <dt>Objectifs</dt><dd><ul><li>Reconnaît chaque lettre dans le désordre</li><li>La prononce depuis son point de sortie</li><li>Distingue les lettres qui se ressemblent</li><li>La reconnaît au début, au milieu et à la fin d'un mot</li></ul></dd>
+      <dt>Comment on mesure</dt><dd>Petit bilan pendant un cours normal, non préparé <span class="tag d">Décidé 12/10</span></dd>
+      <dt>Validé si</dt><dd>Au moins 90 % de lettres justes, 2 aides au plus, aucune confusion répétée, sur deux séances <span class="tag a">Arbitré</span></dd>
+    </dl>
+  </article>
+
+  <article class="etape">
+    <div class="etape-head"><h3>2. Lire avec les voyelles</h3><span class="duree">Prévu <span class="num" data-p="1"></span> sem. · date limite <span class="num" data-l="1"></span> sem.</span></div>
+    <dl>
+      <dt>Sur quoi</dt><dd>Voyelles brèves et longues, soukoun, tanwin, jusqu'à la chadda.</dd>
+      <dt>Objectifs</dt><dd><ul><li>Lit une lettre avec chacune des trois voyelles</li><li>Lit les voyelles longues et le soukoun</li><li>Lit le tanwin</li><li>Lit la chadda</li><li>Lit un mot de plusieurs syllabes sans épeler</li></ul></dd>
+      <dt>Comment on mesure</dt><dd>Petit bilan : syllabes et mots du livre, puis une ligne de mots plus longs.</dd>
+      <dt>Validé si</dt><dd>Au moins 90 % de lecture juste, 2 aides au plus, sans épeler les mots courts <span class="tag a">Arbitré</span></dd>
+      <dt>Ensuite</dt><dd>Pour les 6 à 9 ans, la matière secondaire commence : Al-Fatiha <span class="tag d">Décidé 13/10</span></dd>
+    </dl>
+  </article>
+
+  <article class="etape">
+    <div class="etape-head"><h3>3. Lire dans le Coran</h3><span class="duree">Prévu <span class="num" data-p="2"></span> sem. · date limite <span class="num" data-l="2"></span> sem.</span></div>
+    <dl>
+      <dt>Sur quoi</dt><dd>La fin du livre, puis la lecture directe dans le Mushaf.</dd>
+      <dt>Objectifs</dt><dd><ul><li>Lit les dernières pages du livre sans épeler</li><li>Lit une page du Mushaf en suivant ses signes</li><li>Lit d'un rythme régulier, sans revenir en arrière</li></ul></dd>
+      <dt>Comment on mesure</dt><dd>Petit bilan : un passage nouveau du Mushaf, 2 à 3 minutes avant 10 ans, 3 à 5 ensuite.</dd>
+      <dt>Validé si</dt><dd>Aucune erreur grave non corrigée, 2 erreurs importantes au plus, pas de correction mot à mot <span class="tag a">Arbitré</span></dd>
+      <dt>Ensuite</dt><dd>Le Coran devient la matière principale ; révision de la lecture, invocations et adab passent en matière secondaire <span class="tag d">Décidé 13/10</span></dd>
+    </dl>
+  </article>
+
+  <article class="etape">
+    <div class="etape-head"><h3>4. Les sourates courtes</h3><span class="duree">Prévu <span class="num" data-p="3"></span> sem. · date limite <span class="num" data-l="3"></span> sem.</span></div>
+    <dl>
+      <dt>Sur quoi</dt><dd>13 sourates, d'Al-Masad (111) à Az-Zalzalah (99). Avec Al-Fatiha, An-Nâs, Al-Falaq et Al-Ikhlâs, cela fait les 17 sourates des bases.</dd>
+      <dt>Objectifs</dt><dd><ul><li>Récite chaque sourate de mémoire, sans erreur de mot</li><li>Respecte les voyelles et les lettres longues</li><li>S'arrête aux fins de versets</li><li>Garde les sourates déjà apprises</li></ul></dd>
+      <dt>Comment on mesure</dt><dd>L'enseignant coche chaque sourate récitée juste ; la direction voit sans valider <span class="tag d">Décidé 11/11</span>. Pas de petit bilan séparé <span class="tag a">Arbitré</span></dd>
+      <dt>Ensuite</dt><dd>L'examen de fin des bases ferme le niveau.</dd>
+    </dl>
+  </article>
+</section>
+
+<section aria-labelledby="t-tajwid">
+  <h2 id="t-tajwid">Le tajwid des bases : neuf règles, pas plus <span class="tag a">Arbitré 13/11</span></h2>
+  <p class="lead">Demande du directeur du 13/11 : les règles élémentaires, maîtrisées avant ou pendant les 17 sourates. Chaque règle est d'abord appliquée par imitation, puis nommée. Aucune épreuve de théorie : on l'entend dans la lecture. Les règles qui changent le sens passent en premier.</p>
+  <div class="tw"><table>
+    <thead><tr><th>Étape</th><th>Règle</th><th>Ce que l'élève sait faire</th></tr></thead>
+    <tbody>
+      <tr><td rowspan="2">1. Les lettres</td><td>Le point de sortie de chaque lettre</td><td>Ne confond pas deux lettres proches (س / ص, ت / ط, ه / ح, ذ / ز / ظ)</td></tr>
+      <tr><td>Lettres épaisses et lettres fines</td><td>Prononce épaisses les sept lettres خ ص ض غ ط ق ظ, fines les autres</td></tr>
+      <tr><td rowspan="3">2. Les voyelles</td><td>Brève ou longue</td><td>Tient la lettre longue deux temps, n'allonge jamais une brève</td></tr>
+      <tr><td>La chadda, et la nasalisation du noun et du mim doublés</td><td>Appuie la lettre doublée ; tient نّ et مّ deux temps dans le nez</td></tr>
+      <tr><td>La qalqala</td><td>Fait rebondir ق ط ب ج د quand elles portent un soukoun</td></tr>
+      <tr><td rowspan="2">3. Lire dans le Coran</td><td>L'arrêt</td><td>S'arrête en fin de verset : soukoun sur la dernière lettre, le tanwin « an » devient un alif, la ta marbouta devient un ha</td></tr>
+      <tr><td>Le lam du nom d'Allah</td><td>Épais après a et ou, fin après i</td></tr>
+      <tr><td rowspan="2">4. Les sourates courtes</td><td>Le noun sans voyelle et le tanwin</td><td>Applique les quatre cas dans les 17 sourates : net, fondu, changé en mim, caché</td></tr>
+      <tr><td>Les allongements longs</td><td>Tient plus longtemps la longue suivie d'une hamza ou d'une lettre doublée (« وَلَا ٱلضَّآلِّينَ », « جَآءَ »)</td></tr>
+    </tbody>
+  </table></div>
+  <p class="lead">Tout le reste du tajwid (le mim sans voyelle en détail, le ra, les arrêts fins, les sortes d'allongement par leur nom) attend l'après-bases.</p>
+</section>
+
+<section aria-labelledby="t-priere">
+  <h2 id="t-priere">La prière et les ablutions <span class="tag d">Décidé 13/11</span></h2>
+  <p class="lead">Une seule référence pour les débutants : ce qui est enseigné en Arabie saoudite. Pas de question d'école juridique à ce niveau ; les spécialisations sont pour les avancés. L'architecte rédige donc les paroles de la prière et les étapes des ablutions selon cette référence, et vous les relisez.</p>
+</section>
+
+<section aria-labelledby="t-exam">
+  <h2 id="t-exam">L'examen de fin des bases</h2>
+  <div class="etape">
+    <dl>
+      <dt>Trois parties</dt><dd>La lecture non préparée dans le Mushaf ; les 17 sourates de mémoire (Al-Fatiha, puis 6 tirées au hasard dont 2 longues) ; les paroles de la prière, dans l'ordre. Les trois sont exigées.</dd>
+      <dt>Qui propose</dt><dd>L'enseignant, quand l'élève est prêt, au plus tard à la date limite de l'étape 4 <span class="tag d">Décidé 12/10</span></dd>
+      <dt>Qui évalue</dt><dd>Un évaluateur désigné par la direction, autre que l'enseignant de la classe <span class="tag a">Arbitré</span></dd>
+      <dt>Qui confirme</dt><dd>La direction. Un passage n'est jamais automatique <span class="tag d">Décidé 12/10</span></dd>
+      <dt>Résultat</dt><dd>Une des trois phrases, et seulement elles <span class="tag d">Décidé 12/10</span> : « Étape validée », « Quelques points sont à renforcer », « Une nouvelle vérification est nécessaire ».</dd>
+      <dt>Document</dt><dd>L'Attestation des bases, avec un code de vérification, signée par le directeur.</dd>
+    </dl>
+  </div>
+</section>
+
+<section aria-labelledby="t-regles">
+  <h2 id="t-regles">Les règles qui tiennent le programme</h2>
+  <div class="cols">
+    <div class="bloc"><h3>Deux matières, pas plus</h3><p>Une matière principale, 70 à 80 % du temps, et une seule matière secondaire. Elle ne bloque pas les étapes 1 à 3 ; elle est exigée à l'examen <span class="tag a">Arbitré</span></p></div>
+    <div class="bloc"><h3>La date limite est par étape</h3><p>Elle part du jour où l'élève entre dans l'étape. Elle ne recule que pour les fermetures et une pause accordée. Qui valide en avance garde le temps gagné <span class="tag d">Décidé 14/10</span></p></div>
+    <div class="bloc"><h3>Date limite dépassée</h3><p>Jamais de passage automatique. Un message sans reproche, un bilan avec la famille sous 7 jours, un plan de soutien avec une nouvelle date ferme à 4 semaines. Si elle est encore manquée : une classe de son niveau réel, sans rien perdre.</p></div>
+    <div class="bloc"><h3>Une seule échelle</h3><p>« À renforcer » et « Acquis », dits par l'enseignant. « Stable » n'est jamais saisi : le serveur le calcule après 3 « Acquis » sur 2 semaines au moins, dont un non préparé.</p></div>
+    <div class="bloc"><h3>L'élève absent rattrape seul</h3><p>La classe ne l'attend pas. Il retrouve la position exacte et votre lecture enregistrée, puis marque « J'ai rattrapé ce cours ». L'enseignant ne saisit rien de plus.</p></div>
+    <div class="bloc"><h3>Les 6 à 9 ans</h3><p>Le livre seul jusqu'à la chadda. Ils ne voient aucune date ni durée. Tout message va au tuteur.</p></div>
+  </div>
+</section>
+
+<section aria-labelledby="t-ecran">
+  <h2 id="t-ecran">Ce que l'élève verra dans l'onglet Programme</h2>
+  <ul>
+    <li>Son niveau et son étape en cours, la même pour lui, son tuteur, son enseignant et la direction.</li>
+    <li>Le chemin des quatre étapes : l'étape précédente, l'étape en cours, les étapes à venir, avec les objectifs de chacune.</li>
+    <li>Sa date limite et l'horizon de fin du niveau, sauf pour les 6 à 9 ans.</li>
+    <li>Les dates de l'académie qui le concernent : fermetures, fêtes, rencontres de récitation, examens.</li>
+    <li>Jamais les valeurs d'une autre tranche d'âge, ni rien d'un autre élève.</li>
+  </ul>
+</section>
+
+<section aria-labelledby="t-apres">
+  <h2 id="t-apres">Après les bases <span class="tag p">Proposé</span></h2>
+  <p class="lead">Ce programme n'est pas mis en service tant que vous et vos associés détenteurs d'ijaza ne l'avez pas validé. Le système est prêt à l'accueillir sans recoder ; d'ici là, aucune date n'est affichée après les bases.</p>
+  <div class="cols">
+    <div class="bloc attente"><h3>Lire tout le Coran</h3><p>Six étapes de 5 juz ; une couche de tajwid s'ajoute à chaque étape. Document : le certificat de lecture.</p></div>
+    <div class="bloc attente"><h3>Mémoriser le Coran</h3><p>Le juz 30, puis les juz 1 à 29 en six étapes, puis la consolidation. Chaque séance porte le nouveau, le récent et l'ancien. Document : le certificat de mémorisation.</p></div>
+    <div class="bloc attente"><h3>Orientation</h3><p>Enfant : mémoriser par défaut si ses acquis sont stables, le tuteur peut demander la lecture. Adulte : il choisit, sur conseil de son enseignant <span class="tag d">Décidé 13/10</span></p></div>
+  </div>
+</section>
+
+<section aria-labelledby="t-attendu">
+  <h2 id="t-attendu">Ce qui manque encore, et qui vient de vous</h2>
+  <div class="tw"><table>
+    <thead><tr><th>Contenu</th><th>Effet tant qu'il manque</th></tr></thead>
+    <tbody>
+      <tr><td>Le livre de lecture de Rewayah, rédigé d'après ce programme une fois validé</td><td>Aux étapes 1 à 3, la position reste la page, sans ligne</td></tr>
+      <tr><td>Vos enregistrements (lettres, paroles de la prière, invocations, sourates courtes)</td><td>Le parcours « Rattraper ce cours » montre la position, sans votre voix</td></tr>
+      <tr><td>Votre relecture des paroles de la prière et des étapes des ablutions</td><td>Rédigées par l'architecte selon la référence saoudienne ; en service après votre relecture</td></tr>
+      <tr><td>Votre lecture des objectifs de chaque étape</td><td>Ils ont été rédigés par un agent et ne sont pas encore validés par vous</td></tr>
+      <tr><td>La validation du programme d'après les bases</td><td>Rien n'est affiché après l'Attestation des bases</td></tr>
+    </tbody>
+  </table></div>
+</section>
+
+<footer>Sources : CHARTE-ECOLE.md (parties 3 à 6), REGLAGES.md (tableau 1 bis), EVALUATIONS.md (partie 4), branche claude/charte-ecole, non fusionnée.</footer>
+</div>
+
+<script>
+(function(){
+  var noms=["Les lettres","Lire avec les voyelles","Lire dans le Coran","Les sourates courtes"];
+  var coul=["var(--e1)","var(--e2)","var(--e3)","var(--e4)"];
+  var prevu=[[8,14,8,7],[6,11,6,5],[5,9,5,5],[3,6,3,3]];
+  var limite=[[10,19,10,9],[8,14,8,6],[6,13,6,6],[4,8,4,4]];
+  var max=48;
+  function somme(a){return a.reduce(function(x,y){return x+y},0)}
+  function montrer(i){
+    var p=prevu[i],l=limite[i],bandes=document.querySelectorAll("#frise div"),leg=document.getElementById("leg");
+    leg.textContent="";
+    p.forEach(function(v,k){
+      bandes[k].style.width=(v/max*100)+"%";
+      var s=document.createElement("span"),d=document.createElement("i"),t=document.createElement("span");
+      d.className="dot";d.style.background=coul[k];
+      t.textContent=noms[k]+" : "+v+" sem. (limite "+l[k]+")";
+      s.appendChild(d);s.appendChild(t);leg.appendChild(s);
+    });
+    document.getElementById("tot-p").textContent=somme(p);
+    document.getElementById("tot-l").textContent=somme(l);
+    document.querySelectorAll("[data-p]").forEach(function(e){e.textContent=p[+e.dataset.p]});
+    document.querySelectorAll("[data-l]").forEach(function(e){e.textContent=l[+e.dataset.l]});
+    document.querySelectorAll(".seg button").forEach(function(b){b.setAttribute("aria-pressed",String(+b.dataset.i===i))});
+  }
+  document.querySelectorAll(".seg button").forEach(function(b){b.addEventListener("click",function(){montrer(+b.dataset.i)})});
+  montrer(0);
+})();
+</script>

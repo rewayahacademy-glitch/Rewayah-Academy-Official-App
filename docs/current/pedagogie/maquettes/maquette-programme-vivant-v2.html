@@ -1,0 +1,291 @@
+<title>Maquette du programme vivant</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,500;9..40,600;9..40,700&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Noto+Sans+Arabic:wght@500;700&display=swap">
+<style>
+/* Mise en page : commandes de la maquette a gauche ; a droite un seul ecran d'application qui ne s'allonge pas :
+   une carte du chemin (aplat violet, arches du style Silhouette), une ligne d'alerte, puis une planche de tuiles.
+   Toucher une arche ou une tuile remplace la planche par le detail ; on referme pour revenir.
+   Jetons du systeme de design de l'academie : aucun degrade, violet en aplat, encre, lavande. */
+:root{
+  --canvas:#f1eff4; --raised:#ffffff; --ink:#110e20; --muted:#655e70; --violet:#8652e6; --on-violet:#ffffff;
+  --lavande:#dccafd; --accent:#6538e4; --wash:#eee6fa; --on-wash:#4e2983; --line:#e3dee9;
+  --ok:#157f46; --ok-wash:#e0f3e8; --att:#8a6300; --att-wash:#fbf0d2; --al:#c22a4a; --al-wash:#fde3e8;
+  --aplat:#8652e6; --figure:#110e20; --ombre:#6538e4;
+  --titre:"DM Sans","Noto Sans Arabic",sans-serif; --corps:"Plus Jakarta Sans","Noto Sans Arabic",sans-serif; --ar:"Noto Sans Arabic",sans-serif;
+  --n1:0 2px 8px rgba(33,30,40,.04),0 8px 24px -4px rgba(33,30,40,.06);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --canvas:#16161e; --raised:#272734; --ink:#f5f2fa; --muted:#aeb1ce; --violet:#ba98fb; --on-violet:#25113f;
+  --lavande:#ba98fb; --accent:#c9aeff; --wash:#332643; --on-wash:#e8d8ff; --line:#32323f;
+  --ok:#70ee9c; --ok-wash:#1c3a2a; --att:#ffb703; --att-wash:#3d3010; --al:#f9808c; --al-wash:#48202a;
+  --aplat:#4e2983; --figure:#110e20; --ombre:#3a1f63; --n1:none; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --canvas:#16161e; --raised:#272734; --ink:#f5f2fa; --muted:#aeb1ce; --violet:#ba98fb; --on-violet:#25113f;
+  --lavande:#ba98fb; --accent:#c9aeff; --wash:#332643; --on-wash:#e8d8ff; --line:#32323f;
+  --ok:#70ee9c; --ok-wash:#1c3a2a; --att:#ffb703; --att-wash:#3d3010; --al:#f9808c; --al-wash:#48202a;
+  --aplat:#4e2983; --figure:#110e20; --ombre:#3a1f63; --n1:none; color-scheme:dark}
+body{background:var(--canvas);color:var(--ink);font-family:var(--corps);font-size:14px;line-height:1.45;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 48px}
+.page{max-width:960px;margin:0 auto;display:grid;grid-template-columns:minmax(0,280px) minmax(0,400px);gap:36px;justify-content:center;align-items:start}
+@media (max-width:780px){.page{grid-template-columns:minmax(0,1fr);gap:20px}}
+h1,h2,h3{font-family:var(--titre);margin:0;line-height:1.2;letter-spacing:-.01em}
+h1{font-size:1.6rem;font-weight:700;text-wrap:balance} h2{font-size:1.05rem;font-weight:600} h3{font-size:.95rem;font-weight:600}
+p{margin:0} button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.cmd{display:flex;flex-direction:column;gap:16px;min-width:0}
+.note{font-size:.86rem;color:var(--muted)}
+.t{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.groupe{display:flex;flex-direction:column;gap:8px}
+.puces{display:flex;flex-wrap:wrap;gap:6px}
+.puces button{padding:7px 12px;border-radius:999px;border:1px solid var(--line);background:var(--raised);font-size:.85rem}
+.puces button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--canvas);font-weight:600}
+.app{display:flex;flex-direction:column;gap:10px;min-width:0}
+.onglets{display:flex;gap:4px;background:var(--raised);border-radius:999px;padding:4px;box-shadow:var(--n1)}
+.onglets span{flex:1;text-align:center;padding:7px 4px;border-radius:999px;font-size:.82rem;color:var(--muted)}
+.onglets span.actif{background:var(--wash);color:var(--on-wash);font-weight:600}
+.carte-chemin{position:relative;border-radius:24px;background:var(--aplat);overflow:hidden}
+.carte-chemin svg{display:block;width:100%;height:auto}
+.carte-chemin .titre{position:absolute;left:16px;top:12px;color:#fff;font-family:var(--titre);font-weight:700;font-size:1.05rem;letter-spacing:-.01em}
+.carte-chemin .sous{position:absolute;left:16px;top:35px;color:#fff;opacity:.85;font-size:.76rem}
+.carte-chemin button.st{position:absolute;width:17%;height:40%;transform:translate(-50%,-78%);background:transparent;border:0;border-radius:14px}
+.carte-chemin button.st:focus-visible{outline:2px solid #fff;outline-offset:-2px}
+.carte-chemin button.st[aria-pressed="true"]{background:rgba(255,255,255,.14)}
+@keyframes halo{0%{r:15;opacity:.9}100%{r:27;opacity:0}}
+@keyframes saut{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+.halo{animation:halo 1.8s ease-out infinite} .saute{animation:saut 1.1s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){.halo,.saute{animation:none}.jauge i{transition:none}}
+.alerte{display:flex;align-items:center;gap:10px;border:0;border-radius:16px;padding:11px 14px;text-align:left;width:100%}
+.alerte b{font-family:var(--titre);font-weight:600;font-size:.92rem;display:block}
+.alerte span.s{font-size:.8rem;color:var(--ink)}
+.alerte i.p{width:10px;height:10px;border-radius:50%;flex:none}
+.alerte.ok{background:var(--ok-wash);color:var(--ok)} .alerte.ok i.p{background:var(--ok)}
+.alerte.att{background:var(--att-wash);color:var(--att)} .alerte.att i.p{background:var(--att)}
+.alerte.al{background:var(--al-wash);color:var(--al)} .alerte.al i.p{background:var(--al)}
+.alerte em{margin-left:auto;font-style:normal;font-size:1.1rem;color:var(--ink);opacity:.6}
+.planche{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.tuile{background:var(--raised);border:0;border-radius:18px;padding:13px;text-align:left;display:flex;flex-direction:column;gap:6px;box-shadow:var(--n1);min-width:0}
+.tuile.large{grid-column:1 / -1} .tuile.douce{background:var(--wash);box-shadow:none;color:var(--on-wash)}
+.tuile.pleine{background:var(--violet);color:var(--on-violet);box-shadow:none}
+.tuile .t{color:inherit;opacity:.7}
+.tuile .gros{font-family:var(--titre);font-weight:700;font-size:1.5rem;line-height:1.1;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.tuile .petit{font-size:.78rem;opacity:.85;color:inherit}
+.rang{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
+.chrono{font-family:var(--titre);font-weight:700;font-size:1.1rem;font-variant-numeric:tabular-nums}
+.points{display:flex;flex-wrap:wrap;gap:3px}
+.points i{width:7px;height:7px;border-radius:50%;background:var(--line)} .points i.on{background:var(--ok)} .points i.w{background:var(--att)}
+.jauge{height:8px;border-radius:999px;background:var(--line);position:relative;overflow:hidden}
+.jauge i{position:absolute;inset:0 auto 0 0;border-radius:999px;transition:width .5s}
+.jauge b{position:absolute;top:0;bottom:0;width:2px;background:var(--ink);opacity:.6}
+.detail{background:var(--raised);border-radius:22px;padding:16px;box-shadow:var(--n1);display:flex;flex-direction:column;gap:12px;min-width:0}
+.detail .tete{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.fermer{border:0;background:var(--wash);color:var(--on-wash);border-radius:999px;padding:6px 12px;font-size:.8rem;font-weight:600}
+.etape-carte{display:grid;grid-template-columns:auto 1fr;gap:12px}
+.pilule{writing-mode:vertical-rl;transform:rotate(180deg);background:var(--ink);color:var(--canvas);border-radius:999px;padding:12px 7px;font-size:.74rem;font-weight:600;text-align:center;letter-spacing:.02em}
+.pilule.v{background:var(--ok)}
+.obj{display:flex;justify-content:space-between;gap:8px;align-items:center;font-size:.86rem;padding:6px 0;border-bottom:1px solid var(--line)}
+.obj:last-of-type{border-bottom:0}
+.etat{font-size:.7rem;font-weight:600;padding:2px 8px;border-radius:999px;white-space:nowrap}
+.etat.acq{background:var(--ok-wash);color:var(--ok)} .etat.ren{background:var(--att-wash);color:var(--att)}
+.etat.sta{background:var(--wash);color:var(--on-wash)} .etat.non{background:var(--line);color:var(--muted)}
+.petit{font-size:.8rem;color:var(--muted)}
+.sem{display:flex;gap:5px;flex-wrap:wrap}
+.sem button{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:transparent;font-weight:600;font-size:.82rem}
+.sem button[aria-pressed="true"]{background:var(--ink);color:var(--canvas);border-color:var(--ink)}
+.sem button.auj{border-color:var(--accent);color:var(--accent)} .sem button.auj[aria-pressed="true"]{color:var(--canvas)}
+.seance{display:grid;grid-template-columns:30px 1fr;gap:10px;align-items:start;padding:10px;border-radius:14px;background:var(--canvas)}
+.seance .num{font-family:var(--titre);font-weight:700;font-size:.95rem;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--line);color:var(--muted)}
+.seance.f .num{background:var(--ok);color:var(--raised)} .seance.j{background:var(--wash)} .seance.j .num{background:var(--violet);color:var(--on-violet)}
+.seance.m{background:var(--al-wash)} .seance.m .num{background:var(--al);color:var(--raised)}
+.seance.r{background:var(--att-wash)} .seance.r .num{background:var(--att);color:var(--raised)}
+.ar{font-family:var(--ar);font-size:1.08em;direction:rtl;unicode-bidi:isolate;font-weight:500}
+.grille{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px}
+.grille button{aspect-ratio:1;border-radius:11px;border:1px solid var(--line);background:transparent;font-family:var(--ar);font-size:1.15rem;color:var(--muted);padding:0;min-width:0}
+.grille button.on{background:var(--ok-wash);border-color:transparent;color:var(--ok);font-weight:700}
+.grille button.ren{background:var(--att-wash);border-color:transparent;color:var(--att);font-weight:700}
+.grille button[aria-pressed="true"]{outline:2px solid var(--ink);outline-offset:1px}
+.msg{font-size:.84rem;padding:10px 12px;border-radius:12px;background:var(--wash);color:var(--ink)}
+.btn{align-self:flex-start;padding:9px 16px;border-radius:999px;border:0;background:var(--violet);color:var(--on-violet);font-weight:600;font-size:.86rem}
+table{border-collapse:collapse;width:100%;font-size:.82rem} th,td{text-align:left;padding:6px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-weight:600;font-size:.74rem} .tw{overflow-x:auto}
+.eleve{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--line);font-size:.88rem}
+.eleve:last-of-type{border-bottom:0}
+.bascule{padding:5px 11px;border-radius:999px;border:0;background:var(--ok-wash);color:var(--ok);font-size:.78rem;font-weight:600}
+.bascule[aria-pressed="true"]{background:var(--att-wash);color:var(--att)}
+.choix{display:flex;flex-wrap:wrap;gap:6px}
+.choix button{padding:7px 11px;border-radius:12px;border:1px solid var(--line);background:transparent;font-size:.82rem}
+.choix button[aria-pressed="true"]{border-color:var(--ink);background:var(--ink);color:var(--canvas);font-weight:600}
+.regle{display:grid;grid-template-columns:26px 1fr auto;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid var(--line);font-size:.86rem}
+.regle:last-child{border-bottom:0} .regle .n{font-family:var(--titre);font-weight:700;color:var(--muted)}
+</style>
+
+<div class="page">
+  <div class="cmd">
+    <h1>Maquette du programme vivant</h1>
+    <p class="note">Deuxième version. Données inventées, rien n'est en ligne. L'écran ne s'allonge pas : touchez une arche du chemin ou une tuile, le détail prend la place de la planche, puis refermez.</p>
+    <div class="groupe"><span class="t">Qui regarde</span>
+      <div class="puces" id="roles" role="group" aria-label="Qui regarde">
+        <button type="button" id="r-eleve" data-r="eleve" aria-pressed="true">Élève de 10 ans et plus</button>
+        <button type="button" id="r-enfant" data-r="enfant" aria-pressed="false">Enfant de 6 à 9 ans</button>
+        <button type="button" id="r-tuteur" data-r="tuteur" aria-pressed="false">Tuteur</button>
+        <button type="button" id="r-ens" data-r="ens" aria-pressed="false">Enseignant</button>
+      </div></div>
+    <div class="groupe"><span class="t">Situation</span>
+      <div class="puces" id="sits" role="group" aria-label="Situation">
+        <button type="button" id="s-ok" data-s="ok" aria-pressed="true">Dans les temps</button>
+        <button type="button" id="s-ren" data-s="ren" aria-pressed="false">Un point à renforcer</button>
+        <button type="button" id="s-man" data-s="man" aria-pressed="false">Un cours manqué</button>
+        <button type="button" id="s-lim" data-s="lim" aria-pressed="false">Date limite proche</button>
+        <button type="button" id="s-val" data-s="val" aria-pressed="false">Étape validée</button>
+      </div></div>
+    <p class="note">Exemple : classe Al-Fatiha, enfants de 6 à 9 ans, lundi, mercredi et vendredi. Étape « Les lettres » : 24 séances prévues, 30 au plus. Aujourd'hui : vendredi 13 novembre 2026. Le petit personnage est Bab, la figurine de l'académie.</p>
+  </div>
+  <div class="app" id="app"></div>
+</div>
+
+<script>
+(function(){
+var L="ا ب ت ث ج ح خ د ذ ر ز س ش ص ض ط ظ ع غ ف ق ك ل م ن ه و ي".split(" ");
+var PLAN=[["L","ا ب","Page 1, lignes 1 à 6"],["L","ت ث","Page 1, ligne 7, à page 2, ligne 4"],["C","Relire ا ب ت ث","Pages 1 et 2"],
+ ["L","ج ح","Page 3, lignes 1 à 6"],["L","خ, puis ج ح خ ensemble","Page 3, ligne 7, à page 4"],["C","Relire de ا à خ","Pages 1 à 4"],
+ ["L","د ذ","Page 5"],["L","ر ز","Page 6"],["C","Relire de ا à ز","Pages 1 à 6"],
+ ["L","س ش","Page 7"],["L","ص ض","Page 8"],["C","Relire, lettres fines et lettres épaisses","Pages 7 et 8"],
+ ["L","ط ظ","Page 9"],["L","ع غ","Page 10"],["C","Relire de س à غ","Pages 7 à 10"],
+ ["L","ف ق","Page 11"],["L","ك ل","Page 12"],["C","Relire de ف à ل","Pages 11 et 12"],
+ ["L","م ن","Page 13"],["L","ه و ي","Page 14"],["C","Les 28 lettres dans le désordre","Page 15"],
+ ["L","La lettre au début, au milieu, à la fin du mot","Pages 16 et 17"],["L","Les lettres qui se ressemblent","Pages 18 et 19"],["C","Révision générale, petit bilan","Page 20"]];
+var JOURS=["dimanche","lundi","mardi","mercredi","jeudi","vendredi","samedi"],MOIS=["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
+function dS(i){var d=new Date(2026,10,2);d.setDate(d.getDate()+Math.floor(i/3)*7+[0,2,4][i%3]);return d}
+function fmt(d){return JOURS[d.getDay()]+" "+d.getDate()+" "+MOIS[d.getMonth()]}
+function ar(s){return s.replace(/[؀-ۿ]+(?:\s+[؀-ۿ]+)*/g,function(m){return '<span class="ar">'+m+'</span>'})}
+var E={role:"eleve",sit:"ok",vue:null,sem:1,lettre:null,rattrape:false,ecoute:false,vu:"prevu",ren:{},valide:false};
+var ELEVES=["Yusuf","Maryam","Ibrahim","Aïcha"];
+var t0=Date.now(),cible=((2*24+22)*60+30)*60;
+function chrono(){var s=Math.max(0,cible-Math.floor((Date.now()-t0)/1000));return Math.floor(s/86400)+" j "+String(Math.floor(s%86400/3600)).padStart(2,"0")+" h "+String(Math.floor(s%3600/60)).padStart(2,"0")+" min "+String(s%60).padStart(2,"0")+" s"}
+function auj(){return E.sit==="lim"?19:E.sit==="val"?24:5}
+function eS(i){if(E.role!=="ens"){if(E.sit==="man"&&i===4&&!E.rattrape)return "m";if(E.sit==="ren"&&i===3)return "r"}
+  var a=auj();return i<a?"f":i===a?"j":"v"}
+function vues(){return [0,2,4,4,6,7,7,9,11,11,13,15,15,17,19,19,21,23,23,25,28,28,28,28,28][auj()]}
+var enf=function(){return E.role==="enfant"};
+var ETAPES=[
+ {n:"Les lettres",c:"Lettres",d:"8 semaines",m:"10 au plus",obj:["Reconnaît chaque lettre dans le désordre","La prononce depuis son point de sortie","Distingue les lettres épaisses et les lettres fines","La reconnaît au début, au milieu, à la fin du mot"],taj:"le point de sortie ; lettres épaisses et fines"},
+ {n:"Lire avec les voyelles",c:"Voyelles",d:"14 semaines",m:"19 au plus",obj:["Lit une lettre avec chacune des trois voyelles","Tient la longue deux temps, jamais la brève","Lit la chadda, nasalise le noun et le mim doublés","Fait rebondir les cinq lettres de la qalqala","Lit un mot long sans épeler"],taj:"brève ou longue ; chadda et nasalisation ; qalqala"},
+ {n:"Lire dans le Coran",c:"Coran",d:"8 semaines",m:"10 au plus",obj:["Lit une page du Mushaf en suivant ses signes","S'arrête correctement en fin de verset","Prononce le lam du nom d'Allah, épais ou fin","Lit d'un rythme régulier"],taj:"l'arrêt ; le lam du nom d'Allah"},
+ {n:"Les sourates courtes",c:"Sourates",d:"7 semaines",m:"9 au plus",obj:["Récite chaque sourate de mémoire","Applique les quatre cas du noun sans voyelle et du tanwin","Tient les allongements longs","Garde les sourates déjà apprises"],taj:"noun sans voyelle et tanwin ; allongements longs"}];
+var LIB={acq:"Acquis",ren:"À renforcer",sta:"Stable",non:"À venir"};
+function etats(i){var c=E.sit==="val"?1:0;if(i<c)return ["sta","sta","sta","sta"];if(i>c)return null;
+  if(E.sit==="val")return ["non","non","non","non","non"];if(E.sit==="lim")return ["acq","acq","acq","non"];if(E.sit==="ren")return ["acq","ren","non","non"];return ["acq","acq","non","non"]}
+/* ---- La carte du chemin : primitives du style Silhouette (arche, Bab, drapeau, porte de lumiere, pointilles) ---- */
+var ARCHE="M-60 0 C-62.4 -67.5 -60 -120 -60 -150 A60 60 0 0 1 60 -150 C60 -120 62.4 -67.5 60 0 Z";
+var POS=[[58,186],[146,138],[232,186],[304,132]],PORTE=[340,90];
+function bab(x,y,rot,cls){return '<g transform="translate('+x+' '+y+')"><g class="'+(cls||"")+'"><g transform="rotate('+rot+') scale(.15)"><path d="'+ARCHE+'" fill="var(--figure)"/><path d="M4.8 -14.7 L25.2 -21 L33.6 -142.2 L13.2 -138 Z" fill="#fff"/></g></g></g>'}
+function carte(){
+  var c=E.sit==="val"?1:0,o='<svg viewBox="0 0 380 226" role="img" aria-label="Le chemin des bases : quatre étapes et l\'examen">';
+  o+='<path d="M14 212 C40 212 40 186 58 186 S110 138 146 138 S196 186 232 186 S280 132 304 132 S326 90 340 90" fill="none" stroke="var(--figure)" stroke-width="3.2" stroke-linecap="round" stroke-dasharray="0.1 8.5"/>';
+  POS.forEach(function(p,i){
+    if(i<c){o+='<g transform="translate('+p[0]+' '+p[1]+') scale(.2)"><path d="'+ARCHE+'" fill="var(--figure)"/></g><path d="M'+p[0]+' '+(p[1]-41)+' v-17" stroke="var(--figure)" stroke-width="2.4" stroke-linecap="round"/><path d="M'+p[0]+' '+(p[1]-58)+' l11 4 l-11 4 Z" fill="var(--figure)"/>'}
+    else if(i===c){o+='<circle class="halo" cx="'+p[0]+'" cy="'+(p[1]-22)+'" r="15" fill="none" stroke="#fff" stroke-width="1.6"/><g transform="translate('+p[0]+' '+p[1]+') scale(.24)"><path d="'+ARCHE+'" fill="var(--figure)"/></g>'}
+    else{o+='<g transform="translate('+p[0]+' '+p[1]+') scale(.2)"><path d="'+ARCHE+'" fill="none" stroke="var(--figure)" stroke-width="13" stroke-dasharray="1 26" stroke-linecap="round"/></g>'}
+    o+='<rect x="'+(p[0]-30)+'" y="'+(p[1]+7)+'" width="60" height="15" rx="7.5" fill="var(--aplat)"/><text x="'+p[0]+'" y="'+(p[1]+18)+'" text-anchor="middle" font-size="9.5" font-weight="600" fill="#fff" font-family="Plus Jakarta Sans,sans-serif">'+(i+1)+' · '+ETAPES[i].c+'</text>'});
+  o+='<g transform="translate('+PORTE[0]+' '+PORTE[1]+') scale(.17)"><path d="M-110 0 L-110 -270 A110 110 0 0 1 110 -270 L110 0 Z" fill="var(--figure)"/><rect x="-50" y="-270" width="130" height="258" fill="#fff"/><path d="M-50 -12 L80 -12 L160 50 L-120 50 Z" fill="#fff"/></g>';
+  o+='<rect x="'+(PORTE[0]-26)+'" y="'+(PORTE[1]+12)+'" width="48" height="15" rx="7.5" fill="var(--aplat)"/><text x="'+(PORTE[0]-2)+'" y="'+(PORTE[1]+23)+'" text-anchor="middle" font-size="9.5" font-weight="600" fill="#fff" font-family="Plus Jakarta Sans,sans-serif">Examen</text>';
+  var p=POS[c];
+  if(E.role==="ens"){[0,1,2,3].forEach(function(k){o+='<g transform="translate('+(p[0]-34+k*9-(k===3?16:0))+' '+(p[1]+2+(k%2)*3)+') scale('+[.1,.09,.1,.085][k]+')"><path d="'+ARCHE+'" fill="var(--figure)"/></g>'})}
+  else if(E.sit==="val"){var bx=p[0]-38,by=p[1]-8;o+='<path d="M'+(POS[0][0]+10)+' '+(POS[0][1]-44)+' Q'+(POS[0][0]+30)+' '+(by-70)+' '+(bx-4)+' '+(by-30)+'" fill="none" stroke="var(--figure)" stroke-width="2.6" stroke-linecap="round" stroke-dasharray="0.1 7"/><ellipse cx="'+bx+'" cy="'+(p[1]+3)+'" rx="8" ry="2" fill="var(--ombre)"/>'+bab(bx,by,-12,"saute")+
+     [[-9,-40,-14,-49],[1,-43,1,-53],[11,-40,16,-49]].map(function(a){return '<path d="M'+(bx+a[0])+' '+(by+a[1])+' L'+(bx+a[2])+' '+(by+a[3])+'" stroke="var(--figure)" stroke-width="2.2" stroke-linecap="round"/>'}).join("")}
+  else if(E.sit==="ren"){o+=bab(p[0]-26,p[1]+2,14)+'<path d="M'+(p[0]-12)+' '+(p[1]-32)+' a7 7 0 0 1 0 12 M'+(p[0]-8)+' '+(p[1]-36)+' a12 12 0 0 1 0 20" fill="none" stroke="var(--figure)" stroke-width="1.8" stroke-linecap="round"/>'}
+  else if(E.sit==="man"&&!E.rattrape){o+=bab(p[0]-44,p[1]+8,0)+'<path d="M'+(p[0]-36)+' '+(p[1]-4)+' h14" stroke="var(--figure)" stroke-width="2.2" stroke-linecap="round" stroke-dasharray="0.1 5"/>'}
+  else{o+='<path d="M'+(p[0]-44)+' '+(p[1]-16)+' h10 M'+(p[0]-42)+' '+(p[1]-10)+' h8 M'+(p[0]-40)+' '+(p[1]-4)+' h6" stroke="var(--figure)" stroke-width="1.8" stroke-linecap="round"/>'+bab(p[0]-24,p[1]+2,-18)}
+  o+='</svg>';
+  var titre=E.role==="ens"?"Classe Al-Fatiha":enf()?"Mon chemin":E.role==="tuteur"?"Le chemin de Yusuf":"Le chemin des bases";
+  var sous=E.sit==="val"?"Étape 2 sur 4 · Lire avec les voyelles":"Étape 1 sur 4 · Les lettres";
+  o='<div class="carte-chemin">'+o+'<span class="titre">'+titre+'</span><span class="sous">'+sous+'</span>';
+  POS.concat([PORTE]).forEach(function(q,i){o+='<button type="button" class="st" id="st-'+i+'" data-a="vue" data-v="st'+i+'" aria-pressed="'+(E.vue==="st"+i)+'" aria-label="'+(i<4?"Étape "+(i+1)+" : "+ETAPES[i].n:"L\'examen de fin des bases")+'" style="left:'+(q[0]/380*100)+'%;top:'+(q[1]/226*100)+'%"></button>'});
+  return o+'</div>'}
+function alerte(){
+  if(E.role==="ens")return '<button type="button" class="alerte att" id="al" data-a="vue" data-v="point"><i class="p"></i><span><b>Le point de fin de séance vous attend</b><span class="s">Vingt secondes. La paie de la séance en dépend.</span></span><em>›</em></button>';
+  var e=enf();
+  if(E.sit==="ok")return '<button type="button" class="alerte ok" id="al" data-a="vue" data-v="temps"><i class="p"></i><span><b>'+(e?"Bravo, tu avances bien":"Dans les temps")+'</b><span class="s">'+(e?"Tu connais déjà 7 lettres.":"5 séances faites sur 24.")+'</span></span><em>›</em></button>';
+  if(E.sit==="ren")return '<button type="button" class="alerte att" id="al" data-a="vue" data-v="action"><i class="p"></i><span><b>À renforcer : <span class="ar">ج ح</span></b><span class="s">'+(e?"Écoute-les encore une fois.":"Dix minutes avant lundi.")+'</span></span><em>›</em></button>';
+  if(E.sit==="man")return E.rattrape?'<div class="alerte ok"><i class="p"></i><span><b>Cours rattrapé</b><span class="s">L\'enseignant l\'écoutera une minute lundi.</span></span></div>':
+    '<button type="button" class="alerte al" id="al" data-a="vue" data-v="action"><i class="p"></i><span><b>Le cours de mercredi est à rattraper</b><span class="s">La classe a vu <span class="ar">خ</span>.</span></span><em>›</em></button>';
+  if(E.sit==="lim")return e?'<button type="button" class="alerte ok" id="al" data-a="vue" data-v="lettres"><i class="p"></i><span><b>Encore trois lettres</b><span class="s">Tu en connais 25 sur 28.</span></span><em>›</em></button>':
+    '<button type="button" class="alerte att" id="al" data-a="vue" data-v="temps"><i class="p"></i><span><b>La date limite de l\'étape approche</b><span class="s">5 séances au plan, 11 avant la date limite.</span></span><em>›</em></button>';
+  return '<button type="button" class="alerte ok" id="al" data-a="vue" data-v="st0"><i class="p"></i><span><b>Étape validée : Les lettres</b><span class="s">'+(e?"Tu connais les 28 lettres.":"Confirmée par la direction.")+'</span></span><em>›</em></button>'}
+function pts(n,t,w){var o='<span class="points">';for(var i=0;i<t;i++)o+='<i class="'+(w&&w.indexOf(i)>-1?"w":i<n?"on":"")+'"></i>';return o+'</span>'}
+function planche(){
+  var a=Math.min(auj(),23),s=PLAN[a],e=enf(),v=vues(),o='<div class="planche">';
+  if(E.role==="ens"){
+    o+='<button type="button" class="tuile pleine large" id="tu-point" data-a="vue" data-v="point"><span class="t">Maintenant</span><span class="gros">Le point de fin de séance</span><span class="petit">Séance 6 sur 24 · Consolidation, pages 1 à 4</span></button>';
+    o+='<button type="button" class="tuile" id="tu-plan" data-a="vue" data-v="plan"><span class="t">Le plan</span><span class="gros">6 / 24</span><span class="petit">Séance par séance</span></button>';
+    o+='<button type="button" class="tuile" id="tu-classe" data-a="vue" data-v="classe"><span class="t">Ma classe</span><span class="gros">4 élèves</span><span class="petit">1 cours à rattraper</span></button>';
+    o+='<button type="button" class="tuile douce large" id="tu-pouv" data-a="vue" data-v="pouvoirs"><span class="t">Ce que je décide seul</span><span class="petit">Ralentir, avancer, changer l\'ordre, ajouter une révision</span></button>';
+    return o+'</div>'}
+  if(E.sit!=="val")o+='<button type="button" class="tuile pleine large" id="tu-auj" data-a="vue" data-v="plan"><span class="t">'+(e?"Aujourd\'hui":"Séance d\'aujourd\'hui · "+(a+1)+" sur 24")+'</span><span class="gros">'+(s[0]==="C"?"Consolidation":"Leçon nouvelle")+'</span><span class="petit">'+ar(s[1])+' · '+s[2]+'</span>'+(e?"":'<span class="rang"><span class="petit">Prochain cours, lundi à 18 h</span><span class="chrono" id="chrono">'+chrono()+'</span></span>')+'</button>';
+  else o+='<button type="button" class="tuile pleine large" id="tu-auj" data-a="vue" data-v="st1"><span class="t">La suite</span><span class="gros">Lire avec les voyelles</span><span class="petit">'+(e?"On commence au prochain cours.":"Commence au prochain cours · 42 séances prévues")+'</span></button>';
+  if(!e)o+='<button type="button" class="tuile" id="tu-temps" data-a="vue" data-v="temps"><span class="t">Le temps de l\'étape</span><span class="gros">'+Math.ceil((a+1)/3)+'ᵉ semaine</span><span class="jauge"><i style="width:'+(a/30*100)+'%;background:'+(E.sit==="lim"?"var(--att)":"var(--ok)")+'"></i><b style="left:80%"></b></span></button>';
+  o+='<button type="button" class="tuile" id="tu-plan" data-a="vue" data-v="plan"><span class="t">'+(e?"Mes leçons":"Le plan")+'</span><span class="gros">'+a+' / 24</span>'+pts(a,24,E.sit==="ren"?[3]:E.sit==="man"&&!E.rattrape?[4]:null)+'</button>';
+  o+='<button type="button" class="tuile'+(e?" large":"")+'" id="tu-let" data-a="vue" data-v="lettres"><span class="t">Les 28 lettres</span><span class="gros">'+v+' / 28</span>'+pts(v,28,E.sit==="ren"?[4,5]:null)+'</button>';
+  o+='<button type="button" class="tuile" id="tu-reg" data-a="vue" data-v="regles"><span class="t">Tajwid des bases</span><span class="gros">'+(E.sit==="val"?2:0)+' / 9</span><span class="petit">'+(e?"Les règles pour bien lire":"Neuf règles, pas plus")+'</span></button>';
+  o+='<button type="button" class="tuile" id="tu-sou" data-a="vue" data-v="sourates"><span class="t">Les 17 sourates</span><span class="gros">0 / 17</span><span class="petit">'+(e?"Après les voyelles":"À partir de l\'étape 2")+'</span></button>';
+  if(!e)o+='<button type="button" class="tuile douce large" id="tu-syn" data-a="vue" data-v="synth"><span class="t">Tableau de synthèse</span><span class="petit">Les quatre étapes, leurs séances, leurs dates</span></button>';
+  return o+'</div>'}
+function tete(t){return '<div class="tete"><h2>'+t+'</h2><button type="button" class="fermer" id="fermer" data-a="fermer">Fermer</button></div>'}
+function detail(){
+  var v=E.vue,e=enf(),o='<div class="detail">';
+  if(/^st[0-3]$/.test(v)){var i=+v[2],et=ETAPES[i],c=E.sit==="val"?1:0,ets=etats(i),st=i<c?"Étape précédente":i===c?"En cours":"À venir";
+    o+=tete((i+1)+" · "+et.n)+'<div class="etape-carte">'+(e?"<span></span>":'<span class="pilule'+(i<c?" v":"")+'">'+et.d+'</span>')+'<div><p class="petit">'+st+(e?"":" · "+et.m)+'</p>';
+    et.obj.forEach(function(x,k){var q=ets?ets[k]:"non";o+='<div class="obj"><span>'+x+'</span><span class="etat '+q+'">'+LIB[q]+'</span></div>'});
+    o+='</div></div><p class="msg">Tajwid de cette étape : '+et.taj+'.</p>'}
+  else if(v==="st4"){o+=tete("L'examen de fin des bases")+'<p>Trois parties, toutes exigées : la lecture d\'un passage non préparé, les 17 sourates de mémoire, les paroles de la prière.</p><p class="petit">L\'enseignant propose l\'élève quand il est prêt. Un évaluateur autre que lui fait passer l\'examen. La direction confirme. Puis vient l\'Attestation des bases.</p>'}
+  else if(v==="plan"){o+=tete(e?"Mes leçons":"Le plan, séance par séance")+'<div class="sem" role="group" aria-label="Semaine">';
+    for(var w=0;w<8;w++)o+='<button type="button" id="sm-'+w+'" data-a="sem" data-w="'+w+'" aria-pressed="'+(E.sem===w)+'" class="'+(Math.floor(Math.min(auj(),23)/3)===w?"auj":"")+'" aria-label="Semaine '+(w+1)+'">'+(w+1)+'</button>';
+    o+='</div><p class="petit">Semaine '+(E.sem+1)+(e?"":" · du "+dS(E.sem*3).getDate()+" "+MOIS[dS(E.sem*3).getMonth()])+' · deux leçons, puis une consolidation</p>';
+    for(var k=0;k<3;k++){var n=E.sem*3+k,s=PLAN[n],q=eS(n);
+      o+='<div class="seance '+q+'"><span class="num">'+(n+1)+'</span><span><strong>'+(s[0]==="C"?"Consolidation":"Leçon nouvelle")+'</strong> · '+ar(s[1])+'<br><span class="petit">'+(e?"":fmt(dS(n))+" · ")+s[2]+({m:" · à rattraper",r:" · à renforcer",j:" · aujourd\'hui",f:" · fait",v:""})[q]+'</span></span></div>'}}
+  else if(v==="lettres"){var vu=vues();o+=tete("Les 28 lettres")+'<div class="grille">';
+    L.forEach(function(x,i){var cl=i<vu?"on":"";if(E.sit==="ren"&&(i===4||i===5))cl="ren";o+='<button type="button" class="'+cl+'" id="l-'+i+'" data-a="lettre" data-i="'+i+'" aria-pressed="'+(E.lettre===i)+'" aria-label="Lettre '+x+'">'+x+'</button>'});
+    o+='</div><p class="msg">'+(E.lettre===null?"Touchez une lettre.":'<span class="ar">'+L[E.lettre]+'</span> : '+(E.lettre<vu?"vue en classe. Ici, on l\'écoute par la voix du directeur.":"pas encore vue. Elle arrive à la séance "+([1,1,2,2,4,4,5,7,7,8,8,10,10,11,11,13,13,14,14,16,16,17,17,19,19,20,20,20][E.lettre])+"."))+'</p>'}
+  else if(v==="regles"){o+=tete("Le tajwid des bases");var n=E.sit==="val"?2:0;
+    [["Le point de sortie",1],["Lettres épaisses et fines",1],["Brève ou longue",2],["Chadda et nasalisation",2],["La qalqala",2],["L\'arrêt",3],["Le lam du nom d\'Allah",3],["Noun sans voyelle et tanwin",4],["Les allongements longs",4]].forEach(function(r,i){
+      o+='<div class="regle"><span class="n">'+(i+1)+'</span><span>'+r[0]+'</span><span class="etat '+(i<n?"acq":i<2&&E.sit!=="val"?"ren":"non")+'">'+(i<n?"Acquis":i<2&&E.sit!=="val"?"En cours":"Étape "+r[1])+'</span></div>'})}
+  else if(v==="sourates"){o+=tete("Les 17 sourates")+pts(0,17)+'<p>Elles s\'allument une à une quand l\'enseignant coche une sourate récitée juste.</p><p class="petit">Pour les 6 à 9 ans : Al-Fatiha après l\'étape 2, puis An-Nâs, Al-Falaq, Al-Ikhlâs, puis les treize sourates d\'Al-Masad à Az-Zalzalah.</p>'}
+  else if(v==="temps"){var a=auj();o+=tete("Le temps de l'étape")+'<div class="jauge" role="img" aria-label="'+a+' séances faites, 24 prévues, 30 au plus"><i style="width:'+(a/30*100)+'%;background:'+(E.sit==="lim"?"var(--att)":"var(--ok)")+'"></i><b style="left:80%"></b></div>'+
+    '<div class="tw"><table><tbody><tr><td>Début</td><td>2 novembre</td></tr><tr><td>Fin prévue</td><td>25 décembre, à la 24ᵉ séance</td></tr><tr><td>Au plus tard</td><td>8 janvier, à la 30ᵉ séance</td></tr><tr><td>Marge restante</td><td>'+(E.sit==="lim"?"6 séances sur 6":"6 séances sur 6")+'</td></tr></tbody></table></div><p class="petit">Le trait marque la fin prévue. La marge absorbe un cours plus lent ; une fermeture de l\'académie décale tout le plan.</p>'}
+  else if(v==="synth"){o+=tete("Tableau de synthèse")+'<div class="tw"><table><thead><tr><th>Étape</th><th>Séances</th><th>Prévu</th><th>Au plus tard</th></tr></thead><tbody><tr><td>1. Les lettres</td><td>24</td><td>25 déc.</td><td>8 janv.</td></tr><tr><td>2. Les voyelles</td><td>42</td><td>2 avr.</td><td>21 mai</td></tr><tr><td>3. Lire dans le Coran</td><td>24</td><td>28 mai</td><td>30 juil.</td></tr><tr><td>4. Les sourates courtes</td><td>21</td><td>16 juil.</td><td>1 oct.</td></tr></tbody></table></div><p class="petit">Dates d\'exemple, calculées par le serveur : jours de la classe, fermetures de l\'académie, pauses.</p>'}
+  else if(v==="action"){
+    if(E.sit==="ren"){o+=tete("À renforcer")+'<p>'+ar("Les lettres ج et ح, signalées par l\'enseignant mercredi.")+'</p>'+(E.ecoute?'<p class="msg">Ici s\'ouvre la lecture enregistrée du directeur, puis la répétition à voix haute.</p>':'<button type="button" class="btn" id="b-ec" data-a="ecoute">Écouter et répéter</button>')}
+    else{o+=tete("Rattraper ce cours")+'<p>'+ar("Mercredi, la classe a vu خ : page 3, ligne 7, à page 4.")+'</p><p class="petit">'+(e?"Écoute la lettre, puis répète-la.":"3 écoutes, puis 5 répétitions à voix haute, avant lundi.")+'</p><button type="button" class="btn" id="b-ratt" data-a="ratt">'+(E.role==="tuteur"?"Il a rattrapé ce cours":"J\'ai rattrapé ce cours")+'</button>'}}
+  else if(v==="point"){o+=tete("Le point de fin de séance")+'<p class="petit">Vendredi 13 novembre · séance 6 sur 24</p><p><strong>Prévu :</strong> '+ar("Consolidation, relire de ا à خ, pages 1 à 4.")+'</p><div class="choix" role="group" aria-label="Ce que la classe a vu">'+
+     [["prevu","Vu comme prévu"],["moins","On a vu moins"],["plus","On a vu plus"]].map(function(c){return '<button type="button" id="vu-'+c[0]+'" data-a="vu" data-v="'+c[0]+'" aria-pressed="'+(E.vu===c[0])+'">'+c[1]+'</button>'}).join("")+'</div>';
+    if(E.vu==="moins")o+='<p class="msg">Arrêt réel : page 3. Le plan glisse d\'une séance, sans rien demander à personne. Marge restante : 5 séances sur 6.</p>';
+    if(E.vu==="plus")o+='<p class="msg">'+ar("La classe a commencé د ذ, page 5. Le plan avance d\'une séance.")+'</p>';
+    ELEVES.forEach(function(n,i){var r=!!E.ren[i];o+='<div class="eleve"><span>'+n+'</span>'+(i===3?'<span class="petit">Absente : le rattrapage s\'ouvre seul</span>':'<button type="button" class="bascule" id="el-'+i+'" data-a="ren" data-i="'+i+'" aria-pressed="'+r+'">'+(r?"À renforcer":"A suivi")+'</button>')+'</div>'});
+    o+='<button type="button" class="btn" id="b-val" data-a="valider">Valider la séance</button>';
+    if(E.valide){var nm=ELEVES.filter(function(n,i){return E.ren[i]});o+='<p class="msg"><strong>Enregistré.</strong> '+(nm.length?nm.join(" et ")+" : un travail ciblé est créé avant le prochain cours, et le tuteur est prévenu. ":"Toute la classe a suivi : les objectifs avancent pour chacun. ")+'La paie de la séance est libérée.</p>'}}
+  else if(v==="classe"){o+=tete("Ma classe sur le chemin");ELEVES.forEach(function(n,i){o+='<div class="eleve"><span>'+n+'</span><span class="petit">'+[7,7,6,5][i]+' lettres sur 28'+(i===3?" · 1 cours à rattraper":"")+'</span></div>'})}
+  else if(v==="pouvoirs"){o+=tete("Ce que je décide seul")+'<div class="tw"><table><tbody><tr><td>Ralentir ou avancer</td><td>Jusqu\'à 2 leçons d\'écart avec le plan</td></tr><tr><td>Changer l\'ordre</td><td>À l\'intérieur de la semaine</td></tr><tr><td>Ajouter une révision</td><td>Toujours</td></tr><tr><td>Choisir la méthode</td><td>Toujours</td></tr><tr><td>Sauter un objectif</td><td>Jamais</td></tr></tbody></table></div><p class="petit">Au-delà de 2 leçons d\'écart, rien n\'est bloqué : la direction le voit dans son tableau.</p>'}
+  return o+'</div>'}
+function rendre(){
+  var o='<div class="onglets"><span>Bibliothèque</span><span class="actif">Programme</span><span>Mon livret</span></div>'+carte()+alerte()+(E.vue?detail():planche());
+  document.getElementById("app").innerHTML=o}
+document.addEventListener("click",function(ev){
+  var b=ev.target.closest("button");if(!b)return;
+  if(b.dataset.r){E.role=b.dataset.r;E.vue=null;E.valide=false}
+  else if(b.dataset.s){E.sit=b.dataset.s;E.vue=null;E.rattrape=false;E.ecoute=false;E.lettre=null;E.sem=b.dataset.s==="lim"?6:b.dataset.s==="val"?7:1}
+  else{var a=b.dataset.a;if(!a)return;
+    if(a==="vue")E.vue=E.vue===b.dataset.v?null:b.dataset.v;
+    else if(a==="fermer")E.vue=null;
+    else if(a==="sem")E.sem=+b.dataset.w;
+    else if(a==="lettre")E.lettre=+b.dataset.i;
+    else if(a==="ratt"){E.rattrape=true;E.vue=null}
+    else if(a==="ecoute")E.ecoute=true;
+    else if(a==="vu"){E.vu=b.dataset.v;E.valide=false}
+    else if(a==="ren"){E.ren[b.dataset.i]=!E.ren[b.dataset.i];E.valide=false}
+    else if(a==="valider")E.valide=true}
+  document.querySelectorAll("#roles button").forEach(function(x){x.setAttribute("aria-pressed",String(x.dataset.r===E.role))});
+  document.querySelectorAll("#sits button").forEach(function(x){x.setAttribute("aria-pressed",String(x.dataset.s===E.sit))});
+  var id=b.id;rendre();var n=id&&document.getElementById(id);if(n)n.focus({preventScroll:true})});
+setInterval(function(){var c=document.getElementById("chrono");if(c)c.textContent=chrono()},1000);
+rendre();
+})();
+</script>
