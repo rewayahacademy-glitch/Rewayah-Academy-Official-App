@@ -13,6 +13,11 @@ Tout ce qui suit est **en vigueur par défaut**, posé par l'architecte pédagog
 5. **La règle « prière qui se ferme »** (arbitrée le 13/11/2026) : une prière entrée **moins de 20 minutes avant le cours** et dont le temps se ferme pendant le cours porte la pause, qui commence **10 minutes après le début** du cours ; elle passe avant la prière qui entre pendant le cours ; entrée 20 minutes ou plus avant : aucune pause. Les **deux réglages** sont `priere.marge_avant_cours_minutes` (20) et `priere.delai_fermeture_minutes` (10).
 6. **Rappel du Ramadan 2027** : mettre `priere.ramadan_en_cours` à **vrai vers le 8 février 2027**, puis à **faux vers le 9 mars 2027** (à la main, aucun calendrier n'est branché).
 
+**Ordre d'installation (13/11/2026) : la migration `20261123930000_priere_serveur.sql` AVANT la fusion de la branche.**
+- Migration d'abord : l'ancienne application ne lit que sa propre ligne `prayer_settings` (aucune en production) et n'écrit rien ; elle ne voit aucun changement, jamais une erreur.
+- Fusion d'abord, base non migrée : la nouvelle application appelle des fonctions qui n'existent pas encore ; l'enseignant voit le bandeau d'échec partiel de sa journée et les écrans de prière leur état d'erreur (textes, jamais un message brut), l'élève ne voit simplement pas la pause, la section « La prière » des Règles reste cachée, jusqu'à l'installation.
+- Un seul bloc dans l'éditeur SQL : oui, 98 Ko, 2 097 lignes, ni `BEGIN` ni `COMMIT` (l'éditeur l'envoie en une requête, donc une seule transaction : tout passe ou rien ne change) ; **pas rejouable** : un second collage s'arrête à la première création déjà faite et ne change rien.
+
 Ce que le directeur n'a pas à décider ici : le calcul des heures (prouvé contre le paquet `adhan`, écart 0 minute) et la protection des données (la position d'un enseignant n'est lue que par lui et la direction ; aucune pratique religieuse n'est écrite au journal).
 
 
