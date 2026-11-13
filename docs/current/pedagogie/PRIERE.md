@@ -11,9 +11,10 @@ Tout ce qui suit est **en vigueur par défaut**, posé par l'architecte pédagog
 3. **Prière du vendredi : plage de 12 h 30 à 14 h 30**, heure de l'enseignant ; le réglage « assiste à la prière du vendredi » est faux par défaut et posé par la direction.
 4. **Durées : 10 minutes** de pause (de 5 à 20 par pas de 5), **20 minutes pour le Maghrib du Ramadan** ; marges de 5 minutes au début et de 15 minutes à la fin du cours.
 5. **La règle « prière qui se ferme »** (arbitrée le 13/11/2026) : une prière entrée **moins de 20 minutes avant le cours** et dont le temps se ferme pendant le cours porte la pause, qui commence **10 minutes après le début** du cours ; elle passe avant la prière qui entre pendant le cours ; entrée 20 minutes ou plus avant : aucune pause. Les **deux réglages** sont `priere.marge_avant_cours_minutes` (20) et `priere.delai_fermeture_minutes` (10).
-6. **Rappel du Ramadan 2027** : mettre `priere.ramadan_en_cours` à **vrai vers le 8 février 2027**, puis à **faux vers le 9 mars 2027** (à la main, aucun calendrier n'est branché).
+6. **Zéro saisie (PRIERE-2, 13/11/2026)** : l'enseignant partage sa position d'un toucher (« Utiliser ma position »), arrondie à environ un kilomètre ; **la méthode suit le pays du lieu** pour neuf pays (liste et justification ligne par ligne au § 3 ter), la méthode de l'académie ailleurs ; la direction lit une liste et ne corrige qu'une exception. Le directeur valide une phrase (« méthode selon le pays », activée) : il ne remplit rien.
+7. **Rappel du Ramadan 2027** : mettre `priere.ramadan_en_cours` à **vrai vers le 8 février 2027**, puis à **faux vers le 9 mars 2027** (à la main, aucun calendrier n'est branché).
 
-**Ordre d'installation (13/11/2026) : la migration `20261123930000_priere_serveur.sql` AVANT la fusion de la branche.**
+**Ordre d'installation. PRIERE-1 (installée) : la migration `20261123930000_priere_serveur.sql` AVANT la fusion. PRIERE-2 : la migration `20261124500000_priere_zero_saisie.sql` AVANT la fusion de la branche (voir § 3 ter).**
 - Migration d'abord : l'ancienne application ne lit que sa propre ligne `prayer_settings` (aucune en production) et n'écrit rien ; elle ne voit aucun changement, jamais une erreur.
 - Fusion d'abord, base non migrée : la nouvelle application appelle des fonctions qui n'existent pas encore ; l'enseignant voit le bandeau d'échec partiel de sa journée et les écrans de prière leur état d'erreur (textes, jamais un message brut), l'élève ne voit simplement pas la pause, la section « La prière » des Règles reste cachée, jusqu'à l'installation.
 - Un seul bloc dans l'éditeur SQL : oui, 98 Ko, 2 097 lignes, ni `BEGIN` ni `COMMIT` (l'éditeur l'envoie en une requête, donc une seule transaction : tout passe ou rien ne change) ; **pas rejouable** : un second collage s'arrête à la première création déjà faite et ne change rien.
@@ -37,7 +38,7 @@ Les valeurs chiffrées sont dans `REGLAGES.md` (partie 8, « La prière »), qui
 
 **P2. Une seule source des heures de prière : le serveur.** Calcul astronomique déterministe, sans IA et sans service externe, en SQL. L'application ne calcule plus rien elle-même : les écrans existants lisent le serveur (un seul chiffre partout).
 
-**P3. Le lieu de prière de l'enseignant est fixé par la direction** (nom du lieu, latitude, longitude, fuseau), parce que les zones des enseignants sont connues de l'académie ; l'enseignant peut le lire et ajuster chaque prière de −30 à +30 minutes (bornes existantes). La méthode de calcul et l'école pour l'Asr sont des réglages de la direction : valeur par défaut pour toute l'académie (réglage `app_config` ; défaut : Ligue islamique mondiale, Asr selon la majorité des écoles), surchargeable par enseignant. **Ces deux choix relèvent du fiqh : valeur par défaut en vigueur, à valider par le directeur et ses associés.**
+**P3. **[Amendé le 13/11/2026, PRIERE-2 : voir § 3 ter ; l'enseignant partage sa position d'un toucher, la direction garde le pouvoir de corriger.]** Le lieu de prière de l'enseignant est fixé par la direction** (nom du lieu, latitude, longitude, fuseau), parce que les zones des enseignants sont connues de l'académie ; l'enseignant peut le lire et ajuster chaque prière de −30 à +30 minutes (bornes existantes). La méthode de calcul et l'école pour l'Asr sont des réglages de la direction : valeur par défaut pour toute l'académie (réglage `app_config` ; défaut : Ligue islamique mondiale, Asr selon la majorité des écoles), surchargeable par enseignant. **Ces deux choix relèvent du fiqh : valeur par défaut en vigueur, à valider par le directeur et ses associés.**
 
 **P4. Une seule pause par séance.** Quand une prière ENTRE pendant la séance pour l'enseignant, la pause de la séance est placée à l'entrée de cette prière. Sinon la pause reste où la salle la place (après le milieu). Si deux prières entrent pendant la même séance, la pause va à la première dont la fenêtre est courte (le Maghreb d'abord) ; l'autre se prie après le cours. **[Amendé le 13/11/2026 : la pause va à la première dans l'ordre du temps qui n'est pas en zone de fin ; voir §3, point 4.]**
 
@@ -68,6 +69,42 @@ Pour une séance qui commence en `s`, finit en `e` (durée `L` minutes), avec l'
 6. Résultat : une ligne dans `seance_pause_prevue`, ou aucune.
 
 **Cas non défini.** Aux très hautes latitudes, le soleil peut ne jamais se lever ni se coucher (jour polaire, nuit polaire) : le calcul n'existe pas. Le serveur ne devine rien : il **ne place aucune pause de prière** pour cette séance et écrit une ligne au journal de la direction (`log_sensitive_access`, action `priere_calcul_indefini`). Quand seuls le Fajr ou l'Isha ne se définissent pas par leur angle (été, latitudes moyennes et hautes), le calcul retombe sur la règle de la nuit partagée en deux, la même que celle du paquet de référence ; l'heure est alors marquée **approchée** (aperçu de la direction, journal), et la pause est placée quand même. Sur les latitudes où l'académie est présente aujourd'hui (Guinée), aucun de ces cas ne se produit.
+
+## 3 ter. PRIERE-2 : la prière sans formulaire (amendement de P3, 13/11/2026)
+
+**Le retour du directeur** (13/11/2026, en ouvrant « Lieux de prière », un mur de boutons radio) : « Je ne vais jamais remplir ces formulaires moches et anciens. Si l'app ne peut pas calculer elle-même tout ça alors à toi de régler cela. » **Arbitré : l'application calcule tout ; personne ne remplit de formulaire ; la direction lit et, rarement, corrige une exception.**
+
+**P3 amendé.** Le lieu n'est plus fixé par la direction seule. Qui a posé le lieu est enregistré (`prayer_settings.lieu_source`) :
+
+- **`enseignant`** : l'enseignant touche « Utiliser ma position » (`priere_ma_position`, réservée à l'enseignant connecte, pour lui-même : aucun paramètre ne désigne une autre personne ; refus de l'élève, du tuteur, de la direction, de l'anonyme, et de tout mineur). Le serveur **arrondit latitude et longitude au centième de degré** (environ un kilomètre) avant d'écrire : la position exacte n'est ni stockée ni affichée ; il reçoit le fuseau IANA de l'appareil (vérifié), donne le nom « Votre position, fuseau Africa/Conakry » (aucun service externe) et recalcule aussitôt les pauses. Journal : qui et quand, jamais la position. Refus de géolocalisation ou échec : « Position non partagée. Vous pouvez réessayer, ou la direction posera votre lieu. » ; jamais un formulaire de coordonnées pour l'enseignant. La lecture de la position passe par l'API du navigateur (`dart:js_interop`, aucun paquet, aucun secret) ; hors web, la lecture n'est pas disponible et l'écran le dit.
+- **`direction`** : posé à la main (réglage avancé de la feuille « Corriger », replié par défaut). **Il n'est jamais écrasé** ni par l'enseignant (refus « lieu posé par la direction »), ni par l'automatique. La direction garde son pouvoir de corriger et de retirer.
+- **`auto`** : posé depuis la ville de l'enseignant (lot HORLOGE-ET-LIEU). `private.priere_lieu_auto(p_enseignant, p_nom, p_lat, p_lng, p_fuseau)` ne pose le lieu que si la direction n'en a pas posé un à la main **et** si l'enseignant n'a pas partagé sa propre position (la sienne, plus précise, l'emporte : choix pris seul, voir la fiche) ; elle remplace un lieu `auto` plus ancien (changement de ville) et rend vrai quand elle a posé.
+
+**La ligne que le lot HORLOGE-ET-LIEU devra ajouter.** `public.lieux` n'existait pas à l'installation de ce lot (ses colonnes ne sont pas lues ici) : au moment où le lot horloge enregistre la ville d'un enseignant (écriture ou déclencheur sur `public.lieux`), il ajoute, avec les colonnes de sa propre table :
+
+`PERFORM private.priere_lieu_auto(<profil de l'enseignant>, <nom de la ville>, <latitude du centre>, <longitude du centre>, <fuseau IANA>);`
+
+La fonction est `SECURITY DEFINER`, `search_path` vide, sans droit pour `authenticated`, `anon` ni `PUBLIC` : seul un appel serveur la joint. Elle valide elle-même les bornes et le fuseau et rend faux sans rien écrire si l'un est invalide.
+
+**La méthode suit le pays du lieu** (`priere.methode_selon_pays`, vrai par défaut ; le pays se déduit du fuseau du lieu, jamais d'une saisie). Ordre : surcharge de la direction, puis méthode usuelle du pays, puis méthode de l'académie (Ligue islamique mondiale). Neuf fuseaux seulement, chacun justifié par la documentation du paquet `adhan` qui nomme la méthode d'après l'institution ou la région du pays :
+
+| Fuseau | Pays | Méthode | Justification |
+|---|---|---|---|
+| `Asia/Riyadh` | Arabie saoudite | Umm al-Qura | « Umm al-Qura University, Makkah » : l'institution du pays |
+| `Asia/Qatar` | Qatar | Qatar | la méthode porte le nom du pays |
+| `Asia/Kuwait` | Koweït | Koweït | la méthode porte le nom du pays |
+| `Asia/Dubai` | Émirats arabes unis | Golfe (Dubaï) | « The Gulf Region » |
+| `Africa/Cairo` | Égypte | Autorité générale égyptienne | « Egyptian General Authority of Survey » |
+| `Asia/Karachi` | Pakistan | Karachi | « University of Islamic Sciences, Karachi » |
+| `Asia/Singapore` | Singapour | Singapour | la méthode porte le nom du pays |
+| `Europe/Istanbul` | Turquie | Turquie (Diyanet) | l'autorité religieuse du pays |
+| `Asia/Tehran` | Iran | Téhéran | « Institute of Geophysics, University of Tehran » |
+
+Non déduites, et pourquoi : l'Amérique du Nord (la méthode ISNA est dite « non recommandée » par le paquet lui-même) ; le Moon Sighting Committee (ce n'est pas un pays). Tout autre fuseau, dont la Guinée et la France : la méthode de l'académie. **Valeur en vigueur, à valider par le directeur** : il valide une phrase, il ne remplit rien. Le réglage se coupe d'un interrupteur (Configuration > Règles > La prière) : la méthode de l'académie reprend partout.
+
+**L'écran de la direction, refait.** « Lieux de prière des enseignants » est une liste à lire : par enseignant, sa zone (nom) et d'où vient le lieu, ses cinq heures du jour, la méthode appliquée et son origine (choisie par la direction, usuelle du pays, ou celle de l'académie), et, sans lieu, « En attente : l'enseignant n'a pas encore partagé sa position ». Aucun champ visible. Une seule action secondaire par ligne, « Corriger », qui ouvre une feuille courte : le vendredi par un interrupteur (les heures seulement s'il est activé), un seul bouton plein, et sous « Réglage avancé » (replié) la méthode (menu compact, « Automatique » par défaut), l'école d'Asr et la pose du lieu à la main. La correction (`priere_corriger`) ne change ni la position ni la source du lieu ; le journal garde « réglage corrigé », jamais la valeur. La liste de la direction (`priere_enseignants_vue`) ne rend aucune coordonnée. La section « La prière » des Règles : des phrases et des interrupteurs (méthode selon le pays, Ramadan), les valeurs chiffrées repliées.
+
+**Ordre d'installation de PRIERE-2.** La migration `20261124500000_priere_zero_saisie.sql` **avant** la fusion. Migration d'abord : l'application de PRIERE-1 (en production) appelle `priere_enseignants_liste`, `priere_lieu_definir` et `priere_reglages_lire`, qui existent toujours avec la même forme ; elle ne voit rien changer. Fusion d'abord, base non migrée : la nouvelle application appelle `priere_ma_position`, `priere_enseignants_vue` et `priere_corriger`, absentes ; l'enseignant voit « Il est possible que votre position ne soit pas parvenue jusqu'à Rewayah » et la direction l'état d'erreur de sa liste (des textes, jamais un message brut), et la section des Règles reste cachée tant que la clé `priere.methode_selon_pays` manque.
 
 ## 3 bis. La prière dont le temps se termine pendant la séance (arbitré le 13/11/2026)
 

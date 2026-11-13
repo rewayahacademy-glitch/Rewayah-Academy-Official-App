@@ -7887,7 +7887,11 @@ class _Traductions$priere$enseignant$ar extends Traductions$priere$enseignant$fr
 	@override String get intro => 'أوقات اليوم تحسبها رواية لمكانك. يمكنك تعديل كل صلاة بما لا يزيد على 30 دقيقة.';
 	@override String get ligne => 'أوقات صلاتي';
 	@override String get ligneDetail => 'اطّلع على أوقات يومك وعدّلها';
-	@override String get vide => 'لم يُحدَّد مكان صلاتك بعد. تحدده الإدارة وستظهر أوقاتك هنا.';
+	@override String get vide => 'مكان صلاتك غير معروف بعد. لمسة واحدة تكفي: يقرأ رواية موقع هذا الجهاز ويقرّبه إلى نحو كيلومتر ثم يحسب أوقاتك.';
+	@override String get utiliserPosition => 'استخدام موقعي';
+	@override String get positionRefusee => 'لم تتم مشاركة الموقع. يمكنك إعادة المحاولة، أو تحدد الإدارة مكانك.';
+	@override String get positionErreur => 'ربما لم يصل موقعك إلى رواية. أعد المحاولة بعد قليل.';
+	@override String get positionDirection => 'حددت الإدارة مكانك من قبل. لا يتغير بلمسة واحدة.';
 	@override String get erreur => 'لم تظهر أوقات صلاتك. قد لا يكون الطلب وصل إلى رواية. أعد المحاولة بعد قليل.';
 	@override String get aucunAjustement => 'بلا تعديل';
 	@override String plus({required Object minutes}) => '⁨${minutes}⁩ د زيادة';
@@ -7908,7 +7912,18 @@ class _Traductions$priere$direction$ar extends Traductions$priere$direction$fr {
 	// Translations
 	@override String get onglet => 'الصلاة';
 	@override String get titre => 'أماكن الصلاة';
-	@override String get intro => 'مكان صلاة كل معلم يحدد أوقاته. لا يراه إلا المعلم والإدارة: التلاميذ وأولياء الأمور لا يقرؤون إلا وقت الاستراحة.';
+	@override String get intro => 'تحسب رواية أوقات كل معلم انطلاقًا من موقعه، وتختار الطريقة بحسب البلد. تقرؤون هذه القائمة ولا تصححون إلا الاستثناء. لا يرى المكان إلا المعلم والإدارة: التلاميذ وأولياء الأمور لا يقرؤون إلا وقت الاستراحة.';
+	@override String get attente => 'في الانتظار: لم يشارك المعلم موقعه بعد';
+	@override String get corriger => 'تصحيح';
+	@override String corrigerDe({required Object prenom}) => 'تصحيح إعدادات صلاة ⁨${prenom}⁩';
+	@override String get sourceDirection => 'مكان حددته الإدارة';
+	@override String get sourceEnseignant => 'موقع شاركه المعلم';
+	@override String get sourceAuto => 'مكان مأخوذ من مدينته';
+	@override String get origineEnseignant => 'اختارتها الإدارة';
+	@override String get originePays => 'المعتادة في البلد';
+	@override String get origineAcademie => 'طريقة الأكاديمية';
+	@override String zoneLigne({required Object lieu, required Object source}) => '⁨${lieu}⁩، ⁨${source}⁩';
+	@override String methodeLigne({required Object methode, required Object origine}) => 'الطريقة: ⁨${methode}⁩ (⁨${origine}⁩)';
 	@override String get sansLieu => 'بلا مكان: لا استراحة صلاة';
 	@override String get vide => 'لا يوجد معلم نشط حاليًا.';
 	@override String get erreur => 'لم تظهر أماكن الصلاة. قد لا يكون الطلب وصل إلى رواية. أعد المحاولة بعد قليل.';
@@ -7973,6 +7988,10 @@ class _Traductions$priere$regles$ar extends Traductions$priere$regles$fr {
 	@override String get delaiFermetureDetail => 'تبدأ هذه الاستراحة بعد بداية الدرس بهذه المدة.';
 	@override String get horizon => 'إعادة الحساب ليلًا';
 	@override String get horizonDetail => 'كل ليلة تُعاد حسابات استراحات حصص الأيام القادمة.';
+	@override String get valeurs => 'قيم رقمية';
+	@override String get valeursDetail => 'المدد والهوامش وإعادة الحساب الليلي: تطبق رواية هذه القيم، لا تغيروها إلا لاستثناء.';
+	@override String get methodeSelonPays => 'الطريقة بحسب البلد';
+	@override String get methodeSelonPaysDetail => 'عند التفعيل تُطبَّق الطريقة المعتادة في بلد المكان (السعودية، قطر، الكويت، الإمارات، مصر، باكستان، سنغافورة، تركيا، إيران)، وفي غيرها طريقة الأكاديمية. يؤكدها المدير.';
 	@override String get lieux => 'أماكن صلاة المعلمين';
 	@override String get lieuxDetail => 'مكان كل معلم، وصلاة الجمعة، وأوقات اليوم.';
 	@override String unite({required Object n}) => '⁨${n}⁩ د';
@@ -17306,6 +17325,14 @@ class _Traductions$priere$direction$feuille$ar extends Traductions$priere$direct
 
 	// Translations
 	@override String titre({required Object dePrenom}) => 'مكان وأوقات صلاة ⁨${dePrenom}⁩';
+	@override String get avance => 'إعداد متقدم';
+	@override String get avanceAide => 'تختار رواية الطريقة وحدها بحسب بلد المكان. لا تغيروها إلا لاستثناء.';
+	@override String get methodeAuto => 'تلقائي: بحسب البلد، وإلا الأكاديمية';
+	@override String get ecoleAuto => 'تلقائي';
+	@override String get poserMain => 'تحديد المكان يدويًا';
+	@override String get poserLieu => 'تحديد هذا المكان';
+	@override String get sansLieuAide => 'لا مكان حاليًا: يشاركه المعلم بنفسه بلمسة واحدة. يمكنكم تحديده يدويًا ضمن «إعداد متقدم».';
+	@override String get vendrediAide => 'تُبلَّغ الإدارة بكل موعد يتقاطع مع هذه الصلاة دون منع.';
 	@override String get nomLieu => 'اسم المكان';
 	@override String get latitude => 'خط العرض';
 	@override String get longitude => 'خط الطول';
@@ -32111,7 +32138,11 @@ extension on TraductionsAr {
 			'priere.enseignant.intro' => 'أوقات اليوم تحسبها رواية لمكانك. يمكنك تعديل كل صلاة بما لا يزيد على 30 دقيقة.',
 			'priere.enseignant.ligne' => 'أوقات صلاتي',
 			'priere.enseignant.ligneDetail' => 'اطّلع على أوقات يومك وعدّلها',
-			'priere.enseignant.vide' => 'لم يُحدَّد مكان صلاتك بعد. تحدده الإدارة وستظهر أوقاتك هنا.',
+			'priere.enseignant.vide' => 'مكان صلاتك غير معروف بعد. لمسة واحدة تكفي: يقرأ رواية موقع هذا الجهاز ويقرّبه إلى نحو كيلومتر ثم يحسب أوقاتك.',
+			'priere.enseignant.utiliserPosition' => 'استخدام موقعي',
+			'priere.enseignant.positionRefusee' => 'لم تتم مشاركة الموقع. يمكنك إعادة المحاولة، أو تحدد الإدارة مكانك.',
+			'priere.enseignant.positionErreur' => 'ربما لم يصل موقعك إلى رواية. أعد المحاولة بعد قليل.',
+			'priere.enseignant.positionDirection' => 'حددت الإدارة مكانك من قبل. لا يتغير بلمسة واحدة.',
 			'priere.enseignant.erreur' => 'لم تظهر أوقات صلاتك. قد لا يكون الطلب وصل إلى رواية. أعد المحاولة بعد قليل.',
 			'priere.enseignant.aucunAjustement' => 'بلا تعديل',
 			'priere.enseignant.plus' => ({required Object minutes}) => '⁨${minutes}⁩ د زيادة',
@@ -32123,7 +32154,18 @@ extension on TraductionsAr {
 			'priere.enseignant.unite' => ({required Object n}) => '⁨${n}⁩ د',
 			'priere.direction.onglet' => 'الصلاة',
 			'priere.direction.titre' => 'أماكن الصلاة',
-			'priere.direction.intro' => 'مكان صلاة كل معلم يحدد أوقاته. لا يراه إلا المعلم والإدارة: التلاميذ وأولياء الأمور لا يقرؤون إلا وقت الاستراحة.',
+			'priere.direction.intro' => 'تحسب رواية أوقات كل معلم انطلاقًا من موقعه، وتختار الطريقة بحسب البلد. تقرؤون هذه القائمة ولا تصححون إلا الاستثناء. لا يرى المكان إلا المعلم والإدارة: التلاميذ وأولياء الأمور لا يقرؤون إلا وقت الاستراحة.',
+			'priere.direction.attente' => 'في الانتظار: لم يشارك المعلم موقعه بعد',
+			'priere.direction.corriger' => 'تصحيح',
+			'priere.direction.corrigerDe' => ({required Object prenom}) => 'تصحيح إعدادات صلاة ⁨${prenom}⁩',
+			'priere.direction.sourceDirection' => 'مكان حددته الإدارة',
+			'priere.direction.sourceEnseignant' => 'موقع شاركه المعلم',
+			'priere.direction.sourceAuto' => 'مكان مأخوذ من مدينته',
+			'priere.direction.origineEnseignant' => 'اختارتها الإدارة',
+			'priere.direction.originePays' => 'المعتادة في البلد',
+			'priere.direction.origineAcademie' => 'طريقة الأكاديمية',
+			'priere.direction.zoneLigne' => ({required Object lieu, required Object source}) => '⁨${lieu}⁩، ⁨${source}⁩',
+			'priere.direction.methodeLigne' => ({required Object methode, required Object origine}) => 'الطريقة: ⁨${methode}⁩ (⁨${origine}⁩)',
 			'priere.direction.sansLieu' => 'بلا مكان: لا استراحة صلاة',
 			'priere.direction.vide' => 'لا يوجد معلم نشط حاليًا.',
 			'priere.direction.erreur' => 'لم تظهر أماكن الصلاة. قد لا يكون الطلب وصل إلى رواية. أعد المحاولة بعد قليل.',
@@ -32135,6 +32177,14 @@ extension on TraductionsAr {
 			'priere.direction.incoherencePays' => ({required Object prenom, required Object detail}) => '⁨${prenom}⁩: بلد الحساب (⁨${detail}⁩) لا يطابق مكان الصلاة.',
 			'priere.direction.incoherencePaysFuseau' => ({required Object prenom, required Object detail}) => '⁨${prenom}⁩: بلد الحساب ومنطقته الزمنية لا يتطابقان (⁨${detail}⁩).',
 			'priere.direction.feuille.titre' => ({required Object dePrenom}) => 'مكان وأوقات صلاة ⁨${dePrenom}⁩',
+			'priere.direction.feuille.avance' => 'إعداد متقدم',
+			'priere.direction.feuille.avanceAide' => 'تختار رواية الطريقة وحدها بحسب بلد المكان. لا تغيروها إلا لاستثناء.',
+			'priere.direction.feuille.methodeAuto' => 'تلقائي: بحسب البلد، وإلا الأكاديمية',
+			'priere.direction.feuille.ecoleAuto' => 'تلقائي',
+			'priere.direction.feuille.poserMain' => 'تحديد المكان يدويًا',
+			'priere.direction.feuille.poserLieu' => 'تحديد هذا المكان',
+			'priere.direction.feuille.sansLieuAide' => 'لا مكان حاليًا: يشاركه المعلم بنفسه بلمسة واحدة. يمكنكم تحديده يدويًا ضمن «إعداد متقدم».',
+			'priere.direction.feuille.vendrediAide' => 'تُبلَّغ الإدارة بكل موعد يتقاطع مع هذه الصلاة دون منع.',
 			'priere.direction.feuille.nomLieu' => 'اسم المكان',
 			'priere.direction.feuille.latitude' => 'خط العرض',
 			'priere.direction.feuille.longitude' => 'خط الطول',
@@ -32191,6 +32241,10 @@ extension on TraductionsAr {
 			'priere.regles.delaiFermetureDetail' => 'تبدأ هذه الاستراحة بعد بداية الدرس بهذه المدة.',
 			'priere.regles.horizon' => 'إعادة الحساب ليلًا',
 			'priere.regles.horizonDetail' => 'كل ليلة تُعاد حسابات استراحات حصص الأيام القادمة.',
+			'priere.regles.valeurs' => 'قيم رقمية',
+			'priere.regles.valeursDetail' => 'المدد والهوامش وإعادة الحساب الليلي: تطبق رواية هذه القيم، لا تغيروها إلا لاستثناء.',
+			'priere.regles.methodeSelonPays' => 'الطريقة بحسب البلد',
+			'priere.regles.methodeSelonPaysDetail' => 'عند التفعيل تُطبَّق الطريقة المعتادة في بلد المكان (السعودية، قطر، الكويت، الإمارات، مصر، باكستان، سنغافورة، تركيا، إيران)، وفي غيرها طريقة الأكاديمية. يؤكدها المدير.',
 			'priere.regles.lieux' => 'أماكن صلاة المعلمين',
 			'priere.regles.lieuxDetail' => 'مكان كل معلم، وصلاة الجمعة، وأوقات اليوم.',
 			'priere.regles.unite' => ({required Object n}) => '⁨${n}⁩ د',
@@ -32456,6 +32510,8 @@ extension on TraductionsAr {
 			'inscription.etapeCourte' => ({required Object n, required Object total}) => '⁨${n}⁩ من ⁨${total}⁩',
 			'inscription.retourEtape' => 'العودة إلى الخطوة السابقة',
 			'inscription.seDeconnecter' => 'تسجيل الخروج',
+			_ => null,
+		} ?? switch (path) {
 			'inscription.modifier' => 'تعديل',
 			'inscription.reessayer' => 'إعادة المحاولة',
 			'inscription.erreurActualisation' => 'أُنشئ حسابك، لكن تعذّر تحديث الاتصال. أعد المحاولة، أو سجّل الخروج ثم الدخول من جديد.',
@@ -32483,8 +32539,6 @@ extension on TraductionsAr {
 			'inscription.recap.usage' => 'نوع الحساب',
 			'inscription.recap.identite' => 'الاسم',
 			'inscription.recap.genre' => 'الجنس',
-			_ => null,
-		} ?? switch (path) {
 			'inscription.recap.enseignant' => 'معلم',
 			'inscription.recap.comptable' => 'محاسب',
 			'inscription.recap.cours' => 'دروسك الخاصة',
@@ -32970,6 +33024,8 @@ extension on TraductionsAr {
 			'adulte.demo.etats.emancipation' => 'استقلال طالب بلغ سن الرشد: غير مبني في هذه المرحلة.',
 			'dossiers.titre' => 'ملفات للاعتماد',
 			'dossiers.aucun' => 'لا ملف ينتظر الاعتماد.',
+			_ => null,
+		} ?? switch (path) {
 			'dossiers.aucunDetail' => 'ستظهر الملفات الجديدة هنا حين تصبح جاهزة.',
 			'dossiers.file.chargement' => 'جارٍ تحميل الملفات…',
 			'dossiers.file.erreur' => 'تعذّر تحميل الملفات.',
@@ -32997,8 +33053,6 @@ extension on TraductionsAr {
 			'dossiers.visionneuse.formatNonPrisEnCharge' => 'لا يمكن عرض تنسيق هذه الوثيقة.',
 			'dossiers.visionneuse.accesRetire' => 'لم يعد لديك وصول إلى هذه الوثيقة.',
 			'dossiers.visionneuse.apercuRefuse' => 'هذه الوثيقة غير مرئية بحسابك.',
-			_ => null,
-		} ?? switch (path) {
 			'dossiers.visionneuse.horsLigne' => 'أنت غير متصل. لا يمكن تحميل الوثيقة.',
 			'dossiers.visionneuse.aucune' => 'لا وثيقة متاحة.',
 			'dossiers.visionneuse.fermerPiece' => 'إغلاق الوثيقة',
@@ -33484,6 +33538,8 @@ extension on TraductionsAr {
 			'suiviDemandes.fuseauValeur' => ({required Object deVille}) => 'بتوقيت ⁨${deVille}⁩',
 			'suiviDemandes.etapes.envoyee' => 'تم إرسال الطلب',
 			'suiviDemandes.etapes.listeAttente' => 'في قائمة الانتظار',
+			_ => null,
+		} ?? switch (path) {
 			'suiviDemandes.etapes.classeValidee' => 'تم اعتماد الفصل',
 			'suiviDemandes.etapes.enseignantAffecte' => 'تم تعيين المعلم',
 			'suiviDemandes.etapes.eleveIntegre' => 'الطالب مندمج في الفصل',
@@ -33511,8 +33567,6 @@ extension on TraductionsAr {
 			'suiviDemandes.jalon.aussitot' => 'فورًا',
 			'suiviDemandes.jalon.minutes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'بعد أقل من دقيقة', one: 'بعد دقيقة', two: 'بعد دقيقتين', few: 'بعد ⁨${n}⁩ دقائق', many: 'بعد ⁨${n}⁩ دقيقة', other: 'بعد ⁨${n}⁩ دقيقة', ), 
 			'suiviDemandes.jalon.heures' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'بعد أقل من ساعة', one: 'بعد ساعة', two: 'بعد ساعتين', few: 'بعد ⁨${n}⁩ ساعات', many: 'بعد ⁨${n}⁩ ساعة', other: 'بعد ⁨${n}⁩ ساعة', ), 
-			_ => null,
-		} ?? switch (path) {
 			'suiviDemandes.jalon.jours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'في اليوم نفسه', one: 'بعد يوم', two: 'بعد يومين', few: 'بعد ⁨${n}⁩ أيام', many: 'بعد ⁨${n}⁩ يومًا', other: 'بعد ⁨${n}⁩ يوم', ), 
 			'suiviDemandes.changement.titrePage' => 'تغيّر الفصل',
 			'suiviDemandes.changement.titre' => ({required Object dePrenom}) => 'تغيّر فصل ⁨${dePrenom}⁩',
@@ -33998,6 +34052,8 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.riwayat.options.al_bazzi.libelle' => 'البزي',
 			'recrutement.parcours.q.riwayat.options.al_bazzi.description' => 'رواية عن ابن كثير',
 			'recrutement.parcours.q.riwayat.options.qunbul.libelle' => 'قنبل',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.q.riwayat.options.qunbul.description' => 'رواية عن ابن كثير',
 			'recrutement.parcours.q.riwayat.options.ad_duri_abi_amr.libelle' => 'الدوري (أبو عمرو)',
 			'recrutement.parcours.q.riwayat.options.ad_duri_abi_amr.description' => 'رواية عن أبي عمرو',
@@ -34025,8 +34081,6 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.riwayat.options.rawh.description' => 'رواية عن يعقوب',
 			'recrutement.parcours.q.riwayat.options.ishaq.libelle' => 'إسحاق',
 			'recrutement.parcours.q.riwayat.options.ishaq.description' => 'رواية عن خلف، القارئ العاشر',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.q.riwayat.options.idris.libelle' => 'إدريس',
 			'recrutement.parcours.q.riwayat.options.idris.description' => 'رواية عن خلف، القارئ العاشر',
 			'recrutement.parcours.q.ijazaPresentable.titre' => 'هل عندك إجازة؟',
@@ -34512,6 +34566,8 @@ extension on TraductionsAr {
 			'juridique.cookies.s2.blocs.0' => '- جلسة تسجيل الدخول.',
 			'juridique.cookies.s2.blocs.1' => '- تفضيلات العرض، مثل اللغة والمظهر.',
 			'juridique.cookies.s2.blocs.2' => '- ذاكرة مؤقتة محدودة يمكنكم مسحها.',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.cookies.s2.blocs.3' => '- على جهاز الطالب، رمزه الشخصي، ولا يغادر الجهاز أبدًا.',
 			'juridique.cookies.s2.blocs.4' => 'هذه العناصر ضرورية لعمل التطبيق.',
 			'juridique.cookies.s3.titre' => '٣. ما لا نستخدمه',
@@ -34539,8 +34595,6 @@ extension on TraductionsAr {
 			'juridique.enfants.s3.blocs.0' => 'يوقّع المعلمون عقدًا وسياسة مراقبة. وتُحفظ وثيقة هويتهم في مساحة خاصة منفصلة عن الصور الظاهرة في الفصل.',
 			'juridique.enfants.s4.titre' => '٤. معلومات الطفل',
 			'juridique.enfants.s4.blocs.0' => 'معلومات الطفل ليست عامة ولا تظهر للأسر الأخرى.',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.enfants.s4.blocs.1' => 'الرمز الشخصي للطالب يبقى على جهازه.',
 			'juridique.enfants.s4.blocs.2' => 'انظروا أيضًا نص الخصوصية.',
 			'juridique.enfants.s5.titre' => '٥. إخبارنا بقلق',
@@ -35026,6 +35080,8 @@ extension on TraductionsAr {
 			'snt.planning.refusClasseClose' => 'لم يُحدَّد الموعد: الفصل مغلق ولا يمكن جدولة أي حصة فيه.',
 			'snt.planning.refusNonAutorisee' => 'لم يُحدَّد الموعد: هذا الحساب لا يحدّد المواعيد. ادخلوا بحساب من الإدارة.',
 			'snt.planning.erreur' => 'لم يتأكد الموعد: قد لا يكون الطلب قد وصل إلى أكاديمية الرواية. أعيدوا المحاولة بعد لحظة.',
+			_ => null,
+		} ?? switch (path) {
 			'a3bis.salle.titulaireEntreTitre' => 'وصل معلم الفصل',
 			'a3bis.salle.titulaireEntre' => 'دخل معلم الفصل القاعة أولًا: لم يعد الاستبدال ضروريًا. شكرًا لاستعدادكم.',
 			'a3bis.salle.remplacantEntreTitre' => 'أخذ بديل الفصل',
@@ -35053,8 +35109,6 @@ extension on TraductionsAr {
 			'cahierC1.onReprendPage' => ({required Object page}) => 'نستأنف من الصفحة ⁨${page}⁩',
 			'cahierC3.arretPage' => ({required Object page}) => 'توقف الفصل عند الصفحة ⁨${page}⁩ من المصحف.',
 			'cahierC3.arretAide' => 'هذه آخر صفحة عُرضت في القاعة. إن كانت صحيحة فاعتمد، وإلا فصحّح.',
-			_ => null,
-		} ?? switch (path) {
 			'cahierC3.corriger' => 'تصحيح الموضع الذي توقف عنده الفصل',
 			'cahierC3.positionPage' => ({required Object page}) => 'الصفحة ⁨${page}⁩ من المصحف',
 			'cahierC3.renforcerTitre' => 'نقاط تحتاج إلى تعزيز',

@@ -307,4 +307,51 @@ SET LOCAL ROLE anon;
 SELECT pg_temp.vrai(pg_temp.refuse($q$SELECT * FROM public.priere_enseignants_vue()$q$), 'anonyme : la liste de la direction est refusee');
 RESET ROLE;
 
+-- ===========================================================================
+-- 6. La correction d'une exception par la direction (sans toucher le lieu)
+-- ===========================================================================
+SELECT pg_temp.en_tant_que('9f000000-0000-4000-8000-000000000010', 'admin');
+SELECT public.priere_corriger('9f000000-0000-4000-8000-000000000001', 'egyptian', 'hanafi', true, '12:15', '14:00');
+SELECT pg_temp.personne();
+SELECT pg_temp.vrai((SELECT methode_surcharge = 'egyptian' AND ecole_asr_surcharge = 'hanafi' AND assiste_vendredi
+                            AND vendredi_debut = '12:15' AND vendredi_fin = '14:00'
+                            AND lieu_source = 'enseignant' AND latitude = 10.38 AND longitude = -12.12
+                       FROM public.prayer_settings WHERE teacher_id = '9f000000-0000-4000-8000-000000000001'),
+  'correction : methode, ecole d''Asr et vendredi changes ; la position et la source du lieu restent celles de l''enseignant');
+SELECT pg_temp.vrai((SELECT methode = 'egyptian' AND ecole = 'hanafi' FROM private.priere_reglages('9f000000-0000-4000-8000-000000000001'))
+                    AND private.priere_methode_origine('9f000000-0000-4000-8000-000000000001') = 'enseignant',
+  'correction : la methode corrigee est appliquee, d''origine « enseignant »');
+SELECT pg_temp.vrai((SELECT count(*) FROM public.audit_logs WHERE action = 'priere_reglage_corrige') = 1
+                    AND (SELECT count(*) FROM public.audit_logs WHERE action = 'priere_reglage_corrige'
+                            AND (payload::text ILIKE '%vendredi%' OR payload::text ILIKE '%egyptian%' OR payload::text ILIKE '%latitude%')) = 0,
+  'journal : « reglage corrige » sans la valeur (ni vendredi, ni methode, ni position)');
+SELECT pg_temp.en_tant_que('9f000000-0000-4000-8000-000000000010', 'admin');
+SELECT public.priere_corriger('9f000000-0000-4000-8000-000000000001');
+SELECT pg_temp.personne();
+SELECT pg_temp.vrai((SELECT methode_surcharge IS NULL AND ecole_asr_surcharge IS NULL AND NOT assiste_vendredi
+                       FROM public.prayer_settings WHERE teacher_id = '9f000000-0000-4000-8000-000000000001')
+                    AND private.priere_methode_origine('9f000000-0000-4000-8000-000000000001') = 'academie',
+  'correction sans valeur : retour a l''automatique (pays puis academie)');
+SELECT pg_temp.en_tant_que('9f000000-0000-4000-8000-000000000010', 'admin');
+SELECT pg_temp.vrai(pg_temp.refuse($q$SELECT public.priere_corriger('9f000000-0000-4000-8000-000000000004')$q$),
+  'correction sans lieu : refusee (en attente de la position de l''enseignant)');
+SELECT pg_temp.vrai(pg_temp.refuse($q$SELECT public.priere_corriger('9f000000-0000-4000-8000-000000000001', 'inconnue')$q$)
+                    AND pg_temp.refuse($q$SELECT public.priere_corriger('9f000000-0000-4000-8000-000000000001', NULL, 'maliki')$q$)
+                    AND pg_temp.refuse($q$SELECT public.priere_corriger('9f000000-0000-4000-8000-000000000001', NULL, NULL, true, '14:00', '13:00')$q$),
+  'correction : methode, ecole d''Asr et plage du vendredi invalides refusees');
+SELECT pg_temp.personne();
+SELECT pg_temp.en_tant_que('9f000000-0000-4000-8000-000000000001', 'teacher');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai(pg_temp.refuse($q$SELECT public.priere_corriger('9f000000-0000-4000-8000-000000000001', 'egyptian')$q$),
+  'un enseignant ne corrige pas : reserve a la direction');
+RESET ROLE;
+SELECT pg_temp.personne();
+SET LOCAL ROLE anon;
+SELECT pg_temp.vrai(pg_temp.refuse($q$SELECT public.priere_corriger('9f000000-0000-4000-8000-000000000001', 'egyptian')$q$),
+  'un anonyme ne corrige pas');
+RESET ROLE;
+SELECT pg_temp.vrai(NOT pg_catalog.has_function_privilege('anon', 'public.priere_corriger(uuid, text, text, boolean, time, time)', 'EXECUTE')
+                    AND NOT pg_catalog.has_function_privilege('public', 'public.priere_corriger(uuid, text, text, boolean, time, time)', 'EXECUTE'),
+  'priere_corriger : ni anon ni PUBLIC');
+
 ROLLBACK;

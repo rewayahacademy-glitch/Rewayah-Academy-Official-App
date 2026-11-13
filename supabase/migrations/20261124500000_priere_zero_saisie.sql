@@ -15,7 +15,7 @@
 --   5. `priere_ma_position` : l'enseignant partage sa position, arrondie au centieme de degre ;
 --   6. `private.priere_lieu_auto` : le lieu pose depuis la ville (lot HORLOGE-ET-LIEU) ;
 --   7. `priere_reglages_lire` rend la methode appliquee et son origine ;
---   8. `priere_enseignants_vue` : la liste a lire de la direction ;
+--   8. `priere_enseignants_vue` : la liste a lire de la direction ; `priere_corriger` : sa correction ;
 --   9. droits et controle final.
 --
 -- Sans BEGIN ni COMMIT de premier niveau.
@@ -465,15 +465,61 @@ END;
 $function$;
 
 -- ===========================================================================
+-- 8 bis. La correction d'une exception par la direction
+-- ===========================================================================
+-- Ne change ni la position ni la source du lieu : seulement la methode propre a l'enseignant
+-- (NULL = automatique : pays puis academie), l'ecole d'Asr, le vendredi. Le journal garde
+-- « reglage corrige », jamais la valeur (une pratique religieuse ne s'ecrit pas au journal).
+CREATE FUNCTION public.priere_corriger(
+  p_enseignant_id uuid, p_methode text DEFAULT NULL, p_ecole_asr text DEFAULT NULL,
+  p_assiste_vendredi boolean DEFAULT false,
+  p_vendredi_debut time DEFAULT '12:30', p_vendredi_fin time DEFAULT '14:30')
+RETURNS void
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = ''
+AS $function$
+BEGIN
+  IF NOT coalesce(public.app_account_valid() AND public.app_role() = 'admin', false) THEN
+    RAISE EXCEPTION 'correction de priere reservee a la direction' USING ERRCODE = '42501';
+  END IF;
+  IF p_methode IS NOT NULL AND NOT EXISTS (SELECT 1 FROM private.priere_methode(p_methode)) THEN
+    RAISE EXCEPTION 'methode de calcul inconnue' USING ERRCODE = '22023';
+  END IF;
+  IF p_ecole_asr IS NOT NULL AND p_ecole_asr NOT IN ('shafi', 'hanafi') THEN
+    RAISE EXCEPTION 'ecole pour l''Asr inconnue' USING ERRCODE = '22023';
+  END IF;
+  IF p_assiste_vendredi IS NULL OR p_vendredi_debut IS NULL OR p_vendredi_fin IS NULL
+     OR p_vendredi_debut >= p_vendredi_fin THEN
+    RAISE EXCEPTION 'plage du vendredi invalide' USING ERRCODE = '22023';
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM public.prayer_settings ps
+                  WHERE ps.teacher_id = p_enseignant_id AND ps.actif) THEN
+    RAISE EXCEPTION 'aucun lieu a corriger : en attente de la position de l''enseignant' USING ERRCODE = '22023';
+  END IF;
+
+  UPDATE public.prayer_settings
+     SET methode_surcharge = p_methode, ecole_asr_surcharge = p_ecole_asr,
+         assiste_vendredi = p_assiste_vendredi, vendredi_debut = p_vendredi_debut,
+         vendredi_fin = p_vendredi_fin
+   WHERE teacher_id = p_enseignant_id AND actif;
+
+  PERFORM public.log_sensitive_access('priere_reglage_corrige', 'prayer_settings', p_enseignant_id::text,
+    pg_catalog.jsonb_build_object('acteur', auth.uid()));
+END;
+$function$;
+
+-- ===========================================================================
 -- 9. Droits et controle final
 -- ===========================================================================
 ALTER FUNCTION public.priere_ma_position(numeric, numeric, text) OWNER TO postgres;
 ALTER FUNCTION public.priere_enseignants_vue() OWNER TO postgres;
+ALTER FUNCTION public.priere_corriger(uuid, text, text, boolean, time, time) OWNER TO postgres;
 REVOKE ALL ON FUNCTION public.priere_ma_position(numeric, numeric, text),
-  public.priere_enseignants_vue()
+  public.priere_enseignants_vue(), public.priere_corriger(uuid, text, text, boolean, time, time)
   FROM PUBLIC, anon, service_role, agent_ro;
 GRANT EXECUTE ON FUNCTION public.priere_ma_position(numeric, numeric, text),
-  public.priere_enseignants_vue()
+  public.priere_enseignants_vue(), public.priere_corriger(uuid, text, text, boolean, time, time)
   TO authenticated;
 REVOKE ALL ON FUNCTION
   private.priere_methode_zone(text), private.priere_methode_origine(uuid),
@@ -487,6 +533,7 @@ BEGIN
   FOREACH v_oid IN ARRAY ARRAY[
     'public.priere_ma_position(numeric, numeric, text)'::regprocedure,
     'public.priere_enseignants_vue()'::regprocedure,
+    'public.priere_corriger(uuid, text, text, boolean, time, time)'::regprocedure,
     'public.priere_reglages_lire(uuid)'::regprocedure,
     'public.priere_lieu_definir(uuid, text, numeric, numeric, text, text, text, boolean, time, time)'::regprocedure] LOOP
     IF NOT EXISTS (SELECT 1 FROM pg_catalog.pg_proc p

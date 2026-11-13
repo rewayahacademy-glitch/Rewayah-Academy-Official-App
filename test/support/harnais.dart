@@ -863,6 +863,19 @@ class FauxServicePriere implements ServicePriere {
   /// Les lieux retires, dans l'ordre.
   final List<String> retires = <String>[];
 
+  /// Les corrections de la direction, dans l'ordre (PRIERE-2).
+  final List<
+    ({
+      String enseignantId,
+      MethodeCalcul? methode,
+      Madhab? ecoleAsr,
+      bool assisteVendredi,
+      String vendrediDebut,
+      String vendrediFin,
+    })
+  >
+  corrections = [];
+
   /// Vrai : toute ecriture echoue.
   bool echecEcriture = false;
 
@@ -897,6 +910,26 @@ class FauxServicePriere implements ServicePriere {
   Future<void> definirLieu(DefinitionLieu definition) async {
     if (echecEcriture) throw StateError('echec');
     poses.add(definition);
+  }
+
+  @override
+  Future<void> corriger({
+    required String enseignantId,
+    required bool assisteVendredi,
+    required String vendrediDebut,
+    required String vendrediFin,
+    MethodeCalcul? methode,
+    Madhab? ecoleAsr,
+  }) async {
+    if (echecEcriture) throw StateError('echec');
+    corrections.add((
+      enseignantId: enseignantId,
+      methode: methode,
+      ecoleAsr: ecoleAsr,
+      assisteVendredi: assisteVendredi,
+      vendrediDebut: vendrediDebut,
+      vendrediFin: vendrediFin,
+    ));
   }
 
   @override

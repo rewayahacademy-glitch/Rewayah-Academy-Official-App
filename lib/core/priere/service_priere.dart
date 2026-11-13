@@ -40,6 +40,18 @@ abstract interface class ServicePriere {
   /// La direction retire le lieu d'un enseignant.
   Future<void> retirerLieu(String enseignantId);
 
+  /// La direction corrige une exception (PRIERE-2) : la methode propre a
+  /// l'enseignant (`null` : automatique), l'ecole d'Asr (`null` : celle de
+  /// l'academie) et le vendredi. Ne change ni la position ni la source du lieu.
+  Future<void> corriger({
+    required String enseignantId,
+    required bool assisteVendredi,
+    required String vendrediDebut,
+    required String vendrediFin,
+    MethodeCalcul? methode,
+    Madhab? ecoleAsr,
+  });
+
   /// La direction : les enseignants et l'etat de leur lieu.
   Future<List<EnseignantPriere>> enseignants();
 
@@ -146,6 +158,26 @@ class ServicePriereSupabase implements ServicePriere {
   Future<void> retirerLieu(String enseignantId) => _client.rpc<void>(
     'priere_lieu_retirer',
     params: <String, dynamic>{'p_enseignant_id': enseignantId},
+  );
+
+  @override
+  Future<void> corriger({
+    required String enseignantId,
+    required bool assisteVendredi,
+    required String vendrediDebut,
+    required String vendrediFin,
+    MethodeCalcul? methode,
+    Madhab? ecoleAsr,
+  }) => _client.rpc<void>(
+    'priere_corriger',
+    params: <String, dynamic>{
+      'p_enseignant_id': enseignantId,
+      'p_methode': methode?.valeurSql,
+      'p_ecole_asr': ecoleAsr?.valeurSql,
+      'p_assiste_vendredi': assisteVendredi,
+      'p_vendredi_debut': vendrediDebut,
+      'p_vendredi_fin': vendrediFin,
+    },
   );
 
   @override
