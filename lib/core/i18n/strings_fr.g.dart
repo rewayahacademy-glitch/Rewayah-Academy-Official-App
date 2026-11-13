@@ -23966,6 +23966,9 @@ class Traductions$journalSorties$rapport$fr {
 	/// fr: '{n} min'
 	String minutes({required Object n}) => '${n} min';
 
+	/// fr: '{m} min {s} s'
+	String minutesSecondes({required Object m, required Object s}) => '${m} min ${s} s';
+
 	/// fr: '{nombre}, {duree}'
 	String resume({required Object nombre, required Object duree}) => '${nombre}, ${duree}';
 
@@ -61588,6 +61591,7 @@ extension on Traductions {
 			'journalSorties.rapport.sortieSalle' => 'Sortie de la salle après le délai',
 			'journalSorties.rapport.secondes' => ({required Object n}) => '${n} s',
 			'journalSorties.rapport.minutes' => ({required Object n}) => '${n} min',
+			'journalSorties.rapport.minutesSecondes' => ({required Object m, required Object s}) => '${m} min ${s} s',
 			'journalSorties.rapport.resume' => ({required Object nombre, required Object duree}) => '${nombre}, ${duree}',
 			'journalSorties.rapport.ligneEleve' => ({required Object resume}) => 'Sorties de l\'application : ${resume}',
 			'journalSorties.reglages.section' => 'Sorties de l\'application pendant une séance',

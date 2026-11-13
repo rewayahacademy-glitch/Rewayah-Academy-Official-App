@@ -7,11 +7,17 @@ import 'port_journal_sorties.dart';
 /// du parent et la ligne de l'enseignant. Heures dans le fuseau de la
 /// personne ([heureChezMoi]), durees insecables (DUREE-INSECABLE-1).
 abstract final class LibellesSorties {
-  /// « 45 s » sous une minute, « 4 min » au-dela (arrondi a la minute).
+  /// « 45 s », « 4 min », « 1 min 30 s » : exact a la seconde, pour qu'une
+  /// duree ne contredise jamais les heures « De 18:20 a 18:21 ».
   static String duree(int secondes) => LibellesGroupe.insecable(
     secondes < 60
         ? t.journalSorties.rapport.secondes(n: '$secondes')
-        : t.journalSorties.rapport.minutes(n: '${(secondes / 60).round()}'),
+        : secondes % 60 == 0
+        ? t.journalSorties.rapport.minutes(n: '${secondes ~/ 60}')
+        : t.journalSorties.rapport.minutesSecondes(
+            m: '${secondes ~/ 60}',
+            s: '${secondes % 60}',
+          ),
   );
 
   /// La meme duree, affichee seule (ancree en interface de droite a gauche).

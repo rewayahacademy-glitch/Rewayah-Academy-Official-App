@@ -10996,6 +10996,7 @@ class _Traductions$journalSorties$rapport$ar extends Traductions$journalSorties$
 	@override String get sortieSalle => 'خروج من القاعة بعد المهلة';
 	@override String secondes({required Object n}) => '⁨${n}⁩ ث';
 	@override String minutes({required Object n}) => '⁨${n}⁩ د';
+	@override String minutesSecondes({required Object m, required Object s}) => '⁨${m}⁩ د ⁨${s}⁩ ث';
 	@override String resume({required Object nombre, required Object duree}) => '⁨${nombre}⁩، ⁨${duree}⁩';
 	@override String ligneEleve({required Object resume}) => 'الخروج من التطبيق: ⁨${resume}⁩';
 }
@@ -35548,6 +35549,7 @@ extension on TraductionsAr {
 			'journalSorties.rapport.sortieSalle' => 'خروج من القاعة بعد المهلة',
 			'journalSorties.rapport.secondes' => ({required Object n}) => '⁨${n}⁩ ث',
 			'journalSorties.rapport.minutes' => ({required Object n}) => '⁨${n}⁩ د',
+			'journalSorties.rapport.minutesSecondes' => ({required Object m, required Object s}) => '⁨${m}⁩ د ⁨${s}⁩ ث',
 			'journalSorties.rapport.resume' => ({required Object nombre, required Object duree}) => '⁨${nombre}⁩، ⁨${duree}⁩',
 			'journalSorties.rapport.ligneEleve' => ({required Object resume}) => 'الخروج من التطبيق: ⁨${resume}⁩',
 			'journalSorties.reglages.section' => 'الخروج من التطبيق أثناء الحصة',

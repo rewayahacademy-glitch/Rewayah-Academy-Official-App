@@ -21,6 +21,7 @@ Future<void> _accord(
   ThemeMode mode,
   String nom, {
   bool arabe = false,
+  bool bas = false,
 }) async {
   if (arabe) {
     await tester.runAsync(() => LocaleSettings.setLocale(AppLocale.ar));
@@ -32,6 +33,13 @@ Future<void> _accord(
     densite: 3,
     mode: mode,
   );
+  if (bas) {
+    // Les cartes des enfants, sous le texte.
+    await tester.ensureVisible(
+      find.text(t.journalSorties.accord.enregistrer).last,
+    );
+    await stabiliser(tester);
+  }
   debugPrint('PNG ${await capturer(tester, nom)}');
 }
 
@@ -55,15 +63,46 @@ void main() {
     setUpAll(chargerPolicesDuDepot);
     setUp(neutraliserStockageAppareil);
 
-    testWidgets('journal_sorties_accord_390_light', (WidgetTester tester) async {
-      await _accord(tester, ThemeMode.light, 'journal_sorties_accord_390_light');
+    testWidgets('journal_sorties_accord_390_light', (
+      WidgetTester tester,
+    ) async {
+      await _accord(
+        tester,
+        ThemeMode.light,
+        'journal_sorties_accord_390_light',
+      );
+    });
+
+    testWidgets('journal_sorties_accord_cartes_390_light', (
+      WidgetTester tester,
+    ) async {
+      await _accord(
+        tester,
+        ThemeMode.light,
+        'journal_sorties_accord_cartes_390_light',
+        bas: true,
+      );
+    });
+
+    testWidgets('journal_sorties_accord_cartes_390_arabe', (
+      WidgetTester tester,
+    ) async {
+      await _accord(
+        tester,
+        ThemeMode.dark,
+        'journal_sorties_accord_cartes_390_dark_arabe',
+        arabe: true,
+        bas: true,
+      );
     });
 
     testWidgets('journal_sorties_accord_390_dark', (WidgetTester tester) async {
       await _accord(tester, ThemeMode.dark, 'journal_sorties_accord_390_dark');
     });
 
-    testWidgets('journal_sorties_accord_390_arabe', (WidgetTester tester) async {
+    testWidgets('journal_sorties_accord_390_arabe', (
+      WidgetTester tester,
+    ) async {
       await _accord(
         tester,
         ThemeMode.light,
@@ -72,7 +111,9 @@ void main() {
       );
     });
 
-    testWidgets('journal_sorties_detail_390_light', (WidgetTester tester) async {
+    testWidgets('journal_sorties_detail_390_light', (
+      WidgetTester tester,
+    ) async {
       await _detail(
         tester,
         const Size(390, 844),
@@ -90,7 +131,9 @@ void main() {
       );
     });
 
-    testWidgets('journal_sorties_cahier_390_light', (WidgetTester tester) async {
+    testWidgets('journal_sorties_cahier_390_light', (
+      WidgetTester tester,
+    ) async {
       await monterCahierAvecSorties(
         tester,
         troisSorties('e1'),

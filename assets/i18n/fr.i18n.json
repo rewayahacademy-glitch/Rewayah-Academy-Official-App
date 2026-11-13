@@ -15301,6 +15301,7 @@
       "sortieSalle": "Sortie de la salle après le délai",
       "secondes": "{n} s",
       "minutes": "{n} min",
+      "minutesSecondes": "{m} min {s} s",
       "resume": "{nombre}, {duree}",
       "ligneEleve": "Sorties de l'application : {resume}"
     },

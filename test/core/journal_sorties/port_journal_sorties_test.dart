@@ -141,12 +141,14 @@ void main() {
       expect(r['e2']?.nombre, 1);
     });
 
-    test('« 3 sorties, 4 min », durees insecables', () {
+    test('« 3 sorties, 4 min 15 s », durees exactes et insecables', () {
       LocaleSettings.setLocaleSync(AppLocale.fr);
       final String ligne = LibellesSorties.resume(
         const ResumeSorties(nombre: 3, totalSecondes: 255),
       );
-      expect(ligne, '3 sorties, 4 min');
+      expect(ligne, '3\u00a0sorties, 4\u00a0min\u00a015\u00a0s');
+      expect(LibellesSorties.duree(120), '2\u00a0min');
+      expect(LibellesSorties.duree(90), '1\u00a0min\u00a030\u00a0s');
       expect(LibellesSorties.duree(45), '45 s');
       expect(LibellesSorties.nombre(1), '1 sortie');
     });

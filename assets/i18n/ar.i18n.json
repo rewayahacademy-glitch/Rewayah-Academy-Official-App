@@ -14939,6 +14939,7 @@
       "sortieSalle": "خروج من القاعة بعد المهلة",
       "secondes": "⁨{n}⁩ ث",
       "minutes": "⁨{n}⁩ د",
+      "minutesSecondes": "⁨{m}⁩ د ⁨{s}⁩ ث",
       "resume": "⁨{nombre}⁩، ⁨{duree}⁩",
       "ligneEleve": "الخروج من التطبيق: ⁨{resume}⁩"
     },
