@@ -741,7 +741,7 @@ class _PanneauGauche extends StatelessWidget {
                           key: const ValueKey<String>('vignette-en-grand'),
                           libelleSemantique: classe
                               ? t.salle.revenirALaPage
-                              : t.salle.ruban.voirLaClasse,
+                              : t.salle.scene.voirLaClasse,
                           onPress: basculer,
                           child: cadre,
                         ),
