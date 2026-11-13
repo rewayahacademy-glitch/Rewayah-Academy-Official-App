@@ -110,6 +110,7 @@ import '../salle_enseignant/presentation_coran.dart'
 import '../salle_seance/actions_seance.dart';
 import '../salle_seance/annonce_geste.dart';
 import '../salle_seance/bornes_salle.dart';
+import '../salle_seance/chrono_salle.dart' show horlogeChronoProvider;
 import '../salle_seance/depuis_salle.dart';
 import '../salle_seance/ecriture_seance.dart'
     show
@@ -121,7 +122,9 @@ import '../salle_seance/marque_chrono.dart';
 import '../salle_seance/media_salle.dart';
 import '../salle_seance/notes_deposees.dart';
 import '../salle_seance/panneau_bibliotheque_salle.dart';
+import '../salle_seance/pilote_dynamique.dart';
 import '../salle_seance/presentation_observee.dart';
+import '../salle_seance/relais_salle.dart';
 import '../salle_seance/resultat_seance.dart';
 import '../salle_seance/salle_seance.dart';
 import '../salle_seance/signalement_seance.dart';
@@ -142,6 +145,9 @@ import 'scene_classe.dart';
 import 'suivi_fiche_seance.dart';
 import 'synchro_salle.dart';
 import 'vue_salle.dart';
+
+export '../salle_seance/relais_salle.dart'
+    show chargePause, pauseDepuisCharge, sujetPauseSalle;
 
 /// `ELV-03`, `ENS-03`, `CTR-02` : la salle.
 ///
@@ -331,6 +337,49 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   PauseSeance? _pauseDiffusee;
   int _participantsVus = 0;
 
+  /// DYNAMIQUE-CHRONO-2 (directeur, 12/11/2026, points 5, 6 et 14) : la file
+  /// des alertes de la barre et ses marques (arrivees, appel, recitation,
+  /// pause), la sonnerie repetee de l'appel recu, la pause proposee.
+  final PiloteDynamique _dynamique = PiloteDynamique();
+  late final SonnerieAppel _sonnerie = SonnerieAppel(
+    () => ref.read(signalRappelProvider)(),
+  );
+  late final PilotePause _pilotePause = PilotePause(
+    dynamique: _dynamique,
+    maintenant: () => ref.read(horlogeChronoProvider)().toUtc(),
+    commandes: _CommandesPauseSalle(this),
+  );
+  final SuiviArrivees _arrivees = SuiviArrivees();
+  PauseSeance? _pauseObservee;
+  bool _pauseJamaisObservee = true;
+
+  /// La pause lue par la barre : une fois par changement, apres l'image.
+  void _observerPause(PauseSeance? pause, {required bool pilote}) {
+    if (!_pauseJamaisObservee && pause == _pauseObservee) return;
+    _pauseJamaisObservee = false;
+    _pauseObservee = pause;
+    scheduleMicrotask(() {
+      if (mounted) _pilotePause.observer(pause, pilote: pilote);
+    });
+  }
+
+  /// Une commande de la pause, par le port ; un echec se dit en une phrase
+  /// dans la barre (K-59), puis l'etat est relu.
+  Future<void> _commanderPause(
+    Future<PauseSeance> Function(PortPauseSeance port, String cle) commande,
+  ) async {
+    final PortPauseSeance port = ref.read(portPauseSeanceProvider);
+    if (mounted) setState(() => _echecPause = null);
+    try {
+      await commande(port, const Uuid().v4()).timeout(AppDelais.requeteMax);
+    } on Object {
+      if (mounted) setState(() => _echecPause = t.salle.seance.pause.echec);
+      rethrow;
+    } finally {
+      if (mounted) ref.invalidate(pauseSeanceProvider(widget.seanceId));
+    }
+  }
+
   bool _materielPret = false;
 
   /// La preparation de l'enseignant est a l'ecran : rien n'est connecte.
@@ -507,17 +556,11 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   /// l'ecran.
   void _rappelRecu() {
     if (!mounted) return;
-    ref.read(signalRappelProvider)();
-    _annoncer(
-      AnnonceGeste(
-        cle: const ValueKey<String>('rappel-recu'),
-        titre: _tutoieSalle
-            ? t.salle.gestes.appelRecuTitreTutoie
-            : t.salle.gestes.appelRecuTitre,
-        message: _tutoieSalle
-            ? t.salle.gestes.appelRecuTutoie
-            : t.salle.gestes.appelRecu,
-      ),
+    // DYNAMIQUE-CHRONO-2, points 5 et 6 : la sonnerie repetee, et l'alerte
+    // dans la barre, qui laisse sa marque jusqu'au toucher de la barre.
+    _sonnerie.lancer();
+    _dynamique.annoncer(
+      alerteAppelRecu(tutoie: _tutoieSalle, numero: _dynamique.numero),
     );
   }
 
@@ -534,34 +577,40 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     final ParoleSalle? parole = synchro.parole.value;
     _paroleVue = parole;
     final bool tu = _tutoieSalle;
+    // DYNAMIQUE-CHRONO-2, point 5 : « Faire reciter » est montre a tous,
+    // dans la barre ; la marque reste tant que la recitation dure.
     if (parole == null) {
       if (avant == null) return;
-      _annoncer(
-        AnnonceGeste(
-          cle: const ValueKey<String>('recitation-finie'),
+      _dynamique.annoncer(
+        AlerteChrono(
+          id: 'recitation-fin-${_dynamique.numero}',
+          groupe: groupeRecitation,
           titre: t.salle.gestes.finRecitationTitre,
-          message: tu
+          detail: tu
               ? t.salle.gestes.finRecitationTutoie
               : t.salle.gestes.finRecitation,
+          duree: AppMouvement.alerteChronoBreve,
         ),
       );
     } else if (parole.profilId == synchro.profilLocalId) {
       ref.read(signalRappelProvider)();
-      _annoncer(
-        AnnonceGeste(
-          cle: const ValueKey<String>('recitation-a-vous'),
+      _dynamique.annoncer(
+        AlerteChrono(
+          id: 'recitation-${_dynamique.numero}',
+          groupe: groupeRecitation,
           titre: tu
               ? t.salle.gestes.aVousTitreTutoie
               : t.salle.gestes.aVousTitre,
-          message: tu ? t.salle.gestes.aVousTutoie : t.salle.gestes.aVous,
+          detail: tu ? t.salle.gestes.aVousTutoie : t.salle.gestes.aVous,
         ),
       );
     } else {
-      _annoncer(
-        AnnonceGeste(
-          cle: const ValueKey<String>('recitation-autre'),
-          titre: t.salle.gestes.autreReciteTitre(prenom: parole.prenom),
-          message: tu
+      _dynamique.annoncer(
+        AlerteChrono(
+          id: 'recitation-${_dynamique.numero}',
+          groupe: groupeRecitation,
+          titre: titreRecitation(parole.prenom),
+          detail: tu
               ? t.salle.gestes.autreReciteTutoie
               : t.salle.gestes.autreRecite,
         ),
@@ -631,6 +680,17 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   @override
   void initState() {
     super.initState();
+    // DYNAMIQUE-CHRONO-2 : un toucher de la barre coupe la sonnerie et
+    // efface la marque de l'appel recu ; chaque battement relit la pause.
+    _dynamique
+      ..auToucher(() {
+        _sonnerie.arreter();
+        _dynamique.oublier(cleAppelRecu);
+      })
+      ..aChaqueBattement(() {
+        if (mounted) _pilotePause.evaluer();
+      })
+      ..demarrer();
     // On ecoute AVANT d'entrer : le moteur publie son premier etat pendant
     // `rejoindre`, et un abonnement pose apres manquerait la connexion.
     _sEtats = _moteur.etats.listen((EtatSalle etat) {
@@ -688,6 +748,13 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       });
       _verifierRecitant(liste);
       _veillerEnseignant(liste);
+      // DYNAMIQUE-CHRONO-2, point 5 : qui conduit la seance voit arriver
+      // ses eleves (+1, +2), sans son.
+      if (_acces?.capacites.peutModerer ?? false) {
+        annoncerArrivees(_dynamique, <String>[
+          for (final ParticipantSalle p in _arrivees.observer(liste)) p.nom,
+        ]);
+      }
       // SITUATIONS-GRAVES : un arrivant recoit la pause en cours.
       if (liste.length > _participantsVus && _pauseDiffusee != null) {
         unawaited(_diffuserPause(_pauseDiffusee!, forcer: true));
@@ -844,6 +911,8 @@ class _SallePageEtat extends ConsumerState<SallePage> {
 
   @override
   void dispose() {
+    _sonnerie.arreter();
+    _dynamique.dispose();
     RelaisRappelSalle.retirer(_envoyerRappel);
     _suiviReseau.fermer();
     _envoiReleve.fermer();
@@ -1382,11 +1451,12 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       return;
     }
     _donnerLaParole(eleve);
-    _annoncer(
-      AnnonceGeste(
-        cle: const ValueKey<String>('recitation-ouverte'),
-        titre: t.salle.gestes.recitationOuverteTitre(prenom: eleve.prenom),
-        message: t.salle.gestes.recitationOuverte(prenom: eleve.prenom),
+    _dynamique.annoncer(
+      AlerteChrono(
+        id: 'recitation-${_dynamique.numero}',
+        groupe: groupeRecitation,
+        titre: titreRecitation(eleve.prenom),
+        detail: t.salle.gestes.recitationOuverte(prenom: eleve.prenom),
       ),
     );
   }
@@ -1422,13 +1492,15 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     _finRecitationEnCours = false;
     if (!mounted) return;
     _donnerLaParole(null);
-    _annoncer(
-      AnnonceGeste(
-        cle: const ValueKey<String>('recitation-terminee'),
-        titre: t.salle.gestes.recitationTermineeTitre,
-        message: partie
+    _dynamique.annoncer(
+      AlerteChrono(
+        id: 'recitation-fin-${_dynamique.numero}',
+        groupe: groupeRecitation,
+        titre: t.salle.gestes.finRecitationTitre,
+        detail: partie
             ? t.salle.gestes.recitationFinieSeule(prenom: parole.prenom)
             : t.salle.gestes.recitationTerminee,
+        duree: AppMouvement.alerteChronoBreve,
       ),
     );
   }
@@ -1677,11 +1749,10 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     if (!deLEnseignant) return;
     final PauseSeance? pause = pauseDepuisCharge(paquet.charge);
     if (pause == null) return;
-    final bool commence =
-        pause.statut == StatutPause.enCours &&
-        _pauseRecue?.statut != StatutPause.enCours;
+    // DYNAMIQUE-CHRONO-2 : le debut et la fin se disent dans la barre
+    // (`PilotePause`) ; la salle reduite reprend la derniere pause recue.
+    ref.read(pausesRecuesProvider)[widget.seanceId] = pause;
     setState(() => _pauseRecue = pause);
-    if (commence) _annoncer(annoncePause());
   }
 
   /// SITUATIONS-GRAVES (11/11/2026, defaut n° 2) : ce que l'eleve sait de
@@ -1977,6 +2048,9 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     final PauseSeance? pause = enseignant
         ? ref.watch(pauseSeanceProvider(widget.seanceId)).value
         : _pauseRecue;
+    // DYNAMIQUE-CHRONO-2 : la barre lit la pause (proposition, debut, fin) ;
+    // seule la capacite `peutPiloter` du serveur permet d'agir.
+    _observerPause(pause, pilote: enseignant && (pause?.peutPiloter ?? false));
     // SITUATIONS-GRAVES (defaut n° 6) : l'enseignant relaie la pause servie.
     if (enseignant && pause != null && pause != _pauseDiffusee) {
       unawaited(Future<void>.microtask(() => _diffuserPause(pause)));
@@ -2190,9 +2264,17 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       // presence (J3) et le roster (fiche, rappel) en feuille.
       // DYNAMIQUE-CHRONO-1 : la presence et l'eleve qui recite sont des
       // marques de la Dynamique chrono, plus des pastilles posees a cote.
+      // DYNAMIQUE-CHRONO-2 : la recitation est une marque chez tous,
+      // l'enseignant compris (aucun droit ne change).
       marques: enseignant
-          ? const <MarqueChrono>[]
+          ? <MarqueChrono>[
+              if (parole != null)
+                MarqueChrono.recitation(
+                  libelle: titreRecitation(parole.prenom),
+                ),
+            ]
           : marquesPresence(mienne: mienne, parole: parole),
+      pilote: _dynamique,
       // CHRONO-ETAT (11/11/2026) : presence confirmee, la pilule d'etat le
       // dit elle-meme (« En salle ») et la pastille ne le repete pas.
       presenceEnSalle: !enseignant && mienne.etat == EtatPresence.presente,
@@ -2338,18 +2420,23 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       onPageSuivante: actions.onPageSuivante,
       child: _AvecSynchro(
         synchro: synchro,
-        child: CoucheAnnonceGeste(
-          // ENTREE-ROBUSTE : le son bloque passe avant l'annonce d'un geste.
-          annonce: _annonceSon ?? _annonce,
-          child: SalleSeance(
-            key: const ValueKey<String>('salle-de-seance'),
-            vue: seance,
-            actions: actions,
-            local: EtatLocalSeance(
-              microOuvert: moi?.micro ?? false,
-              cameraAllumee: moi?.camera ?? false,
-              zoom: _zoom,
-              agrandi: _agrandi,
+        // DYNAMIQUE-CHRONO-2, point 6 : toucher l'ecran arrete la sonnerie.
+        child: Listener(
+          behavior: HitTestBehavior.translucent,
+          onPointerDown: (PointerDownEvent _) => _sonnerie.arreter(),
+          child: CoucheAnnonceGeste(
+            // ENTREE-ROBUSTE : le son bloque passe avant l'annonce d'un geste.
+            annonce: _annonceSon ?? _annonce,
+            child: SalleSeance(
+              key: const ValueKey<String>('salle-de-seance'),
+              vue: seance,
+              actions: actions,
+              local: EtatLocalSeance(
+                microOuvert: moi?.micro ?? false,
+                cameraAllumee: moi?.camera ?? false,
+                zoom: _zoom,
+                agrandi: _agrandi,
+              ),
             ),
           ),
         ),
@@ -2478,19 +2565,31 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   /// seance. Parti : l'eleve a recu un son et un message. Pas parti : la
   /// raison et quoi faire.
   void _retourAppel(String prenom, String? echec) {
+    if (echec == null) {
+      // DYNAMIQUE-CHRONO-2 : l'appel parti se dit dans la barre, en bref, et
+      // laisse une marque courte.
+      final String titre = t.salle.gestes.appelEnvoyeTitre(prenom: prenom);
+      _dynamique.annoncer(
+        AlerteChrono(
+          id: 'appel-envoye-${_dynamique.numero}',
+          groupe: 'appel-envoye',
+          titre: titre,
+          detail: t.salle.gestes.appelEnvoye,
+          duree: AppMouvement.alerteChronoBreve,
+          trace: MarqueChrono.evenement(libelle: titre),
+          cleTrace: 'appel-envoye',
+          dureeTrace: AppMouvement.marqueAppelEnvoye,
+        ),
+      );
+      return;
+    }
     _annoncer(
-      echec == null
-          ? AnnonceGeste(
-              cle: const ValueKey<String>('appel-envoye'),
-              titre: t.salle.gestes.appelEnvoyeTitre(prenom: prenom),
-              message: t.salle.gestes.appelEnvoye,
-            )
-          : AnnonceGeste(
-              cle: const ValueKey<String>('appel-echec'),
-              titre: t.salle.gestes.appelEchecTitre(prenom: prenom),
-              message: echec,
-              ton: TonEtat.alerte,
-            ),
+      AnnonceGeste(
+        cle: const ValueKey<String>('appel-echec'),
+        titre: t.salle.gestes.appelEchecTitre(prenom: prenom),
+        message: echec,
+        ton: TonEtat.alerte,
+      ),
     );
   }
 
@@ -3353,49 +3452,6 @@ class _ArcheDeLAttente extends StatelessWidget {
   );
 }
 
-/// SITUATIONS-GRAVES (directeur, 11/11/2026, defaut n° 6) : le sujet du
-/// paquet qui relaie la pause de la seance a la classe (canal fiable).
-const String sujetPauseSalle = 'tc.salle.pause';
-
-/// La charge du relais de pause : l'etat servi, sans aucune identite.
-Map<String, Object?> chargePause(PauseSeance pause) => <String, Object?>{
-  'statut': pause.statut.name,
-  'duree': pause.dureePrevueMinutes,
-  'debut': pause.debutUtc?.toUtc().toIso8601String(),
-  'fin': pause.finUtc?.toUtc().toIso8601String(),
-  'debutPrevu': pause.debutPrevuUtc?.toUtc().toIso8601String(),
-};
-
-/// Lit un relais de pause, ou `null` s'il est illisible. Jamais de commande :
-/// `peutPiloter` reste faux chez qui le recoit.
-PauseSeance? pauseDepuisCharge(List<int> charge) {
-  try {
-    final Object? lu = jsonDecode(utf8.decode(charge));
-    if (lu is! Map) return null;
-    final StatutPause? statut = StatutPause.values
-        .where((StatutPause s) => s.name == lu['statut'])
-        .firstOrNull;
-    final Object? duree = lu['duree'];
-    if (statut == null ||
-        duree is! int ||
-        duree < BornesPause.dureeMin ||
-        duree > BornesPause.dureeMax) {
-      return null;
-    }
-    DateTime? instant(Object? v) =>
-        v is String ? DateTime.tryParse(v)?.toUtc() : null;
-    return PauseSeance(
-      statut: statut,
-      dureePrevueMinutes: duree,
-      debutUtc: instant(lu['debut']),
-      finUtc: instant(lu['fin']),
-      debutPrevuUtc: instant(lu['debutPrevu']),
-    );
-  } on Object {
-    return null;
-  }
-}
-
 /// L'annonce de tete d'une pause qui commence.
 AnnonceGeste annoncePause() => AnnonceGeste(
   cle: const ValueKey<String>('pause-annonce'),
@@ -3739,10 +3795,9 @@ List<MarqueChrono> marquesPresence({
         libelle: LignePresence.libelle(mienne.etat),
         ton: mienne.ton,
       ),
-    if (p != null && p.prenom.isNotEmpty)
-      MarqueChrono.recitation(
-        libelle: t.tc.classe.recitation.actif(prenom: p.prenom),
-      ),
+    // DYNAMIQUE-CHRONO-2 : prenom inconnu de qui regarde, « Un eleve
+    // recite ».
+    if (p != null) MarqueChrono.recitation(libelle: titreRecitation(p.prenom)),
   ];
 }
 
@@ -5530,4 +5585,31 @@ class _SurLaSalle extends StatelessWidget {
       ),
     );
   }
+}
+
+/// DYNAMIQUE-CHRONO-2 : les commandes de la pause de la salle, par le port.
+class _CommandesPauseSalle implements CommandesPause {
+  _CommandesPauseSalle(this._salle);
+
+  final _SallePageEtat _salle;
+
+  String get _seance => _salle.widget.seanceId;
+
+  @override
+  Future<void> demarrer() => _salle._commanderPause(
+    (PortPauseSeance port, String cle) =>
+        port.demarrer(seanceId: _seance, cleIdempotence: cle),
+  );
+
+  @override
+  Future<void> terminer() => _salle._commanderPause(
+    (PortPauseSeance port, String cle) =>
+        port.terminer(seanceId: _seance, cleIdempotence: cle),
+  );
+
+  @override
+  Future<void> refuser() => _salle._commanderPause(
+    (PortPauseSeance port, String cle) =>
+        port.refuser(seanceId: _seance, cleIdempotence: cle),
+  );
 }

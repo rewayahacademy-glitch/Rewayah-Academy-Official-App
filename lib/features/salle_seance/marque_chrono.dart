@@ -8,9 +8,10 @@
 //   seule).
 // - Une **alerte** : un evenement passager (titre, une ou deux actions comme
 //   Oui / Non), qui deplie la barre un instant, part seul et laisse sa trace
-//   en marque. Le type existe pour le lot suivant (DYNAMIQUE-CHRONO-2 :
-//   arrivees, appel, proposition de pause) ; aucune alerte n'est emise dans
-//   ce lot, et aucune ne sonne.
+//   en marque. DYNAMIQUE-CHRONO-2 (directeur, 12/11/2026) : les alertes de la
+//   salle (arrivees, appel, recitation, pause proposee) sont emises par
+//   `PiloteDynamique` (`pilote_dynamique.dart`), qui tient la file, le
+//   repli et les marques laissees.
 //
 // Types fermes : on ajoute un genre ici, jamais une marque construite a la
 // main dans un ecran.
@@ -36,6 +37,14 @@ enum GenreMarqueChrono {
 
   /// La pause deja prise.
   pausePrise,
+
+  /// DYNAMIQUE-CHRONO-2 : un evenement passe qui laisse une trace courte
+  /// (« Yasmine dans la salle », « Appel envoye a Yasmine »).
+  evenement,
+
+  /// DYNAMIQUE-CHRONO-2 : l'appel recu, jusqu'a ce que l'eleve touche la
+  /// barre.
+  appel,
 }
 
 /// Un etat qui dure, porte par la Dynamique chrono.
@@ -65,6 +74,14 @@ class MarqueChrono {
         annonce: libelle,
         ton: TonEtat.accent,
       );
+
+  /// DYNAMIQUE-CHRONO-2 : la trace d'un evenement ([GenreMarqueChrono.evenement]
+  /// ou [GenreMarqueChrono.appel]).
+  const MarqueChrono.evenement({
+    required String libelle,
+    GenreMarqueChrono genre = GenreMarqueChrono.evenement,
+    TonEtat ton = TonEtat.neutre,
+  }) : this._(genre: genre, libelle: libelle, annonce: libelle, ton: ton);
 
   /// La pause, selon son statut : le texte visible et sa version lue.
   const MarqueChrono.pause({
@@ -114,10 +131,18 @@ class MarqueChrono {
 @immutable
 class ActionAlerteChrono {
   /// Cree l'action.
-  const ActionAlerteChrono({required this.libelle, required this.onPress});
+  const ActionAlerteChrono({
+    required this.libelle,
+    required this.onPress,
+    this.principale = false,
+  });
 
   /// Le verbe, court.
   final String libelle;
+
+  /// DYNAMIQUE-CHRONO-2 : l'action de l'alerte (« Oui »), en bouton plein
+  /// compact ; l'autre reste un lien (K-56 : un seul bouton plein).
+  final bool principale;
 
   /// Ce que fait l'action ; la barre se replie ensuite.
   final VoidCallback onPress;
@@ -132,10 +157,40 @@ class AlerteChrono {
   const AlerteChrono({
     required this.id,
     required this.titre,
+    this.detail,
+    this.compte,
     this.actions = const <ActionAlerteChrono>[],
     this.duree,
     this.trace,
+    this.cleTrace,
+    this.dureeTrace,
+    this.rouvrable = false,
+    this.groupe,
   }) : assert(actions.length <= 2, 'Une ou deux actions au plus.');
+
+  /// DYNAMIQUE-CHRONO-2 : une phrase sous le titre (« Votre micro est
+  /// ferme... »), ou `null`.
+  final String? detail;
+
+  /// DYNAMIQUE-CHRONO-2 : le nombre qui roule devant le titre (« +2 »), ou
+  /// `null`.
+  final int? compte;
+
+  /// DYNAMIQUE-CHRONO-2 : la cle de la trace dans les marques (une trace de
+  /// meme cle remplace la precedente) ; `null` : [id].
+  final String? cleTrace;
+
+  /// DYNAMIQUE-CHRONO-2 : combien de temps la trace reste ; `null` : tant
+  /// que l'emetteur ne la retire pas.
+  final Duration? dureeTrace;
+
+  /// DYNAMIQUE-CHRONO-2 : un toucher de la barre rouvre l'alerte tant que sa
+  /// trace est la (la pause proposee).
+  final bool rouvrable;
+
+  /// DYNAMIQUE-CHRONO-2 : la famille de l'alerte (« arrivees ») : une
+  /// alerte de la meme famille remplace celle qui est montree.
+  final String? groupe;
 
   /// Identifie l'alerte : la meme alerte reconstruite ne se rejoue pas.
   final String id;

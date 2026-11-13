@@ -1009,6 +1009,39 @@
       "conclure": "بقيت أقل من 5 دقائق: حان وقت ختم الحصة.",
       "finAtteinte": "بلغت الحصة نهايتها المقرّرة: الحصة ما زالت مباشرة."
     },
+    "dynamique": {
+      "arriveePrenom": "وصول ⁨{prenom}⁩ إلى القاعة",
+      "arrivees(plural, param=n)": {
+        "zero": "وصول ⁨{n}⁩ طلاب إلى القاعة",
+        "one": "وصول طالب إلى القاعة",
+        "two": "وصول ⁨{n}⁩ طلاب إلى القاعة",
+        "few": "وصول ⁨{n}⁩ طلاب إلى القاعة",
+        "many": "وصول ⁨{n}⁩ طلاب إلى القاعة",
+        "other": "وصول ⁨{n}⁩ طلاب إلى القاعة"
+      },
+      "arriveeMarquePrenom": "في القاعة: ⁨{prenom}⁩",
+      "arriveesMarque(plural, param=n)": {
+        "zero": "⁨{n}⁩ طلاب جدد في القاعة",
+        "one": "طالب جديد في القاعة",
+        "two": "⁨{n}⁩ طلاب جدد في القاعة",
+        "few": "⁨{n}⁩ طلاب جدد في القاعة",
+        "many": "⁨{n}⁩ طلاب جدد في القاعة",
+        "other": "⁨{n}⁩ طلاب جدد في القاعة"
+      },
+      "unEleveRecite": "طالب يتلو",
+      "pauseQuestion": "استراحة ⁨{minutes}⁩ د؟",
+      "oui": "نعم",
+      "non": "لا",
+      "pauseProposee": "استراحة مقترحة",
+      "pauseDebut": "استراحة ⁨{minutes}⁩ د. الاستئناف الساعة ⁨{heure}⁩",
+      "pausePriereDebut": "استراحة الصلاة. الاستئناف الساعة ⁨{heure}⁩",
+      "pauseFinie": "انتهت الاستراحة",
+      "priereNom": "استراحة الصلاة",
+      "priereA": "استراحة الصلاة الساعة ⁨{heure}⁩",
+      "priereDans": "استراحة الصلاة بعد ⁨{minutes}⁩ د",
+      "commencerMaintenant": "ابدأ الآن",
+      "decaler": "تأجيل ⁨{minutes}⁩ د"
+    },
     "supports": {
       "coran": "القرآن، مصحف المدينة",
       "coranDetail": "تُفتح الصفحة للفصل كله."
@@ -1174,6 +1207,7 @@
         "tempsPrevuEcoule": "انقضى الوقت المقرّر",
         "reste": "تبقّى",
         "apresFin": "بعد النهاية",
+        "pause": "استراحة",
         "annonce": "الحصة: ⁨{ecoule}⁩ و⁨{restant}⁩.",
         "minutesEcoulees(plural, param=minutes)": {
           "zero": "مضى ⁨{minutes}⁩ د",
@@ -1198,6 +1232,7 @@
         "dans": "استراحة بعد ⁨{minutes}⁩ د",
         "prevue": "استراحة مقرّرة",
         "enCours": "استراحة، الاستئناف الساعة ⁨{heure}⁩",
+        "enCoursDans": "استراحة، الاستئناف بعد ⁨{minutes}⁩ د",
         "prise": "أُخذت الاستراحة",
         "demarrer": "بدء الاستراحة",
         "terminer": "إنهاء الاستراحة",

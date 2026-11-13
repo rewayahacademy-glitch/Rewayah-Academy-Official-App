@@ -36,6 +36,7 @@ import '../../core/widgets/pressable.dart';
 import '../../core/widgets/status_pill.dart';
 import '../accueil_famille/ancre_horloge_serveur.dart';
 import 'marque_chrono.dart';
+import 'pilote_dynamique.dart' show heureDeLaBarre, pauseALInstant;
 import 'vue_seance.dart' show ConnexionSeance;
 
 /// L'instant courant UTC du chrono : l'horloge serveur lue une fois a
@@ -262,7 +263,9 @@ class _ChronoSalleEtat extends State<ChronoSalle> with WidgetsBindingObserver {
 
   /// Les pauses du chrono, d'apres l'etat servi : en cours ou prise.
   List<PauseChrono> _pauses() {
-    final PauseSeance? p = widget.pause;
+    // DYNAMIQUE-CHRONO-2 : passee l'heure de reprise, la pause ne fige plus
+    // le chrono, meme si le message de fin n'est pas encore arrive.
+    final PauseSeance? p = pauseALInstant(widget.pause, _instant);
     final DateTime? debut = p?.debutUtc;
     if (p == null || debut == null) {
       return const <PauseChrono>[];
@@ -312,22 +315,37 @@ class _ChronoSalleEtat extends State<ChronoSalle> with WidgetsBindingObserver {
 
   /// L'heure du profil ([chezMoi], sinon celle de l'appareil), `HH:MM`, en
   /// chiffres de gauche a droite.
-  static String _heure(DateTime utc) => '\u2066${heureChezMoi(utc)}\u2069';
+  static String _heure(DateTime utc) => heureDeLaBarre(utc);
 
   /// La marque de la pause a cet instant, ou `null` (DYNAMIQUE-CHRONO-1 : la
   /// pause est une marque de la barre, son texte n'est plus pose a cote).
   MarqueChrono? _marquePause(ChronoSeance chrono) {
-    final PauseSeance? p = widget.pause;
-    if (p == null || chrono.prevuEcoule) {
+    final PauseSeance? p = pauseALInstant(widget.pause, _instant);
+    // DYNAMIQUE-CHRONO-2 : une marque de pause posee par la barre (« Pause
+    // proposee ») tient lieu de celle-ci.
+    if (p == null ||
+        chrono.prevuEcoule ||
+        widget.marques.any((MarqueChrono m) => m.estPause)) {
       return null;
     }
     final d = t.salle.seance.pause;
-    MarqueChrono marque(GenreMarqueChrono genre, String texte, String annonce) =>
-        MarqueChrono.pause(genre: genre, libelle: texte, annonce: annonce);
+    MarqueChrono marque(
+      GenreMarqueChrono genre,
+      String texte,
+      String annonce,
+    ) => MarqueChrono.pause(genre: genre, libelle: texte, annonce: annonce);
     switch (p.statut) {
       case StatutPause.nonPrevue:
       case StatutPause.nonPrise:
         return null;
+      case StatutPause.programmee when p.motif == MotifPause.priere:
+        // DYNAMIQUE-CHRONO-2 : la pause de priere s'annonce d'avance, a son
+        // heure (celle que le serveur propose, sinon l'heure prevue).
+        final DateTime? heure = p.proposerAUtc ?? p.debutPrevuUtc;
+        final String texte = heure == null
+            ? t.salle.dynamique.priereNom
+            : t.salle.dynamique.priereA(heure: _heure(heure));
+        return marque(GenreMarqueChrono.pauseProgrammee, texte, texte);
       case StatutPause.programmee:
         final DateTime? prevue = p.debutPrevuUtc;
         if (prevue == null || !prevue.isAfter(_instant)) {
@@ -346,9 +364,15 @@ class _ChronoSalleEtat extends State<ChronoSalle> with WidgetsBindingObserver {
         if (reprise == null) {
           return marque(GenreMarqueChrono.pauseEnCours, d.prevue, d.prevue);
         }
+        // DYNAMIQUE-CHRONO-2 (directeur, 12/11/2026) : « Pause, reprise
+        // dans 7 min » ; l'heure exacte est dite a l'alerte et lue ici.
+        final int reste =
+            (reprise.difference(_instant).inSeconds / Duration.secondsPerMinute)
+                .ceil()
+                .clamp(1, p.dureePrevueMinutes);
         return marque(
           GenreMarqueChrono.pauseEnCours,
-          d.enCours(heure: _heure(reprise)),
+          LibellesGroupe.insecable(d.enCoursDans(minutes: reste)),
           d.annonceEnCours(heure: _heure(reprise)),
         );
       case StatutPause.prise:
@@ -398,6 +422,7 @@ class _ChronoSalleEtat extends State<ChronoSalle> with WidgetsBindingObserver {
       libelleFini: d.chrono.tempsPrevuEcoule,
       libelleReste: d.chrono.reste,
       libelleApresFin: d.chrono.apresFin,
+      libellePause: d.chrono.pause,
       uneLigne: true,
       surface: widget.surfaceCapsule,
       sobre: widget.sobre,
@@ -431,19 +456,19 @@ class _ChronoSalleEtat extends State<ChronoSalle> with WidgetsBindingObserver {
       fit: BoxFit.scaleDown,
       alignment: AlignmentDirectional.centerStart,
       child: Row(
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        vivant,
-        if (!deplie)
-          for (final MarqueChrono m in marques) ...<Widget>[
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          vivant,
+          if (!deplie)
+            for (final MarqueChrono m in marques) ...<Widget>[
+              Ecart.hSm,
+              lue(m, point(m)),
+            ],
+          for (final Widget signe in widget.signes) ...<Widget>[
             Ecart.hSm,
-            lue(m, point(m)),
+            signe,
           ],
-        for (final Widget signe in widget.signes) ...<Widget>[
-          Ecart.hSm,
-          signe,
         ],
-      ],
       ),
     );
     final VoidCallback? basculer = widget.onBasculer;
