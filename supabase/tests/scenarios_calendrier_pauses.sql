@@ -906,6 +906,14 @@ SELECT pg_temp.vrai(:'r63_famille' = 'refus' AND :'r64_passe' = 'pause_dates_inv
                            FROM public.pauses_eleve WHERE id = :'r62_id'::uuid)
                         = (pg_temp.auj() + 4) || '/' || (pg_temp.auj() + interval '3 months')::date || '/Direction CP',
   'terminer une pause d''exception : direction seule, jamais dans le passe ni plus tard ; la fin d''origine et le geste sont gardes');
+SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
+SET LOCAL ROLE authenticated;
+SELECT public.pauses_a_traiter() -> 'regle' ->> 'exception_mois_max' AS regle_duree,
+       (SELECT pg_catalog.count(*) FROM pg_catalog.jsonb_array_elements(public.pauses_a_traiter() -> 'recentes') e
+         WHERE (e ->> 'terminable')::boolean) AS terminables \gset r65_
+RESET ROLE;
+SELECT pg_temp.vrai(:'r65_regle_duree' = '3' AND :'r65_terminables'::int >= 1,
+  'la file de la direction dit la duree permise d''une exception (reglage) et quelles pauses se terminent plus tot');
 SELECT pg_temp.vrai(private.eleve_en_pause(pg_temp.u('e4'), pg_temp.auj() + 4)
                     AND NOT private.eleve_en_pause(pg_temp.u('e4'), pg_temp.auj() + 5),
   'le fait « en pause » suit la nouvelle fin');
