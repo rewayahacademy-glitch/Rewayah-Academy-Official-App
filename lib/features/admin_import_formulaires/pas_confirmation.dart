@@ -76,6 +76,8 @@ class PasConfirmation extends StatelessWidget {
       JetonPerime() => a.confirmation.jetonPerime,
       ChoixInvalide() => a.confirmation.choixInvalide,
       CleIdempotenceReutilisee() => a.confirmation.cleReutilisee,
+      ImportTropLong() => a.analyse.tropLong,
+      ImportFichierRefuse() => a.analyse.fichierRefuse,
       ImportInvalide() || ImportRefuseInconnu() => a.confirmation.refus,
       _ => a.confirmation.nonConfirme,
     };

@@ -368,6 +368,17 @@ void main() {
       expect(f.tropVolumineux, isFalse);
     });
 
+    test('lire : le signe nul est retire, le reste du fichier est lu', () {
+      final FichierFormulaires f = FichierFormulaires.lire(
+        nom: 'Formulaire - Reponses.csv',
+        texte: csvFormulaires.replaceFirst('Horodateur', 'Horo\u0000dateur') +
+            '\u0000',
+      );
+      expect(f.csv.contains('\u0000'), isFalse);
+      expect(f.titreDeColonne(1), 'Horodateur');
+      expect(f.nombreLignes, 7);
+    });
+
     test('un export a point-virgule repart en virgules', () {
       final FichierFormulaires f = FichierFormulaires.lire(
         nom: 'a - b.csv',

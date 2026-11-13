@@ -60,7 +60,7 @@ class ImportCandidaturesSupabase implements PortImportCandidatures {
   }) async {
     final Map<String, dynamic> j = _objet(
       await _executer('apercu_import_formulaires', <String, dynamic>{
-        'p_csv': csv,
+        'p_csv': sansSigneNul(csv),
         'p_classeur': classeur,
         'p_onglet': onglet,
         'p_mappage': mappage.versJson(),
@@ -84,7 +84,7 @@ class ImportCandidaturesSupabase implements PortImportCandidatures {
   }) async {
     final Map<String, dynamic> j = _objet(
       await _executer('confirmer_import_formulaires', <String, dynamic>{
-        'p_csv': csv,
+        'p_csv': sansSigneNul(csv),
         'p_classeur': classeur,
         'p_onglet': onglet,
         'p_jeton': jeton,
@@ -106,6 +106,10 @@ class ImportCandidaturesSupabase implements PortImportCandidatures {
     } on PostgrestException catch (e) {
       if (e.code == '42501') throw PermissionInsuffisante(nom);
       if (e.code == '22023') throw ImportInvalide(e.message);
+      if (e.code == '57014') throw const ImportTropLong();
+      if (e.code == '22P05' || e.code == '22021') {
+        throw const ImportFichierRefuse();
+      }
       if (e.code == 'PGRST202' || e.code == '42883') {
         throw const CapaciteIndisponible(dependanceImportCandidatures);
       }
@@ -190,3 +194,7 @@ bool _estErreurReseau(Object error) {
       texte.contains('Failed host lookup') ||
       texte.contains('Connection refused');
 }
+
+/// Le texte sans signe nul (`U+0000`) : une base PostgreSQL ne peut pas garder ce
+/// signe dans un texte et refuse tout le corps de la requete (`22P05`).
+String sansSigneNul(String texte) => texte.replaceAll('\u0000', '');

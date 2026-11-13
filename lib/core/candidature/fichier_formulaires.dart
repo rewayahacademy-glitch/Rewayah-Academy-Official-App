@@ -96,7 +96,7 @@ class FichierFormulaires {
 
   /// Lit [texte], le contenu decode du fichier [nom].
   factory FichierFormulaires.lire({required String nom, required String texte}) {
-    final TableCsv table = AnalyseurCsv.lire(texte);
+    final TableCsv table = AnalyseurCsv.lire(texte.replaceAll('\u0000', ''));
     return FichierFormulaires._(
       nom: nom,
       table: table,

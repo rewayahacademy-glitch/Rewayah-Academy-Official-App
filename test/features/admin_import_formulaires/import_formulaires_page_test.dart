@@ -549,6 +549,30 @@ void main() {
       },
     );
 
+    testWidgets('delai depasse : une phrase vraie qui dit quoi faire', (
+      tester,
+    ) async {
+      final FauxImportCandidatures port = FauxImportCandidatures()
+        ..erreurApercu = (int n) => const ImportTropLong();
+      await _monter(tester, port);
+      await _choisirFichier(tester);
+      await _suivant(tester);
+      expect(find.text(a.analyse.tropLong), findsOneWidget);
+      expect(find.text(a.analyse.echecPhrase), findsNothing);
+    });
+
+    testWidgets('fichier refuse : une phrase vraie qui dit quoi faire', (
+      tester,
+    ) async {
+      final FauxImportCandidatures port = FauxImportCandidatures()
+        ..erreurApercu = (int n) => const ImportFichierRefuse();
+      await _monter(tester, port);
+      await _choisirFichier(tester);
+      await _suivant(tester);
+      expect(find.text(a.analyse.fichierRefuse), findsOneWidget);
+      expect(find.text(a.analyse.echecPhrase), findsNothing);
+    });
+
     testWidgets('un fichier que le serveur dit illisible : la cause en mots', (
       tester,
     ) async {

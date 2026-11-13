@@ -19828,6 +19828,8 @@ class _Traductions$candidatsFlux$importFormulaires$analyse$ar extends Traduction
 	// Translations
 	@override String get echec => 'لم يكتمل التحليل.';
 	@override String get echecPhrase => 'لم يُسجَّل شيء. أعيدوا المحاولة بعد قليل.';
+	@override String get tropLong => 'استغرقت قراءة الملف وقتًا أطول من المسموح. لم يُسجَّل شيء. أودعوا الملف على جزأين (ورقتين أو تصديرين) ثم أعيدوا المحاولة.';
+	@override String get fichierRefuse => 'يحتوي الملف على رمز لا يستطيع التطبيق قراءته. لم يُسجَّل شيء. صدّروا الملف من جديد من Google Sheets بصيغة CSV ثم أودعوه مرة أخرى.';
 	@override String get refus => 'لا يستطيع الخادم قراءة هذا الملف بهذين الاسمين. تحققوا من المصنّف والورقة والملف ثم أعيدوا المحاولة.';
 	@override String get reessayer => 'إعادة التحليل';
 }
@@ -35602,6 +35604,8 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.doublons.option.distinctes.exemple' => 'شخصان من العائلة نفسها ردا بالرقم نفسه',
 			'candidatsFlux.importFormulaires.analyse.echec' => 'لم يكتمل التحليل.',
 			'candidatsFlux.importFormulaires.analyse.echecPhrase' => 'لم يُسجَّل شيء. أعيدوا المحاولة بعد قليل.',
+			'candidatsFlux.importFormulaires.analyse.tropLong' => 'استغرقت قراءة الملف وقتًا أطول من المسموح. لم يُسجَّل شيء. أودعوا الملف على جزأين (ورقتين أو تصديرين) ثم أعيدوا المحاولة.',
+			'candidatsFlux.importFormulaires.analyse.fichierRefuse' => 'يحتوي الملف على رمز لا يستطيع التطبيق قراءته. لم يُسجَّل شيء. صدّروا الملف من جديد من Google Sheets بصيغة CSV ثم أودعوه مرة أخرى.',
 			'candidatsFlux.importFormulaires.analyse.refus' => 'لا يستطيع الخادم قراءة هذا الملف بهذين الاسمين. تحققوا من المصنّف والورقة والملف ثم أعيدوا المحاولة.',
 			'candidatsFlux.importFormulaires.analyse.reessayer' => 'إعادة التحليل',
 			'candidatsFlux.importFormulaires.apercu.question' => 'هل هذا هو الملف المطلوب؟',

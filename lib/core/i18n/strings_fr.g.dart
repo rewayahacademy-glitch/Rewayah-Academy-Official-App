@@ -41926,6 +41926,12 @@ class Traductions$candidatsFlux$importFormulaires$analyse$fr {
 	/// fr: 'Rien n'a été enregistré. Réessayez dans un instant.'
 	String get echecPhrase => 'Rien n\'a été enregistré. Réessayez dans un instant.';
 
+	/// fr: 'Le serveur a mis trop de temps à lire ce fichier. Rien n'a été enregistré. Déposez-le en deux parties (deux onglets ou deux exports), puis réessayez.'
+	String get tropLong => 'Le serveur a mis trop de temps à lire ce fichier. Rien n\'a été enregistré. Déposez-le en deux parties (deux onglets ou deux exports), puis réessayez.';
+
+	/// fr: 'Ce fichier contient un signe que l'application ne peut pas lire. Rien n'a été enregistré. Exportez-le de nouveau depuis Google Sheets au format CSV, puis déposez-le à nouveau.'
+	String get fichierRefuse => 'Ce fichier contient un signe que l\'application ne peut pas lire. Rien n\'a été enregistré. Exportez-le de nouveau depuis Google Sheets au format CSV, puis déposez-le à nouveau.';
+
 	/// fr: 'Le serveur ne peut pas lire ce fichier avec ces noms. Vérifiez le classeur, l'onglet et le fichier, puis réessayez.'
 	String get refus => 'Le serveur ne peut pas lire ce fichier avec ces noms. Vérifiez le classeur, l\'onglet et le fichier, puis réessayez.';
 
@@ -61997,6 +62003,8 @@ extension on Traductions {
 			'candidatsFlux.importFormulaires.doublons.option.distinctes.exemple' => 'deux personnes d\'une même famille qui ont répondu avec le même numéro',
 			'candidatsFlux.importFormulaires.analyse.echec' => 'L\'analyse n\'a pas abouti.',
 			'candidatsFlux.importFormulaires.analyse.echecPhrase' => 'Rien n\'a été enregistré. Réessayez dans un instant.',
+			'candidatsFlux.importFormulaires.analyse.tropLong' => 'Le serveur a mis trop de temps à lire ce fichier. Rien n\'a été enregistré. Déposez-le en deux parties (deux onglets ou deux exports), puis réessayez.',
+			'candidatsFlux.importFormulaires.analyse.fichierRefuse' => 'Ce fichier contient un signe que l\'application ne peut pas lire. Rien n\'a été enregistré. Exportez-le de nouveau depuis Google Sheets au format CSV, puis déposez-le à nouveau.',
 			'candidatsFlux.importFormulaires.analyse.refus' => 'Le serveur ne peut pas lire ce fichier avec ces noms. Vérifiez le classeur, l\'onglet et le fichier, puis réessayez.',
 			'candidatsFlux.importFormulaires.analyse.reessayer' => 'Réessayer l\'analyse',
 			'candidatsFlux.importFormulaires.apercu.question' => 'Est-ce bien le bon fichier ?',

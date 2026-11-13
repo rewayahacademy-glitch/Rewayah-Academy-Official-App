@@ -358,6 +358,8 @@ class _PasDepotEtat extends ConsumerState<PasDepot> {
           nature: NatureEtat.echecServeur,
           titre: a.analyse.echec,
           phrase: switch (echec) {
+            ImportTropLong() => a.analyse.tropLong,
+            ImportFichierRefuse() => a.analyse.fichierRefuse,
             ImportInvalide() || ImportRefuseInconnu() => a.analyse.refus,
             _ => a.analyse.echecPhrase,
           },

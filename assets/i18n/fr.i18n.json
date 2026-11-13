@@ -14914,6 +14914,8 @@
       "analyse": {
         "echec": "L'analyse n'a pas abouti.",
         "echecPhrase": "Rien n'a été enregistré. Réessayez dans un instant.",
+        "tropLong": "Le serveur a mis trop de temps à lire ce fichier. Rien n'a été enregistré. Déposez-le en deux parties (deux onglets ou deux exports), puis réessayez.",
+        "fichierRefuse": "Ce fichier contient un signe que l'application ne peut pas lire. Rien n'a été enregistré. Exportez-le de nouveau depuis Google Sheets au format CSV, puis déposez-le à nouveau.",
         "refus": "Le serveur ne peut pas lire ce fichier avec ces noms. Vérifiez le classeur, l'onglet et le fichier, puis réessayez.",
         "reessayer": "Réessayer l'analyse"
       },

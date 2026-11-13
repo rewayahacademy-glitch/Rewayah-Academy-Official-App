@@ -121,6 +121,21 @@ final class ImportRefuseInconnu extends ErreurImportCandidatures {
   final String code;
 }
 
+/// Le serveur a coupe la lecture du fichier parce qu'elle durait trop (`57014`) :
+/// rien n'a ete ecrit, c'est le fichier qui est en cause, pas un incident passager.
+final class ImportTropLong extends ErreurImportCandidatures {
+  /// Cree l'erreur.
+  const ImportTropLong();
+}
+
+/// Le serveur ou la passerelle a refuse le texte du fichier lui-meme (`22P05` :
+/// signe d'echappement illisible, `22021` : suite d'octets invalide). Rien n'a
+/// ete ecrit ; reessayer le meme fichier ne change rien.
+final class ImportFichierRefuse extends ErreurImportCandidatures {
+  /// Cree l'erreur.
+  const ImportFichierRefuse();
+}
+
 /// La connexion a coupe. Pour une confirmation, l'import est **non confirme** :
 /// la meme demande, rejouee avec la meme cle d'idempotence, ne s'enregistre
 /// qu'une fois.

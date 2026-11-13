@@ -324,6 +324,47 @@ void main() {
       },
     );
 
+    test('57014 : lecture coupee par le delai, erreur typee distincte', () async {
+      erreur = const PostgrestException(
+        message: 'canceling statement due to statement timeout',
+        code: '57014',
+      );
+      await expectLater(
+        adaptateur().apercu(csv: 'x', classeur: 'c', onglet: 'o'),
+        throwsA(isA<ImportTropLong>()),
+      );
+    });
+
+    test('22P05 et 22021 : fichier refuse, jamais un incident passager', () async {
+      for (final String code in <String>['22P05', '22021']) {
+        erreur = PostgrestException(message: 'texte refuse', code: code);
+        await expectLater(
+          adaptateur().apercu(csv: 'x', classeur: 'c', onglet: 'o'),
+          throwsA(isA<ImportFichierRefuse>()),
+        );
+      }
+    });
+
+    test('le signe nul est retire du texte envoye (apercu et confirmation)', () async {
+      reponse = _apercu();
+      await adaptateur().apercu(
+        csv: 'a\u0000b,c\n',
+        classeur: 'c',
+        onglet: 'o',
+      );
+      expect(appels.last.$2!['p_csv'], 'ab,c\n');
+      reponse = _rapport();
+      await adaptateur().confirmer(
+        csv: '\u0000a,b\n',
+        classeur: 'c',
+        onglet: 'o',
+        jeton: 'j',
+        choix: const <ChoixDoublon>[],
+        cleIdempotence: 'cle-12345678',
+      );
+      expect(appels.last.$2!['p_csv'], 'a,b\n');
+    });
+
     test('fonction pas encore versee : capacite indisponible', () async {
       for (final String code in <String>['PGRST202', '42883']) {
         erreur = PostgrestException(message: 'absente', code: code);
