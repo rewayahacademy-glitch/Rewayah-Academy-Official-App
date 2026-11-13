@@ -7145,6 +7145,9 @@
         "echecEnregistrer": "Les modifications n'ont pas pu être confirmées. Réessayez.",
         "titreVide": "Le titre est obligatoire.",
         "retirerVignette": "Retirer la vignette",
+        "ajouterVignette": "Ajouter une vignette",
+        "remplacerVignette": "Remplacer la vignette",
+        "vignetteDeposee": "Vignette enregistrée.",
         "figee": "Version publiée et figée : pour la modifier, créez une nouvelle version.",
         "retireMotif": "Retiré du catalogue. Motif : {motif}",
         "retireSansMotif": "Retiré du catalogue.",
@@ -7249,18 +7252,24 @@
           "envoi": "Envoi en cours : {pourcent} %",
           "confirmation": "Envoi terminé, en attente de la confirmation du serveur…",
           "verification": "Vérification du fichier…",
-          "pret": "Fichier vérifié. Passez aux droits.",
+          "pret": "Fichier vérifié.",
           "annule": "Dépôt annulé."
         },
         "erreurs": {
           "taille": "Ce fichier est trop volumineux. Choisissez un fichier plus léger.",
           "type": "Ce type de fichier n'est pas pris en charge pour ce document. Choisissez un autre fichier.",
-          "reseau": "La connexion s'est interrompue. Le dépôt n'est pas confirmé : réessayez.",
-          "refuse": "Le serveur a refusé ce dépôt. Réessayez ou choisissez un autre fichier.",
+          "reseau": "Aucune réponse du serveur : votre connexion a sans doute coupé. Rien n'est confirmé. Vérifiez la connexion, puis réessayez.",
+          "refuse": "Le serveur a refusé ce dépôt : la demande a expiré, ou ce document a déjà son fichier. Rechargez la page, puis réessayez.",
           "empreinte": "Le fichier reçu ne correspond pas à celui envoyé. Réessayez.",
           "nonActive": "Le dépôt de fichiers n'est pas encore activé : rien n'a été envoyé. En attendant, vous pouvez ajouter un document par son lien.",
           "creation": "Le brouillon n'a pas pu être créé. Réessayez.",
-          "droits": "Les droits n'ont pas pu être enregistrés. Réessayez."
+          "droits": "Les droits n'ont pas pu être enregistrés. Réessayez.",
+          "session": "Votre session a expiré : rien n'a été déposé. Reconnectez-vous, puis réessayez.",
+          "stockage": "Le stockage des fichiers de l'académie a refusé l'envoi. Ce n'est pas votre connexion : c'est un réglage du serveur. Réessayez une fois ; si cela recommence, ce réglage est à corriger avant tout nouveau dépôt.",
+          "envoi": "L'envoi du fichier n'a reçu aucune réponse, alors que le serveur répond. Le plus probable : le stockage des fichiers n'accepte pas encore les envois depuis cette adresse, et c'est un réglage du serveur ; sinon, la connexion a coupé pendant l'envoi. Réessayez une fois ; si cela recommence, c'est le réglage qui est à corriger.",
+          "service": "Le service de dépôt ne répond pas comme prévu. Ce n'est pas votre connexion, et rien n'est confirmé. Réessayez dans quelques minutes ; si cela recommence, le service est à vérifier.",
+          "reglage": "Le fichier est arrivé, mais le serveur ne peut pas le confirmer : sa clé de confirmation n'est pas la même des deux côtés. C'est un réglage à corriger ; réessayer ne changera rien.",
+          "delai": "La vérification du fichier a pris trop de temps et s'est arrêtée. Rien n'est confirmé. Réessayez ; si le fichier est très lourd, choisissez une version plus légère."
         },
         "droits": {
           "aide": "Aucun droit n'est présumé : une valeur inconnue bloque la publication.",
@@ -7274,6 +7283,45 @@
         },
         "poursuivre": "Poursuivre vers la vérification",
         "poursuivreAide": "Le fichier doit être vérifié par le serveur avant de poursuivre.",
+        "simple": {
+          "intro": "Choisissez un fichier : l'application reconnaît seule un PDF, un audio ou une image, et l'envoi commence aussitôt.",
+          "lienALaPlace": "Ajouter un lien à la place",
+          "fichierALaPlace": "Déposer un fichier à la place",
+          "reconnu": "Reconnu : {type}",
+          "nom": "Nom",
+          "nomVide": "Donnez un nom au document.",
+          "description": "Description (facultative)",
+          "descriptionLien": "Un lien externe demande une description : dites en une phrase où il mène.",
+          "acces": {
+            "titre": "Accès au fichier",
+            "lecture": "Lire dans l'application seulement",
+            "lectureAide": "Le document s'ouvre dans l'application et ne s'enregistre pas sur l'appareil. C'est le choix par défaut.",
+            "telechargement": "Téléchargement permis",
+            "telechargementAide": "L'élève peut enregistrer le fichier sur son appareil. Un fichier déjà téléchargé ne peut plus être repris."
+          },
+          "rangement": {
+            "titre": "Où le ranger",
+            "cours": "Un document de l'académie, utile aux cours. Rangé en premier dans la Bibliothèque.",
+            "plusLoin": "Un autre document. Rangé plus bas dans la Bibliothèque."
+          },
+          "plus": "Plus de réglages",
+          "moins": "Masquer les réglages",
+          "plusAide": "Âges, étapes du programme et droits : à compléter avant la publication, ici ou depuis la fiche du document.",
+          "langue": "Langue : {langue}, déduite du nom.",
+          "ajouter": "Ajouter le document",
+          "aideFichier": "Choisissez d'abord un fichier : le bouton d'ajout apparaît quand le fichier est vérifié.",
+          "aideEnvoi": "Le fichier est en cours d'envoi : le bouton d'ajout apparaît dès qu'il est vérifié.",
+          "aideLien": "Collez l'adresse du lien (https) et donnez un nom : le bouton d'ajout apparaît ensuite.",
+          "typeDifferent": "Ce document attend un fichier d'un autre type ({type}). Choisissez un fichier de ce type, ou ajoutez un nouveau document.",
+          "couverture": "La couverture est choisie selon le type. Une vignette peut être ajoutée ensuite, depuis la fiche du document.",
+          "fichierPresent": "Ce document a déjà son fichier vérifié.",
+          "refus": {
+            "vide": "Ce fichier est vide. Choisissez un autre fichier.",
+            "video": "C'est une vidéo : elle est trop lourde pour être déposée ici. Ajoutez-la par son lien.",
+            "inconnu": "Ce fichier n'est ni un PDF, ni un audio (MP3, M4A, OGG), ni une image (PNG, JPEG, WebP). Choisissez un autre fichier.",
+            "tropLourd": "Ce fichier est trop lourd : {limite} Mo au plus pour ce type. Choisissez un fichier plus léger."
+          }
+        },
         "retour": "Retour au catalogue"
       },
       "publication": {

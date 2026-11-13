@@ -52,6 +52,7 @@ class _Etat {
   List<String> tranches = tranchesToutes;
   String? lectureCoran;
   String? ecolePriere;
+  String rayon = codeRayonCours;
 }
 
 /// Le double de demonstration du port.
@@ -85,6 +86,10 @@ class BibliothequeAdminDemo implements PortBibliothequeAdmin {
   /// Si non nul, le prochain depot echoue avec cette cause (puis se remet a
   /// nul).
   ErreurUpload? echecDepot;
+
+  /// La prochaine DEMANDE de depot echoue ainsi (DEPOT-SIMPLE) : l'ecran doit
+  /// dire cette cause, jamais « la connexion a coupe » a sa place.
+  ErreurUpload? echecDemande;
 
   /// « Maintenant », fixe pour des tests deterministes.
   final DateTime maintenant;
@@ -409,6 +414,8 @@ class BibliothequeAdminDemo implements PortBibliothequeAdmin {
       tranches: List<String>.of(e.tranches),
       lectureCoran: e.lectureCoran,
       ecolePriere: e.ecolePriere,
+      rayon: e.rayon,
+      aVignette: e.vignette,
     );
   }
 
@@ -458,6 +465,7 @@ class BibliothequeAdminDemo implements PortBibliothequeAdmin {
                   ? tranchesParDefautLien
                   : tranchesToutes)
           ..etapes = List<String>.of(saisie.etapes)
+          ..rayon = saisie.rayon
           ..lectureCoran = saisie.lectureCoran
           ..ecolePriere = saisie.ecolePriere;
     return id;
@@ -496,6 +504,8 @@ class BibliothequeAdminDemo implements PortBibliothequeAdmin {
     e.description = m.description ?? e.description;
     e.conditions = m.conditionsAttribution ?? e.conditions;
     e.etapes = m.etapes ?? e.etapes;
+    e.rayon = m.rayon ?? e.rayon;
+    if (m.retirerVignette) e.vignette = false;
     e.tranches = m.tranches ?? e.tranches;
     if (m.lectureCoran != null) {
       e.lectureCoran = m.lectureCoran!.isEmpty ? null : m.lectureCoran;
@@ -544,6 +554,11 @@ class BibliothequeAdminDemo implements PortBibliothequeAdmin {
     if (!droitsServeur.peutImporter) throw const BibliothequeNonAutorisee();
     if (e.versions.first.statut != StatutVersionRessource.brouillon) {
       throw const BibliothequeNonAutorisee();
+    }
+    final ErreurUpload? refus = echecDemande;
+    if (refus != null) {
+      echecDemande = null;
+      throw DepotImpossible(refus);
     }
     final String id = 'demo-upload-${++_compteur}';
     _uploads[id] = supportId;

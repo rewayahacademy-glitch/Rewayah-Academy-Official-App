@@ -95,3 +95,23 @@ export async function sha256Hex(octets: Uint8Array): Promise<string> {
     (octet) => octet.toString(16).padStart(2, "0"),
   ).join("");
 }
+
+const EXTENSIONS_NEUTRES: Record<string, string> = {
+  "application/pdf": "pdf",
+  "image/png": "png",
+  "image/jpeg": "jpg",
+  "image/webp": "webp",
+  "audio/mpeg": "mp3",
+  "audio/mp4": "m4a",
+  "audio/ogg": "ogg",
+};
+
+/** Le nom de fichier qui entre dans la cle de stockage : fabrique par le
+ * serveur depuis le type annonce, jamais repris du client. Un nom arabe, avec
+ * un espace ou un accent ne peut donc plus faire refuser un depot (DEPOT-SIMPLE,
+ * 13/11/2026), et aucun nom choisi par une personne ne voyage dans une cle.
+ * `null` pour un type que le depot n'accepte pas. */
+export function nomNeutre(mime: string): string | null {
+  const extension = EXTENSIONS_NEUTRES[mime.trim().toLowerCase()];
+  return extension === undefined ? null : `document.${extension}`;
+}

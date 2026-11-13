@@ -54,6 +54,8 @@ import '../../../core/widgets/status_pill.dart';
 import '../../../core/widgets/zone_saisie.dart';
 import '../catalogue/catalogue_page.dart' show rangBibliotheque;
 import '../classement_document.dart';
+import '../import/import_page.dart' show causeDeLaDemande, phraseErreurDepot;
+import '../import/selecteur_support.dart';
 import '../libelles_bibliotheque.dart';
 import '../porte_bibliotheque.dart';
 
@@ -280,6 +282,59 @@ class _FicheEtat extends ConsumerState<_Fiche> {
     }
   }
 
+  bool _vignetteEnCours = false;
+
+  /// Depose une vignette (image de 2 Mio au plus) : meme chemin que le fichier
+  /// d'un document, et chaque echec a sa phrase vraie.
+  Future<void> _deposerVignette(FicheSupport f) async {
+    final a = t.admin.bibliotheque.fiche;
+    final FichierChoisi? fichier = await ref
+        .read(selecteurFichierSupportProvider)
+        .choisir(TypeRessource.image);
+    if (fichier == null || !mounted) return;
+    setState(() {
+      _vignetteEnCours = true;
+      _message = null;
+      _echec = false;
+    });
+    ErreurUpload? cause;
+    bool faite = false;
+    try {
+      if (fichier.octets.length > 2 * 1024 * 1024) {
+        cause = ErreurUpload.taille;
+      } else {
+        final IntentionUpload intention = await widget.port.demanderUpload(
+          supportId: f.support.id,
+          fichier: fichier.descriptif,
+          finalite: FinaliteUpload.vignette,
+        );
+        await for (final ProgressionUpload p in widget.port.deposer(
+          uploadId: intention.id,
+          octets: fichier.octets,
+        )) {
+          if (p.phase == PhaseUpload.pret) faite = true;
+          if (p.phase == PhaseUpload.echec) {
+            cause = p.erreur ?? ErreurUpload.service;
+          }
+        }
+      }
+    } on Object catch (e) {
+      cause = causeDeLaDemande(e);
+    }
+    if (!mounted) return;
+    if (faite) await _charger();
+    if (!mounted) return;
+    setState(() {
+      _vignetteEnCours = false;
+      if (faite) {
+        _message = a.vignetteDeposee;
+      } else {
+        _echec = true;
+        _message = phraseErreurDepot(cause);
+      }
+    });
+  }
+
   Future<void> _nouvelleVersion(FicheSupport f) async {
     final a = t.admin.bibliotheque.fiche;
     setState(() {
@@ -404,6 +459,8 @@ class _FicheEtat extends ConsumerState<_Fiche> {
           lecture: _lecture,
           onLecture: (String? v) => setState(() => _lecture = v),
           onRetirerVignette: () => unawaited(_retirerVignette(f)),
+          onAjouterVignette: () => unawaited(_deposerVignette(f)),
+          vignetteEnCours: _vignetteEnCours,
           erreurTitre: _erreurTitre,
           envoi: _envoi,
           conflit: _conflit,
@@ -648,6 +705,8 @@ class _Edition extends StatelessWidget {
     required this.rayons,
     required this.onRayon,
     required this.onRetirerVignette,
+    required this.onAjouterVignette,
+    required this.vignetteEnCours,
     required this.tranches,
     required this.onTranches,
     required this.etapes,
@@ -667,6 +726,13 @@ class _Edition extends StatelessWidget {
   final List<RayonBibliotheque> rayons;
   final ValueChanged<String?> onRayon;
   final VoidCallback onRetirerVignette;
+
+  /// Choisit une image et la depose comme vignette (DEPOT-SIMPLE : la
+  /// vignette s'ajoute depuis la fiche, plus dans le formulaire d'ajout).
+  final VoidCallback onAjouterVignette;
+
+  /// Vrai pendant le depot de la vignette.
+  final bool vignetteEnCours;
   final FicheSupport fiche;
   final Map<String, TextEditingController> champs;
   final String? erreurTitre;
@@ -762,19 +828,37 @@ class _Edition extends StatelessWidget {
           onLecture: onLecture,
           ecole: champs['ecole']!,
         ),
-        if (fiche.aVignette) ...<Widget>[
-          Ecart.vMd,
-          Align(
-            alignment: AlignmentDirectional.centerStart,
-            child: ActionPrincipale(
-              key: const ValueKey<String>('fiche-retirer-vignette'),
-              libelle: a.retirerVignette,
-              niveau: NiveauAction.tertiaire,
-              pleineLargeur: false,
-              onPress: envoi ? null : onRetirerVignette,
-            ),
+        Ecart.vMd,
+        Text(t.admin.bibliotheque.import.vignetteAide),
+        Ecart.vSm,
+        Align(
+          alignment: AlignmentDirectional.centerStart,
+          // Choix de formulaire, pas un filtre : ajouter ou retirer la vignette
+          child: Wrap(
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.sm,
+            children: <Widget>[
+              ActionPrincipale(
+                key: const ValueKey<String>('fiche-ajouter-vignette'),
+                libelle: fiche.aVignette
+                    ? a.remplacerVignette
+                    : a.ajouterVignette,
+                niveau: NiveauAction.secondaire,
+                pleineLargeur: false,
+                enCours: vignetteEnCours,
+                onPress: envoi || vignetteEnCours ? null : onAjouterVignette,
+              ),
+              if (fiche.aVignette)
+                ActionPrincipale(
+                  key: const ValueKey<String>('fiche-retirer-vignette'),
+                  libelle: a.retirerVignette,
+                  niveau: NiveauAction.tertiaire,
+                  pleineLargeur: false,
+                  onPress: envoi ? null : onRetirerVignette,
+                ),
+            ],
           ),
-        ],
+        ),
         Ecart.vLg,
         if (conflit) ...<Widget>[
           Text(a.conflit, key: const ValueKey<String>('fiche-conflit')),

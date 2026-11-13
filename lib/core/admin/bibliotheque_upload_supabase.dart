@@ -31,7 +31,10 @@ class BibliothequeUploadSupabase {
   }) async {
     if (fichier.sha256.length != 64 ||
         !RegExp(r'^[0-9a-f]{64}$').hasMatch(fichier.sha256)) {
-      throw const BibliothequeHorsLigne();
+      throw const DepotImpossible(ErreurUpload.empreinte);
+    }
+    if (!vignetteOuNomConnu(fichier, finalite)) {
+      throw const DepotImpossible(ErreurUpload.type);
     }
     final bool vignette = finalite == FinaliteUpload.vignette;
     try {
@@ -44,7 +47,9 @@ class BibliothequeUploadSupabase {
           // du fichier du client n'entre jamais dans sa cle.
           if (!vignette) 'finalite': finalite.name,
           'fichier': <String, Object?>{
-            if (!vignette) 'nom': fichier.nom,
+            // Jamais le nom choisi par la personne : il n'entre ni dans la
+            // cle ni en base (un nom arabe faisait refuser le depot).
+            if (!vignette) 'nom': nomNeutre(fichier.mime),
             'octets': fichier.octets,
             'mime': fichier.mime,
             'sha256': fichier.sha256,
@@ -58,7 +63,7 @@ class BibliothequeUploadSupabase {
       final Uri url = Uri.parse(_texte(corps, 'url'));
       final Object? entetes = corps['en_tetes_exiges'];
       if (url.scheme != 'https' || entetes is! Map) {
-        throw const BibliothequeHorsLigne();
+        throw const DepotImpossible(ErreurUpload.service);
       }
       final Map<String, String> headers = <String, String>{
         for (final MapEntry<Object?, Object?> entree in entetes.entries)
@@ -67,16 +72,24 @@ class BibliothequeUploadSupabase {
       };
       if (headers['content-type'] != fichier.mime ||
           headers['content-length'] != '${fichier.octets}') {
-        throw const BibliothequeHorsLigne();
+        throw const DepotImpossible(ErreurUpload.service);
       }
       _depots[id] = _DepotSigne(url: url, entetes: headers);
       if (vignette) _vignettes.add(id);
       return IntentionUpload(id: id, expireLeUtc: expiration);
     } on FunctionException catch (erreur) {
-      throw _traduire(erreur.status, erreur.details);
+      // Statut 0 : la fonction n'a pas ete jointe (aucune reponse).
+      if (erreur.status == 0) throw const BibliothequeHorsLigne();
+      throw DepotImpossible(erreurPourStatut(erreur.status, erreur.details));
     } on ErreurBibliotheque {
       rethrow;
+    } on TimeoutException {
+      throw const DepotImpossible(ErreurUpload.delai);
+    } on FormatException {
+      // Une reponse que l'on ne sait pas lire : le service, pas la connexion.
+      throw const DepotImpossible(ErreurUpload.service);
     } catch (_) {
+      // Aucune reponse du tout : la seule cause qui soit la connexion.
       throw const BibliothequeHorsLigne();
     }
   }
@@ -88,33 +101,50 @@ class BibliothequeUploadSupabase {
   }) async* {
     final _DepotSigne? depot = _depots[uploadId];
     if (depot == null || octets == null || octets.isEmpty) {
-      yield const ProgressionUpload(
+      // Rien a envoyer (fichier vide) ou intention inconnue : ce n'est pas la
+      // connexion.
+      yield ProgressionUpload(
         phase: PhaseUpload.echec,
-        erreur: ErreurUpload.reseau,
+        erreur: depot == null ? ErreurUpload.service : ErreurUpload.type,
       );
       return;
     }
     yield const ProgressionUpload(phase: PhaseUpload.envoi, partie: 0);
+    final http.StreamedResponse reponse;
     try {
       final Map<String, String> entetes = Map<String, String>.of(depot.entetes)
         ..remove('content-length');
       final http.Request demande = http.Request('PUT', depot.url)
         ..headers.addAll(entetes)
         ..bodyBytes = octets;
-      final http.StreamedResponse reponse = await _transport.send(demande);
+      reponse = await _transport.send(demande);
       await reponse.stream.drain<void>();
-      if (reponse.statusCode < 200 || reponse.statusCode >= 300) {
-        yield const ProgressionUpload(
-          phase: PhaseUpload.echec,
-          erreur: ErreurUpload.reseau,
-        );
-        return;
-      }
+    } catch (_) {
+      // Le serveur vient de repondre a la demande, et l'envoi n'a recu aucune
+      // reponse : le stockage n'accepte pas l'envoi depuis cette adresse
+      // (regle d'origine du seau), ou la connexion a coupe pendant l'envoi.
+      _depots.remove(uploadId);
       yield const ProgressionUpload(
-        phase: PhaseUpload.enAttenteConfirmation,
-        partie: 1,
+        phase: PhaseUpload.echec,
+        erreur: ErreurUpload.envoi,
       );
-      yield const ProgressionUpload(phase: PhaseUpload.verification);
+      return;
+    }
+    if (reponse.statusCode < 200 || reponse.statusCode >= 300) {
+      // Le stockage a repondu non (adresse signee expiree, signature refusee).
+      _depots.remove(uploadId);
+      yield const ProgressionUpload(
+        phase: PhaseUpload.echec,
+        erreur: ErreurUpload.stockage,
+      );
+      return;
+    }
+    yield const ProgressionUpload(
+      phase: PhaseUpload.enAttenteConfirmation,
+      partie: 1,
+    );
+    yield const ProgressionUpload(phase: PhaseUpload.verification);
+    try {
       final FunctionResponse confirmation = await _supabase.functions.invoke(
         'bibliotheque-upload',
         body: <String, Object?>{
@@ -124,9 +154,14 @@ class BibliothequeUploadSupabase {
           'upload_id': uploadId,
         },
       );
-      final Map<String, dynamic> resultat = _objet(confirmation.data);
-      if (resultat['phase'] != 'pret') {
-        throw const BibliothequeHorsLigne();
+      final Object? resultat = confirmation.data;
+      if (resultat is! Map || resultat['phase'] != 'pret') {
+        _depots.remove(uploadId);
+        yield const ProgressionUpload(
+          phase: PhaseUpload.echec,
+          erreur: ErreurUpload.service,
+        );
+        return;
       }
       _depots.remove(uploadId);
       _vignettes.remove(uploadId);
@@ -137,7 +172,14 @@ class BibliothequeUploadSupabase {
         phase: PhaseUpload.echec,
         erreur: erreurPourStatut(erreur.status, erreur.details),
       );
+    } on TimeoutException {
+      _depots.remove(uploadId);
+      yield const ProgressionUpload(
+        phase: PhaseUpload.echec,
+        erreur: ErreurUpload.delai,
+      );
     } catch (_) {
+      // Aucune reponse de la fonction : la connexion, et elle seule.
       _depots.remove(uploadId);
       yield const ProgressionUpload(
         phase: PhaseUpload.echec,
@@ -161,7 +203,9 @@ class BibliothequeUploadSupabase {
       _depots.remove(uploadId);
       _vignettes.remove(uploadId);
     } on FunctionException catch (erreur) {
-      throw _traduire(erreur.status, erreur.details);
+      // Statut 0 : la fonction n'a pas ete jointe (aucune reponse).
+      if (erreur.status == 0) throw const BibliothequeHorsLigne();
+      throw DepotImpossible(erreurPourStatut(erreur.status, erreur.details));
     } catch (_) {
       throw const BibliothequeHorsLigne();
     }
@@ -176,28 +220,67 @@ class BibliothequeUploadSupabase {
 
   static Map<String, dynamic> _objet(Object? valeur) {
     if (valeur is Map<String, dynamic>) return valeur;
-    throw const BibliothequeHorsLigne();
+    throw const DepotImpossible(ErreurUpload.service);
   }
 
   static String _texte(Map<String, dynamic> objet, String cle) {
     final Object? valeur = objet[cle];
     if (valeur is String && valeur.isNotEmpty) return valeur;
-    throw const BibliothequeHorsLigne();
+    throw const DepotImpossible(ErreurUpload.service);
   }
 
-  static ErreurBibliotheque _traduire(int statut, Object? details) {
-    if (statut == 401 || statut == 403) return const BibliothequeNonAutorisee();
-    return const BibliothequeHorsLigne();
-  }
-
-  /// La cause d'un echec de depot, selon le statut rendu par la fonction Edge :
-  /// 503 = le depot n'est pas encore active (secret de confirmation absent).
+  /// La cause d'un echec de depot, selon le statut et le motif rendus par la
+  /// fonction Edge. Chaque cause a sa phrase ; « reseau » n'est rendu que pour
+  /// le statut 0, quand aucune reponse n'est arrivee.
   static ErreurUpload erreurPourStatut(int statut, Object? details) {
-    if (statut == 401 || statut == 403) return ErreurUpload.refuse;
-    if (statut == 422) return ErreurUpload.empreinte;
-    if (statut == 400) return ErreurUpload.type;
-    if (statut == 503) return ErreurUpload.nonActive;
-    return ErreurUpload.reseau;
+    final String motif = details is Map && details['error'] is String
+        ? details['error'] as String
+        : '';
+    return switch (statut) {
+      // 0 : le client n'a recu aucune reponse (`FunctionsFetchException`).
+      0 => ErreurUpload.reseau,
+      401 => ErreurUpload.session,
+      403 => ErreurUpload.refuse,
+      422 => ErreurUpload.empreinte,
+      400 || 413 => ErreurUpload.type,
+      408 || 504 || 546 => ErreurUpload.delai,
+      503 when motif.contains('mal reglee') => ErreurUpload.reglage,
+      503 when motif.contains('confirmation') => ErreurUpload.nonActive,
+      503 when motif.contains('stockage') => ErreurUpload.stockage,
+      _ => ErreurUpload.service,
+    };
+  }
+
+  /// Le nom neutre envoye a la place du nom du fichier : `document.<ext>`.
+  static String nomNeutre(String mime) => switch (mime) {
+    'application/pdf' => 'document.pdf',
+    'image/png' => 'document.png',
+    'image/jpeg' => 'document.jpg',
+    'image/webp' => 'document.webp',
+    'audio/mpeg' => 'document.mp3',
+    'audio/mp4' => 'document.m4a',
+    'audio/ogg' => 'document.ogg',
+    _ => 'document',
+  };
+
+  /// Vrai quand le type annonce est de ceux que le depot accepte pour cette
+  /// finalite : refuse ici, avec sa vraie phrase, plutot qu'au serveur.
+  static bool vignetteOuNomConnu(FichierADeposer f, FinaliteUpload finalite) {
+    const Set<String> images = <String>{
+      'image/png',
+      'image/jpeg',
+      'image/webp',
+    };
+    const Set<String> audios = <String>{'audio/mpeg', 'audio/mp4', 'audio/ogg'};
+    return switch (finalite) {
+      FinaliteUpload.vignette => images.contains(f.mime),
+      FinaliteUpload.preuve =>
+        images.contains(f.mime) || f.mime == 'application/pdf',
+      FinaliteUpload.support =>
+        images.contains(f.mime) ||
+            audios.contains(f.mime) ||
+            f.mime == 'application/pdf',
+    };
   }
 }
 

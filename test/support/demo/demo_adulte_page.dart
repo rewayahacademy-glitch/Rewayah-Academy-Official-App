@@ -915,10 +915,10 @@ class CoquilleAdulteDemo extends StatelessWidget {
             portMaProgressionProvider.overrideWithValue(
               const MaProgressionDemo(),
             ),
-            maProgressionProvider.overrideWith(
-              (Ref _, String eleveId) =>
-                  const MaProgressionDemo().pourEleve(eleveId),
-            ),
+          maProgressionProvider.overrideWith(
+            (Ref _, String eleveId) =>
+                const MaProgressionDemo().pourEleve(eleveId),
+          ),
           // Le second adulte est eleve d'une autre Classe, que la
           // demonstration n'a pas : le fournisseur reel reste (indisponible).
           if (reseauCoupe)

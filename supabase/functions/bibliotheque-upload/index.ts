@@ -5,6 +5,7 @@ import {
   detecterMimeReel,
   mimeAnnonceAutorise,
   mimeVignetteAutorise,
+  nomNeutre,
   sha256Hex,
   TAILLE_VIGNETTE_MAX_OCTETS,
   TAILLES_UPLOAD_BIBLIOTHEQUE,
@@ -117,17 +118,18 @@ async function demanderDepot(
       !Array.isArray(corps.fichier)
     ? corps.fichier as Record<string, unknown>
     : {};
-  const nom = typeof fichier.nom === "string" ? fichier.nom.trim() : "";
   const mime = typeof fichier.mime === "string"
     ? fichier.mime.trim().toLowerCase()
     : "";
+  // Le nom du fichier du client est ignore : il n'entre ni dans la cle ni en
+  // base. Un nom arabe ou accentue faisait refuser le depot (13/11/2026).
+  const nom = nomNeutre(mime);
   const taille = Number(fichier.octets);
   const empreinte = typeof fichier.sha256 === "string"
     ? fichier.sha256.trim().toLowerCase()
     : "";
   if (
-    !UUID.test(supportId) || !finalite ||
-    !/^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/.test(nom) ||
+    !UUID.test(supportId) || !finalite || nom === null ||
     !SHA256.test(empreinte) ||
     !mimeAnnonceAutorise(mime, taille, finalite)
   ) {
@@ -271,7 +273,7 @@ async function confirmerDepot(
       p_sha256_reel: empreinte,
       p_confirmation_signature: confirmationSignature,
     });
-    if (confirme.error) return refus("confirmation refusee", 403);
+    if (confirme.error) return refusConfirmation(confirme.error);
     journaliser({
       domaine: domaineFinal,
       operation: "depot",
@@ -294,6 +296,17 @@ async function confirmerDepot(
     });
     return refus("stockage indisponible", 503);
   }
+}
+
+/** Le refus d'une confirmation par la base. Une signature que la base ne
+ * reconnait pas n'est pas la faute de la personne : le secret de confirmation
+ * n'est pas le meme des deux cotes. C'est un reglage du serveur, et la reponse
+ * le dit (503 « confirmation mal reglee ») au lieu d'un refus (DEPOT-SIMPLE). */
+function refusConfirmation(erreur: { message?: string }): Response {
+  if ((erreur.message ?? "").includes("ConfirmationNonAutorisee")) {
+    return refus("confirmation mal reglee", 503);
+  }
+  return refus("confirmation refusee", 403);
 }
 
 function typesPour(finalite: string): string[] {
@@ -489,7 +502,7 @@ async function confirmerVignette(
       p_sha256_reel: empreinte,
       p_confirmation_signature: confirmationSignature,
     });
-    if (confirme.error) return refus("confirmation refusee", 403);
+    if (confirme.error) return refusConfirmation(confirme.error);
     journaliser({
       domaine: "supports",
       operation: "depot",

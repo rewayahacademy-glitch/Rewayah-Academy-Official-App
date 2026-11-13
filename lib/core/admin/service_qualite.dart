@@ -41,8 +41,7 @@ enum StatutControleQualite {
   final String valeurSql;
 
   /// Lit un statut depuis sa valeur SQL. Se replie sur `ouvert`.
-  static StatutControleQualite depuisSql(String? valeur) =>
-      valeur == 'traite'
+  static StatutControleQualite depuisSql(String? valeur) => valeur == 'traite'
       ? StatutControleQualite.traite
       : StatutControleQualite.ouvert;
 }
@@ -82,9 +81,7 @@ class AnomalieQualite {
         teacherPrenom: json['teacher_prenom'] as String?,
         teacherNom: json['teacher_nom'] as String?,
         depuis:
-            DateTime.tryParse(
-              json['depuis'] as String? ?? '',
-            )?.toLocal() ??
+            DateTime.tryParse(json['depuis'] as String? ?? '')?.toLocal() ??
             DateTime.now(),
         controleStatut: StatutControleQualite.depuisSql(
           json['controle_statut'] as String?,

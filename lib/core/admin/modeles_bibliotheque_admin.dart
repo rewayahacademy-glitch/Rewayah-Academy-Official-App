@@ -844,6 +844,28 @@ enum ErreurUpload {
   /// Le depot de fichiers n'est pas encore active sur le serveur (BIBLIOTHEQUE-UNE,
   /// C2) : la direction le sait en mots simples, le lien externe reste possible.
   nonActive,
+
+  /// La session a expire : il faut se reconnecter (401).
+  session,
+
+  /// Le stockage des fichiers a repondu non, ou n'est pas regle sur le
+  /// serveur : ce n'est pas la connexion de la personne.
+  stockage,
+
+  /// L'envoi vers le stockage est parti et n'a recu aucune reponse alors que
+  /// le serveur venait de repondre : le stockage n'accepte pas l'envoi depuis
+  /// cette adresse, ou la connexion a coupe pendant l'envoi.
+  envoi,
+
+  /// Le service de depot ne repond pas comme attendu (absent, en erreur).
+  service,
+
+  /// Le serveur est mal regle : sa confirmation est refusee par la base (le
+  /// secret de confirmation n'est pas le meme des deux cotes).
+  reglage,
+
+  /// Le serveur n'a pas fini dans le temps imparti.
+  delai,
 }
 
 /// La progression d'un depot, diffusee par le port.
