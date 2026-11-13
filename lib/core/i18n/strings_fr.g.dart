@@ -23869,11 +23869,8 @@ class Traductions$apprendre$programme$fr {
 
 	// Translations
 
-	/// fr: 'Mon niveau'
-	String get niveau => 'Mon niveau';
-
-	/// fr: 'Étape {ordre} sur {total}'
-	String etapeSur({required Object ordre, required Object total}) => 'Étape ${ordre} sur ${total}';
+	/// fr: 'L'étape apparaîtra dès l'entrée dans une classe'
+	String get vide => 'L\'étape apparaîtra dès l\'entrée dans une classe';
 
 	/// fr: 'Dates de l'école'
 	String get datesEcole => 'Dates de l\'école';
@@ -61478,8 +61475,7 @@ extension on Traductions {
 			'apprendre.bibliotheque.lien.copie' => 'Lien copié : collez-le dans votre navigateur.',
 			'apprendre.bibliotheque.lien.copieTu' => 'Lien copié : colle-le dans ton navigateur.',
 			'apprendre.bibliotheque.lien.bloque' => 'Le navigateur a bloqué l\'ouverture. Réessayez.',
-			'apprendre.programme.niveau' => 'Mon niveau',
-			'apprendre.programme.etapeSur' => ({required Object ordre, required Object total}) => 'Étape ${ordre} sur ${total}',
+			'apprendre.programme.vide' => 'L\'étape apparaîtra dès l\'entrée dans une classe',
 			'apprendre.programme.datesEcole' => 'Dates de l\'école',
 			'apprendre.programme.datesEcoleVide' => 'Les dates de l\'école seront affichées ici',
 			'apprendre.programme.genre.evaluation' => 'Évaluation',

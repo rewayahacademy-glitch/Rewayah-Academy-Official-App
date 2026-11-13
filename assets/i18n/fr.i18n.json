@@ -15259,8 +15259,7 @@
       }
     },
     "programme": {
-      "niveau": "Mon niveau",
-      "etapeSur": "Étape {ordre} sur {total}",
+      "vide": "L'étape apparaîtra dès l'entrée dans une classe",
       "datesEcole": "Dates de l'école",
       "datesEcoleVide": "Les dates de l'école seront affichées ici",
       "genre": {

@@ -21,7 +21,7 @@ import 'package:rewayah_academy/core/preferences/preferences_locales.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/port_capacite_eleve.dart';
-import 'package:rewayah_academy/core/suivi/port_suivi_pedagogique.dart';
+import 'package:rewayah_academy/core/suivi/ma_progression.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/couverture_ressource.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/library_resource.dart';
 
@@ -37,7 +37,7 @@ enum ProfilApprendre {
   mineurGuide,
 }
 
-/// Une etape du chemin, telle que le serveur la rend.
+/// Une etape du cycle, telle que `ma_progression` la rend.
 Map<String, Object?> etapeLue(
   int ordre,
   String nom,
@@ -47,18 +47,20 @@ Map<String, Object?> etapeLue(
   int prevue = 3,
   int limite = 4,
 }) => <String, Object?>{
-  'code': 'BASES-$ordre',
   'ordre': ordre,
   'nom': nom,
-  'objectifs': objectifs,
-  'duree_prevue_semaines': dates ? prevue : 8,
-  'date_limite_semaines': dates ? limite : 10,
   'statut': statut,
+  'objectifs': objectifs,
+  'duree_prevue_semaines': dates ? prevue : null,
+  'date_limite_semaines': dates ? limite : null,
+  if (dates && statut == 'franchie') 'atteinte_le': '2026-10-01T10:00:00Z',
 };
 
-/// La lecture unique `etape_eleve_lecture` : l'eleve est a l'etape 2, la 1
-/// est precedente. [dates] : `eleve_voit_dates` (faux de 6 a 9 ans : le
-/// serveur retient alors la date limite, l'horizon et le rythme).
+/// La lecture `ma_progression` (hub de l'ecran « Ma progression », qui lit
+/// `etape_eleve_lecture` : lot 1) : l'eleve est a l'etape 2, la 1 est
+/// franchie (« Etape precedente »). [dates] : `eleve_voit_dates` (faux de 6 a
+/// 9 ans : le serveur retient alors la date limite, l'horizon, le rythme et
+/// les durees).
 Map<String, Object?> lectureDemo({required bool dates}) => <String, Object?>{
   'eleve_voit_dates': dates,
   'etape': <String, Object?>{
@@ -71,9 +73,9 @@ Map<String, Object?> lectureDemo({required bool dates}) => <String, Object?>{
     ],
     'matiere_principale': 'Le livre de lecture de Rewayah : les voyelles',
     'matiere_secondaire': 'Al-Fatiha, puis les paroles de la prière',
-    'duree_prevue_semaines': dates ? 6 : 14,
-    'date_limite_semaines': dates ? 8 : 19,
-    'entree_le': '2026-10-22',
+    'duree_prevue_semaines': dates ? 6 : null,
+    'date_limite_semaines': dates ? 8 : null,
+    'entree_le': dates ? '2026-10-22' : null,
     'date_limite': dates ? '2026-12-17' : null,
     'semaines_ecoulees': dates ? 3 : null,
     'rythme': dates ? 'dans_les_temps' : null,
@@ -81,13 +83,12 @@ Map<String, Object?> lectureDemo({required bool dates}) => <String, Object?>{
   'niveau': <String, Object?>{
     'nom': 'Les bases',
     'horizon': dates ? '2027-03-11' : null,
-    'date_limite_visible': dates,
   },
-  'chemin': <Object?>[
+  'etapes_du_cycle': <Object?>[
     etapeLue(
       1,
       'Les lettres',
-      'precedente',
+      'franchie',
       objectifs: <String>['Reconnaît chaque lettre dans le désordre'],
       dates: dates,
     ),
@@ -118,9 +119,10 @@ Map<String, Object?> lectureDemo({required bool dates}) => <String, Object?>{
       dates: dates,
     ),
   ],
+  'sourates': <String, Object?>{'sourates_validees': 3, 'sourates_total': 17},
 };
 
-/// Ce que lit le port du suivi.
+/// Ce que lit le port de la progression.
 sealed class LectureSuivi {
   const LectureSuivi();
 }
@@ -146,18 +148,18 @@ class SuiviEnAttente extends LectureSuivi {
   const SuiviEnAttente();
 }
 
-class _PortSuivi implements PortSuiviPedagogique {
+class _PortSuivi implements PortMaProgression {
   const _PortSuivi(this.lecture);
 
   final LectureSuivi lecture;
 
   @override
-  Future<SuiviPedagogique?> pourEleve(String eleveId) => switch (lecture) {
-    SuiviLu(:final Object? brut) => Future<SuiviPedagogique?>.value(
-      SuiviPedagogique.depuisLecture(brut),
+  Future<MaProgression?> pourEleve(String eleveId) => switch (lecture) {
+    SuiviLu(:final Object? brut) => Future<MaProgression?>.value(
+      MaProgression.depuisJson(brut),
     ),
-    SuiviEnEchec() => Future<SuiviPedagogique?>.error(StateError('lecture')),
-    SuiviEnAttente() => Completer<SuiviPedagogique?>().future,
+    SuiviEnEchec() => Future<MaProgression?>.error(StateError('lecture')),
+    SuiviEnAttente() => Completer<MaProgression?>().future,
   };
 }
 
@@ -289,7 +291,7 @@ Future<GoRouter> monterApprendre(
       else if (documents is List<DocumentPlanche>)
         documentsApprendreProvider.overrideWith((Ref _) async => documents),
       if (suivi != null)
-        portSuiviPedagogiqueProvider.overrideWithValue(_PortSuivi(suivi)),
+        portMaProgressionProvider.overrideWithValue(_PortSuivi(suivi)),
       if (dates != null) portDatesEcoleProvider.overrideWithValue(dates),
       serviceCoranProvider.overrideWithValue(_CoranVide()),
       horsLigneProvider.overrideWith((Ref _) => Stream<bool>.value(horsLigne)),

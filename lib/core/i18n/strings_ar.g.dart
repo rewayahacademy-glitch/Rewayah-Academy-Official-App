@@ -10942,8 +10942,7 @@ class _Traductions$apprendre$programme$ar extends Traductions$apprendre$programm
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String get niveau => 'مستواي';
-	@override String etapeSur({required Object ordre, required Object total}) => 'المرحلة ⁨${ordre}⁩ من ⁨${total}⁩';
+	@override String get vide => 'تظهر المرحلة عند الالتحاق بفصل';
 	@override String get datesEcole => 'مواعيد الأكاديمية';
 	@override String get datesEcoleVide => 'ستظهر مواعيد الأكاديمية هنا';
 	@override late final _Traductions$apprendre$programme$genre$ar genre = _Traductions$apprendre$programme$genre$ar._(_root);
@@ -35486,8 +35485,7 @@ extension on TraductionsAr {
 			'apprendre.bibliotheque.lien.copie' => 'نُسخ الرابط: الصقه في متصفحك.',
 			'apprendre.bibliotheque.lien.copieTu' => 'نُسخ الرابط: الصقه في متصفحك.',
 			'apprendre.bibliotheque.lien.bloque' => 'منع المتصفح الفتح. حاول مرة أخرى.',
-			'apprendre.programme.niveau' => 'مستواي',
-			'apprendre.programme.etapeSur' => ({required Object ordre, required Object total}) => 'المرحلة ⁨${ordre}⁩ من ⁨${total}⁩',
+			'apprendre.programme.vide' => 'تظهر المرحلة عند الالتحاق بفصل',
 			'apprendre.programme.datesEcole' => 'مواعيد الأكاديمية',
 			'apprendre.programme.datesEcoleVide' => 'ستظهر مواعيد الأكاديمية هنا',
 			'apprendre.programme.genre.evaluation' => 'تقييم',

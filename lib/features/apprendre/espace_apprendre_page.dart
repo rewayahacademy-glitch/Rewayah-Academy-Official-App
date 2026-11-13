@@ -21,7 +21,7 @@ import '../../core/mouvement/bascule_etat.dart';
 import '../../core/mouvement/mouvement.dart';
 import '../../core/router/etat_routeur_sur.dart';
 import '../../core/session/session_controleur.dart';
-import '../../core/suivi/port_suivi_pedagogique.dart';
+import '../../core/suivi/ma_progression.dart';
 import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/controle_segmente.dart' show Segment;
@@ -85,8 +85,8 @@ class _EtatEspace extends ConsumerState<EspaceApprendrePage> {
     // d'onglet ne fait rien attendre.
     ref.watch(documentsApprendreProvider);
     final String? eleveId = ref.watch(sessionProvider).profileId;
-    if (eleveId != null && ref.watch(portSuiviPedagogiqueProvider) != null) {
-      ref.watch(suiviPedagogiqueProvider(eleveId));
+    if (eleveId != null && ref.watch(portMaProgressionProvider) != null) {
+      ref.watch(maProgressionProvider(eleveId));
     }
     final bool tutoiement = AppMetriques.of(context).estEnfant;
     final OngletApprendre onglet = _onglet ?? OngletApprendre.bibliotheque;

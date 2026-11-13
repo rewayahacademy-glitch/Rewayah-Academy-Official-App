@@ -269,7 +269,10 @@ void main() {
         depart: '${Routes.eleveApprendre}?onglet=programme',
       );
       expect(find.byType(OngletProgramme), findsOneWidget);
-      expect(find.byKey(ClesProgramme.niveau), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey<String>('suivi-pedagogique')),
+        findsOneWidget,
+      );
     });
   });
 
@@ -687,6 +690,14 @@ void main() {
   });
 
   group('Programme', () {
+    // L'onglet reutilise l'ecran « Ma progression » de main (hub : le chemin
+    // n'est dessine qu'a un endroit) et y ajoute « Dates de l'ecole ».
+    const Key carte = ValueKey<String>('suivi-pedagogique');
+    const Key chemin = ValueKey<String>('suivi-pedagogique-chemin');
+    Key etape(int ordre) => ValueKey<String>('suivi-pedagogique-etape-$ordre');
+    const Key erreur = ValueKey<String>('suivi-pedagogique-erreur');
+    const Key chargement = ValueKey<String>('suivi-pedagogique-chargement');
+
     Future<void> sur(
       WidgetTester tester, {
       required ProfilApprendre profil,
@@ -705,7 +716,8 @@ void main() {
       await _ouvrirOnglet(tester, t.apprendre.sections.programme);
     }
 
-    testWidgets('adulte : niveau, etape, chemin, objectifs, dates', (
+    testWidgets('adulte : l ecran Ma progression, une seule fois, avec le '
+        'chemin entier, les objectifs et les dates', (
       WidgetTester tester,
     ) async {
       await sur(
@@ -714,21 +726,13 @@ void main() {
         suivi: SuiviLu(lectureDemo(dates: true)),
       );
       final s = t.suiviPedagogique;
-      expect(find.byKey(ClesProgramme.niveau), findsOneWidget);
-      expect(find.text(t.apprendre.programme.niveau), findsOneWidget);
-      // Le niveau et le rang, la matiere principale et la secondaire.
-      expect(find.textContaining('Les bases'), findsWidgets);
-      expect(
-        find.text(t.apprendre.programme.etapeSur(ordre: '2', total: '4')),
-        findsNothing,
-        reason: 'le rang est dans la meme ligne que le niveau',
-      );
-      expect(
-        find.textContaining(
-          t.apprendre.programme.etapeSur(ordre: '2', total: '4'),
-        ),
-        findsOneWidget,
-      );
+      // Un seul ecran du chemin : celui de main, jamais un second dessin.
+      expect(find.byKey(carte), findsOneWidget);
+      expect(find.byKey(chemin), findsOneWidget);
+      expect(find.text(s.chemin(niveau: 'Les bases')), findsOneWidget);
+      for (int ordre = 1; ordre <= 4; ordre++) {
+        expect(find.byKey(etape(ordre)), findsOneWidget);
+      }
       expect(find.text(s.matierePrincipale), findsOneWidget);
       expect(find.text(s.matiereSecondaire), findsOneWidget);
       // Les dates, parce que le serveur dit eleve_voit_dates.
@@ -736,29 +740,23 @@ void main() {
       expect(find.text(s.depuis), findsOneWidget);
       expect(find.text(s.dureePrevue), findsOneWidget);
       expect(find.text(s.horizonNiveau(niveau: 'Les bases')), findsOneWidget);
-      // Le chemin entier, une carte par etape, objectifs compris.
-      for (int ordre = 1; ordre <= 4; ordre++) {
-        expect(find.byKey(ClesProgramme.etape(ordre)), findsOneWidget);
-      }
-      expect(find.text(s.statutPrecedente), findsOneWidget);
-      expect(find.text(s.statutEnCours), findsOneWidget);
-      expect(find.text(s.statutAVenir), findsNWidgets(2));
-      expect(
-        find.text('Lit une lettre avec chacune des trois voyelles'),
-        findsWidgets,
-      );
-      // Jamais « Etape validee » : ce mot est reserve a l'evaluation.
+      // Une etape passee dit « Etape precedente », jamais « Etape validee ».
+      expect(find.textContaining(s.etapeFranchie), findsOneWidget);
       expect(
         find.textContaining(RegExp('valid', caseSensitive: false)),
-        findsNothing,
+        findsNWidgets(1),
+        reason: 'seul le titre « Sourates des bases validees » (lot Sourates)',
       );
-      expectSansArgent(tester);
+      expect(find.text(s.sourates), findsOneWidget);
+      expect(
+        find.textContaining('Lit une lettre avec chacune des trois voyelles'),
+        findsWidgets,
+      );
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('mineur de 10 ans et plus : ses dates, avec le chemin', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('mineur de 10 ans et plus : ses dates, avec le chemin et les '
+        'dates de l ecole', (WidgetTester tester) async {
       await sur(
         tester,
         profil: ProfilApprendre.mineurGuide,
@@ -767,7 +765,7 @@ void main() {
       final s = t.suiviPedagogique;
       expect(find.text(s.aFinirAvant), findsOneWidget);
       expect(find.byKey(ClesProgramme.datesEcole), findsOneWidget);
-      expect(find.byKey(ClesProgramme.etape(3)), findsOneWidget);
+      expect(find.byKey(etape(3)), findsOneWidget);
     });
 
     testWidgets('mineur de 6 a 9 ans : aucune date, aucune duree, aucun '
@@ -801,8 +799,8 @@ void main() {
       expect(find.textContaining('semaines'), findsNothing);
       expect(find.textContaining(RegExp(r'20\d\d')), findsNothing);
       // Il voit quand meme son niveau, son etape et le chemin.
-      expect(find.byKey(ClesProgramme.niveau), findsOneWidget);
-      expect(find.byKey(ClesProgramme.etape(1)), findsOneWidget);
+      expect(find.byKey(carte), findsOneWidget);
+      expect(find.byKey(etape(1)), findsOneWidget);
       expect(find.text(s.matierePrincipale), findsOneWidget);
     });
 
@@ -838,7 +836,7 @@ void main() {
     });
 
     testWidgets('en attente de l entretien de lecture : tel que le serveur le '
-        'dit, a l adulte puis tutoye', (WidgetTester tester) async {
+        'dit, a l adulte', (WidgetTester tester) async {
       await sur(
         tester,
         profil: ProfilApprendre.adulte,
@@ -846,7 +844,6 @@ void main() {
           'attente': 'entretien_de_lecture',
         }),
       );
-      expect(find.byKey(ClesProgramme.attente), findsOneWidget);
       expect(find.text(t.suiviPedagogique.attenteEntretien), findsOneWidget);
     });
 
@@ -871,8 +868,9 @@ void main() {
         suivi: const SuiviLu(null),
       );
       expect(find.byKey(ClesProgramme.vide), findsOneWidget);
-      expect(find.text(t.suiviPedagogique.vide), findsOneWidget);
-      expect(find.byKey(ClesProgramme.niveau), findsNothing);
+      expect(find.text(t.apprendre.programme.vide), findsOneWidget);
+      expect(find.byKey(chemin), findsNothing);
+      expect(find.byKey(ClesProgramme.datesEcole), findsNothing);
     });
 
     testWidgets('sans port branche : meme etat vide honnete', (
@@ -890,7 +888,7 @@ void main() {
         suivi: const SuiviEnAttente(),
       );
       await _ouvrirOnglet(tester, t.apprendre.sections.programme);
-      expect(find.byKey(ClesProgramme.chargement), findsOneWidget);
+      expect(find.byKey(chargement), findsOneWidget);
     });
 
     testWidgets('erreur : la phrase et « Reessayer »', (
@@ -901,7 +899,7 @@ void main() {
         profil: ProfilApprendre.adulte,
         suivi: const SuiviEnEchec(),
       );
-      expect(find.byKey(ClesProgramme.erreur), findsOneWidget);
+      expect(find.byKey(erreur), findsOneWidget);
       expect(find.text(t.suiviPedagogique.erreur), findsOneWidget);
       expect(find.text(t.commun.reessayer), findsOneWidget);
     });
@@ -916,7 +914,7 @@ void main() {
         horsLigne: true,
       );
       await _ouvrirOnglet(tester, t.apprendre.sections.programme);
-      expect(find.byKey(ClesProgramme.erreur), findsOneWidget);
+      expect(find.byKey(erreur), findsOneWidget);
       expect(find.text(t.suiviPedagogique.erreur), findsOneWidget);
     });
 
@@ -935,11 +933,6 @@ void main() {
         ),
         findsNothing,
       );
-      final int n = verifierAucuneCarteCollee(
-        tester,
-        estCarte: (Widget w) => w is AppCard,
-      );
-      expect(n, greaterThan(3));
     });
   });
 
@@ -998,7 +991,10 @@ void main() {
       final Finder pro = _section(t.apprendre.sections.programme);
       expect(tester.getTopLeft(bib).dx > tester.getTopLeft(pro).dx, isTrue);
       await _ouvrirOnglet(tester, t.apprendre.sections.programme);
-      expect(find.byKey(ClesProgramme.niveau), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey<String>('suivi-pedagogique')),
+        findsOneWidget,
+      );
       await _ouvrirOnglet(tester, t.apprendre.sections.livret);
       expect(find.byKey(cleLivretVide), findsOneWidget);
       expect(tester.takeException(), isNull);
