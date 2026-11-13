@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -86,6 +88,9 @@ class BarreSeanceEnDirect extends StatefulWidget {
 
   /// DYNAMIQUE-CHRONO-2 : l'alerte de l'ile (appel recu, pause).
   static const Key cleAlerte = ValueKey<String>('ile-seance-alerte');
+
+  /// SYNCHRO-SESSION : la pastille reduite a son point (place qui manque).
+  static const Key clePointDirect = ValueKey<String>('ile-seance-point-direct');
 
   /// Le chevron qui deplie ou replie l'ile.
   static const Key cleChevron = ValueKey<String>('ile-seance-chevron');
@@ -679,6 +684,50 @@ class _BarreEtat extends ConsumerState<_Barre> {
         ? t.salle.ile.finAtteinte
         : null;
 
+    final bool texteAgrandi = MediaQuery.textScalerOf(context).scale(1) > 1.3;
+    final Widget etatCompact = FonduLiquide(
+      cle: horsLigne,
+      child: horsLigne
+          ? Row(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                IconTheme(
+                  data: IconThemeData(
+                    color: paire.onBackground,
+                    size: AppSpacing.xl,
+                  ),
+                  child: Icon(AppIcons.reconnexion.repos),
+                ),
+                Ecart.hSm,
+                Flexible(child: Text(t.salle.reconnexionCourt, style: style)),
+              ],
+            )
+          // Compacte : le mot court « En direct » ; la phrase « Seance
+          // toujours en direct » vit dans l'ile depliee. SYNCHRO-SESSION :
+          // quand la place manque, la pastille se reduit a son point (son
+          // mot reste lu).
+          : texteAgrandi
+          ? const PastilleEtatSeance(etat: EtatPastilleSeance.enDirect)
+          : _PremierQuiTient(
+              children: <Widget>[
+                const PastilleEtatSeance(etat: EtatPastilleSeance.enDirect),
+                const PastilleEtatSeance(
+                  key: BarreSeanceEnDirect.clePointDirect,
+                  etat: EtatPastilleSeance.enDirect,
+                  pointSeul: true,
+                ),
+                // Le chrono prend toute la place (ecart extreme) : la
+                // pastille ne se voit plus, son mot reste lu.
+                Semantics(
+                  label: PastilleEtatSeance.libelleDe(
+                    EtatPastilleSeance.enDirect,
+                  ),
+                  child: const SizedBox.shrink(),
+                ),
+              ],
+            ),
+    );
+
     // Compacte : la pastille (ou la reconnexion) et le chrono ramenent a la
     // salle d'un appui ; le micro ; le chevron.
     final Widget zoneRetour = Pressable(
@@ -691,51 +740,36 @@ class _BarreEtat extends ConsumerState<_Barre> {
       },
       libelleSemantique: t.salle.retourner,
       arrondiFocus: AppRadius.arrondiLg,
-      child: Wrap(
-        crossAxisAlignment: WrapCrossAlignment.center,
-        spacing: AppSpacing.sm,
-        runSpacing: AppSpacing.xs,
-        // Centree sur la hauteur de la cible (48) : alignee sur le micro et
-        // le chevron.
-        runAlignment: WrapAlignment.center,
-        children: <Widget>[
-          FonduLiquide(
-            cle: horsLigne,
-            child: horsLigne
-                ? Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      IconTheme(
-                        data: IconThemeData(
-                          color: paire.onBackground,
-                          size: AppSpacing.xl,
-                        ),
-                        child: Icon(AppIcons.reconnexion.repos),
-                      ),
-                      Ecart.hSm,
-                      Flexible(
-                        child: Text(t.salle.reconnexionCourt, style: style),
-                      ),
-                    ],
-                  )
-                // Compacte : le mot court « En direct » ; la phrase
-                // « Seance toujours en direct » vit dans l'ile depliee.
-                : const PastilleEtatSeance(etat: EtatPastilleSeance.enDirect),
-          ),
-          ?chrono,
-        ],
-      ),
+      // SYNCHRO-SESSION (13/11/2026, retour du pilote) : une seule rangee
+      // tant que le texte n'est pas agrandi (la pastille cede la premiere ;
+      // la rangee coupe ce qui depasserait le temps que l'ile grandit) ;
+      // texte agrandi, la pastille et le chrono peuvent passer a la ligne.
+      child: texteAgrandi
+          ? Wrap(
+              crossAxisAlignment: WrapCrossAlignment.center,
+              spacing: AppSpacing.sm,
+              runSpacing: AppSpacing.xs,
+              runAlignment: WrapAlignment.center,
+              children: <Widget>[etatCompact, ?chrono],
+            )
+          : _EtatEtChrono(
+              textDirection: Directionality.of(context),
+              children: <Widget>[etatCompact, ?chrono],
+            ),
     );
 
     // Une rangee qui passe a la ligne : a 320 points en texte agrandi, le
     // micro et le chevron descendent sous le chrono plutot que de l'ecraser.
     _mesurerBande();
-    final Widget compacte = Wrap(
-      key: _cleCompacte,
-      crossAxisAlignment: WrapCrossAlignment.center,
+    // SYNCHRO-SESSION (retour du pilote, 13/11/2026) : le micro et le
+    // chevron forment un bloc de fin, jamais separe : au texte normal, ils
+    // restent sur la rangee du chrono, au bord de fin ; texte agrandi (plus
+    // de 130 %), le bloc entier peut passer a la ligne, jamais un bouton
+    // seul.
+    final Widget boutons = Row(
+      mainAxisSize: MainAxisSize.min,
       spacing: AppSpacing.sm,
       children: <Widget>[
-        zoneRetour,
         if (peutParler && !horsLigne) _MicroDeLaBarre(moteur: moteur),
         BoutonIcone(
           key: BarreSeanceEnDirect.cleChevron,
@@ -747,6 +781,25 @@ class _BarreEtat extends ConsumerState<_Barre> {
         ),
       ],
     );
+    final Widget compacte = texteAgrandi
+        ? Wrap(
+            key: _cleCompacte,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            alignment: WrapAlignment.end,
+            spacing: AppSpacing.sm,
+            children: <Widget>[zoneRetour, boutons],
+          )
+        // Au telephone (moins de 600 points), la rangee prend la largeur de
+        // l'ile : les boutons sont au bord de fin, meme quand l'alerte
+        // depliee elargit l'ile ; ailleurs, l'ile garde la taille de son
+        // contenu. Si le chrono seul ne laisse pas la place des boutons
+        // (ecart extreme), le bloc des boutons passe entier dessous.
+        : _RangeeCompacte(
+            key: _cleCompacte,
+            remplir: MediaQuery.sizeOf(context).width < 600,
+            textDirection: Directionality.of(context),
+            children: <Widget>[zoneRetour, boutons],
+          );
 
     final Widget detail = _deplie
         ? Padding(
@@ -960,4 +1013,395 @@ class _AlerteIle extends StatelessWidget {
       ),
     ),
   );
+}
+
+/// SYNCHRO-SESSION (13/11/2026) : montre le premier enfant qui tient dans la
+/// largeur donnee, sinon le dernier. Seul l'enfant montre est peint, touche
+/// et lu ; les autres sont mesures, jamais vus.
+class _PremierQuiTient extends MultiChildRenderObjectWidget {
+  const _PremierQuiTient({required super.children});
+
+  @override
+  RenderObject createRenderObject(BuildContext context) =>
+      _RenduPremierQuiTient();
+}
+
+class _ParentPremierQuiTient extends ContainerBoxParentData<RenderBox> {}
+
+class _RenduPremierQuiTient extends RenderBox
+    with
+        ContainerRenderObjectMixin<RenderBox, _ParentPremierQuiTient>,
+        RenderBoxContainerDefaultsMixin<RenderBox, _ParentPremierQuiTient> {
+  RenderBox? _montre;
+
+  @override
+  void setupParentData(RenderBox child) {
+    if (child.parentData is! _ParentPremierQuiTient) {
+      child.parentData = _ParentPremierQuiTient();
+    }
+  }
+
+  @override
+  void performLayout() {
+    final BoxConstraints libres = constraints.loosen();
+    RenderBox? enfant = firstChild;
+    _montre = null;
+    while (enfant != null) {
+      final RenderBox? suivant = childAfter(enfant);
+      final double largeur = enfant.getMaxIntrinsicWidth(constraints.maxHeight);
+      if (suivant == null || largeur <= constraints.maxWidth) {
+        _montre = enfant;
+        break;
+      }
+      enfant = suivant;
+    }
+    RenderBox? autre = firstChild;
+    while (autre != null) {
+      autre.layout(libres, parentUsesSize: identical(autre, _montre));
+      autre = childAfter(autre);
+    }
+    final RenderBox? montre = _montre;
+    size = constraints.constrain(montre?.size ?? Size.zero);
+  }
+
+  @override
+  double computeMinIntrinsicWidth(double height) =>
+      lastChild?.getMinIntrinsicWidth(height) ?? 0;
+
+  @override
+  double computeMaxIntrinsicWidth(double height) =>
+      firstChild?.getMaxIntrinsicWidth(height) ?? 0;
+
+  @override
+  double computeMinIntrinsicHeight(double width) =>
+      firstChild?.getMinIntrinsicHeight(width) ?? 0;
+
+  @override
+  double computeMaxIntrinsicHeight(double width) =>
+      firstChild?.getMaxIntrinsicHeight(width) ?? 0;
+
+  @override
+  void paint(PaintingContext context, Offset offset) {
+    final RenderBox? montre = _montre;
+    if (montre != null) context.paintChild(montre, offset);
+  }
+
+  @override
+  bool hitTestChildren(BoxHitTestResult result, {required Offset position}) {
+    final RenderBox? montre = _montre;
+    if (montre == null) return false;
+    return montre.hitTest(result, position: position);
+  }
+
+  @override
+  void visitChildrenForSemantics(RenderObjectVisitor visitor) {
+    final RenderBox? montre = _montre;
+    if (montre != null) visitor(montre);
+  }
+
+  @override
+  Size computeDryLayout(BoxConstraints constraints) {
+    RenderBox? enfant = firstChild;
+    while (enfant != null) {
+      final RenderBox? suivant = childAfter(enfant);
+      if (suivant == null ||
+          enfant.getMaxIntrinsicWidth(constraints.maxHeight) <=
+              constraints.maxWidth) {
+        return constraints.constrain(enfant.getDryLayout(constraints.loosen()));
+      }
+      enfant = suivant;
+    }
+    return constraints.constrain(Size.zero);
+  }
+}
+
+/// SYNCHRO-SESSION : la pastille et le chrono de l'ile. Le chrono passe
+/// d'abord (il ne cede jamais) ; la pastille prend ce qui reste (son mot,
+/// son point, ou rien : son mot reste lu).
+class _EtatEtChrono extends MultiChildRenderObjectWidget {
+  const _EtatEtChrono({required this.textDirection, required super.children});
+
+  final TextDirection textDirection;
+
+  @override
+  RenderObject createRenderObject(BuildContext context) =>
+      _RenduEtatEtChrono(textDirection);
+
+  @override
+  void updateRenderObject(
+    BuildContext context,
+    _RenduEtatEtChrono renderObject,
+  ) => renderObject.textDirection = textDirection;
+}
+
+class _RenduEtatEtChrono extends RenderBox
+    with
+        ContainerRenderObjectMixin<RenderBox, _ParentPremierQuiTient>,
+        RenderBoxContainerDefaultsMixin<RenderBox, _ParentPremierQuiTient> {
+  _RenduEtatEtChrono(this._textDirection);
+
+  TextDirection _textDirection;
+  set textDirection(TextDirection valeur) {
+    if (valeur == _textDirection) return;
+    _textDirection = valeur;
+    markNeedsLayout();
+  }
+
+  static const double _ecart = AppSpacing.sm;
+
+  @override
+  void setupParentData(RenderBox child) {
+    if (child.parentData is! _ParentPremierQuiTient) {
+      child.parentData = _ParentPremierQuiTient();
+    }
+  }
+
+  RenderBox? get _etat => firstChild;
+  RenderBox? get _chrono => childCount > 1 ? lastChild : null;
+
+  @override
+  void performLayout() {
+    final double largeur = constraints.maxWidth;
+    final RenderBox? chrono = _chrono;
+    final RenderBox? etat = _etat;
+    double lc = 0;
+    double hauteur = 0;
+    if (chrono != null) {
+      chrono.layout(
+        BoxConstraints(maxWidth: largeur, maxHeight: constraints.maxHeight),
+        parentUsesSize: true,
+      );
+      lc = chrono.size.width;
+      hauteur = chrono.size.height;
+    }
+    double le = 0;
+    if (etat != null) {
+      final double reste = math.max(
+        0,
+        largeur - lc - (chrono == null ? 0 : _ecart),
+      );
+      etat.layout(
+        BoxConstraints(maxWidth: reste, maxHeight: constraints.maxHeight),
+        parentUsesSize: true,
+      );
+      le = etat.size.width;
+      hauteur = math.max(hauteur, etat.size.height);
+    }
+    final double ecart = le > 0 && chrono != null ? _ecart : 0;
+    size = constraints.constrain(Size(le + ecart + lc, hauteur));
+    final bool rtl = _textDirection == TextDirection.rtl;
+    if (etat != null) {
+      (etat.parentData! as _ParentPremierQuiTient).offset = Offset(
+        rtl ? size.width - le : 0,
+        (size.height - etat.size.height) / 2,
+      );
+    }
+    if (chrono != null) {
+      (chrono.parentData! as _ParentPremierQuiTient).offset = Offset(
+        rtl ? size.width - le - ecart - lc : le + ecart,
+        (size.height - chrono.size.height) / 2,
+      );
+    }
+  }
+
+  @override
+  double computeMinIntrinsicWidth(double height) =>
+      _chrono?.getMaxIntrinsicWidth(height) ??
+      _etat?.getMinIntrinsicWidth(height) ??
+      0;
+
+  @override
+  double computeMaxIntrinsicWidth(double height) {
+    final double e = _etat?.getMaxIntrinsicWidth(height) ?? 0;
+    final double c = _chrono?.getMaxIntrinsicWidth(height) ?? 0;
+    return e + c + (_chrono == null ? 0 : _ecart);
+  }
+
+  @override
+  double computeMinIntrinsicHeight(double width) => math.max(
+    _etat?.getMinIntrinsicHeight(width) ?? 0,
+    _chrono?.getMinIntrinsicHeight(width) ?? 0,
+  );
+
+  @override
+  double computeMaxIntrinsicHeight(double width) => math.max(
+    _etat?.getMaxIntrinsicHeight(width) ?? 0,
+    _chrono?.getMaxIntrinsicHeight(width) ?? 0,
+  );
+
+  @override
+  Size computeDryLayout(BoxConstraints constraints) => constraints.constrain(
+    Size(
+      math.min(
+        constraints.maxWidth,
+        computeMaxIntrinsicWidth(constraints.maxHeight),
+      ),
+      computeMaxIntrinsicHeight(constraints.maxWidth),
+    ),
+  );
+
+  @override
+  void paint(PaintingContext context, Offset offset) =>
+      defaultPaint(context, offset);
+
+  @override
+  bool hitTestChildren(BoxHitTestResult result, {required Offset position}) =>
+      defaultHitTestChildren(result, position: position);
+}
+
+/// SYNCHRO-SESSION (retour du pilote, 13/11/2026) : la rangee compacte de
+/// l'ile. Le retour (pastille et chrono) au bord de debut, le bloc des
+/// boutons (micro, chevron) au bord de fin, sur une seule rangee tant que le
+/// chrono et les boutons tiennent ensemble ; sinon le bloc entier passe
+/// dessous, au bord de fin (jamais un bouton seul).
+class _RangeeCompacte extends MultiChildRenderObjectWidget {
+  const _RangeeCompacte({
+    required this.remplir,
+    required this.textDirection,
+    required super.children,
+    super.key,
+  });
+
+  /// Vrai : la rangee prend toute la largeur donnee.
+  final bool remplir;
+  final TextDirection textDirection;
+
+  @override
+  RenderObject createRenderObject(BuildContext context) =>
+      _RenduRangeeCompacte(remplir, textDirection);
+
+  @override
+  void updateRenderObject(
+    BuildContext context,
+    _RenduRangeeCompacte renderObject,
+  ) {
+    renderObject
+      ..remplir = remplir
+      ..textDirection = textDirection;
+  }
+}
+
+class _RenduRangeeCompacte extends RenderBox
+    with
+        ContainerRenderObjectMixin<RenderBox, _ParentPremierQuiTient>,
+        RenderBoxContainerDefaultsMixin<RenderBox, _ParentPremierQuiTient> {
+  _RenduRangeeCompacte(this._remplir, this._textDirection);
+
+  bool _remplir;
+  set remplir(bool valeur) {
+    if (valeur == _remplir) return;
+    _remplir = valeur;
+    markNeedsLayout();
+  }
+
+  TextDirection _textDirection;
+  set textDirection(TextDirection valeur) {
+    if (valeur == _textDirection) return;
+    _textDirection = valeur;
+    markNeedsLayout();
+  }
+
+  static const double _ecart = AppSpacing.sm;
+  static const double _entreRangees = AppSpacing.xs;
+
+  @override
+  void setupParentData(RenderBox child) {
+    if (child.parentData is! _ParentPremierQuiTient) {
+      child.parentData = _ParentPremierQuiTient();
+    }
+  }
+
+  void _placer(RenderBox enfant, double x, double y) =>
+      (enfant.parentData! as _ParentPremierQuiTient).offset = Offset(x, y);
+
+  @override
+  void performLayout() {
+    final RenderBox? retour = firstChild;
+    final RenderBox? boutons = retour == null ? null : childAfter(retour);
+    if (retour == null || boutons == null) {
+      size = constraints.smallest;
+      return;
+    }
+    final double largeur = constraints.maxWidth;
+    final bool rtl = _textDirection == TextDirection.rtl;
+    boutons.layout(constraints.loosen(), parentUsesSize: true);
+    final double lb = boutons.size.width;
+    final double minRetour = retour.getMinIntrinsicWidth(double.infinity);
+    if (minRetour + _ecart + lb <= largeur) {
+      retour.layout(
+        BoxConstraints(
+          maxWidth: math.max(0, largeur - _ecart - lb),
+          maxHeight: constraints.maxHeight,
+        ),
+        parentUsesSize: true,
+      );
+      final double naturelle = retour.size.width + _ecart + lb;
+      final double w = _remplir && largeur.isFinite ? largeur : naturelle;
+      final double h = math.max(retour.size.height, boutons.size.height);
+      size = constraints.constrain(Size(w, h));
+      _placer(
+        retour,
+        rtl ? size.width - retour.size.width : 0,
+        (size.height - retour.size.height) / 2,
+      );
+      _placer(
+        boutons,
+        rtl ? 0 : size.width - lb,
+        (size.height - boutons.size.height) / 2,
+      );
+      return;
+    }
+    retour.layout(constraints.loosen(), parentUsesSize: true);
+    final double naturelle = math.max(retour.size.width, lb);
+    final double w = _remplir && largeur.isFinite ? largeur : naturelle;
+    size = constraints.constrain(
+      Size(w, retour.size.height + _entreRangees + boutons.size.height),
+    );
+    _placer(retour, rtl ? size.width - retour.size.width : 0, 0);
+    _placer(
+      boutons,
+      rtl ? 0 : size.width - lb,
+      retour.size.height + _entreRangees,
+    );
+  }
+
+  @override
+  double computeMinIntrinsicWidth(double height) => math.max(
+    firstChild?.getMinIntrinsicWidth(height) ?? 0,
+    lastChild?.getMinIntrinsicWidth(height) ?? 0,
+  );
+
+  @override
+  double computeMaxIntrinsicWidth(double height) =>
+      (firstChild?.getMaxIntrinsicWidth(height) ?? 0) +
+      _ecart +
+      (lastChild?.getMaxIntrinsicWidth(height) ?? 0);
+
+  @override
+  double computeMinIntrinsicHeight(double width) => math.max(
+    firstChild?.getMinIntrinsicHeight(width) ?? 0,
+    lastChild?.getMinIntrinsicHeight(width) ?? 0,
+  );
+
+  @override
+  double computeMaxIntrinsicHeight(double width) =>
+      (firstChild?.getMaxIntrinsicHeight(width) ?? 0) +
+      _entreRangees +
+      (lastChild?.getMaxIntrinsicHeight(width) ?? 0);
+
+  @override
+  Size computeDryLayout(BoxConstraints constraints) => constraints.constrain(
+    Size(
+      computeMaxIntrinsicWidth(constraints.maxHeight),
+      computeMinIntrinsicHeight(constraints.maxWidth),
+    ),
+  );
+
+  @override
+  void paint(PaintingContext context, Offset offset) =>
+      defaultPaint(context, offset);
+
+  @override
+  bool hitTestChildren(BoxHitTestResult result, {required Offset position}) =>
+      defaultHitTestChildren(result, position: position);
 }

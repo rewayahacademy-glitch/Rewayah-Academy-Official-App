@@ -82,8 +82,10 @@ Future<FauxMoteurSalle> _monter(
   bool enseignant = false,
   PortPauseSeance? port,
   List<Override> autres = const <Override>[],
+  double largeur = 390,
+  double echelle = 1,
 }) async {
-  fixerVueCapture(tester, const Size(390, 844), 2);
+  fixerVueCapture(tester, Size(largeur, 844), 2);
   final FauxMoteurSalle moteur = FauxMoteurSalle();
   // SYNCHRO-SESSION : le controleur de l application tient la seance de
   // l appel (SeanceVivante), comme en production ; la salle reduite la lit.
@@ -171,6 +173,7 @@ Future<FauxMoteurSalle> _monter(
         ...autres,
       ],
       themeMode: mode,
+      echelleTexte: echelle,
     ),
   );
   await stabiliser(tester);
@@ -501,5 +504,162 @@ void main() {
     await tester.pump(AppMouvement.alerteArrivees);
     await _attendre(tester);
     expect(_alerteIle, findsNothing);
+  });
+
+  // SYNCHRO-SESSION (retour du pilote, 13/11/2026) : a 360 et 390, texte x1,
+  // en francais et en arabe, avec zero, une ou deux marques, le micro et le
+  // chevron restent sur la rangee du chrono, au bord de fin ; la pastille
+  // cede (son point) quand la place manque ; l'alerte se pose dessous sans
+  // deplacer les boutons.
+  for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {
+    for (final double largeur in <double>[360, 390]) {
+      for (final int marques in <int>[0, 1, 2]) {
+        final String cas =
+            '${langue.languageCode} ${largeur.toInt()}, $marques marque(s)';
+        testWidgets('salle reduite, $cas : une seule rangee, rien ne deborde '
+            'ni ne se chevauche', (WidgetTester tester) async {
+          await tester.runAsync(() => LocaleSettings.setLocale(langue));
+          final DateTime maintenant = DateTime.now().toUtc();
+          final FauxMoteurSalle moteur = await _monter(
+            tester,
+            horloge: () => maintenant,
+            t0: maintenant.subtract(const Duration(minutes: 52)),
+            largeur: largeur,
+          );
+          moteur.publier(<ParticipantSalle>[
+            _personne('t1', 'teacher'),
+            _personne('e1', 'student', local: true),
+            _personne('e2', 'student'),
+          ]);
+          final Finder micro = find.byKey(BarreSeanceEnDirect.cleMicro);
+          final Finder chevron = find.byKey(BarreSeanceEnDirect.cleChevron);
+          final Finder chrono = find.byKey(BarreSeanceEnDirect.cleChrono);
+          final Finder ile = find.byKey(BarreSeanceEnDirect.cleIle);
+          Rect? avantAlerte;
+          if (marques >= 1) {
+            moteur.recevoirDonnees(_paroleDe('e2', 'Aicha', 1));
+            await _attendre(tester);
+            // L'alerte depliee (« Aicha recite », deux lignes) se pose
+            // dessous, sans deplacer les boutons.
+            expect(_alerteIle, findsOneWidget, reason: cas);
+            avantAlerte = tester.getRect(chevron);
+            expect(
+              tester.getRect(_alerteIle).top,
+              greaterThanOrEqualTo(avantAlerte.bottom - 0.5),
+              reason: cas,
+            );
+            await tester.pump(AppMouvement.alerteChrono);
+            await _attendre(tester);
+          }
+          if (marques >= 2) {
+            moteur.recevoirDonnees(
+              PaquetDonnees(
+                sujet: sujetProtocolePedagogique,
+                charge: messageVersOctets(
+                  messageRappelDiscret(
+                    sessionId: 's1',
+                    emetteurProfilId: 't1',
+                    academyId: 'RA-26-e1',
+                    maintenantUtc: DateTime.now(),
+                  ),
+                ),
+                fiable: true,
+                emetteurIdentite: 't1',
+              ),
+            );
+            await _attendre(tester);
+            await tester.pump(AppMouvement.alerteChrono);
+            await _attendre(tester);
+            await tester.pump(AppMouvement.sonnerieAppelEspace * 3);
+          }
+          await stabiliser(tester);
+          expect(tester.takeException(), isNull, reason: cas);
+          expect(_alerteIle, findsNothing, reason: cas);
+          final Rect rChrono = tester.getRect(chrono);
+          final Rect rMicro = tester.getRect(micro);
+          final Rect rChevron = tester.getRect(chevron);
+          // Une seule rangee : les boutons sont centres sur le chrono.
+          for (final Rect b in <Rect>[rMicro, rChevron]) {
+            expect(
+              (b.center.dy - rChrono.center.dy).abs(),
+              lessThan(1),
+              reason: '$cas : $b hors de la rangee du chrono $rChrono',
+            );
+          }
+          if (avantAlerte != null) {
+            expect(
+              rChevron.top,
+              moreOrLessEquals(avantAlerte.top),
+              reason: cas,
+            );
+          }
+          // Au bord de fin : le chevron apres le micro, apres le chrono.
+          if (langue == AppLocale.ar) {
+            expect(rChevron.right, lessThanOrEqualTo(rMicro.left + 0.5));
+            expect(rMicro.right, lessThanOrEqualTo(rChrono.left + 0.5));
+          } else {
+            expect(rChevron.left, greaterThanOrEqualTo(rMicro.right - 0.5));
+            expect(rMicro.left, greaterThanOrEqualTo(rChrono.right - 0.5));
+          }
+          // Rien ne deborde de l'ile ni de l'ecran ; cibles de 48.
+          final Rect rIle = tester.getRect(ile);
+          for (final Rect r in <Rect>[rChrono, rMicro, rChevron]) {
+            expect(
+              rIle.inflate(0.5).contains(r.topLeft) &&
+                  rIle.inflate(0.5).contains(r.bottomRight),
+              isTrue,
+              reason: '$cas : $r hors de l ile $rIle',
+            );
+          }
+          // Le chevron touche presque le bord de fin de l'ile (sa marge de
+          // fin, 4, et le filet).
+          final double auBord = langue == AppLocale.ar
+              ? rChevron.left - rIle.left
+              : rIle.right - rChevron.right;
+          expect(auBord, lessThanOrEqualTo(8), reason: '$cas : $auBord');
+          expect(rIle.left, greaterThanOrEqualTo(0), reason: cas);
+          expect(rIle.right, lessThanOrEqualTo(largeur), reason: cas);
+          expect(rMicro.width, greaterThanOrEqualTo(48), reason: cas);
+          expect(rChevron.width, greaterThanOrEqualTo(48), reason: cas);
+          // La pastille : son mot, ou son point quand la place manque ; le
+          // mot reste lu.
+          final SemanticsHandle s = tester.ensureSemantics();
+          // Le toucher qui ramene a la salle se lit « Retourner dans la
+          // salle », puis le mot de la pastille.
+          expect(
+            tester
+                .getSemantics(find.byKey(BarreSeanceEnDirect.cleRetour))
+                .label,
+            contains(t.etat.enDirect),
+            reason: cas,
+          );
+          s.dispose();
+        });
+      }
+    }
+  }
+
+  testWidgets('salle reduite, 320 texte x2 : le bloc micro et chevron passe '
+      'entier a la ligne, jamais un bouton seul', (WidgetTester tester) async {
+    final DateTime maintenant = DateTime.now().toUtc();
+    final FauxMoteurSalle moteur = await _monter(
+      tester,
+      horloge: () => maintenant,
+      t0: maintenant.subtract(const Duration(minutes: 52)),
+      largeur: 320,
+      echelle: 2,
+    );
+    moteur.recevoirDonnees(_paroleDe('e2', 'Aicha', 1));
+    await _attendre(tester);
+    await tester.pump(AppMouvement.alerteChrono);
+    await _attendre(tester);
+    expect(tester.takeException(), isNull);
+    final Rect rMicro = tester.getRect(
+      find.byKey(BarreSeanceEnDirect.cleMicro),
+    );
+    final Rect rChevron = tester.getRect(
+      find.byKey(BarreSeanceEnDirect.cleChevron),
+    );
+    expect((rMicro.center.dy - rChevron.center.dy).abs(), lessThan(1));
   });
 }
