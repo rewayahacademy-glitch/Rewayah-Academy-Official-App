@@ -14,6 +14,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart' show Ref;
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/admin/creneaux_classe.dart';
+import 'package:rewayah_academy/core/admin/port_classes_admin.dart';
+import 'package:rewayah_academy/core/admin/port_pilotage.dart';
+import 'package:rewayah_academy/core/offres/port_regroupements_admin.dart';
 import 'package:rewayah_academy/core/admin/service_groupes.dart';
 import 'package:rewayah_academy/core/capacites/port_creation_classe.dart';
 import 'package:rewayah_academy/core/capacites/port_enseignants_classe.dart';
@@ -30,6 +33,9 @@ import 'package:rewayah_academy/core/tc_horloge/mon_horloge.dart';
 import 'package:rewayah_academy/core/widgets/menu_actions.dart';
 
 import '../../router/support_routeur.dart';
+import '../../support/demo/classes_admin_demo.dart';
+import '../../support/demo/pilotage_demo.dart';
+import '../../support/demo/regroupements_demo.dart';
 import '../../support/harnais.dart';
 import '../support_form_l2.dart';
 
@@ -551,5 +557,46 @@ void main() {
         findsOneWidget,
       );
     });
+  });
+
+  group('pilotage de la direction (vrai routeur)', () {
+    testWidgets(
+      'chaque horaire se lit a l heure de la personne puis a celle de '
+      'La Mecque, jamais Riyad ni l heure enregistree brute',
+      (tester) async {
+        final RegroupementsDemo regroupements = RegroupementsDemo(
+          depart: regroupementsVolumeDemo(),
+        );
+        final ClassesAdminDemo classes = ClassesAdminDemo(
+          classes: <ClasseListee>[...familleDemo(), ...volumeDemo()],
+          enseignantAffecte: (String id) => regroupements.enseignantDe[id],
+        );
+        final PilotageDemo pilotage = PilotageDemo(
+          classes: classes.toutes,
+          regroupements: regroupements.regroupements,
+        );
+        await monterRouteur(
+          tester,
+          Routes.adminOperationsPilotage,
+          source: FausseSourceSession(sessionActive(AppRole.admin)),
+          taille: const Size(1440, 3000),
+          surcharges: <Override>[
+            portPilotageProvider.overrideWithValue(pilotage),
+            portClassesAdminProvider.overrideWithValue(classes),
+            portRegroupementsAdminProvider.overrideWithValue(regroupements),
+            ..._horloges(
+              _lecture(),
+              fuseaux: <String, Map<String, Object?>>{
+                'Asia/Riyadh': _riyad,
+                'Europe/Paris': _paris,
+              },
+            ),
+          ],
+        );
+        await tester.pumpAndSettle();
+        expect(find.textContaining('Heure de La Mecque\u00a0:'), findsWidgets);
+        expect(find.textContaining('Riyad'), findsNothing);
+      },
+    );
   });
 }
