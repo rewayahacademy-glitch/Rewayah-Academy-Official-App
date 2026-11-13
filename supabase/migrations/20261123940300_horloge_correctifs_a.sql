@@ -33,6 +33,39 @@
 BEGIN;
 
 -- ---------------------------------------------------------------------------
+-- 0. Controle d'entree : les cinq fonctions deja en base que cette migration
+--    remplace doivent etre exactement celles relevees en production le
+--    13/11/2026 (empreinte md5 de prosrc, identique dans le depot). Une retouche
+--    faite depuis ne peut pas etre ecrasee en silence.
+-- ---------------------------------------------------------------------------
+DO $preflight$
+DECLARE
+  v_attendu constant jsonb := pg_catalog.jsonb_build_object(
+    'public.ajouter_creneau_classe_admin(uuid,integer,integer)',
+      'd66e96fd9b3b01913444fff0b0f5b0ba',
+    'public.ajouter_creneau_classe_admin(uuid,integer,integer,integer)',
+      'd9cf2a7fcc36d8238574e9b6ced9d649',
+    'public.modifier_creneau_classe_admin(uuid,integer,integer,integer,integer,integer,text)',
+      '035396c8caa9f328769ed9f8bc3d8d69',
+    'public.modifier_groupe(uuid,text,smallint,smallint,smallint,text,smallint)',
+      '1a05cc650211b0bd2570320dca13e4e3',
+    'private.push_depuis_notification()',
+      '5532bb238ac7bc754b646a335dd442aa');
+  v_f text;
+  v_empreinte text;
+BEGIN
+  FOR v_f IN SELECT k FROM pg_catalog.jsonb_object_keys(v_attendu) AS k LOOP
+    SELECT pg_catalog.md5(p.prosrc) INTO v_empreinte
+      FROM pg_catalog.pg_proc p WHERE p.oid = v_f::pg_catalog.regprocedure;
+    IF v_empreinte IS DISTINCT FROM (v_attendu ->> v_f) THEN
+      RAISE EXCEPTION 'HORLOGE-ET-LIEU : % a change depuis le releve (empreinte %), migration refusee',
+        v_f, v_empreinte;
+    END IF;
+  END LOOP;
+END
+$preflight$;
+
+-- ---------------------------------------------------------------------------
 -- 1. Le changement d'heure d'un cours : le premier des deux fuseaux
 -- ---------------------------------------------------------------------------
 CREATE OR REPLACE FUNCTION private.changement_heure_cours(
@@ -664,6 +697,7 @@ DECLARE
   v_groupe uuid;
   v_n integer := 0;
   v_raison text;
+  v_cause text;
   v_libelle text;
 BEGIN
   FOR v_groupe IN
@@ -679,8 +713,15 @@ BEGIN
       v_raison := SQLERRM;
       RAISE WARNING 'horloge : classe % non convertie (%, %)', v_groupe, SQLSTATE, v_raison;
       -- Un simple avertissement dans les journaux ne suffit pas : la direction
-      -- le sait, une fois par classe et par raison (l'evenement `creneau_change`
-      -- porte le marqueur `conversion_refusee`, sans nouvelle contrainte).
+      -- le sait, une fois par classe et par cause (l'evenement `creneau_change`
+      -- porte le marqueur `conversion_refusee`, sans nouvelle contrainte). Le
+      -- texte de l'erreur SQL et les identifiants ne partent JAMAIS dans la
+      -- notification (ni dans le courriel qui la reprend) : une cause fermee,
+      -- `proche`, `demi_heure` ou `autre`.
+      v_cause := CASE
+        WHEN v_raison LIKE '%28 jours%' THEN 'proche'
+        WHEN v_raison LIKE '%heure pleine%' THEN 'demi_heure'
+        ELSE 'autre' END;
       SELECT g.libelle INTO v_libelle FROM public.groupes g WHERE g.id = v_groupe;
       INSERT INTO public.notifications (destinataire, evenement, params, destination)
       SELECT a.id, 'creneau_change',
@@ -688,7 +729,7 @@ BEGIN
                'groupe_id', v_groupe,
                'classe', nullif(pg_catalog.btrim(v_libelle), ''),
                'motif', 'conversion_refusee',
-               'raison', pg_catalog.left(v_raison, 300))),
+               'cause', v_cause)),
              '/admin/operations/planning'
         FROM public.profiles a
        WHERE a.role = 'admin' AND a.deleted_at IS NULL
@@ -698,7 +739,7 @@ BEGIN
             WHERE n.destinataire = a.id AND n.evenement = 'creneau_change'
               AND n.params ->> 'motif' = 'conversion_refusee'
               AND n.params ->> 'groupe_id' = v_groupe::text
-              AND n.params ->> 'raison' = pg_catalog.left(v_raison, 300));
+              AND n.params ->> 'cause' = v_cause);
     END;
   END LOOP;
   RETURN v_n;

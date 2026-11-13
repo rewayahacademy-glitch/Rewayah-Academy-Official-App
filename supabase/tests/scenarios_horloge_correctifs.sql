@@ -474,8 +474,19 @@ BEGIN
                     AND n.params ->> 'motif' = 'conversion_refusee'
                     AND n.params ->> 'groupe_id' = 'd5000000-0000-4000-8000-0000000000a3'
                     AND n.params ->> 'classe' = 'HLC classe restee a Paris'
-                    AND nullif(n.params ->> 'raison', '') IS NOT NULL) THEN
-    RAISE EXCEPTION 'HLC ROUGE : la notification a la direction ne porte pas la classe et la raison';
+                    AND n.params ->> 'cause' = 'proche'
+                    AND n.destination = '/admin/operations/planning') THEN
+    RAISE EXCEPTION 'HLC ROUGE : la notification a la direction ne porte pas la classe et la cause';
+  END IF;
+  -- Ni texte SQL ni identifiant dans ce que la direction lit : aucune cle `raison`,
+  -- et l'identifiant de la classe n'apparait que sous `groupe_id` (jamais dans un texte).
+  IF EXISTS (SELECT 1 FROM public.notifications n
+              WHERE n.params ->> 'motif' = 'conversion_refusee'
+                AND (n.params ? 'raison'
+                     OR (n.params - 'groupe_id')::text ~* '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}'
+                     OR (n.params - 'groupe_id')::text ILIKE '%HORLOGE-ET-LIEU%'
+                     OR (n.params - 'groupe_id')::text ILIKE '%conversion refusee%')) THEN
+    RAISE EXCEPTION 'HLC ROUGE : la notification a la direction porte un texte SQL ou un identifiant';
   END IF;
   -- La nuit suivante, meme refus : pas de seconde notification.
   PERFORM private.convertir_classes_hors_academie('2027-03-21 02:47:00+00');
@@ -483,7 +494,7 @@ BEGIN
        WHERE evenement = 'creneau_change' AND params ->> 'motif' = 'conversion_refusee') <> v_apres THEN
     RAISE EXCEPTION 'HLC ROUGE : le meme refus a re-notifie la direction';
   END IF;
-  RAISE NOTICE 'HLC OK : une classe refusee par la tache de nuit previent la direction, une fois (classe et raison)';
+  RAISE NOTICE 'HLC OK : une classe refusee par la tache de nuit previent la direction, une fois (classe et cause fermee, sans texte SQL ni identifiant)';
 END
 $i5c$;
 

@@ -719,3 +719,32 @@ Deno.test('creneau_change : le jour d arrivee, avec le jour inchange, avance ou 
   const ancien = texteDe({ ...commun, changements: [{ jour_avant: 3, avant: '19:00', apres: '20:00' }] })
   assert(!ancien.includes('La Mecque') && ancien.includes('19:00'), ancien)
 })
+
+// HORLOGE-ET-LIEU (13/11/2026, I5) : le courriel que la direction recoit quand la
+// tache de nuit refuse de convertir une classe n'est PAS celui d'une famille :
+// phrase propre, lien vers le planning de la direction, jamais de texte SQL ni
+// d'identifiant, dans les cinq langues.
+Deno.test('creneau_change : refus de conversion, avis propre a la direction', () => {
+  const donnees = {
+    motif: 'conversion_refusee', cause: 'proche', classe: 'Classe des lionceaux',
+    groupe_id: 'd5000000-0000-4000-8000-0000000000a3', destination: '/admin/operations/planning',
+    // Une ancienne notification portait encore le texte brut : il ne doit jamais sortir.
+    raison: 'HORLOGE-ET-LIEU : la classe d5000000-0000-4000-8000-0000000000a3 est a moins de 28 jours',
+  }
+  for (const langue of ['fr', 'en', 'es', 'pt', 'ar'] as const) {
+    const c = contenuPour({ modele: 'creneau_change', categorie: 'classes', essentielle: true, donnees }, langue)
+    const tout = JSON.stringify(c)
+    assert(tout.includes('Classe des lionceaux'), `${langue} : ${tout}`)
+    assert(!tout.includes('HORLOGE') && !tout.includes('d5000000') && !tout.includes('undefined'), `${langue} : ${tout}`)
+    assert(tout.includes('/admin/operations/planning'), `${langue} : ${tout}`)
+    assert(!tout.includes('/#/tuteur'), `${langue} : lien de famille : ${tout}`)
+  }
+  const fr = contenuPour({ modele: 'creneau_change', categorie: 'classes', essentielle: true, donnees })
+  assert(fr.sujet === 'Une classe n’a pas pu passer à l’heure de La Mecque', fr.sujet)
+  assert(fr.blocs.some((b) => b.type === 'texte' && b.texte.includes('un changement d’heure approche (moins de 28 jours)')),
+    JSON.stringify(fr.blocs))
+  // Une cause inconnue devient « autre » : jamais un texte brut.
+  const inconnue = contenuPour({ modele: 'creneau_change', categorie: 'classes', essentielle: true,
+    donnees: { ...donnees, cause: 'n importe quoi' } })
+  assert(JSON.stringify(inconnue).includes('une vérification a échoué'), JSON.stringify(inconnue))
+})

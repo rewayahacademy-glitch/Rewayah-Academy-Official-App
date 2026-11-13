@@ -5,6 +5,7 @@
 // Chiffres latins, comme dans l'application ; dates en `ar-u-nu-latn`.
 
 import { APP } from './gabarit.ts'
+import { causeConversionRefusee, nomClasse, type MotsConversionRefusee } from './outils.ts'
 import { avec, avisDans, bonjour, dateLongue, type Fabrique, type LangueEcrite, libre, type Parole, montantLisible,
   precisions, type Precisions, phraseChangementHeure, type MotsChangementHeure} from './outils.ts'
 import { quandSeance, codeCandidat } from './modeles_fr.ts'
@@ -55,6 +56,17 @@ export const MOTS_CHANGEMENT_HEURE_AR: MotsChangementHeure = {
   ligneJour: (ja, avant, jb, apres) => `من يوم ${ja} الساعة ${avant} إلى يوم ${jb} الساعة ${apres}`,
   mecque: 'تبقى الحصة في الساعة نفسها بتوقيت مكة المكرمة؛ الذي يتغيّر هو توقيت مدينتكم.',
   separateur: '، ',
+}
+
+/// Avis a la direction : une classe que la tache de nuit refuse de convertir
+/// (HORLOGE-ET-LIEU, I5). Cause fermee, jamais le texte SQL ni un identifiant.
+export const MOTS_CONVERSION_REFUSEE_AR: MotsConversionRefusee = {
+  sujet: 'تعذّر نقل فصل إلى توقيت مكة المكرمة',
+  phrase: (classe, cause) => {
+    const raison = { proche: 'يقترب تغيير الساعة (أقل من 28 يومًا)', demi_heure: 'أحد مواعيده لا يقع على ساعة كاملة بتوقيت مكة المكرمة', autre: 'فشل أحد التحقّقات، راجعوا الفصل' }[cause]
+    return classe ? `تعذّر نقل الفصل ${classe} إلى توقيت مكة المكرمة: ${raison}. لم يتغيّر أي موعد، وستُعاد المحاولة هذه الليلة.` : 'تعذّر نقل فصل إلى توقيت مكة المكرمة. لم يتغيّر أي موعد، وستُعاد المحاولة هذه الليلة.'
+  },
+  bouton: 'عرض الجدول',
 }
 
 const MODELES: Record<string, Fabrique> = {
@@ -169,6 +181,13 @@ const MODELES: Record<string, Fabrique> = {
     'يغادر طالب فصلك. القائمة المحدّثة في التطبيق.',
     'عرض فصولي', '/enseignant/classes'),
   creneau_change: (d) => {
+    // I5 (13/11/2026) : l'avis de la direction n'est pas celui d'une famille.
+    const cause = causeConversionRefusee(d)
+    if (cause) {
+      return avis(d, MOTS_CONVERSION_REFUSEE_AR.sujet, MOTS_CONVERSION_REFUSEE_AR.sujet,
+        MOTS_CONVERSION_REFUSEE_AR.phrase(nomClasse(d), cause), MOTS_CONVERSION_REFUSEE_AR.bouton,
+        '/admin/operations/planning')
+    }
     const annonce = phraseChangementHeure(d, MOTS_CHANGEMENT_HEURE_AR)
     if (annonce) {
       return avis(d, 'يتغيّر موعد حصتكم', 'يتغيّر موعد حصتكم', annonce,

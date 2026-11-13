@@ -2,6 +2,7 @@
 // du francais (`modeles_fr.ts`) ; memes liens, memes boutons. Competence `mots-rewayah`.
 
 import { APP } from './gabarit.ts'
+import { causeConversionRefusee, nomClasse, type MotsConversionRefusee } from './outils.ts'
 import { avec, avisDans, bonjour, dateLongue, type Fabrique, type LangueEcrite, libre, type Parole, montantLisible,
   precisions, type Precisions, phraseChangementHeure, type MotsChangementHeure} from './outils.ts'
 import { quandSeance, codeCandidat } from './modeles_fr.ts'
@@ -43,6 +44,17 @@ export const MOTS_CHANGEMENT_HEURE_ES: MotsChangementHeure = {
   ligneJour: (ja, avant, jb, apres) => `del ${ja} a las ${avant} al ${jb} a las ${apres}`,
   mecque: 'La clase mantiene la misma hora en La Meca: lo que cambia es la hora de su ciudad.',
   separateur: '; ',
+}
+
+/// Avis a la direction : une classe que la tache de nuit refuse de convertir
+/// (HORLOGE-ET-LIEU, I5). Cause fermee, jamais le texte SQL ni un identifiant.
+export const MOTS_CONVERSION_REFUSEE_ES: MotsConversionRefusee = {
+  sujet: 'Una clase no pudo pasar a la hora de La Meca',
+  phrase: (classe, cause) => {
+    const raison = { proche: 'un cambio de hora está a menos de 28 días', demi_heure: 'una de sus franjas no tiene hora en punto en La Meca', autre: 'una comprobación falló, consulte la clase' }[cause]
+    return classe ? `La clase ${classe} no pudo pasar a la hora de La Meca: ${raison}. Ningún horario ha cambiado; se volverá a intentar esta noche.` : 'Una clase no pudo pasar a la hora de La Meca. Ningún horario ha cambiado; se volverá a intentar esta noche.'
+  },
+  bouton: 'Ver el horario',
 }
 
 const MODELES: Record<string, Fabrique> = {
@@ -98,6 +110,13 @@ const MODELES: Record<string, Fabrique> = {
     'Un alumno deja su clase. La lista actualizada está en la aplicación.',
     'Ver mis clases', '/enseignant/classes'),
   creneau_change: (d) => {
+    // I5 (13/11/2026) : l'avis de la direction n'est pas celui d'une famille.
+    const cause = causeConversionRefusee(d)
+    if (cause) {
+      return avis(d, MOTS_CONVERSION_REFUSEE_ES.sujet, MOTS_CONVERSION_REFUSEE_ES.sujet,
+        MOTS_CONVERSION_REFUSEE_ES.phrase(nomClasse(d), cause), MOTS_CONVERSION_REFUSEE_ES.bouton,
+        '/admin/operations/planning')
+    }
     const annonce = phraseChangementHeure(d, MOTS_CHANGEMENT_HEURE_ES)
     if (annonce) {
       return avis(d, 'La hora de su clase cambia', 'La hora de su clase cambia', annonce,

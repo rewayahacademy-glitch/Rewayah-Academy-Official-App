@@ -125,20 +125,22 @@ String? changementHeureDepuis(Map<String, dynamic> params, String portee) {
 }
 
 /// L'avis donne a la direction quand la tache de nuit refuse de convertir une
-/// classe a l'heure de La Mecque (I5, 13/11/2026) : la classe et la raison, en
+/// classe a l'heure de La Mecque (I5, 13/11/2026) : la classe et la cause, en
 /// mots simples ; `null` quand la notification n'en est pas un.
 String? conversionRefuseeDepuis(Map<String, dynamic> params) {
   if (params['motif'] != 'conversion_refusee') return null;
   final dynamic classe = params['classe'];
-  final String raison = '${params['raison'] ?? ''}';
+  // La cause est fermee (`proche`, `demi_heure`, `autre`) : le serveur n'envoie
+  // jamais le texte de l'erreur SQL.
+  final String cause = '${params['cause'] ?? ''}';
   final evenements = t.notifications.evenements;
   return evenements.conversionRefusee(
     classe: classe is String && classe.isNotEmpty ? classe : '-',
-    raison: raison.contains('28 jours')
-        ? evenements.conversionRefuseeProche
-        : raison.contains('heure pleine')
-        ? evenements.conversionRefuseeDemiHeure
-        : evenements.conversionRefuseeAutre,
+    raison: switch (cause) {
+      'proche' => evenements.conversionRefuseeProche,
+      'demi_heure' => evenements.conversionRefuseeDemiHeure,
+      _ => evenements.conversionRefuseeAutre,
+    },
   );
 }
 

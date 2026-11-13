@@ -12,6 +12,19 @@ Ce que fait le logiciel aujourd'hui dans les trois états, dit sans enjoliver :
 
 Non prouvé : aucune de ces installations n'a été faite sur staging ni en production ; tout est local (Postgres 16 nu, vrai client contre faux serveur).
 
+### Migrations de ce lot, dans l'ordre (13 fichiers, plage `20261123940000` à `20261123943200`)
+
+`940000` horloge_lieu, `940100` horloge_annonces, `940200` villes_schema, `940300` horloge_correctifs_a (contrôle d'entrée par empreinte des cinq fonctions remplacées, relevées en production le 13/11), `942100` à `942150` villes_donnees_1 à 6 (environ 500 Ko chacune, 0,1 à 0,2 s par fichier en local, un fichier par requête), `942200` villes_controle, `943000` lieux, `943100` apercu_offre, `943200` lieux_correctifs. Aucune instruction `DROP`, `DELETE` ni `TRUNCATE` ; trois `ON DELETE CASCADE` dans `943000` (le mot apparaît) ; les `DELETE` de l'anonymisation sont dans la fonction `private.cpt_anonymiser`, pas dans la migration.
+
+### Revue du 13/11/2026 (tête `d85f9ac0c`), corrections
+
+1. **Le candidat enseignant en `pending_kyc` enregistre sa ville** (`943200`) : le seul rôle `teacher`, pour son propre lieu ; le tuteur en attente, le compte désactivé ou supprimé et le jeton « teacher » sur un autre profil restent refusés. L'adulte « pour moi » est un `guardian` avec son foyer d'une personne : il passe par la branche du tuteur. Preuve : `supabase/tests/scenarios_horloge_lieu_c.sql` (vrai candidat par `inviter_enseignant` puis `inscrire_enseignant_invite`, recherche puis enregistrement ; le scénario échoue exactement là avec l'ancienne fonction) et `test/features/candidature/ville_etape_serveur_test.dart` (adaptateur réel, aucun faux port).
+2. **Suppression de compte** : `private.cpt_anonymiser` efface le lieu du profil, le rappel de report, et la ligne du foyer quand le dernier tuteur actif part (`943200`, scénario).
+3. **Refus de conversion** : la direction reçoit un avis propre (cause fermée `proche`, `demi_heure`, `autre`, sans texte SQL ni identifiant), un courriel dédié dans les cinq langues avec le lien `/admin/operations/planning` (`940300`, `outils.ts`, `modeles_*.ts`) ; tests Deno écrits, non exécutés.
+4. **`940300`** : contrôle d'entrée par empreinte md5 avant de remplacer les cinq fonctions déjà en base.
+5. **Repli de la classe** (`accueil_famille/bloc_seance.dart`) : « Heure de La Mecque : 21:00 », jamais « Riyadh ».
+6. **Liste blanche** : `scenarios_af_liste_blanche_volatiles.sql` est aussi modifié par la prière et le calendrier ; à fusionner en gardant l'union des listes quand la prière sera sur `main`.
+
 > Statut : **TEMPS 1 (relevé et plan), en attente de l'accord de l'architecte pédagogique.** Aucune migration ni aucun code n'est écrit. Décision source : `docs/current/pedagogie/HORLOGE-ET-LIEU.md` (H1 à H7). Branche : `claude/horloge-lieu`, posée sur `origin/main` `25f3ed787` (PR 448). Date du relevé : 12/11/2026.
 
 ## 0. Niveau de preuve de ce relevé

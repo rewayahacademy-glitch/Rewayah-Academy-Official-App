@@ -217,6 +217,25 @@ export function phraseChangementHeure(d: Donnees, m: MotsChangementHeure): strin
   return d.academie === true ? `${base} ${m.mecque}` : base
 }
 
+/// Les mots d'une langue pour l'avis donne a la DIRECTION quand la tache de nuit
+/// refuse de convertir une classe a l'heure de La Mecque (HORLOGE-ET-LIEU, I5,
+/// 13/11/2026). Aucun texte d'erreur SQL, aucun identifiant : une cause fermee.
+export type CauseConversionRefusee = 'proche' | 'demi_heure' | 'autre'
+
+export interface MotsConversionRefusee {
+  sujet: string
+  /// La phrase ; `classe` est nul quand la notification ne la nomme pas.
+  phrase: (classe: string | null, cause: CauseConversionRefusee) => string
+  bouton: string
+}
+
+/// La cause d'un refus de conversion, ou `null` quand la notification n'en est pas
+/// un. Toute valeur inconnue devient `autre` : jamais un texte brut a l'ecran.
+export function causeConversionRefusee(d: Donnees): CauseConversionRefusee | null {
+  if (d.motif !== 'conversion_refusee') return null
+  return d.cause === 'proche' || d.cause === 'demi_heure' ? d.cause : 'autre'
+}
+
 /// Les precisions d'un avis de classe, en phrases courtes : la classe, les
 /// eleves du foyer, la prochaine seance. Chaine vide quand rien n'est connu.
 export function precisions(

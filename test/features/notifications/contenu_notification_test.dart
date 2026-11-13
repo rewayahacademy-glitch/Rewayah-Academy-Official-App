@@ -659,21 +659,32 @@ void main() {
     });
 
     // I5 : une classe que la tache de nuit refuse de convertir previent la direction.
-    test('conversion refusee : la classe et la raison, en mots simples', () {
+    test('conversion refusee : la classe et la cause, en mots simples', () {
       final String titre = contenuNotificationPour(
         'creneau_change',
         <String, dynamic>{
           'motif': 'conversion_refusee',
           'classe': 'Classe des lionceaux',
-          'raison':
-              'HORLOGE-ET-LIEU : la classe x est a moins de 28 jours d un '
-              'changement d heure : conversion refusee',
+          'cause': 'proche',
         },
       ).titre;
       expect(titre, contains('Classe des lionceaux'));
       expect(titre, contains('La Mecque'));
       expect(titre, contains('moins de 28 jours'));
       expect(titre, isNot(contains('HORLOGE')));
+      // Les deux autres causes, et une cause inconnue : jamais de texte brut.
+      for (final String cause in <String>['demi_heure', 'autre', 'x']) {
+        final String t2 = contenuNotificationPour(
+          'creneau_change',
+          <String, dynamic>{
+            'motif': 'conversion_refusee',
+            'classe': 'Classe des lionceaux',
+            'cause': cause,
+          },
+        ).titre;
+        expect(t2, contains('Classe des lionceaux'), reason: cause);
+        expect(t2, isNot(contains('HORLOGE')), reason: cause);
+      }
     });
   });
 }
