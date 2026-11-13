@@ -493,6 +493,138 @@ void main() {
     });
   });
 
+  group('les mots selon qui lit (arbitrage du 13/11)', () {
+    // Tous les textes affiches, d'un seul tenant.
+    String tout(WidgetTester tester) => tester
+        .widgetList<Text>(find.byType(Text))
+        .map((Text w) => w.data ?? w.textSpan?.toPlainText() ?? '')
+        .join(' | ')
+        // Le mot de l'enseignant est le sien, affiche tel qu'il l'a ecrit.
+        .replaceAll(enseignantVisible.mot ?? '', '');
+
+    testWidgets(
+      'le tuteur d\'un enfant de 6 a 9 ans lit les mots des adultes',
+      (WidgetTester tester) async {
+        await _avecSuivi(
+          tester,
+          suiviToutEstPret(versionSimple: true),
+          chemins: CheminsAttente.tuteur,
+        );
+        expect(find.text(t.suiviAttente.titre), findsOneWidget);
+        expect(find.text(t.suiviAttente.dit.recueFait), findsOneWidget);
+        expect(find.text(t.suiviAttente.titreSimple), findsNothing);
+        // Dates, creneau et fuseau : le tuteur les lit.
+        expect(_cle('attente-creneau'), findsOneWidget);
+        expect(_cle('attente-fuseau'), findsOneWidget);
+        expect(_cle('attente-date-1'), findsOneWidget);
+      },
+    );
+
+    testWidgets('l\'enfant de 6 a 9 ans ne lit ni date ni duree', (
+      WidgetTester tester,
+    ) async {
+      await _avecSuivi(
+        tester,
+        suiviToutEstPret(versionSimple: true),
+        chemins: CheminsAttente.enfant,
+      );
+      expect(_cle('attente-creneau'), findsNothing);
+      expect(_cle('attente-fuseau'), findsNothing);
+      for (int n = 1; n <= 5; n++) {
+        expect(_cle('attente-date-$n'), findsNothing, reason: 'etape $n');
+      }
+      expect(find.text(t.suiviAttente.tu.premierCoursPetit), findsOneWidget);
+      final String texte = tout(tester);
+      expect(texte, isNot(contains('novembre')));
+      expect(texte, isNot(contains('18')));
+      expect(texte, isNot(matches(RegExp(r'\b(jours?|heures?|semaines?)\b'))));
+      // Et jamais les mots des adultes.
+      expect(texte, isNot(matches(RegExp(r'\b[Vv]ot(re|res)\b|\b[Vv]ous\b'))));
+    });
+
+    testWidgets(
+      'l\'enfant de 6 a 9 ans dont la classe attend : rien de chiffre',
+      (WidgetTester tester) async {
+        await _avecSuivi(
+          tester,
+          suiviDeTest(
+            versionSimple: true,
+            delai: delaiDeTest(depasse: true),
+            creneauChangeLe: DateTime(2026, 11, 10, 9, 0),
+            etapes: etapesJusqua(1),
+            classe: 'Classe Al-Fatiha',
+          ),
+          chemins: CheminsAttente.enfant,
+        );
+        final String texte = tout(tester);
+        expect(texte, isNot(contains('novembre')));
+        expect(texte, isNot(matches(RegExp(r'\b\d+\s*(jours?|h)\b'))));
+        expect(
+          texte,
+          isNot(matches(RegExp(r'\b[Vv]ot(re|res)\b|\b[Vv]ous\b'))),
+        );
+      },
+    );
+
+    testWidgets('un mineur de 10 a 17 ans : tutoiement, avec ses dates', (
+      WidgetTester tester,
+    ) async {
+      final SuiviAttente s = suiviToutEstPret();
+      expect(s.versionSimple, isFalse);
+      expect(s.typePublic, 'enfant');
+      await _avecSuivi(tester, s, chemins: CheminsAttente.enfant);
+      expect(find.text(t.suiviAttente.titreSimple), findsOneWidget);
+      expect(_cle('attente-date-1'), findsOneWidget);
+      expect(_cle('attente-creneau'), findsOneWidget);
+      final String texte = tout(tester);
+      expect(texte, contains('Ton premier cours'));
+      expect(texte, isNot(matches(RegExp(r'\b[Vv]ot(re|res)\b|\b[Vv]ous\b'))));
+      // Pas le geste du tuteur ni celui de l'enseignant.
+      expect(
+        find.text(t.suiviAttente.enseignant.peutSePresenter),
+        findsNothing,
+      );
+    });
+
+    testWidgets('un mineur de 10 a 17 ans, delai depasse : tutoiement', (
+      WidgetTester tester,
+    ) async {
+      await _avecSuivi(
+        tester,
+        suiviDeTest(delai: delaiDeTest(depasse: true, pointPasse: true)),
+        chemins: CheminsAttente.enfant,
+      );
+      expect(find.text(t.suiviAttente.tu.depasse), findsOneWidget);
+      expect(find.text(t.suiviAttente.delai.depasse), findsNothing);
+    });
+
+    testWidgets('delai depasse : une phrase vraie, aucune action promise', (
+      WidgetTester tester,
+    ) async {
+      await _avecSuivi(
+        tester,
+        suiviDeTest(delai: delaiDeTest(depasse: true, pointPasse: true)),
+      );
+      expect(
+        find.text(
+          'La formation de votre classe prend plus de temps que prévu. '
+          'L\'académie vous écrit.',
+        ),
+        findsOneWidget,
+      );
+      final String texte = tout(tester);
+      for (final String promesse in <String>[
+        'prolonge',
+        'accord',
+        'autre classe',
+        'relance',
+        'automatique',
+      ]) {
+        expect(texte, isNot(contains(promesse)));
+      }
+    });
+  });
+
   group('les cinq etats (S9)', () {
     testWidgets('chargement : un squelette', (WidgetTester tester) async {
       await _ecran(tester, surcharges: _avec(const PortSuiviAttenteSansFin()));
@@ -752,6 +884,18 @@ void main() {
       );
       expect(ligneCarte(suiviToutEstPret()), contains('Yusuf'));
       expect(ligneCarte(suiviToutEstPret()), contains('18:00'));
+    });
+
+    test('la ligne de la carte : le tuteur lit la date, l\'enfant de 6 a 9 ans non', () {
+      final SuiviAttente brut = suiviToutEstPret(versionSimple: true);
+      expect(
+        ligneCarte(brut.pourEspace(espaceEnfant: false)),
+        contains('18:00'),
+      );
+      expect(
+        ligneCarte(brut.pourEspace(espaceEnfant: true)),
+        t.suiviAttente.carte.pretSansDate(prenom: 'Yusuf'),
+      );
     });
   });
 }

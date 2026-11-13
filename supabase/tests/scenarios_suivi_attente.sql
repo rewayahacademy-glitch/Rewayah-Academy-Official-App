@@ -23,7 +23,8 @@ INSERT INTO auth.users (id, email) VALUES
   ('5a000000-0000-0000-0000-000000000004', 'sa-autre-tuteur@example.test'),
   ('5a000000-0000-0000-0000-000000000005', 'sa-autre-enfant@example.test'),
   ('5a000000-0000-0000-0000-000000000006', 'sa-adulte@example.test'),
-  ('5a000000-0000-0000-0000-000000000007', 'sa-enseignante@example.test');
+  ('5a000000-0000-0000-0000-000000000007', 'sa-enseignante@example.test'),
+  ('5a000000-0000-0000-0000-000000000008', 'sa-direction@example.test');
 INSERT INTO public.households (id, timezone) VALUES
   ('5afffff0-0000-0000-0000-000000000001', 'Europe/Paris'),
   ('5afffff0-0000-0000-0000-000000000002', 'Europe/Paris'),
@@ -44,7 +45,9 @@ VALUES
   ('5a000000-0000-0000-0000-000000000006', 'SAADULTE000001', 'student',
    '5afffff0-0000-0000-0000-000000000003', 'Leila', 'Adulte', 'active', 'female'),
   ('5a000000-0000-0000-0000-000000000007', 'SAENSEIGN00002', 'teacher',
-   NULL, 'Khadija', 'Diallo', 'provisional_active', 'female');
+   NULL, 'Khadija', 'Diallo', 'provisional_active', 'female'),
+  ('5a000000-0000-0000-0000-000000000008', 'SADIRECTION001', 'admin',
+   NULL, 'Direction', 'Test', 'active', 'female');
 UPDATE public.households SET primary_guardian_id = '5a000000-0000-0000-0000-000000000001'
  WHERE id = '5afffff0-0000-0000-0000-000000000001';
 UPDATE public.households SET primary_guardian_id = '5a000000-0000-0000-0000-000000000004'
@@ -284,6 +287,14 @@ END
 $reglage$;
 RESET ROLE;
 
+DO $avant_pret$
+BEGIN
+  IF EXISTS (SELECT 1 FROM public.notifications WHERE evenement = 'tout_est_pret') THEN
+    RAISE EXCEPTION 'SUIVI-ATTENTE : aucun « tout est pret » avant l enseignant et la premiere seance';
+  END IF;
+END
+$avant_pret$;
+
 UPDATE public.groupes
    SET teacher_id = '5a000000-0000-0000-0000-000000000003', etat = 'active'
  WHERE id = '5afffff0-0000-0000-0000-0000000000a1';
@@ -430,6 +441,24 @@ END
 $reglage_borne$;
 RESET ROLE;
 
+-- L'export « mes donnees » de l'enseignant porte ses colonnes.
+SELECT pg_temp.moi('5a000000-0000-0000-0000-000000000003', 'teacher', NULL);
+SET LOCAL ROLE authenticated;
+DO $export$
+DECLARE x jsonb;
+BEGIN
+  x := public.mes_donnees_export() -> 'profil_enseignant';
+  IF NOT (x ? 'pays_origine' AND x ? 'pays_residence' AND x ? 'mot_presentation'
+          AND x ? 'montre_aux_familles' AND x ? 'montre_aux_familles_confirme_le') THEN
+    RAISE EXCEPTION 'SUIVI-ATTENTE : l export de l enseignant porte pays, mot et visibilite : %', x;
+  END IF;
+  IF x ->> 'pays_origine' <> 'GN' THEN
+    RAISE EXCEPTION 'SUIVI-ATTENTE : le pays d origine exporte est celui qu il a regle : %', x;
+  END IF;
+END
+$export$;
+RESET ROLE;
+
 -- ---------------------------------------------------------------------------
 -- 5. La notification de l'enseignant : une seule, enrichie ; rien vers un mineur
 -- ---------------------------------------------------------------------------
@@ -468,6 +497,44 @@ END
 $notification$;
 
 -- ---------------------------------------------------------------------------
+-- 5 bis. « Tout est pret » : une seule, au tuteur, jamais a l'enfant
+-- ---------------------------------------------------------------------------
+DO $pret$
+DECLARE n integer; p jsonb; dest text;
+BEGIN
+  SELECT count(*) INTO n FROM public.notifications
+   WHERE evenement = 'tout_est_pret'
+     AND destinataire = '5a000000-0000-0000-0000-000000000001'
+     AND params ->> 'groupe_id' = '5afffff0-0000-0000-0000-0000000000a1';
+  IF n <> 1 THEN
+    RAISE EXCEPTION 'SUIVI-ATTENTE : le tuteur recoit UNE notification « tout est pret », % trouvee(s)', n;
+  END IF;
+  SELECT params, destination INTO p, dest FROM public.notifications
+   WHERE evenement = 'tout_est_pret' AND destinataire = '5a000000-0000-0000-0000-000000000001';
+  IF p ->> 'portee' <> 'foyer' OR p ->> 'eleve_id' <> '5a000000-0000-0000-0000-000000000002'
+     OR (p ->> 'prochaine_local') IS NULL OR (p ->> 'fuseau') <> 'Europe/Paris'
+     OR p -> 'eleves' <> '["Yusuf"]'::jsonb OR dest <> '/tuteur/demandes' THEN
+    RAISE EXCEPTION 'SUIVI-ATTENTE : notification « tout est pret » inattendue : % %', p, dest;
+  END IF;
+  -- L'enfant n'est jamais destinataire ; personne d'autre non plus.
+  IF EXISTS (SELECT 1 FROM public.notifications
+              WHERE evenement = 'tout_est_pret'
+                AND destinataire <> '5a000000-0000-0000-0000-000000000001') THEN
+    RAISE EXCEPTION 'SUIVI-ATTENTE : « tout est pret » ne va qu au tuteur de ce foyer';
+  END IF;
+  -- Idempotente : rappelee, elle n'ajoute rien.
+  IF private.suivi_attente_notifier_pret('5afffff0-0000-0000-0000-0000000000a1') <> 0
+     OR (SELECT count(*) FROM public.notifications WHERE evenement = 'tout_est_pret') <> 1 THEN
+    RAISE EXCEPTION 'SUIVI-ATTENTE : « tout est pret » ne se repete pas';
+  END IF;
+  IF NOT private.notification_avec_courriel('tout_est_pret', 'soi')
+     OR NOT private.notification_avec_courriel('tout_est_pret', 'foyer') THEN
+    RAISE EXCEPTION 'SUIVI-ATTENTE : le courriel « tout est pret » doit partir';
+  END IF;
+END
+$pret$;
+
+-- ---------------------------------------------------------------------------
 -- 6. Un changement de creneau recent est dit
 -- ---------------------------------------------------------------------------
 INSERT INTO public.notifications (destinataire, foyer_id, evenement, params, destination)
@@ -487,6 +554,44 @@ BEGIN
 END
 $changement$;
 RESET ROLE;
+
+-- ---------------------------------------------------------------------------
+-- 6 bis. Le fait pour la direction : les demandes envoyees depuis trop longtemps
+-- ---------------------------------------------------------------------------
+SELECT pg_temp.moi('5a000000-0000-0000-0000-000000000008', 'admin', NULL);
+SET LOCAL ROLE authenticated;
+DO $depassees$
+DECLARE r record; n integer;
+BEGIN
+  SELECT count(*) INTO n FROM public.demandes_formation_depassees();
+  IF n <> 1 THEN
+    RAISE EXCEPTION 'SUIVI-ATTENTE : la direction voit 1 demande depassee (d2, 20 jours), vu %', n;
+  END IF;
+  SELECT * INTO r FROM public.demandes_formation_depassees();
+  IF r.demande_id <> '5afffff0-0000-0000-0000-0000000000d2' OR r.jours_depuis < 19
+     OR r.matricule <> 'SAENFANT000002' THEN
+    RAISE EXCEPTION 'SUIVI-ATTENTE : demande depassee inattendue : %', r;
+  END IF;
+END
+$depassees$;
+RESET ROLE;
+SELECT pg_temp.moi('5a000000-0000-0000-0000-000000000001', 'guardian', '5afffff0-0000-0000-0000-000000000001');
+SET LOCAL ROLE authenticated;
+DO $depassees_refus$
+BEGIN
+  PERFORM * FROM public.demandes_formation_depassees();
+  RAISE EXCEPTION 'SUIVI-ATTENTE : un tuteur ne lit pas les demandes depassees';
+EXCEPTION WHEN insufficient_privilege THEN NULL;
+END
+$depassees_refus$;
+RESET ROLE;
+DO $depassees_anon$
+BEGIN
+  IF pg_catalog.has_function_privilege('anon', 'public.demandes_formation_depassees()', 'EXECUTE') THEN
+    RAISE EXCEPTION 'SUIVI-ATTENTE : demandes_formation_depassees ouverte a anon';
+  END IF;
+END
+$depassees_anon$;
 
 -- ---------------------------------------------------------------------------
 -- 7. Les cas de cloture : refusee, retiree
@@ -578,6 +683,54 @@ END
 $anonymisation$;
 
 -- ---------------------------------------------------------------------------
+-- 8 ter. L'eleve adulte est prevenu lui-meme ; l'ordre des faits ne change rien
+-- ---------------------------------------------------------------------------
+-- L'affectation de l'enseignant materialise les seances de la classe : le
+-- fait qui rapproche l'etape 5 arrive de la classe elle-meme.
+INSERT INTO public.demandes_horaires_famille
+  (id, eleve_id, type_public, langue_code, fuseau_iana, jours, heures_locales,
+   source, etat, created_at)
+VALUES
+  ('5afffff0-0000-0000-0000-0000000000d5', '5a000000-0000-0000-0000-000000000006',
+   'adulte', 'francais', 'Africa/Casablanca', ARRAY[5]::smallint[], ARRAY[19]::smallint[],
+   'personnalisee', 'envoyee', pg_catalog.now() - interval '2 days');
+INSERT INTO public.groupes
+  (id, teacher_id, etat, type_public, seuil_max, libelle, weekday, hour_local,
+   timezone_iana, langue_code)
+VALUES
+  ('5afffff0-0000-0000-0000-0000000000a2', NULL, 'en_attente_enseignant',
+   'adulte', 5, 'Classe Al-Baqara', 5, 19, 'Africa/Casablanca', 'francais');
+INSERT INTO public.groupe_membres (groupe_id, student_id)
+VALUES ('5afffff0-0000-0000-0000-0000000000a2', '5a000000-0000-0000-0000-000000000006');
+UPDATE public.demandes_horaires_famille
+   SET etat = 'classe_validee', groupe_id = '5afffff0-0000-0000-0000-0000000000a2'
+ WHERE id = '5afffff0-0000-0000-0000-0000000000d5';
+UPDATE public.groupes
+   SET teacher_id = '5a000000-0000-0000-0000-000000000007', etat = 'active'
+ WHERE id = '5afffff0-0000-0000-0000-0000000000a2';
+SET CONSTRAINTS ALL IMMEDIATE;
+SET CONSTRAINTS ALL DEFERRED;
+DO $adulte_pret$
+DECLARE p jsonb; dest text;
+BEGIN
+  SELECT params, destination INTO p, dest FROM public.notifications
+   WHERE evenement = 'tout_est_pret'
+     AND destinataire = '5a000000-0000-0000-0000-000000000006';
+  IF p IS NULL OR p ->> 'portee' <> 'soi' OR dest <> '/eleve'
+     OR p ->> 'fuseau' <> 'Africa/Casablanca' OR (p -> 'eleves') IS NOT NULL THEN
+    RAISE EXCEPTION 'SUIVI-ATTENTE : « tout est pret » de l eleve adulte inattendu : % %', p, dest;
+  END IF;
+  -- Jamais un enfant : aucun destinataire eleve hors de la tranche adulte.
+  IF EXISTS (SELECT 1 FROM public.notifications n
+               JOIN public.profiles pp ON pp.id = n.destinataire
+               JOIN public.student_profiles sp ON sp.profile_id = pp.id
+              WHERE n.evenement = 'tout_est_pret' AND sp.cohorte <> 'adulte_18_plus') THEN
+    RAISE EXCEPTION 'SUIVI-ATTENTE : « tout est pret » n est jamais ecrit a un enfant';
+  END IF;
+END
+$adulte_pret$;
+
+-- ---------------------------------------------------------------------------
 -- 9. Droits : fonctions et declencheur
 -- ---------------------------------------------------------------------------
 DO $droits$
@@ -586,13 +739,18 @@ BEGIN
   FOREACH s IN ARRAY ARRAY[
     'public.suivi_attente_foyer()',
     'public.ma_presentation_aux_familles()',
-    'public.regler_presentation_aux_familles(boolean,text,text,text)'
+    'public.regler_presentation_aux_familles(boolean,text,text,text)',
+    'public.demandes_formation_depassees()'
   ] LOOP
     IF has_function_privilege('anon', s, 'EXECUTE') OR has_function_privilege('public', s, 'EXECUTE')
        OR NOT has_function_privilege('authenticated', s, 'EXECUTE') THEN
       RAISE EXCEPTION 'SUIVI-ATTENTE : droits d execution invalides sur %', s;
     END IF;
   END LOOP;
+  IF has_function_privilege('authenticated', 'private.suivi_attente_notifier_pret(uuid)', 'EXECUTE')
+     OR has_function_privilege('authenticated', 'private.suivi_attente_pret_declencheur()', 'EXECUTE') THEN
+    RAISE EXCEPTION 'SUIVI-ATTENTE : les fonctions de « tout est pret » ne s appellent pas';
+  END IF;
   IF has_function_privilege('authenticated', 'private.suivi_attente_notifier_enseignant()', 'EXECUTE') THEN
     RAISE EXCEPTION 'SUIVI-ATTENTE : le declencheur ne s appelle pas';
   END IF;

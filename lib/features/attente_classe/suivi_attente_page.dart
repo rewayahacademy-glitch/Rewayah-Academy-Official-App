@@ -58,6 +58,7 @@ class CheminsAttente {
     required this.accueil,
     this.choisir,
     this.choisirPour,
+    this.espaceEnfant = false,
   });
 
   /// Le detail d'une demande.
@@ -73,6 +74,11 @@ class CheminsAttente {
   /// Ou choisir un autre creneau pour un eleve ; nul quand aucun parcours
   /// n'existe pour ce profil.
   final String Function(String eleveId)? choisirPour;
+
+  /// Vrai dans l'espace de l'enfant : l'ecran lui parle avec ses mots (6 a 9
+  /// ans : sans date ni duree ; 10 a 17 ans : tutoiement). Faux pour le tuteur
+  /// et pour l'eleve adulte, qui lisent avec les mots des adultes.
+  final bool espaceEnfant;
 
   /// La famille (tuteur).
   static const CheminsAttente tuteur = CheminsAttente(
@@ -92,6 +98,7 @@ class CheminsAttente {
   static const CheminsAttente enfant = CheminsAttente(
     detail: Routes.eleveAttenteDemande,
     accueil: Routes.eleve,
+    espaceEnfant: true,
   );
 }
 
@@ -113,12 +120,9 @@ class SuiviAttentePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
-    SuiviAttente? suivi;
-    for (final SuiviAttente s
-        in ref.watch(suivisAttenteProvider).value ?? const <SuiviAttente>[]) {
-      if (s.demandeId == demandeId) suivi = s;
-    }
-    final bool simple = suivi?.versionSimple ?? false;
+    // Le tuteur et l'adulte lisent avec les mots des adultes ; l'enfant, dans
+    // son espace, avec les siens (arbitrage du 13/11/2026).
+    final bool simple = chemins.espaceEnfant;
     void relire() => ref.invalidate(suivisAttenteProvider);
 
     return PageShell(
@@ -148,13 +152,17 @@ class SuiviAttentePage extends ConsumerWidget {
             erreurVersEtat: (Object _, VoidCallback? reessayer) => horsLigne
                 ? EtatSansDonnees(
                     key: const ValueKey<String>('attente-sans-donnees'),
-                    quoi: t.suiviAttente.sansDonnees,
+                    quoi: simple
+                        ? t.suiviAttente.tu.sansDonnees
+                        : t.suiviAttente.sansDonnees,
                     onAction: reessayer,
                   )
                 : EtatSysteme(
                     key: const ValueKey<String>('attente-erreur'),
                     nature: NatureEtat.echecServeur,
-                    phrase: t.suiviAttente.erreur,
+                    phrase: simple
+                        ? t.suiviAttente.tu.erreur
+                        : t.suiviAttente.erreur,
                     onAction: reessayer,
                   ),
             construire: (List<SuiviAttente> lues) {
@@ -163,7 +171,12 @@ class SuiviAttentePage extends ConsumerWidget {
               );
               return trouvees.isEmpty
                   ? _Introuvable(chemins: chemins)
-                  : _Suivi(suivi: trouvees.first, chemins: chemins);
+                  : _Suivi(
+                      suivi: trouvees.first.pourEspace(
+                        espaceEnfant: chemins.espaceEnfant,
+                      ),
+                      chemins: chemins,
+                    );
             },
           ),
         ),
@@ -208,7 +221,9 @@ class _Introuvable extends StatelessWidget {
   @override
   Widget build(BuildContext context) => EmptyState(
     key: const ValueKey<String>('attente-introuvable'),
-    message: t.suiviAttente.introuvable,
+    message: chemins.espaceEnfant
+        ? t.suiviAttente.tu.introuvable
+        : t.suiviAttente.introuvable,
     icone: AppIcons.creneaux,
     registre: RegistreVide.actionnable,
     libelleAction: t.suiviAttente.retour,
@@ -270,12 +285,12 @@ class _Suivi extends StatelessWidget {
           apres: (int numero) => numero == 4 && enseignant != null
               ? CarteEnseignantAttenteVue(
                   enseignant: enseignant,
-                  simple: suivi.versionSimple,
-                  peutSePresenter: !suivi.versionSimple,
+                  simple: estTu(suivi),
+                  peutSePresenter: !estTu(suivi),
                 )
               : null,
         ),
-        if (creneau != null) ...<Widget>[
+        if (creneau != null && !estSimple(suivi)) ...<Widget>[
           Ecart.vLg,
           Text(t.suiviDemandes.creneauxChoisis, style: detail),
           Text(
@@ -286,21 +301,23 @@ class _Suivi extends StatelessWidget {
             ),
           ),
         ],
-        Ecart.vSm,
-        Text(
-          t.suiviDemandes.fuseauValeur(
-            deVille: deFuseau(
-              suivi.fuseauIana,
-              cle: 'suiviDemandes.fuseauValeur',
+        if (!estSimple(suivi)) ...<Widget>[
+          Ecart.vSm,
+          Text(
+            t.suiviDemandes.fuseauValeur(
+              deVille: deFuseau(
+                suivi.fuseauIana,
+                cle: 'suiviDemandes.fuseauValeur',
+              ),
             ),
+            key: const ValueKey<String>('attente-fuseau'),
+            style: detail,
           ),
-          key: const ValueKey<String>('attente-fuseau'),
-          style: detail,
-        ),
+        ],
         if (suivi.close &&
             suivi.peutChoisirAutreCreneau &&
             choisirPour != null &&
-            !suivi.versionSimple) ...<Widget>[
+            !estTu(suivi)) ...<Widget>[
           Ecart.vLg,
           ActionPrincipale(
             key: const ValueKey<String>('attente-autre-creneau'),
@@ -326,7 +343,7 @@ class _Cloture extends StatelessWidget {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
     final bool refus = suivi.cas == CasAttente.refusee;
-    final bool suite = suivi.peutChoisirAutreCreneau && !suivi.versionSimple;
+    final bool suite = suivi.peutChoisirAutreCreneau && !estTu(suivi);
     return PileCartes(
       children: <Widget>[
         AppCard(

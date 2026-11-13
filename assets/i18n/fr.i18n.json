@@ -15191,6 +15191,24 @@
   "suiviAttente": {
     "titre": "Où en est votre demande",
     "titreSimple": "Où en est ta demande",
+    "tu": {
+      "formationListeAttente": "Toutes les classes de ce créneau sont pleines. Ta demande attend qu'une place s'ouvre.",
+      "confirmeeFait": "Ta classe est confirmée.",
+      "confirmeeFaitNom": "Ta classe «\u00a0{classe}\u00a0» est confirmée.",
+      "enseignantEnAttente": "La classe attend son enseignant. L'académie le désigne et te prévient.",
+      "pretEnCours": "L'académie fixe ton premier cours. Elle te prévient dès que la date est connue.",
+      "pretAVenir": "Ton premier cours est annoncé une fois l'enseignant affecté.",
+      "premierCoursPasse": "Ton premier cours a eu lieu le {quand}.",
+      "premierCoursPetit": "Ton premier cours arrive. Ton tuteur te dit quand.",
+      "premierCoursPassePetit": "Ton premier cours a eu lieu.",
+      "depasse": "La formation de ta classe prend plus de temps que prévu. L'académie t'écrit.",
+      "changement": "Le créneau de la classe a changé le {date}. Ton tuteur a reçu l'avis.",
+      "titreRefusee": "Ta demande n'a pas été retenue",
+      "retraitFamille": "Ton tuteur a retiré cette demande.",
+      "erreur": "Nous n'avons pas pu lire ta demande. Cela vient souvent de la connexion. Réessaie dans un instant.",
+      "sansDonnees": "Ta demande n'a pas pu être chargée",
+      "introuvable": "Cette demande n'existe plus."
+    },
     "contexte": "L'académie confirme chaque étape. Vous êtes prévenu à chaque passage.",
     "contexteSimple": "Voici où en est ta demande. L'académie te prévient à chaque étape.",
     "pour": "Pour {prenom}",
@@ -15239,7 +15257,7 @@
       "limite": "Date limite : {date}",
       "point": "Point d'étape : {date}",
       "pointPasse": "Le point d'étape est passé.",
-      "depasse": "Le délai annoncé est dépassé. Notre règle : la direction ne prolonge l'attente qu'avec votre accord, ou vous propose une autre classe."
+      "depasse": "La formation de votre classe prend plus de temps que prévu. L'académie vous écrit."
     },
     "changement": "Le créneau de la classe a changé le {date}. Vous avez reçu l'avis dans vos notifications.",
     "cloture": {
@@ -15291,7 +15309,8 @@
       "titreSimple": "Ta demande de classe",
       "ligne": "{prenom} : étape {n} sur {total}, {etape}",
       "suivre": "Suivre ma demande",
-      "pret": "{prenom} : tout est prêt. Premier cours : {quand}"
+      "pret": "{prenom} : tout est prêt. Premier cours : {quand}",
+      "pretSansDate": "{prenom}\u00a0: tout est prêt."
     },
     "presentation": {
       "titre": "Ce que les familles voient de vous",

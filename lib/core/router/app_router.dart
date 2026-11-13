@@ -106,6 +106,7 @@ import '../../features/appareils/ajouter_enfant_page.dart';
 import '../../features/appareils/appairage_page.dart';
 import '../../features/appareils/appareils_eleve_page.dart';
 import '../../features/appareils/appareils_page.dart';
+import '../../features/attente_classe/entree_demandes_attente.dart';
 import '../../features/attente_classe/me_presenter_page.dart';
 import '../../features/attente_classe/presentation_familles_page.dart';
 import '../../features/attente_classe/suivi_attente_page.dart';
@@ -252,7 +253,6 @@ import '../../features/salle/salle_page.dart' deferred as d_salle_page;
 import '../../features/salle_seance/portee_outils_salle.dart';
 import '../../features/suivi_demandes/changement_classe_page.dart';
 import '../../features/suivi_eleve/suivi_eleve_page.dart';
-import '../../features/suivi_famille/suivi_famille_page.dart';
 import '../../features/suivi_foyer/detail_observations_page.dart';
 import '../../features/suivi_foyer/detail_seance_page.dart';
 import '../../features/suivi_foyer/observations_page.dart';
@@ -1008,7 +1008,13 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                   GoRouteSure(
                     path: 'demandes',
                     pageBuilder: glissee(
-                      (GoRouterState _) => const SuiviDemandesEntree(),
+                      // SUIVI-ATTENTE : un seul suivi en cours, l'adresse des
+                      // notifications ouvre le suivi ; sinon la liste.
+                      (GoRouterState etat) => EntreeDemandesAttente(
+                        // Le detail d'une demande empile cette page sous lui :
+                        // seule l'adresse de la liste elle-meme redirige.
+                        redirige: etat.uri.path == Routes.tuteurDemandes,
+                      ),
                     ),
                     routes: <RouteBase>[
                       GoRouteSure(

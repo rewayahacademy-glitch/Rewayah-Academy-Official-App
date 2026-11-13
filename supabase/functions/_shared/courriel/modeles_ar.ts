@@ -133,6 +133,21 @@ const MODELES: Record<string, Fabrique> = {
     'عُيّن معلم للفصل. تجد اسمه ومواعيده في التطبيق.',
     'عرض الفصل', '/tuteur/demandes')
   },
+  // SUIVI-ATTENTE (12/11/2026) : « Tout est pret » (etape 5), a la famille ou a l'eleve
+  // adulte, jamais a un enfant.
+  tout_est_pret: (d) => {
+    const P = PRECISIONS_AR
+    if (d.portee === 'soi') {
+      return avis(d, 'كل شيء جاهز لحصتك الأولى', 'كل شيء جاهز',
+        avec('كل شيء جاهز: فصلك ومعلمك وموعدك مؤكَّدة.', precisions(d, P, { premiere: true }))
+          + ' تابع التفاصيل في التطبيق.',
+        'عرض المتابعة', '/eleve')
+    }
+    return avis(d, 'كل شيء جاهز للحصة الأولى', 'كل شيء جاهز',
+      avec('كل شيء جاهز: الفصل والمعلم والموعد مؤكَّدة.', precisions(d, P, { premiere: true }))
+        + ' تابع التفاصيل في التطبيق.',
+      'عرض المتابعة', '/tuteur/demandes')
+  },
   demande_close: (d) => avis(d, 'أُغلق طلبك', 'أُغلق طلبك',
     'أُغلق طلبك لحجز موعد. ردّ الإدارة في التطبيق.',
     'قراءة الرد', '/tuteur/demandes'),

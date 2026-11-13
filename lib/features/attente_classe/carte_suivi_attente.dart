@@ -75,7 +75,9 @@ class CarteSuiviAttente extends ConsumerWidget {
             key: const ValueKey<String>('carte-attente-erreur'),
             largeurMax: AppPage.largeurFormulaire,
             child: TexteSansCoupure(
-              t.suiviAttente.erreur,
+              chemins.espaceEnfant
+                  ? t.suiviAttente.tu.erreur
+                  : t.suiviAttente.erreur,
               style: palette.inkStrong.applyTo(
                 textes.bodyMedium ?? const TextStyle(),
               ),
@@ -97,14 +99,17 @@ class CarteSuiviAttente extends ConsumerWidget {
       children: <Widget>[
         PileCartes(
           children: <Widget>[
-            for (final SuiviAttente s in suivis)
+            for (final SuiviAttente s in <SuiviAttente>[
+              for (final SuiviAttente brut in suivis)
+                brut.pourEspace(espaceEnfant: chemins.espaceEnfant),
+            ])
               AppCard(
                 key: ValueKey<String>('carte-attente-${s.demandeId}'),
                 largeurMax: AppPage.largeurFormulaire,
                 entete: Semantics(
                   header: true,
                   child: TexteSansCoupure(
-                    s.versionSimple
+                    estTu(s)
                         ? t.suiviAttente.carte.titreSimple
                         : t.suiviAttente.carte.titre,
                     style: textes.titleMedium ?? const TextStyle(),

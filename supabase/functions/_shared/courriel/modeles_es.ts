@@ -62,6 +62,21 @@ const MODELES: Record<string, Fabrique> = {
     'Se ha asignado un docente a la clase. Encontrará su nombre y los horarios en la aplicación.',
     'Ver la clase', '/tuteur/demandes')
   },
+  // SUIVI-ATTENTE (12/11/2026): «Todo está listo» (etapa 5), a la familia o al alumno
+  // adulto, nunca a un niño.
+  tout_est_pret: (d) => {
+    const P = PRECISIONS_ES
+    if (d.portee === 'soi') {
+      return avis(d, 'Todo está listo para su primera clase', 'Todo está listo',
+        avec('Todo está listo: su clase, su docente y su horario están confirmados.', precisions(d, P, { premiere: true }))
+          + ' Puede seguirlo en la aplicación.',
+        'Ver el seguimiento', '/eleve')
+    }
+    return avis(d, 'Todo está listo para la primera clase', 'Todo está listo',
+      avec('Todo está listo: la clase, el docente y el horario están confirmados.', precisions(d, P, { premiere: true }))
+        + ' Puede seguirlo en la aplicación.',
+      'Ver el seguimiento', '/tuteur/demandes')
+  },
   demande_close: (d) => avis(d, 'Su solicitud ha sido cerrada', 'Su solicitud ha sido cerrada',
     'Su solicitud de horario ha sido cerrada. La respuesta de la dirección está en la aplicación.',
     'Leer la respuesta', '/tuteur/demandes'),

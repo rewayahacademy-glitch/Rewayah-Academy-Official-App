@@ -93,7 +93,7 @@ class _LigneEtape extends StatelessWidget {
     };
     final String nom = nomEtape(etape.numero);
     final String? dit = phraseEtape(suivi, etape);
-    final String? date = dateEtape(etape);
+    final String? date = dateEtape(suivi, etape);
     final String? depuis = depuisEtape(suivi, etape);
     // L'etape 5 franchie dit le jour du premier cours, en gros.
     final String? premier = etape.numero == nombreEtapesAttente && !aVenir
@@ -103,8 +103,11 @@ class _LigneEtape extends StatelessWidget {
         ? phrasesDelai(suivi)
         : const <String>[];
     final DateTime? change = suivi.creneauChangeLe;
-    final String? changement = etape.numero == 3 && change != null
-        ? t.suiviAttente.changement(date: jourDateCourt(change))
+    final String? changement =
+        etape.numero == 3 && change != null && !estSimple(suivi)
+        ? (estTu(suivi)
+              ? t.suiviAttente.tu.changement(date: jourDateCourt(change))
+              : t.suiviAttente.changement(date: jourDateCourt(change)))
         : null;
 
     final TextStyle titre = (enCours ? palette.inkAccent : palette.inkStrong)

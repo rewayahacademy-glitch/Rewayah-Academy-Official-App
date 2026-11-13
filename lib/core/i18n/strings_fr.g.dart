@@ -4225,6 +4225,8 @@ class Traductions$suiviAttente$fr {
 	/// fr: 'Où en est ta demande'
 	String get titreSimple => 'Où en est ta demande';
 
+	late final Traductions$suiviAttente$tu$fr tu = Traductions$suiviAttente$tu$fr.internal(_root);
+
 	/// fr: 'L'académie confirme chaque étape. Vous êtes prévenu à chaque passage.'
 	String get contexte => 'L\'académie confirme chaque étape. Vous êtes prévenu à chaque passage.';
 
@@ -23834,6 +23836,63 @@ class Traductions$push1$reglages$fr {
 	String get changementNonConfirme => 'Le changement n\'est pas encore confirmé : la connexion a peut-être été coupée. Réessayez dans un instant.';
 }
 
+// Path: suiviAttente.tu
+class Traductions$suiviAttente$tu$fr {
+	Traductions$suiviAttente$tu$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Toutes les classes de ce créneau sont pleines. Ta demande attend qu'une place s'ouvre.'
+	String get formationListeAttente => 'Toutes les classes de ce créneau sont pleines. Ta demande attend qu\'une place s\'ouvre.';
+
+	/// fr: 'Ta classe est confirmée.'
+	String get confirmeeFait => 'Ta classe est confirmée.';
+
+	/// fr: 'Ta classe « {classe} » est confirmée.'
+	String confirmeeFaitNom({required Object classe}) => 'Ta classe « ${classe} » est confirmée.';
+
+	/// fr: 'La classe attend son enseignant. L'académie le désigne et te prévient.'
+	String get enseignantEnAttente => 'La classe attend son enseignant. L\'académie le désigne et te prévient.';
+
+	/// fr: 'L'académie fixe ton premier cours. Elle te prévient dès que la date est connue.'
+	String get pretEnCours => 'L\'académie fixe ton premier cours. Elle te prévient dès que la date est connue.';
+
+	/// fr: 'Ton premier cours est annoncé une fois l'enseignant affecté.'
+	String get pretAVenir => 'Ton premier cours est annoncé une fois l\'enseignant affecté.';
+
+	/// fr: 'Ton premier cours a eu lieu le {quand}.'
+	String premierCoursPasse({required Object quand}) => 'Ton premier cours a eu lieu le ${quand}.';
+
+	/// fr: 'Ton premier cours arrive. Ton tuteur te dit quand.'
+	String get premierCoursPetit => 'Ton premier cours arrive. Ton tuteur te dit quand.';
+
+	/// fr: 'Ton premier cours a eu lieu.'
+	String get premierCoursPassePetit => 'Ton premier cours a eu lieu.';
+
+	/// fr: 'La formation de ta classe prend plus de temps que prévu. L'académie t'écrit.'
+	String get depasse => 'La formation de ta classe prend plus de temps que prévu. L\'académie t\'écrit.';
+
+	/// fr: 'Le créneau de la classe a changé le {date}. Ton tuteur a reçu l'avis.'
+	String changement({required Object date}) => 'Le créneau de la classe a changé le ${date}. Ton tuteur a reçu l\'avis.';
+
+	/// fr: 'Ta demande n'a pas été retenue'
+	String get titreRefusee => 'Ta demande n\'a pas été retenue';
+
+	/// fr: 'Ton tuteur a retiré cette demande.'
+	String get retraitFamille => 'Ton tuteur a retiré cette demande.';
+
+	/// fr: 'Nous n'avons pas pu lire ta demande. Cela vient souvent de la connexion. Réessaie dans un instant.'
+	String get erreur => 'Nous n\'avons pas pu lire ta demande. Cela vient souvent de la connexion. Réessaie dans un instant.';
+
+	/// fr: 'Ta demande n'a pas pu être chargée'
+	String get sansDonnees => 'Ta demande n\'a pas pu être chargée';
+
+	/// fr: 'Cette demande n'existe plus.'
+	String get introuvable => 'Cette demande n\'existe plus.';
+}
+
 // Path: suiviAttente.etapes
 class Traductions$suiviAttente$etapes$fr {
 	Traductions$suiviAttente$etapes$fr.internal(this._root);
@@ -23959,8 +24018,8 @@ class Traductions$suiviAttente$delai$fr {
 	/// fr: 'Le point d'étape est passé.'
 	String get pointPasse => 'Le point d\'étape est passé.';
 
-	/// fr: 'Le délai annoncé est dépassé. Notre règle : la direction ne prolonge l'attente qu'avec votre accord, ou vous propose une autre classe.'
-	String get depasse => 'Le délai annoncé est dépassé. Notre règle : la direction ne prolonge l\'attente qu\'avec votre accord, ou vous propose une autre classe.';
+	/// fr: 'La formation de votre classe prend plus de temps que prévu. L'académie vous écrit.'
+	String get depasse => 'La formation de votre classe prend plus de temps que prévu. L\'académie vous écrit.';
 }
 
 // Path: suiviAttente.cloture
@@ -24079,6 +24138,9 @@ class Traductions$suiviAttente$carte$fr {
 
 	/// fr: '{prenom} : tout est prêt. Premier cours : {quand}'
 	String pret({required Object prenom, required Object quand}) => '${prenom} : tout est prêt. Premier cours : ${quand}';
+
+	/// fr: '{prenom} : tout est prêt.'
+	String pretSansDate({required Object prenom}) => '${prenom} : tout est prêt.';
 }
 
 // Path: suiviAttente.presentation
@@ -61589,6 +61651,22 @@ extension on Traductions {
 			'suiviPedagogique.erreur' => 'L\'étape du programme n\'a pas pu être lue. Réessayez dans un instant.',
 			'suiviAttente.titre' => 'Où en est votre demande',
 			'suiviAttente.titreSimple' => 'Où en est ta demande',
+			'suiviAttente.tu.formationListeAttente' => 'Toutes les classes de ce créneau sont pleines. Ta demande attend qu\'une place s\'ouvre.',
+			'suiviAttente.tu.confirmeeFait' => 'Ta classe est confirmée.',
+			'suiviAttente.tu.confirmeeFaitNom' => ({required Object classe}) => 'Ta classe « ${classe} » est confirmée.',
+			'suiviAttente.tu.enseignantEnAttente' => 'La classe attend son enseignant. L\'académie le désigne et te prévient.',
+			'suiviAttente.tu.pretEnCours' => 'L\'académie fixe ton premier cours. Elle te prévient dès que la date est connue.',
+			'suiviAttente.tu.pretAVenir' => 'Ton premier cours est annoncé une fois l\'enseignant affecté.',
+			'suiviAttente.tu.premierCoursPasse' => ({required Object quand}) => 'Ton premier cours a eu lieu le ${quand}.',
+			'suiviAttente.tu.premierCoursPetit' => 'Ton premier cours arrive. Ton tuteur te dit quand.',
+			'suiviAttente.tu.premierCoursPassePetit' => 'Ton premier cours a eu lieu.',
+			'suiviAttente.tu.depasse' => 'La formation de ta classe prend plus de temps que prévu. L\'académie t\'écrit.',
+			'suiviAttente.tu.changement' => ({required Object date}) => 'Le créneau de la classe a changé le ${date}. Ton tuteur a reçu l\'avis.',
+			'suiviAttente.tu.titreRefusee' => 'Ta demande n\'a pas été retenue',
+			'suiviAttente.tu.retraitFamille' => 'Ton tuteur a retiré cette demande.',
+			'suiviAttente.tu.erreur' => 'Nous n\'avons pas pu lire ta demande. Cela vient souvent de la connexion. Réessaie dans un instant.',
+			'suiviAttente.tu.sansDonnees' => 'Ta demande n\'a pas pu être chargée',
+			'suiviAttente.tu.introuvable' => 'Cette demande n\'existe plus.',
 			'suiviAttente.contexte' => 'L\'académie confirme chaque étape. Vous êtes prévenu à chaque passage.',
 			'suiviAttente.contexteSimple' => 'Voici où en est ta demande. L\'académie te prévient à chaque étape.',
 			'suiviAttente.pour' => ({required Object prenom}) => 'Pour ${prenom}',
@@ -61627,7 +61705,7 @@ extension on Traductions {
 			'suiviAttente.delai.limite' => ({required Object date}) => 'Date limite : ${date}',
 			'suiviAttente.delai.point' => ({required Object date}) => 'Point d\'étape : ${date}',
 			'suiviAttente.delai.pointPasse' => 'Le point d\'étape est passé.',
-			'suiviAttente.delai.depasse' => 'Le délai annoncé est dépassé. Notre règle : la direction ne prolonge l\'attente qu\'avec votre accord, ou vous propose une autre classe.',
+			'suiviAttente.delai.depasse' => 'La formation de votre classe prend plus de temps que prévu. L\'académie vous écrit.',
 			'suiviAttente.changement' => ({required Object date}) => 'Le créneau de la classe a changé le ${date}. Vous avez reçu l\'avis dans vos notifications.',
 			'suiviAttente.cloture.titreRefusee' => 'Votre demande n\'a pas été retenue',
 			'suiviAttente.cloture.titreRetiree' => 'Cette demande est retirée',
@@ -61668,6 +61746,7 @@ extension on Traductions {
 			'suiviAttente.carte.ligne' => ({required Object prenom, required Object n, required Object total, required Object etape}) => '${prenom} : étape ${n} sur ${total}, ${etape}',
 			'suiviAttente.carte.suivre' => 'Suivre ma demande',
 			'suiviAttente.carte.pret' => ({required Object prenom, required Object quand}) => '${prenom} : tout est prêt. Premier cours : ${quand}',
+			'suiviAttente.carte.pretSansDate' => ({required Object prenom}) => '${prenom} : tout est prêt.',
 			'suiviAttente.presentation.titre' => 'Ce que les familles voient de vous',
 			'suiviAttente.presentation.phrase' => 'Les familles de vos classes voient toujours votre nom et la langue du cours. Vous choisissez de montrer aussi votre photo, vos pays et un mot de présentation.',
 			'suiviAttente.presentation.montrer' => 'Je montre ma photo et mes pays aux familles de mes classes',

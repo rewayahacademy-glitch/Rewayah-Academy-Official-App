@@ -129,6 +129,52 @@ void main() {
       },
     );
 
+    testWidgets(
+      'les notifications (/tuteur/demandes) ouvrent le suivi quand il n\'y en a qu\'un',
+      (WidgetTester tester) async {
+        final GoRouter routeur = await _monterTuteur(
+          tester,
+          surcharges: _suivi(<SuiviAttente>[suiviDeTest(delai: delaiDeTest())]),
+        );
+        routeur.go(Routes.tuteurDemandes);
+        await stabiliser(tester);
+        expect(lieu(routeur), Routes.tuteurAttenteDemande('d1'));
+        expect(find.byKey(FriseAttente.cleEtape(5)), findsOneWidget);
+      },
+    );
+
+    testWidgets('avec deux suivis, la liste reste la liste de raccourcis', (
+      WidgetTester tester,
+    ) async {
+      final GoRouter routeur = await _monterTuteur(
+        tester,
+        surcharges: _suivi(<SuiviAttente>[
+          suiviDeTest(id: 'd1'),
+          suiviDeTest(id: 'd2', prenom: 'Maryam'),
+        ]),
+      );
+      routeur.go(Routes.tuteurDemandes);
+      await stabiliser(tester);
+      expect(lieu(routeur), Routes.tuteurDemandes);
+    });
+
+    testWidgets('un suivi clos : la liste, pas le suivi', (
+      WidgetTester tester,
+    ) async {
+      final GoRouter routeur = await _monterTuteur(
+        tester,
+        surcharges: _suivi(<SuiviAttente>[
+          suiviDeTest(
+            cas: CasAttente.refusee,
+            motif: MotifCloture.refusDirection,
+          ),
+        ]),
+      );
+      routeur.go(Routes.tuteurDemandes);
+      await stabiliser(tester);
+      expect(lieu(routeur), Routes.tuteurDemandes);
+    });
+
     testWidgets('l\'adresse du suivi se recharge : la demande se relit', (
       WidgetTester tester,
     ) async {

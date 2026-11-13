@@ -162,6 +162,21 @@ export const MODELES: Record<string, Fabrique> = {
     'Un enseignant a été affecté à la classe. Vous retrouvez son nom et les horaires dans l’application.',
     'Voir la classe', '/tuteur/demandes')
   },
+  // SUIVI-ATTENTE (12/11/2026) : « Tout est pret » (etape 5), a la famille ou a l'eleve
+  // adulte, jamais a un enfant.
+  tout_est_pret: (d) => {
+    const P = PRECISIONS_FR
+    if (d.portee === 'soi') {
+      return avis(d, 'Tout est prêt pour votre premier cours', 'Tout est prêt',
+        avec('Tout est prêt : votre classe, votre enseignant et votre horaire sont confirmés.', precisions(d, P, { premiere: true }))
+          + ' Retrouvez le suivi dans l’application.',
+        'Voir le suivi', '/eleve')
+    }
+    return avis(d, 'Tout est prêt pour le premier cours', 'Tout est prêt',
+      avec('Tout est prêt : la classe, l’enseignant et l’horaire sont confirmés.', precisions(d, P, { premiere: true }))
+        + ' Retrouvez le suivi dans l’application.',
+      'Voir le suivi', '/tuteur/demandes')
+  },
   demande_close: (d) => avis(d, 'Votre demande est clôturée', 'Votre demande est clôturée',
     'Votre demande de créneau a été clôturée. La réponse de la direction est dans l’application.',
     'Lire la réponse', '/tuteur/demandes'),

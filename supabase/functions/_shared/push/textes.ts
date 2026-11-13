@@ -119,6 +119,12 @@ export const TEXTES: Record<string, Ligne> = {
       ? 'أُسند إليكم فصل: عرّفوا بأنفسكم للأسر في التطبيق.'
       : 'عُيّن معلم للفصل: اطّلعوا على المتابعة في التطبيق.',
   },
+  // SUIVI-ATTENTE (S8) : « Tout est pret », a la famille ou a l'eleve adulte ; jamais
+  // a un enfant, aucun prenom.
+  tout_est_pret: {
+    fr: 'Tout est prêt pour le premier cours : consultez le suivi dans l\'application.',
+    ar: 'كل شيء جاهز للحصة الأولى: اطّلعوا على المتابعة في التطبيق.',
+  },
   enseignant_change: {
     fr: 'L\'enseignant de la classe change : consultez la classe dans l\'application.',
     ar: 'تغيّر معلم الفصل: اطّلعوا على الفصل في التطبيق.',

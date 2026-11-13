@@ -156,6 +156,20 @@ final List<_Ecran> _ecrans = <_Ecran>[
     suiviToutEstPret(versionSimple: true),
     chemins: CheminsAttente.enfant,
   ),
+  _suivi(
+    '17_mineur_10_17_tout_est_pret',
+    suiviToutEstPret(),
+    chemins: CheminsAttente.enfant,
+  ),
+  _suivi(
+    '18_mineur_10_17_delai_depasse',
+    suiviDeTest(delai: delaiDeTest(depasse: true, pointPasse: true)),
+    chemins: CheminsAttente.enfant,
+  ),
+  _suivi(
+    '19_tuteur_enfant_6_9_tout_est_pret',
+    suiviToutEstPret(versionSimple: true),
+  ),
   (
     nom: '13_vide',
     ecran: () =>

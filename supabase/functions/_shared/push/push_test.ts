@@ -207,7 +207,7 @@ const EVENEMENTS = [
   'seance_annulee', 'seance_deplacee', 'enseignante_absente', 'remplacement_propose', 'remplacement_pris',
   'remplacement_designe_admin', 'remplacement_pre_alerte', 'remplacement_avertissement', 'remplacement_inutile',
   'creneau_change', 'titulaire_en_retard', 'seance_reportee', 'classe_validee', 'classe_creee', 'classe_changee',
-  'classe_supprimee', 'enseignant_affecte', 'enseignant_change', 'eleve_inscrit', 'eleve_retire', 'demande_recue',
+  'classe_supprimee', 'enseignant_affecte', 'tout_est_pret', 'enseignant_change', 'eleve_inscrit', 'eleve_retire', 'demande_recue',
   'demande_close', 'demande_presentation', 'controle_mission_attribuee', 'controle_mission_non_controlee',
   'paiement_relance', 'acces_suspendu_paiement', 'acces_retabli_paiement', 'paiement_recu', 'remboursement_effectue',
   'litige_ouvert', 'litige_clos', 'message_academie_eleve', ...NOUVEAUX, ...RECRUTEMENT,

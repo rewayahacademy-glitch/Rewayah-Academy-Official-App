@@ -14,9 +14,13 @@ import '../suivi_demandes/libelles_suivi_demandes.dart'
 String enMinuscule(String texte) =>
     texte.isEmpty ? texte : texte[0].toLowerCase() + texte.substring(1);
 
-/// Les ecrans qui suivent un enfant de moins de 10 ans parlent a l'enfant :
-/// tutoiement, aucun delai chiffre (S6).
-bool estSimple(SuiviAttente s) => s.versionSimple;
+/// L'enfant de 6 a 9 ans, dans son espace : tutoiement, **ni date ni duree**
+/// (S6, arbitrage du 13/11/2026).
+bool estSimple(SuiviAttente s) => s.audience == AudienceAttente.petit;
+
+/// Un mineur dans son espace (6 a 9 ans ou 10 a 17 ans) : tutoiement, jamais
+/// les mots des adultes ni ceux du tuteur.
+bool estTu(SuiviAttente s) => s.audience != AudienceAttente.adulte;
 
 /// Le nom de l'etape [numero] (S1).
 String nomEtape(int numero) => switch (numero) {
@@ -50,11 +54,19 @@ String? quandCours(SuiviAttente s, DateTime? quand) {
 String? phrasePremierCours(SuiviAttente s) {
   final String? date = quandCours(s, s.premierCours);
   if (date == null) return null;
+  // L'enfant de 6 a 9 ans ne lit ni date ni heure : son tuteur les lit.
+  if (estSimple(s)) {
+    return s.premierCoursPasse
+        ? t.suiviAttente.tu.premierCoursPassePetit
+        : t.suiviAttente.tu.premierCoursPetit;
+  }
   final String quand = enMinuscule(date);
   if (s.premierCoursPasse) {
-    return t.suiviAttente.premierCoursPasse(quand: quand);
+    return estTu(s)
+        ? t.suiviAttente.tu.premierCoursPasse(quand: quand)
+        : t.suiviAttente.premierCoursPasse(quand: quand);
   }
-  return estSimple(s)
+  return estTu(s)
       ? t.suiviAttente.premierCoursSimple(quand: quand)
       : t.suiviAttente.premierCours(quand: quand);
 }
@@ -62,17 +74,18 @@ String? phrasePremierCours(SuiviAttente s) {
 /// Ce que dit l'etape [e] : ce qui s'est passe, ou ce qui se passe, ou ce qui
 /// viendra, et qui agit. Les etapes a venir d'une demande close ne disent rien.
 String? phraseEtape(SuiviAttente s, EtapeAttente e) {
-  final bool simple = estSimple(s);
+  final bool tu = estTu(s);
   final f = t.suiviAttente.dit;
+  final u = t.suiviAttente.tu;
   switch (e.numero) {
     case 1:
-      return simple ? f.recueFaitSimple : f.recueFait;
+      return tu ? f.recueFaitSimple : f.recueFait;
     case 2:
       return switch (e.etat) {
         EtatEtapeAttente.fait => f.formationFait,
         EtatEtapeAttente.enCours =>
           s.cas == CasAttente.listeAttente
-              ? f.formationListeAttente
+              ? (tu ? u.formationListeAttente : f.formationListeAttente)
               : f.formationEnCours,
         EtatEtapeAttente.aVenir => s.close ? null : f.formationAVenir,
       };
@@ -80,25 +93,27 @@ String? phraseEtape(SuiviAttente s, EtapeAttente e) {
       return switch (e.etat) {
         EtatEtapeAttente.fait =>
           s.classe == null
-              ? f.confirmeeFait
-              : f.confirmeeFaitNom(classe: s.classe!),
+              ? (tu ? u.confirmeeFait : f.confirmeeFait)
+              : (tu
+                    ? u.confirmeeFaitNom(classe: s.classe!)
+                    : f.confirmeeFaitNom(classe: s.classe!)),
         _ => s.close ? null : f.confirmeeAVenir,
       };
     case 4:
       return switch (e.etat) {
-        EtatEtapeAttente.fait =>
-          simple ? f.enseignantFaitSimple : f.enseignantFait,
+        EtatEtapeAttente.fait => tu ? f.enseignantFaitSimple : f.enseignantFait,
         EtatEtapeAttente.enCours =>
           s.cas == CasAttente.enAttenteEnseignant
-              ? f.enseignantEnAttente
+              ? (tu ? u.enseignantEnAttente : f.enseignantEnAttente)
               : f.enseignantEnCours,
         EtatEtapeAttente.aVenir => s.close ? null : f.enseignantAVenir,
       };
     case 5:
       return switch (e.etat) {
         EtatEtapeAttente.fait => f.pretFait,
-        EtatEtapeAttente.enCours => f.pretEnCours,
-        EtatEtapeAttente.aVenir => s.close ? null : f.pretAVenir,
+        EtatEtapeAttente.enCours => tu ? u.pretEnCours : f.pretEnCours,
+        EtatEtapeAttente.aVenir =>
+          s.close ? null : (tu ? u.pretAVenir : f.pretAVenir),
       };
   }
   return null;
@@ -106,13 +121,17 @@ String? phraseEtape(SuiviAttente s, EtapeAttente e) {
 
 /// La date d'une etape franchie : « Jeudi 2 octobre a 10:00 ». Pour l'etape 2,
 /// qui n'a pas de date propre, rien (le serveur n'en connait pas).
-String? dateEtape(EtapeAttente e) =>
-    e.etat == EtatEtapeAttente.fait ? libelleJalon(e.quand) : null;
+String? dateEtape(SuiviAttente s, EtapeAttente e) =>
+    !estSimple(s) && e.etat == EtatEtapeAttente.fait
+    ? libelleJalon(e.quand)
+    : null;
 
 /// « Depuis le jeudi 2 octobre » pour l'etape en cours, quand l'etape
 /// precedente a une date.
 String? depuisEtape(SuiviAttente s, EtapeAttente e) {
-  if (e.etat != EtatEtapeAttente.enCours || e.numero < 2) return null;
+  if (estSimple(s) || e.etat != EtatEtapeAttente.enCours || e.numero < 2) {
+    return null;
+  }
   final DateTime? depuis = s.etape(e.numero == 2 ? 1 : e.numero - 1).quand;
   if (depuis == null || depuis.isUtc) return null;
   return t.suiviAttente.depuis(date: enMinuscule(jourDateDemande(depuis)));
@@ -127,7 +146,7 @@ List<String> phrasesDelai(SuiviAttente s) {
   if (d.depasse) {
     return <String>[
       t.suiviAttente.delai.formation(jours: d.jours),
-      t.suiviAttente.delai.depasse,
+      estTu(s) ? t.suiviAttente.tu.depasse : t.suiviAttente.delai.depasse,
     ];
   }
   return <String>[
@@ -144,7 +163,10 @@ List<String> phrasesDelai(SuiviAttente s) {
 
 /// Le titre d'une demande close.
 String titreCloture(SuiviAttente s) => switch (s.cas) {
-  CasAttente.refusee => t.suiviAttente.cloture.titreRefusee,
+  CasAttente.refusee =>
+    estTu(s)
+        ? t.suiviAttente.tu.titreRefusee
+        : t.suiviAttente.cloture.titreRefusee,
   CasAttente.retiree => t.suiviAttente.cloture.titreRetiree,
   _ => t.suiviAttente.cloture.titreClose,
 };
@@ -160,7 +182,10 @@ String motifCloture(SuiviAttente s) {
     };
   }
   return switch (s.motif) {
-    MotifCloture.retraitFamille => t.suiviAttente.cloture.motif.retraitFamille,
+    MotifCloture.retraitFamille =>
+      estTu(s)
+          ? t.suiviAttente.tu.retraitFamille
+          : t.suiviAttente.cloture.motif.retraitFamille,
     MotifCloture.offreRetiree => t.suiviAttente.cloture.motif.offreRetiree,
     MotifCloture.classeNonConstituee =>
       t.suiviAttente.cloture.motif.classeNonConstituee,
@@ -187,6 +212,9 @@ EtapeAttente etapeResumee(SuiviAttente s) {
 String ligneCarte(SuiviAttente s) {
   if (s.toutEstPret) {
     final String? quand = quandCours(s, s.premierCours);
+    if (quand != null && !s.premierCoursPasse && estSimple(s)) {
+      return t.suiviAttente.carte.pretSansDate(prenom: s.prenom);
+    }
     if (quand != null && !s.premierCoursPasse) {
       return t.suiviAttente.carte.pret(
         prenom: s.prenom,

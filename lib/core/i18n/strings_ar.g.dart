@@ -2197,6 +2197,7 @@ class _Traductions$suiviAttente$ar extends Traductions$suiviAttente$fr {
 	// Translations
 	@override String get titre => 'أين وصل طلبك';
 	@override String get titreSimple => 'أين وصل طلبك';
+	@override late final _Traductions$suiviAttente$tu$ar tu = _Traductions$suiviAttente$tu$ar._(_root);
 	@override String get contexte => 'تؤكد الأكاديمية كل مرحلة، وتصلك رسالة عند كل انتقال.';
 	@override String get contexteSimple => 'هنا ترى أين وصل طلبك. تُخبرك الأكاديمية عند كل مرحلة.';
 	@override String pour({required Object prenom}) => 'من أجل ⁨${prenom}⁩';
@@ -10912,6 +10913,31 @@ class _Traductions$push1$reglages$ar extends Traductions$push1$reglages$fr {
 	@override String get changementNonConfirme => 'لم يتأكد التغيير بعد: ربما انقطع الاتصال. أعيدوا المحاولة بعد قليل.';
 }
 
+// Path: suiviAttente.tu
+class _Traductions$suiviAttente$tu$ar extends Traductions$suiviAttente$tu$fr {
+	_Traductions$suiviAttente$tu$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get formationListeAttente => 'جميع فصول هذا الموعد ممتلئة. ينتظر طلبك أن يُفتح مقعد.';
+	@override String get confirmeeFait => 'تم تأكيد فصلك.';
+	@override String confirmeeFaitNom({required Object classe}) => 'تم تأكيد فصلك «⁨${classe}⁩».';
+	@override String get enseignantEnAttente => 'الفصل ينتظر معلمه. تعيّنه الأكاديمية وتُخبرك.';
+	@override String get pretEnCours => 'تحدد الأكاديمية موعد أول حصة لك. تُخبرك حالما يُعرف الموعد.';
+	@override String get pretAVenir => 'يُعلن موعد أول حصة بعد تعيين المعلم.';
+	@override String premierCoursPasse({required Object quand}) => 'كانت أول حصة لك في ⁨${quand}⁩.';
+	@override String get premierCoursPetit => 'أول حصة لك قريبة. يخبرك ولي أمرك بموعدها.';
+	@override String get premierCoursPassePetit => 'انتهت أول حصة لك.';
+	@override String get depasse => 'يستغرق تكوين فصلك وقتًا أطول من المتوقع. تكتب لك الأكاديمية.';
+	@override String changement({required Object date}) => 'تغيّر موعد الفصل في ⁨${date}⁩. وصل ولي أمرك إشعار بذلك.';
+	@override String get titreRefusee => 'لم يُقبل طلبك';
+	@override String get retraitFamille => 'سحب ولي أمرك هذا الطلب.';
+	@override String get erreur => 'تعذّرت قراءة طلبك. يحدث هذا غالبًا بسبب الاتصال. حاول مرة أخرى بعد قليل.';
+	@override String get sansDonnees => 'تعذّر تحميل طلبك';
+	@override String get introuvable => 'لم يعد هذا الطلب موجودًا.';
+}
+
 // Path: suiviAttente.etapes
 class _Traductions$suiviAttente$etapes$ar extends Traductions$suiviAttente$etapes$fr {
 	_Traductions$suiviAttente$etapes$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -10982,7 +11008,7 @@ class _Traductions$suiviAttente$delai$ar extends Traductions$suiviAttente$delai$
 	@override String limite({required Object date}) => 'الموعد الأخير: ⁨${date}⁩';
 	@override String point({required Object date}) => 'وقفة تقييم: ⁨${date}⁩';
 	@override String get pointPasse => 'مرّت وقفة التقييم.';
-	@override String get depasse => 'تجاوز التكوين المدة المعلنة. قاعدتنا: لا تمدّد الإدارة الانتظار إلا بموافقتك، أو تقترح عليك فصلًا آخر.';
+	@override String get depasse => 'يستغرق تكوين فصلك وقتًا أطول من المتوقع. تكتب لك الأكاديمية.';
 }
 
 // Path: suiviAttente.cloture
@@ -11047,6 +11073,7 @@ class _Traductions$suiviAttente$carte$ar extends Traductions$suiviAttente$carte$
 	@override String ligne({required Object prenom, required Object n, required Object total, required Object etape}) => '⁨${prenom}⁩: المرحلة ⁨${n}⁩ من ⁨${total}⁩، ⁨${etape}⁩';
 	@override String get suivre => 'متابعة طلبي';
 	@override String pret({required Object prenom, required Object quand}) => '⁨${prenom}⁩: كل شيء جاهز. أول حصة: ⁨${quand}⁩';
+	@override String pretSansDate({required Object prenom}) => '⁨${prenom}⁩: كل شيء جاهز.';
 }
 
 // Path: suiviAttente.presentation
@@ -35502,6 +35529,22 @@ extension on TraductionsAr {
 			'suiviPedagogique.erreur' => 'تعذرت قراءة مرحلة البرنامج. حاول مرة أخرى بعد قليل.',
 			'suiviAttente.titre' => 'أين وصل طلبك',
 			'suiviAttente.titreSimple' => 'أين وصل طلبك',
+			'suiviAttente.tu.formationListeAttente' => 'جميع فصول هذا الموعد ممتلئة. ينتظر طلبك أن يُفتح مقعد.',
+			'suiviAttente.tu.confirmeeFait' => 'تم تأكيد فصلك.',
+			'suiviAttente.tu.confirmeeFaitNom' => ({required Object classe}) => 'تم تأكيد فصلك «⁨${classe}⁩».',
+			'suiviAttente.tu.enseignantEnAttente' => 'الفصل ينتظر معلمه. تعيّنه الأكاديمية وتُخبرك.',
+			'suiviAttente.tu.pretEnCours' => 'تحدد الأكاديمية موعد أول حصة لك. تُخبرك حالما يُعرف الموعد.',
+			'suiviAttente.tu.pretAVenir' => 'يُعلن موعد أول حصة بعد تعيين المعلم.',
+			'suiviAttente.tu.premierCoursPasse' => ({required Object quand}) => 'كانت أول حصة لك في ⁨${quand}⁩.',
+			'suiviAttente.tu.premierCoursPetit' => 'أول حصة لك قريبة. يخبرك ولي أمرك بموعدها.',
+			'suiviAttente.tu.premierCoursPassePetit' => 'انتهت أول حصة لك.',
+			'suiviAttente.tu.depasse' => 'يستغرق تكوين فصلك وقتًا أطول من المتوقع. تكتب لك الأكاديمية.',
+			'suiviAttente.tu.changement' => ({required Object date}) => 'تغيّر موعد الفصل في ⁨${date}⁩. وصل ولي أمرك إشعار بذلك.',
+			'suiviAttente.tu.titreRefusee' => 'لم يُقبل طلبك',
+			'suiviAttente.tu.retraitFamille' => 'سحب ولي أمرك هذا الطلب.',
+			'suiviAttente.tu.erreur' => 'تعذّرت قراءة طلبك. يحدث هذا غالبًا بسبب الاتصال. حاول مرة أخرى بعد قليل.',
+			'suiviAttente.tu.sansDonnees' => 'تعذّر تحميل طلبك',
+			'suiviAttente.tu.introuvable' => 'لم يعد هذا الطلب موجودًا.',
 			'suiviAttente.contexte' => 'تؤكد الأكاديمية كل مرحلة، وتصلك رسالة عند كل انتقال.',
 			'suiviAttente.contexteSimple' => 'هنا ترى أين وصل طلبك. تُخبرك الأكاديمية عند كل مرحلة.',
 			'suiviAttente.pour' => ({required Object prenom}) => 'من أجل ⁨${prenom}⁩',
@@ -35540,7 +35583,7 @@ extension on TraductionsAr {
 			'suiviAttente.delai.limite' => ({required Object date}) => 'الموعد الأخير: ⁨${date}⁩',
 			'suiviAttente.delai.point' => ({required Object date}) => 'وقفة تقييم: ⁨${date}⁩',
 			'suiviAttente.delai.pointPasse' => 'مرّت وقفة التقييم.',
-			'suiviAttente.delai.depasse' => 'تجاوز التكوين المدة المعلنة. قاعدتنا: لا تمدّد الإدارة الانتظار إلا بموافقتك، أو تقترح عليك فصلًا آخر.',
+			'suiviAttente.delai.depasse' => 'يستغرق تكوين فصلك وقتًا أطول من المتوقع. تكتب لك الأكاديمية.',
 			'suiviAttente.changement' => ({required Object date}) => 'تغيّر موعد الفصل في ⁨${date}⁩. وصلك إشعار بذلك.',
 			'suiviAttente.cloture.titreRefusee' => 'لم يُقبل طلبك',
 			'suiviAttente.cloture.titreRetiree' => 'تم سحب هذا الطلب',
@@ -35581,6 +35624,7 @@ extension on TraductionsAr {
 			'suiviAttente.carte.ligne' => ({required Object prenom, required Object n, required Object total, required Object etape}) => '⁨${prenom}⁩: المرحلة ⁨${n}⁩ من ⁨${total}⁩، ⁨${etape}⁩',
 			'suiviAttente.carte.suivre' => 'متابعة طلبي',
 			'suiviAttente.carte.pret' => ({required Object prenom, required Object quand}) => '⁨${prenom}⁩: كل شيء جاهز. أول حصة: ⁨${quand}⁩',
+			'suiviAttente.carte.pretSansDate' => ({required Object prenom}) => '⁨${prenom}⁩: كل شيء جاهز.',
 			'suiviAttente.presentation.titre' => 'ما تراه الأسر عنك',
 			'suiviAttente.presentation.phrase' => 'ترى أسر فصولك دائمًا اسمك ولغة الدرس. وتختار أنت إظهار صورتك وبلديك وكلمة تعريف.',
 			'suiviAttente.presentation.montrer' => 'أُظهر صورتي وبلديّ لأسر فصولي',

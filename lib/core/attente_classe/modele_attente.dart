@@ -46,6 +46,21 @@ enum EtatEtapeAttente {
   aVenir,
 }
 
+/// A qui l'ecran parle (arbitrage du 13/11/2026). Ce n'est pas l'age de l'eleve
+/// seul qui decide : un tuteur lit toujours le suivi d'un enfant avec les mots
+/// des adultes, l'enfant le lit dans son propre espace.
+enum AudienceAttente {
+  /// Un adulte ou un tuteur : vouvoiement, dates et delais.
+  adulte,
+
+  /// Un mineur de 10 a 17 ans dans son espace : tutoiement, dates et delais,
+  /// rien sur l'argent ni sur les gestes reserves au tuteur.
+  mineur,
+
+  /// Un enfant de 6 a 9 ans dans son espace : tutoiement, **ni date ni duree**.
+  petit,
+}
+
 /// Ou en est la demande, hors du chemin droit ou sur lui (S3).
 enum CasAttente {
   /// Le chemin droit : aucun accroc.
@@ -186,7 +201,11 @@ class SuiviAttente {
     CarteEnseignantAttente? enseignant,
     this.peutChoisirAutreCreneau = false,
     this.visibleAccueil = true,
-  }) : etapes = List<EtapeAttente>.unmodifiable(_rangees(etapes)),
+    AudienceAttente? audience,
+  }) : audience =
+           audience ??
+           (versionSimple ? AudienceAttente.petit : AudienceAttente.adulte),
+       etapes = List<EtapeAttente>.unmodifiable(_rangees(etapes)),
        enseignant =
            _rangees(etapes).any(
              (EtapeAttente e) =>
@@ -255,6 +274,47 @@ class SuiviAttente {
 
   /// Vrai quand le suivi est encore en tete de l'accueil (S6).
   final bool visibleAccueil;
+
+  /// A qui l'ecran parle. Fixee par l'espace de celui qui regarde
+  /// ([pourEspace]) ; par defaut, un enfant de 6 a 9 ans est « petit », tout
+  /// le reste est « adulte ».
+  final AudienceAttente audience;
+
+  /// Le meme suivi, lu depuis l'espace de celui qui regarde : le tuteur et
+  /// l'adulte lisent avec les mots des adultes ; l'enfant, dans son espace, avec
+  /// les siens (6 a 9 ans : sans date ni duree ; 10 a 17 ans : tutoiement, avec
+  /// dates et delais).
+  SuiviAttente pourEspace({required bool espaceEnfant}) {
+    final AudienceAttente voulue = !espaceEnfant
+        ? AudienceAttente.adulte
+        : versionSimple
+        ? AudienceAttente.petit
+        : typePublic == 'enfant'
+        ? AudienceAttente.mineur
+        : AudienceAttente.adulte;
+    if (voulue == audience) return this;
+    return SuiviAttente(
+      demandeId: demandeId,
+      eleveId: eleveId,
+      prenom: prenom,
+      fuseauIana: fuseauIana,
+      cas: cas,
+      etapes: etapes,
+      typePublic: typePublic,
+      versionSimple: versionSimple,
+      motif: motif,
+      creneau: creneau,
+      delai: delai,
+      classe: classe,
+      premierCours: premierCours,
+      premierCoursPasse: premierCoursPasse,
+      creneauChangeLe: creneauChangeLe,
+      enseignant: enseignant,
+      peutChoisirAutreCreneau: peutChoisirAutreCreneau,
+      visibleAccueil: visibleAccueil,
+      audience: voulue,
+    );
+  }
 
   /// L'etape en cours, nulle quand tout est fait ou que la demande est close.
   EtapeAttente? get courante {
