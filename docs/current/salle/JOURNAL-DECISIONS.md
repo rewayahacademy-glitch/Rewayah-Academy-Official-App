@@ -1997,3 +1997,42 @@ décidé en chemin, et qui engage la suite :
 migration n'est installée. La suite complète des tests sur l'ensemble n'a pas encore fini une
 fois (un blocage sous la charge, puis un redémarrage du conteneur).
 
+## D-043 (13/11/2026). Les sorties de l'application consignées au rapport, avec l'accord du parent (lot HORS-SALLE-2)
+
+**Demande du directeur (12/11/2026 au soir).** « Toutes ses sorties de l'app doivent être consignées
+sur le rapport : leur nombre total, fréquence, de quand jusqu'à quand. » Et le délai avant la
+sortie de la salle doit être réglable par la direction.
+
+**Cadre (règle du 11/11, `DROIT-RELEVE-QUALITE.md` §10 point 3).** Rien n'est gardé pour un élève
+mineur sans l'accord d'un tuteur de son foyer. La base ne connaît que `student_type` : un élève qui
+n'est pas `autonomous`, ou dont le type ne se lit pas, est traité comme mineur.
+
+**Décidé et construit (migration `20261124200000_journal_sorties.sql`, non installée).**
+- Trois réglages : `salle.sorties.journal_actif` (faux), `salle.sorties.delai_secondes` (30, de 5 à
+  600), `salle.sorties.accord_version` (`sorties-2026-11-v1`), vérifiés à l'écriture ; le délai et
+  l'état du journal sont rendus par `regles_academie()` (trois clés ajoutées, même signature).
+- L'accord, par élève (`accords_journal_sorties`, modèle `accords_publication`) : un tuteur du foyer
+  pour un élève non autonome ; l'élève autonome pour lui-même ; jamais l'enfant pour lui-même. Un
+  seul en cours ; retrait par `retire_le` ; accepter et retirer sont journalisés
+  (`log_sensitive_access`). Aucun accord n'est recueilli journal éteint.
+- **Élève adulte : option la plus protectrice.** Son choix passe par le même mécanisme : sans
+  réponse de sa part, rien n'est noté (pas d'écriture par défaut avec simple information).
+- Le journal (`journal_sorties_app`) : séance, élève, sortie, retour, sortie de la salle ou non.
+  Écrit par `noter_sortie_app` seulement : journal allumé, accord valide à la version en cours,
+  élève participant de la séance en cours ; heures du serveur ; 200 lignes au plus par séance et
+  par élève, une par seconde. Sinon `{"note": false}`, jamais d'erreur visible. D6 : depuis
+  l'appareil de son tuteur, le tuteur du foyer note pour l'élève (paramètre `p_eleve`).
+- Lecture (`sorties_seance`) : direction, enseignant de la séance (titulaire ou remplaçant
+  effectif), tuteur pour ses enfants, élève pour lui ; **sans le contrôleur**, faute d'usage écrit.
+- Écrans : page de l'accord dans le Compte (tuteur : une carte par enfant ; élève adulte : pour
+  lui), proposée seulement journal allumé ; section « Sorties de l'application » du détail de
+  séance du parent ; une ligne par élève dans le cahier de l'enseignant ; le délai et l'interrupteur
+  du journal dans Configuration > Règles.
+
+**Ce qui attend le directeur.** Valider les textes (`TEXTES-VALIDES/ACCORD-JOURNAL-SORTIES.md`,
+PROPOSITION, français et arabe), décider la durée de conservation (aucune n'est écrite, aucune
+fonction d'effacement n'existe), puis seulement allumer le journal.
+
+**Limites.** Une sortie dont l'élève ne revient pas (page tuée) n'est pas notée. Aucun écran simple
+de présence d'une séance n'existe chez la direction : sa ligne n'a pas d'endroit, aucun écran n'a
+été créé. Le texte A3 promet « Compte, Mes accords », qui n'existe pas (signalé, non corrigé ici).
