@@ -14,6 +14,25 @@
 
 import 'dart:ui' show TextDirection;
 
+import 'strings.g.dart';
+
+/// La marque de lettre arabe (U+061C) : invisible, forte de droite a gauche.
+const String marqueLettreArabe = '\u061C';
+
+/// DATE-ARABE-ISOLAT (garde-cap, 12/11/2026) : [texte] avec la marque de
+/// lettre arabe en tete quand la langue de l'interface est l'arabe, tel quel
+/// sinon (et vide, il reste vide). Pour une date (ou toute valeur) dont le
+/// gabarit isole chaque morceau (jour, mois et annee isoles chacun) : posee
+/// dans une phrase qui l'isole a son tour, elle recevait un isolat exterieur
+/// sans lettre forte, donc de gauche a droite, et se lisait a l'envers
+/// (annee, mois, jour). La marque lui donne le sens de l'interface. Une
+/// seule fonction pour toute l'application : la poser dans le formateur, a la
+/// source, jamais ecran par ecran.
+String enTeteArabe(String texte) =>
+    texte.isNotEmpty && LocaleSettings.currentLocale == AppLocale.ar
+    ? '$marqueLettreArabe$texte'
+    : texte;
+
 /// Isole [texte] dans son propre sens de lecture (premier caractere fort),
 /// sans changer l'ordre des segments voisins. Un texte vide reste vide.
 String isolerSens(String texte) => texte.isEmpty ? texte : '\u2068$texte\u2069';

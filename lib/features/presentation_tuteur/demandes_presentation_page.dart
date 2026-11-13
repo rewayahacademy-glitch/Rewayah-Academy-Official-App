@@ -19,6 +19,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/accessibilite/port_reponse_presentation.dart';
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/i18n/elision.dart';
+import '../../core/i18n/isolat_bidi.dart' show enTeteArabe;
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/etat_sans_donnees.dart';
@@ -39,10 +40,12 @@ import '../../core/widgets/skeleton.dart';
 import '../suivi_demandes/libelles_suivi_demandes.dart' show hhmmDemande;
 
 /// « Lundi 12 octobre » : le jour de la demande, heure murale du foyer.
-String _jour(DateTime d) => t.commun.dates.jourDate(
-  jour: t.commun.dates.jours[d.weekday - 1],
-  numero: d.day,
-  mois: t.commun.dates.mois[d.month - 1],
+String _jour(DateTime d) => enTeteArabe(
+  t.commun.dates.jourDate(
+    jour: t.commun.dates.jours[d.weekday - 1],
+    numero: d.day,
+    mois: t.commun.dates.mois[d.month - 1],
+  ),
 );
 
 /// Le titre de la notification `demande_presentation` : qui demande quoi.

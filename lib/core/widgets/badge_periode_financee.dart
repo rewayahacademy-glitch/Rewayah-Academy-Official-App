@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../finance/finances_profil.dart';
+import '../i18n/isolat_bidi.dart' show enTeteArabe;
 import '../i18n/jour_du_mois.dart';
 import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
@@ -26,10 +27,12 @@ class BadgePeriodeFinancee extends StatelessWidget {
     if (periode == null) return t.argent.periode.aucune;
     final DateTime fin = periode.fin.toLocal();
     return t.argent.periode.jusquau(
-      date: t.foyer.membre.date(
-        jour: jourDuMois(fin.day),
-        mois: t.commun.dates.mois[fin.month - 1],
-        annee: fin.year.toString(),
+      date: enTeteArabe(
+        t.foyer.membre.date(
+          jour: jourDuMois(fin.day),
+          mois: t.commun.dates.mois[fin.month - 1],
+          annee: fin.year.toString(),
+        ),
       ),
     );
   }

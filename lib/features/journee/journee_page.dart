@@ -54,6 +54,7 @@ import '../../core/enseignant/modeles_enseignant.dart';
 import '../../core/enseignant/port_remplacements.dart';
 import '../../core/enseignant/service_enseignant.dart';
 import '../../core/i18n/elision.dart';
+import '../../core/i18n/isolat_bidi.dart' show enTeteArabe;
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/observabilite/journal_dev.dart';
@@ -1802,10 +1803,12 @@ String _nommer(PresenceParticipant ligne) =>
 /// l'heure du profil ([chezMoi]).
 String dateLisible(DateTime instant) {
   final DateTime quand = chezMoi(instant);
-  return t.enseignant.journee.date(
-    jour: t.commun.dates.jours[quand.weekday - 1],
-    numero: '${quand.day}',
-    mois: t.commun.dates.mois[quand.month - 1],
+  return enTeteArabe(
+    t.enseignant.journee.date(
+      jour: t.commun.dates.jours[quand.weekday - 1],
+      numero: '${quand.day}',
+      mois: t.commun.dates.mois[quand.month - 1],
+    ),
   );
 }
 

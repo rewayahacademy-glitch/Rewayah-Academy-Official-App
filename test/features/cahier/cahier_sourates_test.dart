@@ -7,8 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/enseignant/modeles_enseignant.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/suivi/ma_progression.dart';
 import 'package:rewayah_academy/core/suivi/port_suivi_pedagogique.dart';
-import 'package:rewayah_academy/core/suivi/suivi_pedagogique_supabase.dart';
 import 'package:rewayah_academy/core/widgets/app_bottom_sheet.dart';
 import 'package:rewayah_academy/features/cahier/cahier_page.dart';
 import 'package:rewayah_academy/features/fiche_groupe/sourates_classe.dart';
@@ -66,19 +66,19 @@ void main() {
 
     test('suivi : le compte du serveur, nul s il manque ou s il est '
         'incoherent', () {
-      final SuiviPedagogique? avec = SuiviPedagogique.depuisJson(
-        <String, Object?>{
-          'etape_nom': 'Les sourates courtes',
+      final MaProgression? avec = MaProgression.depuisJson(<String, Object?>{
+        'etape': <String, Object?>{'nom': 'Les sourates courtes', 'ordre': 3},
+        'sourates': <String, Object?>{
           'sourates_validees': 3,
           'sourates_total': 17,
         },
-      );
+      });
       expect(avec!.sourates!.validees, 3);
       expect(avec.sourates!.total, 17);
       expect(avec.sourates!.toutes, isFalse);
-      final SuiviPedagogique? sans = SuiviPedagogique.depuisJson(
-        <String, Object?>{'etape_nom': 'Lire avec les voyelles'},
-      );
+      final MaProgression? sans = MaProgression.depuisJson(<String, Object?>{
+        'etape': <String, Object?>{'nom': 'Lire avec les voyelles', 'ordre': 2},
+      });
       expect(sans!.sourates, isNull);
       expect(SouratesValidees.depuis(18, 17), isNull);
       expect(SouratesValidees.depuis(1, 0), isNull);
@@ -86,20 +86,21 @@ void main() {
     });
   });
 
-  test('suivi : sourates_eleve complete la ligne ; sans elle, le suivi '
-      'reste lisible sans sourates', () {
-    final Object? fusion = avecSourates(
-      <Object?>[
-        <String, Object?>{'etape_nom': 'Les sourates courtes'},
-      ],
-      <String, Object?>{'sourates_validees': 4, 'sourates_total': 17},
-    );
-    final SuiviPedagogique? lu = SuiviPedagogique.depuisJson(fusion);
+  test('ma_progression porte les sourates avec l etape ; sans le compte, '
+      'la progression reste lisible sans sourates', () {
+    final MaProgression? lu = MaProgression.depuisJson(<String, Object?>{
+      'etape': <String, Object?>{'nom': 'Les sourates courtes', 'ordre': 3},
+      'sourates': <String, Object?>{
+        'sourates_validees': 4,
+        'sourates_total': 17,
+      },
+    });
     expect(lu!.sourates!.validees, 4);
-    final SuiviPedagogique? sans = SuiviPedagogique.depuisJson(
-      avecSourates(<String, Object?>{'etape_nom': 'Lire'}, null),
-    );
-    expect(sans!.etapeNom, 'Lire');
+    final MaProgression? sans = MaProgression.depuisJson(<String, Object?>{
+      'etape': <String, Object?>{'nom': 'Lire', 'ordre': 1},
+      'sourates': null,
+    });
+    expect(sans!.suivi!.etapeNom, 'Lire');
     expect(sans.sourates, isNull);
   });
 

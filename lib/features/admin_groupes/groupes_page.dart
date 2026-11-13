@@ -56,6 +56,7 @@ import '../../core/widgets/sous_navigation_domaine.dart';
 import '../../core/widgets/status_pill.dart';
 import '../admin_fusion/feuilles_fusion.dart';
 import '../creneaux/plages.dart' show jourCapitalise, nommerHeure;
+import '../fiche_groupe/sourates_retirables_classe.dart';
 import '../priere_serveur/bloc_priere_classe.dart';
 import '../suivi_demandes/libelles_suivi_demandes.dart' show deFuseau;
 import 'bas_de_feuille.dart';
@@ -2046,6 +2047,17 @@ class _FeuilleDetail extends ConsumerWidget {
           ),
           _ => const Skeleton.liste(lignes: 3),
         },
+        // CORRIGER-SOURATE-DIRECTION : les sourates validees par erreur, que
+        // la direction retire sans limite de temps (le serveur en decide).
+        Ecart.vXxl,
+        SouratesRetirablesClasse(
+          groupeId: groupe.id,
+          noms: <String, String>{
+            for (final MembreGroupe m
+                in membres.value ?? const <MembreGroupe>[])
+              m.studentId: m.libelle,
+          },
+        ),
       ],
     );
   }

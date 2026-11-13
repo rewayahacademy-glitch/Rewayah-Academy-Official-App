@@ -11,6 +11,7 @@
 library;
 
 import '../../core/admin/creation_classe_refusee.dart';
+import '../../core/i18n/isolat_bidi.dart' show enTeteArabe;
 import '../../core/i18n/strings.g.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../suivi_demandes/libelles_suivi_demandes.dart' show deFuseau;
@@ -92,9 +93,11 @@ String _avecDate(String jour, String? date) {
   final int? mois = int.tryParse(morceaux[1]);
   final int? numero = int.tryParse(morceaux[2]);
   if (mois == null || numero == null || mois < 1 || mois > 12) return jour;
-  return t.admin.groupes.c1.jourDate(
-    jour: jour,
-    numero: '$numero',
-    mois: t.commun.dates.mois[mois - 1],
+  return enTeteArabe(
+    t.admin.groupes.c1.jourDate(
+      jour: jour,
+      numero: '$numero',
+      mois: t.commun.dates.mois[mois - 1],
+    ),
   );
 }
