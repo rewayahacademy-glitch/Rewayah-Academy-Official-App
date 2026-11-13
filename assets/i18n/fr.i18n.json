@@ -406,8 +406,8 @@
     "dynamique": {
       "arriveePrenom": "{prenom} entre dans la salle",
       "arrivees(plural, param=n)": {
-        "one": "Un élève entre dans la salle",
-        "other": "{n} élèves entrent dans la salle"
+        "one": "élève entre dans la salle",
+        "other": "élèves entrent dans la salle"
       },
       "arriveeMarquePrenom": "{prenom} dans la salle",
       "arriveesMarque(plural, param=n)": {

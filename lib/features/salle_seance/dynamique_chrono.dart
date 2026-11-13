@@ -462,22 +462,29 @@ class _DynamiqueChronoEtat extends State<DynamiqueChrono> {
             crossAxisAlignment: CrossAxisAlignment.start,
             spacing: AppSpacing.xs,
             children: <Widget>[
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  if (compte != null) ...<Widget>[
-                    ExcludeSemantics(
-                      child: ChiffresRoulants(
-                        key: DynamiqueChrono.cleCompte,
-                        texte: '+$compte',
-                        style: titre,
-                      ),
-                    ),
-                    Ecart.hSm,
-                  ],
-                  Flexible(child: Text(a.titre, style: titre)),
-                ],
+              // Le nombre et le titre se lisent ensemble (« +2 eleves entrent
+              // dans la salle ») : les chiffres roulants seuls seraient lus
+              // caractere par caractere.
+              Semantics(
+                label: compte == null ? null : '+$compte ${a.titre}',
+                child: ExcludeSemantics(
+                  excluding: compte != null,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      if (compte != null) ...<Widget>[
+                        ChiffresRoulants(
+                          key: DynamiqueChrono.cleCompte,
+                          texte: '+$compte',
+                          style: titre,
+                        ),
+                        Ecart.hSm,
+                      ],
+                      Flexible(child: Text(a.titre, style: titre)),
+                    ],
+                  ),
+                ),
               ),
               if (a.detail case final String detail) Text(detail, style: style),
               if (a.actions.isNotEmpty)

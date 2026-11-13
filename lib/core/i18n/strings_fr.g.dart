@@ -5133,10 +5133,10 @@ class Traductions$salle$dynamique$fr {
 	/// fr: '{prenom} entre dans la salle'
 	String arriveePrenom({required Object prenom}) => '${prenom} entre dans la salle';
 
-	/// fr: '(one) {Un élève entre dans la salle} (other) {{n} élèves entrent dans la salle}'
+	/// fr: '(one) {élève entre dans la salle} (other) {élèves entrent dans la salle}'
 	String arrivees({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
-		one: 'Un élève entre dans la salle',
-		other: '${n} élèves entrent dans la salle',
+		one: 'élève entre dans la salle',
+		other: 'élèves entrent dans la salle',
 	);
 
 	/// fr: '{prenom} dans la salle'
@@ -49464,7 +49464,7 @@ extension on Traductions {
 			'salle.ile.conclure' => 'Moins de 5 minutes : pensez à conclure.',
 			'salle.ile.finAtteinte' => 'Fin prévue atteinte : séance toujours en direct.',
 			'salle.dynamique.arriveePrenom' => ({required Object prenom}) => '${prenom} entre dans la salle',
-			'salle.dynamique.arrivees' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Un élève entre dans la salle', other: '${n} élèves entrent dans la salle', ), 
+			'salle.dynamique.arrivees' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'élève entre dans la salle', other: 'élèves entrent dans la salle', ), 
 			'salle.dynamique.arriveeMarquePrenom' => ({required Object prenom}) => '${prenom} dans la salle',
 			'salle.dynamique.arriveesMarque' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Un élève de plus dans la salle', other: '${n} élèves de plus dans la salle', ), 
 			'salle.dynamique.unEleveRecite' => 'Un élève récite',

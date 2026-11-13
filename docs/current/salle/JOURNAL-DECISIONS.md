@@ -1831,3 +1831,66 @@ L'Interface guidée reste sans chrono (règle inchangée) : sa barre ne montre q
 page perd la hauteur de la rangée (environ 80 points au téléphone, 64 sur tablette ; à 820 de
 large, la ligne du texte passe de 611 à 577). Prouvé par tests et captures de test
 (`docs/current/captures/E2E/dynamique-chrono-1/`) ; pas sur un vrai appareil, pas en production.
+
+## D-039 (13/11/2026). La Dynamique chrono parle : arrivées, couleurs, appel, récitation, pause proposée (lot DYNAMIQUE-CHRONO-2, retours 5, 6, 14 et 15 du directeur)
+
+**La demande** (directeur, 12/11/2026). Point 5 : les arrivées (+1, +2 animés), des couleurs
+(pause, minutes restantes, peu de temps), l'appel et la récitation dans la barre, une alerte qui
+disparaît en quelques secondes et laisse une marque. Point 6 : la sonnerie de l'appel trop courte.
+Point 14 : la pause proposée par la barre, Oui / Non, l'heure exacte de reprise à tous, le rappel
+après un Non. Point 15 : la salle réduite exploitée au maximum.
+
+**Ce qui est fait.**
+- Une seule logique, sans widget, horloge injectée : `PiloteDynamique` (file d'alertes, une à la
+  fois, repli seul compté en battements, marque laissée, une alerte de la même famille remplace
+  celle qui est montrée, toucher qui replie ou rouvre), `SuiviArrivees`, `PilotePause`
+  (`lib/features/salle_seance/pilote_dynamique.dart`). Partagée par la salle (`salle_page.dart`) et
+  la salle réduite (`BarreSeanceEnDirect`) : rien n'est recopié. Le relais de la pause et la lecture
+  du rappel sont sortis de `salle_page.dart` dans `relais_salle.dart` (lus aussi par `SynchroSalle`).
+- Passent par la barre : l'appel reçu (alerte, sonnerie, marque jusqu'au toucher de la barre),
+  l'appel envoyé (alerte brève, marque 20 s), la récitation chez tous, enseignant compris (alerte
+  « {Prénom} récite » avec « Votre micro est fermé... » chez les camarades, marque tant qu'elle dure,
+  « La récitation est terminée » à la fin, « Un élève récite » sans prénom), le début et la fin de la
+  pause, les arrivées chez qui conduit la séance (+1 avec le prénom, +2 qui roule, pas de son, rien
+  pour ceux déjà là ni pendant 5 s après sa propre entrée). Les échecs (récitation non ouverte,
+  appel non parti, micro bloqué, son bloqué, enseignant parti) restent dans l'annonce de tête :
+  ils disent quoi faire, avec un lien.
+- Couleurs de la barre repliée : temps normal (surface de la pilule), pause (`washAccent`, chez
+  tous, mot « Pause » à la place de « Reste »), peu de temps (`washWarning`, « Reste »),
+  dépassement (`washAlert`, « Après la fin »). Peu de temps et dépassement restent sans teinte chez
+  l'élève (règle CHRONO-ETAT `sobre`, inchangée). Contraste : paires du thème, mesurées par
+  `test/theme/contraste_test.dart`.
+- Sonnerie (point 6) : `SonnerieAppel`, le motif existant joué trois fois à 1,5 s, arrêté dès que
+  l'élève touche l'écran ou la barre ; un refus du navigateur ne casse rien.
+- Pause proposée (point 14) : à `proposerA`, chez qui a `peutPiloter`, « Pause de 10 min ? »,
+  « Oui » en bouton plein compact, « Non » en lien ; 30 s dépliée, puis marque « Pause proposée »
+  (un toucher la rouvre) et retour 5 min plus tard sans rien envoyer. Oui démarre, Non refuse (le
+  serveur rend la suivante ; nulle : plus rien). Un échec garde la proposition et la phrase
+  existante (`salle.seance.pause.echec`). À tous : « Pause de 10 min. Reprise à 20:45 » (heure de
+  la personne, `heureChezMoi`), marque « Pause, reprise dans 7 min » ; à l'heure de reprise, l'écran
+  de l'enseignant termine la pause (une fois, réessai au battement suivant si le serveur refuse),
+  « La pause est finie » chez tous ; chez l'élève, passé l'heure de reprise, la barre ne dit plus
+  « Pause » même sans message de fin. Libellé gardé pour finir plus tôt : « Terminer la pause ».
+  Pause de prière (champ `motif` du serveur) : marque « Pause de prière à 20:30 », 3 min avant
+  « Commencer maintenant » / « Décaler de 5 min » (refuser), départ seul à l'heure. Serveur ancien
+  (`proposerA` nul) : aucune proposition, le lien manuel reste. Le relais porte le motif et
+  `proposerA` ; un ancien message se lit comme une pause ordinaire.
+- Géométrie (décision 2) : au téléphone, quand la barre se déplie par-dessus, la ligne d'état
+  (« En salle », « Visite de contrôle possible. ») descend sous elle, dans le même portail ; sa
+  place reste réservée. La barre dépliée ne la coupe plus (test ajouté, fr et ar).
+- Salle réduite : l'appel reçu (alerte, sonnerie, marque) et la pause (début avec l'heure,
+  couleur, fin à l'heure ; chez l'enseignant, proposition et fin automatique) arrivent par les
+  paquets de la visio, sans la page de la salle. Son toucher garde son geste (retourner dans la
+  salle) et coupe la sonnerie.
+- Lecteur d'écran : chaque alerte est un nœud neuf en `liveRegion` (lue une fois). Mouvement
+  réduit : aucun roulement ni glissement, l'information reste.
+
+**Ce qui n'est pas fait, ou pas prouvé.** Rien n'est prouvé sur un vrai appareil ni en production :
+tests et captures de test seulement (`docs/current/captures/E2E/dynamique-chrono-2/`). Le son sur
+un vrai navigateur (répétition, autorisation) n'est pas essayé. La pause sur un vrai serveur
+(migration PAUSE-SERVEUR non installée à ma connaissance) n'est pas essayée. Le délai de rappel
+sans réponse (5 min) est une constante du client : le port ne rend pas le réglage de la direction.
+La salle réduite ne reçoit ni la récitation ni les arrivées (la synchronisation de la salle n'y
+tourne pas). Une pause démarrée pendant que l'enseignant est hors de la salle n'est pas relayée aux
+élèves (le relais vit dans la page) ; leur barre se fie alors à l'heure. Au téléphone, la ligne
+d'état descendue passe un instant sur la capsule vidéo de l'enseignant.

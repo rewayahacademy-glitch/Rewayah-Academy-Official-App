@@ -3323,12 +3323,12 @@ class _Traductions$salle$dynamique$ar extends Traductions$salle$dynamique$fr {
 	// Translations
 	@override String arriveePrenom({required Object prenom}) => 'وصول ⁨${prenom}⁩ إلى القاعة';
 	@override String arrivees({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
-		zero: 'وصول ⁨${n}⁩ طلاب إلى القاعة',
+		zero: 'وصول طلاب إلى القاعة',
 		one: 'وصول طالب إلى القاعة',
-		two: 'وصول ⁨${n}⁩ طلاب إلى القاعة',
-		few: 'وصول ⁨${n}⁩ طلاب إلى القاعة',
-		many: 'وصول ⁨${n}⁩ طلاب إلى القاعة',
-		other: 'وصول ⁨${n}⁩ طلاب إلى القاعة',
+		two: 'وصول طلاب إلى القاعة',
+		few: 'وصول طلاب إلى القاعة',
+		many: 'وصول طلاب إلى القاعة',
+		other: 'وصول طلاب إلى القاعة',
 	);
 	@override String arriveeMarquePrenom({required Object prenom}) => 'في القاعة: ⁨${prenom}⁩';
 	@override String arriveesMarque({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
@@ -24946,7 +24946,7 @@ extension on TraductionsAr {
 			'salle.ile.conclure' => 'بقيت أقل من 5 دقائق: حان وقت ختم الحصة.',
 			'salle.ile.finAtteinte' => 'بلغت الحصة نهايتها المقرّرة: الحصة ما زالت مباشرة.',
 			'salle.dynamique.arriveePrenom' => ({required Object prenom}) => 'وصول ⁨${prenom}⁩ إلى القاعة',
-			'salle.dynamique.arrivees' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'وصول ⁨${n}⁩ طلاب إلى القاعة', one: 'وصول طالب إلى القاعة', two: 'وصول ⁨${n}⁩ طلاب إلى القاعة', few: 'وصول ⁨${n}⁩ طلاب إلى القاعة', many: 'وصول ⁨${n}⁩ طلاب إلى القاعة', other: 'وصول ⁨${n}⁩ طلاب إلى القاعة', ), 
+			'salle.dynamique.arrivees' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'وصول طلاب إلى القاعة', one: 'وصول طالب إلى القاعة', two: 'وصول طلاب إلى القاعة', few: 'وصول طلاب إلى القاعة', many: 'وصول طلاب إلى القاعة', other: 'وصول طلاب إلى القاعة', ), 
 			'salle.dynamique.arriveeMarquePrenom' => ({required Object prenom}) => 'في القاعة: ⁨${prenom}⁩',
 			'salle.dynamique.arriveesMarque' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: '⁨${n}⁩ طلاب جدد في القاعة', one: 'طالب جديد في القاعة', two: '⁨${n}⁩ طلاب جدد في القاعة', few: '⁨${n}⁩ طلاب جدد في القاعة', many: '⁨${n}⁩ طلاب جدد في القاعة', other: '⁨${n}⁩ طلاب جدد في القاعة', ), 
 			'salle.dynamique.unEleveRecite' => 'طالب يتلو',
