@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:go_router/go_router.dart';
@@ -350,13 +351,9 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     if (acces == null || _sortieEleve != null) return null;
     // La synchronisation a besoin du profil : tant que la session n'est pas
     // lue, rien n'est cree (la composition suivante reessaie).
-    String? profil;
-    try {
-      profil = ref.read(sessionProvider).profileId;
-    } on Object {
-      profil = null;
-    }
+    final String? profil = _lireProfil() ?? _profilConnu;
     if (profil == null) return null;
+    _profilConnu = profil;
     return _seanceLocale = creerSeanceVivante(
       cours: SessionEnCours(
         sessionId: widget.seanceId,
@@ -368,10 +365,26 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       acces: acces,
       moteur: _moteur,
       lire: ref.read,
+      profilLocalId: profil,
+      // Un appel deja tenu (controleur defait sous la page) : la recitation
+      // a deja ete relue a l'entree.
+      terminerRecitationALEntree: !_tenu,
       relirePause: () {
         if (mounted) ref.invalidate(pauseSeanceProvider(widget.seanceId));
       },
     );
+  }
+
+  /// Le profil de cet appareil, lu a chaque composition et retenu : une
+  /// session relue (conteneur reconstruit) ne fait pas perdre la seance.
+  String? _profilConnu;
+
+  String? _lireProfil() {
+    try {
+      return ref.read(sessionProvider).profileId;
+    } on Object {
+      return null;
+    }
   }
 
   /// La seance tenue par cette page seule ([_confiable] faux).
@@ -396,7 +409,17 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   }
 
   void _seanceChange() {
-    if (mounted) setState(() {});
+    if (!mounted) return;
+    // La seance peut finir pendant une construction (conteneur defait) : la
+    // page se redessine apres l'image.
+    if (SchedulerBinding.instance.schedulerPhase ==
+        SchedulerPhase.persistentCallbacks) {
+      SchedulerBinding.instance.addPostFrameCallback((Duration _) {
+        if (mounted) setState(() {});
+      });
+      return;
+    }
+    setState(() {});
   }
 
   /// Libere la seance tenue par la page seule ; celle du controleur vit et
@@ -1892,6 +1915,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     final bool enseignant = base.role == RoleSeance.enseignant;
     // SYNCHRO-SESSION : la seance de l'appel (synchronisation, Dynamique
     // chrono), lue et suivie ; la page ne cree rien.
+    _profilConnu = _lireProfil() ?? _profilConnu;
     _raccorderSeance();
     final SeanceVivante? vivante = _seanceSuivie;
     final SynchroSalle? synchro = vivante?.synchro;

@@ -422,6 +422,8 @@ class SeanceVivante extends ChangeNotifier implements CompagnonAppel {
     _sParticipants = null;
     _sPause = null;
     _sRecitant = null;
+    // Ceux qui la lisent (page, salle reduite) l'apprennent et la quittent.
+    notifyListeners();
     dispose();
     await Future.wait(<Future<void>>[...fins, ?s?.liberer()]);
   }
@@ -469,7 +471,8 @@ typedef LireFournisseur = T Function<T>(ProviderListenable<T> fournisseur);
 /// pas). Une fois, a la naissance de la seance : une salle rouverte depuis la
 /// barre ne coupe plus la recitation en cours. [terminerRecitationALEntree]
 /// faux : la salle reduite qui tient sa propre seance (controleur sans
-/// fabrique) ne le demande pas, comme avant.
+/// fabrique) ne le demande pas, comme avant. [profilLocalId] : le profil
+/// deja connu de l'appelant ; sinon il est lu dans la session.
 SeanceVivante creerSeanceVivante({
   required SessionEnCours cours,
   required AccesSalle acces,
@@ -477,12 +480,15 @@ SeanceVivante creerSeanceVivante({
   required LireFournisseur lire,
   required VoidCallback relirePause,
   bool terminerRecitationALEntree = true,
+  String? profilLocalId,
 }) {
-  String? profil;
-  try {
-    profil = lire(sessionProvider).profileId;
-  } on Object catch (e) {
-    journalDev('profil illisible pour la seance : $e');
+  String? profil = profilLocalId;
+  if (profil == null) {
+    try {
+      profil = lire(sessionProvider).profileId;
+    } on Object catch (e) {
+      journalDev('profil illisible pour la seance : $e');
+    }
   }
   final SeanceVivante seance = SeanceVivante(
     moteur: moteur,
