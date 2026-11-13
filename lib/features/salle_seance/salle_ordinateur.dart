@@ -1402,7 +1402,9 @@ class _Colonne extends ConsumerWidget {
         // tienne aussi, les tuiles gardant au moins leurs icones.
         final PauseSeance? pause = vue.voitPause ? vue.pause : null;
         final double hauteurDepliee =
-            (pause == null ? 0 : ligneTexte + AppSpacing.xs) +
+            // La marque de la pause en clair : deux lignes dans la colonne
+            // (« Pause dans 21 min » y passe a la ligne).
+            (pause == null ? 0 : 2 * ligneTexte + AppSpacing.xs) +
             (pause != null && pause.peutPiloter && actions.onPause != null
                 ? AppSpacing.titreEcran + AppSpacing.xs
                 : 0) +
@@ -1462,7 +1464,11 @@ class _Colonne extends ConsumerWidget {
             avecNom = nom;
             avecTitre = montreTitre;
             largeur = l;
-            trouve = tete + hauteurBarre(nom) <= c.maxHeight;
+            // Une marge d'un palier : l'estimation des tuiles est un peu
+            // courte (mesure du 13/11 a 1280 x 800 : 3 points de trop), et
+            // la tete reservee ne doit jamais pousser la colonne hors de
+            // l'ecran.
+            trouve = tete + hauteurBarre(nom) + AppSpacing.md <= c.maxHeight;
             if (trouve) break;
           }
           if (trouve) break;
