@@ -332,6 +332,8 @@ declare
     'priere_ajuster(text,integer)',
     'priere_lieu_definir(uuid,text,numeric,numeric,text,text,text,boolean,time without time zone,time without time zone)',
     'priere_lieu_retirer(uuid)',
+    'priere_ma_position(numeric,numeric,text)',
+    'priere_corriger(uuid,text,text,boolean,time without time zone,time without time zone)',
     'priere_recalculer_maintenant()',
     'preparer_depot_piece_identite(uuid,text)',
     -- CAHIER-C2 (06/11) : direction seulement, compte valide, brouillon vide.

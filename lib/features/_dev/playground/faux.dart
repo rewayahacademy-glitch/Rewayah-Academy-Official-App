@@ -29,6 +29,7 @@ import 'package:rewayah_academy/core/matching/service_matching.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart';
 import 'package:rewayah_academy/core/priere/lieu_priere.dart';
 import 'package:rewayah_academy/core/priere/pause_prevue.dart';
+import 'package:rewayah_academy/core/priere/position_appareil.dart';
 import 'package:rewayah_academy/core/priere/service_priere.dart';
 import 'package:rewayah_academy/core/regles/service_regles.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
@@ -606,8 +607,30 @@ class FauxServicePriere implements ServicePriere {
   /// Les lieux retires, dans l'ordre.
   final List<String> retires = <String>[];
 
+  /// Les corrections de la direction, dans l'ordre (PRIERE-2).
+  final List<
+    ({
+      String enseignantId,
+      MethodeCalcul? methode,
+      Madhab? ecoleAsr,
+      bool assisteVendredi,
+      String vendrediDebut,
+      String vendrediFin,
+    })
+  >
+  corrections = [];
+
   /// Vrai : toute ecriture echoue.
   bool echecEcriture = false;
+
+  /// La liste a lire rendue a la direction (PRIERE-2).
+  List<VueEnseignantPriere> vueRendue = const <VueEnseignantPriere>[];
+
+  /// Les positions partagees par l'enseignant, dans l'ordre.
+  final List<PositionAppareil> partagees = <PositionAppareil>[];
+
+  /// Vrai : le serveur refuse le partage (un lieu de la direction existe).
+  bool partageRefuse = false;
 
   @override
   Future<PausePrevue?> pausePrevue(String seanceId) async => pauses[seanceId];
@@ -634,6 +657,26 @@ class FauxServicePriere implements ServicePriere {
   }
 
   @override
+  Future<void> corriger({
+    required String enseignantId,
+    required bool assisteVendredi,
+    required String vendrediDebut,
+    required String vendrediFin,
+    MethodeCalcul? methode,
+    Madhab? ecoleAsr,
+  }) async {
+    if (echecEcriture) throw StateError('echec');
+    corrections.add((
+      enseignantId: enseignantId,
+      methode: methode,
+      ecoleAsr: ecoleAsr,
+      assisteVendredi: assisteVendredi,
+      vendrediDebut: vendrediDebut,
+      vendrediFin: vendrediFin,
+    ));
+  }
+
+  @override
   Future<void> retirerLieu(String enseignantId) async {
     if (echecEcriture) throw StateError('echec');
     retires.add(enseignantId);
@@ -641,6 +684,15 @@ class FauxServicePriere implements ServicePriere {
 
   @override
   Future<List<EnseignantPriere>> enseignants() async => enseignantsRendus;
+
+  @override
+  Future<List<VueEnseignantPriere>> vueEnseignants() async => vueRendue;
+
+  @override
+  Future<void> partagerPosition(PositionAppareil position) async {
+    if (echecEcriture || partageRefuse) throw StateError('echec');
+    partagees.add(position);
+  }
 
   @override
   Future<List<LectureCreneauPriere>> lectureClasse(String groupeId) async =>

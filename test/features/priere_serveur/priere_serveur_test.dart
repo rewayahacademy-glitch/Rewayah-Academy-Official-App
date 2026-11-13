@@ -28,8 +28,10 @@ import 'package:rewayah_academy/core/matching/service_matching.dart';
 import 'package:rewayah_academy/core/offres/offre_horaire.dart';
 import 'package:rewayah_academy/core/offres/service_offres.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart';
+import 'package:rewayah_academy/core/priere/libelle_priere.dart';
 import 'package:rewayah_academy/core/priere/lieu_priere.dart';
 import 'package:rewayah_academy/core/priere/pause_prevue.dart';
+import 'package:rewayah_academy/core/priere/position_appareil.dart';
 import 'package:rewayah_academy/core/priere/service_priere.dart';
 import 'package:rewayah_academy/core/profil/service_profil_enseignant.dart';
 import 'package:rewayah_academy/core/regles/service_regles.dart';
@@ -76,6 +78,27 @@ LieuPriere _lieu({
   assisteVendredi: vendredi,
   vendrediDebut: '12:30',
   vendrediFin: '14:30',
+);
+
+VueEnseignantPriere _vue({
+  String id = 'ens-1',
+  String prenom = 'Aicha',
+  bool aUnLieu = true,
+  String source = 'enseignant',
+  String origine = 'academie',
+  bool vendredi = true,
+}) => VueEnseignantPriere(
+  enseignantId: id,
+  prenom: prenom,
+  aUnLieu: aUnLieu,
+  lieu: aUnLieu ? 'Votre position, fuseau Africa/Conakry' : null,
+  fuseau: aUnLieu ? 'Africa/Conakry' : null,
+  source: aUnLieu ? source : null,
+  methode: aUnLieu ? MethodeCalcul.ligueMondiale : null,
+  origineMethode: aUnLieu ? origine : null,
+  ecoleAsr: aUnLieu ? Madhab.shafi : null,
+  assisteVendredi: aUnLieu && vendredi,
+  horaires: aUnLieu ? _heures() : const <HeurePriere>[],
 );
 
 List<HeurePriere> _heures({bool approchee = false}) => <HeurePriere>[
@@ -160,6 +183,7 @@ Map<String, Object?> _clesPriere() => <String, Object?>{
   'priere.horizon_jours': 14,
   'priere.marge_avant_cours_minutes': 20,
   'priere.delai_fermeture_minutes': 10,
+  'priere.methode_selon_pays': true,
 };
 
 List<Override> _surcharges(
@@ -352,7 +376,7 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets('vide : aucun lieu pose, la phrase le dit', (
+    testWidgets('vide : aucun lieu connu, un seul bouton plein, aucun champ', (
       WidgetTester tester,
     ) async {
       await _monterPage(
@@ -365,6 +389,120 @@ void main() {
         find.byKey(PriereEnseignantPage.cleLigne(Priere.fajr)),
         findsNothing,
       );
+      expect(find.text(t.priere.enseignant.utiliserPosition), findsOneWidget);
+      // Jamais un formulaire de coordonnees pour l'enseignant.
+      expect(find.byType(TextField), findsNothing);
+      verifierUnSeulBoutonPlein(tester);
+    });
+
+    testWidgets('« Utiliser ma position » : la position part au serveur', (
+      WidgetTester tester,
+    ) async {
+      final FauxServicePriere priere = FauxServicePriere();
+      await _monterPage(
+        tester,
+        const PriereEnseignantPage(),
+        priere,
+        autres: <Override>[
+          lecturePositionAppareilProvider.overrideWithValue(
+            () async => const PositionAppareil(
+              latitude: 9.64123,
+              longitude: -13.57841,
+              fuseau: 'Africa/Conakry',
+            ),
+          ),
+        ],
+      );
+      await _toucher(
+        tester,
+        find.byKey(const ValueKey<String>('priere-utiliser-position')),
+      );
+      expect(priere.partagees.length, 1);
+      expect(priere.partagees.single.fuseau, 'Africa/Conakry');
+      expect(
+        find.byKey(const ValueKey<String>('priere-position-message')),
+        findsNothing,
+      );
+    });
+
+    testWidgets('position refusee : l\'etat le dit, on peut reessayer', (
+      WidgetTester tester,
+    ) async {
+      final FauxServicePriere priere = FauxServicePriere();
+      await _monterPage(
+        tester,
+        const PriereEnseignantPage(),
+        priere,
+        autres: <Override>[
+          lecturePositionAppareilProvider.overrideWithValue(
+            () => Future<PositionAppareil>.error(const PositionNonPartagee()),
+          ),
+        ],
+      );
+      await _toucher(
+        tester,
+        find.byKey(const ValueKey<String>('priere-utiliser-position')),
+      );
+      expect(find.text(t.priere.enseignant.positionRefusee), findsOneWidget);
+      expect(priere.partagees, isEmpty);
+      expect(find.byType(TextField), findsNothing);
+      expect(
+        find.byKey(const ValueKey<String>('priere-utiliser-position')),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('le serveur n\'a pas recu : « il est possible que... »', (
+      WidgetTester tester,
+    ) async {
+      final FauxServicePriere priere = FauxServicePriere()
+        ..echecEcriture = true;
+      await _monterPage(
+        tester,
+        const PriereEnseignantPage(),
+        priere,
+        autres: <Override>[
+          lecturePositionAppareilProvider.overrideWithValue(
+            () async => const PositionAppareil(
+              latitude: 9.6,
+              longitude: -13.5,
+              fuseau: 'Africa/Conakry',
+            ),
+          ),
+        ],
+      );
+      await _toucher(
+        tester,
+        find.byKey(const ValueKey<String>('priere-utiliser-position')),
+      );
+      expect(find.text(t.priere.enseignant.positionErreur), findsOneWidget);
+    });
+
+    testWidgets('un lieu pose par la direction : la phrase le dit', (
+      WidgetTester tester,
+    ) async {
+      final FauxServicePriere priere = FauxServicePriere()
+        ..partageRefuse = true;
+      await _monterPage(
+        tester,
+        const PriereEnseignantPage(),
+        priere,
+        autres: <Override>[
+          lecturePositionAppareilProvider.overrideWithValue(
+            () async => const PositionAppareil(
+              latitude: 9.6,
+              longitude: -13.5,
+              fuseau: 'Africa/Conakry',
+            ),
+          ),
+        ],
+      );
+      await _toucher(
+        tester,
+        find.byKey(const ValueKey<String>('priere-utiliser-position')),
+      );
+      // Le faux leve une erreur generique : « il est possible que... ».
+      expect(find.text(t.priere.enseignant.positionErreur), findsOneWidget);
     });
 
     testWidgets('erreur : la cause probable et un bouton pour relire', (
@@ -449,54 +587,51 @@ void main() {
     });
   });
 
-  group('La direction : Lieux de priere', () {
-    final List<EnseignantPriere> enseignants = <EnseignantPriere>[
-      const EnseignantPriere(
-        enseignantId: 'ens-1',
-        prenom: 'Aicha',
-        lieu: 'Conakry',
-        fuseau: 'Africa/Conakry',
-        assisteVendredi: true,
-        aUnLieu: true,
-      ),
-      const EnseignantPriere(
-        enseignantId: 'ens-2',
-        prenom: 'Omar',
-        lieu: null,
-        fuseau: null,
-        assisteVendredi: false,
-        aUnLieu: false,
-      ),
+  group('La direction : Lieux de priere (une liste a lire)', () {
+    final List<VueEnseignantPriere> vues = <VueEnseignantPriere>[
+      _vue(),
+      _vue(id: 'ens-2', prenom: 'Omar', aUnLieu: false),
     ];
 
-    testWidgets('contenu : chaque enseignant, son lieu ou « aucun lieu »', (
-      WidgetTester tester,
-    ) async {
-      final FauxServicePriere priere = FauxServicePriere()
-        ..enseignantsRendus = enseignants
-        ..incoherencesRendues = const <IncoherencePriere>[
-          IncoherencePriere(
-            enseignantId: 'ens-1',
-            prenom: 'Aicha',
-            motif: 'fuseau_compte_different',
-            detail: 'Europe/Paris / Africa/Conakry',
+    testWidgets(
+      'contenu : la zone, les cinq heures, la methode, « en attente »',
+      (WidgetTester tester) async {
+        final FauxServicePriere priere = FauxServicePriere()
+          ..vueRendue = vues
+          ..incoherencesRendues = const <IncoherencePriere>[
+            IncoherencePriere(
+              enseignantId: 'ens-1',
+              prenom: 'Aicha',
+              motif: 'fuseau_compte_different',
+              detail: 'Europe/Paris / Africa/Conakry',
+            ),
+          ];
+        await _monterPage(tester, const LieuxPrierePage(), priere);
+        expect(find.byKey(LieuxPrierePage.cleLigne('ens-1')), findsOneWidget);
+        expect(find.byKey(LieuxPrierePage.cleLigne('ens-2')), findsOneWidget);
+        // Omar n'a pas partage sa position : « en attente ».
+        expect(find.textContaining(t.priere.direction.attente), findsOneWidget);
+        // Aicha : sa zone, d'ou vient le lieu, ses cinq heures, sa methode.
+        expect(
+          find.textContaining(t.priere.direction.sourceEnseignant),
+          findsOneWidget,
+        );
+        expect(find.textContaining('18:30'), findsOneWidget);
+        expect(
+          find.textContaining(
+            t.priere.direction.methodeLigne(
+              methode: libelleMethode(MethodeCalcul.ligueMondiale),
+              origine: t.priere.direction.origineAcademie,
+            ),
           ),
-        ];
-      await _monterPage(tester, const LieuxPrierePage(), priere);
-      expect(find.byKey(LieuxPrierePage.cleLigne('ens-1')), findsOneWidget);
-      expect(find.byKey(LieuxPrierePage.cleLigne('ens-2')), findsOneWidget);
-      expect(find.textContaining(t.priere.direction.sansLieu), findsOneWidget);
-      expect(find.text(t.priere.direction.incoherenceTitre), findsOneWidget);
-      expect(
-        find.text(
-          t.priere.direction.incoherenceFuseauCompte(
-            prenom: 'Aicha',
-            detail: 'Europe/Paris / Africa/Conakry',
-          ),
-        ),
-        findsOneWidget,
-      );
-    });
+          findsOneWidget,
+        );
+        // Une seule action secondaire par ligne, aucun champ visible.
+        expect(find.text(t.priere.direction.corriger), findsNWidgets(2));
+        expect(find.byType(TextField), findsNothing);
+        expect(find.text(t.priere.direction.incoherenceTitre), findsOneWidget);
+      },
+    );
 
     testWidgets('vide : aucun enseignant actif', (WidgetTester tester) async {
       await _monterPage(tester, const LieuxPrierePage(), FauxServicePriere());
@@ -509,7 +644,7 @@ void main() {
         const LieuxPrierePage(),
         FauxServicePriere(),
         autres: <Override>[
-          enseignantsPriereProvider.overrideWith(
+          vueEnseignantsPriereProvider.overrideWith(
             (Ref _) async => throw StateError('reseau'),
           ),
         ],
@@ -518,87 +653,139 @@ void main() {
     });
 
     testWidgets('chargement : un squelette', (WidgetTester tester) async {
-      final Completer<List<EnseignantPriere>> attente =
-          Completer<List<EnseignantPriere>>();
+      final Completer<List<VueEnseignantPriere>> attente =
+          Completer<List<VueEnseignantPriere>>();
       await _monterPage(
         tester,
         const LieuxPrierePage(),
         FauxServicePriere(),
         attendre: false,
         autres: <Override>[
-          enseignantsPriereProvider.overrideWith((Ref _) => attente.future),
+          vueEnseignantsPriereProvider.overrideWith((Ref _) => attente.future),
         ],
       );
       await tester.pump(const Duration(milliseconds: 400));
       expect(find.byType(Skeleton), findsWidgets);
-      attente.complete(enseignants);
+      attente.complete(vues);
       await tester.pumpAndSettle();
     });
 
     testWidgets(
-      'poser un lieu : la feuille valide, enregistre, un seul bouton plein',
+      'corriger : le vendredi, les heures seulement s\'il est active, un seul bouton plein',
       (WidgetTester tester) async {
         final FauxServicePriere priere = FauxServicePriere()
-          ..enseignantsRendus = enseignants;
-        await _monterPage(tester, const LieuxPrierePage(), priere);
-        await _toucher(tester, find.byKey(LieuxPrierePage.cleLigne('ens-2')));
-        verifierUnSeulBoutonPlein(tester);
-
-        // Vide : l'enregistrement est refuse en mots simples.
-        await _toucher(
-          tester,
-          find.text(t.priere.direction.feuille.enregistrer),
-        );
-        expect(find.text(t.priere.direction.feuille.invalide), findsOneWidget);
-        expect(priere.poses, isEmpty);
-
-        final Finder champs = find.byType(TextField);
-        await tester.enterText(champs.at(0), 'Dakar');
-        await tester.enterText(champs.at(1), '14,6937');
-        await tester.enterText(champs.at(2), '-17.4441');
-        await tester.enterText(champs.at(3), 'Africa/Dakar');
-        await tester.pumpAndSettle();
-        await _toucher(
-          tester,
-          find.text(t.priere.direction.feuille.enregistrer),
-        );
-        expect(priere.poses.length, 1);
-        final DefinitionLieu d = priere.poses.single;
-        expect(d.enseignantId, 'ens-2');
-        expect(d.lieu, 'Dakar');
-        expect(d.latitude, 14.6937);
-        expect(d.longitude, -17.4441);
-        expect(d.fuseau, 'Africa/Dakar');
-        expect(d.methode, isNull, reason: 'celle de l\'ecole');
-        expect(d.ecoleAsr, isNull);
-        expect(d.assisteVendredi, isFalse);
-      },
-    );
-
-    testWidgets(
-      'un lieu existant : repris dans la feuille, apercu des cinq heures, retrait',
-      (WidgetTester tester) async {
-        final FauxServicePriere priere = FauxServicePriere()
-          ..enseignantsRendus = enseignants
-          ..lieuRendu = _lieu(vendredi: true)
-          ..heures = _heures();
+          ..vueRendue = vues
+          ..lieuRendu = _lieu(vendredi: true);
         await _monterPage(tester, const LieuxPrierePage(), priere);
         await _toucher(tester, find.byKey(LieuxPrierePage.cleLigne('ens-1')));
-        expect(find.text('Conakry'), findsWidgets);
-        expect(find.text(t.priere.direction.feuille.apercu), findsOneWidget);
-        expect(find.textContaining('18:30'), findsOneWidget);
-        await _toucher(tester, find.text(t.priere.direction.feuille.retirer));
-        expect(priere.retires, <String>['ens-1']);
+        verifierUnSeulBoutonPlein(tester);
+        // Active : les deux heures du vendredi sont la ; le reglage avance est replie.
+        expect(find.byType(TextField), findsNWidgets(2));
+        expect(find.text(t.priere.direction.feuille.methodeAuto), findsNothing);
+        // Eteint : plus aucune heure.
+        await _toucher(
+          tester,
+          find.descendant(
+            of: find.byKey(const ValueKey<String>('priere-vendredi')),
+            matching: find.byType(Switch),
+          ),
+        );
+        expect(find.byType(TextField), findsNothing);
+        await _toucher(
+          tester,
+          find.text(t.priere.direction.feuille.enregistrer),
+        );
+        expect(priere.corrections.length, 1);
+        final c = priere.corrections.single;
+        expect(c.enseignantId, 'ens-1');
+        expect(c.assisteVendredi, isFalse);
+        expect(c.methode, isNull, reason: 'automatique');
+        expect(c.ecoleAsr, isNull);
+        expect(priere.poses, isEmpty, reason: 'la position n\'est pas touchee');
       },
     );
+
+    testWidgets('reglage avance : la methode se choisit dans un menu replie', (
+      WidgetTester tester,
+    ) async {
+      final FauxServicePriere priere = FauxServicePriere()
+        ..vueRendue = vues
+        ..lieuRendu = _lieu();
+      await _monterPage(tester, const LieuxPrierePage(), priere);
+      await _toucher(tester, find.byKey(LieuxPrierePage.cleLigne('ens-1')));
+      await _toucher(
+        tester,
+        find.byKey(const ValueKey<String>('priere-avance')),
+      );
+      await _toucher(tester, find.text(t.priere.direction.feuille.methodeAuto));
+      await _toucher(tester, find.text(libelleMethode(MethodeCalcul.egypte)));
+      await _toucher(tester, find.text(t.priere.direction.feuille.enregistrer));
+      expect(priere.corrections.single.methode, MethodeCalcul.egypte);
+    });
+
+    testWidgets('sans lieu : en attente, la pose a la main reste repliee', (
+      WidgetTester tester,
+    ) async {
+      final FauxServicePriere priere = FauxServicePriere()..vueRendue = vues;
+      await _monterPage(tester, const LieuxPrierePage(), priere);
+      await _toucher(tester, find.byKey(LieuxPrierePage.cleLigne('ens-2')));
+      expect(
+        find.text(t.priere.direction.feuille.sansLieuAide),
+        findsOneWidget,
+      );
+      expect(find.byType(TextField), findsNothing);
+      expect(find.text(t.priere.direction.feuille.enregistrer), findsNothing);
+      await _toucher(
+        tester,
+        find.byKey(const ValueKey<String>('priere-avance')),
+      );
+      final Finder champs = find.byType(TextField);
+      await tester.enterText(champs.at(0), 'Dakar');
+      await tester.enterText(champs.at(1), '14,6937');
+      await tester.enterText(champs.at(2), '-17.4441');
+      await tester.enterText(champs.at(3), 'Africa/Dakar');
+      await tester.pumpAndSettle();
+      await _toucher(tester, find.text(t.priere.direction.feuille.poserLieu));
+      expect(priere.poses.length, 1);
+      final DefinitionLieu d = priere.poses.single;
+      expect(d.enseignantId, 'ens-2');
+      expect(d.lieu, 'Dakar');
+      expect(d.latitude, 14.6937);
+      expect(d.longitude, -17.4441);
+      expect(d.fuseau, 'Africa/Dakar');
+    });
+
+    testWidgets('sans lieu, des champs vides : refus en mots simples', (
+      WidgetTester tester,
+    ) async {
+      final FauxServicePriere priere = FauxServicePriere()..vueRendue = vues;
+      await _monterPage(tester, const LieuxPrierePage(), priere);
+      await _toucher(tester, find.byKey(LieuxPrierePage.cleLigne('ens-2')));
+      await _toucher(
+        tester,
+        find.byKey(const ValueKey<String>('priere-avance')),
+      );
+      await _toucher(tester, find.text(t.priere.direction.feuille.poserLieu));
+      expect(find.text(t.priere.direction.feuille.invalide), findsOneWidget);
+      expect(priere.poses, isEmpty);
+    });
+
+    testWidgets('retirer le lieu', (WidgetTester tester) async {
+      final FauxServicePriere priere = FauxServicePriere()
+        ..vueRendue = vues
+        ..lieuRendu = _lieu();
+      await _monterPage(tester, const LieuxPrierePage(), priere);
+      await _toucher(tester, find.byKey(LieuxPrierePage.cleLigne('ens-1')));
+      await _toucher(tester, find.text(t.priere.direction.feuille.retirer));
+      expect(priere.retires, <String>['ens-1']);
+    });
 
     testWidgets('un echec d enregistrement se dit', (
       WidgetTester tester,
     ) async {
       final FauxServicePriere priere = FauxServicePriere()
-        ..enseignantsRendus = enseignants
+        ..vueRendue = vues
         ..lieuRendu = _lieu()
-        ..heures = _heures()
         ..echecEcriture = true;
       await _monterPage(tester, const LieuxPrierePage(), priere);
       await _toucher(tester, find.byKey(LieuxPrierePage.cleLigne('ens-1')));
@@ -725,8 +912,31 @@ void main() {
         find.byKey(const ValueKey<String>('regles-priere')),
       );
       expect(find.text(t.priere.regles.section), findsOneWidget);
-      expect(find.text(t.priere.regles.pause), findsOneWidget);
+      // Les valeurs chiffrees sont repliees : la pause ne se voit pas d'abord.
+      expect(find.text(t.priere.regles.pause), findsNothing);
+      expect(find.text(t.priere.regles.valeurs), findsOneWidget);
       expect(find.textContaining(t.priere.aValider), findsWidgets);
+    });
+
+    testWidgets('« methode selon le pays » : un interrupteur, il s ecrit', (
+      WidgetTester tester,
+    ) async {
+      final _Config config = await monter(tester, <String, Object?>{
+        ..._clesRegles,
+        ..._clesPriere(),
+      });
+      final Finder ligne = find.byKey(
+        const ValueKey<String>('regles-priere-selon-pays'),
+      );
+      await tester.ensureVisible(ligne);
+      await tester.pumpAndSettle();
+      await tester.tap(
+        find.descendant(of: ligne, matching: find.byType(Switch)),
+      );
+      await tester.pumpAndSettle();
+      expect(config.ecritures, <(String, Object)>[
+        ('priere.methode_selon_pays', false),
+      ]);
     });
 
     testWidgets('un serveur d avant le lot : la section n est pas montree', (
@@ -783,6 +993,10 @@ void main() {
       });
       await _toucher(
         tester,
+        find.byKey(const ValueKey<String>('regles-priere-valeurs')),
+      );
+      await _toucher(
+        tester,
         find.byKey(const ValueKey<String>('regles-priere.pause_minutes')),
       );
       await _toucher(tester, find.text(t.admin.regles.envoyer));
@@ -790,105 +1004,242 @@ void main() {
     });
   });
 
-  group('Captures PRIERE-1', skip: sautSansCapture, () {
+  // Captures PRIERE-1 et PRIERE-2 : donnees fictives, jamais sans CAPTURE_DIR.
+  // Les ecrans de la priere sans formulaire (« zero saisie ») : 390 et 1440,
+  // clair et sombre, francais et arabe.
+  group('Captures PRIERE', skip: sautSansCapture, () {
     setUp(masquerRubanDebug);
-    testWidgets('heures de l enseignant', (WidgetTester tester) async {
-      final FauxServicePriere priere = FauxServicePriere()
-        ..lieuRendu = _lieu(maghrib: 3)
-        ..heures = _heures(approchee: true);
-      await _monterPage(
-        tester,
-        const PriereEnseignantPage(),
-        priere,
-        taille: const Size(390, 900),
+    tearDown(() => LocaleSettings.setLocale(AppLocale.fr));
+
+    Future<void> monter(
+      WidgetTester tester,
+      Widget page,
+      FauxServicePriere priere, {
+      required Size taille,
+      required ThemeMode theme,
+      required AppLocale langue,
+      List<Override> autres = const <Override>[],
+    }) async {
+      await tester.runAsync(() => LocaleSettings.setLocale(langue));
+      fixerVueCapture(tester, taille, 1);
+      await tester.pumpWidget(
+        hoteCapture(
+          page,
+          surcharges: <Override>[..._surcharges(priere), ...autres],
+          themeMode: theme,
+        ),
       );
-      debugPrint(
-        'PNG ${await capturerVue(tester, 'priere_enseignant_contenu_390')}',
-      );
-    });
-    testWidgets('heures de l enseignant, vide', (WidgetTester tester) async {
-      await _monterPage(
-        tester,
-        const PriereEnseignantPage(),
-        FauxServicePriere(),
-        taille: const Size(390, 700),
-      );
-      debugPrint(
-        'PNG ${await capturerVue(tester, 'priere_enseignant_vide_390')}',
-      );
-    });
+      await tester.pumpAndSettle();
+    }
+
+    const List<(String, ThemeMode, AppLocale)> variantes =
+        <(String, ThemeMode, AppLocale)>[
+          ('clair', ThemeMode.light, AppLocale.fr),
+          ('sombre', ThemeMode.dark, AppLocale.fr),
+          ('arabe', ThemeMode.light, AppLocale.ar),
+        ];
+
+    for (final (String nom, ThemeMode theme, AppLocale langue) in variantes) {
+      testWidgets('enseignant, aucun lieu : le bouton, $nom', (
+        WidgetTester tester,
+      ) async {
+        await monter(
+          tester,
+          const PriereEnseignantPage(),
+          FauxServicePriere(),
+          taille: const Size(390, 700),
+          theme: theme,
+          langue: langue,
+        );
+        debugPrint(
+          'PNG ${await capturerVue(tester, 'priere_enseignant_vide_390_$nom')}',
+        );
+      });
+
+      testWidgets('enseignant, position refusee : l etat, $nom', (
+        WidgetTester tester,
+      ) async {
+        await monter(
+          tester,
+          const PriereEnseignantPage(),
+          FauxServicePriere(),
+          taille: const Size(390, 700),
+          theme: theme,
+          langue: langue,
+          autres: <Override>[
+            lecturePositionAppareilProvider.overrideWithValue(
+              () => Future<PositionAppareil>.error(const PositionNonPartagee()),
+            ),
+          ],
+        );
+        await _toucher(
+          tester,
+          find.byKey(const ValueKey<String>('priere-utiliser-position')),
+        );
+        debugPrint(
+          'PNG ${await capturerVue(tester, 'priere_enseignant_refus_390_$nom')}',
+        );
+      });
+
+      testWidgets('enseignant, heures : le contenu, $nom', (
+        WidgetTester tester,
+      ) async {
+        await monter(
+          tester,
+          const PriereEnseignantPage(),
+          FauxServicePriere()
+            ..lieuRendu = _lieu(maghrib: 3)
+            ..heures = _heures(approchee: true),
+          taille: const Size(390, 900),
+          theme: theme,
+          langue: langue,
+        );
+        debugPrint(
+          'PNG ${await capturerVue(tester, 'priere_enseignant_contenu_390_$nom')}',
+        );
+      });
+
+      for (final Size taille in <Size>[
+        const Size(390, 1500),
+        const Size(1440, 900),
+      ]) {
+        testWidgets('direction, la liste a lire ${taille.width.toInt()}, $nom', (
+          WidgetTester tester,
+        ) async {
+          await monter(
+            tester,
+            const LieuxPrierePage(),
+            FauxServicePriere()
+              ..vueRendue = <VueEnseignantPriere>[
+                _vue(),
+                _vue(
+                  id: 'ens-3',
+                  prenom: 'Bilal',
+                  source: 'direction',
+                  origine: 'pays',
+                ),
+                _vue(id: 'ens-2', prenom: 'Omar', aUnLieu: false),
+              ]
+              ..incoherencesRendues = const <IncoherencePriere>[
+                IncoherencePriere(
+                  enseignantId: 'ens-1',
+                  prenom: 'Aicha',
+                  motif: 'fuseau_compte_different',
+                  detail: 'Europe/Paris / Africa/Conakry',
+                ),
+              ],
+            taille: taille,
+            theme: theme,
+            langue: langue,
+          );
+          debugPrint(
+            'PNG ${await capturerVue(tester, 'priere_lieux_direction_${taille.width.toInt()}_$nom')}',
+          );
+        });
+      }
+
+      testWidgets('direction, la feuille Corriger, $nom', (
+        WidgetTester tester,
+      ) async {
+        await monter(
+          tester,
+          const LieuxPrierePage(),
+          FauxServicePriere()
+            ..vueRendue = <VueEnseignantPriere>[_vue()]
+            ..lieuRendu = _lieu(vendredi: true),
+          taille: const Size(390, 1500),
+          theme: theme,
+          langue: langue,
+        );
+        await _toucher(tester, find.byKey(LieuxPrierePage.cleLigne('ens-1')));
+        debugPrint(
+          'PNG ${await capturerVue(tester, 'priere_feuille_corriger_390_$nom')}',
+        );
+      });
+
+      testWidgets('direction, la feuille Corriger, avance ouvert, $nom', (
+        WidgetTester tester,
+      ) async {
+        await monter(
+          tester,
+          const LieuxPrierePage(),
+          FauxServicePriere()
+            ..vueRendue = <VueEnseignantPriere>[_vue()]
+            ..lieuRendu = _lieu(),
+          taille: const Size(390, 2200),
+          theme: theme,
+          langue: langue,
+        );
+        await _toucher(tester, find.byKey(LieuxPrierePage.cleLigne('ens-1')));
+        await _toucher(
+          tester,
+          find.byKey(const ValueKey<String>('priere-avance')),
+        );
+        debugPrint(
+          'PNG ${await capturerVue(tester, 'priere_feuille_avance_390_$nom')}',
+        );
+      });
+
+      testWidgets('direction, la feuille d un enseignant en attente, $nom', (
+        WidgetTester tester,
+      ) async {
+        await monter(
+          tester,
+          const LieuxPrierePage(),
+          FauxServicePriere()
+            ..vueRendue = <VueEnseignantPriere>[
+              _vue(id: 'ens-2', prenom: 'Omar', aUnLieu: false),
+            ],
+          taille: const Size(390, 1100),
+          theme: theme,
+          langue: langue,
+        );
+        await _toucher(tester, find.byKey(LieuxPrierePage.cleLigne('ens-2')));
+        debugPrint(
+          'PNG ${await capturerVue(tester, 'priere_feuille_attente_390_$nom')}',
+        );
+      });
+
+      testWidgets('regles, la section La priere, $nom', (
+        WidgetTester tester,
+      ) async {
+        final _Config config = _Config(<String, Object?>{
+          ..._clesRegles,
+          ..._clesPriere(),
+        });
+        await tester.runAsync(() => LocaleSettings.setLocale(langue));
+        fixerVueCapture(tester, const Size(390, 5200), 1);
+        await tester.pumpWidget(
+          hoteCapture(
+            const ReglesPage(),
+            surcharges: <Override>[
+              serviceConfigurationProvider.overrideWithValue(config),
+              peutReglerPolitiqueKycProvider.overrideWithValue(false),
+            ],
+            themeMode: theme,
+          ),
+        );
+        await tester.pumpAndSettle();
+        debugPrint(
+          'PNG ${await capturerVue(tester, 'priere_regles_academie_390_$nom')}',
+        );
+      });
+    }
+
     testWidgets('heures de l enseignant, erreur', (WidgetTester tester) async {
-      await _monterPage(
+      await monter(
         tester,
         const PriereEnseignantPage(),
         _PriereEnPanne(),
         taille: const Size(390, 700),
+        theme: ThemeMode.light,
+        langue: AppLocale.fr,
       );
       debugPrint(
         'PNG ${await capturerVue(tester, 'priere_enseignant_erreur_390')}',
       );
     });
-    testWidgets('lieux de priere de la direction', (WidgetTester tester) async {
-      final FauxServicePriere priere = FauxServicePriere()
-        ..enseignantsRendus = const <EnseignantPriere>[
-          EnseignantPriere(
-            enseignantId: 'ens-1',
-            prenom: 'Aicha',
-            lieu: 'Conakry',
-            fuseau: 'Africa/Conakry',
-            assisteVendredi: true,
-            aUnLieu: true,
-          ),
-          EnseignantPriere(
-            enseignantId: 'ens-2',
-            prenom: 'Omar',
-            lieu: null,
-            fuseau: null,
-            assisteVendredi: false,
-            aUnLieu: false,
-          ),
-        ]
-        ..incoherencesRendues = const <IncoherencePriere>[
-          IncoherencePriere(
-            enseignantId: 'ens-1',
-            prenom: 'Aicha',
-            motif: 'fuseau_compte_different',
-            detail: 'Europe/Paris / Africa/Conakry',
-          ),
-        ];
-      await _monterPage(
-        tester,
-        const LieuxPrierePage(),
-        priere,
-        taille: const Size(1440, 900),
-      );
-      debugPrint(
-        'PNG ${await capturerVue(tester, 'priere_lieux_direction_1440')}',
-      );
-    });
-    testWidgets('feuille du lieu', (WidgetTester tester) async {
-      final FauxServicePriere priere = FauxServicePriere()
-        ..enseignantsRendus = const <EnseignantPriere>[
-          EnseignantPriere(
-            enseignantId: 'ens-1',
-            prenom: 'Aicha',
-            lieu: 'Conakry',
-            fuseau: 'Africa/Conakry',
-            assisteVendredi: true,
-            aUnLieu: true,
-          ),
-        ]
-        ..lieuRendu = _lieu(vendredi: true)
-        ..heures = _heures();
-      await _monterPage(
-        tester,
-        const LieuxPrierePage(),
-        priere,
-        taille: const Size(390, 1400),
-      );
-      await _toucher(tester, find.byKey(LieuxPrierePage.cleLigne('ens-1')));
-      debugPrint('PNG ${await capturerVue(tester, 'priere_feuille_lieu_390')}');
-    });
+
     testWidgets('bloc de la classe', (WidgetTester tester) async {
       final FauxServicePriere priere = FauxServicePriere();
       priere.lectures['g1'] = <LectureCreneauPriere>[
@@ -917,53 +1268,15 @@ void main() {
           heuresSansPriere: const <int>[9, 10, 11],
         ),
       ];
-      await _monterPage(
+      await monter(
         tester,
         const SingleChildScrollView(child: BlocPriereClasse(classeId: 'g1')),
         priere,
         taille: const Size(390, 900),
+        theme: ThemeMode.light,
+        langue: AppLocale.fr,
       );
       debugPrint('PNG ${await capturerVue(tester, 'priere_bloc_classe_390')}');
-    });
-    testWidgets('reglages de l ecole', (WidgetTester tester) async {
-      final _Config config = _Config(<String, Object?>{
-        ..._clesRegles,
-        ..._clesPriere(),
-      });
-      fixerVueCapture(tester, const Size(390, 5200), 1);
-      await tester.pumpWidget(
-        hote(
-          const ReglesPage(),
-          surcharges: <Override>[
-            serviceConfigurationProvider.overrideWithValue(config),
-            peutReglerPolitiqueKycProvider.overrideWithValue(false),
-          ],
-        ),
-      );
-      await tester.pumpAndSettle();
-      debugPrint('PNG ${await capturerVue(tester, 'priere_regles_ecole_390')}');
-    });
-  });
-
-  group('Captures PRIERE-1 en arabe', skip: sautSansCapture, () {
-    setUp(() async {
-      masquerRubanDebug();
-      await LocaleSettings.setLocale(AppLocale.ar);
-    });
-    tearDown(() => LocaleSettings.setLocale(AppLocale.fr));
-    testWidgets('heures de l enseignant, arabe', (WidgetTester tester) async {
-      final FauxServicePriere priere = FauxServicePriere()
-        ..lieuRendu = _lieu()
-        ..heures = _heures();
-      await _monterPage(
-        tester,
-        const PriereEnseignantPage(),
-        priere,
-        taille: const Size(390, 900),
-      );
-      debugPrint(
-        'PNG ${await capturerVue(tester, 'priere_enseignant_contenu_ar_390')}',
-      );
     });
   });
 }

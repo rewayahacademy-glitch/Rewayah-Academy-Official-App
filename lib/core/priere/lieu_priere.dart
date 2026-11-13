@@ -24,6 +24,8 @@ class LieuPriere {
     required this.assisteVendredi,
     required this.vendrediDebut,
     required this.vendrediFin,
+    this.origineMethode = 'academie',
+    this.source = 'direction',
   });
 
   /// Lit la reponse de `priere_reglages_lire`.
@@ -53,8 +55,18 @@ class LieuPriere {
       assisteVendredi: json['assiste_vendredi'] == true,
       vendrediDebut: json['vendredi_debut'] as String? ?? '12:30',
       vendrediFin: json['vendredi_fin'] as String? ?? '14:30',
+      origineMethode: json['methode_origine'] as String? ?? 'academie',
+      source: json['lieu_source'] as String? ?? 'direction',
     );
   }
+
+  /// D'ou vient la methode : `enseignant` (posee par la direction pour lui),
+  /// `pays` (la methode usuelle du pays du lieu) ou `academie`.
+  final String origineMethode;
+
+  /// Qui a pose le lieu : `direction`, `enseignant` (sa position partagee) ou
+  /// `auto` (sa ville).
+  final String source;
 
   /// L'enseignant.
   final String enseignantId;
@@ -409,4 +421,95 @@ class IncoherencePriere {
 
   /// Les deux valeurs qui ne concordent pas.
   final String detail;
+}
+
+/// Une ligne de la liste a lire de la direction (`priere_enseignants_vue`) :
+/// la zone, les cinq heures du jour, la methode appliquee et d'ou elle vient.
+/// Jamais une coordonnee.
+@immutable
+class VueEnseignantPriere {
+  /// Cree une ligne.
+  const VueEnseignantPriere({
+    required this.enseignantId,
+    required this.prenom,
+    required this.aUnLieu,
+    this.lieu,
+    this.fuseau,
+    this.source,
+    this.methode,
+    this.origineMethode,
+    this.ecoleAsr,
+    this.assisteVendredi = false,
+    this.vendrediDebut = '12:30',
+    this.vendrediFin = '14:30',
+    this.horaires = const <HeurePriere>[],
+  });
+
+  /// Lit une ligne de `priere_enseignants_vue`.
+  factory VueEnseignantPriere.depuisJson(Map<String, dynamic> json) {
+    final String fuseau = json['fuseau'] as String? ?? '';
+    final Object? brut = json['horaires'];
+    return VueEnseignantPriere(
+      enseignantId: json['enseignant_id'] as String,
+      prenom: json['prenom'] as String? ?? '',
+      aUnLieu: json['a_un_lieu'] == true,
+      lieu: json['lieu'] as String?,
+      fuseau: json['fuseau'] as String?,
+      source: json['lieu_source'] as String?,
+      methode: MethodeCalcul.depuisSql(json['methode'] as String?),
+      origineMethode: json['methode_origine'] as String?,
+      ecoleAsr: Madhab.depuisSql(json['ecole_asr'] as String?),
+      assisteVendredi: json['assiste_vendredi'] == true,
+      vendrediDebut: json['vendredi_debut'] as String? ?? '12:30',
+      vendrediFin: json['vendredi_fin'] as String? ?? '14:30',
+      horaires: <HeurePriere>[
+        if (brut is List<dynamic>)
+          for (final Object? h in brut)
+            if (h is Map<dynamic, dynamic>)
+              ?HeurePriere.depuisJson(<String, dynamic>{
+                ...Map<String, dynamic>.from(h),
+                'fuseau': fuseau,
+              }),
+      ],
+    );
+  }
+
+  /// L'enseignant.
+  final String enseignantId;
+
+  /// Son prenom.
+  final String prenom;
+
+  /// Vrai quand un lieu est pose.
+  final bool aUnLieu;
+
+  /// Le nom de sa zone, nul sans lieu.
+  final String? lieu;
+
+  /// Le fuseau de sa zone.
+  final String? fuseau;
+
+  /// Qui a pose le lieu : `direction`, `enseignant`, `auto`.
+  final String? source;
+
+  /// La methode appliquee.
+  final MethodeCalcul? methode;
+
+  /// D'ou vient la methode : `enseignant`, `pays`, `academie`.
+  final String? origineMethode;
+
+  /// L'ecole d'Asr appliquee.
+  final Madhab? ecoleAsr;
+
+  /// Assiste a la priere du vendredi.
+  final bool assisteVendredi;
+
+  /// Debut de la plage du vendredi, `HH:MM`.
+  final String vendrediDebut;
+
+  /// Fin de la plage du vendredi, `HH:MM`.
+  final String vendrediFin;
+
+  /// Les cinq heures du jour local de sa zone.
+  final List<HeurePriere> horaires;
 }
