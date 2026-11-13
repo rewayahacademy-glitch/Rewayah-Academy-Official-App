@@ -271,6 +271,8 @@ import 'features/profil_enseignant/photo_publique.dart';
 import 'features/recherche/domaines/familles_eleves/port_resolution_ra.dart';
 import 'features/recherche/domaines/familles_eleves/resolution_ra_supabase.dart';
 import 'features/recherche/moteurs_production.dart';
+import 'features/salle/camarades_salle.dart';
+import 'features/salle/camarades_salle_supabase.dart';
 import 'features/salle/position_reprise.dart';
 import 'features/salle/position_reprise_supabase.dart';
 import 'features/salle/reprise_support.dart';
@@ -782,6 +784,12 @@ List<Override> _surchargesAppReelle() => <Override>[
   // fonction n'existe pas : rien n'est retenu, une phrase le dit.
   portRepriseSupportProvider.overrideWithValue(
     RepriseSupportSupabase(Supabase.instance.client),
+  ),
+  // CAMARADES (directeur, 12/11/2026) : le prenom des camarades de la
+  // Classe, pour tout eleve en salle. Sans la migration 20261124300000,
+  // l'ancienne lecture de l'eleve adulte prend le relais, sans erreur.
+  portCamaradesSalleProvider.overrideWithValue(
+    CamaradesSalleSupabase(Supabase.instance.client),
   ),
   // CAHIER-C2 (06/11/2026) : l'etape du programme de chaque eleve d'une
   // Classe, choisie et datee par le serveur (version publiee seulement).

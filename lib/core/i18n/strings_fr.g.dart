@@ -7525,8 +7525,8 @@ class Traductions$ficheEleve$informations$fr {
 	/// fr: 'Photo'
 	String get photo => 'Photo';
 
-	/// fr: 'Une photo du visage {dePrenom}. Ce n'est pas une pièce d'identité.'
-	String photoLegende({required Object dePrenom}) => 'Une photo du visage ${dePrenom}. Ce n\'est pas une pièce d\'identité.';
+	/// fr: 'Une photo du visage {dePrenom}. Ce n'est pas une pièce d'identité. Son enseignant, les élèves de sa classe et la direction la voient.'
+	String photoLegende({required Object dePrenom}) => 'Une photo du visage ${dePrenom}. Ce n\'est pas une pièce d\'identité. Son enseignant, les élèves de sa classe et la direction la voient.';
 
 	/// fr: 'Pas encore de photo'
 	String get photoAucune => 'Pas encore de photo';
@@ -15107,9 +15107,6 @@ class Traductions$tuteur$reglages$fr {
 
 	/// fr: '{prenom} n'a pas encore de photo. Elle reste visible du seul foyer.'
 	String photoAucune({required Object prenom}) => '${prenom} n\'a pas encore de photo. Elle reste visible du seul foyer.';
-
-	/// fr: 'La photo {dePrenom} reste visible du seul foyer, jamais de son enseignant ni des autres élèves.'
-	String photoPresente({required Object dePrenom}) => 'La photo ${dePrenom} reste visible du seul foyer, jamais de son enseignant ni des autres élèves.';
 
 	/// fr: 'Ajouter une photo'
 	String get photoAjouter => 'Ajouter une photo';
@@ -50716,7 +50713,7 @@ extension on Traductions {
 			'ficheEleve.informations.trancheInconnue' => 'Pas encore connue',
 			'ficheEleve.informations.trancheNonLue' => 'Non lue',
 			'ficheEleve.informations.photo' => 'Photo',
-			'ficheEleve.informations.photoLegende' => ({required Object dePrenom}) => 'Une photo du visage ${dePrenom}. Ce n\'est pas une pièce d\'identité.',
+			'ficheEleve.informations.photoLegende' => ({required Object dePrenom}) => 'Une photo du visage ${dePrenom}. Ce n\'est pas une pièce d\'identité. Son enseignant, les élèves de sa classe et la direction la voient.',
 			'ficheEleve.informations.photoAucune' => 'Pas encore de photo',
 			'ficheEleve.informations.photoPresente' => 'Photo enregistrée',
 			'ficheEleve.informations.choisir' => 'Choisir une photo',
@@ -55722,7 +55719,6 @@ extension on Traductions {
 			'tuteur.reglages.intro' => 'Ces réglages s\'appliquent à la séance suivante, jamais pendant un cours.',
 			'tuteur.reglages.photo' => 'Photo',
 			'tuteur.reglages.photoAucune' => ({required Object prenom}) => '${prenom} n\'a pas encore de photo. Elle reste visible du seul foyer.',
-			'tuteur.reglages.photoPresente' => ({required Object dePrenom}) => 'La photo ${dePrenom} reste visible du seul foyer, jamais de son enseignant ni des autres élèves.',
 			'tuteur.reglages.photoAjouter' => 'Ajouter une photo',
 			'tuteur.reglages.photoChanger' => 'Changer la photo',
 			'tuteur.reglages.photoTropLourde' => ({required Object taille}) => 'Cette photo dépasse ${taille} Mo. Reprenez-la en qualité plus basse.',
@@ -55779,9 +55775,9 @@ extension on Traductions {
 			'classe.entree.demo.etats.preparation' => 'Préparation en cours',
 			'classe.entree.demo.etats.attente' => 'Attente avant le début',
 			'classe.entree.demo.etats.enDirect' => 'En direct',
+			'classe.entree.demo.etats.tempsEcoule' => 'Temps prévu écoulé',
 			_ => null,
 		} ?? switch (path) {
-			'classe.entree.demo.etats.tempsEcoule' => 'Temps prévu écoulé',
 			'classe.entree.demo.etats.terminee' => 'Terminée',
 			'classe.entree.demo.etats.annulee' => 'Annulée',
 			'classe.entree.demo.etats.horsLigne' => 'Hors ligne',
@@ -56293,9 +56289,9 @@ extension on Traductions {
 			'enseignant.profil.compteValide' => 'Compte enseignant vérifié',
 			'enseignant.profil.intro' => 'Ce que l\'académie sait de vous, et ce que vous pouvez y changer.',
 			'enseignant.profil.identite' => 'Identité professionnelle',
+			'enseignant.profil.pays' => 'Pays',
 			_ => null,
 		} ?? switch (path) {
-			'enseignant.profil.pays' => 'Pays',
 			'enseignant.profil.langues' => 'Langues',
 			'enseignant.profil.fuseau' => 'Fuseau de mes cours',
 			'enseignant.profil.fuseauDetail' => 'C\'est lui qui décide de l\'heure de vos créneaux, pas l\'heure de cet appareil.',
@@ -56807,9 +56803,9 @@ extension on Traductions {
 			'tc.groupe.carte.prochainCours' => 'Prochain cours',
 			'tc.groupe.carte.aucuneSeance' => 'Aucune séance planifiée',
 			'tc.groupe.carte.aucuneSeanceDetail' => 'Le planning de cette classe n\'est pas encore posé.',
+			'tc.groupe.carte.duree' => ({required Object valeur}) => 'Durée ${valeur}',
 			_ => null,
 		} ?? switch (path) {
-			'tc.groupe.carte.duree' => ({required Object valeur}) => 'Durée ${valeur}',
 			'tc.groupe.carte.dureeLibelle' => 'Durée',
 			'tc.groupe.carte.rejoindre' => 'Rejoindre',
 			'tc.groupe.carte.entreeSePrepare' => 'Votre entrée se prépare. Réessayez dans un instant.',
@@ -57321,9 +57317,9 @@ extension on Traductions {
 			'adulte.accueil.retourFoyerTitre' => 'Revenir à l\'accueil de votre famille',
 			'adulte.accueil.retourFoyerPhrase' => 'Retrouvez les Classes et les séances de vos proches.',
 			'adulte.accueil.financesPhrase' => 'Votre solde, votre période financée et votre mensualité.',
+			'adulte.accueil.sansDonnees' => 'Votre prochaine séance et vos dernières séances n\'ont pas pu être chargées',
 			_ => null,
 		} ?? switch (path) {
-			'adulte.accueil.sansDonnees' => 'Votre prochaine séance et vos dernières séances n\'ont pas pu être chargées',
 			'adulte.accueil.echec' => 'Votre prochaine séance et vos dernières séances n\'ont pas pu être chargées : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'adulte.historique.titre' => 'Mes séances passées',
 			'adulte.historique.sansDonnees' => 'Vos séances passées n\'ont pas pu être chargées',
@@ -57835,9 +57831,9 @@ extension on Traductions {
 			'suiviFamille.close.suite' => ({required Object prenom}) => 'Vous pouvez choisir un autre créneau pour ${prenom}.',
 			'suiviFamille.close.suiteSansChoix' => 'Rien d\'autre à faire de votre côté.',
 			'suiviFamille.close.choisirAutre' => ({required Object prenom}) => 'Choisir un autre créneau pour ${prenom}',
+			'suiviFamille.close.motif.retraitFamille' => 'Vous avez retiré cette demande.',
 			_ => null,
 		} ?? switch (path) {
-			'suiviFamille.close.motif.retraitFamille' => 'Vous avez retiré cette demande.',
 			'suiviFamille.close.motif.offreRetiree' => 'Ce créneau n\'est plus proposé.',
 			'suiviFamille.close.motif.classeNonConstituee' => 'La classe de ce créneau n\'a pas pu être constituée.',
 			'suiviFamille.close.motif.refusDirection' => 'La direction n\'a pas retenu cette demande.',
@@ -58349,9 +58345,9 @@ extension on Traductions {
 			'com.vocal.lecteur.nonEcoute' => 'Pas encore écouté',
 			'com.vocal.lecteur.lecture' => 'Lecture en cours',
 			'com.vocal.lecteur.enPause' => 'Lecture en pause',
+			'com.vocal.lecteur.fin' => 'Écouté en entier',
 			_ => null,
 		} ?? switch (path) {
-			'com.vocal.lecteur.fin' => 'Écouté en entier',
 			'com.vocal.lecteur.position' => ({required Object position, required Object duree}) => '${position} sur ${duree}',
 			'com.vocal.lecteur.indisponible' => 'La lecture n\'est pas encore disponible ici. Le message reste dans la conversation : revenez plus tard pour l\'écouter.',
 			'com.vocal.lecteur.erreurLectureTitre' => 'Impossible de lire ce message vocal.',
@@ -58863,9 +58859,9 @@ extension on Traductions {
 			'com.annonces.demoPublication.controleurs' => 'Contrôleurs',
 			'com.annonces.demoPublication.direction' => 'Direction',
 			'com.annonces.demoPublication.audiencesDirection' => 'Toute l\'académie, un public ou une classe',
+			'com.annonces.demoPublication.audiencesEnseignant' => 'Sa classe seulement',
 			_ => null,
 		} ?? switch (path) {
-			'com.annonces.demoPublication.audiencesEnseignant' => 'Sa classe seulement',
 			'com.annonces.demoPublication.vacancesTitre' => 'Calendrier des vacances d\'hiver',
 			'com.annonces.demoPublication.vacancesTexte' => 'Les cours s\'arrêtent du 21 décembre au 5 janvier. Les séances reprennent le lundi 6 janvier aux horaires habituels.',
 			'com.annonces.demoPublication.reunionTitre' => 'Réunion des enseignants de jeudi',
@@ -59377,9 +59373,9 @@ extension on Traductions {
 			'comptable.tresorerie.transfert.aucunCouple' => 'Aucun mouvement n\'est permis par la politique pour votre compte.',
 			'comptable.tresorerie.titre' => 'Trésorerie et coffres',
 			'comptable.tresorerie.sousTitre' => 'La Trésorerie libre est le seul chiffre dépensable.',
+			'comptable.tresorerie.alimenter' => 'Alimenter la Réserve stratégique',
 			_ => null,
 		} ?? switch (path) {
-			'comptable.tresorerie.alimenter' => 'Alimenter la Réserve stratégique',
 			'comptable.tresorerie.erreurPartielle' => 'Une partie de la page n\'a pas pu être lue : le reste est à jour. Réessayez pour compléter.',
 			'comptable.tresorerie.erreurPartielleAction' => 'Réessayer',
 			'comptable.encaissements.filtreTous' => 'Tous',
@@ -59891,9 +59887,9 @@ extension on Traductions {
 			'comptable.direction.delegationPanneau.suspendreGarder' => 'Garder les délégations',
 			'comptable.direction.delegationPanneau.reactiverTitre' => 'Réactiver les délégations',
 			'comptable.direction.delegationPanneau.reactiverDetail' => 'Les délégations sont suspendues. Les lever est un acte de la direction, avec une raison écrite.',
+			'comptable.direction.delegationPanneau.reactiverAction' => 'Réactiver les délégations',
 			_ => null,
 		} ?? switch (path) {
-			'comptable.direction.delegationPanneau.reactiverAction' => 'Réactiver les délégations',
 			'comptable.direction.delegationPanneau.reactiverPhrase' => 'Le Comptable pourra de nouveau agir dans les limites de la politique. Une délégation expirée n\'est jamais rétablie : il faudra la renouveler. Les sorties annulées restent annulées. La réactivation est inscrite au journal.',
 			'comptable.direction.delegationPanneau.reactiverRaison' => 'Raison de la réactivation',
 			'comptable.direction.delegationPanneau.reactiverRaisonAide' => 'Elle est conservée au journal avec votre nom.',
@@ -60405,9 +60401,9 @@ extension on Traductions {
 			'avis.admin.retour.publie' => 'L\'avis est publié.',
 			'avis.admin.retour.refuse' => 'L\'avis est refusé.',
 			'avis.admin.retour.retire' => 'L\'avis est retiré.',
+			'avis.admin.retour.etatChange' => 'Cet avis n\'est plus dans l\'état attendu. La liste est mise à jour.',
 			_ => null,
 		} ?? switch (path) {
-			'avis.admin.retour.etatChange' => 'Cet avis n\'est plus dans l\'état attendu. La liste est mise à jour.',
 			'avis.admin.retour.introuvable' => 'Cet avis n\'existe plus. La liste est mise à jour.',
 			'avis.admin.retour.motifManque' => 'Le motif manque. Choisissez-en un.',
 			'avis.admin.retour.refus' => 'Seule la direction connectée peut décider d\'un avis.',
@@ -60919,9 +60915,9 @@ extension on Traductions {
 			'candidatsFlux.importFormulaires.champ.horodatage' => 'Date de la réponse',
 			'candidatsFlux.importFormulaires.champ.horodatageAide' => 'Sert à reconnaître la réponse si vous rejouez le fichier.',
 			'candidatsFlux.importFormulaires.champ.genre' => 'Genre',
+			'candidatsFlux.importFormulaires.champ.genreAide' => 'Sert à ranger la réponse du bon côté. Jamais montré dans l\'aperçu.',
 			_ => null,
 		} ?? switch (path) {
-			'candidatsFlux.importFormulaires.champ.genreAide' => 'Sert à ranger la réponse du bon côté. Jamais montré dans l\'aperçu.',
 			'candidatsFlux.importFormulaires.champ.nom' => 'Nom complet',
 			'candidatsFlux.importFormulaires.champ.nomAide' => 'Sert à reconnaître la personne. Jamais montré ici.',
 			'candidatsFlux.importFormulaires.champ.telephone' => 'Téléphone WhatsApp',

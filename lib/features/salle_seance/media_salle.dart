@@ -9,7 +9,10 @@
 
 import 'package:flutter/widgets.dart';
 
+import '../../core/video/video_camarades.dart';
+import '../../core/video/video_session_provider.dart';
 import '../../core/widgets/action_principale.dart';
+import '../salle/vue_salle.dart';
 import 'marque_chrono.dart';
 import 'panneau_bibliotheque_salle.dart' show SupportBibliotheque;
 import 'vue_seance.dart';
@@ -84,6 +87,38 @@ ModeScene calculerModeScene({
     return ModeScene.classe;
   }
   return tableau ? ModeScene.tableau : ModeScene.document;
+}
+
+/// CAMARADES (directeur, 12/11/2026, journal D-040) : « la vraie video,
+/// c'est seulement celui qui recite ; sinon on ne voit que sa photo. »
+///
+/// LA regle d'affichage de la salle, a UN seul endroit : la video de
+/// [identite] est-elle montree a la personne qui regarde ([vue]) ?
+///
+/// - chez un eleve ([RoleSalle.eleve]) : sa propre image, l'enseignant qui
+///   conduit (role signe par le serveur), et le camarade qui recite
+///   ([recitant]) ; tout autre camarade est montre par sa photo, ou sa
+///   couleur et son initiale (`CadreVisage`), jamais par sa camera ;
+/// - chez l'enseignant, le tuteur qui assiste, le controleur et la
+///   direction : rien ne change.
+///
+/// Le moteur tient la meme regle ([videoRecue]) et ne s'abonne pas a la
+/// camera d'un camarade qui ne recite pas : l'ecran ne cache pas une image
+/// recue, il ne la recoit pas.
+bool videoMontree(VueSalle vue, String identite, {String? recitant}) {
+  for (final ParticipantSalle p in vue.participantsListes) {
+    if (p.identite == identite) {
+      return videoRecue(
+        regardEleve: vue.role == RoleSalle.eleve,
+        local: p.estLocal,
+        roleDistant: p.role,
+        identite: p.identite,
+        recitant: recitant,
+      );
+    }
+  }
+  // Inconnu de la vue : rien a montrer chez un eleve.
+  return vue.role != RoleSalle.eleve;
 }
 
 /// La portee des medias reels de `/salle`.
