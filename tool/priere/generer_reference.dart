@@ -70,7 +70,7 @@ String ligne(
 ) {
   final adhan.CalculationParameters p = parametres(methode)
     ..madhab = ecole == 'hanafi' ? adhan.Madhab.hanafi : adhan.Madhab.shafi;
-  String date =
+  final String date =
       '${jour.year}-${jour.month.toString().padLeft(2, '0')}-${jour.day.toString().padLeft(2, '0')}';
   List<String> heures;
   try {
