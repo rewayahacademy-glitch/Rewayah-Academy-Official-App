@@ -20,15 +20,14 @@ import 'package:rewayah_academy/core/capacites/port_enseignants_classe.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/enseignant/modeles_enseignant.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/lieu/lieu_direction.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
-import 'package:rewayah_academy/core/lieu/lieu_direction.dart';
 import 'package:rewayah_academy/core/tc_horloge/apercu_creneau.dart';
 import 'package:rewayah_academy/core/tc_horloge/creneau_chez_moi.dart';
 import 'package:rewayah_academy/core/tc_horloge/fuseaux_interlocuteurs.dart';
 import 'package:rewayah_academy/core/tc_horloge/mon_horloge.dart';
 import 'package:rewayah_academy/core/widgets/menu_actions.dart';
-import 'package:rewayah_academy/features/admin_groupes/feuille_reglages_classe.dart';
 
 import '../../router/support_routeur.dart';
 import '../../support/harnais.dart';

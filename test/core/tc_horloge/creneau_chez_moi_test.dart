@@ -176,7 +176,7 @@ void main() {
   test('sans lecture du fuseau : l heure du creneau et la ville de son fuseau, '
       'jamais « Riyad » ni une heure devinee', () {
     _vivre(_parisJson);
-    final CleCreneau cle = (jour: 3, heure: 21, fuseau: 'Asia/Riyadh');
+    const CleCreneau cle = (jour: 3, heure: 21, fuseau: 'Asia/Riyadh');
     final String libelle = libelleDuCreneau(null, cle);
     expect(libelle, contains('21:00'));
     expect(libelle, isNot(contains('Riyad')));
@@ -227,7 +227,7 @@ void main() {
 
   test('partiesDuCreneau : le jour et l heure a mettre dans une phrase', () {
     _vivre(_parisJson);
-    final CleCreneau cle = (jour: 3, heure: 21, fuseau: 'Asia/Riyadh');
+    const CleCreneau cle = (jour: 3, heure: 21, fuseau: 'Asia/Riyadh');
     final CreneauChezMoi? c = creneauChezMoi(
       jour: 3,
       heure: 21,

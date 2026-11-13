@@ -243,3 +243,52 @@ Conditions de l'architecte : drapeau de conversion posé seulement par la migrat
 - **Ce qui reste correct** : aucune fusion à tort. Deux clés égales supposent les mêmes décalages et les mêmes heures murales, donc les mêmes instants.
 - **Étendue** : les familles d'un même fuseau se regroupent normalement ; seul le regroupement entre fuseaux est perdu. Production au 12/11/2026 : 0 demande d'horaire (`demandes_horaires_famille`), donc aucun regroupement existant touché.
 - **Correction envisagée (non faite)** : calculer pour chaque couple (jour, heure) murale de la demande l'instant d'une semaine de référence en janvier et en juillet, le ramener au fuseau de l'académie, et construire la clé avec ces deux jeux de (jour, heure) de La Mecque. Test attendu : Paris 19 h et Montréal 13 h en hiver donnent la même clé, Paris 19 h et Montréal 19 h deux clés différentes. Elle change la forme de la clé (donc les identifiants de regroupement calculés par `c11bis_id_regroupement`) : à faire avec les classes vitrines, avant que des demandes existent.
+
+## 9. Correctifs de la partie A (revue indépendante de la tête `bd47382a1`, 13/11/2026) et suite de la partie B
+
+### Consigne pour le directeur (ordre d'installation INVERSÉ par rapport à la réponse Q2)
+
+**« Mettre l'application à jour, puis installer la migration ; entre les deux, ne modifier aucun horaire. »**
+
+Le nouveau client est mis en ligne D'ABORD, la migration (page de collage) ensuite. Le nouveau client marche dans les deux états de la base : tant que les fonctions du lieu et de l'horloge ne sont pas installées il retombe sur l'ancien chemin (une heure saisie dans le fuseau de la classe, dite avec sa ville, sans seconde heure), et après la migration il lit chaque créneau à l'heure de la personne puis à l'heure de La Mecque. Un ancien client qui reste ouvert après la migration est refusé quand il veut DÉPLACER une heure (erreur `RechargerPourModifierUnHoraire`, aucune modification, aucune notification) ; renommer une classe, changer son seuil ou la durée d'un créneau sans le déplacer continue de marcher.
+
+### B1 : où l'heure d'un créneau ou d'un cours est montrée, et ce qui a été fait
+
+Règle : l'heure de la personne d'abord, calculée depuis l'instant réel du prochain cours (`lib/core/tc_horloge/creneau_chez_moi.dart`, fuseau du créneau lu par `public.fuseau_vue`), puis « Heure de La Mecque » en second ; jamais « Riyad », jamais « heure de la classe ».
+
+Corrigés (tous passent par `libelleCreneauLu`, `partiesDuCreneau` ou `quandConflit`) : fiche de la classe de l'enseignant (`fiche_groupe_page.dart`), liste des classes de la direction et fiche d'une classe (`groupes_page.dart`), créneaux de la classe (`feuille_reglages_classe.dart`), saisie d'un créneau (`feuille_creneau.dart` : plus de « L'heure est celle du fuseau horaire de la classe », la légende dit « Heure de Paris » ou « Heure de La Mecque » et l'équivalent à La Mecque est montré avant d'envoyer), conflits d'horaire nommés par le serveur (`refus_creation_classe_libelles.dart`), comparaison d'un créneau saisi avec les classes existantes (`groupes_page.dart`, plus de faux conflit : les deux heures sont comparées dans le même fuseau), pilotage (`pilotage_libelles.dart`, `pilotage_page.dart`), filtres Fuseau de la liste des classes, du pilotage et des regroupements, et libellés de fuseau d'un regroupement (« La Mecque » et non « Riyad »).
+
+Déjà conformes (instants, via `chezMoi` et `HeureDouble` de la partie A) : Journée de l'enseignant, accueil famille, salle, suivi, notifications, mes classes de l'enseignant, cartes de classe.
+
+Laissés, avec la raison :
+- Filtres **Jour** et **Heure** de la liste des classes et du pilotage : ils filtrent sur la valeur enregistrée ; le filtre Fuseau voisin la qualifie (« La Mecque »). Les lire à l'heure de la personne changerait la signification du filtre (un jour qui change à minuit) : à décider.
+- Offres horaires de la direction (`admin_offres`, `libelleHeureMinute` + ville) : une offre est un modèle défini dans son propre fuseau, toujours dit avec sa ville ; ce n'est pas un créneau de classe.
+- Disponibilités de l'enseignant et candidature : heures dans le fuseau de la personne elle-même.
+- Données de démonstration et playground : fictives.
+
+### B2 : l'ancien client ne déplace plus un cours de deux heures
+
+`supabase/migrations/20261123940300_horloge_correctifs_a.sql` : `ajouter_creneau_classe_admin` (3 et 4 arguments), `modifier_creneau_classe_admin` et `modifier_groupe` refusent, pour une classe à l'heure de La Mecque, tout appel qui déplacerait une heure sans fuseau explicite ; trois fonctions nouvelles (`ajouter_creneau_classe_fuseau`, `modifier_creneau_classe_fuseau`, `modifier_groupe_fuseau`) reçoivent le fuseau de l'heure saisie et convertissent (heure sans équivalent entier refusée). Le nouveau client envoie toujours le fuseau de l'heure saisie (celui de sa ville quand il l'a choisie, sinon celui de la classe, donc l'heure de La Mecque pour une direction sans ville) et montre l'équivalent à La Mecque avant d'envoyer.
+
+**Écart à la décision (a)** : un appel qui ne déplace aucune heure (renommer, changer le seuil, changer la durée d'un créneau sans le déplacer) n'est pas refusé : aucune heure n'y est interprétée, et le refuser aurait empêché tout ancien client de renommer une classe.
+
+**L'ancien client affiche, pour ce refus, sa phrase générale de refus** (il ne connaît pas le message `RechargerPourModifierUnHoraire`) ; seul le nouveau client dit « Rechargez l'application pour modifier un horaire ».
+
+### I1 à I8
+
+- I1 : `push_depuis_notification` donne à l'annonce sa propre « portée » de push (`heure_ete`, `heure_hiver`, `heure_classe`) ; textes dans `_shared/push/textes.ts`. Aucun nouvel événement ni contrainte (marqueur dans les paramètres).
+- I2 : le jour d'arrivée est dit quand il change (application, courriel, cinq langues).
+- I3 : « Heure de La Mecque » partout ; la phrase « le cours reste à la même heure à La Mecque » n'est dite que si la classe y est (`academie` dans les paramètres).
+- I4 : tâche horaire (`7 * * * *`), chaque personne est servie à 10 h locale, jamais entre 21 h et 8 h.
+- I5 : `changement_heure_cours` lit le premier des deux changements d'heure (personne, classe) ; une classe refusée par la tâche de nuit prévient la direction une fois (événement `creneau_change`, marqueur `conversion_refusee`).
+- I6 : une classe en attente d'enseignant annonce aussi.
+- I7 : `public.changements_heure_a_venir_direction` et un bloc dans Comptes (familles, enseignants) ; `transitions_fuseau_a_venir` (par classe) n'a aucun écran dans l'application : elle n'est lue que par un scénario SQL.
+- I8 : `test/features/horloge_creneaux/creneaux_routeur_reel_test.dart` part du vrai routeur (`routeurProvider`).
+
+### Zone `lib/features/parcours_offres` : modifiée sur décision de l'architecte (13/11/2026)
+
+Trois preuves données par l'architecte : (1) `docs/orchestration/PASSATION-2026-10-17.md` ligne 15 : « garde-fou levé par le directeur pour `site-public/` et `parcours_offres` » ; (2) `.claude/hooks/garde.py` ne contient plus `parcours_offres` ; (3) la zone a été modifiée depuis par des lots déjà fusionnés (FOYER-PARCOURS, quatre commits du 07/11). L'entrée restée dans `.claude/hooks/zones_apres.sh` est un reste ; je n'ai touché à aucun fichier de `.claude/hooks`.
+
+### Partie B : écart signalé
+
+L'étape « ville » n'est pas une étape de plus dans le parcours d'inscription : à la première entrée d'un tuteur ou d'un enseignant sans ville, la porte du routeur (`villeAFournir`) le mène à `/ville`, avec « Plus tard » tant qu'il reste un report (3 par défaut). Cela évite de toucher le parcours d'inscription ; la personne a le même choix, juste après la création du profil.
