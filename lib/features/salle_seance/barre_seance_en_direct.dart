@@ -15,7 +15,6 @@ import '../../core/pause_seance/port_pause_seance.dart';
 import '../../core/router/billet_salle.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
-import '../../core/session/session_state.dart';
 import '../../core/tc_classe/port_session_persistante.dart';
 import '../../core/tc_classe/session_persistante.dart';
 import '../../core/tc_horloge/chrono_seance.dart' show BornesChrono;
@@ -425,7 +424,6 @@ class _BarreEtat extends ConsumerState<_Barre> {
     commandes: _CommandesPauseIle(this),
   );
   StreamSubscription<PaquetDonnees>? _sDonnees;
-  String? _profil;
   PauseSeance? _pauseObservee;
   bool _pauseJamaisObservee = true;
 
@@ -445,9 +443,17 @@ class _BarreEtat extends ConsumerState<_Barre> {
       setState(() {});
       return;
     }
-    final String? profil = _profil;
-    if (profil != null &&
-        paquetRappelPour(paquet, sessionId: sessionId, profilLocalId: profil)) {
+    // Le rappel est adresse au seul eleve vise : le recevoir, c'est etre
+    // appele (qui conduit la seance ne l'est jamais). Son propre paquet ne
+    // revient pas ; le profil, quand il est connu, l'ecarte en plus.
+    if (widget.etat.acces?.capacites.peutModerer ?? false) return;
+    String profil = '';
+    try {
+      profil = ref.read(sessionProvider).profileId ?? '';
+    } on Object {
+      // Session illisible : le paquet adresse suffit.
+    }
+    if (paquetRappelPour(paquet, sessionId: sessionId, profilLocalId: profil)) {
       _sonnerie.lancer();
       _dynamique.annoncer(
         alerteAppelRecu(
@@ -622,10 +628,6 @@ class _BarreEtat extends ConsumerState<_Barre> {
     // DYNAMIQUE-CHRONO-2 : la pause, lue au serveur par qui conduit, recue
     // par le relais chez les autres.
     final String seance = widget.cours.sessionId;
-    // Le profil de cet appareil, tenu a jour (le rappel ne vise que lui).
-    _profil = ref.watch(
-      sessionProvider.select((SessionState e) => e.profileId),
-    );
     final PauseSeance? pause = conduit
         ? ref.watch(pauseSeanceProvider(seance)).value
         : ref.read(pausesRecuesProvider)[seance];

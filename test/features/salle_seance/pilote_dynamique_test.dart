@@ -10,7 +10,6 @@
 //   pause de priere (avance, decalage, depart seul), fin automatique (une
 //   fois, reessai apres un echec), debut et fin dits a tous, reprise passee.
 
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/pause_seance/port_pause_seance.dart';
@@ -168,7 +167,11 @@ void main() {
         isEmpty,
       );
       List<String> noms(List<ParticipantSalle> l) => <String>[
-        for (final ParticipantSalle x in suivi.observer(l)) x.nom,
+        for (final ParticipantSalle x in suivi.observer(
+          l,
+          ecoule: AppMouvement.calmeEntree,
+        ))
+          x.nom,
       ];
       annoncerArrivees(
         p,
