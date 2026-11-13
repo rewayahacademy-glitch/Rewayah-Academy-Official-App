@@ -26,9 +26,6 @@
 --
 -- Depend du lot 1 (20261123900000) : eleve_etape_en_cours, private.dates_etape,
 -- private.cohorte_effective, etape_eleve_lecture.
-
-BEGIN;
-
 -- ---------------------------------------------------------------------------
 -- 0. Preflight : le lot 1 est installe
 -- ---------------------------------------------------------------------------
@@ -1312,5 +1309,3 @@ BEGIN
   END IF;
 END
 $postflight$;
-
-COMMIT;
