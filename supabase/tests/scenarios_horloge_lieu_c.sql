@@ -11,6 +11,13 @@
 -- reussi ecrit une ligne "HLD OK" ; un echec leve 'HLD ROUGE : ...'.
 BEGIN;
 
+-- TRAIN 13/11/2026 : dans une base qui porte aussi PRIERE-2 (20261124500000), la vraie
+-- `private.priere_lieu_auto` existe deja. Ce scenario prouve le relais SANS elle, puis avec
+-- un double qui note chaque appel : la vraie fonction est donc retiree le temps du scenario
+-- (tout est annule a la fin). Le relais branche sur la VRAIE fonction, et le rattrapage sur
+-- la vraie table public.lieux, sont prouves par scenarios_train_1311_lieu_priere.sql.
+DROP FUNCTION IF EXISTS private.priere_lieu_auto(uuid, text, numeric, numeric, text);
+
 INSERT INTO auth.users (id, email) VALUES
   ('d6000000-0000-4000-8000-000000000001', 'hld-admin@example.test'),
   ('d6000000-0000-4000-8000-000000000102', 'hld-candidat@example.test'),
