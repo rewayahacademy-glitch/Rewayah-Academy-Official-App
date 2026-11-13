@@ -135,7 +135,7 @@ void main() {
     });
   });
 
-  group('le conflit de la cloche de nuit, a la direction', () {
+  group('le conflit du balayage de nuit, a la direction', () {
     setUp(() => LocaleSettings.setLocaleSync(AppLocale.fr));
 
     test('l evenement est connu ; la destination est celle du planning', () {
@@ -165,6 +165,31 @@ void main() {
         expect(titre, contains('rétablie la nuit suivante'));
       },
     );
+
+    test('la relance de la veille rappelle, sans redire la detection', () {
+      final String titre = contenuNotificationPour(
+        'fermeture_conflit',
+        const <String, dynamic>{
+          'portee': 'direction',
+          'motif': 'veille',
+          'classe': 'Classe Al-Noor',
+          'premiere_jour': '2027-05-18',
+          'premiere_heure': '11:00',
+          'enseignant': 'Aïcha Haddad',
+        },
+      ).titre;
+      expect(titre, startsWith('Rappel'));
+      expect(titre, contains('Classe Al-Noor'));
+      expect(titre, contains('18 mai 2027 à 11:00 (heure de La Mecque)'));
+      expect(titre, contains('Aïcha Haddad'));
+      expect(titre, isNot(contains('la nuit suivante')));
+      expect(
+        contenuNotificationPour('fermeture_conflit', const <String, dynamic>{
+          'motif': 'veille',
+        }).titre,
+        startsWith('Rappel'),
+      );
+    });
 
     test('sans nom ni heure : la phrase generale, jamais un trou', () {
       final String titre = contenuNotificationPour(

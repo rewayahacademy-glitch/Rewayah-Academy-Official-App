@@ -385,15 +385,27 @@ String _fermeture(Map<String, dynamic> params, {required bool levee}) {
 /// retablie (l'enseignant a pris un autre cours a la meme heure).
 String _fermetureConflit(Map<String, dynamic> params) {
   final n = t.calendrier.dates.notification.conflit;
+  // La relance de la veille (motif « veille ») ne redit pas la detection : elle rappelle.
+  final bool rappel = params['motif'] == 'veille';
   final String classe = '${params['classe'] ?? ''}'.trim();
   final String enseignant = '${params['enseignant'] ?? ''}'.trim();
   final DateTime? jour = jourDepuisSql(params['premiere_jour']);
   final String heure = '${params['premiere_heure'] ?? ''}'.trim();
   if (classe.isEmpty || jour == null || heure.isEmpty) {
-    return n.generale;
+    return rappel ? n.rappelGenerale : n.generale;
   }
-  return enseignant.isEmpty
-      ? n.sansNom(classe: classe, jour: jourEnMots(jour), heure: heure)
+  if (enseignant.isEmpty) {
+    return rappel
+        ? n.rappelSansNom(classe: classe, jour: jourEnMots(jour), heure: heure)
+        : n.sansNom(classe: classe, jour: jourEnMots(jour), heure: heure);
+  }
+  return rappel
+      ? n.rappelAvecNom(
+          classe: classe,
+          jour: jourEnMots(jour),
+          heure: heure,
+          enseignant: enseignant,
+        )
       : n.avecNom(
           classe: classe,
           jour: jourEnMots(jour),

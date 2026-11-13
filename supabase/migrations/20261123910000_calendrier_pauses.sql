@@ -839,8 +839,8 @@ BEGIN
     END IF;
   END LOOP;
   IF p_nuit AND pg_catalog.cardinality(v_conflits) > 0 THEN
-    -- La cloche de nuit ne refuse rien et n'abandonne rien : une seance qui ne peut pas etre retablie reste de
-    -- cote, la direction en est avertie (une notification par seance et par nuit au plus), un humain tranche.
+    -- Le balayage de nuit ne refuse rien et n'abandonne rien : une seance qui ne peut pas etre retablie reste de
+    -- cote, la direction en est avertie (a la detection, puis la veille de la seance), un humain tranche.
     FOR r IN SELECT x FROM pg_catalog.unnest(v_conflits) AS x LOOP
       PERFORM private.fermeture_signaler_conflit(r.x);
     END LOOP;
@@ -914,10 +914,13 @@ $function$;
 -- que la publication d'une fermeture trouve deja creees. Les sauts de classe et de date voulus
 -- par la direction (nouvelle date d'une seance reportee) sont refuses plus haut, avec leur phrase.
 -- La direction est avertie qu'une seance, qui n'est plus couverte par aucune fermeture, ne peut pas etre
--- retablie (l'enseignant a pris un autre cours a la meme heure) : une notification par administrateur actif,
--- par seance et par nuit au plus (le rejeu de la nuit ne redouble rien). Application seulement (ni courriel
--- ni push) ; un echec d'ecriture n'arrete jamais la cloche.
-CREATE FUNCTION private.fermeture_signaler_conflit(p_session uuid)
+-- retablie (l'enseignant a pris un autre cours a la meme heure). Un conflit non tranche ne harcele pas
+-- (arbitrage de l'architecte, 13/11) : UNE notification par administrateur actif et par seance A LA DETECTION,
+-- puis UNE relance la veille de la seance (jour de La Mecque) si le conflit tient toujours ; rien d'autre.
+-- Le dedoublonnage est par seance et par motif (detection / veille), plus par nuit. La relance n'est jamais
+-- envoyee la nuit meme de la detection. p_jour (la nuit simulee) ne sert qu'aux scenarios. Application
+-- seulement (ni courriel ni push) ; un echec d'ecriture n'arrete jamais le balayage.
+CREATE FUNCTION private.fermeture_signaler_conflit(p_session uuid, p_jour date DEFAULT NULL)
 RETURNS integer
 LANGUAGE plpgsql
 SECURITY DEFINER
@@ -925,6 +928,7 @@ SET search_path = ''
 AS $function$
 DECLARE
   v_n integer := 0;
+  v_jour date := coalesce(p_jour, private.jour_academie());
 BEGIN
   BEGIN
     INSERT INTO public.notifications (destinataire, evenement, params, destination)
@@ -935,7 +939,8 @@ BEGIN
              'premiere_jour', private.jour_academie_de(s.started_at),
              'premiere_heure', pg_catalog.to_char(s.started_at AT TIME ZONE 'Asia/Riyadh', 'HH24:MI'),
              'enseignant', nullif(pg_catalog.btrim(coalesce(t.first_name, '') || ' ' || coalesce(t.last_name, '')), ''),
-             'nuit', private.jour_academie()::text)),
+             'motif', m.motif,
+             'nuit', v_jour::text)),
            '/admin/operations/planning'
       FROM public.sessions s
       JOIN public.groupes g ON g.id = s.groupe_id
@@ -944,12 +949,21 @@ BEGIN
         SELECT pr.id FROM public.profiles pr
          WHERE pr.role = 'admin' AND pr.account_status = 'active' AND pr.deleted_at IS NULL
            AND (pr.access_until IS NULL OR pr.access_until > pg_catalog.now())) a
-     WHERE s.id = p_session
-       AND NOT EXISTS (
-         SELECT 1 FROM public.notifications n
-          WHERE n.destinataire = a.id AND n.evenement = 'fermeture_conflit'
-            AND n.params ->> 'session_id' = p_session::text
-            AND n.params ->> 'nuit' = private.jour_academie()::text);
+      CROSS JOIN LATERAL (
+        SELECT CASE
+                 WHEN NOT EXISTS (
+                   SELECT 1 FROM public.notifications n
+                    WHERE n.destinataire = a.id AND n.evenement = 'fermeture_conflit'
+                      AND n.params ->> 'session_id' = p_session::text) THEN 'detection'
+                 WHEN private.jour_academie_de(s.started_at) - v_jour = 1
+                      AND NOT EXISTS (
+                        SELECT 1 FROM public.notifications n
+                         WHERE n.destinataire = a.id AND n.evenement = 'fermeture_conflit'
+                           AND n.params ->> 'session_id' = p_session::text
+                           AND (n.params ->> 'motif' = 'veille' OR n.params ->> 'nuit' = v_jour::text))
+                   THEN 'veille'
+               END AS motif) m
+     WHERE s.id = p_session AND m.motif IS NOT NULL;
     GET DIAGNOSTICS v_n = ROW_COUNT;
   EXCEPTION WHEN OTHERS THEN
     RAISE WARNING 'fermeture : conflit de la seance % non signale (SQLSTATE %)', p_session, SQLSTATE;
@@ -964,9 +978,9 @@ $function$;
 -- balayage met de cote les seances vivantes non commencees des jours fermes et les notifie par le meme
 -- chemin (private.fermeture_notifier : jamais un mineur, une notification par destinataire, classe et
 -- fermeture). Rejoue, il ne trouve plus rien : aucun doublon. Aucun declencheur sur groupe_membres (le cout
--- d'un recalcul a chaque changement de membre n'est pas prouve nul). Appele par la cloche de nuit.
--- LE CAS INVERSE (arbitrage de l'architecte : des eleves ne perdent jamais un cours un jour OUVERT) : la meme
--- cloche RETABLIT une seance de cote qui n'est plus couverte par AUCUNE fermeture, si le retablissement ne
+-- d'un recalcul a chaque changement de membre n'est pas prouve nul). Appele par sa propre tache planifiee (pg_cron), quelques minutes apres la cloche.
+-- LE CAS INVERSE (arbitrage de l'architecte : des eleves ne perdent jamais un cours un jour OUVERT) : le meme
+-- balayage RETABLIT une seance de cote qui n'est plus couverte par AUCUNE fermeture, si le retablissement ne
 -- trouve aucun conflit (meme simulation que le retrait : tentative en sous-transaction), et previent par
 -- fermeture_levee ; sinon elle ne retablit pas et avertit la direction (fermeture_conflit). Une seance deja
 -- passee n'est jamais retablie, rien n'est envoye.
@@ -1172,19 +1186,6 @@ SELECT pg_temp.remplacer('public.autoriser_jeton_video(uuid,uuid,text,text)'::pg
   $b$ where s.id = p_session_id and s.deleted_at is null
      and not private.session_en_fermeture(s.started_at, s.groupe_id);$b$, 1);
 
--- La cloche de nuit (20261025000000) met aussi de cote les seances vivantes des jours fermes (IMP-A).
-SELECT pg_temp.remplacer('private.materialiser_classes_actives()'::pg_catalog.regprocedure,
-  $a$  RETURN v_n;
-END;$a$,
-  $b$  -- CALENDRIER-ET-PAUSES (13/11/2026) : balayage des jours fermes ; une erreur ne bloque jamais la cloche.
-  BEGIN
-    PERFORM private.fermeture_balayer();
-  EXCEPTION WHEN OTHERS THEN
-    RAISE WARNING 'la cloche : balayage des fermetures impossible (%, %)', SQLSTATE, SQLERRM;
-  END;
-  RETURN v_n;
-END;$b$, 1);
-
 -- Une entree de la file de remplacement ANTERIEURE a la mise de cote ne fait rien sur une seance mise de
 -- cote (ni sur un jour de fermeture) : ni remplacant retenu, ni « pret ».
 SELECT pg_temp.remplacer('private.remplacement_choisir(uuid)'::pg_catalog.regprocedure,
@@ -1254,8 +1255,7 @@ BEGIN
     'public.fixer_nouvelle_date_seance(uuid,timestamptz)'::pg_catalog.regprocedure,
     'public.materialiser_seances(uuid)'::pg_catalog.regprocedure,
     'private.remplacement_choisir(uuid)'::pg_catalog.regprocedure,
-    'private.remplacement_choisir_pret(uuid)'::pg_catalog.regprocedure,
-    'private.materialiser_classes_actives()'::pg_catalog.regprocedure
+    'private.remplacement_choisir_pret(uuid)'::pg_catalog.regprocedure
   ] LOOP
     v_com := pg_catalog.obj_description(v_f, 'pg_proc');
     IF v_com ~ 'md5_functiondef=[0-9a-f]{32}' THEN
@@ -2220,7 +2220,7 @@ REVOKE ALL ON FUNCTION private.eleve_en_fermeture(uuid, date) FROM PUBLIC, anon,
 REVOKE ALL ON FUNCTION private.eleve_hors_cours(uuid, date) FROM PUBLIC, anon, authenticated, service_role;
 REVOKE ALL ON FUNCTION private.fermeture_synchroniser(boolean) FROM PUBLIC, anon, authenticated, service_role;
 REVOKE ALL ON FUNCTION private.fermeture_balayer() FROM PUBLIC, anon, authenticated, service_role;
-REVOKE ALL ON FUNCTION private.fermeture_signaler_conflit(uuid) FROM PUBLIC, anon, authenticated, service_role;
+REVOKE ALL ON FUNCTION private.fermeture_signaler_conflit(uuid, date) FROM PUBLIC, anon, authenticated, service_role;
 REVOKE ALL ON FUNCTION private.fermeture_notifier(uuid, uuid, text, uuid[], uuid[]) FROM PUBLIC, anon, authenticated, service_role;
 REVOKE ALL ON FUNCTION private.groupe_membres_recalculer() FROM PUBLIC, anon, authenticated, service_role;
 REVOKE ALL ON FUNCTION private.pause_depasse_plafond(uuid, date) FROM PUBLIC, anon, authenticated, service_role;
@@ -2309,3 +2309,45 @@ BEGIN
   END IF;
 END
 $postflight$;
+
+-- ---------------------------------------------------------------------------
+-- La tache planifiee du balayage (arbitrage de l'architecte, 13/11/2026, I-1) : la cloche
+-- (private.materialiser_classes_actives, 20261025000000, 2 h 17 UTC) reste STRICTEMENT celle de la production,
+-- non redefinie ici. Le balayage a sa propre tache pg_cron, dix minutes apres elle : un depassement de delai
+-- du balayage (query_canceled, que WHEN OTHERS ne rattrape pas) n'annule donc jamais la materialisation de la
+-- nuit, et un lot futur qui redefinirait la cloche n'efface rien. Nom unique ; cron.schedule sur un nom
+-- existant met la tache a jour (rejouable). Sans pg_cron (CI, base de test) : rien n'est planifie, aucune erreur.
+-- Rien n'est execute par anon ni authenticated : la tache tourne sous le role proprietaire de la migration.
+-- ---------------------------------------------------------------------------
+CREATE FUNCTION private.fermeture_planifier_balayage()
+RETURNS text
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = ''
+AS $function$
+BEGIN
+  IF pg_catalog.to_regprocedure('cron.schedule(text,text,text)') IS NULL THEN
+    RETURN 'absente';
+  END IF;
+  BEGIN
+    EXECUTE $q$SELECT cron.schedule('fermeture-balayage-nuit', '27 2 * * *',
+      'SELECT private.fermeture_balayer()')$q$;
+  EXCEPTION WHEN OTHERS THEN
+    RAISE WARNING 'CALENDRIER-ET-PAUSES : planification pg_cron impossible (%) ; a faire a la main', SQLERRM;
+    RETURN 'echec';
+  END;
+  RETURN 'planifiee';
+END;
+$function$;
+REVOKE ALL ON FUNCTION private.fermeture_planifier_balayage() FROM PUBLIC, anon, authenticated, service_role;
+COMMENT ON FUNCTION private.fermeture_planifier_balayage() IS
+  'CALENDRIER-ET-PAUSES : inscrit la tache pg_cron fermeture-balayage-nuit (02:27 UTC, dix minutes apres la cloche) ; rejouable ; sans pg_cron, rend absente.';
+DO $planification$
+BEGIN
+  IF pg_catalog.to_regprocedure('cron.schedule(text,text,text)') IS NULL THEN
+    RAISE NOTICE 'CALENDRIER-ET-PAUSES : pg_cron absente, rien n''est planifie';
+  ELSE
+    PERFORM private.fermeture_planifier_balayage();
+  END IF;
+END;
+$planification$;

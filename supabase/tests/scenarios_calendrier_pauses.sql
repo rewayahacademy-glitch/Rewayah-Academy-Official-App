@@ -1673,7 +1673,7 @@ SELECT pg_temp.vrai((SELECT pg_catalog.count(*) FROM public.notifications WHERE 
 -- ------------------------------------------------------------------
 -- Une fermeture de TRANCHE (adultes) est publiee. cT est une classe d'adultes sans membre : la fermeture ne la vise pas
 -- (une tranche ne vise une classe que si tous ses membres sont de la tranche), sa seance du jour ferme est vivante.
--- e10 (adulte) y entre : la classe devient couverte, mais rien ne la resynchronise. La cloche de nuit met de cote cette
+-- e10 (adulte) y entre : la classe devient couverte, mais rien ne la resynchronise. Le balayage de nuit met de cote cette
 -- seance et previent par le meme chemin, une fois ; rejouee, elle ne redouble rien.
 INSERT INTO public.groupes(id, teacher_id, type_public, seuil_max, libelle, weekday, hour_local, timezone_iana) VALUES
  (pg_temp.u('cT'), pg_temp.u('b8'), 'adulte', 5, 'Balayage CP', 4, 9, 'UTC');
@@ -1691,13 +1691,13 @@ SELECT pg_temp.vrai(:'r30_vivantes'::int = 1
                            AND private.jour_academie_de(s.started_at) BETWEEN pg_temp.auj() + 13 AND pg_temp.auj() + 19) = 1
                     AND NOT EXISTS (SELECT 1 FROM public.notifications WHERE evenement = 'fermeture_annoncee' AND params ->> 'groupe_id' = pg_temp.u('cT')::text),
   'fixture : la classe couverte apres coup a une seance vivante un jour ferme, jamais annoncee');
-SELECT private.materialiser_classes_actives();
+SELECT private.fermeture_balayer();
 SELECT pg_temp.vrai(
   (SELECT pg_catalog.count(*) FROM public.sessions s WHERE s.groupe_id = pg_temp.u('cT') AND s.deleted_at IS NULL
      AND private.jour_academie_de(s.started_at) BETWEEN pg_temp.auj() + 13 AND pg_temp.auj() + 19) = 0
   AND (SELECT pg_catalog.count(*) FROM public.seances_fermees sf JOIN public.sessions s ON s.id = sf.session_id
         WHERE s.groupe_id = pg_temp.u('cT') AND sf.fermeture_id = (SELECT id FROM cp_ids WHERE cle = 'tr_nuit') AND sf.retablie_le IS NULL) = 1,
-  'la cloche de nuit met de cote la seance vivante d''un jour ferme (rien n''est supprime)');
+  'le balayage de nuit met de cote la seance vivante d''un jour ferme (rien n''est supprime)');
 SELECT pg_temp.vrai(
   (SELECT pg_catalog.count(*) FROM public.notifications WHERE evenement = 'fermeture_annoncee' AND destinataire = pg_temp.u('e10')
      AND params ->> 'groupe_id' = pg_temp.u('cT')::text AND params ->> 'fermeture_id' = (SELECT id::text FROM cp_ids WHERE cle = 'tr_nuit') AND params ->> 'portee' = 'soi' AND destination = '/eleve') = 1
@@ -1708,12 +1708,12 @@ SELECT pg_temp.vrai(
   'l''adulte et l''enseignant sont prevenus une fois par le meme chemin ; aucun mineur');
 SELECT pg_catalog.count(*) AS avant FROM public.notifications WHERE evenement = 'fermeture_annoncee' AND params ->> 'groupe_id' = pg_temp.u('cT')::text \gset r31_
 SELECT pg_catalog.count(*) AS avant_sf FROM public.seances_fermees sf JOIN public.sessions s ON s.id = sf.session_id WHERE s.groupe_id = pg_temp.u('cT') \gset r31_
-SELECT private.materialiser_classes_actives();
-SELECT private.materialiser_classes_actives();
+SELECT private.fermeture_balayer();
+SELECT private.fermeture_balayer();
 SELECT pg_temp.vrai((SELECT pg_catalog.count(*) FROM public.notifications WHERE evenement = 'fermeture_annoncee' AND params ->> 'groupe_id' = pg_temp.u('cT')::text) = :'r31_avant'::int
                     AND (SELECT pg_catalog.count(*) FROM public.seances_fermees sf JOIN public.sessions s ON s.id = sf.session_id WHERE s.groupe_id = pg_temp.u('cT')) = :'r31_avant_sf'::int,
-  'rejouee, la cloche ne redouble ni la mise de cote ni les notifications');
--- Le balayage ne retablit jamais rien et ne refuse jamais : une erreur n'arrete pas la cloche.
+  'rejoue, le balayage ne redouble ni la mise de cote ni les notifications');
+-- Le balayage ne refuse jamais rien.
 SELECT pg_temp.vrai(private.fermeture_balayer() = 0,
   'le balayage ne trouve plus rien a mettre de cote');
 
@@ -1736,7 +1736,7 @@ SELECT pg_temp.vrai(pg_temp.recul('e7') = (SELECT r.recul FROM private.recul_jou
   'le recul de la nouvelle etape est celui de ses propres jours');
 
 -- ------------------------------------------------------------------
--- 26. Contre-lecture du 13/11 : le cas INVERSE, la cloche de nuit retablit (ou signale), jamais un cours perdu un jour ouvert
+-- 26. Contre-lecture du 13/11 : le cas INVERSE, le balayage de nuit retablit (ou signale), jamais un cours perdu un jour ouvert
 -- ------------------------------------------------------------------
 -- (a) Sans conflit. cT (adultes) est couverte par deux fermetures de tranche (tr_nuit, sans_rapport) : ses deux seances sont de
 -- cote. e8 (ado, mineur) entre dans cT : la classe n'est plus couverte par AUCUNE fermeture. La nuit : les deux seances sont
@@ -1745,14 +1745,14 @@ SELECT pg_temp.vrai((SELECT pg_catalog.count(*) FROM public.seances_fermees sf J
                       WHERE s.groupe_id = pg_temp.u('cT') AND sf.retablie_le IS NULL AND sf.abandonnee_le IS NULL) = 2,
   'fixture : les deux seances de cT sont de cote');
 SELECT pg_temp.changer('e8', 'cN1', 'cT');
-SELECT private.materialiser_classes_actives();
+SELECT private.fermeture_balayer();
 SELECT pg_temp.vrai(
   (SELECT pg_catalog.count(*) FROM public.seances_fermees sf JOIN public.sessions s ON s.id = sf.session_id
     WHERE s.groupe_id = pg_temp.u('cT') AND sf.retablie_le IS NOT NULL AND s.deleted_at IS NULL) = 2
   AND (SELECT pg_catalog.count(*) FROM public.session_participants sp JOIN public.sessions s ON s.id = sp.session_id
         WHERE s.groupe_id = pg_temp.u('cT') AND sp.profile_id = pg_temp.u('e8') AND s.deleted_at IS NULL
           AND s.started_at > pg_catalog.now() + interval '12 days') >= 1,
-  'la cloche retablit les seances d''une classe qui n''est plus couverte par aucune fermeture (et y ajoute le nouveau membre)');
+  'le balayage retablit les seances d''une classe qui n''est plus couverte par aucune fermeture (et y ajoute le nouveau membre)');
 SELECT pg_temp.vrai(
   (SELECT pg_catalog.count(*) FROM public.notifications WHERE evenement = 'fermeture_levee' AND destinataire = pg_temp.u('e10')
      AND params ->> 'groupe_id' = pg_temp.u('cT')::text AND params ->> 'fermeture_id' = (SELECT id::text FROM cp_ids WHERE cle = 'tr_nuit')
@@ -1766,14 +1766,14 @@ SELECT pg_temp.vrai(
                    WHERE sp.student_type = 'minor' AND n.evenement IN ('fermeture_annoncee', 'fermeture_levee', 'fermeture_conflit')),
   'le retablissement de nuit est annonce une fois a l''adulte, au tuteur du mineur et a l''enseignant ; jamais au mineur');
 SELECT pg_catalog.count(*) AS avant FROM public.notifications WHERE evenement IN ('fermeture_levee', 'fermeture_annoncee', 'fermeture_conflit') \gset r33_
-SELECT private.materialiser_classes_actives();
-SELECT private.materialiser_classes_actives();
+SELECT private.fermeture_balayer();
+SELECT private.fermeture_balayer();
 SELECT pg_temp.vrai((SELECT pg_catalog.count(*) FROM public.notifications WHERE evenement IN ('fermeture_levee', 'fermeture_annoncee', 'fermeture_conflit')) = :'r33_avant'::int,
-  'rejouee, la cloche ne retablit ni ne notifie rien de plus');
+  'rejoue, le balayage ne retablit ni ne notifie rien de plus');
 
 -- (b) Avec conflit. cU (adultes) : e6 y entre, une fermeture de tranche (adultes) met sa seance de cote ; b8 prend un autre
 -- cours a la meme heure ; e7 (mineur) entre dans cU : la classe n'est plus couverte, mais la seance ne peut pas etre retablie :
--- elle reste de cote, la direction est avertie UNE fois par nuit (pas de levee pour la famille) ; l'enseignant libere : retablie.
+-- elle reste de cote, la direction est avertie UNE fois, a la detection (pas de levee pour la famille) ; l'enseignant libere : retablie.
 INSERT INTO public.groupes(id, teacher_id, type_public, seuil_max, libelle, weekday, hour_local, timezone_iana) VALUES
  (pg_temp.u('cU'), pg_temp.u('b8'), 'adulte', 5, 'Conflit CP', 3, 14, 'UTC');
 SELECT pg_temp.changer('e6', 'cN2', 'cU');
@@ -1793,7 +1793,7 @@ SELECT pg_temp.vrai((SELECT pg_catalog.count(*) FROM public.seances_fermees sf J
   'fixture : la seance de cU est de cote par la fermeture, b8 a pris un autre cours (sX) a la meme heure');
 SELECT pg_temp.changer('e7', 'cN1', 'cU');
 SELECT pg_catalog.count(*) AS levees_avant FROM public.notifications WHERE evenement = 'fermeture_levee' AND params ->> 'groupe_id' = pg_temp.u('cU')::text AND params ->> 'fermeture_id' = (SELECT id::text FROM cp_ids WHERE cle = 'tr_conf') \gset r35_
-SELECT private.materialiser_classes_actives();
+SELECT private.fermeture_balayer();
 SELECT pg_temp.vrai(
   (SELECT pg_catalog.count(*) FROM public.seances_fermees sf JOIN public.sessions s ON s.id = sf.session_id
     WHERE s.groupe_id = pg_temp.u('cU') AND sf.fermeture_id = (SELECT id FROM cp_ids WHERE cle = 'tr_conf') AND sf.retablie_le IS NULL AND s.deleted_at IS NOT NULL) >= 1
@@ -1802,11 +1802,55 @@ SELECT pg_temp.vrai(
         AND params ->> 'groupe_id' = pg_temp.u('cU')::text AND destination = '/admin/operations/planning' AND params ->> 'portee' = 'direction') = 1,
   'conflit : la seance n''est PAS retablie, la famille n''est pas prevenue d''un retablissement, la direction l''est une fois');
 SELECT pg_catalog.count(*) AS conflits_avant FROM public.notifications WHERE evenement = 'fermeture_conflit' \gset r36_
-SELECT private.materialiser_classes_actives();
+SELECT private.fermeture_balayer();
 SELECT pg_temp.vrai((SELECT pg_catalog.count(*) FROM public.notifications WHERE evenement = 'fermeture_conflit') = :'r36_conflits_avant'::int,
-  'rejouee la meme nuit, la cloche ne signale pas deux fois la meme seance');
+  'rejoue la meme nuit, le balayage ne signale pas deux fois la meme seance');
+-- Un conflit non tranche ne harcele pas (arbitrage du 13/11, I-4) : UNE notification a la detection (deja lue plus haut),
+-- puis UNE relance la veille de la seance (jour de La Mecque) si le conflit tient toujours ; rien d'autre. Le
+-- dedoublonnage est par seance et par motif. Les nuits sont simulees par le parametre p_jour de la fonction (les
+-- notifications sont lues en base : le calcul ne depend d'aucun etat de la transaction).
+SELECT s.id AS id_conf, private.jour_academie_de(s.started_at) AS jour_conf
+  FROM public.seances_fermees sf JOIN public.sessions s ON s.id = sf.session_id
+ WHERE s.groupe_id = pg_temp.u('cU') AND sf.fermeture_id = (SELECT id FROM cp_ids WHERE cle = 'tr_conf') AND sf.retablie_le IS NULL
+ ORDER BY s.started_at LIMIT 1 \gset r38_
+SELECT pg_catalog.count(*) AS nb_admins FROM public.profiles pr
+ WHERE pr.role = 'admin' AND pr.account_status = 'active' AND pr.deleted_at IS NULL
+   AND (pr.access_until IS NULL OR pr.access_until > pg_catalog.now()) \gset r38_
+SELECT pg_temp.vrai(
+  (SELECT pg_catalog.count(*) FROM public.notifications WHERE evenement = 'fermeture_conflit' AND params ->> 'session_id' = :'r38_id_conf'
+     AND params ->> 'motif' = 'detection') = :'r38_nb_admins'::int
+  AND (SELECT pg_catalog.count(*) FROM public.notifications WHERE evenement = 'fermeture_conflit' AND params ->> 'session_id' = :'r38_id_conf') = :'r38_nb_admins'::int,
+  'a la detection : une notification « detection » par administrateur actif, pas davantage');
+-- Des nuits sans rapport avec la veille : rien. Une nuit de plus, plusieurs fois : rien.
+SELECT pg_temp.vrai(
+  private.fermeture_signaler_conflit(:'r38_id_conf'::uuid, :'r38_jour_conf'::date - 10) = 0
+  AND private.fermeture_signaler_conflit(:'r38_id_conf'::uuid, :'r38_jour_conf'::date - 2) = 0
+  AND private.fermeture_signaler_conflit(:'r38_id_conf'::uuid, :'r38_jour_conf'::date - 2) = 0,
+  'les nuits ordinaires qui suivent la detection ne notifient plus rien');
+-- La veille de la seance : UNE relance par administrateur, une seule, meme si le balayage passe plusieurs fois.
+SELECT private.fermeture_signaler_conflit(:'r38_id_conf'::uuid, :'r38_jour_conf'::date - 1) AS premiere \gset r39_
+SELECT private.fermeture_signaler_conflit(:'r38_id_conf'::uuid, :'r38_jour_conf'::date - 1) AS seconde \gset r39_
+SELECT pg_temp.vrai(:'r39_premiere'::int = :'r38_nb_admins'::int AND :'r39_seconde'::int = 0
+                    AND (SELECT pg_catalog.count(*) FROM public.notifications WHERE evenement = 'fermeture_conflit'
+                          AND params ->> 'session_id' = :'r38_id_conf' AND params ->> 'motif' = 'veille') = :'r38_nb_admins'::int,
+  'la veille de la seance : une seule relance par administrateur, jamais deux');
+SELECT pg_temp.vrai(private.fermeture_signaler_conflit(:'r38_id_conf'::uuid, :'r38_jour_conf'::date) = 0
+                    AND private.fermeture_signaler_conflit(:'r38_id_conf'::uuid, :'r38_jour_conf'::date + 1) = 0
+                    AND (SELECT pg_catalog.count(*) FROM public.notifications WHERE evenement = 'fermeture_conflit'
+                          AND params ->> 'session_id' = :'r38_id_conf') = 2 * :'r38_nb_admins'::int,
+  'le jour de la seance et apres : rien d''autre ; au total detection + veille, pas une de plus');
+-- Un conflit detecte la veille meme : la detection suffit, aucune relance la meme nuit.
+SELECT private.jour_academie_de(started_at) - 1 AS veille_x FROM public.sessions WHERE id = pg_temp.u('sX') \gset r40_
+SELECT private.fermeture_signaler_conflit(pg_temp.u('sX'), :'r40_veille_x'::date) AS premiere \gset r40_
+SELECT private.fermeture_signaler_conflit(pg_temp.u('sX'), :'r40_veille_x'::date) AS seconde \gset r40_
+SELECT pg_temp.vrai(:'r40_premiere'::int = :'r38_nb_admins'::int AND :'r40_seconde'::int = 0
+                    AND (SELECT pg_catalog.count(*) FROM public.notifications WHERE evenement = 'fermeture_conflit'
+                          AND params ->> 'session_id' = pg_temp.u('sX')::text AND params ->> 'motif' = 'detection') = :'r38_nb_admins'::int
+                    AND (SELECT pg_catalog.count(*) FROM public.notifications WHERE evenement = 'fermeture_conflit'
+                          AND params ->> 'session_id' = pg_temp.u('sX')::text AND params ->> 'motif' = 'veille') = 0,
+  'un conflit detecte la veille de la seance : detection seulement, jamais detection et relance la meme nuit');
 UPDATE public.sessions SET deleted_at = pg_catalog.now() WHERE id = pg_temp.u('sX');
-SELECT private.materialiser_classes_actives();
+SELECT private.fermeture_balayer();
 SELECT pg_temp.vrai(
   (SELECT pg_catalog.count(*) FROM public.seances_fermees sf JOIN public.sessions s ON s.id = sf.session_id
     WHERE s.groupe_id = pg_temp.u('cU') AND sf.fermeture_id = (SELECT id FROM cp_ids WHERE cle = 'tr_conf') AND sf.retablie_le IS NOT NULL AND s.deleted_at IS NULL) >= 1
@@ -1820,11 +1864,43 @@ VALUES (pg_temp.u('s_passee'), pg_temp.u('b8'), pg_catalog.now() - interval '2 d
 INSERT INTO public.seances_fermees(session_id, fermeture_id, masquee_le)
 VALUES (pg_temp.u('s_passee'), (SELECT id FROM cp_ids WHERE cle = 'tr_nuit'), pg_catalog.now() - interval '3 days');
 SELECT pg_catalog.count(*) AS avant_passee FROM public.notifications WHERE evenement IN ('fermeture_levee', 'fermeture_conflit') \gset r37_
-SELECT private.materialiser_classes_actives();
+SELECT private.fermeture_balayer();
 SELECT pg_temp.vrai((SELECT deleted_at FROM public.sessions WHERE id = pg_temp.u('s_passee')) IS NOT NULL
                     AND (SELECT retablie_le FROM public.seances_fermees WHERE session_id = pg_temp.u('s_passee')) IS NULL
                     AND (SELECT pg_catalog.count(*) FROM public.notifications WHERE evenement IN ('fermeture_levee', 'fermeture_conflit')) = :'r37_avant_passee'::int,
-  'une seance deja passee n''est jamais retablie par la cloche, et rien n''est envoye');
+  'une seance deja passee n''est jamais retablie par le balayage, et rien n''est envoye');
+
+-- ------------------------------------------------------------------
+-- 27. Arbitrage du 13/11, I-1 : le balayage a sa propre tache planifiee ; la cloche n'est pas touchee
+-- ------------------------------------------------------------------
+SELECT pg_temp.vrai(
+  pg_catalog.strpos(pg_catalog.pg_get_functiondef('private.materialiser_classes_actives()'::pg_catalog.regprocedure), 'fermeture') = 0,
+  'la cloche de la production n''est pas redefinie : elle ne parle pas des fermetures');
+SELECT pg_temp.vrai(
+  NOT pg_catalog.has_function_privilege('anon', 'private.fermeture_planifier_balayage()', 'EXECUTE')
+  AND NOT pg_catalog.has_function_privilege('authenticated', 'private.fermeture_planifier_balayage()', 'EXECUTE')
+  AND NOT pg_catalog.has_function_privilege('anon', 'private.fermeture_balayer()', 'EXECUTE')
+  AND NOT pg_catalog.has_function_privilege('authenticated', 'private.fermeture_balayer()', 'EXECUTE')
+  AND NOT pg_catalog.has_function_privilege('anon', 'private.fermeture_signaler_conflit(uuid, date)', 'EXECUTE')
+  AND NOT pg_catalog.has_function_privilege('authenticated', 'private.fermeture_signaler_conflit(uuid, date)', 'EXECUTE'),
+  'ni anon ni authenticated n''executent la planification, le balayage ni le signalement');
+-- Sans pg_cron (cette base) : rien n'est planifie, aucune erreur.
+SELECT pg_temp.vrai(pg_catalog.to_regprocedure('cron.schedule(text,text,text)') IS NOT NULL
+                    OR private.fermeture_planifier_balayage() = 'absente',
+  'sans pg_cron, la planification rend « absente » sans erreur');
+-- Avec un pg_cron simule (memes noms et meme semantique : un nom existant est mis a jour) : une seule tache apres deux installations.
+CREATE SCHEMA IF NOT EXISTS cron;
+CREATE TABLE IF NOT EXISTS cron.job (jobid bigserial PRIMARY KEY, jobname text UNIQUE, schedule text, command text);
+CREATE OR REPLACE FUNCTION cron.schedule(job_name text, schedule text, command text) RETURNS bigint LANGUAGE sql AS
+$$ INSERT INTO cron.job (jobname, schedule, command) VALUES (job_name, schedule, command)
+   ON CONFLICT (jobname) DO UPDATE SET schedule = EXCLUDED.schedule, command = EXCLUDED.command RETURNING jobid $$;
+SELECT private.fermeture_planifier_balayage() AS un, private.fermeture_planifier_balayage() AS deux \gset r41_
+SELECT pg_temp.vrai(:'r41_un' = 'planifiee' AND :'r41_deux' = 'planifiee'
+                    AND (SELECT pg_catalog.count(*) FROM cron.job WHERE jobname = 'fermeture-balayage-nuit') = 1
+                    AND (SELECT schedule FROM cron.job WHERE jobname = 'fermeture-balayage-nuit') = '27 2 * * *'
+                    AND (SELECT command FROM cron.job WHERE jobname = 'fermeture-balayage-nuit') = 'SELECT private.fermeture_balayer()'
+                    AND (SELECT pg_catalog.count(*) FROM cron.job) = 1,
+  'avec pg_cron : une seule tache fermeture-balayage-nuit apres deux installations, a 02:27, dix minutes apres la cloche (02:17), qui appelle le balayage');
 
 \o
 SELECT 'scenarios_calendrier_pauses : tous les controles sont verts' AS resultat;
