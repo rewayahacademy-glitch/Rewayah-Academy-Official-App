@@ -213,7 +213,7 @@ SELECT pg_temp.refus_en(pg_temp.p('a1'), 'admin', 'SELECT public.prevenir_par_co
 -- ------------------------------------------------------------
 SELECT pg_temp.vrai(
   pg_temp.en(pg_temp.p('a1'), 'admin', 'SELECT public.apercu_prevenir_par_courriel()')
-    = '{"desinscrits": 0, "aPrevenir": 2, "dejaPrevenus": 1, "dejaInscrits": 1, "inscriptionOuverte": false}'::jsonb,
+    = '{"desinscrits": 0, "aPrevenir": 2, "aPrevenirHommes": 2, "aPrevenirFemmes": 0, "dejaPrevenus": 1, "dejaInscrits": 1, "inscriptionOuverte": false}'::jsonb,
   'c1 : apercu cote hommes, inscription fermee (01 et 02 une adresse, 09 ; 05 prevenu ; 03 inscrit)');
 SELECT pg_temp.vrai(
   pg_temp.en(pg_temp.p('a1'), 'admin', 'SELECT public.prevenir_par_courriel(200)')
@@ -230,7 +230,7 @@ UPDATE public.app_config SET value = 'true'::jsonb WHERE key = 'candidatures.ins
 -- ------------------------------------------------------------
 SELECT pg_temp.vrai(
   pg_temp.en(pg_temp.p('a2'), 'admin', 'SELECT public.apercu_prevenir_par_courriel()')
-    = '{"desinscrits": 0, "aPrevenir": 1, "dejaPrevenus": 0, "dejaInscrits": 0, "inscriptionOuverte": true}'::jsonb,
+    = '{"desinscrits": 0, "aPrevenir": 1, "aPrevenirHommes": 0, "aPrevenirFemmes": 1, "dejaPrevenus": 0, "dejaInscrits": 0, "inscriptionOuverte": true}'::jsonb,
   'd1 : apercu cote femmes : la seule reponse 08');
 SELECT pg_temp.vrai(
   pg_temp.en(pg_temp.p('a1'), 'admin', 'SELECT public.apercu_prevenir_par_courriel()')::text
@@ -271,7 +271,7 @@ SELECT pg_temp.vrai(
   'e6 : ni telephone, ni reponse du formulaire, ni nom dans les donnees');
 SELECT pg_temp.vrai(
   pg_temp.en(pg_temp.p('a1'), 'admin', 'SELECT public.apercu_prevenir_par_courriel()')
-    = '{"desinscrits": 0, "aPrevenir": 0, "dejaPrevenus": 3, "dejaInscrits": 1, "inscriptionOuverte": true}'::jsonb,
+    = '{"desinscrits": 0, "aPrevenir": 0, "aPrevenirHommes": 0, "aPrevenirFemmes": 0, "dejaPrevenus": 3, "dejaInscrits": 1, "inscriptionOuverte": true}'::jsonb,
   'e7 : apres l''envoi, l''apercu les compte prevenus');
 
 -- ------------------------------------------------------------

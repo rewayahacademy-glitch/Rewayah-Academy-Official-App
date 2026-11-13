@@ -282,7 +282,7 @@ SELECT public.courriel_enfiler('recrutement', 'attente_candidat', 'pre-04@test.i
 
 SELECT pg_temp.vrai(
   pg_temp.en(pg_temp.p('a1'), 'admin', 'SELECT public.apercu_prevenir_par_courriel()')
-    = '{"aPrevenir": 4, "desinscrits": 1, "dejaPrevenus": 0, "dejaInscrits": 0, "inscriptionOuverte": true}'::jsonb,
+    = '{"aPrevenir": 4, "aPrevenirHommes": 4, "aPrevenirFemmes": 0, "desinscrits": 1, "dejaPrevenus": 0, "dejaInscrits": 0, "inscriptionOuverte": true}'::jsonb,
   'd1 : 4 adresses a prevenir (doublon compte une fois), le desinscrit a part');
 SELECT pg_temp.vrai(
   pg_temp.en(pg_temp.p('a1'), 'admin', 'SELECT public.prevenir_par_courriel(2000)')
