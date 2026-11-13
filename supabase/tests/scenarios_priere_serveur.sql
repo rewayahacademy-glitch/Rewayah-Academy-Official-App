@@ -2685,6 +2685,9 @@ SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM public.seance_pause_prevue WHERE s
 SELECT pg_temp.vrai((SELECT retiree_le IS NOT NULL FROM public.seance_pause_prevue_stock
                       WHERE session_id = '9e0000e0-0000-4000-8000-000000000081'),
   'compte desactive : la ligne est marquee retiree (aucun effacement)');
+UPDATE public.profiles SET account_status = 'provisional_active' WHERE id = '9e000000-0000-4000-8000-000000000006';
+SELECT pg_temp.vrai(EXISTS (SELECT 1 FROM public.seance_pause_prevue WHERE session_id = '9e0000e0-0000-4000-8000-000000000081'),
+  'compte reactive : la pause de sa seance a venir revient tout de suite, sans attendre le recalcul de nuit');
 
 -- M1 : la lecture d'une classe lit la duree de CHAQUE creneau (groupe_creneaux.duree_minutes).
 INSERT INTO public.weekly_availability (profile_id, weekday, hour_local, timezone_iana)
@@ -2704,5 +2707,37 @@ SELECT pg_temp.vrai((SELECT bool_and((c ->> 'duree_minutes')::int IN (60, 90))
                        FROM jsonb_array_elements(public.priere_lecture_classe('9e0000c0-0000-4000-8000-000000000001') -> 'creneaux') c),
   'lecture d''une classe : sans duree propre, la duree de la classe (60 ou 90 par public)');
 SELECT pg_temp.personne();
+
+-- Defaut aux bornes (contre-lecture du 13/11) : la pause d'une priere qui se ferme doit FINIR avant
+-- sa fermeture. Conakry, 14/01/2027 : Maghrib vers 18 h 52, Isha vers 20 h 02 ; cours de 90 minutes
+-- commence 59 minutes apres le Maghrib ; marge avant le cours 60, delai 30 : la pause du Maghrib
+-- commencerait apres l'entree de l'Isha (qui ferme le Maghrib) : elle n'est pas retenue.
+CREATE TEMP TABLE h_conakry_14 AS
+  SELECT priere, instant_utc FROM private.priere_calculer(9.6412, -13.5784, DATE '2027-01-14',
+                                  'muslim_world_league', 'shafi', '{}');
+SELECT pg_temp.vrai((SELECT count(*) FILTER (WHERE retenue AND zone = 'fermeture') = 0
+                            AND count(*) FILTER (WHERE zone = 'fermeture_fin') = 1
+                            AND count(*) FILTER (WHERE retenue) = 1
+                            AND bool_and(priere = 'isha') FILTER (WHERE retenue)
+                       FROM private.priere_placer(
+                              (SELECT instant_utc + interval '59 minutes' FROM h_conakry_14 WHERE priere = 'maghrib'),
+                              (SELECT instant_utc + interval '149 minutes' FROM h_conakry_14 WHERE priere = 'maghrib'),
+                              9.6412, -13.5784, 'muslim_world_league', 'shafi', '{}', 10, 20, false, 5, 15, 60, 30)),
+  'marge 60, delai 30 : la pause du Maghrib qui se ferme finirait apres l''entree de l''Isha, elle n''est pas retenue ; l''Isha, qui entre, porte la pause');
+SELECT pg_temp.vrai((SELECT count(*) FILTER (WHERE retenue AND zone = 'fermeture') = 1
+                            AND bool_and(priere = 'maghrib') FILTER (WHERE retenue)
+                       FROM private.priere_placer(
+                              (SELECT instant_utc + interval '59 minutes' FROM h_conakry_14 WHERE priere = 'maghrib'),
+                              (SELECT instant_utc + interval '149 minutes' FROM h_conakry_14 WHERE priere = 'maghrib'),
+                              9.6412, -13.5784, 'muslim_world_league', 'shafi', '{}', 10, 20, false, 5, 15, 60, 0)),
+  'meme cours, delai 0 : la pause du Maghrib finit avant la fermeture, elle est retenue');
+SELECT pg_temp.vrai((SELECT bool_and(p.debut_prevu_utc + make_interval(mins => p.duree_minutes) <= f.ferme)
+                       FROM (SELECT s.id,
+                                    (SELECT min(c.instant_utc) FROM private.priere_calculer(9.6412, -13.5784,
+                                       (s.started_at AT TIME ZONE 'UTC')::date, 'muslim_world_league', 'shafi', '{}') c
+                                      WHERE c.instant_utc > s.started_at) AS ferme
+                               FROM public.sessions s WHERE s.id = '9e0000e0-0000-4000-8000-000000000071') f
+                       JOIN public.seance_pause_prevue p ON p.session_id = f.id),
+  'la pause de la priere qui se ferme finit avant la fermeture (seance 71, reglages par defaut)');
 
 ROLLBACK;

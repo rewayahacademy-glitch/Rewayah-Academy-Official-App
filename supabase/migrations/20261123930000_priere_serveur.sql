@@ -928,7 +928,10 @@ BEGIN
   IF v_ferm_i IS NOT NULL THEN
     v_fdur := CASE WHEN v_p[v_ferm_i] = 'maghrib' AND p_ramadan THEN p_pause_ramadan ELSE p_pause END;
     v_fdeb := p_debut + pg_catalog.make_interval(mins => p_delai_fermeture);
+    -- La pause doit tenir dans le cours ET FINIR avant la fermeture de la priere : une pause
+    -- qui finirait apres (reglages aux bornes, marge 60 et delai 30) ne sert plus a prier.
     v_fok := v_fdeb + pg_catalog.make_interval(mins => v_fdur) <= p_fin
+             AND v_fdeb + pg_catalog.make_interval(mins => v_fdur) <= v_ferm_t
              AND p_delai_fermeture <= v_long - GREATEST(p_marge_fin, v_fdur);
     n := n + 1;
     c_i[n] := v_ferm_i; c_zone[n] := CASE WHEN v_fok THEN 'fermeture' ELSE 'fermeture_fin' END;
@@ -1221,16 +1224,21 @@ SET search_path = ''
 AS $function$
 BEGIN
   BEGIN
-    UPDATE public.seance_pause_prevue_stock st
-       SET debut_prevu_utc = NULL, duree_minutes = NULL, motif = NULL, priere = NULL,
-           calcule_le = pg_catalog.now(), retiree_le = pg_catalog.now(), indefini = false
-     WHERE st.retiree_le IS NULL
-       AND st.session_id IN (
-         SELECT s.id FROM public.sessions s
-          WHERE s.status IN ('planned', 'preflight') AND s.started_at > pg_catalog.now()
-            AND private.c29_enseignant_effectif_session(s.id) = NEW.id);
+    IF NEW.account_status = 'disabled' THEN
+      UPDATE public.seance_pause_prevue_stock st
+         SET debut_prevu_utc = NULL, duree_minutes = NULL, motif = NULL, priere = NULL,
+             calcule_le = pg_catalog.now(), retiree_le = pg_catalog.now(), indefini = false
+       WHERE st.retiree_le IS NULL
+         AND st.session_id IN (
+           SELECT s.id FROM public.sessions s
+            WHERE s.status IN ('planned', 'preflight') AND s.started_at > pg_catalog.now()
+              AND private.c29_enseignant_effectif_session(s.id) = NEW.id);
+    ELSE
+      -- Compte reactive : ses pauses sont recalculees tout de suite, sans attendre la nuit.
+      PERFORM private.priere_recalculer_enseignant(NEW.id);
+    END IF;
   EXCEPTION WHEN OTHERS THEN
-    RAISE WARNING 'PRIERE-1 : pauses de priere du compte % non retirees : %', NEW.id, SQLERRM;
+    RAISE WARNING 'PRIERE-1 : pauses de priere du compte % non mises a jour : %', NEW.id, SQLERRM;
   END;
   RETURN NEW;
 END;
@@ -1238,7 +1246,8 @@ $function$;
 
 CREATE TRIGGER priere_pause_prevue_compte
 AFTER UPDATE OF account_status ON public.profiles
-FOR EACH ROW WHEN (NEW.account_status = 'disabled' AND OLD.account_status IS DISTINCT FROM NEW.account_status)
+FOR EACH ROW WHEN (OLD.account_status IS DISTINCT FROM NEW.account_status
+                   AND (NEW.account_status = 'disabled' OR OLD.account_status = 'disabled'))
 EXECUTE FUNCTION private.priere_trg_profil_desactive();
 
 -- Le recalcul planifie de chaque nuit (3 h 30, heure universelle), seulement si
