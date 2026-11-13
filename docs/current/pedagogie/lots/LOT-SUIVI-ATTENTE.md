@@ -108,13 +108,13 @@ Rien ici n'est une preuve du directeur : ce sont des mesures locales (S9).
 | Rejeu SQL sur Postgres nu (utilisateur `postgres`, 439 migrations, tous les scénarios, une copie neuve chacun) | 279 verts, 0 rouge. Scénarios existants ajustés à un comportement voulu : `courriels` (enseignant affecté part par courriel), `courriels_ux` (1.2, 2.1), `fn028_seance_terminee`, `notifications_classes` (4.2, 8.1), `reaffecter_classe` ; `af_liste_blanche_volatiles` amendé plus tôt |
 | `scenarios_suivi_attente.sql` | vert : courriels jamais à un mineur (tous modèles, y compris un profil élève sans `student_profiles`), tuteur, enseignant, direction et adulte reçoivent toujours le leur, trois cas de « Enseignant affecté » (adulte, mineur arrêté, tuteur par le foyer), carte bornée (deux sondes), enseignant retiré, remplacement A vers B, deux changements dans une transaction (A, nul, B), « tout est prêt », « Me présenter » jamais vers un mineur, demandes dépassées, export |
 | `scenarios_suivi_attente_affectations.sql` (transactions SÉPARÉES) | vert : A vers nul (A, famille et élève prévenus), nul vers A, A vers B, B/nul/A et A/nul/B chacun dans une transaction. **Mutation** (retrait du `coalesce` de la retouche de `notifier_classe`) : rouge dès le premier geste, « A est prévenu qu'on le retire : 0 reçu » |
-| Adresse `/tuteur/demandes` pour un élève adulte (vrai routeur) | mène à `/eleve/adulte/attente/:id` quand il n'a qu'un suivi en cours |
+| Adresse `/tuteur/demandes`, trois cas à travers le vrai routeur | adulte autonome sur sa demande : `/eleve/adulte/attente/:id` ; tuteur avec la demande d'un enfant : `/tuteur/attente/:id` ; tuteur non autonome avec la demande d'un adulte de son foyer : `/tuteur/attente/:id`, jamais l'accès refusé. L'ancienne règle (`typePublic == 'adulte'`) fait rougir le troisième |
 | Les trois migrations, rejouées une seconde fois chacune en une seule requête | sans erreur |
 | `962000` sans `961000` | **refuse** (RAISE EXCEPTION, phrase claire), rien n'est changé ; après `961000` elle passe |
 | `961000` après le lot 2 (`911000`) | les deux valeurs restent dans la contrainte ; le nombre de valeurs augmente de 1 (contrôle final par le nombre) |
 | `dart run slang`, `dart run build_runner build --delete-conflicting-outputs` | sans erreur, aucun diff laissé |
 | `dart analyze --fatal-infos` | No issues found |
-| `flutter test` (suite complète) | 20821 réussis, 8304 ignorés (déjà ignorés sur `main`), 0 échec |
+| `flutter test` (suite complète) | 20823 réussis, 8304 ignorés (déjà ignorés sur `main`), 0 échec |
 | `dart run tool/verifier_jetons.dart` | 1514 fichiers, aucune violation |
 | `dart run tool/verifier_branchement.dart` | 2 fichiers non atteints, tous tolérés, aucun nouveau |
 | `dart run tool/verifier_revue.dart` | 1074 violations antérieures au lot, 0 dans le lot |
