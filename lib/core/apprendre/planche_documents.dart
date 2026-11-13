@@ -71,7 +71,17 @@ String libelleTypeDocument(TypeDocumentPlanche type) {
 /// La planche. Se pose dans une colonne de la page : elle ne defile pas.
 class PlancheDocuments extends ConsumerStatefulWidget {
   /// Cree la planche pour [documents].
-  const PlancheDocuments({required this.documents, super.key, this.surOuvrir});
+  const PlancheDocuments({
+    required this.documents,
+    super.key,
+    this.surOuvrir,
+    this.rubriqueClasse,
+  });
+
+  /// L'etat de la rubrique « Pour cette classe » quand elle n'est pas encore
+  /// des documents : sa place reservee pendant la lecture (pas de saut de mise
+  /// en page), ou sa phrase d'echec. Nul : rien a dire.
+  final Widget? rubriqueClasse;
 
   /// Les documents, dans l'ordre voulu (le Coran en premier).
   final List<DocumentPlanche> documents;
@@ -205,6 +215,10 @@ class _PlancheEtat extends ConsumerState<PlancheDocuments> {
             onAction: () =>
                 ref.read(typesRetenusPlancheProvider.notifier).toutEffacer(),
           ),
+        if (widget.rubriqueClasse != null) ...<Widget>[
+          widget.rubriqueClasse!,
+          Ecart.vSection,
+        ],
         ...rayons,
       ],
     );

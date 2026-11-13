@@ -16,7 +16,6 @@ import 'package:rewayah_academy/core/widgets/cercle_selectionnable.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/core/widgets/page_shell.dart';
 
-import '../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../support/harnais.dart';
 
 List<Destination> _tuteur(InterfaceMode mode) =>
@@ -54,10 +53,6 @@ Finder _dansBarre(Finder f) =>
     find.descendant(of: find.byKey(NavShell.barreBasseKey), matching: f);
 
 void main() {
-  // Les vraies polices : la police de test (carres d'un em) ferait passer la
-  // barre guidee en icones seules pour un defaut que l'application n'a pas.
-  setUpAll(chargerPolicesDuDepot);
-
   test('une seule destination Compte par role NavShell', () {
     for (final AppRole role in <AppRole>[
       AppRole.guardian,

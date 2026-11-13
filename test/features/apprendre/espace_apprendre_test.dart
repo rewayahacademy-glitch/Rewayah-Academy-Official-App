@@ -1,20 +1,11 @@
 import 'dart:async';
 
-// ESPACE-APPRENDRE (lot 5, 12/11/2026) : l'espace « Apprendre » a trois
-// onglets, monte par le VRAI routeur de l'application (jamais une page seule),
-// pour l'eleve adulte et pour l'eleve mineur (Interface guidee).
-//
-// Ce que ces tests prouvent : la barre, les trois onglets et leur ordre, la
-// planche (grille, liste, filtres, second rayon, lien externe), le Programme
-// (qui voit quoi, les cinq etats), « Mon livret », l'arabe, le texte a 200 %.
-// Ce qu'ils ne prouvent pas : le serveur (lecture simulee), un lien reellement
-// ouvert hors du navigateur de test, la preuve en production.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+
 import 'package:rewayah_academy/core/apprendre/affichage_planche.dart';
 import 'package:rewayah_academy/core/apprendre/dates_ecole.dart';
 import 'package:rewayah_academy/core/apprendre/document_planche.dart';
@@ -33,6 +24,8 @@ import 'package:rewayah_academy/core/tc_bibliotheque/donnees_catalogue.dart'
     show portCatalogueProvider;
 import 'package:rewayah_academy/core/tc_bibliotheque/library_resource.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/ouvreur_onglet.dart';
+import 'package:rewayah_academy/core/tc_bibliotheque/port_catalogue.dart'
+    show EchecCatalogue;
 import 'package:rewayah_academy/core/theme/app_typography.dart'
     show AppFontFamily;
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
@@ -43,11 +36,18 @@ import 'package:rewayah_academy/core/widgets/entete_page.dart'
 import 'package:rewayah_academy/core/widgets/fil_ariane.dart' show FilAriane;
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/core/widgets/rangee_filtres.dart';
+import 'package:rewayah_academy/features/accueil_adulte/accueil_adulte_page.dart'
+    show AccueilAdultePage;
 import 'package:rewayah_academy/features/apprendre/espace_apprendre_page.dart';
 import 'package:rewayah_academy/features/apprendre/onglet_bibliotheque.dart';
 import 'package:rewayah_academy/features/apprendre/onglet_livret.dart';
 import 'package:rewayah_academy/features/apprendre/onglet_programme.dart';
+import 'package:rewayah_academy/features/foyer/routes_n2_foyer_adulte.dart'
+    show RoutesN2;
+import 'package:rewayah_academy/features/ma_classe_adulte/ma_classe_adulte_page.dart'
+    show MaClasseAdultePage;
 import 'package:rewayah_academy/features/suivi_eleve/entree_bibliotheque.dart';
+import 'package:rewayah_academy/features/tc_catalogue/bibliotheque_page.dart';
 import 'package:rewayah_academy/features/tc_catalogue/routes_tc_b.dart';
 
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
@@ -694,17 +694,24 @@ void main() {
   });
 
   group('une seule Bibliotheque pour l eleve', () {
-    for (final ProfilApprendre profil in ProfilApprendre.values) {
+    // Le role `student` (le mineur, et l'adulte dont la barre est celle de
+    // l'eleve) n'a qu'une Bibliotheque, celle d'Apprendre.
+    for (final (String nom, ProfilApprendre profil, AppRole? role) cas
+        in <(String, ProfilApprendre, AppRole?)>[
+          ('mineur guide', ProfilApprendre.mineurGuide, null),
+          ('adulte, role eleve', ProfilApprendre.adulte, AppRole.student),
+        ]) {
       for (final String adresse in <String>[
         Routes.tcBibliotheque,
         '${Routes.tcBibliotheque}?groupe=g1',
       ]) {
-        testWidgets('${profil.name} : $adresse mene a Apprendre', (
+        testWidgets('${cas.$1} : $adresse mene a Apprendre', (
           WidgetTester tester,
         ) async {
           final GoRouter routeur = await monterApprendre(
             tester,
-            profil: profil,
+            profil: cas.$2,
+            role: cas.$3,
             documents: documentsComplets(),
             depart: adresse,
           );
@@ -720,6 +727,64 @@ void main() {
         });
       }
     }
+
+    // Revue de l'architecte (13/11, IMPORTANT A) : un compte TUTEUR qui est
+    // aussi eleve autonome garde sa Bibliotheque dans l'espace tuteur ; la
+    // redirection ne joue que pour l'espace eleve.
+    for (final String adresse in <String>[
+      Routes.tcBibliotheque,
+      '${Routes.tcBibliotheque}?groupe=g1',
+    ]) {
+      testWidgets('double casquette, espace TUTEUR : $adresse reste la '
+          'Bibliotheque du tuteur', (WidgetTester tester) async {
+        final GoRouter routeur = await monterApprendre(
+          tester,
+          profil: ProfilApprendre.adulte,
+          documents: documentsComplets(),
+          depart: adresse,
+        );
+        expect(lieu(routeur), adresse);
+        expect(find.byType(EspaceApprendrePage), findsNothing);
+        expect(find.byType(BibliothequePage), findsOneWidget);
+      });
+    }
+
+    // Les entrees de l'espace ELEVE de ce compte (Ma classe adulte, Accueil
+    // adulte) menent directement a Apprendre, avec la classe : on appelle le
+    // geste que la route de production donne a la page.
+    testWidgets('double casquette, espace ELEVE : « Voir tout » de Ma classe '
+        'mene a Apprendre, avec la classe', (WidgetTester tester) async {
+      final GoRouter routeur = await monterApprendre(
+        tester,
+        profil: ProfilApprendre.adulte,
+        depart: RoutesN2.eleveAdulteClasse,
+      );
+      expect(lieu(routeur), RoutesN2.eleveAdulteClasse);
+      final MaClasseAdultePage page = tester.widget<MaClasseAdultePage>(
+        find.byType(MaClasseAdultePage),
+      );
+      page.onVoirRessources!('g1');
+      await stabiliser(tester);
+      expect(lieu(routeur), '${Routes.eleveApprendre}?groupe=g1');
+      expect(find.byType(EspaceApprendrePage), findsOneWidget);
+    });
+
+    testWidgets('double casquette, espace ELEVE : « Voir tout » de l Accueil '
+        'adulte mene a Apprendre, avec la classe', (WidgetTester tester) async {
+      final GoRouter routeur = await monterApprendre(
+        tester,
+        profil: ProfilApprendre.adulte,
+        depart: Routes.eleveAdulte,
+      );
+      expect(lieu(routeur), Routes.eleveAdulte);
+      final AccueilAdultePage page = tester.widget<AccueilAdultePage>(
+        find.byType(AccueilAdultePage),
+      );
+      page.onVoirRessources!('g1');
+      await stabiliser(tester);
+      expect(lieu(routeur), '${Routes.eleveApprendre}?groupe=g1');
+      expect(find.byType(EspaceApprendrePage), findsOneWidget);
+    });
 
     group('« Pour cette classe » (la rubrique de l ancienne liste)', () {
       LibraryResource ressource(String id, String titre) => LibraryResource(
@@ -847,50 +912,118 @@ void main() {
         );
       });
 
-      testWidgets('classe falsifiee (le serveur refuse) : la rubrique est '
-          'absente, le reste de la Bibliotheque tient', (
+      for (final bool horsLigne in <bool>[false, true]) {
+        testWidgets(
+          'lecture refusee ou en echec${horsLigne ? ' (hors ligne)' : ''} : la '
+          'rubrique le DIT (jamais « rien »), avec Reessayer, et le reste de '
+          'la Bibliotheque tient',
+          (WidgetTester tester) async {
+            await monterApprendre(
+              tester,
+              profil: ProfilApprendre.mineurGuide,
+              depart: '${Routes.tcBibliotheque}?groupe=pas-la-mienne',
+              horsLigne: horsLigne,
+              autres: <Override>[
+                portCatalogueProvider.overrideWithValue(
+                  CatalogueGroupeRefuse(
+                    ressources: <LibraryResource>[devoir, autre],
+                  ),
+                ),
+              ],
+            );
+            expect(find.byKey(ClesBibliotheque.classeErreur), findsOneWidget);
+            expect(
+              find.descendant(
+                of: find.byKey(ClesBibliotheque.classeErreur),
+                matching: find.text(t.apprendre.bibliotheque.rayonClasse),
+              ),
+              findsOneWidget,
+            );
+            expect(
+              find.descendant(
+                of: find.byKey(ClesBibliotheque.classeErreur),
+                matching: find.text(
+                  t.apprendre.bibliotheque.classeErreur.message,
+                ),
+              ),
+              findsOneWidget,
+            );
+            expect(
+              find.byKey(
+                PlancheDocuments.cleRayon(RayonPlanche.pourCetteClasse),
+              ),
+              findsNothing,
+            );
+            // Le reste de la Bibliotheque tient, sans son propre echec.
+            expect(
+              find.byKey(PlancheDocuments.cleDocument('devoir-g1')),
+              findsOneWidget,
+            );
+            expect(find.byKey(ClesBibliotheque.erreur), findsNothing);
+          },
+        );
+      }
+
+      testWidgets('lecture refusee : « Reessayer » relit la rubrique', (
         WidgetTester tester,
       ) async {
+        final _CatalogueQuiReussitAuSecondEssai catalogue =
+            _CatalogueQuiReussitAuSecondEssai(<LibraryResource>[devoir]);
         await monterApprendre(
           tester,
           profil: ProfilApprendre.mineurGuide,
-          depart: '${Routes.tcBibliotheque}?groupe=pas-la-mienne',
+          depart: '${Routes.tcBibliotheque}?groupe=g1',
           autres: <Override>[
-            portCatalogueProvider.overrideWithValue(
-              CatalogueGroupeRefuse(
-                ressources: <LibraryResource>[devoir, autre],
-              ),
-            ),
+            portCatalogueProvider.overrideWithValue(catalogue),
           ],
         );
+        expect(find.byKey(ClesBibliotheque.classeErreur), findsOneWidget);
+        final Finder reessayer = find.descendant(
+          of: find.byKey(ClesBibliotheque.classeErreur),
+          matching: find.text(t.commun.reessayer),
+        );
+        await tester.ensureVisible(reessayer);
+        await tester.tap(reessayer);
+        await stabiliser(tester);
+        expect(find.byKey(ClesBibliotheque.classeErreur), findsNothing);
         expect(
           find.byKey(PlancheDocuments.cleRayon(RayonPlanche.pourCetteClasse)),
-          findsNothing,
-        );
-        expect(
-          find.byKey(PlancheDocuments.cleDocument('devoir-g1')),
           findsOneWidget,
         );
-        expect(find.byKey(ClesBibliotheque.erreur), findsNothing);
       });
 
-      testWidgets('Ma classe adulte, « Voir tout » : meme chemin, la classe '
-          'suit', (WidgetTester tester) async {
+      testWidgets('pendant la lecture : sa place est reservee (squelette sous '
+          'son titre), le reste s affiche deja', (WidgetTester tester) async {
+        final Completer<List<LibraryResource>> attente =
+            Completer<List<LibraryResource>>();
         final GoRouter routeur = await monterApprendre(
           tester,
-          depart: RoutesTcB.avecGroupe('g1'),
+          profil: ProfilApprendre.mineurGuide,
+          depart: '${Routes.tcBibliotheque}?groupe=g1',
+          documents: documentsComplets(),
           autres: <Override>[
             portCatalogueProvider.overrideWithValue(
-              CatalogueLocal(
-                ressources: <LibraryResource>[devoir, autre],
-                assignationsParGroupe: <String, List<String>>{
-                  'g1': <String>['devoir-g1'],
-                },
-              ),
+              _CatalogueEnAttente(attente.future),
             ),
           ],
         );
         expect(lieu(routeur), '${Routes.eleveApprendre}?groupe=g1');
+        expect(find.byKey(ClesBibliotheque.classeChargement), findsOneWidget);
+        expect(
+          find.descendant(
+            of: find.byKey(ClesBibliotheque.classeChargement),
+            matching: find.text(t.apprendre.bibliotheque.rayonClasse),
+          ),
+          findsOneWidget,
+        );
+        // Le reste s'affiche pendant l'attente.
+        expect(
+          find.byKey(PlancheDocuments.cleDocument('livre-lecture')),
+          findsOneWidget,
+        );
+        attente.complete(<LibraryResource>[devoir]);
+        await stabiliser(tester);
+        expect(find.byKey(ClesBibliotheque.classeChargement), findsNothing);
         expect(
           find.byKey(PlancheDocuments.cleRayon(RayonPlanche.pourCetteClasse)),
           findsOneWidget,
@@ -1346,6 +1479,31 @@ void main() {
       expect(find.textContaining('2026'), findsWidgets);
     });
 
+    testWidgets('reponse SANS `eleve_voit_dates` (serveur d avant le socle) : '
+        'la section « Dates de l academie » n existe pas, quel que soit le '
+        'mode d interface (refus par defaut)', (WidgetTester tester) async {
+      final Map<String, Object?> ancienne = lectureDemo(dates: true)
+        ..remove('eleve_voit_dates');
+      // Un eleve en presentation STANDARD : le mode ne decide rien.
+      await monterApprendre(
+        tester,
+        profil: ProfilApprendre.adulte,
+        role: AppRole.student,
+        autonome: false,
+        documents: documentsComplets(),
+        suivi: SuiviLu(ancienne),
+      );
+      await _ouvrirOnglet(tester, t.apprendre.sections.programme);
+      expect(find.byType(OngletProgramme), findsOneWidget);
+      expect(find.text('Lire avec les voyelles'), findsWidgets);
+      // Ce que l'onglet ajoute (les dates de l'academie) : refus par defaut.
+      // La carte du lot 1 qu'il embarque (`CarteSuiviPedagogique`) garde, elle,
+      // sa regle d'avant le socle quand le drapeau manque (`!guidee`) : un
+      // eleve en presentation standard y lirait les dates de l'etape. C'est
+      // le lot 1 qui la change (signale a l'architecte).
+      expect(find.byKey(ClesProgramme.datesEcole), findsNothing);
+    });
+
     testWidgets('sans port branche : meme etat vide honnete', (
       WidgetTester tester,
     ) async {
@@ -1543,4 +1701,29 @@ class _FamilleAvecJalon implements PortProgressionFamille {
         jalons: const <String>['Lit chaque lettre'],
         dernierJalonLe: DateTime(2026, 10, 14),
       );
+}
+
+/// Un catalogue dont la lecture par classe attend qu'on la libere.
+class _CatalogueEnAttente extends CatalogueLocal {
+  _CatalogueEnAttente(this._attente);
+
+  final Future<List<LibraryResource>> _attente;
+
+  @override
+  Future<List<LibraryResource>> pourGroupe(String groupeId) => _attente;
+}
+
+/// Un catalogue dont la lecture par classe echoue une fois, puis reussit.
+class _CatalogueQuiReussitAuSecondEssai extends CatalogueLocal {
+  _CatalogueQuiReussitAuSecondEssai(this._lues);
+
+  final List<LibraryResource> _lues;
+  int _appels = 0;
+
+  @override
+  Future<List<LibraryResource>> pourGroupe(String groupeId) async {
+    _appels++;
+    if (_appels == 1) throw const EchecCatalogue('lecture refusee');
+    return _lues;
+  }
 }

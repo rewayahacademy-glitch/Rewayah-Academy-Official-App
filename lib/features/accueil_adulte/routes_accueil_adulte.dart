@@ -15,6 +15,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/apprendre/documents_apprendre.dart' show cheminApprendre;
 import '../../core/router/go_route_sure.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
@@ -24,7 +25,6 @@ import '../foyer/nos_prix_page.dart';
 import '../foyer/routes_n2_foyer_adulte.dart' show RoutesN2;
 import '../mon_espace_adulte/mes_finances_page.dart';
 import '../suivi_famille/suivi_famille_page.dart';
-import '../tc_catalogue/routes_tc_b.dart' show RoutesTcB;
 import '../tc_mes_groupes/routes_tc_a.dart' show preparerSalleEleve;
 import 'accueil_adulte_page.dart';
 import 'historique_seances_adulte_page.dart';
@@ -62,7 +62,7 @@ List<GoRoute> routesAccueilAdulte() => <GoRoute>[
             onRejoindre: (GroupSummaryVM groupe) =>
                 preparerSalleEleve(contexte, groupe),
             onVoirRessources: (String groupeId) =>
-                GoRouter.of(contexte).go(RoutesTcB.avecGroupe(groupeId)),
+                GoRouter.of(contexte).go(cheminApprendre(groupe: groupeId)),
             onVoirDernieresSeances: () =>
                 GoRouter.of(contexte).go(Routes.eleveAdulteSeances),
             onMesFinances: () => GoRouter.of(contexte).go(Routes.eleveFinances),

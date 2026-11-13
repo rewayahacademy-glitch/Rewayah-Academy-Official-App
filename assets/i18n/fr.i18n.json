@@ -15215,6 +15215,10 @@
     "bibliotheque": {
       "rayonCours": "Documents des cours",
       "rayonClasse": "Pour cette classe",
+      "classeErreur": {
+        "message": "Les documents de cette classe ne s'affichent pas pour l'instant",
+        "invitation": "Vérifiez votre connexion, puis touchez Réessayer."
+      },
       "rayonPlusLoin": "Pour aller plus loin",
       "rayonCoursVide": {
         "message": "Les documents des cours arriveront ici",

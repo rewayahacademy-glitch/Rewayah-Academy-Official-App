@@ -310,12 +310,10 @@ void main() {
           ),
         );
         await stabiliser(tester);
-        // A 320 en texte x2, l'onglet « Accueil » n'est plus qu'une icone
-        // (barre guidee sur une rangee) : son nom est celui de l'infobulle.
         await tester.tap(
           find.descendant(
             of: find.byKey(NavShell.barreBasseKey),
-            matching: find.byTooltip(t.nav.eleve.accueil),
+            matching: find.text(t.nav.eleve.accueil),
           ),
         );
         await stabiliser(tester);

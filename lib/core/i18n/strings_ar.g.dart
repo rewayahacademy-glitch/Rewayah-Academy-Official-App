@@ -10924,6 +10924,7 @@ class _Traductions$apprendre$bibliotheque$ar extends Traductions$apprendre$bibli
 	// Translations
 	@override String get rayonCours => 'وثائق الدروس';
 	@override String get rayonClasse => 'لهذا الفصل';
+	@override late final _Traductions$apprendre$bibliotheque$classeErreur$ar classeErreur = _Traductions$apprendre$bibliotheque$classeErreur$ar._(_root);
 	@override String get rayonPlusLoin => 'للتعمّق أكثر';
 	@override late final _Traductions$apprendre$bibliotheque$rayonCoursVide$ar rayonCoursVide = _Traductions$apprendre$bibliotheque$rayonCoursVide$ar._(_root);
 	@override String get rayonPlusLoinVide => 'ستظهر وثائق أخرى هنا';
@@ -19984,6 +19985,17 @@ class _Traductions$candidatsFlux$file$reglage$ar extends Traductions$candidatsFl
 	);
 	@override String get invalide => 'اكتبوا عددًا صحيحًا من 1 إلى 2000، دون مسافة.';
 	@override String get echec => 'الإعداد غير مؤكد. السبب المحتمل: انقطع الاتصال بالخادم. أعيدوا المحاولة بعد لحظة.';
+}
+
+// Path: apprendre.bibliotheque.classeErreur
+class _Traductions$apprendre$bibliotheque$classeErreur$ar extends Traductions$apprendre$bibliotheque$classeErreur$fr {
+	_Traductions$apprendre$bibliotheque$classeErreur$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get message => 'لا تظهر مستندات هذا الفصل الآن';
+	@override String get invitation => 'تحقق من اتصالك ثم اضغط إعادة المحاولة.';
 }
 
 // Path: apprendre.bibliotheque.rayonCoursVide
@@ -35460,6 +35472,8 @@ extension on TraductionsAr {
 			'apprendre.sections.livret' => 'سجلّي',
 			'apprendre.bibliotheque.rayonCours' => 'وثائق الدروس',
 			'apprendre.bibliotheque.rayonClasse' => 'لهذا الفصل',
+			'apprendre.bibliotheque.classeErreur.message' => 'لا تظهر مستندات هذا الفصل الآن',
+			'apprendre.bibliotheque.classeErreur.invitation' => 'تحقق من اتصالك ثم اضغط إعادة المحاولة.',
 			'apprendre.bibliotheque.rayonPlusLoin' => 'للتعمّق أكثر',
 			'apprendre.bibliotheque.rayonCoursVide.message' => 'ستظهر وثائق الدروس هنا',
 			'apprendre.bibliotheque.rayonCoursVide.invitation' => 'تظهر بمجرد أن تنشرها الأكاديمية.',

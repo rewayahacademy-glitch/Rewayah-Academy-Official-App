@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/apprendre/documents_apprendre.dart';
+import '../../core/domain/enums.dart';
 import '../../core/router/go_route_sure.dart';
 import '../../core/session/session_controleur.dart';
 import 'bibliotheque_page.dart';
@@ -131,7 +132,7 @@ class _ListeOuApprendreEtat extends ConsumerState<_ListeOuApprendre> {
     // galerie) garde la liste d'origine.
     bool eleve;
     try {
-      eleve = ref.watch(sessionProvider).peutLireLeCoran;
+      eleve = ref.watch(sessionProvider).role == AppRole.student;
     } on Object {
       eleve = false;
     }

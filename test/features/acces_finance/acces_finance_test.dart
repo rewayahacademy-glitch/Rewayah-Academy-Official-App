@@ -55,7 +55,6 @@ import 'package:rewayah_academy/features/tc_espace_groupe/espace_groupe_page.dar
 import 'package:rewayah_academy/features/tc_mes_groupes/carte_groupe.dart';
 import 'package:rewayah_academy/features/tc_mes_groupes/mes_groupes_page.dart';
 
-import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../router/support_routeur.dart';
 import '../../support/annonces.dart';
 import '../../support/demo/accessibilite_demo.dart';
@@ -403,10 +402,6 @@ Future<void> _monterFicheAcces(
 }
 
 void main() {
-  // Les vraies polices : la police de test (carres d'un em) ferait passer la
-  // barre guidee en icones seules pour un defaut que l'application n'a pas.
-  setUpAll(chargerPolicesDuDepot);
-
   group('regles pures', () {
     test('Rejoindre suit la periode financee, jamais le solde', () {
       // Ibrahim a 0 $ et son mois est finance : ouvert (FIN4-08).

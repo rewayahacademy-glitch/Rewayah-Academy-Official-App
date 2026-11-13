@@ -78,32 +78,8 @@ void main() {
                 of: barre,
                 matching: find.text(d.libelle),
               );
-              // Arbitrage de l'architecte (13/11/2026) : quand la largeur
-              // manque, les onglets non selectionnes ne montrent que leur
-              // icone ; le nom reste celui de l'infobulle. L'onglet choisi
-              // garde toujours son libelle.
-              final bool icone = libelle.evaluate().isEmpty;
-              if (icone) {
-                expect(d, isNot(destinations.first), reason: 'choisi');
-                expect(
-                  find.descendant(
-                    of: barre,
-                    matching: find.byTooltip(d.libelle),
-                  ),
-                  findsOneWidget,
-                  reason: d.libelle,
-                );
-              } else {
-                expect(libelle, findsOneWidget, reason: d.libelle);
-              }
-              final Rect r = tester.getRect(
-                icone
-                    ? find.descendant(
-                        of: barre,
-                        matching: find.byTooltip(d.libelle),
-                      )
-                    : libelle,
-              );
+              expect(libelle, findsOneWidget, reason: d.libelle);
+              final Rect r = tester.getRect(libelle);
               expect(r.left, greaterThanOrEqualTo(0), reason: d.libelle);
               expect(r.right, lessThanOrEqualTo(largeur), reason: d.libelle);
             }

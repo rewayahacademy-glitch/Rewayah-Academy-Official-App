@@ -22,7 +22,6 @@ import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/features/tc_espace_groupe/espace_groupe_page.dart';
 
-import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../router/support_routeur.dart';
 import '../../support/demo/accessibilite_demo.dart';
 import '../../support/demo/demo_accessibilite_page.dart';
@@ -120,10 +119,6 @@ Future<void> _ouvrirParLePied(WidgetTester tester, String libelle) async {
 }
 
 void main() {
-  // Les vraies polices : la police de test (carres d'un em) ferait passer la
-  // barre guidee en icones seules pour un defaut que l'application n'a pas.
-  setUpAll(chargerPolicesDuDepot);
-
   test('memes quatre destinations, dans l ordre du doc 06', () {
     for (final InterfaceMode mode in InterfaceMode.values) {
       final List<Destination> d = destinationsPour(

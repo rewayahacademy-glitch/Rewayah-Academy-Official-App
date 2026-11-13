@@ -121,11 +121,12 @@ DocumentPlanche _documentDe(LibraryResource r, RayonPlanche rayon) =>
 /// « Pour cette classe », celle de l'ancienne Bibliotheque que l'eleve ne
 /// voit plus : meme donnee, `PortCatalogue.pourGroupe`).
 ///
-/// **Le groupe vient de l'adresse** (`?groupe=`), donc d'une valeur que
-/// n'importe qui peut ecrire : le serveur LEVE pour une classe qui n'est pas
-/// celle de l'appelant (`ressources_du_groupe`). Cet echec est une absence
-/// ici, comme dans `lireDonneesCatalogue` : la rubrique disparait, le reste
-/// de la Bibliotheque ne tombe pas.
+/// **Une lecture qui echoue echoue ici aussi** (revue de l'architecte, 13/11) :
+/// elle ne se confond pas avec « aucun document ». La rubrique dit alors
+/// qu'elle ne s'affiche pas, avec « Reessayer ». Le groupe vient de l'adresse
+/// (`?groupe=`) et le serveur LEVE pour une classe qui n'est pas celle de
+/// l'appelant : seule cette rubrique tombe, jamais le reste de la
+/// Bibliotheque (lu a part, par [documentsApprendreProvider]).
 final FutureProviderFamily<List<DocumentPlanche>, String>
 documentsDeLaClasseProvider =
     FutureProvider.family<List<DocumentPlanche>, String>((
@@ -134,10 +135,7 @@ documentsDeLaClasseProvider =
     ) async {
       final List<LibraryResource> ressources = await ref
           .watch(portCatalogueProvider)
-          .pourGroupe(groupeId)
-          .onError<Object>(
-            (Object _, StackTrace _) => const <LibraryResource>[],
-          );
+          .pourGroupe(groupeId);
       return <DocumentPlanche>[
         for (final LibraryResource r in ressources)
           if (r.publiee && r.resourceType != TypeRessource.quran)

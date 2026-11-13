@@ -18,7 +18,9 @@ import '../../core/icons/app_icons.dart';
 import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/etat_routeur_sur.dart';
+import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/empty_state.dart';
+import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
 
 /// Les cles des tests.
@@ -28,6 +30,16 @@ abstract final class ClesBibliotheque {
 
   /// L'echec de lecture.
   static const Key erreur = ValueKey<String>('apprendre-bib-erreur');
+
+  /// La place reservee de « Pour cette classe » pendant sa lecture.
+  static const Key classeChargement = ValueKey<String>(
+    'apprendre-bib-classe-chargement',
+  );
+
+  /// L'echec de lecture de « Pour cette classe ».
+  static const Key classeErreur = ValueKey<String>(
+    'apprendre-bib-classe-erreur',
+  );
 }
 
 /// L'onglet.
@@ -67,20 +79,52 @@ class OngletBibliotheque extends ConsumerWidget {
     // fournisseur garde la langue de sa lecture.
     // « Pour cette classe » : seulement quand l'eleve vient de sa classe
     // (`?groupe=`) ; ces documents ne sont montres qu'une fois, dans cette
-    // rubrique, et plus dans « Documents des cours ». Une lecture en cours ou
-    // en echec n'ajoute rien : la rubrique est absente, le reste s'affiche.
+    // rubrique, et plus dans « Documents des cours ». Pendant la lecture, sa
+    // place est reservee ; en echec, elle le dit, sans se confondre avec
+    // « aucun document » (qui, lui, la fait disparaitre). Le reste de la
+    // Bibliotheque ne depend jamais d'elle.
     final String? groupe = parametreRouteurSur(
       context,
       parametreGroupeApprendre,
     );
-    final List<DocumentPlanche> classe = groupe == null || groupe.isEmpty
-        ? const <DocumentPlanche>[]
-        : ref.watch(documentsDeLaClasseProvider(groupe)).value ??
-              const <DocumentPlanche>[];
+    final AsyncValue<List<DocumentPlanche>>? classeLue =
+        groupe == null || groupe.isEmpty
+        ? null
+        : ref.watch(documentsDeLaClasseProvider(groupe));
+    final List<DocumentPlanche> classe =
+        classeLue?.value ?? const <DocumentPlanche>[];
+    Widget? rubrique;
+    if (classeLue != null && !classeLue.hasValue) {
+      if (classeLue.hasError) {
+        final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
+        void relire() => ref.invalidate(documentsDeLaClasseProvider(groupe!));
+        rubrique = _RubriqueClasse(
+          cle: ClesBibliotheque.classeErreur,
+          corps: horsLigne
+              ? EtatSansDonnees(
+                  quoi: t.apprendre.bibliotheque.classeErreur.message,
+                  onAction: relire,
+                )
+              : EmptyState(
+                  message: t.apprendre.bibliotheque.classeErreur.message,
+                  invitation: t.apprendre.bibliotheque.classeErreur.invitation,
+                  icone: AppIcons.avertissement,
+                  libelleAction: t.commun.reessayer,
+                  onAction: relire,
+                ),
+        );
+      } else {
+        rubrique = const _RubriqueClasse(
+          cle: ClesBibliotheque.classeChargement,
+          corps: Skeleton.liste(lignes: 2),
+        );
+      }
+    }
     final Set<String> dansLaClasse = <String>{
       for (final DocumentPlanche d in classe) d.id,
     };
     return PlancheDocuments(
+      rubriqueClasse: rubrique,
       documents: <DocumentPlanche>[
         ...classe,
         for (final DocumentPlanche d in documents.requireValue)
@@ -89,4 +133,25 @@ class OngletBibliotheque extends ConsumerWidget {
       ],
     );
   }
+}
+
+/// La rubrique « Pour cette classe » quand elle attend ou ne s'affiche pas :
+/// son titre, et dessous l'attente ou la phrase d'echec.
+class _RubriqueClasse extends StatelessWidget {
+  const _RubriqueClasse({required this.cle, required this.corps});
+
+  final Key cle;
+  final Widget corps;
+
+  @override
+  Widget build(BuildContext context) => Column(
+    key: cle,
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    mainAxisSize: MainAxisSize.min,
+    children: <Widget>[
+      SectionHeader(titre: t.apprendre.bibliotheque.rayonClasse),
+      Ecart.vMd,
+      corps,
+    ],
+  );
 }

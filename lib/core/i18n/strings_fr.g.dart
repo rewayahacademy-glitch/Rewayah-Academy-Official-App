@@ -23847,6 +23847,8 @@ class Traductions$apprendre$bibliotheque$fr {
 	/// fr: 'Pour cette classe'
 	String get rayonClasse => 'Pour cette classe';
 
+	late final Traductions$apprendre$bibliotheque$classeErreur$fr classeErreur = Traductions$apprendre$bibliotheque$classeErreur$fr.internal(_root);
+
 	/// fr: 'Pour aller plus loin'
 	String get rayonPlusLoin => 'Pour aller plus loin';
 
@@ -41987,6 +41989,21 @@ class Traductions$candidatsFlux$file$reglage$fr {
 
 	/// fr: 'Réglage non confirmé. Cause probable : la connexion au serveur s'est interrompue. Réessayez dans un instant.'
 	String get echec => 'Réglage non confirmé. Cause probable : la connexion au serveur s\'est interrompue. Réessayez dans un instant.';
+}
+
+// Path: apprendre.bibliotheque.classeErreur
+class Traductions$apprendre$bibliotheque$classeErreur$fr {
+	Traductions$apprendre$bibliotheque$classeErreur$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Les documents de cette classe ne s'affichent pas pour l'instant'
+	String get message => 'Les documents de cette classe ne s\'affichent pas pour l\'instant';
+
+	/// fr: 'Vérifiez votre connexion, puis touchez Réessayer.'
+	String get invitation => 'Vérifiez votre connexion, puis touchez Réessayer.';
 }
 
 // Path: apprendre.bibliotheque.rayonCoursVide
@@ -61452,6 +61469,8 @@ extension on Traductions {
 			'apprendre.sections.livret' => 'Mon livret',
 			'apprendre.bibliotheque.rayonCours' => 'Documents des cours',
 			'apprendre.bibliotheque.rayonClasse' => 'Pour cette classe',
+			'apprendre.bibliotheque.classeErreur.message' => 'Les documents de cette classe ne s\'affichent pas pour l\'instant',
+			'apprendre.bibliotheque.classeErreur.invitation' => 'Vérifiez votre connexion, puis touchez Réessayer.',
 			'apprendre.bibliotheque.rayonPlusLoin' => 'Pour aller plus loin',
 			'apprendre.bibliotheque.rayonCoursVide.message' => 'Les documents des cours arriveront ici',
 			'apprendre.bibliotheque.rayonCoursVide.invitation' => 'Ils apparaissent dès que l\'académie les publie.',
