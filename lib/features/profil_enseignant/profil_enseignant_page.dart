@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/attente_classe/modele_attente.dart';
 import '../../core/candidature/port_accord_publication.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/port_revenus_enseignant.dart';
@@ -97,6 +98,11 @@ class ProfilEnseignantPage extends ConsumerWidget {
 
   /// La ligne « Publication sur le site ».
   static const Key publicationKey = ValueKey<String>('compte-ens-publication');
+
+  /// La ligne « Ce que les familles voient de vous » (SUIVI-ATTENTE).
+  static const Key presentationKey = ValueKey<String>(
+    'compte-ens-presentation',
+  );
 
   /// La ligne « Mes disponibilités ».
   static const Key disponibilitesKey = ValueKey<String>('compte-ens-dispo');
@@ -242,6 +248,17 @@ class ProfilEnseignantPage extends ConsumerWidget {
               ),
             ),
           ?publication,
+          // SUIVI-ATTENTE (S4) : ce que les familles voient de l'enseignant,
+          // tant que le reglage est branche.
+          if (ref.watch(portPresentationEnseignantProvider) != null)
+            LigneRubrique(
+              cle: presentationKey,
+              icone: AppIcons.eleves,
+              libelle: t.suiviAttente.presentation.titre,
+              onPress: () => unawaited(
+                context.push(Routes.enseignantPresentationFamilles),
+              ),
+            ),
           // NAV-REFONTE (09/11/2026) : les disponibilites s'ouvrent ici ;
           // `push` : le retour ramene au Compte.
           LigneRubrique(

@@ -38,6 +38,9 @@ const Set<String> evenementsNotificationConnus = <String>{
   'controle_mission_non_controlee',
   // Fusion ou transfert de l'eleve vers une classe parallele (R9, R10).
   'classe_changee',
+  // SUIVI-ATTENTE (13/11/2026, migration 20261123961000) : tout est pret pour
+  // le premier cours, au tuteur d'un mineur ou a l'eleve adulte.
+  'tout_est_pret',
   // Relance avant echeance, acces suspendu pour paiement, acces retabli
   // (FAC-F-01, migration 20261018170000).
   'paiement_relance',
@@ -485,6 +488,10 @@ Map<String, dynamic> _parametresAffichables(Map<dynamic, dynamic> bruts) {
     // SALLE-2-ENTRETIEN : le moment de l'avis (`reserve`, `veille`,
     // `quinze`, `tenu`, `a_replanifier`).
     'sorte',
+    // SUIVI-ATTENTE : « Tout est pret » nomme l'enfant au tuteur (un tuteur de
+    // deux enfants dans la meme classe recoit deux avis). Un prenom, jamais un
+    // identifiant ; jamais pose pour l'eleve adulte lui-meme.
+    'eleve_prenom',
   };
   // FN-028 : des comptes et un drapeau, jamais un identifiant.
   const Set<String> clesNombres = <String>{'presents', 'inscrits'};
@@ -510,6 +517,7 @@ TypeNotification _typePour(String evenement) => switch (evenement) {
   'demande_recue' => TypeNotification.messageMetier,
   'classe_validee' ||
   'enseignant_affecte' ||
+  'tout_est_pret' ||
   'classe_changee' ||
   'classe_creee' ||
   'enseignant_change' ||

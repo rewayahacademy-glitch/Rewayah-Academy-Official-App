@@ -164,9 +164,42 @@ export const MODELES: Record<string, Fabrique> = {
   classe_validee: (d) => avis(d, 'Votre classe est prête', 'Votre classe est prête',
     'La classe correspondant à votre demande est prête. Il reste à lui affecter son enseignant ; vous serez prévenu.',
     'Voir la classe', '/tuteur/demandes'),
-  enseignant_affecte: (d) => avis(d, 'Un enseignant est affecté à la classe', 'Votre enseignant est connu',
+  // SUIVI-ATTENTE (12/11/2026) : a l'affectation, l'enseignant recoit son propre
+  // courriel (S5, trace) : la classe, ses eleves, le premier cours, et le geste
+  // « Me presenter ». Avant ce lot, la portee `classe` aurait recu le texte
+  // ecrit pour la famille.
+  enseignant_affecte: (d) => {
+    if (d.portee === 'classe') {
+      const P = PRECISIONS_FR
+      const n = Number(d.eleves_n)
+      const tranche = typeof d.tranche === 'string' && d.tranche ? d.tranche : (d.public === 'adulte' ? 'adultes' : d.public === 'enfant' ? 'enfants' : '')
+      const eleves = Number.isInteger(n) && n > 0 ? `Élèves : ${n}${tranche ? ` (${tranche})` : ''}.` : (tranche ? `Public : ${tranche}.` : '')
+      const q = quandSeance(d, P.locale, P.a)
+      const detail = [typeof d.classe === 'string' && d.classe ? P.classe(d.classe) : '', eleves, q ? `Premier cours : le ${q}.` : ''].filter(Boolean).join(' ')
+      return avis(d, 'Une classe vous est confiée', 'Une classe vous est confiée',
+        avec('Une classe vous est confiée.', detail)
+          + ' Présentez-vous aux familles depuis l’application : un message est déjà rédigé, vous pouvez le modifier.',
+        'Me présenter', '/enseignant/classes')
+    }
+    return avis(d, 'Un enseignant est affecté à la classe', 'Votre enseignant est connu',
     'Un enseignant a été affecté à la classe. Vous retrouvez son nom et les horaires dans l’application.',
-    'Voir la classe', '/tuteur/demandes'),
+    'Voir la classe', '/tuteur/demandes')
+  },
+  // SUIVI-ATTENTE (12/11/2026) : « Tout est pret » (etape 5), a la famille ou a l'eleve
+  // adulte, jamais a un enfant.
+  tout_est_pret: (d) => {
+    const P = PRECISIONS_FR
+    if (d.portee === 'soi') {
+      return avis(d, 'Tout est prêt pour votre premier cours', 'Tout est prêt',
+        avec('Tout est prêt : votre classe, votre enseignant et votre horaire sont confirmés.', precisions(d, P, { premiere: true }))
+          + ' Retrouvez le suivi dans l’application.',
+        'Voir le suivi', '/eleve')
+    }
+    return avis(d, 'Tout est prêt pour le premier cours', 'Tout est prêt',
+      avec('Tout est prêt : la classe, l’enseignant et l’horaire sont confirmés.', precisions(d, P, { premiere: true }))
+        + ' Retrouvez le suivi dans l’application.',
+      'Voir le suivi', '/tuteur/demandes')
+  },
   demande_close: (d) => avis(d, 'Votre demande est clôturée', 'Votre demande est clôturée',
     'Votre demande de créneau a été clôturée. La réponse de la direction est dans l’application.',
     'Lire la réponse', '/tuteur/demandes'),

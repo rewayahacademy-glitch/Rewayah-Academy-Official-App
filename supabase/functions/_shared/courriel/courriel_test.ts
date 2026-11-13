@@ -10,7 +10,7 @@ import { VILLES_FUSEAU_AR, VILLES_FUSEAU_FR, villeDuFuseau } from './villes_fuse
 // Les evenements de la contrainte notifications_evenement_check (etat au
 // 27/10/2026 : les treize du 23/10 et les neuf de la fiche « Fraicheur et
 // notifications », migration 20261027120000) et les modeles propres a la file.
-const EVENEMENTS = ['demande_recue', 'classe_validee', 'enseignant_affecte', 'demande_close',
+const EVENEMENTS = ['demande_recue', 'classe_validee', 'enseignant_affecte', 'tout_est_pret', 'demande_close',
   'remplacement_propose', 'remplacement_pris', 'demande_presentation', 'controle_mission_attribuee',
   'controle_mission_non_controlee', 'classe_changee', 'paiement_relance', 'acces_suspendu_paiement',
   'acces_retabli_paiement',

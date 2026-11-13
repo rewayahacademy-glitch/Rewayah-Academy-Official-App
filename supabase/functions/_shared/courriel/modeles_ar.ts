@@ -138,9 +138,39 @@ const MODELES: Record<string, Fabrique> = {
   classe_validee: (d) => avis(d, 'فصلك جاهز', 'فصلك جاهز',
     'الفصل المطابق لطلبك جاهز. بقي أن يُعيَّن له معلمه، وسنُعلمك بذلك.',
     'عرض الفصل', '/tuteur/demandes'),
-  enseignant_affecte: (d) => avis(d, 'عُيّن معلم للفصل', 'صار لفصلك معلم',
+  // SUIVI-ATTENTE (12/11/2026) : courriel de l'enseignant a l'affectation.
+  enseignant_affecte: (d) => {
+    if (d.portee === 'classe') {
+      const P = PRECISIONS_AR
+      const n = Number(d.eleves_n)
+      const tranche = d.public === 'adulte' ? 'بالغون' : d.public === 'enfant' ? 'أطفال' : ''
+      const eleves = Number.isInteger(n) && n > 0 ? `عدد الطلاب: ${n}${tranche ? ` (${tranche})` : ''}.` : ''
+      const q = quandSeance(d, P.locale, P.a)
+      const detail = [typeof d.classe === 'string' && d.classe ? P.classe(d.classe) : '', eleves, q ? `أول حصة: ${q}.` : ''].filter(Boolean).join(' ')
+      return avis(d, 'أُسند إليك فصل', 'أُسند إليك فصل',
+        avec('أُسند إليك فصل.', detail)
+          + ' عرّف بنفسك للأسر من التطبيق: رسالة جاهزة يمكنك تعديلها.',
+        'أعرّف بنفسي', '/enseignant/classes')
+    }
+    return avis(d, 'عُيّن معلم للفصل', 'صار لفصلك معلم',
     'عُيّن معلم للفصل. تجد اسمه ومواعيده في التطبيق.',
-    'عرض الفصل', '/tuteur/demandes'),
+    'عرض الفصل', '/tuteur/demandes')
+  },
+  // SUIVI-ATTENTE (12/11/2026) : « Tout est pret » (etape 5), a la famille ou a l'eleve
+  // adulte, jamais a un enfant.
+  tout_est_pret: (d) => {
+    const P = PRECISIONS_AR
+    if (d.portee === 'soi') {
+      return avis(d, 'كل شيء جاهز لحصتك الأولى', 'كل شيء جاهز',
+        avec('كل شيء جاهز: فصلك ومعلمك وموعدك مؤكَّدة.', precisions(d, P, { premiere: true }))
+          + ' تابع التفاصيل في التطبيق.',
+        'عرض المتابعة', '/eleve')
+    }
+    return avis(d, 'كل شيء جاهز للحصة الأولى', 'كل شيء جاهز',
+      avec('كل شيء جاهز: الفصل والمعلم والموعد مؤكَّدة.', precisions(d, P, { premiere: true }))
+        + ' تابع التفاصيل في التطبيق.',
+      'عرض المتابعة', '/tuteur/demandes')
+  },
   demande_close: (d) => avis(d, 'أُغلق طلبك', 'أُغلق طلبك',
     'أُغلق طلبك لحجز موعد. ردّ الإدارة في التطبيق.',
     'قراءة الرد', '/tuteur/demandes'),

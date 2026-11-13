@@ -128,13 +128,22 @@ export const TEXTES: Record<string, Ligne> = {
     fr: 'La classe est fermée : la direction vous donne la suite dans l\'application.',
     ar: 'أُغلق الفصل: تُعلمكم الإدارة بما يلي في التطبيق.',
   },
+  // SUIVI-ATTENTE (S5, S8) : l'enseignant (portee « classe ») a sa propre
+  // phrase et le geste « Me presenter » ; la famille et l'eleve adulte lisent
+  // que l'enseignant est affecte. Aucun prenom, d'enfant ou d'enseignant.
   enseignant_affecte: {
-    fr: (p) => p === 'soi'
-      ? 'Une classe vous est confiée : consultez-la dans l\'application.'
-      : 'Un enseignant est affecté à la classe : consultez la classe dans l\'application.',
-    ar: (p) => p === 'soi'
-      ? 'أُسند إليكم فصل: اطّلعوا عليه في التطبيق.'
-      : 'عُيّن معلم للفصل: اطّلعوا على الفصل في التطبيق.',
+    fr: (p) => p === 'classe'
+      ? 'Une classe vous est confiée : présentez-vous aux familles dans l\'application.'
+      : 'Un enseignant est affecté à la classe : consultez le suivi dans l\'application.',
+    ar: (p) => p === 'classe'
+      ? 'أُسند إليكم فصل: عرّفوا بأنفسكم للأسر في التطبيق.'
+      : 'عُيّن معلم للفصل: اطّلعوا على المتابعة في التطبيق.',
+  },
+  // SUIVI-ATTENTE (S8) : « Tout est pret », a la famille ou a l'eleve adulte ; jamais
+  // a un enfant, aucun prenom.
+  tout_est_pret: {
+    fr: 'Tout est prêt pour le premier cours : consultez le suivi dans l\'application.',
+    ar: 'كل شيء جاهز للحصة الأولى: اطّلعوا على المتابعة في التطبيق.',
   },
   enseignant_change: {
     fr: 'L\'enseignant de la classe change : consultez la classe dans l\'application.',

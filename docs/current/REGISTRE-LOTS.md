@@ -74,6 +74,12 @@ S'il passe sans conflit, le contenu est dans `main`. Un diff nul ne contient rie
 4. **Le garde-cap contrôle** que le résumé du script et ce registre se correspondent.
 5. Une ligne n'est jamais écrite « fait », « livré », « à faire » ou « non branché » sans sa preuve du jour : un commit dans `main`, un fichier:ligne ou une lecture en production. Sans preuve, on écrit « non vérifié ». Un relais d'un autre agent se signale comme tel (consigne du directeur du 11/11, `docs/orchestration/CONSIGNES-DIRECTEUR-EN-VIGUEUR.md`, V9).
 
+## Lots de construction du 12-13/11
+
+| Lot | Branche | Statut | Preuve |
+| :-- | :-- | :-- | :-- |
+| SUIVI-ATTENTE (suivi de l'attente de la classe, « comme une livraison ») | `claude/suivi-attente` | **À LIVRER** (agent de construction, ordre de l'architecte pédagogique du 12/11 ; aucune PR : l'architecte l'ouvre et fusionne) | Fiche `docs/current/pedagogie/lots/LOT-SUIVI-ATTENTE.md`, §6 ; migrations `20261123960000`, `20261123961000` (mot d'effacement, collée par le directeur), `20261123962000` ; scénario `supabase/tests/scenarios_suivi_attente.sql` ; captures `docs/current/captures/E2E/suivi-attente/`. **Non prouvé** : production, que seul le directeur prouve ; `ci.yml` ne rejoue pas encore le scénario (zone interdite au lot). |
+
 ## Train du 11/11 (#435, `main` `f30527be4`, fusionné à 22:34 UTC)
 
 Ordre du directeur du 11/11 (« tout ce qui est codé part en production d'un coup ») relayé par le

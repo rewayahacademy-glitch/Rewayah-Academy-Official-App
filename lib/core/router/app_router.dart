@@ -106,6 +106,10 @@ import '../../features/appareils/ajouter_enfant_page.dart';
 import '../../features/appareils/appairage_page.dart';
 import '../../features/appareils/appareils_eleve_page.dart';
 import '../../features/appareils/appareils_page.dart';
+import '../../features/attente_classe/entree_demandes_attente.dart';
+import '../../features/attente_classe/me_presenter_page.dart';
+import '../../features/attente_classe/presentation_familles_page.dart';
+import '../../features/attente_classe/suivi_attente_page.dart';
 import '../../features/avis_public/avis_public_page.dart';
 import '../../features/bienvenue_enseignant/bienvenue_page.dart';
 import '../../features/cahier/cahier_page.dart';
@@ -253,7 +257,6 @@ import '../../features/salle/salle_page.dart' deferred as d_salle_page;
 import '../../features/salle_seance/portee_outils_salle.dart';
 import '../../features/suivi_demandes/changement_classe_page.dart';
 import '../../features/suivi_eleve/suivi_eleve_page.dart';
-import '../../features/suivi_famille/suivi_famille_page.dart';
 import '../../features/suivi_foyer/detail_observations_page.dart';
 import '../../features/suivi_foyer/detail_seance_page.dart';
 import '../../features/suivi_foyer/observations_page.dart';
@@ -841,6 +844,17 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                       onRetour: () => GoRouter.of(contexte).go(Routes.eleve),
                     ),
               ),
+              // SUIVI-ATTENTE : le suivi de l'attente, version simple, de l'eleve
+              // mineur dans son espace (sa propre route, sans le redirect de
+              // l'Accueil).
+              GoRouteSure(
+                path: '${Routes.eleveAttente}/:demandeId',
+                builder: (BuildContext _, GoRouterState etat) =>
+                    SuiviAttentePage(
+                      demandeId: _parametre(etat, 'demandeId'),
+                      chemins: CheminsAttente.enfant,
+                    ),
+              ),
               // --- DASH-EA-PROD : Accueil adulte et historique -------------
               // Dans la branche Accueil : la destination reste allumee.
               ...routesAccueilAdulte(),
@@ -990,6 +1004,16 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                       (GoRouterState _) => const NotificationsPage(),
                     ),
                   ),
+                  // SUIVI-ATTENTE : le suivi de l'attente de la classe d'un enfant.
+                  GoRouteSure(
+                    path: 'attente/:demandeId',
+                    pageBuilder: glissee(
+                      (GoRouterState etat) => SuiviAttentePage(
+                        demandeId: _parametre(etat, 'demandeId'),
+                        chemins: CheminsAttente.tuteur,
+                      ),
+                    ),
+                  ),
                   GoRouteSure(
                     path: 'presentation',
                     pageBuilder: glissee(
@@ -999,14 +1023,23 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                   GoRouteSure(
                     path: 'demandes',
                     pageBuilder: glissee(
-                      (GoRouterState _) => const SuiviDemandesEntree(),
+                      // SUIVI-ATTENTE : un seul suivi en cours, l'adresse des
+                      // notifications ouvre le suivi ; sinon la liste.
+                      (GoRouterState etat) => EntreeDemandesAttente(
+                        // Le detail d'une demande empile cette page sous lui :
+                        // seule l'adresse de la liste elle-meme redirige.
+                        redirige: etat.uri.path == Routes.tuteurDemandes,
+                      ),
                     ),
                     routes: <RouteBase>[
                       GoRouteSure(
                         path: ':demandeId',
                         pageBuilder: glissee(
-                          (GoRouterState etat) => FriseDemandePage(
+                          // SUIVI-ATTENTE : un seul ecran de suivi ; l'ancienne
+                          // frise reste le repli sans port.
+                          (GoRouterState etat) => DetailDemandeEntree(
                             demandeId: _parametre(etat, 'demandeId'),
+                            attente: CheminsAttente.tuteur,
                           ),
                         ),
                       ),
@@ -1548,6 +1581,14 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                 path: Routes.enseignantClasses,
                 builder: (BuildContext _, GoRouterState _) =>
                     const MesClassesPage(),
+                routes: <RouteBase>[
+                  // SUIVI-ATTENTE : « Me presenter aux familles ».
+                  GoRouteSure(
+                    path: ':groupeId/presentation',
+                    builder: (BuildContext _, GoRouterState etat) =>
+                        MePresenterPage(groupeId: _parametre(etat, 'groupeId')),
+                  ),
+                ],
               ),
             ],
           ),
@@ -1589,6 +1630,12 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                 // pages du titulaire du compte, communes au tuteur ; le
                 // retour ramene au Compte de l'enseignant.
                 routes: <RouteBase>[
+                  // SUIVI-ATTENTE : ce que les familles voient de l'enseignant.
+                  GoRouteSure(
+                    path: 'presentation',
+                    builder: (BuildContext _, GoRouterState _) =>
+                        const PresentationFamillesPage(),
+                  ),
                   GoRouteSure(
                     path: 'informations',
                     builder: (BuildContext contexte, GoRouterState _) =>

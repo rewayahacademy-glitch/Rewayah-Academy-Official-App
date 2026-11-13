@@ -124,6 +124,7 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$push1$fr push1 = Traductions$push1$fr.internal(_root);
 	late final Traductions$nouveautes$fr nouveautes = Traductions$nouveautes$fr.internal(_root);
 	late final Traductions$suiviPedagogique$fr suiviPedagogique = Traductions$suiviPedagogique$fr.internal(_root);
+	late final Traductions$suiviAttente$fr suiviAttente = Traductions$suiviAttente$fr.internal(_root);
 }
 
 // Path: commun
@@ -4394,6 +4395,79 @@ class Traductions$suiviPedagogique$fr {
 
 	/// fr: 'Pour {prenom}, l'étape sera fixée après l'entretien de lecture avec la direction.'
 	String attenteEntretienPour({required Object prenom}) => 'Pour ${prenom}, l\'étape sera fixée après l\'entretien de lecture avec la direction.';
+}
+
+// Path: suiviAttente
+class Traductions$suiviAttente$fr {
+	Traductions$suiviAttente$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Où en est votre demande'
+	String get titre => 'Où en est votre demande';
+
+	/// fr: 'Où en est ta demande'
+	String get titreSimple => 'Où en est ta demande';
+
+	late final Traductions$suiviAttente$tu$fr tu = Traductions$suiviAttente$tu$fr.internal(_root);
+
+	/// fr: 'L'académie confirme chaque étape. Vous êtes prévenu à chaque passage.'
+	String get contexte => 'L\'académie confirme chaque étape. Vous êtes prévenu à chaque passage.';
+
+	/// fr: 'Voici où en est ta demande. L'académie te prévient à chaque étape.'
+	String get contexteSimple => 'Voici où en est ta demande. L\'académie te prévient à chaque étape.';
+
+	/// fr: 'Pour {prenom}'
+	String pour({required Object prenom}) => 'Pour ${prenom}';
+
+	/// fr: 'Étape {n} sur {total} : {etape}'
+	String etapeSurTotal({required Object n, required Object total, required Object etape}) => 'Étape ${n} sur ${total} : ${etape}';
+
+	late final Traductions$suiviAttente$etapes$fr etapes = Traductions$suiviAttente$etapes$fr.internal(_root);
+	late final Traductions$suiviAttente$etats$fr etats = Traductions$suiviAttente$etats$fr.internal(_root);
+	late final Traductions$suiviAttente$dit$fr dit = Traductions$suiviAttente$dit$fr.internal(_root);
+
+	/// fr: 'Votre premier cours : {quand}'
+	String premierCours({required Object quand}) => 'Votre premier cours : ${quand}';
+
+	/// fr: 'Ton premier cours : {quand}'
+	String premierCoursSimple({required Object quand}) => 'Ton premier cours : ${quand}';
+
+	/// fr: 'Votre premier cours a eu lieu le {quand}.'
+	String premierCoursPasse({required Object quand}) => 'Votre premier cours a eu lieu le ${quand}.';
+
+	/// fr: 'Depuis le {date}'
+	String depuis({required Object date}) => 'Depuis le ${date}';
+
+	/// fr: 'Ensuite : {etape}'
+	String ensuite({required Object etape}) => 'Ensuite : ${etape}';
+
+	late final Traductions$suiviAttente$delai$fr delai = Traductions$suiviAttente$delai$fr.internal(_root);
+
+	/// fr: 'Le créneau de la classe a changé le {date}. Vous avez reçu l'avis dans vos notifications.'
+	String changement({required Object date}) => 'Le créneau de la classe a changé le ${date}. Vous avez reçu l\'avis dans vos notifications.';
+
+	late final Traductions$suiviAttente$cloture$fr cloture = Traductions$suiviAttente$cloture$fr.internal(_root);
+	late final Traductions$suiviAttente$enseignant$fr enseignant = Traductions$suiviAttente$enseignant$fr.internal(_root);
+	late final Traductions$suiviAttente$vide$fr vide = Traductions$suiviAttente$vide$fr.internal(_root);
+
+	/// fr: 'Nous n'avons pas pu lire le suivi de votre demande. Cela vient souvent de la connexion. Réessayez dans un instant.'
+	String get erreur => 'Nous n\'avons pas pu lire le suivi de votre demande. Cela vient souvent de la connexion. Réessayez dans un instant.';
+
+	/// fr: 'Le suivi de votre demande n'a pas pu être chargé'
+	String get sansDonnees => 'Le suivi de votre demande n\'a pas pu être chargé';
+
+	/// fr: 'Cette demande n'existe plus dans votre suivi.'
+	String get introuvable => 'Cette demande n\'existe plus dans votre suivi.';
+
+	/// fr: 'Retour'
+	String get retour => 'Retour';
+
+	late final Traductions$suiviAttente$carte$fr carte = Traductions$suiviAttente$carte$fr.internal(_root);
+	late final Traductions$suiviAttente$presentation$fr presentation = Traductions$suiviAttente$presentation$fr.internal(_root);
+	late final Traductions$suiviAttente$mePresenter$fr mePresenter = Traductions$suiviAttente$mePresenter$fr.internal(_root);
 }
 
 // Path: commun.langue
@@ -14832,6 +14906,15 @@ class Traductions$notifications$evenements$fr {
 	/// fr: 'Un enseignant a été affecté à votre classe.'
 	String get enseignantAffecteSoi => 'Un enseignant a été affecté à votre classe.';
 
+	/// fr: 'Tout est prêt : consultez le suivi de votre demande.'
+	String get toutEstPret => 'Tout est prêt : consultez le suivi de votre demande.';
+
+	/// fr: 'Tout est prêt : votre classe, votre enseignant et votre premier cours sont confirmés.'
+	String get toutEstPretSoi => 'Tout est prêt : votre classe, votre enseignant et votre premier cours sont confirmés.';
+
+	/// fr: 'Tout est prêt pour {prenom} : consultez le suivi de la demande.'
+	String toutEstPretPour({required Object prenom}) => 'Tout est prêt pour ${prenom} : consultez le suivi de la demande.';
+
 	/// fr: 'Une classe vous est confiée.'
 	String get enseignantAffecteClasse => 'Une classe vous est confiée.';
 
@@ -24296,6 +24379,409 @@ class Traductions$push1$reglages$fr {
 
 	/// fr: 'Le changement n'est pas encore confirmé : la connexion a peut-être été coupée. Réessayez dans un instant.'
 	String get changementNonConfirme => 'Le changement n\'est pas encore confirmé : la connexion a peut-être été coupée. Réessayez dans un instant.';
+}
+
+// Path: suiviAttente.tu
+class Traductions$suiviAttente$tu$fr {
+	Traductions$suiviAttente$tu$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Toutes les classes de ce créneau sont pleines. Ta demande attend qu'une place s'ouvre.'
+	String get formationListeAttente => 'Toutes les classes de ce créneau sont pleines. Ta demande attend qu\'une place s\'ouvre.';
+
+	/// fr: 'Ta classe est confirmée.'
+	String get confirmeeFait => 'Ta classe est confirmée.';
+
+	/// fr: 'Ta classe « {classe} » est confirmée.'
+	String confirmeeFaitNom({required Object classe}) => 'Ta classe « ${classe} » est confirmée.';
+
+	/// fr: 'Ta classe attend son enseignant. L'académie le désigne et te prévient.'
+	String get enseignantEnAttente => 'Ta classe attend son enseignant. L\'académie le désigne et te prévient.';
+
+	/// fr: 'L'académie fixe ton premier cours. Elle te prévient dès que la date est connue.'
+	String get pretEnCours => 'L\'académie fixe ton premier cours. Elle te prévient dès que la date est connue.';
+
+	/// fr: 'Ton premier cours est annoncé une fois l'enseignant affecté.'
+	String get pretAVenir => 'Ton premier cours est annoncé une fois l\'enseignant affecté.';
+
+	/// fr: 'Ton premier cours a eu lieu le {quand}.'
+	String premierCoursPasse({required Object quand}) => 'Ton premier cours a eu lieu le ${quand}.';
+
+	/// fr: 'Ton premier cours arrive. Ton tuteur te dit quand.'
+	String get premierCoursPetit => 'Ton premier cours arrive. Ton tuteur te dit quand.';
+
+	/// fr: 'Ton premier cours a eu lieu.'
+	String get premierCoursPassePetit => 'Ton premier cours a eu lieu.';
+
+	/// fr: 'La formation de ta classe prend plus de temps que prévu.'
+	String get depasse => 'La formation de ta classe prend plus de temps que prévu.';
+
+	/// fr: 'Le créneau de la classe a changé le {date}. Ton tuteur a reçu l'avis.'
+	String changement({required Object date}) => 'Le créneau de la classe a changé le ${date}. Ton tuteur a reçu l\'avis.';
+
+	/// fr: 'Ta demande n'a pas été retenue'
+	String get titreRefusee => 'Ta demande n\'a pas été retenue';
+
+	/// fr: 'Ton tuteur a retiré cette demande.'
+	String get retraitFamille => 'Ton tuteur a retiré cette demande.';
+
+	/// fr: 'Nous n'avons pas pu lire ta demande. Cela vient souvent de la connexion. Réessaie dans un instant.'
+	String get erreur => 'Nous n\'avons pas pu lire ta demande. Cela vient souvent de la connexion. Réessaie dans un instant.';
+
+	/// fr: 'Ta demande n'a pas pu être chargée'
+	String get sansDonnees => 'Ta demande n\'a pas pu être chargée';
+
+	/// fr: 'Cette demande n'existe plus.'
+	String get introuvable => 'Cette demande n\'existe plus.';
+}
+
+// Path: suiviAttente.etapes
+class Traductions$suiviAttente$etapes$fr {
+	Traductions$suiviAttente$etapes$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Demande reçue'
+	String get recue => 'Demande reçue';
+
+	/// fr: 'Classe en formation'
+	String get formation => 'Classe en formation';
+
+	/// fr: 'Classe confirmée'
+	String get confirmee => 'Classe confirmée';
+
+	/// fr: 'Enseignant affecté'
+	String get enseignant => 'Enseignant affecté';
+
+	/// fr: 'Tout est prêt'
+	String get pret => 'Tout est prêt';
+}
+
+// Path: suiviAttente.etats
+class Traductions$suiviAttente$etats$fr {
+	Traductions$suiviAttente$etats$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Fait'
+	String get fait => 'Fait';
+
+	/// fr: 'En cours'
+	String get enCours => 'En cours';
+
+	/// fr: 'À venir'
+	String get aVenir => 'À venir';
+}
+
+// Path: suiviAttente.dit
+class Traductions$suiviAttente$dit$fr {
+	Traductions$suiviAttente$dit$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Votre demande est arrivée à l'académie.'
+	String get recueFait => 'Votre demande est arrivée à l\'académie.';
+
+	/// fr: 'Ta demande est arrivée à l'académie.'
+	String get recueFaitSimple => 'Ta demande est arrivée à l\'académie.';
+
+	/// fr: 'L'académie réunit les élèves de cette classe.'
+	String get formationEnCours => 'L\'académie réunit les élèves de cette classe.';
+
+	/// fr: 'Toutes les classes de ce créneau sont pleines. Votre demande attend qu'une place s'ouvre.'
+	String get formationListeAttente => 'Toutes les classes de ce créneau sont pleines. Votre demande attend qu\'une place s\'ouvre.';
+
+	/// fr: 'Les élèves de la classe sont réunis.'
+	String get formationFait => 'Les élèves de la classe sont réunis.';
+
+	/// fr: 'L'académie réunit les élèves de la classe une fois la demande reçue.'
+	String get formationAVenir => 'L\'académie réunit les élèves de la classe une fois la demande reçue.';
+
+	/// fr: 'Votre classe est confirmée.'
+	String get confirmeeFait => 'Votre classe est confirmée.';
+
+	/// fr: 'Votre classe « {classe} » est confirmée.'
+	String confirmeeFaitNom({required Object classe}) => 'Votre classe « ${classe} » est confirmée.';
+
+	/// fr: 'L'académie confirme la classe quand ses élèves sont réunis.'
+	String get confirmeeAVenir => 'L\'académie confirme la classe quand ses élèves sont réunis.';
+
+	/// fr: 'L'académie désigne l'enseignant de la classe.'
+	String get enseignantEnCours => 'L\'académie désigne l\'enseignant de la classe.';
+
+	/// fr: 'Votre classe attend son enseignant. L'académie le désigne et vous prévient.'
+	String get enseignantEnAttente => 'Votre classe attend son enseignant. L\'académie le désigne et vous prévient.';
+
+	/// fr: 'Votre enseignant est connu.'
+	String get enseignantFait => 'Votre enseignant est connu.';
+
+	/// fr: 'Ton enseignant est connu.'
+	String get enseignantFaitSimple => 'Ton enseignant est connu.';
+
+	/// fr: 'L'académie désigne l'enseignant une fois la classe confirmée.'
+	String get enseignantAVenir => 'L\'académie désigne l\'enseignant une fois la classe confirmée.';
+
+	/// fr: 'La classe, l'enseignant et le premier cours sont connus.'
+	String get pretFait => 'La classe, l\'enseignant et le premier cours sont connus.';
+
+	/// fr: 'L'académie fixe votre premier cours. Vous êtes prévenu dès que la date est connue.'
+	String get pretEnCours => 'L\'académie fixe votre premier cours. Vous êtes prévenu dès que la date est connue.';
+
+	/// fr: 'Votre premier cours est annoncé une fois l'enseignant affecté.'
+	String get pretAVenir => 'Votre premier cours est annoncé une fois l\'enseignant affecté.';
+}
+
+// Path: suiviAttente.delai
+class Traductions$suiviAttente$delai$fr {
+	Traductions$suiviAttente$delai$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'La formation de votre classe prend plus de temps que prévu.'
+	String get depasse => 'La formation de votre classe prend plus de temps que prévu.';
+}
+
+// Path: suiviAttente.cloture
+class Traductions$suiviAttente$cloture$fr {
+	Traductions$suiviAttente$cloture$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Votre demande n'a pas été retenue'
+	String get titreRefusee => 'Votre demande n\'a pas été retenue';
+
+	/// fr: 'Cette demande est retirée'
+	String get titreRetiree => 'Cette demande est retirée';
+
+	/// fr: 'Cette demande est close'
+	String get titreClose => 'Cette demande est close';
+
+	late final Traductions$suiviAttente$cloture$motif$fr motif = Traductions$suiviAttente$cloture$motif$fr.internal(_root);
+
+	/// fr: 'Vous pouvez choisir un autre créneau.'
+	String get suite => 'Vous pouvez choisir un autre créneau.';
+
+	/// fr: 'Choisir un autre créneau'
+	String get autreCreneau => 'Choisir un autre créneau';
+
+	late final Traductions$suiviAttente$cloture$simple$fr simple = Traductions$suiviAttente$cloture$simple$fr.internal(_root);
+}
+
+// Path: suiviAttente.enseignant
+class Traductions$suiviAttente$enseignant$fr {
+	Traductions$suiviAttente$enseignant$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Votre enseignant'
+	String get titre => 'Votre enseignant';
+
+	/// fr: 'Ton enseignant'
+	String get titreSimple => 'Ton enseignant';
+
+	/// fr: 'Sayyid'
+	String get sayyid => 'Sayyid';
+
+	/// fr: 'Sayyida'
+	String get sayyida => 'Sayyida';
+
+	/// fr: '{prenom}'
+	String nomPlein({required Object prenom}) => '${prenom}';
+
+	/// fr: '{titre} {prenom}'
+	String nomAvecTitre({required Object titre, required Object prenom}) => '${titre} ${prenom}';
+
+	/// fr: 'Langue du cours'
+	String get langue => 'Langue du cours';
+
+	/// fr: 'Pays d'origine'
+	String get origine => 'Pays d\'origine';
+
+	/// fr: 'Pays de résidence'
+	String get residence => 'Pays de résidence';
+
+	/// fr: 'Son mot de présentation'
+	String get mot => 'Son mot de présentation';
+
+	/// fr: 'Votre enseignant peut se présenter aux familles de la classe par un message dans Messages.'
+	String get peutSePresenter => 'Votre enseignant peut se présenter aux familles de la classe par un message dans Messages.';
+}
+
+// Path: suiviAttente.vide
+class Traductions$suiviAttente$vide$fr {
+	Traductions$suiviAttente$vide$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Vous n'avez pas encore choisi de classe.'
+	String get message => 'Vous n\'avez pas encore choisi de classe.';
+
+	/// fr: 'Choisissez une classe : l'académie vous suit ensuite étape par étape.'
+	String get invitation => 'Choisissez une classe : l\'académie vous suit ensuite étape par étape.';
+
+	/// fr: 'Choisir une classe'
+	String get action => 'Choisir une classe';
+
+	/// fr: 'Il n'y a pas encore de demande de classe pour toi.'
+	String get messageSimple => 'Il n\'y a pas encore de demande de classe pour toi.';
+
+	/// fr: 'Ton tuteur peut en faire une.'
+	String get invitationSimple => 'Ton tuteur peut en faire une.';
+}
+
+// Path: suiviAttente.carte
+class Traductions$suiviAttente$carte$fr {
+	Traductions$suiviAttente$carte$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Votre demande de classe'
+	String get titre => 'Votre demande de classe';
+
+	/// fr: 'Ta demande de classe'
+	String get titreSimple => 'Ta demande de classe';
+
+	/// fr: '{prenom} : étape {n} sur {total}, {etape}'
+	String ligne({required Object prenom, required Object n, required Object total, required Object etape}) => '${prenom} : étape ${n} sur ${total}, ${etape}';
+
+	/// fr: 'Suivre ma demande'
+	String get suivre => 'Suivre ma demande';
+
+	/// fr: '{prenom} : tout est prêt. Premier cours : {quand}'
+	String pret({required Object prenom, required Object quand}) => '${prenom} : tout est prêt. Premier cours : ${quand}';
+
+	/// fr: '{prenom} : tout est prêt.'
+	String pretSansDate({required Object prenom}) => '${prenom} : tout est prêt.';
+}
+
+// Path: suiviAttente.presentation
+class Traductions$suiviAttente$presentation$fr {
+	Traductions$suiviAttente$presentation$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ce que les familles voient de vous'
+	String get titre => 'Ce que les familles voient de vous';
+
+	/// fr: 'Les familles de vos classes voient déjà, comme partout dans l'application, votre civilité, votre prénom, la langue du cours, votre photo et votre pays, s'il est renseigné. Ce réglage ne concerne que la carte du suivi de leur demande : vous choisissez d'y montrer aussi vos deux pays et un mot de présentation, quand vous les avez saisis.'
+	String get phrase => 'Les familles de vos classes voient déjà, comme partout dans l\'application, votre civilité, votre prénom, la langue du cours, votre photo et votre pays, s\'il est renseigné. Ce réglage ne concerne que la carte du suivi de leur demande : vous choisissez d\'y montrer aussi vos deux pays et un mot de présentation, quand vous les avez saisis.';
+
+	/// fr: 'Montrer mes pays et mon mot sur la carte du suivi'
+	String get montrer => 'Montrer mes pays et mon mot sur la carte du suivi';
+
+	/// fr: 'Pays d'origine'
+	String get paysOrigine => 'Pays d\'origine';
+
+	/// fr: 'Pays de résidence'
+	String get paysResidence => 'Pays de résidence';
+
+	/// fr: 'Choisir un pays'
+	String get choisirPays => 'Choisir un pays';
+
+	/// fr: 'Non renseigné'
+	String get nonRenseigne => 'Non renseigné';
+
+	/// fr: 'Mon mot de présentation'
+	String get mot => 'Mon mot de présentation';
+
+	/// fr: '500 caractères au plus. Les familles le lisent tel que vous l'écrivez.'
+	String get motAide => '500 caractères au plus. Les familles le lisent tel que vous l\'écrivez.';
+
+	/// fr: 'Vous n'avez pas encore confirmé ce choix. Tant que vous ne l'avez pas fait, vos pays et votre mot, s'ils sont saisis, sont montrés sur la carte du suivi.'
+	String get nonConfirme => 'Vous n\'avez pas encore confirmé ce choix. Tant que vous ne l\'avez pas fait, vos pays et votre mot, s\'ils sont saisis, sont montrés sur la carte du suivi.';
+
+	/// fr: 'Enregistrer'
+	String get enregistrer => 'Enregistrer';
+
+	/// fr: 'Enregistré.'
+	String get enregistre => 'Enregistré.';
+
+	/// fr: 'Votre choix n'est pas confirmé : il n'est peut-être pas parvenu jusqu'à Rewayah. Réessayez dans un instant.'
+	String get erreur => 'Votre choix n\'est pas confirmé : il n\'est peut-être pas parvenu jusqu\'à Rewayah. Réessayez dans un instant.';
+
+	/// fr: 'Ne pas renseigner'
+	String get effacerPays => 'Ne pas renseigner';
+}
+
+// Path: suiviAttente.mePresenter
+class Traductions$suiviAttente$mePresenter$fr {
+	Traductions$suiviAttente$mePresenter$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Me présenter aux familles'
+	String get lien => 'Me présenter aux familles';
+
+	/// fr: 'Me présenter'
+	String get titre => 'Me présenter';
+
+	/// fr: 'Un message est déjà rédigé. Vous pouvez le modifier avant de l'envoyer. Il part dans Messages, aux familles de la classe et aux élèves adultes.'
+	String get contexte => 'Un message est déjà rédigé. Vous pouvez le modifier avant de l\'envoyer. Il part dans Messages, aux familles de la classe et aux élèves adultes.';
+
+	/// fr: 'Bonjour, je suis Sayyid {nom}, votre enseignant de la classe « {classe} ». Je suis heureux de commencer avec vous. Écrivez-moi ici si vous avez une question. À très bientôt.'
+	String messageSayyid({required Object nom, required Object classe}) => 'Bonjour, je suis Sayyid ${nom}, votre enseignant de la classe « ${classe} ». Je suis heureux de commencer avec vous. Écrivez-moi ici si vous avez une question. À très bientôt.';
+
+	/// fr: 'Bonjour, je suis Sayyida {nom}, votre enseignante de la classe « {classe} ». Je suis heureuse de commencer avec vous. Écrivez-moi ici si vous avez une question. À très bientôt.'
+	String messageSayyida({required Object nom, required Object classe}) => 'Bonjour, je suis Sayyida ${nom}, votre enseignante de la classe « ${classe} ». Je suis heureuse de commencer avec vous. Écrivez-moi ici si vous avez une question. À très bientôt.';
+
+	/// fr: 'Votre message'
+	String get champ => 'Votre message';
+
+	/// fr: 'Ce message est lu par les tuteurs des élèves mineurs et par les élèves adultes. Il n'est jamais envoyé à un mineur. N'échangez ni téléphone ni adresse : tout passe par l'application.'
+	String get rappel => 'Ce message est lu par les tuteurs des élèves mineurs et par les élèves adultes. Il n\'est jamais envoyé à un mineur. N\'échangez ni téléphone ni adresse : tout passe par l\'application.';
+
+	/// fr: 'Envoyer aux familles'
+	String get envoyer => 'Envoyer aux familles';
+
+	/// fr: '(one) {Message envoyé à {n} famille.} (other) {Message envoyé à {n} familles.}'
+	String envoye({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: 'Message envoyé à ${n} famille.',
+		other: 'Message envoyé à ${n} familles.',
+	);
+
+	/// fr: '(one) {{n} famille a déjà un échange avec vous : elle ne reçoit pas ce message.} (other) {{n} familles ont déjà un échange avec vous : elles ne reçoivent pas ce message.}'
+	String dejaEcrit({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} famille a déjà un échange avec vous : elle ne reçoit pas ce message.',
+		other: '${n} familles ont déjà un échange avec vous : elles ne reçoivent pas ce message.',
+	);
+
+	/// fr: 'Aucune famille de cette classe ne peut recevoir de message pour le moment.'
+	String get aucune => 'Aucune famille de cette classe ne peut recevoir de message pour le moment.';
+
+	/// fr: 'Le message n'est pas confirmé pour certaines familles : il n'est peut-être pas parvenu jusqu'à elles. Réessayez : celles qui l'ont reçu ne le reçoivent pas deux fois.'
+	String get echec => 'Le message n\'est pas confirmé pour certaines familles : il n\'est peut-être pas parvenu jusqu\'à elles. Réessayez : celles qui l\'ont reçu ne le reçoivent pas deux fois.';
+
+	/// fr: 'Chargement des familles de la classe'
+	String get chargement => 'Chargement des familles de la classe';
+
+	/// fr: 'Les familles de la classe n'ont pas pu être lues. Réessayez dans un instant.'
+	String get erreur => 'Les familles de la classe n\'ont pas pu être lues. Réessayez dans un instant.';
+
+	/// fr: 'Écrivez un message avant de l'envoyer.'
+	String get vide => 'Écrivez un message avant de l\'envoyer.';
 }
 
 // Path: commun.etats.recharge1
@@ -42566,6 +43052,51 @@ class Traductions$candidatsFlux$file$reglage$fr {
 	String get echec => 'Réglage non confirmé. Cause probable : la connexion au serveur s\'est interrompue. Réessayez dans un instant.';
 }
 
+// Path: suiviAttente.cloture.motif
+class Traductions$suiviAttente$cloture$motif$fr {
+	Traductions$suiviAttente$cloture$motif$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Vous avez retiré cette demande.'
+	String get retraitFamille => 'Vous avez retiré cette demande.';
+
+	/// fr: 'L'académie a retiré ce créneau de ses offres.'
+	String get offreRetiree => 'L\'académie a retiré ce créneau de ses offres.';
+
+	/// fr: 'La classe de ce créneau n'a pas pu être constituée.'
+	String get classeNonConstituee => 'La classe de ce créneau n\'a pas pu être constituée.';
+
+	/// fr: 'La direction n'a pas retenu cette demande.'
+	String get refusDirection => 'La direction n\'a pas retenu cette demande.';
+
+	/// fr: 'Cet élève a déjà une place en classe : la demande n'est plus nécessaire.'
+	String get dejaEnClasse => 'Cet élève a déjà une place en classe : la demande n\'est plus nécessaire.';
+
+	/// fr: 'Cette demande est close.'
+	String get inconnu => 'Cette demande est close.';
+}
+
+// Path: suiviAttente.cloture.simple
+class Traductions$suiviAttente$cloture$simple$fr {
+	Traductions$suiviAttente$cloture$simple$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ta demande n'a pas été retenue. Ton tuteur peut choisir un autre créneau.'
+	String get refusee => 'Ta demande n\'a pas été retenue. Ton tuteur peut choisir un autre créneau.';
+
+	/// fr: 'Cette demande est retirée.'
+	String get retiree => 'Cette demande est retirée.';
+
+	/// fr: 'Cette demande est close.'
+	String get close => 'Cette demande est close.';
+}
+
 // Path: salle.preparation.eleve.guidee
 class Traductions$salle$preparation$eleve$guidee$fr {
 	Traductions$salle$preparation$eleve$guidee$fr.internal(this._root);
@@ -56424,6 +56955,9 @@ extension on Traductions {
 			'notifications.evenements.litigeClosPerdu' => 'La contestation est close : le paiement est remboursé, les frais vont au solde du foyer.',
 			'notifications.evenements.litigeClosDirection' => 'Une contestation de paiement est close.',
 			'notifications.evenements.enseignantAffecteSoi' => 'Un enseignant a été affecté à votre classe.',
+			'notifications.evenements.toutEstPret' => 'Tout est prêt : consultez le suivi de votre demande.',
+			'notifications.evenements.toutEstPretSoi' => 'Tout est prêt : votre classe, votre enseignant et votre premier cours sont confirmés.',
+			'notifications.evenements.toutEstPretPour' => ({required Object prenom}) => 'Tout est prêt pour ${prenom} : consultez le suivi de la demande.',
 			'notifications.evenements.enseignantAffecteClasse' => 'Une classe vous est confiée.',
 			'notifications.evenements.remplacementPrisQuand' => ({required Object quand}) => 'La séance du ${quand} sera assurée par un enseignant remplaçant.',
 			'notifications.evenements.classeCreee' => 'Une classe vient d\'être créée.',
@@ -56555,11 +57089,11 @@ extension on Traductions {
 			'eleve.accueil.dansJours' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours, one: 'Dans ${jours} jour', other: 'Dans ${jours} jours', ), 
 			'eleve.accueil.imminent' => 'C\'est presque l\'heure',
 			'eleve.accueil.aucunCours' => 'Pas de cours aujourd\'hui',
+			_ => null,
+		} ?? switch (path) {
 			'eleve.accueil.aucunCoursDetail' => 'Ton enseignant prépare le prochain.',
 			'eleve.accueil.erreurCours' => 'Tes cours n\'ont pas pu être lus. Réessaie dans un instant.',
 			'eleve.accueil.erreurCoursHorsLigneTitre' => 'Tes cours ne sont pas disponibles',
-			_ => null,
-		} ?? switch (path) {
 			'eleve.accueil.prochainAujourdhui' => 'Ton prochain cours est plus tard aujourd\'hui.',
 			'eleve.accueil.prochainDemain' => 'Ton prochain cours est demain.',
 			'eleve.accueil.annulee' => 'Ce cours n\'aura pas lieu',
@@ -57069,11 +57603,11 @@ extension on Traductions {
 			'enseignant.journee.alertesVide' => 'Aucune alerte utile en ce moment.',
 			'enseignant.journee.alertesSansDonnees' => 'Les alertes de présence n\'ont pas pu être lues',
 			'enseignant.journee.alertesErreur' => 'Les alertes de présence n\'ont pas pu être lues. Réessayez dans un instant.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.journee.voirAutreAlerte' => 'Voir l\'autre alerte',
 			'enseignant.journee.voirAutresAlertes' => ({required Object nombre}) => 'Voir les ${nombre} autres alertes',
 			'enseignant.journee.remplacementsVide' => 'Aucun cours d\'un collègue à assurer pour le moment.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.journee.voirTousRemplacements' => ({required Object nombre}) => 'Voir tout : les ${nombre} remplacements confirmés',
 			'enseignant.journee.heure' => 'Heure',
 			'enseignant.journee.eleves' => 'Élèves',
@@ -57583,11 +58117,11 @@ extension on Traductions {
 			'controleur.historique.sectionEchanges' => 'Échanges avec l\'administration',
 			'controleur.historique.cleClasse' => 'Classe',
 			'controleur.historique.cleEnseignant' => 'Enseignant',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.historique.cleDate' => 'Date',
 			'controleur.historique.cleDuree' => 'Durée observée',
 			'controleur.historique.cleElevesPresents' => 'Présents',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.historique.cleReponse' => 'Réponse',
 			'controleur.historique.sansComplement' => 'Aucun complément.',
 			'controleur.historique.faitsIndisponibles' => 'Le relevé automatique de cette visite (heures, élèves présents, reconnexions) n\'est pas encore reçu : la séance vient de se terminer ou la connexion a été coupée. Il s\'affichera ici dès sa réception. Le reste du rapport reste fiable.',
@@ -58097,11 +58631,11 @@ extension on Traductions {
 			'tc.observation.entree.nomInstitutionnel' => 'Administration Rewayah',
 			'tc.observation.entree.visiteJournalisee' => 'Visite journalisée : identité, séance, entrée, sortie et durée.',
 			'tc.observation.entree.roleSansObservation' => 'Votre compte n\'observe pas les séances.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.entree.retourClasse' => 'Retour à la classe',
 			'tc.observation.explication.titre' => 'Un aperçu de son apprentissage',
 			'tc.observation.explication.regleUne' => ({required Object n, required Object duree}) => '${n} visite de ${duree}',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.explication.regle' => ({required num n, required Object duree}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} visite de ${duree}', other: '${n} visites de ${duree}', ), 
 			'tc.observation.explication.regleDetail' => 'Par séance et par parent, même si plusieurs de vos enfants sont dans la classe.',
 			'tc.observation.explication.ecoute' => 'Écoutez l\'enseignant et les élèves',
@@ -58611,11 +59145,11 @@ extension on Traductions {
 			'adulte.reprise.succession' => 'Il s\'agit d\'une succession de titularité du foyer, pas d\'une prise de contrôle du compte personnel.',
 			'adulte.reprise.deposer' => 'Déposer la demande',
 			'adulte.reprise.deposerQuestion' => 'Déposer cette demande ?',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.reprise.deposerConsequence' => 'Le titulaire du foyer en sera informé et pourra la refuser. L\'administration examinera ensuite la demande et décidera.',
 			'adulte.reprise.horsLigne' => 'Rien n\'est envoyé. Vous pourrez déposer la demande vous-même quand la connexion sera revenue.',
 			'adulte.reprise.depotEchecTitre' => 'La demande n\'a pas été confirmée.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.reprise.echecPhrase' => 'Vérifiez avant de réessayer.',
 			'adulte.reprise.motif' => 'Motif',
 			'adulte.reprise.motifDeces' => 'Décès déclaré du titulaire',
@@ -59125,11 +59659,11 @@ extension on Traductions {
 			'com.socle.composants.composer.nonConfirme' => 'Ce message n\'a pas encore été confirmé.',
 			'com.socle.composants.composer.reessayer' => 'Réessayer',
 			'com.socle.composants.composer.auteurSoi' => 'Vous',
+			_ => null,
+		} ?? switch (path) {
 			'com.socle.composants.composer.annonce' => ({required Object auteur, required Object texte}) => 'Nouveau message de ${auteur} : ${texte}',
 			'com.socle.composants.composer.brouillon' => _root.com.socle.lexique.brouillon,
 			'com.socle.composants.composer.brouillonRestaure' => 'Brouillon restauré',
-			_ => null,
-		} ?? switch (path) {
 			'com.socle.composants.composer.enregistrerVocal' => _root.com.vocal.composer.enregistrer,
 			'com.socle.composants.composer.aucunMessageTitre' => 'Aucun message pour le moment',
 			'com.socle.composants.composer.aucunMessage' => 'Écrivez le premier message de cette conversation : il s\'affichera ici.',
@@ -59639,11 +60173,11 @@ extension on Traductions {
 			'com.studio.panneau.aucunPartageTitre' => 'Rien de partagé pour le moment',
 			'com.studio.panneau.aucunPartage' => 'Les éléments épinglés, les fichiers et les liens de ce canal apparaîtront ici.',
 			'com.studio.enregistrer.enregistrer' => _root.com.socle.lexique.enregistrer,
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.enregistrer.retirer' => 'Retirer',
 			'com.studio.enregistrer.semantiqueEnregistrer' => ({required Object titre}) => 'Enregistrer ${titre}',
 			'com.studio.enregistrer.semantiqueRetirer' => ({required Object titre}) => 'Retirer ${titre} des éléments enregistrés',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.enregistrer.ajoute' => ({required Object titre}) => 'Ajouté aux éléments enregistrés : ${titre}.',
 			'com.studio.enregistrer.retire' => ({required Object titre}) => 'Retiré des éléments enregistrés : ${titre}.',
 			'com.studio.enregistrer.nonConfirme' => 'L\'enregistrement n\'a pas encore été confirmé. Réessayez dans un instant.',
@@ -60153,11 +60687,11 @@ extension on Traductions {
 			'comptable.aujourdhui.prestataires' => 'Prestataires',
 			'comptable.aujourdhui.activiteRecente' => 'Activité récente',
 			'comptable.aujourdhui.accesRapides' => 'Accès rapides',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.aujourdhui.encaissementsRecents' => 'Encaissements récents',
 			'comptable.aujourdhui.voirTout' => 'Voir tout',
 			'comptable.paiements.confirmation.titreUn' => 'Confirmer le paiement',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.paiements.confirmation.titreLot' => 'Confirmer le lot',
 			'comptable.paiements.confirmation.titreValidation' => 'Demander une validation',
 			'comptable.paiements.confirmation.payerMaintenant' => 'Payer maintenant',
@@ -60667,11 +61201,11 @@ extension on Traductions {
 			'comptable.contractuels.echeanceLe' => ({required Object date}) => 'Échéance : ${date}',
 			'comptable.contractuels.payer' => 'Payer',
 			'comptable.contractuels.payerLecteur' => ({required Object objet}) => 'Payer l\'obligation ${objet}',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.contractuels.approuver' => 'Approuver',
 			'comptable.contractuels.ouvrirLecteur' => ({required Object objet}) => 'Ouvrir l\'obligation ${objet}',
 			'comptable.contractuels.creationBloquee' => ({required Object raison}) => 'Nouvelle obligation indisponible : ${raison}.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.contractuels.videObligations' => 'Aucune obligation en cours',
 			'comptable.contractuels.videObligationsDetail' => 'Les obligations créées apparaissent ici, avec leur échéance et leur statut.',
 			'comptable.contractuels.videAApprouver' => 'Rien à approuver',
@@ -61181,11 +61715,11 @@ extension on Traductions {
 			'juridique.annulation.resume' => 'Arrêter, être remboursé, et ce qui se passe si un paiement n\'arrive pas.',
 			'juridique.annulation.intro' => 'Vous pouvez arrêter quand vous voulez. Voici ce qui est remboursé, ce qui ne l\'est pas, et ce qui se passe si un paiement n\'arrive pas.',
 			'juridique.annulation.s1.titre' => '1. Délai de rétractation',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.annulation.s1.delai' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours, one: 'Le délai de rétractation est de ${jours} jour à compter du paiement, selon la politique tarifaire en vigueur (page Tarifs).', other: 'Le délai de rétractation est de ${jours} jours à compter du paiement, selon la politique tarifaire en vigueur (page Tarifs).', ), 
 			'juridique.annulation.s1.delaiSansDuree' => 'Le délai de rétractation court à compter du paiement. Sa durée est celle de la politique tarifaire en vigueur (page Tarifs).',
 			'juridique.annulation.s1.blocs.0' => 'Il n\'y a pas d\'essai gratuit. À la place, vous pouvez arrêter pendant le délai de rétractation si le cours ne convient pas.',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.annulation.s1.blocs.1' => 'Pendant ce délai, vous êtes remboursé de ce que vous avez payé, sauf les séances déjà suivies.',
 			'juridique.annulation.s1.blocs.2' => 'Après ce délai, le mois commencé est dû.',
 			'juridique.annulation.s2.titre' => '2. Arrêter l\'abonnement',
@@ -61695,11 +62229,11 @@ extension on Traductions {
 			'd1ter.messages.introSoi' => 'La direction vous a transmis ces messages.',
 			'd1ter.messages.transmisLe' => ({required Object date}) => 'Transmis le ${date}',
 			'd1ter.messages.erreur' => 'Les messages de l\'académie n\'ont pas pu être lus : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
+			_ => null,
+		} ?? switch (path) {
 			'd1ter.notifications.message' => 'La direction vous a transmis un message.',
 			'd1ter.notifications.messageEnfant' => ({required Object prenom}) => 'La direction vous a transmis un message sur ${prenom}.',
 			'd1ter.notifications.messageSoi' => 'La direction vous a transmis un message.',
-			_ => null,
-		} ?? switch (path) {
 			'snt.regles.nonTenue' => 'Séance non tenue',
 			'snt.regles.nonTenueDetail' => 'Si aucun enseignant n\'a rejoint la salle à ce délai, la séance est reportée : la classe est prévenue et la direction fixe la nouvelle date dans le planning.',
 			'snt.regles.bornesNonTenue' => ({required Object min, required Object max}) => 'Entre ${min} et ${max} après le début.',
@@ -62209,11 +62743,11 @@ extension on Traductions {
 			'push1.reglages.erreur' => 'Vos réglages n\'ont pas pu être lus : la connexion a peut-être été coupée. Réessayez dans un instant.',
 			'push1.reglages.horsLigne' => 'Les réglages des notifications se changeront quand la connexion reviendra.',
 			'push1.reglages.changementNonConfirme' => 'Le changement n\'est pas encore confirmé : la connexion a peut-être été coupée. Réessayez dans un instant.',
+			_ => null,
+		} ?? switch (path) {
 			'nouveautes.badge' => 'Nouveau',
 			'nouveautes.lu' => 'nouveau',
 			'suiviPedagogique.titreSoi' => 'Où j\'en suis',
-			_ => null,
-		} ?? switch (path) {
 			'suiviPedagogique.titre' => ({required Object prenom}) => 'Où en est ${prenom}',
 			'suiviPedagogique.etape' => 'Étape du programme',
 			'suiviPedagogique.objectifs' => 'Objectifs de l\'étape',
@@ -62250,6 +62784,129 @@ extension on Traductions {
 			'suiviPedagogique.attenteEntretien' => 'Votre étape sera fixée après l\'entretien de lecture avec la direction.',
 			'suiviPedagogique.attenteEntretienTu' => 'Ton étape sera fixée après l\'entretien de lecture avec la direction.',
 			'suiviPedagogique.attenteEntretienPour' => ({required Object prenom}) => 'Pour ${prenom}, l\'étape sera fixée après l\'entretien de lecture avec la direction.',
+			'suiviAttente.titre' => 'Où en est votre demande',
+			'suiviAttente.titreSimple' => 'Où en est ta demande',
+			'suiviAttente.tu.formationListeAttente' => 'Toutes les classes de ce créneau sont pleines. Ta demande attend qu\'une place s\'ouvre.',
+			'suiviAttente.tu.confirmeeFait' => 'Ta classe est confirmée.',
+			'suiviAttente.tu.confirmeeFaitNom' => ({required Object classe}) => 'Ta classe « ${classe} » est confirmée.',
+			'suiviAttente.tu.enseignantEnAttente' => 'Ta classe attend son enseignant. L\'académie le désigne et te prévient.',
+			'suiviAttente.tu.pretEnCours' => 'L\'académie fixe ton premier cours. Elle te prévient dès que la date est connue.',
+			'suiviAttente.tu.pretAVenir' => 'Ton premier cours est annoncé une fois l\'enseignant affecté.',
+			'suiviAttente.tu.premierCoursPasse' => ({required Object quand}) => 'Ton premier cours a eu lieu le ${quand}.',
+			'suiviAttente.tu.premierCoursPetit' => 'Ton premier cours arrive. Ton tuteur te dit quand.',
+			'suiviAttente.tu.premierCoursPassePetit' => 'Ton premier cours a eu lieu.',
+			'suiviAttente.tu.depasse' => 'La formation de ta classe prend plus de temps que prévu.',
+			'suiviAttente.tu.changement' => ({required Object date}) => 'Le créneau de la classe a changé le ${date}. Ton tuteur a reçu l\'avis.',
+			'suiviAttente.tu.titreRefusee' => 'Ta demande n\'a pas été retenue',
+			'suiviAttente.tu.retraitFamille' => 'Ton tuteur a retiré cette demande.',
+			'suiviAttente.tu.erreur' => 'Nous n\'avons pas pu lire ta demande. Cela vient souvent de la connexion. Réessaie dans un instant.',
+			'suiviAttente.tu.sansDonnees' => 'Ta demande n\'a pas pu être chargée',
+			'suiviAttente.tu.introuvable' => 'Cette demande n\'existe plus.',
+			'suiviAttente.contexte' => 'L\'académie confirme chaque étape. Vous êtes prévenu à chaque passage.',
+			'suiviAttente.contexteSimple' => 'Voici où en est ta demande. L\'académie te prévient à chaque étape.',
+			'suiviAttente.pour' => ({required Object prenom}) => 'Pour ${prenom}',
+			'suiviAttente.etapeSurTotal' => ({required Object n, required Object total, required Object etape}) => 'Étape ${n} sur ${total} : ${etape}',
+			'suiviAttente.etapes.recue' => 'Demande reçue',
+			'suiviAttente.etapes.formation' => 'Classe en formation',
+			'suiviAttente.etapes.confirmee' => 'Classe confirmée',
+			'suiviAttente.etapes.enseignant' => 'Enseignant affecté',
+			'suiviAttente.etapes.pret' => 'Tout est prêt',
+			'suiviAttente.etats.fait' => 'Fait',
+			'suiviAttente.etats.enCours' => 'En cours',
+			'suiviAttente.etats.aVenir' => 'À venir',
+			'suiviAttente.dit.recueFait' => 'Votre demande est arrivée à l\'académie.',
+			'suiviAttente.dit.recueFaitSimple' => 'Ta demande est arrivée à l\'académie.',
+			'suiviAttente.dit.formationEnCours' => 'L\'académie réunit les élèves de cette classe.',
+			'suiviAttente.dit.formationListeAttente' => 'Toutes les classes de ce créneau sont pleines. Votre demande attend qu\'une place s\'ouvre.',
+			'suiviAttente.dit.formationFait' => 'Les élèves de la classe sont réunis.',
+			'suiviAttente.dit.formationAVenir' => 'L\'académie réunit les élèves de la classe une fois la demande reçue.',
+			'suiviAttente.dit.confirmeeFait' => 'Votre classe est confirmée.',
+			'suiviAttente.dit.confirmeeFaitNom' => ({required Object classe}) => 'Votre classe « ${classe} » est confirmée.',
+			'suiviAttente.dit.confirmeeAVenir' => 'L\'académie confirme la classe quand ses élèves sont réunis.',
+			'suiviAttente.dit.enseignantEnCours' => 'L\'académie désigne l\'enseignant de la classe.',
+			'suiviAttente.dit.enseignantEnAttente' => 'Votre classe attend son enseignant. L\'académie le désigne et vous prévient.',
+			'suiviAttente.dit.enseignantFait' => 'Votre enseignant est connu.',
+			'suiviAttente.dit.enseignantFaitSimple' => 'Ton enseignant est connu.',
+			'suiviAttente.dit.enseignantAVenir' => 'L\'académie désigne l\'enseignant une fois la classe confirmée.',
+			'suiviAttente.dit.pretFait' => 'La classe, l\'enseignant et le premier cours sont connus.',
+			'suiviAttente.dit.pretEnCours' => 'L\'académie fixe votre premier cours. Vous êtes prévenu dès que la date est connue.',
+			'suiviAttente.dit.pretAVenir' => 'Votre premier cours est annoncé une fois l\'enseignant affecté.',
+			'suiviAttente.premierCours' => ({required Object quand}) => 'Votre premier cours : ${quand}',
+			'suiviAttente.premierCoursSimple' => ({required Object quand}) => 'Ton premier cours : ${quand}',
+			'suiviAttente.premierCoursPasse' => ({required Object quand}) => 'Votre premier cours a eu lieu le ${quand}.',
+			'suiviAttente.depuis' => ({required Object date}) => 'Depuis le ${date}',
+			'suiviAttente.ensuite' => ({required Object etape}) => 'Ensuite : ${etape}',
+			'suiviAttente.delai.depasse' => 'La formation de votre classe prend plus de temps que prévu.',
+			'suiviAttente.changement' => ({required Object date}) => 'Le créneau de la classe a changé le ${date}. Vous avez reçu l\'avis dans vos notifications.',
+			'suiviAttente.cloture.titreRefusee' => 'Votre demande n\'a pas été retenue',
+			'suiviAttente.cloture.titreRetiree' => 'Cette demande est retirée',
+			'suiviAttente.cloture.titreClose' => 'Cette demande est close',
+			'suiviAttente.cloture.motif.retraitFamille' => 'Vous avez retiré cette demande.',
+			'suiviAttente.cloture.motif.offreRetiree' => 'L\'académie a retiré ce créneau de ses offres.',
+			'suiviAttente.cloture.motif.classeNonConstituee' => 'La classe de ce créneau n\'a pas pu être constituée.',
+			'suiviAttente.cloture.motif.refusDirection' => 'La direction n\'a pas retenu cette demande.',
+			'suiviAttente.cloture.motif.dejaEnClasse' => 'Cet élève a déjà une place en classe : la demande n\'est plus nécessaire.',
+			'suiviAttente.cloture.motif.inconnu' => 'Cette demande est close.',
+			'suiviAttente.cloture.suite' => 'Vous pouvez choisir un autre créneau.',
+			'suiviAttente.cloture.autreCreneau' => 'Choisir un autre créneau',
+			'suiviAttente.cloture.simple.refusee' => 'Ta demande n\'a pas été retenue. Ton tuteur peut choisir un autre créneau.',
+			'suiviAttente.cloture.simple.retiree' => 'Cette demande est retirée.',
+			'suiviAttente.cloture.simple.close' => 'Cette demande est close.',
+			'suiviAttente.enseignant.titre' => 'Votre enseignant',
+			'suiviAttente.enseignant.titreSimple' => 'Ton enseignant',
+			'suiviAttente.enseignant.sayyid' => 'Sayyid',
+			'suiviAttente.enseignant.sayyida' => 'Sayyida',
+			'suiviAttente.enseignant.nomPlein' => ({required Object prenom}) => '${prenom}',
+			'suiviAttente.enseignant.nomAvecTitre' => ({required Object titre, required Object prenom}) => '${titre} ${prenom}',
+			'suiviAttente.enseignant.langue' => 'Langue du cours',
+			'suiviAttente.enseignant.origine' => 'Pays d\'origine',
+			'suiviAttente.enseignant.residence' => 'Pays de résidence',
+			'suiviAttente.enseignant.mot' => 'Son mot de présentation',
+			'suiviAttente.enseignant.peutSePresenter' => 'Votre enseignant peut se présenter aux familles de la classe par un message dans Messages.',
+			'suiviAttente.vide.message' => 'Vous n\'avez pas encore choisi de classe.',
+			'suiviAttente.vide.invitation' => 'Choisissez une classe : l\'académie vous suit ensuite étape par étape.',
+			'suiviAttente.vide.action' => 'Choisir une classe',
+			'suiviAttente.vide.messageSimple' => 'Il n\'y a pas encore de demande de classe pour toi.',
+			'suiviAttente.vide.invitationSimple' => 'Ton tuteur peut en faire une.',
+			'suiviAttente.erreur' => 'Nous n\'avons pas pu lire le suivi de votre demande. Cela vient souvent de la connexion. Réessayez dans un instant.',
+			'suiviAttente.sansDonnees' => 'Le suivi de votre demande n\'a pas pu être chargé',
+			'suiviAttente.introuvable' => 'Cette demande n\'existe plus dans votre suivi.',
+			'suiviAttente.retour' => 'Retour',
+			'suiviAttente.carte.titre' => 'Votre demande de classe',
+			'suiviAttente.carte.titreSimple' => 'Ta demande de classe',
+			'suiviAttente.carte.ligne' => ({required Object prenom, required Object n, required Object total, required Object etape}) => '${prenom} : étape ${n} sur ${total}, ${etape}',
+			'suiviAttente.carte.suivre' => 'Suivre ma demande',
+			'suiviAttente.carte.pret' => ({required Object prenom, required Object quand}) => '${prenom} : tout est prêt. Premier cours : ${quand}',
+			'suiviAttente.carte.pretSansDate' => ({required Object prenom}) => '${prenom} : tout est prêt.',
+			'suiviAttente.presentation.titre' => 'Ce que les familles voient de vous',
+			'suiviAttente.presentation.phrase' => 'Les familles de vos classes voient déjà, comme partout dans l\'application, votre civilité, votre prénom, la langue du cours, votre photo et votre pays, s\'il est renseigné. Ce réglage ne concerne que la carte du suivi de leur demande : vous choisissez d\'y montrer aussi vos deux pays et un mot de présentation, quand vous les avez saisis.',
+			'suiviAttente.presentation.montrer' => 'Montrer mes pays et mon mot sur la carte du suivi',
+			'suiviAttente.presentation.paysOrigine' => 'Pays d\'origine',
+			'suiviAttente.presentation.paysResidence' => 'Pays de résidence',
+			'suiviAttente.presentation.choisirPays' => 'Choisir un pays',
+			'suiviAttente.presentation.nonRenseigne' => 'Non renseigné',
+			'suiviAttente.presentation.mot' => 'Mon mot de présentation',
+			'suiviAttente.presentation.motAide' => '500 caractères au plus. Les familles le lisent tel que vous l\'écrivez.',
+			'suiviAttente.presentation.nonConfirme' => 'Vous n\'avez pas encore confirmé ce choix. Tant que vous ne l\'avez pas fait, vos pays et votre mot, s\'ils sont saisis, sont montrés sur la carte du suivi.',
+			'suiviAttente.presentation.enregistrer' => 'Enregistrer',
+			'suiviAttente.presentation.enregistre' => 'Enregistré.',
+			'suiviAttente.presentation.erreur' => 'Votre choix n\'est pas confirmé : il n\'est peut-être pas parvenu jusqu\'à Rewayah. Réessayez dans un instant.',
+			'suiviAttente.presentation.effacerPays' => 'Ne pas renseigner',
+			'suiviAttente.mePresenter.lien' => 'Me présenter aux familles',
+			'suiviAttente.mePresenter.titre' => 'Me présenter',
+			'suiviAttente.mePresenter.contexte' => 'Un message est déjà rédigé. Vous pouvez le modifier avant de l\'envoyer. Il part dans Messages, aux familles de la classe et aux élèves adultes.',
+			'suiviAttente.mePresenter.messageSayyid' => ({required Object nom, required Object classe}) => 'Bonjour, je suis Sayyid ${nom}, votre enseignant de la classe « ${classe} ». Je suis heureux de commencer avec vous. Écrivez-moi ici si vous avez une question. À très bientôt.',
+			'suiviAttente.mePresenter.messageSayyida' => ({required Object nom, required Object classe}) => 'Bonjour, je suis Sayyida ${nom}, votre enseignante de la classe « ${classe} ». Je suis heureuse de commencer avec vous. Écrivez-moi ici si vous avez une question. À très bientôt.',
+			'suiviAttente.mePresenter.champ' => 'Votre message',
+			'suiviAttente.mePresenter.rappel' => 'Ce message est lu par les tuteurs des élèves mineurs et par les élèves adultes. Il n\'est jamais envoyé à un mineur. N\'échangez ni téléphone ni adresse : tout passe par l\'application.',
+			'suiviAttente.mePresenter.envoyer' => 'Envoyer aux familles',
+			'suiviAttente.mePresenter.envoye' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Message envoyé à ${n} famille.', other: 'Message envoyé à ${n} familles.', ), 
+			'suiviAttente.mePresenter.dejaEcrit' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} famille a déjà un échange avec vous : elle ne reçoit pas ce message.', other: '${n} familles ont déjà un échange avec vous : elles ne reçoivent pas ce message.', ), 
+			'suiviAttente.mePresenter.aucune' => 'Aucune famille de cette classe ne peut recevoir de message pour le moment.',
+			'suiviAttente.mePresenter.echec' => 'Le message n\'est pas confirmé pour certaines familles : il n\'est peut-être pas parvenu jusqu\'à elles. Réessayez : celles qui l\'ont reçu ne le reçoivent pas deux fois.',
+			'suiviAttente.mePresenter.chargement' => 'Chargement des familles de la classe',
+			'suiviAttente.mePresenter.erreur' => 'Les familles de la classe n\'ont pas pu être lues. Réessayez dans un instant.',
+			'suiviAttente.mePresenter.vide' => 'Écrivez un message avant de l\'envoyer.',
 			_ => null,
 		};
 	}

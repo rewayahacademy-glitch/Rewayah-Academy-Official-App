@@ -132,6 +132,8 @@ const Map<String, int> _domaines = <String, int>{
   // CORRIGER-SOURATE-DIRECTION (12/11/2026) : les sourates retirables d'une
   // Classe.
   'souratesRetirables': 7,
+  // SUIVI-ATTENTE (12/11/2026) : le suivi de l'attente de la classe.
+  'suiviAttente': 100,
 };
 
 /// Les domaines francais venus de ccr sans tranche arabe (reunion du 10/10) :
