@@ -26,6 +26,7 @@ import '../../core/widgets/status_pill.dart';
 
 import 'feuille_decision_pause.dart';
 import 'feuille_exception_pause.dart';
+import 'feuille_terminer_pause.dart';
 
 /// La section des pauses.
 class SectionPauses extends ConsumerWidget {
@@ -143,7 +144,13 @@ class _Corps extends ConsumerWidget {
                       p.motifLigne(motif: d.motif!),
                     if ((d.motifDecision ?? '').isNotEmpty)
                       p.motifLigne(motif: d.motifDecision!),
+                    if (d.finInitiale != null)
+                      p.finInitiale(date: jourEnMots(d.finInitiale!)),
+                    if ((d.termineeParNom ?? '').isNotEmpty)
+                      p.termineePar(nom: d.termineeParNom!),
+                    if (d.terminable) p.terminerAction,
                   ].join('\n'),
+                  onPress: _gesteTerminer(context, ref, d),
                   controle: StatusPill(
                     libelle: libelleStatutPause(d.statut, famille: false),
                     ton: switch (d.statut) {
@@ -158,5 +165,16 @@ class _Corps extends ConsumerWidget {
           ),
       ],
     );
+  }
+
+  /// Une pause d'exception en cours se touche pour la terminer plus tot ; les
+  /// autres lignes ne sont que lues.
+  VoidCallback? _gesteTerminer(
+    BuildContext context,
+    WidgetRef ref,
+    DecisionPause d,
+  ) {
+    if (!d.terminable) return null;
+    return () => ouvrirTerminerPause(context, ref, d);
   }
 }

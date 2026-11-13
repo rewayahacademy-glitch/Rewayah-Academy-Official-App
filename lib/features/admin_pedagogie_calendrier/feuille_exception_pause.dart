@@ -115,7 +115,12 @@ class _FeuilleExceptionEtat extends ConsumerState<_FeuilleException> {
       if (mounted) Navigator.of(context).pop();
     } on PauseRefusee catch (r) {
       if (mounted) {
-        setState(() => _erreur = messageRefusDecisionPause(r.motif));
+        setState(
+          () => _erreur = messageRefusDecisionPause(
+            r.motif,
+            moisMax: ref.read(filePausesProvider).value?.exceptionMoisMax,
+          ),
+        );
       }
     } on Object {
       if (mounted) {
@@ -134,11 +139,16 @@ class _FeuilleExceptionEtat extends ConsumerState<_FeuilleException> {
     final TextTheme textes = Theme.of(context).textTheme;
     final DateTime aujourdhui = ref.watch(horlogeFormulairesProvider)();
     final EleveTrouve? eleve = _eleve;
+    final int? moisMax = ref.watch(filePausesProvider).value?.exceptionMoisMax;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         Text(p.exceptionPhrase, style: textes.bodyMedium),
+        if (moisMax != null) ...<Widget>[
+          Ecart.vSm,
+          Text(p.exceptionDuree(mois: moisMax), style: textes.bodyMedium),
+        ],
         Ecart.vLg,
         if (eleve == null) ...<Widget>[
           ChampEtiquete(
@@ -191,6 +201,7 @@ class _FeuilleExceptionEtat extends ConsumerState<_FeuilleException> {
           Ecart.vLg,
           ChampEtiquete(
             libelle: p.exceptionMotif,
+            aide: p.exceptionMotifAide,
             controller: _motif,
             maxLines: 3,
             obligatoire: true,
@@ -204,7 +215,13 @@ class _FeuilleExceptionEtat extends ConsumerState<_FeuilleException> {
             libelle: p.exceptionFin,
             valeur: _fin,
             aujourdhui: aujourdhui,
-            dernier: aujourdhui.add(const Duration(days: 365)),
+            dernier: moisMax == null
+                ? aujourdhui.add(const Duration(days: 365))
+                : DateTime(
+                    aujourdhui.year,
+                    aujourdhui.month + moisMax,
+                    aujourdhui.day,
+                  ),
             onChoix: (DateTime jour) => setState(() {
               _fin = jour;
               _erreur = null;

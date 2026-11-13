@@ -121,7 +121,9 @@ class EvenementCalendrier {
     this.groupeId,
     this.groupeLibelle,
     this.elevesVises,
-    this.seancesDejaPrevues,
+    this.seancesNeutralisees,
+    this.commencee = false,
+    this.passee = false,
   });
 
   /// Lit une ligne ; `null` si elle est illisible (jamais completee).
@@ -147,7 +149,9 @@ class EvenementCalendrier {
       groupeLibelle: brut['groupe_libelle'] as String?,
       publie: brut['publie'] == true,
       elevesVises: (brut['eleves_vises'] as num?)?.toInt(),
-      seancesDejaPrevues: (brut['seances_deja_prevues'] as num?)?.toInt(),
+      seancesNeutralisees: (brut['seances_neutralisees'] as num?)?.toInt(),
+      commencee: brut['commencee'] == true,
+      passee: brut['passee'] == true,
     );
   }
 
@@ -187,9 +191,17 @@ class EvenementCalendrier {
   /// Pour une fermeture : le nombre d'eleves dont la date limite recule.
   final int? elevesVises;
 
-  /// Pour une fermeture : les seances deja creees pendant ces jours, que le
-  /// serveur ne supprime pas.
-  final int? seancesDejaPrevues;
+  /// Pour une fermeture : les seances deja creees pendant ces jours que le
+  /// serveur a mises de cote (rien n'est supprime ; le retrait de la fermeture
+  /// avant son debut les retablit).
+  final int? seancesNeutralisees;
+
+  /// Vrai quand le premier jour est venu : la fermeture ne se retire plus, ne
+  /// se raccourcit plus, ne se deplace plus ; elle peut seulement se prolonger.
+  final bool commencee;
+
+  /// Vrai quand le dernier jour est passe : plus rien ne change.
+  final bool passee;
 
   /// Le nombre de jours, premier et dernier compris.
   int get jours => au.difference(du).inDays + 1;
@@ -216,6 +228,9 @@ enum MotifRefusCalendrier {
 
   /// Titre ou genre illisible.
   evenementInvalide,
+
+  /// Une fermeture commencee ou passee ne se retire, ne se raccourcit, ne se deplace pas.
+  fermetureCommencee,
 
   /// La date n'existe plus.
   introuvable,
@@ -247,6 +262,7 @@ MotifRefusCalendrier motifRefusCalendrier({
 }) => switch (message) {
   'calendrier_fermeture_trop_longue' =>
     MotifRefusCalendrier.fermetureTropLongue,
+  'calendrier_fermeture_commencee' => MotifRefusCalendrier.fermetureCommencee,
   'calendrier_dates_invalides' => MotifRefusCalendrier.datesInvalides,
   'calendrier_portee_invalide' => MotifRefusCalendrier.porteeInvalide,
   'calendrier_evenement_invalide' => MotifRefusCalendrier.evenementInvalide,
@@ -559,6 +575,12 @@ enum MotifRefusPause {
   /// Dates inversees ou trop eloignees.
   datesInvalides,
 
+  /// La pause d'exception depasse la duree permise.
+  exceptionTropLongue,
+
+  /// La pause n'est plus une pause d'exception en cours.
+  nonTerminable,
+
   /// L'eleve n'existe pas.
   eleveIntrouvable,
 
@@ -595,6 +617,8 @@ MotifRefusPause motifRefusPause({
   'pause_deja_decidee' => MotifRefusPause.dejaDecidee,
   'pause_debut_passe' => MotifRefusPause.debutPasse,
   'pause_dates_invalides' => MotifRefusPause.datesInvalides,
+  'pause_exception_trop_longue' => MotifRefusPause.exceptionTropLongue,
+  'pause_non_terminable' => MotifRefusPause.nonTerminable,
   'pause_eleve_introuvable' => MotifRefusPause.eleveIntrouvable,
   _ => code == '42501' ? MotifRefusPause.nonAutorise : MotifRefusPause.inconnu,
 };
@@ -719,6 +743,9 @@ class DecisionPause {
     this.motif,
     this.motifDecision,
     this.decideeParNom,
+    this.finInitiale,
+    this.termineeParNom,
+    this.terminable = false,
   });
 
   /// Lit une decision ; `null` si illisible.
@@ -743,6 +770,9 @@ class DecisionPause {
       motif: (brut['motif'] as String?)?.trim(),
       motifDecision: (brut['motif_decision'] as String?)?.trim(),
       decideeParNom: (brut['decidee_par_nom'] as String?)?.trim(),
+      finInitiale: jourDepuisSql(brut['fin_initiale']),
+      termineeParNom: (brut['terminee_par_nom'] as String?)?.trim(),
+      terminable: brut['terminable'] == true,
     );
   }
 
@@ -772,20 +802,38 @@ class DecisionPause {
 
   /// Le nom de la personne de la direction.
   final String? decideeParNom;
+
+  /// La fin d'origine d'une pause d'exception terminee plus tot.
+  final DateTime? finInitiale;
+
+  /// Le nom de la personne qui l'a terminee plus tot.
+  final String? termineeParNom;
+
+  /// Vrai : une pause d'exception acceptee qui n'est pas finie, que la direction
+  /// peut terminer plus tot.
+  final bool terminable;
 }
 
 /// La file de la direction : les demandes a traiter et les decisions recentes.
 @immutable
 class FilePauses {
   /// Cree la file.
-  const FilePauses({required this.aTraiter, required this.recentes});
+  const FilePauses({
+    required this.aTraiter,
+    required this.recentes,
+    this.exceptionMoisMax,
+  });
 
   /// Lit `pauses_a_traiter`.
   factory FilePauses.depuisJson(Object? brut) {
     final Map<Object?, Object?> m = brut is Map
         ? brut.cast<Object?, Object?>()
         : const <Object?, Object?>{};
+    final Object? regle = m['regle'];
     return FilePauses(
+      exceptionMoisMax: regle is Map
+          ? (regle['exception_mois_max'] as num?)?.toInt()
+          : null,
       aTraiter: <DemandePauseDirection>[
         for (final Object? l
             in m['a_traiter'] is List
@@ -810,6 +858,9 @@ class FilePauses {
 
   /// Les vingt dernieres decisions.
   final List<DecisionPause> recentes;
+
+  /// La duree d'une pause d'exception au plus, en mois (reglage du serveur).
+  final int? exceptionMoisMax;
 }
 
 /// Un eleve trouve par son nom, pour une pause d'exception.
@@ -865,6 +916,10 @@ abstract interface class PortPauses {
     required DateTime fin,
     required String motif,
   });
+
+  /// La direction termine une pause d'exception plus tot, au jour [fin]. Leve
+  /// [PauseRefusee].
+  Future<void> terminerException(String pauseId, DateTime fin);
 
   /// Cherche un eleve par son nom (deux lettres au moins, vingt resultats au
   /// plus).

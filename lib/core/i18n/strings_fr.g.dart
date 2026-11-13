@@ -23941,8 +23941,8 @@ class Traductions$calendrier$dates$fr {
 
 	// Translations
 
-	/// fr: 'Les dates de l'année, saisies par la direction chaque année. Seules les dates publiées agissent et sont lues par les familles, les élèves et les enseignants.'
-	String get intro => 'Les dates de l\'année, saisies par la direction chaque année. Seules les dates publiées agissent et sont lues par les familles, les élèves et les enseignants.';
+	/// fr: 'Les dates de l'année, saisies par la direction chaque année. Seules les dates publiées agissent ; elles seront affichées dans l'onglet Programme des élèves et des familles qu'elles concernent.'
+	String get intro => 'Les dates de l\'année, saisies par la direction chaque année. Seules les dates publiées agissent ; elles seront affichées dans l\'onglet Programme des élèves et des familles qu\'elles concernent.';
 
 	/// fr: 'Ajouter une date'
 	String get ajouter => 'Ajouter une date';
@@ -23991,11 +23991,14 @@ class Traductions$calendrier$dates$fr {
 	/// fr: 'Élèves concernés : {n}'
 	String elevesVises({required Object n}) => 'Élèves concernés : ${n}';
 
-	/// fr: 'Séances déjà prévues pendant ces jours : {n}. Elles ne sont pas supprimées : la direction décide de leur sort.'
-	String seancesDejaPrevues({required Object n}) => 'Séances déjà prévues pendant ces jours : ${n}. Elles ne sont pas supprimées : la direction décide de leur sort.';
+	/// fr: 'Séances déjà prévues pendant ces jours : {n}. Elles sont mises de côté, sans être supprimées, et rétablies si vous retirez la fermeture avant son début.'
+	String seancesNeutralisees({required Object n}) => 'Séances déjà prévues pendant ces jours : ${n}. Elles sont mises de côté, sans être supprimées, et rétablies si vous retirez la fermeture avant son début.';
 
 	/// fr: 'Aucune séance n'est encore prévue pendant ces jours.'
 	String get aucuneSeance => 'Aucune séance n\'est encore prévue pendant ces jours.';
+
+	/// fr: 'Cette fermeture a commencé : elle ne peut plus être retirée ni raccourcie, seulement prolongée.'
+	String get commencee => 'Cette fermeture a commencé : elle ne peut plus être retirée ni raccourcie, seulement prolongée.';
 
 	late final Traductions$calendrier$dates$feuille$fr feuille = Traductions$calendrier$dates$feuille$fr.internal(_root);
 	late final Traductions$calendrier$dates$publication$fr publication = Traductions$calendrier$dates$publication$fr.internal(_root);
@@ -24102,11 +24105,38 @@ class Traductions$calendrier$pauses$fr {
 	/// fr: 'Motif'
 	String get exceptionMotif => 'Motif';
 
+	/// fr: 'Elle dure {mois} mois au plus ; au-delà, vous accordez une nouvelle pause.'
+	String exceptionDuree({required Object mois}) => 'Elle dure ${mois} mois au plus ; au-delà, vous accordez une nouvelle pause.';
+
+	/// fr: 'Un mot suffit (maladie, interruption). Aucun détail de santé.'
+	String get exceptionMotifAide => 'Un mot suffit (maladie, interruption). Aucun détail de santé.';
+
 	/// fr: 'Dernier jour de la pause'
 	String get exceptionFin => 'Dernier jour de la pause';
 
 	/// fr: 'Accorder la pause'
 	String get exceptionEnregistrer => 'Accorder la pause';
+
+	/// fr: 'Terminer la pause'
+	String get terminerAction => 'Terminer la pause';
+
+	/// fr: 'Terminer la pause d'exception'
+	String get terminerTitre => 'Terminer la pause d\'exception';
+
+	/// fr: 'L'élève reprend les cours après le dernier jour choisi. La fin d'origine et votre geste sont gardés ; les jours déjà passés restent comptés dans la date limite.'
+	String get terminerPhrase => 'L\'élève reprend les cours après le dernier jour choisi. La fin d\'origine et votre geste sont gardés ; les jours déjà passés restent comptés dans la date limite.';
+
+	/// fr: 'Dernier jour de la pause'
+	String get terminerChamp => 'Dernier jour de la pause';
+
+	/// fr: 'Terminer la pause'
+	String get terminerEnvoyer => 'Terminer la pause';
+
+	/// fr: 'Fin d'origine : {date}'
+	String finInitiale({required Object date}) => 'Fin d\'origine : ${date}';
+
+	/// fr: 'Terminée plus tôt par {nom}'
+	String termineePar({required Object nom}) => 'Terminée plus tôt par ${nom}';
 
 	late final Traductions$calendrier$pauses$refus$fr refus = Traductions$calendrier$pauses$refus$fr.internal(_root);
 }
@@ -24203,8 +24233,8 @@ class Traductions$pause$refus$fr {
 	/// fr: 'Ce mois n'est pas lisible. Choisissez un mois dans la liste.'
 	String get moisInvalide => 'Ce mois n\'est pas lisible. Choisissez un mois dans la liste.';
 
-	/// fr: 'Cette pause a déjà commencé ou a déjà reçu sa réponse : elle ne peut plus être annulée.'
-	String get nonAnnulable => 'Cette pause a déjà commencé ou a déjà reçu sa réponse : elle ne peut plus être annulée.';
+	/// fr: 'Cette pause ne peut plus être annulée : elle a déjà commencé, ou elle est déjà refusée ou annulée.'
+	String get nonAnnulable => 'Cette pause ne peut plus être annulée : elle a déjà commencé, ou elle est déjà refusée ou annulée.';
 
 	/// fr: 'Vous ne pouvez pas demander de pause depuis ce compte.'
 	String get nonAutorise => 'Vous ne pouvez pas demander de pause depuis ce compte.';
@@ -42422,8 +42452,8 @@ class Traductions$calendrier$dates$publication$fr {
 	/// fr: 'Publier la fermeture'
 	String get titre => 'Publier la fermeture';
 
-	/// fr: 'Pendant ces jours, aucune nouvelle séance n'est créée et la date limite de l'étape de chaque élève concerné recule d'autant. Les séances déjà créées ne sont pas supprimées.'
-	String get phrase => 'Pendant ces jours, aucune nouvelle séance n\'est créée et la date limite de l\'étape de chaque élève concerné recule d\'autant. Les séances déjà créées ne sont pas supprimées.';
+	/// fr: 'Pendant ces jours, aucune nouvelle séance n'est créée et la date limite de l'étape de chaque élève concerné recule d'autant. Les séances déjà prévues ces jours-là sont mises de côté, sans être supprimées ; retirer la fermeture avant son début les rétablit. Une fois commencée, la fermeture ne peut plus être retirée ni raccourcie.'
+	String get phrase => 'Pendant ces jours, aucune nouvelle séance n\'est créée et la date limite de l\'étape de chaque élève concerné recule d\'autant. Les séances déjà prévues ces jours-là sont mises de côté, sans être supprimées ; retirer la fermeture avant son début les rétablit. Une fois commencée, la fermeture ne peut plus être retirée ni raccourcie.';
 
 	/// fr: 'Publier la fermeture'
 	String get confirmer => 'Publier la fermeture';
@@ -42439,6 +42469,9 @@ class Traductions$calendrier$dates$refus$fr {
 
 	/// fr: 'Cette fermeture est plus longue que le maximum permis (Ramadan : 20 jours, Aïd al-Adha : 10 jours). Raccourcissez-la.'
 	String get fermetureTropLongue => 'Cette fermeture est plus longue que le maximum permis (Ramadan : 20 jours, Aïd al-Adha : 10 jours). Raccourcissez-la.';
+
+	/// fr: 'Cette fermeture a déjà commencé ou est passée : elle ne peut plus être retirée, raccourcie ni déplacée. Vous pouvez seulement la prolonger.'
+	String get fermetureCommencee => 'Cette fermeture a déjà commencé ou est passée : elle ne peut plus être retirée, raccourcie ni déplacée. Vous pouvez seulement la prolonger.';
 
 	/// fr: 'Le dernier jour doit venir après le premier, à moins d'un an.'
 	String get datesInvalides => 'Le dernier jour doit venir après le premier, à moins d\'un an.';
@@ -42499,6 +42532,12 @@ class Traductions$calendrier$pauses$refus$fr {
 
 	/// fr: 'Le dernier jour doit être aujourd'hui ou après, à moins d'un an.'
 	String get datesInvalides => 'Le dernier jour doit être aujourd\'hui ou après, à moins d\'un an.';
+
+	/// fr: 'Une pause d'exception dure {mois} mois au plus. Raccourcissez-la ; vous pourrez en accorder une nouvelle ensuite.'
+	String exceptionTropLongue({required Object mois}) => 'Une pause d\'exception dure ${mois} mois au plus. Raccourcissez-la ; vous pourrez en accorder une nouvelle ensuite.';
+
+	/// fr: 'Cette pause est déjà terminée ou n'est pas une pause d'exception.'
+	String get nonTerminable => 'Cette pause est déjà terminée ou n\'est pas une pause d\'exception.';
 
 	/// fr: 'Cet élève est introuvable.'
 	String get eleveIntrouvable => 'Cet élève est introuvable.';
@@ -61811,7 +61850,7 @@ extension on Traductions {
 			'calendrier.sections.dates' => 'Dates de l\'académie',
 			'calendrier.sections.pauses' => 'Pauses',
 			'calendrier.indisponible' => 'Le calendrier n\'a pas pu être ouvert : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
-			'calendrier.dates.intro' => 'Les dates de l\'année, saisies par la direction chaque année. Seules les dates publiées agissent et sont lues par les familles, les élèves et les enseignants.',
+			'calendrier.dates.intro' => 'Les dates de l\'année, saisies par la direction chaque année. Seules les dates publiées agissent ; elles seront affichées dans l\'onglet Programme des élèves et des familles qu\'elles concernent.',
 			'calendrier.dates.ajouter' => 'Ajouter une date',
 			'calendrier.dates.erreur' => 'Les dates n\'ont pas pu être lues : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'calendrier.dates.videTitre' => 'Aucune date saisie',
@@ -61836,8 +61875,9 @@ extension on Traductions {
 			'calendrier.dates.unJour' => ({required Object jour}) => 'Le ${jour}',
 			'calendrier.dates.pour' => ({required Object cible}) => 'Pour : ${cible}',
 			'calendrier.dates.elevesVises' => ({required Object n}) => 'Élèves concernés : ${n}',
-			'calendrier.dates.seancesDejaPrevues' => ({required Object n}) => 'Séances déjà prévues pendant ces jours : ${n}. Elles ne sont pas supprimées : la direction décide de leur sort.',
+			'calendrier.dates.seancesNeutralisees' => ({required Object n}) => 'Séances déjà prévues pendant ces jours : ${n}. Elles sont mises de côté, sans être supprimées, et rétablies si vous retirez la fermeture avant son début.',
 			'calendrier.dates.aucuneSeance' => 'Aucune séance n\'est encore prévue pendant ces jours.',
+			'calendrier.dates.commencee' => 'Cette fermeture a commencé : elle ne peut plus être retirée ni raccourcie, seulement prolongée.',
 			'calendrier.dates.feuille.titreAjout' => 'Ajouter une date',
 			'calendrier.dates.feuille.titreModif' => 'Modifier la date',
 			'calendrier.dates.feuille.champType' => 'Genre de date',
@@ -61853,9 +61893,10 @@ extension on Traductions {
 			'calendrier.dates.feuille.enregistrer' => 'Enregistrer',
 			'calendrier.dates.feuille.aucuneClasse' => 'Aucune classe à choisir pour le moment.',
 			'calendrier.dates.publication.titre' => 'Publier la fermeture',
-			'calendrier.dates.publication.phrase' => 'Pendant ces jours, aucune nouvelle séance n\'est créée et la date limite de l\'étape de chaque élève concerné recule d\'autant. Les séances déjà créées ne sont pas supprimées.',
+			'calendrier.dates.publication.phrase' => 'Pendant ces jours, aucune nouvelle séance n\'est créée et la date limite de l\'étape de chaque élève concerné recule d\'autant. Les séances déjà prévues ces jours-là sont mises de côté, sans être supprimées ; retirer la fermeture avant son début les rétablit. Une fois commencée, la fermeture ne peut plus être retirée ni raccourcie.',
 			'calendrier.dates.publication.confirmer' => 'Publier la fermeture',
 			'calendrier.dates.refus.fermetureTropLongue' => 'Cette fermeture est plus longue que le maximum permis (Ramadan : 20 jours, Aïd al-Adha : 10 jours). Raccourcissez-la.',
+			'calendrier.dates.refus.fermetureCommencee' => 'Cette fermeture a déjà commencé ou est passée : elle ne peut plus être retirée, raccourcie ni déplacée. Vous pouvez seulement la prolonger.',
 			'calendrier.dates.refus.datesInvalides' => 'Le dernier jour doit venir après le premier, à moins d\'un an.',
 			'calendrier.dates.refus.porteeInvalide' => 'Choisissez la tranche d\'âge ou la classe visée.',
 			'calendrier.dates.refus.evenementInvalide' => 'Le titre manque ou le genre de date est illisible. Vérifiez-les, puis réessayez.',
@@ -61896,12 +61937,23 @@ extension on Traductions {
 			'calendrier.pauses.exceptionEleve' => ({required Object nom}) => 'Élève : ${nom}',
 			'calendrier.pauses.exceptionChanger' => 'Choisir un autre élève',
 			'calendrier.pauses.exceptionMotif' => 'Motif',
+			'calendrier.pauses.exceptionDuree' => ({required Object mois}) => 'Elle dure ${mois} mois au plus ; au-delà, vous accordez une nouvelle pause.',
+			'calendrier.pauses.exceptionMotifAide' => 'Un mot suffit (maladie, interruption). Aucun détail de santé.',
 			'calendrier.pauses.exceptionFin' => 'Dernier jour de la pause',
 			'calendrier.pauses.exceptionEnregistrer' => 'Accorder la pause',
+			'calendrier.pauses.terminerAction' => 'Terminer la pause',
+			'calendrier.pauses.terminerTitre' => 'Terminer la pause d\'exception',
+			'calendrier.pauses.terminerPhrase' => 'L\'élève reprend les cours après le dernier jour choisi. La fin d\'origine et votre geste sont gardés ; les jours déjà passés restent comptés dans la date limite.',
+			'calendrier.pauses.terminerChamp' => 'Dernier jour de la pause',
+			'calendrier.pauses.terminerEnvoyer' => 'Terminer la pause',
+			'calendrier.pauses.finInitiale' => ({required Object date}) => 'Fin d\'origine : ${date}',
+			'calendrier.pauses.termineePar' => ({required Object nom}) => 'Terminée plus tôt par ${nom}',
 			'calendrier.pauses.refus.motifRequis' => 'Un motif d\'au moins trois lettres est demandé.',
 			'calendrier.pauses.refus.dejaDecidee' => 'Cette demande a déjà reçu une réponse. Rechargez la liste.',
 			'calendrier.pauses.refus.debutPasse' => 'Le mois a déjà commencé : cette pause ne peut plus être acceptée. Vous pouvez la refuser.',
 			'calendrier.pauses.refus.datesInvalides' => 'Le dernier jour doit être aujourd\'hui ou après, à moins d\'un an.',
+			'calendrier.pauses.refus.exceptionTropLongue' => ({required Object mois}) => 'Une pause d\'exception dure ${mois} mois au plus. Raccourcissez-la ; vous pourrez en accorder une nouvelle ensuite.',
+			'calendrier.pauses.refus.nonTerminable' => 'Cette pause est déjà terminée ou n\'est pas une pause d\'exception.',
 			'calendrier.pauses.refus.eleveIntrouvable' => 'Cet élève est introuvable.',
 			'calendrier.pauses.refus.nonAutorise' => 'Seule la direction peut décider d\'une pause.',
 			'calendrier.pauses.refus.inconnu' => 'La décision n\'est pas confirmée : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
@@ -61941,7 +61993,7 @@ extension on Traductions {
 			'pause.refus.preavis' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours, one: 'Ce mois commence trop tôt : une pause se demande au moins ${jours} jour avant son début. Choisissez un mois plus lointain.', other: 'Ce mois commence trop tôt : une pause se demande au moins ${jours} jours avant son début. Choisissez un mois plus lointain.', ), 
 			'pause.refus.dejaDemandee' => 'Ce mois est déjà demandé ou accepté.',
 			'pause.refus.moisInvalide' => 'Ce mois n\'est pas lisible. Choisissez un mois dans la liste.',
-			'pause.refus.nonAnnulable' => 'Cette pause a déjà commencé ou a déjà reçu sa réponse : elle ne peut plus être annulée.',
+			'pause.refus.nonAnnulable' => 'Cette pause ne peut plus être annulée : elle a déjà commencé, ou elle est déjà refusée ou annulée.',
 			'pause.refus.nonAutorise' => 'Vous ne pouvez pas demander de pause depuis ce compte.',
 			'pause.refus.inconnu' => 'La demande n\'est pas confirmée : il est possible qu\'elle ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			_ => null,

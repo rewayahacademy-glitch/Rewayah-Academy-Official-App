@@ -1,6 +1,6 @@
 // CALENDRIER-ET-PAUSES (12/11/2026) : l'adaptateur Supabase des pauses, sur
 // les RPC `pauses_eleve_lecture`, `pause_demander`, `pause_annuler`,
-// `pauses_a_traiter`, `pause_decider`, `pause_exception_accorder` et
+// `pauses_a_traiter`, `pause_decider`, `pause_exception_accorder`, `pause_exception_terminer` et
 // `pauses_eleves_recherche` (migration 20261123910000). Le serveur decide de
 // tout (preavis, mois civil entier, plafond, recul de la date limite) ;
 // l'adaptateur traduit ses reponses et ses refus.
@@ -80,6 +80,14 @@ class PausesSupabase implements PortPauses {
       'p_debut': null,
       'p_fin': jourVersSql(fin),
       'p_motif': motif,
+    });
+  }
+
+  @override
+  Future<void> terminerException(String pauseId, DateTime fin) async {
+    await _appeler('pause_exception_terminer', <String, dynamic>{
+      'p_pause_id': pauseId,
+      'p_fin': jourVersSql(fin),
     });
   }
 

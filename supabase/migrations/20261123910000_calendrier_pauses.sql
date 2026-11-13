@@ -1474,6 +1474,8 @@ BEGIN
     RAISE EXCEPTION 'pauses reservees a la direction' USING errcode = '42501';
   END IF;
   RETURN pg_catalog.jsonb_build_object(
+    'regle', pg_catalog.jsonb_build_object(
+      'exception_mois_max', public.app_config_int('pause.exception_mois_max', 3)),
     'a_traiter', coalesce((
       SELECT pg_catalog.jsonb_agg(pg_catalog.jsonb_build_object(
                'id', p.id, 'eleve_id', p.student_id,

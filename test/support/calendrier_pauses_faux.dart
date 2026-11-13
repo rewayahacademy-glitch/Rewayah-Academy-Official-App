@@ -20,7 +20,9 @@ Map<String, Object?> ligneCalendrier({
   String? groupeLibelle,
   bool publie = false,
   int? elevesVises,
-  int? seancesDejaPrevues,
+  int? seancesNeutralisees,
+  bool commencee = false,
+  bool passee = false,
 }) => <String, Object?>{
   'id': id,
   'type': type,
@@ -36,7 +38,10 @@ Map<String, Object?> ligneCalendrier({
   'publie': publie,
   'publie_le': publie ? '2026-11-01T08:00:00+00:00' : null,
   'eleves_vises': elevesVises,
-  'seances_deja_prevues': seancesDejaPrevues,
+  'seances_deja_prevues': 0,
+  'seances_neutralisees': seancesNeutralisees,
+  'commencee': commencee,
+  'passee': passee,
 };
 
 /// Le calendrier de l'ecole : une fermeture publiee qui vise 5 eleves et a
@@ -52,7 +57,7 @@ List<Object?> calendrierServeur() => <Object?>[
     au: '2027-05-25',
     publie: true,
     elevesVises: 5,
-    seancesDejaPrevues: 4,
+    seancesNeutralisees: 4,
   ),
   ligneCalendrier(
     id: 'c2',
@@ -212,6 +217,7 @@ Map<String, Object?> fileServeur({bool vide = false}) => <String, Object?>{
             'mois_accordes': 2,
           },
         ],
+  'regle': <String, Object?>{'exception_mois_max': 3},
   'recentes': vide
       ? <Object?>[]
       : <Object?>[
@@ -227,6 +233,23 @@ Map<String, Object?> fileServeur({bool vide = false}) => <String, Object?>{
             'motif_decision': null,
             'decidee_par_nom': 'Direction Rewayah',
             'decidee_le': '2026-11-10T08:00:00+00:00',
+            'terminable': true,
+          },
+          <String, Object?>{
+            'id': 'r2',
+            'eleve_id': 'eleve-yasmine',
+            'eleve_nom': 'Yasmine Haddad',
+            'type': 'exception',
+            'debut': '2026-10-01',
+            'fin': '2026-10-08',
+            'statut': 'acceptee',
+            'motif': 'Interruption accordée',
+            'motif_decision': null,
+            'decidee_par_nom': 'Direction Rewayah',
+            'decidee_le': '2026-10-01T08:00:00+00:00',
+            'fin_initiale': '2026-10-31',
+            'terminee_par_nom': 'Direction Rewayah',
+            'terminable': false,
           },
         ],
 };
@@ -257,6 +280,7 @@ class FausPauses implements PortPauses {
   final List<(String, DateTime)> demandes = <(String, DateTime)>[];
   final List<String> annulees = <String>[];
   final List<(String, bool, String?)> decisions = <(String, bool, String?)>[];
+  final List<(String, DateTime)> terminees = <(String, DateTime)>[];
   final List<(String, DateTime, String)> exceptions =
       <(String, DateTime, String)>[];
   final List<String> lues = <String>[];
@@ -318,6 +342,12 @@ class FausPauses implements PortPauses {
   }) async {
     if (refusDecision != null) throw refusDecision!;
     exceptions.add((eleveId, fin, motif));
+  }
+
+  @override
+  Future<void> terminerException(String pauseId, DateTime fin) async {
+    if (refusDecision != null) throw refusDecision!;
+    terminees.add((pauseId, fin));
   }
 
   @override

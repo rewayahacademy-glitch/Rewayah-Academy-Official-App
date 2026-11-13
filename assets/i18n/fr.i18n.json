@@ -15218,7 +15218,7 @@
     },
     "indisponible": "Le calendrier n'a pas pu être ouvert\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
     "dates": {
-      "intro": "Les dates de l'année, saisies par la direction chaque année. Seules les dates publiées agissent et sont lues par les familles, les élèves et les enseignants.",
+      "intro": "Les dates de l'année, saisies par la direction chaque année. Seules les dates publiées agissent ; elles seront affichées dans l'onglet Programme des élèves et des familles qu'elles concernent.",
       "ajouter": "Ajouter une date",
       "erreur": "Les dates n'ont pas pu être lues\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
       "videTitre": "Aucune date saisie",
@@ -15249,8 +15249,9 @@
       "unJour": "Le {jour}",
       "pour": "Pour\u00a0: {cible}",
       "elevesVises": "Élèves concernés\u00a0: {n}",
-      "seancesDejaPrevues": "Séances déjà prévues pendant ces jours\u00a0: {n}. Elles ne sont pas supprimées\u00a0: la direction décide de leur sort.",
+      "seancesNeutralisees": "Séances déjà prévues pendant ces jours\u00a0: {n}. Elles sont mises de côté, sans être supprimées, et rétablies si vous retirez la fermeture avant son début.",
       "aucuneSeance": "Aucune séance n'est encore prévue pendant ces jours.",
+      "commencee": "Cette fermeture a commencé\u00a0: elle ne peut plus être retirée ni raccourcie, seulement prolongée.",
       "feuille": {
         "titreAjout": "Ajouter une date",
         "titreModif": "Modifier la date",
@@ -15269,11 +15270,12 @@
       },
       "publication": {
         "titre": "Publier la fermeture",
-        "phrase": "Pendant ces jours, aucune nouvelle séance n'est créée et la date limite de l'étape de chaque élève concerné recule d'autant. Les séances déjà créées ne sont pas supprimées.",
+        "phrase": "Pendant ces jours, aucune nouvelle séance n'est créée et la date limite de l'étape de chaque élève concerné recule d'autant. Les séances déjà prévues ces jours-là sont mises de côté, sans être supprimées\u00a0; retirer la fermeture avant son début les rétablit. Une fois commencée, la fermeture ne peut plus être retirée ni raccourcie.",
         "confirmer": "Publier la fermeture"
       },
       "refus": {
         "fermetureTropLongue": "Cette fermeture est plus longue que le maximum permis (Ramadan\u00a0: 20 jours, Aïd al-Adha\u00a0: 10 jours). Raccourcissez-la.",
+        "fermetureCommencee": "Cette fermeture a déjà commencé ou est passée\u00a0: elle ne peut plus être retirée, raccourcie ni déplacée. Vous pouvez seulement la prolonger.",
         "datesInvalides": "Le dernier jour doit venir après le premier, à moins d'un an.",
         "porteeInvalide": "Choisissez la tranche d'âge ou la classe visée.",
         "evenementInvalide": "Le titre manque ou le genre de date est illisible. Vérifiez-les, puis réessayez.",
@@ -15319,13 +15321,24 @@
       "exceptionEleve": "Élève\u00a0: {nom}",
       "exceptionChanger": "Choisir un autre élève",
       "exceptionMotif": "Motif",
+      "exceptionDuree": "Elle dure {mois} mois au plus\u00a0; au-delà, vous accordez une nouvelle pause.",
+      "exceptionMotifAide": "Un mot suffit (maladie, interruption). Aucun détail de santé.",
       "exceptionFin": "Dernier jour de la pause",
       "exceptionEnregistrer": "Accorder la pause",
+      "terminerAction": "Terminer la pause",
+      "terminerTitre": "Terminer la pause d'exception",
+      "terminerPhrase": "L'élève reprend les cours après le dernier jour choisi. La fin d'origine et votre geste sont gardés\u00a0; les jours déjà passés restent comptés dans la date limite.",
+      "terminerChamp": "Dernier jour de la pause",
+      "terminerEnvoyer": "Terminer la pause",
+      "finInitiale": "Fin d'origine\u00a0: {date}",
+      "termineePar": "Terminée plus tôt par {nom}",
       "refus": {
         "motifRequis": "Un motif d'au moins trois lettres est demandé.",
         "dejaDecidee": "Cette demande a déjà reçu une réponse. Rechargez la liste.",
         "debutPasse": "Le mois a déjà commencé\u00a0: cette pause ne peut plus être acceptée. Vous pouvez la refuser.",
         "datesInvalides": "Le dernier jour doit être aujourd'hui ou après, à moins d'un an.",
+        "exceptionTropLongue": "Une pause d'exception dure {mois} mois au plus. Raccourcissez-la\u00a0; vous pourrez en accorder une nouvelle ensuite.",
+        "nonTerminable": "Cette pause est déjà terminée ou n'est pas une pause d'exception.",
         "eleveIntrouvable": "Cet élève est introuvable.",
         "nonAutorise": "Seule la direction peut décider d'une pause.",
         "inconnu": "La décision n'est pas confirmée\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant."
@@ -15391,7 +15404,7 @@
       },
       "dejaDemandee": "Ce mois est déjà demandé ou accepté.",
       "moisInvalide": "Ce mois n'est pas lisible. Choisissez un mois dans la liste.",
-      "nonAnnulable": "Cette pause a déjà commencé ou a déjà reçu sa réponse\u00a0: elle ne peut plus être annulée.",
+      "nonAnnulable": "Cette pause ne peut plus être annulée\u00a0: elle a déjà commencé, ou elle est déjà refusée ou annulée.",
       "nonAutorise": "Vous ne pouvez pas demander de pause depuis ce compte.",
       "inconnu": "La demande n'est pas confirmée\u00a0: il est possible qu'elle ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant."
     }

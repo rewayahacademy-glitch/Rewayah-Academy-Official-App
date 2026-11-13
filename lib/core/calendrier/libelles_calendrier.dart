@@ -63,6 +63,7 @@ String messageRefusCalendrier(MotifRefusCalendrier motif) {
   final r = t.calendrier.dates.refus;
   return switch (motif) {
     MotifRefusCalendrier.fermetureTropLongue => r.fermetureTropLongue,
+    MotifRefusCalendrier.fermetureCommencee => r.fermetureCommencee,
     MotifRefusCalendrier.datesInvalides => r.datesInvalides,
     MotifRefusCalendrier.porteeInvalide => r.porteeInvalide,
     MotifRefusCalendrier.evenementInvalide => r.evenementInvalide,
@@ -73,13 +74,16 @@ String messageRefusCalendrier(MotifRefusCalendrier motif) {
 }
 
 /// Le refus d'une decision de la direction sur une pause.
-String messageRefusDecisionPause(MotifRefusPause motif) {
+String messageRefusDecisionPause(MotifRefusPause motif, {int? moisMax}) {
   final r = t.calendrier.pauses.refus;
   return switch (motif) {
     MotifRefusPause.motifRequis => r.motifRequis,
     MotifRefusPause.dejaDecidee => r.dejaDecidee,
     MotifRefusPause.debutPasse => r.debutPasse,
     MotifRefusPause.datesInvalides => r.datesInvalides,
+    MotifRefusPause.exceptionTropLongue =>
+      moisMax == null ? r.datesInvalides : r.exceptionTropLongue(mois: moisMax),
+    MotifRefusPause.nonTerminable => r.nonTerminable,
     MotifRefusPause.eleveIntrouvable => r.eleveIntrouvable,
     MotifRefusPause.nonAutorise => r.nonAutorise,
     _ => r.inconnu,

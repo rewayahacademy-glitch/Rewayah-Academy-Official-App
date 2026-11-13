@@ -11,10 +11,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/admin/admin_domaine.dart';
+import 'package:rewayah_academy/core/calendrier/libelles_calendrier.dart';
 import 'package:rewayah_academy/core/calendrier/port_calendrier.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/widgets/champ_date.dart'
+    show horlogeFormulairesProvider;
 import 'package:rewayah_academy/core/widgets/offline_banner.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 
@@ -29,6 +32,7 @@ Future<void> _monter(
   bool horsLigne = false,
   bool sansPort = false,
   Size taille = const Size(1440, 1400),
+  List<Override> extra = const <Override>[],
 }) async {
   await monterAdminDemo(
     tester,
@@ -44,6 +48,7 @@ Future<void> _monter(
       horsLigneProvider.overrideWith(
         (Ref ref) => Stream<bool>.value(horsLigne),
       ),
+      ...extra,
     ],
   );
 }
@@ -62,7 +67,12 @@ Future<void> _toucher(WidgetTester tester, Finder cible) async {
 }
 
 Future<void> _versPauses(WidgetTester tester) async {
-  await tester.tap(find.text(t.calendrier.sections.pauses));
+  // Au telephone, le selecteur de sections se replie en menu : on l'ouvre d'abord.
+  if (find.text(t.calendrier.sections.pauses).evaluate().isEmpty) {
+    await tester.tap(find.text(t.calendrier.sections.dates));
+    await _pause(tester);
+  }
+  await tester.tap(find.text(t.calendrier.sections.pauses).last);
   await _pause(tester);
 }
 
@@ -100,7 +110,7 @@ void main() {
     });
 
     testWidgets(
-      'une fermeture dit les eleves concernes et que ses seances ne sont pas supprimees',
+      'une fermeture dit les eleves concernes et que ses seances sont mises de cote, sans etre supprimees',
       (WidgetTester tester) async {
         await _monter(tester);
         expect(
@@ -108,14 +118,89 @@ void main() {
           findsOneWidget,
         );
         expect(
-          find.textContaining(t.calendrier.dates.seancesDejaPrevues(n: 4)),
+          find.textContaining(t.calendrier.dates.seancesNeutralisees(n: 4)),
           findsOneWidget,
         );
-        expect(find.textContaining('ne sont pas supprimées'), findsOneWidget);
+        expect(find.textContaining('sans être supprimées'), findsOneWidget);
+        // Le texte qui promettait un geste inexistant a disparu.
+        expect(find.textContaining('décide de leur sort'), findsNothing);
         // Une rencontre n'a ni eleves vises ni seances.
         expect(find.textContaining('Élèves concernés'), findsOneWidget);
       },
     );
+
+    testWidgets(
+      'une fermeture commencee ne se retire plus : la phrase le dit',
+      (WidgetTester tester) async {
+        await _monter(
+          tester,
+          calendrier: FauxCalendrierDirection(
+            lignes: () => <Object?>[
+              ligneCalendrier(
+                id: 'f1',
+                type: 'fermeture',
+                categorie: 'autre',
+                titre: 'Fermeture en cours',
+                du: '2026-11-10',
+                au: '2026-11-20',
+                publie: true,
+                elevesVises: 3,
+                seancesNeutralisees: 0,
+                commencee: true,
+              ),
+              ligneCalendrier(
+                id: 'f2',
+                type: 'fermeture',
+                categorie: 'autre',
+                titre: 'Fermeture a venir',
+                du: '2027-01-10',
+                au: '2027-01-20',
+                publie: true,
+                elevesVises: 3,
+                seancesNeutralisees: 2,
+              ),
+            ],
+          ),
+        );
+        await tester.tap(find.text('Fermeture en cours'));
+        await _pause(tester);
+        expect(find.text(t.calendrier.dates.commencee), findsOneWidget);
+        expect(
+          find.byKey(const ValueKey<String>('calendrier-retirer')),
+          findsNothing,
+        );
+      },
+    );
+
+    testWidgets('une fermeture publiee a venir se retire avant son debut', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        calendrier: FauxCalendrierDirection(
+          lignes: () => <Object?>[
+            ligneCalendrier(
+              id: 'f2',
+              type: 'fermeture',
+              categorie: 'autre',
+              titre: 'Fermeture a venir',
+              du: '2027-01-10',
+              au: '2027-01-20',
+              publie: true,
+              elevesVises: 3,
+              seancesNeutralisees: 2,
+            ),
+          ],
+        ),
+      );
+      await tester.tap(find.text('Fermeture a venir'));
+      await _pause(tester);
+      expect(find.text(t.calendrier.dates.commencee), findsNothing);
+      expect(
+        find.byKey(const ValueKey<String>('calendrier-retirer')),
+        findsOneWidget,
+      );
+    });
 
     testWidgets('un seul bouton plein', (WidgetTester tester) async {
       await _monter(tester);
@@ -168,7 +253,7 @@ void main() {
             du: '2027-07-01',
             au: '2027-07-05',
             elevesVises: 3,
-            seancesDejaPrevues: 0,
+            seancesNeutralisees: 0,
           ),
         ],
       );
@@ -379,7 +464,8 @@ void main() {
       await _versPauses(tester);
       expect(find.text(t.calendrier.pauses.aTraiter), findsOneWidget);
       expect(find.text('Mariam Benali'), findsOneWidget);
-      expect(find.text('Yasmine Haddad'), findsOneWidget);
+      // Une demande a traiter et une decision recente portent ce nom.
+      expect(find.text('Yasmine Haddad'), findsNWidgets(2));
       expect(find.text(t.calendrier.pauses.enRetard), findsOneWidget);
       expect(
         find.textContaining(
@@ -399,7 +485,7 @@ void main() {
         find.textContaining(
           t.calendrier.pauses.accordeePar(nom: 'Direction Rewayah'),
         ),
-        findsOneWidget,
+        findsNWidgets(2),
       );
       expect(find.textContaining('Maladie soudaine'), findsOneWidget);
       verifierUnSeulBoutonPlein(tester, maximum: 0);
@@ -476,6 +562,11 @@ void main() {
       await tester.tap(find.byKey(const ValueKey<String>('pause-exception')));
       await _pause(tester);
       expect(find.text(t.calendrier.pauses.exceptionPhrase), findsOneWidget);
+      // La duree au plus vient du serveur (3 mois), jamais ecrite en dur.
+      expect(
+        find.text(t.calendrier.pauses.exceptionDuree(mois: 3)),
+        findsOneWidget,
+      );
       await tester.enterText(find.byType(TextField).first, 'Om');
       await _pause(tester);
       expect(port.recherches, <String>['Om']);
@@ -485,6 +576,8 @@ void main() {
         find.text(t.calendrier.pauses.exceptionEleve(nom: 'Omar Saidi')),
         findsOneWidget,
       );
+      // L'aide du motif : un mot suffit, aucun detail de sante.
+      expect(find.text(t.calendrier.pauses.exceptionMotifAide), findsOneWidget);
       await tester.enterText(find.byType(TextField).first, 'Maladie soudaine');
       final Finder champ = find.byKey(const ValueKey<String>('champ-date'));
       await tester.ensureVisible(champ);
@@ -501,6 +594,91 @@ void main() {
       expect(port.exceptions.length, 1);
       expect(port.exceptions.single.$1, 'eleve-omar');
       expect(port.exceptions.single.$3, 'Maladie soudaine');
+    });
+
+    testWidgets(
+      'les decisions recentes disent la fin d origine et qui a termine',
+      (WidgetTester tester) async {
+        await _monter(tester);
+        await _versPauses(tester);
+        expect(
+          find.textContaining(
+            t.calendrier.pauses.finInitiale(
+              date: jourEnMots(DateTime(2026, 10, 31)),
+            ),
+          ),
+          findsOneWidget,
+        );
+        expect(
+          find.textContaining(
+            t.calendrier.pauses.termineePar(nom: 'Direction Rewayah'),
+          ),
+          findsOneWidget,
+        );
+        // Seule la pause d'exception en cours se termine : une seule ligne le propose.
+        expect(find.text(t.calendrier.pauses.terminerAction), findsNothing);
+        expect(
+          find.textContaining(t.calendrier.pauses.terminerAction),
+          findsOneWidget,
+        );
+      },
+    );
+
+    testWidgets(
+      'terminer une pause d exception : le dernier jour part au serveur',
+      (WidgetTester tester) async {
+        final FausPauses port = FausPauses();
+        await _monter(
+          tester,
+          pauses: port,
+          extra: <Override>[
+            horlogeFormulairesProvider.overrideWithValue(
+              () => DateTime(2026, 11, 12),
+            ),
+          ],
+        );
+        await _versPauses(tester);
+        await tester.tap(find.text('Omar Saidi'));
+        await _pause(tester);
+        expect(find.text(t.calendrier.pauses.terminerPhrase), findsOneWidget);
+        final Finder champ = find.byKey(const ValueKey<String>('champ-date'));
+        await tester.ensureVisible(champ);
+        await tester.tap(champ);
+        await _pause(tester);
+        await tester.tap(find.byType(TextButton).last);
+        await _pause(tester);
+        await _toucher(
+          tester,
+          find.byKey(const ValueKey<String>('pause-terminer-envoyer')),
+        );
+        await _pause(tester);
+        expect(port.terminees.length, 1);
+        expect(port.terminees.single.$1, 'r1');
+        expect(
+          port.terminees.single.$2.isBefore(DateTime(2026, 11, 20)),
+          isTrue,
+        );
+      },
+    );
+
+    testWidgets('le serveur refuse : la duree permise se dit avec son nombre', (
+      WidgetTester tester,
+    ) async {
+      expect(
+        messageRefusDecisionPause(
+          MotifRefusPause.exceptionTropLongue,
+          moisMax: 3,
+        ),
+        t.calendrier.pauses.refus.exceptionTropLongue(mois: 3),
+      );
+      expect(
+        messageRefusDecisionPause(MotifRefusPause.nonTerminable),
+        t.calendrier.pauses.refus.nonTerminable,
+      );
+      expect(
+        messageRefusCalendrier(MotifRefusCalendrier.fermetureCommencee),
+        t.calendrier.dates.refus.fermetureCommencee,
+      );
     });
 
     testWidgets('chargement : un squelette, puis la file', (

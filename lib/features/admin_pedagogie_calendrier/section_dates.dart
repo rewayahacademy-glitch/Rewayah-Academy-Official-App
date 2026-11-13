@@ -101,9 +101,9 @@ class _LigneDate extends StatelessWidget {
       t.calendrier.dates.pour(cible: libelleCible(e)),
       if (e.type == TypeEvenement.fermeture && e.elevesVises != null)
         t.calendrier.dates.elevesVises(n: e.elevesVises!),
-      if (e.type == TypeEvenement.fermeture && e.seancesDejaPrevues != null)
-        e.seancesDejaPrevues! > 0
-            ? t.calendrier.dates.seancesDejaPrevues(n: e.seancesDejaPrevues!)
+      if (e.type == TypeEvenement.fermeture && e.seancesNeutralisees != null)
+        e.seancesNeutralisees! > 0
+            ? t.calendrier.dates.seancesNeutralisees(n: e.seancesNeutralisees!)
             : t.calendrier.dates.aucuneSeance,
     ];
     return SettingRow(

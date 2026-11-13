@@ -101,16 +101,22 @@ class _FeuilleDetailEtat extends ConsumerState<_FeuilleDetail> {
             style: textes.bodyMedium,
           ),
         ],
-        if (fermeture && e.seancesDejaPrevues != null) ...<Widget>[
+        if (fermeture && e.seancesNeutralisees != null) ...<Widget>[
           Ecart.vSm,
           Text(
-            e.seancesDejaPrevues! > 0
-                ? t.calendrier.dates.seancesDejaPrevues(
-                    n: e.seancesDejaPrevues!,
+            e.seancesNeutralisees! > 0
+                ? t.calendrier.dates.seancesNeutralisees(
+                    n: e.seancesNeutralisees!,
                   )
                 : t.calendrier.dates.aucuneSeance,
             style: textes.bodyMedium,
           ),
+        ],
+        // Une fermeture commencee ne se retire plus : la phrase le dit, le bouton
+        // qui ne peut pas aboutir n'est pas rendu.
+        if (fermeture && e.publie && e.commencee) ...<Widget>[
+          Ecart.vSm,
+          Text(t.calendrier.dates.commencee, style: textes.bodyMedium),
         ],
         // Une consequence se dit avant le geste (K-58).
         if (fermeture && !e.publie) ...<Widget>[
@@ -125,7 +131,9 @@ class _FeuilleDetailEtat extends ConsumerState<_FeuilleDetail> {
           ),
         ],
         Ecart.vLg,
-        if (e.publie)
+        if (e.publie && fermeture && e.commencee)
+          const SizedBox.shrink()
+        else if (e.publie)
           ActionPrincipale(
             key: const ValueKey<String>('calendrier-retirer'),
             libelle: t.calendrier.dates.retirer,

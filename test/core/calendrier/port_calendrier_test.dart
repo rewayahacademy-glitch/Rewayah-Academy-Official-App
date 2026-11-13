@@ -22,7 +22,8 @@ void main() {
       expect(f.jours, 10);
       expect(f.publie, isTrue);
       expect(f.elevesVises, 5);
-      expect(f.seancesDejaPrevues, 4);
+      expect(f.seancesNeutralisees, 4);
+      expect(f.commencee, isFalse);
       expect(l[1].publie, isFalse);
       expect(l[1].elevesVises, isNull);
       expect(l[2].portee, PorteeEvenement.tranche);
@@ -130,9 +131,16 @@ void main() {
       expect(f.aTraiter.first.moisAccordes, 2);
       expect(f.aTraiter.first.enRetard, isFalse);
       expect(f.aTraiter[1].enRetard, isTrue);
-      expect(f.recentes.single.type, TypePause.exception);
-      expect(f.recentes.single.decideeParNom, 'Direction Rewayah');
-      expect(f.recentes.single.motif, 'Maladie soudaine');
+      expect(f.exceptionMoisMax, 3);
+      expect(f.recentes.length, 2);
+      expect(f.recentes.first.type, TypePause.exception);
+      expect(f.recentes.first.decideeParNom, 'Direction Rewayah');
+      expect(f.recentes.first.motif, 'Maladie soudaine');
+      expect(f.recentes.first.terminable, isTrue);
+      // Une pause deja terminee plus tot garde sa fin d'origine et son auteur.
+      expect(f.recentes[1].terminable, isFalse);
+      expect(f.recentes[1].finInitiale, DateTime(2026, 10, 31));
+      expect(f.recentes[1].termineeParNom, 'Direction Rewayah');
     });
 
     test('une reponse vide ou illisible', () {
@@ -148,6 +156,10 @@ void main() {
       expect(
         m('calendrier_fermeture_trop_longue', '22023'),
         MotifRefusCalendrier.fermetureTropLongue,
+      );
+      expect(
+        m('calendrier_fermeture_commencee', '22023'),
+        MotifRefusCalendrier.fermetureCommencee,
       );
       expect(
         m('calendrier_dates_invalides'),
@@ -183,6 +195,11 @@ void main() {
       expect(m('pause_deja_decidee'), MotifRefusPause.dejaDecidee);
       expect(m('pause_debut_passe'), MotifRefusPause.debutPasse);
       expect(m('pause_dates_invalides'), MotifRefusPause.datesInvalides);
+      expect(
+        m('pause_exception_trop_longue'),
+        MotifRefusPause.exceptionTropLongue,
+      );
+      expect(m('pause_non_terminable'), MotifRefusPause.nonTerminable);
       expect(m('pause_eleve_introuvable'), MotifRefusPause.eleveIntrouvable);
       expect(m('pause refusee', '42501'), MotifRefusPause.nonAutorise);
       expect(m('autre chose'), MotifRefusPause.inconnu);
