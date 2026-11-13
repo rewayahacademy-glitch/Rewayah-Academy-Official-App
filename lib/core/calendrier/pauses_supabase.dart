@@ -16,7 +16,10 @@ class PausesSupabase implements PortPauses {
 
   final SupabaseClient _client;
 
-  Future<Object?> _appeler(String fonction, Map<String, dynamic>? params) async {
+  Future<Object?> _appeler(
+    String fonction,
+    Map<String, dynamic>? params,
+  ) async {
     try {
       return await _client.rpc<Object?>(fonction, params: params);
     } on PostgrestException catch (e) {
@@ -82,9 +85,10 @@ class PausesSupabase implements PortPauses {
 
   @override
   Future<List<EleveTrouve>> rechercherEleves(String recherche) async {
-    final Object? brut = await _appeler('pauses_eleves_recherche', <String, dynamic>{
-      'p_q': recherche,
-    });
+    final Object? brut = await _appeler(
+      'pauses_eleves_recherche',
+      <String, dynamic>{'p_q': recherche},
+    );
     return <EleveTrouve>[
       for (final Object? l in brut is List ? brut : const <Object?>[])
         if (EleveTrouve.depuisJson(l) case final EleveTrouve e) e,

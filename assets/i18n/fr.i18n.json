@@ -7860,6 +7860,10 @@
     "evenements": {
       "bienvenueEquipe": "Bienvenue dans l'équipe. Il vous reste à configurer votre espace.",
       "retenuEntretien": "Vous êtes retenu pour un entretien. Faisons connaissance : choisissez votre horaire dans l'application.",
+      "pauseRepondueAcceptee": "La pause d'un mois {dePrenom} est acceptée pour {mois}. Sa date limite recule d'autant. Sa place est gardée.",
+      "pauseRepondueAccepteeAdulte": "Votre pause d'un mois est acceptée pour {mois}. Votre date limite recule d'autant. Votre place est gardée.",
+      "pauseRepondueRefusee": "La pause d'un mois {dePrenom} pour {mois} n'est pas acceptée. Le motif est dans l'application.",
+      "pauseRepondueRefuseeAdulte": "Votre pause d'un mois pour {mois} n'est pas acceptée. Le motif est dans l'application.",
       "demandeRecue": "Une nouvelle demande de créneau a été reçue.",
       "demandePresentation": "Une demande de présentation standard a été reçue.",
       "classeValidee": "La classe est prête et attend son enseignant.",
@@ -15152,5 +15156,192 @@
     "attenteEntretien": "Votre étape sera fixée après l'entretien de lecture avec la direction.",
     "attenteEntretienTu": "Ton étape sera fixée après l'entretien de lecture avec la direction.",
     "attenteEntretienPour": "L'étape de {prenom} sera fixée après l'entretien de lecture avec la direction."
+  },
+  "calendrier": {
+    "titre": "Calendrier",
+    "sections": {
+      "libelle": "Sections du calendrier",
+      "dates": "Dates de l'école",
+      "pauses": "Pauses"
+    },
+    "indisponible": "Le calendrier n'a pas pu être ouvert\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
+    "dates": {
+      "intro": "Les dates de l'année, saisies par la direction chaque année. Seules les dates publiées agissent et sont lues par les familles, les élèves et les enseignants.",
+      "ajouter": "Ajouter une date",
+      "erreur": "Les dates n'ont pas pu être lues\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
+      "videTitre": "Aucune date saisie",
+      "videDetail": "Ajoutez les fermetures de l'année, les rencontres de récitation et les dates d'évaluation.",
+      "type": {
+        "fermeture": "Fermeture",
+        "rencontre": "Rencontre de récitation",
+        "evaluation": "Évaluation",
+        "autre": "Autre date"
+      },
+      "categorie": {
+        "ramadan": "Ramadan, 20 jours au plus",
+        "aidAlAdha": "Aïd al-Adha, 10 jours au plus",
+        "autre": "Autre fermeture"
+      },
+      "categorieAide": "Ramadan\u00a0: du 20 Ramadan au 7 Shawwal inclus. Aïd al-Adha\u00a0: du 9 au 18 Dhu al-Hijja inclus.",
+      "portee": {
+        "ecole": "Toute l'école",
+        "tranche": "Une tranche d'âge",
+        "classe": "Une classe"
+      },
+      "publiee": "Publiée",
+      "nonPubliee": "Non publiée",
+      "publier": "Publier",
+      "retirer": "Retirer de la publication",
+      "modifier": "Modifier",
+      "periode": "Du {du} au {au}",
+      "unJour": "Le {jour}",
+      "pour": "Pour\u00a0: {cible}",
+      "elevesVises": "Élèves concernés\u00a0: {n}",
+      "seancesDejaPrevues": "Séances déjà prévues pendant ces jours\u00a0: {n}. Elles ne sont pas supprimées\u00a0: la direction décide de leur sort.",
+      "aucuneSeance": "Aucune séance n'est encore prévue pendant ces jours.",
+      "feuille": {
+        "titreAjout": "Ajouter une date",
+        "titreModif": "Modifier la date",
+        "champType": "Genre de date",
+        "champCategorie": "Quelle fermeture",
+        "champTitre": "Titre",
+        "aideTitre": "Le titre que les familles liront.",
+        "champPortee": "À qui elle s'adresse",
+        "champTranche": "Tranche d'âge",
+        "champClasse": "Classe",
+        "champDu": "Premier jour",
+        "champAu": "Dernier jour",
+        "aideDates": "Les dates sont celles du calendrier grégorien, saisies chaque année\u00a0: l'application ne calcule pas le calendrier lunaire.",
+        "enregistrer": "Enregistrer",
+        "aucuneClasse": "Aucune classe à choisir pour le moment."
+      },
+      "publication": {
+        "titre": "Publier la fermeture",
+        "phrase": "Pendant ces jours, aucune nouvelle séance n'est créée et la date limite de l'étape de chaque élève concerné recule d'autant. Les séances déjà créées ne sont pas supprimées.",
+        "confirmer": "Publier la fermeture"
+      },
+      "refus": {
+        "fermetureTropLongue": "Cette fermeture est plus longue que le maximum permis (Ramadan\u00a0: 20 jours, Aïd al-Adha\u00a0: 10 jours). Raccourcissez-la.",
+        "datesInvalides": "Le dernier jour doit venir après le premier, à moins d'un an.",
+        "porteeInvalide": "Choisissez la tranche d'âge ou la classe visée.",
+        "evenementInvalide": "Le titre manque ou le genre de date est illisible. Vérifiez-les, puis réessayez.",
+        "introuvable": "Cette date n'existe plus. Rechargez la liste.",
+        "nonAutorise": "Seule la direction peut modifier le calendrier.",
+        "inconnu": "L'enregistrement n'est pas confirmé\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant."
+      }
+    },
+    "pauses": {
+      "aTraiter": "Demandes à traiter",
+      "aTraiterIntro": "Ces demandes dépassent le plafond de pauses d'une famille\u00a0: la direction décide. Les autres demandes sont acceptées tout de suite et n'apparaissent pas ici.",
+      "erreur": "Les pauses n'ont pas pu être lues\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
+      "videTitre": "Aucune demande en attente",
+      "videDetail": "Une demande au-delà du plafond apparaîtra ici.",
+      "ligneDescription": "Mois demandé\u00a0: {mois}. Mois déjà accordés\u00a0: {n}.",
+      "repondreAvant": "Répondre avant le {date}",
+      "enRetard": "Délai dépassé",
+      "accepter": "Accepter",
+      "refuser": "Refuser",
+      "refusTitre": "Répondre à la demande",
+      "refusPhrase": "Le motif est obligatoire pour refuser\u00a0; la famille le lit dans l'application.",
+      "refusMotif": "Motif",
+      "refusEnvoyer": "Refuser la pause",
+      "decisionsRecentes": "Décisions récentes",
+      "decisionsVide": "Aucune décision pour le moment.",
+      "statut": {
+        "demandee": "En attente",
+        "acceptee": "Acceptée",
+        "refusee": "Refusée",
+        "annulee": "Annulée"
+      },
+      "periode": "Du {du} au {au}",
+      "typeMois": "Pause d'un mois",
+      "typeException": "Pause d'exception",
+      "accordeePar": "Accordée par {nom}",
+      "motifLigne": "Motif\u00a0: {motif}",
+      "exceptionAction": "Accorder une pause d'exception",
+      "exceptionTitre": "Pause d'exception",
+      "exceptionPhrase": "Pour une maladie soudaine ou une interruption accordée. Elle commence aujourd'hui, sans préavis\u00a0; la date limite de l'étape recule de sa durée\u00a0; elle ne compte pas dans le plafond de la famille.",
+      "exceptionRecherche": "Chercher l'élève par son nom",
+      "exceptionRechercheAide": "Deux lettres au moins.",
+      "exceptionAucun": "Aucun élève trouvé.",
+      "exceptionEleve": "Élève\u00a0: {nom}",
+      "exceptionChanger": "Choisir un autre élève",
+      "exceptionMotif": "Motif",
+      "exceptionFin": "Dernier jour de la pause",
+      "exceptionEnregistrer": "Accorder la pause",
+      "refus": {
+        "motifRequis": "Un motif d'au moins trois lettres est demandé.",
+        "dejaDecidee": "Cette demande a déjà reçu une réponse. Rechargez la liste.",
+        "debutPasse": "Le mois a déjà commencé\u00a0: cette pause ne peut plus être acceptée. Vous pouvez la refuser.",
+        "datesInvalides": "Le dernier jour doit être aujourd'hui ou après, à moins d'un an.",
+        "eleveIntrouvable": "Cet élève est introuvable.",
+        "nonAutorise": "Seule la direction peut décider d'une pause.",
+        "inconnu": "La décision n'est pas confirmée\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant."
+      }
+    }
+  },
+  "pause": {
+    "titre": "Demander une pause d'un mois",
+    "entree": "Demander une pause d'un mois",
+    "sousTitre": "Pause {dePrenom}",
+    "indisponible": "Les pauses n'ont pas pu être ouvertes\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
+    "erreur": "Les pauses n'ont pas pu être lues\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
+    "regleTitre": "La règle",
+    "regle": {
+      "moisEntier": "Une pause dure un mois civil entier, du premier au dernier jour du mois.",
+      "preavis(plural, param=jours)": {
+        "one": "Vous la demandez au moins {jours} jour avant le début du mois.",
+        "other": "Vous la demandez au moins {jours} jours avant le début du mois."
+      },
+      "plafond(plural, param=delai)": {
+        "one": "Jusqu'à {mois} mois de pause sur {fenetre} mois. Au-delà, la direction décide et répond sous {delai} jour.",
+        "other": "Jusqu'à {mois} mois de pause sur {fenetre} mois. Au-delà, la direction décide et répond sous {delai} jours."
+      },
+      "placeGardee": "Pendant la pause, la place est gardée.",
+      "dateLimite": "La date limite de l'étape recule de la durée de la pause.",
+      "absence": "Une absence de quelques jours reste une absence\u00a0: on ne demande que des mois entiers."
+    },
+    "choisir": "Choisissez le mois",
+    "moisDansRegle": "Acceptée tout de suite",
+    "moisALaDirection(plural, param=delai)": {
+      "one": "La direction répond sous {delai} jour",
+      "other": "La direction répond sous {delai} jours"
+    },
+    "moisDejaDemande": "Déjà demandé",
+    "moisDejaAccepte": "Déjà accepté",
+    "aucunMois": "Aucun mois n'est proposé pour le moment.",
+    "choisirPourDemander": "Choisissez un mois pour demander la pause.",
+    "demander": "Demander la pause",
+    "reponse": {
+      "acceptee": "La pause de {mois} est acceptée. La place est gardée et la date limite de l'étape recule d'autant.",
+      "demandee(plural, param=delai)": {
+        "one": "Votre demande est transmise à la direction, qui répond sous {delai} jour.",
+        "other": "Votre demande est transmise à la direction, qui répond sous {delai} jours."
+      }
+    },
+    "demandesTitre": "Les pauses",
+    "demandesVide": "Aucune pause pour le moment.",
+    "statut": {
+      "demandee": "En attente",
+      "acceptee": "Acceptée",
+      "refusee": "Refusée",
+      "annulee": "Annulée"
+    },
+    "periode": "Du {du} au {au}",
+    "reponseAvant": "La direction répond avant le {date}.",
+    "reponseMotif": "Réponse de la direction\u00a0: {motif}",
+    "exceptionAccordee": "Pause accordée par la direction.",
+    "annuler": "Annuler la pause de {mois}",
+    "refus": {
+      "preavis(plural, param=jours)": {
+        "one": "Ce mois commence trop tôt\u00a0: une pause se demande au moins {jours} jour avant son début. Choisissez un mois plus lointain.",
+        "other": "Ce mois commence trop tôt\u00a0: une pause se demande au moins {jours} jours avant son début. Choisissez un mois plus lointain."
+      },
+      "dejaDemandee": "Ce mois est déjà demandé ou accepté.",
+      "moisInvalide": "Ce mois n'est pas lisible. Choisissez un mois dans la liste.",
+      "nonAnnulable": "Cette pause a déjà commencé ou a déjà reçu sa réponse\u00a0: elle ne peut plus être annulée.",
+      "nonAutorise": "Vous ne pouvez pas demander de pause depuis ce compte.",
+      "inconnu": "La demande n'est pas confirmée\u00a0: il est possible qu'elle ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant."
+    }
   }
 }

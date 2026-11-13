@@ -196,12 +196,12 @@ class EvenementCalendrier {
 }
 
 /// Lit la liste de `calendrier_ecole_liste` ; une ligne illisible est ecartee.
-List<EvenementCalendrier> evenementsDepuisJson(Object? brut) =>
-    <EvenementCalendrier>[
-      for (final Object? l in brut is List ? brut : const <Object?>[])
-        if (EvenementCalendrier.depuisJson(l) case final EvenementCalendrier e)
-          e,
-    ];
+List<EvenementCalendrier> evenementsDepuisJson(
+  Object? brut,
+) => <EvenementCalendrier>[
+  for (final Object? l in brut is List ? brut : const <Object?>[])
+    if (EvenementCalendrier.depuisJson(l) case final EvenementCalendrier e) e,
+];
 
 /// Pourquoi le serveur a refuse une saisie du calendrier.
 enum MotifRefusCalendrier {
@@ -245,7 +245,8 @@ MotifRefusCalendrier motifRefusCalendrier({
   required String? code,
   required String message,
 }) => switch (message) {
-  'calendrier_fermeture_trop_longue' => MotifRefusCalendrier.fermetureTropLongue,
+  'calendrier_fermeture_trop_longue' =>
+    MotifRefusCalendrier.fermetureTropLongue,
   'calendrier_dates_invalides' => MotifRefusCalendrier.datesInvalides,
   'calendrier_portee_invalide' => MotifRefusCalendrier.porteeInvalide,
   'calendrier_evenement_invalide' => MotifRefusCalendrier.evenementInvalide,
@@ -595,8 +596,7 @@ MotifRefusPause motifRefusPause({
   'pause_debut_passe' => MotifRefusPause.debutPasse,
   'pause_dates_invalides' => MotifRefusPause.datesInvalides,
   'pause_eleve_introuvable' => MotifRefusPause.eleveIntrouvable,
-  _ =>
-    code == '42501' ? MotifRefusPause.nonAutorise : MotifRefusPause.inconnu,
+  _ => code == '42501' ? MotifRefusPause.nonAutorise : MotifRefusPause.inconnu,
 };
 
 /// Ce que la famille obtient en demandant un mois.

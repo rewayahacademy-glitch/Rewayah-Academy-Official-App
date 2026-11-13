@@ -80,6 +80,10 @@ const Map<String, int> _domaines = <String, int>{
   'admin': 590,
   // RECH-1, RECH-2 : la surface de recherche, arabe des l'origine.
   'recherche': 55,
+  // CALENDRIER-ET-PAUSES (12/11/2026) : le calendrier de l'ecole et la pause
+  // d'un mois, arabes des l'origine (texte propose, a valider).
+  'calendrier': 90,
+  'pause': 35,
   // AR-SUIVI-FAMILLE.
   'suiviFamille': 40,
   // EA-HL-DOUBLE-1 etendu (17/10) : ce qui manque, hors ligne, par ecran.

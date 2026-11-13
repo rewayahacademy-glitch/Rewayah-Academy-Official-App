@@ -39,6 +39,9 @@ import 'core/alertes/alertes_supabase.dart';
 import 'core/alertes/port_alertes.dart';
 import 'core/auth/anti_robot.dart';
 import 'core/auth/anti_robot_supabase.dart';
+import 'core/calendrier/calendrier_supabase.dart';
+import 'core/calendrier/pauses_supabase.dart';
+import 'core/calendrier/port_calendrier.dart';
 import 'core/candidature/autres_competences_supabase.dart';
 import 'core/candidature/candidatures_direction_supabase.dart';
 import 'core/candidature/compte_rendu_entretien.dart';
@@ -322,6 +325,15 @@ List<Override> _surchargesAppReelle() => <Override>[
   // direction fixe (RPC lister_seances_reportees, fixer_nouvelle_date_seance).
   portSeancesReporteesProvider.overrideWithValue(
     SeancesReporteesSupabase(Supabase.instance.client),
+  ),
+  // CALENDRIER-ET-PAUSES (12/11/2026) : le calendrier de l'ecole saisi par la
+  // direction, et la pause d'un mois (RPC calendrier_ecole_*, pause_*,
+  // pauses_*, migration 20261123910000).
+  portCalendrierDirectionProvider.overrideWithValue(
+    CalendrierDirectionSupabase(Supabase.instance.client),
+  ),
+  portPausesProvider.overrideWithValue(
+    PausesSupabase(Supabase.instance.client),
   ),
   // V2-e (04/11/2026) : la coche fondateur du personnel, tenue par la
   // direction dans les Comptes (RPC fondateurs_personnel, poser_fondateur).

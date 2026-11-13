@@ -83,6 +83,10 @@ const Set<String> evenementsNotificationConnus = <String>{
   // SALLE-3-ACCUEIL (07/11/2026, migrations 20261119000000 et 20261119000100) :
   // la direction accueille un enseignant dans l'equipe.
   'bienvenue_equipe',
+  // CALENDRIER-ET-PAUSES (12/11/2026, migration 20261123911000) : la reponse de
+  // la direction a une demande de pause, au tuteur ou a l'adulte (jamais a un
+  // mineur).
+  'pause_repondue',
 };
 
 const Set<String> _destinationsAutorisees = <String>{

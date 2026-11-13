@@ -7,6 +7,7 @@
 // caches. Un evenement inconnu (version du serveur plus recente que celle de
 // l'application) a un titre de repli lisible : la page ne plante jamais.
 
+import '../../core/calendrier/libelles_calendrier.dart' show moisDepuisCle;
 import '../../core/capacites/notifications_supabase.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
@@ -61,6 +62,10 @@ NotificationContenu contenuNotificationPour(
     'bienvenue_equipe' => evenements.bienvenueEquipe,
     // NOTIF-RETENU : l'admission en salle 2, la suite est l'entretien.
     'retenu_entretien' => evenements.retenuEntretien,
+    // CALENDRIER-ET-PAUSES : la reponse de la direction a une demande de pause.
+    // Le prenom n'est donne que pour un enfant (le tuteur est destinataire) ;
+    // sans prenom, c'est l'adulte lui-meme.
+    'pause_repondue' => _pauseRepondue(params),
     // D1-ter (03/11/2026) : le prenom de l'eleve, jamais le message lui-meme.
     'message_academie_eleve' => switch ((
       portee,
@@ -299,4 +304,34 @@ String texteEntretien(
     'entretien_tenu' => n.tenu,
     _ => n.aReplanifier,
   };
+}
+
+/// La phrase d'une reponse a une demande de pause : acceptee ou refusee, pour un
+/// enfant (son prenom) ou pour l'adulte. Un mois illisible se dit sans mois
+/// (jamais devine).
+String _pauseRepondue(Map<String, dynamic> params) {
+  final evenements = t.notifications.evenements;
+  final bool acceptee = params['decision'] == 'acceptee';
+  final String prenom = '${params['prenom'] ?? ''}'.trim();
+  final String mois = moisDepuisCle(params['mois']) ?? '';
+  if (prenom.isEmpty) {
+    return acceptee
+        ? evenements.pauseRepondueAccepteeAdulte(mois: mois)
+        : evenements.pauseRepondueRefuseeAdulte(mois: mois);
+  }
+  return acceptee
+      ? evenements.pauseRepondueAcceptee(
+          dePrenom: deDevant(
+            prenom,
+            cle: 'notifications.evenements.pauseRepondueAcceptee',
+          ),
+          mois: mois,
+        )
+      : evenements.pauseRepondueRefusee(
+          dePrenom: deDevant(
+            prenom,
+            cle: 'notifications.evenements.pauseRepondueRefusee',
+          ),
+          mois: mois,
+        );
 }

@@ -122,6 +122,8 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$push1$fr push1 = Traductions$push1$fr.internal(_root);
 	late final Traductions$nouveautes$fr nouveautes = Traductions$nouveautes$fr.internal(_root);
 	late final Traductions$suiviPedagogique$fr suiviPedagogique = Traductions$suiviPedagogique$fr.internal(_root);
+	late final Traductions$calendrier$fr calendrier = Traductions$calendrier$fr.internal(_root);
+	late final Traductions$pause$fr pause = Traductions$pause$fr.internal(_root);
 }
 
 // Path: commun
@@ -4150,6 +4152,109 @@ class Traductions$suiviPedagogique$fr {
 
 	/// fr: 'L'étape de {prenom} sera fixée après l'entretien de lecture avec la direction.'
 	String attenteEntretienPour({required Object prenom}) => 'L\'étape de ${prenom} sera fixée après l\'entretien de lecture avec la direction.';
+}
+
+// Path: calendrier
+class Traductions$calendrier$fr {
+	Traductions$calendrier$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Calendrier'
+	String get titre => 'Calendrier';
+
+	late final Traductions$calendrier$sections$fr sections = Traductions$calendrier$sections$fr.internal(_root);
+
+	/// fr: 'Le calendrier n'a pas pu être ouvert : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
+	String get indisponible => 'Le calendrier n\'a pas pu être ouvert : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
+
+	late final Traductions$calendrier$dates$fr dates = Traductions$calendrier$dates$fr.internal(_root);
+	late final Traductions$calendrier$pauses$fr pauses = Traductions$calendrier$pauses$fr.internal(_root);
+}
+
+// Path: pause
+class Traductions$pause$fr {
+	Traductions$pause$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Demander une pause d'un mois'
+	String get titre => 'Demander une pause d\'un mois';
+
+	/// fr: 'Demander une pause d'un mois'
+	String get entree => 'Demander une pause d\'un mois';
+
+	/// fr: 'Pause {dePrenom}'
+	String sousTitre({required Object dePrenom}) => 'Pause ${dePrenom}';
+
+	/// fr: 'Les pauses n'ont pas pu être ouvertes : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
+	String get indisponible => 'Les pauses n\'ont pas pu être ouvertes : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
+
+	/// fr: 'Les pauses n'ont pas pu être lues : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
+	String get erreur => 'Les pauses n\'ont pas pu être lues : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
+
+	/// fr: 'La règle'
+	String get regleTitre => 'La règle';
+
+	late final Traductions$pause$regle$fr regle = Traductions$pause$regle$fr.internal(_root);
+
+	/// fr: 'Choisissez le mois'
+	String get choisir => 'Choisissez le mois';
+
+	/// fr: 'Acceptée tout de suite'
+	String get moisDansRegle => 'Acceptée tout de suite';
+
+	/// fr: '(one) {La direction répond sous {delai} jour} (other) {La direction répond sous {delai} jours}'
+	String moisALaDirection({required num delai}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(delai,
+		one: 'La direction répond sous ${delai} jour',
+		other: 'La direction répond sous ${delai} jours',
+	);
+
+	/// fr: 'Déjà demandé'
+	String get moisDejaDemande => 'Déjà demandé';
+
+	/// fr: 'Déjà accepté'
+	String get moisDejaAccepte => 'Déjà accepté';
+
+	/// fr: 'Aucun mois n'est proposé pour le moment.'
+	String get aucunMois => 'Aucun mois n\'est proposé pour le moment.';
+
+	/// fr: 'Choisissez un mois pour demander la pause.'
+	String get choisirPourDemander => 'Choisissez un mois pour demander la pause.';
+
+	/// fr: 'Demander la pause'
+	String get demander => 'Demander la pause';
+
+	late final Traductions$pause$reponse$fr reponse = Traductions$pause$reponse$fr.internal(_root);
+
+	/// fr: 'Les pauses'
+	String get demandesTitre => 'Les pauses';
+
+	/// fr: 'Aucune pause pour le moment.'
+	String get demandesVide => 'Aucune pause pour le moment.';
+
+	late final Traductions$pause$statut$fr statut = Traductions$pause$statut$fr.internal(_root);
+
+	/// fr: 'Du {du} au {au}'
+	String periode({required Object du, required Object au}) => 'Du ${du} au ${au}';
+
+	/// fr: 'La direction répond avant le {date}.'
+	String reponseAvant({required Object date}) => 'La direction répond avant le ${date}.';
+
+	/// fr: 'Réponse de la direction : {motif}'
+	String reponseMotif({required Object motif}) => 'Réponse de la direction : ${motif}';
+
+	/// fr: 'Pause accordée par la direction.'
+	String get exceptionAccordee => 'Pause accordée par la direction.';
+
+	/// fr: 'Annuler la pause de {mois}'
+	String annuler({required Object mois}) => 'Annuler la pause de ${mois}';
+
+	late final Traductions$pause$refus$fr refus = Traductions$pause$refus$fr.internal(_root);
 }
 
 // Path: commun.langue
@@ -14211,6 +14316,18 @@ class Traductions$notifications$evenements$fr {
 	/// fr: 'Vous êtes retenu pour un entretien. Faisons connaissance : choisissez votre horaire dans l'application.'
 	String get retenuEntretien => 'Vous êtes retenu pour un entretien. Faisons connaissance : choisissez votre horaire dans l\'application.';
 
+	/// fr: 'La pause d'un mois {dePrenom} est acceptée pour {mois}. Sa date limite recule d'autant. Sa place est gardée.'
+	String pauseRepondueAcceptee({required Object dePrenom, required Object mois}) => 'La pause d\'un mois ${dePrenom} est acceptée pour ${mois}. Sa date limite recule d\'autant. Sa place est gardée.';
+
+	/// fr: 'Votre pause d'un mois est acceptée pour {mois}. Votre date limite recule d'autant. Votre place est gardée.'
+	String pauseRepondueAccepteeAdulte({required Object mois}) => 'Votre pause d\'un mois est acceptée pour ${mois}. Votre date limite recule d\'autant. Votre place est gardée.';
+
+	/// fr: 'La pause d'un mois {dePrenom} pour {mois} n'est pas acceptée. Le motif est dans l'application.'
+	String pauseRepondueRefusee({required Object dePrenom, required Object mois}) => 'La pause d\'un mois ${dePrenom} pour ${mois} n\'est pas acceptée. Le motif est dans l\'application.';
+
+	/// fr: 'Votre pause d'un mois pour {mois} n'est pas acceptée. Le motif est dans l'application.'
+	String pauseRepondueRefuseeAdulte({required Object mois}) => 'Votre pause d\'un mois pour ${mois} n\'est pas acceptée. Le motif est dans l\'application.';
+
 	/// fr: 'Une nouvelle demande de créneau a été reçue.'
 	String get demandeRecue => 'Une nouvelle demande de créneau a été reçue.';
 
@@ -23705,6 +23822,304 @@ class Traductions$push1$reglages$fr {
 
 	/// fr: 'Le changement n'est pas encore confirmé : la connexion a peut-être été coupée. Réessayez dans un instant.'
 	String get changementNonConfirme => 'Le changement n\'est pas encore confirmé : la connexion a peut-être été coupée. Réessayez dans un instant.';
+}
+
+// Path: calendrier.sections
+class Traductions$calendrier$sections$fr {
+	Traductions$calendrier$sections$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Sections du calendrier'
+	String get libelle => 'Sections du calendrier';
+
+	/// fr: 'Dates de l'école'
+	String get dates => 'Dates de l\'école';
+
+	/// fr: 'Pauses'
+	String get pauses => 'Pauses';
+}
+
+// Path: calendrier.dates
+class Traductions$calendrier$dates$fr {
+	Traductions$calendrier$dates$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Les dates de l'année, saisies par la direction chaque année. Seules les dates publiées agissent et sont lues par les familles, les élèves et les enseignants.'
+	String get intro => 'Les dates de l\'année, saisies par la direction chaque année. Seules les dates publiées agissent et sont lues par les familles, les élèves et les enseignants.';
+
+	/// fr: 'Ajouter une date'
+	String get ajouter => 'Ajouter une date';
+
+	/// fr: 'Les dates n'ont pas pu être lues : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
+	String get erreur => 'Les dates n\'ont pas pu être lues : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
+
+	/// fr: 'Aucune date saisie'
+	String get videTitre => 'Aucune date saisie';
+
+	/// fr: 'Ajoutez les fermetures de l'année, les rencontres de récitation et les dates d'évaluation.'
+	String get videDetail => 'Ajoutez les fermetures de l\'année, les rencontres de récitation et les dates d\'évaluation.';
+
+	late final Traductions$calendrier$dates$type$fr type = Traductions$calendrier$dates$type$fr.internal(_root);
+	late final Traductions$calendrier$dates$categorie$fr categorie = Traductions$calendrier$dates$categorie$fr.internal(_root);
+
+	/// fr: 'Ramadan : du 20 Ramadan au 7 Shawwal inclus. Aïd al-Adha : du 9 au 18 Dhu al-Hijja inclus.'
+	String get categorieAide => 'Ramadan : du 20 Ramadan au 7 Shawwal inclus. Aïd al-Adha : du 9 au 18 Dhu al-Hijja inclus.';
+
+	late final Traductions$calendrier$dates$portee$fr portee = Traductions$calendrier$dates$portee$fr.internal(_root);
+
+	/// fr: 'Publiée'
+	String get publiee => 'Publiée';
+
+	/// fr: 'Non publiée'
+	String get nonPubliee => 'Non publiée';
+
+	/// fr: 'Publier'
+	String get publier => 'Publier';
+
+	/// fr: 'Retirer de la publication'
+	String get retirer => 'Retirer de la publication';
+
+	/// fr: 'Modifier'
+	String get modifier => 'Modifier';
+
+	/// fr: 'Du {du} au {au}'
+	String periode({required Object du, required Object au}) => 'Du ${du} au ${au}';
+
+	/// fr: 'Le {jour}'
+	String unJour({required Object jour}) => 'Le ${jour}';
+
+	/// fr: 'Pour : {cible}'
+	String pour({required Object cible}) => 'Pour : ${cible}';
+
+	/// fr: 'Élèves concernés : {n}'
+	String elevesVises({required Object n}) => 'Élèves concernés : ${n}';
+
+	/// fr: 'Séances déjà prévues pendant ces jours : {n}. Elles ne sont pas supprimées : la direction décide de leur sort.'
+	String seancesDejaPrevues({required Object n}) => 'Séances déjà prévues pendant ces jours : ${n}. Elles ne sont pas supprimées : la direction décide de leur sort.';
+
+	/// fr: 'Aucune séance n'est encore prévue pendant ces jours.'
+	String get aucuneSeance => 'Aucune séance n\'est encore prévue pendant ces jours.';
+
+	late final Traductions$calendrier$dates$feuille$fr feuille = Traductions$calendrier$dates$feuille$fr.internal(_root);
+	late final Traductions$calendrier$dates$publication$fr publication = Traductions$calendrier$dates$publication$fr.internal(_root);
+	late final Traductions$calendrier$dates$refus$fr refus = Traductions$calendrier$dates$refus$fr.internal(_root);
+}
+
+// Path: calendrier.pauses
+class Traductions$calendrier$pauses$fr {
+	Traductions$calendrier$pauses$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Demandes à traiter'
+	String get aTraiter => 'Demandes à traiter';
+
+	/// fr: 'Ces demandes dépassent le plafond de pauses d'une famille : la direction décide. Les autres demandes sont acceptées tout de suite et n'apparaissent pas ici.'
+	String get aTraiterIntro => 'Ces demandes dépassent le plafond de pauses d\'une famille : la direction décide. Les autres demandes sont acceptées tout de suite et n\'apparaissent pas ici.';
+
+	/// fr: 'Les pauses n'ont pas pu être lues : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
+	String get erreur => 'Les pauses n\'ont pas pu être lues : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
+
+	/// fr: 'Aucune demande en attente'
+	String get videTitre => 'Aucune demande en attente';
+
+	/// fr: 'Une demande au-delà du plafond apparaîtra ici.'
+	String get videDetail => 'Une demande au-delà du plafond apparaîtra ici.';
+
+	/// fr: 'Mois demandé : {mois}. Mois déjà accordés : {n}.'
+	String ligneDescription({required Object mois, required Object n}) => 'Mois demandé : ${mois}. Mois déjà accordés : ${n}.';
+
+	/// fr: 'Répondre avant le {date}'
+	String repondreAvant({required Object date}) => 'Répondre avant le ${date}';
+
+	/// fr: 'Délai dépassé'
+	String get enRetard => 'Délai dépassé';
+
+	/// fr: 'Accepter'
+	String get accepter => 'Accepter';
+
+	/// fr: 'Refuser'
+	String get refuser => 'Refuser';
+
+	/// fr: 'Répondre à la demande'
+	String get refusTitre => 'Répondre à la demande';
+
+	/// fr: 'Le motif est obligatoire pour refuser ; la famille le lit dans l'application.'
+	String get refusPhrase => 'Le motif est obligatoire pour refuser ; la famille le lit dans l\'application.';
+
+	/// fr: 'Motif'
+	String get refusMotif => 'Motif';
+
+	/// fr: 'Refuser la pause'
+	String get refusEnvoyer => 'Refuser la pause';
+
+	/// fr: 'Décisions récentes'
+	String get decisionsRecentes => 'Décisions récentes';
+
+	/// fr: 'Aucune décision pour le moment.'
+	String get decisionsVide => 'Aucune décision pour le moment.';
+
+	late final Traductions$calendrier$pauses$statut$fr statut = Traductions$calendrier$pauses$statut$fr.internal(_root);
+
+	/// fr: 'Du {du} au {au}'
+	String periode({required Object du, required Object au}) => 'Du ${du} au ${au}';
+
+	/// fr: 'Pause d'un mois'
+	String get typeMois => 'Pause d\'un mois';
+
+	/// fr: 'Pause d'exception'
+	String get typeException => 'Pause d\'exception';
+
+	/// fr: 'Accordée par {nom}'
+	String accordeePar({required Object nom}) => 'Accordée par ${nom}';
+
+	/// fr: 'Motif : {motif}'
+	String motifLigne({required Object motif}) => 'Motif : ${motif}';
+
+	/// fr: 'Accorder une pause d'exception'
+	String get exceptionAction => 'Accorder une pause d\'exception';
+
+	/// fr: 'Pause d'exception'
+	String get exceptionTitre => 'Pause d\'exception';
+
+	/// fr: 'Pour une maladie soudaine ou une interruption accordée. Elle commence aujourd'hui, sans préavis ; la date limite de l'étape recule de sa durée ; elle ne compte pas dans le plafond de la famille.'
+	String get exceptionPhrase => 'Pour une maladie soudaine ou une interruption accordée. Elle commence aujourd\'hui, sans préavis ; la date limite de l\'étape recule de sa durée ; elle ne compte pas dans le plafond de la famille.';
+
+	/// fr: 'Chercher l'élève par son nom'
+	String get exceptionRecherche => 'Chercher l\'élève par son nom';
+
+	/// fr: 'Deux lettres au moins.'
+	String get exceptionRechercheAide => 'Deux lettres au moins.';
+
+	/// fr: 'Aucun élève trouvé.'
+	String get exceptionAucun => 'Aucun élève trouvé.';
+
+	/// fr: 'Élève : {nom}'
+	String exceptionEleve({required Object nom}) => 'Élève : ${nom}';
+
+	/// fr: 'Choisir un autre élève'
+	String get exceptionChanger => 'Choisir un autre élève';
+
+	/// fr: 'Motif'
+	String get exceptionMotif => 'Motif';
+
+	/// fr: 'Dernier jour de la pause'
+	String get exceptionFin => 'Dernier jour de la pause';
+
+	/// fr: 'Accorder la pause'
+	String get exceptionEnregistrer => 'Accorder la pause';
+
+	late final Traductions$calendrier$pauses$refus$fr refus = Traductions$calendrier$pauses$refus$fr.internal(_root);
+}
+
+// Path: pause.regle
+class Traductions$pause$regle$fr {
+	Traductions$pause$regle$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Une pause dure un mois civil entier, du premier au dernier jour du mois.'
+	String get moisEntier => 'Une pause dure un mois civil entier, du premier au dernier jour du mois.';
+
+	/// fr: '(one) {Vous la demandez au moins {jours} jour avant le début du mois.} (other) {Vous la demandez au moins {jours} jours avant le début du mois.}'
+	String preavis({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours,
+		one: 'Vous la demandez au moins ${jours} jour avant le début du mois.',
+		other: 'Vous la demandez au moins ${jours} jours avant le début du mois.',
+	);
+
+	/// fr: '(one) {Jusqu'à {mois} mois de pause sur {fenetre} mois. Au-delà, la direction décide et répond sous {delai} jour.} (other) {Jusqu'à {mois} mois de pause sur {fenetre} mois. Au-delà, la direction décide et répond sous {delai} jours.}'
+	String plafond({required num delai, required Object mois, required Object fenetre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(delai,
+		one: 'Jusqu\'à ${mois} mois de pause sur ${fenetre} mois. Au-delà, la direction décide et répond sous ${delai} jour.',
+		other: 'Jusqu\'à ${mois} mois de pause sur ${fenetre} mois. Au-delà, la direction décide et répond sous ${delai} jours.',
+	);
+
+	/// fr: 'Pendant la pause, la place est gardée.'
+	String get placeGardee => 'Pendant la pause, la place est gardée.';
+
+	/// fr: 'La date limite de l'étape recule de la durée de la pause.'
+	String get dateLimite => 'La date limite de l\'étape recule de la durée de la pause.';
+
+	/// fr: 'Une absence de quelques jours reste une absence : on ne demande que des mois entiers.'
+	String get absence => 'Une absence de quelques jours reste une absence : on ne demande que des mois entiers.';
+}
+
+// Path: pause.reponse
+class Traductions$pause$reponse$fr {
+	Traductions$pause$reponse$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'La pause de {mois} est acceptée. La place est gardée et la date limite de l'étape recule d'autant.'
+	String acceptee({required Object mois}) => 'La pause de ${mois} est acceptée. La place est gardée et la date limite de l\'étape recule d\'autant.';
+
+	/// fr: '(one) {Votre demande est transmise à la direction, qui répond sous {delai} jour.} (other) {Votre demande est transmise à la direction, qui répond sous {delai} jours.}'
+	String demandee({required num delai}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(delai,
+		one: 'Votre demande est transmise à la direction, qui répond sous ${delai} jour.',
+		other: 'Votre demande est transmise à la direction, qui répond sous ${delai} jours.',
+	);
+}
+
+// Path: pause.statut
+class Traductions$pause$statut$fr {
+	Traductions$pause$statut$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'En attente'
+	String get demandee => 'En attente';
+
+	/// fr: 'Acceptée'
+	String get acceptee => 'Acceptée';
+
+	/// fr: 'Refusée'
+	String get refusee => 'Refusée';
+
+	/// fr: 'Annulée'
+	String get annulee => 'Annulée';
+}
+
+// Path: pause.refus
+class Traductions$pause$refus$fr {
+	Traductions$pause$refus$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '(one) {Ce mois commence trop tôt : une pause se demande au moins {jours} jour avant son début. Choisissez un mois plus lointain.} (other) {Ce mois commence trop tôt : une pause se demande au moins {jours} jours avant son début. Choisissez un mois plus lointain.}'
+	String preavis({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours,
+		one: 'Ce mois commence trop tôt : une pause se demande au moins ${jours} jour avant son début. Choisissez un mois plus lointain.',
+		other: 'Ce mois commence trop tôt : une pause se demande au moins ${jours} jours avant son début. Choisissez un mois plus lointain.',
+	);
+
+	/// fr: 'Ce mois est déjà demandé ou accepté.'
+	String get dejaDemandee => 'Ce mois est déjà demandé ou accepté.';
+
+	/// fr: 'Ce mois n'est pas lisible. Choisissez un mois dans la liste.'
+	String get moisInvalide => 'Ce mois n\'est pas lisible. Choisissez un mois dans la liste.';
+
+	/// fr: 'Cette pause a déjà commencé ou a déjà reçu sa réponse : elle ne peut plus être annulée.'
+	String get nonAnnulable => 'Cette pause a déjà commencé ou a déjà reçu sa réponse : elle ne peut plus être annulée.';
+
+	/// fr: 'Vous ne pouvez pas demander de pause depuis ce compte.'
+	String get nonAutorise => 'Vous ne pouvez pas demander de pause depuis ce compte.';
+
+	/// fr: 'La demande n'est pas confirmée : il est possible qu'elle ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
+	String get inconnu => 'La demande n\'est pas confirmée : il est possible qu\'elle ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
 }
 
 // Path: commun.etats.recharge1
@@ -41734,6 +42149,213 @@ class Traductions$candidatsFlux$file$reglage$fr {
 	String get echec => 'Réglage non confirmé. Cause probable : la connexion au serveur s\'est interrompue. Réessayez dans un instant.';
 }
 
+// Path: calendrier.dates.type
+class Traductions$calendrier$dates$type$fr {
+	Traductions$calendrier$dates$type$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Fermeture'
+	String get fermeture => 'Fermeture';
+
+	/// fr: 'Rencontre de récitation'
+	String get rencontre => 'Rencontre de récitation';
+
+	/// fr: 'Évaluation'
+	String get evaluation => 'Évaluation';
+
+	/// fr: 'Autre date'
+	String get autre => 'Autre date';
+}
+
+// Path: calendrier.dates.categorie
+class Traductions$calendrier$dates$categorie$fr {
+	Traductions$calendrier$dates$categorie$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ramadan, 20 jours au plus'
+	String get ramadan => 'Ramadan, 20 jours au plus';
+
+	/// fr: 'Aïd al-Adha, 10 jours au plus'
+	String get aidAlAdha => 'Aïd al-Adha, 10 jours au plus';
+
+	/// fr: 'Autre fermeture'
+	String get autre => 'Autre fermeture';
+}
+
+// Path: calendrier.dates.portee
+class Traductions$calendrier$dates$portee$fr {
+	Traductions$calendrier$dates$portee$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Toute l'école'
+	String get ecole => 'Toute l\'école';
+
+	/// fr: 'Une tranche d'âge'
+	String get tranche => 'Une tranche d\'âge';
+
+	/// fr: 'Une classe'
+	String get classe => 'Une classe';
+}
+
+// Path: calendrier.dates.feuille
+class Traductions$calendrier$dates$feuille$fr {
+	Traductions$calendrier$dates$feuille$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ajouter une date'
+	String get titreAjout => 'Ajouter une date';
+
+	/// fr: 'Modifier la date'
+	String get titreModif => 'Modifier la date';
+
+	/// fr: 'Genre de date'
+	String get champType => 'Genre de date';
+
+	/// fr: 'Quelle fermeture'
+	String get champCategorie => 'Quelle fermeture';
+
+	/// fr: 'Titre'
+	String get champTitre => 'Titre';
+
+	/// fr: 'Le titre que les familles liront.'
+	String get aideTitre => 'Le titre que les familles liront.';
+
+	/// fr: 'À qui elle s'adresse'
+	String get champPortee => 'À qui elle s\'adresse';
+
+	/// fr: 'Tranche d'âge'
+	String get champTranche => 'Tranche d\'âge';
+
+	/// fr: 'Classe'
+	String get champClasse => 'Classe';
+
+	/// fr: 'Premier jour'
+	String get champDu => 'Premier jour';
+
+	/// fr: 'Dernier jour'
+	String get champAu => 'Dernier jour';
+
+	/// fr: 'Les dates sont celles du calendrier grégorien, saisies chaque année : l'application ne calcule pas le calendrier lunaire.'
+	String get aideDates => 'Les dates sont celles du calendrier grégorien, saisies chaque année : l\'application ne calcule pas le calendrier lunaire.';
+
+	/// fr: 'Enregistrer'
+	String get enregistrer => 'Enregistrer';
+
+	/// fr: 'Aucune classe à choisir pour le moment.'
+	String get aucuneClasse => 'Aucune classe à choisir pour le moment.';
+}
+
+// Path: calendrier.dates.publication
+class Traductions$calendrier$dates$publication$fr {
+	Traductions$calendrier$dates$publication$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Publier la fermeture'
+	String get titre => 'Publier la fermeture';
+
+	/// fr: 'Pendant ces jours, aucune nouvelle séance n'est créée et la date limite de l'étape de chaque élève concerné recule d'autant. Les séances déjà créées ne sont pas supprimées.'
+	String get phrase => 'Pendant ces jours, aucune nouvelle séance n\'est créée et la date limite de l\'étape de chaque élève concerné recule d\'autant. Les séances déjà créées ne sont pas supprimées.';
+
+	/// fr: 'Publier la fermeture'
+	String get confirmer => 'Publier la fermeture';
+}
+
+// Path: calendrier.dates.refus
+class Traductions$calendrier$dates$refus$fr {
+	Traductions$calendrier$dates$refus$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Cette fermeture est plus longue que le maximum permis (Ramadan : 20 jours, Aïd al-Adha : 10 jours). Raccourcissez-la.'
+	String get fermetureTropLongue => 'Cette fermeture est plus longue que le maximum permis (Ramadan : 20 jours, Aïd al-Adha : 10 jours). Raccourcissez-la.';
+
+	/// fr: 'Le dernier jour doit venir après le premier, à moins d'un an.'
+	String get datesInvalides => 'Le dernier jour doit venir après le premier, à moins d\'un an.';
+
+	/// fr: 'Choisissez la tranche d'âge ou la classe visée.'
+	String get porteeInvalide => 'Choisissez la tranche d\'âge ou la classe visée.';
+
+	/// fr: 'Le titre manque ou le genre de date est illisible. Vérifiez-les, puis réessayez.'
+	String get evenementInvalide => 'Le titre manque ou le genre de date est illisible. Vérifiez-les, puis réessayez.';
+
+	/// fr: 'Cette date n'existe plus. Rechargez la liste.'
+	String get introuvable => 'Cette date n\'existe plus. Rechargez la liste.';
+
+	/// fr: 'Seule la direction peut modifier le calendrier.'
+	String get nonAutorise => 'Seule la direction peut modifier le calendrier.';
+
+	/// fr: 'L'enregistrement n'est pas confirmé : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
+	String get inconnu => 'L\'enregistrement n\'est pas confirmé : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
+}
+
+// Path: calendrier.pauses.statut
+class Traductions$calendrier$pauses$statut$fr {
+	Traductions$calendrier$pauses$statut$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'En attente'
+	String get demandee => 'En attente';
+
+	/// fr: 'Acceptée'
+	String get acceptee => 'Acceptée';
+
+	/// fr: 'Refusée'
+	String get refusee => 'Refusée';
+
+	/// fr: 'Annulée'
+	String get annulee => 'Annulée';
+}
+
+// Path: calendrier.pauses.refus
+class Traductions$calendrier$pauses$refus$fr {
+	Traductions$calendrier$pauses$refus$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Un motif d'au moins trois lettres est demandé.'
+	String get motifRequis => 'Un motif d\'au moins trois lettres est demandé.';
+
+	/// fr: 'Cette demande a déjà reçu une réponse. Rechargez la liste.'
+	String get dejaDecidee => 'Cette demande a déjà reçu une réponse. Rechargez la liste.';
+
+	/// fr: 'Le mois a déjà commencé : cette pause ne peut plus être acceptée. Vous pouvez la refuser.'
+	String get debutPasse => 'Le mois a déjà commencé : cette pause ne peut plus être acceptée. Vous pouvez la refuser.';
+
+	/// fr: 'Le dernier jour doit être aujourd'hui ou après, à moins d'un an.'
+	String get datesInvalides => 'Le dernier jour doit être aujourd\'hui ou après, à moins d\'un an.';
+
+	/// fr: 'Cet élève est introuvable.'
+	String get eleveIntrouvable => 'Cet élève est introuvable.';
+
+	/// fr: 'Seule la direction peut décider d'une pause.'
+	String get nonAutorise => 'Seule la direction peut décider d\'une pause.';
+
+	/// fr: 'La décision n'est pas confirmée : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
+	String get inconnu => 'La décision n\'est pas confirmée : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
+}
+
 // Path: salle.preparation.eleve.guidee
 class Traductions$salle$preparation$eleve$guidee$fr {
 	Traductions$salle$preparation$eleve$guidee$fr.internal(this._root);
@@ -55193,6 +55815,10 @@ extension on Traductions {
 			'historique.dateCourteSansAnnee' => ({required Object jour, required Object mois}) => '${jour} ${mois}',
 			'notifications.evenements.bienvenueEquipe' => 'Bienvenue dans l\'équipe. Il vous reste à configurer votre espace.',
 			'notifications.evenements.retenuEntretien' => 'Vous êtes retenu pour un entretien. Faisons connaissance : choisissez votre horaire dans l\'application.',
+			'notifications.evenements.pauseRepondueAcceptee' => ({required Object dePrenom, required Object mois}) => 'La pause d\'un mois ${dePrenom} est acceptée pour ${mois}. Sa date limite recule d\'autant. Sa place est gardée.',
+			'notifications.evenements.pauseRepondueAccepteeAdulte' => ({required Object mois}) => 'Votre pause d\'un mois est acceptée pour ${mois}. Votre date limite recule d\'autant. Votre place est gardée.',
+			'notifications.evenements.pauseRepondueRefusee' => ({required Object dePrenom, required Object mois}) => 'La pause d\'un mois ${dePrenom} pour ${mois} n\'est pas acceptée. Le motif est dans l\'application.',
+			'notifications.evenements.pauseRepondueRefuseeAdulte' => ({required Object mois}) => 'Votre pause d\'un mois pour ${mois} n\'est pas acceptée. Le motif est dans l\'application.',
 			'notifications.evenements.demandeRecue' => 'Une nouvelle demande de créneau a été reçue.',
 			'notifications.evenements.demandePresentation' => 'Une demande de présentation standard a été reçue.',
 			'notifications.evenements.classeValidee' => 'La classe est prête et attend son enseignant.',
@@ -55575,12 +56201,12 @@ extension on Traductions {
 			'classe.observation.resume' => ({required Object visites, required Object duree}) => '${visites} · ${duree} par visite',
 			'classe.observation.restanteAucune' => 'Aucune visite restante pour cette séance',
 			'classe.observation.restanteUne' => '1 visite restante pour cette séance',
+			_ => null,
+		} ?? switch (path) {
 			'classe.observation.minutesSecondes' => ({required Object minutes, required Object secondes}) => '${minutes} min ${secondes} s',
 			'classe.observation.secondes' => ({required Object secondes}) => '${secondes} s',
 			'classe.observation.motif.visitesEpuisees' => 'Vous avez utilisé vos visites pour cette séance.',
 			'classe.observation.motif.tempsEpuise' => 'Votre temps d\'observation est épuisé pour cette séance.',
-			_ => null,
-		} ?? switch (path) {
 			'classe.observation.motif.seanceNonCommencee' => 'L\'observation ouvre quand la séance commence.',
 			'classe.observation.motif.seanceTerminee' => 'La séance est terminée.',
 			'classe.observation.motif.seanceNonTenue' => 'Cette séance n\'a pas lieu : il n\'y a rien à observer.',
@@ -56089,12 +56715,12 @@ extension on Traductions {
 			'enseignant.profil.personnel' => 'Mes réglages',
 			'enseignant.profil.deconnexionQuestion' => 'Se déconnecter de cet appareil ?',
 			'enseignant.profil.deconnexionConfirmer' => 'Me déconnecter maintenant',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.profil.deconnexionConsequence' => 'Votre journée, vos créneaux et vos cahiers de transmission restent enregistrés. Il faudra un nouveau lien de connexion pour revenir.',
 			'enseignant.profil.erreur' => 'Votre profil n\'a pas pu être lu. Réessayez dans un instant.',
 			'enseignant.profil.vide' => 'Aucun profil enseignant',
 			'enseignant.profil.videDetail' => 'Ce compte n\'a pas de profil enseignant. Seule l\'académie peut en créer un.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.profil.horsLigne' => 'Rien ne peut être modifié ici pour l\'instant.',
 			'enseignant.profil.modifierPays' => 'Modifier le pays',
 			'enseignant.profil.fuseauAppareil' => 'Heure de cet appareil',
@@ -56603,12 +57229,12 @@ extension on Traductions {
 			'tc.groupe.horloges.heureEtVille' => ({required Object heure, required Object ville}) => '${heure} ${ville}',
 			'tc.groupe.horloges.chezVous' => 'Chez vous',
 			'tc.groupe.horloges.chezEnseignantAnonyme' => 'Chez votre enseignant',
+			_ => null,
+		} ?? switch (path) {
 			'tc.groupe.horloges.familles' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} famille', other: '${n} familles', ), 
 			'tc.groupe.horloges.aConfirmer' => 'Heure à confirmer',
 			'tc.groupe.horloges.enCeMoment' => 'En ce moment',
 			'tc.groupe.dst.j30' => 'Changement d\'heure dans un mois',
-			_ => null,
-		} ?? switch (path) {
 			'tc.groupe.dst.j7' => 'Changement d\'heure la semaine prochaine',
 			'tc.groupe.dst.j1' => 'Changement d\'heure demain',
 			'tc.groupe.dst.detail' => ({required Object avant, required Object apres}) => 'Votre cours passera de ${avant} à ${apres}.',
@@ -57117,12 +57743,12 @@ extension on Traductions {
 			'adulte.recharge.horsLignePayer' => 'Vous pourrez payer quand la connexion sera revenue.',
 			'adulte.recharge.paiementEchecTitre' => 'Le paiement n\'a pas été confirmé.',
 			'adulte.recharge.paiementEchecPhrase' => 'Vérifiez avant de réessayer.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.recharge.paiementIndisponibleTitre' => 'Paiement pas encore disponible',
 			'adulte.recharge.paiementIndisponiblePhrase' => 'Aucun paiement n\'a été effectué. Le paiement en ligne n\'est pas encore ouvert dans l\'application.',
 			'adulte.recharge.formules.trimestriel' => ({required Object montant}) => '${montant} pour 3 mois, payés d\'avance',
 			'adulte.recharge.formules.annuel' => ({required Object montant}) => '${montant} pour 12 mois, payés d\'avance',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.recharge.revenirPaiements' => 'Revenir aux paiements du foyer',
 			'adulte.recharge.phraseUnique' => 'Cochez le profil, puis choisissez le montant.',
 			'adulte.recharge.profils' => 'Profils à recharger',
@@ -57631,12 +58257,12 @@ extension on Traductions {
 			'suiviDemandes.situation.eleveIntegre' => 'Classe validée · enseignant affecté · élève intégré',
 			'suiviDemandes.situation.coursCommences' => 'Les cours ont commencé',
 			'suiviDemandes.prochaine.envoyee' => 'Prochaine étape : constitution de la classe',
+			_ => null,
+		} ?? switch (path) {
 			'suiviDemandes.prochaine.classeValidee' => 'Prochaine étape : l\'enseignant de la classe est désigné. Nous vous prévenons dès que c\'est fait.',
 			'suiviDemandes.prochaine.listeAttente' => 'Nous vous prévenons dès qu\'une place s\'ouvre. Aucune date n\'est annoncée tant qu\'elle n\'est pas connue.',
 			'suiviDemandes.prochaine.eleveIntegre' => 'Prochaine étape : le début des cours',
 			'suiviDemandes.debutCours' => 'Début des cours',
-			_ => null,
-		} ?? switch (path) {
 			'suiviDemandes.debutValeur' => ({required Object date, required Object heure, required Object deVille}) => '${date} à ${heure}, heure ${deVille}',
 			'suiviDemandes.debutAFixer' => 'La date du premier cours s\'affichera ici dès qu\'elle sera fixée.',
 			'suiviDemandes.enseignant' => 'Enseignant',
@@ -58145,12 +58771,12 @@ extension on Traductions {
 			'com.communaute.garde.reponse.liensTitre' => 'Liens de la réponse',
 			'com.communaute.garde.reponse.consigneBlocage' => 'Modifiez la réponse, puis envoyez-la de nouveau.',
 			'com.communaute.lien.interne' => 'Lien interne Rewayah',
+			_ => null,
+		} ?? switch (path) {
 			'com.communaute.lien.ressourceExterne' => 'Ressource pédagogique externe',
 			'com.communaute.lien.commercialInterdit' => 'Lien commercial interdit',
 			'com.communaute.lien.nonVerifie' => 'Lien non vérifié',
 			'com.communaute.lien.semantique' => ({required Object adresse, required Object etat}) => '${adresse}, ${etat}',
-			_ => null,
-		} ?? switch (path) {
 			'com.communaute.sousTitre' => 'Échanges et entraide entre enseignants',
 			'com.communaute.sections' => 'Catégories de la Communauté enseignants',
 			'com.communaute.toutes' => 'Toutes',
@@ -58659,12 +59285,12 @@ extension on Traductions {
 			'com.annonces.demo.roles.enseignant' => 'Enseignant',
 			'com.annonces.demo.roles.adulte' => 'Élève adulte',
 			'com.annonces.demo.roles.admin' => 'Direction',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.demo.roles.controleur' => 'Contrôleur',
 			'com.annonces.demo.classeNour' => 'Classe An-Nour',
 			'com.annonces.demo.classeFajr' => 'Classe Al-Fajr',
 			'com.annonces.demo.enseignante' => 'Enseignante de la classe',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.demo.f.adminStudioMention' => 'Studio : une discussion du canal Programmes vous mentionne',
 			'com.annonces.demo.f.adminStudioReponse' => 'Studio : nouvelle réponse à votre message sur le programme de printemps',
 			'com.annonces.demo.f.adminStudioDecision' => 'Studio : une décision est demandée sur le support de la leçon 4',
@@ -59173,12 +59799,12 @@ extension on Traductions {
 			'comptable.encaissements.fraisSource' => 'Frais et change communiqués par le prestataire, jamais recalculés ici.',
 			'comptable.encaissements.reference' => 'Référence',
 			'comptable.encaissements.prestataire' => 'Prestataire',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.encaissements.moyen' => 'Moyen de paiement',
 			'comptable.encaissements.foyer' => 'Foyer',
 			'comptable.encaissements.date' => 'Date',
 			'comptable.encaissements.etat' => 'État',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.encaissements.devise' => 'Devise',
 			'comptable.encaissements.affectation' => 'Affectation par profil',
 			'comptable.encaissements.affectationAucune' => 'La source n\'a rendu aucune affectation pour cet encaissement.',
@@ -59687,12 +60313,12 @@ extension on Traductions {
 			'comptable.direction.delegationPanneau.sortiePart' => ({required Object objet, required Object date}) => '${objet} · part le ${date}',
 			'comptable.direction.delegationPanneau.sortieAnnuler' => 'Annuler',
 			'comptable.direction.delegationPanneau.sortieAnnulerNom' => ({required Object beneficiaire}) => 'Annuler la sortie de ${beneficiaire}',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.sortieAnnulerTitre' => 'Annuler cette sortie ?',
 			'comptable.direction.delegationPanneau.sortieAnnulerPhrase' => ({required Object beneficiaire}) => 'La sortie de ${beneficiaire} ne partira pas. L\'annulation est inscrite au journal.',
 			'comptable.direction.delegationPanneau.sortieAnnulerConfirmer' => 'Annuler la sortie',
 			'comptable.direction.delegationPanneau.sortieGarder' => 'Garder la sortie',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.sortieAnnulee' => 'Sortie annulée.',
 			'comptable.direction.delegationPanneau.sortieAnnulationEchec' => 'L\'annulation n\'est pas confirmée : la demande n\'est peut-être pas parvenue jusqu\'à Rewayah. Relisez la liste avant de réessayer.',
 			'comptable.direction.delegationPanneau.exceptionsTitre' => 'Exceptions',
@@ -60201,12 +60827,12 @@ extension on Traductions {
 			'avis.admin.liens.fin' => ({required Object date}) => 'Fin le ${date}',
 			'avis.admin.liens.cree' => ({required Object date}) => 'Créé le ${date}',
 			'avis.admin.liens.fermer' => 'Fermer le lien',
+			_ => null,
+		} ?? switch (path) {
 			'avis.admin.liens.fermerQuestion' => ({required Object nom}) => 'Fermer le lien « ${nom} » ?',
 			'avis.admin.liens.fermerConsequence' => 'Les personnes qui ouvriront ce lien verront qu\'il est fermé et ne pourront plus envoyer d\'avis. Les avis déjà reçus restent. Un lien fermé ne se rouvre pas.',
 			'avis.admin.liens.fermerAction' => 'Fermer le lien',
 			'avis.admin.liens.fermerRester' => 'Ne rien changer',
-			_ => null,
-		} ?? switch (path) {
 			'avis.admin.liens.fermeOk' => 'Le lien est fermé.',
 			'avis.admin.liens.fermeEchec' => 'La fermeture n\'est pas confirmée. La liste est relue : vérifiez l\'état du lien.',
 			'avis.admin.liens.vide' => 'Aucun lien pour le moment. Créez-en un pour recueillir des avis.',
@@ -60715,12 +61341,12 @@ extension on Traductions {
 			'candidatsFlux.importFormulaires.avertissement.formatNational' => 'le téléphone n\'a pas l\'indicatif du pays',
 			'candidatsFlux.importFormulaires.avertissement.indicatifInconnu' => 'l\'indicatif du téléphone est inconnu',
 			'candidatsFlux.importFormulaires.avertissement.longueurImplausible' => 'la longueur du téléphone est inhabituelle',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.avertissement.indicatifAConfirmer' => 'l\'indicatif du téléphone est à confirmer',
 			'candidatsFlux.importFormulaires.avertissement.zeroNationalEnTrop' => 'un zéro en trop après l\'indicatif du téléphone',
 			'candidatsFlux.importFormulaires.avertissement.courrielMalforme' => 'le courriel est mal écrit : il est à obtenir',
 			'candidatsFlux.importFormulaires.avertissement.langueMaternelleVersAutre' => 'langue maternelle inconnue, classée en autre langue',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.avertissement.langueInconnueVersAutre' => 'une langue d\'explication inconnue est classée en autre langue',
 			'candidatsFlux.importFormulaires.avertissement.arabeRetire' => 'l\'arabe est retiré des langues d\'explication (ce n\'est pas une langue de cours)',
 			'candidatsFlux.importFormulaires.avertissement.libelleInconnu' => 'une réponse à choix n\'est pas reconnue',
@@ -60979,6 +61605,144 @@ extension on Traductions {
 			'suiviPedagogique.attenteEntretien' => 'Votre étape sera fixée après l\'entretien de lecture avec la direction.',
 			'suiviPedagogique.attenteEntretienTu' => 'Ton étape sera fixée après l\'entretien de lecture avec la direction.',
 			'suiviPedagogique.attenteEntretienPour' => ({required Object prenom}) => 'L\'étape de ${prenom} sera fixée après l\'entretien de lecture avec la direction.',
+			'calendrier.titre' => 'Calendrier',
+			'calendrier.sections.libelle' => 'Sections du calendrier',
+			'calendrier.sections.dates' => 'Dates de l\'école',
+			'calendrier.sections.pauses' => 'Pauses',
+			'calendrier.indisponible' => 'Le calendrier n\'a pas pu être ouvert : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
+			'calendrier.dates.intro' => 'Les dates de l\'année, saisies par la direction chaque année. Seules les dates publiées agissent et sont lues par les familles, les élèves et les enseignants.',
+			'calendrier.dates.ajouter' => 'Ajouter une date',
+			'calendrier.dates.erreur' => 'Les dates n\'ont pas pu être lues : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
+			'calendrier.dates.videTitre' => 'Aucune date saisie',
+			'calendrier.dates.videDetail' => 'Ajoutez les fermetures de l\'année, les rencontres de récitation et les dates d\'évaluation.',
+			'calendrier.dates.type.fermeture' => 'Fermeture',
+			'calendrier.dates.type.rencontre' => 'Rencontre de récitation',
+			'calendrier.dates.type.evaluation' => 'Évaluation',
+			'calendrier.dates.type.autre' => 'Autre date',
+			'calendrier.dates.categorie.ramadan' => 'Ramadan, 20 jours au plus',
+			'calendrier.dates.categorie.aidAlAdha' => 'Aïd al-Adha, 10 jours au plus',
+			'calendrier.dates.categorie.autre' => 'Autre fermeture',
+			'calendrier.dates.categorieAide' => 'Ramadan : du 20 Ramadan au 7 Shawwal inclus. Aïd al-Adha : du 9 au 18 Dhu al-Hijja inclus.',
+			'calendrier.dates.portee.ecole' => 'Toute l\'école',
+			'calendrier.dates.portee.tranche' => 'Une tranche d\'âge',
+			'calendrier.dates.portee.classe' => 'Une classe',
+			'calendrier.dates.publiee' => 'Publiée',
+			'calendrier.dates.nonPubliee' => 'Non publiée',
+			'calendrier.dates.publier' => 'Publier',
+			'calendrier.dates.retirer' => 'Retirer de la publication',
+			'calendrier.dates.modifier' => 'Modifier',
+			'calendrier.dates.periode' => ({required Object du, required Object au}) => 'Du ${du} au ${au}',
+			'calendrier.dates.unJour' => ({required Object jour}) => 'Le ${jour}',
+			'calendrier.dates.pour' => ({required Object cible}) => 'Pour : ${cible}',
+			'calendrier.dates.elevesVises' => ({required Object n}) => 'Élèves concernés : ${n}',
+			'calendrier.dates.seancesDejaPrevues' => ({required Object n}) => 'Séances déjà prévues pendant ces jours : ${n}. Elles ne sont pas supprimées : la direction décide de leur sort.',
+			'calendrier.dates.aucuneSeance' => 'Aucune séance n\'est encore prévue pendant ces jours.',
+			'calendrier.dates.feuille.titreAjout' => 'Ajouter une date',
+			'calendrier.dates.feuille.titreModif' => 'Modifier la date',
+			'calendrier.dates.feuille.champType' => 'Genre de date',
+			'calendrier.dates.feuille.champCategorie' => 'Quelle fermeture',
+			'calendrier.dates.feuille.champTitre' => 'Titre',
+			'calendrier.dates.feuille.aideTitre' => 'Le titre que les familles liront.',
+			'calendrier.dates.feuille.champPortee' => 'À qui elle s\'adresse',
+			'calendrier.dates.feuille.champTranche' => 'Tranche d\'âge',
+			'calendrier.dates.feuille.champClasse' => 'Classe',
+			'calendrier.dates.feuille.champDu' => 'Premier jour',
+			'calendrier.dates.feuille.champAu' => 'Dernier jour',
+			'calendrier.dates.feuille.aideDates' => 'Les dates sont celles du calendrier grégorien, saisies chaque année : l\'application ne calcule pas le calendrier lunaire.',
+			'calendrier.dates.feuille.enregistrer' => 'Enregistrer',
+			'calendrier.dates.feuille.aucuneClasse' => 'Aucune classe à choisir pour le moment.',
+			'calendrier.dates.publication.titre' => 'Publier la fermeture',
+			'calendrier.dates.publication.phrase' => 'Pendant ces jours, aucune nouvelle séance n\'est créée et la date limite de l\'étape de chaque élève concerné recule d\'autant. Les séances déjà créées ne sont pas supprimées.',
+			'calendrier.dates.publication.confirmer' => 'Publier la fermeture',
+			'calendrier.dates.refus.fermetureTropLongue' => 'Cette fermeture est plus longue que le maximum permis (Ramadan : 20 jours, Aïd al-Adha : 10 jours). Raccourcissez-la.',
+			'calendrier.dates.refus.datesInvalides' => 'Le dernier jour doit venir après le premier, à moins d\'un an.',
+			'calendrier.dates.refus.porteeInvalide' => 'Choisissez la tranche d\'âge ou la classe visée.',
+			'calendrier.dates.refus.evenementInvalide' => 'Le titre manque ou le genre de date est illisible. Vérifiez-les, puis réessayez.',
+			'calendrier.dates.refus.introuvable' => 'Cette date n\'existe plus. Rechargez la liste.',
+			'calendrier.dates.refus.nonAutorise' => 'Seule la direction peut modifier le calendrier.',
+			'calendrier.dates.refus.inconnu' => 'L\'enregistrement n\'est pas confirmé : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
+			'calendrier.pauses.aTraiter' => 'Demandes à traiter',
+			'calendrier.pauses.aTraiterIntro' => 'Ces demandes dépassent le plafond de pauses d\'une famille : la direction décide. Les autres demandes sont acceptées tout de suite et n\'apparaissent pas ici.',
+			'calendrier.pauses.erreur' => 'Les pauses n\'ont pas pu être lues : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
+			'calendrier.pauses.videTitre' => 'Aucune demande en attente',
+			'calendrier.pauses.videDetail' => 'Une demande au-delà du plafond apparaîtra ici.',
+			'calendrier.pauses.ligneDescription' => ({required Object mois, required Object n}) => 'Mois demandé : ${mois}. Mois déjà accordés : ${n}.',
+			'calendrier.pauses.repondreAvant' => ({required Object date}) => 'Répondre avant le ${date}',
+			'calendrier.pauses.enRetard' => 'Délai dépassé',
+			'calendrier.pauses.accepter' => 'Accepter',
+			'calendrier.pauses.refuser' => 'Refuser',
+			'calendrier.pauses.refusTitre' => 'Répondre à la demande',
+			'calendrier.pauses.refusPhrase' => 'Le motif est obligatoire pour refuser ; la famille le lit dans l\'application.',
+			'calendrier.pauses.refusMotif' => 'Motif',
+			'calendrier.pauses.refusEnvoyer' => 'Refuser la pause',
+			'calendrier.pauses.decisionsRecentes' => 'Décisions récentes',
+			'calendrier.pauses.decisionsVide' => 'Aucune décision pour le moment.',
+			'calendrier.pauses.statut.demandee' => 'En attente',
+			'calendrier.pauses.statut.acceptee' => 'Acceptée',
+			'calendrier.pauses.statut.refusee' => 'Refusée',
+			'calendrier.pauses.statut.annulee' => 'Annulée',
+			'calendrier.pauses.periode' => ({required Object du, required Object au}) => 'Du ${du} au ${au}',
+			'calendrier.pauses.typeMois' => 'Pause d\'un mois',
+			'calendrier.pauses.typeException' => 'Pause d\'exception',
+			'calendrier.pauses.accordeePar' => ({required Object nom}) => 'Accordée par ${nom}',
+			'calendrier.pauses.motifLigne' => ({required Object motif}) => 'Motif : ${motif}',
+			'calendrier.pauses.exceptionAction' => 'Accorder une pause d\'exception',
+			'calendrier.pauses.exceptionTitre' => 'Pause d\'exception',
+			'calendrier.pauses.exceptionPhrase' => 'Pour une maladie soudaine ou une interruption accordée. Elle commence aujourd\'hui, sans préavis ; la date limite de l\'étape recule de sa durée ; elle ne compte pas dans le plafond de la famille.',
+			'calendrier.pauses.exceptionRecherche' => 'Chercher l\'élève par son nom',
+			'calendrier.pauses.exceptionRechercheAide' => 'Deux lettres au moins.',
+			'calendrier.pauses.exceptionAucun' => 'Aucun élève trouvé.',
+			'calendrier.pauses.exceptionEleve' => ({required Object nom}) => 'Élève : ${nom}',
+			'calendrier.pauses.exceptionChanger' => 'Choisir un autre élève',
+			'calendrier.pauses.exceptionMotif' => 'Motif',
+			'calendrier.pauses.exceptionFin' => 'Dernier jour de la pause',
+			'calendrier.pauses.exceptionEnregistrer' => 'Accorder la pause',
+			'calendrier.pauses.refus.motifRequis' => 'Un motif d\'au moins trois lettres est demandé.',
+			'calendrier.pauses.refus.dejaDecidee' => 'Cette demande a déjà reçu une réponse. Rechargez la liste.',
+			'calendrier.pauses.refus.debutPasse' => 'Le mois a déjà commencé : cette pause ne peut plus être acceptée. Vous pouvez la refuser.',
+			'calendrier.pauses.refus.datesInvalides' => 'Le dernier jour doit être aujourd\'hui ou après, à moins d\'un an.',
+			'calendrier.pauses.refus.eleveIntrouvable' => 'Cet élève est introuvable.',
+			'calendrier.pauses.refus.nonAutorise' => 'Seule la direction peut décider d\'une pause.',
+			'calendrier.pauses.refus.inconnu' => 'La décision n\'est pas confirmée : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
+			'pause.titre' => 'Demander une pause d\'un mois',
+			'pause.entree' => 'Demander une pause d\'un mois',
+			'pause.sousTitre' => ({required Object dePrenom}) => 'Pause ${dePrenom}',
+			'pause.indisponible' => 'Les pauses n\'ont pas pu être ouvertes : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
+			'pause.erreur' => 'Les pauses n\'ont pas pu être lues : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
+			'pause.regleTitre' => 'La règle',
+			'pause.regle.moisEntier' => 'Une pause dure un mois civil entier, du premier au dernier jour du mois.',
+			'pause.regle.preavis' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours, one: 'Vous la demandez au moins ${jours} jour avant le début du mois.', other: 'Vous la demandez au moins ${jours} jours avant le début du mois.', ), 
+			'pause.regle.plafond' => ({required num delai, required Object mois, required Object fenetre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(delai, one: 'Jusqu\'à ${mois} mois de pause sur ${fenetre} mois. Au-delà, la direction décide et répond sous ${delai} jour.', other: 'Jusqu\'à ${mois} mois de pause sur ${fenetre} mois. Au-delà, la direction décide et répond sous ${delai} jours.', ), 
+			'pause.regle.placeGardee' => 'Pendant la pause, la place est gardée.',
+			'pause.regle.dateLimite' => 'La date limite de l\'étape recule de la durée de la pause.',
+			'pause.regle.absence' => 'Une absence de quelques jours reste une absence : on ne demande que des mois entiers.',
+			'pause.choisir' => 'Choisissez le mois',
+			'pause.moisDansRegle' => 'Acceptée tout de suite',
+			'pause.moisALaDirection' => ({required num delai}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(delai, one: 'La direction répond sous ${delai} jour', other: 'La direction répond sous ${delai} jours', ), 
+			'pause.moisDejaDemande' => 'Déjà demandé',
+			'pause.moisDejaAccepte' => 'Déjà accepté',
+			'pause.aucunMois' => 'Aucun mois n\'est proposé pour le moment.',
+			'pause.choisirPourDemander' => 'Choisissez un mois pour demander la pause.',
+			'pause.demander' => 'Demander la pause',
+			'pause.reponse.acceptee' => ({required Object mois}) => 'La pause de ${mois} est acceptée. La place est gardée et la date limite de l\'étape recule d\'autant.',
+			'pause.reponse.demandee' => ({required num delai}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(delai, one: 'Votre demande est transmise à la direction, qui répond sous ${delai} jour.', other: 'Votre demande est transmise à la direction, qui répond sous ${delai} jours.', ), 
+			'pause.demandesTitre' => 'Les pauses',
+			'pause.demandesVide' => 'Aucune pause pour le moment.',
+			'pause.statut.demandee' => 'En attente',
+			'pause.statut.acceptee' => 'Acceptée',
+			'pause.statut.refusee' => 'Refusée',
+			'pause.statut.annulee' => 'Annulée',
+			'pause.periode' => ({required Object du, required Object au}) => 'Du ${du} au ${au}',
+			'pause.reponseAvant' => ({required Object date}) => 'La direction répond avant le ${date}.',
+			'pause.reponseMotif' => ({required Object motif}) => 'Réponse de la direction : ${motif}',
+			'pause.exceptionAccordee' => 'Pause accordée par la direction.',
+			'pause.annuler' => ({required Object mois}) => 'Annuler la pause de ${mois}',
+			'pause.refus.preavis' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours, one: 'Ce mois commence trop tôt : une pause se demande au moins ${jours} jour avant son début. Choisissez un mois plus lointain.', other: 'Ce mois commence trop tôt : une pause se demande au moins ${jours} jours avant son début. Choisissez un mois plus lointain.', ), 
+			'pause.refus.dejaDemandee' => 'Ce mois est déjà demandé ou accepté.',
+			'pause.refus.moisInvalide' => 'Ce mois n\'est pas lisible. Choisissez un mois dans la liste.',
+			'pause.refus.nonAnnulable' => 'Cette pause a déjà commencé ou a déjà reçu sa réponse : elle ne peut plus être annulée.',
+			'pause.refus.nonAutorise' => 'Vous ne pouvez pas demander de pause depuis ce compte.',
+			'pause.refus.inconnu' => 'La demande n\'est pas confirmée : il est possible qu\'elle ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			_ => null,
 		};
 	}
