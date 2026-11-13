@@ -4268,8 +4268,8 @@ class Traductions$suiviAttente$fr {
 	/// fr: 'Nous n'avons pas pu lire le suivi de votre demande. Cela vient souvent de la connexion. Réessayez dans un instant.'
 	String get erreur => 'Nous n\'avons pas pu lire le suivi de votre demande. Cela vient souvent de la connexion. Réessayez dans un instant.';
 
-	/// fr: 'Vous êtes hors ligne et le suivi n'a pas encore été lu. Reconnectez-vous pour le voir.'
-	String get sansDonnees => 'Vous êtes hors ligne et le suivi n\'a pas encore été lu. Reconnectez-vous pour le voir.';
+	/// fr: 'Le suivi de votre demande n'a pas pu être chargé'
+	String get sansDonnees => 'Le suivi de votre demande n\'a pas pu être chargé';
 
 	/// fr: 'Cette demande n'existe plus dans votre suivi.'
 	String get introuvable => 'Cette demande n\'existe plus dans votre suivi.';
@@ -23906,7 +23906,7 @@ class Traductions$suiviAttente$dit$fr {
 	String get confirmeeFait => 'Votre classe est confirmée.';
 
 	/// fr: 'Votre classe « {classe} » est confirmée.'
-	String confirmeeFaitNom({required Object classe}) => 'Votre classe « ${classe} » est confirmée.';
+	String confirmeeFaitNom({required Object classe}) => 'Votre classe « ${classe} » est confirmée.';
 
 	/// fr: 'L'académie confirme la classe quand ses élèves sont réunis.'
 	String get confirmeeAVenir => 'L\'académie confirme la classe quand ses élèves sont réunis.';
@@ -24045,7 +24045,7 @@ class Traductions$suiviAttente$vide$fr {
 	String get message => 'Vous n\'avez pas encore choisi de classe.';
 
 	/// fr: 'Choisissez une classe : l'académie vous suit ensuite étape par étape.'
-	String get invitation => 'Choisissez une classe : l\'académie vous suit ensuite étape par étape.';
+	String get invitation => 'Choisissez une classe : l\'académie vous suit ensuite étape par étape.';
 
 	/// fr: 'Choisir une classe'
 	String get action => 'Choisir une classe';
@@ -24126,7 +24126,7 @@ class Traductions$suiviAttente$presentation$fr {
 	String get enregistre => 'Enregistré.';
 
 	/// fr: 'Votre choix n'est pas confirmé : il n'est peut-être pas parvenu jusqu'à Rewayah. Réessayez dans un instant.'
-	String get erreur => 'Votre choix n\'est pas confirmé : il n\'est peut-être pas parvenu jusqu\'à Rewayah. Réessayez dans un instant.';
+	String get erreur => 'Votre choix n\'est pas confirmé : il n\'est peut-être pas parvenu jusqu\'à Rewayah. Réessayez dans un instant.';
 
 	/// fr: 'Ne pas renseigner'
 	String get effacerPays => 'Ne pas renseigner';
@@ -24150,16 +24150,16 @@ class Traductions$suiviAttente$mePresenter$fr {
 	String get contexte => 'Un message est déjà rédigé. Vous pouvez le modifier avant de l\'envoyer. Il part dans Messages, aux familles de la classe et aux élèves adultes.';
 
 	/// fr: 'Bonjour, je suis Sayyid {nom}, votre enseignant de la classe « {classe} ». Je suis heureux de commencer avec vous. Écrivez-moi ici si vous avez une question. À très bientôt.'
-	String messageSayyid({required Object nom, required Object classe}) => 'Bonjour, je suis Sayyid ${nom}, votre enseignant de la classe « ${classe} ». Je suis heureux de commencer avec vous. Écrivez-moi ici si vous avez une question. À très bientôt.';
+	String messageSayyid({required Object nom, required Object classe}) => 'Bonjour, je suis Sayyid ${nom}, votre enseignant de la classe « ${classe} ». Je suis heureux de commencer avec vous. Écrivez-moi ici si vous avez une question. À très bientôt.';
 
 	/// fr: 'Bonjour, je suis Sayyida {nom}, votre enseignante de la classe « {classe} ». Je suis heureuse de commencer avec vous. Écrivez-moi ici si vous avez une question. À très bientôt.'
-	String messageSayyida({required Object nom, required Object classe}) => 'Bonjour, je suis Sayyida ${nom}, votre enseignante de la classe « ${classe} ». Je suis heureuse de commencer avec vous. Écrivez-moi ici si vous avez une question. À très bientôt.';
+	String messageSayyida({required Object nom, required Object classe}) => 'Bonjour, je suis Sayyida ${nom}, votre enseignante de la classe « ${classe} ». Je suis heureuse de commencer avec vous. Écrivez-moi ici si vous avez une question. À très bientôt.';
 
 	/// fr: 'Votre message'
 	String get champ => 'Votre message';
 
 	/// fr: 'Ce message est lu par les tuteurs des élèves mineurs et par les élèves adultes. Il n'est jamais envoyé à un mineur. N'échangez ni téléphone ni adresse : tout passe par l'application.'
-	String get rappel => 'Ce message est lu par les tuteurs des élèves mineurs et par les élèves adultes. Il n\'est jamais envoyé à un mineur. N\'échangez ni téléphone ni adresse : tout passe par l\'application.';
+	String get rappel => 'Ce message est lu par les tuteurs des élèves mineurs et par les élèves adultes. Il n\'est jamais envoyé à un mineur. N\'échangez ni téléphone ni adresse : tout passe par l\'application.';
 
 	/// fr: 'Envoyer aux familles'
 	String get envoyer => 'Envoyer aux familles';
@@ -24172,15 +24172,15 @@ class Traductions$suiviAttente$mePresenter$fr {
 
 	/// fr: '(one) {{n} famille a déjà un échange avec vous : elle ne reçoit pas ce message.} (other) {{n} familles ont déjà un échange avec vous : elles ne reçoivent pas ce message.}'
 	String dejaEcrit({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
-		one: '${n} famille a déjà un échange avec vous : elle ne reçoit pas ce message.',
-		other: '${n} familles ont déjà un échange avec vous : elles ne reçoivent pas ce message.',
+		one: '${n} famille a déjà un échange avec vous : elle ne reçoit pas ce message.',
+		other: '${n} familles ont déjà un échange avec vous : elles ne reçoivent pas ce message.',
 	);
 
 	/// fr: 'Aucune famille de cette classe ne peut recevoir de message pour le moment.'
 	String get aucune => 'Aucune famille de cette classe ne peut recevoir de message pour le moment.';
 
 	/// fr: 'Le message n'est pas confirmé pour certaines familles : il n'est peut-être pas parvenu jusqu'à elles. Réessayez : celles qui l'ont reçu ne le reçoivent pas deux fois.'
-	String get echec => 'Le message n\'est pas confirmé pour certaines familles : il n\'est peut-être pas parvenu jusqu\'à elles. Réessayez : celles qui l\'ont reçu ne le reçoivent pas deux fois.';
+	String get echec => 'Le message n\'est pas confirmé pour certaines familles : il n\'est peut-être pas parvenu jusqu\'à elles. Réessayez : celles qui l\'ont reçu ne le reçoivent pas deux fois.';
 
 	/// fr: 'Chargement des familles de la classe'
 	String get chargement => 'Chargement des familles de la classe';
@@ -42288,7 +42288,7 @@ class Traductions$suiviAttente$cloture$motif$fr {
 	String get refusDirection => 'La direction n\'a pas retenu cette demande.';
 
 	/// fr: 'Cet élève a déjà une place en classe : la demande n'est plus nécessaire.'
-	String get dejaEnClasse => 'Cet élève a déjà une place en classe : la demande n\'est plus nécessaire.';
+	String get dejaEnClasse => 'Cet élève a déjà une place en classe : la demande n\'est plus nécessaire.';
 
 	/// fr: 'Cette demande est close.'
 	String get inconnu => 'Cette demande est close.';
@@ -61608,7 +61608,7 @@ extension on Traductions {
 			'suiviAttente.dit.formationFait' => 'Les élèves de la classe sont réunis.',
 			'suiviAttente.dit.formationAVenir' => 'L\'académie réunit les élèves de la classe une fois la demande reçue.',
 			'suiviAttente.dit.confirmeeFait' => 'Votre classe est confirmée.',
-			'suiviAttente.dit.confirmeeFaitNom' => ({required Object classe}) => 'Votre classe « ${classe} » est confirmée.',
+			'suiviAttente.dit.confirmeeFaitNom' => ({required Object classe}) => 'Votre classe « ${classe} » est confirmée.',
 			'suiviAttente.dit.confirmeeAVenir' => 'L\'académie confirme la classe quand ses élèves sont réunis.',
 			'suiviAttente.dit.enseignantEnCours' => 'L\'académie désigne l\'enseignant de la classe.',
 			'suiviAttente.dit.enseignantEnAttente' => 'La classe attend son enseignant. L\'académie le désigne et vous prévient.',
@@ -61636,7 +61636,7 @@ extension on Traductions {
 			'suiviAttente.cloture.motif.offreRetiree' => 'L\'académie a retiré ce créneau de ses offres.',
 			'suiviAttente.cloture.motif.classeNonConstituee' => 'La classe de ce créneau n\'a pas pu être constituée.',
 			'suiviAttente.cloture.motif.refusDirection' => 'La direction n\'a pas retenu cette demande.',
-			'suiviAttente.cloture.motif.dejaEnClasse' => 'Cet élève a déjà une place en classe : la demande n\'est plus nécessaire.',
+			'suiviAttente.cloture.motif.dejaEnClasse' => 'Cet élève a déjà une place en classe : la demande n\'est plus nécessaire.',
 			'suiviAttente.cloture.motif.inconnu' => 'Cette demande est close.',
 			'suiviAttente.cloture.suite' => 'Vous pouvez choisir un autre créneau.',
 			'suiviAttente.cloture.autreCreneau' => 'Choisir un autre créneau',
@@ -61655,12 +61655,12 @@ extension on Traductions {
 			'suiviAttente.enseignant.mot' => 'Son mot de présentation',
 			'suiviAttente.enseignant.peutSePresenter' => 'Votre enseignant peut se présenter aux familles de la classe par un message dans Messages.',
 			'suiviAttente.vide.message' => 'Vous n\'avez pas encore choisi de classe.',
-			'suiviAttente.vide.invitation' => 'Choisissez une classe : l\'académie vous suit ensuite étape par étape.',
+			'suiviAttente.vide.invitation' => 'Choisissez une classe : l\'académie vous suit ensuite étape par étape.',
 			'suiviAttente.vide.action' => 'Choisir une classe',
 			'suiviAttente.vide.messageSimple' => 'Il n\'y a pas encore de demande de classe pour toi.',
 			'suiviAttente.vide.invitationSimple' => 'Ton tuteur peut en faire une.',
 			'suiviAttente.erreur' => 'Nous n\'avons pas pu lire le suivi de votre demande. Cela vient souvent de la connexion. Réessayez dans un instant.',
-			'suiviAttente.sansDonnees' => 'Vous êtes hors ligne et le suivi n\'a pas encore été lu. Reconnectez-vous pour le voir.',
+			'suiviAttente.sansDonnees' => 'Le suivi de votre demande n\'a pas pu être chargé',
 			'suiviAttente.introuvable' => 'Cette demande n\'existe plus dans votre suivi.',
 			'suiviAttente.retour' => 'Retour',
 			'suiviAttente.carte.titre' => 'Votre demande de classe',
@@ -61680,20 +61680,20 @@ extension on Traductions {
 			'suiviAttente.presentation.nonConfirme' => 'Vous n\'avez pas encore confirmé ce choix. Tant que vous ne l\'avez pas fait, les familles ne voient que votre nom et la langue du cours.',
 			'suiviAttente.presentation.enregistrer' => 'Enregistrer',
 			'suiviAttente.presentation.enregistre' => 'Enregistré.',
-			'suiviAttente.presentation.erreur' => 'Votre choix n\'est pas confirmé : il n\'est peut-être pas parvenu jusqu\'à Rewayah. Réessayez dans un instant.',
+			'suiviAttente.presentation.erreur' => 'Votre choix n\'est pas confirmé : il n\'est peut-être pas parvenu jusqu\'à Rewayah. Réessayez dans un instant.',
 			'suiviAttente.presentation.effacerPays' => 'Ne pas renseigner',
 			'suiviAttente.mePresenter.lien' => 'Me présenter aux familles',
 			'suiviAttente.mePresenter.titre' => 'Me présenter',
 			'suiviAttente.mePresenter.contexte' => 'Un message est déjà rédigé. Vous pouvez le modifier avant de l\'envoyer. Il part dans Messages, aux familles de la classe et aux élèves adultes.',
-			'suiviAttente.mePresenter.messageSayyid' => ({required Object nom, required Object classe}) => 'Bonjour, je suis Sayyid ${nom}, votre enseignant de la classe « ${classe} ». Je suis heureux de commencer avec vous. Écrivez-moi ici si vous avez une question. À très bientôt.',
-			'suiviAttente.mePresenter.messageSayyida' => ({required Object nom, required Object classe}) => 'Bonjour, je suis Sayyida ${nom}, votre enseignante de la classe « ${classe} ». Je suis heureuse de commencer avec vous. Écrivez-moi ici si vous avez une question. À très bientôt.',
+			'suiviAttente.mePresenter.messageSayyid' => ({required Object nom, required Object classe}) => 'Bonjour, je suis Sayyid ${nom}, votre enseignant de la classe « ${classe} ». Je suis heureux de commencer avec vous. Écrivez-moi ici si vous avez une question. À très bientôt.',
+			'suiviAttente.mePresenter.messageSayyida' => ({required Object nom, required Object classe}) => 'Bonjour, je suis Sayyida ${nom}, votre enseignante de la classe « ${classe} ». Je suis heureuse de commencer avec vous. Écrivez-moi ici si vous avez une question. À très bientôt.',
 			'suiviAttente.mePresenter.champ' => 'Votre message',
-			'suiviAttente.mePresenter.rappel' => 'Ce message est lu par les tuteurs des élèves mineurs et par les élèves adultes. Il n\'est jamais envoyé à un mineur. N\'échangez ni téléphone ni adresse : tout passe par l\'application.',
+			'suiviAttente.mePresenter.rappel' => 'Ce message est lu par les tuteurs des élèves mineurs et par les élèves adultes. Il n\'est jamais envoyé à un mineur. N\'échangez ni téléphone ni adresse : tout passe par l\'application.',
 			'suiviAttente.mePresenter.envoyer' => 'Envoyer aux familles',
 			'suiviAttente.mePresenter.envoye' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Message envoyé à ${n} famille.', other: 'Message envoyé à ${n} familles.', ), 
-			'suiviAttente.mePresenter.dejaEcrit' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} famille a déjà un échange avec vous : elle ne reçoit pas ce message.', other: '${n} familles ont déjà un échange avec vous : elles ne reçoivent pas ce message.', ), 
+			'suiviAttente.mePresenter.dejaEcrit' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} famille a déjà un échange avec vous : elle ne reçoit pas ce message.', other: '${n} familles ont déjà un échange avec vous : elles ne reçoivent pas ce message.', ), 
 			'suiviAttente.mePresenter.aucune' => 'Aucune famille de cette classe ne peut recevoir de message pour le moment.',
-			'suiviAttente.mePresenter.echec' => 'Le message n\'est pas confirmé pour certaines familles : il n\'est peut-être pas parvenu jusqu\'à elles. Réessayez : celles qui l\'ont reçu ne le reçoivent pas deux fois.',
+			'suiviAttente.mePresenter.echec' => 'Le message n\'est pas confirmé pour certaines familles : il n\'est peut-être pas parvenu jusqu\'à elles. Réessayez : celles qui l\'ont reçu ne le reçoivent pas deux fois.',
 			'suiviAttente.mePresenter.chargement' => 'Chargement des familles de la classe',
 			'suiviAttente.mePresenter.erreur' => 'Les familles de la classe n\'ont pas pu être lues. Réessayez dans un instant.',
 			'suiviAttente.mePresenter.vide' => 'Écrivez un message avant de l\'envoyer.',

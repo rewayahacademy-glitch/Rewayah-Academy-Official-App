@@ -11,18 +11,18 @@
 library;
 
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/attente_classe/modele_attente.dart';
 import '../../core/i18n/strings.g.dart';
-import '../../core/photos/photo_personne.dart';
+import '../../core/tc_groupe/group_summary_vm.dart';
 import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/app_card.dart';
-import '../../core/widgets/avatar_tile.dart';
+import '../../core/widgets/avatar_tile.dart' show AppAvatar;
 import '../../core/widgets/pays_enseignant.dart';
+import '../tc_mes_groupes/photo_enseignant.dart';
 import 'libelles_attente.dart';
 
 /// La carte de l'enseignant d'un suivi.
@@ -99,7 +99,11 @@ class CarteEnseignantAttenteVue extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               if (enseignant.montre && id != null) ...<Widget>[
-                _Photo(enseignantId: id, prenom: enseignant.prenom),
+                _Photo(
+                  enseignantId: id,
+                  prenom: enseignant.prenom,
+                  sayyida: enseignant.titre == 'sayyida',
+                ),
                 Ecart.hMd,
               ],
               Expanded(
@@ -151,26 +155,33 @@ class CarteEnseignantAttenteVue extends StatelessWidget {
   }
 }
 
-/// La photo : la source unique des photos (`photoPersonneProvider`), le
-/// serveur dit seul si l'appelant peut la voir ; les initiales tant qu'elle
-/// n'a pas repondu.
-class _Photo extends ConsumerWidget {
-  const _Photo({required this.enseignantId, required this.prenom});
+/// La photo : la source unique des photos (`PhotoEnseignant`, qui lit
+/// `photoPersonneProvider`), le serveur dit seul si l'appelant peut la voir ;
+/// les initiales tant qu'elle n'a pas repondu, ou quand il n'y en a pas
+/// (cote famille, jamais d'avertissement pour une photo manquante).
+class _Photo extends StatelessWidget {
+  const _Photo({
+    required this.enseignantId,
+    required this.prenom,
+    required this.sayyida,
+  });
 
   final String enseignantId;
   final String prenom;
+  final bool sayyida;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final AsyncValue<String?> lue = ref.watch(
-      photoPersonneProvider(enseignantId),
-    );
+  Widget build(BuildContext context) {
     return ExcludeSemantics(
-      child: AvatarTile(
-        key: const ValueKey<String>('attente-enseignant-photo'),
-        prenom: prenom,
-        urlSignee: lue.value,
+      key: const ValueKey<String>('attente-enseignant-photo'),
+      child: PhotoEnseignant(
+        enseignant: EnseignantVM(
+          enseignantId: enseignantId,
+          titre: sayyida ? TitreEnseignant.sayyida : TitreEnseignant.sayyid,
+          nomAffichage: prenom,
+        ),
         diametre: AppAvatar.grand,
+        repliInitiales: true,
       ),
     );
   }

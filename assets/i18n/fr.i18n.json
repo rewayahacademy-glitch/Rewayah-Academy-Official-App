@@ -15215,7 +15215,7 @@
       "formationFait": "Les élèves de la classe sont réunis.",
       "formationAVenir": "L'académie réunit les élèves de la classe une fois la demande reçue.",
       "confirmeeFait": "Votre classe est confirmée.",
-      "confirmeeFaitNom": "Votre classe « {classe} » est confirmée.",
+      "confirmeeFaitNom": "Votre classe «\u00a0{classe}\u00a0» est confirmée.",
       "confirmeeAVenir": "L'académie confirme la classe quand ses élèves sont réunis.",
       "enseignantEnCours": "L'académie désigne l'enseignant de la classe.",
       "enseignantEnAttente": "La classe attend son enseignant. L'académie le désigne et vous prévient.",
@@ -15251,7 +15251,7 @@
         "offreRetiree": "L'académie a retiré ce créneau de ses offres.",
         "classeNonConstituee": "La classe de ce créneau n'a pas pu être constituée.",
         "refusDirection": "La direction n'a pas retenu cette demande.",
-        "dejaEnClasse": "Cet élève a déjà une place en classe : la demande n'est plus nécessaire.",
+        "dejaEnClasse": "Cet élève a déjà une place en classe\u00a0: la demande n'est plus nécessaire.",
         "inconnu": "Cette demande est close."
       },
       "suite": "Vous pouvez choisir un autre créneau.",
@@ -15277,13 +15277,13 @@
     },
     "vide": {
       "message": "Vous n'avez pas encore choisi de classe.",
-      "invitation": "Choisissez une classe : l'académie vous suit ensuite étape par étape.",
+      "invitation": "Choisissez une classe\u00a0: l'académie vous suit ensuite étape par étape.",
       "action": "Choisir une classe",
       "messageSimple": "Il n'y a pas encore de demande de classe pour toi.",
       "invitationSimple": "Ton tuteur peut en faire une."
     },
     "erreur": "Nous n'avons pas pu lire le suivi de votre demande. Cela vient souvent de la connexion. Réessayez dans un instant.",
-    "sansDonnees": "Vous êtes hors ligne et le suivi n'a pas encore été lu. Reconnectez-vous pour le voir.",
+    "sansDonnees": "Le suivi de votre demande n'a pas pu être chargé",
     "introuvable": "Cette demande n'existe plus dans votre suivi.",
     "retour": "Retour",
     "carte": {
@@ -15306,28 +15306,28 @@
       "nonConfirme": "Vous n'avez pas encore confirmé ce choix. Tant que vous ne l'avez pas fait, les familles ne voient que votre nom et la langue du cours.",
       "enregistrer": "Enregistrer",
       "enregistre": "Enregistré.",
-      "erreur": "Votre choix n'est pas confirmé : il n'est peut-être pas parvenu jusqu'à Rewayah. Réessayez dans un instant.",
+      "erreur": "Votre choix n'est pas confirmé\u00a0: il n'est peut-être pas parvenu jusqu'à Rewayah. Réessayez dans un instant.",
       "effacerPays": "Ne pas renseigner"
     },
     "mePresenter": {
       "lien": "Me présenter aux familles",
       "titre": "Me présenter",
       "contexte": "Un message est déjà rédigé. Vous pouvez le modifier avant de l'envoyer. Il part dans Messages, aux familles de la classe et aux élèves adultes.",
-      "messageSayyid": "Bonjour, je suis Sayyid {nom}, votre enseignant de la classe « {classe} ». Je suis heureux de commencer avec vous. Écrivez-moi ici si vous avez une question. À très bientôt.",
-      "messageSayyida": "Bonjour, je suis Sayyida {nom}, votre enseignante de la classe « {classe} ». Je suis heureuse de commencer avec vous. Écrivez-moi ici si vous avez une question. À très bientôt.",
+      "messageSayyid": "Bonjour, je suis Sayyid {nom}, votre enseignant de la classe «\u00a0{classe}\u00a0». Je suis heureux de commencer avec vous. Écrivez-moi ici si vous avez une question. À très bientôt.",
+      "messageSayyida": "Bonjour, je suis Sayyida {nom}, votre enseignante de la classe «\u00a0{classe}\u00a0». Je suis heureuse de commencer avec vous. Écrivez-moi ici si vous avez une question. À très bientôt.",
       "champ": "Votre message",
-      "rappel": "Ce message est lu par les tuteurs des élèves mineurs et par les élèves adultes. Il n'est jamais envoyé à un mineur. N'échangez ni téléphone ni adresse : tout passe par l'application.",
+      "rappel": "Ce message est lu par les tuteurs des élèves mineurs et par les élèves adultes. Il n'est jamais envoyé à un mineur. N'échangez ni téléphone ni adresse\u00a0: tout passe par l'application.",
       "envoyer": "Envoyer aux familles",
       "envoye(param=n)": {
         "one": "Message envoyé à {n} famille.",
         "other": "Message envoyé à {n} familles."
       },
       "dejaEcrit(param=n)": {
-        "one": "{n} famille a déjà un échange avec vous : elle ne reçoit pas ce message.",
-        "other": "{n} familles ont déjà un échange avec vous : elles ne reçoivent pas ce message."
+        "one": "{n} famille a déjà un échange avec vous\u00a0: elle ne reçoit pas ce message.",
+        "other": "{n} familles ont déjà un échange avec vous\u00a0: elles ne reçoivent pas ce message."
       },
       "aucune": "Aucune famille de cette classe ne peut recevoir de message pour le moment.",
-      "echec": "Le message n'est pas confirmé pour certaines familles : il n'est peut-être pas parvenu jusqu'à elles. Réessayez : celles qui l'ont reçu ne le reçoivent pas deux fois.",
+      "echec": "Le message n'est pas confirmé pour certaines familles\u00a0: il n'est peut-être pas parvenu jusqu'à elles. Réessayez\u00a0: celles qui l'ont reçu ne le reçoivent pas deux fois.",
       "chargement": "Chargement des familles de la classe",
       "erreur": "Les familles de la classe n'ont pas pu être lues. Réessayez dans un instant.",
       "vide": "Écrivez un message avant de l'envoyer."
