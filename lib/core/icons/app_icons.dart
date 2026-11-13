@@ -926,6 +926,20 @@ abstract final class AppIcons {
     IconData(0xe3e2, fontFamily: _actif),
   );
 
+  /// Bibliotheque (BIBLIOTHEQUE-UNE) : vignette d'un enregistrement audio.
+  /// Phosphor `speaker-high` (0xe44a).
+  static const AppIcon audio = AppIcon._(
+    IconData(0xe44a, fontFamily: _repos),
+    IconData(0xe44a, fontFamily: _actif),
+  );
+
+  /// Bibliotheque (BIBLIOTHEQUE-UNE) : vignette d'une video.
+  /// Phosphor `video-camera` (0xe4da).
+  static const AppIcon video = AppIcon._(
+    IconData(0xe4da, fontFamily: _repos),
+    IconData(0xe4da, fontFamily: _actif),
+  );
+
   /// Lien partage dans un fil ou une publication (COM-MSG, COM-COMU, COM-STU).
   /// Phosphor `link-simple` (0xe2e6).
   static const AppIcon lien = AppIcon._(

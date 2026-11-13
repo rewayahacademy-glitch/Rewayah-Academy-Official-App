@@ -206,6 +206,11 @@ import 'core/suivi/port_suivi_pedagogique.dart';
 import 'core/suivi/suivi_pedagogique_supabase.dart';
 import 'core/tc_bibliotheque/catalogue_supabase.dart';
 import 'core/tc_bibliotheque/donnees_catalogue.dart';
+import 'core/tc_bibliotheque/etapes_programme.dart';
+import 'core/tc_bibliotheque/etapes_programme_supabase.dart';
+import 'core/tc_bibliotheque/versions_supabase.dart';
+import 'core/tc_bibliotheque/vignettes_ressource.dart';
+import 'core/tc_bibliotheque/vignettes_supabase.dart';
 import 'core/tc_etat_partage/etat_partage_supabase.dart';
 import 'core/tc_etat_partage/providers_tc_etat_partage.dart';
 import 'core/tc_observation/historique_observations_admin_supabase.dart';
@@ -221,6 +226,7 @@ import 'core/tc_parcours/port_feedback.dart';
 import 'core/tc_parcours/port_signalement.dart';
 import 'core/tc_parcours/port_travail_a_venir.dart';
 import 'core/tc_parcours/signalement_supabase.dart';
+import 'core/tc_telechargement/telechargement_supabase.dart';
 import 'core/theme/app_delais.dart';
 import 'core/theme/polices_differees.dart';
 import 'core/video/releve_qualite.dart';
@@ -288,6 +294,14 @@ import 'racine_reelle.dart';
 /// partage ne doit pas dependre implicitement d'un service reseau pour son
 /// comportement par defaut ; ce branchement se fait ici et nulle part
 /// ailleurs.
+/// BIBLIOTHEQUE-UNE : la version courante d'un document et son fichier decrit
+/// sont lus ensemble, et l'ouverture lit ce que la version a decrit : une seule
+/// instance de chaque, partagee par les surcharges ci-dessous.
+final VersionsSupabase _versionsBibliotheque = VersionsSupabase(
+  Supabase.instance.client,
+);
+final TelechargementSupabase _ouvertureBibliotheque = TelechargementSupabase(Supabase.instance.client, _versionsBibliotheque);
+
 List<Override> _surchargesAppReelle() => <Override>[
   // Defaut 1.8 : le brouillon de l'inscription se garde sur l'appareil le
   // temps de l'inscription (un rechargement ne perd plus le prenom).
@@ -409,6 +423,23 @@ List<Override> _surchargesAppReelle() => <Override>[
   // `ressources_du_groupe`. Remplace le catalogue local vide.
   portCatalogueProvider.overrideWithValue(
     CatalogueSupabase(Supabase.instance.client),
+  ),
+  // BIBLIOTHEQUE-UNE : les fils morts de la fiche d'un document. La version
+  // publiee courante (`bibliotheque_version_lecteur`), puis l'URL de lecture
+  // signee par la fonction Edge `bibliotheque-lecture` apres controle du droit ;
+  // les octets d'une image ou d'une copie passent par la meme URL. Sans ces
+  // trois lignes, la fiche d'un document ne trouvait aucune version.
+  portVersionsRessourceProvider.overrideWithValue(_versionsBibliotheque),
+  portTelechargementProvider.overrideWithValue(_ouvertureBibliotheque),
+  lecteurArtefactProvider.overrideWithValue(_ouvertureBibliotheque),
+  // BIBLIOTHEQUE-UNE : les vignettes deposees, URL signee par le serveur.
+  portVignettesProvider.overrideWithValue(
+    VignettesSupabase(Supabase.instance.client),
+  ),
+  // BIBLIOTHEQUE-UNE (D3) : les etapes du programme publie, que la direction
+  // coche au lieu de taper un code (liste vide tant que rien n'est publie).
+  portEtapesProgrammeProvider.overrideWithValue(
+    EtapesProgrammeSupabase(Supabase.instance.client),
   ),
   // RECHERCHE-LIVRAISON (directeur, 08/11/2026) : la recherche est servie en
   // production. Les moteurs lisent les ports reels (classes, Bibliotheque,

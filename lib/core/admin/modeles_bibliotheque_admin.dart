@@ -148,7 +148,11 @@ class FiltreCatalogue {
     this.niveau,
     this.langue,
     this.recherche = '',
+    this.lectureCoran,
   });
+
+  /// La lecture du Coran concernee (`hafs`, `warsh`, `qalun`, `shuba`).
+  final String? lectureCoran;
 
   /// Le segment.
   final EtatCatalogue etat;
@@ -171,6 +175,7 @@ class FiltreCatalogue {
       type == null &&
       niveau == null &&
       langue == null &&
+      lectureCoran == null &&
       recherche.trim().isEmpty;
 
   /// Le meme filtre, avec les champs donnes remplaces. `type`, `niveau` et
@@ -181,15 +186,20 @@ class FiltreCatalogue {
     String? niveau,
     String? langue,
     String? recherche,
+    String? lectureCoran,
     bool retirerType = false,
     bool retirerNiveau = false,
     bool retirerLangue = false,
+    bool retirerLectureCoran = false,
   }) => FiltreCatalogue(
     etat: etat ?? this.etat,
     type: retirerType ? null : (type ?? this.type),
     niveau: retirerNiveau ? null : (niveau ?? this.niveau),
     langue: retirerLangue ? null : (langue ?? this.langue),
     recherche: recherche ?? this.recherche,
+    lectureCoran: retirerLectureCoran
+        ? null
+        : (lectureCoran ?? this.lectureCoran),
   );
 
   @override
@@ -199,10 +209,12 @@ class FiltreCatalogue {
       other.type == type &&
       other.niveau == niveau &&
       other.langue == langue &&
+      other.lectureCoran == lectureCoran &&
       other.recherche == recherche;
 
   @override
-  int get hashCode => Object.hash(etat, type, niveau, langue, recherche);
+  int get hashCode =>
+      Object.hash(etat, type, niveau, langue, recherche, lectureCoran);
 }
 
 /// Les valeurs que le catalogue propose en filtre : rendues par le serveur,
@@ -415,7 +427,24 @@ class FicheSupport {
     this.politiqueHorsLigne = PolitiqueOffline.jamais,
     this.classesServies = 0,
     this.motifRetrait,
+    this.rayon = codeRayonCours,
+    this.ordre = 0,
+    this.lienExterne,
+    this.etapes = const <String>[],
+    this.aVignette = false,
+    this.tranches = tranchesToutes,
+    this.lectureCoran,
+    this.ecolePriere,
   });
+
+  /// Les tranches d'age auxquelles le document s'adresse (codes).
+  final List<String> tranches;
+
+  /// La lecture du Coran concernee, quand elle est precisee.
+  final String? lectureCoran;
+
+  /// L'ecole suivie pour un document de priere ou d'ablutions (texte libre).
+  final String? ecolePriere;
 
   /// La ligne de catalogue (titre, type, etats).
   final SupportAdmin support;
@@ -463,6 +492,21 @@ class FicheSupport {
   /// Le motif d'un retrait.
   final String? motifRetrait;
 
+  /// Le code du rayon (`codeRayonCours`, `codeRayonPlusLoin`).
+  final String rayon;
+
+  /// L'ordre d'affichage dans le rayon.
+  final int ordre;
+
+  /// L'adresse https d'un lien externe ou d'une video par lien.
+  final String? lienExterne;
+
+  /// Les codes stables des etapes rattachees.
+  final List<String> etapes;
+
+  /// Vrai quand une vignette a ete deposee.
+  final bool aVignette;
+
   /// La derniere version, ou `null` si aucune.
   VersionSupport? get derniereVersion =>
       versions.isEmpty ? null : versions.first;
@@ -478,7 +522,25 @@ class NouveauSupport {
     required this.langue,
     required this.categorie,
     this.niveau,
+    this.description,
+    this.rayon = codeRayonCours,
+    this.ordre = 0,
+    this.lienExterne,
+    this.etapes = const <String>[],
+    this.tranches,
+    this.lectureCoran,
+    this.ecolePriere,
   });
+
+  /// Les tranches d'age ; `null` laisse le defaut du serveur (les quatre, ou
+  /// trois sans la tranche 6-9 pour un document donne par un lien).
+  final List<String>? tranches;
+
+  /// La lecture du Coran concernee (facultatif).
+  final String? lectureCoran;
+
+  /// L'ecole suivie, pour un document de priere ou d'ablutions (facultatif).
+  final String? ecolePriere;
 
   /// Le titre.
   final String titre;
@@ -494,6 +556,22 @@ class NouveauSupport {
 
   /// Le niveau.
   final String? niveau;
+
+  /// La description courte, montree sur la carte. Obligatoire pour un lien
+  /// externe (le serveur refuse sans elle).
+  final String? description;
+
+  /// Le code du rayon.
+  final String rayon;
+
+  /// L'ordre d'affichage dans le rayon.
+  final int ordre;
+
+  /// L'adresse https d'un lien externe ou d'une video par lien.
+  final String? lienExterne;
+
+  /// Les codes stables des etapes auxquelles le document se rattache.
+  final List<String> etapes;
 }
 
 /// Les champs modifiables d'un brouillon : `null` = inchange.
@@ -509,7 +587,40 @@ class ModificationSupport {
     this.conditionsAttribution,
     this.visibilite,
     this.politiqueHorsLigne,
+    this.rayon,
+    this.ordre,
+    this.lienExterne,
+    this.etapes,
+    this.retirerVignette = false,
+    this.tranches,
+    this.lectureCoran,
+    this.ecolePriere,
   });
+
+  /// Les tranches d'age (la liste complete remplace la precedente).
+  final List<String>? tranches;
+
+  /// La lecture du Coran (une chaine vide la retire).
+  final String? lectureCoran;
+
+  /// L'ecole suivie (une chaine vide la retire).
+  final String? ecolePriere;
+
+  /// Le code du rayon.
+  final String? rayon;
+
+  /// L'ordre d'affichage.
+  final int? ordre;
+
+  /// L'adresse du lien (une chaine vide la retire : le serveur refuse pour un
+  /// lien externe, qui en exige une).
+  final String? lienExterne;
+
+  /// Les etapes rattachees (la liste complete remplace la precedente).
+  final List<String>? etapes;
+
+  /// Vrai pour retirer la vignette deposee.
+  final bool retirerVignette;
 
   /// Le titre.
   final String? titre;
@@ -682,6 +793,11 @@ enum FinaliteUpload {
 
   /// La preuve d'autorisation (spec §4.3).
   preuve,
+
+  /// La vignette (image de couverture) du document : 2 Mio au plus, deposee
+  /// par la meme voie en deux temps, mais rattachee au document et non a une
+  /// version.
+  vignette,
 }
 
 /// Les phases d'un depot (spec §3.4, §7).
@@ -724,6 +840,10 @@ enum ErreurUpload {
 
   /// Hash different de celui annonce.
   empreinte,
+
+  /// Le depot de fichiers n'est pas encore active sur le serveur (BIBLIOTHEQUE-UNE,
+  /// C2) : la direction le sait en mots simples, le lien externe reste possible.
+  nonActive,
 }
 
 /// La progression d'un depot, diffusee par le port.
