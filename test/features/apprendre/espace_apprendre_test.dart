@@ -711,6 +711,7 @@ void main() {
       String? lien,
       bool vignette = false,
       bool publiee = true,
+      String rayon = codeRayonCours,
     }) => LibraryResource(
       id: id,
       title: 'Titre $id',
@@ -723,6 +724,7 @@ void main() {
       description: description,
       lienExterne: lien,
       aVignette: vignette,
+      rayon: rayon,
       currentVersionId: publiee ? 'v-$id' : null,
     );
 
@@ -769,6 +771,134 @@ void main() {
         cheminFicheDocument('site'),
       );
       expect(de('film').rayon, RayonPlanche.documentsDesCours);
+    });
+
+    test('rayon et ordre viennent du serveur : `plus_loin` va au second rayon, '
+        'chaque rayon suit `ordre` (croissant, stable)', () {
+      LibraryResource r(
+        String id, {
+        String rayon = codeRayonCours,
+        int ordre = 0,
+      }) => LibraryResource(
+        id: id,
+        title: id,
+        shortTitle: id,
+        resourceType: TypeRessource.pdf,
+        language: 'fr',
+        category: 'lecture',
+        accessPolicy: PolitiqueAcces.publique,
+        offlinePolicy: PolitiqueOffline.jamais,
+        rayon: rayon,
+        ordre: ordre,
+        currentVersionId: 'v-$id',
+      );
+      final List<DocumentPlanche> d = documentsDepuisCatalogue(
+        <LibraryResource>[
+          r('c3', ordre: 3),
+          r('loin2', rayon: codeRayonPlusLoin, ordre: 2),
+          r('c1', ordre: 1),
+          r('loin1', rayon: codeRayonPlusLoin, ordre: 1),
+          r('c2', ordre: 2),
+        ],
+        avecCoran: false,
+      );
+      List<String> de(RayonPlanche rayon) => <String>[
+        for (final DocumentPlanche x in d)
+          if (x.rayon == rayon) x.id,
+      ];
+      expect(de(RayonPlanche.documentsDesCours), <String>['c1', 'c2', 'c3']);
+      expect(de(RayonPlanche.pourAllerPlusLoin), <String>['loin1', 'loin2']);
+    });
+
+    testWidgets('les intitules des rayons sont ceux du serveur '
+        '(PortCatalogue.rayons())', (WidgetTester tester) async {
+      await monterApprendre(
+        tester,
+        profil: ProfilApprendre.mineurGuide,
+        autres: <Override>[
+          portCatalogueProvider.overrideWithValue(
+            _CatalogueAvecRayons(
+              <LibraryResource>[
+                ressource('cours1', TypeRessource.pdf),
+                ressource('loin1', TypeRessource.pdf, rayon: codeRayonPlusLoin),
+              ],
+              const <RayonBibliotheque>[
+                RayonBibliotheque(
+                  code: codeRayonCours,
+                  titreFr: 'Mes cours du serveur',
+                  titreAr: 'دروسي',
+                  ordre: 1,
+                ),
+                RayonBibliotheque(
+                  code: codeRayonPlusLoin,
+                  titreFr: 'Plus loin du serveur',
+                  titreAr: 'أبعد',
+                  ordre: 2,
+                ),
+              ],
+            ),
+          ),
+        ],
+      );
+      for (final (String titre, RayonPlanche rayon) cas
+          in <(String, RayonPlanche)>[
+            ('Mes cours du serveur', RayonPlanche.documentsDesCours),
+            ('Plus loin du serveur', RayonPlanche.pourAllerPlusLoin),
+          ]) {
+        expect(
+          find.descendant(
+            of: find.byKey(PlancheDocuments.cleRayon(cas.$2)),
+            matching: find.text(cas.$1),
+          ),
+          findsOneWidget,
+          reason: cas.$1,
+        );
+      }
+      // Chaque document est dans le rayon que le serveur lui donne.
+      expect(
+        find.descendant(
+          of: find.byKey(
+            PlancheDocuments.cleRayon(RayonPlanche.pourAllerPlusLoin),
+          ),
+          matching: find.byKey(PlancheDocuments.cleDocument('loin1')),
+        ),
+        findsOneWidget,
+      );
+      expect(find.text(t.apprendre.bibliotheque.rayonCours), findsNothing);
+    });
+
+    testWidgets('intitules illisibles (rayons() echoue) : repli sur le texte '
+        'ecrit, jamais un trou', (WidgetTester tester) async {
+      await monterApprendre(
+        tester,
+        profil: ProfilApprendre.mineurGuide,
+        autres: <Override>[
+          portCatalogueProvider.overrideWithValue(
+            _CatalogueRayonsEnPanne(<LibraryResource>[
+              ressource('cours1', TypeRessource.pdf),
+              ressource('loin1', TypeRessource.pdf, rayon: codeRayonPlusLoin),
+            ]),
+          ),
+        ],
+      );
+      expect(
+        find.descendant(
+          of: find.byKey(
+            PlancheDocuments.cleRayon(RayonPlanche.documentsDesCours),
+          ),
+          matching: find.text(t.apprendre.bibliotheque.rayonCours),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: find.byKey(
+            PlancheDocuments.cleRayon(RayonPlanche.pourAllerPlusLoin),
+          ),
+          matching: find.text(t.apprendre.bibliotheque.rayonPlusLoin),
+        ),
+        findsOneWidget,
+      );
     });
 
     testWidgets('par le vrai adaptateur : les quatre types se filtrent, le '
@@ -1947,4 +2077,25 @@ class _CatalogueClasseRefusee extends CatalogueLocal {
   @override
   Future<List<LibraryResource>> pourGroupe(String groupeId) =>
       Future<List<LibraryResource>>.error(EchecCatalogue(_raison));
+}
+
+/// Un catalogue qui donne ses propres rayons (donnee du serveur).
+class _CatalogueAvecRayons extends CatalogueLocal {
+  _CatalogueAvecRayons(List<LibraryResource> ressources, this._rayons)
+    : super(ressources: ressources);
+
+  final List<RayonBibliotheque> _rayons;
+
+  @override
+  Future<List<RayonBibliotheque>> rayons() async => _rayons;
+}
+
+/// Un catalogue dont la lecture des rayons echoue (les ressources se lisent).
+class _CatalogueRayonsEnPanne extends CatalogueLocal {
+  _CatalogueRayonsEnPanne(List<LibraryResource> ressources)
+    : super(ressources: ressources);
+
+  @override
+  Future<List<RayonBibliotheque>> rayons() =>
+      Future<List<RayonBibliotheque>>.error(const EchecCatalogue('hors ligne'));
 }
