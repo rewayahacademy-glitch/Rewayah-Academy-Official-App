@@ -48,7 +48,7 @@ Branche `claude/priere-serveur`, migration réservée `20261123930000_priere_ser
 - **Aucun test sur staging ni en production.** La migration n'a jamais été appliquée à distance ; l'emboîtement avec la migration de la salle (branche zealous-tesla, tête 908b59fc) est prouvé en local seulement, sur un Postgres nu.
 - **`pg_cron`** : absent des Postgres de test, donc la planification de nuit n'a pas tourné ; seule la fonction (`priere_recalculer_horizon`) est testée.
 - **Le Ramadan** n'est qu'un booléen posé à la main.
-- **Une prière dont le temps se termine pendant la séance** n'est pas traitée (seule l'entrée l'est) : constat figé par la section 9 du scénario, voir PRIERE.md §3 bis.
+- **Prière qui se ferme** : règle arbitrée le 13/11/2026 (PRIERE.md §3, 2 bis), à valider par le directeur ; deux réglages `priere.marge_avant_cours_minutes` (20) et `priere.delai_fermeture_minutes` (10) ; la lecture des créneaux concernés existe côté serveur (`priere_creneaux_fermeture`), son affichage dans la création de classe est une dette (lot FC-3). Si deux prières se ferment pendant le même cours (marge très grande), celle qui se ferme la première porte la pause.
 - **Hautes latitudes** : sans lever ni coucher du soleil, aucune pause, une ligne au journal ; pas de calcul inventé.
 - **Le module local** `lib/core/priere/horaires_priere.dart` et `reglages_priere.dart` reste dans le dépôt (autre lot de nettoyage) ; plus aucun écran ne l'appelle.
 - **Langues autres que fr et ar** : non écrites (le dépôt n'en a que deux).

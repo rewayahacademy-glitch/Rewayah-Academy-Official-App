@@ -7967,6 +7967,10 @@ class _Traductions$priere$regles$ar extends Traductions$priere$regles$fr {
 	@override String get margeDebutDetail => 'الصلاة التي تدخل في هذه الدقائق الأولى تضع الاستراحة عند هذه الدقيقة من الدرس.';
 	@override String get margeFin => 'هامش النهاية';
 	@override String get margeFinDetail => 'الصلاة التي تدخل في هذه الدقائق الأخيرة تُصلّى بعد الدرس.';
+	@override String get margeAvant => 'صلاة دخلت قبل الدرس مباشرة';
+	@override String get margeAvantDetail => 'الصلاة التي دخلت قبل بداية الدرس بأقل من هذه المدة، ويخرج وقتها أثناء الدرس، لها استراحتها. يؤكدها المدير.';
+	@override String get delaiFermeture => 'بداية استراحة صلاة يخرج وقتها';
+	@override String get delaiFermetureDetail => 'تبدأ هذه الاستراحة بعد بداية الدرس بهذه المدة.';
 	@override String get horizon => 'إعادة الحساب ليلًا';
 	@override String get horizonDetail => 'كل ليلة تُعاد حسابات استراحات حصص الأيام القادمة.';
 	@override String get lieux => 'أماكن صلاة المعلمين';
@@ -32181,6 +32185,10 @@ extension on TraductionsAr {
 			'priere.regles.margeDebutDetail' => 'الصلاة التي تدخل في هذه الدقائق الأولى تضع الاستراحة عند هذه الدقيقة من الدرس.',
 			'priere.regles.margeFin' => 'هامش النهاية',
 			'priere.regles.margeFinDetail' => 'الصلاة التي تدخل في هذه الدقائق الأخيرة تُصلّى بعد الدرس.',
+			'priere.regles.margeAvant' => 'صلاة دخلت قبل الدرس مباشرة',
+			'priere.regles.margeAvantDetail' => 'الصلاة التي دخلت قبل بداية الدرس بأقل من هذه المدة، ويخرج وقتها أثناء الدرس، لها استراحتها. يؤكدها المدير.',
+			'priere.regles.delaiFermeture' => 'بداية استراحة صلاة يخرج وقتها',
+			'priere.regles.delaiFermetureDetail' => 'تبدأ هذه الاستراحة بعد بداية الدرس بهذه المدة.',
 			'priere.regles.horizon' => 'إعادة الحساب ليلًا',
 			'priere.regles.horizonDetail' => 'كل ليلة تُعاد حسابات استراحات حصص الأيام القادمة.',
 			'priere.regles.lieux' => 'أماكن صلاة المعلمين',
@@ -32475,12 +32483,12 @@ extension on TraductionsAr {
 			'inscription.recap.usage' => 'نوع الحساب',
 			'inscription.recap.identite' => 'الاسم',
 			'inscription.recap.genre' => 'الجنس',
+			_ => null,
+		} ?? switch (path) {
 			'inscription.recap.enseignant' => 'معلم',
 			'inscription.recap.comptable' => 'محاسب',
 			'inscription.recap.cours' => 'دروسك الخاصة',
 			'inscription.recap.coursOui' => 'تتابع أنت أيضا دروسا',
-			_ => null,
-		} ?? switch (path) {
 			'inscription.recap.coursNon' => 'لا دروس لك',
 			'inscription.recap.telephone' => 'الهاتف',
 			'inscription.recap.langue' => 'اللغة',
@@ -32989,12 +32997,12 @@ extension on TraductionsAr {
 			'dossiers.visionneuse.formatNonPrisEnCharge' => 'لا يمكن عرض تنسيق هذه الوثيقة.',
 			'dossiers.visionneuse.accesRetire' => 'لم يعد لديك وصول إلى هذه الوثيقة.',
 			'dossiers.visionneuse.apercuRefuse' => 'هذه الوثيقة غير مرئية بحسابك.',
+			_ => null,
+		} ?? switch (path) {
 			'dossiers.visionneuse.horsLigne' => 'أنت غير متصل. لا يمكن تحميل الوثيقة.',
 			'dossiers.visionneuse.aucune' => 'لا وثيقة متاحة.',
 			'dossiers.visionneuse.fermerPiece' => 'إغلاق الوثيقة',
 			'dossiers.visionneuse.agrandir' => 'تكبير',
-			_ => null,
-		} ?? switch (path) {
 			'dossiers.visionneuse.reduire' => 'تصغير',
 			'dossiers.visionneuse.ajuster' => 'ملاءمة الشاشة',
 			'dossiers.visionneuse.infoBulle' => ({required Object action, required Object touche}) => '⁨${action}⁩ (المفتاح ⁨${touche}⁩)',
@@ -33503,12 +33511,12 @@ extension on TraductionsAr {
 			'suiviDemandes.jalon.aussitot' => 'فورًا',
 			'suiviDemandes.jalon.minutes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'بعد أقل من دقيقة', one: 'بعد دقيقة', two: 'بعد دقيقتين', few: 'بعد ⁨${n}⁩ دقائق', many: 'بعد ⁨${n}⁩ دقيقة', other: 'بعد ⁨${n}⁩ دقيقة', ), 
 			'suiviDemandes.jalon.heures' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'بعد أقل من ساعة', one: 'بعد ساعة', two: 'بعد ساعتين', few: 'بعد ⁨${n}⁩ ساعات', many: 'بعد ⁨${n}⁩ ساعة', other: 'بعد ⁨${n}⁩ ساعة', ), 
+			_ => null,
+		} ?? switch (path) {
 			'suiviDemandes.jalon.jours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'في اليوم نفسه', one: 'بعد يوم', two: 'بعد يومين', few: 'بعد ⁨${n}⁩ أيام', many: 'بعد ⁨${n}⁩ يومًا', other: 'بعد ⁨${n}⁩ يوم', ), 
 			'suiviDemandes.changement.titrePage' => 'تغيّر الفصل',
 			'suiviDemandes.changement.titre' => ({required Object dePrenom}) => 'تغيّر فصل ⁨${dePrenom}⁩',
 			'suiviDemandes.changement.fusion' => ({required Object prenom}) => 'دُمج فصلكم مع فصل آخر. هذا هو فصل ⁨${prenom}⁩ الآن.',
-			_ => null,
-		} ?? switch (path) {
 			'suiviDemandes.changement.transfert' => ({required Object prenom}) => 'نقلت الإدارة ⁨${prenom}⁩ إلى فصل آخر. هذا هو فصله الجديد.',
 			'suiviDemandes.changement.classe' => 'الفصل الجديد',
 			'suiviDemandes.changement.enseignant' => 'المعلم',
@@ -34017,12 +34025,12 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.riwayat.options.rawh.description' => 'رواية عن يعقوب',
 			'recrutement.parcours.q.riwayat.options.ishaq.libelle' => 'إسحاق',
 			'recrutement.parcours.q.riwayat.options.ishaq.description' => 'رواية عن خلف، القارئ العاشر',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.q.riwayat.options.idris.libelle' => 'إدريس',
 			'recrutement.parcours.q.riwayat.options.idris.description' => 'رواية عن خلف، القارئ العاشر',
 			'recrutement.parcours.q.ijazaPresentable.titre' => 'هل عندك إجازة؟',
 			'recrutement.parcours.q.ijazaPresentable.explication' => 'الإجازة إذن مكتوب من شيخ بنقل القرآن. من عنده إجازة فقد حفظ، لكن ليس كل من حفظ عنده إجازة: لذلك هذا سؤال مستقل.',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.q.ijazaPresentable.court' => 'الإجازة',
 			'recrutement.parcours.q.ijazaPresentable.options.oui.libelle' => 'نعم، عندي إجازة أستطيع عرضها',
 			'recrutement.parcours.q.ijazaPresentable.options.oui.description' => 'تستطيع أن تعرضها عبر الفيديو.',
@@ -34531,12 +34539,12 @@ extension on TraductionsAr {
 			'juridique.enfants.s3.blocs.0' => 'يوقّع المعلمون عقدًا وسياسة مراقبة. وتُحفظ وثيقة هويتهم في مساحة خاصة منفصلة عن الصور الظاهرة في الفصل.',
 			'juridique.enfants.s4.titre' => '٤. معلومات الطفل',
 			'juridique.enfants.s4.blocs.0' => 'معلومات الطفل ليست عامة ولا تظهر للأسر الأخرى.',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.enfants.s4.blocs.1' => 'الرمز الشخصي للطالب يبقى على جهازه.',
 			'juridique.enfants.s4.blocs.2' => 'انظروا أيضًا نص الخصوصية.',
 			'juridique.enfants.s5.titre' => '٥. إخبارنا بقلق',
 			'juridique.enfants.s5.blocs.0' => 'إذا أقلقكم أمر فاكتبوا لنا. قولوا ما رأيتم ومتى وفي أي فصل.',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.enfants.s5.blocs.1' => 'في حال خطر داهم، اتصلوا أولًا بخدمات الطوارئ في بلدكم.',
 			'avis.form.titre' => 'شاركنا رأيك',
 			'avis.form.sousTitre' => 'بضعة أسطر عن تجربتك في Rewayah Academy. دقيقتان تكفيان.',
@@ -35045,12 +35053,12 @@ extension on TraductionsAr {
 			'cahierC1.onReprendPage' => ({required Object page}) => 'نستأنف من الصفحة ⁨${page}⁩',
 			'cahierC3.arretPage' => ({required Object page}) => 'توقف الفصل عند الصفحة ⁨${page}⁩ من المصحف.',
 			'cahierC3.arretAide' => 'هذه آخر صفحة عُرضت في القاعة. إن كانت صحيحة فاعتمد، وإلا فصحّح.',
+			_ => null,
+		} ?? switch (path) {
 			'cahierC3.corriger' => 'تصحيح الموضع الذي توقف عنده الفصل',
 			'cahierC3.positionPage' => ({required Object page}) => 'الصفحة ⁨${page}⁩ من المصحف',
 			'cahierC3.renforcerTitre' => 'نقاط تحتاج إلى تعزيز',
 			'cahierC3.renforcerAide' => 'المس فقط هدف المرحلة الذي يحتاج هذا الطالب إلى تعزيزه. وما سواه يبقى «كما هو مقرر».',
-			_ => null,
-		} ?? switch (path) {
 			'cahierC3.pretBilan' => 'مستعد للتقييم القصير',
 			'cahierC3.pretBilanDetail' => 'تخطط الإدارة للتقييم القصير؛ لا شيء تلقائي.',
 			'cahierSourates.titre' => 'السور المسمَّعة',

@@ -364,26 +364,27 @@ CREATE FUNCTION private.priere_methode(p_methode text)
 RETURNS TABLE (
   angle_fajr double precision, angle_isha double precision, intervalle_isha integer,
   angle_maghrib double precision,
-  aj_fajr integer, aj_dhuhr integer, aj_asr integer, aj_maghrib integer, aj_isha integer)
+  aj_fajr integer, aj_dhuhr integer, aj_asr integer, aj_maghrib integer, aj_isha integer,
+  aj_lever integer)
 LANGUAGE sql IMMUTABLE PARALLEL SAFE SET search_path = ''
 AS $$
   SELECT v.angle_fajr::double precision, v.angle_isha::double precision, v.intervalle_isha::integer,
          v.angle_maghrib::double precision, v.aj_fajr::integer, v.aj_dhuhr::integer, v.aj_asr::integer,
-         v.aj_maghrib::integer, v.aj_isha::integer FROM (VALUES
-    ('muslim_world_league',    18.0, 17.0::numeric, 0, NULL::numeric, 0, 1, 0, 0, 0),
-    ('egyptian',               19.5, 17.5, 0, NULL, 0, 1, 0, 0, 0),
-    ('karachi',                18.0, 18.0, 0, NULL, 0, 1, 0, 0, 0),
-    ('umm_al_qura',            18.5, NULL, 90, NULL, 0, 0, 0, 0, 0),
-    ('dubai',                  18.2, 18.2, 0, NULL, 0, 3, 3, 3, 0),
-    ('moon_sighting_committee',18.0, 18.0, 0, NULL, 0, 5, 0, 3, 0),
-    ('north_america',          15.0, 15.0, 0, NULL, 0, 1, 0, 0, 0),
-    ('kuwait',                 18.0, 17.5, 0, NULL, 0, 0, 0, 0, 0),
-    ('qatar',                  18.0, NULL, 90, NULL, 0, 0, 0, 0, 0),
-    ('singapore',              20.0, 18.0, 0, NULL, 0, 1, 0, 0, 0),
-    ('turkey',                 18.0, 17.0, 0, NULL, 0, 5, 4, 7, 0),
-    ('tehran',                 17.7, 14.0, 0, 4.5,  0, 0, 0, 0, 0)
+         v.aj_maghrib::integer, v.aj_isha::integer, v.aj_lever::integer FROM (VALUES
+    ('muslim_world_league',    18.0, 17.0::numeric, 0, NULL::numeric, 0, 1, 0, 0, 0, 0),
+    ('egyptian',               19.5, 17.5, 0, NULL, 0, 1, 0, 0, 0, 0),
+    ('karachi',                18.0, 18.0, 0, NULL, 0, 1, 0, 0, 0, 0),
+    ('umm_al_qura',            18.5, NULL, 90, NULL, 0, 0, 0, 0, 0, 0),
+    ('dubai',                  18.2, 18.2, 0, NULL, 0, 3, 3, 3, 0, -3),
+    ('moon_sighting_committee',18.0, 18.0, 0, NULL, 0, 5, 0, 3, 0, 0),
+    ('north_america',          15.0, 15.0, 0, NULL, 0, 1, 0, 0, 0, 0),
+    ('kuwait',                 18.0, 17.5, 0, NULL, 0, 0, 0, 0, 0, 0),
+    ('qatar',                  18.0, NULL, 90, NULL, 0, 0, 0, 0, 0, 0),
+    ('singapore',              20.0, 18.0, 0, NULL, 0, 1, 0, 0, 0, 0),
+    ('turkey',                 18.0, 17.0, 0, NULL, 0, 5, 4, 7, 0, -7),
+    ('tehran',                 17.7, 14.0, 0, 4.5,  0, 0, 0, 0, 0, 0)
   ) AS v(nom, angle_fajr, angle_isha, intervalle_isha, angle_maghrib,
-         aj_fajr, aj_dhuhr, aj_asr, aj_maghrib, aj_isha)
+         aj_fajr, aj_dhuhr, aj_asr, aj_maghrib, aj_isha, aj_lever)
   WHERE v.nom = p_methode
 $$;
 
@@ -570,6 +571,42 @@ BEGIN
 END;
 $function$;
 
+-- Le lever du soleil d'une journee civile (UTC) : l'heure ou se ferme le temps du
+-- Fajr. Meme algorithme et meme arrondi que `adhan` (sunrise) ; NULL quand le soleil
+-- ne se leve pas ce jour-la. Preuve : la colonne `lever` de la reference adhan.
+CREATE FUNCTION private.priere_lever(
+  p_lat double precision, p_lon double precision, p_date date, p_methode text)
+RETURNS timestamptz
+LANGUAGE plpgsql IMMUTABLE PARALLEL SAFE SET search_path = ''
+AS $function$
+DECLARE
+  mt record;
+  jd double precision := private.priere_jour_julien(p_date);
+  s0 record; sp record; sn record;
+  m0 double precision;
+  alt double precision := -50.0 / 60.0;
+  lever bigint;
+  rv bigint;
+BEGIN
+  SELECT * INTO mt FROM private.priere_methode(p_methode);
+  IF NOT FOUND THEN
+    RAISE EXCEPTION 'methode de calcul inconnue : %', p_methode USING ERRCODE = '22023';
+  END IF;
+  SELECT * INTO sp FROM private.priere_soleil(jd - 1);
+  SELECT * INTO s0 FROM private.priere_soleil(jd);
+  SELECT * INTO sn FROM private.priere_soleil(jd + 1);
+  m0 := private.priere_borne((s0.ascension + (-p_lon) - s0.sideral) / 360, 1);
+  lever := private.priere_secondes(private.priere_angle_horaire(m0, alt, p_lat, p_lon, false,
+    s0.sideral, s0.ascension, sp.ascension, sn.ascension, s0.declinaison, sp.declinaison, sn.declinaison));
+  IF lever IS NULL THEN
+    RETURN NULL;
+  END IF;
+  rv := (p_date - DATE '1970-01-01')::bigint * 86400 + lever + mt.aj_lever * 60;
+  rv := rv - (rv % 60) + CASE WHEN rv % 60 >= 30 THEN 60 ELSE 0 END;
+  RETURN pg_catalog.to_timestamp(rv);
+END;
+$function$;
+
 REVOKE ALL ON FUNCTION private.priere_borne(double precision, double precision),
   private.priere_arrondi(double precision), private.priere_angle_proche(double precision),
   private.priere_interpoler(double precision, double precision, double precision, double precision),
@@ -580,7 +617,8 @@ REVOKE ALL ON FUNCTION private.priere_borne(double precision, double precision),
     double precision, double precision, double precision),
   private.priere_secondes(double precision), private.priere_methode(text),
   private.priere_msc_secondes(boolean, double precision, date),
-  private.priere_calculer(double precision, double precision, date, text, text, jsonb)
+  private.priere_calculer(double precision, double precision, date, text, text, jsonb),
+  private.priere_lever(double precision, double precision, date, text)
   FROM PUBLIC, anon, authenticated, service_role, agent_ro;
 
 COMMENT ON FUNCTION private.priere_calculer(double precision, double precision, date, text, text, jsonb) IS
@@ -599,7 +637,9 @@ INSERT INTO public.app_config (key, value) VALUES
   ('priere.ramadan_en_cours', 'false'::jsonb),
   ('priere.debut_marge_minutes', '5'::jsonb),
   ('priere.fin_marge_minutes', '15'::jsonb),
-  ('priere.horizon_jours', '14'::jsonb)
+  ('priere.horizon_jours', '14'::jsonb),
+  ('priere.marge_avant_cours_minutes', '20'::jsonb),
+  ('priere.delai_fermeture_minutes', '10'::jsonb)
 ON CONFLICT (key) DO NOTHING;
 
 CREATE FUNCTION private.priere_reglages_valider()
@@ -649,6 +689,18 @@ BEGIN
          OR (NEW.value #>> '{}')::numeric <> pg_catalog.floor((NEW.value #>> '{}')::numeric) THEN
         RAISE EXCEPTION 'priere.fin_marge_minutes : de 5 a 30 minutes' USING ERRCODE = '22023';
       END IF;
+    WHEN 'priere.marge_avant_cours_minutes' THEN
+      IF pg_catalog.jsonb_typeof(NEW.value) <> 'number'
+         OR (NEW.value #>> '{}')::numeric NOT BETWEEN 5 AND 60
+         OR (NEW.value #>> '{}')::numeric <> pg_catalog.floor((NEW.value #>> '{}')::numeric) THEN
+        RAISE EXCEPTION 'priere.marge_avant_cours_minutes : de 5 a 60 minutes' USING ERRCODE = '22023';
+      END IF;
+    WHEN 'priere.delai_fermeture_minutes' THEN
+      IF pg_catalog.jsonb_typeof(NEW.value) <> 'number'
+         OR (NEW.value #>> '{}')::numeric NOT BETWEEN 0 AND 30
+         OR (NEW.value #>> '{}')::numeric <> pg_catalog.floor((NEW.value #>> '{}')::numeric) THEN
+        RAISE EXCEPTION 'priere.delai_fermeture_minutes : de 0 a 30 minutes' USING ERRCODE = '22023';
+      END IF;
     WHEN 'priere.horizon_jours' THEN
       IF pg_catalog.jsonb_typeof(NEW.value) <> 'number'
          OR (NEW.value #>> '{}')::numeric NOT BETWEEN 7 AND 30
@@ -670,7 +722,8 @@ FOR EACH ROW EXECUTE FUNCTION private.priere_reglages_valider();
 CREATE FUNCTION private.priere_cfg()
 RETURNS TABLE (
   methode text, ecole text, pause integer, pause_ramadan integer, ramadan boolean,
-  marge_debut integer, marge_fin integer, horizon integer)
+  marge_debut integer, marge_fin integer, horizon integer,
+  marge_avant integer, delai_fermeture integer)
 LANGUAGE sql
 STABLE
 SET search_path = ''
@@ -683,7 +736,9 @@ AS $$
     coalesce((SELECT (value #>> '{}')::boolean FROM public.app_config WHERE key = 'priere.ramadan_en_cours'), false),
     coalesce((SELECT (value #>> '{}')::integer FROM public.app_config WHERE key = 'priere.debut_marge_minutes'), 5),
     coalesce((SELECT (value #>> '{}')::integer FROM public.app_config WHERE key = 'priere.fin_marge_minutes'), 15),
-    coalesce((SELECT (value #>> '{}')::integer FROM public.app_config WHERE key = 'priere.horizon_jours'), 14)
+    coalesce((SELECT (value #>> '{}')::integer FROM public.app_config WHERE key = 'priere.horizon_jours'), 14),
+    coalesce((SELECT (value #>> '{}')::integer FROM public.app_config WHERE key = 'priere.marge_avant_cours_minutes'), 20),
+    coalesce((SELECT (value #>> '{}')::integer FROM public.app_config WHERE key = 'priere.delai_fermeture_minutes'), 10)
 $$;
 
 -- ===========================================================================
@@ -763,7 +818,8 @@ CREATE FUNCTION private.priere_placer(
   p_lat double precision, p_lon double precision,
   p_methode text, p_ecole text, p_ajust jsonb,
   p_pause integer, p_pause_ramadan integer, p_ramadan boolean,
-  p_marge_debut integer, p_marge_fin integer)
+  p_marge_debut integer, p_marge_fin integer,
+  p_marge_avant integer DEFAULT 20, p_delai_fermeture integer DEFAULT 10)
 RETURNS TABLE (
   priere text, entree_utc timestamptz, approximee boolean, zone text,
   retenue boolean, debut_prevu_utc timestamptz, duree_minutes integer, indefini boolean)
@@ -782,6 +838,10 @@ DECLARE
   c_deb timestamptz[] := '{}'; c_dur integer[] := '{}';
   v_best integer := NULL;
   k integer;
+  -- La priere qui se ferme (arbitrage du 13/11/2026) : entree moins de p_marge_avant
+  -- minutes avant le debut du cours, temps ferme avant la fin du cours.
+  v_ferm timestamptz; v_ferm_i integer := NULL; v_ferm_t timestamptz;
+  v_fdur integer; v_fdeb timestamptz; v_fok boolean;
 BEGIN
   SELECT pg_catalog.array_agg(c.priere ORDER BY c.instant_utc),
          pg_catalog.array_agg(c.instant_utc ORDER BY c.instant_utc),
@@ -821,6 +881,35 @@ BEGIN
       END IF;
     END IF;
   END LOOP;
+
+  -- La priere qui se ferme PENDANT le cours : le lever du soleil ferme le Fajr, l'entree
+  -- de la priere suivante ferme les autres. La plus proche de se fermer est retenue.
+  FOR i IN 1..14 LOOP
+    IF v_t[i] < p_debut
+       AND p_debut - v_t[i] < pg_catalog.make_interval(mins => p_marge_avant) THEN
+      v_ferm := CASE WHEN v_p[i] = 'fajr'
+                     THEN private.priere_lever(p_lat, p_lon, d0 + ((i - 1) / 5 - 1), p_methode)
+                     ELSE v_t[i + 1] END;
+      IF v_ferm IS NOT NULL AND v_ferm > p_debut AND v_ferm < p_fin
+         AND (v_ferm_t IS NULL OR v_ferm < v_ferm_t) THEN
+        v_ferm_t := v_ferm; v_ferm_i := i;
+      END IF;
+    END IF;
+  END LOOP;
+  IF v_ferm_i IS NOT NULL THEN
+    v_fdur := CASE WHEN v_p[v_ferm_i] = 'maghrib' AND p_ramadan THEN p_pause_ramadan ELSE p_pause END;
+    v_fdeb := p_debut + pg_catalog.make_interval(mins => p_delai_fermeture);
+    v_fok := v_fdeb + pg_catalog.make_interval(mins => v_fdur) <= p_fin
+             AND p_delai_fermeture <= v_long - GREATEST(p_marge_fin, v_fdur);
+    n := n + 1;
+    c_i[n] := v_ferm_i; c_zone[n] := CASE WHEN v_fok THEN 'fermeture' ELSE 'fermeture_fin' END;
+    c_fen[n] := 0; c_deb[n] := v_fdeb; c_dur[n] := v_fdur;
+    -- Elle prime sur la priere qui entre pendant le cours (qui a tout son temps apres) ;
+    -- si sa pause ne tient pas, la regle ordinaire reprend.
+    IF v_fok THEN
+      v_best := n;
+    END IF;
+  END IF;
 
   FOR k IN 1..n LOOP
     priere := v_p[c_i[k]]; entree_utc := v_t[c_i[k]]; approximee := v_a[c_i[k]];
@@ -923,7 +1012,7 @@ BEGIN
   FOR r IN
     SELECT * FROM private.priere_placer(s.started_at, s.ended_at, rg.lat, rg.lon,
       rg.methode, rg.ecole, rg.ajustements, cfg.pause, cfg.pause_ramadan, cfg.ramadan,
-      cfg.marge_debut, cfg.marge_fin)
+      cfg.marge_debut, cfg.marge_fin, cfg.marge_avant, cfg.delai_fermeture)
   LOOP
     IF r.indefini THEN
       v_indefini := true;
@@ -1132,7 +1221,7 @@ $function$;
 REVOKE ALL ON FUNCTION
   private.priere_reglages_valider(), private.priere_cfg(), private.priere_reglages(uuid),
   private.priere_placer(timestamptz, timestamptz, double precision, double precision, text, text, jsonb,
-    integer, integer, boolean, integer, integer),
+    integer, integer, boolean, integer, integer, integer, integer),
   private.priere_ecrire_stock(uuid, timestamptz, integer, text, boolean, uuid, date),
   private.priere_recalculer_seance(uuid), private.priere_recalculer_enseignant(uuid),
   private.priere_recalculer_horizon(boolean), private.priere_trg_seance(), private.priere_trg_remplacement(),
@@ -1367,25 +1456,30 @@ AS $$
          < pg_catalog.now() + pg_catalog.make_interval(days => 365)
 $$;
 
--- Les heures de debut (dans le fuseau de la classe) qui ne croisent aucune entree
--- de priere sur les 12 mois. NULL : pas de lieu, ou calcul indefini.
-CREATE FUNCTION private.priere_heures_sans_priere(
+-- Les heures de debut (dans le fuseau de la classe) classees sur les 12 mois :
+-- `libres` = aucune priere n'entre pendant le cours ET aucune priere ne s'y ferme
+-- (celle entree moins de `marge_avant` minutes avant le debut dont le temps se ferme
+-- avant la fin) ; `fermeture` = au moins une seance dont une priere se ferme pendant
+-- le cours (a deconseiller : l'enseignant n'a que la pause pour prier). NULL, NULL :
+-- pas de lieu, ou calcul indefini.
+CREATE FUNCTION private.priere_heures_classees(
   p_enseignant uuid, p_weekday integer, p_tz text, p_duree integer)
-RETURNS integer[]
+RETURNS TABLE (libres integer[], fermeture integer[])
 LANGUAGE plpgsql
 STABLE
 SET search_path = ''
 AS $function$
 DECLARE
   rg record;
+  cfg record;
   v_base date := pg_catalog.date_trunc('week', pg_catalog.now() AT TIME ZONE p_tz)::date + (p_weekday - 1);
   v_incomplet boolean;
-  v_res integer[];
 BEGIN
   SELECT * INTO rg FROM private.priere_reglages(p_enseignant);
   IF NOT FOUND THEN
-    RETURN NULL;
+    RETURN;
   END IF;
+  SELECT * INTO cfg FROM private.priere_cfg();
 
   SELECT pg_catalog.bool_or(n < 15) INTO v_incomplet
     FROM (SELECT (SELECT pg_catalog.count(*)
@@ -1394,16 +1488,24 @@ BEGIN
                                                          rg.methode, rg.ecole, rg.ajustements)) AS n
             FROM pg_catalog.generate_series(0, 53) AS s(i)) q;
   IF coalesce(v_incomplet, true) THEN
-    RETURN NULL;
+    RETURN;
   END IF;
 
+  RETURN QUERY
   WITH sem AS (
     SELECT s.i, v_base + 7 * s.i AS jour FROM pg_catalog.generate_series(0, 53) AS s(i)
-  ), pr AS (
-    SELECT sem.i, c.instant_utc
+  ), pr0 AS (
+    SELECT sem.i, c.priere, c.instant_utc, sem.jour + j.k AS jour_pr
       FROM sem CROSS JOIN pg_catalog.generate_series(-1, 1) AS j(k)
       CROSS JOIN LATERAL private.priere_calculer(rg.lat, rg.lon, sem.jour + j.k,
                                                  rg.methode, rg.ecole, rg.ajustements) c
+  ), pr AS (
+    SELECT pr0.i, pr0.instant_utc,
+           CASE WHEN pr0.priere = 'fajr'
+                THEN private.priere_lever(rg.lat, rg.lon, pr0.jour_pr, rg.methode)
+                ELSE pg_catalog.lead(pr0.instant_utc) OVER (PARTITION BY pr0.i ORDER BY pr0.instant_utc)
+           END AS ferme_utc
+      FROM pr0
   ), occ AS (
     SELECT sem.i, h.h,
            ((sem.jour::timestamp + pg_catalog.make_interval(hours => h.h)) AT TIME ZONE p_tz) AS debut
@@ -1411,16 +1513,36 @@ BEGIN
   ), occ_an AS (
     SELECT * FROM occ
      WHERE debut >= pg_catalog.now() AND debut < pg_catalog.now() + pg_catalog.make_interval(days => 365)
+  ), heures AS (
+    SELECT h.h,
+           EXISTS (SELECT 1 FROM occ_an o JOIN pr ON pr.i = o.i
+                    WHERE o.h = h.h AND pr.instant_utc >= o.debut
+                      AND pr.instant_utc < o.debut + pg_catalog.make_interval(mins => p_duree)) AS entre,
+           EXISTS (SELECT 1 FROM occ_an o JOIN pr ON pr.i = o.i
+                    WHERE o.h = h.h AND pr.instant_utc < o.debut
+                      AND o.debut - pr.instant_utc < pg_catalog.make_interval(mins => cfg.marge_avant)
+                      AND pr.ferme_utc > o.debut
+                      AND pr.ferme_utc < o.debut + pg_catalog.make_interval(mins => p_duree)) AS ferme
+      FROM pg_catalog.generate_series(0, 23) AS h(h)
   )
-  SELECT coalesce(pg_catalog.array_agg(h.h ORDER BY h.h), '{}'::integer[]) INTO v_res
-    FROM pg_catalog.generate_series(0, 23) AS h(h)
-   WHERE NOT EXISTS (
-     SELECT 1 FROM occ_an o JOIN pr ON pr.i = o.i
-      WHERE o.h = h.h AND pr.instant_utc >= o.debut
-        AND pr.instant_utc < o.debut + pg_catalog.make_interval(mins => p_duree));
-  RETURN v_res;
+  SELECT coalesce(pg_catalog.array_agg(heures.h ORDER BY heures.h) FILTER (WHERE NOT heures.entre AND NOT heures.ferme),
+                  '{}'::integer[]),
+         coalesce(pg_catalog.array_agg(heures.h ORDER BY heures.h) FILTER (WHERE heures.ferme),
+                  '{}'::integer[])
+    FROM heures;
 END;
 $function$;
+
+-- Les heures sans priere (compatibilite de lecture : le premier tableau).
+CREATE FUNCTION private.priere_heures_sans_priere(
+  p_enseignant uuid, p_weekday integer, p_tz text, p_duree integer)
+RETURNS integer[]
+LANGUAGE sql
+STABLE
+SET search_path = ''
+AS $$
+  SELECT (SELECT c.libres FROM private.priere_heures_classees(p_enseignant, p_weekday, p_tz, p_duree) c)
+$$;
 
 -- Une ligne par priere qui croise une seance du creneau, sur 12 mois, avec sa
 -- zone et la priere retenue ; une ligne `aucune` par seance sans croisement ; une
@@ -1449,7 +1571,7 @@ BEGIN
     FOR r IN
       SELECT * FROM private.priere_placer(o.debut_utc, o.debut_utc + pg_catalog.make_interval(mins => p_duree),
         rg.lat, rg.lon, rg.methode, rg.ecole, rg.ajustements, cfg.pause, cfg.pause_ramadan, cfg.ramadan,
-        cfg.marge_debut, cfg.marge_fin)
+        cfg.marge_debut, cfg.marge_fin, cfg.marge_avant, cfg.delai_fermeture)
     LOOP
       v_n := v_n + 1;
       jour_local := o.jour_local; priere := r.priere; zone := CASE WHEN r.indefini THEN 'indefini' ELSE r.zone END;
@@ -1481,6 +1603,7 @@ DECLARE
   v_indefini integer;
   v_vendredi integer;
   v_libres integer[];
+  v_fermeture integer[];
 BEGIN
   SELECT * INTO rg FROM private.priere_reglages(p_enseignant);
   IF NOT FOUND THEN
@@ -1527,7 +1650,8 @@ BEGIN
      AND l.ls < l.ls::date + rg.vendredi_fin
      AND l.le > l.ls::date + rg.vendredi_debut;
 
-  v_libres := private.priere_heures_sans_priere(p_enseignant, p_weekday, p_tz, p_duree);
+  SELECT c.libres, c.fermeture INTO v_libres, v_fermeture
+    FROM private.priere_heures_classees(p_enseignant, p_weekday, p_tz, p_duree) c;
 
   RETURN pg_catalog.jsonb_build_object(
     'sans_lieu', false,
@@ -1538,7 +1662,8 @@ BEGIN
       'assiste', rg.assiste_vendredi, 'nb_seances', v_vendredi,
       'debut', pg_catalog.to_char(rg.vendredi_debut, 'HH24:MI'),
       'fin', pg_catalog.to_char(rg.vendredi_fin, 'HH24:MI')),
-    'heures_sans_priere', CASE WHEN v_libres IS NULL THEN NULL ELSE pg_catalog.to_jsonb(v_libres) END);
+    'heures_sans_priere', CASE WHEN v_libres IS NULL THEN NULL ELSE pg_catalog.to_jsonb(v_libres) END,
+    'heures_fermeture', CASE WHEN v_fermeture IS NULL THEN NULL ELSE pg_catalog.to_jsonb(v_fermeture) END);
 END;
 $function$;
 
@@ -1584,6 +1709,31 @@ BEGIN
     RAISE EXCEPTION 'creneau invalide' USING ERRCODE = '22023';
   END IF;
   RETURN private.priere_heures_sans_priere(p_enseignant_id, p_weekday, p_timezone, p_duree_minutes);
+END;
+$function$;
+
+-- La direction : les heures de debut d'un jour de la semaine ou, au moins une fois
+-- sur les 12 mois, une priere se ferme pendant le cours (a deconseiller : l'enseignant
+-- n'a que la pause pour prier ; sert la creation de classe, lot FC-3).
+CREATE FUNCTION public.priere_creneaux_fermeture(
+  p_enseignant_id uuid, p_weekday integer, p_timezone text, p_duree_minutes integer)
+RETURNS integer[]
+LANGUAGE plpgsql
+STABLE
+SECURITY DEFINER
+SET search_path = ''
+AS $function$
+BEGIN
+  IF NOT coalesce(public.app_account_valid() AND public.app_role() = 'admin', false) THEN
+    RAISE EXCEPTION 'lecture reservee a la direction' USING ERRCODE = '42501';
+  END IF;
+  IF p_weekday IS NULL OR p_weekday NOT BETWEEN 1 AND 7
+     OR p_duree_minutes IS NULL OR p_duree_minutes NOT BETWEEN 15 AND 240
+     OR p_timezone IS NULL OR NOT app_private.fuseau_connu(p_timezone) THEN
+    RAISE EXCEPTION 'creneau invalide' USING ERRCODE = '22023';
+  END IF;
+  RETURN (SELECT c.fermeture
+            FROM private.priere_heures_classees(p_enseignant_id, p_weekday, p_timezone, p_duree_minutes) c);
 END;
 $function$;
 
@@ -1778,6 +1928,7 @@ ALTER FUNCTION public.priere_reglages_lire(uuid) OWNER TO postgres;
 ALTER FUNCTION public.priere_horaires_jour(uuid, date) OWNER TO postgres;
 ALTER FUNCTION public.priere_lecture_creneau(uuid, integer, integer, text, integer) OWNER TO postgres;
 ALTER FUNCTION public.priere_creneaux_sans_priere(uuid, integer, text, integer) OWNER TO postgres;
+ALTER FUNCTION public.priere_creneaux_fermeture(uuid, integer, text, integer) OWNER TO postgres;
 ALTER FUNCTION public.priere_lecture_classe(uuid) OWNER TO postgres;
 ALTER FUNCTION public.priere_incoherences_enseignants() OWNER TO postgres;
 ALTER FUNCTION public.priere_enseignants_liste() OWNER TO postgres;
@@ -1788,6 +1939,7 @@ REVOKE ALL ON FUNCTION
   public.priere_reglages_lire(uuid), public.priere_horaires_jour(uuid, date),
   public.priere_lecture_creneau(uuid, integer, integer, text, integer),
   public.priere_creneaux_sans_priere(uuid, integer, text, integer),
+  public.priere_creneaux_fermeture(uuid, integer, text, integer),
   public.priere_lecture_classe(uuid), public.priere_incoherences_enseignants(),
   public.priere_enseignants_liste()
   FROM PUBLIC, anon, service_role, agent_ro;
@@ -1797,6 +1949,7 @@ GRANT EXECUTE ON FUNCTION
   public.priere_reglages_lire(uuid), public.priere_horaires_jour(uuid, date),
   public.priere_lecture_creneau(uuid, integer, integer, text, integer),
   public.priere_creneaux_sans_priere(uuid, integer, text, integer),
+  public.priere_creneaux_fermeture(uuid, integer, text, integer),
   public.priere_lecture_classe(uuid), public.priere_incoherences_enseignants(),
   public.priere_enseignants_liste()
   TO authenticated;
@@ -1804,6 +1957,7 @@ GRANT EXECUTE ON FUNCTION
 REVOKE ALL ON FUNCTION
   private.priere_occurrences(integer, integer, text),
   private.priere_heures_sans_priere(uuid, integer, text, integer),
+  private.priere_heures_classees(uuid, integer, text, integer),
   private.priere_projection(uuid, integer, integer, text, integer),
   private.priere_lecture_creneau(uuid, integer, integer, text, integer)
   FROM PUBLIC, anon, authenticated, service_role, agent_ro;
@@ -1824,6 +1978,7 @@ BEGIN
     'public.priere_horaires_jour(uuid, date)'::regprocedure,
     'public.priere_lecture_creneau(uuid, integer, integer, text, integer)'::regprocedure,
     'public.priere_creneaux_sans_priere(uuid, integer, text, integer)'::regprocedure,
+    'public.priere_creneaux_fermeture(uuid, integer, text, integer)'::regprocedure,
     'public.priere_lecture_classe(uuid)'::regprocedure,
     'public.priere_incoherences_enseignants()'::regprocedure,
     'public.priere_enseignants_liste()'::regprocedure,

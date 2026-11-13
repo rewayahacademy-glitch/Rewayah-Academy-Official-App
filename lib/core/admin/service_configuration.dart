@@ -169,6 +169,13 @@ const String clePriereMargeFin = 'priere.fin_marge_minutes';
 /// L'horizon du recalcul de nuit, en jours.
 const String clePriereHorizon = 'priere.horizon_jours';
 
+/// Une priere entree moins de ce temps avant le cours, dont le temps se ferme
+/// pendant le cours, porte la pause (arbitrage du 13/11/2026).
+const String clePriereMargeAvant = 'priere.marge_avant_cours_minutes';
+
+/// Le debut de cette pause, apres le debut du cours.
+const String clePriereDelaiFermeture = 'priere.delai_fermeture_minutes';
+
 /// Toutes les cles de la priere de l'ecole.
 const List<String> clesPriere = <String>[
   clePriereMethode,
@@ -179,6 +186,8 @@ const List<String> clesPriere = <String>[
   clePriereMargeDebut,
   clePriereMargeFin,
   clePriereHorizon,
+  clePriereMargeAvant,
+  clePriereDelaiFermeture,
 ];
 
 /// REVENUS-VERITE : la fenetre du jour de paie, du jour `jourDebut` au jour

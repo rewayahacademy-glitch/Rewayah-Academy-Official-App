@@ -79,11 +79,11 @@ String ligne(
       adhan.DateComponents(jour.year, jour.month, jour.day),
       p,
     );
-    heures = <DateTime>[t.fajr, t.dhuhr, t.asr, t.maghrib, t.isha]
+    heures = <DateTime>[t.fajr, t.dhuhr, t.asr, t.maghrib, t.isha, t.sunrise]
         .map((DateTime d) => (d.millisecondsSinceEpoch ~/ 1000).toString())
         .toList();
   } on ArgumentError {
-    heures = <String>['', '', '', '', ''];
+    heures = <String>['', '', '', '', '', ''];
   }
   return <String>[
     lieu.$1,
@@ -141,7 +141,7 @@ void main() {
   final File sortie = File('supabase/tests/fixtures/priere_reference_adhan.csv');
   sortie.parent.createSync(recursive: true);
   sortie.writeAsStringSync(
-    'lieu,latitude,longitude,jour,methode,ecole,fajr,dhuhr,asr,maghrib,isha\n'
+    'lieu,latitude,longitude,jour,methode,ecole,fajr,dhuhr,asr,maghrib,isha,lever\n'
     '${lignes.join('\n')}\n',
   );
   stdout.writeln('${lignes.length} lignes ecrites dans ${sortie.path}');
