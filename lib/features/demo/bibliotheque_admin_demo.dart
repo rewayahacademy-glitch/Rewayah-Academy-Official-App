@@ -16,6 +16,7 @@ import 'dart:typed_data';
 import '../../core/admin/modeles_bibliotheque_admin.dart';
 import '../../core/admin/port_bibliotheque_admin.dart';
 import '../../core/mouvement/mouvement.dart';
+import '../../core/tc_bibliotheque/library_resource.dart';
 
 /// Un support tel que le serveur simule le connait.
 class _Etat {
@@ -42,10 +43,15 @@ class _Etat {
   String? description;
   String? conditions;
   bool fichierDepose;
+  bool vignette = false;
   int revision = 1;
   String? motifRetrait;
   final Set<String> classes = <String>{};
   bool epingle = false;
+  List<String> etapes = <String>[];
+  List<String> tranches = tranchesToutes;
+  String? lectureCoran;
+  String? ecolePriere;
 }
 
 /// Le double de demonstration du port.
@@ -79,6 +85,10 @@ class BibliothequeAdminDemo implements PortBibliothequeAdmin {
   /// Si non nul, le prochain depot echoue avec cette cause (puis se remet a
   /// nul).
   ErreurUpload? echecDepot;
+
+  /// La prochaine DEMANDE de depot echoue ainsi : l'ecran doit dire cette
+  /// cause, jamais « la connexion a coupe » a sa place.
+  ErreurUpload? echecDemande;
 
   /// « Maintenant », fixe pour des tests deterministes.
   final DateTime maintenant;
@@ -145,7 +155,8 @@ class BibliothequeAdminDemo implements PortBibliothequeAdmin {
   static const List<String> _langues = <String>['fr', 'ar', 'en'];
 
   _Etat _generer(int i) {
-    final TypeRessource type = TypeRessource.values[i % 5];
+    final TypeRessource type =
+        TypeRessource.values[i % TypeRessource.values.length];
     // Repartition des etats : 0 brouillon, 1 a verifier, 2 publie, 3 publie,
     // 4 retire, 5 droits expires.
     final int cas = i % 6;
@@ -304,6 +315,18 @@ class BibliothequeAdminDemo implements PortBibliothequeAdmin {
     return droitsServeur;
   }
 
+  /// Faux : le depot de fichiers n'est pas active (le lien reste possible).
+  bool depotActifServeur = true;
+
+  /// Vrai : seule la lecture de l'etat du depot echoue (pas de reponse).
+  bool panneDepot = false;
+
+  @override
+  Future<bool> depotActif() async {
+    if (panne || panneDepot) throw const BibliothequeHorsLigne();
+    return depotActifServeur;
+  }
+
   @override
   Future<FacettesCatalogue> facettes() async {
     _garde();
@@ -327,7 +350,10 @@ class BibliothequeAdminDemo implements PortBibliothequeAdmin {
     final List<SupportAdmin> tous =
         <SupportAdmin>[
           for (final _Etat e in _supports.values)
-            if (_correspond(e.support, filtre, q)) e.support,
+            if (_correspond(e.support, filtre, q) &&
+                (filtre.lectureCoran == null ||
+                    e.lectureCoran == filtre.lectureCoran))
+              e.support,
         ]..sort((SupportAdmin a, SupportAdmin b) {
           final int c = b.modifieLeUtc.compareTo(a.modifieLeUtc);
           return c != 0 ? c : a.id.compareTo(b.id);
@@ -383,6 +409,10 @@ class BibliothequeAdminDemo implements PortBibliothequeAdmin {
       capacites: _capacitesDe(e),
       classesServies: e.classes.length,
       motifRetrait: e.motifRetrait,
+      etapes: List<String>.of(e.etapes),
+      tranches: List<String>.of(e.tranches),
+      lectureCoran: e.lectureCoran,
+      ecolePriere: e.ecolePriere,
     );
   }
 
@@ -399,32 +429,41 @@ class BibliothequeAdminDemo implements PortBibliothequeAdmin {
       statut: StatutVersionRessource.brouillon,
       revueDroits: RevueDroits.aVerifier,
     );
-    _supports[id] = _Etat(
-      support: SupportAdmin(
-        id: id,
-        titre: saisie.titre,
-        type: saisie.type,
-        langue: saisie.langue,
-        categorie: saisie.categorie,
-        niveau: saisie.niveau,
-        numeroVersion: 1,
-        statutVersion: StatutVersionRessource.brouillon,
-        revueDroits: RevueDroits.aVerifier,
-        visibilite: PolitiqueAcces.admin,
-        modifieLeUtc: quand,
-      ),
-      versions: <VersionSupport>[v],
-      droits: DroitsSupport(revue: RevueDroits.aVerifier),
-      historique: <EvenementAudit>[
-        EvenementAudit(
-          action: ActionAudit.creation,
-          acteur: 'Administration',
-          quandUtc: quand,
-          numeroVersion: 1,
-        ),
-      ],
-      titreCourt: saisie.titre,
-    );
+    _supports[id] =
+        _Etat(
+            support: SupportAdmin(
+              id: id,
+              titre: saisie.titre,
+              type: saisie.type,
+              langue: saisie.langue,
+              categorie: saisie.categorie,
+              niveau: saisie.niveau,
+              numeroVersion: 1,
+              statutVersion: StatutVersionRessource.brouillon,
+              revueDroits: RevueDroits.aVerifier,
+              visibilite: PolitiqueAcces.admin,
+              modifieLeUtc: quand,
+            ),
+            versions: <VersionSupport>[v],
+            droits: DroitsSupport(revue: RevueDroits.aVerifier),
+            historique: <EvenementAudit>[
+              EvenementAudit(
+                action: ActionAudit.creation,
+                acteur: 'Administration',
+                quandUtc: quand,
+                numeroVersion: 1,
+              ),
+            ],
+            titreCourt: saisie.titre,
+          )
+          ..tranches =
+              saisie.tranches ??
+              (saisie.type == TypeRessource.lienExterne
+                  ? tranchesParDefautLien
+                  : tranchesToutes)
+          ..etapes = List<String>.of(saisie.etapes)
+          ..lectureCoran = saisie.lectureCoran
+          ..ecolePriere = saisie.ecolePriere;
     return id;
   }
 
@@ -460,6 +499,14 @@ class BibliothequeAdminDemo implements PortBibliothequeAdmin {
     e.organisme = m.organisme ?? e.organisme;
     e.description = m.description ?? e.description;
     e.conditions = m.conditionsAttribution ?? e.conditions;
+    e.etapes = m.etapes ?? e.etapes;
+    e.tranches = m.tranches ?? e.tranches;
+    if (m.lectureCoran != null) {
+      e.lectureCoran = m.lectureCoran!.isEmpty ? null : m.lectureCoran;
+    }
+    if (m.ecolePriere != null) {
+      e.ecolePriere = m.ecolePriere!.isEmpty ? null : m.ecolePriere;
+    }
     _toucher(e);
     return EcritureFaite(revision: e.revision);
   }
@@ -502,6 +549,11 @@ class BibliothequeAdminDemo implements PortBibliothequeAdmin {
     if (e.versions.first.statut != StatutVersionRessource.brouillon) {
       throw const BibliothequeNonAutorisee();
     }
+    final ErreurUpload? refus = echecDemande;
+    if (refus != null) {
+      echecDemande = null;
+      throw DepotImpossible(refus);
+    }
     final String id = 'demo-upload-${++_compteur}';
     _uploads[id] = supportId;
     _depots[id] = (fichier, finalite);
@@ -528,9 +580,22 @@ class BibliothequeAdminDemo implements PortBibliothequeAdmin {
         _depots[uploadId]!;
     // Controles serveur : taille et type reels, jamais ceux que le client dit.
     final TypeRessource type = _trouve(supportId).support.type;
-    final ErreurUpload? refus = finalite == FinaliteUpload.preuve
-        ? null
-        : _controleFichier(type, fichier);
+    final ErreurUpload? refus = switch (finalite) {
+      FinaliteUpload.preuve => null,
+      // La vignette est une image de 2 Mio au plus, quel que soit le type du
+      // document (le serveur le controle de meme).
+      FinaliteUpload.vignette =>
+        fichier.octets > 2 * 1024 * 1024
+            ? ErreurUpload.taille
+            : (const <String>{
+                    'image/png',
+                    'image/jpeg',
+                    'image/webp',
+                  }.contains(fichier.mime)
+                  ? null
+                  : ErreurUpload.type),
+      FinaliteUpload.support => _controleFichier(type, fichier),
+    };
     if (refus != null) {
       yield ProgressionUpload(phase: PhaseUpload.echec, erreur: refus);
       return;
@@ -572,6 +637,9 @@ class BibliothequeAdminDemo implements PortBibliothequeAdmin {
         attribution: e.droits.attribution,
         expireLeUtc: e.droits.expireLeUtc,
       );
+    } else if (finalite == FinaliteUpload.vignette) {
+      // La vignette se rattache au document, pas a une version.
+      e.vignette = true;
     } else {
       e.fichierDepose = true;
       final VersionSupport v = e.versions.first;
@@ -602,6 +670,13 @@ class BibliothequeAdminDemo implements PortBibliothequeAdmin {
       }.contains(f.mime),
       TypeRessource.texteStructure ||
       TypeRessource.lecon => f.mime == 'application/json',
+      TypeRessource.audio => const <String>{
+        'audio/mpeg',
+        'audio/mp4',
+        'audio/ogg',
+      }.contains(f.mime),
+      TypeRessource.video ||
+      TypeRessource.lienExterne ||
       TypeRessource.quran => false,
     };
     return ok ? null : ErreurUpload.type;

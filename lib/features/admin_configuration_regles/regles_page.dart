@@ -15,6 +15,7 @@ import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
+import '../priere_serveur/regles_priere.dart';
 
 /// `ADM-15` : Configuration > Regles, premiere fonction du domaine (contrat
 /// metier reçu le 19 septembre 2026,
@@ -283,6 +284,14 @@ class _Corps extends StatelessWidget {
             erreurEcriture,
             onEcrit,
           );
+    // PRIERE-1 : les reglages de la priere de l'ecole ; absents d'un serveur
+    // d'avant le lot, la section n'est pas montree.
+    final List<Widget> priere = sectionReglesPriere(
+      valeurs: valeurs,
+      textes: textes,
+      onEcrit: onEcrit,
+      erreurEcriture: erreurEcriture,
+    );
     // A3 : un serveur d'avant la regle ne rend pas ces cles ; alors la section
     // n'est pas montree, plutot qu'un « 0 min » que rien n'ecrirait.
     if (clesRemplacement.any(absentes.contains)) {
@@ -294,6 +303,7 @@ class _Corps extends StatelessWidget {
           ...sorties,
           ...entretiens,
           ...paie,
+          ...priere,
         ],
       );
     }
@@ -434,6 +444,7 @@ class _Corps extends StatelessWidget {
         ...sorties,
         ...entretiens,
         ...paie,
+        ...priere,
       ],
     );
   }

@@ -194,8 +194,10 @@ declare
   v_resources int;
   v_versions int;
 begin
-  select count(*) into v_resources from public.library_resource;
-  select count(*) into v_versions from public.resource_version;
+  -- Borne a ses propres fixtures : le Coran seme par BIBLIOTHEQUE-UNE (present
+  -- quand un compte direction existe a l'installation) s'ajouterait au compte.
+  select count(*) into v_resources from public.library_resource where id::text like 'c29d0000-%';
+  select count(*) into v_versions from public.resource_version where resource_id::text like 'c29d0000-%';
   if v_resources <> 3 or v_versions <> 3 then
     raise exception 'CAP-29 teacher visibility expected resources=3 versions=3; got %, %',
       v_resources, v_versions;
@@ -228,8 +230,9 @@ declare
   v_resources int;
   v_versions int;
 begin
-  select count(*) into v_resources from public.library_resource;
-  select count(*) into v_versions from public.resource_version;
+  -- Borne a ses propres fixtures (voir le cas de l'enseignant plus haut).
+  select count(*) into v_resources from public.library_resource where id::text like 'c29d0000-%';
+  select count(*) into v_versions from public.resource_version where resource_id::text like 'c29d0000-%';
   if v_resources <> 6 or v_versions <> 7 then
     raise exception 'CAP-29 admin visibility expected resources=6 versions=7; got %, %',
       v_resources, v_versions;

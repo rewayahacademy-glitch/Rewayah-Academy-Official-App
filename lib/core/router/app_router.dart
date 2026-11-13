@@ -238,6 +238,10 @@ import '../../features/paiements_recus/recevoir_paiements_page.dart';
 import '../../features/parcours_offres/parcours_offres_page.dart';
 import '../../features/partage_offre/partage_offre_page.dart';
 import '../../features/presentation_tuteur/demandes_presentation_page.dart';
+import '../../features/priere_serveur/lieux_priere_page.dart'
+    deferred as d_lieux_priere_page;
+import '../../features/priere_serveur/priere_enseignant_page.dart'
+    deferred as d_priere_enseignant_page;
 import '../../features/profil_enseignant/profil_enseignant_page.dart';
 import '../../features/recherche/entree_recherche.dart';
 import '../../features/recherche/page_recherche.dart'
@@ -369,6 +373,8 @@ final List<MorceauDiffere> morceauxDifferesRouteur = <MorceauDiffere>[
   ('d_rapports_page', d_rapports_page.loadLibrary),
   ('d_rapprochement_page', d_rapprochement_page.loadLibrary),
   ('d_regles_page', d_regles_page.loadLibrary),
+  ('d_lieux_priere_page', d_lieux_priere_page.loadLibrary),
+  ('d_priere_enseignant_page', d_priere_enseignant_page.loadLibrary),
   ('d_regroupements_page', d_regroupements_page.loadLibrary),
   ('d_reprises_page', d_reprises_page.loadLibrary),
   ('d_salle_page', d_salle_page.loadLibrary),
@@ -1600,6 +1606,16 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                               GoRouter.of(contexte).go(Routes.enseignantProfil),
                         ),
                   ),
+                  // PRIERE-1 : « Mes heures de priere », depuis le Compte.
+                  GoRouteSure(
+                    path: 'priere',
+                    builder: (BuildContext _, GoRouterState _) => PageDifferee(
+                      cle: 'd_priere_enseignant_page',
+                      charger: d_priere_enseignant_page.loadLibrary,
+                      construire: () =>
+                          d_priere_enseignant_page.PriereEnseignantPage(),
+                    ),
+                  ),
                   GoRouteSure(
                     path: 'securite',
                     builder: (BuildContext contexte, GoRouterState _) =>
@@ -2523,6 +2539,19 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
             cle: 'd_regles_page',
             charger: d_regles_page.loadLibrary,
             construire: () => d_regles_page.ReglesPage(),
+          ),
+        ),
+      ),
+      // PRIERE-1 : les lieux de priere des enseignants, un onglet de la
+      // Configuration (la direction pose le lieu, le serveur calcule).
+      GoRouteSure(
+        path: Routes.adminConfigurationPriere,
+        builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
+          domaine: AdminDomaine.configuration,
+          child: PageDifferee(
+            cle: 'd_lieux_priere_page',
+            charger: d_lieux_priere_page.loadLibrary,
+            construire: () => d_lieux_priere_page.LieuxPrierePage(),
           ),
         ),
       ),

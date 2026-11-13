@@ -4,7 +4,16 @@ export const TAILLES_UPLOAD_BIBLIOTHEQUE = {
   audio: 100 * 1024 * 1024,
 } as const;
 
+/** La vignette d'un document (BIBLIOTHEQUE-UNE) : une image, 2 Mio au plus. */
+export const TAILLE_VIGNETTE_MAX_OCTETS = 2 * 1024 * 1024;
+
 const TYPES_IMAGES = new Set(["image/png", "image/jpeg", "image/webp"]);
+
+/** Vrai pour une vignette annoncee : image png, jpeg ou webp, taille bornee. */
+export function mimeVignetteAutorise(mime: string, taille: number): boolean {
+  return Number.isSafeInteger(taille) && taille > 0 &&
+    taille <= TAILLE_VIGNETTE_MAX_OCTETS && TYPES_IMAGES.has(mime);
+}
 const TYPES_AUDIO = new Set(["audio/mpeg", "audio/mp4", "audio/ogg"]);
 
 export function mimeAnnonceAutorise(
@@ -85,4 +94,91 @@ export async function sha256Hex(octets: Uint8Array): Promise<string> {
     new Uint8Array(hash),
     (octet) => octet.toString(16).padStart(2, "0"),
   ).join("");
+}
+
+// Une Map, pas un objet nu : `nomNeutre("constructor")` ne doit jamais rendre
+// une propriete heritee du prototype.
+const EXTENSIONS_NEUTRES: ReadonlyMap<string, string> = new Map([
+  ["application/pdf", "pdf"],
+  ["image/png", "png"],
+  ["image/jpeg", "jpg"],
+  ["image/webp", "webp"],
+  ["audio/mpeg", "mp3"],
+  ["audio/mp4", "m4a"],
+  ["audio/ogg", "ogg"],
+]);
+
+/** Le nom de fichier qui entre dans la cle de stockage : fabrique par le
+ * serveur depuis le type annonce, jamais repris du client. Un nom arabe, avec
+ * un espace ou un accent ne peut donc plus faire refuser un depot (DEPOT-SIMPLE,
+ * 13/11/2026), et aucun nom choisi par une personne ne voyage dans une cle.
+ * `null` pour un type que le depot n'accepte pas. */
+export function nomNeutre(mime: string): string | null {
+  const extension = EXTENSIONS_NEUTRES.get(mime.trim().toLowerCase());
+  return extension === undefined ? null : `document.${extension}`;
+}
+
+/** Vrai quand le type annonce est de ceux que le depot accepte, quelle que
+ * soit la taille : sert a dire « trop lourd » plutot que « type refuse ». */
+export function mimeConnu(mime: string, finalite: string): boolean {
+  return TYPES_IMAGES.has(mime) || mime === "application/pdf" ||
+    (finalite === "support" && TYPES_AUDIO.has(mime));
+}
+
+/** Le motif d'un refus de la base, lu dans le nom de l'exception : chaque
+ * cause a sa reponse, pour que l'ecran dise la vraie (DEPOT-NOM-LIBRE, I2).
+ *   - non_autorise   : le compte n'a pas le droit ;
+ *   - non_modifiable : le document n'est plus un brouillon, ou est retire ;
+ *   - deja_depose    : cette version a deja son fichier ;
+ *   - expire         : la demande de depot a expire ou n'attend plus ;
+ *   - invalide       : la base refuse les parametres ;
+ *   - autre          : tout le reste (panne de base comprise). */
+export type MotifRefus =
+  | "non_autorise"
+  | "non_modifiable"
+  | "deja_depose"
+  | "expire"
+  | "invalide"
+  | "autre";
+
+export function motifRefus(
+  erreur: { message?: string; code?: string } | null | undefined,
+): MotifRefus {
+  const message = erreur?.message ?? "";
+  if (message.includes("BibliothequeUploadNonAutorise")) return "non_autorise";
+  if (message.includes("BibliothequeBrouillonIntrouvable")) {
+    return "non_modifiable";
+  }
+  if (message.includes("BibliothequeVersionDejaUnFichier")) {
+    return "deja_depose";
+  }
+  if (message.includes("BibliothequeUploadIntentionIndisponible")) {
+    return "expire";
+  }
+  if (
+    message.includes("BibliothequeUploadParametresInvalides") ||
+    message.includes("BibliothequeUploadTypeOuTailleInvalide") ||
+    message.includes("BibliothequeUploadContenuInvalide")
+  ) return "invalide";
+  if (message.includes("BibliothequeIntrouvable")) return "non_modifiable";
+  return "autre";
+}
+
+/** Le statut et le message d'un refus, par motif. Un compte sans droit lit
+ * toujours un refus (403), jamais un reglage. */
+export function reponseRefus(motif: MotifRefus): [string, number] {
+  switch (motif) {
+    case "non_autorise":
+      return ["depot non autorise", 403];
+    case "non_modifiable":
+      return ["document non modifiable", 409];
+    case "deja_depose":
+      return ["fichier deja depose", 409];
+    case "expire":
+      return ["demande expiree", 410];
+    case "invalide":
+      return ["fichier invalide ou format non autorise", 400];
+    case "autre":
+      return ["depot impossible", 500];
+  }
 }

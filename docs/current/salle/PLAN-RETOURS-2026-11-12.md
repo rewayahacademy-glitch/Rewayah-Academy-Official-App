@@ -254,3 +254,28 @@ Restent, hors décisions du directeur : la fermeture de la vidéo des camarades 
 visio (à étudier), le retrait « Je m'absente un instant », l'écran « Mes accords » promis par un
 texte, les transitions du téléphone relevées par HARMONIE-SALLE.
 
+
+### État au 13/11/2026, 20:27 UTC : la version en ligne fusionnée dans la branche
+
+À la demande de l'architecte pédagogique (message du 13/11, 20:07 UTC ; il rapporte que le
+directeur a essayé la salle ce soir, que rien de cette demande de fusion n'est en ligne, et que le
+directeur lui a confié les fusions : ces trois points sont rapportés par lui, pas dits au gardien
+de la salle par le directeur). **Toujours rien sur staging, rien en production, rien prouvé par
+le directeur.**
+
+- `main` (`e0b3d936`, 83 commits : prière, bibliothèque unique, dépôt à nom libre) est fusionné
+  dans la branche, sans réécriture. Six conflits, tous résolus en gardant les deux côtés : les
+  clés et la section des règles (pause, sorties, prière), le registre des sources des textes, les
+  trois fichiers de textes générés (refaits par l'outil).
+- **Les quatre migrations de la salle sont inchangées, octet pour octet** (empreintes comparées
+  avant et après). Ordre d'installation : `20261123930000` (prière, déjà dans `main`), puis
+  `20261124100000`, `20261124200000`, `20261124300000`, `20261124400000`.
+- Sur une base neuve (Postgres 16 local) : les 443 migrations passent dans l'ordre, puis les 284
+  scénarios, dont l'emboîtement prière et salle de l'architecte, qui ne se déclare plus « sauté ».
+- Un scénario de la salle a été adapté (le test, pas la migration) :
+  `scenarios_pause_proposee.sql` supposait que le lot prière n'était pas installé et créait une
+  fausse table ; il écrit maintenant dans le vrai stock de la prière, déclencheur du lot prière
+  éteint le temps du test, et le cas « ligne rejetée » est une heure hors de la séance (le stock
+  refuse de lui-même une durée hors du pas de 5).
+- Contrôles locaux à cette heure : analyse sans remarque, jetons, branchement, règles de la revue.
+  Les tests de l'application tournaient encore ; les contrôles de la demande de fusion font foi.

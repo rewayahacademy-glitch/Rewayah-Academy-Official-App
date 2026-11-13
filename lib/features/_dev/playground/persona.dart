@@ -31,7 +31,7 @@ import 'package:rewayah_academy/core/dossier/service_dossier.dart';
 import 'package:rewayah_academy/core/dossier/service_validation.dart';
 import 'package:rewayah_academy/core/matching/service_matching.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart';
-import 'package:rewayah_academy/core/priere/reglages_priere.dart';
+import 'package:rewayah_academy/core/priere/pause_prevue.dart';
 import 'package:rewayah_academy/core/priere/service_priere.dart';
 import 'package:rewayah_academy/core/regles/service_regles.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
@@ -92,8 +92,8 @@ class Graine {
   Map<String, List<SurchargeClose>> historique =
       const <String, List<SurchargeClose>>{};
 
-  /// Les reglages de priere, par enseignant.
-  Map<String, ReglagesPriere> prieres = const <String, ReglagesPriere>{};
+  /// Les pauses de priere placees par le serveur, par seance.
+  Map<String, PausePrevue> pauses = const <String, PausePrevue>{};
 
   /// Les profils locaux de l'appareil, pour la connexion eleve.
   List<ProfilLocal> profilsLocaux = const <ProfilLocal>[];
@@ -151,7 +151,7 @@ Persona personne({
     ..parProfil.addAll(graine.regles)
     ..historiqueParProfil.addAll(graine.historique);
   final FauxServicePriere priere = FauxServicePriere()
-    ..parEnseignant.addAll(graine.prieres);
+    ..pauses.addAll(graine.pauses);
   final FauxProfilsLocaux profilsLocaux = FauxProfilsLocaux()
     ..profils = graine.profilsLocaux;
 
@@ -347,7 +347,7 @@ Graine _graineEleve(InterfaceMode mode, DateTime maintenant) =>
           statut: StatutSeance.planifiee,
         ),
       ]
-      ..prieres = <String, ReglagesPriere>{enseignant: _reglagesPriere()};
+      ..pauses = <String, PausePrevue>{'s-2': _pausePriere(maintenant)};
 
 /// La graine de l'enseignant : creneaux, feed, regles bornees en base.
 Graine _graineEnseignant(DateTime maintenant) =>
@@ -406,7 +406,7 @@ Graine _graineEnseignant(DateTime maintenant) =>
           ),
         ],
       }
-      ..prieres = <String, ReglagesPriere>{enseignant: _reglagesPriere()};
+      ..pauses = <String, PausePrevue>{'s-2': _pausePriere(maintenant)};
 
 /// La graine du tuteur d'un foyer actif avec deux enfants.
 Graine _graineTuteur(DateTime maintenant) =>
@@ -660,17 +660,12 @@ RegleProfil _regle({
   poseeLe: poseeLe,
 );
 
-/// Des reglages de priere calculables, dans le fuseau de l'enseignant.
-ReglagesPriere _reglagesPriere() => const ReglagesPriere(
-  enseignantId: enseignant,
-  latitude: 48.8566,
-  longitude: 2.3522,
-  methode: MethodeCalcul.ligueMondiale,
-  madhab: Madhab.shafi,
-  fuseau: 'Europe/Paris',
-  minutesPause: 10,
-  minutesPreavis: 5,
-  lieu: 'Paris',
+/// Une pause de priere que le serveur a placee dans la seance `s-2`.
+PausePrevue _pausePriere(DateTime maintenant) => PausePrevue(
+  seanceId: 's-2',
+  debut: maintenant.add(const Duration(minutes: 55)),
+  duree: const Duration(minutes: 10),
+  priere: Priere.maghrib,
 );
 
 /// Le jour a une heure fixe, jours relatifs a aujourd'hui.

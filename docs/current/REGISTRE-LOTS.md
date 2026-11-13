@@ -27,6 +27,26 @@ Relevé fait par E le 11/11/2026 vers 12 h UTC, sur `main` `b86dbc9d9`, avec `to
   - Les deux autres chiffres sont retrouvés à l'identique : 206 branches livrées, 75 PR non fusionnées.
 - **PR fermées sans fusion.** Parmi toutes les PR fermées sans fusion, 62 l'ont été le 08/11 (date de fermeture lue sur GitHub). Celles d'avant le 25/10 suivent les propositions de `TRI-PR-AVANT-25-10.md`. Pour les autres, je n'ai trouvé aucune raison écrite : leur ligne le dit.
 
+## Chantier pédagogique (architecte pédagogique, relevé du 13/11/2026 à 04 h UTC)
+
+Consigne du directeur du 13/11 : « Attention à ne pas perdre notre travail depuis le début, car on a rien mis en prod. » **Rien de ce chantier n'est dans `main` ni installé en production.** Tout est poussé sur les branches ci-dessous. Avant d'écrire un lot, chercher ici s'il existe déjà.
+
+| Lot | Branche (tête au relevé) | Migrations | Statut et preuve |
+|---|---|---|---|
+| Charte de l'académie, programme séance par séance, tajwid des bases, prière et ablutions, point de fin de séance, chemin, police de l'arabe | `claude/charte-ecole` | aucune | LIVRÉ par la PR de la charte du 13/11. Auditée le 12/11 (33 corrections) puis le 13/11 (14 corrections). À relire par le directeur : objectifs, découpage hors étape 1 des 6-9 ans, textes de la prière, le ya, le point de fin de séance (D4) |
+| Lot 1, socle du programme | `claude/socle-programme` (40a3d563) | 20261123850000, 900000, 905000 | À LIVRER. Trois revues indépendantes, aucun bloquant ; correction en cours : la migration ne publie plus le programme |
+| Lot 2, calendrier et pauses | `claude/calendrier-pauses` (6917fb62) | 20261123910000, 911000 | À LIVRER. Non relu par un tiers |
+| Lot 3, bibliothèque | `claude/bibliotheque-une` (3d601f0f) | 20261123920000, 921000 | À LIVRER. Revue indépendante : un bloquant (tranche d'âge contournée par l'onglet de la classe), en correction |
+| Lot 5, espace Apprendre à trois onglets | `claude/espace-apprendre` (02f680f4) | aucune | À LIVRER. Non relu par un tiers |
+| Suivi de l'attente | `claude/suivi-attente` (3ff5e1c4) | 20261123960000, 961000 | À LIVRER. Revue indépendante : deux bloquants (courriel vers un mineur, fiche de l'enseignant visible après un départ), en correction |
+| Prière, heures et pause prévue | `claude/priere-serveur` (0f7116ef) | 20261123930000 | À LIVRER. Revue indépendante : aucun bloquant, corrections en cours |
+| Horloge de La Mecque et ville | `claude/horloge-lieu` (5ea3a77c) | 20261123940000 à 949999 | À LIVRER. Partie A relue : deux bloquants renvoyés ; partie B en cours |
+| Pause en salle (session de la salle) | `claude/zealous-tesla-ewstzw` (bc38bf4d), PR #449 | 20261124100000 à 400000 | À LIVRER. À relire avec la prière |
+| Maquettes | `docs/current/pedagogie/maquettes/` | aucune | LIVRÉ (#450), mises à jour avec la charte |
+| PLAN-DE-CLASSE, POINT-DE-SEANCE, CHEMIN, lecteur, moteur de suivi, évaluations et livret, classes vitrines FC-1 à FC-4 | aucune | aucune | Spécifiés dans la charte, **non commencés** : détail lot par lot dans la section « Lots de la charte pédagogique » plus bas |
+
+Ordre de livraison prévu : la charte ; le lot 1 ; puis prière, bibliothèque, suivi de l'attente, calendrier, espace Apprendre, horloge, chacun après sa revue indépendante et l'installation de ses migrations par le directeur.
+
 ## Comment refaire le relevé
 
 ```
@@ -176,6 +196,7 @@ par `git ls-remote` le 11/11. « non poussée » : aucune branche distante au mo
 | 12/11, nuit | PARENTS-PLURIEL (salle : « {n} parents observent cette séance » quand plusieurs tuteurs visitent ; fiche 0, ligne 16) | Fable | À LIVRER : présent dans le code, testé localement ; ni sur staging ni en production | `claude/zealous-tesla-ewstzw` ; demande du garde-cap du 12/11 à 03:29 UTC ; journal de la salle D-036 |
 | 12/11, soir | RETOURS-SALLE-1211 (retours du directeur après sa séance du 12/11 et compléments du soir : plan et état lot par lot dans `docs/current/salle/PLAN-RETOURS-2026-11-12.md`) | Fable, exécution déléguée à des sous-agents, relue et testée | À LIVRER : POINTEUR, VISAGES, BIBLIOTHEQUE-SALLE, ENTREE-ROBUSTE, PAGES-FLUIDES, CAMERA-JUMELAGE, PAUSE-SERVEUR (migration `20261124100000`, non installée), HORS-SALLE-1 et DYNAMIQUE-CHRONO-1, DYNAMIQUE-CHRONO-2, CAMARADES (migration `20261124300000`), SERVEUR-PETITS (migration `20261124400000`), HARMONIE-SALLE, HORS-SALLE-2 (migration `20261124200000`, journal éteint par défaut) et SYNCHRO-SESSION sont présents dans le code et testés localement, migrations non installées ; PR brouillon 449, contrôles verts sur les quinze lots (tête `f89e67a1`) ; PAS COMMENCÉ : RETRAIT, écran « Mes accords », vidéo des camarades côté serveur de visio ; REGLE-CHRONO attend le directeur (argent) ; rien sur staging ni en production | `claude/zealous-tesla-ewstzw` ; demandes du directeur du 12/11 (relayées à 20:40 UTC, puis dites par lui le soir) ; journal de la salle D-037 à D-045 |
 | 12/11, matin | EDIT-INFOS-PERSO (le prénom et le nom changés par la personne elle-même, sur la page Informations commune : enseignant, tuteur, élève adulte autonome ; jamais un élève mineur ; sans RPC ni migration, par `profiles_self_update` et `guard_profile_privileged_columns`, décision du garde-cap) | A | À LIVRER : présent dans le code, testé localement ; ni sur staging ni en production ; scénario SQL demandé au pilote par le garde-cap | `claude/edit-infos-perso` ; `test/features/compte/edit_infos_perso_test.dart` ; captures `docs/current/captures/E2E/EDIT-INFOS-PERSO/` ; scénario `supabase/tests/scenarios_edit_infos_perso.sql` (26 vérifications, Postgres local) ; l'élève adulte autonome passe déjà par la page commune (`/compte` le mène au Compte du tuteur, `_aliasTuteur`) : aucune route ajoutée |
+| 12/11, nuit | PRIERE-1 (la prière à l'heure, calculée par le serveur : calcul SQL prouvé contre `adhan`, pause de prière placée par séance, prière qui se ferme, écrans direction/enseignant/élève ; arbitrages P1 à P11 et C45 de l'architecte pédagogique) | Claude (session PRIERE-1) | À LIVRER : présent dans le code, testé localement (migration `20261123930000_priere_serveur.sql` sur Postgres nu, scénarios SQL, suite Flutter) ; **testé sur staging : non ; déployé : non** ; les valeurs de fiqh et la règle de la prière qui se ferme sont à faire valider par le directeur | `claude/priere-serveur`, fiche `docs/current/pedagogie/lots/LOT-PRIERE-1.md` ; migration, aucune PR (ordre de l'architecte) |
 
 **Remplacé** : `claude/profils-p1-travail-a` (`5fe00c834`), le P1 fait en parallèle par A, est
 REMPLACÉ par le P1 de E (`claude/profils-p1-travail`, `ec427b9f3`). Décision du pilote, 11/11
@@ -244,6 +265,27 @@ PRÉFÉRENCES-PAR-COMPTE de A.
 | 12/11 | SUITES-ORPHELINES (leçon pour les agents) : arrêter une suite avec `pkill -f "flutter test"` ne l'arrête PAS ; le processus s'appelle `dartvm … flutter_tools.snapshot test …`, et ses lanceurs `flutter_tester`. Des suites complètes laissées ainsi tournaient en parallèle d'autres, ralentissaient tout et ont fait planter le compilateur des tests (« The Dart compiler exited unexpectedly »). Arrêter avec `pkill -f "flutter_tools.snapshot test"` puis `pkill -f flutter_tester`, et vérifier avec `pgrep -fc "flutter_tools.snapshot\|flutter_tester"` (0 attendu) avant de lancer une suite qui doit donner un chiffre | LEÇON (à connaître) | A, garde-cap, 12/11 |
 | 12/11 | TEST-HORLOGE-SURCHARGE : un test qui monte une page qui écoute `monHorlogeProvider` doit surcharger ce fournisseur (hors Supabase, il rend null et remet à vide la lecture posée par `poserMonHorlogePourTest`) ; modèle : `test/features/compte/paiements_tuteur_test.dart` (`_avec`) | RÈGLE DE TEST (à connaître) | A, garde-cap, 12/11 |
 
+## Lots de la charte pédagogique (architecte, 13/11/2026)
+
+Spécifiés dans `docs/current/pedagogie/PLAN-DE-CONSTRUCTION.md` (branche `claude/charte-ecole`, documentation seule, pas encore dans `main`). Numérotation du 13/11 ; aucun n'a de branche de code.
+
+| N° | Lot | Statut | Preuve |
+| :-- | :-- | :-- | :-- |
+| 1 | SOCLE-PROGRAMME | non commencé, spécifié | `PLAN-DE-CONSTRUCTION.md`, lot 1 ; aucune branche de code au 13/11 |
+| 2 | CALENDRIER-ET-PAUSES | non commencé, spécifié | `PLAN-DE-CONSTRUCTION.md`, lot 2 ; aucune branche de code au 13/11 |
+| 3 | BIBLIOTHEQUE-UNE | non commencé, spécifié | `PLAN-DE-CONSTRUCTION.md`, lot 3 ; aucune branche de code au 13/11 |
+| 4 | LECTEUR | non commencé, spécifié | `PLAN-DE-CONSTRUCTION.md`, lot 4 ; aucune branche de code au 13/11 |
+| 5 | PLAN-DE-CLASSE (ajouté le 13/11) | non commencé, spécifié | `PLAN-DE-CONSTRUCTION.md`, lot 5 ; aucune branche de code au 13/11 |
+| 6 | POINT-DE-SEANCE (ajouté le 13/11) | non commencé, spécifié | `PLAN-DE-CONSTRUCTION.md`, lot 6 ; aucune branche de code au 13/11 |
+| 7 | ESPACE-APPRENDRE | non commencé, spécifié | `PLAN-DE-CONSTRUCTION.md`, lot 7 ; aucune branche de code au 13/11 |
+| 8 | SUIVI-UNIQUE | non commencé, spécifié | `PLAN-DE-CONSTRUCTION.md`, lot 8 ; aucune branche de code au 13/11 |
+| 9 | RETRAIT-CAHIER (ajouté le 13/11) | non commencé, spécifié | `PLAN-DE-CONSTRUCTION.md`, lot 9 ; aucune branche de code au 13/11 |
+| 10 | CHEMIN (ajouté le 13/11) | non commencé, spécifié | `PLAN-DE-CONSTRUCTION.md`, lot 10 ; aucune branche de code au 13/11 |
+| 11 | MOTEUR-1 | non commencé, spécifié | `PLAN-DE-CONSTRUCTION.md`, lot 11 ; aucune branche de code au 13/11 |
+| 12 | EVALUATIONS-ET-LIVRET | non commencé, spécifié | `PLAN-DE-CONSTRUCTION.md`, lot 12 ; aucune branche de code au 13/11 |
+| 13 | MOTEUR-2 | non commencé, spécifié | `PLAN-DE-CONSTRUCTION.md`, lot 13 ; aucune branche de code au 13/11 |
+| 14 | NETTOYAGE | non commencé, spécifié | `PLAN-DE-CONSTRUCTION.md`, lot 14 ; aucune branche de code au 13/11 |
+
 ## Branches mortes, à proposer à la suppression au directeur (11/11)
 
 Proposition seulement : aucune branche n'est supprimée sans le feu vert du directeur sur cette
@@ -266,6 +308,8 @@ Les 206 branches livrées (PR fusionnée) ne figurent que dans la sortie du scri
 | 2026-11-11 | `claude/zealous-tesla-ewstzw` | 409 | 77 | en production le 11/11 (`f30527be4`), wagon de #435 | pilote, 11/11 |
 | 2026-11-11 | `claude/retirer-absence-detectee` | 429 | 2 | en production le 11/11 (`f30527be4`), wagon de #435 | pilote, 11/11 12:02 (relais) |
 | 2026-11-11 | `claude/profils-p1-travail` | - | 1 | en production le 11/11 (`f30527be4`), wagon de #435 | pilote, 11/11 12:02 (relais) |
+| 2026-11-13 | `claude/depot-nom-libre` | 458 | 3 | À LIVRER (DEPOT-NOM-LIBRE, temps 1 de DEPOT-SIMPLE : tout nom de fichier passe, une phrase vraie par cause d'échec ; AUCUNE migration ; la fusion déploie `bibliotheque-upload` par `deploy.yml` ; l'architecte pédagogique fusionne après CI verte et relecture) | agent du lot, 13/11 ; tests des cinq noms rouges avant, verts après ; captures `docs/current/captures/E2E/depot-nom-libre/` ; non prouvé en production |
+| 2026-11-12 | `claude/bibliotheque-une` | - | 4 | À LIVRER (lot 3 BIBLIOTHEQUE-UNE ; l'architecte pédagogique ouvre la PR et fusionne ; le directeur installe 20261123920000 puis 20261123921000 et déploie `bibliotheque-lecture` et `bibliotheque-upload`) | agent du lot 3, 12/11 ; `docs/current/pedagogie/lots/LOT-3-BIBLIOTHEQUE-UNE.md` |
 | 2026-11-08 | `claude/progression-adulte` | 380 | 4 | À LIVRER (A, après la file actuelle) | pilote, 11/11 : abandonnée le 08/11 sur une panne de CI sqlite3 qui ne venait pas d'elle |
 | 2026-11-08 | `claude/ma-progression` | 382 | 3 | À LIVRER (H, après le lot SOURATES de B) | pilote, 11/11 : « sourate validée » tranchée en option A |
 | 2026-11-11 | `claude/titulaire-sans-appareil` | 432 | 1 | en production le 11/11 (`f30527be4`), wagon de #435 | pilote, 11/11 12:02 (relais) |

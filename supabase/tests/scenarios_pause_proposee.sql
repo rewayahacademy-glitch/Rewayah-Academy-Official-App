@@ -127,9 +127,17 @@ BEGIN
     RAISE EXCEPTION 'PP: rappel_minutes non borne a 1 : %', v_e;
   END IF;
   UPDATE public.app_config SET value=to_jsonb(5) WHERE key='seance.pause_rappel_minutes';
-  -- Table de la pause prevue absente (lot priere non installe) : regle ordinaire.
-  IF pg_catalog.to_regclass('public.seance_pause_prevue') IS NOT NULL THEN
-    RAISE EXCEPTION 'PP: la table seance_pause_prevue existe deja, le cas « absente » ne prouve rien';
+  -- Le lot priere (20261123930000) est installe depuis la fusion du 13/11/2026 :
+  -- la vue du contrat existe. Les cas ci-dessus et ci-dessous prouvent la regle
+  -- ordinaire seulement si elle ne porte AUCUNE ligne pour les seances du
+  -- scenario (enseignants sans lieu de priere).
+  IF pg_catalog.to_regclass('public.seance_pause_prevue') IS NULL THEN
+    RAISE EXCEPTION 'PP: la vue seance_pause_prevue manque, rejouer toutes les migrations';
+  END IF;
+  IF EXISTS (SELECT 1 FROM public.seance_pause_prevue p
+              JOIN public.sessions s ON s.id = p.session_id
+             WHERE s.teacher_id::text LIKE 'c2400000-0000-0000-0000-0000000001%') THEN
+    RAISE EXCEPTION 'PP: une pause de priere est prevue pour une seance du scenario, la regle ordinaire ne serait pas prouvee';
   END IF;
 
   -- 4. Enfants : +5 + 30 min, 5 min.
@@ -293,22 +301,23 @@ BEGIN
 END;
 $acl$;
 
--- 13. Pause prevue par le serveur (lot priere, 20261123930000, absent de ce
--- depot) : une table de meme forme, creee ici et annulee par le ROLLBACK.
+-- 13. Pause prevue par le serveur (lot priere, 20261123930000, installe) : la
+-- vue public.seance_pause_prevue est le contrat, son stock est rempli ici a la
+-- main. Le declencheur du lot priere sur les seances est eteint le temps du
+-- scenario (annule par le ROLLBACK), sinon son recalcul retirerait ces lignes
+-- (enseignants sans lieu) ; la chaine reelle, du calcul a la salle, est prouvee
+-- par scenarios_priere_emboitement_salle.sql.
 -- GP : adultes de T4. SP1 : ligne valide (priere a +40 min, 15 min) ; SP2 :
--- ligne invalide (7 min, hors du pas de 5) ignoree, la pause ordinaire
--- s'applique, et le serveur laisse l'avertissement « pause prevue ignoree
--- pour la seance ... : duree hors pas » (visible dans la sortie de psql ; un
--- avertissement n'arrete pas ON_ERROR_STOP) ; SX2 : classe de T3 a la
--- pause desactivee, ligne valide (point a confirmer : la pause est posee).
-CREATE TABLE public.seance_pause_prevue (
-  session_id uuid PRIMARY KEY,
-  debut_prevu_utc timestamptz NOT NULL,
-  duree_minutes integer NOT NULL,
-  motif text NOT NULL,
-  priere text,
-  calcule_le timestamptz NOT NULL DEFAULT now()
-);
+-- ligne rejetee (heure hors de la seance ; le stock refuse de lui-meme une
+-- duree hors du pas de 5), la pause ordinaire s'applique, et le serveur laisse
+-- l'avertissement « pause prevue ignoree pour la seance ... : heure hors de
+-- la seance » (visible dans la sortie de psql ; un avertissement n'arrete pas
+-- ON_ERROR_STOP) ; SX2 : classe de T3 a la pause desactivee, ligne valide
+-- (point a confirmer : la pause est posee).
+-- Les controles differes des ecritures precedentes sont joues d'abord : une
+-- table qui a des evenements en attente ne se modifie pas.
+SET CONSTRAINTS ALL IMMEDIATE;
+ALTER TABLE public.sessions DISABLE TRIGGER priere_pause_prevue;
 INSERT INTO public.groupes(id,teacher_id,type_public,seuil_max,libelle,weekday,hour_local) VALUES
  ('c2400000-0000-0000-0000-000000000124','c2400000-0000-0000-0000-000000000104','adulte',6,'PP priere',2,10);
 DELETE FROM public.sessions WHERE groupe_id='c2400000-0000-0000-0000-000000000124';
@@ -316,10 +325,23 @@ INSERT INTO public.sessions(id,teacher_id,started_at,ended_at,status,session_typ
  ('c2400000-0000-0000-0000-000000000141','c2400000-0000-0000-0000-000000000104',now()+interval '10 minutes',now()+interval '100 minutes','planned','standard','c2400000-0000-0000-0000-000000000124'),
  ('c2400000-0000-0000-0000-000000000142','c2400000-0000-0000-0000-000000000104',now()+interval '5 hours',now()+interval '390 minutes','planned','standard','c2400000-0000-0000-0000-000000000124'),
  ('c2400000-0000-0000-0000-000000000143','c2400000-0000-0000-0000-000000000103',now()+interval '3 hours',now()+interval '240 minutes','planned','standard','c2400000-0000-0000-0000-000000000123');
-INSERT INTO public.seance_pause_prevue(session_id,debut_prevu_utc,duree_minutes,motif,priere) VALUES
+INSERT INTO public.seance_pause_prevue_stock(session_id,debut_prevu_utc,duree_minutes,motif,priere) VALUES
  ('c2400000-0000-0000-0000-000000000141',now()+interval '50 minutes',15,'priere','asr'),
- ('c2400000-0000-0000-0000-000000000142',now()+interval '330 minutes',7,'priere','maghrib'),
- ('c2400000-0000-0000-0000-000000000143',now()+interval '200 minutes',10,'priere','isha');
+ ('c2400000-0000-0000-0000-000000000142',now()+interval '600 minutes',10,'priere','maghrib'),
+ ('c2400000-0000-0000-0000-000000000143',now()+interval '200 minutes',10,'priere','isha')
+ON CONFLICT (session_id) DO UPDATE SET debut_prevu_utc=EXCLUDED.debut_prevu_utc,
+  duree_minutes=EXCLUDED.duree_minutes, motif=EXCLUDED.motif, priere=EXCLUDED.priere,
+  retiree_le=NULL;
+DO $contrat$
+BEGIN
+  IF (SELECT count(*) FROM public.seance_pause_prevue
+       WHERE session_id IN ('c2400000-0000-0000-0000-000000000141',
+                            'c2400000-0000-0000-0000-000000000142',
+                            'c2400000-0000-0000-0000-000000000143')) <> 3 THEN
+    RAISE EXCEPTION 'PP: la vue du contrat ne montre pas les trois lignes posees';
+  END IF;
+END;
+$contrat$;
 
 UPDATE public.sessions SET status='preflight' WHERE id='c2400000-0000-0000-0000-000000000141';
 UPDATE public.sessions SET status='in_progress' WHERE id='c2400000-0000-0000-0000-000000000141';
@@ -341,7 +363,7 @@ BEGIN
     RAISE EXCEPTION 'PP: pause prevue valide non reprise : % % % %',
       v_ps.duree_prevue_minutes, v_ps.debut_prevu_utc, v_ps.motif, v_ps.statut;
   END IF;
-  -- Ligne invalide : la regle ordinaire (milieu, 10 min, sans motif).
+  -- Ligne rejetee (heure hors de la seance) : la regle ordinaire (milieu, 10 min, sans motif).
   PERFORM set_config('request.jwt.claim.sub','c2400000-0000-0000-0000-000000000104',true);
   PERFORM set_config('request.jwt.claims',jsonb_build_object('app_metadata',jsonb_build_object('role','teacher'))::text,true);
   v_e := public.pause_seance_etat('c2400000-0000-0000-0000-000000000142');

@@ -278,6 +278,16 @@ const Set<String> _motsLatinsAdmis = <String>{
   'CSV',
   // CPT-SUPPR-EXPORT : le format de la copie des donnees (compte.donnees).
   'JSON',
+  // BIBLIOTHEQUE-UNE (12/11/2026) : le protocole d'une adresse de lien et les
+  // formats audio acceptes au depot, que l'arabe garde tels quels.
+  'https',
+  'MP3',
+  'MP',
+  'M4A',
+  'OGG',
+  'PNG',
+  'JPEG',
+  'WebP',
   'QR',
   'UTC',
   'Google',

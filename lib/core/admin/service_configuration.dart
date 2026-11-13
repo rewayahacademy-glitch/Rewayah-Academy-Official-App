@@ -187,6 +187,54 @@ const List<String> clesRegles = <String>[
   // l'application avant la sortie de la salle, et le journal des sorties
   // (eteint par defaut). Un serveur d'avant le lot ne les rend pas.
   ...clesSorties,
+  // PRIERE-1 (12/11/2026, migration 20261123930000) : les reglages de la
+  // priere de toute l'academie. Un serveur d'avant ce lot ne les rend pas.
+  ...clesPriere,
+];
+
+/// PRIERE-1 : les reglages de la priere, `app_config` (cles `priere.*`).
+const String clePriereMethode = 'priere.methode_defaut';
+
+/// L'ecole pour l'Asr de l'academie.
+const String clePriereEcoleAsr = 'priere.ecole_asr_defaut';
+
+/// La duree de la pause de priere.
+const String clePrierePause = 'priere.pause_minutes';
+
+/// La duree de la pause du Maghrib pendant le Ramadan.
+const String clePrierePauseRamadan = 'priere.pause_ramadan_maghrib_minutes';
+
+/// Le Ramadan est en cours (pose a la main, en attendant le calendrier).
+const String clePriereRamadan = 'priere.ramadan_en_cours';
+
+/// La marge de debut de seance.
+const String clePriereMargeDebut = 'priere.debut_marge_minutes';
+
+/// La marge de fin de seance.
+const String clePriereMargeFin = 'priere.fin_marge_minutes';
+
+/// L'horizon du recalcul de nuit, en jours.
+const String clePriereHorizon = 'priere.horizon_jours';
+
+/// Une priere entree moins de ce temps avant le cours, dont le temps se ferme
+/// pendant le cours, porte la pause (arbitrage du 13/11/2026).
+const String clePriereMargeAvant = 'priere.marge_avant_cours_minutes';
+
+/// Le debut de cette pause, apres le debut du cours.
+const String clePriereDelaiFermeture = 'priere.delai_fermeture_minutes';
+
+/// Toutes les cles de la priere de l'academie.
+const List<String> clesPriere = <String>[
+  clePriereMethode,
+  clePriereEcoleAsr,
+  clePrierePause,
+  clePrierePauseRamadan,
+  clePriereRamadan,
+  clePriereMargeDebut,
+  clePriereMargeFin,
+  clePriereHorizon,
+  clePriereMargeAvant,
+  clePriereDelaiFermeture,
 ];
 
 /// REVENUS-VERITE : la fenetre du jour de paie, du jour `jourDebut` au jour

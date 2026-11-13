@@ -25,6 +25,7 @@ Sources : les décisions du directeur (annexe 10 du dossier maître, spécificat
 | On écrit | On n'écrit jamais |
 |---|---|
 | Classe | groupe (sauf dans le code) |
+| l'académie, Rewayah Academy (pour désigner Rewayah ; directeur, 13/11/2026) | « l'école », « notre école », « une vraie école » pour parler de Rewayah. « École coranique » (en général), « école juridique » et l'école d'un enfant gardent leur sens |
 | Interface guidée | mode enfant |
 | Ajouter un profil élève | ajouter un enfant |
 | Séance toujours en direct | cours en cours, temps négatif |
@@ -36,6 +37,9 @@ Sources : les décisions du directeur (annexe 10 du dossier maître, spécificat
 | Votre parent observe le cours (à l'enfant concerné seulement) | Ton tuteur regarde le cours |
 | Accueil · Foyer · Historique · Compte (navigation du tuteur) | Disponibilités, Suivi, Réglages en onglet principal |
 | Aujourd'hui · Apprendre · Suivi · Profil (élève adulte) | la navigation du tuteur recopiée |
+| Apprendre : l'espace de tout l'apprentissage, pour l'élève adulte ET pour l'enfant, en trois onglets Bibliothèque · Programme · Mon livret (directeur, 12/11/2026 ; noms arbitrés le 12/11) | un onglet « Coran » (le Coran est un document de la Bibliothèque), « Apprendre » réservé à l'adulte |
+| Mon livret (سجلّي) : l'onglet des résultats, bilans, attestations et rapports (12/11/2026) | Mes réussites, Mon dossier, Consécration |
+| Pour aller plus loin (للتعمّق أكثر) : le second rayon de la Bibliothèque, sous « Documents des cours » (وثائق الدروس) ; aucun prix tant que la vente n'est pas ouverte (12/11/2026) | Autres documents, Lectures choisies, boutique, un mot d'argent |
 | Aujourd'hui · Classes · Messages, et le cercle Compte (enseignant ; décision du directeur du 09/11/2026, NAV-REFONTE : les disponibilités sortent de la barre, « Mes disponibilités » s'ouvre depuis Compte) | Journée · Créneaux · Profil (caduc depuis le 09/11/2026) |
 | Côté candidat enseignant : « Votre candidature » · « Faisons connaissance » · « Bienvenue dans l'équipe » (directeur, 02/11/2026 ; noms internes de la direction inchangés : Salle d'examen · Salle de vérification et d'entretien · Salle des prêts à enseigner) | un nom de salle, « examen », « vérification », « interrogatoire » ou tout mot technique montré au candidat |
 | Recharger (bouton de l'ouverture de l'application quand elle dépasse 20 s, lot du 29/10/2026) | Actualiser, Rafraîchir |
@@ -49,6 +53,8 @@ Sources : les décisions du directeur (annexe 10 du dossier maître, spécificat
 | Présence pas encore connue (une présence que l'application n'a pas pu lire ; jamais une absence, invariant J3 ; TXT-1, 02/11/2026) | État inconnu |
 | Traiter le signalement · Examiner · Transmettre · Clore ; « Message pour la famille » (ce que la direction écrit et transmet) ; « Note de l'enseignant » (lue par la direction seulement) ; en arabe, « Clore » se dit « إغلاق البلاغ », jamais « إغلاق » seul, qui est « Fermer » (D1-bis, 03/11/2026) | résumé famille, détails internes, clôturer, archiver |
 | Paie de l'enseignant (lot FINANCE-ENSEIGNANT, 06/11/2026 ; paie par Wise, directeur 06/11) : « Mes coordonnées de versement » (ce que l'enseignant saisit) · « Versements reçus » (ce que la direction a noté) · « Préparer le fichier Wise du mois » · « Noter un versement fait » · « Coordonnées manquantes » ; la paie « est versée » | « salaire » (on dit la paie), « payout », « bénéficiaire » montré à l'enseignant |
+| Point de fin de séance (la page de l'enseignant après la séance ; 13/11/2026, remplace le cahier) : « Vu comme prévu » (par défaut) · « On a vu moins » · « On a vu plus » · « A suivi » (marque par défaut de chaque présent) · « À renforcer » (le seul toucher pour les autres) · « Acquis » ou « À renforcer » pour l'élève tiré (le seul toucher obligatoire, sans défaut) · « Pas eu le temps de l'écouter » (la sortie honnête) · « Note (facultative) » | cahier de séance, compte rendu, rapport de séance, « Valider la séance », « Maîtrisé », un bouton « Acquis » pour les élèves autres que l'élève tiré (pour eux, on écrit « A suivi ») |
+| Historique des séances (« الحصص السابقة » en arabe) : ce que le système écrit seul après chaque point de fin de séance (13/11/2026, mot proposé par l'architecte) | cahier, journal de classe ; « سجلّ » en arabe (« سجلّي » est « Mon livret ») |
 | « Nouveau » (« جديد » en arabe) : le badge discret à côté du nom d'un point d'entrée (onglet, ligne, bouton d'accès) d'une fonctionnalité sortie depuis moins de 14 jours et pas encore ouverte ; lu « nouveau » au lecteur d'écran (NOUVEAUTES, directeur, 07/11/2026) | « Nouveauté ! », « New », un badge sur un contenu ou dans un parcours, un point de couleur sans mot |
 | La pause d'une séance (directeur, 12/11/2026, PAUSE-SERVEUR) : « Pause pendant la séance » (section des règles de la direction) · « Pause des classes d'adultes » · « Pause des classes d'enfants » · « Rappel après un refus » · « Cours restant après la pause » ; la pause est « proposée » à l'enseignant, qui l'accepte ou la refuse ; « la pause est un droit » ; en arabe « استراحة » | « break », « récré », « pause gelée » ; « pause d'un mois » reste le seul sens du §3 pour l'abonnement |
 
@@ -61,16 +67,20 @@ Sources : les décisions du directeur (annexe 10 du dossier maître, spécificat
 | matière principale, matière secondaire | essentiel, en plus, fil |
 | à finir avant le… (date limite) | deadline, échéance académique |
 | séance de consolidation | révision groupée, récap |
-| les sourates courtes, d'Al-Fatiha à Az-Zalzalah | petit Coran |
+| les sourates courtes, d'Al-Masad (111) à Az-Zalzalah (99) (avec Al-Fatiha, An-Nâs, Al-Falaq et Al-Ikhlâs : les 17 sourates des bases) | petit Coran |
 | examen de fin des bases | porte d'Az-Zalzalah, gate, G0 |
 | lire tout le Coran · mémoriser le Coran | Tilawah, Hifz, T1-T6, H0-H6 |
 | petit bilan | contrôle |
 | rencontre de récitation | Majlis |
 | rattraper ce cours (l'élève, seul) | cours de rattrapage offert |
+| « Rattraper ce cours » (la tâche de l'élève absent) · « J'ai rattrapé ce cours » (le bouton de l'élève, ou du tuteur pour un enfant) · « a rattrapé » / « n'a pas rattrapé » (la marque discrète vue par l'enseignant) (12/11/2026) | rattrapage, cours rattrapé par l'enseignant |
+| plan de soutien (ce qui suit une date limite dépassée, ou « Une nouvelle vérification est nécessaire » ; 12/11/2026) | plan de rattrapage, plan pour rattraper |
 | demander une pause d'un mois | geler, suspendre l'abonnement |
 | lecture enregistrée (du programme) | audio du cours, enregistrement du professeur |
 | qiraat (lectures du Coran), pour traduire القراءات : « Institut des qiraat (lectures du Coran) » (directeur, 22/10/2026) | lectures du Coran seul |
 | emploi du temps de révision | planning, programme de révision personnalisé |
+| Programme (l'onglet d'« Apprendre », qui montre le chemin ; 13/11/2026) ; sur le chemin : « étape », « examen de fin des bases », « Les 28 lettres », « Les 9 règles », « Les 17 sourates », « Cette semaine » | station, porte, niveau de jeu, points, trophée, score, classement, série, « porte d'Az-Zalzalah » |
+| Les noms des neuf règles du tajwid des bases (13/11/2026) : « Le point de sortie des lettres » · « Lettres épaisses et lettres fines » · « Brève ou longue » · « La chadda et la nasalisation » · « La qalqala » · « S'arrêter en fin de verset » · « Le lam du nom d'Allah » · « Le noun sans voyelle et le tanwin » · « Les allongements longs » (`docs/current/pedagogie/EVALUATIONS.md`, 4.1 bis) | règles avancées, couche, idhhar, idgham, iqlab, ikhfa montrés à une famille sans explication |
 | dans la langue choisie à l'inscription | les cours sont en français |
 | nos familles vivent loin des écoles coraniques | le nom d'un pays ou d'un continent |
 

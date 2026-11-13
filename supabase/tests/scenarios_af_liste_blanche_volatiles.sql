@@ -59,6 +59,11 @@ declare
     -- CPT-SUPPR-EXPORT (18/10) : la personne annule sa demande de suppression (compte valide).
     'annuler_suppression_compte()',
     'annuler_upload_bibliotheque(uuid)',
+    -- BIBLIOTHEQUE-UNE (20261123921000, 12/11/2026) : la vignette d'un document, deposee en deux temps comme son fichier ; direction active de son cote (garde positive admin et app_account_valid), intention propre a l'appelant, confirmation signee relue par la base ; seule ecriture : library_resource.vignette_cle.
+    'annuler_vignette_bibliotheque(uuid)',
+    'confirmer_vignette_bibliotheque(uuid,text,bigint,text,text)',
+    'demander_vignette_bibliotheque(uuid,text,bigint,text)',
+    'lire_vignette_bibliotheque(uuid)',
     -- CAND-L3 (23/10) : apercu d'import des formulaires, super-admin en double verification (aal2) exigee en base, aucune ecriture sauf le journal d'acces.
     'apercu_import_formulaires(text,text,text,jsonb,text)',
     -- INVITATIONS-PERSONNELLES (20261120000000, 07/11) : apercu des candidats importes a inviter, direction active super-admin en aal2 (garde role ET app_account_valid, puis private.inv_cand_garde), comptes seulement, audit.
@@ -314,6 +319,12 @@ declare
     'poser_modele_wise(jsonb)',
     'poser_regle(uuid,text,integer,text)',
     'prendre_remplacement(uuid,uuid)',
+    -- PRIERE-1 (12/11/2026) : l'enseignant ajuste ses heures (role teacher et app_account_valid(), pour lui seul) ;
+    -- la direction pose ou retire un lieu, ou relance le recalcul (admin et app_account_valid(), aal2 pour le recalcul).
+    'priere_ajuster(text,integer)',
+    'priere_lieu_definir(uuid,text,numeric,numeric,text,text,text,boolean,time without time zone,time without time zone)',
+    'priere_lieu_retirer(uuid)',
+    'priere_recalculer_maintenant()',
     'preparer_depot_piece_identite(uuid,text)',
     -- CAHIER-C2 (06/11) : direction seulement, compte valide, brouillon vide.
     'preremplir_bases_programme(uuid)',

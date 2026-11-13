@@ -141,7 +141,10 @@ void main() {
     test('un type de ressource inconnu rend null', () {
       expect(TypeRessource.depuisSql('structured_text'),
           TypeRessource.texteStructure);
-      expect(TypeRessource.depuisSql('video'), isNull);
+      expect(TypeRessource.depuisSql('hologramme'), isNull);
+      expect(TypeRessource.depuisSql('video'), TypeRessource.video);
+      expect(TypeRessource.depuisSql('audio'), TypeRessource.audio);
+      expect(TypeRessource.depuisSql('external_link'), TypeRessource.lienExterne);
       expect(TypeRessource.depuisSql(null), isNull);
     });
 

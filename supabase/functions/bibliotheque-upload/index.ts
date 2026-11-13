@@ -4,7 +4,13 @@ import { cleDe, verifierCle } from "../_shared/r2/cles.ts";
 import {
   detecterMimeReel,
   mimeAnnonceAutorise,
+  mimeConnu,
+  mimeVignetteAutorise,
+  motifRefus,
+  nomNeutre,
+  reponseRefus,
   sha256Hex,
+  TAILLE_VIGNETTE_MAX_OCTETS,
   TAILLES_UPLOAD_BIBLIOTHEQUE,
 } from "../_shared/r2/bibliotheque_upload.ts";
 import { stockageConfigure } from "../_shared/r2/domaines.ts";
@@ -13,7 +19,10 @@ import {
   signerDepot,
   signerLecture,
 } from "../_shared/r2/signature.ts";
-import { signatureConfirmationUpload } from "../_shared/r2/confirmation_hmac.ts";
+import {
+  DOMAINE_VIGNETTE,
+  signatureConfirmationUpload,
+} from "../_shared/r2/confirmation_hmac.ts";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const SHA256 = /^[0-9a-f]{64}$/;
@@ -36,7 +45,14 @@ Deno.serve(async (requete: Request) => {
   }
   if (requete.method !== "POST") return refus("methode non autorisee", 405);
 
-  const compte = await appelantR2(requete).catch(() => null);
+  let compte: Awaited<ReturnType<typeof appelantR2>>;
+  try {
+    compte = await appelantR2(requete);
+  } catch {
+    // Une configuration absente n'est pas une session expiree : la personne
+    // n'a pas a se reconnecter (DEPOT-NOM-LIBRE, I3).
+    return refus("service mal regle", 503);
+  }
   if (!compte) return refus("authentification requise", 401);
 
   let corps: Record<string, unknown>;
@@ -60,6 +76,24 @@ Deno.serve(async (requete: Request) => {
   if (action === "confirmer") {
     return await confirmerDepot(compte, corps);
   }
+  if (action === "demander_vignette") {
+    return await demanderVignette(compte, corps);
+  }
+  if (action === "confirmer_vignette") {
+    return await confirmerVignette(compte, corps);
+  }
+  if (action === "annuler_vignette") {
+    const id = typeof corps.upload_id === "string"
+      ? corps.upload_id.trim()
+      : "";
+    if (!UUID.test(id)) return refus("intention invalide");
+    const { data, error } = await compte.sql.rpc(
+      "annuler_vignette_bibliotheque",
+      { p_intention_id: id },
+    );
+    if (error) return refusBase(error);
+    return json({ annule: data === true });
+  }
   if (action === "annuler") {
     const id = typeof corps.upload_id === "string"
       ? corps.upload_id.trim()
@@ -69,7 +103,7 @@ Deno.serve(async (requete: Request) => {
       "annuler_upload_bibliotheque",
       { p_intention_id: id },
     );
-    if (error) return refus("annulation refusee", 403);
+    if (error) return refusBase(error);
     return json({ annule: data === true });
   }
   return refus("action inconnue");
@@ -94,21 +128,28 @@ async function demanderDepot(
       !Array.isArray(corps.fichier)
     ? corps.fichier as Record<string, unknown>
     : {};
-  const nom = typeof fichier.nom === "string" ? fichier.nom.trim() : "";
   const mime = typeof fichier.mime === "string"
     ? fichier.mime.trim().toLowerCase()
     : "";
+  // Le nom du fichier du client est ignore : il n'entre ni dans la cle ni en
+  // base. Un nom arabe ou accentue faisait refuser le depot (13/11/2026).
+  const nom = nomNeutre(mime);
   const taille = Number(fichier.octets);
   const empreinte = typeof fichier.sha256 === "string"
     ? fichier.sha256.trim().toLowerCase()
     : "";
-  if (
-    !UUID.test(supportId) || !finalite ||
-    !/^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$/.test(nom) ||
-    !SHA256.test(empreinte) ||
-    !mimeAnnonceAutorise(mime, taille, finalite)
-  ) {
+  if (!UUID.test(supportId) || !finalite || !SHA256.test(empreinte)) {
+    return refus("demande invalide");
+  }
+  if (!Number.isSafeInteger(taille) || taille <= 0) {
+    return refus("fichier vide");
+  }
+  if (nom === null || !mimeConnu(mime, finalite)) {
     return refus("fichier invalide ou format non autorise");
+  }
+  // Un type accepte mais trop lourd : « trop lourd », pas « type refuse ».
+  if (!mimeAnnonceAutorise(mime, taille, finalite)) {
+    return refus("fichier trop lourd", 413);
   }
   const { data, error } = await compte.sql.rpc("demander_upload_bibliotheque", {
     p_resource_id: supportId,
@@ -118,9 +159,8 @@ async function demanderDepot(
     p_taille: taille,
     p_sha256: empreinte,
   });
-  if (error || !data || typeof data !== "object") {
-    return refus("depot refuse", 403);
-  }
+  if (error) return refusBase(error);
+  if (!data || typeof data !== "object") return refus("depot impossible", 500);
   const intention = data as Record<string, unknown>;
   const id = String(intention.id ?? "");
   if (!UUID.test(id)) return refus("intention invalide", 503);
@@ -185,9 +225,8 @@ async function confirmerDepot(
   const { data, error } = await compte.sql.rpc("lire_upload_bibliotheque", {
     p_intention_id: id,
   });
-  if (error || !data || typeof data !== "object") {
-    return refus("intention refusee", 403);
-  }
+  if (error) return refusBase(error);
+  if (!data || typeof data !== "object") return refus("depot impossible", 500);
   const intention = data as IntentionUpload;
   const domaineTemp = "priveApplicatif" as const;
   const domaineFinal = intention.finalite === "support"
@@ -206,10 +245,21 @@ async function confirmerDepot(
     const octets = new Uint8Array(await objet.arrayBuffer());
     const mimeReel = detecterMimeReel(octets);
     const empreinte = await sha256Hex(octets);
+    // Le contenu reel n'est pas du type annonce (un .pdf qui n'en est pas
+    // un) : la phrase le dit, ce n'est pas un envoi abime.
+    if (!mimeReel || mimeReel !== intention.mime) {
+      journaliser({
+        domaine: domaineTemp,
+        operation: "depot",
+        statut: "refuse",
+        ressource: id,
+        dureeMs: Date.now() - debut,
+      });
+      return refus("contenu different du type annonce", 422);
+    }
     if (
       octets.byteLength !== intention.taille ||
       empreinte !== intention.sha256 ||
-      mimeReel !== intention.mime || !mimeReel ||
       !mimeAnnonceAutorise(mimeReel, octets.byteLength, intention.finalite)
     ) {
       journaliser({
@@ -248,7 +298,7 @@ async function confirmerDepot(
       p_sha256_reel: empreinte,
       p_confirmation_signature: confirmationSignature,
     });
-    if (confirme.error) return refus("confirmation refusee", 403);
+    if (confirme.error) return refusConfirmation(confirme.error);
     journaliser({
       domaine: domaineFinal,
       operation: "depot",
@@ -273,6 +323,25 @@ async function confirmerDepot(
   }
 }
 
+/** Le refus d'une confirmation par la base. Une signature que la base ne
+ * reconnait pas n'est pas la faute de la personne : le secret de confirmation
+ * n'est pas le meme des deux cotes. C'est un reglage du serveur, et la reponse
+ * le dit (503 « confirmation mal reglee ») au lieu d'un refus (DEPOT-SIMPLE). */
+function refusConfirmation(erreur: { message?: string }): Response {
+  if ((erreur.message ?? "").includes("ConfirmationNonAutorisee")) {
+    return refus("confirmation mal reglee", 503);
+  }
+  return refusBase(erreur);
+}
+
+/** Le refus d'un appel a la base : son motif vrai, pas un « 403 » pour tout
+ * (compte sans droit, document plus modifiable, panne). Un compte sans droit
+ * lit toujours un refus, jamais un reglage. */
+function refusBase(erreur: { message?: string; code?: string }): Response {
+  const [message, statut] = reponseRefus(motifRefus(erreur));
+  return refus(message, statut);
+}
+
 function typesPour(finalite: string): string[] {
   return finalite === "preuve"
     ? ["image/png", "image/jpeg", "image/webp", "application/pdf"]
@@ -291,4 +360,216 @@ function limitePour(mime: string): number {
   if (mime.startsWith("image/")) return TAILLES_UPLOAD_BIBLIOTHEQUE.image;
   if (mime === "application/pdf") return TAILLES_UPLOAD_BIBLIOTHEQUE.pdf;
   return TAILLES_UPLOAD_BIBLIOTHEQUE.audio;
+}
+
+// ---------------------------------------------------------------------------
+// BIBLIOTHEQUE-UNE : la vignette d'un document, deposee en deux temps comme son
+// fichier. Meme chemin (intention en base, depot signe, confirmation par
+// l'Edge avec une signature que la base reverifie), borne a une image de 2 Mio.
+// Le nom de fichier du client n'entre jamais dans la cle : la base la fabrique.
+// ---------------------------------------------------------------------------
+async function demanderVignette(
+  compte: NonNullable<Awaited<ReturnType<typeof appelantR2>>>,
+  corps: Record<string, unknown>,
+): Promise<Response> {
+  if (!stockageConfigure("priveApplicatif")) {
+    return refus("stockage indisponible", 503);
+  }
+  const documentId = typeof corps.support_id === "string"
+    ? corps.support_id.trim()
+    : "";
+  const fichier = corps.fichier && typeof corps.fichier === "object" &&
+      !Array.isArray(corps.fichier)
+    ? corps.fichier as Record<string, unknown>
+    : {};
+  const mime = typeof fichier.mime === "string"
+    ? fichier.mime.trim().toLowerCase()
+    : "";
+  const taille = Number(fichier.octets);
+  const empreinte = typeof fichier.sha256 === "string"
+    ? fichier.sha256.trim().toLowerCase()
+    : "";
+  if (!UUID.test(documentId) || !SHA256.test(empreinte)) {
+    return refus("demande invalide");
+  }
+  if (!Number.isSafeInteger(taille) || taille <= 0) {
+    return refus("fichier vide");
+  }
+  if (!mimeConnu(mime, "preuve") || mime === "application/pdf") {
+    return refus("fichier invalide ou format non autorise");
+  }
+  if (!mimeVignetteAutorise(mime, taille)) {
+    return refus("fichier trop lourd", 413);
+  }
+  const { data, error } = await compte.sql.rpc(
+    "demander_vignette_bibliotheque",
+    {
+      p_resource_id: documentId,
+      p_mime: mime,
+      p_taille: taille,
+      p_sha256: empreinte,
+    },
+  );
+  if (error) return refusBase(error);
+  if (!data || typeof data !== "object") return refus("depot impossible", 500);
+  const intention = data as Record<string, unknown>;
+  const id = String(intention.id ?? "");
+  if (!UUID.test(id)) return refus("intention invalide", 503);
+  const cle = cleDe("priveApplicatif", "libraryupload", id);
+  if (intention.cle_temporaire !== cle) return refus("intention invalide", 503);
+  try {
+    const signee = await signerDepot(
+      "priveApplicatif",
+      verifierCle("priveApplicatif", cle),
+      {
+        typeMime: mime,
+        tailleOctets: taille,
+        typesAutorises: typesVignette(),
+        tailleMaximaleOctets: TAILLE_VIGNETTE_MAX_OCTETS,
+      },
+    );
+    journaliser({
+      domaine: "priveApplicatif",
+      operation: "depot",
+      statut: "accorde",
+      ressource: id,
+    });
+    return json({
+      upload_id: id,
+      expire_le_utc: intention.expire_le,
+      url: signee.url,
+      methode: "PUT",
+      en_tetes_exiges: signee.enTetesExiges,
+      expire_dans_secondes: signee.expireDansSecondes,
+    });
+  } catch (erreur) {
+    journaliser({
+      domaine: "priveApplicatif",
+      operation: "depot",
+      statut: "echec",
+      ressource: id,
+      classeErreur: (erreur as Error)?.name ?? "inconnue",
+    });
+    return refus("stockage indisponible", 503);
+  }
+}
+
+async function confirmerVignette(
+  compte: NonNullable<Awaited<ReturnType<typeof appelantR2>>>,
+  corps: Record<string, unknown>,
+): Promise<Response> {
+  const id = typeof corps.upload_id === "string" ? corps.upload_id.trim() : "";
+  if (!UUID.test(id)) return refus("intention invalide");
+  let secretConfirmation: string;
+  try {
+    secretConfirmation = Deno.env.get("LIBRARY_UPLOAD_CONFIRMATION_HMAC_KEY") ?? "";
+  } catch {
+    return refus("confirmation indisponible", 503);
+  }
+  if (
+    new TextEncoder().encode(secretConfirmation).byteLength < 32 ||
+    secretConfirmation.trim() !== secretConfirmation
+  ) {
+    return refus("confirmation indisponible", 503);
+  }
+  const debut = Date.now();
+  const { data, error } = await compte.sql.rpc("lire_vignette_bibliotheque", {
+    p_intention_id: id,
+  });
+  if (error) return refusBase(error);
+  if (!data || typeof data !== "object") return refus("depot impossible", 500);
+  const intention = data as Record<string, unknown>;
+  if (
+    !stockageConfigure("priveApplicatif") || !stockageConfigure("supports")
+  ) {
+    return refus("stockage indisponible", 503);
+  }
+  try {
+    const cleTemp = verifierCle(
+      "priveApplicatif",
+      String(intention.cle_temporaire ?? ""),
+    );
+    const lecture = await signerLecture("priveApplicatif", cleTemp, {
+      dureeSecondes: 60,
+    });
+    const objet = await fetch(lecture.url);
+    if (!objet.ok) return refus("objet depose introuvable", 422);
+    const octets = new Uint8Array(await objet.arrayBuffer());
+    const mimeReel = detecterMimeReel(octets);
+    const empreinte = await sha256Hex(octets);
+    if (!mimeReel || mimeReel !== intention.mime) {
+      journaliser({
+        domaine: "priveApplicatif",
+        operation: "depot",
+        statut: "refuse",
+        ressource: id,
+        dureeMs: Date.now() - debut,
+      });
+      return refus("contenu different du type annonce", 422);
+    }
+    if (
+      octets.byteLength !== Number(intention.taille) ||
+      empreinte !== intention.sha256 ||
+      !mimeVignetteAutorise(mimeReel, octets.byteLength)
+    ) {
+      journaliser({
+        domaine: "priveApplicatif",
+        operation: "depot",
+        statut: "refuse",
+        ressource: id,
+        dureeMs: Date.now() - debut,
+      });
+      return refus("contenu depose invalide", 422);
+    }
+    const cleFinale = verifierCle("supports", String(intention.cle_finale ?? ""));
+    const signee = await signerDepot("supports", cleFinale, {
+      typeMime: mimeReel,
+      tailleOctets: octets.byteLength,
+      typesAutorises: typesVignette(),
+      tailleMaximaleOctets: TAILLE_VIGNETTE_MAX_OCTETS,
+    });
+    const depose = await fetch(signee.url, {
+      method: "PUT",
+      headers: signee.enTetesExiges,
+      body: octets,
+    });
+    if (!depose.ok) throw new Error("ecriture R2 refusee");
+    const confirmationSignature = await signatureConfirmationUpload(
+      secretConfirmation,
+      id,
+      empreinte,
+      octets.byteLength,
+      DOMAINE_VIGNETTE,
+    );
+    const confirme = await compte.sql.rpc("confirmer_vignette_bibliotheque", {
+      p_intention_id: id,
+      p_mime_reel: mimeReel,
+      p_taille_reelle: octets.byteLength,
+      p_sha256_reel: empreinte,
+      p_confirmation_signature: confirmationSignature,
+    });
+    if (confirme.error) return refusConfirmation(confirme.error);
+    journaliser({
+      domaine: "supports",
+      operation: "depot",
+      statut: "accorde",
+      ressource: id,
+      dureeMs: Date.now() - debut,
+    });
+    return json({ phase: "pret", resource_id: intention.resource_id });
+  } catch (erreur) {
+    journaliser({
+      domaine: "priveApplicatif",
+      operation: "depot",
+      statut: "echec",
+      ressource: id,
+      classeErreur: (erreur as Error)?.name ?? "inconnue",
+      dureeMs: Date.now() - debut,
+    });
+    return refus("stockage indisponible", 503);
+  }
+}
+
+function typesVignette(): string[] {
+  return ["image/png", "image/jpeg", "image/webp"];
 }

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
 import '../planning/journee.dart';
-import '../priere/libelle_priere.dart';
 import '../tc_groupe/libelles_tc_groupe.dart';
 import '../tc_horloge/mon_horloge.dart';
 import '../theme/app_color_pair.dart';
@@ -102,10 +101,9 @@ String _libelle(EntreeJournee entree) => switch (entree.sorte) {
     prenom: entree.seance?.elevePrenom ?? '',
   ),
   SorteEntree.pause => t.enseignant.journee.lignePause,
-  SorteEntree.priere =>
-    entree.interruption == null
-        ? t.enseignant.journee.lignePause
-        : libellePriere(entree.interruption!.priere),
+  // PRIERE-1 : « Pause de prière », le mot de la decision ; le nom de la
+  // priere reste dans l'ecran des heures de l'enseignant.
+  SorteEntree.priere => t.priere.pauseDePriere,
 };
 
 /// L'heure d'un instant, a l'heure du profil ([heureChezMoi]) : la meme

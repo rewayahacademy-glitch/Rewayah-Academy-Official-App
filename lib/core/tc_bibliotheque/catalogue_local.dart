@@ -46,6 +46,22 @@ class CatalogueLocal implements PortCatalogue {
   ReprisLecture? _reprise;
 
   @override
+  Future<List<RayonBibliotheque>> rayons() async => const <RayonBibliotheque>[
+    RayonBibliotheque(
+      code: codeRayonCours,
+      titreFr: 'Documents des cours',
+      titreAr: 'وثائق الدروس',
+      ordre: 1,
+    ),
+    RayonBibliotheque(
+      code: codeRayonPlusLoin,
+      titreFr: 'Pour aller plus loin',
+      titreAr: 'للتعمّق أكثر',
+      ordre: 2,
+    ),
+  ];
+
+  @override
   Future<List<LibraryResource>> tous({FiltreCatalogue? filtre}) async =>
       RechercheCatalogue.filtrer(_ressources, filtre);
 

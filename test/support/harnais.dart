@@ -31,7 +31,8 @@ import 'package:rewayah_academy/core/journal/service_journal.dart';
 import 'package:rewayah_academy/core/matching/service_matching.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart';
 import 'package:rewayah_academy/core/presence/service_presence.dart';
-import 'package:rewayah_academy/core/priere/reglages_priere.dart';
+import 'package:rewayah_academy/core/priere/lieu_priere.dart';
+import 'package:rewayah_academy/core/priere/pause_prevue.dart';
 import 'package:rewayah_academy/core/priere/service_priere.dart';
 import 'package:rewayah_academy/core/profil/service_acceptations.dart';
 import 'package:rewayah_academy/core/regles/service_regles.dart';
@@ -835,21 +836,76 @@ class FauxServiceRegles implements ServiceRegles {
 
 /// Un service de prieres en memoire.
 class FauxServicePriere implements ServicePriere {
-  /// Les reglages rendus, par enseignant.
-  final Map<String, ReglagesPriere> parEnseignant = <String, ReglagesPriere>{};
+  /// Les pauses de priere rendues, par seance.
+  final Map<String, PausePrevue> pauses = <String, PausePrevue>{};
 
-  /// Les reglages enregistres, dans l'ordre.
-  final List<ReglagesPriere> enregistres = <ReglagesPriere>[];
+  /// Le lieu rendu a l'enseignant connecte.
+  LieuPriere? lieuRendu;
+
+  /// Les heures du jour rendues.
+  List<HeurePriere> heures = const <HeurePriere>[];
+
+  /// Les enseignants rendus a la direction.
+  List<EnseignantPriere> enseignantsRendus = const <EnseignantPriere>[];
+
+  /// Les lectures de creneaux rendues, par classe.
+  final Map<String, List<LectureCreneauPriere>> lectures =
+      <String, List<LectureCreneauPriere>>{};
+
+  /// Les incoherences rendues.
+  List<IncoherencePriere> incoherencesRendues = const <IncoherencePriere>[];
+
+  /// Les ajustements demandes, dans l'ordre.
+  final List<(Priere, int)> ajustes = <(Priere, int)>[];
+
+  /// Les lieux poses, dans l'ordre.
+  final List<DefinitionLieu> poses = <DefinitionLieu>[];
+
+  /// Les lieux retires, dans l'ordre.
+  final List<String> retires = <String>[];
+
+  /// Vrai : toute ecriture echoue.
+  bool echecEcriture = false;
 
   @override
-  Future<ReglagesPriere?> reglages(String enseignantId) async =>
-      parEnseignant[enseignantId];
+  Future<PausePrevue?> pausePrevue(String seanceId) async => pauses[seanceId];
 
   @override
-  Future<void> enregistrer(ReglagesPriere reglages) async {
-    enregistres.add(reglages);
-    parEnseignant[reglages.enseignantId] = reglages;
+  Future<LieuPriere?> lieu({String? enseignantId}) async => lieuRendu;
+
+  @override
+  Future<List<HeurePriere>> horairesDuJour({
+    String? enseignantId,
+    DateTime? jour,
+  }) async => heures;
+
+  @override
+  Future<void> ajuster(Priere priere, int minutes) async {
+    if (echecEcriture) throw StateError('echec');
+    ajustes.add((priere, minutes));
   }
+
+  @override
+  Future<void> definirLieu(DefinitionLieu definition) async {
+    if (echecEcriture) throw StateError('echec');
+    poses.add(definition);
+  }
+
+  @override
+  Future<void> retirerLieu(String enseignantId) async {
+    if (echecEcriture) throw StateError('echec');
+    retires.add(enseignantId);
+  }
+
+  @override
+  Future<List<EnseignantPriere>> enseignants() async => enseignantsRendus;
+
+  @override
+  Future<List<LectureCreneauPriere>> lectureClasse(String groupeId) async =>
+      lectures[groupeId] ?? const <LectureCreneauPriere>[];
+
+  @override
+  Future<List<IncoherencePriere>> incoherences() async => incoherencesRendues;
 }
 
 /// Un etat de reseau fige.
