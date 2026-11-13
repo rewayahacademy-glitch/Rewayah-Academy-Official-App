@@ -35,7 +35,7 @@ DECLARE
 BEGIN
   SELECT pg_catalog.md5(p.prosrc) INTO v_empreinte
     FROM pg_catalog.pg_proc p WHERE p.oid = 'public.mon_horloge()'::pg_catalog.regprocedure;
-  IF v_empreinte IS DISTINCT FROM 'f5a07a6164894efcc7e38e9e8ae00a90' THEN
+  IF v_empreinte IS DISTINCT FROM 'e5c08d82049c9f8bb55acd3cea0dfd1e' THEN
     RAISE EXCEPTION 'HORLOGE-ET-LIEU : public.mon_horloge() a change depuis la partie A (empreinte %), migration refusee', v_empreinte;
   END IF;
 END
