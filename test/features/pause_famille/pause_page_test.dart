@@ -480,7 +480,8 @@ void main() {
         plus: <Override>[_capaciteAdulte],
       );
       expect(find.text(t.pause.regleTitre), findsOneWidget);
-      expect(find.textContaining('Pause de'), findsNothing);
+      // Sans prenom, aucun sous-titre « Pause de … » (le titre neutre reste).
+      expect(find.text(t.pause.sousTitre(dePrenom: 'de Mariam')), findsNothing);
       expect(port.lues, <String>['p-student']);
     });
 

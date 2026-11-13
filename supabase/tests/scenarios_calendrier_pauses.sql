@@ -1381,6 +1381,58 @@ SELECT public.materialiser_seances_groupe(pg_temp.u('cM'));
 SELECT pg_temp.vrai((SELECT pg_catalog.count(*) FROM public.sessions WHERE groupe_id = pg_temp.u('cM') AND started_at = :'r21_t'::timestamptz) = 1,
   'un second passage du materialiseur ne recree toujours pas la seance de cote');
 
+-- ------------------------------------------------------------------
+-- 19. Revue du 13/11 : la pause de priere (PRIERE-1) suit la mise de cote et le retablissement
+-- ------------------------------------------------------------------
+-- b7 prie a La Mecque. La seance sP (classe cP, +100 jours, 08:30 a 09:50 UTC, autour du Dhuhr) a une pause de
+-- priere prevue. Une fermeture de la classe la met de cote : plus de pause prevue (ligne retiree). Le retrait de la
+-- fermeture la retablit : la pause prevue revient. Les declencheurs de la priere et de la garde se suivent.
+INSERT INTO public.prayer_settings(teacher_id, latitude, longitude, timezone_iana, method, madhab)
+VALUES (pg_temp.u('b7'), 21.42250, 39.82620, 'Asia/Riyadh', 'umm_al_qura', 'shafi');
+INSERT INTO public.groupes(id, teacher_id, type_public, seuil_max, libelle, weekday, hour_local, timezone_iana) VALUES
+ (pg_temp.u('cP'), pg_temp.u('b8'), 'adulte', 5, 'Priere CP', 4, 3, 'UTC');
+INSERT INTO public.sessions(id, teacher_id, started_at, ended_at, session_type, groupe_id, status)
+VALUES (pg_temp.u('sP'), pg_temp.u('b7'), pg_catalog.date_trunc('day', pg_catalog.now()) + interval '100 days 8 hours 30 minutes',
+        pg_catalog.date_trunc('day', pg_catalog.now()) + interval '100 days 9 hours 50 minutes', 'standard', pg_temp.u('cP'), 'planned');
+SELECT pg_temp.vrai(EXISTS (SELECT 1 FROM public.seance_pause_prevue_stock WHERE session_id = pg_temp.u('sP') AND retiree_le IS NULL AND debut_prevu_utc IS NOT NULL),
+  'fixture : la seance sP a une pause de priere prevue');
+SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.fermer('pri', 'autre', 100, 100, 'classe', NULL, 'cP');
+SELECT pg_temp.publier('pri', true);
+RESET ROLE;
+SELECT pg_temp.vrai((SELECT deleted_at FROM public.sessions WHERE id = pg_temp.u('sP')) IS NOT NULL
+                    AND NOT EXISTS (SELECT 1 FROM public.seance_pause_prevue_stock WHERE session_id = pg_temp.u('sP') AND retiree_le IS NULL),
+  'une seance mise de cote par une fermeture n''a plus de pause de priere prevue');
+SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.publier('pri', false);
+RESET ROLE;
+SELECT pg_temp.vrai((SELECT deleted_at FROM public.sessions WHERE id = pg_temp.u('sP')) IS NULL
+                    AND EXISTS (SELECT 1 FROM public.seance_pause_prevue_stock WHERE session_id = pg_temp.u('sP') AND retiree_le IS NULL AND debut_prevu_utc IS NOT NULL),
+  'la seance retablie retrouve sa pause de priere prevue');
+-- Une seance creee d'emblee un jour ferme n'a jamais de pause prevue (la garde la met de cote tout de suite).
+SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.fermer('pri2', 'autre', 101, 101, 'classe', NULL, 'cP');
+SELECT pg_temp.publier('pri2', true);
+RESET ROLE;
+INSERT INTO public.sessions(id, teacher_id, started_at, ended_at, session_type, groupe_id, status)
+VALUES (pg_temp.u('sP2'), pg_temp.u('b7'), pg_catalog.date_trunc('day', pg_catalog.now()) + interval '101 days 8 hours 30 minutes',
+        pg_catalog.date_trunc('day', pg_catalog.now()) + interval '101 days 9 hours 50 minutes', 'standard', pg_temp.u('cP'), 'planned');
+SELECT pg_temp.vrai((SELECT deleted_at FROM public.sessions WHERE id = pg_temp.u('sP2')) IS NOT NULL
+                    AND NOT EXISTS (SELECT 1 FROM public.seance_pause_prevue_stock WHERE session_id = pg_temp.u('sP2') AND retiree_le IS NULL AND debut_prevu_utc IS NOT NULL),
+  'une seance creee un jour de fermeture publiee n''a pas de pause de priere prevue');
+
+-- La garde ne touche JAMAIS une seance deja commencee (B-C) : posee un jour de fermeture publiee (celle
+-- d'aujourd'hui, partie 7b), elle reste telle quelle ; elle n'est ni de cote ni supprimee.
+INSERT INTO public.sessions(id, teacher_id, started_at, ended_at, session_type, groupe_id, status)
+VALUES (pg_temp.u('s_oubli'), pg_temp.u('b7'), pg_catalog.now() - interval '30 minutes', pg_catalog.now() + interval '20 minutes',
+        'standard', pg_temp.u('cP'), 'planned');
+SELECT pg_temp.vrai((SELECT deleted_at FROM public.sessions WHERE id = pg_temp.u('s_oubli')) IS NULL
+                    AND NOT EXISTS (SELECT 1 FROM public.seances_fermees WHERE session_id = pg_temp.u('s_oubli')),
+  'une seance deja commencee un jour de fermeture publiee n''est jamais touchee par la garde (sonde s_oubli)');
+
 \o
 SELECT 'scenarios_calendrier_pauses : tous les controles sont verts' AS resultat;
 ROLLBACK;
