@@ -141,7 +141,9 @@ class CarteSuiviPedagogique extends ConsumerWidget {
     final String? rythme = dates ? libelleRythme(suivi) : null;
     final DateTime? date = dates ? suivi.dateLimite : null;
     final DateTime? horizon = dates ? suivi.horizon : null;
-    final DateTime? entree = suivi.entreeLe;
+    // Aucune date, la date d'entree comprise, quand l'eleve ne voit pas ses
+    // dates (charte : l'enfant de 6 a 9 ans ne recoit aucune date).
+    final DateTime? entree = dates ? suivi.entreeLe : null;
     final String niveau = suivi.niveauNom ?? '';
     String jour(DateTime d) => LibellesGroupe.insecable(
       s.dateJour(

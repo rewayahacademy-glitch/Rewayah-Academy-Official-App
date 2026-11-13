@@ -20,7 +20,11 @@
 --      est par etape). La somme des etapes egale le niveau (37/28/24/15 prevues,
 --      48/36/31/20 de date limite) ; la publication le verifie en base.
 --   2. Publier une version archive la precedente ; un index interdit deux
---      versions publiees.
+--      versions publiees. Regle 4 de programme-rewayah (directeur) : une version
+--      publiee ne se modifie plus et l'eleve finit son etape dans sa version ;
+--      la publication ne deplace donc personne. Le changement de version se fait
+--      au passage d'etape (etape de meme code dans la version publiee courante,
+--      sinon refus `programme_code_absent`).
 --   3. Le fait unique « etape en cours » par eleve (`eleve_etape_en_cours`),
 --      pose seul a l'entree en classe et pour les eleves deja presents (un
 --      eleve debutant entre a l'etape 1 ; jamais « l'etape de la classe ») ; les
@@ -148,10 +152,7 @@ REVOKE ALL ON public.eleve_etape_en_cours FROM PUBLIC, anon, authenticated, serv
 
 -- Le reglage de l'age ou l'eleve voit sa date limite (REGLAGES.md, partie 6 : 10 ans).
 INSERT INTO public.app_config (key, value)
-VALUES ('programme.age_voit_date_limite', pg_catalog.to_jsonb(10)),
--- La fenetre de lecture du remplacant (REGLAGES.md, partie 4 : de l'acceptation a
--- 24 heures apres la fin de la seance).
-       ('remplacement.fenetre_lecture_heures', pg_catalog.to_jsonb(24))
+VALUES ('programme.age_voit_date_limite', pg_catalog.to_jsonb(10))
 ON CONFLICT (key) DO NOTHING;
 
 -- ---------------------------------------------------------------------------
@@ -169,11 +170,14 @@ ON CONFLICT (key) DO NOTHING;
 --   An-Nas, Al-Falaq, Al-Ikhlas, paroles de la priere et ablutions, invocations) ;
 --   10 ans et plus, etapes 1 a 3 : ligne 47 (Al-Fatiha des la premiere semaine)
 --   puis « le meme ordre » (EVALUATIONS.md 4.1, ligne 138) ;
---   etape 4, toutes tranches : ligne 48 (revision de la lecture, invocations,
+--   etape 4, 10 ans et plus : ligne 48 (revision de la lecture, invocations,
 --   adab), precedee des paroles de la priere et des ablutions tant qu'elles ne
---   sont pas confirmees (elles sont exigees a l'examen, EVALUATIONS.md 4.6 ; un
---   enfant de 6-9 ans ne les atteint pas avant l'etape 4 : Al-Fatiha 3 semaines
---   et trois sourates de 2 semaines depassent les 8 semaines de l'etape 3).
+--   sont pas confirmees (exigees a l'examen, EVALUATIONS.md 4.6) ;
+--   etape 4, 6-9 ans : la suite de la ligne 46 (An-Nas, Al-Falaq, Al-Ikhlas
+--   « environ 2 semaines chacune », puis les paroles de la priere et les
+--   ablutions, puis les autres invocations), que l'enfant n'a pas finie a
+--   l'etape 3 (Al-Fatiha 3 semaines + 3 x 2 semaines > 8 semaines de l'etape
+--   3), avec la ligne 48 (revision de la lecture, adab).
 CREATE FUNCTION private.contenu_bases()
 RETURNS TABLE (
   ordre int,
@@ -194,7 +198,8 @@ AS $function$
     SELECT
       'Al-Fatiha, puis An-Nâs, Al-Falaq et Al-Ikhlâs, puis les paroles de la prière et les ablutions, puis les autres invocations'::text AS suite_enfant,
       'Al-Fatiha dès la première semaine, puis An-Nâs, Al-Falaq et Al-Ikhlâs, puis les paroles de la prière et les ablutions, puis les autres invocations'::text AS suite_10,
-      'Les paroles de la prière et les ablutions tant qu''elles ne sont pas confirmées, puis la révision de la lecture, les invocations et l''adab'::text AS apres_livre
+      'Les paroles de la prière et les ablutions tant qu''elles ne sont pas confirmées, puis la révision de la lecture, les invocations et l''adab'::text AS apres_livre,
+      'La suite des sourates commencées (An-Nâs, Al-Falaq, Al-Ikhlâs), puis les paroles de la prière et les ablutions, puis les invocations ; avec la révision de la lecture et l''adab'::text AS apres_livre_enfant
   )
   SELECT e.ordre, e.code, e.nom, e.description, e.objectifs, e.plage, e.durees, e.matieres
     FROM txt CROSS JOIN LATERAL (VALUES
@@ -250,7 +255,7 @@ AS $function$
        '{"enfant_6_9": {"prevue": 7, "limite": 9}, "enfant_10_13": {"prevue": 5, "limite": 6},
          "ado_14_17": {"prevue": 5, "limite": 6}, "adulte_18_plus": {"prevue": 3, "limite": 4}}'::jsonb,
        pg_catalog.jsonb_build_object(
-         'enfant_6_9', pg_catalog.jsonb_build_object('principale', 'Le Coran : les sourates courtes, d''Al-Masad à Az-Zalzalah', 'secondaire', txt.apres_livre),
+         'enfant_6_9', pg_catalog.jsonb_build_object('principale', 'Le Coran : les sourates courtes, d''Al-Masad à Az-Zalzalah', 'secondaire', txt.apres_livre_enfant),
          'enfant_10_13', pg_catalog.jsonb_build_object('principale', 'Le Coran : les sourates courtes, d''Al-Masad à Az-Zalzalah', 'secondaire', txt.apres_livre),
          'ado_14_17', pg_catalog.jsonb_build_object('principale', 'Le Coran : les sourates courtes, d''Al-Masad à Az-Zalzalah', 'secondaire', txt.apres_livre),
          'adulte_18_plus', pg_catalog.jsonb_build_object('principale', 'Le Coran : les sourates courtes, d''Al-Masad à Az-Zalzalah', 'secondaire', txt.apres_livre)))
@@ -370,10 +375,23 @@ DECLARE
   v_ecart text;
 BEGIN
   IF NEW.statut = 'publiee' AND OLD.statut IS DISTINCT FROM 'publiee' THEN
+    -- Une version publiee porte le niveau des bases complet (ses quatre etapes,
+    -- son niveau et ses durees), et aucune etape hors d'un niveau.
+    IF NOT EXISTS (SELECT 1 FROM public.programme_cycles cy
+                    WHERE cy.version_id = NEW.id AND cy.code = 'bases')
+       OR (SELECT pg_catalog.count(*) FROM public.programme_niveaux n
+            WHERE n.version_id = NEW.id AND n.cycle_code = 'bases')
+          < (SELECT pg_catalog.count(*) FROM private.contenu_bases())
+       OR EXISTS (SELECT 1 FROM public.programme_niveaux n
+                   WHERE n.version_id = NEW.id AND n.cycle_code IS NULL) THEN
+      RAISE EXCEPTION 'programme_sans_bases: version %', NEW.numero_version
+        USING errcode = 'P0001',
+              hint = 'Une version publiee doit porter le niveau des bases complet, sans etape hors d''un niveau : partez de la version publiee ou du preremplissage des bases.';
+    END IF;
     -- Pour chaque niveau de la version et chaque tranche active : somme des
     -- durees prevues des etapes = duree prevue du niveau ; somme des dates
     -- limites des etapes = date limite du niveau.
-    SELECT cy.nom_humain || ' (' || co.code || ')' INTO v_ecart
+    SELECT cy.nom_humain || ', ' || co.nom_humain INTO v_ecart
       FROM public.programme_cycles cy
      CROSS JOIN public.cohortes_age co
      WHERE cy.version_id = NEW.id AND co.actif
@@ -395,34 +413,9 @@ BEGIN
         USING errcode = 'P0001',
               hint = 'La somme des durees et des dates limites des etapes doit egaler celles du niveau, pour chaque tranche d''age.';
     END IF;
-    -- Les classes et les eleves passent a l'etape de meme code stable dans la
-    -- nouvelle version (correction de l'architecte, 12/11) ; un code absent de
-    -- la nouvelle version refuse la publication.
-    SELECT n.code_technique INTO v_ecart
-      FROM (SELECT g.programme_niveau_id AS niveau_id FROM public.groupes g
-             WHERE g.programme_niveau_id IS NOT NULL
-            UNION
-            SELECT f.niveau_id FROM public.eleve_etape_en_cours f) r
-      JOIN public.programme_niveaux n ON n.id = r.niveau_id
-      JOIN public.programme_versions v ON v.id = n.version_id AND v.statut IN ('publiee', 'archivee')
-     WHERE n.version_id <> NEW.id
-       AND private.etape_publiee_equivalente(n.id, NEW.id) IS NULL
-     LIMIT 1;
-    IF v_ecart IS NOT NULL THEN
-      RAISE EXCEPTION 'programme_code_absent: %', v_ecart
-        USING errcode = 'P0001',
-              hint = 'Une classe ou un eleve est a cette etape : la nouvelle version doit garder son code.';
-    END IF;
-    UPDATE public.groupes g
-       SET programme_niveau_id = private.etape_publiee_equivalente(g.programme_niveau_id, NEW.id)
-      FROM public.programme_niveaux n
-      JOIN public.programme_versions v ON v.id = n.version_id AND v.statut IN ('publiee', 'archivee')
-     WHERE n.id = g.programme_niveau_id AND n.version_id <> NEW.id;
-    UPDATE public.eleve_etape_en_cours f
-       SET niveau_id = private.etape_publiee_equivalente(f.niveau_id, NEW.id), maj_le = pg_catalog.now()
-      FROM public.programme_niveaux n
-      JOIN public.programme_versions v ON v.id = n.version_id AND v.statut IN ('publiee', 'archivee')
-     WHERE n.id = f.niveau_id AND n.version_id <> NEW.id;
+    -- Regle 4 de programme-rewayah : la publication ne deplace ni classe ni
+    -- eleve ; ils finissent leur etape dans leur version (voir
+    -- `etapes_sur_ancienne_version` pour le compte, a l'usage de la direction).
     -- Une seule version publiee : la precedente est archivee.
     UPDATE public.programme_versions
        SET statut = 'archivee'
@@ -503,6 +496,40 @@ AS $function$
     FROM f;
 $function$;
 
+-- L'eleve voit-il ses dates ? Vrai si sa tranche est connue et que son age
+-- maximum atteint `programme.age_voit_date_limite` (10), ou pour une tranche
+-- d'adultes ; faux si la tranche est inconnue. Independant de qui lit.
+CREATE FUNCTION private.eleve_voit_dates(p_cohorte text)
+RETURNS boolean
+LANGUAGE sql
+STABLE
+SECURITY DEFINER
+SET search_path = ''
+AS $function$
+  SELECT p_cohorte IS NOT NULL
+         AND coalesce((SELECT a.age_max_inclus IS NULL
+                              OR a.age_max_inclus >= coalesce(
+                                   (SELECT (c.value #>> '{}')::int FROM public.app_config c
+                                     WHERE c.key = 'programme.age_voit_date_limite'), 10)
+                         FROM public.cohortes_age a WHERE a.code = p_cohorte), false);
+$function$;
+
+-- Faut-il retenir les dates pour cet appel ? Seulement quand l'eleve lit pour
+-- lui-meme (role eleve) et ne voit pas ses dates. Une seule regle, appelee par
+-- etape_eleve_lecture et suivi_pedagogique_eleve.
+CREATE FUNCTION private.dates_retenues(p_student_id uuid, p_groupe_id uuid)
+RETURNS boolean
+LANGUAGE sql
+STABLE
+SECURITY DEFINER
+SET search_path = ''
+AS $function$
+  SELECT coalesce(public.app_role() = 'student' AND p_student_id = auth.uid(), false)
+         AND NOT private.eleve_voit_dates(coalesce(
+               (SELECT f.cohorte FROM public.eleve_etape_en_cours f WHERE f.student_id = p_student_id),
+               private.cohorte_effective(p_student_id, p_groupe_id)));
+$function$;
+
 -- Pose l'etape d'un eleve s'il n'en a pas : sa derniere decision de niveau
 -- publiee ; sinon, s'il est debutant (niveau declare vide, « debut_lettres » ou
 -- « lettres_avec_aide »), l'etape 1 des bases, datee de son entree en classe.
@@ -530,11 +557,13 @@ BEGIN
   SELECT h.niveau_id, h.created_at INTO v_niveau, v_quand
     FROM public.progression_historique h
     JOIN public.programme_niveaux n ON n.id = h.niveau_id
-    JOIN public.programme_versions v ON v.id = n.version_id AND v.statut = 'publiee'
+    JOIN public.programme_versions v ON v.id = n.version_id AND v.statut IN ('publiee', 'archivee')
    WHERE h.student_id = p_student_id
    ORDER BY h.created_at DESC
    LIMIT 1;
   IF v_niveau IS NOT NULL THEN
+    v_niveau := coalesce(private.etape_publiee_equivalente(
+      v_niveau, (SELECT v.id FROM public.programme_versions v WHERE v.statut = 'publiee')), v_niveau);
     v_origine := 'decision';
   ELSIF coalesce((SELECT sp.niveau_declare IS NULL OR sp.niveau_declare IN ('debut_lettres', 'lettres_avec_aide')
                     FROM public.student_profiles sp WHERE sp.profile_id = p_student_id), true) THEN
@@ -584,7 +613,9 @@ BEGIN
        AND NOT EXISTS (SELECT 1 FROM public.eleve_etape_en_cours f WHERE f.student_id = gm.student_id)
   LOOP
     PERFORM private.poser_etape_eleve(m.student_id, m.groupe_id, pg_catalog.now());
-    v_n := v_n + 1;
+    IF EXISTS (SELECT 1 FROM public.eleve_etape_en_cours f WHERE f.student_id = m.student_id) THEN
+      v_n := v_n + 1;
+    END IF;
   END LOOP;
   RETURN v_n;
 END;
@@ -593,32 +624,70 @@ $function$;
 -- ---------------------------------------------------------------------------
 -- 6. Les declencheurs : classe neuve, entree en classe, decision de la direction
 -- ---------------------------------------------------------------------------
+-- Classe neuve : l'etape 1 des bases. Etape d'une classe changee : l'etape de
+-- meme code dans la version publiee courante (passage d'etape de la classe) ;
+-- un code absent refuse le changement. Une etape de brouillon n'est jamais posee.
 CREATE FUNCTION private.socle_classe_neuve()
 RETURNS trigger
 LANGUAGE plpgsql
 SECURITY DEFINER
 SET search_path = ''
 AS $function$
+DECLARE
+  v_cible uuid;
+  v_code text;
 BEGIN
-  IF NEW.programme_niveau_id IS NULL THEN
+  IF TG_OP = 'INSERT' AND NEW.programme_niveau_id IS NULL THEN
     NEW.programme_niveau_id := private.etape_par_defaut();
+  ELSIF NEW.programme_niveau_id IS NOT NULL
+        AND (TG_OP = 'INSERT' OR NEW.programme_niveau_id IS DISTINCT FROM OLD.programme_niveau_id) THEN
+    v_cible := private.etape_publiee_equivalente(
+      NEW.programme_niveau_id, (SELECT v.id FROM public.programme_versions v WHERE v.statut = 'publiee'));
+    IF v_cible IS NULL
+       AND EXISTS (SELECT 1 FROM public.programme_versions v WHERE v.statut = 'publiee') THEN
+      SELECT n.code_technique INTO v_code FROM public.programme_niveaux n WHERE n.id = NEW.programme_niveau_id;
+      RAISE EXCEPTION 'programme_code_absent: %', v_code
+        USING errcode = 'P0001',
+              hint = 'Cette etape n''existe plus dans la version publiee du programme.';
+    END IF;
+    NEW.programme_niveau_id := coalesce(v_cible, NEW.programme_niveau_id);
   END IF;
   RETURN NEW;
 END;
 $function$;
 
 CREATE TRIGGER groupes_socle_etape_par_defaut
-  BEFORE INSERT ON public.groupes
+  BEFORE INSERT OR UPDATE OF programme_niveau_id ON public.groupes
   FOR EACH ROW EXECUTE FUNCTION private.socle_classe_neuve();
 
+-- Entree en classe : pose l'etape s'il n'y en a pas. Retour en classe apres une
+-- sortie (aucune adhesion active depuis au moins un jour) : le fait est garde
+-- (rien de valide n'est perdu), la date d'entree dans l'etape devient le jour du
+-- retour, pour que le temps passe hors de toute classe ne compte pas. Un
+-- transfert (sortie et entree le meme jour) ne change rien.
 CREATE FUNCTION private.socle_entree_en_classe()
 RETURNS trigger
 LANGUAGE plpgsql
 SECURITY DEFINER
 SET search_path = ''
 AS $function$
+DECLARE
+  v_sortie timestamptz;
 BEGIN
-  IF NEW.left_at IS NULL THEN
+  IF NEW.left_at IS NOT NULL THEN
+    RETURN NEW;
+  END IF;
+  IF EXISTS (SELECT 1 FROM public.eleve_etape_en_cours WHERE student_id = NEW.student_id) THEN
+    SELECT pg_catalog.max(m.left_at) INTO v_sortie
+      FROM public.groupe_membres m
+     WHERE m.student_id = NEW.student_id AND m.id <> NEW.id AND m.left_at IS NOT NULL;
+    IF v_sortie IS NOT NULL AND NEW.joined_at - v_sortie >= interval '1 day' THEN
+      UPDATE public.eleve_etape_en_cours
+         SET entree_etape_le = greatest(NEW.joined_at::date, entree_etape_le),
+             maj_le = pg_catalog.now()
+       WHERE student_id = NEW.student_id;
+    END IF;
+  ELSE
     PERFORM private.poser_etape_eleve(NEW.student_id, NEW.groupe_id, NEW.joined_at);
   END IF;
   RETURN NEW;
@@ -641,19 +710,32 @@ SET search_path = ''
 AS $function$
 DECLARE
   v_cycle text;
+  v_statut text;
+  v_code text;
+  v_cible uuid;
   f public.eleve_etape_en_cours%ROWTYPE;
   v_cycle_actuel text;
   v_groupe uuid;
   v_cohorte text;
   v_jour date := NEW.created_at::date;
 BEGIN
-  SELECT n.cycle_code INTO v_cycle
+  SELECT n.cycle_code, v.statut, n.code_technique INTO v_cycle, v_statut, v_code
     FROM public.programme_niveaux n
-    JOIN public.programme_versions v ON v.id = n.version_id AND v.statut = 'publiee'
+    JOIN public.programme_versions v ON v.id = n.version_id
    WHERE n.id = NEW.niveau_id;
-  IF NOT FOUND THEN
+  IF v_statut IS NULL OR v_statut NOT IN ('publiee', 'archivee') THEN
     RETURN NEW; -- decision sur un brouillon : sans effet, comme avant
   END IF;
+  -- Passage d'etape : l'eleve entre dans l'etape de meme code de la version
+  -- publiee courante ; un code absent refuse le passage (jamais en silence).
+  v_cible := private.etape_publiee_equivalente(
+    NEW.niveau_id, (SELECT v.id FROM public.programme_versions v WHERE v.statut = 'publiee'));
+  IF v_cible IS NULL THEN
+    RAISE EXCEPTION 'programme_code_absent: %', v_code
+      USING errcode = 'P0001',
+            hint = 'Cette etape n''existe plus dans la version publiee du programme : choisissez une etape de la version publiee.';
+  END IF;
+  SELECT n.cycle_code INTO v_cycle FROM public.programme_niveaux n WHERE n.id = v_cible;
 
   SELECT m.groupe_id INTO v_groupe FROM public.groupe_membres m
    WHERE m.student_id = NEW.student_id AND m.left_at IS NULL LIMIT 1;
@@ -664,20 +746,26 @@ BEGIN
     INSERT INTO public.eleve_etape_en_cours
       (student_id, niveau_id, cohorte, entree_etape_le, entree_niveau_le, origine)
     VALUES
-      (NEW.student_id, NEW.niveau_id, v_cohorte, v_jour, v_jour, 'decision');
+      (NEW.student_id, v_cible, v_cohorte, v_jour, v_jour, 'decision');
     RETURN NEW;
   END IF;
 
   SELECT n.cycle_code INTO v_cycle_actuel FROM public.programme_niveaux n WHERE n.id = f.niveau_id;
+  -- Reevaluation ou certification sur l'etape EN COURS (meme code) : rien ne
+  -- change, ni l'etape, ni la date d'entree, ni la date limite.
+  IF EXISTS (SELECT 1 FROM public.programme_niveaux a
+              WHERE a.id = f.niveau_id AND a.code_technique = v_code) THEN
+    RETURN NEW;
+  END IF;
   IF v_cycle IS NOT NULL AND v_cycle = v_cycle_actuel THEN
     UPDATE public.eleve_etape_en_cours
-       SET niveau_id = NEW.niveau_id,
+       SET niveau_id = v_cible,
            entree_etape_le = greatest(v_jour, f.entree_niveau_le),
            origine = 'decision', maj_le = pg_catalog.now()
      WHERE student_id = NEW.student_id;
   ELSE
     UPDATE public.eleve_etape_en_cours
-       SET niveau_id = NEW.niveau_id, cohorte = v_cohorte,
+       SET niveau_id = v_cible, cohorte = v_cohorte,
            entree_etape_le = v_jour, entree_niveau_le = v_jour,
            recul_jours = 0, origine = 'decision', maj_le = pg_catalog.now()
      WHERE student_id = NEW.student_id;
@@ -727,8 +815,8 @@ AS $function$
      LIMIT 1
   ),
   choisie AS (
-    SELECT CASE WHEN dv.statut = 'publiee' THEN d.niveau_id ELSE g.programme_niveau_id END AS niveau_id,
-           CASE WHEN dv.statut = 'publiee' THEN d.created_at END AS depuis
+    SELECT CASE WHEN dv.statut IN ('publiee', 'archivee') THEN d.niveau_id ELSE g.programme_niveau_id END AS niveau_id,
+           CASE WHEN dv.statut IN ('publiee', 'archivee') THEN d.created_at END AS depuis
       FROM public.groupes g
       LEFT JOIN decision d ON true
       LEFT JOIN public.programme_niveaux dn ON dn.id = d.niveau_id
@@ -766,9 +854,12 @@ AS $function$
          END
     FROM choisie ch
     JOIN public.programme_niveaux n ON n.id = ch.niveau_id
-    JOIN public.programme_versions v ON v.id = n.version_id AND v.statut = 'publiee'
+    JOIN public.programme_versions v ON v.id = n.version_id AND v.statut IN ('publiee', 'archivee')
     LEFT JOIN public.student_profiles sp ON sp.profile_id = p_student_id
-   WHERE NOT EXISTS (SELECT 1 FROM f);
+   WHERE NOT EXISTS (SELECT 1 FROM f)
+     -- Des qu'une version est publiee, un eleve sans fait n'a pas d'etape (il
+     -- attend l'entretien de lecture) : jamais « l'etape de la classe ».
+     AND NOT EXISTS (SELECT 1 FROM public.programme_versions pv WHERE pv.statut = 'publiee');
 $function$;
 
 COMMENT ON FUNCTION private.etape_eleve(uuid, uuid) IS
@@ -782,10 +873,9 @@ COMMENT ON FUNCTION private.etape_eleve(uuid, uuid) IS
 -- ---------------------------------------------------------------------------
 -- Garde (positive) : l'eleve lui-meme ; le titulaire de son propre profil eleve ;
 -- le tuteur du foyer de l'eleve ; l'enseignant titulaire de sa classe active ou
--- l'enseignant effectif d'une seance de cette classe (fenetre de CAHIER-C1) ; le
--- remplacant accepte d'une seance de cette classe, de l'acceptation jusqu'a
--- `remplacement.fenetre_lecture_heures` (24) apres la fin prevue de la seance ;
--- la direction. 42501 sinon.
+-- l'enseignant effectif d'une seance de cette classe (garde partagee de
+-- CAHIER-C1 : le remplacant devient enseignant effectif a l'acceptation, et lit
+-- jusqu'a 24 heures apres la fin prevue de la seance) ; la direction. 42501 sinon.
 -- Rend NULL sans etape ni classe ; {"attente": "entretien_de_lecture"} pour un
 -- eleve en classe qui a declare savoir lire et attend la decision de la direction.
 -- `eleve_voit_dates` (independant de l'appelant) : vrai si la tranche de l'eleve
@@ -805,13 +895,11 @@ DECLARE
   v_groupe uuid;
   v_famille boolean;
   v_ecole boolean;
-  v_fenetre int;
   f public.eleve_etape_en_cours%ROWTYPE;
   n public.programme_niveaux%ROWTYPE;
   v_cy public.programme_cycles%ROWTYPE;
   v_version public.programme_versions%ROWTYPE;
   v_coh text;
-  v_age_voit int;
   v_voit boolean;
   v_masque boolean;
   v_dates record;
@@ -837,31 +925,9 @@ BEGIN
                      WHERE p.id = p_eleve_id AND p.role = 'student' AND p.deleted_at IS NULL
                        AND p.household_id IS NOT NULL
                        AND p.household_id = public.app_household_id())), false);
-  SELECT coalesce((SELECT (c.value #>> '{}')::int FROM public.app_config c
-                    WHERE c.key = 'remplacement.fenetre_lecture_heures'), 24)
-    INTO v_fenetre;
   v_ecole := coalesce(
        public.app_role() = 'admin'
-    OR (v_groupe IS NOT NULL AND private.cahier_c1_peut_lire_classe(v_groupe))
-    -- Le remplacant accepte : dernier evenement de la seance = remplacement pris
-    -- ou designe par la direction, pour lui, entre l'acceptation et la fin
-    -- prevue de la seance plus la fenetre.
-    OR (v_groupe IS NOT NULL AND public.app_role() = 'teacher'
-        AND EXISTS (
-          SELECT 1
-            FROM public.sessions s
-            CROSS JOIN LATERAL (
-              SELECT x.evenement, x.enseignant_remplacant_id, x.cree_le
-                FROM public.remplacements_seance x
-               WHERE x.session_id = s.id
-               ORDER BY x.cree_le DESC, x.id DESC
-               LIMIT 1
-            ) r
-           WHERE s.groupe_id = v_groupe AND s.deleted_at IS NULL
-             AND r.evenement IN ('remplacement_pris', 'remplacement_designe_admin')
-             AND r.enseignant_remplacant_id = v_user
-             AND pg_catalog.now() >= r.cree_le
-             AND pg_catalog.now() <= s.ended_at + pg_catalog.make_interval(hours => v_fenetre))), false);
+    OR (v_groupe IS NOT NULL AND private.cahier_c1_peut_lire_classe(v_groupe)), false);
 
   IF NOT coalesce(v_user IS NOT NULL AND p_eleve_id IS NOT NULL AND public.app_account_valid()
                   AND (v_famille OR v_ecole), false) THEN
@@ -885,15 +951,10 @@ BEGIN
    WHERE version_id = n.version_id AND code = n.cycle_code;
   v_coh := coalesce(f.cohorte, private.cohorte_effective(p_eleve_id, v_groupe));
 
-  SELECT coalesce((SELECT (c.value #>> '{}')::int FROM public.app_config c
-                    WHERE c.key = 'programme.age_voit_date_limite'), 10)
-    INTO v_age_voit;
   -- Tranche connue et age maximum au seuil ou au-dela, ou tranche d'adultes
   -- (age maximum nul) ; tranche inconnue : faux.
-  v_voit := v_coh IS NOT NULL
-            AND coalesce((SELECT a.age_max_inclus IS NULL OR a.age_max_inclus >= v_age_voit
-                            FROM public.cohortes_age a WHERE a.code = v_coh), false);
-  v_masque := coalesce(public.app_role() = 'student' AND p_eleve_id = v_user, false) AND NOT v_voit;
+  v_voit := private.eleve_voit_dates(v_coh);
+  v_masque := private.dates_retenues(p_eleve_id, v_groupe);
   SELECT * INTO v_dates FROM private.dates_etape(p_eleve_id);
 
   SELECT coalesce(pg_catalog.jsonb_agg(pg_catalog.jsonb_build_object(
@@ -910,9 +971,15 @@ BEGIN
                           ELSE 'a_venir' END) ORDER BY e.ordre), '[]'::jsonb)
     INTO v_chemin
     FROM public.programme_niveaux e
-   WHERE e.version_id = n.version_id
-     AND ((n.cycle_code IS NOT NULL AND e.cycle_code = n.cycle_code)
-          OR (n.cycle_code IS NULL AND e.id = n.id));
+   WHERE (n.cycle_code IS NULL AND e.id = n.id)
+      -- Etapes passees et etape en cours : la version de l'eleve.
+      OR (n.cycle_code IS NOT NULL AND e.version_id = n.version_id
+          AND e.cycle_code = n.cycle_code AND e.ordre <= n.ordre)
+      -- Etapes a venir : la version publiee courante (celle ou il entrera).
+      OR (n.cycle_code IS NOT NULL AND e.cycle_code = n.cycle_code AND e.ordre > n.ordre
+          AND e.version_id = coalesce(
+                (SELECT v.id FROM public.programme_versions v WHERE v.statut = 'publiee'),
+                n.version_id));
 
   SELECT pg_catalog.jsonb_build_object(
            'validees', pg_catalog.count(v.student_id)::int,
@@ -942,7 +1009,7 @@ BEGIN
       'matiere_secondaire', n.matieres -> v_coh ->> 'secondaire',
       'duree_prevue_semaines', CASE WHEN v_masque THEN NULL ELSE (n.durees -> v_coh ->> 'prevue')::int END,
       'date_limite_semaines', CASE WHEN v_masque THEN NULL ELSE (n.durees -> v_coh ->> 'limite')::int END,
-      'entree_le', f.entree_etape_le,
+      'entree_le', CASE WHEN v_masque THEN NULL ELSE f.entree_etape_le END,
       'date_limite', CASE WHEN v_masque THEN NULL ELSE v_dates.date_limite END,
       'semaines_ecoulees', CASE WHEN v_masque THEN NULL
                                 ELSE pg_catalog.floor((pg_catalog.now()::date - f.entree_etape_le) / 7.0)::int END,
@@ -956,7 +1023,7 @@ BEGIN
       'cohorte', v_coh,
       'duree_prevue_semaines', CASE WHEN v_masque THEN NULL ELSE (v_cy.durees -> v_coh ->> 'prevue')::int END,
       'date_limite_semaines', CASE WHEN v_masque THEN NULL ELSE (v_cy.durees -> v_coh ->> 'limite')::int END,
-      'entree_le', f.entree_niveau_le,
+      'entree_le', CASE WHEN v_masque THEN NULL ELSE f.entree_niveau_le END,
       'horizon', CASE WHEN v_masque THEN NULL ELSE v_dates.horizon END,
       'date_limite_visible', NOT v_masque),
     'chemin', v_chemin,
@@ -974,6 +1041,154 @@ COMMENT ON FUNCTION public.etape_eleve_lecture(uuid) IS
   'Eleve, titulaire de son profil, tuteur du foyer, enseignant de sa classe (fenetre CAHIER-C1), '
   'direction. Date limite, horizon et rythme '
   'retenus pour l''eleve de moins de 10 ans qui lit pour lui-meme. 42501 sinon ; NULL sans etape.';
+
+-- Pour la direction, apres une publication : combien d'eleves et de classes
+-- sont encore sur une etape d'une version archivee (ils la finissent, rien n'est
+-- bloque ; ils passeront a la version publiee au passage d'etape).
+CREATE FUNCTION public.etapes_sur_ancienne_version()
+RETURNS TABLE (eleves integer, classes integer)
+LANGUAGE plpgsql
+STABLE
+SECURITY DEFINER
+SET search_path = ''
+AS $function$
+BEGIN
+  IF NOT coalesce(public.app_role() = 'admin' AND public.app_account_valid(), false) THEN
+    RAISE EXCEPTION 'lecture reservee a la direction' USING errcode = '42501';
+  END IF;
+  RETURN QUERY
+    SELECT (SELECT pg_catalog.count(*)::int
+              FROM public.eleve_etape_en_cours f
+              JOIN public.programme_niveaux n ON n.id = f.niveau_id
+              JOIN public.programme_versions v ON v.id = n.version_id AND v.statut = 'archivee'
+              JOIN public.profiles p ON p.id = f.student_id AND p.deleted_at IS NULL
+             WHERE EXISTS (SELECT 1 FROM public.groupe_membres m
+                             JOIN public.groupes g ON g.id = m.groupe_id AND g.ended_at IS NULL
+                            WHERE m.student_id = f.student_id AND m.left_at IS NULL)),
+           (SELECT pg_catalog.count(*)::int
+              FROM public.groupes g
+              JOIN public.programme_niveaux n ON n.id = g.programme_niveau_id
+              JOIN public.programme_versions v ON v.id = n.version_id AND v.statut = 'archivee'
+             WHERE g.ended_at IS NULL);
+END;
+$function$;
+
+-- L'etape de chaque classe de l'enseignant, lue dans sa version, publiee ou
+-- archivee (jamais un brouillon) : une classe ne perd plus son etape a la
+-- publication d'une version suivante. Signature, droits et colonnes inchanges.
+CREATE OR REPLACE FUNCTION public.mes_classes_details()
+RETURNS TABLE (
+  groupe_id uuid,
+  etape_ordre integer,
+  etape_nom text,
+  langue text
+)
+LANGUAGE sql
+STABLE
+SECURITY DEFINER
+SET search_path = ''
+AS $function$
+  SELECT g.id,
+         n.ordre,
+         n.nom_humain,
+         l.nom_humain
+    FROM public.groupes g
+    LEFT JOIN (public.programme_niveaux n
+               JOIN public.programme_versions v
+                 ON v.id = n.version_id AND v.statut IN ('publiee', 'archivee'))
+           ON n.id = g.programme_niveau_id
+    LEFT JOIN public.langues_cours l ON l.code = g.langue_code
+   WHERE g.teacher_id = auth.uid()
+     AND g.ended_at IS NULL
+     AND public.app_role() = 'teacher'
+     AND public.app_account_valid()
+$function$;
+
+-- L'ancienne lecture de l'eleve et de sa famille (plus appelee par les ecrans,
+-- retiree au lot 10) applique la meme regle : l'eleve de moins de 10 ans qui lit
+-- pour lui-meme ne recoit ni duree, ni date, ni rythme. Signature, garde,
+-- colonnes et droits inchanges (CREATE OR REPLACE garde l'ACL).
+CREATE OR REPLACE FUNCTION public.suivi_pedagogique_eleve(p_eleve_id uuid)
+RETURNS TABLE (
+  etape_nom text,
+  etape_ordre int,
+  cycle text,
+  objectifs text[],
+  duree_prevue_semaines int,
+  date_limite date,
+  depuis timestamptz,
+  semaines_ecoulees int,
+  rythme text,
+  page_reprise int,
+  page_reprise_le timestamptz
+)
+LANGUAGE plpgsql
+STABLE
+SECURITY DEFINER
+SET search_path = ''
+AS $function$
+#variable_conflict use_column
+DECLARE
+  v_user uuid := auth.uid();
+  v_groupe uuid;
+  v_masque boolean;
+BEGIN
+  IF NOT coalesce(
+    v_user IS NOT NULL AND p_eleve_id IS NOT NULL AND public.app_account_valid()
+    AND (
+      -- L'eleve lui-meme.
+      (public.app_role() = 'student' AND p_eleve_id = v_user)
+      -- Le titulaire de son propre profil eleve (0052).
+      OR (public.app_role() = 'guardian' AND p_eleve_id = v_user
+          AND EXISTS (SELECT 1 FROM public.student_profiles sp
+                       WHERE sp.profile_id = v_user AND sp.titulaire_profile_id = v_user
+                         AND sp.deleted_at IS NULL))
+      -- Le tuteur du foyer de l'eleve : son enfant seulement.
+      OR (public.app_role() = 'guardian'
+          AND EXISTS (SELECT 1 FROM public.profiles p
+                       WHERE p.id = p_eleve_id AND p.role = 'student' AND p.deleted_at IS NULL
+                         AND p.household_id IS NOT NULL
+                         AND p.household_id = public.app_household_id()))
+    ), false) THEN
+    RAISE EXCEPTION 'suivi pedagogique refuse' USING errcode = '42501';
+  END IF;
+
+  SELECT m.groupe_id INTO v_groupe
+    FROM public.groupe_membres m
+   WHERE m.student_id = p_eleve_id AND m.left_at IS NULL;
+  IF v_groupe IS NULL THEN
+    RETURN;
+  END IF;
+  v_masque := private.dates_retenues(p_eleve_id, v_groupe);
+
+  RETURN QUERY
+    WITH e AS (
+      SELECT * FROM private.etape_eleve(p_eleve_id, v_groupe)
+    ),
+    calcul AS (
+      SELECT e.*,
+             CASE WHEN e.depuis IS NOT NULL
+                  THEN pg_catalog.floor(
+                         EXTRACT(epoch FROM pg_catalog.now() - e.depuis) / 604800)::int
+             END AS semaines
+        FROM e
+    )
+    SELECT c.etape_nom,
+           c.etape_ordre,
+           c.cycle,
+           c.objectifs,
+           CASE WHEN v_masque THEN NULL ELSE c.duree_prevue_semaines END,
+           CASE WHEN v_masque THEN NULL ELSE c.date_limite END,
+           CASE WHEN v_masque THEN NULL ELSE c.depuis END,
+           CASE WHEN v_masque THEN NULL ELSE c.semaines END,
+           CASE WHEN v_masque THEN NULL
+                ELSE private.vitesse_eleve(c.depuis, c.duree_prevue_semaines, c.date_limite, pg_catalog.now()) END,
+           r.page::int,
+           r.presentee_le
+      FROM calcul c
+      LEFT JOIN public.classe_position_reprise r ON r.groupe_id = v_groupe;
+END;
+$function$;
 
 -- ---------------------------------------------------------------------------
 -- 9. Les gestes existants suivent le nouveau contenu (signatures identiques)
@@ -1135,6 +1350,8 @@ REVOKE ALL ON FUNCTION private.etape_publiee_equivalente(uuid, uuid) FROM PUBLIC
 REVOKE ALL ON FUNCTION private.etape_par_defaut() FROM PUBLIC, anon, authenticated, service_role;
 REVOKE ALL ON FUNCTION private.cohorte_effective(uuid, uuid) FROM PUBLIC, anon, authenticated, service_role;
 REVOKE ALL ON FUNCTION private.dates_etape(uuid) FROM PUBLIC, anon, authenticated, service_role;
+REVOKE ALL ON FUNCTION private.eleve_voit_dates(text) FROM PUBLIC, anon, authenticated, service_role;
+REVOKE ALL ON FUNCTION private.dates_retenues(uuid, uuid) FROM PUBLIC, anon, authenticated, service_role;
 REVOKE ALL ON FUNCTION private.poser_etape_eleve(uuid, uuid, timestamptz) FROM PUBLIC, anon, authenticated, service_role;
 REVOKE ALL ON FUNCTION private.rattacher_classes_et_eleves() FROM PUBLIC, anon, authenticated, service_role;
 REVOKE ALL ON FUNCTION private.socle_classe_neuve() FROM PUBLIC, anon, authenticated, service_role;
@@ -1143,6 +1360,8 @@ REVOKE ALL ON FUNCTION private.socle_decision_niveau() FROM PUBLIC, anon, authen
 REVOKE ALL ON FUNCTION private.semer_programme_bases(uuid) FROM PUBLIC, anon, authenticated, service_role;
 REVOKE ALL ON FUNCTION public.etape_eleve_lecture(uuid) FROM PUBLIC, anon, service_role;
 GRANT EXECUTE ON FUNCTION public.etape_eleve_lecture(uuid) TO authenticated;
+REVOKE ALL ON FUNCTION public.etapes_sur_ancienne_version() FROM PUBLIC, anon, service_role;
+GRANT EXECUTE ON FUNCTION public.etapes_sur_ancienne_version() TO authenticated;
 DO $agent$
 BEGIN
   IF EXISTS (SELECT 1 FROM pg_catalog.pg_roles WHERE rolname = 'agent_ro') THEN
