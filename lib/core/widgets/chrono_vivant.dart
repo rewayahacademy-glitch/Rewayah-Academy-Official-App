@@ -70,9 +70,16 @@ class ChronoVivant extends StatefulWidget {
     this.libelleReste,
     this.libelleApresFin,
     this.libellePause,
+    this.pause,
     this.uneLigne = false,
     super.key,
   });
+
+  /// DYNAMIQUE-CHRONO-2 (directeur, 12/11/2026, relecture : « Pause 38:00 se
+  /// lit une pause de 38 minutes ») : pendant une pause, ce qui reste avant
+  /// la reprise et la duree de la pause. Les chiffres et l'anneau suivent ce
+  /// compte a rebours ; `null` : ceux de la seance.
+  final ({Duration restant, Duration duree})? pause;
 
   /// DYNAMIQUE-CHRONO-2 (directeur, 12/11/2026 : « des couleurs : pause,
   /// minutes restantes, peu de temps ») : pendant une pause
@@ -256,7 +263,18 @@ class _ChronoVivantEtat extends State<ChronoVivant>
       ),
     );
     final ChronoSeance chrono = widget.chrono;
-    final double avancement = chrono.finPrevueAtteinte
+    final ({Duration restant, Duration duree})? comptePause = enPause
+        ? widget.pause
+        : null;
+    final double avancement = comptePause != null
+        ? (comptePause.duree.inMilliseconds <= 0
+              ? 1
+              : (1 -
+                        comptePause.restant.inMilliseconds /
+                            comptePause.duree.inMilliseconds)
+                    .clamp(0, 1)
+                    .toDouble())
+        : chrono.finPrevueAtteinte
         ? 1
         : chrono.duree.inMilliseconds <= 0
         ? 0
@@ -313,7 +331,9 @@ class _ChronoVivantEtat extends State<ChronoVivant>
           ],
           ChiffresRoulants(
             key: ChronoVivant.cleChiffres,
-            texte: ChronoVivant.chiffresDe(chrono),
+            texte: comptePause != null
+                ? formaterChronoCourt(comptePause.restant)
+                : ChronoVivant.chiffresDe(chrono),
             style: style,
           ),
         ],

@@ -29,13 +29,19 @@ import 'package:rewayah_academy/core/theme/app_mouvement.dart';
 import 'package:rewayah_academy/core/video/gestes_salle.dart';
 import 'package:rewayah_academy/core/video/signal_rappel.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
+import 'package:rewayah_academy/core/widgets/chrono_vivant.dart';
 import 'package:rewayah_academy/core/widgets/permanent_notice.dart';
 import 'package:rewayah_academy/features/salle/synchro_salle.dart'
     show typeParoleSalle;
+import 'package:rewayah_academy/features/salle_seance/chrono_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/dynamique_chrono.dart';
 import 'package:rewayah_academy/features/salle_seance/pilote_dynamique.dart'
     show heureDeLaBarre;
 import 'package:rewayah_academy/features/salle_seance/relais_salle.dart';
+import 'package:rewayah_academy/features/salle_seance/telephone_enseignant.dart'
+    show CapsuleVideoTelephone;
+import 'package:rewayah_academy/features/salle_seance/telephone_plein_ecran.dart'
+    show VignetteAimantee;
 
 import '../capture/outil_capture.dart';
 import '../support/garde_interface.dart';
@@ -135,6 +141,40 @@ final Finder _alerte = find.byKey(DynamiqueChrono.cleAlerte);
 Finder _dansAlerte(String texte) =>
     find.descendant(of: _alerte, matching: find.text(texte));
 
+/// Les chiffres de la barre repliee (chaque caractere roule a part).
+String _chiffres(WidgetTester tester) => tester
+    .widgetList<Text>(
+      find.descendant(
+        of: find.byKey(ChronoVivant.cleChiffres).first,
+        matching: find.byType(Text),
+      ),
+    )
+    .map((Text e) => e.data ?? '')
+    .join();
+
+/// Relecture du 13/11/2026 : tant que la barre est depliee, ni la capsule
+/// video de l'enseignant ni sa vignette ne sont rendues ; la barre, la ligne
+/// d'etat et ce qui reste visible ne se coupent pas.
+void _verifierRienSousLaBarre(WidgetTester tester, String cas) {
+  final Finder depliee = find.byKey(DynamiqueChrono.cleDepliee);
+  expect(depliee, findsOneWidget, reason: cas);
+  expect(find.byType(CapsuleVideoTelephone), findsNothing, reason: cas);
+  expect(find.byKey(VignetteAimantee.cle), findsNothing, reason: cas);
+  final List<Finder> rects = <Finder>[depliee, find.byKey(LigneEtatSalle.cle)];
+  for (int i = 0; i < rects.length; i++) {
+    for (int j = i + 1; j < rects.length; j++) {
+      final Rect a = tester.getRect(rects[i]);
+      final Rect b = tester.getRect(rects[j]);
+      final Rect commun = a.intersect(b);
+      expect(
+        commun.width > toleranceGarde && commun.height > toleranceGarde,
+        isFalse,
+        reason: '$cas : ${rects[i]} ($a) coupe ${rects[j]} ($b)',
+      );
+    }
+  }
+}
+
 Future<void> _capture(WidgetTester tester, String nom) async {
   if (dossierCapture == null) return;
   await capturer(tester, nom);
@@ -226,6 +266,14 @@ void main() {
         expect(_dansAlerte(t.salle.dynamique.oui), findsOneWidget);
         expect(_dansAlerte(t.salle.dynamique.non), findsOneWidget);
         verifierUnSeulBoutonPlein(tester);
+        if (l == 390) {
+          // Les commandes au toucher (la capsule viendrait avec elles) :
+          // rien ne passe sous la barre depliee ni sur la ligne d'etat.
+          await tester.tapAt(const Offset(195, 700));
+          await tester.pump();
+          await tester.pump(const Duration(milliseconds: 600));
+          _verifierRienSousLaBarre(tester, 'enseignant 390, proposition');
+        }
         await _capture(tester, 'enseignant_${l}_proposition_light');
         await tester.tap(_dansAlerte(t.salle.dynamique.oui));
         await tester.pump();
@@ -242,13 +290,22 @@ void main() {
           ),
           findsOneWidget,
         );
-        // La barre prend la couleur de la pause, avec son mot.
+        // La barre prend la couleur de la pause, avec son mot, et ses
+        // chiffres comptent jusqu'a la reprise (pas le reste de la seance).
         expect(find.text(t.salle.seance.chrono.pause), findsWidgets);
+        expect(_chiffres(tester), '10:00');
         if (l == 1440) await _capture(tester, 'enseignant_1440_pause_light');
         // L'alerte se replie seule.
         await tester.pump(AppMouvement.alerteChrono);
         await _battre(tester);
         expect(_alerte, findsNothing);
+        if (l == 390) {
+          // Repliee, la capsule revient avec les commandes.
+          await tester.tapAt(const Offset(195, 700));
+          await tester.pump();
+          await tester.pump(const Duration(milliseconds: 600));
+          expect(find.byType(CapsuleVideoTelephone), findsOneWidget);
+        }
       },
     );
   }
@@ -505,11 +562,39 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 600));
     expect(_alerte, findsOneWidget);
+    _verifierRienSousLaBarre(tester, 'eleve 390, pause');
     expect(find.text(t.salle.seance.chrono.pause), findsWidgets);
-    await _capture(tester, 'eleve_390_pause_light');
+    final DateTime reprise = h.maintenant.add(const Duration(minutes: 10));
     await tester.pump(AppMouvement.alerteChrono);
     await _battre(tester);
-    h.maintenant = h.maintenant.add(const Duration(minutes: 10, seconds: 1));
+    // Relecture du 13/11/2026 : « Pause 09:41 », le compte a rebours de la
+    // pause ; le lecteur d'ecran dit la pause et l'heure de reprise.
+    h.maintenant = h.maintenant.add(const Duration(seconds: 19));
+    await _battre(tester, 2);
+    expect(_chiffres(tester), '09:41');
+    final SemanticsHandle s = tester.ensureSemantics();
+    expect(
+      tester.getSemantics(find.byKey(ChronoSalle.cleAnnonce)).label,
+      t.salle.seance.pause.annonceEnCours(heure: heureDeLaBarre(reprise)),
+    );
+    s.dispose();
+    // Depliee : l'heure exacte de reprise et le reste de la seance, en clair.
+    await tester.tap(find.byKey(DynamiqueChrono.cleDeplier).first);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 600));
+    expect(
+      find.text(t.salle.seance.pause.repriseA(heure: heureDeLaBarre(reprise))),
+      findsOneWidget,
+    );
+    expect(find.byKey(ChronoSalle.cleResteSeance), findsOneWidget);
+    expect(
+      tester.widget<Text>(find.byKey(ChronoSalle.cleResteSeance)).data,
+      startsWith(t.salle.seance.chrono.reste),
+    );
+    await _capture(tester, 'eleve_390_pause_light');
+    await tester.pump(AppMouvement.dynamiqueChronoDepliee);
+    await _battre(tester);
+    h.maintenant = reprise.add(const Duration(seconds: 1));
     await _battre(tester, 2);
     expect(_dansAlerte(t.salle.dynamique.pauseFinie), findsOneWidget);
     expect(find.text(t.salle.seance.chrono.pause), findsNothing);

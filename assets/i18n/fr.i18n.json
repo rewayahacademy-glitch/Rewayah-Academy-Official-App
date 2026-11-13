@@ -597,6 +597,7 @@
         "tempsPrevuEcoule": "Temps prévu écoulé",
         "reste": "Reste",
         "apresFin": "Après la fin",
+        "resteSeance": "Reste {temps}",
         "pause": "Pause",
         "annonce": "Séance\u00a0: {ecoule}, {restant}.",
         "minutesEcoulees(plural, param=minutes)": {
@@ -614,7 +615,7 @@
         "dans": "Pause dans {minutes} min",
         "prevue": "Pause prévue",
         "enCours": "Pause, reprise à {heure}",
-        "enCoursDans": "Pause, reprise dans {minutes} min",
+        "repriseA": "Reprise à {heure}",
         "prise": "Pause prise",
         "demarrer": "Démarrer la pause",
         "terminer": "Terminer la pause",

@@ -1894,3 +1894,16 @@ La salle réduite ne reçoit ni la récitation ni les arrivées (la synchronisat
 tourne pas). Une pause démarrée pendant que l'enseignant est hors de la salle n'est pas relayée aux
 élèves (le relais vit dans la page) ; leur barre se fie alors à l'heure. Au téléphone, la ligne
 d'état descendue passe un instant sur la capsule vidéo de l'enseignant.
+
+**Relecture du 13/11/2026 (deux corrections).**
+- Téléphone : tant que la barre est dépliée par-dessus (alerte ou toucher), la capsule vidéo de
+  l'enseignant et la vignette ne sont pas rendues (`CacheSousDynamique`, `Offstage` : la vidéo garde
+  son état) ; elles reviennent quand la barre se replie. Une proposition reste 30 s : la capsule ne
+  pouvait pas rester posée en travers de la ligne d'état. Test : barre dépliée par une alerte,
+  commandes au toucher, ni capsule ni vignette, la barre et la ligne d'état ne se coupent pas
+  (enseignant 390 et élève 390), puis la capsule revient une fois la barre repliée.
+- Pendant une pause, les chiffres de la barre repliée et l'anneau comptent jusqu'à la reprise
+  (« Pause 09:41 »), dans la salle, chez l'enseignant et dans la salle réduite ; dépliée, la barre dit
+  « Reprise à 01:42 » (heure de la personne) et « Reste 37:41 » (la séance). Le lecteur d'écran dit
+  « Pause en cours, reprise à 01:42. » (texte existant). À la reprise, « Reste … » revient. Ceci
+  remplace la marque « Pause, reprise dans 7 min » écrite plus haut.

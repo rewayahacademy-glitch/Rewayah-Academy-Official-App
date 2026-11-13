@@ -89,6 +89,13 @@ class PiloteDynamique extends ChangeNotifier {
   /// Un numero neuf : une alerte reposee porte un nouvel identifiant.
   int get numero => ++_numero;
 
+  /// DYNAMIQUE-CHRONO-2 (relecture du 13/11/2026) : vrai tant que la barre
+  /// est depliee par-dessus le contenu (telephone, tablette) ; la capsule
+  /// video et la vignette de l'enseignant ne se rendent pas pendant ce
+  /// temps ([CacheSousDynamique]) : rien ne coupe la barre ni la ligne
+  /// d'etat descendue.
+  final ValueNotifier<bool> parDessus = ValueNotifier<bool>(false);
+
   /// Le temps passe depuis la creation, en battements.
   Duration get ecoule => _ecoule;
 
@@ -303,6 +310,7 @@ class PiloteDynamique extends ChangeNotifier {
   void dispose() {
     _libere = true;
     _battement?.cancel();
+    parDessus.dispose();
     _auToucher.clear();
     _aChaqueBattement.clear();
     super.dispose();

@@ -1207,6 +1207,7 @@
         "tempsPrevuEcoule": "انقضى الوقت المقرّر",
         "reste": "تبقّى",
         "apresFin": "بعد النهاية",
+        "resteSeance": "تبقّى ⁨{temps}⁩",
         "pause": "استراحة",
         "annonce": "الحصة: ⁨{ecoule}⁩ و⁨{restant}⁩.",
         "minutesEcoulees(plural, param=minutes)": {
@@ -1232,7 +1233,7 @@
         "dans": "استراحة بعد ⁨{minutes}⁩ د",
         "prevue": "استراحة مقرّرة",
         "enCours": "استراحة، الاستئناف الساعة ⁨{heure}⁩",
-        "enCoursDans": "استراحة، الاستئناف بعد ⁨{minutes}⁩ د",
+        "repriseA": "الاستئناف الساعة ⁨{heure}⁩",
         "prise": "أُخذت الاستراحة",
         "demarrer": "بدء الاستراحة",
         "terminer": "إنهاء الاستراحة",

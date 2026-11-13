@@ -165,13 +165,24 @@ void main() {
   });
 
   testWidgets(
-    'en cours : « Pause, reprise dans 8 min » (DYNAMIQUE-CHRONO-2), l heure '
-    'exacte lue ; la fin prevue ne bouge pas',
+    'en cours : « Reprise a HH:MM » en clair, les chiffres comptent jusqu a '
+    'la reprise (DYNAMIQUE-CHRONO-2, relecture du 13/11) ; la fin prevue ne '
+    'bouge pas',
     (WidgetTester tester) async {
       final _Horloge h = _Horloge(_t0.add(const Duration(minutes: 22)));
       final SemanticsHandle semantique = tester.ensureSemantics();
       await _poser(tester, h, _enCours());
-      expect(_pause(tester), 'Pause, reprise dans 8\u00a0min');
+      expect(
+        _pause(tester),
+        t.salle.seance.pause.repriseA(
+          heure: '\u2066${_hhmm(_t0.add(const Duration(minutes: 30)))}\u2069',
+        ),
+      );
+      // Les chiffres de la capsule : ce qui reste avant la reprise.
+      expect(
+        tester.widget<ChronoVivant>(find.byType(ChronoVivant)).pause?.restant,
+        const Duration(minutes: 8),
+      );
       // L'heure exacte de reprise reste lue par le lecteur d'ecran.
       expect(
         tester.getSemantics(find.byKey(ChronoSalle.cleAnnoncePause)).label,

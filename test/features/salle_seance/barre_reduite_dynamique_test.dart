@@ -28,6 +28,7 @@ import 'package:rewayah_academy/core/theme/app_palette.dart';
 import 'package:rewayah_academy/core/video/livekit_session_provider.dart';
 import 'package:rewayah_academy/core/video/signal_rappel.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
+import 'package:rewayah_academy/core/widgets/chrono_vivant.dart';
 import 'package:rewayah_academy/features/salle_seance/barre_seance_en_direct.dart';
 import 'package:rewayah_academy/features/salle_seance/bornes_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/chrono_salle.dart';
@@ -215,6 +216,17 @@ void main() {
     await _attendre(tester);
     expect(find.byKey(BarreSeanceEnDirect.cleAlerte), findsOneWidget);
     expect(find.text(t.salle.seance.chrono.pause), findsOneWidget);
+    // Relecture du 13/11/2026 : les chiffres comptent jusqu'a la reprise.
+    String chiffres() => tester
+        .widgetList<Text>(
+          find.descendant(
+            of: find.byKey(ChronoVivant.cleChiffres).first,
+            matching: find.byType(Text),
+          ),
+        )
+        .map((Text e) => e.data ?? '')
+        .join();
+    expect(chiffres(), '10:00');
     await stabiliser(tester);
     await _capture(tester, 'salle_reduite_390_pause_light');
     await tester.pump(AppMouvement.alerteChrono);

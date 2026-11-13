@@ -154,6 +154,9 @@ class ChronoSalle extends StatefulWidget {
   /// La cle du noeud lu par le lecteur d'ecran.
   static const Key cleAnnonce = ValueKey<String>('chrono-salle-annonce');
 
+  /// DYNAMIQUE-CHRONO-2 : « Reste 38:00 » pendant la pause (barre depliee).
+  static const Key cleResteSeance = ValueKey<String>('chrono-salle-reste');
+
   /// La cle du texte de pause.
   static const Key clePause = ValueKey<String>('chrono-salle-pause');
 
@@ -364,15 +367,12 @@ class _ChronoSalleEtat extends State<ChronoSalle> with WidgetsBindingObserver {
         if (reprise == null) {
           return marque(GenreMarqueChrono.pauseEnCours, d.prevue, d.prevue);
         }
-        // DYNAMIQUE-CHRONO-2 (directeur, 12/11/2026) : « Pause, reprise
-        // dans 7 min » ; l'heure exacte est dite a l'alerte et lue ici.
-        final int reste =
-            (reprise.difference(_instant).inSeconds / Duration.secondsPerMinute)
-                .ceil()
-                .clamp(1, p.dureePrevueMinutes);
+        // DYNAMIQUE-CHRONO-2 (relecture du 13/11/2026) : depliee, l'heure
+        // exacte en clair, « Reprise a 01:30 » ; les chiffres de la ligne
+        // comptent jusqu'a elle.
         return marque(
           GenreMarqueChrono.pauseEnCours,
-          LibellesGroupe.insecable(d.enCoursDans(minutes: reste)),
+          d.repriseA(heure: _heure(reprise)),
           d.annonceEnCours(heure: _heure(reprise)),
         );
       case StatutPause.prise:
@@ -387,7 +387,22 @@ class _ChronoSalleEtat extends State<ChronoSalle> with WidgetsBindingObserver {
       return const SizedBox.shrink();
     }
     final d = t.salle.seance;
-    final String annonce = chrono.prevuEcoule
+    // DYNAMIQUE-CHRONO-2 : pendant une pause, les chiffres comptent jusqu'a
+    // la reprise, et le lecteur d'ecran dit la pause et l'heure de reprise.
+    final PauseSeance? enPause = pauseALInstant(widget.pause, _instant);
+    final DateTime? reprise = chrono.enPause ? enPause?.repriseUtc : null;
+    final ({Duration restant, Duration duree})? comptePause =
+        reprise == null || enPause == null
+        ? null
+        : (
+            restant: reprise.isAfter(_instant)
+                ? reprise.difference(_instant)
+                : Duration.zero,
+            duree: Duration(minutes: enPause.dureePrevueMinutes),
+          );
+    final String annonce = reprise != null
+        ? d.pause.annonceEnCours(heure: _heure(reprise))
+        : chrono.prevuEcoule
         ? d.chrono.annoncePrevuEcoule
         : chrono.enDepassement
         ? LibellesGroupe.insecable(
@@ -423,6 +438,7 @@ class _ChronoSalleEtat extends State<ChronoSalle> with WidgetsBindingObserver {
       libelleReste: d.chrono.reste,
       libelleApresFin: d.chrono.apresFin,
       libellePause: d.chrono.pause,
+      pause: comptePause,
       uneLigne: true,
       surface: widget.surfaceCapsule,
       sobre: widget.sobre,
@@ -525,6 +541,15 @@ class _ChronoSalleEtat extends State<ChronoSalle> with WidgetsBindingObserver {
                 ),
               ],
             ),
+          ),
+        // DYNAMIQUE-CHRONO-2 : pendant la pause, le temps restant de la
+        // seance se lit en clair (les chiffres de la ligne sont ceux de la
+        // pause).
+        if (reprise != null)
+          Text(
+            d.chrono.resteSeance(temps: formaterChronoCourt(chrono.restant)),
+            key: ChronoSalle.cleResteSeance,
+            style: style,
           ),
         if (commander)
           LienFleche(

@@ -213,6 +213,16 @@ class _DynamiqueChronoEtat extends State<DynamiqueChrono> {
 
   @override
   void dispose() {
+    final PiloteDynamique? pilote = _pilote;
+    if (pilote != null && pilote.parDessus.value) {
+      WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+        try {
+          pilote.parDessus.value = false;
+        } on Object {
+          // Pilote deja libere avec la salle.
+        }
+      });
+    }
     _pilote?.removeListener(_piloteChange);
     _replier?.cancel();
     _finAlerte?.cancel();
@@ -304,6 +314,15 @@ class _DynamiqueChronoEtat extends State<DynamiqueChrono> {
     // (la surface relevee, son filet et une ombre douce) : la page ne se lit
     // jamais au travers.
     final bool parDessus = deplie && !enPlace;
+    // DYNAMIQUE-CHRONO-2 : la capsule video et la vignette s'effacent tant
+    // que la barre est depliee par-dessus (apres l'image : un notifier ne se
+    // change pas pendant une construction).
+    if (pilote != null && pilote.parDessus.value != parDessus) {
+      WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+        if (!mounted || !identical(_pilote, pilote)) return;
+        pilote.parDessus.value = parDessus;
+      });
+    }
     final AppColorPair fond = parDessus
         ? palette.surfaceRaised
         : widget.surface ?? palette.piluleSalle;
@@ -754,4 +773,29 @@ class ZoneChrono extends StatelessWidget {
       ligne: avecLigneEtat ? LigneEtatSalle(vue: vue) : null,
     ),
   );
+}
+
+/// DYNAMIQUE-CHRONO-2 (relecture du 13/11/2026 : « la barre depliee, la
+/// capsule video et la ligne d'etat se chevauchent ») : ce qui flotte en haut
+/// de la salle (capsule video de l'enseignant, vignette) n'est pas rendu tant
+/// que la Dynamique chrono est depliee par-dessus le contenu ; il revient quand
+/// elle se replie. Son etat est garde (la video ne se recree pas).
+class CacheSousDynamique extends StatelessWidget {
+  /// Cree le cache autour de [child].
+  const CacheSousDynamique({required this.child, super.key});
+
+  /// Ce qui s'efface pendant le depliage.
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    final PiloteDynamique? pilote = PorteeMediaSalle.de(context)?.pilote;
+    if (pilote == null) return child;
+    return ValueListenableBuilder<bool>(
+      valueListenable: pilote.parDessus,
+      builder: (BuildContext _, bool cache, Widget? enfant) =>
+          Offstage(offstage: cache, child: enfant),
+      child: child,
+    );
+  }
 }
