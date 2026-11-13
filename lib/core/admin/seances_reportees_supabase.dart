@@ -47,6 +47,7 @@ NouvelleDateRefusee refusNouvelleDate({
     'NouvelleDateDejaFixee' => MotifNouvelleDateRefusee.dejaFixee,
     'SeanceReporteeIntrouvable' => MotifNouvelleDateRefusee.dejaFixee,
     'ClasseClose' => MotifNouvelleDateRefusee.classeClose,
+    'NouvelleDateFermee' => MotifNouvelleDateRefusee.jourFerme,
     'NouvelleDateNonAutorisee' => MotifNouvelleDateRefusee.nonAutorisee,
     _ =>
       code == '42501'

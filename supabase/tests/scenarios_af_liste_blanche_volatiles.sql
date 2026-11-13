@@ -79,6 +79,10 @@ declare
     'autre_revenu_annuler(uuid)',
     -- REVENUS-VERITE point 5 (20261110210000, 06/11/2026) : la direction attribue une aide Internet, une prime ou une mission du mois ; garde admin et compte valide ; idempotence par clé ; journalisé ; relue deux fois.
     'autre_revenu_attribuer(uuid,date,text,text,bigint,text)',
+    -- CALENDRIER-ET-PAUSES (12/11) : la direction saisit une date du calendrier de l'ecole ; garde positive admin et app_account_valid().
+    'calendrier_ecole_enregistrer(uuid,text,text,text,date,date,text,text,uuid)',
+    -- CALENDRIER-ET-PAUSES (12/11) : la direction publie ou retire de la publication ; garde positive admin et app_account_valid().
+    'calendrier_ecole_publier(uuid,boolean)',
     'changer_affichage_evaluation(uuid,text)',
     -- COULEUR-PROFIL 22 i (20261110500000, 06/11/2026) : couleur d'un profil, garde tuteur du foyer ou adulte autonome ; relue deux fois.
     'choisir_accent_profil(uuid,text)',
@@ -116,6 +120,20 @@ declare
     'ajouter_creneau_classe_admin(uuid,integer,integer,integer)',
     -- Surcharge a 3 arguments (20261025020000), toujours presente a cote de celle a 4 : direction active seulement (app_account_valid ET admin).
     'ajouter_creneau_classe_admin(uuid,integer,integer)',
+    -- CALENDRIER-ET-PAUSES (12/11) : le tuteur, l'adulte ou la direction annule une pause avant son debut ; garde private.pause_famille_peut ou admin, compte valide.
+    'pause_annuler(uuid)',
+    -- CALENDRIER-ET-PAUSES (12/11) : la direction accepte ou refuse une pause au-dela du plafond ; garde positive admin et app_account_valid().
+    'pause_decider(uuid,boolean,text)',
+    -- CALENDRIER-ET-PAUSES (12/11) : le tuteur (enfant) ou l'adulte autonome demande une pause d'un mois ; garde private.pause_famille_peut (foyer ou soi, jamais l'enfant), compte valide.
+    'pause_demander(uuid,date)',
+    -- CALENDRIER-ET-PAUSES (12/11) : la direction accorde une pause d'exception (motif, fin, nom) ; garde positive admin et app_account_valid().
+    'pause_exception_accorder(uuid,date,date,text)',
+    -- CALENDRIER-ET-PAUSES (13/11) : la direction termine une pause d'exception plus tot (geste trace) ; garde positive admin et app_account_valid().
+    'pause_exception_terminer(uuid,date)',
+    -- CALENDRIER-ET-PAUSES (13/11) : la direction retire une fermeture, en confirmant au besoin d'abandonner des seances qui ne se retablissent pas (geste trace) ; garde positive admin et app_account_valid().
+    'calendrier_ecole_retirer(uuid,integer)',
+    -- CALENDRIER-ET-PAUSES (13/11) : la liste des conflits d'un retrait simule le retablissement puis le defait (aucune ecriture ne subsiste) ; garde positive admin et app_account_valid().
+    'calendrier_retrait_conflits(uuid)',
     'retirer_creneau_classe_admin(uuid,integer,integer,text)',
     -- HORLOGE-ET-LIEU (13/11/2026) : l'heure saisie avec son fuseau, direction active
     -- seulement (app_account_valid ET admin), le serveur convertit vers le fuseau de la classe.

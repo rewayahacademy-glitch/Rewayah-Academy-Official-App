@@ -187,6 +187,9 @@ ongletsPedagogie() => <({String libelle, String chemin})>[
     chemin: Routes.adminPedagogieBibliotheque,
   ),
   (libelle: t.admin.qualite.titre, chemin: Routes.adminPedagogieQualite),
+  // CALENDRIER-ET-PAUSES (12/11/2026) : la 7e et derniere fonction du
+  // domaine (ONGLETS-1 : sept au plus) ; les pauses y sont une section.
+  (libelle: t.calendrier.titre, chemin: Routes.adminPedagogieCalendrier),
 ];
 
 /// Les quatre fonctions pairs du domaine Finance, dans l'ordre du guide

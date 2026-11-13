@@ -74,6 +74,8 @@ import '../../features/admin_pedagogie_bibliotheque/import/import_page.dart'
     deferred as d_import_page;
 import '../../features/admin_pedagogie_bibliotheque/publication/publication_page.dart'
     deferred as d_publication_page;
+import '../../features/admin_pedagogie_calendrier/calendrier_page.dart'
+    deferred as d_calendrier_page;
 import '../../features/admin_pedagogie_diagnostics/diagnostics_page.dart'
     deferred as d_diagnostics_page;
 import '../../features/admin_pedagogie_evaluations/evaluations_page.dart'
@@ -241,6 +243,7 @@ import '../../features/notifications/notifications_page.dart';
 import '../../features/paiements_recus/recevoir_paiements_page.dart';
 import '../../features/parcours_offres/parcours_offres_page.dart';
 import '../../features/partage_offre/partage_offre_page.dart';
+import '../../features/pause_famille/pause_page.dart';
 import '../../features/presentation_tuteur/demandes_presentation_page.dart';
 import '../../features/priere_serveur/lieux_priere_page.dart'
     deferred as d_lieux_priere_page;
@@ -332,6 +335,7 @@ final List<MorceauDiffere> morceauxDifferesRouteur = <MorceauDiffere>[
   ('d_beneficiaires_page', d_beneficiaires_page.loadLibrary),
   ('d_candidature_page', d_candidature_page.loadLibrary),
   ('d_creneaux_entretien_page', d_creneaux_entretien_page.loadLibrary),
+  ('d_calendrier_page', d_calendrier_page.loadLibrary),
   ('d_candidatures_page', d_candidatures_page.loadLibrary),
   ('d_catalogue_page', d_catalogue_page.loadLibrary),
   ('d_communaute_page', d_communaute_page.loadLibrary),
@@ -877,6 +881,19 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                 path: Routes.eleveSuivi,
                 builder: (BuildContext _, GoRouterState _) =>
                     const SuiviElevePage(),
+                routes: <RouteBase>[
+                  // CALENDRIER-ET-PAUSES (12/11/2026) : la demande de pause de
+                  // l'eleve adulte ; un enfant en est renvoye au Suivi.
+                  GoRouteSure(
+                    path: 'pause',
+                    redirect: (BuildContext _, GoRouterState _) =>
+                        ref.read(sessionProvider).barreEleveAdulte
+                        ? null
+                        : Routes.eleveSuivi,
+                    builder: (BuildContext _, GoRouterState _) =>
+                        const PausePage(),
+                  ),
+                ],
               ),
             ],
           ),
@@ -1392,6 +1409,15 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                     path: 'observations',
                     pageBuilder: glissee(
                       (GoRouterState _) => const ObservationsPage(),
+                    ),
+                  ),
+                  // CALENDRIER-ET-PAUSES (12/11/2026) : la demande de pause
+                  // pour l'enfant choisi (?eleve=).
+                  GoRouteSure(
+                    path: 'pause',
+                    pageBuilder: glissee(
+                      (GoRouterState etat) =>
+                          PausePage(eleveId: etat.uri.queryParameters['eleve']),
                     ),
                   ),
                 ],
@@ -2369,6 +2395,17 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
             cle: 'd_evaluations_page',
             charger: d_evaluations_page.loadLibrary,
             construire: () => d_evaluations_page.EvaluationsPage(),
+          ),
+        ),
+      ),
+      GoRouteSure(
+        path: Routes.adminPedagogieCalendrier,
+        builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
+          domaine: AdminDomaine.pedagogie,
+          child: PageDifferee(
+            cle: 'd_calendrier_page',
+            charger: d_calendrier_page.loadLibrary,
+            construire: () => d_calendrier_page.CalendrierPage(),
           ),
         ),
       ),
