@@ -24,7 +24,7 @@
 --   installe est lu, l'ancre doit s'y trouver exactement une fois, sinon la
 --   migration echoue ; l'empreinte F86 est recalculee si elle existe) (2) :
 --     public.autoriser_lecture_version(uuid)            (garde de tranche apres le role)
---     public.rech_d1_rechercher_supports(text,uuid,integer)  (tranche d'age de la recherche)
+--     public.rech_d1_rechercher_supports(text,uuid,integer)  (tranche d'age et acces paye de la recherche)
 --   Politique modifiee par `ALTER POLICY`, a l'identique plus deux conditions :
 --     public.library_resource_lecture                   (tranche d'age ; exception Coran sur l'acces paye)
 --   Table etendue : public.library_resource (colonnes rayon, ordre, lien_externe,
@@ -1646,15 +1646,18 @@ REVOKE EXECUTE ON FUNCTION public.ressources_du_groupe(uuid) FROM PUBLIC, anon;
 GRANT EXECUTE ON FUNCTION public.ressources_du_groupe(uuid) TO authenticated, agent_ro;
 
 -- B1 (suite). La recherche des documents (`rech_d1_rechercher_supports`) copie
--- aussi la regle de lecture, sans la tranche d'age : un enfant y trouvait le
--- titre d'un document destine a d'autres tranches (jamais son adresse ni sa
--- cle). Une ligne ajoutee, ancree sur la porte de compte, qui echoue si le
--- texte de la fonction a change depuis.
+-- aussi la regle de lecture, sans la tranche d'age NI l'acces paye : un enfant
+-- y trouvait le titre d'un document destine a d'autres tranches, et un compte
+-- suspendu pour impaye retrouvait toute la Bibliotheque (jamais l'adresse ni la
+-- cle). Deux lignes ajoutees, ancrees sur la porte de compte, qui echouent si
+-- le texte de la fonction a change depuis : la tranche, et l'acces paye avec la
+-- meme exception ecrite pour le seul Coran (regle du 04/11/2026).
 SELECT pg_temp.ajouter_apres(
   'public.rech_d1_rechercher_supports(text,uuid,integer)'::regprocedure,
   $a$       and public.app_account_valid()
 $a$,
   $b$       and private.tranche_autorisee(r.tranches)
+       and (private.acces_paye_appelant() or r.resource_type::text = 'quran')
 $b$);
 DO $empreinte_recherche$
 DECLARE

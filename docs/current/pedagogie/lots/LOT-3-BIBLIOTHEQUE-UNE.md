@@ -135,6 +135,29 @@ Rien de ce qui suit n'a été fait par un agent : aucun secret n'a été posé, 
 
 **Dépôt de fichiers sans réponse (I1).** Si la lecture de l'état du dépôt échoue, l'écran n'affiche plus les boutons de fichier : une phrase dit que l'état n'a pas pu être vérifié, et le lien externe reste possible (test `I1 : sans reponse sur le depot`).
 
+## En trois lignes, pour le directeur : l'ordre et ce que l'on voit à chaque étape
+
+1. **Les deux migrations d'abord** (le pilote : `20261123920000`, puis `20261123921000`). On ne voit encore rien de neuf dans l'application ; le Coran est semé comme document publié ; l'application de `main`, ancienne, marche comme avant.
+2. **Puis la fusion** (elle déploie l'application et les fonctions Edge). La Bibliothèque montre les deux rayons, le Coran avec son titre arabe sur sa vignette, les liens, les audios et les vidéos ; « Ajouter un document » dit « Le dépôt de fichiers n'est pas encore activé » et ne propose ni fichier ni vignette, mais le lien externe et la vidéo par lien marchent.
+3. **Enfin le secret, posé des deux côtés** (fonctions Edge et base, même valeur) : la phrase disparaît, les boutons de fichier et de vignette apparaissent. Si un seul côté est posé, le dépôt est refusé et l'écran le dit en mots simples, sans rien enregistrer.
+
+## Coller les migrations dans l'éditeur SQL
+
+- `20261123920000_bibliotheque_une_types.sql` : 18 lignes, 1 118 octets, trois `ALTER TYPE … ADD VALUE IF NOT EXISTS`. **Rejouable** (une valeur déjà là est ignorée). À exécuter **seul**, avant l'autre, et à valider avant de lancer la suite (une valeur d'enum ajoutée ne s'emploie pas dans la transaction qui l'ajoute).
+- `20261123921000_bibliotheque_une.sql` : 1 850 lignes, 88 782 octets (46 caractères non ASCII, les deux titres arabes de rayon), se colle **en un seul bloc**, sans `BEGIN` ni `COMMIT` (aucun seul sur une ligne). Aucun mot `DROP`, `DELETE` ni `TRUNCATE` (compte en mots entiers : 0 ; trois occurrences en simple sous-chaîne, les noms de colonne `deleted_at` et `attisdropped`, qui ne sont pas des instructions). **Non rejouable** : `CREATE TABLE`, `CREATE FUNCTION` sans remplacement et `ADD COLUMN` échouent à la première instruction si les objets existent déjà. À ma connaissance, l'éditeur exécute un script en une seule transaction, donc un échec ne laisse rien ; **je n'ai pas pu le vérifier** (mes rejeux ont utilisé `psql`, qui n'est pas atomique). En cas d'échec, regarder l'état avant de relancer. La page de collage du directeur se fabrique par `tool/page_migrations/generer.py` (règle du 23/10/2026).
+
+## Suites de la revue, 13/11/2026
+
+**« Académie », jamais « école » pour Rewayah.** Aucun texte visible de ce lot n'employait « école » pour dire Rewayah (en arabe non plus). « École juridique » (le madhhab d'un document de prière) garde son sens, comme la charte le précise ; le message d'erreur dit désormais « le nom de l'école juridique » et non « l'école suivie ». Un commentaire de code disait « l'ordre de l'école » : corrigé en « l'académie ». Les commentaires SQL parlent de « l'école » de prière : sens juridique, inchangés.
+
+**Arabe de contenu en police du Coran (`AppFontFamily.arabeMushaf`).** Nouveau repère unique `lib/core/tc_bibliotheque/contenu_arabe.dart` : un texte qui contient de l'arabe reçoit la police du Coran (les glyphes qu'elle n'a pas, lettres latines et chiffres, retombent sur la police des documents puis celle de l'interface) et le sens droite-gauche (le point final d'une description arabe se place du bon côté même dans une interface française). Ce que cela change :
+- **lecteur** : la vignette du Coran porte son titre arabe « القرآن / الكريم » sur deux lignes, dans la police du Coran, à la place des initiales (une clé de texte, la même en français et en arabe) ; le titre et la description arabes d'un document, sur sa carte et sur sa fiche, sont dans cette police ; le texte français d'un autre document ne change pas ;
+- **direction** : le titre arabe d'un document dans le catalogue de la direction ;
+- **inchangé** : tout l'arabe d'interface (menus, boutons, libellés, titres de rayon) garde la police d'interface (test avec l'application en arabe) ; la page du Coran elle-même (le mushaf) n'est pas touchée.
+- **Non fait, à dire** : le titre de la page (en-tête `PageShell`, composant partagé) et le champ de saisie d'un titre restent dans la police d'interface ; la valeur de « École juridique suivie » (texte libre) aussi ; une description arabe sans rien d'autre dans une interface arabe prend la police du Coran mais reste alignée comme le reste. Captures : `01`, `02`, `03`, `07`, `12`, `19`.
+
+**La recherche et l'accès payé.** `rech_d1_rechercher_supports` vit dans une migration de `main` (celle de la recherche) mais ce lot la remplace déjà par une insertion ancrée : j'y ai ajouté l'accès payé, avec l'exception du Coran. Un élève suspendu pour impayé ne trouve plus rien dans les documents, sauf le Coran (scénario). Les autres domaines de la recherche (classes, personnes) ne sont pas touchés.
+
 ## Le Coran et ses droits (C6)
 
 « Droits du Coran = amorçage technique » veut dire : pour que le Coran soit un document publié comme les autres, la base devait avoir une ligne de droits ; je l'ai remplie d'une phrase qui renvoie à « À propos de l'édition » dans le lecteur du Coran, **sans nommer de licence ni d'éditeur**. Ce n'est pas une preuve juridique : la direction doit confirmer, depuis la fiche du Coran, que la source et le titulaire des droits du texte et de la police affichés sont bien ceux de cette page, ou corriger la ligne.

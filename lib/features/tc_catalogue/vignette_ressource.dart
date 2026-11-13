@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/tc_bibliotheque/contenu_arabe.dart';
 import '../../core/tc_bibliotheque/couverture_ressource.dart';
 import '../../core/tc_bibliotheque/library_resource.dart';
 import '../../core/tc_bibliotheque/vignettes_ressource.dart';
@@ -86,11 +88,28 @@ class VignetteRessource extends StatelessWidget {
                         padding: const EdgeInsets.all(AppSpacing.sm),
                         child: FittedBox(
                           child: Text(
-                            couverture.monogramme,
+                            // Le Coran porte son titre arabe, dans la police
+                            // du Coran (directeur, 13/11/2026) ; les autres
+                            // couvertures gardent leur monogramme.
+                            couverture.type == TypeRessource.quran
+                                ? t.tc.bibliotheque.detail.coranTitreArabe
+                                : couverture.monogramme,
+                            textAlign: TextAlign.center,
                             style: paire.applyTo(
-                              (compacte
-                                      ? textes.headlineSmall
-                                      : textes.displaySmall) ??
+                              (couverture.type == TypeRessource.quran
+                                      ? styleContenuArabe(
+                                          t
+                                              .tc
+                                              .bibliotheque
+                                              .detail
+                                              .coranTitreArabe,
+                                          compacte
+                                              ? textes.headlineSmall
+                                              : textes.displaySmall,
+                                        )
+                                      : (compacte
+                                            ? textes.headlineSmall
+                                            : textes.displaySmall)) ??
                                   const TextStyle(),
                             ),
                           ),

@@ -978,6 +978,22 @@ BEGIN
   END IF;
 END;
 $i3_impaye$;
+-- La recherche suit la meme regle : rien pour un compte suspendu, sauf le Coran.
+RESET ROLE;
+SELECT set_config('b31.av_003', (SELECT authorization_version::text FROM public.profiles WHERE id = 'b3100000-0000-0000-0000-000000000003'), true);
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.qui_recherche('b3100000-0000-0000-0000-000000000003', 'student', 'b31fffff-0000-0000-0000-000000000002',
+                             current_setting('b31.av_003')::bigint);
+DO $i3_recherche$
+BEGIN
+  IF public.rech_d1_rechercher_supports('lien')::text ~ 'Lien externe' THEN
+    RAISE EXCEPTION 'B31 ROUGE (I3) : la recherche d''un compte suspendu rend un document';
+  END IF;
+  IF public.rech_d1_rechercher_supports('coran')::text !~ 'Coran' THEN
+    RAISE EXCEPTION 'B31 ROUGE (I3) : la recherche d''un compte suspendu ne trouve pas le Coran';
+  END IF;
+END;
+$i3_recherche$;
 RESET ROLE;
 SET LOCAL session_replication_role = replica;
 UPDATE public.acces_suspensions_paiement SET retabli_le = now(), retabli_motif = 'paiement'

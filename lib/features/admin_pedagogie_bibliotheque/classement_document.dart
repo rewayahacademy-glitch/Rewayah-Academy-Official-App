@@ -3,7 +3,7 @@
 /// Posés une seule fois et partagés par « Ajouter un document » et la fiche :
 /// les tranches d'âge auxquelles il s'adresse, les étapes du programme publié
 /// (la direction coche, elle ne tape jamais un code), la lecture du Coran et
-/// l'école suivie. Aucun prix ni mot d'achat.
+/// l'école juridique suivie. Aucun prix ni mot d'achat.
 library;
 
 import 'dart:async';
@@ -22,10 +22,10 @@ import '../../core/widgets/case_a_cocher.dart';
 import '../../core/widgets/menu_filtre.dart';
 import '../../core/widgets/zone_saisie.dart';
 
-/// Vrai si l'école suivie tient dans la limite de la base (80 caractères).
+/// Vrai si l'école juridique suivie tient dans la limite de la base (80 caractères).
 bool ecoleValide(String texte) => texte.trim().length <= 80;
 
-/// Les tranches d'âge, dans l'ordre de l'école (une seule liste, celle du
+/// Les tranches d'âge, dans l'ordre de l'académie (une seule liste, celle du
 /// document).
 const List<String> tranchesProposees = tranchesToutes;
 
@@ -188,9 +188,9 @@ class _ChoixEtapesEtat extends ConsumerState<ChoixEtapes> {
   }
 }
 
-/// La lecture du Coran (facultatif) et l'école suivie (facultatif).
+/// La lecture du Coran (facultatif) et l'école juridique suivie (facultatif).
 class ChampsLectureEcole extends StatelessWidget {
-  /// Crée les champs. [ecole] : le texte libre de l'école suivie.
+  /// Crée les champs. [ecole] : le texte libre de l'école juridique suivie.
   const ChampsLectureEcole({
     required this.lecture,
     required this.onLecture,
@@ -204,7 +204,7 @@ class ChampsLectureEcole extends StatelessWidget {
   /// Appelé avec la lecture choisie (`null` : aucune).
   final ValueChanged<String?> onLecture;
 
-  /// Le champ de l'école suivie.
+  /// Le champ de l'école juridique suivie.
   final TextEditingController ecole;
 
   @override

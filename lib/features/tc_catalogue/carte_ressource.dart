@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/accessibilite/texte_sans_coupure.dart';
+import '../../core/tc_bibliotheque/contenu_arabe.dart';
 import '../../core/tc_bibliotheque/couverture_ressource.dart';
 import '../../core/tc_bibliotheque/library_resource.dart';
 import '../../core/tc_telechargement/port_etat_offline.dart';
@@ -168,10 +169,18 @@ class CarteRessource extends StatelessWidget {
         // COUPE-MOTS-FOND-1 : le titre et le type passent a la ligne entre
         // leurs mots, jamais tronques (« Les regles du... », « Leçon ·
         // Taj... » a 320 px texte x2) ; un mot trop long se reduit, borne.
-        TexteSansCoupure(
+        dirigerContenuArabe(
           ressource.title,
-          style: palette.surfaceRaised.applyTo(
-            textes.titleMedium ?? const TextStyle(),
+          TexteSansCoupure(
+            ressource.title,
+            // Un titre arabe (contenu du document) se rend dans la police du
+            // Coran ; l'arabe d'interface garde la sienne.
+            style: styleContenuArabe(
+              ressource.title,
+              palette.surfaceRaised.applyTo(
+                textes.titleMedium ?? const TextStyle(),
+              ),
+            ),
           ),
         ),
         Ecart.vXs,
@@ -185,10 +194,16 @@ class CarteRessource extends StatelessWidget {
         // trouve, avant de l'ouvrir ; obligatoire pour un lien externe.
         if (_description != null) ...<Widget>[
           Ecart.vXs,
-          TexteSansCoupure(
+          dirigerContenuArabe(
             _description!,
-            style: palette.surfaceRaised.applyTo(
-              textes.bodySmall ?? const TextStyle(),
+            TexteSansCoupure(
+              _description!,
+              style: styleContenuArabe(
+                _description!,
+                palette.surfaceRaised.applyTo(
+                  textes.bodySmall ?? const TextStyle(),
+                ),
+              ),
             ),
           ),
         ],

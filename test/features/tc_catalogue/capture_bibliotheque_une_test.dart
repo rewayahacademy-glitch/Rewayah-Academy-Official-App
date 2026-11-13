@@ -71,6 +71,16 @@ final List<LibraryResource> _catalogue = <LibraryResource>[
     lienExterne: 'https://video.exemple.org/v/1',
     rayon: codeRayonPlusLoin,
   ),
+  // Un document dont le titre et la description sont en arabe : le contenu
+  // arabe se rend dans la police du Coran (directeur, 13/11/2026).
+  ressource(
+    id: 'tajwid',
+    titre: 'أحكام التجويد',
+    type: TypeRessource.pdf,
+    langue: 'ar',
+    description: 'شرح مبسط لأحكام النون الساكنة.',
+    ordre: 3,
+  ),
 ];
 
 List<Override> _surcharges({
@@ -206,6 +216,9 @@ void main() {
   );
   capture('11-fiche-audio-sans-lecteur-390', '$bib/audio', _surcharges);
   capture('12-fiche-coran-390', '$bib/coran', _surcharges);
+  // L'arabe de contenu dans la police du Coran : titre et description d'un
+  // document arabe, sur sa fiche.
+  capture('19-fiche-document-arabe-390', '$bib/tajwid', _surcharges);
 
   // D1 : la confirmation avant d'ouvrir un lien (la feuille, ouverte au toucher).
   testWidgets('15-lien-confirmation-390', (tester) async {

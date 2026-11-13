@@ -7078,7 +7078,7 @@
           "lectureAucune": "Aucune lecture précisée",
           "ecoleLibelle": "École juridique suivie (prière, ablutions ; facultatif)",
           "depotInconnu": "Impossible de vérifier pour le moment si le dépôt de fichiers est activé. Vous pouvez déjà ajouter un document par son lien.",
-          "ecoleTrop": "L'école suivie tient en 80 caractères au plus.",
+          "ecoleTrop": "Le nom de l'école juridique tient en 80 caractères au plus.",
           "depotInactif": "Le dépôt de fichiers n'est pas encore activé. Vous pouvez déjà ajouter un document par son lien.",
           "videoLien": "Pour une vidéo, collez son lien."
         },
@@ -9621,6 +9621,7 @@
       },
       "detail": {
         "titre": "Document",
+        "coranTitreArabe": "القرآن\nالكريم",
         "lecture": "Lecture du Coran",
         "ecole": "École juridique suivie",
         "capacites": "Ce que ce document permet",

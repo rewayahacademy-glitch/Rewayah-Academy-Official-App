@@ -250,6 +250,90 @@ void main() {
     });
   });
 
+  group('arabe de contenu : la police du Coran (directeur, 13/11/2026)', () {
+    String? police(WidgetTester tester, String texte) =>
+        tester.widget<Text>(find.text(texte).first).style?.fontFamily;
+
+    final List<LibraryResource> arabe = <LibraryResource>[
+      ressource(
+        id: 'coran',
+        titre: 'Le Coran',
+        type: TypeRessource.quran,
+        langue: 'ar',
+        description: 'Le Coran en entier, page par page.',
+      ),
+      ressource(
+        id: 'tajwid',
+        titre: 'أحكام التجويد',
+        type: TypeRessource.pdf,
+        langue: 'ar',
+        description: 'شرح مبسط لأحكام النون الساكنة.',
+      ),
+      ressource(
+        id: 'livre',
+        titre: 'Le livre de lecture',
+        type: TypeRessource.pdf,
+        description: 'Les pages du livre.',
+      ),
+    ];
+
+    testWidgets('la vignette du Coran porte son titre arabe', (tester) async {
+      await _monter(
+        tester,
+        Routes.tcBibliotheque,
+        _surcharges(ressources: arabe),
+      );
+      final String titre = t.tc.bibliotheque.detail.coranTitreArabe;
+      expect(find.text(titre), findsWidgets);
+      expect(police(tester, titre), 'UthmanicHafs');
+    });
+
+    testWidgets('titre et description arabes d\'un document : police du '
+        'Coran ; le texte francais garde la sienne', (tester) async {
+      await _monter(
+        tester,
+        Routes.tcBibliotheque,
+        _surcharges(ressources: arabe),
+      );
+      expect(police(tester, 'أحكام التجويد'), 'UthmanicHafs');
+      expect(police(tester, 'شرح مبسط لأحكام النون الساكنة.'), 'UthmanicHafs');
+      expect(police(tester, 'Le livre de lecture'), isNot('UthmanicHafs'));
+      expect(police(tester, 'Les pages du livre.'), isNot('UthmanicHafs'));
+    });
+
+    testWidgets('la fiche du document : titre et description arabes', (
+      tester,
+    ) async {
+      await _monter(
+        tester,
+        '${Routes.tcBibliotheque}/tajwid',
+        _surcharges(ressources: arabe),
+      );
+      expect(police(tester, 'أحكام التجويد'), 'UthmanicHafs');
+      expect(police(tester, 'شرح مبسط لأحكام النون الساكنة.'), 'UthmanicHafs');
+    });
+
+    testWidgets('l\'arabe d\'interface garde sa police (interface en arabe)', (
+      tester,
+    ) async {
+      await tester.runAsync(() => LocaleSettings.setLocale(AppLocale.ar));
+      await _monter(
+        tester,
+        Routes.tcBibliotheque,
+        _surcharges(ressources: arabe),
+        direction: TextDirection.rtl,
+      );
+      // Un libelle d'interface (le titre de la page) n'est jamais en police
+      // du Coran, alors que le titre arabe d'un document, lui, l'est.
+      final String titrePage = t.tc.bibliotheque.titre;
+      expect(find.text(titrePage), findsWidgets);
+      for (final Text w in tester.widgetList<Text>(find.text(titrePage))) {
+        expect(w.style?.fontFamily, isNot('UthmanicHafs'));
+      }
+      expect(police(tester, 'أحكام التجويد'), 'UthmanicHafs');
+    });
+  });
+
   group('la fiche d\'un document, par le routeur reel', () {
     testWidgets(
       'lien externe : l\'adresse https, ouverte seulement sur le web',

@@ -7,6 +7,7 @@ import '../../core/icons/app_icons.dart';
 import '../../core/router/chemin_retour.dart';
 import '../../core/router/etat_routeur_sur.dart';
 import '../../core/router/routes.dart';
+import '../../core/tc_bibliotheque/contenu_arabe.dart';
 import '../../core/tc_bibliotheque/couverture_ressource.dart';
 import '../../core/tc_bibliotheque/donnees_catalogue.dart';
 import '../../core/tc_bibliotheque/lecture_coran.dart';
@@ -227,12 +228,19 @@ class _Corps extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
-                    Text(
+                    dirigerContenuArabe(
                       r.title,
-                      // Le titre de la ressource : un cran sous le titre d'ecran
-                      // de la page (HIER-1), jamais a la meme taille.
-                      style: palette.surfaceRaised.applyTo(
-                        textes.titleLarge ?? const TextStyle(),
+                      Text(
+                        r.title,
+                        // Le titre de la ressource : un cran sous le titre d'ecran
+                        // de la page (HIER-1), jamais a la meme taille. Un titre
+                        // arabe (contenu) se rend dans la police du Coran.
+                        style: styleContenuArabe(
+                          r.title,
+                          palette.surfaceRaised.applyTo(
+                            textes.titleLarge ?? const TextStyle(),
+                          ),
+                        ),
                       ),
                     ),
                     Ecart.vXs,
@@ -244,7 +252,16 @@ class _Corps extends StatelessWidget {
                     ),
                     if ((r.description ?? '').trim().isNotEmpty) ...<Widget>[
                       Ecart.vSm,
-                      Text(r.description!.trim(), style: textes.bodyMedium),
+                      dirigerContenuArabe(
+                        r.description!,
+                        Text(
+                          r.description!.trim(),
+                          style: styleContenuArabe(
+                            r.description!,
+                            textes.bodyMedium,
+                          ),
+                        ),
+                      ),
                     ],
                     Ecart.vSm,
                     Align(
