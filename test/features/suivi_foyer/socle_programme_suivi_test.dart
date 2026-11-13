@@ -104,6 +104,10 @@ Map<String, Object?> _reponse({bool masquee = false, bool voit = true}) {
   };
 }
 
+/// La reponse d'un serveur d'avant le socle : les dates sont rendues, mais
+/// `eleve_voit_dates` manque.
+Map<String, Object?> _sansDrapeau() => _reponse()..remove('eleve_voit_dates');
+
 /// La reponse de `ma_progression` pour un eleve en classe qui attend
 /// l'entretien de lecture : aucune etape, les sourates restent rendues.
 Map<String, Object?> _attente() => <String, Object?>{
@@ -371,6 +375,26 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
+    testWidgets('son tuteur, reponse SANS le drapeau, presentation standard : '
+        'il voit toujours les dates', (tester) async {
+      await monterHistorique(
+        tester,
+        depart: Routes.tuteurSuivi,
+        taille: const Size(390, 3200),
+        autres: <Override>[
+          portMaProgressionProvider.overrideWithValue(
+            _FauxPort(brut: _sansDrapeau()),
+          ),
+        ],
+      );
+      final s = t.suiviPedagogique;
+      expect(find.text(s.aFinirAvant), findsOneWidget);
+      expect(find.text(s.horizonNiveau(niveau: 'Les bases')), findsOneWidget);
+      expect(find.text(s.dureePrevue), findsOneWidget);
+      expect(find.text(s.rythme), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
     testWidgets('son tuteur, lui, lit la date du jalon', (tester) async {
       await monterHistorique(
         tester,
@@ -392,6 +416,28 @@ void main() {
         '(lue avec le jeton du tuteur) : l ecran n affiche toujours aucune '
         'date ni duree, sur eleve_voit_dates', (tester) async {
       await _monterEleve(tester, _FauxPort(brut: _reponse(voit: false)));
+      expect(find.text('Lire avec les voyelles'), findsWidgets);
+      _aucuneDate(tester);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('espace de l eleve, presentation standard, reponse SANS le '
+        'drapeau eleve_voit_dates (serveur d avant le socle) : aucune date, '
+        'refus par defaut', (tester) async {
+      await _monterEleve(tester, _FauxPort(brut: _sansDrapeau()));
+      expect(find.text('Lire avec les voyelles'), findsWidgets);
+      expect(find.text(t.suiviPedagogique.matierePrincipale), findsOneWidget);
+      _aucuneDate(tester);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('espace de l eleve, Interface guidee, reponse sans le drapeau '
+        ': aucune date non plus', (tester) async {
+      await _monterEleve(
+        tester,
+        _FauxPort(brut: _sansDrapeau()),
+        mode: InterfaceMode.enfant,
+      );
       expect(find.text('Lire avec les voyelles'), findsWidgets);
       _aucuneDate(tester);
       expect(tester.takeException(), isNull);

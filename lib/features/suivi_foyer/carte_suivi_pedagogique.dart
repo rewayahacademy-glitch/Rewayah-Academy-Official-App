@@ -131,18 +131,20 @@ class CarteSuiviPedagogique extends ConsumerWidget {
               ? s.attenteEntretienTu
               : s.attenteEntretien);
 
-    // Qui voit les dates (correction de l'architecte, 12/11) : le mode
-    // d'interface ne decide rien quand le serveur parle. Dans l'espace de
-    // l'eleve (eleveId nul : il lit pour lui-meme), dates, durees et rythme
-    // seulement si le serveur dit `eleve_voit_dates` (des 10 ans, ou adulte,
-    // meme en Interface guidee) ; dans les ecrans du tuteur, toujours. Une
-    // reponse d'avant le socle, qui ne le dit pas, garde la regle d'avant en
-    // entier (Interface guidee : ni rythme ni date limite ni reglage).
+    // Qui voit les dates (correction de l'architecte, 12/11 ; refus par defaut,
+    // 13/11) : le mode d'interface ne decide rien quand le serveur parle. Dans
+    // l'espace de l'eleve (eleveId nul : il lit pour lui-meme), dates, durees et
+    // rythme seulement si le serveur dit `eleve_voit_dates` (des 10 ans, ou
+    // adulte, meme en Interface guidee) ; un drapeau absent vaut FAUX, quelle que
+    // soit la presentation. Dans les ecrans de l'adulte responsable (eleveId
+    // donne : tuteur), toujours quand le serveur parle ; une reponse d'avant le
+    // socle, qui ne le dit pas, garde la regle d'avant (Interface guidee : ni
+    // rythme ni date limite ni reglage).
     final bool guidee = AppMetriques.of(context).estEnfant;
     final bool? serveurDit = suivi?.eleveVoitDates;
-    final bool dates = serveurDit == null
-        ? !guidee
-        : (this.eleveId != null || serveurDit);
+    final bool dates = this.eleveId == null
+        ? (serveurDit ?? false)
+        : (serveurDit == null ? !guidee : true);
     final String? rythme = suivi == null || attente || !dates
         ? null
         : libelleRythme(suivi);
