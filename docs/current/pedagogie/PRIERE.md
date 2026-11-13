@@ -20,7 +20,7 @@ Les valeurs chiffrées sont dans `REGLAGES.md` (partie 8, « La prière »), qui
 
 **P3. Le lieu de prière de l'enseignant est fixé par la direction** (nom du lieu, latitude, longitude, fuseau), parce que les zones des enseignants sont connues de l'académie ; l'enseignant peut le lire et ajuster chaque prière de −30 à +30 minutes (bornes existantes). La méthode de calcul et l'école pour l'Asr sont des réglages de la direction : valeur par défaut pour toute l'école (réglage `app_config` ; défaut : Ligue islamique mondiale, Asr selon la majorité des écoles), surchargeable par enseignant. **Ces deux choix relèvent du fiqh : valeur par défaut en vigueur, à valider par le directeur et ses associés.**
 
-**P4. Une seule pause par séance.** Quand une prière ENTRE pendant la séance pour l'enseignant, la pause de la séance est placée à l'entrée de cette prière. Sinon la pause reste où la salle la place (après le milieu). Si deux prières entrent pendant la même séance, la pause va à la première dont la fenêtre est courte (le Maghreb d'abord) ; l'autre se prie après le cours.
+**P4. Une seule pause par séance.** Quand une prière ENTRE pendant la séance pour l'enseignant, la pause de la séance est placée à l'entrée de cette prière. Sinon la pause reste où la salle la place (après le milieu). Si deux prières entrent pendant la même séance, la pause va à la première dont la fenêtre est courte (le Maghreb d'abord) ; l'autre se prie après le cours. **[Amendé le 13/11/2026 : la pause va à la première dans l'ordre du temps qui n'est pas en zone de fin ; voir §3, point 4.]**
 
 **P5. Durée de la pause de prière :** réglage de la direction, 10 minutes par défaut (bornes 5 à 20, par pas de 5) ; pendant le Ramadan, pour le Maghreb (rupture du jeûne) : 20 minutes par défaut. Le Ramadan est connu par le calendrier de l'école (un autre lot le construit) : dans ce lot, un seul réglage booléen `priere.ramadan_en_cours`, posé par la direction, faux par défaut.
 
@@ -44,7 +44,7 @@ Pour une séance qui commence en `s`, finit en `e` (durée `L` minutes), avec l'
 2. Il calcule les cinq heures d'entrée sur les trois jours civils qui entourent la séance, et retient les prières dont l'entrée `t` tombe dans `[s, e)`. Aucun croisement ne passe par une heure locale : tout est comparé en instants absolus.
 2 bis. **Priere qui se ferme (ARBITRÉ le 13/11/2026, à valider par le directeur avec les autres points de fiqh).** Une prière entrée **moins de `priere.marge_avant_cours_minutes`** (20) avant `s`, dont le **temps se ferme avant `e`** (lever du soleil pour le Fajr ; entrée de la prière suivante pour les autres), porte la pause : début `s + priere.delai_fermeture_minutes` (10), durée habituelle (20 pour le Maghrib en Ramadan). Elle **prime** sur la prière qui entre pendant la séance (celle-ci a tout son temps après le cours) : toujours une seule pause par séance. Entrée 20 minutes ou plus avant `s` : aucune pause (chacun avait le temps). Si la pause de la prière qui se ferme ne tient pas (avant la fin, marge de fin), la règle ordinaire reprend. Les gardes-fous restent : pause dans la séance, marge de fin, durée 5/10/15/20.
 3. Pour chacune, `o = t − s`. Si `o` est dans les 5 premières minutes, la pause est placée à `s + 5 min`. Si `o` dépasse `L − fin_marge`, la prière est écartée : l'enseignant prie à la fin du cours. Sinon la pause est placée à `t`.
-4. S'il reste plusieurs prières, celle dont la fenêtre (de son entrée à l'entrée de la suivante, ou au lever du soleil pour le Fajr) est la plus courte l'emporte : le Maghrib passe avant l'Isha.
+4. S'il reste plusieurs prières, **la première dans l'ordre du temps qui n'est pas en zone de fin** l'emporte (amendé le 13/11/2026 sur la revue indépendante : « la fenêtre la plus courte » faisait manquer la première, dont la fenêtre se ferme à l'entrée de la seconde, donc dans la séance). Même logique que la prière qui se ferme : celle qui serait perdue passe d'abord, une seule pause.
 5. La durée est celle du réglage (10 minutes) ; 20 minutes pour le Maghrib quand `priere.ramadan_en_cours` est vrai. La pause ne dépasse jamais l'heure de fin de la séance : la marge de fin est au moins égale à la durée de la pause (voir « Choix pris seul », n° 1).
 6. Résultat : une ligne dans `seance_pause_prevue`, ou aucune.
 
@@ -110,6 +110,15 @@ Valeurs en vigueur par défaut, à valider ; la direction peut les changer sans 
 5. **Bornes** : 5 minutes au début, 15 minutes à la fin.
 6. **Repli de haute latitude** (nuit partagée en deux) quand l'angle ne se définit pas.
 7. **Règle de la prière qui se ferme** (§3, 2 bis) : marge de 20 minutes avant le cours, pause à 10 minutes après son début. ARBITRÉ par l'architecte le 13/11/2026, à faire valider avec les autres points de fiqh.
+
+## 6 bis. Rappels datés pour le directeur
+
+- **Ramadan 2027 : basculer `priere.ramadan_en_cours` à la main** (Configuration > Règles > La prière) : **vrai vers le 8 février 2027, retour à faux vers le 9 mars 2027** (dates de l'architecte, à confirmer sur le calendrier de l'école ; le réglage n'est pas branché sur un calendrier). Tant qu'il est vrai, la pause du Maghrib dure 20 minutes.
+
+## 6 ter. Dettes nommées de ce lot (revue du 13/11/2026)
+
+- **L'export des données personnelles** (`mes_donnees_export`) ne contient pas les colonnes neuves de `prayer_settings` (surcharges de méthode et d'école, vendredi, lieu actif, ajustements) : quatre lots redéfinissent cette fonction ; la recopier ici reviendrait à écraser ou à perdre leurs changements selon l'ordre de fusion. À faire par un lot qui reprend la définition la plus récente de `main`.
+- **Une ligne `prayer_settings` retirée à la main en SQL** (hors anonymisation) n'est reprise qu'au recalcul de nuit : un déclencheur sur l'effacement ne peut pas s'écrire sans le mot que le serveur Supabase fait confirmer. Le cas du compte désactivé ou anonymisé est couvert tout de suite (déclencheur sur le statut du profil, qui précède le retrait des réglages).
 
 ## 7. Ce qui reste pour les lots suivants
 

@@ -20,6 +20,8 @@ import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/admin/service_configuration.dart';
 import 'package:rewayah_academy/core/capacites/port_politique_revue_kyc.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/enseignant/modeles_enseignant.dart'
+    show SeanceEnseignant;
 import 'package:rewayah_academy/core/enseignant/service_enseignant.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/matching/service_matching.dart';
@@ -27,6 +29,7 @@ import 'package:rewayah_academy/core/offres/offre_horaire.dart';
 import 'package:rewayah_academy/core/offres/service_offres.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart';
 import 'package:rewayah_academy/core/priere/lieu_priere.dart';
+import 'package:rewayah_academy/core/priere/pause_prevue.dart';
 import 'package:rewayah_academy/core/priere/service_priere.dart';
 import 'package:rewayah_academy/core/profil/service_profil_enseignant.dart';
 import 'package:rewayah_academy/core/regles/service_regles.dart';
@@ -42,12 +45,14 @@ import 'package:rewayah_academy/core/widgets/empty_state.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/admin_configuration_regles/regles_page.dart';
+import 'package:rewayah_academy/features/journee/journee_page.dart';
 import 'package:rewayah_academy/features/priere_serveur/bloc_priere_classe.dart';
 import 'package:rewayah_academy/features/priere_serveur/lieux_priere_page.dart';
 import 'package:rewayah_academy/features/priere_serveur/priere_enseignant_page.dart';
 import 'package:rewayah_academy/features/profil_enseignant/profil_enseignant_page.dart';
 
 import '../../capture/outil_capture.dart';
+import '../../support/demo/enseignant_demo.dart';
 import '../../support/garde_interface.dart';
 import '../../support/harnais.dart';
 
@@ -92,6 +97,12 @@ List<HeurePriere> _heures({bool approchee = false}) => <HeurePriere>[
 class _PriereEnPanne extends FauxServicePriere {
   @override
   Future<LieuPriere?> lieu({String? enseignantId}) async =>
+      throw StateError('reseau');
+}
+
+class _PausePrevueEnPanne extends FauxServicePriere {
+  @override
+  Future<PausePrevue?> pausePrevue(String seanceId) async =>
       throw StateError('reseau');
 }
 
@@ -147,12 +158,18 @@ Map<String, Object?> _clesPriere() => <String, Object?>{
   'priere.debut_marge_minutes': 5,
   'priere.fin_marge_minutes': 15,
   'priere.horizon_jours': 14,
+  'priere.marge_avant_cours_minutes': 20,
+  'priere.delai_fermeture_minutes': 10,
 };
 
 List<Override> _surcharges(
   FauxServicePriere priere, {
   AppRole role = AppRole.teacher,
+  FauxServiceEnseignant? enseignant,
+  DateTime? maintenant,
 }) => <Override>[
+  if (maintenant != null)
+    maintenantJourneeProvider.overrideWithValue(() => maintenant),
   sourceSessionProvider.overrideWithValue(
     FausseSourceSession(
       SessionState(
@@ -165,7 +182,9 @@ List<Override> _surcharges(
     ),
   ),
   serviceReseauProvider.overrideWithValue(FauxServiceReseau()),
-  serviceEnseignantProvider.overrideWithValue(FauxServiceEnseignant()),
+  serviceEnseignantProvider.overrideWithValue(
+    enseignant ?? FauxServiceEnseignant(),
+  ),
   servicePlanningProvider.overrideWithValue(FauxServicePlanning()),
   referentielLanguesProvider.overrideWith(
     (Ref _) async => const <LangueCours>[],
@@ -190,12 +209,18 @@ Future<GoRouter> _monter(
   String depart,
   FauxServicePriere priere, {
   Size taille = const Size(390, 2400),
+  FauxServiceEnseignant? enseignant,
+  DateTime? maintenant,
 }) async {
   fixerVueCapture(tester, taille, 1);
   late GoRouter routeur;
   await tester.pumpWidget(
     ProviderScope(
-      overrides: _surcharges(priere),
+      overrides: _surcharges(
+        priere,
+        enseignant: enseignant,
+        maintenant: maintenant,
+      ),
       child: TranslationProvider(
         child: Consumer(
           builder: (BuildContext _, WidgetRef ref, Widget? _) {
@@ -267,6 +292,43 @@ void main() {
       await _toucher(tester, find.byType(DisqueRetour));
       expect(routeur.state.matchedLocation, Routes.enseignantProfil);
     });
+
+    // Revue du 13/11/2026 (P2) : le titulaire d'une seance remplacee la voit dans sa
+    // liste ; le serveur ne lui rend plus d'erreur mais zero ligne, donc sa journee ne
+    // signale aucun echec. Le meme chemin avec une vraie panne le signale.
+    for (final (String nom, FauxServicePriere service, bool echec)
+        in <(String, FauxServicePriere, bool)>[
+          ('zero ligne rendue par le serveur', FauxServicePriere(), false),
+          ('lecture en panne', _PausePrevueEnPanne(), true),
+        ]) {
+      testWidgets(
+        'journee du titulaire d une seance remplacee, vrai routeur : $nom',
+        (WidgetTester tester) async {
+          await _monter(
+            tester,
+            Routes.enseignantJournee,
+            service,
+            enseignant: FauxServiceEnseignant()
+              ..groupesRendus = DonneesEnseignantDemo.groupes()
+              ..seancesRendues = <SeanceEnseignant>[
+                seanceDeTest(
+                  debut: DateTime(2026, 9, 28, 9),
+                  duree: const Duration(hours: 1),
+                  groupeId: 'g1',
+                  groupeLibelle: 'An-Nour',
+                  nbParticipants: 4,
+                ),
+              ],
+            maintenant: DateTime(2026, 9, 28, 8),
+          );
+          expect(find.byType(JourneePage), findsOneWidget);
+          expect(
+            find.text(t.enseignant.journee.erreurPartielle),
+            echec ? findsOneWidget : findsNothing,
+          );
+        },
+      );
+    }
 
     testWidgets('contenu : cinq lignes, le lieu, les heures du serveur', (
       WidgetTester tester,

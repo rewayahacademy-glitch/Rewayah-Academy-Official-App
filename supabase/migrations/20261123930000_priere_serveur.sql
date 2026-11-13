@@ -128,6 +128,12 @@ BEGIN
     ELSIF v_role = 'teacher' THEN
       v_autorise := coalesce(
         private.c29_enseignant_effectif_session(p_session_id) = v_uid, false);
+      -- Le titulaire d'une seance remplacee la voit toujours dans sa liste : zero ligne, pas
+      -- d'erreur (il ne lit pas la pause de celui qui enseigne a sa place).
+      IF NOT v_autorise AND EXISTS (SELECT 1 FROM public.sessions t
+                                     WHERE t.id = p_session_id AND t.teacher_id = v_uid) THEN
+        RETURN;
+      END IF;
     ELSIF v_role IN ('student', 'guardian') THEN
       v_autorise := coalesce(
         EXISTS (
@@ -828,12 +834,14 @@ STABLE
 SET search_path = ''
 AS $function$
 DECLARE
-  v_p text[]; v_t timestamptz[]; v_a boolean[];
+  v_p text[]; v_t timestamptz[]; v_a boolean[]; v_d integer[];
+  nn integer;
+  w0 timestamptz; w1 timestamptz; v_indef boolean := false;
   d0 date := (p_debut AT TIME ZONE 'UTC')::date;
   v_long numeric := pg_catalog.date_part('epoch', p_fin - p_debut) / 60.0;
   i integer;
   n integer := 0;
-  v_off numeric; v_dur integer; v_zone text; v_deb timestamptz; v_fen numeric;
+  v_off numeric; v_dur integer; v_zone text; v_deb timestamptz;
   c_i integer[] := '{}'; c_zone text[] := '{}'; c_fen numeric[] := '{}';
   c_deb timestamptz[] := '{}'; c_dur integer[] := '{}';
   v_best integer := NULL;
@@ -845,19 +853,40 @@ DECLARE
 BEGIN
   SELECT pg_catalog.array_agg(c.priere ORDER BY c.instant_utc),
          pg_catalog.array_agg(c.instant_utc ORDER BY c.instant_utc),
-         pg_catalog.array_agg(c.approximee ORDER BY c.instant_utc)
-    INTO v_p, v_t, v_a
+         pg_catalog.array_agg(c.approximee ORDER BY c.instant_utc),
+         pg_catalog.array_agg(j.k ORDER BY c.instant_utc)
+    INTO v_p, v_t, v_a, v_d
     FROM pg_catalog.generate_series(-1, 1) AS j(k),
          LATERAL private.priere_calculer(p_lat, p_lon, d0 + j.k, p_methode, p_ecole, p_ajust) c;
+  nn := coalesce(pg_catalog.cardinality(v_t), 0);
 
-  IF coalesce(pg_catalog.cardinality(v_t), 0) < 15 THEN
+  -- Un jour sans calcul (haute latitude) ne rend indefinie QUE la seance qui le touche :
+  -- la fenetre utile va de `marge_avant` minutes avant le debut a la fin du cours ; elle
+  -- doit tenir entre des heures connues, sans trou de plus de 20 heures dedans.
+  IF nn = 0 THEN
+    v_indef := true;
+  ELSE
+    w0 := p_debut - pg_catalog.make_interval(mins => p_marge_avant);
+    w1 := p_fin;
+    v_indef := (w0 < v_t[1] OR w1 > v_t[nn]);
+    IF NOT v_indef THEN
+      FOR i IN 1..nn - 1 LOOP
+        IF v_t[i + 1] - v_t[i] > INTERVAL '20 hours' AND v_t[i] < w1 AND v_t[i + 1] > w0 THEN
+          v_indef := true;
+          EXIT;
+        END IF;
+      END LOOP;
+    END IF;
+  END IF;
+
+  IF v_indef THEN
     priere := NULL; entree_utc := NULL; approximee := NULL; zone := NULL;
     retenue := false; debut_prevu_utc := NULL; duree_minutes := NULL; indefini := true;
     RETURN NEXT;
     RETURN;
   END IF;
 
-  FOR i IN 1..15 LOOP
+  FOR i IN 1..nn LOOP
     IF v_t[i] >= p_debut AND v_t[i] < p_fin THEN
       v_off := pg_catalog.date_part('epoch', v_t[i] - p_debut) / 60.0;
       v_dur := CASE WHEN v_p[i] = 'maghrib' AND p_ramadan THEN p_pause_ramadan ELSE p_pause END;
@@ -872,11 +901,11 @@ BEGIN
       IF v_deb + pg_catalog.make_interval(mins => v_dur) > p_fin THEN
         v_zone := 'fin';
       END IF;
-      v_fen := CASE WHEN i < 15 THEN pg_catalog.date_part('epoch', v_t[i + 1] - v_t[i]) / 60.0
-                    ELSE 1440 END;
       n := n + 1;
-      c_i[n] := i; c_zone[n] := v_zone; c_fen[n] := v_fen; c_deb[n] := v_deb; c_dur[n] := v_dur;
-      IF v_zone <> 'fin' AND (v_best IS NULL OR v_fen < c_fen[v_best]) THEN
+      c_i[n] := i; c_zone[n] := v_zone; c_fen[n] := 0; c_deb[n] := v_deb; c_dur[n] := v_dur;
+      -- La PREMIERE, dans l'ordre du temps, qui n'est pas en zone de fin : la priere qui
+      -- risquerait de se fermer pendant le cours passe avant celle qui entre apres elle.
+      IF v_zone <> 'fin' AND v_best IS NULL THEN
         v_best := n;
       END IF;
     END IF;
@@ -884,11 +913,11 @@ BEGIN
 
   -- La priere qui se ferme PENDANT le cours : le lever du soleil ferme le Fajr, l'entree
   -- de la priere suivante ferme les autres. La plus proche de se fermer est retenue.
-  FOR i IN 1..14 LOOP
+  FOR i IN 1..nn - 1 LOOP
     IF v_t[i] < p_debut
        AND p_debut - v_t[i] < pg_catalog.make_interval(mins => p_marge_avant) THEN
       v_ferm := CASE WHEN v_p[i] = 'fajr'
-                     THEN private.priere_lever(p_lat, p_lon, d0 + ((i - 1) / 5 - 1), p_methode)
+                     THEN private.priere_lever(p_lat, p_lon, d0 + v_d[i], p_methode)
                      ELSE v_t[i + 1] END;
       IF v_ferm IS NOT NULL AND v_ferm > p_debut AND v_ferm < p_fin
          AND (v_ferm_t IS NULL OR v_ferm < v_ferm_t) THEN
@@ -1180,6 +1209,38 @@ AFTER INSERT OR UPDATE ON public.app_config
 FOR EACH ROW WHEN (NEW.key LIKE 'priere.%')
 EXECUTE FUNCTION private.priere_trg_reglages_ecole();
 
+-- Un compte desactive (suppression, anonymisation : private.cpt_anonymiser desactive le
+-- profil AVANT de retirer ses reglages) : les pauses de ses seances a venir sont retirees
+-- tout de suite, sans attendre le recalcul de nuit. Aucune ligne n'est effacee : elles
+-- sont marquees retirees, comme le fait priere_lieu_retirer.
+CREATE FUNCTION private.priere_trg_profil_desactive()
+RETURNS trigger
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = ''
+AS $function$
+BEGIN
+  BEGIN
+    UPDATE public.seance_pause_prevue_stock st
+       SET debut_prevu_utc = NULL, duree_minutes = NULL, motif = NULL, priere = NULL,
+           calcule_le = pg_catalog.now(), retiree_le = pg_catalog.now(), indefini = false
+     WHERE st.retiree_le IS NULL
+       AND st.session_id IN (
+         SELECT s.id FROM public.sessions s
+          WHERE s.status IN ('planned', 'preflight') AND s.started_at > pg_catalog.now()
+            AND private.c29_enseignant_effectif_session(s.id) = NEW.id);
+  EXCEPTION WHEN OTHERS THEN
+    RAISE WARNING 'PRIERE-1 : pauses de priere du compte % non retirees : %', NEW.id, SQLERRM;
+  END;
+  RETURN NEW;
+END;
+$function$;
+
+CREATE TRIGGER priere_pause_prevue_compte
+AFTER UPDATE OF account_status ON public.profiles
+FOR EACH ROW WHEN (NEW.account_status = 'disabled' AND OLD.account_status IS DISTINCT FROM NEW.account_status)
+EXECUTE FUNCTION private.priere_trg_profil_desactive();
+
 -- Le recalcul planifie de chaque nuit (3 h 30, heure universelle), seulement si
 -- pg_cron existe (comme SES-CLOTURE-AUTO) : la CI rejoue les migrations sur un
 -- Postgres sans pg_cron.
@@ -1225,7 +1286,8 @@ REVOKE ALL ON FUNCTION
   private.priere_ecrire_stock(uuid, timestamptz, integer, text, boolean, uuid, date),
   private.priere_recalculer_seance(uuid), private.priere_recalculer_enseignant(uuid),
   private.priere_recalculer_horizon(boolean), private.priere_trg_seance(), private.priere_trg_remplacement(),
-  private.priere_trg_reglages_enseignant(), private.priere_trg_reglages_ecole()
+  private.priere_trg_reglages_enseignant(), private.priere_trg_reglages_ecole(),
+  private.priere_trg_profil_desactive()
   FROM PUBLIC, anon, authenticated, service_role, agent_ro;
 
 ALTER FUNCTION public.priere_recalculer_maintenant() OWNER TO postgres;
@@ -1293,7 +1355,7 @@ BEGIN
         actif = true, defini_par = EXCLUDED.defini_par, defini_le = EXCLUDED.defini_le;
 
   PERFORM public.log_sensitive_access('priere_lieu_defini', 'prayer_settings', p_enseignant_id::text,
-    pg_catalog.jsonb_build_object('acteur', auth.uid(), 'assiste_vendredi', p_assiste_vendredi));
+    pg_catalog.jsonb_build_object('acteur', auth.uid()));
 END;
 $function$;
 
@@ -1772,17 +1834,23 @@ BEGIN
   END IF;
   v_duree := coalesce(v_duree, CASE WHEN g.type_public = 'adulte' THEN 90 ELSE 60 END);
 
+  -- La duree de chaque creneau est la sienne (groupe_creneaux.duree_minutes), a defaut celle
+  -- de la classe ; l'ancre de la classe (groupes.weekday/hour_local) prend la duree de la classe.
   SELECT coalesce(pg_catalog.jsonb_agg(pg_catalog.jsonb_build_object(
            'weekday', c.weekday, 'hour_local', c.hour_local, 'timezone', g.timezone_iana,
-           'duree_minutes', v_duree,
+           'duree_minutes', c.duree,
            'lecture', private.priere_lecture_creneau(g.teacher_id, c.weekday, c.hour_local,
-                                                     g.timezone_iana, v_duree)) ORDER BY c.weekday, c.hour_local),
+                                                     g.timezone_iana, c.duree)) ORDER BY c.weekday, c.hour_local),
          '[]'::jsonb)
     INTO v_creneaux
-    FROM (SELECT gc.weekday::integer AS weekday, gc.hour_local::integer AS hour_local
+    FROM (SELECT gc.weekday::integer AS weekday, gc.hour_local::integer AS hour_local,
+                 coalesce(gc.duree_minutes, v_duree)::integer AS duree
             FROM public.groupe_creneaux gc WHERE gc.groupe_id = p_groupe_id
-           UNION
-          SELECT g.weekday::integer, g.hour_local::integer) c;
+           UNION ALL
+          SELECT g.weekday::integer, g.hour_local::integer, v_duree
+           WHERE NOT EXISTS (SELECT 1 FROM public.groupe_creneaux gc
+                              WHERE gc.groupe_id = p_groupe_id
+                                AND gc.weekday = g.weekday AND gc.hour_local = g.hour_local)) c;
 
   RETURN pg_catalog.jsonb_build_object('enseignant_id', g.teacher_id, 'creneaux', v_creneaux);
 END;

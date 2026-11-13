@@ -2019,8 +2019,9 @@ SELECT pg_temp.vrai(NOT pg_temp.refuse($q$SELECT * FROM public.pause_prevue_sean
 RESET ROLE;
 SELECT pg_temp.en_tant_que('9e000000-0000-4000-8000-000000000001', 'teacher');
 SET LOCAL ROLE authenticated;
-SELECT pg_temp.vrai(pg_temp.refuse($q$SELECT * FROM public.pause_prevue_seance('9e0000e0-0000-4000-8000-000000000012')$q$),
-  'titulaire remplace : ne lit plus la pause de la seance');
+SELECT pg_temp.vrai(NOT pg_temp.refuse($q$SELECT * FROM public.pause_prevue_seance('9e0000e0-0000-4000-8000-000000000012')$q$)
+                    AND (SELECT count(*) FROM public.pause_prevue_seance('9e0000e0-0000-4000-8000-000000000012')) = 0,
+  'titulaire remplace : zero ligne, pas d''erreur (sa liste montre la seance), il ne lit rien');
 RESET ROLE;
 SELECT pg_temp.personne();
 
@@ -2599,5 +2600,109 @@ SET LOCAL ROLE anon;
 SELECT pg_temp.vrai(pg_temp.refuse($q$SELECT public.priere_creneaux_fermeture('9e000000-0000-4000-8000-000000000001', 3, 'Asia/Riyadh', 60)$q$),
   'anonyme : heures de fermeture refusees');
 RESET ROLE;
+
+-- ===========================================================================
+-- 10. Revue independante du 13/11/2026 : P1 (premiere priere), P3 (journal), M1, M2, M3
+-- ===========================================================================
+-- P1 : deux prieres entrent dans la meme seance : la PREMIERE, dans l'ordre du temps, qui n'est
+-- pas en zone de fin porte la pause, meme si sa fenetre est plus longue que celle de la seconde.
+-- Conakry : le Dhuhr entre 30 minutes apres le debut, l'Asr (fenetre plus courte) plus tard.
+CREATE TEMP TABLE h_conakry_31 AS
+  SELECT priere, instant_utc FROM private.priere_calculer(9.6412, -13.5784, DATE '2027-01-31',
+                                  'muslim_world_league', 'shafi', '{}');
+SELECT pg_temp.vrai((SELECT count(*) = 2 AND count(*) FILTER (WHERE retenue) = 1
+                            AND bool_and(priere = 'dhuhr') FILTER (WHERE retenue)
+                            AND count(*) FILTER (WHERE zone = 'milieu') = 2
+                       FROM private.priere_placer(
+                              (SELECT instant_utc - interval '30 minutes' FROM h_conakry_31 WHERE priere = 'dhuhr'),
+                              (SELECT instant_utc - interval '30 minutes' + interval '300 minutes' FROM h_conakry_31 WHERE priere = 'dhuhr'),
+                              9.6412, -13.5784, 'muslim_world_league', 'shafi', '{}', 10, 20, false, 5, 15)),
+  'deux prieres dans le cours, toutes deux en zone « milieu » : la premiere (Dhuhr) porte la pause, pas celle dont la fenetre est la plus courte (Asr)');
+SELECT pg_temp.vrai((SELECT count(*) FILTER (WHERE retenue) = 1 AND bool_and(priere = 'dhuhr') FILTER (WHERE retenue)
+                       FROM private.priere_placer(
+                              (SELECT instant_utc - interval '30 minutes' FROM h_conakry_31 WHERE priere = 'dhuhr'),
+                              (SELECT instant_utc - interval '30 minutes' + interval '250 minutes' FROM h_conakry_31 WHERE priere = 'dhuhr'),
+                              9.6412, -13.5784, 'muslim_world_league', 'shafi', '{}', 10, 20, false, 5, 15)),
+  'Dhuhr au milieu, Asr en zone de fin : le Dhuhr porte la pause (l''Asr, ecartee, se prie apres le cours)');
+
+-- P3 : le journal ne garde jamais la pratique du vendredi, ni la position.
+SELECT pg_temp.vrai((SELECT count(*) FROM public.audit_logs WHERE action = 'priere_lieu_defini'
+                        AND (payload::text ILIKE '%vendredi%' OR payload::text ILIKE '%assiste%')) = 0
+                    AND (SELECT count(*) FROM public.audit_logs WHERE action = 'priere_lieu_defini') >= 3,
+  'journal : aucune ecriture « priere_lieu_defini » ne contient la pratique du vendredi (la trace « lieu modifie » reste)');
+SELECT pg_temp.vrai((SELECT count(*) FROM public.audit_logs WHERE action LIKE 'priere_%'
+                        AND (payload::text ILIKE '%latitude%' OR payload::text ILIKE '%vendredi%')) = 0,
+  'journal : aucune ecriture de priere ne porte ni position ni pratique religieuse');
+
+-- M2 : un jour indefini ne rend indefinie que la seance qui le touche (Tromso, soleil de minuit).
+CREATE TEMP TABLE tromso_trou AS
+  SELECT min(d::date) AS premier_indefini
+    FROM generate_series(DATE '2027-05-01', DATE '2027-07-31', INTERVAL '1 day') d
+   WHERE NOT EXISTS (SELECT 1 FROM private.priere_calculer(69.6492, 18.9553, d::date,
+                                  'muslim_world_league', 'shafi', '{}'));
+SELECT pg_temp.vrai((SELECT premier_indefini IS NOT NULL FROM tromso_trou), 'Tromso : un premier jour indefini existe en 2027');
+SELECT pg_temp.vrai((SELECT NOT coalesce(bool_or(indefini), false)
+                       FROM private.priere_placer(
+                              ((SELECT premier_indefini FROM tromso_trou) - 1)::timestamp AT TIME ZONE 'UTC' + interval '8 hours',
+                              ((SELECT premier_indefini FROM tromso_trou) - 1)::timestamp AT TIME ZONE 'UTC' + interval '9 hours',
+                              69.6492, 18.9553, 'muslim_world_league', 'shafi', '{}', 10, 20, false, 5, 15)),
+  'la veille du premier jour indefini, un cours du matin reste calculable (le jour indefini ne le touche pas)');
+SELECT pg_temp.vrai((SELECT coalesce(bool_or(indefini), false)
+                       FROM private.priere_placer(
+                              (SELECT premier_indefini FROM tromso_trou)::timestamp AT TIME ZONE 'UTC' + interval '8 hours',
+                              (SELECT premier_indefini FROM tromso_trou)::timestamp AT TIME ZONE 'UTC' + interval '9 hours',
+                              69.6492, 18.9553, 'muslim_world_league', 'shafi', '{}', 10, 20, false, 5, 15)),
+  'le jour indefini lui-meme : un cours de ce jour est indefini');
+SELECT pg_temp.vrai((SELECT coalesce(bool_or(indefini), false)
+                       FROM private.priere_placer(
+                              ((SELECT premier_indefini FROM tromso_trou) - 1)::timestamp AT TIME ZONE 'UTC' + interval '22 hours',
+                              ((SELECT premier_indefini FROM tromso_trou) - 1)::timestamp AT TIME ZONE 'UTC' + interval '24 hours 30 minutes',
+                              69.6492, 18.9553, 'muslim_world_league', 'shafi', '{}', 10, 20, false, 5, 15)),
+  'la veille, un cours qui passe minuit dans le jour indefini est indefini');
+
+-- M3 : un compte desactive retire tout de suite les pauses de ses seances a venir.
+INSERT INTO auth.users (id, email) VALUES ('9e000000-0000-4000-8000-000000000006', 'priere-06@test.invalid');
+INSERT INTO public.profiles (id, immutable_id, role, household_id, first_name, last_name, account_status, gender)
+VALUES ('9e000000-0000-4000-8000-000000000006','PRI-T6','teacher',NULL,'Six','Dix','provisional_active','male');
+INSERT INTO public.teacher_profiles (profile_id, country, timezone_iana, kyc_status)
+VALUES ('9e000000-0000-4000-8000-000000000006','GN','Africa/Conakry','approved');
+INSERT INTO public.groupes (id, teacher_id, type_public, seuil_max, libelle, weekday, hour_local, timezone_iana, genre_public)
+VALUES ('9e0000c0-0000-4000-8000-000000000007', '9e000000-0000-4000-8000-000000000006', 'enfant', 5,
+        'PRI classe 6', 4, 19, 'Europe/Paris', 'indetermine');
+SELECT pg_temp.en_tant_que('9e000000-0000-4000-8000-000000000010', 'admin');
+SELECT public.priere_lieu_definir('9e000000-0000-4000-8000-000000000006', 'Conakry', 9.6412, -13.5784, 'Africa/Conakry');
+SELECT pg_temp.personne();
+INSERT INTO public.sessions (id, teacher_id, started_at, ended_at, status, session_type, groupe_id)
+SELECT '9e0000e0-0000-4000-8000-000000000081', '9e000000-0000-4000-8000-000000000006',
+       instant_utc - interval '25 minutes', instant_utc + interval '35 minutes', 'planned', 'standard',
+       '9e0000c0-0000-4000-8000-000000000007'
+  FROM h_conakry_31 WHERE priere = 'maghrib';
+SELECT pg_temp.vrai(EXISTS (SELECT 1 FROM public.seance_pause_prevue WHERE session_id = '9e0000e0-0000-4000-8000-000000000081'),
+  'compte actif avec un lieu : la seance a sa pause');
+UPDATE public.profiles SET account_status = 'disabled' WHERE id = '9e000000-0000-4000-8000-000000000006';
+SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM public.seance_pause_prevue WHERE session_id = '9e0000e0-0000-4000-8000-000000000081'),
+  'compte desactive : la pause de sa seance a venir est retiree tout de suite, sans attendre le recalcul de nuit');
+SELECT pg_temp.vrai((SELECT retiree_le IS NOT NULL FROM public.seance_pause_prevue_stock
+                      WHERE session_id = '9e0000e0-0000-4000-8000-000000000081'),
+  'compte desactive : la ligne est marquee retiree (aucun effacement)');
+
+-- M1 : la lecture d'une classe lit la duree de CHAQUE creneau (groupe_creneaux.duree_minutes).
+INSERT INTO public.weekly_availability (profile_id, weekday, hour_local, timezone_iana)
+SELECT '9e000000-0000-4000-8000-000000000001', 4, h, 'Europe/Paris' FROM generate_series(17, 22) h
+ON CONFLICT DO NOTHING;
+UPDATE public.groupe_creneaux SET duree_minutes = 45
+ WHERE groupe_id = '9e0000c0-0000-4000-8000-000000000001' AND weekday = 4 AND hour_local = 19;
+SELECT pg_temp.en_tant_que('9e000000-0000-4000-8000-000000000010', 'admin');
+SELECT pg_temp.vrai((SELECT bool_and((c ->> 'duree_minutes')::int = 45)
+                            AND count(*) >= 1
+                       FROM jsonb_array_elements(public.priere_lecture_classe('9e0000c0-0000-4000-8000-000000000001') -> 'creneaux') c
+                      WHERE (c ->> 'weekday')::int = 4 AND (c ->> 'hour_local')::int = 19),
+  'lecture d''une classe : le creneau de 45 minutes est lu avec ses 45 minutes (pas la duree de la classe)');
+UPDATE public.groupe_creneaux SET duree_minutes = NULL
+ WHERE groupe_id = '9e0000c0-0000-4000-8000-000000000001' AND weekday = 4 AND hour_local = 19;
+SELECT pg_temp.vrai((SELECT bool_and((c ->> 'duree_minutes')::int IN (60, 90))
+                       FROM jsonb_array_elements(public.priere_lecture_classe('9e0000c0-0000-4000-8000-000000000001') -> 'creneaux') c),
+  'lecture d''une classe : sans duree propre, la duree de la classe (60 ou 90 par public)');
+SELECT pg_temp.personne();
 
 ROLLBACK;
