@@ -81,7 +81,8 @@ $function$;
 -- Un eleve que la direction peut placer : un eleve, ou un adulte titulaire qui
 -- est lui-meme eleve autonome (role « guardian », sa propre fiche d'eleve : la
 -- marque du schema est student_profiles.titulaire_profile_id = son id, type
--- autonome). Jamais un tuteur qui n'est pas eleve, jamais un compte supprime.
+-- autonome, fiche non supprimee). Jamais un tuteur qui n'est pas eleve, jamais un
+-- compte ni une fiche d'eleve supprimes.
 CREATE OR REPLACE FUNCTION private.eleve_placable(p_id uuid)
 RETURNS boolean
 LANGUAGE sql
@@ -99,7 +100,8 @@ AS $function$
                 AND EXISTS (SELECT 1 FROM public.student_profiles sp
                              WHERE sp.profile_id = p.id
                                AND sp.titulaire_profile_id = p.id
-                               AND sp.student_type = 'autonomous'))));
+                               AND sp.student_type = 'autonomous'
+                               AND sp.deleted_at IS NULL))));
 $function$;
 
 -- Bornes : jamais dans le futur (jour de La Mecque), jamais sous le plancher
