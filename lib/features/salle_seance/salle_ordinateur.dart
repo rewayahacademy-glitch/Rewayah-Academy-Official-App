@@ -157,6 +157,7 @@ class _EtatSalleOrdinateur extends ConsumerState<SalleOrdinateur> {
     _etatHorsColonne.dispose();
     super.dispose();
   }
+
   static const String _cleBibliotheque = 'salle-ordinateur-bibliotheque';
 
   /// L'etat d'un panneau, garde le temps de la seance (stockage de la
@@ -1377,9 +1378,8 @@ class _Colonne extends ConsumerWidget {
         }
 
         final String? mention = vue.texteMention;
-        final double ligneTexte = MediaQuery.textScalerOf(
-          context,
-        ).scale(AppSpacing.xl);
+        final double ligneTexte = MediaQuery.textScalerOf(context)
+            .scale(AppSpacing.xl);
         final double hauteurBarreChrono = vue.voitChrono
             ? math.max(AppSpacing.titreEcran, ligneTexte + 2 * AppSpacing.sm)
             : 0;
@@ -1444,13 +1444,21 @@ class _Colonne extends ConsumerWidget {
                 hauteurBarreChrono +
                 (essai ? 0 : hauteurEtat(l)) +
                 AppSpacing.sm;
+            // HARMONIE-SALLE (13/11/2026) : la tete est reservee une fois,
+            // a la hauteur de la barre depliee la plus haute (la pause en
+            // clair, ou une alerte : titre, detail ou deux actions). Plier ou
+            // deplier la barre ne change alors jamais les tuiles : ni leur
+            // place, ni leurs noms (avant : les noms disparaissaient le temps
+            // du depliage, sur un ecran bas).
+            tete += math.max(
+              hauteurDepliee,
+              allongementAlerteEnPlace(context, l),
+            );
             serre = essai;
             avecNom = nom;
             avecTitre = montreTitre;
             largeur = l;
-            trouve =
-                tete + hauteurBarre(nom) <= c.maxHeight &&
-                tete + hauteurDepliee + hauteurBarre(false) <= c.maxHeight;
+            trouve = tete + hauteurBarre(nom) <= c.maxHeight;
             if (trouve) break;
           }
           if (trouve) break;
@@ -1468,29 +1476,38 @@ class _Colonne extends ConsumerWidget {
             children: <Widget>[
               KeyedSubtree(
                 key: SalleOrdinateur.cleTete,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    if (avecTitre && titre != null)
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: AppSpacing.xs),
-                        child: Text(
-                          titre,
-                          key: SalleOrdinateur.cleTitreSupport,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: styleTitre,
+                // La place reservee (moins l'ecart qui suit) : repliee, la
+                // barre laisse un vide sous elle ; depliee, elle le remplit.
+                // Une alerte plus haute que prevu pousse les tuiles, elle
+                // n'est jamais coupee.
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minHeight: math.max(0, tete - AppSpacing.sm),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      if (avecTitre && titre != null)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: AppSpacing.xs),
+                          child: Text(
+                            titre,
+                            key: SalleOrdinateur.cleTitreSupport,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: styleTitre,
+                          ),
                         ),
+                      ZoneChrono(
+                        vue: vue,
+                        largeur: largeur,
+                        enPlace: true,
+                        avecLigneEtat: !serre,
+                        onPause: actions.onPause,
                       ),
-                    ZoneChrono(
-                      vue: vue,
-                      largeur: largeur,
-                      enPlace: true,
-                      avecLigneEtat: !serre,
-                      onPause: actions.onPause,
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
               Ecart.vSm,
