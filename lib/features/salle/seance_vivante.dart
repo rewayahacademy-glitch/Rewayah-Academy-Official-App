@@ -422,8 +422,6 @@ class SeanceVivante extends ChangeNotifier implements CompagnonAppel {
     _sParticipants = null;
     _sPause = null;
     _sRecitant = null;
-    // Ceux qui la lisent (page, salle reduite) l'apprennent et la quittent.
-    notifyListeners();
     dispose();
     await Future.wait(<Future<void>>[...fins, ?s?.liberer()]);
   }
