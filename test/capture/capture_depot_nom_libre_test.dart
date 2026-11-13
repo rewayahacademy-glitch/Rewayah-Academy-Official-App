@@ -14,7 +14,6 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/catalogue_local.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/donnees_catalogue.dart';
-import 'package:rewayah_academy/core/tc_bibliotheque/library_resource.dart';
 import 'package:rewayah_academy/features/admin_pedagogie_bibliotheque/import/selecteur_support.dart';
 
 import '../support/demo/bibliotheque_admin_demo.dart';
