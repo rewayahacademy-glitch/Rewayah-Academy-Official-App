@@ -49,6 +49,15 @@ Pour une séance qui commence en `s`, finit en `e` (durée `L` minutes), avec l'
 
 **Cas non défini.** Aux très hautes latitudes, le soleil peut ne jamais se lever ni se coucher (jour polaire, nuit polaire) : le calcul n'existe pas. Le serveur ne devine rien : il **ne place aucune pause de prière** pour cette séance et écrit une ligne au journal de la direction (`log_sensitive_access`, action `priere_calcul_indefini`). Quand seuls le Fajr ou l'Isha ne se définissent pas par leur angle (été, latitudes moyennes et hautes), le calcul retombe sur la règle de la nuit partagée en deux, la même que celle du paquet de référence ; l'heure est alors marquée **approchée** (aperçu de la direction, journal), et la pause est placée quand même. Sur les latitudes où l'école est présente aujourd'hui (Guinée), aucun de ces cas ne se produit.
 
+## 3 bis. Ce que fait le système quand le temps d'une prière se termine pendant la séance (constat du 13/11/2026, figé par un scénario)
+
+Le serveur ne regarde que **l'entrée** d'une prière dans la séance. Conséquences, toutes testées :
+
+- **Prière entrée avant le début du cours : aucune pause**, même si son temps se termine pendant le cours (Maghrib entré 5 minutes avant un cours de 45 minutes : aucune ligne). La règle « une seule pause, à l'entrée de la prière » **le couvre déjà** comme l'architecte le disait : pas d'entrée dans la séance, pas de pause.
+- **Le temps du Fajr se ferme au lever du soleil**, qui n'est pas une entrée de prière : un cours qui enjambe le lever du soleil, Fajr entré avant le début, n'a aucune pause.
+- **Le temps de l'Asr se ferme à l'entrée du Maghrib** (et celui du Dhuhr à l'entrée de l'Asr, celui du Maghrib à l'entrée de l'Isha) : la pause est placée à l'entrée de la prière **suivante**, jamais pour celle qui se ferme. Ce que le système ne sait pas : si l'enseignant a déjà prié la prière qui se ferme ; il ne la rattrape que par la pause de la suivante ou après le cours.
+- **Ce que ce constat ne garantit donc pas** : qu'un enseignant dont le temps de prière se ferme pendant un cours (surtout le Fajr, sans autre prière derrière) ait une pause à ce moment. C'est une limite connue, pas une règle ; la direction la voit par les lectures de croisements seulement pour les entrées, pas pour les fermetures.
+
 ## 4. Le contrat avec la salle (livré exactement)
 
 `public.seance_pause_prevue` (lecture seule pour la salle) :
@@ -102,6 +111,6 @@ Valeurs en vigueur par défaut, à valider ; la direction peut les changer sans 
 - **Le retrait individuel de l'élève dans la salle** (P1, troisième protection), sans motif enregistré.
 - **La carte des croisements par élève** (P10) : lieu de l'élève, donnée demandée aux familles avec leur accord.
 - **Le Ramadan branché sur le calendrier de l'école** : aujourd'hui, un réglage booléen posé à la main.
-- **La prière dont le temps se termine pendant la séance** (par exemple l'Asr qui finit au Maghrib quand la séance commence juste avant) : ce lot ne traite que l'entrée d'une prière pendant la séance.
+- **La prière dont le temps se termine pendant la séance** : constat figé par la section 9 de `scenarios_priere_serveur.sql` (13/11/2026), voir §3 bis. La règle « une seule pause, à l'entrée de la prière » ne la couvre pas ; l'architecte décide s'il faut une règle de plus.
 - **L'avertissement à la création d'un créneau** (P1, première protection) : les lectures de la direction existent ; leur branchement dans le parcours de création d'une classe est un lot suivant.
 - **Le nettoyage de `lib/core/priere/`** (calcul local désormais inutilisé) : autre lot ; aucun fichier n'est supprimé ici.

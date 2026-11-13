@@ -44,10 +44,11 @@ Branche `claude/priere-serveur`, migration réservée `20261123930000_priere_ser
 
 ## Ce qui reste faux, limité ou non prouvé
 
+- **Scénario autonome** : la matrice de référence d'`adhan` est embarquée dans `scenarios_priere_serveur.sql` (copie exacte du CSV, gardée par `test/garde/priere_reference_embarquee_test.dart`, régénérable par `tool/priere/integrer_reference.dart`) : il se rejoue depuis n'importe quel dossier, sans droit de superutilisateur ; plus rien à régler dans `ci.yml` à ce sujet.
 - **Aucun test sur staging ni en production.** La migration n'a jamais été appliquée à distance ; l'emboîtement avec la migration de la salle (branche zealous-tesla, tête 908b59fc) est prouvé en local seulement, sur un Postgres nu.
 - **`pg_cron`** : absent des Postgres de test, donc la planification de nuit n'a pas tourné ; seule la fonction (`priere_recalculer_horizon`) est testée.
 - **Le Ramadan** n'est qu'un booléen posé à la main.
-- **Une prière dont le temps se termine pendant la séance** n'est pas traitée (seule l'entrée l'est).
+- **Une prière dont le temps se termine pendant la séance** n'est pas traitée (seule l'entrée l'est) : constat figé par la section 9 du scénario, voir PRIERE.md §3 bis.
 - **Hautes latitudes** : sans lever ni coucher du soleil, aucune pause, une ligne au journal ; pas de calcul inventé.
 - **Le module local** `lib/core/priere/horaires_priere.dart` et `reglages_priere.dart` reste dans le dépôt (autre lot de nettoyage) ; plus aucun écran ne l'appelle.
 - **Langues autres que fr et ar** : non écrites (le dépôt n'en a que deux).
