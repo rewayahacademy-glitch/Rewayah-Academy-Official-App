@@ -22088,6 +22088,7 @@ class _Traductions$admin$bibliotheque$import$simple$ar extends Traductions$admin
 	@override String get enregistrer => 'حفظ الوثيقة';
 	@override String get aideNom => 'أعطِ الوثيقة اسمًا: يظهر زر «حفظ الوثيقة» بعد ذلك.';
 	@override String get aideDroit => 'حدِّد خانة حق النشر: بدونها لا يمكن حفظ وثيقة ليست من الأكاديمية.';
+	@override String get aideReglages => 'هناك إعداد يجب تصحيحه في «إعدادات أخرى»: يعود زر «حفظ الوثيقة» بعد ذلك.';
 	@override String get droitTiers => 'للأكاديمية الحق في نشر هذه الوثيقة';
 	@override String get droitTiersAide => 'تُحدَّد لوثيقة ليست من الأكاديمية. يُحفظ اسمك والتاريخ مع هذا الإقرار.';
 	@override String get enregistreTitre => 'حُفظت الوثيقة';
@@ -30880,6 +30881,7 @@ extension on TraductionsAr {
 			'admin.bibliotheque.import.simple.enregistrer' => 'حفظ الوثيقة',
 			'admin.bibliotheque.import.simple.aideNom' => 'أعطِ الوثيقة اسمًا: يظهر زر «حفظ الوثيقة» بعد ذلك.',
 			'admin.bibliotheque.import.simple.aideDroit' => 'حدِّد خانة حق النشر: بدونها لا يمكن حفظ وثيقة ليست من الأكاديمية.',
+			'admin.bibliotheque.import.simple.aideReglages' => 'هناك إعداد يجب تصحيحه في «إعدادات أخرى»: يعود زر «حفظ الوثيقة» بعد ذلك.',
 			'admin.bibliotheque.import.simple.droitTiers' => 'للأكاديمية الحق في نشر هذه الوثيقة',
 			'admin.bibliotheque.import.simple.droitTiersAide' => 'تُحدَّد لوثيقة ليست من الأكاديمية. يُحفظ اسمك والتاريخ مع هذا الإقرار.',
 			'admin.bibliotheque.import.simple.enregistreTitre' => 'حُفظت الوثيقة',
@@ -31133,9 +31135,9 @@ extension on TraductionsAr {
 			'comptable.statuts.raison.capaciteAbsente' => 'القدرة غير متوفرة',
 			'comptable.statuts.raison.delegationsSuspendues' => 'التفويضات موقوفة من الإدارة',
 			'comptable.statuts.raison.delegationExpiree' => 'التفويض منتهٍ',
-			'comptable.statuts.raison.sortieEnAttenteDelai' => 'صرف بانتظار مهلة الأمان',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.statuts.raison.sortieEnAttenteDelai' => 'صرف بانتظار مهلة الأمان',
 			'comptable.statuts.raison.coffreNonAutorise' => 'صندوق خارج التفويض',
 			'comptable.statuts.raison.beneficiaireExclu' => 'مستفيد مستبعد من التفويض',
 			'comptable.statuts.raison.plafondExceptionDepasse' => 'فوق سقف هذا التفويض',
@@ -31647,9 +31649,9 @@ extension on TraductionsAr {
 			'comptable.beneficiaires.recevoir.wise.formUsdAide' => 'اطلب من بنكك رمز SWIFT ورقم حسابك. يصلح في الغالب حساب بالفرنك الغيني أو بفرنك CFA: يحوّل بنكك الدولارات عند وصولها.',
 			'comptable.beneficiaires.recevoir.wise.enregistrer' => 'تسجيل بياناتي',
 			'comptable.beneficiaires.recevoir.wise.champRequis' => 'يجب ملؤه.',
-			'comptable.beneficiaires.recevoir.wise.caracteresInterdits' => 'دون فاصلة أو فاصلة منقوطة أو علامة تنصيص.',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.beneficiaires.recevoir.wise.caracteresInterdits' => 'دون فاصلة أو فاصلة منقوطة أو علامة تنصيص.',
 			'comptable.beneficiaires.recevoir.wise.enregistrees' => 'سُجّلت البيانات.',
 			'comptable.beneficiaires.recevoir.wise.retirees' => 'سُحبت البيانات.',
 			'comptable.beneficiaires.recevoir.wise.erreurTitre' => 'لم تُسجَّل البيانات',
@@ -32161,9 +32163,9 @@ extension on TraductionsAr {
 			'ficheEleve.finances.remiseRang' => 'الخصم العائلي',
 			'ficheEleve.finances.remiseRangDe' => ({required Object rang}) => 'الخصم العائلي للفرد رقم ⁨${rang}⁩',
 			'ficheEleve.finances.prorata' => 'تخفيض حسب التقويم',
-			'ficheEleve.finances.bourse' => 'منحة رواية',
 			_ => null,
 		} ?? switch (path) {
+			'ficheEleve.finances.bourse' => 'منحة رواية',
 			'ficheEleve.finances.accesOffert' => 'وصول مجاني',
 			'ficheEleve.finances.prixSpecial' => 'سعر خاص',
 			'ficheEleve.finances.remisePrepaiement' => 'تخفيض الدفع المسبق',
@@ -32675,9 +32677,9 @@ extension on TraductionsAr {
 			'attente.contacterAcademie' => 'التواصل مع الأكاديمية',
 			'attente.deposeLe' => ({required Object date}) => 'أُودع في ⁨${date}⁩',
 			'attente.delai' => 'يستغرق التحقق عادة أقل من 48 ساعة.',
-			'attente.aFournir' => 'للتقديم',
 			_ => null,
 		} ?? switch (path) {
+			'attente.aFournir' => 'للتقديم',
 			'attente.pieceIdentite' => 'وثيقة هوية',
 			'attente.signatureContrat' => 'توقيع العقد',
 			'attente.carteAccuse' => 'ما يجب أن تعرفه',
@@ -33189,9 +33191,9 @@ extension on TraductionsAr {
 			'adulte.sortie.delaiTitre' => 'دعوة جديدة غير متاحة',
 			'adulte.sortie.delaiPhrase' => ({required Object date}) => 'يمكن تقديم طلب جديد ابتداءً من ⁨${date}⁩. ثم يجب أن تعتمده الإدارة.',
 			'adulte.sortie.pourquoi' => 'لماذا هذا الانتظار؟',
-			'adulte.sortie.pourquoiPhrase' => 'يضمن هذا الإجراء أمان الأسر وحسن إدارة وصول الأطفال.',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.sortie.pourquoiPhrase' => 'يضمن هذا الإجراء أمان الأسر وحسن إدارة وصول الأطفال.',
 			'adulte.reprise.titre' => 'طلب استلام الأسرة',
 			'adulte.reprise.explication' => 'استخدم هذا الإجراء إن توفي صاحب حساب الأسرة. سيُبلَّغ الحساب المعني بالطلب وستدرسه الإدارة.',
 			'adulte.reprise.reprisTitre' => 'ما سيُنقل',
@@ -33703,9 +33705,9 @@ extension on TraductionsAr {
 			'controleur.demo.titre' => 'عرض تجريبي للمراقب',
 			'controleur.demo.mention' => 'بيانات وهمية، لا إرسال.',
 			'controleur.demo.intro' => 'اختر شاشة من شاشات المراقبة وحالة زيارة.',
-			'controleur.demo.etatAucune' => 'لا زيارة',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.demo.etatAucune' => 'لا زيارة',
 			'controleur.demo.etatPasEncoreEnDirect' => 'الحصة لم تبدأ مباشرة بعد',
 			'controleur.demo.etatEnDirect' => 'حصة مباشرة',
 			'controleur.demo.etatIndisponible' => 'الزيارة لم تعد مقترحة',
@@ -34217,9 +34219,9 @@ extension on TraductionsAr {
 			'recrutement.parcours.fuseau.lieuPropose' => ({required Object lieu}) => 'المنطقة الزمنية المقترحة: ⁨${lieu}⁩.',
 			'recrutement.parcours.fuseau.retenu' => ({required Object lieu}) => 'المنطقة الزمنية المعتمدة: ⁨${lieu}⁩.',
 			'recrutement.parcours.fuseau.oui' => 'نعم، هذا هو الوقت عندي',
-			'recrutement.parcours.fuseau.ouiDescription' => 'تُؤكَّد منطقتك الزمنية.',
 			_ => null,
 		} ?? switch (path) {
+			'recrutement.parcours.fuseau.ouiDescription' => 'تُؤكَّد منطقتك الزمنية.',
 			'recrutement.parcours.fuseau.changer' => 'لا، أريد تغييرها',
 			'recrutement.parcours.fuseau.changerDescription' => 'تختار أقرب مدينة إلى مكان إقامتك.',
 			'recrutement.parcours.fuseau.choisirTitre' => 'ما أقرب مدينة إلى مكان إقامتك؟',
@@ -34731,9 +34733,9 @@ extension on TraductionsAr {
 			'juridique.conditions.intro' => 'تُطبَّق هذه الشروط بمجرد إنشاء حساب أو تسجيل طالب. اقرؤوها كاملة، فهي قصيرة.',
 			'juridique.conditions.s1.titre' => '١. الخدمة',
 			'juridique.conditions.s1.blocs.0' => 'تقدّم أكاديمية الرواية دروس القرآن عبر الفيديو. يوضَع كل طالب في فصل: مجموعة صغيرة، وموعد متكرر، ومعلم معيَّن.',
-			'juridique.conditions.s1.blocs.1' => 'هناك صيغتان: صيغة الأطفال من ٦ إلى ١٧ سنة، وصيغة الكبار من ١٨ سنة فما فوق. لا يوضَع أي قاصر في فصل للكبار.',
 			_ => null,
 		} ?? switch (path) {
+			'juridique.conditions.s1.blocs.1' => 'هناك صيغتان: صيغة الأطفال من ٦ إلى ١٧ سنة، وصيغة الكبار من ١٨ سنة فما فوق. لا يوضَع أي قاصر في فصل للكبار.',
 			'juridique.conditions.s1.blocs.2' => 'يُفتح الفصل عندما يسجّل عدد كافٍ من الطلاب. وقبل ذلك تكونون في قائمة الانتظار ولا يُفوتَر أي مبلغ.',
 			'juridique.conditions.s2.titre' => '٢. الحساب والدخول',
 			'juridique.conditions.s2.blocs.0' => 'يسجّل وليّ أمر بالغ الطفلَ ويتابعه، وهو من يقرّر عنه. انظروا نص حماية الأطفال.',
@@ -35245,9 +35247,9 @@ extension on TraductionsAr {
 			'alertes.traitement.transmettreConsequence' => 'لا يمكن التراجع عن الإحالة. ولا تعرضها أي شاشة من شاشات الأسرة بعد.',
 			'alertes.traitement.transmettreOui' => 'نعم، إحالة',
 			'alertes.traitement.cloreQuestion' => 'إغلاق هذا البلاغ؟',
-			'alertes.traitement.cloreConsequence' => 'يخرج من التنبيهات، ولا يُعاد فتح بلاغ مغلق.',
 			_ => null,
 		} ?? switch (path) {
+			'alertes.traitement.cloreConsequence' => 'يخرج من التنبيهات، ولا يُعاد فتح بلاغ مغلق.',
 			'alertes.traitement.cloreOui' => 'نعم، إغلاق البلاغ',
 			'alertes.traitement.faitExamenTitre' => 'البلاغ قيد الفحص',
 			'alertes.traitement.faitExamenPhrase' => 'يبقى في التنبيهات حتى إغلاقه.',
@@ -35759,9 +35761,9 @@ extension on TraductionsAr {
 			'candidatsFlux.publication.kCase' => 'أوافق على ظهور اسمي وصورتي وبلدي على الموقع العام لأكاديمية الرواية.',
 			'candidatsFlux.publication.signature' => ({required Object nom}) => 'اسمك بمثابة توقيع: ⁨${nom}⁩',
 			'candidatsFlux.publication.signe' => ({required Object date, required Object nom}) => 'أُعطيت الموافقة في ⁨${date}⁩، بتوقيع ⁨${nom}⁩.',
-			'candidatsFlux.publication.donner' => 'إعطاء موافقتي',
 			_ => null,
 		} ?? switch (path) {
+			'candidatsFlux.publication.donner' => 'إعطاء موافقتي',
 			'candidatsFlux.publication.retirer' => 'سحب موافقتي',
 			'candidatsFlux.publication.retirerQuestion' => 'هل تسحب موافقتك على النشر؟',
 			'candidatsFlux.publication.retirerConsequence' => 'لن يظهر اسمك وصورتك وبلدك بعد الآن على الموقع العام. يمكنك إعطاء موافقتك من جديد لاحقًا.',

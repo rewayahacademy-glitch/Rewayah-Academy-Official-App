@@ -25,6 +25,7 @@ import 'package:rewayah_academy/core/tc_bibliotheque/donnees_catalogue.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/etapes_programme.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/library_resource.dart'
     show tranchesToutes;
+import 'package:rewayah_academy/core/widgets/bandeau_attention.dart';
 import 'package:rewayah_academy/core/widgets/case_a_cocher.dart';
 import 'package:rewayah_academy/features/admin_pedagogie_bibliotheque/classement_document.dart';
 import 'package:rewayah_academy/features/admin_pedagogie_bibliotheque/import/selecteur_support.dart';
@@ -51,7 +52,8 @@ class _Selecteur implements SelecteurFichierSupport {
   Future<FichierChoisi?> choisirDocument() async => FichierChoisi(
     nom: 'cours.pdf',
     // « %PDF- » : le type se lit dans le contenu.
-    octets: Uint8List(2048)..setRange(0, 5, <int>[0x25, 0x50, 0x44, 0x46, 0x2d]),
+    octets: Uint8List(2048)
+      ..setRange(0, 5, <int>[0x25, 0x50, 0x44, 0x46, 0x2d]),
     mime: 'application/octet-stream',
   );
 }
@@ -332,8 +334,12 @@ void main() {
       ..depotActifServeur = false;
     await _monter(demo: demo, tester, taille: const Size(1440, 2800));
     await stabiliser(tester, fois: 3);
-    // Une phrase en mots simples, aucun bouton qui echouerait, aucun code.
-    expect(find.text(cl.depotInactif), findsOneWidget);
+    // Le reglage qui manque est nomme (DEPOT-SIMPLE), aucun bouton qui
+    // echouerait.
+    expect(
+      tester.widget<BandeauAttention>(_cle('import-reglages')).message,
+      contains('private.library_upload_confirmation_secrets'),
+    );
     expect(_cle('import-choisir-support'), findsNothing);
     expect(_cle('import-poursuivre'), findsNothing);
     // Le lien externe, lui, se depose et se poursuit.

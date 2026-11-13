@@ -411,7 +411,6 @@ class _ImportEtat extends ConsumerState<_Import> {
   /// aboutir n'est pas rendu : cette phrase tient sa place (K-56).
   String? get _manque {
     final s = t.admin.bibliotheque.import.simple;
-    final c = t.admin.bibliotheque.import.classement;
     if (_parLien) {
       if (!_lienComplet || _nom.text.trim().isEmpty) return s.aideLien;
       if (_descriptionManque) return s.descriptionLien;
@@ -421,8 +420,11 @@ class _ImportEtat extends ConsumerState<_Import> {
       if (_nom.text.trim().isEmpty) return s.aideNom;
     }
     if (_tiers && !_droitTiers) return s.aideDroit;
-    if (_tranchesEffectives.isEmpty) return c.tranchesAucune;
-    if (!ecoleValide(_ecole.text)) return c.ecoleTrop;
+    // Les tranches d'age (D1) et l'ecole (D2) disent deja leur faute sous leur
+    // champ : ici, la phrase dit seulement ou regarder, sans la redire.
+    if (_tranchesEffectives.isEmpty || !ecoleValide(_ecole.text)) {
+      return s.aideReglages;
+    }
     return null;
   }
 
@@ -1476,10 +1478,7 @@ class _ImportEtat extends ConsumerState<_Import> {
               ecole: _ecole,
             ),
             Ecart.vLg,
-            Text(
-              s.sourceTitre,
-              style: Theme.of(context).textTheme.titleSmall,
-            ),
+            Text(s.sourceTitre, style: Theme.of(context).textTheme.titleSmall),
             Ecart.vMd,
             ZoneSaisie(
               controleur: _source,
