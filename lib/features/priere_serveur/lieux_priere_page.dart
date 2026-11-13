@@ -127,7 +127,7 @@ class LieuxPrierePage extends ConsumerWidget {
                   icon: AppIcons.priere,
                   lien: true,
                   libelleSemantique: t.priere.direction.corrigerDe(
-                    prenom: e.prenom,
+                    dePrenom: deDevant(e.prenom),
                   ),
                   onPress: () => _ouvrir(context, e),
                 ),

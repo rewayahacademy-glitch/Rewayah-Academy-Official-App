@@ -149,7 +149,7 @@ List<Widget> sectionReglesPriere({
         ),
       ],
     ),
-    Ecart.vMd,
+    Ecart.vLg,
     // Les valeurs chiffrees sont repliees : Rewayah les applique, la direction
     // ne les change que pour une exception.
     _ValeursChiffrees(
@@ -259,10 +259,7 @@ class _ValeursChiffreesEtat extends State<_ValeursChiffrees> {
             ),
           ],
         ),
-        if (_ouvert) ...<Widget>[
-          Ecart.vMd,
-          CarteLignes(lignes: widget.lignes),
-        ],
+        if (_ouvert) ...<Widget>[Ecart.vLg, CarteLignes(lignes: widget.lignes)],
       ],
     );
   }

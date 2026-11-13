@@ -7915,7 +7915,7 @@ class _Traductions$priere$direction$ar extends Traductions$priere$direction$fr {
 	@override String get intro => 'تحسب رواية أوقات كل معلم انطلاقًا من موقعه، وتختار الطريقة بحسب البلد. تقرؤون هذه القائمة ولا تصححون إلا الاستثناء. لا يرى المكان إلا المعلم والإدارة: التلاميذ وأولياء الأمور لا يقرؤون إلا وقت الاستراحة.';
 	@override String get attente => 'في الانتظار: لم يشارك المعلم موقعه بعد';
 	@override String get corriger => 'تصحيح';
-	@override String corrigerDe({required Object prenom}) => 'تصحيح إعدادات صلاة ⁨${prenom}⁩';
+	@override String corrigerDe({required Object dePrenom}) => 'تصحيح إعدادات صلاة ⁨${dePrenom}⁩';
 	@override String get sourceDirection => 'مكان حددته الإدارة';
 	@override String get sourceEnseignant => 'موقع شاركه المعلم';
 	@override String get sourceAuto => 'مكان مأخوذ من مدينته';
@@ -32279,7 +32279,7 @@ extension on TraductionsAr {
 			'priere.direction.intro' => 'تحسب رواية أوقات كل معلم انطلاقًا من موقعه، وتختار الطريقة بحسب البلد. تقرؤون هذه القائمة ولا تصححون إلا الاستثناء. لا يرى المكان إلا المعلم والإدارة: التلاميذ وأولياء الأمور لا يقرؤون إلا وقت الاستراحة.',
 			'priere.direction.attente' => 'في الانتظار: لم يشارك المعلم موقعه بعد',
 			'priere.direction.corriger' => 'تصحيح',
-			'priere.direction.corrigerDe' => ({required Object prenom}) => 'تصحيح إعدادات صلاة ⁨${prenom}⁩',
+			'priere.direction.corrigerDe' => ({required Object dePrenom}) => 'تصحيح إعدادات صلاة ⁨${dePrenom}⁩',
 			'priere.direction.sourceDirection' => 'مكان حددته الإدارة',
 			'priere.direction.sourceEnseignant' => 'موقع شاركه المعلم',
 			'priere.direction.sourceAuto' => 'مكان مأخوذ من مدينته',

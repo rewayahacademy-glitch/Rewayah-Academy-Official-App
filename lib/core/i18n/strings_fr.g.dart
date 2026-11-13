@@ -8203,7 +8203,7 @@ class Traductions$priere$direction$fr {
 	String get titre => 'Lieux de prière';
 
 	/// fr: 'Rewayah calcule les heures de chaque enseignant à partir de sa position et choisit la méthode d'après le pays. Vous lisez cette liste ; vous ne corrigez qu'une exception. Seuls l'enseignant et la direction voient le lieu : les élèves et les tuteurs ne lisent que l'heure de la pause.'
-	String get intro => 'Rewayah calcule les heures de chaque enseignant à partir de sa position et choisit la méthode d\'après le pays. Vous lisez cette liste ; vous ne corrigez qu\'une exception. Seuls l\'enseignant et la direction voient le lieu : les élèves et les tuteurs ne lisent que l\'heure de la pause.';
+	String get intro => 'Rewayah calcule les heures de chaque enseignant à partir de sa position et choisit la méthode d\'après le pays. Vous lisez cette liste ; vous ne corrigez qu\'une exception. Seuls l\'enseignant et la direction voient le lieu : les élèves et les tuteurs ne lisent que l\'heure de la pause.';
 
 	/// fr: 'En attente : l'enseignant n'a pas encore partagé sa position'
 	String get attente => 'En attente : l\'enseignant n\'a pas encore partagé sa position';
@@ -8211,8 +8211,8 @@ class Traductions$priere$direction$fr {
 	/// fr: 'Corriger'
 	String get corriger => 'Corriger';
 
-	/// fr: 'Corriger les réglages de prière de {prenom}'
-	String corrigerDe({required Object prenom}) => 'Corriger les réglages de prière de ${prenom}';
+	/// fr: 'Corriger les réglages de prière {dePrenom}'
+	String corrigerDe({required Object dePrenom}) => 'Corriger les réglages de prière ${dePrenom}';
 
 	/// fr: 'lieu posé par la direction'
 	String get sourceDirection => 'lieu posé par la direction';
@@ -8403,7 +8403,7 @@ class Traductions$priere$regles$fr {
 	String get methodeSelonPays => 'Méthode selon le pays';
 
 	/// fr: 'Activé, la méthode usuelle du pays du lieu s'applique (Arabie saoudite, Qatar, Koweït, Émirats, Égypte, Pakistan, Singapour, Turquie, Iran) ; ailleurs, la méthode de l'académie. À valider par le directeur.'
-	String get methodeSelonPaysDetail => 'Activé, la méthode usuelle du pays du lieu s\'applique (Arabie saoudite, Qatar, Koweït, Émirats, Égypte, Pakistan, Singapour, Turquie, Iran) ; ailleurs, la méthode de l\'académie. À valider par le directeur.';
+	String get methodeSelonPaysDetail => 'Activé, la méthode usuelle du pays du lieu s\'applique (Arabie saoudite, Qatar, Koweït, Émirats, Égypte, Pakistan, Singapour, Turquie, Iran) ; ailleurs, la méthode de l\'académie. À valider par le directeur.';
 
 	/// fr: 'Lieux de prière des enseignants'
 	String get lieux => 'Lieux de prière des enseignants';
@@ -25898,7 +25898,7 @@ class Traductions$priere$direction$feuille$fr {
 	String get poserLieu => 'Poser ce lieu';
 
 	/// fr: 'Aucun lieu pour le moment : l'enseignant le partage lui-même d'un toucher. Vous pouvez le poser à la main sous « Réglage avancé ».'
-	String get sansLieuAide => 'Aucun lieu pour le moment : l\'enseignant le partage lui-même d\'un toucher. Vous pouvez le poser à la main sous « Réglage avancé ».';
+	String get sansLieuAide => 'Aucun lieu pour le moment : l\'enseignant le partage lui-même d\'un toucher. Vous pouvez le poser à la main sous « Réglage avancé ».';
 
 	/// fr: 'Un créneau qui chevauche cette prière est signalé à la direction, sans blocage.'
 	String get vendrediAide => 'Un créneau qui chevauche cette prière est signalé à la direction, sans blocage.';
@@ -51524,10 +51524,10 @@ extension on Traductions {
 			'priere.enseignant.unite' => ({required Object n}) => '${n} min',
 			'priere.direction.onglet' => 'Prière',
 			'priere.direction.titre' => 'Lieux de prière',
-			'priere.direction.intro' => 'Rewayah calcule les heures de chaque enseignant à partir de sa position et choisit la méthode d\'après le pays. Vous lisez cette liste ; vous ne corrigez qu\'une exception. Seuls l\'enseignant et la direction voient le lieu : les élèves et les tuteurs ne lisent que l\'heure de la pause.',
+			'priere.direction.intro' => 'Rewayah calcule les heures de chaque enseignant à partir de sa position et choisit la méthode d\'après le pays. Vous lisez cette liste ; vous ne corrigez qu\'une exception. Seuls l\'enseignant et la direction voient le lieu : les élèves et les tuteurs ne lisent que l\'heure de la pause.',
 			'priere.direction.attente' => 'En attente : l\'enseignant n\'a pas encore partagé sa position',
 			'priere.direction.corriger' => 'Corriger',
-			'priere.direction.corrigerDe' => ({required Object prenom}) => 'Corriger les réglages de prière de ${prenom}',
+			'priere.direction.corrigerDe' => ({required Object dePrenom}) => 'Corriger les réglages de prière ${dePrenom}',
 			'priere.direction.sourceDirection' => 'lieu posé par la direction',
 			'priere.direction.sourceEnseignant' => 'position partagée par l\'enseignant',
 			'priere.direction.sourceAuto' => 'lieu pris de sa ville',
@@ -51553,7 +51553,7 @@ extension on Traductions {
 			'priere.direction.feuille.ecoleAuto' => 'Automatique',
 			'priere.direction.feuille.poserMain' => 'Poser le lieu à la main',
 			'priere.direction.feuille.poserLieu' => 'Poser ce lieu',
-			'priere.direction.feuille.sansLieuAide' => 'Aucun lieu pour le moment : l\'enseignant le partage lui-même d\'un toucher. Vous pouvez le poser à la main sous « Réglage avancé ».',
+			'priere.direction.feuille.sansLieuAide' => 'Aucun lieu pour le moment : l\'enseignant le partage lui-même d\'un toucher. Vous pouvez le poser à la main sous « Réglage avancé ».',
 			'priere.direction.feuille.vendrediAide' => 'Un créneau qui chevauche cette prière est signalé à la direction, sans blocage.',
 			'priere.direction.feuille.nomLieu' => 'Nom du lieu',
 			'priere.direction.feuille.latitude' => 'Latitude',
@@ -51614,7 +51614,7 @@ extension on Traductions {
 			'priere.regles.valeurs' => 'Valeurs chiffrées',
 			'priere.regles.valeursDetail' => 'Durées, marges et recalcul de nuit : Rewayah applique ces valeurs, ne les changez que pour une exception.',
 			'priere.regles.methodeSelonPays' => 'Méthode selon le pays',
-			'priere.regles.methodeSelonPaysDetail' => 'Activé, la méthode usuelle du pays du lieu s\'applique (Arabie saoudite, Qatar, Koweït, Émirats, Égypte, Pakistan, Singapour, Turquie, Iran) ; ailleurs, la méthode de l\'académie. À valider par le directeur.',
+			'priere.regles.methodeSelonPaysDetail' => 'Activé, la méthode usuelle du pays du lieu s\'applique (Arabie saoudite, Qatar, Koweït, Émirats, Égypte, Pakistan, Singapour, Turquie, Iran) ; ailleurs, la méthode de l\'académie. À valider par le directeur.',
 			'priere.regles.lieux' => 'Lieux de prière des enseignants',
 			'priere.regles.lieuxDetail' => 'Le lieu de chaque enseignant, la prière du vendredi, les heures du jour.',
 			'priere.regles.unite' => ({required Object n}) => '${n} min',
