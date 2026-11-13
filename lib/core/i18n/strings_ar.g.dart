@@ -10954,12 +10954,12 @@ class _Traductions$journalSorties$accord$ar extends Traductions$journalSorties$a
 	@override String get retirer => 'سحب موافقتي';
 	@override String get enregistrer => 'حفظ موافقتي';
 	@override String get manque => 'ضع علامة في خانة لحفظ موافقتك.';
-	@override String get erreur => 'لم يُحفَظ اختيارك. تحقّق من اتصالك، ثم حاول مرة أخرى.';
-	@override String get lectureErreur => 'تعذّرت قراءة موافقاتك. تحقّق من اتصالك، ثم حاول مرة أخرى.';
+	@override String get erreur => 'لم يتأكّد اختيارك: ربما لم يصل إلى رواية. حاول مرة أخرى بعد قليل.';
+	@override String get lectureErreur => 'تعذّرت قراءة موافقاتك. حاول مرة أخرى بعد قليل.';
 	@override String get horsService => 'هذا التسجيل غير مفعّل: لا يُسجَّل أي شيء. عد إلى الحساب.';
 	@override String get versionPerimee => 'تغيّر النص للتو. أعد قراءته، ثم ضع العلامة من جديد.';
 	@override String get eteint => 'أوقفت الإدارة هذا التسجيل للتو: لا يُسجَّل أي شيء. عد إلى الحساب.';
-	@override String get merci => 'تم حفظ موافقتك.';
+	@override String get merci => 'سُجِّلت موافقتك.';
 	@override String get retire => 'تم سحب موافقتك: لا يُسجَّل أي شيء بعد الآن.';
 }
 
@@ -35522,12 +35522,12 @@ extension on TraductionsAr {
 			'journalSorties.accord.retirer' => 'سحب موافقتي',
 			'journalSorties.accord.enregistrer' => 'حفظ موافقتي',
 			'journalSorties.accord.manque' => 'ضع علامة في خانة لحفظ موافقتك.',
-			'journalSorties.accord.erreur' => 'لم يُحفَظ اختيارك. تحقّق من اتصالك، ثم حاول مرة أخرى.',
-			'journalSorties.accord.lectureErreur' => 'تعذّرت قراءة موافقاتك. تحقّق من اتصالك، ثم حاول مرة أخرى.',
+			'journalSorties.accord.erreur' => 'لم يتأكّد اختيارك: ربما لم يصل إلى رواية. حاول مرة أخرى بعد قليل.',
+			'journalSorties.accord.lectureErreur' => 'تعذّرت قراءة موافقاتك. حاول مرة أخرى بعد قليل.',
 			'journalSorties.accord.horsService' => 'هذا التسجيل غير مفعّل: لا يُسجَّل أي شيء. عد إلى الحساب.',
 			'journalSorties.accord.versionPerimee' => 'تغيّر النص للتو. أعد قراءته، ثم ضع العلامة من جديد.',
 			'journalSorties.accord.eteint' => 'أوقفت الإدارة هذا التسجيل للتو: لا يُسجَّل أي شيء. عد إلى الحساب.',
-			'journalSorties.accord.merci' => 'تم حفظ موافقتك.',
+			'journalSorties.accord.merci' => 'سُجِّلت موافقتك.',
 			'journalSorties.accord.retire' => 'تم سحب موافقتك: لا يُسجَّل أي شيء بعد الآن.',
 			'journalSorties.rapport.titre' => 'الخروج من التطبيق',
 			'journalSorties.rapport.nombreCle' => 'العدد',

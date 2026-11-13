@@ -167,7 +167,18 @@ class _AccordSortiesPageState extends ConsumerState<AccordSortiesPage> {
     return PageShell(
       titre: t.journalSorties.accord.titre,
       onRetour: _retour,
-      child: corps,
+      // Sur ordinateur, ni le texte ni le bouton ne s'etirent sur toute la
+      // fenetre (garde des pages d'ordinateur, B4 et B5) : la page garde la
+      // largeur d'un formulaire, au bord de debut.
+      child: Align(
+        alignment: AlignmentDirectional.topStart,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(
+            maxWidth: AppPage.largeurFormulaire,
+          ),
+          child: corps,
+        ),
+      ),
     );
   }
 

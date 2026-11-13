@@ -23896,11 +23896,11 @@ class Traductions$journalSorties$accord$fr {
 	/// fr: 'Cochez une case pour enregistrer votre accord.'
 	String get manque => 'Cochez une case pour enregistrer votre accord.';
 
-	/// fr: 'Votre choix n'a pas été enregistré. Vérifiez votre connexion, puis réessayez.'
-	String get erreur => 'Votre choix n\'a pas été enregistré. Vérifiez votre connexion, puis réessayez.';
+	/// fr: 'Votre choix n'est pas confirmé : il est possible qu'il ne soit pas parvenu jusqu'à Rewayah. Réessayez dans un instant.'
+	String get erreur => 'Votre choix n\'est pas confirmé : il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Réessayez dans un instant.';
 
-	/// fr: 'Vos accords n'ont pas pu être lus. Vérifiez votre connexion, puis réessayez.'
-	String get lectureErreur => 'Vos accords n\'ont pas pu être lus. Vérifiez votre connexion, puis réessayez.';
+	/// fr: 'Vos accords n'ont pas pu être lus. Réessayez dans un instant.'
+	String get lectureErreur => 'Vos accords n\'ont pas pu être lus. Réessayez dans un instant.';
 
 	/// fr: 'Ce relevé n'est pas en service : rien n'est noté. Revenez au Compte.'
 	String get horsService => 'Ce relevé n\'est pas en service : rien n\'est noté. Revenez au Compte.';
@@ -61562,8 +61562,8 @@ extension on Traductions {
 			'journalSorties.accord.retirer' => 'Retirer mon accord',
 			'journalSorties.accord.enregistrer' => 'Enregistrer mon accord',
 			'journalSorties.accord.manque' => 'Cochez une case pour enregistrer votre accord.',
-			'journalSorties.accord.erreur' => 'Votre choix n\'a pas été enregistré. Vérifiez votre connexion, puis réessayez.',
-			'journalSorties.accord.lectureErreur' => 'Vos accords n\'ont pas pu être lus. Vérifiez votre connexion, puis réessayez.',
+			'journalSorties.accord.erreur' => 'Votre choix n\'est pas confirmé : il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Réessayez dans un instant.',
+			'journalSorties.accord.lectureErreur' => 'Vos accords n\'ont pas pu être lus. Réessayez dans un instant.',
 			'journalSorties.accord.horsService' => 'Ce relevé n\'est pas en service : rien n\'est noté. Revenez au Compte.',
 			'journalSorties.accord.versionPerimee' => 'Le texte vient de changer. Relisez-le, puis cochez de nouveau.',
 			'journalSorties.accord.eteint' => 'La direction vient d\'arrêter ce relevé : rien n\'est noté. Revenez au Compte.',
