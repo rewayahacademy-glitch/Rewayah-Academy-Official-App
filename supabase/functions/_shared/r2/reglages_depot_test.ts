@@ -4,6 +4,7 @@
 import { assert, assertEquals } from 'jsr:@std/assert@1'
 import { DOMAINES, type LecteurEnvironnement, prefixeSecrets, seauAttendu } from './domaines.ts'
 import {
+  corpsRefusReglage,
   NOM_REGLE_ORIGINE,
   NOM_SECRET_BASE,
   NOM_SECRET_CONFIRMATION,
@@ -115,4 +116,19 @@ Deno.test('reglages : sans reponse du seau ou sans origine, rien n est affirme',
   assertEquals(r.manquants, [])
   assertEquals(await origineAdmise(null, env(), SEAU_OUVERT), 'inconnue')
   assertEquals(await origineAdmise('pas une origine', env(), SEAU_OUVERT), 'inconnue')
+})
+
+Deno.test('reglages : le nom d un reglage n est rendu qu a la direction', () => {
+  // La direction sait lequel poser.
+  assertEquals(
+    corpsRefusReglage('stockage indisponible', 'R2_BUCKET_SUPPORTS', true),
+    { error: 'stockage indisponible', reglage: 'R2_BUCKET_SUPPORTS' },
+  )
+  // Un eleve, un tuteur, un enseignant : le refus, jamais le nom.
+  for (const role of ['student', 'guardian', 'teacher', 'controleur']) {
+    const corps = corpsRefusReglage('stockage indisponible', 'R2_BUCKET_SUPPORTS', role === 'admin')
+    assertEquals(corps, { error: 'stockage indisponible' })
+    assert(!JSON.stringify(corps).includes('R2_'))
+  }
+  assertEquals(corpsRefusReglage('confirmation indisponible', null, true), { error: 'confirmation indisponible' })
 })

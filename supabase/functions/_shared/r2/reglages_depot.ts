@@ -159,3 +159,14 @@ export async function reglagesDepot(
   if (etat === 'refusee') manquants.push(NOM_REGLE_ORIGINE)
   return { manquants, origine: etat }
 }
+
+/// Le corps d'un refus 503. Le NOM du reglage en cause n'est rendu qu'a la
+/// direction : un eleve, un tuteur ou un enseignant ne recoit jamais un nom de
+/// reglage du serveur (DEPOT-SIMPLE, relecture I2).
+export function corpsRefusReglage(
+  message: string,
+  reglage: string | null,
+  estDirection: boolean,
+): { error: string; reglage?: string } {
+  return estDirection && reglage !== null ? { error: message, reglage } : { error: message }
+}
