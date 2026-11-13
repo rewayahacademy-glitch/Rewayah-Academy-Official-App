@@ -310,21 +310,24 @@ class BlocEtapeEleve extends ConsumerWidget {
     if (etape == null) {
       // SOCLE-PROGRAMME (12/11/2026) : un eleve qui a declare savoir lire n'a
       // pas d'etape supposee ; la lecture unique le dit (« en attente de
-      // l'entretien de lecture »), la meme reponse que chez l'eleve.
-      final bool attente =
-          !etapes.hasError &&
-          ref.watch(portSuiviPedagogiqueProvider) != null &&
-          (ref
-                  .watch(suiviPedagogiqueProvider(studentId))
-                  .value
-                  ?.enAttenteEntretien ??
-              false);
+      // l'entretien de lecture »), la meme reponse que chez l'eleve. Une
+      // lecture en echec (fonction absente, reseau) est un etat d'erreur
+      // honnete (« non renseigne »), jamais « pas encore d'etape publiee ».
+      final AsyncValue<SuiviPedagogique?> lecture =
+          etapes.hasError || ref.watch(portSuiviPedagogiqueProvider) == null
+          ? const AsyncValue<SuiviPedagogique?>.data(null)
+          : ref.watch(suiviPedagogiqueProvider(studentId));
+      if (lecture.isLoading && !lecture.hasValue && !lecture.hasError) {
+        return const SizedBox.shrink();
+      }
+      final bool lectureEnEchec = lecture.hasError && !lecture.hasValue;
+      final bool attente = lecture.value?.enAttenteEntretien ?? false;
       return GroupeReglages(
         lignes: <LigneRubrique>[
           LigneRubrique(
             icone: AppIcons.coran,
             libelle: t.enseignant.eleve.etape,
-            legende: etapes.hasError
+            legende: etapes.hasError || lectureEnEchec
                 ? t.enseignant.eleve.nonRenseigne
                 : (attente
                       ? t.enseignant.eleve.etapeAttenteEntretien
