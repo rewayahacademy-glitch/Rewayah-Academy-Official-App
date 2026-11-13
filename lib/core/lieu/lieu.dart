@@ -169,6 +169,14 @@ class ResultatVille {
   final bool disponibilitesARelire;
 }
 
+/// Les fonctions du lieu ne sont pas (encore) installees sur le serveur : la
+/// personne garde l'ancien chemin (le fuseau choisi dans une liste), jamais un
+/// ecran vide.
+class LieuIndisponible implements Exception {
+  /// Cree l'exception.
+  const LieuIndisponible();
+}
+
 /// L'acces aux fonctions du lieu.
 abstract interface class PortLieu {
   /// Les villes dont le nom commence par [texte].

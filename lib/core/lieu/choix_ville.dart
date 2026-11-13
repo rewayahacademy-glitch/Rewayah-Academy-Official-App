@@ -45,13 +45,22 @@ String detailDeLaVille(Ville v) {
 /// Le choix d'une ville.
 class ChoixVille extends ConsumerStatefulWidget {
   /// Cree le choix.
-  const ChoixVille({required this.onChoisie, this.initiale, super.key});
+  const ChoixVille({
+    required this.onChoisie,
+    this.initiale,
+    this.onIndisponible,
+    super.key,
+  });
 
   /// Appelee quand la personne choisit une ville.
   final ValueChanged<Ville> onChoisie;
 
   /// La ville deja choisie, retenue d'emblee.
   final Ville? initiale;
+
+  /// Appelee quand les fonctions du lieu ne sont pas installees sur le
+  /// serveur : l'appelant montre alors son ancien chemin.
+  final VoidCallback? onIndisponible;
 
   /// Cle du champ de recherche.
   static const Key cleChamp = ValueKey<String>('choix-ville-champ');
@@ -104,6 +113,13 @@ class _EtatChoixVille extends ConsumerState<ChoixVille> {
       if (!mounted || cette != _requete) return;
       setState(() {
         _liste = liste;
+        _chargement = false;
+      });
+    } on LieuIndisponible {
+      if (!mounted || cette != _requete) return;
+      widget.onIndisponible?.call();
+      setState(() {
+        _erreur = true;
         _chargement = false;
       });
     } on Object {

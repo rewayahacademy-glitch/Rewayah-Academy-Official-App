@@ -10,25 +10,39 @@ class LieuSupabase implements PortLieu {
 
   final SupabaseClient _client;
 
+  /// PGRST202 et 42883 : la fonction n'est pas encore installee.
+  static Never _indisponible(PostgrestException e) =>
+      e.code == 'PGRST202' || e.code == '42883'
+      ? throw const LieuIndisponible()
+      : throw e;
+
   @override
   Future<List<Ville>> rechercher(String texte) async {
-    final Object? brut = await _client.rpc<Object?>(
-      'rechercher_villes',
-      params: <String, dynamic>{'p_texte': texte, 'p_limite': 20},
-    );
-    return _villes(brut);
+    try {
+      final Object? brut = await _client.rpc<Object?>(
+        'rechercher_villes',
+        params: <String, dynamic>{'p_texte': texte, 'p_limite': 20},
+      );
+      return _villes(brut);
+    } on PostgrestException catch (e) {
+      _indisponible(e);
+    }
   }
 
   @override
   Future<List<Ville>> proposees(int decalageMinutes) async {
-    final Object? brut = await _client.rpc<Object?>(
-      'villes_proposees',
-      params: <String, dynamic>{
-        'p_decalage_minutes': decalageMinutes,
-        'p_limite': 12,
-      },
-    );
-    return _villes(brut);
+    try {
+      final Object? brut = await _client.rpc<Object?>(
+        'villes_proposees',
+        params: <String, dynamic>{
+          'p_decalage_minutes': decalageMinutes,
+          'p_limite': 12,
+        },
+      );
+      return _villes(brut);
+    } on PostgrestException catch (e) {
+      _indisponible(e);
+    }
   }
 
   @override

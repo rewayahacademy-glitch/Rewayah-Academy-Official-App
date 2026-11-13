@@ -42,10 +42,9 @@ const Ville _riyad = Ville(
 );
 
 class _Port extends LieuAbsent {
-  _Port({this.propositions = const <Ville>[], this.trouvees = const <Ville>[]});
+  _Port({this.propositions = const <Ville>[]});
 
   final List<Ville> propositions;
-  final List<Ville> trouvees;
   final List<String> recherches = <String>[];
   Completer<List<Ville>>? attente;
   bool echec = false;
@@ -60,7 +59,7 @@ class _Port extends LieuAbsent {
   Future<List<Ville>> rechercher(String texte) {
     recherches.add(texte);
     if (echec) return Future<List<Ville>>.error(StateError('hors service'));
-    return Future<List<Ville>>.value(trouvees);
+    return Future<List<Ville>>.value(const <Ville>[]);
   }
 }
 
