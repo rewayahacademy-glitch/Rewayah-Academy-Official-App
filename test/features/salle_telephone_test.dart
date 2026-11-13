@@ -642,7 +642,10 @@ void main() {
             await _attendreLeRepos(tester);
             // Pilote C10 : sur la scene, rien a proteger, la capsule reste.
             expect(capsule.hitTestable(), findsOneWidget);
-            expect(_horsDe(tester, <Finder>[capsule, scene, ouvrir]), isEmpty);
+            expect(
+              _horsDe(tester, <Finder>[capsule, scene, ouvrir]),
+              isEmpty,
+            );
             await _toucher(tester);
             expect(_dock.hitTestable(), findsOneWidget);
             expect(

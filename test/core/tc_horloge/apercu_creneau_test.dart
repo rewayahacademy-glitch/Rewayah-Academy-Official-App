@@ -55,10 +55,7 @@ void main() {
 
   test('lire : une reponse illisible n est pas un apercu', () {
     expect(ApercuCreneau.lire(null), isNull);
-    expect(
-      ApercuCreneau.lire(<String, Object?>{'maintenant': '19:00'}),
-      isNull,
-    );
+    expect(ApercuCreneau.lire(<String, Object?>{'maintenant': '19:00'}), isNull);
     expect(
       ApercuCreneau.lire(<String, Object?>{
         'maintenant': '19:00',
@@ -101,44 +98,39 @@ void main() {
     expect(phrase, contains('23:30 toute l\'année'));
   });
 
-  test(
-    'les deux lectures : le creneau a Riyad, puis revu chez l enseignant',
-    () async {
-      final _Port port = _Port(<Map<String, Object?>?>[
-        _enregistre,
-        _chezParis,
-      ]);
-      final ProviderContainer container = ProviderContainer(
-        overrides: <Override>[
-          portApercuCreneauProvider.overrideWithValue(port),
-        ],
-      );
-      addTearDown(container.dispose);
-      final ResumeCreneauEnseignant? r = await container.read(
-        resumeCreneauEnseignantProvider((
-          fuseauEnseignant: 'Europe/Paris',
-          jour: 3,
-          heure: 19,
-        )).future,
-      );
-      expect(r?.heureAcademie, '21:00');
-      expect(port.appels.length, 2);
-      // Premiere lecture : l'heure de l'enseignant (mercredi 19 h) vue a La
-      // Mecque ; seconde : le creneau de La Mecque (mercredi 21 h) vu chez lui.
-      expect(port.appels[0], <String, Object?>{
-        'fuseau': fuseauAcademieDefaut,
-        'jour': 3,
-        'heure': 19,
-        'fuseauCreneau': 'Europe/Paris',
-      });
-      expect(port.appels[1], <String, Object?>{
-        'fuseau': 'Europe/Paris',
-        'jour': 3,
-        'heure': 21,
-        'fuseauCreneau': null,
-      });
-    },
-  );
+  test('les deux lectures : le creneau a Riyad, puis revu chez l enseignant',
+      () async {
+    final _Port port = _Port(<Map<String, Object?>?>[_enregistre, _chezParis]);
+    final ProviderContainer container = ProviderContainer(
+      overrides: <Override>[
+        portApercuCreneauProvider.overrideWithValue(port),
+      ],
+    );
+    addTearDown(container.dispose);
+    final ResumeCreneauEnseignant? r = await container.read(
+      resumeCreneauEnseignantProvider((
+        fuseauEnseignant: 'Europe/Paris',
+        jour: 3,
+        heure: 19,
+      )).future,
+    );
+    expect(r?.heureAcademie, '21:00');
+    expect(port.appels.length, 2);
+    // Premiere lecture : l'heure de l'enseignant (mercredi 19 h) vue a La
+    // Mecque ; seconde : le creneau de La Mecque (mercredi 21 h) vu chez lui.
+    expect(port.appels[0], <String, Object?>{
+      'fuseau': fuseauAcademieDefaut,
+      'jour': 3,
+      'heure': 19,
+      'fuseauCreneau': 'Europe/Paris',
+    });
+    expect(port.appels[1], <String, Object?>{
+      'fuseau': 'Europe/Paris',
+      'jour': 3,
+      'heure': 21,
+      'fuseauCreneau': null,
+    });
+  });
 
   for (final double largeur in <double>[320, 1440]) {
     for (final double echelle in <double>[1, 2]) {

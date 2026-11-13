@@ -199,7 +199,7 @@ NotificationContenu contenuNotificationPour(
     // pays de la personne dit l'heure exacte avant et apres ; un autre
     // changement de creneau garde la phrase generale.
     'creneau_change' =>
-      changementHeureDepuis(params, portee) ?? evenements.creneauChange,
+        changementHeureDepuis(params, portee) ?? evenements.creneauChange,
     'seance_annulee' =>
       quand == null
           ? evenements.seanceAnnulee

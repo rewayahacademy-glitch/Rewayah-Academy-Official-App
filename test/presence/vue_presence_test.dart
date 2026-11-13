@@ -98,7 +98,9 @@ void main() {
             ligne: _ligne(
               etat,
               entreLe: _maintenant.subtract(const Duration(minutes: 12)),
-              derniereTraceLe: _maintenant.subtract(const Duration(minutes: 4)),
+              derniereTraceLe: _maintenant.subtract(
+                const Duration(minutes: 4),
+              ),
             ),
             maintenant: _maintenant,
           ).etat,
@@ -209,11 +211,10 @@ void main() {
         ],
       );
 
-      expect(trie.map((PresenceParticipant p) => p.prenom).toList(), <String>[
-        'Adam',
-        'Zineb',
-        'Yacine',
-      ]);
+      expect(
+        trie.map((PresenceParticipant p) => p.prenom).toList(),
+        <String>['Adam', 'Zineb', 'Yacine'],
+      );
     });
 
     test('l\'ordre ne depend jamais de l\'etat', () {
@@ -239,12 +240,9 @@ void main() {
       );
     });
 
-    test(
-      'une presence indisponible rend une liste vide, pas une exception',
-      () {
-        expect(tableauDePresence(null), isEmpty);
-      },
-    );
+    test('une presence indisponible rend une liste vide, pas une exception', () {
+      expect(tableauDePresence(null), isEmpty);
+    });
   });
 
   group('Ma propre ligne', () {

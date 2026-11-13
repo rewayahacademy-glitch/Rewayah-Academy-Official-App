@@ -257,34 +257,37 @@ void main() {
     });
   });
 
-  group('MUSHAF-MODES (d), revu le 11/11/2026 : un focus garde retombe sur la '
-      'page du mushaf', () {
-    for (final double echelle in <double>[1, 1.3, 2]) {
-      testWidgets(
-        '320x568 x$echelle : aucune phrase d aide, aucun debordement',
-        (WidgetTester tester) async {
-          final List<String> erreurs = await monter(
-            tester,
-            mode: ModeRenduCoran.focus,
-            taille: const Size(320, 568),
-            echelle: echelle,
-          );
-          expect(erreurs, isEmpty);
-          expect(
-            find.textContaining(t.tc.coran.focus.aucunePlage),
-            findsNothing,
-          );
-          expect(find.byType(VueFocusClasse), findsNothing);
-          final Rect zone = tester.getRect(find.byType(VuePageMushaf));
-          final Rect attribution = tester.getRect(
-            find.byKey(MushafPage.attributionKey),
-          );
-          expect(zone.bottom, lessThanOrEqualTo(attribution.top + 0.5));
-          expect(tester.takeException(), isNull);
-        },
-      );
-    }
-  });
+  group(
+    'MUSHAF-MODES (d), revu le 11/11/2026 : un focus garde retombe sur la '
+    'page du mushaf',
+    () {
+      for (final double echelle in <double>[1, 1.3, 2]) {
+        testWidgets(
+          '320x568 x$echelle : aucune phrase d aide, aucun debordement',
+          (WidgetTester tester) async {
+            final List<String> erreurs = await monter(
+              tester,
+              mode: ModeRenduCoran.focus,
+              taille: const Size(320, 568),
+              echelle: echelle,
+            );
+            expect(erreurs, isEmpty);
+            expect(
+              find.textContaining(t.tc.coran.focus.aucunePlage),
+              findsNothing,
+            );
+            expect(find.byType(VueFocusClasse), findsNothing);
+            final Rect zone = tester.getRect(find.byType(VuePageMushaf));
+            final Rect attribution = tester.getRect(
+              find.byKey(MushafPage.attributionKey),
+            );
+            expect(zone.bottom, lessThanOrEqualTo(attribution.top + 0.5));
+            expect(tester.takeException(), isNull);
+          },
+        );
+      }
+    },
+  );
 
   testWidgets('lecture agrandie 320x568 x2 rtl : la valeur du reglage de '
       'taille est isolee (« 100 % », jamais « % 100 »)', (

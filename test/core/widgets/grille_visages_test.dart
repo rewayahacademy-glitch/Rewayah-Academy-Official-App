@@ -357,9 +357,10 @@ void main() {
     ) async {
       fixerVueCapture(tester, const Size(800, 600), 1);
       await tester.pumpWidget(
-        hote(<int>[
-          for (int i = 1; i <= 12; i++) i,
-        ], taille: const Size(320, 320)),
+        hote(
+          <int>[for (int i = 1; i <= 12; i++) i],
+          taille: const Size(320, 320),
+        ),
       );
       await tester.pumpAndSettle();
       expect(find.byKey(GrilleVisages.clePages), findsOneWidget);

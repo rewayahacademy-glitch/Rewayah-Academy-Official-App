@@ -78,13 +78,12 @@ void main() {
               expect(tester.takeException(), isNull, reason: 'debordement');
               final Rect boite = tester.getRect(find.byKey(_boite));
               // Tout ce qui s'ecrit reste dans le cadre.
-              for (final Element e
-                  in find
-                      .descendant(
-                        of: find.byKey(_boite),
-                        matching: find.byType(RichText),
-                      )
-                      .evaluate()) {
+              for (final Element e in find
+                  .descendant(
+                    of: find.byKey(_boite),
+                    matching: find.byType(RichText),
+                  )
+                  .evaluate()) {
                 final Rect r = tester.getRect(find.byWidget(e.widget));
                 expect(
                   boite.inflate(0.5).contains(r.topLeft) &&
@@ -206,7 +205,8 @@ void main() {
         (Widget w) =>
             w is DecoratedBox &&
             w.decoration is BoxDecoration &&
-            (w.decoration as BoxDecoration).borderRadius == AppRadius.arrondiXs,
+            (w.decoration as BoxDecoration).borderRadius ==
+                AppRadius.arrondiXs,
       ),
       findsNothing,
     );
