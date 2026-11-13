@@ -192,23 +192,27 @@ class _Continuer extends ConsumerWidget {
       children: <Widget>[
         SectionHeader(titre: t.tc.bibliotheque.sections.continuer),
         Ecart.vMd,
-        CarteRessource(
-          ressource: r,
-          etatOffline: reprise.etat,
-          // Le Coran s'ouvre dans son lecteur, comme sa carte de la planche.
-          onPress: ouvrable
-              ? () => GoRouter.of(context).go(
-                  r.resourceType == TypeRessource.quran
-                      ? Routes.eleveCoran
-                      : cheminFicheDocument(r.id),
-                )
-              : null,
-          raisonIndisponible: ouvrable
-              ? null
-              : (r.publiee
-                    ? t.tc.bibliotheque.message.horsLigneNonTelecharge
-                    : t.tc.bibliotheque.detail.sansVersion),
-        ),
+        // Une carte qui ne peut pas s'ouvrir n'est pas un bouton : elle dit
+        // pourquoi (jamais grisee).
+        if (ouvrable)
+          CarteRessource(
+            ressource: r,
+            etatOffline: reprise.etat,
+            // Le Coran s'ouvre dans son lecteur, comme sa carte de la planche.
+            onPress: () => GoRouter.of(context).go(
+              r.resourceType == TypeRessource.quran
+                  ? Routes.eleveCoran
+                  : cheminFicheDocument(r.id),
+            ),
+          )
+        else
+          CarteRessource(
+            ressource: r,
+            etatOffline: reprise.etat,
+            raisonIndisponible: r.publiee
+                ? t.tc.bibliotheque.message.horsLigneNonTelecharge
+                : t.tc.bibliotheque.detail.sansVersion,
+          ),
         Ecart.vSection,
       ],
     );
