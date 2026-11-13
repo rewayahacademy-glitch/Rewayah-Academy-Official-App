@@ -52,6 +52,8 @@ Sources : les décisions du directeur (annexe 10 du dossier maître, spécificat
 | Présence pas encore connue (une présence que l'application n'a pas pu lire ; jamais une absence, invariant J3 ; TXT-1, 02/11/2026) | État inconnu |
 | Traiter le signalement · Examiner · Transmettre · Clore ; « Message pour la famille » (ce que la direction écrit et transmet) ; « Note de l'enseignant » (lue par la direction seulement) ; en arabe, « Clore » se dit « إغلاق البلاغ », jamais « إغلاق » seul, qui est « Fermer » (D1-bis, 03/11/2026) | résumé famille, détails internes, clôturer, archiver |
 | Paie de l'enseignant (lot FINANCE-ENSEIGNANT, 06/11/2026 ; paie par Wise, directeur 06/11) : « Mes coordonnées de versement » (ce que l'enseignant saisit) · « Versements reçus » (ce que la direction a noté) · « Préparer le fichier Wise du mois » · « Noter un versement fait » · « Coordonnées manquantes » ; la paie « est versée » | « salaire » (on dit la paie), « payout », « bénéficiaire » montré à l'enseignant |
+| Point de fin de séance (la page de l'enseignant après la séance ; 13/11/2026, remplace le cahier) : « La classe a vu cela » (confirmer la partie prévue) · « Corriger » · « A suivi » (marque par défaut de chaque présent) · « À renforcer » (le seul toucher) · « Note (facultative) » | cahier de séance, compte rendu, rapport de séance, « Valider la séance », « Maîtrisé », un bouton « Acquis » sur cette page (on écrit « A suivi ») |
+| Historique des séances (« الحصص السابقة » en arabe) : ce que le système écrit seul après chaque point de fin de séance (13/11/2026, mot proposé par l'architecte) | cahier, journal de classe ; « سجلّ » en arabe (« سجلّي » est « Mon livret ») |
 | « Nouveau » (« جديد » en arabe) : le badge discret à côté du nom d'un point d'entrée (onglet, ligne, bouton d'accès) d'une fonctionnalité sortie depuis moins de 14 jours et pas encore ouverte ; lu « nouveau » au lecteur d'écran (NOUVEAUTES, directeur, 07/11/2026) | « Nouveauté ! », « New », un badge sur un contenu ou dans un parcours, un point de couleur sans mot |
 
 ## 3. Les mots du programme
@@ -75,6 +77,8 @@ Sources : les décisions du directeur (annexe 10 du dossier maître, spécificat
 | lecture enregistrée (du programme) | audio du cours, enregistrement du professeur |
 | qiraat (lectures du Coran), pour traduire القراءات : « Institut des qiraat (lectures du Coran) » (directeur, 22/10/2026) | lectures du Coran seul |
 | emploi du temps de révision | planning, programme de révision personnalisé |
+| Programme (l'onglet d'« Apprendre », qui montre le chemin ; 13/11/2026) ; sur le chemin : « étape », « examen de fin des bases », « Les 28 lettres », « Les 9 règles », « Les 17 sourates », « Cette semaine » | station, porte, niveau de jeu, points, trophée, score, classement, série, « porte d'Az-Zalzalah » |
+| Les noms des neuf règles du tajwid des bases (13/11/2026) : « Le point de sortie des lettres » · « Lettres épaisses et lettres fines » · « Brève ou longue » · « La chadda et la nasalisation » · « La qalqala » · « S'arrêter en fin de verset » · « Le lam du nom d'Allah » · « Le noun sans voyelle et le tanwin » · « Les allongements longs » (`docs/current/pedagogie/EVALUATIONS.md`, 4.1 bis) | règles avancées, couche, idhhar, idgham, iqlab, ikhfa montrés à une famille sans explication |
 | dans la langue choisie à l'inscription | les cours sont en français |
 | nos familles vivent loin des écoles coraniques | le nom d'un pays ou d'un continent |
 

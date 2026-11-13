@@ -16,6 +16,10 @@ Partie « scénarios » de la charte de Rewayah Academy, rédigée le 12/11/2026
 
 **Chacun a un chemin clair.** Chaque élève a une étape, un objectif, une date limite et un travail à préparer. Il sait où il en est, où il va, et pour quand [DÉCIDÉ 14/10].
 
+**L'enseignant ne remplit pas de cahier.** À la fin de chaque séance, le point de fin de séance tient en une page : la partie prévue ce jour, que l'enseignant confirme ou corrige ; les présents, tous « A suivi », dont il ne touche que ceux qui sont « À renforcer » ; une note facultative. Le système en tire seul le travail, les messages et l'historique des séances [ARBITRÉ 13/11 ; charte, partie 5].
+
+**Le programme se montre comme un chemin** : quatre étapes et l'examen, les objectifs qui se remplissent, les 28 lettres, les 9 règles du tajwid des bases et les 17 sourates, sans classement ni points [ARBITRÉ 13/11 ; charte, partie 10 bis].
+
 **L'école donne les moyens de rattraper seul** : l'endroit exact où la classe s'est arrêtée, la lecture enregistrée par le directeur, le travail à préparer et l'emploi du temps de révision. L'élève rattrape avant le cours suivant [DÉCIDÉ 14/10].
 
 **Fermeté et douceur.** Rewayah vend la rigueur et l'assiduité que l'élève n'arrive pas à s'imposer seul [DÉCIDÉ 14/10]. On ne promet pas de souplesse. Mais on ne compare jamais deux élèves, on n'humilie jamais, et on peut toujours se rattraper.
@@ -50,7 +54,7 @@ Même gabarit pour toutes les fiches. Une fiche ne dit que ce qui est propre au 
 | Rythme, date limite | Valeurs des 6-9 ans (commun ci-dessus). **Le tuteur porte la date limite, pas l'enfant** [ARBITRÉ]. Séance de 60 minutes avec une courte pause [DÉCIDÉ 12/10]. |
 | Ce qu'il voit | L'Interface guidée par défaut [retenu au registre du 14/10] : son étape en images, ses sourates, les dates de l'école, « Rattraper ce cours ». Jamais sa date limite ni son rythme, jamais d'argent, de note ni de comparaison. Aucune notification : tout passe par le tuteur. |
 | Le tuteur | Il le connecte au calme, suit l'emploi du temps de révision, fait « Rattraper ce cours » avec lui et marque « J'ai rattrapé ce cours ». Il veille à la régularité ; il n'enseigne pas. |
-| L'enseignant | Il enseigne, écoute chaque enfant, confirme la position après la séance. |
+| L'enseignant | Il enseigne, écoute chaque enfant, fait le point de fin de séance. |
 | Risques, réponse | Absences liées à l'organisation de la famille : alertes au tuteur (3.2). |
 
 **Fille ou garçon : ce qui change vraiment.** La classe est non mixte par défaut, à tout âge [DÉCIDÉ 10/10] ; seule la direction peut rendre une classe mixte, par un réglage motivé [DÉCIDÉ 29/10]. Une classe de filles a une enseignante. En remplacement d'une seule séance, une enseignante est préférée, sans être exigée [DÉCIDÉ 07/11]. **Ce qui ne change pas** : programme, étapes, durées, dates limites, critères de maîtrise, mots du résultat.
@@ -136,7 +140,7 @@ Même gabarit pour toutes les fiches. Une fiche ne dit que ce qui est propre au 
 | Motive, freine | Motive : prier seul. Freine : isolement, peur de mal faire. |
 | Son entrée | Étape 1, Al-Fatiha dès la première semaine [DÉCIDÉ 13/10]. Bourse possible de 6 mois [règle retenue au registre du 14/10, partie finance]. |
 | Ce qu'il voit | Selon son âge ; les illustrations des ablutions et de la prière validées par le directeur, dès qu'elles existent [DÉCIDÉ 14/10]. |
-| L'enseignant | Il montre la prière et les ablutions en pratique, sans fiqh détaillé [DÉCIDÉ 13/10]. |
+| L'enseignant | Il montre la prière et les ablutions en pratique, sans fiqh détaillé [DÉCIDÉ 13/10], selon `CONTENU-PRIERE-ET-ABLUTIONS.md` : la référence est ce qui est enseigné en Arabie saoudite, sans question d'école juridique [DÉCIDÉ 13/11]. |
 | Risques, réponse | Découragement : la direction lui écrit un mot d'accueil et prend de ses nouvelles après un mois [ARBITRÉ]. |
 
 ### 2.9 Élève qui reprend après une longue interruption
@@ -226,8 +230,8 @@ Réglages comptés sur les 12 derniers cours prévus pour l'élève (4 semaines)
 
 | | |
 |---|---|
-| Système | Il montre à l'enseignant les points passés « Acquis » puis « Stable ». |
-| Enseignant | Il propose un petit bilan anticipé, pendant un cours normal. |
+| Système | Il montre à l'enseignant les points passés « Acquis » puis « Stable », et propose le petit bilan dès que les objectifs de l'étape sont acquis [ARBITRÉ 13/11]. |
+| Enseignant | Il confirme d'un geste le petit bilan anticipé, ou le marque depuis la fiche, et le fait passer pendant un cours normal. |
 | Direction | Elle confirme « Étape validée ». S'il existe une classe plus avancée (même âge, même genre, horaire possible, place libre), elle propose le passage au début du mois suivant. Sinon, il reste dans sa classe et avance sur sa propre étape : travail à préparer, lecture enregistrée et tour de lecture portent sur l'étape suivante [ARBITRÉ]. |
 | Délai | Petit bilan sous 2 semaines [ARBITRÉ]. |
 | Jamais | Le freiner ; sauter une vérification ; le donner en exemple. |
@@ -245,7 +249,7 @@ Réglages comptés sur les 12 derniers cours prévus pour l'élève (4 semaines)
 
 | | |
 |---|---|
-| Système | Il signale à l'enseignant les points restés « À renforcer » 3 semaines [ARBITRÉ, réglage]. |
+| Système | Il signale à l'enseignant une partie restée « À renforcer » à deux points de fin de séance de suite [ARBITRÉ 13/11, réglage]. |
 | Enseignant | Il choisit « Renforcer » ou « Suspendre le nouveau » ; si la classe ne convient pas, il le dit à la direction. |
 | Direction | Entretien avec la famille ; si besoin, classe de son niveau réel avant la date limite. |
 | Délai | Direction : 14 jours [ARBITRÉ]. |
@@ -364,7 +368,7 @@ Le directeur enregistre une lecture de tout le programme ; l'enseignant n'enregi
 
 1. **Les lettres**, seules puis dans leurs formes (étape 1, celle de tous les élèves aujourd'hui).
 2. **Les voyelles**, jusqu'à la chadda (étape 2).
-3. **Les paroles de la prière et les invocations**, une fois leur liste validée par le directeur (contenu attendu : `CONTENUS-ATTENDUS.md`).
+3. **Les paroles de la prière**, une fois `CONTENU-PRIERE-ET-ABLUTIONS.md` relu par le directeur, dans l'ordre de ce fichier (le plus court d'abord) ; puis **les invocations**, une fois leur liste déposée (`CONTENUS-ATTENDUS.md`).
 4. **Les sourates courtes** : Al-Fatiha, An-Nâs, Al-Falaq, Al-Ikhlâs, puis d'Al-Masad à Az-Zalzalah, verset par verset.
 
 Exception : dès qu'un élève de 10 ans ou plus est inscrit, Al-Fatiha passe juste après les lettres, car il l'étudie dès la première semaine [ARBITRÉ].
@@ -374,12 +378,12 @@ Exception : dès qu'un élève de 10 ans ou plus est inscrit, Al-Fatiha passe ju
 ### 4.b Le parcours « Rattraper ce cours », pas à pas
 
 1. Après le cours manqué, « Rattraper ce cours » apparaît sur l'accueil de l'élève et du tuteur.
-2. **Où la classe s'est arrêtée** : la page (plus tard, page et ligne) confirmée par l'enseignant après la séance.
+2. **Où la classe s'est arrêtée** : la page (plus tard, page et ligne) de la partie vue, confirmée par l'enseignant au point de fin de séance.
 3. **Quoi écouter** : les lectures enregistrées des leçons du jour, dans l'ordre.
 4. **Quoi répéter, combien de fois** : écouter puis répéter à voix haute ; réglage, 3 écoutes et 5 répétitions par défaut [ARBITRÉ].
 5. **Le travail à préparer** de la classe, le même pour lui.
 6. **Il le dit** : bouton « J'ai rattrapé ce cours ». Avant 10 ans, le tuteur le marque [ARBITRÉ].
-7. **Au cours suivant**, l'enseignant voit à côté du nom une marque discrète : « a rattrapé » ou « n'a pas rattrapé ». Dans le tour normal de lecture, il l'écoute une minute au plus (réglage). Il ne saisit rien, sauf s'il note un point « À renforcer » par son geste habituel de fin de séance ; aucun geste de plus pour l'enseignant [ARBITRÉ].
+7. **Au cours suivant**, l'enseignant voit à côté du nom une marque discrète : « a rattrapé » ou « n'a pas rattrapé ». Dans le tour normal de lecture, il l'écoute une minute au plus (réglage). Il ne saisit rien, sauf s'il touche « À renforcer » pour cet élève au point de fin de séance ; aucun geste de plus pour l'enseignant [ARBITRÉ].
 8. **La tâche se ferme** quand l'élève a marqué, ou au deuxième cours suivi sans marquage ; elle compte alors « non rattrapé » pour les règles du moteur [ARBITRÉ].
 9. **La classe ne s'arrête pas.** Si une minute ne suffit pas, le reste devient travail à préparer.
 
@@ -432,7 +436,7 @@ Une règle, une réponse, partout. « Tous » : les 9 profils.
 | Mineur : messages au tuteur ; jamais d'argent face à l'enfant | ARBITRÉ, DÉCIDÉ | 2.1 à 2.3, 2.7 | 3.1 à 3.6, 3.18, 3.20 |
 | Ni classement, ni note brute, ni récompense matérielle, ni série punitive | ARBITRÉ | Tous | 3.2, 3.4, 3.7, 3.10 |
 | Aucune étiquette de risque montrée à l'élève | ARBITRÉ | Tous | 3.5, 3.9 |
-| L'enseignant confirme, il ne saisit pas | ARBITRÉ | Tous | 3.2, 3.4, 3.5, 4.b |
+| L'enseignant confirme, il ne saisit pas : le point de fin de séance remplace le cahier | ARBITRÉ ; point de fin de séance ARBITRÉ 13/11 | Tous | 3.2, 3.4, 3.5, 3.9, 4.b |
 | Une alerte : un responsable, une action, un délai | ARBITRÉ | Tous | 3.2 à 3.6, 3.9, 3.18 |
 | Classe non mixte ; enseignante pour filles et femmes | DÉCIDÉ 10/10, 29/10 | 2.1 à 2.4, 2.7, 2.8 | 3.7, 3.11, 3.15 |
 | Changer d'âge, d'horaire ou d'enseignant ne change pas le contenu | DÉCIDÉ 14/10 | Tous | 3.11, 3.12 |
@@ -446,4 +450,4 @@ Deux points proches, tranchés une fois : après une pause d'un mois, pas d'entr
 
 ## 6. Ce qui reste à recevoir
 
-Aucune question n'est posée au directeur : toutes ont été arbitrées le 12/11/2026 (`ARBITRAGES.md`). Ce qu'il déposera quand il le pourra (livre de lecture, enregistrements, liste des paroles de la prière, des ablutions et des invocations, adab) est dans `CONTENUS-ATTENDUS.md`, avec ce que l'école fait en attendant.
+Aucune question n'est posée au directeur : toutes ont été arbitrées le 12/11/2026 (`ARBITRAGES.md`). Ce qu'il déposera quand il le pourra (enregistrements, liste des invocations, illustrations, adab) et ce qu'il relira (`CONTENU-PRIERE-ET-ABLUTIONS.md`, le cahier des charges du livre de lecture) sont dans `CONTENUS-ATTENDUS.md`, avec ce que l'école fait en attendant.

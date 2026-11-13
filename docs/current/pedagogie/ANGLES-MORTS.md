@@ -44,15 +44,15 @@ Chaque fiche a le même gabarit : le sujet, pourquoi il pèse, ce qui existe dé
 
 - **Le sujet.** Les gestes et certaines paroles de la prière et des ablutions diffèrent selon les écoles, par exemple la position des mains.
 - **Pourquoi il pèse.** Le programme enseigne la prière et les ablutions aux enfants, et les familles y sont sensibles. Un document qui ne dit pas quelle voie il suit peut heurter une famille, ou contredire ce que le père enseigne à la maison.
-- **Ce qui existe déjà.** Le directeur a décidé que l'enseignant montre la prière en pratique sans fiqh détaillé (13/10), et la liste validée des paroles est un contenu attendu (n° 3 de `CONTENUS-ATTENDUS.md`). Aucune mention de l'école suivie n'a été trouvée dans le dépôt.
-- **Position de l'architecte.** L'architecte ne tranche pas un point de fiqh. Chaque document de prière et d'ablutions porte la mention de l'école suivie. L'école dit clairement aux familles, à l'inscription, quelle voie elle enseigne.
-- **Suite.** Contenu attendu du directeur. Champ « école suivie » sur les documents de la bibliothèque.
+- **Ce qui existe déjà.** Le directeur a décidé que l'enseignant montre la prière en pratique sans fiqh détaillé (13/10). **Fermé le 13/11/2026** : le directeur a décidé que les paroles de la prière et les ablutions sont publiques et connues, sans question d'école juridique pour des débutants, avec pour référence ce qui est enseigné en Arabie saoudite ; les spécialisations sont pour les avancés.
+- **Position de l'architecte.** Le texte est écrit dans `CONTENU-PRIERE-ET-ABLUTIONS.md`, qui dit en tête la référence suivie. L'école le dit aussi aux familles, à l'inscription.
+- **Suite.** Relecture du directeur (`CONTENUS-ATTENDUS.md`, n° 3). Plus de champ « école suivie » à prévoir pour les bases.
 
 ### A5. L'argent et le programme se touchent
 
 - **Le sujet.** Trois points relient l'argent au programme : la pause et l'arrêt temporaire, l'accès suspendu pour impayé, et la paie de l'enseignant versée par élève présent.
 - **Pourquoi il pèse.** Une pause d'un mois et un « arrêt temporaire » sont réservés par le directeur, et leurs effets sur la date limite doivent être les mêmes partout. Un accès suspendu pour impayé ne doit pas pénaliser l'élève sur son parcours. Un enseignant payé par élève présent perd de l'argent quand un élève est absent ou en pause, ce qui peut le pousser à ne pas signaler, ou à garder un élève qui devrait changer de classe.
-- **Ce qui existe déjà.** La charte fixe déjà « pas de paie pour un élève absent » (DÉCIDÉ 06/11) et la paie d'une séance qui attend la confirmation de la position (DÉCIDÉ 05/11). Le lot 2 traite l'interruption temporaire comme une pause pour la pédagogie seulement. En revanche, la mémoire finance (`07_MEMOIRE_PEDAGOGIE_FINANCE.md`) vise un professeur « non pénalisé par le faible remplissage commercial » : les deux textes ne disent pas la même chose pour l'absence d'un élève et doivent être harmonisés.
+- **Ce qui existe déjà.** La charte fixe déjà « pas de paie pour un élève absent » (DÉCIDÉ 06/11) et la paie d'une séance qui attend le point de fin de séance, qui confirme la partie vue (DÉCIDÉ 05/11). Le lot 2 traite l'interruption temporaire comme une pause pour la pédagogie seulement. En revanche, la mémoire finance (`07_MEMOIRE_PEDAGOGIE_FINANCE.md`) vise un professeur « non pénalisé par le faible remplissage commercial » : les deux textes ne disent pas la même chose pour l'absence d'un élève et doivent être harmonisés.
 - **Position de l'architecte.** Pendant un accès suspendu pour impayé, la date limite de l'élève ne court pas : elle recule, et l'enfant ne voit jamais la raison. Aucun indicateur pédagogique ne dépend d'un geste dont l'enseignant tire un gain. La présence vient de l'application, jamais de lui. Ce risque est signalé à la direction comme un point à surveiller.
 - **Suite.** À traiter avec le lot d'harmonisation de l'argent du directeur.
 
@@ -88,7 +88,7 @@ Chaque fiche a le même gabarit : le sujet, pourquoi il pèse, ce qui existe dé
 
 - **Le sujet.** La charte demande à l'enseignant une façon de corriger, une échelle à trois états et des gestes précis, qu'un enseignant recruté ne connaît pas.
 - **Pourquoi il pèse.** Si deux enseignants jugent différemment la même récitation, les résultats ne veulent plus rien dire et les familles le voient.
-- **Ce qui existe déjà.** La charte et la grille commune d'`EVALUATIONS.md` existent. Aucun parcours d'accueil de l'enseignant n'est prévu dans les dix lots.
+- **Ce qui existe déjà.** La charte et la grille commune d'`EVALUATIONS.md` existent. Aucun parcours d'accueil de l'enseignant n'est prévu dans les treize lots.
 - **Position de l'architecte.** Un parcours d'accueil dans l'application : la charte en version courte, la grille d'évaluation, des exemples. Puis un essai observé, puis un accompagnement individuel. Deux enseignants doivent juger pareil la même récitation.
 - **Suite.** Lot « ACCUEIL-ENSEIGNANT ».
 
@@ -120,7 +120,7 @@ Chaque fiche a le même gabarit : le sujet, pourquoi il pèse, ce qui existe dé
 
 - **Le sujet.** La charte prévoit des bilans avec la famille, mais ni le lieu, ni la prise de rendez-vous, ni la trace.
 - **Pourquoi il pèse.** Sans lieu ni trace, chaque bilan se fait comme il vient, par appel ou par message, et personne ne peut vérifier qu'il a eu lieu.
-- **Ce qui existe déjà.** Les bilans sont cités dans la charte et le moteur. Aucune salle de bilan ni prise de rendez-vous n'est prévue dans les dix lots.
+- **Ce qui existe déjà.** Les bilans sont cités dans la charte et le moteur. Aucune salle de bilan ni prise de rendez-vous n'est prévue dans les treize lots.
 - **Position de l'architecte.** Le bilan se tient dans une salle de l'application, sur rendez-vous proposé par le système, et laisse une trace courte lue par la famille.
 - **Suite.** Lot après les évaluations (après le lot 8).
 
@@ -185,7 +185,7 @@ Chaque fiche a le même gabarit : le sujet, pourquoi il pèse, ce qui existe dé
 | A1. Qui est « la direction » ? | A | Lot « RÔLES-ET-CHARGE », avant le lot 7 |
 | A2. Les messages arrivent-ils vraiment ? | A | Lot « RÉCEPTION-PROUVÉE », avant le lot 7 |
 | A3. Hafs ou Warsh | A | Champ dans le lot 3 ; contenu attendu du directeur |
-| A4. École suivie pour la prière et les ablutions | A | Contenu attendu du directeur ; champ « école suivie » |
+| A4. École suivie pour la prière et les ablutions | A | Fermé le 13/11/2026 (référence : Arabie saoudite) ; relecture du directeur |
 | A5. L'argent et le programme | A | Avec le lot d'harmonisation de l'argent |
 | A6. La langue des familles | A | Lot « LANGUES », en attente d'un ordre du directeur |
 | B1. Protection de l'enfance | B | Document « PROTECTION-DE-L-ENFANCE », puis lot |

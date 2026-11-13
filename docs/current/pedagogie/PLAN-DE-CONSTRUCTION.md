@@ -6,7 +6,7 @@
 >
 > **Fait à connaître (lu dans le code du garde-fou le 12/11/2026).** Depuis la décision du directeur du 29/10/2026, `.claude/hooks/garde.py` laisse un agent ouvrir une pull request vers `main` et la fusionner par les outils GitHub, CI verte exigée. Il refuse toujours : tout push direct vers `main`, tout push forcé, la fusion automatique, le déclenchement d'un workflow, et les écritures dans `.github/`, `pubspec.yaml`, `vercel.json` et le garde-fou lui-même. Le texte de `CLAUDE.md` qui dit « toute PR vers main ou fusion de PR » est périmé sur ce point. Le garde-fou n'a pas été modifié pour ce projet.
 
-Ce plan découpe en dix lots, dans l'ordre, le passage de l'application d'aujourd'hui à la charte (`CHARTE-ECOLE.md`, `REGLAGES.md`, `SCENARIOS-ELEVES.md`, `EVALUATIONS.md`, `MOTEUR-DE-SUIVI.md`). L'ordre est imposé par l'architecte.
+Ce plan découpe en treize lots, dans l'ordre, le passage de l'application d'aujourd'hui à la charte (`CHARTE-ECOLE.md`, `REGLAGES.md`, `SCENARIOS-ELEVES.md`, `EVALUATIONS.md`, `MOTEUR-DE-SUIVI.md`). L'ordre est imposé par l'architecte. Les lots 11 à 13 ont été ajoutés le 13/11/2026 (`ARBITRAGES.md`, partie 9) ; ils gardent leur numéro pour ne pas changer celui des autres, et leur place dans l'ordre est dite ci-dessous.
 
 ## L'état mesuré en production le 12/11/2026
 
@@ -29,16 +29,19 @@ Ce plan découpe en dix lots, dans l'ordre, le passage de l'application d'aujour
 | 7 | MOTEUR-1 | gros | 1, 2, 3, 6 | aucune |
 | 8 | EVALUATIONS-ET-LIVRET | gros | 1, 5, 6 | aucune |
 | 9 | MOTEUR-2 | moyen | 7, 8 | aucune |
-| 10 | NETTOYAGE | moyen | 1 à 9 | aucune |
+| 10 | NETTOYAGE | moyen | 1 à 9, 11, 12 | aucune |
+| 11 | POINT-DE-SEANCE | moyen | 1 ; se construit avec le lot 6, avant lui | aucune |
+| 12 | RETRAIT-CAHIER | petit | 11 prouvé en production | aucune |
+| 13 | CHEMIN | moyen | 1, 5, 6, 11 ; la célébration de l'attestation vient du lot 8 | aucune |
 
-**En parallèle** : les lots 2 et 3 dès que le lot 1 est fusionné ; puis les lots 4 et 6 ; puis les lots 7 et 8. Le lot 5 attend 3 et 4 ; le lot 7 attend 1, 2, 3 (lectures enregistrées de « Rattraper ce cours ») et 6 ; le lot 9 attend 7 et 8 ; le lot 10 vient en dernier.
+**En parallèle** : les lots 2 et 3 dès que le lot 1 est fusionné ; puis les lots 4 et 11 ; puis le lot 6 ; puis les lots 7 et 8. Le lot 5 attend 3 et 4 ; le lot 6 attend le lot 11, qui lui donne ses observations ; le lot 12 suit le lot 11 dès que le directeur l'a prouvé en production ; le lot 13 attend 5, 6 et 11 ; le lot 7 attend 1, 2, 3 (lectures enregistrées de « Rattraper ce cours ») et 6 ; le lot 9 attend 7 et 8 ; le lot 10 vient en dernier.
 
 ## Lot 1 · SOCLE-PROGRAMME
 
 - **But** : le programme des bases existe en données, fidèle aux décisions, publié, et chaque élève a une seule étape lue de la même façon par tous.
 - **Ce qu'on voit de neuf** : la direction voit le programme des bases publié (4 étapes, objectifs, durée prévue et date limite de chaque étape par tranche d'âge) et le niveau de chaque classe ; l'élève et le tuteur voient son étape, la date limite de cette étape (le tuteur seul avant 10 ans) et l'horizon du niveau ; l'enseignant voit l'étape de chaque élève à côté de son nom, la même partout.
 - **Réutilisé** : `programme_versions` et les étapes existantes (la version en brouillon est complétée puis publiée) ; `suivi_pedagogique_eleve` et `private.etape_eleve`, qui deviennent la seule lecture ; `private.sourates_des_bases` ; les codes techniques d'étape comme identité stable. Branche `claude/parcours-inscrits-main` : **reprise** telle quelle, en tête du lot, parce qu'elle corrige l'accueil des inscrits déjà dans une classe et ne touche pas au programme ; avant installation, comparer la définition de `v_parcours_onboarding` en production, comme son fichier l'exige. Branche `claude/ma-progression-main` : **adaptée** ; on garde l'idée d'une lecture serveur unique qui appelle `suivi_pedagogique_eleve` et ses tests de refus (aucune lecture hors de l'élève, de son tuteur et de ses enseignants) ; on écarte sa table `programme_etape_reglages`, parce que les heures de révision sont un réglage par âge (`REGLAGES.md`), pas par étape, et qu'une seconde clé d'étape contredirait l'arbitrage n° 1.
-- **Créé** : le fait unique « étape en cours » par élève (étape, date d'entrée dans l'étape, date limite de l'étape ; l'horizon du niveau en est déduit), créé seul à l'entrée en classe (étape 1 pour un débutant, sinon celle fixée par la direction après l'entretien de lecture) ; le niveau de chaque classe, posé seul ; la durée prévue et la date limite de chaque étape par tranche d'âge (tableau 1 bis) ; l'archivage automatique de la version précédente à la publication.
+- **Créé** : le fait unique « étape en cours » par élève (étape, date d'entrée dans l'étape, date limite de l'étape ; l'horizon du niveau en est déduit), créé seul à l'entrée en classe (étape 1 pour un débutant, sinon celle fixée par la direction après l'entretien de lecture) ; le niveau de chaque classe, posé seul ; la durée prévue et la date limite de chaque étape par tranche d'âge (tableau 1 bis) ; l'archivage automatique de la version précédente à la publication ; les objectifs des étapes, dont les neuf règles du tajwid des bases (`EVALUATIONS.md`, 4.1 bis, ARBITRÉ 13/11) ; les parties du programme (leçon ou page, sourate), chacune avec son objectif, ses lettres et sa règle, que le point de fin de séance et le chemin lisent ; tant que le livre n'est pas déposé, une partie est une page ou une sourate.
 - **Retiré** : rien encore (les anciens calculs restent jusqu'au lot 10, mais plus aucun écran ne les lit).
 - **Migrations** : oui, additives ; aucune suppression.
 - **Preuve** : le directeur ouvre en production la fiche d'un des 5 élèves comme direction, comme enseignant et comme tuteur, et lit la même étape et la même date limite d'étape ; il voit le programme des bases publié, une seule version publiée, et le niveau de chacune des 3 classes.
@@ -86,7 +89,7 @@ Ce plan découpe en dix lots, dans l'ordre, le passage de l'application d'aujour
 ## Lot 6 · SUIVI-UNIQUE
 
 - **But** : la fiche de suivi de l'élève est un seul objet, avec une seule position, une seule échelle et un seul travail, atteint par des raccourcis.
-- **Ce qu'on voit de neuf** : l'enseignant confirme la position en moins de 20 secondes et ne signale que les exceptions ; « Stable » apparaît seul quand il est mérité ; le travail confirmé arrive dans « Avant le prochain cours » et dans l'emploi du temps de révision ; l'enseignant, la direction et le tuteur ouvrent la même fiche depuis le profil de l'élève, et depuis la classe et la salle.
+- **Ce qu'on voit de neuf** : la fiche lit les observations écrites par le point de fin de séance (lot 11) ; « Stable » apparaît seul quand il est mérité ; le travail confirmé arrive dans « Avant le prochain cours » et dans l'emploi du temps de révision ; l'enseignant, la direction et le tuteur ouvrent la même fiche depuis le profil de l'élève, et depuis la classe et la salle.
 - **Réutilisé** : `classe_position_reprise` (absorbe `classe_position_support`) ; `lesson_reports` et `cahier_observations` ; `sourates_validees` ; `learning_assignment`, désormais écrit à la confirmation ; `rythme_classe` pour l'indicateur de classe. Branche `claude/corriger-sourate-travail` : **reprise et adaptée** ; le retrait d'une sourate par l'enseignant auteur, avec motif et trace, est conforme à la charte ; son délai codé en dur (24 heures, décision du garde-cap du 11/11) devient le réglage de `REGLAGES.md` (7 jours, ARBITRÉ le 12/11), lu dans `app_config`. Branche `claude/corriger-sourate-direction-travail` : **écartée** ; elle donne à la direction le pouvoir de retirer une sourate sans limite de temps, alors que la direction voit sans valider (DÉCIDÉ 11/11) et que seule l'erreur de l'enseignant auteur se corrige ; on ne garde que la lecture des sourates de la classe sur la fiche de classe. Branche `claude/ma-progression-ecran-travail` : voir lot 5.
 - **Créé** : la fiche de suivi unique ; « Stable » calculé par le serveur ; l'écriture du travail dans `learning_assignment` ; les raccourcis.
 - **Retiré** : les échelles du cahier à 4 niveaux et 6 faiblesses et la projection famille à 2 états (plus lues) ; le second circuit du travail (`travail_maison` n'est plus lu) ; la carte de suivi recopiée dans « Suivi ».
@@ -106,7 +109,7 @@ Ce plan découpe en dix lots, dans l'ordre, le passage de l'application d'aujour
 ## Lot 8 · EVALUATIONS-ET-LIVRET
 
 - **But** : le petit bilan, l'examen de fin des bases, les résultats publiés, la réévaluation et l'attestation existent, et « Mon livret » les montre.
-- **Ce qu'on voit de neuf** : l'enseignant marque « prêt pour un petit bilan » et le fait passer en cours normal ; la direction planifie l'examen et désigne l'évaluateur ; le résultat est publié en une des trois phrases et trois lignes ; la famille demande une réévaluation ; l'attestation des bases, signée par le directeur, se télécharge et se vérifie par son code ; « Mon livret » montre résultats, bilans et attestations.
+- **Ce qu'on voit de neuf** : l'enseignant marque « prêt pour un petit bilan » depuis la fiche (la proposition par le système arrive avec la règle 18, au lot 9) et le fait passer en cours normal ; la direction planifie l'examen et désigne l'évaluateur ; le résultat est publié en une des trois phrases et trois lignes ; la famille demande une réévaluation ; l'attestation des bases, signée par le directeur, se télécharge et se vérifie par son code ; « Mon livret » montre résultats, bilans et attestations.
 - **Réutilisé** : `evaluations`, `evaluation_publications`, `publier_evaluation` ; `features/admin_pedagogie_evaluations` ; l'onglet du lot 5.
 - **Créé** : la suite des trois résultats, la réévaluation, la table des attestations et sa page de vérification sans données personnelles, l'onglet « Mon livret » rempli.
 - **Retiré** : le compte rendu jamais alimenté (`seance_resumes`, `enregistrer_resume_seance`, `resume_seance_famille`) n'est plus lu ; il est remplacé par le livret et le message de la semaine.
@@ -132,6 +135,37 @@ Ce plan découpe en dix lots, dans l'ordre, le passage de l'application d'aujour
 - **Retiré** : les cinq calculs de l'étape ; les six représentations de la reprise ramenées à une ; les anciennes échelles ; `travail_maison` ; `seance_resumes` et ses fonctions ; `etagere_supports` ; les restes orphelins (`makharij_findings`, `tendance_feedback_v`, `TendanceFeedbackClasse`, `progressionGroupeProvider`, `anomaliesGroupeProvider`, `tc_flux_academique`, `port_post_cours`).
 - **Migrations** : oui, **avec suppressions** ; seulement après inventaire, sauvegarde et accord du directeur sur la liste précise ; le directeur colle lui-même les fichiers qui contiennent une suppression (page privée générée par `tool/page_migrations/generer.py`).
 - **Preuve** : le directeur refait en production les preuves des lots 1, 6 et 7 après le nettoyage, et tout marche comme avant.
+
+## Lot 11 · POINT-DE-SEANCE
+
+- **But** : le point de fin de séance remplace la saisie du cahier : une page, moins de 20 secondes, et le système fait le reste (charte, partie 5 ; moteur, règle 35 ; ARBITRÉ 13/11 sur la proposition du directeur).
+- **Ce qu'on voit de neuf** : à la fin de la séance, l'enseignant voit la partie prévue ce jour et confirme « La classe a vu cela » ou corrige d'un toucher ; il voit les présents, tous « A suivi », et ne touche que ceux qui sont « À renforcer » ; il peut ajouter une note. Le tuteur (ou l'adulte) reçoit le travail ciblé d'un élève « À renforcer » ; l'historique des séances se remplit seul et se lit par l'élève, le tuteur, l'enseignant et la direction, à leur lieu d'origine (charte, partie 10).
+- **Réutilisé** : `lesson_reports` et `cahier_observations` (les tables reçoivent le point) ; `classe_position_reprise` ; `learning_assignment`, écrit à l'envoi du point ; la paie qui attend la confirmation (DÉCIDÉ 05/11) ; les parties du programme du lot 1 ; `cahier_en_retard` pour la règle 24. Avant d'écrire, chercher dans `features/cahier` ce qui se garde (l'endroit tiré de la page affichée).
+- **Créé** : la page du point de fin de séance ; la partie prévue calculée par le serveur (programme, position, calendrier) ; le passage déjà vu tiré au hasard (réglage de `REGLAGES.md`) ; l'écriture des observations « Acquis » (« A suivi ») et « À renforcer », marquées non préparées pour le passage tiré ; la règle 35, sauf ses messages ; l'historique des séances, en lecture seule. Les messages de la règle 35 partent dès le lot 7 (plafond, heures calmes, mineurs) ; d'ici là, le travail ciblé est dans la carte seulement. Les règles 14 (deux « À renforcer » de suite) et 18 (proposition « Prêt pour un petit bilan ») lisent ces observations ; elles tournent au lot 9.
+- **Retiré** : rien dans ce lot ; la saisie du cahier reste en place jusqu'au lot 12, mais plus aucun écran neuf ne la lit.
+- **Migrations** : oui, additives ; aucune suppression.
+- **Preuve** : après un vrai cours, le directeur, comme enseignant, fait le point en moins de 20 secondes sans toucher un élève ; il voit dans la fiche de chaque présent une observation « Acquis » et le travail « relire la partie vue » ; à un cours suivant, il touche un élève « À renforcer » et voit le travail ciblé chez le tuteur et la ligne dans l'historique des séances.
+
+## Lot 12 · RETRAIT-CAHIER
+
+- **But** : retirer les écrans de l'ancien cahier de séance, une fois le point de fin de séance prouvé en production.
+- **Ce qu'on voit de neuf** : l'enseignant n'a plus qu'un chemin après la séance, le point de fin de séance.
+- **Réutilisé** : rien de neuf.
+- **Créé** : rien.
+- **Retiré** : les écrans de saisie du cahier (`features/cahier` et leurs routes), après inventaire de ce qui les appelle ; les tables restent (elles reçoivent le point) jusqu'au lot 10. Un module en double d'un module branché ne se supprime qu'avec l'accord du directeur (`CLAUDE.md`) : la liste précise lui est présentée avant.
+- **Migrations** : non.
+- **Preuve** : le directeur, comme enseignant, ne trouve plus l'ancien cahier ; le point de fin de séance, la fiche et l'historique marchent comme avant.
+
+## Lot 13 · CHEMIN
+
+- **But** : l'onglet Programme d'« Apprendre » devient le chemin (charte, partie 10 bis ; ARBITRÉ 13/11 sur la demande du directeur).
+- **Ce qu'on voit de neuf** : quatre étapes et l'examen de fin des bases dessinés comme un chemin, l'étape en cours éclairée ; les objectifs qui se remplissent (À renforcer, Acquis, Stable) ; les trois collections (les 28 lettres, les 9 règles, les 17 sourates) ; la régularité de la semaine, sans reproche ; une célébration à chaque étape validée et à l'attestation des bases. Le tuteur voit le chemin de son enfant et ce qu'il y a à faire cette semaine ; l'enseignant, sa classe avec l'étape de chacun ; la direction, toutes les classes.
+- **Réutilisé** : l'onglet Programme du lot 5 (un hub, pas de second écran) ; le fait « étape en cours » (lot 1) ; les objectifs et leurs états (lot 6) ; les observations du point de fin de séance (lot 11) ; les sourates cochées ; les animations communes de `lib/core/` (`DECISION-FLUIDITE-2026-11-07.md`) ; le halo des accueils s'il convient (`A-FAIRE-LUMIERE-ACCUEILS.md`).
+- **Créé** : le dessin du chemin, les collections, la régularité, la célébration ; une seule lecture serveur qui rend tout le chemin d'un élève.
+- **Retiré** : rien.
+- **Migrations** : peut-être une vue de lecture, additive ; aucune suppression.
+- **Interdits vérifiés par un test** : aucun classement, aucun point, rien d'un autre élève, aucune date ni durée sur le chemin d'un enfant de 6 à 9 ans, aucune notification à un enfant, rien d'argent.
+- **Preuve** : le directeur ouvre « Apprendre » > Programme avec un compte enfant de 8 ans et y lit son chemin sans aucune date ; il valide une étape de test et voit la célébration à l'ouverture suivante ; il ouvre le même chemin comme tuteur, comme enseignant et comme direction.
 
 ## Les règles de l'équipe, pour chaque lot
 

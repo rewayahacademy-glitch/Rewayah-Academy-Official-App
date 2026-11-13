@@ -18,19 +18,21 @@ Au-dessus de ces fichiers : les décisions datées du directeur (compétences `p
 | 2 | `CHARTE-ECOLE.md` | La référence : promesse, rôles, programme, année, séance, mesure, suivi, système vivant, responsabilités, qui voit quoi, bibliothèque et lecteur, protection des mineurs, données |
 | 3 | `REGLAGES.md` | La seule table des valeurs : chaque réglage, à quoi il sert, sa valeur, son statut (DÉCIDÉ avec date, ou ARBITRÉ), qui peut le changer ; y compris les valeurs du moteur |
 | 4 | `SCENARIOS-ELEVES.md` | Chaque type d'élève et chaque situation, avec une seule réponse ; la stratégie pour rattraper seul. Le directeur a lu la version du 12/11/2026 (commit 531441aa5) et a dit : c'est bien. Les corrections faites depuis sont listées au registre |
-| 5 | `MOTEUR-DE-SUIVI.md` | Ce que l'application fait seule, sans IA : les faits lus, les états, les 34 règles (quoi, comment, quand, à qui), les garde-fous, ce que voit chacun, la partie pour les développeurs |
-| 6 | `EVALUATIONS.md` | Comment on mesure : les quatre moments, la grille commune, chaque étape des bases, l'examen de fin des bases, l'après-bases (PROPOSÉ), les cas particuliers, la publication |
-| 7 | `ARBITRAGES.md` | Le registre de tous les arbitrages, avec leur raison et leur origine, la clôture de chacune des 53 anciennes questions, et les corrections après audit (partie 8) |
-| 8 | `CONTENUS-ATTENDUS.md` | Les quatre dépôts de contenu attendus du directeur (livre de lecture, enregistrements, paroles de la prière et invocations, adab), ce que l'école fait en attendant, où les déposer |
-| 9 | `PLAN-DE-CONSTRUCTION.md` | Les dix lots, dans l'ordre, pour passer de l'existant à la charte ; qui livre en tête (l'architecte ouvre la pull request et fusionne, CI verte exigée, après revue indépendante ; le directeur installe les migrations) |
+| 5 | `MOTEUR-DE-SUIVI.md` | Ce que l'application fait seule, sans IA : les faits lus, les états, les 35 règles (quoi, comment, quand, à qui ; la règle 35 est le point de fin de séance), les garde-fous, ce que voit chacun, la partie pour les développeurs |
+| 6 | `EVALUATIONS.md` | Comment on mesure : les quatre moments, la grille commune, chaque étape des bases, les neuf règles du tajwid des bases et leurs endroits dans les 17 sourates (4.1 bis), l'examen de fin des bases, l'après-bases (PROPOSÉ), les cas particuliers, la publication |
+| 7 | `ARBITRAGES.md` | Le registre de tous les arbitrages, avec leur raison et leur origine, la clôture de chacune des 53 anciennes questions, les corrections après audit (partie 8) et les décisions et arbitrages du 13/11/2026 (partie 9) |
+| 8 | `CONTENUS-ATTENDUS.md` | Ce que le directeur déposera ou relira (livre de lecture, enregistrements, relecture de la prière et des ablutions, invocations, illustrations, adab), ce que l'école fait en attendant, où les déposer ; le cahier des charges du livre de lecture (partie 2) |
+| 9 | `PLAN-DE-CONSTRUCTION.md` | Les treize lots, dans l'ordre (dont POINT-DE-SEANCE, RETRAIT-CAHIER et CHEMIN, ajoutés le 13/11), pour passer de l'existant à la charte ; qui livre en tête (l'architecte ouvre la pull request et fusionne, CI verte exigée, après revue indépendante ; le directeur installe les migrations) |
 | 10 | `ANGLES-MORTS.md` | Le registre des sujets que la charte ne couvre pas encore (19 fiches en trois groupes), tenu par l'architecte ; il se complète à chaque sujet nouveau |
 | 11 | `STRATEGIE-FORMATION-DES-CLASSES.md` | La stratégie des classes vitrines (l'ancien « matching des classes ») : ce qui existe, ce qui a été perdu, les règles F1 à F16, les angles morts et les quatre lots |
+| 12 | `CONTENU-PRIERE-ET-ABLUTIONS.md` | Les ablutions dans l'ordre et la prière pas à pas, chaque parole en arabe vocalisé, translittérée et traduite, selon ce qui est enseigné en Arabie saoudite ; l'ordre où l'élève les apprend. RÉDIGÉ, en service après la relecture du directeur |
 
 ## Les marques
 
 - **DÉCIDÉ (date)** : décision datée du directeur ; elle ne change que par une décision plus récente.
 - **ARBITRÉ** : décision de l'architecte pédagogique (12/11/2026), en vigueur, avec sa raison au registre ; le directeur peut la corriger à tout moment.
-- **PROPOSÉ** : réservé au programme d'après les bases (lire tout le Coran, mémoriser le Coran, tajwid), qui n'est pas mis en service tant que le directeur et ses associés détenteurs d'ijaza ne l'ont pas validé.
+- **PROPOSÉ** : réservé au programme d'après les bases (lire tout le Coran, mémoriser le Coran, le tajwid d'après les bases), qui n'est pas mis en service tant que le directeur et ses associés détenteurs d'ijaza ne l'ont pas validé.
+- **RÉDIGÉ** : un texte écrit par l'architecte sur ordre du directeur, qui entre en service après sa relecture (`CONTENU-PRIERE-ET-ABLUTIONS.md`, 13/11/2026). Ce qui y est marqué « à vérifier par le directeur » ou « à relire » n'est pas certain.
 
 ## Les décisions du directeur du 12/11/2026 qui encadrent tout
 
@@ -43,3 +45,11 @@ Au-dessus de ces fichiers : les décisions datées du directeur (compétences `p
 7. L'espace de l'élève, « Apprendre », a trois onglets : la Bibliothèque (documents de l'académie en haut, autres en bas, grille ou liste, filtre par type ; le Coran est un document, pas la bibliothèque), le Programme, « Mon livret » (résultats, attestations, rapports) ; un lecteur performant pour texte, audio et vidéo.
 8. Un hub et des raccourcis, jamais de doublons.
 9. La vente n'est pas pour maintenant : on prépare seulement la place du second rayon.
+
+## Les décisions du directeur du 13/11/2026
+
+1. Les règles élémentaires du tajwid sont réparties pour que l'élève les maîtrise avant ou pendant les 17 sourates ; pas les règles avancées, pas trop de règles. L'architecte en a retenu neuf (`EVALUATIONS.md`, 4.1 bis).
+2. Les livres seront rédigés par des agents après la validation du programme, découpés selon lui (`CONTENUS-ATTENDUS.md`, partie 2).
+3. Les paroles de la prière et les ablutions sont publiques et connues ; pas d'école juridique pour des débutants ; la référence est ce qui est enseigné en Arabie saoudite (`CONTENU-PRIERE-ET-ABLUTIONS.md`).
+4. « Le cahier me fatigue » : le cahier à remplir est remplacé par le point de fin de séance (charte, partie 5 ; arbitrage n° 96).
+5. Un système de gamification pour que tout le monde comprenne le programme : le chemin (charte, partie 10 bis ; arbitrage n° 98).

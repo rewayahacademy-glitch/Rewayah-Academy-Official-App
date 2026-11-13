@@ -2,12 +2,12 @@
 
 > **EN VIGUEUR par arbitrage de l'architecte pédagogique (12/11/2026), sur délégation du directeur. Le directeur peut corriger toute règle à tout moment ; une correction datée de sa part l'emporte.**
 
-Charte de référence, partie « Évaluations ». Version du 12/11/2026.
+Charte de référence, partie « Évaluations ». Version du 12/11/2026, complétée le 13/11/2026 (règles de tajwid des bases, point de fin de séance, prière et ablutions ; `ARBITRAGES.md`, partie 9).
 
 **Les marques.**
 
 - **[DÉCIDÉ jj/mm]** : décision datée du directeur ; seule une nouvelle décision datée la change.
-- **[ARBITRÉ]** : arbitrage de l'architecte, 12/11/2026.
+- **[ARBITRÉ]** : arbitrage de l'architecte, 12/11/2026 ; **[ARBITRÉ 13/11]** : arbitrage du 13/11/2026.
 - **[PROPOSÉ]** : réservé au programme d'après les bases (partie 5), pas en service tant que le directeur et ses associés détenteurs d'ijaza ne l'ont pas validé.
 
 Tout chiffre est un **réglage**, modifiable par la direction sans toucher au reste (DÉCIDÉ 12/11).
@@ -51,16 +51,16 @@ Chaque moment a un seul rôle. Aucun ne remplace un autre.
 | | Observation de tous les jours (ajuster le cours) | Petit bilan (fin d'une étape) | Examen (fin d'un niveau) | Rencontre de récitation (encourager) |
 |---|---|---|---|---|
 | **Qui** | L'enseignant de la classe | L'enseignant de la classe | Un évaluateur désigné par la direction, autre que l'enseignant de la classe, et un deuxième regard (§6) **[ARBITRÉ]** | Les enseignants, la direction |
-| **Quand** | Pendant la récitation, à chaque cours | Quand l'élève est prêt ; le système le propose à l'approche de la date limite de l'étape (étapes 1 à 3 seulement) | Quand l'enseignant propose l'élève, au plus tard à la date limite de l'étape 4 **[DÉCIDÉ 12/10]** | 4 fois par an, dont une juste après l'Aïd al-Fitr **[DÉCIDÉ 13/10]** |
+| **Quand** | Pendant la récitation, à chaque cours | Quand l'élève est prêt ; le système le propose quand les objectifs de l'étape sont acquis, ou à l'approche de la date limite de l'étape (étapes 1 à 3 seulement) | Quand l'enseignant propose l'élève, au plus tard à la date limite de l'étape 4 **[DÉCIDÉ 12/10]** | 4 fois par an, dont une juste après l'Aïd al-Fitr **[DÉCIDÉ 13/10]** |
 | **Durée** | Aucune minute de plus | 5 à 10 minutes par élève selon l'âge (§4) **[ARBITRÉ]** | 20 à 30 minutes selon l'âge (§4) **[ARBITRÉ]** | Selon le calendrier publié |
 | **Où** | En classe | En classe, pendant un cours normal **[DÉCIDÉ 12/10]** | Dans une séance d'évaluation planifiée **[DÉCIDÉ 12/10]** | Séance commune publiée |
 | **Qui décide** | L'enseignant (état de la compétence, sourate cochée) | L'enseignant propose le passage, la direction confirme | L'enseignant propose l'élève à l'examen, jamais l'évaluateur **[DÉCIDÉ 12/10]** ; l'évaluateur rend l'une des trois phrases ; la direction confirme « Étape validée » | Personne : aucun passage **[DÉCIDÉ 13/10]** |
-| **Ce qui est enregistré** | Ce que le cahier de séance porte déjà ; les sourates cochées | La phrase de résultat, les points à renforcer, la date de la nouvelle vérification | La même chose, plus les parties de l'épreuve et le nom des évaluateurs | La participation |
+| **Ce qui est enregistré** | Ce que porte le point de fin de séance (« A suivi » ou « À renforcer » pour chaque présent, sur la partie vue) ; les sourates cochées | La phrase de résultat, les points à renforcer, la date de la nouvelle vérification | La même chose, plus les parties de l'épreuve et le nom des évaluateurs | La participation |
 | **L'élève voit** | La sourate cochée ; l'état de ses compétences | La phrase de résultat et sa prochaine étape | Idem | Rien d'autre qu'un mot d'encouragement |
 | **Le tuteur voit** | Idem, dans l'onglet Programme de l'enfant (fiche de suivi) | Idem, dans « Mon livret » de l'enfant | Idem, plus la date de l'examen | La date et la participation |
 | **La direction voit** | Les états et les sourates, sans les valider **[DÉCIDÉ 11/11]** | Les propositions de passage, qu'elle confirme | Les examens qu'elle planifie, puis confirme | Les écarts à vérifier (§6) |
 
-**La sourate validée.** L'enseignant la coche au cahier quand l'élève l'a récitée de mémoire, sans erreur de mot. La direction ne valide pas les sourates : elle voit l'état. On compte en sourates, jamais en versets. Les 17 sourates des bases comptent à toute étape ; le total est 17. **[DÉCIDÉ 08/11 et 11/11]**
+**La sourate validée.** L'enseignant la coche, pendant le cours ou depuis la fiche de l'élève, quand l'élève l'a récitée de mémoire, sans erreur de mot. La direction ne valide pas les sourates : elle voit l'état. On compte en sourates, jamais en versets. Les 17 sourates des bases comptent à toute étape ; le total est 17. **[DÉCIDÉ 08/11 et 11/11]**
 
 **La rencontre de récitation.** Si un élève y récite nettement moins bien qu'en cours, l'enseignant en tient compte à l'observation suivante, sans résultat publié. **[ARBITRÉ]**
 
@@ -78,7 +78,7 @@ Tout enseignant applique la même grille, à tout âge et à tout niveau.
 | Les voyelles et les longueurs | Les voyelles brèves, les voyelles longues, le soukoun, le tanwin et la chadda sont-ils justes ? | Étape 2, règle après règle |
 | La fluidité | L'élève lit-il sans épeler, d'un rythme régulier, sans revenir en arrière ? | Étape 2 |
 | La mémoire | Récite-t-il de mémoire, sans erreur de mot, sans aide ? | Tout ce qui s'apprend par cœur |
-| Les règles de tajwid | Applique-t-il les règles déjà enseignées ? | À partir de sa couche (§5.3) |
+| Les règles de tajwid | Applique-t-il les règles déjà enseignées ? | Dans les bases, chacune des neuf règles à partir de son étape (§4.1 bis) ; après les bases, à partir de sa couche (§5.3, PROPOSÉ) |
 | La tenue et l'adab | Est-il prêt, attentif, respectueux du Coran et de la classe ? | Toujours ; dit en mots, jamais compté dans le résultat |
 
 Une erreur sur une règle **pas encore enseignée** est corrigée, jamais comptée. **[ARBITRÉ, d'après le référentiel]**
@@ -124,7 +124,7 @@ La compétence centrale : les lettres (étape 1), la lecture sans épeler (étap
 
 **Les étapes** : 1. Les lettres ; 2. Lire avec les voyelles, jusqu'à la chadda ; 3. Lire dans le Coran (fin du livre, puis le Mushaf) ; 4. Les sourates courtes, d'Al-Masad à Az-Zalzalah. Puis l'examen de fin des bases. **[DÉCIDÉ 13-14/10]**
 
-Les objectifs mesurés ci-dessous (3 à 5 par étape, **[DÉCIDÉ 05/11]**) ont été rédigés par un agent et sont en service ; la lecture de validation demandée par le directeur le 05/11 n'a pas encore eu lieu ; il peut les corriger à tout moment. Pour chaque étape, l'enseignant propose le passage et la direction confirme **[DÉCIDÉ 12/10]**. **Le critère ne change jamais selon l'âge** ; seuls changent la durée, la longueur du passage lu, le moment de la matière secondaire, la présence du tuteur et le ton.
+Les objectifs mesurés ci-dessous (3 à 5 par étape, **[DÉCIDÉ 05/11]**) ont été rédigés par un agent et sont en service ; la lecture de validation demandée par le directeur le 05/11 n'a pas encore eu lieu ; il peut les corriger à tout moment. Le 13/11, chaque étape a reçu ses règles de tajwid (§4.1 bis) : un objectif par règle, en fusionnant ou en reformulant les anciens objectifs pour rester entre 3 et 5 **[ARBITRÉ 13/11]**. Pour chaque étape, l'enseignant propose le passage et la direction confirme **[DÉCIDÉ 12/10]**. **Le critère ne change jamais selon l'âge** ; seuls changent la durée, la longueur du passage lu, le moment de la matière secondaire, la présence du tuteur et le ton.
 
 **Durées et dates limites.** Chaque étape a sa durée prévue et sa date limite par tranche d'âge, comptées depuis l'entrée de l'élève dans l'étape **[DÉCIDÉ 14/10]**. Les totaux sont décidés **[DÉCIDÉ 14/10]** : durée prévue 37, 28, 24 et 15 semaines ; somme des dates limites 48, 36, 31 et 20 semaines (6-9, 10-13, 14-17, adultes). La répartition par étape est dans `REGLAGES.md`, tableau 1 bis **[ARBITRÉ]**. La date de fin du niveau est la somme : elle est affichée comme horizon.
 
@@ -146,16 +146,68 @@ Les objectifs mesurés ci-dessous (3 à 5 par étape, **[DÉCIDÉ 05/11]**) ont 
 - Al-Fatiha, An-Nâs, Al-Falaq et Al-Ikhlâs sont cochées par l'enseignant le jour où l'élève les récite de mémoire sans erreur de mot, souvent en séance de consolidation.
 - Les paroles de la prière, les ablutions et les invocations sont observées en séance de consolidation : l'enseignant confirme d'un geste quand l'élève les dit ou les montre dans l'ordre, sans lire. Les ablutions se montrent en pratique, avec les illustrations, sans fiqh détaillé.
 - Elle ne bloque jamais les étapes 1 à 3 (le petit bilan note son état en une ligne). Elle est exigée à l'examen de fin des bases : Al-Fatiha et les trois sourates font partie des 17 sourates ; les paroles de la prière sont vérifiées à l'examen ; les ablutions et les invocations doivent avoir été confirmées en cours, sinon elles sont vérifiées à l'examen (§4.6).
-- La liste exacte des paroles, des gestes et des invocations est un contenu que le directeur déposera (`CONTENUS-ATTENDUS.md`) ; en attendant, on ne vérifie que ce qui a été enseigné en classe.
+- Les paroles de la prière et les gestes des ablutions sont écrits dans `CONTENU-PRIERE-ET-ABLUTIONS.md` (référence : ce qui est enseigné en Arabie saoudite, sans question d'école juridique, **[DÉCIDÉ 13/11]**) ; ce fichier est RÉDIGÉ et entre en service après la relecture du directeur ; d'ici là, on ne vérifie que ce qui a été enseigné en classe. La liste des autres invocations reste un contenu que le directeur déposera (`CONTENUS-ATTENDUS.md`).
+
+### 4.1 bis Les neuf règles du tajwid des bases
+
+**La décision [DÉCIDÉ 13/11].** Le directeur : « dispatcher les règles élémentaires du tajwid pour que l'élève les maîtrise avant ou pendant qu'il mémorise les petites sourates jusqu'à Zalzala, les 17 sourates ; pas les règles avancées ; pas trop de règles ».
+
+**La répartition [ARBITRÉ 13/11].** Neuf règles, réparties sur les quatre étapes.
+- **D'abord par imitation, puis nommées.** L'élève répète la voix de l'enseignant et la lecture enregistrée ; la règle reçoit son nom quand l'élève l'applique déjà.
+- **Jamais d'épreuve de théorie.** On n'interroge pas sur le nom ni sur la définition d'une règle : on l'entend dans la lecture ou la récitation.
+- **Les règles qui changent le sens d'abord** : la lettre, la voyelle, la longueur, la chadda viennent avant ce qui embellit la lecture.
+- **Avant son étape, une règle est corrigée, jamais comptée** (§3.1). À partir de son étape, elle compte, avec la grille commune (§3.2 et 3.3).
+- **Tout le reste attend l'après-bases** : par exemple le mim sans voyelle (y compris devant ب), le ra épais ou fin, les autres allongements (devant un arrêt, après une hamza), les arrêts au milieu d'un verset et leurs signes. L'enseignant le fait imiter s'il se présente ; il ne l'exige pas.
+- Chaque règle est **un objectif** de son étape (repère entre parenthèses dans les tableaux 4.2 à 4.5). La collection des neuf règles du chemin (charte, partie 10 bis) se remplit avec l'état de ces neuf objectifs.
+
+| N° | Nom montré aux familles | Ce que l'élève fait | Étape | Exemple dans les 17 sourates |
+|---|---|---|---|---|
+| 1 | Le point de sortie des lettres | Il fait sortir chaque lettre de son point de sortie, sans confondre les lettres proches : ح et ه, ع et ء, ق et ك, ذ et ز, س et ص, ت et ط, د et ض, ث et س | 1. Les lettres | قُلْ, « dis », qui devient كُلْ, « mange », si ق est lu ك ; ٱلْحَمْدُ, avec ح et non ه |
+| 2 | Lettres épaisses et lettres fines | Les sept lettres épaisses (خ ص ض غ ط ق ظ) sonnent épaisses ; les autres restent fines | 1. Les lettres | ٱلصِّرَٰطَ (1:6) |
+| 3 | Brève ou longue | La voyelle longue tient deux temps ; une voyelle brève ne s'allonge jamais | 2. Lire avec les voyelles | مَٰلِكِ (1:4) et مَلِكِ (114:2) |
+| 4 | La chadda et la nasalisation | La lettre qui porte la chadda est doublée ; le noun et le mim doublés gardent une nasalisation de deux temps | 2. Lire avec les voyelles | إِيَّاكَ (1:5) ; إِنَّ (100:6) ; ثُمَّ (102:4) |
+| 5 | La qalqala | Les cinq lettres ق ط ب ج د, avec un soukoun, rebondissent légèrement | 2. Lire avec les voyelles | لَمْ يَلِدْ وَلَمْ يُولَدْ (112:3) ; ٱلْأَبْتَرُ (108:3) |
+| 6 | S'arrêter en fin de verset | À l'arrêt : un soukoun sur la dernière lettre ; un tanwin « an » se lit « â » ; un ta marbouta (ة) se lit « h » | 3. Lire dans le Coran | ضَبْحًا (100:1) lu « dabhâ » ; ٱلْقَارِعَةُ (101:1) lu « al-qâri'ah » |
+| 7 | Le lam du nom d'Allah | Le lam d'« Allah » est épais après a ou ou, fin après i | 3. Lire dans le Coran | نَصْرُ ٱللَّهِ (110:1), épais ; بِسْمِ ٱللَّهِ, fin |
+| 8 | Le noun sans voyelle et le tanwin | Les quatre cas : clair devant ء ه ع ح غ خ ; fondu dans la lettre suivante devant ي ن م و (avec nasalisation) et devant ل ر (sans nasalisation) ; changé en mim devant ب ; caché, avec nasalisation, devant les quinze autres lettres | 4. Les sourates courtes | Liste complète ci-dessous |
+| 9 | Les allongements longs | Plus long que deux temps : devant une hamza dans le même mot ou au début du mot suivant, et devant une lettre doublée ; la même longueur partout | 4. Les sourates courtes | Liste complète ci-dessous |
+
+**Longueurs (contenu de la lecture Hafs, pas un réglage de l'école).** Règles 4 et 8 : nasalisation de deux temps. Règle 9 : devant une hamza, quatre ou cinq temps dans la voie habituelle de Hafs, l'élève gardant toujours la même ; devant une lettre doublée, six temps. **À relire par le directeur** : la longueur que l'école retient devant une hamza (quatre ou cinq).
+
+**Les règles 8 et 9 dans les 17 sourates, sourate par sourate [ARBITRÉ 13/11 ; à relire par le directeur].** Cette liste servira aux auteurs du livre (`CONTENUS-ATTENDUS.md`). Elle est établie sur le texte coranique du dépôt (corpus Tanzil, écriture du Mushaf de Médine, lecture Hafs), en s'arrêtant à chaque fin de verset (règle 6), et vérifiée par un relevé automatique de ce texte. Ne sont pas listés : la basmala ; les fins de verset, où le tanwin devient un arrêt ; les liaisons d'un verset au suivant, qui ne s'enseignent pas dans les bases. Dans le Mushaf de Médine, chaque endroit de la règle 9 porte le signe d'allongement (ٓ). Ordre : celui où l'élève les apprend.
+
+| Sourate | Règle 8 : noun sans voyelle et tanwin (verset : mots, cas) | Règle 9 : allongements longs (verset : mots, devant quoi) |
+|---|---|---|
+| Al-Fatiha (1) | 7 : أَنْعَمْتَ, clair | 7 : ٱلضَّآلِّينَ, lettre doublée |
+| An-Nâs (114) | 4 : مِن شَرِّ, caché | Aucun |
+| Al-Falaq (113) | 2 : مِن شَرِّ, caché ; 3 : وَمِن شَرِّ, caché ; غَاسِقٍ إِذَا, clair ; 4 : وَمِن شَرِّ, caché ; 5 : وَمِن شَرِّ, caché ; حَاسِدٍ إِذَا, clair | Aucun |
+| Al-Ikhlâs (112) | 4 : يَكُن لَّهُۥ, fondu sans nasalisation ; كُفُوًا أَحَدٌ, clair | Aucun |
+| Al-Masad (111) | 1 : لَهَبٍ وَتَبَّ, fondu avec nasalisation ; 2 : عَنْهُ, clair ; 3 : نَارًا ذَاتَ, caché ; 5 : حَبْلٌ مِّن, fondu avec nasalisation ; مِّن مَّسَدٍ, fondu avec nasalisation | 1 : يَدَآ أَبِى, hamza au mot suivant ; 2 : مَآ أَغْنَىٰ, hamza au mot suivant |
+| An-Nasr (110) | Aucun | 1 : جَآءَ, hamza dans le même mot |
+| Al-Kâfirûn (109) | 3 : أَنتُمْ, caché ; 4 : عَابِدٌ مَّا, fondu avec nasalisation ; 5 : أَنتُمْ, caché | 1 : يَٰٓأَيُّهَا, hamza au mot suivant (attachée à l'écrit) ; 2 : لَآ أَعْبُدُ ; 3 : وَلَآ أَنتُمْ, مَآ أَعْبُدُ ; 4 : وَلَآ أَنَا۠ ; 5 : وَلَآ أَنتُمْ, مَآ أَعْبُدُ ; tous hamza au mot suivant |
+| Al-Kawthar (108) | 2 : وَٱنْحَرْ, clair | 1 : إِنَّآ أَعْطَيْنَٰكَ, hamza au mot suivant |
+| Al-Mâ'ûn (107) | 4 : فَوَيْلٌ لِّلْمُصَلِّينَ, fondu sans nasalisation ; 5 : عَن صَلَاتِهِمْ, caché ; 7 : وَيَمْنَعُونَ, clair | 6 : يُرَآءُونَ, hamza dans le même mot |
+| Quraysh (106) | 4 : مِّن جُوعٍ, caché ; جُوعٍ وَءَامَنَهُم, fondu avec nasalisation ; مِّنْ خَوْفٍ, clair | 2 : ٱلشِّتَآءِ, hamza dans le même mot ; 4 : ٱلَّذِىٓ أَطْعَمَهُم, hamza au mot suivant |
+| Al-Fîl (105) | 3 : طَيْرًا أَبَابِيلَ, clair ; 4 : بِحِجَارَةٍ مِّن, fondu avec nasalisation ; مِّن سِجِّيلٍ, caché ; 5 : كَعَصْفٍ مَّأْكُولٍ, fondu avec nasalisation | Aucun |
+| Al-Humaza (104) | 1 : وَيْلٌ لِّكُلِّ, fondu sans nasalisation ; هُمَزَةٍ لُّمَزَةٍ, fondu sans nasalisation ; 2 : مَالًا وَعَدَّدَهُۥ, fondu avec nasalisation ; 4 : لَيُنۢبَذَنَّ, changé en mim ; 9 : عَمَدٍ مُّمَدَّدَةٍ, fondu avec nasalisation | 3 : مَالَهُۥٓ أَخْلَدَهُۥ, hamza au mot suivant ; 5 : وَمَآ أَدْرَىٰكَ, hamza au mot suivant |
+| Al-'Asr (103) | 2 : ٱلْإِنسَٰنَ, caché | Aucun |
+| At-Takâthur (102) | 8 : يَوْمَئِذٍ عَنِ, clair | Aucun |
+| Al-Qâri'a (101) | 5 : ٱلْمَنفُوشِ, caché ; 6 : مَن ثَقُلَتْ, caché ; 7 : عِيشَةٍ رَّاضِيَةٍ, fondu sans nasalisation ; 8 : مَنْ خَفَّتْ, clair ; 11 : نَارٌ حَامِيَةٌ, clair | 3 : وَمَآ أَدْرَىٰكَ ; 10 : وَمَآ أَدْرَىٰكَ ; hamza au mot suivant |
+| Al-'Âdiyât (100) | 6 : ٱلْإِنسَٰنَ, caché ; 11 : يَوْمَئِذٍ لَّخَبِيرٌ, fondu sans nasalisation | Aucun |
+| Az-Zalzalah (99) | 3 : ٱلْإِنسَٰنُ, caché ; 4 : يَوْمَئِذٍ تُحَدِّثُ, caché ; 6 : يَوْمَئِذٍ يَصْدُرُ, fondu avec nasalisation ; أَشْتَاتًا لِّيُرَوْا۟, fondu sans nasalisation ; 7 : فَمَن يَعْمَلْ, fondu avec nasalisation ; ذَرَّةٍ خَيْرًا, clair ; خَيْرًا يَرَهُۥ, fondu avec nasalisation ; 8 : وَمَن يَعْمَلْ, fondu avec nasalisation ; ذَرَّةٍ شَرًّا, caché ; شَرًّا يَرَهُۥ, fondu avec nasalisation | Aucun |
+
+**Totaux** : règle 8, 53 endroits (clair 13, fondu avec nasalisation 14, fondu sans nasalisation 7, changé en mim 1, caché 18) ; règle 9, 19 endroits (devant une lettre doublée 1, hamza dans le même mot 3, hamza au mot suivant 15). Le cas « changé en mim » ne se présente qu'une fois (104:4) : le livre en donne d'autres exemples, pris hors des sourates, pour que l'élève l'entende assez.
+
+**Hors des neuf règles, signalé pour les auteurs** : le mim sans voyelle devant ب (100:11 رَبَّهُم بِهِمْ ; 105:4 تَرْمِيهِم بِحِجَارَةٍ) se lit avec une nasalisation que les bases n'enseignent pas ; l'enseignant la fait imiter. Le mim sans voyelle devant un autre mim (104:8 عَلَيْهِم مُّؤْصَدَةٌ ; 106:4 أَطْعَمَهُم مِّن, وَءَامَنَهُم مِّنْ) s'écrit avec une chadda : la règle 4 s'y applique déjà.
 
 ### 4.2 Étape 1 : Les lettres
 
 | Rubrique | Règle |
 |---|---|
 | **Sur quoi** | Les lettres de l'alphabet, seules et dans le mot |
-| **Ce qu'on mesure** | Reconnaît chaque lettre dans le désordre ; la prononce depuis son point de sortie ; distingue les lettres qui se ressemblent ; la reconnaît au début, au milieu et à la fin d'un mot |
-| **Comment** | Petit bilan en cours normal **[DÉCIDÉ 12/10]**, non préparé : 1) l'enseignant montre des lettres dans un ordre tiré au hasard ; 2) l'élève les nomme et les prononce ; 3) il les retrouve dans des mots. |
-| **Validé si** | Au moins 90 % de lettres justes, au plus 2 aides directes, aucune confusion répétée entre lettres proches, sur deux séances distinctes **[ARBITRÉ, seuils du référentiel]** |
+| **Ce qu'on mesure** | 1) Reconnaît chaque lettre dans le désordre et distingue celles qui se ressemblent par la forme ; 2) la reconnaît au début, au milieu et à la fin d'un mot ; 3) la fait sortir de son point de sortie, sans confondre les lettres proches (règle 1) ; 4) fait sonner épaisses les sept lettres épaisses et garde fines les autres (règle 2) |
+| **Comment** | Petit bilan en cours normal **[DÉCIDÉ 12/10]**, non préparé : 1) l'enseignant montre des lettres dans un ordre tiré au hasard ; 2) l'élève les nomme et les prononce ; 3) il les retrouve dans des mots. Les règles 1 et 2 s'entendent dans ce qu'il prononce ; aucune question de théorie. |
+| **Validé si** | Au moins 90 % de lettres justes, au plus 2 aides directes, aucune confusion répétée entre lettres proches, sur deux séances distinctes **[ARBITRÉ, seuils du référentiel]** ; aucune lettre épaisse rendue fine, ni fine rendue épaisse, de façon répétée **[ARBITRÉ 13/11]** |
 | **Étape validée** | Passage à l'étape 2 dès la confirmation ; message au tuteur ou à l'adulte |
 | **Quelques points à renforcer** | Il travaille ces lettres ; elles seules sont revérifiées 2 semaines plus tard **[ARBITRÉ]** |
 | **Nouvelle vérification nécessaire** | Plan de soutien (travail ciblé, lecture enregistrée), nouveau petit bilan complet 3 semaines plus tard **[ARBITRÉ]** ; date limite dépassée : §4.7 |
@@ -164,22 +216,22 @@ Les objectifs mesurés ci-dessous (3 à 5 par étape, **[DÉCIDÉ 05/11]**) ont 
 
 | Rubrique | Règle |
 |---|---|
-| **Sur quoi** | Les voyelles brèves, les voyelles longues, le soukoun, le tanwin, la chadda |
-| **Ce qu'on mesure** | Lit une lettre avec chacune des trois voyelles ; lit les voyelles longues et le soukoun ; lit le tanwin ; lit la chadda ; lit un mot de plusieurs syllabes sans épeler |
+| **Sur quoi** | Les voyelles brèves, les voyelles longues, le soukoun, le tanwin, la chadda ; les règles 3, 4 et 5 |
+| **Ce qu'on mesure** | 1) Lit une lettre avec chacune des trois voyelles, avec le soukoun et avec le tanwin ; 2) tient la voyelle longue deux temps et n'allonge jamais une brève (règle 3) ; 3) double la lettre qui porte la chadda et tient la nasalisation de deux temps du noun et du mim doublés (règle 4) ; 4) fait rebondir ق ط ب ج د quand elles portent un soukoun (règle 5) ; 5) lit un mot de plusieurs syllabes sans épeler |
 | **Comment** | Petit bilan en cours normal, non préparé : 1) syllabes et mots du livre de Rewayah ; 2) une ligne de mots plus longs. |
-| **Validé si** | Au moins 90 % de lecture juste, au plus 2 aides directes, aucune erreur grave non corrigée, sans épeler les mots courts **[ARBITRÉ]** |
+| **Validé si** | Au moins 90 % de lecture juste, au plus 2 aides directes, aucune erreur grave non corrigée, sans épeler les mots courts **[ARBITRÉ]** ; les règles 3, 4 et 5 appliquées, sans erreur importante répétée sur l'une d'elles (§3.2) **[ARBITRÉ 13/11]** |
 | **Étape validée** | Passage à l'étape 3. Pour les 6-9 ans, la matière secondaire commence : Al-Fatiha **[DÉCIDÉ 13/10]** |
-| **Quelques points à renforcer** | Travail ciblé sur la règle manquée (par exemple le tanwin), revérifiée 2 semaines plus tard **[ARBITRÉ]** |
+| **Quelques points à renforcer** | Travail ciblé sur la règle manquée (par exemple le tanwin ou la qalqala), revérifiée 2 semaines plus tard **[ARBITRÉ]** |
 | **Nouvelle vérification nécessaire** | Plan de soutien, nouveau petit bilan complet 3 semaines plus tard **[ARBITRÉ]** |
 
 ### 4.4 Étape 3 : Lire dans le Coran
 
 | Rubrique | Règle |
 |---|---|
-| **Sur quoi** | La fin du livre, puis la lecture directe dans le Mushaf |
-| **Ce qu'on mesure** | Lit les dernières pages du livre sans épeler ; lit une page du Mushaf en suivant ses signes ; lit d'un rythme régulier, sans revenir en arrière |
+| **Sur quoi** | La fin du livre, puis la lecture directe dans le Mushaf ; les règles 6 et 7 |
+| **Ce qu'on mesure** | 1) Lit les dernières pages du livre sans épeler, d'un rythme régulier, sans revenir en arrière ; 2) lit une page du Mushaf en suivant ses signes ; 3) s'arrête en fin de verset comme il faut : soukoun sur la dernière lettre, tanwin « an » lu « â », ta marbouta lu « h » (règle 6) ; 4) lit le lam du nom d'Allah épais après a ou ou, fin après i (règle 7) |
 | **Comment** | Petit bilan en cours normal, non préparé : 1) l'enseignant ouvre le Mushaf à un passage nouveau ; 2) l'élève lit (2 à 3 minutes avant 10 ans, 3 à 5 ensuite) ; 3) l'enseignant ne corrige pas, sauf blocage. |
-| **Validé si** | Aucune erreur grave non corrigée, au plus 2 erreurs importantes, aucune confusion répétée de lettres, pas de correction mot à mot **[ARBITRÉ, d'après le référentiel]** |
+| **Validé si** | Aucune erreur grave non corrigée, au plus 2 erreurs importantes, aucune confusion répétée de lettres, pas de correction mot à mot **[ARBITRÉ, d'après le référentiel]** ; les règles 1 à 7 appliquées dans le passage lu **[ARBITRÉ 13/11]** |
 | **Étape validée** | Passage à l'étape 4. Le Coran devient la matière principale ; la révision de la lecture, les invocations et l'adab deviennent la matière secondaire **[DÉCIDÉ 13/10]** |
 | **Quelques points à renforcer** | Travail ciblé, nouvelle vérification 2 semaines plus tard **[ARBITRÉ]** |
 | **Nouvelle vérification nécessaire** | Plan de soutien, nouveau petit bilan complet 3 semaines plus tard **[ARBITRÉ]** |
@@ -190,12 +242,12 @@ L'étape 4 n'a pas de petit bilan à part : ses 13 sourates sont validées une �
 
 | Rubrique | Règle |
 |---|---|
-| **Sur quoi** | Les 13 sourates, d'Al-Masad (111) à Az-Zalzalah (99) |
-| **Ce qu'on mesure** | Récite chaque sourate de mémoire, sans erreur de mot ; respecte les voyelles et les lettres longues ; s'arrête aux fins de versets ; garde les sourates déjà apprises |
+| **Sur quoi** | Les 13 sourates, d'Al-Masad (111) à Az-Zalzalah (99) ; les règles 8 et 9, aux endroits listés au §4.1 bis |
+| **Ce qu'on mesure** | 1) Récite chaque sourate de mémoire, sans erreur de mot ; 2) garde les sourates déjà apprises ; 3) récite en appliquant les règles 1 à 7 ; 4) applique les quatre cas du noun sans voyelle et du tanwin (règle 8) ; 5) fait les allongements longs devant une hamza ou une lettre doublée, toujours de la même longueur (règle 9) |
 | **Comment** | Observation de tous les jours : l'élève récite la sourate en cours, l'enseignant la coche quand elle est juste **[DÉCIDÉ 11/11]**. Les sourates déjà cochées reviennent en révision. |
-| **Validé si** | Chaque sourate est cochée ; les 17 sourates des bases sont cochées avant que l'élève soit proposé à l'examen **[ARBITRÉ]** |
+| **Validé si** | Chaque sourate est cochée ; les 17 sourates des bases sont cochées avant que l'élève soit proposé à l'examen **[ARBITRÉ]**. La coche reste « de mémoire, sans erreur de mot » **[DÉCIDÉ 11/11]** : les règles 8 et 9 se suivent par leurs objectifs, au point de fin de séance, sans bloquer une coche |
 | **Qui décide** | L'enseignant coche, seul **[DÉCIDÉ 11/11]** ; il propose l'examen quand l'élève est prêt **[DÉCIDÉ 12/10]** |
-| **Prêt pour l'examen** | Les 17 sourates cochées ; la lecture dans le Mushaf Acquis ou Stable ; les paroles de la prière observées Acquis **[ARBITRÉ]** |
+| **Prêt pour l'examen** | Les 17 sourates cochées ; la lecture dans le Mushaf Acquis ou Stable ; les neuf règles Acquis ou Stable **[ARBITRÉ 13/11]** ; les paroles de la prière observées Acquis **[ARBITRÉ]** |
 | **Après** | Voir l'examen de fin des bases (§4.6) |
 
 ### 4.6 L'examen de fin des bases
@@ -203,12 +255,12 @@ L'étape 4 n'a pas de petit bilan à part : ses 13 sourates sont validées une �
 | Rubrique | Règle |
 |---|---|
 | **Sur quoi** | Trois parties : 1) la lecture non préparée dans le Mushaf ; 2) les 17 sourates de mémoire ; 3) les paroles de la prière |
-| **Ce qu'on mesure** | Lecture : lettres, voyelles, longueurs, fluidité. Sourates : mémoire. Prière : l'ordre des paroles, sans texte |
+| **Ce qu'on mesure** | Lecture : les neuf règles des bases telles qu'elles se présentent dans le passage, et la fluidité. Sourates : la mémoire et les neuf règles, en particulier les règles 8 et 9. Prière : l'ordre des paroles, sans texte. **Aucune question de théorie** : l'évaluateur écoute les règles dans la récitation, il ne demande jamais leur nom **[ARBITRÉ 13/11]** |
 | **Qui propose** | L'enseignant, quand l'élève est prêt, au plus tard à la date limite de l'étape 4 **[DÉCIDÉ 12/10]** ; jamais l'évaluateur |
 | **Où** | Séance d'évaluation planifiée ; la famille peut assister si la direction ouvre la séance **[DÉCIDÉ 12/10]** |
 | **Qui évalue** | Un évaluateur désigné par la direction, autre que l'enseignant de la classe, avec un deuxième regard (§6) **[ARBITRÉ]** |
 | **Déroulé pas à pas** **[ARBITRÉ]** | 1) Accueil, rappel calme du déroulé. 2) Lecture : l'évaluateur ouvre le Mushaf à un passage non préparé (2 à 3 minutes avant 10 ans, 3 à 5 minutes ensuite). 3) Sourates : Al-Fatiha, puis 6 sourates tirées au hasard parmi les 16 autres, dont au moins 2 parmi les plus longues (Al-Qâri'a, Al-'Âdiyât, Al-Humaza, At-Takâthur, Az-Zalzalah, Al-Mâ'ûn) ; en cas de doute, l'évaluateur peut en demander d'autres. 4) Paroles de la prière, dans l'ordre. 5) Un mot d'encouragement ; le résultat est publié après confirmation. |
-| **Validé si** **[ARBITRÉ]** | Lecture : aucune erreur grave non corrigée, au plus 2 erreurs importantes, sans correction mot à mot. Sourates : aucune erreur de mot non corrigée seul. Prière : dans l'ordre, sans oubli, sans texte. Les trois parties sont exigées. |
+| **Validé si** **[ARBITRÉ]** | Lecture : aucune erreur grave non corrigée, au plus 2 erreurs importantes, sans correction mot à mot ; une règle des bases manquée compte selon la grille commune (§3.2) **[ARBITRÉ 13/11]**. Sourates : aucune erreur de mot non corrigée seul ; les règles 8 et 9 jugées par la même grille, sur l'ensemble des sourates tirées **[ARBITRÉ 13/11]**. Prière : dans l'ordre, sans oubli, sans texte ; la liste est celle de `CONTENU-PRIERE-ET-ABLUTIONS.md`, partie 3, une fois ce fichier relu par le directeur. Les trois parties sont exigées. |
 | **Qui décide** | L'évaluateur rend l'une des trois phrases ; la direction confirme « Étape validée » **[DÉCIDÉ 12/10 pour le principe de la confirmation]** |
 | **Étape validée** | Les bases sont finies. L'Attestation des bases est émise (§7). Orientation **[DÉCIDÉ 13/10]** : enfant, mémoriser par défaut si ses acquis sont stables, le tuteur peut demander la lecture ; adulte, il choisit sur conseil de son enseignant. Tant que le programme d'après les bases n'est pas en service, le message est neutre : « Les bases sont validées. La direction vous écrit pour la suite. » |
 | **Quelques points à renforcer** | Une seule partie, autre que la lecture, n'est pas atteinte (par exemple une sourate tirée avec une erreur de mot). L'élève ne passe pas et reste dans sa classe ; seule cette partie est revérifiée 2 semaines plus tard par l'évaluateur ; les autres restent acquises. Une sourate cochée reste cochée et se retravaille **[ARBITRÉ]** |
@@ -248,7 +300,7 @@ Ablutions et invocations, vérifiées en cours (§4.1), ne sont reprises à l'ex
 
 | Moment | Étape validée si | Quelques points à renforcer | Nouvelle vérification nécessaire |
 |---|---|---|---|
-| Petit bilan d'étape | Aucune erreur grave non corrigée, au plus 2 erreurs importantes par passage, règles de la couche appliquées | Une règle ou un passage en dessous : travail ciblé, vérification de ce seul point 2 semaines plus tard | Plusieurs passages en dessous : plan de soutien, nouveau petit bilan 3 semaines plus tard |
+| Petit bilan d'étape | Aucune erreur grave non corrigée, au plus 2 erreurs importantes par passage, règles de la couche appliquées (et les neuf règles des bases, déjà exigées) | Une règle ou un passage en dessous : travail ciblé, vérification de ce seul point 2 semaines plus tard | Plusieurs passages en dessous : plan de soutien, nouveau petit bilan 3 semaines plus tard |
 | Examen final | Même critère sur les 3 passages, toutes les couches appliquées, l'élève se corrige seul | Un seul passage en dessous : un nouveau passage tiré 2 semaines plus tard | Deux passages ou plus : prolongation ciblée de 4 semaines, puis nouvel examen complet ; jamais de reprise de tout le parcours |
 
 L'examen final validé ouvre le **Certificat de lecture**.
@@ -286,6 +338,8 @@ Les jalons de 5, 10, 15, 20 et 25 juz sont salués dans « Mon livret », sans c
 ### 5.3 Le tajwid en couches
 
 Une règle se corrige dès qu'elle apparaît, mais elle n'est exigée qu'à partir de sa couche. Une règle vue en cours n'est jamais affichée comme acquise avant d'être observée dans la récitation réelle.
+
+**Depuis le 13/11 [ARBITRÉ 13/11].** Les neuf règles élémentaires sont enseignées et exigées dès les bases (§4.1 bis). Les couches ci-dessous, comme la colonne « couche de tajwid » du §5.1, les reprennent sur tout le Coran sans les enseigner une seconde fois, et ajoutent ce que les bases laissent de côté. Leur répartition est à revoir à la validation du programme d'après les bases ; elle reste PROPOSÉE.
 
 | Couche | Contenu | Exigée au petit bilan de |
 |---|---|---|
@@ -364,6 +418,11 @@ Chaque situation a une seule réponse.
 | Qui fait passer une étape ? | L'enseignant propose, la direction confirme |
 | Qui valide une sourate ? | L'enseignant, d'une coche ; la direction voit sans valider |
 | Comment on compte ? | En sourates pour les bases, en juz après ; jamais en versets |
+| Quelles règles de tajwid dans les bases ? | Les neuf règles élémentaires (§4.1 bis), réparties sur les quatre étapes ; tout le reste attend l'après-bases |
+| Interroge-t-on l'élève sur la théorie du tajwid ? | Jamais : une règle s'entend dans la lecture ou la récitation, au petit bilan comme à l'examen |
+| À partir de quand une règle compte-t-elle ? | À partir de son étape ; avant, elle est corrigée, jamais comptée |
+| Les règles 8 et 9 bloquent-elles la coche d'une sourate ? | Non : la coche reste « de mémoire, sans erreur de mot » ; les règles se suivent par leurs objectifs et sont exigées à l'examen |
+| Les paroles de la prière exigées à l'examen ? | Celles de `CONTENU-PRIERE-ET-ABLUTIONS.md`, partie 3, une fois ce fichier relu par le directeur ; d'ici là, ce qui a été enseigné en classe |
 | L'étape 4 a-t-elle un petit bilan ? | Non : ses sourates sont cochées une à une, l'examen la ferme |
 | La matière secondaire bloque-t-elle une étape ? | Non pour les étapes 1 à 3 ; elle est exigée à l'examen de fin des bases |
 | « Quelques points sont à renforcer » fait-il passer ? | Non : travail ciblé, puis nouvelle vérification limitée aux points concernés |
@@ -383,4 +442,4 @@ Chaque situation a une seule réponse.
 
 ## 9. Ce qui reste à recevoir
 
-Aucune question n'est posée au directeur : toutes ont été arbitrées le 12/11/2026 (`ARBITRAGES.md`). Les contenus qu'il déposera quand il le pourra sont dans `CONTENUS-ATTENDUS.md`. La validation du programme d'après les bases (partie 5) appartient au directeur et à ses associés détenteurs d'ijaza.
+Aucune question n'est posée au directeur : toutes ont été arbitrées le 12/11/2026 (`ARBITRAGES.md`). Les contenus qu'il déposera quand il le pourra sont dans `CONTENUS-ATTENDUS.md`. Il relit `CONTENU-PRIERE-ET-ABLUTIONS.md` et la liste des règles 8 et 9 par sourate (§4.1 bis), marqués « à vérifier » ou « à relire ». La validation du programme d'après les bases (partie 5) appartient au directeur et à ses associés détenteurs d'ijaza.
