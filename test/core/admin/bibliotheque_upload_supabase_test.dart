@@ -110,32 +110,43 @@ void main() {
     port.dispose();
   });
 
-  test('le nom du fichier ne voyage jamais : un nom arabe part sous un nom '
-      'neutre', () async {
-    // Le depot du 13/11/2026 : « متن الأخضري-1.pdf » etait refuse par la
-    // fonction parce que son nom entrait dans la cle de stockage.
-    final BibliothequeUploadSupabase port = BibliothequeUploadSupabase(
-      supabase,
-      transport: transport,
-    );
-    await port.demanderUpload(
-      supportId: 'c2900000-0000-0000-0000-000000000002',
-      fichier: FichierADeposer(
-        nom: 'متن الأخضري-1.pdf',
-        octets: 4,
-        mime: 'application/pdf',
-        sha256: List<String>.filled(64, 'a').join(),
-      ),
-    );
-    final String envoye =
-        (actions.first['fichier'] as Map<String, dynamic>)['nom'] as String;
-    expect(envoye, 'document.pdf');
-    expect(
-      RegExp(r'^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$').hasMatch(envoye),
-      isTrue,
-    );
-    port.dispose();
-  });
+  // Les trois fichiers reels du directeur (13/11/2026). Les deux premiers
+  // etaient refuses par la fonction (lettres arabes ; espaces et apostrophe)
+  // parce que leur nom entrait dans la cle de stockage, et l'ecran disait
+  // « la connexion s'est interrompue ».
+  for (final String nom in <String>[
+    'متن الأخضري-1.pdf',
+    "Programme d'initiation aux sciences Islamiques - PISI.pdf",
+    'The_Mental_Fortress_Blueprint.pdf',
+    '${'tres-long-' * 40}.pdf',
+    'accentué çà et là (copie).PDF',
+  ]) {
+    test('le nom du fichier ne voyage jamais : « $nom » part sous un nom '
+        'neutre', () async {
+      final BibliothequeUploadSupabase port = BibliothequeUploadSupabase(
+        supabase,
+        transport: transport,
+      );
+      await port.demanderUpload(
+        supportId: 'c2900000-0000-0000-0000-000000000002',
+        fichier: FichierADeposer(
+          nom: nom,
+          octets: 4,
+          mime: 'application/pdf',
+          sha256: List<String>.filled(64, 'a').join(),
+        ),
+      );
+      final String envoye =
+          (actions.first['fichier'] as Map<String, dynamic>)['nom'] as String;
+      expect(envoye, 'document.pdf');
+      // La convention que la fonction, la base et la cle exigeaient du nom.
+      expect(
+        RegExp(r'^[A-Za-z0-9][A-Za-z0-9._-]{0,127}$').hasMatch(envoye),
+        isTrue,
+      );
+      port.dispose();
+    });
+  }
 
   FichierADeposer pdf() => FichierADeposer(
     nom: 'support.pdf',

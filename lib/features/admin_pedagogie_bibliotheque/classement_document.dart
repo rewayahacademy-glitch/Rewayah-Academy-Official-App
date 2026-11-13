@@ -254,6 +254,7 @@ class LigneCase extends StatelessWidget {
     required this.coche,
     required this.onChange,
     this.precision,
+    super.key,
   });
 
   /// La cle de la case.

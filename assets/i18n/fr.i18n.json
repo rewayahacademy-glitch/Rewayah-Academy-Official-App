@@ -7259,7 +7259,7 @@
           "taille": "Ce fichier est trop volumineux. Choisissez un fichier plus léger.",
           "type": "Ce type de fichier n'est pas pris en charge pour ce document. Choisissez un autre fichier.",
           "reseau": "Aucune réponse n'est arrivée\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Rien n'a été enregistré. Réessayez dans un instant.",
-          "refuse": "Le serveur a refusé ce dépôt\u00a0: la demande a expiré, ou ce document a déjà son fichier. Rechargez la page, puis réessayez.",
+          "refuse": "Ce dépôt a été refusé\u00a0: votre compte n'en a pas le droit. Rien n'a été déposé.",
           "empreinte": "Le fichier reçu ne correspond pas à celui envoyé. Réessayez.",
           "nonActive": "Le dépôt de fichiers n'est pas encore activé : rien n'a été envoyé. En attendant, vous pouvez ajouter un document par son lien.",
           "creation": "Le brouillon n'a pas pu être créé. Réessayez.",
@@ -7269,7 +7269,13 @@
           "envoi": "L'envoi du fichier n'a reçu aucune réponse, alors que le serveur répond. Le plus probable\u00a0: le stockage des fichiers n'accepte pas encore les envois depuis cette adresse, et c'est un réglage du serveur\u00a0; sinon, la connexion a coupé pendant l'envoi. Réessayez une fois\u00a0; si cela recommence, c'est le réglage qui est à corriger.",
           "service": "Le dépôt n'a pas abouti\u00a0: la réponse reçue n'est pas celle attendue. Ce n'est pas votre connexion, et rien n'a été enregistré. Réessayez dans quelques minutes\u00a0; si cela recommence, le service de dépôt est à vérifier.",
           "reglage": "Le fichier est arrivé, mais le serveur ne peut pas le confirmer\u00a0: sa clé de confirmation n'est pas la même des deux côtés. C'est un réglage à corriger\u00a0; réessayer ne changera rien.",
-          "delai": "La vérification du fichier a pris trop de temps et s'est arrêtée. Rien n'a été enregistré. Réessayez\u00a0; si le fichier est très lourd, choisissez une version plus légère."
+          "delai": "La vérification du fichier a pris trop de temps et s'est arrêtée. Rien n'a été enregistré. Réessayez\u00a0; si le fichier est très lourd, choisissez une version plus légère.",
+          "vide": "Ce fichier est vide. Choisissez un autre fichier.",
+          "nonModifiable": "Ce document n'est plus modifiable\u00a0: il a été publié ou retiré depuis l'ouverture de cette page. Rien n'a été déposé. Rechargez la page.",
+          "dejaDepose": "Ce document a déjà son fichier. Rien n'a été déposé. Pour le remplacer, créez une nouvelle version depuis sa fiche.",
+          "expire": "La demande de dépôt a expiré avant la fin. Rien n'a été déposé. Réessayez.",
+          "contenu": "Le contenu de ce fichier n'est pas celui de son type\u00a0: ce n'est pas un PDF, un audio ou une image valide. Choisissez un autre fichier.",
+          "introuvable": "Le fichier envoyé n'a pas été retrouvé\u00a0: l'envoi n'a pas abouti. Rien n'a été déposé. Réessayez."
         },
         "droits": {
           "aide": "Aucun droit n'est présumé : une valeur inconnue bloque la publication.",
@@ -7306,7 +7312,8 @@
           },
           "plus": "Plus de réglages",
           "moins": "Masquer les réglages",
-          "plusAide": "Âges, étapes du programme, droits détaillés\u00a0: rien n'est obligatoire, les valeurs par défaut conviennent.",
+          "plusAide": "Âges, étapes du programme, source du document\u00a0: rien n'est obligatoire, les valeurs par défaut conviennent.",
+          "sourceTitre": "Source du document",
           "langue": "Langue\u00a0: {langue}, déduite du nom.",
           "aideFichier": "Choisissez d'abord un fichier\u00a0: le bouton «\u00a0Enregistrer le document\u00a0» apparaît quand le fichier est ajouté.",
           "aideEnvoi": "Le fichier est en cours d'envoi\u00a0: le bouton «\u00a0Enregistrer le document\u00a0» apparaît dès qu'il est ajouté.",

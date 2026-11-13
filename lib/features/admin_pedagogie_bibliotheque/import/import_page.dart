@@ -26,7 +26,6 @@
 library;
 
 import 'dart:async';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -51,8 +50,8 @@ import '../../../core/widgets/choice_card_group.dart';
 import '../../../core/widgets/etat_systeme.dart';
 import '../../../core/widgets/lien_fleche.dart';
 import '../../../core/widgets/page_shell.dart';
-import '../../../core/widgets/status_pill.dart' show TonEtat;
 import '../../../core/widgets/sous_navigation_domaine.dart';
+import '../../../core/widgets/status_pill.dart' show TonEtat;
 import '../../../core/widgets/zone_saisie.dart';
 import '../catalogue/catalogue_page.dart' show rangBibliotheque;
 import '../classement_document.dart';
@@ -152,7 +151,9 @@ String tailleLisible(int octets) {
       : octets < 1024 * 1024
       ? s.tailleKo(n: nombre(octets / 1024))
       : s.tailleMo(n: nombre(octets / (1024 * 1024)));
-  return LibellesGroupe.valeurSeule(texte);
+  // Insecable, sans ancre de sens : la taille suit toujours un autre texte
+  // (« PDF · 1,2 Mo »), et une ancre ne se pose qu'en tete.
+  return LibellesGroupe.insecable(texte);
 }
 
 /// Le reglage nomme par une exception de la demande, s'il y en a un.
@@ -1476,7 +1477,7 @@ class _ImportEtat extends ConsumerState<_Import> {
             ),
             Ecart.vLg,
             Text(
-              f.sections.droits,
+              s.sourceTitre,
               style: Theme.of(context).textTheme.titleSmall,
             ),
             Ecart.vMd,

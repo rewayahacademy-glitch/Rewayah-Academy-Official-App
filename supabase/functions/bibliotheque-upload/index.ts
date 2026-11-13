@@ -79,7 +79,7 @@ Deno.serve(async (requete: Request) => {
     // Les reglages de production du depot : LEQUEL manque, par son nom, jamais
     // sa valeur. Direction seulement : la base refuse tout autre compte.
     const { data, error } = await compte.sql.rpc("bibliotheque_depot_actif");
-    if (error) return refus("reglages refuses", 403);
+    if (error) return refus("depot non autorise", 403);
     return json(
       await reglagesDepot(requete.headers.get("Origin"), data === true),
     );
@@ -128,7 +128,10 @@ async function demanderDepot(
   corps: Record<string, unknown>,
 ): Promise<Response> {
   if (!stockageConfigure("priveApplicatif")) {
-    return refusReglage("stockage indisponible", reglageManquant(["priveApplicatif"]));
+    return refusReglage(
+      "stockage indisponible",
+      reglageManquant(["priveApplicatif"]),
+    );
   }
   const supportId = typeof corps.support_id === "string"
     ? corps.support_id.trim()
@@ -351,14 +354,6 @@ function refusConfirmation(erreur: { message?: string }): Response {
   return refusBase(erreur);
 }
 
-/** Le refus d'un appel a la base : son motif vrai, pas un « 403 » pour tout
- * (compte sans droit, document plus modifiable, panne). Un compte sans droit
- * lit toujours un refus, jamais un reglage. */
-function refusBase(erreur: { message?: string; code?: string }): Response {
-  const [message, statut] = reponseRefus(motifRefus(erreur));
-  return refus(message, statut);
-}
-
 /** Un 503 qui nomme le reglage en cause (son NOM, jamais sa valeur), pour que
  * la direction sache lequel poser sans le decouvrir par des echecs. */
 function refusReglage(message: string, reglage: string | null): Response {
@@ -366,6 +361,14 @@ function refusReglage(message: string, reglage: string | null): Response {
     reglage === null ? { error: message } : { error: message, reglage },
     503,
   );
+}
+
+/** Le refus d'un appel a la base : son motif vrai, pas un « 403 » pour tout
+ * (compte sans droit, document plus modifiable, panne). Un compte sans droit
+ * lit toujours un refus, jamais un reglage. */
+function refusBase(erreur: { message?: string; code?: string }): Response {
+  const [message, statut] = reponseRefus(motifRefus(erreur));
+  return refus(message, statut);
 }
 
 function typesPour(finalite: string): string[] {
@@ -399,7 +402,10 @@ async function demanderVignette(
   corps: Record<string, unknown>,
 ): Promise<Response> {
   if (!stockageConfigure("priveApplicatif")) {
-    return refusReglage("stockage indisponible", reglageManquant(["priveApplicatif"]));
+    return refusReglage(
+      "stockage indisponible",
+      reglageManquant(["priveApplicatif"]),
+    );
   }
   const documentId = typeof corps.support_id === "string"
     ? corps.support_id.trim()
