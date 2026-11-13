@@ -74,6 +74,7 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$vide$fr vide = Traductions$vide$fr.internal(_root);
 	late final Traductions$pin$fr pin = Traductions$pin$fr.internal(_root);
 	late final Traductions$choix$fr choix = Traductions$choix$fr.internal(_root);
+	late final Traductions$lieu$fr lieu = Traductions$lieu$fr.internal(_root);
 	late final Traductions$parcours$fr parcours = Traductions$parcours$fr.internal(_root);
 	late final Traductions$avatar$fr avatar = Traductions$avatar$fr.internal(_root);
 	late final Traductions$nav$fr nav = Traductions$nav$fr.internal(_root);
@@ -1969,6 +1970,138 @@ class Traductions$choix$fr {
 
 	/// fr: 'Par exemple : {texte}'
 	String exemple({required Object texte}) => 'Par exemple : ${texte}';
+}
+
+// Path: lieu
+class Traductions$lieu$fr {
+	Traductions$lieu$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Votre ville'
+	String get titre => 'Votre ville';
+
+	/// fr: 'Choisissez la ville où vous habitez. Elle sert à afficher les heures de cours à votre heure. Seuls vous, votre foyer et la direction la voient.'
+	String get consigneTuteur => 'Choisissez la ville où vous habitez. Elle sert à afficher les heures de cours à votre heure. Seuls vous, votre foyer et la direction la voient.';
+
+	/// fr: 'Choisissez la ville où vous enseignez. Elle sert à afficher vos heures de cours à votre heure, et la direction la vérifie. Seuls vous et la direction la voient.'
+	String get consigneEnseignant => 'Choisissez la ville où vous enseignez. Elle sert à afficher vos heures de cours à votre heure, et la direction la vérifie. Seuls vous et la direction la voient.';
+
+	/// fr: 'Rechercher votre ville'
+	String get champ => 'Rechercher votre ville';
+
+	/// fr: 'Les premières lettres du nom suffisent, avec ou sans accent.'
+	String get aide => 'Les premières lettres du nom suffisent, avec ou sans accent.';
+
+	/// fr: 'Villes à l'heure de cet appareil'
+	String get propositions => 'Villes à l\'heure de cet appareil';
+
+	/// fr: 'Villes trouvées'
+	String get resultats => 'Villes trouvées';
+
+	/// fr: 'Liste des villes : GeoNames (geonames.org), licence CC BY 4.0.'
+	String get credit => 'Liste des villes : GeoNames (geonames.org), licence CC BY 4.0.';
+
+	/// fr: 'Aucune ville ne commence par « {texte} ». Essayez les premières lettres du nom, sans accent.'
+	String aucune({required Object texte}) => 'Aucune ville ne commence par « ${texte} ». Essayez les premières lettres du nom, sans accent.';
+
+	/// fr: 'La liste des villes ne s'est pas chargée'
+	String get chargeEchec => 'La liste des villes ne s\'est pas chargée';
+
+	/// fr: 'La liste n'a pas pu s'afficher. Réessayez dans un instant.'
+	String get chargeEchecPhrase => 'La liste n\'a pas pu s\'afficher. Réessayez dans un instant.';
+
+	/// fr: 'Ville choisie : {ville}, {pays}.'
+	String choisie({required Object ville, required Object pays}) => 'Ville choisie : ${ville}, ${pays}.';
+
+	/// fr: 'Enregistrer ma ville'
+	String get enregistrer => 'Enregistrer ma ville';
+
+	/// fr: 'Plus tard'
+	String get plusTard => 'Plus tard';
+
+	/// fr: 'Vous pouvez encore reporter cette étape. Tant qu'elle n'est pas faite, vos heures de cours s'affichent à l'heure de cet appareil.'
+	String get plusTardPhrase => 'Vous pouvez encore reporter cette étape. Tant qu\'elle n\'est pas faite, vos heures de cours s\'affichent à l\'heure de cet appareil.';
+
+	/// fr: 'Cette étape est maintenant nécessaire pour afficher vos heures de cours à votre heure.'
+	String get obligatoire => 'Cette étape est maintenant nécessaire pour afficher vos heures de cours à votre heure.';
+
+	/// fr: 'Votre ville n'est pas confirmée. Réessayez dans un instant.'
+	String get echec => 'Votre ville n\'est pas confirmée. Réessayez dans un instant.';
+
+	/// fr: 'Relisez vos disponibilités'
+	String get disponibilitesTitre => 'Relisez vos disponibilités';
+
+	/// fr: 'Votre ville a changé de fuseau. Vos disponibilités gardent leurs heures exactes, mais elles s'affichent maintenant à votre nouvelle heure : relisez-les.'
+	String get disponibilitesPhrase => 'Votre ville a changé de fuseau. Vos disponibilités gardent leurs heures exactes, mais elles s\'affichent maintenant à votre nouvelle heure : relisez-les.';
+
+	/// fr: 'Relire mes disponibilités'
+	String get disponibilitesLien => 'Relire mes disponibilités';
+
+	/// fr: 'Heure de cet appareil'
+	String get heureAppareil => 'Heure de cet appareil';
+
+	/// fr: 'Heure de cet appareil : elle diffère de celle de votre ville ({ville}).'
+	String heureAppareilVoyage({required Object ville}) => 'Heure de cet appareil : elle diffère de celle de votre ville (${ville}).';
+
+	/// fr: 'Ville'
+	String get colonneVille => 'Ville';
+
+	/// fr: 'Ville non choisie'
+	String get villeAbsente => 'Ville non choisie';
+
+	/// fr: 'Ville vérifiée'
+	String get verifiee => 'Ville vérifiée';
+
+	/// fr: 'Ville à vérifier'
+	String get nonVerifiee => 'Ville à vérifier';
+
+	/// fr: 'Vérifier la ville {deNom}'
+	String verifier({required Object deNom}) => 'Vérifier la ville ${deNom}';
+
+	/// fr: 'La ville {deNom} est vérifiée.'
+	String villeVerifiee({required Object deNom}) => 'La ville ${deNom} est vérifiée.';
+
+	/// fr: 'La vérification n'est pas confirmée. Réessayez dans un instant.'
+	String get verifierEchec => 'La vérification n\'est pas confirmée. Réessayez dans un instant.';
+
+	/// fr: 'Villes à vérifier'
+	String get incoherencesTitre => 'Villes à vérifier';
+
+	/// fr: 'n'a pas encore choisi sa ville'
+	String get incSansVille => 'n\'a pas encore choisi sa ville';
+
+	/// fr: 'son fuseau enregistré ne correspond pas à sa ville'
+	String get incFuseauDifferent => 'son fuseau enregistré ne correspond pas à sa ville';
+
+	/// fr: 'son pays enregistré ne correspond pas au pays de sa ville'
+	String get incPaysDifferent => 'son pays enregistré ne correspond pas au pays de sa ville';
+
+	/// fr: 'son pays et son fuseau enregistrés ne vont pas ensemble'
+	String get incPaysFuseau => 'son pays et son fuseau enregistrés ne vont pas ensemble';
+
+	/// fr: '{ville} ({pays})'
+	String villeLigne({required Object ville, required Object pays}) => '${ville} (${pays})';
+
+	/// fr: '{n} à vérifier'
+	String incoherencesCompte({required Object n}) => '${n} à vérifier';
+
+	/// fr: 'Prochains changements d'heure'
+	String get changementsTitre => 'Prochains changements d\'heure';
+
+	/// fr: '{date}, {ville} : familles : {familles} ; enseignants : {enseignants} ; de {avant} à {apres}.'
+	String changementsLigne({required Object date, required Object ville, required Object familles, required Object enseignants, required Object avant, required Object apres}) => '${date}, ${ville} : familles : ${familles} ; enseignants : ${enseignants} ; de ${avant} à ${apres}.';
+
+	/// fr: 'Aucun changement d'heure dans les {jours} prochains jours chez les familles et les enseignants.'
+	String changementsAucun({required Object jours}) => 'Aucun changement d\'heure dans les ${jours} prochains jours chez les familles et les enseignants.';
+
+	/// fr: 'La liste des changements d'heure ne s'est pas chargée. Rechargez la page pour la relire.'
+	String get changementsErreur => 'La liste des changements d\'heure ne s\'est pas chargée. Rechargez la page pour la relire.';
+
+	/// fr: 'Aucune ville à vérifier pour le moment.'
+	String get incoherencesVide => 'Aucune ville à vérifier pour le moment.';
 }
 
 // Path: parcours
@@ -14749,6 +14882,48 @@ class Traductions$notifications$evenements$fr {
 
 	/// fr: 'L'horaire de la classe a changé.'
 	String get creneauChange => 'L\'horaire de la classe a changé.';
+
+	/// fr: 'À partir du {date}, {cours} du {jour} passe de {avant} à {apres}.'
+	String changementHeureUn({required Object date, required Object cours, required Object jour, required Object avant, required Object apres}) => 'À partir du ${date}, ${cours} du ${jour} passe de ${avant} à ${apres}.';
+
+	/// fr: 'À partir du {date}, l'heure {cours} change : {liste}.'
+	String changementHeurePlusieurs({required Object date, required Object cours, required Object liste}) => 'À partir du ${date}, l\'heure ${cours} change : ${liste}.';
+
+	/// fr: 'À partir du {date}, {cours} passe du {jourAvant} {avant} au {jourApres} {apres}.'
+	String changementHeureUnJour({required Object date, required Object cours, required Object jourAvant, required Object avant, required Object jourApres, required Object apres}) => 'À partir du ${date}, ${cours} passe du ${jourAvant} ${avant} au ${jourApres} ${apres}.';
+
+	/// fr: 'du {jourAvant} {avant} au {jourApres} {apres}'
+	String changementHeureLigneJour({required Object jourAvant, required Object avant, required Object jourApres, required Object apres}) => 'du ${jourAvant} ${avant} au ${jourApres} ${apres}';
+
+	/// fr: 'Le cours reste à la même heure à La Mecque : c'est l'heure de votre ville qui change.'
+	String get changementHeureMecque => 'Le cours reste à la même heure à La Mecque : c\'est l\'heure de votre ville qui change.';
+
+	/// fr: 'La classe {classe} n'a pas pu passer à l'heure de La Mecque : {raison} Elle sera réessayée cette nuit.'
+	String conversionRefusee({required Object classe, required Object raison}) => 'La classe ${classe} n\'a pas pu passer à l\'heure de La Mecque : ${raison} Elle sera réessayée cette nuit.';
+
+	/// fr: 'un changement d'heure approche (moins de 28 jours).'
+	String get conversionRefuseeProche => 'un changement d\'heure approche (moins de 28 jours).';
+
+	/// fr: 'un de ses créneaux n'a pas d'heure pleine à La Mecque.'
+	String get conversionRefuseeDemiHeure => 'un de ses créneaux n\'a pas d\'heure pleine à La Mecque.';
+
+	/// fr: 'une vérification a échoué, consultez la classe.'
+	String get conversionRefuseeAutre => 'une vérification a échoué, consultez la classe.';
+
+	/// fr: 'le {jour} de {avant} à {apres}'
+	String changementHeureLigne({required Object jour, required Object avant, required Object apres}) => 'le ${jour} de ${avant} à ${apres}';
+
+	/// fr: 'votre cours'
+	String get changementHeureCoursUn => 'votre cours';
+
+	/// fr: 'le cours de la classe'
+	String get changementHeureCoursUnFoyer => 'le cours de la classe';
+
+	/// fr: 'de vos cours'
+	String get changementHeureCoursPlusieurs => 'de vos cours';
+
+	/// fr: 'des cours de la classe'
+	String get changementHeureCoursPlusieursFoyer => 'des cours de la classe';
 
 	/// fr: 'Une séance est annulée.'
 	String get seanceAnnulee => 'Une séance est annulée.';
@@ -28502,6 +28677,9 @@ class Traductions$admin$groupes$c1$fr {
 	/// fr: '{jour} à {heure}, heure {deVille}'
 	String quand({required Object jour, required Object heure, required Object deVille}) => '${jour} à ${heure}, heure ${deVille}';
 
+	/// fr: '{jour} à {heure}, heure de La Mecque'
+	String quandMecque({required Object jour, required Object heure}) => '${jour} à ${heure}, heure de La Mecque';
+
 	/// fr: '{jour} à {heure}'
 	String quandSansVille({required Object jour, required Object heure}) => '${jour} à ${heure}';
 
@@ -28519,6 +28697,9 @@ class Traductions$admin$groupes$c1$fr {
 
 	/// fr: 'Heures à l'heure {deVille}, le fuseau retenu par défaut.'
 	String fuseauDefaut({required Object deVille}) => 'Heures à l\'heure ${deVille}, le fuseau retenu par défaut.';
+
+	/// fr: 'Heures à l'heure de La Mecque.'
+	String get fuseauAcademie => 'Heures à l\'heure de La Mecque.';
 
 	/// fr: 'Heures à l'heure {deVille}, le fuseau que le serveur retient pour l'instant. Le fuseau de l'enseignant sera pris en compte dès que le serveur l'acceptera.'
 	String fuseauNonTransmis({required Object deVille}) => 'Heures à l\'heure ${deVille}, le fuseau que le serveur retient pour l\'instant. Le fuseau de l\'enseignant sera pris en compte dès que le serveur l\'acceptera.';
@@ -28679,6 +28860,12 @@ class Traductions$admin$groupes$reglagesClasse$fr {
 	/// fr: 'Ce créneau a déjà changé : revenez aux créneaux pour voir la liste à jour.'
 	String get refusIntrouvable => 'Ce créneau a déjà changé : revenez aux créneaux pour voir la liste à jour.';
 
+	/// fr: 'Ce changement d'horaire n'est pas encore disponible : réessayez dans quelques minutes.'
+	String get refusConversion => 'Ce changement d\'horaire n\'est pas encore disponible : réessayez dans quelques minutes.';
+
+	/// fr: 'Rechargez l'application pour modifier un horaire.'
+	String get refusRecharger => 'Rechargez l\'application pour modifier un horaire.';
+
 	/// fr: 'Cette classe est fermée : ses créneaux ne changent plus.'
 	String get refusClasseFermee => 'Cette classe est fermée : ses créneaux ne changent plus.';
 
@@ -28733,8 +28920,8 @@ class Traductions$admin$groupes$creneau$fr {
 	/// fr: 'Un jour et une heure de plus, chaque semaine, pour la même classe. Les séances des quatre prochaines semaines sont créées tout de suite.'
 	String get contexte => 'Un jour et une heure de plus, chaque semaine, pour la même classe. Les séances des quatre prochaines semaines sont créées tout de suite.';
 
-	/// fr: 'L'heure est celle du fuseau horaire de la classe.'
-	String get fuseau => 'L\'heure est celle du fuseau horaire de la classe.';
+	/// fr: 'Heure {deVille}'
+	String fuseauSaisie({required Object deVille}) => 'Heure ${deVille}';
 
 	/// fr: 'Ajouter ce créneau'
 	String get envoyer => 'Ajouter ce créneau';
@@ -33374,8 +33561,32 @@ class Traductions$tc$groupe$horloges$fr {
 	/// fr: 'Heure de la classe'
 	String get heureGroupe => 'Heure de la classe';
 
+	/// fr: 'Heure de La Mecque'
+	String get heureMecque => 'Heure de La Mecque';
+
+	/// fr: 'À l'heure de La Mecque, la classe aura lieu le {jour} à {heure}.'
+	String apercuClasse({required Object jour, required Object heure}) => 'À l\'heure de La Mecque, la classe aura lieu le ${jour} à ${heure}.';
+
+	/// fr: 'Chez l'enseignant ({ville})'
+	String apercuOuEnseignant({required Object ville}) => 'Chez l\'enseignant (${ville})';
+
+	/// fr: '{ou} : {heure} toute l'année.'
+	String apercuChez({required Object ou, required Object heure}) => '${ou} : ${heure} toute l\'année.';
+
+	/// fr: '{ou} : {heure}, puis {apres} à partir du {date}.'
+	String apercuChezPuis({required Object ou, required Object heure, required Object apres, required Object date}) => '${ou} : ${heure}, puis ${apres} à partir du ${date}.';
+
 	/// fr: '{heure} {ville}'
 	String heureEtVille({required Object heure, required Object ville}) => '${heure} ${ville}';
+
+	/// fr: 'Heure de La Mecque : {heure}'
+	String mecqueEnSecond({required Object heure}) => 'Heure de La Mecque : ${heure}';
+
+	/// fr: '{heure} (heure {deVille})'
+	String heureDeVille({required Object heure, required Object deVille}) => '${heure} (heure ${deVille})';
+
+	/// fr: 'La Mecque'
+	String get laMecque => 'La Mecque';
 
 	/// fr: 'Chez vous'
 	String get chezVous => 'Chez vous';
@@ -53354,12 +53565,14 @@ extension on Traductions {
 			'admin.groupes.c1.seanceDatee' => ({required Object quand}) => 'La classe n\'est pas créée : cette personne a déjà une séance prévue le ${quand}. Changez de créneau ou choisissez une autre personne dans la liste.',
 			'admin.groupes.c1.creneauxPropres' => 'La classe n\'est pas créée : deux de ses créneaux se chevauchent, le premier déborde sur le suivant. Écartez ces créneaux ou raccourcissez la durée, puis pressez de nouveau.',
 			'admin.groupes.c1.quand' => ({required Object jour, required Object heure, required Object deVille}) => '${jour} à ${heure}, heure ${deVille}',
+			'admin.groupes.c1.quandMecque' => ({required Object jour, required Object heure}) => '${jour} à ${heure}, heure de La Mecque',
 			'admin.groupes.c1.quandSansVille' => ({required Object jour, required Object heure}) => '${jour} à ${heure}',
 			'admin.groupes.c1.jourDate' => ({required Object jour, required Object numero, required Object mois}) => '${jour} ${numero} ${mois}',
 			'admin.groupes.c1.heurePleine' => ({required Object h}) => '${h} h',
 			'admin.groupes.c1.heureMinutes' => ({required Object h, required Object mm}) => '${h} h ${mm}',
 			'admin.groupes.c1.fuseauEnseignant' => ({required Object deVille}) => 'Heures à l\'heure ${deVille}, le fuseau de l\'enseignant.',
 			'admin.groupes.c1.fuseauDefaut' => ({required Object deVille}) => 'Heures à l\'heure ${deVille}, le fuseau retenu par défaut.',
+			'admin.groupes.c1.fuseauAcademie' => 'Heures à l\'heure de La Mecque.',
 			'admin.groupes.c1.fuseauNonTransmis' => ({required Object deVille}) => 'Heures à l\'heure ${deVille}, le fuseau que le serveur retient pour l\'instant. Le fuseau de l\'enseignant sera pris en compte dès que le serveur l\'acceptera.',
 			'admin.groupes.c1.abandonQuestion' => 'Abandonner la nouvelle classe ?',
 			'admin.groupes.c1.abandonConsequence' => 'Les choix faits dans ce formulaire (public, enseignant, créneaux, nom) seront perdus.',
@@ -53416,6 +53629,8 @@ extension on Traductions {
 			'admin.groupes.reglagesClasse.refusDernier' => 'Une classe garde au moins un créneau : ajoutez-en un autre avant de retirer celui-ci.',
 			'admin.groupes.reglagesClasse.refusExistant' => 'La classe a déjà ce créneau : choisissez un autre jour ou une autre heure.',
 			'admin.groupes.reglagesClasse.refusIntrouvable' => 'Ce créneau a déjà changé : revenez aux créneaux pour voir la liste à jour.',
+			'admin.groupes.reglagesClasse.refusConversion' => 'Ce changement d\'horaire n\'est pas encore disponible : réessayez dans quelques minutes.',
+			'admin.groupes.reglagesClasse.refusRecharger' => 'Rechargez l\'application pour modifier un horaire.',
 			'admin.groupes.reglagesClasse.refusClasseFermee' => 'Cette classe est fermée : ses créneaux ne changent plus.',
 			'admin.groupes.reglagesClasse.erreur' => 'Le changement n\'est pas confirmé : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'admin.groupes.reglagesClasse.lectureErreur' => 'Les créneaux de cette classe ne se lisent pas pour le moment.',
@@ -53427,7 +53642,7 @@ extension on Traductions {
 			'admin.groupes.reglagesClasse.faitDuree' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, zero: 'Durée enregistrée : aucune séance à venir à changer pour le moment.', one: 'Durée enregistrée : ${n} séance à venir la prend.', other: 'Durée enregistrée : ${n} séances à venir la prennent.', ), 
 			'admin.groupes.creneau.titre' => ({required Object deLibelle}) => 'Nouveau créneau ${deLibelle}',
 			'admin.groupes.creneau.contexte' => 'Un jour et une heure de plus, chaque semaine, pour la même classe. Les séances des quatre prochaines semaines sont créées tout de suite.',
-			'admin.groupes.creneau.fuseau' => 'L\'heure est celle du fuseau horaire de la classe.',
+			'admin.groupes.creneau.fuseauSaisie' => ({required Object deVille}) => 'Heure ${deVille}',
 			'admin.groupes.creneau.envoyer' => 'Ajouter ce créneau',
 			'admin.groupes.creneau.dejaLa' => 'Cette classe a déjà ce créneau : rien n\'a changé. Choisissez un autre jour ou une autre heure.',
 			'admin.groupes.creneau.erreur' => 'Le créneau n\'est pas confirmé : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
@@ -53773,12 +53988,12 @@ extension on Traductions {
 			'admin.regroupements.refusAffectation.inconnu' => 'L\'enseignant n\'est pas confirmé. Choisissez-en un autre.',
 			'admin.regroupements.dejaAffecte' => 'Un autre membre de la direction a déjà confirmé l\'enseignant de cette classe : votre choix ne remplace pas le sien.',
 			'admin.regroupements.famillesPrevenues' => 'Les familles ont été prévenues.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.regroupements.famillesClasseValidee' => 'Les familles ont été prévenues que leur classe est validée.',
 			'admin.regroupements.termineDetail' => ({required Object libelle, required Object enseignant}) => 'Classe ${libelle} : ${enseignant} en est l\'enseignant.',
 			'admin.regroupements.decoupagePleines' => ({required num n, required Object taille}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} classe de ${taille}', other: '${n} classes de ${taille}', ), 
 			'admin.regroupements.decoupageAucuneClasse' => 'aucune classe',
-			_ => null,
-		} ?? switch (path) {
 			'admin.regroupements.decoupageDerniere' => ({required Object n}) => 'une dernière classe de ${n}',
 			'admin.regroupements.decoupageAttente' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} élève en attente', other: '${n} élèves en attente', ), 
 			'admin.regroupements.decoupage' => ({required Object detail}) => 'Découpage prévu : ${detail}.',
@@ -54287,12 +54502,12 @@ extension on Traductions {
 			'admin.suppressions.traiteeLe' => 'Traitée le',
 			'admin.suppressions.delaiEnCours' => ({required Object date}) => 'Le délai de réflexion court jusqu\'au ${date}. La demande pourra être traitée à partir de ce jour.',
 			'admin.suppressions.soldeTitre' => 'Un solde reste à régler',
+			_ => null,
+		} ?? switch (path) {
 			'admin.suppressions.soldeDetail' => ({required Object montant}) => 'Il reste ${montant} à payer. Ce solde reste dû après la suppression.',
 			'admin.suppressions.seancesTitre' => 'Des séances sont encore prévues',
 			'admin.suppressions.seancesDetail' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} séance est prévue. Annulez-la ou confiez-la à une autre personne. La demande ne peut pas être traitée tant qu\'elle existe.', other: '${n} séances sont prévues. Annulez-les ou confiez-les à une autre personne. La demande ne peut pas être traitée tant qu\'elles existent.', ), 
 			'admin.suppressions.foyerTitre' => 'Des élèves dans ce foyer',
-			_ => null,
-		} ?? switch (path) {
 			'admin.suppressions.foyerDetail' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} élève est dans le foyer de ce tuteur. Vérifiez sa situation avant de continuer.', other: '${n} élèves sont dans le foyer de ce tuteur. Vérifiez leur situation avant de continuer.', ), 
 			'admin.suppressions.traiter' => 'Traiter la demande',
 			'admin.suppressions.confirmerQuestion' => ({required Object nom}) => 'Anonymiser ce compte : ${nom} ?',
@@ -54801,12 +55016,12 @@ extension on Traductions {
 			'admin.finance.pol.historiqueVide' => 'Aucune autre version pour l\'instant : seule la version active existe.',
 			'admin.finance.pol.sansDonnees' => 'Les prix publiés n\'ont pas pu être chargés',
 			'admin.finance.pol.apercuPresentsChoix' => 'Élèves présents',
+			_ => null,
+		} ?? switch (path) {
 			'admin.finance.pol.apercuPresentsDetail' => 'Seul un élève présent est payé ; il n\'y a aucun minimum.',
 			'admin.finance.pol.apercuPresents' => ({required Object presents, required Object capacite}) => '${presents} sur ${capacite}',
 			'admin.finance.pol.apercuPresentsMoins' => 'Un élève présent de moins',
 			'admin.finance.pol.apercuPresentsPlus' => 'Un élève présent de plus',
-			_ => null,
-		} ?? switch (path) {
 			'admin.finance.pol.apercuParEleve' => 'Par élève présent',
 			'admin.finance.pol.apercuHeure' => 'Pour une heure de séance',
 			'admin.finance.pol.apercuHeureDetail' => ({required Object presents, required Object capacite}) => '${presents} élèves présents sur ${capacite}',
@@ -55315,12 +55530,12 @@ extension on Traductions {
 			'admin.bibliotheque.libelles.version.aucune' => 'Aucune version',
 			'admin.bibliotheque.libelles.droits.aVerifier' => 'À vérifier',
 			'admin.bibliotheque.libelles.droits.approuve' => 'Approuvé',
+			_ => null,
+		} ?? switch (path) {
 			'admin.bibliotheque.libelles.droits.refuse' => 'Refusé',
 			'admin.bibliotheque.libelles.droits.expire' => 'Expiré',
 			'admin.bibliotheque.libelles.visibilite.publique' => 'Publique',
 			'admin.bibliotheque.libelles.visibilite.inscrits' => 'Inscrits',
-			_ => null,
-		} ?? switch (path) {
 			'admin.bibliotheque.libelles.visibilite.groupeAssigne' => 'Classes attribuées',
 			'admin.bibliotheque.libelles.visibilite.enseignantSeul' => 'Enseignant seul',
 			'admin.bibliotheque.libelles.visibilite.admin' => 'Administration seule',
@@ -55631,6 +55846,47 @@ extension on Traductions {
 			'choix.augmenter' => 'Augmenter de 1',
 			'choix.selectionMultiple' => 'Plusieurs réponses possibles',
 			'choix.exemple' => ({required Object texte}) => 'Par exemple : ${texte}',
+			'lieu.titre' => 'Votre ville',
+			'lieu.consigneTuteur' => 'Choisissez la ville où vous habitez. Elle sert à afficher les heures de cours à votre heure. Seuls vous, votre foyer et la direction la voient.',
+			'lieu.consigneEnseignant' => 'Choisissez la ville où vous enseignez. Elle sert à afficher vos heures de cours à votre heure, et la direction la vérifie. Seuls vous et la direction la voient.',
+			'lieu.champ' => 'Rechercher votre ville',
+			'lieu.aide' => 'Les premières lettres du nom suffisent, avec ou sans accent.',
+			'lieu.propositions' => 'Villes à l\'heure de cet appareil',
+			'lieu.resultats' => 'Villes trouvées',
+			'lieu.credit' => 'Liste des villes : GeoNames (geonames.org), licence CC BY 4.0.',
+			'lieu.aucune' => ({required Object texte}) => 'Aucune ville ne commence par « ${texte} ». Essayez les premières lettres du nom, sans accent.',
+			'lieu.chargeEchec' => 'La liste des villes ne s\'est pas chargée',
+			'lieu.chargeEchecPhrase' => 'La liste n\'a pas pu s\'afficher. Réessayez dans un instant.',
+			'lieu.choisie' => ({required Object ville, required Object pays}) => 'Ville choisie : ${ville}, ${pays}.',
+			'lieu.enregistrer' => 'Enregistrer ma ville',
+			'lieu.plusTard' => 'Plus tard',
+			'lieu.plusTardPhrase' => 'Vous pouvez encore reporter cette étape. Tant qu\'elle n\'est pas faite, vos heures de cours s\'affichent à l\'heure de cet appareil.',
+			'lieu.obligatoire' => 'Cette étape est maintenant nécessaire pour afficher vos heures de cours à votre heure.',
+			'lieu.echec' => 'Votre ville n\'est pas confirmée. Réessayez dans un instant.',
+			'lieu.disponibilitesTitre' => 'Relisez vos disponibilités',
+			'lieu.disponibilitesPhrase' => 'Votre ville a changé de fuseau. Vos disponibilités gardent leurs heures exactes, mais elles s\'affichent maintenant à votre nouvelle heure : relisez-les.',
+			'lieu.disponibilitesLien' => 'Relire mes disponibilités',
+			'lieu.heureAppareil' => 'Heure de cet appareil',
+			'lieu.heureAppareilVoyage' => ({required Object ville}) => 'Heure de cet appareil : elle diffère de celle de votre ville (${ville}).',
+			'lieu.colonneVille' => 'Ville',
+			'lieu.villeAbsente' => 'Ville non choisie',
+			'lieu.verifiee' => 'Ville vérifiée',
+			'lieu.nonVerifiee' => 'Ville à vérifier',
+			'lieu.verifier' => ({required Object deNom}) => 'Vérifier la ville ${deNom}',
+			'lieu.villeVerifiee' => ({required Object deNom}) => 'La ville ${deNom} est vérifiée.',
+			'lieu.verifierEchec' => 'La vérification n\'est pas confirmée. Réessayez dans un instant.',
+			'lieu.incoherencesTitre' => 'Villes à vérifier',
+			'lieu.incSansVille' => 'n\'a pas encore choisi sa ville',
+			'lieu.incFuseauDifferent' => 'son fuseau enregistré ne correspond pas à sa ville',
+			'lieu.incPaysDifferent' => 'son pays enregistré ne correspond pas au pays de sa ville',
+			'lieu.incPaysFuseau' => 'son pays et son fuseau enregistrés ne vont pas ensemble',
+			'lieu.villeLigne' => ({required Object ville, required Object pays}) => '${ville} (${pays})',
+			'lieu.incoherencesCompte' => ({required Object n}) => '${n} à vérifier',
+			'lieu.changementsTitre' => 'Prochains changements d\'heure',
+			'lieu.changementsLigne' => ({required Object date, required Object ville, required Object familles, required Object enseignants, required Object avant, required Object apres}) => '${date}, ${ville} : familles : ${familles} ; enseignants : ${enseignants} ; de ${avant} à ${apres}.',
+			'lieu.changementsAucun' => ({required Object jours}) => 'Aucun changement d\'heure dans les ${jours} prochains jours chez les familles et les enseignants.',
+			'lieu.changementsErreur' => 'La liste des changements d\'heure ne s\'est pas chargée. Rechargez la page pour la relire.',
+			'lieu.incoherencesVide' => 'Aucune ville à vérifier pour le moment.',
 			'parcours.titre' => ({required Object dePrenom}) => 'Le parcours ${dePrenom}',
 			'parcours.intro' => 'Quelques questions pour personnaliser votre parcours. Vous ne verrez ensuite que les horaires et options adaptés à votre situation.',
 			'parcours.reprendre' => 'Reprendre',
@@ -55788,6 +56044,8 @@ extension on Traductions {
 			'compte.page.sections.paiements' => 'Paiements',
 			'compte.page.sections.preferences' => 'Préférences',
 			'compte.page.sections.compteSecurite' => 'Compte et sécurité',
+			_ => null,
+		} ?? switch (path) {
 			'compte.page.sections.aide' => 'Aide et informations',
 			'compte.page.langue.legende' => 'Pour l\'application et pour les e‑mails de l\'académie',
 			'compte.page.langue.refus' => 'L\'application a changé de langue, mais celle de vos e‑mails n\'est pas confirmée. Réessayez dans un instant.',
@@ -55833,8 +56091,6 @@ extension on Traductions {
 			'compte.donnees.suppression.horsLigne' => 'Votre demande n\'est pas partie. Refaites-la dès le retour du réseau.',
 			'compte.donnees.suppression.refuse' => 'Ce compte ne peut pas demander sa suppression ici.',
 			'compte.titre' => 'Mon compte',
-			_ => null,
-		} ?? switch (path) {
 			'compte.intro' => 'Vos informations, vos préférences et vos accès, au même endroit.',
 			'compte.informations' => 'Informations',
 			'compte.profil' => 'Profil',
@@ -56185,6 +56441,20 @@ extension on Traductions {
 			'notifications.evenements.eleveRetireFoyer' => 'Un élève de votre foyer ne fait plus partie de sa classe.',
 			'notifications.evenements.eleveRetireClasse' => 'Un élève quitte une de vos classes.',
 			'notifications.evenements.creneauChange' => 'L\'horaire de la classe a changé.',
+			'notifications.evenements.changementHeureUn' => ({required Object date, required Object cours, required Object jour, required Object avant, required Object apres}) => 'À partir du ${date}, ${cours} du ${jour} passe de ${avant} à ${apres}.',
+			'notifications.evenements.changementHeurePlusieurs' => ({required Object date, required Object cours, required Object liste}) => 'À partir du ${date}, l\'heure ${cours} change : ${liste}.',
+			'notifications.evenements.changementHeureUnJour' => ({required Object date, required Object cours, required Object jourAvant, required Object avant, required Object jourApres, required Object apres}) => 'À partir du ${date}, ${cours} passe du ${jourAvant} ${avant} au ${jourApres} ${apres}.',
+			'notifications.evenements.changementHeureLigneJour' => ({required Object jourAvant, required Object avant, required Object jourApres, required Object apres}) => 'du ${jourAvant} ${avant} au ${jourApres} ${apres}',
+			'notifications.evenements.changementHeureMecque' => 'Le cours reste à la même heure à La Mecque : c\'est l\'heure de votre ville qui change.',
+			'notifications.evenements.conversionRefusee' => ({required Object classe, required Object raison}) => 'La classe ${classe} n\'a pas pu passer à l\'heure de La Mecque : ${raison} Elle sera réessayée cette nuit.',
+			'notifications.evenements.conversionRefuseeProche' => 'un changement d\'heure approche (moins de 28 jours).',
+			'notifications.evenements.conversionRefuseeDemiHeure' => 'un de ses créneaux n\'a pas d\'heure pleine à La Mecque.',
+			'notifications.evenements.conversionRefuseeAutre' => 'une vérification a échoué, consultez la classe.',
+			'notifications.evenements.changementHeureLigne' => ({required Object jour, required Object avant, required Object apres}) => 'le ${jour} de ${avant} à ${apres}',
+			'notifications.evenements.changementHeureCoursUn' => 'votre cours',
+			'notifications.evenements.changementHeureCoursUnFoyer' => 'le cours de la classe',
+			'notifications.evenements.changementHeureCoursPlusieurs' => 'de vos cours',
+			'notifications.evenements.changementHeureCoursPlusieursFoyer' => 'des cours de la classe',
 			'notifications.evenements.seanceAnnulee' => 'Une séance est annulée.',
 			'notifications.evenements.seanceAnnuleeQuand' => ({required Object quand}) => 'La séance du ${quand} est annulée.',
 			'notifications.evenements.seanceDeplacee' => 'Une séance est déplacée.',
@@ -56288,6 +56558,8 @@ extension on Traductions {
 			'eleve.accueil.aucunCoursDetail' => 'Ton enseignant prépare le prochain.',
 			'eleve.accueil.erreurCours' => 'Tes cours n\'ont pas pu être lus. Réessaie dans un instant.',
 			'eleve.accueil.erreurCoursHorsLigneTitre' => 'Tes cours ne sont pas disponibles',
+			_ => null,
+		} ?? switch (path) {
 			'eleve.accueil.prochainAujourdhui' => 'Ton prochain cours est plus tard aujourd\'hui.',
 			'eleve.accueil.prochainDemain' => 'Ton prochain cours est demain.',
 			'eleve.accueil.annulee' => 'Ce cours n\'aura pas lieu',
@@ -56347,8 +56619,6 @@ extension on Traductions {
 			'tuteur.accueil.seanceTerminee' => 'Séance terminée',
 			'tuteur.accueil.seanceAnnulee' => 'Cette séance n\'aura pas lieu.',
 			'tuteur.accueil.seanceNonTenue' => 'Cette séance n\'a pas pu se tenir.',
-			_ => null,
-		} ?? switch (path) {
 			'tuteur.accueil.horaireIncertain' => 'Ouverture de la salle non confirmée pour l\'instant',
 			'tuteur.accueil.horaireIncertainAvant' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Le bouton pour rejoindre apparaîtra ${n} minute avant le début.', other: 'Le bouton pour rejoindre apparaîtra ${n} minutes avant le début.', ), 
 			'tuteur.accueil.horaireIncertainPendant' => 'Nous n\'arrivons pas à vérifier l\'ouverture de la salle. Rechargez la page.',
@@ -56802,6 +57072,8 @@ extension on Traductions {
 			'enseignant.journee.voirAutreAlerte' => 'Voir l\'autre alerte',
 			'enseignant.journee.voirAutresAlertes' => ({required Object nombre}) => 'Voir les ${nombre} autres alertes',
 			'enseignant.journee.remplacementsVide' => 'Aucun cours d\'un collègue à assurer pour le moment.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.journee.voirTousRemplacements' => ({required Object nombre}) => 'Voir tout : les ${nombre} remplacements confirmés',
 			'enseignant.journee.heure' => 'Heure',
 			'enseignant.journee.eleves' => 'Élèves',
@@ -56861,8 +57133,6 @@ extension on Traductions {
 			'enseignant.remplacements.pretPastille' => 'Retenu',
 			'enseignant.remplacements.pretPhrase' => 'Vous êtes retenu : si l\'enseignant de la classe n\'entre pas à temps, la séance vous est confiée. Restez disponible.',
 			'enseignant.remplacements.pretCollegue' => 'Un collègue est prêt',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.remplacements.pretAvantVous' => 'Un collègue a été retenu pour cette séance. Rien n\'a changé dans votre planning.',
 			'enseignant.remplacements.preparationClose' => 'Cette préparation est close : l\'enseignant de la classe est arrivé, ou la séance est déjà proposée à tous.',
 			'enseignant.remplacements.acceptee' => 'C\'est confirmé : vous assurez cette séance. Elle s\'ajoute à vos remplacements.',
@@ -57316,6 +57586,8 @@ extension on Traductions {
 			'controleur.historique.cleDate' => 'Date',
 			'controleur.historique.cleDuree' => 'Durée observée',
 			'controleur.historique.cleElevesPresents' => 'Présents',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.historique.cleReponse' => 'Réponse',
 			'controleur.historique.sansComplement' => 'Aucun complément.',
 			'controleur.historique.faitsIndisponibles' => 'Le relevé automatique de cette visite (heures, élèves présents, reconnexions) n\'est pas encore reçu : la séance vient de se terminer ou la connexion a été coupée. Il s\'affichera ici dès sa réception. Le reste du rapport reste fiable.',
@@ -57375,8 +57647,6 @@ extension on Traductions {
 			'controleur.compteRendu.pointImportantAide' => 'Quand ce que vous avez vu demande l\'attention de l\'administration · votre texte sera demandé',
 			'controleur.compteRendu.envoyer' => 'Envoyer le compte rendu',
 			'controleur.compteRendu.plusTard' => 'Plus tard',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.compteRendu.notice' => 'Ce compte rendu est transmis automatiquement à l\'administration.',
 			'controleur.compteRendu.echec' => 'L\'envoi n\'est pas confirmé : il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
 			'controleur.compteRendu.echecRien' => 'L\'envoi n\'est pas confirmé : il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Votre choix reste sélectionné ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
@@ -57554,7 +57824,15 @@ extension on Traductions {
 			'tc.groupe.horloges.votreHeure' => 'Votre heure',
 			'tc.groupe.horloges.chezEnseignant' => ({required Object nomme}) => 'Chez ${nomme}',
 			'tc.groupe.horloges.heureGroupe' => 'Heure de la classe',
+			'tc.groupe.horloges.heureMecque' => 'Heure de La Mecque',
+			'tc.groupe.horloges.apercuClasse' => ({required Object jour, required Object heure}) => 'À l\'heure de La Mecque, la classe aura lieu le ${jour} à ${heure}.',
+			'tc.groupe.horloges.apercuOuEnseignant' => ({required Object ville}) => 'Chez l\'enseignant (${ville})',
+			'tc.groupe.horloges.apercuChez' => ({required Object ou, required Object heure}) => '${ou} : ${heure} toute l\'année.',
+			'tc.groupe.horloges.apercuChezPuis' => ({required Object ou, required Object heure, required Object apres, required Object date}) => '${ou} : ${heure}, puis ${apres} à partir du ${date}.',
 			'tc.groupe.horloges.heureEtVille' => ({required Object heure, required Object ville}) => '${heure} ${ville}',
+			'tc.groupe.horloges.mecqueEnSecond' => ({required Object heure}) => 'Heure de La Mecque : ${heure}',
+			'tc.groupe.horloges.heureDeVille' => ({required Object heure, required Object deVille}) => '${heure} (heure ${deVille})',
+			'tc.groupe.horloges.laMecque' => 'La Mecque',
 			'tc.groupe.horloges.chezVous' => 'Chez vous',
 			'tc.groupe.horloges.chezEnseignantAnonyme' => 'Chez votre enseignant',
 			'tc.groupe.horloges.familles' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} famille', other: '${n} familles', ), 
@@ -57822,6 +58100,8 @@ extension on Traductions {
 			'tc.observation.entree.retourClasse' => 'Retour à la classe',
 			'tc.observation.explication.titre' => 'Un aperçu de son apprentissage',
 			'tc.observation.explication.regleUne' => ({required Object n, required Object duree}) => '${n} visite de ${duree}',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.explication.regle' => ({required num n, required Object duree}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} visite de ${duree}', other: '${n} visites de ${duree}', ), 
 			'tc.observation.explication.regleDetail' => 'Par séance et par parent, même si plusieurs de vos enfants sont dans la classe.',
 			'tc.observation.explication.ecoute' => 'Écoutez l\'enseignant et les élèves',
@@ -57889,8 +58169,6 @@ extension on Traductions {
 			'tc.observation.visite.enseignant' => 'Enseignant',
 			'tc.observation.visite.monEnfant' => 'Votre enfant',
 			'tc.observation.visite.budgetIncertain' => 'Temps restant non confirmé par le serveur.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.visite.videoIndisponible' => 'La vidéo de la séance n\'a pas pu s\'ouvrir. Votre temps d\'observation continue de s\'écouler.',
 			'tc.observation.visite.sortieNonConfirmee' => 'La fin de votre visite n\'a pas pu être confirmée. Elle sera fermée par le serveur.',
 			'tc.observation.visite.restantes' => 'restantes',
@@ -58336,6 +58614,8 @@ extension on Traductions {
 			'adulte.reprise.deposerConsequence' => 'Le titulaire du foyer en sera informé et pourra la refuser. L\'administration examinera ensuite la demande et décidera.',
 			'adulte.reprise.horsLigne' => 'Rien n\'est envoyé. Vous pourrez déposer la demande vous-même quand la connexion sera revenue.',
 			'adulte.reprise.depotEchecTitre' => 'La demande n\'a pas été confirmée.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.reprise.echecPhrase' => 'Vérifiez avant de réessayer.',
 			'adulte.reprise.motif' => 'Motif',
 			'adulte.reprise.motifDeces' => 'Décès déclaré du titulaire',
@@ -58403,8 +58683,6 @@ extension on Traductions {
 			'adulte.demo.etats.conjointActif' => 'Le second adulte fait partie du foyer.',
 			'adulte.demo.etats.conjointQuitte' => 'Le second adulte a quitté le foyer.',
 			'adulte.demo.etats.conjointRetire' => 'Le second adulte a été retiré du foyer.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.demo.etats.delai60' => 'Un premier délai est en cours.',
 			'adulte.demo.etats.nouvelleDemande' => 'Une nouvelle invitation est possible après le premier délai.',
 			'adulte.demo.etats.validationEnAttente' => 'La validation administrative est en attente.',
@@ -58850,6 +59128,8 @@ extension on Traductions {
 			'com.socle.composants.composer.annonce' => ({required Object auteur, required Object texte}) => 'Nouveau message de ${auteur} : ${texte}',
 			'com.socle.composants.composer.brouillon' => _root.com.socle.lexique.brouillon,
 			'com.socle.composants.composer.brouillonRestaure' => 'Brouillon restauré',
+			_ => null,
+		} ?? switch (path) {
 			'com.socle.composants.composer.enregistrerVocal' => _root.com.vocal.composer.enregistrer,
 			'com.socle.composants.composer.aucunMessageTitre' => 'Aucun message pour le moment',
 			'com.socle.composants.composer.aucunMessage' => 'Écrivez le premier message de cette conversation : il s\'affichera ici.',
@@ -58917,8 +59197,6 @@ extension on Traductions {
 			'com.socle.navigation.ongletModeration' => 'Modération',
 			'com.socle.navigation.ongletMessages' => _root.com.socle.lexique.messages,
 			'com.socle.navigation.bientot' => 'Bientôt disponible',
-			_ => null,
-		} ?? switch (path) {
 			'com.socle.navigation.provisoire.messagesTitre' => _root.com.socle.lexique.messages,
 			'com.socle.navigation.provisoire.messagesDetail' => 'Les messages liés à vos classes arriveront bientôt dans cet espace.',
 			'com.socle.navigation.provisoire.communauteTitre' => _root.com.socle.lexique.communaute,
@@ -59364,6 +59642,8 @@ extension on Traductions {
 			'com.studio.enregistrer.retirer' => 'Retirer',
 			'com.studio.enregistrer.semantiqueEnregistrer' => ({required Object titre}) => 'Enregistrer ${titre}',
 			'com.studio.enregistrer.semantiqueRetirer' => ({required Object titre}) => 'Retirer ${titre} des éléments enregistrés',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.enregistrer.ajoute' => ({required Object titre}) => 'Ajouté aux éléments enregistrés : ${titre}.',
 			'com.studio.enregistrer.retire' => ({required Object titre}) => 'Retiré des éléments enregistrés : ${titre}.',
 			'com.studio.enregistrer.nonConfirme' => 'L\'enregistrement n\'a pas encore été confirmé. Réessayez dans un instant.',
@@ -59431,8 +59711,6 @@ extension on Traductions {
 			'com.studio.demo.f.canalDirection' => 'Direction stratégique',
 			'com.studio.demo.f.canalDirectionDetail' => 'Orientations de la direction',
 			'com.studio.demo.f.messagePlanning' => 'Bonjour à toute l\'équipe. Voici le planning du prochain trimestre, dites-moi si quelque chose ne va pas.',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.demo.f.messageSupports' => 'Je mets à jour les supports du niveau 2 et on fait le point demain.',
 			'com.studio.demo.f.messageMerci' => 'Merci à tous pour la semaine.',
 			'com.studio.demo.f.messageDossiers' => 'Trois dossiers attendent une décision avant vendredi. Nadia, peux-tu regarder le dossier de la famille Karim ?',
@@ -59878,6 +60156,8 @@ extension on Traductions {
 			'comptable.aujourdhui.encaissementsRecents' => 'Encaissements récents',
 			'comptable.aujourdhui.voirTout' => 'Voir tout',
 			'comptable.paiements.confirmation.titreUn' => 'Confirmer le paiement',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.paiements.confirmation.titreLot' => 'Confirmer le lot',
 			'comptable.paiements.confirmation.titreValidation' => 'Demander une validation',
 			'comptable.paiements.confirmation.payerMaintenant' => 'Payer maintenant',
@@ -59945,8 +60225,6 @@ extension on Traductions {
 			'comptable.paiements.filtres.infos' => 'Infos manquantes',
 			'comptable.paiements.filtres.verification' => 'Vérification',
 			'comptable.paiements.filtres.validation' => 'Validation',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.paiements.filtres.retard' => 'En retard',
 			'comptable.paiements.filtres.classe' => 'Classe',
 			'comptable.paiements.filtres.toutesClasses' => 'Toutes les classes',
@@ -60392,6 +60670,8 @@ extension on Traductions {
 			'comptable.contractuels.approuver' => 'Approuver',
 			'comptable.contractuels.ouvrirLecteur' => ({required Object objet}) => 'Ouvrir l\'obligation ${objet}',
 			'comptable.contractuels.creationBloquee' => ({required Object raison}) => 'Nouvelle obligation indisponible : ${raison}.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.contractuels.videObligations' => 'Aucune obligation en cours',
 			'comptable.contractuels.videObligationsDetail' => 'Les obligations créées apparaissent ici, avec leur échéance et leur statut.',
 			'comptable.contractuels.videAApprouver' => 'Rien à approuver',
@@ -60459,8 +60739,6 @@ extension on Traductions {
 			'comptable.validation.natures.payoutSensible' => 'Paiement sensible',
 			'comptable.validation.natures.retraitReserve' => 'Retrait de la Réserve stratégique',
 			'comptable.validation.natures.obligationAApprouver' => 'Obligation ponctuelle',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.validation.natures.payoutDuComptable' => 'Paie du Comptable',
 			'comptable.validation.natures.sortieCoffreProtege' => 'Sortie d\'un coffre protégé',
 			'comptable.validation.natures.paiementRecu' => 'Paiement reçu d\'une famille',
@@ -60906,6 +61184,8 @@ extension on Traductions {
 			'juridique.annulation.s1.delai' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours, one: 'Le délai de rétractation est de ${jours} jour à compter du paiement, selon la politique tarifaire en vigueur (page Tarifs).', other: 'Le délai de rétractation est de ${jours} jours à compter du paiement, selon la politique tarifaire en vigueur (page Tarifs).', ), 
 			'juridique.annulation.s1.delaiSansDuree' => 'Le délai de rétractation court à compter du paiement. Sa durée est celle de la politique tarifaire en vigueur (page Tarifs).',
 			'juridique.annulation.s1.blocs.0' => 'Il n\'y a pas d\'essai gratuit. À la place, vous pouvez arrêter pendant le délai de rétractation si le cours ne convient pas.',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.annulation.s1.blocs.1' => 'Pendant ce délai, vous êtes remboursé de ce que vous avez payé, sauf les séances déjà suivies.',
 			'juridique.annulation.s1.blocs.2' => 'Après ce délai, le mois commencé est dû.',
 			'juridique.annulation.s2.titre' => '2. Arrêter l\'abonnement',
@@ -60973,8 +61253,6 @@ extension on Traductions {
 			'juridique.confidentialite.s9.titre' => '9. Sécurité',
 			'juridique.confidentialite.s9.blocs.0' => 'Les règles d\'accès sont appliquées par le serveur. Les pièces d\'identité sont dans un espace privé, séparé des photos. Aucune protection n\'est absolue : si vous voyez un problème, écrivez-nous.',
 			'juridique.confidentialite.s10.titre' => '10. Les enfants',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.confidentialite.s10.blocs.0' => 'Les informations d\'un enfant sont données et gérées par son tuteur. Voir le texte Protection des enfants.',
 			'juridique.cookies.titre' => 'Cookies',
 			'juridique.cookies.resume' => 'Ce que l\'application et le site gardent sur votre appareil.',
@@ -61420,6 +61698,8 @@ extension on Traductions {
 			'd1ter.notifications.message' => 'La direction vous a transmis un message.',
 			'd1ter.notifications.messageEnfant' => ({required Object prenom}) => 'La direction vous a transmis un message sur ${prenom}.',
 			'd1ter.notifications.messageSoi' => 'La direction vous a transmis un message.',
+			_ => null,
+		} ?? switch (path) {
 			'snt.regles.nonTenue' => 'Séance non tenue',
 			'snt.regles.nonTenueDetail' => 'Si aucun enseignant n\'a rejoint la salle à ce délai, la séance est reportée : la classe est prévenue et la direction fixe la nouvelle date dans le planning.',
 			'snt.regles.bornesNonTenue' => ({required Object min, required Object max}) => 'Entre ${min} et ${max} après le début.',
@@ -61487,8 +61767,6 @@ extension on Traductions {
 			'cahierC3.pretBilan' => 'Prêt pour le petit bilan',
 			'cahierC3.pretBilanDetail' => 'L\'administration planifie le petit bilan ; rien n\'est automatique.',
 			'cahierSourates.titre' => 'Sourates récitées',
-			_ => null,
-		} ?? switch (path) {
 			'cahierSourates.aide' => 'Cochez une sourate seulement si cet élève l\'a récitée de mémoire, sans erreur de mot. Une sourate cochée est validée.',
 			'cahierSourates.dejaValidees' => ({required Object n, required Object total}) => 'Sourates des bases déjà validées : ${n} sur ${total}',
 			'cahierSourates.toutes' => 'Toutes les sourates des bases sont validées.',
@@ -61934,6 +62212,8 @@ extension on Traductions {
 			'nouveautes.badge' => 'Nouveau',
 			'nouveautes.lu' => 'nouveau',
 			'suiviPedagogique.titreSoi' => 'Où j\'en suis',
+			_ => null,
+		} ?? switch (path) {
 			'suiviPedagogique.titre' => ({required Object prenom}) => 'Où en est ${prenom}',
 			'suiviPedagogique.etape' => 'Étape du programme',
 			'suiviPedagogique.objectifs' => 'Objectifs de l\'étape',

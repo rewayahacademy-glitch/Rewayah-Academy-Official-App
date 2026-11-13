@@ -664,3 +664,87 @@ Deno.test('lien_inscription : le lien porte le code du candidat, cinq langues', 
     donnees: { code: '"><b>' } })).html
   assert(!sansCode.includes('code=') && !sansCode.includes('<b>'), sansCode)
 })
+
+// HORLOGE-ET-LIEU (12/11/2026, H3) : l'annonce du changement d'heure dit l'heure
+// exacte avant et apres, le jour du changement, dans chaque langue, sans prenom
+// d'eleve ; un autre changement de creneau garde la phrase generale.
+Deno.test('creneau_change : l annonce du changement d heure, cinq langues', () => {
+  const donnees = { motif: 'changement_heure', portee: 'soi', date_changement: '2027-03-28',
+    changements: [{ jour_avant: 3, avant: '19:00', jour_apres: 3, apres: '20:00' }] }
+  for (const langue of ['fr', 'en', 'es', 'pt', 'ar'] as const) {
+    const c = contenuPour({ modele: 'creneau_change', categorie: 'classes', essentielle: true, donnees }, langue)
+    const texte = c.blocs.map((b) => b.type === 'texte' ? b.texte : '').join(' ')
+    assert(texte.includes('19:00') && texte.includes('20:00'), `${langue} : ${texte}`)
+    assert(!texte.includes('undefined') && !texte.includes('${'), `${langue} : ${texte}`)
+  }
+  const fr = contenuPour({ modele: 'creneau_change', categorie: 'classes', essentielle: true, donnees })
+  assert(fr.blocs.some((b) => b.type === 'texte' && b.texte.startsWith('À partir du dimanche 28 mars 2027, votre cours du mercredi passe de 19:00 à 20:00.')),
+    JSON.stringify(fr.blocs))
+  const ordinaire = contenuPour({ modele: 'creneau_change', categorie: 'classes', essentielle: true, donnees: { portee: 'foyer' } })
+  assert(ordinaire.blocs.some((b) => b.type === 'texte' && b.texte.startsWith('L’horaire de la classe change.')),
+    JSON.stringify(ordinaire.blocs))
+})
+
+// HORLOGE-ET-LIEU (13/11/2026, I2 et I3) : le jour d'arrivee est dit quand le jour
+// change ; la phrase sur La Mecque n'est dite que si la classe y est.
+Deno.test('creneau_change : le jour d arrivee, avec le jour inchange, avance ou recule', () => {
+  const texteDe = (donnees: Record<string, unknown>, langue: 'fr' | 'en' | 'es' | 'pt' | 'ar' = 'fr') =>
+    contenuPour({ modele: 'creneau_change', categorie: 'classes', essentielle: true, donnees }, langue)
+      .blocs.map((b) => b.type === 'texte' ? b.texte : '').join(' ')
+  const commun = { motif: 'changement_heure', portee: 'soi', date_changement: '2027-03-28' }
+  // Jour inchange : « du mercredi », pas de « au ».
+  const inchange = texteDe({ ...commun, changements: [{ jour_avant: 3, avant: '19:00', jour_apres: 3, apres: '20:00' }] })
+  assert(inchange.includes('du mercredi passe de 19:00 à 20:00'), inchange)
+  // Le jour avance : dimanche 23:00 puis lundi 00:00.
+  const avance = texteDe({ ...commun, changements: [{ jour_avant: 7, avant: '23:00', jour_apres: 1, apres: '00:00' }] })
+  assert(avance.includes('passe du dimanche 23:00 au lundi 00:00'), avance)
+  // Le jour recule : lundi 00:00 puis dimanche 23:00.
+  const recule = texteDe({ ...commun, changements: [{ jour_avant: 1, avant: '00:00', jour_apres: 7, apres: '23:00' }] })
+  assert(recule.includes('passe du lundi 00:00 au dimanche 23:00'), recule)
+  // Plusieurs creneaux dont un change de jour.
+  const plusieurs = texteDe({ ...commun, changements: [
+    { jour_avant: 3, avant: '19:00', jour_apres: 3, apres: '20:00' },
+    { jour_avant: 7, avant: '23:00', jour_apres: 1, apres: '00:00' }] })
+  assert(plusieurs.includes('le mercredi de 19:00 à 20:00') && plusieurs.includes('du dimanche 23:00 au lundi 00:00'), plusieurs)
+  // Les cinq langues disent le jour d'arrivee.
+  for (const langue of ['fr', 'en', 'es', 'pt', 'ar'] as const) {
+    const t = texteDe({ ...commun, changements: [{ jour_avant: 7, avant: '23:00', jour_apres: 1, apres: '00:00' }] }, langue)
+    assert(t.includes('23:00') && t.includes('00:00') && !t.includes('undefined'), `${langue} : ${t}`)
+  }
+  // La Mecque : dite seulement quand la classe y est (academie vrai).
+  const mecque = texteDe({ ...commun, academie: true, changements: [{ jour_avant: 3, avant: '19:00', jour_apres: 3, apres: '20:00' }] })
+  assert(mecque.includes('Le cours reste à la même heure à La Mecque : c’est l’heure de votre ville qui change.'), mecque)
+  const sans = texteDe({ ...commun, academie: false, changements: [{ jour_avant: 3, avant: '19:00', jour_apres: 3, apres: '20:00' }] })
+  assert(!sans.includes('La Mecque'), sans)
+  const ancien = texteDe({ ...commun, changements: [{ jour_avant: 3, avant: '19:00', apres: '20:00' }] })
+  assert(!ancien.includes('La Mecque') && ancien.includes('19:00'), ancien)
+})
+
+// HORLOGE-ET-LIEU (13/11/2026, I5) : le courriel que la direction recoit quand la
+// tache de nuit refuse de convertir une classe n'est PAS celui d'une famille :
+// phrase propre, lien vers le planning de la direction, jamais de texte SQL ni
+// d'identifiant, dans les cinq langues.
+Deno.test('creneau_change : refus de conversion, avis propre a la direction', () => {
+  const donnees = {
+    motif: 'conversion_refusee', cause: 'proche', classe: 'Classe des lionceaux',
+    groupe_id: 'd5000000-0000-4000-8000-0000000000a3', destination: '/admin/operations/planning',
+    // Une ancienne notification portait encore le texte brut : il ne doit jamais sortir.
+    raison: 'HORLOGE-ET-LIEU : la classe d5000000-0000-4000-8000-0000000000a3 est a moins de 28 jours',
+  }
+  for (const langue of ['fr', 'en', 'es', 'pt', 'ar'] as const) {
+    const c = contenuPour({ modele: 'creneau_change', categorie: 'classes', essentielle: true, donnees }, langue)
+    const tout = JSON.stringify(c)
+    assert(tout.includes('Classe des lionceaux'), `${langue} : ${tout}`)
+    assert(!tout.includes('HORLOGE') && !tout.includes('d5000000') && !tout.includes('undefined'), `${langue} : ${tout}`)
+    assert(tout.includes('/admin/operations/planning'), `${langue} : ${tout}`)
+    assert(!tout.includes('/#/tuteur'), `${langue} : lien de famille : ${tout}`)
+  }
+  const fr = contenuPour({ modele: 'creneau_change', categorie: 'classes', essentielle: true, donnees })
+  assert(fr.sujet === 'Une classe n’a pas pu passer à l’heure de La Mecque', fr.sujet)
+  assert(fr.blocs.some((b) => b.type === 'texte' && b.texte.includes('un changement d’heure approche (moins de 28 jours)')),
+    JSON.stringify(fr.blocs))
+  // Une cause inconnue devient « autre » : jamais un texte brut.
+  const inconnue = contenuPour({ modele: 'creneau_change', categorie: 'classes', essentielle: true,
+    donnees: { ...donnees, cause: 'n importe quoi' } })
+  assert(JSON.stringify(inconnue).includes('une vérification a échoué'), JSON.stringify(inconnue))
+})

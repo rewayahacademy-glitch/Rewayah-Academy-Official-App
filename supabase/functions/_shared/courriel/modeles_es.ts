@@ -2,8 +2,9 @@
 // du francais (`modeles_fr.ts`) ; memes liens, memes boutons. Competence `mots-rewayah`.
 
 import { APP } from './gabarit.ts'
+import { causeConversionRefusee, nomClasse, type MotsConversionRefusee } from './outils.ts'
 import { avec, avisDans, bonjour, dateLongue, type Fabrique, type LangueEcrite, libre, type Parole, montantLisible,
-  precisions, type Precisions } from './outils.ts'
+  precisions, type Precisions, phraseChangementHeure, type MotsChangementHeure} from './outils.ts'
 import { quandSeance, codeCandidat } from './modeles_fr.ts'
 
 const PAROLE: Parole = {
@@ -32,6 +33,28 @@ const RAISON: Record<string, string> = {
   recrutement: 'Recibe este correo electrónico porque está en contacto con nuestro equipo de selección.',
   direction: 'Recibe este correo electrónico de la dirección de Rewayah Academy.',
   nouvelles: 'Recibe este correo electrónico porque sigue las novedades de Rewayah Academy.',
+}
+
+export const MOTS_CHANGEMENT_HEURE_ES: MotsChangementHeure = {
+  locale: 'es-ES',
+  un: (date, jour, avant, apres, foyer) => `A partir del ${date}, ${foyer ? 'la clase del grupo' : 'su clase'} del ${jour} pasa de las ${avant} a las ${apres}.`,
+  plusieurs: (date, liste, foyer) => `A partir del ${date}, cambia la hora de ${foyer ? 'las clases del grupo' : 'sus clases'}: ${liste}.`,
+  ligne: (jour, avant, apres) => `el ${jour}, de las ${avant} a las ${apres}`,
+  unJour: (date, ja, avant, jb, apres, foyer) => `A partir del ${date}, ${foyer ? 'la clase del grupo' : 'su clase'} pasa del ${ja} a las ${avant} al ${jb} a las ${apres}.`,
+  ligneJour: (ja, avant, jb, apres) => `del ${ja} a las ${avant} al ${jb} a las ${apres}`,
+  mecque: 'La clase mantiene la misma hora en La Meca: lo que cambia es la hora de su ciudad.',
+  separateur: '; ',
+}
+
+/// Avis a la direction : une classe que la tache de nuit refuse de convertir
+/// (HORLOGE-ET-LIEU, I5). Cause fermee, jamais le texte SQL ni un identifiant.
+export const MOTS_CONVERSION_REFUSEE_ES: MotsConversionRefusee = {
+  sujet: 'Una clase no pudo pasar a la hora de La Meca',
+  phrase: (classe, cause) => {
+    const raison = { proche: 'un cambio de hora está a menos de 28 días', demi_heure: 'una de sus franjas no tiene hora en punto en La Meca', autre: 'una comprobación falló, consulte la clase' }[cause]
+    return classe ? `La clase ${classe} no pudo pasar a la hora de La Meca: ${raison}. Ningún horario ha cambiado; se volverá a intentar esta noche.` : 'Una clase no pudo pasar a la hora de La Meca. Ningún horario ha cambiado; se volverá a intentar esta noche.'
+  },
+  bouton: 'Ver el horario',
 }
 
 const MODELES: Record<string, Fabrique> = {
@@ -86,9 +109,23 @@ const MODELES: Record<string, Fabrique> = {
   eleve_retire: (d) => avis(d, 'Un alumno deja su clase', 'Un alumno deja su clase',
     'Un alumno deja su clase. La lista actualizada está en la aplicación.',
     'Ver mis clases', '/enseignant/classes'),
-  creneau_change: (d) => avis(d, 'El horario de la clase cambia', 'El horario de la clase cambia',
-    'El horario de la clase cambia. El nuevo horario está en la aplicación.',
-    'Ver el nuevo horario', '/tuteur'),
+  creneau_change: (d) => {
+    // I5 (13/11/2026) : l'avis de la direction n'est pas celui d'une famille.
+    const cause = causeConversionRefusee(d)
+    if (cause) {
+      return avis(d, MOTS_CONVERSION_REFUSEE_ES.sujet, MOTS_CONVERSION_REFUSEE_ES.sujet,
+        MOTS_CONVERSION_REFUSEE_ES.phrase(nomClasse(d), cause), MOTS_CONVERSION_REFUSEE_ES.bouton,
+        '/admin/operations/planning')
+    }
+    const annonce = phraseChangementHeure(d, MOTS_CHANGEMENT_HEURE_ES)
+    if (annonce) {
+      return avis(d, 'La hora de su clase cambia', 'La hora de su clase cambia', annonce,
+        'Ver mi horario', '/tuteur')
+    }
+    return avis(d, 'El horario de la clase cambia', 'El horario de la clase cambia',
+      'El horario de la clase cambia. El nuevo horario está en la aplicación.',
+      'Ver el nuevo horario', '/tuteur')
+  },
   seance_annulee: (d) => {
     const quand = quandSeance(d, 'es-ES', 'a las')
     return avis(d, 'Una sesión está anulada', 'Una sesión está anulada',

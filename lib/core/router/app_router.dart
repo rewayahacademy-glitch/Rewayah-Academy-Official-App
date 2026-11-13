@@ -264,6 +264,7 @@ import '../../features/tc_mes_groupes/routes_tc_a.dart';
 import '../../features/tc_mushaf/mushaf_page.dart' deferred as d_mushaf_page;
 import '../../features/tc_mushaf/routes_tc_c.dart';
 import '../../features/tc_observation_ui/routes_tc_g.dart';
+import '../../features/ville/ville_page.dart';
 import '../accessibilite/mode_accessibilite.dart';
 import '../admin/admin_domaine.dart';
 import '../admin/port_classes_admin.dart' as classes_admin show ClasseListee;
@@ -285,6 +286,7 @@ import '../fraicheur/relecture_page.dart';
 import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
 import '../import_inscriptions/accueil_inscrits.dart';
+import '../lieu/lieu.dart';
 import '../mouvement/transitions.dart';
 import '../recherche/controleur_recherche.dart';
 import '../recherche/modeles_recherche.dart';
@@ -428,6 +430,12 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
     rafraichisseur.declencher();
   });
 
+  // HORLOGE-ET-LIEU (partie B) : l'etape de la ville se decide apres la
+  // session (lecture serveur) ; le routeur se reveille quand elle change.
+  ref.listen<bool>(villeAFournirProvider, (bool? _, bool _) {
+    rafraichisseur.declencher();
+  });
+
   // Lu une fois, a la construction du routeur : un role ne change pas sans
   // reconnexion, qui recree ce provider. `routesTcA` n'en a besoin que pour
   // distinguer l'affichage eleve/tuteur au sein de l'Espace Groupe -- la
@@ -455,6 +463,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         resignatureContrat: ref.read(resignatureContratEnseignantProvider),
         atterrissageAdulte: ref.read(atterrissageAdulteProvider),
         accueilInscrits: ref.read(accueilInscritsEnAttenteProvider),
+        villeAFournir: ref.read(villeAFournirProvider),
       );
     },
     // Un chemin qu'aucune route ne sert : une page d'etat dans la charte, qui
@@ -1658,6 +1667,11 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       GoRouteSure(
         path: Routes.enseignantContrat,
         builder: (BuildContext _, GoRouterState _) => const ContratPage(),
+      ),
+      // HORLOGE-ET-LIEU (partie B) : la ville du tuteur et de l'enseignant.
+      GoRouteSure(
+        path: Routes.ville,
+        builder: (BuildContext _, GoRouterState _) => const VillePage(),
       ),
       GoRouteSure(
         path: '${Routes.enseignantSeance}/:seanceId/cahier',

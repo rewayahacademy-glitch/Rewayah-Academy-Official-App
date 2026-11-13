@@ -46,6 +46,7 @@ String? deciderRedirection({
   bool resignatureContrat = false,
   bool atterrissageAdulte = false,
   bool accueilInscrits = false,
+  bool villeAFournir = false,
 }) {
   // La salle de demonstration passe sans session hors production : donnees
   // fictives, aucun appel serveur (K-28). En production, la route n'existe
@@ -223,6 +224,14 @@ String? deciderRedirection({
         return racine;
       }
 
+      // HORLOGE-ET-LIEU (partie B, H5) : une personne qui doit encore choisir
+      // sa ville y est menee, sauf pendant une seance (la salle ne se quitte
+      // jamais pour un formulaire). `/ville` ne s'ouvre que dans ce cas ; le
+      // report (« Plus tard ») ou le choix la referme.
+      if (villeAFournir && !_dansLeSousArbre(cheminDemande, Routes.salle)) {
+        return cheminDemande == Routes.ville ? null : Routes.ville;
+      }
+
       // L1-10 : la seconde etape de connexion du controleur passe avant toute
       // navigation. On lit la capacite `mfaRequise`, jamais le role. Meme une
       // adresse inconnue y renvoie : rien d'autre n'est ouvert. Une fois la
@@ -329,6 +338,15 @@ String? deciderRedirection({
 
       if (cheminDemande == Routes.invitationFoyer) {
         return null;
+      }
+
+      // HORLOGE-ET-LIEU : la ville n'a de sens que pour les deux roles qui en
+      // donnent une (regle positive : tout autre role, role illisible compris,
+      // retourne a sa racine).
+      if (cheminDemande == Routes.ville) {
+        return role == AppRole.guardian || role == AppRole.teacher
+            ? null
+            : racine;
       }
 
       // WEB-BUREAU (b), arbitrage du garde-cap du 06/11/2026 : le lecteur

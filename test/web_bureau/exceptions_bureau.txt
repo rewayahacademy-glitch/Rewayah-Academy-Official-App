@@ -48,7 +48,9 @@ enseignant /enseignant/bienvenue B1
 enseignant /enseignant/bienvenue B7
 enseignant /enseignant/revenus B4
 enseignant /recherche B4
+enseignant /ville B1
 famille /recherche B4
 famille /tuteur/compte/consentements B5
 famille /tuteur/parcours/:eleveId B4
 famille /tuteur/parcours/:eleveId B5
+famille /ville B1

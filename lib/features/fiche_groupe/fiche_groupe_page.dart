@@ -13,7 +13,6 @@ import '../../core/fraicheur/classe_disparue.dart';
 import '../../core/i18n/isolat_bidi.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
-import '../../core/planning/service_planning.dart' show Creneau;
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/billet_salle.dart';
 import '../../core/router/routes.dart';
@@ -25,6 +24,7 @@ import '../../core/tc_groupe/group_summary_vm.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/tc_groupe/port_groupes.dart';
 import '../../core/tc_groupe/rejoindre_classe.dart';
+import '../../core/tc_horloge/creneau_chez_moi.dart';
 import '../../core/tc_horloge/port_horloge_seance.dart';
 import '../../core/tc_horloge/session_clock_vm.dart';
 import '../../core/theme/app_gabarit.dart';
@@ -773,9 +773,20 @@ class _EnteteGroupe extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     // Une seule visio commune par semaine depuis le pivot : le creneau du
     // groupe EST l'heure du cours.
+    // HORLOGE-ET-LIEU (B1) : l'heure de la personne d'abord, « Heure de La
+    // Mecque » en second ; jamais l'heure enregistree de la classe, brute.
+    final CleCreneau cle = (
+      jour: groupe.creneau.jour,
+      heure: groupe.creneau.heure,
+      fuseau: groupe.creneau.fuseau,
+    );
+    final ({String jour, String heure}) parties = partiesDuCreneau(
+      ref.watch(creneauChezMoiProvider(cle)).value,
+      cle,
+    );
     final String horaire = t.enseignant.ficheGroupe.creneauHebdo(
-      jour: _jour(groupe.creneau),
-      heure: _heure(groupe.creneau),
+      jour: parties.jour,
+      heure: parties.heure,
     );
     // Enfants ou Adultes : une information pedagogique, sur la ligne de
     // contexte discrete (revue CL-4.R, m7). Cles existantes, aucune jumelle.
@@ -1037,15 +1048,3 @@ class _ProgressionClasse extends StatelessWidget {
     );
   }
 }
-
-/// Le jour du creneau, en clair. `t.disponibilites.joursLongs` est lu par sept
-/// ecrans : c'est la seule liste de jours du produit.
-String _jour(Creneau creneau) => t.disponibilites.joursLongs[creneau.jour - 1];
-
-/// L'heure pleine du creneau, sur deux chiffres.
-///
-/// Un entier, pas un instant : ce n'est donc pas le formatage `HH:MM` d'une
-/// `DateTime` qui existe deja deux fois dans le depot, et il n'y a rien a
-/// reutiliser ici.
-String _heure(Creneau creneau) =>
-    '${creneau.heure.toString().padLeft(2, '0')}:00';

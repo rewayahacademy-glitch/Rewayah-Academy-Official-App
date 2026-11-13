@@ -148,6 +148,94 @@ export function quandLocal(d: Donnees, cle: string, locale = 'fr-FR', a = 'à'):
   return `${jour} ${a} ${v.slice(11, 16)}${zone ? ` (${zone})` : ''}`
 }
 
+/// Les mots d'une langue pour l'annonce d'un changement d'heure (HORLOGE-ET-LIEU,
+/// 12/11/2026, H3) : « A partir du dimanche 28 mars, votre cours du mercredi passe de
+/// 19:00 a 20:00. » L'heure de La Mecque ne change pas ; c'est l'heure du pays
+/// de la personne qui change.
+export interface MotsChangementHeure {
+  locale: string
+  un: (date: string, jour: string, avant: string, apres: string, foyer: boolean) => string
+  plusieurs: (date: string, liste: string, foyer: boolean) => string
+  ligne: (jour: string, avant: string, apres: string) => string
+  /// Quand le JOUR change aussi (dimanche 23:00 puis lundi 00:00).
+  unJour: (date: string, jourAvant: string, avant: string, jourApres: string, apres: string, foyer: boolean) => string
+  ligneJour: (jourAvant: string, avant: string, jourApres: string, apres: string) => string
+  /// Dite seulement quand la classe est a l'heure de La Mecque : le cours ne
+  /// bouge pas la-bas, c'est l'heure de la ville de la personne qui change.
+  mecque: string
+  separateur: string
+}
+
+/// Le nom d'un jour ISO (1 lundi a 7 dimanche) dans la langue `locale`.
+export function nomDuJour(jourIso: number, locale: string): string {
+  // Le 1er janvier 2024 etait un lundi.
+  return new Intl.DateTimeFormat(locale, { weekday: 'long', timeZone: 'UTC' })
+    .format(new Date(Date.UTC(2024, 0, jourIso)))
+}
+
+/// « dimanche 28 mars 2027 » a partir de « 2027-03-28 ».
+function jourDuChangement(v: string, locale: string): string | null {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(v)) return null
+  const t = new Date(`${v}T00:00:00Z`)
+  if (Number.isNaN(t.getTime())) return null
+  return new Intl.DateTimeFormat(locale, {
+    weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC',
+  }).format(t)
+}
+
+/// La phrase de l'annonce, ou `null` quand la notification n'en est pas une (ou
+/// ne se lit pas) : le modele garde alors sa phrase generale. Aucun prenom
+/// d'eleve : seules des heures et un jour.
+export function phraseChangementHeure(d: Donnees, m: MotsChangementHeure): string | null {
+  if (d.motif !== 'changement_heure') return null
+  const brut = d.changements
+  if (!Array.isArray(brut) || brut.length === 0 || typeof d.date_changement !== 'string') return null
+  const date = jourDuChangement(d.date_changement, m.locale)
+  if (!date) return null
+  type Ligne = { jourAvant: string; avant: string; jourApres: string; apres: string; change: boolean }
+  const lignes: Ligne[] = []
+  for (const c of brut) {
+    if (typeof c !== 'object' || c === null) return null
+    const r = c as Record<string, unknown>
+    const j = r.jour_avant
+    const avant = r.avant
+    const apres = r.apres
+    // Le jour d'arrivee : celui d'avant quand il n'est pas donne (ancienne annonce).
+    const ja = typeof r.jour_apres === 'number' ? r.jour_apres : j
+    if (typeof j !== 'number' || j < 1 || j > 7 || typeof ja !== 'number' || ja < 1 || ja > 7
+      || typeof avant !== 'string' || typeof apres !== 'string') return null
+    lignes.push({ jourAvant: nomDuJour(j, m.locale), avant, jourApres: nomDuJour(ja, m.locale), apres, change: ja !== j })
+  }
+  const foyer = d.portee === 'foyer'
+  const base = lignes.length === 1
+    ? (lignes[0].change
+      ? m.unJour(date, lignes[0].jourAvant, lignes[0].avant, lignes[0].jourApres, lignes[0].apres, foyer)
+      : m.un(date, lignes[0].jourAvant, lignes[0].avant, lignes[0].apres, foyer))
+    : m.plusieurs(date, lignes.map((l) => l.change
+      ? m.ligneJour(l.jourAvant, l.avant, l.jourApres, l.apres)
+      : m.ligne(l.jourAvant, l.avant, l.apres)).join(m.separateur), foyer)
+  return d.academie === true ? `${base} ${m.mecque}` : base
+}
+
+/// Les mots d'une langue pour l'avis donne a la DIRECTION quand la tache de nuit
+/// refuse de convertir une classe a l'heure de La Mecque (HORLOGE-ET-LIEU, I5,
+/// 13/11/2026). Aucun texte d'erreur SQL, aucun identifiant : une cause fermee.
+export type CauseConversionRefusee = 'proche' | 'demi_heure' | 'autre'
+
+export interface MotsConversionRefusee {
+  sujet: string
+  /// La phrase ; `classe` est nul quand la notification ne la nomme pas.
+  phrase: (classe: string | null, cause: CauseConversionRefusee) => string
+  bouton: string
+}
+
+/// La cause d'un refus de conversion, ou `null` quand la notification n'en est pas
+/// un. Toute valeur inconnue devient `autre` : jamais un texte brut a l'ecran.
+export function causeConversionRefusee(d: Donnees): CauseConversionRefusee | null {
+  if (d.motif !== 'conversion_refusee') return null
+  return d.cause === 'proche' || d.cause === 'demi_heure' ? d.cause : 'autre'
+}
+
 /// Les precisions d'un avis de classe, en phrases courtes : la classe, les
 /// eleves du foyer, la prochaine seance. Chaine vide quand rien n'est connu.
 export function precisions(

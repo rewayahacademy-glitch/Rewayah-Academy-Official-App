@@ -21,6 +21,7 @@ import '../../core/offres/page_regroupements.dart' show trierParPret;
 import '../../core/offres/port_regroupements_admin.dart';
 import '../../core/planning/service_planning.dart' show Creneau;
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
+import '../../core/tc_horloge/creneau_chez_moi.dart';
 import '../admin_groupes/genre_classe_libelles.dart' show libelleGenreClasse;
 import '../creneaux/plages.dart' show jourCapitalise;
 
@@ -104,7 +105,7 @@ String? libelleReference(RegroupementDemandes g) {
   return t.admin.regroupements.heureFuseau(
     heure: heure,
     deVille: deDevant(
-      villeDuFuseauLibelle(g.fuseau),
+      nomFuseauClasse(g.fuseau),
       cle: 'admin.regroupements.heureFuseau',
     ),
   );
@@ -115,7 +116,7 @@ String? libelleReference(RegroupementDemandes g) {
 String libelleFuseau(RegroupementDemandes g) =>
     t.admin.regroupements.fuseauValeur(
       deVille: deDevant(
-        villeDuFuseauLibelle(g.fuseau),
+        nomFuseauClasse(g.fuseau),
         cle: 'admin.regroupements.fuseauValeur',
       ),
     );

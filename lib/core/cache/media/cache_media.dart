@@ -120,11 +120,7 @@ class CacheMediaFichiers implements CacheMedia {
 
   @override
   Future<void> deposer(String cle, List<int> octets) async {
-    await _gestionnaire.putFile(
-      cle,
-      Uint8List.fromList(octets),
-      key: cle,
-    );
+    await _gestionnaire.putFile(cle, Uint8List.fromList(octets), key: cle);
     noter(cle);
   }
 

@@ -205,7 +205,9 @@ SharedContentState? etatDepuisJson(Object? brut) {
   }
   final String? sessionId = brut['session_id'] as String?;
   final String? resourceId = brut['resource_id'] as String?;
-  final ContentPosition? position = positionDepuisJson(brut['content_position']);
+  final ContentPosition? position = positionDepuisJson(
+    brut['content_position'],
+  );
   final ModeAffichagePartage? mode = ModeAffichagePartage.depuisSql(
     brut['display_mode'] as String?,
   );

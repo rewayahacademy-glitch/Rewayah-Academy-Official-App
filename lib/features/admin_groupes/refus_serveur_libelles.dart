@@ -12,6 +12,8 @@ library;
 
 import 'package:supabase_flutter/supabase_flutter.dart' show PostgrestException;
 
+import '../../core/admin/creneaux_classe.dart'
+    show CreneauRefuse, MotifRefusCreneau;
 import '../../core/i18n/strings.g.dart';
 
 /// Les debuts des messages leves par `ajouter_eleve_groupe`,
@@ -38,6 +40,13 @@ List<(String, String Function())> get _refusConnus {
 /// repondu. Jamais le texte de l'exception.
 String phraseEchecServeurClasse(Object erreur) {
   final c1 = t.admin.groupes.c1;
+  if (erreur is CreneauRefuse &&
+      erreur.motif == MotifRefusCreneau.rechargerApplication) {
+    // Posee apres « ... n'a pas abouti : » : la phrase de la feuille des
+    // creneaux, sans sa majuscule.
+    final String phrase = t.admin.groupes.reglagesClasse.refusRecharger;
+    return phrase.substring(0, 1).toLowerCase() + phrase.substring(1);
+  }
   if (erreur is PostgrestException) {
     if (erreur.code == '42501') return c1.reservee;
     final String m = erreur.message.trim().toLowerCase();

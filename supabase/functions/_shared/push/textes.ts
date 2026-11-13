@@ -72,9 +72,29 @@ export const TEXTES: Record<string, Ligne> = {
     fr: 'Personne n\'est dans la salle d\'une classe : trouvez un remplaçant ou prévenez les familles.',
     ar: 'لا أحد في قاعة أحد الفصول: ابحثوا عن بديل أو أبلغوا الأسر.',
   },
+  // HORLOGE-ET-LIEU (I1, 13/11/2026) : l'annonce d'un changement d'heure (portee
+  // `heure_ete`, `heure_hiver`, `heure_classe`) et le refus d'une conversion
+  // (`conversion_refusee`, direction) ont leur propre texte, vrai et sans prenom ;
+  // tout autre changement de creneau garde la phrase de l'horaire.
   creneau_change: {
-    fr: 'L\'horaire de la classe change : consultez le nouvel horaire dans l\'application.',
-    ar: 'تغيّر موعد الفصل: اطّلعوا على الموعد الجديد في التطبيق.',
+    fr: (p) => p === 'heure_ete'
+      ? 'L\'heure de votre cours change avec le passage à l\'heure d\'été. Ouvrez l\'application.'
+      : p === 'heure_hiver'
+      ? 'L\'heure de votre cours change avec le passage à l\'heure d\'hiver. Ouvrez l\'application.'
+      : p === 'heure_classe'
+      ? 'L\'heure de votre cours change avec un changement d\'heure. Ouvrez l\'application.'
+      : p === 'conversion_refusee'
+      ? 'Une classe n\'a pas pu passer à l\'heure de La Mecque : consultez les classes dans l\'application.'
+      : 'L\'horaire de la classe change : consultez le nouvel horaire dans l\'application.',
+    ar: (p) => p === 'heure_ete'
+      ? 'تتغيّر ساعة حصتكم مع الانتقال إلى التوقيت الصيفي. افتحوا التطبيق.'
+      : p === 'heure_hiver'
+      ? 'تتغيّر ساعة حصتكم مع الانتقال إلى التوقيت الشتوي. افتحوا التطبيق.'
+      : p === 'heure_classe'
+      ? 'تتغيّر ساعة حصتكم بسبب تغيير الساعة. افتحوا التطبيق.'
+      : p === 'conversion_refusee'
+      ? 'تعذّر نقل فصل إلى توقيت مكة المكرمة: اطّلعوا على الفصول في التطبيق.'
+      : 'تغيّر موعد الفصل: اطّلعوا على الموعد الجديد في التطبيق.',
   },
   titulaire_en_retard: {
     fr: (p) => estStaff(p)

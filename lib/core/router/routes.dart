@@ -600,6 +600,12 @@ abstract final class Routes {
   /// le reste du temps (`deciderRedirection`).
   static const String enseignantContrat = '/enseignant/contrat';
 
+  /// La ville de la personne (HORLOGE-ET-LIEU, partie B, H5) : le tuteur et
+  /// l'enseignant y sont menes tant qu'ils n'ont pas choisi leur ville, avec
+  /// « Plus tard » tant qu'il reste un report. Hors de ce cas, elle reste ouverte
+  /// au tuteur et a l'enseignant qui veulent changer de ville.
+  static const String ville = '/ville';
+
   /// Racine des ecrans contextuels d'une seance.
   static const String enseignantSeance = '/enseignant/seance';
 

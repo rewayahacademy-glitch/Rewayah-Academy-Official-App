@@ -23,6 +23,8 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 /// Les domaines entierement traduits, et leur nombre minimal de cles.
 const Map<String, int> _domaines = <String, int>{
   'salle': 300,
+  // HORLOGE-ET-LIEU, partie B (H5) : la ville de chacun.
+  'lieu': 30,
   'tc': 450,
   'enseignant': 400,
   // AR-TRANSVERSE-1.
@@ -186,6 +188,9 @@ Map<String, String> _domaine(String langue, String domaine) => _aplatir(
 
 /// Les textes gardes en latin (marque, format de fichier).
 const Set<String> _latins = <String>{
+  // HORLOGE-ET-LIEU : le credit de la liste des villes porte le nom propre de
+  // la source et son adresse, tels que la licence les demande.
+  'lieu.credit',
   // CAND-04 : le nom de chaque langue, ecrit dans cette langue, identique
   // dans les deux fichiers, sur les cartes de choix de la langue du candidat.
   'inscription.langue.francais',

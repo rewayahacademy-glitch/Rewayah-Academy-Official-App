@@ -18,7 +18,8 @@ class EtatPartageMemoire implements PortEtatPartagePersistant {
   /// Cree un magasin vide.
   EtatPartageMemoire();
 
-  final Map<String, SharedContentState> _parSeance = <String, SharedContentState>{};
+  final Map<String, SharedContentState> _parSeance =
+      <String, SharedContentState>{};
 
   /// Le nombre d'ecritures acceptees, pour les tests d'ordre d'appel.
   int ecritures = 0;

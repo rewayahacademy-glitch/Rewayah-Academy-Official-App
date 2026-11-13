@@ -16,6 +16,8 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/offres/affectation_refusee.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
+import 'package:rewayah_academy/core/tc_horloge/fuseaux_interlocuteurs.dart'
+    show FuseauVu;
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/menu_actions.dart';
@@ -29,6 +31,11 @@ import '../support_form_l2.dart';
 
 class _FauxCreneaux implements ServiceCreneauxClasse {
   final List<(String, int, int)> ajouts = <(String, int, int)>[];
+
+  /// Le fuseau de l'heure saisie et celui de la Classe, pour chaque ajout et
+  /// chaque deplacement (HORLOGE-ET-LIEU, correction B2).
+  final List<(String?, String?)> fuseauxAjouts = <(String?, String?)>[];
+  final List<(String?, String?)> fuseauxModifications = <(String?, String?)>[];
   Exception? echec;
   int rendu = 4;
 
@@ -37,9 +44,12 @@ class _FauxCreneaux implements ServiceCreneauxClasse {
     required String groupeId,
     required int jour,
     required int heure,
+    String? fuseau,
+    String? fuseauClasse,
   }) async {
     if (echec case final Exception e) throw e;
     ajouts.add((groupeId, jour, heure));
+    fuseauxAjouts.add((fuseau, fuseauClasse));
     return rendu;
   }
 
@@ -61,9 +71,12 @@ class _FauxCreneaux implements ServiceCreneauxClasse {
     required CreneauClasse ancien,
     required CreneauClasse nouveau,
     required String motif,
+    String? fuseau,
+    String? fuseauClasse,
   }) async {
     if (echec case final Exception e) throw e;
     modifications.add((ancien, nouveau, motif));
+    fuseauxModifications.add((fuseau, fuseauClasse));
     return rendu;
   }
 
@@ -88,6 +101,14 @@ class _FauxCreneaux implements ServiceCreneauxClasse {
     genres.add((genre, motif));
   }
 }
+
+/// Le libelle attendu d'un creneau quand le serveur ne rend pas le fuseau (la
+/// classe de ces fixtures est a Paris) : son heure et la ville de son fuseau.
+String _lib(CreneauClasse c) => libelleCreneauClasse(
+  c,
+  fuseaux: const <String, FuseauVu?>{},
+  fuseauClasse: 'Europe/Paris',
+);
 
 Widget _hote(_FauxCreneaux creneaux) => ProviderScope(
   overrides: <Override>[
@@ -258,11 +279,11 @@ void main() {
       await _monter(tester, creneaux);
       expect(find.text(r.creneauxTitre), findsOneWidget);
       expect(
-        find.text(libelleCreneauClasse((jour: 1, heure: 18, duree: null))),
+        find.text(_lib((jour: 1, heure: 18, duree: null))),
         findsOneWidget,
       );
       expect(
-        find.text(libelleCreneauClasse((jour: 3, heure: 18, duree: null))),
+        find.text(_lib((jour: 3, heure: 18, duree: null))),
         findsOneWidget,
       );
       expect(find.text(r.genreTitre), findsOneWidget);
@@ -360,11 +381,11 @@ void main() {
     test('le libelle d un creneau dit sa duree quand elle n est pas celle '
         'de la classe', () {
       expect(
-        libelleCreneauClasse((jour: 2, heure: 18, duree: 45)),
+        _lib((jour: 2, heure: 18, duree: 45)),
         endsWith(libelleDureeCreneau(45)),
       );
       expect(
-        libelleCreneauClasse((jour: 2, heure: 18, duree: null)),
+        _lib((jour: 2, heure: 18, duree: null)),
         isNot(contains(libelleDureeCreneau(45))),
       );
     });

@@ -3,8 +3,9 @@
 // memes boutons. Competence `mots-rewayah`.
 
 import { APP } from './gabarit.ts'
+import { causeConversionRefusee, nomClasse, type MotsConversionRefusee } from './outils.ts'
 import { avec, avisDans, bonjour, dateLongue, type Fabrique, type LangueEcrite, libre, type Parole, montantLisible,
-  precisions, type Precisions } from './outils.ts'
+  precisions, type Precisions, phraseChangementHeure, type MotsChangementHeure} from './outils.ts'
 import { quandSeance, codeCandidat } from './modeles_fr.ts'
 
 const PAROLE: Parole = {
@@ -33,6 +34,28 @@ const RAISON: Record<string, string> = {
   recrutement: 'Recebe este e-mail porque está em contacto com o nosso recrutamento.',
   direction: 'Recebe este e-mail da direção da Rewayah Academy.',
   nouvelles: 'Recebe este e-mail porque acompanha as novidades da Rewayah Academy.',
+}
+
+export const MOTS_CHANGEMENT_HEURE_PT: MotsChangementHeure = {
+  locale: 'pt-PT',
+  un: (date, jour, avant, apres, foyer) => `A partir de ${date}, ${foyer ? 'a aula da turma' : 'a sua aula'} de ${jour} passa das ${avant} para as ${apres}.`,
+  plusieurs: (date, liste, foyer) => `A partir de ${date}, a hora ${foyer ? 'das aulas da turma' : 'das suas aulas'} muda: ${liste}.`,
+  ligne: (jour, avant, apres) => `${jour}, das ${avant} às ${apres}`,
+  unJour: (date, ja, avant, jb, apres, foyer) => `A partir de ${date}, ${foyer ? 'a aula da turma' : 'a sua aula'} passa de ${ja} às ${avant} para ${jb} às ${apres}.`,
+  ligneJour: (ja, avant, jb, apres) => `de ${ja} às ${avant} para ${jb} às ${apres}`,
+  mecque: 'A aula mantém a mesma hora em Meca: o que muda é a hora da sua cidade.',
+  separateur: '; ',
+}
+
+/// Avis a la direction : une classe que la tache de nuit refuse de convertir
+/// (HORLOGE-ET-LIEU, I5). Cause fermee, jamais le texte SQL ni un identifiant.
+export const MOTS_CONVERSION_REFUSEE_PT: MotsConversionRefusee = {
+  sujet: 'Uma turma não pôde passar para a hora de Meca',
+  phrase: (classe, cause) => {
+    const raison = { proche: 'uma mudança de hora está a menos de 28 dias', demi_heure: 'uma das suas faixas não tem hora certa em Meca', autre: 'uma verificação falhou, consulte a turma' }[cause]
+    return classe ? `A turma ${classe} não pôde passar para a hora de Meca: ${raison}. Nenhum horário mudou; será tentada de novo esta noite.` : 'Uma turma não pôde passar para a hora de Meca. Nenhum horário mudou; será tentada de novo esta noite.'
+  },
+  bouton: 'Ver o horário',
 }
 
 const MODELES: Record<string, Fabrique> = {
@@ -87,9 +110,23 @@ const MODELES: Record<string, Fabrique> = {
   eleve_retire: (d) => avis(d, 'Um aluno deixa a sua turma', 'Um aluno deixa a sua turma',
     'Um aluno deixa a sua turma. A lista atualizada está na aplicação.',
     'Ver as minhas turmas', '/enseignant/classes'),
-  creneau_change: (d) => avis(d, 'O horário da turma muda', 'O horário da turma muda',
-    'O horário da turma muda. O novo horário está na aplicação.',
-    'Ver o novo horário', '/tuteur'),
+  creneau_change: (d) => {
+    // I5 (13/11/2026) : l'avis de la direction n'est pas celui d'une famille.
+    const cause = causeConversionRefusee(d)
+    if (cause) {
+      return avis(d, MOTS_CONVERSION_REFUSEE_PT.sujet, MOTS_CONVERSION_REFUSEE_PT.sujet,
+        MOTS_CONVERSION_REFUSEE_PT.phrase(nomClasse(d), cause), MOTS_CONVERSION_REFUSEE_PT.bouton,
+        '/admin/operations/planning')
+    }
+    const annonce = phraseChangementHeure(d, MOTS_CHANGEMENT_HEURE_PT)
+    if (annonce) {
+      return avis(d, 'A hora da sua aula muda', 'A hora da sua aula muda', annonce,
+        'Ver o meu horário', '/tuteur')
+    }
+    return avis(d, 'O horário da turma muda', 'O horário da turma muda',
+      'O horário da turma muda. O novo horário está na aplicação.',
+      'Ver o novo horário', '/tuteur')
+  },
   seance_annulee: (d) => {
     const quand = quandSeance(d, 'pt-PT', 'às')
     return avis(d, 'Uma sessão está anulada', 'Uma sessão está anulada',

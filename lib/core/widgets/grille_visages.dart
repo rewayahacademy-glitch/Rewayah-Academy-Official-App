@@ -244,9 +244,7 @@ List<Rect> rectsGrille(
     final double largeurRangee = dansRangee * w + (dansRangee - 1) * ecart;
     final double debut = ((place.width - largeurRangee) / 2).floorToDouble();
     final double dx = debut + colonne * (w + ecart);
-    final double x = sens == TextDirection.rtl
-        ? place.width - dx - w
-        : dx;
+    final double x = sens == TextDirection.rtl ? place.width - dx - w : dx;
     rects.add(Rect.fromLTWH(x, haut + rangee * (h + ecart), w, h));
   }
   return rects;
@@ -460,7 +458,8 @@ class _GrilleVisagesEtat extends State<GrilleVisages>
         } else if (arrivee != null) {
           final double v = AppMouvement.courbeFondu.transform(arrivee.value);
           opacite = v;
-          echelle = GrilleVisages.echelleArrivee +
+          echelle =
+              GrilleVisages.echelleArrivee +
               (1 - GrilleVisages.echelleArrivee) * v;
         } else {
           final Duration total = depart!.duration ?? Duration.zero;

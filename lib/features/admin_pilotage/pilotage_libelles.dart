@@ -9,23 +9,19 @@ import '../../core/admin/service_groupes.dart' show TypePublicGroupe;
 import '../../core/capacites/port_enseignants_classe.dart' show GenreClasse;
 import '../../core/i18n/isolat_bidi.dart' show enTeteArabe;
 import '../../core/i18n/strings.g.dart';
-import '../../core/i18n/villes_fuseau.dart';
 import '../../core/offres/offre_horaire.dart' show PublicOffre;
 import '../../core/offres/port_regroupements_admin.dart';
 import '../../core/planning/service_planning.dart' show Creneau;
 import '../../core/tc_groupe/libelles_tc_groupe.dart' show LibellesGroupe;
-import '../admin_regroupements/regroupements_libelles.dart'
-    show libelleHeureMinute;
-import '../creneaux/plages.dart' show jourCapitalise;
+import '../../core/tc_horloge/creneau_chez_moi.dart';
+import '../../core/tc_horloge/fuseaux_interlocuteurs.dart' show FuseauVu;
 
-/// « Lundi · 18 h · Paris » : l'horaire d'une ligne, sans ambiguite sur le
-/// fuseau.
-String libelleHoraire(Creneau c) => enTeteArabe(
-  t.admin.pilotage.horaire(
-    jour: jourCapitalise(c.jour),
-    heure: libelleHeureMinute(c.heure, 0),
-    ville: villeDuFuseauLibelle(c.fuseau),
-  ),
+/// « Mercredi 19:00 · Heure de La Mecque : 21:00 » : l'horaire d'une ligne, a
+/// l'heure de la personne d'abord, puis a celle de La Mecque (B1, 13/11/2026).
+/// Sans lecture du fuseau, l'heure enregistree avec la ville de son fuseau
+/// (« La Mecque » pour l'academie). [fuseaux] : [fuseauxDesCreneaux].
+String libelleHoraire(Creneau c, Map<String, FuseauVu?> fuseaux) => enTeteArabe(
+  libelleCreneauLu(fuseaux, (jour: c.jour, heure: c.heure, fuseau: c.fuseau)),
 );
 
 /// « Enfants », « Adultes ».
