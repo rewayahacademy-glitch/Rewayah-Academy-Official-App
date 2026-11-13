@@ -26,8 +26,13 @@ par cause) puis `claude/depot-simple` (temps 2 : ce lot).
   nom est en arabe, sinon la langue de l'interface) et `library_mettre_a_jour` n'a pas de clé
   « langue ». La corriger demande une migration, qui n'est pas de ce lot.
 - **L'accès (lecture seule ou téléchargement) d'un document déjà publié ne se change pas** sans
-  créer une nouvelle version : il est porté par les droits de la version. Le nom, la description,
-  le rayon et la vignette, eux, se changent.
+  créer une nouvelle version : il est porté par les droits de la version.
+- **Le nom et la description d'un document publié ne se changent pas depuis sa fiche** : la règle
+  d'avant ce lot (« version publiée et figée », CAP-29) n'a pas été touchée. Comme le dépôt direct
+  publie aussitôt, corriger un nom demande aujourd'hui une nouvelle version, donc de redéposer le
+  fichier. Le serveur, lui, accepte déjà la correction (`library_mettre_a_jour` ne demande qu'un
+  document non retiré) : lever la règle à l'écran est une décision à prendre, pas un travail lourd.
+  La vignette, elle, se change à tout moment.
 - **Un fichier téléchargé s'appelle `document.pdf`** (le nom du fichier du client n'est plus gardé
   nulle part côté serveur). Donner au téléchargement le nom saisi reste à faire.
 - **Trois types déposables seulement** : PDF, audio (MP3, M4A, OGG), image (PNG, JPEG, WebP). Le
