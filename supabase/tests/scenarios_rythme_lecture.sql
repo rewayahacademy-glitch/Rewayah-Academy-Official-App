@@ -104,6 +104,8 @@ INSERT INTO public.progression_historique (student_id, niveau_id, type_mouvement
 SELECT pg_temp.u(x.e), (SELECT id FROM se_ids WHERE cle = 'n2'), 'diagnostic_initial', pg_temp.u('a1'),
        'Diagnostic', pg_catalog.now() - x.semaines * interval '1 week' - interval '1 hour'
   FROM (VALUES ('e1', 5), ('e4', 16), ('e5', 20)) AS x(e, semaines);
+-- SOCLE-PROGRAMME : comme a l'installation, chaque membre sans etape recoit l'etape 1.
+SELECT private.rattacher_classes_et_eleves();
 SELECT pg_temp.vrai(
   (SELECT (n.durees -> 'enfant_6_9' ->> 'prevue')::int = 14 AND (n.durees -> 'enfant_6_9' ->> 'limite')::int = 19
      FROM public.programme_niveaux n WHERE n.id = (SELECT id FROM se_ids WHERE cle = 'n2')),
@@ -131,9 +133,9 @@ SELECT pg_temp.vrai(
      FROM public.rythme_classe(pg_temp.u('c1')) r WHERE r.student_id = pg_temp.u('e5')),
   'e5, 20 semaines : date_limite_depassee');
 SELECT pg_temp.vrai(
-  (SELECT r.vitesse = 'inconnu' AND r.semaines_ecoulees IS NULL AND r.date_limite IS NULL
+  (SELECT r.vitesse = 'dans_les_temps' AND r.semaines_ecoulees = 0
      FROM public.rythme_classe(pg_temp.u('c1')) r WHERE r.student_id = pg_temp.u('e2')),
-  'e2 sans decision : inconnu, aucune date supposee');
+  'e2 sans decision : etape 1 posee a l''installation, dans les temps (SOCLE-PROGRAMME)');
 -- Meme regle que le suivi de l'eleve : les deux lectures s'accordent pour chaque eleve.
 SELECT pg_temp.vrai(
   NOT EXISTS (SELECT 1 FROM public.rythme_classe(pg_temp.u('c1')) r

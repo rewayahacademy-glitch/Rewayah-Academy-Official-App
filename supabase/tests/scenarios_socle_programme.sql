@@ -190,6 +190,10 @@ SELECT pg_temp.vrai(
     WHERE n.version_id = (SELECT id FROM sp_ids WHERE cle = 'v1') AND n.code_technique = 'BASES-3')
   AND (SELECT n.matieres -> 'adulte_18_plus' ->> 'principale' LIKE 'Le Coran%'
      FROM public.programme_niveaux n
+    WHERE n.version_id = (SELECT id FROM sp_ids WHERE cle = 'v1') AND n.code_technique = 'BASES-4')
+  AND (SELECT n.matieres -> 'enfant_6_9' ->> 'secondaire'
+              LIKE 'La suite des sourates commencées (An-Nâs, Al-Falaq, Al-Ikhlâs), puis les paroles de la prière et les ablutions, puis les invocations%'
+     FROM public.programme_niveaux n
     WHERE n.version_id = (SELECT id FROM sp_ids WHERE cle = 'v1') AND n.code_technique = 'BASES-4'),
   'matieres : 6-9 ans le livre seul jusqu''a la chadda ; 10 ans et plus Al-Fatiha des la premiere semaine ; le Coran principal a l''etape 4');
 SELECT pg_temp.vrai(
@@ -273,6 +277,10 @@ SELECT pg_temp.vrai(
      FROM (SELECT pg_temp.lire('e6') AS j) l)
   AND pg_temp.lire('e5') IS NULL,
   'lecture : « attente de l''entretien de lecture » pour le lecteur en classe ; rien pour un eleve sans classe');
+SELECT pg_temp.vrai(
+  NOT EXISTS (SELECT 1 FROM public.etapes_eleves_classe(pg_temp.u('c2')) e WHERE e.student_id = pg_temp.u('e6'))
+  AND NOT EXISTS (SELECT 1 FROM public.rythme_classe(pg_temp.u('c2')) r WHERE r.student_id = pg_temp.u('e6')),
+  'lecteur en attente : etapes_eleves_classe et rythme_classe ne lui supposent aucune etape (memes reponses que la lecture unique)');
 RESET ROLE;
 
 -- Entre en classe il y a 12 semaines, avant l'installation : rien n'est depasse.
@@ -347,10 +355,16 @@ SELECT pg_temp.vrai(
                            WHERE x -> 'duree_prevue_semaines' <> 'null'::jsonb
                               OR x -> 'date_limite_semaines' <> 'null'::jsonb)
           AND NOT (j #>> '{eleve_voit_dates}')::boolean
-          AND j #>> '{etape,entree_le}' IS NOT NULL
+          AND j #> '{etape,entree_le}' = 'null'::jsonb
+          AND j #> '{niveau,entree_le}' = 'null'::jsonb
           AND pg_catalog.jsonb_array_length(j -> 'chemin') = 4
      FROM (SELECT pg_temp.lire('e1') AS j) l),
-  'enfant de 6-9 ans : son etape et son chemin, aucune date ni aucun nombre de semaines (etape, chemin, niveau)');
+  'enfant de 6-9 ans : son etape et son chemin, aucune date (ni entree) ni aucun nombre de semaines (etape, chemin, niveau)');
+SELECT pg_temp.vrai(
+  (SELECT s.etape_ordre = 1 AND s.duree_prevue_semaines IS NULL AND s.date_limite IS NULL
+          AND s.depuis IS NULL AND s.rythme IS NULL
+     FROM public.suivi_pedagogique_eleve(pg_temp.u('e1')) s),
+  'ancienne lecture suivi_pedagogique_eleve : meme masquage pour l''enfant de 6-9 ans');
 RESET ROLE;
 SELECT pg_temp.qui(pg_temp.u('t1'), 'guardian', pg_temp.u('f1'));
 SET LOCAL ROLE authenticated;
@@ -443,6 +457,14 @@ SELECT pg_temp.vrai(
      FROM public.etapes_eleves_classe(pg_temp.u('c1')) e WHERE e.student_id = pg_temp.u('e2')),
   'etapes_eleves_classe (enseignant, direction) rend la meme etape et la meme date (source unique)');
 RESET ROLE;
+-- Une reevaluation sur l'etape EN COURS (trois jours plus tard) ne change rien.
+INSERT INTO public.progression_historique (student_id, niveau_id, type_mouvement, decide_par, motif, created_at)
+VALUES (pg_temp.u('e2'), (SELECT id FROM sp_ids WHERE cle = 'n2'), 'reevaluation', pg_temp.u('a1'),
+        'Reevaluation reussie', pg_catalog.now() + interval '3 days');
+SELECT pg_temp.vrai(
+  (SELECT f.entree_etape_le = pg_catalog.now()::date FROM public.eleve_etape_en_cours f WHERE f.student_id = pg_temp.u('e2'))
+  AND (SELECT d.date_limite = (pg_catalog.now() + interval '14 weeks')::date FROM private.dates_etape(pg_temp.u('e2')) d),
+  'reevaluation sur l''etape en cours : date d''entree et date limite inchangees');
 SELECT pg_temp.qui(pg_temp.u('t1'), 'guardian', pg_temp.u('f1'));
 SET LOCAL ROLE authenticated;
 SELECT pg_temp.vrai(
@@ -466,6 +488,13 @@ RESET ROLE;
 -- 7. Une seconde version : personne ne bascule (regle 4 du directeur) ;
 --    le changement de version se fait au passage d'etape
 -- ------------------------------------------------------------------
+-- e3 sort de sa classe il y a 10 jours (son fait est garde) ; on recule son entree d'un mois.
+UPDATE public.eleve_etape_en_cours
+   SET entree_etape_le = pg_catalog.now()::date - 30, entree_niveau_le = pg_catalog.now()::date - 30
+ WHERE student_id = pg_temp.u('e3');
+UPDATE public.groupe_membres SET left_at = pg_catalog.now() - interval '10 days', left_by = pg_temp.u('a1'),
+       left_reason = 'sortie'
+ WHERE student_id = pg_temp.u('e3') AND left_at IS NULL;
 CREATE TEMP TABLE sp_avant(eleve text PRIMARY KEY, entree date, limite date);
 GRANT ALL ON sp_avant TO authenticated;
 INSERT INTO sp_avant
@@ -473,6 +502,17 @@ SELECT x, f.entree_etape_le, d.date_limite
   FROM unnest(ARRAY['e1','e2']) x
   JOIN public.eleve_etape_en_cours f ON f.student_id = pg_temp.u(x)
   CROSS JOIN LATERAL private.dates_etape(f.student_id) d;
+CREATE TEMP TABLE sp_compte(quoi text PRIMARY KEY, n int);
+GRANT ALL ON sp_compte TO authenticated;
+INSERT INTO sp_compte
+SELECT 'tous', pg_catalog.count(*)::int FROM public.eleve_etape_en_cours f
+  JOIN public.programme_niveaux n ON n.id = f.niveau_id
+ WHERE n.version_id = (SELECT id FROM sp_ids WHERE cle = 'v1')
+UNION ALL
+SELECT 'actifs', pg_catalog.count(*)::int FROM public.eleve_etape_en_cours f
+  JOIN public.programme_niveaux n ON n.id = f.niveau_id
+ WHERE n.version_id = (SELECT id FROM sp_ids WHERE cle = 'v1')
+   AND EXISTS (SELECT 1 FROM public.groupe_membres m WHERE m.student_id = f.student_id AND m.left_at IS NULL);
 SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
 SET LOCAL ROLE authenticated;
 INSERT INTO sp_ids VALUES ('v2', public.creer_version_programme((SELECT id FROM sp_ids WHERE cle = 'v1')));
@@ -487,8 +527,11 @@ SELECT public.modifier_contenu_niveau(c.niveau_id,
   FROM public.programme_contenu_admin((SELECT id FROM sp_ids WHERE cle = 'v2')) c WHERE c.ordre IN (1, 2);
 SELECT public.publier_version_programme((SELECT id FROM sp_ids WHERE cle = 'v2'), 'Version 2 des bases');
 SELECT pg_temp.vrai(
-  (SELECT e.eleves >= 4 AND e.classes = 3 FROM public.etapes_sur_ancienne_version() e),
-  'direction : la publication ne bloque rien et dit combien d''eleves et de classes restent sur la v1');
+  (SELECT e.eleves = (SELECT n FROM sp_compte WHERE quoi = 'actifs')
+          AND e.eleves < (SELECT n FROM sp_compte WHERE quoi = 'tous')
+          AND e.classes = 3
+     FROM public.etapes_sur_ancienne_version() e),
+  'direction : la publication ne bloque rien et dit combien d''eleves (membres actifs seulement : e3, sorti, ne compte pas) et de classes restent sur la v1');
 INSERT INTO sp_ids SELECT 'v2n' || n.ordre, n.id FROM public.programme_niveaux n
  WHERE n.version_id = (SELECT id FROM sp_ids WHERE cle = 'v2');
 RESET ROLE;
@@ -567,6 +610,32 @@ RESET ROLE;
 SELECT pg_temp.vrai(
   (SELECT statut FROM public.programme_versions WHERE id = (SELECT id FROM sp_ids WHERE cle = 'v2')) = 'publiee',
   'la v2 reste publiee apres le refus');
+-- Une version sans le niveau des bases (un niveau ajoute a la main) : refus.
+SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
+SET LOCAL ROLE authenticated;
+INSERT INTO sp_ids VALUES ('v5', public.creer_version_programme(NULL));
+INSERT INTO sp_ids VALUES ('v5n', public.ajouter_niveau_programme(
+  (SELECT id FROM sp_ids WHERE cle = 'v5'), 'AUTRE-1', 'Autre etape', 'Autre', 1, NULL));
+SELECT public.modifier_contenu_niveau((SELECT id FROM sp_ids WHERE cle = 'v5n'), ARRAY['a', 'b', 'c'], NULL,
+  '{"enfant_6_9": {"prevue": 8, "limite": 10}, "enfant_10_13": {"prevue": 6, "limite": 8},
+    "ado_14_17": {"prevue": 5, "limite": 6}, "adulte_18_plus": {"prevue": 3, "limite": 4}}'::jsonb);
+SELECT pg_temp.vrai(
+  pg_temp.essai(pg_catalog.format('SELECT public.publier_version_programme(%L, %L)',
+    (SELECT id FROM sp_ids WHERE cle = 'v5'), 'essai')) LIKE 'programme_sans_bases%',
+  'version sans le niveau des bases complet : publication refusee (programme_sans_bases)');
+-- Les bases completes (copie de la v2) PLUS une etape sans niveau (cycle_code
+-- nul) : publication refusee aussi, avec le meme message clair.
+INSERT INTO sp_ids VALUES ('v6', public.creer_version_programme((SELECT id FROM sp_ids WHERE cle = 'v2')));
+INSERT INTO sp_ids VALUES ('v6n', public.ajouter_niveau_programme(
+  (SELECT id FROM sp_ids WHERE cle = 'v6'), 'AUTRE-2', 'Etape hors niveau', 'Autre', 9, NULL));
+SELECT public.modifier_contenu_niveau((SELECT id FROM sp_ids WHERE cle = 'v6n'), ARRAY['a', 'b', 'c'], NULL,
+  '{"enfant_6_9": {"prevue": 8, "limite": 10}, "enfant_10_13": {"prevue": 6, "limite": 8},
+    "ado_14_17": {"prevue": 5, "limite": 6}, "adulte_18_plus": {"prevue": 3, "limite": 4}}'::jsonb);
+SELECT pg_temp.vrai(
+  pg_temp.essai(pg_catalog.format('SELECT public.publier_version_programme(%L, %L)',
+    (SELECT id FROM sp_ids WHERE cle = 'v6'), 'essai')) LIKE 'programme_sans_bases%',
+  'bases completes + une etape dont cycle_code est nul : publication refusee (programme_sans_bases)');
+RESET ROLE;
 
 -- Une v4 sans le code BASES-3 se publie (rien n'est bloque) ; mais un passage
 -- vers BASES-3 est alors refuse, avec un message clair.
@@ -621,6 +690,25 @@ SET LOCAL ROLE authenticated;
 SELECT pg_temp.vrai(pg_temp.essai('SELECT pg_temp.lire(''e2'')') = 'refus',
   'remplacant d''une seance finie depuis 25 heures : refus');
 RESET ROLE;
+-- Retour en classe de e3 apres 10 jours : le fait est garde, l'entree dans l'etape
+-- devient le jour du retour ; un transfert le meme jour (e7) ne change rien.
+INSERT INTO public.groupe_membres(groupe_id, student_id) VALUES (pg_temp.u('c2'), pg_temp.u('e3'));
+SELECT pg_temp.vrai(
+  (SELECT f.entree_etape_le = pg_catalog.now()::date AND n.code_technique = 'BASES-1'
+     FROM public.eleve_etape_en_cours f JOIN public.programme_niveaux n ON n.id = f.niveau_id
+    WHERE f.student_id = pg_temp.u('e3')),
+  'retour en classe apres une sortie : meme etape, entree dans l''etape = jour du retour');
+UPDATE public.eleve_etape_en_cours SET entree_etape_le = pg_catalog.now()::date - 7,
+       entree_niveau_le = least(entree_niveau_le, pg_catalog.now()::date - 7)
+ WHERE student_id = pg_temp.u('e7');
+UPDATE public.groupe_membres SET left_at = pg_catalog.now(), left_by = pg_temp.u('a1'), left_reason = 'transfert'
+ WHERE student_id = pg_temp.u('e7') AND left_at IS NULL;
+INSERT INTO public.groupe_membres(groupe_id, student_id) VALUES (pg_temp.u('c3'), pg_temp.u('e7'));
+SELECT pg_temp.vrai(
+  (SELECT f.entree_etape_le = pg_catalog.now()::date - 7 FROM public.eleve_etape_en_cours f
+    WHERE f.student_id = pg_temp.u('e7')),
+  'transfert le meme jour : date d''entree inchangee');
+
 -- ------------------------------------------------------------------
 -- 9. Droits
 -- ------------------------------------------------------------------

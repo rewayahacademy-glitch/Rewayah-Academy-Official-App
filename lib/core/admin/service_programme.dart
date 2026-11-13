@@ -207,10 +207,6 @@ const List<String> tranchesProgramme = <String>[
   'adulte_18_plus',
 ];
 
-/// La date limite d'une etape deduite de sa duree prevue : x 1,3, arrondie
-/// (regle du directeur du 14/10, `programme-rewayah` §3).
-int dateLimiteDeduite(int prevue) => (prevue * 1.3).round();
-
 /// La duree d'une etape pour une tranche d'age, en semaines.
 @immutable
 class DureeEtape {

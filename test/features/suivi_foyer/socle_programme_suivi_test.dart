@@ -113,8 +113,16 @@ void _aucuneDate(WidgetTester tester) {
   expect(find.text(s.horizonNiveau(niveau: 'Les bases')), findsNothing);
   expect(find.text(s.rythme), findsNothing);
   expect(find.text(s.dureePrevue), findsNothing);
+  expect(find.text(s.depuis), findsNothing);
   expect(find.textContaining('semaines'), findsNothing);
-  expect(find.textContaining('2027'), findsNothing);
+  // Aucune date, quel que soit l'an : ni annee a quatre chiffres, ni mois.
+  expect(find.textContaining(RegExp(r'\b(19|20)\d\d\b')), findsNothing);
+  for (final String mois in t.commun.dates.mois) {
+    expect(
+      find.textContaining(RegExp('\\d{1,2}[\\s\u00a0]+$mois')),
+      findsNothing,
+    );
+  }
 }
 
 class _FauxPort implements PortSuiviPedagogique {
