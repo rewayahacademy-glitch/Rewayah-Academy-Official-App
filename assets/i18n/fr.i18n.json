@@ -15462,9 +15462,9 @@
             "generale": "Une séance n'est plus sous une fermeture mais ne peut pas être rétablie\u00a0: l'enseignant a pris un autre cours à la même heure. Libérez-le, la séance sera rétablie la nuit suivante.",
             "avecNom": "La séance de la classe {classe}, le {jour} à {heure} (heure de La Mecque), n'est plus sous une fermeture mais ne peut pas être rétablie\u00a0: {enseignant} a un autre cours à la même heure. Libérez l'enseignant, la séance sera rétablie la nuit suivante.",
             "sansNom": "La séance de la classe {classe}, le {jour} à {heure} (heure de La Mecque), n'est plus sous une fermeture mais ne peut pas être rétablie\u00a0: l'enseignant a un autre cours à la même heure. Libérez-le, la séance sera rétablie la nuit suivante.",
-            "rappelGenerale": "Rappel : une séance qui n'est plus sous une fermeture ne peut toujours pas être rétablie : l'enseignant a un autre cours à la même heure. Libérez-le pour la rétablir.",
-            "rappelAvecNom": "Rappel : la séance de la classe {classe}, le {jour} à {heure} (heure de La Mecque), ne peut toujours pas être rétablie : {enseignant} a un autre cours à la même heure. Libérez l'enseignant pour la rétablir.",
-            "rappelSansNom": "Rappel : la séance de la classe {classe}, le {jour} à {heure} (heure de La Mecque), ne peut toujours pas être rétablie : l'enseignant a un autre cours à la même heure. Libérez-le pour la rétablir."
+            "rappelGenerale": "Rappel : une séance qui n'est plus sous une fermeture ne peut toujours pas être rétablie : l'enseignant a un autre cours à la même heure. Libérez-le pour la rétablir.",
+            "rappelAvecNom": "Rappel : la séance de la classe {classe}, le {jour} à {heure} (heure de La Mecque), ne peut toujours pas être rétablie : {enseignant} a un autre cours à la même heure. Libérez l'enseignant pour la rétablir.",
+            "rappelSansNom": "Rappel : la séance de la classe {classe}, le {jour} à {heure} (heure de La Mecque), ne peut toujours pas être rétablie : l'enseignant a un autre cours à la même heure. Libérez-le pour la rétablir."
           },
           "quandLocal": "{local} ({mecque}, heure de La Mecque)",
           "quandMecque": "{jour} à {heure}, heure de La Mecque",
