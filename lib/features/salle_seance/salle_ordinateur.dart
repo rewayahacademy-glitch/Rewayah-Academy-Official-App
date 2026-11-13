@@ -1464,11 +1464,9 @@ class _Colonne extends ConsumerWidget {
             avecNom = nom;
             avecTitre = montreTitre;
             largeur = l;
-            // Une marge d'un palier : l'estimation des tuiles est un peu
-            // courte (mesure du 13/11 a 1280 x 800 : 3 points de trop), et
-            // la tete reservee ne doit jamais pousser la colonne hors de
-            // l'ecran.
-            trouve = tete + hauteurBarre(nom) + AppSpacing.md <= c.maxHeight;
+            // Mesure du 13/11 (1024 x 768, 1280 x 800, 1440 x 900) : la
+            // hauteur des tuiles estimee ici est celle rendue, au point pres.
+            trouve = tete + hauteurBarre(nom) <= c.maxHeight;
             if (trouve) break;
           }
           if (trouve) break;
