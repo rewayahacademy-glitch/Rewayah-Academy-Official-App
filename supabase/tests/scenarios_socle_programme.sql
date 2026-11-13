@@ -437,6 +437,28 @@ SELECT pg_temp.vrai(pg_temp.essai('SELECT public.etape_eleve_lecture(''00000000-
   'anon : refus');
 RESET ROLE;
 
+-- Le hub `ma_progression` (MA-PROGRESSION, sur le socle) rend LA meme etape : un seul calcul.
+SELECT pg_temp.qui(pg_temp.u('e2'), 'student', pg_temp.u('f1'));
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai(
+  (SELECT (m -> 'etape') @> (l -> 'etape')
+          AND m -> 'niveau' = l -> 'niveau'
+          AND m -> 'eleve_voit_dates' = l -> 'eleve_voit_dates'
+          AND (m -> 'etape' ->> 'page_reprise') IS NOT DISTINCT FROM (l ->> 'page_reprise')
+          AND pg_catalog.jsonb_array_length(m -> 'etapes_du_cycle') = pg_catalog.jsonb_array_length(l -> 'chemin')
+          AND (m -> 'etape' ->> 'code') = 'BASES-1'
+     FROM (SELECT public.ma_progression(pg_temp.u('e2')) AS m, pg_temp.lire('e2') AS l) x),
+  'ma_progression et etape_eleve_lecture : meme etape, meme niveau, meme chemin (un seul calcul)');
+RESET ROLE;
+SELECT pg_temp.qui(pg_temp.u('e6'), 'student', pg_temp.u('f2'));
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai(
+  (SELECT m ->> 'attente' = 'entretien_de_lecture' AND m -> 'etape' = 'null'::jsonb
+          AND m -> 'etapes_du_cycle' = '[]'::jsonb
+     FROM (SELECT public.ma_progression(pg_temp.u('e6')) AS m) x),
+  'ma_progression : l''eleve qui attend l''entretien de lecture le recoit (attente), sans etape ni chemin');
+RESET ROLE;
+
 -- ------------------------------------------------------------------
 -- 6. La direction corrige par un geste existant
 -- ------------------------------------------------------------------

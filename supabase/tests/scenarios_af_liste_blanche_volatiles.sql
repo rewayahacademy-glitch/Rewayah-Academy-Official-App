@@ -348,6 +348,9 @@ declare
     'refuser_demande_horaire(uuid,text)',
     'refuser_demande_presentation(uuid)',
     'refuser_reprise_foyer(uuid)',
+    -- MA-PROGRESSION (08/11) : la direction regle les sourates, les heures de revision et les
+    -- repetitions d'une etape (garde positive app_role() = 'admin' et app_account_valid()).
+    'regler_etape_progression(text,numeric,integer)',
     'rejoindre_observation(uuid)',
     'renoncer_intention_horaire(uuid,text)',
     'repondre_invitation_conjoint(text,uuid)',
@@ -482,7 +485,16 @@ declare
     -- 'admin' ; 42501 sinon. VOLATILE parce qu'elle ecrit chaque lecture au
     -- journal d'audit (log_sensitive_access, action lecture_releve_qualite) :
     -- c'est sa seule ecriture. Relue par l'agent du lot le 11/11/2026.
-    'releve_qualite_seance(uuid)'
+    'releve_qualite_seance(uuid)',
+    -- CORRIGER-SOURATE (migration 20261123820000) : retirer une sourate
+    -- validee par erreur. Garde positive app_account_valid() ET (app_role() =
+    -- 'admin', ou app_role() = 'teacher' ET auteur de la validation dans les
+    -- 24 h) ; 42501 sinon, la meme reponse que la sourate existe ou non. Ce
+    -- qu'elle peut ecrire : le marquage retiree_le, retiree_par, motif (500
+    -- signes au plus) d'UNE ligne de sourates_validees, jamais d'effacement ;
+    -- et une ligne d'audit (log_sensitive_access, action sourate_retiree).
+    -- Relue par l'agent du lot le 12/11/2026.
+    'retirer_sourate_validee(uuid,integer,text)'
   ];
   -- Ouvertes a anon par choix : la desinscription d'un e-mail et le depot d'un
   -- avis se font sans compte.

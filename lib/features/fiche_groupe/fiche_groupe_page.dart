@@ -50,6 +50,7 @@ import '../tc_flux_academique/tendance_feedback_classe.dart';
 import 'bloc_pause_classe.dart';
 import 'fiche_eleve_enseignant.dart';
 import 'preparation_seance.dart';
+import 'sourates_retirables_classe.dart';
 
 /// `ENS-07` : la fiche d'un groupe, telle que son enseignant la lit.
 ///
@@ -354,6 +355,18 @@ class _CorpsState extends ConsumerState<_Corps> {
       seance,
       Ecart.vSection,
       preparation,
+      // CORRIGER-SOURATE-DIRECTION : les sourates que l'enseignant a validees
+      // dans les 24 dernieres heures se retirent ici aussi ; rien quand il n'y
+      // en a pas (le serveur en decide, jamais le role).
+      SouratesRetirablesClasse(
+        groupeId: groupe.id,
+        afficherSiVide: false,
+        ecartAvant: Ecart.vSection,
+        noms: <String, String>{
+          for (final MembreSeance m in membres.requireValue)
+            m.studentId: m.prenom ?? m.identifiantImmuable,
+        },
+      ),
       // PORTS-CARTES-CLASSE : sans serveur, ni bloc de cartes ni son ecart.
       if (ref.watch(cartesClasseOuvertesProvider)) ...<Widget>[
         Ecart.vSection,

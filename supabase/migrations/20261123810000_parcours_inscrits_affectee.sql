@@ -27,8 +27,6 @@
 -- l'identifiant de la classe) ; l'index unique groupe_membres_actif_uidx interdit
 -- deja deux adhesions actives pour un meme eleve, ce tri n'est qu'une ceinture.
 
-BEGIN;
-
 DO $preflight$
 DECLARE
   v_attendues text[] := ARRAY['eleve_id', 'prenom', 'cohorte', 'cohorte_nom', 'type_public',
@@ -74,8 +72,7 @@ SELECT
   i.fuseau_affiche,
   i.heure_affichee,
   i.jours_affiches,
-  -- Revue du lot 1 (12/11) : l'etat « affectee » vient de l'adhesion, la classe aussi.
-  COALESCE(gm.groupe_id, i.groupe_id)             AS groupe_id,
+  COALESCE(i.groupe_id, gm.groupe_id)             AS groupe_id,
   o.etat                                          AS offre_etat,
   (gm.groupe_id IS NULL AND i.id IS NOT NULL AND o.etat <> 'publiee') AS offre_indisponible,
   (gm.groupe_id IS NULL AND i.id IS NOT NULL AND h.timezone IS NOT NULL
@@ -117,5 +114,3 @@ BEGIN
   END IF;
 END
 $postflight$;
-
-COMMIT;

@@ -27,11 +27,13 @@ library;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/capacites/port_progression_famille.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/session/session_controleur.dart';
+import '../../core/suivi/ma_progression.dart';
 import '../../core/suivi/port_suivi_pedagogique.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_metriques.dart';
@@ -55,21 +57,21 @@ class CarteSuiviPedagogique extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    if (ref.watch(portSuiviPedagogiqueProvider) == null) {
+    if (ref.watch(portMaProgressionProvider) == null) {
       return const SizedBox.shrink();
     }
     final String? eleveId =
         this.eleveId ?? ref.watch(sessionProvider).profileId;
     if (eleveId == null) return const SizedBox.shrink();
     final s = t.suiviPedagogique;
-    final AsyncValue<SuiviPedagogique?> lecture = ref.watch(
-      suiviPedagogiqueProvider(eleveId),
+    final AsyncValue<MaProgression?> lecture = ref.watch(
+      maProgressionProvider(eleveId),
     );
     if (lecture.hasError && !lecture.hasValue) {
       // EA-HL-DOUBLE-1 : hors ligne, le bandeau de la page le dit ; le bloc
       // dit seulement ce qui manque.
       final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
-      void relire() => ref.invalidate(suiviPedagogiqueProvider(eleveId));
+      void relire() => ref.invalidate(maProgressionProvider(eleveId));
       return Padding(
         padding: const EdgeInsets.only(bottom: AppSpacing.xl),
         child: horsLigne
@@ -96,55 +98,64 @@ class CarteSuiviPedagogique extends ConsumerWidget {
         ),
       );
     }
-    final SuiviPedagogique? suivi = lecture.value;
+    // Ce que l'enseignant a saisi et que la famille lisait deja : le niveau
+    // declare et le dernier jalon publie. Un refus ou un echec le cache, sans
+    // faire tomber le bloc.
+    final ProgressionEleve? famille = ref
+        .watch(progressionFamilleLueProvider(eleveId))
+        .value;
+    final String? jalon = famille?.jalons.isEmpty ?? true
+        ? null
+        : famille!.jalons.first;
+    final String? niveauDeclare =
+        famille?.niveauHumain?.trim().isNotEmpty ?? false
+        ? famille!.niveauHumain!.trim()
+        : null;
+    final MaProgression? lue = lecture.value;
+    if (lue == null && jalon == null && niveauDeclare == null) {
+      return const SizedBox.shrink();
+    }
+    final MaProgression progression = lue ?? const MaProgression();
+    final SuiviPedagogique? suivi = progression.suivi;
+    final bool attente = suivi?.enAttenteEntretien ?? false;
+
     final String? p = prenom;
     final Widget titre = SectionHeader(
       titre: p == null ? s.titreSoi : s.titre(prenom: p),
     );
-    if (suivi == null || suivi.enAttenteEntretien) {
-      final String phrase = suivi == null
-          ? s.vide
-          : (p != null
-                ? s.attenteEntretienPour(prenom: p)
-                : (AppMetriques.of(context).estEnfant
-                      ? s.attenteEntretienTu
-                      : s.attenteEntretien));
-      return Padding(
-        padding: const EdgeInsets.only(bottom: AppSpacing.xl),
-        child: Column(
-          key: const ValueKey<String>('suivi-pedagogique-vide'),
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            titre,
-            Ecart.vMd,
-            GroupeReglages(
-              lignes: <LigneRubrique>[
-                LigneRubrique(
-                  icone: AppIcons.coran,
-                  libelle: s.etape,
-                  legende: phrase,
-                ),
-              ],
-            ),
-          ],
-        ),
-      );
-    }
+    // SOCLE-PROGRAMME : un eleve qui a declare savoir lire n'a pas d'etape
+    // supposee ; il attend l'entretien de lecture avec la direction.
+    final String phraseAttente = p != null
+        ? s.attenteEntretienPour(prenom: p)
+        : (AppMetriques.of(context).estEnfant
+              ? s.attenteEntretienTu
+              : s.attenteEntretien);
 
     // Qui voit les dates (correction de l'architecte, 12/11) : le mode
-    // d'interface ne decide rien. Dans l'espace de l'eleve (eleveId nul : il
-    // lit pour lui-meme), dates, durees et rythme seulement si le serveur dit
-    // `eleve_voit_dates` (des 10 ans, ou adulte, meme en Interface guidee) ;
-    // dans les ecrans du tuteur, toujours.
-    final bool dates = this.eleveId != null || suivi.eleveVoitDates;
-    final String? rythme = dates ? libelleRythme(suivi) : null;
-    final DateTime? date = dates ? suivi.dateLimite : null;
-    final DateTime? horizon = dates ? suivi.horizon : null;
+    // d'interface ne decide rien quand le serveur parle. Dans l'espace de
+    // l'eleve (eleveId nul : il lit pour lui-meme), dates, durees et rythme
+    // seulement si le serveur dit `eleve_voit_dates` (des 10 ans, ou adulte,
+    // meme en Interface guidee) ; dans les ecrans du tuteur, toujours. Une
+    // reponse d'avant le socle, qui ne le dit pas, garde la regle d'avant en
+    // entier (Interface guidee : ni rythme ni date limite ni reglage).
+    final bool guidee = AppMetriques.of(context).estEnfant;
+    final bool? serveurDit = suivi?.eleveVoitDates;
+    final bool dates = serveurDit == null
+        ? !guidee
+        : (this.eleveId != null || serveurDit);
+    final String? rythme = suivi == null || attente || !dates
+        ? null
+        : libelleRythme(suivi);
+    final DateTime? date = dates && !attente ? suivi?.dateLimite : null;
+    final DateTime? horizon = dates && !attente ? suivi?.horizon : null;
     // Aucune date, la date d'entree comprise, quand l'eleve ne voit pas ses
     // dates (charte : l'enfant de 6 a 9 ans ne recoit aucune date).
-    final DateTime? entree = dates ? suivi.entreeLe : null;
-    final String niveau = suivi.niveauNom ?? '';
+    final DateTime? entree = dates && !attente ? suivi?.entreeLe : null;
+    final String niveau = suivi?.niveauNom ?? '';
+    final ReglageEtape? reglage = dates && !attente
+        ? progression.reglage
+        : null;
+    final SouratesValidees? sourates = progression.sourates;
     String jour(DateTime d) => LibellesGroupe.insecable(
       s.dateJour(
         numero: '${d.day}',
@@ -163,42 +174,79 @@ class CarteSuiviPedagogique extends ConsumerWidget {
           Ecart.vMd,
           GroupeReglages(
             lignes: <LigneRubrique>[
-              LigneRubrique(
-                icone: AppIcons.coran,
-                libelle: s.etape,
-                legende: suivi.etapeNom,
-              ),
-              if (suivi.pageReprise case final int page)
+              if (suivi != null)
                 LigneRubrique(
-                  icone: AppIcons.signet,
-                  libelle: s.reprise,
-                  legende: s.reprisePage(page: '$page'),
+                  icone: AppIcons.coran,
+                  libelle: s.etape,
+                  legende: attente ? phraseAttente : suivi.etapeNom,
                 ),
-              if (suivi.objectifs.isNotEmpty)
+              if (sourates != null)
+                LigneRubrique(
+                  cle: const ValueKey<String>('suivi-pedagogique-sourates'),
+                  icone: AppIcons.coran,
+                  libelle: s.sourates,
+                  legende: s.souratesDe(
+                    validees: sourates.validees,
+                    total: sourates.total,
+                  ),
+                ),
+              // Sans etape publiee, le niveau declare tient lieu de niveau ;
+              // avec une etape, c'est elle qui le dit.
+              if (suivi == null && niveauDeclare != null)
+                LigneRubrique(
+                  cle: const ValueKey<String>('suivi-pedagogique-niveau'),
+                  icone: AppIcons.coran,
+                  libelle: s.niveauDeclare,
+                  legende: niveauDeclare,
+                ),
+              if (jalon != null)
+                LigneRubrique(
+                  cle: const ValueKey<String>('suivi-pedagogique-jalon'),
+                  icone: AppIcons.signet,
+                  libelle: s.dernierJalon,
+                  legende: LibellesGroupe.joindre(
+                    jalon,
+                    famille?.dernierJalonLe == null
+                        ? null
+                        : _jour(famille!.dernierJalonLe!.toLocal()),
+                  ),
+                ),
+              if (!attente)
+                if (suivi?.pageReprise case final int page)
+                  LigneRubrique(
+                    icone: AppIcons.signet,
+                    libelle: s.reprise,
+                    legende: s.reprisePage(page: '$page'),
+                  ),
+              if (suivi != null && !attente && suivi.objectifs.isNotEmpty)
                 LigneRubrique(
                   icone: AppIcons.marqueur,
                   libelle: s.objectifs,
                   legende: suivi.objectifs.join('\n'),
                 ),
-              if (suivi.matierePrincipale case final String principale)
-                LigneRubrique(
-                  icone: AppIcons.livreOuvert,
-                  libelle: s.matierePrincipale,
-                  legende: principale,
-                ),
-              if (suivi.matiereSecondaire case final String secondaire)
-                LigneRubrique(
-                  icone: AppIcons.lecon,
-                  libelle: s.matiereSecondaire,
-                  legende: secondaire,
-                ),
+              if (suivi != null && !attente)
+                if (suivi.matierePrincipale case final String principale)
+                  LigneRubrique(
+                    icone: AppIcons.livreOuvert,
+                    libelle: s.matierePrincipale,
+                    legende: principale,
+                  ),
+              if (suivi != null && !attente)
+                if (suivi.matiereSecondaire case final String secondaire)
+                  LigneRubrique(
+                    icone: AppIcons.lecon,
+                    libelle: s.matiereSecondaire,
+                    legende: secondaire,
+                  ),
               if (entree != null)
                 LigneRubrique(
                   icone: AppIcons.historique,
                   libelle: s.depuis,
                   legende: jour(entree),
                 ),
-              if (dates &&
+              if (suivi != null &&
+                  !attente &&
+                  dates &&
                   suivi.dureePrevueSemaines != null &&
                   suivi.dateLimiteSemaines != null)
                 LigneRubrique(
@@ -211,7 +259,7 @@ class CarteSuiviPedagogique extends ConsumerWidget {
                     ),
                   ),
                 ),
-              if (date != null)
+              if (date != null && suivi != null)
                 LigneRubrique(
                   icone: AppIcons.journee,
                   libelle: s.aFinirAvant,
@@ -229,31 +277,47 @@ class CarteSuiviPedagogique extends ConsumerWidget {
                   libelle: s.rythme,
                   legende: rythme,
                 ),
+              // Le reglage de la direction : rien tant qu'elle n'a rien rempli.
+              if (reglage?.heuresRevisionSemaine case final double heures)
+                LigneRubrique(
+                  cle: const ValueKey<String>('suivi-pedagogique-revision'),
+                  icone: AppIcons.horloge,
+                  libelle: s.revision,
+                  legende: LibellesGroupe.insecable(
+                    s.revisionHeures(heures: _decimal(heures)),
+                  ),
+                ),
+              if (reglage?.repetitionsEstimees case final int n)
+                LigneRubrique(
+                  cle: const ValueKey<String>('suivi-pedagogique-repetitions'),
+                  icone: AppIcons.marqueur,
+                  libelle: s.repetitions,
+                  legende: s.repetitionsNombre(n: n),
+                ),
             ],
           ),
-          if (suivi.chemin.isNotEmpty) ...<Widget>[
-            Ecart.vLg,
+          // Ou il etait, ou il est, ou il va : les etapes du niveau dans l'ordre,
+          // chacune avec ses objectifs et, si l'eleve voit ses dates, sa duree.
+          if (progression.cycle.isNotEmpty && !attente) ...<Widget>[
+            Ecart.vXl,
             SectionHeader(
               key: const ValueKey<String>('suivi-pedagogique-chemin'),
-              titre: niveau.isEmpty ? s.etape : s.chemin(niveau: niveau),
+              titre: niveau.isEmpty ? s.etapesTitre : s.chemin(niveau: niveau),
             ),
             Ecart.vMd,
             GroupeReglages(
               lignes: <LigneRubrique>[
-                for (final EtapeDuChemin e in suivi.chemin)
+                for (final EtapeDuCycle e in progression.cycle)
                   LigneRubrique(
+                    cle: ValueKey<String>('suivi-pedagogique-etape-${e.ordre}'),
                     icone: switch (e.statut) {
-                      StatutEtape.precedente => AppIcons.historique,
-                      StatutEtape.enCours => AppIcons.signet,
+                      StatutEtape.franchie => AppIcons.succes,
+                      StatutEtape.enCours => AppIcons.pointeur,
                       StatutEtape.aVenir => AppIcons.attente,
                     },
-                    libelle: s.etapeNumero(ordre: '${e.ordre}', nom: e.nom),
+                    libelle: e.nom,
                     legende: <String>[
-                      switch (e.statut) {
-                        StatutEtape.precedente => s.statutPrecedente,
-                        StatutEtape.enCours => s.statutEnCours,
-                        StatutEtape.aVenir => s.statutAVenir,
-                      },
+                      libelleStatutEtape(e, avecDate: dates),
                       if (dates &&
                           e.dureePrevueSemaines != null &&
                           e.dateLimiteSemaines != null)
@@ -273,6 +337,40 @@ class CarteSuiviPedagogique extends ConsumerWidget {
       ),
     );
   }
+}
+
+/// Le statut d'une etape du cycle, en une phrase ; la date d'entree n'est
+/// dite que pour une etape franchie dont le serveur la donne. Pure.
+String libelleStatutEtape(EtapeDuCycle e, {bool avecDate = true}) {
+  final s = t.suiviPedagogique;
+  final DateTime? le = e.atteinteLe?.toLocal();
+  return switch (e.statut) {
+    StatutEtape.franchie =>
+      le == null || !avecDate
+          ? s.etapeFranchie
+          : s.etapeFranchieLe(
+              numero: '${le.day}',
+              mois: t.commun.dates.mois[le.month - 1],
+              annee: '${le.year}',
+            ),
+    StatutEtape.enCours => s.etapeEnCours,
+    StatutEtape.aVenir => s.etapeAVenir,
+  };
+}
+
+/// Un jour ecrit en toutes lettres : « 7 septembre 2026 ». Pur.
+String _jour(DateTime d) =>
+    '${d.day} ${t.commun.dates.mois[d.month - 1]} ${d.year}';
+
+/// Un nombre d'heures ecrit comme on le lit : « 2 » ou « 2,5 » (virgule en
+/// francais). Pur.
+String _decimal(double v) {
+  final String brut = v == v.roundToDouble()
+      ? '${v.toInt()}'
+      : v.toStringAsFixed(1);
+  return LocaleSettings.currentLocale == AppLocale.ar
+      ? brut.replaceAll('.', '\u066B')
+      : brut.replaceAll('.', ',');
 }
 
 /// Le libelle du rythme rendu par le serveur ; nul quand il est inconnu (la
