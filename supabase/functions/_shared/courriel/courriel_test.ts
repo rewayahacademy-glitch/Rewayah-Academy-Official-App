@@ -684,3 +684,38 @@ Deno.test('creneau_change : l annonce du changement d heure, cinq langues', () =
   assert(ordinaire.blocs.some((b) => b.type === 'texte' && b.texte.startsWith('L’horaire de la classe change.')),
     JSON.stringify(ordinaire.blocs))
 })
+
+// HORLOGE-ET-LIEU (13/11/2026, I2 et I3) : le jour d'arrivee est dit quand le jour
+// change ; la phrase sur La Mecque n'est dite que si la classe y est.
+Deno.test('creneau_change : le jour d arrivee, avec le jour inchange, avance ou recule', () => {
+  const texteDe = (donnees: Record<string, unknown>, langue: 'fr' | 'en' | 'es' | 'pt' | 'ar' = 'fr') =>
+    contenuPour({ modele: 'creneau_change', categorie: 'classes', essentielle: true, donnees }, langue)
+      .blocs.map((b) => b.type === 'texte' ? b.texte : '').join(' ')
+  const commun = { motif: 'changement_heure', portee: 'soi', date_changement: '2027-03-28' }
+  // Jour inchange : « du mercredi », pas de « au ».
+  const inchange = texteDe({ ...commun, changements: [{ jour_avant: 3, avant: '19:00', jour_apres: 3, apres: '20:00' }] })
+  assert(inchange.includes('du mercredi passe de 19:00 à 20:00'), inchange)
+  // Le jour avance : dimanche 23:00 puis lundi 00:00.
+  const avance = texteDe({ ...commun, changements: [{ jour_avant: 7, avant: '23:00', jour_apres: 1, apres: '00:00' }] })
+  assert(avance.includes('passe du dimanche 23:00 au lundi 00:00'), avance)
+  // Le jour recule : lundi 00:00 puis dimanche 23:00.
+  const recule = texteDe({ ...commun, changements: [{ jour_avant: 1, avant: '00:00', jour_apres: 7, apres: '23:00' }] })
+  assert(recule.includes('passe du lundi 00:00 au dimanche 23:00'), recule)
+  // Plusieurs creneaux dont un change de jour.
+  const plusieurs = texteDe({ ...commun, changements: [
+    { jour_avant: 3, avant: '19:00', jour_apres: 3, apres: '20:00' },
+    { jour_avant: 7, avant: '23:00', jour_apres: 1, apres: '00:00' }] })
+  assert(plusieurs.includes('le mercredi de 19:00 à 20:00') && plusieurs.includes('du dimanche 23:00 au lundi 00:00'), plusieurs)
+  // Les cinq langues disent le jour d'arrivee.
+  for (const langue of ['fr', 'en', 'es', 'pt', 'ar'] as const) {
+    const t = texteDe({ ...commun, changements: [{ jour_avant: 7, avant: '23:00', jour_apres: 1, apres: '00:00' }] }, langue)
+    assert(t.includes('23:00') && t.includes('00:00') && !t.includes('undefined'), `${langue} : ${t}`)
+  }
+  // La Mecque : dite seulement quand la classe y est (academie vrai).
+  const mecque = texteDe({ ...commun, academie: true, changements: [{ jour_avant: 3, avant: '19:00', jour_apres: 3, apres: '20:00' }] })
+  assert(mecque.includes('Le cours reste à la même heure à La Mecque : c’est l’heure de votre ville qui change.'), mecque)
+  const sans = texteDe({ ...commun, academie: false, changements: [{ jour_avant: 3, avant: '19:00', jour_apres: 3, apres: '20:00' }] })
+  assert(!sans.includes('La Mecque'), sans)
+  const ancien = texteDe({ ...commun, changements: [{ jour_avant: 3, avant: '19:00', apres: '20:00' }] })
+  assert(!ancien.includes('La Mecque') && ancien.includes('19:00'), ancien)
+})

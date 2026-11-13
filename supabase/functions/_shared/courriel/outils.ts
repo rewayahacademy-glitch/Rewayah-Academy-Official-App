@@ -157,6 +157,12 @@ export interface MotsChangementHeure {
   un: (date: string, jour: string, avant: string, apres: string, foyer: boolean) => string
   plusieurs: (date: string, liste: string, foyer: boolean) => string
   ligne: (jour: string, avant: string, apres: string) => string
+  /// Quand le JOUR change aussi (dimanche 23:00 puis lundi 00:00).
+  unJour: (date: string, jourAvant: string, avant: string, jourApres: string, apres: string, foyer: boolean) => string
+  ligneJour: (jourAvant: string, avant: string, jourApres: string, apres: string) => string
+  /// Dite seulement quand la classe est a l'heure de La Mecque : le cours ne
+  /// bouge pas la-bas, c'est l'heure de la ville de la personne qui change.
+  mecque: string
   separateur: string
 }
 
@@ -186,18 +192,29 @@ export function phraseChangementHeure(d: Donnees, m: MotsChangementHeure): strin
   if (!Array.isArray(brut) || brut.length === 0 || typeof d.date_changement !== 'string') return null
   const date = jourDuChangement(d.date_changement, m.locale)
   if (!date) return null
-  const lignes: { jour: string; avant: string; apres: string }[] = []
+  type Ligne = { jourAvant: string; avant: string; jourApres: string; apres: string; change: boolean }
+  const lignes: Ligne[] = []
   for (const c of brut) {
     if (typeof c !== 'object' || c === null) return null
-    const j = (c as Record<string, unknown>).jour_avant
-    const avant = (c as Record<string, unknown>).avant
-    const apres = (c as Record<string, unknown>).apres
-    if (typeof j !== 'number' || j < 1 || j > 7 || typeof avant !== 'string' || typeof apres !== 'string') return null
-    lignes.push({ jour: nomDuJour(j, m.locale), avant, apres })
+    const r = c as Record<string, unknown>
+    const j = r.jour_avant
+    const avant = r.avant
+    const apres = r.apres
+    // Le jour d'arrivee : celui d'avant quand il n'est pas donne (ancienne annonce).
+    const ja = typeof r.jour_apres === 'number' ? r.jour_apres : j
+    if (typeof j !== 'number' || j < 1 || j > 7 || typeof ja !== 'number' || ja < 1 || ja > 7
+      || typeof avant !== 'string' || typeof apres !== 'string') return null
+    lignes.push({ jourAvant: nomDuJour(j, m.locale), avant, jourApres: nomDuJour(ja, m.locale), apres, change: ja !== j })
   }
   const foyer = d.portee === 'foyer'
-  if (lignes.length === 1) return m.un(date, lignes[0].jour, lignes[0].avant, lignes[0].apres, foyer)
-  return m.plusieurs(date, lignes.map((l) => m.ligne(l.jour, l.avant, l.apres)).join(m.separateur), foyer)
+  const base = lignes.length === 1
+    ? (lignes[0].change
+      ? m.unJour(date, lignes[0].jourAvant, lignes[0].avant, lignes[0].jourApres, lignes[0].apres, foyer)
+      : m.un(date, lignes[0].jourAvant, lignes[0].avant, lignes[0].apres, foyer))
+    : m.plusieurs(date, lignes.map((l) => l.change
+      ? m.ligneJour(l.jourAvant, l.avant, l.jourApres, l.apres)
+      : m.ligne(l.jourAvant, l.avant, l.apres)).join(m.separateur), foyer)
+  return d.academie === true ? `${base} ${m.mecque}` : base
 }
 
 /// Les precisions d'un avis de classe, en phrases courtes : la classe, les

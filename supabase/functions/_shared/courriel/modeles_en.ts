@@ -39,6 +39,9 @@ export const MOTS_CHANGEMENT_HEURE_EN: MotsChangementHeure = {
   un: (date, jour, avant, apres, foyer) => `From ${date}, ${foyer ? 'the class session' : 'your class'} on ${jour} moves from ${avant} to ${apres}.`,
   plusieurs: (date, liste, foyer) => `From ${date}, the time of ${foyer ? 'the class sessions' : 'your classes'} changes: ${liste}.`,
   ligne: (jour, avant, apres) => `${jour}, from ${avant} to ${apres}`,
+  unJour: (date, ja, avant, jb, apres, foyer) => `From ${date}, ${foyer ? 'the class session' : 'your class'} moves from ${ja} ${avant} to ${jb} ${apres}.`,
+  ligneJour: (ja, avant, jb, apres) => `from ${ja} ${avant} to ${jb} ${apres}`,
+  mecque: 'The class stays at the same time in Mecca: it is the time in your city that changes.',
   separateur: '; ',
 }
 
@@ -97,7 +100,7 @@ const MODELES: Record<string, Fabrique> = {
   creneau_change: (d) => {
     const annonce = phraseChangementHeure(d, MOTS_CHANGEMENT_HEURE_EN)
     if (annonce) {
-      return avis(d, 'The time of your class changes', 'The time of your class changes', `${annonce} The class stays at the same time in Mecca: it is the time in your country that changes.`,
+      return avis(d, 'The time of your class changes', 'The time of your class changes', annonce,
         'View my schedule', '/tuteur')
     }
     return avis(d, 'The class schedule is changing', 'The class schedule is changing',

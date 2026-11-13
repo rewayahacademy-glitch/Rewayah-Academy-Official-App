@@ -43,48 +43,102 @@ String? changementHeureDepuis(Map<String, dynamic> params, String portee) {
   if (jour == null) return null;
   final evenements = t.notifications.evenements;
   final bool foyer = portee == 'foyer';
-  final List<({String jour, String avant, String apres})> lignes =
-      <({String jour, String avant, String apres})>[];
+  // Le jour d'arrivee : celui d'avant quand l'annonce ne le donne pas (ancienne
+  // annonce). Quand le jour change aussi, on dit les deux (I2, 13/11/2026).
+  final List<({String jourAvant, String jourApres, String avant, String apres})>
+  lignes =
+      <({String jourAvant, String jourApres, String avant, String apres})>[];
   for (final dynamic c in brut) {
     if (c is! Map<String, dynamic>) return null;
     final dynamic j = c['jour_avant'];
+    final dynamic ja = c['jour_apres'] ?? j;
     final dynamic avant = c['avant'];
     final dynamic apres = c['apres'];
-    if (j is! int || j < 1 || j > 7 || avant is! String || apres is! String) {
+    if (j is! int ||
+        j < 1 ||
+        j > 7 ||
+        ja is! int ||
+        ja < 1 ||
+        ja > 7 ||
+        avant is! String ||
+        apres is! String) {
       return null;
     }
     lignes.add((
-      jour: t.commun.dates.jours[j - 1].toLowerCase(),
+      jourAvant: t.commun.dates.jours[j - 1].toLowerCase(),
+      jourApres: t.commun.dates.jours[ja - 1].toLowerCase(),
       avant: avant,
       apres: apres,
     ));
   }
   final String date = dateLongueHistorique(jour);
+  final String annonce;
   if (lignes.length == 1) {
-    return evenements.changementHeureUn(
-      date: date,
-      cours: foyer
-          ? evenements.changementHeureCoursUnFoyer
-          : evenements.changementHeureCoursUn,
-      jour: lignes.single.jour,
-      avant: lignes.single.avant,
-      apres: lignes.single.apres,
-    );
-  }
-  return evenements.changementHeurePlusieurs(
-    date: date,
-    cours: foyer
-        ? evenements.changementHeureCoursPlusieursFoyer
-        : evenements.changementHeureCoursPlusieurs,
-    liste: lignes
-        .map(
-          (l) => evenements.changementHeureLigne(
-            jour: l.jour,
+    final l = lignes.single;
+    final String cours = foyer
+        ? evenements.changementHeureCoursUnFoyer
+        : evenements.changementHeureCoursUn;
+    annonce = l.jourAvant == l.jourApres
+        ? evenements.changementHeureUn(
+            date: date,
+            cours: cours,
+            jour: l.jourAvant,
             avant: l.avant,
             apres: l.apres,
-          ),
-        )
-        .join(' ; '),
+          )
+        : evenements.changementHeureUnJour(
+            date: date,
+            cours: cours,
+            jourAvant: l.jourAvant,
+            avant: l.avant,
+            jourApres: l.jourApres,
+            apres: l.apres,
+          );
+  } else {
+    annonce = evenements.changementHeurePlusieurs(
+      date: date,
+      cours: foyer
+          ? evenements.changementHeureCoursPlusieursFoyer
+          : evenements.changementHeureCoursPlusieurs,
+      liste: lignes
+          .map(
+            (l) => l.jourAvant == l.jourApres
+                ? evenements.changementHeureLigne(
+                    jour: l.jourAvant,
+                    avant: l.avant,
+                    apres: l.apres,
+                  )
+                : evenements.changementHeureLigneJour(
+                    jourAvant: l.jourAvant,
+                    avant: l.avant,
+                    jourApres: l.jourApres,
+                    apres: l.apres,
+                  ),
+          )
+          .join(' ; '),
+    );
+  }
+  // I3 : la phrase sur La Mecque n'est vraie que si la classe y est.
+  return params['academie'] == true
+      ? '$annonce ${evenements.changementHeureMecque}'
+      : annonce;
+}
+
+/// L'avis donne a la direction quand la tache de nuit refuse de convertir une
+/// classe a l'heure de La Mecque (I5, 13/11/2026) : la classe et la raison, en
+/// mots simples ; `null` quand la notification n'en est pas un.
+String? conversionRefuseeDepuis(Map<String, dynamic> params) {
+  if (params['motif'] != 'conversion_refusee') return null;
+  final dynamic classe = params['classe'];
+  final String raison = '${params['raison'] ?? ''}';
+  final evenements = t.notifications.evenements;
+  return evenements.conversionRefusee(
+    classe: classe is String && classe.isNotEmpty ? classe : '-',
+    raison: raison.contains('28 jours')
+        ? evenements.conversionRefuseeProche
+        : raison.contains('heure pleine')
+        ? evenements.conversionRefuseeDemiHeure
+        : evenements.conversionRefuseeAutre,
   );
 }
 
@@ -199,7 +253,9 @@ NotificationContenu contenuNotificationPour(
     // pays de la personne dit l'heure exacte avant et apres ; un autre
     // changement de creneau garde la phrase generale.
     'creneau_change' =>
-        changementHeureDepuis(params, portee) ?? evenements.creneauChange,
+      conversionRefuseeDepuis(params) ??
+          changementHeureDepuis(params, portee) ??
+          evenements.creneauChange,
     'seance_annulee' =>
       quand == null
           ? evenements.seanceAnnulee

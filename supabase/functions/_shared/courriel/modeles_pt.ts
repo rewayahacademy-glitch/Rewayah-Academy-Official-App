@@ -40,6 +40,9 @@ export const MOTS_CHANGEMENT_HEURE_PT: MotsChangementHeure = {
   un: (date, jour, avant, apres, foyer) => `A partir de ${date}, ${foyer ? 'a aula da turma' : 'a sua aula'} de ${jour} passa das ${avant} para as ${apres}.`,
   plusieurs: (date, liste, foyer) => `A partir de ${date}, a hora ${foyer ? 'das aulas da turma' : 'das suas aulas'} muda: ${liste}.`,
   ligne: (jour, avant, apres) => `${jour}, das ${avant} às ${apres}`,
+  unJour: (date, ja, avant, jb, apres, foyer) => `A partir de ${date}, ${foyer ? 'a aula da turma' : 'a sua aula'} passa de ${ja} às ${avant} para ${jb} às ${apres}.`,
+  ligneJour: (ja, avant, jb, apres) => `de ${ja} às ${avant} para ${jb} às ${apres}`,
+  mecque: 'A aula mantém a mesma hora em Meca: o que muda é a hora da sua cidade.',
   separateur: '; ',
 }
 
@@ -98,7 +101,7 @@ const MODELES: Record<string, Fabrique> = {
   creneau_change: (d) => {
     const annonce = phraseChangementHeure(d, MOTS_CHANGEMENT_HEURE_PT)
     if (annonce) {
-      return avis(d, 'A hora da sua aula muda', 'A hora da sua aula muda', `${annonce} A aula mantém-se à mesma hora em Meca: é a hora do seu país que muda.`,
+      return avis(d, 'A hora da sua aula muda', 'A hora da sua aula muda', annonce,
         'Ver o meu horário', '/tuteur')
     }
     return avis(d, 'O horário da turma muda', 'O horário da turma muda',

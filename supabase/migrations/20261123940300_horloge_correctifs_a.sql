@@ -788,6 +788,55 @@ COMMENT ON FUNCTION public.changements_heure_a_venir_direction(integer) IS
   'HORLOGE-ET-LIEU (13/11/2026) : les changements d''heure a venir par fuseau des familles et des enseignants (combien de personnes, quelle date, quel decalage). Direction seule. DEFINER, search_path vide.';
 
 -- ---------------------------------------------------------------------------
+-- 7 bis. Le push de l'annonce : son propre texte (I1)
+-- ---------------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION private.push_depuis_notification()
+ RETURNS trigger
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+DECLARE
+  v_categorie text;
+  v_tag text;
+BEGIN
+  BEGIN
+    IF NOT private.notification_avec_push(NEW.evenement, NEW.params ->> 'portee')
+       OR NOT private.push_compte_autorise(NEW.destinataire) THEN
+      RETURN NULL;
+    END IF;
+    SELECT e.categorie, e.tag INTO v_categorie, v_tag
+      FROM private.push_evenements e WHERE e.evenement = NEW.evenement;
+    v_categorie := coalesce(v_categorie, 'classes');
+    IF EXISTS (SELECT 1 FROM public.push_preferences pp
+                WHERE pp.profile_id = NEW.destinataire AND pp.categorie = v_categorie
+                  AND NOT pp.actif)
+       OR NOT EXISTS (SELECT 1 FROM public.abonnements_push a
+                       WHERE a.profile_id = NEW.destinataire AND a.retire_le IS NULL) THEN
+      RETURN NULL;
+    END IF;
+    INSERT INTO public.push_sortants (notification_id, destinataire, evenement, portee, destination, tag)
+    -- HORLOGE-ET-LIEU (I1, 13/11/2026) : l'annonce d'un changement d'heure et le
+    -- refus d'une conversion portent leur propre « portee » de push (le texte du push
+    -- la lit : vrai et sans prenom), sans nouvel evenement ni nouvelle contrainte.
+    VALUES (NEW.id, NEW.destinataire, NEW.evenement,
+            CASE
+              WHEN NEW.evenement = 'creneau_change' AND NEW.params ->> 'motif' = 'changement_heure'
+                THEN 'heure_' || coalesce(nullif(NEW.params ->> 'sens', ''), 'classe')
+              WHEN NEW.evenement = 'creneau_change' AND NEW.params ->> 'motif' = 'conversion_refusee'
+                THEN 'conversion_refusee'
+              ELSE NEW.params ->> 'portee'
+            END,
+            NEW.destination, v_tag)
+    ON CONFLICT (notification_id) DO NOTHING;
+  EXCEPTION WHEN OTHERS THEN
+    PERFORM private.push1_journaliser('push:' || NEW.evenement, NEW.id::text, SQLSTATE);
+  END;
+  RETURN NULL;
+END;
+$function$;
+
+-- ---------------------------------------------------------------------------
 -- 8. Postflight
 -- ---------------------------------------------------------------------------
 DO $postflight$

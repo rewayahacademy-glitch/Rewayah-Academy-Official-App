@@ -51,6 +51,9 @@ export const MOTS_CHANGEMENT_HEURE_AR: MotsChangementHeure = {
   un: (date, jour, avant, apres, foyer) => `ابتداءً من ${date}، يتغيّر موعد ${foyer ? 'حصة الفصل' : 'حصتكم'} يوم ${jour} من الساعة ${avant} إلى الساعة ${apres}.`,
   plusieurs: (date, liste, foyer) => `ابتداءً من ${date}، يتغيّر توقيت ${foyer ? 'حصص الفصل' : 'حصصكم'}: ${liste}.`,
   ligne: (jour, avant, apres) => `يوم ${jour} من ${avant} إلى ${apres}`,
+  unJour: (date, ja, avant, jb, apres, foyer) => `ابتداءً من ${date}، يتغيّر موعد ${foyer ? 'حصة الفصل' : 'حصتكم'} من يوم ${ja} الساعة ${avant} إلى يوم ${jb} الساعة ${apres}.`,
+  ligneJour: (ja, avant, jb, apres) => `من يوم ${ja} الساعة ${avant} إلى يوم ${jb} الساعة ${apres}`,
+  mecque: 'تبقى الحصة في الساعة نفسها بتوقيت مكة المكرمة؛ الذي يتغيّر هو توقيت مدينتكم.',
   separateur: '، ',
 }
 
@@ -168,7 +171,7 @@ const MODELES: Record<string, Fabrique> = {
   creneau_change: (d) => {
     const annonce = phraseChangementHeure(d, MOTS_CHANGEMENT_HEURE_AR)
     if (annonce) {
-      return avis(d, 'يتغيّر موعد حصتكم', 'يتغيّر موعد حصتكم', `${annonce} تبقى الحصة في الساعة نفسها بتوقيت مكة المكرمة؛ الذي يتغيّر هو توقيت بلدكم.`,
+      return avis(d, 'يتغيّر موعد حصتكم', 'يتغيّر موعد حصتكم', annonce,
         'عرض جدولي', '/tuteur')
     }
     return avis(d, 'يتغيّر موعد الفصل', 'يتغيّر موعد الفصل',
