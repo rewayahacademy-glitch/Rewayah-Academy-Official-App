@@ -96,8 +96,11 @@ void main() {
 
     test('en arabe, une cle NON traduite garde l elision francaise', () async {
       await LocaleSettings.setLocale(AppLocale.ar);
-      // Repli francais : la cle passee n'est pas traduite en arabe.
-      const String cle = 'foyer.finances.voirDetailSemantique';
+      // Repli francais : la cle passee n'est pas traduite en arabe. LANGUES-1
+      // (13/11/2026) : l'arabe n'a plus aucune cle francaise sans traduction ;
+      // la regle se prouve donc sur une cle absente de l'arabe.
+      const String cle = 'test.cle.absente.de.l.arabe';
+      expect(t.$meta.getTranslation(cle), isNull);
       expect(deDevant('Aïcha', cle: cle), "d'Aïcha");
       expect(queDevant('Nour', cle: cle), 'que Nour');
     });
