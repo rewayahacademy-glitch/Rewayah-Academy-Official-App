@@ -99,27 +99,28 @@ Cas hors du chemin droit, chacun avec son état et son geste : demande refusée 
 - La migration `0043` pose des tranches (`enfant_5_7`, `enfant_8_10`...) que des migrations ultérieures ont remplacées (`enfant_6_9`, `enfant_10_13`, `ado_14_17`) : lire la base rejouée, pas `0043`.
 - L'accord de publication existant (CAND-PHOTO) vise le site public ; il n'est pas le réglage de ce lot et n'a pas été réutilisé.
 
-## 6. Preuves (état au 13/11/2026, après la revue indépendante et la fusion de `origin/main` 25f3ed78)
+## 6. Preuves (état au 13/11/2026, après les deux contre-lectures et la fusion de `origin/main` d15b318ee)
 
 Rien ici n'est une preuve du directeur : ce sont des mesures locales (S9).
 
 | Contrôle | Résultat |
 |---|---|
-| Rejeu SQL sur Postgres nu (utilisateur `postgres`, 439 migrations, tous les scénarios, une copie neuve chacun) | 278 verts, 0 rouge. Quatre scénarios existants ajustés à un comportement voulu : `courriels_ux` (1.2, 2.1), `fn028_seance_terminee`, `notifications_classes` (4.2, 8.1), `reaffecter_classe` ; `af_liste_blanche_volatiles` amendé plus tôt |
-| `scenarios_suivi_attente.sql` | vert : courriels jamais à un mineur (tous modèles), carte bornée (deux sondes du relecteur), enseignant retiré, remplacement A vers B, « tout est prêt » (tuteur, adulte, jamais l'enfant), « Me présenter » jamais vers un mineur, demandes dépassées (direction seule), export |
-| `20261123962000` sans `20261123961000` | ne casse rien : avertissement, aucune séance ni élève bloqués |
-| `20261123961000` après le lot 2 (`20261123911000`) | les deux valeurs (`pause_repondue`, `tout_est_pret`) sont dans la contrainte, dans les deux ordres |
+| Rejeu SQL sur Postgres nu (utilisateur `postgres`, 439 migrations, tous les scénarios, une copie neuve chacun) | 278 verts, 0 rouge. Scénarios existants ajustés à un comportement voulu : `courriels` (enseignant affecté part par courriel), `courriels_ux` (1.2, 2.1), `fn028_seance_terminee`, `notifications_classes` (4.2, 8.1), `reaffecter_classe` ; `af_liste_blanche_volatiles` amendé plus tôt |
+| `scenarios_suivi_attente.sql` | vert : courriels jamais à un mineur (tous modèles, y compris un profil élève sans `student_profiles`), tuteur, enseignant, direction et adulte reçoivent toujours le leur, trois cas de « Enseignant affecté » (adulte, mineur arrêté, tuteur par le foyer), carte bornée (deux sondes), enseignant retiré, remplacement A vers B, deux changements dans une transaction (A, nul, B), « tout est prêt », « Me présenter » jamais vers un mineur, demandes dépassées, export |
+| Les trois migrations, rejouées une seconde fois chacune en une seule requête | sans erreur |
+| `962000` sans `961000` | **refuse** (RAISE EXCEPTION, phrase claire), rien n'est changé ; après `961000` elle passe |
+| `961000` après le lot 2 (`911000`) | les deux valeurs restent dans la contrainte ; le nombre de valeurs augmente de 1 (contrôle final par le nombre) |
 | `dart run slang`, `dart run build_runner build --delete-conflicting-outputs` | sans erreur, aucun diff laissé |
 | `dart analyze --fatal-infos` | No issues found |
-| `flutter test` (suite complète) | 20815 réussis, 8304 ignorés (déjà ignorés sur `main`), 0 échec |
+| `flutter test` (suite complète) | 20820 réussis, 8304 ignorés (déjà ignorés sur `main`), 0 échec |
 | `dart run tool/verifier_jetons.dart` | 1514 fichiers, aucune violation |
 | `dart run tool/verifier_branchement.dart` | 2 fichiers non atteints, tous tolérés, aucun nouveau |
-| `dart run tool/verifier_revue.dart` | 1077 violations antérieures au lot, 0 dans `suiviAttente` ni `attente_classe` |
-| Gabarits Edge (cinq langues, `tout_est_pret`) | rendus et lus à la main avec node ; les tests Deno du dépôt (`courriel_test.ts`, `push_test.ts`) sont mis à jour mais **non exécutés** : Deno n'est pas installé ici |
-| Captures | 152 PNG, `docs/current/captures/E2E/suivi-attente/` (390 et 1440, clair et sombre, fr et ar), régénérées après les corrections |
+| `dart run tool/verifier_revue.dart` | 1074 violations antérieures au lot, 0 dans le lot |
+| Gabarits Edge (cinq langues) | rendus et lus à la main avec node ; `courriel_test.ts` et `push_test.ts` mis à jour mais **non exécutés** : Deno n'est pas installé ici (voir plus haut les commandes) |
+| Captures | 152 PNG, `docs/current/captures/E2E/suivi-attente/` (390 et 1440, clair et sombre, fr et ar), régénérées après les dernières corrections |
 
 Gardes du dépôt attrapées par la suite complète, corrigées : « Sauvegarde » de succès, espaces insécables, « hors ligne » redit, URL de photo passée à un portrait, paramètres arabes isolés, domaine arabe déclaré.
 
 Piège de rejeu : `tool/rejouer_scenarios.sh` échoue en arrière-plan (`nohup`) sur la migration `20261011121039_c29` et passe en premier plan sous `postgres` ; cause non élucidée, étrangère au lot.
 
-`.github/workflows/ci.yml` doit recevoir `scenarios_suivi_attente.sql` : zone interdite à ce lot, à faire par l'architecte.
+`.github/workflows/ci.yml` doit recevoir `scenarios_suivi_attente.sql` et les deux commandes Deno : zone interdite à ce lot, à faire par l'architecte.
