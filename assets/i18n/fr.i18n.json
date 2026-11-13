@@ -4701,7 +4701,7 @@
         "refusDernier": "Une classe garde au moins un créneau\u00a0: ajoutez-en un autre avant de retirer celui-ci.",
         "refusExistant": "La classe a déjà ce créneau\u00a0: choisissez un autre jour ou une autre heure.",
         "refusIntrouvable": "Ce créneau a déjà changé\u00a0: revenez aux créneaux pour voir la liste à jour.",
-        "refusConversion": "Ce changement d'horaire n'est pas encore disponible\u00a0: mettez l'application à jour, puis réessayez.",
+        "refusConversion": "Ce changement d'horaire n'est pas encore disponible\u00a0: réessayez dans quelques minutes.",
         "refusRecharger": "Rechargez l'application pour modifier un horaire.",
         "refusClasseFermee": "Cette classe est fermée\u00a0: ses créneaux ne changent plus.",
         "erreur": "Le changement n'est pas confirmé\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",

@@ -1,5 +1,17 @@
 # LOT HORLOGE-ET-LIEU : relevé de l'existant, risques, plan de construction
 
+## Ordre d'installation, à lire avant toute autre ligne (13/11/2026)
+
+**1. Mettre l'application à jour, et recharger tous les onglets ouverts. 2. Installer les migrations, dans l'ordre des numéros (`20261123940000` à `20261123943100`). Entre les deux, ne modifier aucun horaire** (ni créneau, ni jour ou heure d'une classe). Un horaire modifié entre les deux est au mieux refusé, jamais enregistré faux (états a et b ci-dessous).
+
+Ce que fait le logiciel aujourd'hui dans les trois états, dit sans enjoliver :
+
+- **(a) Application à jour, serveur pas encore migré : le logiciel fait juste.** Les fonctions avec fuseau sont absentes du serveur (`PGRST202` ou `42883`) : le client retombe sur l'ancienne fonction seulement si l'heure saisie est celle de la classe (encore Europe/Paris), donc lue au bon fuseau ; l'horaire est enregistré à la bonne heure. Dans le cas, pratiquement inatteignable dans cet état, où l'heure saisie serait dans un autre fuseau que celui de la classe, le client refuse lui-même, sans rien envoyer : « Ce changement d'horaire n'est pas encore disponible : réessayez dans quelques minutes. » Prouvé par `test/core/admin/creneaux_classe_supabase_test.dart` et `test/core/admin/service_groupes_supabase_test.dart` (vrai client, faux serveur HTTP local).
+- **(b) Ancienne application (onglet ou PWA pas rechargé), serveur migré : le logiciel refuse sans rien modifier, mais la phrase de l'ancien client est inexacte, et on ne peut pas la corriger : ce client est déjà distribué.** La garde (migration `20261123940300`, erreur `P0001` « RechargerPourModifierUnHoraire ») refuse tout appel sans fuseau qui déplace une heure d'une classe à l'heure de La Mecque ; renommer, changer un seuil ou la durée d'un créneau sans le déplacer reste accepté. L'ancien client affiche, dans les feuilles du créneau et des réglages de la classe : « Le créneau n'est pas confirmé : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant. » (faux : réessayer refusera toujours) ; dans la feuille du nom ou du seuil, si l'appel déplace une heure : « le serveur a refusé cette action sans en dire la raison. Vérifiez vos choix, puis pressez de nouveau. » Rien n'est écrit en base. Remède : recharger l'application. **Décision de l'architecte (13/11) : la garde est gardée ; un refus à phrase inexacte vaut mieux qu'un horaire faux.** Le nouveau client, lui, dit la bonne phrase : « Rechargez l'application pour modifier un horaire. »
+- **(c) Application à jour, serveur migré : le fuseau de l'heure saisie part avec l'appel, le serveur convertit vers le fuseau de la classe, et l'écran montre l'équivalent à l'heure de La Mecque avant l'envoi.**
+
+Non prouvé : aucune de ces installations n'a été faite sur staging ni en production ; tout est local (Postgres 16 nu, vrai client contre faux serveur).
+
 > Statut : **TEMPS 1 (relevé et plan), en attente de l'accord de l'architecte pédagogique.** Aucune migration ni aucun code n'est écrit. Décision source : `docs/current/pedagogie/HORLOGE-ET-LIEU.md` (H1 à H7). Branche : `claude/horloge-lieu`, posée sur `origin/main` `25f3ed787` (PR 448). Date du relevé : 12/11/2026.
 
 ## 0. Niveau de preuve de ce relevé

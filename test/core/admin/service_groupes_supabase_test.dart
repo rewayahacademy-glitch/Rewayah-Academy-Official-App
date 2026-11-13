@@ -22,6 +22,8 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' show ClientException;
 import 'package:rewayah_academy/core/admin/creation_classe_refusee.dart';
+import 'package:rewayah_academy/core/admin/creneaux_classe.dart'
+    show CreneauRefuse, MotifRefusCreneau;
 import 'package:rewayah_academy/core/admin/service_groupes.dart';
 import 'package:rewayah_academy/core/capacites/port_creation_classe.dart';
 import 'package:rewayah_academy/core/capacites/port_enseignants_classe.dart'
@@ -29,6 +31,8 @@ import 'package:rewayah_academy/core/capacites/port_enseignants_classe.dart'
 import 'package:rewayah_academy/core/offres/affectation_refusee.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart'
     show Creneau;
+import 'package:rewayah_academy/features/admin_groupes/refus_serveur_libelles.dart'
+    show phraseEchecServeurClasse;
 import 'package:supabase_flutter/supabase_flutter.dart'
     show AuthClientOptions, PostgrestException, SupabaseClient;
 
@@ -414,6 +418,35 @@ void main() {
       expect(leve, isNot(isA<AffectationRefusee>()));
     });
   }
+
+  test(
+    '« RechargerPourModifierUnHoraire » (ancienne fonction, serveur migre) : '
+    'CreneauRefuse (rechargerApplication), dite en une phrase de la feuille',
+    () async {
+      serveur.refuser(
+        statut: HttpStatus.badRequest,
+        code: 'P0001',
+        message: 'RechargerPourModifierUnHoraire',
+      );
+
+      Object? leve;
+      try {
+        await modifier();
+      } on Object catch (e) {
+        leve = e;
+      }
+
+      expect(leve, isA<CreneauRefuse>());
+      expect(
+        (leve! as CreneauRefuse).motif,
+        MotifRefusCreneau.rechargerApplication,
+      );
+      expect(
+        phraseEchecServeurClasse(leve),
+        "rechargez l'application pour modifier un horaire.",
+      );
+    },
+  );
 
   test('une erreur qui n\'est pas une reponse de PostgREST (connexion '
       'refusee) passe telle quelle : ce n\'est pas un refus', () async {

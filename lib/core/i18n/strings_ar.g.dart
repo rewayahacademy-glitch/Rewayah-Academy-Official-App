@@ -15460,7 +15460,7 @@ class _Traductions$admin$groupes$reglagesClasse$ar extends Traductions$admin$gro
 	@override String get refusDernier => 'يبقى للفصل موعد واحد على الأقل: أضف موعدًا آخر قبل إزالة هذا الموعد.';
 	@override String get refusExistant => 'لهذا الفصل هذا الموعد مسبقًا: اختر يومًا آخر أو ساعة أخرى.';
 	@override String get refusIntrouvable => 'تغيّر هذا الموعد مسبقًا: عُد إلى المواعيد لترى القائمة المحدَّثة.';
-	@override String get refusConversion => 'هذا التغيير في الموعد غير متاح بعد: حدّث التطبيق ثم أعد المحاولة.';
+	@override String get refusConversion => 'هذا التغيير في الموعد غير متاح بعد: أعد المحاولة بعد بضع دقائق.';
 	@override String get refusRecharger => 'أعد تحميل التطبيق لتعديل موعد.';
 	@override String get refusClasseFermee => 'هذا الفصل مغلق: لا تتغيّر مواعيده بعد الآن.';
 	@override String get erreur => 'لم يُؤكَّد التغيير: ربما لم يصل الطلب إلى Rewayah. أعد المحاولة بعد لحظة.';
@@ -28983,7 +28983,7 @@ extension on TraductionsAr {
 			'admin.groupes.reglagesClasse.refusDernier' => 'يبقى للفصل موعد واحد على الأقل: أضف موعدًا آخر قبل إزالة هذا الموعد.',
 			'admin.groupes.reglagesClasse.refusExistant' => 'لهذا الفصل هذا الموعد مسبقًا: اختر يومًا آخر أو ساعة أخرى.',
 			'admin.groupes.reglagesClasse.refusIntrouvable' => 'تغيّر هذا الموعد مسبقًا: عُد إلى المواعيد لترى القائمة المحدَّثة.',
-			'admin.groupes.reglagesClasse.refusConversion' => 'هذا التغيير في الموعد غير متاح بعد: حدّث التطبيق ثم أعد المحاولة.',
+			'admin.groupes.reglagesClasse.refusConversion' => 'هذا التغيير في الموعد غير متاح بعد: أعد المحاولة بعد بضع دقائق.',
 			'admin.groupes.reglagesClasse.refusRecharger' => 'أعد تحميل التطبيق لتعديل موعد.',
 			'admin.groupes.reglagesClasse.refusClasseFermee' => 'هذا الفصل مغلق: لا تتغيّر مواعيده بعد الآن.',
 			'admin.groupes.reglagesClasse.erreur' => 'لم يُؤكَّد التغيير: ربما لم يصل الطلب إلى Rewayah. أعد المحاولة بعد لحظة.',

@@ -8,6 +8,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../offres/affectation_refusee.dart';
 import '../planning/service_planning.dart';
 import 'creation_classe_refusee.dart';
+import 'creneaux_classe.dart' show CreneauRefuse, MotifRefusCreneau;
 import 'personnes_modifiees.dart';
 
 /// Le public d'un groupe : fixe le seuil par defaut (5 enfants, 6 adultes).
@@ -337,6 +338,11 @@ class ServiceGroupesSupabase implements ServiceGroupes {
     } on PostgrestException catch (e) {
       // NOMS-CLASSES (08/11/2026) : une autre classe active porte deja ce nom.
       if (e.message == NomClasseDejaPris.code) throw const NomClasseDejaPris();
+      // HORLOGE-ET-LIEU (B2) : l'ancienne fonction, sans fuseau, a voulu
+      // deplacer une heure : le serveur refuse, rien n'est modifie.
+      if (e.message.startsWith('RechargerPourModifier')) {
+        throw const CreneauRefuse(MotifRefusCreneau.rechargerApplication);
+      }
       final MotifRefusAffectation? motif = motifRefusDeplacementClasse(
         code: e.code,
         message: e.message,

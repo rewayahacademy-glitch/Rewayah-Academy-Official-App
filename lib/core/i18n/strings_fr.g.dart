@@ -28424,8 +28424,8 @@ class Traductions$admin$groupes$reglagesClasse$fr {
 	/// fr: 'Ce créneau a déjà changé : revenez aux créneaux pour voir la liste à jour.'
 	String get refusIntrouvable => 'Ce créneau a déjà changé : revenez aux créneaux pour voir la liste à jour.';
 
-	/// fr: 'Ce changement d'horaire n'est pas encore disponible : mettez l'application à jour, puis réessayez.'
-	String get refusConversion => 'Ce changement d\'horaire n\'est pas encore disponible : mettez l\'application à jour, puis réessayez.';
+	/// fr: 'Ce changement d'horaire n'est pas encore disponible : réessayez dans quelques minutes.'
+	String get refusConversion => 'Ce changement d\'horaire n\'est pas encore disponible : réessayez dans quelques minutes.';
 
 	/// fr: 'Rechargez l'application pour modifier un horaire.'
 	String get refusRecharger => 'Rechargez l\'application pour modifier un horaire.';
@@ -52856,7 +52856,7 @@ extension on Traductions {
 			'admin.groupes.reglagesClasse.refusDernier' => 'Une classe garde au moins un créneau : ajoutez-en un autre avant de retirer celui-ci.',
 			'admin.groupes.reglagesClasse.refusExistant' => 'La classe a déjà ce créneau : choisissez un autre jour ou une autre heure.',
 			'admin.groupes.reglagesClasse.refusIntrouvable' => 'Ce créneau a déjà changé : revenez aux créneaux pour voir la liste à jour.',
-			'admin.groupes.reglagesClasse.refusConversion' => 'Ce changement d\'horaire n\'est pas encore disponible : mettez l\'application à jour, puis réessayez.',
+			'admin.groupes.reglagesClasse.refusConversion' => 'Ce changement d\'horaire n\'est pas encore disponible : réessayez dans quelques minutes.',
 			'admin.groupes.reglagesClasse.refusRecharger' => 'Rechargez l\'application pour modifier un horaire.',
 			'admin.groupes.reglagesClasse.refusClasseFermee' => 'Cette classe est fermée : ses créneaux ne changent plus.',
 			'admin.groupes.reglagesClasse.erreur' => 'Le changement n\'est pas confirmé : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
