@@ -4261,6 +4261,9 @@ class Traductions$calendrier$fr {
 	/// fr: 'Le calendrier n'a pas pu être ouvert : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
 	String get indisponible => 'Le calendrier n\'a pas pu être ouvert : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
 
+	/// fr: 'La date n'est pas fixée : la classe est fermée ce jour-là. Choisissez un autre jour.'
+	String get refusNouvelleDateFermee => 'La date n\'est pas fixée : la classe est fermée ce jour-là. Choisissez un autre jour.';
+
 	late final Traductions$calendrier$dates$fr dates = Traductions$calendrier$dates$fr.internal(_root);
 	late final Traductions$calendrier$pauses$fr pauses = Traductions$calendrier$pauses$fr.internal(_root);
 }
@@ -4313,6 +4316,12 @@ class Traductions$pause$fr {
 
 	/// fr: 'Aucun mois n'est proposé pour le moment.'
 	String get aucunMois => 'Aucun mois n\'est proposé pour le moment.';
+
+	/// fr: 'La demande de pause n'est pas ouverte pour le moment'
+	String get fermeeTitre => 'La demande de pause n\'est pas ouverte pour le moment';
+
+	/// fr: 'Pour interrompre les cours, contactez la direction de l'académie.'
+	String get fermeeDetail => 'Pour interrompre les cours, contactez la direction de l\'académie.';
 
 	/// fr: 'Choisissez un mois pour demander la pause.'
 	String get choisirPourDemander => 'Choisissez un mois pour demander la pause.';
@@ -61850,6 +61859,7 @@ extension on Traductions {
 			'calendrier.sections.dates' => 'Dates de l\'académie',
 			'calendrier.sections.pauses' => 'Pauses',
 			'calendrier.indisponible' => 'Le calendrier n\'a pas pu être ouvert : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
+			'calendrier.refusNouvelleDateFermee' => 'La date n\'est pas fixée : la classe est fermée ce jour-là. Choisissez un autre jour.',
 			'calendrier.dates.intro' => 'Les dates de l\'année, saisies par la direction chaque année. Seules les dates publiées agissent ; elles seront affichées dans l\'onglet Programme des élèves et des familles qu\'elles concernent.',
 			'calendrier.dates.ajouter' => 'Ajouter une date',
 			'calendrier.dates.erreur' => 'Les dates n\'ont pas pu être lues : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
@@ -61975,6 +61985,8 @@ extension on Traductions {
 			'pause.moisDejaDemande' => 'Déjà demandé',
 			'pause.moisDejaAccepte' => 'Déjà accepté',
 			'pause.aucunMois' => 'Aucun mois n\'est proposé pour le moment.',
+			'pause.fermeeTitre' => 'La demande de pause n\'est pas ouverte pour le moment',
+			'pause.fermeeDetail' => 'Pour interrompre les cours, contactez la direction de l\'académie.',
 			'pause.choisirPourDemander' => 'Choisissez un mois pour demander la pause.',
 			'pause.demander' => 'Demander la pause',
 			'pause.reponse.acceptee' => ({required Object mois}) => 'La pause de ${mois} est acceptée. La place est gardée et la date limite de l\'étape recule d\'autant.',

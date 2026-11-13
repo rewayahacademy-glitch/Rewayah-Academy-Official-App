@@ -44,6 +44,14 @@ class EntreePause extends ConsumerWidget {
       }
       if (!adulte) return const SizedBox.shrink();
     }
+    // La demande est ouverte par UN reglage du serveur, ferme par defaut : tant
+    // que la lecture n'a pas dit « ouvert », la ligne n'est pas rendue (ni
+    // pendant le chargement, ni en cas d'echec : jamais supposee ouverte).
+    final String? eleve = enfant ?? _profilConnecte(ref);
+    if (eleve == null) return const SizedBox.shrink();
+    final bool ouverte =
+        ref.watch(lecturePausesProvider(eleve)).value?.demandeOuverte ?? false;
+    if (!ouverte) return const SizedBox.shrink();
     return Padding(
       padding: const EdgeInsets.only(bottom: AppSpacing.xl),
       child: LienFleche(
@@ -57,5 +65,13 @@ class EntreePause extends ConsumerWidget {
         ),
       ),
     );
+  }
+
+  String? _profilConnecte(WidgetRef ref) {
+    try {
+      return ref.watch(sessionProvider).profileId;
+    } on Object {
+      return null;
+    }
   }
 }

@@ -112,7 +112,12 @@ INSERT INTO public.student_profiles(profile_id, student_type, interface_mode, co
   (pg_temp.u('e9'), 'autonomous', 'standard', 'adulte_18_plus');
 
 -- Le programme des bases publie, puis les classes ; les eleves y entrent aujourd'hui.
-SELECT private.semer_programme_bases(pg_temp.u('a1'));
+SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
+SET LOCAL ROLE authenticated;
+SELECT public.creer_version_programme(NULL) AS v \gset prog_
+SELECT public.preremplir_bases_programme(:'prog_v'::uuid);
+SELECT public.publier_version_programme(:'prog_v'::uuid, 'Version 1 des bases');
+RESET ROLE;
 INSERT INTO public.groupes(id, teacher_id, type_public, seuil_max, libelle, weekday, hour_local, timezone_iana) VALUES
  (pg_temp.u('c1'), pg_temp.u('b1'), 'enfant', 5, 'An-Nour CP', 2, 17, 'UTC'),
  (pg_temp.u('c2'), pg_temp.u('b3'), 'enfant', 5, 'Al-Huda CP', 3, 17, 'UTC'),
@@ -164,6 +169,26 @@ SELECT pg_temp.vrai(
   pg_temp.essai($q$UPDATE public.app_config SET value = to_jsonb('abc'::text) WHERE key = 'pause.preavis_jours'$q$) LIKE '%nombre entier%'
   AND pg_temp.essai($q$UPDATE public.app_config SET value = to_jsonb(999) WHERE key = 'pause.fenetre_mois'$q$) LIKE '%hors bornes%',
   'un reglage hors bornes ou non entier est refuse');
+
+-- 1b. La demande de pause de la famille est CACHEE par defaut : un seul reglage
+-- (pause.demande_famille_ouverte, faux) tant que le directeur n'a pas decide la regle d'argent.
+SELECT pg_temp.vrai((SELECT value FROM public.app_config WHERE key = 'pause.demande_famille_ouverte') = pg_catalog.to_jsonb(false),
+  'le reglage pause.demande_famille_ouverte existe et vaut faux par defaut');
+SELECT pg_temp.vrai(
+  pg_temp.essai($q$UPDATE public.app_config SET value = to_jsonb('oui'::text) WHERE key = 'pause.demande_famille_ouverte'$q$) LIKE '%vrai ou faux%',
+  'le reglage de la demande de pause n''accepte que vrai ou faux');
+SELECT pg_temp.qui(pg_temp.u('t1'), 'guardian', pg_temp.u('f1'));
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.essai(pg_catalog.format($q$SELECT public.pause_demander(%L, %L)$q$, pg_temp.u('e1'), pg_temp.mois(2))) AS refus,
+       (public.pauses_eleve_lecture(pg_temp.u('e1')) ->> 'demande_ouverte') AS ouverte,
+       pg_catalog.jsonb_array_length(public.pauses_eleve_lecture(pg_temp.u('e1')) -> 'mois_proposes') AS nb_mois \gset r1b_
+RESET ROLE;
+SELECT pg_temp.vrai(:'r1b_refus' = 'pause_demande_fermee' AND :'r1b_ouverte' = 'false' AND :'r1b_nb_mois'::int = 0
+                    AND NOT EXISTS (SELECT 1 FROM public.pauses_eleve),
+  'reglage ferme (defaut) : pause_demander refuse, la lecture dit demande_ouverte = false et ne propose aucun mois, aucune pause creee');
+-- Les scenarios suivants testent la regle des pauses : le reglage est ouvert pour eux.
+UPDATE public.app_config SET value = pg_catalog.to_jsonb(true) WHERE key = 'pause.demande_famille_ouverte';
+SELECT pg_temp.vrai(private.pause_demande_ouverte(), 'reglage ouvert : la demande de pause de la famille fonctionne');
 
 -- ------------------------------------------------------------------
 -- 2. Droits du calendrier
@@ -925,6 +950,120 @@ SELECT pg_temp.vrai(private.jour_academie() = (pg_catalog.now() AT TIME ZONE 'As
                     AND NOT EXISTS (SELECT 1 FROM pg_catalog.pg_proc p JOIN pg_catalog.pg_namespace n ON n.oid = p.pronamespace
                                      WHERE n.nspname = 'private' AND p.proname = 'aujourdhui_foyer'),
   'un seul jour de reference (heure de La Mecque) ; plus de fuseau du foyer pour decider « passe » ou « 7 jours avant »');
+
+-- ------------------------------------------------------------------
+-- 13. Revue du 13/11, point 6 : le reglage de la demande de pause ne cache que la demande
+-- ------------------------------------------------------------------
+UPDATE public.app_config SET value = pg_catalog.to_jsonb(false) WHERE key = 'pause.demande_famille_ouverte';
+SELECT pg_temp.qui(pg_temp.u('t1'), 'guardian', pg_temp.u('f1'));
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.essai(pg_catalog.format($q$SELECT pg_temp.demander('e1', 9)$q$)) AS refus,
+       pg_temp.essai(pg_catalog.format($q$SELECT public.pause_annuler(%L)$q$, pg_temp.u('inconnue'))) AS annuler,
+       (public.pauses_eleve_lecture(pg_temp.u('e1')) ->> 'demande_ouverte') AS ouverte,
+       pg_catalog.jsonb_array_length(public.pauses_eleve_lecture(pg_temp.u('e1')) -> 'pauses') AS nb_pauses,
+       pg_catalog.jsonb_array_length(public.pauses_eleve_lecture(pg_temp.u('e1')) -> 'mois_proposes') AS nb_mois \gset r13_
+RESET ROLE;
+SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.essai(pg_catalog.format($q$SELECT public.pause_exception_accorder(%L, NULL, %L, 'Maladie soudaine')$q$, pg_temp.u('e2'), pg_temp.auj() + 3)) AS exception,
+       pg_catalog.jsonb_array_length(public.pauses_a_traiter() -> 'recentes') AS recentes \gset r13b_
+RESET ROLE;
+SELECT pg_temp.vrai(:'r13_refus' = 'pause_demande_fermee' AND :'r13_ouverte' = 'false' AND :'r13_nb_mois'::int = 0
+                    AND :'r13_nb_pauses'::int >= 1,
+  'reglage ferme : plus de demande ni de mois proposes, mais les pauses deja accordees restent lisibles');
+SELECT pg_temp.vrai(:'r13b_exception' = 'ok' AND :'r13b_recentes'::int >= 1,
+  'reglage ferme : la pause d''exception et l''ecran de la direction ne changent pas');
+UPDATE public.app_config SET value = pg_catalog.to_jsonb(true) WHERE key = 'pause.demande_famille_ouverte';
+
+-- ------------------------------------------------------------------
+-- 14. Revue du 13/11, point 2 : aucune seance creee ou deplacee sur un jour de fermeture
+-- ------------------------------------------------------------------
+-- 14a. fixer_nouvelle_date_seance : refus avec une phrase claire un jour ferme pour la classe,
+-- accepte un jour ouvert. c2 (classe des 6-9 ans de b3) ; fermeture ecole du jour +300 au +302.
+SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.fermer('g14', 'autre', 300, 302);
+SELECT pg_temp.publier('g14', true);
+RESET ROLE;
+INSERT INTO public.sessions(id, teacher_id, started_at, ended_at, session_type, groupe_id, status)
+VALUES (pg_temp.u('s_rep'), pg_temp.u('b3'), pg_catalog.date_trunc('day', pg_catalog.now()) + interval '270 days 10 hours',
+        pg_catalog.date_trunc('day', pg_catalog.now()) + interval '270 days 11 hours', 'child', pg_temp.u('c2'), 'planned');
+INSERT INTO public.seances_reportees(id, session_id, groupe_id, enseignant_titulaire_id)
+VALUES (pg_temp.u('r_rep'), pg_temp.u('s_rep'), pg_temp.u('c2'), pg_temp.u('b3'));
+SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.essai(pg_catalog.format($q$SELECT public.fixer_nouvelle_date_seance(%L, %L::timestamptz)$q$, pg_temp.u('r_rep'),
+         (pg_temp.auj() + 301)::text || ' 12:00+00')) AS ferme,
+       pg_temp.essai(pg_catalog.format($q$SELECT public.fixer_nouvelle_date_seance(%L, %L::timestamptz)$q$, pg_temp.u('r_rep'),
+         (pg_temp.auj() + 320)::text || ' 12:00+00')) AS ouvert \gset r14_
+RESET ROLE;
+SELECT pg_temp.vrai(:'r14_ferme' = 'NouvelleDateFermee',
+  'fixer_nouvelle_date_seance refuse une nouvelle date un jour de fermeture publiee (NouvelleDateFermee)');
+SELECT pg_temp.vrai(:'r14_ouvert' = 'ok'
+                    AND (SELECT seance_nouvelle_id FROM public.seances_reportees WHERE id = pg_temp.u('r_rep')) IS NOT NULL
+                    AND (SELECT pg_catalog.count(*) FROM public.sessions WHERE groupe_id = pg_temp.u('c2')
+                           AND (started_at AT TIME ZONE 'UTC')::date = pg_temp.auj() + 320 AND deleted_at IS NULL) = 1
+                    AND (SELECT pg_catalog.count(*) FROM public.sessions WHERE groupe_id = pg_temp.u('c2')
+                           AND (started_at AT TIME ZONE 'UTC')::date BETWEEN pg_temp.auj() + 300 AND pg_temp.auj() + 302) = 0,
+  'la meme classe, un jour ouvert : la nouvelle date est fixee ; rien n''a ete cree sur le jour ferme apres le refus');
+
+-- 14b. Garde generale : une seance de classe creee ou deplacee sur un jour ferme est mise de
+-- cote tout de suite (aucune suppression, une ligne dans seances_fermees), meme par un code
+-- qui ne connait pas le calendrier.
+INSERT INTO public.sessions(id, teacher_id, started_at, ended_at, session_type, groupe_id, status)
+VALUES (pg_temp.u('s_garde1'), pg_temp.u('b3'), pg_catalog.date_trunc('day', pg_catalog.now()) + interval '301 days 14 hours',
+        pg_catalog.date_trunc('day', pg_catalog.now()) + interval '301 days 15 hours', 'child', pg_temp.u('c2'), 'planned');
+INSERT INTO public.sessions(id, teacher_id, started_at, ended_at, session_type, groupe_id, status)
+VALUES (pg_temp.u('s_garde2'), pg_temp.u('b3'), pg_catalog.date_trunc('day', pg_catalog.now()) + interval '330 days 14 hours',
+        pg_catalog.date_trunc('day', pg_catalog.now()) + interval '330 days 15 hours', 'child', pg_temp.u('c2'), 'planned');
+SELECT pg_temp.vrai(
+  (SELECT deleted_at FROM public.sessions WHERE id = pg_temp.u('s_garde1')) IS NOT NULL
+  AND EXISTS (SELECT 1 FROM public.seances_fermees WHERE session_id = pg_temp.u('s_garde1') AND retablie_le IS NULL)
+  AND (SELECT deleted_at FROM public.sessions WHERE id = pg_temp.u('s_garde2')) IS NULL
+  AND NOT EXISTS (SELECT 1 FROM public.seances_fermees WHERE session_id = pg_temp.u('s_garde2')),
+  'une seance de classe inseree un jour ferme est mise de cote a l''instant (une ligne dans seances_fermees, rien de supprime) ; un jour ouvert, rien ne change');
+-- Deplacee sur un jour ferme (creneau modifie, fusion, alignement) : mise de cote aussi.
+UPDATE public.sessions
+   SET started_at = pg_catalog.date_trunc('day', pg_catalog.now()) + interval '302 days 14 hours',
+       ended_at   = pg_catalog.date_trunc('day', pg_catalog.now()) + interval '302 days 15 hours'
+ WHERE id = pg_temp.u('s_garde2');
+SELECT pg_temp.vrai(
+  (SELECT deleted_at FROM public.sessions WHERE id = pg_temp.u('s_garde2')) IS NOT NULL
+  AND EXISTS (SELECT 1 FROM public.seances_fermees WHERE session_id = pg_temp.u('s_garde2') AND retablie_le IS NULL),
+  'une seance de classe deplacee sur un jour ferme est mise de cote a l''instant');
+-- Retrait de la fermeture avant son debut : les deux seances sont retablies.
+SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.publier('g14', false);
+RESET ROLE;
+SELECT pg_temp.vrai(
+  (SELECT deleted_at FROM public.sessions WHERE id = pg_temp.u('s_garde1')) IS NULL
+  AND (SELECT deleted_at FROM public.sessions WHERE id = pg_temp.u('s_garde2')) IS NULL,
+  'retirer la fermeture avant son debut retablit les seances mises de cote par la garde');
+
+-- 14c. L'ancien circuit des affectations individuelles (materialiser_seances) ne cree rien un
+-- jour de fermeture de l'academie. b5 et e9 ; creneau a 23 h UTC, le jour de la semaine
+-- d'aujourd'hui : l'occurrence du jour +14 existe, on la ferme.
+INSERT INTO public.teacher_student_assignments(id, teacher_id, student_id, weekday, hour_local, timezone_iana)
+VALUES (pg_temp.u('aff1'), pg_temp.u('b5'), pg_temp.u('e9'),
+        EXTRACT(isodow FROM pg_catalog.now() AT TIME ZONE 'UTC')::int, 23, 'UTC');
+SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.fermer('g14c', 'autre', 14, 14);
+SELECT pg_temp.publier('g14c', true);
+RESET ROLE;
+SELECT public.materialiser_seances(pg_temp.u('aff1')) AS creees \gset r14c_
+SELECT pg_temp.vrai(
+  private.jour_ferme_pour_classe(pg_temp.auj() + 14, NULL)
+  AND :'r14c_creees'::int >= 1
+  AND NOT EXISTS (SELECT 1 FROM public.sessions s
+                   WHERE s.teacher_id = pg_temp.u('b5') AND s.groupe_id IS NULL AND s.deleted_at IS NULL
+                     AND (s.started_at AT TIME ZONE 'UTC')::date = pg_temp.auj() + 14),
+  'materialiser_seances (ancien circuit) saute le jour de fermeture de l''academie et cree les autres semaines');
+SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.publier('g14c', false);
+RESET ROLE;
 
 \o
 SELECT 'scenarios_calendrier_pauses : tous les controles sont verts' AS resultat;

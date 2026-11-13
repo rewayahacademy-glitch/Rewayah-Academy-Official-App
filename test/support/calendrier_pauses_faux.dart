@@ -142,8 +142,10 @@ Map<String, Object?> lecturePausesServeur({
   int moisAccordes = 0,
   Set<int> aLaDirection = const <int>{},
   Map<int, String> etats = const <int, String>{},
+  bool demandeOuverte = true,
 }) => <String, Object?>{
   'eleve_id': 'eleve-mariam',
+  'demande_ouverte': demandeOuverte,
   'prenom': prenom,
   'aujourdhui': '2026-11-12',
   'regle': <String, Object?>{
@@ -154,12 +156,13 @@ Map<String, Object?> lecturePausesServeur({
   },
   'mois_accordes': moisAccordes,
   'mois_proposes': <Object?>[
-    for (int k = 0; k < 12; k++)
-      <String, Object?>{
-        'mois': DateTime(2026, 12 + k).toIso8601String().substring(0, 10),
-        'a_la_direction': aLaDirection.contains(k),
-        'etat': etats[k],
-      },
+    if (demandeOuverte)
+      for (int k = 0; k < 12; k++)
+        <String, Object?>{
+          'mois': DateTime(2026, 12 + k).toIso8601String().substring(0, 10),
+          'a_la_direction': aLaDirection.contains(k),
+          'etat': etats[k],
+        },
   ],
   'pauses': pauses,
 };

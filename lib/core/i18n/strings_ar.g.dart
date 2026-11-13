@@ -2210,6 +2210,7 @@ class _Traductions$calendrier$ar extends Traductions$calendrier$fr {
 	@override String get titre => 'التقويم';
 	@override late final _Traductions$calendrier$sections$ar sections = _Traductions$calendrier$sections$ar._(_root);
 	@override String get indisponible => 'التقويم غير متاح حاليًا. أعد تحميل الصفحة ثم حاول مرة أخرى.';
+	@override String get refusNouvelleDateFermee => 'لم يُحدَّد الموعد: الفصل مغلق في ذلك اليوم. اختر يومًا آخر.';
 	@override late final _Traductions$calendrier$dates$ar dates = _Traductions$calendrier$dates$ar._(_root);
 	@override late final _Traductions$calendrier$pauses$ar pauses = _Traductions$calendrier$pauses$ar._(_root);
 }
@@ -2241,6 +2242,8 @@ class _Traductions$pause$ar extends Traductions$pause$fr {
 	@override String get moisDejaDemande => 'مطلوب سلفًا';
 	@override String get moisDejaAccepte => 'مقبول سلفًا';
 	@override String get aucunMois => 'لا يوجد شهر مقترح حاليًا.';
+	@override String get fermeeTitre => 'طلب التوقف غير متاح حاليًا';
+	@override String get fermeeDetail => 'للتوقف عن الدروس، تواصلوا مع إدارة الأكاديمية.';
 	@override String get choisirPourDemander => 'اختر شهرًا لطلب التوقف.';
 	@override String get demander => 'طلب التوقف';
 	@override late final _Traductions$pause$reponse$ar reponse = _Traductions$pause$reponse$ar._(_root);
@@ -35642,6 +35645,7 @@ extension on TraductionsAr {
 			'calendrier.sections.dates' => 'تواريخ الأكاديمية',
 			'calendrier.sections.pauses' => 'فترات التوقف',
 			'calendrier.indisponible' => 'التقويم غير متاح حاليًا. أعد تحميل الصفحة ثم حاول مرة أخرى.',
+			'calendrier.refusNouvelleDateFermee' => 'لم يُحدَّد الموعد: الفصل مغلق في ذلك اليوم. اختر يومًا آخر.',
 			'calendrier.dates.intro' => 'تواريخ السنة، تدخلها الإدارة كل عام. التواريخ المنشورة وحدها تسري، وستظهر في تبويب البرنامج للطلاب والأسر الذين تعنيهم.',
 			'calendrier.dates.ajouter' => 'إضافة تاريخ',
 			'calendrier.dates.erreur' => 'تعذّرت قراءة التواريخ. تحقّق من الاتصال ثم حاول مرة أخرى.',
@@ -35758,9 +35762,9 @@ extension on TraductionsAr {
 			'pause.regle.moisEntier' => 'يدوم التوقف شهرًا ميلاديًا كاملًا، من أول الشهر إلى آخره.',
 			'pause.regle.preavis' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(jours, zero: 'تطلبه قبل بداية الشهر بـ ⁨${jours}⁩ أيام على الأقل.', one: 'تطلبه قبل بداية الشهر بيوم واحد على الأقل.', two: 'تطلبه قبل بداية الشهر بيومين على الأقل.', few: 'تطلبه قبل بداية الشهر بـ ⁨${jours}⁩ أيام على الأقل.', many: 'تطلبه قبل بداية الشهر بـ ⁨${jours}⁩ يومًا على الأقل.', other: 'تطلبه قبل بداية الشهر بـ ⁨${jours}⁩ يوم على الأقل.', ), 
 			'pause.regle.plafond' => ({required num delai, required Object mois, required Object fenetre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(delai, zero: 'الحد المسموح: ⁨${mois}⁩ من أشهر التوقف في كل ⁨${fenetre}⁩ شهرًا. وبعد ذلك تقرر الإدارة وترد خلال ⁨${delai}⁩ أيام.', one: 'الحد المسموح: ⁨${mois}⁩ من أشهر التوقف في كل ⁨${fenetre}⁩ شهرًا. وبعد ذلك تقرر الإدارة وترد خلال يوم واحد.', two: 'الحد المسموح: ⁨${mois}⁩ من أشهر التوقف في كل ⁨${fenetre}⁩ شهرًا. وبعد ذلك تقرر الإدارة وترد خلال يومين.', few: 'الحد المسموح: ⁨${mois}⁩ من أشهر التوقف في كل ⁨${fenetre}⁩ شهرًا. وبعد ذلك تقرر الإدارة وترد خلال ⁨${delai}⁩ أيام.', many: 'الحد المسموح: ⁨${mois}⁩ من أشهر التوقف في كل ⁨${fenetre}⁩ شهرًا. وبعد ذلك تقرر الإدارة وترد خلال ⁨${delai}⁩ يومًا.', other: 'الحد المسموح: ⁨${mois}⁩ من أشهر التوقف في كل ⁨${fenetre}⁩ شهرًا. وبعد ذلك تقرر الإدارة وترد خلال ⁨${delai}⁩ يوم.', ), 
-			'pause.regle.placeGardee' => 'يبقى المقعد محفوظًا أثناء التوقف.',
 			_ => null,
 		} ?? switch (path) {
+			'pause.regle.placeGardee' => 'يبقى المقعد محفوظًا أثناء التوقف.',
 			'pause.regle.dateLimite' => 'يتأخر الموعد الأقصى للمرحلة بمدة التوقف.',
 			'pause.regle.absence' => 'الغياب لبضعة أيام يبقى غيابًا: لا تُطلب إلا أشهر كاملة.',
 			'pause.choisir' => 'اختر الشهر',
@@ -35769,6 +35773,8 @@ extension on TraductionsAr {
 			'pause.moisDejaDemande' => 'مطلوب سلفًا',
 			'pause.moisDejaAccepte' => 'مقبول سلفًا',
 			'pause.aucunMois' => 'لا يوجد شهر مقترح حاليًا.',
+			'pause.fermeeTitre' => 'طلب التوقف غير متاح حاليًا',
+			'pause.fermeeDetail' => 'للتوقف عن الدروس، تواصلوا مع إدارة الأكاديمية.',
 			'pause.choisirPourDemander' => 'اختر شهرًا لطلب التوقف.',
 			'pause.demander' => 'طلب التوقف',
 			'pause.reponse.acceptee' => ({required Object mois}) => 'قُبل التوقف في ⁨${mois}⁩. المقعد محفوظ ويتأخر الموعد الأقصى للمرحلة بالمدة نفسها.',

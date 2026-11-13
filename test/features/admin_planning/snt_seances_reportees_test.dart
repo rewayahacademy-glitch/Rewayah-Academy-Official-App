@@ -211,6 +211,16 @@ void main() {
         MotifNouvelleDateRefusee.classeClose,
       );
       expect(
+        refusNouvelleDate(code: '22023', message: 'NouvelleDateFermee').motif,
+        MotifNouvelleDateRefusee.jourFerme,
+      );
+      expect(
+        phraseRefusNouvelleDate(
+          const NouvelleDateRefusee(MotifNouvelleDateRefusee.jourFerme),
+        ),
+        t.calendrier.refusNouvelleDateFermee,
+      );
+      expect(
         refusNouvelleDate(code: '42501', message: 'autre').motif,
         MotifNouvelleDateRefusee.nonAutorisee,
       );

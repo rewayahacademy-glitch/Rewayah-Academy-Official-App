@@ -63,6 +63,7 @@ RESET ROLE;
 SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM public.eleve_etape_en_cours),
   'publier, modifier, retirer puis republier une fermeture sans programme : aucune erreur, aucun fait cree');
 
+UPDATE public.app_config SET value = pg_catalog.to_jsonb(true) WHERE key = 'pause.demande_famille_ouverte';
 SELECT pg_temp.qui(pg_temp.u('t1'), 'guardian', pg_temp.u('f1'));
 SET LOCAL ROLE authenticated;
 SELECT public.pause_demander(pg_temp.u('e1'), pg_temp.mois(2)) ->> 'statut' AS statut \gset r2_
@@ -85,7 +86,12 @@ RESET ROLE;
 SELECT pg_temp.vrai(:'r5_n'::int = 1, 'la lecture du calendrier fonctionne sans programme');
 
 -- 4 : le fait arrive apres coup (programme publie ensuite) : son recul est calcule des l'ecriture.
-SELECT private.semer_programme_bases(pg_temp.u('a1'));
+SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
+SET LOCAL ROLE authenticated;
+SELECT public.creer_version_programme(NULL) AS v \gset prog_
+SELECT public.preremplir_bases_programme(:'prog_v'::uuid);
+SELECT public.publier_version_programme(:'prog_v'::uuid, 'Version 1 des bases');
+RESET ROLE;
 INSERT INTO public.eleve_etape_en_cours(student_id, niveau_id, cohorte, entree_etape_le, entree_niveau_le, origine)
 VALUES (pg_temp.u('e1'), private.etape_par_defaut(), 'enfant_6_9', pg_temp.auj(), pg_temp.auj(), 'classe');
 SELECT pg_temp.vrai(

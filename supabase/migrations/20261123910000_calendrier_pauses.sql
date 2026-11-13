@@ -61,7 +61,12 @@ INSERT INTO public.app_config (key, value) VALUES
   ('calendrier.aid_adha_jours_max', pg_catalog.to_jsonb(10)),
   -- Une pause d'exception dure 3 mois au plus ; au-dela, la direction accorde un nouveau geste
   -- (revue independante du 13/11 : jamais une pause sans fin).
-  ('pause.exception_mois_max', pg_catalog.to_jsonb(3))
+  ('pause.exception_mois_max', pg_catalog.to_jsonb(3)),
+  -- UN SEUL reglage cache la demande de pause de la famille : faux par defaut. Tant que le
+  -- directeur n'a pas decide la regle d'argent (A-HARMONISER-REGLES-ARGENT-ET-ARRET.md), le
+  -- tuteur et l'adulte ne voient ni le lien, ni la regle, ni les mois ; pause_demander refuse.
+  -- Les pauses deja accordees, la pause d'exception et l'ecran de la direction ne changent pas.
+  ('pause.demande_famille_ouverte', pg_catalog.to_jsonb(false))
 ON CONFLICT (key) DO NOTHING;
 
 -- Les bornes de ces reglages (la direction les change dans app_config).
@@ -76,7 +81,14 @@ DECLARE
 BEGIN
   IF NEW.key NOT IN ('pause.preavis_jours', 'pause.max_mois_fenetre', 'pause.fenetre_mois',
                      'pause.delai_reponse_jours', 'calendrier.ramadan_jours_max',
-                     'calendrier.aid_adha_jours_max', 'pause.exception_mois_max') THEN
+                     'calendrier.aid_adha_jours_max', 'pause.exception_mois_max',
+                     'pause.demande_famille_ouverte') THEN
+    RETURN NEW;
+  END IF;
+  IF NEW.key = 'pause.demande_famille_ouverte' THEN
+    IF pg_catalog.jsonb_typeof(NEW.value) IS DISTINCT FROM 'boolean' THEN
+      RAISE EXCEPTION 'reglage % : vrai ou faux est attendu', NEW.key USING errcode = '22023';
+    END IF;
     RETURN NEW;
   END IF;
   IF pg_catalog.jsonb_typeof(NEW.value) IS DISTINCT FROM 'number'
@@ -638,6 +650,48 @@ BEGIN
 END;
 $function$;
 
+-- Garde generale : une seance de classe creee ou deplacee (creneau modifie, fusion de classes,
+-- tout code futur) sur un jour de fermeture publiee est mise de cote tout de suite, comme celles
+-- que la publication d'une fermeture trouve deja creees. Les sauts de classe et de date voulus
+-- par la direction (nouvelle date d'une seance reportee) sont refuses plus haut, avec leur phrase.
+CREATE FUNCTION private.seance_jour_ferme_garde()
+RETURNS trigger
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = ''
+AS $function$
+DECLARE
+  v_fermeture uuid;
+BEGIN
+  SELECT ce.id INTO v_fermeture
+    FROM public.groupes g
+    JOIN public.calendrier_ecole ce
+      ON ce.publie AND ce.type = 'fermeture'
+     AND (NEW.started_at AT TIME ZONE g.timezone_iana)::date BETWEEN ce.du AND ce.au
+     AND private.fermeture_vise_classe(ce.portee, ce.cohorte, ce.groupe_id, g.id)
+   WHERE g.id = NEW.groupe_id AND g.ended_at IS NULL
+   ORDER BY ce.du, ce.id
+   LIMIT 1;
+  IF v_fermeture IS NOT NULL THEN
+    PERFORM pg_catalog.set_config('calendrier.fermeture', '1', true);
+    UPDATE public.sessions SET deleted_at = pg_catalog.now() WHERE id = NEW.id;
+    INSERT INTO public.seances_fermees (session_id, fermeture_id)
+    VALUES (NEW.id, v_fermeture)
+    ON CONFLICT (session_id) DO UPDATE
+      SET fermeture_id = excluded.fermeture_id, masquee_le = pg_catalog.now(), retablie_le = NULL;
+  END IF;
+  RETURN NULL;
+END;
+$function$;
+
+CREATE TRIGGER sessions_jour_ferme_garde
+  AFTER INSERT OR UPDATE OF started_at, groupe_id ON public.sessions
+  FOR EACH ROW
+  WHEN (NEW.groupe_id IS NOT NULL AND NEW.deleted_at IS NULL
+        AND NEW.status IN ('planned', 'preflight')
+        AND NEW.started_at > pg_catalog.now())
+  EXECUTE FUNCTION private.seance_jour_ferme_garde();
+
 CREATE FUNCTION private.calendrier_ecole_recalculer()
 RETURNS trigger
 LANGUAGE plpgsql
@@ -780,6 +834,32 @@ SELECT pg_temp.remplacer('public.autoriser_jeton_video(uuid,uuid,text,text)'::pg
   $b$ where s.id = p_session_id and s.deleted_at is null
      and not private.session_en_fermeture(s.started_at, s.groupe_id);$b$, 1);
 
+-- La nouvelle date d'une seance reportee, choisie par la direction : jamais un jour ferme
+-- pour la classe (refus avec une phrase claire cote ecran).
+SELECT pg_temp.remplacer('public.fixer_nouvelle_date_seance(uuid,timestamptz)'::pg_catalog.regprocedure,
+  $a$  -- La meme duree que la seance reportee.
+  v_fin := p_debut + (v_o.ended_at - v_o.started_at);$a$,
+  $b$  -- CALENDRIER-ET-PAUSES (13/11/2026) : jamais une nouvelle date un jour de fermeture publiee.
+  IF private.session_en_fermeture(p_debut, v_r.groupe_id) THEN
+    RAISE EXCEPTION 'NouvelleDateFermee' USING ERRCODE = '22023',
+      DETAIL = 'la classe est fermee ce jour-la';
+  END IF;
+  -- La meme duree que la seance reportee.
+  v_fin := p_debut + (v_o.ended_at - v_o.started_at);$b$, 1);
+
+-- L'ancien circuit des affectations individuelles ne cree rien un jour de fermeture de toute
+-- l'academie (aucune classe : seule une fermeture de l'academie entiere le vise).
+SELECT pg_temp.remplacer('public.materialiser_seances(uuid)'::pg_catalog.regprocedure,
+  $a$    insert into public.sessions (teacher_id, started_at, ended_at, session_type)
+    values (v_a.teacher_id, v_debut,$a$,
+  $b$    -- CALENDRIER-ET-PAUSES (13/11/2026) : aucune seance un jour de fermeture de l'academie.
+    if private.jour_ferme_pour_classe((v_debut at time zone v_a.timezone_iana)::date, null) then
+      continue;
+    end if;
+
+    insert into public.sessions (teacher_id, started_at, ended_at, session_type)
+    values (v_a.teacher_id, v_debut,$b$, 1);
+
 -- Les empreintes F86 des fonctions retouchees suivent leur nouveau corps.
 DO $empreinte$
 DECLARE
@@ -792,7 +872,9 @@ BEGIN
     'private.notifier_classe_seances()'::pg_catalog.regprocedure,
     'private.remplacement_auto_passer(timestamptz)'::pg_catalog.regprocedure,
     'private.ses_cloturer_seances_echues(timestamptz)'::pg_catalog.regprocedure,
-    'public.autoriser_jeton_video(uuid,uuid,text,text)'::pg_catalog.regprocedure
+    'public.autoriser_jeton_video(uuid,uuid,text,text)'::pg_catalog.regprocedure,
+    'public.fixer_nouvelle_date_seance(uuid,timestamptz)'::pg_catalog.regprocedure,
+    'public.materialiser_seances(uuid)'::pg_catalog.regprocedure
   ] LOOP
     v_com := pg_catalog.obj_description(v_f, 'pg_proc');
     IF v_com ~ 'md5_functiondef=[0-9a-f]{32}' THEN
@@ -1122,6 +1204,18 @@ BEGIN
 END;
 $function$;
 
+-- La demande de pause de la famille est-elle ouverte ? Faux par defaut (un seul reglage).
+CREATE FUNCTION private.pause_demande_ouverte()
+RETURNS boolean
+LANGUAGE sql
+STABLE
+SECURITY DEFINER
+SET search_path = ''
+AS $function$
+  SELECT coalesce((SELECT (c.value #>> '{}')::boolean FROM public.app_config c
+                    WHERE c.key = 'pause.demande_famille_ouverte'), false);
+$function$;
+
 -- Le nom de la personne de la direction (copie au moment du geste).
 CREATE FUNCTION private.nom_direction(p_id uuid)
 RETURNS text
@@ -1208,6 +1302,9 @@ DECLARE
 BEGIN
   IF NOT private.pause_famille_peut(p_eleve_id) THEN
     RAISE EXCEPTION 'pause refusee' USING errcode = '42501';
+  END IF;
+  IF NOT private.pause_demande_ouverte() THEN
+    RAISE EXCEPTION 'pause_demande_fermee' USING errcode = '22023';
   END IF;
   IF p_mois IS NULL THEN
     RAISE EXCEPTION 'pause_mois_invalide' USING errcode = '22023';
@@ -1418,6 +1515,7 @@ BEGIN
   END IF;
   RETURN pg_catalog.jsonb_build_object(
     'eleve_id', p_eleve_id,
+    'demande_ouverte', private.pause_demande_ouverte(),
     'prenom', (SELECT pr.first_name FROM public.profiles pr WHERE pr.id = p_eleve_id),
     'aujourdhui', v_aujourdhui,
     'regle', pg_catalog.jsonb_build_object(
@@ -1431,7 +1529,7 @@ BEGIN
        WHERE p.student_id = p_eleve_id AND p.type = 'mois' AND p.statut = 'acceptee'
          AND p.debut >= (pg_catalog.date_trunc('month', (v_aujourdhui)::timestamp)
                          - pg_catalog.make_interval(months => public.app_config_int('pause.fenetre_mois', 12) - 1))::date),
-    'mois_proposes', (
+    'mois_proposes', CASE WHEN NOT private.pause_demande_ouverte() THEN '[]'::jsonb ELSE (
       SELECT pg_catalog.jsonb_agg(pg_catalog.jsonb_build_object(
                'mois', m.debut,
                'a_la_direction', private.pause_depasse_plafond(p_eleve_id, m.debut),
@@ -1440,7 +1538,7 @@ BEGIN
                            AND p.statut IN ('demandee', 'acceptee')))
              ORDER BY m.debut)
         FROM (SELECT (v_premier + pg_catalog.make_interval(months => k))::date AS debut
-                FROM pg_catalog.generate_series(0, 11) k) m),
+                FROM pg_catalog.generate_series(0, 11) k) m) END,
     'pauses', coalesce((
       SELECT pg_catalog.jsonb_agg(
                pg_catalog.jsonb_build_object(
@@ -1565,6 +1663,8 @@ REVOKE ALL ON FUNCTION private.pauses_eleve_recalculer() FROM PUBLIC, anon, auth
 REVOKE ALL ON FUNCTION private.calendrier_eleves_vises(text, text, uuid) FROM PUBLIC, anon, authenticated, service_role;
 REVOKE ALL ON FUNCTION private.pause_famille_peut(uuid) FROM PUBLIC, anon, authenticated, service_role;
 REVOKE ALL ON FUNCTION private.jour_academie() FROM PUBLIC, anon, authenticated, service_role;
+REVOKE ALL ON FUNCTION private.pause_demande_ouverte() FROM PUBLIC, anon, authenticated, service_role;
+REVOKE ALL ON FUNCTION private.seance_jour_ferme_garde() FROM PUBLIC, anon, authenticated, service_role;
 REVOKE ALL ON FUNCTION private.cohorte_figee(uuid) FROM PUBLIC, anon, authenticated, service_role;
 REVOKE ALL ON FUNCTION private.session_en_fermeture(timestamptz, uuid) FROM PUBLIC, anon, authenticated, service_role;
 REVOKE ALL ON FUNCTION private.eleve_en_fermeture(uuid, date) FROM PUBLIC, anon, authenticated, service_role;

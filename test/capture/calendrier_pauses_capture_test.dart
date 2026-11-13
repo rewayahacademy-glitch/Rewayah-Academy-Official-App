@@ -127,6 +127,36 @@ void main() {
             debugPrint('PNG ${await capturerVue(tester, 'tuteur-$suffixe')}');
           });
 
+          testWidgets('tuteur pause fermee $suffixe', (
+            WidgetTester tester,
+          ) async {
+            await tester.runAsync(() => LocaleSettings.setLocale(langue));
+            await monterRouteur(
+              tester,
+              Routes.tuteurPause('eleve-mariam'),
+              taille: Size(largeur, largeur < 600 ? 1700 : 1100),
+              themeMode: theme,
+              direction: direction,
+              surcharges: <Override>[
+                portPausesProvider.overrideWithValue(
+                  FausPauses(
+                    lecture: lecturePausesServeur(
+                      demandeOuverte: false,
+                      pauses: <Object?>[
+                        pauseServeur(id: 'acc', statut: 'acceptee'),
+                      ],
+                    ),
+                  ),
+                ),
+                _enLigne,
+              ],
+            );
+            await tester.pump(const Duration(milliseconds: 600));
+            debugPrint(
+              'PNG ${await capturerVue(tester, 'tuteur-fermee-$suffixe')}',
+            );
+          });
+
           testWidgets('adulte pause $suffixe', (WidgetTester tester) async {
             await tester.runAsync(() => LocaleSettings.setLocale(langue));
             await monterRouteur(

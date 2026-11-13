@@ -387,6 +387,7 @@ void main() {
           taille: const Size(390, 3200),
           autres: <Override>[portPausesProvider.overrideWithValue(port)],
         );
+        await tester.pump(const Duration(milliseconds: 600));
         expect(find.byKey(EntreePause.ligneKey), findsOneWidget);
         await tester.tap(find.byKey(EntreePause.ligneKey));
         await tester.pump(const Duration(milliseconds: 600));
@@ -404,6 +405,65 @@ void main() {
         taille: const Size(390, 3200),
       );
       expect(find.byKey(EntreePause.ligneKey), findsNothing);
+    });
+  });
+
+  group('la demande cachee par le reglage du serveur (defaut : cachee)', () {
+    testWidgets(
+      'reglage ferme : la page ne montre ni la regle ni les mois, dit la direction',
+      (WidgetTester tester) async {
+        final FausPauses port = FausPauses(
+          lecture: lecturePausesServeur(
+            demandeOuverte: false,
+            pauses: <Object?>[pauseServeur(id: 'acc', statut: 'acceptee')],
+          ),
+        );
+        await _monter(tester, port);
+        expect(
+          find.byKey(const ValueKey<String>('pause-fermee')),
+          findsOneWidget,
+        );
+        expect(find.text(t.pause.fermeeTitre), findsOneWidget);
+        expect(find.text(t.pause.fermeeDetail), findsOneWidget);
+        expect(find.text(t.pause.regleTitre), findsNothing);
+        expect(find.text(t.pause.choisir), findsNothing);
+        expect(
+          find.byKey(const ValueKey<String>('pause-demander')),
+          findsNothing,
+        );
+        // Les pauses deja accordees restent lisibles.
+        expect(find.byKey(const ValueKey<String>('pause-acc')), findsOneWidget);
+        expect(port.demandes, isEmpty);
+      },
+    );
+
+    testWidgets('reglage ferme : le tuteur n\'a pas la ligne d\'entree', (
+      WidgetTester tester,
+    ) async {
+      final FausPauses port = FausPauses(
+        lecture: lecturePausesServeur(demandeOuverte: false),
+      );
+      await monterHistorique(
+        tester,
+        depart: Routes.tuteurSuivi,
+        taille: const Size(390, 3200),
+        autres: <Override>[portPausesProvider.overrideWithValue(port)],
+      );
+      await tester.pump(const Duration(milliseconds: 600));
+      expect(find.byKey(EntreePause.ligneKey), findsNothing);
+      expect(find.text(t.pause.entree), findsNothing);
+    });
+
+    testWidgets('sans reponse claire du serveur, la demande reste fermee', (
+      WidgetTester tester,
+    ) async {
+      final Map<String, Object?> brut = lecturePausesServeur();
+      brut.remove('demande_ouverte');
+      expect(LecturePauses.depuisJson(brut)!.demandeOuverte, isFalse);
+      brut['demande_ouverte'] = 'oui';
+      expect(LecturePauses.depuisJson(brut)!.demandeOuverte, isFalse);
+      brut['demande_ouverte'] = true;
+      expect(LecturePauses.depuisJson(brut)!.demandeOuverte, isTrue);
     });
   });
 
@@ -452,6 +512,7 @@ void main() {
         session: _adulte,
         plus: <Override>[_capaciteAdulte],
       );
+      await tester.pump(const Duration(milliseconds: 600));
       expect(find.byKey(EntreePause.ligneKey), findsOneWidget);
       expect(find.text(t.pause.entree), findsOneWidget);
     });

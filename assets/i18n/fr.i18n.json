@@ -15217,6 +15217,7 @@
       "pauses": "Pauses"
     },
     "indisponible": "Le calendrier n'a pas pu être ouvert\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
+    "refusNouvelleDateFermee": "La date n'est pas fixée\u00a0: la classe est fermée ce jour-là. Choisissez un autre jour.",
     "dates": {
       "intro": "Les dates de l'année, saisies par la direction chaque année. Seules les dates publiées agissent\u00a0; elles seront affichées dans l'onglet Programme des élèves et des familles qu'elles concernent.",
       "ajouter": "Ajouter une date",
@@ -15375,6 +15376,8 @@
     "moisDejaDemande": "Déjà demandé",
     "moisDejaAccepte": "Déjà accepté",
     "aucunMois": "Aucun mois n'est proposé pour le moment.",
+    "fermeeTitre": "La demande de pause n'est pas ouverte pour le moment",
+    "fermeeDetail": "Pour interrompre les cours, contactez la direction de l'académie.",
     "choisirPourDemander": "Choisissez un mois pour demander la pause.",
     "demander": "Demander la pause",
     "reponse": {

@@ -494,6 +494,7 @@ class LecturePauses {
     required this.moisProposes,
     required this.pauses,
     this.prenom,
+    this.demandeOuverte = false,
   });
 
   /// Lit `pauses_eleve_lecture` ; `null` si la regle est illisible.
@@ -505,6 +506,8 @@ class LecturePauses {
     return LecturePauses(
       eleveId: eleve,
       prenom: (brut['prenom'] as String?)?.trim(),
+      // Jamais suppose : sans reponse claire du serveur, la demande reste fermee.
+      demandeOuverte: brut['demande_ouverte'] == true,
       regle: regle,
       moisAccordes: (brut['mois_accordes'] as num?)?.toInt() ?? 0,
       moisProposes: <MoisPropose>[
@@ -535,6 +538,11 @@ class LecturePauses {
 
   /// Son prenom, quand le serveur le donne.
   final String? prenom;
+
+  /// Le serveur ouvre-t-il la demande de pause a la famille ? Un seul reglage
+  /// (`pause.demande_famille_ouverte`, ferme par defaut) : tant qu'il est
+  /// ferme, ni le lien, ni la regle, ni les mois ne sont montres.
+  final bool demandeOuverte;
 
   /// La regle de la pause.
   final ReglePause regle;

@@ -169,8 +169,83 @@ class _PausePageEtat extends ConsumerState<PausePage> {
     );
   }
 
+  /// Les pauses de l'eleve, de la plus recente a la plus ancienne, avec le lien
+  /// pour annuler celles qui n'ont pas commence.
+  List<Widget> _listeDesPauses(LecturePauses l, TextTheme textes) {
+    return <Widget>[
+      SectionHeader(titre: t.pause.demandesTitre),
+      Ecart.vMd,
+      if (l.pauses.isEmpty)
+        Text(t.pause.demandesVide, style: textes.bodyMedium)
+      else
+        CarteLignes(
+          lignes: <Widget>[
+            for (final PauseEleve p in l.pauses)
+              SettingRow(
+                key: ValueKey<String>('pause-${p.id}'),
+                title: moisEnMots(p.debut),
+                description: <String>[
+                  t.pause.periode(
+                    du: jourEnMots(p.debut),
+                    au: jourEnMots(p.fin),
+                  ),
+                  if (p.type == TypePause.exception) t.pause.exceptionAccordee,
+                  if (p.statut == StatutPause.demandee &&
+                      p.repondreAvant != null)
+                    t.pause.reponseAvant(date: jourEnMots(p.repondreAvant!)),
+                  if ((p.motifDecision ?? '').isNotEmpty)
+                    t.pause.reponseMotif(motif: p.motifDecision!),
+                ].join('\n'),
+                controle: StatusPill(
+                  libelle: libelleStatutPause(p.statut, famille: true),
+                  ton: switch (p.statut) {
+                    StatutPause.acceptee => TonEtat.succes,
+                    StatutPause.refusee => TonEtat.alerte,
+                    StatutPause.annulee => TonEtat.neutre,
+                    StatutPause.demandee => TonEtat.avertissement,
+                  },
+                ),
+              ),
+          ],
+        ),
+      for (final PauseEleve p in l.pauses.where((PauseEleve p) => p.annulable))
+        Padding(
+          padding: const EdgeInsets.only(top: AppSpacing.md),
+          child: LienFleche(
+            key: ValueKey<String>('pause-annuler-${p.id}'),
+            libelle: t.pause.annuler(mois: moisEnMots(p.debut)),
+            alignerEnDebut: true,
+            onPress: () => _annuler(p, l),
+          ),
+        ),
+    ];
+  }
+
+  /// La demande est fermee par le reglage du serveur : une phrase, la
+  /// direction comme recours ; les pauses deja accordees restent lisibles.
+  Widget _corpsFerme(BuildContext context, LecturePauses l, TextTheme textes) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        EmptyState(
+          key: const ValueKey<String>('pause-fermee'),
+          message: t.pause.fermeeTitre,
+          invitation: t.pause.fermeeDetail,
+          icone: AppIcons.rienAAfficher,
+          registre: RegistreVide.subi,
+        ),
+        if (l.pauses.isNotEmpty) ...<Widget>[
+          Ecart.vXl,
+          ..._listeDesPauses(l, textes),
+        ],
+      ],
+    );
+  }
+
   Widget _corps(BuildContext context, LecturePauses l) {
     final TextTheme textes = Theme.of(context).textTheme;
+    if (!l.demandeOuverte) return _corpsFerme(context, l, textes);
     final r = t.pause.regle;
     final ReglePause regle = l.regle;
     return Column(
@@ -277,54 +352,7 @@ class _PausePageEtat extends ConsumerState<PausePage> {
             onPress: () => _demander(l),
           ),
         Ecart.vXl,
-        SectionHeader(titre: t.pause.demandesTitre),
-        Ecart.vMd,
-        if (l.pauses.isEmpty)
-          Text(t.pause.demandesVide, style: textes.bodyMedium)
-        else
-          CarteLignes(
-            lignes: <Widget>[
-              for (final PauseEleve p in l.pauses)
-                SettingRow(
-                  key: ValueKey<String>('pause-${p.id}'),
-                  title: moisEnMots(p.debut),
-                  description: <String>[
-                    t.pause.periode(
-                      du: jourEnMots(p.debut),
-                      au: jourEnMots(p.fin),
-                    ),
-                    if (p.type == TypePause.exception)
-                      t.pause.exceptionAccordee,
-                    if (p.statut == StatutPause.demandee &&
-                        p.repondreAvant != null)
-                      t.pause.reponseAvant(date: jourEnMots(p.repondreAvant!)),
-                    if ((p.motifDecision ?? '').isNotEmpty)
-                      t.pause.reponseMotif(motif: p.motifDecision!),
-                  ].join('\n'),
-                  controle: StatusPill(
-                    libelle: libelleStatutPause(p.statut, famille: true),
-                    ton: switch (p.statut) {
-                      StatutPause.acceptee => TonEtat.succes,
-                      StatutPause.refusee => TonEtat.alerte,
-                      StatutPause.annulee => TonEtat.neutre,
-                      StatutPause.demandee => TonEtat.avertissement,
-                    },
-                  ),
-                ),
-            ],
-          ),
-        for (final PauseEleve p in l.pauses.where(
-          (PauseEleve p) => p.annulable,
-        ))
-          Padding(
-            padding: const EdgeInsets.only(top: AppSpacing.md),
-            child: LienFleche(
-              key: ValueKey<String>('pause-annuler-${p.id}'),
-              libelle: t.pause.annuler(mois: moisEnMots(p.debut)),
-              alignerEnDebut: true,
-              onPress: () => _annuler(p, l),
-            ),
-          ),
+        ..._listeDesPauses(l, textes),
       ],
     );
   }
