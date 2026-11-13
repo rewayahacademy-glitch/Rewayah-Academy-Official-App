@@ -62,6 +62,7 @@ import '../../support/demo/demo_accessibilite_page.dart';
 import '../../support/demo/finance_demo.dart';
 import '../../support/harnais.dart';
 import '../../teaching_core/a/support/hote_tc_a.dart';
+import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 
 /// L'instant de reference : le 4 octobre 2026, jour de la demonstration.
 final DateTime _maintenant = DateTime(2026, 10, 4, 17);
@@ -402,6 +403,10 @@ Future<void> _monterFicheAcces(
 }
 
 void main() {
+  // Les vraies polices : la police de test (carres d'un em) ferait passer la
+  // barre guidee en icones seules pour un defaut que l'application n'a pas.
+  setUpAll(chargerPolicesDuDepot);
+
   group('regles pures', () {
     test('Rejoindre suit la periode financee, jamais le solde', () {
       // Ibrahim a 0 $ et son mois est finance : ouvert (FIN4-08).

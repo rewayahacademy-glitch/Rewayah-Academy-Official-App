@@ -26,6 +26,7 @@ import '../../router/support_routeur.dart';
 import '../../support/demo/accessibilite_demo.dart';
 import '../../support/demo/demo_accessibilite_page.dart';
 import '../../support/harnais.dart';
+import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 
 const List<(Size, Key)> _formes = <(Size, Key)>[
   (Size(390, 844), NavShell.barreBasseKey),
@@ -119,6 +120,10 @@ Future<void> _ouvrirParLePied(WidgetTester tester, String libelle) async {
 }
 
 void main() {
+  // Les vraies polices : la police de test (carres d'un em) ferait passer la
+  // barre guidee en icones seules pour un defaut que l'application n'a pas.
+  setUpAll(chargerPolicesDuDepot);
+
   test('memes quatre destinations, dans l ordre du doc 06', () {
     for (final InterfaceMode mode in InterfaceMode.values) {
       final List<Destination> d = destinationsPour(

@@ -26,6 +26,7 @@ import 'package:rewayah_academy/features/tc_mes_groupes/photo_enseignant.dart';
 import '../../router/support_routeur.dart' show stabiliser;
 import '../../support/demo/accessibilite_demo.dart';
 import '../../support/demo/demo_accessibilite_page.dart';
+import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 
 const List<(Size, Key)> _formes = <(Size, Key)>[
   (Size(390, 844), NavShell.barreBasseKey),
@@ -87,6 +88,10 @@ void _uneColonne(WidgetTester tester) {
 }
 
 void main() {
+  // Les vraies polices : la police de test (carres d'un em) ferait passer la
+  // barre guidee en icones seules pour un defaut que l'application n'a pas.
+  setUpAll(chargerPolicesDuDepot);
+
   for (final (Size taille, Key forme) in _formes) {
     testWidgets(
       'route de demonstration, ${taille.width.toInt()} : Accueil, puis '
