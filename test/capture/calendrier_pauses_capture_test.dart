@@ -99,9 +99,11 @@ void main() {
               );
               if (pauses) {
                 await tester.tap(find.text(t.calendrier.sections.pauses));
+              }
+              // Le temps de lire les donnees : le squelette ne doit plus etre a l'ecran.
+              for (int i = 0; i < 6; i++) {
                 await tester.pump(const Duration(milliseconds: 600));
               }
-              await tester.pump(const Duration(milliseconds: 600));
               debugPrint(
                 'PNG ${await capturerVue(tester, 'direction-${pauses ? 'pauses' : 'dates'}-$suffixe')}',
               );
