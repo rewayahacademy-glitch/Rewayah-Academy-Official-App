@@ -337,7 +337,7 @@ List<Override> _surchargesAppReelle() => <Override>[
   ),
   // MA-PROGRESSION-ECRAN (12/11/2026) : ou en est l'eleve sur le programme,
   // d'un seul appel (`ma_progression`, migrations 20261123830000 et
-  // 20261123910000, qui lit `etape_eleve_lecture` et `sourates_eleve`).
+  // 20261123905000, qui lit `etape_eleve_lecture` et `sourates_eleve`).
   portMaProgressionProvider.overrideWithValue(
     MaProgressionSupabase(Supabase.instance.client),
   ),

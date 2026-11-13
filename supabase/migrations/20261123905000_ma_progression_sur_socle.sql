@@ -1,4 +1,4 @@
--- MA-PROGRESSION sur le SOCLE-PROGRAMME (13/11/2026, numero 20261123910000, apres 900000 qui
+-- MA-PROGRESSION sur le SOCLE-PROGRAMME (13/11/2026, numero 20261123905000, apres 900000 qui
 -- pose etape_eleve_lecture) : UN SEUL point d'entree pour
 -- la progression de l'eleve et de sa famille.
 --
