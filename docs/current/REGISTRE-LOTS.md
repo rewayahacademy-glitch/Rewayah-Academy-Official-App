@@ -35,6 +35,7 @@ Consigne du directeur du 13/11 : « Attention à ne pas perdre notre travail dep
 |---|---|---|---|
 | Charte de l'académie, programme séance par séance, tajwid des bases, prière et ablutions, point de fin de séance, chemin, police de l'arabe | `claude/charte-ecole` | aucune | LIVRÉ par la PR de la charte du 13/11. Auditée le 12/11 (33 corrections) puis le 13/11 (14 corrections). À relire par le directeur : objectifs, découpage hors étape 1 des 6-9 ans, textes de la prière, le ya, le point de fin de séance (D4) |
 | Lot 1, socle du programme | `claude/socle-programme` (40a3d563) | 20261123850000, 900000, 905000 | À LIVRER. Trois revues indépendantes, aucun bloquant ; correction en cours : la migration ne publie plus le programme |
+| Lot 6, point de fin de séance | `claude/point-de-seance` | 20261125000000 | À LIVRER. Fiche : `pedagogie/lots/LOT-6-POINT-DE-SEANCE.md`. Bloqué sur une décision : la paie attend toujours le cahier (raccord proposé, non codé). Construit sans le lot 5 (pas de séance prévue). Non relu par un tiers |
 | Lot 2, calendrier et pauses | `claude/calendrier-pauses` (6917fb62) | 20261123910000, 911000 | À LIVRER. Non relu par un tiers |
 | Lot 3, bibliothèque | `claude/bibliotheque-une` (3d601f0f) | 20261123920000, 921000 | À LIVRER. Revue indépendante : un bloquant (tranche d'âge contournée par l'onglet de la classe), en correction |
 | Lot 5, espace Apprendre à trois onglets | `claude/espace-apprendre` (02f680f4) | aucune | À LIVRER. Non relu par un tiers |

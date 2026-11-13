@@ -20,6 +20,7 @@ import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
+import '../point_seance/historique_seances.dart';
 import 'carte_messages_academie.dart';
 import 'carte_suivi_pedagogique.dart';
 import 'composants_historique.dart';
@@ -183,6 +184,13 @@ class _Corps extends ConsumerWidget {
         // SUIVI-ELEVE (07/11/2026) : « Où en est `prénom` », en tete.
         CarteSuiviPedagogique(eleveId: retenu.eleveId, prenom: retenu.prenom),
         CarteMessagesAcademie(eleveId: retenu.eleveId, prenom: retenu.prenom),
+        // POINT-DE-SEANCE (13/11/2026) : ce qui est a renforcer, ce qui est
+        // acquis, seance par seance, ecrit par le systeme.
+        BlocHistoriqueSeances(
+          eleveId: retenu.eleveId,
+          lignesMax: 4,
+          seulementPoints: true,
+        ),
         seances,
       ],
     );

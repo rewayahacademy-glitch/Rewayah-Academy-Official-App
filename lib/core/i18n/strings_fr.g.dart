@@ -123,6 +123,8 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$push1$fr push1 = Traductions$push1$fr.internal(_root);
 	late final Traductions$nouveautes$fr nouveautes = Traductions$nouveautes$fr.internal(_root);
 	late final Traductions$suiviPedagogique$fr suiviPedagogique = Traductions$suiviPedagogique$fr.internal(_root);
+	late final Traductions$pointSeance$fr pointSeance = Traductions$pointSeance$fr.internal(_root);
+	late final Traductions$historiqueSeances$fr historiqueSeances = Traductions$historiqueSeances$fr.internal(_root);
 }
 
 // Path: commun
@@ -4261,6 +4263,183 @@ class Traductions$suiviPedagogique$fr {
 
 	/// fr: 'Pour {prenom}, l'étape sera fixée après l'entretien de lecture avec la direction.'
 	String attenteEntretienPour({required Object prenom}) => 'Pour ${prenom}, l\'étape sera fixée après l\'entretien de lecture avec la direction.';
+}
+
+// Path: pointSeance
+class Traductions$pointSeance$fr {
+	Traductions$pointSeance$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Point de fin de séance'
+	String get titre => 'Point de fin de séance';
+
+	/// fr: '{classe}, séance du {jour} {numero} {mois}'
+	String sousTitre({required Object classe, required Object jour, required Object numero, required Object mois}) => '${classe}, séance du ${jour} ${numero} ${mois}';
+
+	/// fr: 'Tous les présents sont marqués « A suivi ». Touchez seulement ceux qui sont « À renforcer ».'
+	String get intro => 'Tous les présents sont marqués « A suivi ». Touchez seulement ceux qui sont « À renforcer ».';
+
+	/// fr: 'À écouter aujourd'hui'
+	String get tireTitre => 'À écouter aujourd\'hui';
+
+	/// fr: 'Écoutez {prenom} sur un passage déjà vu, hors de la leçon du jour, puis touchez « Acquis » ou « À renforcer ».'
+	String tireAide({required Object prenom}) => 'Écoutez ${prenom} sur un passage déjà vu, hors de la leçon du jour, puis touchez « Acquis » ou « À renforcer ».';
+
+	/// fr: 'Réponse pour {prenom}'
+	String reponseDe({required Object prenom}) => 'Réponse pour ${prenom}';
+
+	/// fr: 'A suivi'
+	String get aSuivi => 'A suivi';
+
+	/// fr: 'À renforcer'
+	String get aRenforcer => 'À renforcer';
+
+	/// fr: 'Acquis'
+	String get acquis => 'Acquis';
+
+	/// fr: 'Pas eu le temps de l'écouter'
+	String get pasEcoute => 'Pas eu le temps de l\'écouter';
+
+	/// fr: 'Élèves présents'
+	String get presentsTitre => 'Élèves présents';
+
+	/// fr: 'Ne figurent pas au point : {noms}.'
+	String horsPoint({required Object noms}) => 'Ne figurent pas au point : ${noms}.';
+
+	/// fr: '{prenom} (absent)'
+	String horsAbsent({required Object prenom}) => '${prenom} (absent)';
+
+	/// fr: '{prenom} (présent en partie)'
+	String horsPartiel({required Object prenom}) => '${prenom} (présent en partie)';
+
+	/// fr: '{prenom} (présence pas encore connue)'
+	String horsInconnu({required Object prenom}) => '${prenom} (présence pas encore connue)';
+
+	/// fr: 'Note (facultative)'
+	String get noteLibelle => 'Note (facultative)';
+
+	/// fr: 'Lue par vous et par la direction. Jamais montrée à la famille.'
+	String get noteAide => 'Lue par vous et par la direction. Jamais montrée à la famille.';
+
+	/// fr: 'Envoyer le point'
+	String get envoyer => 'Envoyer le point';
+
+	/// fr: 'Enregistrer la correction'
+	String get corriger => 'Enregistrer la correction';
+
+	/// fr: 'Pour envoyer le point, touchez « Acquis » ou « À renforcer » pour {prenom}.'
+	String manqueTire({required Object prenom}) => 'Pour envoyer le point, touchez « Acquis » ou « À renforcer » pour ${prenom}.';
+
+	/// fr: 'Point envoyé'
+	String get envoyeTitre => 'Point envoyé';
+
+	/// fr: 'Vous pouvez le corriger jusqu'au {numero} {mois} à {heure}.'
+	String envoyeCorrigible({required Object numero, required Object mois, required Object heure}) => 'Vous pouvez le corriger jusqu\'au ${numero} ${mois} à ${heure}.';
+
+	/// fr: 'Le délai de correction est passé. Pour changer une réponse, écrivez à la direction.'
+	String get envoyeFige => 'Le délai de correction est passé. Pour changer une réponse, écrivez à la direction.';
+
+	/// fr: 'L'enseignant n'a pas encore envoyé le point de cette séance.'
+	String get pasEncoreEnvoye => 'L\'enseignant n\'a pas encore envoyé le point de cette séance.';
+
+	/// fr: 'Remplir le cahier de transmission de cette séance'
+	String get versCahier => 'Remplir le cahier de transmission de cette séance';
+
+	/// fr: 'La séance n'est pas terminée'
+	String get nonTenueTitre => 'La séance n\'est pas terminée';
+
+	/// fr: 'Le point se fait dès la fin de la séance. Revenez ici après le cours.'
+	String get nonTenue => 'Le point se fait dès la fin de la séance. Revenez ici après le cours.';
+
+	/// fr: 'Aucun élève n'a été présent pendant au moins la moitié du cours. Il n'y a pas de point à faire pour cette séance.'
+	String get aucunPresent => 'Aucun élève n\'a été présent pendant au moins la moitié du cours. Il n\'y a pas de point à faire pour cette séance.';
+
+	/// fr: 'Le point de cette séance n'a pas pu être lu. Vérifiez votre connexion, puis réessayez.'
+	String get erreur => 'Le point de cette séance n\'a pas pu être lu. Vérifiez votre connexion, puis réessayez.';
+
+	/// fr: 'Le point de cette séance'
+	String get sansDonnees => 'Le point de cette séance';
+
+	/// fr: 'Le délai de correction est passé. Pour changer une réponse, écrivez à la direction.'
+	String get refusDelai => 'Le délai de correction est passé. Pour changer une réponse, écrivez à la direction.';
+
+	/// fr: 'La liste des présents a changé. La page a été relue : vérifiez vos réponses, puis envoyez de nouveau.'
+	String get refusPresents => 'La liste des présents a changé. La page a été relue : vérifiez vos réponses, puis envoyez de nouveau.';
+
+	/// fr: 'Ce point revient à l'enseignant de la séance. Si c'est vous, reconnectez-vous puis réessayez.'
+	String get refusAcces => 'Ce point revient à l\'enseignant de la séance. Si c\'est vous, reconnectez-vous puis réessayez.';
+
+	/// fr: 'L'envoi n'est pas confirmé. Vérifiez votre connexion, puis envoyez de nouveau.'
+	String get refusReseau => 'L\'envoi n\'est pas confirmé. Vérifiez votre connexion, puis envoyez de nouveau.';
+
+	/// fr: 'Point de fin de séance {classe}'
+	String aFaireLigne({required Object classe}) => 'Point de fin de séance ${classe}';
+
+	/// fr: 'Les points de fin de séance à faire n'ont pas pu être lus. Touchez pour relire.'
+	String get aFaireIllisible => 'Les points de fin de séance à faire n\'ont pas pu être lus. Touchez pour relire.';
+}
+
+// Path: historiqueSeances
+class Traductions$historiqueSeances$fr {
+	Traductions$historiqueSeances$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Historique des séances'
+	String get titre => 'Historique des séances';
+
+	/// fr: 'À renforcer depuis le cours du {numero} {mois}'
+	String aRenforcerDepuis({required Object numero, required Object mois}) => 'À renforcer depuis le cours du ${numero} ${mois}';
+
+	/// fr: 'Rien à renforcer'
+	String get rienARenforcer => 'Rien à renforcer';
+
+	/// fr: 'Observations « Acquis » sur cette étape : {n}'
+	String acquisCompte({required Object n}) => 'Observations « Acquis » sur cette étape : ${n}';
+
+	/// fr: 'Avant le prochain cours : revoir ce qui a été vu au cours du {numero} {mois}.'
+	String travailCible({required Object numero, required Object mois}) => 'Avant le prochain cours : revoir ce qui a été vu au cours du ${numero} ${mois}.';
+
+	/// fr: 'Avant le prochain cours : relire ce qui a été vu.'
+	String get travailRelire => 'Avant le prochain cours : relire ce qui a été vu.';
+
+	/// fr: '« À renforcer » à deux points de fin de séance de suite.'
+	String get deuxDeSuite => '« À renforcer » à deux points de fin de séance de suite.';
+
+	/// fr: '{jour} {numero} {mois}'
+	String date({required Object jour, required Object numero, required Object mois}) => '${jour} ${numero} ${mois}';
+
+	/// fr: 'Présent'
+	String get present => 'Présent';
+
+	/// fr: 'Présent en partie'
+	String get partiel => 'Présent en partie';
+
+	/// fr: 'Absent'
+	String get absent => 'Absent';
+
+	/// fr: 'Présence pas encore connue'
+	String get inconnu => 'Présence pas encore connue';
+
+	/// fr: 'Point de fin de séance pas encore fait'
+	String get sansPoint => 'Point de fin de séance pas encore fait';
+
+	/// fr: 'Écouté sur un passage déjà vu'
+	String get ecoute => 'Écouté sur un passage déjà vu';
+
+	/// fr: 'Note de l'enseignant : {note}'
+	String noteDe({required Object note}) => 'Note de l\'enseignant : ${note}';
+
+	/// fr: 'Aucune séance passée pour le moment.'
+	String get vide => 'Aucune séance passée pour le moment.';
+
+	/// fr: 'L'historique des séances n'a pas pu être lu. Touchez pour relire.'
+	String get illisible => 'L\'historique des séances n\'a pas pu être lu. Touchez pour relire.';
 }
 
 // Path: commun.langue
@@ -55833,13 +56012,13 @@ extension on Traductions {
 			'compte.donnees.suppression.horsLigne' => 'Votre demande n\'est pas partie. Refaites-la dès le retour du réseau.',
 			'compte.donnees.suppression.refuse' => 'Ce compte ne peut pas demander sa suppression ici.',
 			'compte.titre' => 'Mon compte',
+			_ => null,
+		} ?? switch (path) {
 			'compte.intro' => 'Vos informations, vos préférences et vos accès, au même endroit.',
 			'compte.informations' => 'Informations',
 			'compte.profil' => 'Profil',
 			'compte.profilDetail' => 'Voir et gérer vos informations',
 			'compte.reglages' => 'Réglages',
-			_ => null,
-		} ?? switch (path) {
 			'compte.reglagesDetail' => 'Apparence, notifications et accessibilité',
 			'compte.profils' => 'Gérer mon foyer',
 			'compte.profilsDetail' => 'Gérer les profils de vos enfants',
@@ -55847,8 +56026,6 @@ extension on Traductions {
 			'compte.appareilsDetail' => 'Les appareils et profils rattachés à votre foyer',
 			'compte.confidentialite' => 'Confidentialité',
 			'compte.confidentialiteDetail' => 'Bientôt disponible',
-			_ => null,
-		} ?? switch (path) {
 			'compte.espaces' => 'Espaces',
 			'compte.espacesDetail' => 'Les espaces auxquels votre compte donne accès',
 			'compte.espacesMissionEnCours' => 'Pour revenir à votre espace principal, quittez d\'abord la visite en cours.',
@@ -56349,13 +56526,13 @@ extension on Traductions {
 			'tuteur.accueil.seanceTerminee' => 'Séance terminée',
 			'tuteur.accueil.seanceAnnulee' => 'Cette séance n\'aura pas lieu.',
 			'tuteur.accueil.seanceNonTenue' => 'Cette séance n\'a pas pu se tenir.',
+			_ => null,
+		} ?? switch (path) {
 			'tuteur.accueil.horaireIncertain' => 'Ouverture de la salle non confirmée pour l\'instant',
 			'tuteur.accueil.horaireIncertainAvant' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Le bouton pour rejoindre apparaîtra ${n} minute avant le début.', other: 'Le bouton pour rejoindre apparaîtra ${n} minutes avant le début.', ), 
 			'tuteur.accueil.horaireIncertainPendant' => 'Nous n\'arrivons pas à vérifier l\'ouverture de la salle. Rechargez la page.',
 			'tuteur.accueil.pastilleAnnulee' => 'Annulée',
 			'tuteur.accueil.pastilleNonTenue' => 'Non tenue',
-			_ => null,
-		} ?? switch (path) {
 			'tuteur.accueil.pastilleTerminee' => 'Terminée',
 			'tuteur.accueil.aucuneSeance' => 'Aucune séance planifiée',
 			'tuteur.accueil.aucuneSeanceDetail' => ({required Object dePrenom}) => 'La prochaine séance ${dePrenom} apparaîtra ici dès qu\'elle sera programmée.',
@@ -56363,8 +56540,6 @@ extension on Traductions {
 			'tuteur.accueil.classeIndisponible' => 'Le détail de la classe n\'est pas encore disponible ici.',
 			'tuteur.accueil.classeIllisible' => 'La classe n\'a pas pu être lue.',
 			'tuteur.accueil.sansClasseTitre' => ({required Object prenom}) => 'Aucune classe pour ${prenom}',
-			_ => null,
-		} ?? switch (path) {
 			'tuteur.accueil.sansClassePhrase' => ({required Object quePrenom}) => 'Choisissez une classe pour ${quePrenom} puisse commencer les cours.',
 			'tuteur.accueil.financesTitre' => ({required Object dePrenom}) => 'Finances ${dePrenom}',
 			'tuteur.accueil.financesPhrase' => 'Solde, prochain débit et ce qu\'il reste à financer.',
@@ -56865,22 +57040,20 @@ extension on Traductions {
 			'enseignant.remplacements.pretPastille' => 'Retenu',
 			'enseignant.remplacements.pretPhrase' => 'Vous êtes retenu : si l\'enseignant de la classe n\'entre pas à temps, la séance vous est confiée. Restez disponible.',
 			'enseignant.remplacements.pretCollegue' => 'Un collègue est prêt',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.remplacements.pretAvantVous' => 'Un collègue a été retenu pour cette séance. Rien n\'a changé dans votre planning.',
 			'enseignant.remplacements.preparationClose' => 'Cette préparation est close : l\'enseignant de la classe est arrivé, ou la séance est déjà proposée à tous.',
 			'enseignant.remplacements.acceptee' => 'C\'est confirmé : vous assurez cette séance. Elle s\'ajoute à vos remplacements.',
 			'enseignant.remplacements.erreur' => 'Les remplacements à assurer n\'ont pas pu être chargés : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'enseignant.remplacements.sansDonnees' => 'Les remplacements à assurer n\'ont pas pu être chargés',
 			'enseignant.salle.reference' => ({required Object page, required Object total, required Object reference}) => 'Présenté : page ${page} sur ${total} · ${reference}',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.salle.rien' => 'Rien n\'est présenté',
 			'enseignant.salle.rienInvitation' => 'Ouvrez le Coran pour montrer une page à votre classe.',
 			'enseignant.salle.attenteSalle' => 'Vous n\'êtes pas encore dans la salle',
 			'enseignant.salle.attenteSalleDetail' => 'Les commandes de présentation s\'ouvrent dès que le cours est connecté.',
 			'enseignant.salle.lienFaibleDetail' => 'le tour de page peut arriver en retard chez votre classe',
 			'enseignant.salle.presentationConservee' => 'la page présentée est conservée, elle repartira au retour du lien',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.salle.presentationSuspendue' => 'présentation suspendue',
 			'enseignant.salle.precedente' => 'Présenter la page précédente',
 			'enseignant.salle.suivante' => 'Présenter la page suivante',
@@ -57381,22 +57554,20 @@ extension on Traductions {
 			'controleur.compteRendu.pointImportantAide' => 'Quand ce que vous avez vu demande l\'attention de l\'administration · votre texte sera demandé',
 			'controleur.compteRendu.envoyer' => 'Envoyer le compte rendu',
 			'controleur.compteRendu.plusTard' => 'Plus tard',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.compteRendu.notice' => 'Ce compte rendu est transmis automatiquement à l\'administration.',
 			'controleur.compteRendu.echec' => 'L\'envoi n\'est pas confirmé : il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Votre texte est gardé ici ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
 			'controleur.compteRendu.echecRien' => 'L\'envoi n\'est pas confirmé : il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Votre choix reste sélectionné ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
 			'controleur.compteRendu.envoyeTitre' => 'Compte rendu envoyé',
 			'controleur.compteRendu.envoyePhrase' => 'Il est transmis à l\'administration. Pour y revenir, ouvrez-le dans l\'Historique et choisissez « Ajouter un complément ».',
 			'controleur.compteRendu.ecrireAdmin' => 'Écrire à l\'administration',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.compteRendu.visiteEnCours' => 'Transmission de la visite à l\'administration en cours.',
 			'controleur.compteRendu.visiteTransmise' => 'La visite et son relevé automatique sont transmis à l\'administration.',
 			'controleur.compteRendu.visiteEchec' => 'La transmission de la visite n\'est pas confirmée : il est possible qu\'elle ne soit pas parvenue jusqu\'à Rewayah. Réessayez ; le relevé de la visite reste enregistré sur le serveur.',
 			'controleur.compteRendu.aTerminer' => 'Compte rendu à terminer',
 			'controleur.compteRendu.reprendre' => 'Reprendre le compte rendu',
 			'controleur.compteRendu.visiteInconnue' => 'Ce compte rendu ne peut plus être repris ici.',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.compteRendu.visiteInconnueAide' => 'Cet appareil n\'a plus la visite en mémoire, sans doute après un rechargement de la page. Le serveur transmet la visite et son relevé automatique dès la sortie de la salle ; cet écran ne peut pas le confirmer. Pour ajouter une remarque, écrivez à l\'administration.',
 			'controleur.observation.important' => 'Vous signalez un point important : votre texte sera demandé.',
 			'controleur.observation.questionNature' => 'Quelle est la nature de votre observation ?',
@@ -57897,22 +58068,20 @@ extension on Traductions {
 			'tc.observation.visite.enseignant' => 'Enseignant',
 			'tc.observation.visite.monEnfant' => 'Votre enfant',
 			'tc.observation.visite.budgetIncertain' => 'Temps restant non confirmé par le serveur.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.visite.videoIndisponible' => 'La vidéo de la séance n\'a pas pu s\'ouvrir. Votre temps d\'observation continue de s\'écouler.',
 			'tc.observation.visite.sortieNonConfirmee' => 'La fin de votre visite n\'a pas pu être confirmée. Elle sera fermée par le serveur.',
 			'tc.observation.visite.restantes' => 'restantes',
 			'tc.observation.visite.decompteLu' => ({required Object duree}) => 'Temps restant : ${duree}',
 			'tc.observation.visite.enDirect' => 'En direct',
 			'tc.observation.visite.connexion' => 'Connexion',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.visite.reconnexion' => 'Reconnexion',
 			'tc.observation.visite.videoCoupee' => 'Vidéo indisponible',
 			'tc.observation.visite.reconnexionDetail' => 'La connexion est interrompue, reconnexion en cours. Votre temps d\'observation continue de s\'écouler.',
 			'tc.observation.visite.sonRecu' => 'Son reçu',
 			'tc.observation.visite.sonInterrompu' => 'Son interrompu',
 			'tc.observation.visite.agrandir' => 'Agrandir',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.visite.reduire' => 'Réduire',
 			'tc.observation.visite.cameraFermee' => 'Caméra fermée',
 			'tc.observation.visite.pasEncoreLa' => 'Pas encore dans la salle',
@@ -58413,22 +58582,20 @@ extension on Traductions {
 			'adulte.demo.etats.conjointActif' => 'Le second adulte fait partie du foyer.',
 			'adulte.demo.etats.conjointQuitte' => 'Le second adulte a quitté le foyer.',
 			'adulte.demo.etats.conjointRetire' => 'Le second adulte a été retiré du foyer.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.demo.etats.delai60' => 'Un premier délai est en cours.',
 			'adulte.demo.etats.nouvelleDemande' => 'Une nouvelle invitation est possible après le premier délai.',
 			'adulte.demo.etats.validationEnAttente' => 'La validation administrative est en attente.',
 			'adulte.demo.etats.validationRefusee' => 'La validation administrative a été refusée.',
 			'adulte.demo.etats.secondDepart' => 'Le second adulte est parti pour la deuxième fois.',
 			'adulte.demo.etats.delai120' => 'Un délai suivant, plus long, est en cours.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.demo.etats.departsSuivants' => 'Après le troisième départ, le délai suivant s\'applique toujours.',
 			'adulte.demo.etats.repriseDemandee' => 'Une demande de reprise du foyer a été déposée.',
 			'adulte.demo.etats.repriseRefuseeParTitulaire' => 'La demande de reprise a été refusée par le titulaire.',
 			'adulte.demo.etats.repriseSansReponse' => 'Sans réponse dans le délai, la demande attend l\'administration.',
 			'adulte.demo.etats.repriseValidee' => 'La reprise du foyer a été validée.',
 			'adulte.demo.etats.repriseRefusee' => 'La reprise du foyer a été refusée.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.demo.etats.dejaDansUnAutreFoyer' => 'L\'adulte invité fait déjà partie d\'un autre foyer.',
 			'adulte.demo.etats.erreurReseau' => 'Le réseau a coupé pendant une action.',
 			'adulte.demo.etats.doubleSoumission' => 'La même action a été envoyée deux fois.',
@@ -58929,22 +59096,20 @@ extension on Traductions {
 			'com.socle.navigation.ongletModeration' => 'Modération',
 			'com.socle.navigation.ongletMessages' => _root.com.socle.lexique.messages,
 			'com.socle.navigation.bientot' => 'Bientôt disponible',
+			_ => null,
+		} ?? switch (path) {
 			'com.socle.navigation.provisoire.messagesTitre' => _root.com.socle.lexique.messages,
 			'com.socle.navigation.provisoire.messagesDetail' => 'Les messages liés à vos classes arriveront bientôt dans cet espace.',
 			'com.socle.navigation.provisoire.communauteTitre' => _root.com.socle.lexique.communaute,
 			'com.socle.navigation.provisoire.communauteDetail' => 'L\'espace d\'échange entre enseignants arrivera bientôt ici.',
 			'com.socle.navigation.provisoire.studioTitre' => _root.com.socle.lexique.studio,
 			'com.socle.navigation.provisoire.studioDetail' => 'L\'espace de travail de l\'équipe arrivera bientôt ici.',
-			_ => null,
-		} ?? switch (path) {
 			'com.socle.navigation.provisoire.administrationTitre' => 'Administration des communications',
 			'com.socle.navigation.provisoire.administrationDetail' => 'Les annonces, la modération et les messages se géreront bientôt ici.',
 			'com.socle.navigation.provisoire.publierAnnonceTitre' => 'Publier une annonce',
 			'com.socle.navigation.provisoire.publierAnnonceDetail' => 'La publication d\'une annonce pour une classe arrivera bientôt ici.',
 			'com.socle.navigation.demo.titre' => 'Démonstration des communications',
 			'com.socle.navigation.demo.detail' => 'Données fictives, absentes des versions de production.',
-			_ => null,
-		} ?? switch (path) {
 			'com.socle.navigation.demo.choisir' => 'Choisissez un espace à essayer.',
 			'com.messages.entree.titreClasse' => 'Échanger sur cette classe',
 			'com.messages.entree.titreDossier' => 'Échanger sur ce dossier',
@@ -59445,22 +59610,20 @@ extension on Traductions {
 			'com.studio.demo.f.canalDirection' => 'Direction stratégique',
 			'com.studio.demo.f.canalDirectionDetail' => 'Orientations de la direction',
 			'com.studio.demo.f.messagePlanning' => 'Bonjour à toute l\'équipe. Voici le planning du prochain trimestre, dites-moi si quelque chose ne va pas.',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.demo.f.messageSupports' => 'Je mets à jour les supports du niveau 2 et on fait le point demain.',
 			'com.studio.demo.f.messageMerci' => 'Merci à tous pour la semaine.',
 			'com.studio.demo.f.messageDossiers' => 'Trois dossiers attendent une décision avant vendredi. Nadia, peux-tu regarder le dossier de la famille Karim ?',
 			'com.studio.demo.f.messageCompteRendu' => 'Le compte rendu des visites du mois est prêt.',
 			'com.studio.demo.f.messageRemplacement' => 'Mardi, la classe An-Nour est assurée par un remplaçant. Le planning est à jour.',
 			'com.studio.demo.f.messageJustificatifs' => 'Les justificatifs de septembre sont rassemblés.',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.demo.f.messageBudget' => 'Budget confidentiel du trimestre.',
 			'com.studio.demo.f.activiteBudget' => 'Budget confidentiel du trimestre',
 			'com.studio.demo.f.partagePlanning' => 'Planning du trimestre',
 			'com.studio.demo.f.partageModeration' => 'Guide de modération',
 			'com.studio.demo.f.epinglePar' => ({required Object nom}) => 'Épinglé par ${nom}',
 			'com.studio.demo.f.partagePar' => ({required Object nom}) => 'Partagé par ${nom}',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.demo.f.lienRemplacements' => 'Remplacements de la semaine',
 			'com.studio.demo.f.lienCharte' => 'Charte de l\'équipe',
 			'com.studio.demo.f.brouillon' => 'Samira, je regarde le dossier de la famille Karim ce soir et je te dis demain matin',
@@ -59961,22 +60124,20 @@ extension on Traductions {
 			'comptable.paiements.filtres.infos' => 'Infos manquantes',
 			'comptable.paiements.filtres.verification' => 'Vérification',
 			'comptable.paiements.filtres.validation' => 'Validation',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.paiements.filtres.retard' => 'En retard',
 			'comptable.paiements.filtres.classe' => 'Classe',
 			'comptable.paiements.filtres.toutesClasses' => 'Toutes les classes',
 			'comptable.paiements.filtres.periode' => 'Période',
 			'comptable.paiements.filtres.toutesPeriodes' => 'Toutes les périodes',
 			'comptable.paiements.filtres.effacer' => 'Effacer les filtres',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.paiements.colonnes.beneficiaire' => 'Bénéficiaire',
 			'comptable.paiements.colonnes.type' => 'Type',
 			'comptable.paiements.colonnes.periode' => 'Période / objet',
 			'comptable.paiements.colonnes.montant' => 'Montant',
 			'comptable.paiements.colonnes.destination' => 'Destination',
 			'comptable.paiements.colonnes.echeance' => 'Échéance',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.paiements.colonnes.statut' => 'Statut',
 			'comptable.paiements.colonnes.action' => 'Action',
 			'comptable.paiements.types.enseignant' => 'Enseignant',
@@ -60477,22 +60638,20 @@ extension on Traductions {
 			'comptable.validation.natures.payoutSensible' => 'Paiement sensible',
 			'comptable.validation.natures.retraitReserve' => 'Retrait de la Réserve stratégique',
 			'comptable.validation.natures.obligationAApprouver' => 'Obligation ponctuelle',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.validation.natures.payoutDuComptable' => 'Paie du Comptable',
 			'comptable.validation.natures.sortieCoffreProtege' => 'Sortie d\'un coffre protégé',
 			'comptable.validation.natures.paiementRecu' => 'Paiement reçu d\'une famille',
 			'comptable.validation.demandePar' => ({required Object demandeur, required Object date}) => 'Demandée par ${demandeur} le ${date}',
 			'comptable.validation.valideePar' => ({required Object decideur, required Object date}) => 'Validée par ${decideur} le ${date}',
 			'comptable.validation.refuseePar' => ({required Object decideur, required Object date}) => 'Refusée par ${decideur} le ${date}',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.validation.motif' => ({required Object motif}) => 'Motif : ${motif}',
 			'comptable.validation.ouvrir' => ({required Object objet}) => 'Voir la demande : ${objet}',
 			'comptable.validation.votreDemandeTitre' => 'Votre propre demande',
 			'comptable.validation.votreDemandePhrase' => 'Une autre personne habilitée la décidera : vous ne validez jamais une demande que vous avez faite.',
 			'comptable.validation.detail.titre' => 'Demande de validation',
 			'comptable.validation.detail.nature' => 'Nature',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.validation.detail.objet' => 'Objet',
 			'comptable.validation.detail.demandeur' => 'Demandée par',
 			'comptable.validation.detail.date' => 'Date de la demande',
@@ -60993,22 +61152,20 @@ extension on Traductions {
 			'juridique.confidentialite.s9.titre' => '9. Sécurité',
 			'juridique.confidentialite.s9.blocs.0' => 'Les règles d\'accès sont appliquées par le serveur. Les pièces d\'identité sont dans un espace privé, séparé des photos. Aucune protection n\'est absolue : si vous voyez un problème, écrivez-nous.',
 			'juridique.confidentialite.s10.titre' => '10. Les enfants',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.confidentialite.s10.blocs.0' => 'Les informations d\'un enfant sont données et gérées par son tuteur. Voir le texte Protection des enfants.',
 			'juridique.cookies.titre' => 'Cookies',
 			'juridique.cookies.resume' => 'Ce que l\'application et le site gardent sur votre appareil.',
 			'juridique.cookies.intro' => 'L\'application et le site gardent peu de choses sur votre appareil. Voici lesquelles.',
 			'juridique.cookies.s1.titre' => '1. Ce que c\'est',
 			'juridique.cookies.s1.blocs.0' => 'Un cookie ou une donnée locale est un petit élément gardé par votre navigateur ou votre appareil. Il aide un service à vous reconnaître ou à retenir un réglage.',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.cookies.s2.titre' => '2. Ce que l\'application garde',
 			'juridique.cookies.s2.blocs.0' => '- Votre session de connexion.',
 			'juridique.cookies.s2.blocs.1' => '- Vos préférences d\'affichage, comme la langue et le thème.',
 			'juridique.cookies.s2.blocs.2' => '- Un cache limité, que vous pouvez effacer.',
 			'juridique.cookies.s2.blocs.3' => '- Sur l\'appareil d\'un élève, son code personnel, qui ne quitte jamais l\'appareil.',
 			'juridique.cookies.s2.blocs.4' => 'Ces éléments sont nécessaires au fonctionnement de l\'application.',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.cookies.s3.titre' => '3. Ce que nous n\'utilisons pas',
 			'juridique.cookies.s3.blocs.0' => 'À la date de ce texte, ni l\'application ni le site n\'utilisent de cookies publicitaires ni de mesure d\'audience.',
 			'juridique.cookies.s4.titre' => '4. Rapports d\'erreurs',
@@ -61509,22 +61666,20 @@ extension on Traductions {
 			'cahierC3.pretBilan' => 'Prêt pour le petit bilan',
 			'cahierC3.pretBilanDetail' => 'L\'administration planifie le petit bilan ; rien n\'est automatique.',
 			'cahierSourates.titre' => 'Sourates récitées',
+			_ => null,
+		} ?? switch (path) {
 			'cahierSourates.aide' => 'Cochez une sourate seulement si cet élève l\'a récitée de mémoire, sans erreur de mot. Une sourate cochée est validée.',
 			'cahierSourates.dejaValidees' => ({required Object n, required Object total}) => 'Sourates des bases déjà validées : ${n} sur ${total}',
 			'cahierSourates.toutes' => 'Toutes les sourates des bases sont validées.',
 			'cahierSourates.retirerTitre' => 'Cochée par erreur ?',
 			'cahierSourates.retirerAide' => 'Une sourate que vous avez validée se retire pendant 24 heures.',
 			'cahierSourates.retirer' => 'Retirer',
-			_ => null,
-		} ?? switch (path) {
 			'cahierSourates.retirerLibelle' => ({required Object nom}) => 'Retirer ${nom} des sourates validées',
 			'cahierSourates.retirerQuestion' => ({required Object nom}) => 'Retirer ${nom} des sourates validées ?',
 			'cahierSourates.retirerConsequence' => 'Elle ne comptera plus comme validée pour cet élève.',
 			'cahierSourates.retirerMotif' => 'Motif (facultatif)',
 			'cahierSourates.retirerFait' => ({required Object nom}) => '${nom} n\'est plus validée.',
 			'cahierSourates.retirerRefus' => 'Le délai de 24 heures est passé : seule la direction peut encore la retirer.',
-			_ => null,
-		} ?? switch (path) {
 			'cahierSourates.retirerEchec' => 'La sourate n\'a pas été retirée. Réessayez.',
 			'souratesRetirables.titre' => 'Sourates cochées par erreur',
 			'souratesRetirables.aide' => 'Les sourates validées dans cette classe que vous pouvez retirer.',
@@ -61994,6 +62149,61 @@ extension on Traductions {
 			'suiviPedagogique.attenteEntretien' => 'Votre étape sera fixée après l\'entretien de lecture avec la direction.',
 			'suiviPedagogique.attenteEntretienTu' => 'Ton étape sera fixée après l\'entretien de lecture avec la direction.',
 			'suiviPedagogique.attenteEntretienPour' => ({required Object prenom}) => 'Pour ${prenom}, l\'étape sera fixée après l\'entretien de lecture avec la direction.',
+			'pointSeance.titre' => 'Point de fin de séance',
+			'pointSeance.sousTitre' => ({required Object classe, required Object jour, required Object numero, required Object mois}) => '${classe}, séance du ${jour} ${numero} ${mois}',
+			'pointSeance.intro' => 'Tous les présents sont marqués « A suivi ». Touchez seulement ceux qui sont « À renforcer ».',
+			'pointSeance.tireTitre' => 'À écouter aujourd\'hui',
+			'pointSeance.tireAide' => ({required Object prenom}) => 'Écoutez ${prenom} sur un passage déjà vu, hors de la leçon du jour, puis touchez « Acquis » ou « À renforcer ».',
+			'pointSeance.reponseDe' => ({required Object prenom}) => 'Réponse pour ${prenom}',
+			'pointSeance.aSuivi' => 'A suivi',
+			'pointSeance.aRenforcer' => 'À renforcer',
+			'pointSeance.acquis' => 'Acquis',
+			'pointSeance.pasEcoute' => 'Pas eu le temps de l\'écouter',
+			'pointSeance.presentsTitre' => 'Élèves présents',
+			'pointSeance.horsPoint' => ({required Object noms}) => 'Ne figurent pas au point : ${noms}.',
+			'pointSeance.horsAbsent' => ({required Object prenom}) => '${prenom} (absent)',
+			'pointSeance.horsPartiel' => ({required Object prenom}) => '${prenom} (présent en partie)',
+			'pointSeance.horsInconnu' => ({required Object prenom}) => '${prenom} (présence pas encore connue)',
+			'pointSeance.noteLibelle' => 'Note (facultative)',
+			'pointSeance.noteAide' => 'Lue par vous et par la direction. Jamais montrée à la famille.',
+			'pointSeance.envoyer' => 'Envoyer le point',
+			'pointSeance.corriger' => 'Enregistrer la correction',
+			'pointSeance.manqueTire' => ({required Object prenom}) => 'Pour envoyer le point, touchez « Acquis » ou « À renforcer » pour ${prenom}.',
+			'pointSeance.envoyeTitre' => 'Point envoyé',
+			'pointSeance.envoyeCorrigible' => ({required Object numero, required Object mois, required Object heure}) => 'Vous pouvez le corriger jusqu\'au ${numero} ${mois} à ${heure}.',
+			'pointSeance.envoyeFige' => 'Le délai de correction est passé. Pour changer une réponse, écrivez à la direction.',
+			'pointSeance.pasEncoreEnvoye' => 'L\'enseignant n\'a pas encore envoyé le point de cette séance.',
+			'pointSeance.versCahier' => 'Remplir le cahier de transmission de cette séance',
+			'pointSeance.nonTenueTitre' => 'La séance n\'est pas terminée',
+			'pointSeance.nonTenue' => 'Le point se fait dès la fin de la séance. Revenez ici après le cours.',
+			'pointSeance.aucunPresent' => 'Aucun élève n\'a été présent pendant au moins la moitié du cours. Il n\'y a pas de point à faire pour cette séance.',
+			'pointSeance.erreur' => 'Le point de cette séance n\'a pas pu être lu. Vérifiez votre connexion, puis réessayez.',
+			'pointSeance.sansDonnees' => 'Le point de cette séance',
+			'pointSeance.refusDelai' => 'Le délai de correction est passé. Pour changer une réponse, écrivez à la direction.',
+			_ => null,
+		} ?? switch (path) {
+			'pointSeance.refusPresents' => 'La liste des présents a changé. La page a été relue : vérifiez vos réponses, puis envoyez de nouveau.',
+			'pointSeance.refusAcces' => 'Ce point revient à l\'enseignant de la séance. Si c\'est vous, reconnectez-vous puis réessayez.',
+			'pointSeance.refusReseau' => 'L\'envoi n\'est pas confirmé. Vérifiez votre connexion, puis envoyez de nouveau.',
+			'pointSeance.aFaireLigne' => ({required Object classe}) => 'Point de fin de séance ${classe}',
+			'pointSeance.aFaireIllisible' => 'Les points de fin de séance à faire n\'ont pas pu être lus. Touchez pour relire.',
+			'historiqueSeances.titre' => 'Historique des séances',
+			'historiqueSeances.aRenforcerDepuis' => ({required Object numero, required Object mois}) => 'À renforcer depuis le cours du ${numero} ${mois}',
+			'historiqueSeances.rienARenforcer' => 'Rien à renforcer',
+			'historiqueSeances.acquisCompte' => ({required Object n}) => 'Observations « Acquis » sur cette étape : ${n}',
+			'historiqueSeances.travailCible' => ({required Object numero, required Object mois}) => 'Avant le prochain cours : revoir ce qui a été vu au cours du ${numero} ${mois}.',
+			'historiqueSeances.travailRelire' => 'Avant le prochain cours : relire ce qui a été vu.',
+			'historiqueSeances.deuxDeSuite' => '« À renforcer » à deux points de fin de séance de suite.',
+			'historiqueSeances.date' => ({required Object jour, required Object numero, required Object mois}) => '${jour} ${numero} ${mois}',
+			'historiqueSeances.present' => 'Présent',
+			'historiqueSeances.partiel' => 'Présent en partie',
+			'historiqueSeances.absent' => 'Absent',
+			'historiqueSeances.inconnu' => 'Présence pas encore connue',
+			'historiqueSeances.sansPoint' => 'Point de fin de séance pas encore fait',
+			'historiqueSeances.ecoute' => 'Écouté sur un passage déjà vu',
+			'historiqueSeances.noteDe' => ({required Object note}) => 'Note de l\'enseignant : ${note}',
+			'historiqueSeances.vide' => 'Aucune séance passée pour le moment.',
+			'historiqueSeances.illisible' => 'L\'historique des séances n\'a pas pu être lu. Touchez pour relire.',
 			_ => null,
 		};
 	}

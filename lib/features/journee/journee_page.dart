@@ -60,6 +60,7 @@ import '../../core/icons/app_icons.dart';
 import '../../core/observabilite/journal_dev.dart';
 import '../../core/planning/journee.dart';
 import '../../core/planning/service_planning.dart';
+import '../../core/point_seance/port_point_seance.dart';
 import '../../core/presence/retard_en_direct.dart';
 import '../../core/presence/service_presence.dart';
 import '../../core/priere/pause_prevue.dart';
@@ -1257,6 +1258,14 @@ class ListeATerminerPage extends ConsumerWidget {
     final AsyncValue<List<CahierEnRetard>> lecture = ref.watch(
       cahiersEnRetardProvider,
     );
+    // POINT-DE-SEANCE (13/11/2026) : les seances tenues qui attendent leur
+    // point de fin de seance (rattrapage : l'application a ete fermee).
+    final AsyncValue<List<PointAFaire>> points = ref.watch(
+      pointsAFaireProvider,
+    );
+    final bool pointsALire =
+        (points.value ?? const <PointAFaire>[]).isNotEmpty ||
+        (points.hasError && !points.hasValue);
     final Widget corps;
     if (!lecture.hasValue && lecture.isLoading) {
       corps = const Skeleton.liste(lignes: 3);
@@ -1269,7 +1278,7 @@ class ListeATerminerPage extends ConsumerWidget {
         quoiHorsLigne: t.enseignant.journee.aTerminerSansDonnees,
         onReessayer: () => ref.invalidate(cahiersEnRetardProvider),
       );
-    } else if (lecture.requireValue.isEmpty) {
+    } else if (lecture.requireValue.isEmpty && !pointsALire) {
       corps = EmptyState(
         key: const ValueKey<String>('a-terminer-vide'),
         message: t.enseignant.journee.aTerminerVide,
@@ -1280,6 +1289,8 @@ class ListeATerminerPage extends ConsumerWidget {
         // Relue au retour d'un cahier : une ligne validee disparait.
         cahiers: trierCahiersATerminer(lecture.requireValue),
         enFile: ref.watch(cahiersEnFileProvider).value ?? const <String>{},
+        points: points.value ?? const <PointAFaire>[],
+        pointsIllisibles: points.hasError && !points.hasValue,
       );
     }
     return PageShell(
@@ -1456,15 +1467,53 @@ class _EchecLecture extends ConsumerWidget {
 
 /// Une ligne par cahier ; l'appui ouvre le cahier de la seance.
 class _LignesATerminer extends ConsumerWidget {
-  const _LignesATerminer({required this.cahiers, required this.enFile});
+  const _LignesATerminer({
+    required this.cahiers,
+    required this.enFile,
+    this.points = const <PointAFaire>[],
+    this.pointsIllisibles = false,
+  });
 
   final List<CahierEnRetard> cahiers;
   final Set<String> enFile;
+
+  /// Les seances qui attendent leur point de fin de seance.
+  final List<PointAFaire> points;
+
+  /// La lecture des points a echoue : une ligne le dit et relit au toucher.
+  final bool pointsIllisibles;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return GroupeReglages(
       lignes: <LigneRubrique>[
+        if (pointsIllisibles)
+          LigneRubrique(
+            cle: const ValueKey<String>('a-terminer-points-illisibles'),
+            icone: AppIcons.suivi,
+            libelle: t.pointSeance.titre,
+            legende: t.pointSeance.aFaireIllisible,
+            onPress: () => ref.invalidate(pointsAFaireProvider),
+          ),
+        for (final PointAFaire point in points)
+          LigneRubrique(
+            cle: ValueKey<String>('a-terminer-point-${point.seanceId}'),
+            icone: AppIcons.suivi,
+            libelle: t.pointSeance.aFaireLigne(
+              classe: deDevant(_nomClasse(point.classe)),
+            ),
+            legende: t.enseignant.journee.cahierDetail(
+              jour: t.commun.dates.jours[point.debut.weekday - 1].toLowerCase(),
+              numero: '${point.debut.day}',
+              mois: t.commun.dates.mois[point.debut.month - 1],
+              heure: _hhmm(point.debut),
+            ),
+            onPress: () async {
+              await GoRouter.of(context)
+                  .push<void>(Routes.pointSeancePour(point.seanceId));
+              if (context.mounted) ref.invalidate(pointsAFaireProvider);
+            },
+          ),
         for (final CahierEnRetard cahier in cahiers)
           LigneRubrique(
             icone: AppIcons.cahier,

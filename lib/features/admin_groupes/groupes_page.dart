@@ -57,6 +57,7 @@ import '../../core/widgets/status_pill.dart';
 import '../admin_fusion/feuilles_fusion.dart';
 import '../creneaux/plages.dart' show jourCapitalise, nommerHeure;
 import '../fiche_groupe/sourates_retirables_classe.dart';
+import '../point_seance/historique_seances.dart';
 import '../priere_serveur/bloc_priere_classe.dart';
 import '../suivi_demandes/libelles_suivi_demandes.dart' show deFuseau;
 import 'bas_de_feuille.dart';
@@ -2031,6 +2032,22 @@ class _FeuilleDetail extends ConsumerWidget {
                             points: true,
                             objet: membre.libelle,
                             actions: <EntreeAction>[
+                              // POINT-DE-SEANCE : l'historique des seances
+                              // de l'eleve, le meme bloc que chez
+                              // l'enseignant et le tuteur.
+                              EntreeAction(
+                                libelle: t.historiqueSeances.titre,
+                                onChoix: () => AppBottomSheet.ouvrir<void>(
+                                  context,
+                                  titre: t.historiqueSeances.titre,
+                                  constructeur: (BuildContext _) =>
+                                      BlocHistoriqueSeances(
+                                        eleveId: membre.studentId,
+                                        lignesMax: 12,
+                                        avecTitre: false,
+                                      ),
+                                ),
+                              ),
                               EntreeAction(
                                 libelle: t.admin.groupes.actionRetirer,
                                 destructif: true,

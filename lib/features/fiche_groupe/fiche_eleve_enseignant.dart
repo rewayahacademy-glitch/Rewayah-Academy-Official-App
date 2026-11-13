@@ -39,6 +39,7 @@ import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/selecteur_motif.dart';
 import '../../core/widgets/zone_saisie.dart';
 import '../foyer/photo_eleve.dart';
+import '../point_seance/historique_seances.dart';
 import '../protection_enfants/notice_securite_enfant.dart';
 import 'etape_eleve.dart';
 import 'observations_eleve.dart';
@@ -262,6 +263,10 @@ class FicheEleveEnseignant extends StatelessWidget {
             groupeId: groupeId,
             studentId: membre.studentId,
           ),
+          // POINT-DE-SEANCE (13/11/2026) : l'historique des seances, ecrit
+          // par le systeme a partir des points de fin de seance.
+          Ecart.vXl,
+          BlocHistoriqueSeances(eleveId: membre.studentId),
         ],
         Ecart.vXl,
         Text(

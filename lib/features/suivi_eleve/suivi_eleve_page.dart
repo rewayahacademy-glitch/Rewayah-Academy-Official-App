@@ -27,6 +27,7 @@ import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/pays_enseignant.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
+import '../point_seance/historique_seances.dart';
 import '../suivi_foyer/carte_messages_academie.dart';
 import '../suivi_foyer/carte_suivi_pedagogique.dart';
 import '../suivi_foyer/filtres_historique.dart' show libelleStatut, statutDe;
@@ -162,6 +163,9 @@ class _Corps extends StatelessWidget {
         // La Bibliotheque en tete de « Ma classe » (garde-cap, 11/11/2026).
         EntreeBibliothequeMaClasse(),
         CarteSuiviPedagogique(),
+        // POINT-DE-SEANCE : l'historique des seances (rien pour le compte
+        // d'un enfant de 6 a 9 ans : le serveur ne l'ouvre pas).
+        BlocHistoriqueSeances(lignesMax: 4, seulementPoints: true),
         CarteMessagesAcademie(),
       ],
     );

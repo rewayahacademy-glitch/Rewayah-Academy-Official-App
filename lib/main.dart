@@ -173,6 +173,8 @@ import 'core/pause_seance/pause_seance_supabase.dart';
 import 'core/pause_seance/port_pause_seance.dart';
 import 'core/photos/photo_personne.dart';
 import 'core/photos/photos_supabase.dart';
+import 'core/point_seance/point_seance_supabase.dart';
+import 'core/point_seance/port_point_seance.dart';
 import 'core/preferences/preferences_compte.dart' show portThemeCompteProvider;
 import 'core/preferences/preferences_locales.dart'
     show appliquerPreferenceLangue, langueMemoriseeAuDemarrage;
@@ -297,7 +299,10 @@ import 'racine_reelle.dart';
 final VersionsSupabase _versionsBibliotheque = VersionsSupabase(
   Supabase.instance.client,
 );
-final TelechargementSupabase _ouvertureBibliotheque = TelechargementSupabase(Supabase.instance.client, _versionsBibliotheque);
+final TelechargementSupabase _ouvertureBibliotheque = TelechargementSupabase(
+  Supabase.instance.client,
+  _versionsBibliotheque,
+);
 
 List<Override> _surchargesAppReelle() => <Override>[
   // Defaut 1.8 : le brouillon de l'inscription se garde sur l'appareil le
@@ -359,6 +364,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   // (`etape_eleve_lecture`) ; l'eleve et sa famille passent par `ma_progression`.
   portSuiviPedagogiqueProvider.overrideWithValue(
     SuiviPedagogiqueSupabase(Supabase.instance.client),
+  ),
+  // POINT-DE-SEANCE (13/11/2026) : le point de fin de seance et l'historique
+  // des seances (migration 20261125000000).
+  portPointSeanceProvider.overrideWithValue(
+    PointSeanceSupabase(Supabase.instance.client),
   ),
   // Le reglage de la direction (heures de revision, repetitions estimees),
   // dans la feuille du contenu d'une etape.

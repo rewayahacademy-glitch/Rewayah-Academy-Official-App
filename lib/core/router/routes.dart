@@ -610,6 +610,12 @@ abstract final class Routes {
   static String cahierPour(String seanceId) =>
       '$enseignantSeance/$seanceId/cahier';
 
+  /// Le point de fin de seance (POINT-DE-SEANCE, 13/11/2026) : la page courte
+  /// de l'enseignant apres la seance. On y arrive en quittant la salle, et la
+  /// liste « A terminer » la rappelle tant qu'il manque.
+  static String pointSeancePour(String seanceId) =>
+      '$enseignantSeance/$seanceId/point';
+
   /// Racine des ecrans contextuels d'un groupe.
   static const String enseignantGroupe = '/enseignant/groupe';
 

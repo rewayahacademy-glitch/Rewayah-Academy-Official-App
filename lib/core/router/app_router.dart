@@ -236,6 +236,7 @@ import '../../features/notifications/notifications_page.dart';
 import '../../features/paiements_recus/recevoir_paiements_page.dart';
 import '../../features/parcours_offres/parcours_offres_page.dart';
 import '../../features/partage_offre/partage_offre_page.dart';
+import '../../features/point_seance/point_seance_page.dart';
 import '../../features/presentation_tuteur/demandes_presentation_page.dart';
 import '../../features/priere_serveur/lieux_priere_page.dart'
     deferred as d_lieux_priere_page;
@@ -1658,6 +1659,15 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       GoRouteSure(
         path: Routes.enseignantContrat,
         builder: (BuildContext _, GoRouterState _) => const ContratPage(),
+      ),
+      GoRouteSure(
+        path: '${Routes.enseignantSeance}/:seanceId/point',
+        builder: (BuildContext _, GoRouterState etat) => _CoquilleSecondaire(
+          chemin: etat.uri.path,
+          child: PointSeancePage(
+            seanceId: etat.pathParameters['seanceId'] ?? '',
+          ),
+        ),
       ),
       GoRouteSure(
         path: '${Routes.enseignantSeance}/:seanceId/cahier',
