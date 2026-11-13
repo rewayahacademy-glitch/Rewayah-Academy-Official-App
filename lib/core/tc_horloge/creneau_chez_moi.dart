@@ -19,6 +19,7 @@ import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../config/env.dart';
+import '../i18n/elision.dart';
 import '../i18n/strings.g.dart';
 import '../i18n/villes_fuseau.dart';
 import 'apercu_creneau.dart' show fuseauAcademieDefaut;
@@ -191,7 +192,7 @@ String libelleCreneauChezMoi(CreneauChezMoi c, {bool capitale = false}) {
       jour: t.disponibilites.joursLongs[c.jour - 1],
       heure: t.tc.groupe.horloges.heureDeVille(
         heure: '${c.heure.toString().padLeft(2, '0')}:00',
-        ville: nomFuseauClasse(c.fuseau),
+        deVille: deDevant(nomFuseauClasse(c.fuseau)),
       ),
     );
   }
@@ -383,7 +384,9 @@ String fuseauDeSaisieLu(MonHorloge? h, String fuseauClasse) {
 String legendeFuseauSaisie(String fuseau) =>
     fuseau == (horlogeAcademie?.fuseau ?? fuseauAcademieDefaut)
     ? t.tc.groupe.horloges.heureMecque
-    : t.admin.groupes.creneau.fuseauSaisie(ville: villeDuFuseauLibelle(fuseau));
+    : t.admin.groupes.creneau.fuseauSaisie(
+        deVille: deDevant(villeDuFuseauLibelle(fuseau)),
+      );
 
 /// Le nom d'un fuseau de classe pour un filtre ou une phrase : « La Mecque »
 /// pour le fuseau de l'academie (jamais « Riyad »), sinon la ville du fuseau.

@@ -124,7 +124,7 @@ class _EtatVillePage extends ConsumerState<VillePage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            ActionPrincipale(
+            _boutonPlein(
               libelle: h.disponibilitesLien,
               onPress: () => GoRouter.of(context).go(Routes.enseignantCreneaux),
             ),
@@ -137,7 +137,7 @@ class _EtatVillePage extends ConsumerState<VillePage> {
             ),
           ],
         ),
-        child: Text(h.disponibilitesPhrase, style: textes.bodyMedium),
+        child: _lisible(Text(h.disponibilitesPhrase, style: textes.bodyMedium)),
       );
     }
     final EtatLieu? etat = ref.watch(etatLieuProvider).value;
@@ -168,7 +168,7 @@ class _EtatVillePage extends ConsumerState<VillePage> {
           ],
           // Un bouton qui ne peut pas aboutir n'est pas rendu.
           if (_choisie != null)
-            ActionPrincipale(
+            _boutonPlein(
               libelle: h.enregistrer,
               onPress: () => unawaited(_enregistrer()),
               enCours: _envoi,
@@ -195,23 +195,42 @@ class _EtatVillePage extends ConsumerState<VillePage> {
           ],
         ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Text(
-            enseignant ? h.consigneEnseignant : h.consigneTuteur,
-            style: textes.bodyMedium,
-          ),
-          Ecart.vXl,
-          ChoixVille(
-            initiale: _choisie,
-            onChoisie: (Ville v) => setState(() {
-              _choisie = v;
-              _echec = false;
-            }),
-          ),
-        ],
+      child: _lisible(
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Text(
+              enseignant ? h.consigneEnseignant : h.consigneTuteur,
+              style: textes.bodyMedium,
+            ),
+            Ecart.vXl,
+            ChoixVille(
+              initiale: _choisie,
+              onChoisie: (Ville v) => setState(() {
+                _choisie = v;
+                _echec = false;
+              }),
+            ),
+          ],
+        ),
       ),
     );
   }
+
+  // Un seul bouton plein dans ce fichier (K-56) : les deux branches de la page
+  // s'excluent, elles passent par ici.
+  Widget _boutonPlein({
+    required String libelle,
+    required VoidCallback onPress,
+    bool enCours = false,
+  }) => ActionPrincipale(libelle: libelle, onPress: onPress, enCours: enCours);
+
+  // Un texte suivi ne depasse pas la largeur d'un formulaire sur ordinateur.
+  Widget _lisible(Widget contenu) => Align(
+    alignment: AlignmentDirectional.topStart,
+    child: ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: AppPage.largeurFormulaire),
+      child: contenu,
+    ),
+  );
 }

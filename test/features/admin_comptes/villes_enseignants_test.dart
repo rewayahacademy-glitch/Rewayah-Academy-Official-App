@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/admin/service_comptes.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/i18n/elision.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/lieu/lieu_direction.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
@@ -208,16 +209,24 @@ void main() {
     final _Direction port = _port();
     await _monter(tester, port);
     await _ouvrirMenu(tester, 'Karim');
-    expect(find.text(t.lieu.verifier(nom: 'Karim Test')), findsNothing);
+    expect(
+      find.text(t.lieu.verifier(deNom: deDevant('Karim Test'))),
+      findsNothing,
+    );
     await tester.tapAt(Offset.zero);
     await tester.pumpAndSettle();
     await _ouvrirMenu(tester, 'Aminata');
-    expect(find.text(t.lieu.verifier(nom: 'Aminata Test')), findsOneWidget);
-    await tester.tap(find.text(t.lieu.verifier(nom: 'Aminata Test')));
+    expect(
+      find.text(t.lieu.verifier(deNom: deDevant('Aminata Test'))),
+      findsOneWidget,
+    );
+    await tester.tap(
+      find.text(t.lieu.verifier(deNom: deDevant('Aminata Test'))),
+    );
     await tester.pumpAndSettle();
     expect(port.verifiees, <String>['e1']);
     expect(
-      find.text(t.lieu.villeVerifiee(nom: 'Aminata Test')),
+      find.text(t.lieu.villeVerifiee(deNom: deDevant('Aminata Test'))),
       findsOneWidget,
     );
   });
@@ -226,7 +235,9 @@ void main() {
     final _Direction port = _port()..echec = true;
     await _monter(tester, port);
     await _ouvrirMenu(tester, 'Aminata');
-    await tester.tap(find.text(t.lieu.verifier(nom: 'Aminata Test')));
+    await tester.tap(
+      find.text(t.lieu.verifier(deNom: deDevant('Aminata Test'))),
+    );
     await tester.pumpAndSettle();
     expect(port.verifiees, isEmpty);
     expect(find.text(t.lieu.verifierEchec), findsOneWidget);

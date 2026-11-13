@@ -1292,7 +1292,7 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
       ref
         ..invalidate(lieuxEnseignantsProvider)
         ..invalidate(incoherencesLieuProvider);
-      message = t.lieu.villeVerifiee(nom: c.libelle);
+      message = t.lieu.villeVerifiee(deNom: deDevant(c.libelle));
     } on Object {
       message = t.lieu.verifierEchec;
     }
@@ -1565,7 +1565,7 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
           ),
         if (_villeAVerifier(c))
           EntreeAction(
-            libelle: t.lieu.verifier(nom: c.libelle),
+            libelle: t.lieu.verifier(deNom: deDevant(c.libelle)),
             icone: AppIcons.controleQualite,
             onChoix: () => unawaited(_verifierVille(c)),
           ),

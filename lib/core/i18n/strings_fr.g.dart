@@ -1990,8 +1990,8 @@ class Traductions$lieu$fr {
 	/// fr: 'La liste des villes ne s'est pas chargée'
 	String get chargeEchec => 'La liste des villes ne s\'est pas chargée';
 
-	/// fr: 'La liste n'a pas répondu. Vérifiez votre connexion puis réessayez.'
-	String get chargeEchecPhrase => 'La liste n\'a pas répondu. Vérifiez votre connexion puis réessayez.';
+	/// fr: 'La liste n'a pas pu s'afficher. Réessayez dans un instant.'
+	String get chargeEchecPhrase => 'La liste n\'a pas pu s\'afficher. Réessayez dans un instant.';
 
 	/// fr: 'Ville choisie : {ville}, {pays}.'
 	String choisie({required Object ville, required Object pays}) => 'Ville choisie : ${ville}, ${pays}.';
@@ -2038,11 +2038,11 @@ class Traductions$lieu$fr {
 	/// fr: 'Ville à vérifier'
 	String get nonVerifiee => 'Ville à vérifier';
 
-	/// fr: 'Vérifier la ville de {nom}'
-	String verifier({required Object nom}) => 'Vérifier la ville de ${nom}';
+	/// fr: 'Vérifier la ville {deNom}'
+	String verifier({required Object deNom}) => 'Vérifier la ville ${deNom}';
 
-	/// fr: 'La ville de {nom} est vérifiée.'
-	String villeVerifiee({required Object nom}) => 'La ville de ${nom} est vérifiée.';
+	/// fr: 'La ville {deNom} est vérifiée.'
+	String villeVerifiee({required Object deNom}) => 'La ville ${deNom} est vérifiée.';
 
 	/// fr: 'La vérification n'est pas confirmée. Réessayez dans un instant.'
 	String get verifierEchec => 'La vérification n\'est pas confirmée. Réessayez dans un instant.';
@@ -28484,8 +28484,8 @@ class Traductions$admin$groupes$creneau$fr {
 	/// fr: 'Un jour et une heure de plus, chaque semaine, pour la même classe. Les séances des quatre prochaines semaines sont créées tout de suite.'
 	String get contexte => 'Un jour et une heure de plus, chaque semaine, pour la même classe. Les séances des quatre prochaines semaines sont créées tout de suite.';
 
-	/// fr: 'Heure de {ville}'
-	String fuseauSaisie({required Object ville}) => 'Heure de ${ville}';
+	/// fr: 'Heure {deVille}'
+	String fuseauSaisie({required Object deVille}) => 'Heure ${deVille}';
 
 	/// fr: 'Ajouter ce créneau'
 	String get envoyer => 'Ajouter ce créneau';
@@ -33106,8 +33106,8 @@ class Traductions$tc$groupe$horloges$fr {
 	/// fr: 'Heure de La Mecque : {heure}'
 	String mecqueEnSecond({required Object heure}) => 'Heure de La Mecque : ${heure}';
 
-	/// fr: '{heure} (heure de {ville})'
-	String heureDeVille({required Object heure, required Object ville}) => '${heure} (heure de ${ville})';
+	/// fr: '{heure} (heure {deVille})'
+	String heureDeVille({required Object heure, required Object deVille}) => '${heure} (heure ${deVille})';
 
 	/// fr: 'La Mecque'
 	String get laMecque => 'La Mecque';
@@ -52869,7 +52869,7 @@ extension on Traductions {
 			'admin.groupes.reglagesClasse.faitDuree' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, zero: 'Durée enregistrée : aucune séance à venir à changer pour le moment.', one: 'Durée enregistrée : ${n} séance à venir la prend.', other: 'Durée enregistrée : ${n} séances à venir la prennent.', ), 
 			'admin.groupes.creneau.titre' => ({required Object deLibelle}) => 'Nouveau créneau ${deLibelle}',
 			'admin.groupes.creneau.contexte' => 'Un jour et une heure de plus, chaque semaine, pour la même classe. Les séances des quatre prochaines semaines sont créées tout de suite.',
-			'admin.groupes.creneau.fuseauSaisie' => ({required Object ville}) => 'Heure de ${ville}',
+			'admin.groupes.creneau.fuseauSaisie' => ({required Object deVille}) => 'Heure ${deVille}',
 			'admin.groupes.creneau.envoyer' => 'Ajouter ce créneau',
 			'admin.groupes.creneau.dejaLa' => 'Cette classe a déjà ce créneau : rien n\'a changé. Choisissez un autre jour ou une autre heure.',
 			'admin.groupes.creneau.erreur' => 'Le créneau n\'est pas confirmé : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
@@ -55024,7 +55024,7 @@ extension on Traductions {
 			'lieu.credit' => 'Liste des villes : GeoNames (geonames.org), licence CC BY 4.0.',
 			'lieu.aucune' => ({required Object texte}) => 'Aucune ville ne commence par « ${texte} ». Essayez les premières lettres du nom, sans accent.',
 			'lieu.chargeEchec' => 'La liste des villes ne s\'est pas chargée',
-			'lieu.chargeEchecPhrase' => 'La liste n\'a pas répondu. Vérifiez votre connexion puis réessayez.',
+			'lieu.chargeEchecPhrase' => 'La liste n\'a pas pu s\'afficher. Réessayez dans un instant.',
 			'lieu.choisie' => ({required Object ville, required Object pays}) => 'Ville choisie : ${ville}, ${pays}.',
 			'lieu.enregistrer' => 'Enregistrer ma ville',
 			'lieu.plusTard' => 'Plus tard',
@@ -55040,8 +55040,8 @@ extension on Traductions {
 			'lieu.villeAbsente' => 'Ville non choisie',
 			'lieu.verifiee' => 'Ville vérifiée',
 			'lieu.nonVerifiee' => 'Ville à vérifier',
-			'lieu.verifier' => ({required Object nom}) => 'Vérifier la ville de ${nom}',
-			'lieu.villeVerifiee' => ({required Object nom}) => 'La ville de ${nom} est vérifiée.',
+			'lieu.verifier' => ({required Object deNom}) => 'Vérifier la ville ${deNom}',
+			'lieu.villeVerifiee' => ({required Object deNom}) => 'La ville ${deNom} est vérifiée.',
 			'lieu.verifierEchec' => 'La vérification n\'est pas confirmée. Réessayez dans un instant.',
 			'lieu.incoherencesTitre' => 'Villes à vérifier',
 			'lieu.incSansVille' => 'n\'a pas encore choisi sa ville',
@@ -56998,7 +56998,7 @@ extension on Traductions {
 			'tc.groupe.horloges.apercuChezPuis' => ({required Object ou, required Object heure, required Object apres, required Object date}) => '${ou} : ${heure}, puis ${apres} à partir du ${date}.',
 			'tc.groupe.horloges.heureEtVille' => ({required Object heure, required Object ville}) => '${heure} ${ville}',
 			'tc.groupe.horloges.mecqueEnSecond' => ({required Object heure}) => 'Heure de La Mecque : ${heure}',
-			'tc.groupe.horloges.heureDeVille' => ({required Object heure, required Object ville}) => '${heure} (heure de ${ville})',
+			'tc.groupe.horloges.heureDeVille' => ({required Object heure, required Object deVille}) => '${heure} (heure ${deVille})',
 			'tc.groupe.horloges.laMecque' => 'La Mecque',
 			'tc.groupe.horloges.chezVous' => 'Chez vous',
 			'tc.groupe.horloges.chezEnseignantAnonyme' => 'Chez votre enseignant',

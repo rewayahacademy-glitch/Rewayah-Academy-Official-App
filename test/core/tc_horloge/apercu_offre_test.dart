@@ -106,11 +106,15 @@ void main() {
     expect(find.byKey(LigneApercuOffre.cle), findsNothing);
   });
 
-  testWidgets('en arabe : la meme ligne', (tester) async {
-    await LocaleSettings.setLocale(AppLocale.ar);
-    await _monter(tester, _Port(_change));
-    expect(find.byKey(LigneApercuOffre.cle), findsOneWidget);
-    expect(find.textContaining('20:00'), findsOneWidget);
-    await LocaleSettings.setLocale(AppLocale.fr);
+  group('en arabe', () {
+    // L'arabe se charge a la demande : dans le setUp, pas dans le test.
+    setUp(() => LocaleSettings.setLocale(AppLocale.ar));
+    tearDown(() => LocaleSettings.setLocale(AppLocale.fr));
+
+    testWidgets('la meme ligne', (tester) async {
+      await _monter(tester, _Port(_change));
+      expect(find.byKey(LigneApercuOffre.cle), findsOneWidget);
+      expect(find.textContaining('20:00'), findsOneWidget);
+    });
   });
 }

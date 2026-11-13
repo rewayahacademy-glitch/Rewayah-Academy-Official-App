@@ -896,7 +896,7 @@ class _Traductions$lieu$ar extends Traductions$lieu$fr {
 	@override String get credit => 'قائمة المدن: GeoNames (geonames.org)، رخصة CC BY 4.0.';
 	@override String aucune({required Object texte}) => 'لا توجد مدينة تبدأ بـ«⁨${texte}⁩». جرّبوا الحروف الأولى من الاسم.';
 	@override String get chargeEchec => 'لم تُحمَّل قائمة المدن';
-	@override String get chargeEchecPhrase => 'لم تستجب القائمة. تحقّقوا من اتصالكم ثم أعيدوا المحاولة.';
+	@override String get chargeEchecPhrase => 'لم تستجب القائمة. أعيدوا المحاولة بعد قليل.';
 	@override String choisie({required Object ville, required Object pays}) => 'المدينة المختارة: ⁨${ville}⁩، ⁨${pays}⁩.';
 	@override String get enregistrer => 'حفظ مدينتي';
 	@override String get plusTard => 'لاحقًا';
@@ -912,8 +912,8 @@ class _Traductions$lieu$ar extends Traductions$lieu$fr {
 	@override String get villeAbsente => 'لم تُختر مدينة';
 	@override String get verifiee => 'مدينة تمت مراجعتها';
 	@override String get nonVerifiee => 'مدينة تحتاج إلى مراجعة';
-	@override String verifier({required Object nom}) => 'مراجعة مدينة ⁨${nom}⁩';
-	@override String villeVerifiee({required Object nom}) => 'تمت مراجعة مدينة ⁨${nom}⁩.';
+	@override String verifier({required Object deNom}) => 'مراجعة مدينة ⁨${deNom}⁩';
+	@override String villeVerifiee({required Object deNom}) => 'تمت مراجعة مدينة ⁨${deNom}⁩.';
 	@override String get verifierEchec => 'لم يتم تأكيد المراجعة. أعيدوا المحاولة بعد قليل.';
 	@override String get incoherencesTitre => 'مدن تحتاج إلى مراجعة';
 	@override String get incSansVille => 'لم يختر مدينته بعد';
@@ -2290,7 +2290,7 @@ class _Traductions$notifications$evenements$ar extends Traductions$notifications
 	@override String get creneauChange => 'تغيّر موعد الفصل.';
 	@override String changementHeureUn({required Object date, required Object cours, required Object jour, required Object avant, required Object apres}) => 'ابتداءً من ⁨${date}⁩، يتغيّر موعد ⁨${cours}⁩ في يوم ⁨${jour}⁩ من الساعة ⁨${avant}⁩ إلى الساعة ⁨${apres}⁩.';
 	@override String changementHeurePlusieurs({required Object date, required Object cours, required Object liste}) => 'ابتداءً من ⁨${date}⁩، يتغيّر توقيت ⁨${cours}⁩: ⁨${liste}⁩.';
-	@override String changementHeureUnJour({required Object date, required Object cours, required Object jourAvant, required Object avant, required Object jourApres, required Object apres}) => 'ابتداءً من ⁨${date}⁩، يتغيّر موعد ${cours} من يوم ⁨${jourAvant}⁩ الساعة ⁨${avant}⁩ إلى يوم ⁨${jourApres}⁩ الساعة ⁨${apres}⁩.';
+	@override String changementHeureUnJour({required Object date, required Object cours, required Object jourAvant, required Object avant, required Object jourApres, required Object apres}) => 'ابتداءً من ⁨${date}⁩، يتغيّر موعد ⁨${cours}⁩ من يوم ⁨${jourAvant}⁩ الساعة ⁨${avant}⁩ إلى يوم ⁨${jourApres}⁩ الساعة ⁨${apres}⁩.';
 	@override String changementHeureLigneJour({required Object jourAvant, required Object avant, required Object jourApres, required Object apres}) => 'من يوم ⁨${jourAvant}⁩ الساعة ⁨${avant}⁩ إلى يوم ⁨${jourApres}⁩ الساعة ⁨${apres}⁩';
 	@override String get changementHeureMecque => 'تبقى الحصة في الساعة نفسها بتوقيت مكة المكرمة: الذي يتغيّر هو توقيت مدينتكم.';
 	@override String conversionRefusee({required Object classe, required Object raison}) => 'تعذّر نقل الفصل ⁨${classe}⁩ إلى توقيت مكة المكرمة: ⁨${raison}⁩ ستُعاد المحاولة هذه الليلة.';
@@ -12320,7 +12320,7 @@ class _Traductions$tc$groupe$horloges$ar extends Traductions$tc$groupe$horloges$
 	@override String apercuChezPuis({required Object ou, required Object heure, required Object apres, required Object date}) => '⁨${ou}⁩: الساعة ⁨${heure}⁩، ثم الساعة ⁨${apres}⁩ ابتداءً من ⁨${date}⁩.';
 	@override String heureEtVille({required Object heure, required Object ville}) => '⁨${heure}⁩ ⁨${ville}⁩';
 	@override String mecqueEnSecond({required Object heure}) => 'توقيت مكة المكرمة: ⁨${heure}⁩';
-	@override String heureDeVille({required Object heure, required Object ville}) => '⁨${heure}⁩ (بتوقيت ⁨${ville}⁩)';
+	@override String heureDeVille({required Object heure, required Object deVille}) => '⁨${heure}⁩ (بتوقيت ⁨${deVille}⁩)';
 	@override String get laMecque => 'مكة المكرمة';
 	@override String get chezVous => 'عندكم';
 	@override String get chezEnseignantAnonyme => 'عند معلّمكم';
@@ -15559,7 +15559,7 @@ class _Traductions$admin$groupes$creneau$ar extends Traductions$admin$groupes$cr
 	// Translations
 	@override String titre({required Object deLibelle}) => 'موعد جديد ⁨${deLibelle}⁩';
 	@override String get contexte => 'يوم وساعة إضافيان كل أسبوع للفصل نفسه. تُنشأ حصص الأسابيع الأربعة القادمة فورًا.';
-	@override String fuseauSaisie({required Object ville}) => 'بتوقيت ⁨${ville}⁩';
+	@override String fuseauSaisie({required Object deVille}) => 'بتوقيت ⁨${deVille}⁩';
 	@override String get envoyer => 'إضافة هذا الموعد';
 	@override String get dejaLa => 'لهذا الفصل هذا الموعد مسبقًا: لم يتغير شيء. اختر يومًا آخر أو ساعة أخرى.';
 	@override String get erreur => 'لم تُؤكَّد إضافة الموعد: ربما لم يصل الطلب إلى Rewayah. أعد المحاولة بعد لحظة.';
@@ -24198,7 +24198,7 @@ extension on TraductionsAr {
 			'notifications.evenements.creneauChange' => 'تغيّر موعد الفصل.',
 			'notifications.evenements.changementHeureUn' => ({required Object date, required Object cours, required Object jour, required Object avant, required Object apres}) => 'ابتداءً من ⁨${date}⁩، يتغيّر موعد ⁨${cours}⁩ في يوم ⁨${jour}⁩ من الساعة ⁨${avant}⁩ إلى الساعة ⁨${apres}⁩.',
 			'notifications.evenements.changementHeurePlusieurs' => ({required Object date, required Object cours, required Object liste}) => 'ابتداءً من ⁨${date}⁩، يتغيّر توقيت ⁨${cours}⁩: ⁨${liste}⁩.',
-			'notifications.evenements.changementHeureUnJour' => ({required Object date, required Object cours, required Object jourAvant, required Object avant, required Object jourApres, required Object apres}) => 'ابتداءً من ⁨${date}⁩، يتغيّر موعد ${cours} من يوم ⁨${jourAvant}⁩ الساعة ⁨${avant}⁩ إلى يوم ⁨${jourApres}⁩ الساعة ⁨${apres}⁩.',
+			'notifications.evenements.changementHeureUnJour' => ({required Object date, required Object cours, required Object jourAvant, required Object avant, required Object jourApres, required Object apres}) => 'ابتداءً من ⁨${date}⁩، يتغيّر موعد ⁨${cours}⁩ من يوم ⁨${jourAvant}⁩ الساعة ⁨${avant}⁩ إلى يوم ⁨${jourApres}⁩ الساعة ⁨${apres}⁩.',
 			'notifications.evenements.changementHeureLigneJour' => ({required Object jourAvant, required Object avant, required Object jourApres, required Object apres}) => 'من يوم ⁨${jourAvant}⁩ الساعة ⁨${avant}⁩ إلى يوم ⁨${jourApres}⁩ الساعة ⁨${apres}⁩',
 			'notifications.evenements.changementHeureMecque' => 'تبقى الحصة في الساعة نفسها بتوقيت مكة المكرمة: الذي يتغيّر هو توقيت مدينتكم.',
 			'notifications.evenements.conversionRefusee' => ({required Object classe, required Object raison}) => 'تعذّر نقل الفصل ⁨${classe}⁩ إلى توقيت مكة المكرمة: ⁨${raison}⁩ ستُعاد المحاولة هذه الليلة.',
@@ -26602,7 +26602,7 @@ extension on TraductionsAr {
 			'tc.groupe.horloges.apercuChezPuis' => ({required Object ou, required Object heure, required Object apres, required Object date}) => '⁨${ou}⁩: الساعة ⁨${heure}⁩، ثم الساعة ⁨${apres}⁩ ابتداءً من ⁨${date}⁩.',
 			'tc.groupe.horloges.heureEtVille' => ({required Object heure, required Object ville}) => '⁨${heure}⁩ ⁨${ville}⁩',
 			'tc.groupe.horloges.mecqueEnSecond' => ({required Object heure}) => 'توقيت مكة المكرمة: ⁨${heure}⁩',
-			'tc.groupe.horloges.heureDeVille' => ({required Object heure, required Object ville}) => '⁨${heure}⁩ (بتوقيت ⁨${ville}⁩)',
+			'tc.groupe.horloges.heureDeVille' => ({required Object heure, required Object deVille}) => '⁨${heure}⁩ (بتوقيت ⁨${deVille}⁩)',
 			'tc.groupe.horloges.laMecque' => 'مكة المكرمة',
 			'tc.groupe.horloges.chezVous' => 'عندكم',
 			'tc.groupe.horloges.chezEnseignantAnonyme' => 'عند معلّمكم',
@@ -29043,7 +29043,7 @@ extension on TraductionsAr {
 			'admin.groupes.actionAjouterCreneau' => 'إضافة موعد',
 			'admin.groupes.creneau.titre' => ({required Object deLibelle}) => 'موعد جديد ⁨${deLibelle}⁩',
 			'admin.groupes.creneau.contexte' => 'يوم وساعة إضافيان كل أسبوع للفصل نفسه. تُنشأ حصص الأسابيع الأربعة القادمة فورًا.',
-			'admin.groupes.creneau.fuseauSaisie' => ({required Object ville}) => 'بتوقيت ⁨${ville}⁩',
+			'admin.groupes.creneau.fuseauSaisie' => ({required Object deVille}) => 'بتوقيت ⁨${deVille}⁩',
 			'admin.groupes.creneau.envoyer' => 'إضافة هذا الموعد',
 			'admin.groupes.creneau.dejaLa' => 'لهذا الفصل هذا الموعد مسبقًا: لم يتغير شيء. اختر يومًا آخر أو ساعة أخرى.',
 			'admin.groupes.creneau.erreur' => 'لم تُؤكَّد إضافة الموعد: ربما لم يصل الطلب إلى Rewayah. أعد المحاولة بعد لحظة.',
@@ -31837,7 +31837,7 @@ extension on TraductionsAr {
 			'lieu.credit' => 'قائمة المدن: GeoNames (geonames.org)، رخصة CC BY 4.0.',
 			'lieu.aucune' => ({required Object texte}) => 'لا توجد مدينة تبدأ بـ«⁨${texte}⁩». جرّبوا الحروف الأولى من الاسم.',
 			'lieu.chargeEchec' => 'لم تُحمَّل قائمة المدن',
-			'lieu.chargeEchecPhrase' => 'لم تستجب القائمة. تحقّقوا من اتصالكم ثم أعيدوا المحاولة.',
+			'lieu.chargeEchecPhrase' => 'لم تستجب القائمة. أعيدوا المحاولة بعد قليل.',
 			'lieu.choisie' => ({required Object ville, required Object pays}) => 'المدينة المختارة: ⁨${ville}⁩، ⁨${pays}⁩.',
 			'lieu.enregistrer' => 'حفظ مدينتي',
 			'lieu.plusTard' => 'لاحقًا',
@@ -31853,8 +31853,8 @@ extension on TraductionsAr {
 			'lieu.villeAbsente' => 'لم تُختر مدينة',
 			'lieu.verifiee' => 'مدينة تمت مراجعتها',
 			'lieu.nonVerifiee' => 'مدينة تحتاج إلى مراجعة',
-			'lieu.verifier' => ({required Object nom}) => 'مراجعة مدينة ⁨${nom}⁩',
-			'lieu.villeVerifiee' => ({required Object nom}) => 'تمت مراجعة مدينة ⁨${nom}⁩.',
+			'lieu.verifier' => ({required Object deNom}) => 'مراجعة مدينة ⁨${deNom}⁩',
+			'lieu.villeVerifiee' => ({required Object deNom}) => 'تمت مراجعة مدينة ⁨${deNom}⁩.',
 			'lieu.verifierEchec' => 'لم يتم تأكيد المراجعة. أعيدوا المحاولة بعد قليل.',
 			'lieu.incoherencesTitre' => 'مدن تحتاج إلى مراجعة',
 			'lieu.incSansVille' => 'لم يختر مدينته بعد',
