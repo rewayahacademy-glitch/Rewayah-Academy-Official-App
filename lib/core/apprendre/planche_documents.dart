@@ -49,6 +49,7 @@ import '../widgets/pressable.dart';
 import '../widgets/puce_filtre_actif.dart';
 import '../widgets/rangee_filtres.dart';
 import '../widgets/section_header.dart';
+import '../widgets/status_pill.dart';
 import 'affichage_planche.dart';
 import 'document_planche.dart';
 import 'vignette_document.dart';
@@ -546,7 +547,8 @@ String _semantiqueDocument(DocumentPlanche d) {
     type: libelleTypeDocument(d.type),
   );
   final String? description = d.description;
-  return description == null ? base : '$base. $description';
+  final String? horsLigne = d.horsLigne?.libelle;
+  return <String>[base, ?description, ?horsLigne].join('. ');
 }
 
 /// Une tuile de la grille : la vignette, puis le titre et une ligne.
@@ -593,6 +595,10 @@ class _TuileDocument extends StatelessWidget {
                       textes.bodySmall ?? const TextStyle(),
                     ),
                   ),
+            if (document.horsLigne != null) ...<Widget>[
+              Ecart.vSm,
+              _PastilleHorsLigne(document.horsLigne!),
+            ],
           ],
         ),
       ),
@@ -669,6 +675,10 @@ class _LigneDocument extends StatelessWidget {
                       ),
                     ],
                   ),
+                  if (document.horsLigne != null) ...<Widget>[
+                    Ecart.vSm,
+                    _PastilleHorsLigne(document.horsLigne!),
+                  ],
                 ],
               ),
             ),
@@ -753,5 +763,19 @@ class _TexteContenu extends StatelessWidget {
   Widget build(BuildContext context) => dirigerContenuArabe(
     texte,
     TexteSansCoupure(texte, style: styleContenuArabe(texte, style)),
+  );
+}
+
+/// L'etat hors ligne d'un document gardé sur l'appareil : une pastille et un
+/// mot (jamais la couleur seule).
+class _PastilleHorsLigne extends StatelessWidget {
+  const _PastilleHorsLigne(this.etat);
+
+  final HorsLigneDocument etat;
+
+  @override
+  Widget build(BuildContext context) => Align(
+    alignment: AlignmentDirectional.centerStart,
+    child: StatusPill(libelle: etat.libelle, ton: etat.ton),
   );
 }

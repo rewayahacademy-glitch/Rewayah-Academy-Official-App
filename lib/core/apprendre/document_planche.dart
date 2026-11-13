@@ -12,6 +12,7 @@ library;
 import 'package:flutter/widgets.dart';
 
 import '../tc_bibliotheque/couverture_ressource.dart';
+import '../widgets/status_pill.dart' show TonEtat;
 
 /// Les types que l'eleve peut filtrer (charte, partie 11 : document, audio,
 /// video, lien externe). Le Coran, une image, une lecon sont des documents.
@@ -62,6 +63,20 @@ class OuvrirDansLApplication extends OuvertureDocument {
   final String chemin;
 }
 
+/// L'etat hors ligne d'un document, tel que le dit la Bibliotheque une : un
+/// mot ([libelle]) et un ton, jamais une couleur seule.
+@immutable
+class HorsLigneDocument {
+  /// Cree l'etat.
+  const HorsLigneDocument({required this.libelle, required this.ton});
+
+  /// Le mot (« Téléchargé »).
+  final String libelle;
+
+  /// Son ton.
+  final TonEtat ton;
+}
+
 /// Un document de la planche.
 @immutable
 class DocumentPlanche {
@@ -76,6 +91,7 @@ class DocumentPlanche {
     this.vignette,
     this.couverture,
     this.aVignetteDeposee = false,
+    this.horsLigne,
   });
 
   /// Son identifiant, stable (cle des widgets et des tests).
@@ -106,18 +122,25 @@ class DocumentPlanche {
   /// manifeste le dit ; l'image se demande au serveur, par l'appelant).
   final bool aVignetteDeposee;
 
-  /// Ce document avec sa vignette complete [widget].
-  DocumentPlanche avecVignette(Widget widget) => DocumentPlanche(
-    id: id,
-    titre: titre,
-    type: type,
-    rayon: rayon,
-    ouverture: ouverture,
-    description: description,
-    vignette: widget,
-    couverture: couverture,
-    aVignetteDeposee: aVignetteDeposee,
-  );
+  /// L'etat hors ligne d'un document que la personne a gardé sur l'appareil
+  /// (telecharge, en cours, en cache), ou `null` : rien a dire. Pose par
+  /// l'appelant, qui lit l'etat du lot 3 (`PortEtatOffline`).
+  final HorsLigneDocument? horsLigne;
+
+  /// Ce document avec sa vignette complete et/ou son etat hors ligne.
+  DocumentPlanche avec({Widget? vignette, HorsLigneDocument? horsLigne}) =>
+      DocumentPlanche(
+        id: id,
+        titre: titre,
+        type: type,
+        rayon: rayon,
+        ouverture: ouverture,
+        description: description,
+        vignette: vignette ?? this.vignette,
+        couverture: couverture,
+        aVignetteDeposee: aVignetteDeposee,
+        horsLigne: horsLigne ?? this.horsLigne,
+      );
 
   /// La couverture calculee d'un document, pour la vignette par defaut d'un
   /// livre (le Coran garde la sienne). `null` : la vignette par defaut du type

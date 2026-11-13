@@ -9,6 +9,7 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/apprendre/document_planche.dart';
 import '../../core/apprendre/documents_apprendre.dart';
@@ -18,13 +19,17 @@ import '../../core/icons/app_icons.dart';
 import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/etat_routeur_sur.dart';
+import '../../core/router/routes.dart';
 import '../../core/tc_bibliotheque/couverture_ressource.dart';
 import '../../core/tc_bibliotheque/library_resource.dart'
-    show RayonBibliotheque;
+    show LibraryResource, RayonBibliotheque, TypeRessource;
+import '../../core/tc_telechargement/port_etat_offline.dart' show EtatOffline;
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
+import '../tc_catalogue/carte_ressource.dart';
+import '../tc_catalogue/libelles_bibliotheque.dart' show libelleOffline;
 import '../tc_catalogue/vignette_ressource.dart';
 
 /// Les cles des tests.
@@ -39,6 +44,9 @@ abstract final class ClesBibliotheque {
   static const Key classeChargement = ValueKey<String>(
     'apprendre-bib-classe-chargement',
   );
+
+  /// « Continuer » : le dernier document ouvert.
+  static const Key continuer = ValueKey<String>('apprendre-bib-continuer');
 
   /// L'echec de lecture de « Pour cette classe ».
   static const Key classeErreur = ValueKey<String>(
@@ -124,10 +132,13 @@ class OngletBibliotheque extends ConsumerWidget {
         );
       }
     }
+    final Map<String, EtatOffline> etats =
+        ref.watch(etatsHorsLigneApprendreProvider).value ??
+        const <String, EtatOffline>{};
     final Set<String> dansLaClasse = <String>{
       for (final DocumentPlanche d in classe) d.id,
     };
-    return PlancheDocuments(
+    final Widget planche = PlancheDocuments(
       rubriqueClasse: rubrique,
       rayons:
           ref.watch(rayonsApprendreProvider).value ??
@@ -139,7 +150,66 @@ class OngletBibliotheque extends ConsumerWidget {
             if (!dansLaClasse.contains(d.id))
               d.id == idDocumentCoran ? documentCoran() : d,
         ])
-          _avecVignette(d),
+          _habiller(d, etats),
+      ],
+    );
+    final RepriseApprendre? reprise = ref.watch(repriseApprendreProvider).value;
+    if (reprise == null) return planche;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        _Continuer(reprise: reprise),
+        planche,
+      ],
+    );
+  }
+}
+
+/// « Continuer » : le dernier document ouvert, avec la carte de la
+/// Bibliotheque une (`CarteRessource`, le port `derniereLecture` du lot 3), sans
+/// rien reecrire. Aucune date ni duree : la carte n'en porte pas, et le moment
+/// de la derniere vue (`vueLeUtc`) n'est jamais montre. Une carte qui ne peut
+/// pas s'ouvrir (hors ligne, rien de garde sur l'appareil) dit pourquoi.
+class _Continuer extends ConsumerWidget {
+  const _Continuer({required this.reprise});
+
+  final RepriseApprendre reprise;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final LibraryResource r = reprise.reprise.ressource;
+    final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
+    final bool ouvrable =
+        r.publiee &&
+        (!horsLigne ||
+            reprise.etat == EtatOffline.telecharge ||
+            reprise.etat == EtatOffline.enCache);
+    return Column(
+      key: ClesBibliotheque.continuer,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        SectionHeader(titre: t.tc.bibliotheque.sections.continuer),
+        Ecart.vMd,
+        CarteRessource(
+          ressource: r,
+          etatOffline: reprise.etat,
+          // Le Coran s'ouvre dans son lecteur, comme sa carte de la planche.
+          onPress: ouvrable
+              ? () => GoRouter.of(context).go(
+                  r.resourceType == TypeRessource.quran
+                      ? Routes.eleveCoran
+                      : cheminFicheDocument(r.id),
+                )
+              : null,
+          raisonIndisponible: ouvrable
+              ? null
+              : (r.publiee
+                    ? t.tc.bibliotheque.message.horsLigneNonTelecharge
+                    : t.tc.bibliotheque.detail.sansVersion),
+        ),
+        Ecart.vSection,
       ],
     );
   }
@@ -148,14 +218,31 @@ class OngletBibliotheque extends ConsumerWidget {
 /// La vignette de la Bibliotheque une (lot 3) pour [d] : la meme couverture
 /// que les cartes de la liste d'origine (par defaut selon le type, ou la
 /// vignette deposee par-dessus). Une seule couverture pour un document.
-DocumentPlanche _avecVignette(DocumentPlanche d) {
+DocumentPlanche _habiller(DocumentPlanche d, Map<String, EtatOffline> etats) {
   final CouvertureRessource? couverture = d.couverture;
-  if (couverture == null) return d;
-  return d.avecVignette(
-    VignetteRessource(
-      couverture: couverture,
-      image: d.aVignetteDeposee ? ImageVignetteDeposee(resourceId: d.id) : null,
-    ),
+  // L'etat hors ligne d'un document gardé sur l'appareil, avec les mots et
+  // les tons de la Bibliotheque une ; « a telecharger » et « indisponible »
+  // ne disent rien ici (la planche n'est pas un gestionnaire de copies).
+  final EtatOffline? etat = etats[d.id];
+  final HorsLigneDocument? horsLigne =
+      etat == null ||
+          etat == EtatOffline.aTelecharger ||
+          etat == EtatOffline.indisponible
+      ? null
+      : HorsLigneDocument(
+          libelle: libelleOffline(etat),
+          ton: CarteRessource.tonDe(etat),
+        );
+  return d.avec(
+    horsLigne: horsLigne,
+    vignette: couverture == null
+        ? null
+        : VignetteRessource(
+            couverture: couverture,
+            image: d.aVignetteDeposee
+                ? ImageVignetteDeposee(resourceId: d.id)
+                : null,
+          ),
   );
 }
 

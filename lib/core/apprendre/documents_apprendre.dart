@@ -23,6 +23,7 @@
 ///   jamais deux Corans).
 library;
 
+import 'package:flutter/foundation.dart' show immutable;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
 
@@ -32,7 +33,10 @@ import '../tc_bibliotheque/capacite_lecture_coran.dart';
 import '../tc_bibliotheque/couverture_ressource.dart';
 import '../tc_bibliotheque/donnees_catalogue.dart';
 import '../tc_bibliotheque/library_resource.dart';
-import '../tc_bibliotheque/port_catalogue.dart' show EchecCatalogue;
+import '../tc_bibliotheque/port_catalogue.dart'
+    show EchecCatalogue, ReprisLecture;
+import '../tc_telechargement/port_etat_offline.dart'
+    show EtatOffline, PortEtatOffline;
 import 'document_planche.dart';
 
 /// L'identifiant de la carte du Coran.
@@ -61,7 +65,7 @@ String cheminApprendre({String? groupe}) {
 /// importer `features/` depuis le core ; le chemin doit rester egal a
 /// `RoutesTcB.versRessource` (un test le verifie).
 String cheminFicheDocument(String resourceId) => Uri(
-  path: '${Routes.tcBibliotheque}/$resourceId',
+  path: '${Routes.tcBibliotheque}/${Uri.encodeComponent(resourceId)}',
   queryParameters: <String, String>{'retour': Routes.eleveApprendre},
 ).toString();
 
@@ -200,3 +204,56 @@ final FutureProvider<List<RayonBibliotheque>> rayonsApprendreProvider =
           ),
       retry: (int _, Object _) => null,
     );
+
+/// « Continuer » : le dernier document ouvert, avec son etat hors ligne (le
+/// port du lot 3, `PortCatalogue.derniereLecture` et `PortEtatOffline`).
+@immutable
+class RepriseApprendre {
+  /// Cree la reprise.
+  const RepriseApprendre({required this.reprise, required this.etat});
+
+  /// La ressource a reprendre et sa position.
+  final ReprisLecture reprise;
+
+  /// Son etat hors ligne.
+  final EtatOffline etat;
+}
+
+/// La reprise, ou `null` : rien a reprendre, ou une lecture qui echoue (la
+/// reprise est un confort, jamais une condition : la Bibliotheque s'affiche
+/// sans elle).
+final FutureProvider<RepriseApprendre?> repriseApprendreProvider =
+    FutureProvider<RepriseApprendre?>((Ref ref) async {
+      try {
+        final ReprisLecture? reprise = await ref
+            .watch(portCatalogueProvider)
+            .derniereLecture();
+        if (reprise == null) return null;
+        final EtatOffline etat = await ref
+            .watch(portEtatOfflineProvider)
+            .etatDe(reprise.ressource.id);
+        return RepriseApprendre(reprise: reprise, etat: etat);
+      } on Object {
+        return null;
+      }
+    }, retry: (int _, Object _) => null);
+
+/// L'etat hors ligne des documents du catalogue : un mot par document que la
+/// personne a garde sur l'appareil. Une lecture qui echoue ne rend rien.
+final FutureProvider<Map<String, EtatOffline>> etatsHorsLigneApprendreProvider =
+    FutureProvider<Map<String, EtatOffline>>((Ref ref) async {
+      final List<DocumentPlanche> documents = await ref.watch(
+        documentsApprendreProvider.future,
+      );
+      final PortEtatOffline offline = ref.watch(portEtatOfflineProvider);
+      final Map<String, EtatOffline> etats = <String, EtatOffline>{};
+      for (final DocumentPlanche d in documents) {
+        if (d.id == idDocumentCoran) continue;
+        try {
+          etats[d.id] = await offline.etatDe(d.id);
+        } on Object {
+          continue;
+        }
+      }
+      return etats;
+    }, retry: (int _, Object _) => null);

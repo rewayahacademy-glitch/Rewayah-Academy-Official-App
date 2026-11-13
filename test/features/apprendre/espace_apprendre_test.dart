@@ -15,15 +15,21 @@ import 'package:rewayah_academy/core/capacites/port_progression_famille.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/preferences/preferences_locales.dart';
+import 'package:rewayah_academy/core/recherche/modeles_recherche.dart';
+import 'package:rewayah_academy/core/recherche/port_recherche.dart'
+    show MoteurRechercheDomaine, moteursRechercheProvider;
 import 'package:rewayah_academy/core/router/fil_ariane.dart' show planFilPour;
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/catalogue_local.dart';
+import 'package:rewayah_academy/core/tc_bibliotheque/content_position.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/donnees_catalogue.dart'
-    show portCatalogueProvider;
+    show portCatalogueProvider, portEtatOfflineProvider;
 import 'package:rewayah_academy/core/tc_bibliotheque/library_resource.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/port_catalogue.dart'
-    show EchecCatalogue;
+    show EchecCatalogue, ReprisLecture;
+import 'package:rewayah_academy/core/tc_telechargement/port_etat_offline.dart'
+    show EtatOffline, PortEtatOffline;
 import 'package:rewayah_academy/core/theme/app_typography.dart'
     show AppFontFamily;
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
@@ -34,6 +40,7 @@ import 'package:rewayah_academy/core/widgets/entete_page.dart'
 import 'package:rewayah_academy/core/widgets/fil_ariane.dart' show FilAriane;
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/core/widgets/rangee_filtres.dart';
+import 'package:rewayah_academy/core/widgets/status_pill.dart' show StatusPill;
 import 'package:rewayah_academy/features/accueil_adulte/accueil_adulte_page.dart'
     show AccueilAdultePage;
 import 'package:rewayah_academy/features/apprendre/espace_apprendre_page.dart';
@@ -42,12 +49,22 @@ import 'package:rewayah_academy/features/apprendre/onglet_livret.dart';
 import 'package:rewayah_academy/features/apprendre/onglet_programme.dart';
 import 'package:rewayah_academy/features/compte/compte_page.dart'
     show ComptePage;
+import 'package:rewayah_academy/features/demo/recherche/moteur_recherche_demo.dart'
+    show EntreeCorpusDemo, MoteurRechercheDemo;
 import 'package:rewayah_academy/features/foyer/routes_n2_foyer_adulte.dart'
     show RoutesN2;
 import 'package:rewayah_academy/features/ma_classe_adulte/ma_classe_adulte_page.dart'
     show MaClasseAdultePage;
+import 'package:rewayah_academy/features/recherche/ecran/ecran_recherche.dart'
+    show cleChampRecherche;
+import 'package:rewayah_academy/features/recherche/resolveur_cible.dart'
+    show cheminPourCible;
 import 'package:rewayah_academy/features/suivi_eleve/entree_bibliotheque.dart';
 import 'package:rewayah_academy/features/tc_catalogue/bibliotheque_page.dart';
+import 'package:rewayah_academy/features/tc_catalogue/carte_ressource.dart'
+    show CarteRessource;
+import 'package:rewayah_academy/features/tc_catalogue/detail_ressource_page.dart'
+    show DetailRessourcePage;
 import 'package:rewayah_academy/features/tc_catalogue/routes_tc_b.dart';
 
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
@@ -703,6 +720,215 @@ void main() {
     });
   });
 
+  group('« Continuer » et l\'etat hors ligne (le port du lot 3)', () {
+    LibraryResource ressource(
+      String id, {
+      TypeRessource type = TypeRessource.pdf,
+      bool publiee = true,
+    }) => LibraryResource(
+      id: id,
+      title: 'Titre $id',
+      shortTitle: id,
+      resourceType: type,
+      language: 'fr',
+      category: 'lecture',
+      accessPolicy: PolitiqueAcces.publique,
+      offlinePolicy: PolitiqueOffline.jamais,
+      currentVersionId: publiee ? 'v-$id' : null,
+    );
+
+    ReprisLecture reprise(LibraryResource r) => ReprisLecture(
+      ressource: r,
+      position: ContentPosition.page(resourceId: r.id, page: 3),
+      vueLeUtc: DateTime.utc(2026, 11, 12, 10),
+    );
+
+    List<Override> catalogue(
+      List<LibraryResource> ressources, {
+      LibraryResource? aReprendre,
+      Map<String, EtatOffline> etats = const <String, EtatOffline>{},
+    }) => <Override>[
+      portCatalogueProvider.overrideWithValue(
+        CatalogueLocal(
+          ressources: ressources,
+          reprise: aReprendre == null ? null : reprise(aReprendre),
+        ),
+      ),
+      portEtatOfflineProvider.overrideWithValue(_EtatsFixes(etats)),
+    ];
+
+    testWidgets('un document a reprendre : « Continuer » en tete, avec la '
+        'carte de la Bibliotheque une ; il s\'ouvre par sa fiche', (
+      WidgetTester tester,
+    ) async {
+      final LibraryResource r = ressource('livre');
+      final GoRouter routeur = await monterApprendre(
+        tester,
+        profil: ProfilApprendre.mineurGuide,
+        autres: catalogue(<LibraryResource>[r], aReprendre: r),
+      );
+      final Finder bloc = find.byKey(ClesBibliotheque.continuer);
+      expect(bloc, findsOneWidget);
+      expect(
+        find.descendant(
+          of: bloc,
+          matching: find.text(t.tc.bibliotheque.sections.continuer),
+        ),
+        findsOneWidget,
+      );
+      final Finder carte = find.descendant(
+        of: bloc,
+        matching: find.byType(CarteRessource),
+      );
+      expect(carte, findsOneWidget);
+      // En tete : au-dessus de la planche.
+      expect(
+        tester.getTopLeft(bloc).dy,
+        lessThan(tester.getTopLeft(find.byType(PlancheDocuments)).dy),
+      );
+      // Un mineur : ni date ni duree (le moment de la derniere vue n'est
+      // jamais montre).
+      expect(find.textContaining('2026'), findsNothing);
+      expect(find.textContaining('12/11'), findsNothing);
+      await tester.tap(carte);
+      await stabiliser(tester);
+      expect(lieu(routeur), cheminFicheDocument('livre'));
+    });
+
+    testWidgets('rien a reprendre : pas de « Continuer »', (
+      WidgetTester tester,
+    ) async {
+      await monterApprendre(
+        tester,
+        profil: ProfilApprendre.mineurGuide,
+        autres: catalogue(<LibraryResource>[ressource('livre')]),
+      );
+      expect(find.byKey(ClesBibliotheque.continuer), findsNothing);
+    });
+
+    testWidgets('lecture de la reprise en echec : la Bibliotheque s\'affiche '
+        'sans elle', (WidgetTester tester) async {
+      await monterApprendre(
+        tester,
+        profil: ProfilApprendre.mineurGuide,
+        autres: <Override>[
+          portCatalogueProvider.overrideWithValue(
+            _CatalogueRepriseEnPanne(<LibraryResource>[ressource('livre')]),
+          ),
+        ],
+      );
+      expect(find.byKey(ClesBibliotheque.continuer), findsNothing);
+      expect(find.byKey(PlancheDocuments.cleDocument('livre')), findsOneWidget);
+    });
+
+    testWidgets('le Coran a reprendre s\'ouvre dans son lecteur', (
+      WidgetTester tester,
+    ) async {
+      final LibraryResource coran = ressource(
+        'coran-cat',
+        type: TypeRessource.quran,
+      );
+      final GoRouter routeur = await monterApprendre(
+        tester,
+        profil: ProfilApprendre.mineurGuide,
+        autres: catalogue(<LibraryResource>[coran], aReprendre: coran),
+      );
+      await tester.tap(
+        find.descendant(
+          of: find.byKey(ClesBibliotheque.continuer),
+          matching: find.byType(CarteRessource),
+        ),
+      );
+      await stabiliser(tester);
+      expect(lieu(routeur), Routes.eleveCoran);
+    });
+
+    testWidgets('hors ligne, rien de garde sur l\'appareil : la carte dit '
+        'pourquoi et ne s\'ouvre pas', (WidgetTester tester) async {
+      final LibraryResource r = ressource('livre');
+      final GoRouter routeur = await monterApprendre(
+        tester,
+        profil: ProfilApprendre.mineurGuide,
+        horsLigne: true,
+        autres: catalogue(<LibraryResource>[r], aReprendre: r),
+      );
+      expect(
+        find.text(t.tc.bibliotheque.message.horsLigneNonTelecharge),
+        findsOneWidget,
+      );
+      await tester.tap(
+        find.descendant(
+          of: find.byKey(ClesBibliotheque.continuer),
+          matching: find.byType(CarteRessource),
+        ),
+        warnIfMissed: false,
+      );
+      await stabiliser(tester);
+      expect(lieu(routeur), Routes.eleveApprendre);
+    });
+
+    testWidgets('hors ligne, document telecharge : « Continuer » s\'ouvre', (
+      WidgetTester tester,
+    ) async {
+      final LibraryResource r = ressource('livre');
+      final GoRouter routeur = await monterApprendre(
+        tester,
+        profil: ProfilApprendre.mineurGuide,
+        horsLigne: true,
+        autres: catalogue(
+          <LibraryResource>[r],
+          aReprendre: r,
+          etats: <String, EtatOffline>{'livre': EtatOffline.telecharge},
+        ),
+      );
+      await tester.tap(
+        find.descendant(
+          of: find.byKey(ClesBibliotheque.continuer),
+          matching: find.byType(CarteRessource),
+        ),
+      );
+      await stabiliser(tester);
+      expect(lieu(routeur), cheminFicheDocument('livre'));
+    });
+
+    testWidgets('l\'etat hors ligne d\'un document garde sur l\'appareil : '
+        'un mot et une pastille sur sa tuile (grille et liste) ; rien pour '
+        'les autres', (WidgetTester tester) async {
+      await monterApprendre(
+        tester,
+        autres: catalogue(
+          <LibraryResource>[ressource('garde'), ressource('autre')],
+          etats: <String, EtatOffline>{
+            'garde': EtatOffline.telecharge,
+            'autre': EtatOffline.aTelecharger,
+          },
+        ),
+      );
+      final Finder garde = find.byKey(PlancheDocuments.cleDocument('garde'));
+      final Finder autre = find.byKey(PlancheDocuments.cleDocument('autre'));
+      for (final AffichagePlanche affichage in AffichagePlanche.values) {
+        await preferer(tester, affichage);
+        expect(
+          find.descendant(
+            of: garde,
+            matching: find.text(t.tc.bibliotheque.offline.telecharge),
+          ),
+          findsOneWidget,
+          reason: affichage.name,
+        );
+        expect(
+          find.descendant(of: garde, matching: find.byType(StatusPill)),
+          findsOneWidget,
+        );
+        expect(
+          find.descendant(of: autre, matching: find.byType(StatusPill)),
+          findsNothing,
+          reason: affichage.name,
+        );
+      }
+    });
+  });
+
   group('adaptateur du catalogue (types et descriptions du lot 3)', () {
     LibraryResource ressource(
       String id,
@@ -1040,6 +1266,90 @@ void main() {
       await stabiliser(tester);
       expect(lieu(routeur), Routes.tcBibliotheque);
       expect(find.byType(BibliothequePage), findsOneWidget);
+    });
+
+    // Contre-lecture finale (13/11) : la RECHERCHE de l'espace eleve de ce
+    // compte ouvrait la fiche SANS `retour` : le retour tombait sur l'ancienne
+    // liste. Une fiche trouvee dans l'espace eleve porte `?retour=Apprendre`.
+    test('un support trouve dans l\'espace eleve ouvre sa fiche avec le retour '
+        'vers Apprendre ; la famille garde le chemin d\'origine', () {
+      const CibleRecherche cible = CibleRecherche(
+        kind: KindCible.support,
+        reference: 'livre-lecture',
+      );
+      for (final EspaceRecherche espace in <EspaceRecherche>[
+        EspaceRecherche.eleve,
+        EspaceRecherche.eleveGuide,
+      ]) {
+        expect(
+          cheminPourCible(cible, espace),
+          cheminFicheDocument('livre-lecture'),
+          reason: espace.name,
+        );
+      }
+      expect(
+        cheminPourCible(cible, EspaceRecherche.famille),
+        RoutesTcB.versRessource('livre-lecture'),
+      );
+    });
+
+    testWidgets('double casquette, recherche dans l\'espace ELEVE : support, '
+        'fiche, disque retour = Apprendre', (WidgetTester tester) async {
+      final GoRouter routeur = await monterApprendre(
+        tester,
+        profil: ProfilApprendre.adulte,
+        depart: Routes.rechercheAvec(espace: 'eleve'),
+        documents: documentsComplets(),
+        autres: <Override>[
+          moteursRechercheProvider.overrideWithValue(<MoteurRechercheDomaine>[
+            MoteurRechercheDemo(
+              domaine: DomaineRecherche.supports,
+              corpus: <EntreeCorpusDemo>[
+                EntreeCorpusDemo(
+                  type: TypeResultat.support,
+                  reference: 'livre-lecture',
+                  titre: 'Le livre de lecture Rewayah',
+                  cible: const CibleRecherche(
+                    kind: KindCible.support,
+                    reference: 'livre-lecture',
+                  ),
+                ),
+              ],
+              espaces: const <EspaceRecherche>{EspaceRecherche.eleve},
+            ),
+          ]),
+          portCatalogueProvider.overrideWithValue(
+            CatalogueLocal(
+              ressources: <LibraryResource>[
+                const LibraryResource(
+                  id: 'livre-lecture',
+                  title: 'Le livre de lecture Rewayah',
+                  shortTitle: 'Le livre',
+                  resourceType: TypeRessource.pdf,
+                  language: 'fr',
+                  category: 'lecture',
+                  accessPolicy: PolitiqueAcces.publique,
+                  offlinePolicy: PolitiqueOffline.jamais,
+                  currentVersionId: 'v1',
+                ),
+              ],
+            ),
+          ),
+        ],
+      );
+      await tester.enterText(find.byKey(cleChampRecherche), 'livre');
+      await tester.pump(const Duration(milliseconds: 300));
+      await tester.pump(const Duration(milliseconds: 50));
+      await tester.pump(const Duration(milliseconds: 50));
+      final Finder resultat = find.text('Le livre de lecture Rewayah');
+      expect(resultat, findsWidgets);
+      await tester.tap(resultat.first);
+      await stabiliser(tester);
+      expect(find.byType(DetailRessourcePage), findsOneWidget);
+      await tester.tap(find.byType(DisqueRetour).first);
+      await stabiliser(tester);
+      expect(lieu(routeur), Routes.eleveApprendre);
+      expect(find.byType(EspaceApprendrePage), findsOneWidget);
     });
 
     // Les entrees de l'espace ELEVE de ce compte (Ma classe adulte, Accueil
@@ -2098,4 +2408,37 @@ class _CatalogueRayonsEnPanne extends CatalogueLocal {
   @override
   Future<List<RayonBibliotheque>> rayons() =>
       Future<List<RayonBibliotheque>>.error(const EchecCatalogue('hors ligne'));
+}
+
+/// Un port d'etat hors ligne qui rend des etats fixes (aucun par defaut :
+/// `aTelecharger`).
+class _EtatsFixes implements PortEtatOffline {
+  _EtatsFixes(this._etats);
+
+  final Map<String, EtatOffline> _etats;
+
+  @override
+  Future<EtatOffline> etatDe(String resourceId) async =>
+      _etats[resourceId] ?? EtatOffline.aTelecharger;
+
+  @override
+  Stream<EtatOffline> suivre(String resourceId) async* {
+    yield await etatDe(resourceId);
+  }
+
+  @override
+  Future<void> demanderTelechargement(String resourceId) async {}
+
+  @override
+  Future<void> libererCache(String resourceId) async {}
+}
+
+/// Un catalogue dont la lecture de la reprise echoue (le reste se lit).
+class _CatalogueRepriseEnPanne extends CatalogueLocal {
+  _CatalogueRepriseEnPanne(List<LibraryResource> ressources)
+    : super(ressources: ressources);
+
+  @override
+  Future<ReprisLecture?> derniereLecture() =>
+      Future<ReprisLecture?>.error(const EchecCatalogue('hors ligne'));
 }
