@@ -25,6 +25,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/apprendre/dates_ecole.dart';
+import '../../core/capacites/port_progression_famille.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/session/session_controleur.dart';
@@ -68,10 +69,22 @@ class OngletProgramme extends ConsumerWidget {
     final AsyncValue<MaProgression?> lecture = ref.watch(
       maProgressionProvider(eleveId),
     );
-    // Rien a montrer (ni etape ni sourate) : l'ecran de `main` se tait, l'onglet
-    // le dit. Pendant la lecture ou en echec, l'ecran dit lui-meme ce qui se
-    // passe.
-    final bool rien = lecture.hasValue && lecture.value == null;
+    // L'etat « pas encore de classe » ne se dit que si l'ecran de `main` n'a
+    // vraiment RIEN a montrer : ni etape, ni sourate, ni jalon, ni niveau
+    // declare (ce que la famille avait saisi, que l'ecran lit aussi). Pendant
+    // la lecture ou en echec, l'ecran dit lui-meme ce qui se passe.
+    final AsyncValue<ProgressionEleve?> famille = ref.watch(
+      progressionFamilleLueProvider(eleveId),
+    );
+    final bool jalon = famille.value?.jalons.isNotEmpty ?? false;
+    final bool niveauDeclare =
+        famille.value?.niveauHumain?.trim().isNotEmpty ?? false;
+    final bool rien =
+        lecture.hasValue &&
+        lecture.value == null &&
+        !famille.isLoading &&
+        !jalon &&
+        !niveauDeclare;
     final bool dates = lecture.value?.suivi?.eleveVoitDates ?? false;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,

@@ -315,15 +315,17 @@ class _CouvertureCoran extends StatelessWidget {
     );
   }
 
-  /// KFGQPC Uthman Taha Naskh (licence du Complexe : usage, copie et
-  /// distribution gratuits, sans modification de la police) : la police des
-  /// documents arabes de l'application.
-  static final TextStyle _styleTitre = AppTypography.document(
+  /// Le titre arabe du Coran est un arabe de CONTENU : il s'ecrit dans la
+  /// police du Coran, KFGQPC UthmanicHafs (`AppFontFamily.arabeMushaf`, decision
+  /// du directeur du 13/11/2026), la police des documents arabes en repli
+  /// (licence du Complexe : usage, copie et distribution gratuits, sans
+  /// modification de la police). L'arabe d'interface ne change pas.
+  static final TextStyle _styleTitre = AppTypography.mushaf15L(
     taille: AppSpacing.xxxl,
     interligne: 1.4,
   );
 
-  static final TextStyle _styleEdition = AppTypography.document(
+  static final TextStyle _styleEdition = AppTypography.mushaf15L(
     taille: AppSpacing.lg,
     interligne: 1.4,
   );

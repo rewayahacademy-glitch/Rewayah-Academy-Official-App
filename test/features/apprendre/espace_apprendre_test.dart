@@ -20,24 +20,34 @@ import 'package:rewayah_academy/core/apprendre/dates_ecole.dart';
 import 'package:rewayah_academy/core/apprendre/document_planche.dart';
 import 'package:rewayah_academy/core/apprendre/documents_apprendre.dart';
 import 'package:rewayah_academy/core/apprendre/planche_documents.dart';
+import 'package:rewayah_academy/core/capacites/port_progression_famille.dart';
+import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/preferences/preferences_locales.dart';
 import 'package:rewayah_academy/core/recrutement/ouvreur_lien.dart';
+import 'package:rewayah_academy/core/router/fil_ariane.dart' show planFilPour;
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/ouvreur_onglet.dart';
+import 'package:rewayah_academy/core/theme/app_typography.dart'
+    show AppFontFamily;
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
 import 'package:rewayah_academy/core/widgets/empty_state.dart';
+import 'package:rewayah_academy/core/widgets/entete_page.dart'
+    show DisqueRetour;
+import 'package:rewayah_academy/core/widgets/fil_ariane.dart' show FilAriane;
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/core/widgets/rangee_filtres.dart';
 import 'package:rewayah_academy/features/apprendre/espace_apprendre_page.dart';
 import 'package:rewayah_academy/features/apprendre/onglet_bibliotheque.dart';
 import 'package:rewayah_academy/features/apprendre/onglet_livret.dart';
 import 'package:rewayah_academy/features/apprendre/onglet_programme.dart';
+import 'package:rewayah_academy/features/suivi_eleve/entree_bibliotheque.dart';
 import 'package:rewayah_academy/features/tc_catalogue/routes_tc_b.dart';
 
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
-import '../../router/support_routeur.dart' show lieu, stabiliser;
+import '../../router/support_routeur.dart' show lieu, sessionActive, stabiliser;
 import '../../support/garde_interface.dart';
 import 'support_apprendre.dart';
 
@@ -663,6 +673,137 @@ void main() {
     });
   });
 
+  group('arabe de contenu dans la police du Coran', () {
+    testWidgets('le titre arabe du Coran, sur sa vignette, est en UthmanicHafs '
+        '(decision du directeur, 13/11)', (WidgetTester tester) async {
+      await monterApprendre(tester, documents: documentsComplets());
+      final Text titre = tester.widget<Text>(
+        find.byKey(const ValueKey<String>('couverture-coran-titre')),
+      );
+      expect(titre.style?.fontFamily, AppFontFamily.arabeMushaf);
+      // L'arabe d'interface, lui, ne change pas : le libelle de la barre
+      // reste en police d'interface.
+      expect(AppFontFamily.arabeMushaf, isNot(AppFontFamily.arabeInterface));
+    });
+  });
+
+  group('une seule Bibliotheque pour l eleve', () {
+    for (final ProfilApprendre profil in ProfilApprendre.values) {
+      for (final String adresse in <String>[
+        Routes.tcBibliotheque,
+        '${Routes.tcBibliotheque}?groupe=g1',
+      ]) {
+        testWidgets('${profil.name} : $adresse mene a Apprendre', (
+          WidgetTester tester,
+        ) async {
+          final GoRouter routeur = await monterApprendre(
+            tester,
+            profil: profil,
+            documents: documentsComplets(),
+            depart: adresse,
+          );
+          expect(lieu(routeur), Routes.eleveApprendre);
+          expect(find.byType(EspaceApprendrePage), findsOneWidget);
+          expect(find.byType(OngletBibliotheque), findsOneWidget);
+        });
+      }
+    }
+
+    testWidgets('le tuteur garde la Bibliotheque d origine', (
+      WidgetTester tester,
+    ) async {
+      final GoRouter routeur = await monterApprendre(
+        tester,
+        autonome: false,
+        depart: Routes.tcBibliotheque,
+      );
+      expect(lieu(routeur), Routes.tcBibliotheque);
+      expect(find.byType(EspaceApprendrePage), findsNothing);
+    });
+
+    testWidgets('la fiche d un document reste ouverte a l eleve, et son '
+        'disque retour ramene a Apprendre', (WidgetTester tester) async {
+      final GoRouter routeur = await monterApprendre(
+        tester,
+        profil: ProfilApprendre.mineurGuide,
+        documents: documentsComplets(),
+      );
+      await tester.tap(
+        find.byKey(PlancheDocuments.cleDocument('livre-lecture')),
+      );
+      await stabiliser(tester);
+      expect(lieu(routeur), cheminFicheDocument('livre-lecture'));
+      await tester.tap(find.byType(DisqueRetour).first);
+      await stabiliser(tester);
+      expect(lieu(routeur), Routes.eleveApprendre);
+      expect(find.byType(EspaceApprendrePage), findsOneWidget);
+    });
+
+    testWidgets('sans `retour`, le retour par defaut de la fiche ramene aussi '
+        'a Apprendre', (WidgetTester tester) async {
+      final GoRouter routeur = await monterApprendre(
+        tester,
+        profil: ProfilApprendre.mineurGuide,
+        documents: documentsComplets(),
+        depart: RoutesTcB.versRessource('livre-lecture'),
+      );
+      await tester.tap(find.byType(DisqueRetour).first);
+      await stabiliser(tester);
+      expect(lieu(routeur), Routes.eleveApprendre);
+    });
+
+    testWidgets('Ma classe, ligne Bibliotheque : Apprendre, puis le retour '
+        'd une fiche y revient', (WidgetTester tester) async {
+      final GoRouter routeur = await monterApprendre(
+        tester,
+        profil: ProfilApprendre.mineurGuide,
+        documents: documentsComplets(),
+        depart: Routes.eleveSuivi,
+      );
+      final Finder ligne = find.byKey(EntreeBibliothequeMaClasse.ligneKey);
+      expect(ligne, findsOneWidget);
+      await tester.tap(ligne);
+      await stabiliser(tester);
+      expect(lieu(routeur), Routes.eleveApprendre);
+      await tester.tap(
+        find.byKey(PlancheDocuments.cleDocument('livre-lecture')),
+      );
+      await stabiliser(tester);
+      await tester.tap(find.byType(DisqueRetour).first);
+      await stabiliser(tester);
+      expect(lieu(routeur), Routes.eleveApprendre);
+    });
+
+    testWidgets('grand ecran : le fil de la fiche dit Apprendre > '
+        'Bibliotheque, pas Compte', (WidgetTester tester) async {
+      final SessionState session = sessionActive(
+        AppRole.student,
+        mode: InterfaceMode.enfant,
+      );
+      await monterApprendre(
+        tester,
+        profil: ProfilApprendre.mineurGuide,
+        taille: const Size(1440, 900),
+        documents: documentsComplets(),
+        planFil: planFilPour(session),
+        depart: cheminFicheDocument('livre-lecture'),
+      );
+      expect(
+        find.byKey(FilAriane.cleSegment(Routes.eleveApprendre)),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(FilAriane.cleSegment(Routes.tcBibliotheque)),
+        findsOneWidget,
+      );
+      expect(find.byKey(FilAriane.cleSegment(Routes.compte)), findsNothing);
+      // Le fil mene a Apprendre : un toucher, et l'on y est.
+      await tester.tap(find.byKey(FilAriane.cleSegment(Routes.eleveApprendre)));
+      await stabiliser(tester);
+      expect(find.byType(EspaceApprendrePage), findsOneWidget);
+    });
+  });
+
   group('l adaptateur du catalogue existant', () {
     test('la fiche d un document vise la route existante', () {
       final Uri adresse = Uri.parse(cheminFicheDocument('abc'));
@@ -871,6 +1012,77 @@ void main() {
       expect(find.text(t.apprendre.programme.vide), findsOneWidget);
       expect(find.byKey(chemin), findsNothing);
       expect(find.byKey(ClesProgramme.datesEcole), findsNothing);
+    });
+
+    testWidgets('la phrase « pas encore de classe » ne se dit que si la carte '
+        'n a vraiment rien a montrer : un jalon saisi, un niveau declare ou '
+        'une sourate la font taire', (WidgetTester tester) async {
+      Future<void> avec(
+        WidgetTester tester, {
+        required LectureSuivi suivi,
+        required ProgressionEleve famille,
+      }) async {
+        await monterApprendre(
+          tester,
+          documents: documentsComplets(),
+          suivi: suivi,
+          autres: <Override>[
+            progressionFamilleLueProvider.overrideWith(
+              (Ref _, String id) async => famille,
+            ),
+          ],
+        );
+        await _ouvrirOnglet(tester, t.apprendre.sections.programme);
+      }
+
+      await avec(
+        tester,
+        suivi: const SuiviLu(null),
+        famille: const ProgressionEleve(
+          eleveId: 'p-guardian',
+          jalons: <String>['Il lit les voyelles'],
+        ),
+      );
+      expect(find.byKey(ClesProgramme.vide), findsNothing);
+      expect(find.text('Il lit les voyelles'), findsOneWidget);
+    });
+
+    testWidgets('un niveau declare fait taire la phrase aussi', (
+      WidgetTester tester,
+    ) async {
+      await monterApprendre(
+        tester,
+        documents: documentsComplets(),
+        suivi: const SuiviLu(null),
+        autres: <Override>[
+          progressionFamilleLueProvider.overrideWith(
+            (Ref _, String id) async =>
+                ProgressionEleve(eleveId: id, niveauHumain: 'Lit les lettres'),
+          ),
+        ],
+      );
+      await _ouvrirOnglet(tester, t.apprendre.sections.programme);
+      expect(find.byKey(ClesProgramme.vide), findsNothing);
+      expect(find.text('Lit les lettres'), findsOneWidget);
+    });
+
+    testWidgets('des sourates seules font aussi taire la phrase', (
+      WidgetTester tester,
+    ) async {
+      await monterApprendre(
+        tester,
+        documents: documentsComplets(),
+        suivi: const SuiviLu(<String, Object?>{
+          'etape': null,
+          'sourates': <String, Object?>{
+            'sourates_validees': 2,
+            'sourates_total': 17,
+          },
+        }),
+      );
+      await _ouvrirOnglet(tester, t.apprendre.sections.programme);
+      expect(find.byKey(ClesProgramme.vide), findsNothing);
+      expect(find.text(t.suiviPedagogique.sourates), findsOneWidget);
     });
 
     testWidgets('sans port branche : meme etat vide honnete', (

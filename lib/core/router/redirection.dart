@@ -296,6 +296,16 @@ String? deciderRedirection({
         }
       }
 
+      // ESPACE-APPRENDRE (lot 5, 13/11/2026) : l'eleve (le mineur, et l'adulte
+      // servi « eleve autonome ») n'a qu'une Bibliotheque, celle de l'espace
+      // Apprendre. L'ancienne liste `/tc/bibliotheque` (Compte, Ma classe,
+      // espace de la classe, recherche, retour par defaut d'une fiche) l'y
+      // mene ; la fiche d'un document (`/tc/bibliotheque/:id`) reste ouverte.
+      // Les autres roles gardent la leur.
+      if (session.peutLireLeCoran && cheminDemande == Routes.tcBibliotheque) {
+        return Routes.eleveApprendre;
+      }
+
       // Aucune route ne correspond : la page introuvable le dit, sans rien
       // montrer, et ramene a l'accueil du role.
       if (!routeConnue) {

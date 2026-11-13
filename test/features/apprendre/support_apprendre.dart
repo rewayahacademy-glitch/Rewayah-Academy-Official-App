@@ -19,6 +19,7 @@ import 'package:rewayah_academy/core/coran/service_coran.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/preferences/preferences_locales.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
+import 'package:rewayah_academy/core/router/fil_ariane.dart' show PlanFil;
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/port_capacite_eleve.dart';
 import 'package:rewayah_academy/core/suivi/ma_progression.dart';
@@ -265,26 +266,33 @@ Future<GoRouter> monterApprendre(
   LectureSuivi? suivi,
   PortDatesEcole? dates,
   bool horsLigne = false,
+  PlanFil? planFil,
+  AppRole? role,
+  bool autonome = true,
   List<Override> autres = const <Override>[],
 }) {
   final bool adulte = profil == ProfilApprendre.adulte;
-  final AppRole role = adulte ? AppRole.guardian : AppRole.student;
+  final AppRole roleSession =
+      role ?? (adulte ? AppRole.guardian : AppRole.student);
   final InterfaceMode mode = adulte
       ? InterfaceMode.standard
       : InterfaceMode.enfant;
   return monterRouteur(
     tester,
     depart,
-    source: FausseSourceSession(sessionActive(role, mode: mode)),
+    source: FausseSourceSession(sessionActive(roleSession, mode: mode)),
     taille: taille,
     themeMode: theme,
     interface: mode,
     direction: direction,
     echelle: echelle,
+    planFil: planFil,
     surcharges: <Override>[
-      if (adulte)
+      if (adulte && autonome)
         portCapaciteEleveProvider.overrideWithValue(
-          PortCapaciteEleveFactice(autonomes: <String>{'p-${role.valeurSql}'}),
+          PortCapaciteEleveFactice(
+            autonomes: <String>{'p-${roleSession.valeurSql}'},
+          ),
         ),
       if (documents is Future<List<DocumentPlanche>> Function())
         documentsApprendreProvider.overrideWith((Ref _) => documents())
