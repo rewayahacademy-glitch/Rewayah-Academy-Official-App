@@ -182,10 +182,23 @@ le directeur. Les preuves sont des tests et des captures de test, sauf mention.
 | PAUSE-SERVEUR | 14 | Sur la branche. Migration `20261124100000_pause_proposee.sql` rejouée en local, NON installée |
 | HORS-SALLE-1 | 16, 17 | Sur la branche. Rien d'essayé sur un vrai téléphone ; aucune ligne enregistrée sur un élève |
 | DYNAMIQUE-CHRONO-1 | 2, 3, 5 (place), 15, 21 | Sur la branche |
-| DYNAMIQUE-CHRONO-2 | 5, 6, 14 (écran), 15 | En cours |
-| CAMARADES | 20 | En cours (migration `20261124300000_camarades_prenoms.sql`) |
+| DYNAMIQUE-CHRONO-2 | 5, 6, 14 (écran), 15 | Sur la branche (13/11, 02:02 UTC). La sonnerie n'est pas essayée dans un vrai navigateur ; la salle réduite ne reçoit ni la récitation ni les arrivées ; une pause démarrée hors de la salle n'est pas relayée aux élèves sur le moment ; le délai de rappel sans réponse est une constante de l'application |
+| CAMARADES | 20 | Sur la branche (13/11, 01:23 UTC). Migration `20261124300000_camarades_prenoms.sql` rejouée en local, NON installée. La règle de la vidéo est tenue par l'application, pas encore par le serveur de visio. Texte du dépôt de la photo à valider par le directeur |
 | HORS-SALLE-2 | 17 (journal des sorties) | Pas commencé : pour un mineur, l'accord du parent est exigé (règle du 11/11, `DROIT-RELEVE-QUALITE.md` §10 point 3) et le mécanisme d'accord n'existe qu'en démonstration |
 | RETRAIT | prière | Pas commencé : « Je m'absente un instant », sans trace ; règle convenue avec l'architecte pédagogique |
 | REGLE-CHRONO | 4 | Attend la confirmation du directeur (argent) |
 | HARMONIE-SALLE | 13 | Pas commencé |
+
+### Depuis ce tableau (13/11/2026, 02:07 UTC)
+
+- Onze lots sont sur la branche et dans la demande de fusion en brouillon
+  `rewayahacademy-glitch/Rewayah-Academy-Official-App#449`.
+- Suite complète sur neuf lots (tête `eee1b2a5`) : 20 824 tests passés, 1 échec (une durée sécable
+  dans le message de retour de l'élève), corrigé. Contrôles de la demande de fusion sur dix lots
+  (tête `835d0899`) : tous verts, migrations rejouées sur Postgres 17 comprises. Sur onze lots
+  (tête `f7b0935f`) : 4 518 tests de la salle et des gardes passés ici ; contrôles en cours.
+- Restes connus, à reprendre dans HARMONIE-SALLE : sur ordinateur, les noms des tuiles de la
+  colonne disparaissent le temps où la barre est dépliée sur un écran bas ; au téléphone, la ligne
+  d'état passe sur le haut de la page le temps où la barre est dépliée ; la fermeture de la vidéo
+  des camarades côté serveur ; la fuite du matricule par `session_peers_v`.
 
