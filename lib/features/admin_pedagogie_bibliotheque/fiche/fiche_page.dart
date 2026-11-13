@@ -23,6 +23,7 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/accessibilite/texte_sans_coupure.dart';
@@ -34,6 +35,8 @@ import '../../../core/i18n/strings.g.dart';
 import '../../../core/icons/app_icons.dart';
 import '../../../core/reseau/etat_sans_donnees.dart';
 import '../../../core/router/routes.dart';
+import '../../../core/tc_bibliotheque/donnees_catalogue.dart';
+import '../../../core/tc_bibliotheque/library_resource.dart';
 import '../../../core/theme/app_gabarit.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -42,6 +45,7 @@ import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/chargement_avec_delais.dart';
 import '../../../core/widgets/etat_systeme.dart';
 import '../../../core/widgets/ligne_cle_valeur.dart';
+import '../../../core/widgets/menu_filtre.dart';
 import '../../../core/widgets/page_shell.dart';
 import '../../../core/widgets/pressable.dart';
 import '../../../core/widgets/skeleton.dart';
@@ -49,6 +53,7 @@ import '../../../core/widgets/sous_navigation_domaine.dart';
 import '../../../core/widgets/status_pill.dart';
 import '../../../core/widgets/zone_saisie.dart';
 import '../catalogue/catalogue_page.dart' show rangBibliotheque;
+import '../classement_document.dart';
 import '../libelles_bibliotheque.dart';
 import '../porte_bibliotheque.dart';
 
@@ -81,17 +86,17 @@ class FichePage extends StatelessWidget {
   }
 }
 
-class _Fiche extends StatefulWidget {
+class _Fiche extends ConsumerStatefulWidget {
   const _Fiche({required this.port, required this.supportId});
 
   final PortBibliothequeAdmin port;
   final String supportId;
 
   @override
-  State<_Fiche> createState() => _FicheEtat();
+  ConsumerState<_Fiche> createState() => _FicheEtat();
 }
 
-class _FicheEtat extends State<_Fiche> {
+class _FicheEtat extends ConsumerState<_Fiche> {
   FicheSupport? _fiche;
   Object? _erreur;
   bool _chargement = true;
@@ -107,11 +112,32 @@ class _FicheEtat extends State<_Fiche> {
   final TextEditingController _organisme = TextEditingController();
   final TextEditingController _description = TextEditingController();
   final TextEditingController _conditions = TextEditingController();
+  final TextEditingController _ordre = TextEditingController();
+  final TextEditingController _ecole = TextEditingController();
+  Set<String> _tranches = <String>{...tranchesTout};
+  final Set<String> _etapesChoisies = <String>{};
+  String? _lecture;
+  final TextEditingController _lien = TextEditingController();
+  String _rayon = codeRayonCours;
+  List<RayonBibliotheque> _rayons = const <RayonBibliotheque>[];
 
   @override
   void initState() {
     super.initState();
     unawaited(_charger());
+    unawaited(_chargerRayons());
+  }
+
+  /// Les rayons viennent du serveur (donnee), jamais d'un ecran.
+  Future<void> _chargerRayons() async {
+    try {
+      final List<RayonBibliotheque> r = await ref
+          .read(portCatalogueProvider)
+          .rayons();
+      if (mounted) setState(() => _rayons = r);
+    } on Object {
+      // Sans la liste, le rayon courant reste affiche par son code.
+    }
   }
 
   @override
@@ -123,6 +149,9 @@ class _FicheEtat extends State<_Fiche> {
       _organisme,
       _description,
       _conditions,
+      _ordre,
+      _ecole,
+      _lien,
     ]) {
       c.dispose();
     }
@@ -143,7 +172,16 @@ class _FicheEtat extends State<_Fiche> {
       _organisme.text = f.organisme ?? '';
       _description.text = f.description ?? '';
       _conditions.text = f.conditionsAttribution ?? '';
+      _ordre.text = '${f.ordre}';
+      _ecole.text = f.ecolePriere ?? '';
+      _tranches = <String>{...f.tranches};
+      _etapesChoisies
+        ..clear()
+        ..addAll(f.etapes);
+      _lecture = f.lectureCoran;
+      _lien.text = f.lienExterne ?? '';
       setState(() {
+        _rayon = f.rayon;
         _fiche = f;
         _chargement = false;
         _conflit = false;
@@ -164,6 +202,9 @@ class _FicheEtat extends State<_Fiche> {
       setState(() => _erreurTitre = a.titreVide);
       return;
     }
+    // Au moins une tranche, et une ecole qui tient dans la base : l'ecran le
+    // dit deja sous les champs, rien ne part.
+    if (_tranches.isEmpty || !ecoleValide(_ecole.text)) return;
     setState(() {
       _envoi = true;
       _erreurTitre = null;
@@ -180,7 +221,48 @@ class _FicheEtat extends State<_Fiche> {
           organisme: _organisme.text.trim(),
           description: _description.text.trim(),
           conditionsAttribution: _conditions.text.trim(),
+          rayon: _rayon,
+          ordre: int.tryParse(_ordre.text.trim()) ?? f.ordre,
+          etapes: _etapesChoisies.toList(),
+          tranches: <String>[
+            for (final String c in tranchesProposees)
+              if (_tranches.contains(c)) c,
+          ],
+          // Une chaine vide retire la valeur (le serveur la remet a null).
+          lectureCoran: _lecture ?? '',
+          ecolePriere: _ecole.text.trim(),
+          // Le lien ne part que pour un document qui en porte un.
+          lienExterne: f.lienExterne == null ? null : _lien.text.trim(),
         ),
+        revisionAttendue: f.revision,
+      );
+      if (!mounted) return;
+      switch (r) {
+        case EcritureFaite():
+          await _charger();
+          if (mounted) setState(() => _message = a.enregistre);
+        case EcritureEnConflit():
+          setState(() => _conflit = true);
+      }
+    } on Object {
+      if (mounted) setState(() => _echec = true);
+    } finally {
+      if (mounted) setState(() => _envoi = false);
+    }
+  }
+
+  /// Retire la vignette deposee : la couverture par defaut du type revient.
+  Future<void> _retirerVignette(FicheSupport f) async {
+    final a = t.admin.bibliotheque.fiche;
+    setState(() {
+      _envoi = true;
+      _message = null;
+      _echec = false;
+    });
+    try {
+      final ResultatEcriture r = await widget.port.mettreAJour(
+        supportId: f.support.id,
+        modification: const ModificationSupport(retirerVignette: true),
         revisionAttendue: f.revision,
       );
       if (!mounted) return;
@@ -304,7 +386,24 @@ class _FicheEtat extends State<_Fiche> {
             'organisme': _organisme,
             'description': _description,
             'conditions': _conditions,
+            'ordre': _ordre,
+            'ecole': _ecole,
+            'lien': _lien,
           },
+          rayon: _rayon,
+          rayons: _rayons,
+          onRayon: (String? v) => setState(() => _rayon = v ?? _rayon),
+          tranches: _tranches,
+          onTranches: (Set<String> v) => setState(() => _tranches = v),
+          etapes: _etapesChoisies,
+          onEtapes: (Set<String> v) => setState(() {
+            _etapesChoisies
+              ..clear()
+              ..addAll(v);
+          }),
+          lecture: _lecture,
+          onLecture: (String? v) => setState(() => _lecture = v),
+          onRetirerVignette: () => unawaited(_retirerVignette(f)),
           erreurTitre: _erreurTitre,
           envoi: _envoi,
           conflit: _conflit,
@@ -317,7 +416,7 @@ class _FicheEtat extends State<_Fiche> {
         cle: 'metadonnees',
         titre: a.fiche.sections.metadonnees,
         large: large,
-        child: _Metadonnees(fiche: f),
+        child: _Metadonnees(fiche: f, rayons: _rayons),
       ),
     ];
     final List<Widget> laterale = <Widget>[
@@ -545,8 +644,29 @@ class _Edition extends StatelessWidget {
     required this.echec,
     required this.onEnregistrer,
     required this.onRecharger,
+    required this.rayon,
+    required this.rayons,
+    required this.onRayon,
+    required this.onRetirerVignette,
+    required this.tranches,
+    required this.onTranches,
+    required this.etapes,
+    required this.onEtapes,
+    required this.lecture,
+    required this.onLecture,
   });
 
+  final Set<String> tranches;
+  final ValueChanged<Set<String>> onTranches;
+  final Set<String> etapes;
+  final ValueChanged<Set<String>> onEtapes;
+  final String? lecture;
+  final ValueChanged<String?> onLecture;
+
+  final String rayon;
+  final List<RayonBibliotheque> rayons;
+  final ValueChanged<String?> onRayon;
+  final VoidCallback onRetirerVignette;
   final FicheSupport fiche;
   final Map<String, TextEditingController> champs;
   final String? erreurTitre;
@@ -603,6 +723,58 @@ class _Edition extends StatelessWidget {
         champ('description', a.champs.description, lignes: 3),
         Ecart.vMd,
         champ('conditions', a.champs.conditions, lignes: 2),
+        // Le classement du document (BIBLIOTHEQUE-UNE) : rayon, ordre, etapes,
+        // et l'adresse d'un lien. Aucun prix : la vente n'est pas ouverte.
+        if (fiche.lienExterne != null) ...<Widget>[
+          Ecart.vMd,
+          champ('lien', a.champs.lien),
+        ],
+        Ecart.vMd,
+        if (rayons.isNotEmpty)
+          MenuFiltre<String>(
+            libelle: a.champs.rayon,
+            valeur: rayon,
+            selecteurDeSection: true,
+            entrees: <EntreeFiltre<String>>[
+              for (final RayonBibliotheque r in rayons)
+                EntreeFiltre<String>(
+                  valeur: r.code,
+                  libelle: r.titrePour(
+                    LocaleSettings.currentLocale.languageCode,
+                  ),
+                ),
+            ],
+            onChoix: onRayon,
+          ),
+        Ecart.vMd,
+        champ('ordre', a.champs.ordre),
+        Ecart.vMd,
+        ChoixTranches(
+          choisies: tranches,
+          lien: fiche.support.type == TypeRessource.lienExterne,
+          onChoix: onTranches,
+        ),
+        Ecart.vMd,
+        ChoixEtapes(choisies: etapes, onChoix: onEtapes),
+        Ecart.vMd,
+        ChampsLectureEcole(
+          lecture: lecture,
+          onLecture: onLecture,
+          ecole: champs['ecole']!,
+        ),
+        if (fiche.aVignette) ...<Widget>[
+          Ecart.vMd,
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: ActionPrincipale(
+              key: const ValueKey<String>('fiche-retirer-vignette'),
+              libelle: a.retirerVignette,
+              niveau: NiveauAction.tertiaire,
+              pleineLargeur: false,
+              onPress: envoi ? null : onRetirerVignette,
+            ),
+          ),
+        ],
         Ecart.vLg,
         if (conflit) ...<Widget>[
           Text(a.conflit, key: const ValueKey<String>('fiche-conflit')),
@@ -644,9 +816,10 @@ class _Edition extends StatelessWidget {
 }
 
 class _Metadonnees extends StatelessWidget {
-  const _Metadonnees({required this.fiche});
+  const _Metadonnees({required this.fiche, required this.rayons});
 
   final FicheSupport fiche;
+  final List<RayonBibliotheque> rayons;
 
   @override
   Widget build(BuildContext context) {
@@ -663,6 +836,22 @@ class _Metadonnees extends StatelessWidget {
       (t.admin.bibliotheque.fiche.champs.organisme, ou(fiche.organisme)),
       (m.visibilite, libelleVisibilite(s.visibilite)),
       (m.horsLigne, libelleHorsLigne(fiche.politiqueHorsLigne)),
+      // L'intitule du rayon vient du serveur ; son code n'est jamais montre.
+      (
+        m.rayon,
+        ou(
+          rayons
+              .where((RayonBibliotheque r) => r.code == fiche.rayon)
+              .map(
+                (RayonBibliotheque r) =>
+                    r.titrePour(LocaleSettings.currentLocale.languageCode),
+              )
+              .firstOrNull,
+        ),
+      ),
+      (m.etapes, ou(fiche.etapes.join(', '))),
+      (m.vignette, fiche.aVignette ? m.vignetteOui : m.vignetteNon),
+      if (fiche.lienExterne != null) (m.lien, fiche.lienExterne!),
     ];
     return Column(
       mainAxisSize: MainAxisSize.min,

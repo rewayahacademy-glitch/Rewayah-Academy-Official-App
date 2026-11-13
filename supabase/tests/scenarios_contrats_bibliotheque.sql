@@ -142,9 +142,12 @@ SELECT pg_temp.qui('cb000000-0000-4000-8000-0000000000a1','admin');
 SET LOCAL ROLE authenticated;
 SELECT pg_temp.vrai(public.library_admin_capacites() = '{"peutLire": true, "peutImporter": true, "peutPublier": true, "peutAttribuer": true}'::jsonb,
   'direction : capacites d''ecriture rendues');
-SELECT pg_temp.vrai(public.library_get_catalogue() = '{"elements": [], "curseur": null}'::jsonb,
+-- Borne a un filtre qui ne correspond a rien : le Coran seme par BIBLIOTHEQUE-UNE
+-- (present quand un compte direction existe a l'installation) ne change pas ce
+-- que ce cas prouve, un catalogue sans resultat qui repond sans 42P01 ni 42501.
+SELECT pg_temp.vrai(public.library_get_catalogue('{"recherche":"aucun-titre-ne-correspond"}') = '{"elements": [], "curseur": null}'::jsonb,
   'catalogue vide : repond sans 42P01 ni 42501');
-SELECT pg_temp.refus($$SELECT public.library_creer_brouillon('{"titre":"x","type":"video","langue":"fr","categorie":"c"}')$$, '22023', 'type inconnu refuse');
+SELECT pg_temp.refus($$SELECT public.library_creer_brouillon('{"titre":"x","type":"hologramme","langue":"fr","categorie":"c"}')$$, '22023', 'type inconnu refuse');
 SELECT pg_temp.refus($$SELECT public.library_creer_brouillon('{"titre":"x","type":"pdf","langue":"fr","categorie":"c","cle":"s3"}')$$, '22023', 'champ inconnu refuse');
 DO $brouillon$
 DECLARE v jsonb; w jsonb; p jsonb;
@@ -212,7 +215,10 @@ BEGIN
     'version publiee, revision rendue');
   PERFORM pg_temp.vrai(public.library_publier_version(s::uuid, v::uuid, 1, 'p-ok') = r,
     'meme cle : meme reponse, rien en double');
-  PERFORM pg_temp.vrai(jsonb_array_length(public.library_get_catalogue('{"etat":"publies"}') -> 'elements') = 1,
+  -- Borne au support de ce cas : le Coran seme par BIBLIOTHEQUE-UNE (present quand
+  -- un compte direction existe a l'installation) est lui aussi publie.
+  PERFORM pg_temp.vrai((SELECT count(*) FROM jsonb_array_elements(public.library_get_catalogue('{"etat":"publies"}') -> 'elements') e
+                         WHERE e ->> 'id' = s) = 1,
     'catalogue : un support publie');
   PERFORM pg_temp.refus(format($q$SELECT public.library_publier_version(%L, %L, %s, 'p-encore')$q$, s, v, pg_temp.rev(s)),
     '22023', 'une version deja publiee ne se republie pas');

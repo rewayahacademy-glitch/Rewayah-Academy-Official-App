@@ -87,9 +87,13 @@ final Provider<PortEtatOffline> portEtatOfflineProvider =
           return DescripteurOffline(
             resourceId: resourceId,
             versionId: v?.id,
+            // Un document donne par lien n'a aucun fichier a garder : jamais
+            // de bouton « hors ligne » pour un lien externe ou une video par
+            // lien.
             possible:
                 r.offlinePolicy != PolitiqueOffline.jamais &&
                 r.peut(CapaciteRessource.supportsOffline) &&
+                r.lienExterne == null &&
                 v != null,
           );
         },

@@ -1,11 +1,19 @@
 const encoder = new TextEncoder();
 
-/** HMAC bound to the server-created intent, verified again by the database. */
+/** Domain prefix of a thumbnail confirmation (BIBLIOTHEQUE-UNE, review I7).
+ * The signed message of a document file has no prefix; a thumbnail's carries
+ * this one, written identically in `confirmer_vignette_bibliotheque`. A
+ * signature made for one therefore cannot confirm the other. */
+export const DOMAINE_VIGNETTE = "bibliotheque-vignette-v1";
+
+/** HMAC bound to the server-created intent, verified again by the database.
+ * `domaine`, when given, is the first line of the signed message. */
 export async function signatureConfirmationUpload(
   secret: string,
   intentionId: string,
   sha256: string,
   size: number,
+  domaine?: string,
 ): Promise<string> {
   if (
     encoder.encode(secret).byteLength < 32 || secret.trim() !== secret ||
@@ -23,7 +31,8 @@ export async function signatureConfirmationUpload(
     false,
     ["sign"],
   );
-  const canonical = `${intentionId.toLowerCase()}\n${sha256.toLowerCase()}\n${size}`;
+  const corps = `${intentionId.toLowerCase()}\n${sha256.toLowerCase()}\n${size}`;
+  const canonical = domaine === undefined ? corps : `${domaine}\n${corps}`;
   const mac = await crypto.subtle.sign("HMAC", key, encoder.encode(canonical));
   return Array.from(new Uint8Array(mac), (byte) =>
     byte.toString(16).padStart(2, "0")

@@ -97,8 +97,11 @@ LANGUAGE sql AS $$
          set_config('request.jwt.claims', jsonb_build_object('sub', p_uid,
            'app_metadata', jsonb_build_object('role', p_role, 'household_id', p_foyer))::text, true);
 $$;
+-- Borne a ses propres fixtures (ids c4400000-) : le Coran seme par BIBLIOTHEQUE-UNE
+-- (present quand un compte direction existe a l'installation) s'ajouterait aux
+-- listes, sans rien changer a ce que ce scenario prouve.
 CREATE FUNCTION pg_temp.titres(p jsonb) RETURNS text
-LANGUAGE sql AS $$ SELECT coalesce(string_agg(e ->> 'title', ',' ORDER BY e ->> 'title'), '') FROM jsonb_array_elements(p) e $$;
+LANGUAGE sql AS $$ SELECT coalesce(string_agg(e ->> 'title', ',' ORDER BY e ->> 'title'), '') FROM jsonb_array_elements(p) e WHERE (e ->> 'id') LIKE 'c4400000-%' $$;
 
 -- Une seule regle : pour un lecteur, les ressources rendues sont exactement
 -- celles que la policy library_resource_lecture lui laisse lire (RLS).
@@ -107,7 +110,8 @@ LANGUAGE plpgsql AS $$
 DECLARE v_rpc text; v_rls text;
 BEGIN
   SELECT coalesce(string_agg(e ->> 'id', ',' ORDER BY e ->> 'id'), '') INTO v_rpc
-    FROM jsonb_array_elements(public.bibliotheque_catalogue_lecteur()) e;
+    FROM jsonb_array_elements(public.bibliotheque_catalogue_lecteur()) e
+   WHERE (e ->> 'id') LIKE 'c4400000-%';
   SELECT coalesce(string_agg(r.id::text, ',' ORDER BY r.id::text), '') INTO v_rls
     FROM public.library_resource r WHERE r.id::text LIKE 'c4400000-%';
   IF v_rpc <> v_rls THEN
