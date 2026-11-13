@@ -317,6 +317,12 @@ declare
     'poser_modele_wise(jsonb)',
     'poser_regle(uuid,text,integer,text)',
     'prendre_remplacement(uuid,uuid)',
+    -- PRIERE-1 (12/11/2026) : l'enseignant ajuste ses heures (role teacher et app_account_valid(), pour lui seul) ;
+    -- la direction pose ou retire un lieu, ou relance le recalcul (admin et app_account_valid(), aal2 pour le recalcul).
+    'priere_ajuster(text,integer)',
+    'priere_lieu_definir(uuid,text,numeric,numeric,text,text,text,boolean,time without time zone,time without time zone)',
+    'priere_lieu_retirer(uuid)',
+    'priere_recalculer_maintenant()',
     'preparer_depot_piece_identite(uuid,text)',
     -- CAHIER-C2 (06/11) : direction seulement, compte valide, brouillon vide.
     'preremplir_bases_programme(uuid)',

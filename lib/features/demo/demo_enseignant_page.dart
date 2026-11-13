@@ -25,7 +25,6 @@ import '../../core/mouvement/mouvement.dart';
 import '../../core/offres/service_offres.dart' show referentielLanguesProvider;
 import '../../core/planning/service_planning.dart';
 import '../../core/presence/service_presence.dart';
-import '../../core/priere/service_priere.dart';
 import '../../core/profil/service_acceptations.dart';
 import '../../core/profil/service_declaration.dart';
 import '../../core/profil/service_profil_enseignant.dart';
@@ -211,7 +210,6 @@ List<Override> surchargesCoquilleEnseignantDemo(EtatDemoEnseignant etat) {
     cahiersEnRetardProvider.overrideWith(
       (Ref _) async => DonneesEnseignantDemo.cahiersEnRetard(etat),
     ),
-    reglagesPriereProvider(id).overrideWith((Ref _) async => null),
     valeurRegleProvider((profilId: id, cle: CleRegle.pauseEntreCours))
         .overrideWith((Ref _) async => 10),
     preVolProvider.overrideWith(
