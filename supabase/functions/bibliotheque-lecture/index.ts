@@ -10,6 +10,49 @@ import {
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i
 
+/// Une vignette se montre dans une liste : l'URL vit plus longtemps que celle
+/// d'un document (60 s), mais reste courte.
+const DUREE_VIGNETTE_S = 300
+const VIGNETTES_MAX = 100
+
+/// BIBLIOTHEQUE-UNE : les vignettes d'une liste de documents. La base dit
+/// lesquels l'appelant a le droit de lire (`bibliotheque_vignettes_autorisees`,
+/// avec son jeton) ; seule cette liste est signee. L'application ne recoit que
+/// des URL, jamais une cle de stockage.
+async function signerVignettes(
+  compte: NonNullable<Awaited<ReturnType<typeof appelantR2>>>,
+  corps: Record<string, unknown>,
+): Promise<Response> {
+  const ids = Array.isArray(corps.ids) ? corps.ids : []
+  if (
+    ids.length < 1 || ids.length > VIGNETTES_MAX ||
+    !ids.every((i) => typeof i === 'string' && UUID.test(i))
+  ) {
+    return refus('liste de documents invalide')
+  }
+  const { data, error } = await compte.sql.rpc('bibliotheque_vignettes_autorisees', {
+    p_ids: (ids as string[]).map((i) => i.toLowerCase()),
+  })
+  if (error || !Array.isArray(data)) return refus('acces aux vignettes refuse', 403)
+  const urls: Record<string, string> = {}
+  for (const ligne of data as Array<Record<string, unknown>>) {
+    try {
+      const id = String(ligne.id ?? '')
+      if (!UUID.test(id)) continue
+      const cle = verifierCle('supports', String(ligne.cle ?? ''))
+      const signee = await signerLecture('supports', cle, {
+        dureeSecondes: DUREE_VIGNETTE_S,
+        contentDisposition: 'inline',
+      })
+      urls[id] = signee.url
+    } catch {
+      // Une vignette qui ne se signe pas est une vignette absente : la carte
+      // retombe sur sa vignette par defaut, la liste ne tombe pas.
+    }
+  }
+  return json({ urls, expire_dans_secondes: DUREE_VIGNETTE_S })
+}
+
 Deno.serve(async (requete: Request) => {
   if (requete.method === 'OPTIONS') return new Response('ok', { headers: enTetesCors })
   if (requete.method !== 'POST') return refus('methode non autorisee', 405)
@@ -34,6 +77,7 @@ Deno.serve(async (requete: Request) => {
   }
 
   if ('object_key' in corps || 'cle_stockage' in corps) return refus('cle resolue par le serveur')
+  if (corps.action === 'vignettes') return await signerVignettes(compte, corps)
   const versionId = typeof corps.resource_version_id === 'string' ? corps.resource_version_id.trim() : ''
   if (!UUID.test(versionId)) return refus('version invalide')
 

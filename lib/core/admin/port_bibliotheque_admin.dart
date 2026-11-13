@@ -87,6 +87,11 @@ abstract interface class PortBibliothequeAdmin {
   /// Ce que la personne connectee peut faire.
   Future<CapacitesBibliotheque> capacites();
 
+  /// Le depot de fichiers est-il active sur le serveur ? Faux tant que le
+  /// secret de confirmation n'est pas pose : l'ecran le dit en mots simples au
+  /// lieu d'echouer au dernier temps (le lien externe reste possible).
+  Future<bool> depotActif();
+
   /// Les valeurs de filtre (niveaux, langues) que le catalogue propose.
   Future<FacettesCatalogue> facettes();
 

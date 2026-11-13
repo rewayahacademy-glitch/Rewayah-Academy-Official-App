@@ -266,6 +266,27 @@ abstract final class AppTypography {
     );
   }
 
+  /// Le style de l'arabe de CONTENU (directeur, 13/11/2026) : le titre, la
+  /// description, une lettre ou un mot d'un document, rendus dans la police du
+  /// Coran ([AppFontFamily.arabeMushaf]) en gardant la taille, le poids et la
+  /// couleur du style [base]. Les glyphes que cette police n'a pas (lettres
+  /// latines, chiffres) retombent sur la police des documents, puis celle de
+  /// l'interface, puis le corps francais. **L'arabe d'interface (menus,
+  /// boutons, libelles) ne passe jamais ici** : il garde sa police.
+  ///
+  /// Reemployable par tout lot qui affiche un texte de document ; le choix de
+  /// ce qui est du contenu se fait par `styleContenuArabe`
+  /// (`lib/core/tc_bibliotheque/contenu_arabe.dart`).
+  static TextStyle arabeContenu([TextStyle? base]) =>
+      (base ?? const TextStyle()).copyWith(
+        fontFamily: AppFontFamily.arabeMushaf,
+        fontFamilyFallback: const <String>[
+          AppFontFamily.arabeDocument,
+          AppFontFamily.arabeInterface,
+          AppFontFamily.corps,
+        ],
+      );
+
   /// Style de rendu d'un document arabe : Coran, hadith, livre, lettre.
   ///
   /// Volontairement hors du [TextTheme] : ce n'est pas un role d'interface,

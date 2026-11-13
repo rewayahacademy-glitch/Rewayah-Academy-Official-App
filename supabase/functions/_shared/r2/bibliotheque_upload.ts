@@ -4,7 +4,16 @@ export const TAILLES_UPLOAD_BIBLIOTHEQUE = {
   audio: 100 * 1024 * 1024,
 } as const;
 
+/** La vignette d'un document (BIBLIOTHEQUE-UNE) : une image, 2 Mio au plus. */
+export const TAILLE_VIGNETTE_MAX_OCTETS = 2 * 1024 * 1024;
+
 const TYPES_IMAGES = new Set(["image/png", "image/jpeg", "image/webp"]);
+
+/** Vrai pour une vignette annoncee : image png, jpeg ou webp, taille bornee. */
+export function mimeVignetteAutorise(mime: string, taille: number): boolean {
+  return Number.isSafeInteger(taille) && taille > 0 &&
+    taille <= TAILLE_VIGNETTE_MAX_OCTETS && TYPES_IMAGES.has(mime);
+}
 const TYPES_AUDIO = new Set(["audio/mpeg", "audio/mp4", "audio/ogg"]);
 
 export function mimeAnnonceAutorise(

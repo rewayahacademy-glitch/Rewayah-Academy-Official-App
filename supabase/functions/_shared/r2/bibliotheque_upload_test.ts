@@ -2,7 +2,9 @@ import { assertEquals } from "jsr:@std/assert@1";
 import {
   detecterMimeReel,
   mimeAnnonceAutorise,
+  mimeVignetteAutorise,
   sha256Hex,
+  TAILLE_VIGNETTE_MAX_OCTETS,
 } from "./bibliotheque_upload.ts";
 
 Deno.test("upload bibliotheque: bornes des types et finalites", () => {
@@ -43,4 +45,14 @@ Deno.test("upload bibliotheque: SHA-256 de reference", async () => {
     // Vecteur de test SHA-256("abc"), coupe pour la garde CI.
     "ba7816bf8f01cfea414140de5dae2223" + "b00361a396177a9cb410ff61f20015ad",
   );
+});
+
+Deno.test("upload bibliotheque: la vignette est une image de 2 Mio au plus", () => {
+  assertEquals(mimeVignetteAutorise("image/png", 1), true);
+  assertEquals(mimeVignetteAutorise("image/webp", TAILLE_VIGNETTE_MAX_OCTETS), true);
+  assertEquals(mimeVignetteAutorise("image/jpeg", TAILLE_VIGNETTE_MAX_OCTETS + 1), false);
+  assertEquals(mimeVignetteAutorise("application/pdf", 100), false);
+  assertEquals(mimeVignetteAutorise("audio/mpeg", 100), false);
+  assertEquals(mimeVignetteAutorise("image/png", 0), false);
+  assertEquals(mimeVignetteAutorise("image/png", Number.NaN), false);
 });

@@ -73,6 +73,14 @@ class FormatsAcceptes {
     ),
     TypeRessource.texteStructure || TypeRessource.lecon =>
       const FormatsAcceptes(<String>['json'], {'json': 'application/json'}),
+    // L'audio se depose (100 Mio au plus au serveur) ; la video se donne par
+    // lien (le poids des fichiers depasse ce que le depot accepte) ; un lien
+    // externe n'a pas de fichier ; le Coran est la source canonique.
+    TypeRessource.audio => const FormatsAcceptes(
+      <String>['mp3', 'm4a', 'ogg'],
+      {'mp3': 'audio/mpeg', 'm4a': 'audio/mp4', 'ogg': 'audio/ogg'},
+    ),
+    TypeRessource.video || TypeRessource.lienExterne => aucun,
     TypeRessource.quran => aucun,
   };
 }
