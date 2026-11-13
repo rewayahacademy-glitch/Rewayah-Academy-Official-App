@@ -8169,8 +8169,8 @@ class Traductions$priere$enseignant$fr {
 	/// fr: 'Enregistrer'
 	String get enregistrer => 'Enregistrer';
 
-	/// fr: 'L'ajustement n'a pas été enregistré. Il est possible qu'il ne soit pas parvenu jusqu'à Rewayah. Réessayez dans un instant.'
-	String get erreurEnregistrement => 'L\'ajustement n\'a pas été enregistré. Il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Réessayez dans un instant.';
+	/// fr: 'Il est possible que l'ajustement ne soit pas parvenu jusqu'à Rewayah. Vérifiez vos heures, puis réessayez dans un instant.'
+	String get erreurEnregistrement => 'Il est possible que l\'ajustement ne soit pas parvenu jusqu\'à Rewayah. Vérifiez vos heures, puis réessayez dans un instant.';
 
 	/// fr: '{n} min'
 	String unite({required Object n}) => '${n} min';
@@ -8354,8 +8354,8 @@ class Traductions$priere$regles$fr {
 	/// fr: 'Enregistrer'
 	String get choisir => 'Enregistrer';
 
-	/// fr: 'Le réglage n'a pas été enregistré ({message}). Réessayez dans un instant.'
-	String erreurEcriture({required Object message}) => 'Le réglage n\'a pas été enregistré (${message}). Réessayez dans un instant.';
+	/// fr: 'Le réglage n'est pas confirmé ({message}). Vérifiez sa valeur, puis réessayez dans un instant.'
+	String erreurEcriture({required Object message}) => 'Le réglage n\'est pas confirmé (${message}). Vérifiez sa valeur, puis réessayez dans un instant.';
 }
 
 // Path: eleveConnexion.profils
@@ -25870,8 +25870,8 @@ class Traductions$priere$direction$feuille$fr {
 	/// fr: 'Vérifiez le nom du lieu, les coordonnées, le fuseau et la plage du vendredi.'
 	String get invalide => 'Vérifiez le nom du lieu, les coordonnées, le fuseau et la plage du vendredi.';
 
-	/// fr: 'Le lieu n'a pas été enregistré. Il est possible qu'il ne soit pas parvenu jusqu'à Rewayah, ou qu'une valeur soit refusée. Réessayez dans un instant.'
-	String get erreurEnregistrement => 'Le lieu n\'a pas été enregistré. Il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah, ou qu\'une valeur soit refusée. Réessayez dans un instant.';
+	/// fr: 'Il est possible que le lieu ne soit pas parvenu jusqu'à Rewayah, ou qu'une valeur soit refusée. Vérifiez la fiche, puis réessayez dans un instant.'
+	String get erreurEnregistrement => 'Il est possible que le lieu ne soit pas parvenu jusqu\'à Rewayah, ou qu\'une valeur soit refusée. Vérifiez la fiche, puis réessayez dans un instant.';
 }
 
 // Path: recrutement.invitations.etat
@@ -51245,7 +51245,7 @@ extension on Traductions {
 			'priere.enseignant.feuilleAide' => 'De 30 minutes en moins à 30 minutes en plus. L\'ajustement déplace aussi la pause de prière de vos cours.',
 			'priere.enseignant.champ' => 'Ajustement',
 			'priere.enseignant.enregistrer' => 'Enregistrer',
-			'priere.enseignant.erreurEnregistrement' => 'L\'ajustement n\'a pas été enregistré. Il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Réessayez dans un instant.',
+			'priere.enseignant.erreurEnregistrement' => 'Il est possible que l\'ajustement ne soit pas parvenu jusqu\'à Rewayah. Vérifiez vos heures, puis réessayez dans un instant.',
 			'priere.enseignant.unite' => ({required Object n}) => '${n} min',
 			'priere.direction.onglet' => 'Prière',
 			'priere.direction.titre' => 'Lieux de prière',
@@ -51281,7 +51281,7 @@ extension on Traductions {
 			'priere.direction.feuille.enregistrer' => 'Enregistrer le lieu',
 			'priere.direction.feuille.retirer' => 'Retirer le lieu',
 			'priere.direction.feuille.invalide' => 'Vérifiez le nom du lieu, les coordonnées, le fuseau et la plage du vendredi.',
-			'priere.direction.feuille.erreurEnregistrement' => 'Le lieu n\'a pas été enregistré. Il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah, ou qu\'une valeur soit refusée. Réessayez dans un instant.',
+			'priere.direction.feuille.erreurEnregistrement' => 'Il est possible que le lieu ne soit pas parvenu jusqu\'à Rewayah, ou qu\'une valeur soit refusée. Vérifiez la fiche, puis réessayez dans un instant.',
 			'priere.classe.titre' => 'Prières et créneau',
 			'priere.classe.intro' => 'Ce que ce créneau croise, sur les 12 mois à venir, pour l\'enseignant de la classe. C\'est un avertissement : rien n\'est bloqué, et la pause de prière protège de toute façon l\'enseignant.',
 			'priere.classe.sansLieu' => 'L\'enseignant de cette classe n\'a pas de lieu de prière : aucune pause de prière n\'est prévue.',
@@ -51318,7 +51318,7 @@ extension on Traductions {
 			'priere.regles.unite' => ({required Object n}) => '${n} min',
 			'priere.regles.uniteJours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} jour', other: '${n} jours', ), 
 			'priere.regles.choisir' => 'Enregistrer',
-			'priere.regles.erreurEcriture' => ({required Object message}) => 'Le réglage n\'a pas été enregistré (${message}). Réessayez dans un instant.',
+			'priere.regles.erreurEcriture' => ({required Object message}) => 'Le réglage n\'est pas confirmé (${message}). Vérifiez sa valeur, puis réessayez dans un instant.',
 			'eleveConnexion.entrerCode' => 'J\'ai un code',
 			'eleveConnexion.scanner' => 'Scanner le carré',
 			'eleveConnexion.choisirProfil' => 'Qui es-tu ?',

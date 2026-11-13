@@ -2318,7 +2318,7 @@
       "feuilleAide": "De 30 minutes en moins à 30 minutes en plus. L'ajustement déplace aussi la pause de prière de vos cours.",
       "champ": "Ajustement",
       "enregistrer": "Enregistrer",
-      "erreurEnregistrement": "L'ajustement n'a pas été enregistré. Il est possible qu'il ne soit pas parvenu jusqu'à Rewayah. Réessayez dans un instant.",
+      "erreurEnregistrement": "Il est possible que l'ajustement ne soit pas parvenu jusqu'à Rewayah. Vérifiez vos heures, puis réessayez dans un instant.",
       "unite": "{n} min"
     },
     "direction": {
@@ -2357,7 +2357,7 @@
         "enregistrer": "Enregistrer le lieu",
         "retirer": "Retirer le lieu",
         "invalide": "Vérifiez le nom du lieu, les coordonnées, le fuseau et la plage du vendredi.",
-        "erreurEnregistrement": "Le lieu n'a pas été enregistré. Il est possible qu'il ne soit pas parvenu jusqu'à Rewayah, ou qu'une valeur soit refusée. Réessayez dans un instant."
+        "erreurEnregistrement": "Il est possible que le lieu ne soit pas parvenu jusqu'à Rewayah, ou qu'une valeur soit refusée. Vérifiez la fiche, puis réessayez dans un instant."
       }
     },
     "classe": {
@@ -2402,7 +2402,7 @@
         "other": "{n} jours"
       },
       "choisir": "Enregistrer",
-      "erreurEcriture": "Le réglage n'a pas été enregistré ({message}). Réessayez dans un instant."
+      "erreurEcriture": "Le réglage n'est pas confirmé ({message}). Vérifiez sa valeur, puis réessayez dans un instant."
     }
   },
   "eleveConnexion": {
