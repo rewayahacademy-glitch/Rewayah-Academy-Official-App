@@ -208,23 +208,24 @@ void main() {
       expect(find.text(p.dateEnvoyer), findsNothing);
     });
 
-    testWidgets('un jour avant l\'inscription : le refus dit la date', (
-      tester,
-    ) async {
-      final FauxPlanClasse plan = FauxPlanClasse()
-        ..echec = Exception(
-          'message: date_avant_inscription: 2026-09-14, code: P0001',
+    testWidgets(
+      'un jour sous le plancher : le refus dit le plus ancien jour accepte',
+      (tester) async {
+        final FauxPlanClasse plan = FauxPlanClasse()
+          ..echec = Exception(
+            'message: date_sous_plancher: 2016-11-13, code: P0001',
+          );
+        await ouvrir(tester, plan);
+        await _presser(tester, _cle('champ-date'));
+        await _presser(tester, find.text('OK'));
+        await _presser(tester, find.text(p.dateMotifs.correction));
+        await _presser(tester, find.text(p.dateEnvoyer));
+        expect(
+          find.text(p.refus.dateSousPlancher(date: '13/11/2016')),
+          findsOneWidget,
         );
-      await ouvrir(tester, plan);
-      await _presser(tester, _cle('champ-date'));
-      await _presser(tester, find.text('OK'));
-      await _presser(tester, find.text(p.dateMotifs.correction));
-      await _presser(tester, find.text(p.dateEnvoyer));
-      expect(
-        find.text(p.refus.dateAvantInscription(date: '14/09/2026')),
-        findsOneWidget,
-      );
-    });
+      },
+    );
   });
 
   group('Diagnostics : qui n\'a pas d\'etape', () {

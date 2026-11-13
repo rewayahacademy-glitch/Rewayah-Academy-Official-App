@@ -6,7 +6,7 @@
 --      ouverte ; les membres sans etape la recoivent par le mecanisme du lot 1
 --      (private.poser_etape_eleve), jamais en double ni remplacee.
 --   2. dater_entree_etape / decider_placement_depuis : un eleve deja en cours a
---      commence a une date passee (jamais future, jamais avant son inscription).
+--      commence a une date passee (jamais future, jamais sous un plancher reglable).
 --   3. eleves_sans_etape / rattacher_eleves_et_classes : qui n'a pas d'etape et
 --      pourquoi, et le geste de rattachement du lot 1 pour la direction.
 --   4. etat_publication_brouillon / repartir_des_bases_programme : dire pourquoi un
@@ -29,9 +29,42 @@ $preflight$;
 -- ---------------------------------------------------------------------------
 -- 0. Un seul endroit pour fixer la date d'entree dans l'etape
 -- ---------------------------------------------------------------------------
--- Bornes : jamais dans le futur, jamais avant l'inscription de l'eleve. Le
--- « jour » se compte en UTC (le Canada est en retard sur l'UTC : aucune date
--- legitime n'est refusee a tort). Rend l'ancienne date d'entree.
+-- Le jour de reference de l'academie : le jour de La Mecque (decision de
+-- l'architecte, 13/11). UN seul endroit nomme, facile a rebrancher sur la
+-- fonction de jour du lot 2 quand elle sera dans main.
+CREATE OR REPLACE FUNCTION private.jour_academie()
+RETURNS date
+LANGUAGE sql
+STABLE
+SECURITY DEFINER
+SET search_path = ''
+AS $function$
+  SELECT (pg_catalog.now() AT TIME ZONE 'Asia/Riyadh')::date;
+$function$;
+
+-- Le plus ancien jour de debut accepte : un reglage (valeur reglable, defaut dix
+-- ans avant aujourd'hui). L'academie enseignait avant l'application : un eleve
+-- deja en cours a presque toujours commence AVANT la creation de son compte.
+INSERT INTO public.app_config (key, value)
+VALUES ('programme.date_debut_plancher_annees', pg_catalog.to_jsonb(10))
+ON CONFLICT (key) DO NOTHING;
+
+CREATE OR REPLACE FUNCTION private.plancher_date_debut()
+RETURNS date
+LANGUAGE sql
+STABLE
+SECURITY DEFINER
+SET search_path = ''
+AS $function$
+  SELECT (private.jour_academie()
+          - pg_catalog.make_interval(years => coalesce(
+              (SELECT (c.value #>> '{}')::int FROM public.app_config c
+                WHERE c.key = 'programme.date_debut_plancher_annees'), 10)))::date;
+$function$;
+
+-- Bornes : jamais dans le futur (jour de La Mecque), jamais sous le plancher
+-- reglable. Aucune reference a la date d'inscription du compte. Rend l'ancienne
+-- date d'entree.
 CREATE OR REPLACE FUNCTION private.fixer_entree_etape(p_student_id uuid, p_date date)
 RETURNS date
 LANGUAGE plpgsql
@@ -40,22 +73,22 @@ SET search_path = ''
 AS $function$
 DECLARE
   f public.eleve_etape_en_cours%ROWTYPE;
-  v_inscrit date;
+  v_existe boolean;
 BEGIN
   IF p_date IS NULL THEN
     RAISE EXCEPTION 'date_obligatoire' USING errcode = 'P0001';
   END IF;
-  IF p_date > (pg_catalog.now() AT TIME ZONE 'UTC')::date THEN
+  IF p_date > private.jour_academie() THEN
     RAISE EXCEPTION 'date_future' USING errcode = 'P0001',
       hint = 'Un eleve ne peut pas avoir commence apres aujourd''hui.';
   END IF;
-  SELECT p.created_at::date INTO v_inscrit FROM public.profiles p WHERE p.id = p_student_id;
-  IF v_inscrit IS NULL THEN
-    RAISE EXCEPTION 'eleve_introuvable' USING errcode = 'P0001';
+  IF p_date < private.plancher_date_debut() THEN
+    RAISE EXCEPTION 'date_sous_plancher: %', private.plancher_date_debut() USING errcode = 'P0001',
+      hint = 'Ce jour est plus ancien que le plus ancien jour accepte (reglage programme.date_debut_plancher_annees).';
   END IF;
-  IF p_date < v_inscrit THEN
-    RAISE EXCEPTION 'date_avant_inscription: %', v_inscrit USING errcode = 'P0001',
-      hint = 'Un eleve ne peut pas avoir commence avant son inscription.';
+  SELECT EXISTS (SELECT 1 FROM public.profiles p WHERE p.id = p_student_id) INTO v_existe;
+  IF NOT v_existe THEN
+    RAISE EXCEPTION 'eleve_introuvable' USING errcode = 'P0001';
   END IF;
   SELECT * INTO f FROM public.eleve_etape_en_cours WHERE student_id = p_student_id FOR UPDATE;
   IF NOT FOUND THEN
@@ -404,6 +437,8 @@ $function$;
 -- 5. Droits (deux chemins : PUBLIC et anon)
 -- ---------------------------------------------------------------------------
 REVOKE ALL ON FUNCTION private.fixer_entree_etape(uuid, date) FROM PUBLIC, anon, authenticated, service_role;
+REVOKE ALL ON FUNCTION private.jour_academie() FROM PUBLIC, anon, authenticated, service_role;
+REVOKE ALL ON FUNCTION private.plancher_date_debut() FROM PUBLIC, anon, authenticated, service_role;
 REVOKE ALL ON FUNCTION public.donner_niveau_classe(uuid, uuid, text) FROM PUBLIC, anon, service_role;
 REVOKE ALL ON FUNCTION public.niveau_classe_direction(uuid) FROM PUBLIC, anon, service_role;
 REVOKE ALL ON FUNCTION public.dater_entree_etape(uuid, date, text) FROM PUBLIC, anon, service_role;

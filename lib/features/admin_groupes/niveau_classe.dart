@@ -67,6 +67,12 @@ class LigneEtapeClasse extends ConsumerWidget {
   }
 }
 
+/// Le plus ancien jour que le calendrier propose : large a dessein. Le plancher
+/// (un reglage, dix ans par defaut) est decide et dit par le serveur, jamais
+/// recopie ici ; un jour plus ancien que lui est refuse avec sa date.
+DateTime premierJourCalendrier(DateTime aujourdhui) =>
+    DateTime(aujourdhui.year - 30, aujourdhui.month, aujourdhui.day);
+
 /// Le texte d'un refus du serveur, en mots simples : ce qui s'est passe et ce
 /// qu'il reste a faire (K-59). Le message brut n'est repris que pour un refus
 /// inconnu.
@@ -74,14 +80,12 @@ String refusPlanClasse(Object erreur, String Function(String brut) generique) {
   final String message = messageMetier(erreur).trim();
   final r = t.admin.planClasse.refus;
   if (message.startsWith('date_future')) return r.dateFuture;
-  if (message.startsWith('date_avant_inscription')) {
+  if (message.startsWith('date_sous_plancher')) {
     final int i = message.indexOf(': ');
     final DateTime? jour = i < 0
         ? null
         : DateTime.tryParse(message.substring(i + 2));
-    return r.dateAvantInscription(
-      date: jour == null ? '' : ChampDate.ecrire(jour),
-    );
+    return r.dateSousPlancher(date: jour == null ? '' : ChampDate.ecrire(jour));
   }
   if (message.startsWith('eleve_sans_etape')) return r.eleveSansEtape;
   if (message.startsWith('niveau_non_publie')) return r.niveauNonPublie;
@@ -377,7 +381,6 @@ void ouvrirDaterEntreeEtape(
   WidgetRef ref, {
   required String studentId,
   required String libelleEleve,
-  DateTime? inscritLe,
   String? groupeId,
 }) {
   AppBottomSheet.ouvrir<void>(
@@ -386,7 +389,6 @@ void ouvrirDaterEntreeEtape(
     constructeur: (BuildContext contexte) => _FeuilleDater(
       studentId: studentId,
       libelleEleve: libelleEleve,
-      inscritLe: inscritLe,
       groupeId: groupeId,
     ),
   );
@@ -396,13 +398,11 @@ class _FeuilleDater extends ConsumerStatefulWidget {
   const _FeuilleDater({
     required this.studentId,
     required this.libelleEleve,
-    required this.inscritLe,
     required this.groupeId,
   });
 
   final String studentId;
   final String libelleEleve;
-  final DateTime? inscritLe;
   final String? groupeId;
 
   @override
@@ -415,9 +415,7 @@ class _FeuilleDaterEtat extends ConsumerState<_FeuilleDater> {
   @override
   Widget build(BuildContext context) {
     final DateTime aujourdhui = ref.read(horlogeFormulairesProvider)();
-    final DateTime inscrit =
-        widget.inscritLe ??
-        DateTime(aujourdhui.year - 3, aujourdhui.month, aujourdhui.day);
+
     return FeuilleGesteDirection(
       intro: '${widget.libelleEleve}\n${t.admin.planClasse.dateIntro}',
       champs: <Widget>[
@@ -426,7 +424,7 @@ class _FeuilleDaterEtat extends ConsumerState<_FeuilleDater> {
           aide: t.admin.planClasse.dateAide,
           valeur: _jour,
           aujourdhui: aujourdhui,
-          premier: inscrit,
+          premier: premierJourCalendrier(aujourdhui),
           dernier: aujourdhui,
           onChoix: (DateTime j) => setState(() => _jour = j),
         ),

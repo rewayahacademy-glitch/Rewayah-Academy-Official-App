@@ -23,7 +23,8 @@ import '../../core/widgets/selecteur_motif.dart';
 import '../../core/widgets/selecteur_niveau_programme.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
-import '../admin_groupes/niveau_classe.dart' show refusPlanClasse;
+import '../admin_groupes/niveau_classe.dart'
+    show premierJourCalendrier, refusPlanClasse;
 import 'placements_a_faire.dart';
 
 /// `ADM-10` : Pedagogie > Diagnostics, fonction primaire du domaine.
@@ -347,7 +348,7 @@ class _Decision extends StatelessWidget {
                   aide: t.admin.planClasse.debutAide,
                   valeur: depuis,
                   aujourdhui: aujourdhui,
-                  premier: eleve.inscritDepuis,
+                  premier: premierJourCalendrier(aujourdhui),
                   dernier: aujourdhui,
                   onChoix: onDepuis,
                 ),

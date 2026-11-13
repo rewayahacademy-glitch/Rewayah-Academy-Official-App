@@ -11164,14 +11164,14 @@ class Traductions$admin$planClasse$fr {
 	/// fr: 'Début de l'étape'
 	String get dateTitre => 'Début de l\'étape';
 
-	/// fr: 'Si cet élève était déjà en cours avant d'être suivi ici, dites quel jour il a commencé son étape. La date limite se compte à partir de ce jour, jamais avant son inscription.'
-	String get dateIntro => 'Si cet élève était déjà en cours avant d\'être suivi ici, dites quel jour il a commencé son étape. La date limite se compte à partir de ce jour, jamais avant son inscription.';
+	/// fr: 'Si cet élève était déjà en cours avant d'être suivi ici, dites quel jour il a commencé son étape, même avant la création de son compte. La date limite se compte à partir de ce jour.'
+	String get dateIntro => 'Si cet élève était déjà en cours avant d\'être suivi ici, dites quel jour il a commencé son étape, même avant la création de son compte. La date limite se compte à partir de ce jour.';
 
 	/// fr: 'Jour de début'
 	String get dateChamp => 'Jour de début';
 
-	/// fr: 'Un jour passé, à partir de l'inscription de l'élève.'
-	String get dateAide => 'Un jour passé, à partir de l\'inscription de l\'élève.';
+	/// fr: 'Un jour passé, jusqu'à aujourd'hui (jour de La Mecque).'
+	String get dateAide => 'Un jour passé, jusqu\'à aujourd\'hui (jour de La Mecque).';
 
 	/// fr: 'Il manque le jour de début : choisissez-le dans le calendrier.'
 	String get dateManque => 'Il manque le jour de début : choisissez-le dans le calendrier.';
@@ -29723,8 +29723,8 @@ class Traductions$admin$planClasse$refus$fr {
 	/// fr: 'Ce jour n'est pas encore arrivé. Choisissez aujourd'hui ou un jour passé.'
 	String get dateFuture => 'Ce jour n\'est pas encore arrivé. Choisissez aujourd\'hui ou un jour passé.';
 
-	/// fr: 'Cet élève n'était pas encore inscrit le {date}. Choisissez un jour à partir de son inscription.'
-	String dateAvantInscription({required Object date}) => 'Cet élève n\'était pas encore inscrit le ${date}. Choisissez un jour à partir de son inscription.';
+	/// fr: 'Ce jour est trop ancien. Le plus ancien jour accepté est le {date}. Choisissez un jour à partir de cette date.'
+	String dateSousPlancher({required Object date}) => 'Ce jour est trop ancien. Le plus ancien jour accepté est le ${date}. Choisissez un jour à partir de cette date.';
 
 	/// fr: 'Cet élève n'a pas encore d'étape. Placez-le d'abord dans Pédagogie, Diagnostics.'
 	String get eleveSansEtape => 'Cet élève n\'a pas encore d\'étape. Placez-le d\'abord dans Pédagogie, Diagnostics.';
@@ -54062,9 +54062,9 @@ extension on Traductions {
 			'admin.planClasse.motifs.correction' => 'Correction de l\'étape de la classe',
 			'admin.planClasse.dateAction' => 'Dire quand il a commencé',
 			'admin.planClasse.dateTitre' => 'Début de l\'étape',
-			'admin.planClasse.dateIntro' => 'Si cet élève était déjà en cours avant d\'être suivi ici, dites quel jour il a commencé son étape. La date limite se compte à partir de ce jour, jamais avant son inscription.',
+			'admin.planClasse.dateIntro' => 'Si cet élève était déjà en cours avant d\'être suivi ici, dites quel jour il a commencé son étape, même avant la création de son compte. La date limite se compte à partir de ce jour.',
 			'admin.planClasse.dateChamp' => 'Jour de début',
-			'admin.planClasse.dateAide' => 'Un jour passé, à partir de l\'inscription de l\'élève.',
+			'admin.planClasse.dateAide' => 'Un jour passé, jusqu\'à aujourd\'hui (jour de La Mecque).',
 			'admin.planClasse.dateManque' => 'Il manque le jour de début : choisissez-le dans le calendrier.',
 			'admin.planClasse.dateEnvoyer' => 'Enregistrer le jour de début',
 			'admin.planClasse.dateErreur' => ({required Object message}) => 'Le jour de début n\'est pas confirmé : ${message}',
@@ -54072,7 +54072,7 @@ extension on Traductions {
 			'admin.planClasse.dateMotifs.correction' => 'Correction du jour de début',
 			'admin.planClasse.dateMotifs.confirme' => 'Jour confirmé avec l\'enseignant',
 			'admin.planClasse.refus.dateFuture' => 'Ce jour n\'est pas encore arrivé. Choisissez aujourd\'hui ou un jour passé.',
-			'admin.planClasse.refus.dateAvantInscription' => ({required Object date}) => 'Cet élève n\'était pas encore inscrit le ${date}. Choisissez un jour à partir de son inscription.',
+			'admin.planClasse.refus.dateSousPlancher' => ({required Object date}) => 'Ce jour est trop ancien. Le plus ancien jour accepté est le ${date}. Choisissez un jour à partir de cette date.',
 			'admin.planClasse.refus.eleveSansEtape' => 'Cet élève n\'a pas encore d\'étape. Placez-le d\'abord dans Pédagogie, Diagnostics.',
 			'admin.planClasse.refus.niveauNonPublie' => 'Cette étape n\'est pas dans la version publiée du programme. Choisissez une étape de la liste.',
 			'admin.planClasse.refus.classeClose' => 'Cette classe est clôturée.',

@@ -5573,9 +5573,9 @@ class _Traductions$admin$planClasse$ar extends Traductions$admin$planClasse$fr {
 	@override late final _Traductions$admin$planClasse$motifs$ar motifs = _Traductions$admin$planClasse$motifs$ar._(_root);
 	@override String get dateAction => 'تحديد متى بدأ';
 	@override String get dateTitre => 'بداية المرحلة';
-	@override String get dateIntro => 'إن كان هذا الطالب في مرحلته قبل أن يُتابَع هنا، فحدّد اليوم الذي بدأها فيه. يُحسب الموعد الأخير من ذلك اليوم، وليس قبل تسجيله.';
+	@override String get dateIntro => 'إن كان هذا الطالب في مرحلته قبل أن يُتابَع هنا، فحدّد اليوم الذي بدأها فيه، ولو قبل إنشاء حسابه. يُحسب الموعد الأخير من ذلك اليوم.';
 	@override String get dateChamp => 'يوم البداية';
-	@override String get dateAide => 'يوم مضى، ابتداءً من تسجيل الطالب.';
+	@override String get dateAide => 'يوم مضى، حتى اليوم (بتوقيت مكة المكرمة).';
 	@override String get dateManque => 'يوم البداية ناقص: اخترْه من التقويم.';
 	@override String get dateEnvoyer => 'حفظ يوم البداية';
 	@override String dateErreur({required Object message}) => 'يوم البداية غير مؤكَّد: ⁨${message}⁩';
@@ -15938,7 +15938,7 @@ class _Traductions$admin$planClasse$refus$ar extends Traductions$admin$planClass
 
 	// Translations
 	@override String get dateFuture => 'لم يحلّ هذا اليوم بعد. اختر اليوم أو يومًا مضى.';
-	@override String dateAvantInscription({required Object date}) => 'لم يكن الطالب مسجَّلًا بعد في ⁨${date}⁩. اختر يومًا ابتداءً من تسجيله.';
+	@override String dateSousPlancher({required Object date}) => 'هذا اليوم قديم جدًا. أقدم يوم مقبول هو ⁨${date}⁩. اختر يومًا ابتداءً من هذا التاريخ.';
 	@override String get eleveSansEtape => 'ليست لهذا الطالب مرحلة بعد. وجّهه أولًا في «التعليم» > «تحديد المستوى».';
 	@override String get niveauNonPublie => 'هذه المرحلة ليست في الإصدار المنشور من المنهج. اختر مرحلة من القائمة.';
 	@override String get classeClose => 'هذا الفصل مغلق.';
@@ -29569,9 +29569,9 @@ extension on TraductionsAr {
 			'admin.planClasse.motifs.correction' => 'تصحيح مرحلة الفصل',
 			'admin.planClasse.dateAction' => 'تحديد متى بدأ',
 			'admin.planClasse.dateTitre' => 'بداية المرحلة',
-			'admin.planClasse.dateIntro' => 'إن كان هذا الطالب في مرحلته قبل أن يُتابَع هنا، فحدّد اليوم الذي بدأها فيه. يُحسب الموعد الأخير من ذلك اليوم، وليس قبل تسجيله.',
+			'admin.planClasse.dateIntro' => 'إن كان هذا الطالب في مرحلته قبل أن يُتابَع هنا، فحدّد اليوم الذي بدأها فيه، ولو قبل إنشاء حسابه. يُحسب الموعد الأخير من ذلك اليوم.',
 			'admin.planClasse.dateChamp' => 'يوم البداية',
-			'admin.planClasse.dateAide' => 'يوم مضى، ابتداءً من تسجيل الطالب.',
+			'admin.planClasse.dateAide' => 'يوم مضى، حتى اليوم (بتوقيت مكة المكرمة).',
 			'admin.planClasse.dateManque' => 'يوم البداية ناقص: اخترْه من التقويم.',
 			'admin.planClasse.dateEnvoyer' => 'حفظ يوم البداية',
 			'admin.planClasse.dateErreur' => ({required Object message}) => 'يوم البداية غير مؤكَّد: ⁨${message}⁩',
@@ -29579,7 +29579,7 @@ extension on TraductionsAr {
 			'admin.planClasse.dateMotifs.correction' => 'تصحيح يوم البداية',
 			'admin.planClasse.dateMotifs.confirme' => 'اليوم مؤكَّد مع المعلم',
 			'admin.planClasse.refus.dateFuture' => 'لم يحلّ هذا اليوم بعد. اختر اليوم أو يومًا مضى.',
-			'admin.planClasse.refus.dateAvantInscription' => ({required Object date}) => 'لم يكن الطالب مسجَّلًا بعد في ⁨${date}⁩. اختر يومًا ابتداءً من تسجيله.',
+			'admin.planClasse.refus.dateSousPlancher' => ({required Object date}) => 'هذا اليوم قديم جدًا. أقدم يوم مقبول هو ⁨${date}⁩. اختر يومًا ابتداءً من هذا التاريخ.',
 			'admin.planClasse.refus.eleveSansEtape' => 'ليست لهذا الطالب مرحلة بعد. وجّهه أولًا في «التعليم» > «تحديد المستوى».',
 			'admin.planClasse.refus.niveauNonPublie' => 'هذه المرحلة ليست في الإصدار المنشور من المنهج. اختر مرحلة من القائمة.',
 			'admin.planClasse.refus.classeClose' => 'هذا الفصل مغلق.',
