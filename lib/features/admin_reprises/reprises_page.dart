@@ -21,6 +21,7 @@ import 'package:uuid/uuid.dart';
 import '../../core/admin/admin_domaine.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/foyer/port_reprises_admin.dart';
+import '../../core/i18n/isolat_bidi.dart' show enTeteArabe;
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/etat_sans_donnees.dart';
@@ -41,10 +42,12 @@ import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
 import '../../core/widgets/status_pill.dart';
 
-String _date(DateTime d) => t.commun.dates.jourDate(
-  jour: t.commun.dates.jours[d.weekday - 1],
-  numero: d.day,
-  mois: t.commun.dates.mois[d.month - 1],
+String _date(DateTime d) => enTeteArabe(
+  t.commun.dates.jourDate(
+    jour: t.commun.dates.jours[d.weekday - 1],
+    numero: d.day,
+    mois: t.commun.dates.mois[d.month - 1],
+  ),
 );
 
 /// L'ecran « Reprises de foyer ».
