@@ -33,7 +33,7 @@ class BibliothequeUploadSupabase {
         !RegExp(r'^[0-9a-f]{64}$').hasMatch(fichier.sha256)) {
       throw const DepotImpossible(ErreurUpload.empreinte);
     }
-    if (!vignetteOuNomConnu(fichier, finalite)) {
+    if (!typeAccepte(fichier, finalite)) {
       throw const DepotImpossible(ErreurUpload.type);
     }
     final bool vignette = finalite == FinaliteUpload.vignette;
@@ -265,7 +265,7 @@ class BibliothequeUploadSupabase {
 
   /// Vrai quand le type annonce est de ceux que le depot accepte pour cette
   /// finalite : refuse ici, avec sa vraie phrase, plutot qu'au serveur.
-  static bool vignetteOuNomConnu(FichierADeposer f, FinaliteUpload finalite) {
+  static bool typeAccepte(FichierADeposer f, FinaliteUpload finalite) {
     const Set<String> images = <String>{
       'image/png',
       'image/jpeg',

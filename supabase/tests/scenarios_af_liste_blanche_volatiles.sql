@@ -505,7 +505,17 @@ declare
     -- signes au plus) d'UNE ligne de sourates_validees, jamais d'effacement ;
     -- et une ligne d'audit (log_sensitive_access, action sourate_retiree).
     -- Relue par l'agent du lot le 12/11/2026.
-    'retirer_sourate_validee(uuid,integer,text)'
+    'retirer_sourate_validee(uuid,integer,text)',
+    -- DEPOT-SIMPLE (migration 20261124700000) : le depot direct de la
+    -- direction. Garde positive app_account_valid() ET app_role() = 'admin' ;
+    -- 42501 sinon. Ce qu'elle peut ecrire : les droits de la version brouillon
+    -- du document (valeurs par defaut la ou rien n'est saisi, approbation
+    -- tracee : acteur, date), la visibilite 'admin' -> 'inscrits', une ligne
+    -- d'audit (library_direct_deposit), puis la publication par
+    -- library_publier_version (meme controle, meme idempotence). Hors du rayon
+    -- des cours, refuse sans la declaration du droit de diffuser. Relue par
+    -- l'agent du lot le 13/11/2026.
+    'library_depot_direct(uuid,integer,text,text,boolean)'
   ];
   -- Ouvertes a anon par choix : la desinscription d'un e-mail et le depot d'un
   -- avis se font sans compte.
