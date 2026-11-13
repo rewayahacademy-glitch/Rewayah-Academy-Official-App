@@ -78,6 +78,12 @@ abstract final class RechercheCatalogue {
           if (filtre.niveau != null && !r.levelScope.contains(filtre.niveau)) {
             return false;
           }
+          if (filtre.rayon != null && r.rayon != filtre.rayon) {
+            return false;
+          }
+          if (filtre.etape != null && !r.etapes.contains(filtre.etape)) {
+            return false;
+          }
           if (filtre.etatOffline != null && etats[r.id] != filtre.etatOffline) {
             return false;
           }
@@ -111,7 +117,7 @@ abstract final class RechercheCatalogue {
     bool dans(String? valeur) =>
         valeur != null && normaliser(valeur).contains(q);
 
-    if (dans(r.title) || dans(r.shortTitle)) return true;
+    if (dans(r.title) || dans(r.shortTitle) || dans(r.description)) return true;
     if (dans(r.category) || dans(r.edition)) return true;
     if (r.levelScope.any(dans)) return true;
     if (dans(r.resourceType.valeurSql)) return true;

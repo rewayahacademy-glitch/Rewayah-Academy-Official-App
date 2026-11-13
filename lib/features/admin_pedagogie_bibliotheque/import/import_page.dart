@@ -30,6 +30,8 @@ import '../../../core/admin/modeles_bibliotheque_admin.dart';
 import '../../../core/admin/port_bibliotheque_admin.dart';
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/router/routes.dart';
+import '../../../core/tc_bibliotheque/donnees_catalogue.dart';
+import '../../../core/tc_bibliotheque/library_resource.dart';
 import '../../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/action_principale.dart';
@@ -41,6 +43,7 @@ import '../../../core/widgets/page_shell.dart';
 import '../../../core/widgets/sous_navigation_domaine.dart';
 import '../../../core/widgets/zone_saisie.dart';
 import '../catalogue/catalogue_page.dart' show rangBibliotheque;
+import '../classement_document.dart';
 import '../libelles_bibliotheque.dart';
 import '../porte_bibliotheque.dart';
 import 'selecteur_support.dart';
@@ -51,7 +54,16 @@ const List<TypeRessource> typesImportables = <TypeRessource>[
   TypeRessource.image,
   TypeRessource.texteStructure,
   TypeRessource.lecon,
+  TypeRessource.audio,
+  TypeRessource.video,
+  TypeRessource.lienExterne,
 ];
+
+/// Vrai pour un type qui se donne par un lien et non par un fichier : le lien
+/// externe, et la video (le poids des fichiers video depasse ce que le depot
+/// accepte).
+bool typeParLien(TypeRessource? type) =>
+    type == TypeRessource.lienExterne || type == TypeRessource.video;
 
 /// L'ecran « Ajouter un support ». [supportId] : le brouillon que l'on
 /// complete, ou `null` pour un nouveau support.
@@ -131,17 +143,36 @@ class _ImportEtat extends ConsumerState<_Import> {
   final TextEditingController _source = TextEditingController();
   final TextEditingController _titulaire = TextEditingController();
   final TextEditingController _attribution = TextEditingController();
+  final TextEditingController _description = TextEditingController();
+  final TextEditingController _ordre = TextEditingController();
+  final TextEditingController _ecole = TextEditingController();
+  final TextEditingController _lien = TextEditingController();
 
   TypeRessource? _type;
+  String _rayon = codeRayonCours;
+  List<RayonBibliotheque> _rayons = const <RayonBibliotheque>[];
   String? _langue;
   String? _niveau;
   FacettesCatalogue _facettes = const FacettesCatalogue();
   final Set<UsageDroit> _usages = <UsageDroit>{};
 
+  /// Les tranches cochees ; `null` tant que la direction n'y a pas touche : la
+  /// valeur par defaut suit alors le type (D1).
+  Set<String>? _tranches;
+  final Set<String> _etapesChoisies = <String>{};
+  String? _lecture;
+
+  /// Vrai seulement quand le serveur a dit que le depot de fichiers est active.
+  /// Faux : pas encore active (C2). `null` : pas de reponse (en attente ou
+  /// erreur) ; sans reponse, AUCUN bouton de fichier n'est affiche (revue I1).
+  bool? _depotActif;
+  bool _depotInconnu = false;
+
   String? _supportId;
   FicheSupport? _existante;
   final _Depot _support = _Depot();
   final _Depot _preuve = _Depot();
+  final _Depot _vignette = _Depot();
 
   bool _incomplet = false;
   String? _erreur;
@@ -160,6 +191,23 @@ class _ImportEtat extends ConsumerState<_Import> {
       if (mounted) setState(() => _facettes = f);
     } on Object {
       // Sans facettes, le niveau n'est pas propose ; le reste fonctionne.
+    }
+    try {
+      // Les rayons viennent du serveur (donnee), jamais d'un ecran.
+      final List<RayonBibliotheque> r = await ref
+          .read(portCatalogueProvider)
+          .rayons();
+      if (mounted) setState(() => _rayons = r);
+    } on Object {
+      // Sans rayons, le document va au rayon des cours (par defaut serveur).
+    }
+    try {
+      final bool actif = await widget.port.depotActif();
+      if (mounted) setState(() => _depotActif = actif);
+    } on Object {
+      // Sans reponse, on ne propose PAS le depot de fichiers : la phrase dit
+      // que l'etat n'a pas pu etre verifie, le lien reste possible.
+      if (mounted) setState(() => _depotInconnu = true);
     }
     final String? id = _supportId;
     if (id == null) return;
@@ -183,24 +231,65 @@ class _ImportEtat extends ConsumerState<_Import> {
   void dispose() {
     _support.annulerAbonnement();
     _preuve.annulerAbonnement();
+    _vignette.annulerAbonnement();
     for (final TextEditingController c in <TextEditingController>[
       _titre,
       _categorie,
       _source,
       _titulaire,
       _attribution,
+      _description,
+      _ordre,
+      _ecole,
+      _lien,
     ]) {
       c.dispose();
     }
     super.dispose();
   }
 
+  /// Pas de bouton de fichier tant que le serveur n'a pas dit « active ».
+  bool get _depotInactif => _depotActif != true;
+
   bool get _ressourceComplete =>
       _existante != null ||
       (_titre.text.trim().isNotEmpty &&
           _type != null &&
           _langue != null &&
-          _categorie.text.trim().isNotEmpty);
+          _categorie.text.trim().isNotEmpty &&
+          _lienComplet &&
+          _tranchesEffectives.isNotEmpty &&
+          ecoleValide(_ecole.text));
+
+  /// L'adresse d'un lien est une URL https dont l'hote est un nom de domaine ;
+  /// la base la revalide (la regle y est ecrite une fois).
+  static final RegExp _https = RegExp(
+    r'^https://[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+(:[0-9]{1,5})?([/?#][^\s<>"\\]*)?$',
+    caseSensitive: false,
+  );
+
+  bool get _lienValide =>
+      _https.hasMatch(_lien.text.trim()) &&
+      // Une adresse IP n'est pas un lien accepte (la base le refuse aussi).
+      !RegExp(r'^https://[0-9.]+([:/?#]|$)').hasMatch(_lien.text.trim());
+
+  /// Un lien externe et une video par lien exigent leur adresse ; un lien
+  /// externe exige aussi sa description. Les autres types n'ont ni l'un ni
+  /// l'autre a donner ici.
+  bool get _lienComplet {
+    if (!typeParLien(_type)) return true;
+    if (!_lienValide) return false;
+    return _type != TypeRessource.lienExterne ||
+        _description.text.trim().isNotEmpty;
+  }
+
+  /// Les tranches retenues : celles que la direction a cochees, sinon le
+  /// defaut du type (un lien exclut les 6 a 9 ans, D1).
+  Set<String> get _tranchesEffectives =>
+      _tranches ??
+      (_type == TypeRessource.lienExterne
+          ? tranchesLienParDefaut
+          : tranchesTout);
 
   /// Cree le brouillon si besoin : il faut un brouillon pour deposer.
   Future<String?> _assurerBrouillon() async {
@@ -217,6 +306,17 @@ class _ImportEtat extends ConsumerState<_Import> {
           langue: _langue!,
           categorie: _categorie.text.trim(),
           niveau: _niveau,
+          description: _description.text.trim(),
+          rayon: _rayon,
+          ordre: int.tryParse(_ordre.text.trim()) ?? 0,
+          lienExterne: typeParLien(_type) ? _lien.text.trim() : null,
+          etapes: _etapesChoisies.toList(),
+          tranches: <String>[
+            for (final String c in tranchesProposees)
+              if (_tranchesEffectives.contains(c)) c,
+          ],
+          lectureCoran: _lecture,
+          ecolePriere: _ecole.text.trim().isEmpty ? null : _ecole.text.trim(),
         ),
       );
       if (mounted) setState(() => _supportId = id);
@@ -237,10 +337,13 @@ class _ImportEtat extends ConsumerState<_Import> {
     final String? id = await _assurerBrouillon();
     final TypeRessource? type = _type;
     if (id == null || type == null || !mounted) return;
-    // La preuve est un document (PDF ou image) ; le support, de son type.
-    final TypeRessource typeFichier = finalite == FinaliteUpload.preuve
-        ? TypeRessource.pdf
-        : type;
+    // La preuve est un document (PDF) ; la vignette, une image ; le fichier du
+    // document, de son type.
+    final TypeRessource typeFichier = switch (finalite) {
+      FinaliteUpload.preuve => TypeRessource.pdf,
+      FinaliteUpload.vignette => TypeRessource.image,
+      FinaliteUpload.support => type,
+    };
     final FichierChoisi? fichier = await ref
         .read(selecteurFichierSupportProvider)
         .choisir(typeFichier);
@@ -302,7 +405,8 @@ class _ImportEtat extends ConsumerState<_Import> {
   }
 
   Future<void> _poursuivre() async {
-    final String? id = _supportId;
+    // Un document par lien n'a aucun depot : son brouillon se cree ici.
+    final String? id = await _assurerBrouillon();
     if (id == null) return;
     setState(() {
       _envoiDroits = true;
@@ -466,12 +570,101 @@ class _ImportEtat extends ConsumerState<_Import> {
                   cleChamp: const ValueKey<String>('import-categorie'),
                   libelle: c.categorie,
                   maxLignes: 1,
-                  actionClavier: TextInputAction.done,
+                  actionClavier: TextInputAction.next,
+                ),
+                Ecart.vMd,
+                ZoneSaisie(
+                  controleur: _description,
+                  cleChamp: const ValueKey<String>('import-description'),
+                  libelle: c.description,
+                  minLignes: 2,
+                  maxLignes: 4,
+                  majuscules: TextCapitalization.sentences,
+                  erreur:
+                      _incomplet &&
+                          _type == TypeRessource.lienExterne &&
+                          _description.text.trim().isEmpty
+                      ? t.admin.bibliotheque.import.completerLien
+                      : null,
+                  onChanged: (_) => setState(() {}),
+                  actionClavier: TextInputAction.newline,
+                ),
+                if (typeParLien(_type)) ...<Widget>[
+                  Ecart.vMd,
+                  if (_type == TypeRessource.video) ...<Widget>[
+                    Text(
+                      t.admin.bibliotheque.import.classement.videoLien,
+                      key: const ValueKey<String>('import-video-lien'),
+                    ),
+                    Ecart.vSm,
+                  ],
+                  ZoneSaisie(
+                    controleur: _lien,
+                    cleChamp: const ValueKey<String>('import-lien'),
+                    libelle: c.lien,
+                    maxLignes: 1,
+                    erreur: _lien.text.trim().isNotEmpty && !_lienValide
+                        ? t.admin.bibliotheque.import.lienInvalide
+                        : null,
+                    onChanged: (_) => setState(() {}),
+                    actionClavier: TextInputAction.next,
+                  ),
+                ],
+                Ecart.vMd,
+                // Choix de formulaire, pas un filtre : le rayon se choisit parmi
+                // ceux du serveur.
+                if (_rayons.isNotEmpty)
+                  MenuFiltre<String>(
+                    libelle: c.rayon,
+                    valeur: _rayon,
+                    selecteurDeSection: true,
+                    entrees: <EntreeFiltre<String>>[
+                      for (final RayonBibliotheque r in _rayons)
+                        EntreeFiltre<String>(
+                          valeur: r.code,
+                          libelle: r.titrePour(
+                            LocaleSettings.currentLocale.languageCode,
+                          ),
+                        ),
+                    ],
+                    onChoix: (String? v) =>
+                        setState(() => _rayon = v ?? codeRayonCours),
+                  ),
+                Ecart.vMd,
+                ZoneSaisie(
+                  controleur: _ordre,
+                  cleChamp: const ValueKey<String>('import-ordre'),
+                  libelle: c.ordre,
+                  maxLignes: 1,
+                  actionClavier: TextInputAction.next,
+                ),
+                Ecart.vMd,
+                ChoixTranches(
+                  choisies: _tranchesEffectives,
+                  lien: _type == TypeRessource.lienExterne,
+                  onChoix: (Set<String> v) => setState(() => _tranches = v),
+                ),
+                Ecart.vMd,
+                ChoixEtapes(
+                  choisies: _etapesChoisies,
+                  onChoix: (Set<String> v) => setState(() {
+                    _etapesChoisies
+                      ..clear()
+                      ..addAll(v);
+                  }),
+                ),
+                Ecart.vMd,
+                ChampsLectureEcole(
+                  lecture: _lecture,
+                  onLecture: (String? v) => setState(() => _lecture = v),
+                  ecole: _ecole,
                 ),
                 if (_incomplet && !_ressourceComplete) ...<Widget>[
                   Ecart.vSm,
                   Text(
-                    t.admin.bibliotheque.import.completerDabord,
+                    typeParLien(_type)
+                        ? t.admin.bibliotheque.import.completerLien
+                        : t.admin.bibliotheque.import.completerDabord,
                     key: const ValueKey<String>('import-incomplet'),
                   ),
                 ],
@@ -487,6 +680,9 @@ class _ImportEtat extends ConsumerState<_Import> {
     required String libelleAutre,
   }) {
     final i = t.admin.bibliotheque.import;
+    // Depot non active : pas de bouton qui ne pourrait pas aboutir, la phrase
+    // de la section Fichier le dit une fois (C2).
+    if (_depotInactif) return const SizedBox.shrink();
     final ProgressionUpload? p = depot.progression;
     final bool enEnvoi =
         p != null &&
@@ -510,6 +706,7 @@ class _ImportEtat extends ConsumerState<_Import> {
         ErreurUpload.reseau || null => i.erreurs.reseau,
         ErreurUpload.refuse => i.erreurs.refuse,
         ErreurUpload.empreinte => i.erreurs.empreinte,
+        ErreurUpload.nonActive => i.erreurs.nonActive,
       },
     };
     final String suffixe = finalite.name;
@@ -580,6 +777,8 @@ class _ImportEtat extends ConsumerState<_Import> {
       TypeRessource.pdf => f.formats.pdf,
       TypeRessource.image => f.formats.image,
       TypeRessource.texteStructure || TypeRessource.lecon => f.formats.json,
+      TypeRessource.audio => f.formats.audio,
+      TypeRessource.video || TypeRessource.lienExterne => f.formats.lien,
       _ => f.formats.aucun,
     };
     return AppCard(
@@ -595,12 +794,41 @@ class _ImportEtat extends ConsumerState<_Import> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
           if (type != null) ...<Widget>[Text(formats), Ecart.vMd],
-          _blocDepot(
-            _support,
-            FinaliteUpload.support,
-            libelleChoisir: f.choisirFichier,
-            libelleAutre: f.choisirAutre,
-          ),
+          if (_depotActif == false) ...<Widget>[
+            Text(
+              f.classement.depotInactif,
+              key: const ValueKey<String>('import-depot-inactif'),
+            ),
+            Ecart.vMd,
+          ] else if (_depotActif == null && _depotInconnu) ...<Widget>[
+            Text(
+              f.classement.depotInconnu,
+              key: const ValueKey<String>('import-depot-inconnu'),
+            ),
+            Ecart.vMd,
+          ],
+          // Un document par lien n'a aucun fichier : pas de bouton qui ne
+          // pourrait pas aboutir.
+          if (!typeParLien(type))
+            _blocDepot(
+              _support,
+              FinaliteUpload.support,
+              libelleChoisir: f.choisirFichier,
+              libelleAutre: f.choisirAutre,
+            ),
+          if (!_depotInactif) ...<Widget>[
+            Ecart.vLg,
+            Text(f.vignette, style: Theme.of(context).textTheme.titleSmall),
+            Ecart.vXs,
+            Text(f.vignetteAide),
+            Ecart.vSm,
+            _blocDepot(
+              _vignette,
+              FinaliteUpload.vignette,
+              libelleChoisir: f.choisirVignette,
+              libelleAutre: f.choisirAutreVignette,
+            ),
+          ],
         ],
       ),
     );
@@ -664,14 +892,16 @@ class _ImportEtat extends ConsumerState<_Import> {
                 }),
               ),
             ),
-          Ecart.vMd,
-          Text(d.preuve, style: Theme.of(context).textTheme.titleSmall),
-          _blocDepot(
-            _preuve,
-            FinaliteUpload.preuve,
-            libelleChoisir: d.deposerPreuve,
-            libelleAutre: f.choisirAutre,
-          ),
+          if (!_depotInactif) ...<Widget>[
+            Ecart.vMd,
+            Text(d.preuve, style: Theme.of(context).textTheme.titleSmall),
+            _blocDepot(
+              _preuve,
+              FinaliteUpload.preuve,
+              libelleChoisir: d.deposerPreuve,
+              libelleAutre: f.choisirAutre,
+            ),
+          ],
           if (_existante?.droits.preuveFournie ?? false) ...<Widget>[
             Ecart.vSm,
             Text(d.preuveDeposee),
@@ -685,7 +915,11 @@ class _ImportEtat extends ConsumerState<_Import> {
     final f = t.admin.bibliotheque.import;
     final bool enCours = _envoiDroits;
     final bool pret =
-        _support.pret || (_existante?.derniereVersion?.empreinte != null);
+        _support.pret ||
+        (_existante?.derniereVersion?.empreinte != null) ||
+        // Un lien externe ou une video par lien : rien a deposer, l'adresse
+        // suffit.
+        (typeParLien(_type) && _ressourceComplete);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
@@ -693,7 +927,7 @@ class _ImportEtat extends ConsumerState<_Import> {
           Padding(
             padding: const EdgeInsets.only(bottom: AppSpacing.md),
             child: Text(
-              f.poursuivreAide,
+              typeParLien(_type) ? f.completerLien : f.poursuivreAide,
               key: const ValueKey<String>('import-aide'),
             ),
           ),

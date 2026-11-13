@@ -29,4 +29,7 @@ String libelleTypeRessource(TypeRessource type) => switch (type) {
   TypeRessource.pdf => t.tc.bibliotheque.type.pdf,
   TypeRessource.image => t.tc.bibliotheque.type.image,
   TypeRessource.lecon => t.tc.bibliotheque.type.lecon,
+  TypeRessource.audio => t.tc.bibliotheque.type.audio,
+  TypeRessource.video => t.tc.bibliotheque.type.video,
+  TypeRessource.lienExterne => t.tc.bibliotheque.type.lienExterne,
 };
