@@ -19,6 +19,9 @@ String libelleType(TypeRessource type) => switch (type) {
   TypeRessource.pdf => t.admin.bibliotheque.libelles.type.pdf,
   TypeRessource.image => t.admin.bibliotheque.libelles.type.image,
   TypeRessource.lecon => t.admin.bibliotheque.libelles.type.lecon,
+  TypeRessource.audio => t.admin.bibliotheque.libelles.type.audio,
+  TypeRessource.video => t.admin.bibliotheque.libelles.type.video,
+  TypeRessource.lienExterne => t.admin.bibliotheque.libelles.type.lienExterne,
 };
 
 /// Le mot d'une langue (code court) ; le code lui-meme pour une langue

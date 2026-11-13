@@ -34,6 +34,8 @@ import '../../../core/mouvement/mouvement.dart';
 import '../../../core/reseau/etat_sans_donnees.dart';
 import '../../../core/reseau/service_reseau.dart';
 import '../../../core/router/routes.dart';
+import '../../../core/tc_bibliotheque/contenu_arabe.dart';
+import '../../../core/tc_bibliotheque/lecture_coran.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/action_principale.dart';
 import '../../../core/widgets/bandeau_attention.dart';
@@ -377,7 +379,17 @@ class _CatalogueEtat extends ConsumerState<_Catalogue> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
-            Text(s.titre, style: Theme.of(context).textTheme.titleSmall),
+            dirigerContenuArabe(
+              s.titre,
+              Text(
+                s.titre,
+                // Un titre arabe (contenu) se rend dans la police du Coran.
+                style: styleContenuArabe(
+                  s.titre,
+                  Theme.of(context).textTheme.titleSmall,
+                ),
+              ),
+            ),
             Text(
               libelleType(s.type),
               style: Theme.of(context).textTheme.bodySmall,
@@ -492,6 +504,20 @@ class _Filtres extends StatelessWidget {
             onChoix: (String? v) =>
                 onChange(filtre.avec(langue: v, retirerLangue: v == null)),
           ),
+        // La lecture du Coran (D2) : un axe ferme, quatre valeurs.
+        MenuFiltre<String>(
+          key: const ValueKey<String>('filtre-lecture'),
+          libelle: t.admin.bibliotheque.import.classement.lectureTitre,
+          valeur: filtre.lectureCoran,
+          entrees: <EntreeFiltre<String>>[
+            EntreeFiltre<String>(valeur: null, libelle: f.tous),
+            for (final String l in lecturesCoran)
+              EntreeFiltre<String>(valeur: l, libelle: libelleLectureCoran(l)),
+          ],
+          onChoix: (String? v) => onChange(
+            filtre.avec(lectureCoran: v, retirerLectureCoran: v == null),
+          ),
+        ),
       ],
     );
   }

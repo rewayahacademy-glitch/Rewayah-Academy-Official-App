@@ -354,4 +354,47 @@ SELECT pg_temp.vrai(NOT pg_catalog.has_function_privilege('anon', 'public.priere
                     AND NOT pg_catalog.has_function_privilege('public', 'public.priere_corriger(uuid, text, text, boolean, time, time)', 'EXECUTE'),
   'priere_corriger : ni anon ni PUBLIC');
 
+-- ===========================================================================
+-- 7. Le declencheur de la ville (`lieux_priere_auto`), sur une table d'essai
+-- ===========================================================================
+-- public.lieux (lot HORLOGE-ET-LIEU) n'existe pas encore : une table d'essai porte le meme
+-- declencheur, avec les noms de colonnes en arguments.
+CREATE TABLE public.lieux_essai (
+  id serial PRIMARY KEY, profil uuid, ville text, lat numeric, lng numeric, zone text);
+CREATE TRIGGER lieux_priere_auto AFTER INSERT OR UPDATE ON public.lieux_essai
+FOR EACH ROW EXECUTE FUNCTION private.priere_trg_lieux_auto('profil', 'ville', 'lat', 'lng', 'zone');
+-- T4 (sans lieu) : la ville pose le lieu.
+INSERT INTO public.lieux_essai (profil, ville, lat, lng, zone)
+VALUES ('9f000000-0000-4000-8000-000000000004', 'Paris', 48.857, 2.352, 'Europe/Paris');
+SELECT pg_temp.vrai((SELECT place_label = 'Paris' AND lieu_source = 'auto' AND timezone_iana = 'Europe/Paris'
+                       FROM public.prayer_settings WHERE teacher_id = '9f000000-0000-4000-8000-000000000004'),
+  'declencheur : l''enregistrement d''une ville pose le lieu de l''enseignant (source « auto »)');
+-- La meme ville enregistree de nouveau : idempotent.
+UPDATE public.lieux_essai SET ville = 'Paris' WHERE profil = '9f000000-0000-4000-8000-000000000004';
+SELECT pg_temp.vrai((SELECT count(*) = 1 FROM public.prayer_settings WHERE teacher_id = '9f000000-0000-4000-8000-000000000004'),
+  'declencheur : une ville enregistree deux fois ne laisse qu''un seul lieu');
+-- Un profil qui n'est pas enseignant : rien n'est pose, l'enregistrement de la ville passe.
+INSERT INTO public.lieux_essai (profil, ville, lat, lng, zone)
+VALUES ('9f000000-0000-4000-8000-000000000020', 'Paris', 48.857, 2.352, 'Europe/Paris');
+SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM public.prayer_settings WHERE teacher_id = '9f000000-0000-4000-8000-000000000020')
+                    AND EXISTS (SELECT 1 FROM public.lieux_essai WHERE profil = '9f000000-0000-4000-8000-000000000020'),
+  'declencheur : un eleve n''a aucun lieu de priere, et sa ville s''enregistre quand meme');
+-- Une ville invalide : l'enregistrement n'est jamais bloque.
+INSERT INTO public.lieux_essai (profil, ville, lat, lng, zone)
+VALUES ('9f000000-0000-4000-8000-000000000003', 'Nulle part', 95, 0, 'Mars/Olympus');
+SELECT pg_temp.vrai(EXISTS (SELECT 1 FROM public.lieux_essai WHERE ville = 'Nulle part'),
+  'declencheur : une ville invalide ne bloque pas son enregistrement');
+-- Un lieu pose par la direction n'est jamais touche par la ville.
+SELECT pg_temp.en_tant_que('9f000000-0000-4000-8000-000000000010', 'admin');
+SELECT public.priere_lieu_definir('9f000000-0000-4000-8000-000000000003', 'Conakry', 9.5370, -13.6773, 'Africa/Conakry');
+SELECT pg_temp.personne();
+INSERT INTO public.lieux_essai (profil, ville, lat, lng, zone)
+VALUES ('9f000000-0000-4000-8000-000000000003', 'Kindia', 10.0565, -12.8658, 'Africa/Conakry');
+SELECT pg_temp.vrai((SELECT place_label = 'Conakry' AND lieu_source = 'direction'
+                       FROM public.prayer_settings WHERE teacher_id = '9f000000-0000-4000-8000-000000000003'),
+  'declencheur : le lieu pose par la direction n''est pas remplace par la ville');
+SELECT pg_temp.vrai(NOT pg_catalog.has_function_privilege('authenticated', 'private.priere_trg_lieux_auto()', 'EXECUTE')
+                    AND NOT pg_catalog.has_function_privilege('anon', 'private.priere_trg_lieux_auto()', 'EXECUTE'),
+  'private.priere_trg_lieux_auto : aucun droit pour authenticated ni anon');
+
 ROLLBACK;

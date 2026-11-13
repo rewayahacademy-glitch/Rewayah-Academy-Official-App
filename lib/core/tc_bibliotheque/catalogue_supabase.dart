@@ -24,8 +24,12 @@ import 'library_resource.dart';
 import 'port_catalogue.dart';
 import 'recherche_catalogue.dart';
 
-/// Le plafond de lignes demande au serveur (sa borne est 200).
+/// Le plafond de lignes demande au serveur a chaque page (sa borne est 200).
 const int limiteCatalogueLecteur = 200;
+
+/// Le nombre de pages lues au plus : le catalogue est « sans limite de
+/// nombre » mais une lecture ne boucle jamais sans borne.
+const int pagesCatalogueMax = 10;
 
 /// Le catalogue lu au serveur.
 class CatalogueSupabase implements PortCatalogue {
@@ -68,6 +72,8 @@ class CatalogueSupabase implements PortCatalogue {
       if (filtre.langue != null) sortie['langue'] = filtre.langue;
       if (filtre.categorie != null) sortie['categorie'] = filtre.categorie;
       if (filtre.niveau != null) sortie['niveau'] = filtre.niveau;
+      if (filtre.rayon != null) sortie['rayon'] = filtre.rayon;
+      if (filtre.etape != null) sortie['etape'] = filtre.etape;
     }
     if (id != null) sortie['id'] = id;
     return sortie;
@@ -149,14 +155,42 @@ class CatalogueSupabase implements PortCatalogue {
     }
   }
 
+  /// Tout le catalogue visible : le serveur rend des pages de
+  /// [limiteCatalogueLecteur] documents (filtre `decalage`) ; on lit la page
+  /// suivante tant que la precedente est pleine.
   @override
-  Future<List<LibraryResource>> tous({FiltreCatalogue? filtre}) async =>
-      manifestes(
+  Future<List<LibraryResource>> tous({FiltreCatalogue? filtre}) async {
+    final List<LibraryResource> sortie = <LibraryResource>[];
+    for (int page = 0; page < pagesCatalogueMax; page++) {
+      final Map<String, dynamic> serveur = filtreServeur(filtre);
+      if (page > 0) serveur['decalage'] = page * limiteCatalogueLecteur;
+      final List<LibraryResource> lot = manifestes(
         await _rpc('bibliotheque_catalogue_lecteur', <String, dynamic>{
-          'p_filtre': filtreServeur(filtre),
+          'p_filtre': serveur,
           'p_limite': limiteCatalogueLecteur,
         }),
       );
+      sortie.addAll(lot);
+      if (lot.length < limiteCatalogueLecteur) break;
+    }
+    return List<LibraryResource>.unmodifiable(sortie);
+  }
+
+  @override
+  Future<List<RayonBibliotheque>> rayons() async {
+    final Object? brut = await _rpc('bibliotheque_rayons_lecteur');
+    if (brut == null) return const <RayonBibliotheque>[];
+    if (brut is! List) throw const EchecCatalogue('reponse illisible');
+    final List<RayonBibliotheque> rayons = brut
+        .whereType<Map<dynamic, dynamic>>()
+        .map(
+          (Map<dynamic, dynamic> m) =>
+              RayonBibliotheque.depuisJson(Map<String, dynamic>.from(m)),
+        )
+        .toList();
+    rayons.sort((RayonBibliotheque a, RayonBibliotheque b) => a.ordre - b.ordre);
+    return List<RayonBibliotheque>.unmodifiable(rayons);
+  }
 
   @override
   Future<List<LibraryResource>> recents({int limite = 10}) async => manifestes(

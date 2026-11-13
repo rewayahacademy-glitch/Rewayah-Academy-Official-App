@@ -18,6 +18,8 @@ class FiltreCatalogue {
     this.categorie,
     this.niveau,
     this.etatOffline,
+    this.rayon,
+    this.etape,
   });
 
   /// Les types retenus. `null` ou vide : tous les types.
@@ -35,13 +37,21 @@ class FiltreCatalogue {
   /// L'etat hors ligne retenu.
   final EtatOffline? etatOffline;
 
+  /// Le code du rayon retenu (`LibraryResource.rayon`).
+  final String? rayon;
+
+  /// Le code stable de l'etape retenue (`LibraryResource.etapes`).
+  final String? etape;
+
   /// Vrai quand aucun axe n'est pose.
   bool get vide =>
       (types == null || types!.isEmpty) &&
       langue == null &&
       categorie == null &&
       niveau == null &&
-      etatOffline == null;
+      etatOffline == null &&
+      rayon == null &&
+      etape == null;
 
   /// Une copie avec un axe change. `remettre` relache l'axe vise.
   FiltreCatalogue avec({
@@ -50,6 +60,8 @@ class FiltreCatalogue {
     String? categorie,
     String? niveau,
     EtatOffline? etatOffline,
+    String? rayon,
+    String? etape,
     Set<String> relacher = const <String>{},
   }) => FiltreCatalogue(
     types: relacher.contains('types') ? null : types ?? this.types,
@@ -61,6 +73,8 @@ class FiltreCatalogue {
     etatOffline: relacher.contains('etatOffline')
         ? null
         : etatOffline ?? this.etatOffline,
+    rayon: relacher.contains('rayon') ? null : rayon ?? this.rayon,
+    etape: relacher.contains('etape') ? null : etape ?? this.etape,
   );
 }
 
@@ -117,6 +131,11 @@ abstract class PortCatalogue {
 
   /// « Continuer » : derniere ressource et derniere position.
   Future<ReprisLecture?> derniereLecture();
+
+  /// Les rayons de la Bibliotheque, par ordre croissant, y compris un rayon
+  /// sans document : la place du second rayon existe meme vide. Les intitules
+  /// viennent du serveur (donnee), jamais d'un ecran.
+  Future<List<RayonBibliotheque>> rayons();
 }
 
 /// Une lecture de catalogue qui echoue.

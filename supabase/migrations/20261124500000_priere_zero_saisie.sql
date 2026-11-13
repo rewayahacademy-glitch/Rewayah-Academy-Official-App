@@ -352,12 +352,48 @@ BEGIN
 END;
 $function$;
 
--- Si le lot HORLOGE-ET-LIEU est deja la, la ligne a brancher est dans la fiche
--- (docs/current/pedagogie/lots/LOT-PRIERE-2.md) : ses colonnes ne sont pas lues ici.
+-- Le declencheur sur la table des villes (lot HORLOGE-ET-LIEU), nomme `lieux_priere_auto` des
+-- deux cotes. La table `public.lieux` n'existe pas encore dans le depot : ses colonnes ne
+-- sont pas devinees. La fonction recoit donc leurs NOMS en arguments du declencheur
+-- (profil de l'enseignant, nom de la ville, latitude, longitude, fuseau) :
+--
+--   CREATE TRIGGER lieux_priere_auto AFTER INSERT OR UPDATE ON public.lieux
+--   FOR EACH ROW EXECUTE FUNCTION private.priere_trg_lieux_auto(
+--     '<colonne profil>', '<colonne nom>', '<colonne latitude>', '<colonne longitude>', '<colonne fuseau>');
+--
+-- Son echec ne bloque JAMAIS l'enregistrement de la ville (avertissement seulement) ; elle ne
+-- pose rien pour un profil qui n'est pas enseignant (priere_lieu_auto le refuse) ; elle est
+-- idempotente (une ville inchangee repose le meme lieu `auto`, un lieu de la direction ou de
+-- l'enseignant n'est jamais touche).
+CREATE FUNCTION private.priere_trg_lieux_auto()
+RETURNS trigger
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = ''
+AS $function$
+DECLARE
+  v_ligne jsonb := pg_catalog.to_jsonb(NEW);
+BEGIN
+  BEGIN
+    IF TG_NARGS = 5 THEN
+      PERFORM private.priere_lieu_auto(
+        (v_ligne ->> TG_ARGV[0])::uuid, v_ligne ->> TG_ARGV[1],
+        (v_ligne ->> TG_ARGV[2])::numeric, (v_ligne ->> TG_ARGV[3])::numeric,
+        v_ligne ->> TG_ARGV[4]);
+    END IF;
+  EXCEPTION WHEN OTHERS THEN
+    RAISE WARNING 'PRIERE-2 : lieu de priere non pose depuis la ville : %', SQLERRM;
+  END;
+  RETURN NEW;
+END;
+$function$;
+
 DO $lieux$
 BEGIN
-  IF pg_catalog.to_regclass('public.lieux') IS NOT NULL THEN
-    RAISE NOTICE 'PRIERE-2 : public.lieux existe ; brancher private.priere_lieu_auto comme dit dans LOT-PRIERE-2.md';
+  IF pg_catalog.to_regclass('public.lieux') IS NOT NULL
+     AND NOT EXISTS (SELECT 1 FROM pg_catalog.pg_trigger t
+                      WHERE t.tgrelid = 'public.lieux'::regclass AND t.tgname = 'lieux_priere_auto') THEN
+    RAISE NOTICE 'PRIERE-2 : public.lieux existe sans declencheur lieux_priere_auto ; le poser avec les noms de ses colonnes (voir le commentaire de private.priere_trg_lieux_auto)';
   END IF;
 END
 $lieux$;
@@ -523,7 +559,7 @@ GRANT EXECUTE ON FUNCTION public.priere_ma_position(numeric, numeric, text),
   TO authenticated;
 REVOKE ALL ON FUNCTION
   private.priere_methode_zone(text), private.priere_methode_origine(uuid),
-  private.priere_lieu_auto(uuid, text, numeric, numeric, text)
+  private.priere_lieu_auto(uuid, text, numeric, numeric, text), private.priere_trg_lieux_auto()
   FROM PUBLIC, anon, authenticated, service_role, agent_ro;
 
 DO $postflight$
