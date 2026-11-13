@@ -575,7 +575,10 @@ class BibliothequeAdminDemo implements PortBibliothequeAdmin {
     _garde();
     final _Etat e = _trouve(supportId);
     if (!droitsServeur.peutImporter) throw const BibliothequeNonAutorisee();
-    if (e.versions.first.statut != StatutVersionRessource.brouillon) {
+    // La vignette tient au document, pas a une version : elle se change
+    // meme une fois le document publie (comme sur le serveur).
+    if (finalite != FinaliteUpload.vignette &&
+        e.versions.first.statut != StatutVersionRessource.brouillon) {
       throw const BibliothequeNonAutorisee();
     }
     final ErreurUpload? refus = echecDemande;

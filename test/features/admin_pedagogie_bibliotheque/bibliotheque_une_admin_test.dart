@@ -27,6 +27,7 @@ import 'package:rewayah_academy/core/tc_bibliotheque/library_resource.dart'
     show tranchesToutes;
 import 'package:rewayah_academy/core/widgets/bandeau_attention.dart';
 import 'package:rewayah_academy/core/widgets/case_a_cocher.dart';
+import 'package:rewayah_academy/core/widgets/status_pill.dart' show TonEtat;
 import 'package:rewayah_academy/features/admin_pedagogie_bibliotheque/classement_document.dart';
 import 'package:rewayah_academy/features/admin_pedagogie_bibliotheque/import/selecteur_support.dart';
 
@@ -204,13 +205,10 @@ void main() {
     expect(find.text(i.lienInvalide), findsOneWidget);
   });
 
-  testWidgets('la vignette ne se demande plus au formulaire : elle se depose '
+  testWidgets('la vignette, facultative, se depose, se remplace et se retire '
       'depuis la fiche, en image', (tester) async {
     final _Selecteur selecteur = _Selecteur();
     final BibliothequeAdminDemo demo = BibliothequeAdminDemo();
-    await _monter(tester, demo: demo, taille: const Size(1440, 2400));
-    expect(_cle('import-choisir-vignette'), findsNothing);
-    expect(find.text(i.vignetteAide), findsNothing);
     await _monter(
       tester,
       demo: demo,
@@ -220,17 +218,66 @@ void main() {
     );
     await stabiliser(tester, fois: 4);
     expect((await demo.fiche('demo-support-001')).aVignette, isFalse);
-    expect(find.text(i.vignetteAide), findsOneWidget);
+    expect(find.text(i.simple.vignette.aide), findsOneWidget);
     await _toucher(tester, _cle('fiche-ajouter-vignette'));
     await stabiliser(tester, fois: 12);
     // La vignette demande une image, jamais le type du document.
     expect(selecteur.demandes, <TypeRessource>[TypeRessource.image]);
     expect((await demo.fiche('demo-support-001')).aVignette, isTrue);
-    expect(
-      find.text(t.admin.bibliotheque.fiche.vignetteDeposee),
-      findsOneWidget,
+    // Etat « reussi » : coche et ton de succes, « Vignette ajoutee », et la
+    // miniature de l'image deposee.
+    final BandeauAttention reussie = tester.widget<BandeauAttention>(
+      _cle('fiche-vignette-reussie'),
     );
-    expect(_cle('fiche-retirer-vignette'), findsOneWidget);
+    expect(reussie.ton, TonEtat.succes);
+    expect(reussie.titre, i.simple.vignette.ajoutee);
+    expect(_cle('fiche-vignette-miniature'), findsOneWidget);
+    // Elle se remplace, autant de fois qu'on veut, sans redeposer le fichier.
+    await _toucher(tester, _cle('fiche-ajouter-vignette'));
+    await stabiliser(tester, fois: 12);
+    expect(selecteur.demandes, hasLength(2));
+    expect((await demo.fiche('demo-support-001')).aVignette, isTrue);
+    // Elle se retire : la couverture selon le type revient.
+    await _toucher(tester, _cle('fiche-retirer-vignette'));
+    await stabiliser(tester, fois: 6);
+    expect((await demo.fiche('demo-support-001')).aVignette, isFalse);
+    expect(_cle('fiche-vignette-miniature'), findsNothing);
+    expect(_cle('fiche-retirer-vignette'), findsNothing);
+    // Un echec de la vignette : alerte, la phrase vraie, « Reessayer ».
+    demo.echecDemande = ErreurUpload.stockage;
+    await _toucher(tester, _cle('fiche-ajouter-vignette'));
+    await stabiliser(tester, fois: 12);
+    final BandeauAttention echec = tester.widget<BandeauAttention>(
+      _cle('fiche-vignette-echec'),
+    );
+    expect(echec.ton, TonEtat.alerte);
+    expect(echec.titre, i.simple.vignette.echec);
+    expect(echec.message, i.erreurs.stockage);
+    expect(_cle('fiche-vignette-reessayer'), findsOneWidget);
+    expect((await demo.fiche('demo-support-001')).aVignette, isFalse);
+  });
+
+  testWidgets('la vignette d\'un document PUBLIE se change sans redeposer le '
+      'fichier', (tester) async {
+    final _Selecteur selecteur = _Selecteur();
+    final BibliothequeAdminDemo demo = BibliothequeAdminDemo();
+    final String id = (await demo.lister(
+      filtre: const FiltreCatalogue(etat: EtatCatalogue.publies),
+    )).elements.first.id;
+    await _monter(
+      tester,
+      demo: demo,
+      selecteur: selecteur,
+      route: Routes.adminPedagogieSupport(id),
+      taille: const Size(1440, 3600),
+    );
+    await stabiliser(tester, fois: 4);
+    // Le contenu publie est fige, la vignette non.
+    expect(_cle('fiche-figee'), findsOneWidget);
+    await _toucher(tester, _cle('fiche-ajouter-vignette'));
+    await stabiliser(tester, fois: 12);
+    expect((await demo.fiche(id)).aVignette, isTrue);
+    expect(_cle('fiche-vignette-reussie'), findsOneWidget);
   });
 
   final cl = t.admin.bibliotheque.import.classement;
@@ -445,6 +492,10 @@ void main() {
       ],
     );
     await stabiliser(tester, fois: 4);
+    // Les tranches, les etapes, la lecture et l'ecole vivent dans « Plus de
+    // reglages », replie par defaut (DEPOT-SIMPLE).
+    expect(_cle('classement-tranches'), findsNothing);
+    await _toucher(tester, _cle('fiche-plus-bascule'));
     expect(coche(tester, 'classement-tranche-enfant_6_9'), isTrue);
     await _toucher(tester, _cle('classement-tranche-enfant_6_9'));
     await _toucher(tester, _cle('classement-etape-E-01'));
@@ -470,6 +521,7 @@ void main() {
       taille: const Size(1440, 3600),
     );
     await stabiliser(tester, fois: 4);
+    await _toucher(tester, _cle('fiche-plus-bascule'));
     for (final String c in tranchesTout) {
       await _toucher(tester, _cle('classement-tranche-$c'));
     }
