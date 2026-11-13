@@ -107,7 +107,7 @@ List<Override> _surcharges({
   cahiersEnRetardProvider.overrideWith(
     (Ref _) async => const <CahierEnRetard>[],
   ),
-  reglagesPriereProvider('ens-1').overrideWith((Ref _) async => null),
+  pausePrevueProvider.overrideWith((Ref _, String _) async => null),
   valeurRegleProvider((profilId: 'ens-1', cle: CleRegle.pauseEntreCours))
       .overrideWith((Ref _) async => 10),
 ];
