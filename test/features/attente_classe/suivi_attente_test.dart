@@ -615,8 +615,7 @@ void main() {
       );
       expect(
         find.text(
-          'La formation de votre classe prend plus de temps que prévu. '
-          'L\'académie vous écrit.',
+          'La formation de votre classe prend plus de temps que prévu.',
         ),
         findsOneWidget,
       );
@@ -627,6 +626,7 @@ void main() {
         'autre classe',
         'relance',
         'automatique',
+        'écrit',
       ]) {
         expect(texte, isNot(contains(promesse)));
       }

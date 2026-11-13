@@ -23871,8 +23871,8 @@ class Traductions$suiviAttente$tu$fr {
 	/// fr: 'Ton premier cours a eu lieu.'
 	String get premierCoursPassePetit => 'Ton premier cours a eu lieu.';
 
-	/// fr: 'La formation de ta classe prend plus de temps que prévu. L'académie t'écrit.'
-	String get depasse => 'La formation de ta classe prend plus de temps que prévu. L\'académie t\'écrit.';
+	/// fr: 'La formation de ta classe prend plus de temps que prévu.'
+	String get depasse => 'La formation de ta classe prend plus de temps que prévu.';
 
 	/// fr: 'Le créneau de la classe a changé le {date}. Ton tuteur a reçu l'avis.'
 	String changement({required Object date}) => 'Le créneau de la classe a changé le ${date}. Ton tuteur a reçu l\'avis.';
@@ -24003,8 +24003,8 @@ class Traductions$suiviAttente$delai$fr {
 
 	// Translations
 
-	/// fr: 'La formation de votre classe prend plus de temps que prévu. L'académie vous écrit.'
-	String get depasse => 'La formation de votre classe prend plus de temps que prévu. L\'académie vous écrit.';
+	/// fr: 'La formation de votre classe prend plus de temps que prévu.'
+	String get depasse => 'La formation de votre classe prend plus de temps que prévu.';
 }
 
 // Path: suiviAttente.cloture
@@ -61645,7 +61645,7 @@ extension on Traductions {
 			'suiviAttente.tu.premierCoursPasse' => ({required Object quand}) => 'Ton premier cours a eu lieu le ${quand}.',
 			'suiviAttente.tu.premierCoursPetit' => 'Ton premier cours arrive. Ton tuteur te dit quand.',
 			'suiviAttente.tu.premierCoursPassePetit' => 'Ton premier cours a eu lieu.',
-			'suiviAttente.tu.depasse' => 'La formation de ta classe prend plus de temps que prévu. L\'académie t\'écrit.',
+			'suiviAttente.tu.depasse' => 'La formation de ta classe prend plus de temps que prévu.',
 			'suiviAttente.tu.changement' => ({required Object date}) => 'Le créneau de la classe a changé le ${date}. Ton tuteur a reçu l\'avis.',
 			'suiviAttente.tu.titreRefusee' => 'Ta demande n\'a pas été retenue',
 			'suiviAttente.tu.retraitFamille' => 'Ton tuteur a retiré cette demande.',
@@ -61686,7 +61686,7 @@ extension on Traductions {
 			'suiviAttente.premierCoursPasse' => ({required Object quand}) => 'Votre premier cours a eu lieu le ${quand}.',
 			'suiviAttente.depuis' => ({required Object date}) => 'Depuis le ${date}',
 			'suiviAttente.ensuite' => ({required Object etape}) => 'Ensuite : ${etape}',
-			'suiviAttente.delai.depasse' => 'La formation de votre classe prend plus de temps que prévu. L\'académie vous écrit.',
+			'suiviAttente.delai.depasse' => 'La formation de votre classe prend plus de temps que prévu.',
 			'suiviAttente.changement' => ({required Object date}) => 'Le créneau de la classe a changé le ${date}. Vous avez reçu l\'avis dans vos notifications.',
 			'suiviAttente.cloture.titreRefusee' => 'Votre demande n\'a pas été retenue',
 			'suiviAttente.cloture.titreRetiree' => 'Cette demande est retirée',

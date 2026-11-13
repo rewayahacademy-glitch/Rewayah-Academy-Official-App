@@ -10929,7 +10929,7 @@ class _Traductions$suiviAttente$tu$ar extends Traductions$suiviAttente$tu$fr {
 	@override String premierCoursPasse({required Object quand}) => 'كانت أول حصة لك في ⁨${quand}⁩.';
 	@override String get premierCoursPetit => 'أول حصة لك قريبة. يخبرك ولي أمرك بموعدها.';
 	@override String get premierCoursPassePetit => 'انتهت أول حصة لك.';
-	@override String get depasse => 'يستغرق تكوين فصلك وقتًا أطول من المتوقع. تكتب لك الأكاديمية.';
+	@override String get depasse => 'يستغرق تكوين فصلك وقتًا أطول من المتوقع.';
 	@override String changement({required Object date}) => 'تغيّر موعد الفصل في ⁨${date}⁩. وصل ولي أمرك إشعار بذلك.';
 	@override String get titreRefusee => 'لم يُقبل طلبك';
 	@override String get retraitFamille => 'سحب ولي أمرك هذا الطلب.';
@@ -10997,7 +10997,7 @@ class _Traductions$suiviAttente$delai$ar extends Traductions$suiviAttente$delai$
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String get depasse => 'يستغرق تكوين فصلك وقتًا أطول من المتوقع. تكتب لك الأكاديمية.';
+	@override String get depasse => 'يستغرق تكوين فصلك وقتًا أطول من المتوقع.';
 }
 
 // Path: suiviAttente.cloture
@@ -35527,7 +35527,7 @@ extension on TraductionsAr {
 			'suiviAttente.tu.premierCoursPasse' => ({required Object quand}) => 'كانت أول حصة لك في ⁨${quand}⁩.',
 			'suiviAttente.tu.premierCoursPetit' => 'أول حصة لك قريبة. يخبرك ولي أمرك بموعدها.',
 			'suiviAttente.tu.premierCoursPassePetit' => 'انتهت أول حصة لك.',
-			'suiviAttente.tu.depasse' => 'يستغرق تكوين فصلك وقتًا أطول من المتوقع. تكتب لك الأكاديمية.',
+			'suiviAttente.tu.depasse' => 'يستغرق تكوين فصلك وقتًا أطول من المتوقع.',
 			'suiviAttente.tu.changement' => ({required Object date}) => 'تغيّر موعد الفصل في ⁨${date}⁩. وصل ولي أمرك إشعار بذلك.',
 			'suiviAttente.tu.titreRefusee' => 'لم يُقبل طلبك',
 			'suiviAttente.tu.retraitFamille' => 'سحب ولي أمرك هذا الطلب.',
@@ -35568,7 +35568,7 @@ extension on TraductionsAr {
 			'suiviAttente.premierCoursPasse' => ({required Object quand}) => 'كانت أول حصة لك في ⁨${quand}⁩.',
 			'suiviAttente.depuis' => ({required Object date}) => 'منذ ⁨${date}⁩',
 			'suiviAttente.ensuite' => ({required Object etape}) => 'بعد ذلك: ⁨${etape}⁩',
-			'suiviAttente.delai.depasse' => 'يستغرق تكوين فصلك وقتًا أطول من المتوقع. تكتب لك الأكاديمية.',
+			'suiviAttente.delai.depasse' => 'يستغرق تكوين فصلك وقتًا أطول من المتوقع.',
 			'suiviAttente.changement' => ({required Object date}) => 'تغيّر موعد الفصل في ⁨${date}⁩. وصلك إشعار بذلك.',
 			'suiviAttente.cloture.titreRefusee' => 'لم يُقبل طلبك',
 			'suiviAttente.cloture.titreRetiree' => 'تم سحب هذا الطلب',

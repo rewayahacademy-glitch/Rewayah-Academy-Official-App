@@ -139,7 +139,7 @@ String? depuisEtape(SuiviAttente s, EtapeAttente e) {
 
 /// La phrase du delai de formation, **seulement quand il est depasse** : une
 /// phrase vraie (« La formation de votre classe prend plus de temps que
-/// prevu. L'academie vous ecrit. »). Aucune duree annoncee, aucune date limite,
+/// prevu. »), sans promesse d'action. Aucune duree annoncee, aucune date limite,
 /// aucun point d'etape : rien ne les tient encore (arbitrage du 13/11/2026).
 /// L'enfant de 6 a 9 ans ne lit rien de tel. Vide sinon.
 List<String> phrasesDelai(SuiviAttente s) {

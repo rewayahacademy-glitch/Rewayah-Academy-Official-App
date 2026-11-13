@@ -15201,7 +15201,7 @@
       "premierCoursPasse": "Ton premier cours a eu lieu le {quand}.",
       "premierCoursPetit": "Ton premier cours arrive. Ton tuteur te dit quand.",
       "premierCoursPassePetit": "Ton premier cours a eu lieu.",
-      "depasse": "La formation de ta classe prend plus de temps que prévu. L'académie t'écrit.",
+      "depasse": "La formation de ta classe prend plus de temps que prévu.",
       "changement": "Le créneau de la classe a changé le {date}. Ton tuteur a reçu l'avis.",
       "titreRefusee": "Ta demande n'a pas été retenue",
       "retraitFamille": "Ton tuteur a retiré cette demande.",
@@ -15250,7 +15250,7 @@
     "depuis": "Depuis le {date}",
     "ensuite": "Ensuite : {etape}",
     "delai": {
-      "depasse": "La formation de votre classe prend plus de temps que prévu. L'académie vous écrit."
+      "depasse": "La formation de votre classe prend plus de temps que prévu."
     },
     "changement": "Le créneau de la classe a changé le {date}. Vous avez reçu l'avis dans vos notifications.",
     "cloture": {
