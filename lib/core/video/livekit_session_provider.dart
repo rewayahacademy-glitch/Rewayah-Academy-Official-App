@@ -11,6 +11,7 @@ import 'fermeture_salle.dart';
 import 'publication_differee.dart';
 import 'repli_audio.dart';
 import 'service_video.dart';
+import 'video_camarades.dart';
 import 'video_session_provider.dart';
 
 /// Le debit maximal de la video publiee, en bits par seconde : 1,2 Mbit/s
@@ -790,6 +791,8 @@ class LiveKitSessionProvider
       (Timer _) => unawaited(_battreRepli()),
     );
     _publierParticipants();
+    // CAMARADES : les cameras deja publiees a l'entree suivent la regle.
+    unawaited(_accorderVideos());
   }
 
   void _brancher(lk.EventsListener<lk.RoomEvent> ecouteur) {
@@ -801,6 +804,7 @@ class LiveKitSessionProvider
       ..on<lk.RoomConnectedEvent>((_) {
         _poser(EtatSalle.connecte);
         _publierParticipants();
+        unawaited(_accorderVideos());
       })
       ..on<lk.RoomReconnectingEvent>((_) {
         // Une reconnexion n'est PAS une absence (specification section 27) :
@@ -813,6 +817,9 @@ class LiveKitSessionProvider
         // ne peut ni le dire ni rien en deduire.
         _poser(EtatSalle.retabli);
         _publierParticipants();
+        // CAMARADES : les abonnements video suivent la regle apres la
+        // reprise (le serveur a pu rabonner les pistes).
+        unawaited(_accorderVideos());
         // **La reconnexion sans perte de l'etat pedagogique.** Le serveur n'a
         // garde aucun paquet de donnees : si l'on presentait, il faut le
         // republier, sinon les eleves qui se reconnectent restent sur une salle
@@ -852,11 +859,28 @@ class LiveKitSessionProvider
       })
       ..on<lk.ParticipantConnectedEvent>((_) => _publierParticipants())
       ..on<lk.ParticipantDisconnectedEvent>((_) => _publierParticipants())
-      ..on<lk.TrackPublishedEvent>((_) => _publierParticipants())
+      ..on<lk.TrackPublishedEvent>((_) {
+        _publierParticipants();
+        unawaited(_accorderVideos());
+      })
       ..on<lk.TrackUnpublishedEvent>((_) => _publierParticipants())
       ..on<lk.TrackSubscribedEvent>((lk.TrackSubscribedEvent e) {
         _diagnostic?.suivrePiste(e.track);
         _publierParticipants();
+        // CAMARADES : l'abonnement automatique de LiveKit vient d'arriver ;
+        // la camera d'un camarade qui ne recite pas est rendue aussitot.
+        unawaited(_accorderVideos());
+      })
+      // CAMARADES : la recitation vit dans les metadonnees de la salle,
+      // ecrites par le serveur seul ; un changement de recitant change les
+      // cameras recues par un eleve.
+      ..on<lk.RoomMetadataChangedEvent>((_) {
+        _publierParticipants();
+        unawaited(_accorderVideos());
+      })
+      ..on<lk.ParticipantMetadataUpdatedEvent>((_) {
+        _publierParticipants();
+        unawaited(_accorderVideos());
       })
       ..on<lk.TrackUnsubscribedEvent>((_) => _publierParticipants())
       ..on<lk.LocalTrackPublishedEvent>((lk.LocalTrackPublishedEvent e) {
@@ -1128,10 +1152,17 @@ class LiveKitSessionProvider
     }
 
     // Les videos recues : couche basse, puis plus rien, puis le retour.
+    // CAMARADES : le retour ne rabonne jamais la camera d'un camarade qu'un
+    // eleve ne doit pas recevoir ([videoRecue]).
     for (final lk.RemoteParticipant distant
         in salle.remoteParticipants.values) {
+      final bool voulue = _videoVoulue(distant);
       for (final lk.RemoteTrackPublication<lk.RemoteVideoTrack> piste
           in distant.videoTrackPublications) {
+        if (!voulue) {
+          await piste.unsubscribe();
+          continue;
+        }
         switch (apres) {
           case NiveauRepli.audioSeul:
             await piste.unsubscribe();
@@ -1311,14 +1342,78 @@ class LiveKitSessionProvider
     // emission, et c'est la reception qui vide un forfait mobile.
     for (final lk.RemoteParticipant distant
         in salle.remoteParticipants.values) {
+      final bool voulue = _videoVoulue(distant);
       for (final lk.RemoteTrackPublication<lk.RemoteVideoTrack> piste
           in distant.videoTrackPublications) {
-        if (actif) {
+        // CAMARADES : la fin de l'« audio seul » ne rabonne pas la camera
+        // d'un camarade qu'un eleve ne doit pas recevoir.
+        if (actif || !voulue) {
           await piste.unsubscribe();
         } else {
           await piste.subscribe();
         }
       }
+    }
+    _publierParticipants();
+  }
+
+  // ---------------------------------------------------------------------
+  // CAMARADES (directeur, 12/11/2026) : chez un eleve, la video d'un
+  // camarade n'est recue que pendant qu'il recite.
+  // ---------------------------------------------------------------------
+
+  /// L'eleve qui recite, lu dans les metadonnees de la salle (ecrites par le
+  /// serveur seul), ou `null`.
+  String? get _recitant => recitantDesMetadonnees(_salle?.metadata);
+
+  /// La regle ([videoRecue]) pour la camera de [distant].
+  bool _videoVoulue(lk.RemoteParticipant distant) => videoRecue(
+    regardEleve: roleEleve(_acces?.role),
+    local: false,
+    roleDistant: _roleDe(distant),
+    identite: distant.identity,
+    recitant: _recitant,
+  );
+
+  /// Aligne les abonnements video sur la regle ([accorderAbonnementsVideo]).
+  /// Le son n'est jamais touche.
+  ///
+  /// **Pourquoi pas les permissions d'abonnement de la piste publiee**
+  /// (`LocalParticipant.setTrackSubscriptionPermissions`, presente dans
+  /// livekit_client 2.12.0, `participant/local.dart` l. 908) : pour fermer
+  /// sa camera aux camarades, il faudrait `allParticipantsAllowed: false` et
+  /// la liste nominative de ceux qui gardent le droit. Or le controleur
+  /// invisible (CTR-02) et l'administration incognito n'apparaissent pas
+  /// dans la salle d'un eleve : absents de la liste, ils perdraient le son
+  /// ET l'image de l'eleve ; et un participant qui arrive n'entendrait plus
+  /// l'eleve tant que la liste n'est pas renvoyee. La regle tient donc par
+  /// l'abonnement de qui regarde, pas par la publication.
+  Future<void> _accorderVideos() async {
+    final lk.Room? salle = _salle;
+    final AccesSalle? acces = _acces;
+    if (salle == null || acces == null || !roleEleve(acces.role)) {
+      return;
+    }
+    try {
+      await accorderAbonnementsVideo(
+        roleLocal: acces.role,
+        recitant: _recitant,
+        videoSuspendue:
+            _audioSeul || _repli.niveau == NiveauRepli.audioSeul,
+        pistes: <PisteDistante>[
+          for (final lk.RemoteParticipant distant
+              in salle.remoteParticipants.values)
+            for (final lk.RemoteTrackPublication<lk.RemoteVideoTrack> piste
+                in distant.videoTrackPublications)
+              _PisteLiveKit(
+                identite: distant.identity,
+                role: _roleDe(distant),
+                publication: piste,
+              ),
+        ],
+      );
+    } catch (e) {
+      journalDev('salle : abonnements video non alignes : $e');
     }
     _publierParticipants();
   }
@@ -1332,6 +1427,12 @@ class LiveKitSessionProvider
 
     final lk.Participant? qui = _participant(salle, identite);
     if (qui == null) {
+      return null;
+    }
+    // CAMARADES (directeur, 12/11/2026) : chez un eleve, la camera d'un
+    // camarade qui ne recite pas n'est jamais rendue, meme si une piste
+    // est encore la le temps du desabonnement.
+    if (qui is lk.RemoteParticipant && !_videoVoulue(qui)) {
       return null;
     }
 
@@ -1847,3 +1948,33 @@ final Provider<VideoSessionProvider> moteurSalleProvider =
       ref.onDispose(() => unawaited(moteur.liberer()));
       return moteur;
     });
+
+/// CAMARADES : une camera distante de LiveKit, vue par la regle
+/// ([PisteDistante]).
+class _PisteLiveKit implements PisteDistante {
+  _PisteLiveKit({
+    required this.identite,
+    required this.role,
+    required this.publication,
+  });
+
+  @override
+  final String identite;
+
+  @override
+  final String role;
+
+  final lk.RemoteTrackPublication<lk.RemoteVideoTrack> publication;
+
+  @override
+  bool get estVideo => true;
+
+  @override
+  bool get abonnee => publication.subscribed;
+
+  @override
+  Future<void> abonner() => publication.subscribe();
+
+  @override
+  Future<void> desabonner() => publication.unsubscribe();
+}

@@ -132,6 +132,7 @@ import '../tc_flux_academique/carte_feedback_seance.dart';
 import '../tc_mes_groupes/chemins_tc_a.dart';
 import '../tc_observation_ui/indicateur_observation.dart';
 import 'annuaire_seance.dart';
+import 'camarades_salle.dart';
 import 'fiche_seance.dart';
 import 'memoire_page_classe.dart';
 import 'position_reprise.dart';
@@ -2280,7 +2281,14 @@ class _SallePageEtat extends ConsumerState<SallePage> {
               onPress: () => unawaited(_ouvrirCoran()),
             )
           : null,
-      video: moteur.renduVideo,
+      // CAMARADES (directeur, 12/11/2026) : la vignette, la capsule et la
+      // bande de cote suivent la meme regle que la grille ([videoMontree]) :
+      // chez un eleve, la camera d'un camarade seulement pendant qu'il
+      // recite.
+      video: (String identite) =>
+          videoMontree(vue, identite, recitant: parole?.profilId)
+          ? moteur.renduVideo(identite)
+          : null,
       // RUBAN-ORDINATEUR : la parole de chacun, pour l'anneau des cadres du
       // panneau des Eleves (seul le cadre l'ecoute, jamais la page).
       parle: (String identite) => moteur.participants
@@ -2949,22 +2957,25 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       ref,
       presence,
     );
-    // PHOTOS-2b (pilote, 04/11/2026) : l'eleve adulte nomme ses camarades
-    // par sa Classe (`participants_classe_eleve_adulte`) ; un enfant ne lit
-    // aucun prenom de camarade (protection des mineurs, decision du pilote
-    // du 04/11/2026) : la vignette garde la photo ou un cercle neutre,
-    // jamais « Participant ». Seuls l'enseignant et le controleur, qui lisent
-    // la liste, gardent ce repli.
+    // CAMARADES (directeur, 12/11/2026, journal D-040 ; amende PHOTOS-2b du
+    // 04/11) : TOUT eleve, enfant compris, nomme ses camarades par leur
+    // prenom, lu sur le serveur (`camarades_classe_eleve`), jamais leur nom
+    // de famille. L'eleve adulte garde aussi la lecture de sa Classe. Hors
+    // de cette liste, un inconnu reste sans nom chez l'eleve et le tuteur ;
+    // seuls l'enseignant et le controleur, qui lisent la liste, gardent
+    // « Participant ».
     final RoleSalle roleSalle = RoleSalle.depuis(_acces?.role);
-    final List<CamaradeSeance> camarades =
-        ref.watch(sessionProvider.select((SessionState s) => s.eleveAutonome))
-        ? <CamaradeSeance>[
-            for (final ParticipantClasseAdulte c
-                in ref.watch(maClasseAdulteProvider).value?.participants ??
-                    const <ParticipantClasseAdulte>[])
-              (id: c.id, prenom: c.prenom),
-          ]
-        : const <CamaradeSeance>[];
+    final List<CamaradeSeance> camarades = <CamaradeSeance>[
+      if (roleSalle == RoleSalle.eleve)
+        ...?ref.watch(camaradesSalleProvider).value,
+      if (ref.watch(
+        sessionProvider.select((SessionState s) => s.eleveAutonome),
+      ))
+        for (final ParticipantClasseAdulte c
+            in ref.watch(maClasseAdulteProvider).value?.participants ??
+                const <ParticipantClasseAdulte>[])
+          (id: c.id, prenom: c.prenom),
+    ];
     final AnnuaireSeance annuaire = AnnuaireSeance(
       presence: presence,
       enseignant: ficheEnseignant,

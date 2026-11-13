@@ -272,11 +272,12 @@ void main() {
     test('l eleve et l observateur ne voient pas la liste', () {
       // **Le droit n'a pas change, le motif si.** L'ancien -- « une seance est
       // plafonnee a deux participants (ADR-004) » -- est invalide depuis le
-      // pivot groupes du 19 septembre 2026. Ce qui tient : le mode enfant n'a
-      // droit qu'a deux commandes, et donner a un mineur la liste nominative de
-      // ses camarades est une decision de protection des mineurs, qui appartient
-      // a l'operateur. Ce test verrouille donc l'etat actuel, il ne le justifie
-      // plus par un plafond disparu.
+      // pivot groupes du 19 septembre 2026. CAMARADES (directeur, 12/11/2026,
+      // journal D-040) : l'eleve voit ses camarades dans la grille, par leur
+      // photo et leur prenom ; il n'a pas pour autant la LISTE des
+      // participants (ni panneau ni feuille des eleves, Q2 du 26/10) : elle
+      // reste l'outil de qui conduit. Ce test verrouille cette liste, pas les
+      // prenoms de la grille (voir test/features/salle/camarades_salle_test).
       expect(_vue(acces: _acces('student')).voitLesParticipants, isFalse);
       expect(
         _vue(acces: _acces('guardian_observer')).voitLesParticipants,

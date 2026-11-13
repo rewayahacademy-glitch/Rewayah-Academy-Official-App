@@ -152,6 +152,9 @@ class SceneClasse extends StatelessWidget {
           participant: p,
           moi: p.estLocal,
           recite: recitant != null && p.identite == recitant,
+          // CAMARADES (12/11/2026) : la regle de la video, a un seul
+          // endroit ([videoMontree]).
+          videoPermise: videoMontree(vue, p.identite, recitant: recitant),
           libelleNom: libelleNom,
           coin: coin,
           detache: detache,
@@ -224,6 +227,14 @@ class SceneClasse extends StatelessWidget {
                                   participant: p,
                                   moi: p.estLocal,
                                   recite: p.identite == recitant,
+                                  // CAMARADES (12/11/2026) : chez un eleve,
+                                  // un camarade est en video seulement
+                                  // pendant qu'il recite ([videoMontree]).
+                                  videoPermise: videoMontree(
+                                    vue,
+                                    p.identite,
+                                    recitant: recitant,
+                                  ),
                                   menu: menuPour?.call(
                                     p,
                                     recite: p.identite == recitant,
@@ -306,9 +317,15 @@ class _CadreParticipant extends ConsumerStatefulWidget {
     this.libelleNom,
     this.coin,
     this.detache = false,
+    this.videoPermise = true,
   });
 
   final ParticipantSalle participant;
+
+  /// CAMARADES (directeur, 12/11/2026) : faux quand la regle de la salle
+  /// ([videoMontree]) ne montre pas la camera de cette personne a qui
+  /// regarde : le cadre garde sa photo, ou sa couleur et son initiale.
+  final bool videoPermise;
   final bool moi;
   final bool recite;
   final Widget? menu;
@@ -362,7 +379,10 @@ class _CadreParticipantEtat extends ConsumerState<_CadreParticipant> {
     final ParticipantSalle p = widget.participant;
     // **L'ecran ne recoit pas une piste, il recoit un widget deja monte**
     // (ADR-001) : aucun import de `livekit_client` ici.
-    final Widget? image = ref.watch(moteurSalleProvider).renduVideo(p.identite);
+    final VideoSessionProvider moteur = ref.watch(moteurSalleProvider);
+    final Widget? image = widget.videoPermise
+        ? moteur.renduVideo(p.identite)
+        : null;
     return CadreVisage(
       nom: widget.moi ? t.salle.vousMeme : p.nom,
       prenom: p.nom,
