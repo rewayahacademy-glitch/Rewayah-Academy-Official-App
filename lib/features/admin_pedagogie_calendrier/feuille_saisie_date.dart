@@ -117,7 +117,11 @@ class _FeuilleSaisieEtat extends ConsumerState<_FeuilleSaisie> {
       ref.invalidate(calendrierDirectionProvider);
       if (mounted) Navigator.of(context).pop();
     } on CalendrierRefuse catch (r) {
-      if (mounted) setState(() => _erreur = messageRefusCalendrier(r.motif));
+      if (mounted) {
+        setState(
+          () => _erreur = messageRefusCalendrier(r.motif, enModification: true),
+        );
+      }
     } on Object {
       if (mounted) {
         setState(

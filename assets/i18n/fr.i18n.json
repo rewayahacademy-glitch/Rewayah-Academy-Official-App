@@ -15457,6 +15457,21 @@
         "phrase": "Pendant ces jours, aucune nouvelle séance n'est créée et la date limite de l'étape de chaque élève concerné recule d'autant. Les séances qui n'ont pas encore commencé ces jours-là sont mises de côté, sans être supprimées\u00a0; une séance déjà commencée continue. Retirer la fermeture avant son début rétablit les séances de côté, si l'enseignant n'a pas pris un autre cours à la même heure entre-temps. Une fois commencée, la fermeture ne peut plus être retirée ni raccourcie.",
         "confirmer": "Publier la fermeture"
       },
+        "notification": {
+          "quandLocal": "{local} ({mecque}, heure de La Mecque)",
+          "quandMecque": "{jour} à {heure}, heure de La Mecque",
+          "annoncee": {
+            "une": "L'académie est fermée du {du} au {au}. La séance du {quand} n'aura pas lieu.",
+            "plusieurs": "L'académie est fermée du {du} au {au}. Séances qui n'auront pas lieu\u00a0: {n}, dont celle du {quand}."
+          },
+          "levee": {
+            "une": "La fermeture de l'académie est retirée. La séance du {quand} est rétablie.",
+            "plusieurs": "La fermeture de l'académie est retirée. Séances rétablies\u00a0: {n}, dont celle du {quand}.",
+            "abandonUne": "La fermeture de l'académie est retirée, mais la séance du {quand} n'aura pas lieu.",
+            "abandonPlusieurs": "La fermeture de l'académie est retirée, mais des séances n'auront pas lieu\u00a0: {n}, dont celle du {quand}.",
+            "mixte": "La fermeture de l'académie est retirée. Séances rétablies\u00a0: {retablies}. Séances qui n'auront pas lieu\u00a0: {abandonnees}. Ouvrez la classe pour les voir."
+          }
+        },
         "concernees": {
           "titre": "Séances concernées",
           "heureMecque": "Les jours et les heures sont ceux de La Mecque.",
@@ -15478,6 +15493,7 @@
         "fermetureCommencee": "Cette fermeture a déjà commencé ou est passée\u00a0: elle ne peut plus être retirée, raccourcie ni déplacée. Vous pouvez seulement la prolonger.",
         "fermeturePassee": "Cette fermeture commence avant aujourd'hui\u00a0: elle ne peut pas être publiée. Choisissez une date à partir d'aujourd'hui.",
         "retraitConflits": "La fermeture n'est pas retirée\u00a0: des séances mises de côté ne peuvent pas être rétablies. Lisez la liste, puis libérez l'enseignant ou confirmez l'abandon de ces séances.",
+        "raccourcissementConflits": "La fermeture n'est pas modifiée\u00a0: des séances mises de côté ne pourraient pas être rétablies. Retirez la fermeture entière ou libérez l'enseignant.",
         "datesInvalides": "Le dernier jour doit venir après le premier, à moins d'un an.",
         "porteeInvalide": "Choisissez la tranche d'âge ou la classe visée.",
         "evenementInvalide": "Le titre manque ou le genre de date est illisible. Vérifiez-les, puis réessayez.",

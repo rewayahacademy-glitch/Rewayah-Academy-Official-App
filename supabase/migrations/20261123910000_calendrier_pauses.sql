@@ -299,10 +299,18 @@ CREATE POLICY pauses_eleve_direction ON public.pauses_eleve
 -- revocables (retrait d'une fermeture ou d'une pause avant son debut).
 ALTER TABLE public.eleve_etape_en_cours
   ADD COLUMN recul_acquis_jours integer NOT NULL DEFAULT 0 CHECK (recul_acquis_jours >= 0),
-  ADD COLUMN recul_ajustement_jours integer NOT NULL DEFAULT 0;
+  ADD COLUMN recul_ajustement_jours integer NOT NULL DEFAULT 0,
+  ADD COLUMN recul_plancher_jours integer NOT NULL DEFAULT 0 CHECK (recul_plancher_jours >= 0);
 COMMENT ON COLUMN public.eleve_etape_en_cours.recul_ajustement_jours IS
   'CALENDRIER-ET-PAUSES (13/11/2026) : decalage pose a chaque changement de classe pour que ce changement '
   'ne modifie JAMAIS la date limite (charte) : recul = calcule + ajustement. Derive, jamais saisi.';
+COMMENT ON COLUMN public.eleve_etape_en_cours.recul_plancher_jours IS
+  'CALENDRIER-ET-PAUSES (13/11/2026) : LA REGLE « un jour accorde reste accorde » (charte : la date limite '
+  'n''avance JAMAIS). A chaque changement de classe, le recul d''avant devient un plancher : le recul ne descend '
+  'plus sous lui, meme si la fermeture qui l''avait accorde est retiree ensuite. Consequence assumee (arbitrage '
+  'de l''architecte, 13/11) : au changement de classe l''eleve peut GARDER les jours d''une fermeture future de la '
+  'classe quittee, et ceux de sa nouvelle classe s''y ajoutent ; c''est favorable a l''eleve et sans danger. '
+  'Repart de zero a chaque nouvelle etape. Derive, jamais saisi.';
 COMMENT ON COLUMN public.eleve_etape_en_cours.recul_acquis_jours IS
   'CALENDRIER-ET-PAUSES : jours de fermeture et de pause deja ecoules (jusqu''au jour de l''academie) '
   'comptes dans recul_jours ; garde-fou : le recul d''une etape ne descend jamais sous cette valeur '
@@ -601,8 +609,10 @@ BEGIN
   ELSE
     NEW.recul_acquis_jours := v_acquis;
     NEW.recul_ajustement_jours := 0;   -- nouvelle etape : on repart de ses propres jours
+    NEW.recul_plancher_jours := 0;
   END IF;
-  NEW.recul_jours := greatest(greatest(0, v_recul + NEW.recul_ajustement_jours), NEW.recul_acquis_jours);
+  NEW.recul_jours := greatest(greatest(0, v_recul + NEW.recul_ajustement_jours),
+                              NEW.recul_acquis_jours, NEW.recul_plancher_jours);
   RETURN NEW;
 END;
 $function$;
@@ -633,7 +643,8 @@ BEGIN
     FROM private.recul_jours_calcule(f.student_id, f.entree_etape_le, f.niveau_id, f.cohorte) r;
   UPDATE public.eleve_etape_en_cours x
      SET recul_ajustement_jours = f.recul_ajustement_jours
-                                  + (f.recul_jours - greatest(0, coalesce(v_calcule, 0) + f.recul_ajustement_jours))
+                                  + (f.recul_jours - greatest(0, coalesce(v_calcule, 0) + f.recul_ajustement_jours)),
+         recul_plancher_jours = greatest(f.recul_plancher_jours, f.recul_jours)
    WHERE x.student_id = NEW.student_id;
   RETURN NULL;
 END;
@@ -666,6 +677,112 @@ BEGIN
 END;
 $function$;
 
+-- La notification d'une fermeture (revue du 13/11, arbitrage de l'architecte) : une seance ne disparait
+-- jamais en silence de l'agenda de la famille. UNE notification dans l'application par (destinataire,
+-- classe, fermeture) et par geste, qui liste les seances : au tuteur (portee foyer) et a l'eleve ADULTE
+-- (portee soi), a l'enseignant de la classe aussi ; JAMAIS a un mineur (aucune notification, aucun
+-- courriel, aucun push vers un profil mineur : le tuteur est le destinataire). Pas de courriel ni de push
+-- dans ce lot (dette : lot 7). Un echec d'ecriture ne bloque jamais la fermeture (avertissement).
+-- p_evenement : fermeture_annoncee (seances mises de cote) ou fermeture_levee (seances retablies, et
+-- seances abandonnees quand la direction l'a confirme).
+CREATE FUNCTION private.fermeture_notifier(
+  p_fermeture uuid, p_groupe uuid, p_evenement text, p_retablies_ou_mises uuid[], p_abandonnees uuid[])
+RETURNS integer
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = ''
+AS $function$
+DECLARE
+  v_ce public.calendrier_ecole%ROWTYPE;
+  v_g public.groupes%ROWTYPE;
+  v_premiere timestamptz;
+  v_n integer := 0;
+  v_tous uuid[] := coalesce(p_retablies_ou_mises, '{}') || coalesce(p_abandonnees, '{}');
+BEGIN
+  IF pg_catalog.cardinality(v_tous) = 0 THEN
+    RETURN 0;
+  END IF;
+  SELECT * INTO v_ce FROM public.calendrier_ecole c WHERE c.id = p_fermeture;
+  SELECT * INTO v_g FROM public.groupes x WHERE x.id = p_groupe;
+  IF v_ce.id IS NULL OR v_g.id IS NULL THEN
+    RETURN 0;
+  END IF;
+  SELECT pg_catalog.min(s.started_at) INTO v_premiere FROM public.sessions s WHERE s.id = ANY (v_tous);
+  BEGIN
+    WITH membres AS (
+      SELECT gm.student_id FROM public.groupe_membres gm
+       WHERE gm.groupe_id = p_groupe AND gm.left_at IS NULL
+    ),
+    personnes AS (
+      -- L'eleve ADULTE autonome, lui-meme (jamais un mineur).
+      SELECT p.id AS destinataire, p.household_id AS foyer, 'soi'::text AS portee,
+             CASE p.role WHEN 'guardian' THEN '/tuteur/classes/' || p_groupe::text || '/planning'
+                         ELSE '/eleve' END AS destination,
+             h.timezone AS fuseau, 1 AS rang, NULL::text AS prenom
+        FROM membres m
+        JOIN public.student_profiles sp ON sp.profile_id = m.student_id AND sp.student_type = 'autonomous'
+        JOIN public.profiles p ON p.id = m.student_id AND p.deleted_at IS NULL AND p.role IN ('student', 'guardian')
+        LEFT JOIN public.households h ON h.id = p.household_id
+      UNION ALL
+      -- Les tuteurs du foyer d'un MINEUR.
+      SELECT t.id, p.household_id, 'foyer', '/tuteur/classes/' || p_groupe::text || '/planning',
+             h.timezone, 2, p.first_name
+        FROM membres m
+        JOIN public.student_profiles sp ON sp.profile_id = m.student_id AND sp.student_type = 'minor'
+        JOIN public.profiles p ON p.id = m.student_id AND p.deleted_at IS NULL
+        JOIN public.households h ON h.id = p.household_id AND h.deleted_at IS NULL
+        JOIN public.profiles t ON t.deleted_at IS NULL AND t.role = 'guardian'
+                              AND (t.id = h.primary_guardian_id OR t.household_id = h.id)
+      UNION ALL
+      -- L'enseignant de la classe, et ceux des seances listees.
+      SELECT x.id, NULL::uuid, 'classe', '/enseignant/classes',
+             coalesce(tp.timezone_iana, v_g.timezone_iana), 3, NULL::text
+        FROM (SELECT v_g.teacher_id AS id
+              UNION
+              SELECT s.teacher_id FROM public.sessions s WHERE s.id = ANY (v_tous)) x
+        JOIN public.profiles pr ON pr.id = x.id AND pr.deleted_at IS NULL AND pr.role = 'teacher'
+        LEFT JOIN public.teacher_profiles tp ON tp.profile_id = x.id
+    ),
+    destinataires AS (
+      SELECT DISTINCT ON (destinataire) destinataire, foyer, portee, destination, fuseau
+        FROM personnes ORDER BY destinataire, rang
+    ),
+    prenoms AS (
+      SELECT x.destinataire, pg_catalog.jsonb_agg(DISTINCT x.prenom ORDER BY x.prenom) AS eleves
+        FROM personnes x JOIN destinataires d ON d.destinataire = x.destinataire AND d.portee = x.portee
+       WHERE x.portee = 'foyer' AND x.prenom IS NOT NULL AND pg_catalog.btrim(x.prenom) <> ''
+       GROUP BY x.destinataire
+    )
+    INSERT INTO public.notifications (destinataire, foyer_id, evenement, params, destination)
+    SELECT d.destinataire, d.foyer, p_evenement,
+           pg_catalog.jsonb_strip_nulls(pg_catalog.jsonb_build_object(
+             'groupe_id', p_groupe, 'fermeture_id', p_fermeture, 'portee', d.portee,
+             'classe', nullif(pg_catalog.btrim(v_g.libelle), ''),
+             'du', v_ce.du, 'au', v_ce.au,
+             'nombre', pg_catalog.cardinality(v_tous),
+             'retablies', CASE WHEN p_evenement = 'fermeture_levee' THEN pg_catalog.cardinality(coalesce(p_retablies_ou_mises, '{}')) END,
+             'abandonnees', CASE WHEN p_evenement = 'fermeture_levee' THEN pg_catalog.cardinality(coalesce(p_abandonnees, '{}')) END,
+             'premiere_jour', private.jour_academie_de(v_premiere),
+             'premiere_heure', pg_catalog.to_char(v_premiere AT TIME ZONE 'Asia/Riyadh', 'HH24:MI'),
+             'debut_local', pg_catalog.to_char(v_premiere AT TIME ZONE coalesce(d.fuseau, 'UTC'), 'YYYY-MM-DD"T"HH24:MI:SS'),
+             'fuseau', coalesce(d.fuseau, 'UTC'),
+             'eleves', pr.eleves)),
+           d.destination
+      FROM destinataires d
+      LEFT JOIN prenoms pr ON pr.destinataire = d.destinataire
+     WHERE NOT EXISTS (
+       SELECT 1 FROM public.notifications n
+        WHERE n.destinataire = d.destinataire AND n.evenement = p_evenement
+          AND n.cree_le = pg_catalog.now()
+          AND n.params ->> 'groupe_id' = p_groupe::text AND n.params ->> 'fermeture_id' = p_fermeture::text);
+    GET DIAGNOSTICS v_n = ROW_COUNT;
+  EXCEPTION WHEN OTHERS THEN
+    RAISE WARNING 'fermeture : notification non posee (SQLSTATE %), la fermeture est enregistree', SQLSTATE;
+  END;
+  RETURN v_n;
+END;
+$function$;
+
 -- Les seances deja creees qu'une fermeture publiee couvre sont mises de cote (deleted_at,
 -- jamais supprimees) : elles n'entrent ni dans le remplacement automatique, ni dans la
 -- cloture automatique, ni dans la paie, ni dans les absences, ni dans le jeton video. Seules
@@ -689,6 +806,9 @@ DECLARE
   v_n integer := 0;
   v_conflits uuid[] := '{}';
   v_abandon integer;
+  v_retablies uuid[] := '{}';
+  v_mises uuid[] := '{}';
+  grp record;
 BEGIN
   PERFORM pg_catalog.set_config('calendrier.fermeture', '1', true);
   -- 1. Retablir les seances mises de cote dont le jour n'est plus ferme.
@@ -712,6 +832,7 @@ BEGIN
          WHERE m.groupe_id = r.groupe_id AND m.left_at IS NULL
         ON CONFLICT (session_id, profile_id) DO NOTHING;
         v_n := v_n + 1;
+        v_retablies := v_retablies || r.session_id;
       EXCEPTION WHEN exclusion_violation THEN
         v_conflits := v_conflits || r.session_id;
       END;
@@ -753,6 +874,28 @@ BEGIN
       SET fermeture_id = excluded.fermeture_id, masquee_le = pg_catalog.now(),
           retablie_le = NULL, abandonnee_le = NULL, abandonnee_par = NULL;
     v_n := v_n + 1;
+    v_mises := v_mises || r.id;
+  END LOOP;
+  -- 3. Les familles, les adultes et les enseignants sont prevenus : une notification par classe et par
+  -- fermeture, qui liste les seances (jamais un mineur).
+  FOR grp IN
+    SELECT sf.fermeture_id, s.groupe_id,
+           pg_catalog.array_agg(s.id ORDER BY s.started_at) FILTER (WHERE s.id = ANY (v_retablies)) AS retablies,
+           pg_catalog.array_agg(s.id ORDER BY s.started_at) FILTER (WHERE s.id = ANY (v_conflits)) AS abandonnees
+      FROM public.seances_fermees sf JOIN public.sessions s ON s.id = sf.session_id
+     WHERE s.id = ANY (v_retablies) OR s.id = ANY (v_conflits)
+     GROUP BY sf.fermeture_id, s.groupe_id
+  LOOP
+    PERFORM private.fermeture_notifier(grp.fermeture_id, grp.groupe_id, 'fermeture_levee',
+                                       grp.retablies, grp.abandonnees);
+  END LOOP;
+  FOR grp IN
+    SELECT sf.fermeture_id, s.groupe_id, pg_catalog.array_agg(s.id ORDER BY s.started_at) AS ids
+      FROM public.seances_fermees sf JOIN public.sessions s ON s.id = sf.session_id
+     WHERE s.id = ANY (v_mises)
+     GROUP BY sf.fermeture_id, s.groupe_id
+  LOOP
+    PERFORM private.fermeture_notifier(grp.fermeture_id, grp.groupe_id, 'fermeture_annoncee', grp.ids, '{}');
   END LOOP;
   RETURN v_n;
 END;
@@ -955,6 +1098,33 @@ SELECT pg_temp.remplacer('public.autoriser_jeton_video(uuid,uuid,text,text)'::pg
   $b$ where s.id = p_session_id and s.deleted_at is null
      and not private.session_en_fermeture(s.started_at, s.groupe_id);$b$, 1);
 
+-- Une entree de la file de remplacement ANTERIEURE a la mise de cote ne fait rien sur une seance mise de
+-- cote (ni sur un jour de fermeture) : ni remplacant retenu, ni « pret ».
+SELECT pg_temp.remplacer('private.remplacement_choisir(uuid)'::pg_catalog.regprocedure,
+  $a$  IF NOT FOUND OR v_absence.evenement <> 'absence_declaree' THEN
+    RETURN NULL;
+  END IF;$a$,
+  $b$  IF NOT FOUND OR v_absence.evenement <> 'absence_declaree' THEN
+    RETURN NULL;
+  END IF;
+  -- CALENDRIER-ET-PAUSES (13/11/2026) : une seance mise de cote par une fermeture ne se remplace pas.
+  IF EXISTS (SELECT 1 FROM public.sessions s
+              WHERE s.id = v_absence.session_id
+                AND (s.deleted_at IS NOT NULL OR private.session_en_fermeture(s.started_at, s.groupe_id))) THEN
+    RETURN NULL;
+  END IF;$b$, 1);
+SELECT pg_temp.remplacer('private.remplacement_choisir_pret(uuid)'::pg_catalog.regprocedure,
+  $a$  SELECT p.enseignant_id INTO v_deja FROM public.remplacements_preparation p
+   WHERE p.session_id = p_session_id AND p.evenement = 'pret';$a$,
+  $b$  -- CALENDRIER-ET-PAUSES (13/11/2026) : une seance mise de cote par une fermeture ne se remplace pas.
+  IF EXISTS (SELECT 1 FROM public.sessions s
+              WHERE s.id = p_session_id
+                AND (s.deleted_at IS NOT NULL OR private.session_en_fermeture(s.started_at, s.groupe_id))) THEN
+    RETURN NULL;
+  END IF;
+  SELECT p.enseignant_id INTO v_deja FROM public.remplacements_preparation p
+   WHERE p.session_id = p_session_id AND p.evenement = 'pret';$b$, 1);
+
 -- La nouvelle date d'une seance reportee, choisie par la direction : jamais un jour ferme
 -- pour la classe (refus avec une phrase claire cote ecran).
 SELECT pg_temp.remplacer('public.fixer_nouvelle_date_seance(uuid,timestamptz)'::pg_catalog.regprocedure,
@@ -995,7 +1165,9 @@ BEGIN
     'private.ses_cloturer_seances_echues(timestamptz)'::pg_catalog.regprocedure,
     'public.autoriser_jeton_video(uuid,uuid,text,text)'::pg_catalog.regprocedure,
     'public.fixer_nouvelle_date_seance(uuid,timestamptz)'::pg_catalog.regprocedure,
-    'public.materialiser_seances(uuid)'::pg_catalog.regprocedure
+    'public.materialiser_seances(uuid)'::pg_catalog.regprocedure,
+    'private.remplacement_choisir(uuid)'::pg_catalog.regprocedure,
+    'private.remplacement_choisir_pret(uuid)'::pg_catalog.regprocedure
   ] LOOP
     v_com := pg_catalog.obj_description(v_f, 'pg_proc');
     IF v_com ~ 'md5_functiondef=[0-9a-f]{32}' THEN
@@ -1150,51 +1322,76 @@ BEGIN
 END;
 $function$;
 
--- Les seances qui empechent de retirer cette fermeture : mises de cote par elle, que
--- l'enseignant ne peut plus donner parce qu'il a pris un autre cours a la meme heure.
--- Classe, jour, heure (heure de La Mecque), enseignant, l'autre cours.
+-- Les seances qui empechent de retirer cette fermeture : mises de cote par elle, que l'enseignant ne peut plus
+-- donner parce qu'il a pris un autre cours a la meme heure, y compris un autre cours QUI EST LUI-MEME une
+-- seance mise de cote par cette fermeture (deux seances de cote qui se chevauchent : la premiere se retablit,
+-- la seconde non). La liste est exacte : le retablissement est SIMULE dans l'ordre exact de
+-- fermeture_synchroniser, puis defait. Classe, jour, heure (heure de La Mecque), enseignant, l'autre cours.
+-- (VOLATILE : elle met en jeu et defait ; aucune ecriture ne subsiste.)
 CREATE FUNCTION public.calendrier_retrait_conflits(p_id uuid)
 RETURNS jsonb
 LANGUAGE plpgsql
-STABLE
+VOLATILE
 SECURITY DEFINER
 SET search_path = ''
 AS $function$
+DECLARE
+  r record;
+  v_liste jsonb := '[]'::jsonb;
+  v_autre jsonb;
 BEGIN
   IF NOT coalesce(auth.uid() IS NOT NULL AND public.app_role() = 'admin' AND public.app_account_valid(), false) THEN
     RAISE EXCEPTION 'calendrier reserve a la direction' USING errcode = '42501';
   END IF;
-  RETURN (
-    WITH c AS (
-      SELECT s.id, s.started_at, g.libelle AS classe,
-             pg_catalog.btrim(coalesce(t.first_name, '') || ' ' || coalesce(t.last_name, '')) AS enseignant,
-             (SELECT pg_catalog.jsonb_build_object(
-                       'classe', og.libelle,
-                       'jour', private.jour_academie_de(o.started_at),
-                       'heure', pg_catalog.to_char(o.started_at AT TIME ZONE 'Asia/Riyadh', 'HH24:MI'))
-                FROM public.sessions o
-                LEFT JOIN public.groupes og ON og.id = o.groupe_id
-               WHERE o.id <> s.id AND o.teacher_id = s.teacher_id AND o.deleted_at IS NULL
-                 AND o.status IN ('planned', 'preflight', 'in_progress')
-                 AND o.session_type IN ('standard', 'child')
-                 AND pg_catalog.tstzrange(o.started_at, o.ended_at, '[)')
-                     && pg_catalog.tstzrange(s.started_at, s.ended_at, '[)')
-               ORDER BY o.started_at LIMIT 1) AS autre
+  BEGIN
+    PERFORM pg_catalog.set_config('calendrier.fermeture', '1', true);
+    FOR r IN
+      SELECT s.id, s.started_at, s.ended_at, s.teacher_id, g.libelle AS classe,
+             pg_catalog.btrim(coalesce(t.first_name, '') || ' ' || coalesce(t.last_name, '')) AS enseignant
         FROM public.seances_fermees sf
         JOIN public.sessions s ON s.id = sf.session_id
         JOIN public.groupes g ON g.id = s.groupe_id
         LEFT JOIN public.profiles t ON t.id = s.teacher_id
        WHERE sf.fermeture_id = p_id AND sf.retablie_le IS NULL AND sf.abandonnee_le IS NULL
          AND s.deleted_at IS NOT NULL AND s.started_at > pg_catalog.now()
-         AND s.status IN ('planned', 'preflight') AND s.session_type IN ('standard', 'child'))
-    SELECT pg_catalog.jsonb_build_object(
-             'nombre', pg_catalog.count(*)::integer,
-             'conflits', coalesce(pg_catalog.jsonb_agg(pg_catalog.jsonb_build_object(
-                'session_id', c.id, 'classe', c.classe,
-                'jour', private.jour_academie_de(c.started_at),
-                'heure', pg_catalog.to_char(c.started_at AT TIME ZONE 'Asia/Riyadh', 'HH24:MI'),
-                'enseignant', c.enseignant, 'autre_cours', c.autre) ORDER BY c.started_at), '[]'::jsonb))
-      FROM c WHERE c.autre IS NOT NULL);
+         AND s.status IN ('planned', 'preflight')
+         -- Une seance que ce retrait ne retablirait pas (une autre fermeture la couvre) n'est pas simulee.
+         AND NOT EXISTS (
+           SELECT 1 FROM public.calendrier_ecole c2
+            WHERE c2.id <> p_id AND c2.publie AND c2.type = 'fermeture'
+              AND private.jour_academie_de(s.started_at) BETWEEN c2.du AND c2.au
+              AND s.started_at > c2.publie_le
+              AND private.fermeture_vise_classe(c2.portee, c2.cohorte, c2.groupe_id, s.groupe_id))
+       ORDER BY s.started_at
+    LOOP
+      BEGIN
+        UPDATE public.sessions SET deleted_at = NULL WHERE id = r.id;
+      EXCEPTION WHEN exclusion_violation THEN
+        SELECT pg_catalog.jsonb_build_object(
+                 'classe', og.libelle,
+                 'jour', private.jour_academie_de(o.started_at),
+                 'heure', pg_catalog.to_char(o.started_at AT TIME ZONE 'Asia/Riyadh', 'HH24:MI'))
+          INTO v_autre
+          FROM public.sessions o
+          LEFT JOIN public.groupes og ON og.id = o.groupe_id
+         WHERE o.id <> r.id AND o.teacher_id = r.teacher_id AND o.deleted_at IS NULL
+           AND o.status IN ('planned', 'preflight', 'in_progress')
+           AND o.session_type IN ('standard', 'child')
+           AND pg_catalog.tstzrange(o.started_at, o.ended_at, '[)')
+               && pg_catalog.tstzrange(r.started_at, r.ended_at, '[)')
+         ORDER BY o.started_at LIMIT 1;
+        v_liste := v_liste || pg_catalog.jsonb_build_array(pg_catalog.jsonb_build_object(
+          'session_id', r.id, 'classe', r.classe,
+          'jour', private.jour_academie_de(r.started_at),
+          'heure', pg_catalog.to_char(r.started_at AT TIME ZONE 'Asia/Riyadh', 'HH24:MI'),
+          'enseignant', r.enseignant, 'autre_cours', v_autre));
+      END;
+    END LOOP;
+    RAISE EXCEPTION 'simulation' USING errcode = 'CP001';   -- defait tout ce qui a ete mis en jeu
+  EXCEPTION WHEN SQLSTATE 'CP001' THEN
+    NULL;
+  END;
+  RETURN pg_catalog.jsonb_build_object('nombre', pg_catalog.jsonb_array_length(v_liste), 'conflits', v_liste);
 END;
 $function$;
 
@@ -1902,7 +2099,9 @@ $function$;
 -- 10. La reponse a une demande de pause n'est ni un courriel ni un push (lot 7)
 -- ---------------------------------------------------------------------------
 INSERT INTO private.notification_courriel (evenement, portee, courriel, push)
-VALUES ('pause_repondue', '*', false, false)
+VALUES ('pause_repondue', '*', false, false),
+       ('fermeture_annoncee', '*', false, false),
+       ('fermeture_levee', '*', false, false)
 ON CONFLICT (evenement, portee) DO NOTHING;
 
 -- ---------------------------------------------------------------------------
@@ -1931,6 +2130,7 @@ REVOKE ALL ON FUNCTION private.jour_academie_de(timestamptz) FROM PUBLIC, anon, 
 REVOKE ALL ON FUNCTION private.eleve_en_fermeture(uuid, date) FROM PUBLIC, anon, authenticated, service_role;
 REVOKE ALL ON FUNCTION private.eleve_hors_cours(uuid, date) FROM PUBLIC, anon, authenticated, service_role;
 REVOKE ALL ON FUNCTION private.fermeture_synchroniser() FROM PUBLIC, anon, authenticated, service_role;
+REVOKE ALL ON FUNCTION private.fermeture_notifier(uuid, uuid, text, uuid[], uuid[]) FROM PUBLIC, anon, authenticated, service_role;
 REVOKE ALL ON FUNCTION private.groupe_membres_recalculer() FROM PUBLIC, anon, authenticated, service_role;
 REVOKE ALL ON FUNCTION private.pause_depasse_plafond(uuid, date) FROM PUBLIC, anon, authenticated, service_role;
 REVOKE ALL ON FUNCTION private.nom_direction(uuid) FROM PUBLIC, anon, authenticated, service_role;

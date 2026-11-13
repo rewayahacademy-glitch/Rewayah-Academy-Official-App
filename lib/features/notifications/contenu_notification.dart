@@ -7,7 +7,9 @@
 // caches. Un evenement inconnu (version du serveur plus recente que celle de
 // l'application) a un titre de repli lisible : la page ne plante jamais.
 
-import '../../core/calendrier/libelles_calendrier.dart' show moisDepuisCle;
+import '../../core/calendrier/libelles_calendrier.dart'
+    show jourEnMots, moisDepuisCle;
+import '../../core/calendrier/port_calendrier.dart' show jourDepuisSql;
 import '../../core/capacites/notifications_supabase.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
@@ -66,6 +68,9 @@ NotificationContenu contenuNotificationPour(
     // Le prenom n'est donne que pour un enfant (le tuteur est destinataire) ;
     // sans prenom, c'est l'adulte lui-meme.
     'pause_repondue' => _pauseRepondue(params),
+    // CALENDRIER-ET-PAUSES (13/11) : la fermeture de l'academie, par classe.
+    'fermeture_annoncee' => _fermeture(params, levee: false),
+    'fermeture_levee' => _fermeture(params, levee: true),
     // D1-ter (03/11/2026) : le prenom de l'eleve, jamais le message lui-meme.
     'message_academie_eleve' => switch ((
       portee,
@@ -334,4 +339,43 @@ String _pauseRepondue(Map<String, dynamic> params) {
           ),
           mois: mois,
         );
+}
+
+/// La fermeture de l'academie, dite a la famille, a l'adulte et a l'enseignant
+/// (jamais a un mineur). La seance se dit a l'heure de la personne quand le
+/// serveur la donne (`debut_local`), toujours avec l'heure de La Mecque, le jour
+/// de reference de l'academie ; sans heure locale, a l'heure de La Mecque seule.
+String _fermeture(Map<String, dynamic> params, {required bool levee}) {
+  final n = t.calendrier.dates.notification;
+  final DateTime? du = jourDepuisSql(params['du']);
+  final DateTime? au = jourDepuisSql(params['au']);
+  final DateTime? jour = jourDepuisSql(params['premiere_jour']);
+  final String heure = '${params['premiere_heure'] ?? ''}'.trim();
+  final String? local = quandDepuis(params);
+  final String quand = jour == null || heure.isEmpty
+      ? (local ?? '')
+      : local != null
+      ? n.quandLocal(local: local, mecque: heure)
+      : n.quandMecque(jour: jourEnMots(jour), heure: heure);
+  final int total = (params['nombre'] as num?)?.toInt() ?? 1;
+  if (!levee) {
+    final String dateDu = du == null ? '' : jourEnMots(du);
+    final String dateAu = au == null ? '' : jourEnMots(au);
+    return total > 1
+        ? n.annoncee.plusieurs(du: dateDu, au: dateAu, n: total, quand: quand)
+        : n.annoncee.une(du: dateDu, au: dateAu, quand: quand);
+  }
+  final int retablies = (params['retablies'] as num?)?.toInt() ?? total;
+  final int abandonnees = (params['abandonnees'] as num?)?.toInt() ?? 0;
+  if (abandonnees == 0) {
+    return retablies > 1
+        ? n.levee.plusieurs(n: retablies, quand: quand)
+        : n.levee.une(quand: quand);
+  }
+  if (retablies == 0) {
+    return abandonnees > 1
+        ? n.levee.abandonPlusieurs(n: abandonnees, quand: quand)
+        : n.levee.abandonUne(quand: quand);
+  }
+  return n.levee.mixte(retablies: retablies, abandonnees: abandonnees);
 }

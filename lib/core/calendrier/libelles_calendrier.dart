@@ -63,13 +63,17 @@ String libelleCible(EvenementCalendrier e) => switch (e.portee) {
 };
 
 /// Le refus du calendrier, en mots simples (K-59 : ce qui manque et quoi faire).
-String messageRefusCalendrier(MotifRefusCalendrier motif) {
+String messageRefusCalendrier(
+  MotifRefusCalendrier motif, {
+  bool enModification = false,
+}) {
   final r = t.calendrier.dates.refus;
   return switch (motif) {
     MotifRefusCalendrier.fermetureTropLongue => r.fermetureTropLongue,
     MotifRefusCalendrier.fermetureCommencee => r.fermetureCommencee,
     MotifRefusCalendrier.fermeturePassee => r.fermeturePassee,
-    MotifRefusCalendrier.retraitConflits => r.retraitConflits,
+    MotifRefusCalendrier.retraitConflits =>
+      enModification ? r.raccourcissementConflits : r.retraitConflits,
     MotifRefusCalendrier.datesInvalides => r.datesInvalides,
     MotifRefusCalendrier.porteeInvalide => r.porteeInvalide,
     MotifRefusCalendrier.evenementInvalide => r.evenementInvalide,

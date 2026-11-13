@@ -87,6 +87,11 @@ const Set<String> evenementsNotificationConnus = <String>{
   // la direction a une demande de pause, au tuteur ou a l'adulte (jamais a un
   // mineur).
   'pause_repondue',
+  // CALENDRIER-ET-PAUSES (13/11/2026, migration 20261123911000) : une fermeture
+  // de l'academie met des seances de cote, ou est retiree : une notification par
+  // classe, au tuteur, a l'adulte autonome et a l'enseignant (jamais un mineur).
+  'fermeture_annoncee',
+  'fermeture_levee',
 };
 
 const Set<String> _destinationsAutorisees = <String>{

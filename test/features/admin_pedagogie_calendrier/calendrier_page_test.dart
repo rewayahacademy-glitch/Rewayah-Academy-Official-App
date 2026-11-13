@@ -401,6 +401,34 @@ void main() {
     });
 
     testWidgets(
+      'un raccourcissement refuse (seances qui ne se retablissent pas) : '
+      'Retirez la fermeture entiere ou liberez l enseignant',
+      (WidgetTester tester) async {
+        final FauxCalendrierDirection port = FauxCalendrierDirection(
+          refus: const CalendrierRefuse(MotifRefusCalendrier.retraitConflits),
+        );
+        await _monter(tester, calendrier: port);
+        await tester.tap(find.text("Fermeture de l'Aïd al-Adha"));
+        await _pause(tester);
+        await tester.tap(find.text(t.calendrier.dates.modifier));
+        await _pause(tester);
+        await _toucher(
+          tester,
+          find.byKey(const ValueKey<String>('calendrier-enregistrer')),
+        );
+        await _pause(tester);
+        expect(
+          find.text(t.calendrier.dates.refus.raccourcissementConflits),
+          findsOneWidget,
+        );
+        expect(
+          t.calendrier.dates.refus.raccourcissementConflits,
+          contains("Retirez la fermeture entière ou libérez l'enseignant"),
+        );
+      },
+    );
+
+    testWidgets(
       'le serveur refuse une fermeture trop longue : dit en mots simples',
       (WidgetTester tester) async {
         final FauxCalendrierDirection port = FauxCalendrierDirection(
