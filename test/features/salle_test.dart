@@ -35,6 +35,7 @@ import 'package:rewayah_academy/core/tc_classe/roster_enseignant.dart';
 import 'package:rewayah_academy/core/tc_classe/teacher_student_projection.dart';
 import 'package:rewayah_academy/core/tc_coran/moteur_mushaf.dart';
 import 'package:rewayah_academy/core/tc_groupe/group_summary_vm.dart';
+import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/tc_groupe/port_groupes.dart';
 import 'package:rewayah_academy/core/tc_horloge/chrono_seance.dart';
 import 'package:rewayah_academy/core/tc_horloge/mon_horloge.dart';
@@ -2946,7 +2947,9 @@ void main() {
       expect(moteur.departs, departs + 1, reason: 'puis deconnexion');
       expect(find.text(t.salle.fin.horsApplication.titre), findsOneWidget);
       expect(
-        find.text(t.salle.fin.horsApplication.phrase(n: 30)),
+        find.text(
+          LibellesGroupe.insecable(t.salle.fin.horsApplication.phrase(n: 30)),
+        ),
         findsOneWidget,
       );
       verifierUnSeulBoutonPlein(tester);
@@ -4341,10 +4344,7 @@ void main() {
           final double haut = tester
               .getRect(find.byKey(TelephonePleinEcran.cleRangeeChrono))
               .bottom;
-          expect(
-            canevas,
-            Rect.fromLTRB(0, haut, taille.width, taille.height),
-          );
+          expect(canevas, Rect.fromLTRB(0, haut, taille.width, taille.height));
         } else {
           final Rect centre = tester.getRect(
             find.byKey(SalleOrdinateur.cleCentre),

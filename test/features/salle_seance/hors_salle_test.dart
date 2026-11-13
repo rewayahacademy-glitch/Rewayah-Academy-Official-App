@@ -20,6 +20,7 @@ import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/tc_classe/garde_hors_application.dart';
 import 'package:rewayah_academy/core/tc_classe/session_persistante.dart';
+import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/tc_observation/port_annonce_observation.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/video/garde_fermeture.dart';
@@ -237,7 +238,9 @@ void main() {
       expect(find.byType(SallePage), findsOneWidget);
       expect(find.text(t.salle.fin.horsApplication.titre), findsOneWidget);
       expect(
-        find.text(t.salle.fin.horsApplication.phrase(n: 5)),
+        find.text(
+          LibellesGroupe.insecable(t.salle.fin.horsApplication.phrase(n: 5)),
+        ),
         findsOneWidget,
       );
       verifierUnSeulBoutonPlein(tester);

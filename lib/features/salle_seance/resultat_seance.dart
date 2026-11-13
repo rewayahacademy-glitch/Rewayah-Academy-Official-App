@@ -121,10 +121,13 @@ class ResultatSeance extends StatelessWidget {
     final int? secondes = secondesHorsApplication;
     final String? phrase = horsApplication
         ? switch ((guidee, secondes)) {
-            (true, final int n) => t.salle.fin.horsApplication.phraseGuidee(
-              n: n,
+            // La duree ne se coupe pas en fin de ligne (« 30 » / « secondes »).
+            (true, final int n) => LibellesGroupe.insecable(
+              t.salle.fin.horsApplication.phraseGuidee(n: n),
             ),
-            (false, final int n) => t.salle.fin.horsApplication.phrase(n: n),
+            (false, final int n) => LibellesGroupe.insecable(
+              t.salle.fin.horsApplication.phrase(n: n),
+            ),
             (true, null) => t.salle.fin.horsApplication.phraseGuideeSansDelai,
             (false, null) => t.salle.fin.horsApplication.phraseSansDelai,
           }
