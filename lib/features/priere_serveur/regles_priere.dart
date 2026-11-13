@@ -19,7 +19,7 @@ import '../../core/widgets/choice_card_group.dart';
 import '../../core/widgets/setting_row.dart';
 
 /// La section « La priere » de Configuration > Regles (PRIERE-1, P3, P5, P6) :
-/// les reglages de la priere de toute l'ecole.
+/// les reglages de la priere de toute l'academie.
 ///
 /// La methode et l'ecole d'Asr relevent du fiqh : la ligne le dit
 /// (« valeur par defaut en vigueur, a valider par le directeur et ses

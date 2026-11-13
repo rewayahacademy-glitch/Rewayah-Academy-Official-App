@@ -374,8 +374,8 @@ class _FeuilleLieuEtat extends ConsumerState<FeuilleLieuPriere> {
     setState(() => _ecole = ecole);
   }
 
-  /// Une feuille de choix : « celle de l'ecole », ou une valeur propre a
-  /// l'enseignant. Rend `null` pour « celle de l'ecole ».
+  /// Une feuille de choix : « celle de l'academie », ou une valeur propre a
+  /// l'enseignant. Rend `null` pour « celle de l'academie ».
   Future<T?> _choisir<T extends Object>({
     required String titre,
     required String defaut,

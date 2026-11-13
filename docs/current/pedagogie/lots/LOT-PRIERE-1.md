@@ -4,7 +4,7 @@ Branche `claude/priere-serveur`, migration réservée `20261123930000_priere_ser
 
 ## Réutilisé
 
-- `prayer_settings` (migration 0005) : lieu, fuseau, ajustements (−30 à +30, garde `guard_prayer_adjustments`). Ses colonnes `method`, `madhab`, `pause_minutes`, `alert_lead_minutes` restent mais ne sont plus lues (la méthode et l'école viennent de l'école, la durée de la pause aussi).
+- `prayer_settings` (migration 0005) : lieu, fuseau, ajustements (−30 à +30, garde `guard_prayer_adjustments`). Ses colonnes `method`, `madhab`, `pause_minutes`, `alert_lead_minutes` restent mais ne sont plus lues (la méthode et l'académie viennent de l'académie, la durée de la pause aussi).
 - `app_config` et son modèle de validation par déclencheur (comme `reglages_remplacement_valider`) ; `public.log_sensitive_access` pour le journal de la direction.
 - `sessions` (`started_at`, `ended_at`, `groupe_id`), `session_participants`, `groupe_membres`, `remplacements_seance` et `private.c29_enseignant_effectif_session` (l'enseignant qui enseigne réellement, remplaçant compris), `groupes` (`weekday`, `hour_local`, `timezone_iana`), `groupe_creneaux`, `teacher_profiles` (`country`, `timezone_iana`).
 - Le paquet Dart `adhan` 2.0.0+1, déjà dans `pubspec.yaml`, comme **référence de la preuve** du calcul SQL (pas comme calcul de production).
@@ -18,7 +18,7 @@ Branche `claude/priere-serveur`, migration réservée `20261123930000_priere_ser
 - le calcul des cinq heures en SQL pur, `private.priere_calculer` (immuable), port ligne à ligne de `adhan` 2.0.0+1 : mêmes arrondis, même repli de haute latitude, douze méthodes ;
 - le contrat avec la salle : `seance_pause_prevue_stock`, la vue `seance_pause_prevue`, la lecture `pause_prevue_seance(uuid)` ;
 - le placement (`private.priere_placer`) et le remplissage : déclencheurs sur `sessions`, `remplacements_seance`, `prayer_settings`, `app_config`, et recalcul de nuit (`pg_cron` si l'extension existe, comme `ses_cloture_auto` ; sinon `priere_recalculer_maintenant()` par la direction, double authentification) ;
-- les réglages de l'école (`app_config`, huit clés `priere.*`, validées par un déclencheur) ;
+- les réglages de l'académie (`app_config`, huit clés `priere.*`, validées par un déclencheur) ;
 - `prayer_settings` : colonnes `methode_surcharge`, `ecole_asr_surcharge`, `assiste_vendredi`, `vendredi_debut`, `vendredi_fin`, `actif`, `defini_par`, `defini_le` ; lecture limitée à l'enseignant et à la direction ; écriture directe fermée ;
 - les fonctions : `priere_lieu_definir`, `priere_lieu_retirer`, `priere_ajuster`, `priere_reglages_lire`, `priere_horaires_jour`, `priere_enseignants_liste`, `priere_lecture_creneau`, `priere_creneaux_sans_priere`, `priere_lecture_classe`, `priere_incoherences_enseignants`, `priere_recalculer_maintenant`.
 
@@ -33,7 +33,7 @@ Branche `claude/priere-serveur`, migration réservée `20261123930000_priere_ser
 3. **Pas de clé étrangère** de `seance_pause_prevue_stock.session_id` vers `sessions` : des opérations et des tests retirent des séances pour de bon, et `ON DELETE CASCADE` contiendrait le mot interdit. La vue ne montre que les séances qui existent.
 4. **Choix entre deux prières** (P4, amendé le 13/11/2026 sur la revue indépendante) : la **première dans l'ordre du temps** qui n'est pas en zone de fin porte la pause, pas celle dont la fenêtre est la plus courte (qui faisait manquer la première). Même logique que la prière qui se ferme : celle qui serait perdue passe d'abord.
 5. **Le lieu retiré n'est pas effacé** (même raison) : la position est écrasée (0, 0, sans nom) et la ligne passe à `actif = false`.
-6. **Colonnes héritées de `prayer_settings`** (`method`, `madhab`, `pause_minutes`, `alert_lead_minutes`) : conservées, plus lues. La durée vient de l'école ; la méthode et l'école d'Asr, de l'école ou de la surcharge.
+6. **Colonnes héritées de `prayer_settings`** (`method`, `madhab`, `pause_minutes`, `alert_lead_minutes`) : conservées, plus lues. La durée vient de l'académie ; la méthode et l'école d'Asr, de l'académie ou de la surcharge.
 7. **La position n'est plus lisible par la famille** : la politique `prayer_settings_parties_read` (ADR-017) ouvrait le lieu de l'enseignant aux élèves et aux tuteurs ; elle est restreinte à l'enseignant et à la direction. Quatre tests existants qui encodaient l'ancienne règle sont alignés (`scenarios_etape4`, `scenarios_sec_garde_5_invoker_droits`, `scenarios_af_liste_blanche_volatiles`, et `scenarios_fuseaux_connus` rendu vert en validant le fuseau par `fuseau_connu`).
 8. **Contrôle du pays** (incohérences) : boîtes englobantes de 20 pays ; un pays hors table ne produit aucun signal. Le pays du compte est comparé au lieu de prière **et** à son propre fuseau (pour les pays de 30 degrés de longitude au plus, écart de plus d'une heure et demie), pour signaler le cas de la production (Guinée, Europe/Paris) avant même qu'un lieu soit posé. C'est un contrôle de vraisemblance, pas une vérité.
 9. **Aperçu et « Pause de prière »** : l'écran de l'élève dit « Pause de prière / À HH:MM » (deux lignes) ; la journée de l'enseignant dit « Pause de prière » ; le nom de la prière reste dans « Mes heures de prière ».

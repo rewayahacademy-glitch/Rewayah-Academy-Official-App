@@ -71,7 +71,7 @@ class LieuPriere {
   /// Le fuseau IANA de l'enseignant.
   final String fuseau;
 
-  /// La methode en vigueur pour lui (la sienne, ou celle de l'ecole).
+  /// La methode en vigueur pour lui (la sienne, ou celle de l'academie).
   final MethodeCalcul? methode;
 
   /// L'ecole d'Asr en vigueur pour lui.
@@ -172,10 +172,10 @@ class DefinitionLieu {
   /// Fuseau IANA.
   final String fuseau;
 
-  /// Methode propre a l'enseignant ; `null` : celle de l'ecole.
+  /// Methode propre a l'enseignant ; `null` : celle de l'academie.
   final MethodeCalcul? methode;
 
-  /// Ecole d'Asr propre a l'enseignant ; `null` : celle de l'ecole.
+  /// Ecole d'Asr propre a l'enseignant ; `null` : celle de l'academie.
   final Madhab? ecoleAsr;
 
   /// Assiste a la priere du vendredi.

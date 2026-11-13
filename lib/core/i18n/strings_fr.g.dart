@@ -8285,8 +8285,8 @@ class Traductions$priere$regles$fr {
 	/// fr: 'La prière'
 	String get section => 'La prière';
 
-	/// fr: 'Le serveur place la pause de prière de l'enseignant quand une prière entre pendant la séance. Ces réglages valent pour toute l'école.'
-	String get intro => 'Le serveur place la pause de prière de l\'enseignant quand une prière entre pendant la séance. Ces réglages valent pour toute l\'école.';
+	/// fr: 'Le serveur place la pause de prière de l'enseignant quand une prière entre pendant la séance. Ces réglages valent pour toute l'académie.'
+	String get intro => 'Le serveur place la pause de prière de l\'enseignant quand une prière entre pendant la séance. Ces réglages valent pour toute l\'académie.';
 
 	/// fr: 'Méthode de calcul'
 	String get methode => 'Méthode de calcul';
@@ -8315,8 +8315,8 @@ class Traductions$priere$regles$fr {
 	/// fr: 'Ramadan en cours'
 	String get ramadan => 'Ramadan en cours';
 
-	/// fr: 'En attendant le calendrier de l'école, la direction le pose à la main.'
-	String get ramadanDetail => 'En attendant le calendrier de l\'école, la direction le pose à la main.';
+	/// fr: 'En attendant le calendrier de l'académie, la direction le pose à la main.'
+	String get ramadanDetail => 'En attendant le calendrier de l\'académie, la direction le pose à la main.';
 
 	/// fr: 'Marge au début'
 	String get margeDebut => 'Marge au début';
@@ -25840,14 +25840,14 @@ class Traductions$priere$direction$feuille$fr {
 	/// fr: 'Méthode de calcul'
 	String get methode => 'Méthode de calcul';
 
-	/// fr: 'Celle de l'école'
-	String get methodeEcole => 'Celle de l\'école';
+	/// fr: 'Celle de l'académie'
+	String get methodeEcole => 'Celle de l\'académie';
 
 	/// fr: 'École pour l'Asr'
 	String get ecole => 'École pour l\'Asr';
 
-	/// fr: 'Celle de l'école'
-	String get ecoleEcole => 'Celle de l\'école';
+	/// fr: 'Celle de l'académie'
+	String get ecoleEcole => 'Celle de l\'académie';
 
 	/// fr: 'Assiste à la prière du vendredi'
 	String get vendredi => 'Assiste à la prière du vendredi';
@@ -51279,9 +51279,9 @@ extension on Traductions {
 			'priere.direction.feuille.coordonneesAide' => 'En degrés décimaux, avec un point (par exemple 9.6412 et -13.5784).',
 			'priere.direction.feuille.fuseau' => ({required Object exemple}) => 'Fuseau (par exemple ${exemple})',
 			'priere.direction.feuille.methode' => 'Méthode de calcul',
-			'priere.direction.feuille.methodeEcole' => 'Celle de l\'école',
+			'priere.direction.feuille.methodeEcole' => 'Celle de l\'académie',
 			'priere.direction.feuille.ecole' => 'École pour l\'Asr',
-			'priere.direction.feuille.ecoleEcole' => 'Celle de l\'école',
+			'priere.direction.feuille.ecoleEcole' => 'Celle de l\'académie',
 			'priere.direction.feuille.vendredi' => 'Assiste à la prière du vendredi',
 			'priere.direction.feuille.vendrediOui' => 'Oui',
 			'priere.direction.feuille.vendrediNon' => 'Non',
@@ -51308,7 +51308,7 @@ extension on Traductions {
 			'priere.classe.libresInconnues' => 'Les heures sans prière ne peuvent pas être dites pour cet enseignant.',
 			'priere.classe.heureCourte' => ({required Object h}) => '${h} h',
 			'priere.regles.section' => 'La prière',
-			'priere.regles.intro' => 'Le serveur place la pause de prière de l\'enseignant quand une prière entre pendant la séance. Ces réglages valent pour toute l\'école.',
+			'priere.regles.intro' => 'Le serveur place la pause de prière de l\'enseignant quand une prière entre pendant la séance. Ces réglages valent pour toute l\'académie.',
 			'priere.regles.methode' => 'Méthode de calcul',
 			'priere.regles.methodeDetail' => 'Les angles du Fajr et de l\'Isha. Un enseignant peut avoir la sienne.',
 			'priere.regles.ecole' => 'École pour l\'Asr',
@@ -51318,7 +51318,7 @@ extension on Traductions {
 			'priere.regles.pauseRamadan' => 'Pause du Maghrib pendant le Ramadan',
 			'priere.regles.pauseRamadanDetail' => 'La rupture du jeûne : de 5 à 20 minutes, par pas de 5.',
 			'priere.regles.ramadan' => 'Ramadan en cours',
-			'priere.regles.ramadanDetail' => 'En attendant le calendrier de l\'école, la direction le pose à la main.',
+			'priere.regles.ramadanDetail' => 'En attendant le calendrier de l\'académie, la direction le pose à la main.',
 			'priere.regles.margeDebut' => 'Marge au début',
 			'priere.regles.margeDebutDetail' => 'Une prière qui entre dans ces premières minutes place la pause à cette minute du cours.',
 			'priere.regles.margeFin' => 'Marge à la fin',

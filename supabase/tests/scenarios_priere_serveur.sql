@@ -1551,7 +1551,7 @@ INSERT INTO public.groupe_membres (groupe_id, student_id) VALUES
  ('9e0000c0-0000-4000-8000-000000000001', '9e000000-0000-4000-8000-000000000020'),
  ('9e0000c0-0000-4000-8000-000000000002', '9e000000-0000-4000-8000-000000000021');
 
--- Defaut de l'ecole, tel que le serveur le pose.
+-- Defaut de l'academie, tel que le serveur le pose.
 SELECT pg_temp.vrai((SELECT methode = 'muslim_world_league' AND ecole = 'shafi' AND pause = 10
                             AND pause_ramadan = 20 AND NOT ramadan AND marge_debut = 5
                             AND marge_fin = 15 AND horizon = 14 FROM private.priere_cfg()),
@@ -1684,7 +1684,7 @@ SELECT pg_temp.vrai((SELECT duree_minutes = 10 FROM public.seance_pause_prevue
                       WHERE session_id = '9e0000e0-0000-4000-8000-000000000011'),
   'Ramadan faux : retour a 10 minutes');
 
--- Les reglages de l'ecole sont valides par le serveur.
+-- Les reglages de l'academie sont valides par le serveur.
 SELECT pg_temp.vrai(pg_temp.refuse($q$UPDATE public.app_config SET value = '7'::jsonb WHERE key = 'priere.pause_minutes'$q$),
   'reglage : une pause de 7 minutes est refusee (pas de 5)');
 SELECT pg_temp.vrai(pg_temp.refuse($q$UPDATE public.app_config SET value = '25'::jsonb WHERE key = 'priere.pause_minutes'$q$),
@@ -1696,7 +1696,7 @@ SELECT pg_temp.vrai(pg_temp.refuse($q$UPDATE public.app_config SET value = '"oui
 SELECT pg_temp.vrai(pg_temp.refuse($q$INSERT INTO public.app_config (key, value) VALUES ('priere.inconnu', '1'::jsonb)$q$),
   'reglage : une cle priere.* inconnue est refusee');
 
--- L'ecole d'Asr et la methode d'un enseignant : surcharge ou defaut de l'ecole.
+-- L'ecole d'Asr et la methode d'un enseignant : surcharge ou defaut de l'academie.
 SELECT pg_temp.vrai((SELECT methode = 'muslim_world_league' AND ecole = 'shafi'
                        FROM private.priere_reglages('9e000000-0000-4000-8000-000000000001')),
   'enseignant sans surcharge : la methode et l''ecole de l''ecole');

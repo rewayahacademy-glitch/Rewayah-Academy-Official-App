@@ -7952,7 +7952,7 @@ class _Traductions$priere$regles$ar extends Traductions$priere$regles$fr {
 
 	// Translations
 	@override String get section => 'الصلاة';
-	@override String get intro => 'يضع الخادم استراحة صلاة المعلم عندما تدخل صلاة أثناء الحصة. تسري هذه الإعدادات على المدرسة كلها.';
+	@override String get intro => 'يضع الخادم استراحة صلاة المعلم عندما تدخل صلاة أثناء الحصة. تسري هذه الإعدادات على الأكاديمية كلها.';
 	@override String get methode => 'طريقة الحساب';
 	@override String get methodeDetail => 'زاويتا الفجر والعشاء. يمكن أن تكون للمعلم طريقته الخاصة.';
 	@override String get ecole => 'مذهب العصر';
@@ -7962,7 +7962,7 @@ class _Traductions$priere$regles$ar extends Traductions$priere$regles$fr {
 	@override String get pauseRamadan => 'استراحة المغرب في رمضان';
 	@override String get pauseRamadanDetail => 'الإفطار: من 5 إلى 20 دقيقة بخطوات من 5.';
 	@override String get ramadan => 'رمضان جارٍ';
-	@override String get ramadanDetail => 'في انتظار تقويم المدرسة، تضبطه الإدارة يدويًا.';
+	@override String get ramadanDetail => 'في انتظار تقويم الأكاديمية، تضبطه الإدارة يدويًا.';
 	@override String get margeDebut => 'هامش البداية';
 	@override String get margeDebutDetail => 'الصلاة التي تدخل في هذه الدقائق الأولى تضع الاستراحة عند هذه الدقيقة من الدرس.';
 	@override String get margeFin => 'هامش النهاية';
@@ -17312,9 +17312,9 @@ class _Traductions$priere$direction$feuille$ar extends Traductions$priere$direct
 	@override String get coordonneesAide => 'بالدرجات العشرية مع نقطة (مثلًا 9.6412 و -13.5784).';
 	@override String fuseau({required Object exemple}) => 'المنطقة الزمنية (مثلًا ⁨${exemple}⁩)';
 	@override String get methode => 'طريقة الحساب';
-	@override String get methodeEcole => 'طريقة المدرسة';
+	@override String get methodeEcole => 'طريقة الأكاديمية';
 	@override String get ecole => 'مذهب العصر';
-	@override String get ecoleEcole => 'مذهب المدرسة';
+	@override String get ecoleEcole => 'مذهب الأكاديمية';
 	@override String get vendredi => 'يحضر صلاة الجمعة';
 	@override String get vendrediOui => 'نعم';
 	@override String get vendrediNon => 'لا';
@@ -32141,9 +32141,9 @@ extension on TraductionsAr {
 			'priere.direction.feuille.coordonneesAide' => 'بالدرجات العشرية مع نقطة (مثلًا 9.6412 و -13.5784).',
 			'priere.direction.feuille.fuseau' => ({required Object exemple}) => 'المنطقة الزمنية (مثلًا ⁨${exemple}⁩)',
 			'priere.direction.feuille.methode' => 'طريقة الحساب',
-			'priere.direction.feuille.methodeEcole' => 'طريقة المدرسة',
+			'priere.direction.feuille.methodeEcole' => 'طريقة الأكاديمية',
 			'priere.direction.feuille.ecole' => 'مذهب العصر',
-			'priere.direction.feuille.ecoleEcole' => 'مذهب المدرسة',
+			'priere.direction.feuille.ecoleEcole' => 'مذهب الأكاديمية',
 			'priere.direction.feuille.vendredi' => 'يحضر صلاة الجمعة',
 			'priere.direction.feuille.vendrediOui' => 'نعم',
 			'priere.direction.feuille.vendrediNon' => 'لا',
@@ -32170,7 +32170,7 @@ extension on TraductionsAr {
 			'priere.classe.libresInconnues' => 'لا يمكن تحديد الساعات الخالية من الصلاة لهذا المعلم.',
 			'priere.classe.heureCourte' => ({required Object h}) => '⁨${h}⁩ س',
 			'priere.regles.section' => 'الصلاة',
-			'priere.regles.intro' => 'يضع الخادم استراحة صلاة المعلم عندما تدخل صلاة أثناء الحصة. تسري هذه الإعدادات على المدرسة كلها.',
+			'priere.regles.intro' => 'يضع الخادم استراحة صلاة المعلم عندما تدخل صلاة أثناء الحصة. تسري هذه الإعدادات على الأكاديمية كلها.',
 			'priere.regles.methode' => 'طريقة الحساب',
 			'priere.regles.methodeDetail' => 'زاويتا الفجر والعشاء. يمكن أن تكون للمعلم طريقته الخاصة.',
 			'priere.regles.ecole' => 'مذهب العصر',
@@ -32180,7 +32180,7 @@ extension on TraductionsAr {
 			'priere.regles.pauseRamadan' => 'استراحة المغرب في رمضان',
 			'priere.regles.pauseRamadanDetail' => 'الإفطار: من 5 إلى 20 دقيقة بخطوات من 5.',
 			'priere.regles.ramadan' => 'رمضان جارٍ',
-			'priere.regles.ramadanDetail' => 'في انتظار تقويم المدرسة، تضبطه الإدارة يدويًا.',
+			'priere.regles.ramadanDetail' => 'في انتظار تقويم الأكاديمية، تضبطه الإدارة يدويًا.',
 			'priere.regles.margeDebut' => 'هامش البداية',
 			'priere.regles.margeDebutDetail' => 'الصلاة التي تدخل في هذه الدقائق الأولى تضع الاستراحة عند هذه الدقيقة من الدرس.',
 			'priere.regles.margeFin' => 'هامش النهاية',

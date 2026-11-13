@@ -141,14 +141,14 @@ const List<String> clesRegles = <String>[
   // pas.
   clePaieFenetreVersement,
   // PRIERE-1 (12/11/2026, migration 20261123930000) : les reglages de la
-  // priere de toute l'ecole. Un serveur d'avant ce lot ne les rend pas.
+  // priere de toute l'academie. Un serveur d'avant ce lot ne les rend pas.
   ...clesPriere,
 ];
 
 /// PRIERE-1 : les reglages de la priere, `app_config` (cles `priere.*`).
 const String clePriereMethode = 'priere.methode_defaut';
 
-/// L'ecole pour l'Asr de l'ecole.
+/// L'ecole pour l'Asr de l'academie.
 const String clePriereEcoleAsr = 'priere.ecole_asr_defaut';
 
 /// La duree de la pause de priere.
@@ -176,7 +176,7 @@ const String clePriereMargeAvant = 'priere.marge_avant_cours_minutes';
 /// Le debut de cette pause, apres le debut du cours.
 const String clePriereDelaiFermeture = 'priere.delai_fermeture_minutes';
 
-/// Toutes les cles de la priere de l'ecole.
+/// Toutes les cles de la priere de l'academie.
 const List<String> clesPriere = <String>[
   clePriereMethode,
   clePriereEcoleAsr,

@@ -12,7 +12,7 @@
 --      `pause_prevue_seance(uuid)` ;
 --   2. le calcul des cinq prieres en SQL pur (port de `adhan`, prouve par
 --      comparaison) ;
---   3. les reglages de l'ecole (`app_config`, cles `priere.*`) ;
+--   3. les reglages de l'academie (`app_config`, cles `priere.*`) ;
 --   4. le lieu et les reglages d'un enseignant (`prayer_settings`) ;
 --   5. le placement de la pause ; 6. le remplissage (declencheurs, recalcul de nuit) ;
 --   7. le lieu, les ajustements, l'apercu du jour ; 8. les lectures de la direction
@@ -631,7 +631,7 @@ COMMENT ON FUNCTION private.priere_calculer(double precision, double precision, 
   'PRIERE-1 : les cinq heures d''entree (UTC) d''un jour civil pour un lieu, une methode, une ecole d''Asr et des ajustements. Immuable. Port de l''algorithme de adhan 2.0.0+1 ; zero ligne quand le soleil ne se leve ou ne se couche pas ; approximee = repli de haute latitude. Preuve : supabase/tests/scenarios_priere_serveur.sql.';
 
 -- ===========================================================================
--- 3. Les reglages de l'ecole (app_config, cles priere.*)
+-- 3. Les reglages de l'academie (app_config, cles priere.*)
 -- ===========================================================================
 -- Valeurs par defaut en vigueur par arbitrage du 12/11/2026. La methode et
 -- l'ecole d'Asr relevent du fiqh : A VALIDER PAR LE DIRECTEUR ET SES ASSOCIES.
@@ -724,7 +724,7 @@ CREATE TRIGGER app_config_priere
 BEFORE INSERT OR UPDATE ON public.app_config
 FOR EACH ROW EXECUTE FUNCTION private.priere_reglages_valider();
 
--- Les reglages de l'ecole, lus d'un seul geste (valeurs par defaut si une cle manque).
+-- Les reglages de l'academie, lus d'un seul geste (valeurs par defaut si une cle manque).
 CREATE FUNCTION private.priere_cfg()
 RETURNS TABLE (
   methode text, ecole text, pause integer, pause_ramadan integer, ramadan boolean,
@@ -755,7 +755,7 @@ $$;
 -- admettait), ecrite par la direction seulement (le lieu) ou par lui (ses
 -- ajustements, par la fonction priere_ajuster). Les colonnes method, madhab,
 -- pause_minutes et alert_lead_minutes restent mais ne sont plus lues : la methode
--- et l'ecole viennent de l'ecole (surchargeables ci-dessous), la duree de la pause
+-- et l'ecole d'Asr viennent de l'academie (surchargeables ci-dessous), la duree de la pause
 -- aussi.
 ALTER TABLE public.prayer_settings
   ADD COLUMN IF NOT EXISTS methode_surcharge text
@@ -778,9 +778,9 @@ ALTER TABLE public.prayer_settings
 COMMENT ON COLUMN public.prayer_settings.actif IS
   'PRIERE-1 : faux = lieu retire par la direction (la position est ecrasee) ; aucune pause de priere pour cet enseignant.';
 COMMENT ON COLUMN public.prayer_settings.methode_surcharge IS
-  'PRIERE-1 : methode propre a cet enseignant ; nul = celle de l''ecole (app_config priere.methode_defaut). A valider par le directeur et ses associes.';
+  'PRIERE-1 : methode propre a cet enseignant ; nul = celle de l''academie (app_config priere.methode_defaut). A valider par le directeur et ses associes.';
 COMMENT ON COLUMN public.prayer_settings.ecole_asr_surcharge IS
-  'PRIERE-1 : ecole d''Asr propre a cet enseignant ; nul = celle de l''ecole (app_config priere.ecole_asr_defaut). A valider par le directeur et ses associes.';
+  'PRIERE-1 : ecole d''Asr propre a cet enseignant ; nul = celle de l''academie (app_config priere.ecole_asr_defaut). A valider par le directeur et ses associes.';
 
 -- Lecture : l'enseignant lui-meme et la direction. Ecriture directe fermee : le
 -- lieu passe par priere_lieu_definir (direction), les ajustements par
@@ -1090,7 +1090,7 @@ END;
 $function$;
 
 -- Les seances de l'horizon (recalcul de nuit) ou, avec p_tout, toutes les seances a
--- venir (changement d'un reglage d'ecole : un reglage rare, une seule passe).
+-- venir (changement d'un reglage de l'academie : un reglage rare, une seule passe).
 CREATE FUNCTION private.priere_recalculer_horizon(p_tout boolean DEFAULT false)
 RETURNS integer
 LANGUAGE plpgsql
@@ -1188,7 +1188,7 @@ CREATE TRIGGER priere_pause_prevue
 AFTER INSERT OR UPDATE ON public.prayer_settings
 FOR EACH ROW EXECUTE FUNCTION private.priere_trg_reglages_enseignant();
 
-CREATE FUNCTION private.priere_trg_reglages_ecole()
+CREATE FUNCTION private.priere_trg_reglages_academie()
 RETURNS trigger
 LANGUAGE plpgsql
 SECURITY DEFINER
@@ -1207,7 +1207,7 @@ $function$;
 CREATE TRIGGER app_config_priere_recalcul
 AFTER INSERT OR UPDATE ON public.app_config
 FOR EACH ROW WHEN (NEW.key LIKE 'priere.%')
-EXECUTE FUNCTION private.priere_trg_reglages_ecole();
+EXECUTE FUNCTION private.priere_trg_reglages_academie();
 
 -- Un compte desactive (suppression, anonymisation : private.cpt_anonymiser desactive le
 -- profil AVANT de retirer ses reglages) : les pauses de ses seances a venir sont retirees
@@ -1286,7 +1286,7 @@ REVOKE ALL ON FUNCTION
   private.priere_ecrire_stock(uuid, timestamptz, integer, text, boolean, uuid, date),
   private.priere_recalculer_seance(uuid), private.priere_recalculer_enseignant(uuid),
   private.priere_recalculer_horizon(boolean), private.priere_trg_seance(), private.priere_trg_remplacement(),
-  private.priere_trg_reglages_enseignant(), private.priere_trg_reglages_ecole(),
+  private.priere_trg_reglages_enseignant(), private.priere_trg_reglages_academie(),
   private.priere_trg_profil_desactive()
   FROM PUBLIC, anon, authenticated, service_role, agent_ro;
 
@@ -1801,7 +1801,7 @@ $function$;
 
 -- La direction : le bloc « Prieres et creneau » d'une classe (un element par
 -- creneau de la classe). La duree est celle de la prochaine seance, sinon celle
--- du reglage de l'ecole pour ce public.
+-- du reglage de l'academie pour ce public.
 CREATE FUNCTION public.priere_lecture_classe(p_groupe_id uuid)
 RETURNS jsonb
 LANGUAGE plpgsql

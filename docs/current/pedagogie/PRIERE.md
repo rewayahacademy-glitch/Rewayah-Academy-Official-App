@@ -2,6 +2,20 @@
 
 > **EN VIGUEUR par arbitrage de l'architecte pédagogique (12/11/2026), sur délégation du directeur. Le directeur peut corriger toute règle à tout moment ; une correction datée de sa part l'emporte.**
 
+## À valider par le directeur (lecture en cinq minutes)
+
+Tout ce qui suit est **en vigueur par défaut**, posé par l'architecte pédagogique ; le directeur le confirme ou le change dans Configuration > Règles > La prière, sans code. Détail : §6.
+
+1. **Méthode de calcul : Ligue islamique mondiale** (Fajr 18°, Isha 17°). Modifiable pour toute l'académie, ou pour un enseignant.
+2. **Asr : selon la majorité des écoles** (ombre égale à la hauteur de l'objet). L'autre choix : ombre double (école hanafite).
+3. **Prière du vendredi : plage de 12 h 30 à 14 h 30**, heure de l'enseignant ; le réglage « assiste à la prière du vendredi » est faux par défaut et posé par la direction.
+4. **Durées : 10 minutes** de pause (de 5 à 20 par pas de 5), **20 minutes pour le Maghrib du Ramadan** ; marges de 5 minutes au début et de 15 minutes à la fin du cours.
+5. **La règle « prière qui se ferme »** (arbitrée le 13/11/2026) : une prière entrée **moins de 20 minutes avant le cours** et dont le temps se ferme pendant le cours porte la pause, qui commence **10 minutes après le début** du cours ; elle passe avant la prière qui entre pendant le cours ; entrée 20 minutes ou plus avant : aucune pause. Les **deux réglages** sont `priere.marge_avant_cours_minutes` (20) et `priere.delai_fermeture_minutes` (10).
+6. **Rappel du Ramadan 2027** : mettre `priere.ramadan_en_cours` à **vrai vers le 8 février 2027**, puis à **faux vers le 9 mars 2027** (à la main, aucun calendrier n'est branché).
+
+Ce que le directeur n'a pas à décider ici : le calcul des heures (prouvé contre le paquet `adhan`, écart 0 minute) et la protection des données (la position d'un enseignant n'est lue que par lui et la direction ; aucune pratique religieuse n'est écrite au journal).
+
+
 **La demande du directeur (12/11/2026, résumé fidèle).** Permettre de prier à l'heure : au minimum l'enseignant de la salle, qui est seul et dans une zone connue de l'académie ; les élèves sont dans des zones éloignées. Trouver un schéma stable pour commencer et finir les cours en évitant les prières, surtout le Maghreb et l'Ichâ, dont l'heure change avec la saison. L'académie doit fonctionner seule, sans lui. Il avait demandé un outil d'heures de prière il y a plus de deux mois.
 
 Les valeurs chiffrées sont dans `REGLAGES.md` (partie 8, « La prière »), qui fait foi ; les arbitrages sont au registre (`ARBITRAGES.md`, partie 9, C34 à C44). Ce document dit la décision, le contrat avec la salle, ce qui reste à valider et ce qui reste à faire.
@@ -14,15 +28,15 @@ Les valeurs chiffrées sont dans `REGLAGES.md` (partie 8, « La prière »), qui
 
 ## 2. Les arbitrages de l'architecte (en vigueur, à lire tels quels)
 
-**P1. Principe.** L'école n'oblige jamais personne à choisir entre son cours et sa prière. Trois protections : prévenir à la création du créneau ; la pause de la séance placée à l'heure de la prière ; un retrait individuel de l'élève (ce dernier point est hors de ce lot : il se fera dans la salle, sans motif enregistré).
+**P1. Principe.** L'académie n'oblige jamais personne à choisir entre son cours et sa prière. Trois protections : prévenir à la création du créneau ; la pause de la séance placée à l'heure de la prière ; un retrait individuel de l'élève (ce dernier point est hors de ce lot : il se fera dans la salle, sans motif enregistré).
 
 **P2. Une seule source des heures de prière : le serveur.** Calcul astronomique déterministe, sans IA et sans service externe, en SQL. L'application ne calcule plus rien elle-même : les écrans existants lisent le serveur (un seul chiffre partout).
 
-**P3. Le lieu de prière de l'enseignant est fixé par la direction** (nom du lieu, latitude, longitude, fuseau), parce que les zones des enseignants sont connues de l'académie ; l'enseignant peut le lire et ajuster chaque prière de −30 à +30 minutes (bornes existantes). La méthode de calcul et l'école pour l'Asr sont des réglages de la direction : valeur par défaut pour toute l'école (réglage `app_config` ; défaut : Ligue islamique mondiale, Asr selon la majorité des écoles), surchargeable par enseignant. **Ces deux choix relèvent du fiqh : valeur par défaut en vigueur, à valider par le directeur et ses associés.**
+**P3. Le lieu de prière de l'enseignant est fixé par la direction** (nom du lieu, latitude, longitude, fuseau), parce que les zones des enseignants sont connues de l'académie ; l'enseignant peut le lire et ajuster chaque prière de −30 à +30 minutes (bornes existantes). La méthode de calcul et l'école pour l'Asr sont des réglages de la direction : valeur par défaut pour toute l'académie (réglage `app_config` ; défaut : Ligue islamique mondiale, Asr selon la majorité des écoles), surchargeable par enseignant. **Ces deux choix relèvent du fiqh : valeur par défaut en vigueur, à valider par le directeur et ses associés.**
 
 **P4. Une seule pause par séance.** Quand une prière ENTRE pendant la séance pour l'enseignant, la pause de la séance est placée à l'entrée de cette prière. Sinon la pause reste où la salle la place (après le milieu). Si deux prières entrent pendant la même séance, la pause va à la première dont la fenêtre est courte (le Maghreb d'abord) ; l'autre se prie après le cours. **[Amendé le 13/11/2026 : la pause va à la première dans l'ordre du temps qui n'est pas en zone de fin ; voir §3, point 4.]**
 
-**P5. Durée de la pause de prière :** réglage de la direction, 10 minutes par défaut (bornes 5 à 20, par pas de 5) ; pendant le Ramadan, pour le Maghreb (rupture du jeûne) : 20 minutes par défaut. Le Ramadan est connu par le calendrier de l'école (un autre lot le construit) : dans ce lot, un seul réglage booléen `priere.ramadan_en_cours`, posé par la direction, faux par défaut.
+**P5. Durée de la pause de prière :** réglage de la direction, 10 minutes par défaut (bornes 5 à 20, par pas de 5) ; pendant le Ramadan, pour le Maghreb (rupture du jeûne) : 20 minutes par défaut. Le Ramadan est connu par le calendrier de l'académie (un autre lot le construit) : dans ce lot, un seul réglage booléen `priere.ramadan_en_cours`, posé par la direction, faux par défaut.
 
 **P6. Bornes.** Si la prière entre dans les 5 premières minutes, la pause est placée à 5 minutes du début ; si elle entre dans les 15 dernières minutes, aucune pause de prière n'est prévue (l'enseignant prie à la fin du cours) et la pause ordinaire s'applique. Valeurs en réglages.
 
@@ -48,7 +62,7 @@ Pour une séance qui commence en `s`, finit en `e` (durée `L` minutes), avec l'
 5. La durée est celle du réglage (10 minutes) ; 20 minutes pour le Maghrib quand `priere.ramadan_en_cours` est vrai. La pause ne dépasse jamais l'heure de fin de la séance : la marge de fin est au moins égale à la durée de la pause (voir « Choix pris seul », n° 1).
 6. Résultat : une ligne dans `seance_pause_prevue`, ou aucune.
 
-**Cas non défini.** Aux très hautes latitudes, le soleil peut ne jamais se lever ni se coucher (jour polaire, nuit polaire) : le calcul n'existe pas. Le serveur ne devine rien : il **ne place aucune pause de prière** pour cette séance et écrit une ligne au journal de la direction (`log_sensitive_access`, action `priere_calcul_indefini`). Quand seuls le Fajr ou l'Isha ne se définissent pas par leur angle (été, latitudes moyennes et hautes), le calcul retombe sur la règle de la nuit partagée en deux, la même que celle du paquet de référence ; l'heure est alors marquée **approchée** (aperçu de la direction, journal), et la pause est placée quand même. Sur les latitudes où l'école est présente aujourd'hui (Guinée), aucun de ces cas ne se produit.
+**Cas non défini.** Aux très hautes latitudes, le soleil peut ne jamais se lever ni se coucher (jour polaire, nuit polaire) : le calcul n'existe pas. Le serveur ne devine rien : il **ne place aucune pause de prière** pour cette séance et écrit une ligne au journal de la direction (`log_sensitive_access`, action `priere_calcul_indefini`). Quand seuls le Fajr ou l'Isha ne se définissent pas par leur angle (été, latitudes moyennes et hautes), le calcul retombe sur la règle de la nuit partagée en deux, la même que celle du paquet de référence ; l'heure est alors marquée **approchée** (aperçu de la direction, journal), et la pause est placée quand même. Sur les latitudes où l'académie est présente aujourd'hui (Guinée), aucun de ces cas ne se produit.
 
 ## 3 bis. La prière dont le temps se termine pendant la séance (arbitré le 13/11/2026)
 
@@ -77,7 +91,7 @@ Constat du 13/11 (avant l'arbitrage, figé puis remplacé) : le serveur ne regar
 
 - **Aucune ligne quand aucune prière n'entre pendant la séance.** Aucun droit direct (RLS activée, tous les droits retirés à `anon` et `authenticated`).
 - **Lecture : `public.pause_prevue_seance(p_session_id uuid)`**, qui rend `debut_prevu_utc`, `duree_minutes`, `motif`, `priere` à la direction, à l'enseignant de la séance (titulaire ou remplaçant accepté), aux élèves de la classe et à leur foyer ; **jamais un lieu**. Refus pour tout autre : étranger, anonyme, élève d'une autre classe.
-- **Remplissage par le serveur** : à la création ou au changement d'heure d'une séance ; au changement du lieu ou des réglages de prière de l'enseignant ; au changement des réglages de l'école `priere.*` ; au changement d'enseignant de la séance (remplacement : la pause suit le lieu de celui qui enseigne réellement) ; par un recalcul planifié chaque nuit pour les séances des 14 prochains jours.
+- **Remplissage par le serveur** : à la création ou au changement d'heure d'une séance ; au changement du lieu ou des réglages de prière de l'enseignant ; au changement des réglages de l'académie `priere.*` ; au changement d'enseignant de la séance (remplacement : la pause suit le lieu de celui qui enseigne réellement) ; par un recalcul planifié chaque nuit pour les séances des 14 prochains jours.
 - **Stockage (choix pris seul, n° 2).** Pour ne retirer aucune ligne par un `DELETE` (la migration n'en contient aucun), la donnée est stockée dans `seance_pause_prevue_stock` (colonne `retiree_le`) ; `seance_pause_prevue` est une **vue** qui ne montre que les lignes non retirées. Pour la salle, c'est une table en lecture : `select … from public.seance_pause_prevue where session_id = …` ne rend aucune ligne quand aucune prière n'entre.
 - **Qui peut lire le stock et la vue (exigence de l'architecte, 12/11/2026).** `seance_pause_prevue_stock` et la vue `seance_pause_prevue` appartiennent à `postgres` ; aucune ligne d'ACL autre que celle du propriétaire (donc rien pour `PUBLIC`, `anon`, `authenticated`, `service_role`, `agent_ro`), prouvé par `has_table_privilege` sur chaque droit et par la liste des ACL. Le stock a la RLS et aucune politique. La vue n'est **pas** `security_invoker` : elle lit avec les droits de son propriétaire, ce qui n'ouvre aucune porte autour de la RLS du stock puisque personne d'autre n'a de droit sur la vue ; seules des fonctions SECURITY DEFINER propriétaires de `postgres` la traversent (`pause_prevue_seance`, qui décide qui lit, et le déclencheur de la salle). Le contrôle final de la migration refuse l'installation si le propriétaire, un droit ou `security_invoker` s'écarte de ce schéma.
 - **Bornes exigées par la salle.** `duree_minutes` est 5, 10, 15 ou 20 (CHECK du stock : entre 5 et 20 ET multiple de 5 ; les réglages de la direction ont les mêmes bornes, refus de 7, 12, 25). `debut_prevu_utc` n'est jamais avant le début prévu et `debut_prevu_utc + durée` jamais après la fin prévue : une pause de 20 minutes dont la prière entre 16 minutes avant la fin ne tient pas, donc **aucune ligne**. Prouvé sur toutes les lignes du contrat, en Ramadan comme hors Ramadan.
@@ -103,7 +117,7 @@ Règle finale, écrite ici pour mémoire : geste neutre « Je m'absente un insta
 
 Valeurs en vigueur par défaut, à valider ; la direction peut les changer sans code :
 
-1. **Méthode de calcul de l'école : Ligue islamique mondiale** (Fajr 18°, Isha 17°). Surchargeable par enseignant.
+1. **Méthode de calcul de l'académie : Ligue islamique mondiale** (Fajr 18°, Isha 17°). Surchargeable par enseignant.
 2. **École pour l'Asr : selon la majorité des écoles** (ombre égale à la hauteur de l'objet). Surchargeable par enseignant.
 3. **Plage de la prière du vendredi : 12 h 30 à 14 h 30**, heure de l'enseignant, et le réglage « assiste à la prière du vendredi » (faux par défaut, posé par la direction).
 4. **Durées** : 10 minutes (5 à 20, par pas de 5) ; Maghrib du Ramadan 20 minutes.
@@ -113,7 +127,7 @@ Valeurs en vigueur par défaut, à valider ; la direction peut les changer sans 
 
 ## 6 bis. Rappels datés pour le directeur
 
-- **Ramadan 2027 : basculer `priere.ramadan_en_cours` à la main** (Configuration > Règles > La prière) : **vrai vers le 8 février 2027, retour à faux vers le 9 mars 2027** (dates de l'architecte, à confirmer sur le calendrier de l'école ; le réglage n'est pas branché sur un calendrier). Tant qu'il est vrai, la pause du Maghrib dure 20 minutes.
+- **Ramadan 2027 : basculer `priere.ramadan_en_cours` à la main** (Configuration > Règles > La prière) : **vrai vers le 8 février 2027, retour à faux vers le 9 mars 2027** (dates de l'architecte, à confirmer sur le calendrier de l'académie ; le réglage n'est pas branché sur un calendrier). Tant qu'il est vrai, la pause du Maghrib dure 20 minutes.
 
 ## 6 ter. Dettes nommées de ce lot (revue du 13/11/2026)
 
@@ -124,7 +138,7 @@ Valeurs en vigueur par défaut, à valider ; la direction peut les changer sans 
 
 - **Le retrait individuel de l'élève dans la salle** (P1, troisième protection), sans motif enregistré.
 - **La carte des croisements par élève** (P10) : lieu de l'élève, donnée demandée aux familles avec leur accord.
-- **Le Ramadan branché sur le calendrier de l'école** : aujourd'hui, un réglage booléen posé à la main.
+- **Le Ramadan branché sur le calendrier de l'académie** : aujourd'hui, un réglage booléen posé à la main.
 - **La prière dont le temps se termine pendant la séance** : traitée depuis le 13/11/2026 (§3, 2 bis, et §3 bis). Reste à brancher la liste des créneaux concernés dans la création d'une classe (lot FC-3).
 - **L'avertissement à la création d'un créneau** (P1, première protection) : les lectures de la direction existent ; leur branchement dans le parcours de création d'une classe est un lot suivant.
 - **Le nettoyage de `lib/core/priere/`** (calcul local désormais inutilisé) : autre lot ; aucun fichier n'est supprimé ici.
