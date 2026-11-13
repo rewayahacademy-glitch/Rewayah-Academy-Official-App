@@ -95,6 +95,18 @@ final class DepotImpossible extends ErreurBibliotheque {
   final String? reglage;
 }
 
+/// Le serveur n'a pas encore la fonction du depot direct (la migration
+/// `20261124700000` n'est pas installee) : l'ecran le dit, sans proposer de
+/// reessayer.
+final class DepotDirectAbsent extends ErreurBibliotheque {
+  /// Cree l'erreur.
+  const DepotDirectAbsent();
+
+  /// Le nom du reglage qui manque, dit a la direction.
+  static const String reglage =
+      'migration 20261124700000_depot_direct_direction';
+}
+
 /// Le port de l'administration de la bibliotheque.
 abstract interface class PortBibliothequeAdmin {
   /// Ce que la personne connectee peut faire.
@@ -180,7 +192,11 @@ abstract interface class PortBibliothequeAdmin {
 
   /// DEPOT-SIMPLE : enregistre ET publie un document depose par la direction,
   /// en un appel. Le serveur remplit par defaut les droits restes vides,
-  /// approuve la revue (tracee) et ouvre le document aux inscrits. [acces] :
+  /// approuve la revue (tracee) et ouvre le document aux inscrits. TOUT OU
+  /// RIEN : une publication bloquee rend [PublicationBloquee] sans rien avoir
+  /// ecrit. [public] : tous les inscrits ou adultes seulement (`null` garde les
+  /// tranches deja reglees). Leve [DepotDirectAbsent] si le serveur n'a pas
+  /// encore la fonction. [acces] :
   /// lire dans l'application seulement, ou telechargement permis.
   /// [droitTiers] : la declaration « l'academie a le droit de diffuser ce
   /// document », exigee hors du rayon des cours. Idempotent par [cle].
@@ -190,6 +206,15 @@ abstract interface class PortBibliothequeAdmin {
     required String cle,
     required AccesDocument acces,
     required bool droitTiers,
+    PublicDocument? public,
+  });
+
+  /// Change l'acces d'un document (lecture seule ou telechargement permis)
+  /// sans redeposer son fichier ni creer de version, document publie compris.
+  Future<ResultatEcriture> changerAcces({
+    required String supportId,
+    required AccesDocument acces,
+    required int revisionAttendue,
   });
 
   /// Les classes auxquelles le support peut etre attribue, a curseur.

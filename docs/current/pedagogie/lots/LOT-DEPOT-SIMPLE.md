@@ -144,6 +144,23 @@ de la base (`bibliotheque_depot_actif`).
 - Fonctions : `deno test supabase/functions/_shared/r2/`.
 - Base : `supabase/tests/scenarios_depot_direct.sql` (publication directe des deux rayons, refus sans
   la déclaration, refus hors direction, sans fichier, révision périmée, idempotence, mutation rouge).
-- Captures : `docs/current/captures/E2E/depot-simple/` (32, par
+- Captures : `docs/current/captures/E2E/depot-simple/` (49, par
   `test/capture/capture_depot_simple_test.dart`).
 - Revue UX : `docs/current/UX_REVIEW_DEPOT-SIMPLE.md`.
+
+## État de la relecture du 13/11/2026 (poussé à l'arrêt demandé, SANS la suite complète)
+
+- **Non prouvé** : ni la suite `flutter test` entière, ni `verifier_revue` comparé à `main`, ni les six
+  vérifications, ni les 281 scénarios SQL n'ont été rejoués sur ce dernier commit (arrêt pour budget).
+  Seuls ont tourné : `dart analyze --fatal-infos lib test` (0), les tests du lot
+  (`test/features/admin_pedagogie_bibliotheque`, `test/core/admin` : 277 verts) et les 49 captures.
+- **Fait** : I1 (tout ou rien, cause nommée par `libelleCritere`), I2, I4, I5 (fonction absente : nommée,
+  sans bouton), I6 (« vérifié » retiré des textes du lot), B1 (« Pour qui », deux cartes, public posé par
+  le serveur, phrase de réussite vraie), point 4 (nom, description, rayon, public d'un document publié
+  modifiables ; fichier et droits figés ; test CAP-29 adapté ; trace `library_resource_draft_updated`),
+  point 5 (accès changé sans redéposer, `library_changer_acces`, trace `library_access_changed`),
+  captures a (nom saisi), b (deux lignes, « Détail » replié), c (phrase à côté de la case), d (cartes
+  égales à 1440), arabe de contenu (`ZoneSaisie(contenu: true)` sur le nom et la description).
+- **Reste** : écrire dans cette fiche les points 6, 7, 9, 10 (limites acceptées), le coût du point 5,
+  la note « seulement certaines classes » ; mettre à jour `UX_REVIEW_DEPOT-SIMPLE.md` ; recherche
+  d'autres « vérifié » hors du lot ; I7 (texte jamais reçu) ; suite complète et scénarios SQL.

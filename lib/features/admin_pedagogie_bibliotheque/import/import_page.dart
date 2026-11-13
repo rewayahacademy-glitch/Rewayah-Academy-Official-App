@@ -135,6 +135,33 @@ String phraseEchecDepot(ErreurUpload? erreur, String? reglage) {
   return '$phrase ${t.admin.bibliotheque.import.simple.reglageNomme(nom: reglage)}';
 }
 
+/// La phrase COURTE d'un echec : ce qui s'est passe et quoi faire, en deux
+/// lignes au plus. Le detail (stockage, adresse, reglage) vit sous « Detail ».
+String phraseCourteDepot(ErreurUpload? erreur) {
+  final c = t.admin.bibliotheque.import.simple.court;
+  return switch (erreur) {
+    ErreurUpload.envoi => c.envoi,
+    ErreurUpload.stockage => c.stockage,
+    ErreurUpload.service || null => c.service,
+    ErreurUpload.reglage => c.reglage,
+    ErreurUpload.delai => c.delai,
+    ErreurUpload.nonActive => c.nonActive,
+    ErreurUpload.reseau => c.reseau,
+    ErreurUpload.nonModifiable => c.nonModifiable,
+    ErreurUpload.dejaDepose => c.dejaDepose,
+    ErreurUpload.introuvable => c.introuvable,
+    ErreurUpload.contenu => c.contenu,
+    ErreurUpload.refuse => c.refuse,
+    // Deja courtes : la meme phrase.
+    ErreurUpload.taille ||
+    ErreurUpload.type ||
+    ErreurUpload.empreinte ||
+    ErreurUpload.session ||
+    ErreurUpload.vide ||
+    ErreurUpload.expire => phraseErreurDepot(erreur),
+  };
+}
+
 /// La taille d'un fichier, lisible : octets, Ko ou Mo.
 String tailleLisible(int octets) {
   final s = t.admin.bibliotheque.import.simple;
@@ -226,6 +253,18 @@ class _ImportEtat extends ConsumerState<_Import> {
   bool _parLien = false;
 
   AccesDocument _acces = AccesDocument.lecture;
+
+  /// Pour qui : tous les inscrits (enfants compris) ou adultes seulement.
+  PublicDocument _public = PublicDocument.tous;
+
+  /// Les echecs dont le detail est deplie (par depot).
+  final Set<String> _detailsOuverts = <String>{};
+
+  /// Vrai quand le serveur n'a pas encore la fonction d'enregistrement.
+  bool _inactif = false;
+
+  /// Le public reellement pose a l'enregistrement, pour le dire.
+  PublicDocument? _publicPose;
   String _rayon = codeRayonCours;
   List<RayonBibliotheque> _rayons = const <RayonBibliotheque>[];
   String? _langue;
@@ -781,25 +820,46 @@ class _ImportEtat extends ConsumerState<_Import> {
         cle: 'depot-direct-$id-${fiche.revision}',
         acces: _parLien ? AccesDocument.lecture : _acces,
         droitTiers: _tiers && _droitTiers,
+        public: _publicEnvoye,
       );
       if (!mounted) return;
       switch (r) {
         case VersionPubliee():
-          setState(() => _enregistre = true);
-        case PublicationBloquee():
+          setState(() {
+            _publicPose = _publicEnvoye;
+            _enregistre = true;
+          });
+        case PublicationBloquee(:final ControleVersion controle):
+          // Tout ou rien : rien n'a ete ecrit. L'ecran dit ce qui bloque.
+          final String criteres = <String>[
+            for (final CritereControle c in controle.bloquants)
+              libelleCritere(c.cle),
+          ].join(', ');
           setState(() {
             _bloque = true;
-            _erreur = s.bloque;
+            _erreur = criteres.isEmpty
+                ? s.bloqueSansDetail
+                : s.bloque(criteres: criteres);
           });
         case PublicationEnConflit():
           setState(() => _erreur = t.admin.bibliotheque.fiche.conflit);
       }
+    } on DepotDirectAbsent {
+      // Le serveur n'a pas encore la fonction : ce n'est pas a retenter.
+      if (mounted) setState(() => _inactif = true);
     } on Object {
       if (mounted) setState(() => _erreur = s.enregistrementEchec);
     } finally {
       if (mounted) setState(() => _envoi = false);
     }
   }
+
+  /// Le public envoye au serveur, qui en tire les tranches d'age : `null`
+  /// quand la personne a regle les tranches elle-meme dans « Plus de
+  /// reglages », ou pour un lien (D1 : un lien n'inclut pas les 6 a 9 ans
+  /// d'emblee, la direction les coche expres).
+  PublicDocument? get _publicEnvoye =>
+      _tranches != null || _parLien ? null : _public;
 
   /// Repart d'un formulaire vide, pour ajouter un autre document.
   void _recommencer() {
@@ -829,6 +889,10 @@ class _ImportEtat extends ConsumerState<_Import> {
       _refusVignette = null;
       _parLien = false;
       _acces = AccesDocument.lecture;
+      _public = PublicDocument.tous;
+      _publicPose = null;
+      _detailsOuverts.clear();
+      _inactif = false;
       _rayon = codeRayonCours;
       _langue = null;
       _plus = false;
@@ -866,6 +930,21 @@ class _ImportEtat extends ConsumerState<_Import> {
           _sectionPlus(),
         ],
         Ecart.vLg,
+        if (_inactif) ...<Widget>[
+          // Le serveur n'a pas encore la fonction : l'ecran nomme ce qui
+          // manque et ne propose pas de reessayer.
+          BandeauAttention(
+            key: const ValueKey<String>('import-inactif'),
+            titre: t.admin.bibliotheque.import.simple.inactifTitre,
+            message: <String>[
+              t.admin.bibliotheque.import.simple.inactif,
+              t.admin.bibliotheque.import.simple.reglageNomme(
+                nom: DepotDirectAbsent.reglage,
+              ),
+            ].join('\n'),
+          ),
+          Ecart.vLg,
+        ],
         if (_erreur != null) ...<Widget>[
           BandeauAttention(
             key: const ValueKey<String>('import-erreur'),
@@ -903,7 +982,12 @@ class _ImportEtat extends ConsumerState<_Import> {
           key: const ValueKey<String>('import-enregistre'),
           ton: TonEtat.succes,
           titre: s.enregistreTitre,
-          message: s.enregistreMessage,
+          // « Visible » dit de qui : le public reellement pose.
+          message: switch (_publicPose) {
+            PublicDocument.tous => s.enregistreTous,
+            PublicDocument.adultes => s.enregistreAdultes,
+            null => s.enregistreTranches,
+          },
           action: id == null
               ? null
               : LienFleche(
@@ -1135,6 +1219,12 @@ class _ImportEtat extends ConsumerState<_Import> {
         ],
       ];
     }
+    // Le detail technique (stockage, adresse, reglage du serveur) n'est montre
+    // que sur demande, sous « Detail ».
+    final String detail = phraseEchecDepot(p.erreur, p.reglage);
+    final bool aDetail =
+        p.phase == PhaseUpload.echec && detail != phraseCourteDepot(p.erreur);
+    final bool ouvert = _detailsOuverts.contains(suffixe);
     return <Widget>[
       Ecart.vSm,
       switch (p.phase) {
@@ -1148,10 +1238,8 @@ class _ImportEtat extends ConsumerState<_Import> {
           key: ValueKey<String>('import-echec-$suffixe'),
           ton: TonEtat.alerte,
           titre: titreEchec,
-          message: <String>[
-            phraseEchecDepot(p.erreur, p.reglage),
-            ?suiteEchec,
-          ].join(' '),
+          // Deux lignes au plus : ce qui s'est passe, quoi faire.
+          message: <String>[phraseCourteDepot(p.erreur), ?suiteEchec].join(' '),
           action: LienFleche(
             key: ValueKey<String>('import-reessayer-$suffixe'),
             libelle: t.commun.reessayer,
@@ -1167,6 +1255,24 @@ class _ImportEtat extends ConsumerState<_Import> {
           ),
         ),
       },
+      if (aDetail) ...<Widget>[
+        Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: LienFleche(
+            key: ValueKey<String>('import-detail-$suffixe'),
+            libelle: ouvert ? i.simple.detailMasquer : i.simple.detail,
+            fleche: false,
+            alignerEnDebut: true,
+            onPress: () => setState(() {
+              if (!_detailsOuverts.remove(suffixe)) {
+                _detailsOuverts.add(suffixe);
+              }
+            }),
+          ),
+        ),
+        if (ouvert)
+          Text(detail, key: ValueKey<String>('import-detail-texte-$suffixe')),
+      ],
     ];
   }
 
@@ -1185,20 +1291,25 @@ class _ImportEtat extends ConsumerState<_Import> {
     final String detail = fichier != null && type != null
         ? _detail(fichier, type)
         : '';
+    final String nomAffiche = _nom.text.trim().isNotEmpty
+        ? _nom.text.trim()
+        : nomPropose(fichier?.nom ?? '');
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         if (fichier != null) ...<Widget>[
-          // Le nom du fichier est du contenu : s'il est en arabe, il prend la
-          // police du contenu arabe et son sens de lecture.
+          // Le nom du document (celui que l'on enregistre), pas le nom brut du
+          // fichier. C'est du contenu : en arabe, il prend la police du contenu
+          // arabe, et son sens de lecture est isole de celui de l'ecran.
           Text(
-            fichier.nom,
+            nomAffiche,
             key: const ValueKey<String>('import-nom-support'),
-            style: styleContenuArabe(fichier.nom, corps),
-            textDirection: commenceParArabe(fichier.nom)
+            style: styleContenuArabe(nomAffiche, corps),
+            textDirection: commenceParArabe(nomAffiche)
                 ? TextDirection.rtl
-                : null,
+                : TextDirection.ltr,
+            textAlign: TextAlign.start,
           ),
           if (type != null && !_support.pret) ...<Widget>[
             Ecart.vXs,
@@ -1330,6 +1441,10 @@ class _ImportEtat extends ConsumerState<_Import> {
     final f = t.admin.bibliotheque.import;
     final s = f.simple;
     final String langue = _langueInterface;
+    // Sur grand ecran, deux cartes de meme largeur cote a cote ; au telephone,
+    // l'une sous l'autre.
+    final bool large =
+        MediaQuery.sizeOf(context).width >= ChoiceCardGroup.seuilBento;
     // La vignette se depose sur le document : il lui faut son brouillon, donc
     // le fichier d'abord (ou le brouillon repris).
     final bool vignettePossible = !_depotInactif && _supportId != null;
@@ -1344,6 +1459,7 @@ class _ImportEtat extends ConsumerState<_Import> {
             cleChamp: const ValueKey<String>('import-nom'),
             libelle: s.nom,
             maxLignes: 1,
+            contenu: true,
             sens: commenceParArabe(_nom.text) ? TextDirection.rtl : null,
             erreur: _incomplet && _nom.text.trim().isEmpty ? s.nomVide : null,
             onChanged: (_) => setState(() {}),
@@ -1356,6 +1472,7 @@ class _ImportEtat extends ConsumerState<_Import> {
             libelle: s.description,
             minLignes: 2,
             maxLignes: 4,
+            contenu: true,
             sens: commenceParArabe(_description.text)
                 ? TextDirection.rtl
                 : null,
@@ -1368,8 +1485,10 @@ class _ImportEtat extends ConsumerState<_Import> {
             Text(s.acces.titre, style: Theme.of(context).textTheme.titleSmall),
             Ecart.vSm,
             ChoiceCardGroup(
-              key: const ValueKey<String>('import-acces'),
+              key: ValueKey<String>('import-acces-$large'),
               autoriserSaisieLibre: false,
+              coteACote: large,
+              choixEgaux: large,
               valeurInitiale: ReponseChoix(valeurs: <String>{_acces.name}),
               options: <OptionChoix>[
                 OptionChoix(
@@ -1403,8 +1522,12 @@ class _ImportEtat extends ConsumerState<_Import> {
             ),
             Ecart.vSm,
             ChoiceCardGroup(
-              key: ValueKey<String>('import-rangement-${_rayons.length}'),
+              key: ValueKey<String>(
+                'import-rangement-${_rayons.length}-$large',
+              ),
               autoriserSaisieLibre: false,
+              coteACote: large,
+              choixEgaux: large,
               valeurInitiale: ReponseChoix(valeurs: <String>{_rayon}),
               options: <OptionChoix>[
                 for (final RayonBibliotheque r in _rayons)
@@ -1427,7 +1550,8 @@ class _ImportEtat extends ConsumerState<_Import> {
             ),
           ],
           // Un document qui ne vient pas de l'academie : une seule
-          // declaration, gardee avec le nom de la personne et la date.
+          // declaration, gardee avec le nom de la personne et la date. La
+          // phrase qui dit pourquoi le bouton manque est ICI, a cote de la case.
           if (_tiers) ...<Widget>[
             Ecart.vMd,
             LigneCase(
@@ -1436,6 +1560,53 @@ class _ImportEtat extends ConsumerState<_Import> {
               precision: s.droitTiersAide,
               coche: _droitTiers,
               onChange: (bool v) => setState(() => _droitTiers = v),
+            ),
+            if (!_droitTiers) ...<Widget>[
+              Ecart.vSm,
+              Semantics(
+                liveRegion: true,
+                child: Text(
+                  s.aideDroit,
+                  key: const ValueKey<String>('import-aide-droit'),
+                ),
+              ),
+            ],
+          ],
+          // Pour qui : deux choix simples, le serveur en tire les tranches
+          // d'age. Un lien garde la regle D1 (les 6 a 9 ans se cochent expres,
+          // dans « Plus de reglages ») ; des tranches reglees a la main priment.
+          if (!_parLien && _tranches == null) ...<Widget>[
+            Ecart.vLg,
+            Text(
+              s.pourQui.titre,
+              style: Theme.of(context).textTheme.titleSmall,
+            ),
+            Ecart.vSm,
+            ChoiceCardGroup(
+              key: ValueKey<String>('import-public-$large'),
+              autoriserSaisieLibre: false,
+              coteACote: large,
+              choixEgaux: large,
+              valeurInitiale: ReponseChoix(valeurs: <String>{_public.name}),
+              options: <OptionChoix>[
+                OptionChoix(
+                  cle: const ValueKey<String>('import-public-tous'),
+                  valeur: PublicDocument.tous.name,
+                  libelle: s.pourQui.tous,
+                  description: s.pourQui.tousAide,
+                ),
+                OptionChoix(
+                  cle: const ValueKey<String>('import-public-adultes'),
+                  valeur: PublicDocument.adultes.name,
+                  libelle: s.pourQui.adultes,
+                  description: s.pourQui.adultesAide,
+                ),
+              ],
+              onChange: (ReponseChoix r) => setState(
+                () => _public = r.valeurs.contains(PublicDocument.adultes.name)
+                    ? PublicDocument.adultes
+                    : PublicDocument.tous,
+              ),
             ),
           ],
           if (vignettePossible) ...<Widget>[Ecart.vLg, _blocVignette()],
@@ -1569,12 +1740,15 @@ class _ImportEtat extends ConsumerState<_Import> {
     final f = t.admin.bibliotheque.import;
     final s = f.simple;
     final String? manque = _manque;
+    // La phrase du droit de diffusion est dite a cote de sa case : elle n'est
+    // pas redite ici.
+    final bool ditAilleurs = manque == s.aideDroit;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         // Un bouton qui ne peut pas aboutir n'est pas rendu : la phrase dit
         // ce qui manque.
-        if (manque != null)
+        if (manque != null && !ditAilleurs && !_inactif)
           Padding(
             padding: const EdgeInsets.only(bottom: AppSpacing.md),
             child: Semantics(
@@ -1582,7 +1756,8 @@ class _ImportEtat extends ConsumerState<_Import> {
               child: Text(manque, key: const ValueKey<String>('import-aide')),
             ),
           ),
-        if (manque == null)
+        // Serveur pas encore pret a enregistrer : pas de bouton de nouvel essai.
+        if (manque == null && !_inactif)
           ActionPrincipale(
             key: const ValueKey<String>('import-poursuivre'),
             libelle: s.enregistrer,

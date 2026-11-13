@@ -1,7 +1,9 @@
 // Captures du lot DEPOT-SIMPLE (13/11/2026) : « Ajouter un document », reduit au
 // strict necessaire. Les trois etats du depot du fichier et de la vignette (en
 // cours, reussi, echoue), l'enregistrement, le reglage manquant nomme, le
-// document d'un tiers, « Plus de reglages ». Francais et arabe, clair et
+// document d'un tiers, « Plus de reglages », le detail replie d'un echec,
+// le blocage du serveur nomme, la fonction pas encore activee, « Pour qui »,
+// la fiche d'un document publie (nom, description, rayon, acces modifiables). Francais et arabe, clair et
 // sombre, 1440 et 390. Par le vrai routeur, sur le double de demonstration.
 //
 // CAPTURE_DIR=docs/current/captures/E2E/depot-simple flutter test \
@@ -145,6 +147,42 @@ final Map<String, (BibliothequeAdminDemo Function(), _Scene)> _scenes =
           await _toucher(tester, _cle('import-rayon-plus_loin'));
         },
       ),
+      '04b-fichier-echoue-detail': (
+        () => BibliothequeAdminDemo(nombre: 0)
+          ..echecDemande = ErreurUpload.stockage
+          ..reglageEchec = 'R2_BUCKET_SUPPORTS',
+        (WidgetTester tester, _) async {
+          await _fichierAjoute(tester);
+          await _toucher(tester, _cle('import-detail-support'));
+        },
+      ),
+      '12-enregistrement-bloque': (
+        () =>
+            BibliothequeAdminDemo(nombre: 0)
+              ..depotDirectBloque = <CleCritere>[CleCritere.source],
+        (WidgetTester tester, _) async {
+          await _fichierAjoute(tester);
+          await _toucher(tester, _cle('import-poursuivre'));
+          await admin.stabiliser(tester, fois: 6);
+        },
+      ),
+      '13-enregistrement-pas-encore-active': (
+        () => BibliothequeAdminDemo(nombre: 0)..depotDirectAbsent = true,
+        (WidgetTester tester, _) async {
+          await _fichierAjoute(tester);
+          await _toucher(tester, _cle('import-poursuivre'));
+          await admin.stabiliser(tester, fois: 6);
+        },
+      ),
+      '14-adultes-seulement-enregistre': (
+        () => BibliothequeAdminDemo(nombre: 0),
+        (WidgetTester tester, _) async {
+          await _fichierAjoute(tester);
+          await _toucher(tester, _cle('import-public-adultes'));
+          await _toucher(tester, _cle('import-poursuivre'));
+          await admin.stabiliser(tester, fois: 6);
+        },
+      ),
       '11-plus-de-reglages': (
         () => BibliothequeAdminDemo(nombre: 0),
         (WidgetTester tester, _) async {
@@ -164,7 +202,15 @@ const Set<String> _etats = <String>{
   '06-vignette-reussie',
   '07-vignette-echouee',
   '08-document-enregistre',
+  '04b-fichier-echoue-detail',
+  '12-enregistrement-bloque',
+  '13-enregistrement-pas-encore-active',
+  '15-fiche-publiee',
 };
+
+/// La fiche d'un document publie : nom, description, rayon, public et acces
+/// modifiables ; le fichier et les droits figes.
+const String _publie = 'demo-support-003';
 
 void main() {
   setUpAll(chargerPolicesDuDepot);
@@ -183,6 +229,26 @@ void main() {
         ('ar-1440-sombre', AppLocale.ar, true, const Size(1440, 1900), false),
         ('ar-390-clair', AppLocale.ar, false, const Size(390, 2600), false),
       ]) {
+    testWidgets('15-fiche-publiee-$suffixe', (tester) async {
+      await tester.runAsync(() => LocaleSettings.setLocale(langue));
+      tester.platformDispatcher.platformBrightnessTestValue = sombre
+          ? Brightness.dark
+          : Brightness.light;
+      addTearDown(tester.platformDispatcher.clearPlatformBrightnessTestValue);
+      await admin.monterAdminDemo(
+        tester,
+        route: Routes.adminPedagogieSupport(_publie),
+        bibliotheque: BibliothequeAdminDemo(),
+        taille: taille.width > 1000 ? const Size(1440, 2600) : taille,
+        direction: langue == AppLocale.ar ? TextDirection.rtl : null,
+        plus: <Override>[
+          portCatalogueProvider.overrideWithValue(CatalogueLocal()),
+          selecteurFichierSupportProvider.overrideWithValue(_Selecteur()),
+        ],
+      );
+      await admin.stabiliser(tester, fois: 6);
+      await capturerVue(tester, '15-fiche-publiee-$suffixe');
+    }, skip: sautSansCapture != false);
     for (final MapEntry<String, (BibliothequeAdminDemo Function(), _Scene)> e
         in _scenes.entries) {
       if (!tout && !_etats.contains(e.key)) continue;

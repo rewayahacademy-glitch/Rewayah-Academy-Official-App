@@ -544,22 +544,7 @@ class _Checklist extends StatelessWidget {
 
   final ControleVersion controle;
 
-  String _libelle(CleCritere c) {
-    final k = t.admin.bibliotheque.publication.criteres;
-    return switch (c) {
-      CleCritere.source => k.source,
-      CleCritere.titulaire => k.titulaire,
-      CleCritere.preuve => k.preuve,
-      CleCritere.usageApplication => k.usageApplication,
-      CleCritere.usageClasse => k.usageClasse,
-      CleCritere.usageTelechargement => k.usageTelechargement,
-      CleCritere.expirationAttribution => k.expirationAttribution,
-      CleCritere.fichierSain => k.fichierSain,
-      CleCritere.renduTeste => k.renduTeste,
-      CleCritere.langueNiveau => k.langueNiveau,
-      CleCritere.versionEmpreinte => k.versionEmpreinte,
-    };
-  }
+  String _libelle(CleCritere c) => libelleCritere(c);
 
   String _explication(CleCritere c) {
     final k = t.admin.bibliotheque.publication.explications;

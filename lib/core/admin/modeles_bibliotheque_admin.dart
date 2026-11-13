@@ -988,6 +988,16 @@ enum AccesDocument {
   telechargement,
 }
 
+/// Le public d'un document (DEPOT-SIMPLE) : deux choix simples. Le serveur en
+/// tire les tranches d'age, jamais le client.
+enum PublicDocument {
+  /// Tous les inscrits, enfants compris (par defaut).
+  tous,
+
+  /// Adultes seulement.
+  adultes,
+}
+
 /// Ce que le serveur repond a une publication.
 sealed class ResultatPublication {
   const ResultatPublication();

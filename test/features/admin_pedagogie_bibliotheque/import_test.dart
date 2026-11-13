@@ -27,6 +27,7 @@ import 'package:rewayah_academy/core/widgets/bandeau_attention.dart';
 import 'package:rewayah_academy/core/widgets/status_pill.dart' show TonEtat;
 import 'package:rewayah_academy/features/admin_pedagogie_bibliotheque/import/import_page.dart';
 import 'package:rewayah_academy/features/admin_pedagogie_bibliotheque/import/selecteur_support.dart';
+import 'package:rewayah_academy/features/admin_pedagogie_bibliotheque/libelles_bibliotheque.dart';
 
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../support/aucun_mot_coupe.dart';
@@ -229,7 +230,7 @@ void main() {
     final BandeauAttention fait = _bandeau(tester, 'import-enregistre');
     expect(fait.ton, TonEtat.succes);
     expect(fait.titre, s.enregistreTitre);
-    expect(fait.message, s.enregistreMessage);
+    expect(fait.message, s.enregistreTous);
     expect(_cle('import-ouvrir'), findsOneWidget);
     expect(_cle('import-autre'), findsOneWidget);
     // Et c'est vrai : publie, ouvert aux inscrits, droits par defaut.
@@ -410,9 +411,17 @@ void main() {
         final BandeauAttention b = _bandeau(tester, 'import-echec-support');
         expect(b.ton, TonEtat.alerte);
         expect(b.titre, s.fichierEchec);
-        expect(b.message, phraseErreurDepot(cause));
+        // Deux lignes au plus : la phrase courte. Le detail est replie.
+        expect(b.message, phraseCourteDepot(cause));
         if (cause != ErreurUpload.reseau) {
-          expect(b.message, isNot(i.erreurs.reseau));
+          expect(b.message, isNot(s.court.reseau));
+        }
+        expect(_cle('import-detail-texte-support'), findsNothing);
+        if (phraseErreurDepot(cause) != phraseCourteDepot(cause)) {
+          await _toucher(tester, _cle('import-detail-support'));
+          expect(find.text(phraseErreurDepot(cause)), findsOneWidget);
+        } else {
+          expect(_cle('import-detail-support'), findsNothing);
         }
         expect(_cle('import-reessayer-support'), findsOneWidget);
         expect(_cle('import-poursuivre'), findsNothing);
@@ -427,10 +436,16 @@ void main() {
         ..reglageEchec = 'R2_BUCKET_SUPPORTS';
       await _monter(tester, port: port);
       await _deposer(tester);
+      // Le nom du reglage n'encombre pas l'alerte : il est sous « Detail ».
       expect(
         _bandeau(tester, 'import-echec-support').message,
-        contains('R2_BUCKET_SUPPORTS'),
+        isNot(contains('R2_BUCKET_SUPPORTS')),
       );
+      await _toucher(tester, _cle('import-detail-support'));
+      expect(find.textContaining('R2_BUCKET_SUPPORTS'), findsOneWidget);
+      // Et il se replie.
+      await _toucher(tester, _cle('import-detail-support'));
+      expect(find.textContaining('R2_BUCKET_SUPPORTS'), findsNothing);
     });
 
     testWidgets('echec pendant l\'envoi, puis « Reessayer » aboutit', (
@@ -441,7 +456,7 @@ void main() {
       final _Selecteur sel = _Selecteur(_pdf());
       await _monter(tester, port: port, selecteur: sel);
       await _deposer(tester);
-      expect(_bandeau(tester, 'import-echec-support').message, i.erreurs.envoi);
+      expect(_bandeau(tester, 'import-echec-support').message, s.court.envoi);
       // Reessayer renvoie le meme fichier, sans le rechoisir, dans le meme
       // brouillon.
       await _toucher(tester, _cle('import-reessayer-support'));
@@ -667,7 +682,7 @@ void main() {
       final BandeauAttention b = _bandeau(tester, 'import-echec-vignette');
       expect(b.ton, TonEtat.alerte);
       expect(b.titre, s.vignette.echec);
-      expect(b.message, contains(i.erreurs.stockage));
+      expect(b.message, contains(s.court.stockage));
       // La phrase dit que le document peut s'enregistrer sans elle.
       expect(b.message, contains(s.vignette.echecSuite));
       expect(_cle('import-reessayer-vignette'), findsOneWidget);
@@ -836,6 +851,90 @@ void main() {
     await _toucher(tester, _cle('import-poursuivre'));
     await stabiliser(tester, fois: 6);
     expect(_cle('import-enregistre'), findsOneWidget);
+  });
+
+  group('pour qui (B1)', () {
+    testWidgets('par defaut : tous les inscrits, et l\'ecran le dit', (
+      tester,
+    ) async {
+      final BibliothequeAdminDemo port = BibliothequeAdminDemo(nombre: 0);
+      await _monter(tester, port: port);
+      await _deposer(tester);
+      expect(find.text(s.pourQui.tous), findsOneWidget);
+      expect(find.text(s.pourQui.adultes), findsOneWidget);
+      await _toucher(tester, _cle('import-poursuivre'));
+      await stabiliser(tester, fois: 6);
+      expect(port.publicsRecus.single, PublicDocument.tous);
+      expect(_bandeau(tester, 'import-enregistre').message, s.enregistreTous);
+    });
+
+    testWidgets('adultes seulement : le serveur le recoit, l\'ecran le dit', (
+      tester,
+    ) async {
+      final BibliothequeAdminDemo port = BibliothequeAdminDemo(nombre: 0);
+      await _monter(tester, port: port);
+      await _deposer(tester);
+      await _toucher(tester, find.text(s.pourQui.adultes));
+      await _toucher(tester, _cle('import-poursuivre'));
+      await stabiliser(tester, fois: 6);
+      expect(port.publicsRecus.single, PublicDocument.adultes);
+      expect(
+        _bandeau(tester, 'import-enregistre').message,
+        s.enregistreAdultes,
+      );
+    });
+  });
+
+  testWidgets('blocage du serveur : rien n\'est ecrit, la cause est nommee', (
+    tester,
+  ) async {
+    final BibliothequeAdminDemo port = BibliothequeAdminDemo(nombre: 0)
+      ..depotDirectBloque = <CleCritere>[CleCritere.source];
+    await _monter(tester, port: port);
+    await _deposer(tester);
+    await _toucher(tester, _cle('import-poursuivre'));
+    await stabiliser(tester, fois: 6);
+    expect(_cle('import-enregistre'), findsNothing);
+    final BandeauAttention b = _bandeau(tester, 'import-erreur');
+    expect(b.ton, TonEtat.alerte);
+    expect(b.message, s.bloque(criteres: libelleCritere(CleCritere.source)));
+    // Tout ou rien : le document n'est pas publie.
+    final String id = (await port.lister()).elements.single.id;
+    expect(
+      (await port.fiche(id)).support.statutVersion,
+      isNot(StatutVersionRessource.publiee),
+    );
+  });
+
+  testWidgets('le serveur n\'a pas encore la fonction (I5) : nomme, sans '
+      'bouton pour reessayer', (tester) async {
+    final BibliothequeAdminDemo port = BibliothequeAdminDemo(nombre: 0)
+      ..depotDirectAbsent = true;
+    await _monter(tester, port: port);
+    await _deposer(tester);
+    await _toucher(tester, _cle('import-poursuivre'));
+    await stabiliser(tester, fois: 6);
+    final BandeauAttention b = _bandeau(tester, 'import-inactif');
+    expect(b.titre, s.inactifTitre);
+    expect(b.message, contains(DepotDirectAbsent.reglage));
+    expect(_cle('import-poursuivre'), findsNothing);
+    expect(_cle('import-enregistre'), findsNothing);
+    expect(find.text(t.commun.reessayer), findsNothing);
+  });
+
+  testWidgets('le nom affiche est celui que l\'on saisit, pas le nom brut', (
+    tester,
+  ) async {
+    await _monter(tester, selecteur: _Selecteur(_pdf('scan_0042-final.pdf')));
+    await _deposer(tester);
+    expect(find.text('scan_0042-final.pdf'), findsNothing);
+    await tester.enterText(_cle('import-nom'), 'متن الأخضري');
+    await tester.pump();
+    final Text nom = tester.widget<Text>(_cle('import-nom-support'));
+    expect(nom.data, 'متن الأخضري');
+    // Contenu arabe : la police du contenu, et son sens isole.
+    expect(nom.style?.fontFamily, AppTypography.arabeContenu().fontFamily);
+    expect(nom.textDirection, TextDirection.rtl);
   });
 
   testWidgets('reprise d\'un brouillon : son nom est la, pas ressaisi', (

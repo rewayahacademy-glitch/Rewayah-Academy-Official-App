@@ -851,12 +851,28 @@ class BibliothequeAdminDemo implements PortBibliothequeAdmin {
     required String cle,
     required AccesDocument acces,
     required bool droitTiers,
+    PublicDocument? public,
   }) async {
     _garde();
     final _Etat e = _trouve(supportId);
     if (!droitsServeur.peutPublier) throw const BibliothequeNonAutorisee();
     if (panneEcriture) throw const BibliothequeHorsLigne();
+    // Le serveur n'a pas encore la fonction (migration non installee).
+    if (depotDirectAbsent) throw const DepotDirectAbsent();
     if (e.revision != revisionAttendue) return const PublicationEnConflit();
+    // Tout ou rien : une publication bloquee ne change rien.
+    final List<CleCritere>? bloque = depotDirectBloque;
+    if (bloque != null) {
+      return PublicationBloquee(
+        ControleVersion(
+          criteres: <CritereControle>[
+            for (final CleCritere c in bloque)
+              CritereControle(cle: c, etat: EtatCritere.bloque),
+          ],
+          publiable: false,
+        ),
+      );
+    }
     if (!e.fichierDepose && e.lienExterne == null) {
       throw StateError('BibliothequeDepotSansFichier');
     }
@@ -880,8 +896,53 @@ class BibliothequeAdminDemo implements PortBibliothequeAdmin {
       attribution: defaut(e.droits.attribution, 'Rewayah Academy'),
       expireLeUtc: e.droits.expireLeUtc,
     );
+    // Le public pose les tranches d'age, cote serveur.
+    if (public == PublicDocument.tous) e.tranches = tranchesToutes;
+    if (public == PublicDocument.adultes) {
+      e.tranches = const <String>['adulte_18_plus'];
+    }
+    publicsRecus.add(public);
     depotsDirects.add((supportId, acces, droitTiers));
     return _publier(e, PolitiqueAcces.inscrits);
+  }
+
+  /// Vrai : le serveur n'a pas la fonction du depot direct.
+  bool depotDirectAbsent = false;
+
+  /// Non nul : le depot direct est bloque par ces criteres, rien n'est ecrit.
+  List<CleCritere>? depotDirectBloque;
+
+  /// Le public recu a chaque depot direct.
+  final List<PublicDocument?> publicsRecus = <PublicDocument?>[];
+
+  /// Change l'acces d'un document sans toucher a son fichier.
+  @override
+  Future<ResultatEcriture> changerAcces({
+    required String supportId,
+    required AccesDocument acces,
+    required int revisionAttendue,
+  }) async {
+    _garde();
+    final _Etat e = _trouve(supportId);
+    if (!droitsServeur.peutImporter) throw const BibliothequeNonAutorisee();
+    if (panneEcriture) throw const BibliothequeHorsLigne();
+    if (e.revision != revisionAttendue) return const EcritureEnConflit();
+    e.droits = DroitsSupport(
+      revue: e.droits.revue,
+      sourceTitre: e.droits.sourceTitre,
+      titulaire: e.droits.titulaire,
+      preuveFournie: e.droits.preuveFournie,
+      usages: <UsageDroit>{
+        ...e.droits.usages.where(
+          (UsageDroit u) => u != UsageDroit.telechargement,
+        ),
+        if (acces == AccesDocument.telechargement) UsageDroit.telechargement,
+      },
+      attribution: e.droits.attribution,
+      expireLeUtc: e.droits.expireLeUtc,
+    );
+    e.revision++;
+    return EcritureFaite(revision: e.revision);
   }
 
   /// Les depots directs recus (support, acces, declaration du tiers).
