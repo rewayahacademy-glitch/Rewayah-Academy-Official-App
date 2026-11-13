@@ -68,7 +68,7 @@ List<Override> _surcharges({
     if (retardsEnEchec) throw StateError('reseau');
     return const <CahierEnRetard>[];
   }),
-  reglagesPriereProvider('ens-1').overrideWith((Ref _) async {
+  pausePrevueProvider.overrideWith((Ref _, String _) async {
     if (horairesEnEchec) throw StateError('reseau');
     return null;
   }),

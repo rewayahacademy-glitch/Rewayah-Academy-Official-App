@@ -128,7 +128,13 @@ class ConfigLigneEntiere extends ConsumerWidget {
     this.max,
     this.aideBornes,
     this.ecrireValeur,
+    this.proposition,
   });
+
+  /// Les valeurs proposees, quand la cle n'est pas dans
+  /// [reglagesEntiersProposes] (PRIERE-1 : les reglages de la priere portent
+  /// leurs propres propositions, avec leur source dans `REGLAGES.md`).
+  final ReglageEntierPropose? proposition;
 
   /// Le titre de la ligne.
   final String titre;
@@ -198,7 +204,7 @@ class ConfigLigneEntiere extends ConsumerWidget {
       titre: titre,
       constructeur: (BuildContext _) => _FeuilleEntiere(
         valeurInitiale: valeur,
-        proposition: reglagesEntiersProposes[cle],
+        proposition: proposition ?? reglagesEntiersProposes[cle],
         min: min,
         max: max,
         aideBornes: aideBornes,

@@ -1037,6 +1037,16 @@ class _Traductions$priere$ar extends Traductions$priere$fr {
 	@override String get lieuSansNom => 'أوقات محسوبة لمكان المعلم';
 	@override String ajustee({required Object priere, required Object minutes}) => 'عدّل المعلم ⁨${priere}⁩ بـ⁨${minutes}⁩ د';
 	@override String get reglagesAbsents => 'لم يضبط المعلم أوقات الصلاة بعد.';
+	@override String get pauseDePriere => 'استراحة الصلاة';
+	@override String pauseA({required Object heure}) => 'استراحة الصلاة الساعة ⁨${heure}⁩';
+	@override String get approchee => 'وقت تقريبي: في هذا الفصل لا تنزل الشمس إلى الدرجة اللازمة لتحديد الزاوية.';
+	@override late final _Traductions$priere$methodes$ar methodes = _Traductions$priere$methodes$ar._(_root);
+	@override late final _Traductions$priere$ecoles$ar ecoles = _Traductions$priere$ecoles$ar._(_root);
+	@override String get aValider => 'قيمة افتراضية معمول بها، في انتظار موافقة المدير وشركائه.';
+	@override late final _Traductions$priere$enseignant$ar enseignant = _Traductions$priere$enseignant$ar._(_root);
+	@override late final _Traductions$priere$direction$ar direction = _Traductions$priere$direction$ar._(_root);
+	@override late final _Traductions$priere$classe$ar classe = _Traductions$priere$classe$ar._(_root);
+	@override late final _Traductions$priere$regles$ar regles = _Traductions$priere$regles$ar._(_root);
 }
 
 // Path: appareils
@@ -3764,8 +3774,8 @@ class _Traductions$eleve$accueil$ar extends Traductions$eleve$accueil$fr {
 	@override String get annulee => 'لن يُعقد هذا الدرس';
 	@override String get horsLigne => 'لا شبكة';
 	@override String get horsLigneDetail => 'يمكنك الدخول بمجرد عودة الشبكة.';
-	@override String get pausePriere => 'استراحة للصلاة';
-	@override String pausePriereDetail({required Object priere, required Object heure}) => '⁨${priere}⁩، نحو ⁨${heure}⁩';
+	@override String get pausePriere => 'استراحة الصلاة';
+	@override String pausePriereDetail({required Object heure}) => 'الساعة ⁨${heure}⁩';
 	@override String get entreeSePrepare => 'دخولك قيد التحضير. أعد المحاولة بعد لحظة.';
 }
 
@@ -7844,6 +7854,150 @@ class _Traductions$eleveConnexion$refus$ar extends Traductions$eleveConnexion$re
 	@override String get nonEnregistre => 'لم يستطع هذا الجهاز الاحتفاظ بالربط. ربما استُخدم الرمز من قبل: اعرض رمزًا جديدًا على جهاز وليّ الأمر، ثم ابدأ من جديد.';
 	@override String get generiqueTitre => 'لم يكتمل الربط';
 	@override String get generique => 'لم يكتمل التحقق من الرمز. أعد المحاولة بعد لحظة.';
+}
+
+// Path: priere.methodes
+class _Traductions$priere$methodes$ar extends Traductions$priere$methodes$fr {
+	_Traductions$priere$methodes$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get muslim_world_league => 'رابطة العالم الإسلامي';
+	@override String get egyptian => 'الهيئة المصرية العامة للمساحة';
+	@override String get karachi => 'جامعة العلوم الإسلامية بكراتشي';
+	@override String get umm_al_qura => 'أم القرى (مكة المكرمة)';
+	@override String get dubai => 'الخليج';
+	@override String get moon_sighting_committee => 'لجنة رؤية الهلال';
+	@override String get north_america => 'أمريكا الشمالية (الجمعية الإسلامية)';
+	@override String get kuwait => 'الكويت';
+	@override String get qatar => 'قطر';
+	@override String get singapore => 'سنغافورة';
+	@override String get tehran => 'طهران';
+	@override String get turkey => 'ديانت (تركيا)';
+}
+
+// Path: priere.ecoles
+class _Traductions$priere$ecoles$ar extends Traductions$priere$ecoles$fr {
+	_Traductions$priere$ecoles$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get shafi => 'حسب أغلب المذاهب (الظل مثل الجسم)';
+	@override String get hanafi => 'الظل ضعفان (المذهب الحنفي)';
+}
+
+// Path: priere.enseignant
+class _Traductions$priere$enseignant$ar extends Traductions$priere$enseignant$fr {
+	_Traductions$priere$enseignant$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'أوقات صلاتي';
+	@override String get intro => 'أوقات اليوم تحسبها رواية لمكانك. يمكنك تعديل كل صلاة بما لا يزيد على 30 دقيقة.';
+	@override String get ligne => 'أوقات صلاتي';
+	@override String get ligneDetail => 'اطّلع على أوقات يومك وعدّلها';
+	@override String get vide => 'لم يُحدَّد مكان صلاتك بعد. تحدده الإدارة وستظهر أوقاتك هنا.';
+	@override String get erreur => 'لم تظهر أوقات صلاتك. قد لا يكون الطلب وصل إلى رواية. أعد المحاولة بعد قليل.';
+	@override String get aucunAjustement => 'بلا تعديل';
+	@override String plus({required Object minutes}) => '⁨${minutes}⁩ د زيادة';
+	@override String moins({required Object minutes}) => '⁨${minutes}⁩ د نقصان';
+	@override String get feuilleAide => 'من 30 دقيقة نقصانًا إلى 30 دقيقة زيادة. يحرّك التعديل أيضًا استراحة الصلاة في دروسك.';
+	@override String get champ => 'التعديل';
+	@override String get enregistrer => 'حفظ';
+	@override String get erreurEnregistrement => 'لم يُحفظ التعديل. قد لا يكون وصل إلى رواية. أعد المحاولة بعد قليل.';
+	@override String unite({required Object n}) => '⁨${n}⁩ د';
+}
+
+// Path: priere.direction
+class _Traductions$priere$direction$ar extends Traductions$priere$direction$fr {
+	_Traductions$priere$direction$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get onglet => 'الصلاة';
+	@override String get titre => 'أماكن الصلاة';
+	@override String get intro => 'مكان صلاة كل معلم يحدد أوقاته. لا يراه إلا المعلم والإدارة: التلاميذ وأولياء الأمور لا يقرؤون إلا وقت الاستراحة.';
+	@override String get sansLieu => 'بلا مكان: لا استراحة صلاة';
+	@override String get vide => 'لا يوجد معلم نشط حاليًا.';
+	@override String get erreur => 'لم تظهر أماكن الصلاة. قد لا يكون الطلب وصل إلى رواية. أعد المحاولة بعد قليل.';
+	@override String get vendredi => 'يحضر صلاة الجمعة';
+	@override String get incoherenceTitre => 'للتحقق';
+	@override String get incoherenceAide => 'تنبيه فقط: لا يُصحَّح شيء تلقائيًا.';
+	@override String incoherenceFuseauCompte({required Object prenom, required Object detail}) => '⁨${prenom}⁩: المنطقة الزمنية للحساب تختلف عن منطقة مكان الصلاة (⁨${detail}⁩).';
+	@override String incoherenceFuseauLieu({required Object prenom, required Object detail}) => '⁨${prenom}⁩: المنطقة الزمنية لمكان الصلاة لا تطابق خط طوله (⁨${detail}⁩).';
+	@override String incoherencePays({required Object prenom, required Object detail}) => '⁨${prenom}⁩: بلد الحساب (⁨${detail}⁩) لا يطابق مكان الصلاة.';
+	@override String incoherencePaysFuseau({required Object prenom, required Object detail}) => '⁨${prenom}⁩: بلد الحساب ومنطقته الزمنية لا يتطابقان (⁨${detail}⁩).';
+	@override late final _Traductions$priere$direction$feuille$ar feuille = _Traductions$priere$direction$feuille$ar._(_root);
+}
+
+// Path: priere.classe
+class _Traductions$priere$classe$ar extends Traductions$priere$classe$fr {
+	_Traductions$priere$classe$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'الصلوات والموعد';
+	@override String get intro => 'ما يتقاطع معه هذا الموعد خلال الاثني عشر شهرًا القادمة لمعلم الفصل. إنه تنبيه: لا يُمنع شيء، واستراحة الصلاة تحمي المعلم على كل حال.';
+	@override String get sansLieu => 'ليس لمعلم هذا الفصل مكان صلاة: لا استراحة صلاة مقررة.';
+	@override String get erreur => 'لم تظهر صلوات هذا الموعد. قد لا يكون الطلب وصل إلى رواية. أعد المحاولة بعد قليل.';
+	@override String creneau({required Object jour, required Object heure, required Object duree}) => '⁨${jour}⁩، الساعة ⁨${heure}⁩، ⁨${duree}⁩ د';
+	@override String get aucun => 'لا يتقاطع هذا الموعد مع أي صلاة للمعلم خلال الاثني عشر شهرًا.';
+	@override String croise({required Object priere, required Object du, required Object au, required Object seances, required Object pause, required Object apres}) => '⁨${priere}⁩: من ⁨${du}⁩ إلى ⁨${au}⁩، ⁨${seances}⁩ حصة، منها ⁨${pause}⁩ باستراحة صلاة و⁨${apres}⁩ يصلي فيها المعلم بعد الدرس.';
+	@override String get indefini => 'في جزء من السنة لا تشرق الشمس أو لا تغرب: لا تُحسب استراحة صلاة.';
+	@override String vendredi({required Object debut, required Object fin, required Object n}) => 'يتقاطع هذا الموعد مع صلاة الجمعة للمعلم (من ⁨${debut}⁩ إلى ⁨${fin}⁩): ⁨${n}⁩ حصة في السنة. تنبيه قوي.';
+	@override String libres({required Object heures}) => 'ساعات البدء بلا صلاة في ذلك اليوم: ⁨${heures}⁩.';
+	@override String get libresAucune => 'لا توجد ساعة بدء في ذلك اليوم تتفادى كل صلوات السنة.';
+	@override String get libresInconnues => 'لا يمكن تحديد الساعات الخالية من الصلاة لهذا المعلم.';
+	@override String heureCourte({required Object h}) => '⁨${h}⁩ س';
+}
+
+// Path: priere.regles
+class _Traductions$priere$regles$ar extends Traductions$priere$regles$fr {
+	_Traductions$priere$regles$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get section => 'الصلاة';
+	@override String get intro => 'يضع الخادم استراحة صلاة المعلم عندما تدخل صلاة أثناء الحصة. تسري هذه الإعدادات على الأكاديمية كلها.';
+	@override String get methode => 'طريقة الحساب';
+	@override String get methodeDetail => 'زاويتا الفجر والعشاء. يمكن أن تكون للمعلم طريقته الخاصة.';
+	@override String get ecole => 'مذهب العصر';
+	@override String get ecoleDetail => 'وقت دخول العصر. يمكن أن يكون للمعلم مذهبه الخاص.';
+	@override String get pause => 'مدة استراحة الصلاة';
+	@override String get pauseDetail => 'من 5 إلى 20 دقيقة بخطوات من 5.';
+	@override String get pauseRamadan => 'استراحة المغرب في رمضان';
+	@override String get pauseRamadanDetail => 'الإفطار: من 5 إلى 20 دقيقة بخطوات من 5.';
+	@override String get ramadan => 'رمضان جارٍ';
+	@override String get ramadanDetail => 'في انتظار تقويم الأكاديمية، تضبطه الإدارة يدويًا.';
+	@override String get margeDebut => 'هامش البداية';
+	@override String get margeDebutDetail => 'الصلاة التي تدخل في هذه الدقائق الأولى تضع الاستراحة عند هذه الدقيقة من الدرس.';
+	@override String get margeFin => 'هامش النهاية';
+	@override String get margeFinDetail => 'الصلاة التي تدخل في هذه الدقائق الأخيرة تُصلّى بعد الدرس.';
+	@override String get margeAvant => 'صلاة دخلت قبل الدرس مباشرة';
+	@override String get margeAvantDetail => 'الصلاة التي دخلت قبل بداية الدرس بأقل من هذه المدة، ويخرج وقتها أثناء الدرس، لها استراحتها. يؤكدها المدير.';
+	@override String get delaiFermeture => 'بداية استراحة صلاة يخرج وقتها';
+	@override String get delaiFermetureDetail => 'تبدأ هذه الاستراحة بعد بداية الدرس بهذه المدة.';
+	@override String get horizon => 'إعادة الحساب ليلًا';
+	@override String get horizonDetail => 'كل ليلة تُعاد حسابات استراحات حصص الأيام القادمة.';
+	@override String get lieux => 'أماكن صلاة المعلمين';
+	@override String get lieuxDetail => 'مكان كل معلم، وصلاة الجمعة، وأوقات اليوم.';
+	@override String unite({required Object n}) => '⁨${n}⁩ د';
+	@override String uniteJours({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: '⁨${n}⁩ يوم',
+		one: 'يوم واحد',
+		two: 'يومان',
+		few: '⁨${n}⁩ أيام',
+		many: '⁨${n}⁩ يومًا',
+		other: '⁨${n}⁩ يوم',
+	);
+	@override String get choisir => 'حفظ';
+	@override String erreurEcriture({required Object message}) => 'لم يُحفظ الإعداد (⁨${message}⁩). أعد المحاولة بعد قليل.';
 }
 
 // Path: appareils.foyer
@@ -17161,6 +17315,37 @@ class _Traductions$ficheEleve$mouvements$recu$ar extends Traductions$ficheEleve$
 	@override String get repartition => 'التوزيع';
 }
 
+// Path: priere.direction.feuille
+class _Traductions$priere$direction$feuille$ar extends Traductions$priere$direction$feuille$fr {
+	_Traductions$priere$direction$feuille$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String titre({required Object dePrenom}) => 'مكان وأوقات صلاة ⁨${dePrenom}⁩';
+	@override String get nomLieu => 'اسم المكان';
+	@override String get latitude => 'خط العرض';
+	@override String get longitude => 'خط الطول';
+	@override String get coordonneesAide => 'بالدرجات العشرية مع نقطة (مثلًا 9.6412 و -13.5784).';
+	@override String fuseau({required Object exemple}) => 'المنطقة الزمنية (مثلًا ⁨${exemple}⁩)';
+	@override String get methode => 'طريقة الحساب';
+	@override String get methodeEcole => 'طريقة الأكاديمية';
+	@override String get ecole => 'مذهب العصر';
+	@override String get ecoleEcole => 'مذهب الأكاديمية';
+	@override String get vendredi => 'يحضر صلاة الجمعة';
+	@override String get vendrediOui => 'نعم';
+	@override String get vendrediNon => 'لا';
+	@override String get vendrediDebut => 'بداية فترة الجمعة';
+	@override String get vendrediFin => 'نهاية فترة الجمعة';
+	@override String get plageAide => 'بتوقيت المعلم بصيغة ساعة:دقيقة (مثل 12:30). تُبلَّغ الإدارة بكل موعد يتقاطع مع هذه الفترة دون منع.';
+	@override String get apercu => 'أوقات اليوم';
+	@override String get apercuVide => 'لا توجد أوقات لعرضها قبل حفظ المكان.';
+	@override String get enregistrer => 'حفظ المكان';
+	@override String get retirer => 'إزالة المكان';
+	@override String get invalide => 'تحقق من اسم المكان والإحداثيات والمنطقة الزمنية وفترة الجمعة.';
+	@override String get erreurEnregistrement => 'لم يُحفظ المكان. قد لا يكون الطلب وصل إلى رواية أو رُفضت قيمة. أعد المحاولة بعد قليل.';
+}
+
 // Path: appareils.emetteur.verification
 class _Traductions$appareils$emetteur$verification$ar extends Traductions$appareils$emetteur$verification$fr {
 	_Traductions$appareils$emetteur$verification$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -25462,8 +25647,8 @@ extension on TraductionsAr {
 			'eleve.accueil.annulee' => 'لن يُعقد هذا الدرس',
 			'eleve.accueil.horsLigne' => 'لا شبكة',
 			'eleve.accueil.horsLigneDetail' => 'يمكنك الدخول بمجرد عودة الشبكة.',
-			'eleve.accueil.pausePriere' => 'استراحة للصلاة',
-			'eleve.accueil.pausePriereDetail' => ({required Object priere, required Object heure}) => '⁨${priere}⁩، نحو ⁨${heure}⁩',
+			'eleve.accueil.pausePriere' => 'استراحة الصلاة',
+			'eleve.accueil.pausePriereDetail' => ({required Object heure}) => 'الساعة ⁨${heure}⁩',
 			'eleve.accueil.entreeSePrepare' => 'دخولك قيد التحضير. أعد المحاولة بعد لحظة.',
 			'eleve.coran.titre' => 'القرآن',
 			'eleve.coran.juz' => ({required Object juz}) => 'الجزء ⁨${juz}⁩',
@@ -31927,6 +32112,114 @@ extension on TraductionsAr {
 			'priere.lieuSansNom' => 'أوقات محسوبة لمكان المعلم',
 			'priere.ajustee' => ({required Object priere, required Object minutes}) => 'عدّل المعلم ⁨${priere}⁩ بـ⁨${minutes}⁩ د',
 			'priere.reglagesAbsents' => 'لم يضبط المعلم أوقات الصلاة بعد.',
+			'priere.pauseDePriere' => 'استراحة الصلاة',
+			'priere.pauseA' => ({required Object heure}) => 'استراحة الصلاة الساعة ⁨${heure}⁩',
+			'priere.approchee' => 'وقت تقريبي: في هذا الفصل لا تنزل الشمس إلى الدرجة اللازمة لتحديد الزاوية.',
+			'priere.methodes.muslim_world_league' => 'رابطة العالم الإسلامي',
+			'priere.methodes.egyptian' => 'الهيئة المصرية العامة للمساحة',
+			'priere.methodes.karachi' => 'جامعة العلوم الإسلامية بكراتشي',
+			'priere.methodes.umm_al_qura' => 'أم القرى (مكة المكرمة)',
+			'priere.methodes.dubai' => 'الخليج',
+			'priere.methodes.moon_sighting_committee' => 'لجنة رؤية الهلال',
+			'priere.methodes.north_america' => 'أمريكا الشمالية (الجمعية الإسلامية)',
+			'priere.methodes.kuwait' => 'الكويت',
+			'priere.methodes.qatar' => 'قطر',
+			'priere.methodes.singapore' => 'سنغافورة',
+			'priere.methodes.tehran' => 'طهران',
+			'priere.methodes.turkey' => 'ديانت (تركيا)',
+			'priere.ecoles.shafi' => 'حسب أغلب المذاهب (الظل مثل الجسم)',
+			'priere.ecoles.hanafi' => 'الظل ضعفان (المذهب الحنفي)',
+			'priere.aValider' => 'قيمة افتراضية معمول بها، في انتظار موافقة المدير وشركائه.',
+			'priere.enseignant.titre' => 'أوقات صلاتي',
+			'priere.enseignant.intro' => 'أوقات اليوم تحسبها رواية لمكانك. يمكنك تعديل كل صلاة بما لا يزيد على 30 دقيقة.',
+			'priere.enseignant.ligne' => 'أوقات صلاتي',
+			'priere.enseignant.ligneDetail' => 'اطّلع على أوقات يومك وعدّلها',
+			'priere.enseignant.vide' => 'لم يُحدَّد مكان صلاتك بعد. تحدده الإدارة وستظهر أوقاتك هنا.',
+			'priere.enseignant.erreur' => 'لم تظهر أوقات صلاتك. قد لا يكون الطلب وصل إلى رواية. أعد المحاولة بعد قليل.',
+			'priere.enseignant.aucunAjustement' => 'بلا تعديل',
+			'priere.enseignant.plus' => ({required Object minutes}) => '⁨${minutes}⁩ د زيادة',
+			'priere.enseignant.moins' => ({required Object minutes}) => '⁨${minutes}⁩ د نقصان',
+			'priere.enseignant.feuilleAide' => 'من 30 دقيقة نقصانًا إلى 30 دقيقة زيادة. يحرّك التعديل أيضًا استراحة الصلاة في دروسك.',
+			'priere.enseignant.champ' => 'التعديل',
+			'priere.enseignant.enregistrer' => 'حفظ',
+			'priere.enseignant.erreurEnregistrement' => 'لم يُحفظ التعديل. قد لا يكون وصل إلى رواية. أعد المحاولة بعد قليل.',
+			'priere.enseignant.unite' => ({required Object n}) => '⁨${n}⁩ د',
+			'priere.direction.onglet' => 'الصلاة',
+			'priere.direction.titre' => 'أماكن الصلاة',
+			'priere.direction.intro' => 'مكان صلاة كل معلم يحدد أوقاته. لا يراه إلا المعلم والإدارة: التلاميذ وأولياء الأمور لا يقرؤون إلا وقت الاستراحة.',
+			'priere.direction.sansLieu' => 'بلا مكان: لا استراحة صلاة',
+			'priere.direction.vide' => 'لا يوجد معلم نشط حاليًا.',
+			'priere.direction.erreur' => 'لم تظهر أماكن الصلاة. قد لا يكون الطلب وصل إلى رواية. أعد المحاولة بعد قليل.',
+			'priere.direction.vendredi' => 'يحضر صلاة الجمعة',
+			'priere.direction.incoherenceTitre' => 'للتحقق',
+			'priere.direction.incoherenceAide' => 'تنبيه فقط: لا يُصحَّح شيء تلقائيًا.',
+			'priere.direction.incoherenceFuseauCompte' => ({required Object prenom, required Object detail}) => '⁨${prenom}⁩: المنطقة الزمنية للحساب تختلف عن منطقة مكان الصلاة (⁨${detail}⁩).',
+			'priere.direction.incoherenceFuseauLieu' => ({required Object prenom, required Object detail}) => '⁨${prenom}⁩: المنطقة الزمنية لمكان الصلاة لا تطابق خط طوله (⁨${detail}⁩).',
+			'priere.direction.incoherencePays' => ({required Object prenom, required Object detail}) => '⁨${prenom}⁩: بلد الحساب (⁨${detail}⁩) لا يطابق مكان الصلاة.',
+			'priere.direction.incoherencePaysFuseau' => ({required Object prenom, required Object detail}) => '⁨${prenom}⁩: بلد الحساب ومنطقته الزمنية لا يتطابقان (⁨${detail}⁩).',
+			'priere.direction.feuille.titre' => ({required Object dePrenom}) => 'مكان وأوقات صلاة ⁨${dePrenom}⁩',
+			'priere.direction.feuille.nomLieu' => 'اسم المكان',
+			'priere.direction.feuille.latitude' => 'خط العرض',
+			'priere.direction.feuille.longitude' => 'خط الطول',
+			'priere.direction.feuille.coordonneesAide' => 'بالدرجات العشرية مع نقطة (مثلًا 9.6412 و -13.5784).',
+			'priere.direction.feuille.fuseau' => ({required Object exemple}) => 'المنطقة الزمنية (مثلًا ⁨${exemple}⁩)',
+			'priere.direction.feuille.methode' => 'طريقة الحساب',
+			'priere.direction.feuille.methodeEcole' => 'طريقة الأكاديمية',
+			'priere.direction.feuille.ecole' => 'مذهب العصر',
+			'priere.direction.feuille.ecoleEcole' => 'مذهب الأكاديمية',
+			'priere.direction.feuille.vendredi' => 'يحضر صلاة الجمعة',
+			'priere.direction.feuille.vendrediOui' => 'نعم',
+			'priere.direction.feuille.vendrediNon' => 'لا',
+			'priere.direction.feuille.vendrediDebut' => 'بداية فترة الجمعة',
+			'priere.direction.feuille.vendrediFin' => 'نهاية فترة الجمعة',
+			'priere.direction.feuille.plageAide' => 'بتوقيت المعلم بصيغة ساعة:دقيقة (مثل 12:30). تُبلَّغ الإدارة بكل موعد يتقاطع مع هذه الفترة دون منع.',
+			'priere.direction.feuille.apercu' => 'أوقات اليوم',
+			'priere.direction.feuille.apercuVide' => 'لا توجد أوقات لعرضها قبل حفظ المكان.',
+			'priere.direction.feuille.enregistrer' => 'حفظ المكان',
+			'priere.direction.feuille.retirer' => 'إزالة المكان',
+			'priere.direction.feuille.invalide' => 'تحقق من اسم المكان والإحداثيات والمنطقة الزمنية وفترة الجمعة.',
+			'priere.direction.feuille.erreurEnregistrement' => 'لم يُحفظ المكان. قد لا يكون الطلب وصل إلى رواية أو رُفضت قيمة. أعد المحاولة بعد قليل.',
+			'priere.classe.titre' => 'الصلوات والموعد',
+			'priere.classe.intro' => 'ما يتقاطع معه هذا الموعد خلال الاثني عشر شهرًا القادمة لمعلم الفصل. إنه تنبيه: لا يُمنع شيء، واستراحة الصلاة تحمي المعلم على كل حال.',
+			'priere.classe.sansLieu' => 'ليس لمعلم هذا الفصل مكان صلاة: لا استراحة صلاة مقررة.',
+			'priere.classe.erreur' => 'لم تظهر صلوات هذا الموعد. قد لا يكون الطلب وصل إلى رواية. أعد المحاولة بعد قليل.',
+			'priere.classe.creneau' => ({required Object jour, required Object heure, required Object duree}) => '⁨${jour}⁩، الساعة ⁨${heure}⁩، ⁨${duree}⁩ د',
+			'priere.classe.aucun' => 'لا يتقاطع هذا الموعد مع أي صلاة للمعلم خلال الاثني عشر شهرًا.',
+			'priere.classe.croise' => ({required Object priere, required Object du, required Object au, required Object seances, required Object pause, required Object apres}) => '⁨${priere}⁩: من ⁨${du}⁩ إلى ⁨${au}⁩، ⁨${seances}⁩ حصة، منها ⁨${pause}⁩ باستراحة صلاة و⁨${apres}⁩ يصلي فيها المعلم بعد الدرس.',
+			'priere.classe.indefini' => 'في جزء من السنة لا تشرق الشمس أو لا تغرب: لا تُحسب استراحة صلاة.',
+			'priere.classe.vendredi' => ({required Object debut, required Object fin, required Object n}) => 'يتقاطع هذا الموعد مع صلاة الجمعة للمعلم (من ⁨${debut}⁩ إلى ⁨${fin}⁩): ⁨${n}⁩ حصة في السنة. تنبيه قوي.',
+			'priere.classe.libres' => ({required Object heures}) => 'ساعات البدء بلا صلاة في ذلك اليوم: ⁨${heures}⁩.',
+			'priere.classe.libresAucune' => 'لا توجد ساعة بدء في ذلك اليوم تتفادى كل صلوات السنة.',
+			'priere.classe.libresInconnues' => 'لا يمكن تحديد الساعات الخالية من الصلاة لهذا المعلم.',
+			'priere.classe.heureCourte' => ({required Object h}) => '⁨${h}⁩ س',
+			'priere.regles.section' => 'الصلاة',
+			'priere.regles.intro' => 'يضع الخادم استراحة صلاة المعلم عندما تدخل صلاة أثناء الحصة. تسري هذه الإعدادات على الأكاديمية كلها.',
+			'priere.regles.methode' => 'طريقة الحساب',
+			'priere.regles.methodeDetail' => 'زاويتا الفجر والعشاء. يمكن أن تكون للمعلم طريقته الخاصة.',
+			'priere.regles.ecole' => 'مذهب العصر',
+			'priere.regles.ecoleDetail' => 'وقت دخول العصر. يمكن أن يكون للمعلم مذهبه الخاص.',
+			'priere.regles.pause' => 'مدة استراحة الصلاة',
+			'priere.regles.pauseDetail' => 'من 5 إلى 20 دقيقة بخطوات من 5.',
+			'priere.regles.pauseRamadan' => 'استراحة المغرب في رمضان',
+			'priere.regles.pauseRamadanDetail' => 'الإفطار: من 5 إلى 20 دقيقة بخطوات من 5.',
+			'priere.regles.ramadan' => 'رمضان جارٍ',
+			'priere.regles.ramadanDetail' => 'في انتظار تقويم الأكاديمية، تضبطه الإدارة يدويًا.',
+			'priere.regles.margeDebut' => 'هامش البداية',
+			'priere.regles.margeDebutDetail' => 'الصلاة التي تدخل في هذه الدقائق الأولى تضع الاستراحة عند هذه الدقيقة من الدرس.',
+			'priere.regles.margeFin' => 'هامش النهاية',
+			'priere.regles.margeFinDetail' => 'الصلاة التي تدخل في هذه الدقائق الأخيرة تُصلّى بعد الدرس.',
+			'priere.regles.margeAvant' => 'صلاة دخلت قبل الدرس مباشرة',
+			'priere.regles.margeAvantDetail' => 'الصلاة التي دخلت قبل بداية الدرس بأقل من هذه المدة، ويخرج وقتها أثناء الدرس، لها استراحتها. يؤكدها المدير.',
+			'priere.regles.delaiFermeture' => 'بداية استراحة صلاة يخرج وقتها',
+			'priere.regles.delaiFermetureDetail' => 'تبدأ هذه الاستراحة بعد بداية الدرس بهذه المدة.',
+			'priere.regles.horizon' => 'إعادة الحساب ليلًا',
+			'priere.regles.horizonDetail' => 'كل ليلة تُعاد حسابات استراحات حصص الأيام القادمة.',
+			'priere.regles.lieux' => 'أماكن صلاة المعلمين',
+			'priere.regles.lieuxDetail' => 'مكان كل معلم، وصلاة الجمعة، وأوقات اليوم.',
+			'priere.regles.unite' => ({required Object n}) => '⁨${n}⁩ د',
+			'priere.regles.uniteJours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: '⁨${n}⁩ يوم', one: 'يوم واحد', two: 'يومان', few: '⁨${n}⁩ أيام', many: '⁨${n}⁩ يومًا', other: '⁨${n}⁩ يوم', ), 
+			'priere.regles.choisir' => 'حفظ',
+			'priere.regles.erreurEcriture' => ({required Object message}) => 'لم يُحفظ الإعداد (⁨${message}⁩). أعد المحاولة بعد قليل.',
 			'appareils.titre' => 'الأجهزة',
 			'appareils.foyer.titre' => 'أجهزة الأسرة',
 			'appareils.foyer.phrase' => 'لكل ملف طالب أجهزته. المس ملفًا لترى أجهزته، أو تزيل أحدها، أو تربط جهازًا جديدًا.',
@@ -32207,6 +32500,8 @@ extension on TraductionsAr {
 			'inscription.usage.coursOuiExplication' => 'تتابع أنت أيضًا دروسًا، إلى جانب دروس أقاربك.',
 			'inscription.usage.coursOuiExemple' => 'يتابع أطفالك صفّهم وتتابع أنت صفّك.',
 			'inscription.usage.coursNonExplication' => 'تسجّل أقاربك وتتابع تقدّمهم، دون دروس لك. يمكنك تغيير رأيك لاحقًا.',
+			_ => null,
+		} ?? switch (path) {
 			'inscription.usage.coursNonExemple' => 'تسجّل ابنتك وتتابع حصصها من حسابك.',
 			'inscription.usage.enseignantPostuler' => 'هل ترغب في التدريس في أكاديمية الرواية؟',
 			'inscription.usage.deposerCandidature' => 'تقديم طلب ترشحي',
@@ -32315,8 +32610,6 @@ extension on TraductionsAr {
 			'foyer.n2.invitationRecueMessage' => 'اقرأ الدعوة ثم اقبلها أو ارفضها.',
 			'foyer.n2.invitationRecueVoir' => 'عرض الدعوة',
 			'foyer.n2.repriseATraiterVoir' => 'عرض طلب الاستلام',
-			_ => null,
-		} ?? switch (path) {
 			'foyer.n2.demanderReprise' => 'طلب استلام الأسرة',
 			'foyer.n2.demanderRepriseLegende' => 'إذا توفي صاحب حساب الأسرة',
 			'foyer.monProfil.titre' => 'إنشاء ملفي كطالب',
@@ -32721,6 +33014,8 @@ extension on TraductionsAr {
 			'dossiers.detail.titreDe' => ({required Object nom}) => 'ملف ⁨${nom}⁩',
 			'dossiers.detail.titreElide' => ({required Object nom}) => 'ملف ⁨${nom}⁩',
 			'dossiers.visionneuse.chargement' => 'جارٍ تحميل الوثيقة…',
+			_ => null,
+		} ?? switch (path) {
 			'dossiers.visionneuse.erreur' => 'لا يمكن عرض الوثيقة.',
 			'dossiers.visionneuse.expire' => 'انتهى الوصول إلى هذه الوثيقة.',
 			'dossiers.visionneuse.recharger' => 'إعادة تحميل الوثيقة',
@@ -32829,8 +33124,6 @@ extension on TraductionsAr {
 			'kyc.erreurFormat' => 'لم يُقبل هذا الملف لأن نوعه غير مقبول: تُقبل الصور وملفات المستندات فقط. اختر صورة أخرى لوثيقتك.',
 			'kyc.erreurReseau' => 'لم يكتمل الإرسال: لم يستجب الخادم. اضغط «إرسال وثيقتي» مرة أخرى بعد لحظة.',
 			'kyc.contenuNonConforme' => 'هذا الملف لا يُفتح كصورة ولا كملف PDF: قد يكون تالفًا، أو من نوع آخر غُيّر اسمه. اختر صورة وثيقة هويتك أو ملف PDF الخاص بها.',
-			_ => null,
-		} ?? switch (path) {
 			'kyc.tropVolumineux' => ({required Object taille}) => 'هذه الصورة تتجاوز ⁨${taille}⁩ ميغابايت. التقطها بجودة أقل.',
 			'kyc.manqueType' => 'اختر أولًا الوثيقة التي تودعها.',
 			'protectionEnfants.categorie' => 'سلامة طفل',
@@ -33235,6 +33528,8 @@ extension on TraductionsAr {
 			'suiviDemandes.debutCours' => 'بدء الدروس',
 			'suiviDemandes.debutValeur' => ({required Object date, required Object heure, required Object deVille}) => '⁨${date}⁩ في ⁨${heure}⁩، بتوقيت ⁨${deVille}⁩',
 			'suiviDemandes.debutAFixer' => 'سيظهر موعد الدرس الأول هنا فور تحديده.',
+			_ => null,
+		} ?? switch (path) {
 			'suiviDemandes.enseignant' => 'المعلم',
 			'suiviDemandes.personnaliseNotice' => 'لن يُفتح هذا الموعد إلا إذا اختاره طلاب آخرون واكتمل الفصل.',
 			'suiviDemandes.jalon.apres' => ({required Object date, required Object heure, required Object duree}) => '⁨${date}⁩ في ⁨${heure}⁩، ⁨${duree}⁩',
@@ -33343,8 +33638,6 @@ extension on TraductionsAr {
 			'recherche.guide.initial.titre' => 'البحث عن مادة',
 			'recherche.guide.initial.phrase' => 'اكتب كلمة لتجد إحدى موادك.',
 			'recherche.guide.limite' => 'موادك ودروسك فقط.',
-			_ => null,
-		} ?? switch (path) {
 			'recherche.entree.supports' => 'البحث في المواد',
 			'recherche.contexte.remplacementOuvert' => 'استبدال متاح',
 			'recherche.contexte.remplacementMien' => 'استبدالك',
@@ -33749,6 +34042,8 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.riwayat.options.ibn_wardan.description' => 'رواية عن أبي جعفر',
 			'recrutement.parcours.q.riwayat.options.ibn_jammaz.libelle' => 'ابن جماز',
 			'recrutement.parcours.q.riwayat.options.ibn_jammaz.description' => 'رواية عن أبي جعفر',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.q.riwayat.options.ruways.libelle' => 'رويس',
 			'recrutement.parcours.q.riwayat.options.ruways.description' => 'رواية عن يعقوب',
 			'recrutement.parcours.q.riwayat.options.rawh.libelle' => 'روح',
@@ -33857,8 +34152,6 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.compteBancaire.options.oui.description' => 'حساب في أحد المصارف، باسمك أو باسم أحد أقاربك.',
 			'recrutement.parcours.q.compteBancaire.options.oui.explication' => 'قد يكون التحويل وسيلة صرف راتبك إذا أكّدته الأكاديمية في بلدك.',
 			'recrutement.parcours.q.compteBancaire.options.oui.exemple' => 'حساب مفتوح في أحد المصارف باسم أخيك.',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.q.compteBancaire.options.non.libelle' => 'لا، ليس عندي',
 			'recrutement.parcours.q.compteBancaire.options.non.description' => 'لا باسمك ولا باسم أحد أقاربك.',
 			'recrutement.parcours.q.compteBancaire.options.non.explication' => 'يمكنك حينئذ اختيار وسيلة دفع عبر الهاتف إن وُجدت في بلدك.',
@@ -34263,6 +34556,8 @@ extension on TraductionsAr {
 			'juridique.enfants.s2.blocs.0' => 'يتابع الطفل دروسه في مجموعة صغيرة مع المعلم المعيَّن نفسه.',
 			'juridique.enfants.s2.blocs.1' => 'لا يوجد رابط عام إلى قاعة. يُدخَل إليها عبر الحساب بصلاحية يمنحها الخادم.',
 			'juridique.enfants.s2.blocs.2' => 'يمكن لوليّ الأمر أن يتابع درس ابنه بصمت. ويُخطَر الطفل المعني بذلك.',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.enfants.s2.blocs.3' => 'قد يحضر مراقب الجودة الحصص. وتذكّر عبارة داخل القاعة بذلك.',
 			'juridique.enfants.s2.blocs.4' => 'قد يُسجَّل الدرس. اليوم ليس الأمر كذلك، وسيُخطَر وليّ الأمر قبل ذلك.',
 			'juridique.enfants.s3.titre' => '٣. المعلمون',
@@ -34371,8 +34666,6 @@ extension on TraductionsAr {
 			'avis.admin.publier.question' => ({required Object deNom}) => 'هل تنشر رأي ⁨${deNom}⁩؟',
 			'avis.admin.publier.consequence' => 'سيظهر الرأي والاسم الظاهر والبلد والتاريخ على موقع Rewayah Academy عند التحديث التالي للموقع. لا يتغير النص.',
 			'avis.admin.publier.action' => 'نشر الرأي',
-			_ => null,
-		} ?? switch (path) {
 			'avis.admin.publier.rester' => 'عدم تغيير شيء',
 			'avis.admin.refuser.titre' => ({required Object deNom}) => 'رفض رأي ⁨${deNom}⁩',
 			'avis.admin.refuser.intro' => 'اختر سبب الرفض. الرأي الناقد المحترم يُنشر.',
@@ -34777,6 +35070,8 @@ extension on TraductionsAr {
 			'payUx.precedentOuvertTitre' => 'تعذّر إغلاق عملية الدفع التي بدأت قبل قليل',
 			'payUx.precedentOuvertPhrase' => 'لا يُدفع أي شيء مرتين، ولا يُفتح نموذج جديد. أعد المحاولة بعد قليل: إن كانت هذه الدفعة قد تمّت للتو، فستظهر في مدفوعاتك.',
 			'payUx.payer' => 'ادفع',
+			_ => null,
+		} ?? switch (path) {
 			'payUx.ouCarte' => 'أو ادفع بالبطاقة',
 			'payUx.enCours' => 'جارٍ الدفع',
 			'payUx.refus' => 'لم يتمّ الدفع: لعلّ إحدى بيانات البطاقة ناقصة أو مرفوضة. تحقّق منها، ثم اضغط «ادفع» من جديد. لم يُدفع شيء.',
@@ -34885,8 +35180,6 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.colonnes.manquants' => ({required Object champs}) => 'اربطوا هذه الأعمدة أولًا: ⁨${champs}⁩.',
 			'candidatsFlux.importFormulaires.colonnes.ambigu' => ({required Object champs}) => 'عدة أعمدة تحمل عنوان: ⁨${champs}⁩. المسوا العمود الذي يجب قراءته ثم اختاروا ما يحتويه.',
 			'candidatsFlux.importFormulaires.colonnes.libelles.titre' => 'كيف تُقرأ الإجابات',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.colonnes.libelles.texte' => 'تُقرأ الإجابات ذات الخيارات (الجنس واللغات ومستوى الحفظ وموعد البدء) بجدول عبارات رواية. وأي عبارة غير موجودة فيه تُبلَّغ سطرًا سطرًا في خطوة «الأخطاء».',
 			'candidatsFlux.importFormulaires.colonnes.relecture' => 'تحتاج تصحيحاتكم إلى قراءة جديدة للملف قبل المتابعة.',
 			'candidatsFlux.importFormulaires.doublons.casTitre' => ({required Object nature, required Object n, required Object total}) => '⁨${nature}⁩: الحالة ⁨${n}⁩ من ⁨${total}⁩',

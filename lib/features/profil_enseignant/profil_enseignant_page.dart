@@ -251,6 +251,16 @@ class ProfilEnseignantPage extends ConsumerWidget {
             legende: t.enseignant.profil.disponibilitesDetail,
             onPress: () => unawaited(context.push(Routes.enseignantCreneaux)),
           ),
+          // PRIERE-1 : les cinq heures du jour, calculees par le serveur pour
+          // son lieu, et leur ajustement.
+          LigneRubrique(
+            cle: const ValueKey<String>('compte-priere'),
+            icone: AppIcons.priere,
+            libelle: t.priere.enseignant.ligne,
+            legende: t.priere.enseignant.ligneDetail,
+            onPress: () =>
+                unawaited(context.push(Routes.enseignantProfilPriere)),
+          ),
         ],
         SectionCompte.paiements: <LigneRubrique>[
           // REVENUS-VERITE : les heures du mois lues au serveur, sinon la
