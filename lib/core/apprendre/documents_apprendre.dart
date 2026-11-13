@@ -59,24 +59,30 @@ final FutureProvider<List<DocumentPlanche>> documentsApprendreProvider =
       );
     }, retry: (int _, Object _) => null);
 
+/// La carte « Coran », ecrite dans la langue COURANTE. Les textes se lisent a
+/// l'appel : la planche la reecrit a chaque affichage, pour qu'un changement de
+/// langue n'attende pas une relecture du catalogue.
+DocumentPlanche documentCoran() {
+  final String titre = t.apprendre.bibliotheque.coran.titre;
+  return DocumentPlanche(
+    id: idDocumentCoran,
+    titre: titre,
+    description: t.apprendre.bibliotheque.coran.edition,
+    type: TypeDocumentPlanche.document,
+    rayon: RayonPlanche.documentsDesCours,
+    ouverture: const OuvrirDansLApplication(Routes.eleveCoran),
+    couverture: CouvertureRessource.coran(titre),
+  );
+}
+
 /// Les documents de la planche pour [ressources], le Coran en premier quand
 /// [avecCoran]. Fonction pure, pour les tests.
 List<DocumentPlanche> documentsDepuisCatalogue(
   List<LibraryResource> ressources, {
   required bool avecCoran,
 }) {
-  final String titreCoran = t.apprendre.bibliotheque.coran.titre;
   return <DocumentPlanche>[
-    if (avecCoran)
-      DocumentPlanche(
-        id: idDocumentCoran,
-        titre: titreCoran,
-        description: t.apprendre.bibliotheque.coran.edition,
-        type: TypeDocumentPlanche.document,
-        rayon: RayonPlanche.documentsDesCours,
-        ouverture: const OuvrirDansLApplication(Routes.eleveCoran),
-        couverture: CouvertureRessource.coran(titreCoran),
-      ),
+    if (avecCoran) documentCoran(),
     for (final LibraryResource r in ressources)
       if (r.publiee && r.resourceType != TypeRessource.quran)
         DocumentPlanche(

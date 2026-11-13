@@ -62,6 +62,13 @@ class OngletBibliotheque extends ConsumerWidget {
     if (!documents.hasValue) {
       return const Skeleton.liste(key: ClesBibliotheque.chargement, lignes: 4);
     }
-    return PlancheDocuments(documents: documents.requireValue);
+    // La carte « Coran » est reecrite ici, dans la langue courante : le
+    // fournisseur garde la langue de sa lecture.
+    return PlancheDocuments(
+      documents: <DocumentPlanche>[
+        for (final DocumentPlanche d in documents.requireValue)
+          d.id == idDocumentCoran ? documentCoran() : d,
+      ],
+    );
   }
 }
