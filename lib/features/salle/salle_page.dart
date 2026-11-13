@@ -348,6 +348,15 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     if (locale != null && !locale.libere) return locale;
     final AccesSalle? acces = _acces;
     if (acces == null || _sortieEleve != null) return null;
+    // La synchronisation a besoin du profil : tant que la session n'est pas
+    // lue, rien n'est cree (la composition suivante reessaie).
+    String? profil;
+    try {
+      profil = ref.read(sessionProvider).profileId;
+    } on Object {
+      profil = null;
+    }
+    if (profil == null) return null;
     return _seanceLocale = creerSeanceVivante(
       cours: SessionEnCours(
         sessionId: widget.seanceId,
@@ -374,12 +383,16 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   /// S'abonne a la seance courante (et se desabonne de la precedente) : la
   /// page se redessine quand la parole, le tableau ou la pause recue
   /// changent. Aucune logique ici : elle vit dans la seance.
-  void _raccorderSeance() {
+  ///
+  /// [redessiner] : appele hors de la construction (adoption de l'appel,
+  /// etat du controleur), la page se redessine si la seance a change.
+  void _raccorderSeance({bool redessiner = false}) {
     final SeanceVivante? s = _seance;
     if (identical(s, _seanceSuivie)) return;
     _seanceSuivie?.removeListener(_seanceChange);
     _seanceSuivie = s;
     s?.addListener(_seanceChange);
+    if (redessiner && mounted) setState(() {});
   }
 
   void _seanceChange() {
@@ -717,7 +730,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
         if (_lireSortieHorsApplication(e)) setState(() {});
         // SYNCHRO-SESSION : la seance de l'appel nait a l'adoption et meurt
         // a la fin de l'appel ; la page suit celle qui vit.
-        _raccorderSeance();
+        _raccorderSeance(redessiner: true);
       });
       if (_lireSortieHorsApplication(_session.etatCourant)) {
         return;
@@ -779,7 +792,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     );
     // SYNCHRO-SESSION : la seance de l'appel vient de naitre (ou reste la
     // meme) ; la page s'y abonne tout de suite.
-    _raccorderSeance();
+    _raccorderSeance(redessiner: true);
   }
 
   /// La sortie de l'appel : par le controleur quand il le tient (annonce,
