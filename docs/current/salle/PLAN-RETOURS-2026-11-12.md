@@ -166,7 +166,7 @@ affiché dit l'inverse du serveur (retiré dans CAMARADES) ; la vue `session_pee
 et le matricule des autres participants d'une séance à tout participant (constat SEC-6) : la fermer
 demande de remplacer une vue, donc une installation par le directeur ; pas fait.
 
-## Où en sont les lots, au 13/11/2026 à 00:20 UTC
+## Où en sont les lots, au 13/11/2026 à 00:17 UTC
 
 Tout est sur `claude/zealous-tesla-ewstzw`. Rien sur staging, rien en production, rien prouvé par
 le directeur. Les preuves sont des tests et des captures de test, sauf mention.

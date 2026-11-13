@@ -1832,7 +1832,7 @@ page perd la hauteur de la rangée (environ 80 points au téléphone, 64 sur tab
 large, la ligne du texte passe de 611 à 577). Prouvé par tests et captures de test
 (`docs/current/captures/E2E/dynamique-chrono-1/`) ; pas sur un vrai appareil, pas en production.
 
-## D-041 (13/11/2026, 00:20 UTC). Les lots du soir du 12/11, intégrés sur la branche (retours du directeur)
+## D-041 (13/11/2026, 00:17 UTC). Les lots du soir du 12/11, intégrés sur la branche (retours du directeur)
 
 Le détail, lot par lot, est dans `PLAN-RETOURS-2026-11-12.md` (dernière section). Ce qui a été
 décidé en chemin, et qui engage la suite :
