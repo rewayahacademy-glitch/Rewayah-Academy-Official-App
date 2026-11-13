@@ -348,7 +348,8 @@ class LiveKitSessionProvider
         RepriseAutomatique,
         DroitsPublicationVivants,
         FermetureParLeServeur,
-        SonRecuBloque {
+        SonRecuBloque,
+        RecitantDeLaSalle {
   /// Cree le fournisseur. [retablirPublication] est l'appel au serveur du
   /// filet de MICRO-AVANT-ENSEIGNANT ([FiletPublication]) ; sans lui, seul le
   /// webhook du serveur rend ses droits a l'eleve. [verifierSalle] est
@@ -875,6 +876,7 @@ class LiveKitSessionProvider
       // ecrites par le serveur seul ; un changement de recitant change les
       // cameras recues par un eleve.
       ..on<lk.RoomMetadataChangedEvent>((_) {
+        _suivreRecitant();
         _publierParticipants();
         unawaited(_accorderVideos());
       })
@@ -1228,6 +1230,9 @@ class LiveKitSessionProvider
     if (salle == null || _participants.isClosed) {
       return;
     }
+    // SYNCHRO-SESSION : la salle rejointe (ou rouverte) porte deja ses
+    // metadonnees ; le recitant se relit avec la liste.
+    _suivreRecitant();
     final List<ParticipantSalle> liste = <ParticipantSalle>[
       if (salle.localParticipant case final lk.LocalParticipant moi)
         _traduire(moi, local: true),
@@ -1365,6 +1370,26 @@ class LiveKitSessionProvider
   /// L'eleve qui recite, lu dans les metadonnees de la salle (ecrites par le
   /// serveur seul), ou `null`.
   String? get _recitant => recitantDesMetadonnees(_salle?.metadata);
+
+  /// SYNCHRO-SESSION (ligne 3.1) : le recitant dit a l'ecran, le meme que
+  /// celui qui decide des abonnements ([_recitant]).
+  String? _recitantVu;
+  final StreamController<String?> _recitantFlux =
+      StreamController<String?>.broadcast();
+
+  @override
+  String? get recitantCourant => _recitantVu;
+
+  @override
+  Stream<String?> get recitantChange => _recitantFlux.stream;
+
+  /// Relit le recitant ; ne dit qu'un changement.
+  void _suivreRecitant() {
+    final String? recitant = _recitant;
+    if (recitant == _recitantVu) return;
+    _recitantVu = recitant;
+    if (!_recitantFlux.isClosed) _recitantFlux.add(recitant);
+  }
 
   /// La regle ([videoRecue]) pour la camera de [distant].
   bool _videoVoulue(lk.RemoteParticipant distant) => videoRecue(
@@ -1884,6 +1909,8 @@ class LiveKitSessionProvider
 
     _acces = null;
     _derniersParticipants = null;
+    // SYNCHRO-SESSION : plus de salle, plus de recitant.
+    _suivreRecitant();
     _repli.remettre();
     _cameraAvantDegradation = false;
     // Le refus de camera ne vaut que pour la seance ou il a eu lieu (revue de
@@ -1909,6 +1936,7 @@ class LiveKitSessionProvider
     await _donnees.close();
     await _accesMisAJour.close();
     await _sonBloqueFlux.close();
+    await _recitantFlux.close();
   }
 }
 

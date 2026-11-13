@@ -173,6 +173,10 @@ class SynchroSalle {
   /// L'etat du tableau que l'enseignant a diffuse en dernier.
   bool _tableauDiffuse = false;
 
+  /// SYNCHRO-SESSION : le tableau que cet appareil a ouvert pour la classe
+  /// (enseignant) ; la page rouverte le reprend.
+  bool get tableauDiffuse => _tableauDiffuse;
+
   /// Les participants vus a la derniere liste, hors soi.
   Set<String> _presents = const <String>{};
 

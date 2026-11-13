@@ -6,8 +6,6 @@
 
 import 'dart:convert';
 
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import '../../core/pause_seance/port_pause_seance.dart';
 import '../../core/tc_realtime/codec_message_pedagogique.dart';
 import '../../core/tc_realtime/port_realtime_pedagogique.dart';
@@ -89,9 +87,3 @@ bool paquetRappelPour(
       message.sessionId == sessionId &&
       estRappelPour(message, profilLocalId);
 }
-
-/// La derniere pause relayee recue par cet appareil, par seance : la salle
-/// l'ecrit, la salle reduite la reprend (sinon elle ne la saurait qu'au
-/// prochain relais).
-final Provider<Map<String, PauseSeance>> pausesRecuesProvider =
-    Provider<Map<String, PauseSeance>>((Ref _) => <String, PauseSeance>{});

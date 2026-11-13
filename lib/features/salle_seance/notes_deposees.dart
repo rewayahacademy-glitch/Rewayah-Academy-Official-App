@@ -50,6 +50,19 @@ class NotesDeposees extends Notifier<List<TraitVectoriel>> {
         .suivre(resourceId: resourceId)
         .listen(_recevoir, onError: (Object _) {});
     ref.onDispose(abonnement.cancel);
+    // SYNCHRO-SESSION (13/11/2026) : le depot de la seance vit avec l'appel,
+    // plus avec la page ; une page rouverte retrouve les traits deja pris
+    // (le flux du depot ne rejoue rien), de la meme portee que le flux suivi.
+    if (depot case final AnnotationsMemoire memoire) {
+      for (final AnnotationLayer couche in memoire.couches) {
+        if (couche.resourceId == resourceId && couche.sessionId == null) {
+          _couches[couche.id] = couche;
+        }
+      }
+      return <TraitVectoriel>[
+        for (final AnnotationLayer c in _couches.values) ...c.traits,
+      ];
+    }
     return const <TraitVectoriel>[];
   }
 
