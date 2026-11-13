@@ -37,9 +37,10 @@ $preflight$;
 -- ---------------------------------------------------------------------------
 -- 0. Un seul endroit pour fixer la date d'entree dans l'etape
 -- ---------------------------------------------------------------------------
--- Le jour de reference de l'academie : le jour de La Mecque (decision de
--- l'architecte, 13/11). UN seul endroit nomme, facile a rebrancher sur la
--- fonction de jour du lot 2 quand elle sera dans main.
+-- LE jour de reference de l'academie : le jour de La Mecque (decision du
+-- directeur relayee le 13/11, arbitrage de l'architecte). MEME fonction, MEME corps,
+-- MEMES droits que le lot 2 (20261123910000) : CREATE OR REPLACE des deux cotes pour
+-- que l'ordre d'installation soit indifferent. Seul endroit ou ce fuseau est ecrit.
 CREATE OR REPLACE FUNCTION private.jour_academie()
 RETURNS date
 LANGUAGE sql
@@ -336,43 +337,56 @@ END;
 $function$;
 
 -- Ce que donnerait un jour de debut, AVANT de confirmer : la date limite de
--- l'etape qui en resulte, calculee par le serveur (le client ne la recalcule
--- pas), et si elle est deja passee. Lecture seule. [p_niveau_id] nul : l'etape en
--- cours de l'eleve (datation) ; donne : l'etape du placement a decider.
+-- l'etape qui en resulte. Elle n'est PAS recalculee ici : le serveur fait le
+-- geste (placement et/ou datation, par les memes fonctions que l'ecriture, donc
+-- avec les declencheurs d'aujourd'hui et de demain, recul du lot 2 compris), lit
+-- private.dates_etape, puis ANNULE tout dans une sous-transaction (aucune trace,
+-- aucun journal). L'aperçu ne peut donc jamais differer de la date reellement
+-- posee. [p_niveau_id] nul : l'etape en cours de l'eleve (datation) ; donne :
+-- l'etape du placement a decider. Un refus (date future, sous le plancher, eleve
+-- sans etape...) se rend dans « refus », sans date.
 CREATE OR REPLACE FUNCTION public.apercu_date_limite(
   p_student_id uuid, p_date date, p_niveau_id uuid DEFAULT NULL)
 RETURNS jsonb
 LANGUAGE plpgsql
-STABLE
 SECURITY DEFINER
 SET search_path = ''
 AS $function$
 DECLARE
-  f public.eleve_etape_en_cours%ROWTYPE;
-  v_niveau uuid;
-  v_coh text;
-  v_sem int;
   v_limite date;
+  v_sem int;
+  v_refus text;
 BEGIN
   IF NOT coalesce(public.app_role() = 'admin' AND public.app_account_valid(), false) THEN
     RAISE EXCEPTION 'reserve a la direction' USING errcode = '42501';
   END IF;
-  SELECT * INTO f FROM public.eleve_etape_en_cours WHERE student_id = p_student_id;
-  v_niveau := coalesce(p_niveau_id, f.niveau_id);
-  IF v_niveau IS NULL OR p_date IS NULL THEN
-    RETURN pg_catalog.jsonb_build_object('date_limite', NULL, 'semaines', NULL, 'deja_passee', false);
+  IF p_date IS NULL THEN
+    RETURN pg_catalog.jsonb_build_object('date_limite', NULL, 'semaines', NULL,
+                                         'deja_passee', false, 'refus', 'date_obligatoire');
   END IF;
-  v_coh := coalesce(f.cohorte, private.cohorte_effective(p_student_id,
-             (SELECT gm.groupe_id FROM public.groupe_membres gm
-               WHERE gm.student_id = p_student_id AND gm.left_at IS NULL LIMIT 1)));
-  SELECT (n.durees -> v_coh ->> 'limite')::int INTO v_sem
-    FROM public.programme_niveaux n WHERE n.id = v_niveau;
-  IF v_sem IS NOT NULL THEN
-    v_limite := ((p_date + coalesce(f.recul_jours, 0)) + pg_catalog.make_interval(weeks => v_sem))::date;
-  END IF;
+  BEGIN
+    IF p_niveau_id IS NOT NULL THEN
+      IF NOT private.eleve_placable(p_student_id)
+         OR NOT EXISTS (SELECT 1 FROM public.programme_niveaux WHERE id = p_niveau_id)
+         OR EXISTS (SELECT 1 FROM public.progression_historique WHERE student_id = p_student_id) THEN
+        RAISE EXCEPTION 'placement_impossible' USING errcode = 'P0001';
+      END IF;
+      INSERT INTO public.progression_historique (student_id, niveau_id, type_mouvement, decide_par, motif)
+      VALUES (p_student_id, p_niveau_id, 'diagnostic_initial', auth.uid(), 'apercu');
+    END IF;
+    PERFORM private.fixer_entree_etape(p_student_id, p_date);
+    SELECT d.date_limite, d.date_limite_semaines INTO v_limite, v_sem
+      FROM private.dates_etape(p_student_id) d;
+    RAISE EXCEPTION 'apercu_annule' USING errcode = 'P0001';
+  EXCEPTION WHEN OTHERS THEN
+    IF SQLERRM <> 'apercu_annule' THEN
+      v_refus := pg_catalog.split_part(SQLERRM, ':', 1);
+    END IF;
+  END;
   RETURN pg_catalog.jsonb_build_object(
     'date_limite', v_limite, 'semaines', v_sem,
-    'deja_passee', v_limite IS NOT NULL AND v_limite < private.jour_academie());
+    'deja_passee', v_limite IS NOT NULL AND v_limite < private.jour_academie(),
+    'refus', v_refus);
 END;
 $function$;
 

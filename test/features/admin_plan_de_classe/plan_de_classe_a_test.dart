@@ -269,6 +269,22 @@ void main() {
       expect(plan.datations.length, 1);
     });
 
+    testWidgets(
+      'un jour que l\'ecriture refuserait : l\'apercu le dit, sans date',
+      (tester) async {
+        final FauxPlanClasse plan = FauxPlanClasse(
+          apercu: const ApercuDateLimite(
+            dateLimite: null,
+            dejaPassee: false,
+            refus: 'date_sous_plancher',
+          ),
+        );
+        await choisirJour(tester, plan);
+        expect(find.text(p.apercuRefus), findsOneWidget);
+        expect(find.text(p.apercuInconnue), findsNothing);
+      },
+    );
+
     testWidgets('duree inconnue : la phrase le dit, sans date inventee', (
       tester,
     ) async {

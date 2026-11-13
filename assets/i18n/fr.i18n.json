@@ -5359,6 +5359,7 @@
       "apercuLimite": "Avec ce jour de début, la date limite de l'étape sera le {date}.",
       "apercuPassee": "Avec ce jour de début, la date limite de l'étape était le {date}\u00a0: elle est déjà passée. L'élève apparaîtra tout de suite en retard sur cette étape. Aucun message n'est envoyé. Vous pouvez choisir un jour plus récent.",
       "apercuInconnue": "La date limite ne peut pas être calculée pour cet élève (durée ou tranche d'âge inconnue).",
+      "apercuRefus": "Ce jour de début ne pourra pas être enregistré (à venir, ou plus ancien que le plus ancien jour accepté). Choisissez un autre jour.",
       "apercuErreur": "La date limite qui en résulte n'a pas pu être lue. Le serveur la calcule à l'enregistrement.",
       "jourErreur": "Le jour de référence n'a pas pu être lu. Réessayez dans un instant.",
       "jourRelire": "Relire le jour",

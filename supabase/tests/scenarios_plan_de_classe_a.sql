@@ -717,6 +717,7 @@ UPDATE public.eleve_etape_en_cours
        entree_etape_le = (pg_catalog.now() AT TIME ZONE 'Asia/Riyadh')::date - 20,
        recul_jours = 7
  WHERE student_id = pg_temp.u('e1');
+CREATE TEMP TABLE pc_recul AS SELECT recul_jours AS r FROM public.eleve_etape_en_cours WHERE student_id = pg_temp.u('e1');
 SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
 SET LOCAL ROLE authenticated;
 SELECT public.dater_entree_etape(pg_temp.u('e1'), (pg_catalog.now() AT TIME ZONE 'Asia/Riyadh')::date - 5, 'Date de la montee');
@@ -724,9 +725,9 @@ RESET ROLE;
 SELECT pg_temp.vrai(
   (SELECT f.entree_etape_le = (pg_catalog.now() AT TIME ZONE 'Asia/Riyadh')::date - 5
           AND f.entree_niveau_le = (pg_catalog.now() AT TIME ZONE 'Asia/Riyadh')::date - 300
-          AND f.recul_jours = 7
+          AND f.recul_jours = (SELECT r FROM pc_recul)
      FROM public.eleve_etape_en_cours f WHERE f.student_id = pg_temp.u('e1')),
-  'monte d''une etape precedente : l''entree dans le niveau reste, le recul du lot 2 est conserve');
+  'monte d''une etape precedente : l''entree dans le niveau reste ; recul_jours n''est jamais touche par ces gestes (7 avec le lot 1 seul, derive par le lot 2 sinon)');
 SET LOCAL ROLE authenticated;
 SELECT public.dater_entree_etape(pg_temp.u('e1'), (pg_catalog.now() AT TIME ZONE 'Asia/Riyadh')::date - 400, 'Avant la montee');
 RESET ROLE;
@@ -889,7 +890,29 @@ SELECT pg_temp.vrai(public.jour_academie_direction() = (now() AT TIME ZONE 'Asia
   'le jour de reference est celui de La Mecque, rendu par le serveur');
 SELECT pg_temp.vrai(
   (SELECT pg_catalog.count(*) FROM public.audit_logs WHERE action = 'entree_etape_datee') = 1,
-  'un apercu n''ecrit rien (ni date, ni journal : seul le placement date a ecrit)');;
+  'un apercu n''ecrit rien (ni date, ni journal : seul le placement date a ecrit)');
+SELECT pg_temp.vrai(
+  NOT EXISTS (SELECT 1 FROM public.progression_historique WHERE student_id = pg_temp.u('e5'))
+  AND NOT EXISTS (SELECT 1 FROM public.eleve_etape_en_cours WHERE student_id = pg_temp.u('e5')),
+  'l''apercu d''un placement ne laisse ni decision ni etape');
+SET LOCAL ROLE authenticated;
+INSERT INTO pc_r VALUES ('hors', public.apercu_date_limite(pg_temp.u('e1'), ((now() AT TIME ZONE 'Asia/Riyadh')::date + 1)));
+INSERT INTO pc_r VALUES ('ancien', public.apercu_date_limite(pg_temp.u('e1'), ((now() AT TIME ZONE 'Asia/Riyadh')::date - interval '11 years')::date));
+INSERT INTO pc_r VALUES ('sansetape', public.apercu_date_limite(pg_temp.u('e5'), (now() AT TIME ZONE 'Asia/Riyadh')::date));
+RESET ROLE;
+SELECT pg_temp.vrai(
+  (SELECT j ->> 'refus' = 'date_future' AND j ->> 'date_limite' IS NULL FROM pc_r WHERE cle = 'hors')
+  AND (SELECT j ->> 'refus' = 'date_sous_plancher' AND j ->> 'date_limite' IS NULL FROM pc_r WHERE cle = 'ancien')
+  AND (SELECT j ->> 'refus' = 'eleve_sans_etape' FROM pc_r WHERE cle = 'sansetape'),
+  'un jour refuse par l''ecriture est refuse par l''apercu (le meme chemin), sans date');
+SET LOCAL ROLE authenticated;
+-- L'apercu est LE MEME calcul que l'ecriture : la date posee ensuite est celle annoncee.
+SELECT public.dater_entree_etape(pg_temp.u('e1'), ((now() AT TIME ZONE 'Asia/Riyadh')::date - interval '3 years')::date, 'Jour annonce');
+RESET ROLE;
+SELECT pg_temp.vrai(
+  (SELECT d.date_limite FROM private.dates_etape(pg_temp.u('e1')) d)
+    = (SELECT (j ->> 'date_limite')::date FROM pc_r WHERE cle = 'passee'),
+  'la date limite apres l''ecriture est exactement celle de l''apercu');;
 RESET ROLE;
 
 SELECT pg_temp.qui(pg_temp.u('x1'), 'teacher');
@@ -1455,6 +1478,144 @@ SET LOCAL ROLE authenticated;
 SELECT pg_temp.vrai(pg_temp.essai('SELECT public.decider_placement_depuis(''' || pg_temp.u('g2') || ''', ''' || (SELECT id FROM pc_ids WHERE cle='n2') || ''', ''x'', NULL)') = 'cet eleve n''existe pas ou son compte n''est pas valide',
   'la fiche d''eleve autonome supprimee : le titulaire ne se place plus');;
 RESET ROLE;
+
+ROLLBACK;
+
+-- ======================================================================
+-- 7. Avec le lot 2 (si installe) : l'apercu est le meme calcul que l'ecriture, recul compris
+-- ======================================================================
+BEGIN;
+SET CONSTRAINTS ALL IMMEDIATE;
+
+CREATE FUNCTION pg_temp.qui(p_id uuid, p_role text, p_foyer uuid DEFAULT NULL) RETURNS void
+LANGUAGE plpgsql AS $$
+DECLARE v_jwt text := pg_catalog.json_build_object('aal', 'aal1', 'app_metadata',
+                        pg_catalog.json_build_object('role', p_role, 'household_id', p_foyer))::text;
+BEGIN
+  PERFORM pg_catalog.set_config('request.jwt.claim.sub', p_id::text, true);
+  PERFORM pg_catalog.set_config('test.uid', p_id::text, true);
+  PERFORM pg_catalog.set_config('request.jwt.claims', v_jwt, true);
+  PERFORM pg_catalog.set_config('test.jwt', v_jwt, true);
+END $$;
+CREATE FUNCTION pg_temp.vrai(p_condition boolean, p_label text) RETURNS void
+LANGUAGE plpgsql AS $$
+BEGIN
+  IF p_condition IS NOT TRUE THEN
+    RAISE EXCEPTION 'ROUGE : %', p_label;
+  END IF;
+  RAISE NOTICE 'OK %', p_label;
+END $$;
+CREATE FUNCTION pg_temp.u(p text) RETURNS uuid LANGUAGE sql AS
+  $$ SELECT pg_catalog.md5('plan-classe-a-' || p)::uuid $$;
+CREATE FUNCTION pg_temp.essai(p_sql text) RETURNS text
+LANGUAGE plpgsql AS $$
+BEGIN
+  EXECUTE p_sql;
+  RETURN 'ok';
+EXCEPTION
+  WHEN insufficient_privilege THEN RETURN 'refus';
+  WHEN OTHERS THEN RETURN SQLERRM;
+END $$;
+CREATE TEMP TABLE pc_ids(cle text PRIMARY KEY, id uuid);
+GRANT ALL ON pc_ids TO authenticated, anon;
+GRANT EXECUTE ON FUNCTION pg_temp.qui(uuid, text, uuid), pg_temp.vrai(boolean, text), pg_temp.u(text),
+  pg_temp.essai(text) TO authenticated, anon;
+
+INSERT INTO auth.users(id, email)
+SELECT pg_temp.u(x), 'pc-' || x || '@test.invalid'
+  FROM unnest(ARRAY['a1','b1','t1','e1','e2','e3','e5','e6','x1']) AS x;
+INSERT INTO public.households(id, timezone) VALUES
+  (pg_temp.u('f1'), 'America/Toronto'), (pg_temp.u('f3'), 'America/Toronto');
+INSERT INTO public.profiles(id, immutable_id, role, household_id, first_name, last_name, account_status, gender)
+SELECT pg_temp.u(x.id), x.mat, x.role::public.app_role,
+       CASE WHEN x.foyer IS NOT NULL THEN pg_temp.u(x.foyer) END,
+       x.prenom, 'PC', (CASE x.role WHEN 'teacher' THEN 'provisional_active' ELSE 'active' END)::public.account_status,
+       'female'::public.gender
+  FROM (VALUES
+   ('a1','PC-ADM-01','admin',NULL,'Direction'),
+   ('b1','PC-ENS-01','teacher',NULL,'Titulaire'),
+   ('t1','PC-TUT-01','guardian','f1','Tutrice'),
+   ('x1','PC-ENS-02','teacher',NULL,'Autre'),
+   ('e1','PC-ELV-01','student','f1','Eleve un'),
+   ('e2','PC-ELV-02','student','f1','Eleve deux'),
+   ('e3','PC-TIT-03','guardian','f3','Adulte'),
+   ('e5','PC-ELV-05','student','f1','Eleve cinq'),
+   ('e6','PC-ELV-06','student','f1','Eleve six')) AS x(id, mat, role, foyer, prenom);
+INSERT INTO public.student_profiles(profile_id, student_type, interface_mode, cohorte) VALUES
+  (pg_temp.u('e1'), 'minor', 'child', 'enfant_6_9'),
+  (pg_temp.u('e2'), 'minor', 'standard', 'enfant_10_13'),
+  (pg_temp.u('e5'), 'minor', 'child', 'enfant_6_9'),
+  (pg_temp.u('e6'), 'minor', 'child', 'enfant_6_9');
+INSERT INTO public.student_profiles(profile_id, titulaire_profile_id, student_type, interface_mode, cohorte, niveau_declare)
+VALUES (pg_temp.u('e3'), pg_temp.u('e3'), 'autonomous', 'standard', 'adulte_18_plus', 'lecture_courante');
+-- Inscrits depuis 60 jours (les bornes de la date d'entree en dependent).
+UPDATE public.profiles SET created_at = pg_catalog.now() - interval '60 days'
+ WHERE id IN (pg_temp.u('e1'), pg_temp.u('e2'), pg_temp.u('e3'), pg_temp.u('e5'), pg_temp.u('e6'));
+
+-- Trois classes ouvertes sans etape (avant toute publication), des membres
+-- deja la ; e6 est sorti de sa classe.
+INSERT INTO public.groupes(id, teacher_id, type_public, seuil_max, libelle, weekday, hour_local, timezone_iana) VALUES
+ (pg_temp.u('c1'), pg_temp.u('b1'), 'enfant', 5, 'An-Nour PC', 1, 18, 'America/Toronto'),
+ (pg_temp.u('c2'), pg_temp.u('b1'), 'adulte', 6, 'Al-Huda PC', 2, 19, 'America/Toronto'),
+ (pg_temp.u('c3'), pg_temp.u('b1'), 'enfant', 5, 'Ar-Rahma PC', 3, 17, 'America/Toronto');
+INSERT INTO public.groupe_membres(groupe_id, student_id, joined_at) VALUES
+ (pg_temp.u('c1'), pg_temp.u('e1'), pg_catalog.now() - interval '30 days'),
+ (pg_temp.u('c1'), pg_temp.u('e2'), pg_catalog.now() - interval '30 days'),
+ (pg_temp.u('c2'), pg_temp.u('e3'), pg_catalog.now() - interval '30 days'),
+ (pg_temp.u('c1'), pg_temp.u('e6'), pg_catalog.now() - interval '40 days');
+UPDATE public.groupe_membres SET left_at = pg_catalog.now() - interval '10 days',
+       left_by = pg_temp.u('a1'), left_reason = 'depart'
+ WHERE student_id = pg_temp.u('e6');
+
+-- Programme publie par la direction (les bases d'un geste, puis la publication).
+SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
+SET LOCAL ROLE authenticated;
+INSERT INTO pc_ids VALUES ('v1', public.repartir_des_bases_programme());
+SELECT public.publier_version_programme((SELECT id FROM pc_ids WHERE cle = 'v1'), 'fixture');
+RESET ROLE;
+INSERT INTO pc_ids SELECT 'n' || n.ordre, n.id FROM public.programme_niveaux n
+ WHERE n.version_id = (SELECT id FROM pc_ids WHERE cle = 'v1');
+CREATE TEMP TABLE pc_notif AS SELECT pg_catalog.count(*) AS n FROM public.notifications;
+SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
+SET LOCAL ROLE authenticated;
+SELECT public.donner_niveau_classe(pg_temp.u('c1'), (SELECT id FROM pc_ids WHERE cle='n1'), 'Premiere etape');
+SELECT public.dater_entree_etape(pg_temp.u('e1'), (pg_catalog.now() AT TIME ZONE 'Asia/Riyadh')::date, 'Debut aujourd''hui');;
+RESET ROLE;
+
+DO $lot2$
+DECLARE
+  v_jour date := (pg_catalog.now() AT TIME ZONE 'Asia/Riyadh')::date;
+  v_apercu jsonb;
+  v_recul_avant integer;
+  v_pose date;
+BEGIN
+  IF pg_catalog.to_regclass('public.calendrier_ecole') IS NULL THEN
+    RAISE NOTICE 'OK lot 2 absent : ce controle est sans objet (recul_jours reste celui du lot 1)';
+    RETURN;
+  END IF;
+  -- Une fermeture publiee de 7 jours, a venir : dans la fenetre de l'etape qui commence aujourd'hui.
+  INSERT INTO public.calendrier_ecole(type, categorie, titre, du, au, portee, publie, publie_le)
+  VALUES ('fermeture', 'autre', 'Fermeture d''essai', v_jour + 5, v_jour + 11, 'ecole', true, pg_catalog.now());
+  UPDATE public.eleve_etape_en_cours SET maj_le = maj_le WHERE student_id = pg_temp.u('e1');
+  SELECT recul_jours INTO v_recul_avant FROM public.eleve_etape_en_cours WHERE student_id = pg_temp.u('e1');
+  IF v_recul_avant <> 7 THEN
+    RAISE EXCEPTION 'ROUGE : fixture du lot 2 : le recul de la fermeture devrait etre 7, il vaut %', v_recul_avant;
+  END IF;
+  -- Un debut il y a 100 jours : la fermeture n'est plus dans la fenetre de l'etape, le
+  -- recul d'ecriture tombe a 0. Un apercu qui reprendrait l'ANCIEN recul (7) mentirait.
+  PERFORM pg_temp.qui(pg_temp.u('a1'), 'admin');
+  v_apercu := public.apercu_date_limite(pg_temp.u('e1'), v_jour - 100);
+  PERFORM public.dater_entree_etape(pg_temp.u('e1'), v_jour - 100, 'Debut annonce');
+  SELECT d.date_limite INTO v_pose FROM private.dates_etape(pg_temp.u('e1')) d;
+  IF (v_apercu ->> 'date_limite')::date IS DISTINCT FROM v_pose THEN
+    RAISE EXCEPTION 'ROUGE : l''apercu (%) differe de la date reellement posee (%)', v_apercu ->> 'date_limite', v_pose;
+  END IF;
+  IF v_pose <> v_jour - 100 + 70 THEN
+    RAISE EXCEPTION 'ROUGE : date posee inattendue % (attendu %)', v_pose, v_jour - 100 + 70;
+  END IF;
+  RAISE NOTICE 'OK avec le lot 2 : l''apercu annonce la date reellement posee (recul recalcule par le declencheur)';
+END
+$lot2$;
 
 ROLLBACK;
 

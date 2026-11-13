@@ -295,13 +295,18 @@ class EtatPublication {
 @immutable
 class ApercuDateLimite {
   /// Cree l'apercu.
-  const ApercuDateLimite({required this.dateLimite, required this.dejaPassee});
+  const ApercuDateLimite({
+    required this.dateLimite,
+    required this.dejaPassee,
+    this.refus,
+  });
 
   /// Lit la reponse de `apercu_date_limite`.
   factory ApercuDateLimite.depuisJson(Map<String, dynamic> json) =>
       ApercuDateLimite(
         dateLimite: DateTime.tryParse(json['date_limite'] as String? ?? ''),
         dejaPassee: json['deja_passee'] as bool? ?? false,
+        refus: json['refus'] as String?,
       );
 
   /// La date limite qui en resulte, nulle quand le serveur ne peut pas la
@@ -310,6 +315,10 @@ class ApercuDateLimite {
 
   /// Vrai quand cette date limite est deja passee.
   final bool dejaPassee;
+
+  /// Le code du refus que l'ecriture opposerait a ce jour (a venir, sous le
+  /// plancher, eleve sans etape...), nul quand le jour passerait.
+  final String? refus;
 }
 
 /// Un apercu se demande pour un eleve, un jour et, pour un placement, une etape.

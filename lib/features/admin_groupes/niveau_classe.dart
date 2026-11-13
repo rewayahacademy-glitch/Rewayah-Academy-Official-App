@@ -163,6 +163,10 @@ class ApercuLimite extends ConsumerWidget {
       ),
       AsyncValue<ApercuDateLimite>(hasValue: true) =>
         switch (apercu.requireValue) {
+          ApercuDateLimite(refus: final String _?) => Text(
+            t.admin.planClasse.apercuRefus,
+            style: textes.bodySmall,
+          ),
           ApercuDateLimite(dateLimite: null) => Text(
             t.admin.planClasse.apercuInconnue,
             style: textes.bodySmall,
