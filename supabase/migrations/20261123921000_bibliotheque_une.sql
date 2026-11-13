@@ -12,11 +12,11 @@
 --   Fonctions remplacees par `CREATE OR REPLACE`, signature identique, droits
 --   conserves puis reaffirmes (12) :
 --     app_private.library_controle_version(uuid)        (lien, etape, sans fichier)
---     public.library_creer_brouillon(jsonb)             (rayon, ordre, lien, etapes, tranches, lecture, ecole)
+--     public.library_creer_brouillon(jsonb)             (rayon, ordre, lien, etapes, tranches, lecture, ecole ; refuse le type quran)
 --     public.library_mettre_a_jour(uuid,jsonb,integer)  (idem + vignette)
 --     public.library_get_detail(uuid)                   (idem)
 --     public.library_get_catalogue(jsonb,text,integer)  (filtres lecture, ecole, rayon ; nouvelles cles)
---     private.n4_ressource_lisible(uuid)                (tranche d'age ; exception ecrite pour le Coran sur l'acces paye)
+--     private.n4_ressource_lisible(uuid)                (tranche d'age ; exception d'acces paye pour le seul Coran seme, par son identifiant)
 --     private.n4_manifeste(uuid)                        (cles ajoutees, jamais une cle de stockage)
 --     public.bibliotheque_catalogue_lecteur(jsonb,integer)  (filtres rayon, etape, classe, eleve, decalage)
 --     public.ressources_du_groupe(uuid)                 (correctif B1 : tranche, plus de colonnes ajoutees)
@@ -24,19 +24,20 @@
 --   installe est lu, l'ancre doit s'y trouver exactement une fois, sinon la
 --   migration echoue ; l'empreinte F86 est recalculee si elle existe) (2) :
 --     public.autoriser_lecture_version(uuid)            (garde de tranche apres le role)
---     public.rech_d1_rechercher_supports(text,uuid,integer)  (tranche d'age et acces paye de la recherche)
+--     public.rech_d1_rechercher_supports(text,uuid,integer)  (meme lisibilite que le catalogue : n4_ressource_lisible)
 --   Politique modifiee par `ALTER POLICY`, a l'identique plus deux conditions :
---     public.library_resource_lecture                   (tranche d'age ; exception Coran sur l'acces paye)
+--     public.library_resource_lecture                   (tranche d'age ; exception d'acces paye pour le seul Coran seme)
 --   Table etendue : public.library_resource (colonnes rayon, ordre, lien_externe,
 --     vignette_cle, etapes, tranches, lecture_coran, ecole_priere, avec leurs contraintes).
 --   Donnees semees : deux lignes de library_rayon ; le Coran (voir 7).
 --   Neuf : deux tables (library_rayon, private.library_vignette_intentions),
---     quinze fonctions : trois lectures du lecteur (rayons, version, vignettes),
+--     seize fonctions : trois lectures du lecteur (rayons, version, vignettes),
 --     quatre fonctions de vignette (demander, lire, confirmer, annuler),
 --     bibliotheque_depot_actif, bibliotheque_etapes_publiees,
 --     library_mineurs_sans_cohorte, library_semer_coran, et quatre aides
 --     internes (library_etapes_normalisees, library_tranches_normalisees,
---     tranche_autorisee, tranche_autorisee_version).
+--     tranche_autorisee, tranche_autorisee_version) dont l'identifiant du Coran
+--     (private.coran_id).
 --
 -- Ce qu'il fait (BIBLIOTHEQUE-UNE, charte partie 11) :
 --   1. Deux rayons, EN DONNEE : library_rayon (« Documents des cours » et
@@ -276,6 +277,21 @@ REVOKE ALL ON FUNCTION private.tranche_autorisee_version(uuid)
   FROM PUBLIC, anon, authenticated, service_role, agent_ro;
 GRANT EXECUTE ON FUNCTION private.tranche_autorisee_version(uuid) TO authenticated;
 
+-- L'identifiant du SEUL Coran de la Bibliotheque (celui que seme
+-- library_semer_coran). L'exception d'acces paye (regle du 04/11/2026) porte sur
+-- cet identifiant, jamais sur le type : un autre document de type Coran n'y a
+-- pas droit (revue de l'architecte). La direction ne peut pas en creer
+-- (library_creer_brouillon refuse le type `quran`).
+CREATE FUNCTION private.coran_id()
+RETURNS uuid
+LANGUAGE sql
+IMMUTABLE
+SET search_path = ''
+AS $function$ SELECT 'c0a4a000-0000-4000-8000-0000000c0a4a'::uuid $function$;
+ALTER FUNCTION private.coran_id() OWNER TO postgres;
+REVOKE ALL ON FUNCTION private.coran_id() FROM PUBLIC, anon, service_role, agent_ro;
+GRANT EXECUTE ON FUNCTION private.coran_id() TO authenticated;
+
 -- Le controle d'une version avant publication, etendu : un document sans
 -- fichier mais avec un lien (lien externe, video par lien) n'a ni fichier a
 -- sonder ni empreinte a exiger, et n'a pas a prouver un droit de diffusion
@@ -400,7 +416,7 @@ BEGIN
      OR pg_catalog.length(v_langue) NOT BETWEEN 2 AND 16
      OR pg_catalog.length(v_categorie) > 80
      OR coalesce(pg_catalog.length(v_niveau), 0) > 80
-     OR v_type IS NULL OR NOT EXISTS (
+     OR v_type IS NULL OR v_type = 'quran' OR NOT EXISTS (
        SELECT 1 FROM pg_catalog.pg_enum e
        JOIN pg_catalog.pg_type t ON t.oid = e.enumtypid
        JOIN pg_catalog.pg_namespace n ON n.oid = t.typnamespace
@@ -1117,8 +1133,8 @@ AS $function$
        )
        -- Le Coran reste ouvert a tout compte valide, paye ou non (regle du
        -- 04/11/2026, 20261104600000, arbitrage de l'architecte sur la revue I3) :
-       -- l'exception est ecrite pour le seul document de type Coran.
-       AND (private.acces_paye_appelant() OR r.resource_type::text = 'quran')
+       -- l'exception porte sur l'identifiant du seul Coran seme, pas sur le type.
+       AND (private.acces_paye_appelant() OR r.id = private.coran_id())
        AND private.tranche_autorisee(r.tranches)
       FROM public.library_resource r
      WHERE r.id = p_resource_id
@@ -1162,8 +1178,8 @@ ALTER POLICY library_resource_lecture ON public.library_resource
         )
       )
     )
-    -- Meme exception ecrite pour le seul document Coran (voir n4_ressource_lisible).
-    AND (private.acces_paye_appelant() OR library_resource.resource_type::text = 'quran')
+    -- Meme exception, sur l'identifiant du seul Coran seme (voir n4_ressource_lisible).
+    AND (private.acces_paye_appelant() OR library_resource.id = private.coran_id())
     AND private.tranche_autorisee(library_resource.tranches)
   );
 
@@ -1423,8 +1439,7 @@ DECLARE
   v_id uuid;
   v_version uuid;
 BEGIN
-  SELECT r.id INTO v_id FROM public.library_resource r
-   WHERE r.resource_type::text = 'quran' ORDER BY r.created_at, r.id LIMIT 1;
+  SELECT r.id INTO v_id FROM public.library_resource r WHERE r.id = private.coran_id();
   IF v_id IS NOT NULL THEN
     RETURN v_id;
   END IF;
@@ -1438,9 +1453,9 @@ BEGIN
   PERFORM pg_catalog.set_config('request.jwt.claim.sub', v_admin::text, true);
 
   INSERT INTO public.library_resource
-    (title, short_title, resource_type, edition, language, category, access_policy, offline_policy,
+    (id, title, short_title, resource_type, edition, language, category, access_policy, offline_policy,
      capabilities, description, rayon, ordre, lecture_coran)
-  VALUES ('Le Coran', 'Coran', 'quran'::public.library_resource_type, 'madina-hafs-604', 'ar', 'coran',
+  VALUES (private.coran_id(), 'Le Coran', 'Coran', 'quran'::public.library_resource_type, 'madina-hafs-604', 'ar', 'coran',
           'inscrits', 'jamais', ARRAY['pageable', 'searchable', 'zoomable'],
           'Le Coran en entier, page par page, dans le lecteur de l''académie.', 'cours', 0, 'hafs')
   RETURNING id INTO v_id;
@@ -1649,15 +1664,15 @@ GRANT EXECUTE ON FUNCTION public.ressources_du_groupe(uuid) TO authenticated, ag
 -- aussi la regle de lecture, sans la tranche d'age NI l'acces paye : un enfant
 -- y trouvait le titre d'un document destine a d'autres tranches, et un compte
 -- suspendu pour impaye retrouvait toute la Bibliotheque (jamais l'adresse ni la
--- cle). Deux lignes ajoutees, ancrees sur la porte de compte, qui echouent si
--- le texte de la fonction a change depuis : la tranche, et l'acces paye avec la
--- meme exception ecrite pour le seul Coran (regle du 04/11/2026).
+-- cle). Une ligne ajoutee, ancree sur la porte de compte, qui echoue si le
+-- texte de la fonction a change depuis : la recherche applique la MEME
+-- lisibilite que le catalogue (`n4_ressource_lisible` : politique, acces paye
+-- avec l'exception du seul Coran, tranche d'age).
 SELECT pg_temp.ajouter_apres(
   'public.rech_d1_rechercher_supports(text,uuid,integer)'::regprocedure,
   $a$       and public.app_account_valid()
 $a$,
-  $b$       and private.tranche_autorisee(r.tranches)
-       and (private.acces_paye_appelant() or r.resource_type::text = 'quran')
+  $b$       and private.n4_ressource_lisible(r.id)
 $b$);
 DO $empreinte_recherche$
 DECLARE

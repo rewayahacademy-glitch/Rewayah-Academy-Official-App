@@ -953,8 +953,34 @@ $b1_recherche_tuteur$;
 
 -- I3 : un compte dont l'acces est suspendu pour impaye ne lit plus la
 -- Bibliotheque, SAUF le Coran (regle du 04/11/2026), et la fonction reste
--- identique a la RLS.
+-- identique a la RLS. Il n'y a qu'UN Coran : celui qui est seme, par son
+-- identifiant ; la direction ne peut pas en creer un second, et un document de
+-- type Coran insere par un autre chemin n'a pas l'exception.
+SELECT pg_temp.qui('b3100000-0000-0000-0000-000000000001', 'admin', NULL);
+DO $coran_unique$
+BEGIN
+  BEGIN
+    PERFORM public.library_creer_brouillon('{"titre":"Pas le Coran","type":"quran","langue":"ar","categorie":"coran"}');
+    RAISE EXCEPTION 'B31 ROUGE (I3) : la direction cree un second document de type Coran';
+  EXCEPTION WHEN invalid_parameter_value THEN NULL; END;
+  IF (SELECT id FROM public.library_resource WHERE resource_type::text = 'quran' AND title = 'Le Coran') <> 'c0a4a000-0000-4000-8000-0000000c0a4a'::uuid THEN
+    RAISE EXCEPTION 'B31 ROUGE (I3) : le Coran seme n''a pas l''identifiant reserve';
+  END IF;
+END;
+$coran_unique$;
 RESET ROLE;
+-- Un document de type Coran qui ne serait pas le Coran seme (insere hors de la
+-- direction) : publie pour les inscrits, il ne passe PAS l'acces paye.
+INSERT INTO public.library_resource (id, title, short_title, resource_type, access_policy, offline_policy, category, language)
+VALUES ('b3100000-0000-0000-0000-0000000005b1', 'Pas le Coran', 'Pas le Coran', 'quran', 'inscrits', 'jamais', 'coran', 'ar');
+INSERT INTO public.resource_version (id, resource_id, numero_version, statut)
+VALUES ('b3100000-0000-0000-0000-0000000005b2', 'b3100000-0000-0000-0000-0000000005b1', 1, 'brouillon');
+INSERT INTO public.library_version_rights
+  (resource_version_id, source_titre, titulaire, usages, attribution, approuve, revu_par, revu_le)
+VALUES ('b3100000-0000-0000-0000-0000000005b2', 'Source B31', 'Titulaire B31', ARRAY['application'], 'Attribution B31', true,
+        'b3100000-0000-0000-0000-000000000001', now());
+UPDATE public.resource_version SET statut = 'publiee' WHERE id = 'b3100000-0000-0000-0000-0000000005b2';
+UPDATE public.library_resource SET current_version_id = 'b3100000-0000-0000-0000-0000000005b2' WHERE id = 'b3100000-0000-0000-0000-0000000005b1';
 SET LOCAL session_replication_role = replica;
 INSERT INTO public.acces_suspensions_paiement (id, profile_id, facture_id, jour)
 VALUES ('b3100000-0000-0000-0000-0000000005a1', 'b3100000-0000-0000-0000-000000000003',
@@ -989,15 +1015,35 @@ BEGIN
   IF public.rech_d1_rechercher_supports('lien')::text ~ 'Lien externe' THEN
     RAISE EXCEPTION 'B31 ROUGE (I3) : la recherche d''un compte suspendu rend un document';
   END IF;
-  IF public.rech_d1_rechercher_supports('coran')::text !~ 'Coran' THEN
+  IF public.rech_d1_rechercher_supports('coran')::text !~ 'Le Coran' THEN
     RAISE EXCEPTION 'B31 ROUGE (I3) : la recherche d''un compte suspendu ne trouve pas le Coran';
+  END IF;
+  IF public.rech_d1_rechercher_supports('coran')::text ~ 'Pas le Coran' THEN
+    RAISE EXCEPTION 'B31 ROUGE (I3) : un faux Coran passe l''acces paye dans la recherche : %', public.rech_d1_rechercher_supports('coran');
   END IF;
 END;
 $i3_recherche$;
+-- L'onglet de la classe suit la meme regle : un eleve membre de la classe, suspendu
+-- pour impaye, n'y voit plus aucun document (le Coran n'est rattache a aucune classe).
+RESET ROLE;
+SET LOCAL session_replication_role = replica;
+INSERT INTO public.acces_suspensions_paiement (id, profile_id, facture_id, jour)
+VALUES ('b3100000-0000-0000-0000-0000000005a2', 'b3100000-0000-0000-0000-000000000002',
+        'b3100000-0000-0000-0000-0000000005f2', current_date);
+SET LOCAL session_replication_role = origin;
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.qui('b3100000-0000-0000-0000-000000000002', 'student', 'b31fffff-0000-0000-0000-000000000001');
+DO $i3_classe$
+BEGIN
+  IF pg_temp.groupe_titres() <> '' THEN
+    RAISE EXCEPTION 'B31 ROUGE (I3) : un eleve suspendu voit encore des documents dans l''onglet de la classe : %', pg_temp.groupe_titres();
+  END IF;
+END;
+$i3_classe$;
 RESET ROLE;
 SET LOCAL session_replication_role = replica;
 UPDATE public.acces_suspensions_paiement SET retabli_le = now(), retabli_motif = 'paiement'
- WHERE id = 'b3100000-0000-0000-0000-0000000005a1';
+ WHERE id IN ('b3100000-0000-0000-0000-0000000005a1', 'b3100000-0000-0000-0000-0000000005a2');
 SET LOCAL session_replication_role = origin;
 SET LOCAL ROLE authenticated;
 
