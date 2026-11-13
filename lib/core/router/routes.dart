@@ -444,7 +444,8 @@ abstract final class Routes {
 
   /// Une sous-page du compte : `informations`, `securite`, `acces`,
   /// `paiements`, `preferences`, `aide`, `informations-legales`,
-  /// `consentements`, `mes-donnees`.
+  /// `consentements`, `mes-donnees`, `sorties` (HORS-SALLE-2 : l'accord du
+  /// journal des sorties de l'application, par enfant).
   static String compteTuteurSousPage(String segment) =>
       '$tuteurCompte/$segment';
 
@@ -459,6 +460,7 @@ abstract final class Routes {
     'informations-legales',
     'consentements',
     'mes-donnees',
+    'sorties',
   ];
 
   /// Ancienne page des preferences du titulaire (PROFILS P2) : les
@@ -1318,6 +1320,11 @@ abstract final class Routes {
   /// Mes donnees : la copie de ses donnees et la demande de suppression du
   /// compte (CPT-SUPPR-EXPORT). Le tuteur la rejoint sous `/tuteur/compte`.
   static const String compteMesDonnees = '/compte/mes-donnees';
+
+  /// HORS-SALLE-2 : l'accord de l'eleve adulte autonome au journal des
+  /// sorties de l'application, pour lui-meme. Le tuteur la rejoint sous
+  /// `/tuteur/compte/sorties`.
+  static const String compteSorties = '/compte/sorties';
 
   /// Profils d'enfants du foyer.
   static const String compteProfils = '/compte/profils';

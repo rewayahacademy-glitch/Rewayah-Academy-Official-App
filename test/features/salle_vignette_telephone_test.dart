@@ -36,6 +36,7 @@ import 'package:rewayah_academy/core/video/service_video.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
 import 'package:rewayah_academy/core/widgets/languette_bord.dart';
 import 'package:rewayah_academy/features/salle/salle_page.dart';
+import 'package:rewayah_academy/features/salle_seance/dynamique_chrono.dart';
 import 'package:rewayah_academy/features/salle_seance/telephone_plein_ecran.dart';
 
 import '../capture/outil_capture.dart';
@@ -193,8 +194,15 @@ List<ParticipantSalle> _classe({required bool camera}) => <ParticipantSalle>[
 ];
 
 /// Un toucher de l'ecran (hors d'un bouton) : les commandes reviennent.
+///
+/// DYNAMIQUE-CHRONO-1 : le coin de l'ecran est la rangee reservee de la
+/// Dynamique chrono ; le toucher se fait juste dessous, sur la page.
 Future<void> _toucher(WidgetTester tester) async {
-  await tester.tapAt(const Offset(AppSpacing.xs, AppSpacing.xs));
+  final Finder rangee = find.byKey(TelephonePleinEcran.cleRangeeChrono);
+  final double haut = rangee.evaluate().isEmpty
+      ? 0
+      : tester.getRect(rangee).bottom;
+  await tester.tapAt(Offset(AppSpacing.xs, haut + AppSpacing.xs));
   await tester.pumpAndSettle();
 }
 
@@ -268,8 +276,18 @@ void main() {
       tester.getRect(_languette).center.dy,
       closeTo(avant.center.dy, toleranceGarde + 1),
     );
-    // La page n'a pas bouge : elle garde l'ecran entier.
-    expect(tester.getSize(_page), ecran);
+    // La page n'a pas bouge : elle garde l'ecran sous la rangee reservee de
+    // la Dynamique chrono (DYNAMIQUE-CHRONO-1).
+    expect(
+      tester.getSize(_page),
+      Size(
+        ecran.width,
+        ecran.height -
+            tester
+                .getRect(find.byKey(TelephonePleinEcran.cleRangeeChrono))
+                .bottom,
+      ),
+    );
     expect(tester.takeException(), isNull);
   });
 
@@ -506,7 +524,9 @@ void main() {
             _verifierRangee(tester, taille, droite: true);
             verifierSansChevauchement(tester, <Finder>[
               _languette,
-              find.byKey(const ValueKey<String>('ligne-etat-telephone')),
+              // DYNAMIQUE-CHRONO-1 : la zone reservee de la barre (sans
+              // chrono dans ce harnais, la barre n'a rien a dire).
+              find.byKey(ZoneChrono.cle),
             ]);
             if (taille.width >= taille.height) {
               // Ordinateur : la languette vit au bord de la bande, hors de

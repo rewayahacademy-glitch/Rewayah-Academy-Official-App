@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 // exporte par l'entree principale de Riverpod 3, il vit dans `misc.dart`.
 import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
 
+import '../coran/service_coran.dart' show pagesMushafMedine;
 import 'corpus_service_coran.dart';
 import 'layout_lignes_indisponible.dart';
 import 'page_mushaf_vm.dart';
@@ -31,6 +32,16 @@ final FutureProviderFamily<PageCorpus?, int> pageCorpusProvider =
     FutureProvider.family<PageCorpus?, int>(
       (Ref ref, int numero) => ref.watch(portCorpusCoranProvider).page(numero),
     );
+
+/// PAGES-FLUIDES (directeur, 12/11/2026) : les pages a lire en avance quand
+/// la page [numero] s'affiche, pour que le tour suivant soit immediat : la
+/// precedente et la suivante, bornees a l'edition. **Pas plus loin** : la
+/// regle de [pageCorpusProvider] tient (on ne fait pas transiter le corpus).
+List<int> pagesVoisines(int numero, {int nombrePages = pagesMushafMedine}) =>
+    <int>[
+      if (numero > 1 && numero <= nombrePages) numero - 1,
+      if (numero >= 1 && numero < nombrePages) numero + 1,
+    ];
 
 /// La mise en page d'une page, quand une source la fournit.
 final FutureProviderFamily<LayoutPage?, int> layoutPageProvider =

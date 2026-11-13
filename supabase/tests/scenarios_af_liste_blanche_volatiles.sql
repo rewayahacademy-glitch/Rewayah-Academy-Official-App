@@ -310,6 +310,8 @@ declare
     'mon_invitation_en_cours()',
     'pause_reglage_ecrire(uuid,boolean,integer,integer,text,text)',
     'pause_seance_demarrer(uuid,text)',
+    -- PAUSE-SERVEUR (12/11/2026) : le Non a la pause proposee ; memes gardes que pause_seance_demarrer (enseignant titulaire, compte valide, seance en cours).
+    'pause_seance_refuser(uuid,text)',
     'pause_seance_terminer(uuid,text)',
     'planifier_evaluation(uuid,uuid,text,date)',
     'poser_exception_progression(uuid,text,text)',
@@ -505,7 +507,28 @@ declare
     -- signes au plus) d'UNE ligne de sourates_validees, jamais d'effacement ;
     -- et une ligne d'audit (log_sensitive_access, action sourate_retiree).
     -- Relue par l'agent du lot le 12/11/2026.
-    'retirer_sourate_validee(uuid,integer,text)'
+    'retirer_sourate_validee(uuid,integer,text)',
+    -- HORS-SALLE-2 (migration 20261124200000) : l'accord du journal des
+    -- sorties de l'application, par eleve. Garde positive
+    -- private.sorties_peut_decider (app_account_valid() ET eleve reconnu par
+    -- sa fiche ET, soit lui-meme ET ma_capacite_eleve() (eleve autonome, quel
+    -- que soit son role), soit app_role() = 'guardian' ET un autre eleve de
+    -- son foyer non autonome) ; 42501 sinon. Ce qu'elles peuvent
+    -- ecrire : le marquage retire_le, retire_par de l'accord en cours et UNE
+    -- ligne d'accord (accepter, journal allume, version en cours seulement),
+    -- jamais d'effacement ; une ligne d'audit (log_sensitive_access).
+    -- Relues par l'agent du lot le 13/11/2026.
+    'accepter_accord_sorties(uuid,text)',
+    'retirer_accord_sorties(uuid)',
+    -- HORS-SALLE-2 (meme migration) : noter une sortie de l'application.
+    -- Garde positive app_account_valid() ET (eleve reconnu par sa fiche pour
+    -- lui-meme, ou 'guardian' ET est_du_foyer(eleve) non autonome, D6) ET
+    -- eleve participant
+    -- de la seance en cours ET journal allume ET accord valide ; sinon rend
+    -- {"note": false} sans rien ecrire. Ce qu'elle peut ecrire : UNE ligne de
+    -- journal_sorties_app, heures du serveur, 200 au plus par seance et par
+    -- eleve, une par seconde au plus. Relue par l'agent du lot le 13/11/2026.
+    'noter_sortie_app(uuid,integer,boolean,uuid)'
   ];
   -- Ouvertes a anon par choix : la desinscription d'un e-mail et le depot d'un
   -- avis se font sans compte.

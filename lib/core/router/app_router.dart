@@ -226,6 +226,7 @@ import '../../features/inscription/inscription_page.dart';
 import '../../features/inscription/questionnaire/questionnaire_inscription.dart'
     show questionnaireInscriptionProvider;
 import '../../features/inscription/questionnaire/questionnaire_page.dart';
+import '../../features/journal_sorties/accord_sorties_page.dart';
 import '../../features/journee/journee_page.dart';
 import '../../features/juridique/juridique_pages.dart';
 import '../../features/juridique/textes_juridiques.dart';
@@ -767,6 +768,15 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         path: Routes.compteMesDonnees,
         builder: (BuildContext _, GoRouterState _) =>
             const _CoquilleSecondaire(child: MesDonneesPage()),
+      ),
+      // HORS-SALLE-2 : l'accord de l'eleve adulte au journal des sorties.
+      GoRouteSure(
+        path: Routes.compteSorties,
+        builder: (BuildContext context, GoRouterState _) => _CoquilleSecondaire(
+          child: AccordSortiesPage(
+            onRetour: () => GoRouter.of(context).go(Routes.compte),
+          ),
+        ),
       ),
       GoRouteSure(
         path: Routes.compteProfils,
@@ -1438,6 +1448,14 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                     path: 'consentements',
                     pageBuilder: glissee(
                       (GoRouterState _) => const ConsentementObservationPage(),
+                    ),
+                  ),
+                  // HORS-SALLE-2 : l'accord du journal des sorties, par
+                  // enfant.
+                  GoRouteSure(
+                    path: 'sorties',
+                    pageBuilder: glissee(
+                      (GoRouterState _) => const AccordSortiesPage(),
                     ),
                   ),
                   GoRouteSure(

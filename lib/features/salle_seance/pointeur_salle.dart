@@ -9,8 +9,9 @@
 //     plus (30 par seconde), **la derniere position d'un geste part
 //     toujours**, un battement redit la position tant que le doigt reste
 //     pose, et le lever part aussitot ;
-//   * [PointeurSalle] : ce qui se voit. Un point a fort contraste (anneau
-//     clair, coeur de la couleur de marque), un sillage qui s'efface en
+//   * [PointeurSalle] : ce qui se voit. Un anneau creux a fort contraste
+//     (couleur de marque, filets clairs, centre vide : directeur, 12/11,
+//     « la tete cache la chose pointee »), un sillage qui s'efface en
 //     [AppMouvement.pointeurSillage], et chez qui recoit un rattrapage court
 //     entre deux positions. « Reduire les animations » : le point seul.
 
@@ -301,9 +302,12 @@ class _PointeurSalleState extends State<PointeurSalle>
   }
 }
 
-/// Le point : un anneau clair cerne de la couleur de marque, et un coeur de
-/// la couleur de marque. Clair sur une page sombre, colore sur une page
-/// claire : il se lit dans les deux themes.
+/// Le point : un ANNEAU CREUX. Le centre est vide, on lit le mot dessous
+/// (directeur, 12/11/2026 : « la tete cache la chose pointee »). Le trait est
+/// de la couleur de marque, borde d'un filet clair de chaque cote : il se
+/// detache d'une page claire comme d'une page sombre, sur du texte comme sur
+/// du blanc (directeur, 11/11/2026 : « trop discret », il reste tres visible).
+/// Un pointeur immobile n'a pas de sillage : l'anneau le garde visible.
 class _Point extends StatelessWidget {
   const _Point({super.key, required this.palette});
 
@@ -321,24 +325,33 @@ class _PeintrePoint extends CustomPainter {
 
   final AppColorPair paire;
 
+  /// L'epaisseur du filet clair, de chaque cote du trait de couleur.
+  static const double _filet = 1;
+
+  /// L'epaisseur du trait de couleur de marque.
+  static const double _trait = 4;
+
   @override
   void paint(Canvas canvas, Size size) {
     final Offset centre = size.center(Offset.zero);
     final double rayon = size.shortestSide / 2;
-    // Le cerne de couleur : il detache l'anneau clair d'une page claire.
+    final Paint clair = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = _filet
+      ..color = paire.onBackground;
+    final Paint marque = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = _trait
+      ..color = paire.background;
+    // Trou : 32 - 2 * (1 + 4 + 1) = 20 de diametre, jamais peint.
     canvas
-      ..drawCircle(centre, rayon, Paint()..color = paire.background)
-      // L'anneau clair : il detache le coeur d'une page sombre.
-      ..drawCircle(centre, rayon - _cerne, Paint()..color = paire.onBackground)
-      ..drawCircle(
-        centre,
-        PointeurSalle.diametreCoeur / 2,
-        Paint()..color = paire.background,
-      );
+      // Filet clair exterieur : detache le trait d'une page sombre.
+      ..drawCircle(centre, rayon - _filet / 2, clair)
+      // Le trait de couleur de marque.
+      ..drawCircle(centre, rayon - _filet - _trait / 2, marque)
+      // Filet clair interieur : detache le trait d'un mot sombre.
+      ..drawCircle(centre, rayon - _filet - _trait - _filet / 2, clair);
   }
-
-  /// L'epaisseur du cerne exterieur.
-  static const double _cerne = 2;
 
   @override
   bool shouldRepaint(_PeintrePoint ancien) => ancien.paire != paire;

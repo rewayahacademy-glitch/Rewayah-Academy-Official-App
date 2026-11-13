@@ -75,6 +75,8 @@ Règles qui en découlent (elles ne se discutent plus écran par écran) :
   rangée incomplète est centrée elle aussi. Écart constant de 16 entre les cadres.
 - **Ordre** : l'enseignant d'abord (chez l'élève), puis les élèves dans un ordre qui ne bouge pas ;
   soi-même en dernier. L'ordre ne change pas quand quelqu'un parle (l'anneau suffit).
+- **Vidéo chez l'élève** (directeur, 12/11/2026, D-040) : seulement l'enseignant et le camarade
+  qui récite ; tout autre camarade est montré par sa photo et son prénom (`videoMontree`).
 - **Seul avec une personne** (cours à deux) : un seul grand cadre, à sa forme, centré.
 - **Seul dans la salle** : la scène d'attente (le symbole et ses ondes). Si sa caméra est allumée,
   son propre cadre est posé sous la phrase d'attente, dans la mise en page, à la largeur du bloc

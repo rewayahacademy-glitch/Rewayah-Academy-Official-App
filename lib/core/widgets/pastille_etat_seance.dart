@@ -51,7 +51,17 @@ EtatPastilleSeance? etatPastilleDe(EtatSeanceFamille etat) => switch (etat) {
 class PastilleEtatSeance extends StatelessWidget {
   /// Cree la pastille. [libelle] remplace le mot par defaut quand l'ecran
   /// dit plus (« Seance en direct »), jamais pour dire autre chose.
-  const PastilleEtatSeance({required this.etat, super.key, this.libelle});
+  const PastilleEtatSeance({
+    required this.etat,
+    super.key,
+    this.libelle,
+    this.pointSeul = false,
+  });
+
+  /// SYNCHRO-SESSION (13/11/2026) : la pastille reduite a son point quand
+  /// la place manque ; le mot reste lu par le lecteur d'ecran (jamais la
+  /// couleur seule a l'oreille). La salle reduite au telephone s'en sert.
+  final bool pointSeul;
 
   /// L'etat a montrer.
   final EtatPastilleSeance etat;
@@ -71,11 +81,13 @@ class PastilleEtatSeance extends StatelessWidget {
       libelle: libelle ?? libelleDe(etat),
       ton: TonEtat.succes,
       marqueur: const PointDirect(),
+      pointSeul: pointSeul,
     ),
     EtatPastilleSeance.annulee => StatusPill(
       libelle: libelle ?? libelleDe(etat),
       ton: TonEtat.alerte,
       marqueur: const _IconeAnnulation(),
+      pointSeul: pointSeul,
     ),
   };
 }

@@ -26,6 +26,7 @@ import '../../core/tc_realtime/service_realtime_pedagogique.dart';
 import '../../core/tc_realtime/types_message.dart';
 import '../../core/theme/app_mouvement.dart';
 import '../../core/video/video_session_provider.dart';
+import '../salle_seance/relais_salle.dart';
 
 /// S1 : le type du message du pointeur de l'enseignant (point normalise de
 /// la page, canal ephemere). `EvenementPointeur` porte une position dans le
@@ -172,6 +173,10 @@ class SynchroSalle {
   /// L'etat du tableau que l'enseignant a diffuse en dernier.
   bool _tableauDiffuse = false;
 
+  /// SYNCHRO-SESSION : le tableau que cet appareil a ouvert pour la classe
+  /// (enseignant) ; la page rouverte le reprend.
+  bool get tableauDiffuse => _tableauDiffuse;
+
   /// Les participants vus a la derniere liste, hors soi.
   Set<String> _presents = const <String>{};
 
@@ -271,7 +276,10 @@ class SynchroSalle {
   }
 
   /// Donne la parole a un eleve pour toute la classe, ou la reprend avec
-  /// `null` (enseignant). Rien n'est coupe chez les autres.
+  /// `null` (enseignant). Ce message ne fait qu'afficher : il n'ouvre ni ne
+  /// coupe aucun micro. La fermeture des micros des camarades pendant une
+  /// recitation est posee par le serveur (`faireReciter`, droits de la
+  /// salle), pas par ce message.
   void diffuserParole(ParoleSalle? eleve) {
     if (!_peutDiffuser) return;
     parole.value = eleve;
@@ -302,11 +310,8 @@ class SynchroSalle {
   final ValueNotifier<int> rappelsRecus = ValueNotifier<int>(0);
 
   void _recevoirRappel(MessagePedagogique message) {
-    if (message.type != typeRappelDiscret ||
-        message.emetteurProfilId == profilLocalId ||
-        academyIdDeCharge(message) == null) {
-      return;
-    }
+    // DYNAMIQUE-CHRONO-2 : la meme lecture que la salle reduite.
+    if (!estRappelPour(message, profilLocalId)) return;
     rappelsRecus.value++;
   }
 
@@ -476,15 +481,21 @@ class SynchroSalle {
   @mustCallSuper
   Future<void> liberer() async {
     _peremptionPointeur?.cancel();
-    await _abonnementPointeur.cancel();
-    await _abonnementTableau.cancel();
-    await _abonnementPage?.cancel();
-    await _abonnementArrivees?.cancel();
+    // SYNCHRO-SESSION : tout se coupe tout de suite (la seance vit avec
+    // l'appel : a sa fin, plus rien ne doit ecouter le moteur), puis on
+    // attend que chaque fin soit faite.
+    final List<Future<void>> fins = <Future<void>>[
+      _abonnementPointeur.cancel(),
+      _abonnementTableau.cancel(),
+      ?_abonnementPage?.cancel(),
+      ?_abonnementArrivees?.cancel(),
+      _reception.liberer(),
+    ];
     pointeurDistant.dispose();
     tableauOuvert.dispose();
     parole.dispose();
     rappelsRecus.dispose();
-    await _reception.liberer();
+    await Future.wait(fins);
     await _transport.liberer();
   }
 }

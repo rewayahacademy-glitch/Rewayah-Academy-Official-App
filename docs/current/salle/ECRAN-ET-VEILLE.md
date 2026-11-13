@@ -28,6 +28,14 @@ son téléphone, après fusion (voir « Comment le vérifier » en bas).
 4. **Rien n'est coupé quand la page passe en arrière-plan** : ni le micro, ni le son reçu, ni la
    connexion. Le code ne l'a jamais fait ; c'est vérifié (voir § 4).
 
+**Mis à jour le 12/11/2026 (lot HORS-SALLE-1, demande du directeur).** Le point 4 reste vrai pour
+celui qui modère la séance (l'enseignant). **Il ne l'est plus pour l'élève** : quand la page de
+l'élève est cachée pendant un appel (autre application, autre onglet, écran éteint ou verrouillé),
+il garde sa place 30 secondes, puis l'application le fait sortir de la salle (annonce, puis
+déconnexion) ; à son retour, un écran le dit et propose « Retourner dans la salle ». Le son reçu
+est maintenant relancé après chaque reprise de la connexion, pas seulement au retour à l'écran.
+Voir `SORTIES-DE-LA-SALLE.md` § 2 bis.
+
 ## 2. Ce que le web peut garantir, et ce qu'il ne peut pas
 
 Le verrou d'écran du web (« Screen Wake Lock ») empêche **l'extinction automatique** de l'écran

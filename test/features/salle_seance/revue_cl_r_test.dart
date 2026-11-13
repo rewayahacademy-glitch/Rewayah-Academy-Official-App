@@ -241,6 +241,9 @@ void main() {
       ]);
     });
 
+    // CAMARADES (directeur, 12/11/2026) : l'eleve lit le prenom et voit la
+    // photo de ses camarades dans la grille de la salle ; la LISTE des
+    // eleves du panneau reste a l'enseignant (ce que ce test garde).
     test('eleve : jamais la liste de ses camarades', () {
       final VueSeance? v = vue('student');
       expect(v, isNotNull);

@@ -58,7 +58,7 @@
 | N° | La fiche dit | État au 12/11 | Où |
 | --: | :-- | :-- | :-- |
 | 10 | La vignette de l'élève ne montre que l'enseignant, jamais un autre | **dans main** : jamais deux images de la même personne, la vignette est celle de l'enseignant | D-014, D-023, D-028 |
-| 11 | L'élève ne voit jamais la vidéo des autres élèves | **à décider** : la salle montre aujourd'hui la classe en grille à l'élève (voir en tête) | `MODES-AFFICHAGE.md`, D-028, D-031 |
+| 11 | L'élève ne voit jamais la vidéo des autres élèves | **tranchée le 12/11/2026, par le directeur** (D-040) : l'élève voit ses camarades dans la grille par leur photo et leur prénom ; la vidéo seulement de l'enseignant et de celui qui récite | `MODES-AFFICHAGE.md`, D-028, D-031, D-040 |
 | 12 | L'enseignant voit ses élèves et leur état | **dans main** | D-017, D-030 |
 | 13 | Le pointeur disparaît 2 s après le dernier mouvement | non revérifié cette nuit (le pointeur est redit toutes les 250 ms tant qu'il est posé) | D-014, `app_mouvement.dart` (`pointeurBattement`) |
 

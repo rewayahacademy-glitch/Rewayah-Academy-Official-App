@@ -13,7 +13,7 @@ import 'package:rewayah_academy/core/tc_horloge/chrono_seance.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/chrono_vivant.dart';
 import 'package:rewayah_academy/features/salle_seance/chrono_salle.dart';
-import 'package:rewayah_academy/features/salle_seance/pilule_etat_salle.dart';
+import 'package:rewayah_academy/features/salle_seance/dynamique_chrono.dart';
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
 
 import '../../support/demo/seance_demo.dart';
@@ -29,7 +29,6 @@ Future<void> _poser(
   required DateTime maintenant,
   RoleSeance role = RoleSeance.eleve,
   bool avecChrono = true,
-  bool aLaLigne = false,
   BornesChrono? bornes,
   bool sansBornes = false,
   Size taille = const Size(1440, 900),
@@ -65,10 +64,9 @@ Future<void> _poser(
             home: Material(
               child: Align(
                 alignment: Alignment.topLeft,
-                child: PiluleEtatSalle(
+                child: DynamiqueChrono(
                   vue: vue,
                   avecChrono: avecChrono,
-                  aLaLigne: aLaLigne,
                   largeurMax: taille.width - 32,
                 ),
               ),
@@ -110,6 +108,8 @@ void main() {
         maintenant: _t0.add(const Duration(minutes: 57, seconds: 30)),
       );
       expect(_texte(tester), '02:30');
+      // DYNAMIQUE-CHRONO-1 (directeur, 12/11/2026) : le mot est visible.
+      expect(find.text(t.salle.seance.chrono.reste), findsOneWidget);
     });
   }
 
@@ -143,7 +143,6 @@ void main() {
     await _poser(
       tester,
       maintenant: _t0.add(const Duration(minutes: 61)),
-      aLaLigne: true,
     );
     expect(_texte(tester), t.salle.seance.chrono.tempsPrevuEcoule);
   });
@@ -162,14 +161,15 @@ void main() {
 
   for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {
     for (final bool ligne in <bool>[false, true]) {
-      testWidgets('${langue.name}, 320 px, texte x2, aLaLigne $ligne : '
+      // DYNAMIQUE-CHRONO-1 : `aLaLigne` n'existe plus (la barre repliee
+      // tient sur une ligne) ; les deux passages restent.
+      testWidgets('${langue.name}, 320 px, texte x2, passage $ligne : '
           'aucun debordement', (WidgetTester tester) async {
         await _poser(
           tester,
           maintenant: _t0.add(const Duration(minutes: 30)),
           taille: const Size(320, 640),
           echelle: 2,
-          aLaLigne: ligne,
           langue: langue,
         );
         expect(find.byType(ChronoSalle), findsOneWidget);
