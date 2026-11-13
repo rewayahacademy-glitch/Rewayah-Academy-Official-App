@@ -22,6 +22,7 @@ Retour du directeur sur PRIERE-1 en production : « Je ne vais jamais remplir ce
 6. **Position arrondie à 2 décimales, ville à 3** (centre-ville, donnée publique).
 7. **Hors web** : la lecture de la position n'est pas disponible (aucun paquet n'a été ajouté : `pubspec.yaml` est protégé) ; l'écran dit « Position non partagée » et la direction peut poser le lieu.
 8. **`public.lieux`** : n'existe ni sur `main` (286b07ea) ni dans la branche horloge visible (d536178d, qui ne porte que `villes_ref`) ; ses colonnes ne sont pas devinées. Le déclencheur `lieux_priere_auto` n'est donc pas posé ; la fonction `private.priere_trg_lieux_auto()` (noms de colonnes en arguments, échec jamais bloquant) est livrée et prouvée sur une table d'essai ; la ligne exacte à ajouter est dans PRIERE.md § 3 ter.
+8 bis. **Ordre avec le lot horloge** (précision de l'architecte) : le lot horloge pose lui-même `lieux_priere_auto` sur `public.lieux` et relaie vers `private.priere_lieu_auto` (signature exacte livrée) si elle existe ; ce lot ne pose aucun déclencheur du même nom. Prouvé sur Postgres nu dans les trois ordres (horloge avant, après, absente). Limite : en « horloge avant », les villes déjà enregistrées ne sont pas rattrapées (le lot horloge doit appeler la fonction une fois par ville existante).
 9. **Clés de textes devenues inutiles** (`priere.direction.feuille.apercu`, `apercuVide`, `vendrediOui`, `vendrediNon`, `methodeEcole`, `ecoleEcole`) : laissées en place, aucune suppression.
 
 ## Ce qui reste faux, limité ou non prouvé
