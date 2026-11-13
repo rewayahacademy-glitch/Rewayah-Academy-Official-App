@@ -15176,8 +15176,8 @@
       "other": "Au-delà de la durée prévue\u00a0: {ecoulees} semaines sur {prevue}, avant la date limite"
     },
     "etapesTitre": "Les étapes",
-    "etapeFranchie": "Franchie",
-    "etapeFranchieLe": "Franchie le {numero} {mois} {annee}",
+    "etapeFranchie": "Étape précédente",
+    "etapeFranchieLe": "Étape précédente, entrée le {numero} {mois} {annee}",
     "etapeEnCours": "En cours",
     "etapeAVenir": "À venir",
     "sourates": "Sourates des bases validées",

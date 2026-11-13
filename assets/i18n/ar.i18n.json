@@ -14790,8 +14790,8 @@
       "other": "تجاوز المدة المقررة: ⁨{ecoulees}⁩ من ⁨{prevue}⁩ أسابيع، قبل الموعد النهائي"
     },
     "etapesTitre": "المراحل",
-    "etapeFranchie": "اجتيزت",
-    "etapeFranchieLe": "اجتيزت في ⁨{numero}⁩ ⁨{mois}⁩ ⁨{annee}⁩",
+    "etapeFranchie": "المرحلة السابقة",
+    "etapeFranchieLe": "المرحلة السابقة، الدخول في ⁨{numero}⁩ ⁨{mois}⁩ ⁨{annee}⁩",
     "etapeEnCours": "جارية",
     "etapeAVenir": "قادمة",
     "sourates": "سور الأساسيات المعتمدة",
