@@ -326,25 +326,25 @@ void main() {
         in <(String, Size, ThemeMode, AppLocale)>[
           (
             'grille-eleve-enfant-390-clair',
-            Size(390, 844),
+            const Size(390, 844),
             ThemeMode.light,
             AppLocale.fr,
           ),
           (
             'grille-eleve-enfant-1440-clair',
-            Size(1440, 900),
+            const Size(1440, 900),
             ThemeMode.light,
             AppLocale.fr,
           ),
           (
             'grille-eleve-enfant-1440-sombre',
-            Size(1440, 900),
+            const Size(1440, 900),
             ThemeMode.dark,
             AppLocale.fr,
           ),
           (
             'grille-eleve-enfant-390-arabe',
-            Size(390, 844),
+            const Size(390, 844),
             ThemeMode.light,
             AppLocale.ar,
           ),
