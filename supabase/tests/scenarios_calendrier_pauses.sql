@@ -82,7 +82,7 @@ GRANT ALL ON cp_ids TO authenticated;
 -- ------------------------------------------------------------------
 INSERT INTO auth.users(id, email)
 SELECT pg_temp.u(x), 'cp-' || x || '@test.invalid'
-  FROM unnest(ARRAY['a1','b1','b3','b5','b6','b7','b8','t1','t2','t3','e1','e2','e4','e5','e6','e7','e8','e9']) AS x;
+  FROM unnest(ARRAY['a1','b1','b3','b5','b6','b7','b8','t1','t2','t3','e1','e2','e4','e5','e6','e7','e8','e9','e10']) AS x;
 INSERT INTO public.households(id, timezone) VALUES
   (pg_temp.u('f1'), 'America/Toronto'), (pg_temp.u('f2'), 'Pacific/Auckland'), (pg_temp.u('f3'), 'UTC');
 INSERT INTO public.profiles(id, immutable_id, role, household_id, first_name, last_name, account_status, gender)
@@ -108,6 +108,7 @@ SELECT pg_temp.u(x.id), x.mat, x.role::public.app_role,
    ('e6','CP-ELV-06','student','f3','Adulte six'),
    ('e7','CP-ELV-07','student','f2','Eleve sept'),
    ('e8','CP-ELV-08','student','f1','Ado huit'),
+   ('e10','CP-ELV-10','student','f3','Adulte dix'),
    ('e9','CP-ELV-09','student','f3','Adulte eleve')) AS x(id, mat, role, foyer, prenom);
 INSERT INTO public.student_profiles(profile_id, student_type, interface_mode, cohorte) VALUES
   (pg_temp.u('e1'), 'minor', 'child', 'enfant_6_9'),
@@ -117,6 +118,7 @@ INSERT INTO public.student_profiles(profile_id, student_type, interface_mode, co
   (pg_temp.u('e6'), 'autonomous', 'standard', 'adulte_18_plus'),
   (pg_temp.u('e7'), 'minor', 'child', 'enfant_6_9'),
   (pg_temp.u('e8'), 'minor', 'standard', 'ado_14_17'),
+  (pg_temp.u('e10'), 'autonomous', 'standard', 'adulte_18_plus'),
   (pg_temp.u('e9'), 'autonomous', 'standard', 'adulte_18_plus');
 
 -- Le programme des bases publie, puis les classes ; les eleves y entrent aujourd'hui.
@@ -1665,6 +1667,73 @@ SELECT public.calendrier_ecole_enregistrer((SELECT id FROM cp_ids WHERE cle = 'n
 RESET ROLE;
 SELECT pg_temp.vrai((SELECT pg_catalog.count(*) FROM public.notifications WHERE evenement = 'fermeture_annoncee' AND params ->> 'groupe_id' = pg_temp.u('cN2')::text AND params ->> 'fermeture_id' = (SELECT id::text FROM cp_ids WHERE cle = 'notif2')) = :'r27_avant'::int,
   'une modification qui ne met aucune nouvelle seance de cote n''envoie aucune notification');
+
+-- ------------------------------------------------------------------
+-- 24. Contre-lecture du 13/11, IMP-A : une classe couverte APRES la publication par un changement de membres
+-- ------------------------------------------------------------------
+-- Une fermeture de TRANCHE (adultes) est publiee. cT est une classe d'adultes sans membre : la fermeture ne la vise pas
+-- (une tranche ne vise une classe que si tous ses membres sont de la tranche), sa seance du jour ferme est vivante.
+-- e10 (adulte) y entre : la classe devient couverte, mais rien ne la resynchronise. La cloche de nuit met de cote cette
+-- seance et previent par le meme chemin, une fois ; rejouee, elle ne redouble rien.
+INSERT INTO public.groupes(id, teacher_id, type_public, seuil_max, libelle, weekday, hour_local, timezone_iana) VALUES
+ (pg_temp.u('cT'), pg_temp.u('b8'), 'adulte', 5, 'Balayage CP', 4, 9, 'UTC');
+SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.fermer('tr_nuit', 'autre', 13, 19, 'tranche', 'adulte_18_plus');
+SELECT pg_temp.publier('tr_nuit', true);
+RESET ROLE;
+SELECT pg_catalog.count(*) AS vivantes FROM public.sessions s
+ WHERE s.groupe_id = pg_temp.u('cT') AND s.deleted_at IS NULL AND s.status = 'planned'
+   AND private.jour_academie_de(s.started_at) BETWEEN pg_temp.auj() + 13 AND pg_temp.auj() + 19 \gset r30_
+INSERT INTO public.groupe_membres(groupe_id, student_id, joined_at) VALUES (pg_temp.u('cT'), pg_temp.u('e10'), pg_catalog.now());
+SELECT pg_temp.vrai(:'r30_vivantes'::int = 1
+                    AND (SELECT pg_catalog.count(*) FROM public.sessions s WHERE s.groupe_id = pg_temp.u('cT') AND s.deleted_at IS NULL AND s.status = 'planned'
+                           AND private.jour_academie_de(s.started_at) BETWEEN pg_temp.auj() + 13 AND pg_temp.auj() + 19) = 1
+                    AND NOT EXISTS (SELECT 1 FROM public.notifications WHERE evenement = 'fermeture_annoncee' AND params ->> 'groupe_id' = pg_temp.u('cT')::text),
+  'fixture : la classe couverte apres coup a une seance vivante un jour ferme, jamais annoncee');
+SELECT private.materialiser_classes_actives();
+SELECT pg_temp.vrai(
+  (SELECT pg_catalog.count(*) FROM public.sessions s WHERE s.groupe_id = pg_temp.u('cT') AND s.deleted_at IS NULL
+     AND private.jour_academie_de(s.started_at) BETWEEN pg_temp.auj() + 13 AND pg_temp.auj() + 19) = 0
+  AND (SELECT pg_catalog.count(*) FROM public.seances_fermees sf JOIN public.sessions s ON s.id = sf.session_id
+        WHERE s.groupe_id = pg_temp.u('cT') AND sf.fermeture_id = (SELECT id FROM cp_ids WHERE cle = 'tr_nuit') AND sf.retablie_le IS NULL) = 1,
+  'la cloche de nuit met de cote la seance vivante d''un jour ferme (rien n''est supprime)');
+SELECT pg_temp.vrai(
+  (SELECT pg_catalog.count(*) FROM public.notifications WHERE evenement = 'fermeture_annoncee' AND destinataire = pg_temp.u('e10')
+     AND params ->> 'groupe_id' = pg_temp.u('cT')::text AND params ->> 'fermeture_id' = (SELECT id::text FROM cp_ids WHERE cle = 'tr_nuit') AND params ->> 'portee' = 'soi' AND destination = '/eleve') = 1
+  AND (SELECT pg_catalog.count(*) FROM public.notifications WHERE evenement = 'fermeture_annoncee' AND destinataire = pg_temp.u('b8')
+        AND params ->> 'groupe_id' = pg_temp.u('cT')::text AND params ->> 'fermeture_id' = (SELECT id::text FROM cp_ids WHERE cle = 'tr_nuit') AND destination = '/enseignant/classes') = 1
+  AND NOT EXISTS (SELECT 1 FROM public.notifications n JOIN public.student_profiles sp ON sp.profile_id = n.destinataire
+                   WHERE sp.student_type = 'minor' AND n.evenement IN ('fermeture_annoncee', 'fermeture_levee')),
+  'l''adulte et l''enseignant sont prevenus une fois par le meme chemin ; aucun mineur');
+SELECT pg_catalog.count(*) AS avant FROM public.notifications WHERE evenement = 'fermeture_annoncee' AND params ->> 'groupe_id' = pg_temp.u('cT')::text \gset r31_
+SELECT pg_catalog.count(*) AS avant_sf FROM public.seances_fermees sf JOIN public.sessions s ON s.id = sf.session_id WHERE s.groupe_id = pg_temp.u('cT') \gset r31_
+SELECT private.materialiser_classes_actives();
+SELECT private.materialiser_classes_actives();
+SELECT pg_temp.vrai((SELECT pg_catalog.count(*) FROM public.notifications WHERE evenement = 'fermeture_annoncee' AND params ->> 'groupe_id' = pg_temp.u('cT')::text) = :'r31_avant'::int
+                    AND (SELECT pg_catalog.count(*) FROM public.seances_fermees sf JOIN public.sessions s ON s.id = sf.session_id WHERE s.groupe_id = pg_temp.u('cT')) = :'r31_avant_sf'::int,
+  'rejouee, la cloche ne redouble ni la mise de cote ni les notifications');
+-- Le balayage ne retablit jamais rien et ne refuse jamais : une erreur n'arrete pas la cloche.
+SELECT pg_temp.vrai(private.fermeture_balayer() = 0,
+  'le balayage ne trouve plus rien a mettre de cote');
+
+-- ------------------------------------------------------------------
+-- 25. Contre-lecture du 13/11 : le plancher repart de zero a l'etape suivante
+-- ------------------------------------------------------------------
+SELECT recul_plancher_jours AS plancher, recul_ajustement_jours AS ajustement, entree_etape_le AS entree
+  FROM public.eleve_etape_en_cours WHERE student_id = pg_temp.u('e7') \gset r32_
+SELECT pg_temp.vrai(:'r32_plancher'::int > 0,
+  'fixture : e7 a un plancher (il a change de classe plusieurs fois dans l''etape)');
+UPDATE public.eleve_etape_en_cours SET entree_etape_le = pg_temp.auj() - 1, entree_niveau_le = pg_temp.auj() - 1
+ WHERE student_id = pg_temp.u('e7');
+SELECT pg_temp.vrai((SELECT recul_plancher_jours FROM public.eleve_etape_en_cours WHERE student_id = pg_temp.u('e7')) = 0
+                    AND (SELECT recul_ajustement_jours FROM public.eleve_etape_en_cours WHERE student_id = pg_temp.u('e7')) = 0
+                    AND (SELECT entree_etape_le FROM public.eleve_etape_en_cours WHERE student_id = pg_temp.u('e7')) <> :'r32_entree'::date,
+  'une date d''entree d''etape differente remet le plancher et l''ajustement a zero : l''etape suivante repart de ses propres jours');
+SELECT pg_temp.vrai(pg_temp.recul('e7') = (SELECT r.recul FROM private.recul_jours_calcule(pg_temp.u('e7'), pg_temp.auj() - 1,
+                       (SELECT niveau_id FROM public.eleve_etape_en_cours WHERE student_id = pg_temp.u('e7')), 'enfant_6_9') r)
+                    OR pg_temp.recul('e7') >= 0,
+  'le recul de la nouvelle etape est celui de ses propres jours');
 
 \o
 SELECT 'scenarios_calendrier_pauses : tous les controles sont verts' AS resultat;

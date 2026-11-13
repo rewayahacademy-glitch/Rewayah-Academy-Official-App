@@ -795,7 +795,7 @@ $function$;
 -- elles portent alors abandonnee_le dans seances_fermees et une ligne du journal d'audit.
 -- La classe n'est pas prevenue seance par seance (l'annonce de la fermeture est le lot 7) :
 -- l'indicateur local coupe notifier_classe_seances.
-CREATE FUNCTION private.fermeture_synchroniser()
+CREATE FUNCTION private.fermeture_synchroniser(p_mises_seulement boolean DEFAULT false)
 RETURNS integer
 LANGUAGE plpgsql
 SECURITY DEFINER
@@ -817,6 +817,7 @@ BEGIN
       FROM public.seances_fermees sf
       JOIN public.sessions s ON s.id = sf.session_id
      WHERE sf.retablie_le IS NULL AND sf.abandonnee_le IS NULL AND s.deleted_at IS NOT NULL
+       AND NOT p_mises_seulement   -- le balayage de nuit ne retablit rien : il ne fait que mettre de cote
      ORDER BY s.started_at
        FOR UPDATE OF sf
   LOOP
@@ -905,6 +906,22 @@ $function$;
 -- tout code futur) sur un jour de fermeture publiee est mise de cote tout de suite, comme celles
 -- que la publication d'une fermeture trouve deja creees. Les sauts de classe et de date voulus
 -- par la direction (nouvelle date d'une seance reportee) sont refuses plus haut, avec leur phrase.
+-- Le balayage de nuit (contre-lecture du 13/11, IMP-A) : une classe qui devient couverte par une fermeture de
+-- TRANCHE apres la publication (un changement de membres) garde sinon une seance « planned » vivante un jour
+-- ferme, que la famille verrait, jamais annoncee. Regle voulue : aucun cours affiche un jour ferme. Le
+-- balayage met de cote les seances vivantes non commencees des jours fermes et les notifie par le meme
+-- chemin (private.fermeture_notifier : jamais un mineur, une notification par destinataire, classe et
+-- fermeture). Rejoue, il ne trouve plus rien : aucun doublon. Aucun declencheur sur groupe_membres (le cout
+-- d'un recalcul a chaque changement de membre n'est pas prouve nul). Appele par la cloche de nuit.
+CREATE FUNCTION private.fermeture_balayer()
+RETURNS integer
+LANGUAGE sql
+SECURITY DEFINER
+SET search_path = ''
+AS $function$
+  SELECT private.fermeture_synchroniser(true);
+$function$;
+
 CREATE FUNCTION private.seance_jour_ferme_garde()
 RETURNS trigger
 LANGUAGE plpgsql
@@ -1098,6 +1115,19 @@ SELECT pg_temp.remplacer('public.autoriser_jeton_video(uuid,uuid,text,text)'::pg
   $b$ where s.id = p_session_id and s.deleted_at is null
      and not private.session_en_fermeture(s.started_at, s.groupe_id);$b$, 1);
 
+-- La cloche de nuit (20261025000000) met aussi de cote les seances vivantes des jours fermes (IMP-A).
+SELECT pg_temp.remplacer('private.materialiser_classes_actives()'::pg_catalog.regprocedure,
+  $a$  RETURN v_n;
+END;$a$,
+  $b$  -- CALENDRIER-ET-PAUSES (13/11/2026) : balayage des jours fermes ; une erreur ne bloque jamais la cloche.
+  BEGIN
+    PERFORM private.fermeture_balayer();
+  EXCEPTION WHEN OTHERS THEN
+    RAISE WARNING 'la cloche : balayage des fermetures impossible (%, %)', SQLSTATE, SQLERRM;
+  END;
+  RETURN v_n;
+END;$b$, 1);
+
 -- Une entree de la file de remplacement ANTERIEURE a la mise de cote ne fait rien sur une seance mise de
 -- cote (ni sur un jour de fermeture) : ni remplacant retenu, ni « pret ».
 SELECT pg_temp.remplacer('private.remplacement_choisir(uuid)'::pg_catalog.regprocedure,
@@ -1167,7 +1197,8 @@ BEGIN
     'public.fixer_nouvelle_date_seance(uuid,timestamptz)'::pg_catalog.regprocedure,
     'public.materialiser_seances(uuid)'::pg_catalog.regprocedure,
     'private.remplacement_choisir(uuid)'::pg_catalog.regprocedure,
-    'private.remplacement_choisir_pret(uuid)'::pg_catalog.regprocedure
+    'private.remplacement_choisir_pret(uuid)'::pg_catalog.regprocedure,
+    'private.materialiser_classes_actives()'::pg_catalog.regprocedure
   ] LOOP
     v_com := pg_catalog.obj_description(v_f, 'pg_proc');
     IF v_com ~ 'md5_functiondef=[0-9a-f]{32}' THEN
@@ -2129,7 +2160,8 @@ REVOKE ALL ON FUNCTION private.debut_ferme(timestamptz, uuid) FROM PUBLIC, anon,
 REVOKE ALL ON FUNCTION private.jour_academie_de(timestamptz) FROM PUBLIC, anon, authenticated, service_role;
 REVOKE ALL ON FUNCTION private.eleve_en_fermeture(uuid, date) FROM PUBLIC, anon, authenticated, service_role;
 REVOKE ALL ON FUNCTION private.eleve_hors_cours(uuid, date) FROM PUBLIC, anon, authenticated, service_role;
-REVOKE ALL ON FUNCTION private.fermeture_synchroniser() FROM PUBLIC, anon, authenticated, service_role;
+REVOKE ALL ON FUNCTION private.fermeture_synchroniser(boolean) FROM PUBLIC, anon, authenticated, service_role;
+REVOKE ALL ON FUNCTION private.fermeture_balayer() FROM PUBLIC, anon, authenticated, service_role;
 REVOKE ALL ON FUNCTION private.fermeture_notifier(uuid, uuid, text, uuid[], uuid[]) FROM PUBLIC, anon, authenticated, service_role;
 REVOKE ALL ON FUNCTION private.groupe_membres_recalculer() FROM PUBLIC, anon, authenticated, service_role;
 REVOKE ALL ON FUNCTION private.pause_depasse_plafond(uuid, date) FROM PUBLIC, anon, authenticated, service_role;
