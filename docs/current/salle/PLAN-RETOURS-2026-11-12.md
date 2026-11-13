@@ -202,3 +202,28 @@ le directeur. Les preuves sont des tests et des captures de test, sauf mention.
   d'état passe sur le haut de la page le temps où la barre est dépliée ; la fermeture de la vidéo
   des camarades côté serveur ; la fuite du matricule par `session_peers_v`.
 
+### État au 13/11/2026, 04:25 UTC
+
+Quatorze lots sont sur la branche et dans la demande de fusion en brouillon
+`rewayahacademy-glitch/Rewayah-Academy-Official-App#449`. Rien sur staging, rien en production,
+rien prouvé par le directeur. Depuis le tableau ci-dessus :
+
+| Lot | Points | État |
+| :-- | :-- | :-- |
+| SERVEUR-PETITS | 20 (suite), 14 | Sur la branche. `20261124400000_session_peers_matricule.sql` : le matricule d'un pair n'est plus rendu à un élève (SEC-6) ; `20261124100000` complétée : le délai de rappel est lu sur le réglage de la direction, un écart de la pause prévue est consigné au journal du serveur. Non installées : la fuite reste ouverte en production |
+| HARMONIE-SALLE | 13 | Sur la branche. Relevé de 40 points dans `HARMONIE-2026-11-13.md` (12 corrigés, 27 laissés avec leur raison). Non fait : la synchronisation tenue par le contrôleur de session (la salle réduite ne reçoit ni la récitation ni les arrivées), la double source du récitant, les transitions du téléphone |
+| HORS-SALLE-2 | 17 | Sur la branche, ÉTEINT par défaut. `20261124200000_journal_sorties.sql`, non installée. Accord du parent par enfant, retirable ; l'élève adulte décide pour lui-même. Textes à valider par le directeur (`docs/current/TEXTES-VALIDES/ACCORD-JOURNAL-SORTIES.md`) ; durée de conservation à décider |
+
+Quatre migrations attendent une installation, dans cet ordre avec celle de la prière (autre lot,
+`20261123930000`, avant `20261124100000`) : `20261124100000_pause_proposee.sql`,
+`20261124200000_journal_sorties.sql`, `20261124300000_camarades_prenoms.sql`,
+`20261124400000_session_peers_matricule.sql`. Zéro mot d'effacement dans chacune.
+
+Vérifications : contrôles de la demande de fusion verts sur douze lots (tête `bc38bf4d`), en cours
+sur quatorze ; chaque fusion suivie des tests de la salle et des gardes sur cette machine.
+
+Ce qui attend le directeur : qui fusionne et installe ; la règle de paie (point 4) ; le texte du
+dépôt de la photo d'un enfant ; les textes de l'accord du journal des sorties, sa durée de
+conservation et son allumage ; le texte « Ce que vous devez savoir », qui promet un écran « Compte,
+Mes accords, Je m'oppose à l'enregistrement » qui n'existe pas.
+
