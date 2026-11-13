@@ -557,6 +557,50 @@ $changement$;
 RESET ROLE;
 
 -- ---------------------------------------------------------------------------
+-- 5 ter. Deux changements de teacher_id dans UNE transaction (A, nul, puis B)
+-- ---------------------------------------------------------------------------
+-- Une classe fraiche (A = Ibrahim), puis, dans la meme transaction, A est
+-- retire et B est affecte. B (l'enseignant a la fin) recoit UNE notification
+-- d'affectation et aucun `enseignant_change`, quel que soit l'ordre dans lequel
+-- les declencheurs differes passent.
+INSERT INTO public.groupes
+  (id, teacher_id, etat, type_public, seuil_max, libelle, weekday, hour_local,
+   timezone_iana, langue_code)
+VALUES
+  ('5afffff0-0000-0000-0000-0000000000a3', '5a000000-0000-0000-0000-000000000003',
+   'active', 'enfant', 5, 'Classe An-Nas', 2, 16, 'Europe/Paris', 'francais');
+SET CONSTRAINTS ALL IMMEDIATE;
+SET CONSTRAINTS ALL DEFERRED;
+UPDATE public.groupes SET teacher_id = NULL, etat = 'en_attente_enseignant'
+ WHERE id = '5afffff0-0000-0000-0000-0000000000a3';
+UPDATE public.groupes SET teacher_id = '5a000000-0000-0000-0000-000000000007', etat = 'active'
+ WHERE id = '5afffff0-0000-0000-0000-0000000000a3';
+SET CONSTRAINTS ALL IMMEDIATE;
+SET CONSTRAINTS ALL DEFERRED;
+DO $deux_changements$
+BEGIN
+  IF (SELECT count(*) FROM public.notifications
+       WHERE destinataire = '5a000000-0000-0000-0000-000000000007'
+         AND evenement = 'enseignant_affecte'
+         AND params ->> 'groupe_id' = '5afffff0-0000-0000-0000-0000000000a3') <> 1 THEN
+    RAISE EXCEPTION 'SUIVI-ATTENTE : B recoit UNE notification d affectation apres deux changements';
+  END IF;
+  IF EXISTS (SELECT 1 FROM public.notifications
+              WHERE destinataire = '5a000000-0000-0000-0000-000000000007'
+                AND evenement = 'enseignant_change'
+                AND params ->> 'groupe_id' = '5afffff0-0000-0000-0000-0000000000a3') THEN
+    RAISE EXCEPTION 'SUIVI-ATTENTE : B ne recoit pas enseignant_change en plus apres deux changements';
+  END IF;
+  IF (SELECT count(*) FROM public.courriels_sortants
+       WHERE destinataire_profil = '5a000000-0000-0000-0000-000000000007'
+         AND modele = 'enseignant_affecte'
+         AND donnees ->> 'groupe_id' = '5afffff0-0000-0000-0000-0000000000a3') <> 1 THEN
+    RAISE EXCEPTION 'SUIVI-ATTENTE : un seul courriel pour B apres deux changements';
+  END IF;
+END
+$deux_changements$;
+
+-- ---------------------------------------------------------------------------
 -- 6 bis. Le fait pour la direction : les demandes envoyees depuis trop longtemps
 -- ---------------------------------------------------------------------------
 SELECT pg_temp.moi('5a000000-0000-0000-0000-000000000008', 'admin', NULL);
@@ -751,17 +795,42 @@ BEGIN
              WHERE sp.student_type = 'minor') THEN
     RAISE EXCEPTION 'SUIVI-ATTENTE : aucun courriel en file pour un mineur, quel que soit le modele';
   END IF;
-  -- Le garde ne bloque pas l'adulte ni le tuteur.
+  -- Un profil ELEVE sans ligne student_profiles : mineur par defaut (refus quand
+  -- on ne sait pas).
+  INSERT INTO auth.users (id, email) VALUES
+    ('5a000000-0000-0000-0000-0000000000f1', 'sa-sans-profil-eleve@example.test');
+  INSERT INTO public.profiles
+    (id, immutable_id, role, household_id, first_name, last_name, account_status, gender)
+  VALUES ('5a000000-0000-0000-0000-0000000000f1', 'SASANSPROF0001', 'student',
+          '5afffff0-0000-0000-0000-000000000001', 'Sans', 'Profil', 'active', 'male');
+  PERFORM public.courriel_enfiler('classes', 'tout_est_pret', 'sa-sans-profil-eleve@example.test',
+    '5a000000-0000-0000-0000-0000000000f1', '{}'::jsonb, 'sa-sans-profil', 'auto');
+  IF EXISTS (SELECT 1 FROM public.courriels_sortants
+              WHERE destinataire_profil = '5a000000-0000-0000-0000-0000000000f1') THEN
+    RAISE EXCEPTION 'SUIVI-ATTENTE : un eleve sans profil eleve est tenu pour mineur : aucun courriel';
+  END IF;
+  -- La garde ne bloque ni l'adulte, ni le tuteur, ni l'enseignant, ni la
+  -- direction : chacun recoit le sien.
   PERFORM public.courriel_enfiler('classes', 'tout_est_pret', 'sa-adulte@example.test',
     '5a000000-0000-0000-0000-000000000006', '{}'::jsonb, 'sa-adulte-ok', 'auto');
   PERFORM public.courriel_enfiler('classes', 'tout_est_pret', 'sa-tuteur@example.test',
     '5a000000-0000-0000-0000-000000000001', '{}'::jsonb, 'sa-tuteur-ok', 'auto');
+  PERFORM public.courriel_enfiler('classes', 'enseignant_affecte', 'sa-enseignante@example.test',
+    '5a000000-0000-0000-0000-000000000007', '{}'::jsonb, 'sa-enseignante-ok', 'auto');
+  PERFORM public.courriel_enfiler('classes', 'demande_close', 'sa-direction@example.test',
+    '5a000000-0000-0000-0000-000000000008', '{}'::jsonb, 'sa-direction-ok', 'auto');
   IF NOT EXISTS (SELECT 1 FROM public.courriels_sortants
                   WHERE destinataire_profil = '5a000000-0000-0000-0000-000000000006')
      OR NOT EXISTS (SELECT 1 FROM public.courriels_sortants
                      WHERE destinataire_profil = '5a000000-0000-0000-0000-000000000001'
-                       AND cle_idempotence = 'sa-tuteur-ok') THEN
-    RAISE EXCEPTION 'SUIVI-ATTENTE : l adulte et le tuteur recoivent leur courriel';
+                       AND cle_idempotence = 'sa-tuteur-ok')
+     OR NOT EXISTS (SELECT 1 FROM public.courriels_sortants
+                     WHERE destinataire_profil = '5a000000-0000-0000-0000-000000000007'
+                       AND cle_idempotence = 'sa-enseignante-ok')
+     OR NOT EXISTS (SELECT 1 FROM public.courriels_sortants
+                     WHERE destinataire_profil = '5a000000-0000-0000-0000-000000000008'
+                       AND cle_idempotence = 'sa-direction-ok') THEN
+    RAISE EXCEPTION 'SUIVI-ATTENTE : l adulte, le tuteur, l enseignant et la direction recoivent leur courriel';
   END IF;
   -- Le tuteur recoit son propre courriel par la portee « foyer », pour chaque
   -- evenement ou l'eleve avait une portee « soi » et pour ceux de ce lot.
@@ -848,19 +917,25 @@ DO $trois_cas$
 BEGIN
   -- Les notifications reelles de l'affectation : l'adulte (classe Al-Baqara,
   -- 8 ter), le mineur et son tuteur (classe Al-Fatiha, section 4).
+  -- L'adulte : une seule notification (celle de l'ancien chemin des demandes,
+  -- sans portee, qui precede celle de notifier_classe).
+  IF (SELECT count(*) FROM public.notifications
+       WHERE evenement = 'enseignant_affecte'
+         AND destinataire = '5a000000-0000-0000-0000-000000000006'
+         AND params ->> 'groupe_id' = '5afffff0-0000-0000-0000-0000000000a2') <> 1 THEN
+    RAISE EXCEPTION 'SUIVI-ATTENTE : l adulte a UNE notification d affectation';
+  END IF;
   IF NOT EXISTS (SELECT 1 FROM public.notifications
                   WHERE evenement = 'enseignant_affecte'
-                    AND destinataire = '5a000000-0000-0000-0000-000000000006'
-                    AND params ->> 'portee' = 'soi')
-     OR NOT EXISTS (SELECT 1 FROM public.notifications
-                     WHERE evenement = 'enseignant_affecte'
-                       AND destinataire = '5a000000-0000-0000-0000-000000000002'
-                       AND params ->> 'portee' = 'soi')
-     OR NOT EXISTS (SELECT 1 FROM public.notifications
-                     WHERE evenement = 'enseignant_affecte'
-                       AND destinataire = '5a000000-0000-0000-0000-000000000001'
-                       AND params ->> 'portee' = 'foyer') THEN
-    RAISE EXCEPTION 'SUIVI-ATTENTE : les notifications d affectation de l adulte, du mineur et du tuteur existent';
+                    AND destinataire = '5a000000-0000-0000-0000-000000000002'
+                    AND params ->> 'portee' = 'soi') THEN
+    RAISE EXCEPTION 'SUIVI-ATTENTE : notification d affectation du mineur absente';
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM public.notifications
+                  WHERE evenement = 'enseignant_affecte'
+                    AND destinataire = '5a000000-0000-0000-0000-000000000001'
+                    AND params ->> 'portee' = 'foyer') THEN
+    RAISE EXCEPTION 'SUIVI-ATTENTE : notification d affectation du tuteur absente';
   END IF;
   -- Adulte : un courriel, du flux reel.
   IF (SELECT count(*) FROM public.courriels_sortants cs

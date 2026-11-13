@@ -16,9 +16,26 @@
 --      garde ajoutee ;
 --   6. controles apres pose.
 --
--- Ordre : sans 20261123961000, l'evenement est refuse par la contrainte ; la pose
--- est alors faite dans un sous-bloc qui avertit et n'echoue jamais (une seance, un
--- eleve ou une demande ajoutes ne sont jamais bloques par une notification).
+-- ORDRE : 20261123961000 d'abord. Ce fichier REFUSE de s'installer si la
+-- contrainte des evenements ne contient pas encore `tout_est_pret` : installe
+-- avant, il laisserait des seances, des eleves et des demandes se creer sans
+-- que « Tout est pret » parte jamais pour elles (la notification est refusee par
+-- la contrainte puis le fait est dedup par eleve et par classe). Gardee en
+-- plus, la pose de la notification est faite dans un sous-bloc qui avertit et
+-- n'echoue jamais (une seance, un eleve ou une demande ajoutes ne sont jamais
+-- bloques par une notification).
+
+DO $ordre$
+BEGIN
+  IF NOT EXISTS (
+       SELECT 1 FROM pg_catalog.pg_constraint c
+        WHERE c.conrelid = 'public.notifications'::regclass
+          AND c.conname = 'notifications_evenement_check'
+          AND pg_catalog.pg_get_constraintdef(c.oid) LIKE '%''tout_est_pret''%') THEN
+    RAISE EXCEPTION 'Installez d''abord 20261123961000_suivi_attente_evenement.sql : la contrainte des evenements de notification ne contient pas encore « tout_est_pret ». Sans elle, « Tout est pret » ne partirait jamais. Rien n''a ete change.';
+  END IF;
+END
+$ordre$;
 
 -- ---------------------------------------------------------------------------
 -- 1. « Tout est pret » : une notification par eleve et par classe
@@ -106,7 +123,12 @@ BEGIN
              'prochaine_local', pg_catalog.to_char(x.premier AT TIME ZONE x.tz,
                                                    'YYYY-MM-DD"T"HH24:MI:SS'),
              'eleves', CASE WHEN x.prenom IS NULL THEN NULL
-                            ELSE pg_catalog.jsonb_build_array(x.prenom) END)),
+                            ELSE pg_catalog.jsonb_build_array(x.prenom) END,
+             -- Le prenom de l'enfant, pour le tuteur seulement : un tuteur de deux
+             -- enfants dans la meme classe recoit deux notifications, chacune
+             -- nommant son enfant. Pas `prenom` : le courriel salue le
+             -- destinataire par cette cle.
+             'eleve_prenom', x.prenom)),
            CASE x.portee WHEN 'soi' THEN '/eleve' ELSE '/tuteur/demandes' END
       FROM dest x;
     GET DIAGNOSTICS v_n = ROW_COUNT;
@@ -326,7 +348,12 @@ $export$;
 -- `child_of` (adresse technique). Ce n'est pas une garantie suffisante : un profil
 -- eleve mineur sans cette marque recevrait le courriel de n'importe quel modele
 -- (prouve par la revue du 13/11 : `enseignant_affecte` en portee « soi »).
--- La garde lit le profil eleve : `student_type = 'minor'`. Elle couvre aussi
+-- La garde est `private.com_est_mineur(p_profil)` : mineur si son profil eleve le
+-- dit, et, **pour un profil eleve sans ligne `student_profiles`, mineur par
+-- defaut** (refus quand on ne sait pas). Un tuteur, un enseignant, la direction
+-- et un eleve adulte ne sont pas mineurs (scenario). LIMITE CONNUE : quand
+-- `p_profil` est NULL (adresse tapee par la direction, invitations), aucun profil
+-- n'est lu et la garde ne s'applique pas : laisse tel quel. Elle couvre aussi
 -- les portees « soi » deja ecrites pour des eleves (classe_creee, classe_validee,
 -- eleve_inscrit) : leur tuteur recoit son propre courriel par la portee « foyer ».
 DO $courriel_mineur$
@@ -334,7 +361,7 @@ BEGIN
   IF pg_catalog.strpos(
        pg_catalog.pg_get_functiondef(
          'public.courriel_enfiler(text,text,text,uuid,jsonb,text,text,uuid)'::regprocedure),
-       'sp.student_type') > 0 THEN
+       'private.com_est_mineur(p_profil)') > 0 THEN
     RAISE NOTICE 'courriel_enfiler : garde des mineurs deja posee, rien a faire';
   ELSE
     PERFORM pg_temp.remplacer(
@@ -342,8 +369,7 @@ BEGIN
       $a$    -- Un compte enfant a une adresse technique : on ne lui ecrit jamais.$a$,
       $b$    -- Un mineur n'est jamais destinataire d'un courriel, quel que soit le modele
     -- (SUIVI-ATTENTE, 13/11/2026) : son tuteur est prevenu par la portee « foyer ».
-    IF EXISTS (SELECT 1 FROM public.student_profiles sp
-                WHERE sp.profile_id = p_profil AND sp.student_type = 'minor') THEN
+    IF private.com_est_mineur(p_profil) THEN
       RETURN NULL;
     END IF;
     -- Un compte enfant a une adresse technique : on ne lui ecrit jamais.$b$);

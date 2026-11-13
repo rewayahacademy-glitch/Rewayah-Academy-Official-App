@@ -30,6 +30,7 @@ DECLARE
   v_def text;
   v_liste text[];
   v_nouvelle text[];
+  v_apres integer;
 BEGIN
   SELECT pg_catalog.pg_get_constraintdef(c.oid) INTO v_def
     FROM pg_catalog.pg_constraint c
@@ -46,11 +47,11 @@ BEGIN
   -- qui l'a posee, pg_get_constraintdef rend la liste sous deux formes :
   -- ARRAY['x'::text, 'y'::text] ou '{x,y}'::text[]. Les deux sont lues.
   SELECT pg_catalog.array_agg(m[1] ORDER BY ord) INTO v_liste
-    FROM pg_catalog.regexp_matches(v_def, '''([a-z_]+)''::text', 'g')
+    FROM pg_catalog.regexp_matches(v_def, '''([a-z0-9_]+)''::text', 'g')
          WITH ORDINALITY AS r(m, ord);
   IF v_liste IS NULL THEN
     SELECT pg_catalog.string_to_array(m[1], ',') INTO v_liste
-      FROM pg_catalog.regexp_matches(v_def, '''\{([a-z_,]+)\}''::text\[\]') AS r(m);
+      FROM pg_catalog.regexp_matches(v_def, '''\{([a-z0-9_,]+)\}''::text\[\]') AS r(m);
   END IF;
   IF v_liste IS NULL OR pg_catalog.cardinality(v_liste) < 10
      OR NOT ('demande_recue' = ANY (v_liste)) THEN
@@ -70,14 +71,22 @@ BEGIN
     (SELECT pg_catalog.string_agg(pg_catalog.quote_literal(e), ', ' ORDER BY ord)
        FROM pg_catalog.unnest(v_nouvelle) WITH ORDINALITY AS u(e, ord)));
 
-  -- Postflight : tout ce qui y etait y est encore, plus le nouvel evenement.
+  -- Postflight : la contrainte relue porte UNE valeur de plus qu'avant (le
+  -- nombre, pas la liste relue) et le nouvel evenement.
   SELECT pg_catalog.pg_get_constraintdef(c.oid) INTO v_def
     FROM pg_catalog.pg_constraint c
    WHERE c.conrelid = 'public.notifications'::regclass
      AND c.conname = 'notifications_evenement_check';
+  SELECT pg_catalog.count(*) INTO v_apres
+    FROM pg_catalog.regexp_matches(v_def, '''([a-z0-9_]+)''::text', 'g') AS r(m);
+  IF v_apres = 0 THEN
+    SELECT pg_catalog.cardinality(pg_catalog.string_to_array(m[1], ',')) INTO v_apres
+      FROM pg_catalog.regexp_matches(v_def, '''\{([a-z0-9_,]+)\}''::text\[\]') AS r(m);
+  END IF;
   IF v_def IS NULL OR v_def NOT LIKE '%''tout_est_pret''%'
-     OR EXISTS (SELECT 1 FROM pg_catalog.unnest(v_liste) AS e WHERE v_def NOT LIKE '%''' || e || '''%') THEN
-    RAISE EXCEPTION 'tout_est_pret : la contrainte n''est pas celle attendue : %', v_def;
+     OR v_apres IS DISTINCT FROM pg_catalog.cardinality(v_liste) + 1 THEN
+    RAISE EXCEPTION 'tout_est_pret : la contrainte doit porter % valeurs (une de plus), elle en porte % : %',
+      pg_catalog.cardinality(v_liste) + 1, v_apres, v_def;
   END IF;
 END
 $migration$;

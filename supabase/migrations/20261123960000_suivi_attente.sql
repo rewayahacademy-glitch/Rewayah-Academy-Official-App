@@ -3,13 +3,14 @@
 -- l'attente de la classe choisie, « comme une livraison ».
 --
 -- Ce que fait ce fichier, et rien d'autre :
---   1. teacher_profiles : le reglage « montrer mon pays et mon mot de
---      presentation aux familles avant le premier cours » (S4), les deux pays
---      et un mot de presentation. Vrai par defaut, pour tous : le pays et le
---      mot n'apparaissent que si l'enseignant les a saisis. Le reglage ne
---      masque PAS la photo (les familles de sa classe la voient deja par
---      ailleurs, `private.photo_visible_par` n'est pas changee) ; aucun texte
---      ne promet un masquage que le serveur ne fait pas.
+--   1. teacher_profiles : le reglage « montrer mes pays et mon mot sur la
+--      carte du suivi » (S4), les deux pays et un mot de presentation. Vrai par
+--      defaut, pour tous : le pays et le mot n'apparaissent que si l'enseignant
+--      les a saisis. Ce reglage ne concerne QUE la carte de l'enseignant du
+--      suivi : sa photo et son pays (`teacher_profiles.country`, ENS-PAYS-1) sont
+--      deja montres aux familles de sa classe ailleurs dans l'application
+--      (`private.photo_visible_par` n'est pas changee) ; aucun texte ne promet
+--      un masquage que le serveur ne fait pas.
 --   2. regler_presentation_aux_familles / ma_presentation_aux_familles :
 --      l'enseignant regle et relit SON reglage, jamais celui d'un autre.
 --   3. suivi_attente_foyer() : UNE lecture du suivi de chaque demande du foyer
@@ -74,7 +75,7 @@ END
 $colonnes$;
 
 COMMENT ON COLUMN public.teacher_profiles.montre_aux_familles IS
-  'SUIVI-ATTENTE (S4) : l''enseignant montre son pays d''origine, son pays de residence et son mot de presentation aux familles de ses classes avant le premier cours. Vrai par defaut ; ne masque pas la photo ; seul ce qu''il a saisi apparait.';
+  'SUIVI-ATTENTE (S4) : l''enseignant montre ses deux pays (origine, residence) et son mot de presentation sur la carte du suivi de la famille. Vrai par defaut ; seul ce qu''il a saisi apparait. Ne masque ni sa photo ni son pays (country), montres ailleurs aux familles de sa classe.';
 COMMENT ON COLUMN public.teacher_profiles.pays_origine IS
   'SUIVI-ATTENTE : pays d''origine, code ISO 3166-1 alpha-2 majuscule. Nul = non declare, jamais affiche comme « inconnu ». Distinct de country (sens ambigu avant ce lot).';
 COMMENT ON COLUMN public.teacher_profiles.pays_residence IS
@@ -586,22 +587,32 @@ $declencheur_anonymisation$;
 -- La portee « soi » : l'eleve adulte recoit son courriel ; un mineur est arrete
 -- par la garde de `public.courriel_enfiler` (20261123962000), son tuteur recoit
 -- le sien par la portee « foyer ». Sans cette garde, ne pas poser cette ligne.
+-- La ligne « * » (portee absente) : pour une demande d'ELEVE ADULTE, l'ancien
+-- chemin des demandes (c11bis) ecrit sa propre notification d'affectation, SANS
+-- portee, avant celle de notifier_classe, qui n'en ajoute alors pas de seconde
+-- (meme destinataire, meme evenement, meme classe, meme transaction) : sans cette
+-- ligne, l'adulte serait prevenu dans l'application mais ne recevrait jamais de
+-- courriel. Une seule notification par destinataire reste ecrite, donc un seul
+-- courriel.
 INSERT INTO private.notification_courriel (evenement, portee, courriel) VALUES
   ('enseignant_affecte', 'classe', true),
   ('enseignant_affecte', 'foyer', true),
-  ('enseignant_affecte', 'soi', true)
+  ('enseignant_affecte', 'soi', true),
+  ('enseignant_affecte', '*', true)
 ON CONFLICT (evenement, portee) DO UPDATE SET courriel = EXCLUDED.courriel;
 
 -- ---------------------------------------------------------------------------
 -- 5 bis. Un remplacement direct (A vers B) previent B une seule fois
 -- ---------------------------------------------------------------------------
 -- notifier_classe dit « enseignant_change » a l'ancien enseignant, au nouveau
--- et aux familles. Le nouveau a deja sa notification d'affectation (ci-dessus,
--- posee avant) : pour lui seul, une notification `enseignant_affecte` de la
--- meme classe et de la meme transaction suffit, `enseignant_change` ne lui est
--- pas ecrit en plus. L'ancien enseignant, l'eleve et les familles gardent
--- `enseignant_change`. Retouche ancree de la condition de deduplication qui
--- existe deja, rejouable.
+-- et aux familles. Le nouvel enseignant (celui qui a la classe a la fin de la
+-- transaction) a sa notification d'affectation enrichie, posee par le
+-- declencheur ci-dessus : `enseignant_change` ne lui est JAMAIS ecrit en plus,
+-- quel que soit le nombre et l'ordre des changements de teacher_id de la
+-- transaction (A vers nul puis nul vers B : les declencheurs differes passent
+-- evenement par evenement et celui du premier changement lit deja l'etat final,
+-- ou B est l'enseignant). L'ancien enseignant, l'eleve et les familles gardent
+-- `enseignant_change`. Retouche ancree de la requete d'insertion, rejouable.
 CREATE OR REPLACE FUNCTION pg_temp.remplacer(p_fonction regprocedure, p_ancre text, p_neuf text)
 RETURNS void LANGUAGE plpgsql AS $$
 DECLARE
@@ -622,17 +633,16 @@ BEGIN
   IF pg_catalog.strpos(
        pg_catalog.pg_get_functiondef(
          'private.notifier_classe(uuid,text,uuid,timestamptz,uuid[],uuid[],boolean)'::regprocedure),
-       $q$d.destinataire = v_groupe.teacher_id$q$) > 0 THEN
+       $q$AND d.destinataire = v_groupe.teacher_id)$q$) > 0 THEN
     RAISE NOTICE 'notifier_classe : deduplication du nouvel enseignant deja posee, rien a faire';
   ELSE
     PERFORM pg_temp.remplacer(
       'private.notifier_classe(uuid,text,uuid,timestamptz,uuid[],uuid[],boolean)'::regprocedure,
-      $a$        AND (n.evenement = p_evenement OR n.evenement = ANY (v_equivalents))$a$,
-      $b$        AND (n.evenement = p_evenement OR n.evenement = ANY (v_equivalents)
-             OR (p_evenement = 'enseignant_change'
-                 AND n.evenement = 'enseignant_affecte'
-                 AND d.portee = 'classe'
-                 AND d.destinataire = v_groupe.teacher_id))$b$);
+      $a$   WHERE NOT EXISTS ($a$,
+      $b$   WHERE NOT (p_evenement = 'enseignant_change'
+                    AND d.portee = 'classe'
+                    AND d.destinataire = v_groupe.teacher_id)
+     AND NOT EXISTS ($b$);
   END IF;
 END
 $equivalents$;

@@ -78,6 +78,17 @@ NotificationContenu contenuNotificationPour(
       classe: evenements.enseignantAffecteClasse,
       sinon: evenements.enseignantAffecte,
     ),
+    // SUIVI-ATTENTE : tout est pret pour le premier cours. Le tuteur lit le
+    // prenom de l'enfant ; l'eleve adulte, sa propre phrase.
+    'tout_est_pret' => switch ((
+      portee,
+      '${params['eleve_prenom'] ?? ''}'.trim(),
+    )) {
+      ('soi', _) => evenements.toutEstPretSoi,
+      (_, final String prenom) when prenom.isNotEmpty =>
+        evenements.toutEstPretPour(prenom: prenom),
+      _ => evenements.toutEstPret,
+    },
     'demande_close' => evenements.demandeClose,
     'remplacement_propose' => evenements.remplacementPropose,
     'remplacement_pris' =>
