@@ -24,17 +24,8 @@ bool contientArabe(String texte) {
 /// polices du document puis de l'interface. Sans arabe, le style est rendu tel
 /// quel. **L'arabe d'interface (menus, boutons, libellés) ne passe jamais
 /// ici** : il garde sa police.
-TextStyle? styleContenuArabe(String texte, TextStyle? base) {
-  if (!contientArabe(texte)) return base;
-  return (base ?? const TextStyle()).copyWith(
-    fontFamily: AppFontFamily.arabeMushaf,
-    fontFamilyFallback: const <String>[
-      AppFontFamily.arabeDocument,
-      AppFontFamily.arabeInterface,
-      AppFontFamily.corps,
-    ],
-  );
-}
+TextStyle? styleContenuArabe(String texte, TextStyle? base) =>
+    contientArabe(texte) ? AppTypography.arabeContenu(base) : base;
 
 /// Vrai quand la première lettre « forte » de [texte] est arabe : le texte se
 /// lit alors de droite à gauche (un point final à gauche, jamais à droite).
