@@ -71,21 +71,24 @@ Cas hors du chemin droit, chacun avec son état et son geste : demande refusée 
 - La migration `0043` pose des tranches (`enfant_5_7`, `enfant_8_10`...) que des migrations ultérieures ont remplacées (`enfant_6_9`, `enfant_10_13`, `ado_14_17`) : lire la base rejouée, pas `0043`.
 - L'accord de publication existant (CAND-PHOTO) vise le site public ; il n'est pas le réglage de ce lot et n'a pas été réutilisé.
 
-## 6. Preuves (état au 13/11/2026)
+## 6. Preuves (état au 13/11/2026, après fusion de `origin/main` 25f3ed78)
 
 Rien ici n'est une preuve du directeur : ce sont des mesures locales (S9).
 
 | Contrôle | Résultat |
 |---|---|
-| Rejeu SQL complet sur Postgres 16 nu (migrations + scénarios) | 275 verts, 0 rouge ; `scenarios_suivi_attente.sql` vert ; `scenarios_courriels_ux` et `scenarios_af_liste_blanche_volatiles` amendés (voulu) |
+| Rejeu SQL sur Postgres nu (utilisateur `postgres`, 437 migrations, tous les scénarios, une copie neuve chacun) | 278 verts, 0 rouge ; `scenarios_suivi_attente.sql` vert ; `scenarios_courriels_ux` et `scenarios_af_liste_blanche_volatiles` amendés (voulu) |
 | `dart run slang` | généré, sans erreur |
-| `dart run build_runner build --delete-conflicting-outputs` | terminé (6195 sorties), sans erreur |
+| `dart run build_runner build --delete-conflicting-outputs` | terminé, sans erreur, aucun diff laissé |
 | `dart analyze --fatal-infos` | No issues found |
-| `dart run tool/verifier_jetons.dart` | 1508 fichiers, aucune violation |
+| `flutter test` (suite complète) | 20805 réussis, 8280 ignorés (déjà ignorés sur `main`), 0 échec |
+| `dart run tool/verifier_jetons.dart` | 1513 fichiers, aucune violation |
 | `dart run tool/verifier_branchement.dart` | 2 fichiers non atteints, tous tolérés, aucun nouveau |
-| `dart run tool/verifier_revue.dart` | 1066 violations, **toutes antérieures au lot** (0 dans `suiviAttente`) ; 4 violations de ce lot corrigées (deux textes d'échec passés en « non confirmé », deux clés au pluriel déclarées dans `tool/libelles_sources.json`) |
-| `flutter test test/features/attente_classe` + `synchronisation_test` | tous verts (138) |
-| Captures | 128 PNG, `docs/current/captures/E2E/suivi-attente/` (390 et 1440, clair et sombre, fr et ar, cinq étapes et cas particuliers) ; **non régénérées** après la correction des deux textes d'échec, qui ne figurent sur aucune capture |
-| `flutter test` complet | voir le rapport final (résultat exact collé à la fin) |
+| `dart run tool/verifier_revue.dart` | 1066 violations antérieures au lot, 0 dans `suiviAttente` |
+| Captures | 128 PNG, `docs/current/captures/E2E/suivi-attente/` (390 et 1440, clair et sombre, fr et ar), régénérées après les dernières corrections de texte |
 
-Le test « aucun « Sauvegarde » de succès » (`synchronisation_test.dart`) a attrapé « تم الحفظ. » (arabe) ; remplacé par « سُجِّل اختيارك. ». `.github/workflows/ci.yml` doit recevoir `scenarios_suivi_attente.sql` : zone interdite à ce lot, à faire par l'architecte.
+Gardes du dépôt attrapées par la suite complète, corrigées : « Sauvegarde » de succès (arabe « تم الحفظ »), espaces insécables du français, « hors ligne » redit dans un texte, URL de photo passée à un portrait (désormais `PhotoEnseignant`), paramètres arabes isolés (U+2068/2069), domaine arabe déclaré.
+
+Piège de rejeu : `tool/rejouer_scenarios.sh` échoue en arrière-plan (`nohup`) sur la migration `20261011121039_c29` (contrôle de propriétaire) et passe en premier plan, sous `postgres` ; cause non élucidée, étrangère au lot. À lancer en premier plan.
+
+`.github/workflows/ci.yml` doit recevoir `scenarios_suivi_attente.sql` : zone interdite à ce lot, à faire par l'architecte.
