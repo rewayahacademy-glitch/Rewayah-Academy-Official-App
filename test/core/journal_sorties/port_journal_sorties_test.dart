@@ -125,7 +125,7 @@ void main() {
           ],
         },
       );
-      expect(e.pourSoi, isTrue);
+      expect(e.eleves.single.autonome, isTrue);
       expect(e.eleves.single.accepteLe, DateTime.utc(2026, 11, 13, 9));
     });
   });

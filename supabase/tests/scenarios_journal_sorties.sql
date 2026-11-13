@@ -26,7 +26,9 @@ INSERT INTO auth.users(id,email) VALUES
  ('c2420000-0000-0000-0000-000000000105','js-e1@example.test'),
  ('c2420000-0000-0000-0000-000000000106','js-g2@example.test'),
  ('c2420000-0000-0000-0000-000000000107','js-a1@example.test'),
- ('c2420000-0000-0000-0000-000000000108','js-e2@example.test');
+ ('c2420000-0000-0000-0000-000000000108','js-e2@example.test'),
+ ('c2420000-0000-0000-0000-000000000109','js-e3@example.test'),
+ ('c2420000-0000-0000-0000-000000000110','js-g3@example.test');
 INSERT INTO public.households(id) VALUES
  ('c2420000-0000-0000-0000-000000000111'),
  ('c2420000-0000-0000-0000-000000000112'),
@@ -39,12 +41,22 @@ INSERT INTO public.profiles(id,immutable_id,role,household_id,first_name,last_na
  ('c2420000-0000-0000-0000-000000000104','JS-G1','guardian','c2420000-0000-0000-0000-000000000111','G1','J','active'),
  ('c2420000-0000-0000-0000-000000000105','JS-E1','student','c2420000-0000-0000-0000-000000000111','E1','J','active'),
  ('c2420000-0000-0000-0000-000000000106','JS-G2','guardian','c2420000-0000-0000-0000-000000000112','G2','J','active'),
- ('c2420000-0000-0000-0000-000000000107','JS-A1','student','c2420000-0000-0000-0000-000000000113','A1','J','active'),
+ -- A1 : l'eleve adulte autonome TEL QU'IL EXISTE (0087, creer_profil_inscription
+ -- avec p_parent_suit_des_cours) : role 'guardian', fiche eleve 'autonomous'
+ -- dont il est le titulaire. Il est aussi parent de E3 (mineur). G3 : un autre
+ -- tuteur du meme foyer, qui n'est pas eleve.
+ ('c2420000-0000-0000-0000-000000000107','JS-A1','guardian','c2420000-0000-0000-0000-000000000113','A1','J','active'),
+ ('c2420000-0000-0000-0000-000000000109','JS-E3','student','c2420000-0000-0000-0000-000000000113','E3','J','active'),
+ ('c2420000-0000-0000-0000-000000000110','JS-G3','guardian','c2420000-0000-0000-0000-000000000113','G3','J','active'),
  ('c2420000-0000-0000-0000-000000000108','JS-E2','student','c2420000-0000-0000-0000-000000000112','E2','J','active');
 INSERT INTO public.student_profiles(profile_id,student_type) VALUES
  ('c2420000-0000-0000-0000-000000000105','minor'),
- ('c2420000-0000-0000-0000-000000000107','autonomous'),
- ('c2420000-0000-0000-0000-000000000108','minor');
+ ('c2420000-0000-0000-0000-000000000108','minor'),
+ ('c2420000-0000-0000-0000-000000000109','minor');
+INSERT INTO public.student_profiles(profile_id,titulaire_profile_id,student_type,interface_mode,camera_policy,cohorte) VALUES
+ ('c2420000-0000-0000-0000-000000000107','c2420000-0000-0000-0000-000000000107','autonomous','standard','forbidden','adulte_18_plus');
+UPDATE public.households SET primary_guardian_id = 'c2420000-0000-0000-0000-000000000107'
+ WHERE id = 'c2420000-0000-0000-0000-000000000113';
 
 -- S1 : en cours depuis 20 min. S2 : terminee.
 INSERT INTO public.sessions(id,teacher_id,started_at,ended_at,status,session_type) VALUES
@@ -55,6 +67,7 @@ INSERT INTO public.session_participants(session_id,profile_id,role) VALUES
  ('c2420000-0000-0000-0000-000000000131','c2420000-0000-0000-0000-000000000105','student'),
  ('c2420000-0000-0000-0000-000000000131','c2420000-0000-0000-0000-000000000107','student'),
  ('c2420000-0000-0000-0000-000000000131','c2420000-0000-0000-0000-000000000108','student'),
+ ('c2420000-0000-0000-0000-000000000131','c2420000-0000-0000-0000-000000000109','student'),
  ('c2420000-0000-0000-0000-000000000132','c2420000-0000-0000-0000-000000000101','teacher'),
  ('c2420000-0000-0000-0000-000000000132','c2420000-0000-0000-0000-000000000105','student');
 
@@ -360,24 +373,119 @@ BEGIN
 END;
 $s9$;
 
--- 10. Adulte autonome : sans accord rien ; avec le sien, ecrit.
+-- 10. Adulte autonome (role 'guardian', fiche 'autonomous') : sans accord
+--     rien ; un autre tuteur de son foyer ne decide pas pour lui ; avec le
+--     sien, il est note et lit ses lignes. Il est aussi parent de E3 : il
+--     voit sa carte ET celle de E3 et accepte pour chacun, separement.
 DO $s10$
 DECLARE
   v jsonb;
+  v_refus boolean;
+  a1 constant uuid := 'c2420000-0000-0000-0000-000000000107';
+  e3 constant uuid := 'c2420000-0000-0000-0000-000000000109';
+  g3 constant uuid := 'c2420000-0000-0000-0000-000000000110';
+  f3 constant uuid := 'c2420000-0000-0000-0000-000000000113';
+  s1 constant uuid := 'c2420000-0000-0000-0000-000000000131';
 BEGIN
-  PERFORM pg_temp.qui('c2420000-0000-0000-0000-000000000107','student','c2420000-0000-0000-0000-000000000113');
-  v := public.noter_sortie_app('c2420000-0000-0000-0000-000000000131', 30, false);
-  IF (v->>'note')::boolean THEN RAISE EXCEPTION 'JS10: adulte sans accord note'; END IF;
+  -- G3, autre tuteur du foyer : ne peut pas accepter pour A1.
+  PERFORM pg_temp.qui(g3,'guardian',f3);
+  v_refus := false;
+  BEGIN
+    PERFORM public.accepter_accord_sorties(a1,'sorties-2026-11-v1');
+  EXCEPTION WHEN insufficient_privilege THEN v_refus := true;
+  END;
+  IF NOT v_refus THEN RAISE EXCEPTION 'JS10: un autre tuteur a accepte pour l''adulte autonome'; END IF;
+  -- G3 ne peut pas s'accepter lui-meme (il n'est pas eleve).
+  v_refus := false;
+  BEGIN
+    PERFORM public.accepter_accord_sorties(g3,'sorties-2026-11-v1');
+  EXCEPTION WHEN insufficient_privilege THEN v_refus := true;
+  END;
+  IF NOT v_refus THEN RAISE EXCEPTION 'JS10: un tuteur non eleve s''est accepte lui-meme'; END IF;
+  -- Sa page : E3 seul (ni A1, ni lui-meme).
   v := public.accords_sorties();
-  IF jsonb_array_length(v->'eleves') <> 1 OR NOT (v->'eleves'->0->>'autonome')::boolean THEN
-    RAISE EXCEPTION 'JS10: l''adulte ne voit pas sa decision : %', v;
+  IF jsonb_array_length(v->'eleves') <> 1 OR v->'eleves'->0->>'eleveId' <> e3::text THEN
+    RAISE EXCEPTION 'JS10: page de G3 inattendue : %', v;
   END IF;
-  v := public.accepter_accord_sorties('c2420000-0000-0000-0000-000000000107','sorties-2026-11-v1');
-  IF NOT (v->'eleves'->0->>'enCours')::boolean THEN RAISE EXCEPTION 'JS10: accord adulte : %', v; END IF;
-  v := public.noter_sortie_app('c2420000-0000-0000-0000-000000000131', 30, false);
-  IF NOT (v->>'note')::boolean OR pg_temp.lignes('c2420000-0000-0000-0000-000000000107') <> 1 THEN
+
+  -- A1 sans accord : rien.
+  PERFORM pg_temp.qui(a1,'guardian',f3);
+  v := public.noter_sortie_app(s1, 30, false);
+  IF (v->>'note')::boolean THEN RAISE EXCEPTION 'JS10: adulte sans accord note'; END IF;
+  -- Sa page : sa carte (autonome) ET celle de E3.
+  v := public.accords_sorties();
+  IF jsonb_array_length(v->'eleves') <> 2
+     OR NOT EXISTS (SELECT 1 FROM jsonb_array_elements(v->'eleves') x
+                     WHERE x->>'eleveId' = a1::text AND (x->>'autonome')::boolean)
+     OR NOT EXISTS (SELECT 1 FROM jsonb_array_elements(v->'eleves') x
+                     WHERE x->>'eleveId' = e3::text AND NOT (x->>'autonome')::boolean) THEN
+    RAISE EXCEPTION 'JS10: la page de l''adulte parent : %', v;
+  END IF;
+  -- Il accepte pour lui seul : E3 reste sans accord.
+  v := public.accepter_accord_sorties(a1,'sorties-2026-11-v1');
+  IF NOT EXISTS (SELECT 1 FROM jsonb_array_elements(v->'eleves') x
+                  WHERE x->>'eleveId' = a1::text AND (x->>'enCours')::boolean)
+     OR EXISTS (SELECT 1 FROM jsonb_array_elements(v->'eleves') x
+                 WHERE x->>'eleveId' = e3::text AND (x->>'enCours')::boolean) THEN
+    RAISE EXCEPTION 'JS10: accord de l''adulte pour lui : %', v;
+  END IF;
+  IF (SELECT accepte_par FROM public.accords_journal_sorties
+       WHERE eleve_id = a1 AND retire_le IS NULL) <> a1 THEN
+    RAISE EXCEPTION 'JS10: l''accord de l''adulte n''est pas le sien';
+  END IF;
+  -- Il est note, pour lui-meme.
+  v := public.noter_sortie_app(s1, 30, false);
+  IF NOT (v->>'note')::boolean OR pg_temp.lignes(a1) <> 1 THEN
     RAISE EXCEPTION 'JS10: adulte avec accord non note : %', v;
   END IF;
+  -- E3 sans accord : rien par son parent (D6).
+  v := public.noter_sortie_app(s1, 30, false, e3);
+  IF (v->>'note')::boolean THEN RAISE EXCEPTION 'JS10: E3 note sans accord'; END IF;
+  -- Puis il accepte pour E3, separement.
+  v := public.accepter_accord_sorties(e3,'sorties-2026-11-v1');
+  IF (SELECT count(*) FROM jsonb_array_elements(v->'eleves') x WHERE (x->>'enCours')::boolean) <> 2 THEN
+    RAISE EXCEPTION 'JS10: accord pour E3 : %', v;
+  END IF;
+  IF (SELECT accepte_par FROM public.accords_journal_sorties
+       WHERE eleve_id = e3 AND retire_le IS NULL) <> a1 THEN
+    RAISE EXCEPTION 'JS10: l''accord de E3 n''est pas celui de son parent';
+  END IF;
+  v := public.noter_sortie_app(s1, 20, true, e3);
+  IF NOT (v->>'note')::boolean OR pg_temp.lignes(e3) <> 1 THEN
+    RAISE EXCEPTION 'JS10: E3 avec accord non note (D6) : %', v;
+  END IF;
+  -- A1 lit ses lignes et celles de E3.
+  IF (SELECT count(*) FROM public.sorties_seance(s1) x WHERE x.eleve_id = a1) <> 1
+     OR (SELECT count(*) FROM public.sorties_seance(s1) x WHERE x.eleve_id = e3) <> 1 THEN
+    RAISE EXCEPTION 'JS10: lecture de l''adulte parent';
+  END IF;
+
+  -- G3 : ne retire pas l'accord de A1, ne note pas pour lui, ne lit pas ses
+  -- lignes ; il lit celles de E3.
+  PERFORM pg_temp.qui(g3,'guardian',f3);
+  v_refus := false;
+  BEGIN
+    PERFORM public.retirer_accord_sorties(a1);
+  EXCEPTION WHEN insufficient_privilege THEN v_refus := true;
+  END;
+  IF NOT v_refus THEN RAISE EXCEPTION 'JS10: un autre tuteur a retire l''accord de l''adulte'; END IF;
+  PERFORM pg_sleep(1.1);
+  v := public.noter_sortie_app(s1, 30, false, a1);
+  IF (v->>'note')::boolean OR pg_temp.lignes(a1) <> 1 THEN
+    RAISE EXCEPTION 'JS10: un autre tuteur a note pour l''adulte';
+  END IF;
+  IF EXISTS (SELECT 1 FROM public.sorties_seance(s1) x WHERE x.eleve_id = a1)
+     OR (SELECT count(*) FROM public.sorties_seance(s1) x WHERE x.eleve_id = e3) <> 1 THEN
+    RAISE EXCEPTION 'JS10: lecture de G3 inattendue';
+  END IF;
+  -- L'enfant E3 ne decide pas pour lui-meme.
+  PERFORM pg_temp.qui(e3,'student',f3);
+  v_refus := false;
+  BEGIN
+    PERFORM public.retirer_accord_sorties(e3);
+  EXCEPTION WHEN insufficient_privilege THEN v_refus := true;
+  END;
+  IF NOT v_refus THEN RAISE EXCEPTION 'JS10: l''enfant a retire son accord'; END IF;
 END;
 $s10$;
 
@@ -394,7 +502,7 @@ DO $s11$
 DECLARE
   v jsonb;
 BEGIN
-  PERFORM pg_temp.qui('c2420000-0000-0000-0000-000000000107','student','c2420000-0000-0000-0000-000000000113');
+  PERFORM pg_temp.qui('c2420000-0000-0000-0000-000000000107','guardian','c2420000-0000-0000-0000-000000000113');
   IF pg_temp.lignes('c2420000-0000-0000-0000-000000000107') <> 200 THEN
     RAISE EXCEPTION 'JS11: preparation du plafond';
   END IF;
@@ -411,7 +519,7 @@ DO $s12$
 DECLARE
   v jsonb;
 BEGIN
-  PERFORM pg_temp.qui('c2420000-0000-0000-0000-000000000107','student','c2420000-0000-0000-0000-000000000113');
+  PERFORM pg_temp.qui('c2420000-0000-0000-0000-000000000107','guardian','c2420000-0000-0000-0000-000000000113');
   v := public.accords_sorties();
   IF (v->'eleves'->0->>'enCours')::boolean OR v->>'versionCourante' <> 'sorties-2026-12-v2' THEN
     RAISE EXCEPTION 'JS12: accord perime encore en cours : %', v;

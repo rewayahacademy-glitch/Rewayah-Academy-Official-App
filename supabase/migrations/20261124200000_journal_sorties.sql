@@ -130,7 +130,10 @@ COMMENT ON TABLE public.journal_sorties_app IS
 -- 4. Les aides privees
 -- ---------------------------------------------------------------------------
 
--- Le type de l'eleve, ou NULL quand il ne se lit pas (pas de fiche eleve).
+-- Le type de l'eleve, lu dans sa fiche eleve vivante, ou NULL quand il ne se
+-- lit pas. Jamais par profiles.role : l'eleve adulte autonome a le role
+-- 'guardian' et une fiche student_profiles 'autonomous' (0087,
+-- creer_profil_inscription) ; seul l'eleve mineur a le role 'student'.
 CREATE OR REPLACE FUNCTION private.sorties_type_eleve(p_eleve uuid)
 RETURNS text
 LANGUAGE sql
@@ -144,7 +147,23 @@ AS $function$
    WHERE sp.profile_id = p_eleve
      AND sp.deleted_at IS NULL
      AND p.deleted_at IS NULL
-     AND p.role = 'student';
+   LIMIT 1;
+$function$;
+
+-- Est-ce un eleve ? Une fiche eleve vivante (mineur ou adulte autonome), ou un
+-- profil de role 'student' sans fiche lisible (traite alors comme mineur).
+CREATE OR REPLACE FUNCTION private.sorties_est_eleve(p_eleve uuid)
+RETURNS boolean
+LANGUAGE sql
+STABLE
+SECURITY DEFINER
+SET search_path = ''
+AS $function$
+  SELECT coalesce(
+    private.sorties_type_eleve(p_eleve) IS NOT NULL
+    OR EXISTS (SELECT 1 FROM public.profiles e
+                WHERE e.id = p_eleve AND e.role = 'student' AND e.deleted_at IS NULL),
+    false);
 $function$;
 
 -- Le journal est-il allume par la direction ?
@@ -172,10 +191,13 @@ AS $function$
 $function$;
 
 -- L'appelant peut-il donner ou retirer l'accord pour cet eleve ?
---   * un tuteur, pour un eleve de son foyer qui n'est pas autonome (ou dont le
---     type ne se lit pas) ;
---   * l'eleve autonome, pour lui-meme.
--- Un enfant ne decide jamais pour lui-meme.
+--   * l'eleve autonome, pour lui-meme : auth.uid() = p_eleve ET
+--     ma_capacite_eleve() (0090 : compte valide ET fiche 'autonomous'), quel
+--     que soit son role (l'adulte autonome a le role 'guardian') ;
+--   * un tuteur, pour un AUTRE eleve de son foyer qui n'est pas autonome (ou
+--     dont le type ne se lit pas : traite comme mineur).
+-- Pour un eleve autonome, lui seul decide. Un enfant ne decide jamais pour
+-- lui-meme. Un tuteur qui n'est pas eleve ne s'accepte pas lui-meme.
 CREATE OR REPLACE FUNCTION private.sorties_peut_decider(p_eleve uuid)
 RETURNS boolean
 LANGUAGE sql
@@ -187,17 +209,15 @@ AS $function$
     auth.uid() IS NOT NULL
     AND p_eleve IS NOT NULL
     AND public.app_account_valid()
-    AND EXISTS (SELECT 1 FROM public.profiles e
-                 WHERE e.id = p_eleve AND e.role = 'student' AND e.deleted_at IS NULL)
+    AND private.sorties_est_eleve(p_eleve)
     AND (
+      (auth.uid() = p_eleve
+       AND public.ma_capacite_eleve())
+      OR
       (public.app_role() = 'guardian'
        AND auth.uid() <> p_eleve
        AND public.est_du_foyer(p_eleve)
        AND private.sorties_type_eleve(p_eleve) IS DISTINCT FROM 'autonomous')
-      OR
-      (public.app_role() = 'student'
-       AND auth.uid() = p_eleve
-       AND private.sorties_type_eleve(p_eleve) = 'autonomous')
     ), false);
 $function$;
 
@@ -238,8 +258,9 @@ $function$;
 -- ---------------------------------------------------------------------------
 
 -- Ce que la page de l'accord montre : l'etat du journal, la version du texte,
--- et une entree par eleve sur lequel l'appelant decide (ses enfants non
--- autonomes pour un tuteur ; lui-meme pour un eleve autonome).
+-- et une entree par eleve sur lequel l'appelant decide : lui-meme s'il est
+-- eleve autonome, et ses enfants non autonomes s'il est tuteur (un adulte
+-- autonome qui est aussi parent voit les deux).
 CREATE OR REPLACE FUNCTION public.accords_sorties()
 RETURNS jsonb
 LANGUAGE plpgsql
@@ -272,8 +293,7 @@ BEGIN
           SELECT a.id, a.version, a.accepte_le
             FROM public.accords_journal_sorties a
            WHERE a.id = private.sorties_accord_valide(e.id)) v ON true
-       WHERE e.role = 'student'
-         AND e.deleted_at IS NULL
+       WHERE e.deleted_at IS NULL
          AND (e.id = v_moi OR (e.household_id IS NOT NULL
                                AND e.household_id = public.app_household_id()))
          AND private.sorties_peut_decider(e.id)), '[]'::jsonb));
@@ -389,11 +409,19 @@ BEGIN
     RETURN v_non;
   END IF;
   v_eleve := coalesce(p_eleve, v_moi);
+  -- Pour lui-meme : tout eleve (mineur de role 'student' ou adulte autonome de
+  -- role 'guardian'), reconnu par sa fiche, jamais par son role. Pour un
+  -- autre (D6) : un tuteur du foyer, pour un eleve qui n'est pas autonome.
+  -- L'accord valide (plus bas) reste exige dans les deux cas.
   IF v_eleve = v_moi THEN
-    IF NOT coalesce(public.app_role() = 'student', false) THEN
+    IF NOT coalesce(private.sorties_est_eleve(v_moi), false) THEN
       RETURN v_non;
     END IF;
-  ELSIF NOT coalesce(public.app_role() = 'guardian' AND public.est_du_foyer(v_eleve), false) THEN
+  ELSIF NOT coalesce(public.app_role() = 'guardian'
+                     AND public.est_du_foyer(v_eleve)
+                     AND private.sorties_est_eleve(v_eleve)
+                     AND private.sorties_type_eleve(v_eleve) IS DISTINCT FROM 'autonomous',
+                     false) THEN
     RETURN v_non;
   END IF;
   IF NOT private.sorties_journal_actif() THEN
@@ -452,7 +480,8 @@ $function$;
 -- La regle de lecture de presence_seance_v (20261102900000), sans le
 -- controleur : la direction lit tout ; l'enseignant de la seance (titulaire ou
 -- remplacant effectif) ses eleves ; le tuteur les enfants de son foyer ;
--- l'eleve les siennes. Jamais les lignes d'un autre foyer.
+-- l'eleve les siennes (quel que soit son role). Jamais les lignes d'un autre
+-- foyer, ni celles d'un adulte autonome pour un autre tuteur de son foyer.
 CREATE OR REPLACE FUNCTION public.sorties_seance(p_session_id uuid)
 RETURNS TABLE (
   eleve_id uuid,
@@ -487,8 +516,14 @@ BEGIN
            OR (v_role = 'teacher'
                AND (s.teacher_id = v_moi
                     OR private.c29_enseignant_effectif_session(s.id) = v_moi))
-           OR (v_role = 'guardian' AND j.eleve_id <> v_moi AND public.est_du_foyer(j.eleve_id))
-           OR (v_role = 'student' AND j.eleve_id = v_moi),
+           -- Le tuteur lit les enfants de son foyer, jamais un eleve adulte
+           -- autonome du meme foyer (son texte : « vous, l'enseignant de la
+           -- seance et la direction »).
+           OR (v_role = 'guardian' AND j.eleve_id <> v_moi AND public.est_du_foyer(j.eleve_id)
+               AND private.sorties_type_eleve(j.eleve_id) IS DISTINCT FROM 'autonomous')
+           -- L'eleve lit les siennes, quel que soit son role (l'adulte
+           -- autonome a le role 'guardian').
+           OR j.eleve_id = v_moi,
          false)
    ORDER BY j.sortie_le, j.id;
 END;
@@ -535,6 +570,7 @@ BEGIN
   FOREACH v_oid IN ARRAY ARRAY[
     'private.sorties_config_valide()'::pg_catalog.regprocedure,
     'private.sorties_type_eleve(uuid)'::pg_catalog.regprocedure,
+    'private.sorties_est_eleve(uuid)'::pg_catalog.regprocedure,
     'private.sorties_journal_actif()'::pg_catalog.regprocedure,
     'private.sorties_version_courante()'::pg_catalog.regprocedure,
     'private.sorties_peut_decider(uuid)'::pg_catalog.regprocedure,
@@ -595,6 +631,7 @@ BEGIN
   END LOOP;
   FOREACH v_fn IN ARRAY ARRAY[
     'private.sorties_type_eleve(uuid)',
+    'private.sorties_est_eleve(uuid)',
     'private.sorties_journal_actif()',
     'private.sorties_version_courante()',
     'private.sorties_peut_decider(uuid)',

@@ -2015,6 +2015,12 @@ n'est pas `autonomous`, ou dont le type ne se lit pas, est traité comme mineur.
   pour un élève non autonome ; l'élève autonome pour lui-même ; jamais l'enfant pour lui-même. Un
   seul en cours ; retrait par `retire_le` ; accepter et retirer sont journalisés
   (`log_sensitive_access`). Aucun accord n'est recueilli journal éteint.
+- **L'élève se reconnaît par sa fiche, jamais par son rôle** (correction du 13/11 après relecture
+  du pilote). L'élève adulte autonome a le rôle `guardian` et une fiche `student_profiles`
+  `autonomous` (0087) ; seul le mineur a le rôle `student`. « Pour soi » = `ma_capacite_eleve()`
+  et lui-même ; « pour un enfant » = tuteur du foyer, un autre élève, non autonome. Pour un élève
+  autonome, lui seul décide ; un autre tuteur du foyer ne décide pas, ne note pas et ne lit pas ses
+  lignes. Un adulte autonome qui est aussi parent voit sa carte et celles de ses enfants.
 - **Élève adulte : option la plus protectrice.** Son choix passe par le même mécanisme : sans
   réponse de sa part, rien n'est noté (pas d'écriture par défaut avec simple information).
 - Le journal (`journal_sorties_app`) : séance, élève, sortie, retour, sortie de la salle ou non.

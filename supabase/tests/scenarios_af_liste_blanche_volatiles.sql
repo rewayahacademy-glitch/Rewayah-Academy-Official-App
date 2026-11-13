@@ -499,9 +499,10 @@ declare
     'retirer_sourate_validee(uuid,integer,text)',
     -- HORS-SALLE-2 (migration 20261124200000) : l'accord du journal des
     -- sorties de l'application, par eleve. Garde positive
-    -- private.sorties_peut_decider (app_account_valid() ET, soit app_role() =
-    -- 'guardian' ET eleve de son foyer non autonome, soit app_role() =
-    -- 'student' ET lui-meme autonome) ; 42501 sinon. Ce qu'elles peuvent
+    -- private.sorties_peut_decider (app_account_valid() ET eleve reconnu par
+    -- sa fiche ET, soit lui-meme ET ma_capacite_eleve() (eleve autonome, quel
+    -- que soit son role), soit app_role() = 'guardian' ET un autre eleve de
+    -- son foyer non autonome) ; 42501 sinon. Ce qu'elles peuvent
     -- ecrire : le marquage retire_le, retire_par de l'accord en cours et UNE
     -- ligne d'accord (accepter, journal allume, version en cours seulement),
     -- jamais d'effacement ; une ligne d'audit (log_sensitive_access).
@@ -509,8 +510,9 @@ declare
     'accepter_accord_sorties(uuid,text)',
     'retirer_accord_sorties(uuid)',
     -- HORS-SALLE-2 (meme migration) : noter une sortie de l'application.
-    -- Garde positive app_account_valid() ET (app_role() = 'student' pour
-    -- lui-meme, ou 'guardian' ET est_du_foyer(eleve), D6) ET eleve participant
+    -- Garde positive app_account_valid() ET (eleve reconnu par sa fiche pour
+    -- lui-meme, ou 'guardian' ET est_du_foyer(eleve) non autonome, D6) ET
+    -- eleve participant
     -- de la seance en cours ET journal allume ET accord valide ; sinon rend
     -- {"note": false} sans rien ecrire. Ce qu'elle peut ecrire : UNE ligne de
     -- journal_sorties_app, heures du serveur, 200 au plus par seance et par

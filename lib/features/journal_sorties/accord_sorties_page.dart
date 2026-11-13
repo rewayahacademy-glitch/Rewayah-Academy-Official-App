@@ -173,60 +173,78 @@ class _AccordSortiesPageState extends ConsumerState<AccordSortiesPage> {
 
   Widget _contenu(EtatAccordsSorties etat, TextTheme textes) {
     final AppPalette palette = AppPalette.of(context);
-    final bool adulte = etat.pourSoi;
+    // Le serveur dit, par eleve, s'il est autonome : un eleve adulte qui est
+    // aussi parent voit sa propre decision (texte de l'adulte) ET celles de
+    // ses enfants (texte du parent), chacune separee. Aucun role n'est lu.
+    final List<AccordSortiesEleve> pourSoi = <AccordSortiesEleve>[
+      for (final AccordSortiesEleve e in etat.eleves)
+        if (e.autonome) e,
+    ];
+    final List<AccordSortiesEleve> enfants = <AccordSortiesEleve>[
+      for (final AccordSortiesEleve e in etat.eleves)
+        if (!e.autonome) e,
+    ];
     final bool unSansAccord = etat.eleves.any(
       (AccordSortiesEleve e) => !e.enCours,
     );
     // Le focus revient a la premiere case quand rien n'est coche.
-    final String? premiereCase = etat.eleves
+    final String? premiereCase = <AccordSortiesEleve>[...pourSoi, ...enfants]
         .where((AccordSortiesEleve e) => !e.enCours)
         .map((AccordSortiesEleve e) => e.eleveId)
         .firstOrNull;
+    List<Widget> groupe(
+      List<AccordSortiesEleve> eleves, {
+      required bool adulte,
+    }) => <Widget>[
+      TexteAccordSorties(adulte: adulte),
+      Ecart.vXl,
+      PileCartes(
+        children: <Widget>[
+          for (final AccordSortiesEleve e in eleves)
+            if (e.enCours)
+              _CarteAccepte(
+                eleve: e,
+                adulte: adulte,
+                enCours: _retraitEnCours == e.eleveId,
+                onRetirer: _retraitEnCours == null && !_envoi
+                    ? () => unawaited(_retirer(e.eleveId))
+                    : null,
+              )
+            else
+              CaseAccordTexte(
+                key: ValueKey<String>('case-sorties-${e.eleveId}'),
+                libelle: adulte
+                    ? t.journalSorties.texte.adulte.caseAccord
+                    : t.journalSorties.texte.parent.caseAccord(
+                        dePrenom: deDevant(e.prenom),
+                      ),
+                cochee: _cochees.contains(e.eleveId),
+                focusNode: e.eleveId == premiereCase ? _focusCase : null,
+                onChanged: _envoi
+                    ? null
+                    : (bool v) => setState(() {
+                        _erreur = null;
+                        v
+                            ? _cochees.add(e.eleveId)
+                            : _cochees.remove(e.eleveId);
+                      }),
+              ),
+        ],
+      ),
+    ];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         Text(
-          adulte
+          enfants.isEmpty
               ? t.journalSorties.accord.introAdulte
               : t.journalSorties.accord.intro,
           style: textes.bodyLarge,
         ),
         Ecart.vXl,
-        TexteAccordSorties(adulte: adulte),
-        Ecart.vXl,
-        PileCartes(
-          children: <Widget>[
-            for (final AccordSortiesEleve e in etat.eleves)
-              if (e.enCours)
-                _CarteAccepte(
-                  eleve: e,
-                  adulte: adulte,
-                  enCours: _retraitEnCours == e.eleveId,
-                  onRetirer: _retraitEnCours == null && !_envoi
-                      ? () => unawaited(_retirer(e.eleveId))
-                      : null,
-                )
-              else
-                CaseAccordTexte(
-                  key: ValueKey<String>('case-sorties-${e.eleveId}'),
-                  libelle: adulte
-                      ? t.journalSorties.texte.adulte.caseAccord
-                      : t.journalSorties.texte.parent.caseAccord(
-                          dePrenom: deDevant(e.prenom),
-                        ),
-                  cochee: _cochees.contains(e.eleveId),
-                  focusNode: e.eleveId == premiereCase ? _focusCase : null,
-                  onChanged: _envoi
-                      ? null
-                      : (bool v) => setState(() {
-                          _erreur = null;
-                          v
-                              ? _cochees.add(e.eleveId)
-                              : _cochees.remove(e.eleveId);
-                        }),
-                ),
-          ],
-        ),
+        if (pourSoi.isNotEmpty) ...groupe(pourSoi, adulte: true),
+        if (pourSoi.isNotEmpty && enfants.isNotEmpty) Ecart.vXxl,
+        if (enfants.isNotEmpty) ...groupe(enfants, adulte: false),
         if (_erreur != null || _annonce != null) ...<Widget>[
           Ecart.vMd,
           Semantics(

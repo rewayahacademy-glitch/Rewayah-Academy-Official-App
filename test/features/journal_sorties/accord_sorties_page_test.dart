@@ -184,6 +184,53 @@ void main() {
     expect(find.text(t.journalSorties.texte.parent.quoi), findsNothing);
   });
 
+  testWidgets('l eleve adulte qui est aussi parent : sa decision avec le '
+      'texte de l adulte, celle de son enfant avec le texte du parent, '
+      'enregistrees separement', (WidgetTester tester) async {
+    final FauxJournalSorties faux = FauxJournalSorties(
+      etat: const EtatAccordsSorties(
+        journalActif: true,
+        versionCourante: 'sorties-2026-11-v1',
+        eleves: <AccordSortiesEleve>[
+          AccordSortiesEleve(
+            eleveId: 'moi',
+            prenom: 'Karim',
+            autonome: true,
+            enCours: false,
+          ),
+          AccordSortiesEleve(
+            eleveId: 'e-amine',
+            prenom: 'Amine',
+            autonome: false,
+            enCours: false,
+          ),
+        ],
+      ),
+    );
+    await monterAccordSorties(tester, faux);
+    expect(find.text(t.journalSorties.texte.adulte.quoi), findsOneWidget);
+    expect(find.text(t.journalSorties.texte.parent.quoi), findsOneWidget);
+    expect(find.text(t.journalSorties.texte.adulte.caseAccord), findsOneWidget);
+    // Elision : « d'Amine ».
+    final Finder caseEnfant = find.text(
+      t.journalSorties.texte.parent.caseAccord(dePrenom: "d'Amine"),
+    );
+    expect(caseEnfant, findsOneWidget);
+    // Le texte de l'adulte vient avant celui du parent.
+    expect(
+      tester.getTopLeft(find.text(t.journalSorties.texte.adulte.quoi)).dy,
+      lessThan(
+        tester.getTopLeft(find.text(t.journalSorties.texte.parent.quoi)).dy,
+      ),
+    );
+    await _toucher(tester, caseEnfant);
+    await _toucher(tester, _bouton());
+    expect(faux.acceptes, <(String, String)>[
+      ('e-amine', 'sorties-2026-11-v1'),
+    ]);
+    verifierUnSeulBoutonPlein(tester);
+  });
+
   testWidgets('journal eteint ou serveur ancien : aucune case, la page le '
       'dit', (WidgetTester tester) async {
     for (final EtatAccordsSorties? etat in <EtatAccordsSorties?>[

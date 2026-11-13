@@ -130,9 +130,6 @@ class EtatAccordsSorties {
   /// releve qui n'existe pas.
   bool get propose =>
       journalActif && versionCourante != null && eleves.isNotEmpty;
-
-  /// Vrai quand l'appelant decide pour lui-meme (eleve adulte autonome).
-  bool get pourSoi => eleves.length == 1 && eleves.single.autonome;
 }
 
 /// Pourquoi un accord n'a pas ete enregistre.
