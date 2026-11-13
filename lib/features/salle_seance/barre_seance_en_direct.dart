@@ -14,6 +14,8 @@ import '../../core/observabilite/journal_dev.dart';
 import '../../core/pause_seance/port_pause_seance.dart';
 import '../../core/router/billet_salle.dart';
 import '../../core/router/routes.dart';
+import '../../core/session/session_controleur.dart';
+import '../../core/session/session_state.dart';
 import '../../core/tc_classe/port_session_persistante.dart';
 import '../../core/tc_classe/session_persistante.dart';
 import '../../core/tc_horloge/chrono_seance.dart' show BornesChrono;
@@ -436,6 +438,17 @@ class _BarreEtat extends ConsumerState<_Barre> {
     if (locale != null && !locale.libere) return locale;
     final AccesSalle? acces = widget.etat.acces;
     if (acces == null) return null;
+    // La synchronisation a besoin du profil : tant que la session n'est pas
+    // lue, l'ile attend (elle se redessine quand il arrive).
+    String? profil;
+    try {
+      profil = ref.watch(
+        sessionProvider.select((SessionState s) => s.profileId),
+      );
+    } on Object {
+      profil = null;
+    }
+    if (profil == null) return null;
     final String seance = widget.cours.sessionId;
     return _seanceLocale = creerSeanceVivante(
       cours: widget.cours,

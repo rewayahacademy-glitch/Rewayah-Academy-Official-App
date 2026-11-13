@@ -1,7 +1,14 @@
+import 'dart:async';
+import 'dart:convert';
+
+import 'package:flutter/widgets.dart' show AppLifecycleState;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/pause_seance/port_pause_seance.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/content_position.dart';
 import 'package:rewayah_academy/core/tc_classe/port_rappel_discret.dart';
+import 'package:rewayah_academy/core/tc_classe/port_session_persistante.dart';
 import 'package:rewayah_academy/core/tc_classe/rappel_discret.dart';
+import 'package:rewayah_academy/core/tc_classe/session_persistante.dart';
 import 'package:rewayah_academy/core/tc_outils/annotation_layer.dart';
 import 'package:rewayah_academy/core/tc_outils/evenements_outils.dart';
 import 'package:rewayah_academy/core/tc_outils/port_annotations.dart';
@@ -12,8 +19,12 @@ import 'package:rewayah_academy/core/tc_realtime/port_transport_donnees.dart';
 import 'package:rewayah_academy/core/tc_realtime/service_realtime_pedagogique.dart';
 import 'package:rewayah_academy/core/tc_realtime/types_message.dart';
 import 'package:rewayah_academy/core/theme/app_mouvement.dart';
+import 'package:rewayah_academy/core/video/ecran_eveille.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
+import 'package:rewayah_academy/features/salle/seance_vivante.dart';
 import 'package:rewayah_academy/features/salle/synchro_salle.dart';
+import 'package:rewayah_academy/features/salle_seance/marque_chrono.dart';
+import 'package:rewayah_academy/features/salle_seance/relais_salle.dart';
 
 import '../support/harnais.dart';
 import '../support/transport_memoire.dart';
@@ -743,6 +754,8 @@ void main() {
     expect(signales.single.$2, isA<StateError>());
     await synchro.liberer();
   });
+
+  _synchroSession();
 }
 
 /// FN-018 : un moteur dont le flux des participants tombe en erreur.
@@ -750,4 +763,390 @@ class _MoteurEnErreur extends FauxMoteurSalle {
   @override
   Stream<List<ParticipantSalle>> get participants =>
       Stream<List<ParticipantSalle>>.error(StateError('flux coupe'));
+}
+
+// ---------------------------------------------------------------------------
+// SYNCHRO-SESSION (13/11/2026, `docs/current/salle/HARMONIE-2026-11-13.md`
+// section 7, journal D-045) : la synchronisation et la Dynamique chrono vivent
+// avec l'appel, tenues par le controleur de session, et non avec la page.
+// ---------------------------------------------------------------------------
+
+AccesSalle _accesSession({required bool enseignant}) => AccesSalle(
+  urlServeur: 'wss://exemple.invalid',
+  jeton: 'jeton.signe',
+  nomSalle: 'r_0123456789abcdef0123456789abcdef',
+  fournisseur: FournisseurVideo.cloud,
+  role: enseignant ? 'teacher' : 'student',
+  capacites: CapacitesSalle(
+    peutPublier: true,
+    peutPublierVideo: true,
+    peutPublierDonnees: enseignant,
+    peutRecevoir: true,
+    invisible: false,
+    peutModerer: enseignant,
+  ),
+  expireLe: DateTime.utc(2030),
+);
+
+ParticipantSalle _qui(String id, String role, {bool local = false}) =>
+    ParticipantSalle(
+      identite: id,
+      nom: id,
+      role: role,
+      estLocal: local,
+      micro: false,
+      camera: false,
+      parle: false,
+      qualite: QualiteLien.bonne,
+    );
+
+PaquetDonnees _parole(String seance, String? profil, String prenom) =>
+    PaquetDonnees(
+      sujet: sujetProtocolePedagogique,
+      charge: messageVersOctets(
+        MessagePedagogique(
+          type: typeParoleSalle,
+          sessionId: seance,
+          emetteurProfilId: 't1',
+          charge: profil == null
+              ? const <String, dynamic>{}
+              : <String, dynamic>{'profil': profil, 'prenom': prenom},
+          emisLeUtc: DateTime.now().toUtc(),
+        ),
+      ),
+      fiable: true,
+      emetteurIdentite: 't1',
+    );
+
+PaquetDonnees _pauseDe(String emetteur) => PaquetDonnees(
+  sujet: sujetPauseSalle,
+  charge: utf8.encode(
+    jsonEncode(
+      chargePause(
+        PauseSeance(
+          statut: StatutPause.enCours,
+          dureePrevueMinutes: 10,
+          debutUtc: DateTime.now().toUtc(),
+        ),
+      ),
+    ),
+  ),
+  fiable: true,
+  emetteurIdentite: emetteur,
+);
+
+/// Une minuterie qu'on declenche a la main (la garde hors application).
+class _Minuterie {
+  final List<(Timer, void Function())> armees = <(Timer, void Function())>[];
+
+  Timer creer(Duration _, void Function() rappel) {
+    final Timer t = Timer(const Duration(days: 1), () {});
+    armees.add((t, rappel));
+    return t;
+  }
+
+  void declencher() {
+    for (final (Timer t, void Function() rappel) in armees.toList()) {
+      if (t.isActive) {
+        t.cancel();
+        rappel();
+      }
+    }
+  }
+}
+
+class _SansNavigateur implements VerrouEcranNavigateur {
+  const _SansNavigateur();
+
+  @override
+  bool get disponible => false;
+
+  @override
+  bool get visible => true;
+
+  @override
+  Stream<void> get changementsDeVisibilite => const Stream<void>.empty();
+
+  @override
+  Future<Object> demander() => throw UnsupportedError('sans navigateur');
+
+  @override
+  bool estRelache(Object verrou) => true;
+
+  @override
+  Future<void> relacher(Object verrou) async {}
+}
+
+/// Le controleur de l'application, avec une fabrique de [SeanceVivante]
+/// branchee sur des doubles.
+ControleurSessionPersistante _controleur(
+  FauxMoteurSalle moteur, {
+  required String profil,
+  _Minuterie? minuterie,
+  List<String>? creees,
+}) => ControleurSessionPersistante(
+  moteur,
+  FauxServiceVideo(),
+  observeLeCycleDeVie: false,
+  ecranEveille: EcranEveille(const _SansNavigateur()),
+  delaiHorsApplication: () => const Duration(seconds: 30),
+  minuterie: minuterie?.creer,
+  fabriqueCompagnon:
+      ({
+        required SessionEnCours cours,
+        required AccesSalle acces,
+        required VideoSessionProvider moteur,
+      }) {
+        creees?.add(cours.sessionId);
+        return SeanceVivante(
+          moteur: moteur,
+          acces: acces,
+          sessionId: cours.sessionId,
+          profilLocalId: profil,
+          tutoie: false,
+          signal: () {},
+          maintenant: () => DateTime.now().toUtc(),
+        );
+      },
+);
+
+SessionEnCours _cours(String id) =>
+    SessionEnCours(sessionId: id, groupeId: 'g1', libelleGroupe: '');
+
+void _synchroSession() {
+  group('SYNCHRO-SESSION', () {
+    for (final String chemin in <String>[
+      'Quitter',
+      'fin subie',
+      'sortie hors application',
+    ]) {
+      test('quitter ($chemin) : plus rien ne vit', () async {
+        final FauxMoteurAvecRecitant moteur = FauxMoteurAvecRecitant();
+        final _Minuterie minuterie = _Minuterie();
+        final ControleurSessionPersistante controleur = _controleur(
+          moteur,
+          profil: 'e1',
+          minuterie: minuterie,
+        );
+        addTearDown(controleur.liberer);
+        await moteur.rejoindre(_accesSession(enseignant: false));
+        controleur.adopter(
+          cours: _cours(_seance),
+          acces: _accesSession(enseignant: false),
+        );
+        final SeanceVivante seance = seanceTenue(controleur, _seance)!;
+        expect(moteur.ecouteParticipants, isTrue);
+        expect(moteur.ecoutePaquets, isTrue);
+        expect(moteur.ecouteContenus, isFalse, reason: 'eleve : aucun rejeu');
+        expect(moteur.ecouteRecitant, isTrue);
+        switch (chemin) {
+          case 'Quitter':
+            await controleur.quitter();
+          case 'fin subie':
+            moteur.poser(EtatSalle.echec);
+            await pumpEventQueue();
+          default:
+            controleur
+              ..didChangeAppLifecycleState(AppLifecycleState.inactive)
+              ..didChangeAppLifecycleState(AppLifecycleState.hidden);
+            minuterie.declencher();
+            await pumpEventQueue();
+            expect(
+              controleur.etatCourant.sortieHorsApplication?.sessionId,
+              _seance,
+            );
+        }
+        await pumpEventQueue();
+        expect(controleur.compagnon, isNull);
+        expect(seance.libere, isTrue);
+        expect(moteur.ecouteParticipants, isFalse);
+        expect(moteur.ecoutePaquets, isFalse);
+        expect(moteur.ecouteRecitant, isFalse);
+        // Plus aucune alerte ne se pose : le pilote est libere.
+        seance.dynamique.annoncer(
+          AlerteChrono(id: 'apres', titre: 'apres'),
+        );
+        expect(seance.dynamique.alerte, isNull);
+      });
+    }
+
+    test('l enseignant a reduit la salle (aucune page), un eleve entre : il '
+        'recoit la page presentee et les traits', () async {
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      final ControleurSessionPersistante controleur = _controleur(
+        moteur,
+        profil: 't1',
+      );
+      addTearDown(controleur.liberer);
+      await moteur.rejoindre(_accesSession(enseignant: true));
+      controleur.adopter(
+        cours: _cours(_seance),
+        acces: _accesSession(enseignant: true),
+      );
+      final SeanceVivante seance = seanceTenue(controleur, _seance)!;
+      moteur.publierContenu(
+        ContenuPresente(
+          page: 42,
+          sourate: 2,
+          verset: 255,
+          presentePar: 't1',
+          emisLe: DateTime.now(),
+        ),
+      );
+      final AnnotationLayer couche = (await seance.synchro!.depot.couche(
+        resourceId: _page42.resourceId,
+        portee: PorteeAnnotation.temporaire,
+      ))!;
+      await seance.synchro!.depot.ajouterTrait(
+        couche.id,
+        _trait('trait-garde'),
+      );
+      moteur.publier(<ParticipantSalle>[_qui('t1', 'teacher', local: true)]);
+      await pumpEventQueue();
+      final int avant = moteur.contenusPresentesDemandes.length;
+      final int paquetsAvant = moteur.donneesPubliees.length;
+      moteur.publier(<ParticipantSalle>[
+        _qui('t1', 'teacher', local: true),
+        _qui('e2', 'student'),
+      ]);
+      await pumpEventQueue();
+      expect(moteur.contenusPresentesDemandes.length, avant + 1);
+      expect(moteur.contenusPresentesDemandes.last.page, 42);
+      // Le trait repart aussi (rejeu du depot).
+      expect(moteur.donneesPubliees.length, greaterThan(paquetsAvant));
+      await controleur.quitter();
+    });
+
+    test('changer de seance : rien ne passe de l une a l autre', () async {
+      final FauxMoteurAvecRecitant moteur = FauxMoteurAvecRecitant();
+      final List<String> creees = <String>[];
+      final ControleurSessionPersistante controleur = _controleur(
+        moteur,
+        profil: 'e1',
+        creees: creees,
+      );
+      addTearDown(controleur.liberer);
+      await moteur.rejoindre(_accesSession(enseignant: false));
+      controleur.adopter(
+        cours: _cours(_seance),
+        acces: _accesSession(enseignant: false),
+      );
+      final SeanceVivante premiere = seanceTenue(controleur, _seance)!;
+      // Une seconde adoption de la meme seance (droits rendus par le
+      // serveur) garde la meme seance.
+      controleur.adopter(
+        cours: _cours(_seance),
+        acces: _accesSession(enseignant: false),
+      );
+      expect(seanceTenue(controleur, _seance), same(premiere));
+      expect(creees, <String>[_seance]);
+      moteur
+        ..publier(<ParticipantSalle>[
+          _qui('t1', 'teacher'),
+          _qui('e1', 'student', local: true),
+        ])
+        ..recevoirDonnees(_parole(_seance, 'e2', 'Aicha'))
+        ..poserRecitant('e2');
+      await pumpEventQueue();
+      final AnnotationLayer couche = (await premiere.synchro!.depot.couche(
+        resourceId: _page42.resourceId,
+        portee: PorteeAnnotation.temporaire,
+      ))!;
+      await premiere.synchro!.depot.ajouterTrait(couche.id, _trait('trait-1'));
+      expect(premiere.parole?.prenom, 'Aicha');
+      expect(premiere.recitant, 'e2');
+      expect(premiere.dynamique.alerte, isNotNull);
+      moteur.poserRecitant(null);
+
+      controleur.adopter(
+        cours: _cours('s2'),
+        acces: _accesSession(enseignant: false),
+      );
+      final SeanceVivante seconde = seanceTenue(controleur, 's2')!;
+      expect(seanceTenue(controleur, _seance), isNull);
+      expect(premiere.libere, isTrue);
+      expect(seconde, isNot(same(premiere)));
+      expect(creees, <String>[_seance, 's2']);
+      expect(seconde.parole, isNull);
+      expect(seconde.recitant, isNull);
+      expect(seconde.synchro!.depot.couches, isEmpty);
+      expect(seconde.dynamique.alerte, isNull);
+      expect(seconde.dynamique.marques, isEmpty);
+      expect(seconde.pauseRecue, isNull);
+      // Un paquet de l'ancienne seance ne touche pas la nouvelle.
+      moteur.recevoirDonnees(_parole(_seance, 'e3', 'Omar'));
+      await pumpEventQueue();
+      expect(seconde.parole, isNull);
+      await controleur.quitter();
+    });
+
+    test('ligne 3.3 : la pause relayee n est lue que de qui conduit', () async {
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      final ControleurSessionPersistante controleur = _controleur(
+        moteur,
+        profil: 'e1',
+      );
+      addTearDown(controleur.liberer);
+      await moteur.rejoindre(_accesSession(enseignant: false));
+      controleur.adopter(
+        cours: _cours(_seance),
+        acces: _accesSession(enseignant: false),
+      );
+      final SeanceVivante seance = seanceTenue(controleur, _seance)!;
+      moteur.publier(<ParticipantSalle>[
+        _qui('t1', 'teacher'),
+        _qui('e1', 'student', local: true),
+        _qui('e2', 'student'),
+      ]);
+      await pumpEventQueue();
+      moteur.recevoirDonnees(_pauseDe('e2'));
+      await pumpEventQueue();
+      expect(seance.pauseRecue, isNull, reason: 'un camarade ne la relaie pas');
+      moteur.recevoirDonnees(_pauseDe('t1'));
+      await pumpEventQueue();
+      expect(seance.pauseRecue?.statut, StatutPause.enCours);
+      await controleur.quitter();
+    });
+
+    test('ligne 3.1 : le recitant de la video est celui du moteur ; sans '
+        'moteur qui le dise, le message de l enseignant', () async {
+      final FauxMoteurAvecRecitant moteur = FauxMoteurAvecRecitant();
+      final ControleurSessionPersistante controleur = _controleur(
+        moteur,
+        profil: 'e1',
+      );
+      addTearDown(controleur.liberer);
+      await moteur.rejoindre(_accesSession(enseignant: false));
+      controleur.adopter(
+        cours: _cours(_seance),
+        acces: _accesSession(enseignant: false),
+      );
+      final SeanceVivante seance = seanceTenue(controleur, _seance)!;
+      moteur.recevoirDonnees(_parole(_seance, 'e2', 'Aicha'));
+      await pumpEventQueue();
+      // Le message est arrive, les metadonnees pas encore : pas de video.
+      expect(seance.parole?.prenom, 'Aicha');
+      expect(seance.recitant, isNull);
+      moteur.poserRecitant('e2');
+      await pumpEventQueue();
+      expect(seance.recitant, 'e2');
+      await controleur.quitter();
+
+      final FauxMoteurSalle simple = FauxMoteurSalle();
+      final ControleurSessionPersistante autre = _controleur(
+        simple,
+        profil: 'e1',
+      );
+      addTearDown(autre.liberer);
+      await simple.rejoindre(_accesSession(enseignant: false));
+      autre.adopter(
+        cours: _cours(_seance),
+        acces: _accesSession(enseignant: false),
+      );
+      simple.recevoirDonnees(_parole(_seance, 'e2', 'Aicha'));
+      await pumpEventQueue();
+      expect(seanceTenue(autre, _seance)!.recitant, 'e2');
+      await autre.quitter();
+    });
+  });
 }
