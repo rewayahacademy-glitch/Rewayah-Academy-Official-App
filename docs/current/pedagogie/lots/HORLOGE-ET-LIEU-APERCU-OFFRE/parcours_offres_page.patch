@@ -1,0 +1,35 @@
+--- a/lib/features/parcours_offres/parcours_offres_page.dart	2026-11-13 00:34:20.064276491 +0000
++++ b/lib/features/parcours_offres/parcours_offres_page.dart	2026-11-13 00:34:35.666918329 +0000
+@@ -12,6 +12,7 @@
+ import '../../core/offres/service_offres.dart';
+ import '../../core/router/routes.dart';
+ import '../../core/tc_groupe/libelles_tc_groupe.dart';
++import '../../core/tc_horloge/apercu_offre.dart';
+ import '../../core/theme/app_palette.dart';
+ import '../../core/theme/app_spacing.dart';
+ import '../../core/widgets/action_principale.dart';
+@@ -975,7 +976,7 @@
+             ),
+           );
+ 
+-    return ScheduleOption(
++    final ScheduleOption carte = ScheduleOption(
+       day: libelleJours(offre.creneaux),
+       hours: libelleHeures(offre.creneaux),
+       // L'ecart d'heure est EXPLIQUE plutot que subi : une famille de Conakry
+@@ -991,6 +992,15 @@
+       enabled: onChoisir != null && !offre.dejaChoisie,
+       onSelected: onChoisir,
+     );
++    // HORLOGE-ET-LIEU : ce que devient l'heure du cours chez la famille au
++    // prochain changement d'heure. Rien quand elle ne change jamais.
++    return Column(
++      crossAxisAlignment: CrossAxisAlignment.stretch,
++      children: <Widget>[
++        carte,
++        LigneApercuOffre(offreId: offre.id, fuseau: fuseauVu),
++      ],
++    );
+   }
+ }
+ 

@@ -459,4 +459,51 @@ BEGIN
 END
 $f$;
 
+-- =====================================================================
+-- (8) Apercu d'une offre a l'inscription : « 18:00 a Paris » se lit 17:00 ou
+-- 16:00 a Conakry selon la saison, et change au prochain changement d'heure de Paris
+-- =====================================================================
+INSERT INTO public.offres_horaires
+  (id, type_public, langue_code, fuseau_iana, jours, heure_locale, duree_minutes, etat, publiee_at, publiee_par, created_by)
+SELECT 'd3000000-0000-4000-8000-00000000a001', 'enfant', (SELECT code FROM public.langues_cours ORDER BY code LIMIT 1),
+       'Europe/Paris', ARRAY[3]::smallint[], 18, 45, 'publiee', pg_catalog.now(),
+       'd3000000-0000-4000-8000-000000000001', 'd3000000-0000-4000-8000-000000000001';
+INSERT INTO public.offres_horaires
+  (id, type_public, langue_code, fuseau_iana, jours, heure_locale, duree_minutes, etat, created_by)
+SELECT 'd3000000-0000-4000-8000-00000000a002', 'enfant', (SELECT code FROM public.langues_cours ORDER BY code LIMIT 1),
+       'Europe/Paris', ARRAY[4]::smallint[], 18, 45, 'brouillon', 'd3000000-0000-4000-8000-000000000001';
+SELECT pg_temp.en_tant('d3000000-0000-4000-8000-000000000b02', 'guardian', 'd3000000-0000-4000-8000-0000000000f2');
+SET LOCAL ROLE authenticated;
+DO $o$
+DECLARE
+  v_conakry jsonb := public.apercu_offre_horaire('d3000000-0000-4000-8000-00000000a001', 'Africa/Conakry');
+  v_paris jsonb := public.apercu_offre_horaire('d3000000-0000-4000-8000-00000000a001', 'Europe/Paris');
+  v_brouillon jsonb := public.apercu_offre_horaire('d3000000-0000-4000-8000-00000000a002', 'Africa/Conakry');
+BEGIN
+  IF (v_conakry ->> 'meme')::boolean
+     OR v_conakry ->> 'heure_apres' IS NULL
+     OR v_conakry ->> 'maintenant' = v_conakry ->> 'heure_apres'
+     OR (v_conakry ->> 'jour_maintenant')::int <> 3 THEN
+    RAISE EXCEPTION 'HLB ROUGE : apercu d''une offre de Paris lue a Conakry : %', v_conakry;
+  END IF;
+  IF NOT (v_paris ->> 'meme')::boolean OR v_paris ->> 'maintenant' <> '18:00' THEN
+    RAISE EXCEPTION 'HLB ROUGE : l''offre lue a Paris ne doit pas bouger : %', v_paris;
+  END IF;
+  IF v_brouillon IS NOT NULL THEN
+    RAISE EXCEPTION 'HLB ROUGE : une offre non publiee ne doit rien montrer : %', v_brouillon;
+  END IF;
+  RAISE NOTICE 'HLB OK : l''apercu d''une offre dit l''heure chez soi puis apres le changement d''heure (Conakry %, puis %), rien pour Paris, rien pour un brouillon',
+    v_conakry ->> 'maintenant', v_conakry ->> 'heure_apres';
+END
+$o$;
+RESET ROLE;
+DO $f$
+BEGIN
+  IF pg_catalog.has_function_privilege('anon', 'public.apercu_offre_horaire(uuid,text)'::pg_catalog.regprocedure, 'EXECUTE') THEN
+    RAISE EXCEPTION 'HLB ROUGE : apercu_offre_horaire executable par anon';
+  END IF;
+  RAISE NOTICE 'HLB OK : apercu_offre_horaire fermee a anon';
+END
+$f$;
+
 ROLLBACK;

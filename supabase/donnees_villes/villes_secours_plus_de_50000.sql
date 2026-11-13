@@ -12410,3 +12410,24 @@ INSERT INTO public.villes_ref (id, nom, nom_ascii, nom_ar, pays_code, region, fu
 (13732115,'Kabal',NULL,NULL,'PK','Khyber Pakhtunkhwa','Asia/Karachi',34.792,72.285,132)
 ON CONFLICT (id) DO NOTHING;
 COMMIT;
+
+-- Controle d'effectif de la variante (celui des six morceaux n'est pas rejoue).
+BEGIN;
+DO $controle$
+DECLARE
+  v_n bigint;
+BEGIN
+  SELECT pg_catalog.count(*) INTO v_n FROM public.villes_ref;
+  IF v_n <> 12405 THEN
+    RAISE EXCEPTION 'HORLOGE-ET-LIEU (variante de secours) : % villes chargees au lieu de 12405', v_n;
+  END IF;
+  IF EXISTS (SELECT 1 FROM public.villes_ref v WHERE NOT app_private.fuseau_connu(v.fuseau_iana)) THEN
+    RAISE EXCEPTION 'HORLOGE-ET-LIEU (variante de secours) : un fuseau de la liste est inconnu de la base';
+  END IF;
+  IF (SELECT pg_catalog.count(*) FROM public.villes_ref
+       WHERE pays_code = 'SA' AND nom_recherche IN ('makkah', 'riyadh', 'madinah')) <> 3 THEN
+    RAISE EXCEPTION 'HORLOGE-ET-LIEU (variante de secours) : les villes saoudiennes attendues manquent';
+  END IF;
+END
+$controle$;
+COMMIT;
