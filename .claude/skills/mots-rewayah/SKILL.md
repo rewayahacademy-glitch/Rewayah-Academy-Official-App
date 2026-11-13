@@ -66,7 +66,7 @@ Sources : les décisions du directeur (annexe 10 du dossier maître, spécificat
 | matière principale, matière secondaire | essentiel, en plus, fil |
 | à finir avant le… (date limite) | deadline, échéance académique |
 | séance de consolidation | révision groupée, récap |
-| les sourates courtes, d'Al-Fatiha à Az-Zalzalah | petit Coran |
+| les sourates courtes, d'Al-Masad (111) à Az-Zalzalah (99) (avec Al-Fatiha, An-Nâs, Al-Falaq et Al-Ikhlâs : les 17 sourates des bases) | petit Coran |
 | examen de fin des bases | porte d'Az-Zalzalah, gate, G0 |
 | lire tout le Coran · mémoriser le Coran | Tilawah, Hifz, T1-T6, H0-H6 |
 | petit bilan | contrôle |

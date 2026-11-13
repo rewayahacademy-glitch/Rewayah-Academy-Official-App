@@ -22,6 +22,7 @@
 | Âge minimum | Entrée à l'académie | 6 ans ; avant, seulement par exception de la direction | DÉCIDÉ 13/10 | Directeur |
 | Part de la matière principale | Équilibre de la semaine | 70 à 80 % du temps | DÉCIDÉ 13/10 | Directeur |
 | Al-Fatiha dès la première semaine | Permettre de prier tôt | Oui à partir de 10 ans ; pour les 6-9 ans, après la chadda | DÉCIDÉ 13/10 | Directeur |
+| Durée de chaque élément de la matière secondaire, en semaines (une consolidation par semaine) | Le placement dans `PROGRAMME-SEANCE-PAR-SEANCE.md` | 6-9 ans : Al-Fatiha 3 ; An-Nâs, Al-Falaq, Al-Ikhlâs 2 chacune ; paroles de la prière : groupe 1 et gestes 2, groupes 2 à 5 1 chacun. Dès 10 ans (repère, l'enseignant décide) : Al-Fatiha 2 ; chaque sourate 1 ; chaque groupe de la prière 1 | 6-9 ans, Al-Fatiha et les trois sourates : DÉCIDÉ 13/10 (« environ ») ; le reste : ARBITRÉ 13/11 | Directeur (6-9 ans) ; direction (le reste) |
 | Durée prévue des bases (total) | Ce qu'on vise pour un débutant | 37 semaines (6-9 ans), 28 (10-13), 24 (14-17), 15 (adultes) | DÉCIDÉ 14/10 | Directeur |
 | Date limite des bases (total) | La somme des dates limites des quatre étapes ; affichée comme **horizon** du niveau, jamais comme une date ferme de plus | 48 semaines (6-9 ans), 36 (10-13), 31 (14-17), 20 (adultes) | DÉCIDÉ 14/10 | Directeur |
 | **Durée prévue et date limite de chaque étape** | Chaque étape a sa durée prévue et sa **date limite** par tranche d'âge (DÉCIDÉ 14/10). La date limite d'une étape part de l'entrée de l'élève dans cette étape et ne recule que pour les fermetures de l'académie et une pause accordée (DÉCIDÉ 14/10). Un élève qui valide une étape en avance garde le temps gagné : la date de l'étape suivante part de son entrée dans cette étape | Voir le tableau 1 bis | Principe et totaux DÉCIDÉS 14/10 ; répartition par étape ARBITRÉE | Directeur (principe, totaux) ; direction (répartition) |
@@ -139,7 +140,7 @@ Chaque case : durée prévue (date limite de l'étape), comptées depuis l'entr�
 | Réglage | À quoi il sert | Valeur par défaut | Statut | Qui peut le changer |
 |---|---|---|---|---|
 | Interface guidée par défaut | L'écran de l'enfant | 6-9 ans ; dès 10 ans, l'enfant peut demander l'interface standard et le tuteur décide | ARBITRÉ (retenu au registre du 14/10, par délégation) | Direction |
-| Âge où l'élève voit sa date limite et son rythme | De 6 à 9 ans, le tuteur porte la date limite | 10 ans | ARBITRÉ | Direction |
+| Âge où l'élève voit sa date limite, la durée prévue, l'horizon, son rythme et les dates de ses séances | De 6 à 9 ans, l'enfant ne voit aucun des cinq ; le tuteur les porte | 10 ans | ARBITRÉ | Direction |
 | Bibliothèque : grille ou liste | L'affichage choisi par l'élève | Grille par défaut ; le choix est gardé sur son appareil | ARBITRÉ | Direction |
 
 ## 7. Le moteur de suivi

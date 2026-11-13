@@ -31,7 +31,7 @@
 | 8 | Laver le pied droit jusqu'à la cheville comprise, puis le pied gauche | Trois fois chacun |
 | 9 | Dire l'attestation après les ablutions (ci-dessous) | Une fois |
 
-- Laver une fois chaque partie suffit ; trois fois est la manière du Prophète ﷺ. On garde cet ordre et on enchaîne sans longue pause.
+- Laver une fois chaque partie suffit ; trois fois est la manière la plus complète. On garde cet ordre et on enchaîne sans longue pause.
 - Les gestes se montrent en pratique et par les illustrations validées par le directeur (`CONTENUS-ATTENDUS.md`, n° 3).
 
 **Au début**
@@ -94,7 +94,7 @@ Une prière se compose d'unités (rak'a). Nombre d'unités : l'aube (al-fajr) 2,
 
 > آمِين
 > *Âmîn.*
-> Exauce-nous.
+> Exauce.
 
 7. **Une autre sourate ou quelques versets**, dans les deux premières unités. Le débutant récite une des sourates courtes qu'il connaît.
 
@@ -207,11 +207,11 @@ Une fois ce fichier relu par le directeur, la partie « paroles de la prière »
 | Groupe | Paroles et gestes | Pourquoi ensemble |
 |---|---|---|
 | 1 | « Allâhu akbar » ; « Âmîn » ; « Bismillâh » ; les gestes des ablutions et de la prière, en pratique | Un ou deux mots ; l'enfant prie avec Al-Fatiha déjà apprise |
-| 2 | « Subhâna rabbiya-l-'azîm » ; « Subhâna rabbiya-l-a'lâ » ; « Rabbi-ghfir lî » ; « Sami'a-llâhu liman hamidah » ; « Rabbanâ wa laka-l-hamd » ; « As-salâmu 'alaykum wa rahmatu-llâh » | Une phrase courte chacune ; avec le groupe 1, l'enfant fait une prière complète, sauf l'assise |
+| 2 | « Subhâna rabbiya-l-'azîm » ; « Subhâna rabbiya-l-a'lâ » ; « Rabbi-ghfir lî » ; « Sami'a-llâhu liman hamidah » ; « Rabbanâ wa laka-l-hamd » ; « As-salâmu 'alaykum wa rahmatu-llâh » | Une phrase courte chacune ; avec le groupe 1, l'enfant fait une prière complète, sauf le tachahhoud |
 | 3 | La demande de protection et la basmala ; l'attestation après les ablutions ; l'invocation d'ouverture | Une phrase plus longue chacune |
 | 4 | Le tachahhoud | Le premier long texte |
 | 5 | La prière sur le Prophète ﷺ | Le plus long |
 
-**À quelle étape.** Pour les 6 à 9 ans, Al-Fatiha commence à la fin de l'étape 2, juste après la chadda, et les trois sourates occupent l'étape 3 ; les paroles de la prière et les ablutions commencent à la fin de l'étape 3 et s'achèvent pendant l'étape 4. Dès 10 ans, elles viennent pendant les étapes 1 et 2 (pour les adultes, la prière sur le Prophète ﷺ tombe au début de l'étape 3). La séance de chaque groupe est fixée par `PROGRAMME-SEANCE-PAR-SEANCE.md`. Dans tous les cas, l'enseignant les fait acquérir avant de proposer l'examen de fin des bases (`EVALUATIONS.md`, partie 4.5, « Prêt pour l'examen »). L'enseignant garde sa méthode et son rythme (DÉCIDÉ 13/10) : seul l'ordre des groupes est fixé.
+**À quelle étape.** Pour les 6 à 9 ans, Al-Fatiha commence à la fin de l'étape 2, juste après la chadda, et les trois sourates occupent l'étape 3 ; les paroles de la prière et les ablutions commencent à la fin de l'étape 3 et s'achèvent pendant l'étape 4. Pour les 10 à 13 ans, elles viennent à la fin de l'étape 1 et pendant l'étape 2 ; pour les 14 à 17 ans, pendant l'étape 2 ; pour les adultes, pendant l'étape 2, la prière sur le Prophète ﷺ tombant au début de l'étape 3. Elles se cochent par groupe, comme les sourates, par l'enseignant, pendant le cours ou depuis la fiche ; « Prêt pour l'examen » lit ces coches (ARBITRÉ 13/11). La séance de chaque groupe est fixée par `PROGRAMME-SEANCE-PAR-SEANCE.md`. Dans tous les cas, l'enseignant les fait acquérir avant de proposer l'examen de fin des bases (`EVALUATIONS.md`, partie 4.5, « Prêt pour l'examen »). L'enseignant garde sa méthode et son rythme (DÉCIDÉ 13/10) : seul l'ordre des groupes est fixé.
 
 **Les enregistrements.** Le directeur enregistre ces paroles dans le même ordre, une fois ce fichier relu (`CONTENUS-ATTENDUS.md`, n° 2).

@@ -43,7 +43,7 @@ Dans l'application, chacun ne voit que **sa** partie : l'élève et son tuteur v
   - 2. Lire avec les voyelles (jusqu'à la chadda)
   - 3. Lire dans le Coran (fin du livre, puis le Mushaf)
   - 4. Les sourates courtes, d'Al-Masad (111) à Az-Zalzalah (99)
-- **6 à 9 ans** : le livre seul jusqu'à la chadda. Ensuite, en matière secondaire, Al-Fatiha (environ 3 semaines), puis An-Nâs, Al-Falaq et Al-Ikhlâs (environ 2 semaines chacune), puis les paroles de la prière et les ablutions (montrées en pratique et par illustrations, sans fiqh détaillé), puis les autres invocations.
+- **6 à 9 ans** : le livre seul jusqu'à la chadda. Ensuite, en matière secondaire, Al-Fatiha (environ 3 semaines), puis An-Nâs, Al-Falaq et Al-Ikhlâs (environ 2 semaines chacune ; valeur unique dans `docs/current/pedagogie/REGLAGES.md`), puis les paroles de la prière et les ablutions (montrées en pratique et par illustrations, sans fiqh détaillé), puis les autres invocations.
 - **Prière et ablutions (directeur, 13/11/2026)** : publiques et connues ; pas de question d'école juridique pour des débutants ; la référence imposée pour l'instant est ce qui est enseigné en Arabie saoudite ; les spécialisations sont pour les avancés. Texte, et ordre d'apprentissage (le plus court d'abord) : `docs/current/pedagogie/CONTENU-PRIERE-ET-ABLUTIONS.md`, en service après la relecture du directeur.
 - **Le tajwid des bases (directeur, 13/11/2026)** : les règles élémentaires sont réparties pour que l'élève les maîtrise avant ou pendant les 17 sourates ; pas les règles avancées, pas trop de règles. Neuf règles (arbitrage de l'architecte), d'abord imitées puis nommées, jamais d'épreuve de théorie : point de sortie des lettres, lettres épaisses et fines (étape 1) ; brève ou longue, chadda et nasalisation, qalqala (étape 2) ; arrêt en fin de verset, lam du nom d'Allah (étape 3) ; noun sans voyelle et tanwin, allongements longs (étape 4). Détail : `docs/current/pedagogie/EVALUATIONS.md`, 4.1 bis.
 - **10 ans et plus** (cohortes 10-13, 14-17, 18+) : Al-Fatiha en matière secondaire dès la première semaine, parce que l'enfant doit prier à cet âge. C'est un réglage.
@@ -74,7 +74,7 @@ Dans l'application, chacun ne voit que **sa** partie : l'élève et son tuteur v
 
 ## 5. Ce qui existe déjà : ne rien ajouter à l'enseignant
 
-- **Le point de fin de séance** remplace le cahier de séance (le directeur, 13/11/2026 : « le cahier me fatigue » ; arbitrage de l'architecte) : une page, moins de 20 secondes ; la séance prévue par le plan de la classe, avec trois réponses : « Vu comme prévu » (par défaut), « On a vu moins », « On a vu plus » ; les présents, tous « A suivi », dont il ne touche que ceux qui sont « À renforcer », sauf l'élève tiré à tour de rôle sur un passage déjà vu, pour qui il touche obligatoirement « Acquis » ou « À renforcer » ; une note facultative. N'y ajoute aucun champ. L'endroit exact (document, page, ligne) vient de la page affichée en classe, jamais d'une saisie de l'enseignant. Le cahier devient l'historique des séances, que le système écrit seul.
+- **Le point de fin de séance** remplace le cahier de séance (le directeur, 13/11/2026 : « le cahier me fatigue » ; arbitrage de l'architecte) : une page, moins de 20 secondes ; la séance prévue par le plan de la classe, avec trois réponses : « Vu comme prévu » (par défaut), « On a vu moins », « On a vu plus » ; les présents, tous « A suivi », dont il ne touche que ceux qui sont « À renforcer », sauf l'élève tiré à tour de rôle sur un passage déjà vu, pour qui il touche obligatoirement « Acquis » ou « À renforcer » ; une note facultative. N'y ajoute aucun champ. L'endroit exact (document, page, ligne) : la page affichée en classe propose l'arrêt ; « Vu comme prévu » le confirme ; « On a vu moins » et « On a vu plus » le corrigent d'un toucher. Jamais une saisie à la main. Le cahier devient l'historique des séances, que le système écrit seul.
 - **États de compétence visibles** : À renforcer, Acquis, Stable. Jamais d'autre échelle face aux familles.
 - **Bilan de fin des étapes 1 à 3** : il passe par l'évaluation « périodique » existante, pendant un cours normal.
 - **Mots du résultat** : « Étape validée », « Quelques points sont à renforcer », « Une nouvelle vérification est nécessaire ». Jamais « échec ».
@@ -118,7 +118,7 @@ Les familles sont des clientes : elles doivent comprendre en une lecture, sans a
 | Ne jamais écrire | Écrire |
 |---|---|
 | porte d'Az-Zalzalah | examen de fin des bases |
-| petit Coran | les sourates courtes, d'Al-Fatiha à Az-Zalzalah |
+| petit Coran | les sourates courtes, d'Al-Masad (111) à Az-Zalzalah (99) |
 | palier, module, cycle | étape, niveau |
 | Fondations | les bases |
 | contrôle | petit bilan, examen |

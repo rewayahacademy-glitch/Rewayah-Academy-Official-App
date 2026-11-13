@@ -52,7 +52,7 @@ Même gabarit pour toutes les fiches. Une fiche ne dit que ce qui est propre au 
 | Motive, freine | Motive : rituels courts, encouragement oral, voir ses sourates s'ajouter, un parent présent. Freine : fatigue, consigne longue, honte devant les autres. |
 | Son entrée | Étape 1. Le livre seul jusqu'à la chadda ; puis, en matière secondaire : Al-Fatiha, An-Nâs, Al-Falaq, Al-Ikhlâs, les paroles de la prière et les ablutions, les invocations [DÉCIDÉ 13/10]. |
 | Rythme, date limite | Valeurs des 6-9 ans (commun ci-dessus). **Le tuteur porte la date limite, pas l'enfant** [ARBITRÉ]. Séance de 60 minutes avec une courte pause [DÉCIDÉ 12/10]. |
-| Ce qu'il voit | L'Interface guidée par défaut [retenu au registre du 14/10] : son étape en images, ses sourates, les dates de l'académie, « Rattraper ce cours ». Jamais sa date limite ni son rythme, jamais d'argent, de note ni de comparaison. Aucune notification : tout passe par le tuteur. |
+| Ce qu'il voit | L'Interface guidée par défaut [retenu au registre du 14/10] : son étape en images, ses sourates, les dates de l'académie, « Rattraper ce cours ». Jamais sa date limite, ni durée prévue, ni horizon, son rythme, ni date de séance, jamais d'argent, de note ni de comparaison. Aucune notification : tout passe par le tuteur. |
 | Le tuteur | Il le connecte au calme, suit l'emploi du temps de révision, fait « Rattraper ce cours » avec lui et marque « J'ai rattrapé ce cours ». Il veille à la régularité ; il n'enseigne pas. |
 | L'enseignant | Il enseigne, écoute chaque enfant, fait le point de fin de séance. |
 | Risques, réponse | Absences liées à l'organisation de la famille : alertes au tuteur (3.2). |

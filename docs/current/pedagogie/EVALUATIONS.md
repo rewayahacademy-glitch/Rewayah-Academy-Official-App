@@ -95,12 +95,12 @@ Une erreur grave que l'élève corrige **seul et aussitôt** compte comme une er
 
 ### 3.3 De l'écoute à l'état d'une compétence
 
-À chaque observation, l'enseignant ne fait qu'un geste : il confirme ou non que la compétence est atteinte. L'application en tire l'état.
+« Acquis » est écrit par le point de fin de séance (« A suivi » par défaut, sur l'objectif principal de la séance, ou le toucher obligatoire pour l'élève tiré) ou par un petit bilan ; « À renforcer », par le toucher de l'enseignant ou par un petit bilan (charte, partie 5). L'application en tire l'état.
 
 | État | Règle | Qui le pose |
 |---|---|---|
-| **À renforcer** | Une erreur grave non corrigée, ou plus de 2 erreurs importantes sur le passage écouté, ou plus de 2 aides directes **[ARBITRÉ]** | L'enseignant, d'un geste |
-| **Acquis** | Aucune erreur grave non corrigée, au plus 2 erreurs importantes, petites erreurs tolérées **[ARBITRÉ]** ; pour la mémoire : aucune erreur de mot **[DÉCIDÉ 11/11 pour la sourate]** | L'enseignant, d'un geste |
+| **À renforcer** | Une erreur grave non corrigée, ou plus de 2 erreurs importantes sur le passage écouté, ou plus de 2 aides directes **[ARBITRÉ]** | L'enseignant, d'un toucher au point de fin de séance ; ou un petit bilan |
+| **Acquis** | Aucune erreur grave non corrigée, au plus 2 erreurs importantes, petites erreurs tolérées **[ARBITRÉ]** ; pour la mémoire : aucune erreur de mot **[DÉCIDÉ 11/11 pour la sourate]** | Le point de fin de séance (« A suivi » par défaut sur l'objectif principal, ou le toucher pour l'élève tiré) ; ou un petit bilan |
 | **Stable** | Acquis lors de 3 observations, sur au moins 2 semaines, dont une non préparée (un « A suivi » laissé par défaut au point de fin de séance ne compte qu'une fois par semaine et par objectif, **[ARBITRÉ 13/11]**) : un petit bilan, ou un passage lu ou récité hors de la leçon du jour, tiré au hasard dans ce qui est déjà vu ; depuis le 13/11, le système tire à chaque séance un élève présent, à tour de rôle, et ce passage, et l'enseignant touche obligatoirement « Acquis » ou « À renforcer » pour lui, sans défaut **[ARBITRÉ 13/11]** ; la séance de consolidation seule ne compte pas, une rencontre de récitation ne compte pas non plus **[DÉCIDÉ 12-13/10 ; non préparé : ARBITRÉ]** | Calculé par l'application, jamais saisi **[ARBITRÉ]** |
 
 L'état d'une compétence est une information pour enseigner : il peut redescendre si l'élève oublie. Une étape validée ou une sourate cochée, elles, ne se perdent jamais. **[ARBITRÉ, d'après la règle du 14/10]**
@@ -144,7 +144,7 @@ Les objectifs mesurés ci-dessous (3 à 5 par étape, **[DÉCIDÉ 05/11]**) ont 
 **La matière secondaire : quand et comment on la vérifie.** **[ARBITRÉ]**
 
 - Al-Fatiha, An-Nâs, Al-Falaq et Al-Ikhlâs sont cochées par l'enseignant le jour où l'élève les récite de mémoire sans erreur de mot, souvent en séance de consolidation.
-- Les paroles de la prière, les ablutions et les invocations sont observées en séance de consolidation : l'enseignant confirme d'un geste quand l'élève les dit ou les montre dans l'ordre, sans lire. Les ablutions se montrent en pratique, avec les illustrations, sans fiqh détaillé.
+- Les paroles de la prière se cochent par groupe (les cinq groupes de `CONTENU-PRIERE-ET-ABLUTIONS.md`), comme les sourates : l'enseignant coche, pendant le cours ou depuis la fiche, quand l'élève dit le groupe dans l'ordre, sans lire **[ARBITRÉ 13/11]**. Les ablutions et les invocations sont observées en séance de consolidation et confirmées d'un geste. Les ablutions se montrent en pratique, avec les illustrations, sans fiqh détaillé.
 - Elle ne bloque jamais les étapes 1 à 3 (le petit bilan note son état en une ligne). Elle est exigée à l'examen de fin des bases : Al-Fatiha et les trois sourates font partie des 17 sourates ; les paroles de la prière sont vérifiées à l'examen ; les ablutions et les invocations doivent avoir été confirmées en cours, sinon elles sont vérifiées à l'examen (§4.6).
 - Les paroles de la prière et les gestes des ablutions sont écrits dans `CONTENU-PRIERE-ET-ABLUTIONS.md` (référence : ce qui est enseigné en Arabie saoudite, sans question d'école juridique, **[DÉCIDÉ 13/11]**) ; ce fichier est RÉDIGÉ et entre en service après la relecture du directeur ; d'ici là, on ne vérifie que ce qui a été enseigné en classe. La liste des autres invocations reste un contenu que le directeur déposera (`CONTENUS-ATTENDUS.md`).
 
@@ -170,9 +170,9 @@ Les objectifs mesurés ci-dessous (3 à 5 par étape, **[DÉCIDÉ 05/11]**) ont 
 | 6 | S'arrêter en fin de verset | À l'arrêt : un soukoun sur la dernière lettre ; un tanwin « an » se lit « â » ; un ta marbouta (ة) se lit « h » | 3. Lire dans le Coran | ضَبْحًا (100:1) lu « dabhâ » ; ٱلْقَارِعَةُ (101:1) lu « al-qâri'ah » |
 | 7 | Le lam du nom d'Allah | Le lam d'« Allah » est épais après a ou ou, fin après i | 3. Lire dans le Coran | نَصْرُ ٱللَّهِ (110:1), épais ; بِسْمِ ٱللَّهِ, fin |
 | 8 | Le noun sans voyelle et le tanwin | Les quatre cas : clair devant ء ه ع ح غ خ ; fondu dans la lettre suivante devant ي ن م و (avec nasalisation) et devant ل ر (sans nasalisation) ; changé en mim devant ب ; caché, avec nasalisation, devant les quinze autres lettres | 4. Les sourates courtes | Liste complète ci-dessous |
-| 9 | Les allongements longs | Plus long que deux temps : devant une hamza dans le même mot ou au début du mot suivant, et devant une lettre doublée ; la même longueur partout | 4. Les sourates courtes | Liste complète ci-dessous |
+| 9 | Les allongements longs | Plus long que deux temps : devant une hamza dans le même mot ou au début du mot suivant, et devant une lettre doublée ; la même longueur à chaque endroit du même cas | 4. Les sourates courtes | Liste complète ci-dessous |
 
-**Longueurs (contenu de la lecture Hafs, pas un réglage de l'académie).** Règles 4 et 8 : nasalisation de deux temps. Règle 9 : devant une hamza, quatre ou cinq temps dans la voie habituelle de Hafs, l'élève gardant toujours la même ; devant une lettre doublée, six temps. **À relire par le directeur** : la longueur que l'académie retient devant une hamza (quatre ou cinq).
+**Longueurs (contenu de la lecture Hafs, pas un réglage de l'académie).** Règles 4 et 8 : nasalisation de deux temps. Règle 9 : devant une hamza, quatre ou cinq temps dans la voie habituelle de Hafs, la même longueur à chaque endroit du même cas ; devant une lettre doublée, six temps. **À relire par le directeur** : la longueur que l'académie retient devant une hamza (quatre ou cinq).
 
 **Les règles 8 et 9 dans les 17 sourates, sourate par sourate [ARBITRÉ 13/11 ; à relire par le directeur].** Cette liste servira aux auteurs du livre (`CONTENUS-ATTENDUS.md`). Elle est établie sur le texte coranique du dépôt (corpus Tanzil, écriture du Mushaf de Médine, lecture Hafs), en s'arrêtant à chaque fin de verset (règle 6), et vérifiée par un relevé automatique de ce texte. Ne sont pas listés : la basmala ; les fins de verset, où le tanwin devient un arrêt ; les liaisons d'un verset au suivant, qui ne s'enseignent pas dans les bases. Dans le Mushaf de Médine, chaque endroit de la règle 9 porte le signe d'allongement (ٓ). Ordre : celui où l'élève les apprend.
 
@@ -220,7 +220,7 @@ Les objectifs mesurés ci-dessous (3 à 5 par étape, **[DÉCIDÉ 05/11]**) ont 
 | **Ce qu'on mesure** | 1) Lit une lettre avec chacune des trois voyelles, avec le soukoun et avec le tanwin ; 2) tient la voyelle longue deux temps et n'allonge jamais une brève (règle 3) ; 3) double la lettre qui porte la chadda et tient la nasalisation de deux temps du noun et du mim doublés (règle 4) ; 4) fait rebondir ق ط ب ج د quand elles portent un soukoun (règle 5) ; 5) lit un mot de plusieurs syllabes sans épeler |
 | **Comment** | Petit bilan en cours normal, non préparé : 1) syllabes et mots du livre de Rewayah ; 2) une ligne de mots plus longs. |
 | **Validé si** | Au moins 90 % de lecture juste, au plus 2 aides directes, aucune erreur grave non corrigée, sans épeler les mots courts **[ARBITRÉ]** ; les règles 3, 4 et 5 appliquées, sans erreur importante répétée sur l'une d'elles (§3.2) **[ARBITRÉ 13/11]** |
-| **Étape validée** | Passage à l'étape 3. Pour les 6-9 ans, la matière secondaire commence : Al-Fatiha **[DÉCIDÉ 13/10]** |
+| **Étape validée** | Passage à l'étape 3 |
 | **Quelques points à renforcer** | Travail ciblé sur la règle manquée (par exemple le tanwin ou la qalqala), revérifiée 2 semaines plus tard **[ARBITRÉ]** |
 | **Nouvelle vérification nécessaire** | Plan de soutien, nouveau petit bilan complet 3 semaines plus tard **[ARBITRÉ]** |
 
@@ -243,11 +243,11 @@ L'étape 4 n'a pas de petit bilan à part : ses 13 sourates sont validées une �
 | Rubrique | Règle |
 |---|---|
 | **Sur quoi** | Les 13 sourates, d'Al-Masad (111) à Az-Zalzalah (99) ; les règles 8 et 9, aux endroits listés au §4.1 bis |
-| **Ce qu'on mesure** | 1) Récite chaque sourate de mémoire, sans erreur de mot ; 2) garde les sourates déjà apprises ; 3) récite en appliquant les règles 1 à 7 ; 4) applique les quatre cas du noun sans voyelle et du tanwin (règle 8) ; 5) fait les allongements longs devant une hamza ou une lettre doublée, toujours de la même longueur (règle 9) |
+| **Ce qu'on mesure** | 1) Récite chaque sourate de mémoire, sans erreur de mot ; 2) garde les sourates déjà apprises ; 3) récite en appliquant les règles 1 à 7 ; 4) applique les quatre cas du noun sans voyelle et du tanwin (règle 8) ; 5) fait les allongements longs devant une hamza ou une lettre doublée, la même longueur à chaque endroit du même cas (règle 9) |
 | **Comment** | Observation de tous les jours : l'élève récite la sourate en cours, l'enseignant la coche quand elle est juste **[DÉCIDÉ 11/11]**. Les sourates déjà cochées reviennent en révision. |
 | **Validé si** | Chaque sourate est cochée ; les 17 sourates des bases sont cochées avant que l'élève soit proposé à l'examen **[ARBITRÉ]**. La coche reste « de mémoire, sans erreur de mot » **[DÉCIDÉ 11/11]** : les règles 8 et 9 se suivent par leurs objectifs, au point de fin de séance, sans bloquer une coche |
 | **Qui décide** | L'enseignant coche, seul **[DÉCIDÉ 11/11]** ; il propose l'examen quand l'élève est prêt **[DÉCIDÉ 12/10]** |
-| **Prêt pour l'examen** | Les 17 sourates cochées ; la lecture dans le Mushaf Acquis ou Stable ; les neuf règles Acquis ou Stable **[ARBITRÉ 13/11]** ; les paroles de la prière observées Acquis **[ARBITRÉ]** |
+| **Prêt pour l'examen** | Les 17 sourates cochées ; la lecture dans le Mushaf Acquis ou Stable ; les neuf règles Acquis ou Stable **[ARBITRÉ 13/11]** ; les cinq groupes de paroles de la prière cochés par l'enseignant (comme les sourates, pendant le cours ou depuis la fiche, jamais au point de fin de séance) **[ARBITRÉ 13/11]** |
 | **Après** | Voir l'examen de fin des bases (§4.6) |
 
 ### 4.6 L'examen de fin des bases

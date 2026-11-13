@@ -40,7 +40,7 @@ Chaque fiche a le même gabarit : le sujet, pourquoi il pèse, ce qui existe dé
 - **Position de l'architecte.** L'académie enseigne une lecture par classe, Hafs par défaut comme décidé. La lecture devient une propriété de la classe et de chaque document de la bibliothèque, pour qu'une classe Warsh soit possible sans rien recoder. Rien n'est ouvert en Warsh tant que le directeur n'a pas fourni le Mushaf et les enregistrements. On réutilise la liste des lectures des candidatures.
 - **Suite.** Champ prévu dans le lot de la bibliothèque (lot 3). Contenu attendu du directeur.
 
-### A4. L'académie juridique des paroles de la prière et des ablutions
+### A4. L'école juridique suivie pour la prière et les ablutions
 
 - **Le sujet.** Les gestes et certaines paroles de la prière et des ablutions diffèrent selon les écoles, par exemple la position des mains.
 - **Pourquoi il pèse.** Le programme enseigne la prière et les ablutions aux enfants, et les familles y sont sensibles. Un document qui ne dit pas quelle voie il suit peut heurter une famille, ou contredire ce que le père enseigne à la maison.

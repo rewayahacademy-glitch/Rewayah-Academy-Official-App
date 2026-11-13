@@ -31,7 +31,7 @@ Ce ne sont **pas des questions**. Aucune question n'est posée au directeur : to
 
 **Ce que contient chaque leçon.**
 1. Son numéro et son titre, en mots simples.
-2. L'objectif de l'étape qu'elle sert (un seul), et, s'il y a lieu, les lettres qu'elle enseigne et la règle de tajwid qu'elle fait imiter ou nommer : c'est ce qui permet au point de fin de séance et au chemin de se remplir sans saisie.
+2. Son objectif principal (un seul : c'est sur lui que « A suivi » écrit « Acquis ») et les objectifs qu'elle touche seulement, tels que les donne `PROGRAMME-SEANCE-PAR-SEANCE.md`, et, s'il y a lieu, les lettres qu'elle enseigne et la règle de tajwid qu'elle fait imiter ou nommer : c'est ce qui permet au point de fin de séance et au chemin de se remplir sans saisie.
 3. Le nouveau : les lettres, syllabes, mots ou lignes à lire, du plus simple au plus long.
 4. Une ou deux lignes de révision des leçons précédentes.
 5. Ce qui est à répéter à la maison : il alimente « Avant le prochain cours » et « Rattraper ce cours ».
