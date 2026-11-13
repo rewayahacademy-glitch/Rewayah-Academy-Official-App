@@ -30,7 +30,7 @@ BEGIN
 END $$;
 CREATE FUNCTION pg_temp.u(p text) RETURNS uuid LANGUAGE sql AS
   $$ SELECT pg_catalog.md5('calendrier-sans-programme-' || p)::uuid $$;
-CREATE FUNCTION pg_temp.auj() RETURNS date LANGUAGE sql AS $$ SELECT (pg_catalog.now() AT TIME ZONE 'UTC')::date $$;
+CREATE FUNCTION pg_temp.auj() RETURNS date LANGUAGE sql AS $$ SELECT (pg_catalog.now() AT TIME ZONE 'Asia/Riyadh')::date $$;
 CREATE FUNCTION pg_temp.mois(k integer) RETURNS date LANGUAGE sql AS
   $$ SELECT (pg_catalog.date_trunc('month', pg_temp.auj()::timestamp) + pg_catalog.make_interval(months => k))::date $$;
 GRANT EXECUTE ON FUNCTION pg_temp.qui(uuid, text, uuid), pg_temp.vrai(boolean, text), pg_temp.u(text),

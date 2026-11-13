@@ -123,6 +123,8 @@ declare
     'pause_demander(uuid,date)',
     -- CALENDRIER-ET-PAUSES (12/11) : la direction accorde une pause d'exception (motif, fin, nom) ; garde positive admin et app_account_valid().
     'pause_exception_accorder(uuid,date,date,text)',
+    -- CALENDRIER-ET-PAUSES (13/11) : la direction termine une pause d'exception plus tot (geste trace) ; garde positive admin et app_account_valid().
+    'pause_exception_terminer(uuid,date)',
     'retirer_creneau_classe_admin(uuid,integer,integer,text)',
     'regler_genre_classe_admin(uuid,text,text)',
     'creer_jeton_agent(text,uuid,integer,boolean)',

@@ -58,9 +58,9 @@ EXCEPTION
   WHEN OTHERS THEN RETURN SQLERRM;
 END $$;
 
--- Aujourd'hui (UTC, comme les foyers du test) et le premier jour du mois k.
+-- Aujourd'hui : le jour de l'academie, heure de La Mecque (les foyers du test sont a UTC : sans effet) et le premier jour du mois k.
 CREATE FUNCTION pg_temp.auj() RETURNS date LANGUAGE sql AS
-  $$ SELECT (pg_catalog.now() AT TIME ZONE 'UTC')::date $$;
+  $$ SELECT (pg_catalog.now() AT TIME ZONE 'Asia/Riyadh')::date $$;
 CREATE FUNCTION pg_temp.mois(k integer) RETURNS date LANGUAGE sql AS
   $$ SELECT (pg_catalog.date_trunc('month', pg_temp.auj()) + pg_catalog.make_interval(months => k))::date $$;
 CREATE FUNCTION pg_temp.recul(p text) RETURNS integer LANGUAGE sql AS
@@ -82,9 +82,9 @@ GRANT ALL ON cp_ids TO authenticated;
 -- ------------------------------------------------------------------
 INSERT INTO auth.users(id, email)
 SELECT pg_temp.u(x), 'cp-' || x || '@test.invalid'
-  FROM unnest(ARRAY['a1','b1','b3','b5','b6','t1','t2','t3','e1','e2','e4','e9']) AS x;
+  FROM unnest(ARRAY['a1','b1','b3','b5','b6','t1','t2','t3','e1','e2','e4','e5','e9']) AS x;
 INSERT INTO public.households(id, timezone) VALUES
-  (pg_temp.u('f1'), 'UTC'), (pg_temp.u('f2'), 'UTC'), (pg_temp.u('f3'), 'UTC');
+  (pg_temp.u('f1'), 'America/Toronto'), (pg_temp.u('f2'), 'Pacific/Auckland'), (pg_temp.u('f3'), 'UTC');
 INSERT INTO public.profiles(id, immutable_id, role, household_id, first_name, last_name, account_status, gender)
 SELECT pg_temp.u(x.id), x.mat, x.role::public.app_role,
        CASE WHEN x.foyer IS NOT NULL THEN pg_temp.u(x.foyer) END,
@@ -102,11 +102,13 @@ SELECT pg_temp.u(x.id), x.mat, x.role::public.app_role,
    ('e1','CP-ELV-01','student','f1','Eleve un'),
    ('e2','CP-ELV-02','student','f1','Eleve deux'),
    ('e4','CP-ELV-04','student','f2','Eleve quatre'),
+   ('e5','CP-ELV-05','student','f2','Eleve cinq'),
    ('e9','CP-ELV-09','student','f3','Adulte eleve')) AS x(id, mat, role, foyer, prenom);
 INSERT INTO public.student_profiles(profile_id, student_type, interface_mode, cohorte) VALUES
   (pg_temp.u('e1'), 'minor', 'child', 'enfant_6_9'),
   (pg_temp.u('e2'), 'minor', 'standard', 'enfant_10_13'),
   (pg_temp.u('e4'), 'minor', 'child', 'enfant_6_9'),
+  (pg_temp.u('e5'), 'minor', 'child', 'enfant_6_9'),
   (pg_temp.u('e9'), 'autonomous', 'standard', 'adulte_18_plus');
 
 -- Le programme des bases publie, puis les classes ; les eleves y entrent aujourd'hui.
@@ -375,11 +377,11 @@ SELECT pg_temp.vrai(pg_temp.recul('e1') = (pg_temp.mois(2) - pg_temp.mois(1)),
   'fermeture de 10 jours tombee pendant la pause : aucun double compte (le mois seulement)');
 SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
 SET LOCAL ROLE authenticated;
-SELECT pg_temp.fermer('a_cheval', 'autre', (pg_temp.mois(1) - pg_temp.auj()) - 5, (pg_temp.mois(1) - pg_temp.auj()) + 4);
+SELECT pg_temp.fermer('a_cheval', 'autre', (pg_temp.mois(2) - pg_temp.auj()) - 4, (pg_temp.mois(2) - pg_temp.auj()) + 5);
 SELECT pg_temp.publier('a_cheval', true);
 RESET ROLE;
-SELECT pg_temp.vrai(pg_temp.recul('e1') = (pg_temp.mois(2) - pg_temp.mois(1)) + LEAST(5, pg_temp.mois(1) - pg_temp.auj()),
-  'fermeture a cheval sur le debut de la pause : seuls les jours hors pause (et dans l''etape) s''ajoutent');
+SELECT pg_temp.vrai(pg_temp.recul('e1') = (pg_temp.mois(2) - pg_temp.mois(1)) + 6,
+  'fermeture a cheval sur la fin de la pause : seuls les 6 jours hors pause s''ajoutent (les 4 autres sont deja comptes)');
 SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
 SET LOCAL ROLE authenticated;
 SELECT pg_temp.publier('dans_pause', false);
@@ -489,7 +491,7 @@ RESET ROLE;
 SELECT pg_temp.vrai(:'r20_m2' = 'acceptee' AND :'r20_m3' = 'acceptee' AND :'r22_exc_commencee' = 'pause_non_annulable',
   'une pause d''exception ne compte pas dans le plafond ; elle ne s''annule pas une fois commencee');
 SELECT pg_temp.vrai(
-  :'r21_lect_famille'::jsonb -> 'regle' = '{"preavis_jours": 7, "plafond_mois": 2, "fenetre_mois": 12, "delai_reponse_jours": 3}'::jsonb
+  :'r21_lect_famille'::jsonb -> 'regle' = '{"preavis_jours": 7, "plafond_mois": 2, "fenetre_mois": 12, "delai_reponse_jours": 3, "exception_mois_max": 3}'::jsonb
   AND pg_catalog.jsonb_array_length(:'r21_lect_famille'::jsonb -> 'mois_proposes') = 12
   AND NOT (:'r21_lect_famille'::jsonb -> 'pauses' -> 0 ? 'motif'),
   'la lecture des pauses donne la regle et douze mois proposes ; le motif d''une exception n''est pas rendu a la famille');
@@ -615,40 +617,59 @@ SELECT pg_temp.vrai(:'r36_admin' = 'L1,L2,L3,L4,L5' AND :'r36_admin_long' = 'L1,
   'la direction lit tous les evenements publies (30 jours de passe par defaut, davantage sur demande) et la liste complete');
 
 -- ------------------------------------------------------------------
--- 7. La generation des seances respecte les fermetures
+-- 7. Les seances et les fermetures
 -- ------------------------------------------------------------------
--- c5 existe avant la fermeture : ses seances ne sont pas touchees. c6 est creee pendant la fermeture.
+-- 7a. Une fermeture a venir met de cote les seances DEJA creees qu'elle couvre (rien n'est
+-- supprime), la generation ne cree rien ce jour-la, le retrait avant le debut retablit.
+-- c5 existe avant la fermeture (cours dans 2 jours a 23 h, puis chaque semaine) ; c6 est creee
+-- pendant la fermeture (cours demain a 23 h).
 INSERT INTO public.groupes(id, teacher_id, type_public, seuil_max, libelle, weekday, hour_local, timezone_iana) VALUES
- (pg_temp.u('c5'), pg_temp.u('b1'), 'enfant', 5, 'Avant CP', 5, 17, 'UTC');
+ (pg_temp.u('c5'), pg_temp.u('b1'), 'enfant', 5, 'Avant CP',
+  EXTRACT(isodow FROM (pg_catalog.now() AT TIME ZONE 'UTC') + interval '2 days')::int, 23, 'UTC');
 SELECT pg_catalog.count(*) AS avant FROM public.sessions WHERE groupe_id = pg_temp.u('c5') \gset r40_
 SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
 SET LOCAL ROLE authenticated;
-SELECT pg_temp.fermer('longue', 'autre', 0, 40);
-SELECT pg_temp.publier('longue', true);
-SELECT (e ->> 'seances_deja_prevues')::int AS deja
+SELECT pg_temp.fermer('courte', 'autre', 1, 3);
+SELECT pg_temp.publier('courte', true);
+SELECT (e ->> 'seances_neutralisees')::int AS neutralisees
   FROM pg_catalog.jsonb_array_elements(public.calendrier_ecole_liste()) e
- WHERE (e ->> 'id')::uuid = (SELECT id FROM cp_ids WHERE cle = 'longue') \gset r41_
+ WHERE (e ->> 'id')::uuid = (SELECT id FROM cp_ids WHERE cle = 'courte') \gset r41_
 RESET ROLE;
 INSERT INTO public.groupes(id, teacher_id, type_public, seuil_max, libelle, weekday, hour_local, timezone_iana) VALUES
- (pg_temp.u('c6'), pg_temp.u('b3'), 'enfant', 5, 'Pendant CP', 6, 17, 'UTC');
+ (pg_temp.u('c6'), pg_temp.u('b3'), 'enfant', 5, 'Pendant CP',
+  EXTRACT(isodow FROM (pg_catalog.now() AT TIME ZONE 'UTC') + interval '1 day')::int, 23, 'UTC');
 SELECT pg_temp.vrai(:'r40_avant'::int = 4
                     AND (SELECT pg_catalog.count(*) FROM public.sessions WHERE groupe_id = pg_temp.u('c5')) = 4
-                    AND :'r41_deja'::int >= 4
-                    AND (SELECT pg_catalog.count(*) FROM public.sessions WHERE groupe_id = pg_temp.u('c6')) = 0,
-  'une fermeture publiee : la classe creee pendant la fermeture n''a aucune seance ; les 4 seances deja creees de c5 sont intactes et comptees pour la direction');
-SELECT public.materialiser_seances_groupe(pg_temp.u('c6')) AS rejoue \gset r42_
+                    AND (SELECT pg_catalog.count(*) FROM public.sessions WHERE groupe_id = pg_temp.u('c5') AND deleted_at IS NOT NULL) = 1
+                    AND (SELECT pg_catalog.count(*) FROM public.seances_fermees WHERE retablie_le IS NULL) >= 1
+                    AND :'r41_neutralisees'::int >= 1,
+  'une fermeture publiee met de cote la seance deja creee qu''elle couvre (une sur quatre pour c5), rien n''est supprime (4 lignes), la direction en voit le nombre');
+SELECT pg_temp.vrai(
+  (SELECT pg_catalog.count(*) FROM public.sessions WHERE groupe_id = pg_temp.u('c6')
+     AND (started_at AT TIME ZONE 'UTC')::date BETWEEN pg_temp.auj() + 1 AND pg_temp.auj() + 3) = 0
+  AND (SELECT pg_catalog.count(*) FROM public.sessions WHERE groupe_id = pg_temp.u('c6')) >= 3,
+  'une classe creee pendant la fermeture : aucune seance les jours fermes, les autres semaines sont creees');
+-- Aucune notification par seance mise de cote (l'annonce de la fermeture est le lot 7).
+SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM public.notifications WHERE evenement = 'seance_annulee'),
+  'la mise de cote d''une seance par une fermeture ne previent pas la classe seance par seance');
+-- Retrait avant le debut : la seance est retablie, la generation reprend.
 SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
 SET LOCAL ROLE authenticated;
-SELECT pg_temp.publier('longue', false);
+SELECT pg_temp.publier('courte', false);
 RESET ROLE;
-SELECT public.materialiser_seances_groupe(pg_temp.u('c6')) AS apres \gset r43_
-SELECT pg_temp.vrai(:'r42_rejoue'::int = 0 AND :'r43_apres'::int = 4
-                    AND (SELECT pg_catalog.count(*) FROM public.sessions WHERE groupe_id = pg_temp.u('c5')) = 4,
-  'fermeture retiree : la generation reprend, 4 seances ; rien n''a ete supprime');
--- La fermeture d'une tranche ne ferme que les classes dont tous les membres en sont.
+SELECT public.materialiser_seances_groupe(pg_temp.u('c6')) AS rejoue \gset r42_
+SELECT pg_temp.vrai(
+  (SELECT pg_catalog.count(*) FROM public.sessions WHERE groupe_id = pg_temp.u('c5') AND deleted_at IS NOT NULL) = 0
+  AND (SELECT pg_catalog.count(*) FROM public.seances_fermees WHERE retablie_le IS NOT NULL) >= 1
+  AND (SELECT pg_catalog.count(*) FROM public.seances_fermees WHERE retablie_le IS NULL) = 0
+  AND :'r42_rejoue'::int >= 1
+  AND (SELECT pg_catalog.count(*) FROM public.sessions WHERE groupe_id = pg_temp.u('c6')
+         AND (started_at AT TIME ZONE 'UTC')::date BETWEEN pg_temp.auj() + 1 AND pg_temp.auj() + 3) = 1,
+  'retirer la fermeture avant son debut retablit la seance de c5 et la generation cree celle de c6 qui manquait');
+-- La fermeture d'une tranche : une classe mixte garde son cours, celle de la tranche ferme.
 SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
 SET LOCAL ROLE authenticated;
-SELECT pg_temp.fermer('tr69', 'autre', 0, 3, 'tranche', 'enfant_6_9');
+SELECT pg_temp.fermer('tr69', 'autre', 1, 3, 'tranche', 'enfant_6_9');
 SELECT pg_temp.publier('tr69', true);
 RESET ROLE;
 SELECT pg_temp.vrai(
@@ -657,12 +678,18 @@ SELECT pg_temp.vrai(
   AND NOT private.jour_ferme_pour_classe(pg_temp.auj() + 1, pg_temp.u('c3'))
   AND NOT private.jour_ferme_pour_classe(pg_temp.auj() + 5, pg_temp.u('c2')),
   'le fait « jour ferme » : c2 (tous 6-9 ans) oui ; c1 (classe mixte) et c3 (adultes) non ; hors des dates non');
+SELECT pg_temp.vrai(
+  private.eleve_en_fermeture(pg_temp.u('e1'), pg_temp.auj() + 2)
+  AND NOT private.eleve_en_fermeture(pg_temp.u('e2'), pg_temp.auj() + 2)
+  AND NOT private.eleve_en_fermeture(pg_temp.u('e1'), pg_temp.auj() + 5)
+  AND private.eleve_hors_cours(pg_temp.u('e1'), pg_temp.auj() + 2),
+  'dans la classe mixte c1 le cours a lieu mais l''eleve de 6-9 ans n''est compte absent a aucune seance ces jours-la (eleve_en_fermeture) ; son camarade de 10-13 ans oui');
 SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
 SET LOCAL ROLE authenticated;
 SELECT pg_temp.publier('tr69', false);
 RESET ROLE;
 
--- Le concierge (seance_a_rejoindre) cree la seance du cours en cours quand la
+-- 7b. Le concierge (seance_a_rejoindre) cree la seance du cours en cours quand la
 -- personne appuie sur « Rejoindre » : jamais un jour de fermeture publiee.
 -- c7 (temoin) et c8 ont leur creneau a l'heure en cours d'aujourd'hui : leur
 -- cours a commence, il n'est pas fini, aucune seance n'existe encore.
@@ -692,17 +719,30 @@ SELECT pg_temp.vrai(:'r51_ferme' = 'NUL'
                     AND (SELECT pg_catalog.count(*) FROM public.sessions WHERE groupe_id = pg_temp.u('c8')
                            AND started_at <= pg_catalog.now()) = 0,
   'un jour de fermeture publiee, le concierge ne cree aucune seance (« Rejoindre » ne trouve rien)');
--- Une seance deja creee ce jour-la n'est pas touchee : le concierge la rend telle quelle.
+-- Une seance deja commencee ce jour-la n'est pas touchee : le concierge la rend telle quelle.
 SELECT pg_temp.qui(pg_temp.u('b5'), 'teacher');
 SET LOCAL ROLE authenticated;
 SELECT public.seance_a_rejoindre(pg_temp.u('c7')) AS existante \gset r52_
 RESET ROLE;
 SELECT pg_temp.vrai(:'r52_existante' = :'r50_temoin',
   'une seance deja creee pendant la fermeture n''est ni supprimee ni remplacee');
-SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
-SET LOCAL ROLE authenticated;
-SELECT pg_temp.publier('aujourdhui', false);
-RESET ROLE;
+
+-- 7c. Les ceintures : cloture automatique et remplacement automatique ignorent une seance
+-- dont le jour est ferme pour sa classe, meme si elle n'a pas ete mise de cote (la seance de
+-- c7 a deja commence). Temoin : une seance un jour non ferme est bien traitee.
+INSERT INTO public.sessions(id, teacher_id, started_at, ended_at, session_type, groupe_id, status)
+VALUES (pg_temp.u('s_ctrl'), pg_temp.u('b3'), pg_catalog.now() + interval '60 days',
+        pg_catalog.now() + interval '60 days 1 hour', 'child', pg_temp.u('c2'), 'planned');
+SELECT private.ses_cloturer_seances_echues(pg_catalog.now() + interval '61 days');
+SELECT pg_temp.vrai(
+  (SELECT status::text FROM public.sessions WHERE id = :'r50_temoin'::uuid) IN ('planned', 'preflight', 'in_progress')
+  AND (SELECT status::text FROM public.sessions WHERE id = pg_temp.u('s_ctrl')) NOT IN ('planned', 'preflight', 'in_progress'),
+  'la cloture automatique ignore la seance d''un jour ferme et traite le temoin d''un jour ouvert');
+SELECT private.remplacement_auto_passer((SELECT started_at FROM public.sessions WHERE id = :'r50_temoin'::uuid) + interval '40 minutes');
+SELECT pg_temp.vrai(
+  NOT EXISTS (SELECT 1 FROM public.seances_reportees WHERE session_id = :'r50_temoin'::uuid)
+  AND (SELECT status::text FROM public.sessions WHERE id = :'r50_temoin'::uuid) IN ('planned', 'preflight', 'in_progress'),
+  'le remplacement automatique ignore la seance d''un jour ferme : ni report, ni enseignant absent, ni alerte');
 
 -- ------------------------------------------------------------------
 -- 8. La notification de la reponse : au tuteur ou a l'adulte, jamais a l'enfant
@@ -742,6 +782,141 @@ SELECT pg_temp.vrai(
     WHERE c.conrelid = 'public.notifications'::regclass AND c.conname = 'notifications_evenement_check')
   AND (SELECT NOT courriel AND NOT push FROM private.notification_courriel WHERE evenement = 'pause_repondue' AND portee = '*'),
   'pause_repondue entre dans la contrainte des notifications ; ni courriel ni push (lot 7)');
+
+-- ------------------------------------------------------------------
+-- 9. Revue du 13/11, B1 : un changement de classe ne fait pas avancer la date limite
+-- ------------------------------------------------------------------
+-- e4 : etape commencee il y a 30 jours, membre de c2 depuis 60 jours ; la classe c2 a ete fermee
+-- 10 jours, deja ecoules. (« aujourdhui » ajoute 1 jour, et la fermeture recente L5 de la partie 6, 6 jours : 17 en tout.)
+INSERT INTO public.groupes(id, teacher_id, type_public, seuil_max, libelle, weekday, hour_local, timezone_iana) VALUES
+ (pg_temp.u('c4'), pg_temp.u('b6'), 'enfant', 5, 'Autre CP', 7, 6, 'UTC');
+UPDATE public.groupe_membres SET joined_at = pg_catalog.now() - interval '60 days'
+ WHERE student_id = pg_temp.u('e4') AND groupe_id = pg_temp.u('c2');
+UPDATE public.eleve_etape_en_cours
+   SET entree_etape_le = pg_temp.auj() - 30, entree_niveau_le = pg_temp.auj() - 30
+ WHERE student_id = pg_temp.u('e4');
+SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.fermer('sonde', 'autre', -20, -11, 'classe', NULL, 'c2');
+SELECT pg_temp.publier('sonde', true);
+RESET ROLE;
+SELECT pg_temp.vrai(pg_temp.recul('e4') = 17
+                    AND (SELECT recul_acquis_jours FROM public.eleve_etape_en_cours WHERE student_id = pg_temp.u('e4')) = 17,
+  'sonde : fermeture de c2 de 10 jours ecoulee + la fermeture d''aujourd''hui = 17 jours, tous deja ecoules (acquis)');
+-- e5 entre dans c2 aujourd'hui : la fermeture de c2 d'il y a 20 jours ne le concerne pas (il n'en etait pas
+-- membre), meme si son etape a commence il y a 30 jours. Il ne doit que la fermeture de l'academie
+-- (L5 : 6 jours, et aujourd'hui : 1 jour).
+INSERT INTO public.groupe_membres(groupe_id, student_id, joined_at) VALUES (pg_temp.u('c2'), pg_temp.u('e5'), pg_catalog.now());
+UPDATE public.eleve_etape_en_cours
+   SET entree_etape_le = pg_temp.auj() - 30, entree_niveau_le = pg_temp.auj() - 30
+ WHERE student_id = pg_temp.u('e5');
+SELECT pg_temp.vrai(pg_temp.recul('e5') = 7
+                    AND NOT private.eleve_en_fermeture(pg_temp.u('e5'), pg_temp.auj() - 15)
+                    AND private.eleve_en_fermeture(pg_temp.u('e4'), pg_temp.auj() - 15),
+  'une fermeture de classe ne compte que les jours ou l''eleve en etait membre : e5, arrive aujourd''hui, ne doit que les 7 jours de l''academie');
+-- e4 change de classe, puis une fermeture sans rapport est publiee.
+UPDATE public.groupe_membres SET left_at = pg_catalog.now(), left_by = pg_temp.u('a1'), left_reason = 'changement de classe'
+ WHERE student_id = pg_temp.u('e4') AND groupe_id = pg_temp.u('c2') AND left_at IS NULL;
+INSERT INTO public.groupe_membres(groupe_id, student_id, joined_at) VALUES (pg_temp.u('c4'), pg_temp.u('e4'), pg_catalog.now());
+SELECT pg_temp.vrai(pg_temp.recul('e4') = 17, 'changer de classe : les jours de la classe quittee, ou il etait membre, restent comptes');
+SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.fermer('sans_rapport', 'autre', 20, 22, 'tranche', 'adulte_18_plus');
+SELECT pg_temp.publier('sans_rapport', true);
+RESET ROLE;
+SELECT pg_temp.vrai(pg_temp.recul('e4') = 17 AND pg_temp.limite('e4') = 70 + 17,
+  'sonde du relecteur : une fermeture sans rapport publiee apres le changement de classe ne fait pas avancer la date limite');
+-- Les jours a venir d'une classe qu'il a quittee ne le concernent plus.
+SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.fermer('apres_depart', 'autre', 3, 12, 'classe', NULL, 'c2');
+SELECT pg_temp.publier('apres_depart', true);
+RESET ROLE;
+SELECT pg_temp.vrai(pg_temp.recul('e4') = 17, 'la fermeture d''une classe quittee, a venir, ne recule rien pour lui');
+-- Garde-fou : le recul deja ecoule d'une etape ne descend jamais.
+UPDATE public.eleve_etape_en_cours SET recul_jours = 0 WHERE student_id = pg_temp.u('e4');
+SELECT pg_temp.vrai(pg_temp.recul('e4') = 17, 'garde-fou : le recul enregistre d''une etape ne descend pas sous les jours deja ecoules');
+-- Le garde-fou ne depend pas du reste : une correction de donnees (date d'entree dans la classe
+-- reculee) qui ferait descendre le calcul ne fait pas descendre le recul deja ecoule.
+UPDATE public.groupe_membres SET joined_at = pg_catalog.now()
+ WHERE student_id = pg_temp.u('e4') AND groupe_id = pg_temp.u('c2');
+SELECT pg_temp.vrai(pg_temp.recul('e4') = 17
+                    AND (SELECT r.recul FROM private.recul_jours_calcule(pg_temp.u('e4'), pg_temp.auj() - 30,
+                           (SELECT niveau_id FROM public.eleve_etape_en_cours WHERE student_id = pg_temp.u('e4')), 'enfant_6_9') r) < 17,
+  'garde-fou : meme quand le calcul du jour redonne moins (7), le recul deja ecoule (17) est garde');
+UPDATE public.groupe_membres SET joined_at = pg_catalog.now() - interval '60 days'
+ WHERE student_id = pg_temp.u('e4') AND groupe_id = pg_temp.u('c2');
+SELECT pg_temp.vrai(private.eleve_en_fermeture(pg_temp.u('e4'), pg_temp.auj() - 15)
+                    AND NOT private.eleve_en_fermeture(pg_temp.u('e4'), pg_temp.auj() + 5),
+  'eleve_en_fermeture : membre ce jour-la de la classe fermee oui ; un jour a venir de la classe quittee non');
+
+-- ------------------------------------------------------------------
+-- 10. Revue du 13/11, I1 : une fermeture commencee ou passee ne se retire, ne se raccourcit,
+--     ne se deplace pas ; une fermeture en cours peut seulement se prolonger
+-- ------------------------------------------------------------------
+SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.fermer('en_cours', 'autre', 0, 5);
+SELECT pg_temp.publier('en_cours', true);
+SELECT pg_temp.essai(pg_catalog.format($q$SELECT public.calendrier_ecole_publier(%L, false)$q$, (SELECT id FROM cp_ids WHERE cle = 'en_cours'))) AS retrait,
+       pg_temp.essai(pg_catalog.format($q$SELECT public.calendrier_ecole_enregistrer(%L, 'fermeture', 'autre', 'x', %L, %L, 'ecole', NULL, NULL)$q$,
+         (SELECT id FROM cp_ids WHERE cle = 'en_cours'), pg_temp.auj(), pg_temp.auj() + 3)) AS raccourci,
+       pg_temp.essai(pg_catalog.format($q$SELECT public.calendrier_ecole_enregistrer(%L, 'fermeture', 'autre', 'x', %L, %L, 'ecole', NULL, NULL)$q$,
+         (SELECT id FROM cp_ids WHERE cle = 'en_cours'), pg_temp.auj() + 1, pg_temp.auj() + 5)) AS deplace,
+       pg_temp.essai(pg_catalog.format($q$SELECT public.calendrier_ecole_enregistrer(%L, 'fermeture', 'autre', 'x', %L, %L, 'tranche', 'adulte_18_plus', NULL)$q$,
+         (SELECT id FROM cp_ids WHERE cle = 'en_cours'), pg_temp.auj(), pg_temp.auj() + 5)) AS portee,
+       pg_temp.essai(pg_catalog.format($q$SELECT public.calendrier_ecole_enregistrer(%L, 'fermeture', 'autre', 'Titre corrige', %L, %L, 'ecole', NULL, NULL)$q$,
+         (SELECT id FROM cp_ids WHERE cle = 'en_cours'), pg_temp.auj(), pg_temp.auj() + 7)) AS prolonge,
+       pg_temp.essai(pg_catalog.format($q$SELECT public.calendrier_ecole_enregistrer(%L, 'fermeture', 'autre', 'x', %L, %L, 'ecole', NULL, NULL)$q$,
+         (SELECT id FROM cp_ids WHERE cle = 'avant'), pg_temp.auj() - 100, pg_temp.auj() - 50)) AS passee \gset r60_
+RESET ROLE;
+SELECT pg_temp.vrai(:'r60_retrait' = 'calendrier_fermeture_commencee' AND :'r60_raccourci' = 'calendrier_fermeture_commencee'
+                    AND :'r60_deplace' = 'calendrier_fermeture_commencee' AND :'r60_portee' = 'calendrier_fermeture_commencee'
+                    AND :'r60_prolonge' = 'ok' AND :'r60_passee' = 'calendrier_fermeture_commencee'
+                    AND (SELECT titre || '/' || au FROM public.calendrier_ecole WHERE id = (SELECT id FROM cp_ids WHERE cle = 'en_cours'))
+                        = 'Titre corrige/' || (pg_temp.auj() + 7),
+  'une fermeture commencee : retrait, raccourcissement, deplacement et changement de portee refuses ; prolongation et titre permis ; une fermeture passee ne change plus');
+
+-- ------------------------------------------------------------------
+-- 11. Revue du 13/11, I2 : la pause d'exception a une duree au plus, et se termine par un geste trace
+-- ------------------------------------------------------------------
+SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.essai(pg_catalog.format($q$SELECT public.pause_exception_accorder(%L, %L, %L, 'Maladie soudaine')$q$,
+         pg_temp.u('e4'), pg_temp.auj(), (pg_temp.auj() + interval '3 months' + interval '1 day')::date)) AS trop_longue \gset r61_
+SELECT public.pause_exception_accorder(pg_temp.u('e4'), NULL, (pg_temp.auj() + interval '3 months')::date, 'Interruption accordee') AS id \gset r62_
+RESET ROLE;
+SELECT pg_temp.vrai(:'r61_trop_longue' = 'pause_exception_trop_longue'
+                    AND (SELECT fin FROM public.pauses_eleve WHERE id = :'r62_id'::uuid) = (pg_temp.auj() + interval '3 months')::date,
+  'une pause d''exception dure 3 mois au plus (reglage) : un jour de plus est refuse, exactement 3 mois est accorde');
+SELECT pg_temp.qui(pg_temp.u('t2'), 'guardian', pg_temp.u('f2'));
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.essai(pg_catalog.format($q$SELECT public.pause_exception_terminer(%L, %L)$q$, :'r62_id'::uuid, pg_temp.auj() + 4)) AS famille \gset r63_
+RESET ROLE;
+SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.essai(pg_catalog.format($q$SELECT public.pause_exception_terminer(%L, %L)$q$, :'r62_id'::uuid, pg_temp.auj() - 1)) AS passe,
+       pg_temp.essai(pg_catalog.format($q$SELECT public.pause_exception_terminer(%L, %L)$q$, :'r62_id'::uuid, (pg_temp.auj() + interval '3 months')::date)) AS pas_plus_tot,
+       pg_temp.essai(pg_catalog.format($q$SELECT public.pause_exception_terminer(%L, %L)$q$, (SELECT id FROM public.pauses_eleve WHERE student_id = pg_temp.u('e1') AND type = 'mois' LIMIT 1), pg_temp.auj() + 4)) AS un_mois,
+       pg_temp.essai(pg_catalog.format($q$SELECT public.pause_exception_terminer(%L, %L)$q$, :'r62_id'::uuid, pg_temp.auj() + 4)) AS termine \gset r64_
+RESET ROLE;
+SELECT pg_temp.vrai(:'r63_famille' = 'refus' AND :'r64_passe' = 'pause_dates_invalides' AND :'r64_pas_plus_tot' = 'pause_dates_invalides'
+                    AND :'r64_un_mois' = 'pause_introuvable' AND :'r64_termine' = 'ok'
+                    AND (SELECT fin || '/' || fin_initiale || '/' || terminee_par_nom
+                           FROM public.pauses_eleve WHERE id = :'r62_id'::uuid)
+                        = (pg_temp.auj() + 4) || '/' || (pg_temp.auj() + interval '3 months')::date || '/Direction CP',
+  'terminer une pause d''exception : direction seule, jamais dans le passe ni plus tard ; la fin d''origine et le geste sont gardes');
+SELECT pg_temp.vrai(private.eleve_en_pause(pg_temp.u('e4'), pg_temp.auj() + 4)
+                    AND NOT private.eleve_en_pause(pg_temp.u('e4'), pg_temp.auj() + 5),
+  'le fait « en pause » suit la nouvelle fin');
+
+-- ------------------------------------------------------------------
+-- 12. Revue du 13/11, I10 : un seul jour de reference, celui de l'academie (Asia/Riyadh)
+-- ------------------------------------------------------------------
+SELECT pg_temp.vrai(private.jour_academie() = (pg_catalog.now() AT TIME ZONE 'Asia/Riyadh')::date
+                    AND NOT EXISTS (SELECT 1 FROM pg_catalog.pg_proc p JOIN pg_catalog.pg_namespace n ON n.oid = p.pronamespace
+                                     WHERE n.nspname = 'private' AND p.proname = 'aujourdhui_foyer'),
+  'un seul jour de reference (heure de La Mecque) ; plus de fuseau du foyer pour decider « passe » ou « 7 jours avant »');
 
 \o
 SELECT 'scenarios_calendrier_pauses : tous les controles sont verts' AS resultat;
