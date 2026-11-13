@@ -16,7 +16,7 @@ Partie « scénarios » de la charte de Rewayah Academy, rédigée le 12/11/2026
 
 **Chacun a un chemin clair.** Chaque élève a une étape, un objectif, une date limite et un travail à préparer. Il sait où il en est, où il va, et pour quand [DÉCIDÉ 14/10].
 
-**L'enseignant ne remplit pas de cahier.** À la fin de chaque séance, le point de fin de séance tient en une page : la séance prévue par le plan de la classe, avec trois réponses (« Vu comme prévu », « On a vu moins », « On a vu plus ») ; les présents, tous « A suivi », dont il ne touche que ceux qui sont « À renforcer » ; une note facultative. Le système en tire seul le travail, les messages et l'historique des séances [ARBITRÉ 13/11 ; charte, partie 5].
+**L'enseignant ne remplit pas de cahier.** À la fin de chaque séance, le point de fin de séance tient en une page : la séance prévue par le plan de la classe, avec trois réponses (« Vu comme prévu », « On a vu moins », « On a vu plus ») ; les présents, tous « A suivi », dont il ne touche que ceux qui sont « À renforcer », sauf l'élève que le système tire à tour de rôle sur un passage déjà vu, pour qui il touche obligatoirement « Acquis » ou « À renforcer » (l'observation non préparée) ; une note facultative. Le système en tire seul le travail, les messages et l'historique des séances [ARBITRÉ 13/11 ; charte, partie 5].
 
 **Le programme se montre comme un chemin** : quatre étapes et l'examen, les objectifs qui se remplissent, les 28 lettres, les 9 règles du tajwid des bases et les 17 sourates, sans classement ni points [ARBITRÉ 13/11 ; charte, partie 10 bis].
 

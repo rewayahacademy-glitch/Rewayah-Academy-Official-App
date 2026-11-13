@@ -98,14 +98,15 @@ Tout est **réglage publié chaque année par la direction**, jamais écrit en d
 **Le point de fin de séance (ARBITRÉ 13/11, sur la proposition du directeur).** Le directeur, 13/11 : « le cahier me fatigue » ; il propose qu'à la fin de la séance le système demande à l'enseignant si l'élève a maîtrisé la partie du programme prévue à cette date, que le système connaît. **Le cahier à remplir disparaît.** Il est remplacé par une seule page, en moins de 20 secondes (DÉCIDÉ 05/11 ; valeur dans `REGLAGES.md`) :
 1. **La séance prévue ce jour**, tirée du plan de la classe (partie 3). Trois réponses : « Vu comme prévu » (par défaut) ; « On a vu moins » (l'enseignant touche l'endroit où la classe s'est vraiment arrêtée) ; « On a vu plus ». La position s'en déduit et le plan glisse seul, sans rien ressaisir.
 2. **Les élèves présents**, tous déjà marqués « A suivi ». L'enseignant ne touche que ceux pour qui c'est « À renforcer ».
+   **Sauf un** : à chaque séance, le système tire un élève présent, à tour de rôle (chacun passe environ une fois par semaine dans une classe de trois ou quatre), et un passage déjà vu, hors de la leçon du jour, que cet élève a lu ou récité. Pour lui seul, il n'y a pas de défaut : l'enseignant touche « Acquis » ou « À renforcer ». C'est le seul toucher obligatoire de la page, et c'est lui qui compte comme observation non préparée pour « Stable » (ARBITRÉ 13/11, repris par l'architecte).
 3. **Une note facultative**, lue par l'enseignant et la direction, jamais montrée à la famille (ARBITRÉ 13/11).
 
 Aucune autre saisie. **Les absents** n'ont rien à recevoir de l'enseignant : « Rattraper ce cours » s'ouvre seul. Un élève présent en partie ne figure pas dans la liste : il reçoit « Rattraper ce cours » et aucune observation n'est écrite pour lui (ARBITRÉ 13/11 : un fait inconnu n'est jamais un fait négatif, ni un « A suivi » donné à qui n'a pas tout suivi).
 
-**Une partie du programme** est ce qui est prévu à une séance : une leçon du livre, une page, une sourate ou une portion de sourate ; chaque partie sert un objectif de son étape (ARBITRÉ 13/11). Le système tire lui-même, au réglage de `REGLAGES.md`, un passage déjà vu qu'il ajoute à la partie prévue : c'est l'observation non préparée qui compte pour « Stable » (partie 6), sans geste de plus.
+**Une partie du programme** est ce qui est prévu à une séance : une leçon du livre, une page, une sourate ou une portion de sourate ; chaque partie sert un objectif de son étape (ARBITRÉ 13/11). L'élève tiré et son passage (point 2 ci-dessus) donnent l'observation non préparée qui compte pour « Stable » (partie 6) ; le point reste sous 20 secondes.
 
 **Ce que le système fait de la réponse (ARBITRÉ 13/11).**
-- « A suivi » compte comme une observation « Acquis » sur l'objectif de la partie ; laissé par défaut, il compte **au plus une fois par semaine et par objectif** (garde-fou, `REGLAGES.md`). « Stable » exige toujours une observation non préparée : le passage tiré par le système, ou un petit bilan.
+- « A suivi » compte comme une observation « Acquis » sur l'objectif de la partie ; laissé par défaut, il compte **au plus une fois par semaine et par objectif** (garde-fou, `REGLAGES.md`). « Stable » exige toujours une observation non préparée : le toucher de l'enseignant pour l'élève tiré, ou un petit bilan.
 - « À renforcer » crée le travail ciblé dans « Avant le prochain cours », le dit au tuteur ou à l'adulte, et deux « À renforcer » de suite sur la même partie (le même objectif) déclenchent la règle de soutien du moteur (« À soutenir », règle 14 de `MOTEUR-DE-SUIVI.md`).
 - Ce qu'on appelait le cahier devient l'**historique des séances**, que le système écrit seul : la date, la partie vue, la présence, « A suivi » ou « À renforcer », le travail donné. Il se lit par l'élève, le tuteur, l'enseignant et la direction (partie 10) ; personne ne le remplit.
 
@@ -116,7 +117,7 @@ Aucune autre saisie. **Les absents** n'ont rien à recevoir de l'enseignant : «
 4. le résultat d'un petit bilan ;
 5. une sourate non cochée à la séance où sa coche était prévue (`PROGRAMME-SEANCE-PAR-SEANCE.md`).
 
-Sans aucun geste, le système suppose « A suivi » pour un élève présent. C'est le défaut voulu ; c'est pourquoi la consolidation de chaque semaine et l'observation non préparée existent : elles rattrapent un « A suivi » trop généreux.
+Sans aucun geste, le système suppose « A suivi » pour un élève présent (sauf l'élève tiré, qui n'a pas de défaut). C'est le défaut voulu ; c'est pourquoi la consolidation de chaque semaine et l'observation non préparée, avec son toucher obligatoire, existent : elles rattrapent un « A suivi » trop généreux.
 
 **Ce qui ne passe pas par le point (ARBITRÉ 13/11).** La coche d'une sourate se fait pendant le cours ou depuis la fiche de l'élève, par l'enseignant seul (DÉCIDÉ 11/11). « Prêt pour un petit bilan » est proposé par le système (partie 6) et confirmé d'un geste dans la liste « à faire » de l'enseignant, qui peut aussi le marquer depuis la fiche de l'élève. La suite « Continuer », « Renforcer », « Suspendre le nouveau » n'est demandée que lorsqu'une règle du moteur la demande.
 
@@ -126,7 +127,7 @@ Sans aucun geste, le système suppose « A suivi » pour un élève présent. C'
 
 ## 6. Mesurer
 
-**Une seule échelle d'appréciation (ARBITRÉ)**, par objectif et par élève : **À renforcer** et **Acquis**, signalés par l'enseignant ; **Stable**, jamais saisi, calculé par le serveur : 3 observations « Acquis » sur au moins 2 semaines, dont une non préparée (DÉCIDÉ : référentiel confirmé les 12 et 13/10). Une observation est non préparée quand elle a lieu pendant un petit bilan, ou sur un passage lu ou récité hors de la leçon du jour, tiré au hasard dans ce qui est déjà vu (depuis le 13/11, le système le tire et l'ajoute à la partie prévue : partie 5) ; la séance de consolidation seule ne compte pas (ARBITRÉ). Une rencontre de récitation ne compte pas : elle encourage, elle ne mesure pas.
+**Une seule échelle d'appréciation (ARBITRÉ)**, par objectif et par élève : **À renforcer** et **Acquis**, signalés par l'enseignant ; **Stable**, jamais saisi, calculé par le serveur : 3 observations « Acquis » sur au moins 2 semaines, dont une non préparée (DÉCIDÉ : référentiel confirmé les 12 et 13/10). Une observation est non préparée quand elle a lieu pendant un petit bilan, ou sur un passage lu ou récité hors de la leçon du jour, tiré au hasard dans ce qui est déjà vu (depuis le 13/11 : l'élève et le passage tirés par le système au point de fin de séance, avec le toucher obligatoire de l'enseignant, partie 5) ; la séance de consolidation seule ne compte pas (ARBITRÉ). Une rencontre de récitation ne compte pas : elle encourage, elle ne mesure pas.
 
 **Résultat d'une évaluation** (DÉCIDÉ 12/10) : trois phrases, et seulement elles. Ce ne sont pas des appréciations : elles restent. Leur suite (ARBITRÉ) :
 - « **Étape validée** » fait passer, après confirmation de la direction.
@@ -348,7 +349,7 @@ Le directeur, 13/11 : « un système de gamification pour que tout le monde comp
 | Plan de la classe | La suite numérotée des séances de son étape (`PROGRAMME-SEANCE-PAR-SEANCE.md`), avec la date de chacune, calculée par le serveur ; il glisse seul |
 | Séance faite | Séance prévue, ce qui a été vu (comme prévu, moins, plus), écart au plan, qui, quand |
 | Point de fin de séance | Séance, réponse (« Vu comme prévu », « On a vu moins », « On a vu plus »), « À renforcer » touchés, note facultative ; la paie l'attend |
-| Observation | Élève, objectif, séance, état (À renforcer ou Acquis), non préparée ou non ; écrite par le point de fin de séance (« A suivi » vaut « Acquis ») ; « Stable » calculé |
+| Observation | Élève, objectif, séance, état (À renforcer ou Acquis), non préparée ou non ; écrite par le point de fin de séance (« A suivi » vaut « Acquis » ; l'élève tiré reçoit un toucher obligatoire, non préparé) ; « Stable » calculé |
 | Historique des séances | Écrit par le système à partir des points de fin de séance et de la présence ; personne ne le remplit |
 | Sourate validée | Élève, sourate, date, enseignant |
 | Travail à faire | Un par séance : actions et plage |
