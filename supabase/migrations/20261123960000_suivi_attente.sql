@@ -22,11 +22,14 @@
 --      remplace un autre : il est prevenu une fois, par cette notification, et
 --      non aussi par `enseignant_change`.
 --   5. private.notification_courriel : le courriel de `enseignant_affecte`
---      part pour la famille (portee foyer) et pour l'enseignant (portee
---      classe) : c'est une trace, S5 et S8. Cela amende la decision du
---      01/11/2026 (« application seulement ») sur ces lignes, a la demande du
---      directeur du 12/11/2026. **Aucune ligne pour la portee « soi »** : un
---      courriel n'est jamais ecrit a un enfant.
+--      part pour la famille (portee foyer), pour l'enseignant (portee classe)
+--      et pour l'eleve adulte (portee soi) : c'est une trace, S5 et S8. Cela
+--      amende la decision du 01/11/2026 (« application seulement ») sur ces
+--      lignes, a la demande du directeur du 12/11/2026. **Un courriel n'est
+--      jamais ecrit a un mineur** : la ligne « soi » ne produit un courriel
+--      que pour un adulte, parce que `public.courriel_enfiler` refuse tout
+--      profil mineur (20261123962000) ; le tuteur d'un mineur recoit le sien par
+--      la portee « foyer ».
 --   6. app_config : formation_delai_jours (14) et formation_point_jours (7),
 --      decides le 30/09, poses si elles manquent. L'entree en debut de mois
 --      n'est PAS construite : aucune valeur n'est posee pour elle.
@@ -580,11 +583,13 @@ $declencheur_anonymisation$;
 -- ---------------------------------------------------------------------------
 -- 5. Le courriel de `enseignant_affecte` : famille et enseignant (trace)
 -- ---------------------------------------------------------------------------
--- Pas de ligne pour la portee « soi » : un courriel n'est jamais ecrit a un
--- enfant (et l'eleve adulte lit l'avancement dans l'application).
+-- La portee « soi » : l'eleve adulte recoit son courriel ; un mineur est arrete
+-- par la garde de `public.courriel_enfiler` (20261123962000), son tuteur recoit
+-- le sien par la portee « foyer ». Sans cette garde, ne pas poser cette ligne.
 INSERT INTO private.notification_courriel (evenement, portee, courriel) VALUES
   ('enseignant_affecte', 'classe', true),
-  ('enseignant_affecte', 'foyer', true)
+  ('enseignant_affecte', 'foyer', true),
+  ('enseignant_affecte', 'soi', true)
 ON CONFLICT (evenement, portee) DO UPDATE SET courriel = EXCLUDED.courriel;
 
 -- ---------------------------------------------------------------------------

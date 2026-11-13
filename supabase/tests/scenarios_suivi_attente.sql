@@ -490,12 +490,9 @@ BEGIN
   END IF;
   -- Le courriel part pour l'enseignant et pour la famille (trace).
   IF NOT private.notification_avec_courriel('enseignant_affecte', 'classe')
-     OR NOT private.notification_avec_courriel('enseignant_affecte', 'foyer') THEN
-    RAISE EXCEPTION 'SUIVI-ATTENTE : le courriel d affectation doit partir (enseignant et foyer)';
-  END IF;
-  -- Jamais de courriel a la portee « soi » : un enfant n'est pas destinataire.
-  IF private.notification_avec_courriel('enseignant_affecte', 'soi') THEN
-    RAISE EXCEPTION 'SUIVI-ATTENTE : aucun courriel d affectation a la portee « soi »';
+     OR NOT private.notification_avec_courriel('enseignant_affecte', 'foyer')
+     OR NOT private.notification_avec_courriel('enseignant_affecte', 'soi') THEN
+    RAISE EXCEPTION 'SUIVI-ATTENTE : le courriel d affectation doit partir (enseignant, foyer, adulte)';
   END IF;
 END
 $notification$;
@@ -840,6 +837,52 @@ BEGIN
 END
 $carte_b$;
 RESET ROLE;
+
+-- ---------------------------------------------------------------------------
+-- 8 quater bis. « Enseignant affecte » : trois destinataires, trois cas
+-- ---------------------------------------------------------------------------
+-- Le courriel part pour l'eleve ADULTE (portee « soi »), il est arrete par la
+-- garde serveur pour un MINEUR (meme portee « soi », meme evenement), et le
+-- TUTEUR du mineur le recoit par la portee « foyer ».
+DO $trois_cas$
+BEGIN
+  -- Les notifications reelles de l'affectation : l'adulte (classe Al-Baqara,
+  -- 8 ter), le mineur et son tuteur (classe Al-Fatiha, section 4).
+  IF NOT EXISTS (SELECT 1 FROM public.notifications
+                  WHERE evenement = 'enseignant_affecte'
+                    AND destinataire = '5a000000-0000-0000-0000-000000000006'
+                    AND params ->> 'portee' = 'soi')
+     OR NOT EXISTS (SELECT 1 FROM public.notifications
+                     WHERE evenement = 'enseignant_affecte'
+                       AND destinataire = '5a000000-0000-0000-0000-000000000002'
+                       AND params ->> 'portee' = 'soi')
+     OR NOT EXISTS (SELECT 1 FROM public.notifications
+                     WHERE evenement = 'enseignant_affecte'
+                       AND destinataire = '5a000000-0000-0000-0000-000000000001'
+                       AND params ->> 'portee' = 'foyer') THEN
+    RAISE EXCEPTION 'SUIVI-ATTENTE : les notifications d affectation de l adulte, du mineur et du tuteur existent';
+  END IF;
+  -- Adulte : un courriel, du flux reel.
+  IF (SELECT count(*) FROM public.courriels_sortants cs
+       WHERE cs.destinataire_profil = '5a000000-0000-0000-0000-000000000006'
+         AND cs.modele = 'enseignant_affecte'
+         AND cs.cle_idempotence LIKE 'notification:%') <> 1 THEN
+    RAISE EXCEPTION 'SUIVI-ATTENTE : l eleve adulte recoit UN courriel « enseignant affecte »';
+  END IF;
+  -- Mineur : aucun, malgre la meme ligne de portee « soi ».
+  IF EXISTS (SELECT 1 FROM public.courriels_sortants cs
+              WHERE cs.destinataire_profil = '5a000000-0000-0000-0000-000000000002') THEN
+    RAISE EXCEPTION 'SUIVI-ATTENTE : le mineur ne recoit aucun courriel';
+  END IF;
+  -- Tuteur : un courriel par la portee « foyer ».
+  IF (SELECT count(*) FROM public.courriels_sortants cs
+       WHERE cs.destinataire_profil = '5a000000-0000-0000-0000-000000000001'
+         AND cs.modele = 'enseignant_affecte'
+         AND cs.donnees ->> 'portee' = 'foyer') <> 1 THEN
+    RAISE EXCEPTION 'SUIVI-ATTENTE : le tuteur du mineur recoit UN courriel « enseignant affecte » par le foyer';
+  END IF;
+END
+$trois_cas$;
 
 -- ---------------------------------------------------------------------------
 -- 8 quinquies. « Me presenter » : jamais un mineur pour destinataire (serveur)
