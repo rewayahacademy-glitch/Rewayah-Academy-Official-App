@@ -12,8 +12,10 @@
 --    enseignant) et la ligne du foyer quand le dernier tuteur actif est efface
 --    (donnee personnelle), ainsi que le rappel de report de la ville.
 --
--- Deux fonctions remplacees par leur copie complete (CREATE OR REPLACE) ; aucun
--- objet retire. Les DELETE de cpt_anonymiser sont dans la fonction, pas dans la
+-- 3. Le lieu de priere d'un enseignant suit sa ville (relais vers PRIERE-2).
+--
+-- Deux fonctions remplacees par leur copie complete (CREATE OR REPLACE), une
+-- fonction et un declencheur crees ; aucun objet retire. Les DELETE de cpt_anonymiser sont dans la fonction, pas dans la
 -- migration.
 
 BEGIN;
@@ -219,11 +221,83 @@ BEGIN
 END;
 $function$;
 
+-- ---------------------------------------------------------------------------
+-- 3. Le lieu de priere suit la ville de l'enseignant (decision du directeur du
+--    13/11/2026 : aucune saisie a la main des lieux de priere ; contrat de
+--    PRIERE-2 : `private.priere_lieu_auto(enseignant, nom, lat, lng, fuseau)`).
+--    Le declencheur appelle cette fonction SI ELLE EXISTE, pour les seuls profils
+--    enseignants ; rien sinon. Une erreur ici n'empeche JAMAIS l'enregistrement de
+--    la ville. Il ne touche ni `prayer_settings` ni `lib/core/priere` : il ne fait
+--    que passer le relais. PRIERE-2 pose le meme declencheur (`lieux_priere_auto`) :
+--    celui qui arrive le premier reste, l'autre ne fait rien.
+-- ---------------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION private.lieux_priere_auto_relais()
+RETURNS trigger
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = ''
+AS $function$
+DECLARE
+  v_f pg_catalog.regprocedure;
+BEGIN
+  BEGIN
+    IF NEW.profil_id IS NULL THEN
+      RETURN NULL;
+    END IF;
+    IF TG_OP = 'UPDATE'
+       AND OLD.ville_id IS NOT DISTINCT FROM NEW.ville_id
+       AND OLD.ville IS NOT DISTINCT FROM NEW.ville
+       AND OLD.latitude IS NOT DISTINCT FROM NEW.latitude
+       AND OLD.longitude IS NOT DISTINCT FROM NEW.longitude
+       AND OLD.fuseau_iana IS NOT DISTINCT FROM NEW.fuseau_iana THEN
+      RETURN NULL;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM public.profiles p
+                    WHERE p.id = NEW.profil_id AND p.role = 'teacher'::public.app_role) THEN
+      RETURN NULL;
+    END IF;
+    v_f := pg_catalog.to_regprocedure('private.priere_lieu_auto(uuid,text,numeric,numeric,text)');
+    IF v_f IS NULL THEN
+      RETURN NULL;
+    END IF;
+    EXECUTE pg_catalog.format(
+      'SELECT private.priere_lieu_auto(%L::uuid, %L::text, %L::numeric, %L::numeric, %L::text)',
+      NEW.profil_id, NEW.ville, NEW.latitude, NEW.longitude, NEW.fuseau_iana);
+  EXCEPTION WHEN OTHERS THEN
+    -- Jamais d'echec de l'enregistrement de la ville pour un lieu de priere.
+    RAISE WARNING 'lieux_priere_auto : lieu de priere non mis a jour (%)', SQLSTATE;
+  END;
+  RETURN NULL;
+END;
+$function$;
+REVOKE ALL ON FUNCTION private.lieux_priere_auto_relais() FROM PUBLIC, anon, authenticated, service_role;
+COMMENT ON FUNCTION private.lieux_priere_auto_relais() IS
+  'HORLOGE-ET-LIEU (13/11/2026) : relais vers private.priere_lieu_auto (PRIERE-2) quand un enseignant enregistre ou change sa ville ; ne fait rien si la fonction n''existe pas ; ne fait jamais echouer l''enregistrement. DEFINER, search_path vide, aucun EXECUTE client.';
+
+-- Idempotent, sans effacement : le declencheur n'est cree que s'il n'existe pas.
+DO $declencheur$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_catalog.pg_trigger t
+                  WHERE t.tgrelid = 'public.lieux'::pg_catalog.regclass
+                    AND t.tgname = 'lieux_priere_auto' AND NOT t.tgisinternal) THEN
+    CREATE TRIGGER lieux_priere_auto
+      AFTER INSERT OR UPDATE ON public.lieux
+      FOR EACH ROW EXECUTE FUNCTION private.lieux_priere_auto_relais();
+  END IF;
+END
+$declencheur$;
+
 DO $postflight$
 BEGIN
   IF pg_catalog.has_function_privilege('anon', 'public.enregistrer_ma_ville(bigint)'::pg_catalog.regprocedure, 'EXECUTE')
      OR NOT pg_catalog.has_function_privilege('authenticated', 'public.enregistrer_ma_ville(bigint)'::pg_catalog.regprocedure, 'EXECUTE') THEN
     RAISE EXCEPTION 'HORLOGE-ET-LIEU : droits de enregistrer_ma_ville';
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM pg_catalog.pg_trigger t
+                  WHERE t.tgrelid = 'public.lieux'::pg_catalog.regclass AND t.tgname = 'lieux_priere_auto')
+     OR pg_catalog.has_function_privilege('authenticated', 'private.lieux_priere_auto_relais()'::pg_catalog.regprocedure, 'EXECUTE')
+     OR pg_catalog.has_function_privilege('anon', 'private.lieux_priere_auto_relais()'::pg_catalog.regprocedure, 'EXECUTE') THEN
+    RAISE EXCEPTION 'HORLOGE-ET-LIEU : declencheur ou droits du relais de priere';
   END IF;
   IF pg_catalog.has_function_privilege('anon', 'private.cpt_anonymiser(uuid)'::pg_catalog.regprocedure, 'EXECUTE')
      OR pg_catalog.has_function_privilege('authenticated', 'private.cpt_anonymiser(uuid)'::pg_catalog.regprocedure, 'EXECUTE') THEN

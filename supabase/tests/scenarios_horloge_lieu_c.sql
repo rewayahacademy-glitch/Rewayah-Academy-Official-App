@@ -210,6 +210,122 @@ SELECT public.enregistrer_ma_ville(current_setting('test.lyon')::bigint);
 RESET ROLE;
 
 -- =====================================================================
+-- (3) Le lieu de priere suit la ville de l'enseignant (relais vers PRIERE-2)
+-- =====================================================================
+-- Sans la fonction de PRIERE-2, rien ne se passe et la ville s'enregistre
+-- (c'est ce que les controles du dessus ont deja prouve : le declencheur existe).
+DO $r$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_catalog.pg_trigger t
+                  WHERE t.tgrelid = 'public.lieux'::pg_catalog.regclass AND t.tgname = 'lieux_priere_auto')
+     OR (SELECT pg_catalog.count(*) FROM pg_catalog.pg_trigger t
+          WHERE t.tgrelid = 'public.lieux'::pg_catalog.regclass AND t.tgname = 'lieux_priere_auto') <> 1 THEN
+    RAISE EXCEPTION 'HLD ROUGE : le declencheur lieux_priere_auto manque ou existe en double';
+  END IF;
+  IF to_regprocedure('private.priere_lieu_auto(uuid,text,numeric,numeric,text)') IS NOT NULL THEN
+    RAISE EXCEPTION 'HLD ROUGE : la fonction de PRIERE-2 existe deja dans la base de test';
+  END IF;
+  RAISE NOTICE 'HLD OK sans la fonction de PRIERE-2 : un seul declencheur lieux_priere_auto, et les villes ci-dessus se sont enregistrees';
+END
+$r$;
+
+-- La fonction de PRIERE-2 arrive APRES le declencheur : un double qui note chaque appel.
+CREATE TABLE public.hld_appels (enseignant uuid, nom text, lat numeric, lng numeric, fuseau text);
+CREATE FUNCTION private.priere_lieu_auto(p_enseignant uuid, p_nom text, p_lat numeric, p_lng numeric, p_fuseau text)
+RETURNS void LANGUAGE plpgsql SECURITY DEFINER SET search_path = '' AS $f$
+BEGIN
+  INSERT INTO public.hld_appels VALUES (p_enseignant, p_nom, p_lat, p_lng, p_fuseau);
+  IF pg_catalog.current_setting('test.priere_echoue', true) = 'oui' THEN
+    RAISE EXCEPTION 'la priere echoue';
+  END IF;
+END $f$;
+SELECT set_config('test.paris2', (SELECT id FROM public.villes_ref WHERE nom = 'Paris' AND pays_code = 'FR' ORDER BY milliers DESC LIMIT 1)::text, true),
+       set_config('test.marseille', (SELECT id FROM public.villes_ref WHERE nom = 'Marseille' AND pays_code = 'FR' ORDER BY milliers DESC LIMIT 1)::text, true);
+
+-- Un enseignant change de ville : un appel, avec le nom, le centre-ville et le fuseau.
+SELECT pg_temp.en_tant('d6000000-0000-4000-8000-000000000109', 'teacher');
+SET LOCAL ROLE authenticated;
+SELECT public.enregistrer_ma_ville(current_setting('test.paris2')::bigint);
+RESET ROLE;
+DO $r$
+DECLARE v record;
+BEGIN
+  SELECT * INTO v FROM public.hld_appels;
+  IF (SELECT pg_catalog.count(*) FROM public.hld_appels) <> 1
+     OR v.enseignant <> 'd6000000-0000-4000-8000-000000000109' OR v.nom <> 'Paris'
+     OR v.fuseau <> 'Europe/Paris' OR v.lat IS NULL OR v.lng IS NULL
+     OR v.lat <> (SELECT latitude FROM public.villes_ref WHERE id = current_setting('test.paris2')::bigint) THEN
+    RAISE EXCEPTION 'HLD ROUGE : l''appel a la priere (%) : un seul attendu, avec le nom, le centre-ville et le fuseau', pg_catalog.to_json(v);
+  END IF;
+  RAISE NOTICE 'HLD OK un enseignant change de ville : PRIERE-2 reçoit son nom, son centre-ville et son fuseau, une fois';
+END
+$r$;
+-- La meme ville de nouveau : aucun nouvel appel.
+SELECT pg_temp.en_tant('d6000000-0000-4000-8000-000000000109', 'teacher');
+SET LOCAL ROLE authenticated;
+SELECT public.enregistrer_ma_ville(current_setting('test.paris2')::bigint);
+RESET ROLE;
+-- Un tuteur change la ville de son foyer : aucun appel (le foyer n'a pas de lieu de priere).
+SELECT pg_temp.en_tant('d6000000-0000-4000-8000-000000000107', 'guardian', 'd6000000-0000-4000-8000-0000000000f3');
+SET LOCAL ROLE authenticated;
+SELECT public.enregistrer_ma_ville(current_setting('test.marseille')::bigint);
+RESET ROLE;
+-- La direction verifie la ville de l'enseignant : aucun appel.
+SELECT pg_temp.en_tant('d6000000-0000-4000-8000-000000000001', 'admin');
+SET LOCAL ROLE authenticated;
+SELECT public.verifier_lieu_enseignant('d6000000-0000-4000-8000-000000000109');
+RESET ROLE;
+DO $r$
+BEGIN
+  IF (SELECT pg_catalog.count(*) FROM public.hld_appels) <> 1 THEN
+    RAISE EXCEPTION 'HLD ROUGE : appels a la priere en trop (meme ville, tuteur ou verification) : %',
+      (SELECT pg_catalog.count(*) FROM public.hld_appels);
+  END IF;
+  RAISE NOTICE 'HLD OK la meme ville, le foyer d''un tuteur et la verification de la direction n''appellent pas la priere';
+END
+$r$;
+-- Le candidat enseignant (pending_kyc) : son lieu est un lieu d'enseignant, un appel.
+SELECT pg_temp.en_tant('d6000000-0000-4000-8000-000000000102', 'teacher');
+SET LOCAL ROLE authenticated;
+SELECT public.enregistrer_ma_ville(current_setting('test.paris2')::bigint);
+RESET ROLE;
+DO $r$
+BEGIN
+  IF (SELECT pg_catalog.count(*) FROM public.hld_appels WHERE enseignant = 'd6000000-0000-4000-8000-000000000102') <> 1 THEN
+    RAISE EXCEPTION 'HLD ROUGE : le candidat enseignant n''a pas declenche son appel';
+  END IF;
+  RAISE NOTICE 'HLD OK le candidat enseignant qui change de ville declenche aussi l''appel';
+END
+$r$;
+-- La priere echoue : la ville s'enregistre quand meme.
+SELECT set_config('test.priere_echoue', 'oui', true);
+SELECT pg_temp.en_tant('d6000000-0000-4000-8000-000000000109', 'teacher');
+SET LOCAL ROLE authenticated;
+SELECT public.enregistrer_ma_ville(current_setting('test.lyon')::bigint);
+RESET ROLE;
+DO $r$
+BEGIN
+  IF (SELECT l.ville FROM public.lieux l WHERE l.profil_id = 'd6000000-0000-4000-8000-000000000109') <> 'Lyon'
+     -- L'appel qui echoue est annule avec son bloc : il ne laisse aucune ligne, la ville reste.
+     OR (SELECT pg_catalog.count(*) FROM public.hld_appels WHERE enseignant = 'd6000000-0000-4000-8000-000000000109') <> 1 THEN
+    RAISE EXCEPTION 'HLD ROUGE : une erreur de la priere a empeche l''enregistrement de la ville';
+  END IF;
+  RAISE NOTICE 'HLD OK une erreur de la priere n''empeche jamais l''enregistrement de la ville';
+END
+$r$;
+SELECT set_config('test.priere_echoue', 'non', true);
+-- Le relais n'est executable par aucun role client.
+DO $r$
+BEGIN
+  IF pg_catalog.has_function_privilege('authenticated', 'private.lieux_priere_auto_relais()'::pg_catalog.regprocedure, 'EXECUTE')
+     OR pg_catalog.has_function_privilege('anon', 'private.lieux_priere_auto_relais()'::pg_catalog.regprocedure, 'EXECUTE') THEN
+    RAISE EXCEPTION 'HLD ROUGE : le relais est executable par un role client';
+  END IF;
+  RAISE NOTICE 'HLD OK le relais n''est executable par aucun role client';
+END
+$r$;
+
+-- =====================================================================
 -- (2) L'anonymisation efface le lieu
 -- =====================================================================
 DO $a$
