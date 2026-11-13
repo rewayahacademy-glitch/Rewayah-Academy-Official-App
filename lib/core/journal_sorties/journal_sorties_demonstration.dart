@@ -35,7 +35,9 @@ class JournalSortiesDemonstration implements PortJournalSorties {
       SortieApp(
         eleveId: eleve,
         prenom: 'Yasmine',
-        sortieLe: retour.subtract(Duration(seconds: secondes < 1 ? 1 : secondes)),
+        sortieLe: retour.subtract(
+          Duration(seconds: secondes < 1 ? 1 : secondes),
+        ),
         retourLe: retour,
         dureeSecondes: secondes < 1 ? 1 : secondes,
         sortieSalle: sortieSalle,
@@ -85,8 +87,6 @@ class JournalSortiesDemonstration implements PortJournalSorties {
   }
 
   @override
-  Future<ReglagesSorties?> reglages() async => const ReglagesSorties(
-    journalActif: true,
-    delai: Duration(seconds: 30),
-  );
+  Future<ReglagesSorties?> reglages() async =>
+      const ReglagesSorties(journalActif: true, delai: Duration(seconds: 30));
 }

@@ -122,6 +122,22 @@ const List<String> clesPause = <String>[
   clePauseResteMinimum,
 ];
 
+/// HORS-SALLE-2 : le journal des sorties de l'application est-il allume ?
+/// Faux par defaut : la direction ne l'allume qu'apres la validation des
+/// textes de l'accord par le directeur.
+const String cleSortiesJournalActif = 'salle.sorties.journal_actif';
+
+/// HORS-SALLE-2 : le delai hors de l'application avant la sortie de la salle,
+/// en secondes (30 par defaut, de 5 a 600, verifie par le serveur).
+const String cleSortiesDelai = 'salle.sorties.delai_secondes';
+
+/// Les deux reglages des sorties de l'application
+/// (`20261124200000_journal_sorties.sql`).
+const List<String> clesSorties = <String>[
+  cleSortiesJournalActif,
+  cleSortiesDelai,
+];
+
 /// Les cles du domaine Configuration > Regles -- les defauts de plateforme,
 /// jamais les surcharges par profil (Operations > Regles individuelles).
 const List<String> clesRegles = <String>[
@@ -167,6 +183,10 @@ const List<String> clesRegles = <String>[
   // PAUSE-SERVEUR (directeur, 12/11/2026) : la pause est un reglage, le
   // rappel apres un Non est reglable par la direction.
   ...clesPause,
+  // HORS-SALLE-2 (directeur, 12/11/2026 au soir) : le delai hors de
+  // l'application avant la sortie de la salle, et le journal des sorties
+  // (eteint par defaut). Un serveur d'avant le lot ne les rend pas.
+  ...clesSorties,
 ];
 
 /// REVENUS-VERITE : la fenetre du jour de paie, du jour `jourDebut` au jour

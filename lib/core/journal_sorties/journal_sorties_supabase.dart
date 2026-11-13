@@ -109,10 +109,8 @@ class JournalSortiesSupabase implements PortJournalSorties {
   });
 
   @override
-  Future<EtatAccordsSorties> retirer(String eleveId) => _etat(
-    'retirer_accord_sorties',
-    <String, dynamic>{'p_eleve': eleveId},
-  );
+  Future<EtatAccordsSorties> retirer(String eleveId) =>
+      _etat('retirer_accord_sorties', <String, dynamic>{'p_eleve': eleveId});
 
   @override
   Future<ReglagesSorties?> reglages() async {

@@ -23,6 +23,7 @@ import '../../core/widgets/pays_enseignant.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
 import '../compte/carte_rubriques.dart';
+import '../journal_sorties/section_sorties_seance.dart';
 import 'bloc_compte_rendu.dart';
 import 'composants_historique.dart';
 import 'donnees_historique.dart';
@@ -309,6 +310,15 @@ class _Contenu extends ConsumerWidget {
               ),
             ),
         ]),
+        // HORS-SALLE-2 (directeur, 12/11/2026 au soir) : les sorties de
+        // l'application de l'eleve, sous le temps de presence. Rien, pas meme
+        // un titre, sans ligne lisible (aucun accord, journal eteint).
+        SectionSortiesSeance(
+          seanceId: seance.id,
+          eleveId: seance.eleveId,
+          titre: titreBloc,
+          carte: carte,
+        ),
         // PED-APRES-1 (TUT-PED-APR-01) : le compte rendu pedagogique partageable
         // de CET eleve. Absent d'une seance annulee ou non tenue : aucun bloc
         // trompeur, ni appreciation, ni faux constat d'absence.

@@ -110,7 +110,8 @@ class EtatAccordsSorties {
         journalActif: json['journalActif'] == true,
         versionCourante: json['versionCourante'] as String?,
         eleves: <AccordSortiesEleve>[
-          for (final Object? e in (json['eleves'] as List<dynamic>?) ?? const [])
+          for (final Object? e
+              in (json['eleves'] as List<dynamic>?) ?? const [])
             if (e is Map<String, dynamic>) AccordSortiesEleve.depuisJson(e),
         ],
       );
@@ -127,7 +128,8 @@ class EtatAccordsSorties {
   /// La page est proposee : journal allume et au moins une decision a prendre.
   /// Tant que la direction n'a pas allume le journal, la page n'annonce pas un
   /// releve qui n'existe pas.
-  bool get propose => journalActif && versionCourante != null && eleves.isNotEmpty;
+  bool get propose =>
+      journalActif && versionCourante != null && eleves.isNotEmpty;
 
   /// Vrai quand l'appelant decide pour lui-meme (eleve adulte autonome).
   bool get pourSoi => eleves.length == 1 && eleves.single.autonome;
