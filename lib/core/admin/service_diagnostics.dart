@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'personnes_modifiees.dart';
+import 'service_plan_classe.dart' show jourPourServeur;
 
 /// Un eleve dont le niveau de placement n'a jamais ete decide.
 ///
@@ -69,10 +70,15 @@ abstract interface class ServiceDiagnostics {
 
   /// Decide le premier placement d'un eleve sur un niveau du programme.
   /// Refuse si l'eleve a deja un niveau decide (voir Progression).
+  ///
+  /// [depuis] : le jour ou l'eleve a vraiment commence, quand il etait deja en
+  /// cours (jamais dans le futur, jamais avant son inscription : le serveur
+  /// refuse). Sans date, l'entree est le jour du geste.
   Future<void> deciderPlacement({
     required String studentId,
     required String niveauId,
     required String motif,
+    DateTime? depuis,
   });
 }
 
@@ -101,14 +107,25 @@ class ServiceDiagnosticsSupabase implements ServiceDiagnostics {
     required String studentId,
     required String niveauId,
     required String motif,
-  }) => _client.rpc<void>(
-    'decider_placement',
-    params: <String, dynamic>{
-      'p_student_id': studentId,
-      'p_niveau_id': niveauId,
-      'p_motif': motif,
-    },
-  );
+    DateTime? depuis,
+  }) => depuis == null
+      ? _client.rpc<void>(
+          'decider_placement',
+          params: <String, dynamic>{
+            'p_student_id': studentId,
+            'p_niveau_id': niveauId,
+            'p_motif': motif,
+          },
+        )
+      : _client.rpc<void>(
+          'decider_placement_depuis',
+          params: <String, dynamic>{
+            'p_student_id': studentId,
+            'p_niveau_id': niveauId,
+            'p_motif': motif,
+            'p_depuis': jourPourServeur(depuis),
+          },
+        );
 }
 
 /// Le service des diagnostics employe par l'application.

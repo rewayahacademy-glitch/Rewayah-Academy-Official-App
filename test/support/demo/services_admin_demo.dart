@@ -13,6 +13,7 @@ import 'package:rewayah_academy/core/admin/service_configuration.dart';
 import 'package:rewayah_academy/core/admin/service_diagnostics.dart';
 import 'package:rewayah_academy/core/admin/service_evaluations.dart';
 import 'package:rewayah_academy/core/admin/service_groupes.dart';
+import 'package:rewayah_academy/core/admin/service_plan_classe.dart';
 import 'package:rewayah_academy/core/admin/service_programme.dart';
 import 'package:rewayah_academy/core/admin/service_progression.dart';
 import 'package:rewayah_academy/core/admin/service_qualite.dart';
@@ -81,6 +82,12 @@ class ServiceDiagnosticsDemo
   const ServiceDiagnosticsDemo();
 }
 
+class ServicePlanClasseDemo
+    with _IndisponibleDemo
+    implements ServicePlanClasse {
+  const ServicePlanClasseDemo();
+}
+
 class ServiceJournalDemo with _IndisponibleDemo implements ServiceJournal {
   const ServiceJournalDemo();
 }
@@ -118,30 +125,59 @@ class PolitiqueObservationAdminDemo
 }
 
 /// Les surcharges qui ferment tous les services admin adosses a Supabase.
-List<Override> surchargesServicesAdminIndisponibles() => <Override>[
-  serviceAdminProvider.overrideWithValue(const ServiceAdminDemo()),
-  serviceComptesProvider.overrideWithValue(const ServiceComptesDemo()),
-  serviceGroupesProvider.overrideWithValue(const ServiceGroupesDemo()),
-  serviceConfigurationProvider.overrideWithValue(
-    const ServiceConfigurationDemo(),
-  ),
-  serviceProgrammeProvider.overrideWithValue(const ServiceProgrammeDemo()),
-  serviceProgressionProvider.overrideWithValue(const ServiceProgressionDemo()),
-  serviceQualiteProvider.overrideWithValue(const ServiceQualiteDemo()),
-  serviceEvaluationsProvider.overrideWithValue(const ServiceEvaluationsDemo()),
-  serviceDiagnosticsProvider.overrideWithValue(const ServiceDiagnosticsDemo()),
-  serviceJournalProvider.overrideWithValue(const ServiceJournalDemo()),
-  serviceMatchingProvider.overrideWithValue(const ServiceMatchingDemo()),
-  serviceControleProvider.overrideWithValue(const ServiceControleDemo()),
-  serviceReglesProvider.overrideWithValue(const ServiceReglesDemo()),
-  serviceAuthProvider.overrideWithValue(const ServiceAuthDemo()),
-  serviceAgentProvider.overrideWithValue(const ServiceAgentDemo()),
-  annuaireObservationsProvider.overrideWithValue(
-    const AnnuaireObservationsDemo(),
-  ),
-  portPolitiqueObservationProvider.overrideWithValue(
-    const PolitiqueObservationAdminDemo(),
-  ),
+/// [sauf] : les providers qu'un test fournit lui-meme (un seul override par
+/// provider dans un meme conteneur).
+List<Override> surchargesServicesAdminIndisponibles({
+  List<Object> sauf = const <Object>[],
+}) => <Override>[
+  if (!sauf.contains(serviceAdminProvider))
+    serviceAdminProvider.overrideWithValue(const ServiceAdminDemo()),
+  if (!sauf.contains(serviceComptesProvider))
+    serviceComptesProvider.overrideWithValue(const ServiceComptesDemo()),
+  if (!sauf.contains(serviceGroupesProvider))
+    serviceGroupesProvider.overrideWithValue(const ServiceGroupesDemo()),
+  if (!sauf.contains(serviceConfigurationProvider))
+    serviceConfigurationProvider.overrideWithValue(
+      const ServiceConfigurationDemo(),
+    ),
+  if (!sauf.contains(serviceProgrammeProvider))
+    serviceProgrammeProvider.overrideWithValue(const ServiceProgrammeDemo()),
+  if (!sauf.contains(serviceProgressionProvider))
+    serviceProgressionProvider.overrideWithValue(
+      const ServiceProgressionDemo(),
+    ),
+  if (!sauf.contains(serviceQualiteProvider))
+    serviceQualiteProvider.overrideWithValue(const ServiceQualiteDemo()),
+  if (!sauf.contains(serviceEvaluationsProvider))
+    serviceEvaluationsProvider.overrideWithValue(
+      const ServiceEvaluationsDemo(),
+    ),
+  if (!sauf.contains(serviceDiagnosticsProvider))
+    serviceDiagnosticsProvider.overrideWithValue(
+      const ServiceDiagnosticsDemo(),
+    ),
+  if (!sauf.contains(servicePlanClasseProvider))
+    servicePlanClasseProvider.overrideWithValue(const ServicePlanClasseDemo()),
+  if (!sauf.contains(serviceJournalProvider))
+    serviceJournalProvider.overrideWithValue(const ServiceJournalDemo()),
+  if (!sauf.contains(serviceMatchingProvider))
+    serviceMatchingProvider.overrideWithValue(const ServiceMatchingDemo()),
+  if (!sauf.contains(serviceControleProvider))
+    serviceControleProvider.overrideWithValue(const ServiceControleDemo()),
+  if (!sauf.contains(serviceReglesProvider))
+    serviceReglesProvider.overrideWithValue(const ServiceReglesDemo()),
+  if (!sauf.contains(serviceAuthProvider))
+    serviceAuthProvider.overrideWithValue(const ServiceAuthDemo()),
+  if (!sauf.contains(serviceAgentProvider))
+    serviceAgentProvider.overrideWithValue(const ServiceAgentDemo()),
+  if (!sauf.contains(annuaireObservationsProvider))
+    annuaireObservationsProvider.overrideWithValue(
+      const AnnuaireObservationsDemo(),
+    ),
+  if (!sauf.contains(portPolitiqueObservationProvider))
+    portPolitiqueObservationProvider.overrideWithValue(
+      const PolitiqueObservationAdminDemo(),
+    ),
 ];
 
 /// Les providers de service que la demonstration admin neutralise (test).
@@ -155,6 +191,7 @@ final List<Provider<Object>> providersServicesAdmin = <Provider<Object>>[
   serviceQualiteProvider,
   serviceEvaluationsProvider,
   serviceDiagnosticsProvider,
+  servicePlanClasseProvider,
   serviceJournalProvider,
   serviceMatchingProvider,
   serviceControleProvider,

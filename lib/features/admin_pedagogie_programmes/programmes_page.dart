@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/accessibilite/signaler_manque.dart';
 import '../../core/admin/admin_domaine.dart';
+import '../../core/admin/service_plan_classe.dart';
 import '../../core/admin/service_programme.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
@@ -119,6 +120,11 @@ class _ProgrammesPageEtat extends ConsumerState<ProgrammesPage> {
                     _ouvrirContenu(context, ref, version, niveau),
                 onPreremplir: (VersionProgramme version) =>
                     _ouvrirPreremplir(context, ref, version),
+                onRepartir: () => _ouvrirRepartir(
+                  context,
+                  ref,
+                  onCree: (String id) => setState(() => _versionId = id),
+                ),
               ),
             ),
           ),
@@ -141,6 +147,7 @@ class _Corps extends StatelessWidget {
     required this.onPublier,
     required this.onContenu,
     required this.onPreremplir,
+    required this.onRepartir,
   });
 
   final List<VersionProgramme> versions;
@@ -156,6 +163,10 @@ class _Corps extends StatelessWidget {
   final void Function(VersionProgramme version, NiveauProgramme niveau)
   onContenu;
   final void Function(VersionProgramme version) onPreremplir;
+
+  /// PLAN-DE-CLASSE A : repartir des bases quand un brouillon est dans
+  /// l'impasse.
+  final VoidCallback onRepartir;
 
   @override
   Widget build(BuildContext context) {
@@ -238,6 +249,7 @@ class _Corps extends StatelessWidget {
             onAjouterNiveau: onAjouterNiveau,
             onPublier: onPublier,
             onPreremplir: onPreremplir,
+            onRepartir: onRepartir,
           )
         else
           Wrap(
@@ -280,6 +292,7 @@ class _ActionsBrouillon extends StatefulWidget {
     required this.onAjouterNiveau,
     required this.onPublier,
     required this.onPreremplir,
+    required this.onRepartir,
   });
 
   final VersionProgramme version;
@@ -288,6 +301,9 @@ class _ActionsBrouillon extends StatefulWidget {
 
   /// CAHIER-C2 : la proposition des bases, offerte a un brouillon vide.
   final void Function(VersionProgramme version) onPreremplir;
+
+  /// PLAN-DE-CLASSE A : « Repartir des bases ».
+  final VoidCallback onRepartir;
 
   @override
   State<_ActionsBrouillon> createState() => _ActionsBrouillonEtat();
@@ -358,12 +374,67 @@ class _ActionsBrouillonEtat extends State<_ActionsBrouillon> {
             ),
           ],
         ),
-        // CAHIER-C2 (garde-cap) : la proposition des bases ne remplit qu'une
-        // version vide ; un brouillon qui a deja des etapes, sans les bases,
-        // dit comment l'obtenir.
+        // PLAN-DE-CLASSE A : le serveur essaie de publier le brouillon, puis
+        // annule ; l'ecran dit pourquoi il ne se publie pas, en mots simples,
+        // et offre la sortie : repartir des bases (la proposition des bases ne
+        // remplit qu'une version vide, CAHIER-C2). Si le serveur ne repond pas,
+        // l'ancienne phrase reste.
         if (widget.version.nombreNiveaux > 0)
           Consumer(
             builder: (BuildContext context, WidgetRef ref, Widget? _) {
+              final AsyncValue<EtatPublication> etat = ref.watch(
+                etatPublicationProvider(widget.version.id),
+              );
+              final EtatPublication? lu = etat.hasValue
+                  ? etat.requireValue
+                  : null;
+              if (lu != null && lu.raison == RaisonBrouillon.publiable) {
+                return const SizedBox.shrink();
+              }
+              if (lu != null && lu.raison != RaisonBrouillon.nonBrouillon) {
+                final String? detail = lu.detail;
+                return Padding(
+                  padding: const EdgeInsetsDirectional.only(top: AppSpacing.sm),
+                  child: Column(
+                    key: const ValueKey<String>('programmes-brouillon-bloque'),
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Semantics(
+                        liveRegion: true,
+                        // WEB-BUREAU B4 : texte suivi borne a la largeur de
+                        // lecture.
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(
+                            maxWidth: AppPage.largeurLecture,
+                          ),
+                          child: Text(switch (lu.raison) {
+                            RaisonBrouillon.incomplet =>
+                              t.admin.planClasse.brouillon.incomplet(
+                                etape: detail ?? '',
+                              ),
+                            RaisonBrouillon.incoherent =>
+                              t.admin.planClasse.brouillon.incoherent(
+                                niveau: detail ?? '',
+                              ),
+                            RaisonBrouillon.sansBases =>
+                              t.admin.planClasse.brouillon.sansBases,
+                            _ => t.admin.planClasse.brouillon.autre,
+                          }, style: textes.bodySmall),
+                        ),
+                      ),
+                      Ecart.vMd,
+                      ActionPrincipale(
+                        key: const ValueKey<String>('programmes-repartir'),
+                        libelle: t.admin.planClasse.brouillon.repartir,
+                        pleineLargeur: false,
+                        niveau: NiveauAction.secondaire,
+                        onPress: widget.onRepartir,
+                      ),
+                    ],
+                  ),
+                );
+              }
               final List<NiveauProgramme>? niveaux = ref
                   .watch(niveauxProgrammeProvider(widget.version.id))
                   .value;
@@ -811,6 +882,35 @@ void _ouvrirContenu(
           );
         },
       ),
+    ),
+  );
+}
+
+/// PLAN-DE-CLASSE A : « Repartir des bases » : une version neuve, vide puis
+/// remplie des bases, sans toucher le brouillon en impasse ; elle devient la
+/// version affichee.
+void _ouvrirRepartir(
+  BuildContext context,
+  WidgetRef ref, {
+  required void Function(String id) onCree,
+}) {
+  String? nouvelle;
+  AppBottomSheet.ouvrir<void>(
+    context,
+    titre: t.admin.planClasse.brouillon.repartirTitre,
+    constructeur: (BuildContext contexte) => _FeuilleAction(
+      detail: t.admin.planClasse.brouillon.repartirDetail,
+      libelleEnvoyer: t.admin.planClasse.brouillon.repartirEnvoyer,
+      onEnvoyer: () async {
+        nouvelle = await ref.read(servicePlanClasseProvider).repartirDesBases();
+      },
+      messageErreur: ({required String message}) =>
+          t.admin.planClasse.brouillon.repartirErreur(message: message),
+      onSucces: () {
+        ref.invalidate(versionsProgrammeProvider);
+        final String? id = nouvelle;
+        if (id != null) onCree(id);
+      },
     ),
   );
 }

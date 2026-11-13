@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/admin/admin_domaine.dart';
 import '../../core/admin/service_diagnostics.dart';
+import '../../core/admin/service_plan_classe.dart';
 import '../../core/admin/service_programme.dart';
 import '../../core/formulaires/motifs_proposes.dart';
 import '../../core/i18n/strings.g.dart';
@@ -14,12 +15,16 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
+import '../../core/widgets/champ_date.dart';
 import '../../core/widgets/empty_state.dart';
+import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/selecteur_motif.dart';
 import '../../core/widgets/selecteur_niveau_programme.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
+import '../admin_groupes/niveau_classe.dart' show refusPlanClasse;
+import 'placements_a_faire.dart';
 
 /// `ADM-10` : Pedagogie > Diagnostics, fonction primaire du domaine.
 ///
@@ -41,6 +46,10 @@ class DiagnosticsPage extends ConsumerStatefulWidget {
 
 class _DiagnosticsPageEtat extends ConsumerState<DiagnosticsPage> {
   String? _niveauId;
+
+  /// PLAN-DE-CLASSE A : le jour ou l'eleve a vraiment commence, quand il etait
+  /// deja en cours ; nul : il commence aujourd'hui.
+  DateTime? _depuis;
   final TextEditingController _motif = TextEditingController();
   bool _envoi = false;
   String? _erreur;
@@ -57,6 +66,7 @@ class _DiagnosticsPageEtat extends ConsumerState<DiagnosticsPage> {
 
   void _reinitialiser() => setState(() {
     _niveauId = null;
+    _depuis = null;
     _motif.clear();
     _erreur = null;
     _motifManquant = false;
@@ -91,14 +101,19 @@ class _DiagnosticsPageEtat extends ConsumerState<DiagnosticsPage> {
             studentId: studentId,
             niveauId: niveauId,
             motif: _motif.text.trim(),
+            depuis: _depuis,
           );
-      ref.invalidate(diagnosticsATraiterProvider);
+      ref
+        ..invalidate(diagnosticsATraiterProvider)
+        ..invalidate(placementsAFaireProvider);
       if (mounted) _reinitialiser();
     } catch (erreur) {
       if (mounted) {
         setState(
-          () => _erreur = t.admin.diagnostics.deciderErreur(
-            message: _message(erreur),
+          () => _erreur = refusPlanClasse(
+            erreur,
+            (String brut) =>
+                t.admin.diagnostics.deciderErreur(message: _message(erreur)),
           ),
         );
       }
@@ -116,37 +131,53 @@ class _DiagnosticsPageEtat extends ConsumerState<DiagnosticsPage> {
     return PageShell(
       titre: t.admin.diagnostics.titre,
       entete: SousNavigationDomaine(onglets: ongletsPedagogie(), indexActif: 0),
-      child: BlocAsynchrone<VersionProgramme?>(
-        valeur: versionActive,
-        squelette: const Skeleton.liste(lignes: 4),
-        titreEchec: t.admin.diagnostics.erreur,
-        // RECHARGE-1 (03/11/2026) : la source, sans nouvelle tentative
-        // automatique, garde son erreur ; invalider le seul derive la
-        // relisait telle quelle. La source relue, le derive suit.
-        onReessayer: () => ref.invalidate(versionsProgrammeProvider),
-        vide: EmptyState(
-          message: t.admin.diagnostics.aucunProgramme,
-          invitation: t.admin.diagnostics.aucunProgrammeDetail,
-          icone: AppIcons.rienAAfficher,
-          registre: RegistreVide.subi,
-        ),
-        construire: (VersionProgramme? version) => _Corps(
-          version: version!,
-          niveauId: _niveauId,
-          motif: _motif,
-          envoi: _envoi,
-          erreur: _erreur,
-          motifManquant: _motifManquant,
-          onNiveau: (String id) => setState(() {
-            _niveauId = id;
-            _erreur = null;
-          }),
-          onMotifChange: (String _) => setState(() {
-            _erreur = null;
-            _motifManquant = false;
-          }),
-          onDecider: (String studentId) => unawaited(_decider(studentId)),
-        ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          // PLAN-DE-CLASSE A : qui n'a pas d'etape, pourquoi, et le geste.
+          const SectionPlacementsAFaire(),
+          _file(versionActive),
+        ],
+      ),
+    );
+  }
+
+  Widget _file(AsyncValue<VersionProgramme?> versionActive) {
+    return BlocAsynchrone<VersionProgramme?>(
+      valeur: versionActive,
+      squelette: const Skeleton.liste(lignes: 4),
+      titreEchec: t.admin.diagnostics.erreur,
+      // RECHARGE-1 (03/11/2026) : la source, sans nouvelle tentative
+      // automatique, garde son erreur ; invalider le seul derive la
+      // relisait telle quelle. La source relue, le derive suit.
+      onReessayer: () => ref.invalidate(versionsProgrammeProvider),
+      vide: EmptyState(
+        message: t.admin.diagnostics.aucunProgramme,
+        invitation: t.admin.diagnostics.aucunProgrammeDetail,
+        icone: AppIcons.rienAAfficher,
+        registre: RegistreVide.subi,
+      ),
+      construire: (VersionProgramme? version) => _Corps(
+        version: version!,
+        niveauId: _niveauId,
+        motif: _motif,
+        envoi: _envoi,
+        erreur: _erreur,
+        motifManquant: _motifManquant,
+        onNiveau: (String id) => setState(() {
+          _niveauId = id;
+          _erreur = null;
+        }),
+        onMotifChange: (String _) => setState(() {
+          _erreur = null;
+          _motifManquant = false;
+        }),
+        depuis: _depuis,
+        onDepuis: (DateTime? jour) => setState(() {
+          _depuis = jour;
+          _erreur = null;
+        }),
+        onDecider: (String studentId) => unawaited(_decider(studentId)),
       ),
     );
   }
@@ -162,6 +193,8 @@ class _Corps extends ConsumerWidget {
     required this.motifManquant,
     required this.onNiveau,
     required this.onMotifChange,
+    required this.depuis,
+    required this.onDepuis,
     required this.onDecider,
   });
 
@@ -175,6 +208,10 @@ class _Corps extends ConsumerWidget {
   final bool motifManquant;
   final void Function(String niveauId) onNiveau;
   final void Function(String motif) onMotifChange;
+
+  /// Le jour de debut choisi (nul : aujourd'hui) et son changement.
+  final DateTime? depuis;
+  final void Function(DateTime? jour) onDepuis;
   final void Function(String studentId) onDecider;
 
   @override
@@ -208,6 +245,8 @@ class _Corps extends ConsumerWidget {
         motifManquant: motifManquant,
         onNiveau: onNiveau,
         onMotifChange: onMotifChange,
+        depuis: depuis,
+        onDepuis: onDepuis,
         onDecider: () => onDecider(v.first.studentId),
       ),
     );
@@ -226,6 +265,8 @@ class _Decision extends StatelessWidget {
     required this.motifManquant,
     required this.onNiveau,
     required this.onMotifChange,
+    required this.depuis,
+    required this.onDepuis,
     required this.onDecider,
   });
 
@@ -241,6 +282,11 @@ class _Decision extends StatelessWidget {
   final bool motifManquant;
   final void Function(String niveauId) onNiveau;
   final void Function(String motif) onMotifChange;
+
+  /// PLAN-DE-CLASSE A : le jour ou l'eleve a vraiment commence (nul :
+  /// aujourd'hui).
+  final DateTime? depuis;
+  final void Function(DateTime? jour) onDepuis;
   final VoidCallback onDecider;
 
   @override
@@ -288,6 +334,34 @@ class _Decision extends StatelessWidget {
           ),
           _ => const Skeleton.liste(lignes: 2),
         },
+        Ecart.vXxl,
+        Consumer(
+          builder: (BuildContext context, WidgetRef ref, Widget? _) {
+            final DateTime aujourdhui = ref.read(horlogeFormulairesProvider)();
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                ChampDate(
+                  libelle: t.admin.planClasse.debutChamp,
+                  aide: t.admin.planClasse.debutAide,
+                  valeur: depuis,
+                  aujourdhui: aujourdhui,
+                  premier: eleve.inscritDepuis,
+                  dernier: aujourdhui,
+                  onChoix: onDepuis,
+                ),
+                if (depuis != null) ...<Widget>[
+                  Ecart.vSm,
+                  LienFleche(
+                    libelle: t.admin.planClasse.debutRetirer,
+                    onPress: () => onDepuis(null),
+                  ),
+                ],
+              ],
+            );
+          },
+        ),
         Ecart.vXxl,
         Text(t.admin.diagnostics.champMotif, style: textes.titleMedium),
         Ecart.vSm,
