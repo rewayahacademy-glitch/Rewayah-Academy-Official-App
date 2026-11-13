@@ -1000,7 +1000,7 @@ void main() {
     });
 
     test('rayon et ordre viennent du serveur : `plus_loin` va au second rayon, '
-        'chaque rayon suit `ordre` (croissant, stable)', () {
+        'chaque rayon suit `ordre` croissant', () {
       LibraryResource r(
         String id, {
         String rayon = codeRayonCours,
@@ -1036,12 +1036,12 @@ void main() {
       expect(de(RayonPlanche.pourAllerPlusLoin), <String>['loin1', 'loin2']);
     });
 
-    test('a `ordre` egal, l\'ordre rendu par le serveur est garde (stable, '
-        'meme au-dela de la taille ou un tri non stable melange)', () {
-      LibraryResource r(String id, int ordre) => LibraryResource(
+    test('a `ordre` egal : par titre puis par identifiant, quel que soit '
+        'l\'ordre ou le serveur rend la liste (total et deterministe)', () {
+      LibraryResource r(String id, String titre, int ordre) => LibraryResource(
         id: id,
-        title: id,
-        shortTitle: id,
+        title: titre,
+        shortTitle: titre,
         resourceType: TypeRessource.pdf,
         language: 'fr',
         category: 'lecture',
@@ -1050,23 +1050,65 @@ void main() {
         ordre: ordre,
         currentVersionId: 'v-$id',
       );
-      // 100 documents, tous au meme `ordre` sauf un, rendus dans un ordre
-      // volontairement non alphabetique.
-      final List<String> rendus = <String>[
-        for (int i = 99; i >= 0; i--) 'doc${i.toString().padLeft(3, '0')}',
-      ];
-      final List<LibraryResource> ressources = <LibraryResource>[
-        for (final String id in rendus) r(id, 5),
-        r('premier', 1),
-      ];
-      final List<String> ids = <String>[
+      List<String> ids(List<LibraryResource> l) => <String>[
         for (final DocumentPlanche d in documentsDepuisCatalogue(
-          ressources,
+          l,
           avecCoran: false,
         ))
           d.id,
       ];
-      expect(ids, <String>['premier', ...rendus]);
+      // 100 documents au meme `ordre` (au-dela de la taille ou un tri non
+      // stable melange), plus un premier ; rendus a l'envers.
+      final List<LibraryResource> ressources = <LibraryResource>[
+        for (int i = 99; i >= 0; i--)
+          r('id$i', 'Titre ${i.toString().padLeft(3, '0')}', 5),
+        r('premier', 'Zzz', 1),
+      ];
+      final List<String> attendu = <String>[
+        'premier',
+        for (int i = 0; i < 100; i++) 'id$i',
+      ];
+      expect(ids(ressources), attendu);
+      // Le meme resultat, quel que soit l'ordre d'arrivee.
+      expect(ids(ressources.reversed.toList()), attendu);
+      // Meme ordre et meme titre : l'identifiant departage.
+      expect(
+        ids(<LibraryResource>[
+          r('b', 'Meme titre', 2),
+          r('a', 'Meme titre', 2),
+          r('c', 'Meme titre', 2),
+        ]),
+        <String>['a', 'b', 'c'],
+      );
+    });
+
+    test('cheminFicheDocument n\'encode pas deux fois : `%` et `/` dans un '
+        'identifiant', () {
+      // `/` reste dans le segment (jamais un autre chemin), `%` est encode
+      // une fois, et le chemin se relit identique.
+      for (final String id in <String>[
+        'a/b',
+        'a%2Fb',
+        '100%',
+        'a b',
+        'x%y/z',
+      ]) {
+        final Uri uri = Uri.parse(cheminFicheDocument(id));
+        expect(uri.pathSegments, <String>[
+          'tc',
+          'bibliotheque',
+          id,
+        ], reason: id);
+        expect(uri.queryParameters['retour'], Routes.eleveApprendre);
+      }
+      expect(
+        cheminFicheDocument('a/b'),
+        '/tc/bibliotheque/a%2Fb?retour=%2Feleve%2Fapprendre',
+      );
+      expect(
+        cheminFicheDocument('100%'),
+        '/tc/bibliotheque/100%25?retour=%2Feleve%2Fapprendre',
+      );
     });
 
     testWidgets('les intitules des rayons sont ceux du serveur '
