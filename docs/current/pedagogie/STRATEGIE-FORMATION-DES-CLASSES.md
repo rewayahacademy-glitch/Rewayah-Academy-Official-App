@@ -64,7 +64,8 @@ Décisions du directeur qui restent la base : seule la direction publie (09/10) 
 
 ## 4. Les angles morts
 
-1. **Le vrai goulot est l'enseignant.** Il y en a un seul aujourd'hui. La vitrine ne peut pas promettre plus que le recrutement ne fournit : F5 relie les deux.
+1. **Le goulot n'est pas le nombre de candidats, c'est leur validation.** Correction du directeur (12/11/2026), vérifiée dans son Drive : le questionnaire « enseignement du Coran à distance » compte près de 2 000 réponses (deux onglets, environ 1 950 lignes), et le nombre monte. Aucun entretien n'a encore eu lieu ; un seul enseignant est inscrit dans l'application, le directeur lui-même. La vitrine ne peut pas promettre plus que le nombre d'enseignants VALIDÉS : F5 relie les deux, et le recrutement (les trois salles) devient le chantier qui conditionne l'ouverture des classes. Le questionnaire demande déjà la langue maternelle, les langues d'enseignement, le niveau de mémorisation, l'expérience avec les débutants, les heures par semaine et la disponibilité tard le soir « à l'heure de La Mecque » : ces réponses servent à trier les candidats à inviter en premier.
+4 bis. **En production, seuls deux élèves sont réels** ; les autres profils sont des comptes de test du directeur. Les inscriptions sont fermées jusqu'à ce que l'accueil soit prêt.
 2. **L'heure de La Mecque** change la clé de regroupement et l'affichage des cartes : ce chantier vient après le lot de l'horloge.
 3. **L'argent** (essai, paiement avant ou après la formation de la classe) n'est pas arbitré ici : il relève des règles que le directeur s'est réservées.
 4. **Cinq élèves sur neuf n'ont pas de classe** en production. Ils sont les premiers à servir.
