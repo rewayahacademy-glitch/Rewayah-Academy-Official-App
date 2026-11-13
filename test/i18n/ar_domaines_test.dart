@@ -82,7 +82,7 @@ const Map<String, int> _domaines = <String, int>{
   'recherche': 55,
   // CALENDRIER-ET-PAUSES (12/11/2026) : le calendrier de l'ecole et la pause
   // d'un mois, arabes des l'origine (texte propose, a valider).
-  'calendrier': 115,
+  'calendrier': 118,
   'pause': 37,
   // AR-SUIVI-FAMILLE.
   'suiviFamille': 40,

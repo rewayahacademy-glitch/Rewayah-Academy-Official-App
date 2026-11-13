@@ -135,6 +135,60 @@ void main() {
     });
   });
 
+  group('le conflit de la cloche de nuit, a la direction', () {
+    setUp(() => LocaleSettings.setLocaleSync(AppLocale.fr));
+
+    test('l evenement est connu ; la destination est celle du planning', () {
+      expect(evenementsNotificationConnus, contains('fermeture_conflit'));
+      expect(
+        destinationNotificationAutorisee('/admin/operations/planning'),
+        isTrue,
+      );
+    });
+
+    test(
+      'la classe, le jour, l heure de La Mecque, l enseignant, la suite',
+      () {
+        final String titre = contenuNotificationPour(
+          'fermeture_conflit',
+          const <String, dynamic>{
+            'portee': 'direction',
+            'classe': 'Classe Al-Noor',
+            'premiere_jour': '2027-05-18',
+            'premiere_heure': '11:00',
+            'enseignant': 'Aïcha Haddad',
+          },
+        ).titre;
+        expect(titre, contains('Classe Al-Noor'));
+        expect(titre, contains('18 mai 2027 à 11:00 (heure de La Mecque)'));
+        expect(titre, contains('Aïcha Haddad'));
+        expect(titre, contains('rétablie la nuit suivante'));
+      },
+    );
+
+    test('sans nom ni heure : la phrase generale, jamais un trou', () {
+      final String titre = contenuNotificationPour(
+        'fermeture_conflit',
+        const <String, dynamic>{'portee': 'direction'},
+      ).titre;
+      expect(titre, startsWith("Une séance n'est plus sous une fermeture"));
+      expect(titre, isNot(t.notifications.evenements.inconnu));
+    });
+
+    test('en arabe', () async {
+      await LocaleSettings.setLocale(AppLocale.ar);
+      final String titre = contenuNotificationPour(
+        'fermeture_conflit',
+        const <String, dynamic>{
+          'classe': 'Classe Al-Noor',
+          'premiere_jour': '2027-05-18',
+          'premiere_heure': '11:00',
+        },
+      ).titre;
+      expect(titre, contains('مكة المكرمة'));
+    });
+  });
+
   test('en arabe : la fermeture dit sa periode et l heure de La Mecque, '
       'sans le francais', () async {
     await LocaleSettings.setLocale(AppLocale.ar);

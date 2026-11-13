@@ -71,6 +71,7 @@ NotificationContenu contenuNotificationPour(
     // CALENDRIER-ET-PAUSES (13/11) : la fermeture de l'academie, par classe.
     'fermeture_annoncee' => _fermeture(params, levee: false),
     'fermeture_levee' => _fermeture(params, levee: true),
+    'fermeture_conflit' => _fermetureConflit(params),
     // D1-ter (03/11/2026) : le prenom de l'eleve, jamais le message lui-meme.
     'message_academie_eleve' => switch ((
       portee,
@@ -378,4 +379,25 @@ String _fermeture(Map<String, dynamic> params, {required bool levee}) {
         : n.levee.abandonUne(quand: quand);
   }
   return n.levee.mixte(retablies: retablies, abandonnees: abandonnees);
+}
+
+/// La direction : une seance n'est plus sous une fermeture mais ne peut pas etre
+/// retablie (l'enseignant a pris un autre cours a la meme heure).
+String _fermetureConflit(Map<String, dynamic> params) {
+  final n = t.calendrier.dates.notification.conflit;
+  final String classe = '${params['classe'] ?? ''}'.trim();
+  final String enseignant = '${params['enseignant'] ?? ''}'.trim();
+  final DateTime? jour = jourDepuisSql(params['premiere_jour']);
+  final String heure = '${params['premiere_heure'] ?? ''}'.trim();
+  if (classe.isEmpty || jour == null || heure.isEmpty) {
+    return n.generale;
+  }
+  return enseignant.isEmpty
+      ? n.sansNom(classe: classe, jour: jourEnMots(jour), heure: heure)
+      : n.avecNom(
+          classe: classe,
+          jour: jourEnMots(jour),
+          heure: heure,
+          enseignant: enseignant,
+        );
 }

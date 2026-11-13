@@ -15458,6 +15458,11 @@
         "confirmer": "Publier la fermeture"
       },
         "notification": {
+          "conflit": {
+            "generale": "Une séance n'est plus sous une fermeture mais ne peut pas être rétablie\u00a0: l'enseignant a pris un autre cours à la même heure. Libérez-le, la séance sera rétablie la nuit suivante.",
+            "avecNom": "La séance de la classe {classe}, le {jour} à {heure} (heure de La Mecque), n'est plus sous une fermeture mais ne peut pas être rétablie\u00a0: {enseignant} a un autre cours à la même heure. Libérez l'enseignant, la séance sera rétablie la nuit suivante.",
+            "sansNom": "La séance de la classe {classe}, le {jour} à {heure} (heure de La Mecque), n'est plus sous une fermeture mais ne peut pas être rétablie\u00a0: l'enseignant a un autre cours à la même heure. Libérez-le, la séance sera rétablie la nuit suivante."
+          },
           "quandLocal": "{local} ({mecque}, heure de La Mecque)",
           "quandMecque": "{jour} à {heure}, heure de La Mecque",
           "annoncee": {

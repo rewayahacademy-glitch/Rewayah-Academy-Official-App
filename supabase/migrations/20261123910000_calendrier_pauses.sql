@@ -795,7 +795,7 @@ $function$;
 -- elles portent alors abandonnee_le dans seances_fermees et une ligne du journal d'audit.
 -- La classe n'est pas prevenue seance par seance (l'annonce de la fermeture est le lot 7) :
 -- l'indicateur local coupe notifier_classe_seances.
-CREATE FUNCTION private.fermeture_synchroniser(p_mises_seulement boolean DEFAULT false)
+CREATE FUNCTION private.fermeture_synchroniser(p_nuit boolean DEFAULT false)
 RETURNS integer
 LANGUAGE plpgsql
 SECURITY DEFINER
@@ -817,7 +817,6 @@ BEGIN
       FROM public.seances_fermees sf
       JOIN public.sessions s ON s.id = sf.session_id
      WHERE sf.retablie_le IS NULL AND sf.abandonnee_le IS NULL AND s.deleted_at IS NOT NULL
-       AND NOT p_mises_seulement   -- le balayage de nuit ne retablit rien : il ne fait que mettre de cote
      ORDER BY s.started_at
        FOR UPDATE OF sf
   LOOP
@@ -839,6 +838,14 @@ BEGIN
       END;
     END IF;
   END LOOP;
+  IF p_nuit AND pg_catalog.cardinality(v_conflits) > 0 THEN
+    -- La cloche de nuit ne refuse rien et n'abandonne rien : une seance qui ne peut pas etre retablie reste de
+    -- cote, la direction en est avertie (une notification par seance et par nuit au plus), un humain tranche.
+    FOR r IN SELECT x FROM pg_catalog.unnest(v_conflits) AS x LOOP
+      PERFORM private.fermeture_signaler_conflit(r.x);
+    END LOOP;
+    v_conflits := '{}';
+  END IF;
   IF pg_catalog.cardinality(v_conflits) > 0 THEN
     v_abandon := NULLIF(pg_catalog.current_setting('calendrier.abandon', true), '')::integer;
     IF v_abandon IS DISTINCT FROM pg_catalog.cardinality(v_conflits) THEN
@@ -906,6 +913,51 @@ $function$;
 -- tout code futur) sur un jour de fermeture publiee est mise de cote tout de suite, comme celles
 -- que la publication d'une fermeture trouve deja creees. Les sauts de classe et de date voulus
 -- par la direction (nouvelle date d'une seance reportee) sont refuses plus haut, avec leur phrase.
+-- La direction est avertie qu'une seance, qui n'est plus couverte par aucune fermeture, ne peut pas etre
+-- retablie (l'enseignant a pris un autre cours a la meme heure) : une notification par administrateur actif,
+-- par seance et par nuit au plus (le rejeu de la nuit ne redouble rien). Application seulement (ni courriel
+-- ni push) ; un echec d'ecriture n'arrete jamais la cloche.
+CREATE FUNCTION private.fermeture_signaler_conflit(p_session uuid)
+RETURNS integer
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = ''
+AS $function$
+DECLARE
+  v_n integer := 0;
+BEGIN
+  BEGIN
+    INSERT INTO public.notifications (destinataire, evenement, params, destination)
+    SELECT a.id, 'fermeture_conflit',
+           pg_catalog.jsonb_strip_nulls(pg_catalog.jsonb_build_object(
+             'portee', 'direction', 'session_id', s.id, 'groupe_id', s.groupe_id,
+             'classe', nullif(pg_catalog.btrim(g.libelle), ''),
+             'premiere_jour', private.jour_academie_de(s.started_at),
+             'premiere_heure', pg_catalog.to_char(s.started_at AT TIME ZONE 'Asia/Riyadh', 'HH24:MI'),
+             'enseignant', nullif(pg_catalog.btrim(coalesce(t.first_name, '') || ' ' || coalesce(t.last_name, '')), ''),
+             'nuit', private.jour_academie()::text)),
+           '/admin/operations/planning'
+      FROM public.sessions s
+      JOIN public.groupes g ON g.id = s.groupe_id
+      LEFT JOIN public.profiles t ON t.id = s.teacher_id
+      CROSS JOIN LATERAL (
+        SELECT pr.id FROM public.profiles pr
+         WHERE pr.role = 'admin' AND pr.account_status = 'active' AND pr.deleted_at IS NULL
+           AND (pr.access_until IS NULL OR pr.access_until > pg_catalog.now())) a
+     WHERE s.id = p_session
+       AND NOT EXISTS (
+         SELECT 1 FROM public.notifications n
+          WHERE n.destinataire = a.id AND n.evenement = 'fermeture_conflit'
+            AND n.params ->> 'session_id' = p_session::text
+            AND n.params ->> 'nuit' = private.jour_academie()::text);
+    GET DIAGNOSTICS v_n = ROW_COUNT;
+  EXCEPTION WHEN OTHERS THEN
+    RAISE WARNING 'fermeture : conflit de la seance % non signale (SQLSTATE %)', p_session, SQLSTATE;
+  END;
+  RETURN v_n;
+END;
+$function$;
+
 -- Le balayage de nuit (contre-lecture du 13/11, IMP-A) : une classe qui devient couverte par une fermeture de
 -- TRANCHE apres la publication (un changement de membres) garde sinon une seance « planned » vivante un jour
 -- ferme, que la famille verrait, jamais annoncee. Regle voulue : aucun cours affiche un jour ferme. Le
@@ -913,6 +965,11 @@ $function$;
 -- chemin (private.fermeture_notifier : jamais un mineur, une notification par destinataire, classe et
 -- fermeture). Rejoue, il ne trouve plus rien : aucun doublon. Aucun declencheur sur groupe_membres (le cout
 -- d'un recalcul a chaque changement de membre n'est pas prouve nul). Appele par la cloche de nuit.
+-- LE CAS INVERSE (arbitrage de l'architecte : des eleves ne perdent jamais un cours un jour OUVERT) : la meme
+-- cloche RETABLIT une seance de cote qui n'est plus couverte par AUCUNE fermeture, si le retablissement ne
+-- trouve aucun conflit (meme simulation que le retrait : tentative en sous-transaction), et previent par
+-- fermeture_levee ; sinon elle ne retablit pas et avertit la direction (fermeture_conflit). Une seance deja
+-- passee n'est jamais retablie, rien n'est envoye.
 CREATE FUNCTION private.fermeture_balayer()
 RETURNS integer
 LANGUAGE sql
@@ -2132,7 +2189,8 @@ $function$;
 INSERT INTO private.notification_courriel (evenement, portee, courriel, push)
 VALUES ('pause_repondue', '*', false, false),
        ('fermeture_annoncee', '*', false, false),
-       ('fermeture_levee', '*', false, false)
+       ('fermeture_levee', '*', false, false),
+       ('fermeture_conflit', '*', false, false)
 ON CONFLICT (evenement, portee) DO NOTHING;
 
 -- ---------------------------------------------------------------------------
@@ -2162,6 +2220,7 @@ REVOKE ALL ON FUNCTION private.eleve_en_fermeture(uuid, date) FROM PUBLIC, anon,
 REVOKE ALL ON FUNCTION private.eleve_hors_cours(uuid, date) FROM PUBLIC, anon, authenticated, service_role;
 REVOKE ALL ON FUNCTION private.fermeture_synchroniser(boolean) FROM PUBLIC, anon, authenticated, service_role;
 REVOKE ALL ON FUNCTION private.fermeture_balayer() FROM PUBLIC, anon, authenticated, service_role;
+REVOKE ALL ON FUNCTION private.fermeture_signaler_conflit(uuid) FROM PUBLIC, anon, authenticated, service_role;
 REVOKE ALL ON FUNCTION private.fermeture_notifier(uuid, uuid, text, uuid[], uuid[]) FROM PUBLIC, anon, authenticated, service_role;
 REVOKE ALL ON FUNCTION private.groupe_membres_recalculer() FROM PUBLIC, anon, authenticated, service_role;
 REVOKE ALL ON FUNCTION private.pause_depasse_plafond(uuid, date) FROM PUBLIC, anon, authenticated, service_role;

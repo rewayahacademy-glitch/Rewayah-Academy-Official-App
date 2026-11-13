@@ -1735,6 +1735,97 @@ SELECT pg_temp.vrai(pg_temp.recul('e7') = (SELECT r.recul FROM private.recul_jou
                     OR pg_temp.recul('e7') >= 0,
   'le recul de la nouvelle etape est celui de ses propres jours');
 
+-- ------------------------------------------------------------------
+-- 26. Contre-lecture du 13/11 : le cas INVERSE, la cloche de nuit retablit (ou signale), jamais un cours perdu un jour ouvert
+-- ------------------------------------------------------------------
+-- (a) Sans conflit. cT (adultes) est couverte par deux fermetures de tranche (tr_nuit, sans_rapport) : ses deux seances sont de
+-- cote. e8 (ado, mineur) entre dans cT : la classe n'est plus couverte par AUCUNE fermeture. La nuit : les deux seances sont
+-- retablies ; une notification « levee » par destinataire (e10 adulte, t1 tuteur de e8, b8 enseignant), jamais e8 ; rejeu : rien.
+SELECT pg_temp.vrai((SELECT pg_catalog.count(*) FROM public.seances_fermees sf JOIN public.sessions s ON s.id = sf.session_id
+                      WHERE s.groupe_id = pg_temp.u('cT') AND sf.retablie_le IS NULL AND sf.abandonnee_le IS NULL) = 2,
+  'fixture : les deux seances de cT sont de cote');
+SELECT pg_temp.changer('e8', 'cN1', 'cT');
+SELECT private.materialiser_classes_actives();
+SELECT pg_temp.vrai(
+  (SELECT pg_catalog.count(*) FROM public.seances_fermees sf JOIN public.sessions s ON s.id = sf.session_id
+    WHERE s.groupe_id = pg_temp.u('cT') AND sf.retablie_le IS NOT NULL AND s.deleted_at IS NULL) = 2
+  AND (SELECT pg_catalog.count(*) FROM public.session_participants sp JOIN public.sessions s ON s.id = sp.session_id
+        WHERE s.groupe_id = pg_temp.u('cT') AND sp.profile_id = pg_temp.u('e8') AND s.deleted_at IS NULL
+          AND s.started_at > pg_catalog.now() + interval '12 days') >= 1,
+  'la cloche retablit les seances d''une classe qui n''est plus couverte par aucune fermeture (et y ajoute le nouveau membre)');
+SELECT pg_temp.vrai(
+  (SELECT pg_catalog.count(*) FROM public.notifications WHERE evenement = 'fermeture_levee' AND destinataire = pg_temp.u('e10')
+     AND params ->> 'groupe_id' = pg_temp.u('cT')::text AND params ->> 'fermeture_id' = (SELECT id::text FROM cp_ids WHERE cle = 'tr_nuit')
+     AND (params ->> 'retablies')::int = 1 AND (params ->> 'abandonnees')::int = 0 AND params ->> 'portee' = 'soi') = 1
+  AND (SELECT pg_catalog.count(*) FROM public.notifications WHERE evenement = 'fermeture_levee' AND destinataire = pg_temp.u('t1')
+        AND params ->> 'groupe_id' = pg_temp.u('cT')::text AND params ->> 'fermeture_id' = (SELECT id::text FROM cp_ids WHERE cle = 'tr_nuit')
+        AND params ->> 'portee' = 'foyer' AND params -> 'eleves' = '["Ado huit"]'::jsonb) = 1
+  AND (SELECT pg_catalog.count(*) FROM public.notifications WHERE evenement = 'fermeture_levee' AND destinataire = pg_temp.u('b8')
+        AND params ->> 'groupe_id' = pg_temp.u('cT')::text AND params ->> 'fermeture_id' = (SELECT id::text FROM cp_ids WHERE cle = 'tr_nuit')) = 1
+  AND NOT EXISTS (SELECT 1 FROM public.notifications n JOIN public.student_profiles sp ON sp.profile_id = n.destinataire
+                   WHERE sp.student_type = 'minor' AND n.evenement IN ('fermeture_annoncee', 'fermeture_levee', 'fermeture_conflit')),
+  'le retablissement de nuit est annonce une fois a l''adulte, au tuteur du mineur et a l''enseignant ; jamais au mineur');
+SELECT pg_catalog.count(*) AS avant FROM public.notifications WHERE evenement IN ('fermeture_levee', 'fermeture_annoncee', 'fermeture_conflit') \gset r33_
+SELECT private.materialiser_classes_actives();
+SELECT private.materialiser_classes_actives();
+SELECT pg_temp.vrai((SELECT pg_catalog.count(*) FROM public.notifications WHERE evenement IN ('fermeture_levee', 'fermeture_annoncee', 'fermeture_conflit')) = :'r33_avant'::int,
+  'rejouee, la cloche ne retablit ni ne notifie rien de plus');
+
+-- (b) Avec conflit. cU (adultes) : e6 y entre, une fermeture de tranche (adultes) met sa seance de cote ; b8 prend un autre
+-- cours a la meme heure ; e7 (mineur) entre dans cU : la classe n'est plus couverte, mais la seance ne peut pas etre retablie :
+-- elle reste de cote, la direction est avertie UNE fois par nuit (pas de levee pour la famille) ; l'enseignant libere : retablie.
+INSERT INTO public.groupes(id, teacher_id, type_public, seuil_max, libelle, weekday, hour_local, timezone_iana) VALUES
+ (pg_temp.u('cU'), pg_temp.u('b8'), 'adulte', 5, 'Conflit CP', 3, 14, 'UTC');
+SELECT pg_temp.changer('e6', 'cN2', 'cU');
+SELECT started_at AS debut_u FROM public.sessions WHERE groupe_id = pg_temp.u('cU') AND started_at > pg_catalog.now() + interval '25 days'
+ ORDER BY started_at LIMIT 1 \gset r34_
+SELECT (private.jour_academie_de(:'r34_debut_u'::timestamptz) - pg_temp.auj()) AS dec_u \gset r34_
+SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.fermer('tr_conf', 'autre', :r34_dec_u, :r34_dec_u, 'tranche', 'adulte_18_plus');
+SELECT pg_temp.publier('tr_conf', true);
+RESET ROLE;
+INSERT INTO public.sessions(id, teacher_id, started_at, ended_at, session_type, groupe_id, status)
+VALUES (pg_temp.u('sX'), pg_temp.u('b8'), :'r34_debut_u'::timestamptz + interval '10 minutes', :'r34_debut_u'::timestamptz + interval '70 minutes',
+        'standard', pg_temp.u('cO'), 'planned');
+SELECT pg_temp.vrai((SELECT pg_catalog.count(*) FROM public.seances_fermees sf JOIN public.sessions s ON s.id = sf.session_id
+                      WHERE s.groupe_id = pg_temp.u('cU') AND sf.fermeture_id = (SELECT id FROM cp_ids WHERE cle = 'tr_conf') AND sf.retablie_le IS NULL) >= 1,
+  'fixture : la seance de cU est de cote par la fermeture, b8 a pris un autre cours (sX) a la meme heure');
+SELECT pg_temp.changer('e7', 'cN1', 'cU');
+SELECT pg_catalog.count(*) AS levees_avant FROM public.notifications WHERE evenement = 'fermeture_levee' AND params ->> 'groupe_id' = pg_temp.u('cU')::text AND params ->> 'fermeture_id' = (SELECT id::text FROM cp_ids WHERE cle = 'tr_conf') \gset r35_
+SELECT private.materialiser_classes_actives();
+SELECT pg_temp.vrai(
+  (SELECT pg_catalog.count(*) FROM public.seances_fermees sf JOIN public.sessions s ON s.id = sf.session_id
+    WHERE s.groupe_id = pg_temp.u('cU') AND sf.fermeture_id = (SELECT id FROM cp_ids WHERE cle = 'tr_conf') AND sf.retablie_le IS NULL AND s.deleted_at IS NOT NULL) >= 1
+  AND (SELECT pg_catalog.count(*) FROM public.notifications WHERE evenement = 'fermeture_levee' AND params ->> 'groupe_id' = pg_temp.u('cU')::text AND params ->> 'fermeture_id' = (SELECT id::text FROM cp_ids WHERE cle = 'tr_conf')) = :'r35_levees_avant'::int
+  AND (SELECT pg_catalog.count(*) FROM public.notifications WHERE evenement = 'fermeture_conflit' AND destinataire = pg_temp.u('a1')
+        AND params ->> 'groupe_id' = pg_temp.u('cU')::text AND destination = '/admin/operations/planning' AND params ->> 'portee' = 'direction') = 1,
+  'conflit : la seance n''est PAS retablie, la famille n''est pas prevenue d''un retablissement, la direction l''est une fois');
+SELECT pg_catalog.count(*) AS conflits_avant FROM public.notifications WHERE evenement = 'fermeture_conflit' \gset r36_
+SELECT private.materialiser_classes_actives();
+SELECT pg_temp.vrai((SELECT pg_catalog.count(*) FROM public.notifications WHERE evenement = 'fermeture_conflit') = :'r36_conflits_avant'::int,
+  'rejouee la meme nuit, la cloche ne signale pas deux fois la meme seance');
+UPDATE public.sessions SET deleted_at = pg_catalog.now() WHERE id = pg_temp.u('sX');
+SELECT private.materialiser_classes_actives();
+SELECT pg_temp.vrai(
+  (SELECT pg_catalog.count(*) FROM public.seances_fermees sf JOIN public.sessions s ON s.id = sf.session_id
+    WHERE s.groupe_id = pg_temp.u('cU') AND sf.fermeture_id = (SELECT id FROM cp_ids WHERE cle = 'tr_conf') AND sf.retablie_le IS NOT NULL AND s.deleted_at IS NULL) >= 1
+  AND EXISTS (SELECT 1 FROM public.notifications WHERE evenement = 'fermeture_levee' AND params ->> 'groupe_id' = pg_temp.u('cU')::text AND params ->> 'fermeture_id' = (SELECT id::text FROM cp_ids WHERE cle = 'tr_conf')),
+  'l''enseignant libere : la nuit suivante la seance est retablie et annoncee');
+
+-- (c) Une seance deja passee n'est jamais retablie, rien n'est envoye.
+INSERT INTO public.sessions(id, teacher_id, started_at, ended_at, session_type, groupe_id, status, deleted_at)
+VALUES (pg_temp.u('s_passee'), pg_temp.u('b8'), pg_catalog.now() - interval '2 days', pg_catalog.now() - interval '2 days' + interval '1 hour',
+        'standard', pg_temp.u('cU'), 'planned', pg_catalog.now() - interval '3 days');
+INSERT INTO public.seances_fermees(session_id, fermeture_id, masquee_le)
+VALUES (pg_temp.u('s_passee'), (SELECT id FROM cp_ids WHERE cle = 'tr_nuit'), pg_catalog.now() - interval '3 days');
+SELECT pg_catalog.count(*) AS avant_passee FROM public.notifications WHERE evenement IN ('fermeture_levee', 'fermeture_conflit') \gset r37_
+SELECT private.materialiser_classes_actives();
+SELECT pg_temp.vrai((SELECT deleted_at FROM public.sessions WHERE id = pg_temp.u('s_passee')) IS NOT NULL
+                    AND (SELECT retablie_le FROM public.seances_fermees WHERE session_id = pg_temp.u('s_passee')) IS NULL
+                    AND (SELECT pg_catalog.count(*) FROM public.notifications WHERE evenement IN ('fermeture_levee', 'fermeture_conflit')) = :'r37_avant_passee'::int,
+  'une seance deja passee n''est jamais retablie par la cloche, et rien n''est envoye');
+
 \o
 SELECT 'scenarios_calendrier_pauses : tous les controles sont verts' AS resultat;
 ROLLBACK;

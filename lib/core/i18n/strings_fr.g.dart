@@ -42945,6 +42945,7 @@ class Traductions$calendrier$dates$notification$fr {
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
+	late final Traductions$calendrier$dates$notification$conflit$fr conflit = Traductions$calendrier$dates$notification$conflit$fr.internal(_root);
 
 	/// fr: '{local} ({mecque}, heure de La Mecque)'
 	String quandLocal({required Object local, required Object mecque}) => '${local} (${mecque}, heure de La Mecque)';
@@ -48842,6 +48843,24 @@ class Traductions$candidatsFlux$invitationsPersonnelles$lienCopie$refus$fr {
 
 	/// fr: 'Cette adresse a demandé à ne plus recevoir les messages du recrutement.'
 	String get desinscrit => 'Cette adresse a demandé à ne plus recevoir les messages du recrutement.';
+}
+
+// Path: calendrier.dates.notification.conflit
+class Traductions$calendrier$dates$notification$conflit$fr {
+	Traductions$calendrier$dates$notification$conflit$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Une séance n'est plus sous une fermeture mais ne peut pas être rétablie : l'enseignant a pris un autre cours à la même heure. Libérez-le, la séance sera rétablie la nuit suivante.'
+	String get generale => 'Une séance n\'est plus sous une fermeture mais ne peut pas être rétablie : l\'enseignant a pris un autre cours à la même heure. Libérez-le, la séance sera rétablie la nuit suivante.';
+
+	/// fr: 'La séance de la classe {classe}, le {jour} à {heure} (heure de La Mecque), n'est plus sous une fermeture mais ne peut pas être rétablie : {enseignant} a un autre cours à la même heure. Libérez l'enseignant, la séance sera rétablie la nuit suivante.'
+	String avecNom({required Object classe, required Object jour, required Object heure, required Object enseignant}) => 'La séance de la classe ${classe}, le ${jour} à ${heure} (heure de La Mecque), n\'est plus sous une fermeture mais ne peut pas être rétablie : ${enseignant} a un autre cours à la même heure. Libérez l\'enseignant, la séance sera rétablie la nuit suivante.';
+
+	/// fr: 'La séance de la classe {classe}, le {jour} à {heure} (heure de La Mecque), n'est plus sous une fermeture mais ne peut pas être rétablie : l'enseignant a un autre cours à la même heure. Libérez-le, la séance sera rétablie la nuit suivante.'
+	String sansNom({required Object classe, required Object jour, required Object heure}) => 'La séance de la classe ${classe}, le ${jour} à ${heure} (heure de La Mecque), n\'est plus sous une fermeture mais ne peut pas être rétablie : l\'enseignant a un autre cours à la même heure. Libérez-le, la séance sera rétablie la nuit suivante.';
 }
 
 // Path: calendrier.dates.notification.annoncee
@@ -62772,6 +62791,9 @@ extension on Traductions {
 			'calendrier.dates.publication.titre' => 'Publier la fermeture',
 			'calendrier.dates.publication.phrase' => 'Pendant ces jours, aucune nouvelle séance n\'est créée et la date limite de l\'étape de chaque élève concerné recule d\'autant. Les séances qui n\'ont pas encore commencé ces jours-là sont mises de côté, sans être supprimées ; une séance déjà commencée continue. Retirer la fermeture avant son début rétablit les séances de côté, si l\'enseignant n\'a pas pris un autre cours à la même heure entre-temps. Une fois commencée, la fermeture ne peut plus être retirée ni raccourcie.',
 			'calendrier.dates.publication.confirmer' => 'Publier la fermeture',
+			'calendrier.dates.notification.conflit.generale' => 'Une séance n\'est plus sous une fermeture mais ne peut pas être rétablie : l\'enseignant a pris un autre cours à la même heure. Libérez-le, la séance sera rétablie la nuit suivante.',
+			'calendrier.dates.notification.conflit.avecNom' => ({required Object classe, required Object jour, required Object heure, required Object enseignant}) => 'La séance de la classe ${classe}, le ${jour} à ${heure} (heure de La Mecque), n\'est plus sous une fermeture mais ne peut pas être rétablie : ${enseignant} a un autre cours à la même heure. Libérez l\'enseignant, la séance sera rétablie la nuit suivante.',
+			'calendrier.dates.notification.conflit.sansNom' => ({required Object classe, required Object jour, required Object heure}) => 'La séance de la classe ${classe}, le ${jour} à ${heure} (heure de La Mecque), n\'est plus sous une fermeture mais ne peut pas être rétablie : l\'enseignant a un autre cours à la même heure. Libérez-le, la séance sera rétablie la nuit suivante.',
 			'calendrier.dates.notification.quandLocal' => ({required Object local, required Object mecque}) => '${local} (${mecque}, heure de La Mecque)',
 			'calendrier.dates.notification.quandMecque' => ({required Object jour, required Object heure}) => '${jour} à ${heure}, heure de La Mecque',
 			'calendrier.dates.notification.annoncee.une' => ({required Object du, required Object au, required Object quand}) => 'L\'académie est fermée du ${du} au ${au}. La séance du ${quand} n\'aura pas lieu.',

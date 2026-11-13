@@ -92,6 +92,9 @@ const Set<String> evenementsNotificationConnus = <String>{
   // classe, au tuteur, a l'adulte autonome et a l'enseignant (jamais un mineur).
   'fermeture_annoncee',
   'fermeture_levee',
+  // La cloche de nuit ne peut pas retablir une seance qui n'est plus sous une
+  // fermeture : la direction est avertie, un humain tranche.
+  'fermeture_conflit',
 };
 
 const Set<String> _destinationsAutorisees = <String>{

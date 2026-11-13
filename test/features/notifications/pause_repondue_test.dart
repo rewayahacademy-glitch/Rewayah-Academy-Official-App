@@ -12,11 +12,14 @@ import 'package:rewayah_academy/features/notifications/contenu_notification.dart
 void main() {
   tearDown(() => LocaleSettings.setLocale(AppLocale.fr));
 
-  test('l evenement est connu du client ; ses destinations sont deja valides', () {
-    expect(evenementsNotificationConnus, contains('pause_repondue'));
-    expect(destinationNotificationAutorisee('/tuteur'), isTrue);
-    expect(destinationNotificationAutorisee('/eleve'), isTrue);
-  });
+  test(
+    'l evenement est connu du client ; ses destinations sont deja valides',
+    () {
+      expect(evenementsNotificationConnus, contains('pause_repondue'));
+      expect(destinationNotificationAutorisee('/tuteur'), isTrue);
+      expect(destinationNotificationAutorisee('/eleve'), isTrue);
+    },
+  );
 
   group('en francais', () {
     setUp(() => LocaleSettings.setLocaleSync(AppLocale.fr));
@@ -49,25 +52,28 @@ void main() {
       );
     });
 
-    test('refusee : le motif est dans l application, jamais dans la notification', () {
-      final NotificationContenu enfant = contenuNotificationPour(
-        'pause_repondue',
-        <String, dynamic>{
-          'decision': 'refusee',
-          'mois': '2027-03',
-          'prenom': 'Mariam',
-        },
-      );
-      expect(enfant.titre, contains('Mariam'));
-      expect(enfant.titre, contains('mars 2027'));
-      expect(enfant.titre, contains("n'est pas acceptée"));
-      expect(enfant.titre, contains("Le motif est dans l'application"));
-      final NotificationContenu adulte = contenuNotificationPour(
-        'pause_repondue',
-        <String, dynamic>{'decision': 'refusee', 'mois': '2027-03'},
-      );
-      expect(adulte.titre, startsWith('Votre pause'));
-    });
+    test(
+      'refusee : le motif est dans l application, jamais dans la notification',
+      () {
+        final NotificationContenu enfant = contenuNotificationPour(
+          'pause_repondue',
+          <String, dynamic>{
+            'decision': 'refusee',
+            'mois': '2027-03',
+            'prenom': 'Mariam',
+          },
+        );
+        expect(enfant.titre, contains('Mariam'));
+        expect(enfant.titre, contains('mars 2027'));
+        expect(enfant.titre, contains("n'est pas acceptée"));
+        expect(enfant.titre, contains("Le motif est dans l'application"));
+        final NotificationContenu adulte = contenuNotificationPour(
+          'pause_repondue',
+          <String, dynamic>{'decision': 'refusee', 'mois': '2027-03'},
+        );
+        expect(adulte.titre, startsWith('Votre pause'));
+      },
+    );
 
     test('un mois illisible : la phrase tient, sans mois invente', () {
       final NotificationContenu c = contenuNotificationPour(
@@ -85,9 +91,17 @@ void main() {
 
     test('les quatre phrases existent, avec le mois en toutes lettres', () {
       for (final Map<String, dynamic> p in <Map<String, dynamic>>[
-        <String, dynamic>{'decision': 'acceptee', 'mois': '2027-02', 'prenom': 'Mariam'},
+        <String, dynamic>{
+          'decision': 'acceptee',
+          'mois': '2027-02',
+          'prenom': 'Mariam',
+        },
         <String, dynamic>{'decision': 'acceptee', 'mois': '2027-02'},
-        <String, dynamic>{'decision': 'refusee', 'mois': '2027-03', 'prenom': 'Mariam'},
+        <String, dynamic>{
+          'decision': 'refusee',
+          'mois': '2027-03',
+          'prenom': 'Mariam',
+        },
         <String, dynamic>{'decision': 'refusee', 'mois': '2027-03'},
       ]) {
         final String titre = contenuNotificationPour('pause_repondue', p).titre;

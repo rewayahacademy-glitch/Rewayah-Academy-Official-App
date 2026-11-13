@@ -1,12 +1,15 @@
--- CALENDRIER-ET-PAUSES (lot 2, 12/11/2026) : trois evenements entrent dans la
+-- CALENDRIER-ET-PAUSES (lot 2, 12/11/2026) : quatre evenements entrent dans la
 -- contrainte des evenements de notifications : « pause_repondue » (la reponse de la
 -- direction a une demande de pause de la famille, acceptee ou refusee, avec son
 -- motif), « fermeture_annoncee » (une fermeture de l'academie met des seances de
--- cote : une notification par classe) et « fermeture_levee » (la fermeture est
--- retiree : les seances sont retablies, ou abandonnees sur confirmation de la
--- direction). Dans l'application du tuteur, de l'adulte autonome et de
--- l'enseignant de la classe, par la chaine de notifications existante. Jamais a un
--- mineur : le destinataire d'un enfant est son tuteur. Ni courriel ni push.
+-- cote : une notification par classe), « fermeture_levee » (la fermeture est
+-- retiree, ou une classe n'est plus couverte : les seances sont retablies, ou
+-- abandonnees sur confirmation de la direction) et « fermeture_conflit » (la cloche
+-- de nuit ne peut pas retablir une seance qui n'est plus sous une fermeture,
+-- l'enseignant ayant pris un autre cours : la direction tranche). Dans
+-- l'application du tuteur, de l'adulte autonome, de l'enseignant de la classe et de
+-- la direction, par la chaine de notifications existante. Jamais a un mineur : le
+-- destinataire d'un enfant est son tuteur. Ni courriel ni push.
 --
 -- FICHIER A MOT D'EFFACEMENT (B5) : une contrainte CHECK ne s'elargit pas, elle se
 -- remplace (retrait puis ajout de la meme contrainte). Le serveur Supabase demande
@@ -43,7 +46,7 @@ BEGIN
     RAISE EXCEPTION 'pause_repondue : la contrainte notifications_evenement_check est absente';
   END IF;
   IF v_def LIKE '%''pause_repondue''%' AND v_def LIKE '%''fermeture_annoncee''%'
-     AND v_def LIKE '%''fermeture_levee''%' THEN
+     AND v_def LIKE '%''fermeture_levee''%' AND v_def LIKE '%''fermeture_conflit''%' THEN
     RAISE NOTICE 'evenements du lot 2 : deja dans la contrainte, rien a faire';
     RETURN;
   END IF;
@@ -63,7 +66,7 @@ BEGIN
   END IF;
   -- Les trois evenements du lot, dans leur ordre, ceux qui y sont deja ne sont pas redoubles.
   v_nouvelle := v_liste;
-  FOREACH v_ajout IN ARRAY ARRAY['pause_repondue', 'fermeture_annoncee', 'fermeture_levee'] LOOP
+  FOREACH v_ajout IN ARRAY ARRAY['pause_repondue', 'fermeture_annoncee', 'fermeture_levee', 'fermeture_conflit'] LOOP
     IF NOT (v_ajout = ANY (v_nouvelle)) THEN
       v_nouvelle := v_nouvelle || v_ajout;
     END IF;
@@ -92,6 +95,7 @@ BEGIN
   END IF;
   IF v_def IS NULL OR v_def NOT LIKE '%''pause_repondue''%'
      OR v_def NOT LIKE '%''fermeture_annoncee''%' OR v_def NOT LIKE '%''fermeture_levee''%'
+     OR v_def NOT LIKE '%''fermeture_conflit''%'
      OR EXISTS (SELECT 1 FROM pg_catalog.unnest(v_liste) AS e WHERE v_def NOT LIKE '%''' || e || '''%') THEN
     RAISE EXCEPTION 'pause_repondue : la contrainte n''est pas celle attendue : %', v_def;
   END IF;
