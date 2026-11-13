@@ -24,13 +24,16 @@ void main() {
   for (final AppRole role in AppRole.values) {
     test('${role.name} : la capacite suit le routeur', () {
       final SessionState session = _actif(role);
+      final String? decision = deciderRedirection(
+        session: session,
+        cheminDemande: Routes.tcBibliotheque,
+        maintenant: DateTime.utc(2026, 11, 11, 12),
+      );
+      // ESPACE-APPRENDRE (lot 5) : l'eleve a une seule Bibliotheque, celle
+      // d'Apprendre ; le routeur l'y conduit, il ne la lui refuse pas.
       final bool routeurOuvre =
-          deciderRedirection(
-            session: session,
-            cheminDemande: Routes.tcBibliotheque,
-            maintenant: DateTime.utc(2026, 11, 11, 12),
-          ) ==
-          null;
+          decision == null ||
+          (role == AppRole.student && decision == Routes.eleveApprendre);
       expect(session.peutOuvrirBibliotheque, routeurOuvre, reason: role.name);
     });
   }
