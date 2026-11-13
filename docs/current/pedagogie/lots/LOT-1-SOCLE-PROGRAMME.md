@@ -4,6 +4,14 @@
 > Plan : `PLAN-DE-CONSTRUCTION.md`, section « Lot 1 ». Valeurs : `REGLAGES.md` (tableau 1 et 1 bis).
 > Statut : **présent dans le code, testé localement, NON installé, NON prouvé en production.** Personne n'est désigné pour fusionner (blocage en tête du plan).
 
+## Ce que la direction ne peut pas encore faire (arbitré le 13/11 : lot PLAN-DE-CLASSE, n° 5 du plan, lancé quand le lot 1 est en production)
+
+Après l'installation de ce lot, la direction peut **publier la version** (écran Programmes) et **placer un élève** à une étape (écran Diagnostics). Elle ne peut pas encore :
+
+1. **Donner un niveau à une classe déjà vivante.** Aucun écran ni RPC ne pose `groupes.programme_niveau_id` ; les classes neuves reçoivent l'étape 1 de la version publiée par déclencheur, les classes existantes restent sans niveau.
+2. **Fixer la date d'entrée d'un élève déjà en cours.** La date d'entrée dans l'étape est le jour du geste (placement) ; la direction ne peut pas dire « il a commencé le 20 octobre », et la date limite de cet élève part donc du placement.
+3. (Conséquence) Un élève déjà membre d'une classe, sans décision, n'a aucune étape jusqu'à son placement par la direction.
+
 ## Ce que le lot réutilise
 
 | Existant | Comment |
@@ -138,7 +146,7 @@ Statut : **présent dans le code, testé localement, NON installé, NON prouvé 
 ## Écarts entre le plan et le code trouvé
 
 1. Le plan dit « `programme_niveaux` : 1 niveau » ; dans le code, une ligne de `programme_niveaux` est une **étape** (C2 y sème `BASES-1` à `BASES-4`). Le « niveau » n'existait qu'en texte (`cycle`). D'où `programme_cycles`.
-2. C2 calculait la date limite d'étape par durée × 1,3 (sommes 47/37/33/20) ; remplacée par le tableau 1 bis (sommes 48/36/31/20). La date reste par étape (correction de l'architecte du 12/11) ; la charte, qui la met sur le niveau, est en cours de correction sur `claude/charte-ecole`.
+2. C2 calculait la date limite d'étape par durée × 1,3 (sommes 47/37/33/20) ; remplacée par le tableau 1 bis (sommes 48/36/31/20). La date reste par étape (correction de l'architecte du 12/11) ; la charte, qui la mettait sur le niveau, a été corrigée depuis (`CHARTE-ACADEMIE.md`).
 3. Objectifs : ceux de C2 sont repris, sauf deux formulations corrigées vers `EVALUATIONS.md` 4.2 et 4.3 (« Reconnaît chaque lettre dans le désordre », « Lit une lettre avec chacune des trois voyelles ») ; ceux de l'étape 4 gardent la phrase citée par le directeur le 11/11.
 4. Matière secondaire des 10 ans et plus : « Al-Fatiha dès la première semaine, puis le même ordre » (`EVALUATIONS.md` 4.1, ARBITRÉ) ; 6-9 ans : aucune avant la chadda (étapes 1 et 2).
 5. `groupe_roster_enseignant` lit encore `progression_historique` pour l'étape ; aucun écran ne l'affiche : laissé pour le lot 10.
