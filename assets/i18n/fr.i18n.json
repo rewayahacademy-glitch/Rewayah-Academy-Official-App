@@ -15218,7 +15218,7 @@
     },
     "indisponible": "Le calendrier n'a pas pu être ouvert\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
     "dates": {
-      "intro": "Les dates de l'année, saisies par la direction chaque année. Seules les dates publiées agissent ; elles seront affichées dans l'onglet Programme des élèves et des familles qu'elles concernent.",
+      "intro": "Les dates de l'année, saisies par la direction chaque année. Seules les dates publiées agissent\u00a0; elles seront affichées dans l'onglet Programme des élèves et des familles qu'elles concernent.",
       "ajouter": "Ajouter une date",
       "erreur": "Les dates n'ont pas pu être lues\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
       "videTitre": "Aucune date saisie",

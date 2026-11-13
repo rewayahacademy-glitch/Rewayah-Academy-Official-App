@@ -23942,7 +23942,7 @@ class Traductions$calendrier$dates$fr {
 	// Translations
 
 	/// fr: 'Les dates de l'année, saisies par la direction chaque année. Seules les dates publiées agissent ; elles seront affichées dans l'onglet Programme des élèves et des familles qu'elles concernent.'
-	String get intro => 'Les dates de l\'année, saisies par la direction chaque année. Seules les dates publiées agissent ; elles seront affichées dans l\'onglet Programme des élèves et des familles qu\'elles concernent.';
+	String get intro => 'Les dates de l\'année, saisies par la direction chaque année. Seules les dates publiées agissent ; elles seront affichées dans l\'onglet Programme des élèves et des familles qu\'elles concernent.';
 
 	/// fr: 'Ajouter une date'
 	String get ajouter => 'Ajouter une date';
@@ -61850,7 +61850,7 @@ extension on Traductions {
 			'calendrier.sections.dates' => 'Dates de l\'académie',
 			'calendrier.sections.pauses' => 'Pauses',
 			'calendrier.indisponible' => 'Le calendrier n\'a pas pu être ouvert : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
-			'calendrier.dates.intro' => 'Les dates de l\'année, saisies par la direction chaque année. Seules les dates publiées agissent ; elles seront affichées dans l\'onglet Programme des élèves et des familles qu\'elles concernent.',
+			'calendrier.dates.intro' => 'Les dates de l\'année, saisies par la direction chaque année. Seules les dates publiées agissent ; elles seront affichées dans l\'onglet Programme des élèves et des familles qu\'elles concernent.',
 			'calendrier.dates.ajouter' => 'Ajouter une date',
 			'calendrier.dates.erreur' => 'Les dates n\'ont pas pu être lues : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'calendrier.dates.videTitre' => 'Aucune date saisie',
