@@ -133,15 +133,21 @@ void main() {
       );
     }
 
-    // Ressources (3 au plus) et progression en une ligne, sans pourcentage.
+    // Ressources (3 au plus) et « Ou j'en suis » (le bloc du Suivi, lu par
+    // ma_progression), sans pourcentage.
     await tester.scrollUntilVisible(
-      find.byKey(const ValueKey<String>('ma-classe-progression')),
+      find.byKey(const ValueKey<String>('suivi-pedagogique')),
       200,
       scrollable: find.byType(Scrollable).first,
     );
     expect(find.byType(BlocBibliotheque), findsOneWidget);
     expect(find.text(t.adulte.accueil.ressources), findsOneWidget);
-    expect(find.text(DonneesAdulteDemo.ligneProgressionClasse), findsOneWidget);
+    expect(find.text(t.suiviPedagogique.titreSoi), findsOneWidget);
+    expect(find.text('Lire avec les voyelles'), findsWidgets);
+    expect(
+      find.text(t.suiviPedagogique.reprisePage(page: '24')),
+      findsOneWidget,
+    );
     expect(find.byType(BlocProgression), findsNothing);
     expect(find.byType(LinearProgressIndicator), findsNothing);
     expect(find.textContaining('%'), findsNothing);
@@ -160,7 +166,7 @@ void main() {
     addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
     await monterCoquille(tester, adresseDemoAdulte(EcranDemoAdulte.maClasse));
     await tester.scrollUntilVisible(
-      find.byKey(const ValueKey<String>('ma-classe-progression')),
+      find.byKey(const ValueKey<String>('suivi-pedagogique')),
       300,
       scrollable: find.byType(Scrollable).first,
     );
@@ -220,11 +226,6 @@ void main() {
       liste(GenreTitulaireDemo.femme)
           .map((ParticipantClasseAdulte p) => p.prenom),
       isNot(contains('Mamadou')),
-    );
-    // La ligne de progression lit la page de reprise du titulaire.
-    expect(
-      DonneesAdulteDemo.ligneProgressionClasse,
-      endsWith(DonneesAdulteDemo.pageRepriseTitulaire),
     );
   });
 

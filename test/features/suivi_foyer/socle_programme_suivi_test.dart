@@ -1,10 +1,11 @@
-// SOCLE-PROGRAMME (lot 1 de la charte, 12/11/2026) : la lecture unique
-// `etape_eleve_lecture` branchee dans le Suivi de l'eleve et l'Historique du
-// tuteur. Lecture de la reponse serveur, puis les ecrans touches a travers le
-// VRAI routeur : contenu (etape, matieres, date d'entree, duree prevue,
-// date limite de l'etape, horizon du niveau, chemin), Interface guidee (ni
-// date limite, ni horizon, ni rythme, ni durees), et les cinq etats : chargement, contenu, vide, erreur,
-// hors ligne.
+// SOCLE-PROGRAMME (lot 1 de la charte, 12/11/2026), sur le hub `ma_progression`
+// (13/11/2026) : l'etape de l'eleve, lue par `etape_eleve_lecture` DEDANS, rendue
+// par le meme appel que les sourates et le reglage. Lecture de la reponse, puis
+// les ecrans touches a travers le VRAI routeur : contenu (etape, matieres,
+// date d'entree, duree prevue, date limite de l'etape, horizon du niveau,
+// chemin), dates retenues par le serveur pour l'enfant de 6 a 9 ans (et la
+// regle d'avant, quand le serveur ne le dit pas), attente de l'entretien de
+// lecture, et les etats : chargement, contenu, erreur, hors ligne.
 
 import 'dart:async';
 
@@ -16,6 +17,7 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/suivi/ma_progression.dart';
 import 'package:rewayah_academy/core/suivi/port_suivi_pedagogique.dart';
 import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
@@ -29,28 +31,45 @@ import '../../support/garde_interface.dart';
 import '../../support/harnais.dart';
 import '../historique/support_historique.dart';
 
-/// La reponse du serveur pour un eleve a l'etape 2. [masquee] : telle que le
-/// serveur la rend a l'enfant de 6 a 9 ans qui lit avec son propre compte
-/// (aucune date, aucun nombre de semaines). [voit] : `eleve_voit_dates`.
+/// La reponse de `ma_progression` pour un eleve a l'etape 2. [masquee] : telle
+/// que le serveur la rend a l'enfant de 6 a 9 ans qui lit avec son propre
+/// compte (aucune date, aucun nombre de semaines). [voit] : `eleve_voit_dates`.
 Map<String, Object?> _reponse({bool masquee = false, bool voit = true}) {
   final bool dateLimite = !masquee;
   int? n(int v) => masquee ? null : v;
+  Map<String, Object?> etape(
+    int ordre,
+    String nom,
+    int prevue,
+    int limite,
+    String statut,
+    List<Object?> objectifs,
+  ) => <String, Object?>{
+    'ordre': ordre,
+    'nom': nom,
+    'statut': statut,
+    'atteinte_le': null,
+    'objectifs': objectifs,
+    'duree_prevue_semaines': n(prevue),
+    'date_limite_semaines': n(limite),
+  };
   return <String, Object?>{
-    'eleve_id': 'p-student',
     'eleve_voit_dates': voit,
     'etape': <String, Object?>{
       'code': 'BASES-2',
       'ordre': 2,
       'nom': 'Lire avec les voyelles',
+      'cycle': 'Les bases',
       'objectifs': <Object?>['Lit le tanwin', 'Lit la chadda'],
       'matiere_principale': 'Le livre de lecture de Rewayah : les voyelles',
       'matiere_secondaire': 'Al-Fatiha dès la première semaine',
       'duree_prevue_semaines': n(11),
       'date_limite_semaines': n(14),
-      'entree_le': '2026-10-01',
+      'entree_le': dateLimite ? '2026-10-01' : null,
       'date_limite': dateLimite ? '2027-01-07' : null,
       'semaines_ecoulees': dateLimite ? 6 : null,
       'rythme': dateLimite ? 'dans_les_temps' : null,
+      'page_reprise': 12,
     },
     'niveau': <String, Object?>{
       'code': 'bases',
@@ -58,53 +77,41 @@ Map<String, Object?> _reponse({bool masquee = false, bool voit = true}) {
       'cohorte': 'enfant_10_13',
       'duree_prevue_semaines': n(28),
       'date_limite_semaines': n(36),
-      'entree_le': '2026-09-01',
+      'entree_le': dateLimite ? '2026-09-01' : null,
       'horizon': dateLimite ? '2027-05-06' : null,
       'date_limite_visible': dateLimite,
     },
-    'chemin': <Object?>[
-      <String, Object?>{
-        'code': 'BASES-1',
-        'ordre': 1,
-        'nom': 'Les lettres',
-        'objectifs': <Object?>['Distingue les lettres qui se ressemblent'],
-        'duree_prevue_semaines': n(6),
-        'date_limite_semaines': n(8),
-        'statut': 'precedente',
-      },
-      <String, Object?>{
-        'code': 'BASES-2',
-        'ordre': 2,
-        'nom': 'Lire avec les voyelles',
-        'objectifs': <Object?>['Lit le tanwin'],
-        'duree_prevue_semaines': n(11),
-        'date_limite_semaines': n(14),
-        'statut': 'en_cours',
-      },
-      <String, Object?>{
-        'code': 'BASES-3',
-        'ordre': 3,
-        'nom': 'Lire dans le Coran',
-        'objectifs': <Object?>[],
-        'duree_prevue_semaines': n(6),
-        'date_limite_semaines': n(8),
-        'statut': 'a_venir',
-      },
-      <String, Object?>{
-        'code': 'BASES-4',
-        'ordre': 4,
-        'nom': "Les sourates courtes, d'Al-Masad à Az-Zalzalah",
-        'objectifs': <Object?>[],
-        'duree_prevue_semaines': n(5),
-        'date_limite_semaines': n(6),
-        'statut': 'a_venir',
-      },
+    'etapes_du_cycle': <Object?>[
+      etape(1, 'Les lettres', 6, 8, 'franchie', <Object?>[
+        'Distingue les lettres qui se ressemblent',
+      ]),
+      etape(2, 'Lire avec les voyelles', 11, 14, 'en_cours', <Object?>[
+        'Lit le tanwin',
+      ]),
+      etape(3, 'Lire dans le Coran', 6, 8, 'a_venir', <Object?>[]),
+      etape(
+        4,
+        "Les sourates courtes, d'Al-Masad à Az-Zalzalah",
+        5,
+        6,
+        'a_venir',
+        <Object?>[],
+      ),
     ],
-    'sourates': <String, Object?>{'validees': 3, 'total': 17},
-    'page_reprise': 12,
-    'version': <String, Object?>{'numero': 1, 'statut': 'publiee'},
+    'sourates': <String, Object?>{'sourates_validees': 3, 'sourates_total': 17},
+    'reglage': null,
   };
 }
+
+/// La reponse de `ma_progression` pour un eleve en classe qui attend
+/// l'entretien de lecture : aucune etape, les sourates restent rendues.
+Map<String, Object?> _attente() => <String, Object?>{
+  'etape': null,
+  'etapes_du_cycle': <Object?>[],
+  'sourates': <String, Object?>{'sourates_validees': 0, 'sourates_total': 17},
+  'reglage': null,
+  'attente': 'entretien_de_lecture',
+};
 
 /// Ce qui ne doit jamais s'afficher quand l'eleve ne voit pas ses dates.
 void _aucuneDate(WidgetTester tester) {
@@ -125,7 +132,7 @@ void _aucuneDate(WidgetTester tester) {
   }
 }
 
-class _FauxPort implements PortSuiviPedagogique {
+class _FauxPort implements PortMaProgression {
   _FauxPort({this.brut, this.erreur, this.attente});
 
   Object? brut;
@@ -134,13 +141,13 @@ class _FauxPort implements PortSuiviPedagogique {
   final List<String> lus = <String>[];
 
   @override
-  Future<SuiviPedagogique?> pourEleve(String eleveId) async {
+  Future<MaProgression?> pourEleve(String eleveId) async {
     lus.add(eleveId);
     if (attente case final Completer<void> c) await c.future;
     if (erreur case final Error e) throw e;
     // Le meme chemin que l'adaptateur Supabase : la reponse brute, lue par
-    // `depuisLecture`.
-    return SuiviPedagogique.depuisLecture(brut);
+    // `MaProgression.depuisJson`.
+    return MaProgression.depuisJson(brut);
   }
 }
 
@@ -158,7 +165,7 @@ Future<void> _monterEleve(
     interface: mode,
     taille: const Size(390, 3200),
     surcharges: <Override>[
-      portSuiviPedagogiqueProvider.overrideWithValue(port),
+      portMaProgressionProvider.overrideWithValue(port),
       horsLigneProvider.overrideWith(
         (Ref ref) => Stream<bool>.value(horsLigne),
       ),
@@ -168,11 +175,12 @@ Future<void> _monterEleve(
 }
 
 void main() {
-  group('Lecture de la reponse de etape_eleve_lecture', () {
+  group('Lecture de la reponse de ma_progression', () {
     test('une reponse complete', () {
-      final SuiviPedagogique? s = SuiviPedagogique.depuisLecture(_reponse());
-      expect(s, isNotNull);
-      expect(s!.etapeNom, 'Lire avec les voyelles');
+      final MaProgression? p = MaProgression.depuisJson(_reponse());
+      expect(p, isNotNull);
+      final SuiviPedagogique s = p!.suivi!;
+      expect(s.etapeNom, 'Lire avec les voyelles');
       expect(s.etapeOrdre, 2);
       expect(s.niveauNom, 'Les bases');
       expect(s.matiereSecondaire, 'Al-Fatiha dès la première semaine');
@@ -183,65 +191,102 @@ void main() {
       expect(s.horizon, DateTime(2027, 5, 6));
       expect(s.rythme, Rythme.dansLesTemps);
       expect(s.pageReprise, 12);
-      expect(s.sourates?.validees, 3);
-      expect(s.sourates?.total, 17);
-      expect(s.chemin.map((EtapeDuChemin e) => e.statut), <StatutEtape>[
-        StatutEtape.precedente,
+      expect(s.eleveVoitDates, isTrue);
+      expect(p.sourates?.validees, 3);
+      expect(p.sourates?.total, 17);
+      expect(p.cycle.map((EtapeDuCycle e) => e.statut), <StatutEtape>[
+        StatutEtape.franchie,
         StatutEtape.enCours,
         StatutEtape.aVenir,
         StatutEtape.aVenir,
       ]);
-      expect(s.chemin.first.dureePrevueSemaines, 6);
-      expect(s.chemin.first.dateLimiteSemaines, 8);
+      expect(p.cycle.first.dureePrevueSemaines, 6);
+      expect(p.cycle.first.dateLimiteSemaines, 8);
+      expect(p.cycle.first.objectifs, <String>[
+        'Distingue les lettres qui se ressemblent',
+      ]);
     });
 
-    test('sans etape, ou reponse illisible : rien, jamais suppose', () {
-      expect(SuiviPedagogique.depuisLecture(null), isNull);
-      expect(SuiviPedagogique.depuisLecture(<Object?>[]), isNull);
+    test('sans etape ni sourates, ou reponse illisible : rien', () {
+      expect(MaProgression.depuisJson(null), isNull);
+      expect(MaProgression.depuisJson(<Object?>[]), isNull);
       expect(
-        SuiviPedagogique.depuisLecture(<String, Object?>{
+        MaProgression.depuisJson(<String, Object?>{
           'etape': <String, Object?>{'nom': ' '},
         }),
         isNull,
       );
+      expect(SuiviPedagogique.depuisLecture(null), isNull);
+      expect(SuiviPedagogique.depuisLecture(<Object?>[]), isNull);
     });
 
     test('reponse masquee par le serveur (enfant de 6 a 9 ans) : ni date ni '
         'nombre de semaines, rythme inconnu', () {
-      final SuiviPedagogique s = SuiviPedagogique.depuisLecture(
+      final MaProgression p = MaProgression.depuisJson(
         _reponse(masquee: true, voit: false),
       )!;
+      final SuiviPedagogique s = p.suivi!;
       expect(s.dateLimite, isNull);
+      expect(s.entreeLe, isNull);
       expect(s.horizon, isNull);
       expect(s.dureePrevueSemaines, isNull);
       expect(s.dateLimiteSemaines, isNull);
       expect(s.rythme, Rythme.inconnu);
       expect(s.eleveVoitDates, isFalse);
-      expect(s.chemin, hasLength(4));
+      expect(p.cycle, hasLength(4));
       expect(
-        s.chemin.every(
-          (EtapeDuChemin e) =>
-              e.dureePrevueSemaines == null && e.dateLimiteSemaines == null,
+        p.cycle.every(
+          (EtapeDuCycle e) =>
+              e.atteinteLe == null &&
+              e.dureePrevueSemaines == null &&
+              e.dateLimiteSemaines == null,
         ),
         isTrue,
       );
     });
 
-    test('attente de l entretien de lecture : un etat a part', () {
-      final SuiviPedagogique? s = SuiviPedagogique.depuisLecture(
-        <String, Object?>{'eleve_id': 'x', 'attente': 'entretien_de_lecture'},
-      );
-      expect(s?.enAttenteEntretien, isTrue);
+    test('reponse d avant le socle (sans niveau ni eleve_voit_dates) : '
+        'lisible, la regle de dates reste celle d avant', () {
+      final Map<String, Object?> r = _reponse()
+        ..remove('niveau')
+        ..remove('eleve_voit_dates');
+      final MaProgression p = MaProgression.depuisJson(r)!;
+      expect(p.suivi!.etapeNom, 'Lire avec les voyelles');
+      expect(p.suivi!.eleveVoitDates, isNull);
+      expect(p.suivi!.niveauNom, isNull);
     });
 
-    test('une etape du chemin au statut inconnu est ecartee', () {
+    test('attente de l entretien de lecture : un etat a part, les sourates '
+        'restent rendues', () {
+      final MaProgression? p = MaProgression.depuisJson(<String, Object?>{
+        'etape': null,
+        'etapes_du_cycle': <Object?>[],
+        'sourates': <String, Object?>{
+          'sourates_validees': 2,
+          'sourates_total': 17,
+        },
+        'reglage': null,
+        'attente': 'entretien_de_lecture',
+      });
+      expect(p?.suivi?.enAttenteEntretien, isTrue);
+      expect(p?.sourates?.validees, 2);
+      expect(
+        SuiviPedagogique.depuisLecture(<String, Object?>{
+          'eleve_id': 'x',
+          'attente': 'entretien_de_lecture',
+        })?.enAttenteEntretien,
+        isTrue,
+      );
+    });
+
+    test('une etape du cycle au statut inconnu est ecartee', () {
       final Map<String, Object?> r = _reponse();
-      (r['chemin']! as List<Object?>).add(<String, Object?>{
+      (r['etapes_du_cycle']! as List<Object?>).add(<String, Object?>{
         'ordre': 5,
         'nom': 'x',
         'statut': 'autre',
       });
-      expect(SuiviPedagogique.depuisLecture(r)!.chemin, hasLength(4));
+      expect(MaProgression.depuisJson(r)!.cycle, hasLength(4));
     });
   });
 
@@ -255,7 +300,8 @@ void main() {
       expect(port.lus, <String>['p-student']);
       final s = t.suiviPedagogique;
       expect(find.text(s.titreSoi), findsOneWidget);
-      expect(find.text('Lire avec les voyelles'), findsOneWidget);
+      // La ligne de l'etape en cours et son nom dans le chemin des etapes.
+      expect(find.text('Lire avec les voyelles'), findsNWidgets(2));
       expect(find.text(s.matierePrincipale), findsOneWidget);
       expect(find.text(s.matiereSecondaire), findsOneWidget);
       expect(find.text(s.depuis), findsOneWidget);
@@ -268,25 +314,13 @@ void main() {
       expect(find.text(s.aFinirAvant), findsOneWidget);
       expect(find.text(s.horizonNiveau(niveau: 'Les bases')), findsOneWidget);
       expect(find.text(s.chemin(niveau: 'Les bases')), findsOneWidget);
-      for (final String nom in <String>[
-        'Les lettres',
-        'Lire avec les voyelles',
-        'Lire dans le Coran',
-      ]) {
-        expect(
-          find.text(
-            s.etapeNumero(
-              ordre: nom == 'Les lettres'
-                  ? '1'
-                  : (nom == 'Lire dans le Coran' ? '3' : '2'),
-              nom: nom,
-            ),
-          ),
-          findsOneWidget,
-        );
+      for (final String nom in <String>['Les lettres', 'Lire dans le Coran']) {
+        expect(find.text(nom), findsOneWidget);
       }
-      expect(find.textContaining(s.statutEnCours), findsOneWidget);
-      expect(find.textContaining(s.statutPrecedente), findsOneWidget);
+      expect(find.textContaining(s.etapeEnCours), findsOneWidget);
+      expect(find.textContaining(s.etapeFranchie), findsOneWidget);
+      // Les sourates validees au cahier, du meme appel.
+      expect(find.text(s.souratesDe(validees: 3, total: 17)), findsOneWidget);
       // « Etape validee » est reserve au resultat d'une evaluation (lot 8).
       expect(find.textContaining('Étape validée'), findsNothing);
       // La ligne de l'etape en cours et sa ligne dans le chemin.
@@ -344,21 +378,19 @@ void main() {
     testWidgets('attente de l entretien de lecture : un texte vrai', (
       tester,
     ) async {
-      await _monterEleve(
-        tester,
-        _FauxPort(brut: <String, Object?>{'attente': 'entretien_de_lecture'}),
-      );
+      await _monterEleve(tester, _FauxPort(brut: _attente()));
       expect(find.text(t.suiviPedagogique.attenteEntretien), findsOneWidget);
-      expect(find.text(t.suiviPedagogique.vide), findsNothing);
+      expect(find.text(t.suiviPedagogique.matierePrincipale), findsNothing);
     });
 
-    testWidgets('vide : sans etape, une ligne le dit', (tester) async {
+    testWidgets('sans etape, sans sourates, sans jalon : le bloc n est pas '
+        'pose (le contrat de MA-PROGRESSION-ECRAN)', (tester) async {
       await _monterEleve(tester, _FauxPort());
       expect(
-        find.byKey(const ValueKey<String>('suivi-pedagogique-vide')),
-        findsOneWidget,
+        find.byKey(const ValueKey<String>('suivi-pedagogique')),
+        findsNothing,
       );
-      expect(find.text(t.suiviPedagogique.vide), findsOneWidget);
+      expect(tester.takeException(), isNull);
     });
 
     testWidgets('chargement : un squelette, puis le contenu', (tester) async {
@@ -423,7 +455,7 @@ void main() {
       tester,
       depart: Routes.tuteurSuivi,
       taille: const Size(390, 3200),
-      autres: <Override>[portSuiviPedagogiqueProvider.overrideWithValue(port)],
+      autres: <Override>[portMaProgressionProvider.overrideWithValue(port)],
     );
     expect(find.byType(SuiviFoyerPage), findsOneWidget);
     expect(port.lus, contains(FoyersFictifs.a1.id));
@@ -443,8 +475,8 @@ void main() {
       depart: Routes.tuteurSuivi,
       taille: const Size(390, 3200),
       autres: <Override>[
-        portSuiviPedagogiqueProvider.overrideWithValue(
-          _FauxPort(brut: <String, Object?>{'attente': 'entretien_de_lecture'}),
+        portMaProgressionProvider.overrideWithValue(
+          _FauxPort(brut: _attente()),
         ),
       ],
     );

@@ -16,6 +16,7 @@ import 'package:uuid/uuid.dart';
 import '../../core/admin/admin_domaine.dart';
 import '../../core/admission/port_admissions_direction.dart';
 import '../../core/i18n/elision.dart';
+import '../../core/i18n/isolat_bidi.dart' show enTeteArabe;
 import '../../core/i18n/strings.g.dart';
 import '../../core/offres/offre_horaire.dart';
 import '../../core/reseau/service_reseau.dart';
@@ -68,10 +69,12 @@ const List<String> modelesRefusAdmission = <String>[
   'refus_sans_reponse',
 ];
 
-String _date(DateTime d) => t.commun.dates.jourDate(
-  jour: t.commun.dates.jours[d.weekday - 1],
-  numero: d.day,
-  mois: t.commun.dates.mois[d.month - 1],
+String _date(DateTime d) => enTeteArabe(
+  t.commun.dates.jourDate(
+    jour: t.commun.dates.jours[d.weekday - 1],
+    numero: d.day,
+    mois: t.commun.dates.mois[d.month - 1],
+  ),
 );
 
 String _etat(EtatDemandeAdmission e) {

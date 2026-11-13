@@ -519,8 +519,8 @@ void main() {
 
     for (final String ancienne in <String>['informations-legales']) {
       testWidgets(
-        'PAIEMENTS-RECUS-TUTEUR : plus de ligne dans le Compte ; la page '
-        'reste routee et dit la verite',
+        'PAIEMENTS-TUTEUR : sans source, pas de ligne au Compte ; la page '
+        'routee dit la verite (indisponible, sans bouton)',
         (WidgetTester tester) async {
           await monterCompte(
             tester,

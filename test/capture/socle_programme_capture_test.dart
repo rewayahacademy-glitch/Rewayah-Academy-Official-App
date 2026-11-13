@@ -1,6 +1,6 @@
 // SOCLE-PROGRAMME (lot 1 de la charte, 12/11/2026) : le Suivi de l'eleve et
-// l'Historique du tuteur, branches sur la lecture unique `etape_eleve_lecture`,
-// montes par le VRAI routeur, en clair et en sombre, a 390 et 1440 points.
+// l'Historique du tuteur, branches sur le hub `ma_progression` (qui lit
+// `etape_eleve_lecture`), montes par le VRAI routeur, en clair et en sombre, a 390 et 1440 points.
 // Eleve adulte (interface standard), enfant (Interface guidee, sans date
 // limite), tuteur. Donnees de test seulement (la reponse du serveur est
 // simulee ; rien ne vient de la production).
@@ -18,7 +18,7 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
-import 'package:rewayah_academy/core/suivi/port_suivi_pedagogique.dart';
+import 'package:rewayah_academy/core/suivi/ma_progression.dart';
 import 'package:rewayah_academy/core/widgets/menu_actions.dart';
 
 import '../features/historique/support_historique.dart';
@@ -38,8 +38,8 @@ Map<String, Object?> _etape(
   'ordre': ordre,
   'nom': nom,
   'objectifs': <Object?>[],
-  'duree_prevue_semaines': prevue,
-  'date_limite_semaines': limite,
+  'duree_prevue_semaines': prevue < 0 ? null : prevue,
+  'date_limite_semaines': limite < 0 ? null : limite,
   'statut': statut,
 };
 
@@ -61,9 +61,10 @@ Map<String, Object?> _reponse({required bool dateLimite}) => <String, Object?>{
               'Al-Ikhlâs, puis les paroles de la prière et les ablutions, puis '
               'les autres invocations'
         : null,
-    'duree_prevue_semaines': dateLimite ? 3 : 8,
-    'date_limite_semaines': dateLimite ? 4 : 10,
-    'entree_le': '2026-10-22',
+    // Enfant de 6 a 9 ans : le serveur ne rend aucune date ni aucune duree.
+    'duree_prevue_semaines': dateLimite ? 3 : null,
+    'date_limite_semaines': dateLimite ? 4 : null,
+    'entree_le': dateLimite ? '2026-10-22' : null,
     'date_limite': dateLimite ? '2026-11-19' : null,
     'semaines_ecoulees': dateLimite ? 3 : null,
     'rythme': dateLimite ? 'dans_les_temps' : null,
@@ -78,29 +79,29 @@ Map<String, Object?> _reponse({required bool dateLimite}) => <String, Object?>{
       1,
       'Les lettres',
       'en_cours',
-      dateLimite ? 3 : 8,
-      dateLimite ? 4 : 10,
+      dateLimite ? 3 : -1,
+      dateLimite ? 4 : -1,
     ),
     _etape(
       2,
       'Lire avec les voyelles',
       'a_venir',
-      dateLimite ? 6 : 14,
-      dateLimite ? 8 : 19,
+      dateLimite ? 6 : -1,
+      dateLimite ? 8 : -1,
     ),
     _etape(
       3,
       'Lire dans le Coran',
       'a_venir',
-      dateLimite ? 3 : 8,
-      dateLimite ? 4 : 10,
+      dateLimite ? 3 : -1,
+      dateLimite ? 4 : -1,
     ),
     _etape(
       4,
       "Les sourates courtes, d'Al-Masad à Az-Zalzalah",
       'a_venir',
-      dateLimite ? 3 : 7,
-      dateLimite ? 4 : 9,
+      dateLimite ? 3 : -1,
+      dateLimite ? 4 : -1,
     ),
   ],
   'sourates': <String, Object?>{'validees': 0, 'total': 17},
@@ -196,14 +197,45 @@ class _Programme implements ServiceProgramme, ServiceContenuProgramme {
   Future<void> preremplirBases(String versionId) async {}
 }
 
-class _Port implements PortSuiviPedagogique {
+/// La reponse de `ma_progression` : l'etape et le niveau de la lecture unique,
+/// le chemin sous `etapes_du_cycle` (`franchie` pour une etape passee), les
+/// sourates et le reglage.
+Map<String, Object?> _enHub(Map<String, Object?> lecture) {
+  final Map<String, Object?> etape = <String, Object?>{
+    ...(lecture['etape']! as Map<String, Object?>),
+    'page_reprise': lecture['page_reprise'],
+  };
+  final Map<String, Object?> sourates =
+      lecture['sourates']! as Map<String, Object?>;
+  return <String, Object?>{
+    'eleve_voit_dates': lecture['eleve_voit_dates'],
+    'etape': etape,
+    'niveau': lecture['niveau'],
+    'etapes_du_cycle': <Object?>[
+      for (final Object? e in lecture['chemin']! as List<Object?>)
+        <String, Object?>{
+          ...(e! as Map<String, Object?>),
+          'statut': (e as Map<String, Object?>)['statut'] == 'precedente'
+              ? 'franchie'
+              : e['statut'],
+        },
+    ],
+    'sourates': <String, Object?>{
+      'sourates_validees': sourates['validees'],
+      'sourates_total': sourates['total'],
+    },
+    'reglage': null,
+  };
+}
+
+class _Port implements PortMaProgression {
   const _Port(this.brut);
 
-  final Object? brut;
+  final Map<String, Object?> brut;
 
   @override
-  Future<SuiviPedagogique?> pourEleve(String eleveId) async =>
-      SuiviPedagogique.depuisLecture(brut);
+  Future<MaProgression?> pourEleve(String eleveId) async =>
+      MaProgression.depuisJson(_enHub(brut));
 }
 
 void main() {
@@ -225,7 +257,7 @@ void main() {
             taille: Size(largeur, 2000),
             themeMode: theme,
             surcharges: <Override>[
-              portSuiviPedagogiqueProvider.overrideWithValue(
+              portMaProgressionProvider.overrideWithValue(
                 _Port(_reponse(dateLimite: true)),
               ),
               horsLigneProvider.overrideWith(
@@ -247,7 +279,7 @@ void main() {
             taille: Size(largeur, 2400),
             themeMode: theme,
             surcharges: <Override>[
-              portSuiviPedagogiqueProvider.overrideWithValue(
+              portMaProgressionProvider.overrideWithValue(
                 _Port(_reponse(dateLimite: false)),
               ),
               horsLigneProvider.overrideWith(
@@ -296,7 +328,7 @@ void main() {
             taille: Size(largeur, 2400),
             mode: theme,
             autres: <Override>[
-              portSuiviPedagogiqueProvider.overrideWithValue(
+              portMaProgressionProvider.overrideWithValue(
                 _Port(_reponse(dateLimite: true)),
               ),
             ],
