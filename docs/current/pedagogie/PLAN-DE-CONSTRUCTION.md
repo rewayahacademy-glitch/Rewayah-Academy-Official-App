@@ -68,6 +68,7 @@ Renumérotation du 13/11/2026 (ancien numéro → nouveau) : 1 → 1, 2 → 2, 3
 - **Retiré** : l'étagère séparée de la salle (`etagere_supports`, `supportsDeSalleProvider`) est rebranchée sur `library_resource` ; ses tables restent jusqu'au lot 14.
 - **Migrations** : oui, additives ; aucune suppression.
 - **Preuve** : le directeur dépose un audio rattaché à l'étape 1, le voit dans la bibliothèque d'un élève et dans le tiroir de la salle, au même endroit ; le Coran apparaît comme un document parmi les autres.
+- **Critère de sortie, police (DÉCIDÉ 13/11)** : tout l'arabe de contenu affiché par ce lot (lettres, mots, sourates, versets, paroles) est en UthmanicHafs (`AppFontFamily.arabeMushaf`) ; l'arabe d'interface reste en Noto Sans Arabic ; une capture le montre.
 
 ## Lot 4 · LECTEUR
 
@@ -78,6 +79,7 @@ Renumérotation du 13/11/2026 (ancien numéro → nouveau) : 1 → 1, 2 → 2, 3
 - **Retiré** : les rendus en double par type, dès que le lecteur unique les remplace.
 - **Migrations** : oui si la reprise d'un audio ou d'une vidéo demande un champ de plus ; additive ; aucune suppression.
 - **Preuve** : le directeur écoute la moitié d'un audio sur son téléphone, ferme l'application, la rouvre et reprend à la même minute ; il ouvre une vidéo et un lien externe depuis la bibliothèque.
+- **Critère de sortie, police (DÉCIDÉ 13/11)** : tout l'arabe de contenu affiché par ce lot (lettres, mots, sourates, versets, paroles) est en UthmanicHafs (`AppFontFamily.arabeMushaf`) ; l'arabe d'interface reste en Noto Sans Arabic ; une capture le montre.
 
 ## Lot 5 · PLAN-DE-CLASSE
 
@@ -88,6 +90,7 @@ Renumérotation du 13/11/2026 (ancien numéro → nouveau) : 1 → 1, 2 → 2, 3
 - **Retiré** : rien.
 - **Migrations** : oui, additives ; aucune suppression.
 - **Preuve** : le directeur ouvre une des 3 classes comme direction et voit ses séances datées ; il publie une fermeture d'une semaine et voit toutes les dates suivantes reculer d'autant ; comme enseignant, il voit la séance du jour ; comme tuteur d'un enfant de 8 ans, il voit la prochaine séance et l'enfant n'en voit aucune date.
+- **Critère de sortie, police (DÉCIDÉ 13/11)** : tout l'arabe de contenu affiché par ce lot (lettres, mots, sourates, versets, paroles) est en UthmanicHafs (`AppFontFamily.arabeMushaf`) ; l'arabe d'interface reste en Noto Sans Arabic ; une capture le montre.
 
 ## Lot 6 · POINT-DE-SEANCE
 
@@ -98,6 +101,7 @@ Renumérotation du 13/11/2026 (ancien numéro → nouveau) : 1 → 1, 2 → 2, 3
 - **Retiré** : rien dans ce lot ; la saisie du cahier reste en place jusqu'au lot 9, mais plus aucun écran neuf ne la lit.
 - **Migrations** : oui, additives ; aucune suppression.
 - **Preuve** : après un vrai cours, le directeur, comme enseignant, fait le point en moins de 20 secondes sans toucher un élève ; il voit dans la fiche de chaque présent une observation « Acquis » et le travail « relire la partie vue » ; à un cours suivant, il touche un élève « À renforcer » et voit le travail ciblé chez le tuteur et la ligne dans l'historique des séances.
+- **Critère de sortie, police (DÉCIDÉ 13/11)** : tout l'arabe de contenu affiché par ce lot (lettres, mots, sourates, versets, paroles) est en UthmanicHafs (`AppFontFamily.arabeMushaf`) ; l'arabe d'interface reste en Noto Sans Arabic ; une capture le montre.
 
 ## Lot 7 · ESPACE-APPRENDRE
 
@@ -108,6 +112,7 @@ Renumérotation du 13/11/2026 (ancien numéro → nouveau) : 1 → 1, 2 → 2, 3
 - **Retiré** : l'onglet « Apprendre » réduit au Coran pour l'adulte ; l'onglet « Coran » de l'enfant (le Coran devient un document de la Bibliothèque).
 - **Migrations** : non.
 - **Preuve** : le directeur ouvre « Apprendre » avec un compte adulte et avec un compte enfant, passe de la grille à la liste, filtre les audios, et retrouve le Coran dans la Bibliothèque.
+- **Critère de sortie, police (DÉCIDÉ 13/11)** : tout l'arabe de contenu affiché par ce lot (lettres, mots, sourates, versets, paroles) est en UthmanicHafs (`AppFontFamily.arabeMushaf`) ; l'arabe d'interface reste en Noto Sans Arabic ; une capture le montre.
 
 ## Lot 8 · SUIVI-UNIQUE
 
@@ -139,6 +144,7 @@ Renumérotation du 13/11/2026 (ancien numéro → nouveau) : 1 → 1, 2 → 2, 3
 - **Migrations** : peut-être une vue de lecture, additive ; aucune suppression.
 - **Interdits vérifiés par un test** : aucun classement, aucun point, rien d'un autre élève, aucune date ni durée sur le chemin d'un enfant de 6 à 9 ans, aucune notification à un enfant, rien d'argent.
 - **Preuve** : le directeur ouvre « Apprendre » > Programme avec un compte enfant de 8 ans et y lit son chemin sans aucune date ; il valide une étape de test et voit la célébration à l'ouverture suivante ; il ouvre le même chemin comme tuteur, comme enseignant et comme direction.
+- **Critère de sortie, police (DÉCIDÉ 13/11)** : tout l'arabe de contenu affiché par ce lot (lettres, mots, sourates, versets, paroles) est en UthmanicHafs (`AppFontFamily.arabeMushaf`) ; l'arabe d'interface reste en Noto Sans Arabic ; une capture le montre.
 
 ## Lot 11 · MOTEUR-1
 

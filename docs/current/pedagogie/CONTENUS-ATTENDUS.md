@@ -39,6 +39,8 @@ Ce ne sont **pas des questions**. Aucune question n'est posée au directeur : to
 7. Pour les 6 à 9 ans, une illustration quand elle aide.
 8. Aucune question de théorie, aucune note, aucun classement ; les consignes, très courtes, s'écrivent dans la langue choisie à l'inscription.
 
+**La police (DÉCIDÉ 13/11).** Toute lettre et tout mot arabe du livre s'écrit dans la police du Coran, UthmanicHafs, en taille assez grande pour un débutant ; les consignes dans la langue de l'élève gardent la police de l'interface (charte, partie 11). Dans cette police, le ya isolé « ي » se dessine sans ses deux points, comme dans le Mushaf : pour la leçon du ya, où l'enfant apprend à le reconnaître, **à trancher par le directeur** (garder la forme du Mushaf, ou montrer aussi la forme pointée dans cette leçon).
+
 **La numérotation (la position en dépend).**
 - Les pages sont numérotées de 1 à la fin du livre, sans recommencer à chaque partie.
 - Les lignes sont numérotées sur chaque page, à partir de 1. Une ligne est une ligne de lecture : elle ne se coupe pas entre deux pages.

@@ -2,6 +2,7 @@
 
 > **ARBITRÉ le 13/11/2026 par l'architecte pédagogique, sur la décision du directeur du même jour. À relire par le directeur.** Le directeur peut corriger toute ligne à tout moment ; une correction datée de sa part l'emporte.
 > Ce fichier est **la commande du livre de lecture** (`CONTENUS-ATTENDUS.md`, partie 2) : le livre se rédige leçon par leçon dans cet ordre, et la colonne « Plage » se remplit quand il existe.
+> **Police (DÉCIDÉ 13/11).** Tout l'arabe de ce programme, et de tout écran qui l'affiche (plan, point de fin de séance, chemin), est de l'arabe de contenu : il s'affiche dans la police du Coran, UthmanicHafs ; seule l'interface garde Noto Sans Arabic (charte, partie 11). Le ya isolé s'y dessine sans points, comme dans le Mushaf : pour la leçon du ya (étape 1), à trancher par le directeur.
 > Toutes les valeurs (séances par semaine, leçons avant une consolidation, durée prévue de chaque étape, écart libre) sont dans `REGLAGES.md` ; ce fichier les applique.
 
 ## 1. La décision et ses règles
