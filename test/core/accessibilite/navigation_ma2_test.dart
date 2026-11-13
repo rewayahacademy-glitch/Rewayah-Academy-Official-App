@@ -22,11 +22,11 @@ import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/features/tc_espace_groupe/espace_groupe_page.dart';
 
+import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../router/support_routeur.dart';
 import '../../support/demo/accessibilite_demo.dart';
 import '../../support/demo/demo_accessibilite_page.dart';
 import '../../support/harnais.dart';
-import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 
 const List<(Size, Key)> _formes = <(Size, Key)>[
   (Size(390, 844), NavShell.barreBasseKey),

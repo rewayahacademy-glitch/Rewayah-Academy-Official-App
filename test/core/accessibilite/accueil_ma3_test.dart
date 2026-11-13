@@ -23,10 +23,10 @@ import 'package:rewayah_academy/features/accueil_eleve/accueil_accessibilite.dar
 import 'package:rewayah_academy/features/tc_espace_groupe/espace_groupe_page.dart';
 import 'package:rewayah_academy/features/tc_mes_groupes/photo_enseignant.dart';
 
+import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../router/support_routeur.dart' show stabiliser;
 import '../../support/demo/accessibilite_demo.dart';
 import '../../support/demo/demo_accessibilite_page.dart';
-import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 
 const List<(Size, Key)> _formes = <(Size, Key)>[
   (Size(390, 844), NavShell.barreBasseKey),

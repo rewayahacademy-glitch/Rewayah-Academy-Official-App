@@ -55,6 +55,7 @@ import 'package:rewayah_academy/features/tc_espace_groupe/espace_groupe_page.dar
 import 'package:rewayah_academy/features/tc_mes_groupes/carte_groupe.dart';
 import 'package:rewayah_academy/features/tc_mes_groupes/mes_groupes_page.dart';
 
+import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../router/support_routeur.dart';
 import '../../support/annonces.dart';
 import '../../support/demo/accessibilite_demo.dart';
@@ -62,7 +63,6 @@ import '../../support/demo/demo_accessibilite_page.dart';
 import '../../support/demo/finance_demo.dart';
 import '../../support/harnais.dart';
 import '../../teaching_core/a/support/hote_tc_a.dart';
-import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 
 /// L'instant de reference : le 4 octobre 2026, jour de la demonstration.
 final DateTime _maintenant = DateTime(2026, 10, 4, 17);
