@@ -2100,5 +2100,14 @@
       "erreur": "The families of the class could not be loaded. Try again in a moment.",
       "vide": "Write a message before sending it."
     }
+  },
+  "compte": {
+    "langue": "Language",
+    "page": {
+      "langue": {
+        "legende": "For the app and for the academy's emails",
+        "refus": "The app changed language, but the language of your emails is not confirmed. Try again in a moment."
+      }
+    }
   }
 }

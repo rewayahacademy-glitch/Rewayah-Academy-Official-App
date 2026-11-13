@@ -61,6 +61,7 @@ class TraductionsEn extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$payUx$en payUx = _Traductions$payUx$en._(_root);
 	@override late final _Traductions$accueilHoraire$en accueilHoraire = _Traductions$accueilHoraire$en._(_root);
 	@override late final _Traductions$suiviAttente$en suiviAttente = _Traductions$suiviAttente$en._(_root);
+	@override late final _Traductions$compte$en compte = _Traductions$compte$en._(_root);
 }
 
 // Path: commun
@@ -726,6 +727,17 @@ class _Traductions$suiviAttente$en extends Traductions$suiviAttente$fr {
 	@override late final _Traductions$suiviAttente$carte$en carte = _Traductions$suiviAttente$carte$en._(_root);
 	@override late final _Traductions$suiviAttente$presentation$en presentation = _Traductions$suiviAttente$presentation$en._(_root);
 	@override late final _Traductions$suiviAttente$mePresenter$en mePresenter = _Traductions$suiviAttente$mePresenter$en._(_root);
+}
+
+// Path: compte
+class _Traductions$compte$en extends Traductions$compte$fr {
+	_Traductions$compte$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get langue => 'Language';
+	@override late final _Traductions$compte$page$en page = _Traductions$compte$page$en._(_root);
 }
 
 // Path: commun.formats
@@ -2242,6 +2254,16 @@ class _Traductions$suiviAttente$mePresenter$en extends Traductions$suiviAttente$
 	@override String get vide => 'Write a message before sending it.';
 }
 
+// Path: compte.page
+class _Traductions$compte$page$en extends Traductions$compte$page$fr {
+	_Traductions$compte$page$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$compte$page$langue$en langue = _Traductions$compte$page$langue$en._(_root);
+}
+
 // Path: commun.etats.recharge1
 class _Traductions$commun$etats$recharge1$en extends Traductions$commun$etats$recharge1$fr {
 	_Traductions$commun$etats$recharge1$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -2870,6 +2892,17 @@ class _Traductions$suiviAttente$cloture$simple$en extends Traductions$suiviAtten
 	@override String get refusee => 'Your request was not accepted. Your guardian can choose another slot.';
 	@override String get retiree => 'This request is withdrawn.';
 	@override String get close => 'This request is closed.';
+}
+
+// Path: compte.page.langue
+class _Traductions$compte$page$langue$en extends Traductions$compte$page$langue$fr {
+	_Traductions$compte$page$langue$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get legende => 'For the app and for the academy\'s emails';
+	@override String get refus => 'The app changed language, but the language of your emails is not confirmed. Try again in a moment.';
 }
 
 // Path: recrutement.parcours.presentation.p1
@@ -5551,6 +5584,9 @@ extension on TraductionsEn {
 			'suiviAttente.mePresenter.chargement' => 'Loading the families of the class',
 			'suiviAttente.mePresenter.erreur' => 'The families of the class could not be loaded. Try again in a moment.',
 			'suiviAttente.mePresenter.vide' => 'Write a message before sending it.',
+			'compte.langue' => 'Language',
+			'compte.page.langue.legende' => 'For the app and for the academy\'s emails',
+			'compte.page.langue.refus' => 'The app changed language, but the language of your emails is not confirmed. Try again in a moment.',
 			_ => null,
 		};
 	}
