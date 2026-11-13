@@ -4,8 +4,11 @@ import { cleDe, verifierCle } from "../_shared/r2/cles.ts";
 import {
   detecterMimeReel,
   mimeAnnonceAutorise,
+  mimeConnu,
   mimeVignetteAutorise,
+  motifRefus,
   nomNeutre,
+  reponseRefus,
   sha256Hex,
   TAILLE_VIGNETTE_MAX_OCTETS,
   TAILLES_UPLOAD_BIBLIOTHEQUE,
@@ -47,7 +50,14 @@ Deno.serve(async (requete: Request) => {
   }
   if (requete.method !== "POST") return refus("methode non autorisee", 405);
 
-  const compte = await appelantR2(requete).catch(() => null);
+  let compte: Awaited<ReturnType<typeof appelantR2>>;
+  try {
+    compte = await appelantR2(requete);
+  } catch {
+    // Une configuration absente n'est pas une session expiree : la personne
+    // n'a pas a se reconnecter (DEPOT-NOM-LIBRE, I3).
+    return refus("service mal regle", 503);
+  }
   if (!compte) return refus("authentification requise", 401);
 
   let corps: Record<string, unknown>;
@@ -95,7 +105,7 @@ Deno.serve(async (requete: Request) => {
       "annuler_vignette_bibliotheque",
       { p_intention_id: id },
     );
-    if (error) return refus("annulation refusee", 403);
+    if (error) return refusBase(error);
     return json({ annule: data === true });
   }
   if (action === "annuler") {
@@ -107,7 +117,7 @@ Deno.serve(async (requete: Request) => {
       "annuler_upload_bibliotheque",
       { p_intention_id: id },
     );
-    if (error) return refus("annulation refusee", 403);
+    if (error) return refusBase(error);
     return json({ annule: data === true });
   }
   return refus("action inconnue");
@@ -142,12 +152,18 @@ async function demanderDepot(
   const empreinte = typeof fichier.sha256 === "string"
     ? fichier.sha256.trim().toLowerCase()
     : "";
-  if (
-    !UUID.test(supportId) || !finalite || nom === null ||
-    !SHA256.test(empreinte) ||
-    !mimeAnnonceAutorise(mime, taille, finalite)
-  ) {
+  if (!UUID.test(supportId) || !finalite || !SHA256.test(empreinte)) {
+    return refus("demande invalide");
+  }
+  if (!Number.isSafeInteger(taille) || taille <= 0) {
+    return refus("fichier vide");
+  }
+  if (nom === null || !mimeConnu(mime, finalite)) {
     return refus("fichier invalide ou format non autorise");
+  }
+  // Un type accepte mais trop lourd : « trop lourd », pas « type refuse ».
+  if (!mimeAnnonceAutorise(mime, taille, finalite)) {
+    return refus("fichier trop lourd", 413);
   }
   const { data, error } = await compte.sql.rpc("demander_upload_bibliotheque", {
     p_resource_id: supportId,
@@ -157,9 +173,8 @@ async function demanderDepot(
     p_taille: taille,
     p_sha256: empreinte,
   });
-  if (error || !data || typeof data !== "object") {
-    return refus("depot refuse", 403);
-  }
+  if (error) return refusBase(error);
+  if (!data || typeof data !== "object") return refus("depot impossible", 500);
   const intention = data as Record<string, unknown>;
   const id = String(intention.id ?? "");
   if (!UUID.test(id)) return refus("intention invalide", 503);
@@ -224,9 +239,8 @@ async function confirmerDepot(
   const { data, error } = await compte.sql.rpc("lire_upload_bibliotheque", {
     p_intention_id: id,
   });
-  if (error || !data || typeof data !== "object") {
-    return refus("intention refusee", 403);
-  }
+  if (error) return refusBase(error);
+  if (!data || typeof data !== "object") return refus("depot impossible", 500);
   const intention = data as IntentionUpload;
   const domaineTemp = "priveApplicatif" as const;
   const domaineFinal = intention.finalite === "support"
@@ -248,10 +262,21 @@ async function confirmerDepot(
     const octets = new Uint8Array(await objet.arrayBuffer());
     const mimeReel = detecterMimeReel(octets);
     const empreinte = await sha256Hex(octets);
+    // Le contenu reel n'est pas du type annonce (un .pdf qui n'en est pas
+    // un) : la phrase le dit, ce n'est pas un envoi abime.
+    if (!mimeReel || mimeReel !== intention.mime) {
+      journaliser({
+        domaine: domaineTemp,
+        operation: "depot",
+        statut: "refuse",
+        ressource: id,
+        dureeMs: Date.now() - debut,
+      });
+      return refus("contenu different du type annonce", 422);
+    }
     if (
       octets.byteLength !== intention.taille ||
       empreinte !== intention.sha256 ||
-      mimeReel !== intention.mime || !mimeReel ||
       !mimeAnnonceAutorise(mimeReel, octets.byteLength, intention.finalite)
     ) {
       journaliser({
@@ -323,7 +348,15 @@ function refusConfirmation(erreur: { message?: string }): Response {
   if ((erreur.message ?? "").includes("ConfirmationNonAutorisee")) {
     return refusReglage("confirmation mal reglee", NOM_SECRET_CONFIRMATION);
   }
-  return refus("confirmation refusee", 403);
+  return refusBase(erreur);
+}
+
+/** Le refus d'un appel a la base : son motif vrai, pas un « 403 » pour tout
+ * (compte sans droit, document plus modifiable, panne). Un compte sans droit
+ * lit toujours un refus, jamais un reglage. */
+function refusBase(erreur: { message?: string; code?: string }): Response {
+  const [message, statut] = reponseRefus(motifRefus(erreur));
+  return refus(message, statut);
 }
 
 /** Un 503 qui nomme le reglage en cause (son NOM, jamais sa valeur), pour que
@@ -382,11 +415,17 @@ async function demanderVignette(
   const empreinte = typeof fichier.sha256 === "string"
     ? fichier.sha256.trim().toLowerCase()
     : "";
-  if (
-    !UUID.test(documentId) || !SHA256.test(empreinte) ||
-    !mimeVignetteAutorise(mime, taille)
-  ) {
-    return refus("vignette invalide : image png, jpeg ou webp de 2 Mio au plus");
+  if (!UUID.test(documentId) || !SHA256.test(empreinte)) {
+    return refus("demande invalide");
+  }
+  if (!Number.isSafeInteger(taille) || taille <= 0) {
+    return refus("fichier vide");
+  }
+  if (!mimeConnu(mime, "preuve") || mime === "application/pdf") {
+    return refus("fichier invalide ou format non autorise");
+  }
+  if (!mimeVignetteAutorise(mime, taille)) {
+    return refus("fichier trop lourd", 413);
   }
   const { data, error } = await compte.sql.rpc(
     "demander_vignette_bibliotheque",
@@ -397,9 +436,8 @@ async function demanderVignette(
       p_sha256: empreinte,
     },
   );
-  if (error || !data || typeof data !== "object") {
-    return refus("depot refuse", 403);
-  }
+  if (error) return refusBase(error);
+  if (!data || typeof data !== "object") return refus("depot impossible", 500);
   const intention = data as Record<string, unknown>;
   const id = String(intention.id ?? "");
   if (!UUID.test(id)) return refus("intention invalide", 503);
@@ -464,9 +502,8 @@ async function confirmerVignette(
   const { data, error } = await compte.sql.rpc("lire_vignette_bibliotheque", {
     p_intention_id: id,
   });
-  if (error || !data || typeof data !== "object") {
-    return refus("intention refusee", 403);
-  }
+  if (error) return refusBase(error);
+  if (!data || typeof data !== "object") return refus("depot impossible", 500);
   const intention = data as Record<string, unknown>;
   if (
     !stockageConfigure("priveApplicatif") || !stockageConfigure("supports")
@@ -489,10 +526,19 @@ async function confirmerVignette(
     const octets = new Uint8Array(await objet.arrayBuffer());
     const mimeReel = detecterMimeReel(octets);
     const empreinte = await sha256Hex(octets);
+    if (!mimeReel || mimeReel !== intention.mime) {
+      journaliser({
+        domaine: "priveApplicatif",
+        operation: "depot",
+        statut: "refuse",
+        ressource: id,
+        dureeMs: Date.now() - debut,
+      });
+      return refus("contenu different du type annonce", 422);
+    }
     if (
       octets.byteLength !== Number(intention.taille) ||
       empreinte !== intention.sha256 ||
-      !mimeReel || mimeReel !== intention.mime ||
       !mimeVignetteAutorise(mimeReel, octets.byteLength)
     ) {
       journaliser({

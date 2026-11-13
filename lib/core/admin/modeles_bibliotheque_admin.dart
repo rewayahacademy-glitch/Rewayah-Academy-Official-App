@@ -835,7 +835,7 @@ enum ErreurUpload {
   /// Connexion perdue.
   reseau,
 
-  /// Le serveur refuse (droit, intention expiree).
+  /// Le compte n'a pas le droit de faire ce depot.
   refuse,
 
   /// Hash different de celui annonce.
@@ -866,6 +866,24 @@ enum ErreurUpload {
 
   /// Le serveur n'a pas fini dans le temps imparti.
   delai,
+
+  /// Le fichier est vide.
+  vide,
+
+  /// Le document n'est plus un brouillon, ou a ete retire.
+  nonModifiable,
+
+  /// Cette version du document a deja son fichier.
+  dejaDepose,
+
+  /// La demande de depot a expire avant la fin.
+  expire,
+
+  /// Le contenu reel n'est pas du type annonce (un .pdf qui n'en est pas un).
+  contenu,
+
+  /// Le fichier envoye n'a pas ete retrouve dans le stockage.
+  introuvable,
 }
 
 /// La progression d'un depot, diffusee par le port.

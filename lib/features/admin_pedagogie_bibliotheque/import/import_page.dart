@@ -117,6 +117,12 @@ String phraseErreurDepot(ErreurUpload? erreur) {
     ErreurUpload.envoi => e.envoi,
     ErreurUpload.reglage => e.reglage,
     ErreurUpload.delai => e.delai,
+    ErreurUpload.vide => e.vide,
+    ErreurUpload.nonModifiable => e.nonModifiable,
+    ErreurUpload.dejaDepose => e.dejaDepose,
+    ErreurUpload.expire => e.expire,
+    ErreurUpload.contenu => e.contenu,
+    ErreurUpload.introuvable => e.introuvable,
     // Une cause que l'on ne connait pas n'est pas « la connexion ».
     ErreurUpload.service || null => e.service,
   };
