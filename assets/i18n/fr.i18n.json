@@ -15255,7 +15255,7 @@
       "nonConfirme": "Vous n'avez pas encore confirmé ce choix. Tant que vous ne l'avez pas fait, les familles ne voient que votre nom et la langue du cours.",
       "enregistrer": "Enregistrer",
       "enregistre": "Enregistré.",
-      "erreur": "Le choix n'a pas pu être enregistré. Réessayez dans un instant.",
+      "erreur": "Votre choix n'est pas confirmé : il n'est peut-être pas parvenu jusqu'à Rewayah. Réessayez dans un instant.",
       "effacerPays": "Ne pas renseigner"
     },
     "mePresenter": {
@@ -15276,7 +15276,7 @@
         "other": "{n} familles ont déjà un échange avec vous : elles ne reçoivent pas ce message."
       },
       "aucune": "Aucune famille de cette classe ne peut recevoir de message pour le moment.",
-      "echec": "Le message n'a pas pu être envoyé à certaines familles. Réessayez : celles qui l'ont reçu ne le reçoivent pas deux fois.",
+      "echec": "Le message n'est pas confirmé pour certaines familles : il n'est peut-être pas parvenu jusqu'à elles. Réessayez : celles qui l'ont reçu ne le reçoivent pas deux fois.",
       "chargement": "Chargement des familles de la classe",
       "erreur": "Les familles de la classe n'ont pas pu être lues. Réessayez dans un instant.",
       "vide": "Écrivez un message avant de l'envoyer."

@@ -24022,8 +24022,8 @@ class Traductions$suiviAttente$presentation$fr {
 	/// fr: 'Enregistré.'
 	String get enregistre => 'Enregistré.';
 
-	/// fr: 'Le choix n'a pas pu être enregistré. Réessayez dans un instant.'
-	String get erreur => 'Le choix n\'a pas pu être enregistré. Réessayez dans un instant.';
+	/// fr: 'Votre choix n'est pas confirmé : il n'est peut-être pas parvenu jusqu'à Rewayah. Réessayez dans un instant.'
+	String get erreur => 'Votre choix n\'est pas confirmé : il n\'est peut-être pas parvenu jusqu\'à Rewayah. Réessayez dans un instant.';
 
 	/// fr: 'Ne pas renseigner'
 	String get effacerPays => 'Ne pas renseigner';
@@ -24076,8 +24076,8 @@ class Traductions$suiviAttente$mePresenter$fr {
 	/// fr: 'Aucune famille de cette classe ne peut recevoir de message pour le moment.'
 	String get aucune => 'Aucune famille de cette classe ne peut recevoir de message pour le moment.';
 
-	/// fr: 'Le message n'a pas pu être envoyé à certaines familles. Réessayez : celles qui l'ont reçu ne le reçoivent pas deux fois.'
-	String get echec => 'Le message n\'a pas pu être envoyé à certaines familles. Réessayez : celles qui l\'ont reçu ne le reçoivent pas deux fois.';
+	/// fr: 'Le message n'est pas confirmé pour certaines familles : il n'est peut-être pas parvenu jusqu'à elles. Réessayez : celles qui l'ont reçu ne le reçoivent pas deux fois.'
+	String get echec => 'Le message n\'est pas confirmé pour certaines familles : il n\'est peut-être pas parvenu jusqu\'à elles. Réessayez : celles qui l\'ont reçu ne le reçoivent pas deux fois.';
 
 	/// fr: 'Chargement des familles de la classe'
 	String get chargement => 'Chargement des familles de la classe';
@@ -61483,7 +61483,7 @@ extension on Traductions {
 			'suiviAttente.presentation.nonConfirme' => 'Vous n\'avez pas encore confirmé ce choix. Tant que vous ne l\'avez pas fait, les familles ne voient que votre nom et la langue du cours.',
 			'suiviAttente.presentation.enregistrer' => 'Enregistrer',
 			'suiviAttente.presentation.enregistre' => 'Enregistré.',
-			'suiviAttente.presentation.erreur' => 'Le choix n\'a pas pu être enregistré. Réessayez dans un instant.',
+			'suiviAttente.presentation.erreur' => 'Votre choix n\'est pas confirmé : il n\'est peut-être pas parvenu jusqu\'à Rewayah. Réessayez dans un instant.',
 			'suiviAttente.presentation.effacerPays' => 'Ne pas renseigner',
 			'suiviAttente.mePresenter.lien' => 'Me présenter aux familles',
 			'suiviAttente.mePresenter.titre' => 'Me présenter',
@@ -61496,7 +61496,7 @@ extension on Traductions {
 			'suiviAttente.mePresenter.envoye' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Message envoyé à ${n} famille.', other: 'Message envoyé à ${n} familles.', ), 
 			'suiviAttente.mePresenter.dejaEcrit' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} famille a déjà un échange avec vous : elle ne reçoit pas ce message.', other: '${n} familles ont déjà un échange avec vous : elles ne reçoivent pas ce message.', ), 
 			'suiviAttente.mePresenter.aucune' => 'Aucune famille de cette classe ne peut recevoir de message pour le moment.',
-			'suiviAttente.mePresenter.echec' => 'Le message n\'a pas pu être envoyé à certaines familles. Réessayez : celles qui l\'ont reçu ne le reçoivent pas deux fois.',
+			'suiviAttente.mePresenter.echec' => 'Le message n\'est pas confirmé pour certaines familles : il n\'est peut-être pas parvenu jusqu\'à elles. Réessayez : celles qui l\'ont reçu ne le reçoivent pas deux fois.',
 			'suiviAttente.mePresenter.chargement' => 'Chargement des familles de la classe',
 			'suiviAttente.mePresenter.erreur' => 'Les familles de la classe n\'ont pas pu être lues. Réessayez dans un instant.',
 			'suiviAttente.mePresenter.vide' => 'Écrivez un message avant de l\'envoyer.',

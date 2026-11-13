@@ -11018,7 +11018,7 @@ class _Traductions$suiviAttente$presentation$ar extends Traductions$suiviAttente
 	@override String get motAide => 'حتى 500 حرف. تقرؤها الأسر كما كتبتها.';
 	@override String get nonConfirme => 'لم تؤكد هذا الاختيار بعد. إلى أن تؤكده ترى الأسر اسمك ولغة الدرس فقط.';
 	@override String get enregistrer => 'حفظ';
-	@override String get enregistre => 'تم الحفظ.';
+	@override String get enregistre => 'سُجِّل اختيارك.';
 	@override String get erreur => 'تعذّر حفظ الاختيار. حاول مرة أخرى بعد قليل.';
 	@override String get effacerPays => 'عدم التحديد';
 }
@@ -35479,7 +35479,7 @@ extension on TraductionsAr {
 			'suiviAttente.presentation.motAide' => 'حتى 500 حرف. تقرؤها الأسر كما كتبتها.',
 			'suiviAttente.presentation.nonConfirme' => 'لم تؤكد هذا الاختيار بعد. إلى أن تؤكده ترى الأسر اسمك ولغة الدرس فقط.',
 			'suiviAttente.presentation.enregistrer' => 'حفظ',
-			'suiviAttente.presentation.enregistre' => 'تم الحفظ.',
+			'suiviAttente.presentation.enregistre' => 'سُجِّل اختيارك.',
 			'suiviAttente.presentation.erreur' => 'تعذّر حفظ الاختيار. حاول مرة أخرى بعد قليل.',
 			'suiviAttente.presentation.effacerPays' => 'عدم التحديد',
 			'suiviAttente.mePresenter.lien' => 'أعرّف بنفسي للأسر',
