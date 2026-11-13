@@ -3,8 +3,6 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/priere/horaires_priere.dart';
 import 'package:rewayah_academy/core/priere/reglages_priere.dart';
 
-import '../support/harnais.dart';
-
 /// Le lieu de reference de l'enseignant de Paris.
 const ReglagesPriere _paris = ReglagesPriere(
   enseignantId: 't1',
@@ -35,20 +33,18 @@ void main() {
   group('Scenario 9 : la meme minute pour tout le monde', () {
     test('l eleve et l enseignant lisent la meme source et trouvent le meme '
         'instant', () async {
-      final FauxServicePriere service = FauxServicePriere()
-        ..parEnseignant['t1'] = _paris;
-
-      // Deux lectures distinctes de la meme ligne : c'est ce que font
-      // l'enseignant sur ENS-02 et l'eleve sur ELV-02.
-      final ReglagesPriere? coteEnseignant = await service.reglages('t1');
-      final ReglagesPriere? coteEleve = await service.reglages('t1');
+      // Deux lectures distinctes des memes entrees : c'est ce que faisait le
+      // calcul local, desormais remplace par la lecture du serveur (PRIERE-1) ;
+      // ce module reste, avec son test, jusqu'au lot de nettoyage.
+      const ReglagesPriere coteEnseignant = _paris;
+      const ReglagesPriere coteEleve = _paris;
 
       final HorairesPriere chezLEnseignant = HorairesPriere.duJour(
-        reglages: coteEnseignant!,
+        reglages: coteEnseignant,
         jour: _jour,
       );
       final HorairesPriere chezLEleve = HorairesPriere.duJour(
-        reglages: coteEleve!,
+        reglages: coteEleve,
         jour: _jour,
       );
 

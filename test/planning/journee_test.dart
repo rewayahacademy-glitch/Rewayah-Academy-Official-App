@@ -3,18 +3,16 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/planning/journee.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart';
 import 'package:rewayah_academy/core/priere/horaires_priere.dart';
-import 'package:rewayah_academy/core/priere/reglages_priere.dart';
-
-const ReglagesPriere _paris = ReglagesPriere(
-  enseignantId: 't1',
-  latitude: 48.85341,
-  longitude: 2.34880,
-  methode: MethodeCalcul.ligueMondiale,
-  madhab: Madhab.shafi,
-  lieu: 'Paris',
-);
+import 'package:rewayah_academy/core/priere/pause_prevue.dart';
 
 final DateTime _jour = DateTime.utc(2026, 3, 11);
+
+PausePrevue _pause(String seanceId, DateTime debut) => PausePrevue(
+  seanceId: seanceId,
+  debut: debut,
+  duree: const Duration(minutes: 10),
+  priere: Priere.dhuhr,
+);
 
 Seance _cours({
   required int heure,
@@ -40,10 +38,8 @@ Seance _cours({
 void main() {
   group('La journee est une seule colonne', () {
     test('cours, pause et priere y sont des entrees de meme nature', () {
-      final DateTime dhuhr = HorairesPriere.duJour(
-        reglages: _paris,
-        jour: _jour,
-      )[Priere.dhuhr]!;
+      // La pause que le serveur a placee a l'entree du Dhuhr.
+      final DateTime dhuhr = _jour.add(const Duration(hours: 12, minutes: 20));
       // Un cours qui contient l'heure du dhuhr, et le suivant une demi-heure
       // apres. C'est la journee que ENS-02 doit rendre de haut en bas.
       final Seance premier = Seance(
@@ -73,7 +69,7 @@ void main() {
 
       final List<EntreeJournee> journee = construireJournee(
         seances: <Seance>[second, premier],
-        reglages: _paris,
+        pauses: <PausePrevue>[_pause('s1', dhuhr)],
         debut: premier.debut,
         fin: second.fin,
         pauseMaximale: const Duration(minutes: 30),
@@ -95,7 +91,7 @@ void main() {
           _cours(heure: 9),
           _cours(heure: 14, id: 's2'),
         ],
-        reglages: null,
+        pauses: const <PausePrevue>[],
         debut: _jour,
         fin: _jour.add(const Duration(days: 1)),
         // La valeur vient de `regle_effective`, elle peut differer d'un profil
@@ -115,7 +111,7 @@ void main() {
           _cours(heure: 9),
           _cours(heure: 11, id: 's2'),
         ],
-        reglages: null,
+        pauses: const <PausePrevue>[],
         debut: _jour,
         fin: _jour.add(const Duration(days: 1)),
         pauseMaximale: const Duration(hours: 1),
@@ -134,7 +130,7 @@ void main() {
             _cours(heure: 10, id: 's2', statut: StatutSeance.annuleeTard),
             _cours(heure: 11, id: 's3'),
           ],
-          reglages: null,
+          pauses: const <PausePrevue>[],
           debut: _jour,
           fin: _jour.add(const Duration(days: 1)),
           pauseMaximale: const Duration(minutes: 30),
@@ -145,17 +141,20 @@ void main() {
       },
     );
 
-    test('sans reglages de priere, la colonne ne contient que les cours', () {
-      final List<EntreeJournee> journee = construireJournee(
-        seances: <Seance>[_cours(heure: 12)],
-        reglages: null,
-        debut: _jour,
-        fin: _jour.add(const Duration(days: 1)),
-        pauseMaximale: const Duration(minutes: 30),
-      );
+    test(
+      'sans pause de priere placee, la colonne ne contient que les cours',
+      () {
+        final List<EntreeJournee> journee = construireJournee(
+          seances: <Seance>[_cours(heure: 12)],
+          pauses: const <PausePrevue>[],
+          debut: _jour,
+          fin: _jour.add(const Duration(days: 1)),
+          pauseMaximale: const Duration(minutes: 30),
+        );
 
-      expect(journee.single.sorte, SorteEntree.cours);
-    });
+        expect(journee.single.sorte, SorteEntree.cours);
+      },
+    );
 
     test('une seance hors de la fenetre ne s y invite pas', () {
       final List<EntreeJournee> journee = construireJournee(
@@ -163,7 +162,7 @@ void main() {
           _cours(heure: 9),
           _cours(heure: 20, id: 's2'),
         ],
-        reglages: null,
+        pauses: const <PausePrevue>[],
         debut: _jour.add(const Duration(hours: 8)),
         fin: _jour.add(const Duration(hours: 12)),
         pauseMaximale: const Duration(minutes: 30),
@@ -255,31 +254,27 @@ void main() {
   });
 
   group('Ce que ELV-02 annonce avant le cours', () {
-    test('les interruptions d une seance sont celles qui tombent dedans', () {
-      final DateTime dhuhr = HorairesPriere.duJour(
-        reglages: _paris,
-        jour: _jour,
-      )[Priere.dhuhr]!;
-      final Seance seance = Seance(
-        id: 's1',
-        debut: dhuhr.subtract(const Duration(minutes: 20)),
-        fin: dhuhr.add(const Duration(minutes: 40)),
-        statut: StatutSeance.planifiee,
-        eleveId: 'e1',
-        elevePrenom: 'Khadija',
-        eleveIdentifiant: 'STUD-KB-000003',
-        enseignantId: 't1',
-        enseignantPrenom: 'Omar',
-        enseignantIdentifiant: 'TEACH-OS-000001',
-      );
+    test(
+      'l interruption d une seance est la pause que le serveur a placee',
+      () {
+        final DateTime dhuhr = _jour.add(
+          const Duration(hours: 12, minutes: 20),
+        );
+        final PausePrevue pause = _pause('s1', dhuhr);
 
-      expect(
-        interruptionsDe(seance, _paris).map((InterruptionPriere i) => i.priere),
-        <Priere>[Priere.dhuhr],
-      );
-      // Tant que l'enseignant n'a pas pose ses reglages, rien n'est annonce :
-      // une annonce inventee vaudrait moins que pas d'annonce du tout.
-      expect(interruptionsDe(seance, null), isEmpty);
-    });
+        expect(
+          interruptionsDe(pause).map((InterruptionPriere i) => i.priere),
+          <Priere>[Priere.dhuhr],
+        );
+        expect(interruptionsDe(pause).single.debut, dhuhr);
+        expect(
+          interruptionsDe(pause).single.duree,
+          const Duration(minutes: 10),
+        );
+        // Tant que le serveur n'a placé aucune pause, rien n'est annonce : une
+        // annonce inventee vaudrait moins que pas d'annonce du tout.
+        expect(interruptionsDe(null), isEmpty);
+      },
+    );
   });
 }
