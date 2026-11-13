@@ -11,19 +11,24 @@ import '../../core/enseignant/service_enseignant.dart'
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/observabilite/journal_dev.dart';
+import '../../core/pause_seance/port_pause_seance.dart';
 import '../../core/router/billet_salle.dart';
 import '../../core/router/routes.dart';
+import '../../core/session/session_controleur.dart';
 import '../../core/tc_classe/port_session_persistante.dart';
 import '../../core/tc_classe/session_persistante.dart';
 import '../../core/tc_horloge/chrono_seance.dart' show BornesChrono;
 import '../../core/tc_horloge/session_clock_vm.dart';
 import '../../core/theme/app_color_pair.dart';
+import '../../core/theme/app_delais.dart';
 import '../../core/theme/app_mouvement.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/video/livekit_session_provider.dart';
+import '../../core/video/signal_rappel.dart';
 import '../../core/video/video_session_provider.dart';
+import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/bouton_icone.dart';
 import '../../core/widgets/chrono_vivant.dart';
 import '../../core/widgets/ile_liquide.dart';
@@ -32,6 +37,9 @@ import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/pressable.dart';
 import 'bornes_salle.dart';
 import 'chrono_salle.dart';
+import 'marque_chrono.dart';
+import 'pilote_dynamique.dart';
+import 'relais_salle.dart';
 import 'vue_seance.dart' show ConnexionSeance;
 
 /// La barre « Seance toujours en direct » (directeur, 31/10/2026).
@@ -75,6 +83,9 @@ class BarreSeanceEnDirect extends StatefulWidget {
 
   /// La pastille et le chrono, qui ramenent a la salle.
   static const Key cleRetour = ValueKey<String>('ile-seance-retour');
+
+  /// DYNAMIQUE-CHRONO-2 : l'alerte de l'ile (appel recu, pause).
+  static const Key cleAlerte = ValueKey<String>('ile-seance-alerte');
 
   /// Le chevron qui deplie ou replie l'ile.
   static const Key cleChevron = ValueKey<String>('ile-seance-chevron');
@@ -397,6 +408,79 @@ class _BarreEtat extends ConsumerState<_Barre> {
   bool _horsLigne(EtatSessionPersistante e) =>
       e.lienPerdu || e.retourDeSuspension;
 
+  /// DYNAMIQUE-CHRONO-2 (directeur, 12/11/2026, point 15 : « la barre doit
+  /// etre exploitee au max quand la salle est reduite ») : la meme logique
+  /// que la salle (`PiloteDynamique`, `PilotePause`), ecrite une fois. L'ile
+  /// recoit l'appel (sonnerie repetee, alerte, marque) et la pause (debut,
+  /// heure de reprise, fin, et chez qui la pilote : la proposition et la fin
+  /// a l'heure) par les paquets de la visio, que la salle soit ouverte ou non.
+  final PiloteDynamique _dynamique = PiloteDynamique();
+  late final SonnerieAppel _sonnerie = SonnerieAppel(
+    () => ref.read(signalRappelProvider)(),
+  );
+  late final PilotePause _pause = PilotePause(
+    dynamique: _dynamique,
+    maintenant: () => ref.read(horlogeChronoProvider)().toUtc(),
+    commandes: _CommandesPauseIle(this),
+  );
+  StreamSubscription<PaquetDonnees>? _sDonnees;
+  PauseSeance? _pauseObservee;
+  bool _pauseJamaisObservee = true;
+
+  void _dynamiqueChange() {
+    if (mounted) setState(() {});
+  }
+
+  void _recevoir(PaquetDonnees paquet) {
+    if (!mounted) return;
+    final String sessionId = widget.cours.sessionId;
+    if (paquet.sujet == sujetPauseSalle) {
+      // Seul qui ne conduit pas lit le relais (qui conduit lit le serveur).
+      if (widget.etat.acces?.capacites.peutModerer ?? true) return;
+      final PauseSeance? pause = pauseDepuisCharge(paquet.charge);
+      if (pause == null) return;
+      ref.read(pausesRecuesProvider)[sessionId] = pause;
+      setState(() {});
+      return;
+    }
+    final String? profil = ref.read(sessionProvider).profileId;
+    if (profil != null &&
+        paquetRappelPour(paquet, sessionId: sessionId, profilLocalId: profil)) {
+      _sonnerie.lancer();
+      _dynamique.annoncer(
+        alerteAppelRecu(
+          tutoie: widget.cours.interfaceGuidee,
+          numero: _dynamique.numero,
+        ),
+      );
+    }
+  }
+
+  /// Une commande de la pause, par le port ; l'etat est relu ensuite.
+  Future<void> _commanderPause(
+    Future<PauseSeance> Function(PortPauseSeance port, String cle) commande,
+  ) async {
+    try {
+      await commande(
+        ref.read(portPauseSeanceProvider),
+        'ile-${widget.cours.sessionId}-${DateTime.now().microsecondsSinceEpoch}',
+      ).timeout(AppDelais.requeteMax);
+    } finally {
+      if (mounted) {
+        ref.invalidate(pauseSeanceProvider(widget.cours.sessionId));
+      }
+    }
+  }
+
+  void _observerPause(PauseSeance? pause, {required bool pilote}) {
+    if (!_pauseJamaisObservee && pause == _pauseObservee) return;
+    _pauseJamaisObservee = false;
+    _pauseObservee = pause;
+    scheduleMicrotask(() {
+      if (mounted) _pause.observer(pause, pilote: pilote);
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -404,6 +488,17 @@ class _BarreEtat extends ConsumerState<_Barre> {
       _deplie = true;
       _depliAuto = true;
     }
+    _dynamique
+      ..addListener(_dynamiqueChange)
+      ..auToucher(() {
+        _sonnerie.arreter();
+        _dynamique.oublier(cleAppelRecu);
+      })
+      ..aChaqueBattement(() {
+        if (mounted) _pause.evaluer();
+      })
+      ..demarrer();
+    _sDonnees = ref.read(moteurSalleProvider).donneesRecues.listen(_recevoir);
   }
 
   @override
@@ -425,6 +520,11 @@ class _BarreEtat extends ConsumerState<_Barre> {
   @override
   void dispose() {
     _replier?.cancel();
+    _sonnerie.arreter();
+    unawaited(_sDonnees?.cancel());
+    _dynamique
+      ..removeListener(_dynamiqueChange)
+      ..dispose();
     super.dispose();
   }
 
@@ -517,6 +617,14 @@ class _BarreEtat extends ConsumerState<_Barre> {
     );
     final String? nom = _nomClasse(widget.cours, conduit: conduit);
     final BornesChrono? bornes = _bornes(widget.cours, conduit: conduit);
+    // DYNAMIQUE-CHRONO-2 : la pause, lue au serveur par qui conduit, recue
+    // par le relais chez les autres.
+    final String seance = widget.cours.sessionId;
+    final PauseSeance? pause = conduit
+        ? ref.watch(pauseSeanceProvider(seance)).value
+        : ref.read(pausesRecuesProvider)[seance];
+    _observerPause(pause, pilote: conduit && (pause?.peutPiloter ?? false));
+    final AlerteChrono? alerte = _dynamique.alerte;
 
     final Widget? chrono = bornes == null
         ? null
@@ -533,6 +641,8 @@ class _BarreEtat extends ConsumerState<_Barre> {
             sobre: !conduit,
             sonne: conduit,
             onEtat: (EtatChronoVivant e) => _changerEtat(e, conduit: conduit),
+            pause: pause,
+            marques: _dynamique.marques,
             // DYNAMIQUE-CHRONO-1 (directeur, 12/11/2026, point 15 : « elle
             // marche bien aussi quand on reduit la salle ») : la meme ligne
             // repliee que la Dynamique chrono de la salle (l'anneau,
@@ -556,7 +666,12 @@ class _BarreEtat extends ConsumerState<_Barre> {
     // salle d'un appui ; le micro ; le chevron.
     final Widget zoneRetour = Pressable(
       key: BarreSeanceEnDirect.cleRetour,
-      onPress: widget.onRetour,
+      // Le toucher coupe aussi la sonnerie et efface l'appel recu ; il garde
+      // son geste : retourner dans la salle.
+      onPress: () {
+        _dynamique.toucher();
+        widget.onRetour();
+      },
       libelleSemantique: t.salle.retourner,
       arrondiFocus: AppRadius.arrondiLg,
       child: Wrap(
@@ -660,48 +775,67 @@ class _BarreEtat extends ConsumerState<_Barre> {
     return Semantics(
       container: true,
       liveRegion: true,
-      child: Stack(
-        children: <Widget>[
-          PositionedDirectional(
-            top: 0,
-            start: 0,
-            end: 0,
-            height: widget.bande,
-            child: ColoredBox(color: palette.surfaceCanvas.background),
-          ),
-          SafeArea(
-            bottom: false,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(
-                horizontal: AppSpacing.lg,
-                vertical: AppSpacing.sm,
-              ),
-              child: Center(
-                child: IleLiquide(
-                  key: BarreSeanceEnDirect.cleIle,
-                  decoration: paire.decoration(
-                    borderRadius: AppRadius.arrondiLg,
-                    side: palette.borderStrong.asBorderSide(),
-                  ),
-                  padding: const EdgeInsetsDirectional.only(
-                    start: AppSpacing.md,
-                    end: AppSpacing.xs,
-                    top: AppSpacing.xs,
-                    bottom: AppSpacing.xs,
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      compacte,
-                      FonduLiquide(cle: _deplie, child: detail),
-                    ],
+      child: Listener(
+        // DYNAMIQUE-CHRONO-2, point 6 : toucher l'ile arrete la sonnerie.
+        behavior: HitTestBehavior.translucent,
+        onPointerDown: (PointerDownEvent _) => _sonnerie.arreter(),
+        child: Stack(
+          children: <Widget>[
+            PositionedDirectional(
+              top: 0,
+              start: 0,
+              end: 0,
+              height: widget.bande,
+              child: ColoredBox(color: palette.surfaceCanvas.background),
+            ),
+            SafeArea(
+              bottom: false,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.lg,
+                  vertical: AppSpacing.sm,
+                ),
+                child: Center(
+                  child: IleLiquide(
+                    key: BarreSeanceEnDirect.cleIle,
+                    decoration: paire.decoration(
+                      borderRadius: AppRadius.arrondiLg,
+                      side: palette.borderStrong.asBorderSide(),
+                    ),
+                    padding: const EdgeInsetsDirectional.only(
+                      start: AppSpacing.md,
+                      end: AppSpacing.xs,
+                      top: AppSpacing.xs,
+                      bottom: AppSpacing.xs,
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        compacte,
+                        if (alerte != null)
+                          _AlerteIle(
+                            key: BarreSeanceEnDirect.cleAlerte,
+                            alerte: alerte,
+                            style: style,
+                            titre: paire.applyTo(
+                              textes.titleSmall ?? const TextStyle(),
+                            ),
+                            onChoix: (ActionAlerteChrono a) {
+                              a.onPress();
+                              _dynamique.choisir(alerte.id);
+                            },
+                          )
+                        else
+                          FonduLiquide(cle: _deplie, child: detail),
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -745,5 +879,95 @@ class _MicroDeLaBarre extends StatelessWidget {
         onPress: () => unawaited(moteur.reglerMicro(actif: !ouvert)),
       );
     },
+  );
+}
+
+/// DYNAMIQUE-CHRONO-2 : l'alerte dans l'ile de la salle reduite (titre, une
+/// phrase, une ou deux actions), lue une fois.
+class _AlerteIle extends StatelessWidget {
+  const _AlerteIle({
+    required this.alerte,
+    required this.style,
+    required this.titre,
+    required this.onChoix,
+    super.key,
+  });
+
+  final AlerteChrono alerte;
+  final TextStyle style;
+  final TextStyle titre;
+  final ValueChanged<ActionAlerteChrono> onChoix;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsetsDirectional.only(
+      top: AppSpacing.sm,
+      start: AppSpacing.xs,
+      end: AppSpacing.md,
+      bottom: AppSpacing.xs,
+    ),
+    child: Semantics(
+      key: ValueKey<String>('alerte-ile-${alerte.id}'),
+      container: true,
+      liveRegion: true,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        spacing: AppSpacing.xs,
+        children: <Widget>[
+          Text(alerte.titre, style: titre),
+          if (alerte.detail case final String detail)
+            Text(detail, style: style),
+          if (alerte.actions.isNotEmpty)
+            Wrap(
+              spacing: AppSpacing.md,
+              runSpacing: AppSpacing.xs,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: <Widget>[
+                for (final ActionAlerteChrono a in alerte.actions)
+                  a.principale
+                      ? ActionPrincipale(
+                          libelle: a.libelle,
+                          compacte: true,
+                          pleineLargeur: false,
+                          onPress: () => onChoix(a),
+                        )
+                      : LienFleche(
+                          libelle: a.libelle,
+                          fleche: false,
+                          onPress: () => onChoix(a),
+                        ),
+              ],
+            ),
+        ],
+      ),
+    ),
+  );
+}
+
+/// DYNAMIQUE-CHRONO-2 : les commandes de la pause depuis l'ile.
+class _CommandesPauseIle implements CommandesPause {
+  _CommandesPauseIle(this._ile);
+
+  final _BarreEtat _ile;
+
+  String get _seance => _ile.widget.cours.sessionId;
+
+  @override
+  Future<void> demarrer() => _ile._commanderPause(
+    (PortPauseSeance port, String cle) =>
+        port.demarrer(seanceId: _seance, cleIdempotence: cle),
+  );
+
+  @override
+  Future<void> terminer() => _ile._commanderPause(
+    (PortPauseSeance port, String cle) =>
+        port.terminer(seanceId: _seance, cleIdempotence: cle),
+  );
+
+  @override
+  Future<void> refuser() => _ile._commanderPause(
+    (PortPauseSeance port, String cle) =>
+        port.refuser(seanceId: _seance, cleIdempotence: cle),
   );
 }

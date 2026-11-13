@@ -48,6 +48,7 @@ import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/chrono_vivant.dart';
 import '../../core/widgets/ile_liquide.dart';
 import '../../core/widgets/lien_fleche.dart';
+import '../../core/widgets/pressable.dart';
 import '../../core/widgets/status_pill.dart';
 import 'chrono_salle.dart';
 import 'marque_chrono.dart';
@@ -267,6 +268,30 @@ class _DynamiqueChronoEtat extends State<DynamiqueChrono> {
     _basculer();
   }
 
+  /// Les marques sans chrono, touchables quand [toucher] existe (cible de 48
+  /// au moins ; le libelle est lu).
+  Widget _touchable({
+    required VoidCallback? toucher,
+    required String libelle,
+    required Widget child,
+  }) {
+    if (toucher == null) return child;
+    return Pressable(
+      key: DynamiqueChrono.cleDeplier,
+      onPress: toucher,
+      libelleSemantique: libelle,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: AppSpacing.titreEcran),
+        child: Align(
+          alignment: AlignmentDirectional.centerStart,
+          widthFactor: 1,
+          heightFactor: 1,
+          child: child,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final VueSeance vue = widget.vue;
@@ -350,34 +375,39 @@ class _DynamiqueChronoEtat extends State<DynamiqueChrono> {
               signes: <Widget>[?micro],
             )
           // Sans chrono (Interface guidee, bornes inconnues) : les marques en
-          // clair, une ile vide ne dirait rien.
-          : Wrap(
-              spacing: AppSpacing.md,
-              runSpacing: AppSpacing.xs,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              children: <Widget>[
-                for (final MarqueChrono m in marques)
-                  Semantics(
-                    container: true,
-                    label: m.annonce,
-                    child: ExcludeSemantics(
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          SizedBox.square(
-                            dimension: StatusPill.diametrePastille,
-                            child: DecoratedBox(
-                              decoration: palette.pastilleDe(m.ton),
+          // clair, une ile vide ne dirait rien. Avec le pilote, le toucher
+          // garde son role (couper la sonnerie, effacer l'appel recu).
+          : _touchable(
+              toucher: pilote == null ? null : toucher,
+              libelle: t.salle.ile.deplierEtat,
+              child: Wrap(
+                spacing: AppSpacing.md,
+                runSpacing: AppSpacing.xs,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: <Widget>[
+                  for (final MarqueChrono m in marques)
+                    Semantics(
+                      container: true,
+                      label: m.annonce,
+                      child: ExcludeSemantics(
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            SizedBox.square(
+                              dimension: StatusPill.diametrePastille,
+                              child: DecoratedBox(
+                                decoration: palette.pastilleDe(m.ton),
+                              ),
                             ),
-                          ),
-                          Ecart.hSm,
-                          Flexible(child: Text(m.libelle, style: style)),
-                        ],
+                            Ecart.hSm,
+                            Flexible(child: Text(m.libelle, style: style)),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ?micro,
-              ],
+                  ?micro,
+                ],
+              ),
             ),
     );
 
