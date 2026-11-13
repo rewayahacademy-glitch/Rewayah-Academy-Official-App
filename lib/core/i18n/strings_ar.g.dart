@@ -22009,8 +22009,8 @@ class _Traductions$admin$bibliotheque$import$erreurs$ar extends Traductions$admi
 	// Translations
 	@override String get taille => 'هذا الملف كبير جدًا. اختر ملفًا أخف.';
 	@override String get type => 'نوع هذا الملف غير مدعوم لهذه الوثيقة. اختر ملفًا آخر.';
-	@override String get reseau => 'لا رد من الخادم: يبدو أن اتصالك انقطع. لم يتأكد شيء. تحقّق من الاتصال ثم أعد المحاولة.';
-	@override String get refuse => 'رفض الخادم هذا الإيداع: انتهت مهلة الطلب، أو لهذه الوثيقة ملف من قبل. أعد تحميل الصفحة ثم أعد المحاولة.';
+	@override String get reseau => 'لم يصل أي رد: ربما لم يصل الطلب إلى رواية. لم يُحفظ شيء. أعد المحاولة بعد قليل.';
+	@override String get refuse => 'رُفض هذا الإيداع: حسابك لا يملك هذا الحق. لم يُودَع شيء. اطلب من الإدارة التحقق من صلاحيتك.';
 	@override String get empreinte => 'الملف المستلم لا يطابق الملف المرسل. أعد المحاولة.';
 	@override String get nonActive => 'لم يُفعَّل بعدُ إيداع الملفات، ولم يُرسَل شيء. يمكنك في الأثناء إضافة وثيقة عن طريق رابطها.';
 	@override String get creation => 'تعذّر إنشاء المسودة. أعد المحاولة.';
@@ -22018,9 +22018,15 @@ class _Traductions$admin$bibliotheque$import$erreurs$ar extends Traductions$admi
 	@override String get session => 'انتهت جلستك: لم يُودَع شيء. سجّل الدخول من جديد ثم أعد المحاولة.';
 	@override String get stockage => 'رفضت خدمة تخزين ملفات الأكاديمية الإرسال. ليس السبب اتصالك، بل إعداد في الخادم. أعد المحاولة مرة واحدة؛ وإذا تكرر ذلك وجب تصحيح هذا الإعداد قبل أي إيداع جديد.';
 	@override String get envoi => 'لم يتلقَّ إرسال الملف أي رد مع أن الخادم يستجيب. الأرجح أن خدمة تخزين الملفات لا تقبل بعدُ الإرسال من هذا العنوان، وهذا إعداد في الخادم؛ وإلا فقد انقطع الاتصال أثناء الإرسال. أعد المحاولة مرة واحدة؛ وإذا تكرر ذلك فالإعداد هو ما يجب تصحيحه.';
-	@override String get service => 'خدمة الإيداع لا تستجيب كما ينبغي. ليس السبب اتصالك، ولم يتأكد شيء. أعد المحاولة بعد دقائق؛ وإذا تكرر ذلك وجب فحص الخدمة.';
+	@override String get service => 'لم يكتمل الإيداع: الرد المستلم ليس الرد المنتظر. ليس السبب اتصالك، ولم يُحفظ شيء. أعد المحاولة بعد دقائق؛ وإذا تكرر ذلك وجب فحص خدمة الإيداع.';
 	@override String get reglage => 'وصل الملف، لكن الخادم لا يستطيع تأكيده: مفتاح التأكيد ليس نفسه في الجهتين. هذا إعداد يجب تصحيحه، وإعادة المحاولة لن تغيّر شيئًا.';
-	@override String get delai => 'استغرق فحص الملف وقتًا طويلًا فتوقف. لم يتأكد شيء. أعد المحاولة؛ وإذا كان الملف كبيرًا جدًا فاختر نسخة أخف.';
+	@override String get delai => 'استغرق فحص الملف وقتًا طويلًا فتوقف. لم يُحفظ شيء. أعد المحاولة؛ وإذا كان الملف كبيرًا جدًا فاختر نسخة أخف.';
+	@override String get vide => 'هذا الملف فارغ. اختر ملفًا آخر.';
+	@override String get nonModifiable => 'لم تعد هذه الوثيقة قابلة للتعديل: نُشرت أو سُحبت منذ فتح هذه الصفحة. لم يُودَع شيء. أعد تحميل الصفحة.';
+	@override String get dejaDepose => 'لهذه الوثيقة ملف من قبل. لم يُودَع شيء. لاستبداله افتح بطاقة الوثيقة وأنشئ نسخة جديدة.';
+	@override String get expire => 'انتهت مهلة طلب الإيداع قبل اكتماله. لم يُودَع شيء. أعد المحاولة.';
+	@override String get contenu => 'محتوى هذا الملف لا يطابق نوعه: ليس ملف PDF ولا ملفًا صوتيًا ولا صورة صالحة. اختر ملفًا آخر.';
+	@override String get introuvable => 'لم يُعثر على الملف المرسل: لم يكتمل الإرسال. لم يُودَع شيء. أعد المحاولة.';
 }
 
 // Path: admin.bibliotheque.import.droits
@@ -30679,8 +30685,8 @@ extension on TraductionsAr {
 			'admin.bibliotheque.import.etats.annule' => 'أُلغي الإيداع.',
 			'admin.bibliotheque.import.erreurs.taille' => 'هذا الملف كبير جدًا. اختر ملفًا أخف.',
 			'admin.bibliotheque.import.erreurs.type' => 'نوع هذا الملف غير مدعوم لهذه الوثيقة. اختر ملفًا آخر.',
-			'admin.bibliotheque.import.erreurs.reseau' => 'لا رد من الخادم: يبدو أن اتصالك انقطع. لم يتأكد شيء. تحقّق من الاتصال ثم أعد المحاولة.',
-			'admin.bibliotheque.import.erreurs.refuse' => 'رفض الخادم هذا الإيداع: انتهت مهلة الطلب، أو لهذه الوثيقة ملف من قبل. أعد تحميل الصفحة ثم أعد المحاولة.',
+			'admin.bibliotheque.import.erreurs.reseau' => 'لم يصل أي رد: ربما لم يصل الطلب إلى رواية. لم يُحفظ شيء. أعد المحاولة بعد قليل.',
+			'admin.bibliotheque.import.erreurs.refuse' => 'رُفض هذا الإيداع: حسابك لا يملك هذا الحق. لم يُودَع شيء. اطلب من الإدارة التحقق من صلاحيتك.',
 			'admin.bibliotheque.import.erreurs.empreinte' => 'الملف المستلم لا يطابق الملف المرسل. أعد المحاولة.',
 			'admin.bibliotheque.import.erreurs.nonActive' => 'لم يُفعَّل بعدُ إيداع الملفات، ولم يُرسَل شيء. يمكنك في الأثناء إضافة وثيقة عن طريق رابطها.',
 			'admin.bibliotheque.import.erreurs.creation' => 'تعذّر إنشاء المسودة. أعد المحاولة.',
@@ -30688,9 +30694,15 @@ extension on TraductionsAr {
 			'admin.bibliotheque.import.erreurs.session' => 'انتهت جلستك: لم يُودَع شيء. سجّل الدخول من جديد ثم أعد المحاولة.',
 			'admin.bibliotheque.import.erreurs.stockage' => 'رفضت خدمة تخزين ملفات الأكاديمية الإرسال. ليس السبب اتصالك، بل إعداد في الخادم. أعد المحاولة مرة واحدة؛ وإذا تكرر ذلك وجب تصحيح هذا الإعداد قبل أي إيداع جديد.',
 			'admin.bibliotheque.import.erreurs.envoi' => 'لم يتلقَّ إرسال الملف أي رد مع أن الخادم يستجيب. الأرجح أن خدمة تخزين الملفات لا تقبل بعدُ الإرسال من هذا العنوان، وهذا إعداد في الخادم؛ وإلا فقد انقطع الاتصال أثناء الإرسال. أعد المحاولة مرة واحدة؛ وإذا تكرر ذلك فالإعداد هو ما يجب تصحيحه.',
-			'admin.bibliotheque.import.erreurs.service' => 'خدمة الإيداع لا تستجيب كما ينبغي. ليس السبب اتصالك، ولم يتأكد شيء. أعد المحاولة بعد دقائق؛ وإذا تكرر ذلك وجب فحص الخدمة.',
+			'admin.bibliotheque.import.erreurs.service' => 'لم يكتمل الإيداع: الرد المستلم ليس الرد المنتظر. ليس السبب اتصالك، ولم يُحفظ شيء. أعد المحاولة بعد دقائق؛ وإذا تكرر ذلك وجب فحص خدمة الإيداع.',
 			'admin.bibliotheque.import.erreurs.reglage' => 'وصل الملف، لكن الخادم لا يستطيع تأكيده: مفتاح التأكيد ليس نفسه في الجهتين. هذا إعداد يجب تصحيحه، وإعادة المحاولة لن تغيّر شيئًا.',
-			'admin.bibliotheque.import.erreurs.delai' => 'استغرق فحص الملف وقتًا طويلًا فتوقف. لم يتأكد شيء. أعد المحاولة؛ وإذا كان الملف كبيرًا جدًا فاختر نسخة أخف.',
+			'admin.bibliotheque.import.erreurs.delai' => 'استغرق فحص الملف وقتًا طويلًا فتوقف. لم يُحفظ شيء. أعد المحاولة؛ وإذا كان الملف كبيرًا جدًا فاختر نسخة أخف.',
+			'admin.bibliotheque.import.erreurs.vide' => 'هذا الملف فارغ. اختر ملفًا آخر.',
+			'admin.bibliotheque.import.erreurs.nonModifiable' => 'لم تعد هذه الوثيقة قابلة للتعديل: نُشرت أو سُحبت منذ فتح هذه الصفحة. لم يُودَع شيء. أعد تحميل الصفحة.',
+			'admin.bibliotheque.import.erreurs.dejaDepose' => 'لهذه الوثيقة ملف من قبل. لم يُودَع شيء. لاستبداله افتح بطاقة الوثيقة وأنشئ نسخة جديدة.',
+			'admin.bibliotheque.import.erreurs.expire' => 'انتهت مهلة طلب الإيداع قبل اكتماله. لم يُودَع شيء. أعد المحاولة.',
+			'admin.bibliotheque.import.erreurs.contenu' => 'محتوى هذا الملف لا يطابق نوعه: ليس ملف PDF ولا ملفًا صوتيًا ولا صورة صالحة. اختر ملفًا آخر.',
+			'admin.bibliotheque.import.erreurs.introuvable' => 'لم يُعثر على الملف المرسل: لم يكتمل الإرسال. لم يُودَع شيء. أعد المحاولة.',
 			'admin.bibliotheque.import.droits.aide' => 'لا يُفترض أي حق: القيمة المجهولة تمنع النشر.',
 			'admin.bibliotheque.import.droits.source' => 'المصدر الأصلي',
 			'admin.bibliotheque.import.droits.titulaire' => 'صاحب الحق',
@@ -31007,14 +31019,14 @@ extension on TraductionsAr {
 			'comptable.paiements.confirmation.prestataireAucun' => 'لم يُرجعه المصدر',
 			'comptable.paiements.confirmation.taux' => 'سعر الصرف',
 			'comptable.paiements.confirmation.tauxDate' => ({required Object taux, required Object date}) => '${taux}، بتاريخ ${date}',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.paiements.confirmation.frais' => 'رسوم مزوّد الدفع',
 			'comptable.paiements.confirmation.change' => 'تكلفة الصرف',
 			'comptable.paiements.confirmation.montantEnvoye' => 'إجمالي المُرسَل',
 			'comptable.paiements.confirmation.montantRecu' => 'المبلغ المتوقع استلامه',
 			'comptable.paiements.confirmation.controlesTitre' => 'الفحوص المجتازة',
 			'comptable.paiements.confirmation.controlesPhrase' => 'المبلغ محسوب، ووسيلة الدفع متحقَّق منها، والتفويض والتكرارات مفحوصة من المصدر. لن تُرسَل إلا المدفوعات الجاهزة.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.paiements.confirmation.sensiblePhrase' => 'هذه الدفعة حساسة: يجب أن يصادق عليها شخص مخوَّل آخر. اطلب المصادقة، فهي لا تُرسَل قبلها.',
 			'comptable.paiements.confirmation.prets' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, one: 'دفعة جاهزة واحدة', two: 'دفعتان جاهزتان', few: '${n} دفعات جاهزة', other: '${n} دفعة جاهزة', ), 
 			'comptable.paiements.confirmation.exclus' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, one: 'دفعة مستبعدة واحدة', two: 'دفعتان مستبعدتان', few: '${n} دفعات مستبعدة', other: '${n} دفعة مستبعدة', ), 
@@ -31521,14 +31533,14 @@ extension on TraductionsAr {
 			'comptable.contractuels.sectionInfos' => 'المعلومات',
 			'comptable.contractuels.sectionHistorique' => 'سجل الالتزام',
 			'comptable.contractuels.historiqueVide' => 'لا توجد عملية مسجلة لهذا الالتزام.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.contractuels.champBeneficiaire' => 'المستفيد',
 			'comptable.contractuels.champType' => 'النوع',
 			'comptable.contractuels.champEcheance' => 'الاستحقاق',
 			'comptable.contractuels.champJustificatif' => 'المستند المؤيِّد',
 			'comptable.contractuels.champCentreCout' => 'مركز التكلفة',
 			'comptable.contractuels.champAuteur' => 'المُنشئ',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.contractuels.champApprobateur' => 'المعتمِد',
 			'comptable.contractuels.champProfilPaiement' => 'دفع المستفيد',
 			'comptable.contractuels.champMotifRefus' => 'سبب الرفض',
@@ -32035,14 +32047,14 @@ extension on TraductionsAr {
 			'ficheEleve.mouvements.recu.date' => 'التاريخ',
 			'ficheEleve.mouvements.recu.reference' => 'المرجع',
 			'ficheEleve.mouvements.recu.moyen' => 'وسيلة الدفع',
+			_ => null,
+		} ?? switch (path) {
 			'ficheEleve.mouvements.recu.montant' => 'المبلغ المدفوع',
 			'ficheEleve.mouvements.recu.repartition' => 'التوزيع',
 			'ficheEleve.mouvements.videTitre' => 'لا توجد حركات',
 			'ficheEleve.mouvements.videPhrase' => ({required Object prenom}) => 'لا يوجد أي شحن ولا قسط شهري مسجل لـ⁨${prenom}⁩ بعد. ستظهر الحركات هنا بعد أول دفعة.',
 			'ficheEleve.mouvements.erreurTitre' => ({required Object dePrenom}) => 'تعذّرت قراءة حركات ⁨${dePrenom}⁩',
 			'ficheEleve.mouvements.indisponibleTitre' => 'الحركات غير متاحة بعد',
-			_ => null,
-		} ?? switch (path) {
 			'ficheEleve.mouvements.indisponiblePhrase' => ({required Object dePrenom}) => 'ستظهر هنا عمليات شحن ⁨${dePrenom}⁩ وأقساطه الشهرية فور تشغيلها.',
 			'ficheEleve.mouvements.sansDonnees' => 'تعذّر تحميل حركات هذا الملف',
 			'parcours.titre' => ({required Object dePrenom}) => 'مسار ⁨${dePrenom}⁩',
@@ -32549,14 +32561,14 @@ extension on TraductionsAr {
 			'inscription.questionnaire.fille' => 'بنت',
 			'inscription.questionnaire.genreRaison' => 'تأخذ الأكاديمية ذلك بعين الاعتبار عند تكوين الفصول.',
 			'inscription.questionnaire.niveauQuestionMoi' => 'أين وصلت اليوم؟',
+			_ => null,
+		} ?? switch (path) {
 			'inscription.questionnaire.etapeCourte' => ({required Object n, required Object total}) => '⁨${n}⁩ من ⁨${total}⁩',
 			'inscription.questionnaire.recapTitre' => 'هذا ما فهمناه',
 			'inscription.questionnaire.recapApprenants' => 'من سيتعلم',
 			'inscription.questionnaire.ligneEnfant' => ({required Object prenom, required Object age}) => '⁨${prenom}⁩، ⁨${age}⁩ سنة',
 			'inscription.questionnaire.ligneVous' => 'أنت',
 			'inscription.questionnaire.ajouterProfil' => 'إضافة ملف طالب آخر',
-			_ => null,
-		} ?? switch (path) {
 			'inscription.questionnaire.envoyer' => 'إرسال طلبي',
 			'inscription.questionnaire.dejaUnCompte' => 'لدي حساب بالفعل',
 			'inscription.questionnaire.aucuneReponse' => 'لم تعد إجابات تسجيلك على هذا الجهاز. أعد الإجابة عن الأسئلة الأولى: تستغرق دقيقتين.',
@@ -33063,14 +33075,14 @@ extension on TraductionsAr {
 			'adulte.demo.donnees.soldeSecondAdulte' => 'رصيد تجريبي 2',
 			'adulte.demo.donnees.soldeAicha' => 'رصيد تجريبي 3',
 			'adulte.demo.donnees.soldeOumar' => 'رصيد تجريبي 4',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.demo.donnees.totalAvecSecondAdulte' => 'مجموع تجريبي A',
 			'adulte.demo.donnees.totalSansSecondAdulte' => 'مجموع تجريبي B',
 			'adulte.demo.donnees.prixOffreA' => '5,00 € (عرض تجريبي)',
 			'adulte.demo.donnees.prixOffreB' => '10,00 € (عرض تجريبي)',
 			'adulte.demo.donnees.detailOffreA' => 'رصيد تجريبي A',
 			'adulte.demo.donnees.detailOffreB' => 'رصيد تجريبي B',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.demo.donnees.totalRecharge5' => '5,00 € (عرض تجريبي)',
 			'adulte.demo.donnees.totalRecharge10' => '10,00 € (عرض تجريبي)',
 			'adulte.demo.donnees.totalRecharge15' => '15,00 € (عرض تجريبي)',
@@ -33577,14 +33589,14 @@ extension on TraductionsAr {
 			'suiviFamille.etapes.envoyee' => 'تم إرسال الطلب',
 			'suiviFamille.etapes.enAttente' => 'في قائمة الانتظار',
 			'suiviFamille.etapes.classeCreee' => 'تم إنشاء الفصل',
+			_ => null,
+		} ?? switch (path) {
 			'suiviFamille.etapes.enseignantAffecte' => 'تم تعيين المعلم',
 			'suiviFamille.etapes.eleveIntegre' => 'الطالب مندمج في الفصل',
 			'suiviFamille.etapes.premiereSeance' => 'الحصة الأولى',
 			'suiviFamille.etats.fait' => 'تم',
 			'suiviFamille.etats.enCours' => 'جارية',
 			'suiviFamille.etats.aVenir' => 'قادمة',
-			_ => null,
-		} ?? switch (path) {
 			'suiviFamille.motif.classesPleines' => 'كل فصول هذا الموعد مكتملة. سنبلغكم حالما يتوفر مكان.',
 			'suiviFamille.motif.aucunEnseignantLibre' => 'لا يتوفر معلم في هذا الموعد حاليًا. سنبلغكم حالما يتغير ذلك.',
 			'suiviFamille.motif.inconnu' => 'طلبكم قيد الانتظار. سنبلغكم حالما يتقدم.',
@@ -34091,14 +34103,14 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.niveauMemorisationDeclare.options.aucune.description' => 'قد تعرف بعض السور، لكن ليس جزءًا كاملًا.',
 			'recrutement.parcours.q.niveauMemorisationDeclare.options.aucune.explication' => 'يُتحقق من هذا المستوى أثناء المقابلة.',
 			'recrutement.parcours.q.niveauMemorisationDeclare.options.aucune.exemple' => 'تُسمّع عن ظهر قلب بعض السور القصيرة، دون جزء كامل.',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.q.niveauMemorisationDeclare.options.moins_10_juz.libelle' => 'حفظت أقل من 10 أجزاء',
 			'recrutement.parcours.q.niveauMemorisationDeclare.options.moins_10_juz.description' => 'من جزء كامل إلى تسعة أجزاء، من ثلاثين جزءًا هي القرآن كله.',
 			'recrutement.parcours.q.niveauMemorisationDeclare.options.moins_10_juz.explication' => 'يُتحقق من هذا المستوى أثناء المقابلة.',
 			'recrutement.parcours.q.niveauMemorisationDeclare.options.moins_10_juz.exemple' => 'حفظت خمسة أجزاء من ثلاثين.',
 			'recrutement.parcours.q.niveauMemorisationDeclare.options.de_10_a_29_juz.libelle' => 'حفظت من 10 إلى 29 جزءًا',
 			'recrutement.parcours.q.niveauMemorisationDeclare.options.de_10_a_29_juz.description' => 'من ثلث القرآن إلى ما يقارب القرآن كله.',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.q.niveauMemorisationDeclare.options.de_10_a_29_juz.explication' => 'يُتحقق من هذا المستوى أثناء المقابلة.',
 			'recrutement.parcours.q.niveauMemorisationDeclare.options.de_10_a_29_juz.exemple' => 'حفظت عشرين جزءًا من ثلاثين.',
 			'recrutement.parcours.q.niveauMemorisationDeclare.options.coran_entier.libelle' => 'حفظت القرآن كله',
@@ -34605,14 +34617,14 @@ extension on TraductionsAr {
 			'juridique.confidentialite.s2.blocs.1' => '- للطالب: تاريخ الميلاد، وهو يُستخدم لاختيار الصيغة المناسبة وللقواعد الخاصة بالقاصرين.',
 			'juridique.confidentialite.s2.blocs.2' => '- اختياري: الصورة، والهاتف، والعنوان، والمستوى، وتفضيلات المواعيد.',
 			'juridique.confidentialite.s2.blocs.3' => '- أثناء الدروس: الحضور، ودفتر التواصل، وتقدّم الطالب.',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.confidentialite.s2.blocs.4' => '- للدفع: الاشتراك والفواتير. أما الدفع نفسه فيتم عبر مزوّد للدفع.',
 			'juridique.confidentialite.s2.blocs.5' => '- للمعلم: وثيقة هوية، تُحفظ على حدة في مساحة خاصة.',
 			'juridique.confidentialite.s2.blocs.6' => '- موافقاتكم: إصدار كل نص تم قبوله وتاريخه.',
 			'juridique.confidentialite.s2.blocs.7' => '- تقارير أخطاء تقنية، بلا لقطة شاشة وبلا اسم وبلا هوية.',
 			'juridique.confidentialite.s3.titre' => '٣. لماذا نستخدمها',
 			'juridique.confidentialite.s3.blocs.0' => '- تكوين الفصول وإجراء الدروس.',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.confidentialite.s3.blocs.1' => '- متابعة الحضور والتقدّم.',
 			'juridique.confidentialite.s3.blocs.2' => '- فوترة الاشتراك.',
 			'juridique.confidentialite.s3.blocs.3' => '- حماية الطلاب ومراقبة جودة الحصص.',
@@ -35119,14 +35131,14 @@ extension on TraductionsAr {
 			'i1.lien.dejaServiDetail' => 'لا يصلح رابط تسجيل الدخول إلا مرة واحدة ولمدة قصيرة. اطلب رابطًا جديدًا: أدخل عنوان بريدك الإلكتروني في صفحة تسجيل الدخول.',
 			'i1.lien.nouveauLien' => 'الحصول على رابط جديد',
 			'd1ter.messages.titre' => ({required Object prenom}) => 'رسائل الأكاديمية عن ⁨${prenom}⁩',
+			_ => null,
+		} ?? switch (path) {
 			'd1ter.messages.titreSoi' => 'رسائل الأكاديمية',
 			'd1ter.messages.intro' => ({required Object prenom}) => 'أرسلت إليكم الإدارة هذه الرسائل عن ⁨${prenom}⁩.',
 			'd1ter.messages.introSoi' => 'أرسلت إليكم الإدارة هذه الرسائل.',
 			'd1ter.messages.transmisLe' => ({required Object date}) => 'أُرسلت في ⁨${date}⁩',
 			'd1ter.messages.erreur' => 'تعذّرت قراءة رسائل الأكاديمية: قد لا يكون الطلب قد وصل إلى أكاديمية الرواية. أعيدوا المحاولة بعد لحظة.',
 			'd1ter.notifications.message' => 'أرسلت إليكم الإدارة رسالة.',
-			_ => null,
-		} ?? switch (path) {
 			'd1ter.notifications.messageEnfant' => ({required Object prenom}) => 'أرسلت إليكم الإدارة رسالة عن ⁨${prenom}⁩.',
 			'd1ter.notifications.messageSoi' => 'أرسلت إليكم الإدارة رسالة.',
 			'snt.regles.nonTenue' => 'حصة لم تُعقد',
@@ -35633,14 +35645,14 @@ extension on TraductionsAr {
 			'push1.reglages.ignore' => 'لم تجيبوا بعد عن طلب المتصفح. اضغطوا الزر مرة أخرى لرؤيته.',
 			'push1.reglages.echecActivation' => 'لم يتأكد تسجيل هذا الجهاز: ربما انقطع الاتصال. أعيدوا المحاولة بعد قليل.',
 			'push1.reglages.compteNonAutoriseTitre' => 'لا إشعارات على الجهاز لهذا الحساب',
+			_ => null,
+		} ?? switch (path) {
 			'push1.reglages.compteNonAutorise' => 'الإشعارات على الجهاز مخصصة للحسابات النشطة للبالغين. تبقى كل إشعاراتكم في صفحة الإشعارات.',
 			'push1.reglages.erreurTitre' => 'تعذّرت قراءة الإعدادات',
 			'push1.reglages.erreur' => 'تعذّرت قراءة إعداداتكم: ربما انقطع الاتصال. أعيدوا المحاولة بعد قليل.',
 			'push1.reglages.horsLigne' => 'تُغيَّر إعدادات الإشعارات حين يعود الاتصال.',
 			'push1.reglages.changementNonConfirme' => 'لم يتأكد التغيير بعد: ربما انقطع الاتصال. أعيدوا المحاولة بعد قليل.',
 			'nouveautes.badge' => 'جديد',
-			_ => null,
-		} ?? switch (path) {
 			'nouveautes.lu' => 'جديد',
 			'suiviPedagogique.titreSoi' => 'موقعي في البرنامج',
 			'suiviPedagogique.titre' => ({required Object prenom}) => 'موقع ⁨${prenom}⁩ في البرنامج',
