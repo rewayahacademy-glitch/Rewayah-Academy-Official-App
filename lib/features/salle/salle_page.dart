@@ -374,7 +374,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     );
   }
 
-  /// Le profil de cet appareil ; nul tant que la session n est pas lue.
+  /// Le profil de cet appareil ; nul tant que la session n'est pas lue.
   String? _lireProfil() {
     try {
       return ref.read(sessionProvider).profileId;
