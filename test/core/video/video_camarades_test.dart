@@ -174,21 +174,24 @@ void main() {
       _sonIntact(pistes);
     });
 
-    test('image suspendue (audio seul, lien perdu) : rien n\'est rabonne', () async {
-      final List<_Piste> pistes = <_Piste>[
-        _Piste('t1', 'teacher', abonnee: false),
-        _Piste('e2', 'student', abonnee: false),
-        _Piste('e2', 'student', estVideo: false),
-      ];
-      await accorderAbonnementsVideo(
-        roleLocal: 'student',
-        recitant: 'e2',
-        videoSuspendue: true,
-        pistes: pistes,
-      );
-      expect(_videosRecues(pistes), isEmpty);
-      _sonIntact(pistes);
-    });
+    test(
+      'image suspendue (audio seul, lien perdu) : rien n\'est rabonne',
+      () async {
+        final List<_Piste> pistes = <_Piste>[
+          _Piste('t1', 'teacher', abonnee: false),
+          _Piste('e2', 'student', abonnee: false),
+          _Piste('e2', 'student', estVideo: false),
+        ];
+        await accorderAbonnementsVideo(
+          roleLocal: 'student',
+          recitant: 'e2',
+          videoSuspendue: true,
+          pistes: pistes,
+        );
+        expect(_videosRecues(pistes), isEmpty);
+        _sonIntact(pistes);
+      },
+    );
 
     test('une piste deja dans le bon etat n\'est pas touchee', () async {
       final List<_Piste> pistes = _salle();

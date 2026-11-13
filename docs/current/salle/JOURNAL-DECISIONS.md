@@ -1831,3 +1831,60 @@ L'Interface guidée reste sans chrono (règle inchangée) : sa barre ne montre q
 page perd la hauteur de la rangée (environ 80 points au téléphone, 64 sur tablette ; à 820 de
 large, la ligne du texte passe de 611 à 577). Prouvé par tests et captures de test
 (`docs/current/captures/E2E/dynamique-chrono-1/`) ; pas sur un vrai appareil, pas en production.
+
+## D-040 (12/11/2026, nuit). Les élèves d'une Classe se voient : prénom et photo pour tous, vidéo seulement de celui qui récite (lot CAMARADES)
+
+**La décision du directeur** (12/11/2026, dite par lui) : « Il faut que les autres élèves voient
+celui qui récite, au moins une partie du nom, la photo, car ils partagent une salle ;
+psychologiquement, s'ils ne se voient pas, ça risque de créer d'autres problèmes ; mais la vraie
+vidéo, c'est seulement celui qui récite ; sinon on ne voit que sa photo ; la vidéo reste coupée en
+ce moment. » Elle tranche la ligne 11 de la fiche 0 du 12/11 (Q7 contre D-028 et D-031, « décision
+de l'opérateur, non prise ») et amende la règle « un enfant ne lit pas le prénom d'un camarade »
+(PHOTOS-2b, pilote, 04/11/2026 ; `MESSAGES-DE-LA-SALLE.md`, message 20 et point 19 ;
+`CONSTAT.md` SEC-6).
+
+**Ce qui est fait.**
+- Serveur (migration additive `20261124300000_camarades_prenoms.sql`, zéro mot d'effacement, **à
+  installer par le directeur**) : `camarades_classe_eleve()` rend à tout élève (mineur, adulte,
+  enfant ouvert par un appareil jumelé) le prénom seul des membres actifs de sa Classe active :
+  `profile_id`, `prenom`, `est_moi`, rien d'autre. Porte positive (compte valide et profil d'élève),
+  refus 42501 pour le tuteur qui n'apprend pas, l'enseignant et la direction (ils ont leurs propres
+  lectures), aucun droit pour anon. `participants_classe_eleve_adulte()` ne change pas. Scénario
+  `supabase/tests/scenarios_camarades_prenoms.sql` (six contrôles), rejoué sur Postgres 16 local.
+- Écran : chaque cadre d'un camarade porte son prénom chez tout élève, Interface guidée comprise
+  (`camaradesSalleProvider` ; sans la migration, repli silencieux sur l'ancienne lecture de
+  l'adulte). Jamais de nom de famille ; deux prénoms égaux ne sont pas départagés.
+- Vidéo, une règle à un seul endroit (`videoMontree`, `media_salle.dart`, sur `videoRecue`,
+  `lib/core/video/video_camarades.dart`) : chez un élève, sa propre image, l'enseignant qui conduit
+  et le camarade qui récite sont en vidéo ; tout autre camarade est montré par sa photo, ou sa
+  couleur et son initiale. Grille, vignette, capsule et bande de côté suivent la même règle.
+  L'enseignant, le tuteur qui assiste, le contrôleur et la direction voient comme avant.
+- Moteur (`LiveKitSessionProvider`) : l'élève ne s'abonne pas à la caméra d'un camarade qui ne
+  récite pas. Le récitant est lu dans les métadonnées de la salle, écrites par le serveur seul
+  (`recitation.ts`) ; les abonnements se réalignent à chaque piste publiée ou reçue, à chaque
+  changement de métadonnées et après une reprise ; le retour d'un repli réseau ou de l'« audio
+  seul » ne rabonne jamais une caméra non voulue. Le son n'est jamais touché.
+- Le drapeau mort `optionQ7` est retiré. La légende de la photo dit qui la voit (son enseignant,
+  les élèves de sa classe, la direction : **à valider par le directeur**) ; la clé fausse et
+  inemployée `tuteur.reglages.photoPresente` est retirée.
+
+**Ce qui n'est pas fait, et ce qui reste tenu par le seul client.**
+- L'abonnement sélectif est un choix du client : le jeton de chaque élève garde `can_subscribe`,
+  un client modifié pourrait encore recevoir la caméra d'un camarade. Pour le fermer côté
+  serveur : que la fonction Edge de la récitation (ou de la salle) pose, à chaque début et fin de
+  récitation et à chaque entrée, les abonnements des élèves par l'API serveur de LiveKit
+  (`UpdateSubscriptions`), ou des jetons d'élève qui ne s'abonnent pas d'eux-mêmes. Les fonctions
+  Edge n'ont pas été touchées.
+- `LocalParticipant.setTrackSubscriptionPermissions` (livekit_client 2.12.0) n'est pas employée :
+  fermer sa caméra aux camarades demande `allParticipantsAllowed: false` et la liste nominative de
+  ceux qui gardent le droit ; le contrôleur invisible et la direction incognito n'apparaissent pas
+  dans la salle d'un élève et perdraient le son et l'image de l'élève.
+- Fuite connue, non corrigée ici : `session_peers_v` rend à tout participant le prénom ET le
+  matricule (`immutable_id`) des autres participants. À faire : remplacer la vue pour que
+  `immutable_id` ne soit rendu qu'à qui en a besoin (direction, contrôleur, enseignant de la
+  séance). Retirer la colonne demande de recréer la vue (installation par le directeur) ; garder
+  la colonne et la rendre nulle pour les autres se ferait par un simple `create or replace view`
+  de même forme, à vérifier contre les lecteurs de la vue.
+- Prouvé par tests (moteur à fausses pistes, vraie page à 390 et 1440, élève enfant et adulte,
+  enseignant) et captures de test (`docs/current/captures/E2E/camarades/`) ; ni rejoué en vraie
+  visio à plusieurs navigateurs, ni en production. Le SQL n'est pas encore installé.
