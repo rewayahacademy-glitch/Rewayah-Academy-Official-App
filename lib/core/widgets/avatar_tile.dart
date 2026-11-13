@@ -50,7 +50,13 @@ class AvatarTile extends StatelessWidget {
     super.key,
     this.urlSignee,
     this.diametre,
+    this.teinte,
   });
+
+  /// VISAGES (directeur, 12/11/2026) : la couleur de la personne pour le
+  /// repli sans photo (le cadre de visage de la salle), ou `null` : la
+  /// teinte neutre du foyer ([AppPalette.washFamily]), comme avant.
+  final AppColorPair? teinte;
 
   /// Le prenom, source des initiales de repli.
   final String prenom;
@@ -67,7 +73,7 @@ class AvatarTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final double taille = diametre ?? AppAvatar.moyen;
-    final AppColorPair paire = palette.washFamily;
+    final AppColorPair paire = teinte ?? palette.washFamily;
 
     final Widget repli = _Initiales(
       prenom: prenom,

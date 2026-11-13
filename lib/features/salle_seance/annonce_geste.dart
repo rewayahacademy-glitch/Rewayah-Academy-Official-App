@@ -27,6 +27,7 @@ class AnnonceGeste {
     required this.message,
     this.ton = TonEtat.accent,
     this.cle,
+    this.action,
   });
 
   /// Ce qui se passe, en quelques mots (« Yasmine recite »).
@@ -40,6 +41,12 @@ class AnnonceGeste {
 
   /// La cle posee sur le bandeau (tests).
   final Key? cle;
+
+  /// ENTREE-ROBUSTE (12/11/2026) : le lien qui regle la situation
+  /// (`LienFleche`), au plus un, pour une annonce qui reste tant que la
+  /// situation dure (« Activer le son »). Hors de l'egalite : un lien
+  /// reconstruit a chaque dessin ne doit pas rejouer l'entree de l'annonce.
+  final Widget? action;
 
   @override
   bool operator ==(Object other) =>
@@ -118,6 +125,7 @@ class CoucheAnnonceGeste extends StatelessWidget {
                                 titre: a.titre,
                                 message: a.message,
                                 ton: a.ton,
+                                action: a.action,
                               ),
                             ),
                           ),

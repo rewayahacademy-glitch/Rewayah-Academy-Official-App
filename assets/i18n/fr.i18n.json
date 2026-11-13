@@ -285,6 +285,8 @@
     "saisieVide": "Écrivez le prénom {prenom} pour confirmer"
   },
   "salle": {
+    "sonBloque": "Le son est coupé par le navigateur",
+    "activerSon": "Activer le son",
     "vignette": {
       "ranger": "Ranger la vidéo {deNom}",
       "montrer": "Montrer la vidéo {deNom}"
@@ -396,9 +398,37 @@
     "ile": {
       "deplier": "Voir le détail de la séance",
       "deplierEtat": "Voir l'état de la salle",
+      "replierEtat": "Réduire l'état de la salle",
       "replier": "Réduire le détail de la séance",
       "conclure": "Moins de 5 minutes\u00a0: pensez à conclure.",
       "finAtteinte": "Fin prévue atteinte\u00a0: séance toujours en direct."
+    },
+    "dynamique": {
+      "arriveePrenom": "{prenom} rejoint la salle",
+      "arrivees(plural, param=n)": {
+        "one": "élève rejoint la salle",
+        "other": "élèves rejoignent la salle"
+      },
+      "arriveeMarquePrenom": "{prenom} dans la salle",
+      "arriveesMarque(plural, param=n)": {
+        "one": "Un élève de plus dans la salle",
+        "other": "{n} élèves de plus dans la salle"
+      },
+      "unEleveRecite": "Un élève récite",
+      "pauseQuestion": "Pause de {minutes}\u00a0min\u00a0?",
+      "oui": "Oui",
+      "non": "Non",
+      "pauseProposee": "Pause proposée",
+      "pauseDebut": "Pause de {minutes} min. Reprise à {heure}",
+      "pausePriereDebut": "Pause de prière. Reprise à {heure}",
+      "pauseFinie": "La pause est finie",
+      "pauseFinNonConfirmee": "La fin de la pause n'est pas confirmée",
+      "priereDepartNonConfirme": "Le début de la pause de prière n'est pas confirmé",
+      "priereNom": "Pause de prière",
+      "priereA": "Pause de prière à {heure}",
+      "priereDans": "Pause de prière dans {minutes} min",
+      "commencerMaintenant": "Commencer maintenant",
+      "decaler": "Décaler de {minutes} min"
     },
     "supports": {
       "coran": "Coran, Mushaf de Médine",
@@ -567,6 +597,10 @@
         "ecoule": "{temps}\u00a0écoulé",
         "restant": "{temps}\u00a0restant",
         "tempsPrevuEcoule": "Temps prévu écoulé",
+        "reste": "Reste",
+        "apresFin": "Après la fin",
+        "resteSeance": "Reste {temps}",
+        "pause": "Pause",
         "annonce": "Séance\u00a0: {ecoule}, {restant}.",
         "minutesEcoulees(plural, param=minutes)": {
           "one": "{minutes} min écoulée",
@@ -583,6 +617,7 @@
         "dans": "Pause dans {minutes} min",
         "prevue": "Pause prévue",
         "enCours": "Pause, reprise à {heure}",
+        "repriseA": "Reprise à {heure}",
         "prise": "Pause prise",
         "demarrer": "Démarrer la pause",
         "terminer": "Terminer la pause",
@@ -895,6 +930,20 @@
       "quitteTitre": "Vous avez quitté la séance.",
       "quittePhrase": "Vous pourrez revenir tant qu'elle reste ouverte.",
       "accesRetireTitre": "Votre accès à cette séance a pris fin.",
+      "horsApplication": {
+        "titre": "Vous êtes sorti de la salle.",
+        "titreGuidee": "Tu es sorti de la salle.",
+        "phrase": {
+          "one": "Vous avez quitté l'application plus de {n} seconde pendant la séance. Vous pouvez revenir tant qu'elle reste ouverte.",
+          "other": "Vous avez quitté l'application plus de {n} secondes pendant la séance. Vous pouvez revenir tant qu'elle reste ouverte."
+        },
+        "phraseGuidee": {
+          "one": "Tu as quitté l'application plus de {n} seconde pendant la séance. Tu peux revenir tant qu'elle reste ouverte.",
+          "other": "Tu as quitté l'application plus de {n} secondes pendant la séance. Tu peux revenir tant qu'elle reste ouverte."
+        },
+        "phraseSansDelai": "Vous avez quitté l'application trop longtemps pendant la séance. Vous pouvez revenir tant qu'elle reste ouverte.",
+        "phraseGuideeSansDelai": "Tu as quitté l'application trop longtemps pendant la séance. Tu peux revenir tant qu'elle reste ouverte."
+      },
       "titreGuidee": "La séance est terminée.",
       "retourAccueil": "Retour à l'accueil",
       "enseignant": {
@@ -920,9 +969,6 @@
       }
     },
     "micro": "Micro",
-    "ruban": {
-      "voirLaClasse": "Voir la classe"
-    },
     "scene": {
       "parle": "en train de parler",
       "precedents": "Visages précédents",
@@ -938,8 +984,7 @@
     "cameraEchecRefus": "Le navigateur refuse l'accès à la caméra. Autorisez la caméra dans les réglages du site (à gauche de l'adresse), puis touchez de nouveau la caméra.",
     "cameraEchecOccupee": "La caméra est déjà utilisée par une autre application ou une autre fenêtre. Fermez-la, puis touchez de nouveau la caméra.",
     "cameraEchecAbsente": "Aucune caméra n'est trouvée sur cet appareil. Branchez-en une, puis touchez de nouveau la caméra.",
-    "cameraEchecAutre": "Touchez de nouveau la caméra. Si rien ne change, prévenez la direction avec le message ci-dessous.",
-    "cameraEchecMessage": "Message du navigateur\u00a0: {erreur}",
+    "cameraEchecAutre": "Touchez de nouveau la caméra. Si rien ne change, prévenez la direction.",
     "quitter": "Quitter",
     "ouvrirCoran": "Ouvrir le Coran",
     "confirmerSortie": "Quitter le cours\u00a0?",
@@ -952,8 +997,8 @@
     "retire": "Votre enseignant vous a fait sortir du cours",
     "rappelRecuDetail": "Regardez l'écran et écoutez votre enseignant.",
     "retireDetail": "Vous pourrez revenir quand votre enseignant vous aura réadmis. Touchez alors «\u00a0Réessayer\u00a0».",
-    "ouverteAilleurs": "La salle est ouverte sur un autre onglet ou appareil",
-    "ouverteAilleursDetail": "Votre compte ne peut être dans la salle qu'à un seul endroit à la fois. Fermez l'autre onglet, ou touchez «\u00a0Réessayer\u00a0» pour revenir ici.",
+    "ouverteAilleurs": "Ce compte est déjà dans la salle sur un autre appareil",
+    "ouverteAilleursDetail": "Quittez la salle sur l'autre appareil, ou touchez «\u00a0Réessayer\u00a0» pour la rejoindre ici\u00a0: l'autre appareil sortira de la salle.",
     "fermeture": {
       "sansEnseignantTitre": "Votre enseignant n'est plus dans la salle",
       "sansEnseignantTitreTutoie": "Ton enseignant n'est plus dans la salle",
@@ -2015,7 +2060,7 @@
       "trancheInconnue": "Pas encore connue",
       "trancheNonLue": "Non lue",
       "photo": "Photo",
-      "photoLegende": "Une photo du visage {dePrenom}. Ce n'est pas une pièce d'identité.",
+      "photoLegende": "Une photo du visage {dePrenom}. Ce n'est pas une pièce d'identité. Son enseignant, les élèves de sa classe et la direction la voient.",
       "photoAucune": "Pas encore de photo",
       "photoPresente": "Photo enregistrée",
       "choisir": "Choisir une photo",
@@ -5424,6 +5469,21 @@
       "fondateursMinimum": "Fondateurs au minimum",
       "fondateursMinimumDetail": "Le nombre de fondateurs exigé parmi les participants d'un entretien.",
       "fondateursBornes": "De 1 à 99.",
+      "pause": {
+        "section": "Pause pendant la séance",
+        "intro": "Par défaut, chaque séance d'une classe a une pause, juste après le milieu. La barre du chrono la propose à l'enseignant, qui accepte ou refuse. L'enseignant peut aussi régler la pause de sa classe.",
+        "adultes": "Pause des classes d'adultes",
+        "adultesDetail": "La durée de la pause par défaut d'une classe d'adultes. 0\u00a0: pas de pause. Arrondie aux 5 minutes, de 5 à 30.",
+        "enfants": "Pause des classes d'enfants",
+        "enfantsDetail": "La durée de la pause par défaut d'une classe d'enfants. 0\u00a0: pas de pause. Arrondie aux 5 minutes, de 5 à 30.",
+        "rappel": "Rappel après un refus",
+        "rappelDetail": "Si l'enseignant refuse la pause, elle lui est proposée de nouveau après ce délai\u00a0: la pause est un droit.",
+        "reste": "Cours restant après la pause",
+        "resteDetail": "La pause n'est plus proposée s'il restait, après elle, moins que ce temps de cours.",
+        "bornesDuree": "De 0 à 30 minutes.",
+        "bornesRappel": "De 1 à 60 minutes.",
+        "bornesReste": "De 0 à 60 minutes."
+      },
       "paie": {
         "section": "Paie des enseignants",
         "intro": "La paie d'un mois est versée entre ces deux jours du mois suivant. Les enseignants voient ces dates sur «\u00a0Mes revenus\u00a0».",
@@ -8482,7 +8542,6 @@
       "intro": "Ces réglages s'appliquent à la séance suivante, jamais pendant un cours.",
       "photo": "Photo",
       "photoAucune": "{prenom} n'a pas encore de photo. Elle reste visible du seul foyer.",
-      "photoPresente": "La photo {dePrenom} reste visible du seul foyer, jamais de son enseignant ni des autres élèves.",
       "photoAjouter": "Ajouter une photo",
       "photoChanger": "Changer la photo",
       "photoTropLourde": "Cette photo dépasse {taille}\u00a0Mo. Reprenez-la en qualité plus basse.",
@@ -15654,6 +15713,74 @@
       "chargement": "Chargement des familles de la classe",
       "erreur": "Les familles de la classe n'ont pas pu être lues. Réessayez dans un instant.",
       "vide": "Écrivez un message avant de l'envoyer."
+    }
+  },
+  "journalSorties": {
+    "texte": {
+      "titre": "Les sorties de l'application pendant le cours",
+      "parent": {
+        "quoi": "Ce qui est noté : chaque fois que votre enfant quitte l'application pendant une séance, l'heure où il la quitte, l'heure où il revient, et si cette absence l'a fait sortir de la salle. Rien d'autre : ni ce qu'il fait ailleurs, ni son écran, ni son image, ni sa voix.",
+        "pourquoi": "Pourquoi : suivre l'attention de votre enfant pendant le cours, pour vous et pour son enseignant.",
+        "qui": "Qui peut le lire : vous, votre enfant, l'enseignant de la séance et la direction. Jamais les autres élèves ni leurs familles.",
+        "retrait": "Vous pouvez retirer votre accord à tout moment, ici même. Dès que vous le retirez, plus rien n'est noté.",
+        "sansAccord": "Sans votre accord, rien n'est noté et rien ne change pour le cours. Un élève qui reste trop longtemps hors de l'application sort de la salle, avec ou sans accord : cela ne garde rien.",
+        "caseAccord": "J'accepte que les sorties de l'application {dePrenom} pendant les séances soient notées."
+      },
+      "adulte": {
+        "quoi": "Ce qui est noté : chaque fois que vous quittez l'application pendant une séance, l'heure où vous la quittez, l'heure où vous revenez, et si cette absence vous a fait sortir de la salle. Rien d'autre : ni ce que vous faites ailleurs, ni votre écran, ni votre image, ni votre voix.",
+        "pourquoi": "Pourquoi : suivre votre attention pendant le cours, pour vous et pour votre enseignant.",
+        "qui": "Qui peut le lire : vous, l'enseignant de la séance et la direction. Jamais les autres élèves ni leurs familles.",
+        "retrait": "Vous pouvez retirer votre accord à tout moment, ici même. Dès que vous le retirez, plus rien n'est noté.",
+        "sansAccord": "Sans votre accord, rien n'est noté et rien ne change pour le cours. Si vous restez trop longtemps hors de l'application, vous sortez de la salle, avec ou sans accord : cela ne garde rien.",
+        "caseAccord": "J'accepte que mes sorties de l'application pendant les séances soient notées."
+      }
+    },
+    "accord": {
+      "titre": "Sorties de l'application",
+      "ligne": "Sorties de l'application pendant le cours",
+      "ligneDetail": "Votre accord, pour chaque enfant",
+      "ligneDetailAdulte": "Votre accord",
+      "intro": "Lisez ce texte, puis choisissez pour chaque enfant. Rien n'est noté sans votre accord.",
+      "introAdulte": "Lisez ce texte, puis choisissez. Rien n'est noté sans votre accord.",
+      "accepteLe": "Accepté le {date}",
+      "pasAccepte": "Pas d'accord : rien n'est noté.",
+      "retirerPour": "Retirer mon accord pour {prenom}",
+      "retirer": "Retirer mon accord",
+      "enregistrer": "Enregistrer mon accord",
+      "manque": "Cochez une case pour enregistrer votre accord.",
+      "erreur": "Votre choix n'est pas confirmé\u00a0: il est possible qu'il ne soit pas parvenu jusqu'à Rewayah. Réessayez dans un instant.",
+      "lectureErreur": "Vos accords n'ont pas pu être lus. Réessayez dans un instant.",
+      "horsService": "Ce relevé n'est pas en service : rien n'est noté. Revenez au Compte.",
+      "versionPerimee": "Le texte vient de changer. Relisez-le, puis cochez de nouveau.",
+      "eteint": "La direction vient d'arrêter ce relevé : rien n'est noté. Revenez au Compte.",
+      "merci": "Votre accord est enregistré.",
+      "retire": "Votre accord est retiré : plus rien n'est noté."
+    },
+    "rapport": {
+      "titre": "Sorties de l'application",
+      "nombreCle": "Nombre",
+      "nombre(param=n)": {
+        "one": "{n} sortie",
+        "other": "{n} sorties"
+      },
+      "dureeTotale": "Durée totale",
+      "plage": "De {debut} à {fin}",
+      "sortieSalle": "Sortie de la salle après le délai",
+      "secondes": "{n} s",
+      "minutes": "{n} min",
+      "minutesSecondes": "{m} min {s} s",
+      "resume": "{nombre}, {duree}",
+      "ligneEleve": "Sorties de l'application : {resume}"
+    },
+    "reglages": {
+      "section": "Sorties de l'application pendant une séance",
+      "intro": "Le délai vaut pour tous les élèves. Le relevé des sorties ne note rien sans l'accord du tuteur, ou de l'élève adulte.",
+      "journal": "Noter les sorties de l'application",
+      "journalDetail": "N'allumez qu'après la validation des textes de l'accord par le directeur. Allumé, le tuteur et l'élève adulte voient la page de l'accord dans leur Compte.",
+      "delai": "Délai avant la sortie de la salle",
+      "delaiDetail": "Le temps laissé à l'élève hors de l'application avant qu'il sorte de la salle.",
+      "bornes": "De 5 à 600 secondes.",
+      "unite": "{n} s"
     }
   }
 }

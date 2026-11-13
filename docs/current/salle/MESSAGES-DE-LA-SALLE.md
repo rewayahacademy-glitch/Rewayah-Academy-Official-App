@@ -130,7 +130,7 @@ Ordre de priorité, du plus grave au moins grave : c'est l'ordre de ce tableau.
 
 | N° | Message | Qui | Décision |
 | :-- | :-- | :-- | :-- |
-| 20 | **Amina est entrée** / **est sortie** (à créer) | E seul | À créer chez l'enseignant. **Jamais chez les élèves** : c'est du bruit pour eux, et un enfant ne lit pas le prénom de ses camarades |
+| 20 | **Amina est entrée** / **est sortie** (à créer) | E seul | À créer chez l'enseignant. **Jamais chez les élèves** : c'est du bruit pour eux, et un enfant ne lit pas le prénom de ses camarades (règle amendée le 12/11/2026, D-040 : le prénom se lit dans la grille ; l'annonce d'entrée reste réservée à l'enseignant) |
 | 21 | **Connexion rétablie** | La personne | Garder : 4 s, puis rien |
 | 22 | **Vous pouvez écrire sur le tableau** | L'élève autorisé | Garder : 6 s. Le retrait du droit : 4 s |
 | 23 | **Votre enseignant a coupé votre micro** (à créer) | L'élève | À créer : aujourd'hui l'élève voit son micro coupé sans savoir par qui |
@@ -191,6 +191,9 @@ Les questions que votre message ne posait pas, avec ma réponse.
     Réponse : une seule phrase par situation, écrite une fois.
 19. **Ce qu'on ne dit pas.** Un enfant ne lit pas le prénom d'un camarade, ni le nom d'un parent
     qui observe un autre enfant, ni le mot « contrôle actif ».
+    *Amendé le 12/11/2026 par le directeur (journal D-040) : tout élève, enfant compris, lit le
+    prénom (jamais le nom de famille) et voit la photo de ses camarades de Classe dans la salle ;
+    le reste de ce point tient.*
 20. **Le mensonge par omission.** Si une chose est vraie et grave (on m'enregistre, on me regarde,
     on ne m'entend pas), elle ne doit jamais pouvoir être masquée par un réglage ou par un écran
     trop petit.

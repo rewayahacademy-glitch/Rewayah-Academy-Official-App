@@ -134,6 +134,9 @@ const Map<String, int> _domaines = <String, int>{
   'souratesRetirables': 7,
   // SUIVI-ATTENTE (12/11/2026) : le suivi de l'attente de la classe.
   'suiviAttente': 100,
+  // HORS-SALLE-2 (13/11/2026) : le journal des sorties de l'application
+  // (accord du parent, rapport, reglages).
+  'journalSorties': 40,
 };
 
 /// Les domaines francais venus de ccr sans tranche arabe (reunion du 10/10) :

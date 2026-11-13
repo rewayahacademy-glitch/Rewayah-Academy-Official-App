@@ -273,6 +273,13 @@ class _EtatPageMadina15 extends State<PageMadina15> {
 
   @override
   Widget build(BuildContext context) {
+    // SYNCHRO-SESSION (13/11/2026) : une place nulle, le temps d'une mise en
+    // page (cadre qui se monte), ne compose rien : l'echelle serait nulle et
+    // l'interligne une division par zero (hauteur NaN).
+    final double? hauteurDonnee = widget.hauteur;
+    if (widget.largeur <= 0 || (hauteurDonnee != null && hauteurDonnee <= 0)) {
+      return const SizedBox.shrink();
+    }
     final AppPalette palette = AppPalette.of(context);
     // Le papier est la surface de l'application, l'encre celle de son texte.
     final Color encre = palette.surfaceCanvas.onBackground;

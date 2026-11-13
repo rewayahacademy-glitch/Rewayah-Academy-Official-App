@@ -384,13 +384,14 @@ class VueSalle {
   /// l'a comme **test de sa propre invisibilite** : il doit y lire exactement ce
   /// que l'enseignant y lit.
   ///
-  /// L'eleve ne la voit pas, et le motif a change. **L'ancien -- « une seance
-  /// est plafonnee a deux participants (ADR-004) » -- est invalide depuis le
-  /// pivot groupes** : une liste de six lignes apprendrait quelque chose. Ce qui
-  /// tient encore : un enfant en mode enfant n'a droit qu'a deux commandes, et
-  /// donner a un mineur la liste nominative de ses camarades est une decision de
-  /// protection des mineurs, pas un choix d'interface. Elle appartient a
-  /// l'operateur ; elle n'est donc pas prise ici.
+  /// L'eleve ne la voit pas. **L'ancien motif -- « une seance est plafonnee a
+  /// deux participants (ADR-004) » -- est invalide depuis le pivot groupes.**
+  /// La decision de l'operateur est prise (directeur, 12/11/2026, CAMARADES,
+  /// journal D-040) : chaque eleve voit ses camarades dans la grille, par
+  /// leur photo et leur prenom (la video seulement de celui qui recite,
+  /// `videoMontree`) ; il n'a pas pour autant de liste ni de panneau des
+  /// eleves (Q2 du 26/10, non) : un enfant en Interface guidee n'a droit
+  /// qu'a deux commandes, et la liste reste l'outil de qui conduit.
   bool get voitLesParticipants =>
       role == RoleSalle.enseignant ||
       role == RoleSalle.controleur ||

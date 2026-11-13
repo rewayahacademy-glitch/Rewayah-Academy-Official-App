@@ -9,8 +9,13 @@
 
 import 'package:flutter/widgets.dart';
 
+import '../../core/video/video_camarades.dart';
+import '../../core/video/video_session_provider.dart';
 import '../../core/widgets/action_principale.dart';
+import '../salle/vue_salle.dart';
+import 'marque_chrono.dart';
 import 'panneau_bibliotheque_salle.dart' show SupportBibliotheque;
+import 'pilote_dynamique.dart' show PiloteDynamique;
 import 'vue_seance.dart';
 
 /// Les paliers du zoom local de la page (directeur, 24/10/2026) : 100, 125,
@@ -85,6 +90,38 @@ ModeScene calculerModeScene({
   return tableau ? ModeScene.tableau : ModeScene.document;
 }
 
+/// CAMARADES (directeur, 12/11/2026, journal D-040) : « la vraie video,
+/// c'est seulement celui qui recite ; sinon on ne voit que sa photo. »
+///
+/// LA regle d'affichage de la salle, a UN seul endroit : la video de
+/// [identite] est-elle montree a la personne qui regarde ([vue]) ?
+///
+/// - chez un eleve ([RoleSalle.eleve]) : sa propre image, l'enseignant qui
+///   conduit (role signe par le serveur), et le camarade qui recite
+///   ([recitant]) ; tout autre camarade est montre par sa photo, ou sa
+///   couleur et son initiale (`CadreVisage`), jamais par sa camera ;
+/// - chez l'enseignant, le tuteur qui assiste, le controleur et la
+///   direction : rien ne change.
+///
+/// Le moteur tient la meme regle ([videoRecue]) et ne s'abonne pas a la
+/// camera d'un camarade qui ne recite pas : l'ecran ne cache pas une image
+/// recue, il ne la recoit pas.
+bool videoMontree(VueSalle vue, String identite, {String? recitant}) {
+  for (final ParticipantSalle p in vue.participantsListes) {
+    if (p.identite == identite) {
+      return videoRecue(
+        regardEleve: vue.role == RoleSalle.eleve,
+        local: p.estLocal,
+        roleDistant: p.role,
+        identite: p.identite,
+        recitant: recitant,
+      );
+    }
+  }
+  // Inconnu de la vue : rien a montrer chez un eleve.
+  return vue.role != RoleSalle.eleve;
+}
+
 /// La portee des medias reels de `/salle`.
 class PorteeMediaSalle extends InheritedWidget {
   const PorteeMediaSalle({
@@ -98,7 +135,8 @@ class PorteeMediaSalle extends InheritedWidget {
     this.scenePremierPlan = false,
     this.onBasculerScene,
     this.actionScene,
-    this.pastille,
+    this.marques = const <MarqueChrono>[],
+    this.pilote,
     this.presenceEnSalle = false,
     this.boutonEleves,
     this.alerte,
@@ -174,14 +212,20 @@ class PorteeMediaSalle extends InheritedWidget {
   /// en haut a droite a cote de la vignette, ou `null`.
   final ({int nombre, VoidCallback onPress})? boutonEleves;
 
-  /// S0.2 : la pastille posee dans la ligne de l'en-tete (la presence de
-  /// l'eleve, section 6.6), ou `null`.
-  final Widget? pastille;
+  /// DYNAMIQUE-CHRONO-1 (directeur, 12/11/2026 : « le chrono cache le
+  /// document ») : ce qui flottait en pastilles a cote de la barre (sa propre
+  /// presence quand elle s'ecarte de « En salle », section 6.6 ; l'eleve qui
+  /// recite) rentre dans la Dynamique chrono, en marques.
+  final List<MarqueChrono> marques;
+
+  /// DYNAMIQUE-CHRONO-2 : la file des alertes et les marques de la barre
+  /// (arrivees, appel, recitation, pause), ou `null` (demonstration).
+  final PiloteDynamique? pilote;
 
   /// CHRONO-ETAT (directeur, 11/11/2026 : « en ligne / en salle =
   /// doublon ») : la presence de la personne est confirmee par le serveur.
   /// La pilule d'etat dit alors « En salle » a la place de « En ligne », et
-  /// [pastille] ne le repete pas : un seul mot pour un seul etat.
+  /// [marques] ne le repetent pas : un seul mot pour un seul etat.
   final bool presenceEnSalle;
 
   /// S0.2 : ce qui se dit sous l'en-tete, seulement quand il y a lieu (le
@@ -268,6 +312,15 @@ class ActionSousLaScene extends InheritedWidget {
         pleineLargeur: false,
         onPress: action.onPress,
       );
+
+  /// BIBLIOTHEQUE-SALLE : [action] avec le geste de la Bibliotheque de
+  /// l'appareil quand il existe ; le libelle reste celui de la salle.
+  static ({String libelle, VoidCallback onPress})? avecGeste(
+    ({String libelle, VoidCallback onPress})? action,
+    VoidCallback? geste,
+  ) => action == null || geste == null
+      ? action
+      : (libelle: action.libelle, onPress: geste);
 
   /// L'action fournie au-dessus de [context], ou `null`.
   static ({String libelle, VoidCallback onPress})? de(BuildContext context) =>

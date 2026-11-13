@@ -149,6 +149,43 @@ void main() {
     expect(find.byKey(BlocPauseClasse.cleEnregistrer), findsNothing);
   });
 
+  // PAUSE-SERVEUR (12/11/2026) : une classe sans reglage enregistre recoit la
+  // pause par defaut ; le serveur la rend (version 0) et le bloc montre la
+  // verite, pause active au milieu (45 min pour 90), jamais « Aucune pause ».
+  testWidgets('classe sans reglage : la pause par defaut, active, au milieu', (
+    WidgetTester tester,
+  ) async {
+    await _poser(
+      tester,
+      _Port(
+        lecture: () async => const ReglagePause(
+          actif: true,
+          apresMinutes: 45,
+          dureeMinutes: 10,
+          version: '0',
+          peutModifier: true,
+        ),
+      ),
+    );
+    expect(tester.widget<Switch>(find.byType(Switch)).value, isTrue);
+    expect(find.text('Aucune pause'), findsNothing);
+    expect(
+      find.descendant(
+        of: find.byKey(BlocPauseClasse.cleMoment),
+        matching: _t('45 min'),
+      ),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(
+        of: find.byKey(BlocPauseClasse.cleDuree),
+        matching: _t('10 min'),
+      ),
+      findsOneWidget,
+    );
+    expect(find.byKey(BlocPauseClasse.cleEnregistrer), findsNothing);
+  });
+
   testWidgets('modifier la duree, enregistrer, relire le reglage du serveur', (
     WidgetTester tester,
   ) async {

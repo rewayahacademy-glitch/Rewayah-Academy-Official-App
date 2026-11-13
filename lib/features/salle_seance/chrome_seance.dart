@@ -22,9 +22,10 @@ import 'capsule_seance.dart';
 import 'chrono_salle.dart';
 import 'cible_debordante.dart';
 import 'dock_seance.dart';
+import 'dynamique_chrono.dart';
+import 'marque_chrono.dart';
 import 'media_salle.dart';
 import 'mention_seance.dart';
-import 'pilule_etat_salle.dart';
 import 'vue_seance.dart';
 
 /// Retour ‹, titre, ligne d'etat, pastille « En ligne », mention.
@@ -80,7 +81,9 @@ class ChromeSeance extends StatelessWidget {
                   vue: vue,
                   actions: actions,
                   gabarit: gabarit,
-                  pastille: PorteeMediaSalle.de(context)?.pastille,
+                  pastille: _pastillesDes(
+                    PorteeMediaSalle.de(context)?.marques,
+                  ),
                 )
               : gabarit == Gabarit.desktop
               ? _Large(vue: vue, actions: actions, focusCapsule: focusCapsule)
@@ -187,7 +190,7 @@ class _UneLigne extends StatelessWidget {
               child: const SizedBox.shrink(),
             ),
             if (large)
-              PiluleEtatSalle(vue: vue)
+              Flexible(flex: 3, child: LigneEtatSalle(vue: vue))
             else ...<Widget>[_Connexion(vue: vue, compacte: true)],
             if (laPastille != null) ...<Widget>[Ecart.hSm, laPastille],
             if (large)
@@ -839,4 +842,20 @@ class _Identite extends StatelessWidget {
           : null,
     );
   }
+}
+
+/// DYNAMIQUE-CHRONO-1 : l'ancien en-tete d'une ligne (hors plein cadre) garde
+/// les marques de la salle en pastilles (point et mot), comme avant.
+Widget? _pastillesDes(List<MarqueChrono>? marques) {
+  if (marques == null || marques.isEmpty) return null;
+  return Row(
+    mainAxisSize: MainAxisSize.min,
+    spacing: AppSpacing.sm,
+    children: <Widget>[
+      for (final MarqueChrono m in marques)
+        Flexible(
+          child: StatusPill(libelle: m.libelle, ton: m.ton),
+        ),
+    ],
+  );
 }

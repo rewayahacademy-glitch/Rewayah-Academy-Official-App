@@ -89,7 +89,48 @@ class HaloLumiere extends StatefulWidget {
     this.arrondi = AppRadius.arrondiMd,
     this.apparition,
     super.key,
-  });
+  }) : voix = null;
+
+  /// VISAGES (directeur, 12/11/2026, point 9 : « reprendre l'effet de
+  /// lumiere du bouton Compte pour l'orateur, dans la miniature ») : la meme
+  /// lumiere (balayage des teintes, flou doux), mais **dans** sa forme,
+  /// rognee a son arrondi ([arrondi]) : rien ne deborde du cadre. Tant que
+  /// [voix] est vrai (la personne parle), des vagues partent du bord vers le
+  /// centre, d'ampleur constante ; [voix] faux : plus aucune horloge, et
+  /// l'appelant efface la lumiere en fondu. Prend toute la place offerte.
+  ///
+  /// Ni arbitre (ce n'est pas une alerte : plusieurs personnes peuvent
+  /// parler), ni nombre de tours (elle dure le temps de la parole). Sous
+  /// mouvement reduit, l'appelant pose une bordure fixe a sa place ; posee
+  /// quand meme, elle reste immobile.
+  const HaloLumiere.voix({
+    required bool parle,
+    this.arrondi = AppRadius.arrondiMd,
+    super.key,
+  }) : voix = parle,
+       nature = NatureHalo.nouveau,
+       taille = Size.zero,
+       forme = FormeHalo.rectangle,
+       apparition = null;
+
+  /// Le mode voix ([HaloLumiere.voix]) : vrai tant que la personne parle ;
+  /// `null` pour une lumiere d'etat (les autres champs servent alors).
+  final bool? voix;
+
+  /// La cle de la lumiere de la voix (tests).
+  static const Key voixKey = ValueKey<String>('halo-lumiere-voix');
+
+  /// Le nombre de vagues visibles a la fois dans la lumiere de la voix.
+  static const int vagues = 3;
+
+  /// Faux : les vagues de la voix restent posees (aucune horloge).
+  ///
+  /// **Reserve aux tests** : une vague qui dure tant que quelqu'un parle
+  /// empeche `pumpAndSettle` de rendre la main. `test/flutter_test_config.dart`
+  /// la coupe pour toute la suite ; le test du composant la rallume. Jamais
+  /// touche par l'application (meme regle que `SceneAttente.boucle`).
+  @visibleForTesting
+  static bool boucleVoix = true;
 
   /// La cle de la lumiere qui tourne (tests).
   static const Key lumiereKey = ValueKey<String>('halo-compte-lumiere');
@@ -136,6 +177,148 @@ class HaloLumiere extends StatefulWidget {
   State<HaloLumiere> createState() => _EtatHaloLumiere();
 }
 
+/// La lumiere de la voix ([HaloLumiere.voix]) : des vagues dans la forme,
+/// tant qu'on parle.
+class _LumiereVoix extends StatefulWidget {
+  const _LumiereVoix({required this.voix, required this.arrondi});
+
+  final bool voix;
+  final BorderRadius arrondi;
+
+  @override
+  State<_LumiereVoix> createState() => _EtatVoix();
+}
+
+class _EtatVoix extends State<_LumiereVoix>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _horloge = AnimationController(
+    vsync: this,
+    duration: AppMouvement.vagueParole,
+  );
+
+  bool get _tourne =>
+      widget.voix &&
+      HaloLumiere.boucleVoix &&
+      !AppMouvement.mouvementReduit(context) &&
+      !EffetsReduits.de(context);
+
+  void _accorder() {
+    if (_tourne) {
+      if (!_horloge.isAnimating) _horloge.repeat();
+    } else {
+      // Silence : l'horloge s'arrete, rien ne tourne sans parole.
+      _horloge.stop();
+    }
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _accorder();
+  }
+
+  @override
+  void didUpdateWidget(_LumiereVoix ancien) {
+    super.didUpdateWidget(ancien);
+    if (ancien.voix != widget.voix) _accorder();
+  }
+
+  @override
+  void dispose() {
+    _horloge.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => IgnorePointer(
+    child: RepaintBoundary(
+      child: CustomPaint(
+        key: HaloLumiere.voixKey,
+        size: Size.infinite,
+        painter: _PeintreVoix(
+          horloge: _horloge,
+          couleurs: CouleursHalo.parole,
+          arrondi: widget.arrondi,
+          forte: !AppPalette.of(context).estSombre,
+        ),
+      ),
+    ),
+  );
+}
+
+/// Les vagues de la voix : une lueur douce le long du bord interieur, qui
+/// tourne lentement (le balayage du cercle Compte), et [HaloLumiere.vagues]
+/// anneaux arrondis qui partent du bord vers le centre en s'effacant. Tout
+/// est rogne a l'arrondi de la forme.
+class _PeintreVoix extends CustomPainter {
+  _PeintreVoix({
+    required this.horloge,
+    required this.couleurs,
+    required this.arrondi,
+    required this.forte,
+  }) : super(repaint: horloge);
+
+  final Animation<double> horloge;
+  final AppHaloColor couleurs;
+  final BorderRadius arrondi;
+  final bool forte;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (size.isEmpty) return;
+    final Rect zone = Offset.zero & size;
+    final RRect forme = arrondi.toRRect(zone);
+    final double t = horloge.value;
+    final Rect balayage = Rect.fromCircle(
+      center: zone.center,
+      radius: size.longestSide / 2,
+    );
+    canvas
+      ..save()
+      ..clipRRect(forme);
+    // La lueur du bord : un trait flou pose SUR le bord, dont seule la
+    // moitie interieure reste (le reste est rogne).
+    canvas.drawRRect(
+      forme,
+      couleurs.pinceau(
+          balayage,
+          angle: t * 2 * math.pi,
+          intensite: forte ? 0.9 : 0.75,
+        )
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = AppSpacing.md
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, AppSpacing.sm),
+    );
+    // Les vagues : decalees d'une part de tour, elles se suivent tant que la
+    // personne parle, ralentissent en entrant et s'effacent avant le centre.
+    // Elles restent dans la bande du bord (un huitieme du petit cote, 24 au
+    // plus) : la lumiere ne passe jamais sur le visage, au centre.
+    final double profondeur = math.min(size.shortestSide * 0.12, AppSpacing.xl);
+    for (int i = 0; i < HaloLumiere.vagues; i++) {
+      final double phase = (t + i / HaloLumiere.vagues) % 1;
+      final double avance = 1 - (1 - phase) * (1 - phase);
+      final double entree = math.min(1, phase / 0.12);
+      final double alpha = 0.55 * entree * (1 - phase) * (1 - phase);
+      if (alpha <= 0.01) continue;
+      final double retrait = AppSpacing.xs + profondeur * avance;
+      canvas.drawRRect(
+        forme.deflate(retrait),
+        couleurs.pinceau(balayage, angle: -t * 2 * math.pi, intensite: alpha)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = AppSpacing.xs * (1 - phase) + 2
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3),
+      );
+    }
+    canvas.restore();
+  }
+
+  @override
+  bool shouldRepaint(_PeintreVoix ancien) =>
+      ancien.couleurs != couleurs ||
+      ancien.arrondi != arrondi ||
+      ancien.forte != forte;
+}
+
 class _EtatHaloLumiere extends State<HaloLumiere>
     with TickerProviderStateMixin, WidgetsBindingObserver {
   AnimationController? _tour;
@@ -155,7 +338,7 @@ class _EtatHaloLumiere extends State<HaloLumiere>
   }
 
   void _rejouer() {
-    if (!mounted) return;
+    if (!mounted || _voix) return;
     setState(() {
       _arreter();
       _demarrerSiElue();
@@ -164,9 +347,13 @@ class _EtatHaloLumiere extends State<HaloLumiere>
 
   bool get _elue => _arbitre?.peutTourner(this) ?? true;
 
+  /// Le mode voix : ni arbitre, ni tours (voir [HaloLumiere.voix]).
+  bool get _voix => widget.voix != null;
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
+    if (_voix) return;
     final EtatArbitreLumieres? arbitre = ArbitreLumieres.de(context);
     if (!identical(arbitre, _arbitre)) {
       _arbitre?._retirer(this);
@@ -184,6 +371,7 @@ class _EtatHaloLumiere extends State<HaloLumiere>
   @override
   void didUpdateWidget(HaloLumiere ancien) {
     super.didUpdateWidget(ancien);
+    if (_voix) return;
     if (ancien.nature != widget.nature) {
       _arbitre?._inscrire(this, widget.nature);
     }
@@ -217,6 +405,9 @@ class _EtatHaloLumiere extends State<HaloLumiere>
 
   @override
   Widget build(BuildContext context) {
+    if (widget.voix case final bool parle) {
+      return _LumiereVoix(voix: parle, arrondi: widget.arrondi);
+    }
     // « Reduire les effets » : aucune lumiere, ni tournante ni fixe.
     if (EffetsReduits.de(context)) return const SizedBox.shrink();
     final bool forte = !AppPalette.of(context).estSombre;

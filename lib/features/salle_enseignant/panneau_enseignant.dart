@@ -9,6 +9,8 @@ import '../../core/coran/vue_lecteur.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/tc_coran/moteur_mushaf.dart';
+import '../../core/tc_coran/page_mushaf_vm.dart';
 import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -19,7 +21,6 @@ import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/barre_precedent_suivant.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/local_feedback.dart';
-import '../../core/widgets/skeleton.dart';
 import 'page_coran_salle.dart';
 import 'presentation_coran.dart';
 import 'vue_presentation.dart';
@@ -306,19 +307,23 @@ class _Reference extends StatelessWidget {
   }
 }
 
+/// PAGES-FLUIDES (directeur, 12/11/2026) : l'etat de lecture de la page
+/// presentee [numero], lu dans **le meme cache que le rendu**
+/// ([pageMushafProvider], qui lit [pageCorpusProvider]) : la page que le
+/// presentateur a lue avant de l'envoyer sert aussi a l'afficher, sans
+/// seconde requete.
+EtatLecteur etatPagePresentee(WidgetRef ref, int numero) {
+  final PageMushafVM? vue = ref.watch(pageMushafProvider(numero)).value;
+  if (vue == null || vue.numero != numero) return EtatLecteur.chargement;
+  return vue.etat;
+}
+
 /// K-56 (pilote, 26/10/2026) : vrai quand la page presentee [numero] montre
 /// un etat d'erreur avec « Reessayer » (page du Coran injoignable, ou page
 /// lue mais qui ne se compose pas) : « Reessayer » reste alors le seul bouton
 /// plein de la salle.
 bool pagePresenteeEnErreur(WidgetRef ref, int numero) {
-  final AsyncValue<PageCoran?> page = ref.watch(pageCoranProvider(numero));
-  final EtatLecteur etat = VueLecteur.depuis(
-    pageDemandee: numero,
-    page: page.value,
-    chargementEnCours: page.isLoading,
-    sourates: ref.watch(souratesProvider).value,
-    position: null,
-  ).etat;
+  final EtatLecteur etat = etatPagePresentee(ref, numero);
   return etat == EtatLecteur.indisponible ||
       (etat == EtatLecteur.lecture && pageCoranEnErreur(ref, numero));
 }
@@ -327,6 +332,11 @@ bool pagePresenteeEnErreur(WidgetRef ref, int numero) {
 ///
 /// S0 : aussi posee par `/salle` dans la surface a page fixe de la salle de
 /// seance ([surCarte] : l'encre de la carte, [SurCarteSalle]).
+///
+/// PAGES-FLUIDES : pendant la lecture, c'est encore [PageCoranSalle] qui est
+/// rendue (elle garde l'ancienne page a l'ecran, ou la forme d'une page au
+/// tout premier affichage) ; quand l'enseignant a demande une page qui se
+/// lit encore ([pageEnPreparationProvider]), une barre fine le dit.
 class PageCoranPresentee extends ConsumerWidget {
   /// Cree la page presentee.
   const PageCoranPresentee({
@@ -349,35 +359,23 @@ class PageCoranPresentee extends ConsumerWidget {
       : _etat(context, ref);
 
   Widget _etat(BuildContext context, WidgetRef ref) {
-    final AsyncValue<PageCoran?> page = ref.watch(
-      pageCoranProvider(contenu.page),
-    );
-    final AsyncValue<List<Sourate>?> sourates = ref.watch(souratesProvider);
     // SALLE-ENCRE-1 : les etats sans page se posent sur le fond de la salle.
     final AppColorPair salle = encreSalle(context);
+    final int? demandee = ref.watch(pageEnPreparationProvider);
 
-    final VueLecteur lecteur = VueLecteur.depuis(
-      pageDemandee: contenu.page,
-      page: page.value,
-      chargementEnCours: page.isLoading,
-      sourates: sourates.value,
-      // [QURAN-STAGE] Aucune position personnelle : l'etat presente est
-      // ephemere, il n'a rien a voir avec le marque-page de qui que ce soit, et
-      // l'enseignant n'a donc aucune reprise a se voir proposer.
-      position: null,
-    );
-
-    return switch (lecteur.etat) {
-      EtatLecteur.chargement => const Padding(
-        padding: EdgeInsets.all(AppSpacing.md),
-        child: Skeleton.texte(lignes: 6),
-      ),
+    // [QURAN-STAGE] Aucune position personnelle : l'etat presente est
+    // ephemere, il n'a rien a voir avec le marque-page de qui que ce soit, et
+    // l'enseignant n'a donc aucune reprise a se voir proposer.
+    return switch (etatPagePresentee(ref, contenu.page)) {
       EtatLecteur.indisponible => EmptyState(
         message: t.enseignant.salle.pageIndisponible,
         invitation: t.enseignant.salle.pageIndisponibleDetail,
         icone: AppIcons.horsLigne,
         libelleAction: t.commun.reessayer,
-        onAction: () => ref.invalidate(pageCoranProvider(contenu.page)),
+        onAction: () => ref
+          ..invalidate(pageCorpusProvider(contenu.page))
+          ..invalidate(souratesCoranProvider)
+          ..invalidate(pageMushafProvider(contenu.page)),
         encre: salle,
       ),
       EtatLecteur.corpusAbsent => EmptyState(
@@ -388,9 +386,10 @@ class PageCoranPresentee extends ConsumerWidget {
         encre: salle,
       ),
       // D9 : la page du mushaf a quinze lignes, plus le texte continu.
-      EtatLecteur.lecture => PageCoranSalle(
+      EtatLecteur.chargement || EtatLecteur.lecture => PageCoranSalle(
         numero: contenu.page,
         surCarte: surCarte,
+        enPreparation: demandee != null && demandee != contenu.page,
       ),
     };
   }

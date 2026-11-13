@@ -24,6 +24,7 @@ import 'package:rewayah_academy/core/coran/service_coran.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/mouvement/passage_scene.dart';
+import 'package:rewayah_academy/core/pause_seance/port_pause_seance.dart';
 import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
@@ -40,8 +41,9 @@ import 'package:rewayah_academy/core/widgets/cadre_visage.dart';
 import 'package:rewayah_academy/core/widgets/tete_panneau.dart';
 import 'package:rewayah_academy/features/salle/salle_page.dart';
 import 'package:rewayah_academy/features/salle_seance/actions_seance.dart';
+import 'package:rewayah_academy/features/salle_seance/chrono_salle.dart';
+import 'package:rewayah_academy/features/salle_seance/dynamique_chrono.dart';
 import 'package:rewayah_academy/features/salle_seance/panneau_eleves.dart';
-import 'package:rewayah_academy/features/salle_seance/pilule_etat_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/salle_ordinateur.dart';
 import 'package:rewayah_academy/features/salle_seance/telephone_plein_ecran.dart'
     show TelephonePleinEcran, margeFlechePage;
@@ -571,89 +573,94 @@ void main() {
     }
   });
 
-  group('l ile dans la colonne', () {
+  // DYNAMIQUE-CHRONO-1 (directeur, 12/11/2026 : « le panneau cache le
+  // chrono ») : remplace « l ile dans la colonne » (RUBAN-ORDINATEUR), dont
+  // la largeur comptait le point d'etat, le signe du reseau et le point de la
+  // mention, qui ont quitte la barre (ligne d'etat, jamais repliee).
+  group('la Dynamique chrono dans la colonne', () {
     for (final double echelle in <double>[1, 1.3, 2]) {
-      for (final bool etroite in <bool>[false, true]) {
-        testWidgets('repliee avec tous ses signes, elle tient dans la colonne '
-            '${etroite ? 'la plus etroite (chrono seul)' : 'assez large'}, '
-            'texte x$echelle', (WidgetTester tester) async {
-          fixerVueCapture(tester, const Size(1440, 900), 1);
-          final DateTime t0 = DateTime.now().toUtc();
-          final VueSeance vue = VueSeance(
-            role: RoleSeance.enseignant,
-            nomClasse: 'Classe',
-            nomEnseignant: 'Sayyida Amina',
-            initialesEnseignant: 'SA',
-            connexion: ConnexionSeance.reseauFaible,
-            videoSuspendue: true,
-            reseauDansIle: true,
-            chrono: BornesChrono(
-              debutUtc: t0,
-              finPrevueUtc: t0.add(const Duration(minutes: 55)),
-            ),
-          );
-          double colonne = 0;
-          double uneLigne = 0;
-          await tester.pumpWidget(
-            ProviderScope(
-              child: TranslationProvider(
-                child: MediaQuery(
-                  data: MediaQueryData(
-                    size: const Size(1440, 900),
-                    textScaler: TextScaler.linear(echelle),
+      testWidgets('repliee avec sa marque de pause, elle tient sur une ligne '
+          'dans la colonne, texte x$echelle', (WidgetTester tester) async {
+        fixerVueCapture(tester, const Size(1440, 900), 1);
+        final DateTime t0 = DateTime.now().toUtc();
+        final VueSeance vue = VueSeance(
+          role: RoleSeance.enseignant,
+          nomClasse: 'Classe',
+          nomEnseignant: 'Sayyida Amina',
+          initialesEnseignant: 'SA',
+          chrono: BornesChrono(
+            debutUtc: t0,
+            finPrevueUtc: t0.add(const Duration(minutes: 55)),
+          ),
+          pause: PauseSeance(
+            statut: StatutPause.programmee,
+            dureePrevueMinutes: 10,
+            debutPrevuUtc: t0.add(const Duration(minutes: 21)),
+            peutPiloter: true,
+          ),
+        );
+        double colonne = 0;
+        await tester.pumpWidget(
+          ProviderScope(
+            child: TranslationProvider(
+              child: MediaQuery(
+                data: MediaQueryData(
+                  size: const Size(1440, 900),
+                  textScaler: TextScaler.linear(echelle),
+                ),
+                child: MaterialApp(
+                  theme: AppTheme.pour(
+                    InterfaceMode.standard,
+                    Brightness.light,
                   ),
-                  child: MaterialApp(
-                    theme: AppTheme.pour(
-                      InterfaceMode.standard,
-                      Brightness.light,
-                    ),
-                    home: Material(
-                      child: Align(
-                        alignment: Alignment.topLeft,
-                        child: Builder(
-                          builder: (BuildContext context) {
-                            uneLigne = largeurIleColonne(context, vue);
-                            colonne = etroite
-                                ? largeurChronoColonne(context)
-                                : uneLigne;
-                            return PiluleEtatSalle(
+                  home: Material(
+                    child: Align(
+                      alignment: Alignment.topLeft,
+                      child: Builder(
+                        builder: (BuildContext context) {
+                          colonne = largeurBarreColonne(context);
+                          return SizedBox(
+                            width: colonne,
+                            child: DynamiqueChrono(
                               vue: vue,
                               avecChrono: true,
-                              aLaLigne: true,
-                              largeurMax: 600,
-                              largeurRepliee: colonne,
-                            );
-                          },
-                        ),
+                              enPlace: true,
+                              largeurMax: colonne,
+                              onPause: () {},
+                            ),
+                          );
+                        },
                       ),
                     ),
                   ),
                 ),
               ),
             ),
-          );
-          // L'ile se replie seule (elle s'ouvre a l'arrivee).
-          await tester.pump(AppMouvement.ileMention);
-          await tester.pump(AppMouvement.ilePassage);
-          await tester.pump(const Duration(seconds: 1));
-          expect(vue.texteMention, isNotNull);
-          expect(find.byKey(PiluleEtatSalle.cleSigneReseau), findsOneWidget);
-          expect(find.byKey(PiluleEtatSalle.cleDepliee), findsNothing);
-          final Rect ile = tester.getRect(find.byType(PiluleEtatSalle));
-          expect(
-            ile.width,
-            lessThanOrEqualTo(colonne + 0.5),
-            reason: 'ile repliee ${ile.width} > colonne $colonne',
-          );
-          // Assez large : une ligne ; la plus etroite : les signes passent
-          // sous le chrono, jamais a cote de la colonne.
-          final Rect signe = tester.getRect(
-            find.byKey(PiluleEtatSalle.cleSigneReseau),
-          );
-          expect(signe.right, lessThanOrEqualTo(colonne + 0.5));
-          if (!etroite) expect(uneLigne, colonne);
-        });
-      }
+          ),
+        );
+        await tester.pump(const Duration(seconds: 1));
+        expect(tester.takeException(), isNull);
+        final Rect barre = tester.getRect(
+          find.byKey(const ValueKey<String>('pilule-etat-salle')),
+        );
+        expect(barre.width, lessThanOrEqualTo(colonne + 0.5));
+        // Une ligne : la cible de 48 (texte x1), une ligne de texte agrandi
+        // au-dela, jamais deux.
+        expect(barre.height, lessThan(80));
+        // La ligne du chrono entiere, sans reduction a texte x1.
+        final Rect ligne = tester.getRect(find.byKey(ChronoSalle.cleLigne));
+        expect(ligne.right, lessThanOrEqualTo(barre.right + 0.5));
+        // Depliee a sa place : tout tient dans la largeur de la colonne.
+        await tester.tap(find.byKey(DynamiqueChrono.cleDeplier));
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 500));
+        expect(tester.takeException(), isNull);
+        expect(
+          tester.getRect(find.byKey(DynamiqueChrono.cleDepliee)).right,
+          lessThanOrEqualTo(colonne + 0.5),
+        );
+        expect(find.byKey(ChronoSalle.cleCommandePause), findsOneWidget);
+      });
     }
   });
 }

@@ -46,6 +46,20 @@ extension PaireDeTonEtat on AppPalette {
     TonEtat.avertissement => washWarning,
     TonEtat.alerte => washAlert,
   };
+
+  /// Le point de 8 d'un ton (celui de [StatusPill]) : un seul calcul, repris
+  /// par les marques de la Dynamique chrono de la salle (DYNAMIQUE-CHRONO-1),
+  /// toujours accompagne d'un mot.
+  BoxDecoration pastilleDe(TonEtat ton) => switch (ton) {
+    TonEtat.neutre => pointsStatut.neutre.pastille(),
+    TonEtat.accent => BoxDecoration(
+      shape: BoxShape.circle,
+      color: surfacePrimary.background,
+    ),
+    TonEtat.succes => pointsStatut.succes.pastille(),
+    TonEtat.avertissement => pointsStatut.attention.pastille(),
+    TonEtat.alerte => pointsStatut.alerte.pastille(),
+  };
 }
 
 /// Un etat nomme : une pastille de couleur **et** un mot.
@@ -65,7 +79,14 @@ class StatusPill extends StatelessWidget {
     required this.ton,
     super.key,
     this.marqueur,
+    this.pointSeul = false,
   });
+
+  /// SYNCHRO-SESSION (13/11/2026) : quand la place manque (salle reduite au
+  /// telephone), la pilule se reduit a son point ; le libelle reste lu par
+  /// le lecteur d'ecran. Reserve aux composants du core
+  /// (`PastilleEtatSeance`).
+  final bool pointSeul;
 
   /// Ce qui remplace le disque de statut, ou `null` pour le disque du ton.
   ///
@@ -96,8 +117,8 @@ class StatusPill extends StatelessWidget {
       label: libelle,
       excludeSemantics: true,
       child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.md,
+        padding: EdgeInsets.symmetric(
+          horizontal: pointSeul ? AppSpacing.sm : AppSpacing.md,
           vertical: AppSpacing.xs,
         ),
         // `arrondiLg` et non `arrondiFull` (CPT-RC, revue CPT-R m8, ecarts
@@ -133,23 +154,25 @@ class StatusPill extends StatelessWidget {
                   dimension: diametrePastille,
                   child: DecoratedBox(decoration: pastille),
                 ),
-            Ecart.hSm,
+            if (!pointSeul) Ecart.hSm,
             // PASTILLE-COUPE-1 : le libelle passe a la ligne entre les mots,
             // jamais dans un mot (« Remplacem / ent » a 200 %) ; un mot trop
             // long pour la place reduit son echelle, jamais sous
             // [echelleMinimaleLisible] (0,85).
-            Flexible(
-              child: TexteSansCoupure(
-                libelle,
-                textAlign: TextAlign.center,
-                // N-10 : un long motif passe a la ligne sans etirer la
-                // pastille sur toute la largeur de sa ligne.
-                largeurAuPlusLong: true,
-                style: fond.applyTo(
-                  Theme.of(context).textTheme.labelMedium ?? const TextStyle(),
+            if (!pointSeul)
+              Flexible(
+                child: TexteSansCoupure(
+                  libelle,
+                  textAlign: TextAlign.center,
+                  // N-10 : un long motif passe a la ligne sans etirer la
+                  // pastille sur toute la largeur de sa ligne.
+                  largeurAuPlusLong: true,
+                  style: fond.applyTo(
+                    Theme.of(context).textTheme.labelMedium ??
+                        const TextStyle(),
+                  ),
                 ),
               ),
-            ),
           ],
         ),
       ),
@@ -166,14 +189,5 @@ class StatusPill extends StatelessWidget {
   /// surfaces par `test/theme` : l'aplat `surfaceSuccess` clair (`#70EE9C`)
   /// ne mesurait que 1,28:1 sur `washSuccess` (revue phase 0, jetons D8).
   /// L'accent, sans point dedie, garde `surfacePrimary`.
-  BoxDecoration _pastille(AppPalette palette) => switch (ton) {
-    TonEtat.neutre => palette.pointsStatut.neutre.pastille(),
-    TonEtat.accent => BoxDecoration(
-      shape: BoxShape.circle,
-      color: palette.surfacePrimary.background,
-    ),
-    TonEtat.succes => palette.pointsStatut.succes.pastille(),
-    TonEtat.avertissement => palette.pointsStatut.attention.pastille(),
-    TonEtat.alerte => palette.pointsStatut.alerte.pastille(),
-  };
+  BoxDecoration _pastille(AppPalette palette) => palette.pastilleDe(ton);
 }

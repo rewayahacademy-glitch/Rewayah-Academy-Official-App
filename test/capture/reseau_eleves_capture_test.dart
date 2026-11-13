@@ -20,8 +20,8 @@ import 'package:rewayah_academy/core/video/seuils_reseau.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
 import 'package:rewayah_academy/features/salle_seance/actions_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/chrono_salle.dart';
+import 'package:rewayah_academy/features/salle_seance/dynamique_chrono.dart';
 import 'package:rewayah_academy/features/salle_seance/panneau_eleves.dart';
-import 'package:rewayah_academy/features/salle_seance/pilule_etat_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
 
 import 'outil_capture.dart';
@@ -132,7 +132,7 @@ void main() {
                       padding: const EdgeInsets.all(16),
                       child: Align(
                         alignment: AlignmentDirectional.topStart,
-                        child: PiluleEtatSalle(
+                        child: DynamiqueChrono(
                           vue: vue,
                           avecChrono: true,
                           largeurMax: taille.width - 32,
