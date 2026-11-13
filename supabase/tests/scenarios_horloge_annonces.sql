@@ -80,6 +80,21 @@ CREATE TEMP TABLE hla_avant AS SELECT id FROM public.notifications;
 -- =====================================================================
 -- (1) Le calcul pur : l'heure locale d'un cours avant et apres
 -- =====================================================================
+-- La tache passe chaque heure (a H:07 UTC) : chaque personne est servie a SON 10 h.
+-- (Depuis la correction I4, 13/11/2026 : aucune annonce n'part entre 21 h et 8 h.)
+CREATE FUNCTION pg_temp.passer(p_jour date) RETURNS integer LANGUAGE plpgsql AS $f$
+DECLARE
+  v_total integer := 0;
+  h integer;
+BEGIN
+  FOR h IN 0..23 LOOP
+    v_total := v_total + private.annoncer_changements_heure(
+      (p_jour::timestamp + pg_catalog.make_interval(hours => h, mins => 7)) AT TIME ZONE 'UTC');
+  END LOOP;
+  RETURN v_total;
+END
+$f$;
+
 DO $c1$
 DECLARE
   v record;
@@ -124,9 +139,10 @@ DECLARE
   v_n integer;
   v_p jsonb;
 BEGIN
-  -- 14/03/2027 06:00 UTC : Paris est a 14 jours moins 5 h de son changement ;
-  -- Toronto est a une heure du sien (donc la veille).
-  v_n := private.annoncer_changements_heure('2027-03-14 06:00:00+00');
+  -- Les 13 et 14/03/2027, a 10 h locale de chacun : Paris entre dans sa fenetre
+  -- de 14 jours le 14/03 ; Toronto, dont le changement est le 14/03 a 02 h, est
+  -- servi la veille a 10 h.
+  v_n := pg_temp.passer('2027-03-13') + pg_temp.passer('2027-03-14');
   -- Classe adultes : enseignante, eleve de Paris et son tuteur, eleve de Toronto et
   -- son tuteur ; classe enfants : enseignante, tuteur de Paris (jamais l'enfant).
   IF v_n <> 7 THEN
@@ -179,11 +195,11 @@ BEGIN
   RAISE NOTICE 'HLA OK : annonce a 14 jours (Paris) et la veille (Toronto), heures avant et apres, tuteur pour l''enfant, jamais l''enfant, rien pour Delhi ni Riyad';
 
   -- Rejouee au meme instant : aucune annonce de plus.
-  IF private.annoncer_changements_heure('2027-03-14 06:00:00+00') <> 0 THEN
+  IF pg_temp.passer('2027-03-14') <> 0 THEN
     RAISE EXCEPTION 'HLA ROUGE : annonces en double au meme instant';
   END IF;
   -- Rejouee le lendemain, toujours dans la fenetre de 14 jours de Paris : rien.
-  IF private.annoncer_changements_heure('2027-03-15 06:00:00+00') <> 0 THEN
+  IF pg_temp.passer('2027-03-15') <> 0 THEN
     RAISE EXCEPTION 'HLA ROUGE : annonces en double le lendemain (meme palier)';
   END IF;
   RAISE NOTICE 'HLA OK : rejouee, la tache n''annonce rien deux fois';
@@ -199,7 +215,7 @@ DECLARE
 BEGIN
   -- 27/03/2027 06:00 UTC : le changement de Paris est dans 19 h ; celui de
   -- Toronto est passe (le prochain est en novembre).
-  v_n := private.annoncer_changements_heure('2027-03-27 06:00:00+00');
+  v_n := pg_temp.passer('2027-03-27');
   IF v_n <> 5 THEN
     RAISE EXCEPTION 'HLA ROUGE : % annonces la veille au lieu de 5 (enseignante x2, eleve et tuteur de Paris, tuteur pour l''enfant)', v_n;
   END IF;
@@ -217,7 +233,7 @@ $c3$;
 DO $c4$
 BEGIN
   -- Le 20 juillet : aucun changement d'heure dans les 14 jours.
-  IF private.annoncer_changements_heure('2027-07-20 06:00:00+00') <> 0 THEN
+  IF pg_temp.passer('2027-07-20') <> 0 THEN
     RAISE EXCEPTION 'HLA ROUGE : une annonce hors de toute fenetre';
   END IF;
   RAISE NOTICE 'HLA OK : hors des fenetres de 14 jours, aucune annonce';

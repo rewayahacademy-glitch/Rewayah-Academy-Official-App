@@ -209,8 +209,7 @@ void main() {
               );
           // PORTS-COMPTABLE : les onglets sans serveur ne sont pas montres ;
           // l'onglet actif reste le meme, a sa place dans la liste montree.
-          final List<({String libelle, String chemin})> tous =
-              destination == 1
+          final List<({String libelle, String chemin})> tous = destination == 1
               ? ongletsPaiementsComptable()
               : ongletsTresorerieComptable();
           expect(nav.onglets[nav.indexActif], tous[onglet]);

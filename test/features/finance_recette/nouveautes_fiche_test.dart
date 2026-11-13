@@ -31,28 +31,29 @@ class _FauxPort implements PortNouveautes {
 }
 
 void main() {
-  testWidgets('Recharger : badge, lu « ..., nouveau », parti au premier appui', (
-    WidgetTester tester,
-  ) async {
-    final SemanticsHandle semantique = tester.ensureSemantics();
-    final _FauxPort port = _FauxPort(<String>{CleNouveaute.moyenPaiement});
-    await monterTuteurFi(
-      tester,
-      depart: Routes.ficheEleveSousPage(_ibrahim, 'finances'),
-      surcharges: <Override>[portNouveautesProvider.overrideWithValue(port)],
-    );
-    final Finder bouton = find.byKey(FinancesElevePage.rechargerKey);
-    expect(bouton, findsOneWidget);
-    expect(find.text(t.nouveautes.badge), findsOneWidget);
-    expect(
-      find.bySemanticsLabel(RegExp(', ${t.nouveautes.lu}\$')),
-      findsOneWidget,
-    );
-    await tester.tap(bouton);
-    await tester.pumpAndSettle();
-    expect(port.marquees, <String>[CleNouveaute.moyenPaiement]);
-    semantique.dispose();
-  });
+  testWidgets(
+    'Recharger : badge, lu « ..., nouveau », parti au premier appui',
+    (WidgetTester tester) async {
+      final SemanticsHandle semantique = tester.ensureSemantics();
+      final _FauxPort port = _FauxPort(<String>{CleNouveaute.moyenPaiement});
+      await monterTuteurFi(
+        tester,
+        depart: Routes.ficheEleveSousPage(_ibrahim, 'finances'),
+        surcharges: <Override>[portNouveautesProvider.overrideWithValue(port)],
+      );
+      final Finder bouton = find.byKey(FinancesElevePage.rechargerKey);
+      expect(bouton, findsOneWidget);
+      expect(find.text(t.nouveautes.badge), findsOneWidget);
+      expect(
+        find.bySemanticsLabel(RegExp(', ${t.nouveautes.lu}\$')),
+        findsOneWidget,
+      );
+      await tester.tap(bouton);
+      await tester.pumpAndSettle();
+      expect(port.marquees, <String>[CleNouveaute.moyenPaiement]);
+      semantique.dispose();
+    },
+  );
 
   testWidgets('Couleur du profil : badge, parti au premier appui', (
     WidgetTester tester,

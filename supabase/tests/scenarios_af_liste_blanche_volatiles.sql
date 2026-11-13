@@ -112,6 +112,16 @@ declare
     -- Surcharge a 3 arguments (20261025020000), toujours presente a cote de celle a 4 : direction active seulement (app_account_valid ET admin).
     'ajouter_creneau_classe_admin(uuid,integer,integer)',
     'retirer_creneau_classe_admin(uuid,integer,integer,text)',
+    -- HORLOGE-ET-LIEU (13/11/2026) : l'heure saisie avec son fuseau, direction active
+    -- seulement (app_account_valid ET admin), le serveur convertit vers le fuseau de la classe.
+    'ajouter_creneau_classe_fuseau(uuid,integer,integer,integer,text)',
+    'modifier_creneau_classe_fuseau(uuid,integer,integer,integer,integer,integer,text,text)',
+    'modifier_groupe_fuseau(uuid,text,smallint,smallint,smallint,text,smallint)',
+    -- HORLOGE-ET-LIEU (13/11/2026) : la ville de la personne (tuteur ou enseignant, compte valide,
+    -- identifiant lu dans le JWT), et la verification de la ville d'un enseignant (direction active).
+    'enregistrer_ma_ville(bigint)',
+    'reporter_ma_ville()',
+    'verifier_lieu_enseignant(uuid)',
     'regler_genre_classe_admin(uuid,text,text)',
     'creer_jeton_agent(text,uuid,integer,boolean)',
     'creer_offre_horaire(text,text,text,smallint[],smallint,smallint)',

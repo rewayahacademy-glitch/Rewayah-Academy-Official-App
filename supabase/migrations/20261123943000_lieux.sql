@@ -410,7 +410,7 @@ DECLARE
   v_id uuid;
   v_relire boolean := false;
 BEGIN
-  IF v_uid IS NULL THEN
+  IF v_uid IS NULL OR NOT coalesce(public.app_account_valid(), false) THEN
     RAISE EXCEPTION 'ville non autorisee' USING ERRCODE = '42501';
   END IF;
   SELECT p.p_role, p.p_foyer INTO v_role, v_foyer FROM private.proprietaire_lieu() p;
@@ -522,7 +522,7 @@ DECLARE
   v_pris integer;
   v_a_un boolean;
 BEGIN
-  IF auth.uid() IS NULL THEN
+  IF auth.uid() IS NULL OR NOT coalesce(public.app_account_valid(), false) THEN
     RAISE EXCEPTION 'lieu non autorise' USING ERRCODE = '42501';
   END IF;
   SELECT p.p_role, p.p_foyer INTO v_role, v_foyer FROM private.proprietaire_lieu() p;

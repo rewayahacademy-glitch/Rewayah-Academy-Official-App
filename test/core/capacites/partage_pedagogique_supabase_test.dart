@@ -154,14 +154,13 @@ void main() {
             ('enAttente', EtatCompteRendu.enAttente),
             ('aucunChamp', EtatCompteRendu.aucunChamp),
           ]) {
-        final CompteRenduFamille cr =
-            await _adaptateur(
-              (String f, Map<String, dynamic>? p) => <String, dynamic>{
-                'etat': code,
-                // Meme si le serveur en disait trop, rien ne passe.
-                'travaille': 'ne doit pas sortir',
-              },
-            ).compteRenduFamille(seanceId: 's', eleveId: 'e');
+        final CompteRenduFamille cr = await _adaptateur(
+          (String f, Map<String, dynamic>? p) => <String, dynamic>{
+            'etat': code,
+            // Meme si le serveur en disait trop, rien ne passe.
+            'travaille': 'ne doit pas sortir',
+          },
+        ).compteRenduFamille(seanceId: 's', eleveId: 'e');
         expect(cr.etat, etat);
         expect(cr.aDuContenu, isFalse);
       }
@@ -271,9 +270,8 @@ void main() {
     test('refuse une forme inattendue', () async {
       final Map<String, dynamic> sansVersion = _classe()..remove('version');
       await expectLater(
-        _adaptateur(
-          (String f, Map<String, dynamic>? p) => sansVersion,
-        ).partageClasse(classeId: 'c1'),
+        _adaptateur((String f, Map<String, dynamic>? p) => sansVersion)
+            .partageClasse(classeId: 'c1'),
         throwsFormatException,
       );
       final Map<String, dynamic> regleInconnue = _classe();
@@ -281,9 +279,8 @@ void main() {
               as Map<String, dynamic>)['regle'] =
           'peut-etre';
       await expectLater(
-        _adaptateur(
-          (String f, Map<String, dynamic>? p) => regleInconnue,
-        ).partageClasse(classeId: 'c1'),
+        _adaptateur((String f, Map<String, dynamic>? p) => regleInconnue)
+            .partageClasse(classeId: 'c1'),
         throwsFormatException,
       );
     });
@@ -292,9 +289,8 @@ void main() {
   group('erreurs du serveur', () {
     test('42501 devient PermissionInsuffisante', () async {
       await expectLater(
-        _qui(
-          const PostgrestException(message: 'refuse', code: '42501'),
-        ).partageClasse(classeId: 'c1'),
+        _qui(const PostgrestException(message: 'refuse', code: '42501'))
+            .partageClasse(classeId: 'c1'),
         throwsA(isA<PermissionInsuffisante>()),
       );
     });
@@ -315,9 +311,8 @@ void main() {
 
     test('une fonction absente devient CapaciteIndisponible', () async {
       await expectLater(
-        _qui(
-          const PostgrestException(message: 'absente', code: 'PGRST202'),
-        ).compteRenduFamille(seanceId: 's', eleveId: 'e'),
+        _qui(const PostgrestException(message: 'absente', code: 'PGRST202'))
+            .compteRenduFamille(seanceId: 's', eleveId: 'e'),
         throwsA(isA<CapaciteIndisponible>()),
       );
     });
@@ -333,26 +328,27 @@ void main() {
   group('cahiers de la direction', () {
     test('liste paginee, filtre par etat', () async {
       final _Appels appels = _Appels();
-      final PageCahiersClasse page = await _adaptateur(
-        (String f, Map<String, dynamic>? p) => <String, dynamic>{
-          'lignes': <Map<String, dynamic>>[
-            <String, dynamic>{
-              'seance_id': 's1',
-              'eleve_id': 'e1',
-              'eleve_prenom': 'Aya',
-              'seance_le': '2026-10-17T18:00:00+00:00',
-              'etat': 'revoque',
+      final PageCahiersClasse page =
+          await _adaptateur(
+            (String f, Map<String, dynamic>? p) => <String, dynamic>{
+              'lignes': <Map<String, dynamic>>[
+                <String, dynamic>{
+                  'seance_id': 's1',
+                  'eleve_id': 'e1',
+                  'eleve_prenom': 'Aya',
+                  'seance_le': '2026-10-17T18:00:00+00:00',
+                  'etat': 'revoque',
+                },
+              ],
+              'total': 51,
+              'page': 2,
             },
-          ],
-          'total': 51,
-          'page': 2,
-        },
-        appels,
-      ).comptesRendusClasse(
-        classeId: 'c1',
-        page: 2,
-        filtreEtat: EtatDiffusion.revoque,
-      );
+            appels,
+          ).comptesRendusClasse(
+            classeId: 'c1',
+            page: 2,
+            filtreEtat: EtatDiffusion.revoque,
+          );
       expect(appels.faits.single.$2, <String, dynamic>{
         'p_classe_id': 'c1',
         'p_page': 2,
@@ -452,18 +448,16 @@ void main() {
 
     test('publier ecrit puis relit l apercu', () async {
       final _Appels appels = _Appels();
-      final ApercuAdmin a = await _adaptateur((
-        String f,
-        Map<String, dynamic>? p,
-      ) {
-        if (f == 'apercu_familial') return _apercu();
-        return <String, dynamic>{'etat': 'partageManuel'};
-      }, appels).publier(
-        seanceId: 's1',
-        eleveId: 'e1',
-        versionAttendue: '4',
-        cleIdempotence: 'k',
-      );
+      final ApercuAdmin a =
+          await _adaptateur((String f, Map<String, dynamic>? p) {
+            if (f == 'apercu_familial') return _apercu();
+            return <String, dynamic>{'etat': 'partageManuel'};
+          }, appels).publier(
+            seanceId: 's1',
+            eleveId: 'e1',
+            versionAttendue: '4',
+            cleIdempotence: 'k',
+          );
       expect(appels.faits.map((x) => x.$1), <String>[
         'publier_resume_seance',
         'apercu_familial',

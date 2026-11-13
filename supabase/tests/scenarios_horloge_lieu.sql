@@ -320,8 +320,10 @@ BEGIN
   SELECT pg_catalog.count(*) INTO v_creneau_avant FROM public.notifications WHERE evenement = 'creneau_change';
   -- La direction deplace le creneau du jeudi (20 h a La Mecque) a 19 h : un vrai changement.
   SET LOCAL ROLE authenticated;
-  PERFORM public.modifier_creneau_classe_admin(
-    'd1000000-0000-4000-8000-0000000000c1', 4, 20, 4, 19, NULL, 'scenario HL : vrai changement');
+  -- Depuis la correction B2 (13/11/2026), une classe a l'heure de La Mecque ne se modifie
+  -- qu'avec un fuseau explicite : l'heure est saisie a l'heure de La Mecque, comme la classe.
+  PERFORM public.modifier_creneau_classe_fuseau(
+    'd1000000-0000-4000-8000-0000000000c1', 4, 20, 4, 19, NULL, 'scenario HL : vrai changement', 'Asia/Riyadh');
   RESET ROLE;
   SET CONSTRAINTS ALL IMMEDIATE;
   SELECT pg_catalog.count(*) INTO v_apres FROM public.notifications WHERE evenement = 'creneau_change';

@@ -58,23 +58,20 @@ void main() {
       expect(reducteur.etat!.contentPosition.page, 3);
     });
 
-    test(
-      'un paquet hors ordre n ecrase JAMAIS une revision plus recente',
-      () {
-        final ReducteurEtatPartage reducteur = ReducteurEtatPartage(
-          sessionId: seanceF,
-        )..appliquer(etatPartage(revision: 9, page: 40));
+    test('un paquet hors ordre n ecrase JAMAIS une revision plus recente', () {
+      final ReducteurEtatPartage reducteur = ReducteurEtatPartage(
+        sessionId: seanceF,
+      )..appliquer(etatPartage(revision: 9, page: 40));
 
-        final ResultatRevision suite = reducteur.appliquer(
-          etatPartage(revision: 8, page: 12),
-        );
+      final ResultatRevision suite = reducteur.appliquer(
+        etatPartage(revision: 8, page: 12),
+      );
 
-        expect(suite.suite, SuiteRevision.obsolete);
-        expect(suite.aChange, isFalse);
-        expect(reducteur.etat!.revision, 9);
-        expect(reducteur.etat!.contentPosition.page, 40);
-      },
-    );
+      expect(suite.suite, SuiteRevision.obsolete);
+      expect(suite.aChange, isFalse);
+      expect(reducteur.etat!.revision, 9);
+      expect(reducteur.etat!.contentPosition.page, 40);
+    });
 
     test('une lacune de revisions ne bloque rien', () {
       final ReducteurEtatPartage reducteur = ReducteurEtatPartage(

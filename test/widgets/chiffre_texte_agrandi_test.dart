@@ -12,9 +12,8 @@ import '../support/harnais.dart';
 Widget _agrandi(Widget enfant) => hote(
   Builder(
     builder: (BuildContext context) => MediaQuery(
-      data: MediaQuery.of(
-        context,
-      ).copyWith(textScaler: const TextScaler.linear(2)),
+      data: MediaQuery.of(context)
+          .copyWith(textScaler: const TextScaler.linear(2)),
       child: Scaffold(body: Center(child: enfant)),
     ),
   ),

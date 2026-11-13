@@ -1466,8 +1466,10 @@ class _LignesATerminer extends ConsumerWidget {
                     // Le jour, comme l'heure, au fuseau du profil : jamais le
                     // jour de l'appareil avec l'heure du profil
                     // (HORLOGE-ET-LIEU, 12/11/2026).
-                    jour: t.commun.dates.jours[chezMoi(cahier.debut).weekday -
-                            1]
+                    jour: t
+                        .commun
+                        .dates
+                        .jours[chezMoi(cahier.debut).weekday - 1]
                         .toLowerCase(),
                     numero: '${chezMoi(cahier.debut).day}',
                     mois: t.commun.dates.mois[chezMoi(cahier.debut).month - 1],
@@ -1724,8 +1726,8 @@ class _RienAujourdhui extends StatelessWidget {
           Text(
             t.enseignant.journee.rienAujourdhuiDetail(
               // Le jour au fuseau du profil, comme l'heure.
-              jour: t.disponibilites.joursLongs[chezMoi(cours.debut).weekday -
-                  1],
+              jour:
+                  t.disponibilites.joursLongs[chezMoi(cours.debut).weekday - 1],
               heure: _hhmm(cours.debut),
             ),
             style: palette.inkMuted.applyTo(

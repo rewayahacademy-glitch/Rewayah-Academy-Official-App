@@ -246,7 +246,10 @@ void main() {
       await monterCommunaute(tester, port: port, taille: _bureau);
       final int avant = port.lecturesFlux;
       for (final String texte in <String>['c', 'ca', 'car', 'cartes']) {
-        await tester.enterText(find.byKey(ClesRechercheCommunaute.champ), texte);
+        await tester.enterText(
+          find.byKey(ClesRechercheCommunaute.champ),
+          texte,
+        );
         await tester.pump();
         expect(find.byType(Skeleton), findsNothing, reason: texte);
       }

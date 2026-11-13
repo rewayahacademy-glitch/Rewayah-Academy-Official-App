@@ -37,10 +37,7 @@ Widget _carteGroupe(GroupSummaryVM g) => MaterialApp(
             key: Key('carte-photo-manquante'),
           )
         else
-          Text(
-            g.enseignant.photoUrlOuCle!,
-            key: const Key('carte-photo-cle'),
-          ),
+          Text(g.enseignant.photoUrlOuCle!, key: const Key('carte-photo-cle')),
       ],
     ),
   ),

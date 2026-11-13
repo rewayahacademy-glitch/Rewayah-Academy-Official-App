@@ -62,9 +62,7 @@ void main() {
       // a partir d'une reference.
       final _FauxServiceCoran corpus = _FauxServiceCoran();
       final ProviderContainer conteneur = ProviderContainer(
-        overrides: <Override>[
-          serviceCoranProvider.overrideWithValue(corpus),
-        ],
+        overrides: <Override>[serviceCoranProvider.overrideWithValue(corpus)],
       );
       addTearDown(conteneur.dispose);
 
@@ -99,9 +97,7 @@ void main() {
       // page, et le cache de Riverpod n'aurait servi a rien.
       final _FauxServiceCoran corpus = _FauxServiceCoran();
       final ProviderContainer conteneur = ProviderContainer(
-        overrides: <Override>[
-          serviceCoranProvider.overrideWithValue(corpus),
-        ],
+        overrides: <Override>[serviceCoranProvider.overrideWithValue(corpus)],
       );
       addTearDown(conteneur.dispose);
 

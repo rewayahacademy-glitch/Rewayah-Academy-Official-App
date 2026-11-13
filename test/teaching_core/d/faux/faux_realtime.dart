@@ -48,7 +48,8 @@ class FauxRealtime implements PortRealtimePedagogique {
     MessagePedagogique message, {
     required String destinataireProfilId,
     required CanalFiabilite canal,
-  }) async => cibles.add((message: message, destinataire: destinataireProfilId));
+  }) async =>
+      cibles.add((message: message, destinataire: destinataireProfilId));
 
   @override
   Future<CapacitesPedagogiques> capacites(String sessionId) async =>

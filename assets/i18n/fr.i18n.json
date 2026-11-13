@@ -9541,6 +9541,8 @@
         "apercuChez": "{ou}\u00a0: {heure} toute l'année.",
         "apercuChezPuis": "{ou}\u00a0: {heure}, puis {apres} à partir du {date}.",
         "heureEtVille": "{heure} {ville}",
+        "mecqueEnSecond": "Heure de La Mecque\u00a0: {heure}",
+        "heureDeVille": "{heure} (heure de {ville})",
         "chezVous": "Chez vous",
         "chezEnseignantAnonyme": "Chez votre enseignant",
         "familles(plural, param=n)": {

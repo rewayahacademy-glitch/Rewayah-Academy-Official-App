@@ -143,10 +143,7 @@ void main() {
         libelleCategorieSignalement(CategorieSignalement.securiteEnfant),
         CategorieBesoin.securiteEnfant.libelle,
       );
-      expect(
-        find.text(CategorieBesoin.securiteEnfant.libelle),
-        findsOneWidget,
-      );
+      expect(find.text(CategorieBesoin.securiteEnfant.libelle), findsOneWidget);
       // Tant qu'elle n'est pas choisie, le resume famille et ses phrases sont
       // la.
       expect(find.byKey(NoticeSecuriteEnfant.noticeKey), findsNothing);

@@ -3093,6 +3093,8 @@
         "apercuChez": "⁨{ou}⁩: الساعة ⁨{heure}⁩ طوال السنة.",
         "apercuChezPuis": "⁨{ou}⁩: الساعة ⁨{heure}⁩، ثم الساعة ⁨{apres}⁩ ابتداءً من ⁨{date}⁩.",
         "heureEtVille": "⁨{heure}⁩ ⁨{ville}⁩",
+        "mecqueEnSecond": "توقيت مكة المكرمة: ⁨{heure}⁩",
+        "heureDeVille": "⁨{heure}⁩ (بتوقيت ⁨{ville}⁩)",
         "chezVous": "عندكم",
         "chezEnseignantAnonyme": "عند معلّمكم",
         "familles(plural, param=n)": {

@@ -33061,6 +33061,12 @@ class Traductions$tc$groupe$horloges$fr {
 	/// fr: '{heure} {ville}'
 	String heureEtVille({required Object heure, required Object ville}) => '${heure} ${ville}';
 
+	/// fr: 'Heure de La Mecque : {heure}'
+	String mecqueEnSecond({required Object heure}) => 'Heure de La Mecque : ${heure}';
+
+	/// fr: '{heure} (heure de {ville})'
+	String heureDeVille({required Object heure, required Object ville}) => '${heure} (heure de ${ville})';
+
 	/// fr: 'Chez vous'
 	String get chezVous => 'Chez vous';
 
@@ -56932,6 +56938,8 @@ extension on Traductions {
 			'tc.groupe.horloges.apercuChez' => ({required Object ou, required Object heure}) => '${ou} : ${heure} toute l\'année.',
 			'tc.groupe.horloges.apercuChezPuis' => ({required Object ou, required Object heure, required Object apres, required Object date}) => '${ou} : ${heure}, puis ${apres} à partir du ${date}.',
 			'tc.groupe.horloges.heureEtVille' => ({required Object heure, required Object ville}) => '${heure} ${ville}',
+			'tc.groupe.horloges.mecqueEnSecond' => ({required Object heure}) => 'Heure de La Mecque : ${heure}',
+			'tc.groupe.horloges.heureDeVille' => ({required Object heure, required Object ville}) => '${heure} (heure de ${ville})',
 			'tc.groupe.horloges.chezVous' => 'Chez vous',
 			'tc.groupe.horloges.chezEnseignantAnonyme' => 'Chez votre enseignant',
 			'tc.groupe.horloges.familles' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} famille', other: '${n} familles', ), 
@@ -57382,10 +57390,10 @@ extension on Traductions {
 			'tc.parcours.signalement.contexte' => ({required Object eleve}) => 'Élève ${eleve}. La séance, la classe et votre nom sont déjà joints.',
 			'tc.parcours.signalement.envoyer' => 'Envoyer le signalement',
 			'tc.parcours.signalement.envoye' => 'Signalement transmis à l\'administration.',
-			'tc.parcours.signalement.interneRequis' => 'Écrivez au moins ce que l\'administration doit savoir.',
-			'tc.parcours.signalement.horsLigne' => 'Rien n\'est parti : le réseau est absent. Réessayez dès son retour.',
 			_ => null,
 		} ?? switch (path) {
+			'tc.parcours.signalement.interneRequis' => 'Écrivez au moins ce que l\'administration doit savoir.',
+			'tc.parcours.signalement.horsLigne' => 'Rien n\'est parti : le réseau est absent. Réessayez dès son retour.',
 			'tc.parcours.signalement.echec' => 'Le signalement n\'a pas pu être transmis. Réessayez.',
 			'tc.parcours.postCours.titre' => 'Après le cours',
 			'tc.parcours.postCours.duree' => ({required Object minutes}) => 'Durée réelle ${minutes} min',
@@ -57896,10 +57904,10 @@ extension on Traductions {
 			'suiviFamille.erreur' => 'Le suivi n\'a pas pu être chargé. Réessayez.',
 			'suiviFamille.sansDonnees' => 'vos demandes',
 			'suiviFamille.introuvable' => 'Cette demande n\'existe plus ou n\'est pas la vôtre.',
-			'suiviFamille.retour' => 'Retour aux demandes',
-			'suiviFamille.fuseau' => ({required Object deVille}) => 'Heures affichées : heure ${deVille}.',
 			_ => null,
 		} ?? switch (path) {
+			'suiviFamille.retour' => 'Retour aux demandes',
+			'suiviFamille.fuseau' => ({required Object deVille}) => 'Heures affichées : heure ${deVille}.',
 			'suiviFamille.prevue' => ({required Object date, required Object heure}) => 'Prévue le ${date} à ${heure}',
 			'suiviFamille.prevueJour' => ({required Object date}) => 'Prévue le ${date}',
 			'suiviFamille.etapes.envoyee' => 'Demande envoyée',
@@ -58410,10 +58418,10 @@ extension on Traductions {
 			'com.vocal.composer.enregistrement' => 'Enregistrement en cours',
 			'com.vocal.composer.pause' => 'Enregistrement en pause',
 			'com.vocal.composer.reprise' => 'Enregistrement repris',
-			'com.vocal.composer.limiteProche' => ({required Object seuil, required Object max}) => 'Moins de ${seuil} avant la limite de ${max}',
-			'com.vocal.composer.limiteAtteinte' => ({required Object max}) => 'Durée maximale atteinte (${max}). Écoutez votre message, puis envoyez-le ou supprimez-le.',
 			_ => null,
 		} ?? switch (path) {
+			'com.vocal.composer.limiteProche' => ({required Object seuil, required Object max}) => 'Moins de ${seuil} avant la limite de ${max}',
+			'com.vocal.composer.limiteAtteinte' => ({required Object max}) => 'Durée maximale atteinte (${max}). Écoutez votre message, puis envoyez-le ou supprimez-le.',
 			'com.vocal.composer.ecoule' => ({required Object ecoule, required Object max}) => '${ecoule} sur ${max}',
 			'com.vocal.composer.preEcoute' => 'Pré-écoute',
 			'com.vocal.composer.preEcouteAide' => 'Écoutez votre message avant de l\'envoyer. Rien ne part sans votre accord.',
@@ -58924,10 +58932,10 @@ extension on Traductions {
 			'com.annonces.administration.moderation.indisponible' => 'La modération n\'est pas encore disponible. Revenez plus tard.',
 			'com.annonces.administration.moderation.videTitre' => 'Aucun contenu à examiner',
 			'com.annonces.administration.moderation.vide' => 'Les signalements de la Communauté enseignants arrivent ici.',
-			'com.annonces.administration.moderation.refuseTitre' => 'File réservée à la modération',
-			'com.annonces.administration.moderation.refuse' => 'Seules les personnes chargées de la modération voient cette file.',
 			_ => null,
 		} ?? switch (path) {
+			'com.annonces.administration.moderation.refuseTitre' => 'File réservée à la modération',
+			'com.annonces.administration.moderation.refuse' => 'Seules les personnes chargées de la modération voient cette file.',
 			'com.annonces.administration.moderation.choisirTitre' => 'Aucun signalement ouvert',
 			'com.annonces.administration.moderation.choisir' => 'Choisissez un signalement dans la file pour l\'examiner.',
 			'com.annonces.administration.moderation.sansAction' => 'Aucune action de modération ne vous est ouverte sur ce contenu.',
@@ -59438,10 +59446,10 @@ extension on Traductions {
 			'comptable.tresorerie.historiqueVide' => 'Aucun mouvement entre coffres enregistré.',
 			'comptable.tresorerie.transfert.titre' => 'Mouvement entre coffres',
 			'comptable.tresorerie.transfert.choix' => 'Mouvement permis par la politique',
-			'comptable.tresorerie.transfert.couple' => ({required Object origine, required Object destination}) => '${origine} → ${destination}',
-			'comptable.tresorerie.transfert.delegable' => 'Vers une protection : exécuté selon votre délégation.',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.tresorerie.transfert.couple' => ({required Object origine, required Object destination}) => '${origine} → ${destination}',
+			'comptable.tresorerie.transfert.delegable' => 'Vers une protection : exécuté selon votre délégation.',
 			'comptable.tresorerie.transfert.sensible' => 'Validation supplémentaire requise : une autre personne décide, rien ne sort du coffre avant.',
 			'comptable.tresorerie.transfert.montant' => 'Montant',
 			'comptable.tresorerie.transfert.montantAide' => ({required Object devise}) => 'En unités entières, ${devise}.',
@@ -59952,10 +59960,10 @@ extension on Traductions {
 			'comptable.direction.delegationPanneau.plafondTransactionDetail' => 'Le montant maximal d\'un seul paiement.',
 			'comptable.direction.delegationPanneau.plafondLot' => 'Plafond par lot',
 			'comptable.direction.delegationPanneau.plafondLotDetail' => 'Le montant maximal d\'un lot de paiements.',
-			'comptable.direction.delegationPanneau.plafondPeriode' => 'Plafond cumulé par période',
-			'comptable.direction.delegationPanneau.plafondPeriodeDetail' => 'Le total maximal sur la période ; il empêche de contourner un plafond en fractionnant.',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.direction.delegationPanneau.plafondPeriode' => 'Plafond cumulé par période',
+			'comptable.direction.delegationPanneau.plafondPeriodeDetail' => 'Le total maximal sur la période ; il empêche de contourner un plafond en fractionnant.',
 			'comptable.direction.delegationPanneau.plafondIndice' => 'Aucun plafond',
 			'comptable.direction.delegationPanneau.validationsTitre' => 'Quand une seconde validation est exigée',
 			'comptable.direction.delegationPanneau.retraitReserve' => 'Retrait de la Réserve stratégique',
@@ -60466,10 +60474,10 @@ extension on Traductions {
 			'avis.admin.champs.qualite' => 'Vous êtes',
 			'avis.admin.champs.depose' => 'Déposé le',
 			'avis.admin.champs.accord' => 'Accord de publication',
-			'avis.admin.champs.motif' => 'Motif',
-			'avis.admin.champs.modere' => 'Décision du',
 			_ => null,
 		} ?? switch (path) {
+			'avis.admin.champs.motif' => 'Motif',
+			'avis.admin.champs.modere' => 'Décision du',
 			'avis.admin.champs.publie' => 'Publié le',
 			'avis.admin.actions.publier' => 'Publier',
 			'avis.admin.actions.refuser' => 'Refuser',
@@ -60980,10 +60988,10 @@ extension on Traductions {
 			'candidatsFlux.importFormulaires.doublons.option.distinctes.titre' => 'Personnes distinctes',
 			'candidatsFlux.importFormulaires.doublons.option.distinctes.description' => 'À choisir si ces lignes viennent de personnes différentes qui partagent un contact. Chacune garde sa réponse.',
 			'candidatsFlux.importFormulaires.doublons.option.distinctes.exemple' => 'deux personnes d\'une même famille qui ont répondu avec le même numéro',
-			'candidatsFlux.importFormulaires.analyse.echec' => 'L\'analyse n\'a pas abouti.',
-			'candidatsFlux.importFormulaires.analyse.echecPhrase' => 'Rien n\'a été enregistré. Réessayez dans un instant.',
 			_ => null,
 		} ?? switch (path) {
+			'candidatsFlux.importFormulaires.analyse.echec' => 'L\'analyse n\'a pas abouti.',
+			'candidatsFlux.importFormulaires.analyse.echecPhrase' => 'Rien n\'a été enregistré. Réessayez dans un instant.',
 			'candidatsFlux.importFormulaires.analyse.refus' => 'Le serveur ne peut pas lire ce fichier avec ces noms. Vérifiez le classeur, l\'onglet et le fichier, puis réessayez.',
 			'candidatsFlux.importFormulaires.analyse.reessayer' => 'Réessayer l\'analyse',
 			'candidatsFlux.importFormulaires.apercu.question' => 'Est-ce bien le bon fichier ?',
