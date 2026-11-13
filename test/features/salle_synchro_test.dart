@@ -963,9 +963,7 @@ void _synchroSession() {
         expect(moteur.ecoutePaquets, isFalse);
         expect(moteur.ecouteRecitant, isFalse);
         // Plus aucune alerte ne se pose : le pilote est libere.
-        seance.dynamique.annoncer(
-          AlerteChrono(id: 'apres', titre: 'apres'),
-        );
+        seance.dynamique.annoncer(AlerteChrono(id: 'apres', titre: 'apres'));
         expect(seance.dynamique.alerte, isNull);
       });
     }

@@ -481,15 +481,21 @@ class SynchroSalle {
   @mustCallSuper
   Future<void> liberer() async {
     _peremptionPointeur?.cancel();
-    await _abonnementPointeur.cancel();
-    await _abonnementTableau.cancel();
-    await _abonnementPage?.cancel();
-    await _abonnementArrivees?.cancel();
+    // SYNCHRO-SESSION : tout se coupe tout de suite (la seance vit avec
+    // l'appel : a sa fin, plus rien ne doit ecouter le moteur), puis on
+    // attend que chaque fin soit faite.
+    final List<Future<void>> fins = <Future<void>>[
+      _abonnementPointeur.cancel(),
+      _abonnementTableau.cancel(),
+      ?_abonnementPage?.cancel(),
+      ?_abonnementArrivees?.cancel(),
+      _reception.liberer(),
+    ];
     pointeurDistant.dispose();
     tableauOuvert.dispose();
     parole.dispose();
     rappelsRecus.dispose();
-    await _reception.liberer();
+    await Future.wait(fins);
     await _transport.liberer();
   }
 }
