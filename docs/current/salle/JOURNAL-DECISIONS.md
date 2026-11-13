@@ -1831,3 +1831,36 @@ L'Interface guidée reste sans chrono (règle inchangée) : sa barre ne montre q
 page perd la hauteur de la rangée (environ 80 points au téléphone, 64 sur tablette ; à 820 de
 large, la ligne du texte passe de 611 à 577). Prouvé par tests et captures de test
 (`docs/current/captures/E2E/dynamique-chrono-1/`) ; pas sur un vrai appareil, pas en production.
+
+## D-041 (13/11/2026, 00:20 UTC). Les lots du soir du 12/11, intégrés sur la branche (retours du directeur)
+
+Le détail, lot par lot, est dans `PLAN-RETOURS-2026-11-12.md` (dernière section). Ce qui a été
+décidé en chemin, et qui engage la suite :
+
+- **Entrée en salle (ENTREE-ROBUSTE).** Trois essais à la première entrée, jamais après un refus
+  du serveur ni quand le même compte est déjà dans la salle ailleurs (deux appareils qui
+  réessaient seuls se chasseraient). Ce dernier cas a son message, et l'état « Votre présence »
+  n'y est plus affiché, parce qu'il le contredisait. La phrase technique du navigateur ne va plus
+  à l'écran : elle part à la supervision. La cause des entrées difficiles du 12/11 reste inconnue.
+- **Pages (PAGES-FLUIDES).** « La page est l'écran » (S0.2c, S0.2d, K4) est amendée par la demande
+  du directeur : la page a un cadre fin et des marges. Pas de boîte sombre autour d'elle : le fond
+  de la salle se voit dans la marge.
+- **Caméra après le jumelage (CAMERA-JUMELAGE).** Le paquet du lecteur de code ne ferme pas la
+  caméra dans un navigateur ; notre adaptateur la ferme lui-même. Prouvé dans Chromium, avant et
+  après ; pas sur un vrai téléphone.
+- **Pause (PAUSE-SERVEUR).** Active par défaut, au milieu de la durée prévue, comptée depuis le
+  début prévu ; durée et rappel réglés par la direction ; le réglage de la classe reste à
+  l'enseignant ; une pause prévue par le serveur (la prière, autre lot) prime et n'est pas soumise
+  au « reste minimum ». Ni la présence ni la paie ne changent.
+- **Hors de l'application (HORS-SALLE-1).** Qui modère n'est jamais coupé ; l'élève a 30 secondes,
+  puis sort de la salle et y rentre d'un geste. Rien n'est enregistré sur un élève : le journal de
+  ses sorties demandera l'accord du parent pour un mineur (règle du 11/11) et n'est pas construit.
+- **Bibliothèque (BIBLIOTHEQUE-SALLE).** Le bouton du milieu ouvre l'étagère existante ; il n'est
+  pas rendu quand elle est déjà ouverte à côté.
+- **Visages (VISAGES).** La lumière de l'orateur suit le seul « parle / ne parle pas » (correction
+  du directeur : pas de lien avec le volume de la voix).
+
+**Ce qui n'est pas fait.** Rien n'est essayé sur de vrais appareils ni à plusieurs. Aucune
+migration n'est installée. La suite complète des tests sur l'ensemble n'a pas encore fini une
+fois (un blocage sous la charge, puis un redémarrage du conteneur).
+

@@ -152,3 +152,40 @@ ou en revient : une sortie d'application ne se distingue pas d'une coupure de r�
 | Information des parents | Le journal reste éteint (réglage de la direction) tant que le directeur n'a pas validé la phrase d'information aux familles : rien n'est relevé sur un mineur sans information |
 
 Lot HORS-SALLE : après ENTREE-ROBUSTE (mêmes fichiers).
+
+## Compléments du directeur, 12/11/2026 vers 22:50 UTC (dits par lui, directement)
+
+| N° | Ce qu'il a dit | Ce que cela change | État |
+| --: | :-- | :-- | :-- |
+| 20 | « Il faut que les autres élèves voient celui qui récite, au moins une partie du nom, la photo, car ils partagent une salle ; [...] mais la vraie vidéo, c'est seulement celui qui récite ; sinon on ne voit que sa photo ; la vidéo reste coupée. » | Tranche la question ouverte de la fiche 0 (ligne 11, Q7 contre D-028 et D-031). Relevé : les élèves se voient déjà en grille et la photo est déjà permise aux camarades (K-44, 09/10) ; manquent le prénom chez les enfants et la règle sur la vidéo (aujourd'hui rien n'empêche la vidéo d'un camarade de s'afficher) | Lot CAMARADES, en cours |
+| 21 | « Sur ta première capture j'ai vu le dynamique timing posé sur les panneaux et la barre sur desktop ; si c'est comme ça que ça va s'afficher en réel, alors tu rectifies. » | Le chevauchement était réel (île dépliée d'office, boîte à débordement en tête de colonne). Corrigé par DYNAMIQUE-CHRONO-1 : la barre vit en tête de la colonne, 16 tests de géométrie | Sur la branche |
+
+Trois défauts trouvés par le relevé du point 20 : le texte du dépôt de la photo d'un enfant ne dit
+pas qui la verra (corrigé dans CAMARADES, texte à valider par le directeur) ; un texte jamais
+affiché dit l'inverse du serveur (retiré dans CAMARADES) ; la vue `session_peers_v` rend le prénom
+et le matricule des autres participants d'une séance à tout participant (constat SEC-6) : la fermer
+demande de remplacer une vue, donc une installation par le directeur ; pas fait.
+
+## Où en sont les lots, au 13/11/2026 à 00:20 UTC
+
+Tout est sur `claude/zealous-tesla-ewstzw`. Rien sur staging, rien en production, rien prouvé par
+le directeur. Les preuves sont des tests et des captures de test, sauf mention.
+
+| Lot | Points | État |
+| :-- | :-- | :-- |
+| POINTEUR | 1 | Sur la branche |
+| VISAGES | 7, 8, 9 | Sur la branche. La couleur d'une personne sans photo est une teinte stable, pas l'accent choisi par le tuteur (le serveur ne le rend qu'au foyer) |
+| BIBLIOTHEQUE-SALLE | 10 | Sur la branche |
+| ENTREE-ROBUSTE | 11, 18 (message), 19 | Sur la branche. La cause des entrées difficiles du 12/11 reste inconnue ; chaque échec est désormais supervisé |
+| PAGES-FLUIDES | 12, 13 | Sur la branche. Le texte rétrécit de 3 à 8 % |
+| CAMERA-JUMELAGE | 18 | Sur la branche. Prouvé dans Chromium (pistes fermées après le lecteur) ; pas sur un vrai téléphone |
+| PAUSE-SERVEUR | 14 | Sur la branche. Migration `20261124100000_pause_proposee.sql` rejouée en local, NON installée |
+| HORS-SALLE-1 | 16, 17 | Sur la branche. Rien d'essayé sur un vrai téléphone ; aucune ligne enregistrée sur un élève |
+| DYNAMIQUE-CHRONO-1 | 2, 3, 5 (place), 15, 21 | Sur la branche |
+| DYNAMIQUE-CHRONO-2 | 5, 6, 14 (écran), 15 | En cours |
+| CAMARADES | 20 | En cours (migration `20261124300000_camarades_prenoms.sql`) |
+| HORS-SALLE-2 | 17 (journal des sorties) | Pas commencé : pour un mineur, l'accord du parent est exigé (règle du 11/11, `DROIT-RELEVE-QUALITE.md` §10 point 3) et le mécanisme d'accord n'existe qu'en démonstration |
+| RETRAIT | prière | Pas commencé : « Je m'absente un instant », sans trace ; règle convenue avec l'architecte pédagogique |
+| REGLE-CHRONO | 4 | Attend la confirmation du directeur (argent) |
+| HARMONIE-SALLE | 13 | Pas commencé |
+
