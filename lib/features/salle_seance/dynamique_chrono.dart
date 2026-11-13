@@ -782,15 +782,19 @@ class ZoneChrono extends StatelessWidget {
 /// elle se replie. Son etat est garde (la video ne se recree pas).
 class CacheSousDynamique extends StatelessWidget {
   /// Cree le cache autour de [child].
-  const CacheSousDynamique({required this.child, super.key});
+  const CacheSousDynamique({required this.child, this.actif = true, super.key});
 
   /// Ce qui s'efface pendant le depliage.
   final Widget child;
 
+  /// Faux : rien ne s'efface (ce qui est pose hors de la barre, dans une
+  /// bande de cote).
+  final bool actif;
+
   @override
   Widget build(BuildContext context) {
     final PiloteDynamique? pilote = PorteeMediaSalle.de(context)?.pilote;
-    if (pilote == null) return child;
+    if (pilote == null || !actif) return child;
     return ValueListenableBuilder<bool>(
       valueListenable: pilote.parDessus,
       builder: (BuildContext _, bool cache, Widget? enfant) =>

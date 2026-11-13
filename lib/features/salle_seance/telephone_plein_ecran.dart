@@ -2268,8 +2268,9 @@ class _EtatVignetteAimantee extends State<VignetteAimantee>
   Widget build(BuildContext context) {
     final String nom = deDevant(widget.vue.nomEnseignant);
     return Positioned.fill(
-      // DYNAMIQUE-CHRONO-2 : pas de vignette sous la barre depliee.
-      child: CacheSousDynamique(child: LayoutBuilder(
+      // DYNAMIQUE-CHRONO-2 : pas de vignette sous la barre depliee, au
+      // telephone (sur les cotes, elle vit dans la bande, hors de la barre).
+      child: CacheSousDynamique(actif: !widget.rangeable, child: LayoutBuilder(
         builder: (BuildContext contexte, BoxConstraints c) {
           _ecran = c.biggest;
           final _Rangement? r = _rangement;

@@ -29,6 +29,7 @@ import 'package:rewayah_academy/core/theme/app_mouvement.dart';
 import 'package:rewayah_academy/core/video/gestes_salle.dart';
 import 'package:rewayah_academy/core/video/signal_rappel.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
+import 'package:rewayah_academy/core/widgets/cadre_visage.dart';
 import 'package:rewayah_academy/core/widgets/chrono_vivant.dart';
 import 'package:rewayah_academy/core/widgets/permanent_notice.dart';
 import 'package:rewayah_academy/features/salle/synchro_salle.dart'
@@ -160,7 +161,14 @@ void _verifierRienSousLaBarre(WidgetTester tester, String cas) {
   expect(depliee, findsOneWidget, reason: cas);
   expect(find.byType(CapsuleVideoTelephone), findsNothing, reason: cas);
   expect(find.byKey(VignetteAimantee.cle), findsNothing, reason: cas);
-  final List<Finder> rects = <Finder>[depliee, find.byKey(LigneEtatSalle.cle)];
+  // Tout cadre de visage encore visible (vignette des rangees de l'eleve,
+  // grille) : ni sous la barre, ni sur la ligne d'etat.
+  final List<Finder> rects = <Finder>[
+    depliee,
+    find.byKey(LigneEtatSalle.cle),
+    for (int k = 0; k < find.byType(CadreVisage).evaluate().length; k++)
+      find.byType(CadreVisage).at(k),
+  ];
   for (int i = 0; i < rects.length; i++) {
     for (int j = i + 1; j < rects.length; j++) {
       final Rect a = tester.getRect(rects[i]);
@@ -562,6 +570,10 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 600));
     expect(_alerte, findsOneWidget);
+    // Les commandes au toucher (la vignette de l'enseignant vient avec elles).
+    await tester.tapAt(const Offset(195, 700));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 600));
     _verifierRienSousLaBarre(tester, 'eleve 390, pause');
     expect(find.text(t.salle.seance.chrono.pause), findsWidgets);
     final DateTime reprise = h.maintenant.add(const Duration(minutes: 10));
