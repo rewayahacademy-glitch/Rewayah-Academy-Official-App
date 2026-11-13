@@ -66,12 +66,12 @@ import 'package:rewayah_academy/features/salle/salle_page.dart';
 import 'package:rewayah_academy/features/salle/synchro_salle.dart'
     show typeParoleSalle;
 import 'package:rewayah_academy/features/salle_enseignant/page_coran_salle.dart';
-import 'package:rewayah_academy/features/salle_seance/annonce_geste.dart';
 import 'package:rewayah_academy/features/salle_seance/barre_outils_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/bornes_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/commandes_pedagogiques.dart'
     show DeclencheurCommandes;
 import 'package:rewayah_academy/features/salle_seance/depuis_salle.dart';
+import 'package:rewayah_academy/features/salle_seance/dynamique_chrono.dart';
 import 'package:rewayah_academy/features/salle_seance/ecriture_seance.dart'
     show diffusionEcritureProvider;
 import 'package:rewayah_academy/features/salle_seance/media_salle.dart';
@@ -2183,10 +2183,11 @@ void main() {
       await tester.pump();
       await tester.pump();
       // Le serveur a ferme les micros des camarades ; l'enseignant le lit.
+      // DYNAMIQUE-CHRONO-2 : dans la Dynamique chrono, montre a tous.
       expect(gestes.recitations, <String?>['e1']);
       expect(
         find.descendant(
-          of: find.byKey(CoucheAnnonceGeste.cle),
+          of: find.byKey(DynamiqueChrono.cleAlerte),
           matching: find.text(
             t.salle.gestes.recitationOuverte(prenom: 'Yusuf'),
           ),
@@ -2201,7 +2202,7 @@ void main() {
       expect(annonce.charge['profil'], 'e1');
       expect(moteur.donneesPubliees.last.fiable, isTrue);
 
-      await tester.pump(AppMouvement.annonceGesteMaintien);
+      await tester.pump(AppMouvement.alerteChrono);
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const ValueKey<String>('gestes-e1')));
       await tester.pumpAndSettle();
@@ -2219,7 +2220,7 @@ void main() {
       )!;
       expect(fin.type, typeParoleSalle);
       expect(fin.charge['profil'], isNull);
-      await tester.pump(AppMouvement.annonceGesteMaintien);
+      await tester.pump(AppMouvement.alerteChrono);
       await tester.pumpAndSettle();
     });
 
@@ -2395,9 +2396,10 @@ void main() {
       recevoirParole('e2', 'Aicha', 1);
       await tester.pump();
       await tester.pump();
+      // DYNAMIQUE-CHRONO-2 : dans la Dynamique chrono.
       expect(
         find.descendant(
-          of: find.byKey(CoucheAnnonceGeste.cle),
+          of: find.byKey(DynamiqueChrono.cleAlerte),
           matching: find.text(t.salle.gestes.autreReciteTitre(prenom: 'Aicha')),
         ),
         findsOneWidget,
@@ -2408,7 +2410,14 @@ void main() {
       recevoirParole(null, '', 2);
       await tester.pump();
       await tester.pump();
-      expect(find.text(t.salle.gestes.finRecitationTitre), findsOneWidget);
+      // La fin remplace l'alerte de la recitation, sans attendre.
+      expect(
+        find.descendant(
+          of: find.byKey(DynamiqueChrono.cleAlerte),
+          matching: find.text(t.salle.gestes.finRecitationTitre),
+        ),
+        findsOneWidget,
+      );
       expect(find.text(t.salle.gestes.finRecitation), findsOneWidget);
 
       // C'est a lui : il lit « ouvrez votre micro », et son appareil sonne.
@@ -2418,7 +2427,7 @@ void main() {
       expect(find.text(t.salle.gestes.aVousTitre), findsOneWidget);
       expect(find.text(t.salle.gestes.aVous), findsOneWidget);
       expect(signaux, 1);
-      await tester.pump(AppMouvement.annonceGesteMaintien);
+      await tester.pump(AppMouvement.alerteChrono);
       await tester.pumpAndSettle();
     });
 
@@ -2736,21 +2745,35 @@ void main() {
       );
       await tester.pump();
       await tester.pump();
-      // GESTES-POINTEUR (11/11/2026) : en tete de la salle, dans la couche
-      // des annonces (jamais dans une couche que le telephone masque).
+      // DYNAMIQUE-CHRONO-2 (directeur, 12/11/2026, point 5) : l'appel se
+      // dit dans la Dynamique chrono, en plus du son et de la vibration.
       expect(
         find.descendant(
-          of: find.byKey(CoucheAnnonceGeste.cle),
+          of: find.byKey(DynamiqueChrono.cleAlerte),
           matching: find.text(t.salle.gestes.appelRecuTitre),
         ),
         findsOneWidget,
       );
       expect(find.text(t.salle.gestes.appelRecu), findsOneWidget);
       expect(signaux, 1);
+      // Point 6 : la sonnerie se repete (trois fois, espacee).
+      await tester.pump(AppMouvement.sonnerieAppelEspace);
+      expect(signaux, 2);
+      await tester.pump(AppMouvement.sonnerieAppelEspace);
+      expect(signaux, 3);
 
-      await tester.pump(AppMouvement.annonceGesteMaintien);
+      // L'alerte se replie seule ; sa marque reste jusqu'au toucher de la
+      // barre.
+      await tester.pump(AppMouvement.alerteChrono);
+      await tester.pumpAndSettle();
+      expect(find.byKey(DynamiqueChrono.cleAlerte), findsNothing);
+      expect(find.text(t.salle.gestes.appelRecu), findsNothing);
+      await tester.tap(find.byKey(DynamiqueChrono.cleDeplier).first);
+      await tester.pumpAndSettle();
+      await tester.pump(AppMouvement.dynamiqueChronoDepliee);
       await tester.pumpAndSettle();
       expect(find.text(t.salle.gestes.appelRecuTitre), findsNothing);
+      expect(signaux, 3);
     });
 
     testWidgets('31/10/2026 : le retour du telephone ou du navigateur quitte '

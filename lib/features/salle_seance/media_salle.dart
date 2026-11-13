@@ -15,6 +15,7 @@ import '../../core/widgets/action_principale.dart';
 import '../salle/vue_salle.dart';
 import 'marque_chrono.dart';
 import 'panneau_bibliotheque_salle.dart' show SupportBibliotheque;
+import 'pilote_dynamique.dart' show PiloteDynamique;
 import 'vue_seance.dart';
 
 /// Les paliers du zoom local de la page (directeur, 24/10/2026) : 100, 125,
@@ -135,6 +136,7 @@ class PorteeMediaSalle extends InheritedWidget {
     this.onBasculerScene,
     this.actionScene,
     this.marques = const <MarqueChrono>[],
+    this.pilote,
     this.presenceEnSalle = false,
     this.boutonEleves,
     this.alerte,
@@ -215,6 +217,10 @@ class PorteeMediaSalle extends InheritedWidget {
   /// presence quand elle s'ecarte de « En salle », section 6.6 ; l'eleve qui
   /// recite) rentre dans la Dynamique chrono, en marques.
   final List<MarqueChrono> marques;
+
+  /// DYNAMIQUE-CHRONO-2 : la file des alertes et les marques de la barre
+  /// (arrivees, appel, recitation, pause), ou `null` (demonstration).
+  final PiloteDynamique? pilote;
 
   /// CHRONO-ETAT (directeur, 11/11/2026 : « en ligne / en salle =
   /// doublon ») : la presence de la personne est confirmee par le serveur.

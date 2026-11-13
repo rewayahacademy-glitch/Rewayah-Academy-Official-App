@@ -1138,7 +1138,10 @@ class _EtatTelephonePleinEcran extends State<_CorpsTelephone> {
           // repos comme au toucher, poses sur la page sans la retrecir ; la
           // capsule se place sous eux et suit le toucher (C10), sauf sur la
           // scene video en grand.
-          final Widget laCapsule = _profil
+          // DYNAMIQUE-CHRONO-2 (relecture du 13/11/2026) : la capsule ne se
+          // rend pas tant que la Dynamique chrono est depliee par-dessus ;
+          // elle revient quand la barre se replie.
+          final Widget laCapsule = CacheSousDynamique(child: _profil
               ? KeyedSubtree(
                   key: _cleProfil,
                   child: ProfilTelephone(
@@ -1164,7 +1167,7 @@ class _EtatTelephonePleinEcran extends State<_CorpsTelephone> {
                         ? null
                         : actions.onRetour,
                   ),
-                );
+                ));
           final Widget capsuleEnHaut = PositionedDirectional(
             top: 0,
             start: 0,
@@ -1315,6 +1318,7 @@ class _EtatTelephonePleinEcran extends State<_CorpsTelephone> {
                 // Pilote C10 (27/10) : sur la scene video en grand, rien a
                 // proteger, la capsule reste au repos ; sur la page, elle se
                 // masque avec les commandes (C12 : sous les alertes).
+                // DYNAMIQUE-CHRONO-2 : pas de capsule sous la barre depliee.
                 if (capsule) capsuleEnHaut,
                 if (panneau && telephone && !enseignant)
                   PositionedDirectional(
@@ -2264,7 +2268,9 @@ class _EtatVignetteAimantee extends State<VignetteAimantee>
   Widget build(BuildContext context) {
     final String nom = deDevant(widget.vue.nomEnseignant);
     return Positioned.fill(
-      child: LayoutBuilder(
+      // DYNAMIQUE-CHRONO-2 : pas de vignette sous la barre depliee, au
+      // telephone (sur les cotes, elle vit dans la bande, hors de la barre).
+      child: CacheSousDynamique(actif: !widget.rangeable, child: LayoutBuilder(
         builder: (BuildContext contexte, BoxConstraints c) {
           _ecran = c.biggest;
           final _Rangement? r = _rangement;
@@ -2371,7 +2377,7 @@ class _EtatVignetteAimantee extends State<VignetteAimantee>
             ],
           );
         },
-      ),
+      )),
     );
   }
 }

@@ -403,6 +403,31 @@
       "conclure": "Moins de 5 minutes\u00a0: pensez à conclure.",
       "finAtteinte": "Fin prévue atteinte\u00a0: séance toujours en direct."
     },
+    "dynamique": {
+      "arriveePrenom": "{prenom} entre dans la salle",
+      "arrivees(plural, param=n)": {
+        "one": "élève entre dans la salle",
+        "other": "élèves entrent dans la salle"
+      },
+      "arriveeMarquePrenom": "{prenom} dans la salle",
+      "arriveesMarque(plural, param=n)": {
+        "one": "Un élève de plus dans la salle",
+        "other": "{n} élèves de plus dans la salle"
+      },
+      "unEleveRecite": "Un élève récite",
+      "pauseQuestion": "Pause de {minutes}\u00a0min\u00a0?",
+      "oui": "Oui",
+      "non": "Non",
+      "pauseProposee": "Pause proposée",
+      "pauseDebut": "Pause de {minutes} min. Reprise à {heure}",
+      "pausePriereDebut": "Pause de prière. Reprise à {heure}",
+      "pauseFinie": "La pause est finie",
+      "priereNom": "Pause de prière",
+      "priereA": "Pause de prière à {heure}",
+      "priereDans": "Pause de prière dans {minutes} min",
+      "commencerMaintenant": "Commencer maintenant",
+      "decaler": "Décaler de {minutes} min"
+    },
     "supports": {
       "coran": "Coran, Mushaf de Médine",
       "coranDetail": "La page s'ouvre pour toute la classe."
@@ -572,6 +597,8 @@
         "tempsPrevuEcoule": "Temps prévu écoulé",
         "reste": "Reste",
         "apresFin": "Après la fin",
+        "resteSeance": "Reste {temps}",
+        "pause": "Pause",
         "annonce": "Séance\u00a0: {ecoule}, {restant}.",
         "minutesEcoulees(plural, param=minutes)": {
           "one": "{minutes} min écoulée",
@@ -588,6 +615,7 @@
         "dans": "Pause dans {minutes} min",
         "prevue": "Pause prévue",
         "enCours": "Pause, reprise à {heure}",
+        "repriseA": "Reprise à {heure}",
         "prise": "Pause prise",
         "demarrer": "Démarrer la pause",
         "terminer": "Terminer la pause",

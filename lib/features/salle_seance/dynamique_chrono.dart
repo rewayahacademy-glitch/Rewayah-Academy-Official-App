@@ -21,9 +21,11 @@
 //   ([PermanentNotice], ADR-011) et le mot d'etat du lien (« En salle »,
 //   « En ligne ») ne se replient jamais : [LigneEtatSalle], dans la meme
 //   zone reservee, sur la meme rangee quand la largeur le permet.
-// - **Prete pour la suite** : une alerte passagere ([AlerteChrono]) deplie la
-//   barre, part seule et laisse sa trace en marque. Aucune n'est emise dans ce
-//   lot (DYNAMIQUE-CHRONO-2) ; aucun son nouveau.
+// - **Les alertes** (DYNAMIQUE-CHRONO-2, directeur, 12/11/2026) : une alerte
+//   passagere ([AlerteChrono], tenue par [PiloteDynamique]) deplie la barre,
+//   part seule et laisse sa trace en marque ; au telephone, la ligne d'etat
+//   (mot du lien, mention permanente) descend sous la barre depliee, jamais
+//   cachee.
 //
 // Elle reunit ce qui existait : l'ancienne ile de la salle (`DynamiqueChrono`,
 // renommee ici), son chrono (`ChronoSalle`, qui calcule le temps et dessine la
@@ -42,14 +44,17 @@ import '../../core/theme/app_mouvement.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/chrono_vivant.dart';
 import '../../core/widgets/ile_liquide.dart';
 import '../../core/widgets/lien_fleche.dart';
+import '../../core/widgets/pressable.dart';
 import '../../core/widgets/status_pill.dart';
 import 'chrono_salle.dart';
 import 'marque_chrono.dart';
 import 'media_salle.dart';
 import 'mention_seance.dart';
+import 'pilote_dynamique.dart' show PiloteDynamique;
 import 'vue_seance.dart';
 
 /// La Dynamique chrono : la barre du temps et des marques de la salle.
@@ -65,6 +70,8 @@ class DynamiqueChrono extends StatefulWidget {
     this.microOuvert = false,
     this.marques,
     this.alerte,
+    this.pilote,
+    this.ligne,
     this.enPlace = false,
     super.key,
   });
@@ -100,8 +107,19 @@ class DynamiqueChrono extends StatefulWidget {
   /// Les marques ; `null` : celles de la salle ([PorteeMediaSalle.marques]).
   final List<MarqueChrono>? marques;
 
-  /// L'alerte passagere en cours, ou `null` (aucune emise dans ce lot).
+  /// Une alerte passagere posee directement (sans pilote) : elle part seule
+  /// apres sa duree et laisse sa trace.
   final AlerteChrono? alerte;
+
+  /// DYNAMIQUE-CHRONO-2 : la file des alertes et ses marques ; `null` :
+  /// celle de la salle ([PorteeMediaSalle.pilote]).
+  final PiloteDynamique? pilote;
+
+  /// DYNAMIQUE-CHRONO-2 (directeur, 12/11/2026) : le mot d'etat du lien et
+  /// la mention permanente ([LigneEtatSalle]), poses apres la barre. Quand la
+  /// barre se deplie par-dessus le contenu, cette ligne descend sous elle :
+  /// la barre depliee ne la cache jamais.
+  final Widget? ligne;
 
   /// Vrai (ordinateur, tete de la colonne) : la barre se deplie a sa place,
   /// dans le flux, et pousse ce qui suit ; faux (telephone, tablette) : elle
@@ -121,6 +139,9 @@ class DynamiqueChrono extends StatefulWidget {
   /// L'alerte passagere (tests).
   static const Key cleAlerte = ValueKey<String>('dynamique-chrono-alerte');
 
+  /// Le nombre qui roule d'une alerte (« +2 ») (tests).
+  static const Key cleCompte = ValueKey<String>('dynamique-chrono-compte');
+
   @override
   State<DynamiqueChrono> createState() => _DynamiqueChronoEtat();
 }
@@ -129,24 +150,29 @@ class _DynamiqueChronoEtat extends State<DynamiqueChrono> {
   bool _deplie = false;
   Timer? _replier;
 
-  /// L'alerte montree en ce moment (par son identifiant), et celles deja
-  /// montrees : une alerte reconstruite ne se rejoue pas.
+  /// L'alerte posee directement (sans pilote), et celles deja montrees : une
+  /// alerte reconstruite ne se rejoue pas.
   AlerteChrono? _alerte;
   final Set<String> _alertesVues = <String>{};
   final List<MarqueChrono> _traces = <MarqueChrono>[];
   Timer? _finAlerte;
+
+  PiloteDynamique? _pilote;
 
   /// Le contenu (le chrono) passe de la barre repliee a la barre depliee
   /// sans etre recree : son etat et son signal sonore ne repartent pas de
   /// zero.
   final GlobalKey _cleContenu = GlobalKey(debugLabel: 'dynamique-chrono');
   final GlobalKey _cleRepliee = GlobalKey(debugLabel: 'dynamique-repliee');
+  final GlobalKey _cleLigne = GlobalKey(debugLabel: 'dynamique-ligne');
   final LayerLink _lien = LayerLink();
   final OverlayPortalController _portail = OverlayPortalController();
 
-  /// La taille de la barre repliee, gardee pendant qu'elle est depliee
-  /// par-dessus : sa place ne change pas.
+  /// La taille de la barre repliee, et celle de la ligne d'etat, gardees
+  /// pendant que la barre est depliee par-dessus : leurs places ne changent
+  /// pas.
   Size? _tailleRepliee;
+  Size? _tailleLigne;
 
   @override
   void initState() {
@@ -159,13 +185,45 @@ class _DynamiqueChronoEtat extends State<DynamiqueChrono> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _ecouter(widget.pilote ?? PorteeMediaSalle.de(context)?.pilote);
+  }
+
+  @override
   void didUpdateWidget(DynamiqueChrono ancien) {
     super.didUpdateWidget(ancien);
+    _ecouter(widget.pilote ?? PorteeMediaSalle.de(context)?.pilote);
     _lireAlerte();
+  }
+
+  void _ecouter(PiloteDynamique? pilote) {
+    if (identical(pilote, _pilote)) return;
+    _pilote?.removeListener(_piloteChange);
+    _pilote = pilote;
+    pilote?.addListener(_piloteChange);
+  }
+
+  void _piloteChange() {
+    if (!mounted) return;
+    // Avant de se deplier par-dessus : la place repliee est mesuree.
+    if (!_deplie) _mesurer();
+    setState(() {});
   }
 
   @override
   void dispose() {
+    final PiloteDynamique? pilote = _pilote;
+    if (pilote != null && pilote.parDessus.value) {
+      WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+        try {
+          pilote.parDessus.value = false;
+        } on Object {
+          // Pilote deja libere avec la salle.
+        }
+      });
+    }
+    _pilote?.removeListener(_piloteChange);
     _replier?.cancel();
     _finAlerte?.cancel();
     super.dispose();
@@ -192,28 +250,79 @@ class _DynamiqueChronoEtat extends State<DynamiqueChrono> {
     });
   }
 
+  void _mesurer() {
+    final RenderObject? r = _cleRepliee.currentContext?.findRenderObject();
+    if (r is RenderBox && r.hasSize) _tailleRepliee = r.size;
+    final RenderObject? l = _cleLigne.currentContext?.findRenderObject();
+    if (l is RenderBox && l.hasSize) _tailleLigne = l.size;
+  }
+
   void _basculer() {
     _replier?.cancel();
     if (_deplie) {
       setState(() => _deplie = false);
       return;
     }
-    final RenderObject? r = _cleRepliee.currentContext?.findRenderObject();
-    _tailleRepliee = r is RenderBox && r.hasSize ? r.size : null;
+    _mesurer();
     setState(() => _deplie = true);
     _replier = Timer(AppMouvement.dynamiqueChronoDepliee, () {
       if (mounted) setState(() => _deplie = false);
     });
   }
 
+  /// DYNAMIQUE-CHRONO-2 : un toucher sert d'abord au pilote (couper la
+  /// sonnerie, effacer l'appel recu, replier une alerte, rouvrir la pause
+  /// proposee) ; sinon il deplie ou replie la barre.
+  void _toucher() {
+    if (_pilote?.toucher() ?? false) return;
+    _basculer();
+  }
+
+  /// Les marques sans chrono, touchables quand [toucher] existe (cible de 48
+  /// au moins ; le libelle est lu).
+  Widget _touchable({
+    required VoidCallback? toucher,
+    required String libelle,
+    required Widget child,
+  }) {
+    if (toucher == null) return child;
+    return Pressable(
+      key: DynamiqueChrono.cleDeplier,
+      onPress: toucher,
+      libelleSemantique: libelle,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: AppSpacing.titreEcran),
+        child: Align(
+          alignment: AlignmentDirectional.centerStart,
+          widthFactor: 1,
+          heightFactor: 1,
+          child: child,
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final VueSeance vue = widget.vue;
     final AppPalette palette = AppPalette.of(context);
+    final PiloteDynamique? pilote = _pilote;
+    final AlerteChrono? alerte = pilote?.alerte ?? _alerte;
+    final bool deplie = alerte != null || _deplie;
+    final bool enPlace = widget.enPlace;
     // Depliee par-dessus le contenu, la capsule devient opaque et cernee
     // (la surface relevee, son filet et une ombre douce) : la page ne se lit
     // jamais au travers.
-    final bool parDessus = _deplie && !widget.enPlace;
+    final bool parDessus = deplie && !enPlace;
+    // DYNAMIQUE-CHRONO-2 : la capsule video et la vignette s'effacent tant
+    // que la barre est depliee par-dessus (apres l'image : un notifier ne se
+    // change pas pendant une construction).
+    if (pilote != null && pilote.parDessus.value != parDessus) {
+      WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+        if (!mounted || !identical(_pilote, pilote)) return;
+        pilote.parDessus.value = parDessus;
+      });
+    }
     final AppColorPair fond = parDessus
         ? palette.surfaceRaised
         : widget.surface ?? palette.piluleSalle;
@@ -223,10 +332,9 @@ class _DynamiqueChronoEtat extends State<DynamiqueChrono> {
     final List<MarqueChrono> marques = <MarqueChrono>[
       ...?(widget.marques ?? PorteeMediaSalle.de(context)?.marques),
       ..._traces,
+      ...?pilote?.marques,
     ];
-    final AlerteChrono? alerte = _alerte;
     final bool avecChrono = widget.avecChrono && vue.voitChrono;
-    final bool deplie = alerte != null || _deplie;
     final Widget? micro = widget.microOuvert
         ? Semantics(
             key: DynamiqueChrono.cleMicroOuvert,
@@ -243,9 +351,21 @@ class _DynamiqueChronoEtat extends State<DynamiqueChrono> {
             ),
           )
         : null;
+    final Widget? ligneEtat = widget.ligne;
     if (!avecChrono && marques.isEmpty && micro == null && alerte == null) {
-      return const SizedBox.shrink();
+      // Rien a dire dans la barre : la ligne d'etat seule (elle ne se replie
+      // jamais), sans capsule vide.
+      return ligneEtat == null
+          ? const SizedBox.shrink()
+          : KeyedSubtree(key: _cleLigne, child: ligneEtat);
     }
+    // Une alerte posee sans pilote ne se replie pas d'un toucher (elle part
+    // seule) ; avec le pilote, le toucher la replie et laisse sa marque.
+    final VoidCallback? toucher = pilote != null
+        ? _toucher
+        : alerte == null
+        ? _basculer
+        : null;
 
     final Widget contenu = KeyedSubtree(
       key: _cleContenu,
@@ -264,127 +384,199 @@ class _DynamiqueChronoEtat extends State<DynamiqueChrono> {
               sonne: vue.conduitLaSeance,
               onEtat: widget.onEtatChrono,
               marques: marques,
-              deplie: deplie,
-              onBasculer: alerte == null ? _basculer : null,
+              // L'alerte seule ne deplie pas les marques en clair : elle
+              // dit son evenement, la ligne garde ses points.
+              deplie: _deplie || (alerte != null && pilote == null),
+              onBasculer: toucher,
               libelleBasculer: deplie
                   ? t.salle.ile.replierEtat
                   : t.salle.ile.deplierEtat,
               signes: <Widget>[?micro],
             )
           // Sans chrono (Interface guidee, bornes inconnues) : les marques en
-          // clair, une ile vide ne dirait rien.
-          : Wrap(
-              spacing: AppSpacing.md,
-              runSpacing: AppSpacing.xs,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              children: <Widget>[
-                for (final MarqueChrono m in marques)
-                  Semantics(
-                    container: true,
-                    label: m.annonce,
-                    child: ExcludeSemantics(
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: <Widget>[
-                          SizedBox.square(
-                            dimension: StatusPill.diametrePastille,
-                            child: DecoratedBox(
-                              decoration: palette.pastilleDe(m.ton),
+          // clair, une ile vide ne dirait rien. Avec le pilote, le toucher
+          // garde son role (couper la sonnerie, effacer l'appel recu).
+          : _touchable(
+              toucher: pilote == null ? null : toucher,
+              libelle: t.salle.ile.deplierEtat,
+              child: Wrap(
+                spacing: AppSpacing.md,
+                runSpacing: AppSpacing.xs,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: <Widget>[
+                  for (final MarqueChrono m in marques)
+                    Semantics(
+                      container: true,
+                      label: m.annonce,
+                      child: ExcludeSemantics(
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            SizedBox.square(
+                              dimension: StatusPill.diametrePastille,
+                              child: DecoratedBox(
+                                decoration: palette.pastilleDe(m.ton),
+                              ),
                             ),
-                          ),
-                          Ecart.hSm,
-                          Flexible(child: Text(m.libelle, style: style)),
-                        ],
+                            Ecart.hSm,
+                            Flexible(child: Text(m.libelle, style: style)),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ?micro,
-              ],
+                  ?micro,
+                ],
+              ),
             ),
     );
 
-    Widget capsule(Widget enfant, {Key? cle, bool cernee = false}) => IleLiquide(
-      key: cle,
-      decoration: cernee
-          ? AppElevation.avecFilet(
-              surface: fond,
-              filet: palette.borderStrong,
-              ombre: palette.ombre,
-              arrondi: AppRadius.arrondiLg,
-              ombres: AppElevation.niveau2(palette.ombre),
-            )
-          : fond.decoration(borderRadius: AppRadius.arrondiLg),
-      alignement: AlignmentDirectional.topStart,
-      padding: EdgeInsetsDirectional.only(
-        start: AppSpacing.md,
-        end: AppSpacing.md,
-        top: avecChrono ? 0 : AppSpacing.md,
-        bottom: avecChrono && !deplie ? 0 : AppSpacing.md,
-      ),
-      child: enfant,
-    );
+    Widget capsule(Widget enfant, {Key? cle, bool cernee = false}) =>
+        IleLiquide(
+          key: cle,
+          decoration: cernee
+              ? AppElevation.avecFilet(
+                  surface: fond,
+                  filet: palette.borderStrong,
+                  ombre: palette.ombre,
+                  arrondi: AppRadius.arrondiLg,
+                  ombres: AppElevation.niveau2(palette.ombre),
+                )
+              : fond.decoration(borderRadius: AppRadius.arrondiLg),
+          alignement: AlignmentDirectional.topStart,
+          padding: EdgeInsetsDirectional.only(
+            start: AppSpacing.md,
+            end: AppSpacing.md,
+            top: avecChrono ? 0 : AppSpacing.md,
+            bottom: avecChrono && !deplie ? 0 : AppSpacing.md,
+          ),
+          child: enfant,
+        );
+
+    Widget? blocAlerte() {
+      final AlerteChrono? a = alerte;
+      if (a == null) return null;
+      final TextStyle titre = fond.applyTo(
+        Theme.of(context).textTheme.titleSmall ?? const TextStyle(),
+      );
+      final int? compte = a.compte;
+      void choisir(ActionAlerteChrono action) {
+        action.onPress();
+        if (pilote != null) {
+          pilote.choisir(a.id);
+        } else {
+          _fermerAlerte(a);
+        }
+      }
+
+      return Padding(
+        key: DynamiqueChrono.cleAlerte,
+        padding: const EdgeInsets.only(top: AppSpacing.md),
+        // Lue une fois, a son arrivee : une alerte neuve est un noeud neuf.
+        child: Semantics(
+          key: ValueKey<String>('alerte-${a.id}'),
+          container: true,
+          liveRegion: true,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            spacing: AppSpacing.xs,
+            children: <Widget>[
+              // Le nombre et le titre se lisent ensemble (« +2 eleves entrent
+              // dans la salle ») : les chiffres roulants seuls seraient lus
+              // caractere par caractere.
+              Semantics(
+                label: compte == null ? null : '+$compte ${a.titre}',
+                child: ExcludeSemantics(
+                  excluding: compte != null,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      if (compte != null) ...<Widget>[
+                        ChiffresRoulants(
+                          key: DynamiqueChrono.cleCompte,
+                          texte: '+$compte',
+                          style: titre,
+                        ),
+                        Ecart.hSm,
+                      ],
+                      Flexible(child: Text(a.titre, style: titre)),
+                    ],
+                  ),
+                ),
+              ),
+              if (a.detail case final String detail) Text(detail, style: style),
+              if (a.actions.isNotEmpty)
+                Wrap(
+                  spacing: AppSpacing.md,
+                  runSpacing: AppSpacing.xs,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: <Widget>[
+                    for (final ActionAlerteChrono action in a.actions)
+                      action.principale
+                          ? ActionPrincipale(
+                              libelle: action.libelle,
+                              compacte: true,
+                              pleineLargeur: false,
+                              onPress: () => choisir(action),
+                            )
+                          : LienFleche(
+                              libelle: action.libelle,
+                              fleche: false,
+                              onPress: () => choisir(action),
+                            ),
+                  ],
+                ),
+            ],
+          ),
+        ),
+      );
+    }
 
     // Depliee : l'alerte (s'il y en a une) puis le contenu.
     Widget depliee() => Column(
       key: DynamiqueChrono.cleDepliee,
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        if (alerte != null)
-          Padding(
-            key: DynamiqueChrono.cleAlerte,
-            padding: const EdgeInsets.only(top: AppSpacing.md),
-            child: Semantics(
-              container: true,
-              liveRegion: true,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    alerte.titre,
-                    style: fond.applyTo(
-                      Theme.of(context).textTheme.titleSmall ??
-                          const TextStyle(),
-                    ),
-                  ),
-                  Wrap(
-                    spacing: AppSpacing.md,
-                    children: <Widget>[
-                      for (final ActionAlerteChrono a in alerte.actions)
-                        LienFleche(
-                          libelle: a.libelle,
-                          fleche: false,
-                          onPress: () {
-                            a.onPress();
-                            _fermerAlerte(alerte);
-                          },
-                        ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-        contenu,
-      ],
+      children: <Widget>[?blocAlerte(), contenu],
     );
 
     final double largeur = widget.largeurMax;
-    final bool enPlace = widget.enPlace;
 
     // Telephone et tablette (et colonne trop serree) : la place reste celle
     // de la barre repliee ; la barre depliee passe un instant par-dessus le
-    // haut du contenu. Le coin de debut de la barre (a droite en arabe)
-    // reste en place. Le portail existe toujours (la structure ne change
-    // pas quand la place change) ; il ne montre rien hors de ce cas.
+    // haut du contenu, et la ligne d'etat descend sous elle (elle reste
+    // lisible). Le coin de debut de la barre (a droite en arabe) reste en
+    // place. Le portail existe toujours (la structure ne change pas quand la
+    // place change) ; il ne montre rien hors de ce cas.
     final Alignment ancre = AlignmentDirectional.topStart.resolve(
       Directionality.of(context),
     );
     final Size? place = _tailleRepliee;
+    final Widget? ligneGardee = ligneEtat == null
+        ? null
+        : KeyedSubtree(key: _cleLigne, child: ligneEtat);
+    final Widget barre = CompositedTransformTarget(
+      link: _lien,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxWidth: largeur),
+        child: enPlace
+            ? capsule(deplie ? depliee() : contenu, cle: widget.cle)
+            : deplie
+            ? SizedBox(
+                key: widget.cle,
+                width: place?.width,
+                height: place?.height ?? AppSpacing.titreEcran,
+              )
+            : KeyedSubtree(
+                key: _cleRepliee,
+                child: capsule(contenu, cle: widget.cle),
+              ),
+      ),
+    );
     return OverlayPortal(
       controller: _portail,
-      overlayChildBuilder: (BuildContext _) => !deplie || enPlace
+      overlayChildBuilder: (BuildContext _) => !parDessus
           ? const SizedBox.shrink()
           : Align(
               alignment: AlignmentDirectional.topStart,
@@ -397,29 +589,50 @@ class _DynamiqueChronoEtat extends State<DynamiqueChrono> {
                   constraints: BoxConstraints(maxWidth: largeur),
                   child: Material(
                     type: MaterialType.transparency,
-                    child: capsule(depliee(), cernee: true),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        capsule(depliee(), cernee: true),
+                        if (ligneGardee != null)
+                          Padding(
+                            padding: const EdgeInsets.only(top: AppSpacing.xs),
+                            child: DecoratedBox(
+                              decoration: palette.surfaceRaised.decoration(
+                                borderRadius: AppRadius.arrondiLg,
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: AppSpacing.md,
+                                  vertical: AppSpacing.xs,
+                                ),
+                                child: ligneGardee,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
                   ),
                 ),
               ),
             ),
-      child: CompositedTransformTarget(
-        link: _lien,
-        child: ConstrainedBox(
-          constraints: BoxConstraints(maxWidth: largeur),
-          child: enPlace
-              ? capsule(deplie ? depliee() : contenu, cle: widget.cle)
-              : deplie
-              ? SizedBox(
-                  key: widget.cle,
-                  width: place?.width,
-                  height: place?.height ?? AppSpacing.titreEcran,
-                )
-              : KeyedSubtree(
-                  key: _cleRepliee,
-                  child: capsule(contenu, cle: widget.cle),
-                ),
-        ),
-      ),
+      child: ligneGardee == null
+          ? barre
+          : Wrap(
+              spacing: AppSpacing.lg,
+              runSpacing: AppSpacing.xs,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: <Widget>[
+                barre,
+                if (parDessus)
+                  SizedBox(
+                    width: _tailleLigne?.width,
+                    height: _tailleLigne?.height,
+                  )
+                else
+                  ligneGardee,
+              ],
+            ),
     );
   }
 }
@@ -545,23 +758,48 @@ class ZoneChrono extends StatelessWidget {
   Widget build(BuildContext context) => SizedBox(
     key: cle,
     width: largeur,
-    child: Wrap(
-      spacing: AppSpacing.lg,
-      runSpacing: AppSpacing.xs,
-      crossAxisAlignment: WrapCrossAlignment.center,
-      children: <Widget>[
-        DynamiqueChrono(
-          vue: vue,
-          largeurMax: largeur,
-          cle: cleBarre,
-          avecChrono: avecChrono,
-          onPause: onPause,
-          onEtatChrono: onEtatChrono,
-          microOuvert: microOuvert,
-          enPlace: enPlace,
-        ),
-        if (avecLigneEtat) LigneEtatSalle(vue: vue),
-      ],
+    // DYNAMIQUE-CHRONO-2 : la barre pose elle-meme la ligne d'etat apres
+    // elle, pour la faire descendre sous elle quand elle se deplie
+    // par-dessus (la mention reste lisible).
+    child: DynamiqueChrono(
+      vue: vue,
+      largeurMax: largeur,
+      cle: cleBarre,
+      avecChrono: avecChrono,
+      onPause: onPause,
+      onEtatChrono: onEtatChrono,
+      microOuvert: microOuvert,
+      enPlace: enPlace,
+      ligne: avecLigneEtat ? LigneEtatSalle(vue: vue) : null,
     ),
   );
+}
+
+/// DYNAMIQUE-CHRONO-2 (relecture du 13/11/2026 : « la barre depliee, la
+/// capsule video et la ligne d'etat se chevauchent ») : ce qui flotte en haut
+/// de la salle (capsule video de l'enseignant, vignette) n'est pas rendu tant
+/// que la Dynamique chrono est depliee par-dessus le contenu ; il revient quand
+/// elle se replie. Son etat est garde (la video ne se recree pas).
+class CacheSousDynamique extends StatelessWidget {
+  /// Cree le cache autour de [child].
+  const CacheSousDynamique({required this.child, this.actif = true, super.key});
+
+  /// Ce qui s'efface pendant le depliage.
+  final Widget child;
+
+  /// Faux : rien ne s'efface (ce qui est pose hors de la barre, dans une
+  /// bande de cote).
+  final bool actif;
+
+  @override
+  Widget build(BuildContext context) {
+    final PiloteDynamique? pilote = PorteeMediaSalle.de(context)?.pilote;
+    if (pilote == null || !actif) return child;
+    return ValueListenableBuilder<bool>(
+      valueListenable: pilote.parDessus,
+      builder: (BuildContext _, bool cache, Widget? enfant) =>
+          Offstage(offstage: cache, child: enfant),
+      child: child,
+    );
+  }
 }

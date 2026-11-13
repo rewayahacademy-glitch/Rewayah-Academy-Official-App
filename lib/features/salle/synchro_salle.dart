@@ -26,6 +26,7 @@ import '../../core/tc_realtime/service_realtime_pedagogique.dart';
 import '../../core/tc_realtime/types_message.dart';
 import '../../core/theme/app_mouvement.dart';
 import '../../core/video/video_session_provider.dart';
+import '../salle_seance/relais_salle.dart';
 
 /// S1 : le type du message du pointeur de l'enseignant (point normalise de
 /// la page, canal ephemere). `EvenementPointeur` porte une position dans le
@@ -302,11 +303,8 @@ class SynchroSalle {
   final ValueNotifier<int> rappelsRecus = ValueNotifier<int>(0);
 
   void _recevoirRappel(MessagePedagogique message) {
-    if (message.type != typeRappelDiscret ||
-        message.emetteurProfilId == profilLocalId ||
-        academyIdDeCharge(message) == null) {
-      return;
-    }
+    // DYNAMIQUE-CHRONO-2 : la meme lecture que la salle reduite.
+    if (!estRappelPour(message, profilLocalId)) return;
     rappelsRecus.value++;
   }
 
