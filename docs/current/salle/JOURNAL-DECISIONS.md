@@ -2139,3 +2139,44 @@ récitation d'un élève parti). Au téléphone à 390 en français, la marque d
 le chevron de la salle réduite sur une seconde rangée (captures). Prouvé par tests et captures de
 test (`docs/current/captures/E2E/synchro-session/`) ; jamais essayé avec une vraie visio à
 plusieurs, ni en production.
+
+## D-046 (13/11/2026, soir). Version en ligne fusionnée dans la branche, et corrections de la relecture indépendante
+
+**Contexte.** L'architecte pédagogique a fait relire la branche par un relecteur indépendant
+(13/11, sur `06ba0bf0`) et a demandé la fusion de `main` (`e0b3d936`) dans la branche. Ses
+remarques sont des données d'une autre session, traitées comme une relecture de la demande de
+fusion : chacune a été vérifiée dans le code avant d'être suivie.
+
+**Fusion de `main`.** Six conflits, les deux côtés gardés (clés et section des règles : pause,
+sorties, prière ; registre des sources des textes ; textes générés). Les quatre migrations de la
+salle sont inchangées, octet pour octet. Sur une base neuve, les 443 migrations puis les 284
+scénarios passent, dont l'emboîtement prière et salle.
+
+**B2, le scénario de la pause.** `scenarios_pause_proposee.sql` supposait le lot prière absent et
+créait une fausse table du nom de sa vue. Il écrit maintenant dans le vrai stock de la prière ; le
+déclencheur du lot prière sur les séances est éteint le temps du test (annulé par le `ROLLBACK`),
+sinon son recalcul retirerait les lignes posées à la main. Le cas « ligne rejetée » est une heure
+hors de la séance (le stock refuse de lui-même une durée hors du pas de 5).
+
+**I7, les essais sans fin.** Vrai : à l'heure de reprise, une fin de pause refusée par le serveur
+était renvoyée à chaque seconde, sans limite ; de même le départ de la pause de prière à son
+heure. Désormais (`_EssaisSeuls`, `PilotePause.essaisSeuls`, `AppDelais.essaiSeulAttente`) : cinq
+essais au plus, à 0, 2, 6, 14 et 30 secondes ; ensuite la salle n'essaie plus seule, elle dit à
+qui pilote « La fin de la pause n'est pas confirmée » avec le bouton « Terminer la pause » (ou
+« Le début de la pause de prière n'est pas confirmé » avec « Commencer maintenant »). La marque
+reste tant que rien n'est confirmé, un toucher la rouvre, le geste relance une série ; elle s'en
+va seule quand l'état relu dit que la pause a fini ou commencé. Non retenu : garder la même clé
+d'idempotence d'un essai à l'autre (les commandes du serveur sont idempotentes sur l'état, et
+l'état est relu après chaque essai).
+
+**I8, les mots.** En arabe, « noter les sorties » ne se dit plus « تسجيل الخروج » (le mot de la
+déconnexion) mais « تدوين مرات الخروج » (réglage de la direction et les deux cases de l'accord ;
+le registre `TEXTES-VALIDES/ACCORD-JOURNAL-SORTIES.md` suit, toujours PROPOSITION). « Entrer »
+devient « rejoindre » (arrivées de la barre, message « compte déjà dans la salle »). « Parent »
+devient « tuteur » dans les réglages de la direction.
+
+**Deux replis prouvés sur l'adaptateur** (`test/features/salle/replis_serveur_ancien_test.dart`,
+faux serveur) : le Non de la pause et les prénoms des camarades sur un serveur d'avant le lot.
+
+**Limites.** Les deux nouveaux messages sont prouvés par tests, sans capture d'écran. Rien de
+tout cela n'est essayé sur staging, en production ni par le directeur.

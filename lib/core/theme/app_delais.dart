@@ -71,4 +71,11 @@ abstract final class AppDelais {
   /// `delaiHorsApplicationProvider`, jamais ici directement : un lot serveur
   /// le rendra reglable par la direction sans toucher a la logique.
   static const Duration horsApplicationEleve = Duration(seconds: 30);
+
+  /// L'attente avant de reessayer une commande que la salle envoie seule (la
+  /// fin de la pause a l'heure de reprise, le depart de la pause de priere)
+  /// apres un premier echec ; elle double a chaque echec suivant (2, 4, 8,
+  /// 16 s), puis la salle rend la main a la personne (revue du 13/11/2026 :
+  /// jamais un appel par seconde sans fin).
+  static const Duration essaiSeulAttente = Duration(seconds: 2);
 }

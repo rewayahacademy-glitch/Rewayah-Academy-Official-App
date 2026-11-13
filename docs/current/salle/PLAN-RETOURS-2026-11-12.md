@@ -279,3 +279,9 @@ le directeur.**
   refuse de lui-même une durée hors du pas de 5).
 - Contrôles locaux à cette heure : analyse sans remarque, jetons, branchement, règles de la revue.
   Les tests de l'application tournaient encore ; les contrôles de la demande de fusion font foi.
+- **Relecture indépendante** (demandée par l'architecte, rendue le 13/11 sur `06ba0bf0`) :
+  migrations jugées installables, « sécurité et mineurs sans faille trouvée » selon lui ; quatre
+  points à corriger, tous traités (journal D-046) : les conflits, le scénario de la pause, les
+  réessais sans fin de la fin de pause (désormais cinq essais, puis un message avec le geste),
+  et des mots (arabe de « noter les sorties », « rejoindre », « tuteur »). Deux replis « serveur
+  d'avant le lot » ont maintenant leur test sur l'adaptateur.

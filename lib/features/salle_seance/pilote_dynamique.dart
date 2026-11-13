@@ -25,6 +25,7 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/pause_seance/port_pause_seance.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/tc_horloge/mon_horloge.dart';
+import '../../core/theme/app_delais.dart';
 import '../../core/theme/app_mouvement.dart';
 import '../../core/video/publication_differee.dart' show roleQuiConduit;
 import '../../core/video/video_session_provider.dart';
@@ -211,6 +212,16 @@ class PiloteDynamique extends ChangeNotifier {
 
   /// Retire l'alerte [id] sans marque, montree ou en attente.
   void retirer(String id) => choisir(id);
+
+  /// Retire sans marque toute alerte, montree ou en attente, dont
+  /// l'identifiant commence par [prefixe] (une alerte rouverte d'un toucher
+  /// garde le debut de son identifiant).
+  void retirerFamille(String prefixe) {
+    if (_libere || prefixe.isEmpty) return;
+    _file.removeWhere((AlerteChrono a) => a.id.startsWith(prefixe));
+    if (_courante?.id.startsWith(prefixe) ?? false) _finir(trace: false);
+    notifyListeners();
+  }
 
   void _poserTrace(
     String cle,
@@ -434,8 +445,12 @@ abstract interface class CommandesPause {
 /// - La pause de priere (motif fourni par le serveur) n'a pas de Oui / Non :
 ///   [avancePriere] avant son heure, « Commencer maintenant » ou « Decaler de
 ///   5 min » ; a l'heure, elle demarre seule.
-/// - A l'heure de reprise, la pause se termine seule (une fois ; un echec se
-///   reessaie au battement suivant).
+/// - A l'heure de reprise, la pause se termine seule (une fois). Un echec se
+///   reessaie apres une attente qui double ([AppDelais.essaiSeulAttente]),
+///   [essaisSeuls] fois au plus ; ensuite la salle n'essaie plus seule : elle
+///   le dit a qui pilote, avec le geste a faire (« Terminer la pause »). Le
+///   depart de la pause de priere a son heure suit la meme regle (revue du
+///   13/11/2026, I7 : jamais un appel par seconde sans fin).
 /// - Chez tous : « Pause de 10 min. Reprise a 20:45 » quand elle commence,
 ///   « La pause est finie » quand elle finit (ou quand l'heure de reprise
 ///   est passee).
@@ -482,6 +497,15 @@ class PilotePause {
   /// La cle de la marque « Pause proposee ».
   static const String cleProposee = 'pause-proposee';
 
+  /// Le nombre d'essais d'une commande que la salle envoie seule (la fin a
+  /// l'heure de reprise, le depart de la pause de priere) avant de rendre la
+  /// main a qui pilote.
+  static const int essaisSeuls = 5;
+
+  /// La cle de la marque « non confirmee » (fin ou depart restes sans
+  /// confirmation apres [essaisSeuls] essais).
+  static const String cleNonConfirmee = 'pause-non-confirmee';
+
   PauseSeance? _pause;
   bool _pilote = false;
   StatutPause? _statutVu;
@@ -497,6 +521,9 @@ class PilotePause {
   DateTime? _priereDemarreePour;
   DateTime? _termineePour;
   bool _terminerEnVol = false;
+  final _EssaisSeuls _finSeule = _EssaisSeuls();
+  final _EssaisSeuls _departPriere = _EssaisSeuls();
+  String? _idNonConfirmee;
 
   /// Relit [pause] (servie au pilote, relayee aux autres). [pilote] : la
   /// capacite `peutPiloter` du serveur, jamais un role.
@@ -558,13 +585,14 @@ class PilotePause {
   void _piloter(DateTime now) {
     final PauseSeance? p = _pause;
     if (p == null) return;
-    // La fin a l'heure de reprise : une fois, un echec se reessaie.
+    // La fin a l'heure de reprise : une fois ; un echec se reessaie, borne.
     final DateTime? reprise = p.repriseUtc;
     if (p.statut == StatutPause.enCours &&
         reprise != null &&
         !now.isBefore(reprise) &&
         !_terminerEnVol &&
-        _termineePour != p.debutUtc) {
+        _termineePour != p.debutUtc &&
+        _finSeule.peutEssayer(p.debutUtc, now)) {
       _terminerEnVol = true;
       final DateTime? debut = p.debutUtc;
       unawaited(
@@ -572,15 +600,36 @@ class PilotePause {
           (void _) {
             _terminerEnVol = false;
             _termineePour = debut;
+            _oublierNonConfirmee();
           },
           onError: (Object _) {
             _terminerEnVol = false;
+            _finSeule.echec(maintenant());
+            if (_finSeule.epuises) {
+              _direNonConfirmee(
+                titre: t.salle.dynamique.pauseFinNonConfirmee,
+                geste: t.salle.seance.pause.terminer,
+                essais: _finSeule,
+              );
+            }
           },
         ),
       );
     }
+    if (p.statut != StatutPause.enCours && _finSeule.enCompte) {
+      // La pause n'est plus en cours (finie ailleurs, etat relu) : plus rien
+      // a terminer, le message s'en va.
+      _finSeule.oublier();
+      _oublierNonConfirmee();
+    }
     if (p.statut != StatutPause.programmee) {
       dynamique.oublier(cleProposee);
+      if (_departPriere.enCompte) {
+        // La pause a commence (ailleurs, ou confirmee apres coup) : plus
+        // rien a demarrer, le message s'en va.
+        _departPriere.oublier();
+        _oublierNonConfirmee();
+      }
       return;
     }
     final DateTime? proposer = p.proposerAUtc;
@@ -676,19 +725,76 @@ class PilotePause {
     );
   }
 
+  /// Apres [essaisSeuls] echecs, la salle n'essaie plus seule : elle dit ce
+  /// qui n'est pas confirme et donne le geste ([geste] relance une serie
+  /// d'essais). La marque reste tant que rien n'est confirme ; un toucher de
+  /// la barre rouvre l'alerte.
+  void _direNonConfirmee({
+    required String titre,
+    required String geste,
+    required _EssaisSeuls essais,
+  }) {
+    final String id = 'pause-non-confirmee-${dynamique.numero}';
+    _idNonConfirmee = id;
+    dynamique.annoncer(
+      AlerteChrono(
+        id: id,
+        titre: titre,
+        actions: <ActionAlerteChrono>[
+          ActionAlerteChrono(
+            libelle: geste,
+            principale: true,
+            onPress: () {
+              essais.relancer();
+              evaluer();
+            },
+          ),
+        ],
+        duree: AppMouvement.propositionPause,
+        trace: MarqueChrono.evenement(
+          libelle: titre,
+          ton: TonEtat.avertissement,
+        ),
+        cleTrace: cleNonConfirmee,
+        rouvrable: true,
+      ),
+    );
+  }
+
+  void _oublierNonConfirmee() {
+    dynamique
+      ..oublier(cleNonConfirmee)
+      ..retirerFamille(_idNonConfirmee ?? '');
+    _idNonConfirmee = null;
+  }
+
   void _piloterPriere(PauseSeance p, DateTime heurePriere, DateTime now) {
     if (_enVol) return;
     if (!now.isBefore(heurePriere)) {
-      if (_priereDemarreePour == heurePriere) return;
+      if (_priereDemarreePour == heurePriere ||
+          !_departPriere.peutEssayer(heurePriere, now)) {
+        return;
+      }
       _priereDemarreePour = heurePriere;
       dynamique.retirer('priere-${heurePriere.millisecondsSinceEpoch}');
       _enVol = true;
       unawaited(
         commandes!.demarrer().then(
-          (void _) => _enVol = false,
+          (void _) {
+            _enVol = false;
+            _oublierNonConfirmee();
+          },
           onError: (Object _) {
             _enVol = false;
             _priereDemarreePour = null;
+            _departPriere.echec(maintenant());
+            if (_departPriere.epuises) {
+              _direNonConfirmee(
+                titre: t.salle.dynamique.priereDepartNonConfirme,
+                geste: t.salle.dynamique.commencerMaintenant,
+                essais: _departPriere,
+              );
+            }
           },
         ),
       );
@@ -746,6 +852,50 @@ class PilotePause {
         duree: AppMouvement.propositionPause,
       ),
     );
+  }
+}
+
+/// Les essais d'une commande que la salle envoie seule (revue du 13/11/2026,
+/// I7). Apres un echec, l'essai suivant attend [AppDelais.essaiSeulAttente],
+/// puis le double a chaque echec ; apres [PilotePause.essaisSeuls] echecs,
+/// plus aucun essai tant que la personne n'a pas fait le geste ([relancer]).
+/// Le compte repart de zero quand l'objet change (une autre pause, une autre
+/// heure de priere).
+class _EssaisSeuls {
+  Object? _pour;
+  int _echecs = 0;
+  DateTime? _pasAvant;
+
+  /// Vrai apres [PilotePause.essaisSeuls] echecs : la main est a la personne.
+  bool get epuises => _echecs >= PilotePause.essaisSeuls;
+
+  /// Vrai tant qu'au moins un echec est compte.
+  bool get enCompte => _echecs > 0;
+
+  /// Vrai si un essai peut partir a [now] pour [pour].
+  bool peutEssayer(Object? pour, DateTime now) {
+    if (_pour != pour) {
+      _pour = pour;
+      oublier();
+    }
+    if (epuises) return false;
+    final DateTime? pasAvant = _pasAvant;
+    return pasAvant == null || !now.isBefore(pasAvant);
+  }
+
+  /// Note un echec a [now] : l'attente double a chaque fois.
+  void echec(DateTime now) {
+    _echecs++;
+    _pasAvant = now.add(AppDelais.essaiSeulAttente * (1 << (_echecs - 1)));
+  }
+
+  /// Le geste de la personne : une nouvelle serie, tout de suite.
+  void relancer() => oublier();
+
+  /// Remet le compte a zero.
+  void oublier() {
+    _echecs = 0;
+    _pasAvant = null;
   }
 }
 

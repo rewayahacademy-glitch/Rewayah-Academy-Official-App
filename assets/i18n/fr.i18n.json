@@ -404,10 +404,10 @@
       "finAtteinte": "Fin prévue atteinte\u00a0: séance toujours en direct."
     },
     "dynamique": {
-      "arriveePrenom": "{prenom} entre dans la salle",
+      "arriveePrenom": "{prenom} rejoint la salle",
       "arrivees(plural, param=n)": {
-        "one": "élève entre dans la salle",
-        "other": "élèves entrent dans la salle"
+        "one": "élève rejoint la salle",
+        "other": "élèves rejoignent la salle"
       },
       "arriveeMarquePrenom": "{prenom} dans la salle",
       "arriveesMarque(plural, param=n)": {
@@ -422,6 +422,8 @@
       "pauseDebut": "Pause de {minutes} min. Reprise à {heure}",
       "pausePriereDebut": "Pause de prière. Reprise à {heure}",
       "pauseFinie": "La pause est finie",
+      "pauseFinNonConfirmee": "La fin de la pause n'est pas confirmée",
+      "priereDepartNonConfirme": "Le début de la pause de prière n'est pas confirmé",
       "priereNom": "Pause de prière",
       "priereA": "Pause de prière à {heure}",
       "priereDans": "Pause de prière dans {minutes} min",
@@ -996,7 +998,7 @@
     "rappelRecuDetail": "Regardez l'écran et écoutez votre enseignant.",
     "retireDetail": "Vous pourrez revenir quand votre enseignant vous aura réadmis. Touchez alors «\u00a0Réessayer\u00a0».",
     "ouverteAilleurs": "Ce compte est déjà dans la salle sur un autre appareil",
-    "ouverteAilleursDetail": "Quittez la salle sur l'autre appareil, ou touchez «\u00a0Réessayer\u00a0» pour entrer ici\u00a0: l'autre appareil sortira de la salle.",
+    "ouverteAilleursDetail": "Quittez la salle sur l'autre appareil, ou touchez «\u00a0Réessayer\u00a0» pour la rejoindre ici\u00a0: l'autre appareil sortira de la salle.",
     "fermeture": {
       "sansEnseignantTitre": "Votre enseignant n'est plus dans la salle",
       "sansEnseignantTitreTutoie": "Ton enseignant n'est plus dans la salle",
@@ -15499,9 +15501,9 @@
     },
     "reglages": {
       "section": "Sorties de l'application pendant une séance",
-      "intro": "Le délai vaut pour tous les élèves. Le relevé des sorties ne note rien sans l'accord du parent, ou de l'élève adulte.",
+      "intro": "Le délai vaut pour tous les élèves. Le relevé des sorties ne note rien sans l'accord du tuteur, ou de l'élève adulte.",
       "journal": "Noter les sorties de l'application",
-      "journalDetail": "N'allumez qu'après la validation des textes de l'accord par le directeur. Allumé, le parent et l'élève adulte voient la page de l'accord dans leur Compte.",
+      "journalDetail": "N'allumez qu'après la validation des textes de l'accord par le directeur. Allumé, le tuteur et l'élève adulte voient la page de l'accord dans leur Compte.",
       "delai": "Délai avant la sortie de la salle",
       "delaiDetail": "Le temps laissé à l'élève hors de l'application avant qu'il sorte de la salle.",
       "bornes": "De 5 à 600 secondes.",

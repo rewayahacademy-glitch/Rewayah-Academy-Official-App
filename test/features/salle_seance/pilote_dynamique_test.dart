@@ -15,6 +15,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/pause_seance/port_pause_seance.dart';
 import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
+import 'package:rewayah_academy/core/theme/app_delais.dart';
 import 'package:rewayah_academy/core/theme/app_mouvement.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
 import 'package:rewayah_academy/features/salle_seance/marque_chrono.dart';
@@ -372,6 +373,11 @@ void main() {
         // La barre dit la fin a tous, par l'heure.
         expect(dyn.alerte?.titre, t.salle.dynamique.pauseFinie);
         cmd.echec = false;
+        // I7 : pas de reessai au battement suivant, l'attente d'abord.
+        pause.evaluer();
+        await _attendre();
+        expect(cmd.appels, hasLength(1), reason: 'attente apres un echec');
+        maintenant = maintenant.add(AppDelais.essaiSeulAttente);
         pause.evaluer();
         await _attendre();
         expect(cmd.appels, <String>['terminer', 'terminer']);
@@ -380,6 +386,84 @@ void main() {
         expect(cmd.appels, hasLength(2), reason: 'une seule fin confirmee');
       },
     );
+
+    test('I7 : la fin automatique qui echoue s essaie cinq fois, l attente '
+        'double, puis la salle rend la main avec le geste', () async {
+      cmd.echec = true;
+      maintenant = _t;
+      pause.observer(_enCours(_t), pilote: true);
+      dyn.retirer(dyn.alerte!.id);
+      final DateTime reprise = _t.add(const Duration(minutes: 10));
+      // Un battement par seconde pendant deux minutes : jamais plus de cinq
+      // appels, aux instants 0, 2, 6, 14 et 30 s.
+      final List<int> instants = <int>[];
+      for (int seconde = 0; seconde <= 120; seconde++) {
+        maintenant = reprise.add(Duration(seconds: seconde));
+        final int avant = cmd.appels.length;
+        pause.evaluer();
+        await _attendre();
+        if (cmd.appels.length > avant) instants.add(seconde);
+        dyn.avancer(AppMouvement.battementDynamique);
+      }
+      expect(instants, <int>[0, 2, 6, 14, 30]);
+      expect(cmd.appels, hasLength(PilotePause.essaisSeuls));
+      // La salle le dit a qui pilote : la marque reste, un toucher rouvre.
+      final String titre = t.salle.dynamique.pauseFinNonConfirmee;
+      expect(
+        dyn.marques.map((MarqueChrono m) => m.libelle),
+        contains(titre),
+        reason: 'repliee, l alerte laisse sa marque',
+      );
+      dyn.toucher();
+      final AlerteChrono a = dyn.alerte!;
+      expect(a.titre, titre);
+      expect(a.actions.single.libelle, t.salle.seance.pause.terminer);
+      // Le geste relance, tout de suite ; confirmee, le message s en va.
+      cmd.echec = false;
+      a.actions.single.onPress();
+      dyn.choisir(a.id);
+      await _attendre();
+      expect(cmd.appels, hasLength(PilotePause.essaisSeuls + 1));
+      expect(
+        dyn.marques.map((MarqueChrono m) => m.libelle),
+        isNot(contains(titre)),
+      );
+      pause.evaluer();
+      await _attendre();
+      expect(cmd.appels, hasLength(PilotePause.essaisSeuls + 1));
+    });
+
+    test('I7 : le depart de la pause de priere qui echoue est borne de la '
+        'meme facon', () async {
+      cmd.echec = true;
+      final PauseSeance priere = _programmee(
+        proposer: _t,
+        motif: MotifPause.priere,
+      );
+      maintenant = _t;
+      pause.observer(priere, pilote: true);
+      for (int seconde = 0; seconde <= 120; seconde++) {
+        maintenant = _t.add(Duration(seconds: seconde));
+        pause.evaluer();
+        await _attendre();
+        dyn.avancer(AppMouvement.battementDynamique);
+      }
+      expect(cmd.appels, List<String>.filled(5, 'demarrer'));
+      final String titre = t.salle.dynamique.priereDepartNonConfirme;
+      expect(dyn.marques.map((MarqueChrono m) => m.libelle), contains(titre));
+      dyn.toucher();
+      final AlerteChrono a = dyn.alerte!;
+      expect(a.actions.single.libelle, t.salle.dynamique.commencerMaintenant);
+      cmd.echec = false;
+      a.actions.single.onPress();
+      dyn.choisir(a.id);
+      await _attendre();
+      expect(cmd.appels, hasLength(6));
+      expect(
+        dyn.marques.map((MarqueChrono m) => m.libelle),
+        isNot(contains(titre)),
+      );
+    });
 
     test('pause de priere : annoncee 3 min avant, decaler refuse, puis depart '
         'seul a l heure', () async {
