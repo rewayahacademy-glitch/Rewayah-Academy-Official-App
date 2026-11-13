@@ -23950,8 +23950,8 @@ class Traductions$calendrier$dates$fr {
 
 	// Translations
 
-	/// fr: 'Les dates de l'année, saisies par la direction chaque année. Seules les dates publiées agissent ; elles seront affichées dans l'onglet Programme des élèves et des familles qu'elles concernent.'
-	String get intro => 'Les dates de l\'année, saisies par la direction chaque année. Seules les dates publiées agissent ; elles seront affichées dans l\'onglet Programme des élèves et des familles qu\'elles concernent.';
+	/// fr: 'Les dates de l'année, saisies par la direction chaque année. Seules les dates publiées agissent : une fermeture recule la date limite des étapes concernées et met de côté les séances qui n'ont pas encore commencé ces jours-là. Les jours se comptent à l'heure de La Mecque.'
+	String get intro => 'Les dates de l\'année, saisies par la direction chaque année. Seules les dates publiées agissent : une fermeture recule la date limite des étapes concernées et met de côté les séances qui n\'ont pas encore commencé ces jours-là. Les jours se comptent à l\'heure de La Mecque.';
 
 	/// fr: 'Ajouter une date'
 	String get ajouter => 'Ajouter une date';
@@ -24011,6 +24011,8 @@ class Traductions$calendrier$dates$fr {
 
 	late final Traductions$calendrier$dates$feuille$fr feuille = Traductions$calendrier$dates$feuille$fr.internal(_root);
 	late final Traductions$calendrier$dates$publication$fr publication = Traductions$calendrier$dates$publication$fr.internal(_root);
+	late final Traductions$calendrier$dates$concernees$fr concernees = Traductions$calendrier$dates$concernees$fr.internal(_root);
+	late final Traductions$calendrier$dates$conflits$fr conflits = Traductions$calendrier$dates$conflits$fr.internal(_root);
 	late final Traductions$calendrier$dates$refus$fr refus = Traductions$calendrier$dates$refus$fr.internal(_root);
 }
 
@@ -42461,11 +42463,65 @@ class Traductions$calendrier$dates$publication$fr {
 	/// fr: 'Publier la fermeture'
 	String get titre => 'Publier la fermeture';
 
-	/// fr: 'Pendant ces jours, aucune nouvelle séance n'est créée et la date limite de l'étape de chaque élève concerné recule d'autant. Les séances déjà prévues ces jours-là sont mises de côté, sans être supprimées ; retirer la fermeture avant son début les rétablit. Une fois commencée, la fermeture ne peut plus être retirée ni raccourcie.'
-	String get phrase => 'Pendant ces jours, aucune nouvelle séance n\'est créée et la date limite de l\'étape de chaque élève concerné recule d\'autant. Les séances déjà prévues ces jours-là sont mises de côté, sans être supprimées ; retirer la fermeture avant son début les rétablit. Une fois commencée, la fermeture ne peut plus être retirée ni raccourcie.';
+	/// fr: 'Pendant ces jours, aucune nouvelle séance n'est créée et la date limite de l'étape de chaque élève concerné recule d'autant. Les séances qui n'ont pas encore commencé ces jours-là sont mises de côté, sans être supprimées ; une séance déjà commencée continue. Retirer la fermeture avant son début rétablit les séances de côté, si l'enseignant n'a pas pris un autre cours à la même heure entre-temps. Une fois commencée, la fermeture ne peut plus être retirée ni raccourcie.'
+	String get phrase => 'Pendant ces jours, aucune nouvelle séance n\'est créée et la date limite de l\'étape de chaque élève concerné recule d\'autant. Les séances qui n\'ont pas encore commencé ces jours-là sont mises de côté, sans être supprimées ; une séance déjà commencée continue. Retirer la fermeture avant son début rétablit les séances de côté, si l\'enseignant n\'a pas pris un autre cours à la même heure entre-temps. Une fois commencée, la fermeture ne peut plus être retirée ni raccourcie.';
 
 	/// fr: 'Publier la fermeture'
 	String get confirmer => 'Publier la fermeture';
+}
+
+// Path: calendrier.dates.concernees
+class Traductions$calendrier$dates$concernees$fr {
+	Traductions$calendrier$dates$concernees$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Séances concernées'
+	String get titre => 'Séances concernées';
+
+	/// fr: 'Les jours et les heures sont ceux de La Mecque.'
+	String get heureMecque => 'Les jours et les heures sont ceux de La Mecque.';
+
+	/// fr: '{classe}, {quand}, {enseignant}'
+	String ligne({required Object classe, required Object quand, required Object enseignant}) => '${classe}, ${quand}, ${enseignant}';
+
+	/// fr: 'mise de côté'
+	String get deCote => 'mise de côté';
+
+	/// fr: 'Et {n} autres séances.'
+	String autres({required Object n}) => 'Et ${n} autres séances.';
+
+	/// fr: 'Les séances concernées n'ont pas pu être lues : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
+	String get erreur => 'Les séances concernées n\'ont pas pu être lues : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
+}
+
+// Path: calendrier.dates.conflits
+class Traductions$calendrier$dates$conflits$fr {
+	Traductions$calendrier$dates$conflits$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Séances qui ne peuvent pas être rétablies'
+	String get titre => 'Séances qui ne peuvent pas être rétablies';
+
+	/// fr: 'Ces séances ont été mises de côté par la fermeture, mais l'enseignant a pris un autre cours à la même heure. Libérez l'enseignant puis réessayez, ou confirmez l'abandon de ces séances : elles ne seront jamais rétablies. Les heures sont celles de La Mecque.'
+	String get intro => 'Ces séances ont été mises de côté par la fermeture, mais l\'enseignant a pris un autre cours à la même heure. Libérez l\'enseignant puis réessayez, ou confirmez l\'abandon de ces séances : elles ne seront jamais rétablies. Les heures sont celles de La Mecque.';
+
+	/// fr: '{classe}, {quand}, {enseignant}'
+	String ligne({required Object classe, required Object quand, required Object enseignant}) => '${classe}, ${quand}, ${enseignant}';
+
+	/// fr: 'Autre cours : {cours}, {quand}'
+	String autre({required Object cours, required Object quand}) => 'Autre cours : ${cours}, ${quand}';
+
+	/// fr: 'Autre cours à la même heure, {quand}'
+	String autreSansNom({required Object quand}) => 'Autre cours à la même heure, ${quand}';
+
+	/// fr: 'Retirer la fermeture et abandonner ces séances ({n})'
+	String abandonner({required Object n}) => 'Retirer la fermeture et abandonner ces séances (${n})';
 }
 
 // Path: calendrier.dates.refus
@@ -42481,6 +42537,12 @@ class Traductions$calendrier$dates$refus$fr {
 
 	/// fr: 'Cette fermeture a déjà commencé ou est passée : elle ne peut plus être retirée, raccourcie ni déplacée. Vous pouvez seulement la prolonger.'
 	String get fermetureCommencee => 'Cette fermeture a déjà commencé ou est passée : elle ne peut plus être retirée, raccourcie ni déplacée. Vous pouvez seulement la prolonger.';
+
+	/// fr: 'Cette fermeture commence avant aujourd'hui : elle ne peut pas être publiée. Choisissez une date à partir d'aujourd'hui.'
+	String get fermeturePassee => 'Cette fermeture commence avant aujourd\'hui : elle ne peut pas être publiée. Choisissez une date à partir d\'aujourd\'hui.';
+
+	/// fr: 'La fermeture n'est pas retirée : des séances mises de côté ne peuvent pas être rétablies. Lisez la liste, puis libérez l'enseignant ou confirmez l'abandon de ces séances.'
+	String get retraitConflits => 'La fermeture n\'est pas retirée : des séances mises de côté ne peuvent pas être rétablies. Lisez la liste, puis libérez l\'enseignant ou confirmez l\'abandon de ces séances.';
 
 	/// fr: 'Le dernier jour doit venir après le premier, à moins d'un an.'
 	String get datesInvalides => 'Le dernier jour doit venir après le premier, à moins d\'un an.';
@@ -61860,7 +61922,7 @@ extension on Traductions {
 			'calendrier.sections.pauses' => 'Pauses',
 			'calendrier.indisponible' => 'Le calendrier n\'a pas pu être ouvert : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'calendrier.refusNouvelleDateFermee' => 'La date n\'est pas fixée : la classe est fermée ce jour-là. Choisissez un autre jour.',
-			'calendrier.dates.intro' => 'Les dates de l\'année, saisies par la direction chaque année. Seules les dates publiées agissent ; elles seront affichées dans l\'onglet Programme des élèves et des familles qu\'elles concernent.',
+			'calendrier.dates.intro' => 'Les dates de l\'année, saisies par la direction chaque année. Seules les dates publiées agissent : une fermeture recule la date limite des étapes concernées et met de côté les séances qui n\'ont pas encore commencé ces jours-là. Les jours se comptent à l\'heure de La Mecque.',
 			'calendrier.dates.ajouter' => 'Ajouter une date',
 			'calendrier.dates.erreur' => 'Les dates n\'ont pas pu être lues : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'calendrier.dates.videTitre' => 'Aucune date saisie',
@@ -61903,10 +61965,24 @@ extension on Traductions {
 			'calendrier.dates.feuille.enregistrer' => 'Enregistrer',
 			'calendrier.dates.feuille.aucuneClasse' => 'Aucune classe à choisir pour le moment.',
 			'calendrier.dates.publication.titre' => 'Publier la fermeture',
-			'calendrier.dates.publication.phrase' => 'Pendant ces jours, aucune nouvelle séance n\'est créée et la date limite de l\'étape de chaque élève concerné recule d\'autant. Les séances déjà prévues ces jours-là sont mises de côté, sans être supprimées ; retirer la fermeture avant son début les rétablit. Une fois commencée, la fermeture ne peut plus être retirée ni raccourcie.',
+			'calendrier.dates.publication.phrase' => 'Pendant ces jours, aucune nouvelle séance n\'est créée et la date limite de l\'étape de chaque élève concerné recule d\'autant. Les séances qui n\'ont pas encore commencé ces jours-là sont mises de côté, sans être supprimées ; une séance déjà commencée continue. Retirer la fermeture avant son début rétablit les séances de côté, si l\'enseignant n\'a pas pris un autre cours à la même heure entre-temps. Une fois commencée, la fermeture ne peut plus être retirée ni raccourcie.',
 			'calendrier.dates.publication.confirmer' => 'Publier la fermeture',
+			'calendrier.dates.concernees.titre' => 'Séances concernées',
+			'calendrier.dates.concernees.heureMecque' => 'Les jours et les heures sont ceux de La Mecque.',
+			'calendrier.dates.concernees.ligne' => ({required Object classe, required Object quand, required Object enseignant}) => '${classe}, ${quand}, ${enseignant}',
+			'calendrier.dates.concernees.deCote' => 'mise de côté',
+			'calendrier.dates.concernees.autres' => ({required Object n}) => 'Et ${n} autres séances.',
+			'calendrier.dates.concernees.erreur' => 'Les séances concernées n\'ont pas pu être lues : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
+			'calendrier.dates.conflits.titre' => 'Séances qui ne peuvent pas être rétablies',
+			'calendrier.dates.conflits.intro' => 'Ces séances ont été mises de côté par la fermeture, mais l\'enseignant a pris un autre cours à la même heure. Libérez l\'enseignant puis réessayez, ou confirmez l\'abandon de ces séances : elles ne seront jamais rétablies. Les heures sont celles de La Mecque.',
+			'calendrier.dates.conflits.ligne' => ({required Object classe, required Object quand, required Object enseignant}) => '${classe}, ${quand}, ${enseignant}',
+			'calendrier.dates.conflits.autre' => ({required Object cours, required Object quand}) => 'Autre cours : ${cours}, ${quand}',
+			'calendrier.dates.conflits.autreSansNom' => ({required Object quand}) => 'Autre cours à la même heure, ${quand}',
+			'calendrier.dates.conflits.abandonner' => ({required Object n}) => 'Retirer la fermeture et abandonner ces séances (${n})',
 			'calendrier.dates.refus.fermetureTropLongue' => 'Cette fermeture est plus longue que le maximum permis (Ramadan : 20 jours, Aïd al-Adha : 10 jours). Raccourcissez-la.',
 			'calendrier.dates.refus.fermetureCommencee' => 'Cette fermeture a déjà commencé ou est passée : elle ne peut plus être retirée, raccourcie ni déplacée. Vous pouvez seulement la prolonger.',
+			'calendrier.dates.refus.fermeturePassee' => 'Cette fermeture commence avant aujourd\'hui : elle ne peut pas être publiée. Choisissez une date à partir d\'aujourd\'hui.',
+			'calendrier.dates.refus.retraitConflits' => 'La fermeture n\'est pas retirée : des séances mises de côté ne peuvent pas être rétablies. Lisez la liste, puis libérez l\'enseignant ou confirmez l\'abandon de ces séances.',
 			'calendrier.dates.refus.datesInvalides' => 'Le dernier jour doit venir après le premier, à moins d\'un an.',
 			'calendrier.dates.refus.porteeInvalide' => 'Choisissez la tranche d\'âge ou la classe visée.',
 			'calendrier.dates.refus.evenementInvalide' => 'Le titre manque ou le genre de date est illisible. Vérifiez-les, puis réessayez.',

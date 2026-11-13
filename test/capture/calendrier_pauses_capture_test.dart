@@ -110,6 +110,72 @@ void main() {
             });
           }
 
+          for (final bool conflits in <bool>[false, true]) {
+            testWidgets(
+              'direction ${conflits ? 'conflits' : 'concernees'} $suffixe',
+              (WidgetTester tester) async {
+                await tester.runAsync(() => LocaleSettings.setLocale(langue));
+                tester.platformDispatcher.platformBrightnessTestValue =
+                    theme == ThemeMode.light
+                    ? Brightness.light
+                    : Brightness.dark;
+                addTearDown(
+                  tester.platformDispatcher.clearPlatformBrightnessTestValue,
+                );
+                final FauxCalendrierDirection port = FauxCalendrierDirection(
+                  lignes: () => <Object?>[
+                    ligneCalendrier(
+                      id: 'f2',
+                      type: 'fermeture',
+                      categorie: 'autre',
+                      titre: 'Fermeture à venir',
+                      du: '2027-05-16',
+                      au: '2027-05-25',
+                      publie: conflits,
+                      elevesVises: 3,
+                      seancesNeutralisees: 7,
+                    ),
+                  ],
+                  refusRetrait: const CalendrierRefuse(
+                    MotifRefusCalendrier.retraitConflits,
+                  ),
+                );
+                await monterAdminDemo(
+                  tester,
+                  route: Routes.adminPedagogieCalendrier,
+                  taille: Size(largeur, largeur < 600 ? 1900 : 1300),
+                  direction: direction,
+                  plus: <Override>[
+                    portCalendrierDirectionProvider.overrideWithValue(port),
+                    portPausesProvider.overrideWithValue(FausPauses()),
+                    _enLigne,
+                  ],
+                );
+                for (int i = 0; i < 4; i++) {
+                  await tester.pump(const Duration(milliseconds: 600));
+                }
+                await tester.tap(find.text('Fermeture à venir'));
+                for (int i = 0; i < 4; i++) {
+                  await tester.pump(const Duration(milliseconds: 600));
+                }
+                if (conflits) {
+                  final Finder retirer = find.byKey(
+                    const ValueKey<String>('calendrier-retirer'),
+                  );
+                  await tester.ensureVisible(retirer);
+                  await tester.pump(const Duration(milliseconds: 200));
+                  await tester.tap(retirer);
+                  for (int i = 0; i < 6; i++) {
+                    await tester.pump(const Duration(milliseconds: 600));
+                  }
+                }
+                debugPrint(
+                  'PNG ${await capturerVue(tester, 'direction-${conflits ? 'conflits' : 'concernees'}-$suffixe')}',
+                );
+              },
+            );
+          }
+
           testWidgets('tuteur pause $suffixe', (WidgetTester tester) async {
             await tester.runAsync(() => LocaleSettings.setLocale(langue));
             await monterRouteur(

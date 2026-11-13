@@ -1,6 +1,8 @@
 // CALENDRIER-ET-PAUSES (12/11/2026) : l'adaptateur Supabase du calendrier de
 // la direction, sur les RPC `calendrier_ecole_liste`,
-// `calendrier_ecole_enregistrer` et `calendrier_ecole_publier` (migration
+// `calendrier_ecole_enregistrer`, `calendrier_ecole_publier`,
+// `calendrier_ecole_retirer`, `calendrier_retrait_conflits` et
+// `calendrier_seances_concernees` (migration
 // 20261123910000). Le serveur decide de tout ; l'adaptateur traduit ses
 // reponses et ses refus, il ne calcule rien.
 
@@ -54,6 +56,38 @@ class CalendrierDirectionSupabase implements PortCalendrierDirection {
       );
     }
   }
+
+  @override
+  Future<void> retirer(String id, {int? abandonner}) async {
+    try {
+      await _client.rpc<Object?>(
+        'calendrier_ecole_retirer',
+        params: <String, dynamic>{'p_id': id, 'p_abandonner': abandonner},
+      );
+    } on PostgrestException catch (e) {
+      throw CalendrierRefuse(
+        motifRefusCalendrier(code: e.code, message: e.message),
+      );
+    }
+  }
+
+  @override
+  Future<ConflitsRetrait> retraitConflits(String id) async =>
+      ConflitsRetrait.depuisJson(
+        await _client.rpc<Object?>(
+          'calendrier_retrait_conflits',
+          params: <String, dynamic>{'p_id': id},
+        ),
+      );
+
+  @override
+  Future<ApercuSeances> seancesConcernees(String id) async =>
+      ApercuSeances.depuisJson(
+        await _client.rpc<Object?>(
+          'calendrier_seances_concernees',
+          params: <String, dynamic>{'p_id': id},
+        ),
+      );
 
   @override
   Future<void> publier(String id, {required bool publie}) async {

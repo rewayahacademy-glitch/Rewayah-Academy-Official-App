@@ -15219,7 +15219,7 @@
     "indisponible": "Le calendrier n'a pas pu être ouvert\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
     "refusNouvelleDateFermee": "La date n'est pas fixée\u00a0: la classe est fermée ce jour-là. Choisissez un autre jour.",
     "dates": {
-      "intro": "Les dates de l'année, saisies par la direction chaque année. Seules les dates publiées agissent\u00a0; elles seront affichées dans l'onglet Programme des élèves et des familles qu'elles concernent.",
+      "intro": "Les dates de l'année, saisies par la direction chaque année. Seules les dates publiées agissent\u00a0: une fermeture recule la date limite des étapes concernées et met de côté les séances qui n'ont pas encore commencé ces jours-là. Les jours se comptent à l'heure de La Mecque.",
       "ajouter": "Ajouter une date",
       "erreur": "Les dates n'ont pas pu être lues\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
       "videTitre": "Aucune date saisie",
@@ -15271,12 +15271,30 @@
       },
       "publication": {
         "titre": "Publier la fermeture",
-        "phrase": "Pendant ces jours, aucune nouvelle séance n'est créée et la date limite de l'étape de chaque élève concerné recule d'autant. Les séances déjà prévues ces jours-là sont mises de côté, sans être supprimées\u00a0; retirer la fermeture avant son début les rétablit. Une fois commencée, la fermeture ne peut plus être retirée ni raccourcie.",
+        "phrase": "Pendant ces jours, aucune nouvelle séance n'est créée et la date limite de l'étape de chaque élève concerné recule d'autant. Les séances qui n'ont pas encore commencé ces jours-là sont mises de côté, sans être supprimées\u00a0; une séance déjà commencée continue. Retirer la fermeture avant son début rétablit les séances de côté, si l'enseignant n'a pas pris un autre cours à la même heure entre-temps. Une fois commencée, la fermeture ne peut plus être retirée ni raccourcie.",
         "confirmer": "Publier la fermeture"
       },
+        "concernees": {
+          "titre": "Séances concernées",
+          "heureMecque": "Les jours et les heures sont ceux de La Mecque.",
+          "ligne": "{classe}, {quand}, {enseignant}",
+          "deCote": "mise de côté",
+          "autres": "Et {n} autres séances.",
+          "erreur": "Les séances concernées n'ont pas pu être lues\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant."
+        },
+        "conflits": {
+          "titre": "Séances qui ne peuvent pas être rétablies",
+          "intro": "Ces séances ont été mises de côté par la fermeture, mais l'enseignant a pris un autre cours à la même heure. Libérez l'enseignant puis réessayez, ou confirmez l'abandon de ces séances\u00a0: elles ne seront jamais rétablies. Les heures sont celles de La Mecque.",
+          "ligne": "{classe}, {quand}, {enseignant}",
+          "autre": "Autre cours\u00a0: {cours}, {quand}",
+          "autreSansNom": "Autre cours à la même heure, {quand}",
+          "abandonner": "Retirer la fermeture et abandonner ces séances ({n})"
+        },
       "refus": {
         "fermetureTropLongue": "Cette fermeture est plus longue que le maximum permis (Ramadan\u00a0: 20 jours, Aïd al-Adha\u00a0: 10 jours). Raccourcissez-la.",
         "fermetureCommencee": "Cette fermeture a déjà commencé ou est passée\u00a0: elle ne peut plus être retirée, raccourcie ni déplacée. Vous pouvez seulement la prolonger.",
+        "fermeturePassee": "Cette fermeture commence avant aujourd'hui\u00a0: elle ne peut pas être publiée. Choisissez une date à partir d'aujourd'hui.",
+        "retraitConflits": "La fermeture n'est pas retirée\u00a0: des séances mises de côté ne peuvent pas être rétablies. Lisez la liste, puis libérez l'enseignant ou confirmez l'abandon de ces séances.",
         "datesInvalides": "Le dernier jour doit venir après le premier, à moins d'un an.",
         "porteeInvalide": "Choisissez la tranche d'âge ou la classe visée.",
         "evenementInvalide": "Le titre manque ou le genre de date est illisible. Vérifiez-les, puis réessayez.",

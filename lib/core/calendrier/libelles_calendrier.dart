@@ -29,6 +29,10 @@ String periodeEnMots(DateTime du, DateTime au) => du == au
     ? t.calendrier.dates.unJour(jour: jourEnMots(du))
     : t.calendrier.dates.periode(du: jourEnMots(du), au: jourEnMots(au));
 
+/// « 21 décembre 2026, 15:00 » : un jour et une heure de La Mecque.
+String jourHeureEnMots(DateTime jour, String heure) =>
+    '${jourEnMots(jour)}, $heure';
+
 /// Le genre d'une date.
 String libelleType(TypeEvenement type) => switch (type) {
   TypeEvenement.fermeture => t.calendrier.dates.type.fermeture,
@@ -64,6 +68,8 @@ String messageRefusCalendrier(MotifRefusCalendrier motif) {
   return switch (motif) {
     MotifRefusCalendrier.fermetureTropLongue => r.fermetureTropLongue,
     MotifRefusCalendrier.fermetureCommencee => r.fermetureCommencee,
+    MotifRefusCalendrier.fermeturePassee => r.fermeturePassee,
+    MotifRefusCalendrier.retraitConflits => r.retraitConflits,
     MotifRefusCalendrier.datesInvalides => r.datesInvalides,
     MotifRefusCalendrier.porteeInvalide => r.porteeInvalide,
     MotifRefusCalendrier.evenementInvalide => r.evenementInvalide,

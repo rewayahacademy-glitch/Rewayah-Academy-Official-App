@@ -89,9 +89,15 @@ SELECT pg_temp.vrai(:'r5_n'::int = 1, 'la lecture du calendrier fonctionne sans 
 SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
 SET LOCAL ROLE authenticated;
 SELECT public.creer_version_programme(NULL) AS v \gset prog_
-SELECT public.preremplir_bases_programme(:'prog_v'::uuid);
+RESET ROLE;
+-- L'installation du lot 1 complete le brouillon vide ; la direction le publie ; le rattachement
+-- des classes et des eleves deja presents est le geste d'installation (comme le lot 1).
+SELECT private.completer_brouillon_bases();
+SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
+SET LOCAL ROLE authenticated;
 SELECT public.publier_version_programme(:'prog_v'::uuid, 'Version 1 des bases');
 RESET ROLE;
+SELECT private.rattacher_classes_et_eleves();
 INSERT INTO public.eleve_etape_en_cours(student_id, niveau_id, cohorte, entree_etape_le, entree_niveau_le, origine)
 VALUES (pg_temp.u('e1'), private.etape_par_defaut(), 'enfant_6_9', pg_temp.auj(), pg_temp.auj(), 'classe');
 SELECT pg_temp.vrai(

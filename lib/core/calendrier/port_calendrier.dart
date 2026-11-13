@@ -232,6 +232,13 @@ enum MotifRefusCalendrier {
   /// Une fermeture commencee ou passee ne se retire, ne se raccourcit, ne se deplace pas.
   fermetureCommencee,
 
+  /// Une fermeture ne se publie pas pour une date deja passee (jour de l'academie).
+  fermeturePassee,
+
+  /// Le retrait est refuse : des seances mises de cote ne peuvent pas etre retablies
+  /// (l'enseignant a pris un autre cours a leur heure).
+  retraitConflits,
+
   /// La date n'existe plus.
   introuvable,
 
@@ -263,6 +270,8 @@ MotifRefusCalendrier motifRefusCalendrier({
   'calendrier_fermeture_trop_longue' =>
     MotifRefusCalendrier.fermetureTropLongue,
   'calendrier_fermeture_commencee' => MotifRefusCalendrier.fermetureCommencee,
+  'calendrier_fermeture_passee' => MotifRefusCalendrier.fermeturePassee,
+  'calendrier_retrait_conflits' => MotifRefusCalendrier.retraitConflits,
   'calendrier_dates_invalides' => MotifRefusCalendrier.datesInvalides,
   'calendrier_portee_invalide' => MotifRefusCalendrier.porteeInvalide,
   'calendrier_evenement_invalide' => MotifRefusCalendrier.evenementInvalide,
@@ -272,6 +281,168 @@ MotifRefusCalendrier motifRefusCalendrier({
         ? MotifRefusCalendrier.nonAutorise
         : MotifRefusCalendrier.inconnu,
 };
+
+/// Une seance qu'une fermeture touche (ou a deja mise de cote), lue dans
+/// `calendrier_seances_concernees` : le jour et l'heure sont ceux de La Mecque
+/// (le jour de l'academie), jamais ceux du fuseau de la classe.
+@immutable
+class SeanceConcernee {
+  /// Cree la ligne.
+  const SeanceConcernee({
+    required this.classe,
+    required this.enseignant,
+    required this.jour,
+    required this.heure,
+    required this.deCote,
+  });
+
+  /// Lit une ligne ; `null` si illisible.
+  static SeanceConcernee? depuisJson(Object? brut) {
+    if (brut is! Map) return null;
+    final DateTime? jour = jourDepuisSql(brut['jour']);
+    final Object? heure = brut['heure'];
+    if (jour == null || heure is! String) return null;
+    return SeanceConcernee(
+      classe: ((brut['classe'] as String?) ?? '').trim(),
+      enseignant: ((brut['enseignant'] as String?) ?? '').trim(),
+      jour: jour,
+      heure: heure,
+      deCote: brut['deja_de_cote'] == true,
+    );
+  }
+
+  /// La classe.
+  final String classe;
+
+  /// Son enseignant.
+  final String enseignant;
+
+  /// Le jour, a La Mecque.
+  final DateTime jour;
+
+  /// L'heure, `HH:MM`, a La Mecque.
+  final String heure;
+
+  /// Vrai quand la fermeture publiee l'a deja mise de cote.
+  final bool deCote;
+}
+
+/// Les seances concernees par une fermeture : le total et les premieres.
+@immutable
+class ApercuSeances {
+  /// Cree l'apercu.
+  const ApercuSeances({required this.total, required this.seances});
+
+  /// Lit `calendrier_seances_concernees` ; vide si illisible.
+  static ApercuSeances depuisJson(Object? brut) {
+    if (brut is! Map) {
+      return const ApercuSeances(total: 0, seances: <SeanceConcernee>[]);
+    }
+    final List<SeanceConcernee> l = <SeanceConcernee>[
+      for (final Object? s
+          in brut['seances'] is List
+              ? brut['seances'] as List<Object?>
+              : const <Object?>[])
+        if (SeanceConcernee.depuisJson(s) case final SeanceConcernee x) x,
+    ];
+    return ApercuSeances(
+      total: (brut['total'] as num?)?.toInt() ?? l.length,
+      seances: l,
+    );
+  }
+
+  /// Le nombre total de seances concernees.
+  final int total;
+
+  /// Les premieres, du plus proche au plus lointain (le serveur en rend 100 au plus).
+  final List<SeanceConcernee> seances;
+}
+
+/// Une seance mise de cote qui ne peut pas etre retablie, avec l'autre cours de
+/// l'enseignant a la meme heure (`calendrier_retrait_conflits`).
+@immutable
+class ConflitRetrait {
+  /// Cree le conflit.
+  const ConflitRetrait({
+    required this.classe,
+    required this.enseignant,
+    required this.jour,
+    required this.heure,
+    this.autreClasse,
+    this.autreJour,
+    this.autreHeure,
+  });
+
+  /// Lit un conflit ; `null` si illisible.
+  static ConflitRetrait? depuisJson(Object? brut) {
+    if (brut is! Map) return null;
+    final DateTime? jour = jourDepuisSql(brut['jour']);
+    final Object? heure = brut['heure'];
+    if (jour == null || heure is! String) return null;
+    final Object? autre = brut['autre_cours'];
+    return ConflitRetrait(
+      classe: ((brut['classe'] as String?) ?? '').trim(),
+      enseignant: ((brut['enseignant'] as String?) ?? '').trim(),
+      jour: jour,
+      heure: heure,
+      autreClasse: autre is Map ? (autre['classe'] as String?)?.trim() : null,
+      autreJour: autre is Map ? jourDepuisSql(autre['jour']) : null,
+      autreHeure: autre is Map ? autre['heure'] as String? : null,
+    );
+  }
+
+  /// La classe dont la seance est de cote.
+  final String classe;
+
+  /// Son enseignant.
+  final String enseignant;
+
+  /// Le jour de la seance, a La Mecque.
+  final DateTime jour;
+
+  /// Son heure, `HH:MM`, a La Mecque.
+  final String heure;
+
+  /// La classe de l'autre cours ; nulle pour une seance sans classe.
+  final String? autreClasse;
+
+  /// Le jour de l'autre cours.
+  final DateTime? autreJour;
+
+  /// L'heure de l'autre cours.
+  final String? autreHeure;
+}
+
+/// Les conflits d'un retrait de fermeture.
+@immutable
+class ConflitsRetrait {
+  /// Cree la lecture.
+  const ConflitsRetrait({required this.nombre, required this.conflits});
+
+  /// Lit `calendrier_retrait_conflits` ; aucun conflit si illisible.
+  static ConflitsRetrait depuisJson(Object? brut) {
+    if (brut is! Map) {
+      return const ConflitsRetrait(nombre: 0, conflits: <ConflitRetrait>[]);
+    }
+    final List<ConflitRetrait> l = <ConflitRetrait>[
+      for (final Object? c
+          in brut['conflits'] is List
+              ? brut['conflits'] as List<Object?>
+              : const <Object?>[])
+        if (ConflitRetrait.depuisJson(c) case final ConflitRetrait x) x,
+    ];
+    return ConflitsRetrait(
+      nombre: (brut['nombre'] as num?)?.toInt() ?? l.length,
+      conflits: l,
+    );
+  }
+
+  /// Le nombre de seances qui ne peuvent pas etre retablies.
+  final int nombre;
+
+  /// Leurs lignes.
+  final List<ConflitRetrait> conflits;
+}
 
 /// Le calendrier cote direction : liste, saisie, publication.
 abstract interface class PortCalendrierDirection {
@@ -292,14 +463,47 @@ abstract interface class PortCalendrierDirection {
     String? groupeId,
   });
 
-  /// Publie la date, ou la retire de la publication. Leve [CalendrierRefuse].
+  /// Publie la date, ou la retire de la publication. Leve [CalendrierRefuse]
+  /// (`retraitConflits` quand des seances mises de cote ne se retablissent pas).
   Future<void> publier(String id, {required bool publie});
+
+  /// Retire la fermeture en confirmant d'abandonner exactement [abandonner]
+  /// seances qui ne se retablissent pas (geste trace au journal). Leve
+  /// [CalendrierRefuse].
+  Future<void> retirer(String id, {int? abandonner});
+
+  /// Les seances qui empechent de retirer cette fermeture.
+  Future<ConflitsRetrait> retraitConflits(String id);
+
+  /// Les seances reellement concernees par cette fermeture, avant ou apres sa
+  /// publication.
+  Future<ApercuSeances> seancesConcernees(String id);
 }
 
 /// Le port du calendrier de la direction : absent tant que `main.dart` ne le
 /// pose pas ; sans lui, la page dit que le calendrier est indisponible.
 final Provider<PortCalendrierDirection?> portCalendrierDirectionProvider =
     Provider<PortCalendrierDirection?>((Ref _) => null);
+
+/// Les seances concernees par une fermeture ; `null` sans port.
+final FutureProviderFamily<ApercuSeances?, String> seancesConcerneesProvider =
+    FutureProvider.family<ApercuSeances?, String>((Ref ref, String id) {
+      final PortCalendrierDirection? port = ref.watch(
+        portCalendrierDirectionProvider,
+      );
+      if (port == null) return Future<ApercuSeances?>.value();
+      return port.seancesConcernees(id);
+    }, retry: (int _, Object _) => null);
+
+/// Les seances qui empechent de retirer une fermeture ; `null` sans port.
+final FutureProviderFamily<ConflitsRetrait?, String> retraitConflitsProvider =
+    FutureProvider.family<ConflitsRetrait?, String>((Ref ref, String id) {
+      final PortCalendrierDirection? port = ref.watch(
+        portCalendrierDirectionProvider,
+      );
+      if (port == null) return Future<ConflitsRetrait?>.value();
+      return port.retraitConflits(id);
+    }, retry: (int _, Object _) => null);
 
 /// Les dates du calendrier pour la direction ; `null` sans port.
 final FutureProvider<List<EvenementCalendrier>?> calendrierDirectionProvider =

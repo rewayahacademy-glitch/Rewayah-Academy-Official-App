@@ -80,12 +80,32 @@ List<Object?> calendrierServeur() => <Object?>[
 
 /// Le calendrier de la direction en memoire.
 class FauxCalendrierDirection implements PortCalendrierDirection {
-  FauxCalendrierDirection({this.lignes, this.erreur, this.attente, this.refus});
+  FauxCalendrierDirection({
+    this.lignes,
+    this.erreur,
+    this.attente,
+    this.refus,
+    this.refusRetrait,
+    this.conflitsBruts,
+    this.concerneesBruts,
+  });
 
   Object? Function()? lignes;
   Object? erreur;
   Completer<void>? attente;
   CalendrierRefuse? refus;
+
+  /// Le refus du retrait SANS confirmation (le serveur dit `retraitConflits`).
+  CalendrierRefuse? refusRetrait;
+
+  /// La reponse de `calendrier_retrait_conflits`.
+  Object? conflitsBruts;
+
+  /// La reponse de `calendrier_seances_concernees`.
+  Object? concerneesBruts;
+
+  /// Les retraits confirmes : (id, nombre abandonne).
+  final List<(String, int?)> retraits = <(String, int?)>[];
 
   final List<Map<String, Object?>> enregistrements = <Map<String, Object?>>[];
   final List<(String, bool)> publications = <(String, bool)>[];
@@ -129,9 +149,61 @@ class FauxCalendrierDirection implements PortCalendrierDirection {
   @override
   Future<void> publier(String id, {required bool publie}) async {
     if (refus != null) throw refus!;
+    if (!publie && refusRetrait != null) throw refusRetrait!;
     publications.add((id, publie));
   }
+
+  @override
+  Future<void> retirer(String id, {int? abandonner}) async {
+    if (refus != null) throw refus!;
+    retraits.add((id, abandonner));
+  }
+
+  @override
+  Future<ConflitsRetrait> retraitConflits(String id) async =>
+      ConflitsRetrait.depuisJson(conflitsBruts ?? conflitsServeur());
+
+  @override
+  Future<ApercuSeances> seancesConcernees(String id) async =>
+      ApercuSeances.depuisJson(concerneesBruts ?? concerneesServeur());
 }
+
+/// La reponse de `calendrier_retrait_conflits` : une seance de cote que
+/// l'enseignant ne peut plus donner, et l'autre cours.
+Map<String, Object?> conflitsServeur() => <String, Object?>{
+  'nombre': 1,
+  'conflits': <Object?>[
+    <String, Object?>{
+      'session_id': 's1',
+      'classe': 'Classe Al-Noor',
+      'jour': '2027-05-18',
+      'heure': '11:00',
+      'enseignant': 'Aïcha Haddad',
+      'autre_cours': <String, Object?>{
+        'classe': 'Classe Al-Huda',
+        'jour': '2027-05-18',
+        'heure': '11:30',
+      },
+    },
+  ],
+};
+
+/// La reponse de `calendrier_seances_concernees` : sept seances, six lignes
+/// rendues et « et 1 autre ».
+Map<String, Object?> concerneesServeur({int total = 7}) => <String, Object?>{
+  'total': total,
+  'seances': <Object?>[
+    for (int k = 0; k < total; k++)
+      <String, Object?>{
+        'session_id': 's$k',
+        'classe': 'Classe $k',
+        'enseignant': 'Enseignant $k',
+        'jour': '2027-05-${16 + k}',
+        'heure': '15:00',
+        'deja_de_cote': k == 0,
+      },
+  ],
+};
 
 /// La reponse de `pauses_eleve_lecture` pour un eleve : le serveur dit la
 /// regle (7 jours, 2 mois sur 12, 3 jours de reponse), douze mois proposes

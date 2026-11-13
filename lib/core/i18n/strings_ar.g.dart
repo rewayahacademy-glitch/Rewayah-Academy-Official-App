@@ -10971,7 +10971,7 @@ class _Traductions$calendrier$dates$ar extends Traductions$calendrier$dates$fr {
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String get intro => 'تواريخ السنة، تدخلها الإدارة كل عام. التواريخ المنشورة وحدها تسري، وستظهر في تبويب البرنامج للطلاب والأسر الذين تعنيهم.';
+	@override String get intro => 'تواريخ السنة، تدخلها الإدارة كل عام. التواريخ المنشورة وحدها تسري: الإغلاق يؤخّر الموعد النهائي للمراحل المعنية ويُبعد الحصص التي لم تبدأ بعد في تلك الأيام. تُحسب الأيام بتوقيت مكة المكرمة.';
 	@override String get ajouter => 'إضافة تاريخ';
 	@override String get erreur => 'تعذّرت قراءة التواريخ. تحقّق من الاتصال ثم حاول مرة أخرى.';
 	@override String get videTitre => 'لا توجد تواريخ مدخلة';
@@ -10994,6 +10994,8 @@ class _Traductions$calendrier$dates$ar extends Traductions$calendrier$dates$fr {
 	@override String get commencee => 'بدأ هذا الإغلاق: لم يعد سحبه ولا اختصاره ممكنًا، بل تمديده فقط.';
 	@override late final _Traductions$calendrier$dates$feuille$ar feuille = _Traductions$calendrier$dates$feuille$ar._(_root);
 	@override late final _Traductions$calendrier$dates$publication$ar publication = _Traductions$calendrier$dates$publication$ar._(_root);
+	@override late final _Traductions$calendrier$dates$concernees$ar concernees = _Traductions$calendrier$dates$concernees$ar._(_root);
+	@override late final _Traductions$calendrier$dates$conflits$ar conflits = _Traductions$calendrier$dates$conflits$ar._(_root);
 	@override late final _Traductions$calendrier$dates$refus$ar refus = _Traductions$calendrier$dates$refus$ar._(_root);
 }
 
@@ -20229,6 +20231,36 @@ class _Traductions$calendrier$dates$publication$ar extends Traductions$calendrie
 	@override String get confirmer => 'نشر الإغلاق';
 }
 
+// Path: calendrier.dates.concernees
+class _Traductions$calendrier$dates$concernees$ar extends Traductions$calendrier$dates$concernees$fr {
+	_Traductions$calendrier$dates$concernees$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'الحصص المعنية';
+	@override String get heureMecque => 'الأيام والساعات بتوقيت مكة المكرمة.';
+	@override String ligne({required Object classe, required Object quand, required Object enseignant}) => '⁨${classe}⁩، ⁨${quand}⁩، ⁨${enseignant}⁩';
+	@override String get deCote => 'مُبعدة';
+	@override String autres({required Object n}) => 'و⁨${n}⁩ حصة أخرى.';
+	@override String get erreur => 'تعذّرت قراءة الحصص المعنية. تحقّق من الاتصال ثم حاول مرة أخرى.';
+}
+
+// Path: calendrier.dates.conflits
+class _Traductions$calendrier$dates$conflits$ar extends Traductions$calendrier$dates$conflits$fr {
+	_Traductions$calendrier$dates$conflits$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'حصص لا يمكن استرجاعها';
+	@override String get intro => 'أبعد الإغلاق هذه الحصص، لكن المعلّم أخذ درسًا آخر في الوقت نفسه. حرّر المعلّم ثم حاول مرة أخرى، أو أكّد التخلّي عن هذه الحصص: لن تُسترجع أبدًا. الساعات بتوقيت مكة المكرمة.';
+	@override String ligne({required Object classe, required Object quand, required Object enseignant}) => '⁨${classe}⁩، ⁨${quand}⁩، ⁨${enseignant}⁩';
+	@override String autre({required Object cours, required Object quand}) => 'درس آخر: ⁨${cours}⁩، ⁨${quand}⁩';
+	@override String autreSansNom({required Object quand}) => 'درس آخر في الوقت نفسه، ⁨${quand}⁩';
+	@override String abandonner({required Object n}) => 'سحب الإغلاق والتخلّي عن هذه الحصص (⁨${n}⁩)';
+}
+
 // Path: calendrier.dates.refus
 class _Traductions$calendrier$dates$refus$ar extends Traductions$calendrier$dates$refus$fr {
 	_Traductions$calendrier$dates$refus$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -20238,6 +20270,8 @@ class _Traductions$calendrier$dates$refus$ar extends Traductions$calendrier$date
 	// Translations
 	@override String get fermetureTropLongue => 'هذا الإغلاق أطول من الحد المسموح (رمضان: عشرون يومًا، عيد الأضحى: عشرة أيام). اختصره.';
 	@override String get fermetureCommencee => 'بدأ هذا الإغلاق أو انقضى: لم يعد سحبه ولا اختصاره ولا نقله ممكنًا. يمكنكم تمديده فقط.';
+	@override String get fermeturePassee => 'تبدأ هذه الفترة قبل اليوم، فلا يمكن نشرها. اختر تاريخًا من اليوم فصاعدًا.';
+	@override String get retraitConflits => 'لم يُسحب الإغلاق: تعذّر استرجاع حصص أُبعدت. اقرأ القائمة ثم حرّر المعلّم أو أكّد التخلّي عن هذه الحصص.';
 	@override String get datesInvalides => 'يجب أن يأتي اليوم الأخير بعد الأول، وفي أقل من سنة.';
 	@override String get porteeInvalide => 'اختر الفئة العمرية أو الفصل المعني.';
 	@override String get evenementInvalide => 'العنوان ناقص أو نوع التاريخ غير مقروء. راجعهما ثم حاول مرة أخرى.';
@@ -35646,7 +35680,7 @@ extension on TraductionsAr {
 			'calendrier.sections.pauses' => 'فترات التوقف',
 			'calendrier.indisponible' => 'التقويم غير متاح حاليًا. أعد تحميل الصفحة ثم حاول مرة أخرى.',
 			'calendrier.refusNouvelleDateFermee' => 'لم يُحدَّد الموعد: الفصل مغلق في ذلك اليوم. اختر يومًا آخر.',
-			'calendrier.dates.intro' => 'تواريخ السنة، تدخلها الإدارة كل عام. التواريخ المنشورة وحدها تسري، وستظهر في تبويب البرنامج للطلاب والأسر الذين تعنيهم.',
+			'calendrier.dates.intro' => 'تواريخ السنة، تدخلها الإدارة كل عام. التواريخ المنشورة وحدها تسري: الإغلاق يؤخّر الموعد النهائي للمراحل المعنية ويُبعد الحصص التي لم تبدأ بعد في تلك الأيام. تُحسب الأيام بتوقيت مكة المكرمة.',
 			'calendrier.dates.ajouter' => 'إضافة تاريخ',
 			'calendrier.dates.erreur' => 'تعذّرت قراءة التواريخ. تحقّق من الاتصال ثم حاول مرة أخرى.',
 			'calendrier.dates.videTitre' => 'لا توجد تواريخ مدخلة',
@@ -35691,8 +35725,22 @@ extension on TraductionsAr {
 			'calendrier.dates.publication.titre' => 'نشر الإغلاق',
 			'calendrier.dates.publication.phrase' => 'في هذه الأيام لا تُنشأ حصص جديدة، ويتأخر الموعد الأقصى لمرحلة كل طالب معني بالمدة نفسها. الحصص المقررة سلفًا في تلك الأيام تُوضع جانبًا دون حذف، وسحب الإغلاق قبل بدايته يعيدها. وبعد أن يبدأ الإغلاق لا يمكن سحبه ولا اختصاره.',
 			'calendrier.dates.publication.confirmer' => 'نشر الإغلاق',
+			'calendrier.dates.concernees.titre' => 'الحصص المعنية',
+			'calendrier.dates.concernees.heureMecque' => 'الأيام والساعات بتوقيت مكة المكرمة.',
+			'calendrier.dates.concernees.ligne' => ({required Object classe, required Object quand, required Object enseignant}) => '⁨${classe}⁩، ⁨${quand}⁩، ⁨${enseignant}⁩',
+			'calendrier.dates.concernees.deCote' => 'مُبعدة',
+			'calendrier.dates.concernees.autres' => ({required Object n}) => 'و⁨${n}⁩ حصة أخرى.',
+			'calendrier.dates.concernees.erreur' => 'تعذّرت قراءة الحصص المعنية. تحقّق من الاتصال ثم حاول مرة أخرى.',
+			'calendrier.dates.conflits.titre' => 'حصص لا يمكن استرجاعها',
+			'calendrier.dates.conflits.intro' => 'أبعد الإغلاق هذه الحصص، لكن المعلّم أخذ درسًا آخر في الوقت نفسه. حرّر المعلّم ثم حاول مرة أخرى، أو أكّد التخلّي عن هذه الحصص: لن تُسترجع أبدًا. الساعات بتوقيت مكة المكرمة.',
+			'calendrier.dates.conflits.ligne' => ({required Object classe, required Object quand, required Object enseignant}) => '⁨${classe}⁩، ⁨${quand}⁩، ⁨${enseignant}⁩',
+			'calendrier.dates.conflits.autre' => ({required Object cours, required Object quand}) => 'درس آخر: ⁨${cours}⁩، ⁨${quand}⁩',
+			'calendrier.dates.conflits.autreSansNom' => ({required Object quand}) => 'درس آخر في الوقت نفسه، ⁨${quand}⁩',
+			'calendrier.dates.conflits.abandonner' => ({required Object n}) => 'سحب الإغلاق والتخلّي عن هذه الحصص (⁨${n}⁩)',
 			'calendrier.dates.refus.fermetureTropLongue' => 'هذا الإغلاق أطول من الحد المسموح (رمضان: عشرون يومًا، عيد الأضحى: عشرة أيام). اختصره.',
 			'calendrier.dates.refus.fermetureCommencee' => 'بدأ هذا الإغلاق أو انقضى: لم يعد سحبه ولا اختصاره ولا نقله ممكنًا. يمكنكم تمديده فقط.',
+			'calendrier.dates.refus.fermeturePassee' => 'تبدأ هذه الفترة قبل اليوم، فلا يمكن نشرها. اختر تاريخًا من اليوم فصاعدًا.',
+			'calendrier.dates.refus.retraitConflits' => 'لم يُسحب الإغلاق: تعذّر استرجاع حصص أُبعدت. اقرأ القائمة ثم حرّر المعلّم أو أكّد التخلّي عن هذه الحصص.',
 			'calendrier.dates.refus.datesInvalides' => 'يجب أن يأتي اليوم الأخير بعد الأول، وفي أقل من سنة.',
 			'calendrier.dates.refus.porteeInvalide' => 'اختر الفئة العمرية أو الفصل المعني.',
 			'calendrier.dates.refus.evenementInvalide' => 'العنوان ناقص أو نوع التاريخ غير مقروء. راجعهما ثم حاول مرة أخرى.',
@@ -35748,6 +35796,8 @@ extension on TraductionsAr {
 			'calendrier.pauses.refus.dejaDecidee' => 'سبق الرد على هذا الطلب. أعد تحميل القائمة.',
 			'calendrier.pauses.refus.debutPasse' => 'بدأ الشهر فعلًا: لم يعد قبول هذا التوقف ممكنًا. يمكنك رفضه.',
 			'calendrier.pauses.refus.datesInvalides' => 'يجب أن يكون اليوم الأخير اليوم أو بعده، وفي أقل من سنة.',
+			_ => null,
+		} ?? switch (path) {
 			'calendrier.pauses.refus.exceptionTropLongue' => ({required Object mois}) => 'مدة التوقف الاستثنائي ⁨${mois}⁩ أشهر على الأكثر. اختصروها؛ يمكنكم بعد ذلك منح توقف جديد.',
 			'calendrier.pauses.refus.nonTerminable' => 'هذا التوقف انتهى أو ليس توقفًا استثنائيًا.',
 			'calendrier.pauses.refus.eleveIntrouvable' => 'لم يوجد هذا الطالب.',
@@ -35762,8 +35812,6 @@ extension on TraductionsAr {
 			'pause.regle.moisEntier' => 'يدوم التوقف شهرًا ميلاديًا كاملًا، من أول الشهر إلى آخره.',
 			'pause.regle.preavis' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(jours, zero: 'تطلبه قبل بداية الشهر بـ ⁨${jours}⁩ أيام على الأقل.', one: 'تطلبه قبل بداية الشهر بيوم واحد على الأقل.', two: 'تطلبه قبل بداية الشهر بيومين على الأقل.', few: 'تطلبه قبل بداية الشهر بـ ⁨${jours}⁩ أيام على الأقل.', many: 'تطلبه قبل بداية الشهر بـ ⁨${jours}⁩ يومًا على الأقل.', other: 'تطلبه قبل بداية الشهر بـ ⁨${jours}⁩ يوم على الأقل.', ), 
 			'pause.regle.plafond' => ({required num delai, required Object mois, required Object fenetre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(delai, zero: 'الحد المسموح: ⁨${mois}⁩ من أشهر التوقف في كل ⁨${fenetre}⁩ شهرًا. وبعد ذلك تقرر الإدارة وترد خلال ⁨${delai}⁩ أيام.', one: 'الحد المسموح: ⁨${mois}⁩ من أشهر التوقف في كل ⁨${fenetre}⁩ شهرًا. وبعد ذلك تقرر الإدارة وترد خلال يوم واحد.', two: 'الحد المسموح: ⁨${mois}⁩ من أشهر التوقف في كل ⁨${fenetre}⁩ شهرًا. وبعد ذلك تقرر الإدارة وترد خلال يومين.', few: 'الحد المسموح: ⁨${mois}⁩ من أشهر التوقف في كل ⁨${fenetre}⁩ شهرًا. وبعد ذلك تقرر الإدارة وترد خلال ⁨${delai}⁩ أيام.', many: 'الحد المسموح: ⁨${mois}⁩ من أشهر التوقف في كل ⁨${fenetre}⁩ شهرًا. وبعد ذلك تقرر الإدارة وترد خلال ⁨${delai}⁩ يومًا.', other: 'الحد المسموح: ⁨${mois}⁩ من أشهر التوقف في كل ⁨${fenetre}⁩ شهرًا. وبعد ذلك تقرر الإدارة وترد خلال ⁨${delai}⁩ يوم.', ), 
-			_ => null,
-		} ?? switch (path) {
 			'pause.regle.placeGardee' => 'يبقى المقعد محفوظًا أثناء التوقف.',
 			'pause.regle.dateLimite' => 'يتأخر الموعد الأقصى للمرحلة بمدة التوقف.',
 			'pause.regle.absence' => 'الغياب لبضعة أيام يبقى غيابًا: لا تُطلب إلا أشهر كاملة.',

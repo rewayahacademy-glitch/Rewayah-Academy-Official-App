@@ -149,8 +149,58 @@ void main() {
     });
   });
 
+  group('les seances concernees et les conflits de retrait', () {
+    test('seances concernees : jour et heure de La Mecque, de cote ou non', () {
+      final ApercuSeances a = ApercuSeances.depuisJson(
+        concerneesServeur(total: 3),
+      );
+      expect(a.total, 3);
+      expect(a.seances.length, 3);
+      expect(a.seances.first.classe, 'Classe 0');
+      expect(a.seances.first.jour, DateTime(2027, 5, 16));
+      expect(a.seances.first.heure, '15:00');
+      expect(a.seances.first.deCote, isTrue);
+      expect(a.seances[1].deCote, isFalse);
+      expect(ApercuSeances.depuisJson(null).total, 0);
+      expect(
+        ApercuSeances.depuisJson(<String, Object?>{
+          'total': 1,
+          'seances': <Object?>[
+            <String, Object?>{'classe': 'x'},
+          ],
+        }).seances,
+        isEmpty,
+      );
+    });
+
+    test('conflits : classe, jour, heure, enseignant, l autre cours', () {
+      final ConflitsRetrait c = ConflitsRetrait.depuisJson(conflitsServeur());
+      expect(c.nombre, 1);
+      expect(c.conflits.single.classe, 'Classe Al-Noor');
+      expect(c.conflits.single.heure, '11:00');
+      expect(c.conflits.single.enseignant, 'Aïcha Haddad');
+      expect(c.conflits.single.autreClasse, 'Classe Al-Huda');
+      expect(c.conflits.single.autreHeure, '11:30');
+      expect(ConflitsRetrait.depuisJson(null).nombre, 0);
+    });
+  });
+
   group('les refus du serveur, en motifs fermes', () {
     test('calendrier', () {
+      expect(
+        motifRefusCalendrier(
+          code: '22023',
+          message: 'calendrier_retrait_conflits',
+        ),
+        MotifRefusCalendrier.retraitConflits,
+      );
+      expect(
+        motifRefusCalendrier(
+          code: '22023',
+          message: 'calendrier_fermeture_passee',
+        ),
+        MotifRefusCalendrier.fermeturePassee,
+      );
       MotifRefusCalendrier m(String message, [String? code]) =>
           motifRefusCalendrier(code: code, message: message);
       expect(

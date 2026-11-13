@@ -202,6 +202,107 @@ void main() {
       );
     });
 
+    testWidgets(
+      'une fermeture : la direction lit les seances concernees, a l heure de La Mecque, avant de publier',
+      (WidgetTester tester) async {
+        await _monter(
+          tester,
+          calendrier: FauxCalendrierDirection(
+            lignes: () => <Object?>[
+              ligneCalendrier(
+                id: 'f3',
+                type: 'fermeture',
+                categorie: 'autre',
+                titre: 'Fermeture a prevoir',
+                du: '2027-05-16',
+                au: '2027-05-25',
+                elevesVises: 3,
+                seancesNeutralisees: 0,
+              ),
+            ],
+          ),
+        );
+        await tester.tap(find.text('Fermeture a prevoir'));
+        await _pause(tester);
+        final c = t.calendrier.dates.concernees;
+        expect(find.text(c.titre), findsOneWidget);
+        expect(find.text(c.heureMecque), findsOneWidget);
+        // Six lignes, dont la premiere est deja de cote, puis « et 1 autre ».
+        expect(
+          find.text(
+            '${c.ligne(classe: 'Classe 0', quand: jourHeureEnMots(DateTime(2027, 5, 16), '15:00'), enseignant: 'Enseignant 0')} (${c.deCote})',
+          ),
+          findsOneWidget,
+        );
+        expect(find.text(c.autres(n: 1)), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'retirer refuse : la liste des conflits se lit, puis abandonner exige le bon nombre',
+      (WidgetTester tester) async {
+        final FauxCalendrierDirection port = FauxCalendrierDirection(
+          lignes: () => <Object?>[
+            ligneCalendrier(
+              id: 'f2',
+              type: 'fermeture',
+              categorie: 'autre',
+              titre: 'Fermeture a venir',
+              du: '2027-01-10',
+              au: '2027-01-20',
+              publie: true,
+              elevesVises: 3,
+              seancesNeutralisees: 2,
+            ),
+          ],
+          refusRetrait: const CalendrierRefuse(
+            MotifRefusCalendrier.retraitConflits,
+          ),
+        );
+        await _monter(tester, calendrier: port);
+        await tester.tap(find.text('Fermeture a venir'));
+        await _pause(tester);
+        await _toucher(
+          tester,
+          find.byKey(const ValueKey<String>('calendrier-retirer')),
+        );
+        await _pause(tester);
+        await _pause(tester);
+        final c = t.calendrier.dates.conflits;
+        // Le retrait n'a pas eu lieu ; la liste des conflits est ouverte.
+        expect(port.publications, isEmpty);
+        expect(find.text(c.titre), findsOneWidget);
+        expect(
+          find.text(
+            c.ligne(
+              classe: 'Classe Al-Noor',
+              quand: jourHeureEnMots(DateTime(2027, 5, 18), '11:00'),
+              enseignant: 'Aïcha Haddad',
+            ),
+          ),
+          findsOneWidget,
+        );
+        expect(
+          find.text(
+            c.autre(
+              cours: 'Classe Al-Huda',
+              quand: jourHeureEnMots(DateTime(2027, 5, 18), '11:30'),
+            ),
+          ),
+          findsOneWidget,
+        );
+        // La feuille pose son seul bouton plein sur la page, qui a le sien (« Ajouter »).
+        verifierUnSeulBoutonPlein(tester, maximum: 2);
+        await _toucher(
+          tester,
+          find.byKey(const ValueKey<String>('calendrier-abandonner')),
+        );
+        await _pause(tester);
+        // La confirmation porte le nombre lu : exactement 1 seance.
+        expect(port.retraits, <(String, int?)>[('f2', 1)]);
+      },
+    );
+
     testWidgets('un seul bouton plein', (WidgetTester tester) async {
       await _monter(tester);
       expect(
