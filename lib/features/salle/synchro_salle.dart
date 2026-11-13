@@ -272,7 +272,10 @@ class SynchroSalle {
   }
 
   /// Donne la parole a un eleve pour toute la classe, ou la reprend avec
-  /// `null` (enseignant). Rien n'est coupe chez les autres.
+  /// `null` (enseignant). Ce message ne fait qu'afficher : il n'ouvre ni ne
+  /// coupe aucun micro. La fermeture des micros des camarades pendant une
+  /// recitation est posee par le serveur (`faireReciter`, droits de la
+  /// salle), pas par ce message.
   void diffuserParole(ParoleSalle? eleve) {
     if (!_peutDiffuser) return;
     parole.value = eleve;

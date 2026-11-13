@@ -20,7 +20,7 @@
 // grand » ; « la barre sur un cote d'abord »), qui prevaut sur ce qui precede
 // pour la disposition : plus de rangee du haut ni de barre du bas. La barre
 // des commandes est une colonne sur le bord de debut (memes cinq groupes, de
-// haut en bas), avec en tete la Classe, le titre du support et l'ile ; le
+// haut en bas), avec en tete le titre du support et la Dynamique chrono ; le
 // zoom, ranger et focus sont dans les marges de la page, au-dessus de ses
 // fleches. La page prend toute la hauteur de l'ecran (aux marges pres). Le
 // focus retire les deux panneaux et les noms de la colonne.
@@ -118,14 +118,15 @@ class SalleOrdinateur extends ConsumerStatefulWidget {
   );
   static const Key cleBas = cleCommandes;
 
-  /// La tete de la colonne : la Classe, le titre du support, l'ile.
+  /// La tete de la colonne : le titre du support, la Dynamique chrono (et
+  /// sous elle le mot d'etat et la mention), a hauteur reservee.
   static const Key cleTete = ValueKey<String>('salle-ordinateur-tete');
   static const Key cleFocus = ValueKey<String>('salle-ordinateur-focus');
 
   /// Directeur, 11/11/2026 : la video de l'enseignant, en tete du panneau
   /// des Eleves. CORAN-GRAND : ranger et focus dans la marge de fin de la
-  /// page ([cleSupport]) ; la Classe et le titre du support en tete de la
-  /// colonne des commandes.
+  /// page ([cleSupport]) ; le titre du support en tete de la colonne des
+  /// commandes.
   static const Key cleVideo = ValueKey<String>('salle-ordinateur-video');
   static const Key cleSupport = ValueKey<String>('salle-ordinateur-support');
   static const Key cleTitreSupport = ValueKey<String>(
@@ -241,10 +242,12 @@ class _EtatSalleOrdinateur extends ConsumerState<SalleOrdinateur> {
           // au-dessous de la page, qui prend toute la hauteur.
           //
           // GRILLE-COMMANDES : la colonne est PEINTE EN DERNIER (enfants
-          // et sens inverses : les places ne changent pas), pour que l'ile
-          // depliee passe par-dessus le panneau voisin au lieu de se plier
-          // sur quatre lignes dans la colonne. Le lecteur d'ecran et la
-          // touche Tab suivent la place a l'ecran : la colonne d'abord.
+          // et sens inverses : les places ne changent pas). La raison
+          // d'origine (l'ile depliee par-dessus le panneau voisin) n'existe
+          // plus depuis DYNAMIQUE-CHRONO-1 : la barre se deplie dans la tete
+          // de la colonne, jamais par-dessus. L'ordre est garde : le lecteur
+          // d'ecran et la touche Tab suivent la place a l'ecran, la colonne
+          // d'abord.
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             spacing: AppSpacing.lg,
@@ -1056,19 +1059,23 @@ Widget tuileOutilSalle(
 /// disposition) : les memes cinq groupes, dans le meme ordre, de haut en
 /// bas, les memes tuiles, etats, raccourcis et infobulles ; « Quitter »,
 /// seul rouge, tout en bas. Au-dessus de la barre sombre, sur le fond de la
-/// salle : le nom de la Classe, le titre du support, puis l'ile, au coin de
-/// debut, hors de la page.
+/// salle : le titre du support, puis la Dynamique chrono, au coin de debut,
+/// hors de la page (le nom de la Classe n'y est plus : [SalleOrdinateur.
+/// cleClasse] ne sert qu'a verifier son absence).
 ///
-/// - au debut (en haut) : « Ma voix et mon image » (Micro, Camera), « Ma
-///   classe » (Eleves), « Sur la page » (Pointeur, Ecrire) ;
-/// - a la fin (en bas) : « Le support » (Bibliotheque, Tableau), « Sortir »
-///   (Reduire, Quitter).
+/// - au debut (en haut), dans l'ordre de GRILLE-COMMANDES (D-027) : « Ma
+///   voix et mon image » (Micro, Camera), « Ma classe » (Eleves), « Le
+///   support » (Bibliotheque, Tableau), « Sur la page » (Pointeur, Ecrire) ;
+/// - a la fin (en bas) : « Sortir » (Reduire, Quitter).
 ///
 /// La colonne ne defile jamais. Quand la hauteur manque, elle se replie dans
-/// cet ordre : le titre du support part, puis le nom de la Classe, puis les
-/// noms des tuiles (il reste les icones, leur infobulle et ce que lit le
-/// lecteur d'ecran ; la colonne retrecit, la page y gagne). En focus, elle
-/// ne garde que les icones et l'ile.
+/// cet ordre : le titre du support part, puis les noms des tuiles (il reste
+/// les icones, leur infobulle et ce que lit le lecteur d'ecran ; la colonne
+/// retrecit, la page y gagne), puis le mot d'etat et la mention passent dans
+/// une rangee reservee au-dessus du contenu. Le choix se fait une fois, pour
+/// une taille d'ecran, la barre depliee comprise (HARMONIE-SALLE) : plier ou
+/// deplier la barre ne change pas les tuiles. En focus, elle ne garde que les
+/// icones et la Dynamique chrono.
 ///
 /// Pointeur et Ecrire gardent leur place quand ils ne peuvent pas servir
 /// (aucune page ni tableau) : la place reste, vide, rien ne glisse.
@@ -1097,9 +1104,8 @@ class _Colonne extends ConsumerWidget {
   /// une rangee reservee au-dessus du contenu.
   final ValueNotifier<bool> etatHorsColonne;
 
-  /// Le panneau des Eleves est a l'ecran, a cote de la colonne : l'ile
-  /// depliee peut passer par-dessus (elle n'y couvre que le haut de la video
-  /// de l'enseignant, quelques secondes).
+  /// Le panneau des Eleves est a l'ecran, a cote de la colonne : la colonne
+  /// ne s'elargit pour la barre que si la page garde sa place.
   final bool panneauEleves;
 
   /// DYNAMIQUE-CHRONO-1 : un panneau est ouvert au bord de fin (Bibliotheque

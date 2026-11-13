@@ -2,17 +2,19 @@
 // FICHE-1-TELEPHONE-2026-10-26.md) : l'enseignant sous 840 points de large
 // (telephone, iPad en portrait).
 //
-// Au repos, l'ile (chrono) en haut et « Commandes » en bas. Au toucher, la
-// capsule de sa video (avec « Reduire la salle » a son debut), la pilule
-// Micro, Camera, Eleves, Quitter, et « Commandes » au-dessus. Toucher la
-// capsule deplie le profil. « Commandes » deplie un tiroir a deux onglets :
-// Support (Tableau, « Ranger le support », la Bibliotheque), Outils (Stylo,
-// Surligner, Gomme, Annuler, et les couleurs).
+// Historique (26/10/2026, remplace par GRILLE-COMMANDES du 11/11/2026,
+// journal D-027, et par DYNAMIQUE-CHRONO-1 du 12/11/2026) : au repos, l'ile
+// en haut et « Commandes » en bas ; un tiroir a deux onglets. Aujourd'hui : la
+// Dynamique chrono dans sa rangee reservee en haut ; une barre unique de six
+// cases (Micro, Camera, Eleves, Pointeur, Plus, Quitter,
+// `BarreCommandesTelephone`) ; « Plus » ouvre le tiroir « Bibliotheque et
+// outils ». Le mot « Commandes » n'existe plus a l'ecran. Toucher la capsule
+// de sa video deplie le profil.
 //
 // TELEPHONE-REDUIT (cahier de la salle §9, 11/11/2026,
 // docs/current/UX_REVIEW_TELEPHONE-REDUIT.md) : sous 600 points, le tiroir
 // n'a plus d'onglets ; l'ecriture et le tableau restent sur tablette et
-// ordinateur, une phrase le dit ; le Pointeur est a cote de « Commandes ».
+// ordinateur, une phrase le dit ; le Pointeur est une case de la barre.
 // Les eleves montent en feuille du bas, leurs cartes se deplient sur place.
 // Rien de neuf : le cadre est [PanneauSeance] (feuille), la Bibliotheque
 // [PanneauBibliothequeSalle], les tuiles [TuileCommandeSalle], les eleves
