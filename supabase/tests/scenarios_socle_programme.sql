@@ -2,7 +2,7 @@
 -- On rejoue l'installation en production : un brouillon v1 avec une seule
 -- etape vide (`bases-lecture`, comme en production le 12/11), deux classes
 -- actives sans etape, des eleves deja membres ; puis le semis de la migration
--- (private.semer_programme_bases, private.rattacher_classes_et_eleves).
+-- (private.completer_brouillon_bases, la publication par la direction, private.rattacher_classes_et_eleves).
 -- a1 direction ; b1 titulaire de c1 ; b2 titulaire de c2 ; b3 enseignant
 -- etranger ; t1 tuteur du foyer f1 ; t2 tuteur du foyer f2 ;
 -- e1 (6-9 ans, f1) et e2 (10-13 ans, f1) membres de c1 avant le semis ;
@@ -77,6 +77,8 @@ CREATE TEMP TABLE sp_ids(cle text PRIMARY KEY, id uuid);
 GRANT ALL ON sp_ids TO authenticated;
 CREATE TEMP TABLE sp_lectures(qui text PRIMARY KEY, j jsonb);
 GRANT ALL ON sp_lectures TO authenticated;
+CREATE TEMP TABLE sp_installation(qui text PRIMARY KEY, j jsonb);
+GRANT ALL ON sp_installation TO authenticated;
 
 -- Aucune version publiee avant le semis (base nue : la migration n'a rien seme).
 SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM public.programme_versions WHERE statut = 'publiee'),
@@ -151,10 +153,93 @@ SELECT pg_temp.vrai(
   'avant le semis : classes sans etape, eleves sans etape (etat de production)');
 
 -- ------------------------------------------------------------------
--- Le semis, comme a l'installation de la migration
+-- L'installation de la migration : elle complete le brouillon VIDE et ne publie
+-- rien (decision de l'architecte, 13/11). Etat « brouillon seul, classes sans
+-- niveau » : ce que lit chaque eleve reel ne change pas.
 -- ------------------------------------------------------------------
-SELECT private.semer_programme_bases(
-  (SELECT cree_par FROM public.programme_versions WHERE id = (SELECT id FROM sp_ids WHERE cle = 'v1')));
+SELECT pg_temp.qui(pg_temp.u('e1'), 'student', pg_temp.u('f1'));
+SET LOCAL ROLE authenticated;
+INSERT INTO sp_installation VALUES ('avant-e1', public.ma_progression(pg_temp.u('e1')));
+RESET ROLE;
+SELECT pg_temp.qui(pg_temp.u('e2'), 'student', pg_temp.u('f1'));
+SET LOCAL ROLE authenticated;
+INSERT INTO sp_installation VALUES ('avant-e2', public.ma_progression(pg_temp.u('e2')));
+RESET ROLE;
+SELECT pg_temp.qui(pg_temp.u('e7'), 'student', pg_temp.u('f1'));
+SET LOCAL ROLE authenticated;
+INSERT INTO sp_installation VALUES ('avant-e7', public.ma_progression(pg_temp.u('e7')));
+RESET ROLE;
+SELECT pg_temp.qui(pg_temp.u('e3'), 'guardian', pg_temp.u('f3'));
+SET LOCAL ROLE authenticated;
+INSERT INTO sp_installation VALUES ('avant-e3', public.ma_progression(pg_temp.u('e3')));
+RESET ROLE;
+SELECT pg_temp.qui(pg_temp.u('e9'), 'student', pg_temp.u('f3'));
+SET LOCAL ROLE authenticated;
+INSERT INTO sp_installation VALUES ('avant-e9', public.ma_progression(pg_temp.u('e9')));
+RESET ROLE;
+SELECT private.completer_brouillon_bases();
+SELECT pg_temp.qui(pg_temp.u('e1'), 'student', pg_temp.u('f1'));
+SET LOCAL ROLE authenticated;
+INSERT INTO sp_installation VALUES ('apres-e1', public.ma_progression(pg_temp.u('e1')));
+RESET ROLE;
+SELECT pg_temp.qui(pg_temp.u('e2'), 'student', pg_temp.u('f1'));
+SET LOCAL ROLE authenticated;
+INSERT INTO sp_installation VALUES ('apres-e2', public.ma_progression(pg_temp.u('e2')));
+RESET ROLE;
+SELECT pg_temp.qui(pg_temp.u('e7'), 'student', pg_temp.u('f1'));
+SET LOCAL ROLE authenticated;
+INSERT INTO sp_installation VALUES ('apres-e7', public.ma_progression(pg_temp.u('e7')));
+RESET ROLE;
+SELECT pg_temp.qui(pg_temp.u('e3'), 'guardian', pg_temp.u('f3'));
+SET LOCAL ROLE authenticated;
+INSERT INTO sp_installation VALUES ('apres-e3', public.ma_progression(pg_temp.u('e3')));
+RESET ROLE;
+SELECT pg_temp.qui(pg_temp.u('e9'), 'student', pg_temp.u('f3'));
+SET LOCAL ROLE authenticated;
+INSERT INTO sp_installation VALUES ('apres-e9', public.ma_progression(pg_temp.u('e9')));
+RESET ROLE;
+SELECT pg_temp.vrai(
+  (SELECT pg_catalog.count(*) = 1 AND pg_catalog.count(*) FILTER (WHERE statut = 'brouillon') = 1
+     FROM public.programme_versions),
+  'apres l''installation : programme_versions = {brouillon : 1}, rien n''est publie');
+SELECT pg_temp.vrai(
+  (SELECT pg_catalog.array_agg(n.code_technique ORDER BY n.ordre)
+     FROM public.programme_niveaux n WHERE n.version_id = (SELECT id FROM sp_ids WHERE cle = 'v1'))
+    = ARRAY['BASES-1','BASES-2','BASES-3','BASES-4']
+  AND EXISTS (SELECT 1 FROM public.programme_cycles c WHERE c.version_id = (SELECT id FROM sp_ids WHERE cle = 'v1') AND c.code = 'bases'),
+  'le brouillon vide est complete : 4 etapes a code stable et le niveau des bases, sans rien publier');
+SELECT pg_temp.vrai(
+  NOT EXISTS (SELECT 1 FROM public.eleve_etape_en_cours)
+  AND (SELECT pg_catalog.count(*) FROM public.groupes WHERE id IN (pg_temp.u('c1'), pg_temp.u('c2'))
+         AND programme_niveau_id IS NULL) = 2,
+  'apres l''installation : aucun fait d''eleve, aucune classe ne recoit de niveau');
+SELECT pg_temp.vrai(
+  (SELECT pg_catalog.count(*) = 5
+          AND pg_catalog.bool_and((SELECT a.j FROM sp_installation a WHERE a.qui = 'avant-' || x.u)
+                                  = (SELECT b.j FROM sp_installation b WHERE b.qui = 'apres-' || x.u))
+     FROM (VALUES ('e1'), ('e2'), ('e7'), ('e3'), ('e9')) AS x(u)),
+  'ma_progression rend la meme chose avant et apres l''installation pour chaque eleve reel');
+-- Un brouillon que la direction a deja rempli n'est jamais touche : une etape modifiee a la
+-- main (objectifs de la direction) ne repart pas vers le contenu de la migration.
+UPDATE public.programme_niveaux SET objectifs = ARRAY['Objectif de la direction un', 'Objectif deux', 'Objectif trois']
+ WHERE version_id = (SELECT id FROM sp_ids WHERE cle = 'v1') AND code_technique = 'BASES-2';
+SELECT pg_temp.vrai(
+  private.completer_brouillon_bases() IS NULL
+  AND (SELECT n.objectifs[1] = 'Objectif de la direction un'
+         FROM public.programme_niveaux n
+        WHERE n.version_id = (SELECT id FROM sp_ids WHERE cle = 'v1') AND n.code_technique = 'BASES-2'),
+  'un brouillon deja rempli n''est jamais touche par l''installation');
+-- On remet le contenu decide (le scenario suivant lit le programme de la migration).
+UPDATE public.programme_niveaux n SET objectifs = c.objectifs
+  FROM private.contenu_bases() c
+ WHERE n.version_id = (SELECT id FROM sp_ids WHERE cle = 'v1') AND n.code_technique = c.code;
+
+-- Les gestes de la direction : publier la version (ecran Programmes), puis donner a chaque
+-- classe et a chaque eleve deja present son etape (stand-in : l'outil de rattachement).
+SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
+SET LOCAL ROLE authenticated;
+SELECT public.publier_version_programme((SELECT id FROM sp_ids WHERE cle = 'v1'), 'Version 1 des bases');
+RESET ROLE;
 SELECT private.rattacher_classes_et_eleves();
 
 -- ------------------------------------------------------------------
@@ -163,7 +248,7 @@ SELECT private.rattacher_classes_et_eleves();
 SELECT pg_temp.vrai(
   (SELECT pg_catalog.count(*) FROM public.programme_versions WHERE statut = 'publiee') = 1
   AND (SELECT statut FROM public.programme_versions WHERE id = (SELECT id FROM sp_ids WHERE cle = 'v1')) = 'publiee',
-  'une seule version publiee : le brouillon de production, complete puis publie');
+  'une seule version publiee : le brouillon de production, complete a l''installation puis publie par la direction');
 SELECT pg_temp.vrai(
   (SELECT pg_catalog.array_agg(n.code_technique ORDER BY n.ordre)
      FROM public.programme_niveaux n WHERE n.version_id = (SELECT id FROM sp_ids WHERE cle = 'v1'))
@@ -435,6 +520,27 @@ RESET ROLE;
 SET LOCAL ROLE anon;
 SELECT pg_temp.vrai(pg_temp.essai('SELECT public.etape_eleve_lecture(''00000000-0000-0000-0000-000000000000'')') = 'refus',
   'anon : refus');
+RESET ROLE;
+-- `progression_famille` (niveau declare et dernier jalon, lus par la carte du suivi) : le serveur
+-- REFUSE le compte d'un enfant ou d'un eleve (role « student ») ; seul le tuteur la lit. La carte
+-- n'y recoit donc rien pour l'enfant de 6 a 9 ans qui lit avec son propre compte (le client avale le refus).
+SELECT pg_temp.qui(pg_temp.u('e1'), 'student', pg_temp.u('f1'));
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai(
+  pg_temp.essai(pg_catalog.format('SELECT public.progression_famille(%L)', pg_temp.u('e1'))) = 'progression indisponible',
+  'progression_famille : refusee au compte de l''enfant de 6 a 9 ans (role eleve)');
+RESET ROLE;
+SELECT pg_temp.qui(pg_temp.u('e9'), 'student', pg_temp.u('f3'));
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai(
+  pg_temp.essai(pg_catalog.format('SELECT public.progression_famille(%L)', pg_temp.u('e9'))) = 'progression indisponible',
+  'progression_famille : refusee aussi au compte d''un adulte au role eleve (seul le tuteur la lit)');
+RESET ROLE;
+SELECT pg_temp.qui(pg_temp.u('t1'), 'guardian', pg_temp.u('f1'));
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai(
+  pg_temp.essai(pg_catalog.format('SELECT public.progression_famille(%L)', pg_temp.u('e1'))) = 'ok',
+  'progression_famille : lue par le tuteur du foyer');
 RESET ROLE;
 
 -- Le hub `ma_progression` (MA-PROGRESSION, sur le socle) rend LA meme etape : un seul calcul.
@@ -738,8 +844,8 @@ SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
 SET LOCAL ROLE authenticated;
 SELECT pg_temp.vrai(pg_temp.essai('SELECT * FROM public.eleve_etape_en_cours') = 'refus',
   'direction : aucune lecture directe du fait (seulement par la lecture unique)');
-SELECT pg_temp.vrai(pg_temp.essai(pg_catalog.format('SELECT private.semer_programme_bases(%L)', pg_temp.u('a1'))) = 'refus',
-  'le semis n''est ouvert a personne');
+SELECT pg_temp.vrai(pg_temp.essai('SELECT private.completer_brouillon_bases()') = 'refus',
+  'la completion du brouillon n''est ouverte a personne');
 RESET ROLE;
 SELECT pg_temp.vrai(
   NOT pg_catalog.has_function_privilege('anon', 'public.etape_eleve_lecture(uuid)', 'EXECUTE')

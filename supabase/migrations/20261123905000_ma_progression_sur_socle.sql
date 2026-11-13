@@ -1,4 +1,4 @@
--- MA-PROGRESSION sur le SOCLE-PROGRAMME (13/11/2026, numero 20261123910000, apres 900000 qui
+-- MA-PROGRESSION sur le SOCLE-PROGRAMME (13/11/2026, numero 20261123905000, apres 900000 qui
 -- pose etape_eleve_lecture) : UN SEUL point d'entree pour
 -- la progression de l'eleve et de sa famille.
 --
@@ -18,7 +18,10 @@
 -- deja en ligne continue de lire ; des cles s'y ajoutent (matieres, entree dans
 -- l'etape, duree et date limite de chaque etape du chemin, `niveau`,
 -- `eleve_voit_dates`, `attente`). Pour l'eleve qui lit pour lui-meme et ne voit pas
--- ses dates (6 a 9 ans), aucune date ni duree ni rythme, `atteinte_le` compris.
+-- ses dates (6 a 9 ans), aucune date ni duree ni rythme : `atteinte_le`,
+-- `sourates[].valide_le` et `etape.page_reprise_le` compris. La page de reprise et
+-- sa date viennent de la MEME adhesion (classe non terminee, adhesion la plus
+-- recente), celle que lit la lecture unique.
 -- Les anciennes cles de statut sont gardees jusqu'au lot 10 (retrait de
 -- suivi_pedagogique_eleve). Aucune donnee n'est ecrite ni modifiee.
 
@@ -28,6 +31,8 @@ BEGIN
      OR pg_catalog.to_regprocedure('public.etape_eleve_lecture(uuid)') IS NULL
      OR pg_catalog.to_regprocedure('public.suivi_pedagogique_eleve(uuid)') IS NULL
      OR pg_catalog.to_regprocedure('public.sourates_eleve(uuid)') IS NULL
+     OR pg_catalog.to_regprocedure('private.dates_retenues(uuid, uuid)') IS NULL
+     OR pg_catalog.to_regclass('public.classe_position_reprise') IS NULL
      OR pg_catalog.to_regclass('public.programme_etape_reglages') IS NULL THEN
     RAISE EXCEPTION 'MA-PROGRESSION sur le socle : MA-PROGRESSION (20261123830000) ou SOCLE-PROGRAMME (20261123900000) absent';
   END IF;
@@ -51,6 +56,9 @@ DECLARE
   v_masque boolean;
   v_code text;
   v_trouve boolean;
+  v_groupe uuid;
+  v_page_le timestamptz;
+  v_sourates jsonb;
 BEGIN
   -- La garde est celle de suivi_pedagogique_eleve : 42501 si l'appelant n'est ni l'eleve, ni le
   -- titulaire de son profil, ni le tuteur de son foyer. Aucune copie de cette garde ici.
@@ -59,20 +67,41 @@ BEGIN
   -- LA lecture de l'etape (SOCLE-PROGRAMME) : meme garde, qui laisse passer ces trois appelants.
   v_lect := public.etape_eleve_lecture(p_student_id);
 
+  -- La Classe : la meme adhesion que la lecture unique (classe non terminee, adhesion la plus
+  -- recente), pour la page de reprise comme pour sa date.
+  SELECT m.groupe_id INTO v_groupe
+    FROM public.groupe_membres m
+    JOIN public.groupes g ON g.id = m.groupe_id AND g.ended_at IS NULL
+   WHERE m.student_id = p_student_id AND m.left_at IS NULL
+   ORDER BY m.joined_at DESC, m.groupe_id
+   LIMIT 1;
+  IF v_groupe IS NOT NULL THEN
+    SELECT r.presentee_le INTO v_page_le
+      FROM public.classe_position_reprise r WHERE r.groupe_id = v_groupe;
+  END IF;
+  -- Les dates retenues pour l'eleve de 6 a 9 ans qui lit pour lui-meme : une seule regle,
+  -- celle de la lecture unique.
+  v_masque := private.dates_retenues(p_student_id, v_groupe);
+  v_sourates := public.sourates_eleve(p_student_id);
+  IF v_masque THEN
+    v_sourates := pg_catalog.jsonb_set(v_sourates, '{sourates}',
+      coalesce((SELECT pg_catalog.jsonb_agg(x - 'valide_le')
+                  FROM pg_catalog.jsonb_array_elements(v_sourates -> 'sourates') x), '[]'::jsonb));
+  END IF;
+
   IF NOT v_trouve OR v_lect IS NULL OR v_lect ->> 'attente' IS NOT NULL THEN
     -- Autorise, mais sans Classe active ni etape : pas d'etape a montrer. Les sourates
     -- validees, elles, sont rendues QUAND MEME : ce que l'eleve a acquis lui appartient
     -- (arbitrage du garde-cap et du pilote, 11/11/2026 ; meme porte que la lecture).
     -- Un eleve qui attend l'entretien de lecture le dit (`attente`) : aucune etape supposee.
     RETURN pg_catalog.jsonb_build_object('etape', NULL, 'etapes_du_cycle', '[]'::jsonb,
-                                         'sourates', public.sourates_eleve(p_student_id),
+                                         'sourates', v_sourates,
                                          'reglage', NULL)
            || CASE WHEN v_lect ->> 'attente' IS NOT NULL
                    THEN pg_catalog.jsonb_build_object('attente', v_lect ->> 'attente')
                    ELSE '{}'::jsonb END;
   END IF;
 
-  v_masque := NOT coalesce((v_lect -> 'niveau' ->> 'date_limite_visible')::boolean, false);
   v_code := v_lect -> 'etape' ->> 'code';
 
   -- L'etape : celle de la lecture unique (ses cles incluent nom, ordre, objectifs, matieres,
@@ -81,7 +110,7 @@ BEGIN
              || pg_catalog.jsonb_build_object(
                   'cycle', v_suivi.cycle,
                   'page_reprise', v_lect -> 'page_reprise',
-                  'page_reprise_le', v_suivi.page_reprise_le);
+                  'page_reprise_le', CASE WHEN v_masque THEN NULL ELSE v_page_le END);
 
   -- Les etapes du chemin dans l'ordre, la sienne marquee : les passees et la sienne dans SA
   -- version, les a-venir dans la version publiee. `franchie` pour une etape passee (cle d'avant),
@@ -118,7 +147,7 @@ BEGIN
     'etapes_du_cycle', v_cycle,
     -- Les sourates : source unique du lot SOURATES (17 sourates des bases, validees par
     -- l'enseignant au cahier), meme porte que suivi_pedagogique_eleve. Rien n'est copie ici.
-    'sourates', public.sourates_eleve(p_student_id),
+    'sourates', v_sourates,
     'reglage', v_reglage,
     'niveau', v_lect -> 'niveau',
     'eleve_voit_dates', v_lect -> 'eleve_voit_dates');

@@ -43,7 +43,9 @@ Dans l'application, chacun ne voit que **sa** partie : l'élève et son tuteur v
   - 2. Lire avec les voyelles (jusqu'à la chadda)
   - 3. Lire dans le Coran (fin du livre, puis le Mushaf)
   - 4. Les sourates courtes, d'Al-Masad (111) à Az-Zalzalah (99)
-- **6 à 9 ans** : le livre seul jusqu'à la chadda. Ensuite, en matière secondaire, Al-Fatiha (environ 3 semaines), puis An-Nâs, Al-Falaq et Al-Ikhlâs (environ 2 semaines chacune), puis les paroles de la prière et les ablutions (montrées en pratique et par illustrations, sans fiqh détaillé), puis les autres invocations.
+- **6 à 9 ans** : le livre seul jusqu'à la chadda. Ensuite, en matière secondaire, Al-Fatiha (environ 3 semaines), puis An-Nâs, Al-Falaq et Al-Ikhlâs (environ 2 semaines chacune ; valeur unique dans `docs/current/pedagogie/REGLAGES.md`), puis les paroles de la prière et les ablutions (montrées en pratique et par illustrations, sans fiqh détaillé), puis les autres invocations.
+- **Prière et ablutions (directeur, 13/11/2026)** : publiques et connues ; pas de question d'école juridique pour des débutants ; la référence imposée pour l'instant est ce qui est enseigné en Arabie saoudite ; les spécialisations sont pour les avancés. Texte, et ordre d'apprentissage (le plus court d'abord) : `docs/current/pedagogie/CONTENU-PRIERE-ET-ABLUTIONS.md`, en service après la relecture du directeur.
+- **Le tajwid des bases (directeur, 13/11/2026)** : les règles élémentaires sont réparties pour que l'élève les maîtrise avant ou pendant les 17 sourates ; pas les règles avancées, pas trop de règles. Neuf règles (arbitrage de l'architecte), d'abord imitées puis nommées, jamais d'épreuve de théorie : point de sortie des lettres, lettres épaisses et fines (étape 1) ; brève ou longue, chadda et nasalisation, qalqala (étape 2) ; arrêt en fin de verset, lam du nom d'Allah (étape 3) ; noun sans voyelle et tanwin, allongements longs (étape 4). Détail : `docs/current/pedagogie/EVALUATIONS.md`, 4.1 bis.
 - **10 ans et plus** (cohortes 10-13, 14-17, 18+) : Al-Fatiha en matière secondaire dès la première semaine, parce que l'enfant doit prier à cet âge. C'est un réglage.
 - Le livre fini et validé, le Coran devient la matière principale. La révision de la lecture, les invocations et l'adab deviennent la matière secondaire.
 - Après les bases vient l'examen de fin des bases. Ensuite : pour un enfant, la mémorisation est proposée par défaut si les acquis sont stables, et le tuteur peut demander la lecture ; un adulte choisit entre lire tout le Coran et le mémoriser, sur conseil de l'enseignant.
@@ -51,6 +53,8 @@ Dans l'application, chacun ne voit que **sa** partie : l'élève et son tuteur v
 **Les 17 sourates des bases (105 versets)** : Al-Fatiha 7 · An-Nâs (114) 6 · Al-Falaq (113) 5 · Al-Ikhlâs (112) 4 · Al-Masad (111) 5 · An-Nasr (110) 3 · Al-Kâfirûn (109) 6 · Al-Kawthar (108) 3 · Al-Mâ'ûn (107) 7 · Quraysh (106) 4 · Al-Fîl (105) 5 · Al-Humaza (104) 9 · Al-'Asr (103) 3 · At-Takâthur (102) 8 · Al-Qâri'a (101) 11 · Al-'Âdiyât (100) 11 · Az-Zalzalah (99) 8.
 
 ## 3. Durées et dates limites
+
+- **Séance par séance (directeur, 13/11/2026)** : le programme est découpé « au jour près » ; pour chaque séance, l'enseignant et l'élève savent quelle partie est prévue ; l'enseignant précise seulement les exceptions. L'unité est la séance ; la date est calculée par le serveur pour chaque classe ; le plan appartient à la classe, l'état à chaque élève. Découpage : `docs/current/pedagogie/PROGRAMME-SEANCE-PAR-SEANCE.md`.
 
 - Chaque étape a une **durée prévue** et une **date limite** par tranche d'âge. Le directeur l'a décidé le 14/10 : sans date limite, c'est la pagaille. Cette décision remplace le « temps variable sans date » du référentiel de septembre.
 - **Durée prévue des bases**, pour un débutant : 6-9 ans, 37 semaines ; 10-13 ans, 28 ; 14-17 ans, 24 ; adulte, 15.
@@ -62,7 +66,7 @@ Dans l'application, chacun ne voit que **sa** partie : l'élève et son tuteur v
 
 ## 4. Les supports de Rewayah
 
-- **Rewayah écrit ses propres supports**, avec le directeur et selon la voie d'Ahl as-Sunna. Nour al-Bayân est protégé par une licence : le livre de lecture de Rewayah s'inspire des meilleurs (Nour al-Bayân, Al-Qâ'ida an-Nûrâniyya…) sans les copier. Ne cite jamais les pages d'une édition d'un autre éditeur.
+- **Rewayah écrit ses propres documents**, avec le directeur et selon la voie d'Ahl as-Sunna. Les livres seront rédigés par des agents après la validation du programme, découpés selon lui, puis relus par le directeur (13/11/2026 ; cahier des charges : `docs/current/pedagogie/CONTENUS-ATTENDUS.md`, partie 2). Nour al-Bayân est protégé par une licence : le livre de lecture de Rewayah s'inspire des meilleurs (Nour al-Bayân, Al-Qâ'ida an-Nûrâniyya…) sans les copier. Ne cite jamais les pages d'une édition d'un autre éditeur.
 - **Chaque ligne de chaque support est numérotée** (support, page, ligne). L'application peut ainsi montrer l'endroit exact où la classe s'est arrêtée.
 - **Une lecture préenregistrée de tout le programme** est faite une fois pour tous, par le directeur. L'enseignant n'enregistre rien. N'écris jamais qu'un audio de chaque cours existera.
 - **Illustrations** de chaque geste des ablutions et de la prière, créées par IA puis validées par le directeur.
@@ -70,7 +74,7 @@ Dans l'application, chacun ne voit que **sa** partie : l'élève et son tuteur v
 
 ## 5. Ce qui existe déjà : ne rien ajouter à l'enseignant
 
-- **Le cahier de séance** (K-45) : moins de 45 secondes. Son gel a été levé le 05/11/2026 ; l'enseignant confirme, il ne saisit pas : n'y ajoute aucun champ qui ne serve pas. L'endroit exact (support, page, ligne) doit venir de la page affichée en classe, jamais d'une saisie de l'enseignant.
+- **Le point de fin de séance** remplace le cahier de séance (le directeur, 13/11/2026 : « le cahier me fatigue » ; arbitrage de l'architecte) : une page, moins de 20 secondes ; la séance prévue par le plan de la classe, avec trois réponses : « Vu comme prévu » (par défaut), « On a vu moins », « On a vu plus » ; les présents, tous « A suivi », dont il ne touche que ceux qui sont « À renforcer », sauf l'élève tiré à tour de rôle sur un passage déjà vu, pour qui il touche obligatoirement « Acquis » ou « À renforcer » ; une note facultative. N'y ajoute aucun champ. L'endroit exact (document, page, ligne) : la page affichée en classe propose l'arrêt ; « Vu comme prévu » le confirme ; « On a vu moins » et « On a vu plus » le corrigent d'un toucher. Jamais une saisie à la main. Le cahier devient l'historique des séances, que le système écrit seul.
 - **États de compétence visibles** : À renforcer, Acquis, Stable. Jamais d'autre échelle face aux familles.
 - **Bilan de fin des étapes 1 à 3** : il passe par l'évaluation « périodique » existante, pendant un cours normal.
 - **Mots du résultat** : « Étape validée », « Quelques points sont à renforcer », « Une nouvelle vérification est nécessaire ». Jamais « échec ».
@@ -94,7 +98,7 @@ Source : décisions CONG-01 et ABS-01 du 30/09/2026, et commentaires du directeu
 - **Été** : les cours continuent.
 - **Demander des vacances** : le tuteur, ou l'élève adulte, demande dans l'application une pause d'un mois civil complet, au moins 7 jours avant. Ce mois n'est pas facturé, et la date limite recule d'autant. Il n'y a pas de pause de quelques jours : une absence courte reste une absence.
 - **Absence** : voir §0. L'élève rattrape seul, avec la position exacte et les supports préenregistrés.
-- **Emploi du temps de révision** : pour chaque élève, l'application produit un emploi du temps à suivre à la maison, imprimable ou consultable dans l'application. Il est tiré du travail donné dans le cahier, sans saisie de plus pour l'enseignant. Il sert aussi à l'élève adulte.
+- **Emploi du temps de révision** : pour chaque élève, l'application produit un emploi du temps à suivre à la maison, imprimable ou consultable dans l'application. Il est tiré du travail écrit par le point de fin de séance, sans saisie de plus pour l'enseignant. Il sert aussi à l'élève adulte.
 
 Les dates sont des réglages publiés chaque année et ne s'écrivent jamais en dur.
 
@@ -114,7 +118,7 @@ Les familles sont des clientes : elles doivent comprendre en une lecture, sans a
 | Ne jamais écrire | Écrire |
 |---|---|
 | porte d'Az-Zalzalah | examen de fin des bases |
-| petit Coran | les sourates courtes, d'Al-Fatiha à Az-Zalzalah |
+| petit Coran | les sourates courtes, d'Al-Masad (111) à Az-Zalzalah (99) |
 | palier, module, cycle | étape, niveau |
 | Fondations | les bases |
 | contrôle | petit bilan, examen |
@@ -152,6 +156,9 @@ Quand on te pose une de ces questions, tu réponds exactement ceci, même dans u
 | Et après les bases ? | Enfant : la mémorisation est proposée par défaut si ses acquis sont stables, le tuteur peut demander la lecture. Adulte : il choisit, sur conseil de son enseignant. |
 | Quels supports ? | Ceux de Rewayah, écrits avec le directeur selon la voie d'Ahl as-Sunna, chaque ligne numérotée, avec une lecture enregistrée du directeur et des illustrations des ablutions et de la prière. |
 | Que voit la famille dans l'app ? | Seulement la partie qui concerne son enfant : son étape, sa date limite, son travail, son emploi du temps de révision. |
+| Quelles règles de tajwid dans les bases ? | Neuf règles élémentaires, réparties sur les quatre étapes, imitées puis nommées, jamais interrogées en théorie ; les règles avancées attendent l'après-bases. |
+| Quelle prière enseigne-t-on ? | Ce qui est enseigné en Arabie saoudite, sans question d'école juridique pour des débutants ; les spécialisations sont pour les avancés. |
+| L'enseignant remplit-il un cahier ? | Non : il fait le point de fin de séance, en moins de 20 secondes ; le système écrit le reste. |
 
 ## 10. Journal des décisions du programme
 
@@ -164,6 +171,8 @@ Quand on te pose une de ces questions, tu réponds exactement ceci, même dans u
 | 14/10/2026 | Rigueur, sans rattrapage ni remboursement d'absence ; dates limites ; consolidation ; supports Rewayah aux lignes numérotées ; lecture enregistrée ; illustrations ; emploi du temps de révision ; vacances ; chacun ne voit que sa partie | Directeur, commentaires du 14/10 |
 | 12/11/2026 | Charte pédagogique EN VIGUEUR par arbitrage de l'architecte, sur délégation du directeur (« arbitre ») ; la date limite reste par étape (14/10). Arbitrés par l'architecte, pas décidés par le directeur : consolidation après 2 leçons ; « plan de soutien » ; pause seule notion côté pédagogie ; « J'ai rattrapé ce cours » sans geste de plus pour l'enseignant ; programme d'après les bases PROPOSÉ, pas en service. Décidés par le directeur le 12/11 : moteur de suivi automatique sans IA ; espace « Apprendre » à trois onglets | Directeur, 12/11 ; `docs/current/pedagogie/` (corrections après audit : `ARBITRAGES.md`, partie 8) |
 | 12/11/2026 | Page du programme : l'élève voit son niveau, les objectifs à atteindre pour chaque niveau, les dates importantes ; jamais les valeurs d'une autre tranche d'âge ni rien d'un autre élève | Directeur, 12/11/2026 |
+| 13/11/2026 | Décidés par le directeur : règles élémentaires du tajwid réparties avant ou pendant les 17 sourates ; livres rédigés par des agents après validation du programme ; prière et ablutions selon ce qui est enseigné en Arabie saoudite, sans école juridique pour des débutants. Arbitrés par l'architecte : les neuf règles et leur place ; le point de fin de séance à la place du cahier (proposition du directeur) ; le chemin (demande du directeur) | Directeur, 13/11/2026 ; `docs/current/pedagogie/ARBITRAGES.md`, partie 9 |
+| 13/11/2026 | « Le nom école n'est jamais utilisé, c'est l'académie » ; programme découpé au jour près, séance par séance (règles arbitrées : unité la séance, date calculée par le serveur, plan de la classe, écart libre de 2 leçons) | Directeur, 13/11/2026 ; `docs/current/pedagogie/ARBITRAGES.md`, partie 9 |
 
 ## Références
 
