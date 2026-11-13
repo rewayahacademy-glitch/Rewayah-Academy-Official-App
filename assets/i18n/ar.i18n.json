@@ -9757,6 +9757,10 @@
     "incPaysFuseau": "البلد والتوقيت المسجَّلان لا يتفقان",
     "villeLigne": "⁨{ville}⁩ (⁨{pays}⁩)",
     "incoherencesCompte": "⁨{n}⁩ تحتاج إلى مراجعة",
+    "changementsTitre": "تغييرات الساعة القادمة",
+    "changementsLigne": "⁨{date}⁩، ⁨{ville}⁩: الأسر: ⁨{familles}⁩؛ المعلمون: ⁨{enseignants}⁩؛ من ⁨{avant}⁩ إلى ⁨{apres}⁩.",
+    "changementsAucun": "لا يوجد تغيير للساعة خلال الأيام ⁨{jours}⁩ القادمة عند الأسر والمعلمين.",
+    "changementsErreur": "لم تُحمَّل قائمة تغييرات الساعة. أعد تحميل الصفحة لقراءتها من جديد.",
     "incoherencesVide": "لا توجد مدن تحتاج إلى مراجعة حاليًا."
   },
   "parcours": {

@@ -121,7 +121,7 @@ String? _quandChezMoi(ConflitHoraire conflit, String fuseau) {
           jour: conflit.jour,
           heure: conflit.heure,
           fuseauCreneau: f,
-          maintenant: DateTime.now(),
+          maintenant: maintenantDesCreneaux(),
         );
   if (instant == null) return null;
   final DateTime chez = chezMoi(instant);

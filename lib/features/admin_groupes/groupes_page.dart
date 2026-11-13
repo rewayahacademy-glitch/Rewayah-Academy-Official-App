@@ -1493,7 +1493,7 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
       heure: g.creneau.heure,
       origine: origine,
       vers: vers,
-      maintenant: DateTime.now(),
+      maintenant: maintenantDesCreneaux(),
     );
     return lu != null && lu.jour == _jour && lu.heure == _heure;
   }

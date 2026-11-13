@@ -922,6 +922,10 @@ class _Traductions$lieu$ar extends Traductions$lieu$fr {
 	@override String get incPaysFuseau => 'البلد والتوقيت المسجَّلان لا يتفقان';
 	@override String villeLigne({required Object ville, required Object pays}) => '⁨${ville}⁩ (⁨${pays}⁩)';
 	@override String incoherencesCompte({required Object n}) => '⁨${n}⁩ تحتاج إلى مراجعة';
+	@override String get changementsTitre => 'تغييرات الساعة القادمة';
+	@override String changementsLigne({required Object date, required Object ville, required Object familles, required Object enseignants, required Object avant, required Object apres}) => '⁨${date}⁩، ⁨${ville}⁩: الأسر: ⁨${familles}⁩؛ المعلمون: ⁨${enseignants}⁩؛ من ⁨${avant}⁩ إلى ⁨${apres}⁩.';
+	@override String changementsAucun({required Object jours}) => 'لا يوجد تغيير للساعة خلال الأيام ⁨${jours}⁩ القادمة عند الأسر والمعلمين.';
+	@override String get changementsErreur => 'لم تُحمَّل قائمة تغييرات الساعة. أعد تحميل الصفحة لقراءتها من جديد.';
 	@override String get incoherencesVide => 'لا توجد مدن تحتاج إلى مراجعة حاليًا.';
 }
 
@@ -31861,6 +31865,10 @@ extension on TraductionsAr {
 		} ?? switch (path) {
 			'lieu.villeLigne' => ({required Object ville, required Object pays}) => '⁨${ville}⁩ (⁨${pays}⁩)',
 			'lieu.incoherencesCompte' => ({required Object n}) => '⁨${n}⁩ تحتاج إلى مراجعة',
+			'lieu.changementsTitre' => 'تغييرات الساعة القادمة',
+			'lieu.changementsLigne' => ({required Object date, required Object ville, required Object familles, required Object enseignants, required Object avant, required Object apres}) => '⁨${date}⁩، ⁨${ville}⁩: الأسر: ⁨${familles}⁩؛ المعلمون: ⁨${enseignants}⁩؛ من ⁨${avant}⁩ إلى ⁨${apres}⁩.',
+			'lieu.changementsAucun' => ({required Object jours}) => 'لا يوجد تغيير للساعة خلال الأيام ⁨${jours}⁩ القادمة عند الأسر والمعلمين.',
+			'lieu.changementsErreur' => 'لم تُحمَّل قائمة تغييرات الساعة. أعد تحميل الصفحة لقراءتها من جديد.',
 			'lieu.incoherencesVide' => 'لا توجد مدن تحتاج إلى مراجعة حاليًا.',
 			'parcours.titre' => ({required Object dePrenom}) => 'مسار ⁨${dePrenom}⁩',
 			'parcours.intro' => 'بعض الأسئلة لتخصيص مسارك. لن ترى بعدها إلا المواعيد والخيارات المناسبة لوضعك.',
@@ -32367,12 +32375,12 @@ extension on TraductionsAr {
 			'inscription.candidat.confidentialitePerimee' => 'تغيّر نص سياسة الخصوصية ولم تعد النسخة المعروضة محدّثة. أعد تحميل الصفحة أو حدّث التطبيق، ثم اقرأ النص من جديد.',
 			'inscription.candidat.indisponible' => 'التسجيل غير متاح حاليًا. أعد المحاولة بعد قليل.',
 			'inscription.nomLatin.libelle' => 'اسمك بالأحرف اللاتينية',
+			_ => null,
+		} ?? switch (path) {
 			'inscription.nomLatin.raison' => 'من أجل القوائم والشهادات والمراسلات مع الأكاديمية.',
 			'inscription.nomLatin.aide' => 'هذا اقتراحنا. صحّحه إذا كان اسمك يُكتب بطريقة أخرى.',
 			'inscription.nomLatin.erreur' => 'اكتب اسمك بحروف الأبجدية اللاتينية (a, b, c) للمتابعة.',
 			'consentement.titre' => 'الموافقات',
-			_ => null,
-		} ?? switch (path) {
 			'consentement.texte.titre' => 'زيارات أولياء الأمور',
 			'consentement.texte.quiResponsable' => 'يمكن لأولياء أمور الطلاب الحاضرين متابعة الحصة لوقت قصير.',
 			'consentement.texte.quiResponsableDetail' => 'يسمعون المعلم والطلاب الذين يتكلمون، ومنهم طفلك. يبقى ميكروفونهم وكاميرتهم معطَّلين: لا يستطيعون الكلام ولا الكتابة ولا الظهور على الشاشة.',
@@ -32881,12 +32889,12 @@ extension on TraductionsAr {
 			'dossiers.apercuIndisponible' => 'المعاينة غير متاحة',
 			'dossiers.verifications' => 'عمليات التحقق',
 			'dossiers.pointLisible' => 'الوثيقة مقروءة',
+			_ => null,
+		} ?? switch (path) {
 			'dossiers.pointNom' => 'الاسم يطابق اسم الحساب',
 			'dossiers.pointValidite' => 'الوثيقة غير منتهية الصلاحية',
 			'dossiers.verdict' => 'القرار',
 			'dossiers.approuver' => 'اعتماد الملف',
-			_ => null,
-		} ?? switch (path) {
 			'dossiers.refuser' => 'رفض الملف',
 			'dossiers.profilACompleter.titre' => 'الملف الشخصي للإكمال',
 			'dossiers.profilACompleter.texte' => 'يجب إكمال ملفك الشخصي قبل الاطلاع على الملفات التي تسمح بها هذه القاعدة.',
@@ -33395,12 +33403,12 @@ extension on TraductionsAr {
 			'suiviDemandes.notification.dejaEnClasse' => ({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩: يوجد مكان في فصل بالفعل، أُغلق الطلب',
 			'suiviDemandes.notification.changementFusion' => ({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩: دُمج فصلكم مع فصل آخر، عرض الفصل الجديد',
 			'suiviDemandes.notification.changementTransfert' => ({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩: فصل جديد، عرض التفاصيل',
+			_ => null,
+		} ?? switch (path) {
 			'suiviDemandes.notification.close' => ({required Object dePrenom, required Object motif}) => 'طلب موعد ⁨${dePrenom}⁩: ⁨${motif}⁩',
 			'formulaire.manqueAccord' => 'موافقتك ناقصة: ضع علامة في الخانة للمتابعة.',
 			'formulaire.motif.manqueSaisi' => 'السبب ناقص: اكتبه في كلمات قليلة.',
 			'recherche.titre' => 'بحث',
-			_ => null,
-		} ?? switch (path) {
 			'recherche.retour' => 'رجوع',
 			'recherche.champ.libelle' => 'بحث',
 			'recherche.champ.aide' => 'كلمة',
@@ -33909,12 +33917,12 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.disponibilitesDeclarees.memes.explication' => ({required Object jours, required Object premier, required Object heures}) => 'اخترت ⁨${jours}⁩. يوم ⁨${premier}⁩، تبدأ في ⁧${heures}⁩.',
 			'recrutement.parcours.q.disponibilitesDeclarees.memes.oui.libelle' => 'نعم، الساعات نفسها',
 			'recrutement.parcours.q.disponibilitesDeclarees.memes.oui.description' => ({required Object premier, required Object autres}) => 'ساعات يوم ⁨${premier}⁩ تصلح لباقي الأيام: ⁨${autres}⁩.',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.q.disponibilitesDeclarees.memes.oui.explication' => 'يمكنك تغيير يوم قبل إرسال طلب ترشحك.',
 			'recrutement.parcours.q.disponibilitesDeclarees.memes.oui.exemple' => 'تبدأ في الساعة 18:00 أيام الاثنين والأربعاء والجمعة.',
 			'recrutement.parcours.q.disponibilitesDeclarees.memes.non.libelle' => 'لا، يومًا بيوم',
 			'recrutement.parcours.q.disponibilitesDeclarees.memes.non.description' => 'تضبط ساعات كل يوم على حدة، واحدًا بعد الآخر.',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.q.disponibilitesDeclarees.memes.non.explication' => 'تبقى الساعات التي اخترتها: تعدّلها فقط.',
 			'recrutement.parcours.q.disponibilitesDeclarees.memes.non.exemple' => 'تبدأ في الساعة 18:00 يوم الاثنين، وفي الساعة 20:00 يوم الأربعاء.',
 			'recrutement.parcours.q.disponibilitesDeclarees.parJour.titre' => 'اضبط الساعات يومًا بيوم',
@@ -34423,12 +34431,12 @@ extension on TraductionsAr {
 			'avis.form.accord.libelle' => 'أوافق على نشر هذا الرأي واسمي الظاهر وبلدي والتاريخ على موقع Rewayah Academy.',
 			'avis.form.accord.erreur' => 'اقبل النشر بوضع علامة في الخانة، وإلا تعذّر إرسال رأيك.',
 			'avis.form.lecture' => ({required Object courriel}) => 'ستقرأ الإدارة رأيك قبل نشره. لطلب سحبه لاحقًا، اكتب إلى ⁨${courriel}⁩.',
+			_ => null,
+		} ?? switch (path) {
 			'avis.form.regles.titre' => 'ما تنشره الإدارة',
 			'avis.form.regles.intro' => 'يُنشر الرأي المحترم حتى لو كان ناقدًا. لا تعدّل الإدارة نصك أبدًا. وهي ترفض فقط الرأي الذي يتضمن:',
 			'avis.form.regles.insulte' => 'إهانة',
 			'avis.form.regles.tiers' => 'بيانات شخصية لطرف ثالث، مثل اسم طفل أو معلم',
-			_ => null,
-		} ?? switch (path) {
 			'avis.form.regles.publicite' => 'إعلانًا',
 			'avis.form.regles.horsSujet' => 'كلامًا خارج الموضوع',
 			'avis.form.regles.doublon' => 'تكرارًا لرأي وصل من قبل',
@@ -34937,12 +34945,12 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.acces.refusePhrase' => 'المشرف العام وحده يستطيع استيراد نماذج الترشح. اطلبوا منه تنفيذ ذلك.',
 			'candidatsFlux.importFormulaires.acces.doublePhrase' => 'يتطلب هذا الاستيراد عاملكم الثاني.',
 			'candidatsFlux.importFormulaires.acces.doubleSuite' => 'المسوا «إعادة تسجيل الدخول»: تُغلق جلستكم وتعودون إلى صفحة الدخول لاستعمال عاملكم الثاني. لم يُسجَّل شيء.',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.acces.doubleAction' => 'إعادة تسجيل الدخول',
 			'candidatsFlux.importFormulaires.pas.liste' => 'خطوات الاستيراد الثماني',
 			'candidatsFlux.importFormulaires.pas.depot' => 'إيداع الملف',
 			'candidatsFlux.importFormulaires.pas.apercu' => 'معاينة',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.pas.colonnes' => 'الأعمدة',
 			'candidatsFlux.importFormulaires.pas.doublons' => 'التكرارات',
 			'candidatsFlux.importFormulaires.pas.controle' => 'الأخطاء',

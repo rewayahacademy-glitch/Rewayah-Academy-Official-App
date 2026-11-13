@@ -109,8 +109,80 @@ class IncoherenceLieu {
   final TypeIncoherenceLieu type;
 }
 
+/// Un changement d'heure a venir, par fuseau des familles et des enseignants.
+@immutable
+class ChangementHeureAVenir {
+  /// Cree la ligne.
+  const ChangementHeureAVenir({
+    required this.fuseau,
+    required this.transition,
+    required this.decalageAvant,
+    required this.decalageApres,
+    required this.familles,
+    required this.enseignants,
+  });
+
+  /// Lit une ligne de `changements_heure_a_venir_direction`, ou `null`.
+  static ChangementHeureAVenir? lire(Object? brut) {
+    if (brut is! Map) return null;
+    final Object? fuseau = brut['fuseau'];
+    final Object? quand = brut['transition_utc'];
+    final Object? avant = brut['decalage_avant_secondes'];
+    final Object? apres = brut['decalage_apres_secondes'];
+    final Object? familles = brut['familles'];
+    final Object? enseignants = brut['enseignants'];
+    final DateTime? t = quand is String ? DateTime.tryParse(quand) : null;
+    if (fuseau is! String ||
+        t == null ||
+        avant is! int ||
+        apres is! int ||
+        familles is! int ||
+        enseignants is! int) {
+      return null;
+    }
+    return ChangementHeureAVenir(
+      fuseau: fuseau,
+      transition: t.toUtc(),
+      decalageAvant: Duration(seconds: avant),
+      decalageApres: Duration(seconds: apres),
+      familles: familles,
+      enseignants: enseignants,
+    );
+  }
+
+  /// Le fuseau IANA.
+  final String fuseau;
+
+  /// L'instant du changement (UTC).
+  final DateTime transition;
+
+  /// Le decalage avec UTC avant le changement.
+  final Duration decalageAvant;
+
+  /// Le decalage avec UTC apres le changement.
+  final Duration decalageApres;
+
+  /// Combien de familles vivent dans ce fuseau.
+  final int familles;
+
+  /// Combien d'enseignants vivent dans ce fuseau.
+  final int enseignants;
+}
+
+/// « UTC+1 », « UTC+5:30 », « UTC-5 » : un decalage avec UTC.
+String libelleDecalageUtc(Duration d) {
+  final int minutes = d.inMinutes.abs();
+  final String signe = d.isNegative ? '-' : '+';
+  final int h = minutes ~/ 60;
+  final int m = minutes % 60;
+  return m == 0 ? 'UTC$signe$h' : 'UTC$signe$h:${m.toString().padLeft(2, '0')}';
+}
+
 /// L'acces direction aux villes des enseignants.
 abstract interface class PortLieuDirection {
+  /// Les changements d'heure des [jours] prochains jours, par fuseau.
+  Future<List<ChangementHeureAVenir>> changementsHeure({int jours = 60});
+
   /// Les villes des enseignants qui en ont choisi une.
   Future<List<LieuEnseignantDirection>> lieux();
 
@@ -125,6 +197,11 @@ abstract interface class PortLieuDirection {
 class LieuDirectionAbsent implements PortLieuDirection {
   /// Cree le port vide.
   const LieuDirectionAbsent();
+
+  @override
+  Future<List<ChangementHeureAVenir>> changementsHeure({
+    int jours = 60,
+  }) async => const <ChangementHeureAVenir>[];
 
   @override
   Future<List<LieuEnseignantDirection>> lieux() async =>
@@ -145,6 +222,23 @@ class LieuDirectionSupabase implements PortLieuDirection {
   const LieuDirectionSupabase(this._client);
 
   final SupabaseClient _client;
+
+  @override
+  Future<List<ChangementHeureAVenir>> changementsHeure({int jours = 60}) async {
+    try {
+      final Object? brut = await _client.rpc<Object?>(
+        'changements_heure_a_venir_direction',
+        params: <String, dynamic>{'p_jours': jours},
+      );
+      return <ChangementHeureAVenir>[
+        if (brut is List<dynamic>)
+          for (final dynamic l in brut) ?ChangementHeureAVenir.lire(l),
+      ];
+    } on PostgrestException catch (e) {
+      if (_absente(e)) return const <ChangementHeureAVenir>[];
+      rethrow;
+    }
+  }
 
   // PGRST202 et 42883 : fonction pas encore installee ; 42501 : pas la
   // direction. Dans les deux cas, rien a montrer, jamais une erreur de page.
@@ -221,5 +315,17 @@ lieuxEnseignantsProvider = FutureProvider<Map<String, LieuEnseignantDirection>>(
 final FutureProvider<List<IncoherenceLieu>> incoherencesLieuProvider =
     FutureProvider<List<IncoherenceLieu>>(
       (Ref ref) => ref.watch(portLieuDirectionProvider).incoherences(),
+      retry: (int _, Object _) => null,
+    );
+
+/// Le nombre de jours que l'ecran de la direction regarde en avant.
+const int joursChangementsHeure = 60;
+
+/// Les changements d'heure a venir des familles et des enseignants.
+final FutureProvider<List<ChangementHeureAVenir>> changementsHeureProvider =
+    FutureProvider<List<ChangementHeureAVenir>>(
+      (Ref ref) => ref
+          .watch(portLieuDirectionProvider)
+          .changementsHeure(jours: joursChangementsHeure),
       retry: (int _, Object _) => null,
     );

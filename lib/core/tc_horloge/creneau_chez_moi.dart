@@ -25,6 +25,17 @@ import 'apercu_creneau.dart' show fuseauAcademieDefaut;
 import 'fuseaux_interlocuteurs.dart';
 import 'mon_horloge.dart';
 
+/// L'horloge des creneaux : l'instant « maintenant » dont on cherche le prochain
+/// cours. Remplacable dans les tests ([poserHorlogeCreneauxPourTest]).
+DateTime Function() _maintenant = DateTime.now;
+
+/// L'instant « maintenant » des creneaux.
+DateTime maintenantDesCreneaux() => _maintenant();
+
+/// Pose l'horloge des creneaux (tests) ; `null` la remet a l'heure reelle.
+void poserHorlogeCreneauxPourTest(DateTime Function()? horloge) =>
+    _maintenant = horloge ?? DateTime.now;
+
 /// Un creneau hebdomadaire lu par la personne.
 @immutable
 class CreneauChezMoi {
@@ -148,6 +159,11 @@ CreneauChezMoi? creneauChezMoi({
   return (jour: murale.weekday, heure: murale.hour);
 }
 
+/// Le mot avec sa premiere lettre en capitale (l'arabe n'en a pas : inchange).
+String _capitale(String mot) => mot.isEmpty
+    ? mot
+    : mot.replaceRange(0, 1, mot.substring(0, 1).toUpperCase());
+
 String _hhmm(DateTime d) =>
     '${d.hour.toString().padLeft(2, '0')}:${d.minute.toString().padLeft(2, '0')}';
 
@@ -155,9 +171,7 @@ String _hhmm(DateTime d) =>
 /// [capitale] est faux).
 String libelleCreneauChezMoi(CreneauChezMoi c, {bool capitale = false}) {
   final String nom = t.disponibilites.joursLongs[c.jour - 1];
-  final String jour = capitale
-      ? nom
-      : nom.replaceRange(0, 1, nom.substring(0, 1).toLowerCase());
+  final String jour = capitale ? _capitale(nom) : nom;
   final String base = '$jour ${c.heure}';
   final String? mecque = c.mecque;
   return mecque == null
@@ -177,7 +191,7 @@ String libelleCreneauChezMoi(CreneauChezMoi c, {bool capitale = false}) {
       jour: t.disponibilites.joursLongs[c.jour - 1],
       heure: t.tc.groupe.horloges.heureDeVille(
         heure: '${c.heure.toString().padLeft(2, '0')}:00',
-        ville: villeDuFuseauLibelle(c.fuseau),
+        ville: nomFuseauClasse(c.fuseau),
       ),
     );
   }
@@ -301,7 +315,7 @@ creneauChezMoiProvider = FutureProvider.family<CreneauChezMoi?, CleCreneau>((
     jour: c.jour,
     heure: c.heure,
     fuseauCreneau: f,
-    maintenant: DateTime.now(),
+    maintenant: _maintenant(),
   );
 }, retry: (int _, Object _) => null);
 
@@ -314,10 +328,7 @@ String libelleDuCreneau(
   bool capitale = true,
 }) {
   final ({String jour, String heure}) p = partiesDuCreneau(lu, c);
-  final String jour = capitale
-      ? p.jour
-      : p.jour.replaceRange(0, 1, p.jour.substring(0, 1).toLowerCase());
-  return '$jour ${p.heure}';
+  return '${capitale ? _capitale(p.jour) : p.jour} ${p.heure}';
 }
 
 /// Les fuseaux d'un ensemble de creneaux, lus pour la personne : a appeler dans
@@ -343,7 +354,7 @@ CreneauChezMoi? creneauLu(Map<String, FuseauVu?> fuseaux, CleCreneau c) {
           jour: c.jour,
           heure: c.heure,
           fuseauCreneau: f,
-          maintenant: DateTime.now(),
+          maintenant: _maintenant(),
         );
 }
 

@@ -11,6 +11,7 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/lieu/lieu_direction.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/widgets/menu_actions.dart';
+import 'package:rewayah_academy/features/admin_comptes/changements_heure.dart';
 import 'package:rewayah_academy/features/admin_comptes/comptes_page.dart';
 
 import '../../support/harnais.dart';
@@ -25,7 +26,21 @@ class _Comptes implements ServiceComptes {
 }
 
 class _Direction implements PortLieuDirection {
-  _Direction({required this.lieuxLus, required this.incoherencesLues});
+  _Direction({
+    required this.lieuxLus,
+    required this.incoherencesLues,
+    this.changements = const <ChangementHeureAVenir>[],
+    this.changementsEnEchec = false,
+  });
+
+  final List<ChangementHeureAVenir> changements;
+  final bool changementsEnEchec;
+
+  @override
+  Future<List<ChangementHeureAVenir>> changementsHeure({int jours = 60}) async {
+    if (changementsEnEchec) throw StateError('hors service');
+    return changements;
+  }
 
   final List<LieuEnseignantDirection> lieuxLus;
   final List<IncoherenceLieu> incoherencesLues;
@@ -65,13 +80,14 @@ Future<void> _monter(
   WidgetTester tester,
   _Direction port, {
   double largeur = 1440,
+  String vue = 'enseignants',
 }) async {
   tester.view.devicePixelRatio = 1;
   tester.view.physicalSize = Size(largeur, 900);
   addTearDown(tester.view.reset);
   await tester.pumpWidget(
     hote(
-      const ComptesPage(requete: <String, String>{'vue': 'enseignants'}),
+      ComptesPage(requete: <String, String>{'vue': vue}),
       surcharges: <Override>[
         serviceComptesProvider.overrideWithValue(
           _Comptes(<CompteAdmin>[
@@ -219,5 +235,115 @@ void main() {
   testWidgets('390 px : la vue tient sans debordement', (tester) async {
     await _monter(tester, _port(), largeur: 390);
     expect(tester.takeException(), isNull);
+  });
+
+  group('I7 : les changements d heure a venir, par fuseau', () {
+    final ChangementHeureAVenir paris = ChangementHeureAVenir(
+      fuseau: 'Europe/Paris',
+      transition: DateTime.utc(2027, 3, 28, 1),
+      decalageAvant: const Duration(hours: 1),
+      decalageApres: const Duration(hours: 2),
+      familles: 12,
+      enseignants: 3,
+    );
+
+    test('lecture et decalage', () {
+      expect(libelleDecalageUtc(const Duration(hours: 1)), 'UTC+1');
+      expect(
+        libelleDecalageUtc(const Duration(hours: 5, minutes: 30)),
+        'UTC+5:30',
+      );
+      expect(libelleDecalageUtc(const Duration(hours: -5)), 'UTC-5');
+      expect(
+        ChangementHeureAVenir.lire(<String, Object?>{'fuseau': 'x'}),
+        isNull,
+      );
+      final ChangementHeureAVenir? lu = ChangementHeureAVenir.lire(
+        <String, Object?>{
+          'fuseau': 'Europe/Paris',
+          'transition_utc': '2027-03-28T01:00:00+00:00',
+          'jours_restants': 135,
+          'decalage_avant_secondes': 3600,
+          'decalage_apres_secondes': 7200,
+          'familles': 12,
+          'enseignants': 3,
+        },
+      );
+      expect(lu?.familles, 12);
+      expect(lu?.decalageApres, const Duration(hours: 2));
+    });
+
+    for (final String vue in <String>['familles', 'enseignants']) {
+      testWidgets('$vue : la date, la ville, le nombre de personnes, le '
+          'decalage', (tester) async {
+        await _monter(
+          tester,
+          _Direction(
+            lieuxLus: const <LieuEnseignantDirection>[],
+            incoherencesLues: const <IncoherenceLieu>[],
+            changements: <ChangementHeureAVenir>[paris],
+          ),
+          vue: vue,
+        );
+        expect(find.byKey(BlocChangementsHeure.cle), findsOneWidget);
+        expect(find.text(t.lieu.changementsTitre), findsOneWidget);
+        expect(
+          find.textContaining(
+            t.lieu.changementsLigne(
+              date: 'dimanche 28 mars 2027',
+              ville: 'Paris',
+              familles: '12',
+              enseignants: '3',
+              avant: 'UTC+1',
+              apres: 'UTC+2',
+            ),
+          ),
+          findsOneWidget,
+        );
+      });
+    }
+
+    testWidgets('aucun changement : l ecran le dit, il n est pas vide', (
+      tester,
+    ) async {
+      await _monter(
+        tester,
+        _Direction(
+          lieuxLus: const <LieuEnseignantDirection>[],
+          incoherencesLues: const <IncoherenceLieu>[],
+        ),
+        vue: 'familles',
+      );
+      expect(
+        find.text(t.lieu.changementsAucun(jours: '$joursChangementsHeure')),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('lecture en echec : la phrase dit quoi faire', (tester) async {
+      await _monter(
+        tester,
+        _Direction(
+          lieuxLus: const <LieuEnseignantDirection>[],
+          incoherencesLues: const <IncoherenceLieu>[],
+          changementsEnEchec: true,
+        ),
+        vue: 'enseignants',
+      );
+      expect(find.text(t.lieu.changementsErreur), findsOneWidget);
+    });
+
+    testWidgets('390 px : aucun debordement', (tester) async {
+      await _monter(
+        tester,
+        _Direction(
+          lieuxLus: const <LieuEnseignantDirection>[],
+          incoherencesLues: const <IncoherenceLieu>[],
+          changements: <ChangementHeureAVenir>[paris],
+        ),
+        largeur: 390,
+      );
+      expect(tester.takeException(), isNull);
+    });
   });
 }

@@ -53,6 +53,7 @@ import '../../core/widgets/sous_navigation_domaine.dart';
 import '../../core/widgets/status_pill.dart';
 import '../foyer/photo_eleve.dart';
 import '../mfa_controleur/double_verification.dart';
+import 'changements_heure.dart';
 import 'liste_comptes.dart';
 
 /// `ADM-08` : les comptes du produit.
@@ -638,6 +639,11 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
             ton: TonEtat.avertissement,
           ),
           Ecart.vSm,
+        ],
+        if (_vue == VueComptes.familles ||
+            _vue == VueComptes.enseignants) ...<Widget>[
+          // I7 : les changements d'heure a venir de leurs fuseaux.
+          const BlocChangementsHeure(),
         ],
         if (_vue == VueComptes.enseignants &&
             _incoherences.isNotEmpty) ...<Widget>[

@@ -7272,6 +7272,10 @@
     "incPaysFuseau": "son pays et son fuseau enregistrés ne vont pas ensemble",
     "villeLigne": "{ville} ({pays})",
     "incoherencesCompte": "{n} à vérifier",
+    "changementsTitre": "Prochains changements d'heure",
+    "changementsLigne": "{date}, {ville}\u00a0: familles\u00a0: {familles}\u00a0; enseignants\u00a0: {enseignants}\u00a0; de {avant} à {apres}.",
+    "changementsAucun": "Aucun changement d'heure dans les {jours} prochains jours chez les familles et les enseignants.",
+    "changementsErreur": "La liste des changements d'heure ne s'est pas chargée. Rechargez la page pour la relire.",
     "incoherencesVide": "Aucune ville à vérifier pour le moment."
   },
   "parcours": {

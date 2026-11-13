@@ -171,7 +171,7 @@ class _FeuilleReglagesClasseEtat extends ConsumerState<FeuilleReglagesClasse> {
       heure: c.heure,
       origine: origine,
       vers: vers,
-      maintenant: DateTime.now(),
+      maintenant: maintenantDesCreneaux(),
     );
   }
 
