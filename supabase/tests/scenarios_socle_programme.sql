@@ -623,6 +623,18 @@ SELECT pg_temp.vrai(
   pg_temp.essai(pg_catalog.format('SELECT public.publier_version_programme(%L, %L)',
     (SELECT id FROM sp_ids WHERE cle = 'v5'), 'essai')) LIKE 'programme_sans_bases%',
   'version sans le niveau des bases complet : publication refusee (programme_sans_bases)');
+-- Les bases completes (copie de la v2) PLUS une etape sans niveau (cycle_code
+-- nul) : publication refusee aussi, avec le meme message clair.
+INSERT INTO sp_ids VALUES ('v6', public.creer_version_programme((SELECT id FROM sp_ids WHERE cle = 'v2')));
+INSERT INTO sp_ids VALUES ('v6n', public.ajouter_niveau_programme(
+  (SELECT id FROM sp_ids WHERE cle = 'v6'), 'AUTRE-2', 'Etape hors niveau', 'Autre', 9, NULL));
+SELECT public.modifier_contenu_niveau((SELECT id FROM sp_ids WHERE cle = 'v6n'), ARRAY['a', 'b', 'c'], NULL,
+  '{"enfant_6_9": {"prevue": 8, "limite": 10}, "enfant_10_13": {"prevue": 6, "limite": 8},
+    "ado_14_17": {"prevue": 5, "limite": 6}, "adulte_18_plus": {"prevue": 3, "limite": 4}}'::jsonb);
+SELECT pg_temp.vrai(
+  pg_temp.essai(pg_catalog.format('SELECT public.publier_version_programme(%L, %L)',
+    (SELECT id FROM sp_ids WHERE cle = 'v6'), 'essai')) LIKE 'programme_sans_bases%',
+  'bases completes + une etape dont cycle_code est nul : publication refusee (programme_sans_bases)');
 RESET ROLE;
 
 -- Une v4 sans le code BASES-3 se publie (rien n'est bloque) ; mais un passage
