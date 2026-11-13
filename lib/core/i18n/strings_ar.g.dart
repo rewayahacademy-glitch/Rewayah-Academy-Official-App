@@ -22059,7 +22059,7 @@ class _Traductions$admin$bibliotheque$import$simple$ar extends Traductions$admin
 	@override String get intro => 'اختر ملفًا: يتعرّف التطبيق وحده على ملف PDF أو ملف صوتي أو صورة، ويبدأ الإرسال فورًا.';
 	@override String get lienALaPlace => 'إضافة رابط بدلًا من ذلك';
 	@override String get fichierALaPlace => 'إيداع ملف بدلًا من ذلك';
-	@override String reconnu({required Object type}) => 'تم التعرّف عليه: ${type}';
+	@override String reconnu({required Object type}) => 'تم التعرّف عليه: ⁨${type}⁩';
 	@override String get nom => 'الاسم';
 	@override String get nomVide => 'أعطِ الوثيقة اسمًا.';
 	@override String get description => 'الوصف (اختياري)';
@@ -22070,19 +22070,19 @@ class _Traductions$admin$bibliotheque$import$simple$ar extends Traductions$admin
 	@override String get moins => 'إخفاء الإعدادات';
 	@override String get plusAide => 'الأعمار ومراحل البرنامج ومصدر الوثيقة: لا شيء منها إلزامي، والقيم الافتراضية كافية.';
 	@override String get sourceTitre => 'مصدر الوثيقة';
-	@override String langue({required Object langue}) => 'اللغة: ${langue}، مستنتجة من الاسم.';
+	@override String langue({required Object langue}) => 'اللغة: ⁨${langue}⁩، مستنتجة من الاسم.';
 	@override String get aideFichier => 'اختر ملفًا أولًا: يظهر زر «حفظ الوثيقة» بعد إضافة الملف.';
 	@override String get aideEnvoi => 'الملف قيد الإرسال: يظهر زر «حفظ الوثيقة» فور إضافته.';
 	@override String get aideLien => 'الصق عنوان الرابط (https) وأعطِ اسمًا: يظهر زر «حفظ الوثيقة» بعد ذلك.';
-	@override String typeDifferent({required Object type}) => 'هذه الوثيقة تنتظر ملفًا من نوع آخر (${type}). اختر ملفًا من هذا النوع، أو أضف وثيقة جديدة.';
+	@override String typeDifferent({required Object type}) => 'هذه الوثيقة تنتظر ملفًا من نوع آخر (⁨${type}⁩). اختر ملفًا من هذا النوع، أو أضف وثيقة جديدة.';
 	@override String get fichierPresent => 'لهذه الوثيقة ملف مفحوص من قبل.';
 	@override late final _Traductions$admin$bibliotheque$import$simple$refus$ar refus = _Traductions$admin$bibliotheque$import$simple$refus$ar._(_root);
 	@override String get fichierAjoute => 'أُضيف الملف';
 	@override String get fichierEchec => 'لم يُضَف الملف';
-	@override String detailFichier({required Object type, required Object taille}) => '${type} · ${taille}';
-	@override String tailleO({required Object n}) => '${n} بايت';
-	@override String tailleKo({required Object n}) => '${n} كيلوبايت';
-	@override String tailleMo({required Object n}) => '${n} ميغابايت';
+	@override String detailFichier({required Object type, required Object taille}) => '⁨${type}⁩ · ⁨${taille}⁩';
+	@override String tailleO({required Object n}) => '⁨${n}⁩ بايت';
+	@override String tailleKo({required Object n}) => '⁨${n}⁩ كيلوبايت';
+	@override String tailleMo({required Object n}) => '⁨${n}⁩ ميغابايت';
 	@override late final _Traductions$admin$bibliotheque$import$simple$vignette$ar vignette = _Traductions$admin$bibliotheque$import$simple$vignette$ar._(_root);
 	@override String get enregistrer => 'حفظ الوثيقة';
 	@override String get aideNom => 'أعطِ الوثيقة اسمًا: يظهر زر «حفظ الوثيقة» بعد ذلك.';
@@ -22090,7 +22090,7 @@ class _Traductions$admin$bibliotheque$import$simple$ar extends Traductions$admin
 	@override String get aideReglages => 'هناك إعداد يجب تصحيحه في «إعدادات أخرى»: يعود زر «حفظ الوثيقة» بعد ذلك.';
 	@override String get droitTiers => 'للأكاديمية الحق في نشر هذه الوثيقة';
 	@override String get droitTiersAide => 'تُحدَّد لوثيقة ليست من الأكاديمية. يُحفظ اسمك والتاريخ مع هذا الإقرار.';
-	@override String get enregistreTitre => 'حُفظت الوثيقة';
+	@override String get enregistreTitre => 'تم تسجيل الوثيقة';
 	@override String get nonEnregistre => 'لم تُحفظ الوثيقة بعد';
 	@override String get enregistreMessage => 'هي ظاهرة في المكتبة.';
 	@override String get ouvrir => 'فتح الوثيقة';
@@ -22100,7 +22100,7 @@ class _Traductions$admin$bibliotheque$import$simple$ar extends Traductions$admin
 	@override String get enregistrementEchec => 'لم يتأكد حفظ الوثيقة. لم يضِع شيء: الملف مضاف من قبل. أعد المحاولة.';
 	@override String get reglagesTitre => 'إيداع الملفات غير جاهز';
 	@override String get reglagesMessage => 'ينقص إعداد في الخادم. ما دام غير موضوع فلا يمكن إضافة أي ملف. يمكن الآن إضافة وثيقة عن طريق رابطها.';
-	@override String reglageNomme({required Object nom}) => 'الإعداد المطلوب: ${nom}';
+	@override String reglageNomme({required Object nom}) => 'الإعداد المطلوب: ⁨${nom}⁩';
 }
 
 // Path: admin.bibliotheque.publication.criteres
@@ -23462,7 +23462,7 @@ class _Traductions$admin$bibliotheque$import$simple$refus$ar extends Traductions
 	@override String get vide => 'هذا الملف فارغ. اختر ملفًا آخر.';
 	@override String get video => 'هذا فيديو: حجمه أكبر من أن يُودَع هنا. أضِفه عن طريق رابطه.';
 	@override String get inconnu => 'هذا الملف ليس ملف PDF ولا ملفًا صوتيًا (MP3 أو M4A أو OGG) ولا صورة (PNG أو JPEG أو WebP). اختر ملفًا آخر.';
-	@override String tropLourd({required Object limite}) => 'هذا الملف كبير جدًا: الحد الأقصى لهذا النوع ${limite} ميغابايت. اختر ملفًا أخف.';
+	@override String tropLourd({required Object limite}) => 'هذا الملف كبير جدًا: الحد الأقصى لهذا النوع ⁨${limite}⁩ ميغابايت. اختر ملفًا أخف.';
 }
 
 // Path: admin.bibliotheque.import.simple.vignette
@@ -30833,7 +30833,7 @@ extension on TraductionsAr {
 			'admin.bibliotheque.import.simple.intro' => 'اختر ملفًا: يتعرّف التطبيق وحده على ملف PDF أو ملف صوتي أو صورة، ويبدأ الإرسال فورًا.',
 			'admin.bibliotheque.import.simple.lienALaPlace' => 'إضافة رابط بدلًا من ذلك',
 			'admin.bibliotheque.import.simple.fichierALaPlace' => 'إيداع ملف بدلًا من ذلك',
-			'admin.bibliotheque.import.simple.reconnu' => ({required Object type}) => 'تم التعرّف عليه: ${type}',
+			'admin.bibliotheque.import.simple.reconnu' => ({required Object type}) => 'تم التعرّف عليه: ⁨${type}⁩',
 			'admin.bibliotheque.import.simple.nom' => 'الاسم',
 			'admin.bibliotheque.import.simple.nomVide' => 'أعطِ الوثيقة اسمًا.',
 			'admin.bibliotheque.import.simple.description' => 'الوصف (اختياري)',
@@ -30850,22 +30850,22 @@ extension on TraductionsAr {
 			'admin.bibliotheque.import.simple.moins' => 'إخفاء الإعدادات',
 			'admin.bibliotheque.import.simple.plusAide' => 'الأعمار ومراحل البرنامج ومصدر الوثيقة: لا شيء منها إلزامي، والقيم الافتراضية كافية.',
 			'admin.bibliotheque.import.simple.sourceTitre' => 'مصدر الوثيقة',
-			'admin.bibliotheque.import.simple.langue' => ({required Object langue}) => 'اللغة: ${langue}، مستنتجة من الاسم.',
+			'admin.bibliotheque.import.simple.langue' => ({required Object langue}) => 'اللغة: ⁨${langue}⁩، مستنتجة من الاسم.',
 			'admin.bibliotheque.import.simple.aideFichier' => 'اختر ملفًا أولًا: يظهر زر «حفظ الوثيقة» بعد إضافة الملف.',
 			'admin.bibliotheque.import.simple.aideEnvoi' => 'الملف قيد الإرسال: يظهر زر «حفظ الوثيقة» فور إضافته.',
 			'admin.bibliotheque.import.simple.aideLien' => 'الصق عنوان الرابط (https) وأعطِ اسمًا: يظهر زر «حفظ الوثيقة» بعد ذلك.',
-			'admin.bibliotheque.import.simple.typeDifferent' => ({required Object type}) => 'هذه الوثيقة تنتظر ملفًا من نوع آخر (${type}). اختر ملفًا من هذا النوع، أو أضف وثيقة جديدة.',
+			'admin.bibliotheque.import.simple.typeDifferent' => ({required Object type}) => 'هذه الوثيقة تنتظر ملفًا من نوع آخر (⁨${type}⁩). اختر ملفًا من هذا النوع، أو أضف وثيقة جديدة.',
 			'admin.bibliotheque.import.simple.fichierPresent' => 'لهذه الوثيقة ملف مفحوص من قبل.',
 			'admin.bibliotheque.import.simple.refus.vide' => 'هذا الملف فارغ. اختر ملفًا آخر.',
 			'admin.bibliotheque.import.simple.refus.video' => 'هذا فيديو: حجمه أكبر من أن يُودَع هنا. أضِفه عن طريق رابطه.',
 			'admin.bibliotheque.import.simple.refus.inconnu' => 'هذا الملف ليس ملف PDF ولا ملفًا صوتيًا (MP3 أو M4A أو OGG) ولا صورة (PNG أو JPEG أو WebP). اختر ملفًا آخر.',
-			'admin.bibliotheque.import.simple.refus.tropLourd' => ({required Object limite}) => 'هذا الملف كبير جدًا: الحد الأقصى لهذا النوع ${limite} ميغابايت. اختر ملفًا أخف.',
+			'admin.bibliotheque.import.simple.refus.tropLourd' => ({required Object limite}) => 'هذا الملف كبير جدًا: الحد الأقصى لهذا النوع ⁨${limite}⁩ ميغابايت. اختر ملفًا أخف.',
 			'admin.bibliotheque.import.simple.fichierAjoute' => 'أُضيف الملف',
 			'admin.bibliotheque.import.simple.fichierEchec' => 'لم يُضَف الملف',
-			'admin.bibliotheque.import.simple.detailFichier' => ({required Object type, required Object taille}) => '${type} · ${taille}',
-			'admin.bibliotheque.import.simple.tailleO' => ({required Object n}) => '${n} بايت',
-			'admin.bibliotheque.import.simple.tailleKo' => ({required Object n}) => '${n} كيلوبايت',
-			'admin.bibliotheque.import.simple.tailleMo' => ({required Object n}) => '${n} ميغابايت',
+			'admin.bibliotheque.import.simple.detailFichier' => ({required Object type, required Object taille}) => '⁨${type}⁩ · ⁨${taille}⁩',
+			'admin.bibliotheque.import.simple.tailleO' => ({required Object n}) => '⁨${n}⁩ بايت',
+			'admin.bibliotheque.import.simple.tailleKo' => ({required Object n}) => '⁨${n}⁩ كيلوبايت',
+			'admin.bibliotheque.import.simple.tailleMo' => ({required Object n}) => '⁨${n}⁩ ميغابايت',
 			'admin.bibliotheque.import.simple.vignette.titre' => 'الصورة المصغرة (اختيارية)',
 			'admin.bibliotheque.import.simple.vignette.aide' => 'صورة للغلاف (PNG أو JPEG أو WebP، حتى 2 ميغابايت). وبدونها يُختار الغلاف بحسب النوع.',
 			'admin.bibliotheque.import.simple.vignette.ajoutee' => 'أُضيفت الصورة المصغرة',
@@ -30882,7 +30882,7 @@ extension on TraductionsAr {
 			'admin.bibliotheque.import.simple.aideReglages' => 'هناك إعداد يجب تصحيحه في «إعدادات أخرى»: يعود زر «حفظ الوثيقة» بعد ذلك.',
 			'admin.bibliotheque.import.simple.droitTiers' => 'للأكاديمية الحق في نشر هذه الوثيقة',
 			'admin.bibliotheque.import.simple.droitTiersAide' => 'تُحدَّد لوثيقة ليست من الأكاديمية. يُحفظ اسمك والتاريخ مع هذا الإقرار.',
-			'admin.bibliotheque.import.simple.enregistreTitre' => 'حُفظت الوثيقة',
+			'admin.bibliotheque.import.simple.enregistreTitre' => 'تم تسجيل الوثيقة',
 			'admin.bibliotheque.import.simple.nonEnregistre' => 'لم تُحفظ الوثيقة بعد',
 			'admin.bibliotheque.import.simple.enregistreMessage' => 'هي ظاهرة في المكتبة.',
 			'admin.bibliotheque.import.simple.ouvrir' => 'فتح الوثيقة',
@@ -30892,7 +30892,7 @@ extension on TraductionsAr {
 			'admin.bibliotheque.import.simple.enregistrementEchec' => 'لم يتأكد حفظ الوثيقة. لم يضِع شيء: الملف مضاف من قبل. أعد المحاولة.',
 			'admin.bibliotheque.import.simple.reglagesTitre' => 'إيداع الملفات غير جاهز',
 			'admin.bibliotheque.import.simple.reglagesMessage' => 'ينقص إعداد في الخادم. ما دام غير موضوع فلا يمكن إضافة أي ملف. يمكن الآن إضافة وثيقة عن طريق رابطها.',
-			'admin.bibliotheque.import.simple.reglageNomme' => ({required Object nom}) => 'الإعداد المطلوب: ${nom}',
+			'admin.bibliotheque.import.simple.reglageNomme' => ({required Object nom}) => 'الإعداد المطلوب: ⁨${nom}⁩',
 			'admin.bibliotheque.import.retour' => 'العودة إلى الفهرس',
 			'admin.bibliotheque.publication.titre' => 'التحقق والنشر',
 			'admin.bibliotheque.publication.intro' => 'يتحقق الخادم من كل نقطة. النشر يثبّت الإصدار.',

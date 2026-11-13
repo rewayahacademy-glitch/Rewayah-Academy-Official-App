@@ -146,14 +146,15 @@ String tailleLisible(int octets) {
     return brut.replaceAll('.', ',');
   }
 
-  final String texte = octets < 1024
-      ? s.tailleO(n: '$octets')
-      : octets < 1024 * 1024
-      ? s.tailleKo(n: nombre(octets / 1024))
-      : s.tailleMo(n: nombre(octets / (1024 * 1024)));
   // Insecable, sans ancre de sens : la taille suit toujours un autre texte
   // (« PDF · 1,2 Mo »), et une ancre ne se pose qu'en tete.
-  return LibellesGroupe.insecable(texte);
+  if (octets < 1024) return LibellesGroupe.insecable(s.tailleO(n: '$octets'));
+  if (octets < 1024 * 1024) {
+    return LibellesGroupe.insecable(s.tailleKo(n: nombre(octets / 1024)));
+  }
+  return LibellesGroupe.insecable(
+    s.tailleMo(n: nombre(octets / (1024 * 1024))),
+  );
 }
 
 /// Le reglage nomme par une exception de la demande, s'il y en a un.
@@ -460,7 +461,8 @@ class _ImportEtat extends ConsumerState<_Import> {
           RefusFichier.vide => i.refus.vide,
           RefusFichier.video => i.refus.video,
           RefusFichier.inconnu => i.refus.inconnu,
-          RefusFichier.tropLourd => LibellesGroupe.valeurSeule(
+          // La phrase commence par un mot : insecable, sans ancre de sens.
+          RefusFichier.tropLourd => LibellesGroupe.insecable(
             i.refus.tropLourd(limite: '${lecture.limiteMio}'),
           ),
         };

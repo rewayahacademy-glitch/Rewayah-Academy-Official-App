@@ -345,7 +345,7 @@ void main() {
       await refus(
         tester,
         _fichier('grande.png', _sigPng, taille: 10 * 1024 * 1024 + 1),
-        LibellesGroupe.valeurSeule(s.refus.tropLourd(limite: '10')),
+        LibellesGroupe.insecable(s.refus.tropLourd(limite: '10')),
       );
     });
   });
