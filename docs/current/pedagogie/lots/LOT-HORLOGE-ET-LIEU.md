@@ -23,6 +23,7 @@ Non prouvé : aucune de ces installations n'a été faite sur staging ni en prod
 3. **Refus de conversion** : la direction reçoit un avis propre (cause fermée `proche`, `demi_heure`, `autre`, sans texte SQL ni identifiant), un courriel dédié dans les cinq langues avec le lien `/admin/operations/planning` (`940300`, `outils.ts`, `modeles_*.ts`) ; tests Deno écrits, non exécutés.
 4. **`940300`** : contrôle d'entrée par empreinte md5 avant de remplacer les cinq fonctions déjà en base.
 5. **Repli de la classe** (`accueil_famille/bloc_seance.dart`) : « Heure de La Mecque : 21:00 », jamais « Riyadh ».
+7. **Captures R3** (la CI refuse une PR qui change `lib/` sans capture) : `docs/current/captures/E2E/horloge-lieu/` (40 PNG : page de la ville, étape de la candidature, aperçu à l'inscription, changements d'heure à venir de la direction, heure chez soi puis « Heure de La Mecque » ; 390 et 1440, clair et sombre, français et arabe), produites par `test/capture/horloge_lieu_capture_test.dart` ; les écrans sans capture sont dits dans le `LISEZ-MOI.md` du dossier.
 6. **Liste blanche** : `scenarios_af_liste_blanche_volatiles.sql` est aussi modifié par la prière et le calendrier ; à fusionner en gardant l'union des listes quand la prière sera sur `main`.
 
 > Statut : **TEMPS 1 (relevé et plan), en attente de l'accord de l'architecte pédagogique.** Aucune migration ni aucun code n'est écrit. Décision source : `docs/current/pedagogie/HORLOGE-ET-LIEU.md` (H1 à H7). Branche : `claude/horloge-lieu`, posée sur `origin/main` `25f3ed787` (PR 448). Date du relevé : 12/11/2026.
