@@ -5152,7 +5152,7 @@ class Traductions$salle$dynamique$fr {
 	String get unEleveRecite => 'Un élève récite';
 
 	/// fr: 'Pause de {minutes} min ?'
-	String pauseQuestion({required Object minutes}) => 'Pause de ${minutes} min  ?';
+	String pauseQuestion({required Object minutes}) => 'Pause de ${minutes} min ?';
 
 	/// fr: 'Oui'
 	String get oui => 'Oui';
@@ -49468,7 +49468,7 @@ extension on Traductions {
 			'salle.dynamique.arriveeMarquePrenom' => ({required Object prenom}) => '${prenom} dans la salle',
 			'salle.dynamique.arriveesMarque' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Un élève de plus dans la salle', other: '${n} élèves de plus dans la salle', ), 
 			'salle.dynamique.unEleveRecite' => 'Un élève récite',
-			'salle.dynamique.pauseQuestion' => ({required Object minutes}) => 'Pause de ${minutes} min  ?',
+			'salle.dynamique.pauseQuestion' => ({required Object minutes}) => 'Pause de ${minutes} min ?',
 			'salle.dynamique.oui' => 'Oui',
 			'salle.dynamique.non' => 'Non',
 			'salle.dynamique.pauseProposee' => 'Pause proposée',

@@ -415,7 +415,7 @@
         "other": "{n} élèves de plus dans la salle"
       },
       "unEleveRecite": "Un élève récite",
-      "pauseQuestion": "Pause de {minutes} min \u00a0?",
+      "pauseQuestion": "Pause de {minutes}\u00a0min\u00a0?",
       "oui": "Oui",
       "non": "Non",
       "pauseProposee": "Pause proposée",
