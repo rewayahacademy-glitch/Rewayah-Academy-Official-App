@@ -119,7 +119,7 @@ class SalleOrdinateur extends ConsumerStatefulWidget {
   static const Key cleBas = cleCommandes;
 
   /// La tete de la colonne : le titre du support, la Dynamique chrono (et
-  /// sous elle le mot d'etat et la mention), a hauteur reservee.
+  /// sous elle le mot d'etat et la mention), a la hauteur de son contenu.
   static const Key cleTete = ValueKey<String>('salle-ordinateur-tete');
   static const Key cleFocus = ValueKey<String>('salle-ordinateur-focus');
 
@@ -1072,10 +1072,10 @@ Widget tuileOutilSalle(
 /// cet ordre : le titre du support part, puis les noms des tuiles (il reste
 /// les icones, leur infobulle et ce que lit le lecteur d'ecran ; la colonne
 /// retrecit, la page y gagne), puis le mot d'etat et la mention passent dans
-/// une rangee reservee au-dessus du contenu. Le choix se fait une fois, pour
-/// une taille d'ecran, la barre depliee comprise (HARMONIE-SALLE) : plier ou
-/// deplier la barre ne change pas les tuiles. En focus, elle ne garde que les
-/// icones et la Dynamique chrono.
+/// une rangee reservee au-dessus du contenu. La tete suit son contenu : au
+/// repos, aucun vide sous la barre ; depliee sur un ecran bas, la colonne se
+/// tasse le temps du depli (HARMONIE-SALLE : l'etat de repos prime). En
+/// focus, elle ne garde que les icones et la Dynamique chrono.
 ///
 /// Pointeur et Ecrire gardent leur place quand ils ne peuvent pas servir
 /// (aucune page ni tableau) : la place reste, vide, rien ne glisse.
@@ -1452,21 +1452,18 @@ class _Colonne extends ConsumerWidget {
                 hauteurBarreChrono +
                 (essai ? 0 : hauteurEtat(l)) +
                 AppSpacing.sm;
-            // HARMONIE-SALLE (13/11/2026) : la tete est reservee une fois,
-            // a la hauteur de la barre depliee d'un toucher (la pause en
-            // clair, sa commande, son echec). Plier ou deplier la barre ne
-            // change alors ni la place ni les noms des tuiles (avant : les
-            // noms disparaissaient le temps du depliage, sur un ecran bas).
-            // Une alerte plus haute que cette reserve n'y tient pas encore :
-            // limite ecrite dans `docs/current/salle/HARMONIE-2026-11-13.md`.
-            tete += hauteurDepliee;
             serre = essai;
             avecNom = nom;
             avecTitre = montreTitre;
             largeur = l;
-            // Mesure du 13/11 (1024 x 768, 1280 x 800, 1440 x 900) : la
-            // hauteur des tuiles estimee ici est celle rendue, au point pres.
-            trouve = tete + hauteurBarre(nom) <= c.maxHeight;
+            // HARMONIE-SALLE (13/11/2026, retour du pilote) : la tete suit
+            // son contenu ; l'etat de repos prime. Au repos, aucun vide sous
+            // la barre et les noms des tuiles quand ils tiennent ; depliee
+            // sur un ecran bas, la colonne se tasse (noms, puis icones),
+            // rien ne chevauche.
+            trouve =
+                tete + hauteurBarre(nom) <= c.maxHeight &&
+                tete + hauteurDepliee + hauteurBarre(false) <= c.maxHeight;
             if (trouve) break;
           }
           if (trouve) break;
@@ -1484,38 +1481,29 @@ class _Colonne extends ConsumerWidget {
             children: <Widget>[
               KeyedSubtree(
                 key: SalleOrdinateur.cleTete,
-                // La place reservee (moins l'ecart qui suit) : repliee, la
-                // barre laisse un vide sous elle ; depliee, elle le remplit.
-                // Une alerte plus haute que prevu pousse les tuiles, elle
-                // n'est jamais coupee.
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    minHeight: math.max(0, tete - AppSpacing.sm),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      if (avecTitre && titre != null)
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: AppSpacing.xs),
-                          child: Text(
-                            titre,
-                            key: SalleOrdinateur.cleTitreSupport,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: styleTitre,
-                          ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    if (avecTitre && titre != null)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: AppSpacing.xs),
+                        child: Text(
+                          titre,
+                          key: SalleOrdinateur.cleTitreSupport,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: styleTitre,
                         ),
-                      ZoneChrono(
-                        vue: vue,
-                        largeur: largeur,
-                        enPlace: true,
-                        avecLigneEtat: !serre,
-                        onPause: actions.onPause,
                       ),
-                    ],
-                  ),
+                    ZoneChrono(
+                      vue: vue,
+                      largeur: largeur,
+                      enPlace: true,
+                      avecLigneEtat: !serre,
+                      onPause: actions.onPause,
+                    ),
+                  ],
                 ),
               ),
               Ecart.vSm,

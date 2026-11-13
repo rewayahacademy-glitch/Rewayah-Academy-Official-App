@@ -187,7 +187,7 @@ le directeur. Les preuves sont des tests et des captures de test, sauf mention.
 | HORS-SALLE-2 | 17 (journal des sorties) | Pas commencé : pour un mineur, l'accord du parent est exigé (règle du 11/11, `DROIT-RELEVE-QUALITE.md` §10 point 3) et le mécanisme d'accord n'existe qu'en démonstration |
 | RETRAIT | prière | Pas commencé : « Je m'absente un instant », sans trace ; règle convenue avec l'architecte pédagogique |
 | REGLE-CHRONO | 4 | Attend la confirmation du directeur (argent) |
-| HARMONIE-SALLE | 13 | Sur sa branche (13/11). Relevé `HARMONIE-2026-11-13.md`, journal D-042. Une alerte haute ne tient pas en tête de colonne d'un écran bas (décision à prendre) ; synchronisation hors de la page non faite (plan écrit) |
+| HARMONIE-SALLE | 13 | Sur sa branche (13/11). Relevé `HARMONIE-2026-11-13.md`, journal D-044. Sur ordinateur, l'état de repos prime (la colonne se tasse le temps d'un dépli) ; synchronisation hors de la page non faite (plan écrit) |
 
 ### Depuis ce tableau (13/11/2026, 02:07 UTC)
 

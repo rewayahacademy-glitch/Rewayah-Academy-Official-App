@@ -1,17 +1,15 @@
-// HARMONIE-SALLE (13/11/2026, directeur, point 13 du plan des retours :
-// « comme un seul ingenieur et architecte ») : sur ordinateur, plier ou
-// deplier la Dynamique chrono en tete de la colonne ne change JAMAIS les
-// tuiles (ni leur place, ni leurs noms). La colonne decide « noms ou icones
-// seules » une fois, sur le cas le plus haut, pour une taille d'ecran donnee.
+// HARMONIE-SALLE (13/11/2026, directeur, point 13 du plan des retours ;
+// retour du pilote le meme jour : « l'etat de repos compte plus que l'instant
+// du depli ») : sur ordinateur, la tete de la colonne suit son contenu.
 //
-// - vraie page `/salle` de l'enseignant a 1024 x 768, 1280 x 800 et
-//   1440 x 900 : les rectangles des tuiles et leurs noms sont identiques barre
-//   repliee, depliee d'un toucher (la pause en clair et sa commande), et
-//   depliee par une alerte courte (une arrivee).
-//
-// Limite (relevé HARMONIE-2026-11-13, point 2) : une alerte haute (detail de
-// la recitation, deux actions de la pause de priere) ne tient pas dans la
-// reserve d'un ecran bas ; elle n'est pas couverte ici.
+// Vraie page `/salle` de l'enseignant a 1024 x 768, 1280 x 800 et
+// 1440 x 900 :
+// (a) au repos, aucun vide en tete de colonne : les tuiles commencent juste
+//     sous la Dynamique chrono et sa ligne d'etat, a l'ecart de l'echelle ;
+// (b) au repos, les noms des tuiles sont la quand ils tiennent (mesure du
+//     13/11 : ils tiennent aux trois tailles, la pause de priere annoncee) ;
+// (c) un depli puis un repli rendent exactement la forme de repos ; pendant
+//     le depli, rien ne chevauche (la colonne se tasse : noms, puis icones).
 //
 // Avec CAPTURE_DIR, chaque etat est capture (R3, captures de test).
 
@@ -20,6 +18,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/pause_seance/port_pause_seance.dart';
 import 'package:rewayah_academy/core/theme/app_mouvement.dart';
+import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/video/gestes_salle.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
 import 'package:rewayah_academy/core/widgets/commande_salle.dart';
@@ -127,6 +126,52 @@ final Finder _tuiles = find.descendant(
       .toList(),
 );
 
+/// Le bas de ce qui se voit dans la tete : la barre et, au repos, la ligne
+/// d'etat quand elle y est.
+double _basDuContenuDeLaTete(WidgetTester tester) {
+  final Finder tete = find.byKey(SalleOrdinateur.cleTete);
+  double bas = tester.getRect(find.byKey(DynamiqueChrono.cleDeplier)).bottom;
+  final Finder ligne = find.descendant(
+    of: tete,
+    matching: find.byKey(LigneEtatSalle.cle),
+  );
+  if (ligne.evaluate().isNotEmpty) {
+    final double b = tester.getRect(ligne).bottom;
+    if (b > bas) bas = b;
+  }
+  return bas;
+}
+
+/// (a) : aucun vide sous la tete, et les tuiles a l'ecart de l'echelle.
+void _sansVide(WidgetTester tester, String cas) {
+  final Rect tete = tester.getRect(find.byKey(SalleOrdinateur.cleTete));
+  final Rect commandes = tester.getRect(_commandes);
+  expect(
+    tete.bottom - _basDuContenuDeLaTete(tester),
+    lessThan(0.5),
+    reason: '$cas : vide sous la barre, tete $tete',
+  );
+  expect(
+    commandes.top - tete.bottom,
+    closeTo(AppSpacing.sm, 0.5),
+    reason: '$cas : ecart entre la tete et les tuiles',
+  );
+}
+
+/// Rien ne chevauche : la tete au-dessus des tuiles, les tuiles dans
+/// l'ecran.
+void _sansChevauchement(WidgetTester tester, Size taille, String cas) {
+  final Rect tete = tester.getRect(find.byKey(SalleOrdinateur.cleTete));
+  final Rect commandes = tester.getRect(_commandes);
+  expect(tete.bottom, lessThanOrEqualTo(commandes.top + 0.5), reason: cas);
+  expect(commandes.bottom, lessThanOrEqualTo(taille.height + 0.5), reason: cas);
+  for (int i = 0; i < _tuiles.evaluate().length; i++) {
+    final Rect r = tester.getRect(_tuiles.at(i));
+    expect(r.top, greaterThanOrEqualTo(commandes.top - 0.5), reason: cas);
+    expect(r.bottom, lessThanOrEqualTo(commandes.bottom + 0.5), reason: cas);
+  }
+}
+
 void _memes(
   ({List<Rect> rects, List<String> noms}) avant,
   ({List<Rect> rects, List<String> noms}) apres,
@@ -173,15 +218,17 @@ ParticipantSalle _personne(
 void main() {
   setUpAll(chargerPolicesDuDepot);
 
-  for (final Size taille in <Size>[
-    const Size(1024, 768),
-    const Size(1280, 800),
-    const Size(1440, 900),
+  for (final (Size taille, bool nomsAuRepos) in <(Size, bool)>[
+    (const Size(1024, 768), true),
+    (const Size(1280, 800), true),
+    (const Size(1440, 900), true),
   ]) {
     final String nom =
         'ordinateur ${taille.width.toInt()}x${taille.height.toInt()}';
-    testWidgets('$nom : plier, deplier ou recevoir une alerte ne change ni la '
-        'place ni les noms des tuiles', (WidgetTester tester) async {
+    testWidgets('$nom : au repos, pas de vide en tete et les noms quand ils '
+        'tiennent ; apres un depli, la forme de repos revient', (
+      WidgetTester tester,
+    ) async {
       final _Horloge h = _Horloge(DateTime.now().toUtc());
       final DateTime heure = h.maintenant.add(const Duration(minutes: 10));
       final _Port port = _Port(
@@ -207,6 +254,14 @@ void main() {
       );
       expect(tester.takeException(), isNull, reason: nom);
       final ({List<Rect> rects, List<String> noms}) repliee = _releve(tester);
+      _sansVide(tester, '$nom, au repos');
+      _sansChevauchement(tester, taille, '$nom, au repos');
+      expect(repliee.rects, hasLength(9), reason: nom);
+      expect(
+        repliee.noms.isNotEmpty,
+        nomsAuRepos,
+        reason: '$nom : noms des tuiles au repos ${repliee.noms}',
+      );
       await _capture(
         tester,
         'ordinateur_${taille.width.toInt()}x${taille.height.toInt()}_repliee',
@@ -219,7 +274,7 @@ void main() {
       expect(find.byKey(DynamiqueChrono.cleDepliee), findsOneWidget);
       expect(find.byKey(ChronoSalle.cleCommandePause), findsOneWidget);
       expect(tester.takeException(), isNull, reason: nom);
-      _memes(repliee, _releve(tester), '$nom, depliee d un toucher');
+      _sansChevauchement(tester, taille, '$nom, depliee d un toucher');
       await _capture(
         tester,
         'ordinateur_${taille.width.toInt()}x${taille.height.toInt()}_depliee',
@@ -228,6 +283,7 @@ void main() {
       await tester.pump(const Duration(milliseconds: 600));
       expect(find.byKey(DynamiqueChrono.cleDepliee), findsNothing);
       _memes(repliee, _releve(tester), '$nom, repliee de nouveau');
+      _sansVide(tester, '$nom, repliee de nouveau');
 
       // Une arrivee.
       moteur.publier(<ParticipantSalle>[
@@ -237,8 +293,14 @@ void main() {
       ]);
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 600));
-      _memes(repliee, _releve(tester), '$nom, arrivee');
+      _sansChevauchement(tester, taille, '$nom, arrivee');
       expect(tester.takeException(), isNull, reason: nom);
+      // L'alerte passee, la forme de repos revient.
+      await tester.pump(const Duration(seconds: 10));
+      await tester.pump(const Duration(milliseconds: 600));
+      expect(find.byKey(DynamiqueChrono.cleDepliee), findsNothing);
+      _memes(repliee, _releve(tester), '$nom, apres l arrivee');
+      _sansVide(tester, '$nom, apres l arrivee');
     });
   }
 }
