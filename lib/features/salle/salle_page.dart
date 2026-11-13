@@ -752,7 +752,11 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       // ses eleves (+1, +2), sans son.
       if (_acces?.capacites.peutModerer ?? false) {
         annoncerArrivees(_dynamique, <String>[
-          for (final ParticipantSalle p in _arrivees.observer(liste)) p.nom,
+          for (final ParticipantSalle p in _arrivees.observer(
+            liste,
+            ecoule: _dynamique.ecoule,
+          ))
+            p.nom,
         ]);
       }
       // SITUATIONS-GRAVES : un arrivant recoit la pause en cours.

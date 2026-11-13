@@ -89,6 +89,9 @@ class PiloteDynamique extends ChangeNotifier {
   /// Un numero neuf : une alerte reposee porte un nouvel identifiant.
   int get numero => ++_numero;
 
+  /// Le temps passe depuis la creation, en battements.
+  Duration get ecoule => _ecoule;
+
   /// L'alerte montree, ou `null`.
   AlerteChrono? get alerte => _courante;
 
@@ -309,25 +312,39 @@ class PiloteDynamique extends ChangeNotifier {
 /// Les arrivees dans la salle, pour qui conduit la seance.
 ///
 /// La premiere liste ou l'on se voit soi-meme fixe ceux qui etaient deja la :
-/// aucune alerte pour eux. Ensuite, chaque personne qui n'etait pas dans la
-/// liste precedente (hors soi et hors qui conduit) est une arrivee ; une
-/// personne qui part puis revient arrive de nouveau.
+/// aucune alerte pour eux, ni pour ceux que la visio annonce pendant
+/// [AppMouvement.calmeEntree] apres (elle ne donne pas toujours tout le monde
+/// d'un coup). Ensuite, chaque personne qui n'etait pas dans la liste
+/// precedente (hors soi et hors qui conduit) est une arrivee ; une personne
+/// qui part puis revient arrive de nouveau.
 class SuiviArrivees {
   Set<String>? _vus;
+  Duration? _entree;
 
   /// Les participants qui viennent d'entrer, dans l'ordre de la liste.
-  List<ParticipantSalle> observer(List<ParticipantSalle> liste) {
+  /// [ecoule] : le temps du pilote ([PiloteDynamique.ecoule]).
+  List<ParticipantSalle> observer(
+    List<ParticipantSalle> liste, {
+    Duration ecoule = Duration.zero,
+  }) {
     final bool moiDedans = liste.any((ParticipantSalle p) => p.estLocal);
     final Set<String> presents = <String>{
       for (final ParticipantSalle p in liste)
         if (!p.estLocal && p.role != roleQuiConduit) p.identite,
     };
     final Set<String>? avant = _vus;
-    if (avant == null) {
-      if (moiDedans) _vus = presents;
+    final Duration? entree = _entree;
+    if (avant == null || entree == null) {
+      if (moiDedans) {
+        _vus = presents;
+        _entree = ecoule;
+      }
       return const <ParticipantSalle>[];
     }
     _vus = presents;
+    if (ecoule - entree < AppMouvement.calmeEntree) {
+      return const <ParticipantSalle>[];
+    }
     return <ParticipantSalle>[
       for (final ParticipantSalle p in liste)
         if (!p.estLocal &&

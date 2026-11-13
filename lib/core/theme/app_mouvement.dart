@@ -284,6 +284,10 @@ abstract final class AppMouvement {
   /// repart.
   static const Duration alerteArrivees = Duration(seconds: 4);
 
+  /// DYNAMIQUE-CHRONO-2 : aucune arrivee n'est annoncee pendant ce temps
+  /// apres sa propre entree (ceux deja la, que la visio annonce un a un).
+  static const Duration calmeEntree = Duration(seconds: 5);
+
   /// DYNAMIQUE-CHRONO-2 : la marque laissee par une arrivee s'efface apres ce
   /// temps.
   static const Duration marqueArrivee = Duration(seconds: 30);
