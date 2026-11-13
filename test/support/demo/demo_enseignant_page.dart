@@ -25,7 +25,6 @@ import 'package:rewayah_academy/core/offres/service_offres.dart'
     show referentielLanguesProvider;
 import 'package:rewayah_academy/core/planning/service_planning.dart';
 import 'package:rewayah_academy/core/presence/service_presence.dart';
-import 'package:rewayah_academy/core/priere/service_priere.dart';
 import 'package:rewayah_academy/core/profil/service_acceptations.dart';
 import 'package:rewayah_academy/core/profil/service_declaration.dart';
 import 'package:rewayah_academy/core/profil/service_profil_enseignant.dart';
@@ -213,7 +212,6 @@ List<Override> surchargesCoquilleEnseignantDemo(EtatDemoEnseignant etat) {
     cahiersEnRetardProvider.overrideWith(
       (Ref _) async => DonneesEnseignantDemo.cahiersEnRetard(etat),
     ),
-    reglagesPriereProvider(id).overrideWith((Ref _) async => null),
     valeurRegleProvider((profilId: id, cle: CleRegle.pauseEntreCours))
         .overrideWith((Ref _) async => 10),
     preVolProvider.overrideWith(

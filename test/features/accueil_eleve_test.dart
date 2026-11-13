@@ -12,8 +12,7 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/icons/app_icons.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart';
 import 'package:rewayah_academy/core/priere/horaires_priere.dart';
-import 'package:rewayah_academy/core/priere/libelle_priere.dart';
-import 'package:rewayah_academy/core/priere/reglages_priere.dart';
+import 'package:rewayah_academy/core/priere/pause_prevue.dart';
 import 'package:rewayah_academy/core/priere/service_priere.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
@@ -47,15 +46,6 @@ const String _enseignantId = 't1';
 /// dernier quart d'heure avant minuit suffirait a faire basculer « cours dans
 /// 25 minutes » en « aucun cours aujourd'hui ».
 final DateTime _maintenant = DateTime(2026, 9, 8, 17);
-
-const ReglagesPriere _paris = ReglagesPriere(
-  enseignantId: _enseignantId,
-  latitude: 48.85341,
-  longitude: 2.34880,
-  methode: MethodeCalcul.ligueMondiale,
-  madhab: Madhab.shafi,
-  lieu: 'Paris',
-);
 
 /// Une seance de l'eleve observe.
 Seance _cours({
@@ -129,20 +119,28 @@ class _SansAnimation extends StatelessWidget {
 /// bougent chaque jour, et un test qui suppose « il y a forcement une priere
 /// entre 17 h et 18 h » finit par etre faux un mois plus tard.
 ({Seance seance, InterruptionPriere interruption}) _seanceAvecPriere() {
-  final List<InterruptionPriere> suivantes = interruptionsEntre(
-    reglages: _paris,
-    debut: _maintenant,
-    fin: _maintenant.add(const Duration(days: 1)),
+  final DateTime debut = _maintenant.add(const Duration(minutes: 90));
+  final InterruptionPriere interruption = InterruptionPriere(
+    priere: Priere.maghrib,
+    debut: debut.add(const Duration(minutes: 25)),
+    duree: const Duration(minutes: 10),
+    preavis: Duration.zero,
   );
-  final InterruptionPriere premiere = suivantes.first;
   return (
-    seance: _cours(
-      debut: premiere.debut.subtract(const Duration(minutes: 10)),
-      fin: premiere.fin.add(const Duration(minutes: 10)),
-    ),
-    interruption: premiere,
+    seance: _cours(debut: debut, fin: debut.add(const Duration(minutes: 60))),
+    interruption: interruption,
   );
 }
+
+/// La pause que le serveur a placee dans la seance du cas.
+PausePrevue _pauseDuCas(
+  ({Seance seance, InterruptionPriere interruption}) cas,
+) => PausePrevue(
+  seanceId: cas.seance.id,
+  debut: cas.interruption.debut,
+  duree: cas.interruption.duree,
+  priere: cas.interruption.priere,
+);
 
 /// L'heure locale d'un instant, comme l'ecran l'ecrit.
 String _hhmm(DateTime quand) =>
@@ -595,7 +593,7 @@ void main() {
         final FauxServicePlanning planning = FauxServicePlanning()
           ..seancesRendues = <Seance>[cas.seance];
         final FauxServicePriere priere = FauxServicePriere()
-          ..parEnseignant[_enseignantId] = _paris;
+          ..pauses[cas.seance.id] = _pauseDuCas(cas);
 
         await tester.pumpWidget(
           hote(
@@ -609,7 +607,6 @@ void main() {
         expect(
           find.text(
             t.eleve.accueil.pausePriereDetail(
-              priere: libellePriere(cas.interruption.priere),
               heure: _hhmm(cas.interruption.debut),
             ),
           ),
@@ -625,7 +622,7 @@ void main() {
         final FauxServicePlanning planning = FauxServicePlanning()
           ..seancesRendues = <Seance>[cas.seance];
         final FauxServicePriere priere = FauxServicePriere()
-          ..parEnseignant[_enseignantId] = _paris;
+          ..pauses[cas.seance.id] = _pauseDuCas(cas);
 
         await tester.pumpWidget(
           hote(
@@ -642,7 +639,6 @@ void main() {
         expect(
           find.text(
             t.eleve.accueil.pausePriereDetail(
-              priere: libellePriere(cas.interruption.priere),
               heure: _hhmm(cas.interruption.debut),
             ),
           ),
@@ -651,7 +647,7 @@ void main() {
       });
 
       testWidgets(
-        'sans reglages lisibles, aucune interruption n est annoncee',
+        'sans pause placee par le serveur, aucune interruption n est annoncee',
         (WidgetTester tester) async {
           final ({Seance seance, InterruptionPriere interruption}) cas =
               _seanceAvecPriere();
@@ -659,7 +655,7 @@ void main() {
             ..seancesRendues = <Seance>[cas.seance];
 
           await tester.pumpWidget(
-            // Le meme cours, sans les reglages de l'enseignant : mieux vaut
+            // Le meme cours, sans pause placee par le serveur : mieux vaut
             // n'annoncer aucune interruption qu'une fausse.
             hote(_ecran(), surcharges: _surcharges(planning: planning)),
           );

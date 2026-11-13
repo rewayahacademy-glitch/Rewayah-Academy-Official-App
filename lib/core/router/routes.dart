@@ -578,6 +578,10 @@ abstract final class Routes {
   /// Profil de l'enseignant.
   static const String enseignantProfil = '/enseignant/profil';
 
+  /// PRIERE-1 : « Mes heures de priere », les cinq heures du jour de
+  /// l'enseignant et leur ajustement. Ouverte depuis le Compte.
+  static const String enseignantProfilPriere = '/enseignant/profil/priere';
+
   /// Les informations personnelles du titulaire du compte, ouvertes depuis
   /// le Compte de l'enseignant (COMPTE-ENSEIGNANT-IDENTITE, 12/11/2026) : la
   /// page commune au tuteur, dans la branche Profil.
@@ -951,6 +955,10 @@ abstract final class Routes {
   /// Domaine Configuration -- regles globales du systeme, contrat metier du
   /// 19 septembre 2026 (`docs/archive/2026-09-pre-remise-a-plat/architecture/ADMIN_FINANCE_CONFIGURATION.md`).
   static const String adminConfiguration = '/admin/configuration';
+
+  /// PRIERE-1 : « Lieux de priere » de la direction, un onglet de la
+  /// Configuration.
+  static const String adminConfigurationPriere = '/admin/configuration/priere';
 
   /// Regles (`ADM-15`), fonction primaire de Configuration : les defauts de
   /// plateforme, jamais les surcharges par profil (`ADM-06`).

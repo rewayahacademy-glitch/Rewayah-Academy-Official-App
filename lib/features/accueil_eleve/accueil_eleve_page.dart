@@ -14,8 +14,7 @@ import '../../core/planning/cours_du_moment.dart';
 import '../../core/planning/journee.dart';
 import '../../core/planning/service_planning.dart';
 import '../../core/priere/horaires_priere.dart';
-import '../../core/priere/libelle_priere.dart';
-import '../../core/priere/reglages_priere.dart';
+import '../../core/priere/pause_prevue.dart';
 import '../../core/priere/service_priere.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/billet_salle.dart';
@@ -231,20 +230,19 @@ class _AccueilElevePageEtat extends ConsumerState<AccueilElevePage>
       horsLigne: horsLigne,
     );
 
-    // Les reglages de l'enseignant de ce cours, jamais ceux d'un autre : c'est
-    // la meme ligne que son `ENS-02` lit, donc les deux ecrans annoncent la
-    // meme minute (invariant I8).
-    final AsyncValue<ReglagesPriere?> reglages = prochain == null
-        ? const AsyncValue<ReglagesPriere?>.data(null)
-        : ref.watch(reglagesPriereProvider(prochain.enseignantId));
+    // La pause de priere que le serveur a placee dans CE cours : une seule
+    // lecture pour l'eleve, son tuteur et l'enseignant, donc la meme minute
+    // (invariant I8). Aucune heure n'est calculee ici, et le lieu de
+    // l'enseignant ne voyage jamais jusqu'a l'eleve (PRIERE-1).
+    final AsyncValue<PausePrevue?> pause = prochain == null || prochain.aCreer
+        ? const AsyncValue<PausePrevue?>.data(null)
+        : ref.watch(pausePrevueProvider(prochain.id));
 
-    // **Toujours annoncees, sans condition d'etat.** Une regle qui n'annoncerait
-    // les interruptions que le jour du cours se lirait bien et se verifierait
-    // mal : l'enfant qui ouvre son ecran la veille apprendrait la pause le
-    // lendemain, ce qui est exactement la surprise que l'ADR-017 refuse.
-    final List<InterruptionPriere> interruptions = prochain == null
-        ? const <InterruptionPriere>[]
-        : interruptionsDe(prochain, reglages.value);
+    // **Toujours annoncee, sans condition d'etat.** Une regle qui n'annoncerait
+    // la pause que le jour du cours se lirait bien et se verifierait mal :
+    // l'enfant qui ouvre son ecran la veille apprendrait la pause le lendemain,
+    // ce qui est exactement la surprise que l'ADR-017 refuse.
+    final List<InterruptionPriere> interruptions = interruptionsDe(pause.value);
 
     // L'acces de l'eleve connecte (FI-9a) : seances ouvertes, essai ou
     // fermees, jamais une cause ni un montant (guide §1.7, lecon 15). Lu
@@ -832,7 +830,6 @@ class _Interruptions extends StatelessWidget {
               padding: const EdgeInsets.only(top: AppSpacing.xs),
               child: Text(
                 t.eleve.accueil.pausePriereDetail(
-                  priere: libellePriere(interruption.priere),
                   heure: _hhmm(interruption.debut),
                 ),
                 style: paire.applyTo(textes.bodyMedium ?? const TextStyle()),

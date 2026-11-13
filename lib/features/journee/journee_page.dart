@@ -62,7 +62,7 @@ import '../../core/planning/journee.dart';
 import '../../core/planning/service_planning.dart';
 import '../../core/presence/retard_en_direct.dart';
 import '../../core/presence/service_presence.dart';
-import '../../core/priere/reglages_priere.dart';
+import '../../core/priere/pause_prevue.dart';
 import '../../core/priere/service_priere.dart';
 import '../../core/regles/service_regles.dart';
 import '../../core/reseau/etat_sans_donnees.dart';
@@ -238,9 +238,6 @@ class _Corps extends ConsumerWidget {
     final AsyncValue<List<SeanceEnseignant>> seances = ref.watch(
       seancesEnseignantProvider,
     );
-    final AsyncValue<ReglagesPriere?> reglages = ref.watch(
-      reglagesPriereProvider(monId),
-    );
     // La pause vient de `regle_effective()`, jamais d'une constante (ADR-017
     // section 2.4, invariant I10).
     final AsyncValue<int> pause = ref.watch(
@@ -250,8 +247,8 @@ class _Corps extends ConsumerWidget {
       cahiersEnRetardProvider,
     );
 
-    final bool premiereCharge =
-        <AsyncValue<Object?>>[seances, reglages, pause, retards].any(
+    final bool premiereCharge = <AsyncValue<Object?>>[seances, pause, retards]
+        .any(
           (AsyncValue<Object?> lecture) =>
               !lecture.hasValue && lecture.isLoading,
         );
@@ -284,9 +281,24 @@ class _Corps extends ConsumerWidget {
       maintenant.month,
       maintenant.day + 1,
     );
+    // Les pauses de priere du jour : celles que le serveur a placees dans les
+    // seances de l'enseignant (PRIERE-1). Une seance dont la pause ne se lit pas
+    // n'en montre aucune, et l'echec partiel le dit (LIB-ERR-1).
+    final List<AsyncValue<PausePrevue?>> lecturesPauses =
+        <AsyncValue<PausePrevue?>>[
+          for (final Seance seance in pont)
+            if (!seance.aCreer &&
+                !(seance.statut?.estAnnulee ?? false) &&
+                seance.debut.isBefore(finJour) &&
+                seance.fin.isAfter(debutJour))
+              ref.watch(pausePrevueProvider(seance.id)),
+        ];
     final List<EntreeJournee> journee = construireJournee(
       seances: pont,
-      reglages: reglages.value,
+      pauses: <PausePrevue>[
+        for (final AsyncValue<PausePrevue?> lecture in lecturesPauses)
+          ?lecture.value,
+      ],
       debut: debutJour,
       fin: finJour,
       // Une regle illisible ne se remplace pas par une valeur inventee.
@@ -317,7 +329,9 @@ class _Corps extends ConsumerWidget {
     ];
     // LIB-ERR-1 : l'echec partiel dit ce qui manque, que les seances sont a
     // jour, et se relance d'un bouton.
-    final bool horairesIllisibles = reglages.hasError || pause.hasError;
+    final bool horairesIllisibles =
+        lecturesPauses.any((AsyncValue<PausePrevue?> l) => l.hasError) ||
+        pause.hasError;
     final bool partielle = horairesIllisibles || retards.hasError;
     // LIB-ERR-2 : le texte cite ce qui manque vraiment (horaires et pauses,
     // cahiers a terminer, ou les deux).
@@ -416,7 +430,7 @@ class _Corps extends ConsumerWidget {
               onReessayerPartiel: partielle
                   ? () {
                       ref
-                        ..invalidate(reglagesPriereProvider(monId))
+                        ..invalidate(pausePrevueProvider)
                         ..invalidate(
                           valeurRegleProvider((
                             profilId: monId,
