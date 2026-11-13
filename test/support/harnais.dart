@@ -33,6 +33,7 @@ import 'package:rewayah_academy/core/planning/service_planning.dart';
 import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/priere/lieu_priere.dart';
 import 'package:rewayah_academy/core/priere/pause_prevue.dart';
+import 'package:rewayah_academy/core/priere/position_appareil.dart';
 import 'package:rewayah_academy/core/priere/service_priere.dart';
 import 'package:rewayah_academy/core/profil/service_acceptations.dart';
 import 'package:rewayah_academy/core/regles/service_regles.dart';
@@ -865,6 +866,15 @@ class FauxServicePriere implements ServicePriere {
   /// Vrai : toute ecriture echoue.
   bool echecEcriture = false;
 
+  /// La liste a lire rendue a la direction (PRIERE-2).
+  List<VueEnseignantPriere> vueRendue = const <VueEnseignantPriere>[];
+
+  /// Les positions partagees par l'enseignant, dans l'ordre.
+  final List<PositionAppareil> partagees = <PositionAppareil>[];
+
+  /// Vrai : le serveur refuse le partage (un lieu de la direction existe).
+  bool partageRefuse = false;
+
   @override
   Future<PausePrevue?> pausePrevue(String seanceId) async => pauses[seanceId];
 
@@ -897,6 +907,15 @@ class FauxServicePriere implements ServicePriere {
 
   @override
   Future<List<EnseignantPriere>> enseignants() async => enseignantsRendus;
+
+  @override
+  Future<List<VueEnseignantPriere>> vueEnseignants() async => vueRendue;
+
+  @override
+  Future<void> partagerPosition(PositionAppareil position) async {
+    if (echecEcriture || partageRefuse) throw StateError('echec');
+    partagees.add(position);
+  }
 
   @override
   Future<List<LectureCreneauPriere>> lectureClasse(String groupeId) async =>

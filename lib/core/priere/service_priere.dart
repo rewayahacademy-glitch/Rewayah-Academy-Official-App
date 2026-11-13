@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../domain/enums.dart';
 import 'lieu_priere.dart';
 import 'pause_prevue.dart';
+import 'position_appareil.dart';
 
 /// La priere, lue sur le serveur (PRIERE-1).
 ///
@@ -41,6 +42,15 @@ abstract interface class ServicePriere {
 
   /// La direction : les enseignants et l'etat de leur lieu.
   Future<List<EnseignantPriere>> enseignants();
+
+  /// La direction : la liste a lire (zone, cinq heures du jour, methode
+  /// appliquee et son origine), sans aucune coordonnee.
+  Future<List<VueEnseignantPriere>> vueEnseignants();
+
+  /// L'enseignant partage sa position (PRIERE-2). Le serveur l'arrondit au
+  /// centieme de degre ; un lieu pose par la direction n'est jamais remplace
+  /// (refus). Pour lui seul : aucune cible n'est designee.
+  Future<void> partagerPosition(PositionAppareil position);
 
   /// La direction : ce que les creneaux d'une classe croisent sur 12 mois.
   Future<List<LectureCreneauPriere>> lectureClasse(String groupeId);
@@ -151,6 +161,29 @@ class ServicePriereSupabase implements ServicePriere {
   }
 
   @override
+  Future<List<VueEnseignantPriere>> vueEnseignants() async {
+    final List<dynamic> lignes = await _client.rpc<List<dynamic>>(
+      'priere_enseignants_vue',
+    );
+    return <VueEnseignantPriere>[
+      for (final Object? ligne in lignes)
+        if (ligne is Map<dynamic, dynamic>)
+          VueEnseignantPriere.depuisJson(Map<String, dynamic>.from(ligne)),
+    ];
+  }
+
+  @override
+  Future<void> partagerPosition(PositionAppareil position) =>
+      _client.rpc<void>(
+        'priere_ma_position',
+        params: <String, dynamic>{
+          'p_latitude': position.latitude,
+          'p_longitude': position.longitude,
+          'p_fuseau': position.fuseau,
+        },
+      );
+
+  @override
   Future<List<LectureCreneauPriere>> lectureClasse(String groupeId) async {
     final Object? json = await _client.rpc<Object?>(
       'priere_lecture_classe',
@@ -189,6 +222,13 @@ String _date(DateTime d) =>
 /// Le service de priere employe par l'application.
 final Provider<ServicePriere> servicePriereProvider = Provider<ServicePriere>(
   (Ref ref) => ServicePriereSupabase(Supabase.instance.client),
+);
+
+/// La lecture de la position de l'appareil : une fonction, pour que les tests
+/// la remplacent (le navigateur n'existe pas sous test).
+final Provider<Future<PositionAppareil> Function()>
+lecturePositionAppareilProvider = Provider<Future<PositionAppareil> Function()>(
+  (Ref ref) => lirePositionAppareil,
 );
 
 /// La pause de priere placee dans une seance.
