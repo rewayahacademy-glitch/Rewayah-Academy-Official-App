@@ -13,11 +13,17 @@
 --      « niveau = tous ») ; sans depot direct, le controle est INCHANGE ;
 --   3. public.library_depot_direct : la direction seule ; remplit par defaut
 --      les droits restes vides, approuve la revue (trace : acteur, date,
---      « depot direct de la direction »), ouvre le document aux inscrits et le
---      publie par public.library_publier_version (meme controle, meme journal,
---      meme idempotence). Pour le rayon des documents d'un tiers (tout rayon
---      autre que « cours »), UNE declaration est exigee : « l'academie a le
---      droit de diffuser ce document ».
+--      « depot direct de la direction »), pose le public (tous les inscrits,
+--      enfants compris, ou adultes seulement), ouvre le document aux inscrits
+--      et le publie par public.library_publier_version (meme controle, meme
+--      journal, meme idempotence). TOUT OU RIEN : si la publication est
+--      bloquee, la fonction leve une exception et rien n'est ecrit (ni droits,
+--      ni visibilite, ni journal, ni cle). Pour le rayon des documents d'un
+--      tiers (tout rayon autre que « cours »), UNE declaration est exigee :
+--      « l'academie a le droit de diffuser ce document » ;
+--   4. public.library_changer_acces : la direction change l'acces d'un
+--      document (lire dans l'application seulement, ou telechargement permis)
+--      sans redeposer son fichier ni creer de version.
 --
 -- Aucun prix, aucun paiement. Aucune suppression (ni objet, ni ligne). Rejouable.
 -- Tests : supabase/tests/scenarios_depot_direct.sql.
@@ -98,14 +104,20 @@ REVOKE ALL ON FUNCTION app_private.library_controle_version(uuid)
 --                   'telechargement' (telechargement permis).
 --   p_droit_tiers : la declaration « l'academie a le droit de diffuser ce
 --                   document » ; exigee hors du rayon des cours.
--- Rend la reponse de library_publier_version.
+--   p_public      : 'tous' (tous les inscrits, enfants compris), 'adultes'
+--                   (adultes seulement), ou NULL (les tranches d'age deja
+--                   reglees sont gardees). Le serveur pose les tranches.
+-- Rend {resultat: 'VersionPubliee', revision} ou {resultat:
+-- 'PublicationEnConflit', revision}. Une publication bloquee LEVE
+-- 'BibliothequeDepotBloque' (55000), le controle en DETAIL : rien n'est ecrit.
 -- ---------------------------------------------------------------------------
 CREATE OR REPLACE FUNCTION public.library_depot_direct(
   p_resource_id uuid,
   p_revision_attendue integer,
   p_cle text,
   p_acces text,
-  p_droit_tiers boolean
+  p_droit_tiers boolean,
+  p_public text
 )
 RETURNS jsonb
 LANGUAGE plpgsql
@@ -114,27 +126,33 @@ SET search_path = ''
 AS $function$
 DECLARE
   v_acteur uuid := auth.uid();
-  v_deja jsonb;
+  v_deja record;
   v_resource public.library_resource%ROWTYPE;
   v_version public.resource_version%ROWTYPE;
   v_droits public.library_version_rights%ROWTYPE;
   v_usages text[];
   v_tiers boolean;
   v_revision integer;
+  v_resultat jsonb;
 BEGIN
   IF NOT coalesce(public.app_account_valid() AND public.app_role() = 'admin', false) THEN
     RAISE EXCEPTION 'BibliothequeNonAutorisee' USING ERRCODE = '42501';
   END IF;
   IF p_resource_id IS NULL OR p_revision_attendue IS NULL
      OR p_acces IS NULL OR p_acces NOT IN ('lecture', 'telechargement')
+     OR (p_public IS NOT NULL AND p_public NOT IN ('tous', 'adultes'))
      OR coalesce(pg_catalog.length(pg_catalog.btrim(p_cle)), 0) NOT BETWEEN 1 AND 200 THEN
     RAISE EXCEPTION 'BibliothequeDepotInvalide' USING ERRCODE = '22023';
   END IF;
-  -- La meme cle rend la meme reponse (celle de la publication).
-  SELECT i.resultat INTO v_deja FROM public.pedagogie_partage_idempotence i
+  -- La meme cle rend la meme reponse, pour le MEME document seulement : une
+  -- cle deja employee pour un autre document est refusee, jamais confondue.
+  SELECT i.resultat, i.requete INTO v_deja FROM public.pedagogie_partage_idempotence i
    WHERE i.actor_id = v_acteur AND i.cle_idempotence = p_cle AND i.operation = 'library_publier';
-  IF v_deja IS NOT NULL THEN
-    RETURN v_deja;
+  IF FOUND THEN
+    IF v_deja.requete ->> 'resource_id' IS DISTINCT FROM p_resource_id::text THEN
+      RAISE EXCEPTION 'BibliothequeCleDejaUtilisee' USING ERRCODE = '22023';
+    END IF;
+    RETURN v_deja.resultat;
   END IF;
 
   SELECT * INTO v_resource FROM public.library_resource r WHERE r.id = p_resource_id FOR UPDATE;
@@ -193,56 +211,156 @@ BEGIN
          revu_le = pg_catalog.clock_timestamp()
    WHERE d.resource_version_id = v_version.id;
 
-  -- « Visible dans la bibliotheque » : un document encore reserve a la
-  -- direction s'ouvre aux inscrits (les tranches d'age filtrent toujours).
-  -- Une visibilite deja choisie n'est pas changee.
+  -- « Visible de qui » : un document encore reserve a la direction s'ouvre
+  -- aux inscrits ; une visibilite deja choisie n'est pas changee. Le public
+  -- choisi pose les tranches d'age ICI, jamais dans le client.
   UPDATE public.library_resource r
-     SET access_policy = 'inscrits'
-   WHERE r.id = p_resource_id AND r.access_policy = 'admin';
+     SET access_policy = CASE WHEN r.access_policy = 'admin' THEN 'inscrits' ELSE r.access_policy END,
+         tranches = CASE p_public
+                      WHEN 'tous' THEN ARRAY['enfant_6_9', 'enfant_10_13', 'ado_14_17', 'adulte_18_plus']
+                      WHEN 'adultes' THEN ARRAY['adulte_18_plus']
+                      ELSE r.tranches END
+   WHERE r.id = p_resource_id;
 
   PERFORM public.log_sensitive_access('library_direct_deposit', 'library_resource', p_resource_id::text,
     pg_catalog.jsonb_build_object(
       'resource_version_id', v_version.id,
       'motif', 'depot direct de la direction',
       'acces', p_acces,
+      'public', p_public,
       'rayon', v_resource.rayon,
       'droit_tiers_declare', v_tiers AND p_droit_tiers IS TRUE));
 
   SELECT r.revision INTO v_revision FROM public.library_resource r WHERE r.id = p_resource_id;
-  RETURN public.library_publier_version(p_resource_id, v_version.id, v_revision, p_cle);
+  v_resultat := public.library_publier_version(p_resource_id, v_version.id, v_revision, p_cle);
+  -- TOUT OU RIEN. Une publication bloquee ne laisse ni droits approuves, ni
+  -- visibilite ouverte, ni ligne de journal, ni cle d'idempotence : l'exception
+  -- annule tout ce que cette fonction a ecrit. Le controle part en DETAIL, pour
+  -- que l'ecran dise ce qui bloque et quoi faire.
+  IF v_resultat ->> 'resultat' IS DISTINCT FROM 'VersionPubliee' THEN
+    RAISE EXCEPTION 'BibliothequeDepotBloque'
+      USING ERRCODE = '55000',
+            DETAIL = coalesce((v_resultat -> 'controle')::text, v_resultat::text);
+  END IF;
+  RETURN v_resultat;
 END;
 $function$;
 
-ALTER FUNCTION public.library_depot_direct(uuid, integer, text, text, boolean) OWNER TO postgres;
-REVOKE ALL ON FUNCTION public.library_depot_direct(uuid, integer, text, text, boolean)
+ALTER FUNCTION public.library_depot_direct(uuid, integer, text, text, boolean, text) OWNER TO postgres;
+REVOKE ALL ON FUNCTION public.library_depot_direct(uuid, integer, text, text, boolean, text)
   FROM PUBLIC, anon, service_role, agent_ro;
-GRANT EXECUTE ON FUNCTION public.library_depot_direct(uuid, integer, text, text, boolean) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.library_depot_direct(uuid, integer, text, text, boolean, text) TO authenticated;
+
+-- ---------------------------------------------------------------------------
+-- Changer l'acces d'un document sans redeposer son fichier : la direction
+-- seule. L'acces est porte par les droits de la version ; on ne touche que
+-- l'usage « telechargement » de la version courante (publiee), ou du dernier
+-- brouillon si rien n'est publie. Le fichier, lui, ne change pas.
+-- Rend {resultat: 'EcritureFaite' | 'EcritureEnConflit', revision}.
+-- ---------------------------------------------------------------------------
+CREATE OR REPLACE FUNCTION public.library_changer_acces(
+  p_resource_id uuid,
+  p_acces text,
+  p_revision_attendue integer
+)
+RETURNS jsonb
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = ''
+AS $function$
+DECLARE
+  v_resource public.library_resource%ROWTYPE;
+  v_version uuid;
+  v_revision integer;
+BEGIN
+  IF NOT coalesce(public.app_account_valid() AND public.app_role() = 'admin', false) THEN
+    RAISE EXCEPTION 'BibliothequeNonAutorisee' USING ERRCODE = '42501';
+  END IF;
+  IF p_resource_id IS NULL OR p_revision_attendue IS NULL
+     OR p_acces IS NULL OR p_acces NOT IN ('lecture', 'telechargement') THEN
+    RAISE EXCEPTION 'BibliothequeAccesInvalide' USING ERRCODE = '22023';
+  END IF;
+  SELECT * INTO v_resource FROM public.library_resource r WHERE r.id = p_resource_id FOR UPDATE;
+  IF NOT FOUND THEN
+    RAISE EXCEPTION 'BibliothequeIntrouvable' USING ERRCODE = 'P0002';
+  END IF;
+  IF v_resource.archived_at IS NOT NULL THEN
+    RAISE EXCEPTION 'BibliothequeRetiree' USING ERRCODE = '22023';
+  END IF;
+  -- Un lien ne se telecharge pas.
+  IF v_resource.lien_externe IS NOT NULL AND p_acces = 'telechargement' THEN
+    RAISE EXCEPTION 'BibliothequeAccesInvalide' USING ERRCODE = '22023';
+  END IF;
+  IF v_resource.revision <> p_revision_attendue THEN
+    RETURN pg_catalog.jsonb_build_object('resultat', 'EcritureEnConflit', 'revision', v_resource.revision);
+  END IF;
+  v_version := coalesce(v_resource.current_version_id, (
+    SELECT v.id FROM public.resource_version v
+     WHERE v.resource_id = p_resource_id AND v.statut = 'brouillon'
+     ORDER BY v.numero_version DESC LIMIT 1));
+  IF v_version IS NULL OR NOT EXISTS (
+       SELECT 1 FROM public.library_version_rights d WHERE d.resource_version_id = v_version) THEN
+    RAISE EXCEPTION 'BibliothequeDroitsIntrouvables' USING ERRCODE = 'P0002';
+  END IF;
+  UPDATE public.library_version_rights d
+     SET usages = CASE
+           WHEN p_acces = 'telechargement' AND NOT ('telechargement' = ANY (d.usages))
+             THEN d.usages || ARRAY['telechargement']
+           WHEN p_acces = 'lecture'
+             THEN pg_catalog.array_remove(d.usages, 'telechargement')
+           ELSE d.usages END
+   WHERE d.resource_version_id = v_version;
+  -- La revision du document avance : un autre ecran ouvert verra le conflit.
+  UPDATE public.library_resource r SET title = r.title WHERE r.id = p_resource_id;
+  SELECT r.revision INTO v_revision FROM public.library_resource r WHERE r.id = p_resource_id;
+  PERFORM public.log_sensitive_access('library_access_changed', 'library_resource', p_resource_id::text,
+    pg_catalog.jsonb_build_object('resource_version_id', v_version, 'acces', p_acces));
+  RETURN pg_catalog.jsonb_build_object('resultat', 'EcritureFaite', 'revision', v_revision);
+END;
+$function$;
+
+ALTER FUNCTION public.library_changer_acces(uuid, text, integer) OWNER TO postgres;
+REVOKE ALL ON FUNCTION public.library_changer_acces(uuid, text, integer)
+  FROM PUBLIC, anon, service_role, agent_ro;
+GRANT EXECUTE ON FUNCTION public.library_changer_acces(uuid, text, integer) TO authenticated;
 
 DO $empreinte$
 DECLARE
-  v_signature regprocedure := 'public.library_depot_direct(uuid,integer,text,text,boolean)'::regprocedure;
+  v_signature regprocedure;
 BEGIN
-  EXECUTE pg_catalog.format('COMMENT ON FUNCTION %s IS %L', v_signature,
-    pg_catalog.format('F86: signature=%s; md5_functiondef=%s; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; date=2026-11-13. Lot DEPOT-SIMPLE. Garde: direction active.',
-      v_signature, pg_catalog.md5(pg_catalog.pg_get_functiondef(v_signature))));
+  FOREACH v_signature IN ARRAY ARRAY[
+    'public.library_depot_direct(uuid,integer,text,text,boolean,text)'::regprocedure,
+    'public.library_changer_acces(uuid,text,integer)'::regprocedure
+  ] LOOP
+    EXECUTE pg_catalog.format('COMMENT ON FUNCTION %s IS %L', v_signature,
+      pg_catalog.format('F86: signature=%s; md5_functiondef=%s; guard_type=ROLE_POSITIVE_TEMPLATE; owner=postgres; search_path=""; date=2026-11-13. Lot DEPOT-SIMPLE. Garde: direction active.',
+        v_signature, pg_catalog.md5(pg_catalog.pg_get_functiondef(v_signature))));
+  END LOOP;
 END
 $empreinte$;
 
 DO $postflight$
 DECLARE
-  v_signature text := 'public.library_depot_direct(uuid,integer,text,text,boolean)';
+  v_signature text;
 BEGIN
-  IF pg_catalog.has_function_privilege('anon', v_signature, 'EXECUTE')
-     OR pg_catalog.has_function_privilege('service_role', v_signature, 'EXECUTE')
-     OR pg_catalog.has_function_privilege('agent_ro', v_signature, 'EXECUTE')
-     OR NOT pg_catalog.has_function_privilege('authenticated', v_signature, 'EXECUTE')
-     OR pg_catalog.has_function_privilege('authenticated', 'app_private.library_controle_version(uuid)', 'EXECUTE')
-     OR NOT EXISTS (
-       SELECT 1 FROM pg_catalog.pg_proc p
-        WHERE p.oid = v_signature::regprocedure
-          AND p.prosecdef AND p.proowner = 'postgres'::regrole
-          AND p.proconfig @> ARRAY['search_path=""']) THEN
-    RAISE EXCEPTION 'DEPOT-SIMPLE : droits ou reglages incorrects pour %', v_signature;
+  FOREACH v_signature IN ARRAY ARRAY[
+    'public.library_depot_direct(uuid,integer,text,text,boolean,text)',
+    'public.library_changer_acces(uuid,text,integer)'
+  ] LOOP
+    IF pg_catalog.has_function_privilege('anon', v_signature, 'EXECUTE')
+       OR pg_catalog.has_function_privilege('service_role', v_signature, 'EXECUTE')
+       OR pg_catalog.has_function_privilege('agent_ro', v_signature, 'EXECUTE')
+       OR NOT pg_catalog.has_function_privilege('authenticated', v_signature, 'EXECUTE')
+       OR NOT EXISTS (
+         SELECT 1 FROM pg_catalog.pg_proc p
+          WHERE p.oid = v_signature::regprocedure
+            AND p.prosecdef AND p.proowner = 'postgres'::regrole
+            AND p.proconfig @> ARRAY['search_path=""']) THEN
+      RAISE EXCEPTION 'DEPOT-SIMPLE : droits ou reglages incorrects pour %', v_signature;
+    END IF;
+  END LOOP;
+  IF pg_catalog.has_function_privilege('authenticated', 'app_private.library_controle_version(uuid)', 'EXECUTE') THEN
+    RAISE EXCEPTION 'DEPOT-SIMPLE : le controle interne est ouvert aux clients';
   END IF;
 END
 $postflight$;

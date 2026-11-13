@@ -15,7 +15,12 @@
 --   5. le controle classique est inchange sans depot direct ;
 --   6. idempotence ; droits d'execution ;
 --   7. mutation rouge : sans la garde de la declaration, la seconde barriere
---      (le controle) tient, et la premiere se voit absente.
+--      (le controle) tient, et la premiere se voit absente ;
+--   8. tout ou rien : une publication bloquee n'ecrit rien (ni droits, ni
+--      visibilite, ni journal, ni cle), et la cle se rejoue apres correction ;
+--   9. une cle d'idempotence est liee a son document ;
+--  10. le public : « tous » et « adultes » posent les tranches cote serveur ;
+--  11. changer l'acces d'un document publie sans redeposer son fichier.
 BEGIN;
 
 INSERT INTO auth.users (id, email) VALUES
@@ -91,7 +96,7 @@ BEGIN
   -- Sans fichier : rien a publier.
   SELECT revision INTO v_rev FROM public.library_resource WHERE id = v_id;
   BEGIN
-    PERFORM public.library_depot_direct(v_id, v_rev, 'd51-cours-sans-fichier', 'lecture', false);
+    PERFORM public.library_depot_direct(v_id, v_rev, 'd51-cours-sans-fichier', 'lecture', false, NULL);
     RAISE EXCEPTION 'D51 ROUGE : depot direct sans fichier accepte';
   EXCEPTION WHEN invalid_parameter_value THEN NULL; END;
 
@@ -105,20 +110,20 @@ BEGIN
   IF r ->> 'resultat' <> 'PublicationBloquee' THEN RAISE EXCEPTION 'D51 ROUGE : publication classique sans droits : %', r; END IF;
 
   -- Un acces inconnu, une cle vide : refuses.
-  BEGIN PERFORM public.library_depot_direct(v_id, v_rev, 'd51-x', 'tout', false);
+  BEGIN PERFORM public.library_depot_direct(v_id, v_rev, 'd51-x', 'tout', false, NULL);
     RAISE EXCEPTION 'D51 ROUGE : acces inconnu accepte'; EXCEPTION WHEN invalid_parameter_value THEN NULL; END;
-  BEGIN PERFORM public.library_depot_direct(v_id, v_rev, ' ', 'lecture', false);
+  BEGIN PERFORM public.library_depot_direct(v_id, v_rev, ' ', 'lecture', false, NULL);
     RAISE EXCEPTION 'D51 ROUGE : cle vide acceptee'; EXCEPTION WHEN invalid_parameter_value THEN NULL; END;
 
   -- Une revision perimee : conflit, rien d'ecrit.
-  r := public.library_depot_direct(v_id, v_rev - 1, 'd51-cours-perime', 'lecture', false);
+  r := public.library_depot_direct(v_id, v_rev - 1, 'd51-cours-perime', 'lecture', false, NULL);
   IF r ->> 'resultat' <> 'PublicationEnConflit' THEN RAISE EXCEPTION 'D51 ROUGE : revision perimee : %', r; END IF;
   IF EXISTS (SELECT 1 FROM public.library_version_rights x WHERE x.resource_version_id = v_version AND x.approuve) THEN
     RAISE EXCEPTION 'D51 ROUGE : un conflit a ecrit les droits';
   END IF;
 
   -- Le depot direct : publie.
-  r := public.library_depot_direct(v_id, v_rev, 'd51-cours', 'lecture', false);
+  r := public.library_depot_direct(v_id, v_rev, 'd51-cours', 'lecture', false, NULL);
   IF r ->> 'resultat' <> 'VersionPubliee' THEN RAISE EXCEPTION 'D51 ROUGE : depot direct des cours : %', r; END IF;
   SELECT * INTO d FROM public.library_version_rights x WHERE x.resource_version_id = v_version;
   IF NOT d.approuve OR d.revu_par <> 'd5100000-0000-0000-0000-000000000001' OR d.revu_le IS NULL
@@ -141,7 +146,7 @@ BEGIN
     RAISE EXCEPTION 'D51 ROUGE : le depot direct n''est pas trace';
   END IF;
   -- Idempotence : la meme cle rend la meme reponse, sans rien refaire.
-  IF public.library_depot_direct(v_id, v_rev, 'd51-cours', 'telechargement', false) IS DISTINCT FROM r THEN
+  IF public.library_depot_direct(v_id, v_rev, 'd51-cours', 'telechargement', false, NULL) IS DISTINCT FROM r THEN
     RAISE EXCEPTION 'D51 ROUGE : la meme cle ne rend pas la meme reponse';
   END IF;
   IF EXISTS (SELECT 1 FROM public.library_version_rights x
@@ -179,10 +184,10 @@ BEGIN
   SELECT revision INTO v_rev FROM public.library_resource WHERE id = v_id;
 
   -- Sans la declaration (faux, puis NULL) : refuse, rien d'ecrit.
-  BEGIN PERFORM public.library_depot_direct(v_id, v_rev, 'd51-tiers-sans', 'lecture', false);
+  BEGIN PERFORM public.library_depot_direct(v_id, v_rev, 'd51-tiers-sans', 'lecture', false, NULL);
     RAISE EXCEPTION 'D51 ROUGE : document d''un tiers publie sans la declaration';
   EXCEPTION WHEN invalid_parameter_value THEN NULL; END;
-  BEGIN PERFORM public.library_depot_direct(v_id, v_rev, 'd51-tiers-null', 'lecture', NULL);
+  BEGIN PERFORM public.library_depot_direct(v_id, v_rev, 'd51-tiers-null', 'lecture', NULL, NULL);
     RAISE EXCEPTION 'D51 ROUGE : document d''un tiers publie avec une declaration NULL';
   EXCEPTION WHEN invalid_parameter_value THEN NULL; END;
   IF (SELECT statut::text FROM public.resource_version WHERE id = v_version) <> 'brouillon'
@@ -191,7 +196,7 @@ BEGIN
   END IF;
 
   -- Avec la declaration, telechargement permis : publie.
-  r := public.library_depot_direct(v_id, v_rev, 'd51-tiers', 'telechargement', true);
+  r := public.library_depot_direct(v_id, v_rev, 'd51-tiers', 'telechargement', true, NULL);
   IF r ->> 'resultat' <> 'VersionPubliee' THEN RAISE EXCEPTION 'D51 ROUGE : depot direct d''un tiers : %', r; END IF;
   SELECT * INTO d FROM public.library_version_rights x WHERE x.resource_version_id = v_version;
   IF NOT d.droit_tiers_declare OR NOT d.approuve OR d.depot_direct_par IS NULL
@@ -233,7 +238,7 @@ BEGIN
     RAISE EXCEPTION 'D51 ROUGE : le controle classique a change : %', public.library_controler_version(v_version);
   END IF;
   SELECT revision INTO v_rev FROM public.library_resource WHERE id = v_id;
-  r := public.library_depot_direct(v_id, v_rev, 'd51-reglages', 'lecture', false);
+  r := public.library_depot_direct(v_id, v_rev, 'd51-reglages', 'lecture', false, NULL);
   IF r ->> 'resultat' <> 'VersionPubliee' THEN RAISE EXCEPTION 'D51 ROUGE : depot direct avec reglages : %', r; END IF;
   IF NOT EXISTS (SELECT 1 FROM public.library_version_rights x
                   WHERE x.resource_version_id = v_version AND x.source_titre = 'Edition de reference'
@@ -268,14 +273,14 @@ BEGIN
   LOOP
     PERFORM pg_temp.qui(q.uid, q.role, q.foyer);
     BEGIN
-      PERFORM public.library_depot_direct(v_id, v_rev, 'd51-refus-' || q.role, 'lecture', true);
+      PERFORM public.library_depot_direct(v_id, v_rev, 'd51-refus-' || q.role, 'lecture', true, NULL);
       RAISE EXCEPTION 'D51 ROUGE : depot direct accepte pour %', q.role;
     EXCEPTION WHEN insufficient_privilege THEN NULL; END;
   END LOOP;
   -- Un compte direction qui n'est plus valide (jeton sans role) : refuse.
   PERFORM set_config('request.jwt.claims', '{}', true);
   BEGIN
-    PERFORM public.library_depot_direct(v_id, v_rev, 'd51-refus-sans-role', 'lecture', true);
+    PERFORM public.library_depot_direct(v_id, v_rev, 'd51-refus-sans-role', 'lecture', true, NULL);
     RAISE EXCEPTION 'D51 ROUGE : depot direct accepte sans role';
   EXCEPTION WHEN insufficient_privilege THEN NULL; END;
   PERFORM pg_temp.direction();
@@ -290,19 +295,177 @@ $refus$;
 -- ---------------------------------------------------------------------------
 DO $droits$
 BEGIN
-  IF has_function_privilege('anon', 'public.library_depot_direct(uuid,integer,text,text,boolean)', 'EXECUTE')
-     OR has_function_privilege('service_role', 'public.library_depot_direct(uuid,integer,text,text,boolean)', 'EXECUTE')
-     OR has_function_privilege('agent_ro', 'public.library_depot_direct(uuid,integer,text,text,boolean)', 'EXECUTE')
-     OR NOT has_function_privilege('authenticated', 'public.library_depot_direct(uuid,integer,text,text,boolean)', 'EXECUTE')
+  IF has_function_privilege('anon', 'public.library_depot_direct(uuid,integer,text,text,boolean,text)', 'EXECUTE')
+     OR has_function_privilege('service_role', 'public.library_depot_direct(uuid,integer,text,text,boolean,text)', 'EXECUTE')
+     OR has_function_privilege('agent_ro', 'public.library_depot_direct(uuid,integer,text,text,boolean,text)', 'EXECUTE')
+     OR NOT has_function_privilege('authenticated', 'public.library_depot_direct(uuid,integer,text,text,boolean,text)', 'EXECUTE')
      OR has_function_privilege('authenticated', 'app_private.library_controle_version(uuid)', 'EXECUTE') THEN
     RAISE EXCEPTION 'D51 ROUGE : droits d''execution du depot direct';
   END IF;
-  IF EXISTS (SELECT 1 FROM pg_proc p WHERE p.oid = 'public.library_depot_direct(uuid,integer,text,text,boolean)'::regprocedure
+  IF EXISTS (SELECT 1 FROM pg_proc p WHERE p.oid = 'public.library_depot_direct(uuid,integer,text,text,boolean,text)'::regprocedure
                 AND (NOT p.prosecdef OR NOT p.proconfig @> ARRAY['search_path=""'])) THEN
     RAISE EXCEPTION 'D51 ROUGE : le depot direct n''est pas DEFINER a search_path vide';
   END IF;
 END;
 $droits$;
+
+-- ---------------------------------------------------------------------------
+-- 8. Tout ou rien : une publication bloquee n'ecrit rien
+-- ---------------------------------------------------------------------------
+SELECT pg_temp.direction();
+DO $tout_ou_rien$
+DECLARE b jsonb; r jsonb; v_id uuid; v_version uuid; v_rev integer; v_audit bigint; v_detail text;
+BEGIN
+  b := public.library_creer_brouillon('{"titre":"Droits expires","type":"pdf","langue":"fr","categorie":""}');
+  v_id := (b ->> 'id')::uuid; v_version := (b ->> 'version_id')::uuid;
+  PERFORM pg_temp.deposer_fichier(v_id);
+  -- Des droits dont la date d'expiration est passee : la publication est
+  -- bloquee (critere 7), quoi que fasse le depot direct.
+  INSERT INTO public.library_version_rights (resource_version_id, expire_le)
+  VALUES (v_version, pg_catalog.now() - interval '1 day')
+  ON CONFLICT (resource_version_id) DO UPDATE SET expire_le = EXCLUDED.expire_le;
+  SELECT revision INTO v_rev FROM public.library_resource WHERE id = v_id;
+  SELECT count(*) INTO v_audit FROM public.audit_logs a WHERE a.row_id = v_id::text;
+  BEGIN
+    r := public.library_depot_direct(v_id, v_rev, 'd51-bloque', 'telechargement', false, 'adultes');
+    RAISE EXCEPTION 'D51 ROUGE : un depot bloque n''a pas leve : %', r;
+  EXCEPTION WHEN object_not_in_prerequisite_state THEN
+    GET STACKED DIAGNOSTICS v_detail = PG_EXCEPTION_DETAIL;
+  END;
+  -- La cause part avec l'exception : l'ecran peut dire ce qui bloque.
+  IF NOT EXISTS (SELECT 1 FROM jsonb_array_elements(v_detail::jsonb -> 'criteres') c
+                  WHERE c ->> 'cle' = 'expirationAttribution' AND c ->> 'etat' = 'bloque') THEN
+    RAISE EXCEPTION 'D51 ROUGE : le blocage ne dit pas sa cause : %', v_detail;
+  END IF;
+  -- Rien n'a change : ni droits, ni visibilite, ni tranches, ni journal, ni cle.
+  IF EXISTS (SELECT 1 FROM public.library_version_rights x WHERE x.resource_version_id = v_version
+              AND (x.approuve OR x.depot_direct_par IS NOT NULL OR x.revu_par IS NOT NULL
+                   OR pg_catalog.cardinality(x.usages) > 0 OR pg_catalog.btrim(x.titulaire) <> ''))
+     OR (SELECT access_policy::text FROM public.library_resource WHERE id = v_id) <> 'admin'
+     OR (SELECT pg_catalog.cardinality(tranches) FROM public.library_resource WHERE id = v_id) <> 4
+     OR (SELECT revision FROM public.library_resource WHERE id = v_id) <> v_rev
+     OR (SELECT statut::text FROM public.resource_version WHERE id = v_version) <> 'brouillon'
+     OR (SELECT count(*) FROM public.audit_logs a WHERE a.row_id = v_id::text) <> v_audit
+     OR EXISTS (SELECT 1 FROM public.pedagogie_partage_idempotence i WHERE i.cle_idempotence = 'd51-bloque') THEN
+    RAISE EXCEPTION 'D51 ROUGE : un depot bloque a laisse une trace';
+  END IF;
+  -- La date corrigee, la MEME cle aboutit.
+  UPDATE public.library_version_rights SET expire_le = NULL WHERE resource_version_id = v_version;
+  r := public.library_depot_direct(v_id, v_rev, 'd51-bloque', 'telechargement', false, 'adultes');
+  IF r ->> 'resultat' <> 'VersionPubliee' THEN RAISE EXCEPTION 'D51 ROUGE : rejeu apres correction : %', r; END IF;
+  PERFORM set_config('d51.adultes_id', v_id::text, true);
+
+  -- 9. La cle est liee a son document : employee pour un autre, elle est refusee.
+  BEGIN
+    PERFORM public.library_depot_direct(current_setting('d51.refus_id')::uuid,
+      (SELECT revision FROM public.library_resource WHERE id = current_setting('d51.refus_id')::uuid),
+      'd51-bloque', 'lecture', false, NULL);
+    RAISE EXCEPTION 'D51 ROUGE : une cle d''un autre document est acceptee';
+  EXCEPTION WHEN invalid_parameter_value THEN NULL; END;
+  IF (SELECT statut::text FROM public.resource_version WHERE resource_id = current_setting('d51.refus_id')::uuid) <> 'brouillon' THEN
+    RAISE EXCEPTION 'D51 ROUGE : la cle d''un autre document a publie';
+  END IF;
+
+  -- 10. Le public : « adultes » a pose la seule tranche adulte ; un public
+  -- inconnu est refuse.
+  IF (SELECT tranches FROM public.library_resource WHERE id = v_id) <> ARRAY['adulte_18_plus'] THEN
+    RAISE EXCEPTION 'D51 ROUGE : « adultes » n''a pas pose les tranches';
+  END IF;
+  BEGIN PERFORM public.library_depot_direct(current_setting('d51.refus_id')::uuid, 1, 'd51-public', 'lecture', false, 'enfants');
+    RAISE EXCEPTION 'D51 ROUGE : public inconnu accepte'; EXCEPTION WHEN invalid_parameter_value THEN NULL; END;
+END;
+$tout_ou_rien$;
+
+DO $public_tous$
+DECLARE b jsonb; r jsonb; v_id uuid; v_rev integer;
+BEGIN
+  -- « tous » : les quatre tranches, meme pour un lien (le choix est expres).
+  b := public.library_creer_brouillon('{"titre":"Lien pour tous","type":"video","langue":"fr","categorie":"","lienExterne":"https://exemple.org/v"}');
+  v_id := (b ->> 'id')::uuid;
+  IF (SELECT pg_catalog.cardinality(tranches) FROM public.library_resource WHERE id = v_id) <> 3 THEN
+    RAISE EXCEPTION 'D51 ROUGE : un lien n''exclut plus les 6 a 9 ans par defaut';
+  END IF;
+  SELECT revision INTO v_rev FROM public.library_resource WHERE id = v_id;
+  r := public.library_depot_direct(v_id, v_rev, 'd51-tous', 'telechargement', false, 'tous');
+  IF r ->> 'resultat' <> 'VersionPubliee' THEN RAISE EXCEPTION 'D51 ROUGE : depot direct d''un lien : %', r; END IF;
+  IF (SELECT pg_catalog.cardinality(tranches) FROM public.library_resource WHERE id = v_id) <> 4 THEN
+    RAISE EXCEPTION 'D51 ROUGE : « tous » n''a pas pose les quatre tranches';
+  END IF;
+  -- Un lien ne se telecharge jamais, meme si on le demande.
+  IF EXISTS (SELECT 1 FROM public.library_version_rights d JOIN public.resource_version v ON v.id = d.resource_version_id
+              WHERE v.resource_id = v_id AND 'telechargement' = ANY (d.usages)) THEN
+    RAISE EXCEPTION 'D51 ROUGE : un lien porte l''usage telechargement';
+  END IF;
+  PERFORM set_config('d51.lien_id', v_id::text, true);
+END;
+$public_tous$;
+
+-- L'enfant de 10 a 13 ans ne voit pas le document « adultes seulement ».
+SELECT pg_temp.qui('d5100000-0000-0000-0000-000000000002', 'student', 'd51fffff-0000-0000-0000-000000000001');
+DO $adultes$
+DECLARE v jsonb;
+BEGIN
+  v := public.bibliotheque_catalogue_lecteur('{"types":["pdf"]}');
+  IF EXISTS (SELECT 1 FROM jsonb_array_elements(v) e WHERE e ->> 'title' = 'Droits expires') THEN
+    RAISE EXCEPTION 'D51 ROUGE : un enfant voit un document reserve aux adultes';
+  END IF;
+END;
+$adultes$;
+
+-- ---------------------------------------------------------------------------
+-- 11. Changer l'acces d'un document publie, sans redeposer son fichier
+-- ---------------------------------------------------------------------------
+SELECT pg_temp.direction();
+DO $acces$
+DECLARE r jsonb; v_id uuid := current_setting('d51.cours_id')::uuid; v_rev integer; v_asset uuid; v_version uuid;
+BEGIN
+  SELECT current_version_id, revision INTO v_version, v_rev FROM public.library_resource WHERE id = v_id;
+  SELECT download_asset_id INTO v_asset FROM public.resource_version WHERE id = v_version;
+  IF EXISTS (SELECT 1 FROM public.library_version_rights d WHERE d.resource_version_id = v_version AND 'telechargement' = ANY (d.usages)) THEN
+    RAISE EXCEPTION 'D51 ROUGE : etat de depart inattendu';
+  END IF;
+  -- Revision perimee : conflit, rien d'ecrit.
+  r := public.library_changer_acces(v_id, 'telechargement', v_rev - 1);
+  IF r ->> 'resultat' <> 'EcritureEnConflit' THEN RAISE EXCEPTION 'D51 ROUGE : acces, revision perimee : %', r; END IF;
+  r := public.library_changer_acces(v_id, 'telechargement', v_rev);
+  IF r ->> 'resultat' <> 'EcritureFaite' OR (r ->> 'revision')::int <= v_rev THEN RAISE EXCEPTION 'D51 ROUGE : acces : %', r; END IF;
+  IF NOT EXISTS (SELECT 1 FROM public.library_version_rights d WHERE d.resource_version_id = v_version
+                  AND d.usages @> ARRAY['application', 'classe', 'telechargement']) THEN
+    RAISE EXCEPTION 'D51 ROUGE : le telechargement n''est pas permis';
+  END IF;
+  -- Le fichier et la version n'ont pas bouge.
+  IF (SELECT current_version_id FROM public.library_resource WHERE id = v_id) <> v_version
+     OR (SELECT download_asset_id FROM public.resource_version WHERE id = v_version) <> v_asset
+     OR (SELECT statut::text FROM public.resource_version WHERE id = v_version) <> 'publiee' THEN
+    RAISE EXCEPTION 'D51 ROUGE : changer l''acces a touche le fichier ou la version';
+  END IF;
+  r := public.library_changer_acces(v_id, 'lecture', (r ->> 'revision')::int);
+  IF EXISTS (SELECT 1 FROM public.library_version_rights d WHERE d.resource_version_id = v_version AND 'telechargement' = ANY (d.usages))
+     OR NOT EXISTS (SELECT 1 FROM public.library_version_rights d WHERE d.resource_version_id = v_version AND d.usages @> ARRAY['application', 'classe']) THEN
+    RAISE EXCEPTION 'D51 ROUGE : le retour a la lecture seule';
+  END IF;
+  IF NOT EXISTS (SELECT 1 FROM public.audit_logs a WHERE a.action = 'library_access_changed' AND a.row_id = v_id::text
+                  AND a.actor = 'd5100000-0000-0000-0000-000000000001') THEN
+    RAISE EXCEPTION 'D51 ROUGE : le changement d''acces n''est pas trace';
+  END IF;
+  -- Un acces inconnu ; un lien qui se telechargerait : refuses.
+  BEGIN PERFORM public.library_changer_acces(v_id, 'tout', 1);
+    RAISE EXCEPTION 'D51 ROUGE : acces inconnu accepte'; EXCEPTION WHEN invalid_parameter_value THEN NULL; END;
+  BEGIN PERFORM public.library_changer_acces(current_setting('d51.lien_id')::uuid, 'telechargement',
+      (SELECT revision FROM public.library_resource WHERE id = current_setting('d51.lien_id')::uuid));
+    RAISE EXCEPTION 'D51 ROUGE : un lien se telecharge'; EXCEPTION WHEN invalid_parameter_value THEN NULL; END;
+  -- Hors direction : refuse.
+  PERFORM pg_temp.qui('d5100000-0000-0000-0000-000000000005', 'teacher', NULL);
+  BEGIN PERFORM public.library_changer_acces(v_id, 'telechargement', 1);
+    RAISE EXCEPTION 'D51 ROUGE : un enseignant change l''acces'; EXCEPTION WHEN insufficient_privilege THEN NULL; END;
+  PERFORM pg_temp.direction();
+  IF has_function_privilege('anon', 'public.library_changer_acces(uuid,text,integer)', 'EXECUTE')
+     OR has_function_privilege('service_role', 'public.library_changer_acces(uuid,text,integer)', 'EXECUTE')
+     OR NOT has_function_privilege('authenticated', 'public.library_changer_acces(uuid,text,integer)', 'EXECUTE') THEN
+    RAISE EXCEPTION 'D51 ROUGE : droits d''execution du changement d''acces';
+  END IF;
+END;
+$acces$;
 
 -- ---------------------------------------------------------------------------
 -- 7. Mutation rouge : on retire la garde de la declaration. La seconde
@@ -317,24 +480,25 @@ BEGIN
   v_id := (b ->> 'id')::uuid;
   PERFORM pg_temp.deposer_fichier(v_id);
   SELECT revision INTO v_rev FROM public.library_resource WHERE id = v_id;
-  v_def := pg_get_functiondef('public.library_depot_direct(uuid,integer,text,text,boolean)'::regprocedure);
+  v_def := pg_get_functiondef('public.library_depot_direct(uuid,integer,text,text,boolean,text)'::regprocedure);
   IF pg_catalog.strpos(v_def, 'IF v_tiers AND p_droit_tiers IS NOT TRUE THEN') = 0 THEN
     RAISE EXCEPTION 'D51 ROUGE : la garde a muter est introuvable';
   END IF;
   BEGIN
     EXECUTE pg_catalog.replace(v_def, 'IF v_tiers AND p_droit_tiers IS NOT TRUE THEN', 'IF false THEN');
-    -- Garde retiree : plus d'exception (la mutation est vue)...
-    r := public.library_depot_direct(v_id, v_rev, 'd51-mutation', 'lecture', false);
-    -- ... mais le controle refuse encore la publication.
-    IF r ->> 'resultat' <> 'PublicationBloquee' THEN
+    -- Garde retiree : ce n'est plus la garde qui refuse (la mutation est vue),
+    -- c'est la seconde barriere, le controle, qui leve « depot bloque ».
+    BEGIN
+      r := public.library_depot_direct(v_id, v_rev, 'd51-mutation', 'lecture', false, NULL);
       RAISE EXCEPTION 'D51 ROUGE : sans la garde, un document d''un tiers est publie sans declaration : %', r;
-    END IF;
+    EXCEPTION WHEN object_not_in_prerequisite_state THEN NULL;
+    END;
     RAISE EXCEPTION 'D51_MUTATION_VUE';
   EXCEPTION WHEN raise_exception THEN
     IF SQLERRM <> 'D51_MUTATION_VUE' THEN RAISE; END IF;
   END;
   -- La mutation est annulee avec son bloc : la garde est revenue.
-  BEGIN PERFORM public.library_depot_direct(v_id, v_rev, 'd51-mutation-2', 'lecture', false);
+  BEGIN PERFORM public.library_depot_direct(v_id, v_rev, 'd51-mutation-2', 'lecture', false, NULL);
     RAISE EXCEPTION 'D51 ROUGE : la garde n''est pas revenue apres la mutation';
   EXCEPTION WHEN invalid_parameter_value THEN NULL; END;
 END;
