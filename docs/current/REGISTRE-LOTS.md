@@ -27,6 +27,26 @@ Relevé fait par E le 11/11/2026 vers 12 h UTC, sur `main` `b86dbc9d9`, avec `to
   - Les deux autres chiffres sont retrouvés à l'identique : 206 branches livrées, 75 PR non fusionnées.
 - **PR fermées sans fusion.** Parmi toutes les PR fermées sans fusion, 62 l'ont été le 08/11 (date de fermeture lue sur GitHub). Celles d'avant le 25/10 suivent les propositions de `TRI-PR-AVANT-25-10.md`. Pour les autres, je n'ai trouvé aucune raison écrite : leur ligne le dit.
 
+## Chantier pédagogique (architecte pédagogique, relevé du 13/11/2026 à 04 h UTC)
+
+Consigne du directeur du 13/11 : « Attention à ne pas perdre notre travail depuis le début, car on a rien mis en prod. » **Rien de ce chantier n'est dans `main` ni installé en production.** Tout est poussé sur les branches ci-dessous. Avant d'écrire un lot, chercher ici s'il existe déjà.
+
+| Lot | Branche (tête au relevé) | Migrations | Statut et preuve |
+|---|---|---|---|
+| Charte pédagogique, programme, tajwid des bases, prière, point de fin de séance, chemin | `claude/charte-ecole` (9c823c70) | aucune | À LIVRER. Auditée le 12/11 ; décisions du 13/11 intégrées, découpage séance par séance en cours d'écriture |
+| Lot 1, socle du programme | `claude/socle-programme` (40a3d563) | 20261123850000, 900000, 905000 | À LIVRER. Trois revues indépendantes, aucun bloquant ; correction en cours : la migration ne publie plus le programme |
+| Lot 2, calendrier et pauses | `claude/calendrier-pauses` (6917fb62) | 20261123910000, 911000 | À LIVRER. Non relu par un tiers |
+| Lot 3, bibliothèque | `claude/bibliotheque-une` (3d601f0f) | 20261123920000, 921000 | À LIVRER. Revue indépendante : un bloquant (tranche d'âge contournée par l'onglet de la classe), en correction |
+| Lot 5, espace Apprendre à trois onglets | `claude/espace-apprendre` (02f680f4) | aucune | À LIVRER. Non relu par un tiers |
+| Suivi de l'attente | `claude/suivi-attente` (3ff5e1c4) | 20261123960000, 961000 | À LIVRER. Revue indépendante : deux bloquants (courriel vers un mineur, fiche de l'enseignant visible après un départ), en correction |
+| Prière, heures et pause prévue | `claude/priere-serveur` (0f7116ef) | 20261123930000 | À LIVRER. Revue indépendante : aucun bloquant, corrections en cours |
+| Horloge de La Mecque et ville | `claude/horloge-lieu` (5ea3a77c) | 20261123940000 à 949999 | À LIVRER. Partie A relue : deux bloquants renvoyés ; partie B en cours |
+| Pause en salle (session de la salle) | `claude/zealous-tesla-ewstzw` (bc38bf4d), PR #449 | 20261124100000 à 400000 | À LIVRER. À relire avec la prière |
+| Maquettes | `docs/current/pedagogie/maquettes/` (cette PR) | aucune | LIVRÉ avec ce registre |
+| PLAN-DE-CLASSE, POINT-DE-SEANCE, CHEMIN, lecteur, moteur de suivi, évaluations et livret, classes vitrines FC-1 à FC-4 | aucune | aucune | Spécifiés dans la charte, **non commencés** |
+
+Ordre de livraison prévu : la charte ; le lot 1 ; puis prière, bibliothèque, suivi de l'attente, calendrier, espace Apprendre, horloge, chacun après sa revue indépendante et l'installation de ses migrations par le directeur.
+
 ## Comment refaire le relevé
 
 ```
