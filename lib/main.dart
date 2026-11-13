@@ -199,6 +199,8 @@ import 'core/suivi/ma_progression.dart';
 import 'core/suivi/ma_progression_supabase.dart';
 import 'core/suivi/messages_academie_supabase.dart';
 import 'core/suivi/port_messages_academie.dart';
+import 'core/suivi/port_suivi_pedagogique.dart';
+import 'core/suivi/suivi_pedagogique_supabase.dart';
 import 'core/tc_bibliotheque/catalogue_supabase.dart';
 import 'core/tc_bibliotheque/donnees_catalogue.dart';
 import 'core/tc_bibliotheque/etapes_programme.dart';
@@ -348,10 +350,15 @@ List<Override> _surchargesAppReelle() => <Override>[
     MessagesAcademieSupabase(Supabase.instance.client),
   ),
   // MA-PROGRESSION-ECRAN (12/11/2026) : ou en est l'eleve sur le programme,
-  // d'un seul appel (`ma_progression`, migration 20261123830000, qui lit
-  // `suivi_pedagogique_eleve` et `sourates_eleve`).
+  // d'un seul appel (`ma_progression`, migrations 20261123830000 et
+  // 20261123905000, qui lit `etape_eleve_lecture` et `sourates_eleve`).
   portMaProgressionProvider.overrideWithValue(
     MaProgressionSupabase(Supabase.instance.client),
+  ),
+  // SOCLE-PROGRAMME (12/11/2026) : la meme etape, lue par l'enseignant
+  // (`etape_eleve_lecture`) ; l'eleve et sa famille passent par `ma_progression`.
+  portSuiviPedagogiqueProvider.overrideWithValue(
+    SuiviPedagogiqueSupabase(Supabase.instance.client),
   ),
   // Le reglage de la direction (heures de revision, repetitions estimees),
   // dans la feuille du contenu d'une etape.

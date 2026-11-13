@@ -1,5 +1,5 @@
 // CAHIER-C2 (06/11/2026) : le contenu d'une etape du programme (objectifs,
-// livre et pages, duree par tranche d'age, date limite deduite).
+// livre et pages, duree prevue et date limite par tranche d'age, saisies).
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -118,13 +118,6 @@ void main() {
     expect(ancien.complet, isNull);
   });
 
-  test('date limite deduite : x 1,3 arrondie (regle du 14/10)', () {
-    expect(dateLimiteDeduite(37), 48);
-    expect(dateLimiteDeduite(28), 36);
-    expect(dateLimiteDeduite(24), 31);
-    expect(dateLimiteDeduite(15), 20);
-  });
-
   for (final Size cadre in <Size>[
     const Size(390, 844),
     const Size(1440, 900),
@@ -134,18 +127,20 @@ void main() {
       WidgetTester tester,
     ) async {
       final _Envoi envoi = await _ouvrir(tester, cadre: cadre);
-      expect(find.byType(ChoixNombre), findsNWidgets(4));
+      // Une duree prevue et une date limite par tranche (SOCLE-PROGRAMME :
+      // la date limite se saisit, jamais deduite).
+      expect(find.byType(ChoixNombre), findsNWidgets(8));
       expect(
         find.text(t.admin.programmes.contenu.propositionDetail),
         findsOneWidget,
       );
       expect(
-        find.text(
-          LibellesGroupe.insecable(
-            t.admin.programmes.contenu.dateLimite(semaines: '18'),
-          ),
-        ),
-        findsOneWidget,
+        tester
+            .widget<ChoixNombre>(
+              find.byKey(const ValueKey<String>('contenu-limite-enfant_6_9')),
+            )
+            .valeur,
+        18,
       );
       await tester.enterText(
         find.byKey(const ValueKey<String>('contenu-objectif-2')),

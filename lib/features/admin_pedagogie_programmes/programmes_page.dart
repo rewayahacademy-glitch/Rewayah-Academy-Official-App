@@ -729,13 +729,25 @@ void _ouvrirPublication(
           .publierVersion(versionId: version.id, motif: motif),
       // CAHIER-C2 : le serveur refuse une version dont une etape est
       // incomplete et la nomme ; l'ecran le dit avec le geste qui comble.
+      // SOCLE-PROGRAMME : les deux autres refus du serveur, en mots simples
+      // (sommes des etapes, niveau des bases incomplet), jamais le code brut.
       messageErreur: ({required String message}) {
         const String marque = 'programme_incomplet: ';
-        return message.startsWith(marque)
-            ? t.admin.programmes.contenu.publierIncomplet(
-                etape: message.substring(marque.length),
-              )
-            : t.admin.programmes.publierVersionErreur(message: message);
+        const String incoherent = 'programme_incoherent: ';
+        if (message.startsWith(marque)) {
+          return t.admin.programmes.contenu.publierIncomplet(
+            etape: message.substring(marque.length),
+          );
+        }
+        if (message.startsWith(incoherent)) {
+          return t.admin.programmes.contenu.publierIncoherent(
+            niveau: message.substring(incoherent.length),
+          );
+        }
+        if (message.startsWith('programme_sans_bases')) {
+          return t.admin.programmes.contenu.publierSansBases;
+        }
+        return t.admin.programmes.publierVersionErreur(message: message);
       },
       onSucces: () => ref.invalidate(versionsProgrammeProvider),
     ),

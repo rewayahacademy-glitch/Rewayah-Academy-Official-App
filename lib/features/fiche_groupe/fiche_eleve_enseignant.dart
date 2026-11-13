@@ -25,6 +25,7 @@ import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/suivi/port_suivi_pedagogique.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/tc_outils/fonction_indisponible.dart';
 import '../../core/tc_parcours/port_signalement.dart';
@@ -307,14 +308,30 @@ class BlocEtapeEleve extends ConsumerWidget {
     if (etapes.isLoading && !etapes.hasValue) return const SizedBox.shrink();
     final EtapeEleve? etape = etapes.hasValue ? etapes.value![studentId] : null;
     if (etape == null) {
+      // SOCLE-PROGRAMME (12/11/2026) : un eleve qui a declare savoir lire n'a
+      // pas d'etape supposee ; la lecture unique le dit (« en attente de
+      // l'entretien de lecture »), la meme reponse que chez l'eleve. Une
+      // lecture en echec (fonction absente, reseau) est un etat d'erreur
+      // honnete (« non renseigne »), jamais « pas encore d'etape publiee ».
+      final AsyncValue<SuiviPedagogique?> lecture =
+          etapes.hasError || ref.watch(portSuiviPedagogiqueProvider) == null
+          ? const AsyncValue<SuiviPedagogique?>.data(null)
+          : ref.watch(suiviPedagogiqueProvider(studentId));
+      if (lecture.isLoading && !lecture.hasValue && !lecture.hasError) {
+        return const SizedBox.shrink();
+      }
+      final bool lectureEnEchec = lecture.hasError && !lecture.hasValue;
+      final bool attente = lecture.value?.enAttenteEntretien ?? false;
       return GroupeReglages(
         lignes: <LigneRubrique>[
           LigneRubrique(
             icone: AppIcons.coran,
             libelle: t.enseignant.eleve.etape,
-            legende: etapes.hasError
+            legende: etapes.hasError || lectureEnEchec
                 ? t.enseignant.eleve.nonRenseigne
-                : t.enseignant.eleve.etapeNonPubliee,
+                : (attente
+                      ? t.enseignant.eleve.etapeAttenteEntretien
+                      : t.enseignant.eleve.etapeNonPubliee),
           ),
         ],
       );

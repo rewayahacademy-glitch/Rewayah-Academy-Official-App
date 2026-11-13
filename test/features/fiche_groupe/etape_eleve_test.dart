@@ -5,7 +5,9 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/enseignant/modeles_enseignant.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/suivi/port_suivi_pedagogique.dart';
 import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
+import 'package:rewayah_academy/core/widgets/groupe_reglages.dart';
 import 'package:rewayah_academy/features/fiche_groupe/etape_eleve.dart';
 import 'package:rewayah_academy/features/fiche_groupe/etape_eleve_supabase.dart';
 import 'package:rewayah_academy/features/fiche_groupe/fiche_eleve_enseignant.dart';
@@ -155,6 +157,46 @@ void main() {
     expect(find.text(t.enseignant.eleve.etapeNonPubliee), findsOneWidget);
   });
 
+  testWidgets('eleve qui a declare savoir lire : « en attente de l entretien '
+      'de lecture », la meme reponse que la lecture unique (SOCLE-PROGRAMME)', (
+    WidgetTester tester,
+  ) async {
+    await _fiche(
+      tester,
+      surcharges: <Override>[
+        portSuiviPedagogiqueProvider.overrideWithValue(const _SuiviAttente()),
+      ],
+    );
+    expect(find.text(t.enseignant.eleve.etapeAttenteEntretien), findsOneWidget);
+    expect(find.text(t.enseignant.eleve.etapeNonPubliee), findsNothing);
+  });
+
+  testWidgets('lecture de l etape en echec (fonction absente pendant le '
+      'deploiement) : etat d erreur honnete, pas « pas encore d etape '
+      'publiee »', (WidgetTester tester) async {
+    await _fiche(
+      tester,
+      surcharges: <Override>[
+        portSuiviPedagogiqueProvider.overrideWithValue(const _SuiviEchec()),
+      ],
+    );
+    // « Non renseigne » se lit deja sur d'autres lignes de la fiche : on le cherche dans le
+    // groupe qui porte la ligne de l'etape.
+    final Finder groupeEtape = find.ancestor(
+      of: find.text(t.enseignant.eleve.etape),
+      matching: find.byType(GroupeReglages),
+    );
+    expect(
+      find.descendant(
+        of: groupeEtape,
+        matching: find.text(t.enseignant.eleve.nonRenseigne),
+      ),
+      findsOneWidget,
+    );
+    expect(find.text(t.enseignant.eleve.etapeNonPubliee), findsNothing);
+    expect(find.text(t.enseignant.eleve.etapeAttenteEntretien), findsNothing);
+  });
+
   testWidgets('sans Classe connue : aucune lecture, aucun bloc', (
     WidgetTester tester,
   ) async {
@@ -167,4 +209,20 @@ void main() {
     expect(port.lues, isEmpty);
     expect(find.text(t.enseignant.eleve.etape), findsNothing);
   });
+}
+
+class _SuiviAttente implements PortSuiviPedagogique {
+  const _SuiviAttente();
+
+  @override
+  Future<SuiviPedagogique?> pourEleve(String eleveId) async =>
+      const SuiviPedagogique.attenteEntretien();
+}
+
+class _SuiviEchec implements PortSuiviPedagogique {
+  const _SuiviEchec();
+
+  @override
+  Future<SuiviPedagogique?> pourEleve(String eleveId) async =>
+      throw StateError('etape_eleve_lecture absente');
 }

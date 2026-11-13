@@ -51,6 +51,9 @@ class EtapeDuCycle {
     required this.nom,
     required this.statut,
     this.atteinteLe,
+    this.objectifs = const <String>[],
+    this.dureePrevueSemaines,
+    this.dateLimiteSemaines,
   });
 
   /// Son rang dans le cycle.
@@ -62,8 +65,20 @@ class EtapeDuCycle {
   /// Franchie, en cours ou a venir.
   final StatutEtape statut;
 
-  /// Le jour ou l'eleve y est entre ; nul quand le serveur ne le sait pas.
+  /// Le jour ou l'eleve y est entre ; nul quand le serveur ne le sait pas, ou le
+  /// retient (enfant de 6 a 9 ans qui lit pour lui-meme).
   final DateTime? atteinteLe;
+
+  /// Ses objectifs, dans l'ordre (SOCLE-PROGRAMME).
+  final List<String> objectifs;
+
+  /// Sa duree prevue en semaines, pour la tranche d'age de l'eleve ; nulle quand
+  /// le serveur la retient.
+  final int? dureePrevueSemaines;
+
+  /// Sa date limite en semaines depuis l'entree dans l'etape ; nulle quand le
+  /// serveur la retient.
+  final int? dateLimiteSemaines;
 }
 
 /// Ce que la direction a regle pour l'etape en cours : vide tant qu'elle n'a
@@ -102,18 +117,20 @@ class MaProgression {
         : brut;
     if (ligne is! Map) return null;
     final Object? etape = ligne['etape'];
-    final SuiviPedagogique? suivi = etape is Map
-        ? SuiviPedagogique.depuisJson(<String, Object?>{
-            'etape_nom': etape['nom'],
-            'etape_ordre': etape['ordre'],
-            'objectifs': etape['objectifs'],
-            'duree_prevue_semaines': etape['duree_prevue_semaines'],
-            'date_limite': etape['date_limite'],
-            'semaines_ecoulees': etape['semaines_ecoulees'],
-            'rythme': etape['rythme'],
-            'page_reprise': etape['page_reprise'],
-          })
-        : null;
+    // SOCLE-PROGRAMME : l'etape est celle de la lecture unique (`etape_eleve_lecture`, par
+    // `ma_progression`) ; un eleve qui attend l'entretien de lecture le dit. Une reponse
+    // d'avant le socle, sans les cles nouvelles, se lit encore (valeurs absentes = absentes).
+    final SuiviPedagogique? suivi = ligne['attente'] == 'entretien_de_lecture'
+        ? const SuiviPedagogique.attenteEntretien()
+        : (etape is Map
+              ? SuiviPedagogique.depuisLecture(<String, Object?>{
+                  'etape': etape,
+                  'niveau': ligne['niveau'],
+                  'page_reprise': etape['page_reprise'],
+                  if (ligne.containsKey('eleve_voit_dates'))
+                    'eleve_voit_dates': ligne['eleve_voit_dates'],
+                })
+              : null);
     final Object? cru = ligne['sourates'];
     final SouratesValidees? sourates = cru is Map
         ? SouratesValidees.depuis(
@@ -145,11 +162,21 @@ class MaProgression {
     final String nom = '${e['nom'] ?? ''}'.trim();
     final StatutEtape? statut = StatutEtape.depuisSql(e['statut']);
     if (ordre is! num || nom.isEmpty || statut == null) return null;
+    final Object? objectifs = e['objectifs'];
+    final Object? prevue = e['duree_prevue_semaines'];
+    final Object? limite = e['date_limite_semaines'];
     return EtapeDuCycle(
       ordre: ordre.toInt(),
       nom: nom,
       statut: statut,
       atteinteLe: DateTime.tryParse('${e['atteinte_le']}'),
+      objectifs: <String>[
+        for (final Object? o
+            in objectifs is List ? objectifs : const <Object?>[])
+          if ('${o ?? ''}'.trim().isNotEmpty) '$o'.trim(),
+      ],
+      dureePrevueSemaines: prevue is num ? prevue.toInt() : null,
+      dateLimiteSemaines: limite is num ? limite.toInt() : null,
     );
   }
 
