@@ -602,10 +602,15 @@ void main() {
       // Aucun texte saisi : la phrase de l'envoi sans texte (ligne ccr,
       // reunie par JONCTION-LIGNES-1), meme forme et meme fin.
       final String echec = t.controleur.observation.echecSansTexte;
-      expect(echec, endsWith("l'administration."));
-      final RenderParagraph p = _paragraphe(tester, 'parvenu');
-      expect(p.text.toPlainText(), arabe ? isolerSens(echec) : echec);
-      _suit(p, precedent: 'administration', suivant: '.');
+      // LANGUES-1 (13/11/2026) : la phrase est traduite en arabe ; elle garde
+      // sa marque latine, isolee, et son point final.
+      expect(echec, endsWith(arabe ? 'الإدارة.' : "l'administration."));
+      final RenderParagraph p = _paragraphe(
+        tester,
+        arabe ? 'Rewayah' : 'parvenu',
+      );
+      expect(p.text.toPlainText(), echec);
+      if (!arabe) _suit(p, precedent: 'administration', suivant: '.');
     });
   }
 }
