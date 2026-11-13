@@ -150,7 +150,10 @@ void main() {
     expect(cause(546), ErreurUpload.delai);
     expect(cause(504), ErreurUpload.delai);
     expect(cause(401), ErreurUpload.session);
-    expect(cause(403, 'depot refuse'), ErreurUpload.refuse);
+    // Les 403 de l'ancienne fonction couvraient toutes les causes.
+    expect(cause(403, 'depot refuse'), ErreurUpload.service);
+    expect(cause(403, 'confirmation refusee'), ErreurUpload.service);
+    expect(cause(403), ErreurUpload.service);
     // Chaque refus de la base a son motif : un compte sans droit lit un refus,
     // jamais un reglage ; un document publie ou retire n'est pas « refuse ».
     expect(cause(403, 'depot non autorise'), ErreurUpload.refuse);

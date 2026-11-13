@@ -161,6 +161,9 @@ export function motifRefus(
     message.includes("BibliothequeUploadContenuInvalide")
   ) return "invalide";
   if (message.includes("BibliothequeIntrouvable")) return "non_modifiable";
+  // Un refus de droit dont le nom n'est pas reconnu (42501, « privilege
+  // insuffisant ») reste un refus de droit, jamais une panne.
+  if (erreur?.code === "42501") return "non_autorise";
   return "autre";
 }
 

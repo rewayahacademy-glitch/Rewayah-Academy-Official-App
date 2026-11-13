@@ -247,8 +247,11 @@ class BibliothequeUploadSupabase {
       // 0 : le client n'a recu aucune reponse (`FunctionsFetchException`).
       0 => ErreurUpload.reseau,
       401 => ErreurUpload.session,
-      // Un compte sans droit lit toujours un refus, jamais un reglage.
-      403 => ErreurUpload.refuse,
+      // Un compte sans droit lit toujours un refus, jamais un reglage. Les 403
+      // d'une ancienne fonction (« depot refuse », « intention refusee »,
+      // « confirmation refusee ») couvraient toutes les causes : ils ne disent
+      // pas « votre compte n'en a pas le droit », ils tombent sur `service`.
+      403 when motif.contains('non autorise') => ErreurUpload.refuse,
       409 when motif.contains('deja depose') => ErreurUpload.dejaDepose,
       409 => ErreurUpload.nonModifiable,
       410 => ErreurUpload.expire,

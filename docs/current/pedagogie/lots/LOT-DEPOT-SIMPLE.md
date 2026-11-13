@@ -33,6 +33,10 @@ par cause) puis `claude/depot-simple` (temps 2 : ce lot).
   fichier. Le serveur, lui, accepte déjà la correction (`library_mettre_a_jour` ne demande qu'un
   document non retiré) : lever la règle à l'écran est une décision à prendre, pas un travail lourd.
   La vignette, elle, se change à tout moment.
+- **DETTE POUR LE DIRECTEUR : tant que le paiement n'existe pas, un document de « Pour aller plus
+  loin » est lisible par tout inscrit.** Aucun prix ni paiement n'est dans ce lot.
+- **« Seulement certaines classes » n'est pas dans « Plus de réglages »** du formulaire : ce choix
+  se fait toujours par l'écran d'attribution existant de la fiche, après l'enregistrement.
 - **Un fichier téléchargé s'appelle `document.pdf`** (le nom du fichier du client n'est plus gardé
   nulle part côté serveur). Donner au téléchargement le nom saisi reste à faire.
 - **Trois types déposables seulement** : PDF, audio (MP3, M4A, OGG), image (PNG, JPEG, WebP). Le
@@ -55,9 +59,9 @@ par cause) puis `claude/depot-simple` (temps 2 : ce lot).
 5. **Vocabulaire** : les rayons gardent les titres semés par le serveur. Jamais « Support », jamais
    « Autres ». Aucun prix, aucun paiement.
 6. **K-56 tenu** : un bouton qui ne peut pas aboutir n'est pas rendu, une phrase dit ce qui manque.
-7. **Choix du lot, à confirmer** : le dépôt direct rend le document visible de **tous les inscrits**
-   (visibilité `inscrits`, filtrée par tranche d'âge). Le défaut d'avant (`groupe_assigne`) ne le
-   montrait à personne tant qu'aucune classe n'était choisie.
+7. **Visibilité (accord de l'architecte, 13/11/2026)** : le dépôt direct rend le document visible
+   de **tous les inscrits**, filtré par tranche d'âge, pour les DEUX rayons. Le défaut d'avant
+   (`groupe_assigne`) ne le montrait à personne tant qu'aucune classe n'était choisie.
 
 ## Ce que la personne fait
 
