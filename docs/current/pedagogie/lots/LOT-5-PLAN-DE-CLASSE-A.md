@@ -2,6 +2,7 @@
 
 > Branche `claude/plan-de-classe`, ouverte le 13/11/2026 sur `claude/socle-programme` (lot 1, relu et figé).
 > Plan : `PLAN-DE-CONSTRUCTION.md`, lot 5. Origine de la partie A : « Ce que la direction ne peut pas encore faire », fiche du lot 1.
+> Arrêt du 13/11 (budget) : FAIT et testé en SQL (114 contrôles verts avec le lot 1 seul, le lot 2 avant et le lot 2 après) : B1bis (fiche d'élève supprimée), B2 (`jour_academie` aligné sur le lot 2 ; aperçu par le même chemin que l'écriture), I5 (`10.0`). Analyse, jetons, branchement, revue et 23 tests d'écran verts. NON FAIT : la suite `flutter test` complète n'a pas fini sur cette tête (14 274 passés, 0 échec, arrêtée aux trois quarts) ; le lot 2 doit passer son `CREATE FUNCTION private.jour_academie()` en `CREATE OR REPLACE` ; contre-lecture du delta non faite.
 > Statut : **présent dans le code, testé localement (Postgres 16 nu et `flutter test`), NON installé, NON prouvé en production.**
 > Ce que cette partie ne fait pas : le plan séance par séance daté par le serveur, le point de fin de séance, le chemin, le moteur. Aucun de ces fichiers n'est touché.
 
