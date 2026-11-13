@@ -93,13 +93,12 @@ typedef DemandeApercuOffre = ({String offreId, String fuseau});
 
 /// L'apercu d'une offre, lu une fois par offre et par fuseau.
 final FutureProviderFamily<ApercuCreneau?, DemandeApercuOffre>
-apercuOffreProvider =
-    FutureProvider.family<ApercuCreneau?, DemandeApercuOffre>(
-      (Ref ref, DemandeApercuOffre d) => ref
-          .watch(portApercuOffreProvider)
-          .lire(offreId: d.offreId, fuseau: d.fuseau),
-      retry: (int _, Object _) => null,
-    );
+apercuOffreProvider = FutureProvider.family<ApercuCreneau?, DemandeApercuOffre>(
+  (Ref ref, DemandeApercuOffre d) => ref
+      .watch(portApercuOffreProvider)
+      .lire(offreId: d.offreId, fuseau: d.fuseau),
+  retry: (int _, Object _) => null,
+);
 
 /// « Chez vous : 19:00, puis 20:00 a partir du dimanche 28 mars 2027. »
 /// `null` quand l'heure ne change jamais dans l'annee.
