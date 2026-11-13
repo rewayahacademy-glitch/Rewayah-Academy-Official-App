@@ -52,6 +52,8 @@ class BandeauAttention extends StatelessWidget {
     final AppColorPair paire = palette.paireDe(ton);
     final AppIcon icone = switch (ton) {
       TonEtat.alerte || TonEtat.avertissement => AppIcons.avertissement,
+      // Une reussite se lit par sa coche, pas par la couleur seule.
+      TonEtat.succes => AppIcons.succes,
       _ => AppIcons.info,
     };
     return Semantics(

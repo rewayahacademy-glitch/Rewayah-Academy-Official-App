@@ -82,6 +82,9 @@ class BibliothequeAdminSupabase implements PortBibliothequeAdmin {
   }
 
   @override
+  Future<List<String>> reglagesDepotManquants() => _depot.reglagesManquants();
+
+  @override
   Future<FacettesCatalogue> facettes() async {
     final Map<String, dynamic> f = await _rpc('library_get_catalogue_facettes');
     return FacettesCatalogue(
@@ -258,6 +261,36 @@ class BibliothequeAdminSupabase implements PortBibliothequeAdmin {
         'p_version_id': versionId,
         'p_revision_attendue': revisionAttendue,
         'p_cle': cle,
+      },
+    );
+    return switch (r['resultat']) {
+      'VersionPubliee' => VersionPubliee(
+        revision: (r['revision'] as num).toInt(),
+      ),
+      'PublicationBloquee' => PublicationBloquee(
+        controleJson(_objet(r['controle'])),
+      ),
+      'PublicationEnConflit' => const PublicationEnConflit(),
+      _ => throw const FormatException('Resultat de publication inconnu.'),
+    };
+  }
+
+  @override
+  Future<ResultatPublication> deposerDirect({
+    required String supportId,
+    required int revisionAttendue,
+    required String cle,
+    required AccesDocument acces,
+    required bool droitTiers,
+  }) async {
+    final Map<String, dynamic> r = await _rpc(
+      'library_depot_direct',
+      <String, dynamic>{
+        'p_resource_id': supportId,
+        'p_revision_attendue': revisionAttendue,
+        'p_cle': cle,
+        'p_acces': acces.name,
+        'p_droit_tiers': droitTiers,
       },
     );
     return switch (r['resultat']) {

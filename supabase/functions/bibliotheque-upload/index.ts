@@ -12,6 +12,11 @@ import {
 } from "../_shared/r2/bibliotheque_upload.ts";
 import { stockageConfigure } from "../_shared/r2/domaines.ts";
 import {
+  NOM_SECRET_CONFIRMATION,
+  reglageManquant,
+  reglagesDepot,
+} from "../_shared/r2/reglages_depot.ts";
+import {
   journaliser,
   signerDepot,
   signerLecture,
@@ -60,6 +65,15 @@ Deno.serve(async (requete: Request) => {
   }
 
   const action = corps.action;
+  if (action === "reglages") {
+    // Les reglages de production du depot : LEQUEL manque, par son nom, jamais
+    // sa valeur. Direction seulement : la base refuse tout autre compte.
+    const { data, error } = await compte.sql.rpc("bibliotheque_depot_actif");
+    if (error) return refus("reglages refuses", 403);
+    return json(
+      await reglagesDepot(requete.headers.get("Origin"), data === true),
+    );
+  }
   if (action === "demander") {
     return await demanderDepot(compte, corps);
   }
@@ -104,7 +118,7 @@ async function demanderDepot(
   corps: Record<string, unknown>,
 ): Promise<Response> {
   if (!stockageConfigure("priveApplicatif")) {
-    return refus("stockage indisponible", 503);
+    return refusReglage("stockage indisponible", reglageManquant(["priveApplicatif"]));
   }
   const supportId = typeof corps.support_id === "string"
     ? corps.support_id.trim()
@@ -204,7 +218,7 @@ async function confirmerDepot(
     new TextEncoder().encode(secretConfirmation).byteLength < 32 ||
     secretConfirmation.trim() !== secretConfirmation
   ) {
-    return refus("confirmation indisponible", 503);
+    return refusReglage("confirmation indisponible", NOM_SECRET_CONFIRMATION);
   }
   const debut = Date.now();
   const { data, error } = await compte.sql.rpc("lire_upload_bibliotheque", {
@@ -219,7 +233,10 @@ async function confirmerDepot(
     ? "supports" as const
     : "priveApplicatif" as const;
   if (!stockageConfigure(domaineTemp) || !stockageConfigure(domaineFinal)) {
-    return refus("stockage indisponible", 503);
+    return refusReglage(
+      "stockage indisponible",
+      reglageManquant([domaineTemp, domaineFinal]),
+    );
   }
   try {
     const cleTemp = verifierCle(domaineTemp, intention.cle_temporaire);
@@ -304,9 +321,18 @@ async function confirmerDepot(
  * le dit (503 « confirmation mal reglee ») au lieu d'un refus (DEPOT-SIMPLE). */
 function refusConfirmation(erreur: { message?: string }): Response {
   if ((erreur.message ?? "").includes("ConfirmationNonAutorisee")) {
-    return refus("confirmation mal reglee", 503);
+    return refusReglage("confirmation mal reglee", NOM_SECRET_CONFIRMATION);
   }
   return refus("confirmation refusee", 403);
+}
+
+/** Un 503 qui nomme le reglage en cause (son NOM, jamais sa valeur), pour que
+ * la direction sache lequel poser sans le decouvrir par des echecs. */
+function refusReglage(message: string, reglage: string | null): Response {
+  return json(
+    reglage === null ? { error: message } : { error: message, reglage },
+    503,
+  );
 }
 
 function typesPour(finalite: string): string[] {
@@ -340,7 +366,7 @@ async function demanderVignette(
   corps: Record<string, unknown>,
 ): Promise<Response> {
   if (!stockageConfigure("priveApplicatif")) {
-    return refus("stockage indisponible", 503);
+    return refusReglage("stockage indisponible", reglageManquant(["priveApplicatif"]));
   }
   const documentId = typeof corps.support_id === "string"
     ? corps.support_id.trim()
@@ -432,7 +458,7 @@ async function confirmerVignette(
     new TextEncoder().encode(secretConfirmation).byteLength < 32 ||
     secretConfirmation.trim() !== secretConfirmation
   ) {
-    return refus("confirmation indisponible", 503);
+    return refusReglage("confirmation indisponible", NOM_SECRET_CONFIRMATION);
   }
   const debut = Date.now();
   const { data, error } = await compte.sql.rpc("lire_vignette_bibliotheque", {
@@ -445,7 +471,10 @@ async function confirmerVignette(
   if (
     !stockageConfigure("priveApplicatif") || !stockageConfigure("supports")
   ) {
-    return refus("stockage indisponible", 503);
+    return refusReglage(
+      "stockage indisponible",
+      reglageManquant(["priveApplicatif", "supports"]),
+    );
   }
   try {
     const cleTemp = verifierCle(

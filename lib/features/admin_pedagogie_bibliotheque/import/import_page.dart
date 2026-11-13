@@ -8,12 +8,17 @@
 /// 2. corriger le nom s'il le faut, ajouter une description (facultative) ;
 /// 3. dire si le fichier se lit seulement dans l'application ou se télécharge ;
 /// 4. dire où le ranger (les rayons viennent du serveur) ;
-/// 5. un seul bouton, « Ajouter le document », qui n'est rendu que fichier
-///    vérifié (jamais grisé) et mène à la vérification avant publication.
+/// 5. au besoin, ajouter une vignette (facultative, jamais bloquante) ;
+/// 6. un seul bouton, « Enregistrer le document », rendu seulement quand il
+///    peut aboutir (jamais grisé, une phrase dit ce qui manque) : il publie
+///    vraiment (dépôt direct de la direction, migration 20261124700000).
 ///
-/// Tout le reste (âges, étapes, lecture, droits, preuve) a une valeur par
-/// défaut sûre ou vit dans « Plus de réglages », replié. La vignette ne se
-/// demande plus ici : couverture selon le type, vignette depuis la fiche.
+/// Chaque dépôt a trois états visibles, jamais par la couleur seule : en
+/// cours (barre et pourcentage), réussi (coche, ton de succès, phrase),
+/// échoué (alerte, ton d'alerte, phrase vraie, « Réessayer »).
+///
+/// Tout le reste (âges, étapes, lecture, droits détaillés, preuve) a une
+/// valeur par défaut sûre et vit dans « Plus de réglages », replié.
 ///
 /// Le dépôt passe par le port (intention, envoi, confirmation du serveur) ; le
 /// client ne choisit jamais la clé de stockage. Chaque échec a sa phrase vraie
@@ -21,6 +26,7 @@
 library;
 
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -36,13 +42,16 @@ import '../../../core/tc_bibliotheque/contenu_arabe.dart';
 import '../../../core/tc_bibliotheque/donnees_catalogue.dart';
 import '../../../core/tc_bibliotheque/library_resource.dart';
 import '../../../core/tc_groupe/libelles_tc_groupe.dart';
+import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/action_principale.dart';
 import '../../../core/widgets/app_card.dart';
+import '../../../core/widgets/bandeau_attention.dart';
 import '../../../core/widgets/choice_card_group.dart';
 import '../../../core/widgets/etat_systeme.dart';
 import '../../../core/widgets/lien_fleche.dart';
 import '../../../core/widgets/page_shell.dart';
+import '../../../core/widgets/status_pill.dart' show TonEtat;
 import '../../../core/widgets/sous_navigation_domaine.dart';
 import '../../../core/widgets/zone_saisie.dart';
 import '../catalogue/catalogue_page.dart' show rangBibliotheque;
@@ -113,6 +122,37 @@ String phraseErreurDepot(ErreurUpload? erreur) {
   };
 }
 
+/// La phrase d'un echec, suivie du NOM du reglage du serveur quand la fonction
+/// le donne : la direction sait lequel poser, sans le decouvrir par un echec.
+String phraseEchecDepot(ErreurUpload? erreur, String? reglage) {
+  final String phrase = phraseErreurDepot(erreur);
+  if (reglage == null) return phrase;
+  return '$phrase ${t.admin.bibliotheque.import.simple.reglageNomme(nom: reglage)}';
+}
+
+/// La taille d'un fichier, lisible : octets, Ko ou Mo.
+String tailleLisible(int octets) {
+  final s = t.admin.bibliotheque.import.simple;
+  String nombre(double v) {
+    final String brut = v >= 10 || v == v.roundToDouble()
+        ? v.round().toString()
+        : v.toStringAsFixed(1);
+    // La virgule decimale du francais et de l'arabe.
+    return brut.replaceAll('.', ',');
+  }
+
+  final String texte = octets < 1024
+      ? s.tailleO(n: '$octets')
+      : octets < 1024 * 1024
+      ? s.tailleKo(n: nombre(octets / 1024))
+      : s.tailleMo(n: nombre(octets / (1024 * 1024)));
+  return LibellesGroupe.valeurSeule(texte);
+}
+
+/// Le reglage nomme par une exception de la demande, s'il y en a un.
+String? reglageDeLaDemande(Object erreur) =>
+    erreur is DepotImpossible ? erreur.reglage : null;
+
 /// La cause a afficher quand la demande de depot leve une exception.
 ErreurUpload causeDeLaDemande(Object erreur) => switch (erreur) {
   DepotImpossible(:final ErreurUpload cause) => cause,
@@ -154,8 +194,7 @@ class _Import extends ConsumerStatefulWidget {
   ConsumerState<_Import> createState() => _ImportEtat();
 }
 
-const String _accesLecture = 'lecture';
-const String _accesTelechargement = 'telechargement';
+const int _vignetteMaxOctets = 2 * 1024 * 1024;
 
 class _ImportEtat extends ConsumerState<_Import> {
   final TextEditingController _nom = TextEditingController();
@@ -172,14 +211,21 @@ class _ImportEtat extends ConsumerState<_Import> {
   /// La phrase d'un fichier qui n'est pas pris (vide, video, inconnu, lourd).
   String? _refus;
 
+  /// La phrase d'une vignette qui n'est pas prise (pas une image, trop lourde).
+  String? _refusVignette;
+
   /// Vrai quand la personne donne un lien a la place d'un fichier.
   bool _parLien = false;
 
-  String _acces = _accesLecture;
+  AccesDocument _acces = AccesDocument.lecture;
   String _rayon = codeRayonCours;
   List<RayonBibliotheque> _rayons = const <RayonBibliotheque>[];
   String? _langue;
   bool _plus = false;
+
+  /// La declaration « l'academie a le droit de diffuser ce document », exigee
+  /// hors du rayon des cours.
+  bool _droitTiers = false;
 
   /// Les tranches cochees ; `null` : le defaut du serveur (les quatre, ou
   /// trois sans les 6 a 9 ans pour un lien, D1).
@@ -187,25 +233,39 @@ class _ImportEtat extends ConsumerState<_Import> {
   final Set<String> _etapes = <String>{};
   String? _lecture;
 
-  /// Vrai seulement quand le serveur a dit que le depot de fichiers est active.
+  /// Vrai seulement quand le serveur a dit que le depot de fichiers est pret.
   /// `null` : pas de reponse ; sans reponse, aucun bouton de fichier.
   bool? _depotActif;
   bool _depotInconnu = false;
+
+  /// Les reglages de production qui manquent, par leur nom.
+  List<String> _manquants = const <String>[];
 
   String? _supportId;
   FicheSupport? _existante;
   final _Depot _support = _Depot();
   final _Depot _preuve = _Depot();
+  final _Depot _vignette = _Depot();
+
+  /// Vrai quand le document porte une vignette (deposee ici, ou deja la).
+  bool _vignettePosee = false;
+  String? _messageVignette;
 
   bool _incomplet = false;
   String? _erreur;
   bool _envoi = false;
 
+  /// Vrai quand le document est enregistre et visible : l'ecran le dit.
+  bool _enregistre = false;
+
+  /// Vrai quand le document est garde en brouillon sans pouvoir etre publie.
+  bool _bloque = false;
+
   @override
   void initState() {
     super.initState();
     _supportId = widget.supportId;
-    // L'ecole trop longue retire le bouton d'ajout (D2) : l'ecran la suit.
+    // L'ecole trop longue retire le bouton (D2) : l'ecran la suit.
     _ecole.addListener(_rafraichir);
     unawaited(_initialiser());
   }
@@ -224,12 +284,7 @@ class _ImportEtat extends ConsumerState<_Import> {
     } on Object {
       // Sans rayons, le document va au rayon des cours (defaut du serveur).
     }
-    try {
-      final bool actif = await widget.port.depotActif();
-      if (mounted) setState(() => _depotActif = actif);
-    } on Object {
-      if (mounted) setState(() => _depotInconnu = true);
-    }
+    await _lireReglages();
     final String? id = _supportId;
     if (id == null) return;
     try {
@@ -251,8 +306,9 @@ class _ImportEtat extends ConsumerState<_Import> {
         _source.text = fiche.droits.sourceTitre ?? '';
         _titulaire.text = fiche.droits.titulaire ?? '';
         _attribution.text = fiche.droits.attribution ?? '';
+        _vignettePosee = fiche.aVignette;
         if (fiche.droits.usages.contains(UsageDroit.telechargement)) {
-          _acces = _accesTelechargement;
+          _acces = AccesDocument.telechargement;
         }
       });
     } on Object {
@@ -260,10 +316,34 @@ class _ImportEtat extends ConsumerState<_Import> {
     }
   }
 
+  /// Le depot est-il pret ? La fonction nomme chaque reglage qui manque ; si
+  /// elle ne sait pas encore le dire (ancienne version), la base dit au moins
+  /// si son secret est pose.
+  Future<void> _lireReglages() async {
+    try {
+      final List<String> manquants = await widget.port.reglagesDepotManquants();
+      if (!mounted) return;
+      setState(() {
+        _manquants = manquants;
+        _depotActif = manquants.isEmpty;
+      });
+      return;
+    } on Object {
+      // On retombe sur la lecture de la base.
+    }
+    try {
+      final bool actif = await widget.port.depotActif();
+      if (mounted) setState(() => _depotActif = actif);
+    } on Object {
+      if (mounted) setState(() => _depotInconnu = true);
+    }
+  }
+
   @override
   void dispose() {
     _support.annulerAbonnement();
     _preuve.annulerAbonnement();
+    _vignette.annulerAbonnement();
     for (final TextEditingController c in <TextEditingController>[
       _nom,
       _description,
@@ -278,7 +358,7 @@ class _ImportEtat extends ConsumerState<_Import> {
     super.dispose();
   }
 
-  /// Pas de bouton de fichier tant que le serveur n'a pas dit « active ».
+  /// Pas de bouton de fichier tant que le serveur n'a pas dit « pret ».
   bool get _depotInactif => _depotActif != true;
 
   /// L'adresse d'un lien est une URL https dont l'hote est un nom de domaine ;
@@ -302,28 +382,42 @@ class _ImportEtat extends ConsumerState<_Import> {
   bool get _descriptionManque =>
       _parLien &&
       _existante == null &&
+      _lienValide &&
       _typeDuLien == TypeRessource.lienExterne &&
       _description.text.trim().isEmpty;
 
-  bool get _fichierVerifie =>
+  bool get _fichierAjoute =>
       _support.pret || (_existante?.derniereVersion?.empreinte != null);
+
+  bool get _lienComplet => _lienValide || _existante != null;
+
+  /// Un document qui ne vient pas de l'academie : la declaration est exigee.
+  bool get _tiers => _rayon != codeRayonCours;
 
   /// Les tranches retenues : celles cochees, sinon le defaut (D1 : un lien
   /// exclut les 6 a 9 ans).
   Set<String> get _tranchesEffectives =>
       _tranches ?? (_parLien ? tranchesLienParDefaut : tranchesTout);
 
-  /// Vrai quand « Ajouter le document » peut aboutir : fichier verifie (ou
-  /// lien complet), au moins une tranche d'age (D1), une ecole qui tient en
-  /// base (D2).
-  bool get _pret =>
-      _tranchesEffectives.isNotEmpty &&
-      ecoleValide(_ecole.text) &&
-      (_parLien
-          ? (_lienValide || _existante != null) &&
-                _nom.text.trim().isNotEmpty &&
-                !_descriptionManque
-          : _fichierVerifie);
+  /// Ce qui manque encore pour enregistrer, en une phrase ; `null` quand
+  /// « Enregistrer le document » peut aboutir. Un bouton qui ne peut pas
+  /// aboutir n'est pas rendu : cette phrase tient sa place (K-56).
+  String? get _manque {
+    final s = t.admin.bibliotheque.import.simple;
+    final c = t.admin.bibliotheque.import.classement;
+    if (_parLien) {
+      if (!_lienComplet || _nom.text.trim().isEmpty) return s.aideLien;
+      if (_descriptionManque) return s.descriptionLien;
+    } else {
+      if (_enEnvoi(_support)) return s.aideEnvoi;
+      if (!_fichierAjoute) return s.aideFichier;
+      if (_nom.text.trim().isEmpty) return s.aideNom;
+    }
+    if (_tiers && !_droitTiers) return s.aideDroit;
+    if (_tranchesEffectives.isEmpty) return c.tranchesAucune;
+    if (!ecoleValide(_ecole.text)) return c.ecoleTrop;
+    return null;
+  }
 
   String get _langueInterface => LocaleSettings.currentLocale.languageCode;
 
@@ -391,6 +485,81 @@ class _ImportEtat extends ConsumerState<_Import> {
     await _envoyer(_support, FinaliteUpload.support, verifie);
   }
 
+  /// La vignette, facultative : une image de 2 Mio au plus. Son echec ne
+  /// retient jamais l'enregistrement du document.
+  Future<void> _choisirVignette() async {
+    final v = t.admin.bibliotheque.import.simple.vignette;
+    setState(() {
+      _refusVignette = null;
+      _messageVignette = null;
+    });
+    final FichierChoisi? fichier = await ref
+        .read(selecteurFichierSupportProvider)
+        .choisir(TypeRessource.image);
+    if (fichier == null || !mounted) return;
+    final LectureFichier lecture = lireFichier(
+      fichier.octets,
+      nom: fichier.nom,
+    );
+    if (lecture is! FichierReconnu || lecture.type != TypeRessource.image) {
+      setState(() => _refusVignette = v.pasUneImage);
+      return;
+    }
+    if (fichier.octets.length > _vignetteMaxOctets) {
+      setState(() => _refusVignette = v.tropLourde);
+      return;
+    }
+    final FichierChoisi image = FichierChoisi(
+      nom: fichier.nom,
+      octets: fichier.octets,
+      mime: lecture.mime,
+    );
+    _vignette
+      ..annulerAbonnement()
+      ..fichier = image
+      ..intention = null;
+    setState(
+      () => _vignette.progression = const ProgressionUpload(
+        phase: PhaseUpload.attente,
+      ),
+    );
+    await _envoyer(_vignette, FinaliteUpload.vignette, image);
+  }
+
+  Future<void> _retirerVignette() async {
+    final String? id = _supportId;
+    if (id == null) return;
+    final v = t.admin.bibliotheque.import.simple.vignette;
+    try {
+      final FicheSupport fiche = await widget.port.fiche(id);
+      final ResultatEcriture r = await widget.port.mettreAJour(
+        supportId: id,
+        modification: const ModificationSupport(retirerVignette: true),
+        revisionAttendue: fiche.revision,
+      );
+      if (!mounted) return;
+      if (r is EcritureFaite) {
+        _vignette.annulerAbonnement();
+        setState(() {
+          _vignette
+            ..fichier = null
+            ..progression = null
+            ..intention = null;
+          _vignettePosee = false;
+          _messageVignette = v.retiree;
+        });
+      } else {
+        setState(() => _messageVignette = t.admin.bibliotheque.fiche.conflit);
+      }
+    } on Object {
+      if (mounted) {
+        setState(
+          () => _messageVignette = t.admin.bibliotheque.fiche.echecEnregistrer,
+        );
+      }
+    }
+  }
+
   /// Cree le brouillon si besoin : il en faut un pour deposer.
   Future<String?> _assurerBrouillon() async {
     if (_supportId != null) return _supportId;
@@ -424,12 +593,13 @@ class _ImportEtat extends ConsumerState<_Import> {
     }
   }
 
-  void _echec(_Depot depot, ErreurUpload cause) {
+  void _echec(_Depot depot, ErreurUpload cause, String? reglage) {
     if (!mounted) return;
     setState(
       () => depot.progression = ProgressionUpload(
         phase: PhaseUpload.echec,
         erreur: cause,
+        reglage: reglage,
       ),
     );
   }
@@ -456,26 +626,35 @@ class _ImportEtat extends ConsumerState<_Import> {
       depot.intention = intention;
       depot.abonnement = widget.port
           .deposer(uploadId: intention.id, octets: fichier.octets)
-          .listen((ProgressionUpload p) {
-            if (mounted) setState(() => depot.progression = p);
-          }, onError: (Object e) => _echec(depot, causeDeLaDemande(e)));
+          .listen(
+            (ProgressionUpload p) {
+              if (!mounted) return;
+              setState(() {
+                depot.progression = p;
+                if (identical(depot, _vignette) &&
+                    p.phase == PhaseUpload.pret) {
+                  _vignettePosee = true;
+                }
+              });
+            },
+            onError: (Object e) =>
+                _echec(depot, causeDeLaDemande(e), reglageDeLaDemande(e)),
+          );
     } on Object catch (e) {
       // Chaque cause a sa phrase : jamais « connexion » par defaut.
-      _echec(depot, causeDeLaDemande(e));
+      _echec(depot, causeDeLaDemande(e), reglageDeLaDemande(e));
     }
   }
 
-  Future<void> _reessayer() async {
-    final FichierChoisi? fichier = _support.fichier;
+  Future<void> _reessayer(_Depot depot, FinaliteUpload finalite) async {
+    final FichierChoisi? fichier = depot.fichier;
     if (fichier == null) return;
-    _support.annulerAbonnement();
+    depot.annulerAbonnement();
     setState(() {
       _erreur = null;
-      _support.progression = const ProgressionUpload(
-        phase: PhaseUpload.attente,
-      );
+      depot.progression = const ProgressionUpload(phase: PhaseUpload.attente);
     });
-    await _envoyer(_support, FinaliteUpload.support, fichier);
+    await _envoyer(depot, finalite, fichier);
   }
 
   Future<void> _deposerPreuve() async {
@@ -506,17 +685,26 @@ class _ImportEtat extends ConsumerState<_Import> {
     }
   }
 
-  /// Le seul bouton : enregistre le nom, la description, le rangement et
-  /// l'acces, puis mene a la verification avant publication.
-  Future<void> _ajouter() async {
-    if (_nom.text.trim().isEmpty) {
+  bool get _droitsSaisis =>
+      _source.text.trim().isNotEmpty ||
+      _titulaire.text.trim().isNotEmpty ||
+      _attribution.text.trim().isNotEmpty ||
+      _preuve.pret;
+
+  /// Le seul bouton : enregistre le nom, la description et le rayon, puis
+  /// publie le document (depot direct de la direction). Les droits restes
+  /// vides prennent leur valeur par defaut cote serveur.
+  Future<void> _enregistrer() async {
+    if (_manque != null) {
       setState(() => _incomplet = true);
       return;
     }
     setState(() {
       _envoi = true;
       _erreur = null;
+      _bloque = false;
     });
+    final s = t.admin.bibliotheque.import.simple;
     try {
       final bool nouveau = _supportId == null;
       final String? id = await _assurerBrouillon();
@@ -524,7 +712,7 @@ class _ImportEtat extends ConsumerState<_Import> {
       FicheSupport fiche = await widget.port.fiche(id);
       if (!nouveau) {
         // Le brouillon a ete cree au choix du fichier : ce que la personne a
-        // corrige depuis (nom, description, rangement, reglages) part ici.
+        // corrige depuis (nom, description, rayon, reglages) part ici.
         final ResultatEcriture maj = await widget.port.mettreAJour(
           supportId: id,
           modification: ModificationSupport(
@@ -545,48 +733,112 @@ class _ImportEtat extends ConsumerState<_Import> {
         }
         fiche = await widget.port.fiche(id);
       }
-      final ResultatEcriture r = await widget.port.revoirDroits(
+      if (_droitsSaisis) {
+        // Ce que la direction a precise dans « Plus de reglages » est garde
+        // tel quel ; le serveur ne remplit que ce qui est reste vide.
+        final ResultatEcriture droits = await widget.port.revoirDroits(
+          supportId: id,
+          versionId: fiche.derniereVersion?.id ?? '',
+          saisie: SaisieDroits(
+            sourceTitre: _source.text.trim(),
+            titulaire: _titulaire.text.trim(),
+            preuveFournie: _preuve.pret || fiche.droits.preuveFournie,
+            usages: <UsageDroit>{
+              UsageDroit.application,
+              UsageDroit.classe,
+              if (fiche.droits.usages.contains(UsageDroit.horsLigne))
+                UsageDroit.horsLigne,
+            },
+            attribution: _attribution.text.trim().isEmpty
+                ? null
+                : _attribution.text.trim(),
+            approuver: false,
+          ),
+          revisionAttendue: fiche.revision,
+        );
+        if (!mounted) return;
+        if (droits is! EcritureFaite) {
+          setState(() => _erreur = t.admin.bibliotheque.fiche.conflit);
+          return;
+        }
+        fiche = await widget.port.fiche(id);
+      }
+      final ResultatPublication r = await widget.port.deposerDirect(
         supportId: id,
-        versionId: fiche.derniereVersion?.id ?? '',
-        saisie: SaisieDroits(
-          sourceTitre: _source.text.trim(),
-          titulaire: _titulaire.text.trim(),
-          preuveFournie: _preuve.pret || fiche.droits.preuveFournie,
-          // L'acces choisi : lire dans l'application et en classe, et le
-          // telechargement seulement s'il est permis. Le hors ligne garde ce
-          // que la fiche porte deja (rien pour un nouveau document).
-          usages: <UsageDroit>{
-            UsageDroit.application,
-            UsageDroit.classe,
-            if (_acces == _accesTelechargement && !_parLien)
-              UsageDroit.telechargement,
-            if (fiche.droits.usages.contains(UsageDroit.horsLigne))
-              UsageDroit.horsLigne,
-          },
-          attribution: _attribution.text.trim().isEmpty
-              ? null
-              : _attribution.text.trim(),
-          approuver: false,
-        ),
         revisionAttendue: fiche.revision,
+        // La meme tentative rend la meme reponse ; une correction en change.
+        cle: 'depot-direct-$id-${fiche.revision}',
+        acces: _parLien ? AccesDocument.lecture : _acces,
+        droitTiers: _tiers && _droitTiers,
       );
       if (!mounted) return;
-      if (r is EcritureFaite) {
-        GoRouter.of(context).go(Routes.adminPedagogieSupportPublication(id));
-        return;
+      switch (r) {
+        case VersionPubliee():
+          setState(() => _enregistre = true);
+        case PublicationBloquee():
+          setState(() {
+            _bloque = true;
+            _erreur = s.bloque;
+          });
+        case PublicationEnConflit():
+          setState(() => _erreur = t.admin.bibliotheque.fiche.conflit);
       }
-      setState(() => _erreur = t.admin.bibliotheque.fiche.conflit);
     } on Object {
-      if (mounted) {
-        setState(() => _erreur = t.admin.bibliotheque.import.erreurs.droits);
-      }
+      if (mounted) setState(() => _erreur = s.enregistrementEchec);
     } finally {
       if (mounted) setState(() => _envoi = false);
     }
   }
 
+  /// Repart d'un formulaire vide, pour ajouter un autre document.
+  void _recommencer() {
+    _support.annulerAbonnement();
+    _preuve.annulerAbonnement();
+    _vignette.annulerAbonnement();
+    for (final TextEditingController c in <TextEditingController>[
+      _nom,
+      _description,
+      _lien,
+      _source,
+      _titulaire,
+      _attribution,
+      _ecole,
+    ]) {
+      c.clear();
+    }
+    setState(() {
+      for (final _Depot d in <_Depot>[_support, _preuve, _vignette]) {
+        d
+          ..fichier = null
+          ..intention = null
+          ..progression = null;
+      }
+      _type = null;
+      _refus = null;
+      _refusVignette = null;
+      _parLien = false;
+      _acces = AccesDocument.lecture;
+      _rayon = codeRayonCours;
+      _langue = null;
+      _plus = false;
+      _droitTiers = false;
+      _tranches = null;
+      _etapes.clear();
+      _lecture = null;
+      _supportId = null;
+      _existante = null;
+      _vignettePosee = false;
+      _messageVignette = null;
+      _incomplet = false;
+      _erreur = null;
+      _enregistre = false;
+      _bloque = false;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (_enregistre) return _reussite();
     // Le reste du formulaire n'apparait qu'une fois le fichier choisi (ou le
     // lien demande) : avant, une seule chose a faire.
     final bool suite =
@@ -603,18 +855,72 @@ class _ImportEtat extends ConsumerState<_Import> {
           _sectionPlus(),
         ],
         Ecart.vLg,
-        if (_erreur != null)
-          Padding(
-            padding: const EdgeInsets.only(bottom: AppSpacing.md),
-            child: Semantics(
-              liveRegion: true,
-              child: Text(
-                _erreur!,
-                key: const ValueKey<String>('import-erreur'),
-              ),
-            ),
+        if (_erreur != null) ...<Widget>[
+          BandeauAttention(
+            key: const ValueKey<String>('import-erreur'),
+            ton: TonEtat.alerte,
+            titre: t.admin.bibliotheque.import.simple.nonEnregistre,
+            message: _erreur!,
+            action: _bloque && _supportId != null
+                ? LienFleche(
+                    key: const ValueKey<String>('import-voir-verification'),
+                    libelle:
+                        t.admin.bibliotheque.import.simple.voirVerification,
+                    onPress: () => GoRouter.of(
+                      context,
+                    ).go(Routes.adminPedagogieSupportPublication(_supportId!)),
+                  )
+                : null,
           ),
+          Ecart.vLg,
+        ],
         _actions(),
+      ],
+    );
+  }
+
+  /// Le document est enregistre et visible : l'ecran le dit, avec un lien
+  /// pour l'ouvrir.
+  Widget _reussite() {
+    final s = t.admin.bibliotheque.import.simple;
+    final String? id = _supportId;
+    return Column(
+      key: const ValueKey<String>('import-reussite'),
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        BandeauAttention(
+          key: const ValueKey<String>('import-enregistre'),
+          ton: TonEtat.succes,
+          titre: s.enregistreTitre,
+          message: s.enregistreMessage,
+          action: id == null
+              ? null
+              : LienFleche(
+                  key: const ValueKey<String>('import-ouvrir'),
+                  libelle: s.ouvrir,
+                  onPress: () =>
+                      GoRouter.of(context).go(Routes.adminPedagogieSupport(id)),
+                ),
+        ),
+        Ecart.vLg,
+        LienFleche(
+          key: const ValueKey<String>('import-autre'),
+          libelle: s.autre,
+          alignerEnDebut: true,
+          onPress: _recommencer,
+        ),
+        Ecart.vSm,
+        Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: ActionPrincipale(
+            key: const ValueKey<String>('import-retour'),
+            libelle: t.admin.bibliotheque.import.retour,
+            niveau: NiveauAction.tertiaire,
+            pleineLargeur: false,
+            onPress: () =>
+                GoRouter.of(context).go(Routes.adminPedagogieBibliotheque),
+          ),
+        ),
       ],
     );
   }
@@ -623,6 +929,45 @@ class _ImportEtat extends ConsumerState<_Import> {
     header: true,
     child: Text(texte, style: Theme.of(context).textTheme.titleMedium),
   );
+
+  /// Le depot n'est pas pret : l'ecran nomme le reglage qui manque (son nom,
+  /// jamais sa valeur), au lieu de le laisser decouvrir par un echec.
+  List<Widget> _etatDuDepot() {
+    final f = t.admin.bibliotheque.import;
+    if (_manquants.isNotEmpty) {
+      return <Widget>[
+        BandeauAttention(
+          key: const ValueKey<String>('import-reglages'),
+          titre: f.simple.reglagesTitre,
+          message: <String>[
+            f.simple.reglagesMessage,
+            for (final String nom in _manquants)
+              f.simple.reglageNomme(nom: nom),
+          ].join('\n'),
+        ),
+        Ecart.vMd,
+      ];
+    }
+    if (_depotActif == false) {
+      return <Widget>[
+        Text(
+          f.classement.depotInactif,
+          key: const ValueKey<String>('import-depot-inactif'),
+        ),
+        Ecart.vMd,
+      ];
+    }
+    if (_depotActif == null && _depotInconnu) {
+      return <Widget>[
+        Text(
+          f.classement.depotInconnu,
+          key: const ValueKey<String>('import-depot-inconnu'),
+        ),
+        Ecart.vMd,
+      ];
+    }
+    return const <Widget>[];
+  }
 
   Widget _sectionFichier() {
     final f = t.admin.bibliotheque.import;
@@ -665,37 +1010,26 @@ class _ImportEtat extends ConsumerState<_Import> {
               ),
             ],
           ] else if (dejaLa)
-            Text(
-              f.simple.fichierPresent,
+            BandeauAttention(
               key: const ValueKey<String>('import-fichier-present'),
+              ton: TonEtat.succes,
+              titre: f.simple.fichierAjoute,
+              message: f.simple.fichierPresent,
             )
           else ...<Widget>[
             if (_support.fichier == null) ...<Widget>[
               Text(f.simple.intro, key: const ValueKey<String>('import-intro')),
               Ecart.vMd,
             ],
-            if (_depotActif == false) ...<Widget>[
-              Text(
-                f.classement.depotInactif,
-                key: const ValueKey<String>('import-depot-inactif'),
-              ),
-              Ecart.vMd,
-            ] else if (_depotActif == null && _depotInconnu) ...<Widget>[
-              Text(
-                f.classement.depotInconnu,
-                key: const ValueKey<String>('import-depot-inconnu'),
-              ),
-              Ecart.vMd,
-            ],
+            ..._etatDuDepot(),
             if (!_depotInactif) _blocFichier(),
             if (_refus != null) ...<Widget>[
               Ecart.vSm,
-              Semantics(
-                liveRegion: true,
-                child: Text(
-                  _refus!,
-                  key: const ValueKey<String>('import-refus'),
-                ),
+              BandeauAttention(
+                key: const ValueKey<String>('import-refus'),
+                ton: TonEtat.alerte,
+                titre: f.simple.fichierEchec,
+                message: _refus!,
               ),
             ],
             if (existante == null &&
@@ -727,70 +1061,110 @@ class _ImportEtat extends ConsumerState<_Import> {
             p.phase == PhaseUpload.verification);
   }
 
-  String? _phraseEtat(ProgressionUpload? p) {
-    final i = t.admin.bibliotheque.import;
-    return switch (p?.phase) {
-      null => null,
-      PhaseUpload.attente => i.etats.attente,
-      PhaseUpload.envoi => LibellesGroupe.valeurSeule(
-        i.etats.envoi(pourcent: '${((p!.partie) * 100).round()}'),
-      ),
-      PhaseUpload.enAttenteConfirmation => i.etats.confirmation,
-      PhaseUpload.verification => i.etats.verification,
-      PhaseUpload.pret => i.etats.pret,
-      PhaseUpload.annule => i.etats.annule,
-      PhaseUpload.echec => phraseErreurDepot(p!.erreur),
-    };
-  }
-
-  /// La progression et l'etat d'un depot, avec son annulation.
-  List<Widget> _suivi(_Depot depot, String suffixe) {
+  /// Les trois etats d'un depot, visibles d'un coup d'oeil et jamais par la
+  /// couleur seule : en cours (barre, pourcentage, phrase), reussi (coche,
+  /// ton de succes, phrase), echoue (alerte, ton d'alerte, phrase vraie et
+  /// « Reessayer »). Chaque etat est annonce aux lecteurs d'ecran.
+  List<Widget> _etat(
+    _Depot depot,
+    String suffixe, {
+    required String titreReussite,
+    required String detailReussite,
+    required String titreEchec,
+    required VoidCallback onReessayer,
+    String? suiteEchec,
+  }) {
     final i = t.admin.bibliotheque.import;
     final ProgressionUpload? p = depot.progression;
-    final bool enEnvoi = _enEnvoi(depot);
-    final String? phrase = _phraseEtat(p);
-    return <Widget>[
-      if (p != null && enEnvoi) ...<Widget>[
+    if (p == null) return const <Widget>[];
+    if (_enEnvoi(depot)) {
+      final int pourcent = (p.partie * 100).round();
+      final String phrase = switch (p.phase) {
+        PhaseUpload.attente => i.etats.attente,
+        PhaseUpload.enAttenteConfirmation => i.etats.confirmation,
+        PhaseUpload.verification => i.etats.verification,
+        _ => LibellesGroupe.valeurSeule(i.etats.envoi(pourcent: '$pourcent')),
+      };
+      return <Widget>[
         Ecart.vSm,
         Semantics(
           label: i.progression,
-          value: '${((p.partie) * 100).round()} %',
+          value: '$pourcent %',
           child: LinearProgressIndicator(
             key: ValueKey<String>('import-progression-$suffixe'),
             value: p.phase == PhaseUpload.attente ? null : p.partie,
           ),
         ),
-      ],
-      if (phrase != null) ...<Widget>[
         Ecart.vSm,
         Semantics(
           liveRegion: true,
           child: Text(phrase, key: ValueKey<String>('import-etat-$suffixe')),
         ),
-      ],
-      if (enEnvoi && p!.phase != PhaseUpload.verification) ...<Widget>[
-        Ecart.vSm,
-        Align(
-          alignment: AlignmentDirectional.centerStart,
-          child: ActionPrincipale(
-            key: ValueKey<String>('import-annuler-$suffixe'),
-            libelle: i.annulerDepot,
-            niveau: NiveauAction.tertiaire,
-            pleineLargeur: false,
-            onPress: () => unawaited(_annuler(depot)),
+        if (p.phase != PhaseUpload.verification) ...<Widget>[
+          Ecart.vSm,
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: ActionPrincipale(
+              key: ValueKey<String>('import-annuler-$suffixe'),
+              libelle: i.annulerDepot,
+              niveau: NiveauAction.tertiaire,
+              pleineLargeur: false,
+              onPress: () => unawaited(_annuler(depot)),
+            ),
+          ),
+        ],
+      ];
+    }
+    return <Widget>[
+      Ecart.vSm,
+      switch (p.phase) {
+        PhaseUpload.pret => BandeauAttention(
+          key: ValueKey<String>('import-reussi-$suffixe'),
+          ton: TonEtat.succes,
+          titre: titreReussite,
+          message: detailReussite,
+        ),
+        PhaseUpload.echec => BandeauAttention(
+          key: ValueKey<String>('import-echec-$suffixe'),
+          ton: TonEtat.alerte,
+          titre: titreEchec,
+          message: <String>[
+            phraseEchecDepot(p.erreur, p.reglage),
+            ?suiteEchec,
+          ].join(' '),
+          action: LienFleche(
+            key: ValueKey<String>('import-reessayer-$suffixe'),
+            libelle: t.commun.reessayer,
+            fleche: false,
+            onPress: onReessayer,
           ),
         ),
-      ],
+        _ => Semantics(
+          liveRegion: true,
+          child: Text(
+            i.etats.annule,
+            key: ValueKey<String>('import-etat-$suffixe'),
+          ),
+        ),
+      },
     ];
   }
+
+  String _detail(FichierChoisi fichier, TypeRessource type) =>
+      t.admin.bibliotheque.import.simple.detailFichier(
+        type: libelleType(type),
+        taille: tailleLisible(fichier.octets.length),
+      );
 
   Widget _blocFichier() {
     final i = t.admin.bibliotheque.import;
     final FichierChoisi? fichier = _support.fichier;
     final TypeRessource? type = _type;
     final bool enEnvoi = _enEnvoi(_support);
-    final bool echec = _support.progression?.phase == PhaseUpload.echec;
     final TextStyle? corps = Theme.of(context).textTheme.bodyLarge;
+    final String detail = fichier != null && type != null
+        ? _detail(fichier, type)
+        : '';
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
@@ -806,46 +1180,121 @@ class _ImportEtat extends ConsumerState<_Import> {
                 ? TextDirection.rtl
                 : null,
           ),
-          if (type != null) ...<Widget>[
+          if (type != null && !_support.pret) ...<Widget>[
             Ecart.vXs,
-            Text(
-              i.simple.reconnu(type: libelleType(type)),
-              key: const ValueKey<String>('import-reconnu'),
-            ),
+            Text(detail, key: const ValueKey<String>('import-reconnu')),
           ],
         ],
-        ..._suivi(_support, 'support'),
-        // Pas de remplacement concurrent, ni apres verification : le choix
-        // revient hors envoi, tant que le fichier n'est pas verifie.
+        ..._etat(
+          _support,
+          'support',
+          titreReussite: i.simple.fichierAjoute,
+          detailReussite: detail,
+          titreEchec: i.simple.fichierEchec,
+          onReessayer: () =>
+              unawaited(_reessayer(_support, FinaliteUpload.support)),
+        ),
+        // Pas de remplacement concurrent, ni apres l'ajout : le choix revient
+        // hors envoi, tant que le fichier n'est pas ajoute.
         if (!enEnvoi && !_support.pret) ...<Widget>[
           if (fichier != null) Ecart.vMd,
           Align(
             alignment: AlignmentDirectional.centerStart,
-            // Choix de formulaire, pas un filtre : reessayer ou changer de fichier
-            child: Wrap(
-              spacing: AppSpacing.sm,
-              runSpacing: AppSpacing.sm,
-              children: <Widget>[
-                if (echec)
-                  ActionPrincipale(
-                    key: const ValueKey<String>('import-reessayer'),
-                    libelle: t.commun.reessayer,
-                    niveau: NiveauAction.secondaire,
-                    pleineLargeur: false,
-                    onPress: () => unawaited(_reessayer()),
-                  ),
-                ActionPrincipale(
-                  key: const ValueKey<String>('import-choisir-support'),
-                  libelle: fichier == null ? i.choisirFichier : i.choisirAutre,
-                  niveau: echec
-                      ? NiveauAction.tertiaire
-                      : NiveauAction.secondaire,
-                  pleineLargeur: false,
-                  onPress: () => unawaited(_choisirFichier()),
-                ),
-              ],
+            child: ActionPrincipale(
+              key: const ValueKey<String>('import-choisir-support'),
+              libelle: fichier == null ? i.choisirFichier : i.choisirAutre,
+              niveau: NiveauAction.secondaire,
+              pleineLargeur: false,
+              onPress: () => unawaited(_choisirFichier()),
             ),
           ),
+        ],
+      ],
+    );
+  }
+
+  /// La vignette : facultative, visible des qu'elle est deposee, remplacable
+  /// et retirable. Elle ne retient jamais l'enregistrement.
+  Widget _blocVignette() {
+    final i = t.admin.bibliotheque.import;
+    final v = i.simple.vignette;
+    final a = t.admin.bibliotheque.fiche;
+    final FichierChoisi? image = _vignette.fichier;
+    final bool enEnvoi = _enEnvoi(_vignette);
+    return Column(
+      key: const ValueKey<String>('import-vignette'),
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Text(v.titre, style: Theme.of(context).textTheme.titleSmall),
+        Ecart.vXs,
+        Text(v.aide),
+        if (image != null && _vignette.pret) ...<Widget>[
+          Ecart.vSm,
+          // La miniature de l'image deposee, des qu'elle l'est.
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: ClipRRect(
+              borderRadius: AppRadius.arrondiSm,
+              child: Image.memory(
+                image.octets,
+                key: const ValueKey<String>('import-vignette-miniature'),
+                width: AppSpacing.respiration * 2,
+                height: AppSpacing.respiration * 2,
+                fit: BoxFit.cover,
+                semanticLabel: v.apercu,
+                errorBuilder: (_, _, _) => const SizedBox.shrink(),
+              ),
+            ),
+          ),
+        ],
+        ..._etat(
+          _vignette,
+          'vignette',
+          titreReussite: v.ajoutee,
+          detailReussite: image == null
+              ? ''
+              : _detail(image, TypeRessource.image),
+          titreEchec: v.echec,
+          suiteEchec: v.echecSuite,
+          onReessayer: () =>
+              unawaited(_reessayer(_vignette, FinaliteUpload.vignette)),
+        ),
+        if (_refusVignette != null) ...<Widget>[
+          Ecart.vSm,
+          BandeauAttention(
+            key: const ValueKey<String>('import-refus-vignette'),
+            ton: TonEtat.alerte,
+            titre: v.echec,
+            message: '${_refusVignette!} ${v.echecSuite}',
+          ),
+        ],
+        if (_messageVignette != null) ...<Widget>[
+          Ecart.vSm,
+          Semantics(
+            liveRegion: true,
+            child: Text(
+              _messageVignette!,
+              key: const ValueKey<String>('import-message-vignette'),
+            ),
+          ),
+        ],
+        if (!enEnvoi) ...<Widget>[
+          Ecart.vSm,
+          LienFleche(
+            key: const ValueKey<String>('import-choisir-vignette'),
+            libelle: _vignettePosee ? a.remplacerVignette : i.choisirVignette,
+            alignerEnDebut: true,
+            onPress: () => unawaited(_choisirVignette()),
+          ),
+          if (_vignettePosee)
+            LienFleche(
+              key: const ValueKey<String>('import-retirer-vignette'),
+              libelle: a.retirerVignette,
+              fleche: false,
+              alignerEnDebut: true,
+              onPress: () => unawaited(_retirerVignette()),
+            ),
         ],
       ],
     );
@@ -855,6 +1304,9 @@ class _ImportEtat extends ConsumerState<_Import> {
     final f = t.admin.bibliotheque.import;
     final s = f.simple;
     final String langue = _langueInterface;
+    // La vignette se depose sur le document : il lui faut son brouillon, donc
+    // le fichier d'abord (ou le brouillon repris).
+    final bool vignettePossible = !_depotInactif && _supportId != null;
     return AppCard(
       key: const ValueKey<String>('import-document'),
       entete: _titreSection(f.sections.ressource),
@@ -892,29 +1344,30 @@ class _ImportEtat extends ConsumerState<_Import> {
             ChoiceCardGroup(
               key: const ValueKey<String>('import-acces'),
               autoriserSaisieLibre: false,
-              valeurInitiale: ReponseChoix(valeurs: <String>{_acces}),
+              valeurInitiale: ReponseChoix(valeurs: <String>{_acces.name}),
               options: <OptionChoix>[
                 OptionChoix(
                   cle: const ValueKey<String>('import-acces-lecture'),
-                  valeur: _accesLecture,
+                  valeur: AccesDocument.lecture.name,
                   libelle: s.acces.lecture,
                   description: s.acces.lectureAide,
                 ),
                 OptionChoix(
                   cle: const ValueKey<String>('import-acces-telechargement'),
-                  valeur: _accesTelechargement,
+                  valeur: AccesDocument.telechargement.name,
                   libelle: s.acces.telechargement,
                   description: s.acces.telechargementAide,
                 ),
               ],
               onChange: (ReponseChoix r) => setState(
-                () => _acces = r.valeurs.isEmpty
-                    ? _accesLecture
-                    : r.valeurs.first,
+                () => _acces =
+                    r.valeurs.contains(AccesDocument.telechargement.name)
+                    ? AccesDocument.telechargement
+                    : AccesDocument.lecture,
               ),
             ),
           ],
-          // Le rangement : les rayons que le serveur a semes, jamais un second
+          // Le rayon : ceux que le serveur a semes, jamais un second
           // classement. Sans rayons lus, le document va au rayon des cours.
           if (_rayons.length > 1) ...<Widget>[
             Ecart.vLg,
@@ -947,13 +1400,26 @@ class _ImportEtat extends ConsumerState<_Import> {
               ),
             ),
           ],
+          // Un document qui ne vient pas de l'academie : une seule
+          // declaration, gardee avec le nom de la personne et la date.
+          if (_tiers) ...<Widget>[
+            Ecart.vMd,
+            LigneCase(
+              cle: const ValueKey<String>('import-droit-tiers'),
+              libelle: s.droitTiers,
+              precision: s.droitTiersAide,
+              coche: _droitTiers,
+              onChange: (bool v) => setState(() => _droitTiers = v),
+            ),
+          ],
+          if (vignettePossible) ...<Widget>[Ecart.vLg, _blocVignette()],
         ],
       ),
     );
   }
 
   /// « Plus de reglages », replie : tout ce que la personne n'a pas a toucher
-  /// pour ajouter un document, et qui garde une valeur par defaut sure.
+  /// pour enregistrer un document, et qui garde une valeur par defaut sure.
   Widget _sectionPlus() {
     final f = t.admin.bibliotheque.import;
     final s = f.simple;
@@ -1007,8 +1473,6 @@ class _ImportEtat extends ConsumerState<_Import> {
               f.sections.droits,
               style: Theme.of(context).textTheme.titleSmall,
             ),
-            Ecart.vXs,
-            Text(d.aide),
             Ecart.vMd,
             ZoneSaisie(
               controleur: _source,
@@ -1039,7 +1503,17 @@ class _ImportEtat extends ConsumerState<_Import> {
                 Ecart.vXs,
                 TexteSansCoupure(_preuve.fichier!.nom),
               ],
-              ..._suivi(_preuve, 'preuve'),
+              ..._etat(
+                _preuve,
+                'preuve',
+                titreReussite: d.preuveDeposee,
+                detailReussite: _preuve.fichier == null
+                    ? ''
+                    : tailleLisible(_preuve.fichier!.octets.length),
+                titreEchec: s.fichierEchec,
+                onReessayer: () =>
+                    unawaited(_reessayer(_preuve, FinaliteUpload.preuve)),
+              ),
               if (!_enEnvoi(_preuve)) ...<Widget>[
                 Ecart.vSm,
                 LienFleche(
@@ -1065,24 +1539,26 @@ class _ImportEtat extends ConsumerState<_Import> {
   Widget _actions() {
     final f = t.admin.bibliotheque.import;
     final s = f.simple;
-    final bool pret = _pret;
-    final String aide = _parLien
-        ? s.aideLien
-        : (_enEnvoi(_support) ? s.aideEnvoi : s.aideFichier);
+    final String? manque = _manque;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        if (!pret)
+        // Un bouton qui ne peut pas aboutir n'est pas rendu : la phrase dit
+        // ce qui manque.
+        if (manque != null)
           Padding(
             padding: const EdgeInsets.only(bottom: AppSpacing.md),
-            child: Text(aide, key: const ValueKey<String>('import-aide')),
+            child: Semantics(
+              liveRegion: true,
+              child: Text(manque, key: const ValueKey<String>('import-aide')),
+            ),
           ),
-        if (pret)
+        if (manque == null)
           ActionPrincipale(
             key: const ValueKey<String>('import-poursuivre'),
-            libelle: s.ajouter,
+            libelle: s.enregistrer,
             enCours: _envoi,
-            onPress: _envoi ? null : () => unawaited(_ajouter()),
+            onPress: _envoi ? null : () => unawaited(_enregistrer()),
           ),
         Ecart.vSm,
         Align(

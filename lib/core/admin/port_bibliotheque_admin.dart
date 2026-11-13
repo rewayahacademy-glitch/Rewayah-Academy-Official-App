@@ -86,10 +86,13 @@ final class BibliothequeHorsLigne extends ErreurBibliotheque {
 /// jamais « la connexion s'est interrompue » a la place (DEPOT-SIMPLE).
 final class DepotImpossible extends ErreurBibliotheque {
   /// Cree l'erreur.
-  const DepotImpossible(this.cause);
+  const DepotImpossible(this.cause, {this.reglage});
 
   /// La cause, celle que l'ecran traduit en une phrase vraie.
   final ErreurUpload cause;
+
+  /// Le NOM du reglage du serveur en cause, quand la fonction le dit.
+  final String? reglage;
 }
 
 /// Le port de l'administration de la bibliotheque.
@@ -101,6 +104,12 @@ abstract interface class PortBibliothequeAdmin {
   /// secret de confirmation n'est pas pose : l'ecran le dit en mots simples au
   /// lieu d'echouer au dernier temps (le lien externe reste possible).
   Future<bool> depotActif();
+
+  /// Les reglages de production qui manquent au depot de fichiers, par leur
+  /// NOM (jamais une valeur) : secrets de la fonction, secret en base, regle
+  /// d'origine du seau. Vide : tout est pose. Leve une erreur quand la
+  /// fonction ne sait pas le dire (ancienne version, panne).
+  Future<List<String>> reglagesDepotManquants();
 
   /// Les valeurs de filtre (niveaux, langues) que le catalogue propose.
   Future<FacettesCatalogue> facettes();
@@ -167,6 +176,20 @@ abstract interface class PortBibliothequeAdmin {
     required String versionId,
     required int revisionAttendue,
     required String cle,
+  });
+
+  /// DEPOT-SIMPLE : enregistre ET publie un document depose par la direction,
+  /// en un appel. Le serveur remplit par defaut les droits restes vides,
+  /// approuve la revue (tracee) et ouvre le document aux inscrits. [acces] :
+  /// lire dans l'application seulement, ou telechargement permis.
+  /// [droitTiers] : la declaration « l'academie a le droit de diffuser ce
+  /// document », exigee hors du rayon des cours. Idempotent par [cle].
+  Future<ResultatPublication> deposerDirect({
+    required String supportId,
+    required int revisionAttendue,
+    required String cle,
+    required AccesDocument acces,
+    required bool droitTiers,
   });
 
   /// Les classes auxquelles le support peut etre attribue, a curseur.
