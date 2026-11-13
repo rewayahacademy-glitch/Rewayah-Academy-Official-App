@@ -1,7 +1,8 @@
 import 'dart:async';
-import 'dart:convert';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -16,18 +17,17 @@ import '../../core/pause_seance/port_pause_seance.dart';
 import '../../core/router/billet_salle.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
+import '../../core/session/session_state.dart';
 import '../../core/tc_classe/port_session_persistante.dart';
 import '../../core/tc_classe/session_persistante.dart';
 import '../../core/tc_horloge/chrono_seance.dart' show BornesChrono;
 import '../../core/tc_horloge/session_clock_vm.dart';
 import '../../core/theme/app_color_pair.dart';
-import '../../core/theme/app_delais.dart';
 import '../../core/theme/app_mouvement.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/video/livekit_session_provider.dart';
-import '../../core/video/signal_rappel.dart';
 import '../../core/video/video_session_provider.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/bouton_icone.dart';
@@ -36,11 +36,12 @@ import '../../core/widgets/ile_liquide.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/pressable.dart';
+import '../salle/seance_vivante.dart';
+import '../salle/synchro_salle.dart' show ParoleSalle;
 import 'bornes_salle.dart';
 import 'chrono_salle.dart';
 import 'marque_chrono.dart';
 import 'pilote_dynamique.dart';
-import 'relais_salle.dart';
 import 'vue_seance.dart' show ConnexionSeance;
 
 /// La barre « Seance toujours en direct » (directeur, 31/10/2026).
@@ -87,6 +88,9 @@ class BarreSeanceEnDirect extends StatefulWidget {
 
   /// DYNAMIQUE-CHRONO-2 : l'alerte de l'ile (appel recu, pause).
   static const Key cleAlerte = ValueKey<String>('ile-seance-alerte');
+
+  /// SYNCHRO-SESSION : la pastille reduite a son point (place qui manque).
+  static const Key clePointDirect = ValueKey<String>('ile-seance-point-direct');
 
   /// Le chevron qui deplie ou replie l'ile.
   static const Key cleChevron = ValueKey<String>('ile-seance-chevron');
@@ -410,104 +414,89 @@ class _BarreEtat extends ConsumerState<_Barre> {
       e.lienPerdu || e.retourDeSuspension;
 
   /// DYNAMIQUE-CHRONO-2 (directeur, 12/11/2026, point 15 : « la barre doit
-  /// etre exploitee au max quand la salle est reduite ») : la meme logique
-  /// que la salle (`PiloteDynamique`, `PilotePause`), ecrite une fois. L'ile
-  /// recoit l'appel (sonnerie repetee, alerte, marque) et la pause (debut,
-  /// heure de reprise, fin, et chez qui la pilote : la proposition et la fin
-  /// a l'heure) par les paquets de la visio, que la salle soit ouverte ou non.
-  final PiloteDynamique _dynamique = PiloteDynamique();
-  late final SonnerieAppel _sonnerie = SonnerieAppel(
-    () => ref.read(signalRappelProvider)(),
-  );
-  late final PilotePause _pause = PilotePause(
-    dynamique: _dynamique,
-    maintenant: () => ref.read(horlogeChronoProvider)().toUtc(),
-    commandes: _CommandesPauseIle(this),
-  );
-  StreamSubscription<PaquetDonnees>? _sDonnees;
-  PauseSeance? _pauseObservee;
-  bool _pauseJamaisObservee = true;
+  /// etre exploitee au max quand la salle est reduite ») et SYNCHRO-SESSION
+  /// (13/11/2026, `HARMONIE-2026-11-13.md` section 7) : la salle reduite lit
+  /// LA seance de l'appel ([SeanceVivante]), tenue par le controleur de
+  /// session : la meme Dynamique chrono que la salle (une file d'alertes, des
+  /// marques qui passent de l'une a l'autre), l'appel recu (sonnerie
+  /// repetee, alerte, marque), la recitation, les arrivees chez qui conduit,
+  /// la pause (verifiee de qui conduit, ligne 3.3) et, chez qui la pilote, la
+  /// proposition et la fin a l'heure. Rien n'est ecrit ici une seconde fois.
+  ///
+  /// Un controleur sans seance (tests du controleur seul) : l'ile tient la
+  /// sienne, liberee avec elle ([_seanceLocale]).
+  SeanceVivante? _seanceLocale;
 
-  void _dynamiqueChange() {
-    if (mounted) setState(() {});
+  /// La seance a laquelle l'ile est abonnee.
+  SeanceVivante? _seanceSuivie;
+
+  SeanceVivante? _seanceCourante() {
+    final SeanceVivante? tenue = seanceTenue(
+      ref.read(controleurSessionProvider),
+      widget.cours.sessionId,
+    );
+    if (tenue != null) {
+      _libererSeanceLocale();
+      return tenue;
+    }
+    final SeanceVivante? locale = _seanceLocale;
+    if (locale != null && !locale.libere) return locale;
+    final AccesSalle? acces = widget.etat.acces;
+    if (acces == null) return null;
+    // La synchronisation a besoin du profil : tant que la session n'est pas
+    // lue, l'ile attend (elle se redessine quand il arrive).
+    String? profil;
+    try {
+      profil = ref.watch(
+        sessionProvider.select((SessionState s) => s.profileId),
+      );
+    } on Object {
+      profil = null;
+    }
+    if (profil == null) return null;
+    final String seance = widget.cours.sessionId;
+    return _seanceLocale = creerSeanceVivante(
+      cours: widget.cours,
+      acces: acces,
+      moteur: ref.read(moteurSalleProvider),
+      lire: ref.read,
+      relirePause: () {
+        if (mounted) ref.invalidate(pauseSeanceProvider(seance));
+      },
+      terminerRecitationALEntree: false,
+    );
   }
 
-  void _recevoir(PaquetDonnees paquet) {
+  /// Suit la seance courante (et quitte la precedente) : l'ile se redessine
+  /// quand la Dynamique chrono, la parole ou la pause recue changent.
+  SeanceVivante? _raccorderSeance() {
+    final SeanceVivante? s = _seanceCourante();
+    if (!identical(s, _seanceSuivie)) {
+      _seanceSuivie?.removeListener(_seanceChange);
+      _seanceSuivie?.dynamique.removeListener(_seanceChange);
+      _seanceSuivie = s;
+      s?.addListener(_seanceChange);
+      s?.dynamique.addListener(_seanceChange);
+    }
+    return s;
+  }
+
+  void _seanceChange() {
     if (!mounted) return;
-    final String sessionId = widget.cours.sessionId;
-    if (paquet.sujet == sujetPauseSalle) {
-      // Seul qui ne conduit pas lit le relais (qui conduit lit le serveur).
-      if (widget.etat.acces?.capacites.peutModerer ?? true) return;
-      final PauseSeance? pause = pauseDepuisCharge(paquet.charge);
-      if (pause == null) return;
-      ref.read(pausesRecuesProvider)[sessionId] = pause;
-      setState(() {});
+    if (SchedulerBinding.instance.schedulerPhase ==
+        SchedulerPhase.persistentCallbacks) {
+      SchedulerBinding.instance.addPostFrameCallback((Duration _) {
+        if (mounted) setState(() {});
+      });
       return;
     }
-    // Le rappel est adresse au seul eleve vise : le recevoir, c'est etre
-    // appele (qui conduit la seance ne l'est jamais). Son propre paquet ne
-    // revient pas ; le profil, quand il est connu, l'ecarte en plus.
-    if (widget.etat.acces?.capacites.peutModerer ?? false) return;
-    String profil = '';
-    try {
-      profil = ref.read(sessionProvider).profileId ?? '';
-    } on Object {
-      // Session illisible : le paquet adresse suffit.
-    }
-    if (paquetRappelPour(paquet, sessionId: sessionId, profilLocalId: profil)) {
-      _sonnerie.lancer();
-      _dynamique.annoncer(
-        alerteAppelRecu(
-          tutoie: widget.cours.interfaceGuidee,
-          numero: _dynamique.numero,
-        ),
-      );
-    }
+    setState(() {});
   }
 
-  /// Une commande de la pause, par le port ; l'etat est relu ensuite.
-  ///
-  /// HARMONIE-SALLE (13/11/2026) : l'etat rendu par le serveur est relaye a
-  /// la classe sur le canal fiable, comme le fait la salle
-  /// (`_diffuserPause`, `salle_page.dart`) : une pause demarree, finie ou
-  /// refusee depuis la salle reduite arrive chez les eleves sur le moment
-  /// (avant : seulement au retour de l'enseignant dans la salle). Rien n'est
-  /// decide ici ; sans droit de publier, rien ne part.
-  Future<void> _commanderPause(
-    Future<PauseSeance> Function(PortPauseSeance port, String cle) commande,
-  ) async {
-    try {
-      final PauseSeance etat = await commande(
-        ref.read(portPauseSeanceProvider),
-        'ile-${widget.cours.sessionId}-${DateTime.now().microsecondsSinceEpoch}',
-      ).timeout(AppDelais.requeteMax);
-      if (widget.etat.acces?.capacites.peutPublierDonnees ?? false) {
-        try {
-          await ref
-              .read(moteurSalleProvider)
-              .publierDonnees(
-                sujet: sujetPauseSalle,
-                charge: utf8.encode(jsonEncode(chargePause(etat))),
-                fiable: true,
-              );
-        } on Object catch (erreur) {
-          journalDev('pause non relayee depuis la salle reduite : $erreur');
-        }
-      }
-    } finally {
-      if (mounted) {
-        ref.invalidate(pauseSeanceProvider(widget.cours.sessionId));
-      }
-    }
-  }
-
-  void _observerPause(PauseSeance? pause, {required bool pilote}) {
-    if (!_pauseJamaisObservee && pause == _pauseObservee) return;
-    _pauseJamaisObservee = false;
-    _pauseObservee = pause;
-    scheduleMicrotask(() {
-      if (mounted) _pause.observer(pause, pilote: pilote);
-    });
+  void _libererSeanceLocale() {
+    final SeanceVivante? locale = _seanceLocale;
+    _seanceLocale = null;
+    if (locale != null) unawaited(locale.liberer());
   }
 
   @override
@@ -517,17 +506,6 @@ class _BarreEtat extends ConsumerState<_Barre> {
       _deplie = true;
       _depliAuto = true;
     }
-    _dynamique
-      ..addListener(_dynamiqueChange)
-      ..auToucher(() {
-        _sonnerie.arreter();
-        _dynamique.oublier(cleAppelRecu);
-      })
-      ..aChaqueBattement(() {
-        if (mounted) _pause.evaluer();
-      })
-      ..demarrer();
-    _sDonnees = ref.read(moteurSalleProvider).donneesRecues.listen(_recevoir);
   }
 
   @override
@@ -549,11 +527,10 @@ class _BarreEtat extends ConsumerState<_Barre> {
   @override
   void dispose() {
     _replier?.cancel();
-    _sonnerie.arreter();
-    unawaited(_sDonnees?.cancel());
-    _dynamique
-      ..removeListener(_dynamiqueChange)
-      ..dispose();
+    _seanceSuivie?.removeListener(_seanceChange);
+    _seanceSuivie?.dynamique.removeListener(_seanceChange);
+    _seanceSuivie = null;
+    _libererSeanceLocale();
     super.dispose();
   }
 
@@ -648,12 +625,22 @@ class _BarreEtat extends ConsumerState<_Barre> {
     final BornesChrono? bornes = _bornes(widget.cours, conduit: conduit);
     // DYNAMIQUE-CHRONO-2 : la pause, lue au serveur par qui conduit, recue
     // par le relais chez les autres.
+    // SYNCHRO-SESSION : la pause recue (de qui conduit seulement, ligne
+    // 3.3) est celle que la seance a gardee, salle ouverte ou reduite.
+    final SeanceVivante? vivante = _raccorderSeance();
     final String seance = widget.cours.sessionId;
     final PauseSeance? pause = conduit
         ? ref.watch(pauseSeanceProvider(seance)).value
-        : ref.read(pausesRecuesProvider)[seance];
-    _observerPause(pause, pilote: conduit && (pause?.peutPiloter ?? false));
-    final AlerteChrono? alerte = _dynamique.alerte;
+        : vivante?.pauseRecue;
+    vivante?.observerPause(
+      pause,
+      pilote: conduit && (pause?.peutPiloter ?? false),
+    );
+    final AlerteChrono? alerte = vivante?.dynamique.alerte;
+    // SYNCHRO-SESSION, point 4 du plan : la recitation se lit aussi dans la
+    // salle reduite (« Yasmine recite », ou « Un eleve recite » quand celui
+    // qui regarde ne connait pas le prenom), comme dans la salle.
+    final ParoleSalle? parole = vivante?.parole;
 
     final Widget? chrono = bornes == null
         ? null
@@ -671,7 +658,13 @@ class _BarreEtat extends ConsumerState<_Barre> {
             sonne: conduit,
             onEtat: (EtatChronoVivant e) => _changerEtat(e, conduit: conduit),
             pause: pause,
-            marques: _dynamique.marques,
+            marques: <MarqueChrono>[
+              ...?vivante?.dynamique.marques,
+              if (parole != null)
+                MarqueChrono.recitation(
+                  libelle: titreRecitation(parole.prenom),
+                ),
+            ],
             // DYNAMIQUE-CHRONO-1 (directeur, 12/11/2026, point 15 : « elle
             // marche bien aussi quand on reduit la salle ») : la meme ligne
             // repliee que la Dynamique chrono de la salle (l'anneau,
@@ -691,6 +684,50 @@ class _BarreEtat extends ConsumerState<_Barre> {
         ? t.salle.ile.finAtteinte
         : null;
 
+    final bool texteAgrandi = MediaQuery.textScalerOf(context).scale(1) > 1.3;
+    final Widget etatCompact = FonduLiquide(
+      cle: horsLigne,
+      child: horsLigne
+          ? Row(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                IconTheme(
+                  data: IconThemeData(
+                    color: paire.onBackground,
+                    size: AppSpacing.xl,
+                  ),
+                  child: Icon(AppIcons.reconnexion.repos),
+                ),
+                Ecart.hSm,
+                Flexible(child: Text(t.salle.reconnexionCourt, style: style)),
+              ],
+            )
+          // Compacte : le mot court « En direct » ; la phrase « Seance
+          // toujours en direct » vit dans l'ile depliee. SYNCHRO-SESSION :
+          // quand la place manque, la pastille se reduit a son point (son
+          // mot reste lu).
+          : texteAgrandi
+          ? const PastilleEtatSeance(etat: EtatPastilleSeance.enDirect)
+          : _PremierQuiTient(
+              children: <Widget>[
+                const PastilleEtatSeance(etat: EtatPastilleSeance.enDirect),
+                const PastilleEtatSeance(
+                  key: BarreSeanceEnDirect.clePointDirect,
+                  etat: EtatPastilleSeance.enDirect,
+                  pointSeul: true,
+                ),
+                // Le chrono prend toute la place (ecart extreme) : la
+                // pastille ne se voit plus, son mot reste lu.
+                Semantics(
+                  label: PastilleEtatSeance.libelleDe(
+                    EtatPastilleSeance.enDirect,
+                  ),
+                  child: const SizedBox.shrink(),
+                ),
+              ],
+            ),
+    );
+
     // Compacte : la pastille (ou la reconnexion) et le chrono ramenent a la
     // salle d'un appui ; le micro ; le chevron.
     final Widget zoneRetour = Pressable(
@@ -698,56 +735,41 @@ class _BarreEtat extends ConsumerState<_Barre> {
       // Le toucher coupe aussi la sonnerie et efface l'appel recu ; il garde
       // son geste : retourner dans la salle.
       onPress: () {
-        _dynamique.toucher();
+        vivante?.dynamique.toucher();
         widget.onRetour();
       },
       libelleSemantique: t.salle.retourner,
       arrondiFocus: AppRadius.arrondiLg,
-      child: Wrap(
-        crossAxisAlignment: WrapCrossAlignment.center,
-        spacing: AppSpacing.sm,
-        runSpacing: AppSpacing.xs,
-        // Centree sur la hauteur de la cible (48) : alignee sur le micro et
-        // le chevron.
-        runAlignment: WrapAlignment.center,
-        children: <Widget>[
-          FonduLiquide(
-            cle: horsLigne,
-            child: horsLigne
-                ? Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      IconTheme(
-                        data: IconThemeData(
-                          color: paire.onBackground,
-                          size: AppSpacing.xl,
-                        ),
-                        child: Icon(AppIcons.reconnexion.repos),
-                      ),
-                      Ecart.hSm,
-                      Flexible(
-                        child: Text(t.salle.reconnexionCourt, style: style),
-                      ),
-                    ],
-                  )
-                // Compacte : le mot court « En direct » ; la phrase
-                // « Seance toujours en direct » vit dans l'ile depliee.
-                : const PastilleEtatSeance(etat: EtatPastilleSeance.enDirect),
-          ),
-          ?chrono,
-        ],
-      ),
+      // SYNCHRO-SESSION (13/11/2026, retour du pilote) : une seule rangee
+      // tant que le texte n'est pas agrandi (la pastille cede la premiere ;
+      // la rangee coupe ce qui depasserait le temps que l'ile grandit) ;
+      // texte agrandi, la pastille et le chrono peuvent passer a la ligne.
+      child: texteAgrandi
+          ? Wrap(
+              crossAxisAlignment: WrapCrossAlignment.center,
+              spacing: AppSpacing.sm,
+              runSpacing: AppSpacing.xs,
+              runAlignment: WrapAlignment.center,
+              children: <Widget>[etatCompact, ?chrono],
+            )
+          : _EtatEtChrono(
+              textDirection: Directionality.of(context),
+              children: <Widget>[etatCompact, ?chrono],
+            ),
     );
 
     // Une rangee qui passe a la ligne : a 320 points en texte agrandi, le
     // micro et le chevron descendent sous le chrono plutot que de l'ecraser.
     _mesurerBande();
-    final Widget compacte = Wrap(
-      key: _cleCompacte,
-      crossAxisAlignment: WrapCrossAlignment.center,
+    // SYNCHRO-SESSION (retour du pilote, 13/11/2026) : le micro et le
+    // chevron forment un bloc de fin, jamais separe : au texte normal, ils
+    // restent sur la rangee du chrono, au bord de fin ; texte agrandi (plus
+    // de 130 %), le bloc entier peut passer a la ligne, jamais un bouton
+    // seul.
+    final Widget boutons = Row(
+      mainAxisSize: MainAxisSize.min,
       spacing: AppSpacing.sm,
       children: <Widget>[
-        zoneRetour,
         if (peutParler && !horsLigne) _MicroDeLaBarre(moteur: moteur),
         BoutonIcone(
           key: BarreSeanceEnDirect.cleChevron,
@@ -759,6 +781,25 @@ class _BarreEtat extends ConsumerState<_Barre> {
         ),
       ],
     );
+    final Widget compacte = texteAgrandi
+        ? Wrap(
+            key: _cleCompacte,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            alignment: WrapAlignment.end,
+            spacing: AppSpacing.sm,
+            children: <Widget>[zoneRetour, boutons],
+          )
+        // Au telephone (moins de 600 points), la rangee prend la largeur de
+        // l'ile : les boutons sont au bord de fin, meme quand l'alerte
+        // depliee elargit l'ile ; ailleurs, l'ile garde la taille de son
+        // contenu. Si le chrono seul ne laisse pas la place des boutons
+        // (ecart extreme), le bloc des boutons passe entier dessous.
+        : _RangeeCompacte(
+            key: _cleCompacte,
+            remplir: MediaQuery.sizeOf(context).width < 600,
+            textDirection: Directionality.of(context),
+            children: <Widget>[zoneRetour, boutons],
+          );
 
     final Widget detail = _deplie
         ? Padding(
@@ -807,7 +848,7 @@ class _BarreEtat extends ConsumerState<_Barre> {
       child: Listener(
         // DYNAMIQUE-CHRONO-2, point 6 : toucher l'ile arrete la sonnerie.
         behavior: HitTestBehavior.translucent,
-        onPointerDown: (PointerDownEvent _) => _sonnerie.arreter(),
+        onPointerDown: (PointerDownEvent _) => vivante?.arreterSonnerie(),
         child: Stack(
           children: <Widget>[
             PositionedDirectional(
@@ -852,7 +893,7 @@ class _BarreEtat extends ConsumerState<_Barre> {
                             ),
                             onChoix: (ActionAlerteChrono a) {
                               a.onPress();
-                              _dynamique.choisir(alerte.id);
+                              vivante?.dynamique.choisir(alerte.id);
                             },
                           )
                         else
@@ -974,29 +1015,393 @@ class _AlerteIle extends StatelessWidget {
   );
 }
 
-/// DYNAMIQUE-CHRONO-2 : les commandes de la pause depuis l'ile.
-class _CommandesPauseIle implements CommandesPause {
-  _CommandesPauseIle(this._ile);
-
-  final _BarreEtat _ile;
-
-  String get _seance => _ile.widget.cours.sessionId;
+/// SYNCHRO-SESSION (13/11/2026) : montre le premier enfant qui tient dans la
+/// largeur donnee, sinon le dernier. Seul l'enfant montre est peint, touche
+/// et lu ; les autres sont mesures, jamais vus.
+class _PremierQuiTient extends MultiChildRenderObjectWidget {
+  const _PremierQuiTient({required super.children});
 
   @override
-  Future<void> demarrer() => _ile._commanderPause(
-    (PortPauseSeance port, String cle) =>
-        port.demarrer(seanceId: _seance, cleIdempotence: cle),
+  RenderObject createRenderObject(BuildContext context) =>
+      _RenduPremierQuiTient();
+}
+
+class _ParentPremierQuiTient extends ContainerBoxParentData<RenderBox> {}
+
+class _RenduPremierQuiTient extends RenderBox
+    with
+        ContainerRenderObjectMixin<RenderBox, _ParentPremierQuiTient>,
+        RenderBoxContainerDefaultsMixin<RenderBox, _ParentPremierQuiTient> {
+  RenderBox? _montre;
+
+  @override
+  void setupParentData(RenderBox child) {
+    if (child.parentData is! _ParentPremierQuiTient) {
+      child.parentData = _ParentPremierQuiTient();
+    }
+  }
+
+  @override
+  void performLayout() {
+    final BoxConstraints libres = constraints.loosen();
+    RenderBox? enfant = firstChild;
+    _montre = null;
+    while (enfant != null) {
+      final RenderBox? suivant = childAfter(enfant);
+      final double largeur = enfant.getMaxIntrinsicWidth(constraints.maxHeight);
+      if (suivant == null || largeur <= constraints.maxWidth) {
+        _montre = enfant;
+        break;
+      }
+      enfant = suivant;
+    }
+    RenderBox? autre = firstChild;
+    while (autre != null) {
+      autre.layout(libres, parentUsesSize: identical(autre, _montre));
+      autre = childAfter(autre);
+    }
+    final RenderBox? montre = _montre;
+    size = constraints.constrain(montre?.size ?? Size.zero);
+  }
+
+  @override
+  double computeMinIntrinsicWidth(double height) =>
+      lastChild?.getMinIntrinsicWidth(height) ?? 0;
+
+  @override
+  double computeMaxIntrinsicWidth(double height) =>
+      firstChild?.getMaxIntrinsicWidth(height) ?? 0;
+
+  @override
+  double computeMinIntrinsicHeight(double width) =>
+      firstChild?.getMinIntrinsicHeight(width) ?? 0;
+
+  @override
+  double computeMaxIntrinsicHeight(double width) =>
+      firstChild?.getMaxIntrinsicHeight(width) ?? 0;
+
+  @override
+  void paint(PaintingContext context, Offset offset) {
+    final RenderBox? montre = _montre;
+    if (montre != null) context.paintChild(montre, offset);
+  }
+
+  @override
+  bool hitTestChildren(BoxHitTestResult result, {required Offset position}) {
+    final RenderBox? montre = _montre;
+    if (montre == null) return false;
+    return montre.hitTest(result, position: position);
+  }
+
+  @override
+  void visitChildrenForSemantics(RenderObjectVisitor visitor) {
+    final RenderBox? montre = _montre;
+    if (montre != null) visitor(montre);
+  }
+
+  @override
+  Size computeDryLayout(BoxConstraints constraints) {
+    RenderBox? enfant = firstChild;
+    while (enfant != null) {
+      final RenderBox? suivant = childAfter(enfant);
+      if (suivant == null ||
+          enfant.getMaxIntrinsicWidth(constraints.maxHeight) <=
+              constraints.maxWidth) {
+        return constraints.constrain(enfant.getDryLayout(constraints.loosen()));
+      }
+      enfant = suivant;
+    }
+    return constraints.constrain(Size.zero);
+  }
+}
+
+/// SYNCHRO-SESSION : la pastille et le chrono de l'ile. Le chrono passe
+/// d'abord (il ne cede jamais) ; la pastille prend ce qui reste (son mot,
+/// son point, ou rien : son mot reste lu).
+class _EtatEtChrono extends MultiChildRenderObjectWidget {
+  const _EtatEtChrono({required this.textDirection, required super.children});
+
+  final TextDirection textDirection;
+
+  @override
+  RenderObject createRenderObject(BuildContext context) =>
+      _RenduEtatEtChrono(textDirection);
+
+  @override
+  void updateRenderObject(
+    BuildContext context,
+    _RenduEtatEtChrono renderObject,
+  ) => renderObject.textDirection = textDirection;
+}
+
+class _RenduEtatEtChrono extends RenderBox
+    with
+        ContainerRenderObjectMixin<RenderBox, _ParentPremierQuiTient>,
+        RenderBoxContainerDefaultsMixin<RenderBox, _ParentPremierQuiTient> {
+  _RenduEtatEtChrono(this._textDirection);
+
+  TextDirection _textDirection;
+  set textDirection(TextDirection valeur) {
+    if (valeur == _textDirection) return;
+    _textDirection = valeur;
+    markNeedsLayout();
+  }
+
+  static const double _ecart = AppSpacing.sm;
+
+  @override
+  void setupParentData(RenderBox child) {
+    if (child.parentData is! _ParentPremierQuiTient) {
+      child.parentData = _ParentPremierQuiTient();
+    }
+  }
+
+  RenderBox? get _etat => firstChild;
+  RenderBox? get _chrono => childCount > 1 ? lastChild : null;
+
+  @override
+  void performLayout() {
+    final double largeur = constraints.maxWidth;
+    final RenderBox? chrono = _chrono;
+    final RenderBox? etat = _etat;
+    double lc = 0;
+    double hauteur = 0;
+    if (chrono != null) {
+      chrono.layout(
+        BoxConstraints(maxWidth: largeur, maxHeight: constraints.maxHeight),
+        parentUsesSize: true,
+      );
+      lc = chrono.size.width;
+      hauteur = chrono.size.height;
+    }
+    double le = 0;
+    if (etat != null) {
+      final double reste = math.max(
+        0,
+        largeur - lc - (chrono == null ? 0 : _ecart),
+      );
+      etat.layout(
+        BoxConstraints(maxWidth: reste, maxHeight: constraints.maxHeight),
+        parentUsesSize: true,
+      );
+      le = etat.size.width;
+      hauteur = math.max(hauteur, etat.size.height);
+    }
+    final double ecart = le > 0 && chrono != null ? _ecart : 0;
+    size = constraints.constrain(Size(le + ecart + lc, hauteur));
+    final bool rtl = _textDirection == TextDirection.rtl;
+    if (etat != null) {
+      (etat.parentData! as _ParentPremierQuiTient).offset = Offset(
+        rtl ? size.width - le : 0,
+        (size.height - etat.size.height) / 2,
+      );
+    }
+    if (chrono != null) {
+      (chrono.parentData! as _ParentPremierQuiTient).offset = Offset(
+        rtl ? size.width - le - ecart - lc : le + ecart,
+        (size.height - chrono.size.height) / 2,
+      );
+    }
+  }
+
+  @override
+  double computeMinIntrinsicWidth(double height) =>
+      _chrono?.getMaxIntrinsicWidth(height) ??
+      _etat?.getMinIntrinsicWidth(height) ??
+      0;
+
+  @override
+  double computeMaxIntrinsicWidth(double height) {
+    final double e = _etat?.getMaxIntrinsicWidth(height) ?? 0;
+    final double c = _chrono?.getMaxIntrinsicWidth(height) ?? 0;
+    return e + c + (_chrono == null ? 0 : _ecart);
+  }
+
+  @override
+  double computeMinIntrinsicHeight(double width) => math.max(
+    _etat?.getMinIntrinsicHeight(width) ?? 0,
+    _chrono?.getMinIntrinsicHeight(width) ?? 0,
   );
 
   @override
-  Future<void> terminer() => _ile._commanderPause(
-    (PortPauseSeance port, String cle) =>
-        port.terminer(seanceId: _seance, cleIdempotence: cle),
+  double computeMaxIntrinsicHeight(double width) => math.max(
+    _etat?.getMaxIntrinsicHeight(width) ?? 0,
+    _chrono?.getMaxIntrinsicHeight(width) ?? 0,
   );
 
   @override
-  Future<void> refuser() => _ile._commanderPause(
-    (PortPauseSeance port, String cle) =>
-        port.refuser(seanceId: _seance, cleIdempotence: cle),
+  Size computeDryLayout(BoxConstraints constraints) => constraints.constrain(
+    Size(
+      math.min(
+        constraints.maxWidth,
+        computeMaxIntrinsicWidth(constraints.maxHeight),
+      ),
+      computeMaxIntrinsicHeight(constraints.maxWidth),
+    ),
   );
+
+  @override
+  void paint(PaintingContext context, Offset offset) =>
+      defaultPaint(context, offset);
+
+  @override
+  bool hitTestChildren(BoxHitTestResult result, {required Offset position}) =>
+      defaultHitTestChildren(result, position: position);
+}
+
+/// SYNCHRO-SESSION (retour du pilote, 13/11/2026) : la rangee compacte de
+/// l'ile. Le retour (pastille et chrono) au bord de debut, le bloc des
+/// boutons (micro, chevron) au bord de fin, sur une seule rangee tant que le
+/// chrono et les boutons tiennent ensemble ; sinon le bloc entier passe
+/// dessous, au bord de fin (jamais un bouton seul).
+class _RangeeCompacte extends MultiChildRenderObjectWidget {
+  const _RangeeCompacte({
+    required this.remplir,
+    required this.textDirection,
+    required super.children,
+    super.key,
+  });
+
+  /// Vrai : la rangee prend toute la largeur donnee.
+  final bool remplir;
+  final TextDirection textDirection;
+
+  @override
+  RenderObject createRenderObject(BuildContext context) =>
+      _RenduRangeeCompacte(remplir, textDirection);
+
+  @override
+  void updateRenderObject(
+    BuildContext context,
+    _RenduRangeeCompacte renderObject,
+  ) {
+    renderObject
+      ..remplir = remplir
+      ..textDirection = textDirection;
+  }
+}
+
+class _RenduRangeeCompacte extends RenderBox
+    with
+        ContainerRenderObjectMixin<RenderBox, _ParentPremierQuiTient>,
+        RenderBoxContainerDefaultsMixin<RenderBox, _ParentPremierQuiTient> {
+  _RenduRangeeCompacte(this._remplir, this._textDirection);
+
+  bool _remplir;
+  set remplir(bool valeur) {
+    if (valeur == _remplir) return;
+    _remplir = valeur;
+    markNeedsLayout();
+  }
+
+  TextDirection _textDirection;
+  set textDirection(TextDirection valeur) {
+    if (valeur == _textDirection) return;
+    _textDirection = valeur;
+    markNeedsLayout();
+  }
+
+  static const double _ecart = AppSpacing.sm;
+  static const double _entreRangees = AppSpacing.xs;
+
+  @override
+  void setupParentData(RenderBox child) {
+    if (child.parentData is! _ParentPremierQuiTient) {
+      child.parentData = _ParentPremierQuiTient();
+    }
+  }
+
+  void _placer(RenderBox enfant, double x, double y) =>
+      (enfant.parentData! as _ParentPremierQuiTient).offset = Offset(x, y);
+
+  @override
+  void performLayout() {
+    final RenderBox? retour = firstChild;
+    final RenderBox? boutons = retour == null ? null : childAfter(retour);
+    if (retour == null || boutons == null) {
+      size = constraints.smallest;
+      return;
+    }
+    final double largeur = constraints.maxWidth;
+    final bool rtl = _textDirection == TextDirection.rtl;
+    boutons.layout(constraints.loosen(), parentUsesSize: true);
+    final double lb = boutons.size.width;
+    final double minRetour = retour.getMinIntrinsicWidth(double.infinity);
+    if (minRetour + _ecart + lb <= largeur) {
+      retour.layout(
+        BoxConstraints(
+          maxWidth: math.max(0, largeur - _ecart - lb),
+          maxHeight: constraints.maxHeight,
+        ),
+        parentUsesSize: true,
+      );
+      final double naturelle = retour.size.width + _ecart + lb;
+      final double w = _remplir && largeur.isFinite ? largeur : naturelle;
+      final double h = math.max(retour.size.height, boutons.size.height);
+      size = constraints.constrain(Size(w, h));
+      _placer(
+        retour,
+        rtl ? size.width - retour.size.width : 0,
+        (size.height - retour.size.height) / 2,
+      );
+      _placer(
+        boutons,
+        rtl ? 0 : size.width - lb,
+        (size.height - boutons.size.height) / 2,
+      );
+      return;
+    }
+    retour.layout(constraints.loosen(), parentUsesSize: true);
+    final double naturelle = math.max(retour.size.width, lb);
+    final double w = _remplir && largeur.isFinite ? largeur : naturelle;
+    size = constraints.constrain(
+      Size(w, retour.size.height + _entreRangees + boutons.size.height),
+    );
+    _placer(retour, rtl ? size.width - retour.size.width : 0, 0);
+    _placer(
+      boutons,
+      rtl ? 0 : size.width - lb,
+      retour.size.height + _entreRangees,
+    );
+  }
+
+  @override
+  double computeMinIntrinsicWidth(double height) => math.max(
+    firstChild?.getMinIntrinsicWidth(height) ?? 0,
+    lastChild?.getMinIntrinsicWidth(height) ?? 0,
+  );
+
+  @override
+  double computeMaxIntrinsicWidth(double height) =>
+      (firstChild?.getMaxIntrinsicWidth(height) ?? 0) +
+      _ecart +
+      (lastChild?.getMaxIntrinsicWidth(height) ?? 0);
+
+  @override
+  double computeMinIntrinsicHeight(double width) => math.max(
+    firstChild?.getMinIntrinsicHeight(width) ?? 0,
+    lastChild?.getMinIntrinsicHeight(width) ?? 0,
+  );
+
+  @override
+  double computeMaxIntrinsicHeight(double width) =>
+      (firstChild?.getMaxIntrinsicHeight(width) ?? 0) +
+      _entreRangees +
+      (lastChild?.getMaxIntrinsicHeight(width) ?? 0);
+
+  @override
+  Size computeDryLayout(BoxConstraints constraints) => constraints.constrain(
+    Size(
+      computeMaxIntrinsicWidth(constraints.maxHeight),
+      computeMinIntrinsicHeight(constraints.maxWidth),
+    ),
+  );
+
+  @override
+  void paint(PaintingContext context, Offset offset) =>
+      defaultPaint(context, offset);
+
+  @override
+  bool hitTestChildren(BoxHitTestResult result, {required Offset position}) =>
+      defaultHitTestChildren(result, position: position);
 }

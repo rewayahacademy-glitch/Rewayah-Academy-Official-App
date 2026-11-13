@@ -22,6 +22,7 @@ import 'package:rewayah_academy/core/tc_classe/port_session_persistante.dart';
 import 'package:rewayah_academy/core/tc_classe/session_persistante.dart';
 import 'package:rewayah_academy/core/tc_horloge/chrono_seance.dart';
 import 'package:rewayah_academy/core/tc_realtime/codec_message_pedagogique.dart';
+import 'package:rewayah_academy/core/tc_realtime/port_realtime_pedagogique.dart';
 import 'package:rewayah_academy/core/tc_realtime/types_message.dart';
 import 'package:rewayah_academy/core/theme/app_mouvement.dart';
 import 'package:rewayah_academy/core/theme/app_palette.dart';
@@ -29,6 +30,9 @@ import 'package:rewayah_academy/core/video/livekit_session_provider.dart';
 import 'package:rewayah_academy/core/video/signal_rappel.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
 import 'package:rewayah_academy/core/widgets/chrono_vivant.dart';
+import 'package:rewayah_academy/features/salle/seance_vivante.dart';
+import 'package:rewayah_academy/features/salle/synchro_salle.dart'
+    show typeParoleSalle;
 import 'package:rewayah_academy/features/salle_seance/barre_seance_en_direct.dart';
 import 'package:rewayah_academy/features/salle_seance/bornes_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/chrono_salle.dart';
@@ -54,6 +58,21 @@ AccesSalle _acces({bool enseignant = false}) => AccesSalle(
   expireLe: DateTime.utc(2030),
 );
 
+/// Le controleur du dernier montage.
+late ControleurSessionPersistante _controleur;
+
+ParticipantSalle _personne(String id, String role, {bool local = false}) =>
+    ParticipantSalle(
+      identite: id,
+      nom: id == 'e2' ? 'Aicha' : id,
+      role: role,
+      estLocal: local,
+      micro: false,
+      camera: false,
+      parle: false,
+      qualite: QualiteLien.bonne,
+    );
+
 Future<FauxMoteurSalle> _monter(
   WidgetTester tester, {
   required DateTime Function() horloge,
@@ -61,15 +80,35 @@ Future<FauxMoteurSalle> _monter(
   void Function()? signal,
   ThemeMode mode = ThemeMode.light,
   bool enseignant = false,
+  PortPauseSeance? port,
   List<Override> autres = const <Override>[],
+  double largeur = 390,
+  double echelle = 1,
 }) async {
-  fixerVueCapture(tester, const Size(390, 844), 2);
+  fixerVueCapture(tester, Size(largeur, 844), 2);
   final FauxMoteurSalle moteur = FauxMoteurSalle();
+  // SYNCHRO-SESSION : le controleur de l application tient la seance de
+  // l appel (SeanceVivante), comme en production ; la salle reduite la lit.
   final ControleurSessionPersistante controleur = ControleurSessionPersistante(
     moteur,
     FauxServiceVideo(),
+    fabriqueCompagnon:
+        ({
+          required SessionEnCours cours,
+          required AccesSalle acces,
+          required VideoSessionProvider moteur,
+        }) => SeanceVivante(
+          moteur: moteur,
+          acces: acces,
+          sessionId: cours.sessionId,
+          profilLocalId: enseignant ? 't1' : 'e1',
+          tutoie: cours.interfaceGuidee,
+          signal: signal ?? () {},
+          maintenant: () => horloge().toUtc(),
+          portPause: port == null ? null : () => port,
+        ),
   );
-  addTearDown(controleur.liberer);
+  _controleur = controleur;
   controleur.adopter(
     cours: const SessionEnCours(
       sessionId: 's1',
@@ -116,7 +155,13 @@ Future<FauxMoteurSalle> _monter(
         ),
         signalChronoProvider.overrideWithValue(() {}),
         signalRappelProvider.overrideWithValue(signal ?? () {}),
-        controleurSessionProvider.overrideWithValue(controleur),
+        // Libere avec l arbre : la seance de l appel (sa minuterie) ne
+        // survit pas au test.
+        controleurSessionProvider.overrideWith((Ref ref) {
+          ref.onDispose(controleur.liberer);
+          return controleur;
+        }),
+        if (port != null) portPauseSeanceProvider.overrideWithValue(port),
         moteurSalleProvider.overrideWithValue(moteur),
         horlogeChronoProvider.overrideWithValue(horloge),
         bornesSalleProvider.overrideWith(
@@ -128,6 +173,7 @@ Future<FauxMoteurSalle> _monter(
         ...autres,
       ],
       themeMode: mode,
+      echelleTexte: echelle,
     ),
   );
   await stabiliser(tester);
@@ -190,8 +236,31 @@ class _PortPause implements PortPauseSeance {
   }) => throw UnimplementedError();
 }
 
+PaquetDonnees _paroleDe(String? profil, String prenom, int ms) => PaquetDonnees(
+  sujet: sujetProtocolePedagogique,
+  charge: messageVersOctets(
+    MessagePedagogique(
+      type: typeParoleSalle,
+      sessionId: 's1',
+      emetteurProfilId: 't1',
+      charge: profil == null
+          ? const <String, dynamic>{}
+          : <String, dynamic>{'profil': profil, 'prenom': prenom},
+      emisLeUtc: DateTime.utc(2026, 11, 13, 10, 0, 0, ms),
+    ),
+  ),
+  fiable: true,
+  emetteurIdentite: 't1',
+);
+
+final Finder _alerteIle = find.byKey(BarreSeanceEnDirect.cleAlerte);
+
+Finder _dansIle(String texte) =>
+    find.descendant(of: _alerteIle, matching: find.text(texte));
+
 void main() {
   setUpAll(chargerPolicesDuDepot);
+  tearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
 
   testWidgets('salle reduite : l appel recu, sonnerie repetee, alerte puis '
       'marque ; le toucher ramene a la salle', (WidgetTester tester) async {
@@ -247,6 +316,12 @@ void main() {
       horloge: () => maintenant,
       t0: maintenant.subtract(const Duration(minutes: 52)),
     );
+    // SYNCHRO-SESSION, ligne 3.3 : la salle reduite verifie, comme la salle,
+    // que la pause vient de qui conduit (identite et role du jeton signe).
+    moteur.publier(<ParticipantSalle>[
+      _personne('t1', 'teacher'),
+      _personne('e1', 'student', local: true),
+    ]);
     moteur.recevoirDonnees(
       PaquetDonnees(
         sujet: sujetPauseSalle,
@@ -318,8 +393,8 @@ void main() {
       horloge: () => maintenant,
       t0: maintenant.subtract(const Duration(minutes: 40)),
       enseignant: true,
+      port: port,
       autres: <Override>[
-        portPauseSeanceProvider.overrideWithValue(port),
         pauseSeanceProvider.overrideWith(
           (Ref _, String _) async => port.etatCourant,
         ),
@@ -341,5 +416,250 @@ void main() {
       pauseDepuisCharge(pauses.single.charge)?.statut,
       StatutPause.enCours,
     );
+  });
+
+  // SYNCHRO-SESSION (13/11/2026, point 4 du plan) : la recitation arrive dans
+  // la salle reduite, par la seance de l appel, comme dans la salle.
+  for (final (String nom, ThemeMode mode, AppLocale langue)
+      in <(String, ThemeMode, AppLocale)>[
+        ('light', ThemeMode.light, AppLocale.fr),
+        ('dark', ThemeMode.dark, AppLocale.fr),
+        ('arabe', ThemeMode.light, AppLocale.ar),
+      ]) {
+    testWidgets('salle reduite, eleve ($nom) : « Aicha recite » dans l ile, '
+        'puis la marque ; « Un eleve recite » sans prenom', (
+      WidgetTester tester,
+    ) async {
+      await tester.runAsync(() => LocaleSettings.setLocale(langue));
+      final DateTime maintenant = DateTime.now().toUtc();
+      final FauxMoteurSalle moteur = await _monter(
+        tester,
+        horloge: () => maintenant,
+        t0: maintenant.subtract(const Duration(minutes: 52)),
+        mode: mode,
+      );
+      moteur
+        ..publier(<ParticipantSalle>[
+          _personne('t1', 'teacher'),
+          _personne('e1', 'student', local: true),
+          _personne('e2', 'student'),
+        ])
+        ..recevoirDonnees(_paroleDe('e2', 'Aicha', 1));
+      await _attendre(tester);
+      final String titre = t.tc.classe.recitation.actif(prenom: 'Aicha');
+      expect(_dansIle(titre), findsOneWidget);
+      expect(_dansIle(t.salle.gestes.autreRecite), findsOneWidget);
+      // Une seule seance pour la salle et la salle reduite : l alerte est
+      // celle de la Dynamique chrono de l appel.
+      expect(seanceTenue(_controleur, 's1')!.dynamique.alerte?.titre, titre);
+      await stabiliser(tester);
+      await _capture(tester, 'salle_reduite_390_recitation_$nom');
+      await tester.pump(AppMouvement.alerteChrono);
+      await _attendre(tester);
+      expect(_alerteIle, findsNothing);
+      final SemanticsHandle s = tester.ensureSemantics();
+      expect(find.bySemanticsLabel(RegExp(RegExp.escape(titre))), findsWidgets);
+      s.dispose();
+      moteur.recevoirDonnees(_paroleDe(null, '', 2));
+      await _attendre(tester);
+      expect(_dansIle(t.salle.gestes.finRecitationTitre), findsOneWidget);
+      moteur.recevoirDonnees(_paroleDe('e3', '', 3));
+      await _attendre(tester);
+      expect(_dansIle(t.salle.dynamique.unEleveRecite), findsOneWidget);
+    });
+  }
+
+  // SYNCHRO-SESSION (point 4 du plan) : chez qui conduit la seance, les
+  // arrivees (+1, +2) arrivent aussi dans la salle reduite.
+  testWidgets('salle reduite, enseignant : « Aicha est arrivee », ceux deja '
+      'la ne comptent pas', (WidgetTester tester) async {
+    final DateTime maintenant = DateTime.now().toUtc();
+    final FauxMoteurSalle moteur = await _monter(
+      tester,
+      horloge: () => maintenant,
+      t0: maintenant.subtract(const Duration(minutes: 40)),
+      enseignant: true,
+    );
+    moteur.publier(<ParticipantSalle>[
+      _personne('t1', 'teacher', local: true),
+      _personne('e1', 'student'),
+    ]);
+    await _attendre(tester);
+    expect(_alerteIle, findsNothing, reason: 'deja la a l entree');
+    for (int i = 0; i < 6; i++) {
+      await tester.pump(AppMouvement.battementDynamique);
+    }
+    moteur.publier(<ParticipantSalle>[
+      _personne('t1', 'teacher', local: true),
+      _personne('e1', 'student'),
+      _personne('e2', 'student'),
+    ]);
+    await _attendre(tester);
+    expect(
+      _dansIle(t.salle.dynamique.arriveePrenom(prenom: 'Aicha')),
+      findsOneWidget,
+    );
+    await stabiliser(tester);
+    await _capture(tester, 'salle_reduite_390_arrivee_light');
+    await tester.pump(AppMouvement.alerteArrivees);
+    await _attendre(tester);
+    expect(_alerteIle, findsNothing);
+  });
+
+  // SYNCHRO-SESSION (retour du pilote, 13/11/2026) : a 360 et 390, texte x1,
+  // en francais et en arabe, avec zero, une ou deux marques, le micro et le
+  // chevron restent sur la rangee du chrono, au bord de fin ; la pastille
+  // cede (son point) quand la place manque ; l'alerte se pose dessous sans
+  // deplacer les boutons.
+  for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {
+    for (final double largeur in <double>[360, 390]) {
+      for (final int marques in <int>[0, 1, 2]) {
+        final String cas =
+            '${langue.languageCode} ${largeur.toInt()}, $marques marque(s)';
+        testWidgets('salle reduite, $cas : une seule rangee, rien ne deborde '
+            'ni ne se chevauche', (WidgetTester tester) async {
+          await tester.runAsync(() => LocaleSettings.setLocale(langue));
+          final DateTime maintenant = DateTime.now().toUtc();
+          final FauxMoteurSalle moteur = await _monter(
+            tester,
+            horloge: () => maintenant,
+            t0: maintenant.subtract(const Duration(minutes: 52)),
+            largeur: largeur,
+          );
+          moteur.publier(<ParticipantSalle>[
+            _personne('t1', 'teacher'),
+            _personne('e1', 'student', local: true),
+            _personne('e2', 'student'),
+          ]);
+          final Finder micro = find.byKey(BarreSeanceEnDirect.cleMicro);
+          final Finder chevron = find.byKey(BarreSeanceEnDirect.cleChevron);
+          final Finder chrono = find.byKey(BarreSeanceEnDirect.cleChrono);
+          final Finder ile = find.byKey(BarreSeanceEnDirect.cleIle);
+          Rect? avantAlerte;
+          if (marques >= 1) {
+            moteur.recevoirDonnees(_paroleDe('e2', 'Aicha', 1));
+            await _attendre(tester);
+            // L'alerte depliee (« Aicha recite », deux lignes) se pose
+            // dessous, sans deplacer les boutons.
+            expect(_alerteIle, findsOneWidget, reason: cas);
+            avantAlerte = tester.getRect(chevron);
+            expect(
+              tester.getRect(_alerteIle).top,
+              greaterThanOrEqualTo(avantAlerte.bottom - 0.5),
+              reason: cas,
+            );
+            await tester.pump(AppMouvement.alerteChrono);
+            await _attendre(tester);
+          }
+          if (marques >= 2) {
+            moteur.recevoirDonnees(
+              PaquetDonnees(
+                sujet: sujetProtocolePedagogique,
+                charge: messageVersOctets(
+                  messageRappelDiscret(
+                    sessionId: 's1',
+                    emetteurProfilId: 't1',
+                    academyId: 'RA-26-e1',
+                    maintenantUtc: DateTime.now(),
+                  ),
+                ),
+                fiable: true,
+                emetteurIdentite: 't1',
+              ),
+            );
+            await _attendre(tester);
+            await tester.pump(AppMouvement.alerteChrono);
+            await _attendre(tester);
+            await tester.pump(AppMouvement.sonnerieAppelEspace * 3);
+          }
+          await stabiliser(tester);
+          expect(tester.takeException(), isNull, reason: cas);
+          expect(_alerteIle, findsNothing, reason: cas);
+          final Rect rChrono = tester.getRect(chrono);
+          final Rect rMicro = tester.getRect(micro);
+          final Rect rChevron = tester.getRect(chevron);
+          // Une seule rangee : les boutons sont centres sur le chrono.
+          for (final Rect b in <Rect>[rMicro, rChevron]) {
+            expect(
+              (b.center.dy - rChrono.center.dy).abs(),
+              lessThan(1),
+              reason: '$cas : $b hors de la rangee du chrono $rChrono',
+            );
+          }
+          if (avantAlerte != null) {
+            expect(
+              rChevron.top,
+              moreOrLessEquals(avantAlerte.top),
+              reason: cas,
+            );
+          }
+          // Au bord de fin : le chevron apres le micro, apres le chrono.
+          if (langue == AppLocale.ar) {
+            expect(rChevron.right, lessThanOrEqualTo(rMicro.left + 0.5));
+            expect(rMicro.right, lessThanOrEqualTo(rChrono.left + 0.5));
+          } else {
+            expect(rChevron.left, greaterThanOrEqualTo(rMicro.right - 0.5));
+            expect(rMicro.left, greaterThanOrEqualTo(rChrono.right - 0.5));
+          }
+          // Rien ne deborde de l'ile ni de l'ecran ; cibles de 48.
+          final Rect rIle = tester.getRect(ile);
+          for (final Rect r in <Rect>[rChrono, rMicro, rChevron]) {
+            expect(
+              rIle.inflate(0.5).contains(r.topLeft) &&
+                  rIle.inflate(0.5).contains(r.bottomRight),
+              isTrue,
+              reason: '$cas : $r hors de l ile $rIle',
+            );
+          }
+          // Le chevron touche presque le bord de fin de l'ile (sa marge de
+          // fin, 4, et le filet).
+          final double auBord = langue == AppLocale.ar
+              ? rChevron.left - rIle.left
+              : rIle.right - rChevron.right;
+          expect(auBord, lessThanOrEqualTo(8), reason: '$cas : $auBord');
+          expect(rIle.left, greaterThanOrEqualTo(0), reason: cas);
+          expect(rIle.right, lessThanOrEqualTo(largeur), reason: cas);
+          expect(rMicro.width, greaterThanOrEqualTo(48), reason: cas);
+          expect(rChevron.width, greaterThanOrEqualTo(48), reason: cas);
+          // La pastille : son mot, ou son point quand la place manque ; le
+          // mot reste lu.
+          final SemanticsHandle s = tester.ensureSemantics();
+          // Le toucher qui ramene a la salle se lit « Retourner dans la
+          // salle », puis le mot de la pastille.
+          expect(
+            tester
+                .getSemantics(find.byKey(BarreSeanceEnDirect.cleRetour))
+                .label,
+            contains(t.etat.enDirect),
+            reason: cas,
+          );
+          s.dispose();
+        });
+      }
+    }
+  }
+
+  testWidgets('salle reduite, 320 texte x2 : le bloc micro et chevron passe '
+      'entier a la ligne, jamais un bouton seul', (WidgetTester tester) async {
+    final DateTime maintenant = DateTime.now().toUtc();
+    final FauxMoteurSalle moteur = await _monter(
+      tester,
+      horloge: () => maintenant,
+      t0: maintenant.subtract(const Duration(minutes: 52)),
+      largeur: 320,
+      echelle: 2,
+    );
+    moteur.recevoirDonnees(_paroleDe('e2', 'Aicha', 1));
+    await _attendre(tester);
+    await tester.pump(AppMouvement.alerteChrono);
+    await _attendre(tester);
+    expect(tester.takeException(), isNull);
+    final Rect rMicro = tester.getRect(
+      find.byKey(BarreSeanceEnDirect.cleMicro),
+    );
+    final Rect rChevron = tester.getRect(
+      find.byKey(BarreSeanceEnDirect.cleChevron),
+    );
+    expect((rMicro.center.dy - rChevron.center.dy).abs(), lessThan(1));
   });
 }

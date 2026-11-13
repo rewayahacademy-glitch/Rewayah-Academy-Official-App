@@ -3,8 +3,10 @@ import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../features/salle/seance_vivante.dart' show creerSeanceVivante;
 import '../journal_sorties/port_journal_sorties.dart';
 import '../observabilite/journal_dev.dart';
+import '../pause_seance/port_pause_seance.dart' show pauseSeanceProvider;
 import '../tc_horloge/session_clock_vm.dart';
 import '../theme/app_delais.dart';
 import '../video/diagnostic_transport.dart';
@@ -145,6 +147,27 @@ class EtatSessionPersistante {
   );
 }
 
+/// SYNCHRO-SESSION (13/11/2026, `docs/current/salle/HARMONIE-2026-11-13.md`
+/// section 7) : ce qui vit le temps d'un appel confie, a cote de lui (la
+/// synchronisation de la salle et la Dynamique chrono de la seance,
+/// `SeanceVivante`). Il nait quand le controleur adopte l'appel et meurt
+/// quand l'appel finit, par l'un des trois chemins : « Quitter », fin subie,
+/// sortie de l'eleve hors de l'application.
+abstract interface class CompagnonAppel {
+  /// La seance accompagnee.
+  String get sessionId;
+
+  /// Coupe tout abonnement et toute minuterie, tout de suite.
+  Future<void> liberer();
+}
+
+/// Cree le compagnon d'un appel qu'on vient d'adopter, ou `null`.
+typedef FabriqueCompagnonAppel = CompagnonAppel? Function({
+  required SessionEnCours cours,
+  required AccesSalle acces,
+  required VideoSessionProvider moteur,
+});
+
 /// Le proprietaire **applicatif** du cycle de vie de la salle.
 ///
 /// **C'est le deuxieme invariant du lot** (spec section 9.4, decision D-24).
@@ -217,6 +240,7 @@ class ControleurSessionPersistante
     void Function(String evenement, Map<String, Object?> donnees)?
     signalerAbsence,
     this.noterSortieApp,
+    this._fabriqueCompagnon,
   }) : _ecran = ecranEveille ?? EcranEveille.dePlateforme() {
     _garde = GardeHorsApplication(
       regle: _regleHorsApplication,
@@ -248,6 +272,21 @@ class ControleurSessionPersistante
   /// HORS-SALLE-1 : ce qui se passe quand la page est cachee pendant un
   /// appel tenu ([GardeHorsApplication]).
   late final GardeHorsApplication _garde;
+
+  /// SYNCHRO-SESSION : cree le compagnon de l'appel adopte ; `null` (tests
+  /// du controleur seul) : aucun.
+  final FabriqueCompagnonAppel? _fabriqueCompagnon;
+  CompagnonAppel? _compagnon;
+
+  /// SYNCHRO-SESSION : le compagnon de l'appel tenu, ou `null` (aucun appel,
+  /// ou aucune fabrique). Il change avant que [etats] ne le dise.
+  CompagnonAppel? get compagnon => _compagnon;
+
+  void _libererCompagnon() {
+    final CompagnonAppel? compagnon = _compagnon;
+    _compagnon = null;
+    if (compagnon != null) unawaited(compagnon.liberer());
+  }
 
   /// HORS-SALLE-2 : note une absence de l'eleve au journal des sorties.
   final Future<bool> Function({
@@ -457,6 +496,22 @@ class ControleurSessionPersistante
   /// ferait deux entrees qui divergeraient. Elle rejoint, puis confie l'appel.
   /// Des cet instant, quitter l'ecran de la salle ne coupe plus rien.
   void adopter({required SessionEnCours cours, required AccesSalle acces}) {
+    // SYNCHRO-SESSION : le compagnon nait avec l'appel adopte. Une seconde
+    // adoption de la meme seance (droits de publication rendus par le
+    // serveur, `_confier` de la salle) garde le sien : rien ne repart de
+    // zero ; une autre seance en a un neuf (`_poser` libere l'ancien).
+    if (_compagnon?.sessionId != cours.sessionId) {
+      _libererCompagnon();
+      try {
+        _compagnon = _fabriqueCompagnon?.call(
+          cours: cours,
+          acces: acces,
+          moteur: _moteur,
+        );
+      } on Object catch (erreur) {
+        journalDev('compagnon de l appel impossible : $erreur');
+      }
+    }
     _poser(
       EtatSessionPersistante(
         cours: cours,
@@ -656,6 +711,12 @@ class ControleurSessionPersistante
   }
 
   void _poser(EtatSessionPersistante etat) {
+    // SYNCHRO-SESSION : un etat sans cette seance (« Quitter », fin subie,
+    // sortie hors de l'application, nouvelle entree) libere le compagnon,
+    // avant que quiconque ne lise l'etat : un seul endroit.
+    if (_compagnon != null && etat.cours?.sessionId != _compagnon!.sessionId) {
+      _libererCompagnon();
+    }
     _etat = etat;
     _suivreLAppel(etat.cours);
     if (!_sortie.isClosed) {
@@ -702,6 +763,7 @@ class ControleurSessionPersistante
     unawaited(_suiviMoteur?.cancel());
     _suiviMoteur = null;
     _garde.liberer();
+    _libererCompagnon();
     _ecran.rendre();
     unawaited(_sortie.close());
   }
@@ -739,6 +801,21 @@ final Provider<ControleurSessionPersistante> controleurSessionProvider =
                       sortieSalle: sortieSalle,
                       eleveId: eleveId,
                     ),
+            // SYNCHRO-SESSION : la synchronisation de la salle et la
+            // Dynamique chrono vivent avec l'appel, pas avec l'ecran.
+            fabriqueCompagnon:
+                ({
+                  required SessionEnCours cours,
+                  required AccesSalle acces,
+                  required VideoSessionProvider moteur,
+                }) => creerSeanceVivante(
+                  cours: cours,
+                  acces: acces,
+                  moteur: moteur,
+                  lire: ref.read,
+                  relirePause: () =>
+                      ref.invalidate(pauseSeanceProvider(cours.sessionId)),
+                ),
           );
       ref.onDispose(controleur.liberer);
       return controleur;

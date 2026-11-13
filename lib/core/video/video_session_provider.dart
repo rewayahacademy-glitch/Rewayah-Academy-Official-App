@@ -804,6 +804,22 @@ abstract interface class SonRecuBloque {
   Future<void> activerSon();
 }
 
+/// SYNCHRO-SESSION (13/11/2026, ligne 3.1 de `HARMONIE-2026-11-13.md`) :
+/// l'eleve qui recite, tel que le moteur le lit dans les metadonnees de la
+/// salle, ecrites par le serveur seul (`recitation.ts`). C'est ce que le
+/// moteur suit pour s'abonner aux cameras (`video_camarades.dart`) : l'ecran
+/// lit la meme source, et le cadre du recitant ne reste plus un instant en
+/// photo. Meme principe que [MotifEchecSalle] : seul le moteur qui sait le
+/// dire l'implemente ; ailleurs (demonstration, doubles), l'ecran garde le
+/// message de l'enseignant.
+abstract interface class RecitantDeLaSalle {
+  /// L'identite de l'eleve qui recite, ou `null`.
+  String? get recitantCourant;
+
+  /// Chaque changement de [recitantCourant] (sans repetition).
+  Stream<String?> get recitantChange;
+}
+
 /// ENTREE-ROBUSTE : l'entree en salle a ete interrompue par une sortie (ou une
 /// nouvelle entree) pendant ses essais. Ce n'est pas une panne : l'ecran ne
 /// dit rien, rien n'est reste ouvert.

@@ -79,7 +79,14 @@ class StatusPill extends StatelessWidget {
     required this.ton,
     super.key,
     this.marqueur,
+    this.pointSeul = false,
   });
+
+  /// SYNCHRO-SESSION (13/11/2026) : quand la place manque (salle reduite au
+  /// telephone), la pilule se reduit a son point ; le libelle reste lu par
+  /// le lecteur d'ecran. Reserve aux composants du core
+  /// (`PastilleEtatSeance`).
+  final bool pointSeul;
 
   /// Ce qui remplace le disque de statut, ou `null` pour le disque du ton.
   ///
@@ -110,8 +117,8 @@ class StatusPill extends StatelessWidget {
       label: libelle,
       excludeSemantics: true,
       child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.md,
+        padding: EdgeInsets.symmetric(
+          horizontal: pointSeul ? AppSpacing.sm : AppSpacing.md,
           vertical: AppSpacing.xs,
         ),
         // `arrondiLg` et non `arrondiFull` (CPT-RC, revue CPT-R m8, ecarts
@@ -147,23 +154,25 @@ class StatusPill extends StatelessWidget {
                   dimension: diametrePastille,
                   child: DecoratedBox(decoration: pastille),
                 ),
-            Ecart.hSm,
+            if (!pointSeul) Ecart.hSm,
             // PASTILLE-COUPE-1 : le libelle passe a la ligne entre les mots,
             // jamais dans un mot (« Remplacem / ent » a 200 %) ; un mot trop
             // long pour la place reduit son echelle, jamais sous
             // [echelleMinimaleLisible] (0,85).
-            Flexible(
-              child: TexteSansCoupure(
-                libelle,
-                textAlign: TextAlign.center,
-                // N-10 : un long motif passe a la ligne sans etirer la
-                // pastille sur toute la largeur de sa ligne.
-                largeurAuPlusLong: true,
-                style: fond.applyTo(
-                  Theme.of(context).textTheme.labelMedium ?? const TextStyle(),
+            if (!pointSeul)
+              Flexible(
+                child: TexteSansCoupure(
+                  libelle,
+                  textAlign: TextAlign.center,
+                  // N-10 : un long motif passe a la ligne sans etirer la
+                  // pastille sur toute la largeur de sa ligne.
+                  largeurAuPlusLong: true,
+                  style: fond.applyTo(
+                    Theme.of(context).textTheme.labelMedium ??
+                        const TextStyle(),
+                  ),
                 ),
               ),
-            ),
           ],
         ),
       ),

@@ -2096,3 +2096,46 @@ avec leur raison, une sans objet).
 **Ce qui n'est pas fait.** La synchronisation de la salle vit encore dans la page (plan en six
 étapes dans le relevé). Prouvé par tests et captures de test
 (`docs/current/captures/E2E/harmonie-salle/`) ; pas sur un vrai appareil, pas en production.
+
+## D-045 (13/11/2026). La synchronisation de la salle vit avec l'appel, pas avec la page (lot SYNCHRO-SESSION, point 15 du directeur)
+
+**Demande.** Le directeur, 12/11 : la barre du chrono « marche bien aussi lorsque l'on réduit la
+salle, mais là aussi il faut qu'elle soit exploitée au max ». Plan : section 7 et lignes 3.1 à 3.3
+de `HARMONIE-2026-11-13.md`.
+
+**Décidé.**
+- La synchronisation de la salle et LA Dynamique chrono d'une séance sont un seul objet,
+  `SeanceVivante` (`lib/features/salle/seance_vivante.dart`), créé par le contrôleur de session
+  quand il adopte l'appel et libéré quand l'appel finit (« Quitter », fin subie, sortie de l'élève
+  hors de l'application) ou qu'une autre séance commence. La page et la salle réduite le lisent :
+  une alerte ou une marque née dans l'une se voit dans l'autre, une fois.
+- Le contrôleur reçoit une fabrique (`fabriqueCompagnon`) : sans elle (tests du contrôleur seul),
+  rien n'est créé. Sans contrôleur qui tienne l'appel (démonstration, moteur surchargé), la page
+  tient sa propre séance, libérée avec elle ; la salle réduite de même.
+- Celui qui récite, pour la vidéo et le cadre mis en avant : les métadonnées de la salle écrites par
+  le serveur, lues par le moteur (`RecitantDeLaSalle`, interface à part : seul le moteur LiveKit
+  l'implémente). Le message de l'enseignant ne sert plus qu'au prénom et aux alertes ; il reste la
+  source quand le moteur ne sait pas le dire.
+- La pause relayée n'est lue que si elle vient de qui conduit, dans la salle comme dans la salle
+  réduite (avant : la salle réduite ne vérifiait pas).
+- La récitation à l'entrée de l'enseignant n'est plus terminée à chaque réouverture de la page :
+  une fois, à la naissance de la séance (avant, rouvrir la salle depuis la barre coupait la
+  récitation en cours).
+- Effets voulus : l'enseignant qui a réduit la salle rejoue la page, le tableau et les traits à
+  qui entre ; les traits survivent à une sortie et un retour dans la page ; le tableau diffusé
+  reste ouvert à la réouverture.
+
+**Aucune règle ne change** : droits lus sur les capacités du jeton, vidéo des camarades, 30 s hors
+de l'application, pause, journal des sorties, textes (aucun texte ajouté). Rien n'est gardé
+au-delà de l'appel.
+
+**Trouvé en chemin.** `PageMadina15` divisait par zéro quand la page recevait une place nulle le
+temps d'une mise en page (hauteur NaN, exception) ; elle ne compose plus rien dans ce cas. Le cas
+n'est apparu que dans un test qui remonte la salle sous un conteneur neuf (`salle_ordinateur_test`,
+« B : repli ») : la cause exacte de cette image à largeur nulle n'est pas établie.
+
+**Limites.** `_verifierRecitant` ne tourne que page ouverte (salle réduite : le serveur termine la
+récitation d'un élève parti). Au téléphone à 390 en français, la marque de récitation fait passer
+le chevron de la salle réduite sur une seconde rangée (captures). Prouvé par tests et captures de
+test (`docs/current/captures/E2E/synchro-session/`) ; jamais essayé avec une vraie visio à
+plusieurs, ni en production.

@@ -1165,6 +1165,17 @@ class FauxMoteurSalle implements VideoSessionProvider, SonRecuBloque {
   /// Les identites pour lesquelles une image existe.
   final Set<String> avecImage = <String>{};
 
+  /// SYNCHRO-SESSION : quelqu'un ecoute-t-il encore les participants, les
+  /// paquets de donnees, les contenus presentes ? (Aucune fuite apres la fin
+  /// de l'appel.)
+  bool get ecouteParticipants => _participants.hasListener;
+
+  /// Voir [ecouteParticipants].
+  bool get ecoutePaquets => _donnees.hasListener;
+
+  /// Voir [ecouteParticipants].
+  bool get ecouteContenus => _contenus.hasListener;
+
   /// Pose un etat et le publie, comme le vrai moteur.
   void poser(EtatSalle etat) {
     _etat = etat;
@@ -1357,6 +1368,37 @@ class FauxMoteurSalle implements VideoSessionProvider, SonRecuBloque {
     await _contenus.close();
     await _donnees.close();
     await _sonBloque.close();
+  }
+}
+
+/// SYNCHRO-SESSION (ligne 3.1) : le faux moteur qui dit aussi le recitant
+/// des metadonnees de la salle, comme le vrai ([RecitantDeLaSalle]).
+class FauxMoteurAvecRecitant extends FauxMoteurSalle
+    implements RecitantDeLaSalle {
+  final StreamController<String?> _recitant =
+      StreamController<String?>.broadcast();
+  String? _recitantCourant;
+
+  /// Le serveur ecrit (ou efface) le recitant dans les metadonnees.
+  void poserRecitant(String? identite) {
+    if (identite == _recitantCourant) return;
+    _recitantCourant = identite;
+    _recitant.add(identite);
+  }
+
+  /// Quelqu'un ecoute-t-il encore le recitant ?
+  bool get ecouteRecitant => _recitant.hasListener;
+
+  @override
+  String? get recitantCourant => _recitantCourant;
+
+  @override
+  Stream<String?> get recitantChange => _recitant.stream;
+
+  @override
+  Future<void> liberer() async {
+    await super.liberer();
+    await _recitant.close();
   }
 }
 
