@@ -102,6 +102,12 @@ class CatalogueEnEchec implements PortCatalogue {
   @override
   Future<ReprisLecture?> derniereLecture() =>
       Future<ReprisLecture?>.error(const EchecCatalogue('lecture refusee'));
+
+  @override
+  Future<List<RayonBibliotheque>> rayons() =>
+      Future<List<RayonBibliotheque>>.error(
+        const EchecCatalogue('lecture refusee'),
+      );
 }
 
 /// Un catalogue dont SEULE la lecture par groupe echoue.
@@ -150,6 +156,9 @@ class CatalogueGroupeRefuse implements PortCatalogue {
 
   @override
   Future<ReprisLecture?> derniereLecture() => _vu.derniereLecture();
+
+  @override
+  Future<List<RayonBibliotheque>> rayons() => _vu.rayons();
 }
 
 /// Un enregistrement de fichier qui n'ouvre aucune boite de dialogue.
@@ -197,7 +206,25 @@ LibraryResource ressource({
     CapaciteRessource.supportsOffline,
     CapaciteRessource.presentableInClass,
   },
+  String? description,
+  String? lienExterne,
+  String rayon = codeRayonCours,
+  int ordre = 0,
+  List<String> etapes = const <String>[],
+  bool aVignette = false,
+  List<String> tranches = tranchesToutes,
+  String? lectureCoran,
+  String? ecolePriere,
 }) => LibraryResource(
+  tranches: tranches,
+  lectureCoran: lectureCoran,
+  ecolePriere: ecolePriere,
+  description: description,
+  lienExterne: lienExterne,
+  rayon: rayon,
+  ordre: ordre,
+  etapes: etapes,
+  aVignette: aVignette,
   id: id,
   title: titre ?? 'Support $id',
   shortTitle: titreCourt ?? 'S $id',

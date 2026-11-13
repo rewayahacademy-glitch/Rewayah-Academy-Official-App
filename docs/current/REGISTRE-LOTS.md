@@ -313,6 +313,7 @@ Les 206 branches livrées (PR fusionnée) ne figurent que dans la sortie du scri
 | 2026-11-11 | `claude/zealous-tesla-ewstzw` | 409 | 77 | en production le 11/11 (`f30527be4`), wagon de #435 | pilote, 11/11 |
 | 2026-11-11 | `claude/retirer-absence-detectee` | 429 | 2 | en production le 11/11 (`f30527be4`), wagon de #435 | pilote, 11/11 12:02 (relais) |
 | 2026-11-11 | `claude/profils-p1-travail` | - | 1 | en production le 11/11 (`f30527be4`), wagon de #435 | pilote, 11/11 12:02 (relais) |
+| 2026-11-12 | `claude/bibliotheque-une` | - | 4 | À LIVRER (lot 3 BIBLIOTHEQUE-UNE ; l'architecte pédagogique ouvre la PR et fusionne ; le directeur installe 20261123920000 puis 20261123921000 et déploie `bibliotheque-lecture` et `bibliotheque-upload`) | agent du lot 3, 12/11 ; `docs/current/pedagogie/lots/LOT-3-BIBLIOTHEQUE-UNE.md` |
 | 2026-11-08 | `claude/progression-adulte` | 380 | 4 | À LIVRER (A, après la file actuelle) | pilote, 11/11 : abandonnée le 08/11 sur une panne de CI sqlite3 qui ne venait pas d'elle |
 | 2026-11-08 | `claude/ma-progression` | 382 | 3 | À LIVRER (H, après le lot SOURATES de B) | pilote, 11/11 : « sourate validée » tranchée en option A |
 | 2026-11-11 | `claude/titulaire-sans-appareil` | 432 | 1 | en production le 11/11 (`f30527be4`), wagon de #435 | pilote, 11/11 12:02 (relais) |

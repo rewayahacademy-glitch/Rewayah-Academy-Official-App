@@ -4953,7 +4953,7 @@ class _Traductions$tc$bibliotheque$ar extends Traductions$tc$bibliotheque$fr {
 	@override late final _Traductions$tc$bibliotheque$sections$ar sections = _Traductions$tc$bibliotheque$sections$ar._(_root);
 	@override String get titre => 'المكتبة';
 	@override String get rechercheIndication => 'العنوان أو المستوى أو السورة أو الصفحة';
-	@override String get rechercheLibelle => 'البحث عن مادة';
+	@override String get rechercheLibelle => 'البحث عن وثيقة';
 	@override String get effacerRecherche => 'عرض الكل';
 	@override late final _Traductions$tc$bibliotheque$filtre$ar filtre = _Traductions$tc$bibliotheque$filtre$ar._(_root);
 	@override late final _Traductions$tc$bibliotheque$vide$ar vide = _Traductions$tc$bibliotheque$vide$ar._(_root);
@@ -6868,19 +6868,19 @@ class _Traductions$admin$bibliotheque$ar extends Traductions$admin$bibliotheque$
 
 	// Translations
 	@override String get titre => 'المكتبة';
-	@override String get intro => 'المواد التعليمية: إيداعها، ومراجعة حقوقها، ونشر إصدار منها، وإسنادها إلى الفصول.';
+	@override String get intro => 'الوثائق التعليمية: إيداعها، ومراجعة حقوقها، ونشر إصدار منها، وإسنادها إلى الفصول.';
 	@override String get brouillonAlerte => 'المسودة لا تمنح أي وصول للطلاب ولا للمعلمين.';
-	@override String get ajouter => 'إضافة مادة';
-	@override String get vide => 'لا توجد مواد';
-	@override String get videDetail => 'أضف أول مادة لتجهيزها ومراجعة حقوقها ثم نشرها.';
+	@override String get ajouter => 'إضافة وثيقة';
+	@override String get vide => 'لا توجد وثائق';
+	@override String get videDetail => 'أضف أول وثيقة لتجهيزها ومراجعة حقوقها ثم نشرها.';
 	@override String get erreur => 'تعذّر تحميل الفهرس. أعد المحاولة.';
 	@override String get nonAutorise => 'ليس لديك صلاحية الوصول إلى مكتبة الإدارة.';
 	@override String get indisponibleTitre => 'المكتبة لم تُفتح بعد';
 	@override String get indisponiblePhrase => 'ستتوفر هذه الوظيفة عند ربط الخادم.';
 	@override String get sansDonnees => 'الفهرس';
-	@override String get ficheTitre => 'المادة';
+	@override String get ficheTitre => 'الوثيقة';
 	@override String get retourCatalogue => 'العودة إلى الفهرس';
-	@override String get introuvable => 'هذه المادة غير موجودة أو لا يمكن الوصول إليها.';
+	@override String get introuvable => 'هذه الوثيقة غير موجودة أو لا يمكن الوصول إليها.';
 	@override late final _Traductions$admin$bibliotheque$libelles$ar libelles = _Traductions$admin$bibliotheque$libelles$ar._(_root);
 	@override late final _Traductions$admin$bibliotheque$catalogue$ar catalogue = _Traductions$admin$bibliotheque$catalogue$ar._(_root);
 	@override late final _Traductions$admin$bibliotheque$fiche$ar fiche = _Traductions$admin$bibliotheque$fiche$ar._(_root);
@@ -12730,11 +12730,11 @@ class _Traductions$tc$bibliotheque$sections$ar extends Traductions$tc$bibliotheq
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String get groupe => 'المواد المعروضة';
+	@override String get groupe => 'الوثائق المعروضة';
 	@override String get continuer => 'متابعة';
 	@override String get pourCeGroupe => 'لهذا الفصل';
 	@override String get recents => 'المستخدمة مؤخرًا';
-	@override String get tousLesSupports => 'كل المواد';
+	@override String get tousLesSupports => 'كل الوثائق';
 	@override String get resultats => 'النتائج';
 }
 
@@ -12756,8 +12756,8 @@ class _Traductions$tc$bibliotheque$vide$ar extends Traductions$tc$bibliotheque$v
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String get message => 'لا مادة منشورة حتى الآن';
-	@override String get invitation => 'سيضع معلموك هنا مواد دروسك.';
+	@override String get message => 'لا وثيقة منشورة حتى الآن';
+	@override String get invitation => 'سيضع معلموك هنا وثائق دروسك.';
 }
 
 // Path: tc.bibliotheque.aucunResultat
@@ -12767,7 +12767,7 @@ class _Traductions$tc$bibliotheque$aucunResultat$ar extends Traductions$tc$bibli
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String get message => 'لا مادة مطابقة';
+	@override String get message => 'لا وثيقة مطابقة';
 	@override String get invitation => 'جرّب كلمة أخرى، أو خفّف عوامل التصفية.';
 }
 
@@ -12789,7 +12789,7 @@ class _Traductions$tc$bibliotheque$introuvable$ar extends Traductions$tc$bibliot
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String get message => 'هذه المادة غير مفتوحة لك';
+	@override String get message => 'هذه الوثيقة غير مفتوحة لك';
 	@override String get invitation => 'ربما سُحبت، أو هي مخصصة لفصل آخر. يمكن لمعلمك أن يعيد فتحها لك.';
 }
 
@@ -12814,6 +12814,9 @@ class _Traductions$tc$bibliotheque$type$ar extends Traductions$tc$bibliotheque$t
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
+	@override String get audio => 'صوت';
+	@override String get video => 'فيديو';
+	@override String get lienExterne => 'رابط خارجي';
 	@override String get quran => 'القرآن';
 	@override String get texteStructure => 'نص';
 	@override String get pdf => 'PDF';
@@ -12828,13 +12831,15 @@ class _Traductions$tc$bibliotheque$detail$ar extends Traductions$tc$bibliotheque
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String get titre => 'المادة';
-	@override String get capacites => 'ما تتيحه هذه المادة';
+	@override String get titre => 'الوثيقة';
+	@override String get lecture => 'الرواية';
+	@override String get ecole => 'المذهب الفقهي المتّبع';
+	@override String get capacites => 'ما تتيحه هذه الوثيقة';
 	@override String get niveaux => 'المستويات';
 	@override String get sansVersion => 'لا نسخة منشورة: لا شيء للفتح الآن.';
 	@override String get apercuIndisponible => 'معاينة هذا التنسيق غير متاحة بعد في التطبيق. يمكنك حفظ نسخة منه.';
 	@override String get renduCoran => 'يُفتح القرآن في القارئ المخصص له.';
-	@override String get entreeDetail => 'كل مواد المراجعة في مكان واحد.';
+	@override String get entreeDetail => 'كل وثائق المراجعة في مكان واحد.';
 	@override String get entreeDetailEnseignant => 'كل وثائق الدروس في مكان واحد.';
 	@override String get entreeLigne => 'فتح المكتبة';
 }
@@ -12860,7 +12865,7 @@ class _Traductions$tc$bibliotheque$message$ar extends Traductions$tc$bibliothequ
 	// Translations
 	@override String get copieEnregistree => 'حُفظت النسخة';
 	@override String get copieImpossible => 'هذه النسخة غير متاحة الآن';
-	@override String get telechargementImpossible => 'هذه المادة غير متاحة دون اتصال بعد';
+	@override String get telechargementImpossible => 'هذه الوثيقة غير متاحة دون اتصال بعد';
 	@override String get horsLigneNonTelecharge => 'تتاح بعد تنزيلها أو عند عودة الاتصال';
 	@override String get aucunTelechargement => 'لا ملف للتنزيل في هذه النسخة.';
 }
@@ -12872,8 +12877,8 @@ class _Traductions$tc$bibliotheque$classe$ar extends Traductions$tc$bibliotheque
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String get titre => 'اختيار مادة';
-	@override String get sousTitre => 'المادة المختارة تحل محل المعروضة. يستمر الدرس.';
+	@override String get titre => 'اختيار وثيقة';
+	@override String get sousTitre => 'الوثيقة المختارة تحل محل المعروضة. يستمر الدرس.';
 }
 
 // Path: tc.bibliotheque.rendu
@@ -12883,13 +12888,22 @@ class _Traductions$tc$bibliotheque$rendu$ar extends Traductions$tc$bibliotheque$
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
+	@override String get sansLecteur => 'هذا النوع من الوثائق ليس له قارئ في التطبيق بعد.';
+	@override String get confirmerTitre => 'هذا الرابط يُخرجك من التطبيق';
+	@override String get confirmerPhrase => 'يفتح موقعًا آخر خارج أكاديمية رواية. يمكنك العودة إلى هنا بعد ذلك.';
+	@override String get confirmerOuvrir => 'فتح الرابط';
+	@override String get confirmerRester => 'البقاء في التطبيق';
+	@override String get ouvrirLien => 'فتح الرابط';
+	@override String get lienAutreSite => 'يُفتح هذا الرابط في موقع آخر.';
+	@override String get lienSansNavigateur => 'يُفتح هذا الرابط من نسخة الويب للتطبيق.';
+	@override String get lienAbsent => 'ليس لهذه الوثيقة محتوى لفتحه بعد.';
 	@override String get imageInaccessible => 'تعذّر تحميل الصورة حاليًا.';
 	@override String get imageIllisible => 'لا يمكن عرض ملف الصورة هذا.';
 	@override String get reessayer => 'إعادة المحاولة';
 	@override String get ouvrir => 'فتح';
 	@override String get ouvrirMushaf => 'فتح المصحف';
 	@override String get lienEchec => 'تعذّر الحصول على رابط القراءة حاليًا.';
-	@override String get lienIndisponible => 'الفتح غير متاح لهذه المادة.';
+	@override String get lienIndisponible => 'الفتح غير متاح لهذه الوثيقة.';
 	@override String get lienHorsLigne => 'سيمكن الفتح عند عودة الاتصال.';
 	@override String get lienBloque => 'منع المتصفح الفتح. اسمح بالنوافذ لهذا الموقع ثم أعد المحاولة.';
 }
@@ -12901,19 +12915,19 @@ class _Traductions$tc$bibliotheque$actif$ar extends Traductions$tc$bibliotheque$
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String get indisponibleTitre => 'المادة المعروضة لم تُفتح بعد';
-	@override String get indisponible => 'سيُفتح تتبّع المادة المعروضة عند ربط الخادم.';
-	@override String get sansDonnees => 'المادة المعروضة';
-	@override String get erreur => 'تعذّر تحميل المادة المعروضة. أعد المحاولة.';
-	@override String get aucun => 'لا توجد مادة معروضة';
-	@override String get aucunDetail => 'حين يعرض معلمك مادة، ستظهر هنا دون أن تفعل شيئًا.';
-	@override String get titre => 'المادة المعروضة';
+	@override String get indisponibleTitre => 'الوثيقة المعروضة لم تُفتح بعد';
+	@override String get indisponible => 'سيُفتح تتبّع الوثيقة المعروضة عند ربط الخادم.';
+	@override String get sansDonnees => 'الوثيقة المعروضة';
+	@override String get erreur => 'تعذّر تحميل الوثيقة المعروضة. أعد المحاولة.';
+	@override String get aucun => 'لا توجد وثيقة معروضة';
+	@override String get aucunDetail => 'حين يعرض معلمك وثيقة، ستظهر هنا دون أن تفعل شيئًا.';
+	@override String get titre => 'الوثيقة المعروضة';
 	@override String version({required Object numero}) => 'الإصدار ⁨${numero}⁩';
 	@override String page({required Object page}) => 'الصفحة ⁨${page}⁩';
-	@override String get ouvrirFiche => 'فتح بطاقة المادة';
+	@override String get ouvrirFiche => 'فتح بطاقة الوثيقة';
 	@override String get ouvrirCoran => 'فتح في قارئ القرآن';
 	@override String retire({required Object titre}) => 'سُحبت «⁨${titre}⁩»';
-	@override String get retireDetail => 'سحب معلمك هذه المادة من الحصة. لم تعد متاحة.';
+	@override String get retireDetail => 'سحب معلمك هذه الوثيقة من الحصة. لم تعد متاحة.';
 }
 
 // Path: tc.coran.modes
@@ -16488,11 +16502,11 @@ class _Traductions$admin$bibliotheque$catalogue$ar extends Traductions$admin$bib
 	@override late final _Traductions$admin$bibliotheque$catalogue$colonnes$ar colonnes = _Traductions$admin$bibliotheque$catalogue$colonnes$ar._(_root);
 	@override String modifieLe({required Object date}) => 'عُدّلت في ⁨${date}⁩';
 	@override String get videRecherche => 'لا توجد نتائج';
-	@override String get videRechercheDetail => 'لا توجد مادة تطابق بحثك أو عوامل التصفية.';
+	@override String get videRechercheDetail => 'لا توجد وثيقة تطابق بحثك أو عوامل التصفية.';
 	@override String get effacerFiltres => 'مسح عوامل التصفية';
-	@override String get voirPlus => 'عرض المزيد من المواد';
+	@override String get voirPlus => 'عرض المزيد من الوثائق';
 	@override String get pageErreur => 'تعذّر تحميل بقية الفهرس.';
-	@override String ouvrir({required Object titre}) => 'فتح المادة ⁨${titre}⁩';
+	@override String ouvrir({required Object titre}) => 'فتح الوثيقة ⁨${titre}⁩';
 	@override String get droitsEchus => 'حقوق منتهية';
 	@override String get alerteTitre => 'المسودات';
 	@override String get pasDeAcces => 'لا يمكنك تعديل المكتبة.';
@@ -16517,10 +16531,11 @@ class _Traductions$admin$bibliotheque$fiche$ar extends Traductions$admin$bibliot
 	@override late final _Traductions$admin$bibliotheque$fiche$meta$ar meta = _Traductions$admin$bibliotheque$fiche$meta$ar._(_root);
 	@override String get enregistrer => 'حفظ التعديلات';
 	@override String get enregistre => 'سُجِّلت التعديلات.';
-	@override String get conflit => 'عدّل مسؤول آخر هذه المادة. أعد تحميل البطاقة قبل المتابعة.';
+	@override String get conflit => 'عدّل مسؤول آخر هذه الوثيقة. أعد تحميل البطاقة قبل المتابعة.';
 	@override String get recharger => 'إعادة تحميل البطاقة';
 	@override String get echecEnregistrer => 'تعذّر تأكيد التعديلات. أعد المحاولة.';
 	@override String get titreVide => 'العنوان مطلوب.';
+	@override String get retirerVignette => 'إزالة الصورة المصغرة';
 	@override String get figee => 'إصدار منشور ومثبّت: لتعديله أنشئ إصدارًا جديدًا.';
 	@override String retireMotif({required Object motif}) => 'سُحبت من الفهرس. السبب: ⁨${motif}⁩';
 	@override String get retireSansMotif => 'سُحبت من الفهرس.';
@@ -16544,7 +16559,15 @@ class _Traductions$admin$bibliotheque$import$ar extends Traductions$admin$biblio
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String get completer => 'استكمال المادة';
+	@override late final _Traductions$admin$bibliotheque$import$classement$ar classement = _Traductions$admin$bibliotheque$import$classement$ar._(_root);
+	@override String get vignette => 'الصورة المصغرة';
+	@override String get choisirVignette => 'اختيار صورة مصغرة';
+	@override String get choisirAutreVignette => 'اختيار صورة مصغرة أخرى';
+	@override String get vignetteAide => 'صورة (PNG أو JPEG أو WebP، حتى 2 ميغابايت)، اختيارية. وبدونها تعرض الشاشة غلافًا بحسب النوع.';
+	@override String get completerLien => 'أدخل عنوان الرابط (https): يطلبه الرابط الخارجي والفيديو، ويطلب الرابط الخارجي وصفه أيضًا.';
+	@override String get lienInvalide => 'هذا العنوان غير مقبول: يجب أن يبدأ بـ https وأن يقود إلى موقع.';
+	@override String get sansFichierAide => 'لا شيء للإيداع لهذا النوع: أدخل عنوان الرابط ثم تابع.';
+	@override String get completer => 'استكمال الوثيقة';
 	@override late final _Traductions$admin$bibliotheque$import$sections$ar sections = _Traductions$admin$bibliotheque$import$sections$ar._(_root);
 	@override late final _Traductions$admin$bibliotheque$import$champs$ar champs = _Traductions$admin$bibliotheque$import$champs$ar._(_root);
 	@override String get completerDabord => 'املأ أولًا العنوان والنوع واللغة والتصنيف.';
@@ -16589,7 +16612,7 @@ class _Traductions$admin$bibliotheque$publication$ar extends Traductions$admin$b
 	@override String get publier => 'نشر الإصدار';
 	@override String get bloque => 'لا يمكن نشر هذا الإصدار ما لم يؤكد الخادم جميع نقاط الفحص.';
 	@override String confirmerTitre({required Object numero}) => 'نشر الإصدار ⁨${numero}⁩؟';
-	@override String get confirmerEffet => 'يصبح الإصدار ثابتًا وظاهرًا للفصول المسندة إليها المادة. ولتعديله ستنشئ إصدارًا جديدًا.';
+	@override String get confirmerEffet => 'يصبح الإصدار ثابتًا وظاهرًا للفصول المسندة إليها الوثيقة. ولتعديله ستنشئ إصدارًا جديدًا.';
 	@override String get confirmerBouton => 'نشر';
 	@override String get publiee => 'تم نشر الإصدار.';
 	@override String get dejaPubliee => 'هذا الإصدار منشور بالفعل.';
@@ -16614,23 +16637,23 @@ class _Traductions$admin$bibliotheque$attribution$ar extends Traductions$admin$b
 	@override String get aucune => 'لا يوجد فصل مفتوح للإسناد حاليًا.';
 	@override String get plusDeClasses => 'عرض المزيد من الفصول';
 	@override String get chargementPlus => 'جارٍ التحميل…';
-	@override String get nonPublie => 'هذه المادة غير منشورة. انشر إصدارًا قبل إسنادها إلى الفصول.';
+	@override String get nonPublie => 'هذه الوثيقة غير منشورة. انشر إصدارًا قبل إسنادها إلى الفصول.';
 	@override String get erreur => 'تعذّر تحميل الفصول. أعد المحاولة.';
 	@override String attribuer({required Object nombre}) => 'الإسناد إلى ⁨${nombre}⁩ من الفصول';
 	@override String get attribuerAucune => 'اختر فصلًا واحدًا على الأقل قبل الإسناد.';
-	@override String get attribuee => 'تم إسناد المادة. الفصول المختارة ترى المادة الآن.';
+	@override String get attribuee => 'تم إسناد الوثيقة. الفصول المختارة ترى الوثيقة الآن.';
 	@override String get attribueEchec => 'لم يتم الإسناد. أعد المحاولة بعد لحظات.';
 	@override String get retraitTitre => 'سحب من الفهرس';
-	@override String get retraitIntro => 'السحب يُخفي المادة عن جميع الفصول. لا يحذف شيئًا: يبقى الملف والسجل محفوظين.';
+	@override String get retraitIntro => 'السحب يُخفي الوثيقة عن جميع الفصول. لا يحذف شيئًا: يبقى الملف والسجل محفوظين.';
 	@override String get motif => 'سبب السحب';
 	@override String get motifRequis => 'اكتب سبب السحب قبل المتابعة: يُحفظ في السجل.';
-	@override String get retirer => 'سحب هذه المادة';
+	@override String get retirer => 'سحب هذه الوثيقة';
 	@override String retraitConfirmerTitre({required Object titre}) => 'سحب «⁨${titre}⁩» من الفهرس؟';
-	@override String get retraitConfirmerEffet => 'لن ترى الفصول المادة بعد الآن، ومنها الفصول التي تستخدمها حاليًا. يُحفظ السبب في السجل.';
-	@override String get retraitConfirmerBouton => 'سحب المادة';
-	@override String get retire => 'سُحبت المادة من الفهرس.';
+	@override String get retraitConfirmerEffet => 'لن ترى الفصول الوثيقة بعد الآن، ومنها الفصول التي تستخدمها حاليًا. يُحفظ السبب في السجل.';
+	@override String get retraitConfirmerBouton => 'سحب الوثيقة';
+	@override String get retire => 'سُحبت الوثيقة من الفهرس.';
 	@override String get retraitEchec => 'لم يتم السحب. أعد المحاولة بعد لحظات.';
-	@override String get conflit => 'عدّل أحدهم هذه المادة في هذه الأثناء. أعد التحميل قبل المتابعة.';
+	@override String get conflit => 'عدّل أحدهم هذه الوثيقة في هذه الأثناء. أعد التحميل قبل المتابعة.';
 }
 
 // Path: comptable.statuts.paiement
@@ -21919,6 +21942,9 @@ class _Traductions$admin$bibliotheque$libelles$type$ar extends Traductions$admin
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
+	@override String get audio => 'صوت';
+	@override String get video => 'فيديو';
+	@override String get lienExterne => 'رابط خارجي';
 	@override String get quran => 'القرآن';
 	@override String get texteStructure => 'نص منظّم';
 	@override String get pdf => 'ملف PDF';
@@ -22040,7 +22066,7 @@ class _Traductions$admin$bibliotheque$catalogue$colonnes$ar extends Traductions$
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String get support => 'المادة';
+	@override String get support => 'الوثيقة';
 	@override String get type => 'النوع';
 	@override String get langue => 'اللغة';
 	@override String get categorie => 'التصنيف';
@@ -22079,7 +22105,10 @@ class _Traductions$admin$bibliotheque$fiche$champs$ar extends Traductions$admin$
 	@override String get titreCourt => 'عنوان مختصر';
 	@override String get edition => 'الطبعة';
 	@override String get organisme => 'الجهة أو المؤلف أو الناشر';
-	@override String get description => 'الوصف التعليمي';
+	@override String get description => 'وصف مختصر (يظهر على البطاقة)';
+	@override String get rayon => 'الرف';
+	@override String get ordre => 'ترتيب العرض';
+	@override String get lien => 'عنوان الرابط (https)';
 	@override String get conditions => 'شروط الإسناد';
 }
 
@@ -22097,6 +22126,12 @@ class _Traductions$admin$bibliotheque$fiche$meta$ar extends Traductions$admin$bi
 	@override String get annee => 'السنة';
 	@override String get visibilite => 'الظهور';
 	@override String get horsLigne => 'القراءة دون إنترنت';
+	@override String get rayon => 'الرف';
+	@override String get etapes => 'مراحل البرنامج';
+	@override String get vignette => 'الصورة المصغرة';
+	@override String get vignetteOui => 'مودعة';
+	@override String get vignetteNon => 'افتراضية بحسب النوع';
+	@override String get lien => 'عنوان الرابط';
 	@override String get nonRenseigne => 'غير مذكور';
 }
 
@@ -22161,6 +22196,30 @@ class _Traductions$admin$bibliotheque$fiche$audit$ar extends Traductions$admin$b
 	@override String get restauration => 'استُعيدت';
 }
 
+// Path: admin.bibliotheque.import.classement
+class _Traductions$admin$bibliotheque$import$classement$ar extends Traductions$admin$bibliotheque$import$classement$fr {
+	_Traductions$admin$bibliotheque$import$classement$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get tranchesTitre => 'لأيّ الأعمار؟';
+	@override String get tranchesAide => 'لا يرى الطالب إلا وثائق فئته العمرية. حدِّد كل الفئات المعنيّة.';
+	@override String get tranchesAideLien => 'الرابط يقود إلى خارج التطبيق، لذلك لا تُحدَّد فئة الأطفال من 6 إلى 9 سنوات تلقائيًا. حدِّدها فقط إذا كنت واثقًا من الموقع.';
+	@override String get tranchesAucune => 'حدِّد فئة عمرية واحدة على الأقل.';
+	@override String get etapesTitre => 'مراحل البرنامج';
+	@override String get etapesAide => 'اربط الوثيقة بالمراحل التي تفيد فيها (اختياري).';
+	@override String get etapesVide => 'ستظهر المراحل عند نشر البرنامج.';
+	@override String get etapesIndisponible => 'تعذّرت قراءة المراحل حاليًا. يمكن حفظ الوثيقة دون مرحلة.';
+	@override String get lectureTitre => 'الرواية';
+	@override String get lectureAucune => 'لم تُحدَّد رواية';
+	@override String get ecoleLibelle => 'المذهب الفقهي المتّبع (للصلاة والوضوء؛ اختياري)';
+	@override String get depotInconnu => 'تعذّر التحقق حاليًا من تفعيل إيداع الملفات. يمكنك الآن إضافة وثيقة عن طريق رابطها.';
+	@override String get ecoleTrop => 'يجب ألا يتجاوز اسم المذهب 80 حرفًا.';
+	@override String get depotInactif => 'لم يُفعَّل بعدُ إيداع الملفات. يمكنك الآن إضافة وثيقة عن طريق رابطها.';
+	@override String get videoLien => 'للفيديو، الصق رابطه.';
+}
+
 // Path: admin.bibliotheque.import.sections
 class _Traductions$admin$bibliotheque$import$sections$ar extends Traductions$admin$bibliotheque$import$sections$fr {
 	_Traductions$admin$bibliotheque$import$sections$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -22168,7 +22227,7 @@ class _Traductions$admin$bibliotheque$import$sections$ar extends Traductions$adm
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String get ressource => 'المادة';
+	@override String get ressource => 'الوثيقة';
 	@override String get fichier => 'الملف';
 	@override String get droits => 'الحقوق والوصول';
 }
@@ -22181,6 +22240,10 @@ class _Traductions$admin$bibliotheque$import$champs$ar extends Traductions$admin
 
 	// Translations
 	@override String get titre => 'العنوان';
+	@override String get description => 'وصف مختصر (يظهر على البطاقة)';
+	@override String get rayon => 'الرف';
+	@override String get ordre => 'ترتيب العرض (اختياري)';
+	@override String get lien => 'عنوان الرابط (https)';
 	@override String get categorie => 'التصنيف';
 	@override String get type => 'النوع';
 	@override String get langue => 'اللغة';
@@ -22197,6 +22260,8 @@ class _Traductions$admin$bibliotheque$import$formats$ar extends Traductions$admi
 	@override String get pdf => 'الصيغة المقبولة: ملف PDF.';
 	@override String get image => 'الصيغ المقبولة: الصور الرقمية الشائعة.';
 	@override String get json => 'الصيغة المقبولة: ملف بيانات منظّم.';
+	@override String get audio => 'الصيغ المقبولة: MP3 وM4A وOGG.';
+	@override String get lien => 'تُعطى هذه الوثيقة برابط: لا ملف للإيداع. ويُعطى الفيديو برابطه.';
 	@override String get aucun => 'هذا النوع لا يقبل ملفًا.';
 }
 
@@ -22223,10 +22288,11 @@ class _Traductions$admin$bibliotheque$import$erreurs$ar extends Traductions$admi
 
 	// Translations
 	@override String get taille => 'هذا الملف كبير جدًا. اختر ملفًا أخف.';
-	@override String get type => 'نوع هذا الملف غير مدعوم لهذه المادة. اختر ملفًا آخر.';
+	@override String get type => 'نوع هذا الملف غير مدعوم لهذه الوثيقة. اختر ملفًا آخر.';
 	@override String get reseau => 'انقطع الاتصال. لم يتأكد الإيداع: أعد المحاولة.';
 	@override String get refuse => 'رفض الخادم هذا الإيداع. أعد المحاولة أو اختر ملفًا آخر.';
 	@override String get empreinte => 'الملف المستلم لا يطابق الملف المرسل. أعد المحاولة.';
+	@override String get nonActive => 'لم يُفعَّل بعدُ إيداع الملفات، ولم يُرسَل شيء. يمكنك في الأثناء إضافة وثيقة عن طريق رابطها.';
 	@override String get creation => 'تعذّر إنشاء المسودة. أعد المحاولة.';
 	@override String get droits => 'تعذّر حفظ الحقوق. أعد المحاولة.';
 }
@@ -26995,43 +27061,48 @@ extension on TraductionsAr {
 			'tc.groupe.espace.introuvableDetail' => 'ربما أُغلق، أو يخص ملفًا آخر.',
 			'tc.groupe.emplacement.nonBranche' => 'قريبًا',
 			'tc.groupe.emplacement.nonBrancheDetail' => 'سيُربط هذا المحتوى بهذه المساحة قريبًا.',
-			'tc.bibliotheque.sections.groupe' => 'المواد المعروضة',
+			'tc.bibliotheque.sections.groupe' => 'الوثائق المعروضة',
 			'tc.bibliotheque.sections.continuer' => 'متابعة',
 			'tc.bibliotheque.sections.pourCeGroupe' => 'لهذا الفصل',
 			'tc.bibliotheque.sections.recents' => 'المستخدمة مؤخرًا',
-			'tc.bibliotheque.sections.tousLesSupports' => 'كل المواد',
+			'tc.bibliotheque.sections.tousLesSupports' => 'كل الوثائق',
 			'tc.bibliotheque.sections.resultats' => 'النتائج',
 			'tc.bibliotheque.titre' => 'المكتبة',
 			'tc.bibliotheque.rechercheIndication' => 'العنوان أو المستوى أو السورة أو الصفحة',
-			'tc.bibliotheque.rechercheLibelle' => 'البحث عن مادة',
+			'tc.bibliotheque.rechercheLibelle' => 'البحث عن وثيقة',
 			'tc.bibliotheque.effacerRecherche' => 'عرض الكل',
 			'tc.bibliotheque.filtre.type' => 'النوع',
 			'tc.bibliotheque.filtre.disponibilite' => 'التوفر',
-			'tc.bibliotheque.vide.message' => 'لا مادة منشورة حتى الآن',
-			'tc.bibliotheque.vide.invitation' => 'سيضع معلموك هنا مواد دروسك.',
-			'tc.bibliotheque.aucunResultat.message' => 'لا مادة مطابقة',
+			'tc.bibliotheque.vide.message' => 'لا وثيقة منشورة حتى الآن',
+			'tc.bibliotheque.vide.invitation' => 'سيضع معلموك هنا وثائق دروسك.',
+			'tc.bibliotheque.aucunResultat.message' => 'لا وثيقة مطابقة',
 			'tc.bibliotheque.aucunResultat.invitation' => 'جرّب كلمة أخرى، أو خفّف عوامل التصفية.',
 			'tc.bibliotheque.indisponible.message' => 'المكتبة غير متاحة مؤقتًا',
 			'tc.bibliotheque.indisponible.action' => 'إعادة المحاولة',
-			'tc.bibliotheque.introuvable.message' => 'هذه المادة غير مفتوحة لك',
+			'tc.bibliotheque.introuvable.message' => 'هذه الوثيقة غير مفتوحة لك',
 			'tc.bibliotheque.introuvable.invitation' => 'ربما سُحبت، أو هي مخصصة لفصل آخر. يمكن لمعلمك أن يعيد فتحها لك.',
 			'tc.bibliotheque.offline.aTelecharger' => 'للتنزيل',
 			'tc.bibliotheque.offline.enCours' => 'جارٍ التنزيل',
 			'tc.bibliotheque.offline.enCache' => 'في الذاكرة المؤقتة',
 			'tc.bibliotheque.offline.telecharge' => 'تم التنزيل',
 			'tc.bibliotheque.offline.indisponible' => 'غير متاحة دون اتصال',
+			'tc.bibliotheque.type.audio' => 'صوت',
+			'tc.bibliotheque.type.video' => 'فيديو',
+			'tc.bibliotheque.type.lienExterne' => 'رابط خارجي',
 			'tc.bibliotheque.type.quran' => 'القرآن',
 			'tc.bibliotheque.type.texteStructure' => 'نص',
 			'tc.bibliotheque.type.pdf' => 'PDF',
 			'tc.bibliotheque.type.image' => 'صورة',
 			'tc.bibliotheque.type.lecon' => 'درس',
-			'tc.bibliotheque.detail.titre' => 'المادة',
-			'tc.bibliotheque.detail.capacites' => 'ما تتيحه هذه المادة',
+			'tc.bibliotheque.detail.titre' => 'الوثيقة',
+			'tc.bibliotheque.detail.lecture' => 'الرواية',
+			'tc.bibliotheque.detail.ecole' => 'المذهب الفقهي المتّبع',
+			'tc.bibliotheque.detail.capacites' => 'ما تتيحه هذه الوثيقة',
 			'tc.bibliotheque.detail.niveaux' => 'المستويات',
 			'tc.bibliotheque.detail.sansVersion' => 'لا نسخة منشورة: لا شيء للفتح الآن.',
 			'tc.bibliotheque.detail.apercuIndisponible' => 'معاينة هذا التنسيق غير متاحة بعد في التطبيق. يمكنك حفظ نسخة منه.',
 			'tc.bibliotheque.detail.renduCoran' => 'يُفتح القرآن في القارئ المخصص له.',
-			'tc.bibliotheque.detail.entreeDetail' => 'كل مواد المراجعة في مكان واحد.',
+			'tc.bibliotheque.detail.entreeDetail' => 'كل وثائق المراجعة في مكان واحد.',
 			'tc.bibliotheque.detail.entreeDetailEnseignant' => 'كل وثائق الدروس في مكان واحد.',
 			'tc.bibliotheque.detail.entreeLigne' => 'فتح المكتبة',
 			'tc.bibliotheque.action.telecharger' => 'إتاحتها دون اتصال',
@@ -27039,33 +27110,42 @@ extension on TraductionsAr {
 			'tc.bibliotheque.action.enregistrerCopie' => 'حفظ نسخة',
 			'tc.bibliotheque.message.copieEnregistree' => 'حُفظت النسخة',
 			'tc.bibliotheque.message.copieImpossible' => 'هذه النسخة غير متاحة الآن',
-			'tc.bibliotheque.message.telechargementImpossible' => 'هذه المادة غير متاحة دون اتصال بعد',
+			'tc.bibliotheque.message.telechargementImpossible' => 'هذه الوثيقة غير متاحة دون اتصال بعد',
 			'tc.bibliotheque.message.horsLigneNonTelecharge' => 'تتاح بعد تنزيلها أو عند عودة الاتصال',
 			'tc.bibliotheque.message.aucunTelechargement' => 'لا ملف للتنزيل في هذه النسخة.',
-			'tc.bibliotheque.classe.titre' => 'اختيار مادة',
-			'tc.bibliotheque.classe.sousTitre' => 'المادة المختارة تحل محل المعروضة. يستمر الدرس.',
+			'tc.bibliotheque.classe.titre' => 'اختيار وثيقة',
+			'tc.bibliotheque.classe.sousTitre' => 'الوثيقة المختارة تحل محل المعروضة. يستمر الدرس.',
+			'tc.bibliotheque.rendu.sansLecteur' => 'هذا النوع من الوثائق ليس له قارئ في التطبيق بعد.',
+			'tc.bibliotheque.rendu.confirmerTitre' => 'هذا الرابط يُخرجك من التطبيق',
+			'tc.bibliotheque.rendu.confirmerPhrase' => 'يفتح موقعًا آخر خارج أكاديمية رواية. يمكنك العودة إلى هنا بعد ذلك.',
+			'tc.bibliotheque.rendu.confirmerOuvrir' => 'فتح الرابط',
+			'tc.bibliotheque.rendu.confirmerRester' => 'البقاء في التطبيق',
+			'tc.bibliotheque.rendu.ouvrirLien' => 'فتح الرابط',
+			'tc.bibliotheque.rendu.lienAutreSite' => 'يُفتح هذا الرابط في موقع آخر.',
+			'tc.bibliotheque.rendu.lienSansNavigateur' => 'يُفتح هذا الرابط من نسخة الويب للتطبيق.',
+			'tc.bibliotheque.rendu.lienAbsent' => 'ليس لهذه الوثيقة محتوى لفتحه بعد.',
 			'tc.bibliotheque.rendu.imageInaccessible' => 'تعذّر تحميل الصورة حاليًا.',
 			'tc.bibliotheque.rendu.imageIllisible' => 'لا يمكن عرض ملف الصورة هذا.',
 			'tc.bibliotheque.rendu.reessayer' => 'إعادة المحاولة',
 			'tc.bibliotheque.rendu.ouvrir' => 'فتح',
 			'tc.bibliotheque.rendu.ouvrirMushaf' => 'فتح المصحف',
 			'tc.bibliotheque.rendu.lienEchec' => 'تعذّر الحصول على رابط القراءة حاليًا.',
-			'tc.bibliotheque.rendu.lienIndisponible' => 'الفتح غير متاح لهذه المادة.',
+			'tc.bibliotheque.rendu.lienIndisponible' => 'الفتح غير متاح لهذه الوثيقة.',
 			'tc.bibliotheque.rendu.lienHorsLigne' => 'سيمكن الفتح عند عودة الاتصال.',
 			'tc.bibliotheque.rendu.lienBloque' => 'منع المتصفح الفتح. اسمح بالنوافذ لهذا الموقع ثم أعد المحاولة.',
-			'tc.bibliotheque.actif.indisponibleTitre' => 'المادة المعروضة لم تُفتح بعد',
-			'tc.bibliotheque.actif.indisponible' => 'سيُفتح تتبّع المادة المعروضة عند ربط الخادم.',
-			'tc.bibliotheque.actif.sansDonnees' => 'المادة المعروضة',
-			'tc.bibliotheque.actif.erreur' => 'تعذّر تحميل المادة المعروضة. أعد المحاولة.',
-			'tc.bibliotheque.actif.aucun' => 'لا توجد مادة معروضة',
-			'tc.bibliotheque.actif.aucunDetail' => 'حين يعرض معلمك مادة، ستظهر هنا دون أن تفعل شيئًا.',
-			'tc.bibliotheque.actif.titre' => 'المادة المعروضة',
+			'tc.bibliotheque.actif.indisponibleTitre' => 'الوثيقة المعروضة لم تُفتح بعد',
+			'tc.bibliotheque.actif.indisponible' => 'سيُفتح تتبّع الوثيقة المعروضة عند ربط الخادم.',
+			'tc.bibliotheque.actif.sansDonnees' => 'الوثيقة المعروضة',
+			'tc.bibliotheque.actif.erreur' => 'تعذّر تحميل الوثيقة المعروضة. أعد المحاولة.',
+			'tc.bibliotheque.actif.aucun' => 'لا توجد وثيقة معروضة',
+			'tc.bibliotheque.actif.aucunDetail' => 'حين يعرض معلمك وثيقة، ستظهر هنا دون أن تفعل شيئًا.',
+			'tc.bibliotheque.actif.titre' => 'الوثيقة المعروضة',
 			'tc.bibliotheque.actif.version' => ({required Object numero}) => 'الإصدار ⁨${numero}⁩',
 			'tc.bibliotheque.actif.page' => ({required Object page}) => 'الصفحة ⁨${page}⁩',
-			'tc.bibliotheque.actif.ouvrirFiche' => 'فتح بطاقة المادة',
+			'tc.bibliotheque.actif.ouvrirFiche' => 'فتح بطاقة الوثيقة',
 			'tc.bibliotheque.actif.ouvrirCoran' => 'فتح في قارئ القرآن',
 			'tc.bibliotheque.actif.retire' => ({required Object titre}) => 'سُحبت «⁨${titre}⁩»',
-			'tc.bibliotheque.actif.retireDetail' => 'سحب معلمك هذه المادة من الحصة. لم تعد متاحة.',
+			'tc.bibliotheque.actif.retireDetail' => 'سحب معلمك هذه الوثيقة من الحصة. لم تعد متاحة.',
 			'tc.coran.modes.mushaf' => 'صفحة المصحف',
 			'tc.coran.modes.verset' => 'قراءة مكبَّرة',
 			'tc.coran.modes.focus' => 'التركيز',
@@ -27095,6 +27175,8 @@ extension on TraductionsAr {
 			'tc.coran.navigation.limite' => 'يشمل البحث أرقام الصفحات والمراجع وأسماء السور. البحث في نص القرآن غير متاح بعد.',
 			'tc.coran.navigation.aucunResultat' => 'لم يُعثر على مرجع',
 			'tc.coran.navigation.aucunResultatDetail' => 'جرّب رقم صفحة، أو اسم سورة، أو مرجعًا مثل 2:255.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.coran.navigation.pageNumero' => ({required Object page}) => 'الصفحة ⁨${page}⁩',
 			'tc.coran.sommaire.titre' => 'السور',
 			'tc.coran.sommaire.detail' => ({required Object versets, required Object page}) => 'عدد آياتها ⁨${versets}⁩ · الصفحة ⁨${page}⁩',
@@ -27109,8 +27191,6 @@ extension on TraductionsAr {
 			'tc.coran.focus.aucunePlageDetail' => 'يتبع التركيز المقطع الذي يحدده المعلم. خارج الفصل، يتمركز على الصفحة المفتوحة.',
 			'tc.coran.focus.quitter' => 'الخروج من التركيز',
 			'tc.outils.dock.titre' => 'الأدوات',
-			_ => null,
-		} ?? switch (path) {
 			'tc.outils.dock.deplacer' => 'نقل الأدوات',
 			'tc.outils.dock.position.bas' => 'في الأسفل',
 			'tc.outils.dock.position.gauche' => 'في جهة البداية',
@@ -27609,6 +27689,8 @@ extension on TraductionsAr {
 			'com.messages.types.dossier' => 'الملف',
 			'com.messages.types.mission' => 'مهمة المراقبة',
 			'com.messages.types.remplacement' => 'الاستبدال',
+			_ => null,
+		} ?? switch (path) {
 			'com.messages.types.candidature' => 'طلب الترشح',
 			'com.messages.types.profilPaiement' => 'ملف الدفع',
 			'com.messages.types.autre' => 'موضوع آخر',
@@ -27623,8 +27705,6 @@ extension on TraductionsAr {
 			'com.messages.demo.roles.tuteur' => 'الأسرة',
 			'com.messages.demo.roles.enseignant' => 'المعلم',
 			'com.messages.demo.roles.adulte' => 'طالب بالغ',
-			_ => null,
-		} ?? switch (path) {
 			'com.messages.demo.roles.admin' => 'الإدارة',
 			'com.messages.demo.roles.controleur' => 'المراقب',
 			'com.messages.demo.situations' => 'حالات للتجربة',
@@ -28123,6 +28203,8 @@ extension on TraductionsAr {
 			'com.annonces.publieur.nature.toutes' => 'تستلمه الأكاديمية كلها. خصصه لما يهم الجميع.',
 			'com.annonces.publieur.quand.maintenant' => 'فور التأكيد',
 			'com.annonces.publieur.quand.maintenantDetail' => 'يُرسل الإعلان فور تأكيد النشر.',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.publieur.quand.creneau' => ({required Object date, required Object heure}) => 'يوم ${date} الساعة ${heure}',
 			'com.annonces.publieur.quand.creneauDetail' => 'ينتظر الإعلان هذا التاريخ. ستجده في الإعلانات المجدولة.',
 			'com.annonces.publieur.apercu.a' => ({required Object cible}) => 'إلى: ${cible}',
@@ -28137,8 +28219,6 @@ extension on TraductionsAr {
 			'com.annonces.publieur.manqueAudience' => 'اختر المستلمين للمتابعة.',
 			'com.annonces.publieur.enCours' => 'النشر جارٍ. انتظر التأكيد.',
 			'com.annonces.publieur.publiee' => 'نُشر الإعلان. يستلمه المستلمون.',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.publieur.planifiee' => ({required Object date, required Object heure}) => 'جُدول الإعلان ليوم ${date} الساعة ${heure}.',
 			'com.annonces.publieur.nonConfirmee' => 'لم يُؤكَّد هذا الإعلان بعد. تحقّق من الاتصال ثم أعد المحاولة؛ لن يُرسل إلا مرة واحدة.',
 			'com.annonces.publieur.horsLigne' => 'أنت غير متصل، ولم يُؤكَّد هذا الإعلان بعد. أعد المحاولة عند عودة الاتصال.',
@@ -28637,6 +28717,8 @@ extension on TraductionsAr {
 			'admin.candidatures.modeles.refusNiveau' => 'المستوى غير كافٍ بعد',
 			'admin.candidatures.modeles.refusBesoins' => 'لا حاجة لهذا الملف',
 			'admin.candidatures.modeles.refusSansReponse' => 'من دون رد من الشخص',
+			_ => null,
+		} ?? switch (path) {
 			'admin.candidatures.modeles.pauseAttenteBesoin' => 'في انتظار حاجة',
 			'admin.candidatures.modeles.pauseAttenteInformations' => 'في انتظار معلومات',
 			'admin.candidatures.modeles.pauseDemandeCandidat' => 'بطلب من الشخص',
@@ -28651,8 +28733,6 @@ extension on TraductionsAr {
 			'admin.candidatures.erreurs.motifRequis' => 'لم يُنجَز شيء. اذكروا السبب.',
 			'admin.candidatures.erreurs.modeleRequis' => 'لم يُنجَز شيء. اختاروا الرسالة التي سيقرؤها الشخص.',
 			'admin.candidatures.erreurs.modeleInconnu' => 'لم تعد هذه الرسالة مقترحة. اختاروا رسالة أخرى.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.candidatures.erreurs.elementsRequis' => 'لم يُنجَز شيء. اختاروا عنصرًا واحدًا على الأقل.',
 			'admin.candidatures.erreurs.elementsInvalides' => 'أحد العناصر المختارة غير ممكن في هذه القاعة. لم يُنجَز شيء.',
 			'admin.candidatures.erreurs.aucunComplement' => 'لا استكمال قائم: لا شيء لإنهائه. حدّثوا طلب الترشح.',
@@ -29151,6 +29231,8 @@ extension on TraductionsAr {
 			'admin.finance.fac.faitTitre' => 'اكتمل الإصدار',
 			'admin.finance.fac.faitPhrase' => 'ترى الأسر فاتورتها وما بقي عليها دفعه.',
 			'admin.finance.fac.dejaEmises' => 'كانت جميع فواتير هذا الشهر صادرة من قبل: لم يُضف شيء.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.finance.fac.emises' => 'الفواتير الصادرة',
 			'admin.finance.fac.financees' => 'الأشهر المسوّاة بالأرصدة المستلمة',
 			'admin.finance.fac.refusTitre' => 'رُفض الإصدار',
@@ -29165,8 +29247,6 @@ extension on TraductionsAr {
 			'admin.finance.autres.attribuer' => 'منح مكافأة أو مهمة أو مساعدة الإنترنت',
 			'admin.finance.autres.feuilleTitre' => ({required Object nom}) => 'دخل آخر لـ⁨${nom}⁩',
 			'admin.finance.autres.feuilleIntro' => 'يُصرف هذا المبلغ في آخر الشهر مع الراتب. ويراه المعلّم في «دخلي».',
-			_ => null,
-		} ?? switch (path) {
 			'admin.finance.autres.natureChoix' => 'النوع',
 			'admin.finance.autres.naturePrimeDetail' => 'مبلغ إضافي تقرّره الإدارة.',
 			'admin.finance.autres.natureMissionDetail' => 'عمل يُكلَّف به المعلّم زيادة على الحصص.',
@@ -29665,6 +29745,8 @@ extension on TraductionsAr {
 			'admin.regles.remplacementBornesAvertissement' => ({required Object min, required Object max}) => 'بين ⁨${min}⁩ و⁨${max}⁩ بعد البداية. لتتجاوز ⁨${max}⁩، ارفع أولًا موعد فقدان الحصة.',
 			'admin.regles.remplacementBornesPerte' => ({required Object min, required Object max}) => 'بين ⁨${min}⁩ و⁨${max}⁩ بعد البداية. لتنزل عن ⁨${min}⁩، اخفض أولًا موعد التنبيه. ولتتجاوز ⁨${max}⁩، ارفع أولًا الهدف.',
 			'admin.regles.remplacementBornesObjectif' => ({required Object min}) => '⁨${min}⁩ على الأقل بعد البداية. لتنزل عن ⁨${min}⁩، اخفض أولًا موعد فقدان الحصة.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.regles.remplacementOrdreRefuse' => 'لم يعد ترتيب المهل محترمًا: تغيّر إعداد آخر في الأثناء. أغلق هذه النافذة، ثم أعد فتح السطر لترى القيم المحدّثة.',
 			'admin.regles.entretiensSection' => 'المقابلات',
 			'admin.regles.entretiensIntro' => 'يُعيَّن المؤسسون من صفحة الحسابات، في عرضَي الإدارة والمعلّمين.',
@@ -29679,8 +29761,6 @@ extension on TraductionsAr {
 			'admin.regles.paie.debutDetail' => 'اليوم من الشهر التالي الذي يبدأ فيه صرف الراتب.',
 			'admin.regles.paie.fin' => 'آخر يوم للصرف',
 			'admin.regles.paie.finDetail' => 'في هذا اليوم على أبعد تقدير يُصرف راتب الشهر.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.regles.paie.jour' => ({required Object n}) => 'اليوم ⁨${n}⁩',
 			'admin.regles.paie.premier' => 'اليوم 1',
 			'admin.regles.paie.bornesDebut' => ({required Object max}) => 'بين اليوم 1 واليوم ⁨${max}⁩، آخر يوم للصرف.',
@@ -30179,6 +30259,8 @@ extension on TraductionsAr {
 			'admin.comptes.retrait.echec' => 'تعذر تأكيد الحذف. تحقق من القائمة ومن الأشخاص، الحذف قبل إعادة المحاولة.',
 			'admin.comptes.retrait.horsLigne' => 'لم يُرسل شيء: الشبكة غير متاحة. أعد المحاولة عند عودتها.',
 			'admin.comptes.plafondTitre' => 'قد تكون القائمة ناقصة',
+			_ => null,
+		} ?? switch (path) {
 			'admin.comptes.plafondMessage' => ({required Object nombre}) => 'يعيد الخادم على الأكثر ⁨${nombre}⁩ حسابًا، والقائمة تبلغ هذا العدد: قد تغيب أحدث التسجيلات.',
 			'admin.comptes.rechercheAideEleves' => 'الاسم أو المعرّف أو الفصل أو وليّ الأمر',
 			'admin.comptes.rechercheAide' => 'الاسم أو المعرّف',
@@ -30193,8 +30275,6 @@ extension on TraductionsAr {
 			'admin.comptes.trancheAdulte' => 'بالغ',
 			'admin.comptes.trancheInconnue' => 'غير محدد',
 			'admin.comptes.colonneClasse' => 'الفصل',
-			_ => null,
-		} ?? switch (path) {
 			'admin.comptes.classeAucune' => 'بلا فصل',
 			'admin.comptes.classeEtAutres' => ({required num n, required Object classe}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: '⁨${classe}⁩', one: '⁨${classe}⁩ وفصل آخر', two: '⁨${classe}⁩ وفصلان آخران', few: '⁨${classe}⁩ و⁨${n}⁩ فصول أخرى', many: '⁨${classe}⁩ و⁨${n}⁩ فصلًا آخر', other: '⁨${classe}⁩ و⁨${n}⁩ فصل آخر', ), 
 			'admin.comptes.colonneTuteur' => 'وليّ الأمر',
@@ -30664,19 +30744,22 @@ extension on TraductionsAr {
 			'admin.tirage.suivante' => 'الصفحة التالية من سجل القرعات',
 			'admin.tirage.resume' => ({required Object debut, required Object fin, required Object total}) => 'القرعات من ⁨${debut}⁩ إلى ⁨${fin}⁩ من أصل ⁨${total}⁩',
 			'admin.bibliotheque.titre' => 'المكتبة',
-			'admin.bibliotheque.intro' => 'المواد التعليمية: إيداعها، ومراجعة حقوقها، ونشر إصدار منها، وإسنادها إلى الفصول.',
+			'admin.bibliotheque.intro' => 'الوثائق التعليمية: إيداعها، ومراجعة حقوقها، ونشر إصدار منها، وإسنادها إلى الفصول.',
 			'admin.bibliotheque.brouillonAlerte' => 'المسودة لا تمنح أي وصول للطلاب ولا للمعلمين.',
-			'admin.bibliotheque.ajouter' => 'إضافة مادة',
-			'admin.bibliotheque.vide' => 'لا توجد مواد',
-			'admin.bibliotheque.videDetail' => 'أضف أول مادة لتجهيزها ومراجعة حقوقها ثم نشرها.',
+			'admin.bibliotheque.ajouter' => 'إضافة وثيقة',
+			'admin.bibliotheque.vide' => 'لا توجد وثائق',
+			'admin.bibliotheque.videDetail' => 'أضف أول وثيقة لتجهيزها ومراجعة حقوقها ثم نشرها.',
 			'admin.bibliotheque.erreur' => 'تعذّر تحميل الفهرس. أعد المحاولة.',
 			'admin.bibliotheque.nonAutorise' => 'ليس لديك صلاحية الوصول إلى مكتبة الإدارة.',
 			'admin.bibliotheque.indisponibleTitre' => 'المكتبة لم تُفتح بعد',
 			'admin.bibliotheque.indisponiblePhrase' => 'ستتوفر هذه الوظيفة عند ربط الخادم.',
 			'admin.bibliotheque.sansDonnees' => 'الفهرس',
-			'admin.bibliotheque.ficheTitre' => 'المادة',
+			'admin.bibliotheque.ficheTitre' => 'الوثيقة',
 			'admin.bibliotheque.retourCatalogue' => 'العودة إلى الفهرس',
-			'admin.bibliotheque.introuvable' => 'هذه المادة غير موجودة أو لا يمكن الوصول إليها.',
+			'admin.bibliotheque.introuvable' => 'هذه الوثيقة غير موجودة أو لا يمكن الوصول إليها.',
+			'admin.bibliotheque.libelles.type.audio' => 'صوت',
+			'admin.bibliotheque.libelles.type.video' => 'فيديو',
+			'admin.bibliotheque.libelles.type.lienExterne' => 'رابط خارجي',
 			'admin.bibliotheque.libelles.type.quran' => 'القرآن',
 			'admin.bibliotheque.libelles.type.texteStructure' => 'نص منظّم',
 			'admin.bibliotheque.libelles.type.pdf' => 'ملف PDF',
@@ -30690,6 +30773,8 @@ extension on TraductionsAr {
 			'admin.bibliotheque.libelles.version.aucune' => 'لا يوجد إصدار',
 			'admin.bibliotheque.libelles.droits.aVerifier' => 'بحاجة إلى مراجعة',
 			'admin.bibliotheque.libelles.droits.approuve' => 'معتمد',
+			_ => null,
+		} ?? switch (path) {
 			'admin.bibliotheque.libelles.droits.refuse' => 'مرفوض',
 			'admin.bibliotheque.libelles.droits.expire' => 'منتهي الصلاحية',
 			'admin.bibliotheque.libelles.visibilite.publique' => 'عامة',
@@ -30707,8 +30792,6 @@ extension on TraductionsAr {
 			'admin.bibliotheque.libelles.horsLigne.jamais' => 'أبدًا',
 			'admin.bibliotheque.libelles.horsLigne.surDemande' => 'عند الطلب',
 			'admin.bibliotheque.libelles.horsLigne.automatique' => 'تلقائي',
-			_ => null,
-		} ?? switch (path) {
 			'admin.bibliotheque.catalogue.recherche' => 'البحث في الفهرس',
 			'admin.bibliotheque.catalogue.segments.tous' => 'الكل',
 			'admin.bibliotheque.catalogue.segments.brouillons' => 'المسودات',
@@ -30720,7 +30803,7 @@ extension on TraductionsAr {
 			'admin.bibliotheque.catalogue.filtres.niveau' => 'المستوى',
 			'admin.bibliotheque.catalogue.filtres.langue' => 'اللغة',
 			'admin.bibliotheque.catalogue.filtres.tous' => 'الكل',
-			'admin.bibliotheque.catalogue.colonnes.support' => 'المادة',
+			'admin.bibliotheque.catalogue.colonnes.support' => 'الوثيقة',
 			'admin.bibliotheque.catalogue.colonnes.type' => 'النوع',
 			'admin.bibliotheque.catalogue.colonnes.langue' => 'اللغة',
 			'admin.bibliotheque.catalogue.colonnes.categorie' => 'التصنيف',
@@ -30731,11 +30814,11 @@ extension on TraductionsAr {
 			'admin.bibliotheque.catalogue.colonnes.modifie' => 'آخر تعديل',
 			'admin.bibliotheque.catalogue.modifieLe' => ({required Object date}) => 'عُدّلت في ⁨${date}⁩',
 			'admin.bibliotheque.catalogue.videRecherche' => 'لا توجد نتائج',
-			'admin.bibliotheque.catalogue.videRechercheDetail' => 'لا توجد مادة تطابق بحثك أو عوامل التصفية.',
+			'admin.bibliotheque.catalogue.videRechercheDetail' => 'لا توجد وثيقة تطابق بحثك أو عوامل التصفية.',
 			'admin.bibliotheque.catalogue.effacerFiltres' => 'مسح عوامل التصفية',
-			'admin.bibliotheque.catalogue.voirPlus' => 'عرض المزيد من المواد',
+			'admin.bibliotheque.catalogue.voirPlus' => 'عرض المزيد من الوثائق',
 			'admin.bibliotheque.catalogue.pageErreur' => 'تعذّر تحميل بقية الفهرس.',
-			'admin.bibliotheque.catalogue.ouvrir' => ({required Object titre}) => 'فتح المادة ⁨${titre}⁩',
+			'admin.bibliotheque.catalogue.ouvrir' => ({required Object titre}) => 'فتح الوثيقة ⁨${titre}⁩',
 			'admin.bibliotheque.catalogue.droitsEchus' => 'حقوق منتهية',
 			'admin.bibliotheque.catalogue.alerteTitre' => 'المسودات',
 			'admin.bibliotheque.catalogue.pasDeAcces' => 'لا يمكنك تعديل المكتبة.',
@@ -30758,7 +30841,10 @@ extension on TraductionsAr {
 			'admin.bibliotheque.fiche.champs.titreCourt' => 'عنوان مختصر',
 			'admin.bibliotheque.fiche.champs.edition' => 'الطبعة',
 			'admin.bibliotheque.fiche.champs.organisme' => 'الجهة أو المؤلف أو الناشر',
-			'admin.bibliotheque.fiche.champs.description' => 'الوصف التعليمي',
+			'admin.bibliotheque.fiche.champs.description' => 'وصف مختصر (يظهر على البطاقة)',
+			'admin.bibliotheque.fiche.champs.rayon' => 'الرف',
+			'admin.bibliotheque.fiche.champs.ordre' => 'ترتيب العرض',
+			'admin.bibliotheque.fiche.champs.lien' => 'عنوان الرابط (https)',
 			'admin.bibliotheque.fiche.champs.conditions' => 'شروط الإسناد',
 			'admin.bibliotheque.fiche.meta.type' => 'النوع',
 			'admin.bibliotheque.fiche.meta.langue' => 'اللغة',
@@ -30767,13 +30853,20 @@ extension on TraductionsAr {
 			'admin.bibliotheque.fiche.meta.annee' => 'السنة',
 			'admin.bibliotheque.fiche.meta.visibilite' => 'الظهور',
 			'admin.bibliotheque.fiche.meta.horsLigne' => 'القراءة دون إنترنت',
+			'admin.bibliotheque.fiche.meta.rayon' => 'الرف',
+			'admin.bibliotheque.fiche.meta.etapes' => 'مراحل البرنامج',
+			'admin.bibliotheque.fiche.meta.vignette' => 'الصورة المصغرة',
+			'admin.bibliotheque.fiche.meta.vignetteOui' => 'مودعة',
+			'admin.bibliotheque.fiche.meta.vignetteNon' => 'افتراضية بحسب النوع',
+			'admin.bibliotheque.fiche.meta.lien' => 'عنوان الرابط',
 			'admin.bibliotheque.fiche.meta.nonRenseigne' => 'غير مذكور',
 			'admin.bibliotheque.fiche.enregistrer' => 'حفظ التعديلات',
 			'admin.bibliotheque.fiche.enregistre' => 'سُجِّلت التعديلات.',
-			'admin.bibliotheque.fiche.conflit' => 'عدّل مسؤول آخر هذه المادة. أعد تحميل البطاقة قبل المتابعة.',
+			'admin.bibliotheque.fiche.conflit' => 'عدّل مسؤول آخر هذه الوثيقة. أعد تحميل البطاقة قبل المتابعة.',
 			'admin.bibliotheque.fiche.recharger' => 'إعادة تحميل البطاقة',
 			'admin.bibliotheque.fiche.echecEnregistrer' => 'تعذّر تأكيد التعديلات. أعد المحاولة.',
 			'admin.bibliotheque.fiche.titreVide' => 'العنوان مطلوب.',
+			'admin.bibliotheque.fiche.retirerVignette' => 'إزالة الصورة المصغرة',
 			'admin.bibliotheque.fiche.figee' => 'إصدار منشور ومثبّت: لتعديله أنشئ إصدارًا جديدًا.',
 			'admin.bibliotheque.fiche.retireMotif' => ({required Object motif}) => 'سُحبت من الفهرس. السبب: ⁨${motif}⁩',
 			'admin.bibliotheque.fiche.retireSansMotif' => 'سُحبت من الفهرس.',
@@ -30809,11 +30902,37 @@ extension on TraductionsAr {
 			'admin.bibliotheque.fiche.audit.restauration' => 'استُعيدت',
 			'admin.bibliotheque.fiche.auditMotif' => ({required Object motif}) => 'السبب: ⁨${motif}⁩',
 			'admin.bibliotheque.fiche.auditVersion' => ({required Object numero}) => 'الإصدار ⁨${numero}⁩',
-			'admin.bibliotheque.import.completer' => 'استكمال المادة',
-			'admin.bibliotheque.import.sections.ressource' => 'المادة',
+			'admin.bibliotheque.import.classement.tranchesTitre' => 'لأيّ الأعمار؟',
+			'admin.bibliotheque.import.classement.tranchesAide' => 'لا يرى الطالب إلا وثائق فئته العمرية. حدِّد كل الفئات المعنيّة.',
+			'admin.bibliotheque.import.classement.tranchesAideLien' => 'الرابط يقود إلى خارج التطبيق، لذلك لا تُحدَّد فئة الأطفال من 6 إلى 9 سنوات تلقائيًا. حدِّدها فقط إذا كنت واثقًا من الموقع.',
+			'admin.bibliotheque.import.classement.tranchesAucune' => 'حدِّد فئة عمرية واحدة على الأقل.',
+			'admin.bibliotheque.import.classement.etapesTitre' => 'مراحل البرنامج',
+			'admin.bibliotheque.import.classement.etapesAide' => 'اربط الوثيقة بالمراحل التي تفيد فيها (اختياري).',
+			'admin.bibliotheque.import.classement.etapesVide' => 'ستظهر المراحل عند نشر البرنامج.',
+			'admin.bibliotheque.import.classement.etapesIndisponible' => 'تعذّرت قراءة المراحل حاليًا. يمكن حفظ الوثيقة دون مرحلة.',
+			'admin.bibliotheque.import.classement.lectureTitre' => 'الرواية',
+			'admin.bibliotheque.import.classement.lectureAucune' => 'لم تُحدَّد رواية',
+			'admin.bibliotheque.import.classement.ecoleLibelle' => 'المذهب الفقهي المتّبع (للصلاة والوضوء؛ اختياري)',
+			'admin.bibliotheque.import.classement.depotInconnu' => 'تعذّر التحقق حاليًا من تفعيل إيداع الملفات. يمكنك الآن إضافة وثيقة عن طريق رابطها.',
+			'admin.bibliotheque.import.classement.ecoleTrop' => 'يجب ألا يتجاوز اسم المذهب 80 حرفًا.',
+			'admin.bibliotheque.import.classement.depotInactif' => 'لم يُفعَّل بعدُ إيداع الملفات. يمكنك الآن إضافة وثيقة عن طريق رابطها.',
+			'admin.bibliotheque.import.classement.videoLien' => 'للفيديو، الصق رابطه.',
+			'admin.bibliotheque.import.vignette' => 'الصورة المصغرة',
+			'admin.bibliotheque.import.choisirVignette' => 'اختيار صورة مصغرة',
+			'admin.bibliotheque.import.choisirAutreVignette' => 'اختيار صورة مصغرة أخرى',
+			'admin.bibliotheque.import.vignetteAide' => 'صورة (PNG أو JPEG أو WebP، حتى 2 ميغابايت)، اختيارية. وبدونها تعرض الشاشة غلافًا بحسب النوع.',
+			'admin.bibliotheque.import.completerLien' => 'أدخل عنوان الرابط (https): يطلبه الرابط الخارجي والفيديو، ويطلب الرابط الخارجي وصفه أيضًا.',
+			'admin.bibliotheque.import.lienInvalide' => 'هذا العنوان غير مقبول: يجب أن يبدأ بـ https وأن يقود إلى موقع.',
+			'admin.bibliotheque.import.sansFichierAide' => 'لا شيء للإيداع لهذا النوع: أدخل عنوان الرابط ثم تابع.',
+			'admin.bibliotheque.import.completer' => 'استكمال الوثيقة',
+			'admin.bibliotheque.import.sections.ressource' => 'الوثيقة',
 			'admin.bibliotheque.import.sections.fichier' => 'الملف',
 			'admin.bibliotheque.import.sections.droits' => 'الحقوق والوصول',
 			'admin.bibliotheque.import.champs.titre' => 'العنوان',
+			'admin.bibliotheque.import.champs.description' => 'وصف مختصر (يظهر على البطاقة)',
+			'admin.bibliotheque.import.champs.rayon' => 'الرف',
+			'admin.bibliotheque.import.champs.ordre' => 'ترتيب العرض (اختياري)',
+			'admin.bibliotheque.import.champs.lien' => 'عنوان الرابط (https)',
 			'admin.bibliotheque.import.champs.categorie' => 'التصنيف',
 			'admin.bibliotheque.import.champs.type' => 'النوع',
 			'admin.bibliotheque.import.champs.langue' => 'اللغة',
@@ -30826,6 +30945,8 @@ extension on TraductionsAr {
 			'admin.bibliotheque.import.formats.pdf' => 'الصيغة المقبولة: ملف PDF.',
 			'admin.bibliotheque.import.formats.image' => 'الصيغ المقبولة: الصور الرقمية الشائعة.',
 			'admin.bibliotheque.import.formats.json' => 'الصيغة المقبولة: ملف بيانات منظّم.',
+			'admin.bibliotheque.import.formats.audio' => 'الصيغ المقبولة: MP3 وM4A وOGG.',
+			'admin.bibliotheque.import.formats.lien' => 'تُعطى هذه الوثيقة برابط: لا ملف للإيداع. ويُعطى الفيديو برابطه.',
 			'admin.bibliotheque.import.formats.aucun' => 'هذا النوع لا يقبل ملفًا.',
 			'admin.bibliotheque.import.etats.attente' => 'جارٍ تجهيز الإيداع…',
 			'admin.bibliotheque.import.etats.envoi' => ({required Object pourcent}) => 'الإرسال جارٍ: ⁨${pourcent}⁩٪',
@@ -30834,10 +30955,11 @@ extension on TraductionsAr {
 			'admin.bibliotheque.import.etats.pret' => 'تم فحص الملف. انتقل إلى الحقوق.',
 			'admin.bibliotheque.import.etats.annule' => 'أُلغي الإيداع.',
 			'admin.bibliotheque.import.erreurs.taille' => 'هذا الملف كبير جدًا. اختر ملفًا أخف.',
-			'admin.bibliotheque.import.erreurs.type' => 'نوع هذا الملف غير مدعوم لهذه المادة. اختر ملفًا آخر.',
+			'admin.bibliotheque.import.erreurs.type' => 'نوع هذا الملف غير مدعوم لهذه الوثيقة. اختر ملفًا آخر.',
 			'admin.bibliotheque.import.erreurs.reseau' => 'انقطع الاتصال. لم يتأكد الإيداع: أعد المحاولة.',
 			'admin.bibliotheque.import.erreurs.refuse' => 'رفض الخادم هذا الإيداع. أعد المحاولة أو اختر ملفًا آخر.',
 			'admin.bibliotheque.import.erreurs.empreinte' => 'الملف المستلم لا يطابق الملف المرسل. أعد المحاولة.',
+			'admin.bibliotheque.import.erreurs.nonActive' => 'لم يُفعَّل بعدُ إيداع الملفات، ولم يُرسَل شيء. يمكنك في الأثناء إضافة وثيقة عن طريق رابطها.',
 			'admin.bibliotheque.import.erreurs.creation' => 'تعذّر إنشاء المسودة. أعد المحاولة.',
 			'admin.bibliotheque.import.erreurs.droits' => 'تعذّر حفظ الحقوق. أعد المحاولة.',
 			'admin.bibliotheque.import.droits.aide' => 'لا يُفترض أي حق: القيمة المجهولة تمنع النشر.',
@@ -30894,7 +31016,7 @@ extension on TraductionsAr {
 			'admin.bibliotheque.publication.publier' => 'نشر الإصدار',
 			'admin.bibliotheque.publication.bloque' => 'لا يمكن نشر هذا الإصدار ما لم يؤكد الخادم جميع نقاط الفحص.',
 			'admin.bibliotheque.publication.confirmerTitre' => ({required Object numero}) => 'نشر الإصدار ⁨${numero}⁩؟',
-			'admin.bibliotheque.publication.confirmerEffet' => 'يصبح الإصدار ثابتًا وظاهرًا للفصول المسندة إليها المادة. ولتعديله ستنشئ إصدارًا جديدًا.',
+			'admin.bibliotheque.publication.confirmerEffet' => 'يصبح الإصدار ثابتًا وظاهرًا للفصول المسندة إليها الوثيقة. ولتعديله ستنشئ إصدارًا جديدًا.',
 			'admin.bibliotheque.publication.confirmerBouton' => 'نشر',
 			'admin.bibliotheque.publication.publiee' => 'تم نشر الإصدار.',
 			'admin.bibliotheque.publication.dejaPubliee' => 'هذا الإصدار منشور بالفعل.',
@@ -30910,23 +31032,23 @@ extension on TraductionsAr {
 			'admin.bibliotheque.attribution.aucune' => 'لا يوجد فصل مفتوح للإسناد حاليًا.',
 			'admin.bibliotheque.attribution.plusDeClasses' => 'عرض المزيد من الفصول',
 			'admin.bibliotheque.attribution.chargementPlus' => 'جارٍ التحميل…',
-			'admin.bibliotheque.attribution.nonPublie' => 'هذه المادة غير منشورة. انشر إصدارًا قبل إسنادها إلى الفصول.',
+			'admin.bibliotheque.attribution.nonPublie' => 'هذه الوثيقة غير منشورة. انشر إصدارًا قبل إسنادها إلى الفصول.',
 			'admin.bibliotheque.attribution.erreur' => 'تعذّر تحميل الفصول. أعد المحاولة.',
 			'admin.bibliotheque.attribution.attribuer' => ({required Object nombre}) => 'الإسناد إلى ⁨${nombre}⁩ من الفصول',
 			'admin.bibliotheque.attribution.attribuerAucune' => 'اختر فصلًا واحدًا على الأقل قبل الإسناد.',
-			'admin.bibliotheque.attribution.attribuee' => 'تم إسناد المادة. الفصول المختارة ترى المادة الآن.',
+			'admin.bibliotheque.attribution.attribuee' => 'تم إسناد الوثيقة. الفصول المختارة ترى الوثيقة الآن.',
 			'admin.bibliotheque.attribution.attribueEchec' => 'لم يتم الإسناد. أعد المحاولة بعد لحظات.',
 			'admin.bibliotheque.attribution.retraitTitre' => 'سحب من الفهرس',
-			'admin.bibliotheque.attribution.retraitIntro' => 'السحب يُخفي المادة عن جميع الفصول. لا يحذف شيئًا: يبقى الملف والسجل محفوظين.',
+			'admin.bibliotheque.attribution.retraitIntro' => 'السحب يُخفي الوثيقة عن جميع الفصول. لا يحذف شيئًا: يبقى الملف والسجل محفوظين.',
 			'admin.bibliotheque.attribution.motif' => 'سبب السحب',
 			'admin.bibliotheque.attribution.motifRequis' => 'اكتب سبب السحب قبل المتابعة: يُحفظ في السجل.',
-			'admin.bibliotheque.attribution.retirer' => 'سحب هذه المادة',
+			'admin.bibliotheque.attribution.retirer' => 'سحب هذه الوثيقة',
 			'admin.bibliotheque.attribution.retraitConfirmerTitre' => ({required Object titre}) => 'سحب «⁨${titre}⁩» من الفهرس؟',
-			'admin.bibliotheque.attribution.retraitConfirmerEffet' => 'لن ترى الفصول المادة بعد الآن، ومنها الفصول التي تستخدمها حاليًا. يُحفظ السبب في السجل.',
-			'admin.bibliotheque.attribution.retraitConfirmerBouton' => 'سحب المادة',
-			'admin.bibliotheque.attribution.retire' => 'سُحبت المادة من الفهرس.',
+			'admin.bibliotheque.attribution.retraitConfirmerEffet' => 'لن ترى الفصول الوثيقة بعد الآن، ومنها الفصول التي تستخدمها حاليًا. يُحفظ السبب في السجل.',
+			'admin.bibliotheque.attribution.retraitConfirmerBouton' => 'سحب الوثيقة',
+			'admin.bibliotheque.attribution.retire' => 'سُحبت الوثيقة من الفهرس.',
 			'admin.bibliotheque.attribution.retraitEchec' => 'لم يتم السحب. أعد المحاولة بعد لحظات.',
-			'admin.bibliotheque.attribution.conflit' => 'عدّل أحدهم هذه المادة في هذه الأثناء. أعد التحميل قبل المتابعة.',
+			'admin.bibliotheque.attribution.conflit' => 'عدّل أحدهم هذه الوثيقة في هذه الأثناء. أعد التحميل قبل المتابعة.',
 			'comptable.nav.aujourdhui' => 'اليوم',
 			'comptable.nav.paiements' => 'المدفوعات',
 			'comptable.nav.tresorerie' => 'الخزينة',
@@ -31165,6 +31287,8 @@ extension on TraductionsAr {
 			'comptable.paiements.confirmation.sensiblePhrase' => 'هذه الدفعة حساسة: يجب أن يصادق عليها شخص مخوَّل آخر. اطلب المصادقة، فهي لا تُرسَل قبلها.',
 			'comptable.paiements.confirmation.prets' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, one: 'دفعة جاهزة واحدة', two: 'دفعتان جاهزتان', few: '${n} دفعات جاهزة', other: '${n} دفعة جاهزة', ), 
 			'comptable.paiements.confirmation.exclus' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, one: 'دفعة مستبعدة واحدة', two: 'دفعتان مستبعدتان', few: '${n} دفعات مستبعدة', other: '${n} دفعة مستبعدة', ), 
+			_ => null,
+		} ?? switch (path) {
 			'comptable.paiements.confirmation.total' => 'إجمالي المدفوعات الجاهزة',
 			'comptable.paiements.confirmation.beneficiairesCle' => 'المستفيدون',
 			'comptable.paiements.confirmation.beneficiaires' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, one: 'مستفيد واحد', two: 'مستفيدان', few: '${n} مستفيدين', other: '${n} مستفيدًا', ), 
@@ -31221,8 +31345,6 @@ extension on TraductionsAr {
 			'comptable.paiements.colonnes.destination' => 'الوجهة',
 			'comptable.paiements.colonnes.echeance' => 'الاستحقاق',
 			'comptable.paiements.colonnes.statut' => 'الحالة',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.paiements.colonnes.action' => 'الإجراء',
 			'comptable.paiements.types.enseignant' => 'معلم',
 			'comptable.paiements.types.contractuel' => 'متعاقد',
@@ -31679,6 +31801,8 @@ extension on TraductionsAr {
 			'comptable.contractuels.champApprobateur' => 'المعتمِد',
 			'comptable.contractuels.champProfilPaiement' => 'دفع المستفيد',
 			'comptable.contractuels.champMotifRefus' => 'سبب الرفض',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.contractuels.aucunJustificatif' => 'لا يوجد مستند مؤيِّد مرفق',
 			'comptable.contractuels.nonRenseigne' => 'غير محدد',
 			'comptable.contractuels.ligneSource' => ({required Object source}) => 'المصدر: ${source}',
@@ -31735,8 +31859,6 @@ extension on TraductionsAr {
 			'comptable.validation.detail.titre' => 'طلب مصادقة',
 			'comptable.validation.detail.nature' => 'النوع',
 			'comptable.validation.detail.objet' => 'الموضوع',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.validation.detail.demandeur' => 'طلبه',
 			'comptable.validation.detail.date' => 'تاريخ الطلب',
 			'comptable.validation.detail.raison' => 'السبب',
@@ -32193,6 +32315,8 @@ extension on TraductionsAr {
 			'ficheEleve.mouvements.indisponiblePhrase' => ({required Object dePrenom}) => 'ستظهر هنا عمليات شحن ⁨${dePrenom}⁩ وأقساطه الشهرية فور تشغيلها.',
 			'ficheEleve.mouvements.sansDonnees' => 'تعذّر تحميل حركات هذا الملف',
 			'parcours.titre' => ({required Object dePrenom}) => 'مسار ⁨${dePrenom}⁩',
+			_ => null,
+		} ?? switch (path) {
 			'parcours.intro' => 'بعض الأسئلة لتخصيص مسارك. لن ترى بعدها إلا المواعيد والخيارات المناسبة لوضعك.',
 			'parcours.reprendre' => 'استئناف',
 			'parcours.commencer' => 'تخصيص المسار',
@@ -32249,8 +32373,6 @@ extension on TraductionsAr {
 			'parcours.offreRecommandee' => 'الأقرب إلى إجاباتك',
 			'parcours.offresAutres' => 'مواعيد ممكنة أخرى',
 			'parcours.offreRecurrence' => ({required num seances, required Object duree}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(seances, zero: 'لا حصص في الأسبوع', one: 'حصة واحدة في الأسبوع، ⁨${duree}⁩ د', two: 'حصتان في الأسبوع، ⁨${duree}⁩ د', few: '⁨${seances}⁩ حصص في الأسبوع، ⁨${duree}⁩ د', many: '⁨${seances}⁩ حصةً في الأسبوع، ⁨${duree}⁩ د', other: '⁨${seances}⁩ حصة في الأسبوع، ⁨${duree}⁩ د', ), 
-			_ => null,
-		} ?? switch (path) {
 			'parcours.offreRecurrencePause' => ({required num seances, required Object duree, required Object pause}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(seances, zero: 'لا حصص في الأسبوع', one: 'حصة واحدة في الأسبوع، ⁨${duree}⁩ د منها ⁨${pause}⁩ د استراحة', two: 'حصتان في الأسبوع، ⁨${duree}⁩ د منها ⁨${pause}⁩ د استراحة', few: '⁨${seances}⁩ حصص في الأسبوع، ⁨${duree}⁩ د منها ⁨${pause}⁩ د استراحة', many: '⁨${seances}⁩ حصةً في الأسبوع، ⁨${duree}⁩ د منها ⁨${pause}⁩ د استراحة', other: '⁨${seances}⁩ حصة في الأسبوع، ⁨${duree}⁩ د منها ⁨${pause}⁩ د استراحة', ), 
 			'parcours.offreLangue' => ({required Object langue}) => 'الدرس بـ⁨${langue}⁩',
 			'parcours.offreFuseau' => ({required Object fuseau}) => 'التوقيت المعروض لـ⁨${fuseau}⁩',
@@ -32707,6 +32829,8 @@ extension on TraductionsAr {
 			'inscription.questionnaire.envoyer' => 'إرسال طلبي',
 			'inscription.questionnaire.dejaUnCompte' => 'لدي حساب بالفعل',
 			'inscription.questionnaire.aucuneReponse' => 'لم تعد إجابات تسجيلك على هذا الجهاز. أعد الإجابة عن الأسئلة الأولى: تستغرق دقيقتين.',
+			_ => null,
+		} ?? switch (path) {
 			'inscription.questionnaire.acces.titre' => 'الخطوة الأخيرة: الدخول',
 			'inscription.questionnaire.acces.reponsesGardees' => 'إجاباتك محفوظة.',
 			'inscription.questionnaire.acces.resteAcces' => 'لم يبقَ إلا أن تتلقى رابط الدخول، أو أن تتابع عبر Google.',
@@ -32763,8 +32887,6 @@ extension on TraductionsAr {
 			'inscription.usage.coursNonExemple' => 'تسجّل ابنتك وتتابع حصصها من حسابك.',
 			'inscription.usage.enseignantPostuler' => 'هل ترغب في التدريس في أكاديمية الرواية؟',
 			'inscription.usage.deposerCandidature' => 'تقديم طلب ترشحي',
-			_ => null,
-		} ?? switch (path) {
 			'inscription.recap.usage' => 'نوع الحساب',
 			'inscription.recap.identite' => 'الاسم',
 			'inscription.recap.genre' => 'الجنس',
@@ -33221,6 +33343,8 @@ extension on TraductionsAr {
 			'adulte.demo.donnees.totalRecharge5' => '5,00 € (عرض تجريبي)',
 			'adulte.demo.donnees.totalRecharge10' => '10,00 € (عرض تجريبي)',
 			'adulte.demo.donnees.totalRecharge15' => '15,00 € (عرض تجريبي)',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.demo.donnees.totalRecharge20' => '20,00 € (عرض تجريبي)',
 			'adulte.demo.donnees.totalRecharge25' => '25,00 € (عرض تجريبي)',
 			'adulte.demo.donnees.totalRecharge30' => '30,00 € (عرض تجريبي)',
@@ -33277,8 +33401,6 @@ extension on TraductionsAr {
 			'dossiers.visionneuse.erreur' => 'لا يمكن عرض الوثيقة.',
 			'dossiers.visionneuse.expire' => 'انتهى الوصول إلى هذه الوثيقة.',
 			'dossiers.visionneuse.recharger' => 'إعادة تحميل الوثيقة',
-			_ => null,
-		} ?? switch (path) {
 			'dossiers.visionneuse.formatNonPrisEnCharge' => 'لا يمكن عرض تنسيق هذه الوثيقة.',
 			'dossiers.visionneuse.accesRetire' => 'لم يعد لديك وصول إلى هذه الوثيقة.',
 			'dossiers.visionneuse.apercuRefuse' => 'هذه الوثيقة غير مرئية بحسابك.',
@@ -33735,6 +33857,8 @@ extension on TraductionsAr {
 			'suiviFamille.motif.classesPleines' => 'كل فصول هذا الموعد مكتملة. سنبلغكم حالما يتوفر مكان.',
 			'suiviFamille.motif.aucunEnseignantLibre' => 'لا يتوفر معلم في هذا الموعد حاليًا. سنبلغكم حالما يتغير ذلك.',
 			'suiviFamille.motif.inconnu' => 'طلبكم قيد الانتظار. سنبلغكم حالما يتقدم.',
+			_ => null,
+		} ?? switch (path) {
 			'suiviFamille.intervalle.moinsHeure' => 'بعد أقل من ساعة',
 			'suiviFamille.intervalle.heures' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'بعد أقل من ساعة', one: 'بعد ساعة', two: 'بعد ساعتين', few: 'بعد ⁨${n}⁩ ساعات', many: 'بعد ⁨${n}⁩ ساعة', other: 'بعد ⁨${n}⁩ ساعة', ), 
 			'suiviFamille.intervalle.jours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'في اليوم نفسه', one: 'بعد يوم', two: 'بعد يومين', few: 'بعد ⁨${n}⁩ أيام', many: 'بعد ⁨${n}⁩ يومًا', other: 'بعد ⁨${n}⁩ يوم', ), 
@@ -33791,8 +33915,6 @@ extension on TraductionsAr {
 			'suiviDemandes.enseignant' => 'المعلم',
 			'suiviDemandes.personnaliseNotice' => 'لن يُفتح هذا الموعد إلا إذا اختاره طلاب آخرون واكتمل الفصل.',
 			'suiviDemandes.jalon.apres' => ({required Object date, required Object heure, required Object duree}) => '⁨${date}⁩ في ⁨${heure}⁩، ⁨${duree}⁩',
-			_ => null,
-		} ?? switch (path) {
 			'suiviDemandes.jalon.aussitot' => 'فورًا',
 			'suiviDemandes.jalon.minutes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'بعد أقل من دقيقة', one: 'بعد دقيقة', two: 'بعد دقيقتين', few: 'بعد ⁨${n}⁩ دقائق', many: 'بعد ⁨${n}⁩ دقيقة', other: 'بعد ⁨${n}⁩ دقيقة', ), 
 			'suiviDemandes.jalon.heures' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'بعد أقل من ساعة', one: 'بعد ساعة', two: 'بعد ساعتين', few: 'بعد ⁨${n}⁩ ساعات', many: 'بعد ⁨${n}⁩ ساعة', other: 'بعد ⁨${n}⁩ ساعة', ), 
@@ -34249,6 +34371,8 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.niveauMemorisationDeclare.options.de_10_a_29_juz.explication' => 'يُتحقق من هذا المستوى أثناء المقابلة.',
 			'recrutement.parcours.q.niveauMemorisationDeclare.options.de_10_a_29_juz.exemple' => 'حفظت عشرين جزءًا من ثلاثين.',
 			'recrutement.parcours.q.niveauMemorisationDeclare.options.coran_entier.libelle' => 'حفظت القرآن كله',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.q.niveauMemorisationDeclare.options.coran_entier.description' => 'السور الـ 114 من الأولى إلى الأخيرة عن ظهر قلب.',
 			'recrutement.parcours.q.niveauMemorisationDeclare.options.coran_entier.explication' => 'يُتحقق من هذا المستوى أثناء المقابلة.',
 			'recrutement.parcours.q.niveauMemorisationDeclare.options.coran_entier.exemple' => 'تُسمّع سورة البقرة ثم سورة الناس دون فتح المصحف.',
@@ -34305,8 +34429,6 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.riwayat.options.ruways.libelle' => 'رويس',
 			'recrutement.parcours.q.riwayat.options.ruways.description' => 'رواية عن يعقوب',
 			'recrutement.parcours.q.riwayat.options.rawh.libelle' => 'روح',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.q.riwayat.options.rawh.description' => 'رواية عن يعقوب',
 			'recrutement.parcours.q.riwayat.options.ishaq.libelle' => 'إسحاق',
 			'recrutement.parcours.q.riwayat.options.ishaq.description' => 'رواية عن خلف، القارئ العاشر',
@@ -34763,6 +34885,8 @@ extension on TraductionsAr {
 			'juridique.confidentialite.s3.blocs.1' => '- متابعة الحضور والتقدّم.',
 			'juridique.confidentialite.s3.blocs.2' => '- فوترة الاشتراك.',
 			'juridique.confidentialite.s3.blocs.3' => '- حماية الطلاب ومراقبة جودة الحصص.',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.confidentialite.s3.blocs.4' => '- إصلاح الأعطال.',
 			'juridique.confidentialite.s4.titre' => '٤. من يرى ماذا',
 			'juridique.confidentialite.s4.blocs.0' => 'لا ترى الأسرة إلا معلوماتها. ومعلومات الطفل ليست عامة أبدًا ولا تُعرض على الأسر الأخرى.',
@@ -34819,8 +34943,6 @@ extension on TraductionsAr {
 			'juridique.enfants.s2.blocs.3' => 'قد يحضر مراقب الجودة الحصص. وتذكّر عبارة داخل القاعة بذلك.',
 			'juridique.enfants.s2.blocs.4' => 'قد يُسجَّل الدرس. اليوم ليس الأمر كذلك، وسيُخطَر وليّ الأمر قبل ذلك.',
 			'juridique.enfants.s3.titre' => '٣. المعلمون',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.enfants.s3.blocs.0' => 'يوقّع المعلمون عقدًا وسياسة مراقبة. وتُحفظ وثيقة هويتهم في مساحة خاصة منفصلة عن الصور الظاهرة في الفصل.',
 			'juridique.enfants.s4.titre' => '٤. معلومات الطفل',
 			'juridique.enfants.s4.blocs.0' => 'معلومات الطفل ليست عامة ولا تظهر للأسر الأخرى.',
@@ -35277,6 +35399,8 @@ extension on TraductionsAr {
 			'd1ter.notifications.messageEnfant' => ({required Object prenom}) => 'أرسلت إليكم الإدارة رسالة عن ⁨${prenom}⁩.',
 			'd1ter.notifications.messageSoi' => 'أرسلت إليكم الإدارة رسالة.',
 			'snt.regles.nonTenue' => 'حصة لم تُعقد',
+			_ => null,
+		} ?? switch (path) {
 			'snt.regles.nonTenueDetail' => 'إذا لم ينضمّ أي معلم إلى القاعة عند هذه المدة، تؤجَّل الحصة: يُبلَّغ الفصل وتحدّد الإدارة الموعد الجديد في الجدول.',
 			'snt.regles.bornesNonTenue' => ({required Object min, required Object max}) => 'بين ⁨${min}⁩ و⁨${max}⁩ بعد البداية.',
 			'snt.regles.bornesObjectif' => ({required Object min, required Object max}) => 'بين ⁨${min}⁩ و⁨${max}⁩ بعد البداية. لتجاوز ⁨${max}⁩، مدّدوا أولًا مدة الحصة التي لم تُعقد.',
@@ -35333,8 +35457,6 @@ extension on TraductionsAr {
 			'payUx.ouCarte' => 'أو ادفع بالبطاقة',
 			'payUx.enCours' => 'جارٍ الدفع',
 			'payUx.refus' => 'لم يتمّ الدفع: لعلّ إحدى بيانات البطاقة ناقصة أو مرفوضة. تحقّق منها، ثم اضغط «ادفع» من جديد. لم يُدفع شيء.',
-			_ => null,
-		} ?? switch (path) {
 			'cahierC1.onReprendPage' => ({required Object page}) => 'نستأنف من الصفحة ⁨${page}⁩',
 			'cahierC3.arretPage' => ({required Object page}) => 'توقف الفصل عند الصفحة ⁨${page}⁩ من المصحف.',
 			'cahierC3.arretAide' => 'هذه آخر صفحة عُرضت في القاعة. إن كانت صحيحة فاعتمد، وإلا فصحّح.',
@@ -35791,6 +35913,8 @@ extension on TraductionsAr {
 			'nouveautes.lu' => 'جديد',
 			'suiviPedagogique.titreSoi' => 'موقعي في البرنامج',
 			'suiviPedagogique.titre' => ({required Object prenom}) => 'موقع ⁨${prenom}⁩ في البرنامج',
+			_ => null,
+		} ?? switch (path) {
 			'suiviPedagogique.etape' => 'مرحلة البرنامج',
 			'suiviPedagogique.objectifs' => 'أهداف المرحلة',
 			'suiviPedagogique.reprise' => 'أين توقف الفصل',
@@ -35847,8 +35971,6 @@ extension on TraductionsAr {
 			'suiviAttente.etats.aVenir' => 'قادم',
 			'suiviAttente.dit.recueFait' => 'وصل طلبك إلى الأكاديمية.',
 			'suiviAttente.dit.recueFaitSimple' => 'وصل طلبك إلى الأكاديمية.',
-			_ => null,
-		} ?? switch (path) {
 			'suiviAttente.dit.formationEnCours' => 'تجمع الأكاديمية طلاب هذا الفصل.',
 			'suiviAttente.dit.formationListeAttente' => 'جميع فصول هذا الموعد ممتلئة. ينتظر طلبك أن يُفتح مقعد.',
 			'suiviAttente.dit.formationFait' => 'اجتمع طلاب الفصل.',

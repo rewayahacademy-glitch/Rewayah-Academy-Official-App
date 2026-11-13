@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../core/accessibilite/texte_sans_coupure.dart';
+import '../../core/tc_bibliotheque/contenu_arabe.dart';
 import '../../core/tc_bibliotheque/couverture_ressource.dart';
 import '../../core/tc_bibliotheque/library_resource.dart';
 import '../../core/tc_telechargement/port_etat_offline.dart';
@@ -79,7 +80,11 @@ class CarteRessource extends StatelessWidget {
       width: largeur,
       child: VignetteRessource(
         couverture: CouvertureRessource.pour(ressource),
-        image: couvertureDeposee,
+        image:
+            couvertureDeposee ??
+            (ressource.aVignette
+                ? ImageVignetteDeposee(resourceId: ressource.id)
+                : null),
         compacte: largeur <= AppSpacing.respiration,
       ),
     );
@@ -126,15 +131,23 @@ class CarteRessource extends StatelessWidget {
     );
   }
 
+  /// La description a montrer, ou `null` quand il n'y en a pas.
+  String? get _description {
+    final String? d = ressource.description?.trim();
+    return d == null || d.isEmpty ? null : d;
+  }
+
   /// Ce que lisent les technologies d'assistance.
   ///
   /// Le titre, le type et l'etat, dans cet ordre : la pastille est marquee
   /// `excludeSemantics`, donc sans cette phrase l'etat hors ligne ne serait
   /// jamais annonce.
   String get libelleSemantique {
+    final String? description = _description;
     final String base =
         '${ressource.title}, ${libelleTypeRessource(ressource.resourceType)}, '
-        '${libelleOffline(etatOffline)}';
+        '${libelleOffline(etatOffline)}'
+        '${description == null ? '' : '. $description'}';
     final String? reprise = pointDeReprise;
     final String avecReprise = reprise == null ? base : '$base. $reprise';
     final String? raison = raisonIndisponible;
@@ -156,10 +169,18 @@ class CarteRessource extends StatelessWidget {
         // COUPE-MOTS-FOND-1 : le titre et le type passent a la ligne entre
         // leurs mots, jamais tronques (« Les regles du... », « Leçon ·
         // Taj... » a 320 px texte x2) ; un mot trop long se reduit, borne.
-        TexteSansCoupure(
+        dirigerContenuArabe(
           ressource.title,
-          style: palette.surfaceRaised.applyTo(
-            textes.titleMedium ?? const TextStyle(),
+          TexteSansCoupure(
+            ressource.title,
+            // Un titre arabe (contenu du document) se rend dans la police du
+            // Coran ; l'arabe d'interface garde la sienne.
+            style: styleContenuArabe(
+              ressource.title,
+              palette.surfaceRaised.applyTo(
+                textes.titleMedium ?? const TextStyle(),
+              ),
+            ),
           ),
         ),
         Ecart.vXs,
@@ -169,6 +190,23 @@ class CarteRessource extends StatelessWidget {
             textes.bodySmall ?? const TextStyle(),
           ),
         ),
+        // La description courte du document (BIBLIOTHEQUE-UNE) : ce qu'on y
+        // trouve, avant de l'ouvrir ; obligatoire pour un lien externe.
+        if (_description != null) ...<Widget>[
+          Ecart.vXs,
+          dirigerContenuArabe(
+            _description!,
+            TexteSansCoupure(
+              _description!,
+              style: styleContenuArabe(
+                _description!,
+                palette.surfaceRaised.applyTo(
+                  textes.bodySmall ?? const TextStyle(),
+                ),
+              ),
+            ),
+          ),
+        ],
         if (pointDeReprise != null) ...<Widget>[
           Ecart.vSm,
           Text(
