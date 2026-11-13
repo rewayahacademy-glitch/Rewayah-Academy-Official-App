@@ -5,8 +5,8 @@
 /// affecte, tout est pret, creneau change...) pointent vers `/tuteur/demandes`,
 /// destination figee par une contrainte du serveur. Quand le foyer n'a qu'**un**
 /// suivi en cours, visible et non clos, cette adresse ouvre directement l'ecran
-/// du suivi (un seul ecran de suivi ; celui de l'adulte pour une demande
-/// d'adulte, celui du tuteur sinon) ; avec plusieurs, ou aucun, la liste des
+/// du suivi (un seul ecran de suivi ; celui de l'adulte pour un adulte
+/// autonome sur sa propre demande, celui du tuteur sinon) ; avec plusieurs, ou aucun, la liste des
 /// demandes reste la liste de raccourcis. Sans port (production avant
 /// branchement), la liste ancienne, inchangee.
 library;
@@ -17,6 +17,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/attente_classe/modele_attente.dart';
 import '../../core/router/routes.dart';
+import '../../core/session/session_controleur.dart' show sessionProvider;
+import '../../core/session/session_state.dart' show SessionState;
 import '../suivi_famille/suivi_famille_page.dart' show SuiviDemandesEntree;
 import 'carte_suivi_attente.dart' show suivisPourAccueil;
 
@@ -48,6 +50,16 @@ class EntreeDemandesAttente extends ConsumerWidget {
     final AsyncValue<List<SuiviAttente>> lues = ref.watch(
       suivisAttenteProvider,
     );
+    // L'ecran de l'adulte n'est ouvert qu'a un adulte AUTONOME qui regarde SA
+    // demande : un tuteur sans cette capacite, meme avec la demande d'un adulte
+    // de son foyer (conjoint, enfant majeur), est refuse sur `/eleve/*`. Il va a
+    // l'ecran du tuteur.
+    final bool autonome = ref.watch(
+      sessionProvider.select((SessionState s) => s.eleveAutonome),
+    );
+    final String? monProfil = ref.watch(
+      sessionProvider.select((SessionState s) => s.profileId),
+    );
     final SuiviAttente? seul = lues.hasValue
         ? seulSuiviEnCours(lues.value ?? const <SuiviAttente>[])
         : null;
@@ -55,9 +67,11 @@ class EntreeDemandesAttente extends ConsumerWidget {
       // Un seul suivi : on y va, sans empiler l'adresse de la liste.
       WidgetsBinding.instance.addPostFrameCallback((Duration _) {
         if (!context.mounted) return;
-        // Une demande d'eleve ADULTE : son propre ecran de suivi (l'adulte est un
-        // compte tuteur qui suit sa propre demande) ; sinon, l'ecran du tuteur.
-        final String chemin = seul.typePublic == 'adulte'
+        // Un adulte autonome sur SA demande : son propre ecran de suivi ; sinon,
+        // l'ecran du tuteur.
+        final bool maDemandeAdulte =
+            autonome && monProfil != null && seul.eleveId == monProfil;
+        final String chemin = maDemandeAdulte
             ? Routes.eleveAdulteAttenteDemande(seul.demandeId)
             : Routes.tuteurAttenteDemande(seul.demandeId);
         GoRouter.maybeOf(context)?.go(chemin);

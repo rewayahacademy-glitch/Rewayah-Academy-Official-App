@@ -254,27 +254,59 @@ void main() {
     });
   });
 
-  group('l\'eleve adulte et l\'adresse des notifications (/tuteur/demandes)', () {
+  group('l\'adresse des notifications (/tuteur/demandes) : trois cas', () {
     // L'ancien chemin des demandes (tc_notification_etape_adulte_autonome) ecrit
     // pour un adulte une notification dont la destination est
-    // `/tuteur/demandes` (contrainte du serveur) : ce lien doit mener l'adulte
-    // a SON ecran de suivi.
-    testWidgets('mene l\'adulte a son propre suivi', (
+    // `/tuteur/demandes` (contrainte du serveur). L'ecran est choisi sur QUI
+    // regarde : l'ecran de l'adulte n'est ouvert qu'a un adulte autonome sur sa
+    // propre demande (redirection.dart refuse `/eleve/*` au tuteur seul).
+    testWidgets('l\'adulte autonome, sur sa demande : son propre suivi', (
       WidgetTester tester,
     ) async {
       final GoRouter routeur = await monterAccueilAdulteReel(
         tester,
         surcharges: <Override>[
           ...surchargesAccueilAdulte(),
-          ..._suivi(<SuiviAttente>[suiviDeTest(typePublic: 'adulte')]),
+          // 'p-guardian' : le profil de la session de test.
+          ..._suivi(<SuiviAttente>[
+            suiviDeTest(typePublic: 'adulte', eleveId: 'p-guardian'),
+          ]),
         ],
         depart: Routes.tuteurDemandes,
       );
       await stabiliser(tester);
       expect(lieu(routeur), Routes.eleveAdulteAttenteDemande('d1'));
       expect(find.byKey(FriseAttente.cleEtape(5)), findsOneWidget);
-      // Les mots de l'adulte, jamais ceux d'un enfant.
       expect(find.text(t.suiviAttente.titre), findsWidgets);
+    });
+
+    testWidgets(
+      'le tuteur, avec la demande d\'un enfant : le suivi du tuteur',
+      (WidgetTester tester) async {
+        final GoRouter routeur = await _monterTuteur(
+          tester,
+          surcharges: _suivi(<SuiviAttente>[suiviDeTest()]),
+        );
+        routeur.go(Routes.tuteurDemandes);
+        await stabiliser(tester);
+        expect(lieu(routeur), Routes.tuteurAttenteDemande('d1'));
+        expect(find.byKey(FriseAttente.cleEtape(5)), findsOneWidget);
+      },
+    );
+
+    testWidgets('le tuteur sans la capacite autonome, avec la demande d\'un adulte de son foyer : '
+        'son suivi, jamais l\'acces refuse', (WidgetTester tester) async {
+      final GoRouter routeur = await _monterTuteur(
+        tester,
+        surcharges: _suivi(<SuiviAttente>[
+          suiviDeTest(typePublic: 'adulte', eleveId: 'conjoint-1'),
+        ]),
+      );
+      routeur.go(Routes.tuteurDemandes);
+      await stabiliser(tester);
+      expect(lieu(routeur), Routes.tuteurAttenteDemande('d1'));
+      expect(lieu(routeur), isNot(Routes.accesRefuse));
+      expect(find.byKey(FriseAttente.cleEtape(5)), findsOneWidget);
     });
   });
 

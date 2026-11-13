@@ -98,9 +98,10 @@ SuiviAttente suiviDeTest({
   bool peutChoisirAutreCreneau = false,
   bool visibleAccueil = true,
   String typePublic = 'enfant',
+  String? eleveId,
 }) => SuiviAttente(
   demandeId: id,
-  eleveId: 'e-$id',
+  eleveId: eleveId ?? 'e-$id',
   prenom: prenom,
   fuseauIana: 'Europe/Paris',
   cas: cas,
