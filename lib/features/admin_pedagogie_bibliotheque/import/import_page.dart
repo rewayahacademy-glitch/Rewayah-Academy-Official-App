@@ -105,6 +105,36 @@ class ImportPage extends StatelessWidget {
   }
 }
 
+/// La phrase vraie d'un echec de depot : une cause, une phrase. « La connexion
+/// a coupe » ne se dit que pour `reseau`, quand rien n'a repondu.
+String phraseErreurDepot(ErreurUpload? erreur) {
+  final e = t.admin.bibliotheque.import.erreurs;
+  return switch (erreur) {
+    ErreurUpload.taille => e.taille,
+    ErreurUpload.type => e.type,
+    ErreurUpload.reseau => e.reseau,
+    ErreurUpload.refuse => e.refuse,
+    ErreurUpload.empreinte => e.empreinte,
+    ErreurUpload.nonActive => e.nonActive,
+    ErreurUpload.session => e.session,
+    ErreurUpload.stockage => e.stockage,
+    ErreurUpload.envoi => e.envoi,
+    ErreurUpload.reglage => e.reglage,
+    ErreurUpload.delai => e.delai,
+    // Une cause que l'on ne connait pas n'est pas « la connexion ».
+    ErreurUpload.service || null => e.service,
+  };
+}
+
+/// La cause a afficher quand la demande de depot leve une exception.
+ErreurUpload causeDeLaDemande(Object erreur) => switch (erreur) {
+  DepotImpossible(:final ErreurUpload cause) => cause,
+  BibliothequeNonAutorisee() => ErreurUpload.refuse,
+  BibliothequeIntrouvable() => ErreurUpload.refuse,
+  BibliothequeHorsLigne() => ErreurUpload.reseau,
+  _ => ErreurUpload.service,
+};
+
 /// Un depot : le fichier, son intention, sa progression.
 class _Depot {
   FichierChoisi? fichier;
@@ -366,31 +396,25 @@ class _ImportEtat extends ConsumerState<_Import> {
       depot.intention = intention;
       depot.abonnement = widget.port
           .deposer(uploadId: intention.id, octets: fichier.octets)
-          .listen(
-            (ProgressionUpload p) {
-              if (mounted) setState(() => depot.progression = p);
-            },
-            onError: (Object _) {
-              if (mounted) {
-                setState(
-                  () => depot.progression = const ProgressionUpload(
-                    phase: PhaseUpload.echec,
-                    erreur: ErreurUpload.reseau,
-                  ),
-                );
-              }
-            },
-          );
-    } on Object {
-      if (mounted) {
-        setState(
-          () => depot.progression = const ProgressionUpload(
-            phase: PhaseUpload.echec,
-            erreur: ErreurUpload.reseau,
-          ),
-        );
-      }
+          .listen((ProgressionUpload p) {
+            if (mounted) setState(() => depot.progression = p);
+          }, onError: (Object e) => _echecDepot(depot, causeDeLaDemande(e)));
+    } on Object catch (e) {
+      // Chaque cause a sa phrase : jamais « connexion » par defaut. Avant le
+      // 13/11/2026, tout refus du serveur s'affichait « la connexion s'est
+      // interrompue ».
+      _echecDepot(depot, causeDeLaDemande(e));
     }
+  }
+
+  void _echecDepot(_Depot depot, ErreurUpload cause) {
+    if (!mounted) return;
+    setState(
+      () => depot.progression = ProgressionUpload(
+        phase: PhaseUpload.echec,
+        erreur: cause,
+      ),
+    );
   }
 
   Future<void> _annuler(_Depot depot) async {
@@ -700,14 +724,7 @@ class _ImportEtat extends ConsumerState<_Import> {
       PhaseUpload.verification => i.etats.verification,
       PhaseUpload.pret => i.etats.pret,
       PhaseUpload.annule => i.etats.annule,
-      PhaseUpload.echec => switch (p!.erreur) {
-        ErreurUpload.taille => i.erreurs.taille,
-        ErreurUpload.type => i.erreurs.type,
-        ErreurUpload.reseau || null => i.erreurs.reseau,
-        ErreurUpload.refuse => i.erreurs.refuse,
-        ErreurUpload.empreinte => i.erreurs.empreinte,
-        ErreurUpload.nonActive => i.erreurs.nonActive,
-      },
+      PhaseUpload.echec => phraseErreurDepot(p!.erreur),
     };
     final String suffixe = finalite.name;
     return Column(

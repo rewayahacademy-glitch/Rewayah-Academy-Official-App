@@ -7255,12 +7255,18 @@
         "erreurs": {
           "taille": "Ce fichier est trop volumineux. Choisissez un fichier plus léger.",
           "type": "Ce type de fichier n'est pas pris en charge pour ce document. Choisissez un autre fichier.",
-          "reseau": "La connexion s'est interrompue. Le dépôt n'est pas confirmé : réessayez.",
-          "refuse": "Le serveur a refusé ce dépôt. Réessayez ou choisissez un autre fichier.",
+          "reseau": "Aucune réponse du serveur : votre connexion a sans doute coupé. Rien n'est confirmé. Vérifiez la connexion, puis réessayez.",
+          "refuse": "Le serveur a refusé ce dépôt : la demande a expiré, ou ce document a déjà son fichier. Rechargez la page, puis réessayez.",
           "empreinte": "Le fichier reçu ne correspond pas à celui envoyé. Réessayez.",
           "nonActive": "Le dépôt de fichiers n'est pas encore activé : rien n'a été envoyé. En attendant, vous pouvez ajouter un document par son lien.",
           "creation": "Le brouillon n'a pas pu être créé. Réessayez.",
-          "droits": "Les droits n'ont pas pu être enregistrés. Réessayez."
+          "droits": "Les droits n'ont pas pu être enregistrés. Réessayez.",
+          "session": "Votre session a expiré : rien n'a été déposé. Reconnectez-vous, puis réessayez.",
+          "stockage": "Le stockage des fichiers de l'académie a refusé l'envoi. Ce n'est pas votre connexion : c'est un réglage du serveur. Réessayez une fois ; si cela recommence, ce réglage est à corriger avant tout nouveau dépôt.",
+          "envoi": "L'envoi du fichier n'a reçu aucune réponse, alors que le serveur répond. Le plus probable : le stockage des fichiers n'accepte pas encore les envois depuis cette adresse, et c'est un réglage du serveur ; sinon, la connexion a coupé pendant l'envoi. Réessayez une fois ; si cela recommence, c'est le réglage qui est à corriger.",
+          "service": "Le service de dépôt ne répond pas comme prévu. Ce n'est pas votre connexion, et rien n'est confirmé. Réessayez dans quelques minutes ; si cela recommence, le service est à vérifier.",
+          "reglage": "Le fichier est arrivé, mais le serveur ne peut pas le confirmer : sa clé de confirmation n'est pas la même des deux côtés. C'est un réglage à corriger ; réessayer ne changera rien.",
+          "delai": "La vérification du fichier a pris trop de temps et s'est arrêtée. Rien n'est confirmé. Réessayez ; si le fichier est très lourd, choisissez une version plus légère."
         },
         "droits": {
           "aide": "Aucun droit n'est présumé : une valeur inconnue bloque la publication.",
