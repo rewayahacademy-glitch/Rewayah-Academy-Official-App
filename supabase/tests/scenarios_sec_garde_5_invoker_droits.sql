@@ -83,18 +83,23 @@ SELECT pg_temp.vrai(
   '2 : un tuteur ne change toujours pas son immutable_id');
 RESET ROLE;
 
+-- PRIERE-1 (12/11/2026) : un client ne pose plus un lieu de priere lui-meme (la
+-- direction passe par priere_lieu_definir). Le garde d'ajustement tient encore :
+-- l'enseignant ajuste par priere_ajuster, dans les bornes seulement.
+INSERT INTO public.prayer_settings (teacher_id, latitude, longitude, place_label)
+  VALUES ('5e5c0000-0000-0000-0000-000000000001', 48.85, 2.35, 'Paris');
 SELECT pg_temp.etre('5e5c0000-0000-0000-0000-000000000001', 'teacher', NULL);
 SET LOCAL ROLE authenticated;
 SELECT pg_temp.vrai(
   pg_temp.essai($$INSERT INTO public.prayer_settings (teacher_id, latitude, longitude, adjustments)
                    VALUES ('5e5c0000-0000-0000-0000-000000000001', 48.85, 2.35,
-                           '{"fajr": 99, "dhuhr": 0, "asr": 0, "maghrib": 0, "isha": 0}'::jsonb)$$)
-  LIKE '%hors bornes%',
+                           '{"fajr": 2, "dhuhr": 0, "asr": 0, "maghrib": 0, "isha": 0}'::jsonb)$$) <> 'ok',
+  '2 : un enseignant ne pose plus un lieu de priere lui-meme (priere_lieu_definir est a la direction)');
+SELECT pg_temp.vrai(
+  pg_temp.essai($$SELECT public.priere_ajuster('fajr', 99)$$) LIKE '%de -30 a +30%',
   '2 : un enseignant ne pose toujours pas un ajustement de priere hors bornes');
 SELECT pg_temp.vrai(
-  pg_temp.essai($$INSERT INTO public.prayer_settings (teacher_id, latitude, longitude, adjustments)
-                   VALUES ('5e5c0000-0000-0000-0000-000000000001', 48.85, 2.35,
-                           '{"fajr": 2, "dhuhr": 0, "asr": 0, "maghrib": 0, "isha": 0}'::jsonb)$$) = 'ok',
+  pg_temp.essai($$SELECT public.priere_ajuster('fajr', 2)$$) = 'ok',
   '2 : un ajustement dans les bornes passe toujours');
 RESET ROLE;
 

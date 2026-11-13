@@ -1186,28 +1186,42 @@ begin
 end $$;
 
 -- ============================================================
--- Les reglages de priere : poses par l'enseignant, lus par ses eleves
+-- Les reglages de priere : poses par la direction, lus par l'enseignant
 -- ============================================================
+-- PRIERE-1 (12/11/2026) : la position d'un enseignant est une donnee
+-- personnelle. L'ancienne regle (l'enseignant pose son lieu, ses eleves et leurs
+-- tuteurs lisent ses reglages) est remplacee par celle de l'arbitrage P2 et P3 :
+-- le lieu est pose par la direction, lu par l'enseignant et la direction
+-- seulement ; le serveur calcule. Detail : scenarios_priere_serveur.sql.
 
 do $$
 declare v_refus int := 0;
 begin
+  -- Le client ne pose plus un lieu lui-meme : le droit d'ecriture est ferme.
   set local role authenticated;
   perform set_config('test.uid', 'cccccccc-0000-0000-0000-000000000001', true);
   perform set_config('test.jwt', '{"app_metadata":{"role":"teacher"}}', true);
+  begin
+    insert into public.prayer_settings
+      (teacher_id, latitude, longitude, method, madhab, timezone_iana, place_label)
+    values ('cccccccc-0000-0000-0000-000000000001', 48.85341, 2.34880,
+            'muslim_world_league', 'shafi', 'Europe/Paris', 'Paris');
+  exception when others then v_refus := v_refus + 1;
+  end;
+  reset role;
+  if v_refus <> 1 then
+    raise exception 'Prieres ECHEC : un enseignant a pu poser son lieu directement';
+  end if;
 
+  -- Le lieu est pose hors client (la direction passe par priere_lieu_definir).
   insert into public.prayer_settings
     (teacher_id, latitude, longitude, method, madhab, timezone_iana, place_label)
   values ('cccccccc-0000-0000-0000-000000000001', 48.85341, 2.34880,
           'muslim_world_league', 'shafi', 'Europe/Paris', 'Paris');
 
-  -- L'ajustement a la minute pres, exige par l'operateur. La pause et son
-  -- preavis d'alerte se posent au meme endroit, pour que tout le monde soit
-  -- prevenu au meme instant.
+  -- Le garde d'ajustement : de -30 a +30 minutes, les cinq prieres.
   update public.prayer_settings
-  set adjustments = '{"fajr": 0, "dhuhr": 2, "asr": 0, "maghrib": -1, "isha": 0}'::jsonb,
-      pause_minutes = 12,
-      alert_lead_minutes = 5
+  set adjustments = '{"fajr": 0, "dhuhr": 2, "asr": 0, "maghrib": -1, "isha": 0}'::jsonb
   where teacher_id = 'cccccccc-0000-0000-0000-000000000001';
 
   begin
@@ -1222,50 +1236,31 @@ begin
   exception when sqlstate 'P0001' then v_refus := v_refus + 1;
   end;
 
-  if v_refus <> 2 then
-    raise exception 'Prieres ECHEC : % refus au lieu de 2 sur des ajustements aberrants', v_refus;
+  if v_refus <> 3 then
+    raise exception 'Prieres ECHEC : % refus au lieu de 3 (ecriture directe, ajustement de 45, priere manquante)', v_refus;
   end if;
-  raise notice 'Prieres ok : ajustement a la minute accepte, decalage de 45 min et priere manquante refuses';
+  raise notice 'Prieres ok : ecriture directe fermee, ajustement a la minute accepte, decalage de 45 min et priere manquante refuses';
 end $$;
 
 do $$
 declare
   v_lu int;
-  v_dhuhr int;
-  v_pause int;
-  v_preavis int;
 begin
-  -- Le tuteur de l'eleve suivi par Omar. Amina a ete reaffectee, on prend donc
-  -- un eleve encore suivi : Eleve1, du foyer B.
+  -- Le tuteur de l'eleve ne lit plus la position de l'enseignant de son enfant.
   set local role authenticated;
   perform set_config('test.uid', 'bbbbbbbb-0000-0000-0000-000000000001', true);
   perform set_config('test.jwt',
     '{"app_metadata":{"role":"guardian","household_id":"ffffffff-0000-0000-0000-00000000000b"}}',
     true);
 
-  select count(*), min((adjustments -> 'dhuhr' #>> '{}')::int),
-         min(pause_minutes), min(alert_lead_minutes)
-    into v_lu, v_dhuhr, v_pause, v_preavis
-  from public.prayer_settings
+  select count(*) into v_lu from public.prayer_settings
   where teacher_id = 'cccccccc-0000-0000-0000-000000000001';
 
-  if v_lu <> 1 then
+  if v_lu <> 0 then
     raise exception
-      'Prieres ECHEC : le foyer ne lit pas les reglages de l''enseignant de son enfant. '
-      'Sans cela, il n''y a pas de transparence, seulement une parole contre une autre';
+      'Prieres ECHEC : un tuteur lit la position de l''enseignant de son enfant (donnee personnelle)';
   end if;
-  if v_dhuhr <> 2 then
-    raise exception 'Prieres ECHEC : l''ajustement lu vaut % au lieu de 2', v_dhuhr;
-  end if;
-  -- La duree de l'interruption et le moment de l'alerte sont les memes des deux
-  -- cotes : c'est la condition pour que « personne ne soit surpris » veuille
-  -- dire la meme chose pour l'eleve et pour l'enseignant.
-  if v_pause <> 12 or v_preavis <> 5 then
-    raise exception
-      'Prieres ECHEC : le foyer lit une pause de % min et un preavis de % min, '
-      'la ou l''enseignant a pose 12 et 5', v_pause, v_preavis;
-  end if;
-  raise notice 'Prieres ok : le foyer lit les memes entrees de calcul que l''enseignant, ajustement, pause et preavis compris';
+  raise notice 'Prieres ok : la position de l''enseignant n''est pas lue par la famille';
 end $$;
 
 do $$
@@ -1281,7 +1276,14 @@ begin
   if v_lu <> 0 then
     raise exception 'Prieres ECHEC : un enseignant lit les reglages d''un collegue';
   end if;
-  raise notice 'Prieres ok : les reglages ne sortent pas du cercle des parties concernees';
+
+  perform set_config('test.uid', 'cccccccc-0000-0000-0000-000000000001', true);
+  select count(*) into v_lu from public.prayer_settings
+  where teacher_id = 'cccccccc-0000-0000-0000-000000000001';
+  if v_lu <> 1 then
+    raise exception 'Prieres ECHEC : l''enseignant ne lit pas son propre lieu';
+  end if;
+  raise notice 'Prieres ok : le lieu n''est lu que par son enseignant';
 end $$;
 
 -- H1: la lecture des groupes ne boucle pas entre les deux policies RLS.
