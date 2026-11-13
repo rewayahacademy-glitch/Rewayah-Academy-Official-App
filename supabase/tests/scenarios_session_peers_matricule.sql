@@ -7,7 +7,8 @@
 --        figure donc pas : il le lit sur son profil) ;
 --   SP2  l'enseignant titulaire de la seance lit les matricules ;
 --   SP3  l'enseignant effectif d'un remplacement lit les matricules ;
---        un autre enseignant participant, sans remplacement, n'en lit aucun ;
+--        un enseignant participant qui n'est ni titulaire ni remplacant
+--        effectif n'en lit aucun ;
 --   SP4  la direction (participante visible) et le controleur (participant
 --        masque) lisent les matricules ;
 --   SP5  un participant d'une AUTRE seance ne lit rien de celle-ci ;
@@ -59,15 +60,19 @@ insert into public.teacher_profiles (profile_id, kyc_status) values
   ('5e600000-0000-4000-8000-000000000006', 'approved');
 
 -- S1 : Hakim (titulaire), Yanis, Ilyes, la direction (visible), Nadia
--- (controleuse masquee), Samir (autre enseignant participant).
--- S2 : Youssef, Rayan. S3 : Hakim titulaire, remplace par Rachid ; Adam.
+-- (controleuse masquee). S2 : Youssef, Rayan. S3 : Hakim titulaire, remplace
+-- par Rachid ; Adam. S4 : Hakim titulaire, sans remplacement ; Samir y figure
+-- comme enseignant participant (un seul enseignant participant par seance,
+-- session_participants_one_teacher_uidx), Adam.
 insert into public.sessions (id, teacher_id, started_at, ended_at, status) values
   ('5e60a000-0000-4000-8000-000000000001', '5e600000-0000-4000-8000-000000000001',
    now() - interval '3 days', now() - interval '3 days' + interval '1 hour', 'planned'),
   ('5e60a000-0000-4000-8000-000000000002', '5e600000-0000-4000-8000-000000000006',
    now() - interval '3 days', now() - interval '3 days' + interval '1 hour', 'planned'),
   ('5e60a000-0000-4000-8000-000000000003', '5e600000-0000-4000-8000-000000000001',
-   now() - interval '2 days', now() - interval '2 days' + interval '1 hour', 'planned');
+   now() - interval '2 days', now() - interval '2 days' + interval '1 hour', 'planned'),
+  ('5e60a000-0000-4000-8000-000000000004', '5e600000-0000-4000-8000-000000000001',
+   now() - interval '1 day', now() - interval '1 day' + interval '1 hour', 'planned');
 
 insert into public.session_participants (session_id, profile_id, role) values
   ('5e60a000-0000-4000-8000-000000000001', '5e600000-0000-4000-8000-000000000001', 'teacher'),
@@ -75,11 +80,12 @@ insert into public.session_participants (session_id, profile_id, role) values
   ('5e60a000-0000-4000-8000-000000000001', '5e600000-0000-4000-8000-0000000000e2', 'student'),
   ('5e60a000-0000-4000-8000-000000000001', '5e600000-0000-4000-8000-000000000004', 'admin_visible'),
   ('5e60a000-0000-4000-8000-000000000001', '5e600000-0000-4000-8000-000000000005', 'masked_controller'),
-  ('5e60a000-0000-4000-8000-000000000001', '5e600000-0000-4000-8000-000000000003', 'teacher'),
   ('5e60a000-0000-4000-8000-000000000002', '5e600000-0000-4000-8000-000000000006', 'teacher'),
   ('5e60a000-0000-4000-8000-000000000002', '5e600000-0000-4000-8000-0000000000f1', 'student'),
   ('5e60a000-0000-4000-8000-000000000003', '5e600000-0000-4000-8000-000000000002', 'teacher'),
-  ('5e60a000-0000-4000-8000-000000000003', '5e600000-0000-4000-8000-0000000000e3', 'student');
+  ('5e60a000-0000-4000-8000-000000000003', '5e600000-0000-4000-8000-0000000000e3', 'student'),
+  ('5e60a000-0000-4000-8000-000000000004', '5e600000-0000-4000-8000-000000000003', 'teacher'),
+  ('5e60a000-0000-4000-8000-000000000004', '5e600000-0000-4000-8000-0000000000e3', 'student');
 
 insert into public.remplacements_seance
   (session_id, evenement, enseignant_titulaire_id, enseignant_remplacant_id, acteur_id, cle_idempotence)
@@ -110,9 +116,9 @@ begin
   select pg_catalog.array_agg(v.first_name order by v.first_name) into v_prenoms
     from public.session_peers_v v
    where v.session_id = '5e60a000-0000-4000-8000-000000000001';
-  -- Pairs visibles : Hakim, Ilyes, Samir, la direction (visible) ; ni la
+  -- Pairs visibles : Hakim, Ilyes, la direction (visible) ; ni la
   -- controleuse masquee, ni lui-meme.
-  if v_prenoms is distinct from array['Direction', 'Hakim', 'Ilyes', 'Samir'] then
+  if v_prenoms is distinct from array['Direction', 'Hakim', 'Ilyes'] then
     raise exception 'SP ROUGE SP1 : prenoms lus %', v_prenoms;
   end if;
   if exists (select 1 from public.session_peers_v v where v.immutable_id is not null) then
@@ -132,14 +138,14 @@ begin
   if (select pg_catalog.array_agg(v.immutable_id order by v.immutable_id)
         from public.session_peers_v v
        where v.session_id = '5e60a000-0000-4000-8000-000000000001')
-     is distinct from array['RA-26-9003', 'RA-26-9004', 'RA-26-9101', 'RA-26-9102'] then
+     is distinct from array['RA-26-9004', 'RA-26-9101', 'RA-26-9102'] then
     raise exception 'SP ROUGE SP2 : le titulaire ne lit pas les matricules de S1';
   end if;
   raise notice 'SP OK SP2 : le titulaire lit les matricules';
 end $$;
 
--- SP3 : Rachid, remplacant effectif de S3 (titulaire Hakim) ; Samir, autre
--- enseignant participant de S1, sans remplacement.
+-- SP3 : Rachid, remplacant effectif de S3 (titulaire Hakim) ; Samir,
+-- enseignant participant de S4 sans en etre le titulaire ni le remplacant.
 select pg_temp.en_tant_que('5e600000-0000-4000-8000-000000000002', 'teacher');
 do $$
 begin
@@ -153,9 +159,10 @@ end $$;
 select pg_temp.en_tant_que('5e600000-0000-4000-8000-000000000003', 'teacher');
 do $$
 begin
-  if (select count(*) from public.session_peers_v v
-       where v.session_id = '5e60a000-0000-4000-8000-000000000001') <> 4 then
-    raise exception 'SP ROUGE SP3 : l''autre enseignant ne lit pas les prenoms de S1';
+  if (select pg_catalog.array_agg(v.first_name) from public.session_peers_v v
+       where v.session_id = '5e60a000-0000-4000-8000-000000000004')
+     is distinct from array['Adam'] then
+    raise exception 'SP ROUGE SP3 : l''autre enseignant ne lit pas le prenom de S4';
   end if;
   if exists (select 1 from public.session_peers_v v where v.immutable_id is not null) then
     raise exception 'SP ROUGE SP3 : un enseignant qui n''est pas celui de la seance lit un matricule';
