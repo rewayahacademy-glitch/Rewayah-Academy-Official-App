@@ -45333,8 +45333,8 @@ class Traductions$admin$bibliotheque$import$erreurs$fr {
 	/// fr: 'Aucune réponse n'est arrivée : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Rien n'a été enregistré. Réessayez dans un instant.'
 	String get reseau => 'Aucune réponse n\'est arrivée : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Rien n\'a été enregistré. Réessayez dans un instant.';
 
-	/// fr: 'Ce dépôt a été refusé : votre compte n'en a pas le droit. Rien n'a été déposé.'
-	String get refuse => 'Ce dépôt a été refusé : votre compte n\'en a pas le droit. Rien n\'a été déposé.';
+	/// fr: 'Ce dépôt a été refusé : votre compte n'en a pas le droit. Rien n'a été déposé. Demandez à la direction de vérifier votre accès.'
+	String get refuse => 'Ce dépôt a été refusé : votre compte n\'en a pas le droit. Rien n\'a été déposé. Demandez à la direction de vérifier votre accès.';
 
 	/// fr: 'Le fichier reçu ne correspond pas à celui envoyé. Réessayez.'
 	String get empreinte => 'Le fichier reçu ne correspond pas à celui envoyé. Réessayez.';
@@ -45372,8 +45372,8 @@ class Traductions$admin$bibliotheque$import$erreurs$fr {
 	/// fr: 'Ce document n'est plus modifiable : il a été publié ou retiré depuis l'ouverture de cette page. Rien n'a été déposé. Rechargez la page.'
 	String get nonModifiable => 'Ce document n\'est plus modifiable : il a été publié ou retiré depuis l\'ouverture de cette page. Rien n\'a été déposé. Rechargez la page.';
 
-	/// fr: 'Ce document a déjà son fichier. Rien n'a été déposé. Pour le remplacer, créez une nouvelle version depuis sa fiche.'
-	String get dejaDepose => 'Ce document a déjà son fichier. Rien n\'a été déposé. Pour le remplacer, créez une nouvelle version depuis sa fiche.';
+	/// fr: 'Ce document a déjà son fichier. Rien n'a été déposé. Pour le remplacer, ouvrez sa fiche et créez une nouvelle version.'
+	String get dejaDepose => 'Ce document a déjà son fichier. Rien n\'a été déposé. Pour le remplacer, ouvrez sa fiche et créez une nouvelle version.';
 
 	/// fr: 'La demande de dépôt a expiré avant la fin. Rien n'a été déposé. Réessayez.'
 	String get expire => 'La demande de dépôt a expiré avant la fin. Rien n\'a été déposé. Réessayez.';
@@ -45544,8 +45544,8 @@ class Traductions$admin$bibliotheque$import$simple$fr {
 	/// fr: 'Ouvrir la vérification du document'
 	String get voirVerification => 'Ouvrir la vérification du document';
 
-	/// fr: 'Le document n'a pas pu être enregistré. Rien n'est perdu : le fichier est déjà ajouté. Réessayez.'
-	String get enregistrementEchec => 'Le document n\'a pas pu être enregistré. Rien n\'est perdu : le fichier est déjà ajouté. Réessayez.';
+	/// fr: 'L'enregistrement du document n'est pas confirmé. Rien n'est perdu : le fichier est déjà ajouté. Réessayez.'
+	String get enregistrementEchec => 'L\'enregistrement du document n\'est pas confirmé. Rien n\'est perdu : le fichier est déjà ajouté. Réessayez.';
 
 	/// fr: 'Le dépôt de fichiers n'est pas prêt'
 	String get reglagesTitre => 'Le dépôt de fichiers n\'est pas prêt';
@@ -55694,7 +55694,7 @@ extension on Traductions {
 			'admin.bibliotheque.import.erreurs.taille' => 'Ce fichier est trop volumineux. Choisissez un fichier plus léger.',
 			'admin.bibliotheque.import.erreurs.type' => 'Ce type de fichier n\'est pas pris en charge pour ce document. Choisissez un autre fichier.',
 			'admin.bibliotheque.import.erreurs.reseau' => 'Aucune réponse n\'est arrivée : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Rien n\'a été enregistré. Réessayez dans un instant.',
-			'admin.bibliotheque.import.erreurs.refuse' => 'Ce dépôt a été refusé : votre compte n\'en a pas le droit. Rien n\'a été déposé.',
+			'admin.bibliotheque.import.erreurs.refuse' => 'Ce dépôt a été refusé : votre compte n\'en a pas le droit. Rien n\'a été déposé. Demandez à la direction de vérifier votre accès.',
 			'admin.bibliotheque.import.erreurs.empreinte' => 'Le fichier reçu ne correspond pas à celui envoyé. Réessayez.',
 			'admin.bibliotheque.import.erreurs.nonActive' => 'Le dépôt de fichiers n\'est pas encore activé : rien n\'a été envoyé. En attendant, vous pouvez ajouter un document par son lien.',
 			'admin.bibliotheque.import.erreurs.creation' => 'Le brouillon n\'a pas pu être créé. Réessayez.',
@@ -55707,7 +55707,7 @@ extension on Traductions {
 			'admin.bibliotheque.import.erreurs.delai' => 'La vérification du fichier a pris trop de temps et s\'est arrêtée. Rien n\'a été enregistré. Réessayez ; si le fichier est très lourd, choisissez une version plus légère.',
 			'admin.bibliotheque.import.erreurs.vide' => 'Ce fichier est vide. Choisissez un autre fichier.',
 			'admin.bibliotheque.import.erreurs.nonModifiable' => 'Ce document n\'est plus modifiable : il a été publié ou retiré depuis l\'ouverture de cette page. Rien n\'a été déposé. Rechargez la page.',
-			'admin.bibliotheque.import.erreurs.dejaDepose' => 'Ce document a déjà son fichier. Rien n\'a été déposé. Pour le remplacer, créez une nouvelle version depuis sa fiche.',
+			'admin.bibliotheque.import.erreurs.dejaDepose' => 'Ce document a déjà son fichier. Rien n\'a été déposé. Pour le remplacer, ouvrez sa fiche et créez une nouvelle version.',
 			'admin.bibliotheque.import.erreurs.expire' => 'La demande de dépôt a expiré avant la fin. Rien n\'a été déposé. Réessayez.',
 			'admin.bibliotheque.import.erreurs.contenu' => 'Le contenu de ce fichier n\'est pas celui de son type : ce n\'est pas un PDF, un audio ou une image valide. Choisissez un autre fichier.',
 			'admin.bibliotheque.import.erreurs.introuvable' => 'Le fichier envoyé n\'a pas été retrouvé : l\'envoi n\'a pas abouti. Rien n\'a été déposé. Réessayez.',
@@ -55780,7 +55780,7 @@ extension on Traductions {
 			'admin.bibliotheque.import.simple.autre' => 'Ajouter un autre document',
 			'admin.bibliotheque.import.simple.bloque' => 'Le document est gardé en brouillon, mais il n\'a pas pu être rendu visible : un de ses réglages l\'empêche. Ouvrez sa vérification pour voir lequel.',
 			'admin.bibliotheque.import.simple.voirVerification' => 'Ouvrir la vérification du document',
-			'admin.bibliotheque.import.simple.enregistrementEchec' => 'Le document n\'a pas pu être enregistré. Rien n\'est perdu : le fichier est déjà ajouté. Réessayez.',
+			'admin.bibliotheque.import.simple.enregistrementEchec' => 'L\'enregistrement du document n\'est pas confirmé. Rien n\'est perdu : le fichier est déjà ajouté. Réessayez.',
 			'admin.bibliotheque.import.simple.reglagesTitre' => 'Le dépôt de fichiers n\'est pas prêt',
 			'admin.bibliotheque.import.simple.reglagesMessage' => 'Il manque un réglage du serveur. Tant qu\'il n\'est pas posé, aucun fichier ne peut être ajouté. Un document peut déjà être ajouté par son lien.',
 			'admin.bibliotheque.import.simple.reglageNomme' => ({required Object nom}) => 'Réglage à poser : ${nom}',

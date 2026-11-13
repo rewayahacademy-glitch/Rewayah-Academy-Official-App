@@ -22013,7 +22013,7 @@ class _Traductions$admin$bibliotheque$import$erreurs$ar extends Traductions$admi
 	@override String get taille => 'هذا الملف كبير جدًا. اختر ملفًا أخف.';
 	@override String get type => 'نوع هذا الملف غير مدعوم لهذه الوثيقة. اختر ملفًا آخر.';
 	@override String get reseau => 'لم يصل أي رد: ربما لم يصل الطلب إلى رواية. لم يُحفظ شيء. أعد المحاولة بعد قليل.';
-	@override String get refuse => 'رُفض هذا الإيداع: حسابك لا يملك هذا الحق. لم يُودَع شيء.';
+	@override String get refuse => 'رُفض هذا الإيداع: حسابك لا يملك هذا الحق. لم يُودَع شيء. اطلب من الإدارة التحقق من صلاحيتك.';
 	@override String get empreinte => 'الملف المستلم لا يطابق الملف المرسل. أعد المحاولة.';
 	@override String get nonActive => 'لم يُفعَّل بعدُ إيداع الملفات، ولم يُرسَل شيء. يمكنك في الأثناء إضافة وثيقة عن طريق رابطها.';
 	@override String get creation => 'تعذّر إنشاء المسودة. أعد المحاولة.';
@@ -22026,7 +22026,7 @@ class _Traductions$admin$bibliotheque$import$erreurs$ar extends Traductions$admi
 	@override String get delai => 'استغرق فحص الملف وقتًا طويلًا فتوقف. لم يُحفظ شيء. أعد المحاولة؛ وإذا كان الملف كبيرًا جدًا فاختر نسخة أخف.';
 	@override String get vide => 'هذا الملف فارغ. اختر ملفًا آخر.';
 	@override String get nonModifiable => 'لم تعد هذه الوثيقة قابلة للتعديل: نُشرت أو سُحبت منذ فتح هذه الصفحة. لم يُودَع شيء. أعد تحميل الصفحة.';
-	@override String get dejaDepose => 'لهذه الوثيقة ملف من قبل. لم يُودَع شيء. لاستبداله أنشئ نسخة جديدة من بطاقة الوثيقة.';
+	@override String get dejaDepose => 'لهذه الوثيقة ملف من قبل. لم يُودَع شيء. لاستبداله افتح بطاقة الوثيقة وأنشئ نسخة جديدة.';
 	@override String get expire => 'انتهت مهلة طلب الإيداع قبل اكتماله. لم يُودَع شيء. أعد المحاولة.';
 	@override String get contenu => 'محتوى هذا الملف لا يطابق نوعه: ليس ملف PDF ولا ملفًا صوتيًا ولا صورة صالحة. اختر ملفًا آخر.';
 	@override String get introuvable => 'لم يُعثر على الملف المرسل: لم يكتمل الإرسال. لم يُودَع شيء. أعد المحاولة.';
@@ -22097,7 +22097,7 @@ class _Traductions$admin$bibliotheque$import$simple$ar extends Traductions$admin
 	@override String get autre => 'إضافة وثيقة أخرى';
 	@override String get bloque => 'بقيت الوثيقة مسودة، وتعذّر إظهارها: أحد إعداداتها يمنع ذلك. افتح صفحة التحقق منها لمعرفته.';
 	@override String get voirVerification => 'فتح صفحة التحقق من الوثيقة';
-	@override String get enregistrementEchec => 'تعذّر حفظ الوثيقة. لم يضِع شيء: الملف مضاف من قبل. أعد المحاولة.';
+	@override String get enregistrementEchec => 'لم يتأكد حفظ الوثيقة. لم يضِع شيء: الملف مضاف من قبل. أعد المحاولة.';
 	@override String get reglagesTitre => 'إيداع الملفات غير جاهز';
 	@override String get reglagesMessage => 'ينقص إعداد في الخادم. ما دام غير موضوع فلا يمكن إضافة أي ملف. يمكن الآن إضافة وثيقة عن طريق رابطها.';
 	@override String reglageNomme({required Object nom}) => 'الإعداد المطلوب: ${nom}';
@@ -30803,7 +30803,7 @@ extension on TraductionsAr {
 			'admin.bibliotheque.import.erreurs.taille' => 'هذا الملف كبير جدًا. اختر ملفًا أخف.',
 			'admin.bibliotheque.import.erreurs.type' => 'نوع هذا الملف غير مدعوم لهذه الوثيقة. اختر ملفًا آخر.',
 			'admin.bibliotheque.import.erreurs.reseau' => 'لم يصل أي رد: ربما لم يصل الطلب إلى رواية. لم يُحفظ شيء. أعد المحاولة بعد قليل.',
-			'admin.bibliotheque.import.erreurs.refuse' => 'رُفض هذا الإيداع: حسابك لا يملك هذا الحق. لم يُودَع شيء.',
+			'admin.bibliotheque.import.erreurs.refuse' => 'رُفض هذا الإيداع: حسابك لا يملك هذا الحق. لم يُودَع شيء. اطلب من الإدارة التحقق من صلاحيتك.',
 			'admin.bibliotheque.import.erreurs.empreinte' => 'الملف المستلم لا يطابق الملف المرسل. أعد المحاولة.',
 			'admin.bibliotheque.import.erreurs.nonActive' => 'لم يُفعَّل بعدُ إيداع الملفات، ولم يُرسَل شيء. يمكنك في الأثناء إضافة وثيقة عن طريق رابطها.',
 			'admin.bibliotheque.import.erreurs.creation' => 'تعذّر إنشاء المسودة. أعد المحاولة.',
@@ -30816,7 +30816,7 @@ extension on TraductionsAr {
 			'admin.bibliotheque.import.erreurs.delai' => 'استغرق فحص الملف وقتًا طويلًا فتوقف. لم يُحفظ شيء. أعد المحاولة؛ وإذا كان الملف كبيرًا جدًا فاختر نسخة أخف.',
 			'admin.bibliotheque.import.erreurs.vide' => 'هذا الملف فارغ. اختر ملفًا آخر.',
 			'admin.bibliotheque.import.erreurs.nonModifiable' => 'لم تعد هذه الوثيقة قابلة للتعديل: نُشرت أو سُحبت منذ فتح هذه الصفحة. لم يُودَع شيء. أعد تحميل الصفحة.',
-			'admin.bibliotheque.import.erreurs.dejaDepose' => 'لهذه الوثيقة ملف من قبل. لم يُودَع شيء. لاستبداله أنشئ نسخة جديدة من بطاقة الوثيقة.',
+			'admin.bibliotheque.import.erreurs.dejaDepose' => 'لهذه الوثيقة ملف من قبل. لم يُودَع شيء. لاستبداله افتح بطاقة الوثيقة وأنشئ نسخة جديدة.',
 			'admin.bibliotheque.import.erreurs.expire' => 'انتهت مهلة طلب الإيداع قبل اكتماله. لم يُودَع شيء. أعد المحاولة.',
 			'admin.bibliotheque.import.erreurs.contenu' => 'محتوى هذا الملف لا يطابق نوعه: ليس ملف PDF ولا ملفًا صوتيًا ولا صورة صالحة. اختر ملفًا آخر.',
 			'admin.bibliotheque.import.erreurs.introuvable' => 'لم يُعثر على الملف المرسل: لم يكتمل الإرسال. لم يُودَع شيء. أعد المحاولة.',
@@ -30889,7 +30889,7 @@ extension on TraductionsAr {
 			'admin.bibliotheque.import.simple.autre' => 'إضافة وثيقة أخرى',
 			'admin.bibliotheque.import.simple.bloque' => 'بقيت الوثيقة مسودة، وتعذّر إظهارها: أحد إعداداتها يمنع ذلك. افتح صفحة التحقق منها لمعرفته.',
 			'admin.bibliotheque.import.simple.voirVerification' => 'فتح صفحة التحقق من الوثيقة',
-			'admin.bibliotheque.import.simple.enregistrementEchec' => 'تعذّر حفظ الوثيقة. لم يضِع شيء: الملف مضاف من قبل. أعد المحاولة.',
+			'admin.bibliotheque.import.simple.enregistrementEchec' => 'لم يتأكد حفظ الوثيقة. لم يضِع شيء: الملف مضاف من قبل. أعد المحاولة.',
 			'admin.bibliotheque.import.simple.reglagesTitre' => 'إيداع الملفات غير جاهز',
 			'admin.bibliotheque.import.simple.reglagesMessage' => 'ينقص إعداد في الخادم. ما دام غير موضوع فلا يمكن إضافة أي ملف. يمكن الآن إضافة وثيقة عن طريق رابطها.',
 			'admin.bibliotheque.import.simple.reglageNomme' => ({required Object nom}) => 'الإعداد المطلوب: ${nom}',
