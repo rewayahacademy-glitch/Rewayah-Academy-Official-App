@@ -18,7 +18,7 @@
 
 ## Migration
 
-`supabase/migrations/20261124600000_plan_de_classe_a_gestes_direction.sql` : un fichier, une transaction, additif, zéro DROP, DELETE ni TRUNCATE (grep). Un bloc de garde (le lot 1 doit être installé, sinon refus net), une fonction privée, huit fonctions publiques, toutes `SECURITY DEFINER`, `search_path` vide, `REVOKE` de PUBLIC, anon et service_role, `EXECUTE` à `authenticated` ; la garde est la direction (`app_role() = 'admin'` et compte valide, exigence positive). Rejouable (`CREATE OR REPLACE`). Aucune table, aucune colonne.
+`supabase/migrations/20261124600000_plan_de_classe_a_gestes_direction.sql`  : un fichier, additif, zéro DROP, DELETE ni TRUNCATE (grep ; `apply_migration` ne demandera donc pas de seconde confirmation). Pas de `BEGIN;`/`COMMIT;` dans le fichier, comme les migrations du lot 1 : c'est l'enveloppe de collage (`tool/envelopper_pour_editeur_sql.py`) qui l'exécute en une seule transaction. Un bloc de garde (le lot 1 doit être installé, sinon refus net), une fonction privée, huit fonctions publiques, toutes `SECURITY DEFINER`, `search_path` vide, `REVOKE` de PUBLIC, anon et service_role, `EXECUTE` à `authenticated` ; la garde est la direction (`app_role() = 'admin'` et compte valide, exigence positive). Rejouable (`CREATE OR REPLACE`). Aucune table, aucune colonne.
 
 **Ordre d'installation** : `20261123850000`, `20261123900000`, `20261123905000` (lot 1), puis cette migration. Entre l'installation de cette migration et la fusion de la branche, rien ne change pour personne : aucun écran de `main` n'appelle ces fonctions.
 
