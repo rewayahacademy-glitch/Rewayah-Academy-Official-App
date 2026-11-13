@@ -27,6 +27,26 @@ Relevé fait par E le 11/11/2026 vers 12 h UTC, sur `main` `b86dbc9d9`, avec `to
   - Les deux autres chiffres sont retrouvés à l'identique : 206 branches livrées, 75 PR non fusionnées.
 - **PR fermées sans fusion.** Parmi toutes les PR fermées sans fusion, 62 l'ont été le 08/11 (date de fermeture lue sur GitHub). Celles d'avant le 25/10 suivent les propositions de `TRI-PR-AVANT-25-10.md`. Pour les autres, je n'ai trouvé aucune raison écrite : leur ligne le dit.
 
+## Chantier pédagogique (architecte pédagogique, relevé du 13/11/2026 à 04 h UTC)
+
+Consigne du directeur du 13/11 : « Attention à ne pas perdre notre travail depuis le début, car on a rien mis en prod. » **Rien de ce chantier n'est dans `main` ni installé en production.** Tout est poussé sur les branches ci-dessous. Avant d'écrire un lot, chercher ici s'il existe déjà.
+
+| Lot | Branche (tête au relevé) | Migrations | Statut et preuve |
+|---|---|---|---|
+| Charte de l'académie, programme séance par séance, tajwid des bases, prière et ablutions, point de fin de séance, chemin, police de l'arabe | `claude/charte-ecole` | aucune | LIVRÉ par la PR de la charte du 13/11. Auditée le 12/11 (33 corrections) puis le 13/11 (14 corrections). À relire par le directeur : objectifs, découpage hors étape 1 des 6-9 ans, textes de la prière, le ya, le point de fin de séance (D4) |
+| Lot 1, socle du programme | `claude/socle-programme` (40a3d563) | 20261123850000, 900000, 905000 | À LIVRER. Trois revues indépendantes, aucun bloquant ; correction en cours : la migration ne publie plus le programme |
+| Lot 2, calendrier et pauses | `claude/calendrier-pauses` (6917fb62) | 20261123910000, 911000 | À LIVRER. Non relu par un tiers |
+| Lot 3, bibliothèque | `claude/bibliotheque-une` (3d601f0f) | 20261123920000, 921000 | À LIVRER. Revue indépendante : un bloquant (tranche d'âge contournée par l'onglet de la classe), en correction |
+| Lot 5, espace Apprendre à trois onglets | `claude/espace-apprendre` (02f680f4) | aucune | À LIVRER. Non relu par un tiers |
+| Suivi de l'attente | `claude/suivi-attente` (3ff5e1c4) | 20261123960000, 961000 | À LIVRER. Revue indépendante : deux bloquants (courriel vers un mineur, fiche de l'enseignant visible après un départ), en correction |
+| Prière, heures et pause prévue | `claude/priere-serveur` (0f7116ef) | 20261123930000 | À LIVRER. Revue indépendante : aucun bloquant, corrections en cours |
+| Horloge de La Mecque et ville | `claude/horloge-lieu` (5ea3a77c) | 20261123940000 à 949999 | À LIVRER. Partie A relue : deux bloquants renvoyés ; partie B en cours |
+| Pause en salle (session de la salle) | `claude/zealous-tesla-ewstzw` (bc38bf4d), PR #449 | 20261124100000 à 400000 | À LIVRER. À relire avec la prière |
+| Maquettes | `docs/current/pedagogie/maquettes/` | aucune | LIVRÉ (#450), mises à jour avec la charte |
+| PLAN-DE-CLASSE, POINT-DE-SEANCE, CHEMIN, lecteur, moteur de suivi, évaluations et livret, classes vitrines FC-1 à FC-4 | aucune | aucune | Spécifiés dans la charte, **non commencés** : détail lot par lot dans la section « Lots de la charte pédagogique » plus bas |
+
+Ordre de livraison prévu : la charte ; le lot 1 ; puis prière, bibliothèque, suivi de l'attente, calendrier, espace Apprendre, horloge, chacun après sa revue indépendante et l'installation de ses migrations par le directeur.
+
 ## Comment refaire le relevé
 
 ```
@@ -242,6 +262,27 @@ PRÉFÉRENCES-PAR-COMPTE de A.
 | 12/11 | DATE-ARABE-ISOLAT : un gabarit arabe qui isole chaque morceau d'une date, posé dans une phrase qui isole la date entière, donne un isolat extérieur sans lettre forte, donc de gauche à droite : la date se lit à l'envers (année, mois, jour). CORRIGÉ à la source pour `dateLongue` (`compte/donnees_compte.dart`, U+061C en tête en arabe) : Paiements, Accès (« انتهى في {date} »), acces_finance, acceptation_invitation, reprise_foyer, resultat_recharge. Même forme, À RELEVER (pour plus tard) : `historique.dateCourte`, `historique.dateCourteSansAnnee`, `historique.dateLongue` (`dateCourte`, `dateMoyenne`, `dateLongueHistorique`), `commun.dates.jourDate` (`dateDeLAppareil`), `enseignant.revenus.periode` et `jourMois`, `enseignant.journee.date`, `admin.groupes.c1.jourDate`, `foyer.membre.date`, `dossiers.file.dateChiffres`, `ficheEleve.finances.periodeAFinancerValeur` ; chacun n'est fautif que là où une phrase l'isole à son tour | PARTIEL (dateLongue corrigé) ; reste À RELEVER | relevé de A (script sur `assets/i18n/ar.i18n.json`), garde-cap, 12/11 ; tests `date_arabe_isolat_test.dart`, `paiements_tuteur_test.dart` |
 | 12/11 | SUITES-ORPHELINES (leçon pour les agents) : arrêter une suite avec `pkill -f "flutter test"` ne l'arrête PAS ; le processus s'appelle `dartvm … flutter_tools.snapshot test …`, et ses lanceurs `flutter_tester`. Des suites complètes laissées ainsi tournaient en parallèle d'autres, ralentissaient tout et ont fait planter le compilateur des tests (« The Dart compiler exited unexpectedly »). Arrêter avec `pkill -f "flutter_tools.snapshot test"` puis `pkill -f flutter_tester`, et vérifier avec `pgrep -fc "flutter_tools.snapshot\|flutter_tester"` (0 attendu) avant de lancer une suite qui doit donner un chiffre | LEÇON (à connaître) | A, garde-cap, 12/11 |
 | 12/11 | TEST-HORLOGE-SURCHARGE : un test qui monte une page qui écoute `monHorlogeProvider` doit surcharger ce fournisseur (hors Supabase, il rend null et remet à vide la lecture posée par `poserMonHorlogePourTest`) ; modèle : `test/features/compte/paiements_tuteur_test.dart` (`_avec`) | RÈGLE DE TEST (à connaître) | A, garde-cap, 12/11 |
+
+## Lots de la charte pédagogique (architecte, 13/11/2026)
+
+Spécifiés dans `docs/current/pedagogie/PLAN-DE-CONSTRUCTION.md` (branche `claude/charte-ecole`, documentation seule, pas encore dans `main`). Numérotation du 13/11 ; aucun n'a de branche de code.
+
+| N° | Lot | Statut | Preuve |
+| :-- | :-- | :-- | :-- |
+| 1 | SOCLE-PROGRAMME | non commencé, spécifié | `PLAN-DE-CONSTRUCTION.md`, lot 1 ; aucune branche de code au 13/11 |
+| 2 | CALENDRIER-ET-PAUSES | non commencé, spécifié | `PLAN-DE-CONSTRUCTION.md`, lot 2 ; aucune branche de code au 13/11 |
+| 3 | BIBLIOTHEQUE-UNE | non commencé, spécifié | `PLAN-DE-CONSTRUCTION.md`, lot 3 ; aucune branche de code au 13/11 |
+| 4 | LECTEUR | non commencé, spécifié | `PLAN-DE-CONSTRUCTION.md`, lot 4 ; aucune branche de code au 13/11 |
+| 5 | PLAN-DE-CLASSE (ajouté le 13/11) | non commencé, spécifié | `PLAN-DE-CONSTRUCTION.md`, lot 5 ; aucune branche de code au 13/11 |
+| 6 | POINT-DE-SEANCE (ajouté le 13/11) | non commencé, spécifié | `PLAN-DE-CONSTRUCTION.md`, lot 6 ; aucune branche de code au 13/11 |
+| 7 | ESPACE-APPRENDRE | non commencé, spécifié | `PLAN-DE-CONSTRUCTION.md`, lot 7 ; aucune branche de code au 13/11 |
+| 8 | SUIVI-UNIQUE | non commencé, spécifié | `PLAN-DE-CONSTRUCTION.md`, lot 8 ; aucune branche de code au 13/11 |
+| 9 | RETRAIT-CAHIER (ajouté le 13/11) | non commencé, spécifié | `PLAN-DE-CONSTRUCTION.md`, lot 9 ; aucune branche de code au 13/11 |
+| 10 | CHEMIN (ajouté le 13/11) | non commencé, spécifié | `PLAN-DE-CONSTRUCTION.md`, lot 10 ; aucune branche de code au 13/11 |
+| 11 | MOTEUR-1 | non commencé, spécifié | `PLAN-DE-CONSTRUCTION.md`, lot 11 ; aucune branche de code au 13/11 |
+| 12 | EVALUATIONS-ET-LIVRET | non commencé, spécifié | `PLAN-DE-CONSTRUCTION.md`, lot 12 ; aucune branche de code au 13/11 |
+| 13 | MOTEUR-2 | non commencé, spécifié | `PLAN-DE-CONSTRUCTION.md`, lot 13 ; aucune branche de code au 13/11 |
+| 14 | NETTOYAGE | non commencé, spécifié | `PLAN-DE-CONSTRUCTION.md`, lot 14 ; aucune branche de code au 13/11 |
 
 ## Branches mortes, à proposer à la suppression au directeur (11/11)
 
