@@ -17,7 +17,7 @@ List<String> _textes() {
     x.parent.qui,
     x.parent.retrait,
     x.parent.sansAccord,
-    x.parent.caseAccord(prenom: '{prenom}'),
+    x.parent.caseAccord(dePrenom: '{dePrenom}'),
     x.adulte.quoi,
     x.adulte.pourquoi,
     x.adulte.qui,

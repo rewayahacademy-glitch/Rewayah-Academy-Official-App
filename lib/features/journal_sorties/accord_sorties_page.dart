@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/accessibilite/signaler_manque.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/journal_sorties/port_journal_sorties.dart';
 import '../../core/router/routes.dart';
@@ -211,7 +212,7 @@ class _AccordSortiesPageState extends ConsumerState<AccordSortiesPage> {
                   libelle: adulte
                       ? t.journalSorties.texte.adulte.caseAccord
                       : t.journalSorties.texte.parent.caseAccord(
-                          prenom: e.prenom,
+                          dePrenom: deDevant(e.prenom),
                         ),
                   cochee: _cochees.contains(e.eleveId),
                   focusNode: e.eleveId == premiereCase ? _focusCase : null,

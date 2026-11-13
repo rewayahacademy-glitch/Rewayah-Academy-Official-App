@@ -93,7 +93,7 @@ void main() {
     expect(find.text(t.journalSorties.texte.parent.quoi), findsOneWidget);
     expect(find.text(t.journalSorties.texte.parent.sansAccord), findsOneWidget);
     final Finder caseYasmine = find.text(
-      t.journalSorties.texte.parent.caseAccord(prenom: 'Yasmine'),
+      t.journalSorties.texte.parent.caseAccord(dePrenom: 'de Yasmine'),
     );
     expect(caseYasmine, findsOneWidget);
     expect(
@@ -127,7 +127,9 @@ void main() {
     await monterAccordSorties(tester, faux);
     await _toucher(
       tester,
-      find.text(t.journalSorties.texte.parent.caseAccord(prenom: 'Yasmine')),
+      find.text(
+        t.journalSorties.texte.parent.caseAccord(dePrenom: 'de Yasmine'),
+      ),
     );
     await _toucher(tester, _bouton());
     expect(faux.acceptes, <(String, String)>[
@@ -150,7 +152,7 @@ void main() {
     expect(faux.retires, <String>['e-bilal']);
     expect(find.text(t.journalSorties.accord.retire), findsOneWidget);
     expect(
-      find.text(t.journalSorties.texte.parent.caseAccord(prenom: 'Bilal')),
+      find.text(t.journalSorties.texte.parent.caseAccord(dePrenom: 'de Bilal')),
       findsOneWidget,
     );
   });
@@ -165,7 +167,9 @@ void main() {
     await monterAccordSorties(tester, faux);
     await _toucher(
       tester,
-      find.text(t.journalSorties.texte.parent.caseAccord(prenom: 'Yasmine')),
+      find.text(
+        t.journalSorties.texte.parent.caseAccord(dePrenom: 'de Yasmine'),
+      ),
     );
     await _toucher(tester, _bouton());
     expect(find.text(t.journalSorties.accord.versionPerimee), findsOneWidget);

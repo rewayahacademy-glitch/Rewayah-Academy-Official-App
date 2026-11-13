@@ -42200,8 +42200,8 @@ class Traductions$journalSorties$texte$parent$fr {
 	/// fr: 'Sans votre accord, rien n'est noté et rien ne change pour le cours. Un élève qui reste trop longtemps hors de l'application sort de la salle, avec ou sans accord : cela ne garde rien.'
 	String get sansAccord => 'Sans votre accord, rien n\'est noté et rien ne change pour le cours. Un élève qui reste trop longtemps hors de l\'application sort de la salle, avec ou sans accord : cela ne garde rien.';
 
-	/// fr: 'J'accepte que les sorties de l'application de {prenom} pendant les séances soient notées.'
-	String caseAccord({required Object prenom}) => 'J\'accepte que les sorties de l\'application de ${prenom} pendant les séances soient notées.';
+	/// fr: 'J'accepte que les sorties de l'application {dePrenom} pendant les séances soient notées.'
+	String caseAccord({required Object dePrenom}) => 'J\'accepte que les sorties de l\'application ${dePrenom} pendant les séances soient notées.';
 }
 
 // Path: journalSorties.texte.adulte
@@ -61554,7 +61554,7 @@ extension on Traductions {
 			'journalSorties.texte.parent.qui' => 'Qui peut le lire : vous, votre enfant, l\'enseignant de la séance et la direction. Jamais les autres élèves ni leurs familles.',
 			'journalSorties.texte.parent.retrait' => 'Vous pouvez retirer votre accord à tout moment, ici même. Dès que vous le retirez, plus rien n\'est noté.',
 			'journalSorties.texte.parent.sansAccord' => 'Sans votre accord, rien n\'est noté et rien ne change pour le cours. Un élève qui reste trop longtemps hors de l\'application sort de la salle, avec ou sans accord : cela ne garde rien.',
-			'journalSorties.texte.parent.caseAccord' => ({required Object prenom}) => 'J\'accepte que les sorties de l\'application de ${prenom} pendant les séances soient notées.',
+			'journalSorties.texte.parent.caseAccord' => ({required Object dePrenom}) => 'J\'accepte que les sorties de l\'application ${dePrenom} pendant les séances soient notées.',
 			'journalSorties.texte.adulte.quoi' => 'Ce qui est noté : chaque fois que vous quittez l\'application pendant une séance, l\'heure où vous la quittez, l\'heure où vous revenez, et si cette absence vous a fait sortir de la salle. Rien d\'autre : ni ce que vous faites ailleurs, ni votre écran, ni votre image, ni votre voix.',
 			'journalSorties.texte.adulte.pourquoi' => 'Pourquoi : suivre votre attention pendant le cours, pour vous et pour votre enseignant.',
 			'journalSorties.texte.adulte.qui' => 'Qui peut le lire : vous, l\'enseignant de la séance et la direction. Jamais les autres élèves ni leurs familles.',

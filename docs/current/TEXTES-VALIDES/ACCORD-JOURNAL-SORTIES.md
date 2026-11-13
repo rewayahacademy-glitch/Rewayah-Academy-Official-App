@@ -10,7 +10,7 @@ Le journal est **éteint** (`salle.sorties.journal_actif` = faux, réglage de la
 qu'il l'est, la page de l'accord n'est proposée à personne et le serveur refuse tout accord. Il ne
 s'allume qu'après la validation de ces textes par le directeur.
 
-L'application affiche ces textes **mot pour mot** (clés `journalSorties.texte.*`) ; le test
+L'application affiche ces textes **mot pour mot** (clés `journalSorties.texte.*`) ; `{dePrenom}` est le prénom de l'enfant, avec « de » ou « d' » devant en français (« de Yasmine », « d'Amine ») et le prénom seul en arabe ; le test
 `test/features/journal_sorties/texte_accord_sorties_test.dart` compare les clés à ce fichier, en
 français et en arabe. Une version du texte est gardée avec chaque accord
 (`salle.sorties.accord_version`, aujourd'hui `sorties-2026-11-v1`) : changer un mot demande une
@@ -41,7 +41,7 @@ Vous pouvez retirer votre accord à tout moment, ici même. Dès que vous le ret
 
 Sans votre accord, rien n'est noté et rien ne change pour le cours. Un élève qui reste trop longtemps hors de l'application sort de la salle, avec ou sans accord : cela ne garde rien.
 
-Case, jamais précochée : J'accepte que les sorties de l'application de {prenom} pendant les séances soient notées.
+Case, jamais précochée : J'accepte que les sorties de l'application {dePrenom} pendant les séances soient notées.
 
 ### العربية
 
@@ -57,7 +57,7 @@ Case, jamais précochée : J'accepte que les sorties de l'application de {prenom
 
 دون موافقتك، لا يُسجَّل أي شيء ولا يتغيّر شيء في الدرس. الطالب الذي يبقى خارج التطبيق مدة طويلة يخرج من القاعة، بموافقة أو دونها: وهذا لا يحفظ أي شيء.
 
-الخانة، غير مُعلَّمة مسبقًا: أوافق على تسجيل خروج {prenom} من التطبيق أثناء الحصص.
+الخانة، غير مُعلَّمة مسبقًا: أوافق على تسجيل خروج ⁨{dePrenom}⁩ من التطبيق أثناء الحصص.
 
 ## Pour l'élève adulte autonome (pour lui-même)
 
