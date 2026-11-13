@@ -15213,7 +15213,7 @@
     "titre": "Calendrier",
     "sections": {
       "libelle": "Sections du calendrier",
-      "dates": "Dates de l'école",
+      "dates": "Dates de l'académie",
       "pauses": "Pauses"
     },
     "indisponible": "Le calendrier n'a pas pu être ouvert\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
@@ -15236,7 +15236,7 @@
       },
       "categorieAide": "Ramadan\u00a0: du 20 Ramadan au 7 Shawwal inclus. Aïd al-Adha\u00a0: du 9 au 18 Dhu al-Hijja inclus.",
       "portee": {
-        "ecole": "Toute l'école",
+        "ecole": "Toute l'académie",
         "tranche": "Une tranche d'âge",
         "classe": "Une classe"
       },

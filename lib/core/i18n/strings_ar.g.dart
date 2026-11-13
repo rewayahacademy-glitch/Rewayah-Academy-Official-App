@@ -10957,7 +10957,7 @@ class _Traductions$calendrier$sections$ar extends Traductions$calendrier$section
 
 	// Translations
 	@override String get libelle => 'أقسام التقويم';
-	@override String get dates => 'تواريخ المدرسة';
+	@override String get dates => 'تواريخ الأكاديمية';
 	@override String get pauses => 'فترات التوقف';
 }
 
@@ -20176,7 +20176,7 @@ class _Traductions$calendrier$dates$portee$ar extends Traductions$calendrier$dat
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String get ecole => 'المدرسة كلها';
+	@override String get ecole => 'الأكاديمية كلها';
 	@override String get tranche => 'فئة عمرية';
 	@override String get classe => 'فصل';
 }
@@ -35626,7 +35626,7 @@ extension on TraductionsAr {
 			'suiviPedagogique.attenteEntretienPour' => ({required Object prenom}) => 'ستُحدَّد مرحلة ⁨${prenom}⁩ بعد مقابلة القراءة مع الإدارة.',
 			'calendrier.titre' => 'التقويم',
 			'calendrier.sections.libelle' => 'أقسام التقويم',
-			'calendrier.sections.dates' => 'تواريخ المدرسة',
+			'calendrier.sections.dates' => 'تواريخ الأكاديمية',
 			'calendrier.sections.pauses' => 'فترات التوقف',
 			'calendrier.indisponible' => 'التقويم غير متاح حاليًا. أعد تحميل الصفحة ثم حاول مرة أخرى.',
 			'calendrier.dates.intro' => 'تواريخ السنة، تدخلها الإدارة كل عام. التواريخ المنشورة وحدها تسري، ويقرؤها الأهل والطلاب والمعلمون.',
@@ -35642,7 +35642,7 @@ extension on TraductionsAr {
 			'calendrier.dates.categorie.aidAlAdha' => 'عيد الأضحى، عشرة أيام على الأكثر',
 			'calendrier.dates.categorie.autre' => 'إغلاق آخر',
 			'calendrier.dates.categorieAide' => 'رمضان: من العشرين من رمضان إلى السابع من شوال بما فيه. عيد الأضحى: من التاسع إلى الثامن عشر من ذي الحجة بما فيه.',
-			'calendrier.dates.portee.ecole' => 'المدرسة كلها',
+			'calendrier.dates.portee.ecole' => 'الأكاديمية كلها',
 			'calendrier.dates.portee.tranche' => 'فئة عمرية',
 			'calendrier.dates.portee.classe' => 'فصل',
 			'calendrier.dates.publiee' => 'منشور',

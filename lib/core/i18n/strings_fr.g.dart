@@ -23926,8 +23926,8 @@ class Traductions$calendrier$sections$fr {
 	/// fr: 'Sections du calendrier'
 	String get libelle => 'Sections du calendrier';
 
-	/// fr: 'Dates de l'école'
-	String get dates => 'Dates de l\'école';
+	/// fr: 'Dates de l'académie'
+	String get dates => 'Dates de l\'académie';
 
 	/// fr: 'Pauses'
 	String get pauses => 'Pauses';
@@ -42350,8 +42350,8 @@ class Traductions$calendrier$dates$portee$fr {
 
 	// Translations
 
-	/// fr: 'Toute l'école'
-	String get ecole => 'Toute l\'école';
+	/// fr: 'Toute l'académie'
+	String get ecole => 'Toute l\'académie';
 
 	/// fr: 'Une tranche d'âge'
 	String get tranche => 'Une tranche d\'âge';
@@ -61808,7 +61808,7 @@ extension on Traductions {
 			'suiviPedagogique.attenteEntretienPour' => ({required Object prenom}) => 'Pour ${prenom}, l\'étape sera fixée après l\'entretien de lecture avec la direction.',
 			'calendrier.titre' => 'Calendrier',
 			'calendrier.sections.libelle' => 'Sections du calendrier',
-			'calendrier.sections.dates' => 'Dates de l\'école',
+			'calendrier.sections.dates' => 'Dates de l\'académie',
 			'calendrier.sections.pauses' => 'Pauses',
 			'calendrier.indisponible' => 'Le calendrier n\'a pas pu être ouvert : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'calendrier.dates.intro' => 'Les dates de l\'année, saisies par la direction chaque année. Seules les dates publiées agissent et sont lues par les familles, les élèves et les enseignants.',
@@ -61824,7 +61824,7 @@ extension on Traductions {
 			'calendrier.dates.categorie.aidAlAdha' => 'Aïd al-Adha, 10 jours au plus',
 			'calendrier.dates.categorie.autre' => 'Autre fermeture',
 			'calendrier.dates.categorieAide' => 'Ramadan : du 20 Ramadan au 7 Shawwal inclus. Aïd al-Adha : du 9 au 18 Dhu al-Hijja inclus.',
-			'calendrier.dates.portee.ecole' => 'Toute l\'école',
+			'calendrier.dates.portee.ecole' => 'Toute l\'académie',
 			'calendrier.dates.portee.tranche' => 'Une tranche d\'âge',
 			'calendrier.dates.portee.classe' => 'Une classe',
 			'calendrier.dates.publiee' => 'Publiée',
