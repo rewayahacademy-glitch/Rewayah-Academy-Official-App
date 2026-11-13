@@ -592,9 +592,11 @@ ON CONFLICT (evenement, portee) DO UPDATE SET courriel = EXCLUDED.courriel;
 -- ---------------------------------------------------------------------------
 -- notifier_classe dit « enseignant_change » a l'ancien enseignant, au nouveau
 -- et aux familles. Le nouveau a deja sa notification d'affectation (ci-dessus,
--- posee avant) : pour lui seul, `enseignant_affecte` vaut `enseignant_change`
--- (la liste des evenements equivalents deja utilisee pour eviter les doublons
--- d'une meme transaction). Retouche ancree, rejouable.
+-- posee avant) : pour lui seul, une notification `enseignant_affecte` de la
+-- meme classe et de la meme transaction suffit, `enseignant_change` ne lui est
+-- pas ecrit en plus. L'ancien enseignant, l'eleve et les familles gardent
+-- `enseignant_change`. Retouche ancree de la condition de deduplication qui
+-- existe deja, rejouable.
 CREATE OR REPLACE FUNCTION pg_temp.remplacer(p_fonction regprocedure, p_ancre text, p_neuf text)
 RETURNS void LANGUAGE plpgsql AS $$
 DECLARE
@@ -615,14 +617,17 @@ BEGIN
   IF pg_catalog.strpos(
        pg_catalog.pg_get_functiondef(
          'private.notifier_classe(uuid,text,uuid,timestamptz,uuid[],uuid[],boolean)'::regprocedure),
-       $q$WHEN 'enseignant_change' THEN ARRAY['enseignant_affecte']$q$) > 0 THEN
-    RAISE NOTICE 'notifier_classe : equivalent deja pose, rien a faire';
+       $q$d.destinataire = v_groupe.teacher_id$q$) > 0 THEN
+    RAISE NOTICE 'notifier_classe : deduplication du nouvel enseignant deja posee, rien a faire';
   ELSE
     PERFORM pg_temp.remplacer(
       'private.notifier_classe(uuid,text,uuid,timestamptz,uuid[],uuid[],boolean)'::regprocedure,
-      $a$    WHEN 'classe_supprimee'   THEN ARRAY['classe_changee']$a$,
-      $b$    WHEN 'classe_supprimee'   THEN ARRAY['classe_changee']
-    WHEN 'enseignant_change'  THEN ARRAY['enseignant_affecte']$b$);
+      $a$        AND (n.evenement = p_evenement OR n.evenement = ANY (v_equivalents))$a$,
+      $b$        AND (n.evenement = p_evenement OR n.evenement = ANY (v_equivalents)
+             OR (p_evenement = 'enseignant_change'
+                 AND n.evenement = 'enseignant_affecte'
+                 AND d.portee = 'classe'
+                 AND d.destinataire = v_groupe.teacher_id))$b$);
   END IF;
 END
 $equivalents$;

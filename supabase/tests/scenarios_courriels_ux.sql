@@ -147,12 +147,15 @@ SELECT pg_temp.vrai(
           WHERE s.groupe_id = pg_temp.u('201') AND s.status = 'planned'
             AND s.deleted_at IS NULL AND s.started_at > pg_catalog.now()),
   '1.1 classe creee : un courriel a la famille, avec la classe, Lina et Yanis, la premiere seance et le fuseau du foyer');
+-- SUIVI-ATTENTE (13/11/2026, revue B1) : un mineur n'est jamais destinataire
+-- d'un courriel, quel que soit le modele ; son tuteur recoit le sien (1.1).
+-- L'eleve garde sa notification dans l'application.
 SELECT pg_temp.vrai(
-  (SELECT c.donnees -> 'eleves' FROM pg_temp.courriels('classe_creee', pg_temp.u('201')) c
-    WHERE c.destinataire_profil = pg_temp.u('12')) IS NULL
-  AND (SELECT c.donnees ->> 'classe' FROM pg_temp.courriels('classe_creee', pg_temp.u('201')) c
-        WHERE c.destinataire_profil = pg_temp.u('12')) = 'CUX Les bases, lundi',
-  '1.2 classe creee : l''eleve recoit sa classe, sans la liste des prenoms');
+  NOT EXISTS (SELECT 1 FROM pg_temp.courriels('classe_creee', pg_temp.u('201'))
+               WHERE destinataire_profil = pg_temp.u('12'))
+  AND (SELECT n.params ->> 'classe' FROM public.notifications n
+        WHERE n.evenement = 'classe_creee' AND n.destinataire = pg_temp.u('12')) = 'CUX Les bases, lundi',
+  '1.2 classe creee : l''eleve mineur ne recoit aucun courriel, seulement sa notification avec sa classe');
 SELECT pg_temp.vrai(
   NOT EXISTS (SELECT 1 FROM pg_temp.courriels('classe_creee', pg_temp.u('201'))
                WHERE destinataire_profil = pg_temp.u('1'))
@@ -171,11 +174,12 @@ SET CONSTRAINTS ALL IMMEDIATE;
 SELECT pg_temp.vrai(
   (SELECT pg_catalog.array_agg(c.destinataire_profil ORDER BY c.destinataire_profil)
      FROM pg_temp.courriels('eleve_inscrit', pg_temp.u('202')) c)
-    = ARRAY[pg_temp.u('21'), pg_temp.u('22')]
+    = ARRAY[pg_temp.u('21')]
   AND EXISTS (SELECT 1 FROM public.notifications n
                WHERE n.evenement = 'eleve_inscrit' AND n.destinataire = pg_temp.u('1')
                  AND n.params ->> 'groupe_id' = pg_temp.u('202')::text),
-  '2.1 eleve inscrit : courriel a Sami et a son tuteur, jamais a l''enseignant (application seulement)');
+  -- SUIVI-ATTENTE (13/11/2026, revue B1) : Sami est mineur, son tuteur recoit le courriel.
+  '2.1 eleve inscrit : courriel au tuteur de Sami (mineur : aucun pour lui), jamais a l''enseignant (application seulement)');
 SELECT pg_temp.vrai(
   (SELECT c.donnees ->> 'portee' FROM pg_temp.courriels('eleve_inscrit', pg_temp.u('202')) c
     WHERE c.destinataire_profil = pg_temp.u('21')) = 'foyer'
