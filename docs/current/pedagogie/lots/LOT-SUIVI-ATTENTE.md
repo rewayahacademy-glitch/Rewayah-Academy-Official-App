@@ -92,24 +92,27 @@ Cas hors du chemin droit, chacun avec son état et son geste : demande refusée 
 - La migration `0043` pose des tranches (`enfant_5_7`, `enfant_8_10`...) que des migrations ultérieures ont remplacées (`enfant_6_9`, `enfant_10_13`, `ado_14_17`) : lire la base rejouée, pas `0043`.
 - L'accord de publication existant (CAND-PHOTO) vise le site public ; il n'est pas le réglage de ce lot et n'a pas été réutilisé.
 
-## 6. Preuves (état au 13/11/2026, après fusion de `origin/main` 25f3ed78)
+## 6. Preuves (état au 13/11/2026, après la revue indépendante et la fusion de `origin/main` 25f3ed78)
 
 Rien ici n'est une preuve du directeur : ce sont des mesures locales (S9).
 
 | Contrôle | Résultat |
 |---|---|
-| Rejeu SQL sur Postgres nu (utilisateur `postgres`, 437 migrations, tous les scénarios, une copie neuve chacun) | 278 verts, 0 rouge ; `scenarios_suivi_attente.sql` vert ; `scenarios_courriels_ux` et `scenarios_af_liste_blanche_volatiles` amendés (voulu) |
-| `dart run slang` | généré, sans erreur |
-| `dart run build_runner build --delete-conflicting-outputs` | terminé, sans erreur, aucun diff laissé |
+| Rejeu SQL sur Postgres nu (utilisateur `postgres`, 439 migrations, tous les scénarios, une copie neuve chacun) | 278 verts, 0 rouge. Quatre scénarios existants ajustés à un comportement voulu : `courriels_ux` (1.2, 2.1), `fn028_seance_terminee`, `notifications_classes` (4.2, 8.1), `reaffecter_classe` ; `af_liste_blanche_volatiles` amendé plus tôt |
+| `scenarios_suivi_attente.sql` | vert : courriels jamais à un mineur (tous modèles), carte bornée (deux sondes du relecteur), enseignant retiré, remplacement A vers B, « tout est prêt » (tuteur, adulte, jamais l'enfant), « Me présenter » jamais vers un mineur, demandes dépassées (direction seule), export |
+| `20261123962000` sans `20261123961000` | ne casse rien : avertissement, aucune séance ni élève bloqués |
+| `20261123961000` après le lot 2 (`20261123911000`) | les deux valeurs (`pause_repondue`, `tout_est_pret`) sont dans la contrainte, dans les deux ordres |
+| `dart run slang`, `dart run build_runner build --delete-conflicting-outputs` | sans erreur, aucun diff laissé |
 | `dart analyze --fatal-infos` | No issues found |
-| `flutter test` (suite complète) | 20805 réussis, 8280 ignorés (déjà ignorés sur `main`), 0 échec |
-| `dart run tool/verifier_jetons.dart` | 1513 fichiers, aucune violation |
+| `flutter test` (suite complète) | 20815 réussis, 8304 ignorés (déjà ignorés sur `main`), 0 échec |
+| `dart run tool/verifier_jetons.dart` | 1514 fichiers, aucune violation |
 | `dart run tool/verifier_branchement.dart` | 2 fichiers non atteints, tous tolérés, aucun nouveau |
-| `dart run tool/verifier_revue.dart` | 1066 violations antérieures au lot, 0 dans `suiviAttente` |
-| Captures | 128 PNG, `docs/current/captures/E2E/suivi-attente/` (390 et 1440, clair et sombre, fr et ar), régénérées après les dernières corrections de texte |
+| `dart run tool/verifier_revue.dart` | 1077 violations antérieures au lot, 0 dans `suiviAttente` ni `attente_classe` |
+| Gabarits Edge (cinq langues, `tout_est_pret`) | rendus et lus à la main avec node ; les tests Deno du dépôt (`courriel_test.ts`, `push_test.ts`) sont mis à jour mais **non exécutés** : Deno n'est pas installé ici |
+| Captures | 152 PNG, `docs/current/captures/E2E/suivi-attente/` (390 et 1440, clair et sombre, fr et ar), régénérées après les corrections |
 
-Gardes du dépôt attrapées par la suite complète, corrigées : « Sauvegarde » de succès (arabe « تم الحفظ »), espaces insécables du français, « hors ligne » redit dans un texte, URL de photo passée à un portrait (désormais `PhotoEnseignant`), paramètres arabes isolés (U+2068/2069), domaine arabe déclaré.
+Gardes du dépôt attrapées par la suite complète, corrigées : « Sauvegarde » de succès, espaces insécables, « hors ligne » redit, URL de photo passée à un portrait, paramètres arabes isolés, domaine arabe déclaré.
 
-Piège de rejeu : `tool/rejouer_scenarios.sh` échoue en arrière-plan (`nohup`) sur la migration `20261011121039_c29` (contrôle de propriétaire) et passe en premier plan, sous `postgres` ; cause non élucidée, étrangère au lot. À lancer en premier plan.
+Piège de rejeu : `tool/rejouer_scenarios.sh` échoue en arrière-plan (`nohup`) sur la migration `20261011121039_c29` et passe en premier plan sous `postgres` ; cause non élucidée, étrangère au lot.
 
 `.github/workflows/ci.yml` doit recevoir `scenarios_suivi_attente.sql` : zone interdite à ce lot, à faire par l'architecte.
