@@ -78,7 +78,7 @@ import 'zone_support.dart'
 /// telephone ([TelephonePleinEcran]).
 bool salleOrdinateur(BuildContext context, VueSeance vue) =>
     pleinEcranSalle(context) &&
-    vue.role == RoleSeance.enseignant &&
+    vue.conduitLaSeance &&
     MediaQuery.sizeOf(context).width >= AppGabarit.seuilEtendu;
 
 /// La largeur du panneau de gauche : la video de l'enseignant et ses Eleves

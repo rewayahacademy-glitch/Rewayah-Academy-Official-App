@@ -83,7 +83,7 @@ bool telephonePleinEcran(BuildContext context) =>
 /// fenetre de moins de 840 points de large : telephone et iPad en portrait.
 bool salleTelephoneEnseignant(BuildContext context, VueSeance vue) =>
     pleinEcranSalle(context) &&
-    vue.role == RoleSeance.enseignant &&
+    vue.conduitLaSeance &&
     MediaQuery.sizeOf(context).width < AppGabarit.seuilEtendu;
 
 /// Ordinateur et tablette : la page du Coran se compose sur toute la hauteur
@@ -491,10 +491,7 @@ Widget? pageSalle(
       // la classe ; il ne la tourne pas. Un glissement le lui dit un court
       // instant (« La page suit celle de l'enseignant »), au lieu de laisser
       // croire a une panne.
-      : !libre &&
-            precedente == null &&
-            suivante == null &&
-            vue.role != RoleSeance.enseignant
+      : !libre && precedente == null && suivante == null && !vue.conduitLaSeance
       ? GlisserPage(
           key: const ValueKey<String>('glisser-page-salle'),
           onPrecedente: null,
@@ -560,7 +557,7 @@ class TelephonePleinEcran extends StatelessWidget {
     final bool scene =
         media?.scene != null && modeSceneDe(context, vue) == ModeScene.classe;
     final bool eleve =
-        vue.role != RoleSeance.enseignant &&
+        !vue.conduitLaSeance &&
         !scene &&
         vue.supportPresente != null &&
         surfaceAMontrer(vue) != null;
@@ -876,10 +873,7 @@ class _EtatTelephonePleinEcran extends State<_CorpsTelephone> {
           // au toucher, puis s'effacent (pilote, 11/11) ; en Interface
           // guidee, la page se pose entre deux rangees.
           final bool eleve =
-              vue.role != RoleSeance.enseignant &&
-              !scene &&
-              !libre &&
-              surface != null;
+              !vue.conduitLaSeance && !scene && !libre && surface != null;
           final bool sceneDevant = enseignant && scene;
           // RUBAN-TELEPHONE (MODES-AFFICHAGE §5) : le passage entre modes.
           // La place du ruban : la capsule (enseignant, en haut au centre) ou
@@ -1201,8 +1195,8 @@ class _EtatTelephonePleinEcran extends State<_CorpsTelephone> {
                 // Lot CORAN-ELEVE : rien a lire avant qu'un support soit
                 // presente (scene, videos) ; la phrase du micro en attente ;
                 // l'Interface guidee entre ses deux rangees.
-                (vue.role != RoleSeance.enseignant && page == null) ||
-                (vue.role != RoleSeance.enseignant && _microAttente) ||
+                (!vue.conduitLaSeance && page == null) ||
+                (!vue.conduitLaSeance && _microAttente) ||
                 (geometrie != null &&
                     !geometrie.cote &&
                     !geometrie.superposee) ||

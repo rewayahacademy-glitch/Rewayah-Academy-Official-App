@@ -371,7 +371,7 @@ double reserveSousVignette({
 /// l'enseignant.
 bool vignetteEnseignantPosee(BuildContext context, VueSeance vue) =>
     vue.voitVignetteSurSupport &&
-    !(vue.role == RoleSeance.enseignant && CompositionSalle.courte(context));
+    !(vue.conduitLaSeance && CompositionSalle.courte(context));
 
 /// TRANSITIONS-SALLE : l'identite de ce que la zone montre (la scene, le
 /// tableau, un support et lequel, rien), pour le fondu d'un support a
@@ -497,7 +497,7 @@ extension on ZoneSupport {
                   // toujours celle de l'enseignant.
                   final bool vignette =
                       video &&
-                      !(vue.role == RoleSeance.enseignant &&
+                      !(vue.conduitLaSeance &&
                           dessus > 0 &&
                           ratio != null &&
                           rectanglePage(
