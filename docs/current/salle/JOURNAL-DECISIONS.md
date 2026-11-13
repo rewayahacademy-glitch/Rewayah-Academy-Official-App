@@ -1997,3 +1997,34 @@ décidé en chemin, et qui engage la suite :
 migration n'est installée. La suite complète des tests sur l'ensemble n'a pas encore fini une
 fois (un blocage sous la charge, puis un redémarrage du conteneur).
 
+
+## D-042 (13/11/2026). Le matricule des camarades fermé côté dépôt ; le délai de rappel de la pause lu sur le serveur (lot SERVEUR-PETITS)
+
+**Ce qui n'est pas fait.** Rien n'est installé : ni staging ni production. Les deux migrations ne
+sont que sur la branche ; la fuite du matricule reste ouverte en production tant que
+`20261124400000_session_peers_matricule.sql` n'y est pas posée. Rien n'est essayé dans
+l'application en ligne.
+
+- **Matricule (SEC-6, fin de D-040).** `public.session_peers_v` rendait à tout participant d'une
+  séance le prénom et le matricule des autres. Migration additive
+  `20261124400000_session_peers_matricule.sql` (aucun mot d'effacement) : même forme, mêmes
+  lignes, mêmes options, mêmes droits (comparés avant et après dans la migration) ; le matricule
+  vaut NULL sauf pour la direction, le contrôleur, l'enseignant de la séance (titulaire, ou
+  remplaçant effectif lu au dernier événement de `remplacements_seance`, comme
+  `private.c29_enseignant_effectif_session`) et la personne elle-même. Le prénom reste pour tous
+  (D-040). Aucun lecteur légitime n'avait besoin du matricule d'un pair : l'application ne lit pas
+  la vue ; aucune vue ni fonction des migrations ne la lit ; `scenarios_agt01` et
+  `scenarios_ctr01` la lisent par prénom et par nombre de lignes. Une session agent masquée garde
+  sa substitution du prénom par le matricule (0047, inchangée). Scénario
+  `scenarios_session_peers_matricule.sql`.
+- **Délai de rappel de la pause (D-039).** Une proposition restée sans réponse revenait après
+  une constante de l'application (5 min), sans lire le réglage de la direction. L'état de la
+  pause rend maintenant `rappel_minutes` (`seance.pause_rappel_minutes`, au moins 1, même lecture
+  que le Non) ; `PauseSeance.rappelMinutes` le porte (nul sur un serveur ancien) ; la barre du
+  chrono attend ce délai, 5 min sinon. Complété en place dans `20261124100000_pause_proposee.sql`,
+  jamais installée.
+- **Pause prévue ignorée (remarque du lot de la prière).** Une lecture illisible de
+  `seance_pause_prevue`, ou une ligne présente mais rejetée (heure absente, durée hors pas, heure
+  hors de la séance), garde le repli sur la règle ordinaire (une séance doit toujours pouvoir
+  commencer) et laisse un avertissement au journal du serveur : identifiant de la séance et
+  raison, ou le code d'erreur ; aucune donnée personnelle, aucune écriture.

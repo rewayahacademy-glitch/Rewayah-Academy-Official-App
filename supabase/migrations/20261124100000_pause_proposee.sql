@@ -41,7 +41,11 @@
 --    est nul quand la pause ne tient plus avant la fin prevue ou quand le
 --    statut n'est plus programmee. Le reste minimum ne compte que pour la
 --    pause ordinaire (motif nul) ; une pause a motif doit seulement finir
---    avant la fin prevue.
+--    avant la fin prevue. L'etat porte aussi rappel_minutes
+--    (seance.pause_rappel_minutes, au moins 1, meme lecture que le Non) :
+--    l'application reprend la proposition restee sans reponse apres ce delai
+--    de la direction, et non plus apres une constante (SERVEUR-PETITS,
+--    13/11/2026, D-042).
 -- 7. pause_reglage_lire rend, pour une classe sans ligne, la verite : la pause
 --    par defaut (actif, milieu de la duree de la classe, duree du public), avec
 --    par_defaut = true. Type de retour inchange (jsonb).
@@ -51,6 +55,12 @@
 --    l'heure, la duree et le motif de la pause ; l'etat rendu porte motif.
 --    Les bornes de l'autre lot font foi : une pause a motif acceptee reste
 --    proposable sans le reste minimum (convenu avec le lot priere).
+--    Une erreur de lecture de cet objet, ou une ligne presente mais rejetee
+--    (heure absente, duree hors pas, heure hors de la seance), garde le repli
+--    sur la regle ordinaire et laisse un RAISE WARNING au journal du serveur
+--    (identifiant de la seance et raison en clair, ou le SQLSTATE ; aucune
+--    donnee personnelle, aucune ecriture). L'absence de l'objet reste
+--    toleree en silence (SERVEUR-PETITS, 13/11/2026, remarque du lot priere).
 --
 -- Aucun droit nouveau a un eleve, un tuteur ou un controleur ; ni la presence
 -- ni la paie ne lisent la pause.
@@ -168,14 +178,18 @@ AS $function$
 DECLARE
   v_result jsonb;
   v_reste integer;
+  v_rappel integer;
 BEGIN
   v_reste := GREATEST(0, coalesce(public.app_config_int('seance.pause_reste_minimum_minutes', 15), 15));
+  -- Meme lecture et meme borne que pause_seance_refuser : au moins 1 minute.
+  v_rappel := GREATEST(1, coalesce(public.app_config_int('seance.pause_rappel_minutes', 5), 5));
   SELECT jsonb_build_object(
     'statut', coalesce(ps.statut,'non_prevue'),
     'duree_prevue_minutes', coalesce(ps.duree_prevue_minutes,5),
     'debut_prevu_utc',ps.debut_prevu_utc,'debut_utc',ps.debut_utc,'fin_utc',ps.fin_utc,
     'peut_piloter', coalesce(s.teacher_id = p_uid AND s.status = 'in_progress',false),
     'refus_nombre', coalesce(ps.refus_nombre, 0),
+    'rappel_minutes', v_rappel,
     'motif', ps.motif,
     'proposer_a', CASE
       WHEN ps.statut = 'programmee'
@@ -245,6 +259,8 @@ DECLARE
   v_prevue_debut timestamptz;
   v_prevue_duree integer;
   v_prevue_motif text;
+  v_prevue_lignes integer := 0;
+  v_prevue_raison text;
 BEGIN
   IF TG_OP='UPDATE' AND OLD.status IS DISTINCT FROM NEW.status
      AND NEW.status='in_progress' AND NEW.groupe_id IS NOT NULL THEN
@@ -255,7 +271,11 @@ BEGIN
     -- public.seance_pause_prevue) prime sur le milieu et sur le moment choisi
     -- par l'enseignant. La table peut ne pas exister : to_regclass, puis une
     -- requete constante, la seance passee par USING. Une ligne invalide (duree
-    -- hors de 5 a 30 ou hors du pas de 5, heure hors de la seance) est ignoree.
+    -- hors de 5 a 30 ou hors du pas de 5, heure hors de la seance) est ignoree,
+    -- comme une erreur de lecture : la regle ordinaire s'applique (une seance
+    -- doit toujours pouvoir commencer), mais l'ecart se voit dans le journal du
+    -- serveur (RAISE WARNING : identifiant de la seance et raison, aucune
+    -- donnee personnelle ; un avertissement n'arrete rien).
     IF pg_catalog.to_regclass('public.seance_pause_prevue') IS NOT NULL THEN
       BEGIN
         -- Table ou vue (le lot priere la livre en vue) ; aucune cle etrangere
@@ -265,14 +285,28 @@ BEGIN
                   ORDER BY p.debut_prevu_utc LIMIT 1'
           INTO v_prevue_debut, v_prevue_duree, v_prevue_motif
           USING NEW.id;
+        GET DIAGNOSTICS v_prevue_lignes = ROW_COUNT;
       EXCEPTION WHEN OTHERS THEN
         -- Une forme inattendue ou une erreur de cet objet externe ne doit
         -- jamais empecher une seance de commencer : regle ordinaire.
+        RAISE WARNING 'pause prevue illisible pour la seance % : %', NEW.id, SQLSTATE;
         v_prevue_debut := NULL;
+        v_prevue_lignes := 0;
       END;
-      IF v_prevue_debut IS NOT NULL AND v_prevue_duree BETWEEN 5 AND 30 AND v_prevue_duree % 5 = 0
-         AND v_prevue_debut >= NEW.started_at
-         AND v_prevue_debut + pg_catalog.make_interval(mins => v_prevue_duree) <= NEW.ended_at THEN
+      IF v_prevue_lignes > 0 THEN
+        v_prevue_raison := CASE
+          WHEN v_prevue_debut IS NULL THEN 'heure absente'
+          WHEN v_prevue_duree IS NULL OR v_prevue_duree NOT BETWEEN 5 AND 30
+               OR v_prevue_duree % 5 <> 0 THEN 'duree hors pas'
+          WHEN v_prevue_debut < NEW.started_at
+               OR v_prevue_debut + pg_catalog.make_interval(mins => v_prevue_duree) > NEW.ended_at
+            THEN 'heure hors de la seance'
+        END;
+        IF v_prevue_raison IS NOT NULL THEN
+          RAISE WARNING 'pause prevue ignoree pour la seance % : %', NEW.id, v_prevue_raison;
+        END IF;
+      END IF;
+      IF v_prevue_lignes > 0 AND v_prevue_raison IS NULL THEN
         -- A confirmer par le directeur : elle est posee meme si l'enseignant a
         -- desactive la pause de sa classe (actif = faux).
         INSERT INTO public.pause_seances(seance_id,statut,duree_prevue_minutes,debut_prevu_utc,motif)
@@ -373,6 +407,10 @@ BEGIN
      OR public.app_config_int('seance.pause_rappel_minutes', -1) < 0
      OR public.app_config_int('seance.pause_reste_minimum_minutes', -1) < 0 THEN
     RAISE EXCEPTION 'PAUSE-SERVEUR : colonnes ou reglages absents';
+  END IF;
+  IF pg_catalog.strpos(pg_catalog.pg_get_functiondef('public.pause_etat_interne(uuid,uuid)'::pg_catalog.regprocedure),
+                       '''rappel_minutes''') = 0 THEN
+    RAISE EXCEPTION 'PAUSE-SERVEUR : pause_etat_interne ne rend pas rappel_minutes';
   END IF;
 END;
 $acl$;

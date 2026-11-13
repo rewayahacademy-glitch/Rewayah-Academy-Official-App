@@ -52,6 +52,7 @@ PauseSeance? pauseALInstant(PauseSeance? pause, DateTime maintenant) {
     finUtc: reprise,
     peutPiloter: pause.peutPiloter,
     refusNombre: pause.refusNombre,
+    rappelMinutes: pause.rappelMinutes,
     motif: pause.motif,
   );
 }
@@ -426,7 +427,8 @@ abstract interface class CommandesPause {
 ///   `proposerA`, l'alerte « Pause de 10 min ? » (Oui / Non) reste depliee
 ///   [AppMouvement.propositionPause] ; sans reponse, elle laisse la marque
 ///   « Pause proposee » (un toucher la rouvre) et revient apres
-///   [rappelSansReponse], sans rien envoyer au serveur (ne pas repondre
+///   [delaiSansReponse] (le reglage de la direction lu du serveur, sinon
+///   [rappelSansReponse]), sans rien envoyer au serveur (ne pas repondre
 ///   n'est pas refuser). Oui demarre, Non refuse (le serveur rend la
 ///   prochaine `proposerA`, nulle quand il n'y a plus de proposition).
 /// - La pause de priere (motif fourni par le serveur) n'a pas de Oui / Non :
@@ -455,11 +457,20 @@ class PilotePause {
   /// Les commandes du port ; `null` : rien n'est jamais envoye (eleve).
   final CommandesPause? commandes;
 
-  /// Le delai avant de reposer une proposition restee sans reponse. Le port
-  /// ne rend pas le reglage de la direction (`seance.pause_rappel_minutes`,
-  /// 5 par defaut), qui ne vaut que pour le rappel apres un Non, pose par le
-  /// serveur : on garde ici la meme valeur par defaut.
+  /// Le delai avant de reposer une proposition restee sans reponse quand le
+  /// serveur ne rend pas le reglage de la direction (`rappelMinutes`, lu de
+  /// `seance.pause_rappel_minutes` : serveur ancien) ; sinon c'est ce reglage
+  /// qui fait foi (SERVEUR-PETITS, D-042), voir [delaiSansReponse].
   static const Duration rappelSansReponse = Duration(minutes: 5);
+
+  /// Le delai avant de reposer une proposition restee sans reponse : le
+  /// reglage de la direction rendu par le serveur, [rappelSansReponse] sinon.
+  static Duration delaiSansReponse(PauseSeance pause) {
+    final int? minutes = pause.rappelMinutes;
+    return minutes != null && minutes >= 1
+        ? Duration(minutes: minutes)
+        : rappelSansReponse;
+  }
 
   /// La pause de priere s'annonce a l'enseignant ce temps avant son heure.
   static const Duration avancePriere = Duration(minutes: 3);
@@ -592,7 +603,7 @@ class PilotePause {
       // maintenant, sans rien envoyer au serveur.
       final DateTime? rappel = _rappelA;
       if (rappel == null) {
-        _rappelA = now.add(rappelSansReponse);
+        _rappelA = now.add(delaiSansReponse(p));
         return;
       }
       if (now.isBefore(rappel)) return;

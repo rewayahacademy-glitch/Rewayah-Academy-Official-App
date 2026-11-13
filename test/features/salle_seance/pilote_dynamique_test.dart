@@ -5,7 +5,8 @@
 // - file : une alerte a la fois, repli seul, marque laissee, meme famille qui
 //   remplace, toucher qui replie ou rouvre ;
 // - arrivees : rien pour ceux deja la, +1 puis +2 dans la meme fenetre ;
-// - pause proposee : Oui, Non, sans reponse (marque puis rappel, rien envoye),
+// - pause proposee : Oui, Non, sans reponse (marque puis rappel, rien envoye ;
+//   delai de la direction lu du serveur, 5 min s'il manque),
 //   plus de proposition, serveur ancien, echec qui laisse la proposition,
 //   pause de priere (avance, decalage, depart seul), fin automatique (une
 //   fois, reessai apres un echec), debut et fin dits a tous, reprise passee.
@@ -62,6 +63,7 @@ PauseSeance _programmee({
   DateTime? proposer,
   MotifPause motif = MotifPause.ordinaire,
   int refus = 0,
+  int? rappelMinutes,
 }) => PauseSeance(
   statut: StatutPause.programmee,
   dureePrevueMinutes: 10,
@@ -70,6 +72,7 @@ PauseSeance _programmee({
   peutPiloter: true,
   motif: motif,
   refusNombre: refus,
+  rappelMinutes: rappelMinutes,
 );
 
 PauseSeance _enCours(
@@ -278,8 +281,8 @@ void main() {
       expect(dyn.aMarque(PilotePause.cleProposee), isFalse);
     });
 
-    test('sans reponse : marque « Pause proposee », rappel apres 5 min, rien '
-        'n est envoye', () {
+    test('sans reponse, champ du serveur absent (serveur ancien) : marque '
+        '« Pause proposee », rappel apres 5 min, rien n est envoye', () {
       maintenant = _t;
       pause.observer(_programmee(proposer: _t), pilote: true);
       expect(dyn.alerte, isNotNull);
@@ -296,6 +299,37 @@ void main() {
       pause.evaluer();
       expect(dyn.alerte?.titre, contains('10'));
       expect(cmd.appels, isEmpty, reason: 'ne pas repondre n est pas refuser');
+    });
+
+    test('sans reponse, delai de la direction rendu par le serveur (3 min) : '
+        'la proposition revient a 3 min, pas a 5 (D-042)', () {
+      maintenant = _t;
+      pause.observer(_programmee(proposer: _t, rappelMinutes: 3), pilote: true);
+      expect(dyn.alerte, isNotNull);
+      dyn.avancer(AppMouvement.propositionPause);
+      expect(dyn.alerte, isNull);
+      expect(dyn.aMarque(PilotePause.cleProposee), isTrue);
+      maintenant = _t.add(const Duration(seconds: 30));
+      pause.evaluer();
+      maintenant = _t.add(const Duration(minutes: 3, seconds: 29));
+      pause.evaluer();
+      expect(dyn.alerte, isNull);
+      maintenant = _t.add(const Duration(minutes: 3, seconds: 31));
+      pause.evaluer();
+      expect(dyn.alerte?.titre, contains('10'));
+      expect(cmd.appels, isEmpty, reason: 'ne pas repondre n est pas refuser');
+    });
+
+    test('delaiSansReponse : le reglage du serveur, la constante sinon', () {
+      expect(
+        PilotePause.delaiSansReponse(_programmee(rappelMinutes: 3)),
+        const Duration(minutes: 3),
+      );
+      expect(
+        PilotePause.delaiSansReponse(_programmee()),
+        PilotePause.rappelSansReponse,
+      );
+      expect(PilotePause.rappelSansReponse, const Duration(minutes: 5));
     });
 
     test('echec du serveur : la proposition reste', () async {

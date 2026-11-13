@@ -144,6 +144,7 @@ class PauseSeance {
     this.peutPiloter = false,
     this.proposerAUtc,
     this.refusNombre = 0,
+    this.rappelMinutes,
     this.motif = MotifPause.ordinaire,
   });
 
@@ -157,6 +158,7 @@ class PauseSeance {
       peutPiloter = false,
       proposerAUtc = null,
       refusNombre = 0,
+      rappelMinutes = null,
       motif = MotifPause.ordinaire;
 
   /// Le statut.
@@ -186,6 +188,13 @@ class PauseSeance {
   /// Le nombre de Non deja dits a la pause de cette seance.
   final int refusNombre;
 
+  /// Le delai, en minutes, apres lequel la barre du chrono repropose une pause
+  /// restee sans reponse : le reglage de la direction
+  /// (`seance.pause_rappel_minutes`, au moins 1), lu par le serveur
+  /// (SERVEUR-PETITS, D-042). `null` quand le serveur ne le rend pas (serveur
+  /// ancien) : l'application garde sa constante.
+  final int? rappelMinutes;
+
   /// Pourquoi la pause a lieu.
   final MotifPause motif;
 
@@ -211,6 +220,7 @@ class PauseSeance {
       other.peutPiloter == peutPiloter &&
       other.proposerAUtc == proposerAUtc &&
       other.refusNombre == refusNombre &&
+      other.rappelMinutes == rappelMinutes &&
       other.motif == motif;
 
   @override
@@ -223,6 +233,7 @@ class PauseSeance {
     peutPiloter,
     proposerAUtc,
     refusNombre,
+    rappelMinutes,
     motif,
   );
 }
