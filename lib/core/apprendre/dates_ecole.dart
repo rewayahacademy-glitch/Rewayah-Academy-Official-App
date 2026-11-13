@@ -1,10 +1,10 @@
-/// ESPACE-APPRENDRE (lot 5) : les dates importantes de l'ecole (evaluations,
+/// ESPACE-APPRENDRE (lot 5) : les dates importantes de l'academie (evaluations,
 /// fermetures, rencontres de recitation), derriere un port.
 ///
 /// Elles viendront du calendrier (lot 2, CALENDRIER-ET-PAUSES), pas encore
 /// livre : aucune table de calendrier n'existe en production (releve du
 /// 12/11/2026). **L'implementation de production rend donc « rien de publie »**
-/// ([DatesEcoleNonPubliees]) et l'onglet Programme dit « Les dates de l'ecole
+/// ([DatesEcoleNonPubliees]) et l'onglet Programme dit « Les dates de l'academie
 /// seront affichees ici ». Aucune date n'est inventee, aucun exemple n'est pose.
 /// Quand le lot 2 arrive, il remplace [portDatesEcoleProvider] ; l'ecran ne
 /// change pas.
@@ -14,7 +14,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
 
-/// La sorte d'une date de l'ecole.
+/// La sorte d'une date de l'academie.
 enum GenreDateEcole {
   /// Un petit bilan ou un examen.
   evaluation,
@@ -26,7 +26,7 @@ enum GenreDateEcole {
   rencontre,
 }
 
-/// Une date de l'ecole qui concerne l'eleve.
+/// Une date de l'academie qui concerne l'eleve.
 @immutable
 class DateEcole {
   /// Cree une date.
@@ -42,7 +42,7 @@ class DateEcole {
   final String? libelle;
 }
 
-/// Le port : les dates de l'ecole qui concernent [eleveId], dans l'ordre.
+/// Le port : les dates de l'academie qui concernent [eleveId], dans l'ordre.
 abstract interface class PortDatesEcole {
   /// Les dates publiees ; vide quand rien n'est publie.
   Future<List<DateEcole>> pourEleve(String eleveId);
@@ -63,7 +63,7 @@ class DatesEcoleNonPubliees implements PortDatesEcole {
 final Provider<PortDatesEcole> portDatesEcoleProvider =
     Provider<PortDatesEcole>((Ref _) => const DatesEcoleNonPubliees());
 
-/// Les dates de l'ecole d'un eleve.
+/// Les dates de l'academie d'un eleve.
 final FutureProviderFamily<List<DateEcole>, String> datesEcoleProvider =
     FutureProvider.family<List<DateEcole>, String>(
       (Ref ref, String eleveId) =>

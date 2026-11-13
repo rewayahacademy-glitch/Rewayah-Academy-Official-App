@@ -11,7 +11,7 @@
 ///
 /// - l'etat « pas encore de classe » quand il n'y a rien a montrer (l'ecran de
 ///   `main` se tait alors) ;
-/// - la section « Dates de l'ecole » (evaluations, fermetures, rencontres de
+/// - la section « Dates de l'academie » (evaluations, fermetures, rencontres de
 ///   recitation) derriere un port ([portDatesEcoleProvider]) qui rend
 ///   aujourd'hui « rien de publie » : le calendrier est le lot 2. Elle n'existe
 ///   que si le serveur dit `eleve_voit_dates` : un enfant de 6 a 9 ans ne voit
@@ -42,10 +42,10 @@ abstract final class ClesProgramme {
   /// L'etat « pas encore de classe ».
   static const Key vide = ValueKey<String>('programme-vide');
 
-  /// La section des dates de l'ecole.
+  /// La section des dates de l'academie.
   static const Key datesEcole = ValueKey<String>('programme-dates-ecole');
 
-  /// L'etat vide des dates de l'ecole.
+  /// L'etat vide des dates de l'academie.
   static const Key datesEcoleVide = ValueKey<String>(
     'programme-dates-ecole-vide',
   );
@@ -107,7 +107,7 @@ String _jour(DateTime d) => LibellesGroupe.insecable(
   ),
 );
 
-/// « Dates de l'ecole » : les evaluations, fermetures et rencontres de
+/// « Dates de l'academie » : les evaluations, fermetures et rencontres de
 /// recitation que le calendrier publiera (lot 2). Aujourd'hui, rien n'est
 /// publie : l'etat vide le dit, sans date inventee.
 class _DatesEcole extends ConsumerWidget {

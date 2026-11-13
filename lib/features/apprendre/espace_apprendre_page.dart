@@ -36,7 +36,7 @@ enum OngletApprendre {
   /// Les documents.
   bibliotheque,
 
-  /// Le niveau, l'etape, le chemin, les dates de l'ecole.
+  /// Le niveau, l'etape, le chemin, les dates de l'academie.
   programme,
 
   /// Resultats, bilans, attestations (lot 8).

@@ -15260,11 +15260,11 @@
     },
     "programme": {
       "vide": "L'étape apparaîtra dès l'entrée dans une classe",
-      "datesEcole": "Dates de l'école",
-      "datesEcoleVide": "Les dates de l'école seront affichées ici",
+      "datesEcole": "Dates de l'académie",
+      "datesEcoleVide": "Les dates de l'académie seront affichées ici",
       "genre": {
         "evaluation": "Évaluation",
-        "fermeture": "Fermeture de l'école",
+        "fermeture": "Fermeture de l'académie",
         "rencontre": "Rencontre de récitation"
       }
     },

@@ -691,7 +691,7 @@ void main() {
 
   group('Programme', () {
     // L'onglet reutilise l'ecran « Ma progression » de main (hub : le chemin
-    // n'est dessine qu'a un endroit) et y ajoute « Dates de l'ecole ».
+    // n'est dessine qu'a un endroit) et y ajoute « Dates de l'academie ».
     const Key carte = ValueKey<String>('suivi-pedagogique');
     const Key chemin = ValueKey<String>('suivi-pedagogique-chemin');
     Key etape(int ordre) => ValueKey<String>('suivi-pedagogique-etape-$ordre');

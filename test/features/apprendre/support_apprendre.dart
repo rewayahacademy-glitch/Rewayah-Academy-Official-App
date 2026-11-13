@@ -163,7 +163,7 @@ class _PortSuivi implements PortMaProgression {
   };
 }
 
-/// Un port des dates de l'ecole fixe.
+/// Un port des dates de l'academie fixe.
 class DatesEcoleFixes implements PortDatesEcole {
   /// Cree le port.
   const DatesEcoleFixes(this.dates);

@@ -23872,11 +23872,11 @@ class Traductions$apprendre$programme$fr {
 	/// fr: 'L'étape apparaîtra dès l'entrée dans une classe'
 	String get vide => 'L\'étape apparaîtra dès l\'entrée dans une classe';
 
-	/// fr: 'Dates de l'école'
-	String get datesEcole => 'Dates de l\'école';
+	/// fr: 'Dates de l'académie'
+	String get datesEcole => 'Dates de l\'académie';
 
-	/// fr: 'Les dates de l'école seront affichées ici'
-	String get datesEcoleVide => 'Les dates de l\'école seront affichées ici';
+	/// fr: 'Les dates de l'académie seront affichées ici'
+	String get datesEcoleVide => 'Les dates de l\'académie seront affichées ici';
 
 	late final Traductions$apprendre$programme$genre$fr genre = Traductions$apprendre$programme$genre$fr.internal(_root);
 }
@@ -42144,8 +42144,8 @@ class Traductions$apprendre$programme$genre$fr {
 	/// fr: 'Évaluation'
 	String get evaluation => 'Évaluation';
 
-	/// fr: 'Fermeture de l'école'
-	String get fermeture => 'Fermeture de l\'école';
+	/// fr: 'Fermeture de l'académie'
+	String get fermeture => 'Fermeture de l\'académie';
 
 	/// fr: 'Rencontre de récitation'
 	String get rencontre => 'Rencontre de récitation';
@@ -61476,10 +61476,10 @@ extension on Traductions {
 			'apprendre.bibliotheque.lien.copieTu' => 'Lien copié : colle-le dans ton navigateur.',
 			'apprendre.bibliotheque.lien.bloque' => 'Le navigateur a bloqué l\'ouverture. Réessayez.',
 			'apprendre.programme.vide' => 'L\'étape apparaîtra dès l\'entrée dans une classe',
-			'apprendre.programme.datesEcole' => 'Dates de l\'école',
-			'apprendre.programme.datesEcoleVide' => 'Les dates de l\'école seront affichées ici',
+			'apprendre.programme.datesEcole' => 'Dates de l\'académie',
+			'apprendre.programme.datesEcoleVide' => 'Les dates de l\'académie seront affichées ici',
 			'apprendre.programme.genre.evaluation' => 'Évaluation',
-			'apprendre.programme.genre.fermeture' => 'Fermeture de l\'école',
+			'apprendre.programme.genre.fermeture' => 'Fermeture de l\'académie',
 			'apprendre.programme.genre.rencontre' => 'Rencontre de récitation',
 			'apprendre.livret.vide' => 'Vos résultats, vos bilans et vos attestations apparaîtront ici',
 			'apprendre.livret.videTu' => 'Tes résultats, tes bilans et tes attestations apparaîtront ici',
