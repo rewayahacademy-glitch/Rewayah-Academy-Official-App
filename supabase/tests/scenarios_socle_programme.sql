@@ -521,6 +521,27 @@ SET LOCAL ROLE anon;
 SELECT pg_temp.vrai(pg_temp.essai('SELECT public.etape_eleve_lecture(''00000000-0000-0000-0000-000000000000'')') = 'refus',
   'anon : refus');
 RESET ROLE;
+-- `progression_famille` (niveau declare et dernier jalon, lus par la carte du suivi) : le serveur
+-- REFUSE le compte d'un enfant ou d'un eleve (role « student ») ; seul le tuteur la lit. La carte
+-- n'y recoit donc rien pour l'enfant de 6 a 9 ans qui lit avec son propre compte (le client avale le refus).
+SELECT pg_temp.qui(pg_temp.u('e1'), 'student', pg_temp.u('f1'));
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai(
+  pg_temp.essai(pg_catalog.format('SELECT public.progression_famille(%L)', pg_temp.u('e1'))) = 'progression indisponible',
+  'progression_famille : refusee au compte de l''enfant de 6 a 9 ans (role eleve)');
+RESET ROLE;
+SELECT pg_temp.qui(pg_temp.u('e9'), 'student', pg_temp.u('f3'));
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai(
+  pg_temp.essai(pg_catalog.format('SELECT public.progression_famille(%L)', pg_temp.u('e9'))) = 'progression indisponible',
+  'progression_famille : refusee aussi au compte d''un adulte au role eleve (seul le tuteur la lit)');
+RESET ROLE;
+SELECT pg_temp.qui(pg_temp.u('t1'), 'guardian', pg_temp.u('f1'));
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai(
+  pg_temp.essai(pg_catalog.format('SELECT public.progression_famille(%L)', pg_temp.u('e1'))) = 'ok',
+  'progression_famille : lue par le tuteur du foyer');
+RESET ROLE;
 
 -- Le hub `ma_progression` (MA-PROGRESSION, sur le socle) rend LA meme etape : un seul calcul.
 SELECT pg_temp.qui(pg_temp.u('e2'), 'student', pg_temp.u('f1'));
