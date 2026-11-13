@@ -1078,6 +1078,13 @@ SELECT pg_temp.vrai(pg_temp.essai('SELECT public.dater_entree_etape(''' || pg_te
   AND pg_temp.essai('SELECT public.dater_entree_etape(''' || pg_temp.u('e1') || ''', ((now() AT TIME ZONE ''Asia/Riyadh'')::date - interval ''11 years'')::date, ''x'')') LIKE 'date_sous_plancher: %',
   'reglage exposant enorme : dix ans par defaut, jamais d''erreur brute');;
 RESET ROLE;
+UPDATE public.app_config SET value = '10.0'::jsonb WHERE key = 'programme.date_debut_plancher_annees';
+SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai(pg_temp.essai('SELECT public.dater_entree_etape(''' || pg_temp.u('e1') || ''', ((now() AT TIME ZONE ''Asia/Riyadh'')::date - interval ''9 years'')::date, ''x'')') = 'ok'
+  AND pg_temp.essai('SELECT public.dater_entree_etape(''' || pg_temp.u('e1') || ''', ((now() AT TIME ZONE ''Asia/Riyadh'')::date - interval ''11 years'')::date, ''x'')') LIKE 'date_sous_plancher: %',
+  'reglage dix point zero : dix ans par defaut, jamais d''erreur brute');;
+RESET ROLE;
 
 ROLLBACK;
 
@@ -1185,6 +1192,13 @@ SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
 SET LOCAL ROLE authenticated;
 SELECT pg_temp.vrai(pg_temp.essai('SELECT public.dater_entree_etape(''' || pg_temp.u('e1') || ''', ((now() AT TIME ZONE ''Asia/Riyadh'')::date - interval ''49 years'')::date, ''x'')') = 'ok',
   '50 ans : accepte');;
+RESET ROLE;
+UPDATE public.app_config SET value = '20.0'::jsonb WHERE key = 'programme.date_debut_plancher_annees';
+SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai(pg_temp.essai('SELECT public.dater_entree_etape(''' || pg_temp.u('e1') || ''', ((now() AT TIME ZONE ''Asia/Riyadh'')::date - interval ''19 years'')::date, ''x'')') = 'ok'
+  AND pg_temp.essai('SELECT public.dater_entree_etape(''' || pg_temp.u('e1') || ''', ((now() AT TIME ZONE ''Asia/Riyadh'')::date - interval ''21 years'')::date, ''x'')') LIKE 'date_sous_plancher: %',
+  '20.0 : un entier ecrit avec une virgule vaut 20 ans, sans erreur brute');;
 RESET ROLE;
 UPDATE public.app_config SET value = '1'::jsonb WHERE key = 'programme.date_debut_plancher_annees';
 SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');

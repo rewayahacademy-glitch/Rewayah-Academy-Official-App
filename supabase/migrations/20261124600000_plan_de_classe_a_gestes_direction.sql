@@ -72,7 +72,7 @@ AS $function$
                         WHEN pg_catalog.jsonb_typeof(c.value) = 'number'
                          AND (c.value #>> '{}')::numeric BETWEEN 1 AND 50
                          AND (c.value #>> '{}')::numeric = pg_catalog.trunc((c.value #>> '{}')::numeric)
-                        THEN (c.value #>> '{}')::int
+                        THEN pg_catalog.trunc((c.value #>> '{}')::numeric)::int
                       END
                  FROM public.app_config c
                 WHERE c.key = 'programme.date_debut_plancher_annees'), 10)))::date;
