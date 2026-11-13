@@ -1,4 +1,4 @@
--- PAIE-MINUTES-RECONNEXION (13/11/2026, migration 20261123940000) :
+-- PAIE-MINUTES-RECONNEXION (13/11/2026, migration 20261124800000) :
 -- private.presence_temps_reel ne perd plus le temps d'une reconnexion dont le
 -- left (ancienne connexion) et le joined (nouvelle) portent le meme horodatage.
 --
