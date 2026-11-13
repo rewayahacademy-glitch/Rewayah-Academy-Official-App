@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../journal_sorties/port_journal_sorties.dart';
 import '../observabilite/journal_dev.dart';
 import '../tc_horloge/session_clock_vm.dart';
 import '../theme/app_delais.dart';
@@ -200,6 +201,10 @@ class ControleurSessionPersistante
   /// `coupureSuspendueProvider`) ; [maintenant] et [minuterie] sont l'horloge
   /// et la minuterie de la garde (doubles dans les tests) ; [signalerAbsence]
   /// recoit les traces de l'enseignant (`signalerAbsencePage` par defaut).
+  ///
+  /// HORS-SALLE-2 : [noterSortieApp] note une absence de l'eleve a son
+  /// retour (le port du journal des sorties ; le serveur n'ecrit qu'avec un
+  /// accord) ; rien par defaut.
   ControleurSessionPersistante(
     this._moteur,
     this._serviceVideo, {
@@ -211,6 +216,7 @@ class ControleurSessionPersistante
     Timer Function(Duration, void Function())? minuterie,
     void Function(String evenement, Map<String, Object?> donnees)?
     signalerAbsence,
+    this.noterSortieApp,
   }) : _ecran = ecranEveille ?? EcranEveille.dePlateforme() {
     _garde = GardeHorsApplication(
       regle: _regleHorsApplication,
@@ -229,6 +235,7 @@ class ControleurSessionPersistante
         final SonRecuBloque son => son.sonBloque,
         _ => false,
       },
+      noter: _noterSortie,
       maintenant: maintenant,
       minuterie: minuterie,
     );
@@ -241,6 +248,35 @@ class ControleurSessionPersistante
   /// HORS-SALLE-1 : ce qui se passe quand la page est cachee pendant un
   /// appel tenu ([GardeHorsApplication]).
   late final GardeHorsApplication _garde;
+
+  /// HORS-SALLE-2 : note une absence de l'eleve au journal des sorties.
+  final Future<bool> Function({
+    required String seanceId,
+    required int secondes,
+    required bool sortieSalle,
+    String? eleveId,
+  })?
+  noterSortieApp;
+
+  /// HORS-SALLE-2 : la seance tenue quand la page a ete cachee (apres une
+  /// sortie de la salle, l'etat ne la porte plus).
+  SessionEnCours? _coursCache;
+
+  /// HORS-SALLE-2 : au retour de l'eleve, la duree mesuree par l'horloge part
+  /// au port ; rien ne s'affiche, quoi que le serveur reponde.
+  void _noterSortie(Duration absence, bool sortieSalle) {
+    final SessionEnCours? cours = _coursCache;
+    final noter = noterSortieApp;
+    if (cours == null || noter == null) return;
+    unawaited(
+      noter(
+        seanceId: cours.sessionId,
+        secondes: absence.inSeconds,
+        sortieSalle: sortieSalle,
+        eleveId: cours.eleveId,
+      ),
+    );
+  }
 
   /// HORS-SALLE-1 : les reprises de la connexion depuis le debut (chaque
   /// passage a `reconnexion`), pour les traces de l'enseignant.
@@ -430,6 +466,9 @@ class ControleurSessionPersistante
         lienPerdu: _moteur.etatCourant == EtatSalle.reconnexion,
       ),
     );
+    // HORS-SALLE-2 : lit le delai de la direction des l'entree, pour que la
+    // premiere absence l'applique deja (la constante tant qu'il n'est pas lu).
+    _garde.delai();
   }
 
   /// Vrai quand l'appel de [sessionId] est ouvert et confie a ce controleur.
@@ -560,6 +599,7 @@ class ControleurSessionPersistante
       if (visible) {
         unawaited(_garde.revenue());
       } else {
+        _coursCache = _etat.cours;
         _garde.cachee();
       }
     }
@@ -684,6 +724,21 @@ final Provider<ControleurSessionPersistante> controleurSessionProvider =
             // direction s'applique sans recreer le controleur.
             delaiHorsApplication: () => ref.read(delaiHorsApplicationProvider),
             coupureSuspendue: () => ref.read(coupureSuspendueProvider),
+            // HORS-SALLE-2 : le journal des sorties, lu au moment de noter.
+            noterSortieApp:
+                ({
+                  required String seanceId,
+                  required int secondes,
+                  required bool sortieSalle,
+                  String? eleveId,
+                }) => ref
+                    .read(portJournalSortiesProvider)
+                    .noterSortie(
+                      seanceId: seanceId,
+                      secondes: secondes,
+                      sortieSalle: sortieSalle,
+                      eleveId: eleveId,
+                    ),
           );
       ref.onDispose(controleur.liberer);
       return controleur;

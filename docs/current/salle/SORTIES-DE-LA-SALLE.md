@@ -105,6 +105,30 @@ coupure, mais s'il sort de l'application, il a un court délai, puis il sort de 
 - Logique : `lib/core/tc_classe/garde_hors_application.dart`. Rien n'est essayé sur un vrai
   téléphone.
 
+## 2 ter. Le journal des sorties de l'application (lot HORS-SALLE-2, 13/11/2026)
+
+Demande du directeur (12/11/2026 au soir) : « Toutes ses sorties de l'app doivent être consignées
+sur le rapport : leur nombre total, fréquence, de quand jusqu'à quand. » ; et le délai réglable par
+la direction. Journal D-043.
+
+- **Le délai** est un réglage de la direction (`salle.sorties.delai_secondes`, 30 par défaut, de 5
+  à 600 ; Configuration > Règles). L'application le lit dans `regles_academie()` ; la constante
+  `AppDelais.horsApplicationEleve` ne sert plus que de repli.
+- **Le journal** est **éteint** par défaut (`salle.sorties.journal_actif`) et ne s'allume qu'après
+  la validation des textes de l'accord (`docs/current/TEXTES-VALIDES/ACCORD-JOURNAL-SORTIES.md`,
+  PROPOSITION). Allumé, il n'écrit rien pour un élève sans accord : celui d'un tuteur de son foyer
+  pour un élève qui n'est pas autonome ; le sien pour un élève adulte autonome. Un retrait arrête
+  l'écriture ; les lignes passées restent lisibles.
+- **Au retour de l'élève** (sorti de la salle ou non), l'application envoie la durée mesurée par
+  l'horloge ; le serveur pose les heures (retour = maintenant, sortie bornée au début de la séance)
+  et le drapeau « sortie de la salle ». Rien pour qui modère ni pour un observateur. **Limite
+  connue** : si l'élève ne revient pas (page tuée, téléphone éteint), rien n'est noté.
+- **Qui lit** : le parent (détail de la séance, sous le temps de présence), l'enseignant de la
+  séance (une ligne par élève dans le cahier), la direction (par le serveur ; **aucun écran simple
+  de présence d'une séance n'existe chez la direction**, aucun n'a été créé), l'élève lui-même.
+- Logique : `lib/core/journal_sorties/`, `supabase/migrations/20261124200000_journal_sorties.sql`.
+  Rien n'est essayé sur un vrai téléphone ; la migration n'est pas installée.
+
 ## 3. À décider par le directeur
 
 | # | Question | Recommandation |

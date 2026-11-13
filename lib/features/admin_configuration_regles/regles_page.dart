@@ -271,12 +271,30 @@ class _Corps extends StatelessWidget {
     final List<Widget> pause = clesPause.any(absentes.contains)
         ? const <Widget>[]
         : _sectionPause(textes, v, erreurEcriture, onEcrit);
+    // HORS-SALLE-2 (12/11/2026 au soir) : le delai et le journal des sorties
+    // de l'application. Un serveur d'avant le lot ne rend pas ces cles : la
+    // section n'est pas montree.
+    final List<Widget> sorties = clesSorties.any(absentes.contains)
+        ? const <Widget>[]
+        : _sectionSorties(
+            textes,
+            v[cleSortiesDelai] ?? 30,
+            _valeur(valeurs, cleSortiesJournalActif)?.versBooleen ?? false,
+            erreurEcriture,
+            onEcrit,
+          );
     // A3 : un serveur d'avant la regle ne rend pas ces cles ; alors la section
     // n'est pas montree, plutot qu'un « 0 min » que rien n'ecrirait.
     if (clesRemplacement.any(absentes.contains)) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[generales, ...pause, ...entretiens, ...paie],
+        children: <Widget>[
+          generales,
+          ...pause,
+          ...sorties,
+          ...entretiens,
+          ...paie,
+        ],
       );
     }
     final int avertissement = v[cleRemplacementAvertissement]!;
@@ -413,11 +431,66 @@ class _Corps extends StatelessWidget {
           ],
         ),
         ...pause,
+        ...sorties,
         ...entretiens,
         ...paie,
       ],
     );
   }
+}
+
+/// La section « Sorties de l'application pendant une seance » (HORS-SALLE-2,
+/// directeur, 12/11/2026 au soir : le delai reglable par la direction, et les
+/// sorties consignees au rapport). Le journal s'allume seulement apres la
+/// validation des textes de l'accord ; le serveur ne note rien sans accord.
+List<Widget> _sectionSorties(
+  TextTheme textes,
+  int delai,
+  bool journalActif,
+  String Function(String message) erreurEcriture,
+  VoidCallback onEcrit,
+) {
+  final r = t.journalSorties.reglages;
+  return <Widget>[
+    Ecart.vXl,
+    Text(
+      r.section,
+      key: const ValueKey<String>('regles-sorties'),
+      style: textes.titleMedium,
+    ),
+    Ecart.vSm,
+    Text(r.intro, style: textes.bodyMedium),
+    Ecart.vMd,
+    CarteLignes(
+      lignes: <Widget>[
+        ConfigLigneEntiere(
+          key: const ValueKey<String>('regles-sorties-delai'),
+          titre: r.delai,
+          description: r.delaiDetail,
+          cle: cleSortiesDelai,
+          valeur: delai,
+          min: 5,
+          max: 600,
+          aideBornes: r.bornes,
+          affichage: (int n) => LibellesGroupe.valeurSeule(r.unite(n: '$n')),
+          champValeur: t.admin.regles.champValeur,
+          envoyer: t.admin.regles.envoyer,
+          valeurInvalide: t.admin.regles.valeurInvalide,
+          erreurEcriture: erreurEcriture,
+          onEcrit: onEcrit,
+        ),
+        ConfigLigneBooleenne(
+          key: const ValueKey<String>('regles-sorties-journal'),
+          titre: r.journal,
+          description: r.journalDetail,
+          cle: cleSortiesJournalActif,
+          valeur: journalActif,
+          erreurEcriture: erreurEcriture,
+          onEcrit: onEcrit,
+        ),
+      ],
+    ),
+  ];
 }
 
 /// La section « Pause pendant la seance » (PAUSE-SERVEUR, directeur,

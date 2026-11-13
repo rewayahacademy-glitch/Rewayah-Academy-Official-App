@@ -2,18 +2,24 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../journal_sorties/port_journal_sorties.dart';
 import '../theme/app_delais.dart';
 
 /// HORS-SALLE-1 (directeur, 12/11/2026 au soir) : le temps laisse a l'eleve
 /// hors de l'application avant qu'il sorte de la salle.
 ///
 /// **Un seul endroit le lit** ([GardeHorsApplication], par le controleur de
-/// session). Aujourd'hui la valeur de [AppDelais.horsApplicationEleve] ; un
-/// lot serveur la remplacera par le reglage de la direction en surchargeant
-/// ce provider, sans toucher a la logique.
-final Provider<Duration> delaiHorsApplicationProvider = Provider<Duration>(
-  (Ref ref) => AppDelais.horsApplicationEleve,
-);
+/// session). HORS-SALLE-2 (meme soir : « le delai doit etre reglable par la
+/// direction ») : le reglage du serveur (`salle.sorties.delai_secondes`, lu
+/// dans `regles_academie()`) quand il existe, [AppDelais.horsApplicationEleve]
+/// sinon (serveur d'avant le lot, lecture en cours ou en echec).
+final Provider<Duration> delaiHorsApplicationProvider = Provider<Duration>((
+  Ref ref,
+) {
+  final AsyncValue<ReglagesSorties?> lu = ref.watch(reglagesSortiesProvider);
+  return (lu.hasValue && !lu.hasError ? lu.value?.delai : null) ??
+      AppDelais.horsApplicationEleve;
+});
 
 /// HORS-SALLE-1 : la porte d'une exception future. Un geste « Je m'absente un
 /// instant » (autre lot, non construit) suspendra la sortie de l'eleve
@@ -83,6 +89,11 @@ RegleHorsApplication regleHorsApplication({
 ///   traces sans identite ([signaler]) disent ce que le telephone a fait de
 ///   l'appel pendant l'absence.
 /// - [coupureSuspendue] vrai : aucune sortie (porte d'un geste futur).
+/// - HORS-SALLE-2 : au retour de l'eleve, qu'il soit sorti de la salle ou non,
+///   [noter] recoit la duree mesuree par l'horloge et le drapeau de la sortie
+///   de la salle (le journal des sorties, que le serveur n'ecrit qu'avec un
+///   accord). Rien pour qui modere, rien pour un observateur. Si l'eleve ne
+///   revient pas (page tuee), rien n'est note : limite connue.
 class GardeHorsApplication {
   /// Cree la garde.
   GardeHorsApplication({
@@ -94,6 +105,7 @@ class GardeHorsApplication {
     this.etatConnexion = _inconnu,
     this.reprises = _zero,
     this.sonBloque = _jamais,
+    this.noter = _rienANoter,
     DateTime Function()? maintenant,
     Timer Function(Duration, void Function())? minuterie,
   }) : _maintenant = maintenant ?? DateTime.now,
@@ -122,6 +134,10 @@ class GardeHorsApplication {
 
   /// Le son recu est-il bloque par le navigateur ?
   final bool Function() sonBloque;
+
+  /// HORS-SALLE-2 : une absence de l'eleve, au retour (duree mesuree par
+  /// l'horloge, et vrai quand elle l'a fait sortir de la salle).
+  final void Function(Duration absence, bool sortieSalle) noter;
 
   final DateTime Function() _maintenant;
   final Timer Function(Duration, void Function()) _minuterie;
@@ -179,6 +195,11 @@ class GardeHorsApplication {
     }
     final bool sortie = _sortieFaite;
     _sortieFaite = false;
+    // HORS-SALLE-2 : seulement pour l'eleve (la regle du depart), jamais pour
+    // qui modere ni pour un observateur.
+    if (_regleAuDepart == RegleHorsApplication.sortieApresDelai) {
+      noter(absence, sortie);
+    }
     return sortie ? IssueRetour.sortie : IssueRetour.rien;
   }
 
@@ -208,4 +229,5 @@ class GardeHorsApplication {
   static String _inconnu() => 'inconnu';
   static int _zero() => 0;
   static void _rienASignaler(String _, Map<String, Object?> _) {}
+  static void _rienANoter(Duration _, bool _) {}
 }

@@ -123,6 +123,7 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$push1$fr push1 = Traductions$push1$fr.internal(_root);
 	late final Traductions$nouveautes$fr nouveautes = Traductions$nouveautes$fr.internal(_root);
 	late final Traductions$suiviPedagogique$fr suiviPedagogique = Traductions$suiviPedagogique$fr.internal(_root);
+	late final Traductions$journalSorties$fr journalSorties = Traductions$journalSorties$fr.internal(_root);
 }
 
 // Path: commun
@@ -4212,6 +4213,19 @@ class Traductions$suiviPedagogique$fr {
 
 	/// fr: 'L'étape du programme n'a pas pu être lue. Réessayez dans un instant.'
 	String get erreur => 'L\'étape du programme n\'a pas pu être lue. Réessayez dans un instant.';
+}
+
+// Path: journalSorties
+class Traductions$journalSorties$fr {
+	Traductions$journalSorties$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$journalSorties$texte$fr texte = Traductions$journalSorties$texte$fr.internal(_root);
+	late final Traductions$journalSorties$accord$fr accord = Traductions$journalSorties$accord$fr.internal(_root);
+	late final Traductions$journalSorties$rapport$fr rapport = Traductions$journalSorties$rapport$fr.internal(_root);
+	late final Traductions$journalSorties$reglages$fr reglages = Traductions$journalSorties$reglages$fr.internal(_root);
 }
 
 // Path: commun.langue
@@ -23823,6 +23837,165 @@ class Traductions$push1$reglages$fr {
 	String get changementNonConfirme => 'Le changement n\'est pas encore confirmé : la connexion a peut-être été coupée. Réessayez dans un instant.';
 }
 
+// Path: journalSorties.texte
+class Traductions$journalSorties$texte$fr {
+	Traductions$journalSorties$texte$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Les sorties de l'application pendant le cours'
+	String get titre => 'Les sorties de l\'application pendant le cours';
+
+	late final Traductions$journalSorties$texte$parent$fr parent = Traductions$journalSorties$texte$parent$fr.internal(_root);
+	late final Traductions$journalSorties$texte$adulte$fr adulte = Traductions$journalSorties$texte$adulte$fr.internal(_root);
+}
+
+// Path: journalSorties.accord
+class Traductions$journalSorties$accord$fr {
+	Traductions$journalSorties$accord$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Sorties de l'application'
+	String get titre => 'Sorties de l\'application';
+
+	/// fr: 'Sorties de l'application pendant le cours'
+	String get ligne => 'Sorties de l\'application pendant le cours';
+
+	/// fr: 'Votre accord, pour chaque enfant'
+	String get ligneDetail => 'Votre accord, pour chaque enfant';
+
+	/// fr: 'Votre accord'
+	String get ligneDetailAdulte => 'Votre accord';
+
+	/// fr: 'Lisez ce texte, puis choisissez pour chaque enfant. Rien n'est noté sans votre accord.'
+	String get intro => 'Lisez ce texte, puis choisissez pour chaque enfant. Rien n\'est noté sans votre accord.';
+
+	/// fr: 'Lisez ce texte, puis choisissez. Rien n'est noté sans votre accord.'
+	String get introAdulte => 'Lisez ce texte, puis choisissez. Rien n\'est noté sans votre accord.';
+
+	/// fr: 'Accepté le {date}'
+	String accepteLe({required Object date}) => 'Accepté le ${date}';
+
+	/// fr: 'Pas d'accord : rien n'est noté.'
+	String get pasAccepte => 'Pas d\'accord : rien n\'est noté.';
+
+	/// fr: 'Retirer mon accord pour {prenom}'
+	String retirerPour({required Object prenom}) => 'Retirer mon accord pour ${prenom}';
+
+	/// fr: 'Retirer mon accord'
+	String get retirer => 'Retirer mon accord';
+
+	/// fr: 'Enregistrer mon accord'
+	String get enregistrer => 'Enregistrer mon accord';
+
+	/// fr: 'Cochez une case pour enregistrer votre accord.'
+	String get manque => 'Cochez une case pour enregistrer votre accord.';
+
+	/// fr: 'Votre choix n'a pas été enregistré. Vérifiez votre connexion, puis réessayez.'
+	String get erreur => 'Votre choix n\'a pas été enregistré. Vérifiez votre connexion, puis réessayez.';
+
+	/// fr: 'Vos accords n'ont pas pu être lus. Vérifiez votre connexion, puis réessayez.'
+	String get lectureErreur => 'Vos accords n\'ont pas pu être lus. Vérifiez votre connexion, puis réessayez.';
+
+	/// fr: 'Ce relevé n'est pas en service : rien n'est noté. Revenez au Compte.'
+	String get horsService => 'Ce relevé n\'est pas en service : rien n\'est noté. Revenez au Compte.';
+
+	/// fr: 'Le texte vient de changer. Relisez-le, puis cochez de nouveau.'
+	String get versionPerimee => 'Le texte vient de changer. Relisez-le, puis cochez de nouveau.';
+
+	/// fr: 'La direction vient d'arrêter ce relevé : rien n'est noté. Revenez au Compte.'
+	String get eteint => 'La direction vient d\'arrêter ce relevé : rien n\'est noté. Revenez au Compte.';
+
+	/// fr: 'Votre accord est enregistré.'
+	String get merci => 'Votre accord est enregistré.';
+
+	/// fr: 'Votre accord est retiré : plus rien n'est noté.'
+	String get retire => 'Votre accord est retiré : plus rien n\'est noté.';
+}
+
+// Path: journalSorties.rapport
+class Traductions$journalSorties$rapport$fr {
+	Traductions$journalSorties$rapport$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Sorties de l'application'
+	String get titre => 'Sorties de l\'application';
+
+	/// fr: 'Nombre'
+	String get nombreCle => 'Nombre';
+
+	/// fr: '(one) {{n} sortie} (other) {{n} sorties}'
+	String nombre({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} sortie',
+		other: '${n} sorties',
+	);
+
+	/// fr: 'Durée totale'
+	String get dureeTotale => 'Durée totale';
+
+	/// fr: 'De {debut} à {fin}'
+	String plage({required Object debut, required Object fin}) => 'De ${debut} à ${fin}';
+
+	/// fr: 'Sortie de la salle après le délai'
+	String get sortieSalle => 'Sortie de la salle après le délai';
+
+	/// fr: '{n} s'
+	String secondes({required Object n}) => '${n} s';
+
+	/// fr: '{n} min'
+	String minutes({required Object n}) => '${n} min';
+
+	/// fr: '{m} min {s} s'
+	String minutesSecondes({required Object m, required Object s}) => '${m} min ${s} s';
+
+	/// fr: '{nombre}, {duree}'
+	String resume({required Object nombre, required Object duree}) => '${nombre}, ${duree}';
+
+	/// fr: 'Sorties de l'application : {resume}'
+	String ligneEleve({required Object resume}) => 'Sorties de l\'application : ${resume}';
+}
+
+// Path: journalSorties.reglages
+class Traductions$journalSorties$reglages$fr {
+	Traductions$journalSorties$reglages$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Sorties de l'application pendant une séance'
+	String get section => 'Sorties de l\'application pendant une séance';
+
+	/// fr: 'Le délai vaut pour tous les élèves. Le relevé des sorties ne note rien sans l'accord du parent, ou de l'élève adulte.'
+	String get intro => 'Le délai vaut pour tous les élèves. Le relevé des sorties ne note rien sans l\'accord du parent, ou de l\'élève adulte.';
+
+	/// fr: 'Noter les sorties de l'application'
+	String get journal => 'Noter les sorties de l\'application';
+
+	/// fr: 'N'allumez qu'après la validation des textes de l'accord par le directeur. Allumé, le parent et l'élève adulte voient la page de l'accord dans leur Compte.'
+	String get journalDetail => 'N\'allumez qu\'après la validation des textes de l\'accord par le directeur. Allumé, le parent et l\'élève adulte voient la page de l\'accord dans leur Compte.';
+
+	/// fr: 'Délai avant la sortie de la salle'
+	String get delai => 'Délai avant la sortie de la salle';
+
+	/// fr: 'Le temps laissé à l'élève hors de l'application avant qu'il sorte de la salle.'
+	String get delaiDetail => 'Le temps laissé à l\'élève hors de l\'application avant qu\'il sorte de la salle.';
+
+	/// fr: 'De 5 à 600 secondes.'
+	String get bornes => 'De 5 à 600 secondes.';
+
+	/// fr: '{n} s'
+	String unite({required Object n}) => '${n} s';
+}
+
 // Path: commun.etats.recharge1
 class Traductions$commun$etats$recharge1$fr {
 	Traductions$commun$etats$recharge1$fr.internal(this._root);
@@ -41992,6 +42165,60 @@ class Traductions$candidatsFlux$file$reglage$fr {
 
 	/// fr: 'Réglage non confirmé. Cause probable : la connexion au serveur s'est interrompue. Réessayez dans un instant.'
 	String get echec => 'Réglage non confirmé. Cause probable : la connexion au serveur s\'est interrompue. Réessayez dans un instant.';
+}
+
+// Path: journalSorties.texte.parent
+class Traductions$journalSorties$texte$parent$fr {
+	Traductions$journalSorties$texte$parent$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ce qui est noté : chaque fois que votre enfant quitte l'application pendant une séance, l'heure où il la quitte, l'heure où il revient, et si cette absence l'a fait sortir de la salle. Rien d'autre : ni ce qu'il fait ailleurs, ni son écran, ni son image, ni sa voix.'
+	String get quoi => 'Ce qui est noté : chaque fois que votre enfant quitte l\'application pendant une séance, l\'heure où il la quitte, l\'heure où il revient, et si cette absence l\'a fait sortir de la salle. Rien d\'autre : ni ce qu\'il fait ailleurs, ni son écran, ni son image, ni sa voix.';
+
+	/// fr: 'Pourquoi : suivre l'attention de votre enfant pendant le cours, pour vous et pour son enseignant.'
+	String get pourquoi => 'Pourquoi : suivre l\'attention de votre enfant pendant le cours, pour vous et pour son enseignant.';
+
+	/// fr: 'Qui peut le lire : vous, votre enfant, l'enseignant de la séance et la direction. Jamais les autres élèves ni leurs familles.'
+	String get qui => 'Qui peut le lire : vous, votre enfant, l\'enseignant de la séance et la direction. Jamais les autres élèves ni leurs familles.';
+
+	/// fr: 'Vous pouvez retirer votre accord à tout moment, ici même. Dès que vous le retirez, plus rien n'est noté.'
+	String get retrait => 'Vous pouvez retirer votre accord à tout moment, ici même. Dès que vous le retirez, plus rien n\'est noté.';
+
+	/// fr: 'Sans votre accord, rien n'est noté et rien ne change pour le cours. Un élève qui reste trop longtemps hors de l'application sort de la salle, avec ou sans accord : cela ne garde rien.'
+	String get sansAccord => 'Sans votre accord, rien n\'est noté et rien ne change pour le cours. Un élève qui reste trop longtemps hors de l\'application sort de la salle, avec ou sans accord : cela ne garde rien.';
+
+	/// fr: 'J'accepte que les sorties de l'application {dePrenom} pendant les séances soient notées.'
+	String caseAccord({required Object dePrenom}) => 'J\'accepte que les sorties de l\'application ${dePrenom} pendant les séances soient notées.';
+}
+
+// Path: journalSorties.texte.adulte
+class Traductions$journalSorties$texte$adulte$fr {
+	Traductions$journalSorties$texte$adulte$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ce qui est noté : chaque fois que vous quittez l'application pendant une séance, l'heure où vous la quittez, l'heure où vous revenez, et si cette absence vous a fait sortir de la salle. Rien d'autre : ni ce que vous faites ailleurs, ni votre écran, ni votre image, ni votre voix.'
+	String get quoi => 'Ce qui est noté : chaque fois que vous quittez l\'application pendant une séance, l\'heure où vous la quittez, l\'heure où vous revenez, et si cette absence vous a fait sortir de la salle. Rien d\'autre : ni ce que vous faites ailleurs, ni votre écran, ni votre image, ni votre voix.';
+
+	/// fr: 'Pourquoi : suivre votre attention pendant le cours, pour vous et pour votre enseignant.'
+	String get pourquoi => 'Pourquoi : suivre votre attention pendant le cours, pour vous et pour votre enseignant.';
+
+	/// fr: 'Qui peut le lire : vous, l'enseignant de la séance et la direction. Jamais les autres élèves ni leurs familles.'
+	String get qui => 'Qui peut le lire : vous, l\'enseignant de la séance et la direction. Jamais les autres élèves ni leurs familles.';
+
+	/// fr: 'Vous pouvez retirer votre accord à tout moment, ici même. Dès que vous le retirez, plus rien n'est noté.'
+	String get retrait => 'Vous pouvez retirer votre accord à tout moment, ici même. Dès que vous le retirez, plus rien n\'est noté.';
+
+	/// fr: 'Sans votre accord, rien n'est noté et rien ne change pour le cours. Si vous restez trop longtemps hors de l'application, vous sortez de la salle, avec ou sans accord : cela ne garde rien.'
+	String get sansAccord => 'Sans votre accord, rien n\'est noté et rien ne change pour le cours. Si vous restez trop longtemps hors de l\'application, vous sortez de la salle, avec ou sans accord : cela ne garde rien.';
+
+	/// fr: 'J'accepte que mes sorties de l'application pendant les séances soient notées.'
+	String get caseAccord => 'J\'accepte que mes sorties de l\'application pendant les séances soient notées.';
 }
 
 // Path: salle.preparation.eleve.guidee
@@ -61310,6 +61537,57 @@ extension on Traductions {
 			'suiviPedagogique.niveauDeclare' => 'Niveau déclaré',
 			'suiviPedagogique.dateLimiteDepassee' => 'Date limite dépassée',
 			'suiviPedagogique.erreur' => 'L\'étape du programme n\'a pas pu être lue. Réessayez dans un instant.',
+			'journalSorties.texte.titre' => 'Les sorties de l\'application pendant le cours',
+			'journalSorties.texte.parent.quoi' => 'Ce qui est noté : chaque fois que votre enfant quitte l\'application pendant une séance, l\'heure où il la quitte, l\'heure où il revient, et si cette absence l\'a fait sortir de la salle. Rien d\'autre : ni ce qu\'il fait ailleurs, ni son écran, ni son image, ni sa voix.',
+			'journalSorties.texte.parent.pourquoi' => 'Pourquoi : suivre l\'attention de votre enfant pendant le cours, pour vous et pour son enseignant.',
+			'journalSorties.texte.parent.qui' => 'Qui peut le lire : vous, votre enfant, l\'enseignant de la séance et la direction. Jamais les autres élèves ni leurs familles.',
+			'journalSorties.texte.parent.retrait' => 'Vous pouvez retirer votre accord à tout moment, ici même. Dès que vous le retirez, plus rien n\'est noté.',
+			'journalSorties.texte.parent.sansAccord' => 'Sans votre accord, rien n\'est noté et rien ne change pour le cours. Un élève qui reste trop longtemps hors de l\'application sort de la salle, avec ou sans accord : cela ne garde rien.',
+			'journalSorties.texte.parent.caseAccord' => ({required Object dePrenom}) => 'J\'accepte que les sorties de l\'application ${dePrenom} pendant les séances soient notées.',
+			'journalSorties.texte.adulte.quoi' => 'Ce qui est noté : chaque fois que vous quittez l\'application pendant une séance, l\'heure où vous la quittez, l\'heure où vous revenez, et si cette absence vous a fait sortir de la salle. Rien d\'autre : ni ce que vous faites ailleurs, ni votre écran, ni votre image, ni votre voix.',
+			'journalSorties.texte.adulte.pourquoi' => 'Pourquoi : suivre votre attention pendant le cours, pour vous et pour votre enseignant.',
+			'journalSorties.texte.adulte.qui' => 'Qui peut le lire : vous, l\'enseignant de la séance et la direction. Jamais les autres élèves ni leurs familles.',
+			'journalSorties.texte.adulte.retrait' => 'Vous pouvez retirer votre accord à tout moment, ici même. Dès que vous le retirez, plus rien n\'est noté.',
+			'journalSorties.texte.adulte.sansAccord' => 'Sans votre accord, rien n\'est noté et rien ne change pour le cours. Si vous restez trop longtemps hors de l\'application, vous sortez de la salle, avec ou sans accord : cela ne garde rien.',
+			'journalSorties.texte.adulte.caseAccord' => 'J\'accepte que mes sorties de l\'application pendant les séances soient notées.',
+			'journalSorties.accord.titre' => 'Sorties de l\'application',
+			'journalSorties.accord.ligne' => 'Sorties de l\'application pendant le cours',
+			'journalSorties.accord.ligneDetail' => 'Votre accord, pour chaque enfant',
+			'journalSorties.accord.ligneDetailAdulte' => 'Votre accord',
+			'journalSorties.accord.intro' => 'Lisez ce texte, puis choisissez pour chaque enfant. Rien n\'est noté sans votre accord.',
+			'journalSorties.accord.introAdulte' => 'Lisez ce texte, puis choisissez. Rien n\'est noté sans votre accord.',
+			'journalSorties.accord.accepteLe' => ({required Object date}) => 'Accepté le ${date}',
+			'journalSorties.accord.pasAccepte' => 'Pas d\'accord : rien n\'est noté.',
+			'journalSorties.accord.retirerPour' => ({required Object prenom}) => 'Retirer mon accord pour ${prenom}',
+			'journalSorties.accord.retirer' => 'Retirer mon accord',
+			'journalSorties.accord.enregistrer' => 'Enregistrer mon accord',
+			'journalSorties.accord.manque' => 'Cochez une case pour enregistrer votre accord.',
+			'journalSorties.accord.erreur' => 'Votre choix n\'a pas été enregistré. Vérifiez votre connexion, puis réessayez.',
+			'journalSorties.accord.lectureErreur' => 'Vos accords n\'ont pas pu être lus. Vérifiez votre connexion, puis réessayez.',
+			'journalSorties.accord.horsService' => 'Ce relevé n\'est pas en service : rien n\'est noté. Revenez au Compte.',
+			'journalSorties.accord.versionPerimee' => 'Le texte vient de changer. Relisez-le, puis cochez de nouveau.',
+			'journalSorties.accord.eteint' => 'La direction vient d\'arrêter ce relevé : rien n\'est noté. Revenez au Compte.',
+			'journalSorties.accord.merci' => 'Votre accord est enregistré.',
+			'journalSorties.accord.retire' => 'Votre accord est retiré : plus rien n\'est noté.',
+			'journalSorties.rapport.titre' => 'Sorties de l\'application',
+			'journalSorties.rapport.nombreCle' => 'Nombre',
+			'journalSorties.rapport.nombre' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} sortie', other: '${n} sorties', ), 
+			'journalSorties.rapport.dureeTotale' => 'Durée totale',
+			'journalSorties.rapport.plage' => ({required Object debut, required Object fin}) => 'De ${debut} à ${fin}',
+			'journalSorties.rapport.sortieSalle' => 'Sortie de la salle après le délai',
+			'journalSorties.rapport.secondes' => ({required Object n}) => '${n} s',
+			'journalSorties.rapport.minutes' => ({required Object n}) => '${n} min',
+			'journalSorties.rapport.minutesSecondes' => ({required Object m, required Object s}) => '${m} min ${s} s',
+			'journalSorties.rapport.resume' => ({required Object nombre, required Object duree}) => '${nombre}, ${duree}',
+			'journalSorties.rapport.ligneEleve' => ({required Object resume}) => 'Sorties de l\'application : ${resume}',
+			'journalSorties.reglages.section' => 'Sorties de l\'application pendant une séance',
+			'journalSorties.reglages.intro' => 'Le délai vaut pour tous les élèves. Le relevé des sorties ne note rien sans l\'accord du parent, ou de l\'élève adulte.',
+			'journalSorties.reglages.journal' => 'Noter les sorties de l\'application',
+			'journalSorties.reglages.journalDetail' => 'N\'allumez qu\'après la validation des textes de l\'accord par le directeur. Allumé, le parent et l\'élève adulte voient la page de l\'accord dans leur Compte.',
+			'journalSorties.reglages.delai' => 'Délai avant la sortie de la salle',
+			'journalSorties.reglages.delaiDetail' => 'Le temps laissé à l\'élève hors de l\'application avant qu\'il sorte de la salle.',
+			'journalSorties.reglages.bornes' => 'De 5 à 600 secondes.',
+			'journalSorties.reglages.unite' => ({required Object n}) => '${n} s',
 			_ => null,
 		};
 	}

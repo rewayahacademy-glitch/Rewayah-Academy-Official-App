@@ -117,6 +117,7 @@ class TraductionsAr extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$push1$ar push1 = _Traductions$push1$ar._(_root);
 	@override late final _Traductions$nouveautes$ar nouveautes = _Traductions$nouveautes$ar._(_root);
 	@override late final _Traductions$suiviPedagogique$ar suiviPedagogique = _Traductions$suiviPedagogique$ar._(_root);
+	@override late final _Traductions$journalSorties$ar journalSorties = _Traductions$journalSorties$ar._(_root);
 }
 
 // Path: notifications
@@ -2186,6 +2187,19 @@ class _Traductions$suiviPedagogique$ar extends Traductions$suiviPedagogique$fr {
 	@override String get niveauDeclare => 'المستوى المصرّح به';
 	@override String get dateLimiteDepassee => 'تجاوز الموعد النهائي';
 	@override String get erreur => 'تعذرت قراءة مرحلة البرنامج. حاول مرة أخرى بعد قليل.';
+}
+
+// Path: journalSorties
+class _Traductions$journalSorties$ar extends Traductions$journalSorties$fr {
+	_Traductions$journalSorties$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$journalSorties$texte$ar texte = _Traductions$journalSorties$texte$ar._(_root);
+	@override late final _Traductions$journalSorties$accord$ar accord = _Traductions$journalSorties$accord$ar._(_root);
+	@override late final _Traductions$journalSorties$rapport$ar rapport = _Traductions$journalSorties$rapport$ar._(_root);
+	@override late final _Traductions$journalSorties$reglages$ar reglages = _Traductions$journalSorties$reglages$ar._(_root);
 }
 
 // Path: notifications.evenements
@@ -10907,6 +10921,90 @@ class _Traductions$push1$reglages$ar extends Traductions$push1$reglages$fr {
 	@override String get erreur => 'تعذّرت قراءة إعداداتكم: ربما انقطع الاتصال. أعيدوا المحاولة بعد قليل.';
 	@override String get horsLigne => 'تُغيَّر إعدادات الإشعارات حين يعود الاتصال.';
 	@override String get changementNonConfirme => 'لم يتأكد التغيير بعد: ربما انقطع الاتصال. أعيدوا المحاولة بعد قليل.';
+}
+
+// Path: journalSorties.texte
+class _Traductions$journalSorties$texte$ar extends Traductions$journalSorties$texte$fr {
+	_Traductions$journalSorties$texte$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'الخروج من التطبيق أثناء الدرس';
+	@override late final _Traductions$journalSorties$texte$parent$ar parent = _Traductions$journalSorties$texte$parent$ar._(_root);
+	@override late final _Traductions$journalSorties$texte$adulte$ar adulte = _Traductions$journalSorties$texte$adulte$ar._(_root);
+}
+
+// Path: journalSorties.accord
+class _Traductions$journalSorties$accord$ar extends Traductions$journalSorties$accord$fr {
+	_Traductions$journalSorties$accord$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'الخروج من التطبيق';
+	@override String get ligne => 'الخروج من التطبيق أثناء الدرس';
+	@override String get ligneDetail => 'موافقتك، لكل طفل';
+	@override String get ligneDetailAdulte => 'موافقتك';
+	@override String get intro => 'اقرأ هذا النص، ثم اختر لكل طفل. لا يُسجَّل أي شيء دون موافقتك.';
+	@override String get introAdulte => 'اقرأ هذا النص، ثم اختر. لا يُسجَّل أي شيء دون موافقتك.';
+	@override String accepteLe({required Object date}) => 'تمت الموافقة في ⁨${date}⁩';
+	@override String get pasAccepte => 'لا موافقة: لا يُسجَّل أي شيء.';
+	@override String retirerPour({required Object prenom}) => 'سحب موافقتي بخصوص ⁨${prenom}⁩';
+	@override String get retirer => 'سحب موافقتي';
+	@override String get enregistrer => 'حفظ موافقتي';
+	@override String get manque => 'ضع علامة في خانة لحفظ موافقتك.';
+	@override String get erreur => 'لم يُحفَظ اختيارك. تحقّق من اتصالك، ثم حاول مرة أخرى.';
+	@override String get lectureErreur => 'تعذّرت قراءة موافقاتك. تحقّق من اتصالك، ثم حاول مرة أخرى.';
+	@override String get horsService => 'هذا التسجيل غير مفعّل: لا يُسجَّل أي شيء. عد إلى الحساب.';
+	@override String get versionPerimee => 'تغيّر النص للتو. أعد قراءته، ثم ضع العلامة من جديد.';
+	@override String get eteint => 'أوقفت الإدارة هذا التسجيل للتو: لا يُسجَّل أي شيء. عد إلى الحساب.';
+	@override String get merci => 'تم حفظ موافقتك.';
+	@override String get retire => 'تم سحب موافقتك: لا يُسجَّل أي شيء بعد الآن.';
+}
+
+// Path: journalSorties.rapport
+class _Traductions$journalSorties$rapport$ar extends Traductions$journalSorties$rapport$fr {
+	_Traductions$journalSorties$rapport$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'الخروج من التطبيق';
+	@override String get nombreCle => 'العدد';
+	@override String nombre({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لا خروج',
+		one: 'خروج واحد',
+		two: 'خروجان',
+		few: '⁨${n}⁩ مرات خروج',
+		many: '⁨${n}⁩ مرة خروج',
+		other: '⁨${n}⁩ مرة خروج',
+	);
+	@override String get dureeTotale => 'المدة الإجمالية';
+	@override String plage({required Object debut, required Object fin}) => 'من ⁨${debut}⁩ إلى ⁨${fin}⁩';
+	@override String get sortieSalle => 'خروج من القاعة بعد المهلة';
+	@override String secondes({required Object n}) => '⁨${n}⁩ ث';
+	@override String minutes({required Object n}) => '⁨${n}⁩ د';
+	@override String minutesSecondes({required Object m, required Object s}) => '⁨${m}⁩ د ⁨${s}⁩ ث';
+	@override String resume({required Object nombre, required Object duree}) => '⁨${nombre}⁩، ⁨${duree}⁩';
+	@override String ligneEleve({required Object resume}) => 'الخروج من التطبيق: ⁨${resume}⁩';
+}
+
+// Path: journalSorties.reglages
+class _Traductions$journalSorties$reglages$ar extends Traductions$journalSorties$reglages$fr {
+	_Traductions$journalSorties$reglages$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get section => 'الخروج من التطبيق أثناء الحصة';
+	@override String get intro => 'تسري المهلة على جميع الطلاب. لا يسجّل تتبّع الخروج أي شيء دون موافقة الوالد، أو الطالب البالغ.';
+	@override String get journal => 'تسجيل الخروج من التطبيق';
+	@override String get journalDetail => 'لا تفعّله إلا بعد أن يعتمد المدير نصوص الموافقة. عند تفعيله، يرى الوالد والطالب البالغ صفحة الموافقة في حسابهما.';
+	@override String get delai => 'المهلة قبل الخروج من القاعة';
+	@override String get delaiDetail => 'الوقت المتروك للطالب خارج التطبيق قبل أن يخرج من القاعة.';
+	@override String get bornes => 'من 5 إلى 600 ثانية.';
+	@override String unite({required Object n}) => '⁨${n}⁩ ث';
 }
 
 // Path: commun.etats.recharge1
@@ -19984,6 +20082,36 @@ class _Traductions$candidatsFlux$file$reglage$ar extends Traductions$candidatsFl
 	);
 	@override String get invalide => 'اكتبوا عددًا صحيحًا من 1 إلى 2000، دون مسافة.';
 	@override String get echec => 'الإعداد غير مؤكد. السبب المحتمل: انقطع الاتصال بالخادم. أعيدوا المحاولة بعد لحظة.';
+}
+
+// Path: journalSorties.texte.parent
+class _Traductions$journalSorties$texte$parent$ar extends Traductions$journalSorties$texte$parent$fr {
+	_Traductions$journalSorties$texte$parent$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get quoi => 'ما يُسجَّل: في كل مرة يخرج فيها طفلك من التطبيق أثناء الحصة، وقت خروجه، ووقت عودته، وهل أدّى هذا الغياب إلى خروجه من القاعة. لا شيء غير ذلك: لا ما يفعله في مكان آخر، ولا شاشته، ولا صورته، ولا صوته.';
+	@override String get pourquoi => 'لماذا: لمتابعة انتباه طفلك أثناء الدرس، لك ولمعلّمه.';
+	@override String get qui => 'من يمكنه قراءته: أنت، وطفلك، ومعلّم الحصة، والإدارة. ولا يقرؤه أبدًا الطلاب الآخرون ولا عائلاتهم.';
+	@override String get retrait => 'يمكنك سحب موافقتك في أي وقت، من هنا. بمجرد سحبها، لا يُسجَّل أي شيء بعد ذلك.';
+	@override String get sansAccord => 'دون موافقتك، لا يُسجَّل أي شيء ولا يتغيّر شيء في الدرس. الطالب الذي يبقى خارج التطبيق مدة طويلة يخرج من القاعة، بموافقة أو دونها: وهذا لا يحفظ أي شيء.';
+	@override String caseAccord({required Object dePrenom}) => 'أوافق على تسجيل خروج ⁨${dePrenom}⁩ من التطبيق أثناء الحصص.';
+}
+
+// Path: journalSorties.texte.adulte
+class _Traductions$journalSorties$texte$adulte$ar extends Traductions$journalSorties$texte$adulte$fr {
+	_Traductions$journalSorties$texte$adulte$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get quoi => 'ما يُسجَّل: في كل مرة تخرج فيها من التطبيق أثناء الحصة، وقت خروجك، ووقت عودتك، وهل أدّى هذا الغياب إلى خروجك من القاعة. لا شيء غير ذلك: لا ما تفعله في مكان آخر، ولا شاشتك، ولا صورتك، ولا صوتك.';
+	@override String get pourquoi => 'لماذا: لمتابعة انتباهك أثناء الدرس، لك ولمعلّمك.';
+	@override String get qui => 'من يمكنه قراءته: أنت، ومعلّم الحصة، والإدارة. ولا يقرؤه أبدًا الطلاب الآخرون ولا عائلاتهم.';
+	@override String get retrait => 'يمكنك سحب موافقتك في أي وقت، من هنا. بمجرد سحبها، لا يُسجَّل أي شيء بعد ذلك.';
+	@override String get sansAccord => 'دون موافقتك، لا يُسجَّل أي شيء ولا يتغيّر شيء في الدرس. إذا بقيت خارج التطبيق مدة طويلة، تخرج من القاعة، بموافقة أو دونها: وهذا لا يحفظ أي شيء.';
+	@override String get caseAccord => 'أوافق على تسجيل خروجي من التطبيق أثناء الحصص.';
 }
 
 // Path: classe.entree.demo.roles
@@ -35369,6 +35497,57 @@ extension on TraductionsAr {
 			'suiviPedagogique.niveauDeclare' => 'المستوى المصرّح به',
 			'suiviPedagogique.dateLimiteDepassee' => 'تجاوز الموعد النهائي',
 			'suiviPedagogique.erreur' => 'تعذرت قراءة مرحلة البرنامج. حاول مرة أخرى بعد قليل.',
+			'journalSorties.texte.titre' => 'الخروج من التطبيق أثناء الدرس',
+			'journalSorties.texte.parent.quoi' => 'ما يُسجَّل: في كل مرة يخرج فيها طفلك من التطبيق أثناء الحصة، وقت خروجه، ووقت عودته، وهل أدّى هذا الغياب إلى خروجه من القاعة. لا شيء غير ذلك: لا ما يفعله في مكان آخر، ولا شاشته، ولا صورته، ولا صوته.',
+			'journalSorties.texte.parent.pourquoi' => 'لماذا: لمتابعة انتباه طفلك أثناء الدرس، لك ولمعلّمه.',
+			'journalSorties.texte.parent.qui' => 'من يمكنه قراءته: أنت، وطفلك، ومعلّم الحصة، والإدارة. ولا يقرؤه أبدًا الطلاب الآخرون ولا عائلاتهم.',
+			'journalSorties.texte.parent.retrait' => 'يمكنك سحب موافقتك في أي وقت، من هنا. بمجرد سحبها، لا يُسجَّل أي شيء بعد ذلك.',
+			'journalSorties.texte.parent.sansAccord' => 'دون موافقتك، لا يُسجَّل أي شيء ولا يتغيّر شيء في الدرس. الطالب الذي يبقى خارج التطبيق مدة طويلة يخرج من القاعة، بموافقة أو دونها: وهذا لا يحفظ أي شيء.',
+			'journalSorties.texte.parent.caseAccord' => ({required Object dePrenom}) => 'أوافق على تسجيل خروج ⁨${dePrenom}⁩ من التطبيق أثناء الحصص.',
+			'journalSorties.texte.adulte.quoi' => 'ما يُسجَّل: في كل مرة تخرج فيها من التطبيق أثناء الحصة، وقت خروجك، ووقت عودتك، وهل أدّى هذا الغياب إلى خروجك من القاعة. لا شيء غير ذلك: لا ما تفعله في مكان آخر، ولا شاشتك، ولا صورتك، ولا صوتك.',
+			'journalSorties.texte.adulte.pourquoi' => 'لماذا: لمتابعة انتباهك أثناء الدرس، لك ولمعلّمك.',
+			'journalSorties.texte.adulte.qui' => 'من يمكنه قراءته: أنت، ومعلّم الحصة، والإدارة. ولا يقرؤه أبدًا الطلاب الآخرون ولا عائلاتهم.',
+			'journalSorties.texte.adulte.retrait' => 'يمكنك سحب موافقتك في أي وقت، من هنا. بمجرد سحبها، لا يُسجَّل أي شيء بعد ذلك.',
+			'journalSorties.texte.adulte.sansAccord' => 'دون موافقتك، لا يُسجَّل أي شيء ولا يتغيّر شيء في الدرس. إذا بقيت خارج التطبيق مدة طويلة، تخرج من القاعة، بموافقة أو دونها: وهذا لا يحفظ أي شيء.',
+			'journalSorties.texte.adulte.caseAccord' => 'أوافق على تسجيل خروجي من التطبيق أثناء الحصص.',
+			'journalSorties.accord.titre' => 'الخروج من التطبيق',
+			'journalSorties.accord.ligne' => 'الخروج من التطبيق أثناء الدرس',
+			'journalSorties.accord.ligneDetail' => 'موافقتك، لكل طفل',
+			'journalSorties.accord.ligneDetailAdulte' => 'موافقتك',
+			'journalSorties.accord.intro' => 'اقرأ هذا النص، ثم اختر لكل طفل. لا يُسجَّل أي شيء دون موافقتك.',
+			'journalSorties.accord.introAdulte' => 'اقرأ هذا النص، ثم اختر. لا يُسجَّل أي شيء دون موافقتك.',
+			'journalSorties.accord.accepteLe' => ({required Object date}) => 'تمت الموافقة في ⁨${date}⁩',
+			'journalSorties.accord.pasAccepte' => 'لا موافقة: لا يُسجَّل أي شيء.',
+			'journalSorties.accord.retirerPour' => ({required Object prenom}) => 'سحب موافقتي بخصوص ⁨${prenom}⁩',
+			'journalSorties.accord.retirer' => 'سحب موافقتي',
+			'journalSorties.accord.enregistrer' => 'حفظ موافقتي',
+			'journalSorties.accord.manque' => 'ضع علامة في خانة لحفظ موافقتك.',
+			'journalSorties.accord.erreur' => 'لم يُحفَظ اختيارك. تحقّق من اتصالك، ثم حاول مرة أخرى.',
+			'journalSorties.accord.lectureErreur' => 'تعذّرت قراءة موافقاتك. تحقّق من اتصالك، ثم حاول مرة أخرى.',
+			'journalSorties.accord.horsService' => 'هذا التسجيل غير مفعّل: لا يُسجَّل أي شيء. عد إلى الحساب.',
+			'journalSorties.accord.versionPerimee' => 'تغيّر النص للتو. أعد قراءته، ثم ضع العلامة من جديد.',
+			'journalSorties.accord.eteint' => 'أوقفت الإدارة هذا التسجيل للتو: لا يُسجَّل أي شيء. عد إلى الحساب.',
+			'journalSorties.accord.merci' => 'تم حفظ موافقتك.',
+			'journalSorties.accord.retire' => 'تم سحب موافقتك: لا يُسجَّل أي شيء بعد الآن.',
+			'journalSorties.rapport.titre' => 'الخروج من التطبيق',
+			'journalSorties.rapport.nombreCle' => 'العدد',
+			'journalSorties.rapport.nombre' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا خروج', one: 'خروج واحد', two: 'خروجان', few: '⁨${n}⁩ مرات خروج', many: '⁨${n}⁩ مرة خروج', other: '⁨${n}⁩ مرة خروج', ), 
+			'journalSorties.rapport.dureeTotale' => 'المدة الإجمالية',
+			'journalSorties.rapport.plage' => ({required Object debut, required Object fin}) => 'من ⁨${debut}⁩ إلى ⁨${fin}⁩',
+			'journalSorties.rapport.sortieSalle' => 'خروج من القاعة بعد المهلة',
+			'journalSorties.rapport.secondes' => ({required Object n}) => '⁨${n}⁩ ث',
+			'journalSorties.rapport.minutes' => ({required Object n}) => '⁨${n}⁩ د',
+			'journalSorties.rapport.minutesSecondes' => ({required Object m, required Object s}) => '⁨${m}⁩ د ⁨${s}⁩ ث',
+			'journalSorties.rapport.resume' => ({required Object nombre, required Object duree}) => '⁨${nombre}⁩، ⁨${duree}⁩',
+			'journalSorties.rapport.ligneEleve' => ({required Object resume}) => 'الخروج من التطبيق: ⁨${resume}⁩',
+			'journalSorties.reglages.section' => 'الخروج من التطبيق أثناء الحصة',
+			'journalSorties.reglages.intro' => 'تسري المهلة على جميع الطلاب. لا يسجّل تتبّع الخروج أي شيء دون موافقة الوالد، أو الطالب البالغ.',
+			'journalSorties.reglages.journal' => 'تسجيل الخروج من التطبيق',
+			'journalSorties.reglages.journalDetail' => 'لا تفعّله إلا بعد أن يعتمد المدير نصوص الموافقة. عند تفعيله، يرى الوالد والطالب البالغ صفحة الموافقة في حسابهما.',
+			'journalSorties.reglages.delai' => 'المهلة قبل الخروج من القاعة',
+			'journalSorties.reglages.delaiDetail' => 'الوقت المتروك للطالب خارج التطبيق قبل أن يخرج من القاعة.',
+			'journalSorties.reglages.bornes' => 'من 5 إلى 600 ثانية.',
+			'journalSorties.reglages.unite' => ({required Object n}) => '⁨${n}⁩ ث',
 			_ => null,
 		};
 	}

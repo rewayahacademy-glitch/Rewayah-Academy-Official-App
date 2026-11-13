@@ -15244,5 +15244,73 @@
     "niveauDeclare": "Niveau déclaré",
     "dateLimiteDepassee": "Date limite dépassée",
     "erreur": "L'étape du programme n'a pas pu être lue. Réessayez dans un instant."
+  },
+  "journalSorties": {
+    "texte": {
+      "titre": "Les sorties de l'application pendant le cours",
+      "parent": {
+        "quoi": "Ce qui est noté : chaque fois que votre enfant quitte l'application pendant une séance, l'heure où il la quitte, l'heure où il revient, et si cette absence l'a fait sortir de la salle. Rien d'autre : ni ce qu'il fait ailleurs, ni son écran, ni son image, ni sa voix.",
+        "pourquoi": "Pourquoi : suivre l'attention de votre enfant pendant le cours, pour vous et pour son enseignant.",
+        "qui": "Qui peut le lire : vous, votre enfant, l'enseignant de la séance et la direction. Jamais les autres élèves ni leurs familles.",
+        "retrait": "Vous pouvez retirer votre accord à tout moment, ici même. Dès que vous le retirez, plus rien n'est noté.",
+        "sansAccord": "Sans votre accord, rien n'est noté et rien ne change pour le cours. Un élève qui reste trop longtemps hors de l'application sort de la salle, avec ou sans accord : cela ne garde rien.",
+        "caseAccord": "J'accepte que les sorties de l'application {dePrenom} pendant les séances soient notées."
+      },
+      "adulte": {
+        "quoi": "Ce qui est noté : chaque fois que vous quittez l'application pendant une séance, l'heure où vous la quittez, l'heure où vous revenez, et si cette absence vous a fait sortir de la salle. Rien d'autre : ni ce que vous faites ailleurs, ni votre écran, ni votre image, ni votre voix.",
+        "pourquoi": "Pourquoi : suivre votre attention pendant le cours, pour vous et pour votre enseignant.",
+        "qui": "Qui peut le lire : vous, l'enseignant de la séance et la direction. Jamais les autres élèves ni leurs familles.",
+        "retrait": "Vous pouvez retirer votre accord à tout moment, ici même. Dès que vous le retirez, plus rien n'est noté.",
+        "sansAccord": "Sans votre accord, rien n'est noté et rien ne change pour le cours. Si vous restez trop longtemps hors de l'application, vous sortez de la salle, avec ou sans accord : cela ne garde rien.",
+        "caseAccord": "J'accepte que mes sorties de l'application pendant les séances soient notées."
+      }
+    },
+    "accord": {
+      "titre": "Sorties de l'application",
+      "ligne": "Sorties de l'application pendant le cours",
+      "ligneDetail": "Votre accord, pour chaque enfant",
+      "ligneDetailAdulte": "Votre accord",
+      "intro": "Lisez ce texte, puis choisissez pour chaque enfant. Rien n'est noté sans votre accord.",
+      "introAdulte": "Lisez ce texte, puis choisissez. Rien n'est noté sans votre accord.",
+      "accepteLe": "Accepté le {date}",
+      "pasAccepte": "Pas d'accord : rien n'est noté.",
+      "retirerPour": "Retirer mon accord pour {prenom}",
+      "retirer": "Retirer mon accord",
+      "enregistrer": "Enregistrer mon accord",
+      "manque": "Cochez une case pour enregistrer votre accord.",
+      "erreur": "Votre choix n'a pas été enregistré. Vérifiez votre connexion, puis réessayez.",
+      "lectureErreur": "Vos accords n'ont pas pu être lus. Vérifiez votre connexion, puis réessayez.",
+      "horsService": "Ce relevé n'est pas en service : rien n'est noté. Revenez au Compte.",
+      "versionPerimee": "Le texte vient de changer. Relisez-le, puis cochez de nouveau.",
+      "eteint": "La direction vient d'arrêter ce relevé : rien n'est noté. Revenez au Compte.",
+      "merci": "Votre accord est enregistré.",
+      "retire": "Votre accord est retiré : plus rien n'est noté."
+    },
+    "rapport": {
+      "titre": "Sorties de l'application",
+      "nombreCle": "Nombre",
+      "nombre(param=n)": {
+        "one": "{n} sortie",
+        "other": "{n} sorties"
+      },
+      "dureeTotale": "Durée totale",
+      "plage": "De {debut} à {fin}",
+      "sortieSalle": "Sortie de la salle après le délai",
+      "secondes": "{n} s",
+      "minutes": "{n} min",
+      "minutesSecondes": "{m} min {s} s",
+      "resume": "{nombre}, {duree}",
+      "ligneEleve": "Sorties de l'application : {resume}"
+    },
+    "reglages": {
+      "section": "Sorties de l'application pendant une séance",
+      "intro": "Le délai vaut pour tous les élèves. Le relevé des sorties ne note rien sans l'accord du parent, ou de l'élève adulte.",
+      "journal": "Noter les sorties de l'application",
+      "journalDetail": "N'allumez qu'après la validation des textes de l'accord par le directeur. Allumé, le parent et l'élève adulte voient la page de l'accord dans leur Compte.",
+      "delai": "Délai avant la sortie de la salle",
+      "delaiDetail": "Le temps laissé à l'élève hors de l'application avant qu'il sorte de la salle.",
+      "bornes": "De 5 à 600 secondes.",
+      "unite": "{n} s"
+    }
   }
 }
