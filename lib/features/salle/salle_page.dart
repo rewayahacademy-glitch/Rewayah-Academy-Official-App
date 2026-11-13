@@ -351,9 +351,8 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     if (acces == null || _sortieEleve != null) return null;
     // La synchronisation a besoin du profil : tant que la session n'est pas
     // lue, rien n'est cree (la composition suivante reessaie).
-    final String? profil = _lireProfil() ?? _profilConnu;
+    final String? profil = _lireProfil();
     if (profil == null) return null;
-    _profilConnu = profil;
     return _seanceLocale = creerSeanceVivante(
       cours: SessionEnCours(
         sessionId: widget.seanceId,
@@ -375,10 +374,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     );
   }
 
-  /// Le profil de cet appareil, lu a chaque composition et retenu : une
-  /// session relue (conteneur reconstruit) ne fait pas perdre la seance.
-  String? _profilConnu;
-
+  /// Le profil de cet appareil ; nul tant que la session n est pas lue.
   String? _lireProfil() {
     try {
       return ref.read(sessionProvider).profileId;
@@ -1915,7 +1911,6 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     final bool enseignant = base.role == RoleSeance.enseignant;
     // SYNCHRO-SESSION : la seance de l'appel (synchronisation, Dynamique
     // chrono), lue et suivie ; la page ne cree rien.
-    _profilConnu = _lireProfil() ?? _profilConnu;
     _raccorderSeance();
     final SeanceVivante? vivante = _seanceSuivie;
     final SynchroSalle? synchro = vivante?.synchro;
