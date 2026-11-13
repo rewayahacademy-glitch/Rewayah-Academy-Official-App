@@ -227,3 +227,30 @@ dépôt de la photo d'un enfant ; les textes de l'accord du journal des sorties,
 conservation et son allumage ; le texte « Ce que vous devez savoir », qui promet un écran « Compte,
 Mes accords, Je m'oppose à l'enregistrement » qui n'existe pas.
 
+### État au 13/11/2026, 07:35 UTC
+
+Quinze lots sont sur la branche et dans la demande de fusion en brouillon
+`rewayahacademy-glitch/Rewayah-Academy-Official-App#449`. Rien sur staging, rien en production,
+rien prouvé par le directeur.
+
+- **Contrôles de la demande de fusion : tous verts sur les quinze lots** (tête `f89e67a1` : six
+  lots de tests, construction web, quatre migrations rejouées sur Postgres 17, captures, fonctions
+  Edge). La section précédente disait « en cours sur quatorze » : sur quatorze lots, les contrôles
+  ont d'abord trouvé trois défauts réels dans le journal des sorties (un mot arabe interdit pour
+  annoncer un succès, deux messages d'erreur qui redisaient la connexion, une page trop large sur
+  ordinateur), corrigés par `1e8b3218`, puis sont passés au vert.
+- **SYNCHRO-SESSION** (point 15, journal D-045) : sur la branche. Une séance vivante par appel,
+  tenue par le contrôleur de session ; la salle réduite reçoit la récitation et les arrivées ; le
+  rejeu de la page continue quand l'enseignant a réduit la salle ; celui qui récite a une seule
+  source. Jamais essayé avec une vraie visio à plusieurs.
+- **Leçon de la nuit** : après la fusion d'un lot, lancer aussi les gardes générales
+  (`test/core/reseau`, `test/web_bureau`, `test/features/tb_recette`, `test/garde`,
+  `test/accessibilite`), pas seulement les dossiers touchés.
+- **Forme de la demande de fusion** : elle réunit quinze lots, contre la règle « une étape, une
+  pull request ». À fusionner par trains successifs, chacun suivi de l'essai du directeur, si le
+  directeur le décide.
+
+Restent, hors décisions du directeur : la fermeture de la vidéo des camarades côté serveur de
+visio (à étudier), le retrait « Je m'absente un instant », l'écran « Mes accords » promis par un
+texte, les transitions du téléphone relevées par HARMONIE-SALLE.
+
