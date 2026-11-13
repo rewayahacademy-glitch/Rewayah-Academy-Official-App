@@ -199,8 +199,7 @@ class OffresAdminIndisponible implements PortOffresAdmin {
       Future<ReglesCreationOffre>.error(_absente);
 
   @override
-  Future<List<OffreAdmin>> lister() =>
-      Future<List<OffreAdmin>>.error(_absente);
+  Future<List<OffreAdmin>> lister() => Future<List<OffreAdmin>>.error(_absente);
 
   @override
   Future<String> creer({

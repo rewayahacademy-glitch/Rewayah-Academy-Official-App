@@ -145,4 +145,3 @@ MessagePedagogique messageRappelDiscret({
 /// [typeRappelDiscret] un paquet a ignorer.
 String? academyIdDeCharge(MessagePedagogique message) =>
     message.charge['academy_id'] as String?;
-

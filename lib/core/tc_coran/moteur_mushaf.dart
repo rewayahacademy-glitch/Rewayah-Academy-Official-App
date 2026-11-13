@@ -45,30 +45,29 @@ final FutureProviderFamily<LayoutPage?, int> layoutPageProvider =
 /// n'assemble jamais ces trois sources lui-meme : il en resterait toujours un
 /// qui oublierait d'interroger la disponibilite du layout, et afficherait une
 /// page approximee sans le dire.
-final FutureProviderFamily<PageMushafVM, int> pageMushafProvider =
-    FutureProvider.family<PageMushafVM, int>((Ref ref, int numero) async {
-      final AsyncValue<PageCorpus?> page = ref.watch(pageCorpusProvider(numero));
-      final AsyncValue<List<SourateVM>> sourates = ref.watch(
-        souratesCoranProvider,
-      );
-      final AsyncValue<DisponibiliteLayout> disponibilite = ref.watch(
-        disponibiliteLayoutProvider,
-      );
-      final AsyncValue<LayoutPage?> layout = ref.watch(
-        layoutPageProvider(numero),
-      );
+final FutureProviderFamily<PageMushafVM, int>
+pageMushafProvider = FutureProvider.family<PageMushafVM, int>((
+  Ref ref,
+  int numero,
+) async {
+  final AsyncValue<PageCorpus?> page = ref.watch(pageCorpusProvider(numero));
+  final AsyncValue<List<SourateVM>> sourates = ref.watch(souratesCoranProvider);
+  final AsyncValue<DisponibiliteLayout> disponibilite = ref.watch(
+    disponibiliteLayoutProvider,
+  );
+  final AsyncValue<LayoutPage?> layout = ref.watch(layoutPageProvider(numero));
 
-      return PageMushafVM.depuis(
-        pageDemandee: numero,
-        // `hasValue` et non le type d'execution : Riverpod 3 relance un
-        // provider en echec tout seul, et l'etat repasse par `AsyncLoading` en
-        // conservant `hasError` (piege deja paye, `lib/CLAUDE.md`).
-        page: page.hasValue ? page.value : null,
-        chargementEnCours: page.isLoading && !page.hasError,
-        sourates: sourates.hasValue ? sourates.value : null,
-        fidelite: disponibilite.hasValue
-            ? disponibilite.value ?? DisponibiliteLayout.indisponible
-            : DisponibiliteLayout.indisponible,
-        layout: layout.hasValue ? layout.value : null,
-      );
-    });
+  return PageMushafVM.depuis(
+    pageDemandee: numero,
+    // `hasValue` et non le type d'execution : Riverpod 3 relance un
+    // provider en echec tout seul, et l'etat repasse par `AsyncLoading` en
+    // conservant `hasError` (piege deja paye, `lib/CLAUDE.md`).
+    page: page.hasValue ? page.value : null,
+    chargementEnCours: page.isLoading && !page.hasError,
+    sourates: sourates.hasValue ? sourates.value : null,
+    fidelite: disponibilite.hasValue
+        ? disponibilite.value ?? DisponibiliteLayout.indisponible
+        : DisponibiliteLayout.indisponible,
+    layout: layout.hasValue ? layout.value : null,
+  );
+});

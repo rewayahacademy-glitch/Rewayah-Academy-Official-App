@@ -215,21 +215,22 @@ class VueCatalogue {
       );
     }
 
-    final List<SectionCatalogue> sections = <SectionCatalogue>[
-      for (final IdSectionCatalogue id in _ordre(contexte))
-        SectionCatalogue(
-          id: id,
-          ressources: switch (id) {
-            IdSectionCatalogue.pourCeGroupe => pourGroupe,
-            IdSectionCatalogue.recents => recents,
-            IdSectionCatalogue.tousLesSupports => tous,
-            IdSectionCatalogue.continuer ||
-            IdSectionCatalogue.resultats => const <LibraryResource>[],
-          },
-        ),
-    ].where((SectionCatalogue s) => s.ressources.isNotEmpty).toList(
-      growable: false,
-    );
+    final List<SectionCatalogue> sections =
+        <SectionCatalogue>[
+              for (final IdSectionCatalogue id in _ordre(contexte))
+                SectionCatalogue(
+                  id: id,
+                  ressources: switch (id) {
+                    IdSectionCatalogue.pourCeGroupe => pourGroupe,
+                    IdSectionCatalogue.recents => recents,
+                    IdSectionCatalogue.tousLesSupports => tous,
+                    IdSectionCatalogue.continuer ||
+                    IdSectionCatalogue.resultats => const <LibraryResource>[],
+                  },
+                ),
+            ]
+            .where((SectionCatalogue s) => s.ressources.isNotEmpty)
+            .toList(growable: false);
 
     return VueCatalogue(
       etat: sections.isEmpty && reprise == null

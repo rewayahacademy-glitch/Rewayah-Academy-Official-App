@@ -81,9 +81,7 @@ class LecteurQrMobileScanner implements LecteurQr {
     switch (erreur.errorCode) {
       case MobileScannerErrorCode.permissionDenied:
         _refus++;
-        return _refus > 1
-            ? EtatCamera.refuseeDurablement
-            : EtatCamera.refusee;
+        return _refus > 1 ? EtatCamera.refuseeDurablement : EtatCamera.refusee;
       case MobileScannerErrorCode.unsupported:
         // Android et iOS : `MOBILE_SCANNER_NO_CAMERA_ERROR` ; web :
         // `NotFoundError` (aucun peripherique video).

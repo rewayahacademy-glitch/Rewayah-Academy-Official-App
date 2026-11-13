@@ -26,9 +26,10 @@ class MonHorloge {
     required this.maintenantServeur,
     this.moi,
     this.academie,
+    this.lieuChoisi,
   });
 
-  /// Lit `{maintenant, moi, academie}`.
+  /// Lit `{maintenant, moi, academie, lieu_choisi}`.
   factory MonHorloge.lire(Object? brut) {
     if (brut is! Map) throw const FormatException('mon_horloge : objet');
     final Object? m = brut['maintenant'];
@@ -42,6 +43,9 @@ class MonHorloge {
       maintenantServeur: maintenant,
       moi: FuseauVu.lire(brut['moi']),
       academie: FuseauVu.lire(brut['academie']),
+      lieuChoisi: brut['lieu_choisi'] is bool
+          ? brut['lieu_choisi'] as bool
+          : null,
     );
   }
 
@@ -56,6 +60,12 @@ class MonHorloge {
   /// H1 et H2, 12/11/2026). `null` tant que le serveur ne la rend pas (fonction
   /// pas encore installee) : l'ecran ne montre alors pas de seconde heure.
   final FuseauVu? academie;
+
+  /// Vrai quand la personne a CHOISI sa ville (HORLOGE-ET-LIEU, partie B) :
+  /// `moi` est alors le fuseau de sa ville. Faux quand elle n'en a pas choisi :
+  /// `moi` n'est que le fuseau enregistre par defaut, pas un choix. `null`
+  /// quand le serveur ne le dit pas (ancienne version) : l'ancien comportement.
+  final bool? lieuChoisi;
 }
 
 /// La derniere lecture, pour les formateurs appeles hors d'un widget (une
@@ -63,14 +73,41 @@ class MonHorloge {
 /// [monHorlogeProvider] seulement.
 MonHorloge? _derniere;
 
-/// L'instant [instant] a l'heure murale de la personne : ses champs (annee,
-/// mois, jour, heure, minute) sont ceux de son fuseau de profil, sinon ceux
-/// de l'appareil. **Pour l'affichage seulement** : jamais une comparaison ni
-/// une difference d'instants.
-DateTime chezMoi(DateTime instant) {
-  final DateTime? murale = _derniere?.moi?.muraleA(instant.toUtc());
-  return murale ?? instant.toLocal();
+/// L'heure murale de [instant] chez la personne, avec ce qui la fonde.
+/// **La regle des trois cas** (architecte pedagogique, 13/11/2026) :
+/// 1. sans ville choisie, l'ecran montre l'heure de l'APPAREIL et le dit ;
+/// 2. avec une ville choisie, l'ecran montre l'heure de la VILLE ;
+/// 3. si l'appareil et la ville donnent deux heures differentes (voyage),
+///    l'ecran montre l'heure de l'appareil et le dit, sans rien modifier au
+///    lieu enregistre.
+/// Cote serveur, sans appareil, le fuseau enregistre sert toujours (jusqu'au
+/// choix de la ville : le serveur ne lit jamais l'appareil). Un serveur qui ne
+/// dit pas `lieu_choisi` garde l'ancien comportement : le fuseau du profil.
+({DateTime murale, bool appareil}) _vue(DateTime instant) {
+  final DateTime utc = instant.toUtc();
+  final MonHorloge? m = _derniere;
+  final FuseauVu? moi = m?.moi;
+  final DateTime? duProfil = moi?.muraleA(utc);
+  if (moi == null || duProfil == null) {
+    return (murale: instant.toLocal(), appareil: true);
+  }
+  final bool? choisie = m?.lieuChoisi;
+  if (choisie == null) return (murale: duProfil, appareil: false);
+  if (!choisie) return (murale: instant.toLocal(), appareil: true);
+  final Duration? decalageVille = moi.decalageA(utc);
+  final bool voyage =
+      decalageVille == null ||
+      instant.toLocal().timeZoneOffset != decalageVille;
+  return voyage
+      ? (murale: instant.toLocal(), appareil: true)
+      : (murale: duProfil, appareil: false);
 }
+
+/// L'instant [instant] a l'heure murale de la personne : ses champs (annee,
+/// mois, jour, heure, minute) sont ceux de son fuseau de profil (sa ville),
+/// sinon ceux de l'appareil (voir [_vue], les trois cas). **Pour l'affichage
+/// seulement** : jamais une comparaison ni une difference d'instants.
+DateTime chezMoi(DateTime instant) => _vue(instant).murale;
 
 /// « 08:00 » a l'heure de la personne ([chezMoi]).
 String heureChezMoi(DateTime instant) => heureDeLAppareil(chezMoi(instant));
@@ -99,7 +136,8 @@ DateTime instantChezMoi(
 ]) {
   final FuseauVu? moi = _derniere?.moi;
   final DateTime murale = DateTime.utc(annee, mois, jour, heure, minute);
-  if (moi != null) {
+  // Les trois cas : sans ville choisie, l'heure saisie est celle de l'appareil.
+  if (moi != null && _derniere?.lieuChoisi != false) {
     // Deux passes : le decalage en vigueur a l'instant trouve, puis la
     // verification que cet instant rend bien l'heure murale demandee.
     final Duration? d = moi.decalageA(murale.subtract(moi.decalage));
@@ -125,14 +163,19 @@ String? heureMecqueSiDifferente(DateTime instant) {
   final FuseauVu? a = _derniere?.academie;
   if (a == null) return null;
   final FuseauVu? moi = _derniere?.moi;
-  if (moi != null && a.memeHeureQue(moi)) return null;
-  return a.heureA(instant.toUtc());
+  final DateTime utc = instant.toUtc();
+  if (estHeureDeLAppareil(instant)) {
+    // L'ecran montre l'heure de l'appareil : la comparaison se fait avec elle.
+    if (a.decalageA(utc) == instant.toLocal().timeZoneOffset) return null;
+  } else if (moi != null && a.memeHeureQue(moi)) {
+    return null;
+  }
+  return a.heureA(utc);
 }
 
 /// Vrai quand [chezMoi] retombe sur l'heure de l'appareil : l'ecran qui en a
 /// la place le dit (« Heure de cet appareil »).
-bool estHeureDeLAppareil(DateTime instant) =>
-    _derniere?.moi?.muraleA(instant.toUtc()) == null;
+bool estHeureDeLAppareil(DateTime instant) => _vue(instant).appareil;
 
 /// Le fuseau du profil qui rend [instant], ou `null` quand [chezMoi]
 /// retombe sur l'appareil.

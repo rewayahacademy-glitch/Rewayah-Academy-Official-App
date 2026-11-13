@@ -67,8 +67,6 @@ class LieuSupabase implements PortLieu {
 
   static List<Ville> _villes(Object? brut) {
     if (brut is! List<dynamic>) return const <Ville>[];
-    return <Ville>[
-      for (final dynamic ligne in brut) ?Ville.lire(ligne),
-    ];
+    return <Ville>[for (final dynamic ligne in brut) ?Ville.lire(ligne)];
   }
 }

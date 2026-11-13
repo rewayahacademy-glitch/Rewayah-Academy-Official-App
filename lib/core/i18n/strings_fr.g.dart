@@ -74,6 +74,7 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$vide$fr vide = Traductions$vide$fr.internal(_root);
 	late final Traductions$pin$fr pin = Traductions$pin$fr.internal(_root);
 	late final Traductions$choix$fr choix = Traductions$choix$fr.internal(_root);
+	late final Traductions$lieu$fr lieu = Traductions$lieu$fr.internal(_root);
 	late final Traductions$parcours$fr parcours = Traductions$parcours$fr.internal(_root);
 	late final Traductions$avatar$fr avatar = Traductions$avatar$fr.internal(_root);
 	late final Traductions$nav$fr nav = Traductions$nav$fr.internal(_root);
@@ -1949,6 +1950,105 @@ class Traductions$choix$fr {
 
 	/// fr: 'Par exemple : {texte}'
 	String exemple({required Object texte}) => 'Par exemple : ${texte}';
+}
+
+// Path: lieu
+class Traductions$lieu$fr {
+	Traductions$lieu$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Votre ville'
+	String get titre => 'Votre ville';
+
+	/// fr: 'Choisissez la ville où vous habitez. Elle sert à afficher les heures de cours à votre heure. Seuls vous, votre foyer et la direction la voient.'
+	String get consigneTuteur => 'Choisissez la ville où vous habitez. Elle sert à afficher les heures de cours à votre heure. Seuls vous, votre foyer et la direction la voient.';
+
+	/// fr: 'Choisissez la ville où vous enseignez. Elle sert à afficher vos heures de cours à votre heure, et la direction la vérifie. Seuls vous et la direction la voient.'
+	String get consigneEnseignant => 'Choisissez la ville où vous enseignez. Elle sert à afficher vos heures de cours à votre heure, et la direction la vérifie. Seuls vous et la direction la voient.';
+
+	/// fr: 'Rechercher votre ville'
+	String get champ => 'Rechercher votre ville';
+
+	/// fr: 'Les premières lettres du nom suffisent, avec ou sans accent.'
+	String get aide => 'Les premières lettres du nom suffisent, avec ou sans accent.';
+
+	/// fr: 'Villes à l'heure de cet appareil'
+	String get propositions => 'Villes à l\'heure de cet appareil';
+
+	/// fr: 'Villes trouvées'
+	String get resultats => 'Villes trouvées';
+
+	/// fr: 'Liste des villes : GeoNames (geonames.org), licence CC BY 4.0.'
+	String get credit => 'Liste des villes : GeoNames (geonames.org), licence CC BY 4.0.';
+
+	/// fr: 'Aucune ville ne commence par « {texte} ». Essayez les premières lettres du nom, sans accent.'
+	String aucune({required Object texte}) => 'Aucune ville ne commence par « ${texte} ». Essayez les premières lettres du nom, sans accent.';
+
+	/// fr: 'La liste des villes ne s'est pas chargée'
+	String get chargeEchec => 'La liste des villes ne s\'est pas chargée';
+
+	/// fr: 'La liste n'a pas répondu. Vérifiez votre connexion puis réessayez.'
+	String get chargeEchecPhrase => 'La liste n\'a pas répondu. Vérifiez votre connexion puis réessayez.';
+
+	/// fr: 'Ville choisie : {ville}, {pays}.'
+	String choisie({required Object ville, required Object pays}) => 'Ville choisie : ${ville}, ${pays}.';
+
+	/// fr: 'Enregistrer ma ville'
+	String get enregistrer => 'Enregistrer ma ville';
+
+	/// fr: 'Plus tard'
+	String get plusTard => 'Plus tard';
+
+	/// fr: 'Vous pouvez encore reporter cette étape. Tant qu'elle n'est pas faite, vos heures de cours s'affichent à l'heure de cet appareil.'
+	String get plusTardPhrase => 'Vous pouvez encore reporter cette étape. Tant qu\'elle n\'est pas faite, vos heures de cours s\'affichent à l\'heure de cet appareil.';
+
+	/// fr: 'Cette étape est maintenant nécessaire pour afficher vos heures de cours à votre heure.'
+	String get obligatoire => 'Cette étape est maintenant nécessaire pour afficher vos heures de cours à votre heure.';
+
+	/// fr: 'Votre ville n'est pas confirmée. Réessayez dans un instant.'
+	String get echec => 'Votre ville n\'est pas confirmée. Réessayez dans un instant.';
+
+	/// fr: 'Relisez vos disponibilités'
+	String get disponibilitesTitre => 'Relisez vos disponibilités';
+
+	/// fr: 'Votre ville a changé de fuseau. Vos disponibilités gardent leurs heures exactes, mais elles s'affichent maintenant à votre nouvelle heure : relisez-les.'
+	String get disponibilitesPhrase => 'Votre ville a changé de fuseau. Vos disponibilités gardent leurs heures exactes, mais elles s\'affichent maintenant à votre nouvelle heure : relisez-les.';
+
+	/// fr: 'Relire mes disponibilités'
+	String get disponibilitesLien => 'Relire mes disponibilités';
+
+	/// fr: 'Heure de cet appareil'
+	String get heureAppareil => 'Heure de cet appareil';
+
+	/// fr: 'Heure de cet appareil : elle diffère de celle de votre ville ({ville}).'
+	String heureAppareilVoyage({required Object ville}) => 'Heure de cet appareil : elle diffère de celle de votre ville (${ville}).';
+
+	/// fr: 'Ville'
+	String get colonneVille => 'Ville';
+
+	/// fr: 'Ville non choisie'
+	String get villeAbsente => 'Ville non choisie';
+
+	/// fr: 'Ville vérifiée'
+	String get verifiee => 'Ville vérifiée';
+
+	/// fr: 'Ville à vérifier'
+	String get nonVerifiee => 'Ville à vérifier';
+
+	/// fr: 'Vérifier la ville de {nom}'
+	String verifier({required Object nom}) => 'Vérifier la ville de ${nom}';
+
+	/// fr: 'La vérification n'est pas confirmée. Réessayez dans un instant.'
+	String get verifierEchec => 'La vérification n\'est pas confirmée. Réessayez dans un instant.';
+
+	/// fr: 'Villes à vérifier'
+	String get incoherencesTitre => 'Villes à vérifier';
+
+	/// fr: 'Aucune ville à vérifier pour le moment.'
+	String get incoherencesVide => 'Aucune ville à vérifier pour le moment.';
 }
 
 // Path: parcours
@@ -54839,6 +54939,36 @@ extension on Traductions {
 			'choix.augmenter' => 'Augmenter de 1',
 			'choix.selectionMultiple' => 'Plusieurs réponses possibles',
 			'choix.exemple' => ({required Object texte}) => 'Par exemple : ${texte}',
+			'lieu.titre' => 'Votre ville',
+			'lieu.consigneTuteur' => 'Choisissez la ville où vous habitez. Elle sert à afficher les heures de cours à votre heure. Seuls vous, votre foyer et la direction la voient.',
+			'lieu.consigneEnseignant' => 'Choisissez la ville où vous enseignez. Elle sert à afficher vos heures de cours à votre heure, et la direction la vérifie. Seuls vous et la direction la voient.',
+			'lieu.champ' => 'Rechercher votre ville',
+			'lieu.aide' => 'Les premières lettres du nom suffisent, avec ou sans accent.',
+			'lieu.propositions' => 'Villes à l\'heure de cet appareil',
+			'lieu.resultats' => 'Villes trouvées',
+			'lieu.credit' => 'Liste des villes : GeoNames (geonames.org), licence CC BY 4.0.',
+			'lieu.aucune' => ({required Object texte}) => 'Aucune ville ne commence par « ${texte} ». Essayez les premières lettres du nom, sans accent.',
+			'lieu.chargeEchec' => 'La liste des villes ne s\'est pas chargée',
+			'lieu.chargeEchecPhrase' => 'La liste n\'a pas répondu. Vérifiez votre connexion puis réessayez.',
+			'lieu.choisie' => ({required Object ville, required Object pays}) => 'Ville choisie : ${ville}, ${pays}.',
+			'lieu.enregistrer' => 'Enregistrer ma ville',
+			'lieu.plusTard' => 'Plus tard',
+			'lieu.plusTardPhrase' => 'Vous pouvez encore reporter cette étape. Tant qu\'elle n\'est pas faite, vos heures de cours s\'affichent à l\'heure de cet appareil.',
+			'lieu.obligatoire' => 'Cette étape est maintenant nécessaire pour afficher vos heures de cours à votre heure.',
+			'lieu.echec' => 'Votre ville n\'est pas confirmée. Réessayez dans un instant.',
+			'lieu.disponibilitesTitre' => 'Relisez vos disponibilités',
+			'lieu.disponibilitesPhrase' => 'Votre ville a changé de fuseau. Vos disponibilités gardent leurs heures exactes, mais elles s\'affichent maintenant à votre nouvelle heure : relisez-les.',
+			'lieu.disponibilitesLien' => 'Relire mes disponibilités',
+			'lieu.heureAppareil' => 'Heure de cet appareil',
+			'lieu.heureAppareilVoyage' => ({required Object ville}) => 'Heure de cet appareil : elle diffère de celle de votre ville (${ville}).',
+			'lieu.colonneVille' => 'Ville',
+			'lieu.villeAbsente' => 'Ville non choisie',
+			'lieu.verifiee' => 'Ville vérifiée',
+			'lieu.nonVerifiee' => 'Ville à vérifier',
+			'lieu.verifier' => ({required Object nom}) => 'Vérifier la ville de ${nom}',
+			'lieu.verifierEchec' => 'La vérification n\'est pas confirmée. Réessayez dans un instant.',
+			'lieu.incoherencesTitre' => 'Villes à vérifier',
+			'lieu.incoherencesVide' => 'Aucune ville à vérifier pour le moment.',
 			'parcours.titre' => ({required Object dePrenom}) => 'Le parcours ${dePrenom}',
 			'parcours.intro' => 'Quelques questions pour personnaliser votre parcours. Vous ne verrez ensuite que les horaires et options adaptés à votre situation.',
 			'parcours.reprendre' => 'Reprendre',
@@ -55177,6 +55307,8 @@ extension on Traductions {
 			'compte.tuteur.pageInformations.langue' => 'Langue de l\'interface',
 			'compte.tuteur.pageInformations.fuseau' => 'Fuseau des séances',
 			'compte.tuteur.pageInformations.fuseauIndisponible' => 'Non chargé',
+			_ => null,
+		} ?? switch (path) {
 			'compte.tuteur.pageInformations.fuseauAppareil' => 'Heure de cet appareil',
 			'compte.tuteur.pageInformations.note' => 'Ces informations sont tenues par l\'académie. Elles ne se modifient pas encore depuis l\'application.',
 			'compte.tuteur.pageInformations.modifier' => 'Modifier mes informations',
@@ -55207,8 +55339,6 @@ extension on Traductions {
 			'compte.tuteur.pagePaiements.indisponibleTitre' => 'Paiements pas encore consultables',
 			'compte.tuteur.pagePaiements.indisponiblePhrase' => 'L\'historique des paiements, les reçus et les moyens de paiement ne sont pas encore disponibles dans l\'application. Aucun paiement ne vous est demandé ici.',
 			'compte.tuteur.pagePaiements.aucunTitre' => 'Aucun paiement enregistré',
-			_ => null,
-		} ?? switch (path) {
 			'compte.tuteur.pagePaiements.aucunePhrase' => 'Les paiements enregistrés par l\'académie s\'afficheront ici.',
 			'compte.tuteur.pagePaiements.paiementDu' => ({required Object date}) => 'Paiement du ${date}',
 			'compte.tuteur.pagePaiements.justificatif' => 'Justificatif disponible',
@@ -55691,6 +55821,8 @@ extension on Traductions {
 			'classe.entree.reessayer' => 'Réessayer',
 			'classe.entree.chargementSeance' => 'Chargement de la prochaine séance.',
 			'classe.entree.progressionValeur' => ({required Object chapitre, required Object pourcentage}) => '${chapitre} · ${pourcentage} %',
+			_ => null,
+		} ?? switch (path) {
 			'classe.entree.dst' => ({required Object avant, required Object apres}) => 'Changement d\'heure : le cours passera de ${avant} à ${apres}.',
 			'classe.entree.annonce.aVenir' => 'Séance à venir',
 			'classe.entree.annonce.fenetreOuverte' => 'La salle est ouverte',
@@ -55721,8 +55853,6 @@ extension on Traductions {
 			'classe.planning' => 'Planning',
 			'classe.travail' => 'Avant le prochain cours',
 			'classe.ressources' => 'Bibliothèque',
-			_ => null,
-		} ?? switch (path) {
 			'classe.progression' => 'Progression',
 			'classe.observer' => 'Observer la séance',
 			'classe.titre' => 'Classe',
@@ -56205,6 +56335,8 @@ extension on Traductions {
 			'enseignant.cahier.repriseVerset' => 'Verset',
 			'enseignant.cahier.repriseVersetBornes' => ({required Object n}) => 'Entre 1 et ${n}',
 			'enseignant.cahier.repriseRetenir' => 'Retenir cette position',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.cahier.repriseIncomplete' => 'Choisissez la sourate puis le verset.',
 			'enseignant.cahier.repriseAucune' => 'Aucune sourate ne correspond',
 			'enseignant.cahier.repriseAucuneDetail' => 'Essayez un autre nom, ou son numéro de 1 à 114.',
@@ -56235,8 +56367,6 @@ extension on Traductions {
 			'enseignant.profil.statutProvisoireDetail' => 'Vous enseignez déjà. Votre dossier reste à compléter, sans coupure automatique.',
 			'enseignant.profil.statutSuspendu' => 'Compte suspendu',
 			'enseignant.profil.statutSuspenduDetail' => 'Vous pouvez joindre l\'académie pour connaître la marche à suivre.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.profil.statutInconnu' => 'Statut non disponible',
 			'enseignant.profil.statutInconnuDetail' => 'Nous n\'avons pas pu lire votre statut.',
 			'enseignant.profil.statutDivergent' => 'Ce statut vient de changer. Rouvrez l\'application pour que votre accès suive.',
@@ -56719,6 +56849,8 @@ extension on Traductions {
 			'galerie.elevation' => 'Élévation et rayons',
 			'galerie.typographie' => 'Échelles typographiques',
 			'galerie.polices' => 'Polices',
+			_ => null,
+		} ?? switch (path) {
 			'galerie.composants' => 'Composants partagés',
 			'galerie.modeEnfant' => 'Interface guidée',
 			'galerie.modeStandard' => 'Mode standard',
@@ -56749,8 +56881,6 @@ extension on Traductions {
 			'tc.groupe.temps.demainA' => ({required Object heure}) => 'Cours demain à ${heure}',
 			'tc.groupe.temps.dansJours' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours, one: 'Cours dans ${jours} jour', other: 'Cours dans ${jours} jours', ), 
 			'tc.groupe.temps.imminent' => 'Cours imminent',
-			_ => null,
-		} ?? switch (path) {
 			'tc.groupe.temps.salleOuverte' => ({required Object reste}) => 'Salle ouverte · ${reste}',
 			'tc.groupe.temps.salleOuverteCourt' => 'Salle ouverte',
 			'tc.groupe.temps.attente' => 'Vous êtes dans la salle. Le cours n\'a pas encore commencé.',
@@ -57233,6 +57363,8 @@ extension on Traductions {
 			'tc.parcours.postCours.toutEstNominal' => 'Rien ne demande votre attention.',
 			'tc.parcours.postCours.reprise' => 'Reprise proposée',
 			'tc.parcours.postCours.repriseInconnue' => 'Aucune position de reprise connue pour cette séance.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.parcours.postCours.travail' => 'Travail proposé',
 			'tc.parcours.postCours.travailAucun' => 'Aucun travail proposé pour l\'instant.',
 			'tc.parcours.postCours.valider' => 'Valider',
@@ -57263,8 +57395,6 @@ extension on Traductions {
 			'adulte.maClasse.aPropos' => 'À propos de cette classe',
 			'adulte.maClasse.participants' => 'Participants',
 			'adulte.maClasse.vous' => ({required Object prenom}) => '${prenom} (vous)',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.maClasse.sansDonnees' => 'Votre classe n\'a pas pu être chargée',
 			'adulte.maClasse.aucuneClasseDetail' => 'Votre classe, ses participants et ses ressources s\'afficheront ici dès qu\'elle sera ouverte.',
 			'adulte.monEspace.informations' => 'Mes informations',
@@ -57747,6 +57877,8 @@ extension on Traductions {
 			'suiviFamille.etapes.classeCreee' => 'Classe créée',
 			'suiviFamille.etapes.enseignantAffecte' => 'Enseignant affecté',
 			'suiviFamille.etapes.eleveIntegre' => 'Élève intégré',
+			_ => null,
+		} ?? switch (path) {
 			'suiviFamille.etapes.premiereSeance' => 'Première séance',
 			'suiviFamille.etats.fait' => 'Fait',
 			'suiviFamille.etats.enCours' => 'En cours',
@@ -57777,8 +57909,6 @@ extension on Traductions {
 			'suiviDemandes.contexte' => 'Chaque demande avance étape par étape. Vous êtes prévenu à chaque passage.',
 			'suiviDemandes.carteTitre' => ({required Object dePrenom}) => 'Demande de créneau ${dePrenom}',
 			'suiviDemandes.joursChoisis' => 'Jours choisis',
-			_ => null,
-		} ?? switch (path) {
 			'suiviDemandes.heureChoisie' => 'Heure choisie',
 			'suiviDemandes.joursEt' => ({required Object debut, required Object dernier}) => '${debut} et ${dernier}',
 			'suiviDemandes.heureFuseau' => ({required Object heure, required Object deVille}) => '${heure}, heure ${deVille}',
@@ -58261,6 +58391,8 @@ extension on Traductions {
 			'com.vocal.composer.actionPause' => 'Pause',
 			'com.vocal.composer.actionReprendre' => 'Reprendre',
 			'com.vocal.composer.actionArreter' => 'Arrêter',
+			_ => null,
+		} ?? switch (path) {
 			'com.vocal.composer.actionSupprimer' => 'Supprimer',
 			'com.vocal.composer.actionEnvoyer' => 'Envoyer',
 			'com.vocal.composer.confirmerTitre' => 'Supprimer ce message vocal ?',
@@ -58291,8 +58423,6 @@ extension on Traductions {
 			'com.vocal.demo.autorise' => 'Micro autorisé',
 			'com.vocal.demo.aDemander' => 'À demander',
 			'com.vocal.demo.refuse' => 'Micro refusé',
-			_ => null,
-		} ?? switch (path) {
 			'com.vocal.demo.nonConfirme' => 'Non confirmé',
 			'com.vocal.demo.indisponible' => 'Indisponible',
 			'com.vocal.demo.recu' => 'Message vocal reçu',
@@ -58775,6 +58905,8 @@ extension on Traductions {
 			'com.annonces.administration.moderation.politique' => 'Politique anti-promotion',
 			'com.annonces.administration.moderation.ouvrirSemantique' => ({required Object objet, required Object motif}) => 'Examiner ${objet}, motif ${motif}',
 			'com.annonces.administration.moderation.regleMotif.publicite' => 'La publicité n\'est pas autorisée dans la Communauté enseignants.',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.administration.moderation.regleMotif.lienAffilie' => 'Les liens affiliés ne sont pas autorisés dans la Communauté enseignants.',
 			'com.annonces.administration.moderation.regleMotif.vente' => 'La vente de produits ou de services n\'est pas autorisée dans cet espace.',
 			'com.annonces.administration.moderation.regleMotif.sollicitation' => 'La sollicitation commerciale n\'est pas autorisée dans cet espace.',
@@ -58805,8 +58937,6 @@ extension on Traductions {
 			'com.annonces.demoPublication.rentreeTitre' => 'Reprise des cours après les vacances',
 			'com.annonces.demoPublication.rentreeTexte' => 'Les séances reprennent le lundi 6 janvier aux horaires habituels.',
 			'com.annonces.demoPublication.signalementAffilie' => 'Publication « Fiches de tajwid à imprimer »',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.demoPublication.extraitAffilie' => 'Retrouvez mes fiches avec ce lien partenaire, remise de 20 % avec mon code.',
 			'com.annonces.demoPublication.signalementVente' => 'Publication « Cours particuliers disponibles »',
 			'com.annonces.demoPublication.extraitVente' => 'Je propose des cours particuliers payants le week-end, écrivez-moi.',
@@ -59289,6 +59419,8 @@ extension on Traductions {
 			'comptable.tresorerie.transfert.utiliserPropose' => 'Utiliser le montant proposé',
 			'comptable.tresorerie.transfert.erreurMontant' => 'Saisissez un montant entier supérieur à zéro.',
 			'comptable.tresorerie.transfert.verifier' => 'Vérifier le mouvement',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.tresorerie.transfert.recapPhrase' => 'Vérifiez le montant exact avant d\'envoyer.',
 			'comptable.tresorerie.transfert.de' => 'De',
 			'comptable.tresorerie.transfert.vers' => 'Vers',
@@ -59319,8 +59451,6 @@ extension on Traductions {
 			'comptable.encaissements.filtreRembourses' => 'Remboursés',
 			'comptable.encaissements.filtreContestes' => 'Contestés',
 			'comptable.encaissements.filtreARapprocher' => 'À rapprocher',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.encaissements.recherche' => 'Rechercher une famille ou une référence',
 			'comptable.encaissements.colDate' => 'Date',
 			'comptable.encaissements.colFamille' => 'Famille',
@@ -59803,6 +59933,8 @@ extension on Traductions {
 			'comptable.direction.delegationPanneau.premierPaiement' => 'Premier paiement d\'un bénéficiaire',
 			'comptable.direction.delegationPanneau.premierPaiementDetail' => 'Le premier paiement vers un bénéficiaire demande une seconde validation.',
 			'comptable.direction.delegationPanneau.coordonnees' => 'Coordonnées modifiées récemment',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.coordonneesDetail' => 'Un paiement vers des coordonnées modifiées récemment demande une seconde validation.',
 			'comptable.direction.delegationPanneau.joursRecents' => 'Durée d\'une modification récente',
 			'comptable.direction.delegationPanneau.joursRecentsDetail' => 'Pendant ce nombre de jours après une modification, les coordonnées sont jugées récentes.',
@@ -59833,8 +59965,6 @@ extension on Traductions {
 			'comptable.direction.delegationPanneau.reactiveeActive' => 'Délégations réactivées.',
 			'comptable.direction.delegationPanneau.reactiveeExpiree' => 'Délégations réactivées, mais la délégation est expirée : renouvelez-la pour qu\'elle reparte sur sa durée.',
 			'comptable.direction.delegationPanneau.reactiverEchec' => 'La réactivation n\'est pas confirmée : la demande n\'est peut-être pas parvenue jusqu\'à Rewayah, ou votre vérification en deux étapes est à refaire. Vérifiez l\'état de la délégation avant de réessayer.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.suspendueTitre' => 'Délégations suspendues',
 			'comptable.direction.delegationPanneau.suspendueDepuis' => ({required Object date}) => 'Suspendues depuis le ${date}. Le Comptable ne peut rien exécuter sans votre validation.',
 			'comptable.direction.delegationPanneau.suspendueSansDate' => 'Le Comptable ne peut rien exécuter sans votre validation.',
@@ -60317,6 +60447,8 @@ extension on Traductions {
 			'avis.admin.publier.question' => ({required Object deNom}) => 'Publier l\'avis ${deNom} ?',
 			'avis.admin.publier.consequence' => 'L\'avis, le nom affiché, le pays et la date paraîtront sur le site de Rewayah Academy au prochain passage du site. Le texte n\'est pas modifié.',
 			'avis.admin.publier.action' => 'Publier l\'avis',
+			_ => null,
+		} ?? switch (path) {
 			'avis.admin.publier.rester' => 'Ne rien changer',
 			'avis.admin.refuser.titre' => ({required Object deNom}) => 'Refuser l\'avis ${deNom}',
 			'avis.admin.refuser.intro' => 'Choisissez le motif du refus. Un avis critique mais respectueux se publie.',
@@ -60347,8 +60479,6 @@ extension on Traductions {
 			'avis.admin.liens.creerIntro' => 'Un lien ouvre le formulaire d\'avis, sans compte ni connexion. Donnez-lui un nom pour le reconnaître.',
 			'avis.admin.liens.libelle' => 'Nom du lien',
 			'avis.admin.liens.libelleAide' => 'Par exemple : Familles octobre 2026.',
-			_ => null,
-		} ?? switch (path) {
 			'avis.admin.liens.libelleErreur' => 'Donnez un nom au lien.',
 			'avis.admin.liens.jours' => 'Durée en jours',
 			'avis.admin.liens.joursAide' => '90 par défaut, 365 au plus.',
@@ -60831,6 +60961,8 @@ extension on Traductions {
 			'candidatsFlux.importFormulaires.apercu.contactsMasques' => 'Les contacts sont masqués dans l\'aperçu.',
 			'candidatsFlux.importFormulaires.apercu.lignes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} ligne lue', other: '${n} lignes lues', ), 
 			'candidatsFlux.importFormulaires.apercu.colonnesReconnues' => ({required Object reconnues, required Object total}) => 'Colonnes reconnues : ${reconnues} sur ${total}',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.apercu.premieres' => 'Les premières lignes',
 			'candidatsFlux.importFormulaires.apercu.ligne' => ({required Object ligne}) => 'Ligne ${ligne}',
 			'candidatsFlux.importFormulaires.apercu.autres' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} autre ligne n\'est pas montrée ici.', other: '${n} autres lignes ne sont pas montrées ici.', ), 
@@ -60861,8 +60993,6 @@ extension on Traductions {
 			'candidatsFlux.importFormulaires.champ.languesExplication' => 'Langues d\'explication',
 			'candidatsFlux.importFormulaires.champ.languesExplicationAide' => 'Les langues dans lesquelles la personne peut expliquer et corriger.',
 			'candidatsFlux.importFormulaires.champ.memorisation' => 'Mémorisation du Coran',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.champ.memorisationAide' => 'Une déclaration, pas un constat : le niveau se constate à l\'entretien.',
 			'candidatsFlux.importFormulaires.champ.ijaza' => 'Ijaza ou certificat à présenter',
 			'candidatsFlux.importFormulaires.champ.ijazaAide' => 'Ce que la personne peut montrer à l\'entretien.',
