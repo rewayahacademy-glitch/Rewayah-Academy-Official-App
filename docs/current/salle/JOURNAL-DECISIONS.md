@@ -2129,6 +2129,11 @@ de `HARMONIE-2026-11-13.md`.
 de l'application, pause, journal des sorties, textes (aucun texte ajouté). Rien n'est gardé
 au-delà de l'appel.
 
+**Trouvé en chemin.** `PageMadina15` divisait par zéro quand la page recevait une place nulle le
+temps d'une mise en page (hauteur NaN, exception) ; elle ne compose plus rien dans ce cas. Le cas
+n'est apparu que dans un test qui remonte la salle sous un conteneur neuf (`salle_ordinateur_test`,
+« B : repli ») : la cause exacte de cette image à largeur nulle n'est pas établie.
+
 **Limites.** `_verifierRecitant` ne tourne que page ouverte (salle réduite : le serveur termine la
 récitation d'un élève parti). Au téléphone à 390 en français, la marque de récitation fait passer
 le chevron de la salle réduite sur une seconde rangée (captures). Prouvé par tests et captures de
