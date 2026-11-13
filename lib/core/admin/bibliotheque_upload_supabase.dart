@@ -101,11 +101,11 @@ class BibliothequeUploadSupabase {
   }) async* {
     final _DepotSigne? depot = _depots[uploadId];
     if (depot == null || octets == null || octets.isEmpty) {
-      // Rien a envoyer (fichier vide) ou intention inconnue : ce n'est pas la
-      // connexion.
+      // Un fichier vide a sa phrase ; une intention inconnue est une faute du
+      // service. Ni l'un ni l'autre n'est la connexion.
       yield ProgressionUpload(
         phase: PhaseUpload.echec,
-        erreur: depot == null ? ErreurUpload.service : ErreurUpload.type,
+        erreur: depot == null ? ErreurUpload.service : ErreurUpload.vide,
       );
       return;
     }
@@ -240,13 +240,26 @@ class BibliothequeUploadSupabase {
       // 0 : le client n'a recu aucune reponse (`FunctionsFetchException`).
       0 => ErreurUpload.reseau,
       401 => ErreurUpload.session,
+      // Un compte sans droit lit toujours un refus, jamais un reglage.
       403 => ErreurUpload.refuse,
+      409 when motif.contains('deja depose') => ErreurUpload.dejaDepose,
+      409 => ErreurUpload.nonModifiable,
+      410 => ErreurUpload.expire,
+      413 => ErreurUpload.taille,
+      400 when motif.contains('fichier vide') => ErreurUpload.vide,
+      400
+          when motif.contains('invalide ou format') ||
+              motif.contains('vignette invalide') =>
+        ErreurUpload.type,
+      422 when motif.contains('different du type') => ErreurUpload.contenu,
+      422 when motif.contains('introuvable') => ErreurUpload.introuvable,
       422 => ErreurUpload.empreinte,
-      400 || 413 => ErreurUpload.type,
       408 || 504 || 546 => ErreurUpload.delai,
       503 when motif.contains('mal reglee') => ErreurUpload.reglage,
       503 when motif.contains('confirmation') => ErreurUpload.nonActive,
       503 when motif.contains('stockage') => ErreurUpload.stockage,
+      // Un corps ou une action que la fonction ne connait pas, une panne :
+      // le service, jamais « le type du fichier ».
       _ => ErreurUpload.service,
     };
   }

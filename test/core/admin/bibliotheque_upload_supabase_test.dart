@@ -159,7 +159,17 @@ void main() {
     final Map<(int, String), ErreurUpload> cas = <(int, String), ErreurUpload>{
       (400, 'fichier invalide ou format non autorise'): ErreurUpload.type,
       (401, 'authentification requise'): ErreurUpload.session,
+      (403, 'depot non autorise'): ErreurUpload.refuse,
+      // L'ancienne fonction rendait 403 pour tout : toujours un refus.
       (403, 'depot refuse'): ErreurUpload.refuse,
+      (409, 'document non modifiable'): ErreurUpload.nonModifiable,
+      (409, 'fichier deja depose'): ErreurUpload.dejaDepose,
+      (413, 'fichier trop lourd'): ErreurUpload.taille,
+      (400, 'fichier vide'): ErreurUpload.vide,
+      // Une action ou un corps inconnus ne sont pas « le type du fichier ».
+      (400, 'action inconnue'): ErreurUpload.service,
+      (400, 'corps invalide'): ErreurUpload.service,
+      (503, 'service mal regle'): ErreurUpload.service,
       (404, 'Function not found'): ErreurUpload.service,
       (500, 'erreur interne'): ErreurUpload.service,
       (503, 'stockage indisponible'): ErreurUpload.stockage,
@@ -236,6 +246,25 @@ void main() {
   });
 
   group('une cause, une phrase : l\'envoi et la confirmation', () {
+    test('un fichier vide : « vide », rien ne part', () async {
+      final BibliothequeUploadSupabase port = BibliothequeUploadSupabase(
+        supabase,
+        transport: transport,
+      );
+      final IntentionUpload intention = await port.demanderUpload(
+        supportId: 'c2900000-0000-0000-0000-000000000002',
+        fichier: pdf(),
+      );
+      final ProgressionUpload p =
+          (await port
+                  .deposer(uploadId: intention.id, octets: Uint8List(0))
+                  .toList())
+              .last;
+      expect(p.erreur, ErreurUpload.vide);
+      expect(transport.url, isNull);
+      port.dispose();
+    });
+
     Future<ProgressionUpload> dernier(BibliothequeUploadSupabase port) async {
       final IntentionUpload intention = await port.demanderUpload(
         supportId: 'c2900000-0000-0000-0000-000000000002',
@@ -284,7 +313,12 @@ void main() {
       (503, 'confirmation indisponible'): ErreurUpload.nonActive,
       (503, 'confirmation mal reglee'): ErreurUpload.reglage,
       (503, 'stockage indisponible'): ErreurUpload.stockage,
-      (403, 'confirmation refusee'): ErreurUpload.refuse,
+      (403, 'depot non autorise'): ErreurUpload.refuse,
+      (409, 'document non modifiable'): ErreurUpload.nonModifiable,
+      (410, 'demande expiree'): ErreurUpload.expire,
+      // Un .pdf qui n'en est pas un : son contenu, pas un envoi abime.
+      (422, 'contenu different du type annonce'): ErreurUpload.contenu,
+      (422, 'objet depose introuvable'): ErreurUpload.introuvable,
       (422, 'contenu depose invalide'): ErreurUpload.empreinte,
       (500, 'erreur interne'): ErreurUpload.service,
       (546, 'limite de ressources'): ErreurUpload.delai,

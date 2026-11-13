@@ -5,7 +5,10 @@ import {
   mimeVignetteAutorise,
   sha256Hex,
   TAILLE_VIGNETTE_MAX_OCTETS,
+  mimeConnu,
+  motifRefus,
   nomNeutre,
+  reponseRefus,
 } from "./bibliotheque_upload.ts";
 
 Deno.test("upload bibliotheque: bornes des types et finalites", () => {
@@ -81,4 +84,39 @@ Deno.test("upload bibliotheque: le nom dans la cle vient du type, jamais du clie
   assertEquals(nomNeutre(" Application/PDF "), "document.pdf");
   assertEquals(nomNeutre("video/mp4"), null);
   assertEquals(nomNeutre(""), null);
+});
+
+Deno.test("upload bibliotheque: nomNeutre ne lit jamais le prototype", () => {
+  for (const piege of ["constructor", "__proto__", "toString", "hasOwnProperty", "valueOf"]) {
+    assertEquals(nomNeutre(piege), null);
+  }
+});
+
+Deno.test("upload bibliotheque: un type connu trop lourd n'est pas un type refuse", () => {
+  assertEquals(mimeConnu("application/pdf", "support"), true);
+  assertEquals(mimeConnu("audio/mpeg", "support"), true);
+  // Une preuve n'est jamais un audio.
+  assertEquals(mimeConnu("audio/mpeg", "preuve"), false);
+  assertEquals(mimeConnu("video/mp4", "support"), false);
+  assertEquals(mimeConnu("constructor", "support"), false);
+});
+
+Deno.test("upload bibliotheque: chaque refus de la base a son motif et son statut", () => {
+  const cas: [string, string, number][] = [
+    ["BibliothequeUploadNonAutorise", "depot non autorise", 403],
+    ["BibliothequeBrouillonIntrouvable", "document non modifiable", 409],
+    ["BibliothequeVersionDejaUnFichier", "fichier deja depose", 409],
+    ["BibliothequeUploadIntentionIndisponible", "demande expiree", 410],
+    ["BibliothequeUploadParametresInvalides", "fichier invalide ou format non autorise", 400],
+    ["BibliothequeUploadTypeOuTailleInvalide", "fichier invalide ou format non autorise", 400],
+    ["connection terminated unexpectedly", "depot impossible", 500],
+  ];
+  for (const [message, attendu, statut] of cas) {
+    assertEquals(reponseRefus(motifRefus({ message })), [attendu, statut]);
+  }
+  // Sans message : une panne, jamais un « refus » qui accuserait la personne.
+  assertEquals(reponseRefus(motifRefus(null)), ["depot impossible", 500]);
+  assertEquals(reponseRefus(motifRefus({})), ["depot impossible", 500]);
+  // Un compte sans droit lit toujours un refus (403), jamais un reglage (503).
+  assertEquals(reponseRefus(motifRefus({ message: "BibliothequeUploadNonAutorise" }))[1], 403);
 });
