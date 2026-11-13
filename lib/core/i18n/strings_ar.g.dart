@@ -19995,7 +19995,7 @@ class _Traductions$apprendre$bibliotheque$classeErreur$ar extends Traductions$ap
 
 	// Translations
 	@override String get message => 'لا تظهر مستندات هذا الفصل الآن';
-	@override String get invitation => 'تحقق من اتصالك ثم اضغط إعادة المحاولة.';
+	@override String get invitation => 'اضغط إعادة المحاولة بعد لحظات.';
 }
 
 // Path: apprendre.bibliotheque.rayonCoursVide
@@ -35473,7 +35473,7 @@ extension on TraductionsAr {
 			'apprendre.bibliotheque.rayonCours' => 'وثائق الدروس',
 			'apprendre.bibliotheque.rayonClasse' => 'لهذا الفصل',
 			'apprendre.bibliotheque.classeErreur.message' => 'لا تظهر مستندات هذا الفصل الآن',
-			'apprendre.bibliotheque.classeErreur.invitation' => 'تحقق من اتصالك ثم اضغط إعادة المحاولة.',
+			'apprendre.bibliotheque.classeErreur.invitation' => 'اضغط إعادة المحاولة بعد لحظات.',
 			'apprendre.bibliotheque.rayonPlusLoin' => 'للتعمّق أكثر',
 			'apprendre.bibliotheque.rayonCoursVide.message' => 'ستظهر وثائق الدروس هنا',
 			'apprendre.bibliotheque.rayonCoursVide.invitation' => 'تظهر بمجرد أن تنشرها الأكاديمية.',

@@ -42002,8 +42002,8 @@ class Traductions$apprendre$bibliotheque$classeErreur$fr {
 	/// fr: 'Les documents de cette classe ne s'affichent pas pour l'instant'
 	String get message => 'Les documents de cette classe ne s\'affichent pas pour l\'instant';
 
-	/// fr: 'Vérifiez votre connexion, puis touchez Réessayer.'
-	String get invitation => 'Vérifiez votre connexion, puis touchez Réessayer.';
+	/// fr: 'Touchez Réessayer dans un instant.'
+	String get invitation => 'Touchez Réessayer dans un instant.';
 }
 
 // Path: apprendre.bibliotheque.rayonCoursVide
@@ -61470,7 +61470,7 @@ extension on Traductions {
 			'apprendre.bibliotheque.rayonCours' => 'Documents des cours',
 			'apprendre.bibliotheque.rayonClasse' => 'Pour cette classe',
 			'apprendre.bibliotheque.classeErreur.message' => 'Les documents de cette classe ne s\'affichent pas pour l\'instant',
-			'apprendre.bibliotheque.classeErreur.invitation' => 'Vérifiez votre connexion, puis touchez Réessayer.',
+			'apprendre.bibliotheque.classeErreur.invitation' => 'Touchez Réessayer dans un instant.',
 			'apprendre.bibliotheque.rayonPlusLoin' => 'Pour aller plus loin',
 			'apprendre.bibliotheque.rayonCoursVide.message' => 'Les documents des cours arriveront ici',
 			'apprendre.bibliotheque.rayonCoursVide.invitation' => 'Ils apparaissent dès que l\'académie les publie.',
