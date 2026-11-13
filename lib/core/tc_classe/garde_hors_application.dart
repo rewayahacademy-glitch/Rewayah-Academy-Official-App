@@ -13,11 +13,13 @@ import '../theme/app_delais.dart';
 /// direction ») : le reglage du serveur (`salle.sorties.delai_secondes`, lu
 /// dans `regles_academie()`) quand il existe, [AppDelais.horsApplicationEleve]
 /// sinon (serveur d'avant le lot, lecture en cours ou en echec).
-final Provider<Duration> delaiHorsApplicationProvider = Provider<Duration>(
-  (Ref ref) =>
-      ref.watch(reglagesSortiesProvider).value?.delai ??
-      AppDelais.horsApplicationEleve,
-);
+final Provider<Duration> delaiHorsApplicationProvider = Provider<Duration>((
+  Ref ref,
+) {
+  final AsyncValue<ReglagesSorties?> lu = ref.watch(reglagesSortiesProvider);
+  return (lu.hasValue && !lu.hasError ? lu.value?.delai : null) ??
+      AppDelais.horsApplicationEleve;
+});
 
 /// HORS-SALLE-1 : la porte d'une exception future. Un geste « Je m'absente un
 /// instant » (autre lot, non construit) suspendra la sortie de l'eleve

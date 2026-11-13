@@ -146,8 +146,11 @@ class _AccordSortiesPageState extends ConsumerState<AccordSortiesPage> {
             ),
           ),
           Ecart.vXl,
+          // Un seul bouton plein par ecran (K-56) : celui de l'accord ;
+          // « Reessayer » est en contour.
           ActionPrincipale(
             libelle: t.commun.reessayer,
+            niveau: NiveauAction.secondaire,
             onPress: () => ref.invalidate(accordsSortiesProvider),
           ),
         ],

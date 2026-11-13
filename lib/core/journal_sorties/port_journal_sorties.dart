@@ -275,15 +275,25 @@ final Provider<PortJournalSorties> portJournalSortiesProvider =
 /// Les reglages publics, relus a chaque changement de compte.
 final FutureProvider<ReglagesSorties?> reglagesSortiesProvider =
     FutureProvider<ReglagesSorties?>((Ref ref) {
-      ref.watch(sessionProvider.select((SessionState s) => s.profileId));
+      _suivreLeCompte(ref);
       return ref.watch(portJournalSortiesProvider).reglages();
     });
+
+/// Relit a chaque changement de compte. Une session illisible (pas de
+/// Supabase : tests, demonstration) ne fait pas tomber la lecture.
+void _suivreLeCompte(Ref ref) {
+  try {
+    ref.watch(sessionProvider.select((SessionState s) => s.profileId));
+  } on Object {
+    // La lecture du port decide seule ; elle se replie sans erreur.
+  }
+}
 
 /// L'etat des accords de l'appelant (tuteur : ses enfants ; eleve adulte
 /// autonome : lui-meme).
 final FutureProvider<EtatAccordsSorties?> accordsSortiesProvider =
     FutureProvider<EtatAccordsSorties?>((Ref ref) {
-      ref.watch(sessionProvider.select((SessionState s) => s.profileId));
+      _suivreLeCompte(ref);
       return ref.watch(portJournalSortiesProvider).accords();
     });
 
