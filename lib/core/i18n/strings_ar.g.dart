@@ -17251,7 +17251,7 @@ class _Traductions$priere$direction$feuille$ar extends Traductions$priere$direct
 	@override String get vendrediNon => 'لا';
 	@override String get vendrediDebut => 'بداية فترة الجمعة';
 	@override String get vendrediFin => 'نهاية فترة الجمعة';
-	@override String get plageAide => 'بتوقيت المعلم بصيغة HH:MM. تُبلَّغ الإدارة بكل موعد يتقاطع مع هذه الفترة دون منع.';
+	@override String get plageAide => 'بتوقيت المعلم بصيغة ساعة:دقيقة (مثل 12:30). تُبلَّغ الإدارة بكل موعد يتقاطع مع هذه الفترة دون منع.';
 	@override String get apercu => 'أوقات اليوم';
 	@override String get apercuVide => 'لا توجد أوقات لعرضها قبل حفظ المكان.';
 	@override String get enregistrer => 'حفظ المكان';
@@ -32062,7 +32062,7 @@ extension on TraductionsAr {
 			'priere.direction.feuille.vendrediNon' => 'لا',
 			'priere.direction.feuille.vendrediDebut' => 'بداية فترة الجمعة',
 			'priere.direction.feuille.vendrediFin' => 'نهاية فترة الجمعة',
-			'priere.direction.feuille.plageAide' => 'بتوقيت المعلم بصيغة HH:MM. تُبلَّغ الإدارة بكل موعد يتقاطع مع هذه الفترة دون منع.',
+			'priere.direction.feuille.plageAide' => 'بتوقيت المعلم بصيغة ساعة:دقيقة (مثل 12:30). تُبلَّغ الإدارة بكل موعد يتقاطع مع هذه الفترة دون منع.',
 			'priere.direction.feuille.apercu' => 'أوقات اليوم',
 			'priere.direction.feuille.apercuVide' => 'لا توجد أوقات لعرضها قبل حفظ المكان.',
 			'priere.direction.feuille.enregistrer' => 'حفظ المكان',
