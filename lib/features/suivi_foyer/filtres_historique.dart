@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 
+import '../../core/i18n/isolat_bidi.dart' show enTeteArabe;
 import '../../core/i18n/strings.g.dart';
 import '../../core/planning/service_planning.dart';
 import '../../core/presence/service_presence.dart';
@@ -392,10 +393,12 @@ String heureMinute(DateTime instant) =>
     '${_deux(instant.hour)}:${_deux(instant.minute)}';
 
 /// « 23 sept. 2026 ».
-String dateCourte(DateTime instant) => t.historique.dateCourte(
-  jour: instant.day,
-  mois: t.historique.moisCourts[instant.month - 1],
-  annee: instant.year,
+String dateCourte(DateTime instant) => enTeteArabe(
+  t.historique.dateCourte(
+    jour: instant.day,
+    mois: t.historique.moisCourts[instant.month - 1],
+    annee: instant.year,
+  ),
 );
 
 /// « 4 oct. » dans l'annee de [maintenant], « 4 oct. 2025 » sinon : la
@@ -403,18 +406,22 @@ String dateCourte(DateTime instant) => t.historique.dateCourte(
 /// 4, N-10).
 String dateCompacte(DateTime instant, DateTime maintenant) =>
     instant.year == maintenant.year
-    ? t.historique.dateCourteSansAnnee(
-        jour: instant.day,
-        mois: t.historique.moisCourts[instant.month - 1],
+    ? enTeteArabe(
+        t.historique.dateCourteSansAnnee(
+          jour: instant.day,
+          mois: t.historique.moisCourts[instant.month - 1],
+        ),
       )
     : dateCourte(instant);
 
 /// « mercredi 23 septembre 2026 ».
-String dateLongueHistorique(DateTime instant) => t.historique.dateLongue(
-  jourSemaine: t.commun.dates.jours[instant.weekday - 1].toLowerCase(),
-  jour: instant.day,
-  mois: t.commun.dates.mois[instant.month - 1],
-  annee: instant.year,
+String dateLongueHistorique(DateTime instant) => enTeteArabe(
+  t.historique.dateLongue(
+    jourSemaine: t.commun.dates.jours[instant.weekday - 1].toLowerCase(),
+    jour: instant.day,
+    mois: t.commun.dates.mois[instant.month - 1],
+    annee: instant.year,
+  ),
 );
 
 /// « lundi 21 sept. 2026 » : le sous-titre des details, sur une ligne.

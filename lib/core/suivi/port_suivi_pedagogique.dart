@@ -61,15 +61,13 @@ class SuiviPedagogique {
     this.semainesEcoulees,
     this.rythme = Rythme.inconnu,
     this.pageReprise,
-    this.sourates,
     this.niveauNom,
     this.matierePrincipale,
     this.matiereSecondaire,
     this.entreeLe,
     this.dateLimiteSemaines,
     this.horizon,
-    this.chemin = const <EtapeDuChemin>[],
-    this.eleveVoitDates = false,
+    this.eleveVoitDates,
     this.enAttenteEntretien = false,
   });
 
@@ -84,14 +82,12 @@ class SuiviPedagogique {
       semainesEcoulees = null,
       rythme = Rythme.inconnu,
       pageReprise = null,
-      sourates = null,
       niveauNom = null,
       matierePrincipale = null,
       matiereSecondaire = null,
       entreeLe = null,
       dateLimiteSemaines = null,
       horizon = null,
-      chemin = const <EtapeDuChemin>[],
       eleveVoitDates = false,
       enAttenteEntretien = true;
 
@@ -113,8 +109,6 @@ class SuiviPedagogique {
         : const <Object?, Object?>{};
     final Object? page = brut['page_reprise'];
     final int? pageLue = page is num ? page.toInt() : null;
-    final Object? sourates = brut['sourates'];
-    final Object? chemin = brut['chemin'];
     return SuiviPedagogique(
       etapeNom: nom,
       etapeOrdre: _entier(etape['ordre']),
@@ -128,9 +122,6 @@ class SuiviPedagogique {
       pageReprise: pageLue != null && pageLue >= 1 && pageLue <= 604
           ? pageLue
           : null,
-      sourates: sourates is Map
-          ? SouratesValidees.depuis(sourates['validees'], sourates['total'])
-          : null,
       niveauNom: _texte(n['nom']),
       matierePrincipale: _texte(etape['matiere_principale']),
       matiereSecondaire: _texte(etape['matiere_secondaire']),
@@ -141,11 +132,10 @@ class SuiviPedagogique {
       horizon: n['horizon'] is String
           ? DateTime.tryParse('${n['horizon']}')
           : null,
-      chemin: <EtapeDuChemin>[
-        for (final Object? e in chemin is List ? chemin : const <Object?>[])
-          if (EtapeDuChemin.depuis(e) case final EtapeDuChemin lue) lue,
-      ],
-      eleveVoitDates: brut['eleve_voit_dates'] == true,
+      // Absent (reponse d'avant le socle) : nul, l'ecran garde alors sa regle d'avant.
+      eleveVoitDates: brut.containsKey('eleve_voit_dates')
+          ? brut['eleve_voit_dates'] == true
+          : null,
     );
   }
 
@@ -186,10 +176,6 @@ class SuiviPedagogique {
       pageReprise: pageLue != null && pageLue >= 1 && pageLue <= 604
           ? pageLue
           : null,
-      sourates: SouratesValidees.depuis(
-        ligne['sourates_validees'],
-        ligne['sourates_total'],
-      ),
     );
   }
 
@@ -221,11 +207,6 @@ class SuiviPedagogique {
   /// rien n'a ete presente : la ligne se cache.
   final int? pageReprise;
 
-  /// SOURATES (directeur, 11/11/2026, option A) : les sourates des bases
-  /// validees au cahier, sur leur total ; nulle quand le serveur ne les rend
-  /// pas (jamais un 0 invente : l'anneau reste dore).
-  final SouratesValidees? sourates;
-
   /// SOCLE-PROGRAMME : le nom du niveau (« Les bases »), nul s'il manque.
   final String? niveauNom;
 
@@ -246,97 +227,17 @@ class SuiviPedagogique {
   /// horizon, pas une date de plus a tenir). Nul quand le serveur le retient.
   final DateTime? horizon;
 
-  /// Le chemin des etapes du niveau, dans l'ordre, la sienne marquee.
-  final List<EtapeDuChemin> chemin;
-
   /// Rendu par le serveur, independant de qui lit : l'eleve lui-meme voit-il
-  /// ses dates et ses durees ? Faux de 6 a 9 ans et quand la tranche est
+  /// ses dates et ses durees ? Nul quand le serveur ne le dit pas. Faux de 6 a 9 ans et quand la tranche est
   /// inconnue ; vrai des 10 ans et pour un adulte.
-  final bool eleveVoitDates;
+  final bool? eleveVoitDates;
 
   /// L'etape attend l'entretien de lecture avec la direction.
   final bool enAttenteEntretien;
 }
 
-/// Ou en est une etape du chemin, pour l'eleve.
-enum StatutEtape {
-  /// Une etape d'avant la sienne (jamais « Etape validee » : ce mot est
-  /// reserve au resultat d'une evaluation).
-  precedente('precedente'),
-
-  /// Son etape.
-  enCours('en_cours'),
-
-  /// Une etape d'apres.
-  aVenir('a_venir');
-
-  const StatutEtape(this.valeurSql);
-
-  /// La valeur rendue par la base.
-  final String valeurSql;
-}
-
-/// Une etape du chemin de l'eleve, telle que la base la rend.
-@immutable
-class EtapeDuChemin {
-  /// Cree une etape du chemin.
-  const EtapeDuChemin({
-    required this.ordre,
-    required this.nom,
-    required this.statut,
-    this.objectifs = const <String>[],
-    this.dureePrevueSemaines,
-    this.dateLimiteSemaines,
-  });
-
-  /// Lit une etape ; nulle si elle est illisible (nom ou statut inconnu).
-  static EtapeDuChemin? depuis(Object? brut) {
-    if (brut is! Map) return null;
-    final String nom = '${brut['nom'] ?? ''}'.trim();
-    final Object? ordre = brut['ordre'];
-    StatutEtape? statut;
-    for (final StatutEtape s in StatutEtape.values) {
-      if (s.valeurSql == brut['statut']) statut = s;
-    }
-    if (nom.isEmpty || ordre is! num || statut == null) return null;
-    final Object? objectifs = brut['objectifs'];
-    final Object? prevue = brut['duree_prevue_semaines'];
-    final Object? limite = brut['date_limite_semaines'];
-    return EtapeDuChemin(
-      ordre: ordre.toInt(),
-      nom: nom,
-      statut: statut,
-      objectifs: <String>[
-        for (final Object? o
-            in objectifs is List ? objectifs : const <Object?>[])
-          if ('${o ?? ''}'.trim().isNotEmpty) '$o'.trim(),
-      ],
-      dureePrevueSemaines: prevue is num ? prevue.toInt() : null,
-      dateLimiteSemaines: limite is num ? limite.toInt() : null,
-    );
-  }
-
-  /// Son rang dans le niveau.
-  final int ordre;
-
-  /// Son nom.
-  final String nom;
-
-  /// Franchie, en cours ou a venir.
-  final StatutEtape statut;
-
-  /// Ses objectifs, dans l'ordre.
-  final List<String> objectifs;
-
-  /// Sa duree prevue en semaines, pour la tranche d'age de l'eleve.
-  final int? dureePrevueSemaines;
-
-  /// Sa date limite en semaines depuis l'entree dans l'etape.
-  final int? dateLimiteSemaines;
-}
-
 /// Les sourates des bases validees d'un eleve, telles que le serveur les
-/// compte (`suivi_pedagogique_eleve`) : jamais calculees sur l'appareil.
+/// compte (`sourates_eleve`, par `ma_progression`) : jamais calculees sur l'appareil.
 @immutable
 class SouratesValidees {
   /// Cree le compte.
@@ -362,19 +263,20 @@ class SouratesValidees {
   bool get toutes => validees == total;
 }
 
-/// Le port.
+/// La lecture de l'etape pour l'ENSEIGNANT (et la direction) : la meme fonction
+/// serveur que celle dont `ma_progression` tire l'etape (`etape_eleve_lecture`),
+/// ouverte au titulaire de la classe et au remplacant. L'eleve et sa famille,
+/// eux, lisent tout par `ma_progression` (PortMaProgression), un seul appel.
 abstract interface class PortSuiviPedagogique {
-  /// Le suivi de [eleveId] ; nul quand l'eleve n'a pas de Classe active ou pas
-  /// d'etape publiee.
+  /// L'etape de [eleveId] ; nulle quand l'eleve n'a pas d'etape.
   Future<SuiviPedagogique?> pourEleve(String eleveId);
 }
 
-/// Le port : absent tant que `main.dart` ne le pose pas ; sans lui, le bloc
-/// n'est pas pose.
+/// Le port : absent tant que `main.dart` ne le pose pas.
 final Provider<PortSuiviPedagogique?> portSuiviPedagogiqueProvider =
     Provider<PortSuiviPedagogique?>((Ref _) => null);
 
-/// Le suivi d'un eleve ; `null` sans port ou sans etape.
+/// L'etape d'un eleve vue par l'enseignant ; `null` sans port ou sans etape.
 final FutureProviderFamily<SuiviPedagogique?, String> suiviPedagogiqueProvider =
     FutureProvider.family<SuiviPedagogique?, String>((Ref ref, String eleveId) {
       final PortSuiviPedagogique? port = ref.watch(

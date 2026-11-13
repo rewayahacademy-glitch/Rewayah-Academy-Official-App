@@ -66,6 +66,7 @@ import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
+import 'package:rewayah_academy/core/suivi/ma_progression.dart';
 import 'package:rewayah_academy/core/theme/app_palette.dart';
 import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
@@ -106,6 +107,7 @@ import 'coran_demo_adulte.dart';
 import 'demo_classe_page.dart'
     show PreparationEleveDemo, adressePreparationEleveDemo, surchargesEleveDemo;
 import 'finance_demo.dart';
+import 'ma_progression_demo.dart';
 import 'mode_demonstration.dart';
 import 'repere_demonstration.dart';
 
@@ -906,6 +908,17 @@ class CoquilleAdulteDemo extends StatelessWidget {
           ...surchargesEleveDemo(
             reseauCoupe ? EtatDemoClasse.horsLigne : seance,
           ),
+          // MA-PROGRESSION-ECRAN : la progression d'essai du titulaire.
+          if (vue == VueDemoAdulte.titulaire)
+            // Le fournisseur par eleve est celui de la racine : il se
+            // surcharge lui-meme, pas seulement son port.
+            portMaProgressionProvider.overrideWithValue(
+              const MaProgressionDemo(),
+            ),
+            maProgressionProvider.overrideWith(
+              (Ref _, String eleveId) =>
+                  const MaProgressionDemo().pourEleve(eleveId),
+            ),
           // Le second adulte est eleve d'une autre Classe, que la
           // demonstration n'a pas : le fournisseur reel reste (indisponible).
           if (reseauCoupe)

@@ -46,7 +46,6 @@
 -- base nue), rien n'est seme : `private.semer_programme_bases(auteur)` le fait
 -- quand on l'appelle.
 
-BEGIN;
 
 -- ---------------------------------------------------------------------------
 -- 0. Preflight
@@ -64,6 +63,12 @@ BEGIN
      OR pg_catalog.to_regclass('public.sourates_validees') IS NULL
      OR pg_catalog.to_regclass('public.classe_position_reprise') IS NULL THEN
     RAISE EXCEPTION 'SOCLE-PROGRAMME : C1, C2, SUIVI-ELEVE, FORMULE-VITESSE-UNIQUE ou SOURATES absent';
+  END IF;
+  -- La lecture unique ecarte les sourates retirees : CORRIGER-SOURATE (20261123820000) doit etre installee avant.
+  IF NOT EXISTS (SELECT 1 FROM information_schema.columns k
+                  WHERE k.table_schema = 'public' AND k.table_name = 'sourates_validees'
+                    AND k.column_name = 'retiree_le') THEN
+    RAISE EXCEPTION 'SOCLE-PROGRAMME : CORRIGER-SOURATE (20261123820000) absent (colonne retiree_le)';
   END IF;
   -- creer_version_programme doit etre celle de C2 (copie du contenu, garde positive).
   IF pg_catalog.strpos(
@@ -991,7 +996,9 @@ BEGIN
     INTO v_sourates
     FROM private.sourates_des_bases b
     JOIN public.sourate s ON s.numero = b.numero
-    LEFT JOIN public.sourates_validees v ON v.student_id = p_eleve_id AND v.sourate_numero = b.numero;
+    -- Une sourate retiree (CORRIGER-SOURATE, 20261123820000) garde sa ligne : elle ne compte pas.
+    LEFT JOIN public.sourates_validees v
+      ON v.student_id = p_eleve_id AND v.sourate_numero = b.numero AND v.retiree_le IS NULL;
 
   IF v_groupe IS NOT NULL THEN
     SELECT r.page::int INTO v_page FROM public.classe_position_reprise r WHERE r.groupe_id = v_groupe;
@@ -1446,4 +1453,3 @@ BEGIN
 END
 $postflight$;
 
-COMMIT;
