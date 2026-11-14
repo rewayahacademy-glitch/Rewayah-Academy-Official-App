@@ -91,17 +91,17 @@ void main() {
       expect(chemins(InterfaceMode.enfant), hasLength(4));
       expect(chemins(InterfaceMode.standard), hasLength(4));
       expect(chemins(InterfaceMode.enfant), chemins(InterfaceMode.standard));
-      expect(chemins(InterfaceMode.enfant), contains(Routes.eleveCoran));
+      expect(chemins(InterfaceMode.enfant), contains(Routes.eleveApprendre));
     });
 
     test('les chemins des destinations sont exactement ceux du role', () {
       final Map<AppRole, List<String>> attendus = <AppRole, List<String>>{
-        // L'eleve (MA-2) : Accueil, Ma classe, Coran, Mon espace, sur les
-        // routes existantes.
+        // L'eleve (MA-2) : Accueil, Ma classe, Apprendre (lot 5 : l'onglet
+        // « Coran » est devenu « Apprendre »), Mon espace.
         AppRole.student: <String>[
           Routes.eleve,
           Routes.eleveSuivi,
-          Routes.eleveCoran,
+          Routes.eleveApprendre,
           Routes.compte,
         ],
         // Le tuteur : Accueil, Foyer, Historique, Compte, dans cet ordre, sur
@@ -531,7 +531,7 @@ void main() {
       for (final String libelle in <String>[
         t.nav.eleve.accueil,
         t.nav.eleve.maClasse,
-        t.nav.eleve.coran,
+        t.nav.eleve.apprendre,
         t.nav.eleve.monEspace,
       ]) {
         // NAV-REFONTE : un onglet ferme n'ecrit pas son nom, il le dit.

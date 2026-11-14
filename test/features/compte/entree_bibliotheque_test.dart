@@ -60,7 +60,9 @@ void main() {
     await tester.tap(ligne);
     await tester.pump(const Duration(milliseconds: 400));
     await tester.pump(const Duration(milliseconds: 400));
-    expect(_sommet(r), Routes.tcBibliotheque);
+    // ESPACE-APPRENDRE (lot 5) : un raccourci vers l'espace Apprendre, qui n'a
+    // qu'une Bibliotheque ; plus vers l'ancienne liste.
+    expect(_sommet(r), Routes.eleveApprendre);
   });
 
   testWidgets('l\'eleve : la Bibliotheque sort du Compte', (tester) async {

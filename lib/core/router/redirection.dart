@@ -1,4 +1,5 @@
 import '../../features/demo/mode_demonstration.dart';
+import '../apprendre/documents_apprendre.dart';
 import '../config/env.dart';
 import '../domain/enums.dart';
 import '../session/session_state.dart';
@@ -303,6 +304,35 @@ String? deciderRedirection({
         if (alias != null) {
           return alias;
         }
+      }
+
+      // ESPACE-APPRENDRE (lot 5, 13/11/2026) : l'eleve (le mineur, et l'adulte
+      // dont la barre est celle de l'eleve : role `student`) n'a qu'une
+      // Bibliotheque, celle de l'espace Apprendre. L'ancienne liste
+      // `/tc/bibliotheque` (Ma classe, espace de la classe, recherche, retour
+      // par defaut d'une fiche) l'y mene ; la fiche d'un document
+      // (`/tc/bibliotheque/:id`) reste ouverte. **Jamais le tuteur** : un
+      // compte tuteur qui est aussi eleve autonome (`eleveAutonome`) garde sa
+      // Bibliotheque dans l'espace tuteur (la coquille de `/tc/*` est celle du
+      // role) ; ses entrees de l'espace eleve (Accueil adulte, Ma classe
+      // adulte) menent directement a Apprendre. L'adresse seule ne dit pas
+      // l'espace : la redirection se limite donc au role `student`.
+      // La classe d'ou il vient (`?groupe=`, posee par « Voir tout » de Ma
+      // classe et par l'espace de la classe) voyage avec lui : Apprendre en
+      // tire la rubrique « Pour cette classe ».
+      if (role == AppRole.student && cheminDemande == Routes.tcBibliotheque) {
+        final String? groupe = cheminComplet == null
+            ? null
+            : Uri.tryParse(cheminComplet)
+                  ?.queryParameters[parametreGroupeApprendre];
+        return groupe == null || groupe.isEmpty
+            ? Routes.eleveApprendre
+            : Uri(
+                path: Routes.eleveApprendre,
+                queryParameters: <String, String>{
+                  parametreGroupeApprendre: groupe,
+                },
+              ).toString();
       }
 
       // Aucune route ne correspond : la page introuvable le dit, sans rien

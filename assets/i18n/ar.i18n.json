@@ -3423,6 +3423,7 @@
         "sansLecteur": "هذا النوع من الوثائق ليس له قارئ في التطبيق بعد.",
         "confirmerTitre": "هذا الرابط يُخرجك من التطبيق",
         "confirmerPhrase": "يفتح موقعًا آخر خارج أكاديمية رواية. يمكنك العودة إلى هنا بعد ذلك.",
+        "confirmerPhraseTu": "يفتح موقعًا آخر خارج أكاديمية رواية. تستطيع أن تعود إلى هنا بعد ذلك.",
         "confirmerOuvrir": "فتح الرابط",
         "confirmerRester": "البقاء في التطبيق",
         "ouvrirLien": "فتح الرابط",
@@ -16192,6 +16193,68 @@
     "attenteEntretien": "ستُحدَّد مرحلتك بعد مقابلة القراءة مع الإدارة.",
     "attenteEntretienTu": "ستُحدَّد مرحلتك بعد مقابلة القراءة مع الإدارة.",
     "attenteEntretienPour": "ستُحدَّد مرحلة ⁨{prenom}⁩ بعد مقابلة القراءة مع الإدارة."
+  },
+  "apprendre": {
+    "sections": {
+      "libelle": "أقسام مساحة التعلّم",
+      "bibliotheque": "المكتبة",
+      "programme": "البرنامج",
+      "livret": "سجلّي"
+    },
+    "bibliotheque": {
+      "rayonCours": "وثائق الدروس",
+      "rayonClasse": "لهذا الفصل",
+      "classeErreur": {
+        "message": "لا تظهر مستندات هذا الفصل الآن",
+        "invitation": "اضغط إعادة المحاولة بعد لحظات."
+      },
+      "rayonPlusLoin": "للتعمّق أكثر",
+      "rayonCoursVide": {
+        "message": "ستظهر وثائق الدروس هنا",
+        "invitation": "تظهر بمجرد أن تنشرها الأكاديمية."
+      },
+      "rayonPlusLoinVide": "ستظهر وثائق أخرى هنا",
+      "affichage": {
+        "libelle": "طريقة عرض الوثائق",
+        "grille": "شبكة",
+        "liste": "قائمة"
+      },
+      "filtres": {
+        "libelle": "نوع الوثيقة"
+      },
+      "type": {
+        "document": "وثيقة",
+        "audio": "صوت",
+        "video": "فيديو",
+        "lienExterne": "رابط خارجي"
+      },
+      "aucunResultat": {
+        "message": "لا توجد وثيقة من هذا النوع حاليًا",
+        "invitation": "أزل التصفية لتعرض كل الوثائق من جديد."
+      },
+      "coran": {
+        "titre": "القرآن الكريم",
+        "edition": "طبعة المدينة المنورة"
+      },
+      "carte": {
+        "document": "⁨{titre}⁩، ⁨{type}⁩",
+        "lien": "⁨{titre}⁩، رابط خارجي، يُفتح خارج التطبيق"
+      }
+    },
+    "programme": {
+      "vide": "تظهر المرحلة عند الالتحاق بفصل",
+      "datesEcole": "مواعيد الأكاديمية",
+      "datesEcoleVide": "ستظهر مواعيد الأكاديمية هنا",
+      "genre": {
+        "evaluation": "تقييم",
+        "fermeture": "إغلاق الأكاديمية",
+        "rencontre": "لقاء التلاوة"
+      }
+    },
+    "livret": {
+      "vide": "ستظهر هنا نتائجك وتقاريرك وشهاداتك",
+      "videTu": "ستظهر هنا نتائجك وتقاريرك وشهاداتك"
+    }
   },
   "suiviAttente": {
     "titre": "أين وصل طلبك",

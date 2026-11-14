@@ -160,8 +160,10 @@ class _Corps extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        // La Bibliotheque en tete de « Ma classe » (garde-cap, 11/11/2026).
-        EntreeBibliothequeMaClasse(),
+        // La Bibliotheque en tete de « Ma classe » (garde-cap, 11/11/2026) :
+        // un raccourci vers l'espace Apprendre (lot 5), qui n'a qu'une
+        // Bibliotheque.
+        EntreeBibliothequeMaClasse(chemin: Routes.eleveApprendre),
         CarteSuiviPedagogique(),
         // CALENDRIER-ET-PAUSES (12/11/2026) : l'eleve adulte demande sa pause ;
         // jamais rendue a un enfant.

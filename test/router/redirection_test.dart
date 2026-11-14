@@ -1070,7 +1070,11 @@ void main() {
               cheminDemande: entree.key,
               maintenant: maintenant,
             );
-            if (doitPasser) {
+            if (role == AppRole.student && entree.key == '/tc/bibliotheque') {
+              // ESPACE-APPRENDRE (lot 5) : l'eleve a une seule Bibliotheque,
+              // celle d'Apprendre ; l'ancienne liste le renvoie la-bas.
+              expect(decision, Routes.eleveApprendre);
+            } else if (doitPasser) {
               expect(decision, isNull);
             } else if (role == AppRole.student && entree.key == '/tc/mushaf') {
               expect(decision, Routes.eleveCoran);

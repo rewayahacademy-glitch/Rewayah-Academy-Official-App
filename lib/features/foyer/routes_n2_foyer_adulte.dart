@@ -12,6 +12,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/apprendre/documents_apprendre.dart' show cheminApprendre;
 import '../../core/i18n/strings.g.dart';
 import '../../core/router/go_route_sure.dart';
 import '../../core/router/routes.dart';
@@ -20,7 +21,6 @@ import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import '../ma_classe_adulte/ma_classe_adulte_page.dart';
-import '../tc_catalogue/routes_tc_b.dart' show RoutesTcB;
 import '../tc_mes_groupes/routes_tc_a.dart' show preparerSalleEleve;
 import 'invitation_conjoint.dart';
 import 'invitation_envoyee.dart';
@@ -64,7 +64,7 @@ List<GoRoute> routesN2Apprendre() => <GoRoute>[
       onRejoindre: (GroupSummaryVM groupe) =>
           preparerSalleEleve(contexte, groupe),
       onVoirRessources: (String groupeId) =>
-          GoRouter.of(contexte).go(RoutesTcB.avecGroupe(groupeId)),
+          GoRouter.of(contexte).go(cheminApprendre(groupe: groupeId)),
     ),
   ),
 ];

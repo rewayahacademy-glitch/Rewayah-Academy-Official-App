@@ -13,7 +13,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
-import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/tc_coran/corpus_service_coran.dart';
 import 'package:rewayah_academy/core/tc_coran/etat_lecture_coran.dart';
@@ -21,7 +20,6 @@ import 'package:rewayah_academy/core/tc_coran/layout_lignes_indisponible.dart';
 import 'package:rewayah_academy/core/tc_coran/navigation_coran.dart';
 import 'package:rewayah_academy/core/tc_coran/page_mushaf_vm.dart';
 import 'package:rewayah_academy/core/widgets/barre_precedent_suivant.dart';
-import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/features/tc_mushaf/mushaf_page.dart';
 import 'package:rewayah_academy/features/tc_mushaf/vue_focus_classe.dart';
 import 'package:rewayah_academy/features/tc_mushaf/vue_page_mushaf.dart';
@@ -31,6 +29,7 @@ import '../../capture/outil_capture.dart'
     show chargerPolicesDuDepot, stabiliser;
 import '../../support/aucun_mot_coupe.dart';
 import '../../support/hote_theme.dart';
+import '../../support/ouvrir_coran.dart';
 import '../../teaching_core/c/faux/faux_corpus_coran.dart';
 import '../../teaching_core/c/goldens/corpus_reference.dart';
 import '../accueil_adulte/support_accueil_adulte_route.dart';
@@ -85,15 +84,7 @@ void main() {
         ],
         depart: Routes.eleve,
       );
-      await tester.tap(
-        find
-            .descendant(
-              of: find.byType(NavShell),
-              matching: find.bySemanticsLabel(t.nav.eleve.apprendre),
-            )
-            .last,
-      );
-      await stabiliser(tester);
+      await ouvrirLeCoranParApprendre(tester);
       ProviderScope.containerOf(tester.element(find.byType(MushafPage)))
           .read(lectureCoranProvider.notifier)
           .changerMode(mode);

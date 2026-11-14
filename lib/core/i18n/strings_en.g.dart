@@ -122,6 +122,7 @@ class TraductionsEn extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$push1$en push1 = _Traductions$push1$en._(_root);
 	@override late final _Traductions$nouveautes$en nouveautes = _Traductions$nouveautes$en._(_root);
 	@override late final _Traductions$suiviPedagogique$en suiviPedagogique = _Traductions$suiviPedagogique$en._(_root);
+	@override late final _Traductions$apprendre$en apprendre = _Traductions$apprendre$en._(_root);
 	@override late final _Traductions$suiviAttente$en suiviAttente = _Traductions$suiviAttente$en._(_root);
 	@override late final _Traductions$journalSorties$en journalSorties = _Traductions$journalSorties$en._(_root);
 	@override late final _Traductions$calendrier$en calendrier = _Traductions$calendrier$en._(_root);
@@ -2336,6 +2337,19 @@ class _Traductions$suiviPedagogique$en extends Traductions$suiviPedagogique$fr {
 	@override String get attenteEntretien => 'Your stage will be set after the reading interview with the management.';
 	@override String get attenteEntretienTu => 'Your stage will be set after the reading interview with the management.';
 	@override String attenteEntretienPour({required Object prenom}) => 'For ${prenom}, the stage will be set after the reading interview with the management.';
+}
+
+// Path: apprendre
+class _Traductions$apprendre$en extends Traductions$apprendre$fr {
+	_Traductions$apprendre$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$apprendre$sections$en sections = _Traductions$apprendre$sections$en._(_root);
+	@override late final _Traductions$apprendre$bibliotheque$en bibliotheque = _Traductions$apprendre$bibliotheque$en._(_root);
+	@override late final _Traductions$apprendre$programme$en programme = _Traductions$apprendre$programme$en._(_root);
+	@override late final _Traductions$apprendre$livret$en livret = _Traductions$apprendre$livret$en._(_root);
 }
 
 // Path: suiviAttente
@@ -11831,6 +11845,64 @@ class _Traductions$push1$reglages$en extends Traductions$push1$reglages$fr {
 	@override String get changementNonConfirme => 'The change is not yet confirmed: the connection may have dropped. Try again in a moment.';
 }
 
+// Path: apprendre.sections
+class _Traductions$apprendre$sections$en extends Traductions$apprendre$sections$fr {
+	_Traductions$apprendre$sections$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'Sections of the Learn space';
+	@override String get bibliotheque => 'Library';
+	@override String get programme => 'Programme';
+	@override String get livret => 'My booklet';
+}
+
+// Path: apprendre.bibliotheque
+class _Traductions$apprendre$bibliotheque$en extends Traductions$apprendre$bibliotheque$fr {
+	_Traductions$apprendre$bibliotheque$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get rayonCours => 'Course documents';
+	@override String get rayonClasse => 'For this class';
+	@override late final _Traductions$apprendre$bibliotheque$classeErreur$en classeErreur = _Traductions$apprendre$bibliotheque$classeErreur$en._(_root);
+	@override String get rayonPlusLoin => 'To go further';
+	@override late final _Traductions$apprendre$bibliotheque$rayonCoursVide$en rayonCoursVide = _Traductions$apprendre$bibliotheque$rayonCoursVide$en._(_root);
+	@override String get rayonPlusLoinVide => 'More documents will arrive here';
+	@override late final _Traductions$apprendre$bibliotheque$affichage$en affichage = _Traductions$apprendre$bibliotheque$affichage$en._(_root);
+	@override late final _Traductions$apprendre$bibliotheque$filtres$en filtres = _Traductions$apprendre$bibliotheque$filtres$en._(_root);
+	@override late final _Traductions$apprendre$bibliotheque$type$en type = _Traductions$apprendre$bibliotheque$type$en._(_root);
+	@override late final _Traductions$apprendre$bibliotheque$aucunResultat$en aucunResultat = _Traductions$apprendre$bibliotheque$aucunResultat$en._(_root);
+	@override late final _Traductions$apprendre$bibliotheque$coran$en coran = _Traductions$apprendre$bibliotheque$coran$en._(_root);
+	@override late final _Traductions$apprendre$bibliotheque$carte$en carte = _Traductions$apprendre$bibliotheque$carte$en._(_root);
+}
+
+// Path: apprendre.programme
+class _Traductions$apprendre$programme$en extends Traductions$apprendre$programme$fr {
+	_Traductions$apprendre$programme$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get vide => 'The stage will appear as soon as you join a class';
+	@override String get datesEcole => 'Academy dates';
+	@override String get datesEcoleVide => 'The academy\'s dates will be shown here';
+	@override late final _Traductions$apprendre$programme$genre$en genre = _Traductions$apprendre$programme$genre$en._(_root);
+}
+
+// Path: apprendre.livret
+class _Traductions$apprendre$livret$en extends Traductions$apprendre$livret$fr {
+	_Traductions$apprendre$livret$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get vide => 'Your results, your reports and your certificates will appear here';
+	@override String get videTu => 'Your results, your reports and your certificates will appear here';
+}
+
 // Path: suiviAttente.tu
 class _Traductions$suiviAttente$tu$en extends Traductions$suiviAttente$tu$fr {
 	_Traductions$suiviAttente$tu$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -17155,6 +17227,7 @@ class _Traductions$tc$bibliotheque$rendu$en extends Traductions$tc$bibliotheque$
 	@override String get sansLecteur => 'This type of document does not have a reader in the app yet.';
 	@override String get confirmerTitre => 'This link leaves the app';
 	@override String get confirmerPhrase => 'It opens another site, outside Rewayah Academy. You can come back here afterwards.';
+	@override String get confirmerPhraseTu => 'It opens another site, outside Rewayah Academy. You will be able to come back here afterwards.';
 	@override String get confirmerOuvrir => 'Open the link';
 	@override String get confirmerRester => 'Stay in the app';
 	@override String get ouvrirLien => 'Open the link';
@@ -21705,6 +21778,108 @@ class _Traductions$candidatsFlux$file$reglage$en extends Traductions$candidatsFl
 	);
 	@override String get invalide => 'Enter a whole number from 1 to 2,000, without spaces.';
 	@override String get echec => 'Setting not confirmed. Probable cause: the connection to the server was interrupted. Try again in a moment.';
+}
+
+// Path: apprendre.bibliotheque.classeErreur
+class _Traductions$apprendre$bibliotheque$classeErreur$en extends Traductions$apprendre$bibliotheque$classeErreur$fr {
+	_Traductions$apprendre$bibliotheque$classeErreur$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get message => 'This class\'s documents are not showing right now';
+	@override String get invitation => 'Tap Try again in a moment.';
+}
+
+// Path: apprendre.bibliotheque.rayonCoursVide
+class _Traductions$apprendre$bibliotheque$rayonCoursVide$en extends Traductions$apprendre$bibliotheque$rayonCoursVide$fr {
+	_Traductions$apprendre$bibliotheque$rayonCoursVide$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get message => 'Course documents will arrive here';
+	@override String get invitation => 'They appear as soon as the academy publishes them.';
+}
+
+// Path: apprendre.bibliotheque.affichage
+class _Traductions$apprendre$bibliotheque$affichage$en extends Traductions$apprendre$bibliotheque$affichage$fr {
+	_Traductions$apprendre$bibliotheque$affichage$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'Document display';
+	@override String get grille => 'Grid';
+	@override String get liste => 'List';
+}
+
+// Path: apprendre.bibliotheque.filtres
+class _Traductions$apprendre$bibliotheque$filtres$en extends Traductions$apprendre$bibliotheque$filtres$fr {
+	_Traductions$apprendre$bibliotheque$filtres$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'Document type';
+}
+
+// Path: apprendre.bibliotheque.type
+class _Traductions$apprendre$bibliotheque$type$en extends Traductions$apprendre$bibliotheque$type$fr {
+	_Traductions$apprendre$bibliotheque$type$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get document => 'Document';
+	@override String get audio => 'Audio';
+	@override String get video => 'Video';
+	@override String get lienExterne => 'External link';
+}
+
+// Path: apprendre.bibliotheque.aucunResultat
+class _Traductions$apprendre$bibliotheque$aucunResultat$en extends Traductions$apprendre$bibliotheque$aucunResultat$fr {
+	_Traductions$apprendre$bibliotheque$aucunResultat$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get message => 'No document of this type for now';
+	@override String get invitation => 'Remove the filter to see all documents again.';
+}
+
+// Path: apprendre.bibliotheque.coran
+class _Traductions$apprendre$bibliotheque$coran$en extends Traductions$apprendre$bibliotheque$coran$fr {
+	_Traductions$apprendre$bibliotheque$coran$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'The Quran';
+	@override String get edition => 'Medina edition';
+}
+
+// Path: apprendre.bibliotheque.carte
+class _Traductions$apprendre$bibliotheque$carte$en extends Traductions$apprendre$bibliotheque$carte$fr {
+	_Traductions$apprendre$bibliotheque$carte$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String document({required Object titre, required Object type}) => '${titre}, ${type}';
+	@override String lien({required Object titre}) => '${titre}, external link, opens outside the app';
+}
+
+// Path: apprendre.programme.genre
+class _Traductions$apprendre$programme$genre$en extends Traductions$apprendre$programme$genre$fr {
+	_Traductions$apprendre$programme$genre$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get evaluation => 'Assessment';
+	@override String get fermeture => 'Academy closure';
+	@override String get rencontre => 'Recitation meeting';
 }
 
 // Path: suiviAttente.cloture.motif
@@ -34308,6 +34483,7 @@ extension on TraductionsEn {
 			'tc.bibliotheque.rendu.sansLecteur' => 'This type of document does not have a reader in the app yet.',
 			'tc.bibliotheque.rendu.confirmerTitre' => 'This link leaves the app',
 			'tc.bibliotheque.rendu.confirmerPhrase' => 'It opens another site, outside Rewayah Academy. You can come back here afterwards.',
+			'tc.bibliotheque.rendu.confirmerPhraseTu' => 'It opens another site, outside Rewayah Academy. You will be able to come back here afterwards.',
 			'tc.bibliotheque.rendu.confirmerOuvrir' => 'Open the link',
 			'tc.bibliotheque.rendu.confirmerRester' => 'Stay in the app',
 			'tc.bibliotheque.rendu.ouvrirLien' => 'Open the link',
@@ -34412,9 +34588,9 @@ extension on TraductionsEn {
 			'tc.outils.revision.titre' => 'To prepare',
 			'tc.outils.revision.aide' => 'The selected passage becomes work to prepare.',
 			'tc.outils.revision.groupeEntier' => 'Whole class',
-			'tc.outils.revision.consigne' => 'Short instruction (optional)',
 			_ => null,
 		} ?? switch (path) {
+			'tc.outils.revision.consigne' => 'Short instruction (optional)',
 			'tc.outils.revision.creer' => 'Set the work',
 			'tc.outils.revision.posee' => 'Work to prepare set',
 			'tc.outils.masquer.reveler' => 'Reveal',
@@ -34926,9 +35102,9 @@ extension on TraductionsEn {
 			'adulte.acceptation.faisonsTitre' => 'What we do',
 			'adulte.acceptation.faisons' => ({required Object prenom}) => '${prenom} invites you to their family plan. If you accept, your account is linked to their household. Your account stays yours. Nothing is merged.',
 			'adulte.acceptation.pourquoiTitre' => 'Why',
-			'adulte.acceptation.pourquoiElle' => ({required Object prenom}) => '${prenom} manages the household and pays for its members. To pay for your classes, she must see your balance.',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.acceptation.pourquoiElle' => ({required Object prenom}) => '${prenom} manages the household and pays for its members. To pay for your classes, she must see your balance.',
 			'adulte.acceptation.pourquoiLui' => ({required Object prenom}) => '${prenom} manages the household and pays for its members. To pay for your classes, he must see your balance.',
 			'adulte.acceptation.verraTitre' => ({required Object quePrenom}) => 'What ${quePrenom} will see',
 			'adulte.acceptation.verraElle' => 'Your first and last name. Your balance, or the need to top it up. The plan that concerns you. The state of your access, if it prevents payment. She will also know if you leave the family plan.',
@@ -35440,9 +35616,9 @@ extension on TraductionsEn {
 			'argent.moyen.webStripe' => 'Bank card',
 			'argent.moyen.webStripeDetail' => 'Payment on the web. Nothing is charged before you confirm.',
 			'argent.soldes.total' => 'Total balances (read-only)',
-			'argent.soldes.totalDetail' => 'A read-only view: each balance stays that of its profile.',
 			_ => null,
 		} ?? switch (path) {
+			'argent.soldes.totalDetail' => 'A read-only view: each balance stays that of its profile.',
 			'argent.soldes.aPayer' => 'To pay this month',
 			'argent.soldes.profilsFinances' => 'Funded profiles',
 			'argent.soldes.profilsFinancesValeur' => ({required Object n, required Object total}) => '${n} of ${total}',
@@ -35954,9 +36130,9 @@ extension on TraductionsEn {
 			'com.studio.aujourdhui.videsBlocs.mentions' => 'No mention or reply pending.',
 			'com.studio.aujourdhui.videsBlocs.decisions' => 'No decision pending.',
 			'com.studio.aujourdhui.videsBlocs.echeances' => 'No upcoming deadline.',
-			'com.studio.aujourdhui.videsBlocs.activite' => 'No recent activity.',
 			_ => null,
 		} ?? switch (path) {
+			'com.studio.aujourdhui.videsBlocs.activite' => 'No recent activity.',
 			'com.studio.aujourdhui.videTitre' => 'Nothing to handle for now',
 			'com.studio.aujourdhui.dansCanal' => ({required Object nom}) => 'In ${nom}',
 			'com.studio.aujourdhui.echeance' => ({required Object date}) => 'Due on ${date}',
@@ -36468,9 +36644,9 @@ extension on TraductionsEn {
 			'comptable.statuts.capacite.verificationRequise' => 'Verification required',
 			'comptable.statuts.capacite.soldePrestataireInsuffisant' => 'Provider balance insufficient',
 			'comptable.statuts.reserve.atteint' => 'Target reached',
-			'comptable.statuts.reserve.sousObjectif' => 'Below target',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.statuts.reserve.sousObjectif' => 'Below target',
 			'comptable.statuts.reserve.depassement' => 'Exceeded',
 			'comptable.statuts.reserve.regleInactive' => 'Rule inactive',
 			'comptable.statuts.reserve.alimentationPrevue' => 'Funding planned',
@@ -36982,9 +37158,9 @@ extension on TraductionsEn {
 			'comptable.beneficiaires.recevoir.notice' => 'Payment information to complete',
 			'comptable.beneficiaires.recevoir.configurer' => 'Set up my payments',
 			'comptable.beneficiaires.recevoir.wise.paysIndisponible' => ({required Object pays}) => 'Wise does not pay out in this country: ${pays}. You can give the account of a relative in another country; otherwise the management will pay you another way.',
-			'comptable.beneficiaires.recevoir.wise.aMonNomQuestion' => 'Is this account in your name?',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.beneficiaires.recevoir.wise.aMonNomQuestion' => 'Is this account in your name?',
 			'comptable.beneficiaires.recevoir.wise.aMonNomOui' => 'Yes, it is in my name',
 			'comptable.beneficiaires.recevoir.wise.aMonNomNon' => 'No, it is in a relative\'s name',
 			'comptable.beneficiaires.recevoir.wise.aMonNomNonDetail' => 'Your pay will go to a relative\'s account, with your agreement. The management checks it before the first payment.',
@@ -37496,9 +37672,9 @@ extension on TraductionsEn {
 			'sansDonnees.mesDonnees' => 'Your deletion information could not be loaded',
 			'sansDonnees.paiementsRecus' => 'Your payments received could not be loaded',
 			'sansDonnees.revenus' => 'Your earnings could not be loaded',
-			'sansDonnees.aujourdhui' => 'Today\'s board could not be loaded',
 			_ => null,
 		} ?? switch (path) {
+			'sansDonnees.aujourdhui' => 'Today\'s board could not be loaded',
 			'sansDonnees.paiement' => 'This payment could not be loaded',
 			'sansDonnees.paiementsAEffectuer' => 'The payments to make could not be loaded',
 			'sansDonnees.encaissements' => 'The collections could not be loaded',
@@ -38010,9 +38186,9 @@ extension on TraductionsEn {
 			'admissions.modeles.niveau' => 'Level not offered yet',
 			'admissions.modeles.niveauPhrase' => '"The level requested is not yet offered."',
 			'admissions.modeles.sansReponse' => 'No reply',
-			'admissions.modeles.sansReponsePhrase' => '"We did not receive a reply to our last message."',
 			_ => null,
 		} ?? switch (path) {
+			'admissions.modeles.sansReponsePhrase' => '"We did not receive a reply to our last message."',
 			'accueilInscrits.titre' => 'We already know you',
 			'accueilInscrits.phrase' => 'Your registration has been carried over. You do not have to enter everything again.',
 			'accueilInscrits.motTitre' => 'A word from the management',
@@ -38524,9 +38700,9 @@ extension on TraductionsEn {
 			'candidatsFlux.file.reglage.aide' => 'From 1 to 2,000. Messages tied to an account, a class, a registration or a payment always go out without waiting.',
 			'candidatsFlux.file.reglage.enregistrer' => 'Save the setting',
 			'candidatsFlux.file.reglage.enregistre' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'Setting saved: ${n} message per day.', other: 'Setting saved: ${n} messages per day.', ), 
-			'candidatsFlux.file.reglage.invalide' => 'Enter a whole number from 1 to 2,000, without spaces.',
 			_ => null,
 		} ?? switch (path) {
+			'candidatsFlux.file.reglage.invalide' => 'Enter a whole number from 1 to 2,000, without spaces.',
 			'candidatsFlux.file.reglage.echec' => 'Setting not confirmed. Probable cause: the connection to the server was interrupted. Try again in a moment.',
 			'candidatsFlux.importDouble.suite' => 'Tap "Enter my code": you enter the code from your verification app, then the import resumes here. Nothing was saved.',
 			'candidatsFlux.importDouble.action' => 'Enter my code',
@@ -38646,6 +38822,40 @@ extension on TraductionsEn {
 			'suiviPedagogique.attenteEntretien' => 'Your stage will be set after the reading interview with the management.',
 			'suiviPedagogique.attenteEntretienTu' => 'Your stage will be set after the reading interview with the management.',
 			'suiviPedagogique.attenteEntretienPour' => ({required Object prenom}) => 'For ${prenom}, the stage will be set after the reading interview with the management.',
+			'apprendre.sections.libelle' => 'Sections of the Learn space',
+			'apprendre.sections.bibliotheque' => 'Library',
+			'apprendre.sections.programme' => 'Programme',
+			'apprendre.sections.livret' => 'My booklet',
+			'apprendre.bibliotheque.rayonCours' => 'Course documents',
+			'apprendre.bibliotheque.rayonClasse' => 'For this class',
+			'apprendre.bibliotheque.classeErreur.message' => 'This class\'s documents are not showing right now',
+			'apprendre.bibliotheque.classeErreur.invitation' => 'Tap Try again in a moment.',
+			'apprendre.bibliotheque.rayonPlusLoin' => 'To go further',
+			'apprendre.bibliotheque.rayonCoursVide.message' => 'Course documents will arrive here',
+			'apprendre.bibliotheque.rayonCoursVide.invitation' => 'They appear as soon as the academy publishes them.',
+			'apprendre.bibliotheque.rayonPlusLoinVide' => 'More documents will arrive here',
+			'apprendre.bibliotheque.affichage.libelle' => 'Document display',
+			'apprendre.bibliotheque.affichage.grille' => 'Grid',
+			'apprendre.bibliotheque.affichage.liste' => 'List',
+			'apprendre.bibliotheque.filtres.libelle' => 'Document type',
+			'apprendre.bibliotheque.type.document' => 'Document',
+			'apprendre.bibliotheque.type.audio' => 'Audio',
+			'apprendre.bibliotheque.type.video' => 'Video',
+			'apprendre.bibliotheque.type.lienExterne' => 'External link',
+			'apprendre.bibliotheque.aucunResultat.message' => 'No document of this type for now',
+			'apprendre.bibliotheque.aucunResultat.invitation' => 'Remove the filter to see all documents again.',
+			'apprendre.bibliotheque.coran.titre' => 'The Quran',
+			'apprendre.bibliotheque.coran.edition' => 'Medina edition',
+			'apprendre.bibliotheque.carte.document' => ({required Object titre, required Object type}) => '${titre}, ${type}',
+			'apprendre.bibliotheque.carte.lien' => ({required Object titre}) => '${titre}, external link, opens outside the app',
+			'apprendre.programme.vide' => 'The stage will appear as soon as you join a class',
+			'apprendre.programme.datesEcole' => 'Academy dates',
+			'apprendre.programme.datesEcoleVide' => 'The academy\'s dates will be shown here',
+			'apprendre.programme.genre.evaluation' => 'Assessment',
+			'apprendre.programme.genre.fermeture' => 'Academy closure',
+			'apprendre.programme.genre.rencontre' => 'Recitation meeting',
+			'apprendre.livret.vide' => 'Your results, your reports and your certificates will appear here',
+			'apprendre.livret.videTu' => 'Your results, your reports and your certificates will appear here',
 			'suiviAttente.titre' => 'Where your request stands',
 			'suiviAttente.titreSimple' => 'Where your request stands',
 			'suiviAttente.tu.formationListeAttente' => 'All classes for this slot are full. Your request is waiting for a place to open.',

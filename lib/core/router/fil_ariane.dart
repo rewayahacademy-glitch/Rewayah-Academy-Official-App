@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../admin/admin_domaine.dart';
 import '../domain/enums.dart';
+import '../i18n/strings.g.dart';
 import '../session/session_state.dart';
 import '../widgets/nav_shell.dart';
 import 'etat_routeur_sur.dart';
@@ -52,6 +53,7 @@ class PlanFil {
     required this.racines,
     this.libelles = const <String, String>{},
     this.compte,
+    this.apprendre,
   });
 
   /// L'accueil du role : le premier segment d'une page qui n'est sous aucune
@@ -65,6 +67,12 @@ class PlanFil {
   /// Les autres pages nommees de l'arbre (chemin vers libelle).
   final Map<String, String> libelles;
 
+  /// ESPACE-APPRENDRE (lot 5) : pour l'eleve, l'espace Apprendre, parent de la
+  /// Bibliotheque et de la fiche d'un document (le fil dit « Apprendre >
+  /// Bibliotheque > document », pas « Compte > ... »). `null` : les autres
+  /// roles, qui gardent le Compte.
+  final SegmentFil? apprendre;
+
   /// Le Compte du role (la ou vivent les reglages, la Bibliotheque, les
   /// donnees) : le parent d'une page `/compte...` ou de la Bibliotheque quand
   /// rien d'autre ne le dit. `null` : l'accueil.
@@ -75,6 +83,7 @@ class PlanFil {
       other is PlanFil &&
       other.accueil == accueil &&
       other.compte == compte &&
+      other.apprendre == apprendre &&
       mapEquals(other.racines, racines) &&
       mapEquals(other.libelles, libelles);
 
@@ -92,6 +101,10 @@ class PlanFil {
 bool _sousLeCompte(String chemin) =>
     chemin == Routes.compte ||
     chemin.startsWith('${Routes.compte}/') ||
+    chemin == Routes.tcBibliotheque ||
+    chemin.startsWith('${Routes.tcBibliotheque}/');
+
+bool _sousLaBibliotheque(String chemin) =>
     chemin == Routes.tcBibliotheque ||
     chemin.startsWith('${Routes.tcBibliotheque}/');
 
@@ -139,6 +152,17 @@ List<SegmentFil> ancetresFil({
   ]);
 
   List<SegmentFil> segments = parAdresse(page);
+  // ESPACE-APPRENDRE : la Bibliotheque et la fiche d'un document de l'eleve
+  // sont sous l'espace Apprendre, quel que soit l'ecran d'ou l'on vient.
+  final SegmentFil? apprendre = plan.apprendre;
+  if (apprendre != null && _sousLaBibliotheque(page)) {
+    final String? biblio = plan._libelle(Routes.tcBibliotheque);
+    return <SegmentFil>[
+      apprendre,
+      if (biblio != null && page != Routes.tcBibliotheque)
+        SegmentFil(libelle: biblio, chemin: Routes.tcBibliotheque),
+    ];
+  }
   if (segments.isEmpty && precedent != null) {
     final String avant = _sansRequete(precedent);
     if (avant.isNotEmpty && avant != page && !_prefixes(avant).contains(page)) {
@@ -258,19 +282,38 @@ PlanFil? planFilPour(SessionState session) {
   }
   final Map<String, String> racines = <String, String>{
     for (final Destination d in destinations) d.chemin: d.libelle,
+    // ESPACE-APPRENDRE (lot 5) : le lecteur du Coran vit dans la branche
+    // Apprendre (la barre y allume Apprendre) ; il reste une page de premier
+    // niveau, comme quand il etait lui-meme la destination : pas de fil.
+    if (destinations.any((Destination d) => d.chemin == Routes.eleveApprendre))
+      Routes.eleveCoran: destinations
+          .firstWhere((Destination d) => d.chemin == Routes.eleveApprendre)
+          .libelle,
   };
   final String? compte = <String>[
     Routes.tuteurCompte,
     Routes.enseignantProfil,
     Routes.compte,
   ].where(racines.containsKey).firstOrNull;
+  final Destination? apprendre = destinations
+      .where((Destination d) => d.chemin == Routes.eleveApprendre)
+      .firstOrNull;
   return PlanFil(
     accueil: SegmentFil(
       libelle: destinations.first.libelle,
       chemin: destinations.first.chemin,
     ),
     racines: racines,
+    // La Bibliotheque de l'eleve est celle d'Apprendre : son fil le dit.
+    libelles: apprendre == null
+        ? const <String, String>{}
+        : <String, String>{
+            Routes.tcBibliotheque: t.apprendre.sections.bibliotheque,
+          },
     compte: compte,
+    apprendre: apprendre == null
+        ? null
+        : SegmentFil(libelle: apprendre.libelle, chemin: apprendre.chemin),
   );
 }
 

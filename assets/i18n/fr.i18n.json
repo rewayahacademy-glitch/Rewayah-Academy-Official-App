@@ -9965,6 +9965,7 @@
         "sansLecteur": "Ce type de document n'a pas encore de lecteur dans l'application.",
         "confirmerTitre": "Ce lien quitte l'application",
         "confirmerPhrase": "Il ouvre un autre site, en dehors de Rewayah Academy. Vous pouvez revenir ici ensuite.",
+        "confirmerPhraseTu": "Il ouvre un autre site, en dehors de Rewayah Academy. Tu pourras revenir ici ensuite.",
         "confirmerOuvrir": "Ouvrir le lien",
         "confirmerRester": "Rester dans l'application",
         "ouvrirLien": "Ouvrir le lien",
@@ -15570,6 +15571,68 @@
     "attenteEntretien": "Votre étape sera fixée après l'entretien de lecture avec la direction.",
     "attenteEntretienTu": "Ton étape sera fixée après l'entretien de lecture avec la direction.",
     "attenteEntretienPour": "Pour {prenom}, l'étape sera fixée après l'entretien de lecture avec la direction."
+  },
+  "apprendre": {
+    "sections": {
+      "libelle": "Sections de l'espace Apprendre",
+      "bibliotheque": "Bibliothèque",
+      "programme": "Programme",
+      "livret": "Mon livret"
+    },
+    "bibliotheque": {
+      "rayonCours": "Documents des cours",
+      "rayonClasse": "Pour cette classe",
+      "classeErreur": {
+        "message": "Les documents de cette classe ne s'affichent pas pour l'instant",
+        "invitation": "Touchez Réessayer dans un instant."
+      },
+      "rayonPlusLoin": "Pour aller plus loin",
+      "rayonCoursVide": {
+        "message": "Les documents des cours arriveront ici",
+        "invitation": "Ils apparaissent dès que l'académie les publie."
+      },
+      "rayonPlusLoinVide": "D'autres documents arriveront ici",
+      "affichage": {
+        "libelle": "Affichage des documents",
+        "grille": "Grille",
+        "liste": "Liste"
+      },
+      "filtres": {
+        "libelle": "Type de document"
+      },
+      "type": {
+        "document": "Document",
+        "audio": "Audio",
+        "video": "Vidéo",
+        "lienExterne": "Lien externe"
+      },
+      "aucunResultat": {
+        "message": "Aucun document de ce type pour le moment",
+        "invitation": "Retirez le filtre pour revoir tous les documents."
+      },
+      "coran": {
+        "titre": "Le Coran",
+        "edition": "Édition de Médine"
+      },
+      "carte": {
+        "document": "{titre}, {type}",
+        "lien": "{titre}, lien externe, s'ouvre hors de l'application"
+      }
+    },
+    "programme": {
+      "vide": "L'étape apparaîtra dès l'entrée dans une classe",
+      "datesEcole": "Dates de l'académie",
+      "datesEcoleVide": "Les dates de l'académie seront affichées ici",
+      "genre": {
+        "evaluation": "Évaluation",
+        "fermeture": "Fermeture de l'académie",
+        "rencontre": "Rencontre de récitation"
+      }
+    },
+    "livret": {
+      "vide": "Vos résultats, vos bilans et vos attestations apparaîtront ici",
+      "videTu": "Tes résultats, tes bilans et tes attestations apparaîtront ici"
+    }
   },
   "suiviAttente": {
     "titre": "Où en est votre demande",

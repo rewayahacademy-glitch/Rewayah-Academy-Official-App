@@ -124,6 +124,7 @@ class Traductions with BaseTranslations<AppLocale, Traductions> {
 	late final Traductions$push1$fr push1 = Traductions$push1$fr.internal(_root);
 	late final Traductions$nouveautes$fr nouveautes = Traductions$nouveautes$fr.internal(_root);
 	late final Traductions$suiviPedagogique$fr suiviPedagogique = Traductions$suiviPedagogique$fr.internal(_root);
+	late final Traductions$apprendre$fr apprendre = Traductions$apprendre$fr.internal(_root);
 	late final Traductions$suiviAttente$fr suiviAttente = Traductions$suiviAttente$fr.internal(_root);
 	late final Traductions$journalSorties$fr journalSorties = Traductions$journalSorties$fr.internal(_root);
 	late final Traductions$calendrier$fr calendrier = Traductions$calendrier$fr.internal(_root);
@@ -4405,6 +4406,19 @@ class Traductions$suiviPedagogique$fr {
 
 	/// fr: 'Pour {prenom}, l'étape sera fixée après l'entretien de lecture avec la direction.'
 	String attenteEntretienPour({required Object prenom}) => 'Pour ${prenom}, l\'étape sera fixée après l\'entretien de lecture avec la direction.';
+}
+
+// Path: apprendre
+class Traductions$apprendre$fr {
+	Traductions$apprendre$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$apprendre$sections$fr sections = Traductions$apprendre$sections$fr.internal(_root);
+	late final Traductions$apprendre$bibliotheque$fr bibliotheque = Traductions$apprendre$bibliotheque$fr.internal(_root);
+	late final Traductions$apprendre$programme$fr programme = Traductions$apprendre$programme$fr.internal(_root);
+	late final Traductions$apprendre$livret$fr livret = Traductions$apprendre$livret$fr.internal(_root);
 }
 
 // Path: suiviAttente
@@ -18265,7 +18279,7 @@ class Traductions$enseignant$revenus$fr {
 	/// fr: 'Une présence en partie est payée comme une présence.'
 	String get partielleNote => 'Une présence en partie est payée comme une présence.';
 
-	/// fr: '(one) {{n} séance est comptée au temps de connexion : sa durée rémunérée n'est pas précisée. Le relevé de l'académie fait foi.} (other) {{n} séances sont comptées au temps de connexion : leur durée rémunérée n'est pas précisée. Le relevé de l'académie fait foi.}'
+	/// fr: '(one) {{n} séance est comptée au temps de connexion : sa durée rémunérée n'est pas précisée. Le relevé de l'académie fait foi.} (other) {{n} séances sont comptées au temps de connexion : leur durée rémunérée n'est pas précisée. Le relevé de l'académie fait foi.}'
 	String sansDureePayee({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
 		one: '${n} séance est comptée au temps de connexion : sa durée rémunérée n\'est pas précisée. Le relevé de l\'académie fait foi.',
 		other: '${n} séances sont comptées au temps de connexion : leur durée rémunérée n\'est pas précisée. Le relevé de l\'académie fait foi.',
@@ -24664,6 +24678,94 @@ class Traductions$push1$reglages$fr {
 
 	/// fr: 'Le changement n'est pas encore confirmé : la connexion a peut-être été coupée. Réessayez dans un instant.'
 	String get changementNonConfirme => 'Le changement n\'est pas encore confirmé : la connexion a peut-être été coupée. Réessayez dans un instant.';
+}
+
+// Path: apprendre.sections
+class Traductions$apprendre$sections$fr {
+	Traductions$apprendre$sections$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Sections de l'espace Apprendre'
+	String get libelle => 'Sections de l\'espace Apprendre';
+
+	/// fr: 'Bibliothèque'
+	String get bibliotheque => 'Bibliothèque';
+
+	/// fr: 'Programme'
+	String get programme => 'Programme';
+
+	/// fr: 'Mon livret'
+	String get livret => 'Mon livret';
+}
+
+// Path: apprendre.bibliotheque
+class Traductions$apprendre$bibliotheque$fr {
+	Traductions$apprendre$bibliotheque$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Documents des cours'
+	String get rayonCours => 'Documents des cours';
+
+	/// fr: 'Pour cette classe'
+	String get rayonClasse => 'Pour cette classe';
+
+	late final Traductions$apprendre$bibliotheque$classeErreur$fr classeErreur = Traductions$apprendre$bibliotheque$classeErreur$fr.internal(_root);
+
+	/// fr: 'Pour aller plus loin'
+	String get rayonPlusLoin => 'Pour aller plus loin';
+
+	late final Traductions$apprendre$bibliotheque$rayonCoursVide$fr rayonCoursVide = Traductions$apprendre$bibliotheque$rayonCoursVide$fr.internal(_root);
+
+	/// fr: 'D'autres documents arriveront ici'
+	String get rayonPlusLoinVide => 'D\'autres documents arriveront ici';
+
+	late final Traductions$apprendre$bibliotheque$affichage$fr affichage = Traductions$apprendre$bibliotheque$affichage$fr.internal(_root);
+	late final Traductions$apprendre$bibliotheque$filtres$fr filtres = Traductions$apprendre$bibliotheque$filtres$fr.internal(_root);
+	late final Traductions$apprendre$bibliotheque$type$fr type = Traductions$apprendre$bibliotheque$type$fr.internal(_root);
+	late final Traductions$apprendre$bibliotheque$aucunResultat$fr aucunResultat = Traductions$apprendre$bibliotheque$aucunResultat$fr.internal(_root);
+	late final Traductions$apprendre$bibliotheque$coran$fr coran = Traductions$apprendre$bibliotheque$coran$fr.internal(_root);
+	late final Traductions$apprendre$bibliotheque$carte$fr carte = Traductions$apprendre$bibliotheque$carte$fr.internal(_root);
+}
+
+// Path: apprendre.programme
+class Traductions$apprendre$programme$fr {
+	Traductions$apprendre$programme$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'L'étape apparaîtra dès l'entrée dans une classe'
+	String get vide => 'L\'étape apparaîtra dès l\'entrée dans une classe';
+
+	/// fr: 'Dates de l'académie'
+	String get datesEcole => 'Dates de l\'académie';
+
+	/// fr: 'Les dates de l'académie seront affichées ici'
+	String get datesEcoleVide => 'Les dates de l\'académie seront affichées ici';
+
+	late final Traductions$apprendre$programme$genre$fr genre = Traductions$apprendre$programme$genre$fr.internal(_root);
+}
+
+// Path: apprendre.livret
+class Traductions$apprendre$livret$fr {
+	Traductions$apprendre$livret$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Vos résultats, vos bilans et vos attestations apparaîtront ici'
+	String get vide => 'Vos résultats, vos bilans et vos attestations apparaîtront ici';
+
+	/// fr: 'Tes résultats, tes bilans et tes attestations apparaîtront ici'
+	String get videTu => 'Tes résultats, tes bilans et tes attestations apparaîtront ici';
 }
 
 // Path: suiviAttente.tu
@@ -35353,6 +35455,9 @@ class Traductions$tc$bibliotheque$rendu$fr {
 	/// fr: 'Il ouvre un autre site, en dehors de Rewayah Academy. Vous pouvez revenir ici ensuite.'
 	String get confirmerPhrase => 'Il ouvre un autre site, en dehors de Rewayah Academy. Vous pouvez revenir ici ensuite.';
 
+	/// fr: 'Il ouvre un autre site, en dehors de Rewayah Academy. Tu pourras revenir ici ensuite.'
+	String get confirmerPhraseTu => 'Il ouvre un autre site, en dehors de Rewayah Academy. Tu pourras revenir ici ensuite.';
+
 	/// fr: 'Ouvrir le lien'
 	String get confirmerOuvrir => 'Ouvrir le lien';
 
@@ -43945,6 +44050,150 @@ class Traductions$candidatsFlux$file$reglage$fr {
 
 	/// fr: 'Réglage non confirmé. Cause probable : la connexion au serveur s'est interrompue. Réessayez dans un instant.'
 	String get echec => 'Réglage non confirmé. Cause probable : la connexion au serveur s\'est interrompue. Réessayez dans un instant.';
+}
+
+// Path: apprendre.bibliotheque.classeErreur
+class Traductions$apprendre$bibliotheque$classeErreur$fr {
+	Traductions$apprendre$bibliotheque$classeErreur$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Les documents de cette classe ne s'affichent pas pour l'instant'
+	String get message => 'Les documents de cette classe ne s\'affichent pas pour l\'instant';
+
+	/// fr: 'Touchez Réessayer dans un instant.'
+	String get invitation => 'Touchez Réessayer dans un instant.';
+}
+
+// Path: apprendre.bibliotheque.rayonCoursVide
+class Traductions$apprendre$bibliotheque$rayonCoursVide$fr {
+	Traductions$apprendre$bibliotheque$rayonCoursVide$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Les documents des cours arriveront ici'
+	String get message => 'Les documents des cours arriveront ici';
+
+	/// fr: 'Ils apparaissent dès que l'académie les publie.'
+	String get invitation => 'Ils apparaissent dès que l\'académie les publie.';
+}
+
+// Path: apprendre.bibliotheque.affichage
+class Traductions$apprendre$bibliotheque$affichage$fr {
+	Traductions$apprendre$bibliotheque$affichage$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Affichage des documents'
+	String get libelle => 'Affichage des documents';
+
+	/// fr: 'Grille'
+	String get grille => 'Grille';
+
+	/// fr: 'Liste'
+	String get liste => 'Liste';
+}
+
+// Path: apprendre.bibliotheque.filtres
+class Traductions$apprendre$bibliotheque$filtres$fr {
+	Traductions$apprendre$bibliotheque$filtres$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Type de document'
+	String get libelle => 'Type de document';
+}
+
+// Path: apprendre.bibliotheque.type
+class Traductions$apprendre$bibliotheque$type$fr {
+	Traductions$apprendre$bibliotheque$type$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Document'
+	String get document => 'Document';
+
+	/// fr: 'Audio'
+	String get audio => 'Audio';
+
+	/// fr: 'Vidéo'
+	String get video => 'Vidéo';
+
+	/// fr: 'Lien externe'
+	String get lienExterne => 'Lien externe';
+}
+
+// Path: apprendre.bibliotheque.aucunResultat
+class Traductions$apprendre$bibliotheque$aucunResultat$fr {
+	Traductions$apprendre$bibliotheque$aucunResultat$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Aucun document de ce type pour le moment'
+	String get message => 'Aucun document de ce type pour le moment';
+
+	/// fr: 'Retirez le filtre pour revoir tous les documents.'
+	String get invitation => 'Retirez le filtre pour revoir tous les documents.';
+}
+
+// Path: apprendre.bibliotheque.coran
+class Traductions$apprendre$bibliotheque$coran$fr {
+	Traductions$apprendre$bibliotheque$coran$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Le Coran'
+	String get titre => 'Le Coran';
+
+	/// fr: 'Édition de Médine'
+	String get edition => 'Édition de Médine';
+}
+
+// Path: apprendre.bibliotheque.carte
+class Traductions$apprendre$bibliotheque$carte$fr {
+	Traductions$apprendre$bibliotheque$carte$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: '{titre}, {type}'
+	String document({required Object titre, required Object type}) => '${titre}, ${type}';
+
+	/// fr: '{titre}, lien externe, s'ouvre hors de l'application'
+	String lien({required Object titre}) => '${titre}, lien externe, s\'ouvre hors de l\'application';
+}
+
+// Path: apprendre.programme.genre
+class Traductions$apprendre$programme$genre$fr {
+	Traductions$apprendre$programme$genre$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Évaluation'
+	String get evaluation => 'Évaluation';
+
+	/// fr: 'Fermeture de l'académie'
+	String get fermeture => 'Fermeture de l\'académie';
+
+	/// fr: 'Rencontre de récitation'
+	String get rencontre => 'Rencontre de récitation';
 }
 
 // Path: suiviAttente.cloture.motif
@@ -59839,6 +60088,7 @@ extension on Traductions {
 			'tc.bibliotheque.rendu.sansLecteur' => 'Ce type de document n\'a pas encore de lecteur dans l\'application.',
 			'tc.bibliotheque.rendu.confirmerTitre' => 'Ce lien quitte l\'application',
 			'tc.bibliotheque.rendu.confirmerPhrase' => 'Il ouvre un autre site, en dehors de Rewayah Academy. Vous pouvez revenir ici ensuite.',
+			'tc.bibliotheque.rendu.confirmerPhraseTu' => 'Il ouvre un autre site, en dehors de Rewayah Academy. Tu pourras revenir ici ensuite.',
 			'tc.bibliotheque.rendu.confirmerOuvrir' => 'Ouvrir le lien',
 			'tc.bibliotheque.rendu.confirmerRester' => 'Rester dans l\'application',
 			'tc.bibliotheque.rendu.ouvrirLien' => 'Ouvrir le lien',
@@ -59943,9 +60193,9 @@ extension on Traductions {
 			'tc.outils.revision.titre' => 'À préparer',
 			'tc.outils.revision.aide' => 'Le passage sélectionné devient un travail à préparer.',
 			'tc.outils.revision.groupeEntier' => 'Toute la classe',
-			'tc.outils.revision.consigne' => 'Consigne courte (facultatif)',
 			_ => null,
 		} ?? switch (path) {
+			'tc.outils.revision.consigne' => 'Consigne courte (facultatif)',
 			'tc.outils.revision.creer' => 'Poser le travail',
 			'tc.outils.revision.posee' => 'Travail à préparer posé',
 			'tc.outils.masquer.reveler' => 'Révéler',
@@ -60457,9 +60707,9 @@ extension on Traductions {
 			'adulte.acceptation.faisonsTitre' => 'Ce que nous faisons',
 			'adulte.acceptation.faisons' => ({required Object prenom}) => '${prenom} vous invite dans son forfait famille. Si vous acceptez, votre compte est rattaché à son foyer. Votre compte reste le vôtre. Rien n\'est fusionné.',
 			'adulte.acceptation.pourquoiTitre' => 'Pourquoi',
-			'adulte.acceptation.pourquoiElle' => ({required Object prenom}) => '${prenom} gère le foyer et paie pour ses membres. Pour payer vos cours, elle doit voir votre solde.',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.acceptation.pourquoiElle' => ({required Object prenom}) => '${prenom} gère le foyer et paie pour ses membres. Pour payer vos cours, elle doit voir votre solde.',
 			'adulte.acceptation.pourquoiLui' => ({required Object prenom}) => '${prenom} gère le foyer et paie pour ses membres. Pour payer vos cours, il doit voir votre solde.',
 			'adulte.acceptation.verraTitre' => ({required Object quePrenom}) => 'Ce ${quePrenom} verra',
 			'adulte.acceptation.verraElle' => 'Votre prénom et votre nom. Votre solde, ou le besoin de le recharger. L\'offre qui vous concerne. L\'état de votre accès, s\'il empêche de payer. Elle saura aussi si vous quittez le forfait famille.',
@@ -60971,9 +61221,9 @@ extension on Traductions {
 			'argent.moyen.webStripe' => 'Carte bancaire',
 			'argent.moyen.webStripeDetail' => 'Paiement par le web. Aucun débit avant votre confirmation.',
 			'argent.soldes.total' => 'Total des soldes (lecture)',
-			'argent.soldes.totalDetail' => 'Une lecture : chaque solde reste celui de son profil.',
 			_ => null,
 		} ?? switch (path) {
+			'argent.soldes.totalDetail' => 'Une lecture : chaque solde reste celui de son profil.',
 			'argent.soldes.aPayer' => 'À payer ce mois',
 			'argent.soldes.profilsFinances' => 'Profils financés',
 			'argent.soldes.profilsFinancesValeur' => ({required Object n, required Object total}) => '${n} sur ${total}',
@@ -61485,9 +61735,9 @@ extension on Traductions {
 			'com.studio.aujourdhui.videsBlocs.mentions' => 'Aucune mention ni réponse en attente.',
 			'com.studio.aujourdhui.videsBlocs.decisions' => 'Aucune décision en attente.',
 			'com.studio.aujourdhui.videsBlocs.echeances' => 'Aucune échéance proche.',
-			'com.studio.aujourdhui.videsBlocs.activite' => 'Aucune activité récente.',
 			_ => null,
 		} ?? switch (path) {
+			'com.studio.aujourdhui.videsBlocs.activite' => 'Aucune activité récente.',
 			'com.studio.aujourdhui.videTitre' => 'Rien à traiter pour le moment',
 			'com.studio.aujourdhui.dansCanal' => ({required Object nom}) => 'Dans ${nom}',
 			'com.studio.aujourdhui.echeance' => ({required Object date}) => 'Échéance le ${date}',
@@ -61999,9 +62249,9 @@ extension on Traductions {
 			'comptable.statuts.capacite.verificationRequise' => 'Vérification requise',
 			'comptable.statuts.capacite.soldePrestataireInsuffisant' => 'Solde prestataire insuffisant',
 			'comptable.statuts.reserve.atteint' => 'Objectif atteint',
-			'comptable.statuts.reserve.sousObjectif' => 'Sous objectif',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.statuts.reserve.sousObjectif' => 'Sous objectif',
 			'comptable.statuts.reserve.depassement' => 'Dépassement',
 			'comptable.statuts.reserve.regleInactive' => 'Règle inactive',
 			'comptable.statuts.reserve.alimentationPrevue' => 'Alimentation prévue',
@@ -62513,9 +62763,9 @@ extension on Traductions {
 			'comptable.beneficiaires.recevoir.notice' => 'Informations de paiement à compléter',
 			'comptable.beneficiaires.recevoir.configurer' => 'Configurer mes paiements',
 			'comptable.beneficiaires.recevoir.wise.paysIndisponible' => ({required Object pays}) => 'Wise ne verse pas dans ce pays : ${pays}. Vous pouvez donner le compte d\'un proche dans un autre pays ; sinon la direction vous paiera autrement.',
-			'comptable.beneficiaires.recevoir.wise.aMonNomQuestion' => 'Ce compte est-il à votre nom ?',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.beneficiaires.recevoir.wise.aMonNomQuestion' => 'Ce compte est-il à votre nom ?',
 			'comptable.beneficiaires.recevoir.wise.aMonNomOui' => 'Oui, il est à mon nom',
 			'comptable.beneficiaires.recevoir.wise.aMonNomNon' => 'Non, il est au nom d\'un proche',
 			'comptable.beneficiaires.recevoir.wise.aMonNomNonDetail' => 'Votre paie ira sur le compte d\'un proche, avec votre accord. La direction le vérifie avant le premier versement.',
@@ -63027,9 +63277,9 @@ extension on Traductions {
 			'sansDonnees.mesDonnees' => 'Vos informations de suppression n\'ont pas pu être chargées',
 			'sansDonnees.paiementsRecus' => 'Vos paiements reçus n\'ont pas pu être chargés',
 			'sansDonnees.revenus' => 'Vos revenus n\'ont pas pu être chargés',
-			'sansDonnees.aujourdhui' => 'Le tableau du jour n\'a pas pu être chargé',
 			_ => null,
 		} ?? switch (path) {
+			'sansDonnees.aujourdhui' => 'Le tableau du jour n\'a pas pu être chargé',
 			'sansDonnees.paiement' => 'Ce paiement n\'a pas pu être chargé',
 			'sansDonnees.paiementsAEffectuer' => 'Les paiements à effectuer n\'ont pas pu être chargés',
 			'sansDonnees.encaissements' => 'Les encaissements n\'ont pas pu être chargés',
@@ -63541,9 +63791,9 @@ extension on Traductions {
 			'admissions.modeles.niveau' => 'Niveau pas encore proposé',
 			'admissions.modeles.niveauPhrase' => '« Le niveau demandé n\'est pas encore proposé. »',
 			'admissions.modeles.sansReponse' => 'Pas de réponse',
-			'admissions.modeles.sansReponsePhrase' => '« Nous n\'avons pas reçu de réponse à notre dernier message. »',
 			_ => null,
 		} ?? switch (path) {
+			'admissions.modeles.sansReponsePhrase' => '« Nous n\'avons pas reçu de réponse à notre dernier message. »',
 			'accueilInscrits.titre' => 'Nous vous connaissons déjà',
 			'accueilInscrits.phrase' => 'Votre inscription a été reprise. Vous n\'avez pas à tout ressaisir.',
 			'accueilInscrits.motTitre' => 'Un mot de la direction',
@@ -64055,9 +64305,9 @@ extension on Traductions {
 			'candidatsFlux.file.reglage.aide' => 'De 1 à 2 000. Les messages liés à un compte, une classe, une inscription ou un paiement partent toujours sans attendre.',
 			'candidatsFlux.file.reglage.enregistrer' => 'Enregistrer le réglage',
 			'candidatsFlux.file.reglage.enregistre' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Réglage enregistré : ${n} message par jour.', other: 'Réglage enregistré : ${n} messages par jour.', ), 
-			'candidatsFlux.file.reglage.invalide' => 'Écrivez un nombre entier de 1 à 2 000, sans espace.',
 			_ => null,
 		} ?? switch (path) {
+			'candidatsFlux.file.reglage.invalide' => 'Écrivez un nombre entier de 1 à 2 000, sans espace.',
 			'candidatsFlux.file.reglage.echec' => 'Réglage non confirmé. Cause probable : la connexion au serveur s\'est interrompue. Réessayez dans un instant.',
 			'candidatsFlux.importDouble.suite' => 'Touchez « Saisir mon code » : vous saisissez le code de votre application de vérification, puis l\'import reprend ici. Rien n\'a été enregistré.',
 			'candidatsFlux.importDouble.action' => 'Saisir mon code',
@@ -64177,6 +64427,40 @@ extension on Traductions {
 			'suiviPedagogique.attenteEntretien' => 'Votre étape sera fixée après l\'entretien de lecture avec la direction.',
 			'suiviPedagogique.attenteEntretienTu' => 'Ton étape sera fixée après l\'entretien de lecture avec la direction.',
 			'suiviPedagogique.attenteEntretienPour' => ({required Object prenom}) => 'Pour ${prenom}, l\'étape sera fixée après l\'entretien de lecture avec la direction.',
+			'apprendre.sections.libelle' => 'Sections de l\'espace Apprendre',
+			'apprendre.sections.bibliotheque' => 'Bibliothèque',
+			'apprendre.sections.programme' => 'Programme',
+			'apprendre.sections.livret' => 'Mon livret',
+			'apprendre.bibliotheque.rayonCours' => 'Documents des cours',
+			'apprendre.bibliotheque.rayonClasse' => 'Pour cette classe',
+			'apprendre.bibliotheque.classeErreur.message' => 'Les documents de cette classe ne s\'affichent pas pour l\'instant',
+			'apprendre.bibliotheque.classeErreur.invitation' => 'Touchez Réessayer dans un instant.',
+			'apprendre.bibliotheque.rayonPlusLoin' => 'Pour aller plus loin',
+			'apprendre.bibliotheque.rayonCoursVide.message' => 'Les documents des cours arriveront ici',
+			'apprendre.bibliotheque.rayonCoursVide.invitation' => 'Ils apparaissent dès que l\'académie les publie.',
+			'apprendre.bibliotheque.rayonPlusLoinVide' => 'D\'autres documents arriveront ici',
+			'apprendre.bibliotheque.affichage.libelle' => 'Affichage des documents',
+			'apprendre.bibliotheque.affichage.grille' => 'Grille',
+			'apprendre.bibliotheque.affichage.liste' => 'Liste',
+			'apprendre.bibliotheque.filtres.libelle' => 'Type de document',
+			'apprendre.bibliotheque.type.document' => 'Document',
+			'apprendre.bibliotheque.type.audio' => 'Audio',
+			'apprendre.bibliotheque.type.video' => 'Vidéo',
+			'apprendre.bibliotheque.type.lienExterne' => 'Lien externe',
+			'apprendre.bibliotheque.aucunResultat.message' => 'Aucun document de ce type pour le moment',
+			'apprendre.bibliotheque.aucunResultat.invitation' => 'Retirez le filtre pour revoir tous les documents.',
+			'apprendre.bibliotheque.coran.titre' => 'Le Coran',
+			'apprendre.bibliotheque.coran.edition' => 'Édition de Médine',
+			'apprendre.bibliotheque.carte.document' => ({required Object titre, required Object type}) => '${titre}, ${type}',
+			'apprendre.bibliotheque.carte.lien' => ({required Object titre}) => '${titre}, lien externe, s\'ouvre hors de l\'application',
+			'apprendre.programme.vide' => 'L\'étape apparaîtra dès l\'entrée dans une classe',
+			'apprendre.programme.datesEcole' => 'Dates de l\'académie',
+			'apprendre.programme.datesEcoleVide' => 'Les dates de l\'académie seront affichées ici',
+			'apprendre.programme.genre.evaluation' => 'Évaluation',
+			'apprendre.programme.genre.fermeture' => 'Fermeture de l\'académie',
+			'apprendre.programme.genre.rencontre' => 'Rencontre de récitation',
+			'apprendre.livret.vide' => 'Vos résultats, vos bilans et vos attestations apparaîtront ici',
+			'apprendre.livret.videTu' => 'Tes résultats, tes bilans et tes attestations apparaîtront ici',
 			'suiviAttente.titre' => 'Où en est votre demande',
 			'suiviAttente.titreSimple' => 'Où en est ta demande',
 			'suiviAttente.tu.formationListeAttente' => 'Toutes les classes de ce créneau sont pleines. Ta demande attend qu\'une place s\'ouvre.',
