@@ -53,6 +53,9 @@ class _AuthEnEchec implements ServiceAuth {
   int tentatives = 0;
 
   @override
+  Future<void> verifierCodeCourriel(String courriel, String code) async {}
+
+  @override
   Future<void> connexionGoogle() async {}
 
   @override

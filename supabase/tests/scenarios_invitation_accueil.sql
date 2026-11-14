@@ -152,8 +152,11 @@ SELECT pg_temp.vrai(pg_temp.accueil(pg_temp.p('04')) = '{"etat": "aucune"}'::jso
   'adresse non confirmee : aucune');
 SELECT pg_temp.vrai(pg_temp.accueil(pg_temp.p('08')) = '{"etat": "aucune"}'::jsonb,
   'invitation echue : aucune');
-SELECT pg_temp.vrai(pg_temp.accueil(pg_temp.p('05')) = '{"etat": "invite", "role": "enseignant"}'::jsonb,
-  'invite enseignant : role enseignant');
+SELECT pg_temp.vrai(pg_temp.accueil(pg_temp.p('05')) = '{"etat": "invite", "role": "enseignant", "code": "ACCA-2345-6789"}'::jsonb,
+  'invite enseignant : role enseignant, avec le code de SA propre invitation (INVITATION-CODE-ACCUEIL)');
+SELECT pg_temp.vrai(pg_temp.accueil(pg_temp.p('06')) = '{"etat": "invite", "role": "comptable"}'::jsonb
+  AND NOT (pg_temp.accueil(pg_temp.p('06')) ? 'code'),
+  'invite comptable : aucun code rendu');
 SELECT pg_temp.vrai(pg_temp.accueil(pg_temp.p('06')) = '{"etat": "invite", "role": "comptable"}'::jsonb,
   'invite comptable : role comptable');
 SELECT pg_temp.vrai(pg_temp.accueil(pg_temp.p('01')) = '{"etat": "aucune"}'::jsonb,

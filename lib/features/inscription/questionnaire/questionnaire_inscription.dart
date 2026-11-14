@@ -509,3 +509,23 @@ class DepartDemande extends Notifier<bool> {
 /// Le depart en cours de la demande ([DepartDemande]).
 final NotifierProvider<DepartDemande, bool> departDemandeProvider =
     NotifierProvider<DepartDemande, bool>(DepartDemande.new);
+
+/// ONBOARDING-BOUCLE (directeur, 14/11/2026) : vrai quand une session vient de
+/// s'ouvrir ici (lien de connexion ouvert dans un autre navigateur que celui
+/// du questionnaire) alors que le questionnaire de cet appareil est vide. Le
+/// questionnaire le dit au lieu de recommencer sans un mot ; le bandeau
+/// disparait des que le questionnaire est complet.
+class ReponsesResteesAilleurs extends Notifier<bool> {
+  @override
+  bool build() => false;
+
+  /// Pose la marque : la prochaine ouverture du questionnaire le dit.
+  void signaler() => state = true;
+}
+
+/// Le repere de [ReponsesResteesAilleurs].
+final NotifierProvider<ReponsesResteesAilleurs, bool>
+reponsesResteesAilleursProvider =
+    NotifierProvider<ReponsesResteesAilleurs, bool>(
+      ReponsesResteesAilleurs.new,
+    );

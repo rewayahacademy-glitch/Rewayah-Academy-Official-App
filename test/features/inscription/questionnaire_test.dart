@@ -56,6 +56,7 @@ Future<GoRouter> _monter(
   String depart, {
   FauxServiceAuth? auth,
   Size taille = const Size(390, 844),
+  List<Override> enPlus = const <Override>[],
 }) async {
   tester.view.physicalSize = taille;
   tester.view.devicePixelRatio = 1;
@@ -67,6 +68,7 @@ Future<GoRouter> _monter(
       surcharges: <Override>[
         sourceSessionProvider.overrideWithValue(FausseSourceSession()),
         serviceAuthProvider.overrideWithValue(auth ?? FauxServiceAuth()),
+        ...enPlus,
         // La liste publique des langues (lue sans compte).
         languesCoursProvider.overrideWith(
           (_) async => const <LangueCours>[
@@ -109,6 +111,40 @@ Future<void> _continuer(WidgetTester tester) =>
 
 void main() {
   setUp(() => effacerMemoireAppareil(clefQuestionnaire));
+
+  group('ONBOARDING-BOUCLE : reponses restees ailleurs', () {
+    testWidgets('session arrivee sans reponses : le bandeau le dit', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        Routes.commencer,
+        enPlus: <Override>[
+          reponsesResteesAilleursProvider.overrideWith(
+            _ResteesAilleursVrai.new,
+          ),
+        ],
+      );
+      expect(
+        find.text(t.inscription.questionnaire.acces.absentesTitre),
+        findsOneWidget,
+      );
+      expect(
+        find.text(t.inscription.questionnaire.acces.absentesPhrase),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('ouverture ordinaire : aucun bandeau', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester, Routes.commencer);
+      expect(
+        find.text(t.inscription.questionnaire.acces.absentesTitre),
+        findsNothing,
+      );
+    });
+  });
 
   group('les ecrans, dans l ordre (Q5)', () {
     test('pour moi : cinq ecrans avant la connexion', () {
@@ -746,4 +782,9 @@ class _AuthGoogleLente extends FauxServiceAuth {
     google++;
     await reponse.future;
   }
+}
+
+class _ResteesAilleursVrai extends ReponsesResteesAilleurs {
+  @override
+  bool build() => true;
 }

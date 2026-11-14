@@ -267,6 +267,20 @@ class FauxServiceAuth implements ServiceAuth {
     jetonsControle.add(jetonControle);
   }
 
+  /// Les codes saisis (adresse et code), un par verification.
+  final List<({String courriel, String code})> codesVerifies =
+      <({String courriel, String code})>[];
+
+  @override
+  Future<void> verifierCodeCourriel(String courriel, String code) async {
+    final Object? erreur = erreurAJeter;
+    if (erreur != null) {
+      // ignore: only_throw_errors
+      throw erreur;
+    }
+    codesVerifies.add((courriel: courriel.trim(), code: code.trim()));
+  }
+
   @override
   Future<void> connexionGoogle() async {
     google++;

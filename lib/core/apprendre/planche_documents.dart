@@ -237,7 +237,12 @@ class _PlancheEtat extends ConsumerState<PlancheDocuments> {
       RayonPlanche.pourAllerPlusLoin => codeRayonPlusLoin,
     };
     final String langue = LocaleSettings.currentLocale.languageCode;
-    final String? duServeur = code == null
+    // Le serveur ne porte que le francais et l'arabe : en anglais, son titre
+    // retombait sur le francais (« Documents des cours » sous une interface
+    // anglaise, constat du directeur, 14/11/2026). Les autres langues lisent
+    // les textes de l'application.
+    final bool serveurDansLaLangue = langue == 'fr' || langue == 'ar';
+    final String? duServeur = code == null || !serveurDansLaLangue
         ? null
         : widget.rayons
               .where((RayonBibliotheque r) => r.code == code)

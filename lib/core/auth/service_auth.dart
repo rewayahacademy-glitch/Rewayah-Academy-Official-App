@@ -22,6 +22,16 @@ abstract interface class ServiceAuth {
   /// quand aucun controle n'est pose (reglage vide).
   Future<void> envoyerLienCourriel(String courriel, {String? jetonControle});
 
+  /// Ouvre une session avec le code a 6 chiffres du courriel de connexion.
+  ///
+  /// ONBOARDING-BOUCLE (directeur, 14/11/2026) : le lien du courriel s'ouvre
+  /// souvent dans un autre navigateur que celui ou la connexion a ete demandee
+  /// (appli de messagerie) ; le flux PKCE y echoue (`flow_state_not_found`) et
+  /// les reponses du questionnaire, gardees dans l'appareil, n'y sont pas. Le
+  /// code se saisit dans le meme navigateur : aucune etape ne passe par un
+  /// autre. Jette une `AuthException` si le code est faux ou expire.
+  Future<void> verifierCodeCourriel(String courriel, String code);
+
   /// Ouvre une session avec un courriel et un mot de passe.
   ///
   /// Ce chemin est reserve a la demonstration locale et reste masque quand
@@ -66,6 +76,15 @@ class ServiceAuthSupabase implements ServiceAuth {
         emailRedirectTo: _retour,
         captchaToken: jetonControle,
       );
+
+  @override
+  Future<void> verifierCodeCourriel(String courriel, String code) async {
+    await _client.auth.verifyOTP(
+      email: courriel.trim(),
+      token: code.trim(),
+      type: OtpType.email,
+    );
+  }
 
   @override
   Future<void> connexionMotDePasse(
