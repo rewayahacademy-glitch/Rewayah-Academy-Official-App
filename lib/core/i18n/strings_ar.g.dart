@@ -4687,8 +4687,8 @@ class _Traductions$enseignant$photo$ar extends Traductions$enseignant$photo$fr {
 	@override String get changer => 'تغيير الصورة';
 	@override String get alternatif => 'صورتك العامة';
 	@override String get succes => 'حُفظت الصورة.';
-	@override String get echec => 'لم يتأكد إرسال الصورة: ربما انقطع الاتصال أثناء الإرسال. تحقق من اتصالك، ثم اضغط «استخدام هذه الصورة» مرة أخرى.';
-	@override String get enregistree => 'تم حفظ صورتك. يمكنك استبدالها في أي وقت.';
+	@override String get echec => 'لم يتأكد إرسال الصورة. اضغط «استخدام هذه الصورة» مرة أخرى بعد لحظة.';
+	@override String get enregistree => 'سُجّلت صورتك. يمكنك استبدالها في أي وقت.';
 	@override String get selectionEchec => 'تعذّر فتح الصورة. تحقّق من إذن الوصول إلى صور الجهاز، ثم أعد المحاولة.';
 	@override String get horsLigne => 'أنت غير متصل. يمكن إرسال الصورة عند عودة الاتصال.';
 }
@@ -9006,8 +9006,8 @@ class _Traductions$inscription$nomPropre$ar extends Traductions$inscription$nomP
 	// Translations
 	@override String get titre => 'اسمك بحاجة إلى تصحيح';
 	@override String get explication => 'يحتوي اسمك أو لقبك على أرقام أو رموز. اكتبهما بالحروف للمتابعة.';
-	@override String get enregistrer => 'حفظ اسمي';
-	@override String get nonConfirme => 'لم يتأكد حفظ اسمك: ربما انقطع الاتصال. تحقق من اتصالك، ثم اضغط «حفظ اسمي» مرة أخرى.';
+	@override String get enregistrer => 'تسجيل اسمي';
+	@override String get nonConfirme => 'لم يتأكد تسجيل اسمك. اضغط «تسجيل اسمي» مرة أخرى بعد لحظة.';
 }
 
 // Path: inscription.usage
@@ -29440,8 +29440,8 @@ extension on TraductionsAr {
 			'enseignant.photo.changer' => 'تغيير الصورة',
 			'enseignant.photo.alternatif' => 'صورتك العامة',
 			'enseignant.photo.succes' => 'حُفظت الصورة.',
-			'enseignant.photo.echec' => 'لم يتأكد إرسال الصورة: ربما انقطع الاتصال أثناء الإرسال. تحقق من اتصالك، ثم اضغط «استخدام هذه الصورة» مرة أخرى.',
-			'enseignant.photo.enregistree' => 'تم حفظ صورتك. يمكنك استبدالها في أي وقت.',
+			'enseignant.photo.echec' => 'لم يتأكد إرسال الصورة. اضغط «استخدام هذه الصورة» مرة أخرى بعد لحظة.',
+			'enseignant.photo.enregistree' => 'سُجّلت صورتك. يمكنك استبدالها في أي وقت.',
 			'enseignant.photo.selectionEchec' => 'تعذّر فتح الصورة. تحقّق من إذن الوصول إلى صور الجهاز، ثم أعد المحاولة.',
 			'enseignant.photo.horsLigne' => 'أنت غير متصل. يمكن إرسال الصورة عند عودة الاتصال.',
 			'enseignant.salle.reference' => ({required Object page, required Object total, required Object reference}) => 'المعروض: الصفحة ⁨${page}⁩ من ⁨${total}⁩ · ⁨${reference}⁩',
@@ -36716,8 +36716,8 @@ extension on TraductionsAr {
 			'inscription.commeSurLaPiece' => 'اكتب اسمك تمامًا كما هو في وثيقة الهوية التي سترسلها.',
 			'inscription.nomPropre.titre' => 'اسمك بحاجة إلى تصحيح',
 			'inscription.nomPropre.explication' => 'يحتوي اسمك أو لقبك على أرقام أو رموز. اكتبهما بالحروف للمتابعة.',
-			'inscription.nomPropre.enregistrer' => 'حفظ اسمي',
-			'inscription.nomPropre.nonConfirme' => 'لم يتأكد حفظ اسمك: ربما انقطع الاتصال. تحقق من اتصالك، ثم اضغط «حفظ اسمي» مرة أخرى.',
+			'inscription.nomPropre.enregistrer' => 'تسجيل اسمي',
+			'inscription.nomPropre.nonConfirme' => 'لم يتأكد تسجيل اسمك. اضغط «تسجيل اسمي» مرة أخرى بعد لحظة.',
 			'inscription.etapeCourte' => ({required Object n, required Object total}) => '⁨${n}⁩ من ⁨${total}⁩',
 			'inscription.retourEtape' => 'العودة إلى الخطوة السابقة',
 			'inscription.seDeconnecter' => 'تسجيل الخروج',

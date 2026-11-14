@@ -3511,7 +3511,7 @@ class _Traductions$inscription$nomPropre$en extends Traductions$inscription$nomP
 	@override String get titre => 'Your name needs correcting';
 	@override String get explication => 'Your first name or last name contains numbers or symbols. Write them in letters to continue.';
 	@override String get enregistrer => 'Save my name';
-	@override String get nonConfirme => 'Your name is not confirmed: the connection may have dropped. Check your connection, then tap “Save my name” again.';
+	@override String get nonConfirme => 'Your name is not confirmed. Tap “Save my name” again in a moment.';
 }
 
 // Path: inscription.usage
@@ -8134,7 +8134,7 @@ class _Traductions$enseignant$photo$en extends Traductions$enseignant$photo$fr {
 	@override String get changer => 'Change the photo';
 	@override String get alternatif => 'Your public photo';
 	@override String get succes => 'The photo is saved.';
-	@override String get echec => 'The photo is not confirmed: the connection may have dropped during sending. Check your connection, then tap “Use this photo” again.';
+	@override String get echec => 'The photo is not confirmed. Tap “Use this photo” again in a moment.';
 	@override String get enregistree => 'Your photo is saved. You can replace it at any time.';
 	@override String get selectionEchec => 'The photo could not be opened. Check access to the device\'s photos, then try again.';
 	@override String get horsLigne => 'The photo can be sent when the connection is back.';
@@ -27868,7 +27868,7 @@ extension on TraductionsEn {
 			'inscription.nomPropre.titre' => 'Your name needs correcting',
 			'inscription.nomPropre.explication' => 'Your first name or last name contains numbers or symbols. Write them in letters to continue.',
 			'inscription.nomPropre.enregistrer' => 'Save my name',
-			'inscription.nomPropre.nonConfirme' => 'Your name is not confirmed: the connection may have dropped. Check your connection, then tap “Save my name” again.',
+			'inscription.nomPropre.nonConfirme' => 'Your name is not confirmed. Tap “Save my name” again in a moment.',
 			'inscription.etapeCourte' => ({required Object n, required Object total}) => '${n} of ${total}',
 			'inscription.retourEtape' => 'Back to the previous step',
 			'inscription.seDeconnecter' => 'Sign out',
@@ -34164,7 +34164,7 @@ extension on TraductionsEn {
 			'enseignant.photo.changer' => 'Change the photo',
 			'enseignant.photo.alternatif' => 'Your public photo',
 			'enseignant.photo.succes' => 'The photo is saved.',
-			'enseignant.photo.echec' => 'The photo is not confirmed: the connection may have dropped during sending. Check your connection, then tap “Use this photo” again.',
+			'enseignant.photo.echec' => 'The photo is not confirmed. Tap “Use this photo” again in a moment.',
 			'enseignant.photo.enregistree' => 'Your photo is saved. You can replace it at any time.',
 			'enseignant.photo.selectionEchec' => 'The photo could not be opened. Check access to the device\'s photos, then try again.',
 			'enseignant.photo.horsLigne' => 'The photo can be sent when the connection is back.',

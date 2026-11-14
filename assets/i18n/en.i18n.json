@@ -1375,7 +1375,7 @@
       "titre": "Your name needs correcting",
       "explication": "Your first name or last name contains numbers or symbols. Write them in letters to continue.",
       "enregistrer": "Save my name",
-      "nonConfirme": "Your name is not confirmed: the connection may have dropped. Check your connection, then tap “Save my name” again."
+      "nonConfirme": "Your name is not confirmed. Tap “Save my name” again in a moment."
     },
     "etapeCourte": "{n} of {total}",
     "retourEtape": "Back to the previous step",
@@ -9171,7 +9171,7 @@
       "changer": "Change the photo",
       "alternatif": "Your public photo",
       "succes": "The photo is saved.",
-      "echec": "The photo is not confirmed: the connection may have dropped during sending. Check your connection, then tap “Use this photo” again.",
+      "echec": "The photo is not confirmed. Tap “Use this photo” again in a moment.",
       "enregistree": "Your photo is saved. You can replace it at any time.",
       "selectionEchec": "The photo could not be opened. Check access to the device's photos, then try again.",
       "horsLigne": "The photo can be sent when the connection is back."

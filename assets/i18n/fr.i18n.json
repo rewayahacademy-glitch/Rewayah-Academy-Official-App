@@ -1375,7 +1375,7 @@
       "titre": "Votre nom est à corriger",
       "explication": "Votre prénom ou votre nom contient des chiffres ou des signes. Écrivez-les en lettres pour continuer.",
       "enregistrer": "Enregistrer mon nom",
-      "nonConfirme": "Votre nom n'est pas confirmé\u00a0: la connexion a pu se couper. Vérifiez votre connexion, puis touchez «\u00a0Enregistrer mon nom\u00a0» de nouveau."
+      "nonConfirme": "Votre nom n'est pas confirmé. Touchez «\u00a0Enregistrer mon nom\u00a0» de nouveau dans un instant."
     },
     "etapeCourte": "{n} sur {total}",
     "retourEtape": "Revenir à l'étape précédente",
@@ -9162,7 +9162,7 @@
       "changer": "Changer la photo",
       "alternatif": "Votre photo publique",
       "succes": "La photo est enregistrée.",
-      "echec": "La photo n'est pas confirmée : la connexion a pu se couper pendant l'envoi. Vérifiez votre connexion, puis touchez « Utiliser cette photo » de nouveau.",
+      "echec": "La photo n'est pas confirmée. Touchez « Utiliser cette photo » de nouveau dans un instant.",
       "enregistree": "Votre photo est enregistrée. Vous pouvez la remplacer à tout moment.",
       "selectionEchec": "La photo n'a pas pu être ouverte. Vérifiez l'accès aux photos de l'appareil, puis réessayez.",
       "horsLigne": "La photo pourra être envoyée quand la connexion reviendra."

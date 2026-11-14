@@ -6700,8 +6700,8 @@ class Traductions$inscription$nomPropre$fr {
 	/// fr: 'Enregistrer mon nom'
 	String get enregistrer => 'Enregistrer mon nom';
 
-	/// fr: 'Votre nom n'est pas confirmé : la connexion a pu se couper. Vérifiez votre connexion, puis touchez « Enregistrer mon nom » de nouveau.'
-	String get nonConfirme => 'Votre nom n\'est pas confirmé : la connexion a pu se couper. Vérifiez votre connexion, puis touchez « Enregistrer mon nom » de nouveau.';
+	/// fr: 'Votre nom n'est pas confirmé. Touchez « Enregistrer mon nom » de nouveau dans un instant.'
+	String get nonConfirme => 'Votre nom n\'est pas confirmé. Touchez « Enregistrer mon nom » de nouveau dans un instant.';
 }
 
 // Path: inscription.usage
@@ -17006,8 +17006,8 @@ class Traductions$enseignant$photo$fr {
 	/// fr: 'La photo est enregistrée.'
 	String get succes => 'La photo est enregistrée.';
 
-	/// fr: 'La photo n'est pas confirmée : la connexion a pu se couper pendant l'envoi. Vérifiez votre connexion, puis touchez « Utiliser cette photo » de nouveau.'
-	String get echec => 'La photo n\'est pas confirmée : la connexion a pu se couper pendant l\'envoi. Vérifiez votre connexion, puis touchez « Utiliser cette photo » de nouveau.';
+	/// fr: 'La photo n'est pas confirmée. Touchez « Utiliser cette photo » de nouveau dans un instant.'
+	String get echec => 'La photo n\'est pas confirmée. Touchez « Utiliser cette photo » de nouveau dans un instant.';
 
 	/// fr: 'Votre photo est enregistrée. Vous pouvez la remplacer à tout moment.'
 	String get enregistree => 'Votre photo est enregistrée. Vous pouvez la remplacer à tout moment.';
@@ -53919,7 +53919,7 @@ extension on Traductions {
 			'inscription.nomPropre.titre' => 'Votre nom est à corriger',
 			'inscription.nomPropre.explication' => 'Votre prénom ou votre nom contient des chiffres ou des signes. Écrivez-les en lettres pour continuer.',
 			'inscription.nomPropre.enregistrer' => 'Enregistrer mon nom',
-			'inscription.nomPropre.nonConfirme' => 'Votre nom n\'est pas confirmé : la connexion a pu se couper. Vérifiez votre connexion, puis touchez « Enregistrer mon nom » de nouveau.',
+			'inscription.nomPropre.nonConfirme' => 'Votre nom n\'est pas confirmé. Touchez « Enregistrer mon nom » de nouveau dans un instant.',
 			'inscription.etapeCourte' => ({required Object n, required Object total}) => '${n} sur ${total}',
 			'inscription.retourEtape' => 'Revenir à l\'étape précédente',
 			'inscription.seDeconnecter' => 'Se déconnecter',
@@ -60215,7 +60215,7 @@ extension on Traductions {
 			'enseignant.photo.changer' => 'Changer la photo',
 			'enseignant.photo.alternatif' => 'Votre photo publique',
 			'enseignant.photo.succes' => 'La photo est enregistrée.',
-			'enseignant.photo.echec' => 'La photo n\'est pas confirmée : la connexion a pu se couper pendant l\'envoi. Vérifiez votre connexion, puis touchez « Utiliser cette photo » de nouveau.',
+			'enseignant.photo.echec' => 'La photo n\'est pas confirmée. Touchez « Utiliser cette photo » de nouveau dans un instant.',
 			'enseignant.photo.enregistree' => 'Votre photo est enregistrée. Vous pouvez la remplacer à tout moment.',
 			'enseignant.photo.selectionEchec' => 'La photo n\'a pas pu être ouverte. Vérifiez l\'accès aux photos de l\'appareil, puis réessayez.',
 			'enseignant.photo.horsLigne' => 'La photo pourra être envoyée quand la connexion reviendra.',
