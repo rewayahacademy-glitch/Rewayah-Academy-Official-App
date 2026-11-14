@@ -54,6 +54,8 @@ class TraductionsEn extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$parcours$en parcours = _Traductions$parcours$en._(_root);
 	@override late final _Traductions$nav$en nav = _Traductions$nav$en._(_root);
 	@override late final _Traductions$compte$en compte = _Traductions$compte$en._(_root);
+	@override late final _Traductions$historique$en historique = _Traductions$historique$en._(_root);
+	@override late final _Traductions$notifications$en notifications = _Traductions$notifications$en._(_root);
 	@override late final _Traductions$eleve$en eleve = _Traductions$eleve$en._(_root);
 	@override late final _Traductions$tuteur$en tuteur = _Traductions$tuteur$en._(_root);
 	@override late final _Traductions$classe$en classe = _Traductions$classe$en._(_root);
@@ -566,6 +568,93 @@ class _Traductions$compte$en extends Traductions$compte$fr {
 	// Translations
 	@override late final _Traductions$compte$page$en page = _Traductions$compte$page$en._(_root);
 	@override String get langue => 'Language';
+}
+
+// Path: historique
+class _Traductions$historique$en extends Traductions$historique$fr {
+	_Traductions$historique$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'History';
+	@override String get detailSeance => 'Session details';
+	@override late final _Traductions$historique$segments$en segments = _Traductions$historique$segments$en._(_root);
+	@override List<String> get moisCourts => [
+		'Jan',
+		'Feb',
+		'Mar',
+		'Apr',
+		'May',
+		'Jun',
+		'Jul',
+		'Aug',
+		'Sep',
+		'Oct',
+		'Nov',
+		'Dec',
+	];
+	@override String dateCourte({required Object mois, required Object jour, required Object annee}) => '${mois} ${jour}, ${annee}';
+	@override String dateLongue({required Object jourSemaine, required Object mois, required Object jour, required Object annee}) => '${jourSemaine}, ${mois} ${jour}, ${annee}';
+	@override String plage({required Object debut, required Object fin}) => '${debut} - ${fin}';
+	@override late final _Traductions$historique$duree$en duree = _Traductions$historique$duree$en._(_root);
+	@override String get fuseauListe => 'Times shown in this device\'s time.';
+	@override String fuseauDetail({required Object decalage}) => 'Times shown in this device\'s time (UTC${decalage}).';
+	@override String get classeInconnue => 'Class not available';
+	@override late final _Traductions$historique$selecteur$en selecteur = _Traductions$historique$selecteur$en._(_root);
+	@override late final _Traductions$historique$filtres$en filtres = _Traductions$historique$filtres$en._(_root);
+	@override String get retour => 'Back to the history';
+	@override late final _Traductions$historique$etat$en etat = _Traductions$historique$etat$en._(_root);
+	@override String get presenceIllisible => 'Attendance could not be loaded: statuses stay unknown for now.';
+	@override late final _Traductions$historique$seances$en seances = _Traductions$historique$seances$en._(_root);
+	@override late final _Traductions$historique$observations$en observations = _Traductions$historique$observations$en._(_root);
+	@override late final _Traductions$historique$seance$en seance = _Traductions$historique$seance$en._(_root);
+	@override late final _Traductions$historique$observation$en observation = _Traductions$historique$observation$en._(_root);
+	@override late final _Traductions$historique$compteRendu$en compteRendu = _Traductions$historique$compteRendu$en._(_root);
+	@override String dateCourteSansAnnee({required Object mois, required Object jour}) => '${mois} ${jour}';
+}
+
+// Path: notifications
+class _Traductions$notifications$en extends Traductions$notifications$fr {
+	_Traductions$notifications$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$notifications$evenements$en evenements = _Traductions$notifications$evenements$en._(_root);
+	@override late final _Traductions$notifications$filtres$en filtres = _Traductions$notifications$filtres$en._(_root);
+	@override String get filtreVideTitre => 'No notification in this filter';
+	@override String get filtreVidePhrase => 'Choose "All" to see all your notifications again.';
+	@override String get voirToutes => 'See all notifications';
+	@override String get sectionAFaire => 'To do';
+	@override String get sectionNouvelles => 'New';
+	@override String get sectionPlusAnciennes => 'Older';
+	@override String get voirPlus => 'See more';
+	@override String get voirPlusErreur => 'Older notifications could not be loaded.';
+	@override String get toutMarquerLu => 'Mark all as read';
+	@override String get ecarter => 'Dismiss';
+	@override String get gesteTraiterContestation => 'Handle the dispute';
+	@override String get gesteObserver => 'Observe the class';
+	@override String get gesteRepondre => 'Reply';
+	@override String get gestePrendreSeance => 'Take the session';
+	@override String get gesteRecharger => 'Reload';
+	@override String get ecartNonConfirme => 'The dismissal is not yet confirmed. Try again in a moment.';
+	@override String repetitions({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} time',
+		other: '${n} times',
+	);
+	@override String get nonLue => 'Unread';
+	@override String get nonLueSemantique => 'unread';
+	@override String get lectureNonConfirmee => 'Reading is not yet confirmed. Try again in a moment.';
+	@override late final _Traductions$notifications$detail$en detail = _Traductions$notifications$detail$en._(_root);
+	@override late final _Traductions$notifications$types$en types = _Traductions$notifications$types$en._(_root);
+	@override String get titre => 'Notifications';
+	@override String quand({required Object date, required Object heure}) => '${date} at ${heure}';
+	@override String get indisponibleTitre => 'Notifications are not available yet';
+	@override String get indisponiblePhrase => 'Session reminders and messages from the academy will appear here once they are open.';
+	@override String get videTitre => 'No notifications';
+	@override String get videPhrase => 'Session reminders and messages from the academy will appear here.';
+	@override String ligne({required Object titre, required Object date, required Object heure}) => '${titre}, on ${date} at ${heure}';
 }
 
 // Path: eleve
@@ -2087,6 +2176,367 @@ class _Traductions$compte$page$en extends Traductions$compte$page$fr {
 
 	// Translations
 	@override late final _Traductions$compte$page$langue$en langue = _Traductions$compte$page$langue$en._(_root);
+}
+
+// Path: historique.segments
+class _Traductions$historique$segments$en extends Traductions$historique$segments$fr {
+	_Traductions$historique$segments$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get seances => 'Sessions';
+	@override String get observations => 'Observations';
+}
+
+// Path: historique.duree
+class _Traductions$historique$duree$en extends Traductions$historique$duree$fr {
+	_Traductions$historique$duree$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String secondes({required Object s}) => '${s} s';
+	@override String minutes({required Object m}) => '${m} min';
+	@override String minutesSecondes({required Object m, required Object s}) => '${m} min ${s} s';
+	@override String heures({required Object h}) => '${h} h';
+	@override String heuresMinutes({required Object h, required Object m}) => '${h} h ${m}';
+}
+
+// Path: historique.selecteur
+class _Traductions$historique$selecteur$en extends Traductions$historique$selecteur$fr {
+	_Traductions$historique$selecteur$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get aucune => 'No session';
+	@override String get une => '1 session';
+	@override String plusieurs({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} session',
+		other: '${n} sessions',
+	);
+}
+
+// Path: historique.filtres
+class _Traductions$historique$filtres$en extends Traductions$historique$filtres$fr {
+	_Traductions$historique$filtres$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get classe => 'Class';
+	@override String get toutesClasses => 'All classes';
+	@override String get periode => 'Period';
+	@override String get toutePeriode => 'Whole period';
+	@override String get septJours => 'Last 7 days';
+	@override String get trenteJours => 'Last 30 days';
+	@override String get troisMois => 'Last 3 months';
+	@override String get statut => 'Status';
+	@override String get tousStatuts => 'All statuses';
+}
+
+// Path: historique.etat
+class _Traductions$historique$etat$en extends Traductions$historique$etat$fr {
+	_Traductions$historique$etat$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get presence => 'Present';
+	@override String retard({required Object minutes}) => 'Late ${minutes} min';
+	@override String get retardSansDuree => 'Late';
+	@override String get verification => 'Being verified';
+	@override String get annule => 'Class cancelled';
+	@override String get nonTenu => 'Class not held';
+	@override String avecDuree({required Object etat, required Object duree}) => '${etat} · ${duree}';
+}
+
+// Path: historique.seances
+class _Traductions$historique$seances$en extends Traductions$historique$seances$fr {
+	_Traductions$historique$seances$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get videTitre => 'No past sessions';
+	@override String videPhrase({required Object dePrenom}) => '${dePrenom}\'s past sessions will appear here.';
+	@override String get videPhraseFoyer => 'The past sessions of the student profiles will appear here.';
+	@override String get filtreVideTitre => 'No session matches';
+	@override String get filtreVidePhrase => 'Change the filters to find the other sessions.';
+	@override String tronquee({required Object nombre}) => 'The ${nombre} most recent sessions are shown.';
+	@override String ouvrir({required Object date, required Object classe, required Object etat}) => 'Session of ${date}, ${classe}, ${etat}';
+}
+
+// Path: historique.observations
+class _Traductions$historique$observations$en extends Traductions$historique$observations$fr {
+	_Traductions$historique$observations$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get indisponibleTitre => 'Observation history unavailable';
+	@override String get indisponiblePhrase => 'Recorded visits cannot be read in the app yet.';
+	@override String get videTitre => 'No observations';
+	@override String videPhrase({required Object dePrenom}) => 'The visits you make during ${dePrenom}\'s sessions will appear here.';
+	@override String get videPhraseFoyer => 'Your visits during sessions will appear here.';
+	@override String get filtreVideTitre => 'No observation matches';
+	@override String get filtreVidePhrase => 'Change the filters to find the other visits.';
+	@override String get visiteUne => '1 visit';
+	@override String visites({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} visit',
+		other: '${n} visits',
+	);
+	@override String get dureeNonConfirmee => 'Duration not confirmed';
+	@override String get terminee => 'Ended';
+	@override String get nonRefermee => 'Exit not recorded';
+	@override String get eleveInconnu => 'Student';
+	@override String get tronquee => 'Only the most recent visits are shown.';
+	@override String ouvrir({required Object date, required Object classe, required Object etat}) => 'Observations of ${date}, ${classe}, ${etat}';
+}
+
+// Path: historique.seance
+class _Traductions$historique$seance$en extends Traductions$historique$seance$fr {
+	_Traductions$historique$seance$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String titreSansClasse({required Object date}) => 'Session of ${date}';
+	@override String get blocSeance => 'The session';
+	@override String blocPresence({required Object dePrenom}) => '${dePrenom}\'s attendance';
+	@override String get date => 'Date';
+	@override String get horaire => 'Time';
+	@override String get dureePrevue => 'Planned duration';
+	@override String get classe => 'Class';
+	@override String get enseignant => 'Teacher';
+	@override String get presence => 'Attendance';
+	@override String get arrivee => 'Arrival';
+	@override String get sortie => 'Exit';
+	@override String get tempsPresence => 'Time present';
+	@override String minutesSur({required Object minutes, required Object prevues}) => '${minutes} min out of ${prevues}';
+	@override String get presencePartielle => 'Partial attendance';
+	@override String get interruption => 'Interruption';
+	@override String get verificationPhrase => 'Attendance is not yet confirmed for this session.';
+	@override String get mesureAutomatique => 'Attendance measured automatically from connections to the room.';
+	@override String get nonTenuPhrase => 'The session did not take place: this is not the student\'s doing.';
+	@override String get annulePhrase => 'The session was cancelled.';
+	@override String get introuvableTitre => 'Session not found';
+	@override String get introuvablePhrase => 'This session is not in your household\'s history.';
+}
+
+// Path: historique.observation
+class _Traductions$historique$observation$en extends Traductions$historique$observation$fr {
+	_Traductions$historique$observation$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String titreSansClasse({required Object date}) => 'Observations of ${date}';
+	@override String get blocResume => 'Summary';
+	@override String get blocVisites => 'Visits';
+	@override String get observateur => 'Observer';
+	@override String get vous => 'You';
+	@override String get eleve => 'Student';
+	@override String get enseignant => 'Teacher';
+	@override String get dureeTotale => 'Total duration';
+	@override String visite({required Object n}) => 'Visit ${n}';
+	@override String plageOuverte({required Object debut}) => 'Entered at ${debut}';
+	@override String get terminee => 'Visit ended';
+	@override String get introuvableTitre => 'No visit for this session';
+	@override String get introuvablePhrase => 'No recorded visit matches this session.';
+}
+
+// Path: historique.compteRendu
+class _Traductions$historique$compteRendu$en extends Traductions$historique$compteRendu$fr {
+	_Traductions$historique$compteRendu$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Teaching report';
+	@override String get travaille => 'What was worked on';
+	@override String get appreciation => 'Assessment of the session';
+	@override String get aRenforcer => 'To reinforce';
+	@override String get aPreparer => 'To prepare for the next session';
+	@override String get commentaire => 'Shared comment';
+	@override String corrigeLe({required Object date}) => 'Corrected on ${date}';
+	@override String get nonDisponibleTitre => 'Teaching report not available';
+	@override String get nonPartagePhrase => 'The observations of this session are not shared with your family for now.';
+	@override String get enAttentePhrase => 'The report is not available yet.';
+	@override String get illisiblePhrase => 'The report cannot be displayed.';
+	@override String get horsLignePhrase => 'A connection is needed to view the report.';
+	@override String get aucunChampPhrase => 'No teaching report is available for this session.';
+	@override String get voirTravail => 'See the work to prepare';
+	@override String get voirProgression => 'See the progress';
+	@override String get etatARenforcer => 'To reinforce';
+	@override String get etatAcquis => 'Mastered';
+}
+
+// Path: notifications.evenements
+class _Traductions$notifications$evenements$en extends Traductions$notifications$evenements$fr {
+	_Traductions$notifications$evenements$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get bienvenueEquipe => 'Welcome to the team. You still need to set up your space.';
+	@override String get retenuEntretien => 'You have been selected for an interview. Let\'s get to know each other: choose your time in the app.';
+	@override String pauseRepondueAcceptee({required Object dePrenom, required Object mois}) => '${dePrenom}\'s one-month pause is accepted for ${mois}. Their deadline moves back by the same amount. Their place is kept.';
+	@override String pauseRepondueAccepteeAdulte({required Object mois}) => 'Your one-month pause is accepted for ${mois}. Your deadline moves back by the same amount. Your place is kept.';
+	@override String pauseRepondueRefusee({required Object dePrenom, required Object mois}) => '${dePrenom}\'s one-month pause for ${mois} is not accepted. The reason is in the app.';
+	@override String pauseRepondueRefuseeAdulte({required Object mois}) => 'Your one-month pause for ${mois} is not accepted. The reason is in the app.';
+	@override String get demandeRecue => 'A new time slot request has been received.';
+	@override String get demandePresentation => 'A standard display request has been received.';
+	@override String get classeValidee => 'The class is ready and waiting for its teacher.';
+	@override String get enseignantAffecte => 'A teacher has been assigned to the class.';
+	@override String get demandeClose => 'A time slot request has been closed.';
+	@override String get remplacementPropose => 'A class replacement is being offered to you.';
+	@override String get remplacementPris => 'A class replacement has been assigned.';
+	@override String get controleMissionAttribuee => 'A review mission has been assigned to you.';
+	@override String get controleMissionNonControlee => 'A review mission was left without a check.';
+	@override String get classeChangee => 'A student in the family has joined another class, at the same time.';
+	@override String get paiementRelance => 'A payment is coming due. It is paid in Payments.';
+	@override String get accesSuspenduPaiement => 'Access is suspended: this month\'s payment has not been received.';
+	@override String get accesRetabliPaiement => 'Access is restored: the payment has been received.';
+	@override String get paiementRecu => 'The payment has been received. The balance is up to date.';
+	@override String get accesSuspenduRemboursement => 'Access is suspended: a payment was refunded, the month is no longer paid.';
+	@override String get accesSuspenduLitige => 'Access is suspended: a payment is disputed with the bank.';
+	@override String get remboursementEffectue => 'A refund has been made. The balance is up to date.';
+	@override String get remboursementEffectueDirection => 'A refund has been made to a family.';
+	@override String get litigeOuvert => 'A payment is disputed with the bank. Access is suspended during the review.';
+	@override String get litigeOuvertDirection => 'A family is disputing a payment with their bank.';
+	@override String get litigeClosGagne => 'The dispute is closed: the bank ruled in the academy\'s favour.';
+	@override String get litigeClosPerdu => 'The dispute is closed: the payment is refunded, the fees go to the household balance.';
+	@override String get litigeClosDirection => 'A payment dispute is closed.';
+	@override String get enseignantAffecteSoi => 'A teacher has been assigned to your class.';
+	@override String get toutEstPret => 'All set: see the tracking of your request.';
+	@override String get toutEstPretSoi => 'All set: your class, your teacher and your first class are confirmed.';
+	@override String toutEstPretPour({required Object prenom}) => 'All set for ${prenom}: see the tracking of the request.';
+	@override String get enseignantAffecteClasse => 'A class is entrusted to you.';
+	@override String remplacementPrisQuand({required Object quand}) => 'The session of ${quand} will be taken by a replacement teacher.';
+	@override String get classeCreee => 'A class has just been created.';
+	@override String get classeCreeeSoi => 'Your class is created. Its schedule is in the app.';
+	@override String get classeCreeeFoyer => 'A class is created for a student in your household.';
+	@override String get classeCreeeClasse => 'A new class is entrusted to you.';
+	@override String get enseignantChange => 'The class teacher has changed.';
+	@override String get enseignantChangeClasse => 'The teacher of one of your classes has changed.';
+	@override String get eleveInscrit => 'A student is registered in the class.';
+	@override String get eleveInscritSoi => 'You are registered in a class.';
+	@override String get eleveInscritFoyer => 'A student in your household is registered in a class.';
+	@override String get eleveInscritClasse => 'A student joins one of your classes.';
+	@override String get eleveRetire => 'A student is no longer part of the class.';
+	@override String get eleveRetireSoi => 'You are no longer part of this class.';
+	@override String get eleveRetireFoyer => 'A student in your household is no longer part of their class.';
+	@override String get eleveRetireClasse => 'A student leaves one of your classes.';
+	@override String get creneauChange => 'The class schedule has changed.';
+	@override String changementHeureUn({required Object date, required Object cours, required Object jour, required Object avant, required Object apres}) => 'From ${date}, ${cours} on ${jour} moves from ${avant} to ${apres}.';
+	@override String changementHeurePlusieurs({required Object date, required Object cours, required Object liste}) => 'From ${date}, the time ${cours} changes: ${liste}.';
+	@override String changementHeureUnJour({required Object date, required Object cours, required Object jourAvant, required Object avant, required Object jourApres, required Object apres}) => 'From ${date}, ${cours} moves from ${jourAvant} ${avant} to ${jourApres} ${apres}.';
+	@override String changementHeureLigneJour({required Object jourAvant, required Object avant, required Object jourApres, required Object apres}) => 'from ${jourAvant} ${avant} to ${jourApres} ${apres}';
+	@override String get changementHeureMecque => 'The class stays at the same time in Makkah: it is your city\'s time that changes.';
+	@override String conversionRefusee({required Object classe, required Object raison}) => 'Class ${classe} could not move to Makkah time: ${raison} It will be retried tonight.';
+	@override String get conversionRefuseeProche => 'a time change is approaching (less than 28 days).';
+	@override String get conversionRefuseeDemiHeure => 'one of its slots has no whole hour in Makkah.';
+	@override String get conversionRefuseeAutre => 'a check failed, see the class.';
+	@override String changementHeureLigne({required Object jour, required Object avant, required Object apres}) => 'on ${jour} from ${avant} to ${apres}';
+	@override String get changementHeureCoursUn => 'your class';
+	@override String get changementHeureCoursUnFoyer => 'the class';
+	@override String get changementHeureCoursPlusieurs => 'your classes';
+	@override String get changementHeureCoursPlusieursFoyer => 'the classes';
+	@override String get seanceAnnulee => 'A session is cancelled.';
+	@override String seanceAnnuleeQuand({required Object quand}) => 'The session of ${quand} is cancelled.';
+	@override String get seanceDeplacee => 'A session is moved.';
+	@override String seanceDeplaceeQuand({required Object quand}) => 'A session is moved to ${quand}.';
+	@override String get enseignanteAbsente => 'The teacher will be absent from a session. A replacement is being sought.';
+	@override String enseignanteAbsenteQuand({required Object quand}) => 'The teacher will be absent from the session of ${quand}. A replacement is being sought.';
+	@override String get remplacementAvertissement => 'You are not in the room yet. Join quickly: otherwise you lose access to today\'s session.';
+	@override String remplacementAvertissementMinutes({required num minutes}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(minutes,
+		one: 'You are not in the room yet. Join within the minute: otherwise you lose access to today\'s session.',
+		other: 'You are not in the room yet. Join within ${minutes} minutes: otherwise you lose access to today\'s session.',
+	);
+	@override String get remplacementPreAlerte => 'A replacement is being prepared: a teacher is not yet in their room. Declare yourself ready in Replacements.';
+	@override String get remplacementInutile => 'The replacement is no longer needed: the class teacher has arrived. Thank you for being ready.';
+	@override String get titulaireEnRetard => 'The class teacher is late. The academy is looking for a replacement: stay in the room.';
+	@override String get titulaireEnRetardDirection => 'A class teacher has not entered their room. A replacement is being sought: see the schedule.';
+	@override String get remplacantArrive => 'A replacement is arriving: stay in the room.';
+	@override String get classeSupprimee => 'The class is closed.';
+	@override String get classeSupprimeeSoi => 'Your class is closed.';
+	@override String get classeSupprimeeFoyer => 'The class of a student in your household is closed.';
+	@override String get classeSupprimeeClasse => 'One of your classes is closed.';
+	@override String get seanceTerminee => 'A session has ended.';
+	@override String seanceTermineeDe({required Object deClasse, required Object quand}) => 'The session ${deClasse} of ${quand} has ended.';
+	@override String seanceTermineeTravail({required Object travail}) => 'Work to prepare: ${travail}';
+	@override String get seanceTermineeAucunTravail => 'No work to prepare.';
+	@override String seanceTermineePresents({required num n, required Object total}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} student present out of ${total}.',
+		other: '${n} students present out of ${total}.',
+	);
+	@override String get seanceTermineeCahierAttend => 'The handover notebook is waiting for your information.';
+	@override String get seanceTermineeCahierDepose => 'Notebook submitted, thank you.';
+	@override String seanceTermineePhrases({required Object premiere, required Object suite}) => '${premiere} ${suite}';
+	@override String get inconnu => 'This notification needs a more recent version of the app. Reload the page to read it.';
+}
+
+// Path: notifications.filtres
+class _Traductions$notifications$filtres$en extends Traductions$notifications$filtres$fr {
+	_Traductions$notifications$filtres$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'Filter notifications';
+	@override String get toutes => 'All';
+	@override String get nonLues => 'Unread';
+}
+
+// Path: notifications.detail
+class _Traductions$notifications$detail$en extends Traductions$notifications$detail$fr {
+	_Traductions$notifications$detail$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String recue({required Object date, required Object heure}) => 'Received on ${date} at ${heure}';
+	@override String get ouvrir => 'Open the page concerned';
+}
+
+// Path: notifications.types
+class _Traductions$notifications$types$en extends Traductions$notifications$types$fr {
+	_Traductions$notifications$types$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get annonceClasse => 'Class announcement';
+	@override String get changementSeance => 'Session change';
+	@override String get decisionDossier => 'Decision on a file';
+	@override String get messageMetier => 'Message';
+	@override String get reponseAttendue => 'Reply expected';
+	@override String get accesFinance => 'Access and payments';
+	@override String get observation => 'Observation';
+	@override String get travailRessource => 'Work or resource';
+	@override String get annonceDirection => 'Announcement from the management';
+	@override String get changementPlanning => 'Schedule change';
+	@override String get remplacement => 'Replacement';
+	@override String get mentionCommunaute => 'Mention in the Community';
+	@override String get reponseCommunaute => 'Reply in the Community';
+	@override String get messageAdministration => 'Message from the Administration';
+	@override String get dossierATraiter => 'File to handle';
+	@override String get signalementCommunaute => 'Report in the Community';
+	@override String get reponseFil => 'Reply in a conversation';
+	@override String get annoncePlanifiee => 'Scheduled announcement to publish';
+	@override String get evenementOperationnel => 'Academy event';
+	@override String get mission => 'Mission';
+	@override String get changementMission => 'Mission change';
+	@override String get reponseAdministration => 'Reply from the Administration';
+	@override String get mentionStudio => 'Mention in The Studio';
+	@override String get reponseStudio => 'Reply in The Studio';
+	@override String get decisionDemandee => 'Decision requested';
+	@override String get elementAssigne => 'Assigned item';
+	@override String get annonceInterne => 'Internal announcement';
+	@override String get evenementContextuel => 'Event';
+	@override String get autre => 'Notification';
 }
 
 // Path: eleve.accueil
@@ -6294,6 +6744,281 @@ extension on TraductionsEn {
 			'compte.page.langue.legende' => 'For the app and for the academy\'s emails',
 			'compte.page.langue.refus' => 'The app changed language, but the language of your emails is not confirmed. Try again in a moment.',
 			'compte.langue' => 'Language',
+			'historique.titre' => 'History',
+			'historique.detailSeance' => 'Session details',
+			'historique.segments.seances' => 'Sessions',
+			'historique.segments.observations' => 'Observations',
+			'historique.moisCourts.0' => 'Jan',
+			'historique.moisCourts.1' => 'Feb',
+			'historique.moisCourts.2' => 'Mar',
+			'historique.moisCourts.3' => 'Apr',
+			'historique.moisCourts.4' => 'May',
+			'historique.moisCourts.5' => 'Jun',
+			'historique.moisCourts.6' => 'Jul',
+			'historique.moisCourts.7' => 'Aug',
+			'historique.moisCourts.8' => 'Sep',
+			'historique.moisCourts.9' => 'Oct',
+			'historique.moisCourts.10' => 'Nov',
+			'historique.moisCourts.11' => 'Dec',
+			'historique.dateCourte' => ({required Object mois, required Object jour, required Object annee}) => '${mois} ${jour}, ${annee}',
+			'historique.dateLongue' => ({required Object jourSemaine, required Object mois, required Object jour, required Object annee}) => '${jourSemaine}, ${mois} ${jour}, ${annee}',
+			'historique.plage' => ({required Object debut, required Object fin}) => '${debut} - ${fin}',
+			'historique.duree.secondes' => ({required Object s}) => '${s} s',
+			'historique.duree.minutes' => ({required Object m}) => '${m} min',
+			'historique.duree.minutesSecondes' => ({required Object m, required Object s}) => '${m} min ${s} s',
+			'historique.duree.heures' => ({required Object h}) => '${h} h',
+			'historique.duree.heuresMinutes' => ({required Object h, required Object m}) => '${h} h ${m}',
+			'historique.fuseauListe' => 'Times shown in this device\'s time.',
+			'historique.fuseauDetail' => ({required Object decalage}) => 'Times shown in this device\'s time (UTC${decalage}).',
+			'historique.classeInconnue' => 'Class not available',
+			'historique.selecteur.aucune' => 'No session',
+			'historique.selecteur.une' => '1 session',
+			'historique.selecteur.plusieurs' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} session', other: '${n} sessions', ), 
+			'historique.filtres.classe' => 'Class',
+			'historique.filtres.toutesClasses' => 'All classes',
+			'historique.filtres.periode' => 'Period',
+			'historique.filtres.toutePeriode' => 'Whole period',
+			'historique.filtres.septJours' => 'Last 7 days',
+			'historique.filtres.trenteJours' => 'Last 30 days',
+			'historique.filtres.troisMois' => 'Last 3 months',
+			'historique.filtres.statut' => 'Status',
+			'historique.filtres.tousStatuts' => 'All statuses',
+			'historique.retour' => 'Back to the history',
+			'historique.etat.presence' => 'Present',
+			'historique.etat.retard' => ({required Object minutes}) => 'Late ${minutes} min',
+			'historique.etat.retardSansDuree' => 'Late',
+			'historique.etat.verification' => 'Being verified',
+			'historique.etat.annule' => 'Class cancelled',
+			'historique.etat.nonTenu' => 'Class not held',
+			'historique.etat.avecDuree' => ({required Object etat, required Object duree}) => '${etat} · ${duree}',
+			'historique.presenceIllisible' => 'Attendance could not be loaded: statuses stay unknown for now.',
+			'historique.seances.videTitre' => 'No past sessions',
+			'historique.seances.videPhrase' => ({required Object dePrenom}) => '${dePrenom}\'s past sessions will appear here.',
+			'historique.seances.videPhraseFoyer' => 'The past sessions of the student profiles will appear here.',
+			'historique.seances.filtreVideTitre' => 'No session matches',
+			'historique.seances.filtreVidePhrase' => 'Change the filters to find the other sessions.',
+			'historique.seances.tronquee' => ({required Object nombre}) => 'The ${nombre} most recent sessions are shown.',
+			'historique.seances.ouvrir' => ({required Object date, required Object classe, required Object etat}) => 'Session of ${date}, ${classe}, ${etat}',
+			'historique.observations.indisponibleTitre' => 'Observation history unavailable',
+			'historique.observations.indisponiblePhrase' => 'Recorded visits cannot be read in the app yet.',
+			'historique.observations.videTitre' => 'No observations',
+			'historique.observations.videPhrase' => ({required Object dePrenom}) => 'The visits you make during ${dePrenom}\'s sessions will appear here.',
+			'historique.observations.videPhraseFoyer' => 'Your visits during sessions will appear here.',
+			'historique.observations.filtreVideTitre' => 'No observation matches',
+			'historique.observations.filtreVidePhrase' => 'Change the filters to find the other visits.',
+			'historique.observations.visiteUne' => '1 visit',
+			'historique.observations.visites' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} visit', other: '${n} visits', ), 
+			'historique.observations.dureeNonConfirmee' => 'Duration not confirmed',
+			'historique.observations.terminee' => 'Ended',
+			'historique.observations.nonRefermee' => 'Exit not recorded',
+			'historique.observations.eleveInconnu' => 'Student',
+			'historique.observations.tronquee' => 'Only the most recent visits are shown.',
+			'historique.observations.ouvrir' => ({required Object date, required Object classe, required Object etat}) => 'Observations of ${date}, ${classe}, ${etat}',
+			'historique.seance.titreSansClasse' => ({required Object date}) => 'Session of ${date}',
+			'historique.seance.blocSeance' => 'The session',
+			'historique.seance.blocPresence' => ({required Object dePrenom}) => '${dePrenom}\'s attendance',
+			'historique.seance.date' => 'Date',
+			'historique.seance.horaire' => 'Time',
+			'historique.seance.dureePrevue' => 'Planned duration',
+			'historique.seance.classe' => 'Class',
+			'historique.seance.enseignant' => 'Teacher',
+			'historique.seance.presence' => 'Attendance',
+			'historique.seance.arrivee' => 'Arrival',
+			'historique.seance.sortie' => 'Exit',
+			'historique.seance.tempsPresence' => 'Time present',
+			'historique.seance.minutesSur' => ({required Object minutes, required Object prevues}) => '${minutes} min out of ${prevues}',
+			'historique.seance.presencePartielle' => 'Partial attendance',
+			'historique.seance.interruption' => 'Interruption',
+			'historique.seance.verificationPhrase' => 'Attendance is not yet confirmed for this session.',
+			'historique.seance.mesureAutomatique' => 'Attendance measured automatically from connections to the room.',
+			'historique.seance.nonTenuPhrase' => 'The session did not take place: this is not the student\'s doing.',
+			'historique.seance.annulePhrase' => 'The session was cancelled.',
+			'historique.seance.introuvableTitre' => 'Session not found',
+			'historique.seance.introuvablePhrase' => 'This session is not in your household\'s history.',
+			'historique.observation.titreSansClasse' => ({required Object date}) => 'Observations of ${date}',
+			'historique.observation.blocResume' => 'Summary',
+			'historique.observation.blocVisites' => 'Visits',
+			'historique.observation.observateur' => 'Observer',
+			'historique.observation.vous' => 'You',
+			'historique.observation.eleve' => 'Student',
+			'historique.observation.enseignant' => 'Teacher',
+			'historique.observation.dureeTotale' => 'Total duration',
+			'historique.observation.visite' => ({required Object n}) => 'Visit ${n}',
+			'historique.observation.plageOuverte' => ({required Object debut}) => 'Entered at ${debut}',
+			'historique.observation.terminee' => 'Visit ended',
+			'historique.observation.introuvableTitre' => 'No visit for this session',
+			'historique.observation.introuvablePhrase' => 'No recorded visit matches this session.',
+			'historique.compteRendu.titre' => 'Teaching report',
+			'historique.compteRendu.travaille' => 'What was worked on',
+			'historique.compteRendu.appreciation' => 'Assessment of the session',
+			'historique.compteRendu.aRenforcer' => 'To reinforce',
+			'historique.compteRendu.aPreparer' => 'To prepare for the next session',
+			'historique.compteRendu.commentaire' => 'Shared comment',
+			'historique.compteRendu.corrigeLe' => ({required Object date}) => 'Corrected on ${date}',
+			'historique.compteRendu.nonDisponibleTitre' => 'Teaching report not available',
+			'historique.compteRendu.nonPartagePhrase' => 'The observations of this session are not shared with your family for now.',
+			'historique.compteRendu.enAttentePhrase' => 'The report is not available yet.',
+			'historique.compteRendu.illisiblePhrase' => 'The report cannot be displayed.',
+			'historique.compteRendu.horsLignePhrase' => 'A connection is needed to view the report.',
+			'historique.compteRendu.aucunChampPhrase' => 'No teaching report is available for this session.',
+			'historique.compteRendu.voirTravail' => 'See the work to prepare',
+			'historique.compteRendu.voirProgression' => 'See the progress',
+			'historique.compteRendu.etatARenforcer' => 'To reinforce',
+			'historique.compteRendu.etatAcquis' => 'Mastered',
+			'historique.dateCourteSansAnnee' => ({required Object mois, required Object jour}) => '${mois} ${jour}',
+			'notifications.evenements.bienvenueEquipe' => 'Welcome to the team. You still need to set up your space.',
+			'notifications.evenements.retenuEntretien' => 'You have been selected for an interview. Let\'s get to know each other: choose your time in the app.',
+			'notifications.evenements.pauseRepondueAcceptee' => ({required Object dePrenom, required Object mois}) => '${dePrenom}\'s one-month pause is accepted for ${mois}. Their deadline moves back by the same amount. Their place is kept.',
+			'notifications.evenements.pauseRepondueAccepteeAdulte' => ({required Object mois}) => 'Your one-month pause is accepted for ${mois}. Your deadline moves back by the same amount. Your place is kept.',
+			'notifications.evenements.pauseRepondueRefusee' => ({required Object dePrenom, required Object mois}) => '${dePrenom}\'s one-month pause for ${mois} is not accepted. The reason is in the app.',
+			'notifications.evenements.pauseRepondueRefuseeAdulte' => ({required Object mois}) => 'Your one-month pause for ${mois} is not accepted. The reason is in the app.',
+			'notifications.evenements.demandeRecue' => 'A new time slot request has been received.',
+			'notifications.evenements.demandePresentation' => 'A standard display request has been received.',
+			'notifications.evenements.classeValidee' => 'The class is ready and waiting for its teacher.',
+			'notifications.evenements.enseignantAffecte' => 'A teacher has been assigned to the class.',
+			'notifications.evenements.demandeClose' => 'A time slot request has been closed.',
+			'notifications.evenements.remplacementPropose' => 'A class replacement is being offered to you.',
+			'notifications.evenements.remplacementPris' => 'A class replacement has been assigned.',
+			'notifications.evenements.controleMissionAttribuee' => 'A review mission has been assigned to you.',
+			'notifications.evenements.controleMissionNonControlee' => 'A review mission was left without a check.',
+			'notifications.evenements.classeChangee' => 'A student in the family has joined another class, at the same time.',
+			'notifications.evenements.paiementRelance' => 'A payment is coming due. It is paid in Payments.',
+			'notifications.evenements.accesSuspenduPaiement' => 'Access is suspended: this month\'s payment has not been received.',
+			'notifications.evenements.accesRetabliPaiement' => 'Access is restored: the payment has been received.',
+			'notifications.evenements.paiementRecu' => 'The payment has been received. The balance is up to date.',
+			'notifications.evenements.accesSuspenduRemboursement' => 'Access is suspended: a payment was refunded, the month is no longer paid.',
+			'notifications.evenements.accesSuspenduLitige' => 'Access is suspended: a payment is disputed with the bank.',
+			'notifications.evenements.remboursementEffectue' => 'A refund has been made. The balance is up to date.',
+			'notifications.evenements.remboursementEffectueDirection' => 'A refund has been made to a family.',
+			'notifications.evenements.litigeOuvert' => 'A payment is disputed with the bank. Access is suspended during the review.',
+			'notifications.evenements.litigeOuvertDirection' => 'A family is disputing a payment with their bank.',
+			_ => null,
+		} ?? switch (path) {
+			'notifications.evenements.litigeClosGagne' => 'The dispute is closed: the bank ruled in the academy\'s favour.',
+			'notifications.evenements.litigeClosPerdu' => 'The dispute is closed: the payment is refunded, the fees go to the household balance.',
+			'notifications.evenements.litigeClosDirection' => 'A payment dispute is closed.',
+			'notifications.evenements.enseignantAffecteSoi' => 'A teacher has been assigned to your class.',
+			'notifications.evenements.toutEstPret' => 'All set: see the tracking of your request.',
+			'notifications.evenements.toutEstPretSoi' => 'All set: your class, your teacher and your first class are confirmed.',
+			'notifications.evenements.toutEstPretPour' => ({required Object prenom}) => 'All set for ${prenom}: see the tracking of the request.',
+			'notifications.evenements.enseignantAffecteClasse' => 'A class is entrusted to you.',
+			'notifications.evenements.remplacementPrisQuand' => ({required Object quand}) => 'The session of ${quand} will be taken by a replacement teacher.',
+			'notifications.evenements.classeCreee' => 'A class has just been created.',
+			'notifications.evenements.classeCreeeSoi' => 'Your class is created. Its schedule is in the app.',
+			'notifications.evenements.classeCreeeFoyer' => 'A class is created for a student in your household.',
+			'notifications.evenements.classeCreeeClasse' => 'A new class is entrusted to you.',
+			'notifications.evenements.enseignantChange' => 'The class teacher has changed.',
+			'notifications.evenements.enseignantChangeClasse' => 'The teacher of one of your classes has changed.',
+			'notifications.evenements.eleveInscrit' => 'A student is registered in the class.',
+			'notifications.evenements.eleveInscritSoi' => 'You are registered in a class.',
+			'notifications.evenements.eleveInscritFoyer' => 'A student in your household is registered in a class.',
+			'notifications.evenements.eleveInscritClasse' => 'A student joins one of your classes.',
+			'notifications.evenements.eleveRetire' => 'A student is no longer part of the class.',
+			'notifications.evenements.eleveRetireSoi' => 'You are no longer part of this class.',
+			'notifications.evenements.eleveRetireFoyer' => 'A student in your household is no longer part of their class.',
+			'notifications.evenements.eleveRetireClasse' => 'A student leaves one of your classes.',
+			'notifications.evenements.creneauChange' => 'The class schedule has changed.',
+			'notifications.evenements.changementHeureUn' => ({required Object date, required Object cours, required Object jour, required Object avant, required Object apres}) => 'From ${date}, ${cours} on ${jour} moves from ${avant} to ${apres}.',
+			'notifications.evenements.changementHeurePlusieurs' => ({required Object date, required Object cours, required Object liste}) => 'From ${date}, the time ${cours} changes: ${liste}.',
+			'notifications.evenements.changementHeureUnJour' => ({required Object date, required Object cours, required Object jourAvant, required Object avant, required Object jourApres, required Object apres}) => 'From ${date}, ${cours} moves from ${jourAvant} ${avant} to ${jourApres} ${apres}.',
+			'notifications.evenements.changementHeureLigneJour' => ({required Object jourAvant, required Object avant, required Object jourApres, required Object apres}) => 'from ${jourAvant} ${avant} to ${jourApres} ${apres}',
+			'notifications.evenements.changementHeureMecque' => 'The class stays at the same time in Makkah: it is your city\'s time that changes.',
+			'notifications.evenements.conversionRefusee' => ({required Object classe, required Object raison}) => 'Class ${classe} could not move to Makkah time: ${raison} It will be retried tonight.',
+			'notifications.evenements.conversionRefuseeProche' => 'a time change is approaching (less than 28 days).',
+			'notifications.evenements.conversionRefuseeDemiHeure' => 'one of its slots has no whole hour in Makkah.',
+			'notifications.evenements.conversionRefuseeAutre' => 'a check failed, see the class.',
+			'notifications.evenements.changementHeureLigne' => ({required Object jour, required Object avant, required Object apres}) => 'on ${jour} from ${avant} to ${apres}',
+			'notifications.evenements.changementHeureCoursUn' => 'your class',
+			'notifications.evenements.changementHeureCoursUnFoyer' => 'the class',
+			'notifications.evenements.changementHeureCoursPlusieurs' => 'your classes',
+			'notifications.evenements.changementHeureCoursPlusieursFoyer' => 'the classes',
+			'notifications.evenements.seanceAnnulee' => 'A session is cancelled.',
+			'notifications.evenements.seanceAnnuleeQuand' => ({required Object quand}) => 'The session of ${quand} is cancelled.',
+			'notifications.evenements.seanceDeplacee' => 'A session is moved.',
+			'notifications.evenements.seanceDeplaceeQuand' => ({required Object quand}) => 'A session is moved to ${quand}.',
+			'notifications.evenements.enseignanteAbsente' => 'The teacher will be absent from a session. A replacement is being sought.',
+			'notifications.evenements.enseignanteAbsenteQuand' => ({required Object quand}) => 'The teacher will be absent from the session of ${quand}. A replacement is being sought.',
+			'notifications.evenements.remplacementAvertissement' => 'You are not in the room yet. Join quickly: otherwise you lose access to today\'s session.',
+			'notifications.evenements.remplacementAvertissementMinutes' => ({required num minutes}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(minutes, one: 'You are not in the room yet. Join within the minute: otherwise you lose access to today\'s session.', other: 'You are not in the room yet. Join within ${minutes} minutes: otherwise you lose access to today\'s session.', ), 
+			'notifications.evenements.remplacementPreAlerte' => 'A replacement is being prepared: a teacher is not yet in their room. Declare yourself ready in Replacements.',
+			'notifications.evenements.remplacementInutile' => 'The replacement is no longer needed: the class teacher has arrived. Thank you for being ready.',
+			'notifications.evenements.titulaireEnRetard' => 'The class teacher is late. The academy is looking for a replacement: stay in the room.',
+			'notifications.evenements.titulaireEnRetardDirection' => 'A class teacher has not entered their room. A replacement is being sought: see the schedule.',
+			'notifications.evenements.remplacantArrive' => 'A replacement is arriving: stay in the room.',
+			'notifications.evenements.classeSupprimee' => 'The class is closed.',
+			'notifications.evenements.classeSupprimeeSoi' => 'Your class is closed.',
+			'notifications.evenements.classeSupprimeeFoyer' => 'The class of a student in your household is closed.',
+			'notifications.evenements.classeSupprimeeClasse' => 'One of your classes is closed.',
+			'notifications.evenements.seanceTerminee' => 'A session has ended.',
+			'notifications.evenements.seanceTermineeDe' => ({required Object deClasse, required Object quand}) => 'The session ${deClasse} of ${quand} has ended.',
+			'notifications.evenements.seanceTermineeTravail' => ({required Object travail}) => 'Work to prepare: ${travail}',
+			'notifications.evenements.seanceTermineeAucunTravail' => 'No work to prepare.',
+			'notifications.evenements.seanceTermineePresents' => ({required num n, required Object total}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} student present out of ${total}.', other: '${n} students present out of ${total}.', ), 
+			'notifications.evenements.seanceTermineeCahierAttend' => 'The handover notebook is waiting for your information.',
+			'notifications.evenements.seanceTermineeCahierDepose' => 'Notebook submitted, thank you.',
+			'notifications.evenements.seanceTermineePhrases' => ({required Object premiere, required Object suite}) => '${premiere} ${suite}',
+			'notifications.evenements.inconnu' => 'This notification needs a more recent version of the app. Reload the page to read it.',
+			'notifications.filtres.libelle' => 'Filter notifications',
+			'notifications.filtres.toutes' => 'All',
+			'notifications.filtres.nonLues' => 'Unread',
+			'notifications.filtreVideTitre' => 'No notification in this filter',
+			'notifications.filtreVidePhrase' => 'Choose "All" to see all your notifications again.',
+			'notifications.voirToutes' => 'See all notifications',
+			'notifications.sectionAFaire' => 'To do',
+			'notifications.sectionNouvelles' => 'New',
+			'notifications.sectionPlusAnciennes' => 'Older',
+			'notifications.voirPlus' => 'See more',
+			'notifications.voirPlusErreur' => 'Older notifications could not be loaded.',
+			'notifications.toutMarquerLu' => 'Mark all as read',
+			'notifications.ecarter' => 'Dismiss',
+			'notifications.gesteTraiterContestation' => 'Handle the dispute',
+			'notifications.gesteObserver' => 'Observe the class',
+			'notifications.gesteRepondre' => 'Reply',
+			'notifications.gestePrendreSeance' => 'Take the session',
+			'notifications.gesteRecharger' => 'Reload',
+			'notifications.ecartNonConfirme' => 'The dismissal is not yet confirmed. Try again in a moment.',
+			'notifications.repetitions' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} time', other: '${n} times', ), 
+			'notifications.nonLue' => 'Unread',
+			'notifications.nonLueSemantique' => 'unread',
+			'notifications.lectureNonConfirmee' => 'Reading is not yet confirmed. Try again in a moment.',
+			'notifications.detail.recue' => ({required Object date, required Object heure}) => 'Received on ${date} at ${heure}',
+			'notifications.detail.ouvrir' => 'Open the page concerned',
+			'notifications.types.annonceClasse' => 'Class announcement',
+			'notifications.types.changementSeance' => 'Session change',
+			'notifications.types.decisionDossier' => 'Decision on a file',
+			'notifications.types.messageMetier' => 'Message',
+			'notifications.types.reponseAttendue' => 'Reply expected',
+			'notifications.types.accesFinance' => 'Access and payments',
+			'notifications.types.observation' => 'Observation',
+			'notifications.types.travailRessource' => 'Work or resource',
+			'notifications.types.annonceDirection' => 'Announcement from the management',
+			'notifications.types.changementPlanning' => 'Schedule change',
+			'notifications.types.remplacement' => 'Replacement',
+			'notifications.types.mentionCommunaute' => 'Mention in the Community',
+			'notifications.types.reponseCommunaute' => 'Reply in the Community',
+			'notifications.types.messageAdministration' => 'Message from the Administration',
+			'notifications.types.dossierATraiter' => 'File to handle',
+			'notifications.types.signalementCommunaute' => 'Report in the Community',
+			'notifications.types.reponseFil' => 'Reply in a conversation',
+			'notifications.types.annoncePlanifiee' => 'Scheduled announcement to publish',
+			'notifications.types.evenementOperationnel' => 'Academy event',
+			'notifications.types.mission' => 'Mission',
+			'notifications.types.changementMission' => 'Mission change',
+			'notifications.types.reponseAdministration' => 'Reply from the Administration',
+			'notifications.types.mentionStudio' => 'Mention in The Studio',
+			'notifications.types.reponseStudio' => 'Reply in The Studio',
+			'notifications.types.decisionDemandee' => 'Decision requested',
+			'notifications.types.elementAssigne' => 'Assigned item',
+			'notifications.types.annonceInterne' => 'Internal announcement',
+			'notifications.types.evenementContextuel' => 'Event',
+			'notifications.types.autre' => 'Notification',
+			'notifications.titre' => 'Notifications',
+			'notifications.quand' => ({required Object date, required Object heure}) => '${date} at ${heure}',
+			'notifications.indisponibleTitre' => 'Notifications are not available yet',
+			'notifications.indisponiblePhrase' => 'Session reminders and messages from the academy will appear here once they are open.',
+			'notifications.videTitre' => 'No notifications',
+			'notifications.videPhrase' => 'Session reminders and messages from the academy will appear here.',
+			'notifications.ligne' => ({required Object titre, required Object date, required Object heure}) => '${titre}, on ${date} at ${heure}',
 			'eleve.accueil.rejoindre' => 'Join',
 			'eleve.accueil.coran' => 'The Quran',
 			'eleve.accueil.coranDetail' => 'To read whenever you want',
@@ -6442,8 +7167,6 @@ extension on TraductionsEn {
 			'tuteur.accueil.motifAnnuleeTard' => 'Session cancelled shortly before the start time',
 			'tuteur.accueil.proposeApres' => ({required Object jour, required Object heure}) => 'Next class ${jour} at ${heure}',
 			'tuteur.accueil.proposeAucun' => 'A new class will be offered to you.',
-			_ => null,
-		} ?? switch (path) {
 			'tuteur.accueil.gererLeFoyer' => 'Manage the household',
 			'tuteur.accueil.blocAppareils' => 'Household devices',
 			'tuteur.accueil.blocAppareilsDetail' => 'Add a device, or remove one.',
@@ -6683,6 +7406,8 @@ extension on TraductionsEn {
 			'suiviDemandes.creneauxChoisis' => 'Chosen days and times',
 			'suiviDemandes.jourHeure' => ({required Object jour, required Object heure}) => '${jour} ${heure}',
 			'suiviDemandes.fuseauChoisi' => 'Time zone',
+			_ => null,
+		} ?? switch (path) {
 			'suiviDemandes.fuseauValeur' => ({required Object deVille}) => '${deVille} time',
 			'suiviDemandes.etapes.envoyee' => 'Request sent',
 			'suiviDemandes.etapes.classeValidee' => 'Class approved',
