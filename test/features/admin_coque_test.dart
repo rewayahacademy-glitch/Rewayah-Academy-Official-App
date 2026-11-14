@@ -107,24 +107,26 @@ void main() {
     );
     expect(tester.getSize(find.byKey(AdminShell.railKey)).width, 80);
     // Icone seule dans le rail : aucun libelle peint, donc aucun libelle
-    // coupe (revue AD-S) ; le libelle reste annonce.
-    expect(
-      find.descendant(
-        of: find.byKey(AdminShell.railKey),
-        matching: find.byWidgetPredicate(
-          (Widget w) => w is Visibility && !w.visible,
-        ),
-      ),
-      findsNWidgets(domainesAdmin(voitDirection: false).length),
-    );
+    // coupe (revue AD-S) ; le libelle reste en infobulle et annonce.
+    for (final AdminDomaine d in domainesAdmin(voitDirection: false)) {
+      expect(_dans(AdminShell.railKey, find.text(d.libelle)), findsNothing);
+      expect(
+        _dans(AdminShell.railKey, find.byTooltip(d.libelle)),
+        findsOneWidget,
+      );
+    }
     expect(
       find.bySemanticsLabel(RegExp(AdminDomaine.operations.libelle)),
       findsOneWidget,
     );
 
+    // NAV-SOUS-LIENS : Personnes ouvre le menu de ses pages ; la premiere
+    // est celle ou menait le domaine.
     await tester.tap(
       _dans(AdminShell.railKey, find.byTooltip(AdminDomaine.personnes.libelle)),
     );
+    await _stabiliser(tester);
+    await tester.tap(find.text(t.dossiers.titre).last);
     await _stabiliser(tester);
     expect(_chemin(routeur), Routes.adminPersonnesDossiers);
 

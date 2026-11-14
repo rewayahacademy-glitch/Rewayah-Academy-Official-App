@@ -288,6 +288,8 @@ import '../capacites/port_delegation_finance.dart'
     show reserveDelegationOuverteProvider;
 import '../capacites/port_finance_direction.dart'
     show vueGlobaleFinanceOuverteProvider;
+import '../capacites/port_politique_revue_kyc.dart'
+    show peutReglerPolitiqueKycProvider;
 import '../communications/moderation.dart' show moderationOuverteProvider;
 import '../config/env.dart';
 import '../domain/enums.dart';
@@ -3840,6 +3842,15 @@ class _CoquilleAdmin extends ConsumerWidget {
         onStudio: ref.watch(studioOuvertProvider)
             ? () => aller(Routes.adminStudio)
             : null,
+        // NAV-SOUS-LIENS (14/11/2026) : les pages de chaque domaine dans le
+        // panneau (tablette et ordinateur), avec les memes interrupteurs que
+        // les pages (PORTS-DIRECTION, politique KYC).
+        sousLiens: sousLiensAdmin(
+          vueGlobaleFinance: ref.watch(vueGlobaleFinanceOuverteProvider),
+          reserveDelegation: ref.watch(reserveDelegationOuverteProvider),
+          politiqueRevueKyc: ref.watch(peutReglerPolitiqueKycProvider),
+        ),
+        cheminCourant: GoRouterState.of(context).uri.path,
         child: child,
       ),
     );

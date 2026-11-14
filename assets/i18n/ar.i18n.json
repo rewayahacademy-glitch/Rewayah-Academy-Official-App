@@ -3180,7 +3180,16 @@
       "recherche": "البحث",
       "rechercheIndication": "البحث عن شاشة",
       "notificationsTitre": "الإشعارات",
-      "menu": "القائمة"
+      "menu": "القائمة",
+      "sections": {
+        "quotidien": "العمل اليومي",
+        "academie": "الأكاديمية",
+        "reglages": "الإعدادات والرقابة"
+      },
+      "sousLiens": {
+        "admissions": "طلبات القبول",
+        "pagesDe": "صفحات {domaine}"
+      }
     },
     "compte": "حسابي",
     "principale": "التنقل الرئيسي",

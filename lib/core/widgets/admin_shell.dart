@@ -10,6 +10,7 @@ import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
 import '../preferences/preferences_locales.dart' show navigationReplieeProvider;
 import '../router/routes.dart';
+import '../theme/app_color_pair.dart';
 import '../theme/app_gabarit.dart';
 import '../theme/app_metriques.dart';
 import '../theme/app_palette.dart';
@@ -23,9 +24,11 @@ import 'brand_logo.dart';
 import 'entete_page.dart';
 import 'halo_lumiere.dart' show ArbitreLumieres;
 import 'lien_fleche.dart';
+import 'menu_actions.dart';
 import 'nav_shell.dart' show BoutonPanneau, Destination, PiedComptePanneau;
 import 'page_shell.dart';
 import 'pressable.dart';
+import 'sous_liens_coquille.dart';
 
 /// La coquille de navigation du panneau admin : huit domaines, jamais plus
 /// granulaire (gel d'architecture, `docs/archive/2026-09-pre-remise-a-plat/architecture/ADMIN_IA_AUDIT.md`).
@@ -94,6 +97,8 @@ class AdminShell extends StatelessWidget {
     this.onStudio,
     this.onRechercheMetier,
     this.onDeconnexion,
+    this.sousLiens = const <AdminDomaine, List<SousLien>>{},
+    this.cheminCourant,
   }) : assert(
          domaines.length <= maxDomaines,
          'La sidebar admin ne contient jamais plus de $maxDomaines domaines '
@@ -161,6 +166,14 @@ class AdminShell extends StatelessWidget {
 
   /// L'ecran affiche.
   final Widget child;
+
+  /// NAV-SOUS-LIENS (14/11/2026) : les pages de chaque domaine, montrees
+  /// par le panneau sur tablette et ordinateur (`sousLiensAdmin`). Vide :
+  /// aucun sous-lien, et les pages gardent leur sous-navigation.
+  final Map<AdminDomaine, List<SousLien>> sousLiens;
+
+  /// L'adresse de la page ouverte, pour allumer son sous-lien.
+  final String? cheminCourant;
 
   /// Le nombre maximal de domaines. **Huit, pas quatre** : la regle du gel
   /// d'architecture, distincte de `NavShell.maxDestinations`.
@@ -343,19 +356,52 @@ class AdminShell extends StatelessWidget {
     // facon besoin d'un `Scaffold` pour son tiroir ouvrable.
     // FIL-ARIANE : la barre laterale (au telephone, le menu) est une sortie
     // visible ; `PageShell` n'y ajoute pas de disque retour de repli.
+    // NAV-SOUS-LIENS : sur tablette et ordinateur, le panneau montre les
+    // pages du domaine ouvert ; les pages le savent et ne repetent pas leur
+    // sous-navigation (`SousLiensCoquille`). Au telephone, rien ne change.
+    final bool avecSousLiens =
+        sousLiens.isNotEmpty && chrome != ChromeNavigation.barreBasse;
+    Widget pageCouverte() {
+      final Widget page = contenu(avecActions: true);
+      if (!avecSousLiens) return page;
+      return SousLiensCoquille(
+        chemins: <String>{
+          for (final List<SousLien> liens in sousLiens.values)
+            for (final SousLien lien in liens) lien.chemin,
+        },
+        child: page,
+      );
+    }
+
     return NavigationDeCoquille(
       child: Scaffold(
-        drawer: chrome == ChromeNavigation.barreBasse
-            ? _Tiroir(
-                domaines: domaines,
-                indexActif: actif,
-                onChoisir: choisir,
-                onCompte: onCompte,
-                onStudio: studio,
-                onRechercheMetier: onRechercheMetier,
-                onAccueil: accueil,
-              )
-            : null,
+        // Telephone : le tiroir du bouton Menu. Tablette (600 a 1199) : le
+        // panneau entier, ouvert par le bouton du rail, PAR-DESSUS la page
+        // avec un voile (Material 3 « Modal navigation drawer » ; point 6 de
+        // la revue, NAV-SOUS-LIENS) : la page garde sa largeur.
+        drawer: switch (chrome) {
+          ChromeNavigation.barreBasse => _Tiroir(
+            domaines: domaines,
+            indexActif: actif,
+            onChoisir: choisir,
+            onCompte: onCompte,
+            onStudio: studio,
+            onRechercheMetier: onRechercheMetier,
+            onAccueil: accueil,
+          ),
+          ChromeNavigation.rail => _Tiroir(
+            domaines: domaines,
+            indexActif: actif,
+            onChoisir: choisir,
+            onCompte: onCompte,
+            onAccueil: accueil,
+            sousLiens: sousLiens,
+            cheminCourant: cheminCourant,
+            onAller: onAller,
+            surTablette: true,
+          ),
+          ChromeNavigation.barreLaterale => null,
+        },
         body: switch (chrome) {
           ChromeNavigation.barreBasse => Column(
             children: <Widget>[
@@ -385,17 +431,22 @@ class AdminShell extends StatelessWidget {
           ),
           ChromeNavigation.rail => Row(
             children: <Widget>[
-              // Sous 1200, le rail reste fige, sans bouton : ouvrir le
-              // panneau a 800 (pousser la page ou passer par-dessus) attend
-              // la decision du directeur (question 6 de la revue du 09/11).
-              _Rail(
-                domaines: domaines,
-                indexActif: actif,
-                onChoisir: choisir,
-                onAccueil: accueil,
-                pied: _pied(repliee: true),
+              // NAV-SOUS-LIENS (point 6) : sous 1200, le bouton du rail ouvre
+              // le panneau par-dessus la page, avec un voile.
+              Builder(
+                builder: (BuildContext dansScaffold) => _Rail(
+                  domaines: domaines,
+                  indexActif: actif,
+                  onChoisir: choisir,
+                  onAccueil: accueil,
+                  onBasculer: () => Scaffold.of(dansScaffold).openDrawer(),
+                  sousLiens: sousLiens,
+                  cheminCourant: cheminCourant,
+                  onAller: onAller,
+                  pied: _pied(repliee: true),
+                ),
               ),
-              Expanded(child: contenu(avecActions: true)),
+              Expanded(child: pageCouverte()),
             ],
           ),
           ChromeNavigation.barreLaterale => Row(
@@ -417,6 +468,9 @@ class AdminShell extends StatelessWidget {
                           onChoisir: choisir,
                           onAccueil: accueil,
                           onBasculer: basculer,
+                          sousLiens: sousLiens,
+                          cheminCourant: cheminCourant,
+                          onAller: onAller,
                           pied: _pied(repliee: true),
                         )
                       : _Sidebar(
@@ -425,6 +479,9 @@ class AdminShell extends StatelessWidget {
                           onChoisir: choisir,
                           onAccueil: accueil,
                           onBasculer: basculer,
+                          sousLiens: sousLiens,
+                          cheminCourant: cheminCourant,
+                          onAller: onAller,
                           pied: _pied(repliee: false),
                         );
                 },
@@ -432,7 +489,7 @@ class AdminShell extends StatelessWidget {
               // Un panneau contextuel pourra prendre place a droite du contenu
               // le jour ou un ecran en aura besoin. Rien n'en a besoin
               // aujourd'hui : ce commentaire tient la place, pas un widget vide.
-              Expanded(child: contenu(avecActions: true)),
+              Expanded(child: pageCouverte()),
             ],
           ),
         },
@@ -730,6 +787,10 @@ class _Tiroir extends StatelessWidget {
     required this.onAccueil,
     this.onStudio,
     this.onRechercheMetier,
+    this.sousLiens = const <AdminDomaine, List<SousLien>>{},
+    this.cheminCourant,
+    this.onAller,
+    this.surTablette = false,
   });
 
   final List<AdminDomaine> domaines;
@@ -737,6 +798,20 @@ class _Tiroir extends StatelessWidget {
   final void Function(int index) onChoisir;
   final VoidCallback onCompte;
   final VoidCallback onAccueil;
+
+  /// NAV-SOUS-LIENS : les pages des domaines (vide au telephone).
+  final Map<AdminDomaine, List<SousLien>> sousLiens;
+
+  /// L'adresse ouverte, pour allumer son sous-lien.
+  final String? cheminCourant;
+
+  /// Mene a un sous-lien.
+  final void Function(String chemin)? onAller;
+
+  /// Vrai quand le panneau s'ouvre par-dessus la page depuis le rail (600 a
+  /// 1199) : le bouton du panneau le referme, a la meme place que dans le
+  /// rail ; le compte reste au pied du rail.
+  final bool surTablette;
 
   /// Ouvre Le Studio ; nul, aucun lien (COM-F).
   final VoidCallback? onStudio;
@@ -790,9 +865,20 @@ class _Tiroir extends StatelessWidget {
               Navigator.of(context).pop();
               onAccueil();
             },
+            // Le bouton referme le panneau ouvert par-dessus la page ; il ne
+            // touche pas au choix garde par appareil.
+            onBasculer: surTablette ? () => Navigator.of(context).pop() : null,
           ),
-          for (final AdminDomaine domaine in domaines)
-            NavigationDrawerDestination(
+          ..._entreesPanneau(
+            domaines: domaines,
+            indexActif: indexActif,
+            sousLiens: sousLiens,
+            cheminCourant: cheminCourant,
+            onSousLien: (String chemin) {
+              Navigator.of(context).pop();
+              onAller?.call(chemin);
+            },
+            destination: (AdminDomaine domaine) => NavigationDrawerDestination(
               icon: _iconeEntree(palette, domaine, selectionnee: false),
               selectedIcon: _iconeEntree(palette, domaine, selectionnee: true),
               // Flexible : enfant direct de la rangee M3 (DefaultTextStyle
@@ -801,6 +887,7 @@ class _Tiroir extends StatelessWidget {
                 child: _libelleEntree(palette, domaine, lignes: 2),
               ),
             ),
+          ),
           Ecart.vLg,
           // Le Studio n'est pas un domaine (Q1) : un lien sous la liste,
           // jamais une neuvieme destination du tiroir.
@@ -839,27 +926,32 @@ class _Tiroir extends StatelessWidget {
                 ),
               ),
             ),
-          _PiedUtilisateur(
-            onCompte: () {
-              Navigator.of(context).pop();
-              onCompte();
-            },
-          ),
+          if (!surTablette)
+            _PiedUtilisateur(
+              onCompte: () {
+                Navigator.of(context).pop();
+                onCompte();
+              },
+            ),
         ],
       ),
     );
   }
 }
 
-/// Le rail replie, de 600 a 1199 : icone seule, libelle en info-bulle et en
-/// semantique. Pas de pied : 80 est trop etroit ; en tete, le symbole seul
-/// du logo (LOGO-APP).
+/// Le rail replie, de 600 a 1199 (et a partir de 1200 quand le panneau est
+/// replie) : icone seule, libelle en info-bulle et en semantique, symbole du
+/// logo en tete, compte au pied.
+///
+/// **NAV-SOUS-LIENS (14/11/2026)** : un domaine qui a des pages ouvre leur
+/// menu au clic (Windows « NavigationView » compact, Material 3 « Navigation
+/// rail » + menu) : deux gestes vers n'importe quelle page, sans deplier le
+/// panneau. Un domaine sans pages y mene directement. Le bouton du panneau,
+/// en tete, l'ouvre en entier (par-dessus la page sous 1200).
 ///
 /// Les libelles complets (« Opérations », « Configuration ») ne tiennent pas
-/// en 80 sans points de suspension, et aucun libelle court n'existe dans les
-/// traductions : plutot que d'en inventer un, le rail n'affiche que l'icone
-/// (revue AD-S, ecart soumis au directeur). Le libelle reste dans l'arbre
-/// semantique (`NavigationRailLabelType.none` le garde, invisible).
+/// en 80 : le rail n'affiche que l'icone, le libelle reste dans l'infobulle
+/// et dans la voix du lecteur d'ecran.
 class _Rail extends StatelessWidget {
   const _Rail({
     required this.domaines,
@@ -867,7 +959,10 @@ class _Rail extends StatelessWidget {
     required this.onChoisir,
     required this.onAccueil,
     required this.pied,
-    this.onBasculer,
+    required this.onBasculer,
+    required this.sousLiens,
+    required this.cheminCourant,
+    required this.onAller,
   });
 
   final List<AdminDomaine> domaines;
@@ -878,22 +973,75 @@ class _Rail extends StatelessWidget {
   /// Le compte au pied du rail (photo seule, nom en infobulle).
   final Widget pied;
 
-  /// Deplie le panneau ; nul sous 1200, ou le rail reste fige.
-  final VoidCallback? onBasculer;
+  /// Ouvre le panneau entier.
+  final VoidCallback onBasculer;
+
+  /// Les pages des domaines, ouvertes en menu.
+  final Map<AdminDomaine, List<SousLien>> sousLiens;
+
+  /// L'adresse ouverte, pour cocher sa page dans le menu.
+  final String? cheminCourant;
+
+  /// Mene a une page.
+  final void Function(String chemin) onAller;
 
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
-    final TextStyle base =
-        Theme.of(context).textTheme.labelMedium ?? const TextStyle();
+    final List<Widget> entrees = <Widget>[];
+    for (int i = 0; i < domaines.length; i++) {
+      final AdminDomaine domaine = domaines[i];
+      if (i > 0 && sectionDe(domaine) != sectionDe(domaines[i - 1])) {
+        entrees.add(const _SeparationRail());
+      }
+      final bool selectionne = i == indexActif;
+      final List<SousLien> pages = sousLiens[domaine] ?? const <SousLien>[];
+      Widget pastille(EtatPression etat) => _infoBulle(
+        domaine,
+        _PastilleRail(
+          domaine: domaine,
+          selectionnee: selectionne,
+          survolee: etat.survole || etat.presse,
+          palette: palette,
+        ),
+      );
+      if (domaine.actif && pages.isNotEmpty) {
+        final SousLien? courant = sousLienCourant(pages, cheminCourant);
+        entrees.add(
+          MenuActions(
+            libelle: t.nav.admin.sousLiens.pagesDe(domaine: domaine.libelle),
+            actions: <EntreeAction>[
+              for (final SousLien page in pages)
+                EntreeAction(
+                  libelle: page.libelle,
+                  // La page ouverte se reconnait a son icone (jamais la
+                  // couleur seule).
+                  icone: page == courant ? AppIcons.pageOuverte : null,
+                  onChoix: () => onAller(page.chemin),
+                ),
+            ],
+            declencheur: (BuildContext _, EtatPression etat) => pastille(etat),
+          ),
+        );
+      } else {
+        entrees.add(
+          Pressable.selon(
+            // Un domaine inerte ne navigue pas (choisir l'ignore) : il
+            // reste lisible et focalisable, jamais grise.
+            onPress: () => onChoisir(i),
+            libelleSemantique: domaine.libelle,
+            selectionne: selectionne,
+            arrondiFocus: AppRadius.arrondiSm,
+            constructeur: (BuildContext _, EtatPression etat) => pastille(etat),
+          ),
+        );
+      }
+    }
 
     return SizedBox(
       key: AdminShell.railKey,
       width: AppGabarit.largeurRail,
       child: DecoratedBox(
-        // Le filet de fin est peint au premier plan : le rail Material peint
-        // son propre fond par-dessus une bordure de fond, et le filet ne se
-        // voyait que hors de lui (en tete et au pied).
         position: DecorationPosition.foreground,
         decoration: BoxDecoration(
           border: BorderDirectional(end: palette.borderHairline.asBorderSide()),
@@ -903,75 +1051,38 @@ class _Rail extends StatelessWidget {
           child: SafeArea(
             child: Column(
               children: <Widget>[
-                if (onBasculer case final VoidCallback basculer)
-                  Padding(
-                    padding: const EdgeInsets.only(top: AppSpacing.md),
-                    child: Align(
-                      alignment: AlignmentDirectional.centerStart,
-                      child: Padding(
-                        padding: const EdgeInsetsDirectional.only(
-                          start: AppSpacing.lg,
-                        ),
-                        child: BoutonPanneau(
-                          cleBouton: AdminShell.boutonPanneauKey,
-                          repliee: true,
-                          onBasculer: basculer,
-                        ),
+                Padding(
+                  padding: const EdgeInsets.only(top: AppSpacing.md),
+                  child: Align(
+                    alignment: AlignmentDirectional.centerStart,
+                    child: Padding(
+                      padding: const EdgeInsetsDirectional.only(
+                        start: AppSpacing.lg,
+                      ),
+                      child: BoutonPanneau(
+                        cleBouton: AdminShell.boutonPanneauKey,
+                        repliee: true,
+                        onBasculer: onBasculer,
                       ),
                     ),
                   ),
+                ),
                 Expanded(
-                  child: NavigationRail(
-                    selectedIndex: indexActif,
-                    onDestinationSelected: onChoisir,
-                    backgroundColor: palette.surfaceRaised.background,
-                    minWidth: AppGabarit.largeurRail,
-                    labelType: NavigationRailLabelType.none,
-                    scrollable: true,
-                    groupAlignment: -1,
-                    // LOGO-APP : en tete du rail, le symbole seul (README du logo :
-                    // petit format, barre etroite), cliquable vers l'Accueil.
-                    leading: BrandLogo(
-                      variante: VarianteLogo.symbole,
-                      hauteur: AppSpacing.xxxl,
-                      onAccueil: onAccueil,
-                    ),
-                    useIndicator: true,
-                    indicatorColor: palette.washAccent.background,
-                    indicatorShape: const RoundedRectangleBorder(
-                      borderRadius: AppRadius.arrondiSm,
-                    ),
-                    // L'etat actif ne passe pas par la couleur seule (spec section
-                    // 20) : la graisse le porte aussi.
-                    selectedLabelTextStyle: AppTypography.graisse(
-                      base.copyWith(
-                        color: palette.inkAccent.asBorderSide().color,
-                      ),
-                      FontWeight.w600,
-                    ),
-                    unselectedLabelTextStyle: base.copyWith(
-                      color: palette.inkMuted.asBorderSide().color,
-                    ),
-                    selectedIconTheme: palette.inkAccent.asIconTheme(
-                      size: AppSpacing.xxl,
-                    ),
-                    unselectedIconTheme: palette.inkMuted.asIconTheme(
-                      size: AppSpacing.xxl,
-                    ),
-                    destinations: <NavigationRailDestination>[
-                      for (final AdminDomaine domaine in domaines)
-                        NavigationRailDestination(
-                          icon: _infoBulle(
-                            domaine,
-                            _iconeEntree(palette, domaine, selectionnee: false),
-                          ),
-                          selectedIcon: _infoBulle(
-                            domaine,
-                            _iconeEntree(palette, domaine, selectionnee: true),
-                          ),
-                          label: _libelleEntree(palette, domaine),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: <Widget>[
+                        Ecart.vSm,
+                        // LOGO-APP : en tete du rail, le symbole seul,
+                        // cliquable vers l'Accueil.
+                        BrandLogo(
+                          variante: VarianteLogo.symbole,
+                          hauteur: AppSpacing.xxxl,
+                          onAccueil: onAccueil,
                         ),
-                    ],
+                        Ecart.vSm,
+                        ...entrees,
+                      ],
+                    ),
                   ),
                 ),
                 pied,
@@ -980,6 +1091,244 @@ class _Rail extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// La pastille d'un domaine du rail : 56 sur 32 (Material 3 « Navigation
+/// rail »), dans une rangee de la hauteur de la cible. Choisie : fond doux,
+/// icone pleine a l'encre d'accent (jamais la couleur seule : l'icone change).
+class _PastilleRail extends StatelessWidget {
+  const _PastilleRail({
+    required this.domaine,
+    required this.selectionnee,
+    required this.survolee,
+    required this.palette,
+  });
+
+  final AdminDomaine domaine;
+  final bool selectionnee;
+  final bool survolee;
+  final AppPalette palette;
+
+  @override
+  Widget build(BuildContext context) {
+    final double cible = AppMetriques.of(context).cibleTactile;
+    final Color? fond = selectionnee
+        ? palette.washAccent.background
+        : survolee
+        ? palette.surfaceSunken.background
+        : null;
+    final AppInkColor encre = !domaine.actif
+        ? palette.inkFaint
+        : selectionnee
+        ? palette.inkAccent
+        : palette.inkMuted;
+    return SizedBox(
+      width: AppGabarit.largeurRail,
+      height: math.max(cible, AppSpacing.titreEcran + AppSpacing.sm),
+      child: Center(
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: fond,
+            borderRadius: AppRadius.arrondiSm,
+          ),
+          child: SizedBox(
+            width: AppSpacing.titreEcran + AppSpacing.sm,
+            height: AppSpacing.xxxl,
+            child: Center(
+              child: IconTheme(
+                data: encre.asIconTheme(size: AppSpacing.xxl),
+                child: Icon(
+                  selectionnee ? domaine.icone.actif : domaine.icone.repos,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Le passage d'une section a la suivante dans le rail : un filet court.
+class _SeparationRail extends StatelessWidget {
+  const _SeparationRail();
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+    child: SizedBox(
+      width: AppSpacing.xxxl,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          border: Border(
+            top: AppPalette.of(context).borderHairline.asBorderSide(),
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
+/// NAV-SOUS-LIENS : les entrees du panneau (tiroir et barre laterale) : le
+/// titre de chaque section, ses domaines, et sous le domaine ouvert ses
+/// pages (Apple HIG « Sidebars » : groupes et elements deplies ; Stripe,
+/// GitHub : la section ouverte montre ses pages). L'ordre des domaines ne
+/// change pas, et `NavigationDrawer` compte toujours ses destinations dans
+/// le meme ordre.
+List<Widget> _entreesPanneau({
+  required List<AdminDomaine> domaines,
+  required int? indexActif,
+  required Map<AdminDomaine, List<SousLien>> sousLiens,
+  required String? cheminCourant,
+  required void Function(String chemin) onSousLien,
+  required Widget Function(AdminDomaine domaine) destination,
+}) => <Widget>[
+  for (int i = 0; i < domaines.length; i++) ...<Widget>[
+    if (i == 0 || sectionDe(domaines[i]) != sectionDe(domaines[i - 1]))
+      _TitreSection(section: sectionDe(domaines[i])),
+    destination(domaines[i]),
+    if (i == indexActif && (sousLiens[domaines[i]]?.isNotEmpty ?? false))
+      _SousLiens(
+        liens: sousLiens[domaines[i]]!,
+        courant: sousLienCourant(sousLiens[domaines[i]]!, cheminCourant),
+        onSousLien: onSousLien,
+      ),
+  ],
+];
+
+/// Le panneau deplie defile : l'entree qui recoit le focus du clavier est
+/// amenee dans la vue (WCAG 2.4.11, focus jamais masque), meme quand Tab
+/// revient au debut du panneau depuis la fin de la page.
+class _VisibleAuFocus extends StatelessWidget {
+  const _VisibleAuFocus({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => Focus(
+    canRequestFocus: false,
+    skipTraversal: true,
+    onFocusChange: (bool focalise) {
+      if (focalise) {
+        unawaited(Scrollable.ensureVisible(context));
+      }
+    },
+    child: child,
+  );
+}
+
+/// Le titre d'une section du panneau : petit, en phrase, a l'encre douce
+/// (jamais en capitales espacees), aligne sur les libelles des domaines.
+class _TitreSection extends StatelessWidget {
+  const _TitreSection({required this.section});
+
+  final SectionAdmin section;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextStyle base =
+        Theme.of(context).textTheme.labelMedium ?? const TextStyle();
+    return Padding(
+      padding: const EdgeInsetsDirectional.only(
+        start: _retraitTuileNav + AppSpacing.lg,
+        end: _retraitTuileNav + AppSpacing.lg,
+        top: AppSpacing.lg,
+        bottom: AppSpacing.sm,
+      ),
+      child: Semantics(
+        header: true,
+        child: Text(section.libelle, style: palette.inkMuted.applyTo(base)),
+      ),
+    );
+  }
+}
+
+/// Les pages du domaine ouvert, sous lui, en retrait sur la colonne de son
+/// libelle. La page ouverte : fond doux, graisse et encre d'accent (trois
+/// signaux, jamais la couleur seule), annoncee « selectionnee ».
+class _SousLiens extends StatelessWidget {
+  const _SousLiens({
+    required this.liens,
+    required this.courant,
+    required this.onSousLien,
+  });
+
+  final List<SousLien> liens;
+  final SousLien? courant;
+  final void Function(String chemin) onSousLien;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final double cible = AppMetriques.of(context).cibleTactile;
+    final TextStyle base =
+        Theme.of(context).textTheme.labelMedium ?? const TextStyle();
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          for (final SousLien lien in liens)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: _retraitTuileNav),
+              child: _VisibleAuFocus(
+                child: Pressable.selon(
+                  onPress: () => onSousLien(lien.chemin),
+                  libelleSemantique: lien.libelle,
+                  selectionne: lien == courant,
+                  lien: true,
+                  arrondiFocus: AppRadius.arrondiSm,
+                  constructeur: (BuildContext _, EtatPression etat) {
+                    final bool choisi = lien == courant;
+                    return DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: choisi
+                            ? palette.washAccent.background
+                            : etat.survole || etat.presse
+                            ? palette.surfaceSunken.background
+                            : null,
+                        borderRadius: AppRadius.arrondiSm,
+                      ),
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(minHeight: cible),
+                        child: Padding(
+                          // Sur la colonne du libelle du domaine : 16, icone
+                          // de 24, 12.
+                          padding: const EdgeInsetsDirectional.only(
+                            start:
+                                AppSpacing.lg + AppSpacing.xxl + AppSpacing.md,
+                            end: AppSpacing.lg,
+                            top: AppSpacing.sm,
+                            bottom: AppSpacing.sm,
+                          ),
+                          child: Align(
+                            alignment: AlignmentDirectional.centerStart,
+                            child: ExcludeSemantics(
+                              // Jamais coupe (WCAG 1.4.4) : a 200 %, il passe
+                              // a la ligne et la rangee grandit.
+                              child: Text(
+                                lien.libelle,
+                                style: choisi
+                                    ? AppTypography.graisse(
+                                        palette.inkAccent.applyTo(base),
+                                        FontWeight.w600,
+                                      )
+                                    : palette.inkStrong.applyTo(base),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }
@@ -995,12 +1344,25 @@ class _Sidebar extends StatelessWidget {
     required this.onAccueil,
     required this.onBasculer,
     required this.pied,
+    required this.sousLiens,
+    required this.cheminCourant,
+    required this.onAller,
   });
 
   final List<AdminDomaine> domaines;
   final int? indexActif;
   final void Function(int index) onChoisir;
   final VoidCallback onAccueil;
+
+  /// NAV-SOUS-LIENS : les pages des domaines, depliees sous le domaine
+  /// ouvert.
+  final Map<AdminDomaine, List<SousLien>> sousLiens;
+
+  /// L'adresse ouverte, pour allumer son sous-lien.
+  final String? cheminCourant;
+
+  /// Mene a un sous-lien.
+  final void Function(String chemin) onAller;
 
   /// Replie le panneau (le bouton, a la meme place que replie).
   final VoidCallback onBasculer;
@@ -1031,70 +1393,89 @@ class _Sidebar extends StatelessWidget {
     return SizedBox(
       key: AdminShell.barreLateraleKey,
       width: AdminShell.largeurBarreLaterale,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: palette.surfaceRaised.background,
-          border: BorderDirectional(end: palette.borderHairline.asBorderSide()),
-        ),
-        child: SafeArea(
-          child: Material(
+      // NAV-SOUS-LIENS : le panneau deplie peut defiler ; Tab le parcourt
+      // dans l'ordre de lecture des entrees, jamais selon leur position a
+      // l'ecran (qui change quand il defile), puis passe a la page.
+      child: FocusTraversalGroup(
+        policy: WidgetOrderTraversalPolicy(),
+        child: DecoratedBox(
+          decoration: BoxDecoration(
             color: palette.surfaceRaised.background,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                Expanded(
-                  child: NavigationDrawerTheme(
-                    data: NavigationDrawerThemeData(
-                      // La tuile grandit avec le texte (200 %) : le libelle
-                      // passe sur deux lignes au lieu de deborder.
-                      tileHeight: hauteurTuile,
-                      indicatorSize: Size(largeurTuile, hauteurTuile),
-                      labelTextStyle: _stylesLibelleNav(context, palette),
-                      iconTheme: _stylesIconeNav(palette),
-                    ),
-                    child: NavigationDrawer(
-                      selectedIndex: indexActif,
-                      backgroundColor: palette.surfaceRaised.background,
-                      indicatorColor: palette.washAccent.background,
-                      indicatorShape: const RoundedRectangleBorder(
-                        borderRadius: AppRadius.arrondiSm,
+            border: BorderDirectional(
+              end: palette.borderHairline.asBorderSide(),
+            ),
+          ),
+          child: SafeArea(
+            child: Material(
+              color: palette.surfaceRaised.background,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  Expanded(
+                    child: NavigationDrawerTheme(
+                      data: NavigationDrawerThemeData(
+                        // La tuile grandit avec le texte (200 %) : le libelle
+                        // passe sur deux lignes au lieu de deborder.
+                        tileHeight: hauteurTuile,
+                        indicatorSize: Size(largeurTuile, hauteurTuile),
+                        labelTextStyle: _stylesLibelleNav(context, palette),
+                        iconTheme: _stylesIconeNav(palette),
                       ),
-                      onDestinationSelected: onChoisir,
-                      children: <Widget>[
-                        _TeteNavigation(
-                          onAccueil: onAccueil,
-                          onBasculer: onBasculer,
+                      child: NavigationDrawer(
+                        selectedIndex: indexActif,
+                        backgroundColor: palette.surfaceRaised.background,
+                        indicatorColor: palette.washAccent.background,
+                        indicatorShape: const RoundedRectangleBorder(
+                          borderRadius: AppRadius.arrondiSm,
                         ),
-                        for (final AdminDomaine domaine in domaines)
-                          NavigationDrawerDestination(
-                            icon: _iconeEntree(
-                              palette,
-                              domaine,
-                              selectionnee: false,
-                            ),
-                            selectedIcon: _iconeEntree(
-                              palette,
-                              domaine,
-                              selectionnee: true,
-                            ),
-                            // La rangee du tiroir ne borne pas son libelle :
-                            // largeur explicite, sinon il deborde a 200 %.
-                            label: SizedBox(
-                              width: largeurLibelle,
-                              child: _libelleEntree(
-                                palette,
-                                domaine,
-                                lignes: 2,
-                              ),
+                        onDestinationSelected: onChoisir,
+                        children: <Widget>[
+                          _VisibleAuFocus(
+                            child: _TeteNavigation(
+                              onAccueil: onAccueil,
+                              onBasculer: onBasculer,
                             ),
                           ),
-                      ],
+                          ..._entreesPanneau(
+                            domaines: domaines,
+                            indexActif: indexActif,
+                            sousLiens: sousLiens,
+                            cheminCourant: cheminCourant,
+                            onSousLien: onAller,
+                            destination: (AdminDomaine domaine) =>
+                                NavigationDrawerDestination(
+                                  icon: _iconeEntree(
+                                    palette,
+                                    domaine,
+                                    selectionnee: false,
+                                  ),
+                                  selectedIcon: _iconeEntree(
+                                    palette,
+                                    domaine,
+                                    selectionnee: true,
+                                  ),
+                                  // La rangee du tiroir ne borne pas son
+                                  // libelle : largeur explicite, sinon il
+                                  // deborde a 200 %.
+                                  label: SizedBox(
+                                    width: largeurLibelle,
+                                    child: _libelleEntree(
+                                      palette,
+                                      domaine,
+                                      lignes: 2,
+                                    ),
+                                  ),
+                                ),
+                          ),
+                          Ecart.vLg,
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                pied,
-                Ecart.vSm,
-              ],
+                  pied,
+                  Ecart.vSm,
+                ],
+              ),
             ),
           ),
         ),

@@ -55,10 +55,15 @@ void main() {
 
       expect(find.byKey(const Key('contenu')), findsOneWidget);
       expect(find.byKey(cas.chrome), findsOneWidget, reason: '${cas.largeur}');
-      // Les huit domaines sont tous nommes, actifs ou non.
+      // Les huit domaines sont tous nommes, actifs ou non : en toutes
+      // lettres dans la barre laterale ; dans le rail (80), icone seule et
+      // nom en infobulle (NAV-SOUS-LIENS : le rail n'est plus un
+      // `NavigationRail` aux libelles invisibles).
       for (final AdminDomaine domaine in domainesAdmin(voitDirection: true)) {
         expect(
-          find.text(domaine.libelle),
+          cas.chrome == AdminShell.railKey
+              ? find.byTooltip(domaine.libelle)
+              : find.text(domaine.libelle),
           findsOneWidget,
           reason: domaine.name,
         );
