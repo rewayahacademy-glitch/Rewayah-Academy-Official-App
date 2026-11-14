@@ -5,8 +5,8 @@
 --   1. app_private.fuseau_connu : un nom de la table repond vrai, un nom inconnu
 --      faux, NULL et vide faux ; un nom VALIDE mais ABSENT de la table (on le
 --      retire ici) reste vrai par le repli sur pg_timezone_names ;
---   2. quinze fonctions ne lisent plus pg_timezone_names (seule
---      private.questionnaire_options, qui LISTE les fuseaux, la lit encore) ;
+--   2. quinze fonctions ne lisent plus pg_timezone_names (depuis
+--      20261126000000, private.questionnaire_options non plus) ;
 --   3. leur comportement ne change pas : prerequis_enseignant (fuseau valide,
 --      invalide, valide mais absent de la table), offres_compatibles (fuseau
 --      valide : memes offres ; inconnu : aucune ligne), cle_horaire_utc,
@@ -77,8 +77,8 @@ SELECT pg_temp.vrai(
   (SELECT pg_catalog.array_agg(n.nspname || '.' || p.proname ORDER BY p.proname)
      FROM pg_catalog.pg_proc p JOIN pg_catalog.pg_namespace n ON n.oid = p.pronamespace
     WHERE p.prosrc ILIKE '%pg_timezone_names%' AND n.nspname IN ('public', 'private', 'app_private'))
-  = ARRAY['app_private.fuseau_connu', 'private.questionnaire_options'],
-  'seules private.questionnaire_options (la liste) et fuseau_connu (le repli) lisent encore pg_timezone_names');
+  = ARRAY['app_private.fuseau_connu'],
+  'seule fuseau_connu (le repli) lit encore pg_timezone_names (la liste du questionnaire lit la table depuis 20261126000000)');
 
 -- 3. Le comportement ne change pas.
 SELECT pg_temp.vrai(
