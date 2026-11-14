@@ -261,6 +261,43 @@ void main() {
       },
     );
 
+    // SIGNER-APRES-ENVOI (directeur, 14/11/2026) : envoyee sans signer le
+    // contrat et nos accords, la page des accords reste a portee.
+    test('en examen sans accords : « Lire et accepter » avant la piece', () {
+      final r = prochaineCandidature(
+        _enExamen,
+        dossier: etatCandidat(
+          candidature: _enExamen,
+          accordsFaits: false,
+          pieceDeposee: false,
+        ),
+      );
+      expect(r?.chemin, Routes.attenteAccords);
+      expect(r?.libelle, t.attente.lireEtAccepter);
+    });
+
+    test('en examen sans accords, piece deposee : les accords', () {
+      final r = prochaineCandidature(
+        _enExamen,
+        dossier: etatCandidat(candidature: _enExamen, accordsFaits: false),
+      );
+      expect(r?.chemin, Routes.attenteAccords);
+    });
+
+    test('en examen, en pause, sans accords : rien n\'est propose', () {
+      const CandidatureDossier pause = CandidatureDossier(
+        existe: true,
+        etape: EtapeCandidature.prequalification,
+        etat: EtatCandidature.enExamen,
+        enPause: true,
+      );
+      final r = prochaineCandidature(
+        pause,
+        dossier: etatCandidat(candidature: pause, accordsFaits: false),
+      );
+      expect(r, isNull);
+    });
+
     test('en examen, en pause, sans piece : rien n\'est propose', () {
       const CandidatureDossier pause = CandidatureDossier(
         existe: true,
