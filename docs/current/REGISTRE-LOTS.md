@@ -27,6 +27,8 @@ Relevé fait par E le 11/11/2026 vers 12 h UTC, sur `main` `b86dbc9d9`, avec `to
   - Les deux autres chiffres sont retrouvés à l'identique : 206 branches livrées, 75 PR non fusionnées.
 - **PR fermées sans fusion.** Parmi toutes les PR fermées sans fusion, 62 l'ont été le 08/11 (date de fermeture lue sur GitHub). Celles d'avant le 25/10 suivent les propositions de `TRI-PR-AVANT-25-10.md`. Pour les autres, je n'ai trouvé aucune raison écrite : leur ligne le dit.
 
+- **REVENUS-DUREE-PAYEE (14/11/2026)** : branche `claude/revenus-duree-payee`, PR brouillon. Statut : **À LIVRER** (aucune preuve en production). L'écran des revenus montrait les minutes connectées ; il dira la durée payée du serveur (`mes_durees_payees_enseignant`, migration `20261125300000`). **Dépend de PAIE-FENETRE** (`claude/paie-fenetre`, migrations `20261124800000` et `20261124900000`, non fusionnée au 14/11) : à fusionner et installer avant elle.
+
 ## Chantier pédagogique (architecte pédagogique, relevé du 13/11/2026 à 04 h UTC)
 
 Consigne du directeur du 13/11 : « Attention à ne pas perdre notre travail depuis le début, car on a rien mis en prod. » **Rien de ce chantier n'est dans `main` ni installé en production.** Tout est poussé sur les branches ci-dessous. Avant d'écrire un lot, chercher ici s'il existe déjà.
