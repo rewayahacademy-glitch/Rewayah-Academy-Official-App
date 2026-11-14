@@ -126,9 +126,12 @@ SELECT pg_temp.vrai(
   (SELECT t.minutes FROM private.presence_temps_reel(pg_temp.u('74'), pg_temp.u('b2')) t)
     = 60 + public.app_config_int('grace_after_end_minutes', 15),
   'FN-003 : entree sans sortie, close 30 h plus tard : 60 minutes plus la grace, plus 1 860');
-SELECT pg_temp.vrai(private.pai_minutes_enseignant(pg_temp.u('74'))
-    = 60 + public.app_config_int('grace_after_end_minutes', 15),
-  'FN-003 : les minutes de paie de l''enseignant effectif suivent la meme borne');
+-- PAIE-FENETRE (13/11/2026, regle du directeur, migration 20261124900000) : les
+-- minutes de paie ne suivent plus la borne de la presence (fin prevue plus la
+-- grace, 75 ici) ; elles s'arretent a la fenetre payable, 60 minutes pour cette
+-- classe d'enfants. Avant cette regle, cette ligne affirmait 60 + la grace.
+SELECT pg_temp.vrai(private.pai_minutes_enseignant(pg_temp.u('74')) = 60,
+  'PAIE-FENETRE : les minutes de paie de l''enseignant effectif s''arretent a la fenetre payable (60), sans la grace');
 -- La paie ne change pas : elle est deja plafonnee a la duree prevue ;
 -- scenarios_ses_cloture_auto.sql (cas 4, montant paye d'une seance close
 -- automatiquement) le prouve avec cette migration installee.
