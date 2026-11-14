@@ -40,11 +40,13 @@ class TraductionsEn extends Traductions with BaseTranslations<AppLocale, Traduct
 
 	// Translations
 	@override late final _Traductions$commun$en commun = _Traductions$commun$en._(_root);
+	@override late final _Traductions$presence$en presence = _Traductions$presence$en._(_root);
 	@override late final _Traductions$attente$en attente = _Traductions$attente$en._(_root);
 	@override late final _Traductions$accords$en accords = _Traductions$accords$en._(_root);
 	@override late final _Traductions$connexion$en connexion = _Traductions$connexion$en._(_root);
 	@override late final _Traductions$inscription$en inscription = _Traductions$inscription$en._(_root);
 	@override late final _Traductions$codeConduite$en codeConduite = _Traductions$codeConduite$en._(_root);
+	@override late final _Traductions$accessibilite$en accessibilite = _Traductions$accessibilite$en._(_root);
 	@override late final _Traductions$consentement$en consentement = _Traductions$consentement$en._(_root);
 	@override late final _Traductions$kyc$en kyc = _Traductions$kyc$en._(_root);
 	@override late final _Traductions$appareils$en appareils = _Traductions$appareils$en._(_root);
@@ -52,7 +54,9 @@ class TraductionsEn extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$foyer$en foyer = _Traductions$foyer$en._(_root);
 	@override late final _Traductions$ficheEleve$en ficheEleve = _Traductions$ficheEleve$en._(_root);
 	@override late final _Traductions$priere$en priere = _Traductions$priere$en._(_root);
+	@override late final _Traductions$eleveConnexion$en eleveConnexion = _Traductions$eleveConnexion$en._(_root);
 	@override late final _Traductions$recrutement$en recrutement = _Traductions$recrutement$en._(_root);
+	@override late final _Traductions$dossiers$en dossiers = _Traductions$dossiers$en._(_root);
 	@override late final _Traductions$parcours$en parcours = _Traductions$parcours$en._(_root);
 	@override late final _Traductions$nav$en nav = _Traductions$nav$en._(_root);
 	@override late final _Traductions$compte$en compte = _Traductions$compte$en._(_root);
@@ -64,15 +68,21 @@ class TraductionsEn extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$adulte$en adulte = _Traductions$adulte$en._(_root);
 	@override late final _Traductions$suiviFamille$en suiviFamille = _Traductions$suiviFamille$en._(_root);
 	@override late final _Traductions$suiviDemandes$en suiviDemandes = _Traductions$suiviDemandes$en._(_root);
+	@override late final _Traductions$recherche$en recherche = _Traductions$recherche$en._(_root);
 	@override late final _Traductions$juridique$en juridique = _Traductions$juridique$en._(_root);
 	@override late final _Traductions$avis$en avis = _Traductions$avis$en._(_root);
 	@override late final _Traductions$courriels$en courriels = _Traductions$courriels$en._(_root);
+	@override late final _Traductions$admissions$en admissions = _Traductions$admissions$en._(_root);
 	@override late final _Traductions$accueilInscrits$en accueilInscrits = _Traductions$accueilInscrits$en._(_root);
 	@override late final _Traductions$accueilInvite$en accueilInvite = _Traductions$accueilInvite$en._(_root);
+	@override late final _Traductions$snt$en snt = _Traductions$snt$en._(_root);
 	@override late final _Traductions$payUx$en payUx = _Traductions$payUx$en._(_root);
 	@override late final _Traductions$accueilHoraire$en accueilHoraire = _Traductions$accueilHoraire$en._(_root);
+	@override late final _Traductions$push1$en push1 = _Traductions$push1$en._(_root);
+	@override late final _Traductions$suiviPedagogique$en suiviPedagogique = _Traductions$suiviPedagogique$en._(_root);
 	@override late final _Traductions$suiviAttente$en suiviAttente = _Traductions$suiviAttente$en._(_root);
 	@override late final _Traductions$calendrier$en calendrier = _Traductions$calendrier$en._(_root);
+	@override late final _Traductions$pause$en pause = _Traductions$pause$en._(_root);
 }
 
 // Path: commun
@@ -107,6 +117,43 @@ class _Traductions$commun$en extends Traductions$commun$fr {
 	@override late final _Traductions$commun$dates$en dates = _Traductions$commun$dates$en._(_root);
 	@override late final _Traductions$commun$sections$en sections = _Traductions$commun$sections$en._(_root);
 	@override late final _Traductions$commun$recherche$en recherche = _Traductions$commun$recherche$en._(_root);
+}
+
+// Path: presence
+class _Traductions$presence$en extends Traductions$presence$fr {
+	_Traductions$presence$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Attendance';
+	@override String get voir => 'See attendance';
+	@override String get mienne => 'Your attendance';
+	@override String get consolide => 'consolidated';
+	@override String get planifiee => 'Upcoming class';
+	@override String get enAttente => 'Not here yet';
+	@override String get enConnexion => 'Connecting';
+	@override String get presente => 'In the room';
+	@override String get enRetard => 'Late';
+	@override String get deconnectee => 'Link lost';
+	@override String get enReconnexion => 'Reconnecting';
+	@override String get reconnectee => 'Back';
+	@override String get sortie => 'Left the class';
+	@override String get absente => 'Absence';
+	@override String get excusee => 'Excused absence';
+	@override String get confirmationEnAttente => 'To confirm';
+	@override String get corrigeeManuel => 'Manual correction';
+	@override String get finalisee => 'Final';
+	@override String get inconnu => 'Attendance not known yet';
+	@override String get entreeInstant => 'in the room just now';
+	@override String entreeMinutes({required Object minutes}) => 'in the room for ${minutes} min';
+	@override String retardMinutes({required Object minutes}) => '${minutes} min after the start';
+	@override String get silenceInstant => 'no news for a few seconds';
+	@override String silenceMinutes({required Object minutes}) => 'no news for ${minutes} min';
+	@override String get attenteInstant => 'the class has just started';
+	@override String attenteMinutes({required Object minutes}) => 'the class started ${minutes} min ago';
+	@override String get etatMicroOuvert => 'their microphone is on';
+	@override String get etatMicroCoupe => 'their microphone is off';
 }
 
 // Path: attente
@@ -318,6 +365,22 @@ class _Traductions$codeConduite$en extends Traductions$codeConduite$fr {
 	@override String get aAccepter => 'To accept';
 }
 
+// Path: accessibilite
+class _Traductions$accessibilite$en extends Traductions$accessibilite$fr {
+	_Traductions$accessibilite$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$accessibilite$demo$en demo = _Traductions$accessibilite$demo$en._(_root);
+	@override late final _Traductions$accessibilite$accueil$en accueil = _Traductions$accessibilite$accueil$en._(_root);
+	@override late final _Traductions$accessibilite$coran$en coran = _Traductions$accessibilite$coran$en._(_root);
+	@override late final _Traductions$accessibilite$maClasse$en maClasse = _Traductions$accessibilite$maClasse$en._(_root);
+	@override late final _Traductions$accessibilite$tutoiement$en tutoiement = _Traductions$accessibilite$tutoiement$en._(_root);
+	@override late final _Traductions$accessibilite$apres$en apres = _Traductions$accessibilite$apres$en._(_root);
+	@override late final _Traductions$accessibilite$monEspace$en monEspace = _Traductions$accessibilite$monEspace$en._(_root);
+}
+
 // Path: consentement
 class _Traductions$consentement$en extends Traductions$consentement$fr {
 	_Traductions$consentement$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -484,6 +547,23 @@ class _Traductions$priere$en extends Traductions$priere$fr {
 	@override late final _Traductions$priere$regles$en regles = _Traductions$priere$regles$en._(_root);
 }
 
+// Path: eleveConnexion
+class _Traductions$eleveConnexion$en extends Traductions$eleveConnexion$fr {
+	_Traductions$eleveConnexion$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get entrerCode => 'I have a code';
+	@override String get scanner => 'Scan the square';
+	@override String get choisirProfil => 'Who are you?';
+	@override late final _Traductions$eleveConnexion$profils$en profils = _Traductions$eleveConnexion$profils$en._(_root);
+	@override late final _Traductions$eleveConnexion$pin$en pin = _Traductions$eleveConnexion$pin$en._(_root);
+	@override late final _Traductions$eleveConnexion$saisie$en saisie = _Traductions$eleveConnexion$saisie$en._(_root);
+	@override late final _Traductions$eleveConnexion$lecteur$en lecteur = _Traductions$eleveConnexion$lecteur$en._(_root);
+	@override late final _Traductions$eleveConnexion$refus$en refus = _Traductions$eleveConnexion$refus$en._(_root);
+}
+
 // Path: recrutement
 class _Traductions$recrutement$en extends Traductions$recrutement$fr {
 	_Traductions$recrutement$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -499,6 +579,48 @@ class _Traductions$recrutement$en extends Traductions$recrutement$fr {
 	@override late final _Traductions$recrutement$entretien$en entretien = _Traductions$recrutement$entretien$en._(_root);
 	@override late final _Traductions$recrutement$questionnaire$en questionnaire = _Traductions$recrutement$questionnaire$en._(_root);
 	@override late final _Traductions$recrutement$parcours$en parcours = _Traductions$recrutement$parcours$en._(_root);
+}
+
+// Path: dossiers
+class _Traductions$dossiers$en extends Traductions$dossiers$fr {
+	_Traductions$dossiers$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Files to approve';
+	@override String get aucun => 'No file is waiting for approval.';
+	@override String get aucunDetail => 'New files will appear here when they are ready.';
+	@override late final _Traductions$dossiers$file$en file = _Traductions$dossiers$file$en._(_root);
+	@override late final _Traductions$dossiers$detail$en detail = _Traductions$dossiers$detail$en._(_root);
+	@override late final _Traductions$dossiers$visionneuse$en visionneuse = _Traductions$dossiers$visionneuse$en._(_root);
+	@override late final _Traductions$dossiers$revue$en revue = _Traductions$dossiers$revue$en._(_root);
+	@override String deposeLe({required Object date}) => 'Submitted on ${date}';
+	@override String get inscritAujourdhui => 'Registered today';
+	@override String get inscritDepuisUnJour => 'Registered for 1 day';
+	@override String get sansPiece => 'No document submitted';
+	@override String get sansPieceDetail => 'This person created their account and accepted the contracts, but has not yet sent their ID document. So there is nothing to check: the next step is theirs.';
+	@override String get pieceNonVisible => 'Document out of your reach';
+	@override String get pieceNonVisibleDetail => 'A document was submitted, but the gender rule prevents you from viewing it. A staff member of the same gender as this person must check it.';
+	@override String get rienATrancher => 'Nothing to decide for now';
+	@override String get apercu => 'The submitted document';
+	@override String get apercuIndisponible => 'Preview unavailable';
+	@override String get verifications => 'Checks';
+	@override String get pointLisible => 'The document is readable';
+	@override String get pointNom => 'The name matches the account\'s';
+	@override String get pointValidite => 'The document is not expired';
+	@override String get verdict => 'Decision';
+	@override String get approuver => 'Approve the file';
+	@override String get refuser => 'Refuse the file';
+	@override late final _Traductions$dossiers$profilACompleter$en profilACompleter = _Traductions$dossiers$profilACompleter$en._(_root);
+	@override late final _Traductions$dossiers$refus$en refus = _Traductions$dossiers$refus$en._(_root);
+	@override late final _Traductions$dossiers$validation$en validation = _Traductions$dossiers$validation$en._(_root);
+	@override late final _Traductions$dossiers$decision$en decision = _Traductions$dossiers$decision$en._(_root);
+	@override String inscritDepuis({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(jours,
+		one: 'Registered for ${jours} day',
+		other: 'Registered for ${jours} days',
+	);
+	@override late final _Traductions$dossiers$accesKyc$en accesKyc = _Traductions$dossiers$accesKyc$en._(_root);
 }
 
 // Path: parcours
@@ -948,6 +1070,40 @@ class _Traductions$suiviDemandes$en extends Traductions$suiviDemandes$fr {
 	@override late final _Traductions$suiviDemandes$changement$en changement = _Traductions$suiviDemandes$changement$en._(_root);
 }
 
+// Path: recherche
+class _Traductions$recherche$en extends Traductions$recherche$fr {
+	_Traductions$recherche$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Search';
+	@override String get retour => 'Back';
+	@override late final _Traductions$recherche$champ$en champ = _Traductions$recherche$champ$en._(_root);
+	@override late final _Traductions$recherche$espace$en espace = _Traductions$recherche$espace$en._(_root);
+	@override late final _Traductions$recherche$initial$en initial = _Traductions$recherche$initial$en._(_root);
+	@override String get courte => 'Enter at least 3 characters.';
+	@override String get formeAttendue => 'Search by exact student ID, for example RA-26-4817.';
+	@override String get chargement => 'Searching…';
+	@override String get lent => 'The search is taking longer than expected. Results already received stay displayed.';
+	@override String resultatsPour({required Object requete}) => 'Results for "${requete}"';
+	@override String categoriesAffichees({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(nombre,
+		one: '${nombre} category shown',
+		other: '${nombre} categories shown',
+	);
+	@override late final _Traductions$recherche$domaines$en domaines = _Traductions$recherche$domaines$en._(_root);
+	@override String get voirDavantage => 'See more';
+	@override String get pageSuivante => 'Loading more results…';
+	@override String get pageEnEchec => 'The next results could not be loaded.';
+	@override late final _Traductions$recherche$etats$en etats = _Traductions$recherche$etats$en._(_root);
+	@override String get tout => 'All';
+	@override String get filtres => 'Search areas';
+	@override String get limite => 'Results are limited to what your space allows.';
+	@override late final _Traductions$recherche$guide$en guide = _Traductions$recherche$guide$en._(_root);
+	@override late final _Traductions$recherche$entree$en entree = _Traductions$recherche$entree$en._(_root);
+	@override late final _Traductions$recherche$contexte$en contexte = _Traductions$recherche$contexte$en._(_root);
+}
+
 // Path: juridique
 class _Traductions$juridique$en extends Traductions$juridique$fr {
 	_Traductions$juridique$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -983,6 +1139,81 @@ class _Traductions$courriels$en extends Traductions$courriels$fr {
 
 	// Translations
 	@override late final _Traductions$courriels$admin$en admin = _Traductions$courriels$admin$en._(_root);
+}
+
+// Path: admissions
+class _Traductions$admissions$en extends Traductions$admissions$fr {
+	_Traductions$admissions$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Requests';
+	@override String get sousTitre => 'The admission requests of families and adult students. No one enters without the management\'s decision.';
+	@override String get population => 'Population';
+	@override String get familles => 'Families';
+	@override String get elevesAdultes => 'Adult students';
+	@override String aTraiter({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		zero: 'No request to handle',
+		one: '${n} request to handle',
+		other: '${n} requests to handle',
+	);
+	@override String get rechercher => 'Search';
+	@override String get rechercherAide => 'A name, an email address or a reference.';
+	@override String get lectureErreur => 'The requests cannot be loaded for now. Try again in a moment.';
+	@override String get vide => 'No request for now.';
+	@override String get videRecherche => 'No request matches this search.';
+	@override String get pagePrecedente => 'Previous page';
+	@override String get pageSuivante => 'Next page';
+	@override String pageSur({required Object n, required Object total}) => 'Page ${n} of ${total}';
+	@override String feuilleTitre({required Object deNom}) => '${deNom}\'s request';
+	@override String ouvrir({required Object deNom}) => 'Open ${deNom}\'s request';
+	@override String get recueLe => 'Received on';
+	@override String get reference => 'Reference';
+	@override String get courriel => 'Email address';
+	@override String get etatLibelle => 'Status';
+	@override String titulaire({required Object prenom}) => '${prenom}, for themselves';
+	@override String enfant({required Object prenom, required Object age}) => '${prenom}, ${age}';
+	@override late final _Traductions$admissions$etat$en etat = _Traductions$admissions$etat$en._(_root);
+	@override String accepter({required Object deNom}) => 'Accept ${deNom}\'s request';
+	@override String get accepterConsequence => 'Their account opens and a "Your request is accepted" email goes out straight away. The children\'s profiles are created on their first sign-in, with the answers of the request.';
+	@override String get demanderPrecisions => 'Ask for clarification';
+	@override String contacter({required Object nom}) => 'Write to ${nom}';
+	@override String get refuser => 'Refuse the request';
+	@override String get refuserContexte => 'Choose the sentence the person will receive, then write the reason for the management. The person never sees the reason.';
+	@override String refuserQuestion({required Object deNom}) => 'Refuse ${deNom}\'s request?';
+	@override String get refuserConsequence => 'The person receives a "We cannot proceed" email. The refusal can be undone for seven days.';
+	@override String get motifInterne => 'Reason, for the management';
+	@override String get motifInterneAide => 'It stays in the request\'s log.';
+	@override String get precisionsContexte => 'The request goes to "to complete". The person receives your message by email and finds it on their waiting page.';
+	@override String get precisionsMessage => 'What is missing';
+	@override String get precisionsAide => 'One or two sentences, in simple words.';
+	@override String get precisionsEnvoyer => 'Send the request for clarification';
+	@override String get contactContexte => 'A free message, sent by email. The request does not change.';
+	@override String get contactSujet => 'Subject';
+	@override String get contactMessage => 'Message';
+	@override String get contactEnvoyer => 'Send the message';
+	@override String get annulerRefus => 'Undo the refusal';
+	@override String get annulerRefusDetail => 'The refusal can be undone for seven days: the request returns to "to handle". The person does not receive an email.';
+	@override String faitAcceptationAnnulee({required Object deNom}) => 'The acceptance of ${deNom}\'s request is undone.';
+	@override String get annulerAcceptationConsequence => 'Their account goes back to pending straight away.';
+	@override String annulerAcceptationQuestion({required Object deNom}) => 'Undo ${deNom}\'s acceptance?';
+	@override String get annulerAcceptationDetail => 'The acceptance can be undone for seven days, as long as no child of the request is in a class. The request returns to "to handle" and the account goes back to pending; the children\'s profiles are set aside, never erased. The person does not receive an email: write to them if needed.';
+	@override String get annulerAcceptation => 'Undo the acceptance';
+	@override String get retour => 'Back to the request';
+	@override String get manqueModele => 'Choose the sentence the person will receive.';
+	@override String get manqueMotif => 'Write the reason: it stays in the request\'s log.';
+	@override String get manqueMessage => 'Write what is missing.';
+	@override String get manqueContact => 'Write a subject and a message.';
+	@override String get horsLigne => 'Nothing was sent. Try again in a moment.';
+	@override String get erreur => 'The action did not go through. Nothing is confirmed. Try again in a moment.';
+	@override String faitAcceptee({required Object deNom}) => '${deNom}\'s request is accepted; the email is on its way.';
+	@override String faitRefusee({required Object deNom}) => '${deNom}\'s request is refused; the email is on its way.';
+	@override String faitPrecisions({required Object nom}) => 'Clarification is requested from ${nom}; the email is on its way.';
+	@override String faitContact({required Object nom}) => 'The message to ${nom} is on its way.';
+	@override String faitRefusAnnule({required Object deNom}) => 'The refusal of ${deNom}\'s request is undone.';
+	@override late final _Traductions$admissions$refus$en refus = _Traductions$admissions$refus$en._(_root);
+	@override late final _Traductions$admissions$modeles$en modeles = _Traductions$admissions$modeles$en._(_root);
 }
 
 // Path: accueilInscrits
@@ -1024,6 +1255,19 @@ class _Traductions$accueilInvite$en extends Traductions$accueilInvite$fr {
 	@override String get champsRequis => 'Enter your first name, last name and gender.';
 }
 
+// Path: snt
+class _Traductions$snt$en extends Traductions$snt$fr {
+	_Traductions$snt$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$snt$regles$en regles = _Traductions$snt$regles$en._(_root);
+	@override late final _Traductions$snt$notifications$en notifications = _Traductions$snt$notifications$en._(_root);
+	@override late final _Traductions$snt$salle$en salle = _Traductions$snt$salle$en._(_root);
+	@override late final _Traductions$snt$planning$en planning = _Traductions$snt$planning$en._(_root);
+}
+
 // Path: payUx
 class _Traductions$payUx$en extends Traductions$payUx$fr {
 	_Traductions$payUx$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -1053,6 +1297,74 @@ class _Traductions$accueilHoraire$en extends Traductions$accueilHoraire$fr {
 	@override String get demandeTitre => 'Request saved';
 	@override String demandeDetail({required Object prenom}) => 'We will let you know as soon as a time slot opens for ${prenom}.';
 	@override String get erreurEnvoi => 'Your request was not confirmed. Try again in a moment.';
+}
+
+// Path: push1
+class _Traductions$push1$en extends Traductions$push1$fr {
+	_Traductions$push1$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$push1$invitation$en invitation = _Traductions$push1$invitation$en._(_root);
+	@override late final _Traductions$push1$evenements$en evenements = _Traductions$push1$evenements$en._(_root);
+	@override late final _Traductions$push1$gestes$en gestes = _Traductions$push1$gestes$en._(_root);
+	@override late final _Traductions$push1$reglages$en reglages = _Traductions$push1$reglages$en._(_root);
+}
+
+// Path: suiviPedagogique
+class _Traductions$suiviPedagogique$en extends Traductions$suiviPedagogique$fr {
+	_Traductions$suiviPedagogique$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titreSoi => 'Where I stand';
+	@override String titre({required Object prenom}) => 'Where ${prenom} stands';
+	@override String get etape => 'Program stage';
+	@override String get objectifs => 'Stage goals';
+	@override String get reprise => 'Where the class stopped';
+	@override String reprisePage({required Object page}) => 'Page ${page} of the Mushaf';
+	@override String get aFinirAvant => 'To finish before';
+	@override String aFinirAvantDate({required Object mois, required Object numero, required Object annee, required Object prevue}) => '${mois} ${numero}, ${annee}, for ${prevue} planned weeks';
+	@override String get rythme => 'Pace';
+	@override String dansLesTemps({required num ecoulees, required Object prevue}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(ecoulees,
+		one: 'Within the planned time: ${ecoulees} week out of ${prevue}',
+		other: 'Within the planned time: ${ecoulees} weeks out of ${prevue}',
+	);
+	@override String auDelaDuPrevu({required num ecoulees, required Object prevue}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(ecoulees,
+		one: 'Beyond the planned time: ${ecoulees} week out of ${prevue}, before the deadline',
+		other: 'Beyond the planned time: ${ecoulees} weeks out of ${prevue}, before the deadline',
+	);
+	@override String get etapesTitre => 'The stages';
+	@override String get etapeFranchie => 'Previous stage';
+	@override String etapeFranchieLe({required Object mois, required Object numero, required Object annee}) => 'Previous stage, entered on ${mois} ${numero}, ${annee}';
+	@override String get etapeEnCours => 'In progress';
+	@override String get etapeAVenir => 'Upcoming';
+	@override String get sourates => 'Foundation surahs achieved';
+	@override String souratesDe({required Object validees, required Object total}) => '${validees} of ${total}';
+	@override String get revision => 'Revision per week';
+	@override String revisionHeures({required Object heures}) => '${heures} h';
+	@override String get repetitions => 'Estimated repetitions';
+	@override String repetitionsNombre({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} repetition',
+		other: '${n} repetitions',
+	);
+	@override String get dernierJalon => 'Latest milestone';
+	@override String get niveauDeclare => 'Stated level';
+	@override String get dateLimiteDepassee => 'Deadline passed';
+	@override String get erreur => 'The program stage could not be loaded. Try again in a moment.';
+	@override String get matierePrincipale => 'Main subject';
+	@override String get matiereSecondaire => 'Secondary subject';
+	@override String get depuis => 'In this stage since';
+	@override String dateJour({required Object mois, required Object numero, required Object annee}) => '${mois} ${numero}, ${annee}';
+	@override String get dureePrevue => 'Stage length';
+	@override String chemin({required Object niveau}) => '${niveau}, step by step';
+	@override String dureesEtape({required Object prevue, required Object limite}) => '${prevue} weeks planned, ${limite} at most';
+	@override String horizonNiveau({required Object niveau}) => '${niveau}: ends at the latest on';
+	@override String get attenteEntretien => 'Your stage will be set after the reading interview with the management.';
+	@override String get attenteEntretienTu => 'Your stage will be set after the reading interview with the management.';
+	@override String attenteEntretienPour({required Object prenom}) => 'For ${prenom}, the stage will be set after the reading interview with the management.';
 }
 
 // Path: suiviAttente
@@ -1104,6 +1416,45 @@ class _Traductions$calendrier$en extends Traductions$calendrier$fr {
 	@override String get refusNouvelleDateFermee => 'The date is not set: the class is closed that day. Choose another day, or remove the closure for this class.';
 	@override late final _Traductions$calendrier$dates$en dates = _Traductions$calendrier$dates$en._(_root);
 	@override late final _Traductions$calendrier$pauses$en pauses = _Traductions$calendrier$pauses$en._(_root);
+}
+
+// Path: pause
+class _Traductions$pause$en extends Traductions$pause$fr {
+	_Traductions$pause$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Class breaks';
+	@override String get entree => 'Request a one-month break';
+	@override String sousTitre({required Object dePrenom}) => '${dePrenom}\'s break';
+	@override String get indisponible => 'The breaks could not be opened: the request may not have reached Rewayah. Try again in a moment.';
+	@override String get erreur => 'The breaks could not be loaded: the request may not have reached Rewayah. Try again in a moment.';
+	@override String get regleTitre => 'The rule';
+	@override late final _Traductions$pause$regle$en regle = _Traductions$pause$regle$en._(_root);
+	@override String get choisir => 'Choose the month';
+	@override String get moisDansRegle => 'Accepted straight away';
+	@override String moisALaDirection({required num delai}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(delai,
+		one: 'The management replies within ${delai} day',
+		other: 'The management replies within ${delai} days',
+	);
+	@override String get moisDejaDemande => 'Already requested';
+	@override String get moisDejaAccepte => 'Already accepted';
+	@override String get aucunMois => 'No month is offered for now.';
+	@override String get fermeeTitre => 'Break requests are not open for now';
+	@override String get fermeeDetail => 'To interrupt classes, contact the academy\'s management.';
+	@override String get choisirPourDemander => 'Choose a month to request the break.';
+	@override String get demander => 'Request the break';
+	@override late final _Traductions$pause$reponse$en reponse = _Traductions$pause$reponse$en._(_root);
+	@override String get demandesTitre => 'The breaks';
+	@override String get demandesVide => 'No break for now.';
+	@override late final _Traductions$pause$statut$en statut = _Traductions$pause$statut$en._(_root);
+	@override String periode({required Object du, required Object au}) => 'From ${du} to ${au}';
+	@override String reponseAvant({required Object date}) => 'The management replies before ${date}.';
+	@override String reponseMotif({required Object motif}) => 'Reply from the management: ${motif}';
+	@override String get exceptionAccordee => 'Break granted by the management.';
+	@override String annuler({required Object mois}) => 'Cancel the break of ${mois}';
+	@override late final _Traductions$pause$refus$en refus = _Traductions$pause$refus$en._(_root);
 }
 
 // Path: commun.langue
@@ -1574,6 +1925,134 @@ class _Traductions$inscription$nomLatin$en extends Traductions$inscription$nomLa
 	@override String get raison => 'For lists, certificates and exchanges with the academy.';
 	@override String get aide => 'Here is our suggestion. Correct it if your name is not written this way.';
 	@override String get erreur => 'Write your name using Latin alphabet letters (a, b, c) to continue.';
+}
+
+// Path: accessibilite.demo
+class _Traductions$accessibilite$demo$en extends Traductions$accessibilite$demo$fr {
+	_Traductions$accessibilite$demo$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Guided interface demo';
+	@override String get mention => 'Fictitious data, nothing is sent.';
+	@override String get intro => 'Choose a student and a moment of the session.';
+	@override String get eleveMineure => 'Mariam, minor student';
+	@override String get eleveAdulte => 'Idriss, adult student';
+	@override String get etatAvant => 'Before the session';
+	@override String get etatFenetre => 'Just before the session, entry is open';
+	@override String get etatPendant => 'During the session';
+	@override String get etatApres => 'After the session';
+}
+
+// Path: accessibilite.accueil
+class _Traductions$accessibilite$accueil$en extends Traductions$accessibilite$accueil$fr {
+	_Traductions$accessibilite$accueil$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String salutation({required Object prenom}) => 'Assalamu alaykum, ${prenom}.';
+	@override String get prochaineSeance => 'Next session';
+	@override String avec({required Object nomme}) => 'with ${nomme}';
+	@override String get voirMaClasse => 'See my class';
+	@override String get lireCoran => 'Read the Quran';
+	@override String get lireCoranDetail => 'Open the Mushaf';
+	@override String get aide => 'Need help?';
+	@override String get erreurTitre => 'Next session not loaded';
+	@override String get erreurPhrase => 'The session and the work to do could not be loaded. Just try again in a moment.';
+	@override String get indisponibleTitre => 'Next session not shown here yet';
+	@override String get indisponiblePhrase => 'Home does not receive the class session yet. It can be read in My class.';
+	@override String get videTitre => 'No class yet';
+	@override String get videPhrase => 'No class is assigned yet. It is chosen with the academy. In the meantime, the Quran and help stay open just below.';
+}
+
+// Path: accessibilite.coran
+class _Traductions$accessibilite$coran$en extends Traductions$accessibilite$coran$fr {
+	_Traductions$accessibilite$coran$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get reprendreVous => 'Resume your reading';
+	@override String reprendreDetailVous({required Object page}) => 'You were on page ${page}';
+	@override String get repriseErreur => 'Your last page could not be found. Open the Quran and choose your page in the reader. Your reading settings stay saved.';
+	@override String get repriseErreurVous => 'Your last page could not be found. Open the Quran and choose your page in the reader. Your reading settings stay saved.';
+	@override String get demoSansTexte => 'The Quran text is not loaded in the demo';
+	@override String get demoSansTexteDetail => 'This is not a fault: the demo does not contain the text. You have nothing to do. In the app, the Quran opens here, at your page, and your reading settings stay saved.';
+	@override String get demoSansTexteDetailVous => 'This is not a fault: the demo does not contain the text. You have nothing to do. In the app, the Quran opens here, at your page, and your reading settings stay saved.';
+	@override String get indisponibleDetailVous => 'As soon as the network is back, your page reopens here.';
+	@override String get absentDetailVous => 'The text has not been installed on this page. Report it: it is not you.';
+}
+
+// Path: accessibilite.maClasse
+class _Traductions$accessibilite$maClasse$en extends Traductions$accessibilite$maClasse$fr {
+	_Traductions$accessibilite$maClasse$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'My class';
+	@override String get suivi => 'My progress';
+	@override String get suiviDetail => 'Past sessions and attendance';
+}
+
+// Path: accessibilite.tutoiement
+class _Traductions$accessibilite$tutoiement$en extends Traductions$accessibilite$tutoiement$fr {
+	_Traductions$accessibilite$tutoiement$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get tonHeure => 'Your time';
+	@override String get attenteDetail => 'This waiting time does not count in your attendance.';
+	@override String attente({required Object duree}) => 'You are in the room. The session starts in ${duree}.';
+	@override String get attenteImminent => 'You are in the room. The session starts in less than a minute.';
+	@override String get annonceAttente => 'You are in the room';
+	@override String get horsLigne => 'You will be able to join the session as soon as the connection is back.';
+	@override String get finPhrase => 'You can find your work in your class.';
+}
+
+// Path: accessibilite.apres
+class _Traductions$accessibilite$apres$en extends Traductions$accessibilite$apres$fr {
+	_Traductions$accessibilite$apres$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get revoirSupport => 'Review the class material';
+	@override String get revoirSupportDetail => 'The material stays in your class.';
+	@override String get revoirSupportDetailVous => 'The material stays in your class.';
+	@override String get quitteTitre => 'You left the session.';
+	@override String get quittePhrase => 'You can come back as long as it stays open.';
+	@override String prochaineDateHeure({required Object date, required Object heure}) => '${date} at ${heure}';
+	@override String get vide => 'Your next session is not scheduled yet. It will appear here and in your class.';
+	@override String get videVous => 'Your next session is not scheduled yet. It will appear here and in your class.';
+	@override String get erreur => 'Your next session and your work could not be loaded: your request may not have reached Rewayah. Try again, or find them in your class.';
+	@override String get erreurVous => 'Your next session and your work could not be loaded: your request may not have reached Rewayah. Try again, or find them in your class.';
+	@override String get horsLigne => 'Your next session and your work will appear when the connection is back.';
+	@override String get horsLigneVous => 'Your next session and your work will appear when the connection is back.';
+	@override String get prochaineInconnue => 'Your next session will appear in your class.';
+	@override String get prochaineInconnueVous => 'Your next session will appear in your class.';
+}
+
+// Path: accessibilite.monEspace
+class _Traductions$accessibilite$monEspace$en extends Traductions$accessibilite$monEspace$fr {
+	_Traductions$accessibilite$monEspace$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'My space';
+	@override String get mode => 'Guided interface';
+	@override String get modeDetail => 'A simplified interface adapted for calmer learning.';
+	@override String get modeActif => 'On';
+	@override String get presentationStandard => 'Standard display';
+	@override String get demanderDetail => 'Ask your guardian to switch to the standard display.';
+	@override String get demandeEnCours => 'Your request is being sent.';
+	@override String get demandeEnvoyee => 'Your request was sent to your guardian.';
+	@override String get demandeHorsLigne => 'Nothing was sent: there is no network. Try again as soon as it is back.';
+	@override String get demandeNonConfirmee => 'The sending was not confirmed. Tap the line to try again. Nothing changed in the meantime: your display stays the same.';
 }
 
 // Path: consentement.texte
@@ -2347,6 +2826,121 @@ class _Traductions$priere$regles$en extends Traductions$priere$regles$fr {
 	@override String erreurEcriture({required Object message}) => 'The setting is not confirmed (${message}). Check its value, then try again in a moment.';
 }
 
+// Path: eleveConnexion.profils
+class _Traductions$eleveConnexion$profils$en extends Traductions$eleveConnexion$profils$fr {
+	_Traductions$eleveConnexion$profils$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get phrase => 'Tap your first name to continue.';
+	@override String get ajouter => 'Add a profile on this device';
+	@override String get ajouterLegende => 'With the code shown by the guardian';
+	@override String profilLibelle({required Object quePrenom}) => 'Continue as ${quePrenom}';
+	@override String get videTitre => 'No profile on this device';
+	@override String get vide => 'To use this device, the guardian must show a new code on their own device.';
+	@override String get videAction => 'Enter a code';
+	@override String retire({required Object prenom}) => 'This device was removed for ${prenom}. Ask the guardian to reconnect it with a new code.';
+	@override String jetonAbsent({required Object dePrenom}) => 'This device can no longer find ${dePrenom}\'s sign-in. Ask the guardian to show a new code, then enter it here.';
+}
+
+// Path: eleveConnexion.pin
+class _Traductions$eleveConnexion$pin$en extends Traductions$eleveConnexion$pin$fr {
+	_Traductions$eleveConnexion$pin$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String bonjour({required Object prenom}) => 'Hello ${prenom}';
+	@override String get creer => 'Choose your personal code';
+	@override String get creerPhrase => 'Four digits, just for you. It stays on this device.';
+	@override String get confirmer => 'Enter it once more';
+	@override String get different => 'The two codes are not the same. Choose your code again.';
+	@override String get ouverture => 'Signing in';
+	@override String get horsLigne => 'Your code is right: try again when the internet is back.';
+	@override String get tropDEssais => 'Too many tries. Wait a moment before trying again.';
+	@override String get echec => 'Sign-in did not complete. Try again in a moment.';
+	@override String get changerProfil => 'Switch profile';
+	@override String get oublie => 'Forgot your code?';
+	@override String get oubliePhrase => 'Ask the guardian to show a new code on their device, then enter it here. You will then choose a new personal code.';
+	@override String get oublieAction => 'Enter a new code';
+}
+
+// Path: eleveConnexion.saisie
+class _Traductions$eleveConnexion$saisie$en extends Traductions$eleveConnexion$saisie$fr {
+	_Traductions$eleveConnexion$saisie$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Connect this device';
+	@override String get phrase => 'Enter the six-character code shown under the QR code, on the guardian\'s device.';
+	@override String get champ => 'Code';
+	@override String get aide => 'Digits 2 to 9 and letters, without I or O.';
+	@override String get valider => 'Connect the device';
+	@override String get scanner => 'Scan the QR code';
+	@override String get horsLigne => 'The code can be checked when the network is back.';
+}
+
+// Path: eleveConnexion.lecteur
+class _Traductions$eleveConnexion$lecteur$en extends Traductions$eleveConnexion$lecteur$fr {
+	_Traductions$eleveConnexion$lecteur$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Scan the QR code';
+	@override String get consigne => 'Point at the QR code shown on the guardian\'s device.';
+	@override String get demarrage => 'Allow the camera if the device asks.';
+	@override String get libelleApercu => 'Camera view';
+	@override String get contenuInvalide => 'This QR code is not a Rewayah sign-in code. Point at the one shown by the guardian.';
+	@override String get saisir => 'Enter the code';
+	@override String get scannerANouveau => 'Scan again';
+	@override String get verificationTitre => 'Checking the code';
+	@override String get verificationPhrase => 'The camera is stopped while checking.';
+	@override String get refuseeTitre => 'Camera not allowed';
+	@override String get refuseePhrase => 'To read the QR code, allow the camera. You can also enter the code shown under the QR code.';
+	@override String get refuseeAction => 'Allow the camera';
+	@override String get refuseeDurablementTitre => 'Camera blocked';
+	@override String get refuseeDurablementPhrase => 'The camera stays refused for Rewayah. Allow it in the device or browser settings, or enter the code.';
+	@override String get occupeeTitre => 'Camera in use';
+	@override String get occupeePhrase => 'Another app is using the camera. Close it, then try again, or enter the code.';
+	@override String get absenteTitre => 'No camera';
+	@override String get absentePhrase => 'This device has no camera available. Enter the code shown under the QR code.';
+	@override String get nonSupporteeTitre => 'Reading impossible here';
+	@override String get nonSupporteePhrase => 'This device or browser cannot read a QR code. Enter the code shown under the QR code.';
+	@override String get erreurTitre => 'The camera did not start';
+	@override String get erreurPhrase => 'Try again, or enter the code shown under the QR code.';
+}
+
+// Path: eleveConnexion.refus
+class _Traductions$eleveConnexion$refus$en extends Traductions$eleveConnexion$refus$fr {
+	_Traductions$eleveConnexion$refus$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get format => 'A code has six characters: digits 2 to 9 and letters, without I or O.';
+	@override String get inconnuTitre => 'Code not recognised';
+	@override String get inconnu => 'This code does not exist, or a newer code replaced it. Check it, or show a new code on the guardian\'s device.';
+	@override String get expireTitre => 'Code expired';
+	@override String get expire => 'This code is no longer valid. Show a new code on the guardian\'s device.';
+	@override String get dejaUtiliseTitre => 'Code already used';
+	@override String get dejaUtilise => 'This code has already been used to connect a device. Show a new code on the guardian\'s device.';
+	@override String get revoqueTitre => 'Device removed';
+	@override String get revoque => 'The guardian removed this device. Ask them to show a new code.';
+	@override String get plafondTitre => 'Device limit reached';
+	@override String get plafond => 'This student profile has reached the number of allowed devices. The guardian can remove one in Household, then show a new code.';
+	@override String get tropDEssaisTitre => 'Too many tries';
+	@override String get tropDEssais => 'Wait a moment before trying again.';
+	@override String get horsLigneTitre => 'Code not checked yet';
+	@override String get horsLigne => 'It can be checked when the connection is back. Try again then.';
+	@override String get nonEnregistreTitre => 'Sign-in not saved';
+	@override String get nonEnregistre => 'This device could not keep the sign-in. The code has probably already been used: show a new code on the guardian\'s device, then start again.';
+	@override String get generiqueTitre => 'Sign-in did not complete';
+	@override String get generique => 'The code check did not complete. Try again in a moment.';
+}
+
 // Path: recrutement.nomLatin
 class _Traductions$recrutement$nomLatin$en extends Traductions$recrutement$nomLatin$fr {
 	_Traductions$recrutement$nomLatin$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -2599,6 +3193,176 @@ class _Traductions$recrutement$parcours$en extends Traductions$recrutement$parco
 	@override String get choisirJour => 'Choose at least one day to continue.';
 	@override String get choisirHeure => 'Choose at least one start time to continue.';
 	@override String choisirHeureJour({required Object jour}) => 'Choose at least one start time for ${jour}.';
+}
+
+// Path: dossiers.file
+class _Traductions$dossiers$file$en extends Traductions$dossiers$file$fr {
+	_Traductions$dossiers$file$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get chargement => 'Loading files…';
+	@override String get erreur => 'Unable to load the files.';
+	@override String get horsLigne => 'The files could not be refreshed.';
+	@override String get accesRefuse => 'You do not have access to the files to approve.';
+	@override String get actualisation => 'Refreshing files…';
+	@override String get chargementProlonge => 'Loading is taking longer than expected.';
+	@override String get suivantsErreur => 'Unable to load the next files.';
+	@override String get indisponible => 'Viewing files is unavailable for now.';
+	@override String get selectionRetiree => 'This file is no longer available in the queue.';
+	@override String get actualiser => 'Reload the files';
+	@override String get suivants => 'Load the next files';
+	@override String ouvrirDe({required Object nom}) => 'Open ${nom}\'s file';
+	@override String ouvrirElide({required Object nom}) => 'Open ${nom}\'s file';
+	@override String get enVerification => 'Being verified';
+	@override String get sansNom => 'File without an available name';
+	@override String legende({required Object type, required Object date}) => '${type} · ${date}';
+	@override String dateChiffres({required Object mois, required Object jour, required Object annee}) => '${mois}/${jour}/${annee}';
+}
+
+// Path: dossiers.detail
+class _Traductions$dossiers$detail$en extends Traductions$dossiers$detail$fr {
+	_Traductions$dossiers$detail$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String titreDe({required Object nom}) => '${nom}\'s file';
+	@override String titreElide({required Object nom}) => '${nom}\'s file';
+}
+
+// Path: dossiers.visionneuse
+class _Traductions$dossiers$visionneuse$en extends Traductions$dossiers$visionneuse$fr {
+	_Traductions$dossiers$visionneuse$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get chargement => 'Loading the document…';
+	@override String get erreur => 'The document cannot be displayed.';
+	@override String get expire => 'Access to this document has expired.';
+	@override String get recharger => 'Reload the document';
+	@override String get formatNonPrisEnCharge => 'This document format cannot be displayed.';
+	@override String get accesRetire => 'You no longer have access to this document.';
+	@override String get apercuRefuse => 'This document is not visible with your account.';
+	@override String get horsLigne => 'The document could not be loaded.';
+	@override String get aucune => 'No document is available.';
+	@override String get fermerPiece => 'Close the document';
+	@override String get agrandir => 'Enlarge';
+	@override String get reduire => 'Reduce';
+	@override String get ajuster => 'Fit to screen';
+	@override String infoBulle({required Object action, required Object touche}) => '${action} (key ${touche})';
+	@override String get documentFictif => 'Fictitious document';
+}
+
+// Path: dossiers.revue
+class _Traductions$dossiers$revue$en extends Traductions$dossiers$revue$fr {
+	_Traductions$dossiers$revue$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get identite => 'Identity and file';
+	@override String get pieceNonTransmise => 'The required document was not submitted.';
+	@override String get piece => 'ID document';
+	@override String get voirPiece => 'See the document';
+	@override String get accords => 'Agreements and submitted items';
+	@override String get nom => 'Last name';
+	@override String get prenom => 'First name';
+	@override String get dateIndisponible => 'Submission date unavailable';
+	@override String get pasPret => 'This file is not ready to be approved yet.';
+	@override String get erreurChargement => 'Unable to load this file.';
+	@override String get pieceIndisponible => 'Viewing the document is unavailable for now.';
+	@override late final _Traductions$dossiers$revue$etats$en etats = _Traductions$dossiers$revue$etats$en._(_root);
+}
+
+// Path: dossiers.profilACompleter
+class _Traductions$dossiers$profilACompleter$en extends Traductions$dossiers$profilACompleter$fr {
+	_Traductions$dossiers$profilACompleter$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Profile to complete';
+	@override String get texte => 'Your profile must be completed before you can view the files allowed by this rule.';
+}
+
+// Path: dossiers.refus
+class _Traductions$dossiers$refus$en extends Traductions$dossiers$refus$fr {
+	_Traductions$dossiers$refus$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Refuse the file';
+	@override String nomType({required Object nom, required Object type}) => '${nom} · ${type}';
+	@override String get corps => 'Give the reason that will be shown to the person concerned.';
+	@override String get champ => 'Reason for refusal';
+	@override String get aide => 'Explain what needs to be corrected, with no internal data or personal comment.';
+	@override String get erreurVide => 'Enter the reason for refusal.';
+	@override String get tropLong => 'The reason exceeds the allowed length.';
+	@override String get envoi => 'Refusing…';
+	@override String get erreur => 'The file could not be refused.';
+	@override String get horsLigne => 'The refusal was not sent. Try again when the connection is back.';
+	@override String get inconnu => 'The result of the refusal is not confirmed yet.';
+	@override String get interdit => 'You can no longer refuse this file.';
+	@override String get indisponible => 'Refusal is unavailable for now.';
+	@override String get succes => 'File refused.';
+	@override String get abandonQuestion => 'Discard the reason entered?';
+	@override String get continuerSaisie => 'Keep typing';
+	@override String get abandonner => 'Discard';
+}
+
+// Path: dossiers.validation
+class _Traductions$dossiers$validation$en extends Traductions$dossiers$validation$fr {
+	_Traductions$dossiers$validation$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Approve this file?';
+	@override String corpsActivation({required Object nom}) => '${nom}\'s file will be approved. Their account will be able to access their space.';
+	@override String corpsActivationElide({required Object nom}) => '${nom}\'s file will be approved. Their account will be able to access their space.';
+	@override String corpsDocumentaire({required Object nom}) => '${nom}\'s file will be approved. Other access conditions will still apply.';
+	@override String corpsDocumentaireElide({required Object nom}) => '${nom}\'s file will be approved. Other access conditions will still apply.';
+	@override String get indisponible => 'Approval is unavailable for now.';
+	@override String get envoi => 'Approving…';
+	@override String get erreur => 'The file could not be approved.';
+	@override String get horsLigne => 'The approval was not sent. Try again when the connection is back.';
+	@override String get inconnu => 'The result of the approval is not confirmed yet.';
+	@override String get plusPret => 'This file is no longer ready to be approved.';
+	@override String get interdit => 'You can no longer approve this file.';
+	@override String get succes => 'File approved.';
+}
+
+// Path: dossiers.decision
+class _Traductions$dossiers$decision$en extends Traductions$dossiers$decision$fr {
+	_Traductions$dossiers$decision$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get verifierResultat => 'Check the result';
+	@override String get dejaTraite => 'This file has already been handled.';
+	@override String get conflit => 'This file was handled by another team member.';
+	@override String nomComplet({required Object prenom, required Object nom}) => '${prenom} ${nom}';
+}
+
+// Path: dossiers.accesKyc
+class _Traductions$dossiers$accesKyc$en extends Traductions$dossiers$accesKyc$fr {
+	_Traductions$dossiers$accesKyc$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get exceptionTitre => 'Super administrator exception active';
+	@override String get exceptionMessage => 'You can open the documents of both genders. Every opening outside your gender is recorded.';
+	@override String get exceptionPiece => 'This opening is outside your gender: it will be recorded.';
+	@override String get verification => 'Checking your access rights…';
+	@override String get verificationEchec => 'Your access rights to this document could not be verified.';
+	@override String get reessayer => 'Try again';
+	@override late final _Traductions$dossiers$accesKyc$refus$en refus = _Traductions$dossiers$accesKyc$refus$en._(_root);
 }
 
 // Path: nav.eleve
@@ -4211,6 +4975,122 @@ class _Traductions$suiviDemandes$changement$en extends Traductions$suiviDemandes
 	@override String get introuvableDetail => 'Go back to the tracking to see where your requests stand.';
 }
 
+// Path: recherche.champ
+class _Traductions$recherche$champ$en extends Traductions$recherche$champ$fr {
+	_Traductions$recherche$champ$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'Search';
+	@override String get aide => 'One word';
+}
+
+// Path: recherche.espace
+class _Traductions$recherche$espace$en extends Traductions$recherche$espace$fr {
+	_Traductions$recherche$espace$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get famille => 'In your Guardian space';
+	@override String get eleve => 'In your Student space';
+	@override String get eleveGuide => 'In your Student space';
+	@override String get enseignant => 'In your Teacher space';
+	@override String get controleur => 'In your Review space';
+	@override String get comptable => 'In your Accounting space';
+	@override String get administration => 'In your Administration space';
+}
+
+// Path: recherche.initial
+class _Traductions$recherche$initial$en extends Traductions$recherche$initial$fr {
+	_Traductions$recherche$initial$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Search in your space';
+	@override String get phrase => 'Enter a name, a class or a document. Nothing is searched before you write.';
+}
+
+// Path: recherche.domaines
+class _Traductions$recherche$domaines$en extends Traductions$recherche$domaines$fr {
+	_Traductions$recherche$domaines$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get classes => 'Classes';
+	@override String get supports => 'Documents';
+	@override String get personnes => 'People';
+	@override String get enseignants => 'Teachers';
+	@override String get pedagogie => 'Students';
+	@override String get controle => 'Review';
+	@override String get finances => 'Finances';
+	@override String get fils => 'Conversations';
+	@override String get remplacements => 'Replacements';
+}
+
+// Path: recherche.etats
+class _Traductions$recherche$etats$en extends Traductions$recherche$etats$fr {
+	_Traductions$recherche$etats$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$recherche$etats$vide$en vide = _Traductions$recherche$etats$vide$en._(_root);
+	@override late final _Traductions$recherche$etats$domaineIndisponible$en domaineIndisponible = _Traductions$recherche$etats$domaineIndisponible$en._(_root);
+	@override late final _Traductions$recherche$etats$erreur$en erreur = _Traductions$recherche$etats$erreur$en._(_root);
+	@override late final _Traductions$recherche$etats$delai$en delai = _Traductions$recherche$etats$delai$en._(_root);
+	@override late final _Traductions$recherche$etats$horsLigne$en horsLigne = _Traductions$recherche$etats$horsLigne$en._(_root);
+	@override late final _Traductions$recherche$etats$sessionExpiree$en sessionExpiree = _Traductions$recherche$etats$sessionExpiree$en._(_root);
+	@override late final _Traductions$recherche$etats$nonRaccorde$en nonRaccorde = _Traductions$recherche$etats$nonRaccorde$en._(_root);
+	@override late final _Traductions$recherche$etats$inaccessible$en inaccessible = _Traductions$recherche$etats$inaccessible$en._(_root);
+}
+
+// Path: recherche.guide
+class _Traductions$recherche$guide$en extends Traductions$recherche$guide$fr {
+	_Traductions$recherche$guide$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Find a document';
+	@override late final _Traductions$recherche$guide$initial$en initial = _Traductions$recherche$guide$initial$en._(_root);
+	@override String get limite => 'Only your documents and your lessons.';
+}
+
+// Path: recherche.entree
+class _Traductions$recherche$entree$en extends Traductions$recherche$entree$fr {
+	_Traductions$recherche$entree$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get supports => 'Search in documents';
+}
+
+// Path: recherche.contexte
+class _Traductions$recherche$contexte$en extends Traductions$recherche$contexte$fr {
+	_Traductions$recherche$contexte$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get remplacementOuvert => 'Replacement to take';
+	@override String get remplacementMien => 'Your replacement';
+	@override String get mission => 'Review mission';
+	@override String missionEnseignant({required Object enseignant}) => 'Review mission · ${enseignant}';
+	@override String eleveDeClasse({required Object classe}) => 'Student of class ${classe}';
+	@override String enseignantDeClasse({required Object classe}) => 'Teacher of class ${classe}';
+	@override String get personneFoyer => 'Profile in your household';
+	@override String personneFoyerClasse({required Object classe}) => 'Profile in your household · ${classe}';
+	@override String get personneParIdentifiant => 'Found by its identifier';
+	@override String personneParIdentifiantClasse({required Object classe}) => 'Found by its identifier · ${classe}';
+	@override String get canalStudio => 'Studio channel';
+	@override String encaissement({required Object famille}) => 'Payment received · ${famille}';
+}
+
 // Path: juridique.coord
 class _Traductions$juridique$coord$en extends Traductions$juridique$coord$fr {
 	_Traductions$juridique$coord$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -4306,6 +5186,52 @@ class _Traductions$courriels$admin$en extends Traductions$courriels$admin$fr {
 	@override late final _Traductions$courriels$admin$adresses$en adresses = _Traductions$courriels$admin$adresses$en._(_root);
 }
 
+// Path: admissions.etat
+class _Traductions$admissions$etat$en extends Traductions$admissions$etat$fr {
+	_Traductions$admissions$etat$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get aTraiter => 'To handle';
+	@override String get aCompleter => 'To complete';
+	@override String get acceptee => 'Accepted';
+	@override String get refusee => 'Refused';
+	@override String get retiree => 'Withdrawn';
+}
+
+// Path: admissions.refus
+class _Traductions$admissions$refus$en extends Traductions$admissions$refus$fr {
+	_Traductions$admissions$refus$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get dejaTraitee => 'This request has just been handled by another member of the management. The list is reloaded.';
+	@override String get transitionInterdite => 'This action no longer applies to this request (its status changed, or the seven-day period has passed).';
+	@override String get motifRequis => 'A reason is needed for this action.';
+	@override String get adresseInconnue => 'This person\'s email address is not known: no message can be sent.';
+	@override String get enfantEnClasse => 'A child in this request is already in a class: the acceptance can no longer be undone.';
+	@override String get autre => 'The server refused this action. Reopen the request to see its status.';
+}
+
+// Path: admissions.modeles
+class _Traductions$admissions$modeles$en extends Traductions$admissions$modeles$fr {
+	_Traductions$admissions$modeles$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get general => 'No details';
+	@override String get generalPhrase => '"We cannot proceed with your request for now."';
+	@override String get besoins => 'Our classes do not meet the request';
+	@override String get besoinsPhrase => '"Our classes do not yet match what you are looking for."';
+	@override String get niveau => 'Level not offered yet';
+	@override String get niveauPhrase => '"The level requested is not yet offered."';
+	@override String get sansReponse => 'No reply';
+	@override String get sansReponsePhrase => '"We did not receive a reply to our last message."';
+}
+
 // Path: accueilInvite.roles
 class _Traductions$accueilInvite$roles$en extends Traductions$accueilInvite$roles$fr {
 	_Traductions$accueilInvite$roles$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -4317,6 +5243,172 @@ class _Traductions$accueilInvite$roles$en extends Traductions$accueilInvite$role
 	@override String get enseignant => 'Rewayah Academy invites you as a teacher.';
 	@override String get comptable => 'Rewayah Academy invites you as an accountant.';
 	@override String get candidat => 'Rewayah Academy invites you as a teaching applicant.';
+}
+
+// Path: snt.regles
+class _Traductions$snt$regles$en extends Traductions$snt$regles$fr {
+	_Traductions$snt$regles$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get nonTenue => 'Session not held';
+	@override String get nonTenueDetail => 'If no teacher has joined the room by this deadline, the session is postponed: the class is notified and the management sets the new date in the schedule.';
+	@override String bornesNonTenue({required Object min, required Object max}) => 'Between ${min} and ${max} after the start.';
+	@override String bornesObjectif({required Object min, required Object max}) => 'Between ${min} and ${max} after the start. To go beyond ${max}, first lengthen the session not held.';
+}
+
+// Path: snt.notifications
+class _Traductions$snt$notifications$en extends Traductions$snt$notifications$fr {
+	_Traductions$snt$notifications$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get seanceReportee => 'A session did not take place: it is postponed. New date to come.';
+	@override String seanceReporteeQuand({required Object quand}) => 'The session of ${quand} did not take place: it is postponed. New date to come.';
+}
+
+// Path: snt.salle
+class _Traductions$snt$salle$en extends Traductions$snt$salle$fr {
+	_Traductions$snt$salle$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get reporteeTitre => 'Session postponed';
+	@override String get reportee => 'No teacher joined the room in time: the session is postponed. New date to come, the class will be notified.';
+}
+
+// Path: snt.planning
+class _Traductions$snt$planning$en extends Traductions$snt$planning$fr {
+	_Traductions$snt$planning$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get section => 'Postponed sessions';
+	@override String get intro => 'No teacher joined the room in time. Set the new date of each session: it will be held with the class teacher.';
+	@override String ligne({required Object classe}) => 'Postponed session of class ${classe}';
+	@override String ligneQuand({required Object quand}) => 'Planned for ${quand}';
+	@override String get fixer => 'Set the new date';
+	@override String get erreurLecture => 'The postponed sessions could not be loaded: the request may not have reached Rewayah. Try again in a moment.';
+	@override String get feuilleTitre => 'Set the new date';
+	@override String feuilleSeance({required Object classe, required Object quand}) => 'Class ${classe}, session planned for ${quand}';
+	@override String feuilleContexte({required Object enseignant, required Object minutes}) => 'The new session is held with ${enseignant}, the class teacher, and lasts ${minutes} minutes, like the postponed session. The class is notified of the new date.';
+	@override String feuilleContexteSansNom({required Object minutes}) => 'The new session is held with the class teacher and lasts ${minutes} minutes, like the postponed session. The class is notified of the new date.';
+	@override String get jour => 'Day of the new session';
+	@override String get heure => 'Time';
+	@override String quand({required Object jour, required Object heure}) => '${jour} at ${heure}';
+	@override String get choixManquant => 'Choose the day and time of the new session.';
+	@override String get confirmer => 'Set this date';
+	@override String get horsLigne => 'No connection: the date will be set once the device is reconnected.';
+	@override String fixee({required Object quand}) => 'New date set: ${quand}. The class is notified.';
+	@override String get refusChevauchement => 'The date is not set: the teacher already has a session at that time. Choose another time or day.';
+	@override String refusChevauchementNomme({required Object classe, required Object quand}) => 'The date is not set: the teacher already has a session of class ${classe} on ${quand}. Choose another time or day.';
+	@override String refusChevauchementDate({required Object quand}) => 'The date is not set: the teacher already has a session on ${quand}. Choose another time or day.';
+	@override String get refusDatePassee => 'The date is not set: that time has already passed. Choose an upcoming day and time.';
+	@override String get refusDejaFixee => 'The new date for this session is already set, perhaps from another device. Close this window: the session is in the schedule.';
+	@override String get refusClasseClose => 'The date is not set: the class is closed. No session can be planned in it any more.';
+	@override String get refusNonAutorisee => 'The date is not set: this account cannot set a date. Sign in with a management account.';
+	@override String get erreur => 'The date is not confirmed: the request may not have reached Rewayah. Try again in a moment.';
+}
+
+// Path: push1.invitation
+class _Traductions$push1$invitation$en extends Traductions$push1$invitation$fr {
+	_Traductions$push1$invitation$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Receive notifications?';
+	@override String get phrase => 'An alert on this device when your class changes or you are expected, even with the app closed. You can turn it off at any time in Preferences.';
+	@override String get activer => 'Turn on';
+	@override String get plusTard => 'Later';
+}
+
+// Path: push1.evenements
+class _Traductions$push1$evenements$en extends Traductions$push1$evenements$fr {
+	_Traductions$push1$evenements$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get admissionRecue => 'A new admission request needs review.';
+	@override String get candidatureEnseignant => 'A teacher application needs review.';
+	@override String get demandeHoraireRecue => 'A new schedule request needs review.';
+	@override String get creneauPersonnalise => 'A custom schedule is requested.';
+	@override String get pieceIdentite => 'An ID document needs checking.';
+	@override String get signalementEleve => 'A report is waiting for your decision.';
+	@override String get suppressionCompte => 'An account deletion is requested.';
+	@override String get personneEnSalle => 'No one is in a class\'s room: find a replacement.';
+	@override String get paiementEchoue => 'Your payment did not go through. It is paid in Payments.';
+	@override String get paiementEchoueDirection => 'A payment failed.';
+	@override String get coordonneesAValider => 'Payout details need approval.';
+	@override String get coordonneesValidees => 'Your payout details are approved.';
+	@override String get remboursementDemande => 'A refund is requested.';
+	@override String get remboursementEchec => 'A refund did not go through.';
+	@override String get cahierEnRetard => 'A session\'s handover notebook is waiting for your information.';
+}
+
+// Path: push1.gestes
+class _Traductions$push1$gestes$en extends Traductions$push1$gestes$fr {
+	_Traductions$push1$gestes$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get examiner => 'Review';
+	@override String get verifierPiece => 'Check the document';
+	@override String get traiterSignalement => 'Handle the report';
+	@override String get traiterDemande => 'Handle the request';
+	@override String get trouverRemplacant => 'Find a replacement';
+	@override String get voirPaiement => 'See the payment';
+	@override String get validerCoordonnees => 'Approve the details';
+	@override String get voirRemboursement => 'See the refund';
+	@override String get remplirCahier => 'Fill in the handover notebook';
+	@override String get rejoindreSalle => 'Join the room';
+}
+
+// Path: push1.reglages
+class _Traductions$push1$reglages$en extends Traductions$push1$reglages$fr {
+	_Traductions$push1$reglages$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get lien => 'Notifications on this device';
+	@override String get titre => 'Notifications on this device';
+	@override String get contexte => 'Receive an alert on this phone or computer, even when the app is closed. The alert gives no name: the detail is read in the app.';
+	@override String get categoriesTitre => 'What you receive';
+	@override String get categoriesContexte => 'Turn off a category to stop receiving it on your devices. It stays in the Notifications page.';
+	@override String get classes => 'Classes and sessions';
+	@override String get classesDetail => 'Session cancelled, moved or postponed, teacher absent, schedule changed.';
+	@override String get remplacements => 'Replacements';
+	@override String get remplacementsDetail => 'Session to take, teacher not yet in their room.';
+	@override String get paiements => 'Payments';
+	@override String get paiementsDetail => 'Payment due or failed, refund, dispute, payout details.';
+	@override String get admissions => 'Requests and files';
+	@override String get admissionsDetail => 'Admission requests, applications, schedule requests, ID documents.';
+	@override String get suivi => 'Student follow-up';
+	@override String get suiviDetail => 'Reports, messages from the management, review missions.';
+	@override String get appareilActif => 'This device receives your notifications.';
+	@override String get appareilInactif => 'This device does not receive your notifications yet. Your browser will ask for your permission.';
+	@override String get activer => 'Receive notifications on this device';
+	@override String get desactiver => 'Stop receiving them on this device';
+	@override String get active => 'Done: this device will receive your notifications.';
+	@override String get desactive => 'This device will no longer receive your notifications. They stay in the Notifications page.';
+	@override String get nonPrisEnCharge => 'This browser does not receive notifications. Open Rewayah in a recent browser (Chrome, Edge, Firefox or Safari) to receive them.';
+	@override String get iosEcranAccueil => 'On iPhone and iPad, first add Rewayah to the home screen (Share, then Add to Home Screen), open the app from that icon, then come back here.';
+	@override String get refuse => 'Your browser blocks Rewayah\'s notifications. Allow them in the browser settings for this site, then come back here.';
+	@override String get ignore => 'You have not yet answered the browser\'s request. Tap the button again to see it again.';
+	@override String get echecActivation => 'The registration of this device is not confirmed: the connection may have dropped. Try again in a moment.';
+	@override String get compteNonAutoriseTitre => 'No device notifications for this account';
+	@override String get compteNonAutorise => 'Device notifications are reserved for active adult accounts. All your notifications stay in the Notifications page.';
+	@override String get erreurTitre => 'The settings could not be loaded';
+	@override String get erreur => 'Your settings could not be loaded: the connection may have dropped. Try again in a moment.';
+	@override String get horsLigne => 'Notification settings can be changed when the connection is back.';
+	@override String get changementNonConfirme => 'The change is not yet confirmed: the connection may have dropped. Try again in a moment.';
 }
 
 // Path: suiviAttente.tu
@@ -4622,6 +5714,72 @@ class _Traductions$calendrier$pauses$en extends Traductions$calendrier$pauses$fr
 	@override String finInitiale({required Object date}) => 'Original end: ${date}';
 	@override String termineePar({required Object nom}) => 'Ended early by ${nom}';
 	@override late final _Traductions$calendrier$pauses$refus$en refus = _Traductions$calendrier$pauses$refus$en._(_root);
+}
+
+// Path: pause.regle
+class _Traductions$pause$regle$en extends Traductions$pause$regle$fr {
+	_Traductions$pause$regle$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get moisEntier => 'A break lasts a whole calendar month, from the first to the last day of the month.';
+	@override String preavis({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(jours,
+		one: 'You request it at least ${jours} day before the start of the month.',
+		other: 'You request it at least ${jours} days before the start of the month.',
+	);
+	@override String plafond({required num delai, required Object mois, required Object fenetre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(delai,
+		one: 'Up to ${mois} months of break within ${fenetre} months. Beyond that, the management decides and replies within ${delai} day.',
+		other: 'Up to ${mois} months of break within ${fenetre} months. Beyond that, the management decides and replies within ${delai} days.',
+	);
+	@override String get placeGardee => 'During the break, the place is kept.';
+	@override String get dateLimite => 'The stage deadline moves back by the length of the break.';
+	@override String get absence => 'An absence of a few days stays an absence: only whole months are requested.';
+}
+
+// Path: pause.reponse
+class _Traductions$pause$reponse$en extends Traductions$pause$reponse$fr {
+	_Traductions$pause$reponse$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String acceptee({required Object mois}) => 'The break of ${mois} is accepted. The place is kept and the stage deadline moves back by the same amount.';
+	@override String demandee({required num delai}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(delai,
+		one: 'Your request has been passed to the management, who reply within ${delai} day.',
+		other: 'Your request has been passed to the management, who reply within ${delai} days.',
+	);
+}
+
+// Path: pause.statut
+class _Traductions$pause$statut$en extends Traductions$pause$statut$fr {
+	_Traductions$pause$statut$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get demandee => 'Pending';
+	@override String get acceptee => 'Accepted';
+	@override String get refusee => 'Refused';
+	@override String get annulee => 'Cancelled';
+}
+
+// Path: pause.refus
+class _Traductions$pause$refus$en extends Traductions$pause$refus$fr {
+	_Traductions$pause$refus$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String preavis({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(jours,
+		one: 'This month starts too soon: a break is requested at least ${jours} day before it starts. Choose a later month.',
+		other: 'This month starts too soon: a break is requested at least ${jours} days before it starts. Choose a later month.',
+	);
+	@override String get dejaDemandee => 'This month is already requested or accepted.';
+	@override String get moisInvalide => 'This month is not readable. Choose a month from the list.';
+	@override String get nonAnnulable => 'This break can no longer be cancelled: it has already started, or it is already refused or cancelled.';
+	@override String get nonAutorise => 'You cannot request a break from this account.';
+	@override String get inconnu => 'The request is not confirmed: it may not have reached Rewayah. Try again in a moment.';
 }
 
 // Path: commun.etats.recharge1
@@ -5346,6 +6504,36 @@ class _Traductions$recrutement$parcours$moyens$en extends Traductions$recrutemen
 	@override String get virement => 'Bank transfer';
 	@override String get explication => 'Choose it if it is common where you live.';
 	@override String get nonElimine => 'This question is optional and eliminates no one: your application does not depend on your answer. It helps the academy know the methods used where you live.';
+}
+
+// Path: dossiers.revue.etats
+class _Traductions$dossiers$revue$etats$en extends Traductions$dossiers$revue$etats$fr {
+	_Traductions$dossiers$revue$etats$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get chargement => 'Loading the file…';
+	@override String get horsLigne => 'No decision can be sent for now.';
+	@override String get accesPerdu => 'You no longer have access to this file.';
+	@override String get retourDossiers => 'Back to the files';
+	@override String get verificationsIncompletes => 'Complete the required checks.';
+	@override String get accordManquant => 'A required agreement is missing from this file.';
+	@override String get decisionIndisponible => 'The decision is unavailable for now.';
+	@override String get actualiserDossier => 'Reload the file';
+	@override String get refusNonAutorise => 'This file cannot be refused in its current state.';
+}
+
+// Path: dossiers.accesKyc.refus
+class _Traductions$dossiers$accesKyc$refus$en extends Traductions$dossiers$accesKyc$refus$fr {
+	_Traductions$dossiers$accesKyc$refus$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get genreDifferent => 'This document is reserved for an administrator of the same gender as the applicant.';
+	@override String get adminSansGenre => 'Your gender is not recorded: no document can be opened. Ask the management to record it.';
+	@override String get profilNonAutorise => 'Your profile cannot view ID documents.';
 }
 
 // Path: compte.page.sections
@@ -6112,6 +7300,109 @@ class _Traductions$suiviDemandes$close$motif$en extends Traductions$suiviDemande
 	@override String get refusDirection => 'The management could not accept this request.';
 	@override String dejaEnClasse({required Object prenom}) => '${prenom} already has a place in a class: this request is no longer needed.';
 	@override String get inconnu => 'This request is closed.';
+}
+
+// Path: recherche.etats.vide
+class _Traductions$recherche$etats$vide$en extends Traductions$recherche$etats$vide$fr {
+	_Traductions$recherche$etats$vide$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'No results for this search.';
+	@override String get phrase => 'Try another word or a filter.';
+	@override String get action => 'Change the search';
+}
+
+// Path: recherche.etats.domaineIndisponible
+class _Traductions$recherche$etats$domaineIndisponible$en extends Traductions$recherche$etats$domaineIndisponible$fr {
+	_Traductions$recherche$etats$domaineIndisponible$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Search in this area is unavailable.';
+	@override String get phrase => 'The other categories stay available.';
+	@override String get action => 'Try this area again';
+}
+
+// Path: recherche.etats.erreur
+class _Traductions$recherche$etats$erreur$en extends Traductions$recherche$etats$erreur$fr {
+	_Traductions$recherche$etats$erreur$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Unable to perform the search.';
+	@override String get phrase => 'Your access was re-checked. Try again in a moment.';
+}
+
+// Path: recherche.etats.delai
+class _Traductions$recherche$etats$delai$en extends Traductions$recherche$etats$delai$fr {
+	_Traductions$recherche$etats$delai$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'The search is taking too long.';
+	@override String get phrase => 'Narrow the area or try again.';
+}
+
+// Path: recherche.etats.horsLigne
+class _Traductions$recherche$etats$horsLigne$en extends Traductions$recherche$etats$horsLigne$fr {
+	_Traductions$recherche$etats$horsLigne$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Online search is unavailable.';
+	@override String get phrase => 'It will resume when the connection is back. No private result is kept in the meantime.';
+}
+
+// Path: recherche.etats.sessionExpiree
+class _Traductions$recherche$etats$sessionExpiree$en extends Traductions$recherche$etats$sessionExpiree$fr {
+	_Traductions$recherche$etats$sessionExpiree$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Your session has expired.';
+	@override String get phrase => 'Sign in again to resume the search.';
+}
+
+// Path: recherche.etats.nonRaccorde
+class _Traductions$recherche$etats$nonRaccorde$en extends Traductions$recherche$etats$nonRaccorde$fr {
+	_Traductions$recherche$etats$nonRaccorde$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Search unavailable for now.';
+	@override String get phrase => 'This search is not yet open in your space.';
+	@override String get action => 'Back';
+}
+
+// Path: recherche.etats.inaccessible
+class _Traductions$recherche$etats$inaccessible$en extends Traductions$recherche$etats$inaccessible$fr {
+	_Traductions$recherche$etats$inaccessible$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'This item is no longer accessible.';
+	@override String get phrase => 'Your results have been refreshed.';
+	@override String get action => 'Back to the results';
+}
+
+// Path: recherche.guide.initial
+class _Traductions$recherche$guide$initial$en extends Traductions$recherche$guide$initial$fr {
+	_Traductions$recherche$guide$initial$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Find a document';
+	@override String get phrase => 'Write a word to find one of your documents.';
 }
 
 // Path: avis.form.nom
@@ -8174,6 +9465,34 @@ extension on TraductionsEn {
 			'commun.sections.page' => 'Page sections',
 			'commun.recherche.effacer' => 'Clear search',
 			'commun.recherche.fermer' => 'Close search',
+			'presence.titre' => 'Attendance',
+			'presence.voir' => 'See attendance',
+			'presence.mienne' => 'Your attendance',
+			'presence.consolide' => 'consolidated',
+			'presence.planifiee' => 'Upcoming class',
+			'presence.enAttente' => 'Not here yet',
+			'presence.enConnexion' => 'Connecting',
+			'presence.presente' => 'In the room',
+			'presence.enRetard' => 'Late',
+			'presence.deconnectee' => 'Link lost',
+			'presence.enReconnexion' => 'Reconnecting',
+			'presence.reconnectee' => 'Back',
+			'presence.sortie' => 'Left the class',
+			'presence.absente' => 'Absence',
+			'presence.excusee' => 'Excused absence',
+			'presence.confirmationEnAttente' => 'To confirm',
+			'presence.corrigeeManuel' => 'Manual correction',
+			'presence.finalisee' => 'Final',
+			'presence.inconnu' => 'Attendance not known yet',
+			'presence.entreeInstant' => 'in the room just now',
+			'presence.entreeMinutes' => ({required Object minutes}) => 'in the room for ${minutes} min',
+			'presence.retardMinutes' => ({required Object minutes}) => '${minutes} min after the start',
+			'presence.silenceInstant' => 'no news for a few seconds',
+			'presence.silenceMinutes' => ({required Object minutes}) => 'no news for ${minutes} min',
+			'presence.attenteInstant' => 'the class has just started',
+			'presence.attenteMinutes' => ({required Object minutes}) => 'the class started ${minutes} min ago',
+			'presence.etatMicroOuvert' => 'their microphone is on',
+			'presence.etatMicroCoupe' => 'their microphone is off',
 			'attente.titre' => 'Your file is being reviewed',
 			'attente.dossierIncomplet' => 'Some documents are still missing from your file.',
 			'attente.enVerification' => 'We are reviewing your file.',
@@ -8443,6 +9762,71 @@ extension on TraductionsEn {
 			'codeConduite.erreur' => 'Your agreement was not saved. Try again in a moment.',
 			'codeConduite.erreurLecture' => 'We could not load your agreements. Try again.',
 			'codeConduite.aAccepter' => 'To accept',
+			'accessibilite.demo.titre' => 'Guided interface demo',
+			'accessibilite.demo.mention' => 'Fictitious data, nothing is sent.',
+			'accessibilite.demo.intro' => 'Choose a student and a moment of the session.',
+			'accessibilite.demo.eleveMineure' => 'Mariam, minor student',
+			'accessibilite.demo.eleveAdulte' => 'Idriss, adult student',
+			'accessibilite.demo.etatAvant' => 'Before the session',
+			'accessibilite.demo.etatFenetre' => 'Just before the session, entry is open',
+			'accessibilite.demo.etatPendant' => 'During the session',
+			'accessibilite.demo.etatApres' => 'After the session',
+			'accessibilite.accueil.salutation' => ({required Object prenom}) => 'Assalamu alaykum, ${prenom}.',
+			'accessibilite.accueil.prochaineSeance' => 'Next session',
+			'accessibilite.accueil.avec' => ({required Object nomme}) => 'with ${nomme}',
+			'accessibilite.accueil.voirMaClasse' => 'See my class',
+			'accessibilite.accueil.lireCoran' => 'Read the Quran',
+			'accessibilite.accueil.lireCoranDetail' => 'Open the Mushaf',
+			'accessibilite.accueil.aide' => 'Need help?',
+			'accessibilite.accueil.erreurTitre' => 'Next session not loaded',
+			'accessibilite.accueil.erreurPhrase' => 'The session and the work to do could not be loaded. Just try again in a moment.',
+			'accessibilite.accueil.indisponibleTitre' => 'Next session not shown here yet',
+			'accessibilite.accueil.indisponiblePhrase' => 'Home does not receive the class session yet. It can be read in My class.',
+			'accessibilite.accueil.videTitre' => 'No class yet',
+			'accessibilite.accueil.videPhrase' => 'No class is assigned yet. It is chosen with the academy. In the meantime, the Quran and help stay open just below.',
+			'accessibilite.coran.reprendreVous' => 'Resume your reading',
+			'accessibilite.coran.reprendreDetailVous' => ({required Object page}) => 'You were on page ${page}',
+			'accessibilite.coran.repriseErreur' => 'Your last page could not be found. Open the Quran and choose your page in the reader. Your reading settings stay saved.',
+			'accessibilite.coran.repriseErreurVous' => 'Your last page could not be found. Open the Quran and choose your page in the reader. Your reading settings stay saved.',
+			'accessibilite.coran.demoSansTexte' => 'The Quran text is not loaded in the demo',
+			'accessibilite.coran.demoSansTexteDetail' => 'This is not a fault: the demo does not contain the text. You have nothing to do. In the app, the Quran opens here, at your page, and your reading settings stay saved.',
+			'accessibilite.coran.demoSansTexteDetailVous' => 'This is not a fault: the demo does not contain the text. You have nothing to do. In the app, the Quran opens here, at your page, and your reading settings stay saved.',
+			'accessibilite.coran.indisponibleDetailVous' => 'As soon as the network is back, your page reopens here.',
+			'accessibilite.coran.absentDetailVous' => 'The text has not been installed on this page. Report it: it is not you.',
+			'accessibilite.maClasse.titre' => 'My class',
+			'accessibilite.maClasse.suivi' => 'My progress',
+			'accessibilite.maClasse.suiviDetail' => 'Past sessions and attendance',
+			'accessibilite.tutoiement.tonHeure' => 'Your time',
+			'accessibilite.tutoiement.attenteDetail' => 'This waiting time does not count in your attendance.',
+			'accessibilite.tutoiement.attente' => ({required Object duree}) => 'You are in the room. The session starts in ${duree}.',
+			'accessibilite.tutoiement.attenteImminent' => 'You are in the room. The session starts in less than a minute.',
+			'accessibilite.tutoiement.annonceAttente' => 'You are in the room',
+			'accessibilite.tutoiement.horsLigne' => 'You will be able to join the session as soon as the connection is back.',
+			'accessibilite.tutoiement.finPhrase' => 'You can find your work in your class.',
+			'accessibilite.apres.revoirSupport' => 'Review the class material',
+			'accessibilite.apres.revoirSupportDetail' => 'The material stays in your class.',
+			'accessibilite.apres.revoirSupportDetailVous' => 'The material stays in your class.',
+			'accessibilite.apres.quitteTitre' => 'You left the session.',
+			'accessibilite.apres.quittePhrase' => 'You can come back as long as it stays open.',
+			'accessibilite.apres.prochaineDateHeure' => ({required Object date, required Object heure}) => '${date} at ${heure}',
+			'accessibilite.apres.vide' => 'Your next session is not scheduled yet. It will appear here and in your class.',
+			'accessibilite.apres.videVous' => 'Your next session is not scheduled yet. It will appear here and in your class.',
+			'accessibilite.apres.erreur' => 'Your next session and your work could not be loaded: your request may not have reached Rewayah. Try again, or find them in your class.',
+			'accessibilite.apres.erreurVous' => 'Your next session and your work could not be loaded: your request may not have reached Rewayah. Try again, or find them in your class.',
+			'accessibilite.apres.horsLigne' => 'Your next session and your work will appear when the connection is back.',
+			'accessibilite.apres.horsLigneVous' => 'Your next session and your work will appear when the connection is back.',
+			'accessibilite.apres.prochaineInconnue' => 'Your next session will appear in your class.',
+			'accessibilite.apres.prochaineInconnueVous' => 'Your next session will appear in your class.',
+			'accessibilite.monEspace.titre' => 'My space',
+			'accessibilite.monEspace.mode' => 'Guided interface',
+			'accessibilite.monEspace.modeDetail' => 'A simplified interface adapted for calmer learning.',
+			'accessibilite.monEspace.modeActif' => 'On',
+			'accessibilite.monEspace.presentationStandard' => 'Standard display',
+			'accessibilite.monEspace.demanderDetail' => 'Ask your guardian to switch to the standard display.',
+			'accessibilite.monEspace.demandeEnCours' => 'Your request is being sent.',
+			'accessibilite.monEspace.demandeEnvoyee' => 'Your request was sent to your guardian.',
+			'accessibilite.monEspace.demandeHorsLigne' => 'Nothing was sent: there is no network. Try again as soon as it is back.',
+			'accessibilite.monEspace.demandeNonConfirmee' => 'The sending was not confirmed. Tap the line to try again. Nothing changed in the meantime: your display stays the same.',
 			'consentement.titre' => 'Consents',
 			'consentement.texte.titre' => 'Parent visits',
 			'consentement.texte.quiResponsable' => 'The parents of the students present can briefly observe the session.',
@@ -8472,6 +9856,8 @@ extension on TraductionsEn {
 			'consentement.compte.chargement' => 'Loading your agreements',
 			'consentement.compte.erreur' => 'Your agreements cannot be displayed for now.',
 			'consentement.compte.horsLigne' => 'Your agreements will be displayed as soon as the network is back.',
+			_ => null,
+		} ?? switch (path) {
 			'consentement.compte.sansProfil' => 'No account signed in: sign in again to read your agreements.',
 			'consentement.compte.invite' => 'A new version to read: parent visits',
 			'consentement.compte.inviteAction' => 'Read',
@@ -8565,8 +9951,6 @@ extension on TraductionsEn {
 			'appareils.emetteur.remplace.titre' => 'This code has been replaced',
 			'appareils.emetteur.remplace.phrase' => 'A new code was requested for this student, here or on another device. This one no longer works.',
 			'appareils.emetteur.dejaActif.titre' => 'A code is already valid',
-			_ => null,
-		} ?? switch (path) {
 			'appareils.emetteur.dejaActif.phrase' => ({required Object heure}) => 'A code created for this student is valid until ${heure}. It cannot be shown again: generating a new one will make the old one unusable.',
 			'appareils.emetteur.horsLigne.titreAvecCode' => 'Code hidden for now',
 			'appareils.emetteur.horsLigne.titreSansCode' => 'The code could not be prepared',
@@ -8986,6 +10370,8 @@ extension on TraductionsEn {
 			'priere.direction.incoherenceAide' => 'Reporting only: nothing is corrected automatically.',
 			'priere.direction.incoherenceFuseauCompte' => ({required Object prenom, required Object detail}) => '${prenom}: the account time zone and the prayer location\'s differ (${detail}).',
 			'priere.direction.incoherenceFuseauLieu' => ({required Object prenom, required Object detail}) => '${prenom}: the prayer location\'s time zone does not match its longitude (${detail}).',
+			_ => null,
+		} ?? switch (path) {
 			'priere.direction.incoherencePays' => ({required Object prenom, required Object detail}) => '${prenom}: the account country (${detail}) does not match the prayer location.',
 			'priere.direction.incoherencePaysFuseau' => ({required Object prenom, required Object detail}) => '${prenom}: the account country and its time zone do not match (${detail}).',
 			'priere.direction.feuille.titre' => ({required Object dePrenom}) => '${dePrenom}\'s prayer location and times',
@@ -9063,6 +10449,79 @@ extension on TraductionsEn {
 			'priere.regles.uniteJours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} day', other: '${n} days', ), 
 			'priere.regles.choisir' => 'Save',
 			'priere.regles.erreurEcriture' => ({required Object message}) => 'The setting is not confirmed (${message}). Check its value, then try again in a moment.',
+			'eleveConnexion.entrerCode' => 'I have a code',
+			'eleveConnexion.scanner' => 'Scan the square',
+			'eleveConnexion.choisirProfil' => 'Who are you?',
+			'eleveConnexion.profils.phrase' => 'Tap your first name to continue.',
+			'eleveConnexion.profils.ajouter' => 'Add a profile on this device',
+			'eleveConnexion.profils.ajouterLegende' => 'With the code shown by the guardian',
+			'eleveConnexion.profils.profilLibelle' => ({required Object quePrenom}) => 'Continue as ${quePrenom}',
+			'eleveConnexion.profils.videTitre' => 'No profile on this device',
+			'eleveConnexion.profils.vide' => 'To use this device, the guardian must show a new code on their own device.',
+			'eleveConnexion.profils.videAction' => 'Enter a code',
+			'eleveConnexion.profils.retire' => ({required Object prenom}) => 'This device was removed for ${prenom}. Ask the guardian to reconnect it with a new code.',
+			'eleveConnexion.profils.jetonAbsent' => ({required Object dePrenom}) => 'This device can no longer find ${dePrenom}\'s sign-in. Ask the guardian to show a new code, then enter it here.',
+			'eleveConnexion.pin.bonjour' => ({required Object prenom}) => 'Hello ${prenom}',
+			'eleveConnexion.pin.creer' => 'Choose your personal code',
+			'eleveConnexion.pin.creerPhrase' => 'Four digits, just for you. It stays on this device.',
+			'eleveConnexion.pin.confirmer' => 'Enter it once more',
+			'eleveConnexion.pin.different' => 'The two codes are not the same. Choose your code again.',
+			'eleveConnexion.pin.ouverture' => 'Signing in',
+			'eleveConnexion.pin.horsLigne' => 'Your code is right: try again when the internet is back.',
+			'eleveConnexion.pin.tropDEssais' => 'Too many tries. Wait a moment before trying again.',
+			'eleveConnexion.pin.echec' => 'Sign-in did not complete. Try again in a moment.',
+			'eleveConnexion.pin.changerProfil' => 'Switch profile',
+			'eleveConnexion.pin.oublie' => 'Forgot your code?',
+			'eleveConnexion.pin.oubliePhrase' => 'Ask the guardian to show a new code on their device, then enter it here. You will then choose a new personal code.',
+			'eleveConnexion.pin.oublieAction' => 'Enter a new code',
+			'eleveConnexion.saisie.titre' => 'Connect this device',
+			'eleveConnexion.saisie.phrase' => 'Enter the six-character code shown under the QR code, on the guardian\'s device.',
+			'eleveConnexion.saisie.champ' => 'Code',
+			'eleveConnexion.saisie.aide' => 'Digits 2 to 9 and letters, without I or O.',
+			'eleveConnexion.saisie.valider' => 'Connect the device',
+			'eleveConnexion.saisie.scanner' => 'Scan the QR code',
+			'eleveConnexion.saisie.horsLigne' => 'The code can be checked when the network is back.',
+			'eleveConnexion.lecteur.titre' => 'Scan the QR code',
+			'eleveConnexion.lecteur.consigne' => 'Point at the QR code shown on the guardian\'s device.',
+			'eleveConnexion.lecteur.demarrage' => 'Allow the camera if the device asks.',
+			'eleveConnexion.lecteur.libelleApercu' => 'Camera view',
+			'eleveConnexion.lecteur.contenuInvalide' => 'This QR code is not a Rewayah sign-in code. Point at the one shown by the guardian.',
+			'eleveConnexion.lecteur.saisir' => 'Enter the code',
+			'eleveConnexion.lecteur.scannerANouveau' => 'Scan again',
+			'eleveConnexion.lecteur.verificationTitre' => 'Checking the code',
+			'eleveConnexion.lecteur.verificationPhrase' => 'The camera is stopped while checking.',
+			'eleveConnexion.lecteur.refuseeTitre' => 'Camera not allowed',
+			'eleveConnexion.lecteur.refuseePhrase' => 'To read the QR code, allow the camera. You can also enter the code shown under the QR code.',
+			'eleveConnexion.lecteur.refuseeAction' => 'Allow the camera',
+			'eleveConnexion.lecteur.refuseeDurablementTitre' => 'Camera blocked',
+			'eleveConnexion.lecteur.refuseeDurablementPhrase' => 'The camera stays refused for Rewayah. Allow it in the device or browser settings, or enter the code.',
+			'eleveConnexion.lecteur.occupeeTitre' => 'Camera in use',
+			'eleveConnexion.lecteur.occupeePhrase' => 'Another app is using the camera. Close it, then try again, or enter the code.',
+			'eleveConnexion.lecteur.absenteTitre' => 'No camera',
+			'eleveConnexion.lecteur.absentePhrase' => 'This device has no camera available. Enter the code shown under the QR code.',
+			'eleveConnexion.lecteur.nonSupporteeTitre' => 'Reading impossible here',
+			'eleveConnexion.lecteur.nonSupporteePhrase' => 'This device or browser cannot read a QR code. Enter the code shown under the QR code.',
+			'eleveConnexion.lecteur.erreurTitre' => 'The camera did not start',
+			'eleveConnexion.lecteur.erreurPhrase' => 'Try again, or enter the code shown under the QR code.',
+			'eleveConnexion.refus.format' => 'A code has six characters: digits 2 to 9 and letters, without I or O.',
+			'eleveConnexion.refus.inconnuTitre' => 'Code not recognised',
+			'eleveConnexion.refus.inconnu' => 'This code does not exist, or a newer code replaced it. Check it, or show a new code on the guardian\'s device.',
+			'eleveConnexion.refus.expireTitre' => 'Code expired',
+			'eleveConnexion.refus.expire' => 'This code is no longer valid. Show a new code on the guardian\'s device.',
+			'eleveConnexion.refus.dejaUtiliseTitre' => 'Code already used',
+			'eleveConnexion.refus.dejaUtilise' => 'This code has already been used to connect a device. Show a new code on the guardian\'s device.',
+			'eleveConnexion.refus.revoqueTitre' => 'Device removed',
+			'eleveConnexion.refus.revoque' => 'The guardian removed this device. Ask them to show a new code.',
+			'eleveConnexion.refus.plafondTitre' => 'Device limit reached',
+			'eleveConnexion.refus.plafond' => 'This student profile has reached the number of allowed devices. The guardian can remove one in Household, then show a new code.',
+			'eleveConnexion.refus.tropDEssaisTitre' => 'Too many tries',
+			'eleveConnexion.refus.tropDEssais' => 'Wait a moment before trying again.',
+			'eleveConnexion.refus.horsLigneTitre' => 'Code not checked yet',
+			'eleveConnexion.refus.horsLigne' => 'It can be checked when the connection is back. Try again then.',
+			'eleveConnexion.refus.nonEnregistreTitre' => 'Sign-in not saved',
+			'eleveConnexion.refus.nonEnregistre' => 'This device could not keep the sign-in. The code has probably already been used: show a new code on the guardian\'s device, then start again.',
+			'eleveConnexion.refus.generiqueTitre' => 'Sign-in did not complete',
+			'eleveConnexion.refus.generique' => 'The code check did not complete. Try again in a moment.',
 			'recrutement.nomLatin.titre' => 'Your name in Latin letters',
 			'recrutement.nomLatin.explication' => 'Your name is written in another script. For lists, certificates and exchanges with the academy, we need it written in Latin letters.',
 			'recrutement.nomLatin.libelle' => 'Your name in Latin letters',
@@ -9079,8 +10538,6 @@ extension on TraductionsEn {
 			'recrutement.candidat.verifier' => 'Check the code',
 			'recrutement.candidat.valide' => ({required Object date}) => 'Invitation valid until ${date}.',
 			'recrutement.candidat.valideDetail' => 'You can create your teacher profile.',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.candidat.creerProfil' => 'Create my profile',
 			'recrutement.candidat.expiree' => 'This invitation has expired.',
 			'recrutement.candidat.expireeDetail' => 'Ask the academy\'s management for a new invitation.',
@@ -9427,6 +10884,8 @@ extension on TraductionsEn {
 			'recrutement.parcours.q.riwayat.options.qunbul.libelle' => 'Qunbul',
 			'recrutement.parcours.q.riwayat.options.qunbul.description' => 'Transmitted from Ibn Kathir',
 			'recrutement.parcours.q.riwayat.options.ad_duri_abi_amr.libelle' => 'Ad-Duri (Abu Amr)',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.q.riwayat.options.ad_duri_abi_amr.description' => 'Transmitted from Abu Amr',
 			'recrutement.parcours.q.riwayat.options.as_susi.libelle' => 'As-Susi',
 			'recrutement.parcours.q.riwayat.options.as_susi.description' => 'Transmitted from Abu Amr',
@@ -9580,6 +11039,126 @@ extension on TraductionsEn {
 			'recrutement.parcours.choisirJour' => 'Choose at least one day to continue.',
 			'recrutement.parcours.choisirHeure' => 'Choose at least one start time to continue.',
 			'recrutement.parcours.choisirHeureJour' => ({required Object jour}) => 'Choose at least one start time for ${jour}.',
+			'dossiers.titre' => 'Files to approve',
+			'dossiers.aucun' => 'No file is waiting for approval.',
+			'dossiers.aucunDetail' => 'New files will appear here when they are ready.',
+			'dossiers.file.chargement' => 'Loading files…',
+			'dossiers.file.erreur' => 'Unable to load the files.',
+			'dossiers.file.horsLigne' => 'The files could not be refreshed.',
+			'dossiers.file.accesRefuse' => 'You do not have access to the files to approve.',
+			'dossiers.file.actualisation' => 'Refreshing files…',
+			'dossiers.file.chargementProlonge' => 'Loading is taking longer than expected.',
+			'dossiers.file.suivantsErreur' => 'Unable to load the next files.',
+			'dossiers.file.indisponible' => 'Viewing files is unavailable for now.',
+			'dossiers.file.selectionRetiree' => 'This file is no longer available in the queue.',
+			'dossiers.file.actualiser' => 'Reload the files',
+			'dossiers.file.suivants' => 'Load the next files',
+			'dossiers.file.ouvrirDe' => ({required Object nom}) => 'Open ${nom}\'s file',
+			'dossiers.file.ouvrirElide' => ({required Object nom}) => 'Open ${nom}\'s file',
+			'dossiers.file.enVerification' => 'Being verified',
+			'dossiers.file.sansNom' => 'File without an available name',
+			'dossiers.file.legende' => ({required Object type, required Object date}) => '${type} · ${date}',
+			'dossiers.file.dateChiffres' => ({required Object mois, required Object jour, required Object annee}) => '${mois}/${jour}/${annee}',
+			'dossiers.detail.titreDe' => ({required Object nom}) => '${nom}\'s file',
+			'dossiers.detail.titreElide' => ({required Object nom}) => '${nom}\'s file',
+			'dossiers.visionneuse.chargement' => 'Loading the document…',
+			'dossiers.visionneuse.erreur' => 'The document cannot be displayed.',
+			'dossiers.visionneuse.expire' => 'Access to this document has expired.',
+			'dossiers.visionneuse.recharger' => 'Reload the document',
+			'dossiers.visionneuse.formatNonPrisEnCharge' => 'This document format cannot be displayed.',
+			'dossiers.visionneuse.accesRetire' => 'You no longer have access to this document.',
+			'dossiers.visionneuse.apercuRefuse' => 'This document is not visible with your account.',
+			'dossiers.visionneuse.horsLigne' => 'The document could not be loaded.',
+			'dossiers.visionneuse.aucune' => 'No document is available.',
+			'dossiers.visionneuse.fermerPiece' => 'Close the document',
+			'dossiers.visionneuse.agrandir' => 'Enlarge',
+			'dossiers.visionneuse.reduire' => 'Reduce',
+			'dossiers.visionneuse.ajuster' => 'Fit to screen',
+			'dossiers.visionneuse.infoBulle' => ({required Object action, required Object touche}) => '${action} (key ${touche})',
+			'dossiers.visionneuse.documentFictif' => 'Fictitious document',
+			'dossiers.revue.identite' => 'Identity and file',
+			'dossiers.revue.pieceNonTransmise' => 'The required document was not submitted.',
+			'dossiers.revue.piece' => 'ID document',
+			'dossiers.revue.voirPiece' => 'See the document',
+			'dossiers.revue.accords' => 'Agreements and submitted items',
+			'dossiers.revue.nom' => 'Last name',
+			'dossiers.revue.prenom' => 'First name',
+			'dossiers.revue.dateIndisponible' => 'Submission date unavailable',
+			'dossiers.revue.pasPret' => 'This file is not ready to be approved yet.',
+			'dossiers.revue.erreurChargement' => 'Unable to load this file.',
+			'dossiers.revue.pieceIndisponible' => 'Viewing the document is unavailable for now.',
+			'dossiers.revue.etats.chargement' => 'Loading the file…',
+			'dossiers.revue.etats.horsLigne' => 'No decision can be sent for now.',
+			'dossiers.revue.etats.accesPerdu' => 'You no longer have access to this file.',
+			'dossiers.revue.etats.retourDossiers' => 'Back to the files',
+			'dossiers.revue.etats.verificationsIncompletes' => 'Complete the required checks.',
+			'dossiers.revue.etats.accordManquant' => 'A required agreement is missing from this file.',
+			'dossiers.revue.etats.decisionIndisponible' => 'The decision is unavailable for now.',
+			'dossiers.revue.etats.actualiserDossier' => 'Reload the file',
+			'dossiers.revue.etats.refusNonAutorise' => 'This file cannot be refused in its current state.',
+			'dossiers.deposeLe' => ({required Object date}) => 'Submitted on ${date}',
+			'dossiers.inscritAujourdhui' => 'Registered today',
+			'dossiers.inscritDepuisUnJour' => 'Registered for 1 day',
+			'dossiers.sansPiece' => 'No document submitted',
+			'dossiers.sansPieceDetail' => 'This person created their account and accepted the contracts, but has not yet sent their ID document. So there is nothing to check: the next step is theirs.',
+			'dossiers.pieceNonVisible' => 'Document out of your reach',
+			'dossiers.pieceNonVisibleDetail' => 'A document was submitted, but the gender rule prevents you from viewing it. A staff member of the same gender as this person must check it.',
+			'dossiers.rienATrancher' => 'Nothing to decide for now',
+			'dossiers.apercu' => 'The submitted document',
+			'dossiers.apercuIndisponible' => 'Preview unavailable',
+			'dossiers.verifications' => 'Checks',
+			'dossiers.pointLisible' => 'The document is readable',
+			'dossiers.pointNom' => 'The name matches the account\'s',
+			'dossiers.pointValidite' => 'The document is not expired',
+			'dossiers.verdict' => 'Decision',
+			'dossiers.approuver' => 'Approve the file',
+			'dossiers.refuser' => 'Refuse the file',
+			'dossiers.profilACompleter.titre' => 'Profile to complete',
+			'dossiers.profilACompleter.texte' => 'Your profile must be completed before you can view the files allowed by this rule.',
+			'dossiers.refus.titre' => 'Refuse the file',
+			'dossiers.refus.nomType' => ({required Object nom, required Object type}) => '${nom} · ${type}',
+			'dossiers.refus.corps' => 'Give the reason that will be shown to the person concerned.',
+			'dossiers.refus.champ' => 'Reason for refusal',
+			'dossiers.refus.aide' => 'Explain what needs to be corrected, with no internal data or personal comment.',
+			'dossiers.refus.erreurVide' => 'Enter the reason for refusal.',
+			'dossiers.refus.tropLong' => 'The reason exceeds the allowed length.',
+			'dossiers.refus.envoi' => 'Refusing…',
+			'dossiers.refus.erreur' => 'The file could not be refused.',
+			'dossiers.refus.horsLigne' => 'The refusal was not sent. Try again when the connection is back.',
+			'dossiers.refus.inconnu' => 'The result of the refusal is not confirmed yet.',
+			'dossiers.refus.interdit' => 'You can no longer refuse this file.',
+			'dossiers.refus.indisponible' => 'Refusal is unavailable for now.',
+			'dossiers.refus.succes' => 'File refused.',
+			'dossiers.refus.abandonQuestion' => 'Discard the reason entered?',
+			'dossiers.refus.continuerSaisie' => 'Keep typing',
+			'dossiers.refus.abandonner' => 'Discard',
+			'dossiers.validation.titre' => 'Approve this file?',
+			'dossiers.validation.corpsActivation' => ({required Object nom}) => '${nom}\'s file will be approved. Their account will be able to access their space.',
+			'dossiers.validation.corpsActivationElide' => ({required Object nom}) => '${nom}\'s file will be approved. Their account will be able to access their space.',
+			'dossiers.validation.corpsDocumentaire' => ({required Object nom}) => '${nom}\'s file will be approved. Other access conditions will still apply.',
+			'dossiers.validation.corpsDocumentaireElide' => ({required Object nom}) => '${nom}\'s file will be approved. Other access conditions will still apply.',
+			'dossiers.validation.indisponible' => 'Approval is unavailable for now.',
+			'dossiers.validation.envoi' => 'Approving…',
+			'dossiers.validation.erreur' => 'The file could not be approved.',
+			'dossiers.validation.horsLigne' => 'The approval was not sent. Try again when the connection is back.',
+			'dossiers.validation.inconnu' => 'The result of the approval is not confirmed yet.',
+			'dossiers.validation.plusPret' => 'This file is no longer ready to be approved.',
+			'dossiers.validation.interdit' => 'You can no longer approve this file.',
+			'dossiers.validation.succes' => 'File approved.',
+			'dossiers.decision.verifierResultat' => 'Check the result',
+			'dossiers.decision.dejaTraite' => 'This file has already been handled.',
+			'dossiers.decision.conflit' => 'This file was handled by another team member.',
+			'dossiers.decision.nomComplet' => ({required Object prenom, required Object nom}) => '${prenom} ${nom}',
+			'dossiers.inscritDepuis' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(jours, one: 'Registered for ${jours} day', other: 'Registered for ${jours} days', ), 
+			'dossiers.accesKyc.exceptionTitre' => 'Super administrator exception active',
+			'dossiers.accesKyc.exceptionMessage' => 'You can open the documents of both genders. Every opening outside your gender is recorded.',
+			'dossiers.accesKyc.exceptionPiece' => 'This opening is outside your gender: it will be recorded.',
+			'dossiers.accesKyc.verification' => 'Checking your access rights…',
+			'dossiers.accesKyc.verificationEchec' => 'Your access rights to this document could not be verified.',
+			'dossiers.accesKyc.reessayer' => 'Try again',
+			'dossiers.accesKyc.refus.genreDifferent' => 'This document is reserved for an administrator of the same gender as the applicant.',
+			'dossiers.accesKyc.refus.adminSansGenre' => 'Your gender is not recorded: no document can be opened. Ask the management to record it.',
+			'dossiers.accesKyc.refus.profilNonAutorise' => 'Your profile cannot view ID documents.',
 			'parcours.titre' => ({required Object dePrenom}) => '${dePrenom}\'s journey',
 			'parcours.intro' => 'A few questions to personalise your journey. You will then only see the schedules and options that fit your situation.',
 			'parcours.reprendre' => 'Resume',
@@ -9593,8 +11172,6 @@ extension on TraductionsEn {
 			'parcours.retourAccueil' => 'Back to home',
 			'parcours.retourFoyer' => 'Back to the Household',
 			'parcours.reessayer' => 'Try again',
-			_ => null,
-		} ?? switch (path) {
 			'parcours.indisponibleTitre' => 'The questionnaire is not available yet',
 			'parcours.indisponibleDetail' => 'The academy has not opened this step yet. You have nothing to do for now: nothing is lost, and you can fill it in as soon as it opens.',
 			'parcours.horsLigneTitre' => 'The journey could not be loaded',
@@ -9821,6 +11398,8 @@ extension on TraductionsEn {
 			'compte.doubleVerification.feuille.erreur' => 'The code is not confirmed: the request may not have reached Rewayah. Try again in a moment.',
 			'compte.doubleVerification.feuille.horsLigne' => 'Nothing was sent: there is no network. Try again as soon as it is back.',
 			'compte.identifiant' => 'Identifier',
+			_ => null,
+		} ?? switch (path) {
 			'compte.nonDisponible' => 'Not available',
 			'compte.contact' => 'Contact',
 			'compte.langue' => 'Language',
@@ -10107,8 +11686,6 @@ extension on TraductionsEn {
 			'notifications.evenements.controleMissionNonControlee' => 'A review mission was left without a check.',
 			'notifications.evenements.classeChangee' => 'A student in the family has joined another class, at the same time.',
 			'notifications.evenements.paiementRelance' => 'A payment is coming due. It is paid in Payments.',
-			_ => null,
-		} ?? switch (path) {
 			'notifications.evenements.accesSuspenduPaiement' => 'Access is suspended: this month\'s payment has not been received.',
 			'notifications.evenements.accesRetabliPaiement' => 'Access is restored: the payment has been received.',
 			'notifications.evenements.paiementRecu' => 'The payment has been received. The balance is up to date.',
@@ -10335,6 +11912,8 @@ extension on TraductionsEn {
 			'tuteur.accueil.financesPhrase' => 'Balance, next debit and what remains to be funded.',
 			'tuteur.accueil.foyerVideTitre' => 'No student profile yet',
 			'tuteur.accueil.foyerVidePhrase' => 'Add a student profile to choose a class and follow their sessions.',
+			_ => null,
+		} ?? switch (path) {
 			'tuteur.accueil.ouvrirEspaceEleve' => 'Open my student space',
 			'tuteur.accueil.autreAppareilFeuille.phrase' => 'Your account follows you on all your devices. On the other device, open the app at this address, then sign in with the same sign-in address.',
 			'tuteur.accueil.autreAppareilFeuille.aucunCode' => 'No code to enter: it is your own account.',
@@ -10621,8 +12200,6 @@ extension on TraductionsEn {
 			'adulte.maClasse.aucuneClasseDetail' => 'Your class, its participants and its resources will appear here as soon as it is open.',
 			'adulte.monEspace.informations' => 'My information',
 			'adulte.monEspace.paiements' => 'Payments',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.coranDemo.titre' => 'Available after sign-in',
 			'adulte.coranDemo.phrase' => 'This is not a fault: the demo does not contain the Quran text. After you sign in to your student space, it opens here.',
 			'adulte.recharge.titre' => 'Top-up',
@@ -10849,6 +12426,8 @@ extension on TraductionsEn {
 			'adulte.acceptation.sansCompteAction' => 'Sign in or create my account',
 			'adulte.sortie.retirerElle' => 'Remove my spouse',
 			'adulte.sortie.retirerLui' => 'Remove my spouse',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.sortie.retirerQuestionElle' => 'Remove my spouse?',
 			'adulte.sortie.retirerQuestionLui' => 'Remove my spouse?',
 			'adulte.sortie.retirerConsequence' => 'Their account, classes, history and balance will not be deleted.',
@@ -11118,6 +12697,77 @@ extension on TraductionsEn {
 			'suiviDemandes.changement.retour' => 'Back to the tracking of requests',
 			'suiviDemandes.changement.introuvable' => 'This class change no longer needs to be shown',
 			'suiviDemandes.changement.introuvableDetail' => 'Go back to the tracking to see where your requests stand.',
+			'recherche.titre' => 'Search',
+			'recherche.retour' => 'Back',
+			'recherche.champ.libelle' => 'Search',
+			'recherche.champ.aide' => 'One word',
+			'recherche.espace.famille' => 'In your Guardian space',
+			'recherche.espace.eleve' => 'In your Student space',
+			'recherche.espace.eleveGuide' => 'In your Student space',
+			'recherche.espace.enseignant' => 'In your Teacher space',
+			'recherche.espace.controleur' => 'In your Review space',
+			'recherche.espace.comptable' => 'In your Accounting space',
+			'recherche.espace.administration' => 'In your Administration space',
+			'recherche.initial.titre' => 'Search in your space',
+			'recherche.initial.phrase' => 'Enter a name, a class or a document. Nothing is searched before you write.',
+			'recherche.courte' => 'Enter at least 3 characters.',
+			'recherche.formeAttendue' => 'Search by exact student ID, for example RA-26-4817.',
+			'recherche.chargement' => 'Searching…',
+			'recherche.lent' => 'The search is taking longer than expected. Results already received stay displayed.',
+			'recherche.resultatsPour' => ({required Object requete}) => 'Results for "${requete}"',
+			'recherche.categoriesAffichees' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(nombre, one: '${nombre} category shown', other: '${nombre} categories shown', ), 
+			'recherche.domaines.classes' => 'Classes',
+			'recherche.domaines.supports' => 'Documents',
+			'recherche.domaines.personnes' => 'People',
+			'recherche.domaines.enseignants' => 'Teachers',
+			'recherche.domaines.pedagogie' => 'Students',
+			'recherche.domaines.controle' => 'Review',
+			'recherche.domaines.finances' => 'Finances',
+			'recherche.domaines.fils' => 'Conversations',
+			'recherche.domaines.remplacements' => 'Replacements',
+			'recherche.voirDavantage' => 'See more',
+			'recherche.pageSuivante' => 'Loading more results…',
+			'recherche.pageEnEchec' => 'The next results could not be loaded.',
+			'recherche.etats.vide.titre' => 'No results for this search.',
+			'recherche.etats.vide.phrase' => 'Try another word or a filter.',
+			'recherche.etats.vide.action' => 'Change the search',
+			'recherche.etats.domaineIndisponible.titre' => 'Search in this area is unavailable.',
+			'recherche.etats.domaineIndisponible.phrase' => 'The other categories stay available.',
+			'recherche.etats.domaineIndisponible.action' => 'Try this area again',
+			'recherche.etats.erreur.titre' => 'Unable to perform the search.',
+			'recherche.etats.erreur.phrase' => 'Your access was re-checked. Try again in a moment.',
+			'recherche.etats.delai.titre' => 'The search is taking too long.',
+			'recherche.etats.delai.phrase' => 'Narrow the area or try again.',
+			'recherche.etats.horsLigne.titre' => 'Online search is unavailable.',
+			'recherche.etats.horsLigne.phrase' => 'It will resume when the connection is back. No private result is kept in the meantime.',
+			'recherche.etats.sessionExpiree.titre' => 'Your session has expired.',
+			'recherche.etats.sessionExpiree.phrase' => 'Sign in again to resume the search.',
+			'recherche.etats.nonRaccorde.titre' => 'Search unavailable for now.',
+			'recherche.etats.nonRaccorde.phrase' => 'This search is not yet open in your space.',
+			'recherche.etats.nonRaccorde.action' => 'Back',
+			'recherche.etats.inaccessible.titre' => 'This item is no longer accessible.',
+			'recherche.etats.inaccessible.phrase' => 'Your results have been refreshed.',
+			'recherche.etats.inaccessible.action' => 'Back to the results',
+			'recherche.tout' => 'All',
+			'recherche.filtres' => 'Search areas',
+			'recherche.limite' => 'Results are limited to what your space allows.',
+			'recherche.guide.titre' => 'Find a document',
+			'recherche.guide.initial.titre' => 'Find a document',
+			'recherche.guide.initial.phrase' => 'Write a word to find one of your documents.',
+			'recherche.guide.limite' => 'Only your documents and your lessons.',
+			'recherche.entree.supports' => 'Search in documents',
+			'recherche.contexte.remplacementOuvert' => 'Replacement to take',
+			'recherche.contexte.remplacementMien' => 'Your replacement',
+			'recherche.contexte.mission' => 'Review mission',
+			'recherche.contexte.missionEnseignant' => ({required Object enseignant}) => 'Review mission · ${enseignant}',
+			'recherche.contexte.eleveDeClasse' => ({required Object classe}) => 'Student of class ${classe}',
+			'recherche.contexte.enseignantDeClasse' => ({required Object classe}) => 'Teacher of class ${classe}',
+			'recherche.contexte.personneFoyer' => 'Profile in your household',
+			'recherche.contexte.personneFoyerClasse' => ({required Object classe}) => 'Profile in your household · ${classe}',
+			'recherche.contexte.personneParIdentifiant' => 'Found by its identifier',
+			'recherche.contexte.personneParIdentifiantClasse' => ({required Object classe}) => 'Found by its identifier · ${classe}',
+			'recherche.contexte.canalStudio' => 'Studio channel',
+			'recherche.contexte.encaissement' => ({required Object famille}) => 'Payment received · ${famille}',
 			'juridique.titre' => 'Legal information',
 			'juridique.intro' => 'The texts that govern the service. They can be read without an account.',
 			'juridique.version' => ({required Object version, required Object date}) => 'Version ${version}, text of ${date}',
@@ -11135,8 +12785,6 @@ extension on TraductionsEn {
 			'avis.form.qualite.libelle' => 'You are',
 			'avis.form.qualite.parent' => 'Parent or guardian',
 			'avis.form.qualite.eleveAdulte' => 'Adult student',
-			_ => null,
-		} ?? switch (path) {
 			'avis.form.qualite.erreur' => 'Choose who you are.',
 			'avis.form.pays.libelle' => 'Country of residence',
 			'avis.form.pays.choisir' => 'Choose a country',
@@ -11292,6 +12940,8 @@ extension on TraductionsEn {
 			'courriels.admin.titre' => 'Emails',
 			'courriels.admin.sousTitre' => 'Write to a person and follow the emails that leave the academy.',
 			'courriels.admin.outil' => 'Emails',
+			_ => null,
+		} ?? switch (path) {
 			'courriels.admin.outilDetail' => 'Write an email, follow the sendings, see the sending addresses',
 			'courriels.admin.sections.libelle' => 'Email sections',
 			'courriels.admin.sections.ecrire' => 'Write',
@@ -11371,6 +13021,84 @@ extension on TraductionsEn {
 			'courriels.admin.adresses.vide' => 'No category for now.',
 			'courriels.admin.adresses.erreur' => 'The sending addresses could not be loaded. Try again.',
 			'courriels.admin.adresses.sansDonnees' => 'The sending addresses could not be loaded',
+			'admissions.titre' => 'Requests',
+			'admissions.sousTitre' => 'The admission requests of families and adult students. No one enters without the management\'s decision.',
+			'admissions.population' => 'Population',
+			'admissions.familles' => 'Families',
+			'admissions.elevesAdultes' => 'Adult students',
+			'admissions.aTraiter' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, zero: 'No request to handle', one: '${n} request to handle', other: '${n} requests to handle', ), 
+			'admissions.rechercher' => 'Search',
+			'admissions.rechercherAide' => 'A name, an email address or a reference.',
+			'admissions.lectureErreur' => 'The requests cannot be loaded for now. Try again in a moment.',
+			'admissions.vide' => 'No request for now.',
+			'admissions.videRecherche' => 'No request matches this search.',
+			'admissions.pagePrecedente' => 'Previous page',
+			'admissions.pageSuivante' => 'Next page',
+			'admissions.pageSur' => ({required Object n, required Object total}) => 'Page ${n} of ${total}',
+			'admissions.feuilleTitre' => ({required Object deNom}) => '${deNom}\'s request',
+			'admissions.ouvrir' => ({required Object deNom}) => 'Open ${deNom}\'s request',
+			'admissions.recueLe' => 'Received on',
+			'admissions.reference' => 'Reference',
+			'admissions.courriel' => 'Email address',
+			'admissions.etatLibelle' => 'Status',
+			'admissions.titulaire' => ({required Object prenom}) => '${prenom}, for themselves',
+			'admissions.enfant' => ({required Object prenom, required Object age}) => '${prenom}, ${age}',
+			'admissions.etat.aTraiter' => 'To handle',
+			'admissions.etat.aCompleter' => 'To complete',
+			'admissions.etat.acceptee' => 'Accepted',
+			'admissions.etat.refusee' => 'Refused',
+			'admissions.etat.retiree' => 'Withdrawn',
+			'admissions.accepter' => ({required Object deNom}) => 'Accept ${deNom}\'s request',
+			'admissions.accepterConsequence' => 'Their account opens and a "Your request is accepted" email goes out straight away. The children\'s profiles are created on their first sign-in, with the answers of the request.',
+			'admissions.demanderPrecisions' => 'Ask for clarification',
+			'admissions.contacter' => ({required Object nom}) => 'Write to ${nom}',
+			'admissions.refuser' => 'Refuse the request',
+			'admissions.refuserContexte' => 'Choose the sentence the person will receive, then write the reason for the management. The person never sees the reason.',
+			'admissions.refuserQuestion' => ({required Object deNom}) => 'Refuse ${deNom}\'s request?',
+			'admissions.refuserConsequence' => 'The person receives a "We cannot proceed" email. The refusal can be undone for seven days.',
+			'admissions.motifInterne' => 'Reason, for the management',
+			'admissions.motifInterneAide' => 'It stays in the request\'s log.',
+			'admissions.precisionsContexte' => 'The request goes to "to complete". The person receives your message by email and finds it on their waiting page.',
+			'admissions.precisionsMessage' => 'What is missing',
+			'admissions.precisionsAide' => 'One or two sentences, in simple words.',
+			'admissions.precisionsEnvoyer' => 'Send the request for clarification',
+			'admissions.contactContexte' => 'A free message, sent by email. The request does not change.',
+			'admissions.contactSujet' => 'Subject',
+			'admissions.contactMessage' => 'Message',
+			'admissions.contactEnvoyer' => 'Send the message',
+			'admissions.annulerRefus' => 'Undo the refusal',
+			'admissions.annulerRefusDetail' => 'The refusal can be undone for seven days: the request returns to "to handle". The person does not receive an email.',
+			'admissions.faitAcceptationAnnulee' => ({required Object deNom}) => 'The acceptance of ${deNom}\'s request is undone.',
+			'admissions.annulerAcceptationConsequence' => 'Their account goes back to pending straight away.',
+			'admissions.annulerAcceptationQuestion' => ({required Object deNom}) => 'Undo ${deNom}\'s acceptance?',
+			'admissions.annulerAcceptationDetail' => 'The acceptance can be undone for seven days, as long as no child of the request is in a class. The request returns to "to handle" and the account goes back to pending; the children\'s profiles are set aside, never erased. The person does not receive an email: write to them if needed.',
+			'admissions.annulerAcceptation' => 'Undo the acceptance',
+			'admissions.retour' => 'Back to the request',
+			'admissions.manqueModele' => 'Choose the sentence the person will receive.',
+			'admissions.manqueMotif' => 'Write the reason: it stays in the request\'s log.',
+			'admissions.manqueMessage' => 'Write what is missing.',
+			'admissions.manqueContact' => 'Write a subject and a message.',
+			'admissions.horsLigne' => 'Nothing was sent. Try again in a moment.',
+			'admissions.erreur' => 'The action did not go through. Nothing is confirmed. Try again in a moment.',
+			'admissions.faitAcceptee' => ({required Object deNom}) => '${deNom}\'s request is accepted; the email is on its way.',
+			'admissions.faitRefusee' => ({required Object deNom}) => '${deNom}\'s request is refused; the email is on its way.',
+			'admissions.faitPrecisions' => ({required Object nom}) => 'Clarification is requested from ${nom}; the email is on its way.',
+			'admissions.faitContact' => ({required Object nom}) => 'The message to ${nom} is on its way.',
+			'admissions.faitRefusAnnule' => ({required Object deNom}) => 'The refusal of ${deNom}\'s request is undone.',
+			'admissions.refus.dejaTraitee' => 'This request has just been handled by another member of the management. The list is reloaded.',
+			'admissions.refus.transitionInterdite' => 'This action no longer applies to this request (its status changed, or the seven-day period has passed).',
+			'admissions.refus.motifRequis' => 'A reason is needed for this action.',
+			'admissions.refus.adresseInconnue' => 'This person\'s email address is not known: no message can be sent.',
+			'admissions.refus.enfantEnClasse' => 'A child in this request is already in a class: the acceptance can no longer be undone.',
+			'admissions.refus.autre' => 'The server refused this action. Reopen the request to see its status.',
+			'admissions.modeles.general' => 'No details',
+			'admissions.modeles.generalPhrase' => '"We cannot proceed with your request for now."',
+			'admissions.modeles.besoins' => 'Our classes do not meet the request',
+			'admissions.modeles.besoinsPhrase' => '"Our classes do not yet match what you are looking for."',
+			'admissions.modeles.niveau' => 'Level not offered yet',
+			'admissions.modeles.niveauPhrase' => '"The level requested is not yet offered."',
+			'admissions.modeles.sansReponse' => 'No reply',
+			'admissions.modeles.sansReponsePhrase' => '"We did not receive a reply to our last message."',
 			'accueilInscrits.titre' => 'We already know you',
 			'accueilInscrits.phrase' => 'Your registration has been carried over. You do not have to enter everything again.',
 			'accueilInscrits.motTitre' => 'A word from the management',
@@ -11395,6 +13123,39 @@ extension on TraductionsEn {
 			'accueilInvite.foyerIdentite' => 'Tell us who you are, then answer the invitation. Your account is only created if you accept it.',
 			'accueilInvite.suite' => 'Continue to create your account.',
 			'accueilInvite.champsRequis' => 'Enter your first name, last name and gender.',
+			'snt.regles.nonTenue' => 'Session not held',
+			'snt.regles.nonTenueDetail' => 'If no teacher has joined the room by this deadline, the session is postponed: the class is notified and the management sets the new date in the schedule.',
+			'snt.regles.bornesNonTenue' => ({required Object min, required Object max}) => 'Between ${min} and ${max} after the start.',
+			'snt.regles.bornesObjectif' => ({required Object min, required Object max}) => 'Between ${min} and ${max} after the start. To go beyond ${max}, first lengthen the session not held.',
+			'snt.notifications.seanceReportee' => 'A session did not take place: it is postponed. New date to come.',
+			'snt.notifications.seanceReporteeQuand' => ({required Object quand}) => 'The session of ${quand} did not take place: it is postponed. New date to come.',
+			'snt.salle.reporteeTitre' => 'Session postponed',
+			'snt.salle.reportee' => 'No teacher joined the room in time: the session is postponed. New date to come, the class will be notified.',
+			'snt.planning.section' => 'Postponed sessions',
+			'snt.planning.intro' => 'No teacher joined the room in time. Set the new date of each session: it will be held with the class teacher.',
+			'snt.planning.ligne' => ({required Object classe}) => 'Postponed session of class ${classe}',
+			'snt.planning.ligneQuand' => ({required Object quand}) => 'Planned for ${quand}',
+			'snt.planning.fixer' => 'Set the new date',
+			'snt.planning.erreurLecture' => 'The postponed sessions could not be loaded: the request may not have reached Rewayah. Try again in a moment.',
+			'snt.planning.feuilleTitre' => 'Set the new date',
+			'snt.planning.feuilleSeance' => ({required Object classe, required Object quand}) => 'Class ${classe}, session planned for ${quand}',
+			'snt.planning.feuilleContexte' => ({required Object enseignant, required Object minutes}) => 'The new session is held with ${enseignant}, the class teacher, and lasts ${minutes} minutes, like the postponed session. The class is notified of the new date.',
+			'snt.planning.feuilleContexteSansNom' => ({required Object minutes}) => 'The new session is held with the class teacher and lasts ${minutes} minutes, like the postponed session. The class is notified of the new date.',
+			'snt.planning.jour' => 'Day of the new session',
+			'snt.planning.heure' => 'Time',
+			'snt.planning.quand' => ({required Object jour, required Object heure}) => '${jour} at ${heure}',
+			'snt.planning.choixManquant' => 'Choose the day and time of the new session.',
+			'snt.planning.confirmer' => 'Set this date',
+			'snt.planning.horsLigne' => 'No connection: the date will be set once the device is reconnected.',
+			'snt.planning.fixee' => ({required Object quand}) => 'New date set: ${quand}. The class is notified.',
+			'snt.planning.refusChevauchement' => 'The date is not set: the teacher already has a session at that time. Choose another time or day.',
+			'snt.planning.refusChevauchementNomme' => ({required Object classe, required Object quand}) => 'The date is not set: the teacher already has a session of class ${classe} on ${quand}. Choose another time or day.',
+			'snt.planning.refusChevauchementDate' => ({required Object quand}) => 'The date is not set: the teacher already has a session on ${quand}. Choose another time or day.',
+			'snt.planning.refusDatePassee' => 'The date is not set: that time has already passed. Choose an upcoming day and time.',
+			'snt.planning.refusDejaFixee' => 'The new date for this session is already set, perhaps from another device. Close this window: the session is in the schedule.',
+			'snt.planning.refusClasseClose' => 'The date is not set: the class is closed. No session can be planned in it any more.',
+			'snt.planning.refusNonAutorisee' => 'The date is not set: this account cannot set a date. Sign in with a management account.',
+			'snt.planning.erreur' => 'The date is not confirmed: the request may not have reached Rewayah. Try again in a moment.',
 			'payUx.repriseTitre' => 'Did you leave the form without paying?',
 			'payUx.reprisePhrase' => 'Resume the payment: a new form opens. If the payment already went through, nothing is paid twice; reload to see its status.',
 			'payUx.reprendre' => 'Resume payment',
@@ -11408,6 +13169,104 @@ extension on TraductionsEn {
 			'accueilHoraire.demandeTitre' => 'Request saved',
 			'accueilHoraire.demandeDetail' => ({required Object prenom}) => 'We will let you know as soon as a time slot opens for ${prenom}.',
 			'accueilHoraire.erreurEnvoi' => 'Your request was not confirmed. Try again in a moment.',
+			'push1.invitation.titre' => 'Receive notifications?',
+			'push1.invitation.phrase' => 'An alert on this device when your class changes or you are expected, even with the app closed. You can turn it off at any time in Preferences.',
+			'push1.invitation.activer' => 'Turn on',
+			'push1.invitation.plusTard' => 'Later',
+			'push1.evenements.admissionRecue' => 'A new admission request needs review.',
+			'push1.evenements.candidatureEnseignant' => 'A teacher application needs review.',
+			'push1.evenements.demandeHoraireRecue' => 'A new schedule request needs review.',
+			'push1.evenements.creneauPersonnalise' => 'A custom schedule is requested.',
+			'push1.evenements.pieceIdentite' => 'An ID document needs checking.',
+			'push1.evenements.signalementEleve' => 'A report is waiting for your decision.',
+			'push1.evenements.suppressionCompte' => 'An account deletion is requested.',
+			'push1.evenements.personneEnSalle' => 'No one is in a class\'s room: find a replacement.',
+			'push1.evenements.paiementEchoue' => 'Your payment did not go through. It is paid in Payments.',
+			'push1.evenements.paiementEchoueDirection' => 'A payment failed.',
+			'push1.evenements.coordonneesAValider' => 'Payout details need approval.',
+			'push1.evenements.coordonneesValidees' => 'Your payout details are approved.',
+			'push1.evenements.remboursementDemande' => 'A refund is requested.',
+			'push1.evenements.remboursementEchec' => 'A refund did not go through.',
+			'push1.evenements.cahierEnRetard' => 'A session\'s handover notebook is waiting for your information.',
+			'push1.gestes.examiner' => 'Review',
+			'push1.gestes.verifierPiece' => 'Check the document',
+			'push1.gestes.traiterSignalement' => 'Handle the report',
+			'push1.gestes.traiterDemande' => 'Handle the request',
+			'push1.gestes.trouverRemplacant' => 'Find a replacement',
+			'push1.gestes.voirPaiement' => 'See the payment',
+			'push1.gestes.validerCoordonnees' => 'Approve the details',
+			'push1.gestes.voirRemboursement' => 'See the refund',
+			'push1.gestes.remplirCahier' => 'Fill in the handover notebook',
+			'push1.gestes.rejoindreSalle' => 'Join the room',
+			'push1.reglages.lien' => 'Notifications on this device',
+			'push1.reglages.titre' => 'Notifications on this device',
+			'push1.reglages.contexte' => 'Receive an alert on this phone or computer, even when the app is closed. The alert gives no name: the detail is read in the app.',
+			'push1.reglages.categoriesTitre' => 'What you receive',
+			'push1.reglages.categoriesContexte' => 'Turn off a category to stop receiving it on your devices. It stays in the Notifications page.',
+			'push1.reglages.classes' => 'Classes and sessions',
+			'push1.reglages.classesDetail' => 'Session cancelled, moved or postponed, teacher absent, schedule changed.',
+			'push1.reglages.remplacements' => 'Replacements',
+			'push1.reglages.remplacementsDetail' => 'Session to take, teacher not yet in their room.',
+			'push1.reglages.paiements' => 'Payments',
+			'push1.reglages.paiementsDetail' => 'Payment due or failed, refund, dispute, payout details.',
+			'push1.reglages.admissions' => 'Requests and files',
+			'push1.reglages.admissionsDetail' => 'Admission requests, applications, schedule requests, ID documents.',
+			'push1.reglages.suivi' => 'Student follow-up',
+			'push1.reglages.suiviDetail' => 'Reports, messages from the management, review missions.',
+			'push1.reglages.appareilActif' => 'This device receives your notifications.',
+			'push1.reglages.appareilInactif' => 'This device does not receive your notifications yet. Your browser will ask for your permission.',
+			'push1.reglages.activer' => 'Receive notifications on this device',
+			'push1.reglages.desactiver' => 'Stop receiving them on this device',
+			'push1.reglages.active' => 'Done: this device will receive your notifications.',
+			'push1.reglages.desactive' => 'This device will no longer receive your notifications. They stay in the Notifications page.',
+			'push1.reglages.nonPrisEnCharge' => 'This browser does not receive notifications. Open Rewayah in a recent browser (Chrome, Edge, Firefox or Safari) to receive them.',
+			'push1.reglages.iosEcranAccueil' => 'On iPhone and iPad, first add Rewayah to the home screen (Share, then Add to Home Screen), open the app from that icon, then come back here.',
+			'push1.reglages.refuse' => 'Your browser blocks Rewayah\'s notifications. Allow them in the browser settings for this site, then come back here.',
+			'push1.reglages.ignore' => 'You have not yet answered the browser\'s request. Tap the button again to see it again.',
+			'push1.reglages.echecActivation' => 'The registration of this device is not confirmed: the connection may have dropped. Try again in a moment.',
+			'push1.reglages.compteNonAutoriseTitre' => 'No device notifications for this account',
+			'push1.reglages.compteNonAutorise' => 'Device notifications are reserved for active adult accounts. All your notifications stay in the Notifications page.',
+			'push1.reglages.erreurTitre' => 'The settings could not be loaded',
+			'push1.reglages.erreur' => 'Your settings could not be loaded: the connection may have dropped. Try again in a moment.',
+			'push1.reglages.horsLigne' => 'Notification settings can be changed when the connection is back.',
+			'push1.reglages.changementNonConfirme' => 'The change is not yet confirmed: the connection may have dropped. Try again in a moment.',
+			'suiviPedagogique.titreSoi' => 'Where I stand',
+			'suiviPedagogique.titre' => ({required Object prenom}) => 'Where ${prenom} stands',
+			'suiviPedagogique.etape' => 'Program stage',
+			'suiviPedagogique.objectifs' => 'Stage goals',
+			'suiviPedagogique.reprise' => 'Where the class stopped',
+			'suiviPedagogique.reprisePage' => ({required Object page}) => 'Page ${page} of the Mushaf',
+			'suiviPedagogique.aFinirAvant' => 'To finish before',
+			'suiviPedagogique.aFinirAvantDate' => ({required Object mois, required Object numero, required Object annee, required Object prevue}) => '${mois} ${numero}, ${annee}, for ${prevue} planned weeks',
+			'suiviPedagogique.rythme' => 'Pace',
+			'suiviPedagogique.dansLesTemps' => ({required num ecoulees, required Object prevue}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(ecoulees, one: 'Within the planned time: ${ecoulees} week out of ${prevue}', other: 'Within the planned time: ${ecoulees} weeks out of ${prevue}', ), 
+			'suiviPedagogique.auDelaDuPrevu' => ({required num ecoulees, required Object prevue}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(ecoulees, one: 'Beyond the planned time: ${ecoulees} week out of ${prevue}, before the deadline', other: 'Beyond the planned time: ${ecoulees} weeks out of ${prevue}, before the deadline', ), 
+			'suiviPedagogique.etapesTitre' => 'The stages',
+			'suiviPedagogique.etapeFranchie' => 'Previous stage',
+			'suiviPedagogique.etapeFranchieLe' => ({required Object mois, required Object numero, required Object annee}) => 'Previous stage, entered on ${mois} ${numero}, ${annee}',
+			'suiviPedagogique.etapeEnCours' => 'In progress',
+			'suiviPedagogique.etapeAVenir' => 'Upcoming',
+			'suiviPedagogique.sourates' => 'Foundation surahs achieved',
+			'suiviPedagogique.souratesDe' => ({required Object validees, required Object total}) => '${validees} of ${total}',
+			'suiviPedagogique.revision' => 'Revision per week',
+			'suiviPedagogique.revisionHeures' => ({required Object heures}) => '${heures} h',
+			'suiviPedagogique.repetitions' => 'Estimated repetitions',
+			'suiviPedagogique.repetitionsNombre' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} repetition', other: '${n} repetitions', ), 
+			'suiviPedagogique.dernierJalon' => 'Latest milestone',
+			'suiviPedagogique.niveauDeclare' => 'Stated level',
+			'suiviPedagogique.dateLimiteDepassee' => 'Deadline passed',
+			'suiviPedagogique.erreur' => 'The program stage could not be loaded. Try again in a moment.',
+			'suiviPedagogique.matierePrincipale' => 'Main subject',
+			'suiviPedagogique.matiereSecondaire' => 'Secondary subject',
+			'suiviPedagogique.depuis' => 'In this stage since',
+			'suiviPedagogique.dateJour' => ({required Object mois, required Object numero, required Object annee}) => '${mois} ${numero}, ${annee}',
+			'suiviPedagogique.dureePrevue' => 'Stage length',
+			'suiviPedagogique.chemin' => ({required Object niveau}) => '${niveau}, step by step',
+			'suiviPedagogique.dureesEtape' => ({required Object prevue, required Object limite}) => '${prevue} weeks planned, ${limite} at most',
+			'suiviPedagogique.horizonNiveau' => ({required Object niveau}) => '${niveau}: ends at the latest on',
+			'suiviPedagogique.attenteEntretien' => 'Your stage will be set after the reading interview with the management.',
+			'suiviPedagogique.attenteEntretienTu' => 'Your stage will be set after the reading interview with the management.',
+			'suiviPedagogique.attenteEntretienPour' => ({required Object prenom}) => 'For ${prenom}, the stage will be set after the reading interview with the management.',
 			'suiviAttente.titre' => 'Where your request stands',
 			'suiviAttente.titreSimple' => 'Where your request stands',
 			'suiviAttente.tu.formationListeAttente' => 'All classes for this slot are full. Your request is waiting for a place to open.',
@@ -11595,6 +13454,8 @@ extension on TraductionsEn {
 			'calendrier.dates.notification.levee.une' => ({required Object quand}) => 'The academy\'s closure is removed. The session of ${quand} is restored.',
 			'calendrier.dates.notification.levee.plusieurs' => ({required Object n, required Object quand}) => 'The academy\'s closure is removed. Sessions restored: ${n}, including the one of ${quand}.',
 			'calendrier.dates.notification.levee.abandonUne' => ({required Object quand}) => 'The academy\'s closure is removed, but the session of ${quand} will not take place.',
+			_ => null,
+		} ?? switch (path) {
 			'calendrier.dates.notification.levee.abandonPlusieurs' => ({required Object n, required Object quand}) => 'The academy\'s closure is removed, but some sessions will not take place: ${n}, including the one of ${quand}.',
 			'calendrier.dates.notification.levee.mixte' => ({required Object retablies, required Object abandonnees}) => 'The academy\'s closure is removed. Sessions restored: ${retablies}. Sessions that will not take place: ${abandonnees}. Open the class to see them.',
 			'calendrier.dates.concernees.titre' => 'Sessions concerned',
@@ -11649,8 +13510,6 @@ extension on TraductionsEn {
 			'calendrier.pauses.exceptionTitre' => 'Exceptional break',
 			'calendrier.pauses.exceptionPhrase' => 'For a sudden illness or a granted interruption. It starts today, without notice; the stage deadline moves back by its length; it does not count towards the family\'s limit.',
 			'calendrier.pauses.exceptionRecherche' => 'Search for the student by name',
-			_ => null,
-		} ?? switch (path) {
 			'calendrier.pauses.exceptionRechercheAide' => 'At least two letters.',
 			'calendrier.pauses.exceptionAucun' => 'No student found.',
 			'calendrier.pauses.exceptionEleve' => ({required Object nom}) => 'Student: ${nom}',
@@ -11676,6 +13535,47 @@ extension on TraductionsEn {
 			'calendrier.pauses.refus.eleveIntrouvable' => 'This student cannot be found.',
 			'calendrier.pauses.refus.nonAutorise' => 'Only the management can decide on a break.',
 			'calendrier.pauses.refus.inconnu' => 'The decision is not confirmed: the request may not have reached Rewayah. Try again in a moment.',
+			'pause.titre' => 'Class breaks',
+			'pause.entree' => 'Request a one-month break',
+			'pause.sousTitre' => ({required Object dePrenom}) => '${dePrenom}\'s break',
+			'pause.indisponible' => 'The breaks could not be opened: the request may not have reached Rewayah. Try again in a moment.',
+			'pause.erreur' => 'The breaks could not be loaded: the request may not have reached Rewayah. Try again in a moment.',
+			'pause.regleTitre' => 'The rule',
+			'pause.regle.moisEntier' => 'A break lasts a whole calendar month, from the first to the last day of the month.',
+			'pause.regle.preavis' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(jours, one: 'You request it at least ${jours} day before the start of the month.', other: 'You request it at least ${jours} days before the start of the month.', ), 
+			'pause.regle.plafond' => ({required num delai, required Object mois, required Object fenetre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(delai, one: 'Up to ${mois} months of break within ${fenetre} months. Beyond that, the management decides and replies within ${delai} day.', other: 'Up to ${mois} months of break within ${fenetre} months. Beyond that, the management decides and replies within ${delai} days.', ), 
+			'pause.regle.placeGardee' => 'During the break, the place is kept.',
+			'pause.regle.dateLimite' => 'The stage deadline moves back by the length of the break.',
+			'pause.regle.absence' => 'An absence of a few days stays an absence: only whole months are requested.',
+			'pause.choisir' => 'Choose the month',
+			'pause.moisDansRegle' => 'Accepted straight away',
+			'pause.moisALaDirection' => ({required num delai}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(delai, one: 'The management replies within ${delai} day', other: 'The management replies within ${delai} days', ), 
+			'pause.moisDejaDemande' => 'Already requested',
+			'pause.moisDejaAccepte' => 'Already accepted',
+			'pause.aucunMois' => 'No month is offered for now.',
+			'pause.fermeeTitre' => 'Break requests are not open for now',
+			'pause.fermeeDetail' => 'To interrupt classes, contact the academy\'s management.',
+			'pause.choisirPourDemander' => 'Choose a month to request the break.',
+			'pause.demander' => 'Request the break',
+			'pause.reponse.acceptee' => ({required Object mois}) => 'The break of ${mois} is accepted. The place is kept and the stage deadline moves back by the same amount.',
+			'pause.reponse.demandee' => ({required num delai}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(delai, one: 'Your request has been passed to the management, who reply within ${delai} day.', other: 'Your request has been passed to the management, who reply within ${delai} days.', ), 
+			'pause.demandesTitre' => 'The breaks',
+			'pause.demandesVide' => 'No break for now.',
+			'pause.statut.demandee' => 'Pending',
+			'pause.statut.acceptee' => 'Accepted',
+			'pause.statut.refusee' => 'Refused',
+			'pause.statut.annulee' => 'Cancelled',
+			'pause.periode' => ({required Object du, required Object au}) => 'From ${du} to ${au}',
+			'pause.reponseAvant' => ({required Object date}) => 'The management replies before ${date}.',
+			'pause.reponseMotif' => ({required Object motif}) => 'Reply from the management: ${motif}',
+			'pause.exceptionAccordee' => 'Break granted by the management.',
+			'pause.annuler' => ({required Object mois}) => 'Cancel the break of ${mois}',
+			'pause.refus.preavis' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(jours, one: 'This month starts too soon: a break is requested at least ${jours} day before it starts. Choose a later month.', other: 'This month starts too soon: a break is requested at least ${jours} days before it starts. Choose a later month.', ), 
+			'pause.refus.dejaDemandee' => 'This month is already requested or accepted.',
+			'pause.refus.moisInvalide' => 'This month is not readable. Choose a month from the list.',
+			'pause.refus.nonAnnulable' => 'This break can no longer be cancelled: it has already started, or it is already refused or cancelled.',
+			'pause.refus.nonAutorise' => 'You cannot request a break from this account.',
+			'pause.refus.inconnu' => 'The request is not confirmed: it may not have reached Rewayah. Try again in a moment.',
 			_ => null,
 		};
 	}

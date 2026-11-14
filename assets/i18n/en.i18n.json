@@ -186,6 +186,36 @@
       "fermer": "Close search"
     }
   },
+  "presence": {
+    "titre": "Attendance",
+    "voir": "See attendance",
+    "mienne": "Your attendance",
+    "consolide": "consolidated",
+    "planifiee": "Upcoming class",
+    "enAttente": "Not here yet",
+    "enConnexion": "Connecting",
+    "presente": "In the room",
+    "enRetard": "Late",
+    "deconnectee": "Link lost",
+    "enReconnexion": "Reconnecting",
+    "reconnectee": "Back",
+    "sortie": "Left the class",
+    "absente": "Absence",
+    "excusee": "Excused absence",
+    "confirmationEnAttente": "To confirm",
+    "corrigeeManuel": "Manual correction",
+    "finalisee": "Final",
+    "inconnu": "Attendance not known yet",
+    "entreeInstant": "in the room just now",
+    "entreeMinutes": "in the room for {minutes} min",
+    "retardMinutes": "{minutes} min after the start",
+    "silenceInstant": "no news for a few seconds",
+    "silenceMinutes": "no news for {minutes} min",
+    "attenteInstant": "the class has just started",
+    "attenteMinutes": "the class started {minutes} min ago",
+    "etatMicroOuvert": "their microphone is on",
+    "etatMicroCoupe": "their microphone is off"
+  },
   "attente": {
     "titre": "Your file is being reviewed",
     "dossierIncomplet": "Some documents are still missing from your file.",
@@ -498,6 +528,87 @@
     "erreur": "Your agreement was not saved. Try again in a moment.",
     "erreurLecture": "We could not load your agreements. Try again.",
     "aAccepter": "To accept"
+  },
+  "accessibilite": {
+    "demo": {
+      "titre": "Guided interface demo",
+      "mention": "Fictitious data, nothing is sent.",
+      "intro": "Choose a student and a moment of the session.",
+      "eleveMineure": "Mariam, minor student",
+      "eleveAdulte": "Idriss, adult student",
+      "etatAvant": "Before the session",
+      "etatFenetre": "Just before the session, entry is open",
+      "etatPendant": "During the session",
+      "etatApres": "After the session"
+    },
+    "accueil": {
+      "salutation": "Assalamu alaykum, {prenom}.",
+      "prochaineSeance": "Next session",
+      "avec": "with {nomme}",
+      "voirMaClasse": "See my class",
+      "lireCoran": "Read the Quran",
+      "lireCoranDetail": "Open the Mushaf",
+      "aide": "Need help?",
+      "erreurTitre": "Next session not loaded",
+      "erreurPhrase": "The session and the work to do could not be loaded. Just try again in a moment.",
+      "indisponibleTitre": "Next session not shown here yet",
+      "indisponiblePhrase": "Home does not receive the class session yet. It can be read in My class.",
+      "videTitre": "No class yet",
+      "videPhrase": "No class is assigned yet. It is chosen with the academy. In the meantime, the Quran and help stay open just below."
+    },
+    "coran": {
+      "reprendreVous": "Resume your reading",
+      "reprendreDetailVous": "You were on page {page}",
+      "repriseErreur": "Your last page could not be found. Open the Quran and choose your page in the reader. Your reading settings stay saved.",
+      "repriseErreurVous": "Your last page could not be found. Open the Quran and choose your page in the reader. Your reading settings stay saved.",
+      "demoSansTexte": "The Quran text is not loaded in the demo",
+      "demoSansTexteDetail": "This is not a fault: the demo does not contain the text. You have nothing to do. In the app, the Quran opens here, at your page, and your reading settings stay saved.",
+      "demoSansTexteDetailVous": "This is not a fault: the demo does not contain the text. You have nothing to do. In the app, the Quran opens here, at your page, and your reading settings stay saved.",
+      "indisponibleDetailVous": "As soon as the network is back, your page reopens here.",
+      "absentDetailVous": "The text has not been installed on this page. Report it: it is not you."
+    },
+    "maClasse": {
+      "titre": "My class",
+      "suivi": "My progress",
+      "suiviDetail": "Past sessions and attendance"
+    },
+    "tutoiement": {
+      "tonHeure": "Your time",
+      "attenteDetail": "This waiting time does not count in your attendance.",
+      "attente": "You are in the room. The session starts in {duree}.",
+      "attenteImminent": "You are in the room. The session starts in less than a minute.",
+      "annonceAttente": "You are in the room",
+      "horsLigne": "You will be able to join the session as soon as the connection is back.",
+      "finPhrase": "You can find your work in your class."
+    },
+    "apres": {
+      "revoirSupport": "Review the class material",
+      "revoirSupportDetail": "The material stays in your class.",
+      "revoirSupportDetailVous": "The material stays in your class.",
+      "quitteTitre": "You left the session.",
+      "quittePhrase": "You can come back as long as it stays open.",
+      "prochaineDateHeure": "{date} at {heure}",
+      "vide": "Your next session is not scheduled yet. It will appear here and in your class.",
+      "videVous": "Your next session is not scheduled yet. It will appear here and in your class.",
+      "erreur": "Your next session and your work could not be loaded: your request may not have reached Rewayah. Try again, or find them in your class.",
+      "erreurVous": "Your next session and your work could not be loaded: your request may not have reached Rewayah. Try again, or find them in your class.",
+      "horsLigne": "Your next session and your work will appear when the connection is back.",
+      "horsLigneVous": "Your next session and your work will appear when the connection is back.",
+      "prochaineInconnue": "Your next session will appear in your class.",
+      "prochaineInconnueVous": "Your next session will appear in your class."
+    },
+    "monEspace": {
+      "titre": "My space",
+      "mode": "Guided interface",
+      "modeDetail": "A simplified interface adapted for calmer learning.",
+      "modeActif": "On",
+      "presentationStandard": "Standard display",
+      "demanderDetail": "Ask your guardian to switch to the standard display.",
+      "demandeEnCours": "Your request is being sent.",
+      "demandeEnvoyee": "Your request was sent to your guardian.",
+      "demandeHorsLigne": "Nothing was sent: there is no network. Try again as soon as it is back.",
+      "demandeNonConfirmee": "The sending was not confirmed. Tap the line to try again. Nothing changed in the meantime: your display stays the same."
+    }
   },
   "consentement": {
     "titre": "Consents",
@@ -1245,6 +1356,91 @@
       },
       "choisir": "Save",
       "erreurEcriture": "The setting is not confirmed ({message}). Check its value, then try again in a moment."
+    }
+  },
+  "eleveConnexion": {
+    "entrerCode": "I have a code",
+    "scanner": "Scan the square",
+    "choisirProfil": "Who are you?",
+    "profils": {
+      "phrase": "Tap your first name to continue.",
+      "ajouter": "Add a profile on this device",
+      "ajouterLegende": "With the code shown by the guardian",
+      "profilLibelle": "Continue as {quePrenom}",
+      "videTitre": "No profile on this device",
+      "vide": "To use this device, the guardian must show a new code on their own device.",
+      "videAction": "Enter a code",
+      "retire": "This device was removed for {prenom}. Ask the guardian to reconnect it with a new code.",
+      "jetonAbsent": "This device can no longer find {dePrenom}'s sign-in. Ask the guardian to show a new code, then enter it here."
+    },
+    "pin": {
+      "bonjour": "Hello {prenom}",
+      "creer": "Choose your personal code",
+      "creerPhrase": "Four digits, just for you. It stays on this device.",
+      "confirmer": "Enter it once more",
+      "different": "The two codes are not the same. Choose your code again.",
+      "ouverture": "Signing in",
+      "horsLigne": "Your code is right: try again when the internet is back.",
+      "tropDEssais": "Too many tries. Wait a moment before trying again.",
+      "echec": "Sign-in did not complete. Try again in a moment.",
+      "changerProfil": "Switch profile",
+      "oublie": "Forgot your code?",
+      "oubliePhrase": "Ask the guardian to show a new code on their device, then enter it here. You will then choose a new personal code.",
+      "oublieAction": "Enter a new code"
+    },
+    "saisie": {
+      "titre": "Connect this device",
+      "phrase": "Enter the six-character code shown under the QR code, on the guardian's device.",
+      "champ": "Code",
+      "aide": "Digits 2 to 9 and letters, without I or O.",
+      "valider": "Connect the device",
+      "scanner": "Scan the QR code",
+      "horsLigne": "The code can be checked when the network is back."
+    },
+    "lecteur": {
+      "titre": "Scan the QR code",
+      "consigne": "Point at the QR code shown on the guardian's device.",
+      "demarrage": "Allow the camera if the device asks.",
+      "libelleApercu": "Camera view",
+      "contenuInvalide": "This QR code is not a Rewayah sign-in code. Point at the one shown by the guardian.",
+      "saisir": "Enter the code",
+      "scannerANouveau": "Scan again",
+      "verificationTitre": "Checking the code",
+      "verificationPhrase": "The camera is stopped while checking.",
+      "refuseeTitre": "Camera not allowed",
+      "refuseePhrase": "To read the QR code, allow the camera. You can also enter the code shown under the QR code.",
+      "refuseeAction": "Allow the camera",
+      "refuseeDurablementTitre": "Camera blocked",
+      "refuseeDurablementPhrase": "The camera stays refused for Rewayah. Allow it in the device or browser settings, or enter the code.",
+      "occupeeTitre": "Camera in use",
+      "occupeePhrase": "Another app is using the camera. Close it, then try again, or enter the code.",
+      "absenteTitre": "No camera",
+      "absentePhrase": "This device has no camera available. Enter the code shown under the QR code.",
+      "nonSupporteeTitre": "Reading impossible here",
+      "nonSupporteePhrase": "This device or browser cannot read a QR code. Enter the code shown under the QR code.",
+      "erreurTitre": "The camera did not start",
+      "erreurPhrase": "Try again, or enter the code shown under the QR code."
+    },
+    "refus": {
+      "format": "A code has six characters: digits 2 to 9 and letters, without I or O.",
+      "inconnuTitre": "Code not recognised",
+      "inconnu": "This code does not exist, or a newer code replaced it. Check it, or show a new code on the guardian's device.",
+      "expireTitre": "Code expired",
+      "expire": "This code is no longer valid. Show a new code on the guardian's device.",
+      "dejaUtiliseTitre": "Code already used",
+      "dejaUtilise": "This code has already been used to connect a device. Show a new code on the guardian's device.",
+      "revoqueTitre": "Device removed",
+      "revoque": "The guardian removed this device. Ask them to show a new code.",
+      "plafondTitre": "Device limit reached",
+      "plafond": "This student profile has reached the number of allowed devices. The guardian can remove one in Household, then show a new code.",
+      "tropDEssaisTitre": "Too many tries",
+      "tropDEssais": "Wait a moment before trying again.",
+      "horsLigneTitre": "Code not checked yet",
+      "horsLigne": "It can be checked when the connection is back. Try again then.",
+      "nonEnregistreTitre": "Sign-in not saved",
+      "nonEnregistre": "This device could not keep the sign-in. The code has probably already been used: show a new code on the guardian's device, then start again.",
+      "generiqueTitre": "Sign-in did not complete",
+      "generique": "The code check did not complete. Try again in a moment."
     }
   },
   "recrutement": {
@@ -2007,6 +2203,153 @@
       "choisirJour": "Choose at least one day to continue.",
       "choisirHeure": "Choose at least one start time to continue.",
       "choisirHeureJour": "Choose at least one start time for {jour}."
+    }
+  },
+  "dossiers": {
+    "titre": "Files to approve",
+    "aucun": "No file is waiting for approval.",
+    "aucunDetail": "New files will appear here when they are ready.",
+    "file": {
+      "chargement": "Loading files…",
+      "erreur": "Unable to load the files.",
+      "horsLigne": "The files could not be refreshed.",
+      "accesRefuse": "You do not have access to the files to approve.",
+      "actualisation": "Refreshing files…",
+      "chargementProlonge": "Loading is taking longer than expected.",
+      "suivantsErreur": "Unable to load the next files.",
+      "indisponible": "Viewing files is unavailable for now.",
+      "selectionRetiree": "This file is no longer available in the queue.",
+      "actualiser": "Reload the files",
+      "suivants": "Load the next files",
+      "ouvrirDe": "Open {nom}'s file",
+      "ouvrirElide": "Open {nom}'s file",
+      "enVerification": "Being verified",
+      "sansNom": "File without an available name",
+      "legende": "{type} · {date}",
+      "dateChiffres": "{mois}/{jour}/{annee}"
+    },
+    "detail": {
+      "titreDe": "{nom}'s file",
+      "titreElide": "{nom}'s file"
+    },
+    "visionneuse": {
+      "chargement": "Loading the document…",
+      "erreur": "The document cannot be displayed.",
+      "expire": "Access to this document has expired.",
+      "recharger": "Reload the document",
+      "formatNonPrisEnCharge": "This document format cannot be displayed.",
+      "accesRetire": "You no longer have access to this document.",
+      "apercuRefuse": "This document is not visible with your account.",
+      "horsLigne": "The document could not be loaded.",
+      "aucune": "No document is available.",
+      "fermerPiece": "Close the document",
+      "agrandir": "Enlarge",
+      "reduire": "Reduce",
+      "ajuster": "Fit to screen",
+      "infoBulle": "{action} (key {touche})",
+      "documentFictif": "Fictitious document"
+    },
+    "revue": {
+      "identite": "Identity and file",
+      "pieceNonTransmise": "The required document was not submitted.",
+      "piece": "ID document",
+      "voirPiece": "See the document",
+      "accords": "Agreements and submitted items",
+      "nom": "Last name",
+      "prenom": "First name",
+      "dateIndisponible": "Submission date unavailable",
+      "pasPret": "This file is not ready to be approved yet.",
+      "erreurChargement": "Unable to load this file.",
+      "pieceIndisponible": "Viewing the document is unavailable for now.",
+      "etats": {
+        "chargement": "Loading the file…",
+        "horsLigne": "No decision can be sent for now.",
+        "accesPerdu": "You no longer have access to this file.",
+        "retourDossiers": "Back to the files",
+        "verificationsIncompletes": "Complete the required checks.",
+        "accordManquant": "A required agreement is missing from this file.",
+        "decisionIndisponible": "The decision is unavailable for now.",
+        "actualiserDossier": "Reload the file",
+        "refusNonAutorise": "This file cannot be refused in its current state."
+      }
+    },
+    "deposeLe": "Submitted on {date}",
+    "inscritAujourdhui": "Registered today",
+    "inscritDepuisUnJour": "Registered for 1 day",
+    "sansPiece": "No document submitted",
+    "sansPieceDetail": "This person created their account and accepted the contracts, but has not yet sent their ID document. So there is nothing to check: the next step is theirs.",
+    "pieceNonVisible": "Document out of your reach",
+    "pieceNonVisibleDetail": "A document was submitted, but the gender rule prevents you from viewing it. A staff member of the same gender as this person must check it.",
+    "rienATrancher": "Nothing to decide for now",
+    "apercu": "The submitted document",
+    "apercuIndisponible": "Preview unavailable",
+    "verifications": "Checks",
+    "pointLisible": "The document is readable",
+    "pointNom": "The name matches the account's",
+    "pointValidite": "The document is not expired",
+    "verdict": "Decision",
+    "approuver": "Approve the file",
+    "refuser": "Refuse the file",
+    "profilACompleter": {
+      "titre": "Profile to complete",
+      "texte": "Your profile must be completed before you can view the files allowed by this rule."
+    },
+    "refus": {
+      "titre": "Refuse the file",
+      "nomType": "{nom} · {type}",
+      "corps": "Give the reason that will be shown to the person concerned.",
+      "champ": "Reason for refusal",
+      "aide": "Explain what needs to be corrected, with no internal data or personal comment.",
+      "erreurVide": "Enter the reason for refusal.",
+      "tropLong": "The reason exceeds the allowed length.",
+      "envoi": "Refusing…",
+      "erreur": "The file could not be refused.",
+      "horsLigne": "The refusal was not sent. Try again when the connection is back.",
+      "inconnu": "The result of the refusal is not confirmed yet.",
+      "interdit": "You can no longer refuse this file.",
+      "indisponible": "Refusal is unavailable for now.",
+      "succes": "File refused.",
+      "abandonQuestion": "Discard the reason entered?",
+      "continuerSaisie": "Keep typing",
+      "abandonner": "Discard"
+    },
+    "validation": {
+      "titre": "Approve this file?",
+      "corpsActivation": "{nom}'s file will be approved. Their account will be able to access their space.",
+      "corpsActivationElide": "{nom}'s file will be approved. Their account will be able to access their space.",
+      "corpsDocumentaire": "{nom}'s file will be approved. Other access conditions will still apply.",
+      "corpsDocumentaireElide": "{nom}'s file will be approved. Other access conditions will still apply.",
+      "indisponible": "Approval is unavailable for now.",
+      "envoi": "Approving…",
+      "erreur": "The file could not be approved.",
+      "horsLigne": "The approval was not sent. Try again when the connection is back.",
+      "inconnu": "The result of the approval is not confirmed yet.",
+      "plusPret": "This file is no longer ready to be approved.",
+      "interdit": "You can no longer approve this file.",
+      "succes": "File approved."
+    },
+    "decision": {
+      "verifierResultat": "Check the result",
+      "dejaTraite": "This file has already been handled.",
+      "conflit": "This file was handled by another team member.",
+      "nomComplet": "{prenom} {nom}"
+    },
+    "inscritDepuis(param=jours)": {
+      "one": "Registered for {jours} day",
+      "other": "Registered for {jours} days"
+    },
+    "accesKyc": {
+      "exceptionTitre": "Super administrator exception active",
+      "exceptionMessage": "You can open the documents of both genders. Every opening outside your gender is recorded.",
+      "exceptionPiece": "This opening is outside your gender: it will be recorded.",
+      "verification": "Checking your access rights…",
+      "verificationEchec": "Your access rights to this document could not be verified.",
+      "reessayer": "Try again",
+      "refus": {
+        "genreDifferent": "This document is reserved for an administrator of the same gender as the applicant.",
+        "adminSansGenre": "Your gender is not recorded: no document can be opened. Ask the management to record it.",
+        "profilNonAutorise": "Your profile cannot view ID documents."
+      }
     }
   },
   "parcours": {
@@ -3877,6 +4220,116 @@
       "introuvableDetail": "Go back to the tracking to see where your requests stand."
     }
   },
+  "recherche": {
+    "titre": "Search",
+    "retour": "Back",
+    "champ": {
+      "libelle": "Search",
+      "aide": "One word"
+    },
+    "espace": {
+      "famille": "In your Guardian space",
+      "eleve": "In your Student space",
+      "eleveGuide": "In your Student space",
+      "enseignant": "In your Teacher space",
+      "controleur": "In your Review space",
+      "comptable": "In your Accounting space",
+      "administration": "In your Administration space"
+    },
+    "initial": {
+      "titre": "Search in your space",
+      "phrase": "Enter a name, a class or a document. Nothing is searched before you write."
+    },
+    "courte": "Enter at least 3 characters.",
+    "formeAttendue": "Search by exact student ID, for example RA-26-4817.",
+    "chargement": "Searching…",
+    "lent": "The search is taking longer than expected. Results already received stay displayed.",
+    "resultatsPour": "Results for \"{requete}\"",
+    "categoriesAffichees(param=nombre)": {
+      "one": "{nombre} category shown",
+      "other": "{nombre} categories shown"
+    },
+    "domaines": {
+      "classes": "Classes",
+      "supports": "Documents",
+      "personnes": "People",
+      "enseignants": "Teachers",
+      "pedagogie": "Students",
+      "controle": "Review",
+      "finances": "Finances",
+      "fils": "Conversations",
+      "remplacements": "Replacements"
+    },
+    "voirDavantage": "See more",
+    "pageSuivante": "Loading more results…",
+    "pageEnEchec": "The next results could not be loaded.",
+    "etats": {
+      "vide": {
+        "titre": "No results for this search.",
+        "phrase": "Try another word or a filter.",
+        "action": "Change the search"
+      },
+      "domaineIndisponible": {
+        "titre": "Search in this area is unavailable.",
+        "phrase": "The other categories stay available.",
+        "action": "Try this area again"
+      },
+      "erreur": {
+        "titre": "Unable to perform the search.",
+        "phrase": "Your access was re-checked. Try again in a moment."
+      },
+      "delai": {
+        "titre": "The search is taking too long.",
+        "phrase": "Narrow the area or try again."
+      },
+      "horsLigne": {
+        "titre": "Online search is unavailable.",
+        "phrase": "It will resume when the connection is back. No private result is kept in the meantime."
+      },
+      "sessionExpiree": {
+        "titre": "Your session has expired.",
+        "phrase": "Sign in again to resume the search."
+      },
+      "nonRaccorde": {
+        "titre": "Search unavailable for now.",
+        "phrase": "This search is not yet open in your space.",
+        "action": "Back"
+      },
+      "inaccessible": {
+        "titre": "This item is no longer accessible.",
+        "phrase": "Your results have been refreshed.",
+        "action": "Back to the results"
+      }
+    },
+    "tout": "All",
+    "filtres": "Search areas",
+    "limite": "Results are limited to what your space allows.",
+    "guide": {
+      "titre": "Find a document",
+      "initial": {
+        "titre": "Find a document",
+        "phrase": "Write a word to find one of your documents."
+      },
+      "limite": "Only your documents and your lessons."
+    },
+    "entree": {
+      "supports": "Search in documents"
+    },
+    "contexte": {
+      "remplacementOuvert": "Replacement to take",
+      "remplacementMien": "Your replacement",
+      "mission": "Review mission",
+      "missionEnseignant(param=enseignant)": "Review mission · {enseignant}",
+      "eleveDeClasse(param=classe)": "Student of class {classe}",
+      "enseignantDeClasse(param=classe)": "Teacher of class {classe}",
+      "personneFoyer": "Profile in your household",
+      "personneFoyerClasse(param=classe)": "Profile in your household · {classe}",
+      "personneParIdentifiant": "Found by its identifier",
+      "personneParIdentifiantClasse(param=classe)": "Found by its identifier · {classe}",
+      "canalStudio": "Studio channel",
+      "encaissement(param=famille)": "Payment received · {famille}"
+    }
+  },
   "juridique": {
     "titre": "Legal information",
     "intro": "The texts that govern the service. They can be read without an account.",
@@ -4212,6 +4665,96 @@
       }
     }
   },
+  "admissions": {
+    "titre": "Requests",
+    "sousTitre": "The admission requests of families and adult students. No one enters without the management's decision.",
+    "population": "Population",
+    "familles": "Families",
+    "elevesAdultes": "Adult students",
+    "aTraiter(param=n)": {
+      "zero": "No request to handle",
+      "one": "{n} request to handle",
+      "other": "{n} requests to handle"
+    },
+    "rechercher": "Search",
+    "rechercherAide": "A name, an email address or a reference.",
+    "lectureErreur": "The requests cannot be loaded for now. Try again in a moment.",
+    "vide": "No request for now.",
+    "videRecherche": "No request matches this search.",
+    "pagePrecedente": "Previous page",
+    "pageSuivante": "Next page",
+    "pageSur": "Page {n} of {total}",
+    "feuilleTitre": "{deNom}'s request",
+    "ouvrir": "Open {deNom}'s request",
+    "recueLe": "Received on",
+    "reference": "Reference",
+    "courriel": "Email address",
+    "etatLibelle": "Status",
+    "titulaire": "{prenom}, for themselves",
+    "enfant": "{prenom}, {age}",
+    "etat": {
+      "aTraiter": "To handle",
+      "aCompleter": "To complete",
+      "acceptee": "Accepted",
+      "refusee": "Refused",
+      "retiree": "Withdrawn"
+    },
+    "accepter": "Accept {deNom}'s request",
+    "accepterConsequence": "Their account opens and a \"Your request is accepted\" email goes out straight away. The children's profiles are created on their first sign-in, with the answers of the request.",
+    "demanderPrecisions": "Ask for clarification",
+    "contacter": "Write to {nom}",
+    "refuser": "Refuse the request",
+    "refuserContexte": "Choose the sentence the person will receive, then write the reason for the management. The person never sees the reason.",
+    "refuserQuestion": "Refuse {deNom}'s request?",
+    "refuserConsequence": "The person receives a \"We cannot proceed\" email. The refusal can be undone for seven days.",
+    "motifInterne": "Reason, for the management",
+    "motifInterneAide": "It stays in the request's log.",
+    "precisionsContexte": "The request goes to \"to complete\". The person receives your message by email and finds it on their waiting page.",
+    "precisionsMessage": "What is missing",
+    "precisionsAide": "One or two sentences, in simple words.",
+    "precisionsEnvoyer": "Send the request for clarification",
+    "contactContexte": "A free message, sent by email. The request does not change.",
+    "contactSujet": "Subject",
+    "contactMessage": "Message",
+    "contactEnvoyer": "Send the message",
+    "annulerRefus": "Undo the refusal",
+    "annulerRefusDetail": "The refusal can be undone for seven days: the request returns to \"to handle\". The person does not receive an email.",
+    "faitAcceptationAnnulee": "The acceptance of {deNom}'s request is undone.",
+    "annulerAcceptationConsequence": "Their account goes back to pending straight away.",
+    "annulerAcceptationQuestion": "Undo {deNom}'s acceptance?",
+    "annulerAcceptationDetail": "The acceptance can be undone for seven days, as long as no child of the request is in a class. The request returns to \"to handle\" and the account goes back to pending; the children's profiles are set aside, never erased. The person does not receive an email: write to them if needed.",
+    "annulerAcceptation": "Undo the acceptance",
+    "retour": "Back to the request",
+    "manqueModele": "Choose the sentence the person will receive.",
+    "manqueMotif": "Write the reason: it stays in the request's log.",
+    "manqueMessage": "Write what is missing.",
+    "manqueContact": "Write a subject and a message.",
+    "horsLigne": "Nothing was sent. Try again in a moment.",
+    "erreur": "The action did not go through. Nothing is confirmed. Try again in a moment.",
+    "faitAcceptee": "{deNom}'s request is accepted; the email is on its way.",
+    "faitRefusee": "{deNom}'s request is refused; the email is on its way.",
+    "faitPrecisions": "Clarification is requested from {nom}; the email is on its way.",
+    "faitContact": "The message to {nom} is on its way.",
+    "faitRefusAnnule": "The refusal of {deNom}'s request is undone.",
+    "refus": {
+      "dejaTraitee": "This request has just been handled by another member of the management. The list is reloaded.",
+      "transitionInterdite": "This action no longer applies to this request (its status changed, or the seven-day period has passed).",
+      "motifRequis": "A reason is needed for this action.",
+      "adresseInconnue": "This person's email address is not known: no message can be sent.",
+      "enfantEnClasse": "A child in this request is already in a class: the acceptance can no longer be undone.",
+      "autre": "The server refused this action. Reopen the request to see its status."
+    },
+    "modeles": {
+      "general": "No details",
+      "generalPhrase": "\"We cannot proceed with your request for now.\"",
+      "besoins": "Our classes do not meet the request",
+      "besoinsPhrase": "\"Our classes do not yet match what you are looking for.\"",
+      "niveau": "Level not offered yet",
+      "niveauPhrase": "\"The level requested is not yet offered.\"",
+      "sansReponse": "No reply",
+      "sansReponsePhrase": "\"We did not receive a reply to our last message.\""
+    }
+  },
   "accueilInscrits": {
     "titre": "We already know you",
     "phrase": "Your registration has been carried over. You do not have to enter everything again.",
@@ -4242,6 +4785,49 @@
     "suite": "Continue to create your account.",
     "champsRequis": "Enter your first name, last name and gender."
   },
+  "snt": {
+    "regles": {
+      "nonTenue": "Session not held",
+      "nonTenueDetail": "If no teacher has joined the room by this deadline, the session is postponed: the class is notified and the management sets the new date in the schedule.",
+      "bornesNonTenue": "Between {min} and {max} after the start.",
+      "bornesObjectif": "Between {min} and {max} after the start. To go beyond {max}, first lengthen the session not held."
+    },
+    "notifications": {
+      "seanceReportee": "A session did not take place: it is postponed. New date to come.",
+      "seanceReporteeQuand": "The session of {quand} did not take place: it is postponed. New date to come."
+    },
+    "salle": {
+      "reporteeTitre": "Session postponed",
+      "reportee": "No teacher joined the room in time: the session is postponed. New date to come, the class will be notified."
+    },
+    "planning": {
+      "section": "Postponed sessions",
+      "intro": "No teacher joined the room in time. Set the new date of each session: it will be held with the class teacher.",
+      "ligne": "Postponed session of class {classe}",
+      "ligneQuand": "Planned for {quand}",
+      "fixer": "Set the new date",
+      "erreurLecture": "The postponed sessions could not be loaded: the request may not have reached Rewayah. Try again in a moment.",
+      "feuilleTitre": "Set the new date",
+      "feuilleSeance": "Class {classe}, session planned for {quand}",
+      "feuilleContexte": "The new session is held with {enseignant}, the class teacher, and lasts {minutes} minutes, like the postponed session. The class is notified of the new date.",
+      "feuilleContexteSansNom": "The new session is held with the class teacher and lasts {minutes} minutes, like the postponed session. The class is notified of the new date.",
+      "jour": "Day of the new session",
+      "heure": "Time",
+      "quand": "{jour} at {heure}",
+      "choixManquant": "Choose the day and time of the new session.",
+      "confirmer": "Set this date",
+      "horsLigne": "No connection: the date will be set once the device is reconnected.",
+      "fixee": "New date set: {quand}. The class is notified.",
+      "refusChevauchement": "The date is not set: the teacher already has a session at that time. Choose another time or day.",
+      "refusChevauchementNomme": "The date is not set: the teacher already has a session of class {classe} on {quand}. Choose another time or day.",
+      "refusChevauchementDate": "The date is not set: the teacher already has a session on {quand}. Choose another time or day.",
+      "refusDatePassee": "The date is not set: that time has already passed. Choose an upcoming day and time.",
+      "refusDejaFixee": "The new date for this session is already set, perhaps from another device. Close this window: the session is in the schedule.",
+      "refusClasseClose": "The date is not set: the class is closed. No session can be planned in it any more.",
+      "refusNonAutorisee": "The date is not set: this account cannot set a date. Sign in with a management account.",
+      "erreur": "The date is not confirmed: the request may not have reached Rewayah. Try again in a moment."
+    }
+  },
   "payUx": {
     "repriseTitre": "Did you leave the form without paying?",
     "reprisePhrase": "Resume the payment: a new form opens. If the payment already went through, nothing is paid twice; reload to see its status.",
@@ -4258,6 +4844,125 @@
     "demandeTitre": "Request saved",
     "demandeDetail": "We will let you know as soon as a time slot opens for {prenom}.",
     "erreurEnvoi": "Your request was not confirmed. Try again in a moment."
+  },
+  "push1": {
+    "invitation": {
+      "titre": "Receive notifications?",
+      "phrase": "An alert on this device when your class changes or you are expected, even with the app closed. You can turn it off at any time in Preferences.",
+      "activer": "Turn on",
+      "plusTard": "Later"
+    },
+    "evenements": {
+      "admissionRecue": "A new admission request needs review.",
+      "candidatureEnseignant": "A teacher application needs review.",
+      "demandeHoraireRecue": "A new schedule request needs review.",
+      "creneauPersonnalise": "A custom schedule is requested.",
+      "pieceIdentite": "An ID document needs checking.",
+      "signalementEleve": "A report is waiting for your decision.",
+      "suppressionCompte": "An account deletion is requested.",
+      "personneEnSalle": "No one is in a class's room: find a replacement.",
+      "paiementEchoue": "Your payment did not go through. It is paid in Payments.",
+      "paiementEchoueDirection": "A payment failed.",
+      "coordonneesAValider": "Payout details need approval.",
+      "coordonneesValidees": "Your payout details are approved.",
+      "remboursementDemande": "A refund is requested.",
+      "remboursementEchec": "A refund did not go through.",
+      "cahierEnRetard": "A session's handover notebook is waiting for your information."
+    },
+    "gestes": {
+      "examiner": "Review",
+      "verifierPiece": "Check the document",
+      "traiterSignalement": "Handle the report",
+      "traiterDemande": "Handle the request",
+      "trouverRemplacant": "Find a replacement",
+      "voirPaiement": "See the payment",
+      "validerCoordonnees": "Approve the details",
+      "voirRemboursement": "See the refund",
+      "remplirCahier": "Fill in the handover notebook",
+      "rejoindreSalle": "Join the room"
+    },
+    "reglages": {
+      "lien": "Notifications on this device",
+      "titre": "Notifications on this device",
+      "contexte": "Receive an alert on this phone or computer, even when the app is closed. The alert gives no name: the detail is read in the app.",
+      "categoriesTitre": "What you receive",
+      "categoriesContexte": "Turn off a category to stop receiving it on your devices. It stays in the Notifications page.",
+      "classes": "Classes and sessions",
+      "classesDetail": "Session cancelled, moved or postponed, teacher absent, schedule changed.",
+      "remplacements": "Replacements",
+      "remplacementsDetail": "Session to take, teacher not yet in their room.",
+      "paiements": "Payments",
+      "paiementsDetail": "Payment due or failed, refund, dispute, payout details.",
+      "admissions": "Requests and files",
+      "admissionsDetail": "Admission requests, applications, schedule requests, ID documents.",
+      "suivi": "Student follow-up",
+      "suiviDetail": "Reports, messages from the management, review missions.",
+      "appareilActif": "This device receives your notifications.",
+      "appareilInactif": "This device does not receive your notifications yet. Your browser will ask for your permission.",
+      "activer": "Receive notifications on this device",
+      "desactiver": "Stop receiving them on this device",
+      "active": "Done: this device will receive your notifications.",
+      "desactive": "This device will no longer receive your notifications. They stay in the Notifications page.",
+      "nonPrisEnCharge": "This browser does not receive notifications. Open Rewayah in a recent browser (Chrome, Edge, Firefox or Safari) to receive them.",
+      "iosEcranAccueil": "On iPhone and iPad, first add Rewayah to the home screen (Share, then Add to Home Screen), open the app from that icon, then come back here.",
+      "refuse": "Your browser blocks Rewayah's notifications. Allow them in the browser settings for this site, then come back here.",
+      "ignore": "You have not yet answered the browser's request. Tap the button again to see it again.",
+      "echecActivation": "The registration of this device is not confirmed: the connection may have dropped. Try again in a moment.",
+      "compteNonAutoriseTitre": "No device notifications for this account",
+      "compteNonAutorise": "Device notifications are reserved for active adult accounts. All your notifications stay in the Notifications page.",
+      "erreurTitre": "The settings could not be loaded",
+      "erreur": "Your settings could not be loaded: the connection may have dropped. Try again in a moment.",
+      "horsLigne": "Notification settings can be changed when the connection is back.",
+      "changementNonConfirme": "The change is not yet confirmed: the connection may have dropped. Try again in a moment."
+    }
+  },
+  "suiviPedagogique": {
+    "titreSoi": "Where I stand",
+    "titre": "Where {prenom} stands",
+    "etape": "Program stage",
+    "objectifs": "Stage goals",
+    "reprise": "Where the class stopped",
+    "reprisePage": "Page {page} of the Mushaf",
+    "aFinirAvant": "To finish before",
+    "aFinirAvantDate": "{mois} {numero}, {annee}, for {prevue} planned weeks",
+    "rythme": "Pace",
+    "dansLesTemps(param=ecoulees)": {
+      "one": "Within the planned time: {ecoulees} week out of {prevue}",
+      "other": "Within the planned time: {ecoulees} weeks out of {prevue}"
+    },
+    "auDelaDuPrevu(param=ecoulees)": {
+      "one": "Beyond the planned time: {ecoulees} week out of {prevue}, before the deadline",
+      "other": "Beyond the planned time: {ecoulees} weeks out of {prevue}, before the deadline"
+    },
+    "etapesTitre": "The stages",
+    "etapeFranchie": "Previous stage",
+    "etapeFranchieLe": "Previous stage, entered on {mois} {numero}, {annee}",
+    "etapeEnCours": "In progress",
+    "etapeAVenir": "Upcoming",
+    "sourates": "Foundation surahs achieved",
+    "souratesDe": "{validees} of {total}",
+    "revision": "Revision per week",
+    "revisionHeures": "{heures} h",
+    "repetitions": "Estimated repetitions",
+    "repetitionsNombre(param=n)": {
+      "one": "{n} repetition",
+      "other": "{n} repetitions"
+    },
+    "dernierJalon": "Latest milestone",
+    "niveauDeclare": "Stated level",
+    "dateLimiteDepassee": "Deadline passed",
+    "erreur": "The program stage could not be loaded. Try again in a moment.",
+    "matierePrincipale": "Main subject",
+    "matiereSecondaire": "Secondary subject",
+    "depuis": "In this stage since",
+    "dateJour": "{mois} {numero}, {annee}",
+    "dureePrevue": "Stage length",
+    "chemin": "{niveau}, step by step",
+    "dureesEtape": "{prevue} weeks planned, {limite} at most",
+    "horizonNiveau": "{niveau}: ends at the latest on",
+    "attenteEntretien": "Your stage will be set after the reading interview with the management.",
+    "attenteEntretienTu": "Your stage will be set after the reading interview with the management.",
+    "attenteEntretienPour": "For {prenom}, the stage will be set after the reading interview with the management."
   },
   "suiviAttente": {
     "titre": "Where your request stands",
@@ -4593,6 +5298,72 @@
         "nonAutorise": "Only the management can decide on a break.",
         "inconnu": "The decision is not confirmed: the request may not have reached Rewayah. Try again in a moment."
       }
+    }
+  },
+  "pause": {
+    "titre": "Class breaks",
+    "entree": "Request a one-month break",
+    "sousTitre": "{dePrenom}'s break",
+    "indisponible": "The breaks could not be opened: the request may not have reached Rewayah. Try again in a moment.",
+    "erreur": "The breaks could not be loaded: the request may not have reached Rewayah. Try again in a moment.",
+    "regleTitre": "The rule",
+    "regle": {
+      "moisEntier": "A break lasts a whole calendar month, from the first to the last day of the month.",
+      "preavis(plural, param=jours)": {
+        "one": "You request it at least {jours} day before the start of the month.",
+        "other": "You request it at least {jours} days before the start of the month."
+      },
+      "plafond(plural, param=delai)": {
+        "one": "Up to {mois} months of break within {fenetre} months. Beyond that, the management decides and replies within {delai} day.",
+        "other": "Up to {mois} months of break within {fenetre} months. Beyond that, the management decides and replies within {delai} days."
+      },
+      "placeGardee": "During the break, the place is kept.",
+      "dateLimite": "The stage deadline moves back by the length of the break.",
+      "absence": "An absence of a few days stays an absence: only whole months are requested."
+    },
+    "choisir": "Choose the month",
+    "moisDansRegle": "Accepted straight away",
+    "moisALaDirection(plural, param=delai)": {
+      "one": "The management replies within {delai} day",
+      "other": "The management replies within {delai} days"
+    },
+    "moisDejaDemande": "Already requested",
+    "moisDejaAccepte": "Already accepted",
+    "aucunMois": "No month is offered for now.",
+    "fermeeTitre": "Break requests are not open for now",
+    "fermeeDetail": "To interrupt classes, contact the academy's management.",
+    "choisirPourDemander": "Choose a month to request the break.",
+    "demander": "Request the break",
+    "reponse": {
+      "acceptee": "The break of {mois} is accepted. The place is kept and the stage deadline moves back by the same amount.",
+      "demandee(plural, param=delai)": {
+        "one": "Your request has been passed to the management, who reply within {delai} day.",
+        "other": "Your request has been passed to the management, who reply within {delai} days."
+      }
+    },
+    "demandesTitre": "The breaks",
+    "demandesVide": "No break for now.",
+    "statut": {
+      "demandee": "Pending",
+      "acceptee": "Accepted",
+      "refusee": "Refused",
+      "annulee": "Cancelled"
+    },
+    "periode": "From {du} to {au}",
+    "reponseAvant": "The management replies before {date}.",
+    "reponseMotif": "Reply from the management: {motif}",
+    "exceptionAccordee": "Break granted by the management.",
+    "annuler": "Cancel the break of {mois}",
+    "refus": {
+      "preavis(plural, param=jours)": {
+        "one": "This month starts too soon: a break is requested at least {jours} day before it starts. Choose a later month.",
+        "other": "This month starts too soon: a break is requested at least {jours} days before it starts. Choose a later month."
+      },
+      "dejaDemandee": "This month is already requested or accepted.",
+      "moisInvalide": "This month is not readable. Choose a month from the list.",
+      "nonAnnulable": "This break can no longer be cancelled: it has already started, or it is already refused or cancelled.",
+      "nonAutorise": "You cannot request a break from this account.",
+      "inconnu": "The request is not confirmed: it may not have reached Rewayah. Try again in a moment."
     }
   }
 }
