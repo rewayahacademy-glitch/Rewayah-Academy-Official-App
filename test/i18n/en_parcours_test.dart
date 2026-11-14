@@ -61,6 +61,9 @@ void main() {
   test('aucun tiret long, aucun mot interdit (« school ») dans l anglais', () {
     for (final MapEntry<String, String> e in en.entries) {
       expect(e.value.contains('—'), isFalse, reason: e.key);
+      // « école » au sens juridique (école de l'Asr, école hanafite) garde son
+      // sens ; l'académie, elle, n'est jamais « school ».
+      if (e.key.contains('ecole')) continue;
       expect(RegExp('[Ss]chool').hasMatch(e.value), isFalse, reason: e.key);
     }
   });
