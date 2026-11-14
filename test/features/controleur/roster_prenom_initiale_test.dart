@@ -160,6 +160,7 @@ void main() {
     // La traduction arabe est differee : chargee ici, hors du temps simule
     // de `testWidgets`, pour que `setLocaleSync(ar)` la trouve.
     await LocaleSettings.setLocale(AppLocale.ar);
+    await LocaleSettings.setLocale(AppLocale.en);
     await LocaleSettings.setLocale(AppLocale.fr);
   });
 
