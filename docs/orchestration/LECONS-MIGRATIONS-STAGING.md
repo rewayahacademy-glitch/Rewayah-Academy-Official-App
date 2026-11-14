@@ -100,3 +100,28 @@ Chaque fois que le directeur doit coller des migrations dans l'éditeur SQL de l
 Les fichiers sans mot d'effacement peuvent toujours être appliqués par Claude avec
 `apply_migration` quand le texte exact peut lui être transmis sans recopie à la main ; sinon, ils
 vont sur la page avec les autres (une recopie de 100 Ko par Claude est un risque d'erreur).
+
+## Production : pas d'outillage lourd pendant une arrivée (pilote, 14/11/2026)
+
+### Le constat
+
+Le 14/11, pendant l'arrivée des candidats, la base de production a renvoyé des « statement timeout »
+de 14:21 à 14:24 UTC. Les journaux Postgres, lus en lecture seule, montrent que les requêtes longues
+de cette fenêtre ne venaient pas de l'application. C'étaient les contrôles des **Advisors** de Supabase :
+- « with f as (-- CTE with sane arg_modes…) » : 30,9 s, lancé par `supabase/dashboard` ;
+- « -- Used for 0025_public_bucket_allows_listing » : 33 s, 14 s et 14 s, lancé par `mgmt-api`. C'est
+  l'API de gestion, celle qu'appelle l'outil `get_advisors` du MCP.
+
+À 14:23:38, une migration a en plus été collée dans l'éditeur SQL. Chaque instruction qui modifie la
+structure de la base fait recharger le cache de schéma de PostgREST : environ 1 s de requêtes sur le
+catalogue, dont 0,5 s pour la seule liste des fuseaux.
+
+### La règle (décision du pilote, par délégation du directeur, 14/11/2026)
+
+Pendant une arrivée de personnes (candidats, inscriptions, rentrée) :
+1. **aucun agent n'appelle `get_advisors`** ;
+2. personne n'ouvre **Advisors** ni l'**éditeur de tables** du tableau de bord Supabase ;
+3. **les migrations de production se collent le soir**, hors des heures d'arrivée.
+
+Pour lire la base pendant une arrivée, un agent utilise des requêtes courtes et ciblées
+(`pg_stat_statements`, journaux, `EXPLAIN` sur une seule fonction).

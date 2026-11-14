@@ -314,4 +314,64 @@ SELECT pg_temp.vrai(NOT has_table_privilege('authenticated', 'public.entretien_c
   AND NOT has_function_privilege('anon', 'public.reserver_creneau_entretien(uuid,integer,text)', 'EXECUTE'),
   '6. tables illisibles par un client, reservation fermee a anon');
 
+-- ===========================================================================
+-- 7. SALLE2-ENTRETIEN (14/11/2026) : la plage publiee, l'etat fourni par le
+-- serveur
+-- ===========================================================================
+CREATE FUNCTION pg_temp.nb_creneaux() RETURNS bigint
+LANGUAGE sql SECURITY DEFINER AS $$ SELECT count(*) FROM public.entretien_creneaux $$;
+GRANT EXECUTE ON FUNCTION pg_temp.nb_creneaux() TO authenticated;
+SET LOCAL ROLE authenticated;
+DO $plage$
+DECLARE
+  v_avant bigint;
+  v_r jsonb;
+  v_t timestamptz := pg_catalog.date_trunc('hour', now()) + interval '6 days';
+BEGIN
+  PERFORM pg_temp.en_tant_que('7e200000-0000-4000-8000-0000000000a1', 'admin');
+  v_avant := pg_temp.nb_creneaux();
+  v_r := public.ouvrir_plage_entretien('female', v_t, v_t + interval '90 minutes', 30, ARRAY['francais'],
+    ARRAY['7e200000-0000-4000-8000-0000000000a2', '7e200000-0000-4000-8000-0000000000d2']::uuid[]);
+  PERFORM pg_temp.vrai((v_r ->> 'nombre')::integer = 3 AND pg_temp.nb_creneaux() = v_avant + 3,
+    '7. une plage de 90 minutes, entretiens de 30 : trois creneaux publies : ' || v_r::text);
+  v_avant := pg_temp.nb_creneaux();
+  v_r := public.ouvrir_plage_entretien('female', v_t + interval '1 day', v_t + interval '1 day 2 hours', 30, ARRAY['francais'],
+    ARRAY['7e200000-0000-4000-8000-0000000000a2', '7e200000-0000-4000-8000-0000000000b1']::uuid[]);
+  PERFORM pg_temp.vrai(v_r ->> 'erreur' = 'participant_autre_cote' AND pg_temp.nb_creneaux() = v_avant,
+    '7. un refus sur la plage : aucun creneau ne reste (tout ou rien) : ' || v_r::text);
+  PERFORM pg_temp.vrai(public.ouvrir_plage_entretien('female', v_t, v_t + interval '20 minutes', 30, ARRAY['francais'],
+    ARRAY['7e200000-0000-4000-8000-0000000000a2', '7e200000-0000-4000-8000-0000000000d2']::uuid[]) ->> 'erreur' = 'plage_trop_courte',
+    '7. une plage plus courte qu''un entretien est refusee');
+  PERFORM pg_temp.vrai(public.ouvrir_plage_entretien('female', v_t, v_t + interval '13 hours', 30, ARRAY['francais'],
+    ARRAY['7e200000-0000-4000-8000-0000000000a2', '7e200000-0000-4000-8000-0000000000d2']::uuid[]) ->> 'erreur' = 'plage_trop_longue',
+    '7. une plage de plus de 12 heures est refusee');
+
+  PERFORM pg_temp.en_tant_que('7e200000-0000-4000-8000-0000000000c1', 'teacher');
+  BEGIN
+    PERFORM public.ouvrir_plage_entretien('female', v_t, v_t + interval '1 hour', 30, ARRAY['francais'],
+      ARRAY['7e200000-0000-4000-8000-0000000000a2']::uuid[]);
+    RAISE EXCEPTION 'ROUGE : 7. une candidate a publie une plage';
+  EXCEPTION WHEN insufficient_privilege THEN
+    RAISE NOTICE 'OK 7. une candidate ne publie pas de plage';
+  END;
+  PERFORM pg_temp.vrai(public.mon_entretien() ->> 'etat' = 'a_venir' AND public.mon_entretien() ? 'serveurLe',
+    '7. mon_entretien : etat a_venir et heure du serveur : ' || public.mon_entretien()::text);
+END
+$plage$;
+RESET ROLE;
+UPDATE public.sessions SET started_at = now() + interval '5 minutes', ended_at = now() + interval '50 minutes',
+       join_opens_at = now() - interval '5 minutes'
+ WHERE id = current_setting('v1b.seance1')::uuid;
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.en_tant_que('7e200000-0000-4000-8000-0000000000c1', 'teacher');
+SELECT pg_temp.vrai(public.mon_entretien() ->> 'etat' = 'ouvert', '7. mon_entretien : ouvert dix minutes avant');
+RESET ROLE;
+UPDATE public.sessions SET started_at = now() + interval '40 minutes', ended_at = now() + interval '85 minutes',
+       join_opens_at = now() + interval '30 minutes'
+ WHERE id = current_setting('v1b.seance1')::uuid;
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.en_tant_que('7e200000-0000-4000-8000-0000000000c1', 'teacher');
+SELECT pg_temp.vrai(public.mon_entretien() ->> 'etat' = 'proche', '7. mon_entretien : proche dans l''heure');
+RESET ROLE;
+
 ROLLBACK;

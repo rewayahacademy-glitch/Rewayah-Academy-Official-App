@@ -40,6 +40,8 @@ String messageRefusCreneau(Object refus) {
       'absente' => c.refusAbsent,
       'langues_invalides' => c.refusLangues,
       'hors_portee' => c.refusHorsPortee,
+      'plage_trop_courte' => c.refusPlageCourte,
+      'plage_trop_longue' => c.refusPlageLongue,
       _ => t.admin.candidatures.erreurs.generique,
     };
   }
@@ -169,6 +171,11 @@ class _EtatOuvrir extends ConsumerState<FeuilleOuvrirCreneau>
   DateTime? _jour;
   int? _heure;
   int _duree = 45;
+
+  /// SALLE2-ENTRETIEN : la fin de la plage, en minutes depuis minuit, ou
+  /// [_unSeul] pour un seul entretien.
+  int _fin = _unSeul;
+  static const int _unSeul = -1;
   final Set<String> _langues = <String>{};
   List<String> _ordre = const <String>[];
   final Set<String> _choisis = <String>{};
@@ -200,6 +207,9 @@ class _EtatOuvrir extends ConsumerState<FeuilleOuvrirCreneau>
       _heure! ~/ 60,
       _heure! % 60,
     );
+    final DateTime? finPlage = _fin == _unSeul || _fin <= _heure!
+        ? null
+        : instantChezMoi(j.year, j.month, j.day, _fin ~/ 60, _fin % 60);
     await envoyer((PortCreneauxDirection port) async {
       await port.ouvrir(
         cote: _cote!,
@@ -210,8 +220,11 @@ class _EtatOuvrir extends ConsumerState<FeuilleOuvrirCreneau>
             if (_langues.contains(l)) l,
         ],
         participants: <String>[..._choisis],
+        finPlage: finPlage,
       );
-      return t.admin.candidatures.creneaux.ouvert;
+      return finPlage == null
+          ? t.admin.candidatures.creneaux.ouvert
+          : t.admin.candidatures.creneaux.plagePubliee;
     }, widget.onFini);
   }
 
@@ -299,7 +312,12 @@ class _EtatOuvrir extends ConsumerState<FeuilleOuvrirCreneau>
                 ),
             ],
             onChoix: (int? m) {
-              if (m != null) _modifie(() => _heure = m);
+              if (m != null) {
+                _modifie(() {
+                  _heure = m;
+                  _fin = _unSeul;
+                });
+              }
             },
           ),
         ),
@@ -321,10 +339,42 @@ class _EtatOuvrir extends ConsumerState<FeuilleOuvrirCreneau>
                 ),
             ],
             onChoix: (int? d) {
-              if (d != null) _modifie(() => _duree = d);
+              if (d != null) {
+                _modifie(() {
+                  _duree = d;
+                  _fin = _unSeul;
+                });
+              }
             },
           ),
         ),
+        // SALLE2-ENTRETIEN (directeur, 14/11/2026) : la direction publie une
+        // plage, le candidat choisit lui-meme un moment dedans.
+        Ecart.vMd,
+        Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: MenuFiltre<int>(
+            key: const ValueKey<String>('creneau-fin-plage'),
+            libelle: c.finPlage,
+            valeur: _fin,
+            entrees: <EntreeFiltre<int>>[
+              EntreeFiltre<int>(valeur: _unSeul, libelle: c.unSeulMoment),
+              for (final int m in heuresEntretien)
+                if (_heure != null && m >= _heure! + _duree * 2)
+                  EntreeFiltre<int>(
+                    valeur: m,
+                    libelle: heureDeLAppareil(
+                      DateTime(2000, 1, 1, m ~/ 60, m % 60),
+                    ),
+                  ),
+            ],
+            onChoix: (int? m) {
+              if (m != null) _modifie(() => _fin = m);
+            },
+          ),
+        ),
+        Ecart.vXs,
+        muet(c.finPlageAide),
         Ecart.vLg,
         titreChamp(c.langues),
         Ecart.vXs,

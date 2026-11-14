@@ -105,7 +105,7 @@ DateTime? instantOptionnel(Map<String, dynamic> m, String cle) {
 
 /// Une personne ou une partie rendue par le serveur, nommee par [libelles].
 ///
-/// Natures : `equipe` (l'Administration, jamais une personne nommee), `foyer`
+/// Natures : `equipe` (« #Ra_staff », jamais une personne nommee), `foyer`
 /// (une famille ; sa fonction dit les enfants concernes), `profil` (un
 /// enseignant nomme par son titre et son prenom, sinon par son prenom).
 ///
@@ -128,6 +128,7 @@ Participant participantJson(
         id: id,
         nomAffiche: libelles.administration(),
         estSoi: soi,
+        equipe: true,
       );
     case 'foyer':
       final Object? eleves = m['eleves'];

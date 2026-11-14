@@ -327,6 +327,20 @@ abstract final class AppIcons {
     IconData(0xe4c2, fontFamily: _actif),
   );
 
+  /// MESSAGERIE-LU (14/11/2026) : message envoye, pas encore lu par l'autre
+  /// partie (Phosphor `check`).
+  static const AppIcon messageEnvoye = AppIcon._(
+    IconData(0xe182, fontFamily: _repos),
+    IconData(0xe182, fontFamily: _actif),
+  );
+
+  /// MESSAGERIE-LU (14/11/2026) : message lu par l'autre partie (Phosphor
+  /// `checks`, deux coches).
+  static const AppIcon messageLu = AppIcon._(
+    IconData(0xe53a, fontFamily: _repos),
+    IconData(0xe53a, fontFamily: _actif),
+  );
+
   /// Validation, succes.
   static const AppIcon succes = AppIcon._(
     IconData(0xe184, fontFamily: _repos),

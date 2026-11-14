@@ -284,7 +284,13 @@ void main() {
           'message_academie_eleve',
           const <String, dynamic>{'prenom': 'Yasmine', 'portee': 'foyer'},
         ).titre,
-        contains('الإدارة'),
+        // #Ra_staff (directeur, 14/11/2026) : l'equipe se nomme ainsi dans
+        // toutes les langues, jamais « الإدارة » ; la phrase reste arabe.
+        allOf(
+          contains('#Ra_staff'),
+          contains('كتب إليكم'),
+          isNot(contains('الإدارة')),
+        ),
       );
     });
   });

@@ -972,7 +972,9 @@ class LigneNotification extends StatelessWidget {
       'remplacement_avertissement' => gestes.rejoindreSalle,
       'remplacement_propose' ||
       'remplacement_pre_alerte' => mots.gestePrendreSeance,
-      'demande_presentation' => mots.gesteRepondre,
+      'demande_presentation' ||
+      // MESSAGERIE-PUSH (14/11/2026) : repondre au candidat.
+      'message_candidat_recu' => mots.gesteRepondre,
       'controle_mission_attribuee' => mots.gesteObserver,
       'litige_ouvert' => mots.gesteTraiterContestation,
       _ => mots.sectionAFaire,

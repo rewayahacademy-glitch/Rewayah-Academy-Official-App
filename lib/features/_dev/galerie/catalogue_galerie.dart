@@ -98,6 +98,7 @@ import '../../../core/widgets/lire_jusqu_en_bas.dart';
 import '../../../core/widgets/local_feedback.dart';
 import '../../../core/widgets/lumiere_autour.dart';
 import '../../../core/widgets/marque_page.dart';
+import '../../../core/widgets/marque_staff.dart';
 import '../../../core/widgets/menu_actions.dart';
 import '../../../core/widgets/menu_commun.dart';
 import '../../../core/widgets/menu_filtre.dart';
@@ -2462,6 +2463,27 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
         (BuildContext _) => const Directionality(
           textDirection: TextDirection.rtl,
           child: MarquePage(),
+        ),
+      ),
+    ],
+  ),
+
+  // #Ra_staff (directeur, 14/11/2026) : l'identite de l'equipe dans toute
+  // interaction, icone de l'application et nom exact, en ligne ou en avatar.
+  EntreeGalerie(
+    nom: 'MarqueStaff',
+    famille: FamilleComposant.structure,
+    etats: <EtatGalerie>[
+      EtatGalerie('en ligne', (BuildContext _) => const MarqueStaff()),
+      EtatGalerie(
+        'avatar seul, petit',
+        (BuildContext _) => const MarqueStaff.avatar(diametre: AppAvatar.petit),
+      ),
+      EtatGalerie(
+        'en arabe : le nom reste « #Ra_staff »',
+        (BuildContext _) => const Directionality(
+          textDirection: TextDirection.rtl,
+          child: MarqueStaff(),
         ),
       ),
     ],

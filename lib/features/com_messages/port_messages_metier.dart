@@ -100,6 +100,7 @@ class FilMetier {
     required List<MessageCommunication> messages,
     this.attention = IndicateurAttention.aucun,
     Set<CapaciteFil> capacites = const <CapaciteFil>{},
+    this.luParAutresLe,
   }) : assert(contexte.isNotEmpty, 'Un fil metier est lie a un objet.'),
        contexte = List<ElementContexteFil>.unmodifiable(contexte),
        participants = List<Participant>.unmodifiable(participants),
@@ -123,6 +124,10 @@ class FilMetier {
 
   /// Les actions ouvertes a la personne qui lit.
   final Set<CapaciteFil> capacites;
+
+  /// MESSAGERIE-LU (migration 20261125860000) : la plus recente lecture du fil
+  /// par l'AUTRE partie, ou `null` (jamais lu, ou serveur plus ancien).
+  final DateTime? luParAutresLe;
 
   /// L'objet principal du fil.
   ObjetLie get objet => contexte.first.objet;

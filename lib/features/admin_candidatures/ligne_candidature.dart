@@ -2,10 +2,11 @@
 // bureau, une carte ailleurs. Les deux lisent les memes champs de la meme
 // ligne ; aucun n'en recalcule un.
 //
-// **Jamais dans une ligne** : courriel, telephone, genre, piece, motif interne,
+// **Jamais dans une ligne** : courriel, telephone, piece, motif interne,
 // compte rendu, constat, reponse libre (`CONS` 8.3). `LigneCandidature` n'a pas
 // de champ pour les recevoir ; du contact, seules deux marques s'affichent
-// (« Courriel a obtenir », « Indicatif a confirmer »).
+// (« Courriel a obtenir », « Indicatif a confirmer »). Le genre, lui, s'y lit
+// en mots depuis le 14/11/2026 (SALLE2-GENRE, demande expresse du directeur).
 //
 // **Une cible par ligne aujourd'hui** : hors selection, la ligne entiere ouvre
 // la candidature quand une destination existe (`ADM-21`), sinon elle ne se
@@ -99,6 +100,11 @@ List<ColonneDonnees<LigneCandidature>> colonnesCandidatures(
       role: RoleColonne.identifiante,
       flex: 5,
       rendu: (BuildContext _, LigneCandidature l) => _CelluleNom(ligne: l),
+    ),
+    ColonneDonnees<LigneCandidature>(
+      titre: c.genre,
+      texte: (LigneCandidature l) => libelleGenre(l.genre) ?? '',
+      flex: 2,
     ),
     ColonneDonnees<LigneCandidature>(
       titre: c.salle,
@@ -311,6 +317,8 @@ class CarteCandidature extends StatelessWidget {
                   ),
                 ],
                 Ecart.vSm,
+                if (libelleGenre(ligne.genre) case final String genre)
+                  TexteSansCoupure(l.genre(genre: genre), style: attenue),
                 if (pays != null)
                   TexteSansCoupure(l.pays(pays: pays), style: attenue),
                 TexteSansCoupure(

@@ -41,6 +41,9 @@ const Set<String> evenementsNotificationConnus = <String>{
   // SUIVI-ATTENTE (13/11/2026, migration 20261123961000) : tout est pret pour
   // le premier cours, au tuteur d'un mineur ou a l'eleve adulte.
   'tout_est_pret',
+  // MESSAGERIE-PUSH (14/11/2026, migration 20261125850000) : un candidat a
+  // ecrit a la direction.
+  'message_candidat_recu',
   // Relance avant echeance, acces suspendu pour paiement, acces retabli
   // (FAC-F-01, migration 20261018170000).
   'paiement_relance',
@@ -144,12 +147,19 @@ final RegExp _destinationClasse = RegExp(
   r'^/tuteur/classes/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}(/planning)?$',
 );
 
+/// MESSAGERIE-PUSH (14/11/2026) : les Messages de la direction, ou un de leurs
+/// fils (la meme forme que la contrainte SQL, migration 20261125850000).
+final RegExp _destinationMessagesDirection = RegExp(
+  r'^/admin/operations/communications/messages(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})?$',
+);
+
 /// Vrai si [destination] est un ecran que l'ouverture d'une notification peut
 /// atteindre. Pure.
 bool destinationNotificationAutorisee(String? destination) =>
     destination != null &&
     (_destinationsAutorisees.contains(destination) ||
-        _destinationClasse.hasMatch(destination));
+        _destinationClasse.hasMatch(destination) ||
+        _destinationMessagesDirection.hasMatch(destination));
 
 /// Adaptateur Supabase de la boîte privée de notifications.
 class NotificationsSupabase
@@ -577,6 +587,7 @@ TypeNotification _typePour(String evenement) => switch (evenement) {
   'creneau_personnalise_demande' ||
   'piece_identite_deposee' ||
   'suppression_compte_demandee' => TypeNotification.decisionDossier,
+  'message_candidat_recu' => TypeNotification.messageMetier,
   'remplacement_personne_en_salle' => TypeNotification.remplacement,
   'signalement_eleve_recu' => TypeNotification.evenementOperationnel,
   'cahier_en_retard' => TypeNotification.changementSeance,

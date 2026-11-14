@@ -17,7 +17,7 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/badge_non_lu.dart';
-import '../foyer/photo_eleve.dart' show PhotoEleve;
+import 'avatar_participant.dart';
 import 'port_messages_metier.dart';
 
 /// Le nom d'un participant, avec sa fonction quand le port la donne :
@@ -240,14 +240,13 @@ class EnteteFilContexte extends StatelessWidget {
                     // coupait en « An- » puis « Nour ».
                     nom: noms.replaceAll('-', '\u2011'),
                     role: ligneObjets,
-                    // PHOTOS-2b : la photo du premier interlocuteur quand
-                    // c'est une personne ; sinon les initiales.
-                    avatar: PhotoEleve(
-                      prenom: prenom,
-                      cleAvatar: null,
-                      personneId: interlocuteurs.isEmpty
+                    // PHOTOS-2b et #Ra_staff : l'avatar du premier
+                    // interlocuteur.
+                    avatar: AvatarParticipant(
+                      participant: interlocuteurs.isEmpty
                           ? null
-                          : interlocuteurs.first.profilId,
+                          : interlocuteurs.first,
+                      repli: prenom,
                       diametre: AppAvatar.moyen,
                     ),
                     styleNom: palette.inkStrong.applyTo(

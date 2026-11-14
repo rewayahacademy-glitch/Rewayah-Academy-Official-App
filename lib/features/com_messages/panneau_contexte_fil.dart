@@ -28,7 +28,7 @@ import '../../core/widgets/avatar_tile.dart';
 import '../../core/widgets/carte_piece_jointe.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/pile_cartes.dart';
-import '../foyer/photo_eleve.dart' show PhotoEleve;
+import 'avatar_participant.dart';
 import 'entete_fil_contexte.dart';
 import 'port_messages_metier.dart';
 
@@ -91,12 +91,11 @@ class PanneauContexteFil extends StatelessWidget {
           lignes: <LigneRubrique>[
             for (final Participant q in fil.participants)
               LigneRubrique(
-                // PHOTOS-2b : la photo d'une personne par le fournisseur
-                // unique ; l'Administration et une famille, leurs initiales.
-                meneur: PhotoEleve(
-                  prenom: q.nomAffiche,
-                  cleAvatar: null,
-                  personneId: q.profilId,
+                // PHOTOS-2b et #Ra_staff : la photo d'une personne, l'icone
+                // de l'application pour l'equipe, les initiales d'une famille.
+                meneur: AvatarParticipant(
+                  participant: q,
+                  repli: q.nomAffiche,
                   diametre: AppAvatar.petit,
                 ),
                 libelle: q.nomAffiche,
