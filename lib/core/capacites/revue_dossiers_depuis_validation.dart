@@ -384,7 +384,9 @@ class RevueDossiersDepuisValidation extends RevueDossiersIndisponible {
           m.contains('seul un administrateur')) {
         throw const ErreurRevueDossier(CodeErreurRevue.interdit);
       }
-      throw const EchecDecisionCertain();
+      // K-59 (SALLE2-ENTRETIEN, 14/11/2026) : le message du serveur est
+      // garde ; l'ecran le traduit en une phrase qui dit quoi faire.
+      throw EchecDecisionCertain(m);
     } on Object {
       // Delai, coupure : la decision a pu etre enregistree (P-ADM-10).
       throw const ErreurRevueDossier(CodeErreurRevue.reponsePerdue);
@@ -432,10 +434,14 @@ typedef DeciderExistant = Future<void> Function({
 });
 
 /// Le serveur a repondu par un refus sans code connu : echec certain, la
-/// reprise de la meme charge est permise. Aucun message serveur n'est garde.
+/// reprise de la meme charge est permise. [messageServeur] est le message de
+/// l'exception (K-59 : l'ecran dit la vraie raison, jamais un echec muet).
 class EchecDecisionCertain implements Exception {
   /// Cree l'echec.
-  const EchecDecisionCertain();
+  const EchecDecisionCertain([this.messageServeur]);
+
+  /// Le message de l'exception rendue par le serveur, ou `null`.
+  final String? messageServeur;
 }
 
 /// Le branchement de production, pose dans `lib/main.dart` seulement.

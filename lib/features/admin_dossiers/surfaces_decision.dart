@@ -93,6 +93,10 @@ String? _message(
     refus ? t.dossiers.refus.horsLigne : t.dossiers.validation.horsLigne,
   DecisionEchec(code: CodeErreurRevue.motifTropLong) =>
     t.dossiers.refus.tropLong,
+  DecisionEchec(:final String messageServeur) => raisonEchecDecision(
+    messageServeur,
+    refus: refus,
+  ),
   DecisionEchec() =>
     refus ? t.dossiers.refus.erreur : t.dossiers.validation.erreur,
   DecisionConflit() => t.dossiers.decision.conflit,
@@ -108,6 +112,26 @@ String? _message(
   DecisionTraitee() => t.dossiers.decision.dejaTraite,
   _ => null,
 };
+
+/// K-59 (SALLE2-ENTRETIEN, 14/11/2026) : la phrase d'un echec certain, tiree
+/// du message du serveur. Ce qui manque, pourquoi, quoi faire ; jamais un
+/// echec muet. Un message inconnu est cite tel quel.
+String raisonEchecDecision(String messageServeur, {required bool refus}) {
+  final v = t.dossiers.validation;
+  if (messageServeur.contains('compte_candidat_actif_avant_salle_3')) {
+    return v.candidatSalle2;
+  }
+  if (messageServeur.contains('compte_candidat_non_affectable')) {
+    return v.candidatAffecte;
+  }
+  if (messageServeur.contains('compte_candidat_role_du_type')) {
+    return v.candidatRole;
+  }
+  return v.raisonServeur(
+    erreur: refus ? t.dossiers.refus.erreur : v.erreur,
+    raison: messageServeur.trim(),
+  );
+}
 
 String _manque(List<ManqueSignature> manque) {
   final bool contrat = manque.contains(ManqueSignature.contrat);

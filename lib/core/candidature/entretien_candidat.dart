@@ -57,6 +57,38 @@ class CreneauOuvert {
   final List<String> langues;
 }
 
+/// L'etat de l'entretien, fourni par le serveur (`mon_entretien().etat`,
+/// SALLE2-ENTRETIEN du 14/11/2026). [inconnu] : un serveur d'avant cet etat.
+enum EtatEntretien {
+  /// Plus d'une heure avant le debut.
+  aVenir,
+
+  /// Dans l'heure qui precede le debut, salle pas encore ouverte.
+  proche,
+
+  /// La salle est ouverte (10 minutes avant le debut).
+  ouvert,
+
+  /// L'entretien a commence.
+  enCours,
+
+  /// L'heure de fin est passee.
+  termine,
+
+  /// Le serveur ne l'a pas dit.
+  inconnu;
+
+  /// Lit la valeur du serveur.
+  static EtatEntretien depuis(Object? brut) => switch (brut) {
+    'a_venir' => aVenir,
+    'proche' => proche,
+    'ouvert' => ouvert,
+    'en_cours' => enCours,
+    'termine' => termine,
+    _ => inconnu,
+  };
+}
+
 /// L'entretien reserve du candidat.
 class MonEntretien {
   /// Cree l'entretien.
@@ -66,6 +98,8 @@ class MonEntretien {
     required this.fin,
     required this.ouvertureLe,
     required this.statut,
+    this.etat = EtatEntretien.inconnu,
+    this.ecartServeur = Duration.zero,
   });
 
   /// Lit `mon_entretien()`.
@@ -77,6 +111,12 @@ class MonEntretien {
         ? DateTime.parse(j['ouvertureLe'] as String).toLocal()
         : null,
     statut: j['statut'] as String? ?? 'planned',
+    etat: EtatEntretien.depuis(j['etat']),
+    // L'heure du serveur moins celle de l'appareil : le decompte reste juste
+    // quand l'horloge de l'appareil avance ou retarde.
+    ecartServeur: j['serveurLe'] is String
+        ? DateTime.parse(j['serveurLe'] as String).difference(DateTime.now())
+        : Duration.zero,
   );
 
   /// La seance d'entretien (celle que `/salle` ouvre).
@@ -94,10 +134,45 @@ class MonEntretien {
   /// L'etat de la seance cote serveur (`planned`, `live`...).
   final String statut;
 
+  /// L'etat lu sur le serveur.
+  final EtatEntretien etat;
+
+  /// L'heure du serveur moins celle de l'appareil, a la lecture.
+  final Duration ecartServeur;
+
   /// Vrai quand le candidat peut rejoindre a [maintenant] : l'ouverture est
   /// passee et la fin ne l'est pas. Le serveur decide encore a l'entree.
-  bool ouvertA(DateTime maintenant) =>
-      !maintenant.isBefore(ouvertureLe ?? debut) && maintenant.isBefore(fin);
+  /// [maintenant] est l'heure de l'appareil ; l'ecart au serveur est ajoute.
+  bool ouvertA(DateTime maintenant) {
+    final DateTime m = maintenant.add(ecartServeur);
+    return !m.isBefore(ouvertureLe ?? debut) && m.isBefore(fin);
+  }
+
+  /// Les minutes avant le debut a [maintenant] (heure de l'appareil, ecart au
+  /// serveur ajoute), jamais negatives.
+  int minutesAvant(DateTime maintenant) {
+    final int s = debut.difference(maintenant.add(ecartServeur)).inSeconds;
+    return s <= 0 ? 0 : (s + 59) ~/ 60;
+  }
+
+  /// L'etat a [maintenant] : celui du serveur, avance par l'horloge entre deux
+  /// lectures (proche, puis ouvert, puis en cours) ; jamais recule.
+  EtatEntretien etatA(DateTime maintenant) {
+    final DateTime m = maintenant.add(ecartServeur);
+    final EtatEntretien parHeure = !m.isBefore(fin)
+        ? EtatEntretien.termine
+        : !m.isBefore(debut)
+        ? EtatEntretien.enCours
+        : !m.isBefore(
+            ouvertureLe ?? debut.subtract(const Duration(minutes: 10)),
+          )
+        ? EtatEntretien.ouvert
+        : !m.isBefore(debut.subtract(const Duration(hours: 1)))
+        ? EtatEntretien.proche
+        : EtatEntretien.aVenir;
+    if (etat == EtatEntretien.inconnu) return parHeure;
+    return parHeure.index > etat.index ? parHeure : etat;
+  }
 }
 
 /// Le refus d'une reservation, rendu par le serveur.

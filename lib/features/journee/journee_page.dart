@@ -98,6 +98,7 @@ import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
 import '../../core/widgets/timeline_row.dart';
+import '../admin_candidature/entretiens_du_jour.dart';
 import '../bienvenue_enseignant/carte_bienvenue_equipe.dart';
 import '../com_communaute/entree_communaute.dart';
 import '../remplacements/remplacements_page.dart' show titreRemplacementUrgent;
@@ -216,6 +217,9 @@ class _JourneePageEtat extends ConsumerState<JourneePage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             LocalFeedback(message: _retour),
+            // SALLE2-ENTRETIEN (14/11/2026) : l'entretien que mene cette
+            // personne, et sa porte. Rien sans entretien du jour.
+            const EntretiensDuJour(),
             _Corps(maintenant: maintenant),
           ],
         ),

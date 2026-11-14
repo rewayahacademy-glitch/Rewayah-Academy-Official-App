@@ -325,10 +325,14 @@ SELECT pg_temp.vrai(pg_temp.lu('r_e0') -> 'controles' = '[{"nom": "entretien_con
   AND pg_temp.trace('01') = pg_temp.lu('t01e'),
   'V1-a present, entretien tenu mais avis non favorable : entretien_conclu nomme (avis_non_favorable), rien d''ecrit');
 SELECT pg_temp.garde('conclusion', '{"tenu": true, "avisFavorable": true, "constatComplet": false}'::jsonb);
-SELECT pg_temp.garde('r_e00', pg_temp.valider('a2', '01', 'cle-salle3-e-0010'));
-SELECT pg_temp.vrai(pg_temp.lu('r_e00') -> 'controles' = '[{"nom": "evaluation_validee", "cause": "constat_incomplet"}]'::jsonb
-  AND pg_temp.trace('01') = pg_temp.lu('t01e'),
-  'constat incomplet : evaluation_validee nomme (constat_incomplet), rien d''ecrit');
+-- SALLE2-FICHE (directeur, 14/11/2026) : la declaration du candidat suffit,
+-- le constat du compte rendu n'est plus exige. Lu sur la fonction des
+-- controles, sans valider (la suite du scenario garde sa candidature).
+SELECT pg_temp.vrai(
+  (SELECT (x ->> 'valeur')::boolean AND x ->> 'cause' IS NULL
+     FROM pg_catalog.jsonb_array_elements(private.candidature_entretien_controles(gen_random_uuid())) x
+    WHERE x ->> 'nom' = 'evaluation_validee'),
+  'SALLE2-FICHE : constat incomplet, entretien tenu : evaluation_validee vaut, aucune re-saisie');
 SELECT pg_temp.garde('conclusion', '{"tenu": true, "avisFavorable": true, "constatComplet": true}'::jsonb);
 
 SELECT pg_temp.garde('t02', pg_temp.trace('02'));

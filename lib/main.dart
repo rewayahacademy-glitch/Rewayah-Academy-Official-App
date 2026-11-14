@@ -52,12 +52,14 @@ import 'core/candidature/compte_rendu_entretien.dart';
 import 'core/candidature/creneaux_direction.dart';
 import 'core/candidature/entretien_candidat.dart';
 import 'core/candidature/entretiens_direction_supabase.dart';
+import 'core/candidature/entretiens_temps_reel.dart';
 import 'core/candidature/import_candidatures_supabase.dart';
 import 'core/candidature/inscription_candidat_supabase.dart';
 import 'core/candidature/invitations_personnelles_supabase.dart';
 import 'core/candidature/ma_candidature_supabase.dart';
 import 'core/candidature/nom_latin_supabase.dart';
 import 'core/candidature/photo_dossier_candidat.dart';
+import 'core/candidature/piece_candidature.dart';
 import 'core/candidature/port_accord_publication.dart';
 import 'core/candidature/port_autres_competences.dart';
 import 'core/candidature/port_candidatures_direction.dart';
@@ -632,6 +634,19 @@ List<Override> _surchargesAppReelle() => <Override>[
   // SALLE-2-ENTRETIEN : les creneaux d'entretien de la direction (V1-b).
   portCreneauxDirectionProvider.overrideWithValue(
     CreneauxDirectionSupabase(Supabase.instance.client),
+  ),
+  // SALLE2-ENTRETIEN (14/11/2026) : le signal temps reel des entretiens
+  // (canal `entretiens`, migration 20261125820000) et les entretiens du jour.
+  sourceSignalEntretiensProvider.overrideWithValue(
+    signalEntretiensSupabase(Supabase.instance.client),
+  ),
+  lireEntretiensProvider.overrideWithValue(
+    lireEntretiensSupabase(Supabase.instance.client),
+  ),
+  // SALLE2-FICHE (14/11/2026) : la piece d'une candidature, decidee sur la
+  // fiche (migration 20261125900000).
+  lirePieceCandidatureProvider.overrideWithValue(
+    lirePieceCandidatureSupabase(Supabase.instance.client),
   ),
   // Ports a defaut « indisponible » (ou en memoire) dont l'adaptateur
   // serveur existe : compte, tresorerie, observations, controleur, support

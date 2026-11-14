@@ -16,6 +16,8 @@ import 'package:uuid/uuid.dart';
 
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/port_revue_dossiers.dart';
+import '../../core/capacites/revue_dossiers_depuis_validation.dart'
+    show EchecDecisionCertain;
 import '../../core/recrutement/port_statuts_signature.dart';
 
 /// Une commande de decision, immuable : « Reessayer » la rejoue telle quelle.
@@ -83,9 +85,12 @@ final class DecisionReussie extends EtatDecision {
 
 /// Echec certain : la reprise rejoue la MEME commande.
 final class DecisionEchec extends EtatDecision {
-  const DecisionEchec(super.commande, [this.code]);
+  const DecisionEchec(super.commande, [this.code, this.messageServeur]);
 
   final CodeErreurRevue? code;
+
+  /// Le message de l'exception du serveur, quand il en a rendu un (K-59).
+  final String? messageServeur;
 }
 
 final class DecisionConflit extends EtatDecision {
@@ -199,6 +204,8 @@ class DecisionsDossiersNotifier extends Notifier<Map<String, EtatDecision>> {
       fin = etatPourCode(c, e.code);
     } on TimeoutException {
       fin = DecisionInconnue(c);
+    } on EchecDecisionCertain catch (e) {
+      fin = DecisionEchec(c, null, e.messageServeur);
     } on Object {
       fin = DecisionEchec(c);
     }

@@ -2809,6 +2809,10 @@
       "termine": "L'heure de votre entretien est passée. L'académie vous écrit la suite.",
       "pasEncore": "L'entretien n'est pas encore ouvert pour votre candidature.",
       "portailChoisir": "Choisir le moment de notre entretien",
+      "commenceDans(param=n)": {"one": "Votre entretien commence dans {n}\u00a0minute.", "other": "Votre entretien commence dans {n}\u00a0minutes."},
+      "aCommence": "Votre entretien a commencé\u00a0: on vous attend. Rejoignez-le maintenant.",
+      "prevu": "Votre entretien est fixé\u00a0: {horaire}.",
+      "jour": {"titre": "Entretiens du jour", "intro": "Les entretiens que vous menez aujourd'hui. Le bouton pour rejoindre apparaît 10\u00a0minutes avant le début, dans la même salle que le candidat.", "candidat": "Candidat", "rejoindreAvec": "Rejoindre l'entretien avec {nom}", "ouvreA": "Vous pourrez rejoindre à partir de {heure}.", "voirFiche": "Voir la candidature {deNom}"},
       "portailVoir": "Voir mon entretien",
       "notifications": {
         "reserve": "Votre entretien est fixé. Le jour et l'heure sont dans «\u00a0Faisons connaissance\u00a0».",
@@ -3852,6 +3856,10 @@
       "erreur": "Le dossier n'a pas pu être validé.",
       "horsLigne": "La validation n’a pas été envoyée. Réessayez quand la connexion sera revenue.",
       "inconnu": "Le résultat de la validation n’est pas encore confirmé.",
+      "candidatSalle2": "Cette personne est candidate, encore à l'étape de l'entretien. Son compte ne s'ouvre qu'à son accueil dans l'équipe. Validez sa pièce depuis sa fiche de candidature, avec «\u00a0Accueillir dans l'équipe\u00a0», une fois l'entretien conclu.",
+      "candidatAffecte": "Cette personne est candidate et a déjà une classe ou une séance à son nom. Retirez-la de cette classe, puis validez de nouveau.",
+      "candidatRole": "Le compte de cette personne n'a pas le rôle de sa candidature. Ouvrez sa fiche de candidature pour corriger le rôle, puis validez de nouveau.",
+      "raisonServeur": "{erreur} Réponse du serveur\u00a0: «\u00a0{raison}\u00a0». Réessayez\u00a0; si cela se répète, transmettez cette phrase à l'équipe technique.",
       "plusPret": "Ce dossier n’est plus prêt à être validé.",
       "interdit": "Vous ne pouvez plus valider ce dossier.",
       "succes": "Dossier validé."
@@ -4006,6 +4014,7 @@
         "pause": "Pause",
         "sansPause": "Pas en pause",
         "versement": "Versement",
+        "genre": "Genre",
         "pays": "Pays de résidence",
         "talents": {
           "domaine": "Autres compétences",
@@ -4038,6 +4047,7 @@
         "nom": "Nom",
         "salle": "Salle",
         "etat": "État",
+        "genre": "Genre",
         "pays": "Pays de résidence",
         "versement": "Versement",
         "activite": "Dernière activité"
@@ -4045,6 +4055,7 @@
       "ligne": {
         "versement": "Versement : {etat}",
         "activite": "Dernière activité le {date}",
+        "genre": "Genre\u00a0: {genre}",
         "pays": "Résidence : {pays}",
         "courrielAObtenir": "Courriel à obtenir",
         "indicatifAConfirmer": "Indicatif à confirmer",
@@ -4142,6 +4153,9 @@
         "entretien": "Entretien",
         "affectation": "Affectation",
         "courriels": "Courriels",
+        "pieceEchec": "La pièce d'identité n'a pas pu être lue. Réessayez.",
+        "pieceSansCompte": "Aucun compte n'est encore rattaché à cette candidature\u00a0: la pièce se dépose après l'inscription.",
+        "pieceMotif": "{etat}\u00a0: {motif}",
         "ouvrirDossier": "Ouvrir dans Dossiers à valider",
         "responsable": "Responsable",
         "contact": {
@@ -4378,6 +4392,8 @@
         "responsable": "Le responsable est enregistré.",
         "rejoue": "Ce geste avait déjà été fait : rien n'a été écrit une seconde fois."
       },
+      "genres": {"male": "Homme", "female": "Femme"},
+      "decision": {"accepter": "Accepter", "refuser": "Refuser", "preciser": "Demander une précision", "nePasAccueillir": "Ne pas accueillir"},
       "creneaux": {
         "lien": "Créneaux d'entretien",
         "titre": "Créneaux d'entretien",
@@ -4410,6 +4426,12 @@
         "refusReserve": "Ce créneau est déjà réservé\u00a0: il ne se retire plus.",
         "refusAbsent": "Ce créneau n'existe plus. Rechargez la liste.",
         "refusLangues": "Une des langues choisies n'est pas acceptée pour un créneau. Retirez-la et réessayez.",
+        "finPlage": "Fin de la plage",
+        "unSeulMoment": "Un seul entretien",
+        "finPlageAide": "Choisissez une heure de fin pour publier plusieurs moments d'un coup, de la durée choisie. Chaque candidat choisit lui-même son moment\u00a0; un moment pris disparaît pour les autres.",
+        "plagePubliee": "Les moments sont publiés. Les candidats les voient tout de suite.",
+        "refusPlageCourte": "La plage est plus courte qu'un entretien. Choisissez une heure de fin plus tardive.",
+        "refusPlageLongue": "Une plage dure 12\u00a0heures au plus. Choisissez une heure de fin plus proche.",
         "refusHorsPortee": "Ce côté n'est pas le vôtre\u00a0: vous ne pouvez pas y ouvrir de créneau."
       },
       "entretien": {
@@ -4430,6 +4452,8 @@
         "aucunePresence": "Personne n'est encore entré dans la salle.",
         "entree": "Entrée de \u2068{nom}\u2069 à {heure}",
         "sortie": "Sortie de \u2068{nom}\u2069 à {heure}",
+        "autreIssue": "Autre issue (annulé, absence)",
+        "resultat": {"titre": "Résultat de l'entretien", "concluant": "Concluant", "nonConcluant": "Non concluant", "aRefaire": "À refaire", "texteConcluant": "Entretien concluant.", "texteNonConcluant": "Entretien non concluant.", "motifARefaire": "Entretien à refaire.", "retourConcluant": "Entretien concluant. Vous pouvez l'accueillir dans l'équipe.", "retourNonConcluant": "Entretien non concluant. Vous pouvez ne pas l’accueillir.", "retourARefaire": "Entretien à refaire. La personne choisit un nouveau moment.", "refusNonParticipant": "Seule une personne qui a mené l'entretien peut en donner le résultat. Demandez-lui de le faire depuis cette fiche.", "refusPasCommence": "L'entretien n'a pas encore commencé. Revenez à l'heure de début.", "refusDejaConsigne": "Le résultat est déjà enregistré. Rechargez la fiche.", "refusAutre": "Le résultat n'est pas confirmé. Réessayez dans un instant."},
         "consigner": "Consigner l'issue",
         "dernier": "Dernier entretien\u00a0: {date}. {issue}.",
         "lectureEchec": "L'entretien n'a pas pu être lu.",
