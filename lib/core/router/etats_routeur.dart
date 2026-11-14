@@ -7,7 +7,11 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/connexion/coquille_entree.dart';
 import '../../features/connexion/recuperation_page.dart'
-    show MotifRecuperation, cheminRecuperation, motifDepuisUrlRetour;
+    show
+        MotifRecuperation,
+        cheminRecuperation,
+        lienOuvertDansUnAutreNavigateurDepuisUrlRetour,
+        motifDepuisUrlRetour;
 import '../domain/enums.dart';
 import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
@@ -49,8 +53,11 @@ String destinationAutorisee(SessionState session) {
 /// La page introuvable : un chemin qu'aucune route ne sert (`errorBuilder`),
 /// ou un lien profond perime. Jamais l'exception brute de go_router.
 class PageIntrouvable extends ConsumerWidget {
-  /// Cree la page.
-  const PageIntrouvable({super.key});
+  /// Cree la page. [adresse] remplace l'adresse d'ouverture (tests).
+  const PageIntrouvable({super.key, this.adresse});
+
+  /// L'adresse lue pour reconnaitre un retour en echec ; `Uri.base` par defaut.
+  final Uri? adresse;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -60,13 +67,28 @@ class PageIntrouvable extends ConsumerWidget {
     // revient avec `error_code` dans l'adresse (souvent dans le fragment, que
     // le routeur prend pour un chemin) : on dit ce qui s'est passe et quoi
     // faire, au lieu de « page introuvable ».
-    final MotifRecuperation? motif = motifDepuisUrlRetour(Uri.base);
+    final MotifRecuperation? motif = motifDepuisUrlRetour(adresse ?? Uri.base);
     if (motif != null) {
+      // Chaque cause dit la sienne (K-59) : « deja servi ou expire » n'est dit
+      // que pour `otp_expired`. Un lien ouvert dans un autre navigateur et tout
+      // autre refus ont leur propre phrase.
+      final bool autreNavigateur =
+          lienOuvertDansUnAutreNavigateurDepuisUrlRetour(adresse ?? Uri.base);
+      final String titre = autreNavigateur
+          ? t.i1.lien.autreNavigateurTitre
+          : motif == MotifRecuperation.expire
+          ? t.i1.lien.dejaServiTitre
+          : t.i1.lien.refuseTitre;
+      final String phrase = autreNavigateur
+          ? t.i1.lien.autreNavigateurDetail
+          : motif == MotifRecuperation.expire
+          ? t.i1.lien.dejaServiDetail
+          : t.i1.lien.refuseDetail;
       return PageEtat(
         key: const ValueKey<String>('lien-deja-servi'),
         nature: NatureEtat.introuvable,
-        titre: t.i1.lien.dejaServiTitre,
-        phrase: t.i1.lien.dejaServiDetail,
+        titre: titre,
+        phrase: phrase,
         libelleAction: visiteur
             ? t.i1.lien.nouveauLien
             : t.commun.etats.actions.retourAccueil,

@@ -1219,6 +1219,12 @@
     "sessionTermineePhrase": "Votre session a pris fin\u00a0: ce compte, ou un autre, s'est connecté ailleurs, dans ce navigateur ou sur un autre appareil. Reconnectez-vous ici. Pour utiliser deux comptes en même temps, ouvrez le second dans une fenêtre de navigation privée ou sur un autre appareil.",
     "lienAilleursTitre": "Ce lien a été ouvert sur un autre appareil",
     "lienAilleursPhrase": "Un lien de connexion ne s'ouvre que dans le navigateur où vous l'avez demandé. Ouvrez-le sur cet appareil-là\u00a0: si vous avez commencé une inscription, vos réponses y sont gardées. Sinon, demandez ici un nouveau lien.",
+    "avoirCodeInvitation": "J'ai un code d'invitation",
+    "codeInvitation": "Code d'invitation",
+    "codeInvitationIndice": "XXXX-XXXX-XXXX",
+    "codeInvitationReconnu": "Code d'invitation\u00a0: {code} reconnu",
+    "erreurServeur": "Le lien n'a pas pu partir. Réessayez dans un instant\u00a0; si cela se répète, écrivez à l'académie.",
+    "invitationCreationImpossible": "Votre compte n'a pas pu être créé avec cette invitation. Le code est peut-être échu ou déjà utilisé, ou il ne correspond pas à cette adresse. Vérifiez l'adresse saisie\u00a0; sinon, demandez une nouvelle invitation à l'académie.",
     "modeConnexion": "J'ai déjà un compte",
     "modeCreation": "Créer un compte",
     "titreCreation": "Créer votre compte",
@@ -14728,7 +14734,11 @@
     "lien": {
       "dejaServiTitre": "Ce lien a déjà servi ou a expiré",
       "dejaServiDetail": "Un lien de connexion ne sert qu'une fois, et pour peu de temps. Demandez-en un nouveau : saisissez votre adresse e-mail sur la page de connexion.",
-      "nouveauLien": "Recevoir un nouveau lien"
+      "nouveauLien": "Recevoir un nouveau lien",
+      "autreNavigateurDetail": "Ce lien ne s'ouvre que dans le navigateur où vous avez saisi votre adresse. Ouvrez-le dans ce même navigateur, ou demandez-en un nouveau ici\u00a0: saisissez votre adresse e-mail sur la page de connexion.",
+      "autreNavigateurTitre": "Ouvrez ce lien dans le même navigateur",
+      "refuseTitre": "La connexion n'a pas abouti",
+      "refuseDetail": "Ce lien n'a pas pu ouvrir votre session. Demandez-en un nouveau\u00a0: saisissez votre adresse e-mail sur la page de connexion. Si cela se répète, écrivez à l'académie."
     }
   },
   "d1ter": {

@@ -13,6 +13,11 @@
 //    pour cette adresse, et une adresse sans compte. Elle ne consomme rien
 //    (INVITATION-ACCUEIL, 09/11/2026). Regle de `_shared/clients.ts` : la cle
 //    de service reverifie l'autorisation metier.
+//    Avant elle, pour `equipe` et `candidat` seulement : si l'adresse a un
+//    compte banni PAR SUPPRESSION et que le code est valide pour elle,
+//    `invitation_compte_lever_bannissement` (service_role seul) leve le
+//    bannissement et journalise (audit_logs) ; le lien de connexion part alors
+//    comme pour tout compte existant. Jamais pour `foyer`.
 // 3. Creation du compte, adresse confirmee : le code n'a ete remis qu'a cette
 //    boite (e-mail du foyer ou du candidat) ou par la direction a cette
 //    personne (enseignant, comptable), et il est lie a l'adresse. Un compte
@@ -48,6 +53,9 @@ export interface Demande {
 export interface PorteInvitation {
   debit(adresse: string, ip: string): Promise<boolean>
   autoriser(demande: Demande): Promise<boolean>
+  /// Equipe et candidat seulement : leve le bannissement par suppression du
+  /// compte de cette adresse si le code est valide pour elle (rien n'est consomme).
+  leverBannissement(demande: Demande): Promise<boolean>
   creerCompte(adresse: string): Promise<'cree' | 'existe' | 'echec'>
   consommer(demande: Demande): Promise<boolean>
 }
@@ -86,8 +94,20 @@ export function ipDe(requete: Request): string {
 /// seulement si le compte a ete cree. Un code non consomme apres une creation
 /// reussie ne sert plus a rien : l'autorisation refuse une adresse qui a deja
 /// un compte.
-export async function traiter(demande: Demande, ip: string, porte: PorteInvitation): Promise<'cree' | 'rien'> {
+export async function traiter(
+  demande: Demande,
+  ip: string,
+  porte: PorteInvitation,
+): Promise<'cree' | 'leve' | 'rien'> {
   if (!(await porte.debit(demande.adresse, ip))) return 'rien'
+  // Reinvitation d'une adresse dont le compte a ete supprime (decision de
+  // l'architecte, 14/11/2026) : une invitation d'equipe ou de candidat valide
+  // leve le bannissement par suppression, puis le parcours normal continue
+  // (lien de connexion). Jamais pour un foyer. Avant `autoriser`, qui refuse
+  // toute adresse deja titulaire d'un compte.
+  if ((demande.type === 'equipe' || demande.type === 'candidat') && (await porte.leverBannissement(demande))) {
+    return 'leve'
+  }
   if (!(await porte.autoriser(demande))) return 'rien'
   if ((await porte.creerCompte(demande.adresse)) !== 'cree') return 'rien'
   if (!(await porte.consommer(demande))) {
@@ -108,6 +128,12 @@ function porteReelle(): PorteInvitation {
         p_type: d.type, p_code: d.code, p_email: d.adresse,
       })
       return !error && data?.autorise === true
+    },
+    async leverBannissement(d) {
+      const { data, error } = await db.rpc('invitation_compte_lever_bannissement', {
+        p_type: d.type, p_code: d.code, p_email: d.adresse,
+      })
+      return !error && data === true
     },
     async creerCompte(adresse) {
       const { error } = await db.auth.admin.createUser({ email: adresse, email_confirm: true })

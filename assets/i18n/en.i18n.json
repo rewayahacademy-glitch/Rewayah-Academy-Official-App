@@ -1219,6 +1219,12 @@
     "sessionTermineePhrase": "Your session has ended: this account, or another one, signed in elsewhere, in this browser or on another device. Sign in again here. To use two accounts at the same time, open the second one in a private window or on another device.",
     "lienAilleursTitre": "This link was opened on another device",
     "lienAilleursPhrase": "A sign-in link only opens in the browser where you requested it. Open it on that device: if you started signing up, your answers are saved there. Otherwise, request a new link here.",
+    "avoirCodeInvitation": "I have an invitation code",
+    "codeInvitation": "Invitation code",
+    "codeInvitationIndice": "XXXX-XXXX-XXXX",
+    "codeInvitationReconnu": "Invitation code: {code} recognized",
+    "erreurServeur": "The link could not be sent. Try again in a moment; if it keeps happening, write to the academy.",
+    "invitationCreationImpossible": "Your account could not be created with this invitation. The code may have expired or already been used, or it may not match this address. Check the address you entered; otherwise, ask the academy for a new invitation.",
     "modeConnexion": "I already have an account",
     "modeCreation": "Create an account",
     "titreCreation": "Create your account",
@@ -14740,7 +14746,11 @@
     "lien": {
       "dejaServiTitre": "This link has already been used or has expired",
       "dejaServiDetail": "A sign-in link works only once, and only for a short time. Ask for a new one: enter your email address on the sign-in page.",
-      "nouveauLien": "Get a new link"
+      "nouveauLien": "Get a new link",
+      "autreNavigateurDetail": "This link only opens in the browser where you entered your address. Open it in that same browser, or request a new one here: enter your email address on the sign-in page.",
+      "autreNavigateurTitre": "Open this link in the same browser",
+      "refuseTitre": "Sign-in did not work",
+      "refuseDetail": "This link could not open your session. Ask for a new one: enter your email address on the sign-in page. If it keeps happening, write to the academy."
     }
   },
   "d1ter": {
