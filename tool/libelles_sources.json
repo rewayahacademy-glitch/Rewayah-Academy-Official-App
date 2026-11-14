@@ -1,4 +1,5 @@
 {
+  "push1.evenements.messageCandidat": "pilote, 14/11/2026 (MESSAGERIE-PUSH, après #477) : push et courriel à la direction à chaque message d'un candidat ; rédigé par l'agent, à faire valider par le directeur",
   "com.messages.direct.nouveau": "directeur, 14/11/2026, retour en production relayé par le pilote : « la messagerie entre candidat et administration n'est pas en temps réel et ne notifie rien » ; lot MESSAGERIE-TEMPS-REEL ; rédigé par l'agent, à faire valider par le directeur",
   "com.messages.direct.horsDirect": "directeur, 14/11/2026, retour en production relayé par le pilote : « la messagerie entre candidat et administration n'est pas en temps réel et ne notifie rien » ; lot MESSAGERIE-TEMPS-REEL ; rédigé par l'agent, à faire valider par le directeur",
   "com.messages.direct.icone": "directeur, 14/11/2026, retour en production relayé par le pilote : « la messagerie entre candidat et administration n'est pas en temps réel et ne notifie rien » ; lot MESSAGERIE-TEMPS-REEL ; rédigé par l'agent, à faire valider par le directeur",

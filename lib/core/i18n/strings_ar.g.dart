@@ -12079,6 +12079,7 @@ class _Traductions$push1$evenements$ar extends Traductions$push1$evenements$fr {
 	@override String get demandeHoraireRecue => 'طلب موعد جديد بانتظار الدراسة.';
 	@override String get creneauPersonnalise => 'طُلب موعد خاص.';
 	@override String get pieceIdentite => 'وثيقة هوية بانتظار التحقق.';
+	@override String get messageCandidat => 'كتب إليكم مرشّح: ردّوا عليه في الرسائل.';
 	@override String get signalementEleve => 'بلاغ بانتظار قراركم.';
 	@override String get suppressionCompte => 'طُلب حذف حساب.';
 	@override String get personneEnSalle => 'لا أحد في قاعة أحد الفصول: ابحثوا عن بديل.';
@@ -40008,6 +40009,7 @@ extension on TraductionsAr {
 			'push1.evenements.demandeHoraireRecue' => 'طلب موعد جديد بانتظار الدراسة.',
 			'push1.evenements.creneauPersonnalise' => 'طُلب موعد خاص.',
 			'push1.evenements.pieceIdentite' => 'وثيقة هوية بانتظار التحقق.',
+			'push1.evenements.messageCandidat' => 'كتب إليكم مرشّح: ردّوا عليه في الرسائل.',
 			'push1.evenements.signalementEleve' => 'بلاغ بانتظار قراركم.',
 			'push1.evenements.suppressionCompte' => 'طُلب حذف حساب.',
 			'push1.evenements.personneEnSalle' => 'لا أحد في قاعة أحد الفصول: ابحثوا عن بديل.',
@@ -40423,9 +40425,9 @@ extension on TraductionsAr {
 			'calendrier.pauses.typeMois' => 'توقف لمدة شهر',
 			'calendrier.pauses.typeException' => 'توقف استثنائي',
 			'calendrier.pauses.accordeePar' => ({required Object nom}) => 'منحه ⁨${nom}⁩',
-			'calendrier.pauses.motifLigne' => ({required Object motif}) => 'السبب: ⁨${motif}⁩',
 			_ => null,
 		} ?? switch (path) {
+			'calendrier.pauses.motifLigne' => ({required Object motif}) => 'السبب: ⁨${motif}⁩',
 			'calendrier.pauses.exceptionAction' => 'منح توقف استثنائي',
 			'calendrier.pauses.exceptionTitre' => 'توقف استثنائي',
 			'calendrier.pauses.exceptionPhrase' => 'لمرض مفاجئ أو انقطاع مأذون به. يبدأ اليوم دون إشعار مسبق، ويتأخر الموعد الأقصى للمرحلة بمدته، ولا يُحتسب ضمن الحد المسموح للأسرة.',

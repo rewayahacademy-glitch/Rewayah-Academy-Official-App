@@ -123,6 +123,10 @@ const MODELES: Record<string, Fabrique> = {
   entretien_tenu: (d) => avis(d, 'شكرًا على هذه المقابلة', 'شكرًا على هذه المقابلة',
     'جرت مقابلتك. تدرس الإدارة ترشحك وتكتب إليك بالخطوة التالية في التطبيق.',
     'عرض ترشحي', '/attente/entretien'),
+  // MESSAGERIE-PUSH (14/11/2026) : a la direction, quand un candidat ecrit.
+  message_candidat_recu: (d) => avis(d, 'كتب إليكم مرشّح', 'كتب إليكم مرشّح',
+    'كتب مرشّح إلى الإدارة بشأن طلب ترشحه. اقرؤوا رسالته وردّوا عليه من التطبيق.',
+    'قراءة الرسالة', '/admin/operations/communications/messages'),
   entretien_a_replanifier: (d) => avis(d, 'اختر موعدًا آخر لمقابلتك', 'اختر موعدًا آخر',
     'لم تُعقد مقابلتك. اختر موعدًا آخر في التطبيق.',
     'اختيار موعد', '/attente/entretien'),

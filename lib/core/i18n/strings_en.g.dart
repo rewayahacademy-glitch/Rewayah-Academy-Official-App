@@ -11864,6 +11864,7 @@ class _Traductions$push1$evenements$en extends Traductions$push1$evenements$fr {
 	@override String get demandeHoraireRecue => 'A new schedule request needs review.';
 	@override String get creneauPersonnalise => 'A custom schedule is requested.';
 	@override String get pieceIdentite => 'An ID document needs checking.';
+	@override String get messageCandidat => 'A candidate has written to you: reply in Messages.';
 	@override String get signalementEleve => 'A report is waiting for your decision.';
 	@override String get suppressionCompte => 'An account deletion is requested.';
 	@override String get personneEnSalle => 'No one is in a class\'s room: find a replacement.';
@@ -39278,6 +39279,7 @@ extension on TraductionsEn {
 			'push1.evenements.demandeHoraireRecue' => 'A new schedule request needs review.',
 			'push1.evenements.creneauPersonnalise' => 'A custom schedule is requested.',
 			'push1.evenements.pieceIdentite' => 'An ID document needs checking.',
+			'push1.evenements.messageCandidat' => 'A candidate has written to you: reply in Messages.',
 			'push1.evenements.signalementEleve' => 'A report is waiting for your decision.',
 			'push1.evenements.suppressionCompte' => 'An account deletion is requested.',
 			'push1.evenements.personneEnSalle' => 'No one is in a class\'s room: find a replacement.',
@@ -39566,9 +39568,9 @@ extension on TraductionsEn {
 			'journalSorties.rapport.nombre' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} exit', other: '${n} exits', ), 
 			'journalSorties.rapport.dureeTotale' => 'Total duration',
 			'journalSorties.rapport.plage' => ({required Object debut, required Object fin}) => 'From ${debut} to ${fin}',
-			'journalSorties.rapport.sortieSalle' => 'Left the room after the delay',
 			_ => null,
 		} ?? switch (path) {
+			'journalSorties.rapport.sortieSalle' => 'Left the room after the delay',
 			'journalSorties.rapport.secondes' => ({required Object n}) => '${n} s',
 			'journalSorties.rapport.minutes' => ({required Object n}) => '${n} min',
 			'journalSorties.rapport.minutesSecondes' => ({required Object m, required Object s}) => '${m} min ${s} s',

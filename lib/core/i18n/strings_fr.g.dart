@@ -24724,6 +24724,9 @@ class Traductions$push1$evenements$fr {
 	/// fr: 'Une pièce d'identité est à vérifier.'
 	String get pieceIdentite => 'Une pièce d\'identité est à vérifier.';
 
+	/// fr: 'Un candidat vous a écrit : répondez-lui dans Messages.'
+	String get messageCandidat => 'Un candidat vous a écrit : répondez-lui dans Messages.';
+
 	/// fr: 'Un signalement attend votre décision.'
 	String get signalementEleve => 'Un signalement attend votre décision.';
 
@@ -65286,6 +65289,7 @@ extension on Traductions {
 			'push1.evenements.demandeHoraireRecue' => 'Une nouvelle demande d\'horaire est à examiner.',
 			'push1.evenements.creneauPersonnalise' => 'Un horaire personnalisé est demandé.',
 			'push1.evenements.pieceIdentite' => 'Une pièce d\'identité est à vérifier.',
+			'push1.evenements.messageCandidat' => 'Un candidat vous a écrit : répondez-lui dans Messages.',
 			'push1.evenements.signalementEleve' => 'Un signalement attend votre décision.',
 			'push1.evenements.suppressionCompte' => 'Une suppression de compte est demandée.',
 			'push1.evenements.personneEnSalle' => 'Personne n\'est dans la salle d\'une classe : trouvez un remplaçant.',
@@ -65574,9 +65578,9 @@ extension on Traductions {
 			'journalSorties.rapport.nombre' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} sortie', other: '${n} sorties', ), 
 			'journalSorties.rapport.dureeTotale' => 'Durée totale',
 			'journalSorties.rapport.plage' => ({required Object debut, required Object fin}) => 'De ${debut} à ${fin}',
-			'journalSorties.rapport.sortieSalle' => 'Sortie de la salle après le délai',
 			_ => null,
 		} ?? switch (path) {
+			'journalSorties.rapport.sortieSalle' => 'Sortie de la salle après le délai',
 			'journalSorties.rapport.secondes' => ({required Object n}) => '${n} s',
 			'journalSorties.rapport.minutes' => ({required Object n}) => '${n} min',
 			'journalSorties.rapport.minutesSecondes' => ({required Object m, required Object s}) => '${m} min ${s} s',

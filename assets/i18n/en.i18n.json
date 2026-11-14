@@ -15704,6 +15704,7 @@
       "demandeHoraireRecue": "A new schedule request needs review.",
       "creneauPersonnalise": "A custom schedule is requested.",
       "pieceIdentite": "An ID document needs checking.",
+      "messageCandidat": "A candidate has written to you: reply in Messages.",
       "signalementEleve": "A report is waiting for your decision.",
       "suppressionCompte": "An account deletion is requested.",
       "personneEnSalle": "No one is in a class's room: find a replacement.",
