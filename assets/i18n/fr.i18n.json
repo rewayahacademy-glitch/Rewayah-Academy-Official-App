@@ -9152,7 +9152,7 @@
       "changer": "Changer la photo",
       "alternatif": "Votre photo publique",
       "succes": "La photo est enregistrée.",
-      "echec": "La photo n'est pas confirmée : la connexion a pu se couper pendant l'envoi. Vérifiez votre connexion, puis touchez « Utiliser cette photo » de nouveau.",
+      "echec": "La photo n'est pas confirmée : la connexion a pu se couper pendant l'envoi. Vérifiez votre connexion, puis touchez « Utiliser cette photo » de nouveau.",
       "enregistree": "Votre photo est enregistrée. Vous pouvez la remplacer à tout moment.",
       "selectionEchec": "La photo n'a pas pu être ouverte. Vérifiez l'accès aux photos de l'appareil, puis réessayez.",
       "horsLigne": "La photo pourra être envoyée quand la connexion reviendra."

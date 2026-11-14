@@ -17,7 +17,8 @@
 --
 --   2. RPC APPELEES PAR DES COMPTES CANDIDATS (403 en serie, sans effet pour
 --      l'utilisateur mais qui saturent les journaux) :
---        - `mon_horloge()` (x105) : un compte non valide (pending_kyc) recoit
+--        - `mon_horloge()` (x105) : un compte identifie (profil existant) mais
+--          non valide (pending_kyc) recoit
 --          l'heure du serveur et celle de l'academie, sans son fuseau
 --          (`moi` nul, l'ecran montre l'heure de l'appareil, comme avant) ;
 --        - `mon_lieu_a_fournir()` (x80) : un compte non valide n'a pas de ville
@@ -26,7 +27,8 @@
 --          avant `inscrire_candidat`) recoit la valeur par defaut de la colonne
 --          (`systeme`).
 --      Aucune donnee d'un autre compte n'est rendue ; une session anonyme
---      reste refusee.
+--      reste refusee, et un compte inconnu (sans profil) aussi pour l'horloge
+--      et le lieu (scenarios_fuseaux_decalage_apres.sql, point 7).
 --
 -- Sans BEGIN ni COMMIT de premier niveau. Aucun mot d'effacement. Rejouable :
 -- CREATE OR REPLACE a signature identique, les droits EXECUTE sont conserves.
@@ -170,11 +172,15 @@ DECLARE
   v_foyer uuid;
   v_choisi boolean := false;
 BEGIN
-  IF auth.uid() IS NULL THEN
+  -- Un compte inconnu (sans profil) reste refuse.
+  IF auth.uid() IS NULL OR NOT EXISTS (
+       SELECT 1 FROM public.profiles p
+        WHERE p.id = auth.uid() AND p.deleted_at IS NULL) THEN
     RAISE EXCEPTION 'horloge non autorisee' USING ERRCODE = '42501';
   END IF;
-  -- INCIDENT-CANDIDATS : un compte non valide (candidat pending_kyc) recoit
-  -- l'heure du serveur et de l'academie, rien de son profil.
+  -- INCIDENT-CANDIDATS : un compte identifie mais non valide (candidat
+  -- pending_kyc) recoit l'heure du serveur et de l'academie, rien de son
+  -- profil.
   IF NOT coalesce(public.app_account_valid(), false) THEN
     RETURN pg_catalog.jsonb_build_object(
       'maintenant', pg_catalog.now(),
@@ -222,11 +228,14 @@ DECLARE
   v_pris integer;
   v_a_un boolean;
 BEGIN
-  IF auth.uid() IS NULL THEN
+  -- Un compte inconnu (sans profil) reste refuse.
+  IF auth.uid() IS NULL OR NOT EXISTS (
+       SELECT 1 FROM public.profiles p
+        WHERE p.id = auth.uid() AND p.deleted_at IS NULL) THEN
     RAISE EXCEPTION 'lieu non autorise' USING ERRCODE = '42501';
   END IF;
-  -- INCIDENT-CANDIDATS : un compte non valide (candidat pending_kyc) n'a pas
-  -- de ville a fournir.
+  -- INCIDENT-CANDIDATS : un compte identifie mais non valide (candidat
+  -- pending_kyc) n'a pas de ville a fournir.
   IF NOT coalesce(public.app_account_valid(), false) THEN
     RETURN pg_catalog.jsonb_build_object('requis', false, 'reports_restants', 0, 'reports_max', v_max);
   END IF;
@@ -271,3 +280,26 @@ BEGIN
   RETURN v_theme;
 END;
 $function$;
+
+-- L'empreinte F86 du commentaire (md5_functiondef=...) suit la nouvelle
+-- definition, pour chaque fonction qui en porte une.
+DO $empreintes$
+DECLARE
+  f regprocedure;
+  v_com text;
+BEGIN
+  FOREACH f IN ARRAY ARRAY[
+    'public.dossiers_en_attente()'::regprocedure,
+    'public.indicateurs_admin()'::regprocedure,
+    'public.mon_horloge()'::regprocedure,
+    'public.mon_lieu_a_fournir()'::regprocedure,
+    'public.ma_preference_theme()'::regprocedure] LOOP
+    v_com := pg_catalog.obj_description(f, 'pg_proc');
+    IF v_com LIKE '%md5_functiondef=%' THEN
+      v_com := pg_catalog.regexp_replace(v_com, 'md5_functiondef=[0-9A-Za-z_]+',
+        'md5_functiondef=' || pg_catalog.md5(pg_catalog.pg_get_functiondef(f)));
+      EXECUTE pg_catalog.format('COMMENT ON FUNCTION %s IS %L', f, v_com);
+    END IF;
+  END LOOP;
+END
+$empreintes$;

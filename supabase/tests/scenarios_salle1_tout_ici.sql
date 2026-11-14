@@ -92,6 +92,19 @@ SELECT pg_temp.vrai(
       AND k.verified_by IS NULL AND k.verified_at IS NULL) = 1,
   'salle 1 a completer : la piece passe le declencheur du depot et nait en attente, sans decision');
 
+-- 1 ter. INCIDENT-CANDIDATS (migration 20261125950000) : la candidate
+-- pending_kyc, identifiee, lit l'horloge sans 403 et n'a pas de ville a
+-- fournir ; rien de son profil dans l'horloge.
+SELECT pg_temp.qui(pg_temp.id('s1'), 'teacher');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai(
+  (public.mon_horloge() ->> 'maintenant') IS NOT NULL
+  AND public.mon_horloge() -> 'moi' = 'null'::jsonb
+  AND NOT (public.mon_horloge() ? 'lieu_choisi')
+  AND (public.mon_lieu_a_fournir() ->> 'requis')::boolean = false,
+  'candidate pending_kyc : horloge sans profil et aucune ville a fournir, sans refus');
+RESET ROLE;
+
 -- 1 bis. Les accords en salle 1 : aucun changement serveur n'etait
 -- necessaire ; on le prouve. Le contrat par signer_contrat (version en
 -- vigueur), l'avis d'enregistrement et le code de conduite aux versions

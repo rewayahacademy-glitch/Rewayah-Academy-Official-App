@@ -16972,7 +16972,7 @@ class Traductions$enseignant$photo$fr {
 	String get succes => 'La photo est enregistrée.';
 
 	/// fr: 'La photo n'est pas confirmée : la connexion a pu se couper pendant l'envoi. Vérifiez votre connexion, puis touchez « Utiliser cette photo » de nouveau.'
-	String get echec => 'La photo n\'est pas confirmée : la connexion a pu se couper pendant l\'envoi. Vérifiez votre connexion, puis touchez « Utiliser cette photo » de nouveau.';
+	String get echec => 'La photo n\'est pas confirmée : la connexion a pu se couper pendant l\'envoi. Vérifiez votre connexion, puis touchez « Utiliser cette photo » de nouveau.';
 
 	/// fr: 'Votre photo est enregistrée. Vous pouvez la remplacer à tout moment.'
 	String get enregistree => 'Votre photo est enregistrée. Vous pouvez la remplacer à tout moment.';
@@ -60172,7 +60172,7 @@ extension on Traductions {
 			'enseignant.photo.changer' => 'Changer la photo',
 			'enseignant.photo.alternatif' => 'Votre photo publique',
 			'enseignant.photo.succes' => 'La photo est enregistrée.',
-			'enseignant.photo.echec' => 'La photo n\'est pas confirmée : la connexion a pu se couper pendant l\'envoi. Vérifiez votre connexion, puis touchez « Utiliser cette photo » de nouveau.',
+			'enseignant.photo.echec' => 'La photo n\'est pas confirmée : la connexion a pu se couper pendant l\'envoi. Vérifiez votre connexion, puis touchez « Utiliser cette photo » de nouveau.',
 			'enseignant.photo.enregistree' => 'Votre photo est enregistrée. Vous pouvez la remplacer à tout moment.',
 			'enseignant.photo.selectionEchec' => 'La photo n\'a pas pu être ouverte. Vérifiez l\'accès aux photos de l\'appareil, puis réessayez.',
 			'enseignant.photo.horsLigne' => 'La photo pourra être envoyée quand la connexion reviendra.',
