@@ -758,12 +758,27 @@ class _SectionSeance extends StatelessWidget {
           ),
         ],
         Ecart.vXs,
+        // REVENUS-DUREE-PAYEE : la duree PAYEE dite par le serveur ; sans
+        // elle, une phrase qui renvoie au releve de l'academie (jamais les
+        // minutes connectees presentees comme payees). Les minutes
+        // connectees dans la fenetre viennent en second.
         LigneCleValeur(
+          key: ValueKey<String>('revenus-duree-payee-${seance.seanceId}'),
           cle: r.seanceDuree,
-          valeur: _duree(seance.minutes),
-          chiffres: true,
+          valeur: seance.minutesPayees == null
+              ? r.seanceDureeNonPrecisee
+              : _duree(seance.minutesPayees!),
+          chiffres: seance.minutesPayees != null,
           valeurEnFin: true,
         ),
+        if (seance.minutesConnectees != null)
+          LigneCleValeur(
+            key: ValueKey<String>('revenus-connecte-${seance.seanceId}'),
+            cle: r.seanceConnecte,
+            valeur: _duree(seance.minutesConnectees!),
+            chiffres: true,
+            valeurEnFin: true,
+          ),
         for (final RevenusEleveSeance e in seance.eleves)
           // Une part seulement quand la seance a un montant : un absent, ou
           // une seance sans montant, n'affiche aucun montant.

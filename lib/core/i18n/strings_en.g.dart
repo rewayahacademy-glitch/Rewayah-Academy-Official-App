@@ -8479,7 +8479,9 @@ class _Traductions$enseignant$revenus$en extends Traductions$enseignant$revenus$
 	@override String get tauxMoyen => 'Average hourly rate';
 	@override String get total => 'Total';
 	@override String seanceDate({required Object date, required Object heure}) => '${date} at ${heure}';
-	@override String get seanceDuree => 'Retained length';
+	@override String get seanceDuree => 'Paid length';
+	@override String get seanceDureeNonPrecisee => 'See the academy statement';
+	@override String get seanceConnecte => 'Connected during the pay window';
 	@override String get present => 'Present';
 	@override String get absent => 'Absent';
 	@override String get presentPartiel => 'Partly present';
@@ -32841,7 +32843,9 @@ extension on TraductionsEn {
 			'enseignant.revenus.tauxMoyen' => 'Average hourly rate',
 			'enseignant.revenus.total' => 'Total',
 			'enseignant.revenus.seanceDate' => ({required Object date, required Object heure}) => '${date} at ${heure}',
-			'enseignant.revenus.seanceDuree' => 'Retained length',
+			'enseignant.revenus.seanceDuree' => 'Paid length',
+			'enseignant.revenus.seanceDureeNonPrecisee' => 'See the academy statement',
+			'enseignant.revenus.seanceConnecte' => 'Connected during the pay window',
 			'enseignant.revenus.present' => 'Present',
 			'enseignant.revenus.absent' => 'Absent',
 			'enseignant.revenus.presentPartiel' => 'Partly present',
@@ -32915,10 +32919,10 @@ extension on TraductionsEn {
 			'controleur.historique.cleDate' => 'Date',
 			'controleur.historique.cleDuree' => 'Time observed',
 			'controleur.historique.cleElevesPresents' => 'Present',
-			'controleur.historique.cleReponse' => 'Reply',
-			'controleur.historique.sansComplement' => 'No addendum.',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.historique.cleReponse' => 'Reply',
+			'controleur.historique.sansComplement' => 'No addendum.',
 			'controleur.historique.faitsIndisponibles' => 'The automatic log of this visit (times, students present, reconnections) has not been received yet: the session has just ended or the connection was cut. It will appear here as soon as it is received. The rest of the report remains reliable.',
 			'controleur.historique.motif' => ({required Object motif}) => 'Reason: ${motif}',
 			'controleur.historique.ajouterComplement' => 'Add an addendum',
@@ -33429,10 +33433,10 @@ extension on TraductionsEn {
 			'tc.observation.entree.retourClasse' => 'Back to the class',
 			'tc.observation.explication.titre' => 'A glimpse of their learning',
 			'tc.observation.explication.regleUne' => ({required Object n, required Object duree}) => '${n} visit of ${duree}',
-			'tc.observation.explication.regle' => ({required num n, required Object duree}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} visit of ${duree}', other: '${n} visits of ${duree}', ), 
-			'tc.observation.explication.regleDetail' => 'Per session and per parent, even if several of your children are in the class.',
 			_ => null,
 		} ?? switch (path) {
+			'tc.observation.explication.regle' => ({required num n, required Object duree}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} visit of ${duree}', other: '${n} visits of ${duree}', ), 
+			'tc.observation.explication.regleDetail' => 'Per session and per parent, even if several of your children are in the class.',
 			'tc.observation.explication.ecoute' => 'Listen to the teacher and the students',
 			'tc.observation.explication.ecouteDetail' => 'You hear the teacher and the students who speak, including your child.',
 			'tc.observation.explication.sansMedia' => 'No microphone or camera',
@@ -33943,10 +33947,10 @@ extension on TraductionsEn {
 			'adulte.reprise.deposerConsequence' => 'The household account holder will be informed and can refuse it. The administration will then review the request and decide.',
 			'adulte.reprise.horsLigne' => 'Nothing is sent. You can submit the request yourself when the connection is back.',
 			'adulte.reprise.depotEchecTitre' => 'The request was not confirmed.',
-			'adulte.reprise.echecPhrase' => 'Check before trying again.',
-			'adulte.reprise.motif' => 'Reason',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.reprise.echecPhrase' => 'Check before trying again.',
+			'adulte.reprise.motif' => 'Reason',
 			'adulte.reprise.motifDeces' => 'Reported death of the account holder',
 			'adulte.reprise.deposeeLe' => 'Submitted on',
 			'adulte.reprise.etat' => 'Status',
@@ -34457,10 +34461,10 @@ extension on TraductionsEn {
 			'com.socle.composants.composer.annonce' => ({required Object auteur, required Object texte}) => 'New message from ${auteur}: ${texte}',
 			'com.socle.composants.composer.brouillon' => _root.com.socle.lexique.brouillon,
 			'com.socle.composants.composer.brouillonRestaure' => 'Draft restored',
-			'com.socle.composants.composer.enregistrerVocal' => _root.com.vocal.composer.enregistrer,
-			'com.socle.composants.composer.aucunMessageTitre' => 'No message yet',
 			_ => null,
 		} ?? switch (path) {
+			'com.socle.composants.composer.enregistrerVocal' => _root.com.vocal.composer.enregistrer,
+			'com.socle.composants.composer.aucunMessageTitre' => 'No message yet',
 			'com.socle.composants.composer.aucunMessage' => 'Write the first message of this conversation: it will appear here.',
 			'com.socle.composants.etats.chargement' => 'Loading',
 			'com.socle.composants.etats.videTitre' => 'Nothing here yet',
@@ -34971,10 +34975,10 @@ extension on TraductionsEn {
 			'com.studio.enregistrer.retirer' => 'Remove',
 			'com.studio.enregistrer.semantiqueEnregistrer' => ({required Object titre}) => 'Save ${titre}',
 			'com.studio.enregistrer.semantiqueRetirer' => ({required Object titre}) => 'Remove ${titre} from saved items',
-			'com.studio.enregistrer.ajoute' => ({required Object titre}) => 'Added to saved items: ${titre}.',
-			'com.studio.enregistrer.retire' => ({required Object titre}) => 'Removed from saved items: ${titre}.',
 			_ => null,
 		} ?? switch (path) {
+			'com.studio.enregistrer.ajoute' => ({required Object titre}) => 'Added to saved items: ${titre}.',
+			'com.studio.enregistrer.retire' => ({required Object titre}) => 'Removed from saved items: ${titre}.',
 			'com.studio.enregistrer.nonConfirme' => 'Saving has not been confirmed yet. Try again in a moment.',
 			'com.studio.enregistres.detail' => 'The channels and items you keep at hand. Each opens in its original place.',
 			'com.studio.enregistres.videTitre' => 'No saved item',
@@ -35485,10 +35489,10 @@ extension on TraductionsEn {
 			'comptable.aujourdhui.encaissementsRecents' => 'Recent collections',
 			'comptable.aujourdhui.voirTout' => 'See all',
 			'comptable.paiements.confirmation.titreUn' => 'Confirm the payment',
-			'comptable.paiements.confirmation.titreLot' => 'Confirm the batch',
-			'comptable.paiements.confirmation.titreValidation' => 'Request a validation',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.paiements.confirmation.titreLot' => 'Confirm the batch',
+			'comptable.paiements.confirmation.titreValidation' => 'Request a validation',
 			'comptable.paiements.confirmation.payerMaintenant' => 'Pay now',
 			'comptable.paiements.confirmation.controleEchoueTitre' => 'Check interrupted',
 			'comptable.paiements.confirmation.controleEchoue' => 'The check of the selection did not go through. Nothing was sent. Run the check again.',
@@ -35999,10 +36003,10 @@ extension on TraductionsEn {
 			'comptable.contractuels.approuver' => 'Approve',
 			'comptable.contractuels.ouvrirLecteur' => ({required Object objet}) => 'Open the obligation ${objet}',
 			'comptable.contractuels.creationBloquee' => ({required Object raison}) => 'New obligation unavailable: ${raison}.',
-			'comptable.contractuels.videObligations' => 'No obligation in progress',
-			'comptable.contractuels.videObligationsDetail' => 'Obligations created appear here, with their due date and status.',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.contractuels.videObligations' => 'No obligation in progress',
+			'comptable.contractuels.videObligationsDetail' => 'Obligations created appear here, with their due date and status.',
 			'comptable.contractuels.videAApprouver' => 'Nothing to approve',
 			'comptable.contractuels.videAApprouverDetail' => 'Obligations awaiting approval appear here.',
 			'comptable.contractuels.videAPayer' => 'Nothing to pay',
@@ -36513,10 +36517,10 @@ extension on TraductionsEn {
 			'avis.admin.outil' => 'Family reviews',
 			'avis.admin.outilDetail' => 'Create a collection link, read the reviews, publish or refuse them',
 			'avis.admin.sections.libelle' => 'Review sections',
-			'avis.admin.sections.avis' => 'Reviews',
-			'avis.admin.sections.liens' => 'Links',
 			_ => null,
 		} ?? switch (path) {
+			'avis.admin.sections.avis' => 'Reviews',
+			'avis.admin.sections.liens' => 'Links',
 			'avis.admin.statut.tous' => 'All',
 			'avis.admin.statut.enAttente' => 'Pending',
 			'avis.admin.statut.publie' => 'Published',
@@ -37027,10 +37031,10 @@ extension on TraductionsEn {
 			'candidatsFlux.importFormulaires.doublons.total' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} case to look at', other: '${n} cases to look at', ), 
 			'candidatsFlux.importFormulaires.doublons.tranches' => ({required Object choisis, required Object total}) => 'Choices made by you: ${choisis} of ${total}. For the others, the most recent row is kept.',
 			'candidatsFlux.importFormulaires.doublons.nature.courriel' => 'Same email',
-			'candidatsFlux.importFormulaires.doublons.nature.telephone' => 'Same phone',
-			'candidatsFlux.importFormulaires.doublons.nature.courrielEtTelephone' => 'Same email and same phone',
 			_ => null,
 		} ?? switch (path) {
+			'candidatsFlux.importFormulaires.doublons.nature.telephone' => 'Same phone',
+			'candidatsFlux.importFormulaires.doublons.nature.courrielEtTelephone' => 'Same email and same phone',
 			'candidatsFlux.importFormulaires.doublons.lignes' => ({required Object liste}) => 'Rows ${liste}',
 			'candidatsFlux.importFormulaires.doublons.dansLaBase' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'and ${n} row already saved', other: 'and ${n} rows already saved', ), 
 			'candidatsFlux.importFormulaires.doublons.choisirLigne' => 'Choose the row to keep, or say these are different people.',
@@ -37541,10 +37545,10 @@ extension on TraductionsEn {
 			'journalSorties.texte.adulte.retrait' => 'You can withdraw your agreement at any time, right here. As soon as you withdraw it, nothing more is recorded.',
 			'journalSorties.texte.adulte.sansAccord' => 'Without your agreement, nothing is recorded and nothing changes for the class. If you stay out of the app too long, you leave the room, with or without agreement: that keeps nothing.',
 			'journalSorties.texte.adulte.caseAccord' => 'I agree that my exits from the app during sessions be recorded.',
-			'journalSorties.accord.titre' => 'Exits from the app',
-			'journalSorties.accord.ligne' => 'Exits from the app during class',
 			_ => null,
 		} ?? switch (path) {
+			'journalSorties.accord.titre' => 'Exits from the app',
+			'journalSorties.accord.ligne' => 'Exits from the app during class',
 			'journalSorties.accord.ligneDetail' => 'Your agreement, for each child',
 			'journalSorties.accord.ligneDetailAdulte' => 'Your agreement',
 			'journalSorties.accord.intro' => 'Read this text, then choose for each child. Nothing is recorded without your agreement.',
