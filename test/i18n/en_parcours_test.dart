@@ -45,6 +45,12 @@ void main() {
     }
   });
 
+  test('l anglais est complet : chaque cle francaise existe en anglais', () {
+    for (final String cle in fr.keys) {
+      expect(en.containsKey(cle), isTrue, reason: cle);
+    }
+  });
+
   test('un pluriel anglais garde ses deux formes, comme le francais', () {
     for (final String cle in en.keys.where((String k) => k.endsWith('.one'))) {
       final String autre = '${cle.substring(0, cle.length - 4)}.other';
@@ -68,17 +74,12 @@ void main() {
     }
   });
 
-  test(
-    'l anglais est charge a la demande, le reste retombe sur le francais',
-    () async {
-      await LocaleSettings.setLocale(AppLocale.en);
-      addTearDown(() => LocaleSettings.setLocale(AppLocale.fr));
-      expect(t.connexion.titre, 'Sign in');
-      expect(t.commun.langue.anglais, 'English');
-      // Une cle absente de l'anglais (textes juridiques, volontairement
-      // laisses en francais) rend le francais, pas la cle.
-      expect(t.juridique.conditions.titre, 'Conditions d\'utilisation et de vente');
-      expect(t.parcours.titre(dePrenom: 'Amina'), "Amina's journey");
-    },
-  );
+  test('l anglais est charge a la demande', () async {
+    await LocaleSettings.setLocale(AppLocale.en);
+    addTearDown(() => LocaleSettings.setLocale(AppLocale.fr));
+    expect(t.connexion.titre, 'Sign in');
+    expect(t.commun.langue.anglais, 'English');
+    expect(t.juridique.conditions.titre, 'Terms of use and sale');
+    expect(t.parcours.titre(dePrenom: 'Amina'), "Amina's journey");
+  });
 }

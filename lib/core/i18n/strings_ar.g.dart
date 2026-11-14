@@ -1860,6 +1860,7 @@ class _Traductions$juridique$ar extends Traductions$juridique$fr {
 	// Translations
 	@override String get titre => 'المعلومات القانونية';
 	@override String get intro => 'النصوص التي تنظّم الخدمة. يمكن قراءتها دون تسجيل الدخول.';
+	@override String get traduction => 'في حال وجود اختلاف، تُعتمد النسخة الفرنسية.';
 	@override String version({required Object version, required Object date}) => 'الإصدار ⁨${version}⁩، نص ⁨${date}⁩';
 	@override String contact({required Object contact}) => 'لأي سؤال، اكتبوا إلى ⁨${contact}⁩.';
 	@override String get lire => 'قراءة';
@@ -10584,6 +10585,7 @@ class _Traductions$recrutement$signature$ar extends Traductions$recrutement$sign
 	@override String get nomCompteVide => 'ليس لحسابك اسم بعد: التوقيع غير ممكن. أخبر الإدارة.';
 	@override String get nomCompteLecture => 'لا يظهر اسم حسابك: التوقيع ينتظر. أعد المحاولة بعد لحظات.';
 	@override String get titre => 'العقد';
+	@override String get traductionTitre => 'ترجمة للاطلاع';
 	@override String version({required Object version}) => 'الإصدار ⁨${version}⁩';
 	@override String empreinte({required Object empreinte}) => 'بصمة النص: ⁨${empreinte}⁩';
 	@override String get texteAltere => 'النص المستلم لا يطابق بصمته: لا يُعرض التوقيع. أعد المحاولة لاحقًا أو أبلغ الإدارة.';
@@ -37302,14 +37304,15 @@ extension on TraductionsAr {
 			'recrutement.signature.nomCompteVide' => 'ليس لحسابك اسم بعد: التوقيع غير ممكن. أخبر الإدارة.',
 			'recrutement.signature.nomCompteLecture' => 'لا يظهر اسم حسابك: التوقيع ينتظر. أعد المحاولة بعد لحظات.',
 			'recrutement.signature.titre' => 'العقد',
+			'recrutement.signature.traductionTitre' => 'ترجمة للاطلاع',
 			'recrutement.signature.version' => ({required Object version}) => 'الإصدار ⁨${version}⁩',
 			'recrutement.signature.empreinte' => ({required Object empreinte}) => 'بصمة النص: ⁨${empreinte}⁩',
 			'recrutement.signature.texteAltere' => 'النص المستلم لا يطابق بصمته: لا يُعرض التوقيع. أعد المحاولة لاحقًا أو أبلغ الإدارة.',
 			'recrutement.signature.nomVide' => 'أدخل اسمك الكامل للتوقيع.',
 			'recrutement.signature.nomTropLong' => 'هذا الاسم طويل جدًا: اختصره.',
-			'recrutement.signature.accuse' => 'أؤكد أنني قرأت هذا العقد.',
 			_ => null,
 		} ?? switch (path) {
+			'recrutement.signature.accuse' => 'أؤكد أنني قرأت هذا العقد.',
 			'recrutement.signature.signer' => 'توقيع العقد',
 			'recrutement.signature.dejaSigne' => ({required Object date, required Object version}) => 'وُقّع في ⁨${date}⁩، الإصدار ⁨${version}⁩.',
 			'recrutement.signature.signePar' => ({required Object nom}) => 'وقّعه ⁨${nom}⁩',
@@ -37821,9 +37824,9 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.debutPossible.options.immediat.libelle' => 'من الآن',
 			'recrutement.parcours.q.debutPossible.options.immediat.description' => 'تستطيع البدء فور إسناد فصل إليك.',
 			'recrutement.parcours.q.debutPossible.options.immediat.exemple' => 'لا التزام يشغلك هذا الشهر.',
-			'recrutement.parcours.q.debutPossible.options.mois_prochain.libelle' => 'الشهر القادم',
 			_ => null,
 		} ?? switch (path) {
+			'recrutement.parcours.q.debutPossible.options.mois_prochain.libelle' => 'الشهر القادم',
 			'recrutement.parcours.q.debutPossible.options.mois_prochain.description' => 'ستكون متفرغًا ابتداءً من الشهر القادم.',
 			'recrutement.parcours.q.debutPossible.options.mois_prochain.exemple' => 'تنهي عملًا آخر في نهاية هذا الشهر.',
 			'recrutement.parcours.q.debutPossible.options.sous_3_mois.libelle' => 'خلال أقل من ثلاثة أشهر',
@@ -38154,6 +38157,7 @@ extension on TraductionsAr {
 			'argent.soldes.paiements' => 'مدفوعات الشهر',
 			'juridique.titre' => 'المعلومات القانونية',
 			'juridique.intro' => 'النصوص التي تنظّم الخدمة. يمكن قراءتها دون تسجيل الدخول.',
+			'juridique.traduction' => 'في حال وجود اختلاف، تُعتمد النسخة الفرنسية.',
 			'juridique.version' => ({required Object version, required Object date}) => 'الإصدار ⁨${version}⁩، نص ⁨${date}⁩',
 			'juridique.contact' => ({required Object contact}) => 'لأي سؤال، اكتبوا إلى ⁨${contact}⁩.',
 			'juridique.lire' => 'قراءة',
@@ -38334,10 +38338,10 @@ extension on TraductionsAr {
 			'juridique.enfants.s5.blocs.0' => 'إذا أقلقكم أمر فاكتبوا لنا. قولوا ما رأيتم ومتى وفي أي فصل.',
 			'juridique.enfants.s5.blocs.1' => 'في حال خطر داهم، اتصلوا أولًا بخدمات الطوارئ في بلدكم.',
 			'avis.form.titre' => 'شاركنا رأيك',
-			'avis.form.sousTitre' => 'بضعة أسطر عن تجربتك في Rewayah Academy. دقيقتان تكفيان.',
-			'avis.form.nom.libelle' => 'الاسم الظاهر',
 			_ => null,
 		} ?? switch (path) {
+			'avis.form.sousTitre' => 'بضعة أسطر عن تجربتك في Rewayah Academy. دقيقتان تكفيان.',
+			'avis.form.nom.libelle' => 'الاسم الظاهر',
 			'avis.form.nom.aide' => 'يكفي اسمك الأول والحرف الأول من اسم عائلتك.',
 			'avis.form.nom.erreur' => 'اكتب اسمًا من حرفين إلى 60 حرفًا.',
 			'avis.form.qualite.libelle' => 'أنت',
@@ -38848,10 +38852,10 @@ extension on TraductionsAr {
 			'a3bis.regles.avertissementDetail' => 'يُنبَّه المعلم إلى أنه قد يفقد الحصة. ويمكن للمعلمين المتاحين التقدّم لاستبداله.',
 			'a3bis.regles.seanceTardive' => 'حصة أُنشئت متأخرة',
 			'a3bis.regles.seanceTardiveDetail' => 'الحصة التي أُنشئت قبل بدايتها بأقل من هذه المدة لا تُسحب من المعلم تلقائيًا أبدًا. ومع ذلك يُرسَل تنبيه الإدارة.',
-			'a3bis.regles.bornesAlerte' => ({required Object min, required Object max}) => 'بين ⁨${min}⁩ و⁨${max}⁩ بعد البداية.',
-			'a3bis.regles.bornesTardive' => ({required Object min, required Object max}) => 'بين ⁨${min}⁩ و⁨${max}⁩ قبل البداية.',
 			_ => null,
 		} ?? switch (path) {
+			'a3bis.regles.bornesAlerte' => ({required Object min, required Object max}) => 'بين ⁨${min}⁩ و⁨${max}⁩ بعد البداية.',
+			'a3bis.regles.bornesTardive' => ({required Object min, required Object max}) => 'بين ⁨${min}⁩ و⁨${max}⁩ قبل البداية.',
 			'payUx.repriseTitre' => 'هل غادرت النموذج دون أن تدفع؟',
 			'payUx.reprisePhrase' => 'تابع الدفع: يُفتح نموذج جديد. إن كان الدفع قد تمّ من قبل، فلا يُدفع شيء مرتين؛ حدّث الصفحة لترى حالته.',
 			'payUx.reprendre' => 'متابعة الدفع',
@@ -39362,10 +39366,10 @@ extension on TraductionsAr {
 			'suiviAttente.tu.pretEnCours' => 'تحدد الأكاديمية موعد أول حصة لك. تُخبرك حالما يُعرف الموعد.',
 			'suiviAttente.tu.pretAVenir' => 'يُعلن موعد أول حصة بعد تعيين المعلم.',
 			'suiviAttente.tu.premierCoursPasse' => ({required Object quand}) => 'كانت أول حصة لك في ⁨${quand}⁩.',
-			'suiviAttente.tu.premierCoursPetit' => 'أول حصة لك قريبة. يخبرك ولي أمرك بموعدها.',
-			'suiviAttente.tu.premierCoursPassePetit' => 'انتهت أول حصة لك.',
 			_ => null,
 		} ?? switch (path) {
+			'suiviAttente.tu.premierCoursPetit' => 'أول حصة لك قريبة. يخبرك ولي أمرك بموعدها.',
+			'suiviAttente.tu.premierCoursPassePetit' => 'انتهت أول حصة لك.',
 			'suiviAttente.tu.depasse' => 'يستغرق تكوين فصلك وقتًا أطول من المتوقع.',
 			'suiviAttente.tu.changement' => ({required Object date}) => 'تغيّر موعد الفصل في ⁨${date}⁩. وصل ولي أمرك إشعار بذلك.',
 			'suiviAttente.tu.titreRefusee' => 'لم يُقبل طلبك',

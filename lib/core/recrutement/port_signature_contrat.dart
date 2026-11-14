@@ -44,6 +44,33 @@ class ContratCourant {
   final String sha256;
 }
 
+/// La traduction de courtoisie d'un contrat (LANGUES, directeur, 14/11/2026) :
+/// le meme contrat, meme version, dans une autre langue. Elle se lit sous le
+/// texte francais ; elle ne se signe jamais, et l'empreinte de la signature
+/// reste celle du francais ([ContratCourant.sha256]).
+@immutable
+class TraductionContrat {
+  /// Cree la traduction.
+  const TraductionContrat({
+    required this.locale,
+    required this.version,
+    required this.texte,
+    required this.sha256,
+  });
+
+  /// La langue du texte (`ar` ou `en`).
+  final String locale;
+
+  /// La version du contrat que ce texte traduit.
+  final String version;
+
+  /// Le texte, servi tel quel.
+  final String texte;
+
+  /// L'empreinte annoncee du texte (controle d'affichage seulement).
+  final String sha256;
+}
+
 /// Une signature enregistree.
 @immutable
 class Signature {
@@ -155,6 +182,20 @@ abstract interface class PortSignatureContrat {
   Future<String> copieSigneeUrl(SorteContrat kind);
 }
 
+/// La lecture de la traduction de courtoisie d'un contrat. Port a part : le
+/// port de signature ne change pas, et un adaptateur sans traduction (tests,
+/// demonstration) n'implemente pas celui-ci.
+abstract interface class PortTraductionContrat {
+  /// La traduction en vigueur de [kind] dans [locale], pour la [version]
+  /// donnee ; `null` si le serveur n'en a pas. Ne leve jamais : une traduction
+  /// est facultative, elle ne doit rien empecher.
+  Future<TraductionContrat?> traduction(
+    SorteContrat kind,
+    String version,
+    String locale,
+  );
+}
+
 /// L'identifiant de la dependance serveur, pour la trace et les tests.
 const String dependanceSignatureContrat = 'RECRUT-SIGNATURE';
 
@@ -166,7 +207,8 @@ final Provider<PortSignatureContrat?> portSignatureContratProvider =
 ///
 /// La migration F70 ne stocke que le texte, son empreinte et la ligne de
 /// signature; aucun fichier PDF signe ni bucket prive n'y est defini.
-final class SignatureContratSupabase implements PortSignatureContrat {
+final class SignatureContratSupabase
+    implements PortSignatureContrat, PortTraductionContrat {
   /// Cree l'adaptateur.
   const SignatureContratSupabase(this._client);
 
@@ -197,6 +239,37 @@ final class SignatureContratSupabase implements PortSignatureContrat {
     } on Object catch (error) {
       if (_estHorsLigne(error)) throw const HorsLigneSignature();
       rethrow;
+    }
+  }
+
+  @override
+  Future<TraductionContrat?> traduction(
+    SorteContrat kind,
+    String version,
+    String locale,
+  ) async {
+    try {
+      _exigerContratEnseignant(kind);
+      // Meme contrat, meme version, autre langue : la ligne en vigueur
+      // (migration 20261125400000). Jamais utilisee pour signer : la signature
+      // lit et fait signer le francais.
+      final Map<String, dynamic>? row = await _client
+          .from('contract_texts')
+          .select('version, body, sha256')
+          .eq('contract_kind', kind.valeurSql)
+          .eq('version', version)
+          .eq('locale', locale)
+          .eq('is_current', true)
+          .maybeSingle();
+      if (row == null) return null;
+      return TraductionContrat(
+        locale: locale,
+        version: _string(row, 'version'),
+        texte: _string(row, 'body'),
+        sha256: _string(row, 'sha256'),
+      );
+    } on Object {
+      return null;
     }
   }
 
@@ -366,6 +439,34 @@ final FutureProvider<Signature?> maSignatureEnseignantProvider =
       (Ref ref) => _port(ref).maSignature(SorteContrat.contratEnseignant),
       retry: (int _, Object _) => null,
     );
+
+/// Le port de traduction : celui de signature s'il sait lire des traductions.
+final Provider<PortTraductionContrat?>
+portTraductionContratProvider = Provider<PortTraductionContrat?>((Ref ref) {
+  final PortSignatureContrat? port = ref.watch(portSignatureContratProvider);
+  return port is PortTraductionContrat ? port as PortTraductionContrat : null;
+});
+
+/// La langue et la version a traduire.
+typedef CleTraductionContrat = ({String locale, String version});
+
+/// La traduction de courtoisie du contrat de l'enseignant, `null` sans port,
+/// sans ligne ou en cas d'erreur : elle est facultative.
+final traductionContratProvider = FutureProvider.autoDispose
+    .family<TraductionContrat?, CleTraductionContrat>((
+      Ref ref,
+      CleTraductionContrat cle,
+    ) async {
+      final PortTraductionContrat? port = ref.watch(
+        portTraductionContratProvider,
+      );
+      if (port == null) return null;
+      return port.traduction(
+        SorteContrat.contratEnseignant,
+        cle.version,
+        cle.locale,
+      );
+    });
 
 /// Le nom complet comme le serveur le compose (`concat_ws(' ', btrim(prenom),
 /// btrim(nom))`, migration 20261108400000) : vide si les deux manquent.

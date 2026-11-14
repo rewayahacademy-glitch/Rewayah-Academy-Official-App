@@ -26,6 +26,7 @@ import '../../core/widgets/page_shell.dart';
 import '../connexion/recuperation_page.dart'
     show IssueEnvoiLien, issueEchecEnvoi;
 import '../consentements/texte_observation.dart';
+import '../juridique/mention_traduction.dart';
 import '../recrutement/signature_contrat_page.dart';
 import 'politique_controle.dart';
 
@@ -324,6 +325,7 @@ class _PageASignerState extends ConsumerState<_PageASigner> {
           // PLAN-TROIS-SALLES §2 : l'action est en fin de texte ; une seule
           // ligne le dit en haut.
           const LireJusquEnBas(),
+          const MentionTraduction(),
           Ecart.vSm,
           if (widget.introduction case final String intro) ...<Widget>[
             Text(intro, style: textes.bodyMedium),

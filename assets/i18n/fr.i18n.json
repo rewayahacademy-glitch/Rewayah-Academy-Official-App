@@ -2660,6 +2660,7 @@
     },
     "signature": {
       "titre": "Contrat",
+      "traductionTitre": "Traduction de courtoisie",
       "version": "Version {version}",
       "empreinte": "Empreinte du texte : {empreinte}",
       "texteAltere": "Le texte reçu ne correspond pas à son empreinte : la signature n'est pas proposée. Réessayez plus tard ou prévenez la direction.",
@@ -13856,6 +13857,7 @@
   "juridique": {
     "titre": "Informations légales",
     "intro": "Les textes qui encadrent le service. Ils se lisent sans compte.",
+    "traduction": "En cas de divergence, la version française fait foi.",
     "version": "Version {version}, texte du {date}",
     "contact": "Pour toute question, écrivez à {contact}.",
     "lire": "Lire",

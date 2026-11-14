@@ -52,6 +52,7 @@ class TraductionsEn extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$inscription$en inscription = _Traductions$inscription$en._(_root);
 	@override late final _Traductions$protectionEnfants$en protectionEnfants = _Traductions$protectionEnfants$en._(_root);
 	@override late final _Traductions$codeConduite$en codeConduite = _Traductions$codeConduite$en._(_root);
+	@override late final _Traductions$contrat$en contrat = _Traductions$contrat$en._(_root);
 	@override late final _Traductions$accessibilite$en accessibilite = _Traductions$accessibilite$en._(_root);
 	@override late final _Traductions$accuse$en accuse = _Traductions$accuse$en._(_root);
 	@override late final _Traductions$consentement$en consentement = _Traductions$consentement$en._(_root);
@@ -596,6 +597,31 @@ class _Traductions$codeConduite$en extends Traductions$codeConduite$fr {
 	@override String get erreur => 'Your agreement was not saved. Try again in a moment.';
 	@override String get erreurLecture => 'We could not load your agreements. Try again.';
 	@override String get aAccepter => 'To accept';
+}
+
+// Path: contrat
+class _Traductions$contrat$en extends Traductions$contrat$fr {
+	_Traductions$contrat$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'What you are signing';
+	@override String get intro => 'Two points matter more than the others. They are written here plainly rather than in the middle of a long text.';
+	@override String get pointEnregistrement => 'A class may be recorded in audio. In that case, it is kept for thirty days, then erased. Each listening is entered in the log, with the name of the person listening.';
+	@override String get pointControle => 'A quality reviewer may attend a class without being seen. The room reminds of this permanently, whether the visit takes place or not.';
+	@override String get pointCoordonnees => 'You shall never see a family\'s contact details: neither full name, nor email, nor phone.';
+	@override String get lireTexte => 'Read the full text';
+	@override String get accepter => 'I have read and I accept';
+	@override String get resignature => 'The contract has been updated: the class review policy is now attached to it. Sign this new version to continue.';
+	@override String accepteLe({required Object date}) => 'Accepted on ${date}';
+	@override String get erreur => 'The signature did not go through. Try again in a moment.';
+	@override String get horsLigne => 'Your agreement will be recorded as soon as the network returns, by pressing again.';
+	@override String get caseRequise => 'Tick the box to continue.';
+	@override late final _Traductions$contrat$a3$en a3 = _Traductions$contrat$a3$en._(_root);
+	@override late final _Traductions$contrat$e1$en e1 = _Traductions$contrat$e1$en._(_root);
+	@override late final _Traductions$contrat$clauseControle$en clauseControle = _Traductions$contrat$clauseControle$en._(_root);
+	@override late final _Traductions$contrat$politique$en politique = _Traductions$contrat$politique$en._(_root);
 }
 
 // Path: accessibilite
@@ -1907,11 +1933,20 @@ class _Traductions$juridique$en extends Traductions$juridique$fr {
 	// Translations
 	@override String get titre => 'Legal information';
 	@override String get intro => 'The texts that govern the service. They can be read without an account.';
+	@override String get traduction => 'This translation is provided for convenience. In case of discrepancy, the French version prevails.';
 	@override String version({required Object version, required Object date}) => 'Version ${version}, text of ${date}';
 	@override String contact({required Object contact}) => 'For any question, write to ${contact}.';
 	@override String get lire => 'Read';
 	@override late final _Traductions$juridique$coord$en coord = _Traductions$juridique$coord$en._(_root);
 	@override String aCompleter({required Object quoi}) => '[to be completed by the management: ${quoi}]';
+	@override late final _Traductions$juridique$quoi$en quoi = _Traductions$juridique$quoi$en._(_root);
+	@override late final _Traductions$juridique$valeurs$en valeurs = _Traductions$juridique$valeurs$en._(_root);
+	@override late final _Traductions$juridique$mentions$en mentions = _Traductions$juridique$mentions$en._(_root);
+	@override late final _Traductions$juridique$conditions$en conditions = _Traductions$juridique$conditions$en._(_root);
+	@override late final _Traductions$juridique$annulation$en annulation = _Traductions$juridique$annulation$en._(_root);
+	@override late final _Traductions$juridique$confidentialite$en confidentialite = _Traductions$juridique$confidentialite$en._(_root);
+	@override late final _Traductions$juridique$cookies$en cookies = _Traductions$juridique$cookies$en._(_root);
+	@override late final _Traductions$juridique$enfants$en enfants = _Traductions$juridique$enfants$en._(_root);
 }
 
 // Path: avis
@@ -3548,6 +3583,74 @@ class _Traductions$inscription$nomLatin$en extends Traductions$inscription$nomLa
 	@override String get erreur => 'Write your name using Latin alphabet letters (a, b, c) to continue.';
 }
 
+// Path: contrat.a3
+class _Traductions$contrat$a3$en extends Traductions$contrat$a3$fr {
+	_Traductions$contrat$a3$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Classes may be recorded (sound only)';
+	@override String get quoiTitre => 'What we do.';
+	@override String get quoi => 'A class may be recorded in audio. The image is not recorded. A person from the Academy in charge of review may also follow a class live: they see and hear the class, without being seen or heard. They record nothing. The room reminds of this permanently.';
+	@override String get pourquoiTitre => 'Why.';
+	@override String get pourquoi => 'To protect children and Teachers. If someone reports a problem, we can check what happened.';
+	@override String get quiTitre => 'Who may listen to the recording.';
+	@override String get qui => 'Only the persons of the Academy in charge of quality and protection, and only for a specific reason, for example a report. Each listening is entered in a log. You may ask whether a recording has been listened to, and why.';
+	@override String get dureeTitre => 'How long.';
+	@override String duree({required Object duree}) => '${duree} days, then erased. If there is a report, the recording is kept until the end of the review.';
+	@override String get desaccordTitre => 'If you do not agree.';
+	@override String get desaccord => 'You may object: Account, My agreements, I object to recording. We shall reply within one month. We shall look for a solution with you. If none is possible, you may stop at no cost for the classes not yet attended.';
+	@override String get jaiLu => 'I have read';
+}
+
+// Path: contrat.e1
+class _Traductions$contrat$e1$en extends Traductions$contrat$e1$fr {
+	_Traductions$contrat$e1$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get quoi => 'A class may be recorded in audio. The image is not recorded. A person from the Academy in charge of review may also follow a class live: they see and hear the class, without being seen or heard. They record nothing. They then send a report to the Academy. The room reminds of this permanently.';
+	@override String get pourquoi => 'To protect children and Teachers. If someone reports a problem, we can check what happened. It is also evidence for you if a family complains wrongly.';
+	@override String get refusTitre => 'If you refuse.';
+	@override String get refus => 'We cannot entrust students to you, because this measure protects children. We tell you before your signature.';
+}
+
+// Path: contrat.clauseControle
+class _Traductions$contrat$clauseControle$en extends Traductions$contrat$clauseControle$fr {
+	_Traductions$contrat$clauseControle$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Review visits.';
+	@override String get texte => 'To protect students and guarantee the quality of classes, a person from the Academy may observe your classes live, without warning you of the time. They see and hear the class. They do not speak, record nothing and publish nothing. They write a report for the administration. You receive a summary each month. You may dispute it. Reports are kept for 12 months. The review policy, attached to this contract and available in your space, explains everything. By signing, you confirm having received it.';
+	@override String get caseReligion => 'I agree that the Academy processes the fact that I teach the Quran, which may reveal my religion, to manage my contract and my classes.';
+}
+
+// Path: contrat.politique
+class _Traductions$contrat$politique$en extends Traductions$contrat$politique$fr {
+	_Traductions$contrat$politique$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Teacher review policy';
+	@override String get lien => 'Read the review policy';
+	@override String get puce => '•';
+	@override late final _Traductions$contrat$politique$s1$en s1 = _Traductions$contrat$politique$s1$en._(_root);
+	@override late final _Traductions$contrat$politique$s2$en s2 = _Traductions$contrat$politique$s2$en._(_root);
+	@override late final _Traductions$contrat$politique$s3$en s3 = _Traductions$contrat$politique$s3$en._(_root);
+	@override late final _Traductions$contrat$politique$s4$en s4 = _Traductions$contrat$politique$s4$en._(_root);
+	@override late final _Traductions$contrat$politique$s5$en s5 = _Traductions$contrat$politique$s5$en._(_root);
+	@override late final _Traductions$contrat$politique$s6$en s6 = _Traductions$contrat$politique$s6$en._(_root);
+	@override late final _Traductions$contrat$politique$s7$en s7 = _Traductions$contrat$politique$s7$en._(_root);
+	@override late final _Traductions$contrat$politique$s8$en s8 = _Traductions$contrat$politique$s8$en._(_root);
+	@override late final _Traductions$contrat$politique$s9$en s9 = _Traductions$contrat$politique$s9$en._(_root);
+	@override late final _Traductions$contrat$politique$s10$en s10 = _Traductions$contrat$politique$s10$en._(_root);
+}
+
 // Path: accessibilite.demo
 class _Traductions$accessibilite$demo$en extends Traductions$accessibilite$demo$fr {
 	_Traductions$accessibilite$demo$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -4657,6 +4760,7 @@ class _Traductions$recrutement$signature$en extends Traductions$recrutement$sign
 
 	// Translations
 	@override String get titre => 'Contract';
+	@override String get traductionTitre => 'Courtesy translation';
 	@override String version({required Object version}) => 'Version ${version}';
 	@override String empreinte({required Object empreinte}) => 'Text fingerprint: ${empreinte}';
 	@override String get texteAltere => 'The text received does not match its fingerprint: signing is not offered. Try again later or let the management know.';
@@ -10919,6 +11023,155 @@ class _Traductions$juridique$coord$en extends Traductions$juridique$coord$fr {
 	@override String get adresse => 'Registered office: 71-75 Shelton Street, Covent Garden, London WC2H 9JQ, United Kingdom';
 }
 
+// Path: juridique.quoi
+class _Traductions$juridique$quoi$en extends Traductions$juridique$quoi$fr {
+	_Traductions$juridique$quoi$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get hebergeur => 'legal host and its contact details';
+	@override String get lieuxHebergement => 'countries where the information is hosted';
+	@override String get dureesConservation => 'retention period for each type of information';
+	@override String get droitApplicable => 'governing law and competent jurisdiction';
+	@override String get confirmationConseil => 'review by legal counsel, including the right of withdrawal';
+	@override String get remboursementModalites => 'method and time limit of the refund';
+	@override String get responsableEnfants => 'person responsible for child protection';
+}
+
+// Path: juridique.valeurs
+class _Traductions$juridique$valeurs$en extends Traductions$juridique$valeurs$fr {
+	_Traductions$juridique$valeurs$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get hebergeur => 'Database and account sign-in: Supabase Inc. (supabase.com). Application and web pages: Vercel Inc. (vercel.com). Domain name: Cloudflare, Inc. (cloudflare.com).';
+	@override String get lieuxHebergement => 'The database is hosted in Ireland, in the European Union. Other providers may process certain information outside the United Kingdom: these transfers comply with the protection rules provided by law.';
+	@override String get dureesConservation => 'Account and profile: for as long as the account exists. After a deletion request and a reflection period of 14 days, the name, email address and contact details are erased. Invoices and payments: 6 years, as required by United Kingdom accounting law. A Teacher\'s ID document: 90 days at most after verification. Messages: for as long as the account exists; after deletion, their author becomes anonymous.';
+	@override String get droitApplicable => 'The law of England and Wales, and the courts of England and Wales. If you are a consumer, you keep the protection of the mandatory rules of your country of residence.';
+	@override String confirmationConseil({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(jours,
+		one: 'Right of withdrawal: you may cancel within ${jours} day from payment, without giving any reason. If classes began at your request during this period, the part already attended remains due.',
+		other: 'Right of withdrawal: you may cancel within ${jours} days from payment, without giving any reason. If classes began at your request during this period, the part already attended remains due.',
+	);
+	@override String get confirmationConseilSansDuree => 'Right of withdrawal: you may cancel during the withdrawal period, which runs from payment, without giving any reason. Its length is that of the pricing policy in force (Prices page). If classes began at your request during this period, the part already attended remains due.';
+	@override String get remboursementModalites => 'The refund is made to the payment method used, within 14 days of your request.';
+	@override String responsableEnfants({required Object nom, required Object contact}) => '${nom}, reachable at ${contact}.';
+	@override String get responsableDefaut => 'Rewayah Academy';
+	@override String get representantUeDefaut => 'Rewayah Academy';
+}
+
+// Path: juridique.mentions
+class _Traductions$juridique$mentions$en extends Traductions$juridique$mentions$fr {
+	_Traductions$juridique$mentions$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Legal notice';
+	@override String get resume => 'Who operates Rewayah Academy and how to contact it.';
+	@override String get intro => 'Here is who operates Rewayah Academy and how to contact it.';
+	@override late final _Traductions$juridique$mentions$s1$en s1 = _Traductions$juridique$mentions$s1$en._(_root);
+	@override late final _Traductions$juridique$mentions$s2$en s2 = _Traductions$juridique$mentions$s2$en._(_root);
+	@override late final _Traductions$juridique$mentions$s3$en s3 = _Traductions$juridique$mentions$s3$en._(_root);
+	@override late final _Traductions$juridique$mentions$s4$en s4 = _Traductions$juridique$mentions$s4$en._(_root);
+}
+
+// Path: juridique.conditions
+class _Traductions$juridique$conditions$en extends Traductions$juridique$conditions$fr {
+	_Traductions$juridique$conditions$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Terms of use and sale';
+	@override String get resume => 'The rules for using the service and selling subscriptions.';
+	@override String get intro => 'These terms apply as soon as you create an account or register a student. Read them in full, they are short.';
+	@override late final _Traductions$juridique$conditions$s1$en s1 = _Traductions$juridique$conditions$s1$en._(_root);
+	@override late final _Traductions$juridique$conditions$s2$en s2 = _Traductions$juridique$conditions$s2$en._(_root);
+	@override late final _Traductions$juridique$conditions$s3$en s3 = _Traductions$juridique$conditions$s3$en._(_root);
+	@override late final _Traductions$juridique$conditions$s4$en s4 = _Traductions$juridique$conditions$s4$en._(_root);
+	@override late final _Traductions$juridique$conditions$s5$en s5 = _Traductions$juridique$conditions$s5$en._(_root);
+	@override late final _Traductions$juridique$conditions$s6$en s6 = _Traductions$juridique$conditions$s6$en._(_root);
+	@override late final _Traductions$juridique$conditions$s7$en s7 = _Traductions$juridique$conditions$s7$en._(_root);
+}
+
+// Path: juridique.annulation
+class _Traductions$juridique$annulation$en extends Traductions$juridique$annulation$fr {
+	_Traductions$juridique$annulation$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Cancellation and refund';
+	@override String get resume => 'Stopping, being refunded, and what happens if a payment does not arrive.';
+	@override String get intro => 'You may stop whenever you wish. Here is what is refunded, what is not, and what happens if a payment does not arrive.';
+	@override late final _Traductions$juridique$annulation$s1$en s1 = _Traductions$juridique$annulation$s1$en._(_root);
+	@override late final _Traductions$juridique$annulation$s2$en s2 = _Traductions$juridique$annulation$s2$en._(_root);
+	@override late final _Traductions$juridique$annulation$s3$en s3 = _Traductions$juridique$annulation$s3$en._(_root);
+	@override late final _Traductions$juridique$annulation$s4$en s4 = _Traductions$juridique$annulation$s4$en._(_root);
+	@override late final _Traductions$juridique$annulation$s5$en s5 = _Traductions$juridique$annulation$s5$en._(_root);
+	@override late final _Traductions$juridique$annulation$litige$en litige = _Traductions$juridique$annulation$litige$en._(_root);
+	@override late final _Traductions$juridique$annulation$s6$en s6 = _Traductions$juridique$annulation$s6$en._(_root);
+}
+
+// Path: juridique.confidentialite
+class _Traductions$juridique$confidentialite$en extends Traductions$juridique$confidentialite$fr {
+	_Traductions$juridique$confidentialite$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Privacy';
+	@override String get resume => 'What information we keep, why, and your rights.';
+	@override String get intro => 'We keep only what is needed to run the classes. Here is what information, why, and how to control it.';
+	@override late final _Traductions$juridique$confidentialite$s1$en s1 = _Traductions$juridique$confidentialite$s1$en._(_root);
+	@override late final _Traductions$juridique$confidentialite$s2$en s2 = _Traductions$juridique$confidentialite$s2$en._(_root);
+	@override late final _Traductions$juridique$confidentialite$s3$en s3 = _Traductions$juridique$confidentialite$s3$en._(_root);
+	@override late final _Traductions$juridique$confidentialite$s4$en s4 = _Traductions$juridique$confidentialite$s4$en._(_root);
+	@override late final _Traductions$juridique$confidentialite$s5$en s5 = _Traductions$juridique$confidentialite$s5$en._(_root);
+	@override late final _Traductions$juridique$confidentialite$s6$en s6 = _Traductions$juridique$confidentialite$s6$en._(_root);
+	@override late final _Traductions$juridique$confidentialite$s7$en s7 = _Traductions$juridique$confidentialite$s7$en._(_root);
+	@override late final _Traductions$juridique$confidentialite$s8$en s8 = _Traductions$juridique$confidentialite$s8$en._(_root);
+	@override late final _Traductions$juridique$confidentialite$s9$en s9 = _Traductions$juridique$confidentialite$s9$en._(_root);
+	@override late final _Traductions$juridique$confidentialite$s10$en s10 = _Traductions$juridique$confidentialite$s10$en._(_root);
+}
+
+// Path: juridique.cookies
+class _Traductions$juridique$cookies$en extends Traductions$juridique$cookies$fr {
+	_Traductions$juridique$cookies$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Cookies';
+	@override String get resume => 'What the app and the website keep on your device.';
+	@override String get intro => 'The app and the website keep little on your device. Here is what.';
+	@override late final _Traductions$juridique$cookies$s1$en s1 = _Traductions$juridique$cookies$s1$en._(_root);
+	@override late final _Traductions$juridique$cookies$s2$en s2 = _Traductions$juridique$cookies$s2$en._(_root);
+	@override late final _Traductions$juridique$cookies$s3$en s3 = _Traductions$juridique$cookies$s3$en._(_root);
+	@override late final _Traductions$juridique$cookies$s4$en s4 = _Traductions$juridique$cookies$s4$en._(_root);
+	@override late final _Traductions$juridique$cookies$s5$en s5 = _Traductions$juridique$cookies$s5$en._(_root);
+	@override late final _Traductions$juridique$cookies$s6$en s6 = _Traductions$juridique$cookies$s6$en._(_root);
+}
+
+// Path: juridique.enfants
+class _Traductions$juridique$enfants$en extends Traductions$juridique$enfants$fr {
+	_Traductions$juridique$enfants$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Child protection';
+	@override String get resume => 'How we protect minor students.';
+	@override String get intro => 'Minor students take their classes under an adult\'s responsibility. Here are the rules we apply and how to raise a concern with us.';
+	@override late final _Traductions$juridique$enfants$s1$en s1 = _Traductions$juridique$enfants$s1$en._(_root);
+	@override late final _Traductions$juridique$enfants$s2$en s2 = _Traductions$juridique$enfants$s2$en._(_root);
+	@override late final _Traductions$juridique$enfants$s3$en s3 = _Traductions$juridique$enfants$s3$en._(_root);
+	@override late final _Traductions$juridique$enfants$s4$en s4 = _Traductions$juridique$enfants$s4$en._(_root);
+	@override late final _Traductions$juridique$enfants$s5$en s5 = _Traductions$juridique$enfants$s5$en._(_root);
+}
+
 // Path: avis.form
 class _Traductions$avis$form$en extends Traductions$avis$form$fr {
 	_Traductions$avis$form$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -12673,6 +12926,160 @@ class _Traductions$inscription$questionnaire$acces$en extends Traductions$inscri
 	@override String get titre => 'Last step: your access';
 	@override String get reponsesGardees => 'Your answers are saved.';
 	@override String get resteAcces => 'All that is left is to receive your access link, or to continue with Google.';
+}
+
+// Path: contrat.politique.s1
+class _Traductions$contrat$politique$s1$en extends Traductions$contrat$politique$s1$fr {
+	_Traductions$contrat$politique$s1$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => '1. Why we review';
+	@override List<String> get blocs => [
+		'Our Teachers and our students live in many countries. We verify the identity and background of each Teacher, but no verification tells everything. We entrust children to adults, online, often alone. Parents must be able to trust us.',
+		'Review visits serve four purposes:',
+		'1. to protect the students;',
+		'2. to verify that the class respects our teaching objectives and our safety rules;',
+		'3. to enable the administration to act if there is a problem;',
+		'4. to help you improve.',
+		'They serve no other purpose. They are not used to calculate your pay. No decision is made by a machine: a person from the administration always decides.',
+	];
+}
+
+// Path: contrat.politique.s2
+class _Traductions$contrat$politique$s2$en extends Traductions$contrat$politique$s2$fr {
+	_Traductions$contrat$politique$s2$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => '2. How a visit goes';
+	@override List<String> get blocs => [
+		'- A person from the Academy, called a reviewer, is **approved by the administration** and signs in with **two-step verification** (B1, B2).',
+		'- The system chooses a Class **at random**. A Class may be visited several times in the month, or not at all. A reviewer never observes their own Class or a session in which they take part.',
+		'- You are **not told when** the visit takes place. You are told **in advance that it may take place**: by this text, by your contract and by the room\'s permanent banner "review visit possible".',
+		'- The reviewer sees the document, your video and the students\' thumbnails. They may hear the sound. They have **no microphone, no camera and no chat**. They cannot speak to you or to the students.',
+		'- They **record nothing**. Screen capture is blocked on their device (B10).',
+		'- The administration may withdraw their access **in one click** (B3).',
+	];
+}
+
+// Path: contrat.politique.s3
+class _Traductions$contrat$politique$s3$en extends Traductions$contrat$politique$s3$fr {
+	_Traductions$contrat$politique$s3$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => '3. What is written';
+	@override List<String> get blocs => [
+		'- **An automatic log of the session**: planned time, actual time, length, students present, reconnections. No one enters it by hand.',
+		'- **The reviewer\'s report**: "Nothing to report", or an observation on the class (nature, area, person concerned, text). They write only what they observed about the class.',
+		'- The report is **never rewritten**. An addendum may be added, dated.',
+		'- The reviewer\'s draft **never leaves the app** and is erased after sending (B11).',
+	];
+}
+
+// Path: contrat.politique.s4
+class _Traductions$contrat$politique$s4$en extends Traductions$contrat$politique$s4$fr {
+	_Traductions$contrat$politique$s4$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => '4. Who reads';
+	@override List<String> get blocs => [
+		'- **The raw report**: the administration, and the reviewer who wrote it, for their own report only (B13).',
+		'- **The export**: the administration only, and each export is noted in the log (B14).',
+		'- **You**: a **monthly summary** with the positive points and the points to follow up.',
+		'- **The reviewer\'s name is never given to you**, even after the summary (B15). This protects them from pressure. You receive all the content that concerns you: this is what allows you to respond.',
+		'- **No one else.** Nothing is published, nor shown to families, nor to other Teachers.',
+	];
+}
+
+// Path: contrat.politique.s5
+class _Traductions$contrat$politique$s5$en extends Traductions$contrat$politique$s5$fr {
+	_Traductions$contrat$politique$s5$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => '5. How long';
+	@override List<String> get blocs => [
+		'- The raw report is kept **12 months** after it is sent, then erased. If there is a file or a measure in progress, it is kept until the end of that file (B4).',
+		'- The monthly summary, without any student\'s name, is kept longer to follow your progress. Length: that of your contract, plus 12 months.',
+	];
+}
+
+// Path: contrat.politique.s6
+class _Traductions$contrat$politique$s6$en extends Traductions$contrat$politique$s6$fr {
+	_Traductions$contrat$politique$s6$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => '6. Disputing a report (B7)';
+	@override List<String> get blocs => [
+		'- You may dispute **once per report**.',
+		'- You have **7 days** from the day you receive the monthly summary.',
+		'- You write **the reason**. Without a written reason, the request is not processed.',
+		'- The administration reviews and replies to you in writing. The report is not rewritten; your dispute and the administration\'s decision are added to it.',
+		'This dispute is an internal procedure. **It removes none of your legal rights** (part 8), which you may exercise at any time, even after 7 days.',
+	];
+}
+
+// Path: contrat.politique.s7
+class _Traductions$contrat$politique$s7$en extends Traductions$contrat$politique$s7$fr {
+	_Traductions$contrat$politique$s7$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => '7. What the Academy may decide';
+	@override List<String> get blocs => [
+		'On the basis of a report, the administration may: congratulate you, offer you training, ask you to change a practice, withdraw a Class from you, or end the contract in serious cases. Any measure is decided by a person, after reading, and is explained to you. In case of danger to a child, the Academy may act immediately and notify the authorities of the country.',
+	];
+}
+
+// Path: contrat.politique.s8
+class _Traductions$contrat$politique$s8$en extends Traductions$contrat$politique$s8$fr {
+	_Traductions$contrat$politique$s8$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => '8. Your rights';
+	@override List<String> get blocs => [
+		'- **Access**: you may ask for a copy of your data, including the reports that concern you. We reply within one month. The reviewer\'s name and the students\' data are masked (DPA 2018, Schedule 2, Part 3, paragraph 16: third-party data).',
+		'- **Rectification**: if a fact is wrong (time, attendance), we correct it.',
+		'- **Objection**: you may object to the review. We examine your request. As the review protects children, we may maintain it. In that case, we cannot entrust you with a children\'s Class, and we tell you in writing.',
+		'- **Complaint**: you may refer the matter to the data protection authority (in the United Kingdom, the ICO; in the EU, the authority of your country).',
+	];
+}
+
+// Path: contrat.politique.s9
+class _Traductions$contrat$politique$s9$en extends Traductions$contrat$politique$s9$fr {
+	_Traductions$contrat$politique$s9$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => '9. Legal basis';
+	@override List<String> get blocs => [
+		'Legitimate interest of the Academy and of the students: protecting children and guaranteeing the quality of classes (UK GDPR art. 6(1)(f)). The balancing test is written and signed. We do not ask for your "consent" to the review, because you could not freely refuse it.',
+	];
+}
+
+// Path: contrat.politique.s10
+class _Traductions$contrat$politique$s10$en extends Traductions$contrat$politique$s10$fr {
+	_Traductions$contrat$politique$s10$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => '10. Contact';
+	@override String texte({required Object contact, required Object nom}) => 'Controller: Rewayah Academy Ltd, company no. 16624644 registered in England and Wales, 71-75 Shelton Street, Covent Garden, London WC2H 9JQ, United Kingdom. Privacy contact: ${contact}. Representative in the European Union: ${nom}.';
 }
 
 // Path: appareils.emetteur.verification
@@ -19744,6 +20151,575 @@ class _Traductions$recherche$guide$initial$en extends Traductions$recherche$guid
 	@override String get phrase => 'Write a word to find one of your documents.';
 }
 
+// Path: juridique.mentions.s1
+class _Traductions$juridique$mentions$s1$en extends Traductions$juridique$mentions$s1$fr {
+	_Traductions$juridique$mentions$s1$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => '1. Who operates the service';
+	@override List<String> get blocs => [
+		'Rewayah Academy offers Quran classes by video, in stable Classes: the same students, a timetable that returns every week and an assigned Teacher.',
+	];
+}
+
+// Path: juridique.mentions.s2
+class _Traductions$juridique$mentions$s2$en extends Traductions$juridique$mentions$s2$fr {
+	_Traductions$juridique$mentions$s2$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => '2. Contacting us';
+	@override List<String> get blocs => [
+		'A single address for your questions about the service, about these texts and about your information.',
+	];
+}
+
+// Path: juridique.mentions.s3
+class _Traductions$juridique$mentions$s3$en extends Traductions$juridique$mentions$s3$fr {
+	_Traductions$juridique$mentions$s3$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => '3. Hosting and technical services';
+	@override List<String> get blocs => [
+		'The service relies on technical providers: hosting of the web pages, the database and account sign-in, video for the sessions, private file storage and a payment provider.',
+	];
+}
+
+// Path: juridique.mentions.s4
+class _Traductions$juridique$mentions$s4$en extends Traductions$juridique$mentions$s4$fr {
+	_Traductions$juridique$mentions$s4$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => '4. These texts';
+	@override List<String> get blocs => [
+		'Each legal text carries its version and its date, shown at the top of the page. When a text changes, the new version replaces the old one on the date indicated.',
+	];
+}
+
+// Path: juridique.conditions.s1
+class _Traductions$juridique$conditions$s1$en extends Traductions$juridique$conditions$s1$fr {
+	_Traductions$juridique$conditions$s1$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => '1. The service';
+	@override List<String> get blocs => [
+		'Rewayah Academy offers Quran classes by video. Each student is placed in a Class: a small number of students, a recurring timetable and an assigned Teacher.',
+		'There are two plans: the child plan, from 6 to 17 years, and the adult plan, from 18 years. No minor shall be placed in an adults\' Class.',
+		'A Class opens when enough students are registered. Until then, you are on the waiting list and nothing is invoiced.',
+	];
+}
+
+// Path: juridique.conditions.s2
+class _Traductions$juridique$conditions$s2$en extends Traductions$juridique$conditions$s2$fr {
+	_Traductions$juridique$conditions$s2$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => '2. Account and access';
+	@override List<String> get blocs => [
+		'A child is registered and followed by an adult Guardian, who decides for them. See the Child protection text.',
+		'You shall give accurate information and keep your access to yourself. A session is entered through one\'s account, never through a public link.',
+	];
+}
+
+// Path: juridique.conditions.s3
+class _Traductions$juridique$conditions$s3$en extends Traductions$juridique$conditions$s3$fr {
+	_Traductions$juridique$conditions$s3$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => '3. Sessions';
+	@override List<String> get blocs => [
+		'Sessions take place at a fixed time, with the same Teacher. Being present and on time is part of the commitment.',
+		'A shortened session remains due if the student was present long enough. A session cancelled by the Academy or by the Teacher is replaced.',
+		'A quality reviewer may attend sessions without being seen, and a class may be recorded. If recording becomes real, we shall tell you beforehand.',
+		'The parent may silently observe their child\'s session.',
+	];
+}
+
+// Path: juridique.conditions.s4
+class _Traductions$juridique$conditions$s4$en extends Traductions$juridique$conditions$s4$fr {
+	_Traductions$juridique$conditions$s4$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => '4. Prices and payment';
+	@override List<String> get blocs => [
+		'Prices appear on the Prices page and in the app, when choosing a plan. They are in US dollars and exclude tax. The tax due according to your country is added to the payment.',
+		'The subscription renews every month. Discounts are calculated by the system on the household\'s invoice.',
+		'Payment goes through a payment provider.',
+		'There is no free trial. During the withdrawal period, which runs from payment, you are refunded what you paid, except for sessions already attended (see the Cancellation and refund text).',
+		'Without payment, the student no longer has access to sessions or resources. Their space stays open to see their profile, their history and to pay.',
+		'To stop, be refunded or pay late, see the Cancellation and refund text.',
+	];
+}
+
+// Path: juridique.conditions.s5
+class _Traductions$juridique$conditions$s5$en extends Traductions$juridique$conditions$s5$fr {
+	_Traductions$juridique$conditions$s5$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => '5. Respect during sessions';
+	@override List<String> get blocs => [
+		'Everyone shall behave respectfully towards the Teacher and the other students, in words as in gestures.',
+	];
+}
+
+// Path: juridique.conditions.s6
+class _Traductions$juridique$conditions$s6$en extends Traductions$juridique$conditions$s6$fr {
+	_Traductions$juridique$conditions$s6$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => '6. Your information';
+	@override List<String> get blocs => [
+		'How we use your information is explained in the Privacy text.',
+	];
+}
+
+// Path: juridique.conditions.s7
+class _Traductions$juridique$conditions$s7$en extends Traductions$juridique$conditions$s7$fr {
+	_Traductions$juridique$conditions$s7$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => '7. Governing law';
+	@override List<String> get blocs => [
+		'This part states the law that applies and the competent court.',
+	];
+}
+
+// Path: juridique.annulation.s1
+class _Traductions$juridique$annulation$s1$en extends Traductions$juridique$annulation$s1$fr {
+	_Traductions$juridique$annulation$s1$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => '1. Withdrawal period';
+	@override String delai({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(jours,
+		one: 'The withdrawal period is ${jours} day from payment, according to the pricing policy in force (Prices page).',
+		other: 'The withdrawal period is ${jours} days from payment, according to the pricing policy in force (Prices page).',
+	);
+	@override String get delaiSansDuree => 'The withdrawal period runs from payment. Its length is that of the pricing policy in force (Prices page).';
+	@override List<String> get blocs => [
+		'There is no free trial. Instead, you may stop during the withdrawal period if the class does not suit.',
+		'During this period, you are refunded what you paid, except for sessions already attended.',
+		'After this period, the month begun is due.',
+	];
+}
+
+// Path: juridique.annulation.s2
+class _Traductions$juridique$annulation$s2$en extends Traductions$juridique$annulation$s2$fr {
+	_Traductions$juridique$annulation$s2$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => '2. Stopping the subscription';
+	@override List<String> get blocs => [
+		'The monthly subscription may be stopped at any time, without justification. It ends at the end of the current month.',
+		'After the withdrawal period, stopping a plan paid in advance, by the quarter or by the year, remains a right. Months begun are counted at the normal monthly price, without the plan\'s discount, and the remainder is refunded.',
+		'A registration during the month pays only the remaining sessions of the month.',
+	];
+}
+
+// Path: juridique.annulation.s3
+class _Traductions$juridique$annulation$s3$en extends Traductions$juridique$annulation$s3$fr {
+	_Traductions$juridique$annulation$s3$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => '3. Absences and cancelled sessions';
+	@override List<String> get blocs => [
+		'A missed place is not refunded: it is reserved for the student in a fixed Class.',
+		'A session cancelled by the Academy or by the Teacher is replaced.',
+		'If the Class does not open for lack of registrations, nothing is invoiced.',
+	];
+}
+
+// Path: juridique.annulation.s4
+class _Traductions$juridique$annulation$s4$en extends Traductions$juridique$annulation$s4$fr {
+	_Traductions$juridique$annulation$s4$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => '4. Late payment';
+	@override List<String> get blocs => [
+		'Before renewal, you receive automatic reminders.',
+		'After the renewal date, a short grace period applies: the student attends their classes and the unpaid amount is shown to the Guardian.',
+		'If payment still does not arrive, access to sessions and resources is suspended. The space stays open to see the profile, the history and to pay. The place is kept for some time.',
+		'Then, the place is released to the waiting list. Returning remains possible at no cost, in a new Class.',
+		'The exact dates are those of the pricing policy in force (Prices page).',
+	];
+}
+
+// Path: juridique.annulation.s5
+class _Traductions$juridique$annulation$s5$en extends Traductions$juridique$annulation$s5$fr {
+	_Traductions$juridique$annulation$s5$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => '5. Moving to the adult plan';
+	@override List<String> get blocs => [
+		'A student who reaches 18 moves to the adult plan at the next renewal. The parent is notified in advance.',
+	];
+}
+
+// Path: juridique.annulation.litige
+class _Traductions$juridique$annulation$litige$en extends Traductions$juridique$annulation$litige$fr {
+	_Traductions$juridique$annulation$litige$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => '6. Disputing a payment with one\'s bank';
+	@override List<String> get blocs => [
+		'If you dispute a payment with your bank, the payment provider takes the money back from the Academy as soon as the review begins. The access of the students concerned is then suspended during the review.',
+		'If the bank rules in favour of the Academy, access returns.',
+		'If the bank rules in your favour, the payment is treated as a full refund. The fees the payment provider charges the Academy for the dispute are added to your household\'s balance.',
+		'Before disputing, write to us: a refund request to the Academy costs nothing.',
+	];
+}
+
+// Path: juridique.annulation.s6
+class _Traductions$juridique$annulation$s6$en extends Traductions$juridique$annulation$s6$fr {
+	_Traductions$juridique$annulation$s6$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => '7. Making a request';
+	@override List<String> get blocs => [
+		'To stop or to ask for a refund, write to us giving the account name and the reason.',
+	];
+}
+
+// Path: juridique.confidentialite.s1
+class _Traductions$juridique$confidentialite$s1$en extends Traductions$juridique$confidentialite$s1$fr {
+	_Traductions$juridique$confidentialite$s1$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => '1. Who is responsible';
+	@override List<String> get blocs => [
+		'Rewayah Academy Ltd decides why and how your information is used. Its contact details are in the Legal notice.',
+	];
+	@override String representant({required Object nom}) => 'Representative in the European Union: ${nom}.';
+}
+
+// Path: juridique.confidentialite.s2
+class _Traductions$juridique$confidentialite$s2$en extends Traductions$juridique$confidentialite$s2$fr {
+	_Traductions$juridique$confidentialite$s2$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => '2. What we collect';
+	@override List<String> get blocs => [
+		'- To create an account: the name, the email address, the interface language, the country of residence and the time zone.',
+		'- For a student: the date of birth, which is used to choose the right plan and the rules specific to minors.',
+		'- Optional: photo, phone, address, level, timetable preferences.',
+		'- During classes: attendance, the handover notebook and the student\'s progress.',
+		'- To pay: the subscription and invoices. The payment itself goes through a payment provider.',
+		'- For a Teacher: an ID document, kept apart in a private space.',
+		'- Your agreements: the version of each text accepted and the date.',
+		'- Technical error reports, with no screenshot, no name and no identity.',
+	];
+}
+
+// Path: juridique.confidentialite.s3
+class _Traductions$juridique$confidentialite$s3$en extends Traductions$juridique$confidentialite$s3$fr {
+	_Traductions$juridique$confidentialite$s3$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => '3. Why we use it';
+	@override List<String> get blocs => [
+		'- To form the Classes and deliver the classes.',
+		'- To follow attendance and progress.',
+		'- To invoice the subscription.',
+		'- To protect the students and review the quality of sessions.',
+		'- To repair outages.',
+	];
+}
+
+// Path: juridique.confidentialite.s4
+class _Traductions$juridique$confidentialite$s4$en extends Traductions$juridique$confidentialite$s4$fr {
+	_Traductions$juridique$confidentialite$s4$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => '4. Who sees what';
+	@override List<String> get blocs => [
+		'A family sees only its own information. A child\'s information is never public and is never shown to other families.',
+		'The Teacher sees their students and their Classes. The management sees what is needed to manage registrations, Classes and payments. These accesses are enforced on the server side.',
+		'A quality reviewer may attend sessions. Sensitive accesses are recorded in a log.',
+	];
+}
+
+// Path: juridique.confidentialite.s5
+class _Traductions$juridique$confidentialite$s5$en extends Traductions$juridique$confidentialite$s5$fr {
+	_Traductions$juridique$confidentialite$s5$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => '5. Live sessions and recording';
+	@override List<String> get blocs => [
+		'Video goes through a specialist service. Access to a session is given by the server, for that session only and for a short time.',
+		'Today, the app does not record classes. If recording returns, we shall tell you beforehand why, how long it is kept and who can access it, and we shall ask for your agreement.',
+		'A notice in the room reminds that a review visit is possible.',
+	];
+}
+
+// Path: juridique.confidentialite.s6
+class _Traductions$juridique$confidentialite$s6$en extends Traductions$juridique$confidentialite$s6$fr {
+	_Traductions$juridique$confidentialite$s6$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => '6. Where your information is';
+	@override List<String> get blocs => [
+		'We use a web page host, a database with account sign-in, a video service, private storage for files, a payment provider and an error reporting service. They process your information for us, for these reasons only.',
+		'To protect sign-in against bots, we use Cloudflare Turnstile (Cloudflare, Inc.). At the time of verification, Cloudflare processes your IP address and technical information about your browser, solely for this check and without any advertising cookie. Legal basis: our legitimate interest in securing the service.',
+	];
+}
+
+// Path: juridique.confidentialite.s7
+class _Traductions$juridique$confidentialite$s7$en extends Traductions$juridique$confidentialite$s7$fr {
+	_Traductions$juridique$confidentialite$s7$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => '7. How long';
+	@override List<String> get blocs => [
+		'We keep each type of information for the time needed, no longer. A Teacher\'s ID document is deleted at the end of a fixed period. A deletion may be frozen in the event of a dispute.',
+	];
+}
+
+// Path: juridique.confidentialite.s8
+class _Traductions$juridique$confidentialite$s8$en extends Traductions$juridique$confidentialite$s8$fr {
+	_Traductions$juridique$confidentialite$s8$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => '8. Your rights';
+	@override List<String> get blocs => [
+		'- To see the information we hold about you.',
+		'- To correct it.',
+		'- To ask for its deletion or to limit its use.',
+		'Write to us. We first check that it is you, or the student\'s Guardian. You may also contact the data protection authority of your country.',
+	];
+}
+
+// Path: juridique.confidentialite.s9
+class _Traductions$juridique$confidentialite$s9$en extends Traductions$juridique$confidentialite$s9$fr {
+	_Traductions$juridique$confidentialite$s9$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => '9. Security';
+	@override List<String> get blocs => [
+		'Access rules are enforced by the server. ID documents are in a private space, separate from photos. No protection is absolute: if you see a problem, write to us.',
+	];
+}
+
+// Path: juridique.confidentialite.s10
+class _Traductions$juridique$confidentialite$s10$en extends Traductions$juridique$confidentialite$s10$fr {
+	_Traductions$juridique$confidentialite$s10$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => '10. Children';
+	@override List<String> get blocs => [
+		'A child\'s information is given and managed by their Guardian. See the Child protection text.',
+	];
+}
+
+// Path: juridique.cookies.s1
+class _Traductions$juridique$cookies$s1$en extends Traductions$juridique$cookies$s1$fr {
+	_Traductions$juridique$cookies$s1$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => '1. What it is';
+	@override List<String> get blocs => [
+		'A cookie or a piece of local data is a small item kept by your browser or your device. It helps a service recognize you or remember a setting.',
+	];
+}
+
+// Path: juridique.cookies.s2
+class _Traductions$juridique$cookies$s2$en extends Traductions$juridique$cookies$s2$fr {
+	_Traductions$juridique$cookies$s2$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => '2. What the app keeps';
+	@override List<String> get blocs => [
+		'- Your sign-in session.',
+		'- Your display preferences, such as language and theme.',
+		'- A limited cache, which you can clear.',
+		'- On a student\'s device, their personal code, which never leaves the device.',
+		'These items are necessary for the app to work.',
+	];
+}
+
+// Path: juridique.cookies.s3
+class _Traductions$juridique$cookies$s3$en extends Traductions$juridique$cookies$s3$fr {
+	_Traductions$juridique$cookies$s3$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => '3. What we do not use';
+	@override List<String> get blocs => [
+		'At the date of this text, neither the app nor the website uses advertising cookies or audience measurement.',
+	];
+}
+
+// Path: juridique.cookies.s4
+class _Traductions$juridique$cookies$s4$en extends Traductions$juridique$cookies$s4$fr {
+	_Traductions$juridique$cookies$s4$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => '4. Error reports';
+	@override List<String> get blocs => [
+		'When the app crashes, a technical report may be sent to an error tracking service. It contains no screenshot, no name and no identity.',
+	];
+}
+
+// Path: juridique.cookies.s5
+class _Traductions$juridique$cookies$s5$en extends Traductions$juridique$cookies$s5$fr {
+	_Traductions$juridique$cookies$s5$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => '5. Controlling them';
+	@override List<String> get blocs => [
+		'You may clear the site\'s data in your browser settings, or sign out from the Account. You will then have to sign in again and redo your display settings.',
+	];
+}
+
+// Path: juridique.cookies.s6
+class _Traductions$juridique$cookies$s6$en extends Traductions$juridique$cookies$s6$fr {
+	_Traductions$juridique$cookies$s6$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => '6. Third-party services';
+	@override List<String> get blocs => [
+		'If you leave Rewayah Academy for another service, for example payment, that service applies its own rules.',
+	];
+}
+
+// Path: juridique.enfants.s1
+class _Traductions$juridique$enfants$s1$en extends Traductions$juridique$enfants$s1$fr {
+	_Traductions$juridique$enfants$s1$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => '1. A responsible adult';
+	@override List<String> get blocs => [
+		'A child shall not access classes without an authorized adult Guardian. Registration, agreements and payments are the Guardian\'s responsibility.',
+		'The child plan runs from 6 to 17 years. No minor shall be placed in an adults\' Class.',
+		'From 6 to 9 years, the Guided interface is on by default: simpler screens, with large keys.',
+	];
+}
+
+// Path: juridique.enfants.s2
+class _Traductions$juridique$enfants$s2$en extends Traductions$juridique$enfants$s2$fr {
+	_Traductions$juridique$enfants$s2$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => '2. During sessions';
+	@override List<String> get blocs => [
+		'The child takes their classes with a small number of students and the same assigned Teacher.',
+		'There is no public link to a room. A room is entered through one\'s account, with access given by the server.',
+		'The parent may silently observe their child\'s class. The child concerned is informed.',
+		'A quality reviewer may attend sessions. A notice in the room reminds of this.',
+		'A class may be recorded. Today, this is not the case, and the Guardian would be informed beforehand.',
+	];
+}
+
+// Path: juridique.enfants.s3
+class _Traductions$juridique$enfants$s3$en extends Traductions$juridique$enfants$s3$fr {
+	_Traductions$juridique$enfants$s3$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => '3. Teachers';
+	@override List<String> get blocs => [
+		'Teachers sign a contract and a review policy. Their ID document is kept in a private space, separate from the photos visible in class.',
+	];
+}
+
+// Path: juridique.enfants.s4
+class _Traductions$juridique$enfants$s4$en extends Traductions$juridique$enfants$s4$fr {
+	_Traductions$juridique$enfants$s4$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => '4. The child\'s information';
+	@override List<String> get blocs => [
+		'A child\'s information is neither public nor visible to other families.',
+		'The student\'s personal code stays on their device.',
+		'See also the Privacy text.',
+	];
+}
+
+// Path: juridique.enfants.s5
+class _Traductions$juridique$enfants$s5$en extends Traductions$juridique$enfants$s5$fr {
+	_Traductions$juridique$enfants$s5$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => '5. Raising a concern';
+	@override List<String> get blocs => [
+		'If something worries you, write to us. Say what you saw, when, and in which Class.',
+		'In case of immediate danger, first contact the emergency services of your country.',
+	];
+}
+
 // Path: avis.form.nom
 class _Traductions$avis$form$nom$en extends Traductions$avis$form$nom$fr {
 	_Traductions$avis$form$nom$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -26403,6 +27379,86 @@ extension on TraductionsEn {
 			'codeConduite.erreur' => 'Your agreement was not saved. Try again in a moment.',
 			'codeConduite.erreurLecture' => 'We could not load your agreements. Try again.',
 			'codeConduite.aAccepter' => 'To accept',
+			'contrat.titre' => 'What you are signing',
+			'contrat.intro' => 'Two points matter more than the others. They are written here plainly rather than in the middle of a long text.',
+			'contrat.pointEnregistrement' => 'A class may be recorded in audio. In that case, it is kept for thirty days, then erased. Each listening is entered in the log, with the name of the person listening.',
+			'contrat.pointControle' => 'A quality reviewer may attend a class without being seen. The room reminds of this permanently, whether the visit takes place or not.',
+			'contrat.pointCoordonnees' => 'You shall never see a family\'s contact details: neither full name, nor email, nor phone.',
+			'contrat.lireTexte' => 'Read the full text',
+			'contrat.accepter' => 'I have read and I accept',
+			'contrat.resignature' => 'The contract has been updated: the class review policy is now attached to it. Sign this new version to continue.',
+			'contrat.accepteLe' => ({required Object date}) => 'Accepted on ${date}',
+			'contrat.erreur' => 'The signature did not go through. Try again in a moment.',
+			'contrat.horsLigne' => 'Your agreement will be recorded as soon as the network returns, by pressing again.',
+			'contrat.caseRequise' => 'Tick the box to continue.',
+			'contrat.a3.titre' => 'Classes may be recorded (sound only)',
+			'contrat.a3.quoiTitre' => 'What we do.',
+			'contrat.a3.quoi' => 'A class may be recorded in audio. The image is not recorded. A person from the Academy in charge of review may also follow a class live: they see and hear the class, without being seen or heard. They record nothing. The room reminds of this permanently.',
+			'contrat.a3.pourquoiTitre' => 'Why.',
+			'contrat.a3.pourquoi' => 'To protect children and Teachers. If someone reports a problem, we can check what happened.',
+			'contrat.a3.quiTitre' => 'Who may listen to the recording.',
+			'contrat.a3.qui' => 'Only the persons of the Academy in charge of quality and protection, and only for a specific reason, for example a report. Each listening is entered in a log. You may ask whether a recording has been listened to, and why.',
+			'contrat.a3.dureeTitre' => 'How long.',
+			'contrat.a3.duree' => ({required Object duree}) => '${duree} days, then erased. If there is a report, the recording is kept until the end of the review.',
+			'contrat.a3.desaccordTitre' => 'If you do not agree.',
+			'contrat.a3.desaccord' => 'You may object: Account, My agreements, I object to recording. We shall reply within one month. We shall look for a solution with you. If none is possible, you may stop at no cost for the classes not yet attended.',
+			'contrat.a3.jaiLu' => 'I have read',
+			'contrat.e1.quoi' => 'A class may be recorded in audio. The image is not recorded. A person from the Academy in charge of review may also follow a class live: they see and hear the class, without being seen or heard. They record nothing. They then send a report to the Academy. The room reminds of this permanently.',
+			'contrat.e1.pourquoi' => 'To protect children and Teachers. If someone reports a problem, we can check what happened. It is also evidence for you if a family complains wrongly.',
+			'contrat.e1.refusTitre' => 'If you refuse.',
+			'contrat.e1.refus' => 'We cannot entrust students to you, because this measure protects children. We tell you before your signature.',
+			'contrat.clauseControle.titre' => 'Review visits.',
+			'contrat.clauseControle.texte' => 'To protect students and guarantee the quality of classes, a person from the Academy may observe your classes live, without warning you of the time. They see and hear the class. They do not speak, record nothing and publish nothing. They write a report for the administration. You receive a summary each month. You may dispute it. Reports are kept for 12 months. The review policy, attached to this contract and available in your space, explains everything. By signing, you confirm having received it.',
+			'contrat.clauseControle.caseReligion' => 'I agree that the Academy processes the fact that I teach the Quran, which may reveal my religion, to manage my contract and my classes.',
+			'contrat.politique.titre' => 'Teacher review policy',
+			'contrat.politique.lien' => 'Read the review policy',
+			'contrat.politique.puce' => '•',
+			'contrat.politique.s1.titre' => '1. Why we review',
+			'contrat.politique.s1.blocs.0' => 'Our Teachers and our students live in many countries. We verify the identity and background of each Teacher, but no verification tells everything. We entrust children to adults, online, often alone. Parents must be able to trust us.',
+			'contrat.politique.s1.blocs.1' => 'Review visits serve four purposes:',
+			'contrat.politique.s1.blocs.2' => '1. to protect the students;',
+			'contrat.politique.s1.blocs.3' => '2. to verify that the class respects our teaching objectives and our safety rules;',
+			'contrat.politique.s1.blocs.4' => '3. to enable the administration to act if there is a problem;',
+			'contrat.politique.s1.blocs.5' => '4. to help you improve.',
+			'contrat.politique.s1.blocs.6' => 'They serve no other purpose. They are not used to calculate your pay. No decision is made by a machine: a person from the administration always decides.',
+			'contrat.politique.s2.titre' => '2. How a visit goes',
+			'contrat.politique.s2.blocs.0' => '- A person from the Academy, called a reviewer, is **approved by the administration** and signs in with **two-step verification** (B1, B2).',
+			'contrat.politique.s2.blocs.1' => '- The system chooses a Class **at random**. A Class may be visited several times in the month, or not at all. A reviewer never observes their own Class or a session in which they take part.',
+			'contrat.politique.s2.blocs.2' => '- You are **not told when** the visit takes place. You are told **in advance that it may take place**: by this text, by your contract and by the room\'s permanent banner "review visit possible".',
+			'contrat.politique.s2.blocs.3' => '- The reviewer sees the document, your video and the students\' thumbnails. They may hear the sound. They have **no microphone, no camera and no chat**. They cannot speak to you or to the students.',
+			'contrat.politique.s2.blocs.4' => '- They **record nothing**. Screen capture is blocked on their device (B10).',
+			'contrat.politique.s2.blocs.5' => '- The administration may withdraw their access **in one click** (B3).',
+			'contrat.politique.s3.titre' => '3. What is written',
+			'contrat.politique.s3.blocs.0' => '- **An automatic log of the session**: planned time, actual time, length, students present, reconnections. No one enters it by hand.',
+			'contrat.politique.s3.blocs.1' => '- **The reviewer\'s report**: "Nothing to report", or an observation on the class (nature, area, person concerned, text). They write only what they observed about the class.',
+			'contrat.politique.s3.blocs.2' => '- The report is **never rewritten**. An addendum may be added, dated.',
+			'contrat.politique.s3.blocs.3' => '- The reviewer\'s draft **never leaves the app** and is erased after sending (B11).',
+			'contrat.politique.s4.titre' => '4. Who reads',
+			'contrat.politique.s4.blocs.0' => '- **The raw report**: the administration, and the reviewer who wrote it, for their own report only (B13).',
+			'contrat.politique.s4.blocs.1' => '- **The export**: the administration only, and each export is noted in the log (B14).',
+			'contrat.politique.s4.blocs.2' => '- **You**: a **monthly summary** with the positive points and the points to follow up.',
+			'contrat.politique.s4.blocs.3' => '- **The reviewer\'s name is never given to you**, even after the summary (B15). This protects them from pressure. You receive all the content that concerns you: this is what allows you to respond.',
+			'contrat.politique.s4.blocs.4' => '- **No one else.** Nothing is published, nor shown to families, nor to other Teachers.',
+			'contrat.politique.s5.titre' => '5. How long',
+			'contrat.politique.s5.blocs.0' => '- The raw report is kept **12 months** after it is sent, then erased. If there is a file or a measure in progress, it is kept until the end of that file (B4).',
+			'contrat.politique.s5.blocs.1' => '- The monthly summary, without any student\'s name, is kept longer to follow your progress. Length: that of your contract, plus 12 months.',
+			'contrat.politique.s6.titre' => '6. Disputing a report (B7)',
+			'contrat.politique.s6.blocs.0' => '- You may dispute **once per report**.',
+			'contrat.politique.s6.blocs.1' => '- You have **7 days** from the day you receive the monthly summary.',
+			'contrat.politique.s6.blocs.2' => '- You write **the reason**. Without a written reason, the request is not processed.',
+			'contrat.politique.s6.blocs.3' => '- The administration reviews and replies to you in writing. The report is not rewritten; your dispute and the administration\'s decision are added to it.',
+			'contrat.politique.s6.blocs.4' => 'This dispute is an internal procedure. **It removes none of your legal rights** (part 8), which you may exercise at any time, even after 7 days.',
+			'contrat.politique.s7.titre' => '7. What the Academy may decide',
+			'contrat.politique.s7.blocs.0' => 'On the basis of a report, the administration may: congratulate you, offer you training, ask you to change a practice, withdraw a Class from you, or end the contract in serious cases. Any measure is decided by a person, after reading, and is explained to you. In case of danger to a child, the Academy may act immediately and notify the authorities of the country.',
+			'contrat.politique.s8.titre' => '8. Your rights',
+			'contrat.politique.s8.blocs.0' => '- **Access**: you may ask for a copy of your data, including the reports that concern you. We reply within one month. The reviewer\'s name and the students\' data are masked (DPA 2018, Schedule 2, Part 3, paragraph 16: third-party data).',
+			'contrat.politique.s8.blocs.1' => '- **Rectification**: if a fact is wrong (time, attendance), we correct it.',
+			'contrat.politique.s8.blocs.2' => '- **Objection**: you may object to the review. We examine your request. As the review protects children, we may maintain it. In that case, we cannot entrust you with a children\'s Class, and we tell you in writing.',
+			'contrat.politique.s8.blocs.3' => '- **Complaint**: you may refer the matter to the data protection authority (in the United Kingdom, the ICO; in the EU, the authority of your country).',
+			'contrat.politique.s9.titre' => '9. Legal basis',
+			'contrat.politique.s9.blocs.0' => 'Legitimate interest of the Academy and of the students: protecting children and guaranteeing the quality of classes (UK GDPR art. 6(1)(f)). The balancing test is written and signed. We do not ask for your "consent" to the review, because you could not freely refuse it.',
+			'contrat.politique.s10.titre' => '10. Contact',
+			'contrat.politique.s10.texte' => ({required Object contact, required Object nom}) => 'Controller: Rewayah Academy Ltd, company no. 16624644 registered in England and Wales, 71-75 Shelton Street, Covent Garden, London WC2H 9JQ, United Kingdom. Privacy contact: ${contact}. Representative in the European Union: ${nom}.',
 			'accessibilite.demo.titre' => 'Guided interface demo',
 			'accessibilite.demo.mention' => 'Fictitious data, nothing is sent.',
 			'accessibilite.demo.intro' => 'Choose a student and a moment of the session.',
@@ -26671,6 +27727,8 @@ extension on TraductionsEn {
 			'foyer.ajout.pourQui.enfantTitre' => 'A child or a minor',
 			'foyer.ajout.pourQui.enfantDescription' => 'A profile attached to your household, which you manage for them.',
 			'foyer.ajout.pourQui.enfantAttente' => 'Possible as soon as your access is open.',
+			_ => null,
+		} ?? switch (path) {
 			'foyer.ajout.pourQui.moiTitre' => 'Myself',
 			'foyer.ajout.identite.question' => 'Who is the student?',
 			'foyer.ajout.identite.sousTitre' => 'Their first name, last name and age.',
@@ -26751,8 +27809,6 @@ extension on TraductionsEn {
 			'ficheEleve.lignes.inscriptionLegende' => 'Questionnaire and class',
 			'ficheEleve.lignes.interface' => 'Interface',
 			'ficheEleve.lignes.camera' => 'Current camera',
-			_ => null,
-		} ?? switch (path) {
 			'ficheEleve.lignes.cameraAutorisee' => 'Allowed',
 			'ficheEleve.lignes.cameraNonAutorisee' => 'Not allowed',
 			'ficheEleve.lignes.acces' => 'Rewayah access',
@@ -27185,6 +28241,8 @@ extension on TraductionsEn {
 			'eleveConnexion.refus.dejaUtiliseTitre' => 'Code already used',
 			'eleveConnexion.refus.dejaUtilise' => 'This code has already been used to connect a device. Show a new code on the guardian\'s device.',
 			'eleveConnexion.refus.revoqueTitre' => 'Device removed',
+			_ => null,
+		} ?? switch (path) {
 			'eleveConnexion.refus.revoque' => 'The guardian removed this device. Ask them to show a new code.',
 			'eleveConnexion.refus.plafondTitre' => 'Device limit reached',
 			'eleveConnexion.refus.plafond' => 'This student profile has reached the number of allowed devices. The guardian can remove one in Household, then show a new code.',
@@ -27265,8 +28323,6 @@ extension on TraductionsEn {
 			'recrutement.candidat.dejaUtiliseeDetail' => 'If it was you, sign in with the account you created.',
 			'recrutement.candidat.seConnecter' => 'Sign in',
 			'recrutement.candidat.inconnue' => 'Code not recognised.',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.candidat.inconnueDetail' => 'Check the code, then enter it again.',
 			'recrutement.candidat.ressaisir' => 'Enter another code',
 			'recrutement.candidat.horsLigne' => 'The code was not checked. Try again in a moment.',
@@ -27277,6 +28333,7 @@ extension on TraductionsEn {
 			'recrutement.candidat.comptable.valideDetail' => 'You can create your accountant profile.',
 			'recrutement.candidat.comptable.indisponible' => 'Checking accountant codes will be available once the server is connected.',
 			'recrutement.signature.titre' => 'Contract',
+			'recrutement.signature.traductionTitre' => 'Courtesy translation',
 			'recrutement.signature.version' => ({required Object version}) => 'Version ${version}',
 			'recrutement.signature.empreinte' => ({required Object empreinte}) => 'Text fingerprint: ${empreinte}',
 			'recrutement.signature.texteAltere' => 'The text received does not match its fingerprint: signing is not offered. Try again later or let the management know.',
@@ -27698,6 +28755,8 @@ extension on TraductionsEn {
 			'recrutement.parcours.q.ijazaPresentable.options.non.description' => 'You have no ijaza, and you do not plan to take a test for now.',
 			'recrutement.parcours.q.ijazaPresentable.options.non.explication' => 'Your level is then assessed during the interview.',
 			'recrutement.parcours.q.ijazaPresentable.options.non.exemple' => 'you learned with a teacher, without receiving a written document.',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.q.experienceDebutants.titre' => 'Have you already taught beginners?',
 			'recrutement.parcours.q.experienceDebutants.explication' => 'A beginner is still learning to read the letters and join them.',
 			'recrutement.parcours.q.experienceDebutants.court' => 'Experience with beginners',
@@ -27779,8 +28838,6 @@ extension on TraductionsEn {
 			'recrutement.parcours.q.compteBancaire.titre' => 'Do you have a bank account to receive your payment, in your name or a relative\'s?',
 			'recrutement.parcours.q.compteBancaire.explication' => 'Pay is paid by bank transfer where the academy has confirmed it. Your details are only requested before the first payment.',
 			'recrutement.parcours.q.compteBancaire.court' => 'Bank account',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.q.compteBancaire.options.oui.libelle' => 'Yes, in my name or a relative\'s',
 			'recrutement.parcours.q.compteBancaire.options.oui.description' => 'An account at a bank, in your name or a relative\'s.',
 			'recrutement.parcours.q.compteBancaire.options.oui.explication' => 'Bank transfer can be your payment method, if the academy has confirmed it in your country.',
@@ -28212,6 +29269,8 @@ extension on TraductionsEn {
 			'admin.candidatures.sansDonnees' => 'The applications list could not be loaded',
 			'admin.candidatures.accesRefuse' => 'You do not have access to the applications.',
 			'admin.candidatures.genreInconnuTitre' => 'Applications are not showing',
+			_ => null,
+		} ?? switch (path) {
 			'admin.candidatures.genreInconnu' => 'Your file does not say which side you work on. Ask the management to complete it.',
 			'admin.candidatures.etats.gardee' => 'Kept for follow-up',
 			'admin.candidatures.etats.invitee' => 'Invited',
@@ -28293,8 +29352,6 @@ extension on TraductionsEn {
 			'admin.candidatures.detail.groupeJours' => ({required Object jours, required Object heures}) => '${jours}: ${heures}',
 			'admin.candidatures.detail.etatsPiece.aDeposer' => 'To submit',
 			'admin.candidatures.detail.etatsPiece.deposee' => 'Submitted',
-			_ => null,
-		} ?? switch (path) {
 			'admin.candidatures.detail.etatsPiece.aCorriger' => 'To correct',
 			'admin.candidatures.detail.etatsPiece.validee' => 'Validated',
 			'admin.candidatures.detail.controlesVrai' => 'Satisfied',
@@ -28726,6 +29783,8 @@ extension on TraductionsEn {
 			'admin.traitement.natureDossier' => 'Identity file · Teacher',
 			'admin.traitement.natureReaffectation' => 'Request · Teacher change',
 			'admin.traitement.naturePlafond' => 'Request · Student ceiling',
+			_ => null,
+		} ?? switch (path) {
 			'admin.traitement.natureRegle' => 'Request · Rule change',
 			'admin.traitement.natureDemande' => 'Request',
 			'admin.traitement.cleDepot' => 'Submission date',
@@ -28807,8 +29866,6 @@ extension on TraductionsEn {
 			'admin.groupes.colonneMembres' => 'Members',
 			'admin.groupes.colonneCreneau' => 'Slot',
 			'admin.groupes.colonneEtat' => 'Status',
-			_ => null,
-		} ?? switch (path) {
 			'admin.groupes.typeEnfant' => 'Children',
 			'admin.groupes.typeAdulte' => 'Adults',
 			'admin.groupes.filtreTousTypes' => 'All audiences',
@@ -29240,6 +30297,8 @@ extension on TraductionsEn {
 			'admin.regroupements.indisponibleTitre' => 'Available once the server is connected',
 			'admin.regroupements.indisponiblePhrase' => 'Grouped requests will be shown here once the server is connected. Until then, nothing is shown: no request is invented.',
 			'admin.regroupements.erreur' => 'The grouped requests could not be displayed: the read may not have reached Rewayah. Try again in a moment.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.regroupements.sansDonnees' => 'The grouped requests could not be loaded',
 			'admin.regroupements.vide' => 'No request pending',
 			'admin.regroupements.videDetail' => 'New family requests will appear here, grouped when they look alike.',
@@ -29321,8 +30380,6 @@ extension on TraductionsEn {
 			'admin.regroupements.liste.aucunAvecCeFiltreDetail' => 'Change the filter to see the other grouped requests.',
 			'admin.regroupements.liste.positionSemantique' => ({required Object page, required Object total}) => 'Page ${page} of ${total} of the grouped requests list',
 			'admin.regroupements.liste.precedente' => 'Previous page of grouped requests',
-			_ => null,
-		} ?? switch (path) {
 			'admin.regroupements.liste.suivante' => 'Next page of grouped requests',
 			'admin.regroupements.liste.resume' => ({required Object debut, required Object fin, required Object total}) => 'Grouped requests ${debut} to ${fin} of ${total}',
 			'admin.diagnostics.titre' => 'Diagnostics',
@@ -29754,6 +30811,8 @@ extension on TraductionsEn {
 			'admin.journal.effacerFiltres' => 'Clear the filters',
 			'admin.journal.erreur' => 'The log could not be read. Try again in a moment.',
 			'admin.journal.erreurSuite' => 'The older entries could not be read.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.journal.chargerSuite' => 'Load older entries',
 			'admin.journal.fin' => 'You have gone back to the first entry of the log.',
 			'admin.journal.evenements.observationEntree' => 'Observation visit started',
@@ -29835,8 +30894,6 @@ extension on TraductionsEn {
 			'admin.suppressions.traiter' => 'Handle the request',
 			'admin.suppressions.confirmerQuestion' => ({required Object nom}) => 'Anonymize this account: ${nom}?',
 			'admin.suppressions.confirmerConsequence' => 'The name, contact details and photo are erased. The person can no longer sign in. This action cannot be undone. Invoices and payments are kept.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.suppressions.confirmerSolde' => ({required Object montant}) => 'A balance of ${montant} remains due and will remain so.',
 			'admin.suppressions.confirmerAction' => 'Anonymize the account',
 			'admin.suppressions.confirmerRester' => 'Change nothing',
@@ -30268,6 +31325,8 @@ extension on TraductionsEn {
 			'admin.finance.pol.margeObjectif' => 'Target margin',
 			'admin.finance.pol.margeObjectifDetail' => 'The net margin aimed for, all costs included: a steering guide, never a sanction or a block.',
 			'admin.finance.pol.margeForte' => 'Strong performance',
+			_ => null,
+		} ?? switch (path) {
 			'admin.finance.pol.margeForteDetail' => 'The guide for a very good month; it does not go below the target.',
 			'admin.finance.pol.margeStretch' => 'Stretch scenario',
 			'admin.finance.pol.margeStretchDetail' => 'The ambitious guide; it does not go below the strong performance.',
@@ -30349,8 +31408,6 @@ extension on TraductionsEn {
 			'admin.finance.pol.apercuHeure' => 'For one session hour',
 			'admin.finance.pol.apercuHeureDetail' => ({required Object presents, required Object capacite}) => '${presents} students present of ${capacite}',
 			'admin.finance.pol.apercuAbsentLigne' => 'One absent student',
-			_ => null,
-		} ?? switch (path) {
 			'admin.finance.pol.apercuSansTaux' => 'This version carries no per-student-present rate: the example applies only to a version that has one.',
 			'admin.finance.reserveDelegation' => 'Reserve and delegation',
 			'admin.finance.aValider' => 'To validate',
@@ -30782,6 +31839,8 @@ extension on TraductionsEn {
 			'admin.tirage.ajouterContexte' => 'Choose the class or teacher to draw first. The target is added to the rules, which you then save.',
 			'admin.tirage.ajouterChoix' => 'Class or teacher to target',
 			'admin.tirage.ajouterConfirmer' => 'Add this target',
+			_ => null,
+		} ?? switch (path) {
 			'admin.tirage.manqueCible' => 'The target is missing: choose one from the list.',
 			'admin.tirage.aucunCandidat' => 'No class or teacher to target',
 			'admin.tirage.aucunCandidatDetail' => 'All classes and teachers are already targeted, or no session exists yet.',
@@ -30863,8 +31922,6 @@ extension on TraductionsEn {
 			'admin.bibliotheque.libelles.visibilite.enseignantSeul' => 'Teacher only',
 			'admin.bibliotheque.libelles.visibilite.admin' => 'Administration only',
 			'admin.bibliotheque.libelles.langue.fr' => 'French',
-			_ => null,
-		} ?? switch (path) {
 			'admin.bibliotheque.libelles.langue.ar' => 'Arabic',
 			'admin.bibliotheque.libelles.langue.en' => 'English',
 			'admin.bibliotheque.libelles.usage.application' => 'In the app',
@@ -31296,6 +32353,8 @@ extension on TraductionsEn {
 			'parcours.etatClasseConfirmeeDetail' => ({required Object dePrenom}) => '${dePrenom}\'s class is formed. You will find its sessions in their space.',
 			'parcours.fuseauChange' => 'Your location has changed since this choice',
 			'parcours.fuseauChangeDetail' => 'The schedule is the same for the academy, but it no longer falls at the same time for you. Check that it still suits you.',
+			_ => null,
+		} ?? switch (path) {
 			'parcours.voirHoraires' => 'See the schedules',
 			'parcours.changerHoraire' => 'Change schedule',
 			'parcours.renoncerMotif' => 'The family changed schedule since the journey',
@@ -31377,8 +32436,6 @@ extension on TraductionsEn {
 			'compte.page.matricule' => ({required Object valeur}) => 'Student ID ${valeur}',
 			'compte.page.identiteVide' => 'Your information is not available yet. Your preferences and signing out remain accessible.',
 			'compte.page.identiteEchec' => 'Your information could not be loaded.',
-			_ => null,
-		} ?? switch (path) {
 			'compte.donnees.titre' => 'My data',
 			'compte.donnees.sousTitre' => 'A copy of your data, or the deletion of your account.',
 			'compte.donnees.ligne' => 'Copy of my data and account deletion',
@@ -31810,6 +32867,8 @@ extension on TraductionsEn {
 			'notifications.evenements.seanceTermineeAucunTravail' => 'No work to prepare.',
 			'notifications.evenements.seanceTermineePresents' => ({required num n, required Object total}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} student present out of ${total}.', other: '${n} students present out of ${total}.', ), 
 			'notifications.evenements.seanceTermineeCahierAttend' => 'The handover notebook is waiting for your information.',
+			_ => null,
+		} ?? switch (path) {
 			'notifications.evenements.seanceTermineeCahierDepose' => 'Notebook submitted, thank you.',
 			'notifications.evenements.seanceTermineePhrases' => ({required Object premiere, required Object suite}) => '${premiere} ${suite}',
 			'notifications.evenements.inconnu' => 'This notification needs a more recent version of the app. Reload the page to read it.',
@@ -31891,8 +32950,6 @@ extension on TraductionsEn {
 			'eleve.accueil.erreurCours' => 'Your classes could not be loaded. Try again in a moment.',
 			'eleve.accueil.erreurCoursHorsLigneTitre' => 'Your classes are not available',
 			'eleve.accueil.prochainAujourdhui' => 'Your next class is later today.',
-			_ => null,
-		} ?? switch (path) {
 			'eleve.accueil.prochainDemain' => 'Your next class is tomorrow.',
 			'eleve.accueil.annulee' => 'This class will not take place',
 			'eleve.accueil.horsLigne' => 'Entry pending',
@@ -32324,6 +33381,8 @@ extension on TraductionsEn {
 			'enseignant.bienvenue.dossierIncomplet' => 'Your file is not approved yet.',
 			'enseignant.bienvenue.dossierIncompletDetail' => 'The waiting page tells you what remains to be provided.',
 			'enseignant.bienvenue.versAttente' => 'See my file',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.bienvenue.erreur' => 'Your profile could not be loaded. Try again in a moment.',
 			'enseignant.photo.titre' => 'Professional photo',
 			'enseignant.photo.aide' => 'Your photo is required: families do not entrust their children to a stranger on the internet. It is visible to the families of your students.',
@@ -32405,8 +33464,6 @@ extension on TraductionsEn {
 			'enseignant.journee.remplacementsVide' => 'No class from a colleague to take on for now.',
 			'enseignant.journee.voirTousRemplacements' => ({required Object nombre}) => 'See all: the ${nombre} confirmed replacements',
 			'enseignant.journee.heure' => 'Time',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.journee.eleves' => 'Students',
 			'enseignant.journee.classe' => 'Class',
 			'enseignant.journee.preparerSeance' => 'Prepare the session',
@@ -32838,6 +33895,8 @@ extension on TraductionsEn {
 			'enseignant.revenus.type' => 'Type',
 			'enseignant.revenus.typeEnfants' => 'Children',
 			'enseignant.revenus.typeDebutants' => 'Beginner children',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.revenus.typeAdultes' => 'Adults',
 			'enseignant.revenus.remplacement' => 'Replacement',
 			'enseignant.revenus.tauxMoyen' => 'Average hourly rate',
@@ -32919,8 +33978,6 @@ extension on TraductionsEn {
 			'controleur.historique.cleDate' => 'Date',
 			'controleur.historique.cleDuree' => 'Time observed',
 			'controleur.historique.cleElevesPresents' => 'Present',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.historique.cleReponse' => 'Reply',
 			'controleur.historique.sansComplement' => 'No addendum.',
 			'controleur.historique.faitsIndisponibles' => 'The automatic log of this visit (times, students present, reconnections) has not been received yet: the session has just ended or the connection was cut. It will appear here as soon as it is received. The rest of the report remains reliable.',
@@ -33352,6 +34409,8 @@ extension on TraductionsEn {
 			'tc.outils.revision.groupeEntier' => 'Whole class',
 			'tc.outils.revision.consigne' => 'Short instruction (optional)',
 			'tc.outils.revision.creer' => 'Set the work',
+			_ => null,
+		} ?? switch (path) {
 			'tc.outils.revision.posee' => 'Work to prepare set',
 			'tc.outils.masquer.reveler' => 'Reveal',
 			'tc.outils.masquer.refermer' => 'Hide again',
@@ -33433,8 +34492,6 @@ extension on TraductionsEn {
 			'tc.observation.entree.retourClasse' => 'Back to the class',
 			'tc.observation.explication.titre' => 'A glimpse of their learning',
 			'tc.observation.explication.regleUne' => ({required Object n, required Object duree}) => '${n} visit of ${duree}',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.explication.regle' => ({required num n, required Object duree}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} visit of ${duree}', other: '${n} visits of ${duree}', ), 
 			'tc.observation.explication.regleDetail' => 'Per session and per parent, even if several of your children are in the class.',
 			'tc.observation.explication.ecoute' => 'Listen to the teacher and the students',
@@ -33866,6 +34923,8 @@ extension on TraductionsEn {
 			'adulte.acceptation.pourquoiTitre' => 'Why',
 			'adulte.acceptation.pourquoiElle' => ({required Object prenom}) => '${prenom} manages the household and pays for its members. To pay for your classes, she must see your balance.',
 			'adulte.acceptation.pourquoiLui' => ({required Object prenom}) => '${prenom} manages the household and pays for its members. To pay for your classes, he must see your balance.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.acceptation.verraTitre' => ({required Object quePrenom}) => 'What ${quePrenom} will see',
 			'adulte.acceptation.verraElle' => 'Your first and last name. Your balance, or the need to top it up. The plan that concerns you. The state of your access, if it prevents payment. She will also know if you leave the family plan.',
 			'adulte.acceptation.verraLui' => 'Your first and last name. Your balance, or the need to top it up. The plan that concerns you. The state of your access, if it prevents payment. He will also know if you leave the family plan.',
@@ -33947,8 +35006,6 @@ extension on TraductionsEn {
 			'adulte.reprise.deposerConsequence' => 'The household account holder will be informed and can refuse it. The administration will then review the request and decide.',
 			'adulte.reprise.horsLigne' => 'Nothing is sent. You can submit the request yourself when the connection is back.',
 			'adulte.reprise.depotEchecTitre' => 'The request was not confirmed.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.reprise.echecPhrase' => 'Check before trying again.',
 			'adulte.reprise.motif' => 'Reason',
 			'adulte.reprise.motifDeces' => 'Reported death of the account holder',
@@ -34380,6 +35437,8 @@ extension on TraductionsEn {
 			'argent.soldes.total' => 'Total balances (read-only)',
 			'argent.soldes.totalDetail' => 'A read-only view: each balance stays that of its profile.',
 			'argent.soldes.aPayer' => 'To pay this month',
+			_ => null,
+		} ?? switch (path) {
 			'argent.soldes.profilsFinances' => 'Funded profiles',
 			'argent.soldes.profilsFinancesValeur' => ({required Object n, required Object total}) => '${n} of ${total}',
 			'argent.soldes.paiements' => 'Payments this month',
@@ -34461,8 +35520,6 @@ extension on TraductionsEn {
 			'com.socle.composants.composer.annonce' => ({required Object auteur, required Object texte}) => 'New message from ${auteur}: ${texte}',
 			'com.socle.composants.composer.brouillon' => _root.com.socle.lexique.brouillon,
 			'com.socle.composants.composer.brouillonRestaure' => 'Draft restored',
-			_ => null,
-		} ?? switch (path) {
 			'com.socle.composants.composer.enregistrerVocal' => _root.com.vocal.composer.enregistrer,
 			'com.socle.composants.composer.aucunMessageTitre' => 'No message yet',
 			'com.socle.composants.composer.aucunMessage' => 'Write the first message of this conversation: it will appear here.',
@@ -34894,6 +35951,8 @@ extension on TraductionsEn {
 			'com.studio.aujourdhui.videsBlocs.echeances' => 'No upcoming deadline.',
 			'com.studio.aujourdhui.videsBlocs.activite' => 'No recent activity.',
 			'com.studio.aujourdhui.videTitre' => 'Nothing to handle for now',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.aujourdhui.dansCanal' => ({required Object nom}) => 'In ${nom}',
 			'com.studio.aujourdhui.echeance' => ({required Object date}) => 'Due on ${date}',
 			'com.studio.aujourdhui.seTraiteDans' => ({required Object module}) => 'Handled in ${module}',
@@ -34975,8 +36034,6 @@ extension on TraductionsEn {
 			'com.studio.enregistrer.retirer' => 'Remove',
 			'com.studio.enregistrer.semantiqueEnregistrer' => ({required Object titre}) => 'Save ${titre}',
 			'com.studio.enregistrer.semantiqueRetirer' => ({required Object titre}) => 'Remove ${titre} from saved items',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.enregistrer.ajoute' => ({required Object titre}) => 'Added to saved items: ${titre}.',
 			'com.studio.enregistrer.retire' => ({required Object titre}) => 'Removed from saved items: ${titre}.',
 			'com.studio.enregistrer.nonConfirme' => 'Saving has not been confirmed yet. Try again in a moment.',
@@ -35408,6 +36465,8 @@ extension on TraductionsEn {
 			'comptable.statuts.reserve.atteint' => 'Target reached',
 			'comptable.statuts.reserve.sousObjectif' => 'Below target',
 			'comptable.statuts.reserve.depassement' => 'Exceeded',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.statuts.reserve.regleInactive' => 'Rule inactive',
 			'comptable.statuts.reserve.alimentationPrevue' => 'Funding planned',
 			'comptable.statuts.reserve.mouvementSensible' => 'Sensitive movement',
@@ -35489,8 +36548,6 @@ extension on TraductionsEn {
 			'comptable.aujourdhui.encaissementsRecents' => 'Recent collections',
 			'comptable.aujourdhui.voirTout' => 'See all',
 			'comptable.paiements.confirmation.titreUn' => 'Confirm the payment',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.paiements.confirmation.titreLot' => 'Confirm the batch',
 			'comptable.paiements.confirmation.titreValidation' => 'Request a validation',
 			'comptable.paiements.confirmation.payerMaintenant' => 'Pay now',
@@ -35922,6 +36979,8 @@ extension on TraductionsEn {
 			'comptable.beneficiaires.recevoir.wise.paysIndisponible' => ({required Object pays}) => 'Wise does not pay out in this country: ${pays}. You can give the account of a relative in another country; otherwise the management will pay you another way.',
 			'comptable.beneficiaires.recevoir.wise.aMonNomQuestion' => 'Is this account in your name?',
 			'comptable.beneficiaires.recevoir.wise.aMonNomOui' => 'Yes, it is in my name',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.beneficiaires.recevoir.wise.aMonNomNon' => 'No, it is in a relative\'s name',
 			'comptable.beneficiaires.recevoir.wise.aMonNomNonDetail' => 'Your pay will go to a relative\'s account, with your agreement. The management checks it before the first payment.',
 			'comptable.beneficiaires.recevoir.wise.lienQuestion' => 'Who holds the account?',
@@ -36003,8 +37062,6 @@ extension on TraductionsEn {
 			'comptable.contractuels.approuver' => 'Approve',
 			'comptable.contractuels.ouvrirLecteur' => ({required Object objet}) => 'Open the obligation ${objet}',
 			'comptable.contractuels.creationBloquee' => ({required Object raison}) => 'New obligation unavailable: ${raison}.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.contractuels.videObligations' => 'No obligation in progress',
 			'comptable.contractuels.videObligationsDetail' => 'Obligations created appear here, with their due date and status.',
 			'comptable.contractuels.videAApprouver' => 'Nothing to approve',
@@ -36436,6 +37493,8 @@ extension on TraductionsEn {
 			'sansDonnees.revenus' => 'Your earnings could not be loaded',
 			'sansDonnees.aujourdhui' => 'Today\'s board could not be loaded',
 			'sansDonnees.paiement' => 'This payment could not be loaded',
+			_ => null,
+		} ?? switch (path) {
 			'sansDonnees.paiementsAEffectuer' => 'The payments to make could not be loaded',
 			'sansDonnees.encaissements' => 'The collections could not be loaded',
 			'sansDonnees.tresorerie' => 'The cash position could not be loaded',
@@ -36447,6 +37506,7 @@ extension on TraductionsEn {
 			'sansDonnees.profilPaiement' => 'This payment profile could not be loaded',
 			'juridique.titre' => 'Legal information',
 			'juridique.intro' => 'The texts that govern the service. They can be read without an account.',
+			'juridique.traduction' => 'This translation is provided for convenience. In case of discrepancy, the French version prevails.',
 			'juridique.version' => ({required Object version, required Object date}) => 'Version ${version}, text of ${date}',
 			'juridique.contact' => ({required Object contact}) => 'For any question, write to ${contact}.',
 			'juridique.lire' => 'Read',
@@ -36454,6 +37514,178 @@ extension on TraductionsEn {
 			'juridique.coord.numero' => 'Registration number: 16624644, England and Wales',
 			'juridique.coord.adresse' => 'Registered office: 71-75 Shelton Street, Covent Garden, London WC2H 9JQ, United Kingdom',
 			'juridique.aCompleter' => ({required Object quoi}) => '[to be completed by the management: ${quoi}]',
+			'juridique.quoi.hebergeur' => 'legal host and its contact details',
+			'juridique.quoi.lieuxHebergement' => 'countries where the information is hosted',
+			'juridique.quoi.dureesConservation' => 'retention period for each type of information',
+			'juridique.quoi.droitApplicable' => 'governing law and competent jurisdiction',
+			'juridique.quoi.confirmationConseil' => 'review by legal counsel, including the right of withdrawal',
+			'juridique.quoi.remboursementModalites' => 'method and time limit of the refund',
+			'juridique.quoi.responsableEnfants' => 'person responsible for child protection',
+			'juridique.valeurs.hebergeur' => 'Database and account sign-in: Supabase Inc. (supabase.com). Application and web pages: Vercel Inc. (vercel.com). Domain name: Cloudflare, Inc. (cloudflare.com).',
+			'juridique.valeurs.lieuxHebergement' => 'The database is hosted in Ireland, in the European Union. Other providers may process certain information outside the United Kingdom: these transfers comply with the protection rules provided by law.',
+			'juridique.valeurs.dureesConservation' => 'Account and profile: for as long as the account exists. After a deletion request and a reflection period of 14 days, the name, email address and contact details are erased. Invoices and payments: 6 years, as required by United Kingdom accounting law. A Teacher\'s ID document: 90 days at most after verification. Messages: for as long as the account exists; after deletion, their author becomes anonymous.',
+			'juridique.valeurs.droitApplicable' => 'The law of England and Wales, and the courts of England and Wales. If you are a consumer, you keep the protection of the mandatory rules of your country of residence.',
+			'juridique.valeurs.confirmationConseil' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(jours, one: 'Right of withdrawal: you may cancel within ${jours} day from payment, without giving any reason. If classes began at your request during this period, the part already attended remains due.', other: 'Right of withdrawal: you may cancel within ${jours} days from payment, without giving any reason. If classes began at your request during this period, the part already attended remains due.', ), 
+			'juridique.valeurs.confirmationConseilSansDuree' => 'Right of withdrawal: you may cancel during the withdrawal period, which runs from payment, without giving any reason. Its length is that of the pricing policy in force (Prices page). If classes began at your request during this period, the part already attended remains due.',
+			'juridique.valeurs.remboursementModalites' => 'The refund is made to the payment method used, within 14 days of your request.',
+			'juridique.valeurs.responsableEnfants' => ({required Object nom, required Object contact}) => '${nom}, reachable at ${contact}.',
+			'juridique.valeurs.responsableDefaut' => 'Rewayah Academy',
+			'juridique.valeurs.representantUeDefaut' => 'Rewayah Academy',
+			'juridique.mentions.titre' => 'Legal notice',
+			'juridique.mentions.resume' => 'Who operates Rewayah Academy and how to contact it.',
+			'juridique.mentions.intro' => 'Here is who operates Rewayah Academy and how to contact it.',
+			'juridique.mentions.s1.titre' => '1. Who operates the service',
+			'juridique.mentions.s1.blocs.0' => 'Rewayah Academy offers Quran classes by video, in stable Classes: the same students, a timetable that returns every week and an assigned Teacher.',
+			'juridique.mentions.s2.titre' => '2. Contacting us',
+			'juridique.mentions.s2.blocs.0' => 'A single address for your questions about the service, about these texts and about your information.',
+			'juridique.mentions.s3.titre' => '3. Hosting and technical services',
+			'juridique.mentions.s3.blocs.0' => 'The service relies on technical providers: hosting of the web pages, the database and account sign-in, video for the sessions, private file storage and a payment provider.',
+			'juridique.mentions.s4.titre' => '4. These texts',
+			'juridique.mentions.s4.blocs.0' => 'Each legal text carries its version and its date, shown at the top of the page. When a text changes, the new version replaces the old one on the date indicated.',
+			'juridique.conditions.titre' => 'Terms of use and sale',
+			'juridique.conditions.resume' => 'The rules for using the service and selling subscriptions.',
+			'juridique.conditions.intro' => 'These terms apply as soon as you create an account or register a student. Read them in full, they are short.',
+			'juridique.conditions.s1.titre' => '1. The service',
+			'juridique.conditions.s1.blocs.0' => 'Rewayah Academy offers Quran classes by video. Each student is placed in a Class: a small number of students, a recurring timetable and an assigned Teacher.',
+			'juridique.conditions.s1.blocs.1' => 'There are two plans: the child plan, from 6 to 17 years, and the adult plan, from 18 years. No minor shall be placed in an adults\' Class.',
+			'juridique.conditions.s1.blocs.2' => 'A Class opens when enough students are registered. Until then, you are on the waiting list and nothing is invoiced.',
+			'juridique.conditions.s2.titre' => '2. Account and access',
+			'juridique.conditions.s2.blocs.0' => 'A child is registered and followed by an adult Guardian, who decides for them. See the Child protection text.',
+			'juridique.conditions.s2.blocs.1' => 'You shall give accurate information and keep your access to yourself. A session is entered through one\'s account, never through a public link.',
+			'juridique.conditions.s3.titre' => '3. Sessions',
+			'juridique.conditions.s3.blocs.0' => 'Sessions take place at a fixed time, with the same Teacher. Being present and on time is part of the commitment.',
+			'juridique.conditions.s3.blocs.1' => 'A shortened session remains due if the student was present long enough. A session cancelled by the Academy or by the Teacher is replaced.',
+			'juridique.conditions.s3.blocs.2' => 'A quality reviewer may attend sessions without being seen, and a class may be recorded. If recording becomes real, we shall tell you beforehand.',
+			'juridique.conditions.s3.blocs.3' => 'The parent may silently observe their child\'s session.',
+			'juridique.conditions.s4.titre' => '4. Prices and payment',
+			'juridique.conditions.s4.blocs.0' => 'Prices appear on the Prices page and in the app, when choosing a plan. They are in US dollars and exclude tax. The tax due according to your country is added to the payment.',
+			'juridique.conditions.s4.blocs.1' => 'The subscription renews every month. Discounts are calculated by the system on the household\'s invoice.',
+			'juridique.conditions.s4.blocs.2' => 'Payment goes through a payment provider.',
+			'juridique.conditions.s4.blocs.3' => 'There is no free trial. During the withdrawal period, which runs from payment, you are refunded what you paid, except for sessions already attended (see the Cancellation and refund text).',
+			'juridique.conditions.s4.blocs.4' => 'Without payment, the student no longer has access to sessions or resources. Their space stays open to see their profile, their history and to pay.',
+			'juridique.conditions.s4.blocs.5' => 'To stop, be refunded or pay late, see the Cancellation and refund text.',
+			'juridique.conditions.s5.titre' => '5. Respect during sessions',
+			'juridique.conditions.s5.blocs.0' => 'Everyone shall behave respectfully towards the Teacher and the other students, in words as in gestures.',
+			'juridique.conditions.s6.titre' => '6. Your information',
+			'juridique.conditions.s6.blocs.0' => 'How we use your information is explained in the Privacy text.',
+			'juridique.conditions.s7.titre' => '7. Governing law',
+			'juridique.conditions.s7.blocs.0' => 'This part states the law that applies and the competent court.',
+			'juridique.annulation.titre' => 'Cancellation and refund',
+			'juridique.annulation.resume' => 'Stopping, being refunded, and what happens if a payment does not arrive.',
+			'juridique.annulation.intro' => 'You may stop whenever you wish. Here is what is refunded, what is not, and what happens if a payment does not arrive.',
+			'juridique.annulation.s1.titre' => '1. Withdrawal period',
+			'juridique.annulation.s1.delai' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(jours, one: 'The withdrawal period is ${jours} day from payment, according to the pricing policy in force (Prices page).', other: 'The withdrawal period is ${jours} days from payment, according to the pricing policy in force (Prices page).', ), 
+			'juridique.annulation.s1.delaiSansDuree' => 'The withdrawal period runs from payment. Its length is that of the pricing policy in force (Prices page).',
+			'juridique.annulation.s1.blocs.0' => 'There is no free trial. Instead, you may stop during the withdrawal period if the class does not suit.',
+			'juridique.annulation.s1.blocs.1' => 'During this period, you are refunded what you paid, except for sessions already attended.',
+			'juridique.annulation.s1.blocs.2' => 'After this period, the month begun is due.',
+			'juridique.annulation.s2.titre' => '2. Stopping the subscription',
+			'juridique.annulation.s2.blocs.0' => 'The monthly subscription may be stopped at any time, without justification. It ends at the end of the current month.',
+			'juridique.annulation.s2.blocs.1' => 'After the withdrawal period, stopping a plan paid in advance, by the quarter or by the year, remains a right. Months begun are counted at the normal monthly price, without the plan\'s discount, and the remainder is refunded.',
+			'juridique.annulation.s2.blocs.2' => 'A registration during the month pays only the remaining sessions of the month.',
+			'juridique.annulation.s3.titre' => '3. Absences and cancelled sessions',
+			'juridique.annulation.s3.blocs.0' => 'A missed place is not refunded: it is reserved for the student in a fixed Class.',
+			'juridique.annulation.s3.blocs.1' => 'A session cancelled by the Academy or by the Teacher is replaced.',
+			'juridique.annulation.s3.blocs.2' => 'If the Class does not open for lack of registrations, nothing is invoiced.',
+			'juridique.annulation.s4.titre' => '4. Late payment',
+			'juridique.annulation.s4.blocs.0' => 'Before renewal, you receive automatic reminders.',
+			'juridique.annulation.s4.blocs.1' => 'After the renewal date, a short grace period applies: the student attends their classes and the unpaid amount is shown to the Guardian.',
+			'juridique.annulation.s4.blocs.2' => 'If payment still does not arrive, access to sessions and resources is suspended. The space stays open to see the profile, the history and to pay. The place is kept for some time.',
+			'juridique.annulation.s4.blocs.3' => 'Then, the place is released to the waiting list. Returning remains possible at no cost, in a new Class.',
+			'juridique.annulation.s4.blocs.4' => 'The exact dates are those of the pricing policy in force (Prices page).',
+			'juridique.annulation.s5.titre' => '5. Moving to the adult plan',
+			'juridique.annulation.s5.blocs.0' => 'A student who reaches 18 moves to the adult plan at the next renewal. The parent is notified in advance.',
+			'juridique.annulation.litige.titre' => '6. Disputing a payment with one\'s bank',
+			'juridique.annulation.litige.blocs.0' => 'If you dispute a payment with your bank, the payment provider takes the money back from the Academy as soon as the review begins. The access of the students concerned is then suspended during the review.',
+			'juridique.annulation.litige.blocs.1' => 'If the bank rules in favour of the Academy, access returns.',
+			'juridique.annulation.litige.blocs.2' => 'If the bank rules in your favour, the payment is treated as a full refund. The fees the payment provider charges the Academy for the dispute are added to your household\'s balance.',
+			'juridique.annulation.litige.blocs.3' => 'Before disputing, write to us: a refund request to the Academy costs nothing.',
+			'juridique.annulation.s6.titre' => '7. Making a request',
+			'juridique.annulation.s6.blocs.0' => 'To stop or to ask for a refund, write to us giving the account name and the reason.',
+			'juridique.confidentialite.titre' => 'Privacy',
+			'juridique.confidentialite.resume' => 'What information we keep, why, and your rights.',
+			'juridique.confidentialite.intro' => 'We keep only what is needed to run the classes. Here is what information, why, and how to control it.',
+			'juridique.confidentialite.s1.titre' => '1. Who is responsible',
+			'juridique.confidentialite.s1.blocs.0' => 'Rewayah Academy Ltd decides why and how your information is used. Its contact details are in the Legal notice.',
+			'juridique.confidentialite.s1.representant' => ({required Object nom}) => 'Representative in the European Union: ${nom}.',
+			'juridique.confidentialite.s2.titre' => '2. What we collect',
+			'juridique.confidentialite.s2.blocs.0' => '- To create an account: the name, the email address, the interface language, the country of residence and the time zone.',
+			'juridique.confidentialite.s2.blocs.1' => '- For a student: the date of birth, which is used to choose the right plan and the rules specific to minors.',
+			'juridique.confidentialite.s2.blocs.2' => '- Optional: photo, phone, address, level, timetable preferences.',
+			'juridique.confidentialite.s2.blocs.3' => '- During classes: attendance, the handover notebook and the student\'s progress.',
+			'juridique.confidentialite.s2.blocs.4' => '- To pay: the subscription and invoices. The payment itself goes through a payment provider.',
+			'juridique.confidentialite.s2.blocs.5' => '- For a Teacher: an ID document, kept apart in a private space.',
+			'juridique.confidentialite.s2.blocs.6' => '- Your agreements: the version of each text accepted and the date.',
+			'juridique.confidentialite.s2.blocs.7' => '- Technical error reports, with no screenshot, no name and no identity.',
+			'juridique.confidentialite.s3.titre' => '3. Why we use it',
+			'juridique.confidentialite.s3.blocs.0' => '- To form the Classes and deliver the classes.',
+			'juridique.confidentialite.s3.blocs.1' => '- To follow attendance and progress.',
+			'juridique.confidentialite.s3.blocs.2' => '- To invoice the subscription.',
+			'juridique.confidentialite.s3.blocs.3' => '- To protect the students and review the quality of sessions.',
+			'juridique.confidentialite.s3.blocs.4' => '- To repair outages.',
+			'juridique.confidentialite.s4.titre' => '4. Who sees what',
+			'juridique.confidentialite.s4.blocs.0' => 'A family sees only its own information. A child\'s information is never public and is never shown to other families.',
+			'juridique.confidentialite.s4.blocs.1' => 'The Teacher sees their students and their Classes. The management sees what is needed to manage registrations, Classes and payments. These accesses are enforced on the server side.',
+			'juridique.confidentialite.s4.blocs.2' => 'A quality reviewer may attend sessions. Sensitive accesses are recorded in a log.',
+			'juridique.confidentialite.s5.titre' => '5. Live sessions and recording',
+			'juridique.confidentialite.s5.blocs.0' => 'Video goes through a specialist service. Access to a session is given by the server, for that session only and for a short time.',
+			'juridique.confidentialite.s5.blocs.1' => 'Today, the app does not record classes. If recording returns, we shall tell you beforehand why, how long it is kept and who can access it, and we shall ask for your agreement.',
+			'juridique.confidentialite.s5.blocs.2' => 'A notice in the room reminds that a review visit is possible.',
+			'juridique.confidentialite.s6.titre' => '6. Where your information is',
+			'juridique.confidentialite.s6.blocs.0' => 'We use a web page host, a database with account sign-in, a video service, private storage for files, a payment provider and an error reporting service. They process your information for us, for these reasons only.',
+			'juridique.confidentialite.s6.blocs.1' => 'To protect sign-in against bots, we use Cloudflare Turnstile (Cloudflare, Inc.). At the time of verification, Cloudflare processes your IP address and technical information about your browser, solely for this check and without any advertising cookie. Legal basis: our legitimate interest in securing the service.',
+			'juridique.confidentialite.s7.titre' => '7. How long',
+			'juridique.confidentialite.s7.blocs.0' => 'We keep each type of information for the time needed, no longer. A Teacher\'s ID document is deleted at the end of a fixed period. A deletion may be frozen in the event of a dispute.',
+			'juridique.confidentialite.s8.titre' => '8. Your rights',
+			'juridique.confidentialite.s8.blocs.0' => '- To see the information we hold about you.',
+			'juridique.confidentialite.s8.blocs.1' => '- To correct it.',
+			'juridique.confidentialite.s8.blocs.2' => '- To ask for its deletion or to limit its use.',
+			'juridique.confidentialite.s8.blocs.3' => 'Write to us. We first check that it is you, or the student\'s Guardian. You may also contact the data protection authority of your country.',
+			'juridique.confidentialite.s9.titre' => '9. Security',
+			'juridique.confidentialite.s9.blocs.0' => 'Access rules are enforced by the server. ID documents are in a private space, separate from photos. No protection is absolute: if you see a problem, write to us.',
+			'juridique.confidentialite.s10.titre' => '10. Children',
+			'juridique.confidentialite.s10.blocs.0' => 'A child\'s information is given and managed by their Guardian. See the Child protection text.',
+			'juridique.cookies.titre' => 'Cookies',
+			'juridique.cookies.resume' => 'What the app and the website keep on your device.',
+			'juridique.cookies.intro' => 'The app and the website keep little on your device. Here is what.',
+			'juridique.cookies.s1.titre' => '1. What it is',
+			'juridique.cookies.s1.blocs.0' => 'A cookie or a piece of local data is a small item kept by your browser or your device. It helps a service recognize you or remember a setting.',
+			'juridique.cookies.s2.titre' => '2. What the app keeps',
+			'juridique.cookies.s2.blocs.0' => '- Your sign-in session.',
+			'juridique.cookies.s2.blocs.1' => '- Your display preferences, such as language and theme.',
+			'juridique.cookies.s2.blocs.2' => '- A limited cache, which you can clear.',
+			'juridique.cookies.s2.blocs.3' => '- On a student\'s device, their personal code, which never leaves the device.',
+			'juridique.cookies.s2.blocs.4' => 'These items are necessary for the app to work.',
+			'juridique.cookies.s3.titre' => '3. What we do not use',
+			'juridique.cookies.s3.blocs.0' => 'At the date of this text, neither the app nor the website uses advertising cookies or audience measurement.',
+			'juridique.cookies.s4.titre' => '4. Error reports',
+			'juridique.cookies.s4.blocs.0' => 'When the app crashes, a technical report may be sent to an error tracking service. It contains no screenshot, no name and no identity.',
+			'juridique.cookies.s5.titre' => '5. Controlling them',
+			'juridique.cookies.s5.blocs.0' => 'You may clear the site\'s data in your browser settings, or sign out from the Account. You will then have to sign in again and redo your display settings.',
+			'juridique.cookies.s6.titre' => '6. Third-party services',
+			'juridique.cookies.s6.blocs.0' => 'If you leave Rewayah Academy for another service, for example payment, that service applies its own rules.',
+			'juridique.enfants.titre' => 'Child protection',
+			'juridique.enfants.resume' => 'How we protect minor students.',
+			'juridique.enfants.intro' => 'Minor students take their classes under an adult\'s responsibility. Here are the rules we apply and how to raise a concern with us.',
+			'juridique.enfants.s1.titre' => '1. A responsible adult',
+			'juridique.enfants.s1.blocs.0' => 'A child shall not access classes without an authorized adult Guardian. Registration, agreements and payments are the Guardian\'s responsibility.',
+			'juridique.enfants.s1.blocs.1' => 'The child plan runs from 6 to 17 years. No minor shall be placed in an adults\' Class.',
+			'juridique.enfants.s1.blocs.2' => 'From 6 to 9 years, the Guided interface is on by default: simpler screens, with large keys.',
+			'juridique.enfants.s2.titre' => '2. During sessions',
+			'juridique.enfants.s2.blocs.0' => 'The child takes their classes with a small number of students and the same assigned Teacher.',
+			'juridique.enfants.s2.blocs.1' => 'There is no public link to a room. A room is entered through one\'s account, with access given by the server.',
+			'juridique.enfants.s2.blocs.2' => 'The parent may silently observe their child\'s class. The child concerned is informed.',
+			'juridique.enfants.s2.blocs.3' => 'A quality reviewer may attend sessions. A notice in the room reminds of this.',
+			'juridique.enfants.s2.blocs.4' => 'A class may be recorded. Today, this is not the case, and the Guardian would be informed beforehand.',
+			'juridique.enfants.s3.titre' => '3. Teachers',
+			'juridique.enfants.s3.blocs.0' => 'Teachers sign a contract and a review policy. Their ID document is kept in a private space, separate from the photos visible in class.',
+			'juridique.enfants.s4.titre' => '4. The child\'s information',
+			'juridique.enfants.s4.blocs.0' => 'A child\'s information is neither public nor visible to other families.',
+			'juridique.enfants.s4.blocs.1' => 'The student\'s personal code stays on their device.',
+			'juridique.enfants.s4.blocs.2' => 'See also the Privacy text.',
+			'juridique.enfants.s5.titre' => '5. Raising a concern',
+			'juridique.enfants.s5.blocs.0' => 'If something worries you, write to us. Say what you saw, when, and in which Class.',
+			'juridique.enfants.s5.blocs.1' => 'In case of immediate danger, first contact the emergency services of your country.',
 			'avis.form.titre' => 'Give your feedback',
 			'avis.form.sousTitre' => 'A few lines about your experience at Rewayah Academy. Two minutes is enough.',
 			'avis.form.nom.libelle' => 'Display name',
@@ -36517,8 +37749,6 @@ extension on TraductionsEn {
 			'avis.admin.outil' => 'Family reviews',
 			'avis.admin.outilDetail' => 'Create a collection link, read the reviews, publish or refuse them',
 			'avis.admin.sections.libelle' => 'Review sections',
-			_ => null,
-		} ?? switch (path) {
 			'avis.admin.sections.avis' => 'Reviews',
 			'avis.admin.sections.liens' => 'Links',
 			'avis.admin.statut.tous' => 'All',
@@ -36777,6 +38007,8 @@ extension on TraductionsEn {
 			'admissions.modeles.sansReponse' => 'No reply',
 			'admissions.modeles.sansReponsePhrase' => '"We did not receive a reply to our last message."',
 			'accueilInscrits.titre' => 'We already know you',
+			_ => null,
+		} ?? switch (path) {
 			'accueilInscrits.phrase' => 'Your registration has been carried over. You do not have to enter everything again.',
 			'accueilInscrits.motTitre' => 'A word from the management',
 			'accueilInscrits.elevesTitre' => 'Your children already registered',
@@ -37031,8 +38263,6 @@ extension on TraductionsEn {
 			'candidatsFlux.importFormulaires.doublons.total' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} case to look at', other: '${n} cases to look at', ), 
 			'candidatsFlux.importFormulaires.doublons.tranches' => ({required Object choisis, required Object total}) => 'Choices made by you: ${choisis} of ${total}. For the others, the most recent row is kept.',
 			'candidatsFlux.importFormulaires.doublons.nature.courriel' => 'Same email',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.doublons.nature.telephone' => 'Same phone',
 			'candidatsFlux.importFormulaires.doublons.nature.courrielEtTelephone' => 'Same email and same phone',
 			'candidatsFlux.importFormulaires.doublons.lignes' => ({required Object liste}) => 'Rows ${liste}',
@@ -37291,6 +38521,8 @@ extension on TraductionsEn {
 			'candidatsFlux.file.reglage.enregistre' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'Setting saved: ${n} message per day.', other: 'Setting saved: ${n} messages per day.', ), 
 			'candidatsFlux.file.reglage.invalide' => 'Enter a whole number from 1 to 2,000, without spaces.',
 			'candidatsFlux.file.reglage.echec' => 'Setting not confirmed. Probable cause: the connection to the server was interrupted. Try again in a moment.',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importDouble.suite' => 'Tap "Enter my code": you enter the code from your verification app, then the import resumes here. Nothing was saved.',
 			'candidatsFlux.importDouble.action' => 'Enter my code',
 			'candidatsFlux.langues.man' => 'Malinke (Mandinka)',
@@ -37545,8 +38777,6 @@ extension on TraductionsEn {
 			'journalSorties.texte.adulte.retrait' => 'You can withdraw your agreement at any time, right here. As soon as you withdraw it, nothing more is recorded.',
 			'journalSorties.texte.adulte.sansAccord' => 'Without your agreement, nothing is recorded and nothing changes for the class. If you stay out of the app too long, you leave the room, with or without agreement: that keeps nothing.',
 			'journalSorties.texte.adulte.caseAccord' => 'I agree that my exits from the app during sessions be recorded.',
-			_ => null,
-		} ?? switch (path) {
 			'journalSorties.accord.titre' => 'Exits from the app',
 			'journalSorties.accord.ligne' => 'Exits from the app during class',
 			'journalSorties.accord.ligneDetail' => 'Your agreement, for each child',
