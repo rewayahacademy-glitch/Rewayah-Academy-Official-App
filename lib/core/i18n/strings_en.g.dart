@@ -44,6 +44,7 @@ class TraductionsEn extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$reseau$en reseau = _Traductions$reseau$en._(_root);
 	@override late final _Traductions$etat$en etat = _Traductions$etat$en._(_root);
 	@override late final _Traductions$destructif$en destructif = _Traductions$destructif$en._(_root);
+	@override late final _Traductions$salle$en salle = _Traductions$salle$en._(_root);
 	@override late final _Traductions$presence$en presence = _Traductions$presence$en._(_root);
 	@override late final _Traductions$attente$en attente = _Traductions$attente$en._(_root);
 	@override late final _Traductions$accords$en accords = _Traductions$accords$en._(_root);
@@ -216,6 +217,117 @@ class _Traductions$destructif$en extends Traductions$destructif$fr {
 	// Translations
 	@override String get irreversible => 'This action cannot be undone.';
 	@override String saisieVide({required Object prenom}) => 'Write the first name ${prenom} to confirm';
+}
+
+// Path: salle
+class _Traductions$salle$en extends Traductions$salle$fr {
+	_Traductions$salle$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get sonBloque => 'The browser has muted the sound';
+	@override String get activerSon => 'Turn on sound';
+	@override late final _Traductions$salle$vignette$en vignette = _Traductions$salle$vignette$en._(_root);
+	@override late final _Traductions$salle$reseau$en reseau = _Traductions$salle$reseau$en._(_root);
+	@override late final _Traductions$salle$coranEleve$en coranEleve = _Traductions$salle$coranEleve$en._(_root);
+	@override late final _Traductions$salle$support$en support = _Traductions$salle$support$en._(_root);
+	@override late final _Traductions$salle$etagere$en etagere = _Traductions$salle$etagere$en._(_root);
+	@override late final _Traductions$salle$barre$en barre = _Traductions$salle$barre$en._(_root);
+	@override late final _Traductions$salle$telephone$en telephone = _Traductions$salle$telephone$en._(_root);
+	@override late final _Traductions$salle$sortie$en sortie = _Traductions$salle$sortie$en._(_root);
+	@override String get retourner => 'Return to the room';
+	@override late final _Traductions$salle$microAttente$en microAttente = _Traductions$salle$microAttente$en._(_root);
+	@override late final _Traductions$salle$ile$en ile = _Traductions$salle$ile$en._(_root);
+	@override late final _Traductions$salle$dynamique$en dynamique = _Traductions$salle$dynamique$en._(_root);
+	@override late final _Traductions$salle$supports$en supports = _Traductions$salle$supports$en._(_root);
+	@override late final _Traductions$salle$coran$en coran = _Traductions$salle$coran$en._(_root);
+	@override late final _Traductions$salle$preparation$en preparation = _Traductions$salle$preparation$en._(_root);
+	@override String get bandeauPermanent => 'A review visit is possible.';
+	@override late final _Traductions$salle$informationControle$en informationControle = _Traductions$salle$informationControle$en._(_root);
+	@override late final _Traductions$salle$releve$en releve = _Traductions$salle$releve$en._(_root);
+	@override late final _Traductions$salle$situations$en situations = _Traductions$salle$situations$en._(_root);
+	@override late final _Traductions$salle$secours$en secours = _Traductions$salle$secours$en._(_root);
+	@override late final _Traductions$salle$seance$en seance = _Traductions$salle$seance$en._(_root);
+	@override late final _Traductions$salle$fin$en fin = _Traductions$salle$fin$en._(_root);
+	@override String get micro => 'Microphone';
+	@override late final _Traductions$salle$scene$en scene = _Traductions$salle$scene$en._(_root);
+	@override String get microCoupe => 'Microphone off';
+	@override String get microOuvert => 'Microphone on';
+	@override String get camera => 'Camera';
+	@override String get cameraCoupee => 'Camera off';
+	@override String get cameraAllumee => 'Camera on';
+	@override String get cameraEchec => 'The camera will not turn on';
+	@override String get cameraEchecRefus => 'The browser is refusing camera access. Allow the camera in the site settings (to the left of the address), then tap the camera again.';
+	@override String get cameraEchecOccupee => 'The camera is already in use by another app or another window. Close it, then tap the camera again.';
+	@override String get cameraEchecAbsente => 'No camera was found on this device. Plug one in, then tap the camera again.';
+	@override String get cameraEchecAutre => 'Tap the camera again. If nothing changes, tell the management.';
+	@override String get quitter => 'Leave';
+	@override String get ouvrirCoran => 'Open the Quran';
+	@override String get confirmerSortie => 'Leave the class?';
+	@override String get expiree => 'This room is no longer accessible. Go back to your home screen to join the next class.';
+	@override String get ouverture => 'Opening the room';
+	@override String get verificationMateriel => 'Checking your microphone';
+	@override String get connexion => 'Connecting to the class';
+	@override String get reconnexionCourt => 'Reconnecting';
+	@override String get perdue => 'The connection to the class is lost';
+	@override String get retire => 'Your teacher has removed you from the class';
+	@override String get rappelRecuDetail => 'Look at the screen and listen to your teacher.';
+	@override String get retireDetail => 'You can come back when your teacher has readmitted you. Then tap "Try again".';
+	@override String get ouverteAilleurs => 'This account is already in the room on another device';
+	@override String get ouverteAilleursDetail => 'Leave the room on the other device, or tap "Try again" to join it here: the other device will leave the room.';
+	@override late final _Traductions$salle$fermeture$en fermeture = _Traductions$salle$fermeture$en._(_root);
+	@override late final _Traductions$salle$gestes$en gestes = _Traductions$salle$gestes$en._(_root);
+	@override String get seulEnseignant => 'Your teacher has not arrived yet';
+	@override String get seulEnseignantDetail => 'Stay on this screen: the session starts as soon as your teacher enters.';
+	@override String get seulEnseignantTutoie => 'Your teacher has not arrived yet';
+	@override String get seulEnseignantDetailTutoie => 'Stay on this screen: the session starts as soon as your teacher enters.';
+	@override String attenteDe({required Object deNom}) => 'Waiting for ${deNom}';
+	@override String get seulEleve => 'Your student has not arrived yet';
+	@override String get voirVideoEnGrand => 'See the video larger';
+	@override String get revenirALaPage => 'Back to the page';
+	@override String get seulEleveDetail => 'Stay on this screen. You will see them appear.';
+	@override String get seulObservation => 'No one has entered this room yet';
+	@override String get seulObservationDetail => 'The class has not started, or it has already ended.';
+	@override String get refusAcces => 'This class is not open to you right now';
+	@override String get refusAccesDetail => 'The room opens shortly before class time, and closes shortly after it ends.';
+	@override String refusTerminee({required Object heure}) => 'The session ended at ${heure}. The room closed shortly after.';
+	@override String refusPasEncoreOuverte({required Object heure}) => 'The room will open at ${heure}.';
+	@override String get refusAnnulee => 'This session is cancelled.';
+	@override String get refusAccesPerduTitre => 'You did not join the room in time';
+	@override String get refusAccesPerdu => 'After the delay to join the room, today\'s session was taken from you: it counts as an absence. You remain the class teacher.';
+	@override String get refusConfiguration => 'The room is not available yet';
+	@override String get refusConfigurationDetail => 'It is not your device: the video conferencing service is not connected. The team knows.';
+	@override String get refusReseau => 'The room could not open';
+	@override String get refusReseauDetail => 'The request may not have reached Rewayah. Check your connection, then try again.';
+	@override String get refusMateriel => 'No usable microphone on this device';
+	@override String get refusMaterielDetail => 'A Quran class is done by voice. Allow microphone access, or plug in a headset, then try again.';
+	@override String get retourAccueil => 'Back to my home';
+	@override String get ouvrirMicro => 'Turn on the microphone';
+	@override String get fermerMicro => 'Turn off the microphone';
+	@override String get ouvrirCamera => 'Turn on the camera';
+	@override String get fermerCamera => 'Turn off the camera';
+	@override String get quitterLeCours => 'Leave the class';
+	@override String get consequenceSortie => 'The class continues without you, and your departure is recorded in the session.';
+	@override String get vousMeme => 'You';
+	@override String get participant => 'Participant';
+	@override String get sansImage => 'No image';
+	@override String get lienMediocre => 'Weak connection';
+	@override String get lienPerdu => 'Connection lost';
+	@override String get videoSuspendue => 'Image off until the connection returns. The voice continues.';
+	@override String get roleEnseignant => 'Teacher';
+	@override String get roleEleve => 'Student';
+	@override String get roleTuteur => 'Guardian, observing';
+	@override String get roleAdministration => 'Rewayah administration';
+	@override String get observationMuette => 'You are attending the class. You cannot be heard.';
+	@override String get observationMuetteTitre => 'You are attending the class.';
+	@override String get bandeauControle => 'Review visit. You are neither seen nor heard, and your visit is recorded in the log.';
+	@override String get bandeauControleTitre => 'Review visit.';
+	@override String get roleCandidat => 'Candidate';
+	@override String get roleIntervieweur => 'Leads the interview';
+	@override String get seulEntretien => 'The other people in the interview have not arrived yet';
+	@override String get seulEntretienDetail => 'Stay on this screen. The interview starts as soon as everyone is here.';
+	@override late final _Traductions$salle$visiteControle$en visiteControle = _Traductions$salle$visiteControle$en._(_root);
 }
 
 // Path: presence
@@ -2514,6 +2626,566 @@ class _Traductions$commun$autresRevenus$en extends Traductions$commun$autresReve
 	@override String get aideInternet => 'Internet allowance';
 	@override String get prime => 'Bonus';
 	@override String get mission => 'Mission';
+}
+
+// Path: salle.vignette
+class _Traductions$salle$vignette$en extends Traductions$salle$vignette$fr {
+	_Traductions$salle$vignette$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String ranger({required Object deNom}) => 'Put away ${deNom}\'s video';
+	@override String montrer({required Object deNom}) => 'Show ${deNom}\'s video';
+}
+
+// Path: salle.reseau
+class _Traductions$salle$reseau$en extends Traductions$salle$reseau$fr {
+	_Traductions$salle$reseau$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get bon => 'Good network';
+	@override String get correct => 'Fair network';
+	@override String get faible => 'Weak network';
+	@override String get perdu => 'Network lost';
+	@override String onEntendMal({required Object prenom}) => '${prenom} may be hard to hear.';
+	@override String entendMal({required Object prenom}) => '${prenom} may be hearing poorly.';
+	@override String get onVousEntendMal => 'Your connection is weak: you may be hard to hear. Move closer to the Wi-Fi or close other apps.';
+	@override String get onTEntendMal => 'Your connection is weak: you may be hard to hear. Move closer to the Wi-Fi or close other apps.';
+	@override String get onTEntendMalGuidee => 'You may be hard to hear. Move closer to the Wi-Fi.';
+}
+
+// Path: salle.coranEleve
+class _Traductions$salle$coranEleve$en extends Traductions$salle$coranEleve$fr {
+	_Traductions$salle$coranEleve$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get retrouverReprise => 'See where to resume reading';
+	@override String revenirPage({required Object page}) => 'Go back to page ${page}';
+	@override String revenirPageClasse({required Object page}) => 'Go back to the class\'s page ${page}';
+	@override String fermerReprise({required Object page}) => 'Close the reminder for page ${page}';
+	@override String get pageDeLaClasse => 'The page follows the teacher\'s. It turns with the class.';
+}
+
+// Path: salle.support
+class _Traductions$salle$support$en extends Traductions$salle$support$fr {
+	_Traductions$salle$support$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get inconnuTitre => 'This document cannot be shown here yet';
+	@override String get inconnuDetail => 'The teacher is sharing a document this version of the app does not know. The class continues by voice. After the class, closing and reopening the app updates it.';
+	@override String get inconnuNom => 'Shared document';
+	@override String titrePage({required Object titre, required Object page}) => '${titre} · Page ${page}';
+	@override String get demoDetail => 'Demo document. It is used to try out sharing.';
+	@override String get repriseNonRetenue => 'This document\'s page is not yet remembered from one session to the next. At the next session, choose the page again.';
+	@override String get pageIllisible => 'This page is not showing';
+	@override String get pageIllisibleDetail => 'The page file did not arrive, the connection may have been cut. Try again: the session and the sound continue.';
+	@override String reessayerPage({required Object page}) => 'Try showing page ${page} again';
+}
+
+// Path: salle.etagere
+class _Traductions$salle$etagere$en extends Traductions$salle$etagere$fr {
+	_Traductions$salle$etagere$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String etape({required Object numero}) => 'Stage ${numero}';
+	@override late final _Traductions$salle$etagere$coranCouverture$en coranCouverture = _Traductions$salle$etagere$coranCouverture$en._(_root);
+	@override String get intro => 'Choose a document, then look at it alone or show it to the class.';
+	@override String ouvrirFiche({required Object titre}) => 'Open the sheet for ${titre}';
+	@override String get revenir => 'Back to the library';
+	@override String get revenirFiche => 'Back to the document sheet';
+	@override String get afficher => 'Show';
+	@override String afficherSemantique({required Object titre}) => 'Show ${titre} for yourself only';
+	@override String get afficherDetail => 'You are looking at it alone. The class sees nothing.';
+	@override String get partager => 'Share';
+	@override String partagerSemantique({required Object titre}) => 'Share ${titre} with the class';
+	@override String get partagerDetail => 'The class can see it now.';
+	@override String partagerPage({required Object page}) => 'Share page ${page}';
+	@override String partagerPageSemantique({required Object page}) => 'Share page ${page} with the class';
+	@override String get partagerPageDetail => 'The class can see it now, at the page where it had stopped.';
+	@override String get choisirDebut => 'Share from another place';
+	@override String reprise({required Object page}) => 'The class had stopped at page ${page}.';
+	@override String get seulVous => 'Only you see this page. The class keeps what it sees.';
+	@override String get pagePrecedente => 'Previous page';
+	@override String get pageSuivante => 'Next page';
+	@override String get nonPartageable => 'This document cannot be shared in class yet. You can only look at it.';
+	@override String get jamaisOuvert => 'Not opened in this class yet.';
+	@override String get nonOuvrable => 'This document cannot be opened in the room yet. The management is preparing its content.';
+	@override String get aValider => 'To validate';
+	@override String get aValiderDetail => 'Demo document, to be validated by the management. Its content is not official yet.';
+	@override String get rechercher => 'Search for a document';
+	@override String get fermerRecherche => 'Close the search';
+	@override String get vide => 'No document in the library';
+	@override String get videDetail => 'The management has not added any document yet. The Quran stays available as soon as it loads.';
+	@override String get erreurTitre => 'The library did not load';
+	@override String get erreurDetail => 'The connection may have been cut. Try again; if nothing changes, tell the management.';
+	@override String get horsLigne => 'The library is not loaded yet';
+	@override String get horsLigneDetail => 'The library will load as soon as the connection returns. What the class sees stays displayed.';
+	@override late final _Traductions$salle$etagere$demo$en demo = _Traductions$salle$etagere$demo$en._(_root);
+}
+
+// Path: salle.barre
+class _Traductions$salle$barre$en extends Traductions$salle$barre$fr {
+	_Traductions$salle$barre$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String infobulle({required Object etat, required Object touche}) => '${etat} (key ${touche})';
+	@override String outilTenu({required Object outil}) => '${outil} in hand (Esc to put it down)';
+	@override late final _Traductions$salle$barre$groupes$en groupes = _Traductions$salle$barre$groupes$en._(_root);
+}
+
+// Path: salle.telephone
+class _Traductions$salle$telephone$en extends Traductions$salle$telephone$fr {
+	_Traductions$salle$telephone$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get ecrireAilleurs => 'To write on the page or open the board, use a tablet or a computer.';
+}
+
+// Path: salle.sortie
+class _Traductions$salle$sortie$en extends Traductions$salle$sortie$fr {
+	_Traductions$salle$sortie$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get reduire => 'Minimize the room';
+	@override String get reduireNom => 'Minimize';
+	@override String get reduireSemantique => 'Minimize the room: the session continues and you still hear the class';
+	@override String get question => 'Leave the session?';
+	@override String get conduiteReduire => 'If you leave, your students stay in the room without you. Minimize the room instead: the class can still hear you, and you come back with one tap on "Return to the room".';
+	@override String get conduite => 'If you leave, your students stay in the room without you. You will then move on to the handover notebook.';
+	@override String get eleveReduire => 'You are leaving the call. You can come back as long as the session is open. To hear the class on another screen, minimize the room instead.';
+}
+
+// Path: salle.microAttente
+class _Traductions$salle$microAttente$en extends Traductions$salle$microAttente$fr {
+	_Traductions$salle$microAttente$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get phrase => 'Your microphone will open when your teacher is here.';
+	@override String get phraseTutoie => 'Your microphone will open when your teacher is here.';
+	@override String get guidee => 'Your microphone is waiting for your teacher.';
+}
+
+// Path: salle.ile
+class _Traductions$salle$ile$en extends Traductions$salle$ile$fr {
+	_Traductions$salle$ile$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get deplier => 'See the session details';
+	@override String get deplierEtat => 'See the room status';
+	@override String get replierEtat => 'Collapse the room status';
+	@override String get replier => 'Collapse the session details';
+	@override String get conclure => 'Less than 5 minutes: remember to wrap up.';
+	@override String get finAtteinte => 'Planned end reached: session still live.';
+}
+
+// Path: salle.dynamique
+class _Traductions$salle$dynamique$en extends Traductions$salle$dynamique$fr {
+	_Traductions$salle$dynamique$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String arriveePrenom({required Object prenom}) => '${prenom} is joining the room';
+	@override String arrivees({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: 'student joins the room',
+		other: 'students join the room',
+	);
+	@override String arriveeMarquePrenom({required Object prenom}) => '${prenom} is in the room';
+	@override String arriveesMarque({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: 'One more student in the room',
+		other: '${n} more students in the room',
+	);
+	@override String get unEleveRecite => 'A student is reciting';
+	@override String pauseQuestion({required Object minutes}) => 'A ${minutes}-min break?';
+	@override String get oui => 'Yes';
+	@override String get non => 'No';
+	@override String get pauseProposee => 'Break proposed';
+	@override String pauseDebut({required Object minutes, required Object heure}) => '${minutes}-min break. Resuming at ${heure}';
+	@override String pausePriereDebut({required Object heure}) => 'Prayer break. Resuming at ${heure}';
+	@override String get pauseFinie => 'The break is over';
+	@override String get pauseFinNonConfirmee => 'The end of the break is not confirmed';
+	@override String get priereDepartNonConfirme => 'The start of the prayer break is not confirmed';
+	@override String get priereNom => 'Prayer break';
+	@override String priereA({required Object heure}) => 'Prayer break at ${heure}';
+	@override String priereDans({required Object minutes}) => 'Prayer break in ${minutes} min';
+	@override String get commencerMaintenant => 'Start now';
+	@override String decaler({required Object minutes}) => 'Delay by ${minutes} min';
+}
+
+// Path: salle.supports
+class _Traductions$salle$supports$en extends Traductions$salle$supports$fr {
+	_Traductions$salle$supports$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get coran => 'Quran, Madinah Mushaf';
+	@override String get coranDetail => 'The page opens for the whole class.';
+}
+
+// Path: salle.coran
+class _Traductions$salle$coran$en extends Traductions$salle$coran$fr {
+	_Traductions$salle$coran$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get indisponible => 'The Quran page is not showing on this device';
+	@override String get indisponibleDetail => 'The Madinah edition\'s script could not load. Try again; if nothing changes, tell the management.';
+	@override String get titrePage => 'The Quran, Madinah edition';
+}
+
+// Path: salle.preparation
+class _Traductions$salle$preparation$en extends Traductions$salle$preparation$fr {
+	_Traductions$salle$preparation$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Prepare to enter the class';
+	@override String get retour => 'Back to the class';
+	@override String get cameraCoupee => 'Camera off';
+	@override String get testerCamera => 'Test the camera';
+	@override String get testCameraFait => 'Local test finished. The camera stays off on entry.';
+	@override String get equipement => 'Your equipment';
+	@override String get connexion => 'Connection';
+	@override String get micro => 'Microphone';
+	@override String get sortieAudio => 'Audio output';
+	@override String get camera => 'Camera';
+	@override String get verification => 'Checking…';
+	@override String get chargement => 'Checking the equipment…';
+	@override String get connexionPrete => 'Connection ready';
+	@override String get connexionInstable => 'Unstable connection';
+	@override String get reseauFaible => 'Unstable connection. Audio will take priority.';
+	@override String get microPret => 'Microphone detected · Microphone off on entry';
+	@override String get microAbsent => 'No microphone detected';
+	@override String get microAbsentRaison => 'No microphone detected. Connect or enable a microphone to teach.';
+	@override String get microBloque => 'Microphone blocked';
+	@override String get permissionRefusee => 'The microphone is blocked in this device\'s settings.';
+	@override String get ouvrirReglages => 'Open settings';
+	@override String get reessayer => 'Try again';
+	@override String get sortieSysteme => 'System output';
+	@override String get cameraPrete => 'Camera detected · Camera off on entry';
+	@override String get cameraAbsente => 'Camera not available. You can enter without a camera.';
+	@override String get modifierPeripheriques => 'Change devices';
+	@override String get contexte => 'Session context';
+	@override String get classe => 'Class';
+	@override String get debut => 'Start';
+	@override String get support => 'Planned document';
+	@override String get reprise => 'Resume';
+	@override String get eleves => 'Students expected';
+	@override String get entrer => 'Enter the class';
+	@override String get terminee => 'This session has ended.';
+	@override String get nonAssignee => 'This session is not assigned to you.';
+	@override String get retourJournee => 'Back to my day';
+	@override late final _Traductions$salle$preparation$demo$en demo = _Traductions$salle$preparation$demo$en._(_root);
+	@override late final _Traductions$salle$preparation$eleve$en eleve = _Traductions$salle$preparation$eleve$en._(_root);
+}
+
+// Path: salle.informationControle
+class _Traductions$salle$informationControle$en extends Traductions$salle$informationControle$fr {
+	_Traductions$salle$informationControle$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get lien => 'Learn more';
+	@override late final _Traductions$salle$informationControle$e1$en e1 = _Traductions$salle$informationControle$e1$en._(_root);
+	@override late final _Traductions$salle$informationControle$e2$en e2 = _Traductions$salle$informationControle$e2$en._(_root);
+}
+
+// Path: salle.releve
+class _Traductions$salle$releve$en extends Traductions$salle$releve$fr {
+	_Traductions$salle$releve$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'The connection during the session';
+	@override String get titreGuidee => 'Your connection during class';
+	@override String get adulte => 'During a session, the app notes whether the teacher\'s connection and that of each adult student are good, weak or lost, and whether their microphone is open at that moment. It keeps neither the sound nor the image, nor the connection address. For a minor student, it keeps nothing. This log is used to understand what happened when a session is disputed. It is kept for 180 days, then deleted. Only the management can read it. You can ask the management for the data about you, and object to this log.';
+	@override String get mineur => 'During a session, the app notes whether your teacher\'s connection is good, weak or lost, and whether their microphone is open at that moment. It keeps neither the sound nor the image. About your own connection, it keeps nothing. This log is kept for 180 days, then deleted. Only the management can read it.';
+	@override String get guidee => 'During class, the app checks whether your connection is working well. It keeps neither your voice nor your image, and it keeps nothing about your connection.';
+}
+
+// Path: salle.situations
+class _Traductions$salle$situations$en extends Traductions$salle$situations$fr {
+	_Traductions$salle$situations$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get microEchecTitre => 'The microphone will not open';
+	@override String get microRefuse => 'The browser is refusing microphone access. Allow the microphone in the site settings (to the left of the address), then try again.';
+	@override String get microOccupe => 'The microphone is already in use by another app or another window. Close it, then try again.';
+	@override String get microAbsent => 'No microphone was found on this device. Plug in a headset or a microphone, then try again.';
+	@override String get microAutre => 'The microphone could not open. Try again; if nothing changes, reload the page or tell the management.';
+	@override String get microRefuseEntree => 'The browser is refusing microphone access. Allow the microphone in the site settings (to the left of the address), then tap "Try again".';
+	@override String get reessayerMicro => 'Try the microphone again';
+	@override String get nonInscritTitre => 'This class is not among your classes';
+	@override String get nonInscrit => 'Open the room from your home screen. If this class should be yours, write to the management.';
+	@override String get accesSuspenduTitre => 'Access to this class temporarily unavailable';
+	@override String get accesSuspendu => 'The person who manages the account can restore access. For any question, write to the management.';
+	@override String get observationTermineeTitre => 'Your observation time is over';
+	@override String get observationTerminee => 'The permitted observation time has run out. Your child continues their class normally.';
+	@override String get compteInvalideTitre => 'Your account does not allow you to enter';
+	@override String get compteInvalide => 'Your account is no longer active. Write to the management to restore it.';
+	@override String get enseignantPartiTitre => 'Your teacher is no longer in the room';
+	@override String get enseignantParti => 'Stay on this screen: they may come back in a moment.';
+	@override String get enseignantPartiTutoie => 'Stay on this screen: they may come back in a moment.';
+	@override String get pauseTitre => 'Break';
+	@override String get pause => 'The session resumes in a moment.';
+}
+
+// Path: salle.secours
+class _Traductions$salle$secours$en extends Traductions$salle$secours$fr {
+	_Traductions$salle$secours$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get reseauFaible => 'Weak network. Audio takes priority.';
+	@override String get reseauFaibleGuidee => 'The network is weak.';
+	@override String get reseauFaibleGuideeSuite => 'The sound stays the priority.';
+	@override String get reconnexion => 'Connection interrupted. Reconnecting…';
+	@override String get reconnexionGuidee => 'Reconnecting the session…';
+	@override String get retablie => 'Connection restored.';
+	@override String get echec => 'Could not restore the connection.';
+	@override String get echecGuidee => 'The connection is not coming back.';
+	@override String get horsLigne => 'You are offline. The session needs a connection.';
+	@override String get reessayer => 'Try again';
+	@override String get quitter => 'Leave';
+	@override String indisponible({required Object commande}) => '${commande}. Unavailable while reconnecting.';
+	@override String get cameraInterdite => 'Camera turned off for this profile.';
+	@override String get microBloque => 'The microphone is blocked in this device\'s settings.';
+	@override String get microBloqueGuidee => 'The microphone is blocked on this device.';
+	@override String get continuerSansMicro => 'Continue without a microphone';
+	@override String get ouvrirReglages => 'Open settings';
+}
+
+// Path: salle.seance
+class _Traductions$salle$seance$en extends Traductions$salle$seance$fr {
+	_Traductions$salle$seance$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get tableauOuvert => 'Board open';
+	@override String get tableauFerme => 'Board closed';
+	@override String get ouvrirTableau => 'Open the board for the class';
+	@override String get fermerTableau => 'Close the board';
+	@override String get titre => 'Live session';
+	@override String get titreGuidee => 'My session';
+	@override String ligne({required Object debut, required Object fin}) => '${debut} · ${fin}';
+	@override String minutesRestantes({required num minutes}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(minutes,
+		one: '${minutes} min left',
+		other: '${minutes} min left',
+	);
+	@override String get sePoursuit => 'The session continues.';
+	@override late final _Traductions$salle$seance$chrono$en chrono = _Traductions$salle$seance$chrono$en._(_root);
+	@override late final _Traductions$salle$seance$pause$en pause = _Traductions$salle$seance$pause$en._(_root);
+	@override String get enLigne => 'Online';
+	@override String get reconnexion => 'Reconnecting';
+	@override String get votreParentObserve => 'Your parent is observing the session.';
+	@override String get tonParentObserve => 'Your parent is observing the session.';
+	@override String tuteurDeObserve({required Object dePrenom}) => 'Guardian ${dePrenom} is observing.';
+	@override String parentsObservent({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: 'A parent is observing this session',
+		other: '${n} parents are observing this session',
+	);
+	@override String leTuteurDeObserve({required Object dePrenom}) => 'The guardian ${dePrenom} is observing the session.';
+	@override String mentionEtNotice({required Object mention, required Object notice}) => '${mention} ${notice}';
+	@override String get retour => 'Back';
+	@override String get notifications => 'Notifications';
+	@override String get reglages => 'Settings';
+	@override String compteDe({required Object deNom}) => '${deNom}\'s account';
+	@override String get sortir => 'Leave the session';
+	@override String get commandesAppel => 'Call controls';
+	@override String compteurEleves({required Object connectes, required Object inscrits}) => 'Students ${connectes}/${inscrits}';
+	@override String enseignantTitre({required Object titre, required Object prenom}) => '${titre} ${prenom}';
+	@override String get parler => 'Speak';
+	@override String get agrandir => 'Enlarge';
+	@override String get reduire => 'Shrink';
+	@override String rienPartage({required Object nom}) => '${nom} has not shared anything yet.';
+	@override String videoDe({required Object deNom}) => '${deNom}\'s video';
+	@override String page({required Object page, required Object pages}) => '${page} / ${pages}';
+	@override String pageSemantique({required Object page, required Object pages}) => 'Page ${page} of ${pages}';
+	@override String get zoomLocal => 'Local zoom, no effect on others';
+	@override String zoomValeur({required Object valeur}) => '${valeur}%';
+	@override String get zoomMoins => 'Zoom out';
+	@override String get zoomPlus => 'Zoom in';
+	@override String get quitterQuestion => 'Leave the session?';
+	@override String get quitterConsequence => 'You can come back if the session is still open.';
+	@override String get illustration => 'Document illustration';
+	@override String get quitterCahierConsequence => 'You will then move on to the handover notebook.';
+	@override String get quitterCahier => 'Leave and open the handover notebook';
+	@override String get rester => 'Stay';
+	@override String get supports => 'Library';
+	@override String get reseau => 'Network';
+	@override String get pagePrecedente => 'Previous page';
+	@override String get pageSuivante => 'Next page';
+	@override late final _Traductions$salle$seance$outils$en outils = _Traductions$salle$seance$outils$en._(_root);
+	@override late final _Traductions$salle$seance$ecriture$en ecriture = _Traductions$salle$seance$ecriture$en._(_root);
+	@override late final _Traductions$salle$seance$rail$en rail = _Traductions$salle$seance$rail$en._(_root);
+	@override String get fermerPanneau => 'Close the panel';
+	@override late final _Traductions$salle$seance$panneauSupports$en panneauSupports = _Traductions$salle$seance$panneauSupports$en._(_root);
+	@override String get eleves => 'Students';
+	@override String get rappeler => 'Call';
+	@override String get faireReciter => 'Have recite';
+	@override String get fileRecitation => 'Recitation queue';
+	@override String get aSuivre => 'Next up';
+	@override String vousAppelle({required Object nom}) => '${nom} is calling you';
+	@override String get signalerBesoin => 'Report a need';
+	@override String deplierFiche({required Object dePrenom}) => 'Show ${dePrenom}\'s sheet';
+	@override String replierFiche({required Object dePrenom}) => 'Hide ${dePrenom}\'s sheet';
+	@override late final _Traductions$salle$seance$fiche$en fiche = _Traductions$salle$seance$fiche$en._(_root);
+	@override String optionsPanneau({required Object titre}) => 'Options for the ${titre} panel';
+	@override late final _Traductions$salle$seance$commandes$en commandes = _Traductions$salle$seance$commandes$en._(_root);
+	@override late final _Traductions$salle$seance$bibliotheque$en bibliotheque = _Traductions$salle$seance$bibliotheque$en._(_root);
+	@override late final _Traductions$salle$seance$surface$en surface = _Traductions$salle$seance$surface$en._(_root);
+	@override late final _Traductions$salle$seance$synchro$en synchro = _Traductions$salle$seance$synchro$en._(_root);
+	@override late final _Traductions$salle$seance$rangement$en rangement = _Traductions$salle$seance$rangement$en._(_root);
+	@override late final _Traductions$salle$seance$capsule$en capsule = _Traductions$salle$seance$capsule$en._(_root);
+	@override late final _Traductions$salle$seance$contexte$en contexte = _Traductions$salle$seance$contexte$en._(_root);
+	@override late final _Traductions$salle$seance$demo$en demo = _Traductions$salle$seance$demo$en._(_root);
+	@override late final _Traductions$salle$seance$statut$en statut = _Traductions$salle$seance$statut$en._(_root);
+}
+
+// Path: salle.fin
+class _Traductions$salle$fin$en extends Traductions$salle$fin$fr {
+	_Traductions$salle$fin$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Session ended';
+	@override String get phrase => 'You can find your work in your class.';
+	@override String phraseHeure({required Object heure}) => 'The session ended at ${heure}. You can find your work in your class.';
+	@override String get retourClasse => 'Back to the class';
+	@override String get quitteTitre => 'You have left the session.';
+	@override String get quittePhrase => 'You can come back as long as it stays open.';
+	@override String get accesRetireTitre => 'Your access to this session has ended.';
+	@override late final _Traductions$salle$fin$horsApplication$en horsApplication = _Traductions$salle$fin$horsApplication$en._(_root);
+	@override String get titreGuidee => 'The session is over.';
+	@override String get retourAccueil => 'Back to home';
+	@override late final _Traductions$salle$fin$enseignant$en enseignant = _Traductions$salle$fin$enseignant$en._(_root);
+}
+
+// Path: salle.scene
+class _Traductions$salle$scene$en extends Traductions$salle$scene$fr {
+	_Traductions$salle$scene$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get parle => 'speaking';
+	@override String get precedents => 'Previous faces';
+	@override String get suivants => 'Next faces';
+	@override String get voirLaClasse => 'See the class';
+}
+
+// Path: salle.fermeture
+class _Traductions$salle$fermeture$en extends Traductions$salle$fermeture$fr {
+	_Traductions$salle$fermeture$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get sansEnseignantTitre => 'Your teacher is no longer in the room';
+	@override String get sansEnseignantTitreTutoie => 'Your teacher is no longer in the room';
+	@override String get microFerme => 'Your microphone is off until they return.';
+	@override String get microFermeTutoie => 'Your microphone is off until they return.';
+	@override String get seanceTerminee => 'The session is over.';
+	@override String get seanceTermineeDetail => 'The room is closed. You can go back to home.';
+}
+
+// Path: salle.gestes
+class _Traductions$salle$gestes$en extends Traductions$salle$gestes$fr {
+	_Traductions$salle$gestes$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String menu({required Object prenom}) => 'Actions for ${prenom}';
+	@override String couperMicro({required Object dePrenom}) => 'Mute ${dePrenom}\'s microphone';
+	@override String couperCamera({required Object dePrenom}) => 'Turn off ${dePrenom}\'s camera';
+	@override String faireSortir({required Object prenom}) => 'Remove ${prenom} from the class';
+	@override String confirmerSortie({required Object prenom}) => 'Remove ${prenom} from the class?';
+	@override String consequenceSortie({required Object prenom}) => '${prenom} leaves the room and returns to this class only if you readmit them.';
+	@override String get echec => 'The action did not go through. Try again in a moment.';
+	@override String get sortis => 'Removed from the class';
+	@override String readmettre({required Object prenom}) => 'Readmit ${prenom}';
+	@override String get sortisErreur => 'The list of students removed from the class could not be read. Try again in a moment.';
+	@override String faireReciter({required Object prenom}) => 'Have ${prenom} recite';
+	@override String get terminerRecitation => 'End the recitation';
+	@override String appeler({required Object prenom}) => 'Call ${prenom}';
+	@override String recitationOuverteTitre({required Object prenom}) => '${prenom} is reciting';
+	@override String recitationOuverte({required Object prenom}) => 'The other students\' microphones are off until their recitation ends. Ask ${prenom} to open their microphone.';
+	@override String get recitationTermineeTitre => 'Recitation finished';
+	@override String get recitationTerminee => 'All students can open their microphone again.';
+	@override String recitationFinieSeule({required Object prenom}) => '${prenom} left the room. All students can open their microphone again.';
+	@override String recitationAbsentTitre({required Object prenom}) => '${prenom} cannot recite right now';
+	@override String recitationAbsent({required Object prenom}) => '${prenom} is not in the room. Choose a student who is present.';
+	@override String get recitationEchecTitre => 'The recitation did not start';
+	@override String get recitationEchec => 'The other students\' microphones could not be turned off. Try again in a moment.';
+	@override String get finEchecTitre => 'The microphones have not been given back yet';
+	@override String get finEchec => 'The end of the recitation is not confirmed. Tap "End the recitation" again.';
+	@override String appelEnvoyeTitre({required Object prenom}) => 'Call sent to ${prenom}';
+	@override String get appelEnvoye => 'A sound and a message appear on their screen.';
+	@override String appelEchecTitre({required Object prenom}) => 'The call did not go out to ${prenom}';
+	@override String appelEchec({required Object quePrenom}) => 'Check that ${quePrenom} is in the room, then try again.';
+	@override String get appelRecuTitre => 'Your teacher is calling you';
+	@override String get appelRecuTitreTutoie => 'Your teacher is calling you';
+	@override String get appelRecu => 'Look at the screen and answer your teacher.';
+	@override String get appelRecuTutoie => 'Look at the screen and answer your teacher.';
+	@override String get aVousTitre => 'It\'s your turn to recite';
+	@override String get aVousTitreTutoie => 'It\'s your turn to recite';
+	@override String get aVous => 'Your teacher is asking you to recite: open your microphone.';
+	@override String get aVousTutoie => 'Your teacher is asking you to recite: open your microphone.';
+	@override String autreReciteTitre({required Object prenom}) => '${prenom} is reciting';
+	@override String get autreRecite => 'Your microphone is off while they recite. It will be given back afterwards.';
+	@override String get autreReciteTutoie => 'Your microphone is off while they recite. It will be given back afterwards.';
+	@override String get finRecitationTitre => 'The recitation is over';
+	@override String get finRecitation => 'You can open your microphone again.';
+	@override String get finRecitationTutoie => 'You can open your microphone again.';
+	@override String microFerme({required Object quePrenom}) => 'Your microphone is off while ${quePrenom} is reciting.';
+	@override String microFermeTutoie({required Object quePrenom}) => 'Your microphone is off while ${quePrenom} is reciting.';
+	@override String microFermeGuidee({required Object prenom}) => '${prenom} is reciting. Your microphone is waiting.';
+}
+
+// Path: salle.visiteControle
+class _Traductions$salle$visiteControle$en extends Traductions$salle$visiteControle$fr {
+	_Traductions$salle$visiteControle$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Rewayah Review';
+	@override String get sonRecu => 'Sound received';
+	@override String get sonCoupe => 'Sound off';
+	@override String get couperSon => 'Mute the received sound';
+	@override String get retablirSon => 'Restore the received sound';
+	@override String get agrandir => 'Enlarge the document';
+	@override String get reduire => 'Shrink the document';
 }
 
 // Path: connexion.invitationFoyer
@@ -8542,6 +9214,483 @@ class _Traductions$commun$etats$actions$en extends Traductions$commun$etats$acti
 	@override String get revenir => 'Go back';
 }
 
+// Path: salle.etagere.coranCouverture
+class _Traductions$salle$etagere$coranCouverture$en extends Traductions$salle$etagere$coranCouverture$fr {
+	_Traductions$salle$etagere$coranCouverture$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'القرآن الكريم';
+	@override String get edition => 'مصحف المدينة';
+}
+
+// Path: salle.etagere.demo
+class _Traductions$salle$etagere$demo$en extends Traductions$salle$etagere$demo$fr {
+	_Traductions$salle$etagere$demo$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get lettres => 'The letters';
+	@override String get lettresDetail => 'Foundation stage 1. Pages to be defined.';
+	@override String get voyelles => 'Reading with vowel marks';
+	@override String get voyellesDetail => 'Foundation stage 2, up to the shadda. Pages to be defined.';
+	@override String get priere => 'The words of the prayer';
+	@override String get priereDetail => 'Secondary subject. Illustrations to be validated.';
+}
+
+// Path: salle.barre.groupes
+class _Traductions$salle$barre$groupes$en extends Traductions$salle$barre$groupes$fr {
+	_Traductions$salle$barre$groupes$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get voix => 'My voice and my image';
+	@override String get classe => 'My class';
+	@override String get page => 'On the page';
+	@override String get support => 'The document';
+	@override String get sortir => 'Leave';
+}
+
+// Path: salle.preparation.demo
+class _Traductions$salle$preparation$demo$en extends Traductions$salle$preparation$demo$fr {
+	_Traductions$salle$preparation$demo$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get section => 'Teacher preparation';
+	@override String get pret => 'Ready';
+	@override String get reseauFaible => 'Weak network';
+	@override String get microAbsent => 'No microphone';
+	@override String get permissionRefusee => 'Permission denied';
+}
+
+// Path: salle.preparation.eleve
+class _Traductions$salle$preparation$eleve$en extends Traductions$salle$preparation$eleve$fr {
+	_Traductions$salle$preparation$eleve$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get verification => 'We are checking your device…';
+	@override String get pret => 'All set';
+	@override String get audio => 'Audio';
+	@override String get acces => 'Access to the class';
+	@override String get accesOk => 'You can enter';
+	@override String get accesAttente => 'Waiting for the connection';
+	@override String get microCoupe => 'You will enter with your microphone off.';
+	@override String get microInaccessible => 'Your microphone is not accessible';
+	@override String get microInaccessibleDetail => 'No one in the class will be able to hear you as long as microphone access stays blocked.';
+	@override String get autoriserMicro => 'Allow the microphone';
+	@override late final _Traductions$salle$preparation$eleve$guidee$en guidee = _Traductions$salle$preparation$eleve$guidee$en._(_root);
+	@override late final _Traductions$salle$preparation$eleve$demo$en demo = _Traductions$salle$preparation$eleve$demo$en._(_root);
+}
+
+// Path: salle.informationControle.e1
+class _Traductions$salle$informationControle$e1$en extends Traductions$salle$informationControle$e1$fr {
+	_Traductions$salle$informationControle$e1$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Someone is looking out for your class';
+	@override String get p1 => 'Sometimes, a person from the academy watches and listens to your class live.';
+	@override String get p2 => 'They come to check that everything is going well and that your teacher is kind and doing their job well.';
+	@override String get p3 => 'They do not speak. They do not film. They do not show your class to anyone.';
+	@override String get p4 => 'You do not know when they come. That is normal: this way, they see the real class. The little message at the top of the screen reminds you.';
+	@override String get p5 => 'If something bothers you or scares you during a class, tell your parents.';
+	@override String get signaler => 'You can also tap Report.';
+}
+
+// Path: salle.informationControle.e2
+class _Traductions$salle$informationControle$e2$en extends Traductions$salle$informationControle$e2$fr {
+	_Traductions$salle$informationControle$e2$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Review visits';
+	@override String get p1 => 'To protect students, a person from the academy may observe a class live, without warning of the time. They see the class screen and can hear the sound.';
+	@override String get p2 => 'They do not speak, have no camera and record nothing. They write a short report for the academy\'s administration, mainly about the teacher and how the class went. Your first name appears in it only if necessary.';
+	@override String get p3 => 'This report is never published and is deleted after 12 months. It is used only by the academy to make the right decisions.';
+	@override String p4({required Object contact}) => 'The banner at the top of the room reminds you that a visit is possible. If you have a question, or if something bothers you, talk to your parents or write to ${contact}.';
+}
+
+// Path: salle.seance.chrono
+class _Traductions$salle$seance$chrono$en extends Traductions$salle$seance$chrono$fr {
+	_Traductions$salle$seance$chrono$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String ecoule({required Object temps}) => '${temps} elapsed';
+	@override String restant({required Object temps}) => '${temps} left';
+	@override String get tempsPrevuEcoule => 'Planned time elapsed';
+	@override String get reste => 'Left';
+	@override String get apresFin => 'After the end';
+	@override String resteSeance({required Object temps}) => '${temps} left';
+	@override String get pause => 'Break';
+	@override String annonce({required Object ecoule, required Object restant}) => 'Session: ${ecoule}, ${restant}.';
+	@override String minutesEcoulees({required num minutes}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(minutes,
+		one: '${minutes} min elapsed',
+		other: '${minutes} min elapsed',
+	);
+	@override String minutesRestantes({required num minutes}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(minutes,
+		one: '${minutes} min left',
+		other: '${minutes} min left',
+	);
+	@override String get annoncePrevuEcoule => 'Planned time elapsed.';
+	@override String annonceDepassement({required Object minutes}) => 'Session still live, ${minutes} min after the planned end.';
+}
+
+// Path: salle.seance.pause
+class _Traductions$salle$seance$pause$en extends Traductions$salle$seance$pause$fr {
+	_Traductions$salle$seance$pause$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String dans({required Object minutes}) => 'Break in ${minutes} min';
+	@override String get prevue => 'Break planned';
+	@override String enCours({required Object heure}) => 'Break, resuming at ${heure}';
+	@override String repriseA({required Object heure}) => 'Resuming at ${heure}';
+	@override String get prise => 'Break taken';
+	@override String get demarrer => 'Start the break';
+	@override String get terminer => 'End the break';
+	@override String annonceDans({required Object minutes}) => 'Break in ${minutes} min.';
+	@override String annonceEnCours({required Object heure}) => 'Break in progress, resuming at ${heure}.';
+	@override String get recapTitre => 'Break';
+	@override String recapPrise({required Object minutes}) => 'Break taken, ${minutes} min';
+	@override String get recapNonPrise => 'Break planned, not taken';
+	@override String get echec => 'The break is not confirmed: the request may not have reached Rewayah. Try again.';
+}
+
+// Path: salle.seance.outils
+class _Traductions$salle$seance$outils$en extends Traductions$salle$seance$outils$fr {
+	_Traductions$salle$seance$outils$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Teaching tools';
+	@override String get pointeur => 'Pointer';
+	@override String get marquer => 'Mark';
+	@override String get masquer => 'Hide';
+	@override String get ecrire => 'Write';
+	@override String get aideLecture => 'With no tool, the page is read; when enlarged, it moves by dragging it.';
+	@override String get aidePointeur => 'Pointer: touch the page to show a passage, nothing stays.';
+	@override String get aideEcrire => 'Write: write on the page. On a touchscreen, two fingers move it.';
+}
+
+// Path: salle.seance.ecriture
+class _Traductions$salle$seance$ecriture$en extends Traductions$salle$seance$ecriture$fr {
+	_Traductions$salle$seance$ecriture$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get palette => 'Writing tools';
+	@override String get toutEffacer => 'Erase all';
+	@override String get retablir => 'Redo';
+	@override late final _Traductions$salle$seance$ecriture$couleurs$en couleurs = _Traductions$salle$seance$ecriture$couleurs$en._(_root);
+	@override String get terminer => 'Done';
+	@override String get couleur => 'Colour';
+	@override String get couleurAide => 'The colour shows the intent of the stroke, for the whole class.';
+	@override String get epaisseur => 'Thickness';
+	@override String get epaisseurAide => 'Thin to write a word, thick to circle.';
+	@override String get fine => 'Thin';
+	@override String get moyenne => 'Medium';
+	@override String get epaisse => 'Thick';
+	@override String get tuPeuxEcrire => 'You can write on the board.';
+	@override String get vousPouvezEcrire => 'You can write on the board.';
+	@override String get repriseSayyid => 'Sayyid takes the board back.';
+	@override String get repriseSayyida => 'Sayyida takes the board back.';
+	@override String repriseNom({required Object nom}) => '${nom} takes the board back.';
+	@override String get choisirTu => 'Tap "Write" when you want to write. Otherwise the page is read, leaving no stroke.';
+	@override String get choisirVous => 'Tap "Write" when you want to write. Otherwise the page is read, leaving no stroke.';
+	@override String get aideEleveTu => 'Write with the pen. The eraser and Undo only affect your strokes; Done goes back to reading.';
+	@override String get aideEleveVous => 'Write with the pen. The eraser and Undo only affect your strokes; Done goes back to reading.';
+	@override String get peutEcrire => 'Can write';
+	@override String get autoriser => 'Allow to write';
+	@override String get retirer => 'Remove permission to write';
+	@override String autoriserSemantique({required Object prenom}) => 'Allow to write: ${prenom}';
+	@override String retirerSemantique({required Object dePrenom}) => 'Remove ${dePrenom}\'s permission to write';
+	@override String autoriserAide({required Object prenom}) => '${prenom} will be able to write on the page or the board. The page and the document stay yours.';
+	@override String get retirerAide => 'Their strokes stay on the page; their writing tools are withdrawn.';
+}
+
+// Path: salle.seance.rail
+class _Traductions$salle$seance$rail$en extends Traductions$salle$seance$rail$fr {
+	_Traductions$salle$seance$rail$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get navigation => 'Navigation';
+	@override String get marque => 'Rewayah';
+	@override String get sousMarque => 'Academy';
+	@override String get journee => 'Day';
+	@override String get classes => 'Classes';
+	@override String get ressources => 'Resources';
+	@override String get profil => 'Profile';
+}
+
+// Path: salle.seance.panneauSupports
+class _Traductions$salle$seance$panneauSupports$en extends Traductions$salle$seance$panneauSupports$fr {
+	_Traductions$salle$seance$panneauSupports$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get reprendre => 'Resume';
+	@override String get recents => 'Recent';
+	@override String get ressourcesClasse => 'Class resources';
+	@override String get voirTout => 'See all';
+	@override String get ouvrir => 'Open';
+	@override String ouvrirSupport({required Object titre}) => 'Open ${titre}';
+	@override String get voirBibliotheque => 'See the whole library';
+}
+
+// Path: salle.seance.fiche
+class _Traductions$salle$seance$fiche$en extends Traductions$salle$seance$fiche$fr {
+	_Traductions$salle$seance$fiche$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get aucuneSeanceSemaine => 'No session this week';
+	@override String get uneSeanceSemaine => '1 session this week';
+	@override String seancesSemaine({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(nombre,
+		one: '${nombre} session this week',
+		other: '${nombre} sessions this week',
+	);
+}
+
+// Path: salle.seance.commandes
+class _Traductions$salle$seance$commandes$en extends Traductions$salle$seance$commandes$fr {
+	_Traductions$salle$seance$commandes$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get declencheur => 'More';
+	@override String get declencheurSemantique => 'More: the library and the board';
+	@override String get titre => 'More';
+	@override String get titreTiroir => 'Library and tools';
+	@override String get reduire => 'Minimize';
+	@override String get reduireSemantique => 'Minimize this panel';
+	@override String get ongletSupport => 'Library';
+	@override String get ongletOutils => 'Tools';
+	@override String get ongletSeance => 'Session';
+	@override String get bibliotheque => 'Library';
+	@override String get affichageSupport => 'Page';
+	@override String get affichageAvecNotes => 'With notes';
+	@override String get affichageTableau => 'Board';
+	@override String get lecture => 'Reading';
+	@override String get ajuster => 'Fit to screen';
+	@override String get affichage => 'Display';
+	@override String get focus => 'Focus';
+	@override String get focusSemantique => 'Focus, enlarge the content and minimize the panels';
+	@override String get quitterFocus => 'Exit focus';
+	@override String get quitterFocusSemantique => 'Exit focus and show the panels again';
+	@override String get focusGuide => 'Enlarge';
+	@override String get quitterFocusGuide => 'Stop enlarging';
+	@override String get ajusterGuide => 'See the whole page';
+	@override String get classeVoitSupport => 'The class sees the page, without the notes.';
+	@override String get classeVoitAvecNotes => 'The class sees the page and the notes.';
+	@override String get classeVoitTableau => 'The class sees the board, without the page.';
+}
+
+// Path: salle.seance.bibliotheque
+class _Traductions$salle$seance$bibliotheque$en extends Traductions$salle$seance$bibliotheque$fr {
+	_Traductions$salle$seance$bibliotheque$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get intro => 'A chosen document opens for you alone. The class keeps the current document until "Present".';
+	@override String get apercu => 'Personal preview';
+	@override String get apercuClasse => 'Students still see the current document.';
+	@override String get presenter => 'Present';
+	@override String get revenir => 'Back to the library';
+	@override String get ouverture => 'Opening the document…';
+	@override String get echec => 'File not opened.';
+	@override String get echecDetail => 'This document\'s file is unavailable. Try again, or go back to the library to choose another.';
+	@override String get tous => 'All';
+	@override String reprendrePage({required Object page}) => 'Resume at page ${page}';
+	@override String get cetteClasse => 'This class';
+	@override String detailReprise({required Object page}) => 'Page ${page} · Last session';
+	@override String titreCoranPage({required Object page}) => 'Quran · Page ${page}';
+}
+
+// Path: salle.seance.surface
+class _Traductions$salle$seance$surface$en extends Traductions$salle$seance$surface$fr {
+	_Traductions$salle$seance$surface$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get aucunSupport => 'Choose a document from the library or write on the board.';
+	@override String page({required Object titre, required Object page, required Object pages}) => '${titre}, page ${page} of ${pages}';
+	@override String get supportMasque => 'Board, the document is hidden';
+	@override String get supportArrive => 'The document is arriving…';
+	@override String get supportIndisponible => 'The document is not showing.';
+	@override String get supportIndisponibleDetail => 'The file is unavailable. Try again: the session and the sound continue.';
+	@override String get reessayerSemantique => 'Try showing the document again';
+	@override String get supportIllustratif => 'Illustrative document';
+}
+
+// Path: salle.seance.synchro
+class _Traductions$salle$seance$synchro$en extends Traductions$salle$seance$synchro$fr {
+	_Traductions$salle$seance$synchro$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get nonPartagees => 'Your new notes are not shared.';
+	@override String get nonPartageesSuite => 'Dotted notes are visible only on your screen while the board reconnects.';
+	@override String get seReconnecte => 'The board is reconnecting.';
+	@override String get reprise => 'Resuming the board…';
+	@override String get revient => 'The board is back.';
+	@override String get ecritureSuspendue => 'Writing resumes as soon as the board returns.';
+	@override String get nonSauvegardees => 'This session\'s notes are not saved.';
+	@override String get nonSauvegardeesSuite => 'They stay on the board until the end of the session, but will not be found again at the next class.';
+}
+
+// Path: salle.seance.rangement
+class _Traductions$salle$seance$rangement$en extends Traductions$salle$seance$rangement$fr {
+	_Traductions$salle$seance$rangement$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get ranger => 'Put away in the library';
+	@override String get rangerSupport => 'Put the document away';
+	@override String get menuSupport => 'Actions for the displayed document';
+	@override String get menuTableau => 'Actions for the free board';
+	@override String get range => 'Document put away';
+	@override String get rangeDetail => 'It stays in the Library, at its page and with its notes. "Present" brings it back.';
+	@override String get tableauLibre => 'Free board';
+	@override String get section => 'Put away during the session';
+	@override String reprise({required Object page, required Object total}) => 'Resuming at page ${page} of ${total}.';
+	@override String get notesConservees => 'Notes are kept in this session only.';
+	@override String get effacer => 'Erase the notes';
+	@override String get questionPage => 'Erase all the notes on this page?';
+	@override String get questionTableau => 'Erase all the notes on the board?';
+	@override String get consequencePage => 'The notes on this page disappear for the whole class.';
+	@override String get consequenceTableau => 'The free board\'s notes disappear for the whole class.';
+}
+
+// Path: salle.seance.capsule
+class _Traductions$salle$seance$capsule$en extends Traductions$salle$seance$capsule$fr {
+	_Traductions$salle$seance$capsule$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String avatar({required Object deNom}) => 'Show ${deNom}\'s information';
+	@override String get controlePossible => 'Review possible. Show information';
+	@override String get controleActif => 'Review active. Show information';
+}
+
+// Path: salle.seance.contexte
+class _Traductions$salle$seance$contexte$en extends Traductions$salle$seance$contexte$fr {
+	_Traductions$salle$seance$contexte$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Session information';
+	@override String get reseau => 'Network';
+	@override String get detailReseau => 'Network details';
+	@override String get controle => 'Review';
+	@override String get controlePossible => 'Review possible';
+	@override String get controleActif => 'Review active';
+	@override String get controlePossibleDetail => 'A review visit may take place. This does not mean someone is observing now.';
+	@override String get controleActifDetail => 'A review visit is taking place right now.';
+	@override String get reduire => 'Minimize';
+	@override String get reduireParticipants => 'Minimize the participants';
+	@override String get reduireInformations => 'Minimize the information';
+	@override String get enseignante => 'Teacher';
+}
+
+// Path: salle.seance.demo
+class _Traductions$salle$seance$demo$en extends Traductions$salle$seance$demo$fr {
+	_Traductions$salle$seance$demo$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Demo room';
+	@override String get intro => 'Fictional data, no server. Choose a role and a state.';
+	@override late final _Traductions$salle$seance$demo$groupes$en groupes = _Traductions$salle$seance$demo$groupes$en._(_root);
+	@override late final _Traductions$salle$seance$demo$roles$en roles = _Traductions$salle$seance$demo$roles$en._(_root);
+	@override late final _Traductions$salle$seance$demo$etats$en etats = _Traductions$salle$seance$demo$etats$en._(_root);
+	@override late final _Traductions$salle$seance$demo$tb$en tb = _Traductions$salle$seance$demo$tb$en._(_root);
+}
+
+// Path: salle.seance.statut
+class _Traductions$salle$seance$statut$en extends Traductions$salle$seance$statut$fr {
+	_Traductions$salle$seance$statut$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get connecte => 'Connected';
+	@override String get pasEncoreConnecte => 'Not connected yet';
+	@override String get connexionInterrompue => 'Connection interrupted';
+}
+
+// Path: salle.fin.horsApplication
+class _Traductions$salle$fin$horsApplication$en extends Traductions$salle$fin$horsApplication$fr {
+	_Traductions$salle$fin$horsApplication$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'You have left the room.';
+	@override String get titreGuidee => 'You have left the room.';
+	@override String phrase({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: 'You left the app for more than ${n} second during the session. You can come back as long as it stays open.',
+		other: 'You left the app for more than ${n} seconds during the session. You can come back as long as it stays open.',
+	);
+	@override String phraseGuidee({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: 'You left the app for more than ${n} second during the session. You can come back as long as it stays open.',
+		other: 'You left the app for more than ${n} seconds during the session. You can come back as long as it stays open.',
+	);
+	@override String get phraseSansDelai => 'You left the app for too long during the session. You can come back as long as it stays open.';
+	@override String get phraseGuideeSansDelai => 'You left the app for too long during the session. You can come back as long as it stays open.';
+}
+
+// Path: salle.fin.enseignant
+class _Traductions$salle$fin$enseignant$en extends Traductions$salle$fin$enseignant$fr {
+	_Traductions$salle$fin$enseignant$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get terminee => 'Ended';
+	@override String get phrase => 'The handover notebook is ready with the session\'s information.';
+	@override String get recapitulatif => 'Session summary';
+	@override String get fin => 'End';
+	@override String connectes({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} student connected',
+		other: '${n} students connected',
+	);
+	@override String unConnecte({required Object n}) => '${n} student connected';
+	@override String inscrits({required Object n}) => 'of ${n} registered';
+	@override String unInscrit({required Object n}) => 'of ${n} registered';
+	@override String get cahierSeance => 'Handover notebook';
+	@override String get cahierACompleter => 'Handover notebook to complete';
+	@override String get ouvrirCahier => 'Open the handover notebook';
+	@override String get revenirJournee => 'Back to my day';
+	@override late final _Traductions$salle$fin$enseignant$recharge1$en recharge1 = _Traductions$salle$fin$enseignant$recharge1$en._(_root);
+	@override String get erreurCahier => 'The handover notebook cannot be opened right now. Try again in a moment.';
+}
+
 // Path: inscription.questionnaire.acces
 class _Traductions$inscription$questionnaire$acces$en extends Traductions$inscription$questionnaire$acces$fr {
 	_Traductions$inscription$questionnaire$acces$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -10863,6 +12012,150 @@ class _Traductions$calendrier$pauses$refus$en extends Traductions$calendrier$pau
 	@override String get inconnu => 'The decision is not confirmed: the request may not have reached Rewayah. Try again in a moment.';
 }
 
+// Path: salle.preparation.eleve.guidee
+class _Traductions$salle$preparation$eleve$guidee$en extends Traductions$salle$preparation$eleve$guidee$fr {
+	_Traductions$salle$preparation$eleve$guidee$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get verification => 'Preparing the session…';
+	@override String get pret => 'All set.';
+	@override String get microCoupe => 'The microphone will be off when you enter.';
+	@override String get microQuestion => 'The microphone is blocked. Allow it?';
+	@override String get microBloque => 'The microphone is blocked.';
+	@override String get horsLigne => 'The connection is not working right now.';
+}
+
+// Path: salle.preparation.eleve.demo
+class _Traductions$salle$preparation$eleve$demo$en extends Traductions$salle$preparation$eleve$demo$fr {
+	_Traductions$salle$preparation$eleve$demo$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get section => 'Student preparation';
+	@override String get sectionGuidee => 'Student preparation, Guided interface';
+	@override String get verification => 'Checking in progress';
+	@override String get pret => 'Ready';
+	@override String get microBloque => 'Microphone blocked';
+	@override String get horsLigne => 'Offline';
+}
+
+// Path: salle.seance.ecriture.couleurs
+class _Traductions$salle$seance$ecriture$couleurs$en extends Traductions$salle$seance$ecriture$couleurs$fr {
+	_Traductions$salle$seance$ecriture$couleurs$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get noir => 'Black';
+	@override String get bleu => 'Blue';
+	@override String get turquoise => 'Turquoise';
+	@override String get orange => 'Orange';
+	@override String get rose => 'Pink';
+	@override String get marron => 'Brown';
+}
+
+// Path: salle.seance.demo.groupes
+class _Traductions$salle$seance$demo$groupes$en extends Traductions$salle$seance$demo$groupes$fr {
+	_Traductions$salle$seance$demo$groupes$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get seance => 'Session flow';
+	@override String get secours => 'Fallback situations';
+	@override String get tableau => 'Library and board';
+}
+
+// Path: salle.seance.demo.roles
+class _Traductions$salle$seance$demo$roles$en extends Traductions$salle$seance$demo$roles$fr {
+	_Traductions$salle$seance$demo$roles$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get eleve => 'Standard student';
+	@override String get guidee => 'Guided interface';
+	@override String get enseignant => 'Teacher';
+	@override String get tuteur => 'Observing guardian';
+	@override String get controleur => 'Reviewer';
+}
+
+// Path: salle.seance.demo.etats
+class _Traductions$salle$seance$demo$etats$en extends Traductions$salle$seance$demo$etats$fr {
+	_Traductions$salle$seance$demo$etats$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get repos => 'Idle';
+	@override String get visite => 'Visit';
+	@override String get rienPartage => 'Nothing shared';
+	@override String get appel => 'Call discreetly';
+	@override String get eleves => 'Students panel';
+	@override String get supports => 'Library panel';
+	@override String get fin => 'End of session';
+	@override String get reseauFaible => 'Weak network';
+	@override String get reconnexion => 'Reconnecting';
+	@override String get retablie => 'Connection restored';
+	@override String get echec => 'Reconnection impossible';
+	@override String get horsLigne => 'Offline';
+	@override String get microBloque => 'Microphone blocked';
+	@override String get cameraInterdite => 'Camera forbidden';
+	@override String get prolongee => 'Session extended';
+	@override String get accesRetire => 'Access withdrawn';
+}
+
+// Path: salle.seance.demo.tb
+class _Traductions$salle$seance$demo$tb$en extends Traductions$salle$seance$demo$tb$fr {
+	_Traductions$salle$seance$demo$tb$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get sal00 => 'SAL-00 Room and people';
+	@override String get ped01 => 'PED-01 Free board, no document';
+	@override String get ped02 => 'PED-02 Document only';
+	@override String get ped03 => 'PED-03 Document with notes';
+	@override String get ped04 => 'PED-04 Board, document hidden';
+	@override String get ui01 => 'UI-01 Compact layout';
+	@override String get ui02 => 'UI-02 Expanded room';
+	@override String get ui03 => 'UI-03 Local focus';
+	@override String get vis01 => 'VIS-01 Video bar revealed';
+	@override String get ctx01 => 'CTX-01 Session context';
+	@override String get ctx02 => 'CTX-02 Review information';
+	@override String get cmd01 => 'CMD-01 Controls';
+	@override String get cmd02 => 'CMD-02 Colour and thickness';
+	@override String get cmd03 => 'CMD-03 Writing active';
+	@override String get lib01 => 'LIB-01 Library';
+	@override String get lib02 => 'LIB-02 Personal preview';
+	@override String get lib03 => 'LIB-03 Opening the document';
+	@override String get lib04 => 'LIB-04 Search with no result';
+	@override String get per01 => 'PER-01 Participants and permissions';
+	@override String get dlg01 => 'DLG-01 Erase the page\'s notes';
+	@override String get err01 => 'ERR-01 Sync interrupted';
+	@override String get err02 => 'ERR-02 Board resuming';
+	@override String get err03 => 'ERR-03 Save failed';
+	@override String get end01 => 'END-01 Leave the session';
+	@override String get supportArrive => 'The document is arriving';
+	@override String get ressourceIndisponible => 'Resource unavailable';
+	@override String get autorisationEcrire => 'Permission to write';
+	@override String get droitRetire => 'Right withdrawn';
+	@override String get effacementTableau => 'Erase the board\'s notes';
+}
+
+// Path: salle.fin.enseignant.recharge1
+class _Traductions$salle$fin$enseignant$recharge1$en extends Traductions$salle$fin$enseignant$recharge1$fr {
+	_Traductions$salle$fin$enseignant$recharge1$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get erreurCahier => 'The handover notebook does not open from this screen. Go back to your day: you will fill it in from the session card.';
+}
+
 // Path: recrutement.parcours.presentation.p1
 class _Traductions$recrutement$parcours$presentation$p1$en extends Traductions$recrutement$parcours$presentation$p1$fr {
 	_Traductions$recrutement$parcours$presentation$p1$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -12412,6 +13705,691 @@ extension on TraductionsEn {
 			'etat.raisonEtSuite' => ({required Object raison, required Object suite}) => '${raison} · ${suite}',
 			'destructif.irreversible' => 'This action cannot be undone.',
 			'destructif.saisieVide' => ({required Object prenom}) => 'Write the first name ${prenom} to confirm',
+			'salle.sonBloque' => 'The browser has muted the sound',
+			'salle.activerSon' => 'Turn on sound',
+			'salle.vignette.ranger' => ({required Object deNom}) => 'Put away ${deNom}\'s video',
+			'salle.vignette.montrer' => ({required Object deNom}) => 'Show ${deNom}\'s video',
+			'salle.reseau.bon' => 'Good network',
+			'salle.reseau.correct' => 'Fair network',
+			'salle.reseau.faible' => 'Weak network',
+			'salle.reseau.perdu' => 'Network lost',
+			'salle.reseau.onEntendMal' => ({required Object prenom}) => '${prenom} may be hard to hear.',
+			'salle.reseau.entendMal' => ({required Object prenom}) => '${prenom} may be hearing poorly.',
+			'salle.reseau.onVousEntendMal' => 'Your connection is weak: you may be hard to hear. Move closer to the Wi-Fi or close other apps.',
+			'salle.reseau.onTEntendMal' => 'Your connection is weak: you may be hard to hear. Move closer to the Wi-Fi or close other apps.',
+			'salle.reseau.onTEntendMalGuidee' => 'You may be hard to hear. Move closer to the Wi-Fi.',
+			'salle.coranEleve.retrouverReprise' => 'See where to resume reading',
+			'salle.coranEleve.revenirPage' => ({required Object page}) => 'Go back to page ${page}',
+			'salle.coranEleve.revenirPageClasse' => ({required Object page}) => 'Go back to the class\'s page ${page}',
+			'salle.coranEleve.fermerReprise' => ({required Object page}) => 'Close the reminder for page ${page}',
+			'salle.coranEleve.pageDeLaClasse' => 'The page follows the teacher\'s. It turns with the class.',
+			'salle.support.inconnuTitre' => 'This document cannot be shown here yet',
+			'salle.support.inconnuDetail' => 'The teacher is sharing a document this version of the app does not know. The class continues by voice. After the class, closing and reopening the app updates it.',
+			'salle.support.inconnuNom' => 'Shared document',
+			'salle.support.titrePage' => ({required Object titre, required Object page}) => '${titre} · Page ${page}',
+			'salle.support.demoDetail' => 'Demo document. It is used to try out sharing.',
+			'salle.support.repriseNonRetenue' => 'This document\'s page is not yet remembered from one session to the next. At the next session, choose the page again.',
+			'salle.support.pageIllisible' => 'This page is not showing',
+			'salle.support.pageIllisibleDetail' => 'The page file did not arrive, the connection may have been cut. Try again: the session and the sound continue.',
+			'salle.support.reessayerPage' => ({required Object page}) => 'Try showing page ${page} again',
+			'salle.etagere.etape' => ({required Object numero}) => 'Stage ${numero}',
+			'salle.etagere.coranCouverture.titre' => 'القرآن الكريم',
+			'salle.etagere.coranCouverture.edition' => 'مصحف المدينة',
+			'salle.etagere.intro' => 'Choose a document, then look at it alone or show it to the class.',
+			'salle.etagere.ouvrirFiche' => ({required Object titre}) => 'Open the sheet for ${titre}',
+			'salle.etagere.revenir' => 'Back to the library',
+			'salle.etagere.revenirFiche' => 'Back to the document sheet',
+			'salle.etagere.afficher' => 'Show',
+			'salle.etagere.afficherSemantique' => ({required Object titre}) => 'Show ${titre} for yourself only',
+			'salle.etagere.afficherDetail' => 'You are looking at it alone. The class sees nothing.',
+			'salle.etagere.partager' => 'Share',
+			'salle.etagere.partagerSemantique' => ({required Object titre}) => 'Share ${titre} with the class',
+			'salle.etagere.partagerDetail' => 'The class can see it now.',
+			'salle.etagere.partagerPage' => ({required Object page}) => 'Share page ${page}',
+			'salle.etagere.partagerPageSemantique' => ({required Object page}) => 'Share page ${page} with the class',
+			'salle.etagere.partagerPageDetail' => 'The class can see it now, at the page where it had stopped.',
+			'salle.etagere.choisirDebut' => 'Share from another place',
+			'salle.etagere.reprise' => ({required Object page}) => 'The class had stopped at page ${page}.',
+			'salle.etagere.seulVous' => 'Only you see this page. The class keeps what it sees.',
+			'salle.etagere.pagePrecedente' => 'Previous page',
+			'salle.etagere.pageSuivante' => 'Next page',
+			'salle.etagere.nonPartageable' => 'This document cannot be shared in class yet. You can only look at it.',
+			'salle.etagere.jamaisOuvert' => 'Not opened in this class yet.',
+			'salle.etagere.nonOuvrable' => 'This document cannot be opened in the room yet. The management is preparing its content.',
+			'salle.etagere.aValider' => 'To validate',
+			'salle.etagere.aValiderDetail' => 'Demo document, to be validated by the management. Its content is not official yet.',
+			'salle.etagere.rechercher' => 'Search for a document',
+			'salle.etagere.fermerRecherche' => 'Close the search',
+			'salle.etagere.vide' => 'No document in the library',
+			'salle.etagere.videDetail' => 'The management has not added any document yet. The Quran stays available as soon as it loads.',
+			'salle.etagere.erreurTitre' => 'The library did not load',
+			'salle.etagere.erreurDetail' => 'The connection may have been cut. Try again; if nothing changes, tell the management.',
+			'salle.etagere.horsLigne' => 'The library is not loaded yet',
+			'salle.etagere.horsLigneDetail' => 'The library will load as soon as the connection returns. What the class sees stays displayed.',
+			'salle.etagere.demo.lettres' => 'The letters',
+			'salle.etagere.demo.lettresDetail' => 'Foundation stage 1. Pages to be defined.',
+			'salle.etagere.demo.voyelles' => 'Reading with vowel marks',
+			'salle.etagere.demo.voyellesDetail' => 'Foundation stage 2, up to the shadda. Pages to be defined.',
+			'salle.etagere.demo.priere' => 'The words of the prayer',
+			'salle.etagere.demo.priereDetail' => 'Secondary subject. Illustrations to be validated.',
+			'salle.barre.infobulle' => ({required Object etat, required Object touche}) => '${etat} (key ${touche})',
+			'salle.barre.outilTenu' => ({required Object outil}) => '${outil} in hand (Esc to put it down)',
+			'salle.barre.groupes.voix' => 'My voice and my image',
+			'salle.barre.groupes.classe' => 'My class',
+			'salle.barre.groupes.page' => 'On the page',
+			'salle.barre.groupes.support' => 'The document',
+			'salle.barre.groupes.sortir' => 'Leave',
+			'salle.telephone.ecrireAilleurs' => 'To write on the page or open the board, use a tablet or a computer.',
+			'salle.sortie.reduire' => 'Minimize the room',
+			'salle.sortie.reduireNom' => 'Minimize',
+			'salle.sortie.reduireSemantique' => 'Minimize the room: the session continues and you still hear the class',
+			'salle.sortie.question' => 'Leave the session?',
+			'salle.sortie.conduiteReduire' => 'If you leave, your students stay in the room without you. Minimize the room instead: the class can still hear you, and you come back with one tap on "Return to the room".',
+			'salle.sortie.conduite' => 'If you leave, your students stay in the room without you. You will then move on to the handover notebook.',
+			'salle.sortie.eleveReduire' => 'You are leaving the call. You can come back as long as the session is open. To hear the class on another screen, minimize the room instead.',
+			'salle.retourner' => 'Return to the room',
+			'salle.microAttente.phrase' => 'Your microphone will open when your teacher is here.',
+			'salle.microAttente.phraseTutoie' => 'Your microphone will open when your teacher is here.',
+			'salle.microAttente.guidee' => 'Your microphone is waiting for your teacher.',
+			'salle.ile.deplier' => 'See the session details',
+			'salle.ile.deplierEtat' => 'See the room status',
+			'salle.ile.replierEtat' => 'Collapse the room status',
+			'salle.ile.replier' => 'Collapse the session details',
+			'salle.ile.conclure' => 'Less than 5 minutes: remember to wrap up.',
+			'salle.ile.finAtteinte' => 'Planned end reached: session still live.',
+			'salle.dynamique.arriveePrenom' => ({required Object prenom}) => '${prenom} is joining the room',
+			'salle.dynamique.arrivees' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'student joins the room', other: 'students join the room', ), 
+			'salle.dynamique.arriveeMarquePrenom' => ({required Object prenom}) => '${prenom} is in the room',
+			'salle.dynamique.arriveesMarque' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'One more student in the room', other: '${n} more students in the room', ), 
+			'salle.dynamique.unEleveRecite' => 'A student is reciting',
+			'salle.dynamique.pauseQuestion' => ({required Object minutes}) => 'A ${minutes}-min break?',
+			'salle.dynamique.oui' => 'Yes',
+			'salle.dynamique.non' => 'No',
+			'salle.dynamique.pauseProposee' => 'Break proposed',
+			'salle.dynamique.pauseDebut' => ({required Object minutes, required Object heure}) => '${minutes}-min break. Resuming at ${heure}',
+			'salle.dynamique.pausePriereDebut' => ({required Object heure}) => 'Prayer break. Resuming at ${heure}',
+			'salle.dynamique.pauseFinie' => 'The break is over',
+			'salle.dynamique.pauseFinNonConfirmee' => 'The end of the break is not confirmed',
+			'salle.dynamique.priereDepartNonConfirme' => 'The start of the prayer break is not confirmed',
+			'salle.dynamique.priereNom' => 'Prayer break',
+			'salle.dynamique.priereA' => ({required Object heure}) => 'Prayer break at ${heure}',
+			'salle.dynamique.priereDans' => ({required Object minutes}) => 'Prayer break in ${minutes} min',
+			'salle.dynamique.commencerMaintenant' => 'Start now',
+			'salle.dynamique.decaler' => ({required Object minutes}) => 'Delay by ${minutes} min',
+			'salle.supports.coran' => 'Quran, Madinah Mushaf',
+			'salle.supports.coranDetail' => 'The page opens for the whole class.',
+			'salle.coran.indisponible' => 'The Quran page is not showing on this device',
+			'salle.coran.indisponibleDetail' => 'The Madinah edition\'s script could not load. Try again; if nothing changes, tell the management.',
+			'salle.coran.titrePage' => 'The Quran, Madinah edition',
+			'salle.preparation.titre' => 'Prepare to enter the class',
+			'salle.preparation.retour' => 'Back to the class',
+			'salle.preparation.cameraCoupee' => 'Camera off',
+			'salle.preparation.testerCamera' => 'Test the camera',
+			'salle.preparation.testCameraFait' => 'Local test finished. The camera stays off on entry.',
+			'salle.preparation.equipement' => 'Your equipment',
+			'salle.preparation.connexion' => 'Connection',
+			'salle.preparation.micro' => 'Microphone',
+			'salle.preparation.sortieAudio' => 'Audio output',
+			'salle.preparation.camera' => 'Camera',
+			'salle.preparation.verification' => 'Checking…',
+			'salle.preparation.chargement' => 'Checking the equipment…',
+			'salle.preparation.connexionPrete' => 'Connection ready',
+			'salle.preparation.connexionInstable' => 'Unstable connection',
+			'salle.preparation.reseauFaible' => 'Unstable connection. Audio will take priority.',
+			'salle.preparation.microPret' => 'Microphone detected · Microphone off on entry',
+			'salle.preparation.microAbsent' => 'No microphone detected',
+			'salle.preparation.microAbsentRaison' => 'No microphone detected. Connect or enable a microphone to teach.',
+			'salle.preparation.microBloque' => 'Microphone blocked',
+			'salle.preparation.permissionRefusee' => 'The microphone is blocked in this device\'s settings.',
+			'salle.preparation.ouvrirReglages' => 'Open settings',
+			'salle.preparation.reessayer' => 'Try again',
+			'salle.preparation.sortieSysteme' => 'System output',
+			'salle.preparation.cameraPrete' => 'Camera detected · Camera off on entry',
+			'salle.preparation.cameraAbsente' => 'Camera not available. You can enter without a camera.',
+			'salle.preparation.modifierPeripheriques' => 'Change devices',
+			'salle.preparation.contexte' => 'Session context',
+			'salle.preparation.classe' => 'Class',
+			'salle.preparation.debut' => 'Start',
+			'salle.preparation.support' => 'Planned document',
+			'salle.preparation.reprise' => 'Resume',
+			'salle.preparation.eleves' => 'Students expected',
+			'salle.preparation.entrer' => 'Enter the class',
+			'salle.preparation.terminee' => 'This session has ended.',
+			'salle.preparation.nonAssignee' => 'This session is not assigned to you.',
+			'salle.preparation.retourJournee' => 'Back to my day',
+			'salle.preparation.demo.section' => 'Teacher preparation',
+			'salle.preparation.demo.pret' => 'Ready',
+			'salle.preparation.demo.reseauFaible' => 'Weak network',
+			'salle.preparation.demo.microAbsent' => 'No microphone',
+			'salle.preparation.demo.permissionRefusee' => 'Permission denied',
+			'salle.preparation.eleve.verification' => 'We are checking your device…',
+			'salle.preparation.eleve.pret' => 'All set',
+			'salle.preparation.eleve.audio' => 'Audio',
+			'salle.preparation.eleve.acces' => 'Access to the class',
+			'salle.preparation.eleve.accesOk' => 'You can enter',
+			'salle.preparation.eleve.accesAttente' => 'Waiting for the connection',
+			'salle.preparation.eleve.microCoupe' => 'You will enter with your microphone off.',
+			'salle.preparation.eleve.microInaccessible' => 'Your microphone is not accessible',
+			'salle.preparation.eleve.microInaccessibleDetail' => 'No one in the class will be able to hear you as long as microphone access stays blocked.',
+			'salle.preparation.eleve.autoriserMicro' => 'Allow the microphone',
+			'salle.preparation.eleve.guidee.verification' => 'Preparing the session…',
+			'salle.preparation.eleve.guidee.pret' => 'All set.',
+			'salle.preparation.eleve.guidee.microCoupe' => 'The microphone will be off when you enter.',
+			'salle.preparation.eleve.guidee.microQuestion' => 'The microphone is blocked. Allow it?',
+			'salle.preparation.eleve.guidee.microBloque' => 'The microphone is blocked.',
+			'salle.preparation.eleve.guidee.horsLigne' => 'The connection is not working right now.',
+			'salle.preparation.eleve.demo.section' => 'Student preparation',
+			'salle.preparation.eleve.demo.sectionGuidee' => 'Student preparation, Guided interface',
+			'salle.preparation.eleve.demo.verification' => 'Checking in progress',
+			'salle.preparation.eleve.demo.pret' => 'Ready',
+			'salle.preparation.eleve.demo.microBloque' => 'Microphone blocked',
+			'salle.preparation.eleve.demo.horsLigne' => 'Offline',
+			'salle.bandeauPermanent' => 'A review visit is possible.',
+			'salle.informationControle.lien' => 'Learn more',
+			'salle.informationControle.e1.titre' => 'Someone is looking out for your class',
+			'salle.informationControle.e1.p1' => 'Sometimes, a person from the academy watches and listens to your class live.',
+			'salle.informationControle.e1.p2' => 'They come to check that everything is going well and that your teacher is kind and doing their job well.',
+			'salle.informationControle.e1.p3' => 'They do not speak. They do not film. They do not show your class to anyone.',
+			'salle.informationControle.e1.p4' => 'You do not know when they come. That is normal: this way, they see the real class. The little message at the top of the screen reminds you.',
+			'salle.informationControle.e1.p5' => 'If something bothers you or scares you during a class, tell your parents.',
+			'salle.informationControle.e1.signaler' => 'You can also tap Report.',
+			'salle.informationControle.e2.titre' => 'Review visits',
+			'salle.informationControle.e2.p1' => 'To protect students, a person from the academy may observe a class live, without warning of the time. They see the class screen and can hear the sound.',
+			'salle.informationControle.e2.p2' => 'They do not speak, have no camera and record nothing. They write a short report for the academy\'s administration, mainly about the teacher and how the class went. Your first name appears in it only if necessary.',
+			'salle.informationControle.e2.p3' => 'This report is never published and is deleted after 12 months. It is used only by the academy to make the right decisions.',
+			'salle.informationControle.e2.p4' => ({required Object contact}) => 'The banner at the top of the room reminds you that a visit is possible. If you have a question, or if something bothers you, talk to your parents or write to ${contact}.',
+			'salle.releve.titre' => 'The connection during the session',
+			'salle.releve.titreGuidee' => 'Your connection during class',
+			'salle.releve.adulte' => 'During a session, the app notes whether the teacher\'s connection and that of each adult student are good, weak or lost, and whether their microphone is open at that moment. It keeps neither the sound nor the image, nor the connection address. For a minor student, it keeps nothing. This log is used to understand what happened when a session is disputed. It is kept for 180 days, then deleted. Only the management can read it. You can ask the management for the data about you, and object to this log.',
+			'salle.releve.mineur' => 'During a session, the app notes whether your teacher\'s connection is good, weak or lost, and whether their microphone is open at that moment. It keeps neither the sound nor the image. About your own connection, it keeps nothing. This log is kept for 180 days, then deleted. Only the management can read it.',
+			'salle.releve.guidee' => 'During class, the app checks whether your connection is working well. It keeps neither your voice nor your image, and it keeps nothing about your connection.',
+			'salle.situations.microEchecTitre' => 'The microphone will not open',
+			'salle.situations.microRefuse' => 'The browser is refusing microphone access. Allow the microphone in the site settings (to the left of the address), then try again.',
+			'salle.situations.microOccupe' => 'The microphone is already in use by another app or another window. Close it, then try again.',
+			'salle.situations.microAbsent' => 'No microphone was found on this device. Plug in a headset or a microphone, then try again.',
+			'salle.situations.microAutre' => 'The microphone could not open. Try again; if nothing changes, reload the page or tell the management.',
+			'salle.situations.microRefuseEntree' => 'The browser is refusing microphone access. Allow the microphone in the site settings (to the left of the address), then tap "Try again".',
+			'salle.situations.reessayerMicro' => 'Try the microphone again',
+			'salle.situations.nonInscritTitre' => 'This class is not among your classes',
+			'salle.situations.nonInscrit' => 'Open the room from your home screen. If this class should be yours, write to the management.',
+			'salle.situations.accesSuspenduTitre' => 'Access to this class temporarily unavailable',
+			'salle.situations.accesSuspendu' => 'The person who manages the account can restore access. For any question, write to the management.',
+			'salle.situations.observationTermineeTitre' => 'Your observation time is over',
+			'salle.situations.observationTerminee' => 'The permitted observation time has run out. Your child continues their class normally.',
+			'salle.situations.compteInvalideTitre' => 'Your account does not allow you to enter',
+			'salle.situations.compteInvalide' => 'Your account is no longer active. Write to the management to restore it.',
+			'salle.situations.enseignantPartiTitre' => 'Your teacher is no longer in the room',
+			'salle.situations.enseignantParti' => 'Stay on this screen: they may come back in a moment.',
+			'salle.situations.enseignantPartiTutoie' => 'Stay on this screen: they may come back in a moment.',
+			'salle.situations.pauseTitre' => 'Break',
+			'salle.situations.pause' => 'The session resumes in a moment.',
+			'salle.secours.reseauFaible' => 'Weak network. Audio takes priority.',
+			'salle.secours.reseauFaibleGuidee' => 'The network is weak.',
+			'salle.secours.reseauFaibleGuideeSuite' => 'The sound stays the priority.',
+			'salle.secours.reconnexion' => 'Connection interrupted. Reconnecting…',
+			'salle.secours.reconnexionGuidee' => 'Reconnecting the session…',
+			'salle.secours.retablie' => 'Connection restored.',
+			'salle.secours.echec' => 'Could not restore the connection.',
+			'salle.secours.echecGuidee' => 'The connection is not coming back.',
+			'salle.secours.horsLigne' => 'You are offline. The session needs a connection.',
+			'salle.secours.reessayer' => 'Try again',
+			'salle.secours.quitter' => 'Leave',
+			'salle.secours.indisponible' => ({required Object commande}) => '${commande}. Unavailable while reconnecting.',
+			'salle.secours.cameraInterdite' => 'Camera turned off for this profile.',
+			'salle.secours.microBloque' => 'The microphone is blocked in this device\'s settings.',
+			'salle.secours.microBloqueGuidee' => 'The microphone is blocked on this device.',
+			'salle.secours.continuerSansMicro' => 'Continue without a microphone',
+			'salle.secours.ouvrirReglages' => 'Open settings',
+			'salle.seance.tableauOuvert' => 'Board open',
+			'salle.seance.tableauFerme' => 'Board closed',
+			'salle.seance.ouvrirTableau' => 'Open the board for the class',
+			'salle.seance.fermerTableau' => 'Close the board',
+			'salle.seance.titre' => 'Live session',
+			'salle.seance.titreGuidee' => 'My session',
+			'salle.seance.ligne' => ({required Object debut, required Object fin}) => '${debut} · ${fin}',
+			'salle.seance.minutesRestantes' => ({required num minutes}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(minutes, one: '${minutes} min left', other: '${minutes} min left', ), 
+			'salle.seance.sePoursuit' => 'The session continues.',
+			'salle.seance.chrono.ecoule' => ({required Object temps}) => '${temps} elapsed',
+			'salle.seance.chrono.restant' => ({required Object temps}) => '${temps} left',
+			'salle.seance.chrono.tempsPrevuEcoule' => 'Planned time elapsed',
+			'salle.seance.chrono.reste' => 'Left',
+			'salle.seance.chrono.apresFin' => 'After the end',
+			'salle.seance.chrono.resteSeance' => ({required Object temps}) => '${temps} left',
+			'salle.seance.chrono.pause' => 'Break',
+			'salle.seance.chrono.annonce' => ({required Object ecoule, required Object restant}) => 'Session: ${ecoule}, ${restant}.',
+			'salle.seance.chrono.minutesEcoulees' => ({required num minutes}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(minutes, one: '${minutes} min elapsed', other: '${minutes} min elapsed', ), 
+			'salle.seance.chrono.minutesRestantes' => ({required num minutes}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(minutes, one: '${minutes} min left', other: '${minutes} min left', ), 
+			'salle.seance.chrono.annoncePrevuEcoule' => 'Planned time elapsed.',
+			'salle.seance.chrono.annonceDepassement' => ({required Object minutes}) => 'Session still live, ${minutes} min after the planned end.',
+			'salle.seance.pause.dans' => ({required Object minutes}) => 'Break in ${minutes} min',
+			'salle.seance.pause.prevue' => 'Break planned',
+			'salle.seance.pause.enCours' => ({required Object heure}) => 'Break, resuming at ${heure}',
+			'salle.seance.pause.repriseA' => ({required Object heure}) => 'Resuming at ${heure}',
+			'salle.seance.pause.prise' => 'Break taken',
+			'salle.seance.pause.demarrer' => 'Start the break',
+			'salle.seance.pause.terminer' => 'End the break',
+			'salle.seance.pause.annonceDans' => ({required Object minutes}) => 'Break in ${minutes} min.',
+			'salle.seance.pause.annonceEnCours' => ({required Object heure}) => 'Break in progress, resuming at ${heure}.',
+			'salle.seance.pause.recapTitre' => 'Break',
+			'salle.seance.pause.recapPrise' => ({required Object minutes}) => 'Break taken, ${minutes} min',
+			'salle.seance.pause.recapNonPrise' => 'Break planned, not taken',
+			'salle.seance.pause.echec' => 'The break is not confirmed: the request may not have reached Rewayah. Try again.',
+			'salle.seance.enLigne' => 'Online',
+			'salle.seance.reconnexion' => 'Reconnecting',
+			'salle.seance.votreParentObserve' => 'Your parent is observing the session.',
+			'salle.seance.tonParentObserve' => 'Your parent is observing the session.',
+			'salle.seance.tuteurDeObserve' => ({required Object dePrenom}) => 'Guardian ${dePrenom} is observing.',
+			'salle.seance.parentsObservent' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'A parent is observing this session', other: '${n} parents are observing this session', ), 
+			'salle.seance.leTuteurDeObserve' => ({required Object dePrenom}) => 'The guardian ${dePrenom} is observing the session.',
+			'salle.seance.mentionEtNotice' => ({required Object mention, required Object notice}) => '${mention} ${notice}',
+			'salle.seance.retour' => 'Back',
+			'salle.seance.notifications' => 'Notifications',
+			'salle.seance.reglages' => 'Settings',
+			'salle.seance.compteDe' => ({required Object deNom}) => '${deNom}\'s account',
+			'salle.seance.sortir' => 'Leave the session',
+			'salle.seance.commandesAppel' => 'Call controls',
+			'salle.seance.compteurEleves' => ({required Object connectes, required Object inscrits}) => 'Students ${connectes}/${inscrits}',
+			'salle.seance.enseignantTitre' => ({required Object titre, required Object prenom}) => '${titre} ${prenom}',
+			'salle.seance.parler' => 'Speak',
+			'salle.seance.agrandir' => 'Enlarge',
+			'salle.seance.reduire' => 'Shrink',
+			'salle.seance.rienPartage' => ({required Object nom}) => '${nom} has not shared anything yet.',
+			'salle.seance.videoDe' => ({required Object deNom}) => '${deNom}\'s video',
+			'salle.seance.page' => ({required Object page, required Object pages}) => '${page} / ${pages}',
+			'salle.seance.pageSemantique' => ({required Object page, required Object pages}) => 'Page ${page} of ${pages}',
+			'salle.seance.zoomLocal' => 'Local zoom, no effect on others',
+			'salle.seance.zoomValeur' => ({required Object valeur}) => '${valeur}%',
+			'salle.seance.zoomMoins' => 'Zoom out',
+			'salle.seance.zoomPlus' => 'Zoom in',
+			'salle.seance.quitterQuestion' => 'Leave the session?',
+			'salle.seance.quitterConsequence' => 'You can come back if the session is still open.',
+			'salle.seance.illustration' => 'Document illustration',
+			'salle.seance.quitterCahierConsequence' => 'You will then move on to the handover notebook.',
+			'salle.seance.quitterCahier' => 'Leave and open the handover notebook',
+			'salle.seance.rester' => 'Stay',
+			'salle.seance.supports' => 'Library',
+			'salle.seance.reseau' => 'Network',
+			'salle.seance.pagePrecedente' => 'Previous page',
+			'salle.seance.pageSuivante' => 'Next page',
+			'salle.seance.outils.titre' => 'Teaching tools',
+			'salle.seance.outils.pointeur' => 'Pointer',
+			'salle.seance.outils.marquer' => 'Mark',
+			'salle.seance.outils.masquer' => 'Hide',
+			'salle.seance.outils.ecrire' => 'Write',
+			'salle.seance.outils.aideLecture' => 'With no tool, the page is read; when enlarged, it moves by dragging it.',
+			_ => null,
+		} ?? switch (path) {
+			'salle.seance.outils.aidePointeur' => 'Pointer: touch the page to show a passage, nothing stays.',
+			'salle.seance.outils.aideEcrire' => 'Write: write on the page. On a touchscreen, two fingers move it.',
+			'salle.seance.ecriture.palette' => 'Writing tools',
+			'salle.seance.ecriture.toutEffacer' => 'Erase all',
+			'salle.seance.ecriture.retablir' => 'Redo',
+			'salle.seance.ecriture.couleurs.noir' => 'Black',
+			'salle.seance.ecriture.couleurs.bleu' => 'Blue',
+			'salle.seance.ecriture.couleurs.turquoise' => 'Turquoise',
+			'salle.seance.ecriture.couleurs.orange' => 'Orange',
+			'salle.seance.ecriture.couleurs.rose' => 'Pink',
+			'salle.seance.ecriture.couleurs.marron' => 'Brown',
+			'salle.seance.ecriture.terminer' => 'Done',
+			'salle.seance.ecriture.couleur' => 'Colour',
+			'salle.seance.ecriture.couleurAide' => 'The colour shows the intent of the stroke, for the whole class.',
+			'salle.seance.ecriture.epaisseur' => 'Thickness',
+			'salle.seance.ecriture.epaisseurAide' => 'Thin to write a word, thick to circle.',
+			'salle.seance.ecriture.fine' => 'Thin',
+			'salle.seance.ecriture.moyenne' => 'Medium',
+			'salle.seance.ecriture.epaisse' => 'Thick',
+			'salle.seance.ecriture.tuPeuxEcrire' => 'You can write on the board.',
+			'salle.seance.ecriture.vousPouvezEcrire' => 'You can write on the board.',
+			'salle.seance.ecriture.repriseSayyid' => 'Sayyid takes the board back.',
+			'salle.seance.ecriture.repriseSayyida' => 'Sayyida takes the board back.',
+			'salle.seance.ecriture.repriseNom' => ({required Object nom}) => '${nom} takes the board back.',
+			'salle.seance.ecriture.choisirTu' => 'Tap "Write" when you want to write. Otherwise the page is read, leaving no stroke.',
+			'salle.seance.ecriture.choisirVous' => 'Tap "Write" when you want to write. Otherwise the page is read, leaving no stroke.',
+			'salle.seance.ecriture.aideEleveTu' => 'Write with the pen. The eraser and Undo only affect your strokes; Done goes back to reading.',
+			'salle.seance.ecriture.aideEleveVous' => 'Write with the pen. The eraser and Undo only affect your strokes; Done goes back to reading.',
+			'salle.seance.ecriture.peutEcrire' => 'Can write',
+			'salle.seance.ecriture.autoriser' => 'Allow to write',
+			'salle.seance.ecriture.retirer' => 'Remove permission to write',
+			'salle.seance.ecriture.autoriserSemantique' => ({required Object prenom}) => 'Allow to write: ${prenom}',
+			'salle.seance.ecriture.retirerSemantique' => ({required Object dePrenom}) => 'Remove ${dePrenom}\'s permission to write',
+			'salle.seance.ecriture.autoriserAide' => ({required Object prenom}) => '${prenom} will be able to write on the page or the board. The page and the document stay yours.',
+			'salle.seance.ecriture.retirerAide' => 'Their strokes stay on the page; their writing tools are withdrawn.',
+			'salle.seance.rail.navigation' => 'Navigation',
+			'salle.seance.rail.marque' => 'Rewayah',
+			'salle.seance.rail.sousMarque' => 'Academy',
+			'salle.seance.rail.journee' => 'Day',
+			'salle.seance.rail.classes' => 'Classes',
+			'salle.seance.rail.ressources' => 'Resources',
+			'salle.seance.rail.profil' => 'Profile',
+			'salle.seance.fermerPanneau' => 'Close the panel',
+			'salle.seance.panneauSupports.reprendre' => 'Resume',
+			'salle.seance.panneauSupports.recents' => 'Recent',
+			'salle.seance.panneauSupports.ressourcesClasse' => 'Class resources',
+			'salle.seance.panneauSupports.voirTout' => 'See all',
+			'salle.seance.panneauSupports.ouvrir' => 'Open',
+			'salle.seance.panneauSupports.ouvrirSupport' => ({required Object titre}) => 'Open ${titre}',
+			'salle.seance.panneauSupports.voirBibliotheque' => 'See the whole library',
+			'salle.seance.eleves' => 'Students',
+			'salle.seance.rappeler' => 'Call',
+			'salle.seance.faireReciter' => 'Have recite',
+			'salle.seance.fileRecitation' => 'Recitation queue',
+			'salle.seance.aSuivre' => 'Next up',
+			'salle.seance.vousAppelle' => ({required Object nom}) => '${nom} is calling you',
+			'salle.seance.signalerBesoin' => 'Report a need',
+			'salle.seance.deplierFiche' => ({required Object dePrenom}) => 'Show ${dePrenom}\'s sheet',
+			'salle.seance.replierFiche' => ({required Object dePrenom}) => 'Hide ${dePrenom}\'s sheet',
+			'salle.seance.fiche.aucuneSeanceSemaine' => 'No session this week',
+			'salle.seance.fiche.uneSeanceSemaine' => '1 session this week',
+			'salle.seance.fiche.seancesSemaine' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(nombre, one: '${nombre} session this week', other: '${nombre} sessions this week', ), 
+			'salle.seance.optionsPanneau' => ({required Object titre}) => 'Options for the ${titre} panel',
+			'salle.seance.commandes.declencheur' => 'More',
+			'salle.seance.commandes.declencheurSemantique' => 'More: the library and the board',
+			'salle.seance.commandes.titre' => 'More',
+			'salle.seance.commandes.titreTiroir' => 'Library and tools',
+			'salle.seance.commandes.reduire' => 'Minimize',
+			'salle.seance.commandes.reduireSemantique' => 'Minimize this panel',
+			'salle.seance.commandes.ongletSupport' => 'Library',
+			'salle.seance.commandes.ongletOutils' => 'Tools',
+			'salle.seance.commandes.ongletSeance' => 'Session',
+			'salle.seance.commandes.bibliotheque' => 'Library',
+			'salle.seance.commandes.affichageSupport' => 'Page',
+			'salle.seance.commandes.affichageAvecNotes' => 'With notes',
+			'salle.seance.commandes.affichageTableau' => 'Board',
+			'salle.seance.commandes.lecture' => 'Reading',
+			'salle.seance.commandes.ajuster' => 'Fit to screen',
+			'salle.seance.commandes.affichage' => 'Display',
+			'salle.seance.commandes.focus' => 'Focus',
+			'salle.seance.commandes.focusSemantique' => 'Focus, enlarge the content and minimize the panels',
+			'salle.seance.commandes.quitterFocus' => 'Exit focus',
+			'salle.seance.commandes.quitterFocusSemantique' => 'Exit focus and show the panels again',
+			'salle.seance.commandes.focusGuide' => 'Enlarge',
+			'salle.seance.commandes.quitterFocusGuide' => 'Stop enlarging',
+			'salle.seance.commandes.ajusterGuide' => 'See the whole page',
+			'salle.seance.commandes.classeVoitSupport' => 'The class sees the page, without the notes.',
+			'salle.seance.commandes.classeVoitAvecNotes' => 'The class sees the page and the notes.',
+			'salle.seance.commandes.classeVoitTableau' => 'The class sees the board, without the page.',
+			'salle.seance.bibliotheque.intro' => 'A chosen document opens for you alone. The class keeps the current document until "Present".',
+			'salle.seance.bibliotheque.apercu' => 'Personal preview',
+			'salle.seance.bibliotheque.apercuClasse' => 'Students still see the current document.',
+			'salle.seance.bibliotheque.presenter' => 'Present',
+			'salle.seance.bibliotheque.revenir' => 'Back to the library',
+			'salle.seance.bibliotheque.ouverture' => 'Opening the document…',
+			'salle.seance.bibliotheque.echec' => 'File not opened.',
+			'salle.seance.bibliotheque.echecDetail' => 'This document\'s file is unavailable. Try again, or go back to the library to choose another.',
+			'salle.seance.bibliotheque.tous' => 'All',
+			'salle.seance.bibliotheque.reprendrePage' => ({required Object page}) => 'Resume at page ${page}',
+			'salle.seance.bibliotheque.cetteClasse' => 'This class',
+			'salle.seance.bibliotheque.detailReprise' => ({required Object page}) => 'Page ${page} · Last session',
+			'salle.seance.bibliotheque.titreCoranPage' => ({required Object page}) => 'Quran · Page ${page}',
+			'salle.seance.surface.aucunSupport' => 'Choose a document from the library or write on the board.',
+			'salle.seance.surface.page' => ({required Object titre, required Object page, required Object pages}) => '${titre}, page ${page} of ${pages}',
+			'salle.seance.surface.supportMasque' => 'Board, the document is hidden',
+			'salle.seance.surface.supportArrive' => 'The document is arriving…',
+			'salle.seance.surface.supportIndisponible' => 'The document is not showing.',
+			'salle.seance.surface.supportIndisponibleDetail' => 'The file is unavailable. Try again: the session and the sound continue.',
+			'salle.seance.surface.reessayerSemantique' => 'Try showing the document again',
+			'salle.seance.surface.supportIllustratif' => 'Illustrative document',
+			'salle.seance.synchro.nonPartagees' => 'Your new notes are not shared.',
+			'salle.seance.synchro.nonPartageesSuite' => 'Dotted notes are visible only on your screen while the board reconnects.',
+			'salle.seance.synchro.seReconnecte' => 'The board is reconnecting.',
+			'salle.seance.synchro.reprise' => 'Resuming the board…',
+			'salle.seance.synchro.revient' => 'The board is back.',
+			'salle.seance.synchro.ecritureSuspendue' => 'Writing resumes as soon as the board returns.',
+			'salle.seance.synchro.nonSauvegardees' => 'This session\'s notes are not saved.',
+			'salle.seance.synchro.nonSauvegardeesSuite' => 'They stay on the board until the end of the session, but will not be found again at the next class.',
+			'salle.seance.rangement.ranger' => 'Put away in the library',
+			'salle.seance.rangement.rangerSupport' => 'Put the document away',
+			'salle.seance.rangement.menuSupport' => 'Actions for the displayed document',
+			'salle.seance.rangement.menuTableau' => 'Actions for the free board',
+			'salle.seance.rangement.range' => 'Document put away',
+			'salle.seance.rangement.rangeDetail' => 'It stays in the Library, at its page and with its notes. "Present" brings it back.',
+			'salle.seance.rangement.tableauLibre' => 'Free board',
+			'salle.seance.rangement.section' => 'Put away during the session',
+			'salle.seance.rangement.reprise' => ({required Object page, required Object total}) => 'Resuming at page ${page} of ${total}.',
+			'salle.seance.rangement.notesConservees' => 'Notes are kept in this session only.',
+			'salle.seance.rangement.effacer' => 'Erase the notes',
+			'salle.seance.rangement.questionPage' => 'Erase all the notes on this page?',
+			'salle.seance.rangement.questionTableau' => 'Erase all the notes on the board?',
+			'salle.seance.rangement.consequencePage' => 'The notes on this page disappear for the whole class.',
+			'salle.seance.rangement.consequenceTableau' => 'The free board\'s notes disappear for the whole class.',
+			'salle.seance.capsule.avatar' => ({required Object deNom}) => 'Show ${deNom}\'s information',
+			'salle.seance.capsule.controlePossible' => 'Review possible. Show information',
+			'salle.seance.capsule.controleActif' => 'Review active. Show information',
+			'salle.seance.contexte.titre' => 'Session information',
+			'salle.seance.contexte.reseau' => 'Network',
+			'salle.seance.contexte.detailReseau' => 'Network details',
+			'salle.seance.contexte.controle' => 'Review',
+			'salle.seance.contexte.controlePossible' => 'Review possible',
+			'salle.seance.contexte.controleActif' => 'Review active',
+			'salle.seance.contexte.controlePossibleDetail' => 'A review visit may take place. This does not mean someone is observing now.',
+			'salle.seance.contexte.controleActifDetail' => 'A review visit is taking place right now.',
+			'salle.seance.contexte.reduire' => 'Minimize',
+			'salle.seance.contexte.reduireParticipants' => 'Minimize the participants',
+			'salle.seance.contexte.reduireInformations' => 'Minimize the information',
+			'salle.seance.contexte.enseignante' => 'Teacher',
+			'salle.seance.demo.titre' => 'Demo room',
+			'salle.seance.demo.intro' => 'Fictional data, no server. Choose a role and a state.',
+			'salle.seance.demo.groupes.seance' => 'Session flow',
+			'salle.seance.demo.groupes.secours' => 'Fallback situations',
+			'salle.seance.demo.groupes.tableau' => 'Library and board',
+			'salle.seance.demo.roles.eleve' => 'Standard student',
+			'salle.seance.demo.roles.guidee' => 'Guided interface',
+			'salle.seance.demo.roles.enseignant' => 'Teacher',
+			'salle.seance.demo.roles.tuteur' => 'Observing guardian',
+			'salle.seance.demo.roles.controleur' => 'Reviewer',
+			'salle.seance.demo.etats.repos' => 'Idle',
+			'salle.seance.demo.etats.visite' => 'Visit',
+			'salle.seance.demo.etats.rienPartage' => 'Nothing shared',
+			'salle.seance.demo.etats.appel' => 'Call discreetly',
+			'salle.seance.demo.etats.eleves' => 'Students panel',
+			'salle.seance.demo.etats.supports' => 'Library panel',
+			'salle.seance.demo.etats.fin' => 'End of session',
+			'salle.seance.demo.etats.reseauFaible' => 'Weak network',
+			'salle.seance.demo.etats.reconnexion' => 'Reconnecting',
+			'salle.seance.demo.etats.retablie' => 'Connection restored',
+			'salle.seance.demo.etats.echec' => 'Reconnection impossible',
+			'salle.seance.demo.etats.horsLigne' => 'Offline',
+			'salle.seance.demo.etats.microBloque' => 'Microphone blocked',
+			'salle.seance.demo.etats.cameraInterdite' => 'Camera forbidden',
+			'salle.seance.demo.etats.prolongee' => 'Session extended',
+			'salle.seance.demo.etats.accesRetire' => 'Access withdrawn',
+			'salle.seance.demo.tb.sal00' => 'SAL-00 Room and people',
+			'salle.seance.demo.tb.ped01' => 'PED-01 Free board, no document',
+			'salle.seance.demo.tb.ped02' => 'PED-02 Document only',
+			'salle.seance.demo.tb.ped03' => 'PED-03 Document with notes',
+			'salle.seance.demo.tb.ped04' => 'PED-04 Board, document hidden',
+			'salle.seance.demo.tb.ui01' => 'UI-01 Compact layout',
+			'salle.seance.demo.tb.ui02' => 'UI-02 Expanded room',
+			'salle.seance.demo.tb.ui03' => 'UI-03 Local focus',
+			'salle.seance.demo.tb.vis01' => 'VIS-01 Video bar revealed',
+			'salle.seance.demo.tb.ctx01' => 'CTX-01 Session context',
+			'salle.seance.demo.tb.ctx02' => 'CTX-02 Review information',
+			'salle.seance.demo.tb.cmd01' => 'CMD-01 Controls',
+			'salle.seance.demo.tb.cmd02' => 'CMD-02 Colour and thickness',
+			'salle.seance.demo.tb.cmd03' => 'CMD-03 Writing active',
+			'salle.seance.demo.tb.lib01' => 'LIB-01 Library',
+			'salle.seance.demo.tb.lib02' => 'LIB-02 Personal preview',
+			'salle.seance.demo.tb.lib03' => 'LIB-03 Opening the document',
+			'salle.seance.demo.tb.lib04' => 'LIB-04 Search with no result',
+			'salle.seance.demo.tb.per01' => 'PER-01 Participants and permissions',
+			'salle.seance.demo.tb.dlg01' => 'DLG-01 Erase the page\'s notes',
+			'salle.seance.demo.tb.err01' => 'ERR-01 Sync interrupted',
+			'salle.seance.demo.tb.err02' => 'ERR-02 Board resuming',
+			'salle.seance.demo.tb.err03' => 'ERR-03 Save failed',
+			'salle.seance.demo.tb.end01' => 'END-01 Leave the session',
+			'salle.seance.demo.tb.supportArrive' => 'The document is arriving',
+			'salle.seance.demo.tb.ressourceIndisponible' => 'Resource unavailable',
+			'salle.seance.demo.tb.autorisationEcrire' => 'Permission to write',
+			'salle.seance.demo.tb.droitRetire' => 'Right withdrawn',
+			'salle.seance.demo.tb.effacementTableau' => 'Erase the board\'s notes',
+			'salle.seance.statut.connecte' => 'Connected',
+			'salle.seance.statut.pasEncoreConnecte' => 'Not connected yet',
+			'salle.seance.statut.connexionInterrompue' => 'Connection interrupted',
+			'salle.fin.titre' => 'Session ended',
+			'salle.fin.phrase' => 'You can find your work in your class.',
+			'salle.fin.phraseHeure' => ({required Object heure}) => 'The session ended at ${heure}. You can find your work in your class.',
+			'salle.fin.retourClasse' => 'Back to the class',
+			'salle.fin.quitteTitre' => 'You have left the session.',
+			'salle.fin.quittePhrase' => 'You can come back as long as it stays open.',
+			'salle.fin.accesRetireTitre' => 'Your access to this session has ended.',
+			'salle.fin.horsApplication.titre' => 'You have left the room.',
+			'salle.fin.horsApplication.titreGuidee' => 'You have left the room.',
+			'salle.fin.horsApplication.phrase' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'You left the app for more than ${n} second during the session. You can come back as long as it stays open.', other: 'You left the app for more than ${n} seconds during the session. You can come back as long as it stays open.', ), 
+			'salle.fin.horsApplication.phraseGuidee' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'You left the app for more than ${n} second during the session. You can come back as long as it stays open.', other: 'You left the app for more than ${n} seconds during the session. You can come back as long as it stays open.', ), 
+			'salle.fin.horsApplication.phraseSansDelai' => 'You left the app for too long during the session. You can come back as long as it stays open.',
+			'salle.fin.horsApplication.phraseGuideeSansDelai' => 'You left the app for too long during the session. You can come back as long as it stays open.',
+			'salle.fin.titreGuidee' => 'The session is over.',
+			'salle.fin.retourAccueil' => 'Back to home',
+			'salle.fin.enseignant.terminee' => 'Ended',
+			'salle.fin.enseignant.phrase' => 'The handover notebook is ready with the session\'s information.',
+			'salle.fin.enseignant.recapitulatif' => 'Session summary',
+			'salle.fin.enseignant.fin' => 'End',
+			'salle.fin.enseignant.connectes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} student connected', other: '${n} students connected', ), 
+			'salle.fin.enseignant.unConnecte' => ({required Object n}) => '${n} student connected',
+			'salle.fin.enseignant.inscrits' => ({required Object n}) => 'of ${n} registered',
+			'salle.fin.enseignant.unInscrit' => ({required Object n}) => 'of ${n} registered',
+			'salle.fin.enseignant.cahierSeance' => 'Handover notebook',
+			'salle.fin.enseignant.cahierACompleter' => 'Handover notebook to complete',
+			'salle.fin.enseignant.ouvrirCahier' => 'Open the handover notebook',
+			'salle.fin.enseignant.revenirJournee' => 'Back to my day',
+			'salle.fin.enseignant.recharge1.erreurCahier' => 'The handover notebook does not open from this screen. Go back to your day: you will fill it in from the session card.',
+			'salle.fin.enseignant.erreurCahier' => 'The handover notebook cannot be opened right now. Try again in a moment.',
+			'salle.micro' => 'Microphone',
+			'salle.scene.parle' => 'speaking',
+			'salle.scene.precedents' => 'Previous faces',
+			'salle.scene.suivants' => 'Next faces',
+			'salle.scene.voirLaClasse' => 'See the class',
+			'salle.microCoupe' => 'Microphone off',
+			'salle.microOuvert' => 'Microphone on',
+			'salle.camera' => 'Camera',
+			'salle.cameraCoupee' => 'Camera off',
+			'salle.cameraAllumee' => 'Camera on',
+			'salle.cameraEchec' => 'The camera will not turn on',
+			'salle.cameraEchecRefus' => 'The browser is refusing camera access. Allow the camera in the site settings (to the left of the address), then tap the camera again.',
+			'salle.cameraEchecOccupee' => 'The camera is already in use by another app or another window. Close it, then tap the camera again.',
+			'salle.cameraEchecAbsente' => 'No camera was found on this device. Plug one in, then tap the camera again.',
+			'salle.cameraEchecAutre' => 'Tap the camera again. If nothing changes, tell the management.',
+			'salle.quitter' => 'Leave',
+			'salle.ouvrirCoran' => 'Open the Quran',
+			'salle.confirmerSortie' => 'Leave the class?',
+			'salle.expiree' => 'This room is no longer accessible. Go back to your home screen to join the next class.',
+			'salle.ouverture' => 'Opening the room',
+			'salle.verificationMateriel' => 'Checking your microphone',
+			'salle.connexion' => 'Connecting to the class',
+			'salle.reconnexionCourt' => 'Reconnecting',
+			'salle.perdue' => 'The connection to the class is lost',
+			'salle.retire' => 'Your teacher has removed you from the class',
+			'salle.rappelRecuDetail' => 'Look at the screen and listen to your teacher.',
+			'salle.retireDetail' => 'You can come back when your teacher has readmitted you. Then tap "Try again".',
+			'salle.ouverteAilleurs' => 'This account is already in the room on another device',
+			'salle.ouverteAilleursDetail' => 'Leave the room on the other device, or tap "Try again" to join it here: the other device will leave the room.',
+			'salle.fermeture.sansEnseignantTitre' => 'Your teacher is no longer in the room',
+			'salle.fermeture.sansEnseignantTitreTutoie' => 'Your teacher is no longer in the room',
+			'salle.fermeture.microFerme' => 'Your microphone is off until they return.',
+			'salle.fermeture.microFermeTutoie' => 'Your microphone is off until they return.',
+			'salle.fermeture.seanceTerminee' => 'The session is over.',
+			'salle.fermeture.seanceTermineeDetail' => 'The room is closed. You can go back to home.',
+			'salle.gestes.menu' => ({required Object prenom}) => 'Actions for ${prenom}',
+			'salle.gestes.couperMicro' => ({required Object dePrenom}) => 'Mute ${dePrenom}\'s microphone',
+			'salle.gestes.couperCamera' => ({required Object dePrenom}) => 'Turn off ${dePrenom}\'s camera',
+			'salle.gestes.faireSortir' => ({required Object prenom}) => 'Remove ${prenom} from the class',
+			'salle.gestes.confirmerSortie' => ({required Object prenom}) => 'Remove ${prenom} from the class?',
+			'salle.gestes.consequenceSortie' => ({required Object prenom}) => '${prenom} leaves the room and returns to this class only if you readmit them.',
+			'salle.gestes.echec' => 'The action did not go through. Try again in a moment.',
+			'salle.gestes.sortis' => 'Removed from the class',
+			'salle.gestes.readmettre' => ({required Object prenom}) => 'Readmit ${prenom}',
+			'salle.gestes.sortisErreur' => 'The list of students removed from the class could not be read. Try again in a moment.',
+			'salle.gestes.faireReciter' => ({required Object prenom}) => 'Have ${prenom} recite',
+			'salle.gestes.terminerRecitation' => 'End the recitation',
+			'salle.gestes.appeler' => ({required Object prenom}) => 'Call ${prenom}',
+			'salle.gestes.recitationOuverteTitre' => ({required Object prenom}) => '${prenom} is reciting',
+			'salle.gestes.recitationOuverte' => ({required Object prenom}) => 'The other students\' microphones are off until their recitation ends. Ask ${prenom} to open their microphone.',
+			'salle.gestes.recitationTermineeTitre' => 'Recitation finished',
+			'salle.gestes.recitationTerminee' => 'All students can open their microphone again.',
+			'salle.gestes.recitationFinieSeule' => ({required Object prenom}) => '${prenom} left the room. All students can open their microphone again.',
+			'salle.gestes.recitationAbsentTitre' => ({required Object prenom}) => '${prenom} cannot recite right now',
+			'salle.gestes.recitationAbsent' => ({required Object prenom}) => '${prenom} is not in the room. Choose a student who is present.',
+			'salle.gestes.recitationEchecTitre' => 'The recitation did not start',
+			'salle.gestes.recitationEchec' => 'The other students\' microphones could not be turned off. Try again in a moment.',
+			'salle.gestes.finEchecTitre' => 'The microphones have not been given back yet',
+			'salle.gestes.finEchec' => 'The end of the recitation is not confirmed. Tap "End the recitation" again.',
+			'salle.gestes.appelEnvoyeTitre' => ({required Object prenom}) => 'Call sent to ${prenom}',
+			'salle.gestes.appelEnvoye' => 'A sound and a message appear on their screen.',
+			'salle.gestes.appelEchecTitre' => ({required Object prenom}) => 'The call did not go out to ${prenom}',
+			'salle.gestes.appelEchec' => ({required Object quePrenom}) => 'Check that ${quePrenom} is in the room, then try again.',
+			'salle.gestes.appelRecuTitre' => 'Your teacher is calling you',
+			'salle.gestes.appelRecuTitreTutoie' => 'Your teacher is calling you',
+			'salle.gestes.appelRecu' => 'Look at the screen and answer your teacher.',
+			'salle.gestes.appelRecuTutoie' => 'Look at the screen and answer your teacher.',
+			'salle.gestes.aVousTitre' => 'It\'s your turn to recite',
+			'salle.gestes.aVousTitreTutoie' => 'It\'s your turn to recite',
+			'salle.gestes.aVous' => 'Your teacher is asking you to recite: open your microphone.',
+			'salle.gestes.aVousTutoie' => 'Your teacher is asking you to recite: open your microphone.',
+			'salle.gestes.autreReciteTitre' => ({required Object prenom}) => '${prenom} is reciting',
+			'salle.gestes.autreRecite' => 'Your microphone is off while they recite. It will be given back afterwards.',
+			'salle.gestes.autreReciteTutoie' => 'Your microphone is off while they recite. It will be given back afterwards.',
+			'salle.gestes.finRecitationTitre' => 'The recitation is over',
+			'salle.gestes.finRecitation' => 'You can open your microphone again.',
+			'salle.gestes.finRecitationTutoie' => 'You can open your microphone again.',
+			'salle.gestes.microFerme' => ({required Object quePrenom}) => 'Your microphone is off while ${quePrenom} is reciting.',
+			'salle.gestes.microFermeTutoie' => ({required Object quePrenom}) => 'Your microphone is off while ${quePrenom} is reciting.',
+			'salle.gestes.microFermeGuidee' => ({required Object prenom}) => '${prenom} is reciting. Your microphone is waiting.',
+			'salle.seulEnseignant' => 'Your teacher has not arrived yet',
+			'salle.seulEnseignantDetail' => 'Stay on this screen: the session starts as soon as your teacher enters.',
+			'salle.seulEnseignantTutoie' => 'Your teacher has not arrived yet',
+			'salle.seulEnseignantDetailTutoie' => 'Stay on this screen: the session starts as soon as your teacher enters.',
+			'salle.attenteDe' => ({required Object deNom}) => 'Waiting for ${deNom}',
+			'salle.seulEleve' => 'Your student has not arrived yet',
+			'salle.voirVideoEnGrand' => 'See the video larger',
+			'salle.revenirALaPage' => 'Back to the page',
+			'salle.seulEleveDetail' => 'Stay on this screen. You will see them appear.',
+			'salle.seulObservation' => 'No one has entered this room yet',
+			'salle.seulObservationDetail' => 'The class has not started, or it has already ended.',
+			'salle.refusAcces' => 'This class is not open to you right now',
+			'salle.refusAccesDetail' => 'The room opens shortly before class time, and closes shortly after it ends.',
+			'salle.refusTerminee' => ({required Object heure}) => 'The session ended at ${heure}. The room closed shortly after.',
+			'salle.refusPasEncoreOuverte' => ({required Object heure}) => 'The room will open at ${heure}.',
+			'salle.refusAnnulee' => 'This session is cancelled.',
+			'salle.refusAccesPerduTitre' => 'You did not join the room in time',
+			'salle.refusAccesPerdu' => 'After the delay to join the room, today\'s session was taken from you: it counts as an absence. You remain the class teacher.',
+			'salle.refusConfiguration' => 'The room is not available yet',
+			'salle.refusConfigurationDetail' => 'It is not your device: the video conferencing service is not connected. The team knows.',
+			'salle.refusReseau' => 'The room could not open',
+			'salle.refusReseauDetail' => 'The request may not have reached Rewayah. Check your connection, then try again.',
+			'salle.refusMateriel' => 'No usable microphone on this device',
+			'salle.refusMaterielDetail' => 'A Quran class is done by voice. Allow microphone access, or plug in a headset, then try again.',
+			'salle.retourAccueil' => 'Back to my home',
+			'salle.ouvrirMicro' => 'Turn on the microphone',
+			'salle.fermerMicro' => 'Turn off the microphone',
+			'salle.ouvrirCamera' => 'Turn on the camera',
+			'salle.fermerCamera' => 'Turn off the camera',
+			'salle.quitterLeCours' => 'Leave the class',
+			'salle.consequenceSortie' => 'The class continues without you, and your departure is recorded in the session.',
+			'salle.vousMeme' => 'You',
+			'salle.participant' => 'Participant',
+			'salle.sansImage' => 'No image',
+			'salle.lienMediocre' => 'Weak connection',
+			'salle.lienPerdu' => 'Connection lost',
+			'salle.videoSuspendue' => 'Image off until the connection returns. The voice continues.',
+			'salle.roleEnseignant' => 'Teacher',
+			'salle.roleEleve' => 'Student',
+			'salle.roleTuteur' => 'Guardian, observing',
+			'salle.roleAdministration' => 'Rewayah administration',
+			'salle.observationMuette' => 'You are attending the class. You cannot be heard.',
+			'salle.observationMuetteTitre' => 'You are attending the class.',
+			'salle.bandeauControle' => 'Review visit. You are neither seen nor heard, and your visit is recorded in the log.',
+			'salle.bandeauControleTitre' => 'Review visit.',
+			'salle.roleCandidat' => 'Candidate',
+			'salle.roleIntervieweur' => 'Leads the interview',
+			'salle.seulEntretien' => 'The other people in the interview have not arrived yet',
+			'salle.seulEntretienDetail' => 'Stay on this screen. The interview starts as soon as everyone is here.',
+			'salle.visiteControle.titre' => 'Rewayah Review',
+			'salle.visiteControle.sonRecu' => 'Sound received',
+			'salle.visiteControle.sonCoupe' => 'Sound off',
+			'salle.visiteControle.couperSon' => 'Mute the received sound',
+			'salle.visiteControle.retablirSon' => 'Restore the received sound',
+			'salle.visiteControle.agrandir' => 'Enlarge the document',
+			'salle.visiteControle.reduire' => 'Shrink the document',
 			'presence.titre' => 'Attendance',
 			'presence.voir' => 'See attendance',
 			'presence.mienne' => 'Your attendance',
@@ -12553,6 +14531,8 @@ extension on TraductionsEn {
 			'connexion.recuperation.envoyeTitre' => 'New link sent',
 			'connexion.recuperation.envoye' => ({required Object courriel}) => 'Open the message sent to ${courriel}, then follow the link.',
 			'connexion.recuperation.envoyeEncart' => 'The message can take a few minutes to arrive. Remember to check your spam folder.',
+			_ => null,
+		} ?? switch (path) {
 			'connexion.recuperation.autreAdresse' => 'Use another address',
 			'connexion.recuperation.revenirConnexion' => 'Back to sign-in',
 			'connexion.feuilleAppareil.pourQui' => 'For guardians who are already registered. This screen gives a student in your household their own access, on their tablet or phone, without handing over your account.',
@@ -12724,8 +14704,6 @@ extension on TraductionsEn {
 			'accessibilite.demo.eleveAdulte' => 'Idriss, adult student',
 			'accessibilite.demo.etatAvant' => 'Before the session',
 			'accessibilite.demo.etatFenetre' => 'Just before the session, entry is open',
-			_ => null,
-		} ?? switch (path) {
 			'accessibilite.demo.etatPendant' => 'During the session',
 			'accessibilite.demo.etatApres' => 'After the session',
 			'accessibilite.accueil.salutation' => ({required Object prenom}) => 'Assalamu alaykum, ${prenom}.',
@@ -13067,6 +15045,8 @@ extension on TraductionsEn {
 			'ficheEleve.lignes.inscriptionLegende' => 'Questionnaire and class',
 			'ficheEleve.lignes.interface' => 'Interface',
 			'ficheEleve.lignes.camera' => 'Current camera',
+			_ => null,
+		} ?? switch (path) {
 			'ficheEleve.lignes.cameraAutorisee' => 'Allowed',
 			'ficheEleve.lignes.cameraNonAutorisee' => 'Not allowed',
 			'ficheEleve.lignes.acces' => 'Rewayah access',
@@ -13238,8 +15218,6 @@ extension on TraductionsEn {
 			'ficheEleve.mouvements.nature.correction' => 'Balance correction',
 			'ficheEleve.mouvements.nature.remboursement' => 'Refund',
 			'ficheEleve.mouvements.statut.enregistre' => 'Recorded',
-			_ => null,
-		} ?? switch (path) {
 			'ficheEleve.mouvements.statut.enConfirmation' => 'Being confirmed',
 			'ficheEleve.mouvements.voirRecu' => 'See the receipt',
 			'ficheEleve.mouvements.voirRecuSemantique' => ({required Object reference}) => 'See receipt ${reference}',
@@ -13581,6 +15559,8 @@ extension on TraductionsEn {
 			'recrutement.cadre.refuse' => 'This framework cannot be accepted for now: your application is no longer at this step.',
 			'recrutement.portail.aCompleterTitre' => 'Your application needs to be completed',
 			'recrutement.portail.aCompleter' => 'To complete',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.portail.elementCadre' => 'The religious and educational framework',
 			'recrutement.portail.etatAEnvoyer' => 'To send',
 			'recrutement.portail.completer' => 'Complete my application',
@@ -13752,8 +15732,6 @@ extension on TraductionsEn {
 			'recrutement.parcours.langues.aucune' => 'No language matches.',
 			'recrutement.parcours.langues.retour' => 'Back to the languages offered',
 			'recrutement.parcours.pays.autre' => 'Another country',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.pays.recherche' => 'Search for a country',
 			'recrutement.parcours.pays.rechercheAide' => 'Country name',
 			'recrutement.parcours.pays.aucun' => 'No country matches.',
@@ -14095,6 +16073,8 @@ extension on TraductionsEn {
 			'dossiers.pieceNonVisibleDetail' => 'A document was submitted, but the gender rule prevents you from viewing it. A staff member of the same gender as this person must check it.',
 			'dossiers.rienATrancher' => 'Nothing to decide for now',
 			'dossiers.apercu' => 'The submitted document',
+			_ => null,
+		} ?? switch (path) {
 			'dossiers.apercuIndisponible' => 'Preview unavailable',
 			'dossiers.verifications' => 'Checks',
 			'dossiers.pointLisible' => 'The document is readable',
@@ -14266,8 +16246,6 @@ extension on TraductionsEn {
 			'parcours.objectifMemoriser' => 'Memorise',
 			'parcours.objectifIndecis' => 'I don\'t know yet',
 			'parcours.momentsQuestion' => 'Which times of day suit you best?',
-			_ => null,
-		} ?? switch (path) {
 			'parcours.momentsRaison' => 'This answer creates no schedule and reserves nothing. It is only used to highlight, among the schedules the academy already offers, those that suit you best. You will see all the others just below.',
 			'parcours.momentMatin' => 'Mornings',
 			'parcours.momentApresMidi' => 'Afternoons',
@@ -14609,6 +16587,8 @@ extension on TraductionsEn {
 			'compte.tuteur.pageLegal.textes' => 'Terms and privacy',
 			'historique.titre' => 'History',
 			'historique.detailSeance' => 'Session details',
+			_ => null,
+		} ?? switch (path) {
 			'historique.segments.seances' => 'Sessions',
 			'historique.segments.observations' => 'Observations',
 			'historique.moisCourts.0' => 'Jan',
@@ -14780,8 +16760,6 @@ extension on TraductionsEn {
 			'notifications.evenements.eleveRetireClasse' => 'A student leaves one of your classes.',
 			'notifications.evenements.creneauChange' => 'The class schedule has changed.',
 			'notifications.evenements.changementHeureUn' => ({required Object date, required Object cours, required Object jour, required Object avant, required Object apres}) => 'From ${date}, ${cours} on ${jour} moves from ${avant} to ${apres}.',
-			_ => null,
-		} ?? switch (path) {
 			'notifications.evenements.changementHeurePlusieurs' => ({required Object date, required Object cours, required Object liste}) => 'From ${date}, the time ${cours} changes: ${liste}.',
 			'notifications.evenements.changementHeureUnJour' => ({required Object date, required Object cours, required Object jourAvant, required Object avant, required Object jourApres, required Object apres}) => 'From ${date}, ${cours} moves from ${jourAvant} ${avant} to ${jourApres} ${apres}.',
 			'notifications.evenements.changementHeureLigneJour' => ({required Object jourAvant, required Object avant, required Object jourApres, required Object apres}) => 'from ${jourAvant} ${avant} to ${jourApres} ${apres}',
@@ -15123,6 +17101,8 @@ extension on TraductionsEn {
 			'classe.indisponiblePhrase' => 'The class details are not yet available here.',
 			'classe.introuvableTitre' => 'This class is not open to this profile',
 			'classe.introuvablePhrase' => 'It may have ended, or it concerns another student in the household.',
+			_ => null,
+		} ?? switch (path) {
 			'classe.disparue' => 'This class no longer exists.',
 			'classe.seance.aucune' => 'No session planned',
 			'classe.seance.aucuneDetail' => ({required Object dePrenom}) => '${dePrenom}\'s next session will appear here as soon as it is scheduled.',
@@ -15294,8 +17274,6 @@ extension on TraductionsEn {
 			'enseignant.signalement.envoyer' => 'Send the report',
 			'enseignant.signalement.demoSucces' => 'Demo: this report is ready, but nothing was sent.',
 			'enseignant.signalement.demoSuccesDetail' => 'In the connected app, it will go to the academy team.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.signalement.fermer' => 'Close',
 			'enseignant.demo.titre' => 'Teacher demo',
 			'enseignant.demo.mention' => 'Fictitious data, nothing is sent.',
@@ -15637,6 +17615,8 @@ extension on TraductionsEn {
 			'enseignant.profil.verificationEnAttente' => 'Pending',
 			'enseignant.profil.verificationValidee' => 'Approved',
 			'enseignant.profil.verificationRefusee' => 'To redo',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.profil.contratSection' => 'Contract and acknowledgements',
 			'enseignant.profil.contratEnseignant' => 'Teacher contract',
 			'enseignant.profil.contratConditions' => 'Terms of use',
@@ -15808,8 +17788,6 @@ extension on TraductionsEn {
 			'enseignant.revue.aucuneAnomalie' => 'Nothing needs your attention.',
 			'enseignant.revue.erreur' => 'The review could not be loaded.',
 			'enseignant.revue.erreurDetail' => 'This class may not be yours, or loading failed.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.revue.pasDeDecision' => 'You report, the academy decides: a transfer and a reorientation are not decided from here.',
 			'enseignant.revue.typeGate' => 'Upcoming stage',
 			'enseignant.revue.typeCorridor' => 'Student outside the corridor',
@@ -16151,6 +18129,8 @@ extension on TraductionsEn {
 			'adulte.recharge.phrase' => 'Choose the profiles and the amounts.',
 			'adulte.recharge.verifier' => 'Check the top-up',
 			'adulte.recharge.raisonAucun' => 'Select at least one profile to continue.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.recharge.sansDonnees' => 'The beneficiaries to top up could not be loaded',
 			'adulte.recharge.indisponibleTitre' => 'Top-up not available yet',
 			'adulte.recharge.indisponiblePhrase' => 'Top-up is not yet available in the app. No payment is possible here for now.',
@@ -16322,8 +18302,6 @@ extension on TraductionsEn {
 			'adulte.invitation.annulationEchecTitre' => 'The cancellation was not confirmed.',
 			'adulte.invitation.annulationEchecPhrase' => 'Check before trying again.',
 			'adulte.invitation.valableJusquau' => ({required Object date}) => 'Valid until ${date}',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.invitation.renvoyer' => 'Resend the invitation',
 			'adulte.invitation.renvoyeePhrase' => ({required Object courriel}) => 'The invitation was sent again to ${courriel}, with a new code: the one in the previous email no longer works.',
 			'adulte.invitation.renvoisRestants' => ({required Object n}) => 'Resends still possible: ${n}',
@@ -16665,6 +18643,8 @@ extension on TraductionsEn {
 			'suiviDemandes.etapes.envoyee' => 'Request sent',
 			'suiviDemandes.etapes.classeValidee' => 'Class approved',
 			'suiviDemandes.etapes.enseignantAffecte' => 'Teacher assigned',
+			_ => null,
+		} ?? switch (path) {
 			'suiviDemandes.etapes.listeAttente' => 'On the waiting list',
 			'suiviDemandes.etapes.eleveIntegre' => 'Student placed in the class',
 			'suiviDemandes.etapes.coursCommences' => 'Classes start',
@@ -16836,8 +18816,6 @@ extension on TraductionsEn {
 			'argent.transparence.videPhrase' => 'It will be published with the next version of the prices.',
 			'argent.etat.finance' => 'Funded',
 			'argent.etat.essai' => 'Trial',
-			_ => null,
-		} ?? switch (path) {
 			'argent.etat.essaiCompte' => ({required Object n, required Object max}) => 'Trial: ${n}/${max}',
 			'argent.etat.manque' => 'To fund',
 			'argent.etat.enConfirmation' => 'Being confirmed',
@@ -17179,6 +19157,8 @@ extension on TraductionsEn {
 			'avis.admin.liens.vide' => 'No links for now. Create one to collect reviews.',
 			'avis.admin.liens.erreur' => 'The links could not be loaded. Try again.',
 			'avis.admin.liens.sansDonnees' => 'The links could not be loaded',
+			_ => null,
+		} ?? switch (path) {
 			'courriels.admin.titre' => 'Emails',
 			'courriels.admin.sousTitre' => 'Write to a person and follow the emails that leave the academy.',
 			'courriels.admin.outil' => 'Emails',
@@ -17350,8 +19330,6 @@ extension on TraductionsEn {
 			'accueilInscrits.plusTard' => 'You can also do it later, from the Household.',
 			'accueilInscrits.sansEleve' => 'No student profile was carried over for your family. You can add one from the Household.',
 			'accueilInscrits.finirCompte' => 'A few questions remain to finish your account.',
-			_ => null,
-		} ?? switch (path) {
 			'accueilInscrits.continuer' => 'Continue',
 			'accueilInscrits.echecTitre' => 'Your registration could not be verified',
 			'accueilInscrits.echecPhrase' => 'Probable cause: the connection to the server was interrupted (not confirmed). Try again in a moment: nothing is created twice.',
@@ -17693,6 +19671,8 @@ extension on TraductionsEn {
 			'suiviAttente.enseignant.origine' => 'Country of origin',
 			'suiviAttente.enseignant.residence' => 'Country of residence',
 			'suiviAttente.enseignant.mot' => 'Their introduction',
+			_ => null,
+		} ?? switch (path) {
 			'suiviAttente.enseignant.peutSePresenter' => 'Your teacher can introduce themselves to the families of the class with a message in Messages.',
 			'suiviAttente.vide.message' => 'You have not chosen a class yet.',
 			'suiviAttente.vide.invitation' => 'Choose a class: the academy then follows you step by step.',
@@ -17864,8 +19844,6 @@ extension on TraductionsEn {
 			'calendrier.dates.conflits.titre' => 'Sessions that cannot be restored',
 			'calendrier.dates.conflits.intro' => 'These sessions were set aside by the closure, but the teacher took another class at the same time. Free the teacher then try again, or confirm abandoning these sessions: they will never be restored. Times are Makkah time.',
 			'calendrier.dates.conflits.ligne' => ({required Object classe, required Object quand, required Object enseignant}) => '${classe}, ${quand}, ${enseignant}',
-			_ => null,
-		} ?? switch (path) {
 			'calendrier.dates.conflits.autre' => ({required Object cours, required Object quand}) => 'Other class: ${cours}, ${quand}',
 			'calendrier.dates.conflits.autreSansNom' => ({required Object quand}) => 'Other class at the same time, ${quand}',
 			'calendrier.dates.conflits.abandonner' => ({required Object n}) => 'Remove the closure and abandon these sessions (${n})',
