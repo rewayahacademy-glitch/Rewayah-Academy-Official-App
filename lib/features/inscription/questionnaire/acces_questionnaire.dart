@@ -36,6 +36,7 @@ import '../../../core/widgets/page_etape.dart';
 import '../../connexion/coquille_entree.dart';
 import '../../connexion/recuperation_page.dart'
     show estInscriptionFermee, issueEchecEnvoi, phraseEchecEnvoi;
+import '../../connexion/saisie_code_courriel.dart';
 import '../../juridique/textes_juridiques.dart';
 
 /// Le dernier ecran du questionnaire : l'acces (lien par courriel, ou Google).
@@ -359,6 +360,11 @@ class _EcranAccesQuestionnaireState
             ),
           ),
         ],
+        // ONBOARDING-BOUCLE (14/11/2026) : le code du message, saisi dans ce
+        // navigateur, ouvre la session meme si le lien s'ouvre ailleurs ; les
+        // reponses du questionnaire sont ici.
+        Ecart.vXl,
+        SaisieCodeCourriel(courriel: courriel),
         ?controle,
         Ecart.vXxl,
         // ALIGN-RENVOI (garde-cap, 04/11) : « Renvoyer le lien » prend la

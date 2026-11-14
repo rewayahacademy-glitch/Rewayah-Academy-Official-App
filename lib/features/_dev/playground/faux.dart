@@ -169,6 +169,9 @@ class FauxServiceAuth implements ServiceAuth {
   }
 
   @override
+  Future<void> verifierCodeCourriel(String courriel, String code) async {}
+
+  @override
   Future<void> connexionGoogle() async {
     google++;
   }
