@@ -1803,6 +1803,7 @@ void main() {
           seance('d-3', 21, minutes: 47, connectees: 47),
         ],
         versement: b.versement,
+        seancesSansDureePayee: 1,
       );
     }
 
@@ -1811,46 +1812,62 @@ void main() {
       AppLocale.ar,
       AppLocale.en,
     ]) {
-      for (final Size taille in <Size>[
-        const Size(390, 844),
-        const Size(1440, 900),
-      ]) {
-        final String nom =
-            'revenus_duree_payee_${langue.languageCode}_'
-            '${taille.width.toInt()}x${taille.height.toInt()}';
-        testWidgets(nom, (WidgetTester tester) async {
-          await tester.runAsync(() => LocaleSettings.setLocale(langue));
-          addTearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
-          final RevenusEnseignant r = contenu();
-          fixerVueCapture(tester, taille, 1);
-          await tester.pumpWidget(
-            hoteCapture(
-              RevenusEnseignantPage(onRetour: () {}),
-              surcharges: <Override>[
-                sansPersonneConnectee(),
-                serviceReseauProvider.overrideWithValue(
-                  FauxServiceReseau(horsLigneRendu: false),
+      for (final (Size taille, ThemeMode theme, String suffixe) cas
+          in <(Size, ThemeMode, String)>[
+            (const Size(390, 844), ThemeMode.light, 'clair'),
+            (const Size(1440, 900), ThemeMode.dark, 'sombre'),
+          ]) {
+        // « resume » : le haut de la page (la phrase des seances comptees au
+        // temps de connexion) ; « seances » : le detail de la Classe.
+        for (final bool resume in <bool>[true, false]) {
+          final String nom =
+              'revenus_duree_payee_${resume ? 'resume' : 'seances'}_'
+              '${langue.languageCode}_${cas.$1.width.toInt()}x'
+              '${cas.$1.height.toInt()}_${cas.$3}';
+          testWidgets(nom, (WidgetTester tester) async {
+            await tester.runAsync(() => LocaleSettings.setLocale(langue));
+            addTearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
+            final RevenusEnseignant r = contenu();
+            fixerVueCapture(tester, cas.$1, 1);
+            await tester.pumpWidget(
+              hoteCapture(
+                RevenusEnseignantPage(onRetour: () {}),
+                themeMode: cas.$2,
+                surcharges: <Override>[
+                  sansPersonneConnectee(),
+                  serviceReseauProvider.overrideWithValue(
+                    FauxServiceReseau(horsLigneRendu: false),
+                  ),
+                  portRevenusEnseignantProvider.overrideWithValue(
+                    _PortFige(Future<RevenusEnseignant>.value(r)),
+                  ),
+                ],
+              ),
+            );
+            await _attendre(tester);
+            if (!resume) {
+              await _deplierClasse(tester, r.classes.first.classeId);
+              final BuildContext classe = tester.element(
+                find.byKey(
+                  ValueKey<String>(
+                    'revenus-classe-${r.classes.first.classeId}',
+                  ),
                 ),
-                portRevenusEnseignantProvider.overrideWithValue(
-                  _PortFige(Future<RevenusEnseignant>.value(r)),
-                ),
-              ],
-            ),
-          );
-          await _attendre(tester);
-          await _deplierClasse(tester, r.classes.first.classeId);
-          final BuildContext classe = tester.element(
-            find.byKey(
-              ValueKey<String>('revenus-classe-${r.classes.first.classeId}'),
-            ),
-          );
-          await tester.runAsync(
-            () => Scrollable.ensureVisible(classe, alignment: 0),
-          );
-          await _attendre(tester);
-          expect(tester.takeException(), isNull);
-          debugPrint('PNG ${await capturerVue(tester, nom)}');
-        });
+              );
+              await tester.runAsync(
+                () => Scrollable.ensureVisible(classe, alignment: 0),
+              );
+              await _attendre(tester);
+            } else {
+              expect(
+                find.byKey(const ValueKey<String>('revenus-sans-duree-payee')),
+                findsOneWidget,
+              );
+            }
+            expect(tester.takeException(), isNull);
+            debugPrint('PNG ${await capturerVue(tester, nom)}');
+          });
+        }
       }
     }
   });
