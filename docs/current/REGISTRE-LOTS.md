@@ -84,6 +84,7 @@ S'il passe sans conflit, le contenu est dans `main`. Un diff nul ne contient rie
 ## Lots de construction du 12-13/11
 
 | Lot | Branche | Statut | Preuve |
+| PERF-FUSEAUX-HORLOGE (14/11, lenteurs pendant l'arrivée des candidats) : la liste des fuseaux du questionnaire candidat lit `app_private.fuseaux_connus` au lieu de `pg_timezone_names` (508 ms par ouverture mesurés en production) ; volet horloge client NON fait (mesure : `mon_horloge` ≈ 106 appels par heure au pic, une lecture par page ; les 116 070 appels cumulés datent de la boucle corrigée le 05/11) | `claude/perf-fuseaux-horloge` | **À LIVRER** (PR brouillon ; migration `20261126000000_perf_fuseaux_questionnaire.sql` à coller par le directeur ; NON PROUVÉ en production) | Migrations rejouées sur Postgres 16 local, liste identique à celle de la vue, `scenarios_fuseaux_connus.sql` vert |
 | :-- | :-- | :-- | :-- |
 | SUIVI-ATTENTE (suivi de l'attente de la classe, « comme une livraison ») | `claude/suivi-attente` | **À LIVRER** (agent de construction, ordre de l'architecte pédagogique du 12/11 ; aucune PR : l'architecte l'ouvre et fusionne) | Fiche `docs/current/pedagogie/lots/LOT-SUIVI-ATTENTE.md`, §6 ; migrations `20261123960000`, `20261123961000` (mot d'effacement, collée par le directeur), `20261123962000` ; scénario `supabase/tests/scenarios_suivi_attente.sql` ; captures `docs/current/captures/E2E/suivi-attente/`. **Non prouvé** : production, que seul le directeur prouve ; `ci.yml` ne rejoue pas encore le scénario (zone interdite au lot). |
 
