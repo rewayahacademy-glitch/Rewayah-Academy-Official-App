@@ -25,13 +25,20 @@ export type LangueAuth = typeof LANGUES_AUTH[number]
 const RAISON = 'Vous recevez cet e-mail parce qu’une demande a été faite avec cette adresse sur Rewayah Academy. Si ce n’est pas vous, ignorez-le : rien ne change sans ce lien.'
 const RAISON_CODE = RAISON.replace('ce lien', 'ce code')
 
-function lien(sujet: string, titre: string, phrase: string, bouton: string, note: string): Contenu {
+// ONBOARDING-BOUCLE (directeur, 14/11/2026) : le lien de connexion s'ouvre
+// souvent dans un autre navigateur (appli Gmail) que celui du questionnaire.
+// Le code a 6 chiffres se saisit dans le MEME navigateur : la connexion aboutit
+// et les reponses du questionnaire sont retrouvees.
+const CODE_LIEN = 'Le lien ne s’ouvre pas dans le bon navigateur ? Saisissez ce code sur l’écran de l’application où vous avez demandé le lien :'
+
+function lien(sujet: string, titre: string, phrase: string, bouton: string, note: string, avecCode = false): Contenu {
   return {
     sujet, apercu: phrase, titre, raison: RAISON,
     blocs: [
       { type: 'texte', texte: 'Bonjour,' },
       { type: 'texte', texte: phrase },
       { type: 'bouton', libelle: bouton, href: '{{ .ConfirmationURL }}' },
+      ...(avecCode ? [{ type: 'texte' as const, texte: CODE_LIEN }, { type: 'code' as const, code: '{{ .Token }}' }] : []),
       { type: 'note', texte: note },
       { type: 'lien', texte: 'Le bouton ne fonctionne pas ?', libelle: 'Ouvrir le lien', href: '{{ .ConfirmationURL }}' },
     ],
@@ -41,7 +48,7 @@ function lien(sujet: string, titre: string, phrase: string, bouton: string, note
 export const MODELES_AUTH: Record<string, Contenu> = {
   magic_link: lien('Votre lien de connexion à Rewayah Academy', 'Votre lien de connexion',
     'Voici votre lien pour vous connecter à Rewayah Academy.', 'Me connecter',
-    'Le lien est valable une heure et ne sert qu’une fois.'),
+    'Le lien est valable une heure et ne sert qu’une fois.', true),
   confirmation: lien('Confirmez votre adresse e-mail', 'Confirmez votre adresse e-mail',
     'Pour terminer votre inscription à Rewayah Academy, confirmez votre adresse e-mail.', 'Confirmer mon adresse',
     'Le lien est valable une heure.'),
@@ -74,6 +81,8 @@ interface TextesAuth {
   ouvrir: string
   raison: string
   raisonCode: string
+  /// Phrase avant le code a 6 chiffres du lien de connexion (magic_link).
+  codeLien: string
   droiteAGauche?: boolean
   /// [sujet, titre, phrase, bouton, note] pour les cinq messages a lien.
   magic_link: [string, string, string, string, string]
@@ -87,19 +96,20 @@ interface TextesAuth {
 
 function jeu(langue: LangueAuth, t: TextesAuth): Record<string, Contenu> {
   const base = { langue, droiteAGauche: t.droiteAGauche ?? false }
-  const lien = ([sujet, titre, phrase, bouton, note]: [string, string, string, string, string]): Contenu => ({
+  const lien = ([sujet, titre, phrase, bouton, note]: [string, string, string, string, string], avecCode = false): Contenu => ({
     ...base, sujet, apercu: phrase, titre, raison: t.raison,
     blocs: [
       { type: 'texte', texte: t.salut },
       { type: 'texte', texte: phrase },
       { type: 'bouton', libelle: bouton, href: '{{ .ConfirmationURL }}' },
+      ...(avecCode ? [{ type: 'texte' as const, texte: t.codeLien }, { type: 'code' as const, code: '{{ .Token }}' }] : []),
       { type: 'note', texte: note },
       { type: 'lien', texte: t.copie, libelle: t.ouvrir, href: '{{ .ConfirmationURL }}' },
     ],
   })
   const [rs, ra, rp, rn] = t.reauthentication
   return {
-    magic_link: lien(t.magic_link),
+    magic_link: lien(t.magic_link, true),
     confirmation: lien(t.confirmation),
     invite: lien(t.invite),
     recovery: lien(t.recovery),
@@ -118,6 +128,7 @@ function jeu(langue: LangueAuth, t: TextesAuth): Record<string, Contenu> {
 
 export const MODELES_AUTH_LANGUES: Record<LangueAuth, Record<string, Contenu>> = {
   en: jeu('en', {
+    codeLien: 'The link does not open in the right browser? Enter this code on the app screen where you asked for the link:',
     salut: 'Hello,',
     copie: 'The button does not work?',
     ouvrir: 'Open the link',
@@ -142,6 +153,7 @@ export const MODELES_AUTH_LANGUES: Record<LangueAuth, Record<string, Contenu>> =
       'The code is valid for one hour. Do not share it with anyone: the management will never ask you for it.'],
   }),
   ar: jeu('ar', {
+    codeLien: 'الرابط لا يُفتح في المتصفح المناسب؟ أدخل هذا الرمز في شاشة التطبيق التي طلبتَ منها الرابط:',
     salut: 'مرحبًا،',
     copie: 'لا يعمل الزر؟',
     ouvrir: 'افتح الرابط',
@@ -166,6 +178,7 @@ export const MODELES_AUTH_LANGUES: Record<LangueAuth, Record<string, Contenu>> =
       'الرمز صالح لمدة ساعة. لا تعطه لأحد: لن تطلبه منك الإدارة أبدًا.'],
   }),
   es: jeu('es', {
+    codeLien: '¿El enlace no se abre en el navegador correcto? Introduzca este código en la pantalla de la aplicación donde pidió el enlace:',
     salut: 'Hola,',
     copie: '¿No funciona el botón?',
     ouvrir: 'Abrir el enlace',
@@ -191,6 +204,7 @@ export const MODELES_AUTH_LANGUES: Record<LangueAuth, Record<string, Contenu>> =
       'El código es válido durante una hora. No se lo comunique a nadie: la dirección nunca se lo pedirá.'],
   }),
   pt: jeu('pt', {
+    codeLien: 'A ligação não abre no navegador certo? Introduza este código no ecrã da aplicação onde pediu a ligação:',
     salut: 'Olá,',
     copie: 'O botão não funciona?',
     ouvrir: 'Abrir a ligação',

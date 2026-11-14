@@ -32,6 +32,7 @@ import 'feuille_appareil_eleve.dart';
 import 'invitation_compte.dart';
 import 'lien_ailleurs.dart';
 import 'recuperation_page.dart';
+import 'saisie_code_courriel.dart';
 
 /// L'environnement compile, lu par un provider pour que les tests le
 /// surchargent. La garde reste [environnementAutoriseDemo], la meme que
@@ -470,6 +471,12 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
               motDePasse: _motDePasse,
               demo: _demo,
               mode: _mode,
+              // ONBOARDING-BOUCLE (14/11/2026) : un questionnaire deja rempli
+              // sur cet appareil se dit, au lieu de passer sous silence.
+              reponsesGardees:
+                  ref.watch(questionnaireInscriptionProvider).complet &&
+                  _invitation == null,
+              onRevoirReponses: () => GoRouter.of(context).go(Routes.commencer),
               onMode: (ModeConnexion m) {
                 // Admission, lot B : creer un compte commence par le
                 // questionnaire (fiche du 29/10, « compte en dernier »).
@@ -562,6 +569,8 @@ class _Saisie extends StatelessWidget {
     required this.demo,
     required this.mode,
     required this.onMode,
+    required this.reponsesGardees,
+    required this.onRevoirReponses,
     required this.erreur,
     required this.envoi,
     required this.onChanged,
@@ -587,6 +596,11 @@ class _Saisie extends StatelessWidget {
   final bool demo;
   final ModeConnexion mode;
   final ValueChanged<ModeConnexion> onMode;
+
+  /// Vrai quand le questionnaire est deja rempli sur cet appareil : en
+  /// creation, l'ecran le dit et propose de revoir les reponses.
+  final bool reponsesGardees;
+  final VoidCallback onRevoirReponses;
   final String? erreur;
   final bool envoi;
   final VoidCallback onChanged;
@@ -679,6 +693,24 @@ class _Saisie extends StatelessWidget {
             onChange: onMode,
           ),
         ),
+        if (creation && reponsesGardees) ...<Widget>[
+          Ecart.vLg,
+          Semantics(
+            liveRegion: true,
+            child: Text(
+              t.inscription.questionnaire.acces.reponsesGardees,
+              key: const ValueKey<String>('connexion-reponses-gardees'),
+              style: palette.inkMuted.applyTo(
+                textes.bodyMedium ?? const TextStyle(),
+              ),
+            ),
+          ),
+          LienEntree(
+            cle: const ValueKey<String>('connexion-revoir-reponses'),
+            libelle: t.connexion.revoirReponses,
+            onPress: onRevoirReponses,
+          ),
+        ],
         Ecart.vXl,
         ChampEntree(
           cle: 'connexion-courriel',
@@ -830,6 +862,10 @@ class _LienEnvoye extends StatelessWidget {
             ),
           ),
         ],
+        // ONBOARDING-BOUCLE (14/11/2026) : le code du message, saisi dans ce
+        // navigateur, ouvre la session meme si le lien s'ouvre ailleurs.
+        Ecart.vXl,
+        SaisieCodeCourriel(courriel: courriel),
         ?controle,
         Ecart.vXxl,
         // ALIGN-RENVOI (04/11/2026) : le bouton seul a la largeur du champ,

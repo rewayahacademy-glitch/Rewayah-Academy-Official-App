@@ -104,10 +104,17 @@ class _InscriptionPageState extends ConsumerState<InscriptionPage> {
       brouillonInscriptionProvider,
     );
     // Un titulaire dont le questionnaire n'est pas fini le reprend d'abord.
-    final String manquante =
+    // ONBOARDING-BOUCLE (14/11/2026) : sans reponses ici (le lien s'est ouvert
+    // dans un autre navigateur que celui du questionnaire), le retour au debut
+    // se dit au lieu de se faire sans un mot.
+    final bool reponsesAbsentes =
         brouillon.titulaire &&
-            !brouillon.profilCree &&
-            !ref.read(questionnaireInscriptionProvider).complet
+        !brouillon.profilCree &&
+        !ref.read(questionnaireInscriptionProvider).complet;
+    if (reponsesAbsentes) {
+      ref.read(reponsesResteesAilleursProvider.notifier).signaler();
+    }
+    final String manquante = reponsesAbsentes
         ? Routes.commencer
         : brouillon.premiereEtapeManquante;
     if (manquante != Routes.inscriptionUsage) {

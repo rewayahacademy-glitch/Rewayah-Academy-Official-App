@@ -15,6 +15,7 @@ import '../../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/action_principale.dart';
+import '../../../core/widgets/bandeau_attention.dart';
 import '../../../core/widgets/choice_card_group.dart';
 import '../../../core/widgets/etat_systeme.dart';
 import '../../../core/widgets/filter_pill.dart';
@@ -364,6 +365,17 @@ class _EcranQuestionState extends ConsumerState<_EcranQuestion> {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
+              // ONBOARDING-BOUCLE (14/11/2026) : la session est arrivee ici
+              // sans les reponses (autre navigateur) : on le dit.
+              if (ref.watch(reponsesResteesAilleursProvider) &&
+                  !q.complet) ...<Widget>[
+                BandeauAttention(
+                  key: const ValueKey<String>('questionnaire-absentes'),
+                  titre: t.inscription.questionnaire.acces.absentesTitre,
+                  message: t.inscription.questionnaire.acces.absentesPhrase,
+                ),
+                Ecart.vLg,
+              ],
               _corps(context, bureau: bureau),
               Ecart.vXl,
               if (_tente && !repondue && !_adulte) ...<Widget>[
