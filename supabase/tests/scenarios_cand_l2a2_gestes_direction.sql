@@ -1421,8 +1421,6 @@ BEGIN
       ('a1', $$SELECT public.executer_lot_candidats('refuser', ARRAY[pg_temp.c('06'), 'ca2bdddd-0000-4000-8000-000000000000'::uuid],
            md5('x'), 0, 'cle-o1-jeton-003', 'Motif', 'refus_general')$$,
         '{"erreur": "jeton_perime"}'::jsonb, 'identifiant inconnu a cote : meme reponse, aucun oracle'),
-      ('a4', $$SELECT public.executer_lot_candidats('refuser', ARRAY[pg_temp.c('06')], md5('x'), 0, 'cle-o1-jeton-004', 'Motif', 'refus_general')$$,
-        '{"erreur": "jeton_perime"}'::jsonb, 'super-admin : aucune exception de lecture pour un geste'),
       ('a1', $$SELECT public.executer_lot_candidats('Robert''); DROP TABLE x;--', ARRAY[pg_temp.c('06')], md5('x'), 0, 'cle-o1-garbage-1')$$,
         '{"erreur": "geste_non_groupable", "geste": null}'::jsonb, 'geste mal forme : jamais recopie')
       ) AS t(qui, q, attendu, nom) LOOP
@@ -1434,7 +1432,17 @@ BEGIN
       AND (pg_temp.hp(pg_temp.c('06')) ->> 'audit')::int = (b ->> 'audit')::int + 1,
       'D16 : ' || v.nom || ' : ' || (r ->> 'erreur') || ', une trace (evenement et ligne d''audit) pour la candidate de l''autre cote');
   END LOOP;
-  PERFORM pg_temp.vrai(n = 11, 'D16 : onze refus rendus avant la boucle, chacun trace');
+  PERFORM pg_temp.vrai(n = 10, 'D16 : dix refus rendus avant la boucle, chacun trace');
+  -- VISION-RECRUTEMENT (directeur, 14/11/2026, migration 20261126400000) : le
+  -- super-admin agit aussi en lot ; la candidate de l'autre cote est dans sa
+  -- portee, donc aucune trace hors portee. Le jeton invente reste refuse.
+  b := pg_temp.hp(pg_temp.c('06'));
+  r := pg_temp.en(pg_temp.p('a4'), 'admin',
+    $$SELECT public.executer_lot_candidats('refuser', ARRAY[pg_temp.c('06')], md5('x'), 0, 'cle-o1-jeton-004', 'Motif', 'refus_general')$$);
+  PERFORM pg_temp.vrai(r = '{"erreur": "jeton_perime"}'::jsonb
+    AND (pg_temp.hp(pg_temp.c('06')) ->> 'evenements')::int = (b ->> 'evenements')::int
+    AND (pg_temp.hp(pg_temp.c('06')) ->> 'audit')::int = (b ->> 'audit')::int,
+    'super-admin en lot : jeton invente refuse, aucune trace hors portee (candidate dans sa portee)');
 END $o1$;
 SELECT pg_temp.vrai((SELECT count(*) FROM public.audit_logs
                       WHERE row_id = pg_temp.c('06')::text AND action = 'candidature_hors_portee'

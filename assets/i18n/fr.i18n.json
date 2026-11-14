@@ -4010,6 +4010,36 @@
         "candidature": "Cette candidature est de l'autre côté : sa lecture est inscrite au journal."
       },
       "aTraiter": "À traiter",
+      "attentes": {
+        "titre": "Qui attend quoi",
+        "aide": "Les candidatures en cours, rangées selon qui doit agir. Touchez une ligne pour filtrer la liste.",
+        "deuxCotes": "Les deux côtés sont comptés.",
+        "academie": "Attendent l'académie",
+        "personne": "Attendent la personne",
+        "versement": "Attendent un moyen de versement",
+        "pieceAValider": "Pièce d'identité à valider",
+        "pieceAide": "À valider dans le dossier de chaque personne.",
+        "aucunCreneau": "Aucun créneau d'entretien ouvert.",
+        "creneauxOuverts": {
+          "one": "{n} créneau d'entretien ouvert",
+          "other": "{n} créneaux d'entretien ouverts"
+        },
+        "versementAide": "Aucun moyen de versement confirmé dans le pays déclaré : une décision de la direction est attendue.",
+        "rien": "Personne n'attend.",
+        "depuisMinutes": {
+          "one": "La plus ancienne depuis {n} minute",
+          "other": "La plus ancienne depuis {n} minutes"
+        },
+        "depuisHeures": {
+          "one": "La plus ancienne depuis {n} heure",
+          "other": "La plus ancienne depuis {n} heures"
+        },
+        "depuisJours": {
+          "one": "La plus ancienne depuis {n} jour",
+          "other": "La plus ancienne depuis {n} jours"
+        },
+        "filtrer": "Filtrer la liste : {etat}, {n}"
+      },
       "alertes": {
         "bloquees": "Bloquées",
         "entretiensEnRetard": "Entretiens en retard",
