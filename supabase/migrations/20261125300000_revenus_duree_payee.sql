@@ -49,7 +49,8 @@
 --
 -- PREREQUIS : 20261124800000_paie_minutes_reconnexion.sql et
 -- 20261124900000_paie_fenetre.sql (fonctions private.pai_fenetre et
--- private.pai_minutes_enseignant). Le corps est en plpgsql : le fichier se
+-- private.pai_minutes_enseignant), et 20261125310000 (private.pai_minutes_payees,
+-- la regle de la duree payee, appelee ici). Le corps est en plpgsql : le fichier se
 -- cree meme sans elles (une base rejouee avant leur fusion), mais la lecture
 -- refuse alors avec un message clair au lieu de rendre un chiffre faux.
 --
@@ -97,8 +98,9 @@ BEGIN
   END IF;
 
   IF pg_catalog.to_regprocedure('private.pai_fenetre(uuid)') IS NULL
-     OR pg_catalog.to_regprocedure('private.pai_minutes_enseignant(uuid)') IS NULL THEN
-    RAISE EXCEPTION 'durees payees : la fenetre payable (PAIE-FENETRE) n''est pas installee'
+     OR pg_catalog.to_regprocedure('private.pai_minutes_enseignant(uuid)') IS NULL
+     OR pg_catalog.to_regprocedure('private.pai_minutes_payees(uuid,public.politiques_commerciales)') IS NULL THEN
+    RAISE EXCEPTION 'durees payees : la fenetre payable (PAIE-FENETRE) ou 20261125310000 n''est pas installee'
       USING ERRCODE = '55000';
   END IF;
 
@@ -110,46 +112,23 @@ BEGIN
   v_pol := private.fac_politique_au(v_mois);
 
   WITH base AS (
-    SELECT r.seance, r.debut, r.presents, r.en_attente, m.montant_minor AS ecrit,
-           g.type_public,
+    SELECT r.seance, r.debut,
            f.minutes AS fenetre,
            private.pai_minutes_enseignant(r.seance) AS connectees
       FROM private.pai_releve_seances(v_debut, v_fin) r
-      JOIN public.groupes g ON g.id = r.groupe
-      LEFT JOIN public.tresorerie_mouvements m
-        ON m.source_type = 'prestation' AND m.source_id = r.seance::text
-       AND m.regle = 'remuneration_due' AND m.coffre = 'paie_a_decaisser' AND m.sens = 'entree'
       CROSS JOIN LATERAL private.pai_fenetre(r.seance) f
      WHERE r.enseignant = v_cible
-  ), regle AS (
-    SELECT b.*,
-           CASE b.type_public WHEN 'adulte' THEN v_pol.taux_eleve_heure_adulte_mineur
-                              ELSE v_pol.taux_eleve_heure_enfant_mineur END AS taux,
-           CASE b.type_public WHEN 'adulte' THEN v_pol.duree_due_adulte_minutes
-                              ELSE v_pol.duree_due_enfant_minutes END AS duree_due
-      FROM base b
-  ), payee AS (
-    -- La meme regle que private.pai_due_seance (PAIE-FENETRE, section 5).
-    SELECT g.*,
-           CASE WHEN NOT coalesce(g.fenetre > 0, false) OR g.connectees IS NULL THEN NULL
-                WHEN g.duree_due IS NULL OR g.connectees >= g.duree_due THEN g.fenetre
-                ELSE least(g.connectees::numeric, g.fenetre) END AS payees
-      FROM regle g
   )
   SELECT coalesce(pg_catalog.jsonb_agg(pg_catalog.jsonb_build_object(
-           'seanceId', p.seance,
-           'minutesPayees',
-             CASE WHEN p.en_attente AND p.ecrit IS NULL THEN NULL
-                  WHEN p.payees IS NULL OR p.taux IS NULL THEN NULL
-                  WHEN pg_catalog.round(p.taux * p.presents * p.payees / 60)::bigint
-                       IS NOT DISTINCT FROM coalesce(p.ecrit, 0)
-                  THEN pg_catalog.round(p.payees)::integer
-                  ELSE NULL END,
-           'minutesConnectees', p.connectees,
-           'fenetreMinutes', pg_catalog.round(p.fenetre)::integer)
-         ORDER BY p.debut DESC, p.seance), '[]'::jsonb)
+           'seanceId', b.seance,
+           -- La regle est unique : private.pai_minutes_payees (20261125310000),
+           -- garde de coherence comprise. null quand elle n'est pas affirmable.
+           'minutesPayees', private.pai_minutes_payees(b.seance, v_pol),
+           'minutesConnectees', b.connectees,
+           'fenetreMinutes', pg_catalog.round(b.fenetre)::integer)
+         ORDER BY b.debut DESC, b.seance), '[]'::jsonb)
     INTO v_res
-    FROM payee p;
+    FROM base b;
 
   RETURN v_res;
 END;

@@ -9476,6 +9476,10 @@
       "absent": "Absent",
       "presentPartiel": "Présent en partie",
       "partielleNote": "Une présence en partie est payée comme une présence.",
+      "sansDureePayee(param=n)": {
+        "one": "{n}\u00a0séance est comptée au temps de connexion : sa durée rémunérée n'est pas précisée. Le relevé de l'académie fait foi.",
+        "other": "{n}\u00a0séances sont comptées au temps de connexion : leur durée rémunérée n'est pas précisée. Le relevé de l'académie fait foi."
+      },
       "aucunMontant": "Aucun montant pour cette séance.",
       "partielle": "4. Une présence en partie compte",
       "partielleDetail": "Un élève présent pendant une partie de la séance est payé comme un élève présent.",

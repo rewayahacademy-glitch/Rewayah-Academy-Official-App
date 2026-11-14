@@ -296,6 +296,7 @@ class RevenusEnseignant {
     this.allocationInternet,
     this.totalARecevoir,
     this.totalAttenteCahier,
+    this.seancesSansDureePayee,
   });
 
   /// Le debut de la periode.
@@ -340,6 +341,11 @@ class RevenusEnseignant {
   /// Ce qui attend le cahier de la semaine, montre a part du total a
   /// recevoir ; `null` avec un serveur plus ancien.
   final Montant? totalAttenteCahier;
+
+  /// Le nombre de seances du mois comptees au temps de connexion faute d'une
+  /// duree payee affirmable par le serveur (REVENUS-DUREE-PAYEE) ; `null`
+  /// avec un serveur plus ancien. Le serveur compte, l'ecran le dit.
+  final int? seancesSansDureePayee;
 }
 
 /// Les revenus de l'enseignant connecte.

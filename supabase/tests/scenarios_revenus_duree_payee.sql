@@ -8,6 +8,8 @@
 --   3. garde de coherence : un montant qui ne redonne pas la duree -> null ;
 --   4. acces : l'enseignant lit les siennes, pas celles d'un autre ; la
 --      direction lit celles d'un enseignant designe ; eleve, anonyme refuses ;
+--   3 bis. heures assurees sur la duree payee (270, pas 265) ; bf1_prestations
+--      inchangee ;
 --   5. droits.
 -- Seances (mois en cours, enseignante Maryam, un eleve present) :
 --   sA enfants planifiee 90 min, connectee 0-75 : fenetre 60, connectees 60, payees 60 ;
@@ -135,9 +137,18 @@ INSERT INTO public.session_events(session_id, profile_id, event_type, server_ts,
 SELECT s.id, 'fd400000-0000-4000-8000-0000000000e2', 'joined', s.started_at + interval '1 minute', 'livekit_webhook'
   FROM public.sessions s WHERE s.id = 'fd400000-0000-4000-8000-000000000505';
 
+-- bf1_prestations ne change pas : ses minutes restent les minutes CONNECTEES
+-- (60 + 30 + 90 + 55 + 30 = 265), c'est mes_revenus_enseignant qui les remplace.
+CREATE TEMP TABLE bf AS SELECT sum(minutes)::int AS m FROM private.bf1_prestations(
+  'fd400000-0000-4000-8000-0000000000b1', pg_temp.mois()::timestamptz - interval '1 day',
+  pg_temp.mois()::timestamptz + interval '40 days');
+GRANT SELECT ON bf TO authenticated;
+SELECT pg_temp.vrai((SELECT m FROM bf) = 265, '0 : bf1_prestations inchangee, 265 minutes connectees');
+
 SELECT pg_temp.qui('fd400000-0000-4000-8000-0000000000b1', 'teacher');
 SET LOCAL ROLE authenticated;
 CREATE TEMP TABLE rdp AS SELECT public.mes_durees_payees_enseignant(NULL) AS j;
+CREATE TEMP TABLE rv AS SELECT public.mes_revenus_enseignant(NULL) AS j;
 
 -- 1. Duree payee
 SELECT pg_temp.vrai((SELECT (pg_temp.ligne(j,'1') ->> 'minutesPayees')::int = 60
@@ -162,6 +173,22 @@ SELECT pg_temp.vrai((SELECT (pg_temp.ligne(j,'4') ->> 'minutesConnectees')::int 
 SELECT pg_temp.vrai((SELECT pg_temp.ligne(j,'5') -> 'minutesPayees' = 'null'::jsonb
                         AND (pg_temp.ligne(j,'5') ->> 'minutesConnectees')::int = 30 FROM rdp),
   '3 : montant ecrit qui ne redonne plus la duree : duree payee absente (jamais inventee), connectees gardees');
+
+-- 3 bis. Heures assurees : la duree payee, plus les minutes connectees
+-- sA 60, sB 30, sC 90, sD 60 (payees) ; sE non affirmable : 30 connectees
+-- gardees. Total 270 (et non 265), une seance comptee faute de mieux.
+SELECT pg_temp.vrai((SELECT (j #>> '{total,minutesAssurees}')::int = 270 FROM rv),
+  '3 bis : heures assurees 270 min (duree payee) au lieu de 265 (connectees)');
+SELECT pg_temp.vrai((SELECT (j ->> 'seancesSansDureePayee')::int = 1 FROM rv),
+  '3 bis : une seance comptee au temps de connexion (duree payee non affirmable), dite');
+SELECT pg_temp.vrai((SELECT (SELECT (x ->> 'minutesAssurees')::int FROM jsonb_array_elements(j -> 'classes') x
+                              WHERE x ->> 'type' = 'enfants') = 180
+                        AND (SELECT (x ->> 'minutesAssurees')::int FROM jsonb_array_elements(j -> 'classes') x
+                              WHERE x ->> 'type' = 'adultes') = 90 FROM rv),
+  '3 bis : minutes par Classe : enfants 60+30+60+30 = 180, adultes 90');
+SELECT pg_temp.vrai((SELECT (j #>> '{total,minutesAssurees}')::int = (
+    SELECT sum((x ->> 'minutesAssurees')::int) FROM jsonb_array_elements(j -> 'classes') x) FROM rv),
+  '3 bis : le total vaut la somme des Classes');
 
 -- 4. Acces
 SELECT pg_temp.vrai(pg_temp.refuse($q$SELECT public.mes_durees_payees_enseignant(NULL, 'fd400000-0000-4000-8000-0000000000b2')$q$, '42501'),

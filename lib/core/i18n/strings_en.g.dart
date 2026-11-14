@@ -8590,6 +8590,10 @@ class _Traductions$enseignant$revenus$en extends Traductions$enseignant$revenus$
 	@override String get absent => 'Absent';
 	@override String get presentPartiel => 'Partly present';
 	@override String get partielleNote => 'A partial attendance is paid as an attendance.';
+	@override String sansDureePayee({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} session is counted at connection time: its paid length is not specified. The academy statement is authoritative.',
+		other: '${n} sessions are counted at connection time: their paid length is not specified. The academy statement is authoritative.',
+	);
 	@override String get aucunMontant => 'No amount for this session.';
 	@override String get partielle => '4. A partial attendance counts';
 	@override String get partielleDetail => 'A student present for part of the session is paid as a present student.';
@@ -33909,6 +33913,7 @@ extension on TraductionsEn {
 			'enseignant.revenus.absent' => 'Absent',
 			'enseignant.revenus.presentPartiel' => 'Partly present',
 			'enseignant.revenus.partielleNote' => 'A partial attendance is paid as an attendance.',
+			'enseignant.revenus.sansDureePayee' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} session is counted at connection time: its paid length is not specified. The academy statement is authoritative.', other: '${n} sessions are counted at connection time: their paid length is not specified. The academy statement is authoritative.', ), 
 			'enseignant.revenus.aucunMontant' => 'No amount for this session.',
 			'enseignant.revenus.partielle' => '4. A partial attendance counts',
 			'enseignant.revenus.partielleDetail' => 'A student present for part of the session is paid as a present student.',
@@ -34408,9 +34413,9 @@ extension on TraductionsEn {
 			'tc.outils.revision.aide' => 'The selected passage becomes work to prepare.',
 			'tc.outils.revision.groupeEntier' => 'Whole class',
 			'tc.outils.revision.consigne' => 'Short instruction (optional)',
-			'tc.outils.revision.creer' => 'Set the work',
 			_ => null,
 		} ?? switch (path) {
+			'tc.outils.revision.creer' => 'Set the work',
 			'tc.outils.revision.posee' => 'Work to prepare set',
 			'tc.outils.masquer.reveler' => 'Reveal',
 			'tc.outils.masquer.refermer' => 'Hide again',
@@ -34922,9 +34927,9 @@ extension on TraductionsEn {
 			'adulte.acceptation.faisons' => ({required Object prenom}) => '${prenom} invites you to their family plan. If you accept, your account is linked to their household. Your account stays yours. Nothing is merged.',
 			'adulte.acceptation.pourquoiTitre' => 'Why',
 			'adulte.acceptation.pourquoiElle' => ({required Object prenom}) => '${prenom} manages the household and pays for its members. To pay for your classes, she must see your balance.',
-			'adulte.acceptation.pourquoiLui' => ({required Object prenom}) => '${prenom} manages the household and pays for its members. To pay for your classes, he must see your balance.',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.acceptation.pourquoiLui' => ({required Object prenom}) => '${prenom} manages the household and pays for its members. To pay for your classes, he must see your balance.',
 			'adulte.acceptation.verraTitre' => ({required Object quePrenom}) => 'What ${quePrenom} will see',
 			'adulte.acceptation.verraElle' => 'Your first and last name. Your balance, or the need to top it up. The plan that concerns you. The state of your access, if it prevents payment. She will also know if you leave the family plan.',
 			'adulte.acceptation.verraLui' => 'Your first and last name. Your balance, or the need to top it up. The plan that concerns you. The state of your access, if it prevents payment. He will also know if you leave the family plan.',
@@ -35436,9 +35441,9 @@ extension on TraductionsEn {
 			'argent.moyen.webStripeDetail' => 'Payment on the web. Nothing is charged before you confirm.',
 			'argent.soldes.total' => 'Total balances (read-only)',
 			'argent.soldes.totalDetail' => 'A read-only view: each balance stays that of its profile.',
-			'argent.soldes.aPayer' => 'To pay this month',
 			_ => null,
 		} ?? switch (path) {
+			'argent.soldes.aPayer' => 'To pay this month',
 			'argent.soldes.profilsFinances' => 'Funded profiles',
 			'argent.soldes.profilsFinancesValeur' => ({required Object n, required Object total}) => '${n} of ${total}',
 			'argent.soldes.paiements' => 'Payments this month',
@@ -35950,9 +35955,9 @@ extension on TraductionsEn {
 			'com.studio.aujourdhui.videsBlocs.decisions' => 'No decision pending.',
 			'com.studio.aujourdhui.videsBlocs.echeances' => 'No upcoming deadline.',
 			'com.studio.aujourdhui.videsBlocs.activite' => 'No recent activity.',
-			'com.studio.aujourdhui.videTitre' => 'Nothing to handle for now',
 			_ => null,
 		} ?? switch (path) {
+			'com.studio.aujourdhui.videTitre' => 'Nothing to handle for now',
 			'com.studio.aujourdhui.dansCanal' => ({required Object nom}) => 'In ${nom}',
 			'com.studio.aujourdhui.echeance' => ({required Object date}) => 'Due on ${date}',
 			'com.studio.aujourdhui.seTraiteDans' => ({required Object module}) => 'Handled in ${module}',
@@ -36464,9 +36469,9 @@ extension on TraductionsEn {
 			'comptable.statuts.capacite.soldePrestataireInsuffisant' => 'Provider balance insufficient',
 			'comptable.statuts.reserve.atteint' => 'Target reached',
 			'comptable.statuts.reserve.sousObjectif' => 'Below target',
-			'comptable.statuts.reserve.depassement' => 'Exceeded',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.statuts.reserve.depassement' => 'Exceeded',
 			'comptable.statuts.reserve.regleInactive' => 'Rule inactive',
 			'comptable.statuts.reserve.alimentationPrevue' => 'Funding planned',
 			'comptable.statuts.reserve.mouvementSensible' => 'Sensitive movement',
@@ -36978,9 +36983,9 @@ extension on TraductionsEn {
 			'comptable.beneficiaires.recevoir.configurer' => 'Set up my payments',
 			'comptable.beneficiaires.recevoir.wise.paysIndisponible' => ({required Object pays}) => 'Wise does not pay out in this country: ${pays}. You can give the account of a relative in another country; otherwise the management will pay you another way.',
 			'comptable.beneficiaires.recevoir.wise.aMonNomQuestion' => 'Is this account in your name?',
-			'comptable.beneficiaires.recevoir.wise.aMonNomOui' => 'Yes, it is in my name',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.beneficiaires.recevoir.wise.aMonNomOui' => 'Yes, it is in my name',
 			'comptable.beneficiaires.recevoir.wise.aMonNomNon' => 'No, it is in a relative\'s name',
 			'comptable.beneficiaires.recevoir.wise.aMonNomNonDetail' => 'Your pay will go to a relative\'s account, with your agreement. The management checks it before the first payment.',
 			'comptable.beneficiaires.recevoir.wise.lienQuestion' => 'Who holds the account?',
@@ -37492,9 +37497,9 @@ extension on TraductionsEn {
 			'sansDonnees.paiementsRecus' => 'Your payments received could not be loaded',
 			'sansDonnees.revenus' => 'Your earnings could not be loaded',
 			'sansDonnees.aujourdhui' => 'Today\'s board could not be loaded',
-			'sansDonnees.paiement' => 'This payment could not be loaded',
 			_ => null,
 		} ?? switch (path) {
+			'sansDonnees.paiement' => 'This payment could not be loaded',
 			'sansDonnees.paiementsAEffectuer' => 'The payments to make could not be loaded',
 			'sansDonnees.encaissements' => 'The collections could not be loaded',
 			'sansDonnees.tresorerie' => 'The cash position could not be loaded',
@@ -38006,9 +38011,9 @@ extension on TraductionsEn {
 			'admissions.modeles.niveauPhrase' => '"The level requested is not yet offered."',
 			'admissions.modeles.sansReponse' => 'No reply',
 			'admissions.modeles.sansReponsePhrase' => '"We did not receive a reply to our last message."',
-			'accueilInscrits.titre' => 'We already know you',
 			_ => null,
 		} ?? switch (path) {
+			'accueilInscrits.titre' => 'We already know you',
 			'accueilInscrits.phrase' => 'Your registration has been carried over. You do not have to enter everything again.',
 			'accueilInscrits.motTitre' => 'A word from the management',
 			'accueilInscrits.elevesTitre' => 'Your children already registered',
@@ -38520,9 +38525,9 @@ extension on TraductionsEn {
 			'candidatsFlux.file.reglage.enregistrer' => 'Save the setting',
 			'candidatsFlux.file.reglage.enregistre' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'Setting saved: ${n} message per day.', other: 'Setting saved: ${n} messages per day.', ), 
 			'candidatsFlux.file.reglage.invalide' => 'Enter a whole number from 1 to 2,000, without spaces.',
-			'candidatsFlux.file.reglage.echec' => 'Setting not confirmed. Probable cause: the connection to the server was interrupted. Try again in a moment.',
 			_ => null,
 		} ?? switch (path) {
+			'candidatsFlux.file.reglage.echec' => 'Setting not confirmed. Probable cause: the connection to the server was interrupted. Try again in a moment.',
 			'candidatsFlux.importDouble.suite' => 'Tap "Enter my code": you enter the code from your verification app, then the import resumes here. Nothing was saved.',
 			'candidatsFlux.importDouble.action' => 'Enter my code',
 			'candidatsFlux.langues.man' => 'Malinke (Mandinka)',

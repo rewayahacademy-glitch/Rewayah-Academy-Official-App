@@ -224,6 +224,26 @@ void main() {
       expect(faux.appels.last.$2, <String, dynamic>{'p_mois': '2026-10-01'});
     });
 
+    test('REVENUS-DUREE-PAYEE : seancesSansDureePayee lu du serveur, nul '
+        'avec un serveur plus ancien', () async {
+      final _Faux faux = _Faux(
+        <String, Object? Function(Map<String, dynamic>?)>{
+          'mes_revenus_enseignant': (_) => <String, Object?>{
+            ..._revenus,
+            'seancesSansDureePayee': 2,
+          },
+        },
+      );
+      final RevenusEnseignant r = await RevenusEnseignantSupabase.avecAppel(
+        faux.call,
+      ).moisEnCours();
+      expect(r.seancesSansDureePayee, 2);
+      final RevenusEnseignant ancien = RevenusEnseignantSupabase.decoderRevenus(
+        _revenus,
+      );
+      expect(ancien.seancesSansDureePayee, isNull);
+    });
+
     test('REVENUS-DUREE-PAYEE : la lecture des durees absente ou en echec '
         'ne casse pas les revenus', () async {
       final RevenusEnseignant r = await RevenusEnseignantSupabase.avecAppel((

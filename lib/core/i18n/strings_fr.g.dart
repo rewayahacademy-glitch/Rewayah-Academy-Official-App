@@ -18265,6 +18265,12 @@ class Traductions$enseignant$revenus$fr {
 	/// fr: 'Une présence en partie est payée comme une présence.'
 	String get partielleNote => 'Une présence en partie est payée comme une présence.';
 
+	/// fr: '(one) {{n} séance est comptée au temps de connexion : sa durée rémunérée n'est pas précisée. Le relevé de l'académie fait foi.} (other) {{n} séances sont comptées au temps de connexion : leur durée rémunérée n'est pas précisée. Le relevé de l'académie fait foi.}'
+	String sansDureePayee({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} séance est comptée au temps de connexion : sa durée rémunérée n\'est pas précisée. Le relevé de l\'académie fait foi.',
+		other: '${n} séances sont comptées au temps de connexion : leur durée rémunérée n\'est pas précisée. Le relevé de l\'académie fait foi.',
+	);
+
 	/// fr: 'Aucun montant pour cette séance.'
 	String get aucunMontant => 'Aucun montant pour cette séance.';
 
@@ -59438,6 +59444,7 @@ extension on Traductions {
 			'enseignant.revenus.absent' => 'Absent',
 			'enseignant.revenus.presentPartiel' => 'Présent en partie',
 			'enseignant.revenus.partielleNote' => 'Une présence en partie est payée comme une présence.',
+			'enseignant.revenus.sansDureePayee' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} séance est comptée au temps de connexion : sa durée rémunérée n\'est pas précisée. Le relevé de l\'académie fait foi.', other: '${n} séances sont comptées au temps de connexion : leur durée rémunérée n\'est pas précisée. Le relevé de l\'académie fait foi.', ), 
 			'enseignant.revenus.aucunMontant' => 'Aucun montant pour cette séance.',
 			'enseignant.revenus.partielle' => '4. Une présence en partie compte',
 			'enseignant.revenus.partielleDetail' => 'Un élève présent pendant une partie de la séance est payé comme un élève présent.',
@@ -59937,9 +59944,9 @@ extension on Traductions {
 			'tc.outils.revision.aide' => 'Le passage sélectionné devient un travail à préparer.',
 			'tc.outils.revision.groupeEntier' => 'Toute la classe',
 			'tc.outils.revision.consigne' => 'Consigne courte (facultatif)',
-			'tc.outils.revision.creer' => 'Poser le travail',
 			_ => null,
 		} ?? switch (path) {
+			'tc.outils.revision.creer' => 'Poser le travail',
 			'tc.outils.revision.posee' => 'Travail à préparer posé',
 			'tc.outils.masquer.reveler' => 'Révéler',
 			'tc.outils.masquer.refermer' => 'Masquer de nouveau',
@@ -60451,9 +60458,9 @@ extension on Traductions {
 			'adulte.acceptation.faisons' => ({required Object prenom}) => '${prenom} vous invite dans son forfait famille. Si vous acceptez, votre compte est rattaché à son foyer. Votre compte reste le vôtre. Rien n\'est fusionné.',
 			'adulte.acceptation.pourquoiTitre' => 'Pourquoi',
 			'adulte.acceptation.pourquoiElle' => ({required Object prenom}) => '${prenom} gère le foyer et paie pour ses membres. Pour payer vos cours, elle doit voir votre solde.',
-			'adulte.acceptation.pourquoiLui' => ({required Object prenom}) => '${prenom} gère le foyer et paie pour ses membres. Pour payer vos cours, il doit voir votre solde.',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.acceptation.pourquoiLui' => ({required Object prenom}) => '${prenom} gère le foyer et paie pour ses membres. Pour payer vos cours, il doit voir votre solde.',
 			'adulte.acceptation.verraTitre' => ({required Object quePrenom}) => 'Ce ${quePrenom} verra',
 			'adulte.acceptation.verraElle' => 'Votre prénom et votre nom. Votre solde, ou le besoin de le recharger. L\'offre qui vous concerne. L\'état de votre accès, s\'il empêche de payer. Elle saura aussi si vous quittez le forfait famille.',
 			'adulte.acceptation.verraLui' => 'Votre prénom et votre nom. Votre solde, ou le besoin de le recharger. L\'offre qui vous concerne. L\'état de votre accès, s\'il empêche de payer. Il saura aussi si vous quittez le forfait famille.',
@@ -60965,9 +60972,9 @@ extension on Traductions {
 			'argent.moyen.webStripeDetail' => 'Paiement par le web. Aucun débit avant votre confirmation.',
 			'argent.soldes.total' => 'Total des soldes (lecture)',
 			'argent.soldes.totalDetail' => 'Une lecture : chaque solde reste celui de son profil.',
-			'argent.soldes.aPayer' => 'À payer ce mois',
 			_ => null,
 		} ?? switch (path) {
+			'argent.soldes.aPayer' => 'À payer ce mois',
 			'argent.soldes.profilsFinances' => 'Profils financés',
 			'argent.soldes.profilsFinancesValeur' => ({required Object n, required Object total}) => '${n} sur ${total}',
 			'argent.soldes.paiements' => 'Paiements du mois',
@@ -61479,9 +61486,9 @@ extension on Traductions {
 			'com.studio.aujourdhui.videsBlocs.decisions' => 'Aucune décision en attente.',
 			'com.studio.aujourdhui.videsBlocs.echeances' => 'Aucune échéance proche.',
 			'com.studio.aujourdhui.videsBlocs.activite' => 'Aucune activité récente.',
-			'com.studio.aujourdhui.videTitre' => 'Rien à traiter pour le moment',
 			_ => null,
 		} ?? switch (path) {
+			'com.studio.aujourdhui.videTitre' => 'Rien à traiter pour le moment',
 			'com.studio.aujourdhui.dansCanal' => ({required Object nom}) => 'Dans ${nom}',
 			'com.studio.aujourdhui.echeance' => ({required Object date}) => 'Échéance le ${date}',
 			'com.studio.aujourdhui.seTraiteDans' => ({required Object module}) => 'Se traite dans ${module}',
@@ -61993,9 +62000,9 @@ extension on Traductions {
 			'comptable.statuts.capacite.soldePrestataireInsuffisant' => 'Solde prestataire insuffisant',
 			'comptable.statuts.reserve.atteint' => 'Objectif atteint',
 			'comptable.statuts.reserve.sousObjectif' => 'Sous objectif',
-			'comptable.statuts.reserve.depassement' => 'Dépassement',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.statuts.reserve.depassement' => 'Dépassement',
 			'comptable.statuts.reserve.regleInactive' => 'Règle inactive',
 			'comptable.statuts.reserve.alimentationPrevue' => 'Alimentation prévue',
 			'comptable.statuts.reserve.mouvementSensible' => 'Mouvement sensible',
@@ -62507,9 +62514,9 @@ extension on Traductions {
 			'comptable.beneficiaires.recevoir.configurer' => 'Configurer mes paiements',
 			'comptable.beneficiaires.recevoir.wise.paysIndisponible' => ({required Object pays}) => 'Wise ne verse pas dans ce pays : ${pays}. Vous pouvez donner le compte d\'un proche dans un autre pays ; sinon la direction vous paiera autrement.',
 			'comptable.beneficiaires.recevoir.wise.aMonNomQuestion' => 'Ce compte est-il à votre nom ?',
-			'comptable.beneficiaires.recevoir.wise.aMonNomOui' => 'Oui, il est à mon nom',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.beneficiaires.recevoir.wise.aMonNomOui' => 'Oui, il est à mon nom',
 			'comptable.beneficiaires.recevoir.wise.aMonNomNon' => 'Non, il est au nom d\'un proche',
 			'comptable.beneficiaires.recevoir.wise.aMonNomNonDetail' => 'Votre paie ira sur le compte d\'un proche, avec votre accord. La direction le vérifie avant le premier versement.',
 			'comptable.beneficiaires.recevoir.wise.lienQuestion' => 'Qui est le titulaire du compte ?',
@@ -63021,9 +63028,9 @@ extension on Traductions {
 			'sansDonnees.paiementsRecus' => 'Vos paiements reçus n\'ont pas pu être chargés',
 			'sansDonnees.revenus' => 'Vos revenus n\'ont pas pu être chargés',
 			'sansDonnees.aujourdhui' => 'Le tableau du jour n\'a pas pu être chargé',
-			'sansDonnees.paiement' => 'Ce paiement n\'a pas pu être chargé',
 			_ => null,
 		} ?? switch (path) {
+			'sansDonnees.paiement' => 'Ce paiement n\'a pas pu être chargé',
 			'sansDonnees.paiementsAEffectuer' => 'Les paiements à effectuer n\'ont pas pu être chargés',
 			'sansDonnees.encaissements' => 'Les encaissements n\'ont pas pu être chargés',
 			'sansDonnees.tresorerie' => 'La trésorerie n\'a pas pu être chargée',
@@ -63535,9 +63542,9 @@ extension on Traductions {
 			'admissions.modeles.niveauPhrase' => '« Le niveau demandé n\'est pas encore proposé. »',
 			'admissions.modeles.sansReponse' => 'Pas de réponse',
 			'admissions.modeles.sansReponsePhrase' => '« Nous n\'avons pas reçu de réponse à notre dernier message. »',
-			'accueilInscrits.titre' => 'Nous vous connaissons déjà',
 			_ => null,
 		} ?? switch (path) {
+			'accueilInscrits.titre' => 'Nous vous connaissons déjà',
 			'accueilInscrits.phrase' => 'Votre inscription a été reprise. Vous n\'avez pas à tout ressaisir.',
 			'accueilInscrits.motTitre' => 'Un mot de la direction',
 			'accueilInscrits.elevesTitre' => 'Vos enfants déjà inscrits',
@@ -64049,9 +64056,9 @@ extension on Traductions {
 			'candidatsFlux.file.reglage.enregistrer' => 'Enregistrer le réglage',
 			'candidatsFlux.file.reglage.enregistre' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Réglage enregistré : ${n} message par jour.', other: 'Réglage enregistré : ${n} messages par jour.', ), 
 			'candidatsFlux.file.reglage.invalide' => 'Écrivez un nombre entier de 1 à 2 000, sans espace.',
-			'candidatsFlux.file.reglage.echec' => 'Réglage non confirmé. Cause probable : la connexion au serveur s\'est interrompue. Réessayez dans un instant.',
 			_ => null,
 		} ?? switch (path) {
+			'candidatsFlux.file.reglage.echec' => 'Réglage non confirmé. Cause probable : la connexion au serveur s\'est interrompue. Réessayez dans un instant.',
 			'candidatsFlux.importDouble.suite' => 'Touchez « Saisir mon code » : vous saisissez le code de votre application de vérification, puis l\'import reprend ici. Rien n\'a été enregistré.',
 			'candidatsFlux.importDouble.action' => 'Saisir mon code',
 			'candidatsFlux.langues.man' => 'Malinké (mandinka)',

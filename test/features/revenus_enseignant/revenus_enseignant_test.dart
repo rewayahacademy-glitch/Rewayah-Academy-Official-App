@@ -1277,6 +1277,46 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
+    testWidgets('REVENUS-DUREE-PAYEE : des seances comptees au temps de '
+        'connexion sont dites, et rien n est dit quand il n y en a pas', (
+      WidgetTester tester,
+    ) async {
+      final RevenusEnseignant b = DonneesFinanceDemo.revenus();
+      RevenusEnseignant avecN(int? n) => RevenusEnseignant(
+        debut: b.debut,
+        fin: b.fin,
+        classes: b.classes,
+        total: b.total,
+        totalEstime: b.totalEstime,
+        seances: b.seances,
+        versement: b.versement,
+        seancesSansDureePayee: n,
+      );
+      await monterPage(
+        tester,
+        _PortFige(Future<RevenusEnseignant>.value(avecN(2))),
+      );
+      await _attendre(tester);
+      expect(
+        find.byKey(const ValueKey<String>('revenus-sans-duree-payee')),
+        findsOneWidget,
+      );
+      expect(
+        find.text(t.enseignant.revenus.sansDureePayee(n: 2)),
+        findsOneWidget,
+      );
+      await monterPage(
+        tester,
+        _PortFige(Future<RevenusEnseignant>.value(avecN(0))),
+      );
+      await _attendre(tester);
+      expect(
+        find.byKey(const ValueKey<String>('revenus-sans-duree-payee')),
+        findsNothing,
+      );
+      expect(tester.takeException(), isNull);
+    });
+
     testWidgets('REVENUS-DUREE-PAYEE : sans duree payee du serveur, une '
         'phrase renvoie au releve, sans minutes inventees', (
       WidgetTester tester,

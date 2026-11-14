@@ -431,6 +431,17 @@ class _Resume extends StatelessWidget {
             valeurForte: true,
             valeurEnFin: true,
           ),
+          // REVENUS-DUREE-PAYEE : des seances comptees faute de mieux au
+          // temps de connexion : dit, jamais une duree inventee.
+          if (revenus.seancesSansDureePayee case final int n
+              when n > 0) ...<Widget>[
+            Ecart.vXs,
+            Text(
+              t.enseignant.revenus.sansDureePayee(n: n),
+              key: const ValueKey<String>('revenus-sans-duree-payee'),
+              style: attenue,
+            ),
+          ],
           if (revenus.versement case final FenetreVersement v)
             LigneCleValeur(
               key: RevenusEnseignantPage.versementKey,

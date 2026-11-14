@@ -145,6 +145,10 @@ class RevenusEnseignantSupabase implements PortRevenusEnseignant {
         j['totalAttenteCahier'],
         'totalAttenteCahier',
       ),
+      // REVENUS-DUREE-PAYEE (migration 20261125310000) : absent avant.
+      seancesSansDureePayee: j['seancesSansDureePayee'] is num
+          ? (j['seancesSansDureePayee'] as num).toInt()
+          : null,
     );
   }
 
