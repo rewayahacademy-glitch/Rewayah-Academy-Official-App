@@ -7307,7 +7307,10 @@
           "restauration": "Restored"
         },
         "auditMotif": "Reason: {motif}",
-        "auditVersion": "Version {numero}"
+        "auditVersion": "Version {numero}",
+        "ajouterVignette": "Add a thumbnail",
+        "remplacerVignette": "Replace the thumbnail",
+        "accesChange": "File access updated."
       },
       "import": {
         "classement": {
@@ -7404,9 +7407,107 @@
           "deposerPreuve": "Submit the proof",
           "preuveDeposee": "Proof submitted."
         },
-        "poursuivre": "Continue to verification",
-        "poursuivreAide": "The file must be verified by the server before continuing.",
-        "retour": "Back to the catalogue"
+        "retour": "Back to the catalogue",
+        "simple": {
+          "intro": "Choose a file: the app recognises a PDF, an audio file or an image by itself, and the upload starts at once.",
+          "lienALaPlace": "Add a link instead",
+          "fichierALaPlace": "Upload a file instead",
+          "nom": "Name",
+          "nomVide": "Give the document a name.",
+          "description": "Description (optional)",
+          "descriptionLien": "An external link needs a description: say in one sentence where it leads.",
+          "acces": {
+            "titre": "File access",
+            "lecture": "Read in the app only",
+            "lectureAide": "The document opens in the app and is not saved on the device. This is the default.",
+            "telechargement": "Download allowed",
+            "telechargementAide": "The student can save the file on their device. A file that has been downloaded cannot be taken back."
+          },
+          "rangement": {
+            "titre": "Shelf",
+            "cours": "A document from the academy, useful for classes. Shelved first in the Library.",
+            "plusLoin": "Another document. Shelved lower in the Library."
+          },
+          "plus": "More settings",
+          "moins": "Hide settings",
+          "plusAide": "Ages, programme stages, document source: nothing is required, the defaults are fine.",
+          "sourceTitre": "Document source",
+          "langue": "Language: {langue}, taken from the name.",
+          "aideFichier": "Choose a file first: the “Save the document” button appears once the file is added.",
+          "aideEnvoi": "The file is being uploaded: the “Save the document” button appears as soon as it is added.",
+          "aideLien": "Paste the link address (https) and give a name: the “Save the document” button then appears.",
+          "typeDifferent": "This document expects a file of another type ({type}). Choose a file of that type, or add a new document.",
+          "refus": {
+            "vide": "This file is empty. Choose another file.",
+            "video": "This is a video: it is too large to be uploaded here. Add it by its link.",
+            "inconnu": "This file is not a PDF, an audio file (MP3, M4A, OGG) or an image (PNG, JPEG, WebP). Choose another file.",
+            "tropLourd": "This file is too large: {limite} MB at most for this type. Choose a lighter file."
+          },
+          "fichierAjoute": "File added",
+          "fichierEchec": "The file was not added",
+          "detailFichier": "{type} · {taille}",
+          "tailleO": "{n} bytes",
+          "tailleKo": "{n} KB",
+          "tailleMo": "{n} MB",
+          "vignette": {
+            "titre": "Thumbnail (optional)",
+            "aide": "An image for the cover (PNG, JPEG or WebP, 2 MB at most). Without it, the cover is chosen by type.",
+            "ajoutee": "Thumbnail added",
+            "echec": "The thumbnail was not added",
+            "echecSuite": "The document can be saved without it.",
+            "tropLourde": "This image is over 2 MB. Choose a lighter image.",
+            "pasUneImage": "This file is not a PNG, JPEG or WebP image. Choose another image.",
+            "retiree": "Thumbnail removed. The cover is chosen by type again.",
+            "apercu": "Thumbnail preview",
+            "enCours": "Uploading the thumbnail…"
+          },
+          "enregistrer": "Save the document",
+          "aideNom": "Give the document a name: the “Save the document” button then appears.",
+          "aideDroit": "Tick the right-to-distribute box: without it, a document that does not come from the academy cannot be saved.",
+          "aideReglages": "A setting needs fixing in “More settings”: the “Save the document” button comes back afterwards.",
+          "droitTiers": "The academy has the right to distribute this document",
+          "droitTiersAide": "Tick this for a document that does not come from the academy. Your name and the date are kept with this statement.",
+          "enregistreTitre": "Document saved",
+          "nonEnregistre": "The document is not saved yet",
+          "ouvrir": "Open the document",
+          "autre": "Add another document",
+          "voirVerification": "Open the document check",
+          "enregistrementEchec": "The saving of the document is not confirmed. Nothing is lost: the file is already added. Try again.",
+          "reglagesTitre": "File upload is not ready",
+          "reglagesMessage": "A server setting is missing. Until it is set, no file can be added. A document can already be added by its link.",
+          "reglageNomme": "Setting to set: {nom}",
+          "pourQui": {
+            "titre": "For whom",
+            "tous": "All enrolled members, children included",
+            "tousAide": "Enrolled children, teenagers and adults will see it.",
+            "adultes": "Adults only",
+            "adultesAide": "Only enrolled members aged 18 and over will see it."
+          },
+          "enregistreTous": "It is visible to all enrolled members, children included.",
+          "enregistreAdultes": "It is visible to adults only.",
+          "enregistreTranches": "It is visible to the age groups chosen in “More settings”.",
+          "bloque": "Saving is blocked, and nothing has changed. What blocks it: {criteres}. Fix it in “More settings”, then try again.",
+          "bloqueSansDetail": "Saving is blocked, and nothing has changed. Open the document check to see what blocks it.",
+          "inactifTitre": "Saving is not enabled yet",
+          "inactif": "The server does not have the update that allows saving a document yet. Nothing is lost: the file stays added. Tell the person who installs updates.",
+          "fichierPresent": "This document already has its file.",
+          "detail": "Detail",
+          "detailMasquer": "Hide the detail",
+          "court": {
+            "envoi": "The file did not go through. Try again; if it happens again, a server setting needs fixing.",
+            "stockage": "File storage refused the upload. Try once more; if it happens again, a server setting needs fixing.",
+            "service": "The upload did not succeed. Try again in a few minutes.",
+            "reglage": "The file arrived, but it could not be kept. A server setting needs fixing before you try again.",
+            "delai": "The check took too long. Try again, or choose a lighter file.",
+            "nonActive": "File upload is not enabled yet. Add the document by its link in the meantime.",
+            "reseau": "No answer came back. Try again in a moment.",
+            "nonModifiable": "This document can no longer be edited. Reload the page.",
+            "dejaDepose": "This document already has its file. Open its page to create a new version.",
+            "introuvable": "The upload did not succeed. Try again.",
+            "contenu": "This file is not a valid PDF, audio file or image. Choose another file.",
+            "refuse": "Your account is not allowed to make this upload. Ask the management to check your access."
+          }
+        }
       },
       "publication": {
         "titre": "Check and publish",
