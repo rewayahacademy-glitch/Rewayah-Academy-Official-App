@@ -80,6 +80,7 @@ class TraductionsEn extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$tuteur$en tuteur = _Traductions$tuteur$en._(_root);
 	@override late final _Traductions$classe$en classe = _Traductions$classe$en._(_root);
 	@override late final _Traductions$enseignant$en enseignant = _Traductions$enseignant$en._(_root);
+	@override late final _Traductions$controleur$en controleur = _Traductions$controleur$en._(_root);
 	@override late final _Traductions$aConstruire$en aConstruire = _Traductions$aConstruire$en._(_root);
 	@override late final _Traductions$galerie$en galerie = _Traductions$galerie$en._(_root);
 	@override late final _Traductions$adulte$en adulte = _Traductions$adulte$en._(_root);
@@ -1318,6 +1319,24 @@ class _Traductions$enseignant$en extends Traductions$enseignant$fr {
 	@override late final _Traductions$enseignant$ficheGroupe$en ficheGroupe = _Traductions$enseignant$ficheGroupe$en._(_root);
 	@override late final _Traductions$enseignant$revue$en revue = _Traductions$enseignant$revue$en._(_root);
 	@override late final _Traductions$enseignant$revenus$en revenus = _Traductions$enseignant$revenus$en._(_root);
+}
+
+// Path: controleur
+class _Traductions$controleur$en extends Traductions$controleur$fr {
+	_Traductions$controleur$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$controleur$mfa$en mfa = _Traductions$controleur$mfa$en._(_root);
+	@override late final _Traductions$controleur$historique$en historique = _Traductions$controleur$historique$en._(_root);
+	@override late final _Traductions$controleur$complement$en complement = _Traductions$controleur$complement$en._(_root);
+	@override late final _Traductions$controleur$compteRendu$en compteRendu = _Traductions$controleur$compteRendu$en._(_root);
+	@override late final _Traductions$controleur$observation$en observation = _Traductions$controleur$observation$en._(_root);
+	@override late final _Traductions$controleur$echanges$en echanges = _Traductions$controleur$echanges$en._(_root);
+	@override late final _Traductions$controleur$demo$en demo = _Traductions$controleur$demo$en._(_root);
+	@override late final _Traductions$controleur$acces$en acces = _Traductions$controleur$acces$en._(_root);
+	@override late final _Traductions$controleur$controle$en controle = _Traductions$controleur$controle$en._(_root);
 }
 
 // Path: aConstruire
@@ -5909,6 +5928,315 @@ class _Traductions$enseignant$revenus$en extends Traductions$enseignant$revenus$
 	@override String get mention => 'This amount is an estimate, not a final payment. The statement closed by the academy is authoritative.';
 	@override String get vide => 'No hours taught this month';
 	@override String get videDetail => 'The estimate will appear after your first session taught of the month.';
+}
+
+// Path: controleur.mfa
+class _Traductions$controleur$mfa$en extends Traductions$controleur$mfa$fr {
+	_Traductions$controleur$mfa$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titreEnrolement => 'Protect your reviewer account';
+	@override String get introEnrolement => 'This account gives access to sessions where children are present. A stolen password must not be enough: add a second step with an authenticator app.';
+	@override String get etapeScanner => 'In your authenticator app, scan this code.';
+	@override String get libelleQr => 'Code to scan to add this account to your authenticator app';
+	@override String get cleManuelle => 'Can\'t scan? Enter this key in the app.';
+	@override String get etapeCode => 'Enter the six-digit code shown by the app.';
+	@override String get champCode => 'Six-digit code';
+	@override String get activer => 'Turn on protection';
+	@override String get titreVerification => 'Confirm your sign-in';
+	@override String get introVerification => 'Open your authenticator app and enter the six-digit code shown for this account.';
+	@override String get confirmer => 'Confirm';
+	@override String get codeIncomplet => 'Enter all six digits of the code.';
+	@override String get codeRefuse => 'That code is not right. Check your phone\'s time, then enter the code shown now.';
+	@override String get sansApplication => 'I don\'t have an authenticator app';
+	@override String get videTitre => 'You need an authenticator app';
+	@override String get videPhrase => 'Install one on your phone, for example Google Authenticator, Microsoft Authenticator or Aegis, then come back here. For help, write to the academy\'s administration.';
+	@override String get videRetour => 'I installed the app';
+	@override String get seDeconnecter => 'Sign out';
+	@override String get chargement => 'Checking your account';
+}
+
+// Path: controleur.historique
+class _Traductions$controleur$historique$en extends Traductions$controleur$historique$fr {
+	_Traductions$controleur$historique$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'History';
+	@override String get provisoire => 'This screen is being prepared.';
+	@override String get envoye => 'Sent';
+	@override String get complementAjoute => 'Addendum added';
+	@override String get aTerminer => 'To finish';
+	@override String get filtreEtat => 'Status';
+	@override String get tousEtats => 'All statuses';
+	@override String duree({required Object minutes}) => '${minutes} min observed';
+	@override String meta({required Object heure, required Object duree}) => '${heure} · ${duree}';
+	@override String dateHeure({required Object date, required Object heure}) => '${date}, ${heure}';
+	@override String dateHeureAuteur({required Object date, required Object heure, required Object auteur}) => '${date}, ${heure} · ${auteur}';
+	@override String ligne({required Object date, required Object classe, required Object enseignant, required Object duree, required Object statut}) => '${date}, ${classe}, ${enseignant}, ${duree}, ${statut}';
+	@override String get vide => 'No review yet.';
+	@override String get videFiltres => 'No review matches these filters.';
+	@override String resultats({required Object n}) => 'Reviews shown: ${n}';
+	@override String titreDetail({required Object classe, required Object date}) => '${classe} · ${date}';
+	@override String get sectionMission => 'Class observed';
+	@override String get sectionObservation => 'Reviewer\'s observation';
+	@override String get sectionComplements => 'Addenda';
+	@override String get sectionEchanges => 'Exchanges with the administration';
+	@override String get cleClasse => 'Class';
+	@override String get cleEnseignant => 'Teacher';
+	@override String get cleDate => 'Date';
+	@override String get cleDuree => 'Time observed';
+	@override String get cleElevesPresents => 'Present';
+	@override String get cleReponse => 'Reply';
+	@override String get sansComplement => 'No addendum.';
+	@override String get faitsIndisponibles => 'The automatic log of this visit (times, students present, reconnections) has not been received yet: the session has just ended or the connection was cut. It will appear here as soon as it is received. The rest of the report remains reliable.';
+	@override String motif({required Object motif}) => 'Reason: ${motif}';
+	@override String get ajouterComplement => 'Add an addendum';
+}
+
+// Path: controleur.complement
+class _Traductions$controleur$complement$en extends Traductions$controleur$complement$fr {
+	_Traductions$controleur$complement$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get bandeau => 'This addendum will be added to the existing report.';
+	@override String get questionMotif => 'Why are you adding this addendum?';
+	@override String get contexteMotif => 'Optional: the reason helps the administration read the addendum. The original report does not change.';
+	@override String get precision => 'Clarification';
+	@override String get precisionAide => 'When a detail is missing · it completes the report without changing anything in it';
+	@override String get correction => 'Correction';
+	@override String get correctionAide => 'When some information in the report is inaccurate · the original stays readable, the correction appears below it';
+	@override String get faitNouveau => 'New information';
+	@override String get faitNouveauAide => 'When you learn it after the visit · it is dated the day it is added';
+	@override String get questionTexte => 'What are you adding to the report?';
+	@override String get texteObligatoire => 'Required: what you noticed, in a few sentences.';
+	@override String get libelleTexte => 'Addendum';
+	@override String get aideTexte => 'What you noticed or learned since the visit.';
+	@override String get texteRequis => 'Write the addendum to continue.';
+	@override String get questionRecap => 'Check before sending';
+	@override String get cleRapport => 'Original report';
+	@override String rapportInchange({required Object classe, required Object date}) => '${classe} · ${date}, unchanged';
+	@override String get cleMotif => 'Reason';
+	@override String get sansMotif => 'No reason';
+	@override String get cleTexte => 'Addendum';
+	@override String get envoyer => 'Send the addendum';
+	@override String get echec => 'The sending is not confirmed: it may not have reached Rewayah. Your text is kept here, try again in a moment. The original report stays intact.';
+	@override String get envoyeTitre => 'Addendum added';
+	@override String get envoyePhrase => 'It appears below the original report, which stays unchanged.';
+	@override String get revenir => 'Back to the report';
+}
+
+// Path: controleur.compteRendu
+class _Traductions$controleur$compteRendu$en extends Traductions$controleur$compteRendu$fr {
+	_Traductions$controleur$compteRendu$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Report';
+	@override String get provisoire => 'This screen is being prepared.';
+	@override String get revenir => 'Back to the review';
+	@override String sousTitre({required Object classe, required Object heure}) => '${classe} · ${heure}';
+	@override String get faits => 'Automatic log of the session';
+	@override String get faitsReplies => 'Automatic log of the session, collapsed';
+	@override String get faitsDeplies => 'Automatic log of the session, expanded';
+	@override String get faitsChargement => 'Reading the automatic log of the session: times, students present, reconnections.';
+	@override String get faitsAbsents => 'The automatic log of the session (times, students present, reconnections) has not been received yet: the session has just ended or the connection was cut. You can answer without it; it will be attached to the report as soon as it is received.';
+	@override String get cleHoraire => 'Scheduled time';
+	@override String horaire({required Object debut, required Object fin}) => '${debut} to ${fin}';
+	@override String get cleDebutReel => 'Actual start';
+	@override String debutRetard({required Object heure, required Object minutes}) => '${heure}, ${minutes} min late';
+	@override String debutALHeure({required Object heure}) => '${heure}, on time';
+	@override String get cleFin => 'End';
+	@override String get enCours => 'In progress';
+	@override String get clePresents => 'Students present';
+	@override String presents({required Object presents, required Object attendus}) => '${presents} of ${attendus}';
+	@override String get cleReconnexions => 'Reconnections';
+	@override String get question => 'Is there anything to report?';
+	@override String get contexte => 'Your answer is added to the session\'s automatic log: times, attendance, reconnections.';
+	@override String get rienASignaler => 'Nothing to report';
+	@override String get rienASignalerAide => 'When the session went normally · the report is sent in one action; you can add an addendum afterwards';
+	@override String get ajouterObservation => 'Add an observation';
+	@override String get ajouterObservationAide => 'When you want to note what you saw · a few short questions, one at a time';
+	@override String get pointImportant => 'Flag an important point';
+	@override String get pointImportantAide => 'When what you saw needs the administration\'s attention · your text will be required';
+	@override String get envoyer => 'Send the report';
+	@override String get plusTard => 'Later';
+	@override String get notice => 'This report is sent automatically to the administration.';
+	@override String get echec => 'The sending is not confirmed: it may not have reached Rewayah. Your text is kept here; try again in a moment. If the problem continues, write to the administration.';
+	@override String get echecRien => 'The sending is not confirmed: it may not have reached Rewayah. Your choice stays selected; try again in a moment. If the problem continues, write to the administration.';
+	@override String get envoyeTitre => 'Report sent';
+	@override String get envoyePhrase => 'It has been passed on to the administration. To come back to it, open it in History and choose "Add an addendum".';
+	@override String get ecrireAdmin => 'Write to the administration';
+	@override String get visiteEnCours => 'Passing the visit on to the administration.';
+	@override String get visiteTransmise => 'The visit and its automatic log have been passed on to the administration.';
+	@override String get visiteEchec => 'Passing on the visit is not confirmed: it may not have reached Rewayah. Try again; the visit\'s log stays saved on the server.';
+	@override String get aTerminer => 'Report to finish';
+	@override String get reprendre => 'Resume the report';
+	@override String get visiteInconnue => 'This report can no longer be resumed here.';
+	@override String get visiteInconnueAide => 'This device no longer has the visit in memory, probably after the page was reloaded. The server passes on the visit and its automatic log as soon as you leave the room; this screen cannot confirm it. To add a remark, write to the administration.';
+}
+
+// Path: controleur.observation
+class _Traductions$controleur$observation$en extends Traductions$controleur$observation$fr {
+	_Traductions$controleur$observation$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get important => 'You are flagging an important point: your text will be required.';
+	@override String get questionNature => 'What is the nature of your observation?';
+	@override String get contexteNature => 'Your observation joins this visit\'s report, passed on to the administration.';
+	@override String get pointPositif => 'Positive point';
+	@override String get pointPositifAide => 'When a practice deserves to be noted · it appears in the report as a positive point';
+	@override String get aSuivre => 'To follow up';
+	@override String get aSuivreAide => 'When a point should be reviewed at a later visit · it appears in the report as a point to follow up';
+	@override String get interventionAdmin => 'Administration action requested';
+	@override String get interventionAdminAide => 'When the administration needs to act · your text will be required, and it receives it with the report';
+	@override String get questionDomaine => 'Which area does it concern?';
+	@override String get contexteDomaine => 'The area helps the administration read your observation.';
+	@override String get pedagogie => 'Teaching';
+	@override String get pedagogieAide => 'When it concerns the teaching: explanations, progression, documents';
+	@override String get interaction => 'Interaction with students';
+	@override String get interactionAide => 'When it concerns the exchanges between teacher and students';
+	@override String get gestionClasse => 'Class management';
+	@override String get gestionClasseAide => 'When it concerns how the session is organized: timing, instructions, flow';
+	@override String get respectCadre => 'Respect of the framework';
+	@override String get respectCadreAide => 'When it concerns the rules of the academy and of the session';
+	@override String get climat => 'Behavior / atmosphere';
+	@override String get climatAide => 'When it concerns the behavior or atmosphere of the class';
+	@override String get autre => 'Other';
+	@override String get autreAide => 'When no other area fits · specify it in your text';
+	@override String get questionPersonne => 'Who is concerned?';
+	@override String get contextePersonne => 'Say who the observation concerns. A student is chosen from the class list, by first name and the initial of their surname.';
+	@override String get enseignant => 'Teacher';
+	@override String get enseignantAide => 'When the observation concerns the session\'s teacher';
+	@override String get classeEntiere => 'Whole class';
+	@override String get classeEntiereAide => 'When it concerns all the students present';
+	@override String get elevePrecis => 'A specific student';
+	@override String get elevePrecisAide => 'When only one student is concerned · you choose them from the list, by first name and the initial of their surname';
+	@override String get aucun => 'No specific participant';
+	@override String get aucunAide => 'When it targets no one in particular, for example the flow of the session';
+	@override String get questionEleve => 'Choose the student from the class list.';
+	@override String get rosterChargement => 'Reading the list of students present.';
+	@override String get rosterIndisponible => 'The list of students present has not been received. Try again, or choose "Whole class" or "No specific participant". Your other answers are kept.';
+	@override String get rosterVide => 'No student present appears in this visit\'s list. Choose "Whole class" or "No specific participant".';
+	@override String get questionTexte => 'What did you observe?';
+	@override String get texteObligatoire => 'Your text is required for this observation.';
+	@override String get texteFacultatif => 'This text is optional.';
+	@override String get libelleTexte => 'Your remark';
+	@override String get aideTexte => 'Describe only what you observed.';
+	@override String get texteRequis => 'Write what you observed to continue.';
+	@override String get questionRecap => 'Check your observation before sending.';
+	@override String get cleNature => 'Nature';
+	@override String get cleDomaine => 'Area';
+	@override String get clePersonne => 'Person concerned';
+	@override String get cleTexte => 'Remark';
+	@override String get sansTexte => 'No text';
+	@override String get echec => 'The sending is not confirmed: it may not have reached Rewayah. Your text is kept here; try again in a moment. If the problem continues, write to the administration.';
+	@override String get echecSansTexte => 'The sending is not confirmed: it may not have reached Rewayah. Your answers stay selected; try again in a moment. If the problem continues, write to the administration.';
+}
+
+// Path: controleur.echanges
+class _Traductions$controleur$echanges$en extends Traductions$controleur$echanges$fr {
+	_Traductions$controleur$echanges$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Exchanges';
+	@override String titreFil({required Object classe, required Object date}) => '${classe} · ${date}';
+	@override String derniereActivite({required Object date}) => 'Last activity: ${date}';
+	@override String get reponseRecue => 'Reply received';
+	@override String get enAttente => 'Waiting';
+	@override String get vide => 'No exchange with the administration yet.';
+	@override String get contexte => 'Context of the visit, attached automatically';
+	@override String get cleClasse => 'Class';
+	@override String get cleDate => 'Date';
+	@override String get cleHeure => 'Time';
+	@override String get auteurVous => 'You';
+	@override String get auteurAdmin => 'Administration';
+	@override String get champ => 'Reply to the administration…';
+	@override String get champLibelle => 'Reply to the administration';
+	@override String get envoyer => 'Send';
+	@override String get champVide => 'Write a message to be able to send it.';
+	@override String get enCours => 'Sending.';
+	@override String get envoye => 'Sent.';
+	@override String get echec => 'The sending is not confirmed: it may not have reached Rewayah. Your text is kept here; try again in a moment. If the problem continues, write to the administration.';
+	@override String get reessayer => 'Try again';
+	@override String nouveauMessage({required Object deAuteur, required Object texte}) => 'New message ${deAuteur}: ${texte}';
+	@override String contexteCompact({required Object heure}) => 'Context attached to your messages: session at ${heure}';
+}
+
+// Path: controleur.demo
+class _Traductions$controleur$demo$en extends Traductions$controleur$demo$fr {
+	_Traductions$controleur$demo$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Reviewer demo';
+	@override String get mention => 'Fictional data, nothing is sent.';
+	@override String get intro => 'Choose a review screen and a visit situation.';
+	@override String get etatAucune => 'No visit';
+	@override String get etatPasEncoreEnDirect => 'Session not live yet';
+	@override String get etatEnDirect => 'Session live';
+	@override String get etatIndisponible => 'Visit no longer offered';
+	@override String get etatDejaControlee => 'Class already reviewed';
+	@override String get espaces => 'Spaces and access';
+	@override String get espacesIntro => 'The same account, several spaces: Teacher or Admin switch to Review through Account, then Spaces.';
+	@override String get enseignantControle => 'Teacher-Reviewer, Review space';
+	@override String get enseignantPrincipal => 'Teacher-Reviewer, Teacher space';
+	@override String get adminControle => 'Admin-Reviewer, Review space';
+	@override String get adminPrincipal => 'Admin-Reviewer, Admin space';
+	@override String get missionEnCours => 'Visit in progress, back to the main space';
+	@override String get accesRevoque => 'Access revoked while browsing';
+	@override String get sansCapacite => 'Teacher without the Review capability';
+	@override String get compteRenduIndisponible => 'Report, visit no longer offered';
+}
+
+// Path: controleur.acces
+class _Traductions$controleur$acces$en extends Traductions$controleur$acces$fr {
+	_Traductions$controleur$acces$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get revoque => 'Your access to the review is no longer active.';
+	@override String get revenir => 'Back to my space';
+}
+
+// Path: controleur.controle
+class _Traductions$controleur$controle$en extends Traductions$controleur$controle$fr {
+	_Traductions$controleur$controle$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Review';
+	@override String get mission => 'Your next class to observe';
+	@override String get missionEnDirect => 'Class to observe now';
+	@override String get commencer => 'Start the review';
+	@override String get vide => 'No review to carry out for now.';
+	@override String get videAide => 'Rewayah will offer you a class to observe when a compatible session is available.';
+	@override String get indisponible => 'This visit is no longer offered: the session was cancelled or given to another reviewer.';
+	@override String get attente => 'The review will open as soon as the session is live.';
+	@override String get dejaEnCours => 'A review is already in progress in this class.';
+	@override String get dejaEnCoursAide => 'Only one review at a time per class. Choose another session, or come back later: you can start when this review is finished.';
+	@override String get incognito => 'Your presence is not announced in real time.';
+	@override String horaire({required Object debut, required Object fin}) => '${debut} to ${fin}';
+	@override String duree({required Object minutes}) => '${minutes} min planned';
+	@override String eleves({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} student',
+		other: '${n} students',
+	);
+	@override String get chargement => 'Reading your next visit.';
+	@override String get erreur => 'Your next visit could not be read. Try again in a moment.';
 }
 
 // Path: adulte.nav
@@ -15553,6 +15881,231 @@ extension on TraductionsEn {
 			'enseignant.revenus.mention' => 'This amount is an estimate, not a final payment. The statement closed by the academy is authoritative.',
 			'enseignant.revenus.vide' => 'No hours taught this month',
 			'enseignant.revenus.videDetail' => 'The estimate will appear after your first session taught of the month.',
+			'controleur.mfa.titreEnrolement' => 'Protect your reviewer account',
+			'controleur.mfa.introEnrolement' => 'This account gives access to sessions where children are present. A stolen password must not be enough: add a second step with an authenticator app.',
+			'controleur.mfa.etapeScanner' => 'In your authenticator app, scan this code.',
+			'controleur.mfa.libelleQr' => 'Code to scan to add this account to your authenticator app',
+			'controleur.mfa.cleManuelle' => 'Can\'t scan? Enter this key in the app.',
+			'controleur.mfa.etapeCode' => 'Enter the six-digit code shown by the app.',
+			'controleur.mfa.champCode' => 'Six-digit code',
+			'controleur.mfa.activer' => 'Turn on protection',
+			'controleur.mfa.titreVerification' => 'Confirm your sign-in',
+			'controleur.mfa.introVerification' => 'Open your authenticator app and enter the six-digit code shown for this account.',
+			'controleur.mfa.confirmer' => 'Confirm',
+			'controleur.mfa.codeIncomplet' => 'Enter all six digits of the code.',
+			'controleur.mfa.codeRefuse' => 'That code is not right. Check your phone\'s time, then enter the code shown now.',
+			'controleur.mfa.sansApplication' => 'I don\'t have an authenticator app',
+			'controleur.mfa.videTitre' => 'You need an authenticator app',
+			'controleur.mfa.videPhrase' => 'Install one on your phone, for example Google Authenticator, Microsoft Authenticator or Aegis, then come back here. For help, write to the academy\'s administration.',
+			'controleur.mfa.videRetour' => 'I installed the app',
+			'controleur.mfa.seDeconnecter' => 'Sign out',
+			'controleur.mfa.chargement' => 'Checking your account',
+			'controleur.historique.titre' => 'History',
+			'controleur.historique.provisoire' => 'This screen is being prepared.',
+			'controleur.historique.envoye' => 'Sent',
+			'controleur.historique.complementAjoute' => 'Addendum added',
+			'controleur.historique.aTerminer' => 'To finish',
+			'controleur.historique.filtreEtat' => 'Status',
+			'controleur.historique.tousEtats' => 'All statuses',
+			'controleur.historique.duree' => ({required Object minutes}) => '${minutes} min observed',
+			'controleur.historique.meta' => ({required Object heure, required Object duree}) => '${heure} · ${duree}',
+			'controleur.historique.dateHeure' => ({required Object date, required Object heure}) => '${date}, ${heure}',
+			'controleur.historique.dateHeureAuteur' => ({required Object date, required Object heure, required Object auteur}) => '${date}, ${heure} · ${auteur}',
+			'controleur.historique.ligne' => ({required Object date, required Object classe, required Object enseignant, required Object duree, required Object statut}) => '${date}, ${classe}, ${enseignant}, ${duree}, ${statut}',
+			'controleur.historique.vide' => 'No review yet.',
+			'controleur.historique.videFiltres' => 'No review matches these filters.',
+			'controleur.historique.resultats' => ({required Object n}) => 'Reviews shown: ${n}',
+			'controleur.historique.titreDetail' => ({required Object classe, required Object date}) => '${classe} · ${date}',
+			'controleur.historique.sectionMission' => 'Class observed',
+			'controleur.historique.sectionObservation' => 'Reviewer\'s observation',
+			'controleur.historique.sectionComplements' => 'Addenda',
+			'controleur.historique.sectionEchanges' => 'Exchanges with the administration',
+			'controleur.historique.cleClasse' => 'Class',
+			'controleur.historique.cleEnseignant' => 'Teacher',
+			'controleur.historique.cleDate' => 'Date',
+			'controleur.historique.cleDuree' => 'Time observed',
+			'controleur.historique.cleElevesPresents' => 'Present',
+			'controleur.historique.cleReponse' => 'Reply',
+			'controleur.historique.sansComplement' => 'No addendum.',
+			'controleur.historique.faitsIndisponibles' => 'The automatic log of this visit (times, students present, reconnections) has not been received yet: the session has just ended or the connection was cut. It will appear here as soon as it is received. The rest of the report remains reliable.',
+			'controleur.historique.motif' => ({required Object motif}) => 'Reason: ${motif}',
+			'controleur.historique.ajouterComplement' => 'Add an addendum',
+			'controleur.complement.bandeau' => 'This addendum will be added to the existing report.',
+			'controleur.complement.questionMotif' => 'Why are you adding this addendum?',
+			'controleur.complement.contexteMotif' => 'Optional: the reason helps the administration read the addendum. The original report does not change.',
+			'controleur.complement.precision' => 'Clarification',
+			'controleur.complement.precisionAide' => 'When a detail is missing · it completes the report without changing anything in it',
+			'controleur.complement.correction' => 'Correction',
+			'controleur.complement.correctionAide' => 'When some information in the report is inaccurate · the original stays readable, the correction appears below it',
+			'controleur.complement.faitNouveau' => 'New information',
+			'controleur.complement.faitNouveauAide' => 'When you learn it after the visit · it is dated the day it is added',
+			'controleur.complement.questionTexte' => 'What are you adding to the report?',
+			'controleur.complement.texteObligatoire' => 'Required: what you noticed, in a few sentences.',
+			'controleur.complement.libelleTexte' => 'Addendum',
+			'controleur.complement.aideTexte' => 'What you noticed or learned since the visit.',
+			'controleur.complement.texteRequis' => 'Write the addendum to continue.',
+			'controleur.complement.questionRecap' => 'Check before sending',
+			'controleur.complement.cleRapport' => 'Original report',
+			'controleur.complement.rapportInchange' => ({required Object classe, required Object date}) => '${classe} · ${date}, unchanged',
+			'controleur.complement.cleMotif' => 'Reason',
+			'controleur.complement.sansMotif' => 'No reason',
+			'controleur.complement.cleTexte' => 'Addendum',
+			'controleur.complement.envoyer' => 'Send the addendum',
+			'controleur.complement.echec' => 'The sending is not confirmed: it may not have reached Rewayah. Your text is kept here, try again in a moment. The original report stays intact.',
+			'controleur.complement.envoyeTitre' => 'Addendum added',
+			'controleur.complement.envoyePhrase' => 'It appears below the original report, which stays unchanged.',
+			'controleur.complement.revenir' => 'Back to the report',
+			'controleur.compteRendu.titre' => 'Report',
+			'controleur.compteRendu.provisoire' => 'This screen is being prepared.',
+			'controleur.compteRendu.revenir' => 'Back to the review',
+			'controleur.compteRendu.sousTitre' => ({required Object classe, required Object heure}) => '${classe} · ${heure}',
+			'controleur.compteRendu.faits' => 'Automatic log of the session',
+			'controleur.compteRendu.faitsReplies' => 'Automatic log of the session, collapsed',
+			'controleur.compteRendu.faitsDeplies' => 'Automatic log of the session, expanded',
+			'controleur.compteRendu.faitsChargement' => 'Reading the automatic log of the session: times, students present, reconnections.',
+			'controleur.compteRendu.faitsAbsents' => 'The automatic log of the session (times, students present, reconnections) has not been received yet: the session has just ended or the connection was cut. You can answer without it; it will be attached to the report as soon as it is received.',
+			'controleur.compteRendu.cleHoraire' => 'Scheduled time',
+			'controleur.compteRendu.horaire' => ({required Object debut, required Object fin}) => '${debut} to ${fin}',
+			'controleur.compteRendu.cleDebutReel' => 'Actual start',
+			'controleur.compteRendu.debutRetard' => ({required Object heure, required Object minutes}) => '${heure}, ${minutes} min late',
+			'controleur.compteRendu.debutALHeure' => ({required Object heure}) => '${heure}, on time',
+			'controleur.compteRendu.cleFin' => 'End',
+			'controleur.compteRendu.enCours' => 'In progress',
+			'controleur.compteRendu.clePresents' => 'Students present',
+			'controleur.compteRendu.presents' => ({required Object presents, required Object attendus}) => '${presents} of ${attendus}',
+			'controleur.compteRendu.cleReconnexions' => 'Reconnections',
+			'controleur.compteRendu.question' => 'Is there anything to report?',
+			'controleur.compteRendu.contexte' => 'Your answer is added to the session\'s automatic log: times, attendance, reconnections.',
+			'controleur.compteRendu.rienASignaler' => 'Nothing to report',
+			'controleur.compteRendu.rienASignalerAide' => 'When the session went normally · the report is sent in one action; you can add an addendum afterwards',
+			'controleur.compteRendu.ajouterObservation' => 'Add an observation',
+			'controleur.compteRendu.ajouterObservationAide' => 'When you want to note what you saw · a few short questions, one at a time',
+			'controleur.compteRendu.pointImportant' => 'Flag an important point',
+			'controleur.compteRendu.pointImportantAide' => 'When what you saw needs the administration\'s attention · your text will be required',
+			'controleur.compteRendu.envoyer' => 'Send the report',
+			'controleur.compteRendu.plusTard' => 'Later',
+			'controleur.compteRendu.notice' => 'This report is sent automatically to the administration.',
+			'controleur.compteRendu.echec' => 'The sending is not confirmed: it may not have reached Rewayah. Your text is kept here; try again in a moment. If the problem continues, write to the administration.',
+			'controleur.compteRendu.echecRien' => 'The sending is not confirmed: it may not have reached Rewayah. Your choice stays selected; try again in a moment. If the problem continues, write to the administration.',
+			'controleur.compteRendu.envoyeTitre' => 'Report sent',
+			'controleur.compteRendu.envoyePhrase' => 'It has been passed on to the administration. To come back to it, open it in History and choose "Add an addendum".',
+			'controleur.compteRendu.ecrireAdmin' => 'Write to the administration',
+			'controleur.compteRendu.visiteEnCours' => 'Passing the visit on to the administration.',
+			'controleur.compteRendu.visiteTransmise' => 'The visit and its automatic log have been passed on to the administration.',
+			'controleur.compteRendu.visiteEchec' => 'Passing on the visit is not confirmed: it may not have reached Rewayah. Try again; the visit\'s log stays saved on the server.',
+			'controleur.compteRendu.aTerminer' => 'Report to finish',
+			'controleur.compteRendu.reprendre' => 'Resume the report',
+			'controleur.compteRendu.visiteInconnue' => 'This report can no longer be resumed here.',
+			'controleur.compteRendu.visiteInconnueAide' => 'This device no longer has the visit in memory, probably after the page was reloaded. The server passes on the visit and its automatic log as soon as you leave the room; this screen cannot confirm it. To add a remark, write to the administration.',
+			'controleur.observation.important' => 'You are flagging an important point: your text will be required.',
+			'controleur.observation.questionNature' => 'What is the nature of your observation?',
+			'controleur.observation.contexteNature' => 'Your observation joins this visit\'s report, passed on to the administration.',
+			'controleur.observation.pointPositif' => 'Positive point',
+			'controleur.observation.pointPositifAide' => 'When a practice deserves to be noted · it appears in the report as a positive point',
+			'controleur.observation.aSuivre' => 'To follow up',
+			'controleur.observation.aSuivreAide' => 'When a point should be reviewed at a later visit · it appears in the report as a point to follow up',
+			'controleur.observation.interventionAdmin' => 'Administration action requested',
+			'controleur.observation.interventionAdminAide' => 'When the administration needs to act · your text will be required, and it receives it with the report',
+			'controleur.observation.questionDomaine' => 'Which area does it concern?',
+			'controleur.observation.contexteDomaine' => 'The area helps the administration read your observation.',
+			'controleur.observation.pedagogie' => 'Teaching',
+			'controleur.observation.pedagogieAide' => 'When it concerns the teaching: explanations, progression, documents',
+			'controleur.observation.interaction' => 'Interaction with students',
+			'controleur.observation.interactionAide' => 'When it concerns the exchanges between teacher and students',
+			'controleur.observation.gestionClasse' => 'Class management',
+			'controleur.observation.gestionClasseAide' => 'When it concerns how the session is organized: timing, instructions, flow',
+			'controleur.observation.respectCadre' => 'Respect of the framework',
+			'controleur.observation.respectCadreAide' => 'When it concerns the rules of the academy and of the session',
+			'controleur.observation.climat' => 'Behavior / atmosphere',
+			'controleur.observation.climatAide' => 'When it concerns the behavior or atmosphere of the class',
+			'controleur.observation.autre' => 'Other',
+			'controleur.observation.autreAide' => 'When no other area fits · specify it in your text',
+			'controleur.observation.questionPersonne' => 'Who is concerned?',
+			'controleur.observation.contextePersonne' => 'Say who the observation concerns. A student is chosen from the class list, by first name and the initial of their surname.',
+			'controleur.observation.enseignant' => 'Teacher',
+			'controleur.observation.enseignantAide' => 'When the observation concerns the session\'s teacher',
+			'controleur.observation.classeEntiere' => 'Whole class',
+			'controleur.observation.classeEntiereAide' => 'When it concerns all the students present',
+			'controleur.observation.elevePrecis' => 'A specific student',
+			'controleur.observation.elevePrecisAide' => 'When only one student is concerned · you choose them from the list, by first name and the initial of their surname',
+			'controleur.observation.aucun' => 'No specific participant',
+			'controleur.observation.aucunAide' => 'When it targets no one in particular, for example the flow of the session',
+			'controleur.observation.questionEleve' => 'Choose the student from the class list.',
+			'controleur.observation.rosterChargement' => 'Reading the list of students present.',
+			'controleur.observation.rosterIndisponible' => 'The list of students present has not been received. Try again, or choose "Whole class" or "No specific participant". Your other answers are kept.',
+			'controleur.observation.rosterVide' => 'No student present appears in this visit\'s list. Choose "Whole class" or "No specific participant".',
+			'controleur.observation.questionTexte' => 'What did you observe?',
+			'controleur.observation.texteObligatoire' => 'Your text is required for this observation.',
+			'controleur.observation.texteFacultatif' => 'This text is optional.',
+			'controleur.observation.libelleTexte' => 'Your remark',
+			'controleur.observation.aideTexte' => 'Describe only what you observed.',
+			'controleur.observation.texteRequis' => 'Write what you observed to continue.',
+			'controleur.observation.questionRecap' => 'Check your observation before sending.',
+			'controleur.observation.cleNature' => 'Nature',
+			'controleur.observation.cleDomaine' => 'Area',
+			'controleur.observation.clePersonne' => 'Person concerned',
+			'controleur.observation.cleTexte' => 'Remark',
+			'controleur.observation.sansTexte' => 'No text',
+			'controleur.observation.echec' => 'The sending is not confirmed: it may not have reached Rewayah. Your text is kept here; try again in a moment. If the problem continues, write to the administration.',
+			'controleur.observation.echecSansTexte' => 'The sending is not confirmed: it may not have reached Rewayah. Your answers stay selected; try again in a moment. If the problem continues, write to the administration.',
+			'controleur.echanges.titre' => 'Exchanges',
+			'controleur.echanges.titreFil' => ({required Object classe, required Object date}) => '${classe} · ${date}',
+			'controleur.echanges.derniereActivite' => ({required Object date}) => 'Last activity: ${date}',
+			'controleur.echanges.reponseRecue' => 'Reply received',
+			'controleur.echanges.enAttente' => 'Waiting',
+			'controleur.echanges.vide' => 'No exchange with the administration yet.',
+			'controleur.echanges.contexte' => 'Context of the visit, attached automatically',
+			'controleur.echanges.cleClasse' => 'Class',
+			'controleur.echanges.cleDate' => 'Date',
+			'controleur.echanges.cleHeure' => 'Time',
+			'controleur.echanges.auteurVous' => 'You',
+			'controleur.echanges.auteurAdmin' => 'Administration',
+			'controleur.echanges.champ' => 'Reply to the administration…',
+			'controleur.echanges.champLibelle' => 'Reply to the administration',
+			'controleur.echanges.envoyer' => 'Send',
+			'controleur.echanges.champVide' => 'Write a message to be able to send it.',
+			'controleur.echanges.enCours' => 'Sending.',
+			'controleur.echanges.envoye' => 'Sent.',
+			'controleur.echanges.echec' => 'The sending is not confirmed: it may not have reached Rewayah. Your text is kept here; try again in a moment. If the problem continues, write to the administration.',
+			'controleur.echanges.reessayer' => 'Try again',
+			'controleur.echanges.nouveauMessage' => ({required Object deAuteur, required Object texte}) => 'New message ${deAuteur}: ${texte}',
+			'controleur.echanges.contexteCompact' => ({required Object heure}) => 'Context attached to your messages: session at ${heure}',
+			'controleur.demo.titre' => 'Reviewer demo',
+			'controleur.demo.mention' => 'Fictional data, nothing is sent.',
+			'controleur.demo.intro' => 'Choose a review screen and a visit situation.',
+			'controleur.demo.etatAucune' => 'No visit',
+			'controleur.demo.etatPasEncoreEnDirect' => 'Session not live yet',
+			'controleur.demo.etatEnDirect' => 'Session live',
+			'controleur.demo.etatIndisponible' => 'Visit no longer offered',
+			'controleur.demo.etatDejaControlee' => 'Class already reviewed',
+			'controleur.demo.espaces' => 'Spaces and access',
+			'controleur.demo.espacesIntro' => 'The same account, several spaces: Teacher or Admin switch to Review through Account, then Spaces.',
+			'controleur.demo.enseignantControle' => 'Teacher-Reviewer, Review space',
+			'controleur.demo.enseignantPrincipal' => 'Teacher-Reviewer, Teacher space',
+			'controleur.demo.adminControle' => 'Admin-Reviewer, Review space',
+			'controleur.demo.adminPrincipal' => 'Admin-Reviewer, Admin space',
+			'controleur.demo.missionEnCours' => 'Visit in progress, back to the main space',
+			'controleur.demo.accesRevoque' => 'Access revoked while browsing',
+			'controleur.demo.sansCapacite' => 'Teacher without the Review capability',
+			'controleur.demo.compteRenduIndisponible' => 'Report, visit no longer offered',
+			'controleur.acces.revoque' => 'Your access to the review is no longer active.',
+			'controleur.acces.revenir' => 'Back to my space',
+			'controleur.controle.titre' => 'Review',
+			'controleur.controle.mission' => 'Your next class to observe',
+			'controleur.controle.missionEnDirect' => 'Class to observe now',
+			'controleur.controle.commencer' => 'Start the review',
+			'controleur.controle.vide' => 'No review to carry out for now.',
+			'controleur.controle.videAide' => 'Rewayah will offer you a class to observe when a compatible session is available.',
+			'controleur.controle.indisponible' => 'This visit is no longer offered: the session was cancelled or given to another reviewer.',
+			'controleur.controle.attente' => 'The review will open as soon as the session is live.',
+			'controleur.controle.dejaEnCours' => 'A review is already in progress in this class.',
+			'controleur.controle.dejaEnCoursAide' => 'Only one review at a time per class. Choose another session, or come back later: you can start when this review is finished.',
+			'controleur.controle.incognito' => 'Your presence is not announced in real time.',
+			'controleur.controle.horaire' => ({required Object debut, required Object fin}) => '${debut} to ${fin}',
+			'controleur.controle.duree' => ({required Object minutes}) => '${minutes} min planned',
+			'controleur.controle.eleves' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} student', other: '${n} students', ), 
+			'controleur.controle.chargement' => 'Reading your next visit.',
+			'controleur.controle.erreur' => 'Your next visit could not be read. Try again in a moment.',
 			'aConstruire.titre' => 'Screen to build',
 			'aConstruire.detail' => 'This screen arrives at step 3.',
 			'galerie.titre' => 'Component gallery',
@@ -15769,6 +16322,8 @@ extension on TraductionsEn {
 			'adulte.invitation.annulationEchecTitre' => 'The cancellation was not confirmed.',
 			'adulte.invitation.annulationEchecPhrase' => 'Check before trying again.',
 			'adulte.invitation.valableJusquau' => ({required Object date}) => 'Valid until ${date}',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.invitation.renvoyer' => 'Resend the invitation',
 			'adulte.invitation.renvoyeePhrase' => ({required Object courriel}) => 'The invitation was sent again to ${courriel}, with a new code: the one in the previous email no longer works.',
 			'adulte.invitation.renvoisRestants' => ({required Object n}) => 'Resends still possible: ${n}',
@@ -15994,8 +16549,6 @@ extension on TraductionsEn {
 			'motifs.cloreSurcharge.termine' => 'One-off need ended',
 			'motifs.cloreSurcharge.famille' => 'Family request',
 			'motifs.cloreSurcharge.changement' => 'Change of class or teacher',
-			_ => null,
-		} ?? switch (path) {
 			'motifs.cloreSurcharge.parErreur' => 'Rule set by mistake',
 			'motifs.annulationEvaluation.absenceEleve' => 'Student\'s absence',
 			'motifs.annulationEvaluation.absenceEnseignant' => 'Teacher\'s absence',
@@ -16283,6 +16836,8 @@ extension on TraductionsEn {
 			'argent.transparence.videPhrase' => 'It will be published with the next version of the prices.',
 			'argent.etat.finance' => 'Funded',
 			'argent.etat.essai' => 'Trial',
+			_ => null,
+		} ?? switch (path) {
 			'argent.etat.essaiCompte' => ({required Object n, required Object max}) => 'Trial: ${n}/${max}',
 			'argent.etat.manque' => 'To fund',
 			'argent.etat.enConfirmation' => 'Being confirmed',
@@ -16508,8 +17063,6 @@ extension on TraductionsEn {
 			'avis.form.regles.horsSujet' => 'an off-topic remark',
 			'avis.form.regles.doublon' => 'a duplicate of a review already received',
 			'avis.form.regles.donnees' => 'Do not give the name of a child, nor email, nor phone number.',
-			_ => null,
-		} ?? switch (path) {
 			'avis.form.regles.publie' => 'A respectful review is published, even a critical one. The management only refuses an insult, a third party\'s data, advertising, an off-topic remark or a duplicate.',
 			'avis.form.envoyer' => 'Send my feedback',
 			'avis.form.aCorriger' => 'A few fields need to be corrected before sending.',
@@ -16797,6 +17350,8 @@ extension on TraductionsEn {
 			'accueilInscrits.plusTard' => 'You can also do it later, from the Household.',
 			'accueilInscrits.sansEleve' => 'No student profile was carried over for your family. You can add one from the Household.',
 			'accueilInscrits.finirCompte' => 'A few questions remain to finish your account.',
+			_ => null,
+		} ?? switch (path) {
 			'accueilInscrits.continuer' => 'Continue',
 			'accueilInscrits.echecTitre' => 'Your registration could not be verified',
 			'accueilInscrits.echecPhrase' => 'Probable cause: the connection to the server was interrupted (not confirmed). Try again in a moment: nothing is created twice.',
@@ -17022,8 +17577,6 @@ extension on TraductionsEn {
 			'push1.reglages.horsLigne' => 'Notification settings can be changed when the connection is back.',
 			'push1.reglages.changementNonConfirme' => 'The change is not yet confirmed: the connection may have dropped. Try again in a moment.',
 			'nouveautes.badge' => 'New',
-			_ => null,
-		} ?? switch (path) {
 			'nouveautes.lu' => 'new',
 			'suiviPedagogique.titreSoi' => 'Where I stand',
 			'suiviPedagogique.titre' => ({required Object prenom}) => 'Where ${prenom} stands',
@@ -17311,6 +17864,8 @@ extension on TraductionsEn {
 			'calendrier.dates.conflits.titre' => 'Sessions that cannot be restored',
 			'calendrier.dates.conflits.intro' => 'These sessions were set aside by the closure, but the teacher took another class at the same time. Free the teacher then try again, or confirm abandoning these sessions: they will never be restored. Times are Makkah time.',
 			'calendrier.dates.conflits.ligne' => ({required Object classe, required Object quand, required Object enseignant}) => '${classe}, ${quand}, ${enseignant}',
+			_ => null,
+		} ?? switch (path) {
 			'calendrier.dates.conflits.autre' => ({required Object cours, required Object quand}) => 'Other class: ${cours}, ${quand}',
 			'calendrier.dates.conflits.autreSansNom' => ({required Object quand}) => 'Other class at the same time, ${quand}',
 			'calendrier.dates.conflits.abandonner' => ({required Object n}) => 'Remove the closure and abandon these sessions (${n})',
