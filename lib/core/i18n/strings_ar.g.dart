@@ -1160,6 +1160,8 @@ class _Traductions$connexion$ar extends Traductions$connexion$fr {
 	@override String get appareilEleve => 'ربط جهاز طالب';
 	@override String get renvoyer => 'إعادة إرسال الرابط';
 	@override String renvoye({required Object courriel}) => 'أُرسل رابط جديد إلى ⁨${courriel}⁩. استخدم رابط أحدث رسالة.';
+	@override late final _Traductions$connexion$code$ar code = _Traductions$connexion$code$ar._(_root);
+	@override String get revoirReponses => 'مراجعة إجاباتي';
 	@override String get inscriptionFermee => 'التسجيل يتم حاليًا بدعوة فقط. هل قدّمتم ترشحكم للتدريس؟ ستصلكم منا رسالة شخصية عبر البريد الإلكتروني: لا شيء مطلوب منكم. هل أنتم أسرة؟ يُعاد فتح التسجيل قريبًا.';
 	@override late final _Traductions$connexion$invitationFoyer$ar invitationFoyer = _Traductions$connexion$invitationFoyer$ar._(_root);
 	@override String get erreurTropTot => 'أُرسل رابط للتو. انتظر قليلًا قبل طلب رابط آخر.';
@@ -8803,6 +8805,23 @@ class _Traductions$appareils$emetteur$ar extends Traductions$appareils$emetteur$
 	@override late final _Traductions$appareils$emetteur$dejaActif$ar dejaActif = _Traductions$appareils$emetteur$dejaActif$ar._(_root);
 	@override late final _Traductions$appareils$emetteur$horsLigne$ar horsLigne = _Traductions$appareils$emetteur$horsLigne$ar._(_root);
 	@override late final _Traductions$appareils$emetteur$erreur$ar erreur = _Traductions$appareils$emetteur$erreur$ar._(_root);
+}
+
+// Path: connexion.code
+class _Traductions$connexion$code$ar extends Traductions$connexion$code$fr {
+	_Traductions$connexion$code$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'أو أدخل الرمز الذي وصلك';
+	@override String get aide => 'تحتوي الرسالة أيضًا على رمز من 6 أرقام. أدخله هنا: يعمل حتى لو فُتح الرابط في متصفح آخر.';
+	@override String get etiquette => 'رمز الرسالة';
+	@override String get indice => '6 أرقام';
+	@override String get valider => 'تأكيد الرمز';
+	@override String get erreurLongueur => 'ينقصك بعض الأرقام: الرمز من 6 أرقام. انسخه من أحدث رسالة.';
+	@override String get erreurCode => 'هذا الرمز غير صحيح أو لم يعد صالحًا. تحقق من أحدث رسالة، أو اطلب رابطًا جديدًا.';
+	@override String get erreurReseau => 'لم تتم عملية التحقق، ربما بسبب انقطاع الاتصال. حاول مرة أخرى بعد قليل.';
 }
 
 // Path: connexion.invitationFoyer
@@ -19679,6 +19698,8 @@ class _Traductions$inscription$questionnaire$acces$ar extends Traductions$inscri
 	// Translations
 	@override String get titre => 'الخطوة الأخيرة: الدخول';
 	@override String get reponsesGardees => 'إجاباتك محفوظة.';
+	@override String get absentesTitre => 'بقيت إجاباتك على الجهاز أو المتصفح الآخر';
+	@override String get absentesPhrase => 'فُتح الرابط هنا، حيث لم يُملأ الاستبيان. أعد ملأه: يستغرق دقائق قليلة. أو عد إلى حيث طلبت الرابط وأدخل هناك الرمز المكوّن من 6 أرقام.';
 	@override String get resteAcces => 'لم يبقَ إلا أن تتلقى رابط الدخول، أو أن تتابع عبر Google.';
 }
 
@@ -36226,6 +36247,15 @@ extension on TraductionsAr {
 			'connexion.appareilEleve' => 'ربط جهاز طالب',
 			'connexion.renvoyer' => 'إعادة إرسال الرابط',
 			'connexion.renvoye' => ({required Object courriel}) => 'أُرسل رابط جديد إلى ⁨${courriel}⁩. استخدم رابط أحدث رسالة.',
+			'connexion.code.titre' => 'أو أدخل الرمز الذي وصلك',
+			'connexion.code.aide' => 'تحتوي الرسالة أيضًا على رمز من 6 أرقام. أدخله هنا: يعمل حتى لو فُتح الرابط في متصفح آخر.',
+			'connexion.code.etiquette' => 'رمز الرسالة',
+			'connexion.code.indice' => '6 أرقام',
+			'connexion.code.valider' => 'تأكيد الرمز',
+			'connexion.code.erreurLongueur' => 'ينقصك بعض الأرقام: الرمز من 6 أرقام. انسخه من أحدث رسالة.',
+			'connexion.code.erreurCode' => 'هذا الرمز غير صحيح أو لم يعد صالحًا. تحقق من أحدث رسالة، أو اطلب رابطًا جديدًا.',
+			'connexion.code.erreurReseau' => 'لم تتم عملية التحقق، ربما بسبب انقطاع الاتصال. حاول مرة أخرى بعد قليل.',
+			'connexion.revoirReponses' => 'مراجعة إجاباتي',
 			'connexion.inscriptionFermee' => 'التسجيل يتم حاليًا بدعوة فقط. هل قدّمتم ترشحكم للتدريس؟ ستصلكم منا رسالة شخصية عبر البريد الإلكتروني: لا شيء مطلوب منكم. هل أنتم أسرة؟ يُعاد فتح التسجيل قريبًا.',
 			'connexion.invitationFoyer.titre' => 'دعوة للانضمام إلى أسرة',
 			'connexion.invitationFoyer.autreAdresse' => 'هذه الدعوة لعنوان آخر: سجّل الخروج لفتحها.',
@@ -36361,6 +36391,8 @@ extension on TraductionsAr {
 			'inscription.questionnaire.aucuneReponse' => 'لم تعد إجابات تسجيلك على هذا الجهاز. أعد الإجابة عن الأسئلة الأولى: تستغرق دقيقتين.',
 			'inscription.questionnaire.acces.titre' => 'الخطوة الأخيرة: الدخول',
 			'inscription.questionnaire.acces.reponsesGardees' => 'إجاباتك محفوظة.',
+			'inscription.questionnaire.acces.absentesTitre' => 'بقيت إجاباتك على الجهاز أو المتصفح الآخر',
+			'inscription.questionnaire.acces.absentesPhrase' => 'فُتح الرابط هنا، حيث لم يُملأ الاستبيان. أعد ملأه: يستغرق دقائق قليلة. أو عد إلى حيث طلبت الرابط وأدخل هناك الرمز المكوّن من 6 أرقام.',
 			'inscription.questionnaire.acces.resteAcces' => 'لم يبقَ إلا أن تتلقى رابط الدخول، أو أن تتابع عبر Google.',
 			'inscription.titre' => 'إنشاء حسابك',
 			'inscription.etapeSur' => ({required Object n, required Object total}) => 'الخطوة ⁨${n}⁩ من ⁨${total}⁩',
@@ -36621,6 +36653,8 @@ extension on TraductionsAr {
 			'adulte.accueil.financesPhrase' => 'رصيدك والفترة المموَّلة وقسطك الشهري.',
 			'adulte.accueil.echec' => 'تعذّر تحميل حصتك القادمة وآخر حصصك: لم يستجب الخادم. أعد المحاولة بعد لحظة.',
 			'adulte.accueil.sansDonnees' => 'تعذّر تحميل حصتك القادمة وحصصك الأخيرة',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.historique.titre' => 'حصصي الماضية',
 			'adulte.historique.echec' => 'تعذّر تحميل حصصك الماضية: لم يستجب الخادم. أعد المحاولة بعد لحظة.',
 			'adulte.historique.vide' => 'لا حصة ماضية حتى الآن.',
@@ -36632,8 +36666,6 @@ extension on TraductionsAr {
 			'adulte.maClasse.aucuneClasseDetail' => 'سيظهر فصلك ومشاركوه وموارده هنا بمجرد فتحه.',
 			'adulte.maClasse.sansDonnees' => 'تعذّر تحميل فصلك',
 			'adulte.monEspace.informations' => 'معلوماتي',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.monEspace.paiements' => 'المدفوعات',
 			'adulte.coranDemo.titre' => 'متاح بعد تسجيل الدخول',
 			'adulte.coranDemo.phrase' => 'ليس هذا عطلًا: العرض التجريبي لا يحتوي على نص القرآن. بعد الدخول إلى مساحتك كطالب، يُفتح هنا.',
@@ -37135,6 +37167,8 @@ extension on TraductionsAr {
 			'kyc.explicationAutre' => 'وثيقة رسمية أخرى تحمل صورتك واسمك.',
 			'kyc.exempleAutre' => 'رخصة قيادة أو بطاقة قنصلية',
 			'kyc.choisirFichier' => 'اختيار الصورة',
+			_ => null,
+		} ?? switch (path) {
 			'kyc.fichierChoisi' => 'الصورة جاهزة للإرسال',
 			'kyc.envoyer' => 'إرسال وثيقتي',
 			'kyc.envoiEnCours' => 'جارٍ الإرسال',
@@ -37146,8 +37180,6 @@ extension on TraductionsAr {
 			'kyc.tropVolumineux' => ({required Object taille}) => 'هذه الصورة تتجاوز ⁨${taille}⁩ ميغابايت. التقطها بجودة أقل.',
 			'kyc.manqueType' => 'اختر أولًا الوثيقة التي تودعها.',
 			'protectionEnfants.categorie' => 'سلامة طفل',
-			_ => null,
-		} ?? switch (path) {
 			'protectionEnfants.prioritaireTitre' => 'إبلاغ ذو أولوية',
 			'protectionEnfants.prioritaireDetail' => 'تقرؤه الإدارة والمسؤول عن حماية الأطفال فورًا. لا يراه المعلم المعني ولا الأسر الأخرى أبدًا. لا تُرسل أي رسالة إلى الأسرة.',
 			'protectionEnfants.urgence' => 'في حال وجود خطر داهم، اتصل أولًا بخدمات الطوارئ في بلدك.',
@@ -37649,6 +37681,8 @@ extension on TraductionsAr {
 			'suiviDemandes.notification.classeValidee' => ({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩: فصلكم جاهز وينتظر معلمه',
 			'suiviDemandes.notification.enseignantAffecte' => ({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩: تم اعتماد الفصل وتعيين المعلم',
 			'suiviDemandes.notification.eleveIntegre' => ({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩: الطالب مندمج في الفصل',
+			_ => null,
+		} ?? switch (path) {
 			'suiviDemandes.notification.coursCommences' => ({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩: بدأت الدروس',
 			'suiviDemandes.notification.dejaEnClasse' => ({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩: يوجد مكان في فصل بالفعل، أُغلق الطلب',
 			'suiviDemandes.notification.changementFusion' => ({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩: دُمج فصلكم مع فصل آخر، عرض الفصل الجديد',
@@ -37660,8 +37694,6 @@ extension on TraductionsAr {
 			'formulaire.motif.autreVide' => 'اخترت «أخرى»: اكتب السبب في بضع كلمات.',
 			'formulaire.motif.autreChamp' => 'السبب، في بضع كلمات',
 			'formulaire.entier.bornes' => ({required Object min, required Object max}) => 'بين ⁨${min}⁩ و⁨${max}⁩',
-			_ => null,
-		} ?? switch (path) {
 			'formulaire.entier.horsBornes' => ({required Object min, required Object max}) => 'اختر قيمة بين ⁨${min}⁩ و⁨${max}⁩، أو إحدى القيم المقترحة.',
 			'formulaire.obligatoire' => 'حقل إلزامي',
 			'formulaire.champObligatoire' => ({required Object champ}) => '⁨${champ}⁩، حقل إلزامي',
@@ -38163,6 +38195,8 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.niveauLectureTajwid.options.tajwid_applique.libelle' => 'أطبّق أحكام التجويد أثناء القراءة',
 			'recrutement.parcours.q.niveauLectureTajwid.options.tajwid_applique.description' => 'تلتزم بأحكام النطق حين تقرأ.',
 			'recrutement.parcours.q.niveauLectureTajwid.options.tajwid_applique.explication' => 'يُتحقق من قراءتك أثناء المقابلة.',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.q.niveauLectureTajwid.options.tajwid_applique.exemple' => 'تمدّ الحروف وتنطقها كما تقتضي أحكام التجويد.',
 			'recrutement.parcours.q.niveauLectureTajwid.options.tajwid_enseigne.libelle' => 'أطبّق التجويد وأعرف كيف أعلّمه',
 			'recrutement.parcours.q.niveauLectureTajwid.options.tajwid_enseigne.description' => 'تلتزم بالأحكام وتعرف شرحها لطالب.',
@@ -38174,8 +38208,6 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.riwayat.options.hafs.libelle' => 'حفص',
 			'recrutement.parcours.q.riwayat.options.hafs.description' => 'رواية عن عاصم',
 			'recrutement.parcours.q.riwayat.options.shuba.libelle' => 'شعبة',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.q.riwayat.options.shuba.description' => 'رواية عن عاصم',
 			'recrutement.parcours.q.riwayat.options.warsh.libelle' => 'ورش',
 			'recrutement.parcours.q.riwayat.options.warsh.description' => 'رواية عن نافع',
@@ -38677,6 +38709,8 @@ extension on TraductionsAr {
 			'juridique.annulation.s1.blocs.2' => 'بعد هذه المهلة يُستحق الشهر الذي بدأ.',
 			'juridique.annulation.s2.titre' => '٢. إيقاف الاشتراك',
 			'juridique.annulation.s2.blocs.0' => 'يتوقف الاشتراك الشهري في أي وقت دون تبرير. وينتهي بنهاية الشهر الجاري.',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.annulation.s2.blocs.1' => 'بعد مهلة التراجع يبقى إيقاف الصيغة المدفوعة مسبقًا، كل ثلاثة أشهر أو كل سنة، حقًا لكم. تُحتسب الأشهر التي بدأت بالسعر الشهري العادي دون خصم الصيغة، ويُسترد الباقي.',
 			'juridique.annulation.s2.blocs.2' => 'التسجيل في منتصف الشهر لا يدفع إلا ثمن الحصص المتبقية من الشهر.',
 			'juridique.annulation.s3.titre' => '٣. الغياب والحصص الملغاة',
@@ -38688,8 +38722,6 @@ extension on TraductionsAr {
 			'juridique.annulation.s4.blocs.1' => 'بعد تاريخ التجديد تُطبَّق مهلة سماح قصيرة: يتابع الطالب دروسه ويظهر المبلغ غير المدفوع عند وليّ الأمر.',
 			'juridique.annulation.s4.blocs.2' => 'إذا لم يصل الدفع بعد ذلك يُعلَّق الدخول إلى الحصص وإلى الموارد. ويبقى الفضاء مفتوحًا للاطلاع على الملف والسجل وللدفع. ويُحفظ المقعد لبعض الوقت.',
 			'juridique.annulation.s4.blocs.3' => 'بعد ذلك يُفرَج عن المقعد لقائمة الانتظار. وتبقى العودة ممكنة دون رسوم في فصل جديد.',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.annulation.s4.blocs.4' => 'التواريخ الدقيقة هي المعتمدة في سياسة الأسعار المعمول بها (صفحة الأسعار).',
 			'juridique.annulation.s5.titre' => '٥. الانتقال إلى صيغة الكبار',
 			'juridique.annulation.s5.blocs.0' => 'الطالب الذي يبلغ ١٨ سنة ينتقل إلى صيغة الكبار عند التجديد التالي. ويُخطَر وليّ الأمر مسبقًا.',
@@ -39191,6 +39223,8 @@ extension on TraductionsAr {
 			'alertes.erreurTitre' => 'تعذّرت قراءة التنبيهات',
 			'alertes.sansDonnees' => 'تعذّرت قراءة التنبيهات',
 			'alertes.cloche' => 'التنبيهات',
+			_ => null,
+		} ?? switch (path) {
 			'alertes.clocheUneUrgente' => 'التنبيهات، واحد عاجل',
 			'alertes.clocheUrgentes' => ({required Object nombre}) => 'التنبيهات، ⁨${nombre}⁩ عاجلة',
 			'n1.regles.auteurs.direction' => 'الإدارة',
@@ -39202,8 +39236,6 @@ extension on TraductionsAr {
 			'n1.regles.portee.touteAudience' => 'الأكاديمية كلها، أو جمهور، أو فصل',
 			'n1.regles.portee.saClasse' => 'فصله فقط',
 			'n1.alertes.signalement' => ({required Object categorie, required Object matricule, required Object note}) => '⁨${categorie}⁩: بلاغ بشأن الطالب ⁨${matricule}⁩. ملاحظة داخلية: «⁨${note}⁩»',
-			_ => null,
-		} ?? switch (path) {
 			'i1.invitations.aideEmail' => 'يُنشأ الرمز لهذا العنوان ويُرسَل فورًا بالبريد الإلكتروني مع رابط التسجيل. ويمكنك أيضًا أن تنقله بنفسك.',
 			'i1.invitations.creee' => ({required Object code, required Object email}) => 'أُنشئت الدعوة. يُرسَل البريد الذي فيه الرمز ⁨${code}⁩ إلى ⁨${email}⁩.',
 			'i1.invitations.dejaInvite' => 'توجد دعوة سارية لهذا العنوان، وهي في القائمة أدناه؛ ولا يُعاد إرسال بريدها مرة ثانية.',
@@ -39705,6 +39737,8 @@ extension on TraductionsAr {
 			'candidatsFlux.publication.nonPublie' => 'نص الموافقة على النشر لم يُنشر بعد.',
 			'candidatsFlux.publication.horsLigne' => 'يمكن تسجيل اختيارك عند عودة الاتصال.',
 			'candidatsFlux.photo.titre' => 'صورتك',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.photo.requise' => 'أضف صورتك قبل إرسال ترشحك.',
 			'push1.invitation.titre' => 'هل تريدون استقبال الإشعارات؟',
 			'push1.invitation.phrase' => 'تنبيه على هذا الجهاز عندما يتغيّر فصلكم أو يُنتظر حضوركم، حتى والتطبيق مغلق. يمكنكم إيقافه في أي وقت من التفضيلات.',
@@ -39716,8 +39750,6 @@ extension on TraductionsAr {
 			'push1.evenements.creneauPersonnalise' => 'طُلب موعد خاص.',
 			'push1.evenements.pieceIdentite' => 'وثيقة هوية بانتظار التحقق.',
 			'push1.evenements.signalementEleve' => 'بلاغ بانتظار قراركم.',
-			_ => null,
-		} ?? switch (path) {
 			'push1.evenements.suppressionCompte' => 'طُلب حذف حساب.',
 			'push1.evenements.personneEnSalle' => 'لا أحد في قاعة أحد الفصول: ابحثوا عن بديل.',
 			'push1.evenements.paiementEchoue' => 'لم تكتمل دفعتكم. تُسوّى في صفحة المدفوعات.',
@@ -40219,6 +40251,8 @@ extension on TraductionsAr {
 			'motifs.refusDemande.plafond' => 'بلوغ الحد الأقصى للطلاب',
 			'motifs.refusDemande.insuffisant' => 'معلومات غير كافية للبتّ',
 			'motifs.poserRegle.famille' => 'طلب الأسرة مقبول',
+			_ => null,
+		} ?? switch (path) {
 			'motifs.poserRegle.pedagogique' => 'حاجة تعليمية للطالب',
 			'motifs.poserRegle.age' => 'مدة مناسبة للعمر',
 			'motifs.poserRegle.charge' => 'عبء المعلّم',
@@ -40230,8 +40264,6 @@ extension on TraductionsAr {
 			'motifs.annulationEvaluation.absenceEleve' => 'غياب الطالب',
 			'motifs.annulationEvaluation.absenceEnseignant' => 'غياب المعلّم',
 			'motifs.annulationEvaluation.pasPret' => 'الطالب غير جاهز بعد',
-			_ => null,
-		} ?? switch (path) {
 			'motifs.annulationEvaluation.report' => 'التأجيل إلى تاريخ آخر',
 			'motifs.annulationEvaluation.parErreur' => 'تقييم مُجدوَل بالخطأ',
 			'motifs.changementNiveau.reussie' => 'تقييم ناجح',
