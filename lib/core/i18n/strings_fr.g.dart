@@ -27906,8 +27906,8 @@ class Traductions$recrutement$entretien$jour$fr {
 	/// fr: 'Vous pourrez rejoindre à partir de {heure}.'
 	String ouvreA({required Object heure}) => 'Vous pourrez rejoindre à partir de ${heure}.';
 
-	/// fr: 'Voir la candidature de {nom}'
-	String voirFiche({required Object nom}) => 'Voir la candidature de ${nom}';
+	/// fr: 'Voir la candidature {deNom}'
+	String voirFiche({required Object deNom}) => 'Voir la candidature ${deNom}';
 }
 
 // Path: recrutement.entretien.notifications
@@ -55163,7 +55163,7 @@ extension on Traductions {
 			'recrutement.entretien.jour.candidat' => 'Candidat',
 			'recrutement.entretien.jour.rejoindreAvec' => ({required Object nom}) => 'Rejoindre l\'entretien avec ${nom}',
 			'recrutement.entretien.jour.ouvreA' => ({required Object heure}) => 'Vous pourrez rejoindre à partir de ${heure}.',
-			'recrutement.entretien.jour.voirFiche' => ({required Object nom}) => 'Voir la candidature de ${nom}',
+			'recrutement.entretien.jour.voirFiche' => ({required Object deNom}) => 'Voir la candidature ${deNom}',
 			'recrutement.entretien.portailVoir' => 'Voir mon entretien',
 			'recrutement.entretien.notifications.reserve' => 'Votre entretien est fixé. Le jour et l\'heure sont dans « Faisons connaissance ».',
 			'recrutement.entretien.notifications.reserveQuand' => ({required Object quand}) => 'Votre entretien est fixé au ${quand}.',

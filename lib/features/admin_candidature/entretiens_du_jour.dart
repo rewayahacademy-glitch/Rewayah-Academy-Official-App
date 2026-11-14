@@ -19,6 +19,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/candidature/entretiens_temps_reel.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/router/billet_salle.dart';
 import '../../core/router/routes.dart';
@@ -196,7 +197,12 @@ class _Ligne extends StatelessWidget {
           Align(
             alignment: AlignmentDirectional.centerStart,
             child: LienFleche(
-              libelle: j.voirFiche(nom: nom),
+              libelle: j.voirFiche(
+                deNom: deDevant(
+                  nom,
+                  cle: 'recrutement.entretien.jour.voirFiche',
+                ),
+              ),
               alignerEnDebut: true,
               onPress: () => GoRouter.of(
                 context,

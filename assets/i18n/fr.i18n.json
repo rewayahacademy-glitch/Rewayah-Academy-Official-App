@@ -2806,7 +2806,7 @@
       "commenceDans(param=n)": {"one": "Votre entretien commence dans {n}\u00a0minute.", "other": "Votre entretien commence dans {n}\u00a0minutes."},
       "aCommence": "Votre entretien a commencé\u00a0: on vous attend. Rejoignez-le maintenant.",
       "prevu": "Votre entretien est fixé\u00a0: {horaire}.",
-      "jour": {"titre": "Entretiens du jour", "intro": "Les entretiens que vous menez aujourd'hui. Le bouton pour rejoindre apparaît 10\u00a0minutes avant le début, dans la même salle que le candidat.", "candidat": "Candidat", "rejoindreAvec": "Rejoindre l'entretien avec {nom}", "ouvreA": "Vous pourrez rejoindre à partir de {heure}.", "voirFiche": "Voir la candidature de {nom}"},
+      "jour": {"titre": "Entretiens du jour", "intro": "Les entretiens que vous menez aujourd'hui. Le bouton pour rejoindre apparaît 10\u00a0minutes avant le début, dans la même salle que le candidat.", "candidat": "Candidat", "rejoindreAvec": "Rejoindre l'entretien avec {nom}", "ouvreA": "Vous pourrez rejoindre à partir de {heure}.", "voirFiche": "Voir la candidature {deNom}"},
       "portailVoir": "Voir mon entretien",
       "notifications": {
         "reserve": "Votre entretien est fixé. Le jour et l'heure sont dans «\u00a0Faisons connaissance\u00a0».",

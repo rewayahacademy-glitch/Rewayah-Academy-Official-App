@@ -20629,7 +20629,7 @@ class _Traductions$recrutement$entretien$jour$ar extends Traductions$recrutement
 	@override String get candidat => 'مترشح';
 	@override String rejoindreAvec({required Object nom}) => 'الانضمام إلى المقابلة مع ⁨${nom}⁩';
 	@override String ouvreA({required Object heure}) => 'يمكنك الانضمام ابتداءً من ⁨${heure}⁩.';
-	@override String voirFiche({required Object nom}) => 'عرض ترشّح ⁨${nom}⁩';
+	@override String voirFiche({required Object deNom}) => 'عرض ترشّح ⁨${deNom}⁩';
 }
 
 // Path: recrutement.entretien.notifications
@@ -38317,7 +38317,7 @@ extension on TraductionsAr {
 			'recrutement.entretien.jour.candidat' => 'مترشح',
 			'recrutement.entretien.jour.rejoindreAvec' => ({required Object nom}) => 'الانضمام إلى المقابلة مع ⁨${nom}⁩',
 			'recrutement.entretien.jour.ouvreA' => ({required Object heure}) => 'يمكنك الانضمام ابتداءً من ⁨${heure}⁩.',
-			'recrutement.entretien.jour.voirFiche' => ({required Object nom}) => 'عرض ترشّح ⁨${nom}⁩',
+			'recrutement.entretien.jour.voirFiche' => ({required Object deNom}) => 'عرض ترشّح ⁨${deNom}⁩',
 			'recrutement.entretien.portailVoir' => 'عرض موعد مقابلتي',
 			'recrutement.entretien.notifications.reserve' => 'حُدّد موعد مقابلتك. اليوم والساعة في «لنتعارف».',
 			'recrutement.entretien.notifications.reserveQuand' => ({required Object quand}) => 'حُدّد موعد مقابلتك يوم ⁨${quand}⁩.',

@@ -2806,7 +2806,7 @@
       "commenceDans(param=n)": {"one": "Your interview starts in {n} minute.", "other": "Your interview starts in {n} minutes."},
       "aCommence": "Your interview has started: we are waiting for you. Join it now.",
       "prevu": "Your interview is set: {horaire}.",
-      "jour": {"titre": "Today's interviews", "intro": "The interviews you lead today. The join button appears 10 minutes before the start, in the same room as the candidate.", "candidat": "Candidate", "rejoindreAvec": "Join the interview with {nom}", "ouvreA": "You can join from {heure}.", "voirFiche": "See {nom}'s application"},
+      "jour": {"titre": "Today's interviews", "intro": "The interviews you lead today. The join button appears 10 minutes before the start, in the same room as the candidate.", "candidat": "Candidate", "rejoindreAvec": "Join the interview with {nom}", "ouvreA": "You can join from {heure}.", "voirFiche": "See {deNom}'s application"},
       "portailVoir": "See my interview",
       "notifications": {
         "reserve": "Your interview is set. The day and time are in \"Let's get to know each other\".",

@@ -13602,7 +13602,7 @@ class _Traductions$recrutement$entretien$jour$en extends Traductions$recrutement
 	@override String get candidat => 'Candidate';
 	@override String rejoindreAvec({required Object nom}) => 'Join the interview with ${nom}';
 	@override String ouvreA({required Object heure}) => 'You can join from ${heure}.';
-	@override String voirFiche({required Object nom}) => 'See ${nom}\'s application';
+	@override String voirFiche({required Object deNom}) => 'See ${deNom}\'s application';
 }
 
 // Path: recrutement.entretien.notifications
@@ -29071,7 +29071,7 @@ extension on TraductionsEn {
 			'recrutement.entretien.jour.candidat' => 'Candidate',
 			'recrutement.entretien.jour.rejoindreAvec' => ({required Object nom}) => 'Join the interview with ${nom}',
 			'recrutement.entretien.jour.ouvreA' => ({required Object heure}) => 'You can join from ${heure}.',
-			'recrutement.entretien.jour.voirFiche' => ({required Object nom}) => 'See ${nom}\'s application',
+			'recrutement.entretien.jour.voirFiche' => ({required Object deNom}) => 'See ${deNom}\'s application',
 			'recrutement.entretien.portailVoir' => 'See my interview',
 			'recrutement.entretien.notifications.reserve' => 'Your interview is set. The day and time are in "Let\'s get to know each other".',
 			'recrutement.entretien.notifications.reserveQuand' => ({required Object quand}) => 'Your interview is set for ${quand}.',
