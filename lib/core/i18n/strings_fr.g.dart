@@ -24821,6 +24821,15 @@ class Traductions$apprendre$programme$fr {
 	/// fr: 'L'étape apparaîtra dès l'entrée dans une classe'
 	String get vide => 'L\'étape apparaîtra dès l\'entrée dans une classe';
 
+	/// fr: 'Votre programme ne s'affiche pas encore : aucune étape n'est publiée pour vous. Elle apparaîtra ici, avec son parcours et ses objectifs, dès que la direction aura placé votre classe. Pour en savoir plus, contactez la direction.'
+	String get sansEtape => 'Votre programme ne s\'affiche pas encore : aucune étape n\'est publiée pour vous. Elle apparaîtra ici, avec son parcours et ses objectifs, dès que la direction aura placé votre classe. Pour en savoir plus, contactez la direction.';
+
+	/// fr: 'Le programme de l'académie'
+	String get titreProgramme => 'Le programme de l\'académie';
+
+	/// fr: 'Votre place dans le programme sera indiquée par votre enseignant.'
+	String get votrePlace => 'Votre place dans le programme sera indiquée par votre enseignant.';
+
 	/// fr: 'Dates de l'académie'
 	String get datesEcole => 'Dates de l\'académie';
 
@@ -64561,6 +64570,9 @@ extension on Traductions {
 			'apprendre.bibliotheque.carte.document' => ({required Object titre, required Object type}) => '${titre}, ${type}',
 			'apprendre.bibliotheque.carte.lien' => ({required Object titre}) => '${titre}, lien externe, s\'ouvre hors de l\'application',
 			'apprendre.programme.vide' => 'L\'étape apparaîtra dès l\'entrée dans une classe',
+			'apprendre.programme.sansEtape' => 'Votre programme ne s\'affiche pas encore : aucune étape n\'est publiée pour vous. Elle apparaîtra ici, avec son parcours et ses objectifs, dès que la direction aura placé votre classe. Pour en savoir plus, contactez la direction.',
+			'apprendre.programme.titreProgramme' => 'Le programme de l\'académie',
+			'apprendre.programme.votrePlace' => 'Votre place dans le programme sera indiquée par votre enseignant.',
 			'apprendre.programme.datesEcole' => 'Dates de l\'académie',
 			'apprendre.programme.datesEcoleVide' => 'Les dates de l\'académie seront affichées ici',
 			'apprendre.programme.genre.evaluation' => 'Évaluation',
