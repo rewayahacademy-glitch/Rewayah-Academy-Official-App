@@ -1,7 +1,7 @@
 // CANDIDATURE-UX (directeur, 14/11/2026) : captures R3 du parcours candidat
 // corrige. Langue maternelle en lignes compactes, recherche en tete ; riwayat
 // avec « toutes » en tete, les plus connues, puis « Une autre riwaya » ; la
-// mention que candidater ne coute rien (presentation et recapitulatif). 390 et
+// mention que candidater ne coute rien (recapitulatif). 390 et
 // 1440, francais, anglais, arabe.
 //
 // Saute sans CAPTURE_DIR (voir test/capture/LISEZ-MOI.md).
@@ -93,7 +93,6 @@ void main() {
         testWidgets('$langue $nom', (WidgetTester tester) async {
           await tester.runAsync(() => LocaleSettings.setLocale(locale));
           await _monter(tester, taille);
-          await _photo(tester, 'presentation-gratuit_${langue}_$nom');
           await passerLaPresentation(tester);
           await _photo(tester, 'langue-maternelle-compacte_${langue}_$nom');
           await toucherCle(tester, 'option-langueMaternelle-wo');

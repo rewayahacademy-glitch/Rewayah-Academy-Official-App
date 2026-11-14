@@ -27,7 +27,8 @@ Ce lot n'est **PAS PROUVÉ** : il a été testé localement seulement. Il n'est 
 
 ## 4. Candidater ne coûte rien
 
-- La phrase apparaît à l'accueil de l'inscription, sur la présentation (tuile « Candidater ne coûte rien ») et sur le récapitulatif d'envoi, en fr, en et ar.
+- La phrase apparaît à l'accueil de l'inscription et sur le récapitulatif d'envoi, en fr, en et ar.
+- Elle n'est pas sur la présentation : une tuile de plus, ou même une ligne de plus, poussait « Continuer » hors du premier écran à 390 × 844 (`salle1_action_premier_ecran_test`, rouge en CI le 14/11).
 - Le mot « gratuit » est évité : mots-rewayah l'interdit sans preuve dans la politique publiée.
 
 ## 6. « Votre dossier » : étape X sur 3
@@ -46,5 +47,5 @@ Les captures sont à 390 et 1440, en fr, en et ar :
 - `langue-choix_*` : choix de la langue ;
 - `langue-maternelle-*` : longues listes ;
 - `riwayat*` : riwayat ;
-- `presentation-gratuit_*` et `recapitulatif-gratuit_*` : gratuité ;
+- `recapitulatif-gratuit_*` : gratuité ;
 - `dossier-etape-2_*` et `dossier-etape-3_*` : étape X sur 3.
