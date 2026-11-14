@@ -261,6 +261,43 @@ void main() {
       },
     );
 
+    // SIGNER-APRES-ENVOI (directeur, 14/11/2026) : envoyee sans signer le
+    // contrat et nos accords, la page des accords reste a portee.
+    test('en examen sans accords : « Lire et accepter » avant la piece', () {
+      final r = prochaineCandidature(
+        _enExamen,
+        dossier: etatCandidat(
+          candidature: _enExamen,
+          accordsFaits: false,
+          pieceDeposee: false,
+        ),
+      );
+      expect(r?.chemin, Routes.attenteAccords);
+      expect(r?.libelle, t.attente.lireEtAccepter);
+    });
+
+    test('en examen sans accords, piece deposee : les accords', () {
+      final r = prochaineCandidature(
+        _enExamen,
+        dossier: etatCandidat(candidature: _enExamen, accordsFaits: false),
+      );
+      expect(r?.chemin, Routes.attenteAccords);
+    });
+
+    test('en examen, en pause, sans accords : rien n\'est propose', () {
+      const CandidatureDossier pause = CandidatureDossier(
+        existe: true,
+        etape: EtapeCandidature.prequalification,
+        etat: EtatCandidature.enExamen,
+        enPause: true,
+      );
+      final r = prochaineCandidature(
+        pause,
+        dossier: etatCandidat(candidature: pause, accordsFaits: false),
+      );
+      expect(r, isNull);
+    });
+
     test('en examen, en pause, sans piece : rien n\'est propose', () {
       const CandidatureDossier pause = CandidatureDossier(
         existe: true,
@@ -830,6 +867,38 @@ void main() {
         );
         await capturerVue(tester, nom);
       });
+    }
+  }, skip: sautSansCapture);
+
+  // SIGNER-APRES-ENVOI (14/11/2026), captures R3 (sautees sans CAPTURE_DIR) :
+  // CAPTURE_DIR=docs/current/captures/E2E. Envoyee sans signer : le portail
+  // propose « Lire et accepter » avant la piece. 1440 et 390, fr et ar.
+  group('captures signer apres envoi', () {
+    setUpAll(chargerPolicesDuDepot);
+    setUp(masquerRubanDebug);
+    for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {
+      for (final Size taille in <Size>[
+        const Size(1440, 900),
+        const Size(390, 844),
+      ]) {
+        final String nom =
+            'portail-accords-a-signer-${taille.width.toInt()}-'
+            '${langue.languageCode}';
+        testWidgets(nom, (WidgetTester tester) async {
+          await tester.runAsync(() => LocaleSettings.setLocale(langue));
+          await _portail(
+            tester,
+            _enExamen,
+            accordsFaits: false,
+            pieceDeposee: false,
+            taille: taille,
+            direction: langue == AppLocale.ar ? TextDirection.rtl : null,
+          );
+          expect(_texte(t.attente.lireEtAccepter), findsWidgets);
+          await stabiliser(tester);
+          await capturerVue(tester, 'signer-apres-envoi/$nom');
+        });
+      }
     }
   }, skip: sautSansCapture);
 }

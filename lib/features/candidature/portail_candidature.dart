@@ -112,11 +112,20 @@ bool pieceADeposer(EtatDossier d) =>
     // envoyee (en examen, versement pas encore possible), mais la piece
     // demandee en salle 1 manque et le serveur l'accepte encore : c'est la
     // seule chose a faire, elle passe en premier. Pas pendant une pause.
-    if (dossier != null &&
-        c.enSalleExamen &&
-        !c.enPause &&
-        pieceADeposer(dossier)) {
-      return (libelle: t.attente.deposerLaPiece, chemin: Routes.attentePiece);
+    // SIGNER-APRES-ENVOI (directeur, 14/11/2026) : de meme pour le contrat et
+    // nos accords envoyes sans signature (37 candidats en production) : le
+    // serveur les accepte a toute etape, ils se signent avant la piece, dans
+    // l'ordre de la salle 1. L'envoi des reponses reste ferme.
+    if (dossier != null && c.enSalleExamen && !c.enPause) {
+      if (!accordsFaits(dossier)) {
+        return (
+          libelle: t.attente.lireEtAccepter,
+          chemin: Routes.attenteAccords,
+        );
+      }
+      if (pieceADeposer(dossier)) {
+        return (libelle: t.attente.deposerLaPiece, chemin: Routes.attentePiece);
+      }
     }
     return null;
   }
