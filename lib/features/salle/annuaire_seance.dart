@@ -31,7 +31,7 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/presence/service_presence.dart';
 import '../../core/tc_groupe/group_summary_vm.dart';
 import '../../core/video/video_session_provider.dart';
-import 'vue_salle.dart' show RoleSalle;
+import 'vue_salle.dart' show RoleSalle, estStaff;
 
 /// Une personne connue de la seance.
 typedef PersonneSeance = ({String nom, String? clePhotoEnseignant});
@@ -148,7 +148,16 @@ class AnnuaireSeance {
   /// Le participant nomme : le nom de l'annuaire, sinon celui du jeton s'il
   /// en porte un qui n'est pas l'identite, sinon « Participant » chez qui
   /// lit la liste, et aucun nom ailleurs (PHOTOS-2b).
-  ParticipantSalle nommer(ParticipantSalle p) {
+  ///
+  /// RA-STAFF (14/11/2026) : une personne de la direction ([estStaff]) ne
+  /// porte jamais son nom dans la salle, seulement [designationStaff]
+  /// (« #Ra_staff », decision du pilote du 14/11 : aucun prenom). `null` :
+  /// la designation n'est pas encore branchee, rien ne change.
+  ParticipantSalle nommer(ParticipantSalle p, {String? designationStaff}) {
+    final String? staff = designationStaff;
+    if (staff != null && estStaff(p.role)) {
+      return p.nomme(nom: staff);
+    }
     final PersonneSeance? connue = _personnes[p.identite];
     if (connue != null) {
       return p.nomme(

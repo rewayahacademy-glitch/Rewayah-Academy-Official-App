@@ -47,10 +47,16 @@ import '../salle_seance/marque_chrono.dart';
 import '../salle_seance/pilote_dynamique.dart';
 import '../salle_seance/relais_salle.dart';
 import 'synchro_salle.dart';
+import 'vue_salle.dart' show estStaff;
 
 /// La synchronisation et la Dynamique chrono d'une seance, le temps de
 /// l'appel.
 class SeanceVivante extends ChangeNotifier implements CompagnonAppel {
+  /// RA-STAFF (14/11/2026) : la designation d'une personne de la direction
+  /// dans les arrivees (« #Ra_staff ») ; `null` tant que le composant partage
+  /// n'est pas branche : le nom du jeton reste.
+  final String? designationStaff;
+
   /// Raccorde la seance [sessionId] au moteur, avec l'acces [acces].
   ///
   /// [profilLocalId] : le profil de cet appareil ; `null` (session illisible)
@@ -70,6 +76,7 @@ class SeanceVivante extends ChangeNotifier implements CompagnonAppel {
     PortPauseSeance Function()? portPause,
     this._relirePause,
     SignalErreurSynchro signalerErreur = signalerErreurSynchro,
+    this.designationStaff,
   }) : _moteur = moteur,
        _acces = acces,
        _portPause = portPause,
@@ -290,7 +297,8 @@ class SeanceVivante extends ChangeNotifier implements CompagnonAppel {
           liste,
           ecoule: dynamique.ecoule,
         ))
-          p.nom,
+          // RA-STAFF : la direction n'arrive jamais sous son nom.
+          nomArrivant(p, designationStaff),
       ]);
     }
     // SITUATIONS-GRAVES : un arrivant recoit la pause en cours.
@@ -523,3 +531,9 @@ SeanceVivante? seanceTenue(
   final SeanceVivante s when s.sessionId == sessionId && !s.libere => s,
   _ => null,
 };
+
+/// RA-STAFF : le nom d'un arrivant dans la barre ; une personne de la
+/// direction ([estStaff]) arrive sous [designationStaff] quand elle est
+/// branchee, jamais sous son nom.
+String nomArrivant(ParticipantSalle p, String? designationStaff) =>
+    designationStaff != null && estStaff(p.role) ? designationStaff : p.nom;

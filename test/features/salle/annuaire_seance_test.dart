@@ -7,6 +7,9 @@ import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/tc_groupe/group_summary_vm.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
 import 'package:rewayah_academy/features/salle/annuaire_seance.dart';
+import 'package:rewayah_academy/features/salle/seance_vivante.dart'
+    show nomArrivant;
+import 'package:rewayah_academy/features/salle/vue_salle.dart' show estStaff;
 
 PresenceParticipant _ligne(String profil, String prenom, String role) =>
     PresenceParticipant(
@@ -116,5 +119,75 @@ void main() {
     );
     expect(annuaire.nommer(_p(idCamarade)).nom, 'Nora');
     expect(annuaire.nommer(_p(_idEleve)).nom, 'Yasmine');
+  });
+
+  group('RA-STAFF (directeur, 14/11/2026)', () {
+    ParticipantSalle personne(String role, String nom) => ParticipantSalle(
+      identite: 'id-$role',
+      nom: nom,
+      role: role,
+      estLocal: false,
+      micro: true,
+      camera: true,
+      parle: false,
+      qualite: QualiteLien.bonne,
+    );
+
+    test('la direction visible et qui mene un entretien sont du staff ; '
+        'jamais l incognito, le controleur, l enseignant, l eleve, le '
+        'candidat', () {
+      expect(estStaff('admin_visible'), isTrue);
+      expect(estStaff('intervieweur'), isTrue);
+      for (final String r in <String>[
+        'admin_masked',
+        'masked_controller',
+        'teacher',
+        'student',
+        'guardian_observer',
+        'candidat',
+        'inconnu',
+      ]) {
+        expect(estStaff(r), isFalse, reason: r);
+      }
+      expect(estStaff(null), isFalse);
+    });
+
+    test('nommee : la designation remplace le nom, meme connu de l '
+        'annuaire ; sans designation branchee, rien ne change', () {
+      final AnnuaireSeance a = AnnuaireSeance(
+        presence: <PresenceParticipant>[
+          _ligne('id-intervieweur', 'Hafsa', 'intervieweur'),
+        ],
+      );
+      final ParticipantSalle staff = personne('intervieweur', 'Hafsa');
+      expect(a.nommer(staff, designationStaff: '#Ra_staff').nom, '#Ra_staff');
+      expect(a.nommer(staff).nom, 'Hafsa');
+      expect(
+        a
+            .nommer(
+              personne('admin_visible', 'Administration Rewayah'),
+              designationStaff: '#Ra_staff',
+            )
+            .nom,
+        '#Ra_staff',
+      );
+      final ParticipantSalle candidat = personne('candidat', 'Khadija');
+      expect(a.nommer(candidat, designationStaff: '#Ra_staff').nom, 'Khadija');
+    });
+
+    test('arrivees : la direction arrive sous la designation', () {
+      expect(
+        nomArrivant(
+          personne('admin_visible', 'Administration Rewayah'),
+          '#Ra_staff',
+        ),
+        '#Ra_staff',
+      );
+      expect(
+        nomArrivant(personne('student', 'Yasmine'), '#Ra_staff'),
+        'Yasmine',
+      );
+      expect(nomArrivant(personne('admin_visible', 'X'), null), 'X');
+    });
   });
 }
