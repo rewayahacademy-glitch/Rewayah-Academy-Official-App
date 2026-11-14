@@ -59,9 +59,12 @@ class TraductionsEn extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$eleve$en eleve = _Traductions$eleve$en._(_root);
 	@override late final _Traductions$tuteur$en tuteur = _Traductions$tuteur$en._(_root);
 	@override late final _Traductions$classe$en classe = _Traductions$classe$en._(_root);
+	@override late final _Traductions$adulte$en adulte = _Traductions$adulte$en._(_root);
 	@override late final _Traductions$suiviFamille$en suiviFamille = _Traductions$suiviFamille$en._(_root);
 	@override late final _Traductions$suiviDemandes$en suiviDemandes = _Traductions$suiviDemandes$en._(_root);
 	@override late final _Traductions$juridique$en juridique = _Traductions$juridique$en._(_root);
+	@override late final _Traductions$avis$en avis = _Traductions$avis$en._(_root);
+	@override late final _Traductions$courriels$en courriels = _Traductions$courriels$en._(_root);
 	@override late final _Traductions$accueilInscrits$en accueilInscrits = _Traductions$accueilInscrits$en._(_root);
 	@override late final _Traductions$accueilInvite$en accueilInvite = _Traductions$accueilInvite$en._(_root);
 	@override late final _Traductions$payUx$en payUx = _Traductions$payUx$en._(_root);
@@ -797,6 +800,30 @@ class _Traductions$classe$en extends Traductions$classe$fr {
 	@override late final _Traductions$classe$cartes$en cartes = _Traductions$classe$cartes$en._(_root);
 }
 
+// Path: adulte
+class _Traductions$adulte$en extends Traductions$adulte$fr {
+	_Traductions$adulte$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$adulte$nav$en nav = _Traductions$adulte$nav$en._(_root);
+	@override late final _Traductions$adulte$accueil$en accueil = _Traductions$adulte$accueil$en._(_root);
+	@override late final _Traductions$adulte$historique$en historique = _Traductions$adulte$historique$en._(_root);
+	@override late final _Traductions$adulte$maClasse$en maClasse = _Traductions$adulte$maClasse$en._(_root);
+	@override late final _Traductions$adulte$monEspace$en monEspace = _Traductions$adulte$monEspace$en._(_root);
+	@override late final _Traductions$adulte$coranDemo$en coranDemo = _Traductions$adulte$coranDemo$en._(_root);
+	@override late final _Traductions$adulte$recharge$en recharge = _Traductions$adulte$recharge$en._(_root);
+	@override late final _Traductions$adulte$paiements$en paiements = _Traductions$adulte$paiements$en._(_root);
+	@override late final _Traductions$adulte$famille$en famille = _Traductions$adulte$famille$en._(_root);
+	@override late final _Traductions$adulte$invitation$en invitation = _Traductions$adulte$invitation$en._(_root);
+	@override late final _Traductions$adulte$acceptation$en acceptation = _Traductions$adulte$acceptation$en._(_root);
+	@override late final _Traductions$adulte$sortie$en sortie = _Traductions$adulte$sortie$en._(_root);
+	@override late final _Traductions$adulte$reprise$en reprise = _Traductions$adulte$reprise$en._(_root);
+	@override late final _Traductions$adulte$demo$en demo = _Traductions$adulte$demo$en._(_root);
+	@override late final _Traductions$adulte$finances$en finances = _Traductions$adulte$finances$en._(_root);
+}
+
 // Path: suiviFamille
 class _Traductions$suiviFamille$en extends Traductions$suiviFamille$fr {
 	_Traductions$suiviFamille$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -880,6 +907,27 @@ class _Traductions$juridique$en extends Traductions$juridique$fr {
 	@override String get lire => 'Read';
 	@override late final _Traductions$juridique$coord$en coord = _Traductions$juridique$coord$en._(_root);
 	@override String aCompleter({required Object quoi}) => '[to be completed by the management: ${quoi}]';
+}
+
+// Path: avis
+class _Traductions$avis$en extends Traductions$avis$fr {
+	_Traductions$avis$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$avis$form$en form = _Traductions$avis$form$en._(_root);
+	@override late final _Traductions$avis$admin$en admin = _Traductions$avis$admin$en._(_root);
+}
+
+// Path: courriels
+class _Traductions$courriels$en extends Traductions$courriels$fr {
+	_Traductions$courriels$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$courriels$admin$en admin = _Traductions$courriels$admin$en._(_root);
 }
 
 // Path: accueilInscrits
@@ -3191,6 +3239,407 @@ class _Traductions$classe$cartes$en extends Traductions$classe$cartes$fr {
 	@override late final _Traductions$classe$cartes$feuille$en feuille = _Traductions$classe$cartes$feuille$en._(_root);
 }
 
+// Path: adulte.nav
+class _Traductions$adulte$nav$en extends Traductions$adulte$nav$fr {
+	_Traductions$adulte$nav$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get accueil => 'Home';
+	@override String get maClasse => 'My class';
+	@override String get coran => 'Quran';
+}
+
+// Path: adulte.accueil
+class _Traductions$adulte$accueil$en extends Traductions$adulte$accueil$fr {
+	_Traductions$adulte$accueil$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String salutation({required Object prenom}) => 'Hello ${prenom}';
+	@override String get prochaineSeance => 'Next session';
+	@override String get parcours => 'My journey';
+	@override String get dernieresSeances => 'Latest sessions';
+	@override String get ressources => 'Class resources';
+	@override String get absence => 'Absence';
+	@override String get aucuneClasse => 'No class for now.';
+	@override String get aucuneClasseDetail => 'Your next session will appear here as soon as your class is open.';
+	@override String get retourFoyerTitre => 'Back to your family\'s home';
+	@override String get retourFoyerPhrase => 'Find your relatives\' classes and sessions.';
+	@override String get financesPhrase => 'Your balance, your funded period and your monthly fee.';
+	@override String get sansDonnees => 'Your next session and your latest sessions could not be loaded';
+	@override String get echec => 'Your next session and your latest sessions could not be loaded: your request may not have reached Rewayah. Try again in a moment.';
+}
+
+// Path: adulte.historique
+class _Traductions$adulte$historique$en extends Traductions$adulte$historique$fr {
+	_Traductions$adulte$historique$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'My past sessions';
+	@override String get sansDonnees => 'Your past sessions could not be loaded';
+	@override String get echec => 'Your past sessions could not be loaded: your request may not have reached Rewayah. Try again in a moment.';
+	@override String get vide => 'No past sessions for now.';
+	@override String get videDetail => 'Your sessions will appear here after your first class.';
+}
+
+// Path: adulte.maClasse
+class _Traductions$adulte$maClasse$en extends Traductions$adulte$maClasse$fr {
+	_Traductions$adulte$maClasse$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get aPropos => 'About this class';
+	@override String get participants => 'Participants';
+	@override String vous({required Object prenom}) => '${prenom} (you)';
+	@override String get sansDonnees => 'Your class could not be loaded';
+	@override String get aucuneClasseDetail => 'Your class, its participants and its resources will appear here as soon as it is open.';
+}
+
+// Path: adulte.monEspace
+class _Traductions$adulte$monEspace$en extends Traductions$adulte$monEspace$fr {
+	_Traductions$adulte$monEspace$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get informations => 'My information';
+	@override String get paiements => 'Payments';
+}
+
+// Path: adulte.coranDemo
+class _Traductions$adulte$coranDemo$en extends Traductions$adulte$coranDemo$fr {
+	_Traductions$adulte$coranDemo$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Available after sign-in';
+	@override String get phrase => 'This is not a fault: the demo does not contain the Quran text. After you sign in to your student space, it opens here.';
+}
+
+// Path: adulte.recharge
+class _Traductions$adulte$recharge$en extends Traductions$adulte$recharge$fr {
+	_Traductions$adulte$recharge$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Top-up';
+	@override String get phrase => 'Choose the profiles and the amounts.';
+	@override String get verifier => 'Check the top-up';
+	@override String get raisonAucun => 'Select at least one profile to continue.';
+	@override String get sansDonnees => 'The beneficiaries to top up could not be loaded';
+	@override String get indisponibleTitre => 'Top-up not available yet';
+	@override String get indisponiblePhrase => 'Top-up is not yet available in the app. No payment is possible here for now.';
+	@override String get verificationEchecTitre => 'The check did not complete.';
+	@override String get verificationEchecPhrase => 'Your choices are kept. You can try again.';
+	@override String get recapitulatif => 'Summary by profile';
+	@override String get montantPaye => 'Amount paid';
+	@override String get soldeAttribue => 'Balance credited';
+	@override String get statut => 'Credit status';
+	@override String get total => 'Total to pay';
+	@override String payer({required Object montant}) => 'Pay ${montant}';
+	@override String get horsLignePayer => 'You will be able to pay when the connection is back.';
+	@override String get paiementEchecTitre => 'The payment was not confirmed.';
+	@override String get paiementEchecPhrase => 'Check before trying again.';
+	@override String get paiementIndisponibleTitre => 'Payment not available yet';
+	@override String get paiementIndisponiblePhrase => 'No payment was made. Online payment is not yet open in the app.';
+	@override late final _Traductions$adulte$recharge$formules$en formules = _Traductions$adulte$recharge$formules$en._(_root);
+	@override String get revenirPaiements => 'Back to the household payments';
+	@override String get phraseUnique => 'Tick the profile, then choose the amount.';
+	@override String get profils => 'Profiles to top up';
+	@override String get profilUnique => 'Profile to top up';
+	@override String soldeActuel({required Object montant}) => 'Current balance: ${montant}';
+	@override String montantSuggere({required Object montant}) => 'Suggested amount: ${montant}';
+	@override String montantPour({required Object prenom}) => 'Amount for ${prenom}';
+	@override String diminuer({required Object prenom}) => 'Decrease the amount for ${prenom}';
+	@override String augmenter({required Object prenom}) => 'Increase the amount for ${prenom}';
+	@override String get repartition => 'A single payment will be made. Each amount goes to the balance of its profile: there is no shared balance.';
+	@override String get moyen => 'Payment method';
+	@override String get raisonMontant => 'Choose an amount for each selected profile.';
+	@override String get payerSeul => 'Pay';
+	@override String get conditionsRemboursement => 'Refund and dispute: read the terms';
+	@override String get fraisContestation => 'If you dispute a payment with your bank, the dispute fees are added to your household balance.';
+	@override String ajouter({required Object prenom}) => 'Add ${prenom} to the top-up';
+	@override String regularisationDe({required Object prenom, required Object message}) => '${prenom}: ${message}';
+	@override String get commandeRendue => 'The payment has been sent. Do not pay a second time: follow its status.';
+	@override String get suivrePaiement => 'Follow the payment';
+	@override late final _Traductions$adulte$recharge$resultat$en resultat = _Traductions$adulte$recharge$resultat$en._(_root);
+	@override late final _Traductions$adulte$recharge$source$en source = _Traductions$adulte$recharge$source$en._(_root);
+}
+
+// Path: adulte.paiements
+class _Traductions$adulte$paiements$en extends Traductions$adulte$paiements$fr {
+	_Traductions$adulte$paiements$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get beneficiaires => 'Beneficiaries';
+	@override String get recharger => 'Top up';
+	@override String recapitulatif({required Object valeur}) => 'Household summary: ${valeur}. Each balance stays that of its beneficiary.';
+	@override String get bientotEpuise => 'Almost used up';
+	@override String get inactif => 'Inactive';
+	@override String get historique => 'Payment history';
+	@override String get soldesSansDonnees => 'The balances of your household could not be loaded';
+	@override String get soldesIndisponiblesTitre => 'Balances cannot be viewed yet';
+	@override String get soldesIndisponiblesPhrase => 'The balance of each beneficiary is not yet available in the app. No top-up is possible here for now.';
+	@override String get aucunBeneficiaireTitre => 'No beneficiary';
+	@override String get aucunBeneficiairePhrase => 'No student profile in your household has a balance to top up for now.';
+}
+
+// Path: adulte.famille
+class _Traductions$adulte$famille$en extends Traductions$adulte$famille$fr {
+	_Traductions$adulte$famille$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get ajouter => 'Add my family';
+	@override String get ajouterLegende => 'Register your children and invite a spouse to join your family plan.';
+	@override String get ajouterPhrase => 'You can add your children and invite a spouse to join your family plan. Your student space stays unchanged.';
+	@override String get inscrireEnfant => 'Register a child';
+	@override String get maFamille => 'My family';
+	@override String get forfaitFamille => 'Family plan';
+	@override String get titulaire => 'You are the household account holder';
+	@override String get paiementsFoyer => 'Household payments';
+	@override String get aProposForfait => 'About the family plan';
+	@override String get aProposForfaitPhrase => 'The family plan includes an account holder, an adult spouse, and the children or teenagers under the account holder\'s responsibility. Each adult keeps their own account.';
+	@override String get profilNonCreeTitre => 'Demo: no profile was created';
+	@override String get profilNonCreePhrase => 'In the demo, nothing is sent. My family stays as it was.';
+	@override String get profilNonCreePhraseSeul => 'In the demo, nothing is sent. Your student space stays as it was.';
+	@override String get monProfilIndisponibleTitre => 'Not available yet';
+	@override String get monProfilIndisponiblePhrase => 'Creating a separate student profile is not yet available. Your classes and My family stay as they are.';
+	@override String get indisponibleTitre => 'The family section is not available yet';
+	@override String get indisponiblePhrase => 'Your family or your family plan will appear here as soon as it is available.';
+	@override late final _Traductions$adulte$famille$place$en place = _Traductions$adulte$famille$place$en._(_root);
+}
+
+// Path: adulte.invitation
+class _Traductions$adulte$invitation$en extends Traductions$adulte$invitation$fr {
+	_Traductions$adulte$invitation$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titreElle => 'Invite my spouse';
+	@override String get titreLui => 'Invite my spouse';
+	@override String get enteteElle => 'A personal account for her';
+	@override String get enteteLui => 'A personal account for him';
+	@override String get phraseElle => 'Your spouse will use her own account. She will not be able to manage your household or the student profiles you created.';
+	@override String get phraseLui => 'Your spouse will use his own account. He will not be able to manage your household or the student profiles you created.';
+	@override String get prenom => 'First name';
+	@override String get nom => 'Last name';
+	@override String get nomAide => 'Optional.';
+	@override String get nomAidePrerempli => 'Optional. Filled in with your account name: change it if needed.';
+	@override String get courriel => 'Email address';
+	@override String get courrielAideElle => 'The email address will be used to send your spouse the invitation to join Rewayah.';
+	@override String get courrielAideLui => 'The email address will be used to send your spouse the invitation to join Rewayah.';
+	@override String get titreNeutre => 'Invite a second adult';
+	@override String get enteteNeutre => 'A personal account for this person';
+	@override String get phraseNeutre => 'This person will use their own account. They will not be able to manage your household or the student profiles you created.';
+	@override String get courrielAideNeutre => 'The email address will be used to send this person the invitation to join Rewayah.';
+	@override String get refusPhraseFoyer => 'Nothing was sent. An invitation may already be in progress for your household, or this address cannot join it. Check the address, then go back to the household.';
+	@override String get prenomRequis => 'Enter their first name.';
+	@override String get courrielRequis => 'Enter their email address.';
+	@override String get courrielInvalide => 'Check the email address: it should look like name@example.com.';
+	@override String get verifier => 'Continue';
+	@override String get verifierTitre => 'Check and send';
+	@override String get verifierPhrase => 'Read this information again. The invitation will go to this address.';
+	@override String get nonRenseigne => 'Not provided';
+	@override String get modifier => 'Edit';
+	@override String get envoyer => 'Send the invitation';
+	@override String get horsLigne => 'Nothing is sent. You can send the invitation yourself when the connection is back.';
+	@override String get echecTitre => 'The sending was not confirmed.';
+	@override String get echecPhrase => 'Check before trying again. Your information is kept.';
+	@override String get refusTitre => 'This invitation cannot be sent';
+	@override String get refusPhrase => 'My family shows the current state of the place.';
+	@override String get envoyeeTitre => 'Invitation sent';
+	@override String envoyeePhrase({required Object courriel}) => 'The invitation was sent to ${courriel}.';
+	@override String get revenirMaFamille => 'Back to My family';
+	@override String get detailPhrase => 'The invitation is waiting for a reply. You can cancel it as long as it has not been accepted.';
+	@override String get annuler => 'Cancel the invitation';
+	@override String annulerQuestion({required Object dePrenom}) => 'Cancel ${dePrenom}\'s invitation?';
+	@override String get annulerQuestionSansPrenom => 'Cancel this invitation?';
+	@override String get annulerHorsLigne => 'Nothing is cancelled. You can cancel the invitation yourself when the connection is back.';
+	@override String get annulerConsequence => 'The invitation can no longer be accepted. You can send a new one whenever you like.';
+	@override String get garder => 'Keep the invitation';
+	@override String get annulationEchecTitre => 'The cancellation was not confirmed.';
+	@override String get annulationEchecPhrase => 'Check before trying again.';
+	@override String valableJusquau({required Object date}) => 'Valid until ${date}';
+	@override String get renvoyer => 'Resend the invitation';
+	@override String renvoyeePhrase({required Object courriel}) => 'The invitation was sent again to ${courriel}, with a new code: the one in the previous email no longer works.';
+	@override String renvoisRestants({required Object n}) => 'Resends still possible: ${n}';
+	@override String get renvoiLimite => 'The invitation has already been resent three times. Cancel it to send a new one.';
+	@override String get renvoiPerimee => 'This invitation has expired. Go back to the household to send a new one.';
+	@override String get renvoiEchecTitre => 'The resend was not confirmed.';
+	@override String get renvoyerSiEchec => 'If the person invited cannot create their account, resend them the invitation.';
+}
+
+// Path: adulte.acceptation
+class _Traductions$adulte$acceptation$en extends Traductions$adulte$acceptation$fr {
+	_Traductions$adulte$acceptation$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String notification({required Object prenom}) => '${prenom} invites you to join their family plan.';
+	@override String titre({required Object dePrenom}) => 'Join ${dePrenom}\'s family plan';
+	@override String get faisonsTitre => 'What we do';
+	@override String faisons({required Object prenom}) => '${prenom} invites you to their family plan. If you accept, your account is linked to their household. Your account stays yours. Nothing is merged.';
+	@override String get pourquoiTitre => 'Why';
+	@override String pourquoiElle({required Object prenom}) => '${prenom} manages the household and pays for its members. To pay for your classes, she must see your balance.';
+	@override String pourquoiLui({required Object prenom}) => '${prenom} manages the household and pays for its members. To pay for your classes, he must see your balance.';
+	@override String verraTitre({required Object quePrenom}) => 'What ${quePrenom} will see';
+	@override String get verraElle => 'Your first and last name. Your balance, or the need to top it up. The plan that concerns you. The state of your access, if it prevents payment. She will also know if you leave the family plan.';
+	@override String get verraLui => 'Your first and last name. Your balance, or the need to top it up. The plan that concerns you. The state of your access, if it prevents payment. He will also know if you leave the family plan.';
+	@override String verraPasTitre({required Object quePrenom}) => 'What ${quePrenom} will not see';
+	@override String get verraPas => 'Your class. Your level. Your sessions and your attendance. Your progress. Your messages. Your notifications. Your personal payment methods. Your ID documents.';
+	@override String get vousTitre => 'What you will not see';
+	@override String vous({required Object dePrenom}) => 'The classes, progress and messages of ${dePrenom} and the household\'s children. You will not be able to add a child, invite anyone or change the household.';
+	@override String get autresTitre => 'Who else sees';
+	@override String get autres => 'Your teacher sees nothing of your household. The academy team sees the link, to manage it and, if necessary, approve it.';
+	@override String get dureeTitre => 'How long';
+	@override String duree({required Object quePrenom}) => 'The link lasts until you leave the family plan, or ${quePrenom} ends it.';
+	@override String conservation({required Object duree}) => 'We keep a record of the link ${duree}.';
+	@override String get partirTitre => 'How to leave';
+	@override String get partir => 'In My space, Family plan, Leave the family plan. You do not need their agreement. Your account, your classes, your history and your balance stay available.';
+	@override String get refusTitre => 'If you decline';
+	@override String get refus => 'Nothing changes for your account, your classes or your balance.';
+	@override String get validation => 'This link must be approved by the academy\'s administration. In the meantime, your account and your classes work normally.';
+	@override String get refuser => 'Decline the invitation';
+	@override String get accepter => 'Accept the invitation';
+	@override String get horsLigne => 'Nothing is sent. You can reply yourself when the connection is back.';
+	@override String get acceptationEchecTitre => 'The acceptance was not confirmed.';
+	@override String get refusEchecTitre => 'The refusal was not confirmed.';
+	@override String get echecPhrase => 'Check before trying again.';
+	@override String get accepteeTitre => 'Invitation accepted';
+	@override String rejoint({required Object dePrenom}) => 'You joined ${dePrenom}\'s family plan.';
+	@override String get refuseeTitre => 'Invitation declined';
+	@override String get impossible => 'This account cannot join this plan at the moment.';
+	@override String get perimee => 'This invitation is no longer valid.';
+	@override String recu({required Object date}) => 'Reply recorded on ${date}.';
+	@override String get titreNeutre => 'Family plan invitation';
+	@override String get sansCompteTitre => 'Family plan invitation';
+	@override String get sansCompte => 'To reply, sign in to your account, or create one. You will then read what the person inviting you will and will not see before you decide.';
+	@override String get sansCompteAction => 'Sign in or create my account';
+}
+
+// Path: adulte.sortie
+class _Traductions$adulte$sortie$en extends Traductions$adulte$sortie$fr {
+	_Traductions$adulte$sortie$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get retirerElle => 'Remove my spouse';
+	@override String get retirerLui => 'Remove my spouse';
+	@override String get retirerQuestionElle => 'Remove my spouse?';
+	@override String get retirerQuestionLui => 'Remove my spouse?';
+	@override String get retirerConsequence => 'Their account, classes, history and balance will not be deleted.';
+	@override String placePhrase({required Object prenom}) => '${prenom} is part of your family plan, with their own account.';
+	@override String get quitter => 'Leave the family plan';
+	@override String get quitterQuestion => 'Leave the family plan?';
+	@override String get quitterConfirmer => 'Leave the plan';
+	@override String get quitterConsequence => 'Your account, classes, history and balance stay available. The link to the family plan will end.';
+	@override String forfaitPhrase({required Object dePrenom}) => 'You are part of ${dePrenom}\'s family plan.';
+	@override String get resultatTitre => 'The link to the family plan has ended';
+	@override String get resultatTitulaire => 'Their account, classes, history and balance stay available.';
+	@override String get resultatSecondAdulte => 'Your account, classes, history and balance stay available.';
+	@override String get compris => 'Understood';
+	@override String get retraitEchecTitre => 'The removal was not confirmed.';
+	@override String get departEchecTitre => 'Leaving was not confirmed.';
+	@override String get echecPhrase => 'Check before trying again.';
+	@override String get horsLigne => 'Nothing is sent. You can try again yourself when the connection is back.';
+	@override String notificationQuitte({required Object prenom}) => '${prenom} left your family plan.';
+	@override String notificationRetiree({required Object dePrenom}) => 'You were removed from ${dePrenom}\'s family plan.';
+	@override String notificationRetire({required Object dePrenom}) => 'You were removed from ${dePrenom}\'s family plan.';
+	@override String get delaiTitre => 'New invitation unavailable';
+	@override String delaiPhrase({required Object date}) => 'A new request can be made from ${date}. It will then have to be approved by the administration.';
+	@override String get pourquoi => 'Why this wait?';
+	@override String get pourquoiPhrase => 'This measure ensures the safety of households and the proper management of children\'s access.';
+	@override String get foyerPersonnel => 'A personal household was created for you: you will find your account and your students there.';
+}
+
+// Path: adulte.reprise
+class _Traductions$adulte$reprise$en extends Traductions$adulte$reprise$fr {
+	_Traductions$adulte$reprise$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Household takeover request';
+	@override String get explication => 'Use this process if the household account holder has passed away. The request will be reported to the account concerned and reviewed by the administration.';
+	@override String get reprisTitre => 'What will be taken over';
+	@override late final _Traductions$adulte$reprise$repris$en repris = _Traductions$adulte$reprise$repris$en._(_root);
+	@override String get jamaisTitre => 'What is never taken over';
+	@override late final _Traductions$adulte$reprise$jamais$en jamais = _Traductions$adulte$reprise$jamais$en._(_root);
+	@override String get succession => 'This is a succession of the household account holder role, not a takeover of the personal account.';
+	@override String get deposer => 'Submit the request';
+	@override String get deposerQuestion => 'Submit this request?';
+	@override String get deposerConsequence => 'The household account holder will be informed and can refuse it. The administration will then review the request and decide.';
+	@override String get horsLigne => 'Nothing is sent. You can submit the request yourself when the connection is back.';
+	@override String get depotEchecTitre => 'The request was not confirmed.';
+	@override String get echecPhrase => 'Check before trying again.';
+	@override String get motif => 'Reason';
+	@override String get motifDeces => 'Reported death of the account holder';
+	@override String get deposeeLe => 'Submitted on';
+	@override String get etat => 'Status';
+	@override late final _Traductions$adulte$reprise$etats$en etats = _Traductions$adulte$reprise$etats$en._(_root);
+	@override late final _Traductions$adulte$reprise$phrases$en phrases = _Traductions$adulte$reprise$phrases$en._(_root);
+	@override late final _Traductions$adulte$reprise$titulaire$en titulaire = _Traductions$adulte$reprise$titulaire$en._(_root);
+	@override late final _Traductions$adulte$reprise$notifications$en notifications = _Traductions$adulte$reprise$notifications$en._(_root);
+}
+
+// Path: adulte.demo
+class _Traductions$adulte$demo$en extends Traductions$adulte$demo$fr {
+	_Traductions$adulte$demo$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Adult student demo';
+	@override String get mention => 'The data is fictitious and nothing is sent.';
+	@override String get intro => 'Choose a screen, then a situation of the Diallo household.';
+	@override String get ecrans => 'The screens';
+	@override String get situations => 'The household situations';
+	@override String get variantes => 'The variants';
+	@override String get titulaireFemme => 'The account holder is a woman, her husband is the second adult.';
+	@override String get vueConjointe => 'My space as seen by the wife, second adult of the household.';
+	@override String get vueConjoint => 'My space as seen by the husband, second adult of the household.';
+	@override String get invitationRecueConjointe => 'The invitation received by the wife, in her own account.';
+	@override String get invitationRecueConjoint => 'The invitation received by the husband, in his own account.';
+	@override String get invitationSansCompte => 'The invitation opened without an account.';
+	@override String get reseauCoupe => 'The network is cut: Home and My class offline.';
+	@override late final _Traductions$adulte$demo$donnees$en donnees = _Traductions$adulte$demo$donnees$en._(_root);
+	@override late final _Traductions$adulte$demo$etats$en etats = _Traductions$adulte$demo$etats$en._(_root);
+}
+
+// Path: adulte.finances
+class _Traductions$adulte$finances$en extends Traductions$adulte$finances$fr {
+	_Traductions$adulte$finances$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get indisponibleTitre => 'Your finances are not available yet';
+	@override String get indisponiblePhrase => 'Your balance, your funded period and your monthly fee will appear here as soon as the academy has published them. No payment is asked of you here.';
+	@override String get erreurTitre => 'Your finances cannot be loaded';
+	@override String get videTitre => 'No finances recorded';
+	@override String get videPhrase => 'No balance or monthly fee is shown yet for your profile. They will appear here after you register in a class.';
+	@override String get voirMouvementsSemantique => 'See your movements';
+	@override String get mouvementsContexte => 'Your top-ups, monthly fees, discounts and credit notes, from the most recent to the oldest. Nothing is erased: a correction is added as a new movement.';
+	@override String get mouvementsErreurTitre => 'Your movements cannot be loaded';
+	@override String get mouvementsIndisponiblePhrase => 'Your top-ups and monthly fees will appear here once they are in service.';
+	@override String get mouvementsVidePhrase => 'No top-up or monthly fee is recorded yet for your profile. Movements will appear here after the first payment.';
+}
+
 // Path: suiviFamille.etapes
 class _Traductions$suiviFamille$etapes$en extends Traductions$suiviFamille$etapes$fr {
 	_Traductions$suiviFamille$etapes$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -3434,6 +3883,89 @@ class _Traductions$juridique$coord$en extends Traductions$juridique$coord$fr {
 	@override String get societe => 'Company: Rewayah Academy Ltd';
 	@override String get numero => 'Registration number: 16624644, England and Wales';
 	@override String get adresse => 'Registered office: 71-75 Shelton Street, Covent Garden, London WC2H 9JQ, United Kingdom';
+}
+
+// Path: avis.form
+class _Traductions$avis$form$en extends Traductions$avis$form$fr {
+	_Traductions$avis$form$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Give your feedback';
+	@override String get sousTitre => 'A few lines about your experience at Rewayah Academy. Two minutes is enough.';
+	@override late final _Traductions$avis$form$nom$en nom = _Traductions$avis$form$nom$en._(_root);
+	@override late final _Traductions$avis$form$qualite$en qualite = _Traductions$avis$form$qualite$en._(_root);
+	@override late final _Traductions$avis$form$pays$en pays = _Traductions$avis$form$pays$en._(_root);
+	@override late final _Traductions$avis$form$depuis$en depuis = _Traductions$avis$form$depuis$en._(_root);
+	@override late final _Traductions$avis$form$note$en note = _Traductions$avis$form$note$en._(_root);
+	@override late final _Traductions$avis$form$titreAvis$en titreAvis = _Traductions$avis$form$titreAvis$en._(_root);
+	@override late final _Traductions$avis$form$texte$en texte = _Traductions$avis$form$texte$en._(_root);
+	@override late final _Traductions$avis$form$accord$en accord = _Traductions$avis$form$accord$en._(_root);
+	@override String lecture({required Object courriel}) => 'Your feedback will be read by the management before being published. To have it removed later, write to ${courriel}.';
+	@override late final _Traductions$avis$form$regles$en regles = _Traductions$avis$form$regles$en._(_root);
+	@override String get envoyer => 'Send my feedback';
+	@override String get aCorriger => 'A few fields need to be corrected before sending.';
+	@override String get erreurChamp => 'A field is not accepted. Read the form again, then send again.';
+	@override String get echec => 'Your feedback could not be confirmed. The connection may have dropped. Check it, then tap "Send my feedback" again.';
+	@override String get horsLigne => 'Nothing was sent, your entry stays on this screen. Send your feedback as soon as the network is back.';
+	@override late final _Traductions$avis$form$ferme$en ferme = _Traductions$avis$form$ferme$en._(_root);
+	@override late final _Traductions$avis$form$envoye$en envoye = _Traductions$avis$form$envoye$en._(_root);
+	@override String get erreurChargement => 'The form could not be opened. Try again in a moment.';
+	@override String get sansDonnees => 'The form could not be opened';
+	@override String get indisponibleTitre => 'Feedback unavailable';
+	@override String get indisponiblePhrase => 'This feature will be available once the server is connected.';
+}
+
+// Path: avis.admin
+class _Traductions$avis$admin$en extends Traductions$avis$admin$fr {
+	_Traductions$avis$admin$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Reviews';
+	@override String get sousTitre => 'Reviews from families and students. The management reads them, publishes them or refuses them. It never edits a text.';
+	@override String get outil => 'Family reviews';
+	@override String get outilDetail => 'Create a collection link, read the reviews, publish or refuse them';
+	@override late final _Traductions$avis$admin$sections$en sections = _Traductions$avis$admin$sections$en._(_root);
+	@override late final _Traductions$avis$admin$statut$en statut = _Traductions$avis$admin$statut$en._(_root);
+	@override late final _Traductions$avis$admin$filtre$en filtre = _Traductions$avis$admin$filtre$en._(_root);
+	@override String attente({required Object n}) => 'Reviews pending: ${n}';
+	@override String get vide => 'No reviews in this list.';
+	@override String get erreur => 'The reviews could not be loaded. Try again.';
+	@override String get sansDonnees => 'The reviews could not be loaded';
+	@override String get refuse => 'Only the signed-in management reads and decides on reviews. Sign in again with the right account, then try again.';
+	@override String get indisponibleTitre => 'Reviews unavailable';
+	@override String get indisponiblePhrase => 'This feature will be available once the server is connected.';
+	@override late final _Traductions$avis$admin$champs$en champs = _Traductions$avis$admin$champs$en._(_root);
+	@override late final _Traductions$avis$admin$actions$en actions = _Traductions$avis$admin$actions$en._(_root);
+	@override late final _Traductions$avis$admin$publier$en publier = _Traductions$avis$admin$publier$en._(_root);
+	@override late final _Traductions$avis$admin$refuser$en refuser = _Traductions$avis$admin$refuser$en._(_root);
+	@override late final _Traductions$avis$admin$retirer$en retirer = _Traductions$avis$admin$retirer$en._(_root);
+	@override late final _Traductions$avis$admin$motifs$en motifs = _Traductions$avis$admin$motifs$en._(_root);
+	@override late final _Traductions$avis$admin$retour$en retour = _Traductions$avis$admin$retour$en._(_root);
+	@override late final _Traductions$avis$admin$liens$en liens = _Traductions$avis$admin$liens$en._(_root);
+}
+
+// Path: courriels.admin
+class _Traductions$courriels$admin$en extends Traductions$courriels$admin$fr {
+	_Traductions$courriels$admin$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Emails';
+	@override String get sousTitre => 'Write to a person and follow the emails that leave the academy.';
+	@override String get outil => 'Emails';
+	@override String get outilDetail => 'Write an email, follow the sendings, see the sending addresses';
+	@override late final _Traductions$courriels$admin$sections$en sections = _Traductions$courriels$admin$sections$en._(_root);
+	@override String get refuse => 'Only the signed-in management writes and follows emails. Sign in again with the right account, then try again.';
+	@override String get indisponibleTitre => 'Emails unavailable';
+	@override String get indisponiblePhrase => 'This feature will be available once the server is connected.';
+	@override late final _Traductions$courriels$admin$ecrire$en ecrire = _Traductions$courriels$admin$ecrire$en._(_root);
+	@override late final _Traductions$courriels$admin$file$en file = _Traductions$courriels$admin$file$en._(_root);
+	@override late final _Traductions$courriels$admin$adresses$en adresses = _Traductions$courriels$admin$adresses$en._(_root);
 }
 
 // Path: accueilInvite.roles
@@ -4741,6 +5273,252 @@ class _Traductions$classe$cartes$feuille$en extends Traductions$classe$cartes$fe
 	@override late final _Traductions$classe$cartes$feuille$defauts$en defauts = _Traductions$classe$cartes$feuille$defauts$en._(_root);
 }
 
+// Path: adulte.recharge.formules
+class _Traductions$adulte$recharge$formules$en extends Traductions$adulte$recharge$formules$fr {
+	_Traductions$adulte$recharge$formules$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String trimestriel({required Object montant}) => '${montant} for 3 months, paid in advance';
+	@override String annuel({required Object montant}) => '${montant} for 12 months, paid in advance';
+}
+
+// Path: adulte.recharge.resultat
+class _Traductions$adulte$recharge$resultat$en extends Traductions$adulte$recharge$resultat$fr {
+	_Traductions$adulte$recharge$resultat$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get formulaireTitre => 'Pay here, without leaving the app';
+	@override String get formulairePhrase => 'Enter your payment details below. Balances only change after the payment is confirmed.';
+	@override String get formulaireEchecTitre => 'The payment form did not appear.';
+	@override String get formulaireEchecPhrase => 'Try again in a moment. Nothing was paid through this form.';
+	@override String get formulaireSansPayer => 'Back to balances without paying';
+	@override String get preparationTitre => 'Payment being prepared';
+	@override String get preparationPhrase => 'Check the breakdown before paying.';
+	@override String get attenteTitre => 'Payment being confirmed';
+	@override String get attentePhrase => 'The payment provider has not confirmed yet. Balances only change after its confirmation.';
+	@override String get attenteBandeauTitre => 'Do not pay a second time.';
+	@override String get attenteBandeauPhrase => 'This payment may have already gone through. Reload in a few moments to see its status.';
+	@override String get confirmeTitre => 'Payment confirmed';
+	@override String get confirmePhrase => 'The payment is confirmed. Balances are about to be updated.';
+	@override String get allocationPhrase => 'Updating balances...';
+	@override String terminePhrase({required Object montant}) => 'Your payment of ${montant} was made and split between the selected profiles.';
+	@override String get details => 'Payment details';
+	@override String get reference => 'Reference';
+	@override String get date => 'Date';
+	@override String get moyen => 'Payment method';
+	@override String get total => 'Total amount';
+	@override String get repartition => 'Breakdown by profile';
+	@override String nouveauSolde({required Object montant}) => 'New balance: ${montant}';
+	@override String get soldesTitre => 'Balances updated';
+	@override String get soldesPhrase => 'The new balances are available for each profile concerned.';
+	@override String get retourSoldes => 'Back to balances';
+	@override String get echecTitre => 'The payment failed';
+	@override String get echecPhrase => 'No balance was credited. Your selection is kept: you can try again or change payment method.';
+	@override String get echecMotif => 'Reason';
+	@override String get reessayer => 'Try again';
+	@override String get changerMoyen => 'Change payment method';
+	@override String get annuleTitre => 'Payment cancelled';
+	@override String get annulePhrase => 'The payment was cancelled before its confirmation. No balance was credited. You can start again with the same selection.';
+	@override String get perimeTitre => 'Order expired';
+	@override String get perimePhrase => 'The payment deadline for this order has passed. No balance was credited. Start the top-up again to get a new order.';
+	@override String get recommencer => 'Start the top-up again';
+	@override String get actualiser => 'Reload';
+	@override String get horsLigne => 'The status shown may have changed since: reload as soon as reading is possible again.';
+	@override String get videTitre => 'No payment to follow';
+	@override String get videPhrase => 'This address does not designate any order. Go back to the household payments to find your top-ups.';
+	@override String get indisponibleTitre => 'Payment tracking not available yet';
+	@override String get indisponiblePhrase => 'Payment status is not yet available in the app. No payment was made here.';
+	@override String get lectureEchecTitre => 'The payment status could not be loaded.';
+	@override String get lectureEchecPhrase => 'The payment is not cancelled for that. Do not pay a second time: try loading again.';
+}
+
+// Path: adulte.recharge.source
+class _Traductions$adulte$recharge$source$en extends Traductions$adulte$recharge$source$fr {
+	_Traductions$adulte$recharge$source$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get avantPaiement => 'Waiting for payment';
+	@override late final _Traductions$adulte$recharge$source$motifs$en motifs = _Traductions$adulte$recharge$source$motifs$en._(_root);
+}
+
+// Path: adulte.famille.place
+class _Traductions$adulte$famille$place$en extends Traductions$adulte$famille$place$fr {
+	_Traductions$adulte$famille$place$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get ajouterConjointe => 'Add a spouse';
+	@override String get ajouterConjoint => 'Add a spouse';
+	@override String get inviterConjointe => 'Invite your spouse to join Rewayah with her own account.';
+	@override String get inviterConjoint => 'Invite your spouse to join Rewayah with his own account.';
+	@override String get invitationEnvoyee => 'Invitation sent';
+	@override String maConjointe({required Object prenom}) => '${prenom}, your spouse';
+	@override String monConjoint({required Object prenom}) => '${prenom}, your spouse';
+	@override String get validationEnAttente => 'Pending administrative approval';
+	@override String get validationRefusee => 'Approval refused by the management';
+	@override String get nouvelleDemande => 'Make a new request';
+	@override String nouvelleInvitation({required Object date}) => 'A new invitation is possible from ${date}';
+	@override String envoyeeA({required Object courriel}) => 'Sent to ${courriel}';
+	@override String get expiree => 'The previous invitation has expired. You can send a new one.';
+	@override String get annulee => 'The invitation was cancelled and can no longer be accepted. You can send a new one.';
+}
+
+// Path: adulte.reprise.repris
+class _Traductions$adulte$reprise$repris$en extends Traductions$adulte$reprise$repris$fr {
+	_Traductions$adulte$reprise$repris$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get profils => 'The existing minor profiles';
+	@override String get composition => 'The future composition of the household according to the active rules';
+	@override String get paiements => 'The household\'s future payments';
+	@override String get parcours => 'The guardian journeys attached to the minors';
+}
+
+// Path: adulte.reprise.jamais
+class _Traductions$adulte$reprise$jamais$en extends Traductions$adulte$reprise$jamais$fr {
+	_Traductions$adulte$reprise$jamais$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get identifiants => 'The account holder\'s sign-in credentials';
+	@override String get messages => 'Their private messages';
+	@override String get conversations => 'Their conversations';
+	@override String get historique => 'Their personal teaching history';
+	@override String get moyensPaiement => 'Their saved payment methods';
+	@override String get pieces => 'Their ID documents';
+	@override String get donnees => 'Their private data unrelated to managing the household';
+}
+
+// Path: adulte.reprise.etats
+class _Traductions$adulte$reprise$etats$en extends Traductions$adulte$reprise$etats$fr {
+	_Traductions$adulte$reprise$etats$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get deposee => 'Submitted';
+	@override String get refuseeParTitulaire => 'Refused by the account holder';
+	@override String get attenteAdministration => 'Pending the administration';
+	@override String get validee => 'Approved';
+	@override String get refusee => 'Refused';
+}
+
+// Path: adulte.reprise.phrases
+class _Traductions$adulte$reprise$phrases$en extends Traductions$adulte$reprise$phrases$fr {
+	_Traductions$adulte$reprise$phrases$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get deposee => 'The household account holder has been informed. The administration will review the request.';
+	@override String examenLe({required Object date}) => 'With no reply from the account holder, the administration can review it from ${date}.';
+	@override String get refuseeParTitulaire => 'The household account holder refused this request. The administration is informed. No household permission is transferred.';
+	@override String get attenteAdministration => 'The account holder has not replied. Nothing is transferred automatically: the administration must still review the request.';
+	@override String get validee => 'The administration approved the request. You are now the household account holder.';
+	@override String get refusee => 'The administration refused the request. No household permission is transferred.';
+	@override String redepotLe({required Object date}) => 'A new request can be submitted from ${date}.';
+}
+
+// Path: adulte.reprise.titulaire
+class _Traductions$adulte$reprise$titulaire$en extends Traductions$adulte$reprise$titulaire$fr {
+	_Traductions$adulte$reprise$titulaire$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get notification => 'A request to take over your household was submitted stating your death.';
+	@override String get consigne => 'If this request is wrong, refuse it.';
+	@override String get refuser => 'Refuse the request';
+	@override String get ligne => 'A request to take over your household was submitted.';
+	@override String get refusEchecTitre => 'The refusal was not confirmed.';
+	@override String get horsLigne => 'Nothing is sent. You can refuse the request yourself when the connection is back.';
+	@override String get refusee => 'You refused this request. The administration is informed. No permission of your household is transferred.';
+}
+
+// Path: adulte.reprise.notifications
+class _Traductions$adulte$reprise$notifications$en extends Traductions$adulte$reprise$notifications$fr {
+	_Traductions$adulte$reprise$notifications$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get refuseeParTitulaire => 'The household account holder refused your request to take over the household.';
+	@override String get attenteAdministration => 'Your request to take over the household is pending the administration.';
+	@override String get validee => 'Your request to take over the household was approved.';
+	@override String get refusee => 'Your request to take over the household was refused.';
+}
+
+// Path: adulte.demo.donnees
+class _Traductions$adulte$demo$donnees$en extends Traductions$adulte$demo$donnees$fr {
+	_Traductions$adulte$demo$donnees$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get soldeTitulaire => 'Demo balance 1';
+	@override String get soldeSecondAdulte => 'Demo balance 2';
+	@override String get soldeAicha => 'Demo balance 3';
+	@override String get soldeOumar => 'Demo balance 4';
+	@override String get totalAvecSecondAdulte => 'Demo total A';
+	@override String get totalSansSecondAdulte => 'Demo total B';
+	@override String get prixOffreA => '€5.00 (demo)';
+	@override String get prixOffreB => '€10.00 (demo)';
+	@override String get detailOffreA => 'Demo balance A';
+	@override String get detailOffreB => 'Demo balance B';
+	@override String get totalRecharge5 => '€5.00 (demo)';
+	@override String get totalRecharge10 => '€10.00 (demo)';
+	@override String get totalRecharge15 => '€15.00 (demo)';
+	@override String get totalRecharge20 => '€20.00 (demo)';
+	@override String get totalRecharge25 => '€25.00 (demo)';
+	@override String get totalRecharge30 => '€30.00 (demo)';
+	@override String get totalRecharge35 => '€35.00 (demo)';
+	@override String get totalRecharge40 => '€40.00 (demo)';
+}
+
+// Path: adulte.demo.etats
+class _Traductions$adulte$demo$etats$en extends Traductions$adulte$demo$etats$fr {
+	_Traductions$adulte$demo$etats$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get adulteSeul => 'The adult is alone, with no household.';
+	@override String get titulaireSansConjoint => 'The household has no second adult.';
+	@override String get invitationEnAttente => 'The second adult\'s invitation is pending.';
+	@override String get invitationExpiree => 'The second adult\'s invitation has expired.';
+	@override String get invitationAnnulee => 'The second adult\'s invitation was cancelled.';
+	@override String get conjointActif => 'The second adult is part of the household.';
+	@override String get conjointQuitte => 'The second adult left the household.';
+	@override String get conjointRetire => 'The second adult was removed from the household.';
+	@override String get delai60 => 'A first waiting period is in progress.';
+	@override String get nouvelleDemande => 'A new invitation is possible after the first waiting period.';
+	@override String get validationEnAttente => 'Administrative approval is pending.';
+	@override String get validationRefusee => 'Administrative approval was refused.';
+	@override String get secondDepart => 'The second adult left for the second time.';
+	@override String get delai120 => 'A following, longer waiting period is in progress.';
+	@override String get departsSuivants => 'After the third departure, the following waiting period still applies.';
+	@override String get repriseDemandee => 'A request to take over the household was submitted.';
+	@override String get repriseRefuseeParTitulaire => 'The takeover request was refused by the account holder.';
+	@override String get repriseSansReponse => 'With no reply within the period, the request waits for the administration.';
+	@override String get repriseValidee => 'The household takeover was approved.';
+	@override String get repriseRefusee => 'The household takeover was refused.';
+	@override String get dejaDansUnAutreFoyer => 'The invited adult is already part of another household.';
+	@override String get erreurReseau => 'The network dropped during an action.';
+	@override String get doubleSoumission => 'The same action was sent twice.';
+	@override String get notificationDansLApplication => 'The notification could not be sent to the phone, it stays visible in the app.';
+	@override String get emancipation => 'Emancipation of a student who became an adult: not built in this wave.';
+}
+
 // Path: suiviFamille.close.motif
 class _Traductions$suiviFamille$close$motif$en extends Traductions$suiviFamille$close$motif$fr {
 	_Traductions$suiviFamille$close$motif$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -4769,6 +5547,417 @@ class _Traductions$suiviDemandes$close$motif$en extends Traductions$suiviDemande
 	@override String get refusDirection => 'The management could not accept this request.';
 	@override String dejaEnClasse({required Object prenom}) => '${prenom} already has a place in a class: this request is no longer needed.';
 	@override String get inconnu => 'This request is closed.';
+}
+
+// Path: avis.form.nom
+class _Traductions$avis$form$nom$en extends Traductions$avis$form$nom$fr {
+	_Traductions$avis$form$nom$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'Display name';
+	@override String get aide => 'Your first name and the initial of your last name are enough.';
+	@override String get erreur => 'Enter a name of 2 to 60 characters.';
+}
+
+// Path: avis.form.qualite
+class _Traductions$avis$form$qualite$en extends Traductions$avis$form$qualite$fr {
+	_Traductions$avis$form$qualite$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'You are';
+	@override String get parent => 'Parent or guardian';
+	@override String get eleveAdulte => 'Adult student';
+	@override String get erreur => 'Choose who you are.';
+}
+
+// Path: avis.form.pays
+class _Traductions$avis$form$pays$en extends Traductions$avis$form$pays$fr {
+	_Traductions$avis$form$pays$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'Country of residence';
+	@override String get choisir => 'Choose a country';
+	@override String get rechercheLibelle => 'Search for a country';
+	@override String get rechercheAide => 'Type the name of the country';
+	@override String get aucun => 'No country matches. Try another spelling.';
+	@override String get erreur => 'Choose your country of residence.';
+}
+
+// Path: avis.form.depuis
+class _Traductions$avis$form$depuis$en extends Traductions$avis$form$depuis$fr {
+	_Traductions$avis$form$depuis$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'With us since';
+	@override String get aide => 'The month and year you joined the academy.';
+	@override String get mois => 'Month';
+	@override String get annee => 'Year';
+	@override String get erreur => 'Choose a month and a year, from April 2024 up to this month.';
+}
+
+// Path: avis.form.note
+class _Traductions$avis$form$note$en extends Traductions$avis$form$note$fr {
+	_Traductions$avis$form$note$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'Your rating';
+	@override String get aide => 'Tap a star: 1 is the lowest rating, 5 the highest.';
+	@override String etoile({required Object n}) => 'Give a rating of ${n} out of 5';
+	@override String lue({required Object n}) => 'Rating: ${n} out of 5';
+	@override String surCinq({required Object n}) => '${n} out of 5';
+	@override String get erreur => 'Choose a rating from 1 to 5 stars.';
+}
+
+// Path: avis.form.titreAvis
+class _Traductions$avis$form$titreAvis$en extends Traductions$avis$form$titreAvis$fr {
+	_Traductions$avis$form$titreAvis$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'Title (optional)';
+	@override String get aide => 'A short sentence that sums up your feedback. 80 characters at most.';
+	@override String get erreur => 'Fix the title: 80 characters at most.';
+}
+
+// Path: avis.form.texte
+class _Traductions$avis$form$texte$en extends Traductions$avis$form$texte$fr {
+	_Traductions$avis$form$texte$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'Your feedback';
+	@override String get aide => 'What you liked, what you learned, what could be better. At least 20 characters.';
+	@override String compteur({required Object n, required Object max}) => 'Characters: ${n} of ${max}';
+	@override String get erreur => 'Write between 20 and 1500 characters.';
+}
+
+// Path: avis.form.accord
+class _Traductions$avis$form$accord$en extends Traductions$avis$form$accord$fr {
+	_Traductions$avis$form$accord$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'I agree that this feedback, my display name, my country and the date be published on the Rewayah Academy website.';
+	@override String get erreur => 'Accept publication by ticking the box, otherwise your feedback cannot be sent.';
+}
+
+// Path: avis.form.regles
+class _Traductions$avis$form$regles$en extends Traductions$avis$form$regles$fr {
+	_Traductions$avis$form$regles$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'What the management publishes';
+	@override String get intro => 'A respectful review is published, even when it is critical. The management never edits your text. It only refuses a review that contains:';
+	@override String get insulte => 'an insult';
+	@override String get tiers => 'personal data of a third party, such as the name of a child or a teacher';
+	@override String get publicite => 'advertising';
+	@override String get horsSujet => 'an off-topic remark';
+	@override String get doublon => 'a duplicate of a review already received';
+	@override String get donnees => 'Do not give the name of a child, nor email, nor phone number.';
+	@override String get publie => 'A respectful review is published, even a critical one. The management only refuses an insult, a third party\'s data, advertising, an off-topic remark or a duplicate.';
+}
+
+// Path: avis.form.ferme
+class _Traductions$avis$form$ferme$en extends Traductions$avis$form$ferme$fr {
+	_Traductions$avis$form$ferme$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'This link no longer accepts feedback';
+	@override String phrase({required Object courriel}) => 'It is closed, expired, or the planned number of reviews has been reached. To give your feedback, ask the management for a new link: ${courriel}.';
+}
+
+// Path: avis.form.envoye
+class _Traductions$avis$form$envoye$en extends Traductions$avis$form$envoye$fr {
+	_Traductions$avis$form$envoye$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Thank you for your feedback';
+	@override String phrase({required Object courriel}) => 'The management will read it before publishing it on the website, with your display name, your country and the date. To have it removed, write to ${courriel}.';
+}
+
+// Path: avis.admin.sections
+class _Traductions$avis$admin$sections$en extends Traductions$avis$admin$sections$fr {
+	_Traductions$avis$admin$sections$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'Review sections';
+	@override String get avis => 'Reviews';
+	@override String get liens => 'Links';
+}
+
+// Path: avis.admin.statut
+class _Traductions$avis$admin$statut$en extends Traductions$avis$admin$statut$fr {
+	_Traductions$avis$admin$statut$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get tous => 'All';
+	@override String get enAttente => 'Pending';
+	@override String get publie => 'Published';
+	@override String get refuse => 'Refused';
+	@override String get retire => 'Removed';
+}
+
+// Path: avis.admin.filtre
+class _Traductions$avis$admin$filtre$en extends Traductions$avis$admin$filtre$fr {
+	_Traductions$avis$admin$filtre$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get tous => 'All';
+	@override String get enAttente => 'Pending';
+	@override String get publie => 'Published';
+	@override String get refuse => 'Refused';
+	@override String get retire => 'Removed';
+}
+
+// Path: avis.admin.champs
+class _Traductions$avis$admin$champs$en extends Traductions$avis$admin$champs$fr {
+	_Traductions$avis$admin$champs$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get lien => 'Link';
+	@override String get pays => 'Country';
+	@override String get depuis => 'With us since';
+	@override String get qualite => 'You are';
+	@override String get depose => 'Submitted on';
+	@override String get accord => 'Publication agreement';
+	@override String get motif => 'Reason';
+	@override String get modere => 'Decision on';
+	@override String get publie => 'Published on';
+}
+
+// Path: avis.admin.actions
+class _Traductions$avis$admin$actions$en extends Traductions$avis$admin$actions$fr {
+	_Traductions$avis$admin$actions$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get publier => 'Publish';
+	@override String get refuser => 'Refuse';
+	@override String get retirer => 'Remove';
+}
+
+// Path: avis.admin.publier
+class _Traductions$avis$admin$publier$en extends Traductions$avis$admin$publier$fr {
+	_Traductions$avis$admin$publier$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String question({required Object deNom}) => 'Publish ${deNom}\'s review?';
+	@override String get consequence => 'The review, display name, country and date will appear on the Rewayah Academy website at the site\'s next update. The text is not edited.';
+	@override String get action => 'Publish the review';
+	@override String get rester => 'Change nothing';
+}
+
+// Path: avis.admin.refuser
+class _Traductions$avis$admin$refuser$en extends Traductions$avis$admin$refuser$fr {
+	_Traductions$avis$admin$refuser$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String titre({required Object deNom}) => 'Refuse ${deNom}\'s review';
+	@override String get intro => 'Choose the reason for refusal. A critical but respectful review is published.';
+	@override String get consequence => 'The review will not be published. The reason is kept.';
+	@override String get action => 'Refuse the review';
+	@override String get rester => 'Change nothing';
+}
+
+// Path: avis.admin.retirer
+class _Traductions$avis$admin$retirer$en extends Traductions$avis$admin$retirer$fr {
+	_Traductions$avis$admin$retirer$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String titre({required Object deNom}) => 'Remove ${deNom}\'s review';
+	@override String get intro => 'Choose the reason for removal.';
+	@override String get consequence => 'The review will disappear from the site at the site\'s next update. The reason is kept.';
+	@override String get action => 'Remove the review';
+	@override String get rester => 'Change nothing';
+}
+
+// Path: avis.admin.motifs
+class _Traductions$avis$admin$motifs$en extends Traductions$avis$admin$motifs$fr {
+	_Traductions$avis$admin$motifs$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get insulte => 'Insult';
+	@override String get tiers => 'Personal data of a third party';
+	@override String get publicite => 'Advertising';
+	@override String get horsSujet => 'Off topic';
+	@override String get doublon => 'Duplicate';
+	@override String get demande => 'Request from the person';
+}
+
+// Path: avis.admin.retour
+class _Traductions$avis$admin$retour$en extends Traductions$avis$admin$retour$fr {
+	_Traductions$avis$admin$retour$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get publie => 'The review is published.';
+	@override String get refuse => 'The review is refused.';
+	@override String get retire => 'The review is removed.';
+	@override String get etatChange => 'This review is no longer in the expected state. The list is updated.';
+	@override String get introuvable => 'This review no longer exists. The list is updated.';
+	@override String get motifManque => 'The reason is missing. Choose one.';
+	@override String get refus => 'Only the signed-in management can decide on a review.';
+	@override String get echec => 'The decision could not be confirmed. The list is reloaded: check the state of the review before trying again.';
+	@override String get horsLigne => 'Nothing was sent: there is no network. Try again as soon as it is back.';
+}
+
+// Path: avis.admin.liens
+class _Traductions$avis$admin$liens$en extends Traductions$avis$admin$liens$fr {
+	_Traductions$avis$admin$liens$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get creerTitre => 'Create a link';
+	@override String get creerIntro => 'A link opens the feedback form, without an account or sign-in. Give it a name so you can recognise it.';
+	@override String get libelle => 'Link name';
+	@override String get libelleAide => 'For example: Families October 2026.';
+	@override String get libelleErreur => 'Give the link a name.';
+	@override String get jours => 'Duration in days';
+	@override String get joursAide => '90 by default, 365 at most.';
+	@override String get joursErreur => 'Enter a number of days from 1 to 365.';
+	@override String get max => 'Maximum number of reviews';
+	@override String get maxAide => '200 by default, 2000 at most.';
+	@override String get maxErreur => 'Enter a number of reviews from 1 to 2000.';
+	@override String get creer => 'Create the link';
+	@override String get echecCreation => 'The creation of the link is not confirmed. Look at the list of links before trying again.';
+	@override String get creeTitre => 'Link created';
+	@override String get creePhrase => 'Copy this link now. It will no longer be shown once this box is closed. If you lose it, close this link and create a new one.';
+	@override String get creeAdresse => 'Link address';
+	@override String creeValable({required Object date}) => 'Valid until ${date}.';
+	@override String get copier => 'Copy the link';
+	@override String get copie => 'Link copied.';
+	@override String get creeFermer => 'I copied the link';
+	@override late final _Traductions$avis$admin$liens$etat$en etat = _Traductions$avis$admin$liens$etat$en._(_root);
+	@override String recus({required Object recus, required Object max}) => 'Reviews received: ${recus} of ${max}';
+	@override String fin({required Object date}) => 'Ends on ${date}';
+	@override String cree({required Object date}) => 'Created on ${date}';
+	@override String get fermer => 'Close the link';
+	@override String fermerQuestion({required Object nom}) => 'Close the link "${nom}"?';
+	@override String get fermerConsequence => 'People who open this link will see that it is closed and can no longer send reviews. Reviews already received stay. A closed link cannot be reopened.';
+	@override String get fermerAction => 'Close the link';
+	@override String get fermerRester => 'Change nothing';
+	@override String get fermeOk => 'The link is closed.';
+	@override String get fermeEchec => 'The closing is not confirmed. The list is reloaded: check the state of the link.';
+	@override String get vide => 'No links for now. Create one to collect reviews.';
+	@override String get erreur => 'The links could not be loaded. Try again.';
+	@override String get sansDonnees => 'The links could not be loaded';
+}
+
+// Path: courriels.admin.sections
+class _Traductions$courriels$admin$sections$en extends Traductions$courriels$admin$sections$fr {
+	_Traductions$courriels$admin$sections$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'Email sections';
+	@override String get ecrire => 'Write';
+	@override String get file => 'Sendings';
+	@override String get adresses => 'Sending addresses';
+}
+
+// Path: courriels.admin.ecrire
+class _Traductions$courriels$admin$ecrire$en extends Traductions$courriels$admin$ecrire$fr {
+	_Traductions$courriels$admin$ecrire$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'New email';
+	@override String get intro => 'The email is queued, then leaves from the address of its category, within the minute. It is only sent when the list of sendings shows Sent.';
+	@override String get adresse => 'Recipient\'s address';
+	@override String get adresseAide => 'A single address. A child\'s account never receives email.';
+	@override String get categorie => 'Category';
+	@override String get categorieAide => 'It decides the sending address and the mailbox that receives replies.';
+	@override String partDe({required Object adresse}) => 'Sent from ${adresse}';
+	@override String get desinscription => 'Every message carries an unsubscribe link.';
+	@override String get sujet => 'Subject';
+	@override String get sujetAide => '120 characters at most.';
+	@override String get corps => 'Message';
+	@override String get corpsAide => 'Plain text, 5000 characters at most. An empty line makes a new paragraph.';
+	@override String get traduction => 'Each recipient receives it in their language: the message is translated automatically when sent.';
+	@override String get envoyer => 'Send the message';
+	@override String get erreurCategories => 'The categories could not be loaded. Try again.';
+	@override String get sansDonneesCategories => 'The categories could not be loaded';
+	@override String get pasDeCategorie => 'No category is active: it is not possible to write for now.';
+	@override late final _Traductions$courriels$admin$ecrire$champ$en champ = _Traductions$courriels$admin$ecrire$champ$en._(_root);
+	@override late final _Traductions$courriels$admin$ecrire$retour$en retour = _Traductions$courriels$admin$ecrire$retour$en._(_root);
+}
+
+// Path: courriels.admin.file
+class _Traductions$courriels$admin$file$en extends Traductions$courriels$admin$file$fr {
+	_Traductions$courriels$admin$file$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$courriels$admin$file$filtre$en filtre = _Traductions$courriels$admin$file$filtre$en._(_root);
+	@override late final _Traductions$courriels$admin$file$statut$en statut = _Traductions$courriels$admin$file$statut$en._(_root);
+	@override late final _Traductions$courriels$admin$file$origine$en origine = _Traductions$courriels$admin$file$origine$en._(_root);
+	@override String get messageAuto => 'Automatic message';
+	@override late final _Traductions$courriels$admin$file$champs$en champs = _Traductions$courriels$admin$file$champs$en._(_root);
+	@override String get actualiser => 'Reload';
+	@override String get reessayer => 'Queue again';
+	@override String get vide => 'No emails in this list.';
+	@override String get erreur => 'The sendings could not be loaded. Try again.';
+	@override String get sansDonnees => 'The sendings could not be loaded';
+	@override late final _Traductions$courriels$admin$file$retour$en retour = _Traductions$courriels$admin$file$retour$en._(_root);
+}
+
+// Path: courriels.admin.adresses
+class _Traductions$courriels$admin$adresses$en extends Traductions$courriels$admin$adresses$fr {
+	_Traductions$courriels$admin$adresses$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get intro => 'Each category leaves from its own address, and replies arrive in the mailbox indicated. This list is read here; it cannot be changed in the app.';
+	@override late final _Traductions$courriels$admin$adresses$champs$en champs = _Traductions$courriels$admin$adresses$champs$en._(_root);
+	@override String get essentielle => 'Tied to the service, no unsubscribe';
+	@override String get facultative => 'With unsubscribe link';
+	@override String get active => 'Active';
+	@override String get coupee => 'Off';
+	@override String get vide => 'No category for now.';
+	@override String get erreur => 'The sending addresses could not be loaded. Try again.';
+	@override String get sansDonnees => 'The sending addresses could not be loaded';
 }
 
 // Path: suiviAttente.cloture.motif
@@ -5134,6 +6323,143 @@ class _Traductions$classe$cartes$feuille$defauts$en extends Traductions$classe$c
 	@override String texteLong({required Object max}) => 'The text exceeds ${max} characters. Shorten it or share a link.';
 	@override String get lienInvalide => 'This link is not a full address. Paste an address that starts with https://.';
 	@override String get echeanceManquante => 'Homework needs a due date. Choose the due date.';
+}
+
+// Path: adulte.recharge.source.motifs
+class _Traductions$adulte$recharge$source$motifs$en extends Traductions$adulte$recharge$source$motifs$fr {
+	_Traductions$adulte$recharge$source$motifs$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get paiementRefuse => 'The payment was refused by the bank or the card. Nothing was charged.';
+	@override String get montantIncoherent => 'The amount received does not match the top-up. Nothing was credited: the management checks with the provider.';
+	@override String get sessionExpiree => 'The payment page expired before payment. Nothing was charged.';
+}
+
+// Path: avis.admin.liens.etat
+class _Traductions$avis$admin$liens$etat$en extends Traductions$avis$admin$liens$etat$fr {
+	_Traductions$avis$admin$liens$etat$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get ouvert => 'Open';
+	@override String get ferme => 'Closed';
+	@override String get expire => 'Expired';
+	@override String get plein => 'Full';
+}
+
+// Path: courriels.admin.ecrire.champ
+class _Traductions$courriels$admin$ecrire$champ$en extends Traductions$courriels$admin$ecrire$champ$fr {
+	_Traductions$courriels$admin$ecrire$champ$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get adresse => 'Enter a valid email address.';
+	@override String get categorie => 'Choose a category.';
+	@override String get sujet => 'Give a subject of 1 to 120 characters.';
+	@override String get corps => 'Write a message of 1 to 5000 characters.';
+	@override String get destinataireExclu => 'This person cannot receive this email: child account or unsubscribed.';
+}
+
+// Path: courriels.admin.ecrire.retour
+class _Traductions$courriels$admin$ecrire$retour$en extends Traductions$courriels$admin$ecrire$retour$fr {
+	_Traductions$courriels$admin$ecrire$retour$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get misEnFile => 'Sending within the minute. Follow it in the list of sendings.';
+	@override String get voir => 'See the sendings';
+	@override String get refus => 'Only the signed-in management can write an email.';
+	@override String get echec => 'The sending is not confirmed. Look at the list of sendings before trying again: the same email will not be queued twice.';
+	@override String get horsLigne => 'Nothing was sent: there is no network. Try again as soon as it is back.';
+}
+
+// Path: courriels.admin.file.filtre
+class _Traductions$courriels$admin$file$filtre$en extends Traductions$courriels$admin$file$filtre$fr {
+	_Traductions$courriels$admin$file$filtre$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get tous => 'All';
+	@override String get enAttente => 'Queued';
+	@override String get envoi => 'Being sent';
+	@override String get envoye => 'Sent';
+	@override String get echec => 'Not sent';
+	@override String get annule => 'Cancelled';
+}
+
+// Path: courriels.admin.file.statut
+class _Traductions$courriels$admin$file$statut$en extends Traductions$courriels$admin$file$statut$fr {
+	_Traductions$courriels$admin$file$statut$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get enAttente => 'Queued';
+	@override String get envoi => 'Being sent';
+	@override String get envoye => 'Sent';
+	@override String get echec => 'Not sent';
+	@override String get annule => 'Cancelled';
+}
+
+// Path: courriels.admin.file.origine
+class _Traductions$courriels$admin$file$origine$en extends Traductions$courriels$admin$file$origine$fr {
+	_Traductions$courriels$admin$file$origine$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get auto => 'Automatic';
+	@override String get manuel => 'Manual';
+}
+
+// Path: courriels.admin.file.champs
+class _Traductions$courriels$admin$file$champs$en extends Traductions$courriels$admin$file$champs$fr {
+	_Traductions$courriels$admin$file$champs$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get destinataire => 'To';
+	@override String get categorie => 'Category';
+	@override String get origine => 'Origin';
+	@override String get creeLe => 'Queued on';
+	@override String get envoyeLe => 'Sent on';
+	@override String get tentatives => 'Attempts';
+	@override String get motifEchec => 'Last error';
+	@override String get langue => 'Language';
+}
+
+// Path: courriels.admin.file.retour
+class _Traductions$courriels$admin$file$retour$en extends Traductions$courriels$admin$file$retour$fr {
+	_Traductions$courriels$admin$file$retour$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get relance => 'Queued again. Sending within the minute.';
+	@override String get introuvable => 'This email no longer needs to be retried. The list is updated.';
+	@override String get echec => 'Queueing again is not confirmed. The list is reloaded: check the state of the email before trying again.';
+	@override String get refus => 'Only the signed-in management can retry an email.';
+	@override String get horsLigne => 'Nothing was sent: there is no network. Try again as soon as it is back.';
+}
+
+// Path: courriels.admin.adresses.champs
+class _Traductions$courriels$admin$adresses$champs$en extends Traductions$courriels$admin$adresses$champs$fr {
+	_Traductions$courriels$admin$adresses$champs$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get expediteur => 'Sent from';
+	@override String get nom => 'Display name';
+	@override String get reponses => 'Replies to';
+	@override String get type => 'Type';
 }
 
 // Path: recrutement.parcours.presentation.p1.academie
@@ -8262,6 +9588,402 @@ extension on TraductionsEn {
 			'classe.cartes.feuille.defauts.texteLong' => ({required Object max}) => 'The text exceeds ${max} characters. Shorten it or share a link.',
 			'classe.cartes.feuille.defauts.lienInvalide' => 'This link is not a full address. Paste an address that starts with https://.',
 			'classe.cartes.feuille.defauts.echeanceManquante' => 'Homework needs a due date. Choose the due date.',
+			'adulte.nav.accueil' => 'Home',
+			'adulte.nav.maClasse' => 'My class',
+			'adulte.nav.coran' => 'Quran',
+			'adulte.accueil.salutation' => ({required Object prenom}) => 'Hello ${prenom}',
+			'adulte.accueil.prochaineSeance' => 'Next session',
+			'adulte.accueil.parcours' => 'My journey',
+			'adulte.accueil.dernieresSeances' => 'Latest sessions',
+			'adulte.accueil.ressources' => 'Class resources',
+			'adulte.accueil.absence' => 'Absence',
+			'adulte.accueil.aucuneClasse' => 'No class for now.',
+			'adulte.accueil.aucuneClasseDetail' => 'Your next session will appear here as soon as your class is open.',
+			'adulte.accueil.retourFoyerTitre' => 'Back to your family\'s home',
+			'adulte.accueil.retourFoyerPhrase' => 'Find your relatives\' classes and sessions.',
+			'adulte.accueil.financesPhrase' => 'Your balance, your funded period and your monthly fee.',
+			'adulte.accueil.sansDonnees' => 'Your next session and your latest sessions could not be loaded',
+			'adulte.accueil.echec' => 'Your next session and your latest sessions could not be loaded: your request may not have reached Rewayah. Try again in a moment.',
+			'adulte.historique.titre' => 'My past sessions',
+			'adulte.historique.sansDonnees' => 'Your past sessions could not be loaded',
+			'adulte.historique.echec' => 'Your past sessions could not be loaded: your request may not have reached Rewayah. Try again in a moment.',
+			'adulte.historique.vide' => 'No past sessions for now.',
+			'adulte.historique.videDetail' => 'Your sessions will appear here after your first class.',
+			'adulte.maClasse.aPropos' => 'About this class',
+			'adulte.maClasse.participants' => 'Participants',
+			'adulte.maClasse.vous' => ({required Object prenom}) => '${prenom} (you)',
+			'adulte.maClasse.sansDonnees' => 'Your class could not be loaded',
+			'adulte.maClasse.aucuneClasseDetail' => 'Your class, its participants and its resources will appear here as soon as it is open.',
+			'adulte.monEspace.informations' => 'My information',
+			'adulte.monEspace.paiements' => 'Payments',
+			'adulte.coranDemo.titre' => 'Available after sign-in',
+			'adulte.coranDemo.phrase' => 'This is not a fault: the demo does not contain the Quran text. After you sign in to your student space, it opens here.',
+			'adulte.recharge.titre' => 'Top-up',
+			'adulte.recharge.phrase' => 'Choose the profiles and the amounts.',
+			'adulte.recharge.verifier' => 'Check the top-up',
+			'adulte.recharge.raisonAucun' => 'Select at least one profile to continue.',
+			'adulte.recharge.sansDonnees' => 'The beneficiaries to top up could not be loaded',
+			'adulte.recharge.indisponibleTitre' => 'Top-up not available yet',
+			'adulte.recharge.indisponiblePhrase' => 'Top-up is not yet available in the app. No payment is possible here for now.',
+			'adulte.recharge.verificationEchecTitre' => 'The check did not complete.',
+			'adulte.recharge.verificationEchecPhrase' => 'Your choices are kept. You can try again.',
+			'adulte.recharge.recapitulatif' => 'Summary by profile',
+			'adulte.recharge.montantPaye' => 'Amount paid',
+			'adulte.recharge.soldeAttribue' => 'Balance credited',
+			'adulte.recharge.statut' => 'Credit status',
+			'adulte.recharge.total' => 'Total to pay',
+			'adulte.recharge.payer' => ({required Object montant}) => 'Pay ${montant}',
+			'adulte.recharge.horsLignePayer' => 'You will be able to pay when the connection is back.',
+			'adulte.recharge.paiementEchecTitre' => 'The payment was not confirmed.',
+			'adulte.recharge.paiementEchecPhrase' => 'Check before trying again.',
+			'adulte.recharge.paiementIndisponibleTitre' => 'Payment not available yet',
+			'adulte.recharge.paiementIndisponiblePhrase' => 'No payment was made. Online payment is not yet open in the app.',
+			'adulte.recharge.formules.trimestriel' => ({required Object montant}) => '${montant} for 3 months, paid in advance',
+			'adulte.recharge.formules.annuel' => ({required Object montant}) => '${montant} for 12 months, paid in advance',
+			'adulte.recharge.revenirPaiements' => 'Back to the household payments',
+			'adulte.recharge.phraseUnique' => 'Tick the profile, then choose the amount.',
+			'adulte.recharge.profils' => 'Profiles to top up',
+			'adulte.recharge.profilUnique' => 'Profile to top up',
+			'adulte.recharge.soldeActuel' => ({required Object montant}) => 'Current balance: ${montant}',
+			'adulte.recharge.montantSuggere' => ({required Object montant}) => 'Suggested amount: ${montant}',
+			'adulte.recharge.montantPour' => ({required Object prenom}) => 'Amount for ${prenom}',
+			'adulte.recharge.diminuer' => ({required Object prenom}) => 'Decrease the amount for ${prenom}',
+			'adulte.recharge.augmenter' => ({required Object prenom}) => 'Increase the amount for ${prenom}',
+			'adulte.recharge.repartition' => 'A single payment will be made. Each amount goes to the balance of its profile: there is no shared balance.',
+			'adulte.recharge.moyen' => 'Payment method',
+			'adulte.recharge.raisonMontant' => 'Choose an amount for each selected profile.',
+			'adulte.recharge.payerSeul' => 'Pay',
+			'adulte.recharge.conditionsRemboursement' => 'Refund and dispute: read the terms',
+			'adulte.recharge.fraisContestation' => 'If you dispute a payment with your bank, the dispute fees are added to your household balance.',
+			'adulte.recharge.ajouter' => ({required Object prenom}) => 'Add ${prenom} to the top-up',
+			'adulte.recharge.regularisationDe' => ({required Object prenom, required Object message}) => '${prenom}: ${message}',
+			'adulte.recharge.commandeRendue' => 'The payment has been sent. Do not pay a second time: follow its status.',
+			'adulte.recharge.suivrePaiement' => 'Follow the payment',
+			'adulte.recharge.resultat.formulaireTitre' => 'Pay here, without leaving the app',
+			'adulte.recharge.resultat.formulairePhrase' => 'Enter your payment details below. Balances only change after the payment is confirmed.',
+			'adulte.recharge.resultat.formulaireEchecTitre' => 'The payment form did not appear.',
+			'adulte.recharge.resultat.formulaireEchecPhrase' => 'Try again in a moment. Nothing was paid through this form.',
+			'adulte.recharge.resultat.formulaireSansPayer' => 'Back to balances without paying',
+			'adulte.recharge.resultat.preparationTitre' => 'Payment being prepared',
+			'adulte.recharge.resultat.preparationPhrase' => 'Check the breakdown before paying.',
+			'adulte.recharge.resultat.attenteTitre' => 'Payment being confirmed',
+			'adulte.recharge.resultat.attentePhrase' => 'The payment provider has not confirmed yet. Balances only change after its confirmation.',
+			'adulte.recharge.resultat.attenteBandeauTitre' => 'Do not pay a second time.',
+			'adulte.recharge.resultat.attenteBandeauPhrase' => 'This payment may have already gone through. Reload in a few moments to see its status.',
+			'adulte.recharge.resultat.confirmeTitre' => 'Payment confirmed',
+			'adulte.recharge.resultat.confirmePhrase' => 'The payment is confirmed. Balances are about to be updated.',
+			'adulte.recharge.resultat.allocationPhrase' => 'Updating balances...',
+			'adulte.recharge.resultat.terminePhrase' => ({required Object montant}) => 'Your payment of ${montant} was made and split between the selected profiles.',
+			'adulte.recharge.resultat.details' => 'Payment details',
+			'adulte.recharge.resultat.reference' => 'Reference',
+			'adulte.recharge.resultat.date' => 'Date',
+			'adulte.recharge.resultat.moyen' => 'Payment method',
+			'adulte.recharge.resultat.total' => 'Total amount',
+			'adulte.recharge.resultat.repartition' => 'Breakdown by profile',
+			'adulte.recharge.resultat.nouveauSolde' => ({required Object montant}) => 'New balance: ${montant}',
+			'adulte.recharge.resultat.soldesTitre' => 'Balances updated',
+			'adulte.recharge.resultat.soldesPhrase' => 'The new balances are available for each profile concerned.',
+			'adulte.recharge.resultat.retourSoldes' => 'Back to balances',
+			'adulte.recharge.resultat.echecTitre' => 'The payment failed',
+			'adulte.recharge.resultat.echecPhrase' => 'No balance was credited. Your selection is kept: you can try again or change payment method.',
+			'adulte.recharge.resultat.echecMotif' => 'Reason',
+			'adulte.recharge.resultat.reessayer' => 'Try again',
+			'adulte.recharge.resultat.changerMoyen' => 'Change payment method',
+			'adulte.recharge.resultat.annuleTitre' => 'Payment cancelled',
+			'adulte.recharge.resultat.annulePhrase' => 'The payment was cancelled before its confirmation. No balance was credited. You can start again with the same selection.',
+			'adulte.recharge.resultat.perimeTitre' => 'Order expired',
+			'adulte.recharge.resultat.perimePhrase' => 'The payment deadline for this order has passed. No balance was credited. Start the top-up again to get a new order.',
+			'adulte.recharge.resultat.recommencer' => 'Start the top-up again',
+			'adulte.recharge.resultat.actualiser' => 'Reload',
+			'adulte.recharge.resultat.horsLigne' => 'The status shown may have changed since: reload as soon as reading is possible again.',
+			'adulte.recharge.resultat.videTitre' => 'No payment to follow',
+			'adulte.recharge.resultat.videPhrase' => 'This address does not designate any order. Go back to the household payments to find your top-ups.',
+			'adulte.recharge.resultat.indisponibleTitre' => 'Payment tracking not available yet',
+			'adulte.recharge.resultat.indisponiblePhrase' => 'Payment status is not yet available in the app. No payment was made here.',
+			'adulte.recharge.resultat.lectureEchecTitre' => 'The payment status could not be loaded.',
+			'adulte.recharge.resultat.lectureEchecPhrase' => 'The payment is not cancelled for that. Do not pay a second time: try loading again.',
+			'adulte.recharge.source.avantPaiement' => 'Waiting for payment',
+			'adulte.recharge.source.motifs.paiementRefuse' => 'The payment was refused by the bank or the card. Nothing was charged.',
+			'adulte.recharge.source.motifs.montantIncoherent' => 'The amount received does not match the top-up. Nothing was credited: the management checks with the provider.',
+			'adulte.recharge.source.motifs.sessionExpiree' => 'The payment page expired before payment. Nothing was charged.',
+			'adulte.paiements.beneficiaires' => 'Beneficiaries',
+			'adulte.paiements.recharger' => 'Top up',
+			'adulte.paiements.recapitulatif' => ({required Object valeur}) => 'Household summary: ${valeur}. Each balance stays that of its beneficiary.',
+			'adulte.paiements.bientotEpuise' => 'Almost used up',
+			'adulte.paiements.inactif' => 'Inactive',
+			'adulte.paiements.historique' => 'Payment history',
+			'adulte.paiements.soldesSansDonnees' => 'The balances of your household could not be loaded',
+			'adulte.paiements.soldesIndisponiblesTitre' => 'Balances cannot be viewed yet',
+			'adulte.paiements.soldesIndisponiblesPhrase' => 'The balance of each beneficiary is not yet available in the app. No top-up is possible here for now.',
+			'adulte.paiements.aucunBeneficiaireTitre' => 'No beneficiary',
+			'adulte.paiements.aucunBeneficiairePhrase' => 'No student profile in your household has a balance to top up for now.',
+			'adulte.famille.ajouter' => 'Add my family',
+			'adulte.famille.ajouterLegende' => 'Register your children and invite a spouse to join your family plan.',
+			'adulte.famille.ajouterPhrase' => 'You can add your children and invite a spouse to join your family plan. Your student space stays unchanged.',
+			'adulte.famille.inscrireEnfant' => 'Register a child',
+			'adulte.famille.maFamille' => 'My family',
+			'adulte.famille.forfaitFamille' => 'Family plan',
+			'adulte.famille.titulaire' => 'You are the household account holder',
+			'adulte.famille.paiementsFoyer' => 'Household payments',
+			'adulte.famille.aProposForfait' => 'About the family plan',
+			'adulte.famille.aProposForfaitPhrase' => 'The family plan includes an account holder, an adult spouse, and the children or teenagers under the account holder\'s responsibility. Each adult keeps their own account.',
+			'adulte.famille.profilNonCreeTitre' => 'Demo: no profile was created',
+			'adulte.famille.profilNonCreePhrase' => 'In the demo, nothing is sent. My family stays as it was.',
+			'adulte.famille.profilNonCreePhraseSeul' => 'In the demo, nothing is sent. Your student space stays as it was.',
+			'adulte.famille.monProfilIndisponibleTitre' => 'Not available yet',
+			'adulte.famille.monProfilIndisponiblePhrase' => 'Creating a separate student profile is not yet available. Your classes and My family stay as they are.',
+			'adulte.famille.indisponibleTitre' => 'The family section is not available yet',
+			'adulte.famille.indisponiblePhrase' => 'Your family or your family plan will appear here as soon as it is available.',
+			'adulte.famille.place.ajouterConjointe' => 'Add a spouse',
+			'adulte.famille.place.ajouterConjoint' => 'Add a spouse',
+			'adulte.famille.place.inviterConjointe' => 'Invite your spouse to join Rewayah with her own account.',
+			'adulte.famille.place.inviterConjoint' => 'Invite your spouse to join Rewayah with his own account.',
+			'adulte.famille.place.invitationEnvoyee' => 'Invitation sent',
+			'adulte.famille.place.maConjointe' => ({required Object prenom}) => '${prenom}, your spouse',
+			'adulte.famille.place.monConjoint' => ({required Object prenom}) => '${prenom}, your spouse',
+			'adulte.famille.place.validationEnAttente' => 'Pending administrative approval',
+			'adulte.famille.place.validationRefusee' => 'Approval refused by the management',
+			'adulte.famille.place.nouvelleDemande' => 'Make a new request',
+			'adulte.famille.place.nouvelleInvitation' => ({required Object date}) => 'A new invitation is possible from ${date}',
+			'adulte.famille.place.envoyeeA' => ({required Object courriel}) => 'Sent to ${courriel}',
+			'adulte.famille.place.expiree' => 'The previous invitation has expired. You can send a new one.',
+			'adulte.famille.place.annulee' => 'The invitation was cancelled and can no longer be accepted. You can send a new one.',
+			'adulte.invitation.titreElle' => 'Invite my spouse',
+			'adulte.invitation.titreLui' => 'Invite my spouse',
+			'adulte.invitation.enteteElle' => 'A personal account for her',
+			'adulte.invitation.enteteLui' => 'A personal account for him',
+			'adulte.invitation.phraseElle' => 'Your spouse will use her own account. She will not be able to manage your household or the student profiles you created.',
+			'adulte.invitation.phraseLui' => 'Your spouse will use his own account. He will not be able to manage your household or the student profiles you created.',
+			'adulte.invitation.prenom' => 'First name',
+			'adulte.invitation.nom' => 'Last name',
+			'adulte.invitation.nomAide' => 'Optional.',
+			'adulte.invitation.nomAidePrerempli' => 'Optional. Filled in with your account name: change it if needed.',
+			'adulte.invitation.courriel' => 'Email address',
+			'adulte.invitation.courrielAideElle' => 'The email address will be used to send your spouse the invitation to join Rewayah.',
+			'adulte.invitation.courrielAideLui' => 'The email address will be used to send your spouse the invitation to join Rewayah.',
+			'adulte.invitation.titreNeutre' => 'Invite a second adult',
+			'adulte.invitation.enteteNeutre' => 'A personal account for this person',
+			'adulte.invitation.phraseNeutre' => 'This person will use their own account. They will not be able to manage your household or the student profiles you created.',
+			'adulte.invitation.courrielAideNeutre' => 'The email address will be used to send this person the invitation to join Rewayah.',
+			'adulte.invitation.refusPhraseFoyer' => 'Nothing was sent. An invitation may already be in progress for your household, or this address cannot join it. Check the address, then go back to the household.',
+			'adulte.invitation.prenomRequis' => 'Enter their first name.',
+			'adulte.invitation.courrielRequis' => 'Enter their email address.',
+			'adulte.invitation.courrielInvalide' => 'Check the email address: it should look like name@example.com.',
+			'adulte.invitation.verifier' => 'Continue',
+			'adulte.invitation.verifierTitre' => 'Check and send',
+			'adulte.invitation.verifierPhrase' => 'Read this information again. The invitation will go to this address.',
+			'adulte.invitation.nonRenseigne' => 'Not provided',
+			'adulte.invitation.modifier' => 'Edit',
+			'adulte.invitation.envoyer' => 'Send the invitation',
+			'adulte.invitation.horsLigne' => 'Nothing is sent. You can send the invitation yourself when the connection is back.',
+			'adulte.invitation.echecTitre' => 'The sending was not confirmed.',
+			'adulte.invitation.echecPhrase' => 'Check before trying again. Your information is kept.',
+			'adulte.invitation.refusTitre' => 'This invitation cannot be sent',
+			'adulte.invitation.refusPhrase' => 'My family shows the current state of the place.',
+			'adulte.invitation.envoyeeTitre' => 'Invitation sent',
+			'adulte.invitation.envoyeePhrase' => ({required Object courriel}) => 'The invitation was sent to ${courriel}.',
+			'adulte.invitation.revenirMaFamille' => 'Back to My family',
+			'adulte.invitation.detailPhrase' => 'The invitation is waiting for a reply. You can cancel it as long as it has not been accepted.',
+			'adulte.invitation.annuler' => 'Cancel the invitation',
+			'adulte.invitation.annulerQuestion' => ({required Object dePrenom}) => 'Cancel ${dePrenom}\'s invitation?',
+			'adulte.invitation.annulerQuestionSansPrenom' => 'Cancel this invitation?',
+			'adulte.invitation.annulerHorsLigne' => 'Nothing is cancelled. You can cancel the invitation yourself when the connection is back.',
+			'adulte.invitation.annulerConsequence' => 'The invitation can no longer be accepted. You can send a new one whenever you like.',
+			'adulte.invitation.garder' => 'Keep the invitation',
+			'adulte.invitation.annulationEchecTitre' => 'The cancellation was not confirmed.',
+			'adulte.invitation.annulationEchecPhrase' => 'Check before trying again.',
+			'adulte.invitation.valableJusquau' => ({required Object date}) => 'Valid until ${date}',
+			'adulte.invitation.renvoyer' => 'Resend the invitation',
+			'adulte.invitation.renvoyeePhrase' => ({required Object courriel}) => 'The invitation was sent again to ${courriel}, with a new code: the one in the previous email no longer works.',
+			'adulte.invitation.renvoisRestants' => ({required Object n}) => 'Resends still possible: ${n}',
+			'adulte.invitation.renvoiLimite' => 'The invitation has already been resent three times. Cancel it to send a new one.',
+			'adulte.invitation.renvoiPerimee' => 'This invitation has expired. Go back to the household to send a new one.',
+			'adulte.invitation.renvoiEchecTitre' => 'The resend was not confirmed.',
+			'adulte.invitation.renvoyerSiEchec' => 'If the person invited cannot create their account, resend them the invitation.',
+			'adulte.acceptation.notification' => ({required Object prenom}) => '${prenom} invites you to join their family plan.',
+			'adulte.acceptation.titre' => ({required Object dePrenom}) => 'Join ${dePrenom}\'s family plan',
+			'adulte.acceptation.faisonsTitre' => 'What we do',
+			'adulte.acceptation.faisons' => ({required Object prenom}) => '${prenom} invites you to their family plan. If you accept, your account is linked to their household. Your account stays yours. Nothing is merged.',
+			'adulte.acceptation.pourquoiTitre' => 'Why',
+			'adulte.acceptation.pourquoiElle' => ({required Object prenom}) => '${prenom} manages the household and pays for its members. To pay for your classes, she must see your balance.',
+			'adulte.acceptation.pourquoiLui' => ({required Object prenom}) => '${prenom} manages the household and pays for its members. To pay for your classes, he must see your balance.',
+			'adulte.acceptation.verraTitre' => ({required Object quePrenom}) => 'What ${quePrenom} will see',
+			'adulte.acceptation.verraElle' => 'Your first and last name. Your balance, or the need to top it up. The plan that concerns you. The state of your access, if it prevents payment. She will also know if you leave the family plan.',
+			'adulte.acceptation.verraLui' => 'Your first and last name. Your balance, or the need to top it up. The plan that concerns you. The state of your access, if it prevents payment. He will also know if you leave the family plan.',
+			'adulte.acceptation.verraPasTitre' => ({required Object quePrenom}) => 'What ${quePrenom} will not see',
+			'adulte.acceptation.verraPas' => 'Your class. Your level. Your sessions and your attendance. Your progress. Your messages. Your notifications. Your personal payment methods. Your ID documents.',
+			'adulte.acceptation.vousTitre' => 'What you will not see',
+			'adulte.acceptation.vous' => ({required Object dePrenom}) => 'The classes, progress and messages of ${dePrenom} and the household\'s children. You will not be able to add a child, invite anyone or change the household.',
+			'adulte.acceptation.autresTitre' => 'Who else sees',
+			'adulte.acceptation.autres' => 'Your teacher sees nothing of your household. The academy team sees the link, to manage it and, if necessary, approve it.',
+			'adulte.acceptation.dureeTitre' => 'How long',
+			'adulte.acceptation.duree' => ({required Object quePrenom}) => 'The link lasts until you leave the family plan, or ${quePrenom} ends it.',
+			'adulte.acceptation.conservation' => ({required Object duree}) => 'We keep a record of the link ${duree}.',
+			'adulte.acceptation.partirTitre' => 'How to leave',
+			'adulte.acceptation.partir' => 'In My space, Family plan, Leave the family plan. You do not need their agreement. Your account, your classes, your history and your balance stay available.',
+			'adulte.acceptation.refusTitre' => 'If you decline',
+			'adulte.acceptation.refus' => 'Nothing changes for your account, your classes or your balance.',
+			'adulte.acceptation.validation' => 'This link must be approved by the academy\'s administration. In the meantime, your account and your classes work normally.',
+			'adulte.acceptation.refuser' => 'Decline the invitation',
+			'adulte.acceptation.accepter' => 'Accept the invitation',
+			'adulte.acceptation.horsLigne' => 'Nothing is sent. You can reply yourself when the connection is back.',
+			'adulte.acceptation.acceptationEchecTitre' => 'The acceptance was not confirmed.',
+			'adulte.acceptation.refusEchecTitre' => 'The refusal was not confirmed.',
+			'adulte.acceptation.echecPhrase' => 'Check before trying again.',
+			'adulte.acceptation.accepteeTitre' => 'Invitation accepted',
+			'adulte.acceptation.rejoint' => ({required Object dePrenom}) => 'You joined ${dePrenom}\'s family plan.',
+			'adulte.acceptation.refuseeTitre' => 'Invitation declined',
+			'adulte.acceptation.impossible' => 'This account cannot join this plan at the moment.',
+			'adulte.acceptation.perimee' => 'This invitation is no longer valid.',
+			'adulte.acceptation.recu' => ({required Object date}) => 'Reply recorded on ${date}.',
+			'adulte.acceptation.titreNeutre' => 'Family plan invitation',
+			'adulte.acceptation.sansCompteTitre' => 'Family plan invitation',
+			'adulte.acceptation.sansCompte' => 'To reply, sign in to your account, or create one. You will then read what the person inviting you will and will not see before you decide.',
+			'adulte.acceptation.sansCompteAction' => 'Sign in or create my account',
+			'adulte.sortie.retirerElle' => 'Remove my spouse',
+			'adulte.sortie.retirerLui' => 'Remove my spouse',
+			'adulte.sortie.retirerQuestionElle' => 'Remove my spouse?',
+			'adulte.sortie.retirerQuestionLui' => 'Remove my spouse?',
+			'adulte.sortie.retirerConsequence' => 'Their account, classes, history and balance will not be deleted.',
+			'adulte.sortie.placePhrase' => ({required Object prenom}) => '${prenom} is part of your family plan, with their own account.',
+			'adulte.sortie.quitter' => 'Leave the family plan',
+			'adulte.sortie.quitterQuestion' => 'Leave the family plan?',
+			'adulte.sortie.quitterConfirmer' => 'Leave the plan',
+			_ => null,
+		} ?? switch (path) {
+			'adulte.sortie.quitterConsequence' => 'Your account, classes, history and balance stay available. The link to the family plan will end.',
+			'adulte.sortie.forfaitPhrase' => ({required Object dePrenom}) => 'You are part of ${dePrenom}\'s family plan.',
+			'adulte.sortie.resultatTitre' => 'The link to the family plan has ended',
+			'adulte.sortie.resultatTitulaire' => 'Their account, classes, history and balance stay available.',
+			'adulte.sortie.resultatSecondAdulte' => 'Your account, classes, history and balance stay available.',
+			'adulte.sortie.compris' => 'Understood',
+			'adulte.sortie.retraitEchecTitre' => 'The removal was not confirmed.',
+			'adulte.sortie.departEchecTitre' => 'Leaving was not confirmed.',
+			'adulte.sortie.echecPhrase' => 'Check before trying again.',
+			'adulte.sortie.horsLigne' => 'Nothing is sent. You can try again yourself when the connection is back.',
+			'adulte.sortie.notificationQuitte' => ({required Object prenom}) => '${prenom} left your family plan.',
+			'adulte.sortie.notificationRetiree' => ({required Object dePrenom}) => 'You were removed from ${dePrenom}\'s family plan.',
+			'adulte.sortie.notificationRetire' => ({required Object dePrenom}) => 'You were removed from ${dePrenom}\'s family plan.',
+			'adulte.sortie.delaiTitre' => 'New invitation unavailable',
+			'adulte.sortie.delaiPhrase' => ({required Object date}) => 'A new request can be made from ${date}. It will then have to be approved by the administration.',
+			'adulte.sortie.pourquoi' => 'Why this wait?',
+			'adulte.sortie.pourquoiPhrase' => 'This measure ensures the safety of households and the proper management of children\'s access.',
+			'adulte.sortie.foyerPersonnel' => 'A personal household was created for you: you will find your account and your students there.',
+			'adulte.reprise.titre' => 'Household takeover request',
+			'adulte.reprise.explication' => 'Use this process if the household account holder has passed away. The request will be reported to the account concerned and reviewed by the administration.',
+			'adulte.reprise.reprisTitre' => 'What will be taken over',
+			'adulte.reprise.repris.profils' => 'The existing minor profiles',
+			'adulte.reprise.repris.composition' => 'The future composition of the household according to the active rules',
+			'adulte.reprise.repris.paiements' => 'The household\'s future payments',
+			'adulte.reprise.repris.parcours' => 'The guardian journeys attached to the minors',
+			'adulte.reprise.jamaisTitre' => 'What is never taken over',
+			'adulte.reprise.jamais.identifiants' => 'The account holder\'s sign-in credentials',
+			'adulte.reprise.jamais.messages' => 'Their private messages',
+			'adulte.reprise.jamais.conversations' => 'Their conversations',
+			'adulte.reprise.jamais.historique' => 'Their personal teaching history',
+			'adulte.reprise.jamais.moyensPaiement' => 'Their saved payment methods',
+			'adulte.reprise.jamais.pieces' => 'Their ID documents',
+			'adulte.reprise.jamais.donnees' => 'Their private data unrelated to managing the household',
+			'adulte.reprise.succession' => 'This is a succession of the household account holder role, not a takeover of the personal account.',
+			'adulte.reprise.deposer' => 'Submit the request',
+			'adulte.reprise.deposerQuestion' => 'Submit this request?',
+			'adulte.reprise.deposerConsequence' => 'The household account holder will be informed and can refuse it. The administration will then review the request and decide.',
+			'adulte.reprise.horsLigne' => 'Nothing is sent. You can submit the request yourself when the connection is back.',
+			'adulte.reprise.depotEchecTitre' => 'The request was not confirmed.',
+			'adulte.reprise.echecPhrase' => 'Check before trying again.',
+			'adulte.reprise.motif' => 'Reason',
+			'adulte.reprise.motifDeces' => 'Reported death of the account holder',
+			'adulte.reprise.deposeeLe' => 'Submitted on',
+			'adulte.reprise.etat' => 'Status',
+			'adulte.reprise.etats.deposee' => 'Submitted',
+			'adulte.reprise.etats.refuseeParTitulaire' => 'Refused by the account holder',
+			'adulte.reprise.etats.attenteAdministration' => 'Pending the administration',
+			'adulte.reprise.etats.validee' => 'Approved',
+			'adulte.reprise.etats.refusee' => 'Refused',
+			'adulte.reprise.phrases.deposee' => 'The household account holder has been informed. The administration will review the request.',
+			'adulte.reprise.phrases.examenLe' => ({required Object date}) => 'With no reply from the account holder, the administration can review it from ${date}.',
+			'adulte.reprise.phrases.refuseeParTitulaire' => 'The household account holder refused this request. The administration is informed. No household permission is transferred.',
+			'adulte.reprise.phrases.attenteAdministration' => 'The account holder has not replied. Nothing is transferred automatically: the administration must still review the request.',
+			'adulte.reprise.phrases.validee' => 'The administration approved the request. You are now the household account holder.',
+			'adulte.reprise.phrases.refusee' => 'The administration refused the request. No household permission is transferred.',
+			'adulte.reprise.phrases.redepotLe' => ({required Object date}) => 'A new request can be submitted from ${date}.',
+			'adulte.reprise.titulaire.notification' => 'A request to take over your household was submitted stating your death.',
+			'adulte.reprise.titulaire.consigne' => 'If this request is wrong, refuse it.',
+			'adulte.reprise.titulaire.refuser' => 'Refuse the request',
+			'adulte.reprise.titulaire.ligne' => 'A request to take over your household was submitted.',
+			'adulte.reprise.titulaire.refusEchecTitre' => 'The refusal was not confirmed.',
+			'adulte.reprise.titulaire.horsLigne' => 'Nothing is sent. You can refuse the request yourself when the connection is back.',
+			'adulte.reprise.titulaire.refusee' => 'You refused this request. The administration is informed. No permission of your household is transferred.',
+			'adulte.reprise.notifications.refuseeParTitulaire' => 'The household account holder refused your request to take over the household.',
+			'adulte.reprise.notifications.attenteAdministration' => 'Your request to take over the household is pending the administration.',
+			'adulte.reprise.notifications.validee' => 'Your request to take over the household was approved.',
+			'adulte.reprise.notifications.refusee' => 'Your request to take over the household was refused.',
+			'adulte.demo.titre' => 'Adult student demo',
+			'adulte.demo.mention' => 'The data is fictitious and nothing is sent.',
+			'adulte.demo.intro' => 'Choose a screen, then a situation of the Diallo household.',
+			'adulte.demo.ecrans' => 'The screens',
+			'adulte.demo.situations' => 'The household situations',
+			'adulte.demo.variantes' => 'The variants',
+			'adulte.demo.titulaireFemme' => 'The account holder is a woman, her husband is the second adult.',
+			'adulte.demo.vueConjointe' => 'My space as seen by the wife, second adult of the household.',
+			'adulte.demo.vueConjoint' => 'My space as seen by the husband, second adult of the household.',
+			'adulte.demo.invitationRecueConjointe' => 'The invitation received by the wife, in her own account.',
+			'adulte.demo.invitationRecueConjoint' => 'The invitation received by the husband, in his own account.',
+			'adulte.demo.invitationSansCompte' => 'The invitation opened without an account.',
+			'adulte.demo.reseauCoupe' => 'The network is cut: Home and My class offline.',
+			'adulte.demo.donnees.soldeTitulaire' => 'Demo balance 1',
+			'adulte.demo.donnees.soldeSecondAdulte' => 'Demo balance 2',
+			'adulte.demo.donnees.soldeAicha' => 'Demo balance 3',
+			'adulte.demo.donnees.soldeOumar' => 'Demo balance 4',
+			'adulte.demo.donnees.totalAvecSecondAdulte' => 'Demo total A',
+			'adulte.demo.donnees.totalSansSecondAdulte' => 'Demo total B',
+			'adulte.demo.donnees.prixOffreA' => '€5.00 (demo)',
+			'adulte.demo.donnees.prixOffreB' => '€10.00 (demo)',
+			'adulte.demo.donnees.detailOffreA' => 'Demo balance A',
+			'adulte.demo.donnees.detailOffreB' => 'Demo balance B',
+			'adulte.demo.donnees.totalRecharge5' => '€5.00 (demo)',
+			'adulte.demo.donnees.totalRecharge10' => '€10.00 (demo)',
+			'adulte.demo.donnees.totalRecharge15' => '€15.00 (demo)',
+			'adulte.demo.donnees.totalRecharge20' => '€20.00 (demo)',
+			'adulte.demo.donnees.totalRecharge25' => '€25.00 (demo)',
+			'adulte.demo.donnees.totalRecharge30' => '€30.00 (demo)',
+			'adulte.demo.donnees.totalRecharge35' => '€35.00 (demo)',
+			'adulte.demo.donnees.totalRecharge40' => '€40.00 (demo)',
+			'adulte.demo.etats.adulteSeul' => 'The adult is alone, with no household.',
+			'adulte.demo.etats.titulaireSansConjoint' => 'The household has no second adult.',
+			'adulte.demo.etats.invitationEnAttente' => 'The second adult\'s invitation is pending.',
+			'adulte.demo.etats.invitationExpiree' => 'The second adult\'s invitation has expired.',
+			'adulte.demo.etats.invitationAnnulee' => 'The second adult\'s invitation was cancelled.',
+			'adulte.demo.etats.conjointActif' => 'The second adult is part of the household.',
+			'adulte.demo.etats.conjointQuitte' => 'The second adult left the household.',
+			'adulte.demo.etats.conjointRetire' => 'The second adult was removed from the household.',
+			'adulte.demo.etats.delai60' => 'A first waiting period is in progress.',
+			'adulte.demo.etats.nouvelleDemande' => 'A new invitation is possible after the first waiting period.',
+			'adulte.demo.etats.validationEnAttente' => 'Administrative approval is pending.',
+			'adulte.demo.etats.validationRefusee' => 'Administrative approval was refused.',
+			'adulte.demo.etats.secondDepart' => 'The second adult left for the second time.',
+			'adulte.demo.etats.delai120' => 'A following, longer waiting period is in progress.',
+			'adulte.demo.etats.departsSuivants' => 'After the third departure, the following waiting period still applies.',
+			'adulte.demo.etats.repriseDemandee' => 'A request to take over the household was submitted.',
+			'adulte.demo.etats.repriseRefuseeParTitulaire' => 'The takeover request was refused by the account holder.',
+			'adulte.demo.etats.repriseSansReponse' => 'With no reply within the period, the request waits for the administration.',
+			'adulte.demo.etats.repriseValidee' => 'The household takeover was approved.',
+			'adulte.demo.etats.repriseRefusee' => 'The household takeover was refused.',
+			'adulte.demo.etats.dejaDansUnAutreFoyer' => 'The invited adult is already part of another household.',
+			'adulte.demo.etats.erreurReseau' => 'The network dropped during an action.',
+			'adulte.demo.etats.doubleSoumission' => 'The same action was sent twice.',
+			'adulte.demo.etats.notificationDansLApplication' => 'The notification could not be sent to the phone, it stays visible in the app.',
+			'adulte.demo.etats.emancipation' => 'Emancipation of a student who became an adult: not built in this wave.',
+			'adulte.finances.indisponibleTitre' => 'Your finances are not available yet',
+			'adulte.finances.indisponiblePhrase' => 'Your balance, your funded period and your monthly fee will appear here as soon as the academy has published them. No payment is asked of you here.',
+			'adulte.finances.erreurTitre' => 'Your finances cannot be loaded',
+			'adulte.finances.videTitre' => 'No finances recorded',
+			'adulte.finances.videPhrase' => 'No balance or monthly fee is shown yet for your profile. They will appear here after you register in a class.',
+			'adulte.finances.voirMouvementsSemantique' => 'See your movements',
+			'adulte.finances.mouvementsContexte' => 'Your top-ups, monthly fees, discounts and credit notes, from the most recent to the oldest. Nothing is erased: a correction is added as a new movement.',
+			'adulte.finances.mouvementsErreurTitre' => 'Your movements cannot be loaded',
+			'adulte.finances.mouvementsIndisponiblePhrase' => 'Your top-ups and monthly fees will appear here once they are in service.',
+			'adulte.finances.mouvementsVidePhrase' => 'No top-up or monthly fee is recorded yet for your profile. Movements will appear here after the first payment.',
 			'suiviFamille.titre' => 'Tracking of requests',
 			'suiviFamille.contexte' => 'Each request moves forward step by step. You are notified at each stage.',
 			'suiviFamille.carteTitre' => ({required Object dePrenom}) => '${dePrenom}\'s request',
@@ -8400,6 +10122,250 @@ extension on TraductionsEn {
 			'juridique.coord.numero' => 'Registration number: 16624644, England and Wales',
 			'juridique.coord.adresse' => 'Registered office: 71-75 Shelton Street, Covent Garden, London WC2H 9JQ, United Kingdom',
 			'juridique.aCompleter' => ({required Object quoi}) => '[to be completed by the management: ${quoi}]',
+			'avis.form.titre' => 'Give your feedback',
+			'avis.form.sousTitre' => 'A few lines about your experience at Rewayah Academy. Two minutes is enough.',
+			'avis.form.nom.libelle' => 'Display name',
+			'avis.form.nom.aide' => 'Your first name and the initial of your last name are enough.',
+			'avis.form.nom.erreur' => 'Enter a name of 2 to 60 characters.',
+			'avis.form.qualite.libelle' => 'You are',
+			'avis.form.qualite.parent' => 'Parent or guardian',
+			'avis.form.qualite.eleveAdulte' => 'Adult student',
+			'avis.form.qualite.erreur' => 'Choose who you are.',
+			'avis.form.pays.libelle' => 'Country of residence',
+			'avis.form.pays.choisir' => 'Choose a country',
+			'avis.form.pays.rechercheLibelle' => 'Search for a country',
+			'avis.form.pays.rechercheAide' => 'Type the name of the country',
+			'avis.form.pays.aucun' => 'No country matches. Try another spelling.',
+			'avis.form.pays.erreur' => 'Choose your country of residence.',
+			'avis.form.depuis.libelle' => 'With us since',
+			'avis.form.depuis.aide' => 'The month and year you joined the academy.',
+			'avis.form.depuis.mois' => 'Month',
+			'avis.form.depuis.annee' => 'Year',
+			'avis.form.depuis.erreur' => 'Choose a month and a year, from April 2024 up to this month.',
+			'avis.form.note.libelle' => 'Your rating',
+			'avis.form.note.aide' => 'Tap a star: 1 is the lowest rating, 5 the highest.',
+			'avis.form.note.etoile' => ({required Object n}) => 'Give a rating of ${n} out of 5',
+			'avis.form.note.lue' => ({required Object n}) => 'Rating: ${n} out of 5',
+			'avis.form.note.surCinq' => ({required Object n}) => '${n} out of 5',
+			'avis.form.note.erreur' => 'Choose a rating from 1 to 5 stars.',
+			'avis.form.titreAvis.libelle' => 'Title (optional)',
+			'avis.form.titreAvis.aide' => 'A short sentence that sums up your feedback. 80 characters at most.',
+			'avis.form.titreAvis.erreur' => 'Fix the title: 80 characters at most.',
+			'avis.form.texte.libelle' => 'Your feedback',
+			'avis.form.texte.aide' => 'What you liked, what you learned, what could be better. At least 20 characters.',
+			'avis.form.texte.compteur' => ({required Object n, required Object max}) => 'Characters: ${n} of ${max}',
+			'avis.form.texte.erreur' => 'Write between 20 and 1500 characters.',
+			'avis.form.accord.libelle' => 'I agree that this feedback, my display name, my country and the date be published on the Rewayah Academy website.',
+			'avis.form.accord.erreur' => 'Accept publication by ticking the box, otherwise your feedback cannot be sent.',
+			'avis.form.lecture' => ({required Object courriel}) => 'Your feedback will be read by the management before being published. To have it removed later, write to ${courriel}.',
+			'avis.form.regles.titre' => 'What the management publishes',
+			'avis.form.regles.intro' => 'A respectful review is published, even when it is critical. The management never edits your text. It only refuses a review that contains:',
+			'avis.form.regles.insulte' => 'an insult',
+			'avis.form.regles.tiers' => 'personal data of a third party, such as the name of a child or a teacher',
+			'avis.form.regles.publicite' => 'advertising',
+			'avis.form.regles.horsSujet' => 'an off-topic remark',
+			'avis.form.regles.doublon' => 'a duplicate of a review already received',
+			'avis.form.regles.donnees' => 'Do not give the name of a child, nor email, nor phone number.',
+			'avis.form.regles.publie' => 'A respectful review is published, even a critical one. The management only refuses an insult, a third party\'s data, advertising, an off-topic remark or a duplicate.',
+			'avis.form.envoyer' => 'Send my feedback',
+			'avis.form.aCorriger' => 'A few fields need to be corrected before sending.',
+			'avis.form.erreurChamp' => 'A field is not accepted. Read the form again, then send again.',
+			'avis.form.echec' => 'Your feedback could not be confirmed. The connection may have dropped. Check it, then tap "Send my feedback" again.',
+			'avis.form.horsLigne' => 'Nothing was sent, your entry stays on this screen. Send your feedback as soon as the network is back.',
+			'avis.form.ferme.titre' => 'This link no longer accepts feedback',
+			'avis.form.ferme.phrase' => ({required Object courriel}) => 'It is closed, expired, or the planned number of reviews has been reached. To give your feedback, ask the management for a new link: ${courriel}.',
+			'avis.form.envoye.titre' => 'Thank you for your feedback',
+			'avis.form.envoye.phrase' => ({required Object courriel}) => 'The management will read it before publishing it on the website, with your display name, your country and the date. To have it removed, write to ${courriel}.',
+			'avis.form.erreurChargement' => 'The form could not be opened. Try again in a moment.',
+			'avis.form.sansDonnees' => 'The form could not be opened',
+			'avis.form.indisponibleTitre' => 'Feedback unavailable',
+			'avis.form.indisponiblePhrase' => 'This feature will be available once the server is connected.',
+			'avis.admin.titre' => 'Reviews',
+			'avis.admin.sousTitre' => 'Reviews from families and students. The management reads them, publishes them or refuses them. It never edits a text.',
+			'avis.admin.outil' => 'Family reviews',
+			'avis.admin.outilDetail' => 'Create a collection link, read the reviews, publish or refuse them',
+			'avis.admin.sections.libelle' => 'Review sections',
+			'avis.admin.sections.avis' => 'Reviews',
+			'avis.admin.sections.liens' => 'Links',
+			'avis.admin.statut.tous' => 'All',
+			'avis.admin.statut.enAttente' => 'Pending',
+			'avis.admin.statut.publie' => 'Published',
+			'avis.admin.statut.refuse' => 'Refused',
+			'avis.admin.statut.retire' => 'Removed',
+			'avis.admin.filtre.tous' => 'All',
+			'avis.admin.filtre.enAttente' => 'Pending',
+			'avis.admin.filtre.publie' => 'Published',
+			'avis.admin.filtre.refuse' => 'Refused',
+			'avis.admin.filtre.retire' => 'Removed',
+			'avis.admin.attente' => ({required Object n}) => 'Reviews pending: ${n}',
+			'avis.admin.vide' => 'No reviews in this list.',
+			'avis.admin.erreur' => 'The reviews could not be loaded. Try again.',
+			'avis.admin.sansDonnees' => 'The reviews could not be loaded',
+			'avis.admin.refuse' => 'Only the signed-in management reads and decides on reviews. Sign in again with the right account, then try again.',
+			'avis.admin.indisponibleTitre' => 'Reviews unavailable',
+			'avis.admin.indisponiblePhrase' => 'This feature will be available once the server is connected.',
+			'avis.admin.champs.lien' => 'Link',
+			'avis.admin.champs.pays' => 'Country',
+			'avis.admin.champs.depuis' => 'With us since',
+			'avis.admin.champs.qualite' => 'You are',
+			'avis.admin.champs.depose' => 'Submitted on',
+			'avis.admin.champs.accord' => 'Publication agreement',
+			'avis.admin.champs.motif' => 'Reason',
+			'avis.admin.champs.modere' => 'Decision on',
+			'avis.admin.champs.publie' => 'Published on',
+			'avis.admin.actions.publier' => 'Publish',
+			'avis.admin.actions.refuser' => 'Refuse',
+			'avis.admin.actions.retirer' => 'Remove',
+			'avis.admin.publier.question' => ({required Object deNom}) => 'Publish ${deNom}\'s review?',
+			'avis.admin.publier.consequence' => 'The review, display name, country and date will appear on the Rewayah Academy website at the site\'s next update. The text is not edited.',
+			'avis.admin.publier.action' => 'Publish the review',
+			'avis.admin.publier.rester' => 'Change nothing',
+			'avis.admin.refuser.titre' => ({required Object deNom}) => 'Refuse ${deNom}\'s review',
+			'avis.admin.refuser.intro' => 'Choose the reason for refusal. A critical but respectful review is published.',
+			'avis.admin.refuser.consequence' => 'The review will not be published. The reason is kept.',
+			'avis.admin.refuser.action' => 'Refuse the review',
+			'avis.admin.refuser.rester' => 'Change nothing',
+			'avis.admin.retirer.titre' => ({required Object deNom}) => 'Remove ${deNom}\'s review',
+			'avis.admin.retirer.intro' => 'Choose the reason for removal.',
+			'avis.admin.retirer.consequence' => 'The review will disappear from the site at the site\'s next update. The reason is kept.',
+			'avis.admin.retirer.action' => 'Remove the review',
+			'avis.admin.retirer.rester' => 'Change nothing',
+			'avis.admin.motifs.insulte' => 'Insult',
+			'avis.admin.motifs.tiers' => 'Personal data of a third party',
+			'avis.admin.motifs.publicite' => 'Advertising',
+			'avis.admin.motifs.horsSujet' => 'Off topic',
+			'avis.admin.motifs.doublon' => 'Duplicate',
+			'avis.admin.motifs.demande' => 'Request from the person',
+			'avis.admin.retour.publie' => 'The review is published.',
+			'avis.admin.retour.refuse' => 'The review is refused.',
+			'avis.admin.retour.retire' => 'The review is removed.',
+			'avis.admin.retour.etatChange' => 'This review is no longer in the expected state. The list is updated.',
+			'avis.admin.retour.introuvable' => 'This review no longer exists. The list is updated.',
+			'avis.admin.retour.motifManque' => 'The reason is missing. Choose one.',
+			'avis.admin.retour.refus' => 'Only the signed-in management can decide on a review.',
+			'avis.admin.retour.echec' => 'The decision could not be confirmed. The list is reloaded: check the state of the review before trying again.',
+			'avis.admin.retour.horsLigne' => 'Nothing was sent: there is no network. Try again as soon as it is back.',
+			'avis.admin.liens.creerTitre' => 'Create a link',
+			'avis.admin.liens.creerIntro' => 'A link opens the feedback form, without an account or sign-in. Give it a name so you can recognise it.',
+			'avis.admin.liens.libelle' => 'Link name',
+			'avis.admin.liens.libelleAide' => 'For example: Families October 2026.',
+			'avis.admin.liens.libelleErreur' => 'Give the link a name.',
+			'avis.admin.liens.jours' => 'Duration in days',
+			'avis.admin.liens.joursAide' => '90 by default, 365 at most.',
+			'avis.admin.liens.joursErreur' => 'Enter a number of days from 1 to 365.',
+			'avis.admin.liens.max' => 'Maximum number of reviews',
+			'avis.admin.liens.maxAide' => '200 by default, 2000 at most.',
+			'avis.admin.liens.maxErreur' => 'Enter a number of reviews from 1 to 2000.',
+			'avis.admin.liens.creer' => 'Create the link',
+			'avis.admin.liens.echecCreation' => 'The creation of the link is not confirmed. Look at the list of links before trying again.',
+			'avis.admin.liens.creeTitre' => 'Link created',
+			'avis.admin.liens.creePhrase' => 'Copy this link now. It will no longer be shown once this box is closed. If you lose it, close this link and create a new one.',
+			'avis.admin.liens.creeAdresse' => 'Link address',
+			'avis.admin.liens.creeValable' => ({required Object date}) => 'Valid until ${date}.',
+			'avis.admin.liens.copier' => 'Copy the link',
+			'avis.admin.liens.copie' => 'Link copied.',
+			'avis.admin.liens.creeFermer' => 'I copied the link',
+			'avis.admin.liens.etat.ouvert' => 'Open',
+			'avis.admin.liens.etat.ferme' => 'Closed',
+			'avis.admin.liens.etat.expire' => 'Expired',
+			'avis.admin.liens.etat.plein' => 'Full',
+			'avis.admin.liens.recus' => ({required Object recus, required Object max}) => 'Reviews received: ${recus} of ${max}',
+			'avis.admin.liens.fin' => ({required Object date}) => 'Ends on ${date}',
+			'avis.admin.liens.cree' => ({required Object date}) => 'Created on ${date}',
+			'avis.admin.liens.fermer' => 'Close the link',
+			'avis.admin.liens.fermerQuestion' => ({required Object nom}) => 'Close the link "${nom}"?',
+			'avis.admin.liens.fermerConsequence' => 'People who open this link will see that it is closed and can no longer send reviews. Reviews already received stay. A closed link cannot be reopened.',
+			'avis.admin.liens.fermerAction' => 'Close the link',
+			'avis.admin.liens.fermerRester' => 'Change nothing',
+			'avis.admin.liens.fermeOk' => 'The link is closed.',
+			'avis.admin.liens.fermeEchec' => 'The closing is not confirmed. The list is reloaded: check the state of the link.',
+			'avis.admin.liens.vide' => 'No links for now. Create one to collect reviews.',
+			'avis.admin.liens.erreur' => 'The links could not be loaded. Try again.',
+			'avis.admin.liens.sansDonnees' => 'The links could not be loaded',
+			'courriels.admin.titre' => 'Emails',
+			'courriels.admin.sousTitre' => 'Write to a person and follow the emails that leave the academy.',
+			'courriels.admin.outil' => 'Emails',
+			'courriels.admin.outilDetail' => 'Write an email, follow the sendings, see the sending addresses',
+			'courriels.admin.sections.libelle' => 'Email sections',
+			'courriels.admin.sections.ecrire' => 'Write',
+			'courriels.admin.sections.file' => 'Sendings',
+			'courriels.admin.sections.adresses' => 'Sending addresses',
+			'courriels.admin.refuse' => 'Only the signed-in management writes and follows emails. Sign in again with the right account, then try again.',
+			'courriels.admin.indisponibleTitre' => 'Emails unavailable',
+			'courriels.admin.indisponiblePhrase' => 'This feature will be available once the server is connected.',
+			'courriels.admin.ecrire.titre' => 'New email',
+			'courriels.admin.ecrire.intro' => 'The email is queued, then leaves from the address of its category, within the minute. It is only sent when the list of sendings shows Sent.',
+			'courriels.admin.ecrire.adresse' => 'Recipient\'s address',
+			'courriels.admin.ecrire.adresseAide' => 'A single address. A child\'s account never receives email.',
+			'courriels.admin.ecrire.categorie' => 'Category',
+			'courriels.admin.ecrire.categorieAide' => 'It decides the sending address and the mailbox that receives replies.',
+			'courriels.admin.ecrire.partDe' => ({required Object adresse}) => 'Sent from ${adresse}',
+			'courriels.admin.ecrire.desinscription' => 'Every message carries an unsubscribe link.',
+			'courriels.admin.ecrire.sujet' => 'Subject',
+			'courriels.admin.ecrire.sujetAide' => '120 characters at most.',
+			'courriels.admin.ecrire.corps' => 'Message',
+			'courriels.admin.ecrire.corpsAide' => 'Plain text, 5000 characters at most. An empty line makes a new paragraph.',
+			'courriels.admin.ecrire.traduction' => 'Each recipient receives it in their language: the message is translated automatically when sent.',
+			'courriels.admin.ecrire.envoyer' => 'Send the message',
+			'courriels.admin.ecrire.erreurCategories' => 'The categories could not be loaded. Try again.',
+			'courriels.admin.ecrire.sansDonneesCategories' => 'The categories could not be loaded',
+			'courriels.admin.ecrire.pasDeCategorie' => 'No category is active: it is not possible to write for now.',
+			'courriels.admin.ecrire.champ.adresse' => 'Enter a valid email address.',
+			'courriels.admin.ecrire.champ.categorie' => 'Choose a category.',
+			'courriels.admin.ecrire.champ.sujet' => 'Give a subject of 1 to 120 characters.',
+			'courriels.admin.ecrire.champ.corps' => 'Write a message of 1 to 5000 characters.',
+			'courriels.admin.ecrire.champ.destinataireExclu' => 'This person cannot receive this email: child account or unsubscribed.',
+			'courriels.admin.ecrire.retour.misEnFile' => 'Sending within the minute. Follow it in the list of sendings.',
+			'courriels.admin.ecrire.retour.voir' => 'See the sendings',
+			'courriels.admin.ecrire.retour.refus' => 'Only the signed-in management can write an email.',
+			'courriels.admin.ecrire.retour.echec' => 'The sending is not confirmed. Look at the list of sendings before trying again: the same email will not be queued twice.',
+			'courriels.admin.ecrire.retour.horsLigne' => 'Nothing was sent: there is no network. Try again as soon as it is back.',
+			'courriels.admin.file.filtre.tous' => 'All',
+			'courriels.admin.file.filtre.enAttente' => 'Queued',
+			'courriels.admin.file.filtre.envoi' => 'Being sent',
+			'courriels.admin.file.filtre.envoye' => 'Sent',
+			'courriels.admin.file.filtre.echec' => 'Not sent',
+			'courriels.admin.file.filtre.annule' => 'Cancelled',
+			'courriels.admin.file.statut.enAttente' => 'Queued',
+			'courriels.admin.file.statut.envoi' => 'Being sent',
+			'courriels.admin.file.statut.envoye' => 'Sent',
+			'courriels.admin.file.statut.echec' => 'Not sent',
+			'courriels.admin.file.statut.annule' => 'Cancelled',
+			'courriels.admin.file.origine.auto' => 'Automatic',
+			'courriels.admin.file.origine.manuel' => 'Manual',
+			'courriels.admin.file.messageAuto' => 'Automatic message',
+			'courriels.admin.file.champs.destinataire' => 'To',
+			'courriels.admin.file.champs.categorie' => 'Category',
+			'courriels.admin.file.champs.origine' => 'Origin',
+			'courriels.admin.file.champs.creeLe' => 'Queued on',
+			'courriels.admin.file.champs.envoyeLe' => 'Sent on',
+			'courriels.admin.file.champs.tentatives' => 'Attempts',
+			'courriels.admin.file.champs.motifEchec' => 'Last error',
+			'courriels.admin.file.champs.langue' => 'Language',
+			'courriels.admin.file.actualiser' => 'Reload',
+			'courriels.admin.file.reessayer' => 'Queue again',
+			'courriels.admin.file.vide' => 'No emails in this list.',
+			'courriels.admin.file.erreur' => 'The sendings could not be loaded. Try again.',
+			'courriels.admin.file.sansDonnees' => 'The sendings could not be loaded',
+			'courriels.admin.file.retour.relance' => 'Queued again. Sending within the minute.',
+			'courriels.admin.file.retour.introuvable' => 'This email no longer needs to be retried. The list is updated.',
+			'courriels.admin.file.retour.echec' => 'Queueing again is not confirmed. The list is reloaded: check the state of the email before trying again.',
+			'courriels.admin.file.retour.refus' => 'Only the signed-in management can retry an email.',
+			'courriels.admin.file.retour.horsLigne' => 'Nothing was sent: there is no network. Try again as soon as it is back.',
+			'courriels.admin.adresses.intro' => 'Each category leaves from its own address, and replies arrive in the mailbox indicated. This list is read here; it cannot be changed in the app.',
+			'courriels.admin.adresses.champs.expediteur' => 'Sent from',
+			'courriels.admin.adresses.champs.nom' => 'Display name',
+			'courriels.admin.adresses.champs.reponses' => 'Replies to',
+			'courriels.admin.adresses.champs.type' => 'Type',
+			'courriels.admin.adresses.essentielle' => 'Tied to the service, no unsubscribe',
+			'courriels.admin.adresses.facultative' => 'With unsubscribe link',
+			'courriels.admin.adresses.active' => 'Active',
+			'courriels.admin.adresses.coupee' => 'Off',
+			'courriels.admin.adresses.vide' => 'No category for now.',
+			'courriels.admin.adresses.erreur' => 'The sending addresses could not be loaded. Try again.',
+			_ => null,
+		} ?? switch (path) {
+			'courriels.admin.adresses.sansDonnees' => 'The sending addresses could not be loaded',
 			'accueilInscrits.titre' => 'We already know you',
 			'accueilInscrits.phrase' => 'Your registration has been carried over. You do not have to enter everything again.',
 			'accueilInscrits.motTitre' => 'A word from the management',
@@ -8523,8 +10489,6 @@ extension on TraductionsEn {
 			'suiviAttente.vide.invitationSimple' => 'Your guardian can make one.',
 			'suiviAttente.erreur' => 'We could not read the tracking of your request. This is often caused by the connection. Try again in a moment.',
 			'suiviAttente.sansDonnees' => 'The tracking of your request could not be loaded',
-			_ => null,
-		} ?? switch (path) {
 			'suiviAttente.introuvable' => 'This request no longer exists in your tracking.',
 			'suiviAttente.retour' => 'Back',
 			'suiviAttente.carte.titre' => 'Your class request',
