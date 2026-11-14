@@ -19,7 +19,27 @@ final Finder selecteurSection = find.byWidgetPredicate(
 
 /// Le libelle de la section est visible dans le selecteur (segment, ou section
 /// courante du menu ferme).
-Finder sectionVisible(String libelle) =>
+///
+/// NAV-SOUS-LIENS (14/11/2026) : sur tablette et ordinateur, les sections
+/// d'une page de la direction sont les sous-liens du panneau ; elles y
+/// comptent comme visibles.
+Finder sectionVisible(String libelle) => find.byElementPredicate((Element e) {
+  final Widget w = e.widget;
+  if (w is! Text || w.data != libelle) return false;
+  bool trouve = false;
+  e.visitAncestorElements((Element a) {
+    if (a.widget is SelecteurSection ||
+        a.widget.key == AdminShell.barreLateraleKey) {
+      trouve = true;
+      return false;
+    }
+    return true;
+  });
+  return trouve;
+});
+
+/// Le libelle dans le selecteur de la page seulement.
+Finder _dansSelecteur(String libelle) =>
     find.descendant(of: selecteurSection, matching: find.text(libelle));
 
 /// Choisit la section [libelle] : touche le segment, ou ouvre le menu puis
@@ -29,7 +49,7 @@ Finder sectionVisible(String libelle) =>
 /// direction ne montre plus son selecteur quand le panneau porte deja ses
 /// sections ; la section se choisit alors par son sous-lien du panneau.
 Future<void> choisirSection(WidgetTester tester, String libelle) async {
-  if (sectionVisible(libelle).evaluate().isEmpty) {
+  if (_dansSelecteur(libelle).evaluate().isEmpty) {
     final Finder barre = find.byKey(AdminShell.barreLateraleKey);
     final Finder sousLien = find.descendant(
       of: barre,
@@ -65,7 +85,7 @@ Future<void> choisirSection(WidgetTester tester, String libelle) async {
   }
   // Rail replie : la section est dans le menu des pages d'un domaine.
   final Finder rail = find.byKey(AdminShell.railKey);
-  if (sectionVisible(libelle).evaluate().isEmpty &&
+  if (_dansSelecteur(libelle).evaluate().isEmpty &&
       selecteurSection.evaluate().isEmpty &&
       rail.evaluate().isNotEmpty) {
     final Finder declencheurs = find.descendant(
@@ -88,7 +108,7 @@ Future<void> choisirSection(WidgetTester tester, String libelle) async {
       await tester.pumpAndSettle();
     }
   }
-  final Finder segment = sectionVisible(libelle);
+  final Finder segment = _dansSelecteur(libelle);
   final Finder menu = find.descendant(
     of: selecteurSection,
     matching: find.byWidgetPredicate((Widget w) => w is MenuFiltre),
