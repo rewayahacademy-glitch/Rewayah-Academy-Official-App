@@ -27,6 +27,7 @@ class ChampDate extends StatelessWidget {
     required this.aujourdhui,
     super.key,
     this.dernier,
+    this.premier,
     this.aide,
   });
 
@@ -47,20 +48,27 @@ class ChampDate extends StatelessWidget {
   /// aujourd'hui. Nul : dans un an.
   final DateTime? dernier;
 
+  /// La premiere date permise, quand ce n'est pas [aujourdhui] : un jour
+  /// passe a dire (le jour ou un eleve a commence) ouvre le calendrier vers
+  /// le passe, de [premier] a [dernier] ; il s'ouvre alors sur [dernier].
+  final DateTime? premier;
+
   /// La phrase sous le champ, quand elle n'est pas « Entre aujourd'hui et dans
   /// un an. » : elle dit alors l'etendue reelle du calendrier.
   final String? aide;
 
   /// La premiere date permise : aujourd'hui, a minuit.
-  DateTime get premierJour =>
-      DateTime(aujourdhui.year, aujourdhui.month, aujourdhui.day);
+  DateTime get premierJour {
+    final DateTime depart = premier ?? aujourdhui;
+    return DateTime(depart.year, depart.month, depart.day);
+  }
 
   /// La derniere date permise : [dernier], sinon dans un an.
   DateTime get dernierJour {
     final DateTime? d = dernier;
     return d != null
         ? DateTime(d.year, d.month, d.day)
-        : DateTime(premierJour.year + 1, premierJour.month, premierJour.day);
+        : DateTime(aujourdhui.year + 1, aujourdhui.month, aujourdhui.day);
   }
 
   /// Ecrit un jour `JJ/MM/AAAA`, pour l'afficher.
@@ -74,7 +82,7 @@ class ChampDate extends StatelessWidget {
         actuel == null ||
             actuel.isBefore(premierJour) ||
             actuel.isAfter(dernierJour)
-        ? premierJour
+        ? (premier == null ? premierJour : dernierJour)
         : actuel;
     final DateTime? choisie = await showDatePicker(
       context: context,

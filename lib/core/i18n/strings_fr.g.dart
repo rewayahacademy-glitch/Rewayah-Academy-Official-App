@@ -1863,6 +1863,7 @@ class Traductions$admin$fr {
 	late final Traductions$admin$offres$fr offres = Traductions$admin$offres$fr.internal(_root);
 	late final Traductions$admin$regroupements$fr regroupements = Traductions$admin$regroupements$fr.internal(_root);
 	late final Traductions$admin$diagnostics$fr diagnostics = Traductions$admin$diagnostics$fr.internal(_root);
+	late final Traductions$admin$planClasse$fr planClasse = Traductions$admin$planClasse$fr.internal(_root);
 	late final Traductions$admin$qualite$fr qualite = Traductions$admin$qualite$fr.internal(_root);
 	late final Traductions$admin$regles$fr regles = Traductions$admin$regles$fr.internal(_root);
 	late final Traductions$admin$fonctionnalites$fr fonctionnalites = Traductions$admin$fonctionnalites$fr.internal(_root);
@@ -11646,6 +11647,146 @@ class Traductions$admin$diagnostics$fr {
 		one: 'Inscrit depuis ${jours} jour',
 		other: 'Inscrit depuis ${jours} jours',
 	);
+}
+
+// Path: admin.planClasse
+class Traductions$admin$planClasse$fr {
+	Traductions$admin$planClasse$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Étape'
+	String get etapeCle => 'Étape';
+
+	/// fr: 'Aucune étape pour le moment'
+	String get aucuneEtape => 'Aucune étape pour le moment';
+
+	/// fr: '(one) {{n} élève de la classe sans étape} (other) {{n} élèves de la classe sans étape}'
+	String sansEtapeMembres({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} élève de la classe sans étape',
+		other: '${n} élèves de la classe sans étape',
+	);
+
+	/// fr: 'Donner une étape à la classe'
+	String get donnerEtape => 'Donner une étape à la classe';
+
+	/// fr: 'Changer l'étape de la classe'
+	String get changerEtape => 'Changer l\'étape de la classe';
+
+	/// fr: 'Étape de la classe'
+	String get donnerTitre => 'Étape de la classe';
+
+	/// fr: 'Choisissez l'étape où en est la classe. Les élèves de la classe qui n'ont pas encore d'étape la reçoivent : un débutant commence à l'étape 1, un élève qui sait déjà lire attend votre décision de placement. Un élève qui a déjà son étape la garde.'
+	String get donnerIntro => 'Choisissez l\'étape où en est la classe. Les élèves de la classe qui n\'ont pas encore d\'étape la reçoivent : un débutant commence à l\'étape 1, un élève qui sait déjà lire attend votre décision de placement. Un élève qui a déjà son étape la garde.';
+
+	/// fr: 'Étape de la classe'
+	String get donnerChamp => 'Étape de la classe';
+
+	/// fr: 'Il manque l'étape : choisissez-la dans la liste.'
+	String get donnerManque => 'Il manque l\'étape : choisissez-la dans la liste.';
+
+	/// fr: 'Donner cette étape'
+	String get donnerEnvoyer => 'Donner cette étape';
+
+	/// fr: 'L'étape de la classe n'est pas confirmée : {message}'
+	String donnerErreur({required Object message}) => 'L\'étape de la classe n\'est pas confirmée : ${message}';
+
+	/// fr: 'Aucune version du programme n'est publiée. Publiez-la dans Pédagogie, Programmes, puis revenez ici.'
+	String get aucunProgramme => 'Aucune version du programme n\'est publiée. Publiez-la dans Pédagogie, Programmes, puis revenez ici.';
+
+	/// fr: 'Les étapes n'ont pas pu être lues. Réessayez dans un instant.'
+	String get programmeErreur => 'Les étapes n\'ont pas pu être lues. Réessayez dans un instant.';
+
+	/// fr: 'Motif'
+	String get motifChamp => 'Motif';
+
+	/// fr: 'Un motif est requis, il s'inscrit au journal d'audit.'
+	String get motifRequis => 'Un motif est requis, il s\'inscrit au journal d\'audit.';
+
+	late final Traductions$admin$planClasse$motifs$fr motifs = Traductions$admin$planClasse$motifs$fr.internal(_root);
+
+	/// fr: 'Dire quand il a commencé'
+	String get dateAction => 'Dire quand il a commencé';
+
+	/// fr: 'Début de l'étape'
+	String get dateTitre => 'Début de l\'étape';
+
+	/// fr: 'Si cet élève était déjà en cours avant d'être suivi ici, dites quel jour il a commencé son étape, même avant la création de son compte. La date limite se compte à partir de ce jour.'
+	String get dateIntro => 'Si cet élève était déjà en cours avant d\'être suivi ici, dites quel jour il a commencé son étape, même avant la création de son compte. La date limite se compte à partir de ce jour.';
+
+	/// fr: 'Jour de début'
+	String get dateChamp => 'Jour de début';
+
+	/// fr: 'Un jour passé, jusqu'à aujourd'hui (jour de La Mecque).'
+	String get dateAide => 'Un jour passé, jusqu\'à aujourd\'hui (jour de La Mecque).';
+
+	/// fr: 'Il manque le jour de début : choisissez-le dans le calendrier.'
+	String get dateManque => 'Il manque le jour de début : choisissez-le dans le calendrier.';
+
+	/// fr: 'Enregistrer le jour de début'
+	String get dateEnvoyer => 'Enregistrer le jour de début';
+
+	/// fr: 'Le jour de début n'est pas confirmé : {message}'
+	String dateErreur({required Object message}) => 'Le jour de début n\'est pas confirmé : ${message}';
+
+	late final Traductions$admin$planClasse$dateMotifs$fr dateMotifs = Traductions$admin$planClasse$dateMotifs$fr.internal(_root);
+	late final Traductions$admin$planClasse$refus$fr refus = Traductions$admin$planClasse$refus$fr.internal(_root);
+
+	/// fr: 'A-t-il commencé avant aujourd'hui ?'
+	String get debutChamp => 'A-t-il commencé avant aujourd\'hui ?';
+
+	/// fr: 'Laissez vide si l'élève commence aujourd'hui. Sinon, choisissez le jour où il a vraiment commencé.'
+	String get debutAide => 'Laissez vide si l\'élève commence aujourd\'hui. Sinon, choisissez le jour où il a vraiment commencé.';
+
+	/// fr: 'Il commence aujourd'hui'
+	String get debutRetirer => 'Il commence aujourd\'hui';
+
+	/// fr: 'Avec ce jour de début, la date limite de l'étape sera le {date}.'
+	String apercuLimite({required Object date}) => 'Avec ce jour de début, la date limite de l\'étape sera le ${date}.';
+
+	/// fr: 'Avec ce jour de début, la date limite de l'étape était le {date} : elle est déjà passée. L'élève apparaîtra tout de suite en retard sur cette étape. Aucun message n'est envoyé. Vous pouvez choisir un jour plus récent.'
+	String apercuPassee({required Object date}) => 'Avec ce jour de début, la date limite de l\'étape était le ${date} : elle est déjà passée. L\'élève apparaîtra tout de suite en retard sur cette étape. Aucun message n\'est envoyé. Vous pouvez choisir un jour plus récent.';
+
+	/// fr: 'La date limite ne peut pas être calculée pour cet élève (durée ou tranche d'âge inconnue).'
+	String get apercuInconnue => 'La date limite ne peut pas être calculée pour cet élève (durée ou tranche d\'âge inconnue).';
+
+	/// fr: 'Ce jour de début ne pourra pas être enregistré (à venir, ou plus ancien que le plus ancien jour accepté). Choisissez un autre jour.'
+	String get apercuRefus => 'Ce jour de début ne pourra pas être enregistré (à venir, ou plus ancien que le plus ancien jour accepté). Choisissez un autre jour.';
+
+	/// fr: 'La date limite qui en résulte n'a pas pu être lue. Le serveur la calcule à l'enregistrement.'
+	String get apercuErreur => 'La date limite qui en résulte n\'a pas pu être lue. Le serveur la calcule à l\'enregistrement.';
+
+	/// fr: 'Le jour de référence n'a pas pu être lu. Réessayez dans un instant.'
+	String get jourErreur => 'Le jour de référence n\'a pas pu être lu. Réessayez dans un instant.';
+
+	/// fr: 'Relire le jour'
+	String get jourRelire => 'Relire le jour';
+
+	/// fr: 'Décider son placement'
+	String get placerAction => 'Décider son placement';
+
+	/// fr: 'Placement de l'élève'
+	String get placerTitre => 'Placement de l\'élève';
+
+	/// fr: 'Cet élève sait déjà lire. Choisissez l'étape où il commence, après l'entretien de lecture. S'il était déjà en cours, dites aussi quel jour il a commencé.'
+	String get placerIntro => 'Cet élève sait déjà lire. Choisissez l\'étape où il commence, après l\'entretien de lecture. S\'il était déjà en cours, dites aussi quel jour il a commencé.';
+
+	/// fr: 'Étape de placement'
+	String get placerChamp => 'Étape de placement';
+
+	/// fr: 'Il manque l'étape : choisissez-la dans la liste.'
+	String get placerManque => 'Il manque l\'étape : choisissez-la dans la liste.';
+
+	/// fr: 'Décider le placement'
+	String get placerEnvoyer => 'Décider le placement';
+
+	/// fr: 'Le placement n'est pas confirmé : {message}'
+	String placerErreur({required Object message}) => 'Le placement n\'est pas confirmé : ${message}';
+
+	late final Traductions$admin$planClasse$sansEtape$fr sansEtape = Traductions$admin$planClasse$sansEtape$fr.internal(_root);
+	late final Traductions$admin$planClasse$brouillon$fr brouillon = Traductions$admin$planClasse$brouillon$fr.internal(_root);
 }
 
 // Path: admin.qualite
@@ -31290,6 +31431,168 @@ class Traductions$admin$regroupements$liste$fr {
 
 	/// fr: 'Demandes réunies {debut} à {fin} sur {total}'
 	String resume({required Object debut, required Object fin, required Object total}) => 'Demandes réunies ${debut} à ${fin} sur ${total}';
+}
+
+// Path: admin.planClasse.motifs
+class Traductions$admin$planClasse$motifs$fr {
+	Traductions$admin$planClasse$motifs$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'La classe en est déjà là'
+	String get classe => 'La classe en est déjà là';
+
+	/// fr: 'Classe reprise en cours de route'
+	String get reprise => 'Classe reprise en cours de route';
+
+	/// fr: 'Correction de l'étape de la classe'
+	String get correction => 'Correction de l\'étape de la classe';
+}
+
+// Path: admin.planClasse.dateMotifs
+class Traductions$admin$planClasse$dateMotifs$fr {
+	Traductions$admin$planClasse$dateMotifs$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Il était déjà en cours avant le lancement'
+	String get avant => 'Il était déjà en cours avant le lancement';
+
+	/// fr: 'Correction du jour de début'
+	String get correction => 'Correction du jour de début';
+
+	/// fr: 'Jour confirmé avec l'enseignant'
+	String get confirme => 'Jour confirmé avec l\'enseignant';
+}
+
+// Path: admin.planClasse.refus
+class Traductions$admin$planClasse$refus$fr {
+	Traductions$admin$planClasse$refus$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ce jour n'est pas encore arrivé. Choisissez aujourd'hui ou un jour passé.'
+	String get dateFuture => 'Ce jour n\'est pas encore arrivé. Choisissez aujourd\'hui ou un jour passé.';
+
+	/// fr: 'Ce jour est trop ancien. Le plus ancien jour accepté est le {date}. Choisissez un jour à partir de cette date.'
+	String dateSousPlancher({required Object date}) => 'Ce jour est trop ancien. Le plus ancien jour accepté est le ${date}. Choisissez un jour à partir de cette date.';
+
+	/// fr: 'Cet élève n'a pas encore d'étape. Placez-le d'abord dans Pédagogie, Diagnostics.'
+	String get eleveSansEtape => 'Cet élève n\'a pas encore d\'étape. Placez-le d\'abord dans Pédagogie, Diagnostics.';
+
+	/// fr: 'Cette étape n'est pas dans la version publiée du programme. Choisissez une étape de la liste.'
+	String get niveauNonPublie => 'Cette étape n\'est pas dans la version publiée du programme. Choisissez une étape de la liste.';
+
+	/// fr: 'Cette classe est clôturée.'
+	String get classeClose => 'Cette classe est clôturée.';
+
+	/// fr: 'Aucune version du programme n'est publiée.'
+	String get aucunProgrammePublie => 'Aucune version du programme n\'est publiée.';
+
+	/// fr: 'Le motif manque.'
+	String get motif => 'Le motif manque.';
+}
+
+// Path: admin.planClasse.sansEtape
+class Traductions$admin$planClasse$sansEtape$fr {
+	Traductions$admin$planClasse$sansEtape$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Élèves sans étape'
+	String get titre => 'Élèves sans étape';
+
+	/// fr: 'Ces élèves sont déjà dans une classe, mais n'ont pas encore d'étape du programme.'
+	String get intro => 'Ces élèves sont déjà dans une classe, mais n\'ont pas encore d\'étape du programme.';
+
+	/// fr: 'Classes sans étape'
+	String get classesTitre => 'Classes sans étape';
+
+	/// fr: '(one) {{n} élève} (other) {{n} élèves}'
+	String membres({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: '${n} élève',
+		other: '${n} élèves',
+	);
+
+	/// fr: 'Aucune version du programme n'est publiée'
+	String get raisonAucunProgramme => 'Aucune version du programme n\'est publiée';
+
+	/// fr: 'Sait déjà lire : son étape se décide après l'entretien de lecture (Décider un placement, plus bas)'
+	String get raisonAttente => 'Sait déjà lire : son étape se décide après l\'entretien de lecture (Décider un placement, plus bas)';
+
+	/// fr: 'Débutant : il recevra l'étape 1 au rattachement'
+	String get raisonDebutant => 'Débutant : il recevra l\'étape 1 au rattachement';
+
+	/// fr: 'Rattacher les débutants et les classes'
+	String get rattacher => 'Rattacher les débutants et les classes';
+
+	/// fr: 'Rattachement'
+	String get rattacherTitre => 'Rattachement';
+
+	/// fr: 'L'étape 1 des bases sera donnée à toutes les classes ouvertes sans étape et aux élèves débutants de la liste, à partir d'aujourd'hui. Les élèves qui savent déjà lire ne sont pas touchés. Vous pourrez ensuite dire quel jour chacun a vraiment commencé.'
+	String get rattacherDetail => 'L\'étape 1 des bases sera donnée à toutes les classes ouvertes sans étape et aux élèves débutants de la liste, à partir d\'aujourd\'hui. Les élèves qui savent déjà lire ne sont pas touchés. Vous pourrez ensuite dire quel jour chacun a vraiment commencé.';
+
+	/// fr: 'Rattacher maintenant'
+	String get rattacherEnvoyer => 'Rattacher maintenant';
+
+	/// fr: 'Le rattachement n'est pas confirmé : {message}'
+	String rattacherErreur({required Object message}) => 'Le rattachement n\'est pas confirmé : ${message}';
+
+	/// fr: 'Rattachement fait : la liste est à jour.'
+	String get rattacherFait => 'Rattachement fait : la liste est à jour.';
+
+	/// fr: 'La liste des élèves sans étape n'a pas pu être lue. Réessayez dans un instant.'
+	String get erreurLecture => 'La liste des élèves sans étape n\'a pas pu être lue. Réessayez dans un instant.';
+
+	/// fr: 'Relire la liste'
+	String get relire => 'Relire la liste';
+
+	/// fr: 'Chaque élève membre d'une classe a son étape.'
+	String get toutPlace => 'Chaque élève membre d\'une classe a son étape.';
+}
+
+// Path: admin.planClasse.brouillon
+class Traductions$admin$planClasse$brouillon$fr {
+	Traductions$admin$planClasse$brouillon$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ce brouillon ne peut pas être publié : l'étape « {etape} » n'a pas encore tous ses objectifs et toutes ses durées. Complétez-la, ou repartez des bases.'
+	String incomplet({required Object etape}) => 'Ce brouillon ne peut pas être publié : l\'étape « ${etape} » n\'a pas encore tous ses objectifs et toutes ses durées. Complétez-la, ou repartez des bases.';
+
+	/// fr: 'Ce brouillon ne peut pas être publié : pour {niveau}, les durées des étapes ne font pas la durée du niveau. Corrigez-les, ou repartez des bases.'
+	String incoherent({required Object niveau}) => 'Ce brouillon ne peut pas être publié : pour ${niveau}, les durées des étapes ne font pas la durée du niveau. Corrigez-les, ou repartez des bases.';
+
+	/// fr: 'Ce brouillon ne peut pas être publié : il n'a pas les quatre étapes des bases. Repartez des bases.'
+	String get sansBases => 'Ce brouillon ne peut pas être publié : il n\'a pas les quatre étapes des bases. Repartez des bases.';
+
+	/// fr: 'Ce brouillon ne peut pas être publié pour le moment. Vous pouvez repartir des bases.'
+	String get autre => 'Ce brouillon ne peut pas être publié pour le moment. Vous pouvez repartir des bases.';
+
+	/// fr: 'Repartir des bases'
+	String get repartir => 'Repartir des bases';
+
+	/// fr: 'Repartir des bases'
+	String get repartirTitre => 'Repartir des bases';
+
+	/// fr: 'Crée une nouvelle version avec les quatre étapes des bases, leurs objectifs, leurs matières et leurs durées. Ce brouillon n'est ni modifié ni effacé : il reste dans la liste. Relisez la nouvelle version, puis publiez-la.'
+	String get repartirDetail => 'Crée une nouvelle version avec les quatre étapes des bases, leurs objectifs, leurs matières et leurs durées. Ce brouillon n\'est ni modifié ni effacé : il reste dans la liste. Relisez la nouvelle version, puis publiez-la.';
+
+	/// fr: 'Créer la version avec les bases'
+	String get repartirEnvoyer => 'Créer la version avec les bases';
+
+	/// fr: 'La nouvelle version n'est pas confirmée : {message}'
+	String repartirErreur({required Object message}) => 'La nouvelle version n\'est pas confirmée : ${message}';
 }
 
 // Path: admin.regles.pause
@@ -56658,6 +56961,84 @@ extension on Traductions {
 			'admin.diagnostics.deciderErreur' => ({required Object message}) => 'La décision n\'a pas abouti : ${message}',
 			'admin.diagnostics.journalisation' => 'Chaque placement décidé est inscrit au journal d\'audit.',
 			'admin.diagnostics.inscritDepuis' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours, one: 'Inscrit depuis ${jours} jour', other: 'Inscrit depuis ${jours} jours', ), 
+			'admin.planClasse.etapeCle' => 'Étape',
+			'admin.planClasse.aucuneEtape' => 'Aucune étape pour le moment',
+			'admin.planClasse.sansEtapeMembres' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} élève de la classe sans étape', other: '${n} élèves de la classe sans étape', ), 
+			'admin.planClasse.donnerEtape' => 'Donner une étape à la classe',
+			'admin.planClasse.changerEtape' => 'Changer l\'étape de la classe',
+			'admin.planClasse.donnerTitre' => 'Étape de la classe',
+			'admin.planClasse.donnerIntro' => 'Choisissez l\'étape où en est la classe. Les élèves de la classe qui n\'ont pas encore d\'étape la reçoivent : un débutant commence à l\'étape 1, un élève qui sait déjà lire attend votre décision de placement. Un élève qui a déjà son étape la garde.',
+			'admin.planClasse.donnerChamp' => 'Étape de la classe',
+			'admin.planClasse.donnerManque' => 'Il manque l\'étape : choisissez-la dans la liste.',
+			'admin.planClasse.donnerEnvoyer' => 'Donner cette étape',
+			'admin.planClasse.donnerErreur' => ({required Object message}) => 'L\'étape de la classe n\'est pas confirmée : ${message}',
+			'admin.planClasse.aucunProgramme' => 'Aucune version du programme n\'est publiée. Publiez-la dans Pédagogie, Programmes, puis revenez ici.',
+			'admin.planClasse.programmeErreur' => 'Les étapes n\'ont pas pu être lues. Réessayez dans un instant.',
+			'admin.planClasse.motifChamp' => 'Motif',
+			'admin.planClasse.motifRequis' => 'Un motif est requis, il s\'inscrit au journal d\'audit.',
+			'admin.planClasse.motifs.classe' => 'La classe en est déjà là',
+			'admin.planClasse.motifs.reprise' => 'Classe reprise en cours de route',
+			'admin.planClasse.motifs.correction' => 'Correction de l\'étape de la classe',
+			'admin.planClasse.dateAction' => 'Dire quand il a commencé',
+			'admin.planClasse.dateTitre' => 'Début de l\'étape',
+			'admin.planClasse.dateIntro' => 'Si cet élève était déjà en cours avant d\'être suivi ici, dites quel jour il a commencé son étape, même avant la création de son compte. La date limite se compte à partir de ce jour.',
+			'admin.planClasse.dateChamp' => 'Jour de début',
+			'admin.planClasse.dateAide' => 'Un jour passé, jusqu\'à aujourd\'hui (jour de La Mecque).',
+			'admin.planClasse.dateManque' => 'Il manque le jour de début : choisissez-le dans le calendrier.',
+			'admin.planClasse.dateEnvoyer' => 'Enregistrer le jour de début',
+			'admin.planClasse.dateErreur' => ({required Object message}) => 'Le jour de début n\'est pas confirmé : ${message}',
+			'admin.planClasse.dateMotifs.avant' => 'Il était déjà en cours avant le lancement',
+			'admin.planClasse.dateMotifs.correction' => 'Correction du jour de début',
+			'admin.planClasse.dateMotifs.confirme' => 'Jour confirmé avec l\'enseignant',
+			'admin.planClasse.refus.dateFuture' => 'Ce jour n\'est pas encore arrivé. Choisissez aujourd\'hui ou un jour passé.',
+			'admin.planClasse.refus.dateSousPlancher' => ({required Object date}) => 'Ce jour est trop ancien. Le plus ancien jour accepté est le ${date}. Choisissez un jour à partir de cette date.',
+			'admin.planClasse.refus.eleveSansEtape' => 'Cet élève n\'a pas encore d\'étape. Placez-le d\'abord dans Pédagogie, Diagnostics.',
+			'admin.planClasse.refus.niveauNonPublie' => 'Cette étape n\'est pas dans la version publiée du programme. Choisissez une étape de la liste.',
+			'admin.planClasse.refus.classeClose' => 'Cette classe est clôturée.',
+			'admin.planClasse.refus.aucunProgrammePublie' => 'Aucune version du programme n\'est publiée.',
+			'admin.planClasse.refus.motif' => 'Le motif manque.',
+			'admin.planClasse.debutChamp' => 'A-t-il commencé avant aujourd\'hui ?',
+			'admin.planClasse.debutAide' => 'Laissez vide si l\'élève commence aujourd\'hui. Sinon, choisissez le jour où il a vraiment commencé.',
+			'admin.planClasse.debutRetirer' => 'Il commence aujourd\'hui',
+			'admin.planClasse.apercuLimite' => ({required Object date}) => 'Avec ce jour de début, la date limite de l\'étape sera le ${date}.',
+			'admin.planClasse.apercuPassee' => ({required Object date}) => 'Avec ce jour de début, la date limite de l\'étape était le ${date} : elle est déjà passée. L\'élève apparaîtra tout de suite en retard sur cette étape. Aucun message n\'est envoyé. Vous pouvez choisir un jour plus récent.',
+			'admin.planClasse.apercuInconnue' => 'La date limite ne peut pas être calculée pour cet élève (durée ou tranche d\'âge inconnue).',
+			'admin.planClasse.apercuRefus' => 'Ce jour de début ne pourra pas être enregistré (à venir, ou plus ancien que le plus ancien jour accepté). Choisissez un autre jour.',
+			'admin.planClasse.apercuErreur' => 'La date limite qui en résulte n\'a pas pu être lue. Le serveur la calcule à l\'enregistrement.',
+			'admin.planClasse.jourErreur' => 'Le jour de référence n\'a pas pu être lu. Réessayez dans un instant.',
+			'admin.planClasse.jourRelire' => 'Relire le jour',
+			'admin.planClasse.placerAction' => 'Décider son placement',
+			'admin.planClasse.placerTitre' => 'Placement de l\'élève',
+			'admin.planClasse.placerIntro' => 'Cet élève sait déjà lire. Choisissez l\'étape où il commence, après l\'entretien de lecture. S\'il était déjà en cours, dites aussi quel jour il a commencé.',
+			'admin.planClasse.placerChamp' => 'Étape de placement',
+			'admin.planClasse.placerManque' => 'Il manque l\'étape : choisissez-la dans la liste.',
+			'admin.planClasse.placerEnvoyer' => 'Décider le placement',
+			'admin.planClasse.placerErreur' => ({required Object message}) => 'Le placement n\'est pas confirmé : ${message}',
+			'admin.planClasse.sansEtape.titre' => 'Élèves sans étape',
+			'admin.planClasse.sansEtape.intro' => 'Ces élèves sont déjà dans une classe, mais n\'ont pas encore d\'étape du programme.',
+			'admin.planClasse.sansEtape.classesTitre' => 'Classes sans étape',
+			'admin.planClasse.sansEtape.membres' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} élève', other: '${n} élèves', ), 
+			'admin.planClasse.sansEtape.raisonAucunProgramme' => 'Aucune version du programme n\'est publiée',
+			'admin.planClasse.sansEtape.raisonAttente' => 'Sait déjà lire : son étape se décide après l\'entretien de lecture (Décider un placement, plus bas)',
+			'admin.planClasse.sansEtape.raisonDebutant' => 'Débutant : il recevra l\'étape 1 au rattachement',
+			'admin.planClasse.sansEtape.rattacher' => 'Rattacher les débutants et les classes',
+			'admin.planClasse.sansEtape.rattacherTitre' => 'Rattachement',
+			'admin.planClasse.sansEtape.rattacherDetail' => 'L\'étape 1 des bases sera donnée à toutes les classes ouvertes sans étape et aux élèves débutants de la liste, à partir d\'aujourd\'hui. Les élèves qui savent déjà lire ne sont pas touchés. Vous pourrez ensuite dire quel jour chacun a vraiment commencé.',
+			'admin.planClasse.sansEtape.rattacherEnvoyer' => 'Rattacher maintenant',
+			'admin.planClasse.sansEtape.rattacherErreur' => ({required Object message}) => 'Le rattachement n\'est pas confirmé : ${message}',
+			'admin.planClasse.sansEtape.rattacherFait' => 'Rattachement fait : la liste est à jour.',
+			'admin.planClasse.sansEtape.erreurLecture' => 'La liste des élèves sans étape n\'a pas pu être lue. Réessayez dans un instant.',
+			'admin.planClasse.sansEtape.relire' => 'Relire la liste',
+			'admin.planClasse.sansEtape.toutPlace' => 'Chaque élève membre d\'une classe a son étape.',
+			'admin.planClasse.brouillon.incomplet' => ({required Object etape}) => 'Ce brouillon ne peut pas être publié : l\'étape « ${etape} » n\'a pas encore tous ses objectifs et toutes ses durées. Complétez-la, ou repartez des bases.',
+			'admin.planClasse.brouillon.incoherent' => ({required Object niveau}) => 'Ce brouillon ne peut pas être publié : pour ${niveau}, les durées des étapes ne font pas la durée du niveau. Corrigez-les, ou repartez des bases.',
+			'admin.planClasse.brouillon.sansBases' => 'Ce brouillon ne peut pas être publié : il n\'a pas les quatre étapes des bases. Repartez des bases.',
+			'admin.planClasse.brouillon.autre' => 'Ce brouillon ne peut pas être publié pour le moment. Vous pouvez repartir des bases.',
+			'admin.planClasse.brouillon.repartir' => 'Repartir des bases',
+			'admin.planClasse.brouillon.repartirTitre' => 'Repartir des bases',
+			'admin.planClasse.brouillon.repartirDetail' => 'Crée une nouvelle version avec les quatre étapes des bases, leurs objectifs, leurs matières et leurs durées. Ce brouillon n\'est ni modifié ni effacé : il reste dans la liste. Relisez la nouvelle version, puis publiez-la.',
+			'admin.planClasse.brouillon.repartirEnvoyer' => 'Créer la version avec les bases',
+			'admin.planClasse.brouillon.repartirErreur' => ({required Object message}) => 'La nouvelle version n\'est pas confirmée : ${message}',
 			'admin.qualite.titre' => 'Qualité',
 			'admin.qualite.intro' => 'Les anomalies pédagogiques détectées : rapports manquants, blocages sans suivi, évaluations en retard.',
 			'admin.qualite.erreur' => 'Les anomalies n\'ont pas pu être lues. Réessayez dans un instant.',
@@ -56970,6 +57351,8 @@ extension on Traductions {
 			'admin.programmes.contenu.livreRewayahDetail' => 'Pour les étapes lues avant le Mushaf. Ses pages ne sont pas encore numérotées : laissez les pages vides.',
 			'admin.programmes.contenu.mushaf' => 'Mushaf',
 			'admin.programmes.contenu.mushafDetail' => 'Pour les étapes lues dans le Coran, de la page 1 à la page 604.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.programmes.contenu.pageDebut' => 'Première page de l\'étape (facultatif)',
 			'admin.programmes.contenu.pageFin' => 'Dernière page de l\'étape (facultatif)',
 			'admin.programmes.contenu.dureesTitre' => 'Durée prévue et date limite, par tranche d\'âge',
@@ -57048,8 +57431,6 @@ extension on Traductions {
 			'admin.journal.evtAppareilAppaire' => 'Appareil appairé',
 			'admin.journal.evtAppareilRevoque' => 'Appareil révoqué',
 			'admin.journal.evtPedagogie' => 'Réglages pédagogiques modifiés',
-			_ => null,
-		} ?? switch (path) {
 			'admin.journal.evtAffectationPrise' => 'Élève pris par un enseignant',
 			'admin.journal.evtAffectationAttribuee' => 'Élève attribué par l\'administration',
 			'admin.journal.evtDemandeCreee' => 'Demande déposée',
@@ -57484,6 +57865,8 @@ extension on Traductions {
 			'admin.finance.pol.bourse' => 'Bourse',
 			'admin.finance.pol.bourseDetail' => 'Accordée par la direction sur demande écrite ; elle ne s\'ajoute à aucune autre remise.',
 			'admin.finance.pol.boursePlaces' => 'Places de bourse',
+			_ => null,
+		} ?? switch (path) {
 			'admin.finance.pol.boursePlacesDetail' => 'La part des élèves qui peuvent recevoir une bourse en même temps.',
 			'admin.finance.pol.bourseDuree' => 'Durée d\'une bourse',
 			'admin.finance.pol.bourseDureeDetail' => 'Après cette durée, la bourse est revue avec la famille.',
@@ -57562,8 +57945,6 @@ extension on Traductions {
 			'admin.finance.pol.railWeb' => 'Paiement web (Stripe)',
 			'admin.finance.pol.railActif' => 'Actif',
 			'admin.finance.pol.railInactif' => 'Inactif',
-			_ => null,
-		} ?? switch (path) {
 			'admin.finance.pol.railWebDetail' => 'Le seul moyen de paiement proposé aux familles au lancement.',
 			'admin.finance.pol.railIos' => 'Achat intégré iOS',
 			'admin.finance.pol.railAndroid' => 'Facturation Google Play',
@@ -57998,6 +58379,8 @@ extension on Traductions {
 			'admin.pilotage.precedente' => 'Page précédente du tableau de pilotage',
 			'admin.pilotage.suivante' => 'Page suivante du tableau de pilotage',
 			'admin.pilotage.resume' => ({required Object debut, required Object fin, required Object total}) => 'Horaires ${debut} à ${fin} sur ${total}',
+			_ => null,
+		} ?? switch (path) {
 			'admin.fusion.actionFusionner' => 'Fusionner avec une classe parallèle',
 			'admin.fusion.actionTransferer' => 'Transférer un élève',
 			'admin.fusion.actionHistorique' => 'Historique de la classe',
@@ -58076,8 +58459,6 @@ extension on Traductions {
 			'admin.tirage.nombreInvalide' => 'Entrez un nombre entier de 0 à 50, ou choisissez une des valeurs proposées.',
 			'admin.tirage.frequenceAutreChamp' => 'Nombre',
 			'admin.tirage.enregistreesVersion' => ({required Object n}) => 'Règles enregistrées, version ${n}. Elles s\'appliquent aux prochains tirages.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.tirage.missionsParSemaine' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} mission par semaine', other: '${n} missions par semaine', ), 
 			'admin.tirage.ponderationTitre' => 'Pondération',
 			'admin.tirage.ponderationDetail' => 'Plus le poids est fort, plus ces séances ont de chances d\'être tirées. Le tirage reste imprévisible pour l\'enseignant comme pour le contrôleur.',
@@ -58512,6 +58893,8 @@ extension on Traductions {
 			'admin.bibliotheque.publication.bloque' => 'Cette version ne peut pas être publiée tant que le serveur n\'a pas validé tous les points du contrôle.',
 			'admin.bibliotheque.publication.confirmerTitre' => ({required Object numero}) => 'Publier la version ${numero} ?',
 			'admin.bibliotheque.publication.confirmerEffet' => 'La version devient immuable et visible des classes auxquelles le document est attribué. Pour la modifier, vous créerez une nouvelle version.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.bibliotheque.publication.confirmerBouton' => 'Publier',
 			'admin.bibliotheque.publication.publiee' => 'Version publiée.',
 			'admin.bibliotheque.publication.dejaPubliee' => 'Cette version est déjà publiée.',
@@ -58590,8 +58973,6 @@ extension on Traductions {
 			'lieu.obligatoire' => 'Cette étape est maintenant nécessaire pour afficher vos heures de cours à votre heure.',
 			'lieu.echec' => 'Votre ville n\'est pas confirmée. Réessayez dans un instant.',
 			'lieu.disponibilitesTitre' => 'Relisez vos disponibilités',
-			_ => null,
-		} ?? switch (path) {
 			'lieu.disponibilitesPhrase' => 'Votre ville a changé de fuseau. Vos disponibilités gardent leurs heures exactes, mais elles s\'affichent maintenant à votre nouvelle heure : relisez-les.',
 			'lieu.disponibilitesLien' => 'Relire mes disponibilités',
 			'lieu.heureAppareil' => 'Heure de cet appareil',
@@ -59026,6 +59407,8 @@ extension on Traductions {
 			'historique.duree.minutesSecondes' => ({required Object m, required Object s}) => '${m} min ${s} s',
 			'historique.duree.heures' => ({required Object h}) => '${h} h',
 			'historique.duree.heuresMinutes' => ({required Object h, required Object m}) => '${h} h ${m}',
+			_ => null,
+		} ?? switch (path) {
 			'historique.fuseauListe' => 'Heures affichées à l\'heure de cet appareil.',
 			'historique.fuseauDetail' => ({required Object decalage}) => 'Heures affichées à l\'heure de cet appareil (UTC${decalage}).',
 			'historique.classeInconnue' => 'Classe non disponible',
@@ -59104,8 +59487,6 @@ extension on Traductions {
 			'historique.observation.visite' => ({required Object n}) => 'Visite ${n}',
 			'historique.observation.plageOuverte' => ({required Object debut}) => 'Entrée à ${debut}',
 			'historique.observation.terminee' => 'Visite terminée',
-			_ => null,
-		} ?? switch (path) {
 			'historique.observation.introuvableTitre' => 'Aucune visite pour cette séance',
 			'historique.observation.introuvablePhrase' => 'Aucune visite enregistrée ne correspond à cette séance.',
 			'historique.compteRendu.titre' => 'Compte rendu pédagogique',
@@ -59540,6 +59921,8 @@ extension on Traductions {
 			'classe.observation.motif.horsFenetre' => 'La salle n\'est pas ouverte à cette heure.',
 			'classe.observation.motif.observationDesactivee' => 'L\'observation est fermée pour cette classe.',
 			'classe.observation.motif.lienAbsent' => 'Aucun élève de votre foyer n\'est rattaché à cette séance.',
+			_ => null,
+		} ?? switch (path) {
 			'classe.observation.motif.enfantAbsent' => ({required Object dePrenom}) => 'L\'observation attend l\'arrivée ${dePrenom}.',
 			'classe.observation.motif.presenceEnVerification' => ({required Object dePrenom}) => 'La présence ${dePrenom} est en cours de vérification.',
 			'classe.observation.motif.visiteDejaOuverte' => 'Une visite est déjà ouverte, sur cet appareil ou sur un autre.',
@@ -59618,8 +60001,6 @@ extension on Traductions {
 			'classe.cartes.feuille.enregistrer' => 'Enregistrer la carte',
 			'classe.cartes.feuille.retirer' => 'Retirer cette carte',
 			'classe.cartes.feuille.retirerQuestion' => ({required Object titre}) => 'Retirer la carte « ${titre} » ?',
-			_ => null,
-		} ?? switch (path) {
 			'classe.cartes.feuille.retirerConsequence' => 'Elle disparaît aussitôt pour les élèves de la classe et leurs familles.',
 			'classe.cartes.feuille.retirerConfirmer' => 'Retirer la carte',
 			'classe.cartes.feuille.envoiNonConfirme' => 'La carte n\'est pas confirmée : la réponse n\'est pas arrivée. Enregistrez de nouveau dans un instant.',
@@ -60054,6 +60435,8 @@ extension on Traductions {
 			'enseignant.profil.fuseauAppareil' => 'Heure de cet appareil',
 			'enseignant.profil.fuseauValeur' => ({required Object ville, required Object decalage}) => '${ville} · UTC${decalage}',
 			'enseignant.profil.modifierFuseau' => 'Modifier le fuseau horaire',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.profil.fuseauConsigne' => 'Choisissez le fuseau de la ville où vous vivez. Vos disponibilités et vos séances s\'affichent à cette heure.',
 			'enseignant.profil.fuseauDuPays' => 'Fuseau de votre pays',
 			'enseignant.profil.fuseauExpert' => 'Ou écrivez le nom du fuseau',
@@ -60132,8 +60515,6 @@ extension on Traductions {
 			'enseignant.creneaux.plageEngagee' => ({required Object heures}) => 'Classe déjà engagée sur ${heures}',
 			'enseignant.creneaux.ajouterPlage' => 'Ajouter une plage',
 			'enseignant.creneaux.feuilleAjouterTitre' => 'Nouvelle plage de disponibilité',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.creneaux.feuilleModifierTitre' => ({required Object jour}) => 'Modifier la plage du ${jour}',
 			'enseignant.creneaux.feuilleContexte' => 'Choisissez un ou plusieurs jours, puis l\'heure de début et l\'heure de fin. Un cours peut commencer à chaque heure pleine de la plage.',
 			'enseignant.creneaux.raccourcis' => 'Raccourcis',
@@ -60568,6 +60949,8 @@ extension on Traductions {
 			'tc.groupe.horloges.mecqueEnSecond' => ({required Object heure}) => 'Heure de La Mecque : ${heure}',
 			'tc.groupe.horloges.heureDeVille' => ({required Object heure, required Object deVille}) => '${heure} (heure ${deVille})',
 			'tc.groupe.horloges.laMecque' => 'La Mecque',
+			_ => null,
+		} ?? switch (path) {
 			'tc.groupe.horloges.chezVous' => 'Chez vous',
 			'tc.groupe.horloges.chezEnseignantAnonyme' => 'Chez votre enseignant',
 			'tc.groupe.horloges.familles' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} famille', other: '${n} familles', ), 
@@ -60646,8 +61029,6 @@ extension on Traductions {
 			'tc.bibliotheque.classe.titre' => 'Choisir un document',
 			'tc.bibliotheque.classe.sousTitre' => 'Le document choisi remplace celui affiché. Le cours continue.',
 			'tc.bibliotheque.rendu.sansLecteur' => 'Ce type de document n\'a pas encore de lecteur dans l\'application.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.bibliotheque.rendu.confirmerTitre' => 'Ce lien quitte l\'application',
 			'tc.bibliotheque.rendu.confirmerPhrase' => 'Il ouvre un autre site, en dehors de Rewayah Academy. Vous pouvez revenir ici ensuite.',
 			'tc.bibliotheque.rendu.confirmerPhraseTu' => 'Il ouvre un autre site, en dehors de Rewayah Academy. Tu pourras revenir ici ensuite.',
@@ -61082,6 +61463,8 @@ extension on Traductions {
 			'adulte.coranDemo.phrase' => 'Ce n\'est pas une panne : la démonstration ne contient pas le texte du Coran. Après connexion à votre espace élève, il s\'ouvre ici.',
 			'adulte.recharge.titre' => 'Recharge',
 			'adulte.recharge.phrase' => 'Choisissez les profils et les montants.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.recharge.verifier' => 'Vérifier la recharge',
 			'adulte.recharge.raisonAucun' => 'Sélectionnez au moins un profil pour continuer.',
 			'adulte.recharge.sansDonnees' => 'Les bénéficiaires à recharger n\'ont pas pu être chargés',
@@ -61160,8 +61543,6 @@ extension on Traductions {
 			'adulte.recharge.resultat.horsLigne' => 'L\'état affiché peut avoir changé depuis : actualisez dès que la lecture est de nouveau possible.',
 			'adulte.recharge.resultat.videTitre' => 'Aucun paiement à suivre',
 			'adulte.recharge.resultat.videPhrase' => 'Cette adresse ne désigne aucune commande. Revenez aux paiements du foyer pour retrouver vos recharges.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.recharge.resultat.indisponibleTitre' => 'Suivi du paiement pas encore disponible',
 			'adulte.recharge.resultat.indisponiblePhrase' => 'L\'état des paiements n\'est pas encore disponible dans l\'application. Aucun paiement n\'a été effectué ici.',
 			'adulte.recharge.resultat.lectureEchecTitre' => 'L\'état du paiement n\'a pas pu être lu.',
@@ -61596,6 +61977,8 @@ extension on Traductions {
 			'suiviDemandes.fuseauChoisi' => 'Fuseau horaire',
 			'suiviDemandes.fuseauValeur' => ({required Object deVille}) => 'Heure ${deVille}',
 			'suiviDemandes.etapes.envoyee' => 'Demande envoyée',
+			_ => null,
+		} ?? switch (path) {
 			'suiviDemandes.etapes.classeValidee' => 'Classe validée',
 			'suiviDemandes.etapes.enseignantAffecte' => 'Enseignant affecté',
 			'suiviDemandes.etapes.listeAttente' => 'En liste d\'attente',
@@ -61674,8 +62057,6 @@ extension on Traductions {
 			'alertes.ligne' => ({required Object gravite, required Object titre, required Object date, required Object heure}) => '${gravite}, ${titre}, le ${date} à ${heure}',
 			'alertes.bandeauUne' => ({required Object titre}) => 'Alerte urgente : ${titre}',
 			'alertes.bandeauPlusieurs' => ({required Object nombre, required Object titre}) => '${nombre} alertes urgentes. La plus récente : ${titre}',
-			_ => null,
-		} ?? switch (path) {
 			'alertes.bandeauCourtUne' => 'Alerte urgente à traiter',
 			'alertes.bandeauCourtPlusieurs' => ({required Object nombre}) => '${nombre} alertes urgentes à traiter',
 			'alertes.voirTout' => 'Voir toutes les alertes',
@@ -62110,6 +62491,8 @@ extension on Traductions {
 			'com.vocal.demo.nonConfirme' => 'Non confirmé',
 			'com.vocal.demo.indisponible' => 'Indisponible',
 			'com.vocal.demo.recu' => 'Message vocal reçu',
+			_ => null,
+		} ?? switch (path) {
 			'com.vocal.demo.repondre' => 'Répondre dans la conversation',
 			'com.vocal.demo.envoyes' => 'Messages vocaux envoyés',
 			'com.vocal.demo.auteurEnseignante' => 'Sayyida Mariam, enseignante',
@@ -62188,8 +62571,6 @@ extension on Traductions {
 			'com.communaute.composer.nouvelle' => 'Nouvelle publication',
 			'com.communaute.composer.contexte' => 'Partagez une question, une méthode ou une ressource utile à l\'enseignement.',
 			'com.communaute.composer.categorie' => 'Catégorie',
-			_ => null,
-		} ?? switch (path) {
 			'com.communaute.composer.categorieManquante' => 'Choisissez une catégorie pour publier.',
 			'com.communaute.composer.champTitre' => 'Titre',
 			'com.communaute.composer.aideTitre' => 'Le sujet en quelques mots',
@@ -62624,6 +63005,8 @@ extension on Traductions {
 			'com.annonces.demoPublication.extraitAffilie' => 'Retrouvez mes fiches avec ce lien partenaire, remise de 20 % avec mon code.',
 			'com.annonces.demoPublication.signalementVente' => 'Publication « Cours particuliers disponibles »',
 			'com.annonces.demoPublication.extraitVente' => 'Je propose des cours particuliers payants le week-end, écrivez-moi.',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.demoPublication.signalementHorsSujet' => 'Réponse sous « Organiser une révision collective »',
 			'com.annonces.section' => 'Annonces de la classe',
 			'com.annonces.annonce' => 'Annonce',
@@ -62702,8 +63085,6 @@ extension on Traductions {
 			'comptable.graphiques.legendeSorties' => 'Sorties',
 			'comptable.graphiques.legendeEncaissements' => 'Encaissements',
 			'comptable.graphiques.legendeDecaissements' => 'Décaissements',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.graphiques.legendeDetenue' => 'Trésorerie détenue',
 			'comptable.graphiques.kpiTitre' => 'Entrées et sorties',
 			'comptable.graphiques.kpiEntrees' => 'Entrées',
@@ -63138,6 +63519,8 @@ extension on Traductions {
 			'comptable.encaissements.recherche' => 'Rechercher une famille ou une référence',
 			'comptable.encaissements.colDate' => 'Date',
 			'comptable.encaissements.colFamille' => 'Famille',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.encaissements.colReference' => 'Référence',
 			'comptable.encaissements.colBrut' => 'Brut',
 			'comptable.encaissements.colFrais' => 'Frais',
@@ -63216,8 +63599,6 @@ extension on Traductions {
 			'comptable.encaissements.rap.executerLecteur' => ({required Object beneficiaire}) => 'Exécuter le remboursement de ${beneficiaire}',
 			'comptable.encaissements.rap.executerTitre' => 'Exécuter ce remboursement ?',
 			'comptable.encaissements.rap.executerPhrase' => 'Le montant et les conditions viennent de la politique Finance. Le prestataire confirmera l\'exécution.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.encaissements.rap.remboursementsVideTitre' => 'Aucun remboursement ni avoir en cours.',
 			'comptable.encaissements.rap.journalRemboursement' => 'Journal du remboursement',
 			'comptable.encaissements.rap.journalRemboursementVide' => 'Aucune opération enregistrée pour ce remboursement.',
@@ -63652,6 +64033,8 @@ extension on Traductions {
 			'comptable.direction.delegationPanneau.suspendueTitre' => 'Délégations suspendues',
 			'comptable.direction.delegationPanneau.suspendueDepuis' => ({required Object date}) => 'Suspendues depuis le ${date}. Le Comptable ne peut rien exécuter sans votre validation.',
 			'comptable.direction.delegationPanneau.suspendueSansDate' => 'Le Comptable ne peut rien exécuter sans votre validation.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.suspendueEnCours' => 'Suspension en cours',
 			'comptable.direction.delegationPanneau.suspendueEchec' => 'La suspension n\'est pas confirmée : la demande n\'est peut-être pas parvenue jusqu\'à Rewayah. Vérifiez l\'état de la délégation avant de réessayer.',
 			'comptable.direction.delegationPanneau.expirationTitre' => 'Expiration',
@@ -63730,8 +64113,6 @@ extension on Traductions {
 			'comptable.paiementsFamilles.entree' => 'Paiements des familles',
 			'presentationTuteur.titre' => 'Demandes de présentation',
 			'presentationTuteur.contexte' => 'Un enfant de votre foyer demande la présentation standard. C\'est vous qui décidez.',
-			_ => null,
-		} ?? switch (path) {
 			'presentationTuteur.ligne' => ({required Object prenom}) => '${prenom} demande la présentation standard.',
 			'presentationTuteur.demandeeLe' => ({required Object date, required Object heure}) => 'Demandé le ${date} à ${heure}',
 			'presentationTuteur.accepter' => 'Accepter',
@@ -64166,6 +64547,8 @@ extension on Traductions {
 			'avis.admin.liens.libelleAide' => 'Par exemple : Familles octobre 2026.',
 			'avis.admin.liens.libelleErreur' => 'Donnez un nom au lien.',
 			'avis.admin.liens.jours' => 'Durée en jours',
+			_ => null,
+		} ?? switch (path) {
 			'avis.admin.liens.joursAide' => '90 par défaut, 365 au plus.',
 			'avis.admin.liens.joursErreur' => 'Entrez un nombre de jours de 1 à 365.',
 			'avis.admin.liens.max' => 'Nombre maximal d\'avis',
@@ -64244,8 +64627,6 @@ extension on Traductions {
 			'courriels.admin.file.statut.enAttente' => 'En file',
 			'courriels.admin.file.statut.envoi' => 'En cours d\'envoi',
 			'courriels.admin.file.statut.envoye' => 'Envoyé',
-			_ => null,
-		} ?? switch (path) {
 			'courriels.admin.file.statut.echec' => 'Non envoyé',
 			'courriels.admin.file.statut.annule' => 'Annulé',
 			'courriels.admin.file.origine.auto' => 'Automatique',
@@ -64680,6 +65061,8 @@ extension on Traductions {
 			'candidatsFlux.importFormulaires.champ.langueMaternelle' => 'Langue maternelle',
 			'candidatsFlux.importFormulaires.champ.langueMaternelleAide' => 'Facultatif.',
 			'candidatsFlux.importFormulaires.champ.languesExplication' => 'Langues d\'explication',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.champ.languesExplicationAide' => 'Les langues dans lesquelles la personne peut expliquer et corriger.',
 			'candidatsFlux.importFormulaires.champ.memorisation' => 'Mémorisation du Coran',
 			'candidatsFlux.importFormulaires.champ.memorisationAide' => 'Une déclaration, pas un constat : le niveau se constate à l\'entretien.',
@@ -64758,8 +65141,6 @@ extension on Traductions {
 			'candidatsFlux.importFormulaires.comptes.attendus.lignes' => 'Lignes attendues',
 			'candidatsFlux.importFormulaires.comptes.attendus.personnes' => 'Personnes attendues',
 			'candidatsFlux.importFormulaires.comptes.attendus.aide' => 'Un nombre entier. Laissez vide ce que vous ne comparez pas.',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.comptes.choisir' => 'Indiquez le décompte à comparer pour continuer.',
 			'candidatsFlux.importFormulaires.comptes.saisirNombre' => 'Saisissez au moins un nombre pour continuer.',
 			'candidatsFlux.importFormulaires.comptes.ecartTitre' => 'Un écart à vérifier',
@@ -65194,6 +65575,8 @@ extension on Traductions {
 			'journalSorties.rapport.dureeTotale' => 'Durée totale',
 			'journalSorties.rapport.plage' => ({required Object debut, required Object fin}) => 'De ${debut} à ${fin}',
 			'journalSorties.rapport.sortieSalle' => 'Sortie de la salle après le délai',
+			_ => null,
+		} ?? switch (path) {
 			'journalSorties.rapport.secondes' => ({required Object n}) => '${n} s',
 			'journalSorties.rapport.minutes' => ({required Object n}) => '${n} min',
 			'journalSorties.rapport.minutesSecondes' => ({required Object m, required Object s}) => '${m} min ${s} s',
@@ -65272,8 +65655,6 @@ extension on Traductions {
 			'calendrier.dates.notification.levee.plusieurs' => ({required Object n, required Object quand}) => 'La fermeture de l\'académie est retirée. Séances rétablies : ${n}, dont celle du ${quand}.',
 			'calendrier.dates.notification.levee.abandonUne' => ({required Object quand}) => 'La fermeture de l\'académie est retirée, mais la séance du ${quand} n\'aura pas lieu.',
 			'calendrier.dates.notification.levee.abandonPlusieurs' => ({required Object n, required Object quand}) => 'La fermeture de l\'académie est retirée, mais des séances n\'auront pas lieu : ${n}, dont celle du ${quand}.',
-			_ => null,
-		} ?? switch (path) {
 			'calendrier.dates.notification.levee.mixte' => ({required Object retablies, required Object abandonnees}) => 'La fermeture de l\'académie est retirée. Séances rétablies : ${retablies}. Séances qui n\'auront pas lieu : ${abandonnees}. Ouvrez la classe pour les voir.',
 			'calendrier.dates.concernees.titre' => 'Séances concernées',
 			'calendrier.dates.concernees.heureMecque' => 'Les jours et les heures sont ceux de La Mecque.',

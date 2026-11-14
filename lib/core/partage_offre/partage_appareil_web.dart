@@ -106,10 +106,13 @@ class PartageNavigateur implements PortPartageOffre {
         throw const PartageImpossible();
       }
       final _DonneesPartage donnees = niveau == NiveauPartage.image
+          // Avec un fichier, beaucoup d'applications (WhatsApp, Messages)
+          // ignorent `url` : le lien du site public part dans le texte, sous
+          // la phrase, pour arriver toujours avec l'image (directeur,
+          // 14/11/2026). Pas de `url` en plus : il doublerait le lien.
           ? _DonneesPartage(
               title: titre,
-              text: texte,
-              url: lien.toString(),
+              text: texteAvecLien(texte, lien),
               files: <_Fichier>[
                 _Fichier(
                   <JSAny>[png.toJS].toJS,

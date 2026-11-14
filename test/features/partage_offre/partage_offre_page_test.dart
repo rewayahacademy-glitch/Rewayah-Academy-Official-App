@@ -826,11 +826,28 @@ void main() {
         final AppelPartage appel = m.partage.appels.single;
         expect(appel.titre, textesCarte[LangueCarte.portugais]!.titre);
         expect(appel.texte, textesCarte[LangueCarte.portugais]!.sousTitre);
+        // Le lien suit la langue de la carte : l'accueil portugais du site
+        // public (directeur, 14/11/2026).
+        expect(appel.lien.toString(), 'https://rewayah.test/pt/');
         // Puis l'arabe, de droite a gauche, sur une page qui reste en francais.
         await _puce(tester, 'العربية');
         await tester.pumpAndSettle();
         expect(langueDeLaCarte(tester), LangueCarte.arabe);
         expect(m.rendu.appels, 3);
+        // La ligne du lien et le lien de la carte (QR, texte imprime) suivent.
+        expect(
+          tester
+              .widget<Text>(find.byKey(const ValueKey<String>('partage-lien')))
+              .data,
+          contains('rewayah.test/ar/'),
+        );
+        expect(
+          tester
+              .widget<CartePartage>(find.byType(CartePartage))
+              .lien
+              .toString(),
+          'https://rewayah.test/ar/',
+        );
         expect(find.text(t.recrutement.partage.partager), findsOneWidget);
         expect(tester.takeException(), isNull);
       },
