@@ -37,6 +37,7 @@ import 'package:rewayah_academy/core/dossier/service_dossier.dart';
 import 'package:rewayah_academy/core/i18n/isolat_bidi.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/icons/app_icons.dart';
+import 'package:rewayah_academy/core/preferences/preferences_locales.dart';
 import 'package:rewayah_academy/core/recrutement/port_invitations_enseignant.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
@@ -51,6 +52,8 @@ import 'package:rewayah_academy/features/inscription/etapes/usage_etape.dart';
 import 'package:rewayah_academy/features/inscription/inscription_page.dart';
 import 'package:rewayah_academy/features/juridique/textes_juridiques.dart';
 
+import '../../capture/outil_capture.dart'
+    show capturerVue, chargerPolicesDuDepot, masquerRubanDebug, sautSansCapture;
 import '../../fixtures/candidature/faux_inscription_candidat.dart';
 import '../../fixtures/candidature/faux_nom_latin.dart';
 import '../../support/garde_interface.dart';
@@ -61,6 +64,7 @@ const Key _caseConfidentialite = Key('inscription-confidentialite');
 const Key _lienPolitique = Key('inscription-confidentialite-lire');
 const Key _carteArabe = ValueKey<String>('inscription-langue-ar');
 const Key _carteFrancais = ValueKey<String>('inscription-langue-fr');
+const Key _carteAnglais = ValueKey<String>('inscription-langue-en');
 
 /// Ce que le test garde du parcours monte.
 class _Hote {
@@ -274,6 +278,46 @@ Future<void> _versLeRecap(
   await tester.pumpAndSettle();
 }
 
+/// CANDIDATURE-UX (14/11/2026) : captures R3 du choix de la langue (Francais,
+/// arabe, anglais), sautees sans `CAPTURE_DIR`.
+void _capturesLangue() {
+  group(
+    'CANDIDATURE-UX : captures du choix de la langue',
+    skip: sautSansCapture,
+    () {
+      setUpAll(chargerPolicesDuDepot);
+      setUp(masquerRubanDebug);
+      for (final (String nom, AppLocale langue) in <(String, AppLocale)>[
+        ('fr', AppLocale.fr),
+        ('en', AppLocale.en),
+        ('ar', AppLocale.ar),
+      ]) {
+        for (final Size taille in <Size>[
+          const Size(390, 844),
+          const Size(1440, 900),
+        ]) {
+          testWidgets('langue $nom ${taille.width.toInt()}', (
+            WidgetTester tester,
+          ) async {
+            await tester.runAsync(() => LocaleSettings.setLocale(langue));
+            final _Hote hote = await _monter(tester, taille: taille);
+            await _versLeRecap(tester, hote);
+            await Scrollable.ensureVisible(
+              tester.element(find.text(t.inscription.langue.question)),
+              alignment: 0.05,
+            );
+            await tester.pumpAndSettle();
+            await capturerVue(
+              tester,
+              'langue-choix_${nom}_${taille.width.toInt()}',
+            );
+          });
+        }
+      }
+    },
+  );
+}
+
 Future<void> _cocherEtCreer(WidgetTester tester) async {
   await _taper(tester, find.byKey(_caseConfidentialite));
   await _taper(tester, find.text(t.inscription.candidat.envoyer));
@@ -283,6 +327,7 @@ void main() {
   tearDown(() async {
     await LocaleSettings.setLocale(AppLocale.fr);
   });
+  _capturesLangue();
 
   group('l\'entree sans code, lue au serveur', () {
     testWidgets(
@@ -536,6 +581,7 @@ void main() {
             UsageInscription.enseignant,
             t.inscription.identiteQuestion,
             '${t.inscription.candidat.accueil} '
+                '${t.inscription.candidat.gratuit} '
                 '${t.inscription.identiteRaison}',
           ),
         ]) {
@@ -939,6 +985,9 @@ void main() {
         expect(find.text(t.inscription.langue.question), findsOneWidget);
         expect(find.byKey(_carteFrancais), findsOneWidget);
         expect(find.byKey(_carteArabe), findsOneWidget);
+        // CANDIDATURE-UX (14/11/2026) : l'anglais aussi, toute langue chargee.
+        expect(find.byKey(_carteAnglais), findsOneWidget);
+        expect(find.text(t.inscription.langue.anglais), findsOneWidget);
         // La case : jamais precochee, avec son lien.
         expect(tester.widget<Checkbox>(find.byType(Checkbox)).value, isFalse);
         expect(
@@ -1070,6 +1119,29 @@ void main() {
         await LocaleSettings.setLocale(AppLocale.fr);
       },
     );
+
+    testWidgets('CANDIDATURE-UX : la carte change la PREFERENCE de langue, pas '
+        'seulement l\'affichage (sinon la creation du compte la remettait)', (
+      WidgetTester tester,
+    ) async {
+      await _precharger(tester);
+      final _Hote hote = await _monter(tester);
+      await _versLeRecap(tester, hote);
+      final ProviderContainer conteneur = ProviderScope.containerOf(
+        tester.element(find.byKey(_carteArabe)),
+      );
+      await _taper(tester, find.byKey(_carteArabe));
+      expect(
+        conteneur.read(preferencesLocalesProvider).langue,
+        PreferenceLangue.arabe,
+      );
+      expect(
+        conteneur.read(preferencesLocalesProvider.notifier).langueChoisie,
+        isTrue,
+      );
+      expect(LocaleSettings.currentLocale, AppLocale.ar);
+      await LocaleSettings.setLocale(AppLocale.fr);
+    });
 
     testWidgets('le francais par defaut part comme « fr »', (
       WidgetTester tester,

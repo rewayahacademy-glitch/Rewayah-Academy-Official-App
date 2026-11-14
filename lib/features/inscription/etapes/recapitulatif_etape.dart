@@ -18,6 +18,7 @@ import '../../../core/i18n/strings.g.dart';
 import '../../../core/icons/app_icons.dart';
 import '../../../core/offres/offre_horaire.dart' show LangueCours;
 import '../../../core/offres/service_offres.dart' show languesCoursProvider;
+import '../../../core/preferences/preferences_locales.dart';
 import '../../../core/recrutement/port_invitations_comptable.dart';
 import '../../../core/recrutement/port_invitations_enseignant.dart';
 import '../../../core/reseau/service_reseau.dart';
@@ -289,6 +290,10 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
         genre: genre.valeurSql,
         telephone: telephone,
         // La langue de l'ecran, jamais deduite d'ailleurs.
+        // L'anglais : la candidature n'accepte que 'fr' et 'ar' au serveur
+        // (`candidatures.langue`, migration 20261022000600) ; le candidat
+        // anglophone y est note 'fr', son compte garde l'anglais (langue
+        // de communication, a la naissance du compte). Dette annoncee.
         langue: LocaleSettings.currentLocale == AppLocale.ar ? 'ar' : 'fr',
         // La version du texte que la case affiche et que la personne peut lire.
         versionConfidentialite: VersionsJuridiques.version,
@@ -845,10 +850,19 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
   }
 }
 
-/// Le choix de la langue de l'application : deux cartes, la langue active est
-/// deja retenue (deduite, jamais imposee). Toucher une carte change la langue
-/// de l'ecran tout de suite ; c'est cette langue que le serveur reçoit.
-class _ChoixLangue extends StatelessWidget {
+/// Le choix de la langue de l'application : une carte par langue chargee dans
+/// l'application ([AppLocale.values] : francais, arabe, anglais), la langue
+/// active deja retenue (deduite, jamais imposee).
+///
+/// CANDIDATURE-UX (directeur, 14/11/2026) : le directeur choisit Francais,
+/// puis l'interface passe en arabe. Cause : la carte changeait la langue
+/// d'affichage seule (`LocaleSettings.setLocale`), sans passer par la
+/// preference ; a la creation du compte, la persistance remettait la
+/// preference du compte neuf (« Systeme », donc la langue de l'appareil). La
+/// carte passe maintenant par la preference ([PreferencesLocalesControleur]) :
+/// la langue s'applique tout de suite, et ce choix devient celui du compte a
+/// sa creation (`_persisterParCompte`, langue du compte au serveur).
+class _ChoixLangue extends ConsumerWidget {
   const _ChoixLangue({required this.enCours});
 
   final bool enCours;
@@ -860,16 +874,39 @@ class _ChoixLangue extends StatelessWidget {
   static Key carteKey(String code) =>
       ValueKey<String>('inscription-langue-$code');
 
+  /// La preference qui impose [langue].
+  static PreferenceLangue preferencePour(AppLocale langue) => switch (langue) {
+    AppLocale.fr => PreferenceLangue.francais,
+    AppLocale.ar => PreferenceLangue.arabe,
+    AppLocale.en => PreferenceLangue.anglais,
+  };
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final r = t.inscription.langue;
-    // LANGUES-1 : l'inscription du candidat ne propose que le francais et
-    // l'arabe (le serveur n'accepte que ces deux codes) ; en anglais, aucune
-    // carte n'est cochee.
-    final String active = switch (LocaleSettings.currentLocale) {
-      AppLocale.ar => 'ar',
-      AppLocale.fr => 'fr',
-      AppLocale.en => '',
+    final AppLocale active = LocaleSettings.currentLocale;
+    OptionChoix option(AppLocale l) => switch (l) {
+      AppLocale.fr => OptionChoix(
+        cle: carteKey('fr'),
+        valeur: 'fr',
+        libelle: r.francais,
+        explication: r.francaisExplication,
+        exemple: r.francaisExemple,
+      ),
+      AppLocale.ar => OptionChoix(
+        cle: carteKey('ar'),
+        valeur: 'ar',
+        libelle: r.arabe,
+        explication: r.arabeExplication,
+        exemple: r.arabeExemple,
+      ),
+      AppLocale.en => OptionChoix(
+        cle: carteKey('en'),
+        valeur: 'en',
+        libelle: r.anglais,
+        explication: r.anglaisExplication,
+        exemple: r.anglaisExemple,
+      ),
     };
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -881,33 +918,23 @@ class _ChoixLangue extends StatelessWidget {
           child: ChoiceCardGroup(
             key: groupeKey,
             autoriserSaisieLibre: false,
-            coteACote: true,
             valeurInitiale: ReponseChoix(
-              valeurs: active.isEmpty ? <String>{} : <String>{active},
+              valeurs: <String>{active.languageCode},
             ),
             options: <OptionChoix>[
-              OptionChoix(
-                cle: carteKey('fr'),
-                valeur: 'fr',
-                libelle: r.francais,
-                explication: r.francaisExplication,
-                exemple: r.francaisExemple,
-              ),
-              OptionChoix(
-                cle: carteKey('ar'),
-                valeur: 'ar',
-                libelle: r.arabe,
-                explication: r.arabeExplication,
-                exemple: r.arabeExemple,
-              ),
+              for (final AppLocale l in AppLocale.values) option(l),
             ],
             onChange: (ReponseChoix reponse) {
-              // L'arabe est une bibliotheque chargee a la demande : le
-              // changement est asynchrone, l'ecran se reconstruit a son arrivee.
-              if (reponse.valeurs.contains('ar') && active != 'ar') {
-                unawaited(LocaleSettings.setLocale(AppLocale.ar));
-              } else if (reponse.valeurs.contains('fr') && active != 'fr') {
-                unawaited(LocaleSettings.setLocale(AppLocale.fr));
+              for (final AppLocale l in AppLocale.values) {
+                if (reponse.valeurs.contains(l.languageCode) && l != active) {
+                  // La preference applique la langue (chargee a la demande
+                  // pour l'arabe et l'anglais : l'ecran se reconstruit a son
+                  // arrivee) et la garde pour le compte qui va naitre.
+                  ref
+                      .read(preferencesLocalesProvider.notifier)
+                      .langue(preferencePour(l));
+                  unawaited(appliquerPreferenceLangue(preferencePour(l)));
+                }
               }
             },
           ),

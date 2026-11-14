@@ -513,6 +513,9 @@ class CarteCadre extends StatelessWidget {
 
 /// Le recapitulatif, les conditions et l'envoi.
 class RecapitulatifEtape extends ConsumerStatefulWidget {
+  /// La cle de la phrase qui dit que candidater est gratuit (tests).
+  static const Key gratuitKey = ValueKey<String>('candidature-recap-gratuit');
+
   /// Cree l'etape.
   const RecapitulatifEtape({
     required this.controleur,
@@ -855,6 +858,14 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
       enfant: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
+          // CANDIDATURE-UX (directeur, 14/11/2026) : l'ecran d'envoi dit que
+          // candidater est gratuit.
+          Text(
+            t.recrutement.parcours.recap.gratuit,
+            key: RecapitulatifEtape.gratuitKey,
+            style: textes.titleSmall,
+          ),
+          Ecart.vLg,
           CartesRecapitulatif(
             questionnaire: _c.questionnaire,
             reponses: _c.reponses,

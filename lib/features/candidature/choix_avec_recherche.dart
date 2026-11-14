@@ -1,8 +1,14 @@
-// Un choix dans une longue liste (langues, pays, riwayat, villes), sans clavier
-// tant que ce n'est pas inevitable : d'abord les choix courants en cartes
-// (`ChoiceCardGroup`), puis « Autre ... » qui ouvre une recherche proposant des
-// lignes a toucher. Ce qui est retenu hors des cartes courantes s'y ajoute en
-// carte, pour se voir et se retirer.
+// Un choix dans une longue liste (langues, pays, riwayat, villes).
+//
+// CANDIDATURE-UX (directeur, 14/11/2026 : « les cartes sont enormes, 5 par
+// ecran ») : la recherche est en tete, toujours visible ; dessous, les choix
+// courants en lignes compactes (`ChoiceCardGroup(compacte: true)`, 48 a 56).
+// Taper filtre toute la liste, dans les memes lignes. Ce qui est retenu hors
+// des choix courants s'y ajoute, pour se voir et se retirer.
+//
+// Les riwayat (meme demande) : d'abord « toutes » (exclusive), puis les plus
+// connues, puis « Une autre riwaya » et sa recherche, sous la liste
+// ([ChoixAvecRecherche.rechercheEnTete] faux).
 //
 // Aucune saisie libre : le serveur ne recoit que des codes de la liste.
 library;
@@ -10,13 +16,11 @@ library;
 import 'package:flutter/material.dart';
 
 import '../../core/i18n/pays_iso.dart' show formeDeRecherche;
-import '../../core/icons/app_icons.dart';
 import '../../core/theme/app_spacing.dart';
-import '../../core/widgets/carte_lignes.dart';
+import '../../core/widgets/champ_etiquete.dart' show TitreChamp;
 import '../../core/widgets/champ_recherche.dart';
 import '../../core/widgets/choice_card_group.dart';
 import '../../core/widgets/lien_fleche.dart';
-import '../../core/widgets/setting_row.dart';
 
 /// Un element d'une liste de choix.
 class ElementChoix {
@@ -50,15 +54,12 @@ class ElementChoix {
 class TextesRecherche {
   /// Cree les textes.
   const TextesRecherche({
-    required this.autre,
     required this.recherche,
     required this.aide,
     required this.aucun,
     required this.retour,
+    this.autre,
   });
-
-  /// « Un autre pays » : ouvre la recherche.
-  final String autre;
 
   /// L'etiquette du champ de recherche.
   final String recherche;
@@ -69,11 +70,15 @@ class TextesRecherche {
   /// Quand rien ne correspond.
   final String aucun;
 
-  /// « Revenir aux pays proposes ».
+  /// « Revenir aux pays proposes » : vide la recherche.
   final String retour;
+
+  /// « Une autre riwaya » : le titre pose au-dessus de la recherche quand
+  /// elle vient sous la liste ([ChoixAvecRecherche.rechercheEnTete] faux).
+  final String? autre;
 }
 
-/// Cartes courantes, puis recherche.
+/// La recherche en tete, puis les choix courants en lignes compactes.
 class ChoixAvecRecherche extends StatefulWidget {
   /// Cree le choix.
   const ChoixAvecRecherche({
@@ -85,14 +90,14 @@ class ChoixAvecRecherche extends StatefulWidget {
     required this.textes,
     super.key,
     this.multiple = false,
-    this.icone,
-    this.resultatsEnCartes = false,
+    this.rechercheEnTete = true,
+    this.toutes,
   });
 
   /// Le prefixe des cles des widgets (tests).
   final String cle;
 
-  /// Les choix courants, en cartes, dans l'ordre.
+  /// Les choix courants, en lignes, dans l'ordre.
   final List<ElementChoix> courants;
 
   /// Tous les choix, pour la recherche.
@@ -110,22 +115,21 @@ class ChoixAvecRecherche extends StatefulWidget {
   /// Vrai : plusieurs reponses.
   final bool multiple;
 
-  /// L'icone des cartes, s'il y en a une.
-  final AppIcon? icone;
+  /// Vrai : la recherche au-dessus des choix courants (langues, pays) ; faux :
+  /// sous eux, avec le titre [TextesRecherche.autre] (riwayat).
+  final bool rechercheEnTete;
 
-  /// Vrai : la recherche propose ses resultats en cartes (decrites, a
-  /// toucher), comme les choix courants ; faux : en lignes. Les langues
-  /// montrent des cartes, les pays et les riwayat des lignes.
-  final bool resultatsEnCartes;
+  /// En selection multiple, une premiere ligne exclusive qui retient **tous**
+  /// les codes de [tous] (« J'ai maitrise toutes les riwayat »). Le serveur
+  /// recoit la liste complete ; son code n'est jamais envoye. Une autre ligne
+  /// touchee ensuite la remplace.
+  final ElementChoix? toutes;
 
-  /// La cle du lien « Autre ... ».
-  static const Key autreKey = ValueKey<String>('choix-recherche-autre');
+  /// La valeur interne de la ligne [toutes].
+  static const String valeurToutes = r'$toutes';
 
   /// La cle du champ de recherche.
   static const Key champKey = ValueKey<String>('choix-recherche-champ');
-
-  /// La cle de la ligne de recherche d'un code.
-  static Key ligneKey(String code) => ValueKey<String>('choix-recherche-$code');
 
   @override
   State<ChoixAvecRecherche> createState() => _ChoixAvecRechercheState();
@@ -133,11 +137,6 @@ class ChoixAvecRecherche extends StatefulWidget {
 
 class _ChoixAvecRechercheState extends State<ChoixAvecRecherche> {
   final TextEditingController _requete = TextEditingController();
-  bool _enRecherche = false;
-
-  /// Change quand la selection change hors des cartes (retour de la
-  /// recherche) : le groupe de cartes se reconstruit avec la nouvelle.
-  int _revision = 0;
 
   @override
   void dispose() {
@@ -145,173 +144,191 @@ class _ChoixAvecRechercheState extends State<ChoixAvecRecherche> {
     super.dispose();
   }
 
-  /// Les cartes : les choix courants, puis ceux de la selection qui n'en font
-  /// pas partie.
-  List<ElementChoix> get _cartes {
+  /// Vrai quand la ligne « toutes » est retenue : chaque code de la liste.
+  bool get _toutesRetenues =>
+      widget.toutes != null &&
+      widget.tous.isNotEmpty &&
+      widget.tous.every((ElementChoix e) => widget.selection.contains(e.code));
+
+  /// Sans recherche : la ligne « toutes », les choix courants, puis ceux de
+  /// la selection qui n'en font pas partie (aucun quand tout est retenu).
+  List<ElementChoix> get _courantsEtRetenus {
     final Set<String> courants = <String>{
       for (final ElementChoix e in widget.courants) e.code,
     };
     return <ElementChoix>[
+      ?widget.toutes,
       ...widget.courants,
-      for (final ElementChoix e in widget.tous)
-        if (widget.selection.contains(e.code) && !courants.contains(e.code)) e,
+      if (!_toutesRetenues)
+        for (final ElementChoix e in widget.tous)
+          if (widget.selection.contains(e.code) && !courants.contains(e.code))
+            e,
     ];
   }
 
-  void _choisir(String code) {
-    setState(() {
-      _enRecherche = false;
-      _requete.clear();
-      _revision++;
-    });
-    widget.onChange(
-      widget.multiple ? <String>{...widget.selection, code} : <String>{code},
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) =>
-      _enRecherche ? _recherche(context) : _cartesEtLien(context);
-
-  Widget _cartesEtLien(BuildContext context) {
-    final List<ElementChoix> cartes = _cartes;
-    final Set<String> visibles = <String>{
-      for (final ElementChoix e in cartes) e.code,
-    };
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        // Le lien est avant les cartes : qui ne se retrouve pas dans la liste
-        // courante n'a pas a la parcourir en entier.
-        LienFleche(
-          key: ChoixAvecRecherche.autreKey,
-          libelle: widget.textes.autre,
-          alignerEnDebut: true,
-          onPress: () => setState(() => _enRecherche = true),
-        ),
-        Ecart.vMd,
-        ChoiceCardGroup(
-          key: ValueKey<String>('${widget.cle}-$_revision-${cartes.length}'),
-          autoriserSaisieLibre: false,
-          selectionMultiple: widget.multiple,
-          valeurInitiale: ReponseChoix(
-            valeurs: <String>{
-              for (final String c in widget.selection)
-                if (visibles.contains(c)) c,
-            },
-          ),
-          options: <OptionChoix>[
-            for (final ElementChoix e in cartes)
-              OptionChoix(
-                cle: e.cle,
-                valeur: e.code,
-                libelle: e.libelle,
-                description: e.description,
-                icone: widget.icone,
-              ),
-          ],
-          onChange: (ReponseChoix r) => widget.onChange(r.valeurs),
-        ),
-      ],
-    );
-  }
-
-  Widget _recherche(BuildContext context) {
-    final String q = formeDeRecherche(_requete.text);
+  /// Avec une recherche : toute la liste filtree, sauf [exclus] ; ceux dont
+  /// le nom COMMENCE par ce qui est tape passent d'abord (« ma » : Maroc
+  /// avant Allemagne), l'ordre de la liste est garde dans chaque groupe.
+  List<ElementChoix> _trouves(String q, Set<String> exclus) {
     final List<ElementChoix> correspondants = <ElementChoix>[
       for (final ElementChoix e in widget.tous)
-        if (q.isEmpty ||
-            formeDeRecherche(e.libelle).contains(q) ||
-            (e.motsCles != null && formeDeRecherche(e.motsCles!).contains(q)))
+        if (!exclus.contains(e.code) &&
+            (formeDeRecherche(e.libelle).contains(q) ||
+                (e.motsCles != null &&
+                    formeDeRecherche(e.motsCles!).contains(q))))
           e,
     ];
-    // Ceux dont le nom COMMENCE par ce qui est tape passent d'abord (« ma » :
-    // Maroc avant Allemagne) ; l'ordre de la liste est gardé dans chaque groupe.
-    final List<ElementChoix> trouves = q.isEmpty
-        ? correspondants
-        : <ElementChoix>[
-            ...correspondants.where(
-              (ElementChoix e) => formeDeRecherche(e.libelle).startsWith(q),
-            ),
-            ...correspondants.where(
-              (ElementChoix e) => !formeDeRecherche(e.libelle).startsWith(q),
-            ),
-          ];
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        LienFleche(
-          libelle: widget.textes.retour,
-          alignerEnDebut: true,
-          onPress: () => setState(() {
-            _enRecherche = false;
-            _requete.clear();
-          }),
-        ),
-        Ecart.vMd,
-        ChampRecherche(
-          cleChamp: ChoixAvecRecherche.champKey,
-          controleur: _requete,
-          libelle: widget.textes.recherche,
-          aide: widget.textes.aide,
-          onChange: (String _) => setState(() {}),
-        ),
-        Ecart.vLg,
-        if (trouves.isEmpty)
-          Text(
-            widget.textes.aucun,
-            style: Theme.of(context).textTheme.bodyMedium,
-          )
-        else if (widget.resultatsEnCartes)
-          _resultatsEnCartes(trouves, q)
-        else
-          CarteLignes(
-            lignes: <Widget>[
-              for (final ElementChoix e in trouves)
-                SettingRow(
-                  key: ChoixAvecRecherche.ligneKey(e.code),
-                  title: e.libelle,
-                  description: e.description,
-                  onPress: () => _choisir(e.code),
-                ),
-            ],
-          ),
-      ],
-    );
+    return <ElementChoix>[
+      ...correspondants.where(
+        (ElementChoix e) => formeDeRecherche(e.libelle).startsWith(q),
+      ),
+      ...correspondants.where(
+        (ElementChoix e) => !formeDeRecherche(e.libelle).startsWith(q),
+      ),
+    ];
   }
 
-  /// Les resultats d'une recherche en cartes : ce qui est deja retenu y est
-  /// coche, et un geste ajoute ou retire la langue sans quitter la recherche.
-  Widget _resultatsEnCartes(List<ElementChoix> trouves, String requete) {
-    final Set<String> affiches = <String>{
-      for (final ElementChoix e in trouves) e.code,
+  void _vider() => setState(_requete.clear);
+
+  /// Une reponse d'un groupe de lignes, rendue en codes pour le serveur.
+  void _repondre(ReponseChoix r, Set<String> affiches) {
+    if (!widget.multiple) {
+      // Un seul choix : il est fait, la recherche se vide et le choix retenu
+      // se voit parmi les choix courants.
+      if (_requete.text.isNotEmpty) _vider();
+      widget.onChange(r.valeurs);
+      return;
+    }
+    final Set<String> valeurs = r.valeurs.toSet();
+    if (widget.toutes != null) {
+      final bool avant = _toutesRetenues;
+      final bool apres = valeurs.contains(ChoixAvecRecherche.valeurToutes);
+      if (apres && !avant) {
+        widget.onChange(<String>{
+          for (final ElementChoix e in widget.tous) e.code,
+        });
+        return;
+      }
+      if (avant) {
+        // « Toutes » etait retenue : la retirer vide tout ; toucher une autre
+        // ligne ne garde qu'elle.
+        valeurs.remove(ChoixAvecRecherche.valeurToutes);
+        widget.onChange(valeurs);
+        if (_requete.text.isNotEmpty) _vider();
+        return;
+      }
+      valeurs.remove(ChoixAvecRecherche.valeurToutes);
+    }
+    // Ce qui n'est pas affiche reste retenu.
+    widget.onChange(<String>{
+      ...widget.selection.difference(affiches),
+      ...valeurs,
+    });
+  }
+
+  /// Un groupe de lignes compactes pour [elements].
+  Widget _groupe(List<ElementChoix> elements, String suffixe) {
+    final bool toutes = _toutesRetenues;
+    final Set<String> codes = <String>{
+      for (final ElementChoix e in elements)
+        if (e.code != ChoixAvecRecherche.valeurToutes) e.code,
     };
     return ChoiceCardGroup(
-      key: ValueKey<String>('${widget.cle}-resultats-$requete'),
+      // La liste affichee change : le groupe repart de la selection.
+      key: ValueKey<String>(
+        '${widget.cle}-$suffixe-${elements.length}-$toutes',
+      ),
+      compacte: true,
       autoriserSaisieLibre: false,
       selectionMultiple: widget.multiple,
       valeurInitiale: ReponseChoix(
-        valeurs: <String>{
-          for (final String c in widget.selection)
-            if (affiches.contains(c)) c,
-        },
+        valeurs: toutes
+            ? const <String>{ChoixAvecRecherche.valeurToutes}
+            : <String>{
+                for (final String c in widget.selection)
+                  if (codes.contains(c)) c,
+              },
       ),
       options: <OptionChoix>[
-        for (final ElementChoix e in trouves)
+        for (final ElementChoix e in elements)
           OptionChoix(
             cle: e.cle,
             valeur: e.code,
             libelle: e.libelle,
             description: e.description,
-            icone: widget.icone,
           ),
       ],
-      onChange: (ReponseChoix r) => widget.onChange(
-        widget.multiple
-            ? <String>{...widget.selection.difference(affiches), ...r.valeurs}
-            : r.valeurs,
-      ),
+      onChange: (ReponseChoix r) => _repondre(r, codes),
+    );
+  }
+
+  Widget _aucun(BuildContext context) =>
+      Text(widget.textes.aucun, style: Theme.of(context).textTheme.bodyMedium);
+
+  Widget _champ() => ChampRecherche(
+    cleChamp: ChoixAvecRecherche.champKey,
+    controleur: _requete,
+    libelle: widget.textes.recherche,
+    aide: widget.textes.aide,
+    onChange: (String _) => setState(() {}),
+  );
+
+  Widget _retour() => LienFleche(
+    libelle: widget.textes.retour,
+    alignerEnDebut: true,
+    onPress: _vider,
+  );
+
+  @override
+  Widget build(BuildContext context) {
+    final String q = formeDeRecherche(_requete.text);
+    final bool enRecherche = q.isNotEmpty;
+    final List<ElementChoix> courants = _courantsEtRetenus;
+    if (widget.rechercheEnTete) {
+      final List<ElementChoix> affiches = enRecherche
+          ? _trouves(q, const <String>{})
+          : courants;
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          // La recherche d'abord : qui ne se retrouve pas dans les choix
+          // courants n'a pas a les parcourir en entier.
+          _champ(),
+          if (enRecherche) ...<Widget>[Ecart.vSm, _retour()],
+          Ecart.vMd,
+          if (affiches.isEmpty)
+            _aucun(context)
+          else
+            _groupe(affiches, enRecherche ? 'q-$q' : 'courants'),
+        ],
+      );
+    }
+    // La liste d'abord, puis « Une autre riwaya » et sa recherche : les
+    // resultats ne repetent pas une ligne deja visible au-dessus.
+    final Set<String> visibles = <String>{
+      for (final ElementChoix e in courants) e.code,
+    };
+    final List<ElementChoix> trouves = enRecherche
+        ? _trouves(q, visibles)
+        : const <ElementChoix>[];
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        _groupe(courants, 'courants'),
+        if (widget.textes.autre case final String autre) ...<Widget>[
+          TitreChamp(autre, style: Theme.of(context).textTheme.titleSmall),
+          Ecart.vSm,
+        ],
+        _champ(),
+        if (enRecherche) ...<Widget>[
+          Ecart.vSm,
+          _retour(),
+          Ecart.vMd,
+          if (trouves.isEmpty) _aucun(context) else _groupe(trouves, 'q-$q'),
+        ],
+      ],
     );
   }
 }

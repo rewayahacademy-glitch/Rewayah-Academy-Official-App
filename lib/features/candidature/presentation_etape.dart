@@ -65,6 +65,12 @@ class TuileInformation {
             p.p1.separation.titre,
             p.p1.separation.texte,
           ),
+          // CANDIDATURE-UX (directeur, 14/11/2026) : candidater est gratuit.
+          TuileInformation(
+            AppIcons.paiements,
+            p.p1.gratuit.titre,
+            p.p1.gratuit.texte,
+          ),
         ],
       );
     case 2:
