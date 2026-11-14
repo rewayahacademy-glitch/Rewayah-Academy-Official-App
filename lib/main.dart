@@ -628,7 +628,7 @@ List<Override> _surchargesAppReelle() => <Override>[
     CreneauxDirectionSupabase(Supabase.instance.client),
   ),
   // SALLE2-ENTRETIEN (14/11/2026) : le signal temps reel des entretiens
-  // (canal `entretiens`, migration 20261125800000) et les entretiens du jour.
+  // (canal `entretiens`, migration 20261125820000) et les entretiens du jour.
   sourceSignalEntretiensProvider.overrideWithValue(
     signalEntretiensSupabase(Supabase.instance.client),
   ),

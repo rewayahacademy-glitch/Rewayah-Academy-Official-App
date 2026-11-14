@@ -1,7 +1,7 @@
 /// SALLE2-ENTRETIEN (14/11/2026) : les entretiens en temps reel, et les
 /// entretiens du jour de la personne qui les mene.
 ///
-/// Le signal : la migration 20261125800000 diffuse, apres tout changement de
+/// Le signal : la migration 20261125820000 diffuse, apres tout changement de
 /// creneau ou d'entretien, un message sans contenu sur le canal public
 /// `entretiens` (Supabase Realtime, diffusion). Il ne porte aucune donnee :
 /// chacun relit ses listes par les RPC, qui gardent leurs gardes. Avant, une
