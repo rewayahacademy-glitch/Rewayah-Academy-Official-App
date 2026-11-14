@@ -378,6 +378,7 @@ List<Override> surchargesDemoAdmin({
   Duration? arriveeAlerte,
   PortBibliothequeAdmin? bibliotheque,
   bool bibliothequeAbsente = false,
+  List<Object> servicesFournis = const <Object>[],
 }) {
   if (!environnementAutoriseDemo(environnement ?? Env.environnement)) {
     throw StateError('Demonstration interdite en production.');
@@ -505,7 +506,7 @@ List<Override> surchargesDemoAdmin({
       const PolitiquesCommercialesDemo(),
     ),
     // Tous les autres services admin adosses a Supabase : « indisponible ».
-    ...surchargesServicesAdminIndisponibles(),
+    ...surchargesServicesAdminIndisponibles(sauf: servicesFournis),
     // CAP29-0 : la bibliotheque d'administration, en demonstration.
     // [bibliotheque] pose un autre double (tests) ; [bibliothequeAbsente]
     // laisse le port nul, comme en production.

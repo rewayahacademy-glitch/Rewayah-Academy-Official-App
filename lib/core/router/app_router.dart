@@ -134,6 +134,7 @@ import '../../features/com_messages/messages_admin.dart'
     deferred as d_messages_admin;
 import '../../features/com_messages/messages_page.dart'
     deferred as d_messages_page;
+import '../../features/com_messages/non_lus_messages.dart';
 import '../../features/com_studio/port_studio.dart' show studioOuvertProvider;
 import '../../features/com_studio/studio_page.dart';
 import '../../features/comptable/aujourdhui/aujourdhui_page.dart'
@@ -3766,6 +3767,11 @@ class _CoquilleAdmin extends ConsumerWidget {
     // dit qu'une alerte urgente est ouverte. Jamais deduite du role.
     final int? urgentes = ref.watch(alertesUrgentesProvider);
 
+    // MESSAGERIE-TEMPS-REEL (14/11/2026) : un message attend (candidat, ou
+    // toute conversation de la direction) : l'acces aux Messages se pose dans
+    // l'en-tete avec son nombre, mis a jour en direct ; rien sinon.
+    final int messagesNonLus = ref.watch(nonLusMessagesProvider).value ?? 0;
+
     // RECH-D5 : la loupe d'en-tete ouvre aussi la recherche metier, quand un
     // domaine est servi a l'espace administration.
     final bool rechercheServie =
@@ -3804,6 +3810,17 @@ class _CoquilleAdmin extends ConsumerWidget {
                   1 => t.alertes.clocheUneUrgente,
                   _ => t.alertes.clocheUrgentes(nombre: urgentes),
                 },
+              ),
+        messages: messagesNonLus == 0
+            ? null
+            : ClocheNotifications(
+                key: const ValueKey<String>('admin-messages-non-lus'),
+                icone: AppIcons.discussion,
+                onPress: () => aller(Routes.adminCommunicationsMessages),
+                nonLues: messagesNonLus,
+                libelleSemantique: messagesNonLus == 1
+                    ? t.com.messages.direct.iconeUnNonLu
+                    : t.com.messages.direct.iconeNonLus(nombre: messagesNonLus),
               ),
         // Le bandeau d'alerte urgente, en tete de toute page ouverte, sauf
         // sous l'Accueil : le Centre de commande et la page des alertes

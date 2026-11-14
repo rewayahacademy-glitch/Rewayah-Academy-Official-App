@@ -12,14 +12,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/capacites/capacite_indisponible.dart';
+import '../../core/communications/veille_messages.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/badge_non_lu.dart';
 import '../com_messages/port_messages_metier.dart';
 
 /// Les messages non lus de chaque candidature (identifiant -> nombre), pour les
-/// fils que la direction lit. Relue a chaque ouverture de la liste.
+/// fils que la direction lit. Relue a chaque ouverture de la liste et a
+/// chaque signal de la veille des messages.
 final FutureProvider<Map<String, int>> nonLusParCandidatureProvider =
     FutureProvider.autoDispose<Map<String, int>>((Ref ref) async {
+      // MESSAGERIE-TEMPS-REEL (14/11/2026) : relue a chaque message recu ou
+      // lecture faite, sans rouvrir la liste.
+      ref.watch(
+        etatVeilleMessagesProvider.select((EtatVeilleMessages e) => e.rang),
+      );
       try {
         final List<ResumeFil> fils = await ref
             .watch(portMessagesMetierProvider)

@@ -70,7 +70,7 @@ export const MOTS_CONVERSION_REFUSEE_AR: MotsConversionRefusee = {
 }
 
 const MODELES: Record<string, Fabrique> = {
-  admission_acceptee: (d) => avis(d, 'قُبل طلبك', 'أهلا بك في أكاديمية رواية',
+  admission_acceptee: (d) => avis(d, 'قُبل طلبك', 'أهلا بك في أكاديمية الرواية',
     'قبلت الإدارة طلبك. مساحتك مفتوحة: ادخل إلى التطبيق لتجدها.',
     'الدخول إلى التطبيق', '/'),
   admission_refusee: (d) => avis(d, 'لا يمكننا متابعة طلبك', 'طلبك',

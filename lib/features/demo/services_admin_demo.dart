@@ -14,6 +14,7 @@ import '../../core/admin/service_configuration.dart';
 import '../../core/admin/service_diagnostics.dart';
 import '../../core/admin/service_evaluations.dart';
 import '../../core/admin/service_groupes.dart';
+import '../../core/admin/service_plan_classe.dart';
 import '../../core/admin/service_programme.dart';
 import '../../core/admin/service_progression.dart';
 import '../../core/admin/service_qualite.dart';
@@ -82,6 +83,12 @@ class ServiceDiagnosticsDemo
   const ServiceDiagnosticsDemo();
 }
 
+class ServicePlanClasseDemo
+    with _IndisponibleDemo
+    implements ServicePlanClasse {
+  const ServicePlanClasseDemo();
+}
+
 class ServiceJournalDemo with _IndisponibleDemo implements ServiceJournal {
   const ServiceJournalDemo();
 }
@@ -131,6 +138,7 @@ List<Override> surchargesServicesAdminIndisponibles() => <Override>[
   serviceQualiteProvider.overrideWithValue(const ServiceQualiteDemo()),
   serviceEvaluationsProvider.overrideWithValue(const ServiceEvaluationsDemo()),
   serviceDiagnosticsProvider.overrideWithValue(const ServiceDiagnosticsDemo()),
+  servicePlanClasseProvider.overrideWithValue(const ServicePlanClasseDemo()),
   serviceJournalProvider.overrideWithValue(const ServiceJournalDemo()),
   serviceMatchingProvider.overrideWithValue(const ServiceMatchingDemo()),
   serviceControleProvider.overrideWithValue(const ServiceControleDemo()),
@@ -156,6 +164,7 @@ final List<Provider<Object>> providersServicesAdmin = <Provider<Object>>[
   serviceQualiteProvider,
   serviceEvaluationsProvider,
   serviceDiagnosticsProvider,
+  servicePlanClasseProvider,
   serviceJournalProvider,
   serviceMatchingProvider,
   serviceControleProvider,

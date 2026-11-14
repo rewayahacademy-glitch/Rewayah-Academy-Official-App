@@ -138,6 +138,8 @@ import 'core/communications/capacites_communication_supabase.dart';
 import 'core/communications/communications_supabase.dart';
 import 'core/communications/libelles_communication_slang.dart';
 import 'core/communications/ma_candidature_fil.dart';
+import 'core/communications/veille_messages.dart';
+import 'core/communications/veille_messages_supabase.dart';
 import 'core/config/ecran_configuration_absente.dart';
 import 'core/config/env.dart';
 import 'core/controle/port_tirage_controle.dart';
@@ -332,6 +334,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   // Fraicheur (27/10/2026) : la veille Realtime des classes et des seances.
   portVeilleProvider.overrideWithValue(
     VeilleSupabase(Supabase.instance.client),
+  ),
+  // MESSAGERIE-TEMPS-REEL (14/11/2026) : la veille Realtime des messages
+  // (`com_signaux`), sur un canal a part de la fraicheur.
+  portVeilleMessagesProvider.overrideWithValue(
+    VeilleMessagesSupabase(Supabase.instance.client),
   ),
   surchargeRevueDossiersProduction,
   // Direction : chaque port d'administration lit et ecrit par les RPC de

@@ -87,6 +87,7 @@ class AdminShell extends StatelessWidget {
     super.key,
     this.onRetour,
     this.cloche,
+    this.messages,
     this.bandeau,
     this.onNotifications,
     this.notificationsActives = false,
@@ -124,6 +125,11 @@ class AdminShell extends StatelessWidget {
 
   /// La cloche des alertes, ou `null` sans capacite « alertes » (Q5).
   final Widget? cloche;
+
+  /// MESSAGERIE-TEMPS-REEL (14/11/2026) : l'acces aux Messages avec le nombre
+  /// de non lus, pose seulement quand un message attend ; `null` sinon. Il
+  /// se range a cote de la cloche des alertes, a toutes les tailles.
+  final Widget? messages;
 
   /// Le bandeau pose tout en haut de chaque page : l'alerte urgente
   /// (ALERTE-1). Nul : aucun.
@@ -267,6 +273,7 @@ class AdminShell extends StatelessWidget {
           ),
           if (studio != null) _BoutonStudio(onStudio: studio),
           const BasculeTheme(),
+          ?messages,
           ?cloche,
           // NAV-REFONTE etape 4 : le compte vit au pied de la colonne
           // (photo, nom, menu), il quitte l'en-tete, comme pour les roles.
@@ -356,6 +363,7 @@ class AdminShell extends StatelessWidget {
                 onRecherche: onAller,
                 onCompte: onCompte,
                 cloche: cloche,
+                messages: messages,
                 studio: studio != null,
               ),
               // La barre a deja pose la zone sure du haut (encoche, barre
@@ -1271,11 +1279,15 @@ class _BarreMobile extends StatefulWidget {
     required this.onCompte,
     required this.studio,
     this.cloche,
+    this.messages,
   });
 
   final void Function(String chemin) onRecherche;
   final VoidCallback onCompte;
   final Widget? cloche;
+
+  /// L'acces aux Messages quand un message attend (MESSAGERIE-TEMPS-REEL).
+  final Widget? messages;
 
   /// Vrai quand Le Studio a un serveur, et peut donc etre une cible.
   final bool studio;
@@ -1351,7 +1363,10 @@ class _BarreMobileState extends State<_BarreMobile> {
           // touchent, leurs icones restent espacees de plus de 48.
           child: LayoutBuilder(
             builder: (BuildContext _, BoxConstraints c) {
-              final int boutons = widget.cloche == null ? 3 : 4;
+              final int boutons =
+                  3 +
+                  (widget.cloche == null ? 0 : 1) +
+                  (widget.messages == null ? 0 : 1);
               final bool serre =
                   c.maxWidth <
                   boutons * AppMetriques.of(context).cibleTactile +
@@ -1427,6 +1442,10 @@ class _BarreMobileState extends State<_BarreMobile> {
               ),
             ),
           ecart,
+          if (widget.messages case final Widget messages) ...<Widget>[
+            messages,
+            ecart,
+          ],
           if (widget.cloche case final Widget cloche) ...<Widget>[
             cloche,
             ecart,

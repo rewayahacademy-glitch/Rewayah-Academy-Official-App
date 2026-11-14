@@ -315,7 +315,7 @@ void _rendu() {
 void _corpsReel() {
   for (final (String langue, String prefixe) in <(String, String)>[
     ('fr', 'acf60aea3a0f'),
-    ('ar', '2623d7ef9416'),
+    ('ar', 'b0bb7668e351'),
   ]) {
     testWidgets('corps reel publie ($langue) : 8 paragraphes, titre en '
         'en-tete, 3 puces, rendu identique au corps', (
