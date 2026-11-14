@@ -383,7 +383,21 @@ class _Traductions$foyer$en extends Traductions$foyer$fr {
 	@override String get membres => 'Student profiles';
 	@override late final _Traductions$foyer$vide$en vide = _Traductions$foyer$vide$en._(_root);
 	@override late final _Traductions$foyer$membre$en membre = _Traductions$foyer$membre$en._(_root);
+	@override String get classesIndisponibles => 'Each student\'s class is not shown on this page yet.';
+	@override String get classesEchec => 'The class of some students could not be loaded.';
+	@override String get relireClasses => 'Reload the classes';
+	@override String get profilsSansDonnees => 'The student profiles of your household could not be loaded';
+	@override String get titulaireSansDonnees => 'Your account holder information could not be loaded';
+	@override String get inscriptionIllisible => 'Each student\'s current registration is not shown on this page yet.';
+	@override String get appareilsPartages => 'Shared devices';
+	@override String get appareilsFoyer => 'Household devices';
+	@override String get appareilsFoyerLegende => 'Connect a device, see those that are linked, remove one';
+	@override String get creerMonProfil => 'Create my student profile';
+	@override late final _Traductions$foyer$n2$en n2 = _Traductions$foyer$n2$en._(_root);
+	@override late final _Traductions$foyer$monProfil$en monProfil = _Traductions$foyer$monProfil$en._(_root);
 	@override late final _Traductions$foyer$ajout$en ajout = _Traductions$foyer$ajout$en._(_root);
+	@override late final _Traductions$foyer$finances$en finances = _Traductions$foyer$finances$en._(_root);
+	@override late final _Traductions$foyer$transactions$en transactions = _Traductions$foyer$transactions$en._(_root);
 }
 
 // Path: ficheEleve
@@ -567,7 +581,81 @@ class _Traductions$compte$en extends Traductions$compte$fr {
 
 	// Translations
 	@override late final _Traductions$compte$page$en page = _Traductions$compte$page$en._(_root);
+	@override late final _Traductions$compte$donnees$en donnees = _Traductions$compte$donnees$en._(_root);
+	@override String get titre => 'My account';
+	@override String get intro => 'Your information, your preferences and your access, in one place.';
+	@override String get informations => 'Information';
+	@override String get profil => 'Profile';
+	@override String get profilDetail => 'See and manage your information';
+	@override String get reglages => 'Settings';
+	@override String get reglagesDetail => 'Appearance, notifications and accessibility';
+	@override String get profils => 'Manage my household';
+	@override String get profilsDetail => 'Manage your children\'s profiles';
+	@override String get appareils => 'Household';
+	@override String get appareilsDetail => 'The devices and profiles linked to your household';
+	@override String get confidentialite => 'Privacy';
+	@override String get confidentialiteDetail => 'Coming soon';
+	@override String get espaces => 'Spaces';
+	@override String get espacesDetail => 'The spaces your account gives access to';
+	@override String get espacesMissionEnCours => 'To return to your main space, first leave the visit in progress.';
+	@override String get habilitation => 'Authorised';
+	@override String get deconnexion => 'Sign out';
+	@override String get deconnexionDetail => 'End the session on this device';
+	@override String version({required Object version, required Object build}) => 'Version ${version} (${build})';
+	@override String versionSeule({required Object version}) => 'Version ${version}';
+	@override late final _Traductions$compte$doubleVerification$en doubleVerification = _Traductions$compte$doubleVerification$en._(_root);
+	@override String get identifiant => 'Identifier';
+	@override String get nonDisponible => 'Not available';
+	@override String get contact => 'Contact';
 	@override String get langue => 'Language';
+	@override String get francais => 'Français';
+	@override String get fuseau => 'Time zone';
+	@override String get academie => 'Academy';
+	@override String get securite => 'Security';
+	@override String get statut => 'Status';
+	@override String get reglagesTitre => 'Settings';
+	@override String get reglagesIntro => 'These preferences apply immediately.';
+	@override String get apparence => 'Appearance';
+	@override String get themeContexte => 'Follows your account everywhere.';
+	@override String get themeSysteme => 'System';
+	@override String get themeClair => 'Light';
+	@override String get themeSombre => 'Dark';
+	@override String get accessibilite => 'Accessibility';
+	@override String get animations => 'Reduce animations';
+	@override String get animationsDetail => 'Limits movement on screen';
+	@override String get effets => 'Reduce effects';
+	@override String get effetsDetail => 'Limits transparency and shadows';
+	@override String get lisibiliteDetail => 'Text size follows your device setting.';
+	@override String get langueRegion => 'Language and region';
+	@override String get francaisDetail => 'Interface language';
+	@override String get actif => 'Active';
+	@override String get arabe => 'Arabic';
+	@override String get arabeDetail => 'Coming soon';
+	@override String get fuseauDetail => 'Detected automatically';
+	@override String get notifications => 'Notifications';
+	@override String get notificationsCours => 'Classes';
+	@override String get notificationsCoursDetail => 'Reminders before your classes';
+	@override String get notificationsFoyer => 'Household';
+	@override String get notificationsFoyerDetail => 'Activity of your household\'s profiles';
+	@override String get notificationsEtat => 'Notifications also depend on your device and browser settings.';
+	@override String get coursDonnees => 'Classes and data';
+	@override String get lectureGrande => 'Large text reading';
+	@override String get lectureGrandeDetail => 'Shows the Quran larger by default';
+	@override String get reessayer => 'Try again';
+	@override String get ajouterEnfant => 'Add a child';
+	@override String get modeEnfant => 'Guided interface';
+	@override String get modeStandard => 'Standard mode';
+	@override String get cameraAutorisee => 'Allowed';
+	@override String get cameraInterdite => 'Not allowed';
+	@override String get statutActif => 'Active';
+	@override String get statutProvisoire => 'Active, provisionally';
+	@override String matricule({required Object valeur, required Object role}) => 'Student ID ${valeur} · ${role}';
+	@override String get copier => 'Copy';
+	@override String get copierMatricule => 'Copy the student ID';
+	@override String get matriculeCopie => 'Copied';
+	@override late final _Traductions$compte$roles$en roles = _Traductions$compte$roles$en._(_root);
+	@override late final _Traductions$compte$roleDetail$en roleDetail = _Traductions$compte$roleDetail$en._(_root);
+	@override late final _Traductions$compte$tuteur$en tuteur = _Traductions$compte$tuteur$en._(_root);
 }
 
 // Path: historique
@@ -677,6 +765,7 @@ class _Traductions$tuteur$en extends Traductions$tuteur$fr {
 
 	// Translations
 	@override late final _Traductions$tuteur$accueil$en accueil = _Traductions$tuteur$accueil$en._(_root);
+	@override late final _Traductions$tuteur$reglages$en reglages = _Traductions$tuteur$reglages$en._(_root);
 }
 
 // Path: classe
@@ -1462,6 +1551,46 @@ class _Traductions$foyer$membre$en extends Traductions$foyer$membre$fr {
 	@override String date({required Object mois, required Object jour, required Object annee}) => '${mois} ${jour}, ${annee}';
 }
 
+// Path: foyer.n2
+class _Traductions$foyer$n2$en extends Traductions$foyer$n2$fr {
+	_Traductions$foyer$n2$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get invitationRecueMessage => 'Read the invitation, then accept or decline it.';
+	@override String get invitationRecueVoir => 'See the invitation';
+	@override String get repriseATraiterVoir => 'See the takeover request';
+	@override String get demanderReprise => 'Request to take over the household';
+	@override String get demanderRepriseLegende => 'If the household account holder has passed away';
+}
+
+// Path: foyer.monProfil
+class _Traductions$foyer$monProfil$en extends Traductions$foyer$monProfil$fr {
+	_Traductions$foyer$monProfil$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Create my student profile';
+	@override String get indisponibleTitre => 'Not possible yet';
+	@override String get indisponiblePhrase => 'Taking classes yourself with your own student profile will be offered soon. Your guardian account stays as it is.';
+	@override String get intro => 'With your own student profile, you can take classes yourself, in an adults\' class.';
+	@override String get consequence => 'Your guardian account does not change: you keep your household and your children\'s student profiles.';
+	@override String get creer => 'Create my student profile';
+	@override String get reessayer => 'Try creating my student profile again';
+	@override String get nonConfirme => 'The creation of your student profile is not confirmed: your request may not have reached Rewayah. Try again in a moment; if your profile already exists, nothing is created twice.';
+	@override String get horsLigne => 'Nothing is created. You can create your student profile yourself when the connection is back.';
+	@override String get sansDonnees => 'Your student profile could not be verified';
+	@override String get creeTitre => 'Your student profile is created';
+	@override String get creePhrase => 'Your guardian account does not change. You keep your household and your children\'s student profiles.';
+	@override String get dejaTitre => 'You already have your student profile';
+	@override String get dejaPhrase => 'Your student profile already exists: there is nothing to create.';
+	@override String get dejaOuvertPhrase => 'Your student profile already exists: your classes are waiting for you in your student space.';
+	@override String get dejaAttentePhrase => 'Your student space will be available as soon as the management has approved your admission request.';
+	@override String get retour => 'Back to the household';
+}
+
 // Path: foyer.ajout
 class _Traductions$foyer$ajout$en extends Traductions$foyer$ajout$fr {
 	_Traductions$foyer$ajout$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -1478,6 +1607,49 @@ class _Traductions$foyer$ajout$en extends Traductions$foyer$ajout$fr {
 	@override late final _Traductions$foyer$ajout$refus$en refus = _Traductions$foyer$ajout$refus$en._(_root);
 	@override late final _Traductions$foyer$ajout$incertaine$en incertaine = _Traductions$foyer$ajout$incertaine$en._(_root);
 	@override String get horsLigne => 'The profile can be created when the connection is back.';
+}
+
+// Path: foyer.finances
+class _Traductions$foyer$finances$en extends Traductions$foyer$finances$fr {
+	_Traductions$foyer$finances$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Balances and payments';
+	@override String get rechargerPlusieurs => 'Top up several profiles';
+	@override String rechargerPour({required Object prenom}) => 'Top up ${prenom}';
+	@override String get recharger => 'Top up';
+	@override String get voirDetail => 'See the details';
+	@override String voirDetailSemantique({required Object dePrenom}) => 'See the details of ${dePrenom}\'s finances';
+	@override String get noteSoldes => 'Each child has an individual balance and funded period. Access is tied to the funded period, not simply to the balance.';
+	@override String get vueFinanciere => 'Household financial view';
+	@override String get vueFinancierePeriode => 'This month';
+	@override String get soldeActuel => 'Current balance';
+	@override String get prochainDebit => 'Next debit';
+	@override String prochainDebitValeur({required Object date, required Object montant}) => '${date} · ${montant}';
+	@override String get aucunDebit => 'No debit planned';
+	@override String essaiSansMax({required Object n}) => 'Trial: ${n} session(s) used';
+	@override String manque({required Object montant}) => '${montant} is missing for the next period.';
+	@override String get indisponibleTitre => 'Balances cannot be loaded';
+	@override String get sansDonnees => 'The balances of your household could not be loaded';
+}
+
+// Path: foyer.transactions
+class _Traductions$foyer$transactions$en extends Traductions$foyer$transactions$fr {
+	_Traductions$foyer$transactions$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Latest transactions';
+	@override String ligne({required Object libelle, required Object prenom}) => '${libelle} · ${prenom}';
+	@override String get voirTout => 'See all';
+	@override String get voirToutSemantique => 'See all: the household\'s payment history';
+	@override String get videTitre => 'No transactions yet';
+	@override String get videPhrase => 'Top-ups and monthly fees of the profiles will appear here.';
+	@override String get erreurTitre => 'The latest transactions cannot be loaded';
+	@override String get sansDonnees => 'The household\'s latest movements could not be loaded';
 }
 
 // Path: ficheEleve.supprimer
@@ -2175,7 +2347,101 @@ class _Traductions$compte$page$en extends Traductions$compte$page$fr {
 	final TraductionsEn _root; // ignore: unused_field
 
 	// Translations
+	@override late final _Traductions$compte$page$sections$en sections = _Traductions$compte$page$sections$en._(_root);
 	@override late final _Traductions$compte$page$langue$en langue = _Traductions$compte$page$langue$en._(_root);
+	@override String get accessibiliteLegende => 'Animations, effects and keyboard shortcuts of the room';
+	@override String get changerPhoto => 'Change the photo';
+	@override String matricule({required Object valeur}) => 'Student ID ${valeur}';
+	@override String get identiteVide => 'Your information is not available yet. Your preferences and signing out remain accessible.';
+	@override String get identiteEchec => 'Your information could not be loaded.';
+}
+
+// Path: compte.donnees
+class _Traductions$compte$donnees$en extends Traductions$compte$donnees$fr {
+	_Traductions$compte$donnees$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'My data';
+	@override String get sousTitre => 'A copy of your data, or the deletion of your account.';
+	@override String get ligne => 'Copy of my data and account deletion';
+	@override String get ligneDetail => 'Download your data or request the deletion of your account.';
+	@override late final _Traductions$compte$donnees$copie$en copie = _Traductions$compte$donnees$copie$en._(_root);
+	@override late final _Traductions$compte$donnees$suppression$en suppression = _Traductions$compte$donnees$suppression$en._(_root);
+}
+
+// Path: compte.doubleVerification
+class _Traductions$compte$doubleVerification$en extends Traductions$compte$doubleVerification$fr {
+	_Traductions$compte$doubleVerification$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get rubriqueDetail => 'Double verification for the management\'s sensitive actions';
+	@override String get saisirCode => 'Enter my verification code';
+	@override String get titre => 'Security';
+	@override String get sousTitre => 'Double verification protects the management\'s sensitive actions: deleting or restoring an account, processing a deletion request, publishing the commercial policy, importing forms, inviting an accountant.';
+	@override String get titreEnrolement => 'Turn on double verification';
+	@override String get introEnrolement => 'A stolen sign-in link must not be enough to delete an account. Add a second step with an authentication app on your phone. You only do it once; the code is then asked for at the time of a sensitive action.';
+	@override String get videPhrase => 'Install one on your phone, for example Google Authenticator, Microsoft Authenticator or Aegis, then come back here.';
+	@override String get activeeTitre => 'Double verification is on';
+	@override String get activeePhrase => 'The code from your authentication app will be asked for at the time of a sensitive action, once per sign-in.';
+	@override late final _Traductions$compte$doubleVerification$feuille$en feuille = _Traductions$compte$doubleVerification$feuille$en._(_root);
+}
+
+// Path: compte.roles
+class _Traductions$compte$roles$en extends Traductions$compte$roles$fr {
+	_Traductions$compte$roles$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get admin => 'Administrator';
+	@override String get accountant => 'Accountant';
+	@override String get controller => 'Reviewer';
+	@override String get teacher => 'Teacher';
+	@override String get guardian => 'Guardian';
+	@override String get student => 'Student';
+}
+
+// Path: compte.roleDetail
+class _Traductions$compte$roleDetail$en extends Traductions$compte$roleDetail$fr {
+	_Traductions$compte$roleDetail$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get admin => 'Manages files, assignment and the academy\'s log';
+	@override String get accountant => 'Manages payments and invoices';
+	@override String get controller => 'Observes sessions for teaching quality';
+	@override String get teacher => 'Gives classes and follows their slots';
+	@override String get guardian => 'Follows the household and its children';
+	@override String get student => 'Follows their classes and their Quran';
+}
+
+// Path: compte.tuteur
+class _Traductions$compte$tuteur$en extends Traductions$compte$tuteur$fr {
+	_Traductions$compte$tuteur$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String dateLongue({required Object mois, required Object jour, required Object annee}) => '${mois} ${jour}, ${annee}';
+	@override late final _Traductions$compte$tuteur$identite$en identite = _Traductions$compte$tuteur$identite$en._(_root);
+	@override late final _Traductions$compte$tuteur$acces$en acces = _Traductions$compte$tuteur$acces$en._(_root);
+	@override late final _Traductions$compte$tuteur$securite$en securite = _Traductions$compte$tuteur$securite$en._(_root);
+	@override late final _Traductions$compte$tuteur$informations$en informations = _Traductions$compte$tuteur$informations$en._(_root);
+	@override late final _Traductions$compte$tuteur$foyer$en foyer = _Traductions$compte$tuteur$foyer$en._(_root);
+	@override late final _Traductions$compte$tuteur$aide$en aide = _Traductions$compte$tuteur$aide$en._(_root);
+	@override late final _Traductions$compte$tuteur$deconnexion$en deconnexion = _Traductions$compte$tuteur$deconnexion$en._(_root);
+	@override late final _Traductions$compte$tuteur$pageInformations$en pageInformations = _Traductions$compte$tuteur$pageInformations$en._(_root);
+	@override late final _Traductions$compte$tuteur$pageSecurite$en pageSecurite = _Traductions$compte$tuteur$pageSecurite$en._(_root);
+	@override late final _Traductions$compte$tuteur$pageAcces$en pageAcces = _Traductions$compte$tuteur$pageAcces$en._(_root);
+	@override late final _Traductions$compte$tuteur$pagePaiements$en pagePaiements = _Traductions$compte$tuteur$pagePaiements$en._(_root);
+	@override late final _Traductions$compte$tuteur$pagePreferences$en pagePreferences = _Traductions$compte$tuteur$pagePreferences$en._(_root);
+	@override late final _Traductions$compte$tuteur$pageAide$en pageAide = _Traductions$compte$tuteur$pageAide$en._(_root);
+	@override late final _Traductions$compte$tuteur$pageLegal$en pageLegal = _Traductions$compte$tuteur$pageLegal$en._(_root);
 }
 
 // Path: historique.segments
@@ -2370,7 +2636,7 @@ class _Traductions$historique$compteRendu$en extends Traductions$historique$comp
 	@override String get voirTravail => 'See the work to prepare';
 	@override String get voirProgression => 'See the progress';
 	@override String get etatARenforcer => 'To reinforce';
-	@override String get etatAcquis => 'Mastered';
+	@override String get etatAcquis => 'Achieved';
 }
 
 // Path: notifications.evenements
@@ -2725,6 +2991,35 @@ class _Traductions$tuteur$accueil$en extends Traductions$tuteur$accueil$fr {
 	@override String get aucunEnfant => 'No child in the household';
 	@override String get aucunEnfantDetail => 'Add your first child to get started.';
 	@override String get erreur => 'The household could not be loaded completely. Try again in a moment.';
+}
+
+// Path: tuteur.reglages
+class _Traductions$tuteur$reglages$en extends Traductions$tuteur$reglages$fr {
+	_Traductions$tuteur$reglages$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Settings per child';
+	@override String get intro => 'These settings apply to the next session, never during a class.';
+	@override String get photo => 'Photo';
+	@override String photoAucune({required Object prenom}) => '${prenom} has no photo yet. It stays visible to the household only.';
+	@override String get photoAjouter => 'Add a photo';
+	@override String get photoChanger => 'Change the photo';
+	@override String photoTropLourde({required Object taille}) => 'This photo is larger than ${taille} MB. Retake it at a lower quality.';
+	@override String get camera => 'Camera';
+	@override String cameraAutorisee({required Object prenom}) => '${prenom} can turn on their camera during class.';
+	@override String cameraInterdite({required Object prenom}) => 'The camera button will not appear for ${prenom}.';
+	@override String cameraAutoriser({required Object dePrenom}) => 'Allow ${dePrenom}\'s camera';
+	@override String cameraRetirer({required Object dePrenom}) => 'Remove ${dePrenom}\'s camera';
+	@override String get mode => 'Display';
+	@override String modeEnfant({required Object prenom}) => 'Large display, no reading: ${prenom} recognises pictures and listens.';
+	@override String modeStandard({required Object prenom}) => 'Usual display: ${prenom} reads their screen.';
+	@override String modePasserEnfant({required Object prenom}) => 'Switch ${prenom} to the large display';
+	@override String modePasserStandard({required Object prenom}) => 'Switch ${prenom} to the usual display';
+	@override String get aucunEnfant => 'No child in the household';
+	@override String get aucunEnfantDetail => 'Add a child to set their display and camera.';
+	@override String erreur({required Object message}) => 'Saving did not go through: ${message}';
 }
 
 // Path: classe.entree
@@ -3956,6 +4251,20 @@ class _Traductions$recrutement$parcours$moyens$en extends Traductions$recrutemen
 	@override String get nonElimine => 'This question is optional and eliminates no one: your application does not depend on your answer. It helps the academy know the methods used where you live.';
 }
 
+// Path: compte.page.sections
+class _Traductions$compte$page$sections$en extends Traductions$compte$page$sections$fr {
+	_Traductions$compte$page$sections$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get monEspace => 'My space';
+	@override String get paiements => 'Payments';
+	@override String get preferences => 'Preferences';
+	@override String get compteSecurite => 'Account and security';
+	@override String get aide => 'Help and information';
+}
+
 // Path: compte.page.langue
 class _Traductions$compte$page$langue$en extends Traductions$compte$page$langue$fr {
 	_Traductions$compte$page$langue$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -3965,6 +4274,300 @@ class _Traductions$compte$page$langue$en extends Traductions$compte$page$langue$
 	// Translations
 	@override String get legende => 'For the app and for the academy\'s emails';
 	@override String get refus => 'The app changed language, but the language of your emails is not confirmed. Try again in a moment.';
+}
+
+// Path: compte.donnees.copie
+class _Traductions$compte$donnees$copie$en extends Traductions$compte$donnees$copie$fr {
+	_Traductions$compte$donnees$copie$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Download a copy';
+	@override String get intro => 'A JSON file with your information, your classes, your sessions and your invoices. If you are a guardian, it also contains those of the students in your household.';
+	@override String get exclus => 'It contains no sign-in secret and no internal team note.';
+	@override String get action => 'Download my data';
+	@override String get reussi => 'Your copy is saved.';
+	@override String get echec => 'The copy could not be prepared. Nothing was saved. Try again in a moment.';
+	@override String get horsLigne => 'Download your data as soon as the network is back.';
+	@override String get refuse => 'This account cannot download a copy.';
+}
+
+// Path: compte.donnees.suppression
+class _Traductions$compte$donnees$suppression$en extends Traductions$compte$donnees$suppression$fr {
+	_Traductions$compte$donnees$suppression$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Delete my account';
+	@override String intro({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: 'The management reviews your request after a cooling-off period of ${n} day. You can cancel it during that time.',
+		other: 'The management reviews your request after a cooling-off period of ${n} days. You can cancel it during that time.',
+	);
+	@override String get effacement => 'Once the request is processed, your name, your contact details and your photo are erased. You can no longer sign in.';
+	@override String get conservation => 'Invoices and payments are kept for accounting. Your student ID is never reassigned.';
+	@override String get aucuneDemande => 'No deletion request in progress.';
+	@override String get soldeTitre => 'A balance remains to be paid';
+	@override String soldeDetail({required Object montant}) => '${montant} remains to be paid. You can request deletion, but this balance stays due.';
+	@override String get seancesTitre => 'Sessions are still planned';
+	@override String seancesDetail({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} session is planned. The management must cancel it or entrust it to someone else before deleting your account.',
+		other: '${n} sessions are planned. The management must cancel them or entrust them to someone else before deleting your account.',
+	);
+	@override String get motifLibelle => 'Why are you leaving? (optional)';
+	@override String get motifAide => 'The management reads it. It is erased when the request is processed.';
+	@override String get demander => 'Request the deletion of my account';
+	@override String get confirmerQuestion => 'Request the deletion of your account?';
+	@override String confirmerConsequence({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: 'If you do not cancel it within ${n} day, the management may erase your name, your contact details and your photo. You will no longer be able to sign in. Invoices and payments are kept.',
+		other: 'If you do not cancel it within ${n} days, the management may erase your name, your contact details and your photo. You will no longer be able to sign in. Invoices and payments are kept.',
+	);
+	@override String get confirmerAction => 'Request deletion';
+	@override String get confirmerRester => 'Keep my account';
+	@override String get enCoursTitre => 'Deletion request in progress';
+	@override String enCoursDetail({required Object demandee, required Object echeance}) => 'Requested on ${demandee}. The management can process it from ${echeance}.';
+	@override String get annuler => 'Cancel my request';
+	@override String get demandeEnvoyee => 'Your request is saved. You can cancel it until it is processed.';
+	@override String get demandeAnnulee => 'Your request is cancelled. Your account stays open.';
+	@override String get echec => 'Your request did not go through. Your account has not changed. Try again in a moment.';
+	@override String get horsLigne => 'Your request was not sent. Make it again as soon as the network is back.';
+	@override String get refuse => 'This account cannot request its deletion here.';
+}
+
+// Path: compte.doubleVerification.feuille
+class _Traductions$compte$doubleVerification$feuille$en extends Traductions$compte$doubleVerification$feuille$fr {
+	_Traductions$compte$doubleVerification$feuille$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Verification code';
+	@override String get intro => 'This action requires double verification. Open your authentication app and enter the six-digit code shown for this account.';
+	@override String get confirmer => 'Confirm the code and continue';
+	@override String get aActiverTitre => 'First turn on double verification';
+	@override String get aActiverPhrase => 'This action requires double verification. Turn it on once in Account > Security, then repeat the action.';
+	@override String get ouvrirSecurite => 'Open Account > Security';
+	@override String get erreur => 'The code is not confirmed: the request may not have reached Rewayah. Try again in a moment.';
+	@override String get horsLigne => 'Nothing was sent: there is no network. Try again as soon as it is back.';
+}
+
+// Path: compte.tuteur.identite
+class _Traductions$compte$tuteur$identite$en extends Traductions$compte$tuteur$identite$fr {
+	_Traductions$compte$tuteur$identite$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get statutValide => 'Account approved';
+	@override String get statutProvisoire => 'Profile to complete';
+	@override String get nomInconnu => 'Account holder';
+	@override String get courrielAbsent => 'Sign-in address not provided';
+	@override String get connexionLien => 'Sign-in by link received by email';
+	@override String get connexionGoogle => 'Sign-in with Google';
+	@override String get connexionInconnue => 'Sign-in method not specified';
+}
+
+// Path: compte.tuteur.acces
+class _Traductions$compte$tuteur$acces$en extends Traductions$compte$tuteur$acces$fr {
+	_Traductions$compte$tuteur$acces$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get pastilleActif => 'Access active';
+	@override String get pastilleExpire => 'Access ended';
+	@override String get ligne => 'Access of the student profiles';
+	@override String get paiements => 'Payments and receipts';
+}
+
+// Path: compte.tuteur.securite
+class _Traductions$compte$tuteur$securite$en extends Traductions$compte$tuteur$securite$fr {
+	_Traductions$compte$tuteur$securite$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Sign-in and security';
+	@override String get methode => 'Sign-in method';
+	@override String get methodeLien => 'Link by email';
+	@override String get methodeGoogle => 'Google';
+	@override String get consentements => 'Parent visits';
+}
+
+// Path: compte.tuteur.informations
+class _Traductions$compte$tuteur$informations$en extends Traductions$compte$tuteur$informations$fr {
+	_Traductions$compte$tuteur$informations$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Personal information';
+	@override String langueFuseau({required Object ville}) => 'Français · ${ville}';
+}
+
+// Path: compte.tuteur.foyer
+class _Traductions$compte$tuteur$foyer$en extends Traductions$compte$tuteur$foyer$fr {
+	_Traductions$compte$tuteur$foyer$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String plusieurs({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(nombre,
+		one: '${nombre} student profile',
+		other: '${nombre} student profiles',
+	);
+	@override String get creerMonProfil => 'Create my student profile';
+}
+
+// Path: compte.tuteur.aide
+class _Traductions$compte$tuteur$aide$en extends Traductions$compte$tuteur$aide$fr {
+	_Traductions$compte$tuteur$aide$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get ligne => 'Help and contact';
+	@override String get legal => 'Legal information';
+}
+
+// Path: compte.tuteur.deconnexion
+class _Traductions$compte$tuteur$deconnexion$en extends Traductions$compte$tuteur$deconnexion$fr {
+	_Traductions$compte$tuteur$deconnexion$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get question => 'Sign out of Rewayah?';
+	@override String get consequence => 'You will need to sign in again to return on this device. Your other devices stay signed in.';
+	@override String get confirmer => 'Sign me out';
+	@override String get echec => 'Signing out did not complete. Try again in a moment.';
+	@override String get rapportsQuestion => 'Sign out anyway?';
+	@override String rapportsConsequence({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} handover notebook is not sent. Signing out will lose it.',
+		other: '${n} handover notebooks are not sent. Signing out will lose them.',
+	);
+	@override String get rapportsConfirmer => 'Sign out anyway';
+	@override String get rapportsAnnuler => 'Cancel';
+}
+
+// Path: compte.tuteur.pageInformations
+class _Traductions$compte$tuteur$pageInformations$en extends Traductions$compte$tuteur$pageInformations$fr {
+	_Traductions$compte$tuteur$pageInformations$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Personal information';
+	@override String get prenom => 'First name';
+	@override String get nom => 'Last name';
+	@override String get courriel => 'Sign-in address';
+	@override String get langue => 'Interface language';
+	@override String get fuseau => 'Time zone of sessions';
+	@override String get fuseauIndisponible => 'Not loaded';
+	@override String get fuseauAppareil => 'This device\'s time';
+	@override String get note => 'This information is held by the academy. It cannot yet be changed from the app.';
+	@override String get modifier => 'Edit my information';
+	@override String get enregistrer => 'Save';
+	@override String get prenomVide => 'Write your first name.';
+	@override String get nomVide => 'Write your last name.';
+	@override String get tropLong => 'No more than 80 characters.';
+	@override String get echec => 'Your first and last name were not changed.';
+	@override String get horsLigne => 'Editing comes back with the connection.';
+	@override String get noteModifiable => 'Your sign-in address is changed through the academy.';
+}
+
+// Path: compte.tuteur.pageSecurite
+class _Traductions$compte$tuteur$pageSecurite$en extends Traductions$compte$tuteur$pageSecurite$fr {
+	_Traductions$compte$tuteur$pageSecurite$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Sign-in and security';
+	@override String get sousTitre => 'How you access your account.';
+	@override String get methode => 'Sign-in method';
+	@override String get adresse => 'Sign-in address';
+	@override String get appareils => 'The devices connected to your account are not yet listed in the app.';
+	@override String get deconnexion => 'To end the session on this device, use "Sign out" at the bottom of My account.';
+}
+
+// Path: compte.tuteur.pageAcces
+class _Traductions$compte$tuteur$pageAcces$en extends Traductions$compte$tuteur$pageAcces$fr {
+	_Traductions$compte$tuteur$pageAcces$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Access of the student profiles';
+	@override String get sousTitre => 'The access status of each student profile.';
+	@override String get sansEcheance => 'No end date';
+	@override String jusqua({required Object date}) => 'Open until ${date}';
+	@override String expire({required Object date}) => 'Ended on ${date}';
+	@override String get pastilleActif => 'Active';
+	@override String get pastilleExpire => 'Ended';
+	@override String get aucunTitre => 'No student profile';
+	@override String get aucunePhrase => 'The access of each student profile will appear here.';
+	@override String get titulaire => 'Your account holder account has no end date of its own: access is set profile by profile.';
+}
+
+// Path: compte.tuteur.pagePaiements
+class _Traductions$compte$tuteur$pagePaiements$en extends Traductions$compte$tuteur$pagePaiements$fr {
+	_Traductions$compte$tuteur$pagePaiements$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Payments';
+	@override String get indisponibleTitre => 'Payments cannot be viewed yet';
+	@override String get indisponiblePhrase => 'Payment history, receipts and payment methods are not yet available in the app. No payment is asked of you here.';
+	@override String get aucunTitre => 'No payment recorded';
+	@override String get aucunePhrase => 'Payments recorded by the academy will appear here.';
+	@override String paiementDu({required Object date}) => 'Payment of ${date}';
+	@override String get justificatif => 'Receipt available';
+	@override String get statutConfirme => 'Confirmed';
+	@override String get statutEnConfirmation => 'Being confirmed';
+	@override String get refusTitre => 'Payments handled by the household account holder';
+	@override String get refusPhrase => 'Only the household account holder sees the payment history.';
+}
+
+// Path: compte.tuteur.pagePreferences
+class _Traductions$compte$tuteur$pagePreferences$en extends Traductions$compte$tuteur$pagePreferences$fr {
+	_Traductions$compte$tuteur$pagePreferences$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get notifications => 'Notifications';
+	@override String get notificationsDetail => 'This device and what you receive';
+}
+
+// Path: compte.tuteur.pageAide
+class _Traductions$compte$tuteur$pageAide$en extends Traductions$compte$tuteur$pageAide$fr {
+	_Traductions$compte$tuteur$pageAide$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Help and support';
+	@override String get indisponibleTitre => 'Help not available yet';
+	@override String get indisponiblePhrase => 'Frequently asked questions and the academy\'s contact are not yet open in the app.';
+	@override String get canalCourriel => 'Academy email';
+	@override String get canalLien => 'Academy help page';
+	@override String get aucunCanal => 'No help channel is published for now.';
+}
+
+// Path: compte.tuteur.pageLegal
+class _Traductions$compte$tuteur$pageLegal$en extends Traductions$compte$tuteur$pageLegal$fr {
+	_Traductions$compte$tuteur$pageLegal$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get conditionsTuteur => 'Guardian terms';
+	@override String get contratEnseignant => 'Teacher contract';
+	@override String get accuseEnregistrement => 'Class recording acknowledgement';
+	@override String get textes => 'Terms and privacy';
 }
 
 // Path: tuteur.accueil.autreAppareilFeuille
@@ -5816,6 +6419,38 @@ extension on TraductionsEn {
 			'foyer.membre.accesJusquau' => ({required Object date}) => 'Access until ${date}',
 			'foyer.membre.accesExpire' => ({required Object date}) => 'Access expired since ${date}',
 			'foyer.membre.date' => ({required Object mois, required Object jour, required Object annee}) => '${mois} ${jour}, ${annee}',
+			'foyer.classesIndisponibles' => 'Each student\'s class is not shown on this page yet.',
+			'foyer.classesEchec' => 'The class of some students could not be loaded.',
+			'foyer.relireClasses' => 'Reload the classes',
+			'foyer.profilsSansDonnees' => 'The student profiles of your household could not be loaded',
+			'foyer.titulaireSansDonnees' => 'Your account holder information could not be loaded',
+			'foyer.inscriptionIllisible' => 'Each student\'s current registration is not shown on this page yet.',
+			'foyer.appareilsPartages' => 'Shared devices',
+			'foyer.appareilsFoyer' => 'Household devices',
+			'foyer.appareilsFoyerLegende' => 'Connect a device, see those that are linked, remove one',
+			'foyer.creerMonProfil' => 'Create my student profile',
+			'foyer.n2.invitationRecueMessage' => 'Read the invitation, then accept or decline it.',
+			'foyer.n2.invitationRecueVoir' => 'See the invitation',
+			'foyer.n2.repriseATraiterVoir' => 'See the takeover request',
+			'foyer.n2.demanderReprise' => 'Request to take over the household',
+			'foyer.n2.demanderRepriseLegende' => 'If the household account holder has passed away',
+			'foyer.monProfil.titre' => 'Create my student profile',
+			'foyer.monProfil.indisponibleTitre' => 'Not possible yet',
+			'foyer.monProfil.indisponiblePhrase' => 'Taking classes yourself with your own student profile will be offered soon. Your guardian account stays as it is.',
+			'foyer.monProfil.intro' => 'With your own student profile, you can take classes yourself, in an adults\' class.',
+			'foyer.monProfil.consequence' => 'Your guardian account does not change: you keep your household and your children\'s student profiles.',
+			'foyer.monProfil.creer' => 'Create my student profile',
+			'foyer.monProfil.reessayer' => 'Try creating my student profile again',
+			'foyer.monProfil.nonConfirme' => 'The creation of your student profile is not confirmed: your request may not have reached Rewayah. Try again in a moment; if your profile already exists, nothing is created twice.',
+			'foyer.monProfil.horsLigne' => 'Nothing is created. You can create your student profile yourself when the connection is back.',
+			'foyer.monProfil.sansDonnees' => 'Your student profile could not be verified',
+			'foyer.monProfil.creeTitre' => 'Your student profile is created',
+			'foyer.monProfil.creePhrase' => 'Your guardian account does not change. You keep your household and your children\'s student profiles.',
+			'foyer.monProfil.dejaTitre' => 'You already have your student profile',
+			'foyer.monProfil.dejaPhrase' => 'Your student profile already exists: there is nothing to create.',
+			'foyer.monProfil.dejaOuvertPhrase' => 'Your student profile already exists: your classes are waiting for you in your student space.',
+			'foyer.monProfil.dejaAttentePhrase' => 'Your student space will be available as soon as the management has approved your admission request.',
+			'foyer.monProfil.retour' => 'Back to the household',
 			'foyer.ajout.suivant' => 'Next',
 			'foyer.ajout.creer' => 'Create the profile',
 			'foyer.ajout.porte.sansDonneesTitre' => 'The profiles you can add could not be checked',
@@ -5832,6 +6467,8 @@ extension on TraductionsEn {
 			'foyer.ajout.identite.question' => 'Who is the student?',
 			'foyer.ajout.identite.sousTitre' => 'Their first name, last name and age.',
 			'foyer.ajout.identite.prenom' => 'First name',
+			_ => null,
+		} ?? switch (path) {
 			'foyer.ajout.identite.nom' => 'Last name',
 			'foyer.ajout.identite.nomAide' => 'The family name is never shown to the teacher.',
 			'foyer.ajout.identite.nomAidePrerempli' => 'Filled in with your account name: change it if the student has a different name. Never shown to the teacher.',
@@ -5855,6 +6492,31 @@ extension on TraductionsEn {
 			'foyer.ajout.incertaine.voirFoyer' => 'See the household',
 			'foyer.ajout.incertaine.reessayer' => 'Try again anyway',
 			'foyer.ajout.horsLigne' => 'The profile can be created when the connection is back.',
+			'foyer.finances.titre' => 'Balances and payments',
+			'foyer.finances.rechargerPlusieurs' => 'Top up several profiles',
+			'foyer.finances.rechargerPour' => ({required Object prenom}) => 'Top up ${prenom}',
+			'foyer.finances.recharger' => 'Top up',
+			'foyer.finances.voirDetail' => 'See the details',
+			'foyer.finances.voirDetailSemantique' => ({required Object dePrenom}) => 'See the details of ${dePrenom}\'s finances',
+			'foyer.finances.noteSoldes' => 'Each child has an individual balance and funded period. Access is tied to the funded period, not simply to the balance.',
+			'foyer.finances.vueFinanciere' => 'Household financial view',
+			'foyer.finances.vueFinancierePeriode' => 'This month',
+			'foyer.finances.soldeActuel' => 'Current balance',
+			'foyer.finances.prochainDebit' => 'Next debit',
+			'foyer.finances.prochainDebitValeur' => ({required Object date, required Object montant}) => '${date} · ${montant}',
+			'foyer.finances.aucunDebit' => 'No debit planned',
+			'foyer.finances.essaiSansMax' => ({required Object n}) => 'Trial: ${n} session(s) used',
+			'foyer.finances.manque' => ({required Object montant}) => '${montant} is missing for the next period.',
+			'foyer.finances.indisponibleTitre' => 'Balances cannot be loaded',
+			'foyer.finances.sansDonnees' => 'The balances of your household could not be loaded',
+			'foyer.transactions.titre' => 'Latest transactions',
+			'foyer.transactions.ligne' => ({required Object libelle, required Object prenom}) => '${libelle} · ${prenom}',
+			'foyer.transactions.voirTout' => 'See all',
+			'foyer.transactions.voirToutSemantique' => 'See all: the household\'s payment history',
+			'foyer.transactions.videTitre' => 'No transactions yet',
+			'foyer.transactions.videPhrase' => 'Top-ups and monthly fees of the profiles will appear here.',
+			'foyer.transactions.erreurTitre' => 'The latest transactions cannot be loaded',
+			'foyer.transactions.sansDonnees' => 'The household\'s latest movements could not be loaded',
 			'ficheEleve.sansDonnees' => 'This student\'s profile could not be loaded',
 			'ficheEleve.titreRepli' => 'Student profile',
 			'ficheEleve.parametres' => 'Student settings',
@@ -5864,8 +6526,6 @@ extension on TraductionsEn {
 			'ficheEleve.supprimer.legende' => 'The profile leaves its classes and can no longer sign in.',
 			'ficheEleve.supprimer.question' => ({required Object dePrenom}) => 'Delete ${dePrenom}\'s profile?',
 			'ficheEleve.supprimer.consequence' => 'The profile can no longer sign in, immediately, and leaves its classes. It is anonymised at the end of the retention period. To get it back before then, write to the management.',
-			_ => null,
-		} ?? switch (path) {
 			'ficheEleve.supprimer.confirmer' => ({required Object prenom}) => 'Yes, delete ${prenom}',
 			'ficheEleve.supprimer.saisieLibelle' => ({required Object prenom}) => 'To confirm, write the first name ${prenom}',
 			'ficheEleve.supprimer.saisieErreur' => ({required Object prenom}) => 'That is not the first name ${prenom}. Write it to confirm the deletion.',
@@ -6321,6 +6981,8 @@ extension on TraductionsEn {
 			'recrutement.parcours.riwayat.rechercheAide' => 'Riwaya name',
 			'recrutement.parcours.riwayat.aucune' => 'No riwaya matches.',
 			'recrutement.parcours.riwayat.retour' => 'Back to the riwayat offered',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.fuseau.heureChezVous' => ({required Object heure}) => 'Is it ${heure} where you are?',
 			'recrutement.parcours.fuseau.lieuPropose' => ({required Object lieu}) => 'Suggested time zone: ${lieu}.',
 			'recrutement.parcours.fuseau.retenu' => ({required Object lieu}) => 'Time zone kept: ${lieu}.',
@@ -6378,8 +7040,6 @@ extension on TraductionsEn {
 			'recrutement.parcours.recap.titre' => 'Review your application',
 			'recrutement.parcours.recap.explication' => 'Tap an answer to change it. Nothing is sent before the "Send my application" button.',
 			'recrutement.parcours.recap.jours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'One day per week', other: '${n} days per week', ), 
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.q.langueMaternelle.titre' => 'What is your mother tongue?',
 			'recrutement.parcours.q.langueMaternelle.explication' => 'It is the language you have spoken since childhood. This question is optional: you can continue without answering.',
 			'recrutement.parcours.q.langueMaternelle.court' => 'Mother tongue',
@@ -6741,9 +7401,242 @@ extension on TraductionsEn {
 			'nav.halo.salleNom' => ({required Object compte}) => '${compte}, the room is open',
 			'nav.filAriane.separateur' => '›',
 			'nav.filAriane.suite' => ({required Object libelle}) => '› ${libelle}',
+			'compte.page.sections.monEspace' => 'My space',
+			'compte.page.sections.paiements' => 'Payments',
+			'compte.page.sections.preferences' => 'Preferences',
+			'compte.page.sections.compteSecurite' => 'Account and security',
+			'compte.page.sections.aide' => 'Help and information',
 			'compte.page.langue.legende' => 'For the app and for the academy\'s emails',
 			'compte.page.langue.refus' => 'The app changed language, but the language of your emails is not confirmed. Try again in a moment.',
+			'compte.page.accessibiliteLegende' => 'Animations, effects and keyboard shortcuts of the room',
+			'compte.page.changerPhoto' => 'Change the photo',
+			'compte.page.matricule' => ({required Object valeur}) => 'Student ID ${valeur}',
+			'compte.page.identiteVide' => 'Your information is not available yet. Your preferences and signing out remain accessible.',
+			'compte.page.identiteEchec' => 'Your information could not be loaded.',
+			'compte.donnees.titre' => 'My data',
+			'compte.donnees.sousTitre' => 'A copy of your data, or the deletion of your account.',
+			'compte.donnees.ligne' => 'Copy of my data and account deletion',
+			'compte.donnees.ligneDetail' => 'Download your data or request the deletion of your account.',
+			'compte.donnees.copie.titre' => 'Download a copy',
+			'compte.donnees.copie.intro' => 'A JSON file with your information, your classes, your sessions and your invoices. If you are a guardian, it also contains those of the students in your household.',
+			'compte.donnees.copie.exclus' => 'It contains no sign-in secret and no internal team note.',
+			'compte.donnees.copie.action' => 'Download my data',
+			'compte.donnees.copie.reussi' => 'Your copy is saved.',
+			'compte.donnees.copie.echec' => 'The copy could not be prepared. Nothing was saved. Try again in a moment.',
+			'compte.donnees.copie.horsLigne' => 'Download your data as soon as the network is back.',
+			'compte.donnees.copie.refuse' => 'This account cannot download a copy.',
+			'compte.donnees.suppression.titre' => 'Delete my account',
+			'compte.donnees.suppression.intro' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'The management reviews your request after a cooling-off period of ${n} day. You can cancel it during that time.', other: 'The management reviews your request after a cooling-off period of ${n} days. You can cancel it during that time.', ), 
+			'compte.donnees.suppression.effacement' => 'Once the request is processed, your name, your contact details and your photo are erased. You can no longer sign in.',
+			'compte.donnees.suppression.conservation' => 'Invoices and payments are kept for accounting. Your student ID is never reassigned.',
+			'compte.donnees.suppression.aucuneDemande' => 'No deletion request in progress.',
+			'compte.donnees.suppression.soldeTitre' => 'A balance remains to be paid',
+			'compte.donnees.suppression.soldeDetail' => ({required Object montant}) => '${montant} remains to be paid. You can request deletion, but this balance stays due.',
+			'compte.donnees.suppression.seancesTitre' => 'Sessions are still planned',
+			'compte.donnees.suppression.seancesDetail' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} session is planned. The management must cancel it or entrust it to someone else before deleting your account.', other: '${n} sessions are planned. The management must cancel them or entrust them to someone else before deleting your account.', ), 
+			'compte.donnees.suppression.motifLibelle' => 'Why are you leaving? (optional)',
+			'compte.donnees.suppression.motifAide' => 'The management reads it. It is erased when the request is processed.',
+			'compte.donnees.suppression.demander' => 'Request the deletion of my account',
+			'compte.donnees.suppression.confirmerQuestion' => 'Request the deletion of your account?',
+			'compte.donnees.suppression.confirmerConsequence' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'If you do not cancel it within ${n} day, the management may erase your name, your contact details and your photo. You will no longer be able to sign in. Invoices and payments are kept.', other: 'If you do not cancel it within ${n} days, the management may erase your name, your contact details and your photo. You will no longer be able to sign in. Invoices and payments are kept.', ), 
+			'compte.donnees.suppression.confirmerAction' => 'Request deletion',
+			'compte.donnees.suppression.confirmerRester' => 'Keep my account',
+			'compte.donnees.suppression.enCoursTitre' => 'Deletion request in progress',
+			'compte.donnees.suppression.enCoursDetail' => ({required Object demandee, required Object echeance}) => 'Requested on ${demandee}. The management can process it from ${echeance}.',
+			'compte.donnees.suppression.annuler' => 'Cancel my request',
+			'compte.donnees.suppression.demandeEnvoyee' => 'Your request is saved. You can cancel it until it is processed.',
+			'compte.donnees.suppression.demandeAnnulee' => 'Your request is cancelled. Your account stays open.',
+			'compte.donnees.suppression.echec' => 'Your request did not go through. Your account has not changed. Try again in a moment.',
+			'compte.donnees.suppression.horsLigne' => 'Your request was not sent. Make it again as soon as the network is back.',
+			'compte.donnees.suppression.refuse' => 'This account cannot request its deletion here.',
+			'compte.titre' => 'My account',
+			'compte.intro' => 'Your information, your preferences and your access, in one place.',
+			'compte.informations' => 'Information',
+			'compte.profil' => 'Profile',
+			'compte.profilDetail' => 'See and manage your information',
+			'compte.reglages' => 'Settings',
+			'compte.reglagesDetail' => 'Appearance, notifications and accessibility',
+			'compte.profils' => 'Manage my household',
+			'compte.profilsDetail' => 'Manage your children\'s profiles',
+			'compte.appareils' => 'Household',
+			'compte.appareilsDetail' => 'The devices and profiles linked to your household',
+			'compte.confidentialite' => 'Privacy',
+			'compte.confidentialiteDetail' => 'Coming soon',
+			'compte.espaces' => 'Spaces',
+			'compte.espacesDetail' => 'The spaces your account gives access to',
+			'compte.espacesMissionEnCours' => 'To return to your main space, first leave the visit in progress.',
+			'compte.habilitation' => 'Authorised',
+			'compte.deconnexion' => 'Sign out',
+			'compte.deconnexionDetail' => 'End the session on this device',
+			'compte.version' => ({required Object version, required Object build}) => 'Version ${version} (${build})',
+			'compte.versionSeule' => ({required Object version}) => 'Version ${version}',
+			'compte.doubleVerification.rubriqueDetail' => 'Double verification for the management\'s sensitive actions',
+			'compte.doubleVerification.saisirCode' => 'Enter my verification code',
+			'compte.doubleVerification.titre' => 'Security',
+			'compte.doubleVerification.sousTitre' => 'Double verification protects the management\'s sensitive actions: deleting or restoring an account, processing a deletion request, publishing the commercial policy, importing forms, inviting an accountant.',
+			'compte.doubleVerification.titreEnrolement' => 'Turn on double verification',
+			'compte.doubleVerification.introEnrolement' => 'A stolen sign-in link must not be enough to delete an account. Add a second step with an authentication app on your phone. You only do it once; the code is then asked for at the time of a sensitive action.',
+			'compte.doubleVerification.videPhrase' => 'Install one on your phone, for example Google Authenticator, Microsoft Authenticator or Aegis, then come back here.',
+			'compte.doubleVerification.activeeTitre' => 'Double verification is on',
+			'compte.doubleVerification.activeePhrase' => 'The code from your authentication app will be asked for at the time of a sensitive action, once per sign-in.',
+			'compte.doubleVerification.feuille.titre' => 'Verification code',
+			'compte.doubleVerification.feuille.intro' => 'This action requires double verification. Open your authentication app and enter the six-digit code shown for this account.',
+			'compte.doubleVerification.feuille.confirmer' => 'Confirm the code and continue',
+			'compte.doubleVerification.feuille.aActiverTitre' => 'First turn on double verification',
+			'compte.doubleVerification.feuille.aActiverPhrase' => 'This action requires double verification. Turn it on once in Account > Security, then repeat the action.',
+			'compte.doubleVerification.feuille.ouvrirSecurite' => 'Open Account > Security',
+			'compte.doubleVerification.feuille.erreur' => 'The code is not confirmed: the request may not have reached Rewayah. Try again in a moment.',
+			'compte.doubleVerification.feuille.horsLigne' => 'Nothing was sent: there is no network. Try again as soon as it is back.',
+			'compte.identifiant' => 'Identifier',
+			'compte.nonDisponible' => 'Not available',
+			'compte.contact' => 'Contact',
 			'compte.langue' => 'Language',
+			'compte.francais' => 'Français',
+			'compte.fuseau' => 'Time zone',
+			'compte.academie' => 'Academy',
+			'compte.securite' => 'Security',
+			_ => null,
+		} ?? switch (path) {
+			'compte.statut' => 'Status',
+			'compte.reglagesTitre' => 'Settings',
+			'compte.reglagesIntro' => 'These preferences apply immediately.',
+			'compte.apparence' => 'Appearance',
+			'compte.themeContexte' => 'Follows your account everywhere.',
+			'compte.themeSysteme' => 'System',
+			'compte.themeClair' => 'Light',
+			'compte.themeSombre' => 'Dark',
+			'compte.accessibilite' => 'Accessibility',
+			'compte.animations' => 'Reduce animations',
+			'compte.animationsDetail' => 'Limits movement on screen',
+			'compte.effets' => 'Reduce effects',
+			'compte.effetsDetail' => 'Limits transparency and shadows',
+			'compte.lisibiliteDetail' => 'Text size follows your device setting.',
+			'compte.langueRegion' => 'Language and region',
+			'compte.francaisDetail' => 'Interface language',
+			'compte.actif' => 'Active',
+			'compte.arabe' => 'Arabic',
+			'compte.arabeDetail' => 'Coming soon',
+			'compte.fuseauDetail' => 'Detected automatically',
+			'compte.notifications' => 'Notifications',
+			'compte.notificationsCours' => 'Classes',
+			'compte.notificationsCoursDetail' => 'Reminders before your classes',
+			'compte.notificationsFoyer' => 'Household',
+			'compte.notificationsFoyerDetail' => 'Activity of your household\'s profiles',
+			'compte.notificationsEtat' => 'Notifications also depend on your device and browser settings.',
+			'compte.coursDonnees' => 'Classes and data',
+			'compte.lectureGrande' => 'Large text reading',
+			'compte.lectureGrandeDetail' => 'Shows the Quran larger by default',
+			'compte.reessayer' => 'Try again',
+			'compte.ajouterEnfant' => 'Add a child',
+			'compte.modeEnfant' => 'Guided interface',
+			'compte.modeStandard' => 'Standard mode',
+			'compte.cameraAutorisee' => 'Allowed',
+			'compte.cameraInterdite' => 'Not allowed',
+			'compte.statutActif' => 'Active',
+			'compte.statutProvisoire' => 'Active, provisionally',
+			'compte.matricule' => ({required Object valeur, required Object role}) => 'Student ID ${valeur} · ${role}',
+			'compte.copier' => 'Copy',
+			'compte.copierMatricule' => 'Copy the student ID',
+			'compte.matriculeCopie' => 'Copied',
+			'compte.roles.admin' => 'Administrator',
+			'compte.roles.accountant' => 'Accountant',
+			'compte.roles.controller' => 'Reviewer',
+			'compte.roles.teacher' => 'Teacher',
+			'compte.roles.guardian' => 'Guardian',
+			'compte.roles.student' => 'Student',
+			'compte.roleDetail.admin' => 'Manages files, assignment and the academy\'s log',
+			'compte.roleDetail.accountant' => 'Manages payments and invoices',
+			'compte.roleDetail.controller' => 'Observes sessions for teaching quality',
+			'compte.roleDetail.teacher' => 'Gives classes and follows their slots',
+			'compte.roleDetail.guardian' => 'Follows the household and its children',
+			'compte.roleDetail.student' => 'Follows their classes and their Quran',
+			'compte.tuteur.dateLongue' => ({required Object mois, required Object jour, required Object annee}) => '${mois} ${jour}, ${annee}',
+			'compte.tuteur.identite.statutValide' => 'Account approved',
+			'compte.tuteur.identite.statutProvisoire' => 'Profile to complete',
+			'compte.tuteur.identite.nomInconnu' => 'Account holder',
+			'compte.tuteur.identite.courrielAbsent' => 'Sign-in address not provided',
+			'compte.tuteur.identite.connexionLien' => 'Sign-in by link received by email',
+			'compte.tuteur.identite.connexionGoogle' => 'Sign-in with Google',
+			'compte.tuteur.identite.connexionInconnue' => 'Sign-in method not specified',
+			'compte.tuteur.acces.pastilleActif' => 'Access active',
+			'compte.tuteur.acces.pastilleExpire' => 'Access ended',
+			'compte.tuteur.acces.ligne' => 'Access of the student profiles',
+			'compte.tuteur.acces.paiements' => 'Payments and receipts',
+			'compte.tuteur.securite.titre' => 'Sign-in and security',
+			'compte.tuteur.securite.methode' => 'Sign-in method',
+			'compte.tuteur.securite.methodeLien' => 'Link by email',
+			'compte.tuteur.securite.methodeGoogle' => 'Google',
+			'compte.tuteur.securite.consentements' => 'Parent visits',
+			'compte.tuteur.informations.titre' => 'Personal information',
+			'compte.tuteur.informations.langueFuseau' => ({required Object ville}) => 'Français · ${ville}',
+			'compte.tuteur.foyer.plusieurs' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(nombre, one: '${nombre} student profile', other: '${nombre} student profiles', ), 
+			'compte.tuteur.foyer.creerMonProfil' => 'Create my student profile',
+			'compte.tuteur.aide.ligne' => 'Help and contact',
+			'compte.tuteur.aide.legal' => 'Legal information',
+			'compte.tuteur.deconnexion.question' => 'Sign out of Rewayah?',
+			'compte.tuteur.deconnexion.consequence' => 'You will need to sign in again to return on this device. Your other devices stay signed in.',
+			'compte.tuteur.deconnexion.confirmer' => 'Sign me out',
+			'compte.tuteur.deconnexion.echec' => 'Signing out did not complete. Try again in a moment.',
+			'compte.tuteur.deconnexion.rapportsQuestion' => 'Sign out anyway?',
+			'compte.tuteur.deconnexion.rapportsConsequence' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} handover notebook is not sent. Signing out will lose it.', other: '${n} handover notebooks are not sent. Signing out will lose them.', ), 
+			'compte.tuteur.deconnexion.rapportsConfirmer' => 'Sign out anyway',
+			'compte.tuteur.deconnexion.rapportsAnnuler' => 'Cancel',
+			'compte.tuteur.pageInformations.titre' => 'Personal information',
+			'compte.tuteur.pageInformations.prenom' => 'First name',
+			'compte.tuteur.pageInformations.nom' => 'Last name',
+			'compte.tuteur.pageInformations.courriel' => 'Sign-in address',
+			'compte.tuteur.pageInformations.langue' => 'Interface language',
+			'compte.tuteur.pageInformations.fuseau' => 'Time zone of sessions',
+			'compte.tuteur.pageInformations.fuseauIndisponible' => 'Not loaded',
+			'compte.tuteur.pageInformations.fuseauAppareil' => 'This device\'s time',
+			'compte.tuteur.pageInformations.note' => 'This information is held by the academy. It cannot yet be changed from the app.',
+			'compte.tuteur.pageInformations.modifier' => 'Edit my information',
+			'compte.tuteur.pageInformations.enregistrer' => 'Save',
+			'compte.tuteur.pageInformations.prenomVide' => 'Write your first name.',
+			'compte.tuteur.pageInformations.nomVide' => 'Write your last name.',
+			'compte.tuteur.pageInformations.tropLong' => 'No more than 80 characters.',
+			'compte.tuteur.pageInformations.echec' => 'Your first and last name were not changed.',
+			'compte.tuteur.pageInformations.horsLigne' => 'Editing comes back with the connection.',
+			'compte.tuteur.pageInformations.noteModifiable' => 'Your sign-in address is changed through the academy.',
+			'compte.tuteur.pageSecurite.titre' => 'Sign-in and security',
+			'compte.tuteur.pageSecurite.sousTitre' => 'How you access your account.',
+			'compte.tuteur.pageSecurite.methode' => 'Sign-in method',
+			'compte.tuteur.pageSecurite.adresse' => 'Sign-in address',
+			'compte.tuteur.pageSecurite.appareils' => 'The devices connected to your account are not yet listed in the app.',
+			'compte.tuteur.pageSecurite.deconnexion' => 'To end the session on this device, use "Sign out" at the bottom of My account.',
+			'compte.tuteur.pageAcces.titre' => 'Access of the student profiles',
+			'compte.tuteur.pageAcces.sousTitre' => 'The access status of each student profile.',
+			'compte.tuteur.pageAcces.sansEcheance' => 'No end date',
+			'compte.tuteur.pageAcces.jusqua' => ({required Object date}) => 'Open until ${date}',
+			'compte.tuteur.pageAcces.expire' => ({required Object date}) => 'Ended on ${date}',
+			'compte.tuteur.pageAcces.pastilleActif' => 'Active',
+			'compte.tuteur.pageAcces.pastilleExpire' => 'Ended',
+			'compte.tuteur.pageAcces.aucunTitre' => 'No student profile',
+			'compte.tuteur.pageAcces.aucunePhrase' => 'The access of each student profile will appear here.',
+			'compte.tuteur.pageAcces.titulaire' => 'Your account holder account has no end date of its own: access is set profile by profile.',
+			'compte.tuteur.pagePaiements.titre' => 'Payments',
+			'compte.tuteur.pagePaiements.indisponibleTitre' => 'Payments cannot be viewed yet',
+			'compte.tuteur.pagePaiements.indisponiblePhrase' => 'Payment history, receipts and payment methods are not yet available in the app. No payment is asked of you here.',
+			'compte.tuteur.pagePaiements.aucunTitre' => 'No payment recorded',
+			'compte.tuteur.pagePaiements.aucunePhrase' => 'Payments recorded by the academy will appear here.',
+			'compte.tuteur.pagePaiements.paiementDu' => ({required Object date}) => 'Payment of ${date}',
+			'compte.tuteur.pagePaiements.justificatif' => 'Receipt available',
+			'compte.tuteur.pagePaiements.statutConfirme' => 'Confirmed',
+			'compte.tuteur.pagePaiements.statutEnConfirmation' => 'Being confirmed',
+			'compte.tuteur.pagePaiements.refusTitre' => 'Payments handled by the household account holder',
+			'compte.tuteur.pagePaiements.refusPhrase' => 'Only the household account holder sees the payment history.',
+			'compte.tuteur.pagePreferences.notifications' => 'Notifications',
+			'compte.tuteur.pagePreferences.notificationsDetail' => 'This device and what you receive',
+			'compte.tuteur.pageAide.titre' => 'Help and support',
+			'compte.tuteur.pageAide.indisponibleTitre' => 'Help not available yet',
+			'compte.tuteur.pageAide.indisponiblePhrase' => 'Frequently asked questions and the academy\'s contact are not yet open in the app.',
+			'compte.tuteur.pageAide.canalCourriel' => 'Academy email',
+			'compte.tuteur.pageAide.canalLien' => 'Academy help page',
+			'compte.tuteur.pageAide.aucunCanal' => 'No help channel is published for now.',
+			'compte.tuteur.pageLegal.conditionsTuteur' => 'Guardian terms',
+			'compte.tuteur.pageLegal.contratEnseignant' => 'Teacher contract',
+			'compte.tuteur.pageLegal.accuseEnregistrement' => 'Class recording acknowledgement',
+			'compte.tuteur.pageLegal.textes' => 'Terms and privacy',
 			'historique.titre' => 'History',
 			'historique.detailSeance' => 'Session details',
 			'historique.segments.seances' => 'Sessions',
@@ -6864,7 +7757,7 @@ extension on TraductionsEn {
 			'historique.compteRendu.voirTravail' => 'See the work to prepare',
 			'historique.compteRendu.voirProgression' => 'See the progress',
 			'historique.compteRendu.etatARenforcer' => 'To reinforce',
-			'historique.compteRendu.etatAcquis' => 'Mastered',
+			'historique.compteRendu.etatAcquis' => 'Achieved',
 			'historique.dateCourteSansAnnee' => ({required Object mois, required Object jour}) => '${mois} ${jour}',
 			'notifications.evenements.bienvenueEquipe' => 'Welcome to the team. You still need to set up your space.',
 			'notifications.evenements.retenuEntretien' => 'You have been selected for an interview. Let\'s get to know each other: choose your time in the app.',
@@ -6892,8 +7785,6 @@ extension on TraductionsEn {
 			'notifications.evenements.remboursementEffectueDirection' => 'A refund has been made to a family.',
 			'notifications.evenements.litigeOuvert' => 'A payment is disputed with the bank. Access is suspended during the review.',
 			'notifications.evenements.litigeOuvertDirection' => 'A family is disputing a payment with their bank.',
-			_ => null,
-		} ?? switch (path) {
 			'notifications.evenements.litigeClosGagne' => 'The dispute is closed: the bank ruled in the academy\'s favour.',
 			'notifications.evenements.litigeClosPerdu' => 'The dispute is closed: the payment is refunded, the fees go to the household balance.',
 			'notifications.evenements.litigeClosDirection' => 'A payment dispute is closed.',
@@ -7118,6 +8009,8 @@ extension on TraductionsEn {
 			'tuteur.accueil.autreAppareilFeuille.adresseConnexion' => 'Sign-in address',
 			'tuteur.accueil.autreAppareilFeuille.copier' => 'Copy the app link',
 			'tuteur.accueil.autreAppareilFeuille.copie' => 'Link copied',
+			_ => null,
+		} ?? switch (path) {
 			'tuteur.accueil.autreAppareil' => 'Use another device',
 			'tuteur.accueil.ajouterProfil' => 'Add a student profile',
 			'tuteur.accueil.profilsIllisibles' => 'The household profiles could not be loaded.',
@@ -7177,6 +8070,26 @@ extension on TraductionsEn {
 			'tuteur.accueil.aucunEnfant' => 'No child in the household',
 			'tuteur.accueil.aucunEnfantDetail' => 'Add your first child to get started.',
 			'tuteur.accueil.erreur' => 'The household could not be loaded completely. Try again in a moment.',
+			'tuteur.reglages.titre' => 'Settings per child',
+			'tuteur.reglages.intro' => 'These settings apply to the next session, never during a class.',
+			'tuteur.reglages.photo' => 'Photo',
+			'tuteur.reglages.photoAucune' => ({required Object prenom}) => '${prenom} has no photo yet. It stays visible to the household only.',
+			'tuteur.reglages.photoAjouter' => 'Add a photo',
+			'tuteur.reglages.photoChanger' => 'Change the photo',
+			'tuteur.reglages.photoTropLourde' => ({required Object taille}) => 'This photo is larger than ${taille} MB. Retake it at a lower quality.',
+			'tuteur.reglages.camera' => 'Camera',
+			'tuteur.reglages.cameraAutorisee' => ({required Object prenom}) => '${prenom} can turn on their camera during class.',
+			'tuteur.reglages.cameraInterdite' => ({required Object prenom}) => 'The camera button will not appear for ${prenom}.',
+			'tuteur.reglages.cameraAutoriser' => ({required Object dePrenom}) => 'Allow ${dePrenom}\'s camera',
+			'tuteur.reglages.cameraRetirer' => ({required Object dePrenom}) => 'Remove ${dePrenom}\'s camera',
+			'tuteur.reglages.mode' => 'Display',
+			'tuteur.reglages.modeEnfant' => ({required Object prenom}) => 'Large display, no reading: ${prenom} recognises pictures and listens.',
+			'tuteur.reglages.modeStandard' => ({required Object prenom}) => 'Usual display: ${prenom} reads their screen.',
+			'tuteur.reglages.modePasserEnfant' => ({required Object prenom}) => 'Switch ${prenom} to the large display',
+			'tuteur.reglages.modePasserStandard' => ({required Object prenom}) => 'Switch ${prenom} to the usual display',
+			'tuteur.reglages.aucunEnfant' => 'No child in the household',
+			'tuteur.reglages.aucunEnfantDetail' => 'Add a child to set their display and camera.',
+			'tuteur.reglages.erreur' => ({required Object message}) => 'Saving did not go through: ${message}',
 			'classe.entree.coursDans' => ({required Object duree}) => 'Class in ${duree}',
 			'classe.entree.coursImminent' => 'Class in less than a minute',
 			'classe.entree.coursDemainA' => ({required Object heure}) => 'Class tomorrow at ${heure}',
@@ -7406,8 +8319,6 @@ extension on TraductionsEn {
 			'suiviDemandes.creneauxChoisis' => 'Chosen days and times',
 			'suiviDemandes.jourHeure' => ({required Object jour, required Object heure}) => '${jour} ${heure}',
 			'suiviDemandes.fuseauChoisi' => 'Time zone',
-			_ => null,
-		} ?? switch (path) {
 			'suiviDemandes.fuseauValeur' => ({required Object deVille}) => '${deVille} time',
 			'suiviDemandes.etapes.envoyee' => 'Request sent',
 			'suiviDemandes.etapes.classeValidee' => 'Class approved',
@@ -7612,6 +8523,8 @@ extension on TraductionsEn {
 			'suiviAttente.vide.invitationSimple' => 'Your guardian can make one.',
 			'suiviAttente.erreur' => 'We could not read the tracking of your request. This is often caused by the connection. Try again in a moment.',
 			'suiviAttente.sansDonnees' => 'The tracking of your request could not be loaded',
+			_ => null,
+		} ?? switch (path) {
 			'suiviAttente.introuvable' => 'This request no longer exists in your tracking.',
 			'suiviAttente.retour' => 'Back',
 			'suiviAttente.carte.titre' => 'Your class request',

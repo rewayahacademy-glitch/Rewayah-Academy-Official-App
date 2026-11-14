@@ -596,6 +596,42 @@
       "accesExpire": "Access expired since {date}",
       "date": "{mois} {jour}, {annee}"
     },
+    "classesIndisponibles": "Each student's class is not shown on this page yet.",
+    "classesEchec": "The class of some students could not be loaded.",
+    "relireClasses": "Reload the classes",
+    "profilsSansDonnees": "The student profiles of your household could not be loaded",
+    "titulaireSansDonnees": "Your account holder information could not be loaded",
+    "inscriptionIllisible": "Each student's current registration is not shown on this page yet.",
+    "appareilsPartages": "Shared devices",
+    "appareilsFoyer": "Household devices",
+    "appareilsFoyerLegende": "Connect a device, see those that are linked, remove one",
+    "creerMonProfil": "Create my student profile",
+    "n2": {
+      "invitationRecueMessage": "Read the invitation, then accept or decline it.",
+      "invitationRecueVoir": "See the invitation",
+      "repriseATraiterVoir": "See the takeover request",
+      "demanderReprise": "Request to take over the household",
+      "demanderRepriseLegende": "If the household account holder has passed away"
+    },
+    "monProfil": {
+      "titre": "Create my student profile",
+      "indisponibleTitre": "Not possible yet",
+      "indisponiblePhrase": "Taking classes yourself with your own student profile will be offered soon. Your guardian account stays as it is.",
+      "intro": "With your own student profile, you can take classes yourself, in an adults' class.",
+      "consequence": "Your guardian account does not change: you keep your household and your children's student profiles.",
+      "creer": "Create my student profile",
+      "reessayer": "Try creating my student profile again",
+      "nonConfirme": "The creation of your student profile is not confirmed: your request may not have reached Rewayah. Try again in a moment; if your profile already exists, nothing is created twice.",
+      "horsLigne": "Nothing is created. You can create your student profile yourself when the connection is back.",
+      "sansDonnees": "Your student profile could not be verified",
+      "creeTitre": "Your student profile is created",
+      "creePhrase": "Your guardian account does not change. You keep your household and your children's student profiles.",
+      "dejaTitre": "You already have your student profile",
+      "dejaPhrase": "Your student profile already exists: there is nothing to create.",
+      "dejaOuvertPhrase": "Your student profile already exists: your classes are waiting for you in your student space.",
+      "dejaAttentePhrase": "Your student space will be available as soon as the management has approved your admission request.",
+      "retour": "Back to the household"
+    },
     "ajout": {
       "suivant": "Next",
       "creer": "Create the profile",
@@ -648,6 +684,35 @@
         "reessayer": "Try again anyway"
       },
       "horsLigne": "The profile can be created when the connection is back."
+    },
+    "finances": {
+      "titre": "Balances and payments",
+      "rechargerPlusieurs": "Top up several profiles",
+      "rechargerPour": "Top up {prenom}",
+      "recharger": "Top up",
+      "voirDetail": "See the details",
+      "voirDetailSemantique": "See the details of {dePrenom}'s finances",
+      "noteSoldes": "Each child has an individual balance and funded period. Access is tied to the funded period, not simply to the balance.",
+      "vueFinanciere": "Household financial view",
+      "vueFinancierePeriode": "This month",
+      "soldeActuel": "Current balance",
+      "prochainDebit": "Next debit",
+      "prochainDebitValeur": "{date} · {montant}",
+      "aucunDebit": "No debit planned",
+      "essaiSansMax": "Trial: {n} session(s) used",
+      "manque": "{montant} is missing for the next period.",
+      "indisponibleTitre": "Balances cannot be loaded",
+      "sansDonnees": "The balances of your household could not be loaded"
+    },
+    "transactions": {
+      "titre": "Latest transactions",
+      "ligne": "{libelle} · {prenom}",
+      "voirTout": "See all",
+      "voirToutSemantique": "See all: the household's payment history",
+      "videTitre": "No transactions yet",
+      "videPhrase": "Top-ups and monthly fees of the profiles will appear here.",
+      "erreurTitre": "The latest transactions cannot be loaded",
+      "sansDonnees": "The household's latest movements could not be loaded"
     }
   },
   "ficheEleve": {
@@ -1850,12 +1915,304 @@
   },
   "compte": {
     "page": {
+      "sections": {
+        "monEspace": "My space",
+        "paiements": "Payments",
+        "preferences": "Preferences",
+        "compteSecurite": "Account and security",
+        "aide": "Help and information"
+      },
       "langue": {
         "legende": "For the app and for the academy's emails",
         "refus": "The app changed language, but the language of your emails is not confirmed. Try again in a moment."
+      },
+      "accessibiliteLegende": "Animations, effects and keyboard shortcuts of the room",
+      "changerPhoto": "Change the photo",
+      "matricule": "Student ID {valeur}",
+      "identiteVide": "Your information is not available yet. Your preferences and signing out remain accessible.",
+      "identiteEchec": "Your information could not be loaded."
+    },
+    "donnees": {
+      "titre": "My data",
+      "sousTitre": "A copy of your data, or the deletion of your account.",
+      "ligne": "Copy of my data and account deletion",
+      "ligneDetail": "Download your data or request the deletion of your account.",
+      "copie": {
+        "titre": "Download a copy",
+        "intro": "A JSON file with your information, your classes, your sessions and your invoices. If you are a guardian, it also contains those of the students in your household.",
+        "exclus": "It contains no sign-in secret and no internal team note.",
+        "action": "Download my data",
+        "reussi": "Your copy is saved.",
+        "echec": "The copy could not be prepared. Nothing was saved. Try again in a moment.",
+        "horsLigne": "Download your data as soon as the network is back.",
+        "refuse": "This account cannot download a copy."
+      },
+      "suppression": {
+        "titre": "Delete my account",
+        "intro(param=n)": {
+          "one": "The management reviews your request after a cooling-off period of {n} day. You can cancel it during that time.",
+          "other": "The management reviews your request after a cooling-off period of {n} days. You can cancel it during that time."
+        },
+        "effacement": "Once the request is processed, your name, your contact details and your photo are erased. You can no longer sign in.",
+        "conservation": "Invoices and payments are kept for accounting. Your student ID is never reassigned.",
+        "aucuneDemande": "No deletion request in progress.",
+        "soldeTitre": "A balance remains to be paid",
+        "soldeDetail": "{montant} remains to be paid. You can request deletion, but this balance stays due.",
+        "seancesTitre": "Sessions are still planned",
+        "seancesDetail(param=n)": {
+          "one": "{n} session is planned. The management must cancel it or entrust it to someone else before deleting your account.",
+          "other": "{n} sessions are planned. The management must cancel them or entrust them to someone else before deleting your account."
+        },
+        "motifLibelle": "Why are you leaving? (optional)",
+        "motifAide": "The management reads it. It is erased when the request is processed.",
+        "demander": "Request the deletion of my account",
+        "confirmerQuestion": "Request the deletion of your account?",
+        "confirmerConsequence(param=n)": {
+          "one": "If you do not cancel it within {n} day, the management may erase your name, your contact details and your photo. You will no longer be able to sign in. Invoices and payments are kept.",
+          "other": "If you do not cancel it within {n} days, the management may erase your name, your contact details and your photo. You will no longer be able to sign in. Invoices and payments are kept."
+        },
+        "confirmerAction": "Request deletion",
+        "confirmerRester": "Keep my account",
+        "enCoursTitre": "Deletion request in progress",
+        "enCoursDetail": "Requested on {demandee}. The management can process it from {echeance}.",
+        "annuler": "Cancel my request",
+        "demandeEnvoyee": "Your request is saved. You can cancel it until it is processed.",
+        "demandeAnnulee": "Your request is cancelled. Your account stays open.",
+        "echec": "Your request did not go through. Your account has not changed. Try again in a moment.",
+        "horsLigne": "Your request was not sent. Make it again as soon as the network is back.",
+        "refuse": "This account cannot request its deletion here."
       }
     },
-    "langue": "Language"
+    "titre": "My account",
+    "intro": "Your information, your preferences and your access, in one place.",
+    "informations": "Information",
+    "profil": "Profile",
+    "profilDetail": "See and manage your information",
+    "reglages": "Settings",
+    "reglagesDetail": "Appearance, notifications and accessibility",
+    "profils": "Manage my household",
+    "profilsDetail": "Manage your children's profiles",
+    "appareils": "Household",
+    "appareilsDetail": "The devices and profiles linked to your household",
+    "confidentialite": "Privacy",
+    "confidentialiteDetail": "Coming soon",
+    "espaces": "Spaces",
+    "espacesDetail": "The spaces your account gives access to",
+    "espacesMissionEnCours": "To return to your main space, first leave the visit in progress.",
+    "habilitation": "Authorised",
+    "deconnexion": "Sign out",
+    "deconnexionDetail": "End the session on this device",
+    "version": "Version {version} ({build})",
+    "versionSeule": "Version {version}",
+    "doubleVerification": {
+      "rubriqueDetail": "Double verification for the management's sensitive actions",
+      "saisirCode": "Enter my verification code",
+      "titre": "Security",
+      "sousTitre": "Double verification protects the management's sensitive actions: deleting or restoring an account, processing a deletion request, publishing the commercial policy, importing forms, inviting an accountant.",
+      "titreEnrolement": "Turn on double verification",
+      "introEnrolement": "A stolen sign-in link must not be enough to delete an account. Add a second step with an authentication app on your phone. You only do it once; the code is then asked for at the time of a sensitive action.",
+      "videPhrase": "Install one on your phone, for example Google Authenticator, Microsoft Authenticator or Aegis, then come back here.",
+      "activeeTitre": "Double verification is on",
+      "activeePhrase": "The code from your authentication app will be asked for at the time of a sensitive action, once per sign-in.",
+      "feuille": {
+        "titre": "Verification code",
+        "intro": "This action requires double verification. Open your authentication app and enter the six-digit code shown for this account.",
+        "confirmer": "Confirm the code and continue",
+        "aActiverTitre": "First turn on double verification",
+        "aActiverPhrase": "This action requires double verification. Turn it on once in Account > Security, then repeat the action.",
+        "ouvrirSecurite": "Open Account > Security",
+        "erreur": "The code is not confirmed: the request may not have reached Rewayah. Try again in a moment.",
+        "horsLigne": "Nothing was sent: there is no network. Try again as soon as it is back."
+      }
+    },
+    "identifiant": "Identifier",
+    "nonDisponible": "Not available",
+    "contact": "Contact",
+    "langue": "Language",
+    "francais": "Français",
+    "fuseau": "Time zone",
+    "academie": "Academy",
+    "securite": "Security",
+    "statut": "Status",
+    "reglagesTitre": "Settings",
+    "reglagesIntro": "These preferences apply immediately.",
+    "apparence": "Appearance",
+    "themeContexte": "Follows your account everywhere.",
+    "themeSysteme": "System",
+    "themeClair": "Light",
+    "themeSombre": "Dark",
+    "accessibilite": "Accessibility",
+    "animations": "Reduce animations",
+    "animationsDetail": "Limits movement on screen",
+    "effets": "Reduce effects",
+    "effetsDetail": "Limits transparency and shadows",
+    "lisibiliteDetail": "Text size follows your device setting.",
+    "langueRegion": "Language and region",
+    "francaisDetail": "Interface language",
+    "actif": "Active",
+    "arabe": "Arabic",
+    "arabeDetail": "Coming soon",
+    "fuseauDetail": "Detected automatically",
+    "notifications": "Notifications",
+    "notificationsCours": "Classes",
+    "notificationsCoursDetail": "Reminders before your classes",
+    "notificationsFoyer": "Household",
+    "notificationsFoyerDetail": "Activity of your household's profiles",
+    "notificationsEtat": "Notifications also depend on your device and browser settings.",
+    "coursDonnees": "Classes and data",
+    "lectureGrande": "Large text reading",
+    "lectureGrandeDetail": "Shows the Quran larger by default",
+    "reessayer": "Try again",
+    "ajouterEnfant": "Add a child",
+    "modeEnfant": "Guided interface",
+    "modeStandard": "Standard mode",
+    "cameraAutorisee": "Allowed",
+    "cameraInterdite": "Not allowed",
+    "statutActif": "Active",
+    "statutProvisoire": "Active, provisionally",
+    "matricule": "Student ID {valeur} · {role}",
+    "copier": "Copy",
+    "copierMatricule": "Copy the student ID",
+    "matriculeCopie": "Copied",
+    "roles": {
+      "admin": "Administrator",
+      "accountant": "Accountant",
+      "controller": "Reviewer",
+      "teacher": "Teacher",
+      "guardian": "Guardian",
+      "student": "Student"
+    },
+    "roleDetail": {
+      "admin": "Manages files, assignment and the academy's log",
+      "accountant": "Manages payments and invoices",
+      "controller": "Observes sessions for teaching quality",
+      "teacher": "Gives classes and follows their slots",
+      "guardian": "Follows the household and its children",
+      "student": "Follows their classes and their Quran"
+    },
+    "tuteur": {
+      "dateLongue": "{mois} {jour}, {annee}",
+      "identite": {
+        "statutValide": "Account approved",
+        "statutProvisoire": "Profile to complete",
+        "nomInconnu": "Account holder",
+        "courrielAbsent": "Sign-in address not provided",
+        "connexionLien": "Sign-in by link received by email",
+        "connexionGoogle": "Sign-in with Google",
+        "connexionInconnue": "Sign-in method not specified"
+      },
+      "acces": {
+        "pastilleActif": "Access active",
+        "pastilleExpire": "Access ended",
+        "ligne": "Access of the student profiles",
+        "paiements": "Payments and receipts"
+      },
+      "securite": {
+        "titre": "Sign-in and security",
+        "methode": "Sign-in method",
+        "methodeLien": "Link by email",
+        "methodeGoogle": "Google",
+        "consentements": "Parent visits"
+      },
+      "informations": {
+        "titre": "Personal information",
+        "langueFuseau": "Français · {ville}"
+      },
+      "foyer": {
+        "plusieurs(param=nombre)": {
+          "one": "{nombre} student profile",
+          "other": "{nombre} student profiles"
+        },
+        "creerMonProfil": "Create my student profile"
+      },
+      "aide": {
+        "ligne": "Help and contact",
+        "legal": "Legal information"
+      },
+      "deconnexion": {
+        "question": "Sign out of Rewayah?",
+        "consequence": "You will need to sign in again to return on this device. Your other devices stay signed in.",
+        "confirmer": "Sign me out",
+        "echec": "Signing out did not complete. Try again in a moment.",
+        "rapportsQuestion": "Sign out anyway?",
+        "rapportsConsequence(param=n)": {
+          "one": "{n} handover notebook is not sent. Signing out will lose it.",
+          "other": "{n} handover notebooks are not sent. Signing out will lose them."
+        },
+        "rapportsConfirmer": "Sign out anyway",
+        "rapportsAnnuler": "Cancel"
+      },
+      "pageInformations": {
+        "titre": "Personal information",
+        "prenom": "First name",
+        "nom": "Last name",
+        "courriel": "Sign-in address",
+        "langue": "Interface language",
+        "fuseau": "Time zone of sessions",
+        "fuseauIndisponible": "Not loaded",
+        "fuseauAppareil": "This device's time",
+        "note": "This information is held by the academy. It cannot yet be changed from the app.",
+        "modifier": "Edit my information",
+        "enregistrer": "Save",
+        "prenomVide": "Write your first name.",
+        "nomVide": "Write your last name.",
+        "tropLong": "No more than 80 characters.",
+        "echec": "Your first and last name were not changed.",
+        "horsLigne": "Editing comes back with the connection.",
+        "noteModifiable": "Your sign-in address is changed through the academy."
+      },
+      "pageSecurite": {
+        "titre": "Sign-in and security",
+        "sousTitre": "How you access your account.",
+        "methode": "Sign-in method",
+        "adresse": "Sign-in address",
+        "appareils": "The devices connected to your account are not yet listed in the app.",
+        "deconnexion": "To end the session on this device, use \"Sign out\" at the bottom of My account."
+      },
+      "pageAcces": {
+        "titre": "Access of the student profiles",
+        "sousTitre": "The access status of each student profile.",
+        "sansEcheance": "No end date",
+        "jusqua": "Open until {date}",
+        "expire": "Ended on {date}",
+        "pastilleActif": "Active",
+        "pastilleExpire": "Ended",
+        "aucunTitre": "No student profile",
+        "aucunePhrase": "The access of each student profile will appear here.",
+        "titulaire": "Your account holder account has no end date of its own: access is set profile by profile."
+      },
+      "pagePaiements": {
+        "titre": "Payments",
+        "indisponibleTitre": "Payments cannot be viewed yet",
+        "indisponiblePhrase": "Payment history, receipts and payment methods are not yet available in the app. No payment is asked of you here.",
+        "aucunTitre": "No payment recorded",
+        "aucunePhrase": "Payments recorded by the academy will appear here.",
+        "paiementDu": "Payment of {date}",
+        "justificatif": "Receipt available",
+        "statutConfirme": "Confirmed",
+        "statutEnConfirmation": "Being confirmed",
+        "refusTitre": "Payments handled by the household account holder",
+        "refusPhrase": "Only the household account holder sees the payment history."
+      },
+      "pagePreferences": {
+        "notifications": "Notifications",
+        "notificationsDetail": "This device and what you receive"
+      },
+      "pageAide": {
+        "titre": "Help and support",
+        "indisponibleTitre": "Help not available yet",
+        "indisponiblePhrase": "Frequently asked questions and the academy's contact are not yet open in the app.",
+        "canalCourriel": "Academy email",
+        "canalLien": "Academy help page",
+        "aucunCanal": "No help channel is published for now."
+      },
+      "pageLegal": {
+        "conditionsTuteur": "Guardian terms",
+        "contratEnseignant": "Teacher contract",
+        "accuseEnregistrement": "Class recording acknowledgement",
+        "textes": "Terms and privacy"
+      }
+    }
   },
   "historique": {
     "titre": "History",
@@ -2005,7 +2362,7 @@
       "voirTravail": "See the work to prepare",
       "voirProgression": "See the progress",
       "etatARenforcer": "To reinforce",
-      "etatAcquis": "Mastered"
+      "etatAcquis": "Achieved"
     },
     "dateCourteSansAnnee": "{mois} {jour}"
   },
@@ -2360,6 +2717,28 @@
       "aucunEnfant": "No child in the household",
       "aucunEnfantDetail": "Add your first child to get started.",
       "erreur": "The household could not be loaded completely. Try again in a moment."
+    },
+    "reglages": {
+      "titre": "Settings per child",
+      "intro": "These settings apply to the next session, never during a class.",
+      "photo": "Photo",
+      "photoAucune": "{prenom} has no photo yet. It stays visible to the household only.",
+      "photoAjouter": "Add a photo",
+      "photoChanger": "Change the photo",
+      "photoTropLourde": "This photo is larger than {taille} MB. Retake it at a lower quality.",
+      "camera": "Camera",
+      "cameraAutorisee": "{prenom} can turn on their camera during class.",
+      "cameraInterdite": "The camera button will not appear for {prenom}.",
+      "cameraAutoriser": "Allow {dePrenom}'s camera",
+      "cameraRetirer": "Remove {dePrenom}'s camera",
+      "mode": "Display",
+      "modeEnfant": "Large display, no reading: {prenom} recognises pictures and listens.",
+      "modeStandard": "Usual display: {prenom} reads their screen.",
+      "modePasserEnfant": "Switch {prenom} to the large display",
+      "modePasserStandard": "Switch {prenom} to the usual display",
+      "aucunEnfant": "No child in the household",
+      "aucunEnfantDetail": "Add a child to set their display and camera.",
+      "erreur": "Saving did not go through: {message}"
     }
   },
   "classe": {
