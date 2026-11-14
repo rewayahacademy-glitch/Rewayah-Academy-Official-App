@@ -58,6 +58,11 @@ final class PartageImpossible implements Exception {
   String toString() => 'PartageImpossible()';
 }
 
+/// Le texte d'un partage avec image : la phrase, puis le lien du site public
+/// sur sa ligne. Avec un fichier, beaucoup d'applications ignorent le champ
+/// `url` du partage : le lien voyage dans le texte (directeur, 14/11/2026).
+String texteAvecLien(String texte, Uri lien) => '$texte\n$lien';
+
 /// Le partage de l'image de la carte par le menu de l'appareil.
 abstract interface class PortPartageOffre {
   /// Ce que l'appareil sait partager. Constant pour la duree de vie du port.

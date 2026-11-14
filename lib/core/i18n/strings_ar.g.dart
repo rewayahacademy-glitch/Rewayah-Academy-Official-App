@@ -14516,8 +14516,8 @@ class _Traductions$tc$bibliotheque$rendu$ar extends Traductions$tc$bibliotheque$
 	// Translations
 	@override String get sansLecteur => 'هذا النوع من الوثائق ليس له قارئ في التطبيق بعد.';
 	@override String get confirmerTitre => 'هذا الرابط يُخرجك من التطبيق';
-	@override String get confirmerPhrase => 'يفتح موقعًا آخر خارج أكاديمية رواية. يمكنك العودة إلى هنا بعد ذلك.';
-	@override String get confirmerPhraseTu => 'يفتح موقعًا آخر خارج أكاديمية رواية. تستطيع أن تعود إلى هنا بعد ذلك.';
+	@override String get confirmerPhrase => 'يفتح موقعًا آخر خارج أكاديمية الرواية. يمكنك العودة إلى هنا بعد ذلك.';
+	@override String get confirmerPhraseTu => 'يفتح موقعًا آخر خارج أكاديمية الرواية. تستطيع أن تعود إلى هنا بعد ذلك.';
 	@override String get confirmerOuvrir => 'فتح الرابط';
 	@override String get confirmerRester => 'البقاء في التطبيق';
 	@override String get ouvrirLien => 'فتح الرابط';
@@ -25063,7 +25063,7 @@ class _Traductions$comptable$beneficiaires$recevoir$wise$ar extends Traductions$
 	@override String get lienQuestion => 'من صاحب الحساب؟';
 	@override late final _Traductions$comptable$beneficiaires$recevoir$wise$lien$ar lien = _Traductions$comptable$beneficiaires$recevoir$wise$lien$ar._(_root);
 	@override String get lienLibelle => 'الصلة بصاحب الحساب';
-	@override String autorisation({required Object titulaire}) => 'أوافق على أن تحوّل أكاديمية رواية راتبي إلى هذا الحساب باسم ⁨${titulaire}⁩.';
+	@override String autorisation({required Object titulaire}) => 'أوافق على أن تحوّل أكاديمية الرواية راتبي إلى هذا الحساب باسم ⁨${titulaire}⁩.';
 	@override String get autorisationRequise => 'ضع علامة الموافقة: لا يمكن تسجيل حساب ليس باسمك دونها.';
 	@override String get lienRequis => 'اختر صلتك بصاحب الحساب.';
 	@override String get enAttenteValidation => 'في انتظار اعتماد الإدارة: سيُحوَّل راتبك إلى هذه البيانات فور أن تتحقق منها.';
@@ -30095,8 +30095,8 @@ extension on TraductionsAr {
 			'tc.bibliotheque.classe.sousTitre' => 'الوثيقة المختارة تحل محل المعروضة. يستمر الدرس.',
 			'tc.bibliotheque.rendu.sansLecteur' => 'هذا النوع من الوثائق ليس له قارئ في التطبيق بعد.',
 			'tc.bibliotheque.rendu.confirmerTitre' => 'هذا الرابط يُخرجك من التطبيق',
-			'tc.bibliotheque.rendu.confirmerPhrase' => 'يفتح موقعًا آخر خارج أكاديمية رواية. يمكنك العودة إلى هنا بعد ذلك.',
-			'tc.bibliotheque.rendu.confirmerPhraseTu' => 'يفتح موقعًا آخر خارج أكاديمية رواية. تستطيع أن تعود إلى هنا بعد ذلك.',
+			'tc.bibliotheque.rendu.confirmerPhrase' => 'يفتح موقعًا آخر خارج أكاديمية الرواية. يمكنك العودة إلى هنا بعد ذلك.',
+			'tc.bibliotheque.rendu.confirmerPhraseTu' => 'يفتح موقعًا آخر خارج أكاديمية الرواية. تستطيع أن تعود إلى هنا بعد ذلك.',
 			'tc.bibliotheque.rendu.confirmerOuvrir' => 'فتح الرابط',
 			'tc.bibliotheque.rendu.confirmerRester' => 'البقاء في التطبيق',
 			'tc.bibliotheque.rendu.ouvrirLien' => 'فتح الرابط',
@@ -35163,7 +35163,7 @@ extension on TraductionsAr {
 			'comptable.beneficiaires.recevoir.wise.lien.frereSoeur' => 'أخي أو أختي',
 			'comptable.beneficiaires.recevoir.wise.lien.autre' => 'شخص آخر',
 			'comptable.beneficiaires.recevoir.wise.lienLibelle' => 'الصلة بصاحب الحساب',
-			'comptable.beneficiaires.recevoir.wise.autorisation' => ({required Object titulaire}) => 'أوافق على أن تحوّل أكاديمية رواية راتبي إلى هذا الحساب باسم ⁨${titulaire}⁩.',
+			'comptable.beneficiaires.recevoir.wise.autorisation' => ({required Object titulaire}) => 'أوافق على أن تحوّل أكاديمية الرواية راتبي إلى هذا الحساب باسم ⁨${titulaire}⁩.',
 			'comptable.beneficiaires.recevoir.wise.autorisationRequise' => 'ضع علامة الموافقة: لا يمكن تسجيل حساب ليس باسمك دونها.',
 			'comptable.beneficiaires.recevoir.wise.lienRequis' => 'اختر صلتك بصاحب الحساب.',
 			'comptable.beneficiaires.recevoir.wise.enAttenteValidation' => 'في انتظار اعتماد الإدارة: سيُحوَّل راتبك إلى هذه البيانات فور أن تتحقق منها.',
