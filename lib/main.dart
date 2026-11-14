@@ -377,7 +377,7 @@ List<Override> _surchargesAppReelle() => <Override>[
     MaProgressionSupabase(Supabase.instance.client),
   ),
   // PROGRAMME-PUBLIE (14/11/2026) : le programme de l'academie, lisible meme
-  // sans etape propre (`programme_publie`, migration 20261125600000).
+  // sans etape propre (`programme_publie`, migration 20261125610000).
   portProgrammePublieProvider.overrideWithValue(
     ProgrammePublieSupabase(Supabase.instance.client),
   ),

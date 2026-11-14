@@ -1,5 +1,5 @@
 // PROGRAMME-PUBLIE (14/11/2026) : l'adaptateur Supabase du programme publie,
-// sur la RPC `programme_publie` (migration 20261125600000, lecture seule). Le
+// sur la RPC `programme_publie` (migration 20261125610000, lecture seule). Le
 // serveur porte la garde et decide de ce qui sort ; l'adaptateur ne fait que
 // lire.
 

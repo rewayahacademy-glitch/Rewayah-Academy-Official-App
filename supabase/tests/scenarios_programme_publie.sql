@@ -93,7 +93,7 @@ UPDATE public.groupes SET programme_niveau_id = (SELECT id FROM se_ids WHERE cle
  WHERE id = pg_temp.u('c1');
 
 -- PROGRAMME-PUBLIE (14/11/2026) : public.programme_publie(uuid). Migration
--- 20261125600000_programme_publie.sql. ROUGE sans la migration ; VERT avec. Tout est annule a la fin.
+-- 20261125610000_programme_publie.sql. ROUGE sans la migration ; VERT avec. Tout est annule a la fin.
 --   1. la version publiee seulement (un brouillon ne sort pas) ; cycles et etapes avec objectifs ;
 --   2. l'enfant de 6 a 9 ans qui lit pour lui-meme : aucune duree ; son tuteur et l'adulte : les durees ;
 --   3. sans eleve nomme : aucune matiere, aucune duree ;

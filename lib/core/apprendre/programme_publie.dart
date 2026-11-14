@@ -1,5 +1,5 @@
 /// PROGRAMME-PUBLIE (14/11/2026) : le programme de l'academie, tel que le
-/// serveur le publie (`programme_publie`, migration 20261125600000), lisible par
+/// serveur le publie (`programme_publie`, migration 20261125610000), lisible par
 /// l'eleve et sa famille meme sans etape propre.
 ///
 /// **Aucun calcul ici** : le serveur decide ce qui sort (version publiee
