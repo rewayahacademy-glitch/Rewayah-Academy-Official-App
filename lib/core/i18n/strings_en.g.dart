@@ -40,24 +40,38 @@ class TraductionsEn extends Traductions with BaseTranslations<AppLocale, Traduct
 
 	// Translations
 	@override late final _Traductions$commun$en commun = _Traductions$commun$en._(_root);
+	@override late final _Traductions$miseAJour$en miseAJour = _Traductions$miseAJour$en._(_root);
+	@override late final _Traductions$reseau$en reseau = _Traductions$reseau$en._(_root);
+	@override late final _Traductions$etat$en etat = _Traductions$etat$en._(_root);
+	@override late final _Traductions$destructif$en destructif = _Traductions$destructif$en._(_root);
 	@override late final _Traductions$presence$en presence = _Traductions$presence$en._(_root);
 	@override late final _Traductions$attente$en attente = _Traductions$attente$en._(_root);
 	@override late final _Traductions$accords$en accords = _Traductions$accords$en._(_root);
 	@override late final _Traductions$connexion$en connexion = _Traductions$connexion$en._(_root);
 	@override late final _Traductions$inscription$en inscription = _Traductions$inscription$en._(_root);
+	@override late final _Traductions$protectionEnfants$en protectionEnfants = _Traductions$protectionEnfants$en._(_root);
 	@override late final _Traductions$codeConduite$en codeConduite = _Traductions$codeConduite$en._(_root);
 	@override late final _Traductions$accessibilite$en accessibilite = _Traductions$accessibilite$en._(_root);
+	@override late final _Traductions$accuse$en accuse = _Traductions$accuse$en._(_root);
 	@override late final _Traductions$consentement$en consentement = _Traductions$consentement$en._(_root);
 	@override late final _Traductions$kyc$en kyc = _Traductions$kyc$en._(_root);
 	@override late final _Traductions$appareils$en appareils = _Traductions$appareils$en._(_root);
 	@override late final _Traductions$enfant$en enfant = _Traductions$enfant$en._(_root);
 	@override late final _Traductions$foyer$en foyer = _Traductions$foyer$en._(_root);
 	@override late final _Traductions$ficheEleve$en ficheEleve = _Traductions$ficheEleve$en._(_root);
+	@override late final _Traductions$disponibilites$en disponibilites = _Traductions$disponibilites$en._(_root);
+	@override late final _Traductions$creneaux$en creneaux = _Traductions$creneaux$en._(_root);
 	@override late final _Traductions$priere$en priere = _Traductions$priere$en._(_root);
 	@override late final _Traductions$eleveConnexion$en eleveConnexion = _Traductions$eleveConnexion$en._(_root);
 	@override late final _Traductions$recrutement$en recrutement = _Traductions$recrutement$en._(_root);
 	@override late final _Traductions$dossiers$en dossiers = _Traductions$dossiers$en._(_root);
+	@override late final _Traductions$agent$en agent = _Traductions$agent$en._(_root);
+	@override late final _Traductions$vide$en vide = _Traductions$vide$en._(_root);
+	@override late final _Traductions$pin$en pin = _Traductions$pin$en._(_root);
+	@override late final _Traductions$choix$en choix = _Traductions$choix$en._(_root);
+	@override late final _Traductions$lieu$en lieu = _Traductions$lieu$en._(_root);
 	@override late final _Traductions$parcours$en parcours = _Traductions$parcours$en._(_root);
+	@override late final _Traductions$avatar$en avatar = _Traductions$avatar$en._(_root);
 	@override late final _Traductions$nav$en nav = _Traductions$nav$en._(_root);
 	@override late final _Traductions$compte$en compte = _Traductions$compte$en._(_root);
 	@override late final _Traductions$historique$en historique = _Traductions$historique$en._(_root);
@@ -66,22 +80,42 @@ class TraductionsEn extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$tuteur$en tuteur = _Traductions$tuteur$en._(_root);
 	@override late final _Traductions$classe$en classe = _Traductions$classe$en._(_root);
 	@override late final _Traductions$enseignant$en enseignant = _Traductions$enseignant$en._(_root);
+	@override late final _Traductions$aConstruire$en aConstruire = _Traductions$aConstruire$en._(_root);
+	@override late final _Traductions$galerie$en galerie = _Traductions$galerie$en._(_root);
 	@override late final _Traductions$adulte$en adulte = _Traductions$adulte$en._(_root);
+	@override late final _Traductions$formulaire$en formulaire = _Traductions$formulaire$en._(_root);
+	@override late final _Traductions$motifs$en motifs = _Traductions$motifs$en._(_root);
 	@override late final _Traductions$suiviFamille$en suiviFamille = _Traductions$suiviFamille$en._(_root);
 	@override late final _Traductions$suiviDemandes$en suiviDemandes = _Traductions$suiviDemandes$en._(_root);
+	@override late final _Traductions$alertes$en alertes = _Traductions$alertes$en._(_root);
+	@override late final _Traductions$argent$en argent = _Traductions$argent$en._(_root);
+	@override late final _Traductions$identiteProfil$en identiteProfil = _Traductions$identiteProfil$en._(_root);
+	@override late final _Traductions$presentationTuteur$en presentationTuteur = _Traductions$presentationTuteur$en._(_root);
+	@override late final _Traductions$reprisesAdmin$en reprisesAdmin = _Traductions$reprisesAdmin$en._(_root);
 	@override late final _Traductions$recherche$en recherche = _Traductions$recherche$en._(_root);
+	@override late final _Traductions$sansDonnees$en sansDonnees = _Traductions$sansDonnees$en._(_root);
 	@override late final _Traductions$juridique$en juridique = _Traductions$juridique$en._(_root);
 	@override late final _Traductions$avis$en avis = _Traductions$avis$en._(_root);
 	@override late final _Traductions$courriels$en courriels = _Traductions$courriels$en._(_root);
 	@override late final _Traductions$admissions$en admissions = _Traductions$admissions$en._(_root);
 	@override late final _Traductions$accueilInscrits$en accueilInscrits = _Traductions$accueilInscrits$en._(_root);
 	@override late final _Traductions$accueilInvite$en accueilInvite = _Traductions$accueilInvite$en._(_root);
+	@override late final _Traductions$n1$en n1 = _Traductions$n1$en._(_root);
+	@override late final _Traductions$i1$en i1 = _Traductions$i1$en._(_root);
+	@override late final _Traductions$d1ter$en d1ter = _Traductions$d1ter$en._(_root);
 	@override late final _Traductions$snt$en snt = _Traductions$snt$en._(_root);
+	@override late final _Traductions$a3bis$en a3bis = _Traductions$a3bis$en._(_root);
 	@override late final _Traductions$payUx$en payUx = _Traductions$payUx$en._(_root);
+	@override late final _Traductions$cahierC1$en cahierC1 = _Traductions$cahierC1$en._(_root);
+	@override late final _Traductions$cahierC3$en cahierC3 = _Traductions$cahierC3$en._(_root);
+	@override late final _Traductions$cahierSourates$en cahierSourates = _Traductions$cahierSourates$en._(_root);
+	@override late final _Traductions$souratesRetirables$en souratesRetirables = _Traductions$souratesRetirables$en._(_root);
 	@override late final _Traductions$accueilHoraire$en accueilHoraire = _Traductions$accueilHoraire$en._(_root);
 	@override late final _Traductions$push1$en push1 = _Traductions$push1$en._(_root);
+	@override late final _Traductions$nouveautes$en nouveautes = _Traductions$nouveautes$en._(_root);
 	@override late final _Traductions$suiviPedagogique$en suiviPedagogique = _Traductions$suiviPedagogique$en._(_root);
 	@override late final _Traductions$suiviAttente$en suiviAttente = _Traductions$suiviAttente$en._(_root);
+	@override late final _Traductions$journalSorties$en journalSorties = _Traductions$journalSorties$en._(_root);
 	@override late final _Traductions$calendrier$en calendrier = _Traductions$calendrier$en._(_root);
 	@override late final _Traductions$pause$en pause = _Traductions$pause$en._(_root);
 }
@@ -97,6 +131,7 @@ class _Traductions$commun$en extends Traductions$commun$fr {
 	@override late final _Traductions$commun$formats$en formats = _Traductions$commun$formats$en._(_root);
 	@override late final _Traductions$commun$roles$en roles = _Traductions$commun$roles$en._(_root);
 	@override late final _Traductions$commun$classeDistincte$en classeDistincte = _Traductions$commun$classeDistincte$en._(_root);
+	@override String get marque => 'Rewayah Academy';
 	@override String get continuer => 'Continue';
 	@override String get retour => 'Back';
 	@override String get valider => 'Confirm';
@@ -106,9 +141,11 @@ class _Traductions$commun$en extends Traductions$commun$fr {
 	@override String get reessayer => 'Try again';
 	@override String get chargement => 'Loading';
 	@override String get reussite => 'Done.';
+	@override late final _Traductions$commun$demonstration$en demonstration = _Traductions$commun$demonstration$en._(_root);
 	@override late final _Traductions$commun$etape$en etape = _Traductions$commun$etape$en._(_root);
 	@override late final _Traductions$commun$choix$en choix = _Traductions$commun$choix$en._(_root);
 	@override late final _Traductions$commun$champDate$en champDate = _Traductions$commun$champDate$en._(_root);
+	@override late final _Traductions$commun$selecteurPersonne$en selecteurPersonne = _Traductions$commun$selecteurPersonne$en._(_root);
 	@override late final _Traductions$commun$etats$en etats = _Traductions$commun$etats$en._(_root);
 	@override late final _Traductions$commun$entete$en entete = _Traductions$commun$entete$en._(_root);
 	@override late final _Traductions$commun$selecteurProfils$en selecteurProfils = _Traductions$commun$selecteurProfils$en._(_root);
@@ -117,7 +154,67 @@ class _Traductions$commun$en extends Traductions$commun$fr {
 	@override late final _Traductions$commun$fuseaux$en fuseaux = _Traductions$commun$fuseaux$en._(_root);
 	@override late final _Traductions$commun$dates$en dates = _Traductions$commun$dates$en._(_root);
 	@override late final _Traductions$commun$sections$en sections = _Traductions$commun$sections$en._(_root);
+	@override late final _Traductions$commun$filtres$en filtres = _Traductions$commun$filtres$en._(_root);
 	@override late final _Traductions$commun$recherche$en recherche = _Traductions$commun$recherche$en._(_root);
+	@override late final _Traductions$commun$listes$en listes = _Traductions$commun$listes$en._(_root);
+	@override late final _Traductions$commun$paieEnseignant$en paieEnseignant = _Traductions$commun$paieEnseignant$en._(_root);
+	@override late final _Traductions$commun$autresRevenus$en autresRevenus = _Traductions$commun$autresRevenus$en._(_root);
+}
+
+// Path: miseAJour
+class _Traductions$miseAJour$en extends Traductions$miseAJour$fr {
+	_Traductions$miseAJour$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get prete => 'A new version of the app is ready.';
+	@override String get recharger => 'Reload';
+}
+
+// Path: reseau
+class _Traductions$reseau$en extends Traductions$reseau$fr {
+	_Traductions$reseau$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get horsLigne => 'No network. What is already displayed stays available.';
+	@override String get enAttenteEnvoi => 'Will be sent as soon as the network is back';
+	@override String get retabli => 'Network restored';
+	@override String get syncImpossible => 'Sync not possible';
+}
+
+// Path: etat
+class _Traductions$etat$en extends Traductions$etat$fr {
+	_Traductions$etat$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get enDirect => 'Live';
+	@override String get imminent => 'Soon';
+	@override String get annule => 'Cancelled';
+	@override String get enAttente => 'Pending';
+	@override String get enRetard => 'Late';
+	@override String get termine => 'Ended';
+	@override String get seanceAnnulee => 'Cancelled';
+	@override String annuleeValeur({required Object valeur}) => 'Cancelled: ${valeur}';
+	@override String get motifNonCommunique => 'Reason not given';
+	@override String get aucunRemplacantTrouve => 'No replacement found';
+	@override String get seanceNonFacturee => 'session not billed';
+	@override String raisonEtSuite({required Object raison, required Object suite}) => '${raison} · ${suite}';
+}
+
+// Path: destructif
+class _Traductions$destructif$en extends Traductions$destructif$fr {
+	_Traductions$destructif$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get irreversible => 'This action cannot be undone.';
+	@override String saisieVide({required Object prenom}) => 'Write the first name ${prenom} to confirm';
 }
 
 // Path: presence
@@ -337,6 +434,23 @@ class _Traductions$inscription$en extends Traductions$inscription$fr {
 	@override late final _Traductions$inscription$nomLatin$en nomLatin = _Traductions$inscription$nomLatin$en._(_root);
 }
 
+// Path: protectionEnfants
+class _Traductions$protectionEnfants$en extends Traductions$protectionEnfants$fr {
+	_Traductions$protectionEnfants$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get categorie => 'A child\'s safety';
+	@override String get prioritaireTitre => 'Priority report';
+	@override String get prioritaireDetail => 'The management and the child protection officer read it right away. The teacher concerned and other families never see it. No message is sent to the family.';
+	@override String get urgence => 'In case of immediate danger, first call the emergency services of your country.';
+	@override String get direction => 'The management receives your report.';
+	@override String recuPar({required Object nom}) => '${nom} and the management receive your report.';
+	@override String contact({required Object courriel}) => 'Contact email: ${courriel}';
+	@override String get erreurLecture => 'The officer\'s name is not shown for now. Try again in a moment.';
+}
+
 // Path: codeConduite
 class _Traductions$codeConduite$en extends Traductions$codeConduite$fr {
 	_Traductions$codeConduite$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -380,6 +494,17 @@ class _Traductions$accessibilite$en extends Traductions$accessibilite$fr {
 	@override late final _Traductions$accessibilite$tutoiement$en tutoiement = _Traductions$accessibilite$tutoiement$en._(_root);
 	@override late final _Traductions$accessibilite$apres$en apres = _Traductions$accessibilite$apres$en._(_root);
 	@override late final _Traductions$accessibilite$monEspace$en monEspace = _Traductions$accessibilite$monEspace$en._(_root);
+}
+
+// Path: accuse
+class _Traductions$accuse$en extends Traductions$accuse$fr {
+	_Traductions$accuse$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'To know before you start';
+	@override String get compris => 'I understand';
 }
 
 // Path: consentement
@@ -514,6 +639,74 @@ class _Traductions$ficheEleve$en extends Traductions$ficheEleve$fr {
 	@override late final _Traductions$ficheEleve$mouvements$en mouvements = _Traductions$ficheEleve$mouvements$en._(_root);
 }
 
+// Path: disponibilites
+class _Traductions$disponibilites$en extends Traductions$disponibilites$fr {
+	_Traductions$disponibilites$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titreEnseignant => 'When can you teach?';
+	@override String get effet => 'A teacher will choose from these times. The more you offer, the sooner the class starts.';
+	@override String fuseau({required Object fuseau}) => 'Times shown in ${fuseau}';
+	@override String get poseeUne => '1 time offered';
+	@override List<String> get joursLongs => [
+		'Monday',
+		'Tuesday',
+		'Wednesday',
+		'Thursday',
+		'Friday',
+		'Saturday',
+		'Sunday',
+	];
+	@override String posees({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(nombre,
+		one: '${nombre} time offered',
+		other: '${nombre} times offered',
+	);
+}
+
+// Path: creneaux
+class _Traductions$creneaux$en extends Traductions$creneaux$fr {
+	_Traductions$creneaux$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Slots';
+	@override String get ongletHeures => 'My times';
+	@override String get ongletEleves => 'Waiting students';
+	@override String get aucunEleve => 'No student waiting on your times';
+	@override String get aucunEleveDetail => 'Offer other times to see more families.';
+	@override String get attendUnJour => 'Waiting for 1 day';
+	@override String get attendAujourdhui => 'Request submitted today';
+	@override String niveau({required Object niveau}) => 'Level ${niveau}';
+	@override String prendre({required Object jour, required Object heure}) => 'Take ${jour} at ${heure}:00';
+	@override String get priseEnCours => 'Saving';
+	@override String get plafondDemander => 'Ask to follow more students';
+	@override String get demandeTitre => 'How many students can you follow?';
+	@override String get demandeMotif => 'Why this change?';
+	@override String get demandeMotifRequis => 'A reason is needed: it is what lets us decide.';
+	@override String get demandeEnvoyer => 'Send the request';
+	@override String get demandeEnvoyee => 'Request sent. The administration will decide.';
+	@override String erreur({required Object message}) => 'The operation did not go through: ${message}';
+	@override String mesEleves({required num nombre, required Object plafond}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(nombre,
+		one: 'You follow ${nombre} student out of ${plafond} possible.',
+		other: 'You follow ${nombre} students out of ${plafond} possible.',
+	);
+	@override String attendDepuis({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(jours,
+		one: 'Waiting for ${jours} day',
+		other: 'Waiting for ${jours} days',
+	);
+	@override String plafondAtteint({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(nombre,
+		one: 'You already follow ${nombre} student, your maximum. A student taken is a lasting commitment, not a booking.',
+		other: 'You already follow ${nombre} students, your maximum. A student taken is a lasting commitment, not a booking.',
+	);
+	@override String eleves({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(nombre,
+		one: '${nombre} student',
+		other: '${nombre} students',
+	);
+}
+
 // Path: priere
 class _Traductions$priere$en extends Traductions$priere$fr {
 	_Traductions$priere$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -624,6 +817,120 @@ class _Traductions$dossiers$en extends Traductions$dossiers$fr {
 	@override late final _Traductions$dossiers$accesKyc$en accesKyc = _Traductions$dossiers$accesKyc$en._(_root);
 }
 
+// Path: agent
+class _Traductions$agent$en extends Traductions$agent$fr {
+	_Traductions$agent$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Agent entry';
+	@override String get intro => 'This page opens the app in read-only mode, with the token provided by the academy.';
+	@override String get jeton => 'Observation token';
+	@override String get jetonExemple => 'rag_...';
+	@override String get entrer => 'Open the app';
+	@override String get ouverture => 'Opening';
+	@override String get refus => 'Token refused';
+	@override String get refusDetail => 'This token is unknown, revoked or expired. Ask the academy for a new one.';
+	@override String get indisponible => 'The opening did not complete';
+	@override String get indisponibleDetail => 'The request may not have reached Rewayah. Try again in a moment.';
+	@override String get reessayer => 'Try again';
+	@override String get bandeau => 'Observation, read-only';
+	@override String get bandeauMasque => 'First names hidden';
+	@override String bandeauExpire({required Object heure}) => 'until ${heure}';
+}
+
+// Path: vide
+class _Traductions$vide$en extends Traductions$vide$fr {
+	_Traductions$vide$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get aucunCours => 'No class today';
+	@override String get aucunCoursDetail => 'Your next class will appear here.';
+	@override String get aucunCreneau => 'No slot available for now';
+	@override String get aucunRapport => 'No handover notebook yet';
+	@override String get aucunAppareil => 'No paired device';
+}
+
+// Path: pin
+class _Traductions$pin$en extends Traductions$pin$fr {
+	_Traductions$pin$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Enter your code';
+	@override String get erreur => 'This code does not match';
+	@override String get effacer => 'Clear';
+}
+
+// Path: choix
+class _Traductions$choix$en extends Traductions$choix$fr {
+	_Traductions$choix$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get autre => 'Other';
+	@override String get autreInvite => 'Specify';
+	@override String get diminuer => 'Decrease by 1';
+	@override String get augmenter => 'Increase by 1';
+	@override String get selectionMultiple => 'Several answers possible';
+	@override String exemple({required Object texte}) => 'For example: ${texte}';
+}
+
+// Path: lieu
+class _Traductions$lieu$en extends Traductions$lieu$fr {
+	_Traductions$lieu$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Your city';
+	@override String get consigneTuteur => 'Choose the city where you live. It is used to show class times in your time. Only you, your household and the management see it.';
+	@override String get consigneEnseignant => 'Choose the city where you teach. It is used to show your class times in your time, and the management checks it. Only you and the management see it.';
+	@override String get champ => 'Search for your city';
+	@override String get aide => 'The first letters of the name are enough, with or without accents.';
+	@override String get propositions => 'Cities in this device\'s time';
+	@override String get resultats => 'Cities found';
+	@override String get credit => 'City list: GeoNames (geonames.org), CC BY 4.0 licence.';
+	@override String aucune({required Object texte}) => 'No city starts with "${texte}". Try the first letters of the name, without accents.';
+	@override String get chargeEchec => 'The city list did not load';
+	@override String get chargeEchecPhrase => 'The list could not be displayed. Try again in a moment.';
+	@override String choisie({required Object ville, required Object pays}) => 'City chosen: ${ville}, ${pays}.';
+	@override String get enregistrer => 'Save my city';
+	@override String get plusTard => 'Later';
+	@override String get plusTardPhrase => 'You can still postpone this step. Until it is done, your class times are shown in this device\'s time.';
+	@override String get obligatoire => 'This step is now needed to show your class times in your time.';
+	@override String get echec => 'Your city is not confirmed. Try again in a moment.';
+	@override String get disponibilitesTitre => 'Review your availability';
+	@override String get disponibilitesPhrase => 'Your city changed time zone. Your availability keeps its exact times, but is now shown in your new time: review it.';
+	@override String get disponibilitesLien => 'Review my availability';
+	@override String get heureAppareil => 'This device\'s time';
+	@override String heureAppareilVoyage({required Object ville}) => 'This device\'s time: it differs from your city\'s (${ville}).';
+	@override String get colonneVille => 'City';
+	@override String get villeAbsente => 'City not chosen';
+	@override String get verifiee => 'City verified';
+	@override String get nonVerifiee => 'City to verify';
+	@override String verifier({required Object deNom}) => 'Verify ${deNom}\'s city';
+	@override String villeVerifiee({required Object deNom}) => '${deNom}\'s city is verified.';
+	@override String get verifierEchec => 'The verification is not confirmed. Try again in a moment.';
+	@override String get incoherencesTitre => 'Cities to verify';
+	@override String get incSansVille => 'has not chosen their city yet';
+	@override String get incFuseauDifferent => 'their recorded time zone does not match their city';
+	@override String get incPaysDifferent => 'their recorded country does not match their city\'s country';
+	@override String get incPaysFuseau => 'their recorded country and time zone do not go together';
+	@override String villeLigne({required Object ville, required Object pays}) => '${ville} (${pays})';
+	@override String incoherencesCompte({required Object n}) => '${n} to verify';
+	@override String get changementsTitre => 'Upcoming time changes';
+	@override String changementsLigne({required Object date, required Object ville, required Object familles, required Object enseignants, required Object avant, required Object apres}) => '${date}, ${ville}: families: ${familles}; teachers: ${enseignants}; from ${avant} to ${apres}.';
+	@override String changementsAucun({required Object jours}) => 'No time change in the next ${jours} days for families and teachers.';
+	@override String get changementsErreur => 'The list of time changes did not load. Reload the page to read it again.';
+	@override String get incoherencesVide => 'No city to verify for now.';
+}
+
 // Path: parcours
 class _Traductions$parcours$en extends Traductions$parcours$fr {
 	_Traductions$parcours$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -730,6 +1037,16 @@ class _Traductions$parcours$en extends Traductions$parcours$fr {
 		one: 'A class starts once there is ${minimum} student. We will let you know as soon as it is confirmed.',
 		other: 'A class starts once there are ${minimum} students. We will let you know as soon as it is confirmed.',
 	);
+}
+
+// Path: avatar
+class _Traductions$avatar$en extends Traductions$avatar$fr {
+	_Traductions$avatar$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get sansPhoto => 'No photo yet';
 }
 
 // Path: nav
@@ -1003,6 +1320,35 @@ class _Traductions$enseignant$en extends Traductions$enseignant$fr {
 	@override late final _Traductions$enseignant$revenus$en revenus = _Traductions$enseignant$revenus$en._(_root);
 }
 
+// Path: aConstruire
+class _Traductions$aConstruire$en extends Traductions$aConstruire$fr {
+	_Traductions$aConstruire$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Screen to build';
+	@override String get detail => 'This screen arrives at step 3.';
+}
+
+// Path: galerie
+class _Traductions$galerie$en extends Traductions$galerie$fr {
+	_Traductions$galerie$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Component gallery';
+	@override String get avertissement => 'Development test bench. Absent from production versions.';
+	@override String get paires => 'Colour pairs';
+	@override String get elevation => 'Elevation and radii';
+	@override String get typographie => 'Type scales';
+	@override String get polices => 'Fonts';
+	@override String get composants => 'Shared components';
+	@override String get modeEnfant => 'Guided interface';
+	@override String get modeStandard => 'Standard mode';
+}
+
 // Path: adulte
 class _Traductions$adulte$en extends Traductions$adulte$fr {
 	_Traductions$adulte$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -1025,6 +1371,46 @@ class _Traductions$adulte$en extends Traductions$adulte$fr {
 	@override late final _Traductions$adulte$reprise$en reprise = _Traductions$adulte$reprise$en._(_root);
 	@override late final _Traductions$adulte$demo$en demo = _Traductions$adulte$demo$en._(_root);
 	@override late final _Traductions$adulte$finances$en finances = _Traductions$adulte$finances$en._(_root);
+}
+
+// Path: formulaire
+class _Traductions$formulaire$en extends Traductions$formulaire$fr {
+	_Traductions$formulaire$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$formulaire$motif$en motif = _Traductions$formulaire$motif$en._(_root);
+	@override late final _Traductions$formulaire$entier$en entier = _Traductions$formulaire$entier$en._(_root);
+	@override String get obligatoire => 'Required field';
+	@override String champObligatoire({required Object champ}) => '${champ}, required field';
+	@override String get legendeObligatoire => 'Fields marked with a dot are required.';
+	@override String get manqueAccord => 'Your agreement is missing: tick the box to continue.';
+}
+
+// Path: motifs
+class _Traductions$motifs$en extends Traductions$motifs$fr {
+	_Traductions$motifs$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$motifs$ajoutEleve$en ajoutEleve = _Traductions$motifs$ajoutEleve$en._(_root);
+	@override late final _Traductions$motifs$retraitEleve$en retraitEleve = _Traductions$motifs$retraitEleve$en._(_root);
+	@override late final _Traductions$motifs$clotureClasse$en clotureClasse = _Traductions$motifs$clotureClasse$en._(_root);
+	@override late final _Traductions$motifs$refusDemande$en refusDemande = _Traductions$motifs$refusDemande$en._(_root);
+	@override late final _Traductions$motifs$poserRegle$en poserRegle = _Traductions$motifs$poserRegle$en._(_root);
+	@override late final _Traductions$motifs$cloreSurcharge$en cloreSurcharge = _Traductions$motifs$cloreSurcharge$en._(_root);
+	@override late final _Traductions$motifs$annulationEvaluation$en annulationEvaluation = _Traductions$motifs$annulationEvaluation$en._(_root);
+	@override late final _Traductions$motifs$changementNiveau$en changementNiveau = _Traductions$motifs$changementNiveau$en._(_root);
+	@override late final _Traductions$motifs$blocage$en blocage = _Traductions$motifs$blocage$en._(_root);
+	@override late final _Traductions$motifs$derogation$en derogation = _Traductions$motifs$derogation$en._(_root);
+	@override late final _Traductions$motifs$cloreException$en cloreException = _Traductions$motifs$cloreException$en._(_root);
+	@override late final _Traductions$motifs$placement$en placement = _Traductions$motifs$placement$en._(_root);
+	@override late final _Traductions$motifs$refusDossier$en refusDossier = _Traductions$motifs$refusDossier$en._(_root);
+	@override late final _Traductions$motifs$presenceCorrigee$en presenceCorrigee = _Traductions$motifs$presenceCorrigee$en._(_root);
+	@override late final _Traductions$motifs$presenceExcusee$en presenceExcusee = _Traductions$motifs$presenceExcusee$en._(_root);
+	@override late final _Traductions$motifs$signalement$en signalement = _Traductions$motifs$signalement$en._(_root);
 }
 
 // Path: suiviFamille
@@ -1096,6 +1482,122 @@ class _Traductions$suiviDemandes$en extends Traductions$suiviDemandes$fr {
 	@override late final _Traductions$suiviDemandes$changement$en changement = _Traductions$suiviDemandes$changement$en._(_root);
 }
 
+// Path: alertes
+class _Traductions$alertes$en extends Traductions$alertes$fr {
+	_Traductions$alertes$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Alerts';
+	@override late final _Traductions$alertes$gravite$en gravite = _Traductions$alertes$gravite$en._(_root);
+	@override String creeeLe({required Object date, required Object heure}) => 'On ${date} at ${heure}';
+	@override String ligne({required Object gravite, required Object titre, required Object date, required Object heure}) => '${gravite}, ${titre}, on ${date} at ${heure}';
+	@override String bandeauUne({required Object titre}) => 'Urgent alert: ${titre}';
+	@override String bandeauPlusieurs({required Object nombre, required Object titre}) => '${nombre} urgent alerts. The most recent: ${titre}';
+	@override String get bandeauCourtUne => 'Urgent alert to handle';
+	@override String bandeauCourtPlusieurs({required Object nombre}) => '${nombre} urgent alerts to handle';
+	@override String get voirTout => 'See all alerts';
+	@override String get vide => 'No alert in progress.';
+	@override String get videTitre => 'No alert in progress';
+	@override String get videPhrase => 'An urgent alert will appear here, at the top, as soon as it arrives.';
+	@override String get indisponibleTitre => 'Alerts are not available yet';
+	@override String get indisponiblePhrase => 'Urgent alerts will appear here, at the top, as soon as their source is open.';
+	@override String get erreurTitre => 'The alerts could not be loaded';
+	@override String get sansDonnees => 'The alerts could not be loaded';
+	@override String get cloche => 'Alerts';
+	@override String get clocheUneUrgente => 'Alerts, one urgent';
+	@override String clocheUrgentes({required Object nombre}) => 'Alerts, ${nombre} urgent';
+	@override late final _Traductions$alertes$traitement$en traitement = _Traductions$alertes$traitement$en._(_root);
+}
+
+// Path: argent
+class _Traductions$argent$en extends Traductions$argent$fr {
+	_Traductions$argent$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$argent$transparence$en transparence = _Traductions$argent$transparence$en._(_root);
+	@override late final _Traductions$argent$etat$en etat = _Traductions$argent$etat$en._(_root);
+	@override late final _Traductions$argent$periode$en periode = _Traductions$argent$periode$en._(_root);
+	@override late final _Traductions$argent$allocation$en allocation = _Traductions$argent$allocation$en._(_root);
+	@override late final _Traductions$argent$moyen$en moyen = _Traductions$argent$moyen$en._(_root);
+	@override late final _Traductions$argent$soldes$en soldes = _Traductions$argent$soldes$en._(_root);
+	@override late final _Traductions$argent$acces$en acces = _Traductions$argent$acces$en._(_root);
+}
+
+// Path: identiteProfil
+class _Traductions$identiteProfil$en extends Traductions$identiteProfil$fr {
+	_Traductions$identiteProfil$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String age({required Object n}) => '${n} years old';
+	@override String classe({required Object classe}) => 'Class ${classe}';
+	@override String ageEtClasse({required Object age, required Object classe}) => '${age} · ${classe}';
+	@override String lecteurEnfant({required Object prenom}) => '${prenom}, child profile';
+	@override String lecteurAdulte({required Object prenom}) => '${prenom}, adult profile';
+	@override String lecteurAvecClasse({required Object profil, required Object classe}) => '${profil}, ${classe}';
+}
+
+// Path: presentationTuteur
+class _Traductions$presentationTuteur$en extends Traductions$presentationTuteur$fr {
+	_Traductions$presentationTuteur$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Display requests';
+	@override String get contexte => 'A child in your household is asking for the standard display. You decide.';
+	@override String ligne({required Object prenom}) => '${prenom} is asking for the standard display.';
+	@override String demandeeLe({required Object date, required Object heure}) => 'Requested on ${date} at ${heure}';
+	@override String get accepter => 'Accept';
+	@override String get refuser => 'Decline';
+	@override String acceptee({required Object prenom}) => 'Standard display turned on for ${prenom}.';
+	@override String refusee({required Object dePrenom}) => '${dePrenom}\'s request declined.';
+	@override String get echecReponse => 'Your answer could not be confirmed. The request is still pending: try again.';
+	@override String get vide => 'No display request pending.';
+	@override String get erreur => 'The requests could not be loaded. Try again.';
+	@override String get sansDonnees => 'the display requests';
+	@override late final _Traductions$presentationTuteur$accueil$en accueil = _Traductions$presentationTuteur$accueil$en._(_root);
+	@override String notification({required Object prenom}) => '${prenom} is asking for the standard display';
+}
+
+// Path: reprisesAdmin
+class _Traductions$reprisesAdmin$en extends Traductions$reprisesAdmin$fr {
+	_Traductions$reprisesAdmin$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get onglet => 'Takeovers';
+	@override String get titre => 'Household takeovers';
+	@override String get sousTitre => 'Requests from a second adult to become the household\'s account holder. The administration decides.';
+	@override String get demandeur => 'Requester';
+	@override String get foyer => 'Household';
+	@override String get deposeeLe => 'Submitted on';
+	@override late final _Traductions$reprisesAdmin$etat$en etat = _Traductions$reprisesAdmin$etat$en._(_root);
+	@override String examenLe({required Object date}) => 'Review possible from ${date}.';
+	@override String get refuseeInfo => 'The account holder declined this request. No decision is expected.';
+	@override String get valider => 'Approve the takeover';
+	@override String get refuser => 'Decline the takeover';
+	@override String validerQuestion({required Object prenom}) => 'Approve the household takeover by ${prenom}?';
+	@override String get validerConsequence => 'This person will become the household\'s account holder. This decision transfers the account holder role.';
+	@override String refuserQuestion({required Object prenom}) => 'Decline the household takeover by ${prenom}?';
+	@override String get refuserConsequence => 'No permission is transferred. The person may submit a new request after the set delay.';
+	@override String get validee => 'Takeover approved.';
+	@override String get refusee => 'Takeover declined.';
+	@override String get dejaTraitee => 'This request has already been handled. The list is up to date.';
+	@override String get echecReseau => 'The decision could not be confirmed. Check the list before trying again.';
+	@override String get vide => 'No takeover request to handle.';
+	@override String get erreur => 'The requests could not be loaded. Try again.';
+	@override String get sansDonnees => 'the takeover requests';
+	@override String get indisponibleTitre => 'Household takeovers unavailable';
+	@override String get indisponiblePhrase => 'This feature will be available once the server is connected.';
+}
+
 // Path: recherche
 class _Traductions$recherche$en extends Traductions$recherche$fr {
 	_Traductions$recherche$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -1128,6 +1630,29 @@ class _Traductions$recherche$en extends Traductions$recherche$fr {
 	@override late final _Traductions$recherche$guide$en guide = _Traductions$recherche$guide$en._(_root);
 	@override late final _Traductions$recherche$entree$en entree = _Traductions$recherche$entree$en._(_root);
 	@override late final _Traductions$recherche$contexte$en contexte = _Traductions$recherche$contexte$en._(_root);
+}
+
+// Path: sansDonnees
+class _Traductions$sansDonnees$en extends Traductions$sansDonnees$fr {
+	_Traductions$sansDonnees$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get mesDonnees => 'Your deletion information could not be loaded';
+	@override String get paiementsRecus => 'Your payments received could not be loaded';
+	@override String get revenus => 'Your earnings could not be loaded';
+	@override String get aujourdhui => 'Today\'s board could not be loaded';
+	@override String get paiement => 'This payment could not be loaded';
+	@override String get paiementsAEffectuer => 'The payments to make could not be loaded';
+	@override String get encaissements => 'The collections could not be loaded';
+	@override String get tresorerie => 'The cash position could not be loaded';
+	@override String get obligation => 'This obligation could not be loaded';
+	@override String get contractuels => 'The contractors could not be loaded';
+	@override String get reserve => 'The reserve policy could not be loaded';
+	@override String get vueGlobale => 'The overview of finances could not be loaded';
+	@override String get beneficiaires => 'The beneficiaries could not be loaded';
+	@override String get profilPaiement => 'This payment profile could not be loaded';
 }
 
 // Path: juridique
@@ -1281,6 +1806,41 @@ class _Traductions$accueilInvite$en extends Traductions$accueilInvite$fr {
 	@override String get champsRequis => 'Enter your first name, last name and gender.';
 }
 
+// Path: n1
+class _Traductions$n1$en extends Traductions$n1$fr {
+	_Traductions$n1$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$n1$regles$en regles = _Traductions$n1$regles$en._(_root);
+	@override late final _Traductions$n1$alertes$en alertes = _Traductions$n1$alertes$en._(_root);
+}
+
+// Path: i1
+class _Traductions$i1$en extends Traductions$i1$fr {
+	_Traductions$i1$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$i1$invitations$en invitations = _Traductions$i1$invitations$en._(_root);
+	@override late final _Traductions$i1$familles$en familles = _Traductions$i1$familles$en._(_root);
+	@override late final _Traductions$i1$import$en import = _Traductions$i1$import$en._(_root);
+	@override late final _Traductions$i1$lien$en lien = _Traductions$i1$lien$en._(_root);
+}
+
+// Path: d1ter
+class _Traductions$d1ter$en extends Traductions$d1ter$fr {
+	_Traductions$d1ter$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$d1ter$messages$en messages = _Traductions$d1ter$messages$en._(_root);
+	@override late final _Traductions$d1ter$notifications$en notifications = _Traductions$d1ter$notifications$en._(_root);
+}
+
 // Path: snt
 class _Traductions$snt$en extends Traductions$snt$fr {
 	_Traductions$snt$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -1292,6 +1852,18 @@ class _Traductions$snt$en extends Traductions$snt$fr {
 	@override late final _Traductions$snt$notifications$en notifications = _Traductions$snt$notifications$en._(_root);
 	@override late final _Traductions$snt$salle$en salle = _Traductions$snt$salle$en._(_root);
 	@override late final _Traductions$snt$planning$en planning = _Traductions$snt$planning$en._(_root);
+}
+
+// Path: a3bis
+class _Traductions$a3bis$en extends Traductions$a3bis$fr {
+	_Traductions$a3bis$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$a3bis$salle$en salle = _Traductions$a3bis$salle$en._(_root);
+	@override late final _Traductions$a3bis$notifications$en notifications = _Traductions$a3bis$notifications$en._(_root);
+	@override late final _Traductions$a3bis$regles$en regles = _Traductions$a3bis$regles$en._(_root);
 }
 
 // Path: payUx
@@ -1311,6 +1883,73 @@ class _Traductions$payUx$en extends Traductions$payUx$fr {
 	@override String get ouCarte => 'Or pay by card';
 	@override String get enCours => 'Payment in progress';
 	@override String get refus => 'The payment did not go through: some card information is probably incomplete or refused. Check it, then press "Pay" again. Nothing was paid.';
+}
+
+// Path: cahierC1
+class _Traductions$cahierC1$en extends Traductions$cahierC1$fr {
+	_Traductions$cahierC1$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String onReprendPage({required Object page}) => 'We pick up again at page ${page}';
+}
+
+// Path: cahierC3
+class _Traductions$cahierC3$en extends Traductions$cahierC3$fr {
+	_Traductions$cahierC3$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String arretPage({required Object page}) => 'The class stopped at page ${page} of the Mushaf.';
+	@override String get arretAide => 'This is the last page shown in the room. If it is right, confirm; otherwise, correct it.';
+	@override String get corriger => 'Correct where the class stopped';
+	@override String positionPage({required Object page}) => 'Page ${page} of the Mushaf';
+	@override String get renforcerTitre => 'Points to reinforce';
+	@override String get renforcerAide => 'Tap only the stage objective this student must reinforce. The rest counts as "as planned".';
+	@override String get pretBilan => 'Ready for the short assessment';
+	@override String get pretBilanDetail => 'The administration schedules the short assessment; nothing is automatic.';
+}
+
+// Path: cahierSourates
+class _Traductions$cahierSourates$en extends Traductions$cahierSourates$fr {
+	_Traductions$cahierSourates$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Surahs recited';
+	@override String get aide => 'Tick a surah only if this student recited it from memory, without a single word wrong. A ticked surah is validated.';
+	@override String dejaValidees({required Object n, required Object total}) => 'Foundation surahs already validated: ${n} of ${total}';
+	@override String get toutes => 'All the foundation surahs are validated.';
+	@override String get retirerTitre => 'Ticked by mistake?';
+	@override String get retirerAide => 'A surah you validated can be removed for 24 hours.';
+	@override String get retirer => 'Remove';
+	@override String retirerLibelle({required Object nom}) => 'Remove ${nom} from the validated surahs';
+	@override String retirerQuestion({required Object nom}) => 'Remove ${nom} from the validated surahs?';
+	@override String get retirerConsequence => 'It will no longer count as validated for this student.';
+	@override String get retirerMotif => 'Reason (optional)';
+	@override String retirerFait({required Object nom}) => '${nom} is no longer validated.';
+	@override String get retirerRefus => 'The 24-hour delay has passed: only the management can still remove it.';
+	@override String get retirerEchec => 'The surah was not removed. Try again.';
+}
+
+// Path: souratesRetirables
+class _Traductions$souratesRetirables$en extends Traductions$souratesRetirables$fr {
+	_Traductions$souratesRetirables$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Surahs ticked by mistake';
+	@override String get aide => 'The surahs validated in this class that you can remove.';
+	@override String get vide => 'No validated surah to remove in this class.';
+	@override String get erreur => 'The surahs of this class could not be read. Try again.';
+	@override String ligne({required Object eleve, required Object sourate}) => '${eleve} · ${sourate}';
+	@override String jusqua({required Object heure}) => 'Possible until ${heure}';
+	@override String jusquaDemain({required Object heure}) => 'Possible until tomorrow, ${heure}';
+	@override String retirerPour({required Object sourate, required Object eleve}) => 'Remove ${sourate} for ${eleve}';
 }
 
 // Path: accueilHoraire
@@ -1336,6 +1975,17 @@ class _Traductions$push1$en extends Traductions$push1$fr {
 	@override late final _Traductions$push1$evenements$en evenements = _Traductions$push1$evenements$en._(_root);
 	@override late final _Traductions$push1$gestes$en gestes = _Traductions$push1$gestes$en._(_root);
 	@override late final _Traductions$push1$reglages$en reglages = _Traductions$push1$reglages$en._(_root);
+}
+
+// Path: nouveautes
+class _Traductions$nouveautes$en extends Traductions$nouveautes$fr {
+	_Traductions$nouveautes$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get badge => 'New';
+	@override String get lu => 'new';
 }
 
 // Path: suiviPedagogique
@@ -1429,6 +2079,19 @@ class _Traductions$suiviAttente$en extends Traductions$suiviAttente$fr {
 	@override late final _Traductions$suiviAttente$mePresenter$en mePresenter = _Traductions$suiviAttente$mePresenter$en._(_root);
 }
 
+// Path: journalSorties
+class _Traductions$journalSorties$en extends Traductions$journalSorties$fr {
+	_Traductions$journalSorties$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$journalSorties$texte$en texte = _Traductions$journalSorties$texte$en._(_root);
+	@override late final _Traductions$journalSorties$accord$en accord = _Traductions$journalSorties$accord$en._(_root);
+	@override late final _Traductions$journalSorties$rapport$en rapport = _Traductions$journalSorties$rapport$en._(_root);
+	@override late final _Traductions$journalSorties$reglages$en reglages = _Traductions$journalSorties$reglages$en._(_root);
+}
+
 // Path: calendrier
 class _Traductions$calendrier$en extends Traductions$calendrier$fr {
 	_Traductions$calendrier$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -1519,6 +2182,7 @@ class _Traductions$commun$roles$en extends Traductions$commun$roles$fr {
 	@override String get tuteur => 'Guardian';
 	@override String get enseignant => 'Teacher';
 	@override String get administration => 'Administration';
+	@override String get controleur => 'Reviewer';
 	@override String get comptable => 'Accountant';
 }
 
@@ -1532,6 +2196,17 @@ class _Traductions$commun$classeDistincte$en extends Traductions$commun$classeDi
 	@override String numero({required Object libelle, required Object numero}) => '${libelle} · no. ${numero}';
 	@override String code({required Object libelle, required Object code}) => '${libelle} · ${code}';
 	@override String enseignant({required Object libelle, required Object enseignant}) => '${libelle} · with ${enseignant}';
+}
+
+// Path: commun.demonstration
+class _Traductions$commun$demonstration$en extends Traductions$commun$demonstration$fr {
+	_Traductions$commun$demonstration$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get repere => 'Demo';
+	@override String get repereLu => 'Demo mode';
 }
 
 // Path: commun.etape
@@ -1564,6 +2239,39 @@ class _Traductions$commun$champDate$en extends Traductions$commun$champDate$fr {
 	// Translations
 	@override String get choisir => 'Choose a date';
 	@override String get aide => 'Between today and one year from now.';
+}
+
+// Path: commun.selecteurPersonne
+class _Traductions$commun$selecteurPersonne$en extends Traductions$commun$selecteurPersonne$fr {
+	_Traductions$commun$selecteurPersonne$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titreEleve => 'Student';
+	@override String get titreEnseignant => 'Teacher';
+	@override String get contexteEleve => 'Choose the student from the list. Only active student accounts appear here: an account still awaiting approval cannot be chosen.';
+	@override String get contexteEnseignant => 'Choose the teacher from the list. Only active teacher accounts appear here: a teacher whose file is awaiting approval cannot be given a class yet.';
+	@override String get titreObservable => 'Who the agent observes';
+	@override String get contexteObservable => 'The agent will see exactly this person\'s screen, and their journey will be theirs.';
+	@override String get rechercheEleve => 'Search for a student by name or identifier';
+	@override String get rechercheEnseignant => 'Search for a teacher by name or identifier';
+	@override String get rechercheObservable => 'Search for a name or identifier';
+	@override String get videEleve => 'No active student account';
+	@override String get videEleveDetail => 'No student can be chosen for now. First approve the pending registrations in People > Accounts, then come back here.';
+	@override String get videEnseignant => 'No active teacher account';
+	@override String get videEnseignantDetail => 'No teacher can be chosen for now. First approve the pending files in People > Accounts, then come back here.';
+	@override String get videObservable => 'No one to observe';
+	@override String get videObservableDetail => 'No account can be observed for now. First approve the pending accounts in People > Accounts, then come back here.';
+	@override String get erreurEleveTitre => 'The student list could not be loaded';
+	@override String get erreurEnseignantTitre => 'The teacher list could not be loaded';
+	@override String get erreurObservableTitre => 'The list of people could not be loaded';
+	@override String get erreurDetail => 'Probable cause: the connection to the server was interrupted (not confirmed). Try again in a moment.';
+	@override String aucunResultat({required Object recherche}) => 'No one matches "${recherche}"';
+	@override String get aucunResultatDetail => 'Check the spelling, or search for part of the name or identifier.';
+	@override String get effacerRecherche => 'Clear the search';
+	@override String get autreUne => 'One other person matches: narrow the search to see them.';
+	@override String autresPlusieurs({required Object n}) => '${n} other people match: narrow the search to see them.';
 }
 
 // Path: commun.etats
@@ -1711,6 +2419,21 @@ class _Traductions$commun$sections$en extends Traductions$commun$sections$fr {
 	@override String get page => 'Page sections';
 }
 
+// Path: commun.filtres
+class _Traductions$commun$filtres$en extends Traductions$commun$filtres$fr {
+	_Traductions$commun$filtres$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get plus => 'More';
+	@override String plusAvec({required Object n}) => 'More, ${n}';
+	@override String get titreFeuille => 'More filters';
+	@override String get bouton => 'Filters';
+	@override String boutonAvec({required Object n}) => 'Filters, ${n}';
+	@override String axeValeur({required Object axe, required Object valeur}) => '${axe}: ${valeur}';
+}
+
 // Path: commun.recherche
 class _Traductions$commun$recherche$en extends Traductions$commun$recherche$fr {
 	_Traductions$commun$recherche$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -1720,6 +2443,58 @@ class _Traductions$commun$recherche$en extends Traductions$commun$recherche$fr {
 	// Translations
 	@override String get effacer => 'Clear search';
 	@override String get fermer => 'Close search';
+}
+
+// Path: commun.listes
+class _Traductions$commun$listes$en extends Traductions$commun$listes$fr {
+	_Traductions$commun$listes$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get actions => 'Actions';
+	@override String actionsDe({required Object objet}) => 'Actions: ${objet}';
+	@override String get cocherPage => 'Select the page';
+	@override String cocherLigne({required Object objet}) => 'Select ${objet}';
+	@override String trierPar({required Object colonne}) => 'Sort by ${colonne}';
+	@override String trierParCroissant({required Object colonne}) => 'Sort by ${colonne} (currently ascending)';
+	@override String trierParDecroissant({required Object colonne}) => 'Sort by ${colonne} (currently descending)';
+	@override String tranche({required Object debut, required Object fin, required Object total}) => '${debut}-${fin} of ${total}';
+	@override String trancheLue({required Object debut, required Object fin, required Object total}) => 'Rows ${debut} to ${fin} of ${total}';
+	@override String get precedente => 'Previous page';
+	@override String get suivante => 'Next page';
+	@override String get taillePage => 'Rows per page';
+	@override String parPage({required Object n}) => '${n} per page';
+	@override String get deselectionner => 'Deselect';
+	@override String retirerFiltre({required Object filtre}) => 'Remove the filter: ${filtre}';
+	@override String get toutEffacer => 'Clear all';
+}
+
+// Path: commun.paieEnseignant
+class _Traductions$commun$paieEnseignant$en extends Traductions$commun$paieEnseignant$fr {
+	_Traductions$commun$paieEnseignant$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get present => '1. Per student present';
+	@override String get presentDetail => 'Each session taught earns an amount for each student present, according to the session length. The rate depends on the class: children or adults.';
+	@override String get absent => '2. An absent student does not count';
+	@override String get absentDetail => 'For an absent student, nothing is paid for this session.';
+	@override String get minimum => '3. No minimum';
+	@override String get minimumDetail => 'There is no minimum amount, neither per session nor per month.';
+}
+
+// Path: commun.autresRevenus
+class _Traductions$commun$autresRevenus$en extends Traductions$commun$autresRevenus$fr {
+	_Traductions$commun$autresRevenus$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get aideInternet => 'Internet allowance';
+	@override String get prime => 'Bonus';
+	@override String get mission => 'Mission';
 }
 
 // Path: connexion.invitationFoyer
@@ -5537,6 +6312,246 @@ class _Traductions$adulte$finances$en extends Traductions$adulte$finances$fr {
 	@override String get mouvementsVidePhrase => 'No top-up or monthly fee is recorded yet for your profile. Movements will appear here after the first payment.';
 }
 
+// Path: formulaire.motif
+class _Traductions$formulaire$motif$en extends Traductions$formulaire$motif$fr {
+	_Traductions$formulaire$motif$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get manque => 'The reason is missing: choose one from the list, or tap "Other" and write it.';
+	@override String get autreVide => 'You chose "Other": write the reason in a few words.';
+	@override String get autreChamp => 'The reason, in a few words';
+	@override String get manqueSaisi => 'The reason is missing: write it in a few words.';
+}
+
+// Path: formulaire.entier
+class _Traductions$formulaire$entier$en extends Traductions$formulaire$entier$fr {
+	_Traductions$formulaire$entier$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String bornes({required Object min, required Object max}) => 'Between ${min} and ${max}';
+	@override String horsBornes({required Object min, required Object max}) => 'Choose a value between ${min} and ${max}, or one of the values offered.';
+}
+
+// Path: motifs.ajoutEleve
+class _Traductions$motifs$ajoutEleve$en extends Traductions$motifs$ajoutEleve$fr {
+	_Traductions$motifs$ajoutEleve$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get diagnostic => 'Placement after diagnosis';
+	@override String get attente => 'Leaving the waiting list';
+	@override String get transfert => 'Transfer from another class';
+	@override String get famille => 'Family request';
+}
+
+// Path: motifs.retraitEleve
+class _Traductions$motifs$retraitEleve$en extends Traductions$motifs$retraitEleve$fr {
+	_Traductions$motifs$retraitEleve$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get famille => 'Family request';
+	@override String get transfert => 'Transfer to another class';
+	@override String get ecartNiveau => 'Lasting level gap';
+	@override String get finInscription => 'End of registration';
+}
+
+// Path: motifs.clotureClasse
+class _Traductions$motifs$clotureClasse$en extends Traductions$motifs$clotureClasse$fr {
+	_Traductions$motifs$clotureClasse$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get finCycle => 'End of the class cycle';
+	@override String get remplissage => 'Low enrolment';
+	@override String get transfert => 'Students transferred to other classes';
+	@override String get remplacement => 'Teacher absent with no replacement';
+	@override String get parErreur => 'Class created by mistake';
+}
+
+// Path: motifs.refusDemande
+class _Traductions$motifs$refusDemande$en extends Traductions$motifs$refusDemande$fr {
+	_Traductions$motifs$refusDemande$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get aucunEnseignant => 'No teacher available at this time';
+	@override String get exceptionnel => 'Changing teacher stays exceptional';
+	@override String get reglePlateforme => 'The platform\'s rule applies';
+	@override String get plafond => 'Student limit already reached';
+	@override String get insuffisant => 'Not enough information to decide';
+}
+
+// Path: motifs.poserRegle
+class _Traductions$motifs$poserRegle$en extends Traductions$motifs$poserRegle$fr {
+	_Traductions$motifs$poserRegle$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get famille => 'Family request granted';
+	@override String get pedagogique => 'Student\'s teaching need';
+	@override String get age => 'Length suited to age';
+	@override String get charge => 'Teacher\'s workload';
+	@override String get parErreur => 'Correction of a data entry error';
+}
+
+// Path: motifs.cloreSurcharge
+class _Traductions$motifs$cloreSurcharge$en extends Traductions$motifs$cloreSurcharge$fr {
+	_Traductions$motifs$cloreSurcharge$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get termine => 'One-off need ended';
+	@override String get famille => 'Family request';
+	@override String get changement => 'Change of class or teacher';
+	@override String get parErreur => 'Rule set by mistake';
+}
+
+// Path: motifs.annulationEvaluation
+class _Traductions$motifs$annulationEvaluation$en extends Traductions$motifs$annulationEvaluation$fr {
+	_Traductions$motifs$annulationEvaluation$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get absenceEleve => 'Student\'s absence';
+	@override String get absenceEnseignant => 'Teacher\'s absence';
+	@override String get pasPret => 'Student not ready yet';
+	@override String get report => 'Postponed to another date';
+	@override String get parErreur => 'Assessment scheduled by mistake';
+}
+
+// Path: motifs.changementNiveau
+class _Traductions$motifs$changementNiveau$en extends Traductions$motifs$changementNiveau$fr {
+	_Traductions$motifs$changementNiveau$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get reussie => 'Assessment passed';
+	@override String get stable => 'Unit achieved and stable';
+	@override String get enseignant => 'Teacher\'s decision';
+	@override String get reevaluation => 'Reassessment requested by the family';
+	@override String get placement => 'Correction of the placement level';
+}
+
+// Path: motifs.blocage
+class _Traductions$motifs$blocage$en extends Traductions$motifs$blocage$fr {
+	_Traductions$motifs$blocage$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get prerequis => 'Prerequisites not yet stable';
+	@override String get renforcement => 'Reinforcement needed before moving on';
+	@override String get aRevoir => 'Assessment to redo';
+	@override String get absences => 'Repeated absences';
+}
+
+// Path: motifs.derogation
+class _Traductions$motifs$derogation$en extends Traductions$motifs$derogation$fr {
+	_Traductions$motifs$derogation$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get aucuneClasse => 'No suitable class';
+	@override String get avance => 'Faster progress than the class';
+	@override String get enseignant => 'Teacher\'s decision';
+	@override String get direction => 'Agreement of the teaching management';
+}
+
+// Path: motifs.cloreException
+class _Traductions$motifs$cloreException$en extends Traductions$motifs$cloreException$fr {
+	_Traductions$motifs$cloreException$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get stables => 'Prerequisites now stable';
+	@override String get classe => 'Student placed in a suitable class';
+	@override String get inutile => 'The exception is no longer needed';
+	@override String get parErreur => 'Exception set by mistake';
+}
+
+// Path: motifs.placement
+class _Traductions$motifs$placement$en extends Traductions$motifs$placement$fr {
+	_Traductions$motifs$placement$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get debutant => 'Beginner: foundation journey';
+	@override String get lecture => 'Level observed at reading';
+	@override String get declaratif => 'Declared pre-diagnosis confirmed';
+	@override String get procheNiveau => 'Class closest to the assessed level';
+	@override String get provisoire => 'Provisional placement, to reassess';
+}
+
+// Path: motifs.refusDossier
+class _Traductions$motifs$refusDossier$en extends Traductions$motifs$refusDossier$fr {
+	_Traductions$motifs$refusDossier$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get illisible => 'ID document unreadable';
+	@override String get expiree => 'ID document expired';
+	@override String get nom => 'Name different from the account\'s';
+	@override String get nonTransmise => 'Required document not submitted';
+	@override String get accord => 'Required agreement missing';
+}
+
+// Path: motifs.presenceCorrigee
+class _Traductions$motifs$presenceCorrigee$en extends Traductions$motifs$presenceCorrigee$fr {
+	_Traductions$motifs$presenceCorrigee$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get nonDetectee => 'Attendance not detected by the app';
+	@override String get reseau => 'Network cut during the class';
+	@override String get retard => 'Arrived late';
+	@override String get appareil => 'Connected from another device';
+	@override String get parErreur => 'Data entry error';
+}
+
+// Path: motifs.presenceExcusee
+class _Traductions$motifs$presenceExcusee$en extends Traductions$motifs$presenceExcusee$fr {
+	_Traductions$motifs$presenceExcusee$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get prevenue => 'Absence notified in advance';
+	@override String get reseau => 'Network cut reported';
+	@override String get conge => 'Public holiday or leave';
+	@override String get familiale => 'Family reason';
+}
+
+// Path: motifs.signalement
+class _Traductions$motifs$signalement$en extends Traductions$motifs$signalement$fr {
+	_Traductions$motifs$signalement$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$motifs$signalement$pedagogique$en pedagogique = _Traductions$motifs$signalement$pedagogique$en._(_root);
+	@override late final _Traductions$motifs$signalement$presence$en presence = _Traductions$motifs$signalement$presence$en._(_root);
+	@override late final _Traductions$motifs$signalement$technique$en technique = _Traductions$motifs$signalement$technique$en._(_root);
+	@override late final _Traductions$motifs$signalement$changement$en changement = _Traductions$motifs$signalement$changement$en._(_root);
+}
+
 // Path: suiviFamille.etapes
 class _Traductions$suiviFamille$etapes$en extends Traductions$suiviFamille$etapes$fr {
 	_Traductions$suiviFamille$etapes$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -5768,6 +6783,222 @@ class _Traductions$suiviDemandes$changement$en extends Traductions$suiviDemandes
 	@override String get retour => 'Back to the tracking of requests';
 	@override String get introuvable => 'This class change no longer needs to be shown';
 	@override String get introuvableDetail => 'Go back to the tracking to see where your requests stand.';
+}
+
+// Path: alertes.gravite
+class _Traductions$alertes$gravite$en extends Traductions$alertes$gravite$fr {
+	_Traductions$alertes$gravite$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get urgent => 'Urgent';
+	@override String get important => 'Important';
+	@override String get info => 'For information';
+}
+
+// Path: alertes.traitement
+class _Traductions$alertes$traitement$en extends Traductions$alertes$traitement$fr {
+	_Traductions$alertes$traitement$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Handle the report';
+	@override String get categorie => 'Category';
+	@override String get eleve => 'Student';
+	@override String get recu => 'Received';
+	@override String get statut => 'Where it stands';
+	@override late final _Traductions$alertes$traitement$statutValeur$en statutValeur = _Traductions$alertes$traitement$statutValeur$en._(_root);
+	@override String get note => 'Teacher\'s note';
+	@override String get noteAide => 'Read by the management only.';
+	@override String get securitePhrase => 'Neither the family nor the teacher reads this report. It is not passed on.';
+	@override String get message => 'Message for the family';
+	@override String messageAide({required Object cible}) => 'Written for ${cible}. The teacher\'s note is never sent.';
+	@override String get messageManque => 'Write the message for the family before passing it on.';
+	@override String get cibleTuteur => 'the student\'s guardian';
+	@override String get cibleAdulte => 'the student';
+	@override String get pasEncoreAffiche => 'No family screen shows this message yet.';
+	@override String get motif => 'Reason for closing';
+	@override String get motifRequisAide => 'Required for this report. Read by the management only.';
+	@override String get motifFacultatifAide => 'Optional. Read by the management only.';
+	@override String get motifManque => 'Write the reason for closing.';
+	@override String get examiner => 'Review';
+	@override String get transmettre => 'Pass on';
+	@override String get clore => 'Close';
+	@override String get transmettreQuestionTuteur => 'Pass this message on to the student\'s guardian?';
+	@override String get transmettreQuestionAdulte => 'Pass this message on to the student?';
+	@override String get transmettreConsequence => 'A message passed on cannot be taken back. No family screen shows it yet.';
+	@override String get transmettreOui => 'Yes, pass on';
+	@override String get cloreQuestion => 'Close this report?';
+	@override String get cloreConsequence => 'It leaves the alerts. A closed report cannot be reopened.';
+	@override String get cloreOui => 'Yes, close';
+	@override String get faitExamenTitre => 'Report under review';
+	@override String get faitExamenPhrase => 'It stays in the alerts until it is closed.';
+	@override String get faitTransmisTitre => 'Message saved';
+	@override String faitTransmisPhrase({required Object cible}) => 'Saved for ${cible}. No family screen shows it yet.';
+	@override String get faitClosTitre => 'Report closed';
+	@override String get faitClosPhrase => 'It has left the alerts.';
+	@override String get refuseTitre => 'This report has changed';
+	@override String get refusePhrase => 'The alerts have been reloaded.';
+	@override String get erreurTitre => 'The action did not go through';
+	@override String get erreurPhrase => 'Try again in a moment.';
+	@override String get indisponibleTitre => 'Handling unavailable';
+	@override String get indisponiblePhrase => 'The handling of reports is not open yet.';
+	@override String get horsLigne => 'Actions return with the connection.';
+}
+
+// Path: argent.transparence
+class _Traductions$argent$transparence$en extends Traductions$argent$transparence$fr {
+	_Traductions$argent$transparence$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Our prices, in full transparency';
+	@override String get lien => 'Our prices, in full transparency';
+	@override String get intro => 'Here is what becomes of each student payment, item by item, in percentages.';
+	@override String get repartitionTitre => 'Where each payment goes';
+	@override String version({required Object date}) => 'Estimate for the prices in force from ${date}.';
+	@override String part({required Object valeur}) => '${valeur}%';
+	@override String get virgule => '.';
+	@override String get total => 'Total';
+	@override late final _Traductions$argent$transparence$postes$en postes = _Traductions$argent$transparence$postes$en._(_root);
+	@override String posteSemantique({required Object poste, required Object part}) => '${poste}: ${part} of the student\'s payment';
+	@override String estimation({required Object enfants, required Object adultes}) => 'These percentages are an estimate, calculated for ${enfants} children and ${adultes} adults, each at full price and present at every session. They are reviewed with each new version of the prices.';
+	@override String get magasinsTitre => 'Why the app is not on the App Store or Google Play';
+	@override String get magasinsPhrase => 'Those stores take 15 to 30% of every payment. The academy cannot bear these fees without raising its prices. Payment is therefore made on the web.';
+	@override String get taxesTitre => 'Taxes';
+	@override String get taxesPhrase => 'Our prices exclude tax. Your country\'s tax, when due, is added to the payment and goes entirely to the State: it is not part of this breakdown.';
+	@override String get hausseTitre => 'Prices may rise';
+	@override String get haussePhrase => 'Our prices depend on the cost of the services we use and on inflation. If these costs rise, the academy will have to adjust its prices. It will warn you before the next payment, and you may stop if the new price does not suit you.';
+	@override String get montantsTitre => 'The exact amounts';
+	@override String get montantsPhrase => 'This page gives percentages only: amounts change every month with the number of students. Anyone who wants the exact amounts can ask the administration.';
+	@override String get indisponibleTitre => 'The price breakdown cannot be read';
+	@override String get indisponiblePhrase => 'It will be shown here as soon as it is available.';
+	@override String get erreurTitre => 'The price breakdown could not be read';
+	@override String get sansDonnees => 'The price breakdown could not be loaded';
+	@override String get videTitre => 'The price breakdown is not published yet';
+	@override String get videPhrase => 'It will be published with the next version of the prices.';
+}
+
+// Path: argent.etat
+class _Traductions$argent$etat$en extends Traductions$argent$etat$fr {
+	_Traductions$argent$etat$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get finance => 'Funded';
+	@override String get essai => 'Trial';
+	@override String essaiCompte({required Object n, required Object max}) => 'Trial: ${n}/${max}';
+	@override String get manque => 'To fund';
+	@override String get enConfirmation => 'Being confirmed';
+	@override String get expire => 'Access expired';
+	@override String get pause => 'Paused';
+	@override String get aRegulariser => 'To settle';
+}
+
+// Path: argent.periode
+class _Traductions$argent$periode$en extends Traductions$argent$periode$fr {
+	_Traductions$argent$periode$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String jusquau({required Object date}) => 'Funded until ${date}';
+	@override String get aucune => 'No funded period';
+}
+
+// Path: argent.allocation
+class _Traductions$argent$allocation$en extends Traductions$argent$allocation$fr {
+	_Traductions$argent$allocation$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get credite => 'Credited';
+}
+
+// Path: argent.moyen
+class _Traductions$argent$moyen$en extends Traductions$argent$moyen$fr {
+	_Traductions$argent$moyen$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get webStripe => 'Bank card';
+	@override String get webStripeDetail => 'Payment on the web. Nothing is charged before you confirm.';
+}
+
+// Path: argent.soldes
+class _Traductions$argent$soldes$en extends Traductions$argent$soldes$fr {
+	_Traductions$argent$soldes$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get total => 'Total balances (read-only)';
+	@override String get totalDetail => 'A read-only view: each balance stays that of its profile.';
+	@override String get aPayer => 'To pay this month';
+	@override String get profilsFinances => 'Funded profiles';
+	@override String profilsFinancesValeur({required Object n, required Object total}) => '${n} of ${total}';
+	@override String get paiements => 'Payments this month';
+}
+
+// Path: argent.acces
+class _Traductions$argent$acces$en extends Traductions$argent$acces$fr {
+	_Traductions$argent$acces$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get enfantTitre => 'Access to this class temporarily unavailable';
+	@override String get enfantMessage => 'Your guardian can manage access.';
+	@override String get regulariserTitre => 'Access to settle';
+	@override String regulariserManque({required Object montant, required Object mois}) => '${montant} is missing to fund ${mois}.';
+	@override String regulariserManqueNouvellePeriode({required Object montant}) => '${montant} is missing to fund the new period.';
+	@override String get regulariserSansManque => 'The new period is not funded yet.';
+	@override String placeConservee({required Object date}) => 'Place kept until ${date}.';
+	@override String get seancesFermeesTitre => 'New sessions unavailable';
+	@override String seancesFermees({required Object prenom}) => '${prenom} cannot join a new session for now. Their space stays open to see their profile, their history and to pay.';
+	@override String get adulteSeancesFermees => 'You cannot join a new session for now. Your space stays open to see your profile, your history and to pay.';
+	@override String get suspenduTitre => 'Access suspended';
+	@override String suspenduTuteur({required Object prenom, required Object date}) => 'The place reserved for ${prenom} was released on ${date}. Their space stays open to see their profile, their history and to pay.';
+	@override String suspenduTuteurSansDate({required Object prenom}) => 'The place reserved for ${prenom} was released. Their space stays open to see their profile, their history and to pay.';
+	@override String suspenduAdulte({required Object date}) => 'Your place was released on ${date}. Your space stays open to see your profile, your history and to pay.';
+	@override String get suspenduAdulteSansDate => 'Your place was released. Your space stays open to see your profile, your history and to pay.';
+	@override String get reactiveTitre => 'Access reactivated';
+	@override String reactiveTuteur({required Object prenom, required Object date}) => '${prenom} can join their sessions again since ${date}.';
+	@override String reactiveTuteurSansDate({required Object prenom}) => '${prenom} can join their sessions again.';
+	@override String reactiveAdulte({required Object date}) => 'You can join your sessions again since ${date}.';
+	@override String get reactiveAdulteSansDate => 'You can join your sessions again.';
+	@override String suspenduPaiementTuteur({required Object prenom}) => 'This month\'s payment has not been received. ${prenom} can no longer join their sessions. Their space stays open to see their profile, their history and to pay.';
+	@override String get suspenduPaiementAdulte => 'This month\'s payment has not been received. You can no longer join your sessions. Your space stays open to see your profile, your history and to pay.';
+	@override String get pastilleSuspendu => 'Suspended';
+	@override String get pastilleReactive => 'Reactivated';
+}
+
+// Path: presentationTuteur.accueil
+class _Traductions$presentationTuteur$accueil$en extends Traductions$presentationTuteur$accueil$fr {
+	_Traductions$presentationTuteur$accueil$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Display request';
+	@override String get voir => 'Answer';
+}
+
+// Path: reprisesAdmin.etat
+class _Traductions$reprisesAdmin$etat$en extends Traductions$reprisesAdmin$etat$fr {
+	_Traductions$reprisesAdmin$etat$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get aExaminer => 'To review';
+	@override String get refuseeParTitulaire => 'Declined by the account holder';
 }
 
 // Path: recherche.champ
@@ -6040,6 +7271,127 @@ class _Traductions$accueilInvite$roles$en extends Traductions$accueilInvite$role
 	@override String get candidat => 'Rewayah Academy invites you as a teaching applicant.';
 }
 
+// Path: n1.regles
+class _Traductions$n1$regles$en extends Traductions$n1$regles$fr {
+	_Traductions$n1$regles$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$n1$regles$auteurs$en auteurs = _Traductions$n1$regles$auteurs$en._(_root);
+	@override late final _Traductions$n1$regles$portee$en portee = _Traductions$n1$regles$portee$en._(_root);
+}
+
+// Path: n1.alertes
+class _Traductions$n1$alertes$en extends Traductions$n1$alertes$fr {
+	_Traductions$n1$alertes$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String signalement({required Object categorie, required Object matricule, required Object note}) => '${categorie}: report for student ${matricule}. Internal note: "${note}"';
+}
+
+// Path: i1.invitations
+class _Traductions$i1$invitations$en extends Traductions$i1$invitations$fr {
+	_Traductions$i1$invitations$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get aideEmail => 'The code is created for this address and sent right away by email, with the sign-up link. You can also pass it on yourself.';
+	@override String creee({required Object code, required Object email}) => 'Invitation created. The email with code ${code} is on its way to ${email}.';
+	@override String get dejaInvite => 'An invitation is already active for this address. It is in the list below; its email is not sent a second time.';
+}
+
+// Path: i1.familles
+class _Traductions$i1$familles$en extends Traductions$i1$familles$fr {
+	_Traductions$i1$familles$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get choixTitre => 'A family already registered';
+	@override String get choixExplication => 'To choose for imported families: each receives an email to open their space, with nothing to re-enter.';
+	@override String get titre => 'Families to invite';
+	@override String get aide => 'Each imported family receives, on your action, an email inviting them to sign in with their address. Nothing is sent automatically.';
+	@override String personnes({required Object n}) => 'People: ${n}';
+	@override late final _Traductions$i1$familles$etat$en etat = _Traductions$i1$familles$etat$en._(_root);
+	@override String envoyeeLe({required Object date}) => 'Sent on ${date}';
+	@override String get envoyer => 'Send the invitation';
+	@override String envoyerPour({required Object email}) => 'Send the invitation to ${email}';
+	@override String get renvoyer => 'Resend the invitation';
+	@override String renvoyerPour({required Object email}) => 'Resend the invitation to ${email}';
+	@override String envoyerToutes({required Object n}) => 'Send to all families (${n})';
+	@override String toutesQuestion({required Object n}) => 'Send the invitation to all the families to invite? Number of families: ${n}.';
+	@override String get toutesConsequence => 'Each family receives an email right away. An email that has gone out cannot be taken back.';
+	@override String toutesConfirmer({required Object n}) => 'Yes, send to all families (${n})';
+	@override String enFile({required Object email}) => 'The invitation is on its way to ${email}.';
+	@override String dejaEnFile({required Object email}) => 'An invitation has already gone out or is being sent to ${email}: nothing more is sent.';
+	@override String get compteCree => 'This family has already opened their space: nothing is sent.';
+	@override String get introuvable => 'This family no longer needs an invitation. Refresh the list.';
+	@override String toutesEnFile({required Object n}) => 'The invitations are on their way. Number of families: ${n}.';
+	@override String get nombreChange => 'The list has changed since your confirmation: nothing was sent. Review it, then confirm again.';
+	@override String get erreurEnvoi => 'The sending is not confirmed. Refresh the list before trying again.';
+	@override String get horsLigne => 'The invitation was not sent. Try again in a moment.';
+	@override String get nonAutorise => 'Only the management can send these invitations. Sign in again with a management account.';
+	@override String get vide => 'No imported family to invite';
+	@override String get videDetail => 'Import the current registrations: each confirmed family appears here.';
+	@override String get toutesEnvoyees => 'All the families have received their invitation or opened their space.';
+	@override String get erreurListe => 'The imported families could not be read. Try again in a moment.';
+	@override String get sansDonnees => 'The imported families';
+	@override String get indisponible => 'Sending invitations to families is not connected to this server yet.';
+}
+
+// Path: i1.import
+class _Traductions$i1$import$en extends Traductions$i1$import$fr {
+	_Traductions$i1$import$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get invitationsAide => 'Each new family waits for your invitation. The list just below sends it to one family or to all. Nothing is sent automatically.';
+}
+
+// Path: i1.lien
+class _Traductions$i1$lien$en extends Traductions$i1$lien$fr {
+	_Traductions$i1$lien$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get dejaServiTitre => 'This link has already been used or has expired';
+	@override String get dejaServiDetail => 'A sign-in link works only once, and only for a short time. Ask for a new one: enter your email address on the sign-in page.';
+	@override String get nouveauLien => 'Get a new link';
+}
+
+// Path: d1ter.messages
+class _Traductions$d1ter$messages$en extends Traductions$d1ter$messages$fr {
+	_Traductions$d1ter$messages$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String titre({required Object prenom}) => 'Academy messages about ${prenom}';
+	@override String get titreSoi => 'Academy messages';
+	@override String intro({required Object prenom}) => 'The management has passed on these messages about ${prenom}.';
+	@override String get introSoi => 'The management has passed on these messages to you.';
+	@override String transmisLe({required Object date}) => 'Passed on on ${date}';
+	@override String get erreur => 'The academy messages could not be read: the request may not have reached Rewayah. Try again in a moment.';
+}
+
+// Path: d1ter.notifications
+class _Traductions$d1ter$notifications$en extends Traductions$d1ter$notifications$fr {
+	_Traductions$d1ter$notifications$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get message => 'The management has passed on a message to you.';
+	@override String messageEnfant({required Object prenom}) => 'The management has passed on a message about ${prenom}.';
+	@override String get messageSoi => 'The management has passed on a message to you.';
+}
+
 // Path: snt.regles
 class _Traductions$snt$regles$en extends Traductions$snt$regles$fr {
 	_Traductions$snt$regles$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -6107,6 +7459,50 @@ class _Traductions$snt$planning$en extends Traductions$snt$planning$fr {
 	@override String get refusClasseClose => 'The date is not set: the class is closed. No session can be planned in it any more.';
 	@override String get refusNonAutorisee => 'The date is not set: this account cannot set a date. Sign in with a management account.';
 	@override String get erreur => 'The date is not confirmed: the request may not have reached Rewayah. Try again in a moment.';
+}
+
+// Path: a3bis.salle
+class _Traductions$a3bis$salle$en extends Traductions$a3bis$salle$fr {
+	_Traductions$a3bis$salle$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titulaireEntreTitre => 'The class teacher has arrived';
+	@override String get titulaireEntre => 'The class teacher joined the room first: the replacement is no longer needed. Thank you for being ready.';
+	@override String get remplacantEntreTitre => 'A replacement has taken the class';
+	@override String get remplacantEntre => 'The replacement who took the class joined the room first: today\'s session is taken from you. You remain the class teacher.';
+}
+
+// Path: a3bis.notifications
+class _Traductions$a3bis$notifications$en extends Traductions$a3bis$notifications$fr {
+	_Traductions$a3bis$notifications$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get avertissement => 'You are not in the room yet. Come in quickly: if a teacher has offered to replace you, you lose access to today\'s session.';
+	@override String avertissementMinutes({required num minutes}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(minutes,
+		one: 'You are not in the room yet. Come in within the minute: after that, if a teacher has offered to replace you, you lose access to today\'s session.',
+		other: 'You are not in the room yet. Come in within ${minutes} minutes: after that, if a teacher has offered to replace you, you lose access to today\'s session.',
+	);
+}
+
+// Path: a3bis.regles
+class _Traductions$a3bis$regles$en extends Traductions$a3bis$regles$fr {
+	_Traductions$a3bis$regles$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get perteDetail => 'If a teacher has offered, they replace the teacher, who can no longer join today\'s session, and families are notified. If nobody has offered, the teacher can still come in: the session stays open to replacement until it ends.';
+	@override String get alerteDirection => 'Management alert';
+	@override String get alerteDirectionDetail => 'If neither the teacher nor a replacement has joined the room, the management receives an email, once per session.';
+	@override String get avertissementDetail => 'The teacher is warned that they risk losing the session. Free teachers can offer to replace them.';
+	@override String get seanceTardive => 'Session created late';
+	@override String get seanceTardiveDetail => 'A session created less than this delay before its start is never taken from the teacher automatically. The management alert is still sent.';
+	@override String bornesAlerte({required Object min, required Object max}) => 'Between ${min} and ${max} after the start.';
+	@override String bornesTardive({required Object min, required Object max}) => 'Between ${min} and ${max} before the start.';
 }
 
 // Path: push1.invitation
@@ -6409,6 +7805,86 @@ class _Traductions$suiviAttente$mePresenter$en extends Traductions$suiviAttente$
 	@override String get chargement => 'Loading the families of the class';
 	@override String get erreur => 'The families of the class could not be loaded. Try again in a moment.';
 	@override String get vide => 'Write a message before sending it.';
+}
+
+// Path: journalSorties.texte
+class _Traductions$journalSorties$texte$en extends Traductions$journalSorties$texte$fr {
+	_Traductions$journalSorties$texte$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Leaving the app during class';
+	@override late final _Traductions$journalSorties$texte$parent$en parent = _Traductions$journalSorties$texte$parent$en._(_root);
+	@override late final _Traductions$journalSorties$texte$adulte$en adulte = _Traductions$journalSorties$texte$adulte$en._(_root);
+}
+
+// Path: journalSorties.accord
+class _Traductions$journalSorties$accord$en extends Traductions$journalSorties$accord$fr {
+	_Traductions$journalSorties$accord$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Exits from the app';
+	@override String get ligne => 'Exits from the app during class';
+	@override String get ligneDetail => 'Your agreement, for each child';
+	@override String get ligneDetailAdulte => 'Your agreement';
+	@override String get intro => 'Read this text, then choose for each child. Nothing is recorded without your agreement.';
+	@override String get introAdulte => 'Read this text, then choose. Nothing is recorded without your agreement.';
+	@override String accepteLe({required Object date}) => 'Accepted on ${date}';
+	@override String get pasAccepte => 'Not agreed: nothing is recorded.';
+	@override String retirerPour({required Object prenom}) => 'Withdraw my agreement for ${prenom}';
+	@override String get retirer => 'Withdraw my agreement';
+	@override String get enregistrer => 'Save my agreement';
+	@override String get manque => 'Tick a box to save your agreement.';
+	@override String get erreur => 'Your choice is not confirmed: it may not have reached Rewayah. Try again in a moment.';
+	@override String get lectureErreur => 'Your agreements could not be read. Try again in a moment.';
+	@override String get horsService => 'This log is not in service: nothing is recorded. Go back to Account.';
+	@override String get versionPerimee => 'The text has just changed. Read it again, then tick again.';
+	@override String get eteint => 'The management has just turned this log off: nothing is recorded. Go back to Account.';
+	@override String get merci => 'Your agreement is saved.';
+	@override String get retire => 'Your agreement is withdrawn: nothing more is recorded.';
+}
+
+// Path: journalSorties.rapport
+class _Traductions$journalSorties$rapport$en extends Traductions$journalSorties$rapport$fr {
+	_Traductions$journalSorties$rapport$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Exits from the app';
+	@override String get nombreCle => 'Count';
+	@override String nombre({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} exit',
+		other: '${n} exits',
+	);
+	@override String get dureeTotale => 'Total duration';
+	@override String plage({required Object debut, required Object fin}) => 'From ${debut} to ${fin}';
+	@override String get sortieSalle => 'Left the room after the delay';
+	@override String secondes({required Object n}) => '${n} s';
+	@override String minutes({required Object n}) => '${n} min';
+	@override String minutesSecondes({required Object m, required Object s}) => '${m} min ${s} s';
+	@override String resume({required Object nombre, required Object duree}) => '${nombre}, ${duree}';
+	@override String ligneEleve({required Object resume}) => 'Exits from the app: ${resume}';
+}
+
+// Path: journalSorties.reglages
+class _Traductions$journalSorties$reglages$en extends Traductions$journalSorties$reglages$fr {
+	_Traductions$journalSorties$reglages$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get section => 'Exits from the app during a session';
+	@override String get intro => 'The delay applies to all students. The exits log records nothing without the agreement of the guardian, or of the adult student.';
+	@override String get journal => 'Record exits from the app';
+	@override String get journalDetail => 'Turn on only after the director has validated the agreement texts. Once on, the guardian and the adult student see the agreement page in their Account.';
+	@override String get delai => 'Delay before leaving the room';
+	@override String get delaiDetail => 'The time a student is given outside the app before they leave the room.';
+	@override String get bornes => 'From 5 to 600 seconds.';
+	@override String unite({required Object n}) => '${n} s';
 }
 
 // Path: calendrier.sections
@@ -8169,6 +9645,55 @@ class _Traductions$adulte$demo$etats$en extends Traductions$adulte$demo$etats$fr
 	@override String get emancipation => 'Emancipation of a student who became an adult: not built in this wave.';
 }
 
+// Path: motifs.signalement.pedagogique
+class _Traductions$motifs$signalement$pedagogique$en extends Traductions$motifs$signalement$pedagogique$fr {
+	_Traductions$motifs$signalement$pedagogique$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get renforcement => 'Reinforcement is advised on the current lesson.';
+	@override String get revision => 'A little revision at home will help before the next class.';
+	@override String get regularite => 'Regular work at home will make the difference.';
+	@override String get echange => 'A conversation with the academy is proposed.';
+}
+
+// Path: motifs.signalement.presence
+class _Traductions$motifs$signalement$presence$en extends Traductions$motifs$signalement$presence$fr {
+	_Traductions$motifs$signalement$presence$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get absences => 'Several recent absences: regularity helps progress.';
+	@override String get retards => 'Late arrivals in the latest sessions.';
+	@override String get prevenir => 'Please let the academy know in case of absence.';
+}
+
+// Path: motifs.signalement.technique
+class _Traductions$motifs$signalement$technique$en extends Traductions$motifs$signalement$technique$fr {
+	_Traductions$motifs$signalement$technique$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get son => 'Sound or connection disrupted the class.';
+	@override String get essai => 'A device test before the class is advised.';
+	@override String get camera => 'The camera or microphone did not work.';
+}
+
+// Path: motifs.signalement.changement
+class _Traductions$motifs$signalement$changement$en extends Traductions$motifs$signalement$changement$fr {
+	_Traductions$motifs$signalement$changement$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get classe => 'A change of class is being considered.';
+	@override String get niveau => 'The class level no longer seems suitable.';
+	@override String get suite => 'The academy will get back to you to discuss it.';
+}
+
 // Path: suiviFamille.close.motif
 class _Traductions$suiviFamille$close$motif$en extends Traductions$suiviFamille$close$motif$fr {
 	_Traductions$suiviFamille$close$motif$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -8197,6 +9722,39 @@ class _Traductions$suiviDemandes$close$motif$en extends Traductions$suiviDemande
 	@override String get refusDirection => 'The management could not accept this request.';
 	@override String dejaEnClasse({required Object prenom}) => '${prenom} already has a place in a class: this request is no longer needed.';
 	@override String get inconnu => 'This request is closed.';
+}
+
+// Path: alertes.traitement.statutValeur
+class _Traductions$alertes$traitement$statutValeur$en extends Traductions$alertes$traitement$statutValeur$fr {
+	_Traductions$alertes$traitement$statutValeur$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get aExaminer => 'To review';
+	@override String get enExamen => 'Under review';
+	@override String get transmis => 'Message passed on';
+}
+
+// Path: argent.transparence.postes
+class _Traductions$argent$transparence$postes$en extends Traductions$argent$transparence$postes$fr {
+	_Traductions$argent$transparence$postes$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get enseignant => 'The class teacher';
+	@override String get fraisCarteChange => 'Card payment and currency exchange fees';
+	@override String get fraisEnvoiPaie => 'Fees for sending pay to teachers';
+	@override String get visioconference => 'Video conferencing';
+	@override String get applicationHebergement => 'Application and hosting';
+	@override String get emails => 'Emails';
+	@override String get stockage => 'File storage';
+	@override String get comptabilite => 'Accounting';
+	@override String get developpement => 'Application development';
+	@override String get administration => 'Academy administration';
+	@override String get impotSocietes => 'Corporate tax';
+	@override String get benefice => 'Academy profit';
 }
 
 // Path: recherche.etats.vide
@@ -8713,6 +10271,46 @@ class _Traductions$courriels$admin$adresses$en extends Traductions$courriels$adm
 	@override String get sansDonnees => 'The sending addresses could not be loaded';
 }
 
+// Path: n1.regles.auteurs
+class _Traductions$n1$regles$auteurs$en extends Traductions$n1$regles$auteurs$fr {
+	_Traductions$n1$regles$auteurs$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get direction => 'Management';
+	@override String get enseignants => 'Teachers';
+	@override String get familles => 'Families';
+	@override String get eleves => 'Students';
+	@override String get comptables => 'Accountants';
+	@override String get controleurs => 'Reviewers';
+}
+
+// Path: n1.regles.portee
+class _Traductions$n1$regles$portee$en extends Traductions$n1$regles$portee$fr {
+	_Traductions$n1$regles$portee$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get touteAudience => 'The whole academy, an audience or a class';
+	@override String get saClasse => 'Its class only';
+}
+
+// Path: i1.familles.etat
+class _Traductions$i1$familles$etat$en extends Traductions$i1$familles$etat$fr {
+	_Traductions$i1$familles$etat$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get aEnvoyer => 'To send';
+	@override String get enFile => 'Sending';
+	@override String get envoyee => 'Sent';
+	@override String get echec => 'Not sent';
+	@override String get compteCree => 'Space opened';
+}
+
 // Path: suiviAttente.cloture.motif
 class _Traductions$suiviAttente$cloture$motif$en extends Traductions$suiviAttente$cloture$motif$fr {
 	_Traductions$suiviAttente$cloture$motif$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -8738,6 +10336,36 @@ class _Traductions$suiviAttente$cloture$simple$en extends Traductions$suiviAtten
 	@override String get refusee => 'Your request was not accepted. Your guardian can choose another slot.';
 	@override String get retiree => 'This request is withdrawn.';
 	@override String get close => 'This request is closed.';
+}
+
+// Path: journalSorties.texte.parent
+class _Traductions$journalSorties$texte$parent$en extends Traductions$journalSorties$texte$parent$fr {
+	_Traductions$journalSorties$texte$parent$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get quoi => 'What is recorded: each time your child leaves the app during a session, the time they leave, the time they return, and whether this absence made them leave the room. Nothing else: not what they do elsewhere, not their screen, not their image, not their voice.';
+	@override String get pourquoi => 'Why: to follow your child\'s attention during class, for you and for their teacher.';
+	@override String get qui => 'Who can read it: you, your child, the session\'s teacher and the management. Never the other students or their families.';
+	@override String get retrait => 'You can withdraw your agreement at any time, right here. As soon as you withdraw it, nothing more is recorded.';
+	@override String get sansAccord => 'Without your agreement, nothing is recorded and nothing changes for the class. A student who stays out of the app too long leaves the room, with or without agreement: that keeps nothing.';
+	@override String caseAccord({required Object dePrenom}) => 'I agree that ${dePrenom}\'s exits from the app during sessions be recorded.';
+}
+
+// Path: journalSorties.texte.adulte
+class _Traductions$journalSorties$texte$adulte$en extends Traductions$journalSorties$texte$adulte$fr {
+	_Traductions$journalSorties$texte$adulte$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get quoi => 'What is recorded: each time you leave the app during a session, the time you leave, the time you return, and whether this absence made you leave the room. Nothing else: not what you do elsewhere, not your screen, not your image, not your voice.';
+	@override String get pourquoi => 'Why: to follow your attention during class, for you and for your teacher.';
+	@override String get qui => 'Who can read it: you, the session\'s teacher and the management. Never the other students or their families.';
+	@override String get retrait => 'You can withdraw your agreement at any time, right here. As soon as you withdraw it, nothing more is recorded.';
+	@override String get sansAccord => 'Without your agreement, nothing is recorded and nothing changes for the class. If you stay out of the app too long, you leave the room, with or without agreement: that keeps nothing.';
+	@override String get caseAccord => 'I agree that my exits from the app during sessions be recorded.';
 }
 
 // Path: calendrier.dates.type
@@ -10267,10 +11895,12 @@ extension on TraductionsEn {
 			'commun.roles.tuteur' => 'Guardian',
 			'commun.roles.enseignant' => 'Teacher',
 			'commun.roles.administration' => 'Administration',
+			'commun.roles.controleur' => 'Reviewer',
 			'commun.roles.comptable' => 'Accountant',
 			'commun.classeDistincte.numero' => ({required Object libelle, required Object numero}) => '${libelle} · no. ${numero}',
 			'commun.classeDistincte.code' => ({required Object libelle, required Object code}) => '${libelle} · ${code}',
 			'commun.classeDistincte.enseignant' => ({required Object libelle, required Object enseignant}) => '${libelle} · with ${enseignant}',
+			'commun.marque' => 'Rewayah Academy',
 			'commun.continuer' => 'Continue',
 			'commun.retour' => 'Back',
 			'commun.valider' => 'Confirm',
@@ -10280,11 +11910,37 @@ extension on TraductionsEn {
 			'commun.reessayer' => 'Try again',
 			'commun.chargement' => 'Loading',
 			'commun.reussite' => 'Done.',
+			'commun.demonstration.repere' => 'Demo',
+			'commun.demonstration.repereLu' => 'Demo mode',
 			'commun.etape.sur' => ({required Object n, required Object total}) => '${n} of ${total}',
 			'commun.etape.surLue' => ({required Object n, required Object total}) => 'Step ${n} of ${total}',
 			'commun.choix.indisponible' => 'Unavailable',
 			'commun.champDate.choisir' => 'Choose a date',
 			'commun.champDate.aide' => 'Between today and one year from now.',
+			'commun.selecteurPersonne.titreEleve' => 'Student',
+			'commun.selecteurPersonne.titreEnseignant' => 'Teacher',
+			'commun.selecteurPersonne.contexteEleve' => 'Choose the student from the list. Only active student accounts appear here: an account still awaiting approval cannot be chosen.',
+			'commun.selecteurPersonne.contexteEnseignant' => 'Choose the teacher from the list. Only active teacher accounts appear here: a teacher whose file is awaiting approval cannot be given a class yet.',
+			'commun.selecteurPersonne.titreObservable' => 'Who the agent observes',
+			'commun.selecteurPersonne.contexteObservable' => 'The agent will see exactly this person\'s screen, and their journey will be theirs.',
+			'commun.selecteurPersonne.rechercheEleve' => 'Search for a student by name or identifier',
+			'commun.selecteurPersonne.rechercheEnseignant' => 'Search for a teacher by name or identifier',
+			'commun.selecteurPersonne.rechercheObservable' => 'Search for a name or identifier',
+			'commun.selecteurPersonne.videEleve' => 'No active student account',
+			'commun.selecteurPersonne.videEleveDetail' => 'No student can be chosen for now. First approve the pending registrations in People > Accounts, then come back here.',
+			'commun.selecteurPersonne.videEnseignant' => 'No active teacher account',
+			'commun.selecteurPersonne.videEnseignantDetail' => 'No teacher can be chosen for now. First approve the pending files in People > Accounts, then come back here.',
+			'commun.selecteurPersonne.videObservable' => 'No one to observe',
+			'commun.selecteurPersonne.videObservableDetail' => 'No account can be observed for now. First approve the pending accounts in People > Accounts, then come back here.',
+			'commun.selecteurPersonne.erreurEleveTitre' => 'The student list could not be loaded',
+			'commun.selecteurPersonne.erreurEnseignantTitre' => 'The teacher list could not be loaded',
+			'commun.selecteurPersonne.erreurObservableTitre' => 'The list of people could not be loaded',
+			'commun.selecteurPersonne.erreurDetail' => 'Probable cause: the connection to the server was interrupted (not confirmed). Try again in a moment.',
+			'commun.selecteurPersonne.aucunResultat' => ({required Object recherche}) => 'No one matches "${recherche}"',
+			'commun.selecteurPersonne.aucunResultatDetail' => 'Check the spelling, or search for part of the name or identifier.',
+			'commun.selecteurPersonne.effacerRecherche' => 'Clear the search',
+			'commun.selecteurPersonne.autreUne' => 'One other person matches: narrow the search to see them.',
+			'commun.selecteurPersonne.autresPlusieurs' => ({required Object n}) => '${n} other people match: narrow the search to see them.',
 			'commun.etats.recharge1.ouvertureTitre' => 'This screen did not open',
 			'commun.etats.recharge1.ouverturePhrase' => 'Loading was interrupted. Try again; if it keeps happening, reload the page.',
 			'commun.etats.recharge1.repetePhrase' => 'Loading was interrupted again. Reload the page to open this screen: you stay signed in.',
@@ -10375,8 +12031,59 @@ extension on TraductionsEn {
 			'commun.dates.jourDate' => ({required Object jour, required Object mois, required Object numero}) => '${jour} ${mois} ${numero}',
 			'commun.dates.premierJour' => '1st',
 			'commun.sections.page' => 'Page sections',
+			'commun.filtres.plus' => 'More',
+			'commun.filtres.plusAvec' => ({required Object n}) => 'More, ${n}',
+			'commun.filtres.titreFeuille' => 'More filters',
+			'commun.filtres.bouton' => 'Filters',
+			'commun.filtres.boutonAvec' => ({required Object n}) => 'Filters, ${n}',
+			'commun.filtres.axeValeur' => ({required Object axe, required Object valeur}) => '${axe}: ${valeur}',
 			'commun.recherche.effacer' => 'Clear search',
 			'commun.recherche.fermer' => 'Close search',
+			'commun.listes.actions' => 'Actions',
+			'commun.listes.actionsDe' => ({required Object objet}) => 'Actions: ${objet}',
+			'commun.listes.cocherPage' => 'Select the page',
+			'commun.listes.cocherLigne' => ({required Object objet}) => 'Select ${objet}',
+			'commun.listes.trierPar' => ({required Object colonne}) => 'Sort by ${colonne}',
+			'commun.listes.trierParCroissant' => ({required Object colonne}) => 'Sort by ${colonne} (currently ascending)',
+			'commun.listes.trierParDecroissant' => ({required Object colonne}) => 'Sort by ${colonne} (currently descending)',
+			'commun.listes.tranche' => ({required Object debut, required Object fin, required Object total}) => '${debut}-${fin} of ${total}',
+			'commun.listes.trancheLue' => ({required Object debut, required Object fin, required Object total}) => 'Rows ${debut} to ${fin} of ${total}',
+			'commun.listes.precedente' => 'Previous page',
+			'commun.listes.suivante' => 'Next page',
+			'commun.listes.taillePage' => 'Rows per page',
+			'commun.listes.parPage' => ({required Object n}) => '${n} per page',
+			'commun.listes.deselectionner' => 'Deselect',
+			'commun.listes.retirerFiltre' => ({required Object filtre}) => 'Remove the filter: ${filtre}',
+			'commun.listes.toutEffacer' => 'Clear all',
+			'commun.paieEnseignant.present' => '1. Per student present',
+			'commun.paieEnseignant.presentDetail' => 'Each session taught earns an amount for each student present, according to the session length. The rate depends on the class: children or adults.',
+			'commun.paieEnseignant.absent' => '2. An absent student does not count',
+			'commun.paieEnseignant.absentDetail' => 'For an absent student, nothing is paid for this session.',
+			'commun.paieEnseignant.minimum' => '3. No minimum',
+			'commun.paieEnseignant.minimumDetail' => 'There is no minimum amount, neither per session nor per month.',
+			'commun.autresRevenus.aideInternet' => 'Internet allowance',
+			'commun.autresRevenus.prime' => 'Bonus',
+			'commun.autresRevenus.mission' => 'Mission',
+			'miseAJour.prete' => 'A new version of the app is ready.',
+			'miseAJour.recharger' => 'Reload',
+			'reseau.horsLigne' => 'No network. What is already displayed stays available.',
+			'reseau.enAttenteEnvoi' => 'Will be sent as soon as the network is back',
+			'reseau.retabli' => 'Network restored',
+			'reseau.syncImpossible' => 'Sync not possible',
+			'etat.enDirect' => 'Live',
+			'etat.imminent' => 'Soon',
+			'etat.annule' => 'Cancelled',
+			'etat.enAttente' => 'Pending',
+			'etat.enRetard' => 'Late',
+			'etat.termine' => 'Ended',
+			'etat.seanceAnnulee' => 'Cancelled',
+			'etat.annuleeValeur' => ({required Object valeur}) => 'Cancelled: ${valeur}',
+			'etat.motifNonCommunique' => 'Reason not given',
+			'etat.aucunRemplacantTrouve' => 'No replacement found',
+			'etat.seanceNonFacturee' => 'session not billed',
+			'etat.raisonEtSuite' => ({required Object raison, required Object suite}) => '${raison} · ${suite}',
+			'destructif.irreversible' => 'This action cannot be undone.',
+			'destructif.saisieVide' => ({required Object prenom}) => 'Write the first name ${prenom} to confirm',
 			'presence.titre' => 'Attendance',
 			'presence.voir' => 'See attendance',
 			'presence.mienne' => 'Your attendance',
@@ -10656,6 +12363,14 @@ extension on TraductionsEn {
 			'inscription.nomLatin.raison' => 'For lists, certificates and exchanges with the academy.',
 			'inscription.nomLatin.aide' => 'Here is our suggestion. Correct it if your name is not written this way.',
 			'inscription.nomLatin.erreur' => 'Write your name using Latin alphabet letters (a, b, c) to continue.',
+			'protectionEnfants.categorie' => 'A child\'s safety',
+			'protectionEnfants.prioritaireTitre' => 'Priority report',
+			'protectionEnfants.prioritaireDetail' => 'The management and the child protection officer read it right away. The teacher concerned and other families never see it. No message is sent to the family.',
+			'protectionEnfants.urgence' => 'In case of immediate danger, first call the emergency services of your country.',
+			'protectionEnfants.direction' => 'The management receives your report.',
+			'protectionEnfants.recuPar' => ({required Object nom}) => '${nom} and the management receive your report.',
+			'protectionEnfants.contact' => ({required Object courriel}) => 'Contact email: ${courriel}',
+			'protectionEnfants.erreurLecture' => 'The officer\'s name is not shown for now. Try again in a moment.',
 			'codeConduite.titre' => 'Teacher code of conduct',
 			'codeConduite.lien' => 'Read the code of conduct',
 			'codeConduite.intro' => 'These rules protect students, and they protect you. Read them, then accept.',
@@ -10681,6 +12396,8 @@ extension on TraductionsEn {
 			'accessibilite.demo.eleveAdulte' => 'Idriss, adult student',
 			'accessibilite.demo.etatAvant' => 'Before the session',
 			'accessibilite.demo.etatFenetre' => 'Just before the session, entry is open',
+			_ => null,
+		} ?? switch (path) {
 			'accessibilite.demo.etatPendant' => 'During the session',
 			'accessibilite.demo.etatApres' => 'After the session',
 			'accessibilite.accueil.salutation' => ({required Object prenom}) => 'Assalamu alaykum, ${prenom}.',
@@ -10739,6 +12456,8 @@ extension on TraductionsEn {
 			'accessibilite.monEspace.demandeEnvoyee' => 'Your request was sent to your guardian.',
 			'accessibilite.monEspace.demandeHorsLigne' => 'Nothing was sent: there is no network. Try again as soon as it is back.',
 			'accessibilite.monEspace.demandeNonConfirmee' => 'The sending was not confirmed. Tap the line to try again. Nothing changed in the meantime: your display stays the same.',
+			'accuse.titre' => 'To know before you start',
+			'accuse.compris' => 'I understand',
 			'consentement.titre' => 'Consents',
 			'consentement.texte.titre' => 'Parent visits',
 			'consentement.texte.quiResponsable' => 'The parents of the students present can briefly observe the session.',
@@ -10768,8 +12487,6 @@ extension on TraductionsEn {
 			'consentement.compte.chargement' => 'Loading your agreements',
 			'consentement.compte.erreur' => 'Your agreements cannot be displayed for now.',
 			'consentement.compte.horsLigne' => 'Your agreements will be displayed as soon as the network is back.',
-			_ => null,
-		} ?? switch (path) {
 			'consentement.compte.sansProfil' => 'No account signed in: sign in again to read your agreements.',
 			'consentement.compte.invite' => 'A new version to read: parent visits',
 			'consentement.compte.inviteAction' => 'Read',
@@ -11193,6 +12910,8 @@ extension on TraductionsEn {
 			'ficheEleve.mouvements.nature.correction' => 'Balance correction',
 			'ficheEleve.mouvements.nature.remboursement' => 'Refund',
 			'ficheEleve.mouvements.statut.enregistre' => 'Recorded',
+			_ => null,
+		} ?? switch (path) {
 			'ficheEleve.mouvements.statut.enConfirmation' => 'Being confirmed',
 			'ficheEleve.mouvements.voirRecu' => 'See the receipt',
 			'ficheEleve.mouvements.voirRecuSemantique' => ({required Object reference}) => 'See receipt ${reference}',
@@ -11209,6 +12928,39 @@ extension on TraductionsEn {
 			'ficheEleve.mouvements.indisponibleTitre' => 'Movements are not available yet',
 			'ficheEleve.mouvements.indisponiblePhrase' => ({required Object dePrenom}) => '${dePrenom}\'s top-ups and monthly fees will appear here once they are in service.',
 			'ficheEleve.mouvements.sansDonnees' => 'The movements of this profile could not be loaded',
+			'disponibilites.titreEnseignant' => 'When can you teach?',
+			'disponibilites.effet' => 'A teacher will choose from these times. The more you offer, the sooner the class starts.',
+			'disponibilites.fuseau' => ({required Object fuseau}) => 'Times shown in ${fuseau}',
+			'disponibilites.poseeUne' => '1 time offered',
+			'disponibilites.joursLongs.0' => 'Monday',
+			'disponibilites.joursLongs.1' => 'Tuesday',
+			'disponibilites.joursLongs.2' => 'Wednesday',
+			'disponibilites.joursLongs.3' => 'Thursday',
+			'disponibilites.joursLongs.4' => 'Friday',
+			'disponibilites.joursLongs.5' => 'Saturday',
+			'disponibilites.joursLongs.6' => 'Sunday',
+			'disponibilites.posees' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(nombre, one: '${nombre} time offered', other: '${nombre} times offered', ), 
+			'creneaux.titre' => 'Slots',
+			'creneaux.ongletHeures' => 'My times',
+			'creneaux.ongletEleves' => 'Waiting students',
+			'creneaux.aucunEleve' => 'No student waiting on your times',
+			'creneaux.aucunEleveDetail' => 'Offer other times to see more families.',
+			'creneaux.attendUnJour' => 'Waiting for 1 day',
+			'creneaux.attendAujourdhui' => 'Request submitted today',
+			'creneaux.niveau' => ({required Object niveau}) => 'Level ${niveau}',
+			'creneaux.prendre' => ({required Object jour, required Object heure}) => 'Take ${jour} at ${heure}:00',
+			'creneaux.priseEnCours' => 'Saving',
+			'creneaux.plafondDemander' => 'Ask to follow more students',
+			'creneaux.demandeTitre' => 'How many students can you follow?',
+			'creneaux.demandeMotif' => 'Why this change?',
+			'creneaux.demandeMotifRequis' => 'A reason is needed: it is what lets us decide.',
+			'creneaux.demandeEnvoyer' => 'Send the request',
+			'creneaux.demandeEnvoyee' => 'Request sent. The administration will decide.',
+			'creneaux.erreur' => ({required Object message}) => 'The operation did not go through: ${message}',
+			'creneaux.mesEleves' => ({required num nombre, required Object plafond}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(nombre, one: 'You follow ${nombre} student out of ${plafond} possible.', other: 'You follow ${nombre} students out of ${plafond} possible.', ), 
+			'creneaux.attendDepuis' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(jours, one: 'Waiting for ${jours} day', other: 'Waiting for ${jours} days', ), 
+			'creneaux.plafondAtteint' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(nombre, one: 'You already follow ${nombre} student, your maximum. A student taken is a lasting commitment, not a booking.', other: 'You already follow ${nombre} students, your maximum. A student taken is a lasting commitment, not a booking.', ), 
+			'creneaux.eleves' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(nombre, one: '${nombre} student', other: '${nombre} students', ), 
 			'priere.fajr' => 'Fajr',
 			'priere.dhuhr' => 'Dhuhr',
 			'priere.asr' => 'Asr',
@@ -11282,8 +13034,6 @@ extension on TraductionsEn {
 			'priere.direction.incoherenceAide' => 'Reporting only: nothing is corrected automatically.',
 			'priere.direction.incoherenceFuseauCompte' => ({required Object prenom, required Object detail}) => '${prenom}: the account time zone and the prayer location\'s differ (${detail}).',
 			'priere.direction.incoherenceFuseauLieu' => ({required Object prenom, required Object detail}) => '${prenom}: the prayer location\'s time zone does not match its longitude (${detail}).',
-			_ => null,
-		} ?? switch (path) {
 			'priere.direction.incoherencePays' => ({required Object prenom, required Object detail}) => '${prenom}: the account country (${detail}) does not match the prayer location.',
 			'priere.direction.incoherencePaysFuseau' => ({required Object prenom, required Object detail}) => '${prenom}: the account country and its time zone do not match (${detail}).',
 			'priere.direction.feuille.titre' => ({required Object dePrenom}) => '${dePrenom}\'s prayer location and times',
@@ -11674,6 +13424,8 @@ extension on TraductionsEn {
 			'recrutement.parcours.langues.aucune' => 'No language matches.',
 			'recrutement.parcours.langues.retour' => 'Back to the languages offered',
 			'recrutement.parcours.pays.autre' => 'Another country',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.pays.recherche' => 'Search for a country',
 			'recrutement.parcours.pays.rechercheAide' => 'Country name',
 			'recrutement.parcours.pays.aucun' => 'No country matches.',
@@ -11796,8 +13548,6 @@ extension on TraductionsEn {
 			'recrutement.parcours.q.riwayat.options.qunbul.libelle' => 'Qunbul',
 			'recrutement.parcours.q.riwayat.options.qunbul.description' => 'Transmitted from Ibn Kathir',
 			'recrutement.parcours.q.riwayat.options.ad_duri_abi_amr.libelle' => 'Ad-Duri (Abu Amr)',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.q.riwayat.options.ad_duri_abi_amr.description' => 'Transmitted from Abu Amr',
 			'recrutement.parcours.q.riwayat.options.as_susi.libelle' => 'As-Susi',
 			'recrutement.parcours.q.riwayat.options.as_susi.description' => 'Transmitted from Abu Amr',
@@ -12071,6 +13821,75 @@ extension on TraductionsEn {
 			'dossiers.accesKyc.refus.genreDifferent' => 'This document is reserved for an administrator of the same gender as the applicant.',
 			'dossiers.accesKyc.refus.adminSansGenre' => 'Your gender is not recorded: no document can be opened. Ask the management to record it.',
 			'dossiers.accesKyc.refus.profilNonAutorise' => 'Your profile cannot view ID documents.',
+			'agent.titre' => 'Agent entry',
+			'agent.intro' => 'This page opens the app in read-only mode, with the token provided by the academy.',
+			'agent.jeton' => 'Observation token',
+			'agent.jetonExemple' => 'rag_...',
+			'agent.entrer' => 'Open the app',
+			'agent.ouverture' => 'Opening',
+			'agent.refus' => 'Token refused',
+			'agent.refusDetail' => 'This token is unknown, revoked or expired. Ask the academy for a new one.',
+			'agent.indisponible' => 'The opening did not complete',
+			'agent.indisponibleDetail' => 'The request may not have reached Rewayah. Try again in a moment.',
+			'agent.reessayer' => 'Try again',
+			'agent.bandeau' => 'Observation, read-only',
+			'agent.bandeauMasque' => 'First names hidden',
+			'agent.bandeauExpire' => ({required Object heure}) => 'until ${heure}',
+			'vide.aucunCours' => 'No class today',
+			'vide.aucunCoursDetail' => 'Your next class will appear here.',
+			'vide.aucunCreneau' => 'No slot available for now',
+			'vide.aucunRapport' => 'No handover notebook yet',
+			'vide.aucunAppareil' => 'No paired device',
+			'pin.titre' => 'Enter your code',
+			'pin.erreur' => 'This code does not match',
+			'pin.effacer' => 'Clear',
+			'choix.autre' => 'Other',
+			'choix.autreInvite' => 'Specify',
+			'choix.diminuer' => 'Decrease by 1',
+			'choix.augmenter' => 'Increase by 1',
+			'choix.selectionMultiple' => 'Several answers possible',
+			'choix.exemple' => ({required Object texte}) => 'For example: ${texte}',
+			'lieu.titre' => 'Your city',
+			'lieu.consigneTuteur' => 'Choose the city where you live. It is used to show class times in your time. Only you, your household and the management see it.',
+			'lieu.consigneEnseignant' => 'Choose the city where you teach. It is used to show your class times in your time, and the management checks it. Only you and the management see it.',
+			'lieu.champ' => 'Search for your city',
+			'lieu.aide' => 'The first letters of the name are enough, with or without accents.',
+			'lieu.propositions' => 'Cities in this device\'s time',
+			'lieu.resultats' => 'Cities found',
+			'lieu.credit' => 'City list: GeoNames (geonames.org), CC BY 4.0 licence.',
+			'lieu.aucune' => ({required Object texte}) => 'No city starts with "${texte}". Try the first letters of the name, without accents.',
+			'lieu.chargeEchec' => 'The city list did not load',
+			'lieu.chargeEchecPhrase' => 'The list could not be displayed. Try again in a moment.',
+			'lieu.choisie' => ({required Object ville, required Object pays}) => 'City chosen: ${ville}, ${pays}.',
+			'lieu.enregistrer' => 'Save my city',
+			'lieu.plusTard' => 'Later',
+			'lieu.plusTardPhrase' => 'You can still postpone this step. Until it is done, your class times are shown in this device\'s time.',
+			'lieu.obligatoire' => 'This step is now needed to show your class times in your time.',
+			'lieu.echec' => 'Your city is not confirmed. Try again in a moment.',
+			'lieu.disponibilitesTitre' => 'Review your availability',
+			'lieu.disponibilitesPhrase' => 'Your city changed time zone. Your availability keeps its exact times, but is now shown in your new time: review it.',
+			'lieu.disponibilitesLien' => 'Review my availability',
+			'lieu.heureAppareil' => 'This device\'s time',
+			'lieu.heureAppareilVoyage' => ({required Object ville}) => 'This device\'s time: it differs from your city\'s (${ville}).',
+			'lieu.colonneVille' => 'City',
+			'lieu.villeAbsente' => 'City not chosen',
+			'lieu.verifiee' => 'City verified',
+			'lieu.nonVerifiee' => 'City to verify',
+			'lieu.verifier' => ({required Object deNom}) => 'Verify ${deNom}\'s city',
+			'lieu.villeVerifiee' => ({required Object deNom}) => '${deNom}\'s city is verified.',
+			'lieu.verifierEchec' => 'The verification is not confirmed. Try again in a moment.',
+			'lieu.incoherencesTitre' => 'Cities to verify',
+			'lieu.incSansVille' => 'has not chosen their city yet',
+			'lieu.incFuseauDifferent' => 'their recorded time zone does not match their city',
+			'lieu.incPaysDifferent' => 'their recorded country does not match their city\'s country',
+			'lieu.incPaysFuseau' => 'their recorded country and time zone do not go together',
+			'lieu.villeLigne' => ({required Object ville, required Object pays}) => '${ville} (${pays})',
+			'lieu.incoherencesCompte' => ({required Object n}) => '${n} to verify',
+			'lieu.changementsTitre' => 'Upcoming time changes',
+			'lieu.changementsLigne' => ({required Object date, required Object ville, required Object familles, required Object enseignants, required Object avant, required Object apres}) => '${date}, ${ville}: families: ${familles}; teachers: ${enseignants}; from ${avant} to ${apres}.',
+			'lieu.changementsAucun' => ({required Object jours}) => 'No time change in the next ${jours} days for families and teachers.',
+			'lieu.changementsErreur' => 'The list of time changes did not load. Reload the page to read it again.',
+			'lieu.incoherencesVide' => 'No city to verify for now.',
 			'parcours.titre' => ({required Object dePrenom}) => '${dePrenom}\'s journey',
 			'parcours.intro' => 'A few questions to personalise your journey. You will then only see the schedules and options that fit your situation.',
 			'parcours.reprendre' => 'Resume',
@@ -12119,6 +13938,8 @@ extension on TraductionsEn {
 			'parcours.objectifMemoriser' => 'Memorise',
 			'parcours.objectifIndecis' => 'I don\'t know yet',
 			'parcours.momentsQuestion' => 'Which times of day suit you best?',
+			_ => null,
+		} ?? switch (path) {
 			'parcours.momentsRaison' => 'This answer creates no schedule and reserves nothing. It is only used to highlight, among the schedules the academy already offers, those that suit you best. You will see all the others just below.',
 			'parcours.momentMatin' => 'Mornings',
 			'parcours.momentApresMidi' => 'Afternoons',
@@ -12161,6 +13982,7 @@ extension on TraductionsEn {
 			'parcours.offreRecurrence' => ({required num seances, required Object duree}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(seances, one: '${seances} session per week, ${duree} min', other: '${seances} sessions per week, ${duree} min', ), 
 			'parcours.offreRecurrencePause' => ({required num seances, required Object duree, required Object pause}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(seances, one: '${seances} session per week, ${duree} min including ${pause} min of break', other: '${seances} sessions per week, ${duree} min including ${pause} min of break', ), 
 			'parcours.etatClasseEnFormationDetail' => ({required num minimum}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(minimum, one: 'A class starts once there is ${minimum} student. We will let you know as soon as it is confirmed.', other: 'A class starts once there are ${minimum} students. We will let you know as soon as it is confirmed.', ), 
+			'avatar.sansPhoto' => 'No photo yet',
 			'nav.eleve.accueil' => 'Home',
 			'nav.eleve.maClasse' => 'My class',
 			'nav.eleve.coran' => 'Quran',
@@ -12310,8 +14132,6 @@ extension on TraductionsEn {
 			'compte.doubleVerification.feuille.erreur' => 'The code is not confirmed: the request may not have reached Rewayah. Try again in a moment.',
 			'compte.doubleVerification.feuille.horsLigne' => 'Nothing was sent: there is no network. Try again as soon as it is back.',
 			'compte.identifiant' => 'Identifier',
-			_ => null,
-		} ?? switch (path) {
 			'compte.nonDisponible' => 'Not available',
 			'compte.contact' => 'Contact',
 			'compte.langue' => 'Language',
@@ -12632,6 +14452,8 @@ extension on TraductionsEn {
 			'notifications.evenements.eleveRetireClasse' => 'A student leaves one of your classes.',
 			'notifications.evenements.creneauChange' => 'The class schedule has changed.',
 			'notifications.evenements.changementHeureUn' => ({required Object date, required Object cours, required Object jour, required Object avant, required Object apres}) => 'From ${date}, ${cours} on ${jour} moves from ${avant} to ${apres}.',
+			_ => null,
+		} ?? switch (path) {
 			'notifications.evenements.changementHeurePlusieurs' => ({required Object date, required Object cours, required Object liste}) => 'From ${date}, the time ${cours} changes: ${liste}.',
 			'notifications.evenements.changementHeureUnJour' => ({required Object date, required Object cours, required Object jourAvant, required Object avant, required Object jourApres, required Object apres}) => 'From ${date}, ${cours} moves from ${jourAvant} ${avant} to ${jourApres} ${apres}.',
 			'notifications.evenements.changementHeureLigneJour' => ({required Object jourAvant, required Object avant, required Object jourApres, required Object apres}) => 'from ${jourAvant} ${avant} to ${jourApres} ${apres}',
@@ -12824,8 +14646,6 @@ extension on TraductionsEn {
 			'tuteur.accueil.financesPhrase' => 'Balance, next debit and what remains to be funded.',
 			'tuteur.accueil.foyerVideTitre' => 'No student profile yet',
 			'tuteur.accueil.foyerVidePhrase' => 'Add a student profile to choose a class and follow their sessions.',
-			_ => null,
-		} ?? switch (path) {
 			'tuteur.accueil.ouvrirEspaceEleve' => 'Open my student space',
 			'tuteur.accueil.autreAppareilFeuille.phrase' => 'Your account follows you on all your devices. On the other device, open the app at this address, then sign in with the same sign-in address.',
 			'tuteur.accueil.autreAppareilFeuille.aucunCode' => 'No code to enter: it is your own account.',
@@ -13146,6 +14966,8 @@ extension on TraductionsEn {
 			'enseignant.signalement.envoyer' => 'Send the report',
 			'enseignant.signalement.demoSucces' => 'Demo: this report is ready, but nothing was sent.',
 			'enseignant.signalement.demoSuccesDetail' => 'In the connected app, it will go to the academy team.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.signalement.fermer' => 'Close',
 			'enseignant.demo.titre' => 'Teacher demo',
 			'enseignant.demo.mention' => 'Fictitious data, nothing is sent.',
@@ -13338,8 +15160,6 @@ extension on TraductionsEn {
 			'enseignant.salle.bibliotheque' => 'Choose a surah',
 			'enseignant.salle.presenterSourate' => ({required Object deSourate}) => 'Present the start of ${deSourate}',
 			'enseignant.salle.sourateDetail' => ({required Object numero, required Object versets}) => 'Surah ${numero} · ${versets} verses',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.salle.souratesIndisponibles' => 'The surah list could not be loaded',
 			'enseignant.salle.souratesIndisponiblesDetail' => 'What your class sees has not changed. Try again.',
 			'enseignant.salle.pageIndisponible' => 'This page could not be loaded',
@@ -13660,6 +15480,8 @@ extension on TraductionsEn {
 			'enseignant.revue.aucuneAnomalie' => 'Nothing needs your attention.',
 			'enseignant.revue.erreur' => 'The review could not be loaded.',
 			'enseignant.revue.erreurDetail' => 'This class may not be yours, or loading failed.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.revue.pasDeDecision' => 'You report, the academy decides: a transfer and a reorientation are not decided from here.',
 			'enseignant.revue.typeGate' => 'Upcoming stage',
 			'enseignant.revue.typeCorridor' => 'Student outside the corridor',
@@ -13731,6 +15553,17 @@ extension on TraductionsEn {
 			'enseignant.revenus.mention' => 'This amount is an estimate, not a final payment. The statement closed by the academy is authoritative.',
 			'enseignant.revenus.vide' => 'No hours taught this month',
 			'enseignant.revenus.videDetail' => 'The estimate will appear after your first session taught of the month.',
+			'aConstruire.titre' => 'Screen to build',
+			'aConstruire.detail' => 'This screen arrives at step 3.',
+			'galerie.titre' => 'Component gallery',
+			'galerie.avertissement' => 'Development test bench. Absent from production versions.',
+			'galerie.paires' => 'Colour pairs',
+			'galerie.elevation' => 'Elevation and radii',
+			'galerie.typographie' => 'Type scales',
+			'galerie.polices' => 'Fonts',
+			'galerie.composants' => 'Shared components',
+			'galerie.modeEnfant' => 'Guided interface',
+			'galerie.modeStandard' => 'Standard mode',
 			'adulte.nav.accueil' => 'Home',
 			'adulte.nav.maClasse' => 'My class',
 			'adulte.nav.coran' => 'Quran',
@@ -13852,8 +15685,6 @@ extension on TraductionsEn {
 			'adulte.paiements.beneficiaires' => 'Beneficiaries',
 			'adulte.paiements.recharger' => 'Top up',
 			'adulte.paiements.recapitulatif' => ({required Object valeur}) => 'Household summary: ${valeur}. Each balance stays that of its beneficiary.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.paiements.bientotEpuise' => 'Almost used up',
 			'adulte.paiements.inactif' => 'Inactive',
 			'adulte.paiements.historique' => 'Payment history',
@@ -14127,6 +15958,99 @@ extension on TraductionsEn {
 			'adulte.finances.mouvementsErreurTitre' => 'Your movements cannot be loaded',
 			'adulte.finances.mouvementsIndisponiblePhrase' => 'Your top-ups and monthly fees will appear here once they are in service.',
 			'adulte.finances.mouvementsVidePhrase' => 'No top-up or monthly fee is recorded yet for your profile. Movements will appear here after the first payment.',
+			'formulaire.motif.manque' => 'The reason is missing: choose one from the list, or tap "Other" and write it.',
+			'formulaire.motif.autreVide' => 'You chose "Other": write the reason in a few words.',
+			'formulaire.motif.autreChamp' => 'The reason, in a few words',
+			'formulaire.motif.manqueSaisi' => 'The reason is missing: write it in a few words.',
+			'formulaire.entier.bornes' => ({required Object min, required Object max}) => 'Between ${min} and ${max}',
+			'formulaire.entier.horsBornes' => ({required Object min, required Object max}) => 'Choose a value between ${min} and ${max}, or one of the values offered.',
+			'formulaire.obligatoire' => 'Required field',
+			'formulaire.champObligatoire' => ({required Object champ}) => '${champ}, required field',
+			'formulaire.legendeObligatoire' => 'Fields marked with a dot are required.',
+			'formulaire.manqueAccord' => 'Your agreement is missing: tick the box to continue.',
+			'motifs.ajoutEleve.diagnostic' => 'Placement after diagnosis',
+			'motifs.ajoutEleve.attente' => 'Leaving the waiting list',
+			'motifs.ajoutEleve.transfert' => 'Transfer from another class',
+			'motifs.ajoutEleve.famille' => 'Family request',
+			'motifs.retraitEleve.famille' => 'Family request',
+			'motifs.retraitEleve.transfert' => 'Transfer to another class',
+			'motifs.retraitEleve.ecartNiveau' => 'Lasting level gap',
+			'motifs.retraitEleve.finInscription' => 'End of registration',
+			'motifs.clotureClasse.finCycle' => 'End of the class cycle',
+			'motifs.clotureClasse.remplissage' => 'Low enrolment',
+			'motifs.clotureClasse.transfert' => 'Students transferred to other classes',
+			'motifs.clotureClasse.remplacement' => 'Teacher absent with no replacement',
+			'motifs.clotureClasse.parErreur' => 'Class created by mistake',
+			'motifs.refusDemande.aucunEnseignant' => 'No teacher available at this time',
+			'motifs.refusDemande.exceptionnel' => 'Changing teacher stays exceptional',
+			'motifs.refusDemande.reglePlateforme' => 'The platform\'s rule applies',
+			'motifs.refusDemande.plafond' => 'Student limit already reached',
+			'motifs.refusDemande.insuffisant' => 'Not enough information to decide',
+			'motifs.poserRegle.famille' => 'Family request granted',
+			'motifs.poserRegle.pedagogique' => 'Student\'s teaching need',
+			'motifs.poserRegle.age' => 'Length suited to age',
+			'motifs.poserRegle.charge' => 'Teacher\'s workload',
+			'motifs.poserRegle.parErreur' => 'Correction of a data entry error',
+			'motifs.cloreSurcharge.termine' => 'One-off need ended',
+			'motifs.cloreSurcharge.famille' => 'Family request',
+			'motifs.cloreSurcharge.changement' => 'Change of class or teacher',
+			_ => null,
+		} ?? switch (path) {
+			'motifs.cloreSurcharge.parErreur' => 'Rule set by mistake',
+			'motifs.annulationEvaluation.absenceEleve' => 'Student\'s absence',
+			'motifs.annulationEvaluation.absenceEnseignant' => 'Teacher\'s absence',
+			'motifs.annulationEvaluation.pasPret' => 'Student not ready yet',
+			'motifs.annulationEvaluation.report' => 'Postponed to another date',
+			'motifs.annulationEvaluation.parErreur' => 'Assessment scheduled by mistake',
+			'motifs.changementNiveau.reussie' => 'Assessment passed',
+			'motifs.changementNiveau.stable' => 'Unit achieved and stable',
+			'motifs.changementNiveau.enseignant' => 'Teacher\'s decision',
+			'motifs.changementNiveau.reevaluation' => 'Reassessment requested by the family',
+			'motifs.changementNiveau.placement' => 'Correction of the placement level',
+			'motifs.blocage.prerequis' => 'Prerequisites not yet stable',
+			'motifs.blocage.renforcement' => 'Reinforcement needed before moving on',
+			'motifs.blocage.aRevoir' => 'Assessment to redo',
+			'motifs.blocage.absences' => 'Repeated absences',
+			'motifs.derogation.aucuneClasse' => 'No suitable class',
+			'motifs.derogation.avance' => 'Faster progress than the class',
+			'motifs.derogation.enseignant' => 'Teacher\'s decision',
+			'motifs.derogation.direction' => 'Agreement of the teaching management',
+			'motifs.cloreException.stables' => 'Prerequisites now stable',
+			'motifs.cloreException.classe' => 'Student placed in a suitable class',
+			'motifs.cloreException.inutile' => 'The exception is no longer needed',
+			'motifs.cloreException.parErreur' => 'Exception set by mistake',
+			'motifs.placement.debutant' => 'Beginner: foundation journey',
+			'motifs.placement.lecture' => 'Level observed at reading',
+			'motifs.placement.declaratif' => 'Declared pre-diagnosis confirmed',
+			'motifs.placement.procheNiveau' => 'Class closest to the assessed level',
+			'motifs.placement.provisoire' => 'Provisional placement, to reassess',
+			'motifs.refusDossier.illisible' => 'ID document unreadable',
+			'motifs.refusDossier.expiree' => 'ID document expired',
+			'motifs.refusDossier.nom' => 'Name different from the account\'s',
+			'motifs.refusDossier.nonTransmise' => 'Required document not submitted',
+			'motifs.refusDossier.accord' => 'Required agreement missing',
+			'motifs.presenceCorrigee.nonDetectee' => 'Attendance not detected by the app',
+			'motifs.presenceCorrigee.reseau' => 'Network cut during the class',
+			'motifs.presenceCorrigee.retard' => 'Arrived late',
+			'motifs.presenceCorrigee.appareil' => 'Connected from another device',
+			'motifs.presenceCorrigee.parErreur' => 'Data entry error',
+			'motifs.presenceExcusee.prevenue' => 'Absence notified in advance',
+			'motifs.presenceExcusee.reseau' => 'Network cut reported',
+			'motifs.presenceExcusee.conge' => 'Public holiday or leave',
+			'motifs.presenceExcusee.familiale' => 'Family reason',
+			'motifs.signalement.pedagogique.renforcement' => 'Reinforcement is advised on the current lesson.',
+			'motifs.signalement.pedagogique.revision' => 'A little revision at home will help before the next class.',
+			'motifs.signalement.pedagogique.regularite' => 'Regular work at home will make the difference.',
+			'motifs.signalement.pedagogique.echange' => 'A conversation with the academy is proposed.',
+			'motifs.signalement.presence.absences' => 'Several recent absences: regularity helps progress.',
+			'motifs.signalement.presence.retards' => 'Late arrivals in the latest sessions.',
+			'motifs.signalement.presence.prevenir' => 'Please let the academy know in case of absence.',
+			'motifs.signalement.technique.son' => 'Sound or connection disrupted the class.',
+			'motifs.signalement.technique.essai' => 'A device test before the class is advised.',
+			'motifs.signalement.technique.camera' => 'The camera or microphone did not work.',
+			'motifs.signalement.changement.classe' => 'A change of class is being considered.',
+			'motifs.signalement.changement.niveau' => 'The class level no longer seems suitable.',
+			'motifs.signalement.changement.suite' => 'The academy will get back to you to discuss it.',
 			'suiviFamille.titre' => 'Tracking of requests',
 			'suiviFamille.contexte' => 'Each request moves forward step by step. You are notified at each stage.',
 			'suiviFamille.carteTitre' => ({required Object dePrenom}) => '${dePrenom}\'s request',
@@ -14256,6 +16180,196 @@ extension on TraductionsEn {
 			'suiviDemandes.changement.retour' => 'Back to the tracking of requests',
 			'suiviDemandes.changement.introuvable' => 'This class change no longer needs to be shown',
 			'suiviDemandes.changement.introuvableDetail' => 'Go back to the tracking to see where your requests stand.',
+			'alertes.titre' => 'Alerts',
+			'alertes.gravite.urgent' => 'Urgent',
+			'alertes.gravite.important' => 'Important',
+			'alertes.gravite.info' => 'For information',
+			'alertes.creeeLe' => ({required Object date, required Object heure}) => 'On ${date} at ${heure}',
+			'alertes.ligne' => ({required Object gravite, required Object titre, required Object date, required Object heure}) => '${gravite}, ${titre}, on ${date} at ${heure}',
+			'alertes.bandeauUne' => ({required Object titre}) => 'Urgent alert: ${titre}',
+			'alertes.bandeauPlusieurs' => ({required Object nombre, required Object titre}) => '${nombre} urgent alerts. The most recent: ${titre}',
+			'alertes.bandeauCourtUne' => 'Urgent alert to handle',
+			'alertes.bandeauCourtPlusieurs' => ({required Object nombre}) => '${nombre} urgent alerts to handle',
+			'alertes.voirTout' => 'See all alerts',
+			'alertes.vide' => 'No alert in progress.',
+			'alertes.videTitre' => 'No alert in progress',
+			'alertes.videPhrase' => 'An urgent alert will appear here, at the top, as soon as it arrives.',
+			'alertes.indisponibleTitre' => 'Alerts are not available yet',
+			'alertes.indisponiblePhrase' => 'Urgent alerts will appear here, at the top, as soon as their source is open.',
+			'alertes.erreurTitre' => 'The alerts could not be loaded',
+			'alertes.sansDonnees' => 'The alerts could not be loaded',
+			'alertes.cloche' => 'Alerts',
+			'alertes.clocheUneUrgente' => 'Alerts, one urgent',
+			'alertes.clocheUrgentes' => ({required Object nombre}) => 'Alerts, ${nombre} urgent',
+			'alertes.traitement.titre' => 'Handle the report',
+			'alertes.traitement.categorie' => 'Category',
+			'alertes.traitement.eleve' => 'Student',
+			'alertes.traitement.recu' => 'Received',
+			'alertes.traitement.statut' => 'Where it stands',
+			'alertes.traitement.statutValeur.aExaminer' => 'To review',
+			'alertes.traitement.statutValeur.enExamen' => 'Under review',
+			'alertes.traitement.statutValeur.transmis' => 'Message passed on',
+			'alertes.traitement.note' => 'Teacher\'s note',
+			'alertes.traitement.noteAide' => 'Read by the management only.',
+			'alertes.traitement.securitePhrase' => 'Neither the family nor the teacher reads this report. It is not passed on.',
+			'alertes.traitement.message' => 'Message for the family',
+			'alertes.traitement.messageAide' => ({required Object cible}) => 'Written for ${cible}. The teacher\'s note is never sent.',
+			'alertes.traitement.messageManque' => 'Write the message for the family before passing it on.',
+			'alertes.traitement.cibleTuteur' => 'the student\'s guardian',
+			'alertes.traitement.cibleAdulte' => 'the student',
+			'alertes.traitement.pasEncoreAffiche' => 'No family screen shows this message yet.',
+			'alertes.traitement.motif' => 'Reason for closing',
+			'alertes.traitement.motifRequisAide' => 'Required for this report. Read by the management only.',
+			'alertes.traitement.motifFacultatifAide' => 'Optional. Read by the management only.',
+			'alertes.traitement.motifManque' => 'Write the reason for closing.',
+			'alertes.traitement.examiner' => 'Review',
+			'alertes.traitement.transmettre' => 'Pass on',
+			'alertes.traitement.clore' => 'Close',
+			'alertes.traitement.transmettreQuestionTuteur' => 'Pass this message on to the student\'s guardian?',
+			'alertes.traitement.transmettreQuestionAdulte' => 'Pass this message on to the student?',
+			'alertes.traitement.transmettreConsequence' => 'A message passed on cannot be taken back. No family screen shows it yet.',
+			'alertes.traitement.transmettreOui' => 'Yes, pass on',
+			'alertes.traitement.cloreQuestion' => 'Close this report?',
+			'alertes.traitement.cloreConsequence' => 'It leaves the alerts. A closed report cannot be reopened.',
+			'alertes.traitement.cloreOui' => 'Yes, close',
+			'alertes.traitement.faitExamenTitre' => 'Report under review',
+			'alertes.traitement.faitExamenPhrase' => 'It stays in the alerts until it is closed.',
+			'alertes.traitement.faitTransmisTitre' => 'Message saved',
+			'alertes.traitement.faitTransmisPhrase' => ({required Object cible}) => 'Saved for ${cible}. No family screen shows it yet.',
+			'alertes.traitement.faitClosTitre' => 'Report closed',
+			'alertes.traitement.faitClosPhrase' => 'It has left the alerts.',
+			'alertes.traitement.refuseTitre' => 'This report has changed',
+			'alertes.traitement.refusePhrase' => 'The alerts have been reloaded.',
+			'alertes.traitement.erreurTitre' => 'The action did not go through',
+			'alertes.traitement.erreurPhrase' => 'Try again in a moment.',
+			'alertes.traitement.indisponibleTitre' => 'Handling unavailable',
+			'alertes.traitement.indisponiblePhrase' => 'The handling of reports is not open yet.',
+			'alertes.traitement.horsLigne' => 'Actions return with the connection.',
+			'argent.transparence.titre' => 'Our prices, in full transparency',
+			'argent.transparence.lien' => 'Our prices, in full transparency',
+			'argent.transparence.intro' => 'Here is what becomes of each student payment, item by item, in percentages.',
+			'argent.transparence.repartitionTitre' => 'Where each payment goes',
+			'argent.transparence.version' => ({required Object date}) => 'Estimate for the prices in force from ${date}.',
+			'argent.transparence.part' => ({required Object valeur}) => '${valeur}%',
+			'argent.transparence.virgule' => '.',
+			'argent.transparence.total' => 'Total',
+			'argent.transparence.postes.enseignant' => 'The class teacher',
+			'argent.transparence.postes.fraisCarteChange' => 'Card payment and currency exchange fees',
+			'argent.transparence.postes.fraisEnvoiPaie' => 'Fees for sending pay to teachers',
+			'argent.transparence.postes.visioconference' => 'Video conferencing',
+			'argent.transparence.postes.applicationHebergement' => 'Application and hosting',
+			'argent.transparence.postes.emails' => 'Emails',
+			'argent.transparence.postes.stockage' => 'File storage',
+			'argent.transparence.postes.comptabilite' => 'Accounting',
+			'argent.transparence.postes.developpement' => 'Application development',
+			'argent.transparence.postes.administration' => 'Academy administration',
+			'argent.transparence.postes.impotSocietes' => 'Corporate tax',
+			'argent.transparence.postes.benefice' => 'Academy profit',
+			'argent.transparence.posteSemantique' => ({required Object poste, required Object part}) => '${poste}: ${part} of the student\'s payment',
+			'argent.transparence.estimation' => ({required Object enfants, required Object adultes}) => 'These percentages are an estimate, calculated for ${enfants} children and ${adultes} adults, each at full price and present at every session. They are reviewed with each new version of the prices.',
+			'argent.transparence.magasinsTitre' => 'Why the app is not on the App Store or Google Play',
+			'argent.transparence.magasinsPhrase' => 'Those stores take 15 to 30% of every payment. The academy cannot bear these fees without raising its prices. Payment is therefore made on the web.',
+			'argent.transparence.taxesTitre' => 'Taxes',
+			'argent.transparence.taxesPhrase' => 'Our prices exclude tax. Your country\'s tax, when due, is added to the payment and goes entirely to the State: it is not part of this breakdown.',
+			'argent.transparence.hausseTitre' => 'Prices may rise',
+			'argent.transparence.haussePhrase' => 'Our prices depend on the cost of the services we use and on inflation. If these costs rise, the academy will have to adjust its prices. It will warn you before the next payment, and you may stop if the new price does not suit you.',
+			'argent.transparence.montantsTitre' => 'The exact amounts',
+			'argent.transparence.montantsPhrase' => 'This page gives percentages only: amounts change every month with the number of students. Anyone who wants the exact amounts can ask the administration.',
+			'argent.transparence.indisponibleTitre' => 'The price breakdown cannot be read',
+			'argent.transparence.indisponiblePhrase' => 'It will be shown here as soon as it is available.',
+			'argent.transparence.erreurTitre' => 'The price breakdown could not be read',
+			'argent.transparence.sansDonnees' => 'The price breakdown could not be loaded',
+			'argent.transparence.videTitre' => 'The price breakdown is not published yet',
+			'argent.transparence.videPhrase' => 'It will be published with the next version of the prices.',
+			'argent.etat.finance' => 'Funded',
+			'argent.etat.essai' => 'Trial',
+			'argent.etat.essaiCompte' => ({required Object n, required Object max}) => 'Trial: ${n}/${max}',
+			'argent.etat.manque' => 'To fund',
+			'argent.etat.enConfirmation' => 'Being confirmed',
+			'argent.etat.expire' => 'Access expired',
+			'argent.etat.pause' => 'Paused',
+			'argent.etat.aRegulariser' => 'To settle',
+			'argent.periode.jusquau' => ({required Object date}) => 'Funded until ${date}',
+			'argent.periode.aucune' => 'No funded period',
+			'argent.allocation.credite' => 'Credited',
+			'argent.moyen.webStripe' => 'Bank card',
+			'argent.moyen.webStripeDetail' => 'Payment on the web. Nothing is charged before you confirm.',
+			'argent.soldes.total' => 'Total balances (read-only)',
+			'argent.soldes.totalDetail' => 'A read-only view: each balance stays that of its profile.',
+			'argent.soldes.aPayer' => 'To pay this month',
+			'argent.soldes.profilsFinances' => 'Funded profiles',
+			'argent.soldes.profilsFinancesValeur' => ({required Object n, required Object total}) => '${n} of ${total}',
+			'argent.soldes.paiements' => 'Payments this month',
+			'argent.acces.enfantTitre' => 'Access to this class temporarily unavailable',
+			'argent.acces.enfantMessage' => 'Your guardian can manage access.',
+			'argent.acces.regulariserTitre' => 'Access to settle',
+			'argent.acces.regulariserManque' => ({required Object montant, required Object mois}) => '${montant} is missing to fund ${mois}.',
+			'argent.acces.regulariserManqueNouvellePeriode' => ({required Object montant}) => '${montant} is missing to fund the new period.',
+			'argent.acces.regulariserSansManque' => 'The new period is not funded yet.',
+			'argent.acces.placeConservee' => ({required Object date}) => 'Place kept until ${date}.',
+			'argent.acces.seancesFermeesTitre' => 'New sessions unavailable',
+			'argent.acces.seancesFermees' => ({required Object prenom}) => '${prenom} cannot join a new session for now. Their space stays open to see their profile, their history and to pay.',
+			'argent.acces.adulteSeancesFermees' => 'You cannot join a new session for now. Your space stays open to see your profile, your history and to pay.',
+			'argent.acces.suspenduTitre' => 'Access suspended',
+			'argent.acces.suspenduTuteur' => ({required Object prenom, required Object date}) => 'The place reserved for ${prenom} was released on ${date}. Their space stays open to see their profile, their history and to pay.',
+			'argent.acces.suspenduTuteurSansDate' => ({required Object prenom}) => 'The place reserved for ${prenom} was released. Their space stays open to see their profile, their history and to pay.',
+			'argent.acces.suspenduAdulte' => ({required Object date}) => 'Your place was released on ${date}. Your space stays open to see your profile, your history and to pay.',
+			'argent.acces.suspenduAdulteSansDate' => 'Your place was released. Your space stays open to see your profile, your history and to pay.',
+			'argent.acces.reactiveTitre' => 'Access reactivated',
+			'argent.acces.reactiveTuteur' => ({required Object prenom, required Object date}) => '${prenom} can join their sessions again since ${date}.',
+			'argent.acces.reactiveTuteurSansDate' => ({required Object prenom}) => '${prenom} can join their sessions again.',
+			'argent.acces.reactiveAdulte' => ({required Object date}) => 'You can join your sessions again since ${date}.',
+			'argent.acces.reactiveAdulteSansDate' => 'You can join your sessions again.',
+			'argent.acces.suspenduPaiementTuteur' => ({required Object prenom}) => 'This month\'s payment has not been received. ${prenom} can no longer join their sessions. Their space stays open to see their profile, their history and to pay.',
+			'argent.acces.suspenduPaiementAdulte' => 'This month\'s payment has not been received. You can no longer join your sessions. Your space stays open to see your profile, your history and to pay.',
+			'argent.acces.pastilleSuspendu' => 'Suspended',
+			'argent.acces.pastilleReactive' => 'Reactivated',
+			'identiteProfil.age' => ({required Object n}) => '${n} years old',
+			'identiteProfil.classe' => ({required Object classe}) => 'Class ${classe}',
+			'identiteProfil.ageEtClasse' => ({required Object age, required Object classe}) => '${age} · ${classe}',
+			'identiteProfil.lecteurEnfant' => ({required Object prenom}) => '${prenom}, child profile',
+			'identiteProfil.lecteurAdulte' => ({required Object prenom}) => '${prenom}, adult profile',
+			'identiteProfil.lecteurAvecClasse' => ({required Object profil, required Object classe}) => '${profil}, ${classe}',
+			'presentationTuteur.titre' => 'Display requests',
+			'presentationTuteur.contexte' => 'A child in your household is asking for the standard display. You decide.',
+			'presentationTuteur.ligne' => ({required Object prenom}) => '${prenom} is asking for the standard display.',
+			'presentationTuteur.demandeeLe' => ({required Object date, required Object heure}) => 'Requested on ${date} at ${heure}',
+			'presentationTuteur.accepter' => 'Accept',
+			'presentationTuteur.refuser' => 'Decline',
+			'presentationTuteur.acceptee' => ({required Object prenom}) => 'Standard display turned on for ${prenom}.',
+			'presentationTuteur.refusee' => ({required Object dePrenom}) => '${dePrenom}\'s request declined.',
+			'presentationTuteur.echecReponse' => 'Your answer could not be confirmed. The request is still pending: try again.',
+			'presentationTuteur.vide' => 'No display request pending.',
+			'presentationTuteur.erreur' => 'The requests could not be loaded. Try again.',
+			'presentationTuteur.sansDonnees' => 'the display requests',
+			'presentationTuteur.accueil.titre' => 'Display request',
+			'presentationTuteur.accueil.voir' => 'Answer',
+			'presentationTuteur.notification' => ({required Object prenom}) => '${prenom} is asking for the standard display',
+			'reprisesAdmin.onglet' => 'Takeovers',
+			'reprisesAdmin.titre' => 'Household takeovers',
+			'reprisesAdmin.sousTitre' => 'Requests from a second adult to become the household\'s account holder. The administration decides.',
+			'reprisesAdmin.demandeur' => 'Requester',
+			'reprisesAdmin.foyer' => 'Household',
+			'reprisesAdmin.deposeeLe' => 'Submitted on',
+			'reprisesAdmin.etat.aExaminer' => 'To review',
+			'reprisesAdmin.etat.refuseeParTitulaire' => 'Declined by the account holder',
+			'reprisesAdmin.examenLe' => ({required Object date}) => 'Review possible from ${date}.',
+			'reprisesAdmin.refuseeInfo' => 'The account holder declined this request. No decision is expected.',
+			'reprisesAdmin.valider' => 'Approve the takeover',
+			'reprisesAdmin.refuser' => 'Decline the takeover',
+			'reprisesAdmin.validerQuestion' => ({required Object prenom}) => 'Approve the household takeover by ${prenom}?',
+			'reprisesAdmin.validerConsequence' => 'This person will become the household\'s account holder. This decision transfers the account holder role.',
+			'reprisesAdmin.refuserQuestion' => ({required Object prenom}) => 'Decline the household takeover by ${prenom}?',
+			'reprisesAdmin.refuserConsequence' => 'No permission is transferred. The person may submit a new request after the set delay.',
+			'reprisesAdmin.validee' => 'Takeover approved.',
+			'reprisesAdmin.refusee' => 'Takeover declined.',
+			'reprisesAdmin.dejaTraitee' => 'This request has already been handled. The list is up to date.',
+			'reprisesAdmin.echecReseau' => 'The decision could not be confirmed. Check the list before trying again.',
+			'reprisesAdmin.vide' => 'No takeover request to handle.',
+			'reprisesAdmin.erreur' => 'The requests could not be loaded. Try again.',
+			'reprisesAdmin.sansDonnees' => 'the takeover requests',
+			'reprisesAdmin.indisponibleTitre' => 'Household takeovers unavailable',
+			'reprisesAdmin.indisponiblePhrase' => 'This feature will be available once the server is connected.',
 			'recherche.titre' => 'Search',
 			'recherche.retour' => 'Back',
 			'recherche.champ.libelle' => 'Search',
@@ -14327,6 +16441,20 @@ extension on TraductionsEn {
 			'recherche.contexte.personneParIdentifiantClasse' => ({required Object classe}) => 'Found by its identifier · ${classe}',
 			'recherche.contexte.canalStudio' => 'Studio channel',
 			'recherche.contexte.encaissement' => ({required Object famille}) => 'Payment received · ${famille}',
+			'sansDonnees.mesDonnees' => 'Your deletion information could not be loaded',
+			'sansDonnees.paiementsRecus' => 'Your payments received could not be loaded',
+			'sansDonnees.revenus' => 'Your earnings could not be loaded',
+			'sansDonnees.aujourdhui' => 'Today\'s board could not be loaded',
+			'sansDonnees.paiement' => 'This payment could not be loaded',
+			'sansDonnees.paiementsAEffectuer' => 'The payments to make could not be loaded',
+			'sansDonnees.encaissements' => 'The collections could not be loaded',
+			'sansDonnees.tresorerie' => 'The cash position could not be loaded',
+			'sansDonnees.obligation' => 'This obligation could not be loaded',
+			'sansDonnees.contractuels' => 'The contractors could not be loaded',
+			'sansDonnees.reserve' => 'The reserve policy could not be loaded',
+			'sansDonnees.vueGlobale' => 'The overview of finances could not be loaded',
+			'sansDonnees.beneficiaires' => 'The beneficiaries could not be loaded',
+			'sansDonnees.profilPaiement' => 'This payment profile could not be loaded',
 			'juridique.titre' => 'Legal information',
 			'juridique.intro' => 'The texts that govern the service. They can be read without an account.',
 			'juridique.version' => ({required Object version, required Object date}) => 'Version ${version}, text of ${date}',
@@ -14366,8 +16494,6 @@ extension on TraductionsEn {
 			'avis.form.titreAvis.aide' => 'A short sentence that sums up your feedback. 80 characters at most.',
 			'avis.form.titreAvis.erreur' => 'Fix the title: 80 characters at most.',
 			'avis.form.texte.libelle' => 'Your feedback',
-			_ => null,
-		} ?? switch (path) {
 			'avis.form.texte.aide' => 'What you liked, what you learned, what could be better. At least 20 characters.',
 			'avis.form.texte.compteur' => ({required Object n, required Object max}) => 'Characters: ${n} of ${max}',
 			'avis.form.texte.erreur' => 'Write between 20 and 1500 characters.',
@@ -14382,6 +16508,8 @@ extension on TraductionsEn {
 			'avis.form.regles.horsSujet' => 'an off-topic remark',
 			'avis.form.regles.doublon' => 'a duplicate of a review already received',
 			'avis.form.regles.donnees' => 'Do not give the name of a child, nor email, nor phone number.',
+			_ => null,
+		} ?? switch (path) {
 			'avis.form.regles.publie' => 'A respectful review is published, even a critical one. The management only refuses an insult, a third party\'s data, advertising, an off-topic remark or a duplicate.',
 			'avis.form.envoyer' => 'Send my feedback',
 			'avis.form.aCorriger' => 'A few fields need to be corrected before sending.',
@@ -14682,6 +16810,65 @@ extension on TraductionsEn {
 			'accueilInvite.foyerIdentite' => 'Tell us who you are, then answer the invitation. Your account is only created if you accept it.',
 			'accueilInvite.suite' => 'Continue to create your account.',
 			'accueilInvite.champsRequis' => 'Enter your first name, last name and gender.',
+			'n1.regles.auteurs.direction' => 'Management',
+			'n1.regles.auteurs.enseignants' => 'Teachers',
+			'n1.regles.auteurs.familles' => 'Families',
+			'n1.regles.auteurs.eleves' => 'Students',
+			'n1.regles.auteurs.comptables' => 'Accountants',
+			'n1.regles.auteurs.controleurs' => 'Reviewers',
+			'n1.regles.portee.touteAudience' => 'The whole academy, an audience or a class',
+			'n1.regles.portee.saClasse' => 'Its class only',
+			'n1.alertes.signalement' => ({required Object categorie, required Object matricule, required Object note}) => '${categorie}: report for student ${matricule}. Internal note: "${note}"',
+			'i1.invitations.aideEmail' => 'The code is created for this address and sent right away by email, with the sign-up link. You can also pass it on yourself.',
+			'i1.invitations.creee' => ({required Object code, required Object email}) => 'Invitation created. The email with code ${code} is on its way to ${email}.',
+			'i1.invitations.dejaInvite' => 'An invitation is already active for this address. It is in the list below; its email is not sent a second time.',
+			'i1.familles.choixTitre' => 'A family already registered',
+			'i1.familles.choixExplication' => 'To choose for imported families: each receives an email to open their space, with nothing to re-enter.',
+			'i1.familles.titre' => 'Families to invite',
+			'i1.familles.aide' => 'Each imported family receives, on your action, an email inviting them to sign in with their address. Nothing is sent automatically.',
+			'i1.familles.personnes' => ({required Object n}) => 'People: ${n}',
+			'i1.familles.etat.aEnvoyer' => 'To send',
+			'i1.familles.etat.enFile' => 'Sending',
+			'i1.familles.etat.envoyee' => 'Sent',
+			'i1.familles.etat.echec' => 'Not sent',
+			'i1.familles.etat.compteCree' => 'Space opened',
+			'i1.familles.envoyeeLe' => ({required Object date}) => 'Sent on ${date}',
+			'i1.familles.envoyer' => 'Send the invitation',
+			'i1.familles.envoyerPour' => ({required Object email}) => 'Send the invitation to ${email}',
+			'i1.familles.renvoyer' => 'Resend the invitation',
+			'i1.familles.renvoyerPour' => ({required Object email}) => 'Resend the invitation to ${email}',
+			'i1.familles.envoyerToutes' => ({required Object n}) => 'Send to all families (${n})',
+			'i1.familles.toutesQuestion' => ({required Object n}) => 'Send the invitation to all the families to invite? Number of families: ${n}.',
+			'i1.familles.toutesConsequence' => 'Each family receives an email right away. An email that has gone out cannot be taken back.',
+			'i1.familles.toutesConfirmer' => ({required Object n}) => 'Yes, send to all families (${n})',
+			'i1.familles.enFile' => ({required Object email}) => 'The invitation is on its way to ${email}.',
+			'i1.familles.dejaEnFile' => ({required Object email}) => 'An invitation has already gone out or is being sent to ${email}: nothing more is sent.',
+			'i1.familles.compteCree' => 'This family has already opened their space: nothing is sent.',
+			'i1.familles.introuvable' => 'This family no longer needs an invitation. Refresh the list.',
+			'i1.familles.toutesEnFile' => ({required Object n}) => 'The invitations are on their way. Number of families: ${n}.',
+			'i1.familles.nombreChange' => 'The list has changed since your confirmation: nothing was sent. Review it, then confirm again.',
+			'i1.familles.erreurEnvoi' => 'The sending is not confirmed. Refresh the list before trying again.',
+			'i1.familles.horsLigne' => 'The invitation was not sent. Try again in a moment.',
+			'i1.familles.nonAutorise' => 'Only the management can send these invitations. Sign in again with a management account.',
+			'i1.familles.vide' => 'No imported family to invite',
+			'i1.familles.videDetail' => 'Import the current registrations: each confirmed family appears here.',
+			'i1.familles.toutesEnvoyees' => 'All the families have received their invitation or opened their space.',
+			'i1.familles.erreurListe' => 'The imported families could not be read. Try again in a moment.',
+			'i1.familles.sansDonnees' => 'The imported families',
+			'i1.familles.indisponible' => 'Sending invitations to families is not connected to this server yet.',
+			'i1.import.invitationsAide' => 'Each new family waits for your invitation. The list just below sends it to one family or to all. Nothing is sent automatically.',
+			'i1.lien.dejaServiTitre' => 'This link has already been used or has expired',
+			'i1.lien.dejaServiDetail' => 'A sign-in link works only once, and only for a short time. Ask for a new one: enter your email address on the sign-in page.',
+			'i1.lien.nouveauLien' => 'Get a new link',
+			'd1ter.messages.titre' => ({required Object prenom}) => 'Academy messages about ${prenom}',
+			'd1ter.messages.titreSoi' => 'Academy messages',
+			'd1ter.messages.intro' => ({required Object prenom}) => 'The management has passed on these messages about ${prenom}.',
+			'd1ter.messages.introSoi' => 'The management has passed on these messages to you.',
+			'd1ter.messages.transmisLe' => ({required Object date}) => 'Passed on on ${date}',
+			'd1ter.messages.erreur' => 'The academy messages could not be read: the request may not have reached Rewayah. Try again in a moment.',
+			'd1ter.notifications.message' => 'The management has passed on a message to you.',
+			'd1ter.notifications.messageEnfant' => ({required Object prenom}) => 'The management has passed on a message about ${prenom}.',
+			'd1ter.notifications.messageSoi' => 'The management has passed on a message to you.',
 			'snt.regles.nonTenue' => 'Session not held',
 			'snt.regles.nonTenueDetail' => 'If no teacher has joined the room by this deadline, the session is postponed: the class is notified and the management sets the new date in the schedule.',
 			'snt.regles.bornesNonTenue' => ({required Object min, required Object max}) => 'Between ${min} and ${max} after the start.',
@@ -14715,6 +16902,20 @@ extension on TraductionsEn {
 			'snt.planning.refusClasseClose' => 'The date is not set: the class is closed. No session can be planned in it any more.',
 			'snt.planning.refusNonAutorisee' => 'The date is not set: this account cannot set a date. Sign in with a management account.',
 			'snt.planning.erreur' => 'The date is not confirmed: the request may not have reached Rewayah. Try again in a moment.',
+			'a3bis.salle.titulaireEntreTitre' => 'The class teacher has arrived',
+			'a3bis.salle.titulaireEntre' => 'The class teacher joined the room first: the replacement is no longer needed. Thank you for being ready.',
+			'a3bis.salle.remplacantEntreTitre' => 'A replacement has taken the class',
+			'a3bis.salle.remplacantEntre' => 'The replacement who took the class joined the room first: today\'s session is taken from you. You remain the class teacher.',
+			'a3bis.notifications.avertissement' => 'You are not in the room yet. Come in quickly: if a teacher has offered to replace you, you lose access to today\'s session.',
+			'a3bis.notifications.avertissementMinutes' => ({required num minutes}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(minutes, one: 'You are not in the room yet. Come in within the minute: after that, if a teacher has offered to replace you, you lose access to today\'s session.', other: 'You are not in the room yet. Come in within ${minutes} minutes: after that, if a teacher has offered to replace you, you lose access to today\'s session.', ), 
+			'a3bis.regles.perteDetail' => 'If a teacher has offered, they replace the teacher, who can no longer join today\'s session, and families are notified. If nobody has offered, the teacher can still come in: the session stays open to replacement until it ends.',
+			'a3bis.regles.alerteDirection' => 'Management alert',
+			'a3bis.regles.alerteDirectionDetail' => 'If neither the teacher nor a replacement has joined the room, the management receives an email, once per session.',
+			'a3bis.regles.avertissementDetail' => 'The teacher is warned that they risk losing the session. Free teachers can offer to replace them.',
+			'a3bis.regles.seanceTardive' => 'Session created late',
+			'a3bis.regles.seanceTardiveDetail' => 'A session created less than this delay before its start is never taken from the teacher automatically. The management alert is still sent.',
+			'a3bis.regles.bornesAlerte' => ({required Object min, required Object max}) => 'Between ${min} and ${max} after the start.',
+			'a3bis.regles.bornesTardive' => ({required Object min, required Object max}) => 'Between ${min} and ${max} before the start.',
 			'payUx.repriseTitre' => 'Did you leave the form without paying?',
 			'payUx.reprisePhrase' => 'Resume the payment: a new form opens. If the payment already went through, nothing is paid twice; reload to see its status.',
 			'payUx.reprendre' => 'Resume payment',
@@ -14725,6 +16926,37 @@ extension on TraductionsEn {
 			'payUx.ouCarte' => 'Or pay by card',
 			'payUx.enCours' => 'Payment in progress',
 			'payUx.refus' => 'The payment did not go through: some card information is probably incomplete or refused. Check it, then press "Pay" again. Nothing was paid.',
+			'cahierC1.onReprendPage' => ({required Object page}) => 'We pick up again at page ${page}',
+			'cahierC3.arretPage' => ({required Object page}) => 'The class stopped at page ${page} of the Mushaf.',
+			'cahierC3.arretAide' => 'This is the last page shown in the room. If it is right, confirm; otherwise, correct it.',
+			'cahierC3.corriger' => 'Correct where the class stopped',
+			'cahierC3.positionPage' => ({required Object page}) => 'Page ${page} of the Mushaf',
+			'cahierC3.renforcerTitre' => 'Points to reinforce',
+			'cahierC3.renforcerAide' => 'Tap only the stage objective this student must reinforce. The rest counts as "as planned".',
+			'cahierC3.pretBilan' => 'Ready for the short assessment',
+			'cahierC3.pretBilanDetail' => 'The administration schedules the short assessment; nothing is automatic.',
+			'cahierSourates.titre' => 'Surahs recited',
+			'cahierSourates.aide' => 'Tick a surah only if this student recited it from memory, without a single word wrong. A ticked surah is validated.',
+			'cahierSourates.dejaValidees' => ({required Object n, required Object total}) => 'Foundation surahs already validated: ${n} of ${total}',
+			'cahierSourates.toutes' => 'All the foundation surahs are validated.',
+			'cahierSourates.retirerTitre' => 'Ticked by mistake?',
+			'cahierSourates.retirerAide' => 'A surah you validated can be removed for 24 hours.',
+			'cahierSourates.retirer' => 'Remove',
+			'cahierSourates.retirerLibelle' => ({required Object nom}) => 'Remove ${nom} from the validated surahs',
+			'cahierSourates.retirerQuestion' => ({required Object nom}) => 'Remove ${nom} from the validated surahs?',
+			'cahierSourates.retirerConsequence' => 'It will no longer count as validated for this student.',
+			'cahierSourates.retirerMotif' => 'Reason (optional)',
+			'cahierSourates.retirerFait' => ({required Object nom}) => '${nom} is no longer validated.',
+			'cahierSourates.retirerRefus' => 'The 24-hour delay has passed: only the management can still remove it.',
+			'cahierSourates.retirerEchec' => 'The surah was not removed. Try again.',
+			'souratesRetirables.titre' => 'Surahs ticked by mistake',
+			'souratesRetirables.aide' => 'The surahs validated in this class that you can remove.',
+			'souratesRetirables.vide' => 'No validated surah to remove in this class.',
+			'souratesRetirables.erreur' => 'The surahs of this class could not be read. Try again.',
+			'souratesRetirables.ligne' => ({required Object eleve, required Object sourate}) => '${eleve} · ${sourate}',
+			'souratesRetirables.jusqua' => ({required Object heure}) => 'Possible until ${heure}',
+			'souratesRetirables.jusquaDemain' => ({required Object heure}) => 'Possible until tomorrow, ${heure}',
+			'souratesRetirables.retirerPour' => ({required Object sourate, required Object eleve}) => 'Remove ${sourate} for ${eleve}',
 			'accueilHoraire.demandeTitre' => 'Request saved',
 			'accueilHoraire.demandeDetail' => ({required Object prenom}) => 'We will let you know as soon as a time slot opens for ${prenom}.',
 			'accueilHoraire.erreurEnvoi' => 'Your request was not confirmed. Try again in a moment.',
@@ -14789,6 +17021,10 @@ extension on TraductionsEn {
 			'push1.reglages.erreur' => 'Your settings could not be loaded: the connection may have dropped. Try again in a moment.',
 			'push1.reglages.horsLigne' => 'Notification settings can be changed when the connection is back.',
 			'push1.reglages.changementNonConfirme' => 'The change is not yet confirmed: the connection may have dropped. Try again in a moment.',
+			'nouveautes.badge' => 'New',
+			_ => null,
+		} ?? switch (path) {
+			'nouveautes.lu' => 'new',
 			'suiviPedagogique.titreSoi' => 'Where I stand',
 			'suiviPedagogique.titre' => ({required Object prenom}) => 'Where ${prenom} stands',
 			'suiviPedagogique.etape' => 'Program stage',
@@ -14880,8 +17116,6 @@ extension on TraductionsEn {
 			'suiviAttente.ensuite' => ({required Object etape}) => 'Next: ${etape}',
 			'suiviAttente.delai.depasse' => 'Forming your class is taking longer than expected.',
 			'suiviAttente.changement' => ({required Object date}) => 'The class slot changed on ${date}. You received the notice in your notifications.',
-			_ => null,
-		} ?? switch (path) {
 			'suiviAttente.cloture.titreRefusee' => 'Your request was not accepted',
 			'suiviAttente.cloture.titreRetiree' => 'This request is withdrawn',
 			'suiviAttente.cloture.titreClose' => 'This request is closed',
@@ -14951,6 +17185,57 @@ extension on TraductionsEn {
 			'suiviAttente.mePresenter.chargement' => 'Loading the families of the class',
 			'suiviAttente.mePresenter.erreur' => 'The families of the class could not be loaded. Try again in a moment.',
 			'suiviAttente.mePresenter.vide' => 'Write a message before sending it.',
+			'journalSorties.texte.titre' => 'Leaving the app during class',
+			'journalSorties.texte.parent.quoi' => 'What is recorded: each time your child leaves the app during a session, the time they leave, the time they return, and whether this absence made them leave the room. Nothing else: not what they do elsewhere, not their screen, not their image, not their voice.',
+			'journalSorties.texte.parent.pourquoi' => 'Why: to follow your child\'s attention during class, for you and for their teacher.',
+			'journalSorties.texte.parent.qui' => 'Who can read it: you, your child, the session\'s teacher and the management. Never the other students or their families.',
+			'journalSorties.texte.parent.retrait' => 'You can withdraw your agreement at any time, right here. As soon as you withdraw it, nothing more is recorded.',
+			'journalSorties.texte.parent.sansAccord' => 'Without your agreement, nothing is recorded and nothing changes for the class. A student who stays out of the app too long leaves the room, with or without agreement: that keeps nothing.',
+			'journalSorties.texte.parent.caseAccord' => ({required Object dePrenom}) => 'I agree that ${dePrenom}\'s exits from the app during sessions be recorded.',
+			'journalSorties.texte.adulte.quoi' => 'What is recorded: each time you leave the app during a session, the time you leave, the time you return, and whether this absence made you leave the room. Nothing else: not what you do elsewhere, not your screen, not your image, not your voice.',
+			'journalSorties.texte.adulte.pourquoi' => 'Why: to follow your attention during class, for you and for your teacher.',
+			'journalSorties.texte.adulte.qui' => 'Who can read it: you, the session\'s teacher and the management. Never the other students or their families.',
+			'journalSorties.texte.adulte.retrait' => 'You can withdraw your agreement at any time, right here. As soon as you withdraw it, nothing more is recorded.',
+			'journalSorties.texte.adulte.sansAccord' => 'Without your agreement, nothing is recorded and nothing changes for the class. If you stay out of the app too long, you leave the room, with or without agreement: that keeps nothing.',
+			'journalSorties.texte.adulte.caseAccord' => 'I agree that my exits from the app during sessions be recorded.',
+			'journalSorties.accord.titre' => 'Exits from the app',
+			'journalSorties.accord.ligne' => 'Exits from the app during class',
+			'journalSorties.accord.ligneDetail' => 'Your agreement, for each child',
+			'journalSorties.accord.ligneDetailAdulte' => 'Your agreement',
+			'journalSorties.accord.intro' => 'Read this text, then choose for each child. Nothing is recorded without your agreement.',
+			'journalSorties.accord.introAdulte' => 'Read this text, then choose. Nothing is recorded without your agreement.',
+			'journalSorties.accord.accepteLe' => ({required Object date}) => 'Accepted on ${date}',
+			'journalSorties.accord.pasAccepte' => 'Not agreed: nothing is recorded.',
+			'journalSorties.accord.retirerPour' => ({required Object prenom}) => 'Withdraw my agreement for ${prenom}',
+			'journalSorties.accord.retirer' => 'Withdraw my agreement',
+			'journalSorties.accord.enregistrer' => 'Save my agreement',
+			'journalSorties.accord.manque' => 'Tick a box to save your agreement.',
+			'journalSorties.accord.erreur' => 'Your choice is not confirmed: it may not have reached Rewayah. Try again in a moment.',
+			'journalSorties.accord.lectureErreur' => 'Your agreements could not be read. Try again in a moment.',
+			'journalSorties.accord.horsService' => 'This log is not in service: nothing is recorded. Go back to Account.',
+			'journalSorties.accord.versionPerimee' => 'The text has just changed. Read it again, then tick again.',
+			'journalSorties.accord.eteint' => 'The management has just turned this log off: nothing is recorded. Go back to Account.',
+			'journalSorties.accord.merci' => 'Your agreement is saved.',
+			'journalSorties.accord.retire' => 'Your agreement is withdrawn: nothing more is recorded.',
+			'journalSorties.rapport.titre' => 'Exits from the app',
+			'journalSorties.rapport.nombreCle' => 'Count',
+			'journalSorties.rapport.nombre' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} exit', other: '${n} exits', ), 
+			'journalSorties.rapport.dureeTotale' => 'Total duration',
+			'journalSorties.rapport.plage' => ({required Object debut, required Object fin}) => 'From ${debut} to ${fin}',
+			'journalSorties.rapport.sortieSalle' => 'Left the room after the delay',
+			'journalSorties.rapport.secondes' => ({required Object n}) => '${n} s',
+			'journalSorties.rapport.minutes' => ({required Object n}) => '${n} min',
+			'journalSorties.rapport.minutesSecondes' => ({required Object m, required Object s}) => '${m} min ${s} s',
+			'journalSorties.rapport.resume' => ({required Object nombre, required Object duree}) => '${nombre}, ${duree}',
+			'journalSorties.rapport.ligneEleve' => ({required Object resume}) => 'Exits from the app: ${resume}',
+			'journalSorties.reglages.section' => 'Exits from the app during a session',
+			'journalSorties.reglages.intro' => 'The delay applies to all students. The exits log records nothing without the agreement of the guardian, or of the adult student.',
+			'journalSorties.reglages.journal' => 'Record exits from the app',
+			'journalSorties.reglages.journalDetail' => 'Turn on only after the director has validated the agreement texts. Once on, the guardian and the adult student see the agreement page in their Account.',
+			'journalSorties.reglages.delai' => 'Delay before leaving the room',
+			'journalSorties.reglages.delaiDetail' => 'The time a student is given outside the app before they leave the room.',
+			'journalSorties.reglages.bornes' => 'From 5 to 600 seconds.',
+			'journalSorties.reglages.unite' => ({required Object n}) => '${n} s',
 			'calendrier.titre' => 'Calendar',
 			'calendrier.sections.libelle' => 'Calendar sections',
 			'calendrier.sections.dates' => 'Academy dates',
