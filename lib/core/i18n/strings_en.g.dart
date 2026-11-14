@@ -47,9 +47,11 @@ class TraductionsEn extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$codeConduite$en codeConduite = _Traductions$codeConduite$en._(_root);
 	@override late final _Traductions$consentement$en consentement = _Traductions$consentement$en._(_root);
 	@override late final _Traductions$kyc$en kyc = _Traductions$kyc$en._(_root);
+	@override late final _Traductions$appareils$en appareils = _Traductions$appareils$en._(_root);
 	@override late final _Traductions$enfant$en enfant = _Traductions$enfant$en._(_root);
 	@override late final _Traductions$foyer$en foyer = _Traductions$foyer$en._(_root);
 	@override late final _Traductions$ficheEleve$en ficheEleve = _Traductions$ficheEleve$en._(_root);
+	@override late final _Traductions$priere$en priere = _Traductions$priere$en._(_root);
 	@override late final _Traductions$recrutement$en recrutement = _Traductions$recrutement$en._(_root);
 	@override late final _Traductions$parcours$en parcours = _Traductions$parcours$en._(_root);
 	@override late final _Traductions$nav$en nav = _Traductions$nav$en._(_root);
@@ -70,6 +72,7 @@ class TraductionsEn extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$payUx$en payUx = _Traductions$payUx$en._(_root);
 	@override late final _Traductions$accueilHoraire$en accueilHoraire = _Traductions$accueilHoraire$en._(_root);
 	@override late final _Traductions$suiviAttente$en suiviAttente = _Traductions$suiviAttente$en._(_root);
+	@override late final _Traductions$calendrier$en calendrier = _Traductions$calendrier$en._(_root);
 }
 
 // Path: commun
@@ -361,6 +364,24 @@ class _Traductions$kyc$en extends Traductions$kyc$fr {
 	@override String get manqueType => 'First choose the document you are submitting.';
 }
 
+// Path: appareils
+class _Traductions$appareils$en extends Traductions$appareils$fr {
+	_Traductions$appareils$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Devices';
+	@override late final _Traductions$appareils$foyer$en foyer = _Traductions$appareils$foyer$en._(_root);
+	@override late final _Traductions$appareils$eleve$en eleve = _Traductions$appareils$eleve$en._(_root);
+	@override late final _Traductions$appareils$plateforme$en plateforme = _Traductions$appareils$plateforme$en._(_root);
+	@override late final _Traductions$appareils$retrait$en retrait = _Traductions$appareils$retrait$en._(_root);
+	@override late final _Traductions$appareils$emetteur$en emetteur = _Traductions$appareils$emetteur$en._(_root);
+	@override String get regenerer => 'Generate a new code';
+	@override String get revoquer => 'Remove';
+	@override String get revoquerConfirmation => 'Remove this device? It will no longer be able to sign in until the guardian reconnects it with a new code.';
+}
+
 // Path: enfant
 class _Traductions$enfant$en extends Traductions$enfant$fr {
 	_Traductions$enfant$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -427,6 +448,40 @@ class _Traductions$ficheEleve$en extends Traductions$ficheEleve$fr {
 	@override late final _Traductions$ficheEleve$onglets$en onglets = _Traductions$ficheEleve$onglets$en._(_root);
 	@override late final _Traductions$ficheEleve$finances$en finances = _Traductions$ficheEleve$finances$en._(_root);
 	@override late final _Traductions$ficheEleve$mouvements$en mouvements = _Traductions$ficheEleve$mouvements$en._(_root);
+}
+
+// Path: priere
+class _Traductions$priere$en extends Traductions$priere$fr {
+	_Traductions$priere$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get fajr => 'Fajr';
+	@override String get dhuhr => 'Dhuhr';
+	@override String get asr => 'Asr';
+	@override String get maghrib => 'Maghrib';
+	@override String get isha => 'Isha';
+	@override String entree({required Object priere, required Object minutes}) => '${priere}, ${minutes} min';
+	@override String annonce({required Object priere, required Object heure}) => 'This class will be interrupted for ${priere}, around ${heure}.';
+	@override String get annonceAucune => 'No interruption planned during this class.';
+	@override String alerte({required Object priere, required Object minutes}) => '${priere} in ${minutes} min';
+	@override String alerteMaintenant({required Object priere, required Object heure}) => 'Break for ${priere}, resuming at ${heure}';
+	@override String get pause => 'Break';
+	@override String lieu({required Object lieu}) => 'Times calculated for ${lieu}';
+	@override String get lieuSansNom => 'Times calculated for the teacher\'s location';
+	@override String ajustee({required Object priere, required Object minutes}) => '${priere} adjusted by ${minutes} min by the teacher';
+	@override String get reglagesAbsents => 'The teacher has not yet set their prayer times.';
+	@override String get pauseDePriere => 'Prayer break';
+	@override String pauseA({required Object heure}) => 'Prayer break at ${heure}';
+	@override String get approchee => 'Approximate time: at this season, the sun does not go low enough for the angle to be defined.';
+	@override late final _Traductions$priere$methodes$en methodes = _Traductions$priere$methodes$en._(_root);
+	@override late final _Traductions$priere$ecoles$en ecoles = _Traductions$priere$ecoles$en._(_root);
+	@override String get aValider => 'Default value in force, to be approved by the director and his partners.';
+	@override late final _Traductions$priere$enseignant$en enseignant = _Traductions$priere$enseignant$en._(_root);
+	@override late final _Traductions$priere$direction$en direction = _Traductions$priere$direction$en._(_root);
+	@override late final _Traductions$priere$classe$en classe = _Traductions$priere$classe$en._(_root);
+	@override late final _Traductions$priere$regles$en regles = _Traductions$priere$regles$en._(_root);
 }
 
 // Path: recrutement
@@ -1036,6 +1091,21 @@ class _Traductions$suiviAttente$en extends Traductions$suiviAttente$fr {
 	@override late final _Traductions$suiviAttente$mePresenter$en mePresenter = _Traductions$suiviAttente$mePresenter$en._(_root);
 }
 
+// Path: calendrier
+class _Traductions$calendrier$en extends Traductions$calendrier$fr {
+	_Traductions$calendrier$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Calendar';
+	@override late final _Traductions$calendrier$sections$en sections = _Traductions$calendrier$sections$en._(_root);
+	@override String get indisponible => 'The calendar could not be opened: the request may not have reached Rewayah. Try again in a moment.';
+	@override String get refusNouvelleDateFermee => 'The date is not set: the class is closed that day. Choose another day, or remove the closure for this class.';
+	@override late final _Traductions$calendrier$dates$en dates = _Traductions$calendrier$dates$en._(_root);
+	@override late final _Traductions$calendrier$pauses$en pauses = _Traductions$calendrier$pauses$en._(_root);
+}
+
 // Path: commun.langue
 class _Traductions$commun$langue$en extends Traductions$commun$langue$fr {
 	_Traductions$commun$langue$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -1570,6 +1640,115 @@ class _Traductions$consentement$compte$en extends Traductions$consentement$compt
 	@override String get inviteAction => 'Read';
 }
 
+// Path: appareils.foyer
+class _Traductions$appareils$foyer$en extends Traductions$appareils$foyer$fr {
+	_Traductions$appareils$foyer$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Household devices';
+	@override String get phrase => 'Each student profile has its own devices. Tap a profile to see its devices, remove one or connect a new one.';
+	@override String get groupeProfils => 'Student profiles';
+	@override String get aucunAppareil => 'No device connected';
+	@override String unAppareil({required Object nom}) => '1 device connected: ${nom}';
+	@override String get partageTitre => 'Shared device';
+	@override String get partage => 'On a shared device, each student chooses their profile then enters their personal code. This device then appears under each profile that uses it.';
+	@override String get sansDonnees => 'The devices of your household could not be loaded';
+	@override String get videTitre => 'No student profile';
+	@override String get vide => 'Add a student profile to connect a tablet, a phone or a computer to it.';
+	@override String get videAction => 'Add a student profile';
+	@override String plusieursAppareils({required num nombre, required Object noms}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(nombre,
+		one: '${nombre} device connected: ${noms}',
+		other: '${nombre} devices connected: ${noms}',
+	);
+}
+
+// Path: appareils.eleve
+class _Traductions$appareils$eleve$en extends Traductions$appareils$eleve$fr {
+	_Traductions$appareils$eleve$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String sousTitre({required Object prenom}) => 'Manage the devices allowed for ${prenom}.';
+	@override String get groupe => 'Connected devices';
+	@override String get connecter => 'Connect a device';
+	@override String get sansDonnees => 'The devices of this profile could not be loaded';
+	@override String get videTitre => 'No device connected';
+	@override String vide({required Object dePrenom}) => 'Connect ${dePrenom}\'s tablet, phone or computer with the code shown by the button below.';
+	@override String get introuvableTitre => 'Student profile not found';
+	@override String get introuvable => 'This student profile is not linked to your household.';
+	@override String get introuvableAction => 'See the household devices';
+	@override String connecteLe({required Object date}) => 'Connected on ${date}';
+	@override String utiliseLe({required Object date}) => 'Last used: ${date}';
+	@override String get jamaisUtilise => 'Not used yet';
+	@override String retirerLibelle({required Object appareil}) => 'Remove ${appareil}';
+	@override String get horsLigne => 'You will be able to remove or connect a device when the connection is back.';
+	@override String get partageTitre => 'Profile choice and personal code';
+	@override String get partage => 'On a shared device, each student chooses their profile then enters their own personal code, kept on this device.';
+	@override String get retraitTitre => 'Remove a device';
+	@override String get retrait => 'A removed device can no longer sign in again. If it is connected right now, it stays connected until its next sign-out.';
+}
+
+// Path: appareils.plateforme
+class _Traductions$appareils$plateforme$en extends Traductions$appareils$plateforme$fr {
+	_Traductions$appareils$plateforme$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get android => 'Android phone or tablet';
+	@override String get ios => 'iPhone or iPad';
+	@override String get web => 'Web browser';
+	@override String get windows => 'Computer';
+	@override String get inconnue => 'Device';
+}
+
+// Path: appareils.retrait
+class _Traductions$appareils$retrait$en extends Traductions$appareils$retrait$fr {
+	_Traductions$appareils$retrait$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get question => 'Remove this device?';
+	@override String consequence({required Object appareil, required Object dePrenom}) => '${appareil} will no longer be able to sign in to ${dePrenom}\'s profile. If it is connected right now, it stays connected until its next sign-out.';
+	@override String get confirmer => 'Remove the device';
+	@override String get enCours => 'Removing';
+	@override String get reussi => 'Device removed. If it is connected right now, it stays connected until its next sign-out.';
+	@override String get echec => 'The removal did not go through. The device is still allowed. Try again in a moment.';
+	@override String get horsLigne => 'The device was not removed. Try again when the connection is back.';
+}
+
+// Path: appareils.emetteur
+class _Traductions$appareils$emetteur$en extends Traductions$appareils$emetteur$fr {
+	_Traductions$appareils$emetteur$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Connect a device';
+	@override String pourEleve({required Object prenom}) => 'For ${prenom}';
+	@override String get consigneTitre => 'On the other device';
+	@override String get consigne => 'Open Rewayah, tap "Connect a student\'s device", then scan this QR code or enter the code.';
+	@override String get libelleQr => 'Sign-in QR code. The same code is also written on this screen, to enter if the device does not read the QR code.';
+	@override String get codeManuel => 'Code to enter';
+	@override String codeLu({required Object code}) => 'Code to enter: ${code}';
+	@override String valableJusqua({required Object heure}) => 'Valid until ${heure}';
+	@override String restant({required Object temps}) => '${temps} left';
+	@override String sortie({required Object heure}) => 'Leaving this screen does not cancel the code: it stays valid until ${heure}.';
+	@override String get suiviIndisponible => 'This screen cannot confirm the connection. Check on the student\'s device.';
+	@override String get preparation => 'Preparing the code';
+	@override late final _Traductions$appareils$emetteur$verification$en verification = _Traductions$appareils$emetteur$verification$en._(_root);
+	@override late final _Traductions$appareils$emetteur$confirme$en confirme = _Traductions$appareils$emetteur$confirme$en._(_root);
+	@override late final _Traductions$appareils$emetteur$expire$en expire = _Traductions$appareils$emetteur$expire$en._(_root);
+	@override late final _Traductions$appareils$emetteur$remplace$en remplace = _Traductions$appareils$emetteur$remplace$en._(_root);
+	@override late final _Traductions$appareils$emetteur$dejaActif$en dejaActif = _Traductions$appareils$emetteur$dejaActif$en._(_root);
+	@override late final _Traductions$appareils$emetteur$horsLigne$en horsLigne = _Traductions$appareils$emetteur$horsLigne$en._(_root);
+	@override late final _Traductions$appareils$emetteur$erreur$en erreur = _Traductions$appareils$emetteur$erreur$en._(_root);
+}
+
 // Path: foyer.vide
 class _Traductions$foyer$vide$en extends Traductions$foyer$vide$fr {
 	_Traductions$foyer$vide$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -2007,6 +2186,165 @@ class _Traductions$ficheEleve$mouvements$en extends Traductions$ficheEleve$mouve
 	@override String get indisponibleTitre => 'Movements are not available yet';
 	@override String indisponiblePhrase({required Object dePrenom}) => '${dePrenom}\'s top-ups and monthly fees will appear here once they are in service.';
 	@override String get sansDonnees => 'The movements of this profile could not be loaded';
+}
+
+// Path: priere.methodes
+class _Traductions$priere$methodes$en extends Traductions$priere$methodes$fr {
+	_Traductions$priere$methodes$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get muslim_world_league => 'Muslim World League';
+	@override String get egyptian => 'Egyptian General Authority';
+	@override String get karachi => 'University of Islamic Sciences, Karachi';
+	@override String get umm_al_qura => 'Umm al-Qura (Makkah)';
+	@override String get dubai => 'Gulf';
+	@override String get moon_sighting_committee => 'Moon Sighting Committee';
+	@override String get north_america => 'ISNA (North America)';
+	@override String get kuwait => 'Kuwait';
+	@override String get qatar => 'Qatar';
+	@override String get singapore => 'Singapore';
+	@override String get tehran => 'Tehran';
+	@override String get turkey => 'Diyanet (Turkey)';
+}
+
+// Path: priere.ecoles
+class _Traductions$priere$ecoles$en extends Traductions$priere$ecoles$fr {
+	_Traductions$priere$ecoles$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get shafi => 'According to the majority of schools (shadow equals the object)';
+	@override String get hanafi => 'Double shadow (Hanafi school)';
+}
+
+// Path: priere.enseignant
+class _Traductions$priere$enseignant$en extends Traductions$priere$enseignant$fr {
+	_Traductions$priere$enseignant$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'My prayer times';
+	@override String get intro => 'The times of the day, calculated by Rewayah for your location. You can adjust each prayer by 30 minutes at most.';
+	@override String get ligne => 'My prayer times';
+	@override String get ligneDetail => 'See your times of the day and adjust them';
+	@override String get vide => 'Your prayer location is not known yet. One tap is enough: Rewayah reads this device\'s position, rounds it to about a kilometre and calculates your times.';
+	@override String get utiliserPosition => 'Use my location';
+	@override String get positionRefusee => 'Location not shared. You can try again, or the management will set your location.';
+	@override String get positionErreur => 'Your location may not have reached Rewayah. Try again in a moment.';
+	@override String get positionDirection => 'The management has already set your location. It does not change with a tap.';
+	@override String get erreur => 'Your prayer times did not appear. The request may not have reached Rewayah. Try again in a moment.';
+	@override String get aucunAjustement => 'No adjustment';
+	@override String plus({required Object minutes}) => '${minutes} min later';
+	@override String moins({required Object minutes}) => '${minutes} min earlier';
+	@override String get feuilleAide => 'From 30 minutes earlier to 30 minutes later. The adjustment also moves the prayer break of your classes.';
+	@override String get champ => 'Adjustment';
+	@override String get enregistrer => 'Save';
+	@override String get erreurEnregistrement => 'The adjustment may not have reached Rewayah. Check your times, then try again in a moment.';
+	@override String unite({required Object n}) => '${n} min';
+}
+
+// Path: priere.direction
+class _Traductions$priere$direction$en extends Traductions$priere$direction$fr {
+	_Traductions$priere$direction$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get onglet => 'Prayer';
+	@override String get titre => 'Prayer locations';
+	@override String get intro => 'Rewayah calculates each teacher\'s times from their position and chooses the method according to the country. You read this list; you only fix an exception. Only the teacher and the management see the location: students and guardians only read the time of the break.';
+	@override String get attente => 'Pending: the teacher has not shared their position yet';
+	@override String get corriger => 'Correct';
+	@override String corrigerDe({required Object dePrenom}) => 'Correct ${dePrenom}\'s prayer settings';
+	@override String get sourceDirection => 'location set by the management';
+	@override String get sourceEnseignant => 'position shared by the teacher';
+	@override String get sourceAuto => 'location taken from their city';
+	@override String get origineEnseignant => 'chosen by the management';
+	@override String get originePays => 'usual for the country';
+	@override String get origineAcademie => 'the academy\'s';
+	@override String zoneLigne({required Object lieu, required Object source}) => '${lieu}, ${source}';
+	@override String methodeLigne({required Object methode, required Object origine}) => 'Method: ${methode} (${origine})';
+	@override String get sansLieu => 'No location: no prayer break';
+	@override String get vide => 'No active teacher for now.';
+	@override String get erreur => 'The prayer locations did not appear. The request may not have reached Rewayah. Try again in a moment.';
+	@override String get vendredi => 'Attends Friday prayer';
+	@override String get incoherenceTitre => 'To check';
+	@override String get incoherenceAide => 'Reporting only: nothing is corrected automatically.';
+	@override String incoherenceFuseauCompte({required Object prenom, required Object detail}) => '${prenom}: the account time zone and the prayer location\'s differ (${detail}).';
+	@override String incoherenceFuseauLieu({required Object prenom, required Object detail}) => '${prenom}: the prayer location\'s time zone does not match its longitude (${detail}).';
+	@override String incoherencePays({required Object prenom, required Object detail}) => '${prenom}: the account country (${detail}) does not match the prayer location.';
+	@override String incoherencePaysFuseau({required Object prenom, required Object detail}) => '${prenom}: the account country and its time zone do not match (${detail}).';
+	@override late final _Traductions$priere$direction$feuille$en feuille = _Traductions$priere$direction$feuille$en._(_root);
+}
+
+// Path: priere.classe
+class _Traductions$priere$classe$en extends Traductions$priere$classe$fr {
+	_Traductions$priere$classe$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Prayers and slot';
+	@override String get intro => 'What this slot crosses, over the next 12 months, for the class teacher. It is a warning: nothing is blocked, and the prayer break protects the teacher anyway.';
+	@override String get sansLieu => 'This class\'s teacher has no prayer location: no prayer break is planned.';
+	@override String get erreur => 'The prayers for this slot did not appear. The request may not have reached Rewayah. Try again in a moment.';
+	@override String creneau({required Object jour, required Object heure, required Object duree}) => '${jour}, ${heure}:00, ${duree} min';
+	@override String get aucun => 'This slot crosses no prayer of the teacher over the 12 months.';
+	@override String croise({required Object priere, required Object du, required Object au, required Object seances, required Object pause, required Object apres}) => '${priere}: from ${du} to ${au}, ${seances} sessions, of which ${pause} with a prayer break and ${apres} where the teacher prays after the class.';
+	@override String get indefini => 'For part of the year, the sun does not rise or set: no prayer break is calculated.';
+	@override String vendredi({required Object debut, required Object fin, required Object n}) => 'This slot overlaps the teacher\'s Friday prayer (${debut} to ${fin}): ${n} sessions of the year. Strong warning.';
+	@override String libres({required Object heures}) => 'Start times with no prayer that day: ${heures}.';
+	@override String get libresAucune => 'No start time that day avoids all the prayers of the year.';
+	@override String get libresInconnues => 'Times with no prayer cannot be given for this teacher.';
+	@override String heureCourte({required Object h}) => '${h}:00';
+}
+
+// Path: priere.regles
+class _Traductions$priere$regles$en extends Traductions$priere$regles$fr {
+	_Traductions$priere$regles$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get section => 'Prayer';
+	@override String get intro => 'The server places the teacher\'s prayer break when a prayer falls during the session. These settings apply to the whole academy.';
+	@override String get methode => 'Calculation method';
+	@override String get methodeDetail => 'The Fajr and Isha angles. A teacher can have their own.';
+	@override String get ecole => 'School for Asr';
+	@override String get ecoleDetail => 'The entry time of Asr. A teacher can have their own.';
+	@override String get pause => 'Prayer break length';
+	@override String get pauseDetail => 'From 5 to 20 minutes, in steps of 5.';
+	@override String get pauseRamadan => 'Maghrib break during Ramadan';
+	@override String get pauseRamadanDetail => 'The breaking of the fast: from 5 to 20 minutes, in steps of 5.';
+	@override String get ramadan => 'Ramadan in progress';
+	@override String get ramadanDetail => 'Pending the academy\'s calendar, the management sets it by hand.';
+	@override String get margeDebut => 'Margin at the start';
+	@override String get margeDebutDetail => 'A prayer that falls in these first minutes places the break at that minute of the class.';
+	@override String get margeFin => 'Margin at the end';
+	@override String get margeFinDetail => 'A prayer that falls in these last minutes is prayed after the class.';
+	@override String get margeAvant => 'Prayer that began just before the class';
+	@override String get margeAvantDetail => 'A prayer that began less than this long before the class starts, and whose time closes during the class, gets its break. To be approved by the director.';
+	@override String get delaiFermeture => 'Start of the break for a closing prayer';
+	@override String get delaiFermetureDetail => 'This break starts this long after the start of the class.';
+	@override String get horizon => 'Night recalculation';
+	@override String get horizonDetail => 'Every night, the breaks of the next days\' sessions are recalculated.';
+	@override String get valeurs => 'Numeric values';
+	@override String get valeursDetail => 'Lengths, margins and night recalculation: Rewayah applies these values, only change them for an exception.';
+	@override String get methodeSelonPays => 'Method by country';
+	@override String get methodeSelonPaysDetail => 'When on, the usual method of the location\'s country applies (Saudi Arabia, Qatar, Kuwait, Emirates, Egypt, Pakistan, Singapore, Turkey, Iran); elsewhere, the academy\'s method. To be approved by the director.';
+	@override String get lieux => 'Teachers\' prayer locations';
+	@override String get lieuxDetail => 'Each teacher\'s location, Friday prayer, times of the day.';
+	@override String unite({required Object n}) => '${n} min';
+	@override String uniteJours({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} day',
+		other: '${n} days',
+	);
+	@override String get choisir => 'Save';
+	@override String erreurEcriture({required Object message}) => 'The setting is not confirmed (${message}). Check its value, then try again in a moment.';
 }
 
 // Path: recrutement.nomLatin
@@ -4186,6 +4524,106 @@ class _Traductions$suiviAttente$mePresenter$en extends Traductions$suiviAttente$
 	@override String get vide => 'Write a message before sending it.';
 }
 
+// Path: calendrier.sections
+class _Traductions$calendrier$sections$en extends Traductions$calendrier$sections$fr {
+	_Traductions$calendrier$sections$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'Calendar sections';
+	@override String get dates => 'Academy dates';
+	@override String get pauses => 'Breaks';
+}
+
+// Path: calendrier.dates
+class _Traductions$calendrier$dates$en extends Traductions$calendrier$dates$fr {
+	_Traductions$calendrier$dates$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get intro => 'The dates of the year, entered by the management each year. Only published dates take effect: a closure moves back the deadline of the stages concerned and sets aside the sessions that have not yet started on those days. Days are counted in Makkah time.';
+	@override String get ajouter => 'Add a date';
+	@override String get erreur => 'The dates could not be loaded: the request may not have reached Rewayah. Try again in a moment.';
+	@override String get videTitre => 'No date entered';
+	@override String get videDetail => 'Add the year\'s closures, recitation meetings and assessment dates.';
+	@override late final _Traductions$calendrier$dates$type$en type = _Traductions$calendrier$dates$type$en._(_root);
+	@override late final _Traductions$calendrier$dates$categorie$en categorie = _Traductions$calendrier$dates$categorie$en._(_root);
+	@override String get categorieAide => 'Ramadan: from 20 Ramadan to 7 Shawwal inclusive. Eid al-Adha: from 9 to 18 Dhu al-Hijjah inclusive.';
+	@override late final _Traductions$calendrier$dates$portee$en portee = _Traductions$calendrier$dates$portee$en._(_root);
+	@override String get publiee => 'Published';
+	@override String get nonPubliee => 'Not published';
+	@override String get publier => 'Publish';
+	@override String get retirer => 'Remove from publication';
+	@override String get modifier => 'Edit';
+	@override String periode({required Object du, required Object au}) => 'From ${du} to ${au}';
+	@override String unJour({required Object jour}) => 'On ${jour}';
+	@override String pour({required Object cible}) => 'For: ${cible}';
+	@override String elevesVises({required Object n}) => 'Students concerned: ${n}';
+	@override String seancesNeutralisees({required Object n}) => 'Sessions already planned on these days: ${n}. They are set aside, not deleted, and restored if you remove the closure before it starts.';
+	@override String get aucuneSeance => 'No session is planned yet on these days.';
+	@override String get commencee => 'This closure has started: it can no longer be removed or shortened, only extended.';
+	@override late final _Traductions$calendrier$dates$feuille$en feuille = _Traductions$calendrier$dates$feuille$en._(_root);
+	@override late final _Traductions$calendrier$dates$publication$en publication = _Traductions$calendrier$dates$publication$en._(_root);
+	@override late final _Traductions$calendrier$dates$notification$en notification = _Traductions$calendrier$dates$notification$en._(_root);
+	@override late final _Traductions$calendrier$dates$concernees$en concernees = _Traductions$calendrier$dates$concernees$en._(_root);
+	@override late final _Traductions$calendrier$dates$conflits$en conflits = _Traductions$calendrier$dates$conflits$en._(_root);
+	@override late final _Traductions$calendrier$dates$refus$en refus = _Traductions$calendrier$dates$refus$en._(_root);
+}
+
+// Path: calendrier.pauses
+class _Traductions$calendrier$pauses$en extends Traductions$calendrier$pauses$fr {
+	_Traductions$calendrier$pauses$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get aTraiter => 'Requests to handle';
+	@override String get aTraiterIntro => 'These requests exceed a family\'s break limit: the management decides. Other requests are accepted straight away and do not appear here.';
+	@override String get erreur => 'The breaks could not be loaded: the request may not have reached Rewayah. Try again in a moment.';
+	@override String get videTitre => 'No request pending';
+	@override String get videDetail => 'A request beyond the limit will appear here.';
+	@override String ligneDescription({required Object mois, required Object n}) => 'Month requested: ${mois}. Months already granted: ${n}.';
+	@override String repondreAvant({required Object date}) => 'Reply before ${date}';
+	@override String get enRetard => 'Deadline passed';
+	@override String get accepter => 'Accept';
+	@override String get refuser => 'Refuse';
+	@override String get refusTitre => 'Reply to the request';
+	@override String get refusPhrase => 'The reason is required to refuse; the family reads it in the app.';
+	@override String get refusMotif => 'Reason';
+	@override String get refusEnvoyer => 'Refuse the break';
+	@override String get decisionsRecentes => 'Recent decisions';
+	@override String get decisionsVide => 'No decision for now.';
+	@override late final _Traductions$calendrier$pauses$statut$en statut = _Traductions$calendrier$pauses$statut$en._(_root);
+	@override String periode({required Object du, required Object au}) => 'From ${du} to ${au}';
+	@override String get typeMois => 'One-month break';
+	@override String get typeException => 'Exceptional break';
+	@override String accordeePar({required Object nom}) => 'Granted by ${nom}';
+	@override String motifLigne({required Object motif}) => 'Reason: ${motif}';
+	@override String get exceptionAction => 'Grant an exceptional break';
+	@override String get exceptionTitre => 'Exceptional break';
+	@override String get exceptionPhrase => 'For a sudden illness or a granted interruption. It starts today, without notice; the stage deadline moves back by its length; it does not count towards the family\'s limit.';
+	@override String get exceptionRecherche => 'Search for the student by name';
+	@override String get exceptionRechercheAide => 'At least two letters.';
+	@override String get exceptionAucun => 'No student found.';
+	@override String exceptionEleve({required Object nom}) => 'Student: ${nom}';
+	@override String get exceptionChanger => 'Choose another student';
+	@override String get exceptionMotif => 'Reason';
+	@override String exceptionDuree({required Object mois}) => 'It lasts ${mois} months at most; beyond that, you grant a new break.';
+	@override String get exceptionMotifAide => 'One word is enough (illness, interruption). No health details.';
+	@override String get exceptionFin => 'Last day of the break';
+	@override String get exceptionEnregistrer => 'Grant the break';
+	@override String get terminerAction => 'End the break';
+	@override String get terminerTitre => 'End the exceptional break';
+	@override String get terminerPhrase => 'The student resumes classes after the last day chosen. The original end and your action are kept; days already past stay counted in the deadline.';
+	@override String get terminerChamp => 'Last day of the break';
+	@override String get terminerEnvoyer => 'End the break';
+	@override String finInitiale({required Object date}) => 'Original end: ${date}';
+	@override String termineePar({required Object nom}) => 'Ended early by ${nom}';
+	@override late final _Traductions$calendrier$pauses$refus$en refus = _Traductions$calendrier$pauses$refus$en._(_root);
+}
+
 // Path: commun.etats.recharge1
 class _Traductions$commun$etats$recharge1$en extends Traductions$commun$etats$recharge1$fr {
 	_Traductions$commun$etats$recharge1$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -4359,6 +4797,94 @@ class _Traductions$inscription$questionnaire$acces$en extends Traductions$inscri
 	@override String get resteAcces => 'All that is left is to receive your access link, or to continue with Google.';
 }
 
+// Path: appareils.emetteur.verification
+class _Traductions$appareils$emetteur$verification$en extends Traductions$appareils$emetteur$verification$fr {
+	_Traductions$appareils$emetteur$verification$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Checking the code';
+	@override String get phrase => 'The code is hidden while we check that it is still valid.';
+}
+
+// Path: appareils.emetteur.confirme
+class _Traductions$appareils$emetteur$confirme$en extends Traductions$appareils$emetteur$confirme$fr {
+	_Traductions$appareils$emetteur$confirme$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Device connected';
+	@override String phrase({required Object dePrenom}) => '${dePrenom}\'s device is ready. The code is no longer displayed and can no longer be used.';
+	@override String get phraseSansPrenom => 'The student\'s device is ready. The code is no longer displayed and can no longer be used.';
+	@override String get action => 'Done';
+}
+
+// Path: appareils.emetteur.expire
+class _Traductions$appareils$emetteur$expire$en extends Traductions$appareils$emetteur$expire$fr {
+	_Traductions$appareils$emetteur$expire$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'This code has expired';
+	@override String get phrase => 'It can no longer be used. Generate a new one when the other device is ready.';
+}
+
+// Path: appareils.emetteur.remplace
+class _Traductions$appareils$emetteur$remplace$en extends Traductions$appareils$emetteur$remplace$fr {
+	_Traductions$appareils$emetteur$remplace$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'This code has been replaced';
+	@override String get phrase => 'A new code was requested for this student, here or on another device. This one no longer works.';
+}
+
+// Path: appareils.emetteur.dejaActif
+class _Traductions$appareils$emetteur$dejaActif$en extends Traductions$appareils$emetteur$dejaActif$fr {
+	_Traductions$appareils$emetteur$dejaActif$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'A code is already valid';
+	@override String phrase({required Object heure}) => 'A code created for this student is valid until ${heure}. It cannot be shown again: generating a new one will make the old one unusable.';
+}
+
+// Path: appareils.emetteur.horsLigne
+class _Traductions$appareils$emetteur$horsLigne$en extends Traductions$appareils$emetteur$horsLigne$fr {
+	_Traductions$appareils$emetteur$horsLigne$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titreAvecCode => 'Code hidden for now';
+	@override String get titreSansCode => 'The code could not be prepared';
+	@override String phraseAvecCode({required Object heure}) => 'It will reappear when the connection is back. It stays valid until ${heure}.';
+	@override String get phraseSansCode => 'It will be when the connection is back.';
+}
+
+// Path: appareils.emetteur.erreur
+class _Traductions$appareils$emetteur$erreur$en extends Traductions$appareils$emetteur$erreur$fr {
+	_Traductions$appareils$emetteur$erreur$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get plafondTitre => 'Device limit reached';
+	@override String get plafondPhrase => 'This student already has the maximum number of devices. Remove one to connect another.';
+	@override String get plafondAction => 'See the devices';
+	@override String get horsFoyerTitre => 'Student profile not found';
+	@override String get horsFoyerPhrase => 'This student profile is not linked to your household. Go back to the Household to choose one.';
+	@override String get compteTitre => 'Device connection not open yet';
+	@override String get comptePhrase => 'Your account must be open before you connect a student\'s device.';
+	@override String get generiqueTitre => 'The code could not be prepared';
+	@override String get generiquePhrase => 'The request did not go through. Try again in a moment.';
+}
+
 // Path: foyer.ajout.porte
 class _Traductions$foyer$ajout$porte$en extends Traductions$foyer$ajout$porte$fr {
 	_Traductions$foyer$ajout$porte$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -4506,6 +5032,45 @@ class _Traductions$ficheEleve$mouvements$recu$en extends Traductions$ficheEleve$
 	@override String get moyen => 'Payment method';
 	@override String get montant => 'Amount paid';
 	@override String get repartition => 'Breakdown';
+}
+
+// Path: priere.direction.feuille
+class _Traductions$priere$direction$feuille$en extends Traductions$priere$direction$feuille$fr {
+	_Traductions$priere$direction$feuille$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String titre({required Object dePrenom}) => '${dePrenom}\'s prayer location and times';
+	@override String get avance => 'Advanced setting';
+	@override String get avanceAide => 'Rewayah chooses the method by itself according to the country of the location. Only change it for an exception.';
+	@override String get methodeAuto => 'Automatic: according to the country, otherwise the academy';
+	@override String get ecoleAuto => 'Automatic';
+	@override String get poserMain => 'Set the location by hand';
+	@override String get poserLieu => 'Set this location';
+	@override String get sansLieuAide => 'No location for now: the teacher shares it themselves with one tap. You can set it by hand under "Advanced setting".';
+	@override String get vendrediAide => 'A slot that overlaps this prayer is reported to the management, without blocking.';
+	@override String get nomLieu => 'Location name';
+	@override String get latitude => 'Latitude';
+	@override String get longitude => 'Longitude';
+	@override String get coordonneesAide => 'In decimal degrees, with a dot (for example 9.6412 and -13.5784).';
+	@override String fuseau({required Object exemple}) => 'Time zone (for example ${exemple})';
+	@override String get methode => 'Calculation method';
+	@override String get methodeEcole => 'The academy\'s';
+	@override String get ecole => 'School for Asr';
+	@override String get ecoleEcole => 'The academy\'s';
+	@override String get vendredi => 'Attends Friday prayer';
+	@override String get vendrediOui => 'Yes';
+	@override String get vendrediNon => 'No';
+	@override String get vendrediDebut => 'Start of Friday\'s window';
+	@override String get vendrediFin => 'End of Friday\'s window';
+	@override String get plageAide => 'Teacher\'s time, in HH:MM format. A slot that overlaps this window is reported to the management, without blocking.';
+	@override String get apercu => 'Times of the day';
+	@override String get apercuVide => 'No time to show until the location is saved.';
+	@override String get enregistrer => 'Save the location';
+	@override String get retirer => 'Remove the location';
+	@override String get invalide => 'Check the location name, the coordinates, the time zone and Friday\'s window.';
+	@override String get erreurEnregistrement => 'The location may not have reached Rewayah, or a value was refused. Check the form, then try again in a moment.';
 }
 
 // Path: recrutement.candidat.comptable
@@ -5987,6 +6552,173 @@ class _Traductions$suiviAttente$cloture$simple$en extends Traductions$suiviAtten
 	@override String get close => 'This request is closed.';
 }
 
+// Path: calendrier.dates.type
+class _Traductions$calendrier$dates$type$en extends Traductions$calendrier$dates$type$fr {
+	_Traductions$calendrier$dates$type$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get fermeture => 'Closure';
+	@override String get rencontre => 'Recitation meeting';
+	@override String get evaluation => 'Assessment';
+	@override String get autre => 'Other date';
+}
+
+// Path: calendrier.dates.categorie
+class _Traductions$calendrier$dates$categorie$en extends Traductions$calendrier$dates$categorie$fr {
+	_Traductions$calendrier$dates$categorie$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get ramadan => 'Ramadan, 20 days at most';
+	@override String get aidAlAdha => 'Eid al-Adha, 10 days at most';
+	@override String get autre => 'Other closure';
+}
+
+// Path: calendrier.dates.portee
+class _Traductions$calendrier$dates$portee$en extends Traductions$calendrier$dates$portee$fr {
+	_Traductions$calendrier$dates$portee$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get ecole => 'The whole academy';
+	@override String get tranche => 'An age group';
+	@override String get classe => 'A class';
+}
+
+// Path: calendrier.dates.feuille
+class _Traductions$calendrier$dates$feuille$en extends Traductions$calendrier$dates$feuille$fr {
+	_Traductions$calendrier$dates$feuille$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titreAjout => 'Add a date';
+	@override String get titreModif => 'Edit the date';
+	@override String get champType => 'Kind of date';
+	@override String get champCategorie => 'Which closure';
+	@override String get champTitre => 'Title';
+	@override String get aideTitre => 'The title families will read.';
+	@override String get champPortee => 'Who it is for';
+	@override String get champTranche => 'Age group';
+	@override String get champClasse => 'Class';
+	@override String get champDu => 'First day';
+	@override String get champAu => 'Last day';
+	@override String get aideDates => 'Dates are those of the Gregorian calendar, entered each year: the app does not calculate the lunar calendar.';
+	@override String get enregistrer => 'Save';
+	@override String get aucuneClasse => 'No class to choose for now.';
+}
+
+// Path: calendrier.dates.publication
+class _Traductions$calendrier$dates$publication$en extends Traductions$calendrier$dates$publication$fr {
+	_Traductions$calendrier$dates$publication$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Publish the closure';
+	@override String get phrase => 'During these days, no new session is created and the deadline of each concerned student\'s stage moves back by the same amount. Sessions that have not yet started on those days are set aside, not deleted; a session already started continues. Removing the closure before it starts restores the sessions set aside, unless the teacher took another class at the same time in the meantime. Once started, the closure can no longer be removed or shortened.';
+	@override String get confirmer => 'Publish the closure';
+}
+
+// Path: calendrier.dates.notification
+class _Traductions$calendrier$dates$notification$en extends Traductions$calendrier$dates$notification$fr {
+	_Traductions$calendrier$dates$notification$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$calendrier$dates$notification$conflit$en conflit = _Traductions$calendrier$dates$notification$conflit$en._(_root);
+	@override String quandLocal({required Object local, required Object mecque}) => '${local} (${mecque}, Makkah time)';
+	@override String quandMecque({required Object jour, required Object heure}) => '${jour} at ${heure}, Makkah time';
+	@override late final _Traductions$calendrier$dates$notification$annoncee$en annoncee = _Traductions$calendrier$dates$notification$annoncee$en._(_root);
+	@override late final _Traductions$calendrier$dates$notification$levee$en levee = _Traductions$calendrier$dates$notification$levee$en._(_root);
+}
+
+// Path: calendrier.dates.concernees
+class _Traductions$calendrier$dates$concernees$en extends Traductions$calendrier$dates$concernees$fr {
+	_Traductions$calendrier$dates$concernees$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Sessions concerned';
+	@override String get heureMecque => 'Days and times are Makkah time.';
+	@override String ligne({required Object classe, required Object quand, required Object enseignant}) => '${classe}, ${quand}, ${enseignant}';
+	@override String get deCote => 'set aside';
+	@override String autres({required Object n}) => 'And ${n} other sessions.';
+	@override String get erreur => 'The sessions concerned could not be loaded: the request may not have reached Rewayah. Try again in a moment.';
+}
+
+// Path: calendrier.dates.conflits
+class _Traductions$calendrier$dates$conflits$en extends Traductions$calendrier$dates$conflits$fr {
+	_Traductions$calendrier$dates$conflits$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Sessions that cannot be restored';
+	@override String get intro => 'These sessions were set aside by the closure, but the teacher took another class at the same time. Free the teacher then try again, or confirm abandoning these sessions: they will never be restored. Times are Makkah time.';
+	@override String ligne({required Object classe, required Object quand, required Object enseignant}) => '${classe}, ${quand}, ${enseignant}';
+	@override String autre({required Object cours, required Object quand}) => 'Other class: ${cours}, ${quand}';
+	@override String autreSansNom({required Object quand}) => 'Other class at the same time, ${quand}';
+	@override String abandonner({required Object n}) => 'Remove the closure and abandon these sessions (${n})';
+}
+
+// Path: calendrier.dates.refus
+class _Traductions$calendrier$dates$refus$en extends Traductions$calendrier$dates$refus$fr {
+	_Traductions$calendrier$dates$refus$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get fermetureTropLongue => 'This closure is longer than the maximum allowed (Ramadan: 20 days, Eid al-Adha: 10 days). Shorten it.';
+	@override String get fermetureCommencee => 'This closure has already started or is past: it can no longer be removed, shortened or moved. You can only extend it.';
+	@override String get fermeturePassee => 'This closure starts before today: it cannot be published. Choose a date from today.';
+	@override String get retraitConflits => 'The closure is not removed: sessions set aside cannot be restored. Read the list, then free the teacher or confirm abandoning these sessions.';
+	@override String get raccourcissementConflits => 'The closure is not changed: sessions set aside could not be restored. Remove the whole closure or free the teacher.';
+	@override String get datesInvalides => 'The last day must come after the first, within a year.';
+	@override String get porteeInvalide => 'Choose the age group or class concerned.';
+	@override String get evenementInvalide => 'The title is missing or the kind of date is unreadable. Check them, then try again.';
+	@override String get introuvable => 'This date no longer exists. Reload the list.';
+	@override String get nonAutorise => 'Only the management can edit the calendar.';
+	@override String get inconnu => 'The save is not confirmed: the request may not have reached Rewayah. Try again in a moment.';
+}
+
+// Path: calendrier.pauses.statut
+class _Traductions$calendrier$pauses$statut$en extends Traductions$calendrier$pauses$statut$fr {
+	_Traductions$calendrier$pauses$statut$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get demandee => 'Pending';
+	@override String get acceptee => 'Accepted';
+	@override String get refusee => 'Refused';
+	@override String get annulee => 'Cancelled';
+}
+
+// Path: calendrier.pauses.refus
+class _Traductions$calendrier$pauses$refus$en extends Traductions$calendrier$pauses$refus$fr {
+	_Traductions$calendrier$pauses$refus$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get motifRequis => 'A reason of at least three letters is required.';
+	@override String get dejaDecidee => 'This request has already been answered. Reload the list.';
+	@override String get debutPasse => 'The month has already started: this break can no longer be accepted. You can refuse it.';
+	@override String get datesInvalides => 'The last day must be today or later, within a year.';
+	@override String exceptionTropLongue({required Object mois}) => 'An exceptional break lasts ${mois} months at most. Shorten it; you can then grant a new one.';
+	@override String get nonTerminable => 'This break is already ended or is not an exceptional break.';
+	@override String get eleveIntrouvable => 'This student cannot be found.';
+	@override String get nonAutorise => 'Only the management can decide on a break.';
+	@override String get inconnu => 'The decision is not confirmed: the request may not have reached Rewayah. Try again in a moment.';
+}
+
 // Path: recrutement.parcours.presentation.p1
 class _Traductions$recrutement$parcours$presentation$p1$en extends Traductions$recrutement$parcours$presentation$p1$fr {
 	_Traductions$recrutement$parcours$presentation$p1$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -6460,6 +7192,46 @@ class _Traductions$courriels$admin$adresses$champs$en extends Traductions$courri
 	@override String get nom => 'Display name';
 	@override String get reponses => 'Replies to';
 	@override String get type => 'Type';
+}
+
+// Path: calendrier.dates.notification.conflit
+class _Traductions$calendrier$dates$notification$conflit$en extends Traductions$calendrier$dates$notification$conflit$fr {
+	_Traductions$calendrier$dates$notification$conflit$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get generale => 'A session is no longer under a closure but cannot be restored: the teacher took another class at the same time. Free them, the session will be restored the following night.';
+	@override String avecNom({required Object classe, required Object jour, required Object heure, required Object enseignant}) => 'The session of class ${classe}, on ${jour} at ${heure} (Makkah time), is no longer under a closure but cannot be restored: ${enseignant} has another class at the same time. Free the teacher, the session will be restored the following night.';
+	@override String sansNom({required Object classe, required Object jour, required Object heure}) => 'The session of class ${classe}, on ${jour} at ${heure} (Makkah time), is no longer under a closure but cannot be restored: the teacher has another class at the same time. Free them, the session will be restored the following night.';
+	@override String get rappelGenerale => 'Reminder: a session that is no longer under a closure still cannot be restored: the teacher has another class at the same time. Free them to restore it.';
+	@override String rappelAvecNom({required Object classe, required Object jour, required Object heure, required Object enseignant}) => 'Reminder: the session of class ${classe}, on ${jour} at ${heure} (Makkah time), still cannot be restored: ${enseignant} has another class at the same time. Free the teacher to restore it.';
+	@override String rappelSansNom({required Object classe, required Object jour, required Object heure}) => 'Reminder: the session of class ${classe}, on ${jour} at ${heure} (Makkah time), still cannot be restored: the teacher has another class at the same time. Free them to restore it.';
+}
+
+// Path: calendrier.dates.notification.annoncee
+class _Traductions$calendrier$dates$notification$annoncee$en extends Traductions$calendrier$dates$notification$annoncee$fr {
+	_Traductions$calendrier$dates$notification$annoncee$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String une({required Object du, required Object au, required Object quand}) => 'The academy is closed from ${du} to ${au}. The session of ${quand} will not take place.';
+	@override String plusieurs({required Object du, required Object au, required Object n, required Object quand}) => 'The academy is closed from ${du} to ${au}. Sessions that will not take place: ${n}, including the one of ${quand}.';
+}
+
+// Path: calendrier.dates.notification.levee
+class _Traductions$calendrier$dates$notification$levee$en extends Traductions$calendrier$dates$notification$levee$fr {
+	_Traductions$calendrier$dates$notification$levee$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String une({required Object quand}) => 'The academy\'s closure is removed. The session of ${quand} is restored.';
+	@override String plusieurs({required Object n, required Object quand}) => 'The academy\'s closure is removed. Sessions restored: ${n}, including the one of ${quand}.';
+	@override String abandonUne({required Object quand}) => 'The academy\'s closure is removed, but the session of ${quand} will not take place.';
+	@override String abandonPlusieurs({required Object n, required Object quand}) => 'The academy\'s closure is removed, but some sessions will not take place: ${n}, including the one of ${quand}.';
+	@override String mixte({required Object retablies, required Object abandonnees}) => 'The academy\'s closure is removed. Sessions restored: ${retablies}. Sessions that will not take place: ${abandonnees}. Open the class to see them.';
 }
 
 // Path: recrutement.parcours.presentation.p1.academie
@@ -7727,6 +8499,91 @@ extension on TraductionsEn {
 			'kyc.contenuNonConforme' => 'This file does not open as a photo or as a PDF: it may be damaged, or of another type that was renamed. Choose the photo or PDF of your ID document.',
 			'kyc.tropVolumineux' => ({required Object taille}) => 'This photo is larger than ${taille} MB. Retake it at a lower quality.',
 			'kyc.manqueType' => 'First choose the document you are submitting.',
+			'appareils.titre' => 'Devices',
+			'appareils.foyer.titre' => 'Household devices',
+			'appareils.foyer.phrase' => 'Each student profile has its own devices. Tap a profile to see its devices, remove one or connect a new one.',
+			'appareils.foyer.groupeProfils' => 'Student profiles',
+			'appareils.foyer.aucunAppareil' => 'No device connected',
+			'appareils.foyer.unAppareil' => ({required Object nom}) => '1 device connected: ${nom}',
+			'appareils.foyer.partageTitre' => 'Shared device',
+			'appareils.foyer.partage' => 'On a shared device, each student chooses their profile then enters their personal code. This device then appears under each profile that uses it.',
+			'appareils.foyer.sansDonnees' => 'The devices of your household could not be loaded',
+			'appareils.foyer.videTitre' => 'No student profile',
+			'appareils.foyer.vide' => 'Add a student profile to connect a tablet, a phone or a computer to it.',
+			'appareils.foyer.videAction' => 'Add a student profile',
+			'appareils.foyer.plusieursAppareils' => ({required num nombre, required Object noms}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(nombre, one: '${nombre} device connected: ${noms}', other: '${nombre} devices connected: ${noms}', ), 
+			'appareils.eleve.sousTitre' => ({required Object prenom}) => 'Manage the devices allowed for ${prenom}.',
+			'appareils.eleve.groupe' => 'Connected devices',
+			'appareils.eleve.connecter' => 'Connect a device',
+			'appareils.eleve.sansDonnees' => 'The devices of this profile could not be loaded',
+			'appareils.eleve.videTitre' => 'No device connected',
+			'appareils.eleve.vide' => ({required Object dePrenom}) => 'Connect ${dePrenom}\'s tablet, phone or computer with the code shown by the button below.',
+			'appareils.eleve.introuvableTitre' => 'Student profile not found',
+			'appareils.eleve.introuvable' => 'This student profile is not linked to your household.',
+			'appareils.eleve.introuvableAction' => 'See the household devices',
+			'appareils.eleve.connecteLe' => ({required Object date}) => 'Connected on ${date}',
+			'appareils.eleve.utiliseLe' => ({required Object date}) => 'Last used: ${date}',
+			'appareils.eleve.jamaisUtilise' => 'Not used yet',
+			'appareils.eleve.retirerLibelle' => ({required Object appareil}) => 'Remove ${appareil}',
+			'appareils.eleve.horsLigne' => 'You will be able to remove or connect a device when the connection is back.',
+			'appareils.eleve.partageTitre' => 'Profile choice and personal code',
+			'appareils.eleve.partage' => 'On a shared device, each student chooses their profile then enters their own personal code, kept on this device.',
+			'appareils.eleve.retraitTitre' => 'Remove a device',
+			'appareils.eleve.retrait' => 'A removed device can no longer sign in again. If it is connected right now, it stays connected until its next sign-out.',
+			'appareils.plateforme.android' => 'Android phone or tablet',
+			'appareils.plateforme.ios' => 'iPhone or iPad',
+			'appareils.plateforme.web' => 'Web browser',
+			'appareils.plateforme.windows' => 'Computer',
+			'appareils.plateforme.inconnue' => 'Device',
+			'appareils.retrait.question' => 'Remove this device?',
+			'appareils.retrait.consequence' => ({required Object appareil, required Object dePrenom}) => '${appareil} will no longer be able to sign in to ${dePrenom}\'s profile. If it is connected right now, it stays connected until its next sign-out.',
+			'appareils.retrait.confirmer' => 'Remove the device',
+			'appareils.retrait.enCours' => 'Removing',
+			'appareils.retrait.reussi' => 'Device removed. If it is connected right now, it stays connected until its next sign-out.',
+			'appareils.retrait.echec' => 'The removal did not go through. The device is still allowed. Try again in a moment.',
+			'appareils.retrait.horsLigne' => 'The device was not removed. Try again when the connection is back.',
+			'appareils.emetteur.titre' => 'Connect a device',
+			'appareils.emetteur.pourEleve' => ({required Object prenom}) => 'For ${prenom}',
+			'appareils.emetteur.consigneTitre' => 'On the other device',
+			'appareils.emetteur.consigne' => 'Open Rewayah, tap "Connect a student\'s device", then scan this QR code or enter the code.',
+			'appareils.emetteur.libelleQr' => 'Sign-in QR code. The same code is also written on this screen, to enter if the device does not read the QR code.',
+			'appareils.emetteur.codeManuel' => 'Code to enter',
+			'appareils.emetteur.codeLu' => ({required Object code}) => 'Code to enter: ${code}',
+			'appareils.emetteur.valableJusqua' => ({required Object heure}) => 'Valid until ${heure}',
+			'appareils.emetteur.restant' => ({required Object temps}) => '${temps} left',
+			'appareils.emetteur.sortie' => ({required Object heure}) => 'Leaving this screen does not cancel the code: it stays valid until ${heure}.',
+			'appareils.emetteur.suiviIndisponible' => 'This screen cannot confirm the connection. Check on the student\'s device.',
+			'appareils.emetteur.preparation' => 'Preparing the code',
+			'appareils.emetteur.verification.titre' => 'Checking the code',
+			'appareils.emetteur.verification.phrase' => 'The code is hidden while we check that it is still valid.',
+			'appareils.emetteur.confirme.titre' => 'Device connected',
+			'appareils.emetteur.confirme.phrase' => ({required Object dePrenom}) => '${dePrenom}\'s device is ready. The code is no longer displayed and can no longer be used.',
+			'appareils.emetteur.confirme.phraseSansPrenom' => 'The student\'s device is ready. The code is no longer displayed and can no longer be used.',
+			'appareils.emetteur.confirme.action' => 'Done',
+			'appareils.emetteur.expire.titre' => 'This code has expired',
+			'appareils.emetteur.expire.phrase' => 'It can no longer be used. Generate a new one when the other device is ready.',
+			'appareils.emetteur.remplace.titre' => 'This code has been replaced',
+			'appareils.emetteur.remplace.phrase' => 'A new code was requested for this student, here or on another device. This one no longer works.',
+			'appareils.emetteur.dejaActif.titre' => 'A code is already valid',
+			_ => null,
+		} ?? switch (path) {
+			'appareils.emetteur.dejaActif.phrase' => ({required Object heure}) => 'A code created for this student is valid until ${heure}. It cannot be shown again: generating a new one will make the old one unusable.',
+			'appareils.emetteur.horsLigne.titreAvecCode' => 'Code hidden for now',
+			'appareils.emetteur.horsLigne.titreSansCode' => 'The code could not be prepared',
+			'appareils.emetteur.horsLigne.phraseAvecCode' => ({required Object heure}) => 'It will reappear when the connection is back. It stays valid until ${heure}.',
+			'appareils.emetteur.horsLigne.phraseSansCode' => 'It will be when the connection is back.',
+			'appareils.emetteur.erreur.plafondTitre' => 'Device limit reached',
+			'appareils.emetteur.erreur.plafondPhrase' => 'This student already has the maximum number of devices. Remove one to connect another.',
+			'appareils.emetteur.erreur.plafondAction' => 'See the devices',
+			'appareils.emetteur.erreur.horsFoyerTitre' => 'Student profile not found',
+			'appareils.emetteur.erreur.horsFoyerPhrase' => 'This student profile is not linked to your household. Go back to the Household to choose one.',
+			'appareils.emetteur.erreur.compteTitre' => 'Device connection not open yet',
+			'appareils.emetteur.erreur.comptePhrase' => 'Your account must be open before you connect a student\'s device.',
+			'appareils.emetteur.erreur.generiqueTitre' => 'The code could not be prepared',
+			'appareils.emetteur.erreur.generiquePhrase' => 'The request did not go through. Try again in a moment.',
+			'appareils.regenerer' => 'Generate a new code',
+			'appareils.revoquer' => 'Remove',
+			'appareils.revoquerConfirmation' => 'Remove this device? It will no longer be able to sign in until the guardian reconnects it with a new code.',
 			'enfant.titre' => 'Add a student profile',
 			'enfant.aucun' => 'No student profile in the household',
 			'enfant.aucunDetail' => 'First add a student profile from the Household.',
@@ -7793,8 +8650,6 @@ extension on TraductionsEn {
 			'foyer.ajout.identite.question' => 'Who is the student?',
 			'foyer.ajout.identite.sousTitre' => 'Their first name, last name and age.',
 			'foyer.ajout.identite.prenom' => 'First name',
-			_ => null,
-		} ?? switch (path) {
 			'foyer.ajout.identite.nom' => 'Last name',
 			'foyer.ajout.identite.nomAide' => 'The family name is never shown to the teacher.',
 			'foyer.ajout.identite.nomAidePrerempli' => 'Filled in with your account name: change it if the student has a different name. Never shown to the teacher.',
@@ -8058,6 +8913,156 @@ extension on TraductionsEn {
 			'ficheEleve.mouvements.indisponibleTitre' => 'Movements are not available yet',
 			'ficheEleve.mouvements.indisponiblePhrase' => ({required Object dePrenom}) => '${dePrenom}\'s top-ups and monthly fees will appear here once they are in service.',
 			'ficheEleve.mouvements.sansDonnees' => 'The movements of this profile could not be loaded',
+			'priere.fajr' => 'Fajr',
+			'priere.dhuhr' => 'Dhuhr',
+			'priere.asr' => 'Asr',
+			'priere.maghrib' => 'Maghrib',
+			'priere.isha' => 'Isha',
+			'priere.entree' => ({required Object priere, required Object minutes}) => '${priere}, ${minutes} min',
+			'priere.annonce' => ({required Object priere, required Object heure}) => 'This class will be interrupted for ${priere}, around ${heure}.',
+			'priere.annonceAucune' => 'No interruption planned during this class.',
+			'priere.alerte' => ({required Object priere, required Object minutes}) => '${priere} in ${minutes} min',
+			'priere.alerteMaintenant' => ({required Object priere, required Object heure}) => 'Break for ${priere}, resuming at ${heure}',
+			'priere.pause' => 'Break',
+			'priere.lieu' => ({required Object lieu}) => 'Times calculated for ${lieu}',
+			'priere.lieuSansNom' => 'Times calculated for the teacher\'s location',
+			'priere.ajustee' => ({required Object priere, required Object minutes}) => '${priere} adjusted by ${minutes} min by the teacher',
+			'priere.reglagesAbsents' => 'The teacher has not yet set their prayer times.',
+			'priere.pauseDePriere' => 'Prayer break',
+			'priere.pauseA' => ({required Object heure}) => 'Prayer break at ${heure}',
+			'priere.approchee' => 'Approximate time: at this season, the sun does not go low enough for the angle to be defined.',
+			'priere.methodes.muslim_world_league' => 'Muslim World League',
+			'priere.methodes.egyptian' => 'Egyptian General Authority',
+			'priere.methodes.karachi' => 'University of Islamic Sciences, Karachi',
+			'priere.methodes.umm_al_qura' => 'Umm al-Qura (Makkah)',
+			'priere.methodes.dubai' => 'Gulf',
+			'priere.methodes.moon_sighting_committee' => 'Moon Sighting Committee',
+			'priere.methodes.north_america' => 'ISNA (North America)',
+			'priere.methodes.kuwait' => 'Kuwait',
+			'priere.methodes.qatar' => 'Qatar',
+			'priere.methodes.singapore' => 'Singapore',
+			'priere.methodes.tehran' => 'Tehran',
+			'priere.methodes.turkey' => 'Diyanet (Turkey)',
+			'priere.ecoles.shafi' => 'According to the majority of schools (shadow equals the object)',
+			'priere.ecoles.hanafi' => 'Double shadow (Hanafi school)',
+			'priere.aValider' => 'Default value in force, to be approved by the director and his partners.',
+			'priere.enseignant.titre' => 'My prayer times',
+			'priere.enseignant.intro' => 'The times of the day, calculated by Rewayah for your location. You can adjust each prayer by 30 minutes at most.',
+			'priere.enseignant.ligne' => 'My prayer times',
+			'priere.enseignant.ligneDetail' => 'See your times of the day and adjust them',
+			'priere.enseignant.vide' => 'Your prayer location is not known yet. One tap is enough: Rewayah reads this device\'s position, rounds it to about a kilometre and calculates your times.',
+			'priere.enseignant.utiliserPosition' => 'Use my location',
+			'priere.enseignant.positionRefusee' => 'Location not shared. You can try again, or the management will set your location.',
+			'priere.enseignant.positionErreur' => 'Your location may not have reached Rewayah. Try again in a moment.',
+			'priere.enseignant.positionDirection' => 'The management has already set your location. It does not change with a tap.',
+			'priere.enseignant.erreur' => 'Your prayer times did not appear. The request may not have reached Rewayah. Try again in a moment.',
+			'priere.enseignant.aucunAjustement' => 'No adjustment',
+			'priere.enseignant.plus' => ({required Object minutes}) => '${minutes} min later',
+			'priere.enseignant.moins' => ({required Object minutes}) => '${minutes} min earlier',
+			'priere.enseignant.feuilleAide' => 'From 30 minutes earlier to 30 minutes later. The adjustment also moves the prayer break of your classes.',
+			'priere.enseignant.champ' => 'Adjustment',
+			'priere.enseignant.enregistrer' => 'Save',
+			'priere.enseignant.erreurEnregistrement' => 'The adjustment may not have reached Rewayah. Check your times, then try again in a moment.',
+			'priere.enseignant.unite' => ({required Object n}) => '${n} min',
+			'priere.direction.onglet' => 'Prayer',
+			'priere.direction.titre' => 'Prayer locations',
+			'priere.direction.intro' => 'Rewayah calculates each teacher\'s times from their position and chooses the method according to the country. You read this list; you only fix an exception. Only the teacher and the management see the location: students and guardians only read the time of the break.',
+			'priere.direction.attente' => 'Pending: the teacher has not shared their position yet',
+			'priere.direction.corriger' => 'Correct',
+			'priere.direction.corrigerDe' => ({required Object dePrenom}) => 'Correct ${dePrenom}\'s prayer settings',
+			'priere.direction.sourceDirection' => 'location set by the management',
+			'priere.direction.sourceEnseignant' => 'position shared by the teacher',
+			'priere.direction.sourceAuto' => 'location taken from their city',
+			'priere.direction.origineEnseignant' => 'chosen by the management',
+			'priere.direction.originePays' => 'usual for the country',
+			'priere.direction.origineAcademie' => 'the academy\'s',
+			'priere.direction.zoneLigne' => ({required Object lieu, required Object source}) => '${lieu}, ${source}',
+			'priere.direction.methodeLigne' => ({required Object methode, required Object origine}) => 'Method: ${methode} (${origine})',
+			'priere.direction.sansLieu' => 'No location: no prayer break',
+			'priere.direction.vide' => 'No active teacher for now.',
+			'priere.direction.erreur' => 'The prayer locations did not appear. The request may not have reached Rewayah. Try again in a moment.',
+			'priere.direction.vendredi' => 'Attends Friday prayer',
+			'priere.direction.incoherenceTitre' => 'To check',
+			'priere.direction.incoherenceAide' => 'Reporting only: nothing is corrected automatically.',
+			'priere.direction.incoherenceFuseauCompte' => ({required Object prenom, required Object detail}) => '${prenom}: the account time zone and the prayer location\'s differ (${detail}).',
+			'priere.direction.incoherenceFuseauLieu' => ({required Object prenom, required Object detail}) => '${prenom}: the prayer location\'s time zone does not match its longitude (${detail}).',
+			'priere.direction.incoherencePays' => ({required Object prenom, required Object detail}) => '${prenom}: the account country (${detail}) does not match the prayer location.',
+			'priere.direction.incoherencePaysFuseau' => ({required Object prenom, required Object detail}) => '${prenom}: the account country and its time zone do not match (${detail}).',
+			'priere.direction.feuille.titre' => ({required Object dePrenom}) => '${dePrenom}\'s prayer location and times',
+			'priere.direction.feuille.avance' => 'Advanced setting',
+			'priere.direction.feuille.avanceAide' => 'Rewayah chooses the method by itself according to the country of the location. Only change it for an exception.',
+			'priere.direction.feuille.methodeAuto' => 'Automatic: according to the country, otherwise the academy',
+			'priere.direction.feuille.ecoleAuto' => 'Automatic',
+			'priere.direction.feuille.poserMain' => 'Set the location by hand',
+			'priere.direction.feuille.poserLieu' => 'Set this location',
+			'priere.direction.feuille.sansLieuAide' => 'No location for now: the teacher shares it themselves with one tap. You can set it by hand under "Advanced setting".',
+			'priere.direction.feuille.vendrediAide' => 'A slot that overlaps this prayer is reported to the management, without blocking.',
+			'priere.direction.feuille.nomLieu' => 'Location name',
+			'priere.direction.feuille.latitude' => 'Latitude',
+			'priere.direction.feuille.longitude' => 'Longitude',
+			'priere.direction.feuille.coordonneesAide' => 'In decimal degrees, with a dot (for example 9.6412 and -13.5784).',
+			'priere.direction.feuille.fuseau' => ({required Object exemple}) => 'Time zone (for example ${exemple})',
+			'priere.direction.feuille.methode' => 'Calculation method',
+			'priere.direction.feuille.methodeEcole' => 'The academy\'s',
+			'priere.direction.feuille.ecole' => 'School for Asr',
+			'priere.direction.feuille.ecoleEcole' => 'The academy\'s',
+			'priere.direction.feuille.vendredi' => 'Attends Friday prayer',
+			'priere.direction.feuille.vendrediOui' => 'Yes',
+			'priere.direction.feuille.vendrediNon' => 'No',
+			'priere.direction.feuille.vendrediDebut' => 'Start of Friday\'s window',
+			'priere.direction.feuille.vendrediFin' => 'End of Friday\'s window',
+			'priere.direction.feuille.plageAide' => 'Teacher\'s time, in HH:MM format. A slot that overlaps this window is reported to the management, without blocking.',
+			'priere.direction.feuille.apercu' => 'Times of the day',
+			'priere.direction.feuille.apercuVide' => 'No time to show until the location is saved.',
+			'priere.direction.feuille.enregistrer' => 'Save the location',
+			'priere.direction.feuille.retirer' => 'Remove the location',
+			'priere.direction.feuille.invalide' => 'Check the location name, the coordinates, the time zone and Friday\'s window.',
+			'priere.direction.feuille.erreurEnregistrement' => 'The location may not have reached Rewayah, or a value was refused. Check the form, then try again in a moment.',
+			'priere.classe.titre' => 'Prayers and slot',
+			'priere.classe.intro' => 'What this slot crosses, over the next 12 months, for the class teacher. It is a warning: nothing is blocked, and the prayer break protects the teacher anyway.',
+			'priere.classe.sansLieu' => 'This class\'s teacher has no prayer location: no prayer break is planned.',
+			'priere.classe.erreur' => 'The prayers for this slot did not appear. The request may not have reached Rewayah. Try again in a moment.',
+			'priere.classe.creneau' => ({required Object jour, required Object heure, required Object duree}) => '${jour}, ${heure}:00, ${duree} min',
+			'priere.classe.aucun' => 'This slot crosses no prayer of the teacher over the 12 months.',
+			'priere.classe.croise' => ({required Object priere, required Object du, required Object au, required Object seances, required Object pause, required Object apres}) => '${priere}: from ${du} to ${au}, ${seances} sessions, of which ${pause} with a prayer break and ${apres} where the teacher prays after the class.',
+			'priere.classe.indefini' => 'For part of the year, the sun does not rise or set: no prayer break is calculated.',
+			'priere.classe.vendredi' => ({required Object debut, required Object fin, required Object n}) => 'This slot overlaps the teacher\'s Friday prayer (${debut} to ${fin}): ${n} sessions of the year. Strong warning.',
+			'priere.classe.libres' => ({required Object heures}) => 'Start times with no prayer that day: ${heures}.',
+			'priere.classe.libresAucune' => 'No start time that day avoids all the prayers of the year.',
+			'priere.classe.libresInconnues' => 'Times with no prayer cannot be given for this teacher.',
+			'priere.classe.heureCourte' => ({required Object h}) => '${h}:00',
+			'priere.regles.section' => 'Prayer',
+			'priere.regles.intro' => 'The server places the teacher\'s prayer break when a prayer falls during the session. These settings apply to the whole academy.',
+			'priere.regles.methode' => 'Calculation method',
+			'priere.regles.methodeDetail' => 'The Fajr and Isha angles. A teacher can have their own.',
+			'priere.regles.ecole' => 'School for Asr',
+			'priere.regles.ecoleDetail' => 'The entry time of Asr. A teacher can have their own.',
+			'priere.regles.pause' => 'Prayer break length',
+			'priere.regles.pauseDetail' => 'From 5 to 20 minutes, in steps of 5.',
+			'priere.regles.pauseRamadan' => 'Maghrib break during Ramadan',
+			'priere.regles.pauseRamadanDetail' => 'The breaking of the fast: from 5 to 20 minutes, in steps of 5.',
+			'priere.regles.ramadan' => 'Ramadan in progress',
+			'priere.regles.ramadanDetail' => 'Pending the academy\'s calendar, the management sets it by hand.',
+			'priere.regles.margeDebut' => 'Margin at the start',
+			'priere.regles.margeDebutDetail' => 'A prayer that falls in these first minutes places the break at that minute of the class.',
+			'priere.regles.margeFin' => 'Margin at the end',
+			'priere.regles.margeFinDetail' => 'A prayer that falls in these last minutes is prayed after the class.',
+			'priere.regles.margeAvant' => 'Prayer that began just before the class',
+			'priere.regles.margeAvantDetail' => 'A prayer that began less than this long before the class starts, and whose time closes during the class, gets its break. To be approved by the director.',
+			'priere.regles.delaiFermeture' => 'Start of the break for a closing prayer',
+			'priere.regles.delaiFermetureDetail' => 'This break starts this long after the start of the class.',
+			'priere.regles.horizon' => 'Night recalculation',
+			'priere.regles.horizonDetail' => 'Every night, the breaks of the next days\' sessions are recalculated.',
+			'priere.regles.valeurs' => 'Numeric values',
+			'priere.regles.valeursDetail' => 'Lengths, margins and night recalculation: Rewayah applies these values, only change them for an exception.',
+			'priere.regles.methodeSelonPays' => 'Method by country',
+			'priere.regles.methodeSelonPaysDetail' => 'When on, the usual method of the location\'s country applies (Saudi Arabia, Qatar, Kuwait, Emirates, Egypt, Pakistan, Singapore, Turkey, Iran); elsewhere, the academy\'s method. To be approved by the director.',
+			'priere.regles.lieux' => 'Teachers\' prayer locations',
+			'priere.regles.lieuxDetail' => 'Each teacher\'s location, Friday prayer, times of the day.',
+			'priere.regles.unite' => ({required Object n}) => '${n} min',
+			'priere.regles.uniteJours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} day', other: '${n} days', ), 
+			'priere.regles.choisir' => 'Save',
+			'priere.regles.erreurEcriture' => ({required Object message}) => 'The setting is not confirmed (${message}). Check its value, then try again in a moment.',
 			'recrutement.nomLatin.titre' => 'Your name in Latin letters',
 			'recrutement.nomLatin.explication' => 'Your name is written in another script. For lists, certificates and exchanges with the academy, we need it written in Latin letters.',
 			'recrutement.nomLatin.libelle' => 'Your name in Latin letters',
@@ -8074,6 +9079,8 @@ extension on TraductionsEn {
 			'recrutement.candidat.verifier' => 'Check the code',
 			'recrutement.candidat.valide' => ({required Object date}) => 'Invitation valid until ${date}.',
 			'recrutement.candidat.valideDetail' => 'You can create your teacher profile.',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.candidat.creerProfil' => 'Create my profile',
 			'recrutement.candidat.expiree' => 'This invitation has expired.',
 			'recrutement.candidat.expireeDetail' => 'Ask the academy\'s management for a new invitation.',
@@ -8307,8 +9314,6 @@ extension on TraductionsEn {
 			'recrutement.parcours.riwayat.rechercheAide' => 'Riwaya name',
 			'recrutement.parcours.riwayat.aucune' => 'No riwaya matches.',
 			'recrutement.parcours.riwayat.retour' => 'Back to the riwayat offered',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.fuseau.heureChezVous' => ({required Object heure}) => 'Is it ${heure} where you are?',
 			'recrutement.parcours.fuseau.lieuPropose' => ({required Object lieu}) => 'Suggested time zone: ${lieu}.',
 			'recrutement.parcours.fuseau.retenu' => ({required Object lieu}) => 'Time zone kept: ${lieu}.',
@@ -8588,6 +9593,8 @@ extension on TraductionsEn {
 			'parcours.retourAccueil' => 'Back to home',
 			'parcours.retourFoyer' => 'Back to the Household',
 			'parcours.reessayer' => 'Try again',
+			_ => null,
+		} ?? switch (path) {
 			'parcours.indisponibleTitre' => 'The questionnaire is not available yet',
 			'parcours.indisponibleDetail' => 'The academy has not opened this step yet. You have nothing to do for now: nothing is lost, and you can fill it in as soon as it opens.',
 			'parcours.horsLigneTitre' => 'The journey could not be loaded',
@@ -8821,8 +9828,6 @@ extension on TraductionsEn {
 			'compte.fuseau' => 'Time zone',
 			'compte.academie' => 'Academy',
 			'compte.securite' => 'Security',
-			_ => null,
-		} ?? switch (path) {
 			'compte.statut' => 'Status',
 			'compte.reglagesTitre' => 'Settings',
 			'compte.reglagesIntro' => 'These preferences apply immediately.',
@@ -9102,6 +10107,8 @@ extension on TraductionsEn {
 			'notifications.evenements.controleMissionNonControlee' => 'A review mission was left without a check.',
 			'notifications.evenements.classeChangee' => 'A student in the family has joined another class, at the same time.',
 			'notifications.evenements.paiementRelance' => 'A payment is coming due. It is paid in Payments.',
+			_ => null,
+		} ?? switch (path) {
 			'notifications.evenements.accesSuspenduPaiement' => 'Access is suspended: this month\'s payment has not been received.',
 			'notifications.evenements.accesRetabliPaiement' => 'Access is restored: the payment has been received.',
 			'notifications.evenements.paiementRecu' => 'The payment has been received. The balance is up to date.',
@@ -9335,8 +10342,6 @@ extension on TraductionsEn {
 			'tuteur.accueil.autreAppareilFeuille.adresseConnexion' => 'Sign-in address',
 			'tuteur.accueil.autreAppareilFeuille.copier' => 'Copy the app link',
 			'tuteur.accueil.autreAppareilFeuille.copie' => 'Link copied',
-			_ => null,
-		} ?? switch (path) {
 			'tuteur.accueil.autreAppareil' => 'Use another device',
 			'tuteur.accueil.ajouterProfil' => 'Add a student profile',
 			'tuteur.accueil.profilsIllisibles' => 'The household profiles could not be loaded.',
@@ -9616,6 +10621,8 @@ extension on TraductionsEn {
 			'adulte.maClasse.aucuneClasseDetail' => 'Your class, its participants and its resources will appear here as soon as it is open.',
 			'adulte.monEspace.informations' => 'My information',
 			'adulte.monEspace.paiements' => 'Payments',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.coranDemo.titre' => 'Available after sign-in',
 			'adulte.coranDemo.phrase' => 'This is not a fault: the demo does not contain the Quran text. After you sign in to your student space, it opens here.',
 			'adulte.recharge.titre' => 'Top-up',
@@ -9849,8 +10856,6 @@ extension on TraductionsEn {
 			'adulte.sortie.quitter' => 'Leave the family plan',
 			'adulte.sortie.quitterQuestion' => 'Leave the family plan?',
 			'adulte.sortie.quitterConfirmer' => 'Leave the plan',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.sortie.quitterConsequence' => 'Your account, classes, history and balance stay available. The link to the family plan will end.',
 			'adulte.sortie.forfaitPhrase' => ({required Object dePrenom}) => 'You are part of ${dePrenom}\'s family plan.',
 			'adulte.sortie.resultatTitre' => 'The link to the family plan has ended',
@@ -10130,6 +11135,8 @@ extension on TraductionsEn {
 			'avis.form.qualite.libelle' => 'You are',
 			'avis.form.qualite.parent' => 'Parent or guardian',
 			'avis.form.qualite.eleveAdulte' => 'Adult student',
+			_ => null,
+		} ?? switch (path) {
 			'avis.form.qualite.erreur' => 'Choose who you are.',
 			'avis.form.pays.libelle' => 'Country of residence',
 			'avis.form.pays.choisir' => 'Choose a country',
@@ -10363,8 +11370,6 @@ extension on TraductionsEn {
 			'courriels.admin.adresses.coupee' => 'Off',
 			'courriels.admin.adresses.vide' => 'No category for now.',
 			'courriels.admin.adresses.erreur' => 'The sending addresses could not be loaded. Try again.',
-			_ => null,
-		} ?? switch (path) {
 			'courriels.admin.adresses.sansDonnees' => 'The sending addresses could not be loaded',
 			'accueilInscrits.titre' => 'We already know you',
 			'accueilInscrits.phrase' => 'Your registration has been carried over. You do not have to enter everything again.',
@@ -10526,6 +11531,151 @@ extension on TraductionsEn {
 			'suiviAttente.mePresenter.chargement' => 'Loading the families of the class',
 			'suiviAttente.mePresenter.erreur' => 'The families of the class could not be loaded. Try again in a moment.',
 			'suiviAttente.mePresenter.vide' => 'Write a message before sending it.',
+			'calendrier.titre' => 'Calendar',
+			'calendrier.sections.libelle' => 'Calendar sections',
+			'calendrier.sections.dates' => 'Academy dates',
+			'calendrier.sections.pauses' => 'Breaks',
+			'calendrier.indisponible' => 'The calendar could not be opened: the request may not have reached Rewayah. Try again in a moment.',
+			'calendrier.refusNouvelleDateFermee' => 'The date is not set: the class is closed that day. Choose another day, or remove the closure for this class.',
+			'calendrier.dates.intro' => 'The dates of the year, entered by the management each year. Only published dates take effect: a closure moves back the deadline of the stages concerned and sets aside the sessions that have not yet started on those days. Days are counted in Makkah time.',
+			'calendrier.dates.ajouter' => 'Add a date',
+			'calendrier.dates.erreur' => 'The dates could not be loaded: the request may not have reached Rewayah. Try again in a moment.',
+			'calendrier.dates.videTitre' => 'No date entered',
+			'calendrier.dates.videDetail' => 'Add the year\'s closures, recitation meetings and assessment dates.',
+			'calendrier.dates.type.fermeture' => 'Closure',
+			'calendrier.dates.type.rencontre' => 'Recitation meeting',
+			'calendrier.dates.type.evaluation' => 'Assessment',
+			'calendrier.dates.type.autre' => 'Other date',
+			'calendrier.dates.categorie.ramadan' => 'Ramadan, 20 days at most',
+			'calendrier.dates.categorie.aidAlAdha' => 'Eid al-Adha, 10 days at most',
+			'calendrier.dates.categorie.autre' => 'Other closure',
+			'calendrier.dates.categorieAide' => 'Ramadan: from 20 Ramadan to 7 Shawwal inclusive. Eid al-Adha: from 9 to 18 Dhu al-Hijjah inclusive.',
+			'calendrier.dates.portee.ecole' => 'The whole academy',
+			'calendrier.dates.portee.tranche' => 'An age group',
+			'calendrier.dates.portee.classe' => 'A class',
+			'calendrier.dates.publiee' => 'Published',
+			'calendrier.dates.nonPubliee' => 'Not published',
+			'calendrier.dates.publier' => 'Publish',
+			'calendrier.dates.retirer' => 'Remove from publication',
+			'calendrier.dates.modifier' => 'Edit',
+			'calendrier.dates.periode' => ({required Object du, required Object au}) => 'From ${du} to ${au}',
+			'calendrier.dates.unJour' => ({required Object jour}) => 'On ${jour}',
+			'calendrier.dates.pour' => ({required Object cible}) => 'For: ${cible}',
+			'calendrier.dates.elevesVises' => ({required Object n}) => 'Students concerned: ${n}',
+			'calendrier.dates.seancesNeutralisees' => ({required Object n}) => 'Sessions already planned on these days: ${n}. They are set aside, not deleted, and restored if you remove the closure before it starts.',
+			'calendrier.dates.aucuneSeance' => 'No session is planned yet on these days.',
+			'calendrier.dates.commencee' => 'This closure has started: it can no longer be removed or shortened, only extended.',
+			'calendrier.dates.feuille.titreAjout' => 'Add a date',
+			'calendrier.dates.feuille.titreModif' => 'Edit the date',
+			'calendrier.dates.feuille.champType' => 'Kind of date',
+			'calendrier.dates.feuille.champCategorie' => 'Which closure',
+			'calendrier.dates.feuille.champTitre' => 'Title',
+			'calendrier.dates.feuille.aideTitre' => 'The title families will read.',
+			'calendrier.dates.feuille.champPortee' => 'Who it is for',
+			'calendrier.dates.feuille.champTranche' => 'Age group',
+			'calendrier.dates.feuille.champClasse' => 'Class',
+			'calendrier.dates.feuille.champDu' => 'First day',
+			'calendrier.dates.feuille.champAu' => 'Last day',
+			'calendrier.dates.feuille.aideDates' => 'Dates are those of the Gregorian calendar, entered each year: the app does not calculate the lunar calendar.',
+			'calendrier.dates.feuille.enregistrer' => 'Save',
+			'calendrier.dates.feuille.aucuneClasse' => 'No class to choose for now.',
+			'calendrier.dates.publication.titre' => 'Publish the closure',
+			'calendrier.dates.publication.phrase' => 'During these days, no new session is created and the deadline of each concerned student\'s stage moves back by the same amount. Sessions that have not yet started on those days are set aside, not deleted; a session already started continues. Removing the closure before it starts restores the sessions set aside, unless the teacher took another class at the same time in the meantime. Once started, the closure can no longer be removed or shortened.',
+			'calendrier.dates.publication.confirmer' => 'Publish the closure',
+			'calendrier.dates.notification.conflit.generale' => 'A session is no longer under a closure but cannot be restored: the teacher took another class at the same time. Free them, the session will be restored the following night.',
+			'calendrier.dates.notification.conflit.avecNom' => ({required Object classe, required Object jour, required Object heure, required Object enseignant}) => 'The session of class ${classe}, on ${jour} at ${heure} (Makkah time), is no longer under a closure but cannot be restored: ${enseignant} has another class at the same time. Free the teacher, the session will be restored the following night.',
+			'calendrier.dates.notification.conflit.sansNom' => ({required Object classe, required Object jour, required Object heure}) => 'The session of class ${classe}, on ${jour} at ${heure} (Makkah time), is no longer under a closure but cannot be restored: the teacher has another class at the same time. Free them, the session will be restored the following night.',
+			'calendrier.dates.notification.conflit.rappelGenerale' => 'Reminder: a session that is no longer under a closure still cannot be restored: the teacher has another class at the same time. Free them to restore it.',
+			'calendrier.dates.notification.conflit.rappelAvecNom' => ({required Object classe, required Object jour, required Object heure, required Object enseignant}) => 'Reminder: the session of class ${classe}, on ${jour} at ${heure} (Makkah time), still cannot be restored: ${enseignant} has another class at the same time. Free the teacher to restore it.',
+			'calendrier.dates.notification.conflit.rappelSansNom' => ({required Object classe, required Object jour, required Object heure}) => 'Reminder: the session of class ${classe}, on ${jour} at ${heure} (Makkah time), still cannot be restored: the teacher has another class at the same time. Free them to restore it.',
+			'calendrier.dates.notification.quandLocal' => ({required Object local, required Object mecque}) => '${local} (${mecque}, Makkah time)',
+			'calendrier.dates.notification.quandMecque' => ({required Object jour, required Object heure}) => '${jour} at ${heure}, Makkah time',
+			'calendrier.dates.notification.annoncee.une' => ({required Object du, required Object au, required Object quand}) => 'The academy is closed from ${du} to ${au}. The session of ${quand} will not take place.',
+			'calendrier.dates.notification.annoncee.plusieurs' => ({required Object du, required Object au, required Object n, required Object quand}) => 'The academy is closed from ${du} to ${au}. Sessions that will not take place: ${n}, including the one of ${quand}.',
+			'calendrier.dates.notification.levee.une' => ({required Object quand}) => 'The academy\'s closure is removed. The session of ${quand} is restored.',
+			'calendrier.dates.notification.levee.plusieurs' => ({required Object n, required Object quand}) => 'The academy\'s closure is removed. Sessions restored: ${n}, including the one of ${quand}.',
+			'calendrier.dates.notification.levee.abandonUne' => ({required Object quand}) => 'The academy\'s closure is removed, but the session of ${quand} will not take place.',
+			'calendrier.dates.notification.levee.abandonPlusieurs' => ({required Object n, required Object quand}) => 'The academy\'s closure is removed, but some sessions will not take place: ${n}, including the one of ${quand}.',
+			'calendrier.dates.notification.levee.mixte' => ({required Object retablies, required Object abandonnees}) => 'The academy\'s closure is removed. Sessions restored: ${retablies}. Sessions that will not take place: ${abandonnees}. Open the class to see them.',
+			'calendrier.dates.concernees.titre' => 'Sessions concerned',
+			'calendrier.dates.concernees.heureMecque' => 'Days and times are Makkah time.',
+			'calendrier.dates.concernees.ligne' => ({required Object classe, required Object quand, required Object enseignant}) => '${classe}, ${quand}, ${enseignant}',
+			'calendrier.dates.concernees.deCote' => 'set aside',
+			'calendrier.dates.concernees.autres' => ({required Object n}) => 'And ${n} other sessions.',
+			'calendrier.dates.concernees.erreur' => 'The sessions concerned could not be loaded: the request may not have reached Rewayah. Try again in a moment.',
+			'calendrier.dates.conflits.titre' => 'Sessions that cannot be restored',
+			'calendrier.dates.conflits.intro' => 'These sessions were set aside by the closure, but the teacher took another class at the same time. Free the teacher then try again, or confirm abandoning these sessions: they will never be restored. Times are Makkah time.',
+			'calendrier.dates.conflits.ligne' => ({required Object classe, required Object quand, required Object enseignant}) => '${classe}, ${quand}, ${enseignant}',
+			'calendrier.dates.conflits.autre' => ({required Object cours, required Object quand}) => 'Other class: ${cours}, ${quand}',
+			'calendrier.dates.conflits.autreSansNom' => ({required Object quand}) => 'Other class at the same time, ${quand}',
+			'calendrier.dates.conflits.abandonner' => ({required Object n}) => 'Remove the closure and abandon these sessions (${n})',
+			'calendrier.dates.refus.fermetureTropLongue' => 'This closure is longer than the maximum allowed (Ramadan: 20 days, Eid al-Adha: 10 days). Shorten it.',
+			'calendrier.dates.refus.fermetureCommencee' => 'This closure has already started or is past: it can no longer be removed, shortened or moved. You can only extend it.',
+			'calendrier.dates.refus.fermeturePassee' => 'This closure starts before today: it cannot be published. Choose a date from today.',
+			'calendrier.dates.refus.retraitConflits' => 'The closure is not removed: sessions set aside cannot be restored. Read the list, then free the teacher or confirm abandoning these sessions.',
+			'calendrier.dates.refus.raccourcissementConflits' => 'The closure is not changed: sessions set aside could not be restored. Remove the whole closure or free the teacher.',
+			'calendrier.dates.refus.datesInvalides' => 'The last day must come after the first, within a year.',
+			'calendrier.dates.refus.porteeInvalide' => 'Choose the age group or class concerned.',
+			'calendrier.dates.refus.evenementInvalide' => 'The title is missing or the kind of date is unreadable. Check them, then try again.',
+			'calendrier.dates.refus.introuvable' => 'This date no longer exists. Reload the list.',
+			'calendrier.dates.refus.nonAutorise' => 'Only the management can edit the calendar.',
+			'calendrier.dates.refus.inconnu' => 'The save is not confirmed: the request may not have reached Rewayah. Try again in a moment.',
+			'calendrier.pauses.aTraiter' => 'Requests to handle',
+			'calendrier.pauses.aTraiterIntro' => 'These requests exceed a family\'s break limit: the management decides. Other requests are accepted straight away and do not appear here.',
+			'calendrier.pauses.erreur' => 'The breaks could not be loaded: the request may not have reached Rewayah. Try again in a moment.',
+			'calendrier.pauses.videTitre' => 'No request pending',
+			'calendrier.pauses.videDetail' => 'A request beyond the limit will appear here.',
+			'calendrier.pauses.ligneDescription' => ({required Object mois, required Object n}) => 'Month requested: ${mois}. Months already granted: ${n}.',
+			'calendrier.pauses.repondreAvant' => ({required Object date}) => 'Reply before ${date}',
+			'calendrier.pauses.enRetard' => 'Deadline passed',
+			'calendrier.pauses.accepter' => 'Accept',
+			'calendrier.pauses.refuser' => 'Refuse',
+			'calendrier.pauses.refusTitre' => 'Reply to the request',
+			'calendrier.pauses.refusPhrase' => 'The reason is required to refuse; the family reads it in the app.',
+			'calendrier.pauses.refusMotif' => 'Reason',
+			'calendrier.pauses.refusEnvoyer' => 'Refuse the break',
+			'calendrier.pauses.decisionsRecentes' => 'Recent decisions',
+			'calendrier.pauses.decisionsVide' => 'No decision for now.',
+			'calendrier.pauses.statut.demandee' => 'Pending',
+			'calendrier.pauses.statut.acceptee' => 'Accepted',
+			'calendrier.pauses.statut.refusee' => 'Refused',
+			'calendrier.pauses.statut.annulee' => 'Cancelled',
+			'calendrier.pauses.periode' => ({required Object du, required Object au}) => 'From ${du} to ${au}',
+			'calendrier.pauses.typeMois' => 'One-month break',
+			'calendrier.pauses.typeException' => 'Exceptional break',
+			'calendrier.pauses.accordeePar' => ({required Object nom}) => 'Granted by ${nom}',
+			'calendrier.pauses.motifLigne' => ({required Object motif}) => 'Reason: ${motif}',
+			'calendrier.pauses.exceptionAction' => 'Grant an exceptional break',
+			'calendrier.pauses.exceptionTitre' => 'Exceptional break',
+			'calendrier.pauses.exceptionPhrase' => 'For a sudden illness or a granted interruption. It starts today, without notice; the stage deadline moves back by its length; it does not count towards the family\'s limit.',
+			'calendrier.pauses.exceptionRecherche' => 'Search for the student by name',
+			_ => null,
+		} ?? switch (path) {
+			'calendrier.pauses.exceptionRechercheAide' => 'At least two letters.',
+			'calendrier.pauses.exceptionAucun' => 'No student found.',
+			'calendrier.pauses.exceptionEleve' => ({required Object nom}) => 'Student: ${nom}',
+			'calendrier.pauses.exceptionChanger' => 'Choose another student',
+			'calendrier.pauses.exceptionMotif' => 'Reason',
+			'calendrier.pauses.exceptionDuree' => ({required Object mois}) => 'It lasts ${mois} months at most; beyond that, you grant a new break.',
+			'calendrier.pauses.exceptionMotifAide' => 'One word is enough (illness, interruption). No health details.',
+			'calendrier.pauses.exceptionFin' => 'Last day of the break',
+			'calendrier.pauses.exceptionEnregistrer' => 'Grant the break',
+			'calendrier.pauses.terminerAction' => 'End the break',
+			'calendrier.pauses.terminerTitre' => 'End the exceptional break',
+			'calendrier.pauses.terminerPhrase' => 'The student resumes classes after the last day chosen. The original end and your action are kept; days already past stay counted in the deadline.',
+			'calendrier.pauses.terminerChamp' => 'Last day of the break',
+			'calendrier.pauses.terminerEnvoyer' => 'End the break',
+			'calendrier.pauses.finInitiale' => ({required Object date}) => 'Original end: ${date}',
+			'calendrier.pauses.termineePar' => ({required Object nom}) => 'Ended early by ${nom}',
+			'calendrier.pauses.refus.motifRequis' => 'A reason of at least three letters is required.',
+			'calendrier.pauses.refus.dejaDecidee' => 'This request has already been answered. Reload the list.',
+			'calendrier.pauses.refus.debutPasse' => 'The month has already started: this break can no longer be accepted. You can refuse it.',
+			'calendrier.pauses.refus.datesInvalides' => 'The last day must be today or later, within a year.',
+			'calendrier.pauses.refus.exceptionTropLongue' => ({required Object mois}) => 'An exceptional break lasts ${mois} months at most. Shorten it; you can then grant a new one.',
+			'calendrier.pauses.refus.nonTerminable' => 'This break is already ended or is not an exceptional break.',
+			'calendrier.pauses.refus.eleveIntrouvable' => 'This student cannot be found.',
+			'calendrier.pauses.refus.nonAutorise' => 'Only the management can decide on a break.',
+			'calendrier.pauses.refus.inconnu' => 'The decision is not confirmed: the request may not have reached Rewayah. Try again in a moment.',
 			_ => null,
 		};
 	}
