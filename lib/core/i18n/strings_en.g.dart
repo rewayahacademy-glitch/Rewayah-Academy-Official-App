@@ -956,6 +956,19 @@ class _Traductions$admin$en extends Traductions$admin$fr {
 	@override late final _Traductions$admin$traitement$en traitement = _Traductions$admin$traitement$en._(_root);
 	@override late final _Traductions$admin$demandes$en demandes = _Traductions$admin$demandes$en._(_root);
 	@override late final _Traductions$admin$groupes$en groupes = _Traductions$admin$groupes$en._(_root);
+	@override late final _Traductions$admin$offres$en offres = _Traductions$admin$offres$en._(_root);
+	@override late final _Traductions$admin$regroupements$en regroupements = _Traductions$admin$regroupements$en._(_root);
+	@override late final _Traductions$admin$diagnostics$en diagnostics = _Traductions$admin$diagnostics$en._(_root);
+	@override late final _Traductions$admin$qualite$en qualite = _Traductions$admin$qualite$en._(_root);
+	@override late final _Traductions$admin$regles$en regles = _Traductions$admin$regles$en._(_root);
+	@override late final _Traductions$admin$fonctionnalites$en fonctionnalites = _Traductions$admin$fonctionnalites$en._(_root);
+	@override late final _Traductions$admin$protectionEnfants$en protectionEnfants = _Traductions$admin$protectionEnfants$en._(_root);
+	@override late final _Traductions$admin$conservationDonnees$en conservationDonnees = _Traductions$admin$conservationDonnees$en._(_root);
+	@override late final _Traductions$admin$politiqueRevueKyc$en politiqueRevueKyc = _Traductions$admin$politiqueRevueKyc$en._(_root);
+	@override late final _Traductions$admin$evaluations$en evaluations = _Traductions$admin$evaluations$en._(_root);
+	@override late final _Traductions$admin$progression$en progression = _Traductions$admin$progression$en._(_root);
+	@override late final _Traductions$admin$programmes$en programmes = _Traductions$admin$programmes$en._(_root);
+	@override late final _Traductions$admin$journal$en journal = _Traductions$admin$journal$en._(_root);
 }
 
 // Path: agent
@@ -5452,6 +5465,569 @@ class _Traductions$admin$groupes$en extends Traductions$admin$groupes$fr {
 	@override String get observationCapaciteAbsente => 'This installation does not yet have the server update this setting requires (migration 0036). Trying again will change nothing: it must first be applied to the database.';
 	@override late final _Traductions$admin$groupes$cahiers$en cahiers = _Traductions$admin$groupes$cahiers$en._(_root);
 	@override late final _Traductions$admin$groupes$partage$en partage = _Traductions$admin$groupes$partage$en._(_root);
+	@override late final _Traductions$admin$groupes$formulaire$en formulaire = _Traductions$admin$groupes$formulaire$en._(_root);
+}
+
+// Path: admin.offres
+class _Traductions$admin$offres$en extends Traductions$admin$offres$fr {
+	_Traductions$admin$offres$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Showcase offers';
+	@override String get sousTitre => 'The slots families see and choose. Only the administration publishes, and the showcase shows no teacher.';
+	@override String get nouvelle => 'New offer';
+	@override String get vide => 'No offer yet. Create the first one to open the showcase to families.';
+	@override String get erreur => 'The offers could not be displayed: the read may not have reached Rewayah. Try again in a moment.';
+	@override String get sansDonnees => 'The offers could not be loaded';
+	@override String get horsLigneAction => 'Publishing and withdrawing an offer will be possible when the connection has returned.';
+	@override String get etatBrouillon => 'Draft';
+	@override String get etatPubliee => 'Published';
+	@override String get etatRetiree => 'Withdrawn';
+	@override String get cleJours => 'Days';
+	@override String get cleHeure => 'Time';
+	@override String get cleFuseau => 'Time zone';
+	@override String get clePublic => 'Audience';
+	@override String get cleLangue => 'Language';
+	@override String get cleDuree => 'Length';
+	@override String get cleMotif => 'Reason for withdrawal';
+	@override String heure({required Object heure}) => '${heure}:00';
+	@override String duree({required Object minutes}) => '${minutes} min';
+	@override String get publier => 'Publish';
+	@override String get retirer => 'Withdraw';
+	@override String publierPour({required Object resume}) => 'Publish the offer ${resume}';
+	@override String retirerPour({required Object resume}) => 'Withdraw the offer ${resume}';
+	@override String get publiee => 'Offer published. Families see it in the showcase.';
+	@override String get retiree => 'Offer withdrawn from the showcase.';
+	@override String get creee => 'Offer created as a draft. Publish it to open it to families.';
+	@override String get nonConfirmee => 'The action could not be confirmed: nothing changed. Try again in a moment.';
+	@override String refusee({required Object motif}) => 'Refused by the server: ${motif}';
+	@override String get retraitTitre => 'Withdraw this offer';
+	@override String get retraitExplication => 'Requests already made on this offer are kept: the administration must handle them.';
+	@override String get motifLibelle => 'Reason for withdrawal';
+	@override String get motifManque => 'Give the reason for withdrawal';
+	@override late final _Traductions$admin$offres$serveur$en serveur = _Traductions$admin$offres$serveur$en._(_root);
+	@override String get retraitHorsLigne => 'The offer can be withdrawn when the connection has returned. Your reason stays displayed.';
+	@override late final _Traductions$admin$offres$formulaire$en formulaire = _Traductions$admin$offres$formulaire$en._(_root);
+}
+
+// Path: admin.regroupements
+class _Traductions$admin$regroupements$en extends Traductions$admin$regroupements$fr {
+	_Traductions$admin$regroupements$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Classes to open';
+	@override String get sousTitre => 'Requests from families that look alike are grouped: same days, same time, same time zone, same audience, same language.';
+	@override String get tri => 'Requests ready to open a class first, then the most numerous.';
+	@override String get indisponibleTitre => 'Available once the server is connected';
+	@override String get indisponiblePhrase => 'Grouped requests will be shown here once the server is connected. Until then, nothing is shown: no request is invented.';
+	@override String get erreur => 'The grouped requests could not be displayed: the read may not have reached Rewayah. Try again in a moment.';
+	@override String get sansDonnees => 'The grouped requests could not be loaded';
+	@override String get vide => 'No request pending';
+	@override String get videDetail => 'New family requests will appear here, grouped when they look alike.';
+	@override String get sectionAFinir => 'Teacher to confirm';
+	@override String get sectionDemandes => 'Grouped requests';
+	@override String get cleJours => 'Days';
+	@override String get cleHeure => 'Reference time';
+	@override String get cleAilleurs => 'Elsewhere';
+	@override String get clePublic => 'Audience';
+	@override String get cleLangue => 'Language';
+	@override String get cleEleves => 'Requests';
+	@override String heure({required Object heure}) => '${heure}:00';
+	@override String heureMinutes({required Object heure, required Object minutes}) => '${heure}:${minutes}';
+	@override String heureFuseau({required Object heure, required Object deVille}) => '${heure}, ${deVille} time';
+	@override String ailleursMemeJour({required Object heure, required Object ville}) => '${heure} in ${ville}';
+	@override String ailleursVeille({required Object heure, required Object ville}) => '${heure} the day before in ${ville}';
+	@override String ailleursLendemain({required Object heure, required Object ville}) => '${heure} the next day in ${ville}';
+	@override String get cleJoursHeures => 'Days and times';
+	@override String get cleFuseau => 'Reference time zone';
+	@override String fuseauValeur({required Object deVille}) => '${deVille} time';
+	@override String jourHeure({required Object jour, required Object heure}) => '${jour} ${heure}';
+	@override String ailleursJour({required Object jour, required Object ailleurs}) => '${jour}: ${ailleurs}';
+	@override String demandes({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} request',
+		other: '${n} requests',
+	);
+	@override String classesPossibles({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		zero: 'no class possible',
+		one: '${n} class possible',
+		other: '${n} classes possible',
+	);
+	@override String demandesVersClasses({required Object demandes, required Object classes}) => '${demandes} → ${classes}';
+	@override String get pret => 'Ready';
+	@override String get incomplete => 'Incomplete';
+	@override String get pretDetail => 'The quota is reached: the class can open full.';
+	@override String manquent({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} request is missing to reach the quota: the class can be created as soon as the grouping is ready.',
+		other: '${n} requests are missing to reach the quota: the class can be created as soon as the grouping is ready.',
+	);
+	@override String get nonOuvert => 'Creating this class is not open to you: a member of the management who has the right can do it.';
+	@override String get affectationNonOuverte => 'Confirming the teacher is not open to you: a member of the management who has the right can do it.';
+	@override String classeAttend({required Object libelle}) => 'Class ${libelle} created: its teacher is still to be confirmed.';
+	@override String get creer => 'Create the class';
+	@override String get choisirEnseignant => 'Choose the teacher';
+	@override String get voirClasse => 'See the class';
+	@override String manquentCourt({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} request is missing.',
+		other: '${n} requests are missing.',
+	);
+	@override String contexte({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: 'The student of these requests will be placed in the class as soon as it is created. You will then confirm the proposed teacher.',
+		other: 'The ${n} students of these requests will be placed in the class as soon as it is created. You will then confirm the proposed teacher.',
+	);
+	@override String get nomDetail => 'Deduced from the gender, audience, days and time.';
+	@override String get dejaCreee => 'Another member of the management has just created this class: nothing was created twice. Close this sheet to see the up-to-date list.';
+	@override String refusee({required Object motif}) => 'The class was not created: ${motif}. Check the requests, then press again.';
+	@override String get nonConfirmee => 'The creation is not confirmed: the server\'s answer did not arrive. Press again: the same request will be resumed, with no duplicate class.';
+	@override String creee({required num n, required Object libelle}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: 'Class ${libelle} created: ${n} student placed.',
+		other: 'Class ${libelle} created: ${n} students placed.',
+	);
+	@override String get enseignantTitre => 'Proposed teacher';
+	@override String get enseignantContexte => 'The first choice takes into account the class\'s gender, their free slots on the same days and at the same time, then the number of their classes. These times are compared as they are, with no time zone conversion: if the teacher lives in another time zone, check with them before confirming. Confirm them or choose another person.';
+	@override String get confirmerEnseignant => 'Confirm the teacher';
+	@override String get enseignantHorsLigne => 'The teacher can be confirmed when the connection has returned. Your choice stays displayed.';
+	@override String get affectationNonConfirmee => 'The teacher is not confirmed: the server\'s answer did not arrive. Press again.';
+	@override late final _Traductions$admin$regroupements$refusAffectation$en refusAffectation = _Traductions$admin$regroupements$refusAffectation$en._(_root);
+	@override String get dejaAffecte => 'Another member of the management has already confirmed this class\'s teacher: your choice does not replace theirs.';
+	@override String get famillesPrevenues => 'The families have been notified.';
+	@override String get famillesClasseValidee => 'The families have been notified that their class is validated.';
+	@override String termineDetail({required Object libelle, required Object enseignant}) => 'Class ${libelle}: ${enseignant} is its teacher.';
+	@override String decoupagePleines({required num n, required Object taille}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} class of ${taille}',
+		other: '${n} classes of ${taille}',
+	);
+	@override String get decoupageAucuneClasse => 'no class';
+	@override String decoupageDerniere({required Object n}) => 'a last class of ${n}';
+	@override String decoupageAttente({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} student waiting',
+		other: '${n} students waiting',
+	);
+	@override String decoupage({required Object detail}) => 'Planned split: ${detail}.';
+	@override String get contexteReparti => 'The students of these requests will be distributed according to the split below. You will then confirm the proposed teacher.';
+	@override String classesExistantes({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} class is already open on this slot: the new one is added, none is changed.',
+		other: '${n} classes are already open on this slot: the new one is added, none is changed.',
+	);
+	@override late final _Traductions$admin$regroupements$liste$en liste = _Traductions$admin$regroupements$liste$en._(_root);
+}
+
+// Path: admin.diagnostics
+class _Traductions$admin$diagnostics$en extends Traductions$admin$diagnostics$fr {
+	_Traductions$admin$diagnostics$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Diagnostics';
+	@override String get intro => 'Each registered student waits for a first level before joining a class: this is where that placement is decided.';
+	@override String get aucunProgramme => 'No programme published';
+	@override String get aucunProgrammeDetail => 'Publish a first version of the programme (Teaching > Programmes) before a placement can be decided.';
+	@override String get erreur => 'The queue could not be read. Try again in a moment.';
+	@override String restants({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} student remaining',
+		other: '${n} students remaining',
+	);
+	@override String get restantUn => '1 student remaining';
+	@override String get inscritAujourdhui => 'Registered today';
+	@override String get inscritDepuisUnJour => 'Registered 1 day ago';
+	@override String get aucun => 'No student to diagnose';
+	@override String get aucunDetail => 'All registered students already have a level decided.';
+	@override String get champNiveau => 'Placement level';
+	@override String get manqueNiveau => 'The placement level is missing: choose it from the list of levels.';
+	@override String get champMotif => 'Reason';
+	@override String get motifRequis => 'A reason is required, it is written in the audit log.';
+	@override String get decider => 'Decide the placement';
+	@override String deciderErreur({required Object message}) => 'The decision did not go through: ${message}';
+	@override String get journalisation => 'Each placement decided is written in the audit log.';
+	@override String inscritDepuis({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(jours,
+		one: 'Registered ${jours} day ago',
+		other: 'Registered ${jours} days ago',
+	);
+}
+
+// Path: admin.qualite
+class _Traductions$admin$qualite$en extends Traductions$admin$qualite$fr {
+	_Traductions$admin$qualite$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Quality';
+	@override String get intro => 'Teaching anomalies detected: missing reports, blockages with no follow-up, late assessments.';
+	@override String get erreur => 'The anomalies could not be read. Try again in a moment.';
+	@override String get aucune => 'No anomaly detected';
+	@override String get aucuneDetail => 'Everything is up to date: reports written, blockages followed up, assessments on time.';
+	@override String get filtreToutes => 'All';
+	@override String get filtreOuvertes => 'Open';
+	@override String get filtreTraitees => 'Handled';
+	@override String get groupeRapportManquant => 'Missing session reports';
+	@override String get groupeBlocageSansSuivi => 'Blockages with no follow-up';
+	@override String get groupeEvaluationEnRetard => 'Late assessments';
+	@override String get colonnePersonne => 'Concerns';
+	@override String get colonneDepuis => 'Since';
+	@override String get colonneStatut => 'Status';
+	@override String get statutOuvert => 'Open';
+	@override String get statutTraite => 'Handled';
+	@override String get depuisAujourdhui => 'Today';
+	@override String get depuisUnJour => '1 day';
+	@override String get actionTraiter => 'Mark as handled';
+	@override String traiterTitre({required Object personne}) => 'Mark as handled: ${personne}';
+	@override String get champNote => 'Note (optional)';
+	@override String get traiterEnvoyer => 'Mark as handled';
+	@override String traiterErreur({required Object message}) => 'The handling did not go through: ${message}';
+	@override String depuisJours({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(jours,
+		one: '${jours} day',
+		other: '${jours} days',
+	);
+}
+
+// Path: admin.regles
+class _Traductions$admin$regles$en extends Traductions$admin$regles$fr {
+	_Traductions$admin$regles$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Rules';
+	@override String get intro => 'The default values for the whole platform. An exception for a specific profile is set from Operations > Individual rules, never here.';
+	@override String get erreur => 'The rules could not be read. Try again in a moment.';
+	@override String erreurEcriture({required Object message}) => 'The saving did not go through: ${message}';
+	@override String get valeurInvalide => 'Enter a valid number.';
+	@override String get envoyer => 'Save';
+	@override String get champValeur => 'Value';
+	@override String get absenceSeuil => 'Absence threshold';
+	@override String get absenceSeuilDetail => 'Beyond this number of minutes without joining the session, the student is marked absent.';
+	@override String get dureeSeance => 'Session length';
+	@override String get dureeSeanceDetail => 'The length of a private lesson session, before any individual exception. A class has the length of its offer, or that of its audience (adults or children).';
+	@override String get dureeMinimalePayee => 'Minimum paid length';
+	@override String get dureeMinimalePayeeDetail => 'Below this length, a shortened session is still paid in full.';
+	@override String get pauseEntreSeances => 'Break between two sessions';
+	@override String get pauseEntreSeancesDetail => 'The minimum time left to a teacher between two consecutive sessions.';
+	@override String get depassementSeance => 'Overrun allowed after the planned end';
+	@override String get depassementSeanceDetail => 'After a session\'s planned end, the room stays open for this time and the timer counts the overrun. After that, no one can join it.';
+	@override String get elevesParEnseignant => 'Students per teacher';
+	@override String get elevesParEnseignantDetail => 'The maximum number of students a teacher can follow in parallel.';
+	@override String get horizonAffectation => 'Assignment horizon';
+	@override String get horizonAffectationDetail => 'The number of weeks ahead over which assignment looks for an available teacher.';
+	@override String get ageCameraAuto => 'Minimum age for automatic camera';
+	@override String get ageCameraAutoDetail => 'Below this age, turning on the camera stays subject to the guardian\'s agreement.';
+	@override String get ageInterfaceEnfant => 'Maximum age for the child interface';
+	@override String get ageInterfaceEnfantDetail => 'Below this age, a profile switches to the simplified interface when created.';
+	@override String get appareilsParEleve => 'Devices per student';
+	@override String get appareilsParEleveDetail => 'The number of devices a student can have active at the same time.';
+	@override String get seancesSimultanees => 'Simultaneous sessions per profile';
+	@override String get seancesSimultaneesDetail => 'The number of sessions the same profile can follow at the same time.';
+	@override String uniteMinutes({required Object n}) => '${n} min';
+	@override String uniteSemaines({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} wk',
+		other: '${n} wk',
+	);
+	@override String uniteNombre({required Object n}) => '${n}';
+	@override String get classesParEnseignant => 'Classes at most per teacher';
+	@override String get classesParEnseignantDetail => 'The number of classes a teacher can hold at the same time. A closed class and a one-off replacement do not count. A decrease removes no class already held. In their questionnaire, candidates choose from 1 up to this number.';
+	@override String get remplacementSection => 'When the teacher has not joined the room';
+	@override String get remplacementIntro => 'The minutes count from the session\'s start time. Each step comes after the previous one.';
+	@override String get remplacementAvertissement => 'Warning to the teacher';
+	@override String get remplacementAvertissementDetail => 'The teacher is warned that they are about to lose the session. Free teachers can offer to replace them.';
+	@override String get remplacementPerte => 'Loss of the session';
+	@override String get remplacementPerteDetail => 'The teacher is marked absent and can no longer join today\'s session. A teacher who offered replaces them, and families are notified.';
+	@override String get remplacementObjectif => 'Replacement in the room';
+	@override String get remplacementObjectifDetail => 'The goal: the replacement has joined the room.';
+	@override String remplacementBornesAvertissement({required Object min, required Object max}) => 'Between ${min} and ${max} after the start. To go beyond ${max}, first raise the loss of the session.';
+	@override String remplacementBornesPerte({required Object min, required Object max}) => 'Between ${min} and ${max} after the start. To go below ${min}, first lower the warning. To go beyond ${max}, first raise the goal.';
+	@override String remplacementBornesObjectif({required Object min}) => 'At least ${min} after the start. To go below ${min}, first lower the loss of the session.';
+	@override String get remplacementOrdreRefuse => 'The order of the delays is no longer respected: another setting changed in the meantime. Close this window, then reopen the row to see the up-to-date values.';
+	@override String get entretiensSection => 'Interviews';
+	@override String get entretiensIntro => 'Founders are ticked in Accounts, Management and Teachers views.';
+	@override String get regleFondateurs => 'Require founders';
+	@override String get regleFondateursDetail => 'When on, an interview cannot be scheduled, and a participant cannot be removed, with fewer founders than the minimum.';
+	@override String get fondateursMinimum => 'Minimum founders';
+	@override String get fondateursMinimumDetail => 'The number of founders required among an interview\'s participants.';
+	@override String get fondateursBornes => 'From 1 to 99.';
+	@override late final _Traductions$admin$regles$pause$en pause = _Traductions$admin$regles$pause$en._(_root);
+	@override late final _Traductions$admin$regles$paie$en paie = _Traductions$admin$regles$paie$en._(_root);
+}
+
+// Path: admin.fonctionnalites
+class _Traductions$admin$fonctionnalites$en extends Traductions$admin$fonctionnalites$fr {
+	_Traductions$admin$fonctionnalites$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Features';
+	@override String get intro => 'Features that change the behaviour of the whole platform.';
+	@override String get erreur => 'The features could not be read. Try again in a moment.';
+	@override String erreurEcriture({required Object message}) => 'The saving did not go through: ${message}';
+	@override String get valeurInvalide => 'Enter a valid number.';
+	@override String get envoyer => 'Save';
+	@override String get champValeur => 'Value';
+	@override String get multiParticipants => 'Multi-participant sessions';
+	@override String get multiParticipantsDetail => 'Allows several students in the same video session.';
+	@override String get participantsMax => 'Maximum participants';
+	@override String get participantsMaxDetail => 'The number of participants allowed when multi-participant sessions are on.';
+	@override String uniteNombre({required Object n}) => '${n}';
+}
+
+// Path: admin.protectionEnfants
+class _Traductions$admin$protectionEnfants$en extends Traductions$admin$protectionEnfants$fr {
+	_Traductions$admin$protectionEnfants$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Child protection';
+	@override String get intro => 'The officer receives, with the management, reports about a child\'s safety. Their name and email are shown to teachers who report. Leave the fields empty: the screen then says the management receives the report.';
+	@override String get nom => 'Displayed name';
+	@override String get nomDetail => 'The name teachers see.';
+	@override String get courriel => 'Contact email';
+	@override String get courrielDetail => 'The address to write to the officer.';
+	@override String get nonRenseigne => 'Not provided';
+	@override String get champNom => 'Officer\'s name';
+	@override String get champCourriel => 'Officer\'s email';
+	@override String get enregistrer => 'Save';
+	@override String get videAide => 'Leave empty to remove the officer.';
+	@override String get nomTropLong => 'This name is too long. 120 characters at most.';
+	@override String get courrielInvalide => 'This address is not valid. An email contains an @ and a dot.';
+	@override String erreurEcriture({required Object message}) => 'The change was not saved: ${message}. Try again.';
+	@override String get erreur => 'We could not read the officer. Try again in a moment.';
+	@override String get representantTitre => 'Representative in the European Union';
+	@override String get representantDetail => 'The name shown in the legal texts. Leave empty: they then show "Rewayah Academy".';
+	@override String get representantChamp => 'Representative\'s name';
+	@override String get representantVideAide => 'Leave empty to show "Rewayah Academy".';
+	@override String get representantErreur => 'We could not read the representative. Try again in a moment.';
+}
+
+// Path: admin.conservationDonnees
+class _Traductions$admin$conservationDonnees$en extends Traductions$admin$conservationDonnees$fr {
+	_Traductions$admin$conservationDonnees$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Data retention';
+	@override String get intro => 'How long these items stay accessible before their automatic deletion.';
+	@override String get erreur => 'The retention periods could not be read. Try again in a moment.';
+	@override String erreurEcriture({required Object message}) => 'The saving did not go through: ${message}';
+	@override String get valeurInvalide => 'Enter a valid number.';
+	@override String get envoyer => 'Save';
+	@override String get champValeur => 'Value';
+	@override String get enregistrements => 'Session recordings';
+	@override String get enregistrementsDetail => 'The number of days a session recording stays accessible.';
+	@override String get documentsIdentite => 'ID documents';
+	@override String get documentsIdentiteDetail => 'The number of days a submitted ID document stays accessible before it is purged.';
+	@override String get suppressionCompte => 'Account deletion';
+	@override String get suppressionCompteDetail => 'The number of days of reflection before the management can process an account deletion request.';
+	@override String uniteJours({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} d',
+		other: '${n} d',
+	);
+}
+
+// Path: admin.politiqueRevueKyc
+class _Traductions$admin$politiqueRevueKyc$en extends Traductions$admin$politiqueRevueKyc$fr {
+	_Traductions$admin$politiqueRevueKyc$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Teacher verification by gender';
+	@override String get libelle => 'Limit teacher verification by gender';
+	@override String get aide => 'When this rule is off, any member allowed to review files can handle the files in their scope, whatever their gender.';
+	@override String get echecEnregistrement => _root.admin.groupes.observationErreur;
+}
+
+// Path: admin.evaluations
+class _Traductions$admin$evaluations$en extends Traductions$admin$evaluations$fr {
+	_Traductions$admin$evaluations$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Assessments';
+	@override String get intro => 'What is planned, what has been taken, and the certifications obtained.';
+	@override String get erreur => 'The assessments could not be read. Try again in a moment.';
+	@override String get aucune => 'No assessment';
+	@override String get aucuneDetail => 'Schedule a first assessment for a student already diagnosed.';
+	@override String get aucuneAvecCeFiltre => 'No assessment with this filter';
+	@override String get aucuneAvecCeFiltreDetail => 'Change the filter to see the other assessments.';
+	@override String get filtreToutes => 'All';
+	@override String get filtrePlanifiees => 'Scheduled';
+	@override String get filtreRealisees => 'Taken';
+	@override String get filtreAnnulees => 'Cancelled';
+	@override String get filtreCertifications => 'Certifications';
+	@override String get colonneEleve => 'Student';
+	@override String get colonneNiveau => 'Level';
+	@override String get colonneType => 'Type';
+	@override String get colonneDatePrevue => 'Planned for';
+	@override String get colonneStatut => 'Status';
+	@override String get colonneResultat => 'Result';
+	@override String get typeInitiale => 'Initial';
+	@override String get typePeriodique => 'Periodic';
+	@override String get typeReevaluation => 'Reassessment';
+	@override String get typeCertification => 'Certification';
+	@override String get statutPlanifiee => 'Scheduled';
+	@override String get statutRealisee => 'Taken';
+	@override String get statutAnnulee => 'Cancelled';
+	@override String get resultatReussi => 'Stage validated';
+	@override String get resultatEchec => 'A new check is needed';
+	@override String get resultatARevoir => 'A few points need reinforcing';
+	@override String get planifier => 'Schedule an assessment';
+	@override String get planifierTitre => 'Schedule an assessment';
+	@override String get manqueEleve => 'The student is missing: choose one from the list.';
+	@override String get manqueNiveau => 'The assessed level is missing: choose it from the list of levels.';
+	@override String get manqueDate => 'The planned date is missing: tap the date field and choose a day in the calendar.';
+	@override String get champNiveau => 'Assessed level';
+	@override String get champType => 'Type';
+	@override String get champDatePrevue => 'Planned date';
+	@override String get planifierEnvoyer => 'Schedule';
+	@override String planifierErreur({required Object message}) => 'The scheduling did not go through: ${message}';
+	@override String get actionEnregistrerResultat => 'Record the result';
+	@override String get actionAnnuler => 'Cancel the assessment';
+	@override String resultatTitre({required Object deEleve}) => '${deEleve}\'s result';
+	@override String get champNotes => 'Notes (optional)';
+	@override String get resultatEnvoyer => 'Save';
+	@override String resultatErreur({required Object message}) => 'The saving did not go through: ${message}';
+	@override String annulerTitre({required Object deEleve}) => 'Cancel ${deEleve}\'s assessment';
+	@override String get annulerEnvoyer => 'Cancel';
+	@override String annulerErreur({required Object message}) => 'The cancellation did not go through: ${message}';
+	@override String get champMotif => 'Reason';
+	@override String get motifRequis => 'A reason is required, it is written in the audit log.';
+	@override String get journalisation => 'Each scheduling, result and cancellation is written in the audit log.';
+	@override String get manqueResultat => 'First choose the assessment\'s result.';
+}
+
+// Path: admin.progression
+class _Traductions$admin$progression$en extends Traductions$admin$progression$fr {
+	_Traductions$admin$progression$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Progress';
+	@override String get intro => 'Each student\'s current level, their class, and the blockages or waivers in progress.';
+	@override String get erreur => 'The progress could not be read. Try again in a moment.';
+	@override String get aucun => 'No active student';
+	@override String get aucunDetail => 'Students will appear here as soon as their first placement diagnosis.';
+	@override String get colonneEleve => 'Student';
+	@override String get colonneGroupe => 'Class';
+	@override String get colonneNiveau => 'Level';
+	@override String get colonneDepuis => 'Since';
+	@override String get colonneException => 'Exception';
+	@override String get sansGroupe => 'No class';
+	@override String get sansNiveau => 'Not diagnosed';
+	@override String get filtreTousCycles => 'All cycles';
+	@override String get depuisAujourdhui => 'Today';
+	@override String get depuisUnJour => '1 day';
+	@override String get typeBlocage => 'Blockage';
+	@override String get typeDerogation => 'Waiver';
+	@override String get actionPoserBlocage => 'Set a blockage';
+	@override String get actionPoserDerogation => 'Set a waiver';
+	@override String get actionCloreException => 'Close the exception';
+	@override String get actionPromouvoir => 'Change level';
+	@override String poserExceptionTitre({required Object type, required Object eleve}) => '${type} for ${eleve}';
+	@override String get poserExceptionEnvoyer => 'Set the exception';
+	@override String poserExceptionErreur({required Object message}) => 'The setting did not go through: ${message}';
+	@override String clorerExceptionTitre({required Object deEleve}) => 'Close ${deEleve}\'s exception';
+	@override String get clorerExceptionEnvoyer => 'Close';
+	@override String clorerExceptionErreur({required Object message}) => 'The closing did not go through: ${message}';
+	@override String promouvoirTitre({required Object deEleve}) => 'Change ${deEleve}\'s level';
+	@override String get promouvoirChampNiveau => 'New level';
+	@override String get manqueNiveau => 'The new level is missing: choose it from the list of levels.';
+	@override String get promouvoirEnvoyer => 'Save';
+	@override String promouvoirErreur({required Object message}) => 'The change did not go through: ${message}';
+	@override String get champMotif => 'Reason';
+	@override String get motifRequis => 'A reason is required, it is written in the audit log.';
+	@override String get journalisation => 'Each exception set or closed, and each level change, is written in the audit log.';
+	@override String depuisJours({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(jours,
+		one: '${jours} day',
+		other: '${jours} days',
+	);
+}
+
+// Path: admin.programmes
+class _Traductions$admin$programmes$en extends Traductions$admin$programmes$fr {
+	_Traductions$admin$programmes$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Programmes';
+	@override String get intro => 'The Rewayah curriculum, versioned: a published version can no longer be changed, any academic change creates a new one.';
+	@override String get aucuneVersion => 'No programme version';
+	@override String get aucuneVersionDetail => 'Create the first version, still a draft, to start adding levels to it.';
+	@override String get erreur => 'The programme could not be read. Try again in a moment.';
+	@override String get statutBrouillon => 'Draft';
+	@override String get statutPubliee => 'Published';
+	@override String get statutArchivee => 'Archived';
+	@override String versionNumero({required Object numero}) => 'Version ${numero}';
+	@override String get creerVersion => 'Create a version';
+	@override String get creerVersionVide => 'Create an empty version';
+	@override String get enregistrerVersion => 'Save the version';
+	@override String get creerVersionDepuisPubliee => 'Create a new version from this one';
+	@override String creerVersionErreur({required Object message}) => 'The creation did not go through: ${message}';
+	@override String get niveauxTitre => 'Levels';
+	@override String get niveauAucun => 'No level in this version';
+	@override String get niveauAucunDetail => 'Add a first level to start building this version.';
+	@override String codeTechnique({required Object code}) => 'Code: ${code}';
+	@override String get ajouterNiveau => 'Add a level';
+	@override String ajouterNiveauTitre({required Object version}) => 'Add a level to ${version}';
+	@override String get ajouterNiveauEnvoyer => 'Add';
+	@override String ajouterNiveauErreur({required Object message}) => 'The addition of the level was not confirmed: ${message}. The technical code may already exist in this version: change it, then try again.';
+	@override String get modifierNiveau => 'Edit';
+	@override String modifierNiveauTitre({required Object nom}) => 'Edit ${nom}';
+	@override String get modifierNiveauEnvoyer => 'Save';
+	@override String modifierNiveauErreur({required Object message}) => 'The change did not go through: ${message}';
+	@override String get supprimerNiveau => 'Delete';
+	@override String supprimerNiveauTitre({required Object nom}) => 'Delete ${nom}';
+	@override String get supprimerNiveauEnvoyer => 'Delete';
+	@override String supprimerNiveauErreur({required Object message}) => 'The deletion did not go through: ${message}';
+	@override String get publierVersion => 'Publish the version';
+	@override String publierVersionTitre({required Object version}) => 'Publish ${version}';
+	@override String get publierVersionDetail => 'Once published, this version can no longer be changed. Any academic change will create a new one.';
+	@override String get publierVersionEnvoyer => 'Publish';
+	@override String publierVersionErreur({required Object message}) => 'The publication did not go through: ${message}';
+	@override String get champCodeTechnique => 'Technical code (internal use, never shown to the student)';
+	@override String get champNomHumain => 'Displayed name';
+	@override String get champCycle => 'Cycle';
+	@override String get champOrdre => 'Order';
+	@override String get nouveauCycle => 'New cycle';
+	@override String get champNouveauCycle => 'Name of the new cycle';
+	@override String get ordreMoins => 'Decrease the order by 1';
+	@override String get ordrePlus => 'Increase the order by 1';
+	@override String get ordreDeduit => 'The proposed order follows the last level of the chosen cycle. Change it if needed.';
+	@override String codeGenere({required Object code}) => 'Proposed technical code: ${code}';
+	@override String get codeModifier => 'Edit the technical code';
+	@override String get manqueNom => 'the displayed name';
+	@override String get manqueCycle => 'the cycle';
+	@override String get manqueOrdre => 'the order (a whole number)';
+	@override String get manqueCode => 'the technical code';
+	@override String manque({required Object elements}) => 'Nothing was saved: ${elements} is missing. Complete it, then try again.';
+	@override String get champDescription => 'Description (optional)';
+	@override String get champMotif => 'Reason';
+	@override String get motifRequis => 'A reason is required, it is written in the audit log.';
+	@override String get journalisation => 'Each creation, change, deletion and publication is written in the audit log.';
+	@override String niveauxSur({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(nombre,
+		one: '${nombre} level',
+		other: '${nombre} levels',
+	);
+	@override String get publierSansNiveau => 'Add at least one level to be able to publish this version.';
+	@override late final _Traductions$admin$programmes$contenu$en contenu = _Traductions$admin$programmes$contenu$en._(_root);
+}
+
+// Path: admin.journal
+class _Traductions$admin$journal$en extends Traductions$admin$journal$fr {
+	_Traductions$admin$journal$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Log';
+	@override String get chaineIntacte => 'Log intact';
 }
 
 // Path: nav.eleve
@@ -13218,6 +13794,340 @@ class _Traductions$admin$groupes$partage$en extends Traductions$admin$groupes$pa
 	@override String get regleToujours => 'Always share automatically';
 	@override String get regleToujoursAide => 'Choose this when their family must always see the reports, even if the class does not share.';
 	@override String get regleJamais => 'Do not share automatically';
+	@override String get regleJamaisAide => 'Choose this when their family must not see them automatically: they are hidden right away, the notebook is kept.';
+	@override String confirmerEleve({required Object prenom}) => 'Change sharing for ${prenom}?';
+	@override String get consequenceEleve => 'This rule concerns only this student. It changes neither the class nor the other students.';
+	@override String get consequenceEleveJamais => 'Reports visible through automatic sharing are hidden right away from their family. The notebook and the session proof are kept.';
+	@override String get comptesRendus => 'See the reports';
+	@override String comptesRendusTitre({required Object dePrenom}) => '${dePrenom}\'s reports';
+	@override String get aucunCompteRendu => 'No report exists yet for this student.';
+	@override String get apercuTitre => 'Preview of the report visible to the family';
+	@override String get apercuAide => 'What the family will read, in the same order and with the same headings as in the app.';
+	@override String get notesInternes => 'The notebook\'s internal notes are never shown here.';
+	@override String get diffusion => 'Delivery to the family';
+	@override String get regleEffective => 'Effective rule';
+	@override String get regleActive => 'Automatic sharing on';
+	@override String get regleInactive => 'Automatic sharing off';
+	@override String regleSource({required Object regle, required Object source}) => '${regle}, from ${source}';
+	@override String get etatNonValide => 'The notebook is not validated yet. No publication is possible.';
+	@override String get etatConfirmeNonPartage => 'Notebook validated, report not shared with the family.';
+	@override String get etatPartageAuto => 'Shared automatically with the family.';
+	@override String get etatPartageManuel => 'Published manually for the family.';
+	@override String get etatRevoque => 'Family access revoked for this report.';
+	@override String get etatCorrige => 'Corrected after publication: the family sees the latest approved version.';
+	@override String get nonPubliable => 'No shareable teaching content exists for this report: publication is not possible.';
+	@override String get publier => 'Publish for the family';
+	@override String get revoquer => 'Revoke access';
+	@override String get portee => 'This action concerns only this report.';
+	@override String confirmerPublier({required Object dePrenom}) => 'Publish this report for ${dePrenom}\'s family?';
+	@override String get consequencePublier => 'Sharing is limited to this report. It does not turn on the class\'s automatic sharing.';
+	@override String get confirmerRevoquer => 'Revoke the family\'s access to this report?';
+	@override String get consequenceRevoquer => 'The family no longer sees it, right away. The notebook and the session stay validated.';
+	@override String get publie => 'This report is now visible to the family.';
+	@override String get revoque => 'Access to this report has been revoked.';
+	@override String get conflitApercu => 'Another member of the management changed this report. The up-to-date state is shown.';
+	@override String get historique => 'History of actions';
+	@override String get actionPublication => 'Manual publication';
+	@override String get actionRevocation => 'Revocation';
+	@override String get actionAuto => 'Automatic sharing';
+	@override String get parSysteme => 'System';
+	@override String entete({required Object eleve, required Object classe, required Object date}) => '${eleve}, ${classe}, session of ${date}';
+	@override String get enseignant => 'Teacher';
+	@override String miseAJour({required Object date}) => 'Updated on ${date}';
+	@override String get fermer => 'Close';
+}
+
+// Path: admin.groupes.formulaire
+class _Traductions$admin$groupes$formulaire$en extends Traductions$admin$groupes$formulaire$fr {
+	_Traductions$admin$groupes$formulaire$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get contexte => 'A class brings together a teacher and their students on the same slot each week. Choose the audience and the gender: the teachers list, the ceiling and the class name follow from them.';
+	@override String get titrePublic => 'Audience';
+	@override String get publicEnfantDetail => 'Choose for a children\'s class. Suggested ceiling: 5 students.';
+	@override String get publicAdulteDetail => 'Choose for an adults\' class. Suggested ceiling: 6 students.';
+	@override String get titreGenre => 'Class gender';
+	@override String get genreHommes => 'Men';
+	@override String get genreFemmes => 'Women';
+	@override String get genreGarcons => 'Boys';
+	@override String get genreFilles => 'Girls';
+	@override String get genreIndetermine => 'Not determined';
+	@override String get genreHommesDetail => 'Choose for a men\'s class: only male teachers will be able to take it.';
+	@override String get genreFemmesDetail => 'Choose for a women\'s class: only female teachers will be able to take it.';
+	@override String get genreGarconsDetail => 'Choose for a boys\' class: only male teachers will be able to take it.';
+	@override String get genreFillesDetail => 'Choose for a girls\' class: only female teachers will be able to take it.';
+	@override String get genreIndetermineDetail => 'Choose when the gender is not yet known: any teacher whose gender is filled in will be able to take it.';
+	@override String get autresCreneauxTitre => 'Other slots of the week';
+	@override String get autresCreneauxContexte => 'A class meets three times a week by default, on fixed days. Remove a line for a class that meets less often; no date to enter.';
+	@override String creneauNumero({required Object n}) => 'Slot ${n}';
+	@override String retirerCreneau({required Object n}) => 'Remove slot ${n}';
+	@override String get ajouterCreneauLigne => 'Add a slot';
+	@override String manqueAutreCreneau({required Object n}) => 'Choose the day and time of slot ${n}, or remove it.';
+	@override String get creneauEnDouble => 'Two slots fall on the same day at the same time: change one.';
+	@override String get duree => 'Length';
+	@override String get dureeClasse => 'Class length';
+	@override String dureeValeur({required Object minutes}) => '${minutes} min';
+	@override String get dureeContexte => 'By default, a slot lasts the class\'s length, set by its audience. Choose another length for this slot only.';
+	@override String get genreMixte => 'Mixed';
+	@override String get genreMixteDetailEnfants => 'Boys and girls together: any teacher whose gender is filled in will be able to take it. Choose only when teachers of one gender are missing.';
+	@override String get genreMixteDetailAdultes => 'Men and women together: any teacher whose gender is filled in will be able to take it. Choose only when teachers of one gender are missing.';
+	@override String get genreHommesDetailSansSource => 'Choose for a men\'s class. Teachers\' gender is not yet readable here: check yourself that the teacher chosen is a man.';
+	@override String get genreFemmesDetailSansSource => 'Choose for a women\'s class. Teachers\' gender is not yet readable here: check yourself that you choose a woman teacher.';
+	@override String get genreGarconsDetailSansSource => 'Choose for a boys\' class. Teachers\' gender is not yet readable here: check yourself that the teacher chosen is a man.';
+	@override String get genreFillesDetailSansSource => 'Choose for a girls\' class. Teachers\' gender is not yet readable here: check yourself that you choose a woman teacher.';
+	@override String get genreNonEnregistre => 'The gender guides the choice of teacher. It will be saved with the class as soon as the server accepts it: for now, it is not.';
+	@override String get aideEnseignant => 'Teachers are ranked from most to least suitable: class gender, free slot, then fewest classes in progress.';
+	@override String get aideEnseignantSansSource => 'Teachers are ranked from least to most loaded, and a teacher already in class at this slot cannot be chosen. Their gender and availability are not yet readable here: check them yourself.';
+	@override String plusAdapteCreneau({required Object charge}) => 'First choice: free at this slot, ${charge}.';
+	@override String plusAdapteSansCreneau({required Object libres, required Object charge}) => 'First choice: ${libres}, ${charge}.';
+	@override String classesEnCours({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} class in progress',
+		other: '${n} classes in progress',
+	);
+	@override String get aucuneClasse => 'no class in progress';
+	@override String creneauxLibres({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} free slot',
+		other: '${n} free slots',
+	);
+	@override String get pasLibre => 'This slot is not in their declared availability: you can still make this choice.';
+	@override String get raisonHommes => 'Men\'s class: only a male teacher can take it.';
+	@override String get raisonGarcons => 'Boys\' class: only a male teacher can take it.';
+	@override String get raisonFemmes => 'Women\'s class: only a female teacher can take it.';
+	@override String get raisonFilles => 'Girls\' class: only a female teacher can take it.';
+	@override String get raisonPris => 'Already in class at this slot: change the slot to choose them.';
+	@override String get raisonGenreInconnu => 'Gender not filled in on their profile: no class can be entrusted to them until it is.';
+	@override String get titreCreneau => 'Slot';
+	@override String get creneauContexte => 'The day and time of the class, each week.';
+	@override String creneauxLibresDe({required Object deNom}) => '${deNom}\'s free slots: tapping a slot sets the day and time.';
+	@override String aucunCreneauLibre({required Object nom}) => '${nom} has no free slot declared: choose a day and a time below.';
+	@override String disponibilitesInconnues({required Object deNom}) => '${deNom}\'s availability is not yet readable here: choose a day and a time below.';
+	@override String get jour => 'Day';
+	@override String get heure => 'Time';
+	@override String heureValeur({required Object heure}) => '${heure}:00';
+	@override String fuseauEnseignant({required Object fuseau}) => 'Times read in the ${fuseau} time zone, the teacher\'s.';
+	@override String fuseauDefaut({required Object fuseau}) => 'Times read in the ${fuseau} time zone, kept by default.';
+	@override String fuseauNonTransmis({required Object fuseau}) => 'Times read in the ${fuseau} time zone, the one the server keeps for now. The teacher\'s time zone will be taken into account as soon as the server accepts it.';
+	@override String get titreSeuil => 'Maximum ceiling';
+	@override String get seuilDetail => 'The class is full as soon as it reaches this number of students. Suggested: 5 for children, 6 for adults; 6 at most.';
+	@override String seuilValeur({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} student',
+		other: '${n} students',
+	);
+	@override String get nomAutomatique => 'The class name is chosen automatically from names of personalities of Islam: a woman\'s name for a women\'s class, a man\'s name for a men\'s class. You will be able to change it afterwards.';
+	@override String nomPropose({required Object base, required Object creneau}) => '${base}, ${creneau}';
+	@override String get manqueGenre => 'The class gender is missing: choose one of the three cards.';
+	@override String get manqueCreneau => 'The slot is missing: choose the day and time of the class.';
+	@override String get manqueSeuil => 'The maximum ceiling is missing: choose a number of students between 1 and 6.';
+	@override String manqueEnseignantHommes({required Object nom}) => '${nom} cannot take a men\'s class: choose a male teacher from the list.';
+	@override String manqueEnseignantGarcons({required Object nom}) => '${nom} cannot take a boys\' class: choose a male teacher from the list.';
+	@override String manqueEnseignantFemmes({required Object nom}) => '${nom} cannot take a women\'s class: choose a female teacher from the list.';
+	@override String manqueEnseignantFilles({required Object nom}) => '${nom} cannot take a girls\' class: choose a female teacher from the list.';
+	@override String manqueEnseignantPris({required Object nom}) => '${nom} is already in class at this slot: change the slot or choose another person from the list.';
+	@override String manqueEnseignantGenreInconnu({required Object nom}) => '${nom} has no gender filled in on their profile: no class can be entrusted to them. Choose another person from the list.';
+	@override String get manqueListeEnseignants => 'The teachers list is not up to date yet, so the teacher chosen could not be checked: wait for it to display, then press again.';
+	@override String get horsLigne => 'The class can be created when the connection has returned. Your choices stay displayed.';
+	@override String get seuilHorsLigne => 'The ceiling can be saved when the connection has returned. Your choice stays displayed.';
+}
+
+// Path: admin.offres.serveur
+class _Traductions$admin$offres$serveur$en extends Traductions$admin$offres$serveur$fr {
+	_Traductions$admin$offres$serveur$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get reserve => 'Only the administration can manage offers.';
+	@override String get dejaPubliee => 'This offer is already published.';
+	@override String get dejaRetiree => 'This offer is already withdrawn.';
+	@override String get introuvable => 'This offer cannot be found.';
+	@override String get motifRequis => 'A reason is required to withdraw an offer.';
+	@override String get joursInvalides => 'The chosen days are not valid.';
+	@override String get nombreJours => 'The number of days does not match the academy\'s sessions per week.';
+	@override String get fuseauInconnu => 'This time zone is unknown.';
+	@override String get publicInconnu => 'This audience is unknown.';
+	@override String get doublon => 'An identical offer already exists.';
+	@override String get jourManquant => 'Choose at least one day';
+}
+
+// Path: admin.offres.formulaire
+class _Traductions$admin$offres$formulaire$en extends Traductions$admin$offres$formulaire$fr {
+	_Traductions$admin$offres$formulaire$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get question => 'Which slot to open to families?';
+	@override String get explication => 'A published offer cannot be changed: to change it, withdraw it then create another. No teacher is chosen here.';
+	@override String get public => 'Audience';
+	@override String get langue => 'Course language';
+	@override String get fuseau => 'Time zone';
+	@override String get jours => 'Days';
+	@override String joursAide({required Object n}) => 'Choose ${n} days a week.';
+	@override String get heure => 'Local time';
+	@override String get duree => 'Session length';
+	@override String get creer => 'Create the offer';
+	@override String get manqueJour => 'Choose at least one day';
+	@override String manqueNombre({required Object n}) => 'Choose exactly ${n} days';
+	@override String get manqueLangue => 'Choose the course language';
+	@override String get horsLigne => 'The offer can be created when the connection has returned. Your choices stay displayed.';
+	@override String get regles => 'The academy\'s rules could not be read: the number of days will be checked on sending.';
+}
+
+// Path: admin.regroupements.refusAffectation
+class _Traductions$admin$regroupements$refusAffectation$en extends Traductions$admin$regroupements$refusAffectation$fr {
+	_Traductions$admin$regroupements$refusAffectation$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get reservee => 'The teacher is not confirmed: your account is not allowed to confirm a teacher.';
+	@override String get classeIndisponible => 'The teacher is not confirmed: this class no longer awaits a teacher. Close this sheet to see the up-to-date list.';
+	@override String get enseignantIndisponible => 'The teacher is not confirmed: their account, ID document, course language or gender filled in do not yet allow this class. Choose another person.';
+	@override String get genreIncompatible => 'The teacher is not confirmed: their gender does not match the class\'s audience. Choose another person.';
+	@override String get plafond => 'The teacher is not confirmed: this class would exceed their weekly hours ceiling. Choose another person.';
+	@override String get nonDisponible => 'The teacher is not confirmed: their availability does not cover all of the class\'s slots. Choose another person.';
+	@override String get chevauchementClasse => 'The teacher is not confirmed: this person already has a class or a student at the same time. Choose another person.';
+	@override String get chevauchementSeance => 'The teacher is not confirmed: this person already has a session planned at the same time. Choose another person.';
+	@override String plafondClasses({required num n, required Object maximum}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: 'The teacher is not confirmed: they already hold ${n} active class, for a maximum of ${maximum}. Close one of their classes, or raise the maximum in the Rules. Otherwise, choose another person.',
+		other: 'The teacher is not confirmed: they already hold ${n} active classes, for a maximum of ${maximum}. Close one of their classes, or raise the maximum in the Rules. Otherwise, choose another person.',
+	);
+	@override String get plafondClassesSansNombre => 'The teacher is not confirmed: they already hold the maximum number of active classes. Close one of their classes, or raise the maximum in the Rules. Otherwise, choose another person.';
+	@override String get inconnu => 'The teacher is not confirmed. Choose another.';
+}
+
+// Path: admin.regroupements.liste
+class _Traductions$admin$regroupements$liste$en extends Traductions$admin$regroupements$liste$fr {
+	_Traductions$admin$regroupements$liste$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get rechercheLibelle => 'Search for a request';
+	@override String get rechercheAide => 'Language, time zone or name of the class created';
+	@override String get filtreToutes => 'All';
+	@override String get filtreAFinir => 'Teacher to confirm';
+	@override String get filtrePrets => 'Ready';
+	@override String get filtreIncompletes => 'Incomplete';
+	@override String get filtrePublic => 'Audience';
+	@override String get filtreTousPublics => 'All audiences';
+	@override String get aucunAvecCeFiltre => 'No request with this filter';
+	@override String get aucunAvecCeFiltreDetail => 'Change the filter to see the other grouped requests.';
+	@override String positionSemantique({required Object page, required Object total}) => 'Page ${page} of ${total} of the grouped requests list';
+	@override String get precedente => 'Previous page of grouped requests';
+	@override String get suivante => 'Next page of grouped requests';
+	@override String resume({required Object debut, required Object fin, required Object total}) => 'Grouped requests ${debut} to ${fin} of ${total}';
+}
+
+// Path: admin.regles.pause
+class _Traductions$admin$regles$pause$en extends Traductions$admin$regles$pause$fr {
+	_Traductions$admin$regles$pause$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get section => 'Break during the session';
+	@override String get intro => 'By default, each session of a class has a break, just after the middle. The timer bar offers it to the teacher, who accepts or declines. The teacher can also set their class\'s break.';
+	@override String get adultes => 'Adults\' classes break';
+	@override String get adultesDetail => 'The default break length of an adults\' class. 0: no break. Rounded to 5 minutes, from 5 to 30.';
+	@override String get enfants => 'Children\'s classes break';
+	@override String get enfantsDetail => 'The default break length of a children\'s class. 0: no break. Rounded to 5 minutes, from 5 to 30.';
+	@override String get rappel => 'Reminder after a refusal';
+	@override String get rappelDetail => 'If the teacher declines the break, it is offered again after this delay: the break is a right.';
+	@override String get reste => 'Class remaining after the break';
+	@override String get resteDetail => 'The break is no longer offered if less than this amount of class would remain after it.';
+	@override String get bornesDuree => 'From 0 to 30 minutes.';
+	@override String get bornesRappel => 'From 1 to 60 minutes.';
+	@override String get bornesReste => 'From 0 to 60 minutes.';
+}
+
+// Path: admin.regles.paie
+class _Traductions$admin$regles$paie$en extends Traductions$admin$regles$paie$fr {
+	_Traductions$admin$regles$paie$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get section => 'Teachers\' pay';
+	@override String get intro => 'A month\'s pay is paid between these two days of the following month. Teachers see these dates on "My earnings".';
+	@override String get debut => 'First payment day';
+	@override String get debutDetail => 'The day of the following month when pay payments begin.';
+	@override String get fin => 'Last payment day';
+	@override String get finDetail => 'At the latest on this day, the month\'s pay is paid.';
+	@override String jour({required Object n}) => 'the ${n}';
+	@override String get premier => 'the 1st';
+	@override String bornesDebut({required Object max}) => 'Between the 1st and the ${max}, the last payment day.';
+	@override String bornesFin({required Object min}) => 'Between the ${min}, the first payment day, and the 28th.';
+	@override String get refus => 'These days were not accepted: they run from the 1st to the 28th, and the first day comes before the last. Nothing changed: choose other days.';
+}
+
+// Path: admin.programmes.contenu
+class _Traductions$admin$programmes$contenu$en extends Traductions$admin$programmes$contenu$fr {
+	_Traductions$admin$programmes$contenu$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get colonne => 'Stage content';
+	@override String get pret => 'Ready to publish';
+	@override String get aCompleter => 'To complete';
+	@override String get ouvrir => 'Goals and lengths';
+	@override String get voir => 'See the goals and lengths';
+	@override String titre({required Object nom}) => 'Goals and lengths: ${nom}';
+	@override String get intro => 'What the student can do at the end of the stage, and the time planned for each age group. The teacher, the family and the management follow progress from this data.';
+	@override String get lectureSeule => 'This version is published: its content can no longer be changed. To change it, create a new version from this one.';
+	@override String get objectifsTitre => 'Stage goals';
+	@override String get objectifsAide => '3 to 5 goals, each written as something the student can do. Leave empty those that are not needed.';
+	@override String objectifNumero({required Object numero}) => 'Goal ${numero}';
+	@override String get livreTitre => 'Stage book';
+	@override String get livreAide => 'The book where the stage is read. The pages are used to measure the class\'s progress.';
+	@override String get livreRewayah => 'Rewayah reading book';
+	@override String get livreRewayahDetail => 'For the stages read before the Mushaf. Its pages are not numbered yet: leave the pages empty.';
+	@override String get mushaf => 'Mushaf';
+	@override String get mushafDetail => 'For the stages read in the Quran, from page 1 to page 604.';
+	@override String get pageDebut => 'First page of the stage (optional)';
+	@override String get pageFin => 'Last page of the stage (optional)';
+	@override String get dureesTitre => 'Planned length and deadline, by age group';
+	@override String get dureesAide => 'In weeks, counted from the student\'s entry into the stage. The deadline is entered: for each group, the sum of the stages must equal that of the level, otherwise the version cannot be published.';
+	@override String get tranche69 => '6 to 9 years';
+	@override String get tranche1013 => '10 to 13 years';
+	@override String get tranche1417 => '14 to 17 years';
+	@override String get tranche18 => '18 years and over';
+	@override String dureeTranche({required Object tranche}) => 'Planned length for ${tranche}, in weeks';
+	@override String dureeMoins({required Object tranche}) => 'One week less for ${tranche}';
+	@override String dureePlus({required Object tranche}) => 'One week more for ${tranche}';
+	@override String dureeLecture({required Object tranche, required Object prevue}) => '${tranche}: ${prevue} weeks planned';
+	@override String dateLimite({required Object semaines}) => 'To finish in ${semaines} weeks at most';
+	@override String limiteTranche({required Object tranche}) => 'Stage deadline for ${tranche}, in weeks';
+	@override String limiteMoins({required Object tranche}) => 'One week less in the deadline for ${tranche}';
+	@override String limitePlus({required Object tranche}) => 'One week more in the deadline for ${tranche}';
+	@override String publierIncoherent({required Object niveau}) => 'The publication did not go through: for ${niveau}, the sum of the planned lengths or the stages\' deadlines does not equal that of the level. Correct the stages\' lengths, then publish again.';
+	@override String get publierSansBases => 'The publication did not go through: this version does not have the complete foundation level (its four stages and their lengths). Create the new version from the published version, or pre-fill the foundation in an empty version.';
+	@override String get enregistrer => 'Save the stage';
+	@override String erreur({required Object message}) => 'Saving the stage is not confirmed: ${message}. Check the goals and pages, then try again.';
+	@override String get revisionTitre => 'Student revision';
+	@override String get revisionAide => 'What families read in "Where I stand". Leave "Not set": nothing is shown.';
+	@override String get revisionHeures => 'Revision hours per week';
+	@override String get revisionRepetitions => 'Estimated repetitions';
+	@override String get revisionNonRegle => 'Not set';
+	@override String revisionHeuresValeur({required Object heures}) => '${heures} h';
+	@override String get revisionHeuresMoins => 'Fewer revision hours';
+	@override String get revisionHeuresPlus => 'More revision hours';
+	@override String get revisionRepetitionsMoins => 'Fewer repetitions';
+	@override String get revisionRepetitionsPlus => 'More repetitions';
+	@override String get revisionEnregistrer => 'Save the revision';
+	@override String revisionErreur({required Object message}) => 'The revision could not be saved: ${message}';
+	@override String get manquePages => 'Nothing was saved: pages are written as whole numbers, the last after the first. Correct them, then try again.';
+	@override String get proposition => 'Proposal to be validated by the management';
+	@override String get propositionDetail => 'The goals and lengths in this draft are a proposal, not a rule: the management re-reads and edits them before publishing.';
+	@override String get preremplir => 'Pre-fill the foundation';
+	@override String get preremplirDetail => 'Adds to this version the four foundation stages, with their goals, their subjects and, for each age group, the planned length and the deadline of each stage (settings table). Review each stage before publishing.';
+	@override String get preremplirVersionVide => 'To pre-fill the foundation, create an empty version: the proposal fills only a version with no stage.';
+	@override String get preremplirEnvoyer => 'Add the proposal';
+	@override String preremplirErreur({required Object message}) => 'Adding the proposal is not confirmed: ${message}. Try again in a moment.';
+	@override String publierIncomplet({required Object etape}) => 'The publication did not go through: the stage "${etape}" is not complete. Open its goals and lengths: 3 to 5 goals and a length for each age group are needed.';
 }
 
 // Path: compte.page.sections
@@ -25918,6 +26828,647 @@ extension on TraductionsEn {
 			'admin.groupes.partage.regleToujours' => 'Always share automatically',
 			'admin.groupes.partage.regleToujoursAide' => 'Choose this when their family must always see the reports, even if the class does not share.',
 			'admin.groupes.partage.regleJamais' => 'Do not share automatically',
+			'admin.groupes.partage.regleJamaisAide' => 'Choose this when their family must not see them automatically: they are hidden right away, the notebook is kept.',
+			'admin.groupes.partage.confirmerEleve' => ({required Object prenom}) => 'Change sharing for ${prenom}?',
+			'admin.groupes.partage.consequenceEleve' => 'This rule concerns only this student. It changes neither the class nor the other students.',
+			'admin.groupes.partage.consequenceEleveJamais' => 'Reports visible through automatic sharing are hidden right away from their family. The notebook and the session proof are kept.',
+			'admin.groupes.partage.comptesRendus' => 'See the reports',
+			'admin.groupes.partage.comptesRendusTitre' => ({required Object dePrenom}) => '${dePrenom}\'s reports',
+			'admin.groupes.partage.aucunCompteRendu' => 'No report exists yet for this student.',
+			'admin.groupes.partage.apercuTitre' => 'Preview of the report visible to the family',
+			'admin.groupes.partage.apercuAide' => 'What the family will read, in the same order and with the same headings as in the app.',
+			'admin.groupes.partage.notesInternes' => 'The notebook\'s internal notes are never shown here.',
+			'admin.groupes.partage.diffusion' => 'Delivery to the family',
+			'admin.groupes.partage.regleEffective' => 'Effective rule',
+			'admin.groupes.partage.regleActive' => 'Automatic sharing on',
+			'admin.groupes.partage.regleInactive' => 'Automatic sharing off',
+			'admin.groupes.partage.regleSource' => ({required Object regle, required Object source}) => '${regle}, from ${source}',
+			'admin.groupes.partage.etatNonValide' => 'The notebook is not validated yet. No publication is possible.',
+			'admin.groupes.partage.etatConfirmeNonPartage' => 'Notebook validated, report not shared with the family.',
+			'admin.groupes.partage.etatPartageAuto' => 'Shared automatically with the family.',
+			'admin.groupes.partage.etatPartageManuel' => 'Published manually for the family.',
+			'admin.groupes.partage.etatRevoque' => 'Family access revoked for this report.',
+			'admin.groupes.partage.etatCorrige' => 'Corrected after publication: the family sees the latest approved version.',
+			'admin.groupes.partage.nonPubliable' => 'No shareable teaching content exists for this report: publication is not possible.',
+			'admin.groupes.partage.publier' => 'Publish for the family',
+			'admin.groupes.partage.revoquer' => 'Revoke access',
+			'admin.groupes.partage.portee' => 'This action concerns only this report.',
+			'admin.groupes.partage.confirmerPublier' => ({required Object dePrenom}) => 'Publish this report for ${dePrenom}\'s family?',
+			'admin.groupes.partage.consequencePublier' => 'Sharing is limited to this report. It does not turn on the class\'s automatic sharing.',
+			'admin.groupes.partage.confirmerRevoquer' => 'Revoke the family\'s access to this report?',
+			'admin.groupes.partage.consequenceRevoquer' => 'The family no longer sees it, right away. The notebook and the session stay validated.',
+			'admin.groupes.partage.publie' => 'This report is now visible to the family.',
+			'admin.groupes.partage.revoque' => 'Access to this report has been revoked.',
+			'admin.groupes.partage.conflitApercu' => 'Another member of the management changed this report. The up-to-date state is shown.',
+			'admin.groupes.partage.historique' => 'History of actions',
+			'admin.groupes.partage.actionPublication' => 'Manual publication',
+			'admin.groupes.partage.actionRevocation' => 'Revocation',
+			'admin.groupes.partage.actionAuto' => 'Automatic sharing',
+			'admin.groupes.partage.parSysteme' => 'System',
+			'admin.groupes.partage.entete' => ({required Object eleve, required Object classe, required Object date}) => '${eleve}, ${classe}, session of ${date}',
+			'admin.groupes.partage.enseignant' => 'Teacher',
+			'admin.groupes.partage.miseAJour' => ({required Object date}) => 'Updated on ${date}',
+			'admin.groupes.partage.fermer' => 'Close',
+			'admin.groupes.formulaire.contexte' => 'A class brings together a teacher and their students on the same slot each week. Choose the audience and the gender: the teachers list, the ceiling and the class name follow from them.',
+			'admin.groupes.formulaire.titrePublic' => 'Audience',
+			'admin.groupes.formulaire.publicEnfantDetail' => 'Choose for a children\'s class. Suggested ceiling: 5 students.',
+			'admin.groupes.formulaire.publicAdulteDetail' => 'Choose for an adults\' class. Suggested ceiling: 6 students.',
+			'admin.groupes.formulaire.titreGenre' => 'Class gender',
+			'admin.groupes.formulaire.genreHommes' => 'Men',
+			'admin.groupes.formulaire.genreFemmes' => 'Women',
+			'admin.groupes.formulaire.genreGarcons' => 'Boys',
+			'admin.groupes.formulaire.genreFilles' => 'Girls',
+			'admin.groupes.formulaire.genreIndetermine' => 'Not determined',
+			'admin.groupes.formulaire.genreHommesDetail' => 'Choose for a men\'s class: only male teachers will be able to take it.',
+			'admin.groupes.formulaire.genreFemmesDetail' => 'Choose for a women\'s class: only female teachers will be able to take it.',
+			'admin.groupes.formulaire.genreGarconsDetail' => 'Choose for a boys\' class: only male teachers will be able to take it.',
+			'admin.groupes.formulaire.genreFillesDetail' => 'Choose for a girls\' class: only female teachers will be able to take it.',
+			'admin.groupes.formulaire.genreIndetermineDetail' => 'Choose when the gender is not yet known: any teacher whose gender is filled in will be able to take it.',
+			'admin.groupes.formulaire.autresCreneauxTitre' => 'Other slots of the week',
+			'admin.groupes.formulaire.autresCreneauxContexte' => 'A class meets three times a week by default, on fixed days. Remove a line for a class that meets less often; no date to enter.',
+			'admin.groupes.formulaire.creneauNumero' => ({required Object n}) => 'Slot ${n}',
+			'admin.groupes.formulaire.retirerCreneau' => ({required Object n}) => 'Remove slot ${n}',
+			'admin.groupes.formulaire.ajouterCreneauLigne' => 'Add a slot',
+			'admin.groupes.formulaire.manqueAutreCreneau' => ({required Object n}) => 'Choose the day and time of slot ${n}, or remove it.',
+			'admin.groupes.formulaire.creneauEnDouble' => 'Two slots fall on the same day at the same time: change one.',
+			'admin.groupes.formulaire.duree' => 'Length',
+			'admin.groupes.formulaire.dureeClasse' => 'Class length',
+			'admin.groupes.formulaire.dureeValeur' => ({required Object minutes}) => '${minutes} min',
+			'admin.groupes.formulaire.dureeContexte' => 'By default, a slot lasts the class\'s length, set by its audience. Choose another length for this slot only.',
+			'admin.groupes.formulaire.genreMixte' => 'Mixed',
+			'admin.groupes.formulaire.genreMixteDetailEnfants' => 'Boys and girls together: any teacher whose gender is filled in will be able to take it. Choose only when teachers of one gender are missing.',
+			'admin.groupes.formulaire.genreMixteDetailAdultes' => 'Men and women together: any teacher whose gender is filled in will be able to take it. Choose only when teachers of one gender are missing.',
+			'admin.groupes.formulaire.genreHommesDetailSansSource' => 'Choose for a men\'s class. Teachers\' gender is not yet readable here: check yourself that the teacher chosen is a man.',
+			'admin.groupes.formulaire.genreFemmesDetailSansSource' => 'Choose for a women\'s class. Teachers\' gender is not yet readable here: check yourself that you choose a woman teacher.',
+			'admin.groupes.formulaire.genreGarconsDetailSansSource' => 'Choose for a boys\' class. Teachers\' gender is not yet readable here: check yourself that the teacher chosen is a man.',
+			'admin.groupes.formulaire.genreFillesDetailSansSource' => 'Choose for a girls\' class. Teachers\' gender is not yet readable here: check yourself that you choose a woman teacher.',
+			'admin.groupes.formulaire.genreNonEnregistre' => 'The gender guides the choice of teacher. It will be saved with the class as soon as the server accepts it: for now, it is not.',
+			'admin.groupes.formulaire.aideEnseignant' => 'Teachers are ranked from most to least suitable: class gender, free slot, then fewest classes in progress.',
+			'admin.groupes.formulaire.aideEnseignantSansSource' => 'Teachers are ranked from least to most loaded, and a teacher already in class at this slot cannot be chosen. Their gender and availability are not yet readable here: check them yourself.',
+			'admin.groupes.formulaire.plusAdapteCreneau' => ({required Object charge}) => 'First choice: free at this slot, ${charge}.',
+			'admin.groupes.formulaire.plusAdapteSansCreneau' => ({required Object libres, required Object charge}) => 'First choice: ${libres}, ${charge}.',
+			'admin.groupes.formulaire.classesEnCours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} class in progress', other: '${n} classes in progress', ), 
+			'admin.groupes.formulaire.aucuneClasse' => 'no class in progress',
+			'admin.groupes.formulaire.creneauxLibres' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} free slot', other: '${n} free slots', ), 
+			'admin.groupes.formulaire.pasLibre' => 'This slot is not in their declared availability: you can still make this choice.',
+			'admin.groupes.formulaire.raisonHommes' => 'Men\'s class: only a male teacher can take it.',
+			'admin.groupes.formulaire.raisonGarcons' => 'Boys\' class: only a male teacher can take it.',
+			'admin.groupes.formulaire.raisonFemmes' => 'Women\'s class: only a female teacher can take it.',
+			'admin.groupes.formulaire.raisonFilles' => 'Girls\' class: only a female teacher can take it.',
+			'admin.groupes.formulaire.raisonPris' => 'Already in class at this slot: change the slot to choose them.',
+			'admin.groupes.formulaire.raisonGenreInconnu' => 'Gender not filled in on their profile: no class can be entrusted to them until it is.',
+			'admin.groupes.formulaire.titreCreneau' => 'Slot',
+			'admin.groupes.formulaire.creneauContexte' => 'The day and time of the class, each week.',
+			'admin.groupes.formulaire.creneauxLibresDe' => ({required Object deNom}) => '${deNom}\'s free slots: tapping a slot sets the day and time.',
+			'admin.groupes.formulaire.aucunCreneauLibre' => ({required Object nom}) => '${nom} has no free slot declared: choose a day and a time below.',
+			'admin.groupes.formulaire.disponibilitesInconnues' => ({required Object deNom}) => '${deNom}\'s availability is not yet readable here: choose a day and a time below.',
+			'admin.groupes.formulaire.jour' => 'Day',
+			'admin.groupes.formulaire.heure' => 'Time',
+			'admin.groupes.formulaire.heureValeur' => ({required Object heure}) => '${heure}:00',
+			'admin.groupes.formulaire.fuseauEnseignant' => ({required Object fuseau}) => 'Times read in the ${fuseau} time zone, the teacher\'s.',
+			'admin.groupes.formulaire.fuseauDefaut' => ({required Object fuseau}) => 'Times read in the ${fuseau} time zone, kept by default.',
+			'admin.groupes.formulaire.fuseauNonTransmis' => ({required Object fuseau}) => 'Times read in the ${fuseau} time zone, the one the server keeps for now. The teacher\'s time zone will be taken into account as soon as the server accepts it.',
+			'admin.groupes.formulaire.titreSeuil' => 'Maximum ceiling',
+			'admin.groupes.formulaire.seuilDetail' => 'The class is full as soon as it reaches this number of students. Suggested: 5 for children, 6 for adults; 6 at most.',
+			'admin.groupes.formulaire.seuilValeur' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} student', other: '${n} students', ), 
+			'admin.groupes.formulaire.nomAutomatique' => 'The class name is chosen automatically from names of personalities of Islam: a woman\'s name for a women\'s class, a man\'s name for a men\'s class. You will be able to change it afterwards.',
+			'admin.groupes.formulaire.nomPropose' => ({required Object base, required Object creneau}) => '${base}, ${creneau}',
+			'admin.groupes.formulaire.manqueGenre' => 'The class gender is missing: choose one of the three cards.',
+			'admin.groupes.formulaire.manqueCreneau' => 'The slot is missing: choose the day and time of the class.',
+			'admin.groupes.formulaire.manqueSeuil' => 'The maximum ceiling is missing: choose a number of students between 1 and 6.',
+			'admin.groupes.formulaire.manqueEnseignantHommes' => ({required Object nom}) => '${nom} cannot take a men\'s class: choose a male teacher from the list.',
+			'admin.groupes.formulaire.manqueEnseignantGarcons' => ({required Object nom}) => '${nom} cannot take a boys\' class: choose a male teacher from the list.',
+			'admin.groupes.formulaire.manqueEnseignantFemmes' => ({required Object nom}) => '${nom} cannot take a women\'s class: choose a female teacher from the list.',
+			'admin.groupes.formulaire.manqueEnseignantFilles' => ({required Object nom}) => '${nom} cannot take a girls\' class: choose a female teacher from the list.',
+			'admin.groupes.formulaire.manqueEnseignantPris' => ({required Object nom}) => '${nom} is already in class at this slot: change the slot or choose another person from the list.',
+			'admin.groupes.formulaire.manqueEnseignantGenreInconnu' => ({required Object nom}) => '${nom} has no gender filled in on their profile: no class can be entrusted to them. Choose another person from the list.',
+			'admin.groupes.formulaire.manqueListeEnseignants' => 'The teachers list is not up to date yet, so the teacher chosen could not be checked: wait for it to display, then press again.',
+			'admin.groupes.formulaire.horsLigne' => 'The class can be created when the connection has returned. Your choices stay displayed.',
+			'admin.groupes.formulaire.seuilHorsLigne' => 'The ceiling can be saved when the connection has returned. Your choice stays displayed.',
+			'admin.offres.titre' => 'Showcase offers',
+			'admin.offres.sousTitre' => 'The slots families see and choose. Only the administration publishes, and the showcase shows no teacher.',
+			'admin.offres.nouvelle' => 'New offer',
+			'admin.offres.vide' => 'No offer yet. Create the first one to open the showcase to families.',
+			'admin.offres.erreur' => 'The offers could not be displayed: the read may not have reached Rewayah. Try again in a moment.',
+			'admin.offres.sansDonnees' => 'The offers could not be loaded',
+			'admin.offres.horsLigneAction' => 'Publishing and withdrawing an offer will be possible when the connection has returned.',
+			'admin.offres.etatBrouillon' => 'Draft',
+			'admin.offres.etatPubliee' => 'Published',
+			'admin.offres.etatRetiree' => 'Withdrawn',
+			'admin.offres.cleJours' => 'Days',
+			'admin.offres.cleHeure' => 'Time',
+			'admin.offres.cleFuseau' => 'Time zone',
+			'admin.offres.clePublic' => 'Audience',
+			'admin.offres.cleLangue' => 'Language',
+			'admin.offres.cleDuree' => 'Length',
+			'admin.offres.cleMotif' => 'Reason for withdrawal',
+			'admin.offres.heure' => ({required Object heure}) => '${heure}:00',
+			'admin.offres.duree' => ({required Object minutes}) => '${minutes} min',
+			'admin.offres.publier' => 'Publish',
+			'admin.offres.retirer' => 'Withdraw',
+			'admin.offres.publierPour' => ({required Object resume}) => 'Publish the offer ${resume}',
+			'admin.offres.retirerPour' => ({required Object resume}) => 'Withdraw the offer ${resume}',
+			'admin.offres.publiee' => 'Offer published. Families see it in the showcase.',
+			'admin.offres.retiree' => 'Offer withdrawn from the showcase.',
+			'admin.offres.creee' => 'Offer created as a draft. Publish it to open it to families.',
+			'admin.offres.nonConfirmee' => 'The action could not be confirmed: nothing changed. Try again in a moment.',
+			'admin.offres.refusee' => ({required Object motif}) => 'Refused by the server: ${motif}',
+			'admin.offres.retraitTitre' => 'Withdraw this offer',
+			'admin.offres.retraitExplication' => 'Requests already made on this offer are kept: the administration must handle them.',
+			'admin.offres.motifLibelle' => 'Reason for withdrawal',
+			'admin.offres.motifManque' => 'Give the reason for withdrawal',
+			'admin.offres.serveur.reserve' => 'Only the administration can manage offers.',
+			'admin.offres.serveur.dejaPubliee' => 'This offer is already published.',
+			'admin.offres.serveur.dejaRetiree' => 'This offer is already withdrawn.',
+			'admin.offres.serveur.introuvable' => 'This offer cannot be found.',
+			'admin.offres.serveur.motifRequis' => 'A reason is required to withdraw an offer.',
+			'admin.offres.serveur.joursInvalides' => 'The chosen days are not valid.',
+			'admin.offres.serveur.nombreJours' => 'The number of days does not match the academy\'s sessions per week.',
+			'admin.offres.serveur.fuseauInconnu' => 'This time zone is unknown.',
+			'admin.offres.serveur.publicInconnu' => 'This audience is unknown.',
+			'admin.offres.serveur.doublon' => 'An identical offer already exists.',
+			'admin.offres.serveur.jourManquant' => 'Choose at least one day',
+			'admin.offres.retraitHorsLigne' => 'The offer can be withdrawn when the connection has returned. Your reason stays displayed.',
+			'admin.offres.formulaire.question' => 'Which slot to open to families?',
+			'admin.offres.formulaire.explication' => 'A published offer cannot be changed: to change it, withdraw it then create another. No teacher is chosen here.',
+			'admin.offres.formulaire.public' => 'Audience',
+			'admin.offres.formulaire.langue' => 'Course language',
+			'admin.offres.formulaire.fuseau' => 'Time zone',
+			'admin.offres.formulaire.jours' => 'Days',
+			'admin.offres.formulaire.joursAide' => ({required Object n}) => 'Choose ${n} days a week.',
+			'admin.offres.formulaire.heure' => 'Local time',
+			'admin.offres.formulaire.duree' => 'Session length',
+			'admin.offres.formulaire.creer' => 'Create the offer',
+			'admin.offres.formulaire.manqueJour' => 'Choose at least one day',
+			'admin.offres.formulaire.manqueNombre' => ({required Object n}) => 'Choose exactly ${n} days',
+			'admin.offres.formulaire.manqueLangue' => 'Choose the course language',
+			'admin.offres.formulaire.horsLigne' => 'The offer can be created when the connection has returned. Your choices stay displayed.',
+			'admin.offres.formulaire.regles' => 'The academy\'s rules could not be read: the number of days will be checked on sending.',
+			'admin.regroupements.titre' => 'Classes to open',
+			'admin.regroupements.sousTitre' => 'Requests from families that look alike are grouped: same days, same time, same time zone, same audience, same language.',
+			'admin.regroupements.tri' => 'Requests ready to open a class first, then the most numerous.',
+			'admin.regroupements.indisponibleTitre' => 'Available once the server is connected',
+			'admin.regroupements.indisponiblePhrase' => 'Grouped requests will be shown here once the server is connected. Until then, nothing is shown: no request is invented.',
+			'admin.regroupements.erreur' => 'The grouped requests could not be displayed: the read may not have reached Rewayah. Try again in a moment.',
+			'admin.regroupements.sansDonnees' => 'The grouped requests could not be loaded',
+			'admin.regroupements.vide' => 'No request pending',
+			'admin.regroupements.videDetail' => 'New family requests will appear here, grouped when they look alike.',
+			'admin.regroupements.sectionAFinir' => 'Teacher to confirm',
+			'admin.regroupements.sectionDemandes' => 'Grouped requests',
+			'admin.regroupements.cleJours' => 'Days',
+			'admin.regroupements.cleHeure' => 'Reference time',
+			'admin.regroupements.cleAilleurs' => 'Elsewhere',
+			'admin.regroupements.clePublic' => 'Audience',
+			'admin.regroupements.cleLangue' => 'Language',
+			'admin.regroupements.cleEleves' => 'Requests',
+			'admin.regroupements.heure' => ({required Object heure}) => '${heure}:00',
+			'admin.regroupements.heureMinutes' => ({required Object heure, required Object minutes}) => '${heure}:${minutes}',
+			'admin.regroupements.heureFuseau' => ({required Object heure, required Object deVille}) => '${heure}, ${deVille} time',
+			'admin.regroupements.ailleursMemeJour' => ({required Object heure, required Object ville}) => '${heure} in ${ville}',
+			'admin.regroupements.ailleursVeille' => ({required Object heure, required Object ville}) => '${heure} the day before in ${ville}',
+			'admin.regroupements.ailleursLendemain' => ({required Object heure, required Object ville}) => '${heure} the next day in ${ville}',
+			'admin.regroupements.cleJoursHeures' => 'Days and times',
+			'admin.regroupements.cleFuseau' => 'Reference time zone',
+			'admin.regroupements.fuseauValeur' => ({required Object deVille}) => '${deVille} time',
+			'admin.regroupements.jourHeure' => ({required Object jour, required Object heure}) => '${jour} ${heure}',
+			'admin.regroupements.ailleursJour' => ({required Object jour, required Object ailleurs}) => '${jour}: ${ailleurs}',
+			'admin.regroupements.demandes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} request', other: '${n} requests', ), 
+			'admin.regroupements.classesPossibles' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, zero: 'no class possible', one: '${n} class possible', other: '${n} classes possible', ), 
+			'admin.regroupements.demandesVersClasses' => ({required Object demandes, required Object classes}) => '${demandes} → ${classes}',
+			'admin.regroupements.pret' => 'Ready',
+			'admin.regroupements.incomplete' => 'Incomplete',
+			'admin.regroupements.pretDetail' => 'The quota is reached: the class can open full.',
+			'admin.regroupements.manquent' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} request is missing to reach the quota: the class can be created as soon as the grouping is ready.', other: '${n} requests are missing to reach the quota: the class can be created as soon as the grouping is ready.', ), 
+			'admin.regroupements.nonOuvert' => 'Creating this class is not open to you: a member of the management who has the right can do it.',
+			'admin.regroupements.affectationNonOuverte' => 'Confirming the teacher is not open to you: a member of the management who has the right can do it.',
+			'admin.regroupements.classeAttend' => ({required Object libelle}) => 'Class ${libelle} created: its teacher is still to be confirmed.',
+			'admin.regroupements.creer' => 'Create the class',
+			'admin.regroupements.choisirEnseignant' => 'Choose the teacher',
+			'admin.regroupements.voirClasse' => 'See the class',
+			'admin.regroupements.manquentCourt' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} request is missing.', other: '${n} requests are missing.', ), 
+			'admin.regroupements.contexte' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'The student of these requests will be placed in the class as soon as it is created. You will then confirm the proposed teacher.', other: 'The ${n} students of these requests will be placed in the class as soon as it is created. You will then confirm the proposed teacher.', ), 
+			'admin.regroupements.nomDetail' => 'Deduced from the gender, audience, days and time.',
+			'admin.regroupements.dejaCreee' => 'Another member of the management has just created this class: nothing was created twice. Close this sheet to see the up-to-date list.',
+			'admin.regroupements.refusee' => ({required Object motif}) => 'The class was not created: ${motif}. Check the requests, then press again.',
+			'admin.regroupements.nonConfirmee' => 'The creation is not confirmed: the server\'s answer did not arrive. Press again: the same request will be resumed, with no duplicate class.',
+			'admin.regroupements.creee' => ({required num n, required Object libelle}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'Class ${libelle} created: ${n} student placed.', other: 'Class ${libelle} created: ${n} students placed.', ), 
+			'admin.regroupements.enseignantTitre' => 'Proposed teacher',
+			'admin.regroupements.enseignantContexte' => 'The first choice takes into account the class\'s gender, their free slots on the same days and at the same time, then the number of their classes. These times are compared as they are, with no time zone conversion: if the teacher lives in another time zone, check with them before confirming. Confirm them or choose another person.',
+			'admin.regroupements.confirmerEnseignant' => 'Confirm the teacher',
+			'admin.regroupements.enseignantHorsLigne' => 'The teacher can be confirmed when the connection has returned. Your choice stays displayed.',
+			'admin.regroupements.affectationNonConfirmee' => 'The teacher is not confirmed: the server\'s answer did not arrive. Press again.',
+			'admin.regroupements.refusAffectation.reservee' => 'The teacher is not confirmed: your account is not allowed to confirm a teacher.',
+			'admin.regroupements.refusAffectation.classeIndisponible' => 'The teacher is not confirmed: this class no longer awaits a teacher. Close this sheet to see the up-to-date list.',
+			'admin.regroupements.refusAffectation.enseignantIndisponible' => 'The teacher is not confirmed: their account, ID document, course language or gender filled in do not yet allow this class. Choose another person.',
+			'admin.regroupements.refusAffectation.genreIncompatible' => 'The teacher is not confirmed: their gender does not match the class\'s audience. Choose another person.',
+			'admin.regroupements.refusAffectation.plafond' => 'The teacher is not confirmed: this class would exceed their weekly hours ceiling. Choose another person.',
+			'admin.regroupements.refusAffectation.nonDisponible' => 'The teacher is not confirmed: their availability does not cover all of the class\'s slots. Choose another person.',
+			'admin.regroupements.refusAffectation.chevauchementClasse' => 'The teacher is not confirmed: this person already has a class or a student at the same time. Choose another person.',
+			'admin.regroupements.refusAffectation.chevauchementSeance' => 'The teacher is not confirmed: this person already has a session planned at the same time. Choose another person.',
+			'admin.regroupements.refusAffectation.plafondClasses' => ({required num n, required Object maximum}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'The teacher is not confirmed: they already hold ${n} active class, for a maximum of ${maximum}. Close one of their classes, or raise the maximum in the Rules. Otherwise, choose another person.', other: 'The teacher is not confirmed: they already hold ${n} active classes, for a maximum of ${maximum}. Close one of their classes, or raise the maximum in the Rules. Otherwise, choose another person.', ), 
+			'admin.regroupements.refusAffectation.plafondClassesSansNombre' => 'The teacher is not confirmed: they already hold the maximum number of active classes. Close one of their classes, or raise the maximum in the Rules. Otherwise, choose another person.',
+			'admin.regroupements.refusAffectation.inconnu' => 'The teacher is not confirmed. Choose another.',
+			'admin.regroupements.dejaAffecte' => 'Another member of the management has already confirmed this class\'s teacher: your choice does not replace theirs.',
+			'admin.regroupements.famillesPrevenues' => 'The families have been notified.',
+			'admin.regroupements.famillesClasseValidee' => 'The families have been notified that their class is validated.',
+			'admin.regroupements.termineDetail' => ({required Object libelle, required Object enseignant}) => 'Class ${libelle}: ${enseignant} is its teacher.',
+			'admin.regroupements.decoupagePleines' => ({required num n, required Object taille}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} class of ${taille}', other: '${n} classes of ${taille}', ), 
+			'admin.regroupements.decoupageAucuneClasse' => 'no class',
+			'admin.regroupements.decoupageDerniere' => ({required Object n}) => 'a last class of ${n}',
+			'admin.regroupements.decoupageAttente' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} student waiting', other: '${n} students waiting', ), 
+			'admin.regroupements.decoupage' => ({required Object detail}) => 'Planned split: ${detail}.',
+			'admin.regroupements.contexteReparti' => 'The students of these requests will be distributed according to the split below. You will then confirm the proposed teacher.',
+			'admin.regroupements.classesExistantes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} class is already open on this slot: the new one is added, none is changed.', other: '${n} classes are already open on this slot: the new one is added, none is changed.', ), 
+			'admin.regroupements.liste.rechercheLibelle' => 'Search for a request',
+			'admin.regroupements.liste.rechercheAide' => 'Language, time zone or name of the class created',
+			'admin.regroupements.liste.filtreToutes' => 'All',
+			'admin.regroupements.liste.filtreAFinir' => 'Teacher to confirm',
+			'admin.regroupements.liste.filtrePrets' => 'Ready',
+			'admin.regroupements.liste.filtreIncompletes' => 'Incomplete',
+			'admin.regroupements.liste.filtrePublic' => 'Audience',
+			'admin.regroupements.liste.filtreTousPublics' => 'All audiences',
+			'admin.regroupements.liste.aucunAvecCeFiltre' => 'No request with this filter',
+			'admin.regroupements.liste.aucunAvecCeFiltreDetail' => 'Change the filter to see the other grouped requests.',
+			'admin.regroupements.liste.positionSemantique' => ({required Object page, required Object total}) => 'Page ${page} of ${total} of the grouped requests list',
+			'admin.regroupements.liste.precedente' => 'Previous page of grouped requests',
+			_ => null,
+		} ?? switch (path) {
+			'admin.regroupements.liste.suivante' => 'Next page of grouped requests',
+			'admin.regroupements.liste.resume' => ({required Object debut, required Object fin, required Object total}) => 'Grouped requests ${debut} to ${fin} of ${total}',
+			'admin.diagnostics.titre' => 'Diagnostics',
+			'admin.diagnostics.intro' => 'Each registered student waits for a first level before joining a class: this is where that placement is decided.',
+			'admin.diagnostics.aucunProgramme' => 'No programme published',
+			'admin.diagnostics.aucunProgrammeDetail' => 'Publish a first version of the programme (Teaching > Programmes) before a placement can be decided.',
+			'admin.diagnostics.erreur' => 'The queue could not be read. Try again in a moment.',
+			'admin.diagnostics.restants' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} student remaining', other: '${n} students remaining', ), 
+			'admin.diagnostics.restantUn' => '1 student remaining',
+			'admin.diagnostics.inscritAujourdhui' => 'Registered today',
+			'admin.diagnostics.inscritDepuisUnJour' => 'Registered 1 day ago',
+			'admin.diagnostics.aucun' => 'No student to diagnose',
+			'admin.diagnostics.aucunDetail' => 'All registered students already have a level decided.',
+			'admin.diagnostics.champNiveau' => 'Placement level',
+			'admin.diagnostics.manqueNiveau' => 'The placement level is missing: choose it from the list of levels.',
+			'admin.diagnostics.champMotif' => 'Reason',
+			'admin.diagnostics.motifRequis' => 'A reason is required, it is written in the audit log.',
+			'admin.diagnostics.decider' => 'Decide the placement',
+			'admin.diagnostics.deciderErreur' => ({required Object message}) => 'The decision did not go through: ${message}',
+			'admin.diagnostics.journalisation' => 'Each placement decided is written in the audit log.',
+			'admin.diagnostics.inscritDepuis' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(jours, one: 'Registered ${jours} day ago', other: 'Registered ${jours} days ago', ), 
+			'admin.qualite.titre' => 'Quality',
+			'admin.qualite.intro' => 'Teaching anomalies detected: missing reports, blockages with no follow-up, late assessments.',
+			'admin.qualite.erreur' => 'The anomalies could not be read. Try again in a moment.',
+			'admin.qualite.aucune' => 'No anomaly detected',
+			'admin.qualite.aucuneDetail' => 'Everything is up to date: reports written, blockages followed up, assessments on time.',
+			'admin.qualite.filtreToutes' => 'All',
+			'admin.qualite.filtreOuvertes' => 'Open',
+			'admin.qualite.filtreTraitees' => 'Handled',
+			'admin.qualite.groupeRapportManquant' => 'Missing session reports',
+			'admin.qualite.groupeBlocageSansSuivi' => 'Blockages with no follow-up',
+			'admin.qualite.groupeEvaluationEnRetard' => 'Late assessments',
+			'admin.qualite.colonnePersonne' => 'Concerns',
+			'admin.qualite.colonneDepuis' => 'Since',
+			'admin.qualite.colonneStatut' => 'Status',
+			'admin.qualite.statutOuvert' => 'Open',
+			'admin.qualite.statutTraite' => 'Handled',
+			'admin.qualite.depuisAujourdhui' => 'Today',
+			'admin.qualite.depuisUnJour' => '1 day',
+			'admin.qualite.actionTraiter' => 'Mark as handled',
+			'admin.qualite.traiterTitre' => ({required Object personne}) => 'Mark as handled: ${personne}',
+			'admin.qualite.champNote' => 'Note (optional)',
+			'admin.qualite.traiterEnvoyer' => 'Mark as handled',
+			'admin.qualite.traiterErreur' => ({required Object message}) => 'The handling did not go through: ${message}',
+			'admin.qualite.depuisJours' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(jours, one: '${jours} day', other: '${jours} days', ), 
+			'admin.regles.titre' => 'Rules',
+			'admin.regles.intro' => 'The default values for the whole platform. An exception for a specific profile is set from Operations > Individual rules, never here.',
+			'admin.regles.erreur' => 'The rules could not be read. Try again in a moment.',
+			'admin.regles.erreurEcriture' => ({required Object message}) => 'The saving did not go through: ${message}',
+			'admin.regles.valeurInvalide' => 'Enter a valid number.',
+			'admin.regles.envoyer' => 'Save',
+			'admin.regles.champValeur' => 'Value',
+			'admin.regles.absenceSeuil' => 'Absence threshold',
+			'admin.regles.absenceSeuilDetail' => 'Beyond this number of minutes without joining the session, the student is marked absent.',
+			'admin.regles.dureeSeance' => 'Session length',
+			'admin.regles.dureeSeanceDetail' => 'The length of a private lesson session, before any individual exception. A class has the length of its offer, or that of its audience (adults or children).',
+			'admin.regles.dureeMinimalePayee' => 'Minimum paid length',
+			'admin.regles.dureeMinimalePayeeDetail' => 'Below this length, a shortened session is still paid in full.',
+			'admin.regles.pauseEntreSeances' => 'Break between two sessions',
+			'admin.regles.pauseEntreSeancesDetail' => 'The minimum time left to a teacher between two consecutive sessions.',
+			'admin.regles.depassementSeance' => 'Overrun allowed after the planned end',
+			'admin.regles.depassementSeanceDetail' => 'After a session\'s planned end, the room stays open for this time and the timer counts the overrun. After that, no one can join it.',
+			'admin.regles.elevesParEnseignant' => 'Students per teacher',
+			'admin.regles.elevesParEnseignantDetail' => 'The maximum number of students a teacher can follow in parallel.',
+			'admin.regles.horizonAffectation' => 'Assignment horizon',
+			'admin.regles.horizonAffectationDetail' => 'The number of weeks ahead over which assignment looks for an available teacher.',
+			'admin.regles.ageCameraAuto' => 'Minimum age for automatic camera',
+			'admin.regles.ageCameraAutoDetail' => 'Below this age, turning on the camera stays subject to the guardian\'s agreement.',
+			'admin.regles.ageInterfaceEnfant' => 'Maximum age for the child interface',
+			'admin.regles.ageInterfaceEnfantDetail' => 'Below this age, a profile switches to the simplified interface when created.',
+			'admin.regles.appareilsParEleve' => 'Devices per student',
+			'admin.regles.appareilsParEleveDetail' => 'The number of devices a student can have active at the same time.',
+			'admin.regles.seancesSimultanees' => 'Simultaneous sessions per profile',
+			'admin.regles.seancesSimultaneesDetail' => 'The number of sessions the same profile can follow at the same time.',
+			'admin.regles.uniteMinutes' => ({required Object n}) => '${n} min',
+			'admin.regles.uniteSemaines' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} wk', other: '${n} wk', ), 
+			'admin.regles.uniteNombre' => ({required Object n}) => '${n}',
+			'admin.regles.classesParEnseignant' => 'Classes at most per teacher',
+			'admin.regles.classesParEnseignantDetail' => 'The number of classes a teacher can hold at the same time. A closed class and a one-off replacement do not count. A decrease removes no class already held. In their questionnaire, candidates choose from 1 up to this number.',
+			'admin.regles.remplacementSection' => 'When the teacher has not joined the room',
+			'admin.regles.remplacementIntro' => 'The minutes count from the session\'s start time. Each step comes after the previous one.',
+			'admin.regles.remplacementAvertissement' => 'Warning to the teacher',
+			'admin.regles.remplacementAvertissementDetail' => 'The teacher is warned that they are about to lose the session. Free teachers can offer to replace them.',
+			'admin.regles.remplacementPerte' => 'Loss of the session',
+			'admin.regles.remplacementPerteDetail' => 'The teacher is marked absent and can no longer join today\'s session. A teacher who offered replaces them, and families are notified.',
+			'admin.regles.remplacementObjectif' => 'Replacement in the room',
+			'admin.regles.remplacementObjectifDetail' => 'The goal: the replacement has joined the room.',
+			'admin.regles.remplacementBornesAvertissement' => ({required Object min, required Object max}) => 'Between ${min} and ${max} after the start. To go beyond ${max}, first raise the loss of the session.',
+			'admin.regles.remplacementBornesPerte' => ({required Object min, required Object max}) => 'Between ${min} and ${max} after the start. To go below ${min}, first lower the warning. To go beyond ${max}, first raise the goal.',
+			'admin.regles.remplacementBornesObjectif' => ({required Object min}) => 'At least ${min} after the start. To go below ${min}, first lower the loss of the session.',
+			'admin.regles.remplacementOrdreRefuse' => 'The order of the delays is no longer respected: another setting changed in the meantime. Close this window, then reopen the row to see the up-to-date values.',
+			'admin.regles.entretiensSection' => 'Interviews',
+			'admin.regles.entretiensIntro' => 'Founders are ticked in Accounts, Management and Teachers views.',
+			'admin.regles.regleFondateurs' => 'Require founders',
+			'admin.regles.regleFondateursDetail' => 'When on, an interview cannot be scheduled, and a participant cannot be removed, with fewer founders than the minimum.',
+			'admin.regles.fondateursMinimum' => 'Minimum founders',
+			'admin.regles.fondateursMinimumDetail' => 'The number of founders required among an interview\'s participants.',
+			'admin.regles.fondateursBornes' => 'From 1 to 99.',
+			'admin.regles.pause.section' => 'Break during the session',
+			'admin.regles.pause.intro' => 'By default, each session of a class has a break, just after the middle. The timer bar offers it to the teacher, who accepts or declines. The teacher can also set their class\'s break.',
+			'admin.regles.pause.adultes' => 'Adults\' classes break',
+			'admin.regles.pause.adultesDetail' => 'The default break length of an adults\' class. 0: no break. Rounded to 5 minutes, from 5 to 30.',
+			'admin.regles.pause.enfants' => 'Children\'s classes break',
+			'admin.regles.pause.enfantsDetail' => 'The default break length of a children\'s class. 0: no break. Rounded to 5 minutes, from 5 to 30.',
+			'admin.regles.pause.rappel' => 'Reminder after a refusal',
+			'admin.regles.pause.rappelDetail' => 'If the teacher declines the break, it is offered again after this delay: the break is a right.',
+			'admin.regles.pause.reste' => 'Class remaining after the break',
+			'admin.regles.pause.resteDetail' => 'The break is no longer offered if less than this amount of class would remain after it.',
+			'admin.regles.pause.bornesDuree' => 'From 0 to 30 minutes.',
+			'admin.regles.pause.bornesRappel' => 'From 1 to 60 minutes.',
+			'admin.regles.pause.bornesReste' => 'From 0 to 60 minutes.',
+			'admin.regles.paie.section' => 'Teachers\' pay',
+			'admin.regles.paie.intro' => 'A month\'s pay is paid between these two days of the following month. Teachers see these dates on "My earnings".',
+			'admin.regles.paie.debut' => 'First payment day',
+			'admin.regles.paie.debutDetail' => 'The day of the following month when pay payments begin.',
+			'admin.regles.paie.fin' => 'Last payment day',
+			'admin.regles.paie.finDetail' => 'At the latest on this day, the month\'s pay is paid.',
+			'admin.regles.paie.jour' => ({required Object n}) => 'the ${n}',
+			'admin.regles.paie.premier' => 'the 1st',
+			'admin.regles.paie.bornesDebut' => ({required Object max}) => 'Between the 1st and the ${max}, the last payment day.',
+			'admin.regles.paie.bornesFin' => ({required Object min}) => 'Between the ${min}, the first payment day, and the 28th.',
+			'admin.regles.paie.refus' => 'These days were not accepted: they run from the 1st to the 28th, and the first day comes before the last. Nothing changed: choose other days.',
+			'admin.fonctionnalites.titre' => 'Features',
+			'admin.fonctionnalites.intro' => 'Features that change the behaviour of the whole platform.',
+			'admin.fonctionnalites.erreur' => 'The features could not be read. Try again in a moment.',
+			'admin.fonctionnalites.erreurEcriture' => ({required Object message}) => 'The saving did not go through: ${message}',
+			'admin.fonctionnalites.valeurInvalide' => 'Enter a valid number.',
+			'admin.fonctionnalites.envoyer' => 'Save',
+			'admin.fonctionnalites.champValeur' => 'Value',
+			'admin.fonctionnalites.multiParticipants' => 'Multi-participant sessions',
+			'admin.fonctionnalites.multiParticipantsDetail' => 'Allows several students in the same video session.',
+			'admin.fonctionnalites.participantsMax' => 'Maximum participants',
+			'admin.fonctionnalites.participantsMaxDetail' => 'The number of participants allowed when multi-participant sessions are on.',
+			'admin.fonctionnalites.uniteNombre' => ({required Object n}) => '${n}',
+			'admin.protectionEnfants.titre' => 'Child protection',
+			'admin.protectionEnfants.intro' => 'The officer receives, with the management, reports about a child\'s safety. Their name and email are shown to teachers who report. Leave the fields empty: the screen then says the management receives the report.',
+			'admin.protectionEnfants.nom' => 'Displayed name',
+			'admin.protectionEnfants.nomDetail' => 'The name teachers see.',
+			'admin.protectionEnfants.courriel' => 'Contact email',
+			'admin.protectionEnfants.courrielDetail' => 'The address to write to the officer.',
+			'admin.protectionEnfants.nonRenseigne' => 'Not provided',
+			'admin.protectionEnfants.champNom' => 'Officer\'s name',
+			'admin.protectionEnfants.champCourriel' => 'Officer\'s email',
+			'admin.protectionEnfants.enregistrer' => 'Save',
+			'admin.protectionEnfants.videAide' => 'Leave empty to remove the officer.',
+			'admin.protectionEnfants.nomTropLong' => 'This name is too long. 120 characters at most.',
+			'admin.protectionEnfants.courrielInvalide' => 'This address is not valid. An email contains an @ and a dot.',
+			'admin.protectionEnfants.erreurEcriture' => ({required Object message}) => 'The change was not saved: ${message}. Try again.',
+			'admin.protectionEnfants.erreur' => 'We could not read the officer. Try again in a moment.',
+			'admin.protectionEnfants.representantTitre' => 'Representative in the European Union',
+			'admin.protectionEnfants.representantDetail' => 'The name shown in the legal texts. Leave empty: they then show "Rewayah Academy".',
+			'admin.protectionEnfants.representantChamp' => 'Representative\'s name',
+			'admin.protectionEnfants.representantVideAide' => 'Leave empty to show "Rewayah Academy".',
+			'admin.protectionEnfants.representantErreur' => 'We could not read the representative. Try again in a moment.',
+			'admin.conservationDonnees.titre' => 'Data retention',
+			'admin.conservationDonnees.intro' => 'How long these items stay accessible before their automatic deletion.',
+			'admin.conservationDonnees.erreur' => 'The retention periods could not be read. Try again in a moment.',
+			'admin.conservationDonnees.erreurEcriture' => ({required Object message}) => 'The saving did not go through: ${message}',
+			'admin.conservationDonnees.valeurInvalide' => 'Enter a valid number.',
+			'admin.conservationDonnees.envoyer' => 'Save',
+			'admin.conservationDonnees.champValeur' => 'Value',
+			'admin.conservationDonnees.enregistrements' => 'Session recordings',
+			'admin.conservationDonnees.enregistrementsDetail' => 'The number of days a session recording stays accessible.',
+			'admin.conservationDonnees.documentsIdentite' => 'ID documents',
+			'admin.conservationDonnees.documentsIdentiteDetail' => 'The number of days a submitted ID document stays accessible before it is purged.',
+			'admin.conservationDonnees.suppressionCompte' => 'Account deletion',
+			'admin.conservationDonnees.suppressionCompteDetail' => 'The number of days of reflection before the management can process an account deletion request.',
+			'admin.conservationDonnees.uniteJours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} d', other: '${n} d', ), 
+			'admin.politiqueRevueKyc.titre' => 'Teacher verification by gender',
+			'admin.politiqueRevueKyc.libelle' => 'Limit teacher verification by gender',
+			'admin.politiqueRevueKyc.aide' => 'When this rule is off, any member allowed to review files can handle the files in their scope, whatever their gender.',
+			'admin.politiqueRevueKyc.echecEnregistrement' => _root.admin.groupes.observationErreur,
+			'admin.evaluations.titre' => 'Assessments',
+			'admin.evaluations.intro' => 'What is planned, what has been taken, and the certifications obtained.',
+			'admin.evaluations.erreur' => 'The assessments could not be read. Try again in a moment.',
+			'admin.evaluations.aucune' => 'No assessment',
+			'admin.evaluations.aucuneDetail' => 'Schedule a first assessment for a student already diagnosed.',
+			'admin.evaluations.aucuneAvecCeFiltre' => 'No assessment with this filter',
+			'admin.evaluations.aucuneAvecCeFiltreDetail' => 'Change the filter to see the other assessments.',
+			'admin.evaluations.filtreToutes' => 'All',
+			'admin.evaluations.filtrePlanifiees' => 'Scheduled',
+			'admin.evaluations.filtreRealisees' => 'Taken',
+			'admin.evaluations.filtreAnnulees' => 'Cancelled',
+			'admin.evaluations.filtreCertifications' => 'Certifications',
+			'admin.evaluations.colonneEleve' => 'Student',
+			'admin.evaluations.colonneNiveau' => 'Level',
+			'admin.evaluations.colonneType' => 'Type',
+			'admin.evaluations.colonneDatePrevue' => 'Planned for',
+			'admin.evaluations.colonneStatut' => 'Status',
+			'admin.evaluations.colonneResultat' => 'Result',
+			'admin.evaluations.typeInitiale' => 'Initial',
+			'admin.evaluations.typePeriodique' => 'Periodic',
+			'admin.evaluations.typeReevaluation' => 'Reassessment',
+			'admin.evaluations.typeCertification' => 'Certification',
+			'admin.evaluations.statutPlanifiee' => 'Scheduled',
+			'admin.evaluations.statutRealisee' => 'Taken',
+			'admin.evaluations.statutAnnulee' => 'Cancelled',
+			'admin.evaluations.resultatReussi' => 'Stage validated',
+			'admin.evaluations.resultatEchec' => 'A new check is needed',
+			'admin.evaluations.resultatARevoir' => 'A few points need reinforcing',
+			'admin.evaluations.planifier' => 'Schedule an assessment',
+			'admin.evaluations.planifierTitre' => 'Schedule an assessment',
+			'admin.evaluations.manqueEleve' => 'The student is missing: choose one from the list.',
+			'admin.evaluations.manqueNiveau' => 'The assessed level is missing: choose it from the list of levels.',
+			'admin.evaluations.manqueDate' => 'The planned date is missing: tap the date field and choose a day in the calendar.',
+			'admin.evaluations.champNiveau' => 'Assessed level',
+			'admin.evaluations.champType' => 'Type',
+			'admin.evaluations.champDatePrevue' => 'Planned date',
+			'admin.evaluations.planifierEnvoyer' => 'Schedule',
+			'admin.evaluations.planifierErreur' => ({required Object message}) => 'The scheduling did not go through: ${message}',
+			'admin.evaluations.actionEnregistrerResultat' => 'Record the result',
+			'admin.evaluations.actionAnnuler' => 'Cancel the assessment',
+			'admin.evaluations.resultatTitre' => ({required Object deEleve}) => '${deEleve}\'s result',
+			'admin.evaluations.champNotes' => 'Notes (optional)',
+			'admin.evaluations.resultatEnvoyer' => 'Save',
+			'admin.evaluations.resultatErreur' => ({required Object message}) => 'The saving did not go through: ${message}',
+			'admin.evaluations.annulerTitre' => ({required Object deEleve}) => 'Cancel ${deEleve}\'s assessment',
+			'admin.evaluations.annulerEnvoyer' => 'Cancel',
+			'admin.evaluations.annulerErreur' => ({required Object message}) => 'The cancellation did not go through: ${message}',
+			'admin.evaluations.champMotif' => 'Reason',
+			'admin.evaluations.motifRequis' => 'A reason is required, it is written in the audit log.',
+			'admin.evaluations.journalisation' => 'Each scheduling, result and cancellation is written in the audit log.',
+			'admin.evaluations.manqueResultat' => 'First choose the assessment\'s result.',
+			'admin.progression.titre' => 'Progress',
+			'admin.progression.intro' => 'Each student\'s current level, their class, and the blockages or waivers in progress.',
+			'admin.progression.erreur' => 'The progress could not be read. Try again in a moment.',
+			'admin.progression.aucun' => 'No active student',
+			'admin.progression.aucunDetail' => 'Students will appear here as soon as their first placement diagnosis.',
+			'admin.progression.colonneEleve' => 'Student',
+			'admin.progression.colonneGroupe' => 'Class',
+			'admin.progression.colonneNiveau' => 'Level',
+			'admin.progression.colonneDepuis' => 'Since',
+			'admin.progression.colonneException' => 'Exception',
+			'admin.progression.sansGroupe' => 'No class',
+			'admin.progression.sansNiveau' => 'Not diagnosed',
+			'admin.progression.filtreTousCycles' => 'All cycles',
+			'admin.progression.depuisAujourdhui' => 'Today',
+			'admin.progression.depuisUnJour' => '1 day',
+			'admin.progression.typeBlocage' => 'Blockage',
+			'admin.progression.typeDerogation' => 'Waiver',
+			'admin.progression.actionPoserBlocage' => 'Set a blockage',
+			'admin.progression.actionPoserDerogation' => 'Set a waiver',
+			'admin.progression.actionCloreException' => 'Close the exception',
+			'admin.progression.actionPromouvoir' => 'Change level',
+			'admin.progression.poserExceptionTitre' => ({required Object type, required Object eleve}) => '${type} for ${eleve}',
+			'admin.progression.poserExceptionEnvoyer' => 'Set the exception',
+			'admin.progression.poserExceptionErreur' => ({required Object message}) => 'The setting did not go through: ${message}',
+			'admin.progression.clorerExceptionTitre' => ({required Object deEleve}) => 'Close ${deEleve}\'s exception',
+			'admin.progression.clorerExceptionEnvoyer' => 'Close',
+			'admin.progression.clorerExceptionErreur' => ({required Object message}) => 'The closing did not go through: ${message}',
+			'admin.progression.promouvoirTitre' => ({required Object deEleve}) => 'Change ${deEleve}\'s level',
+			'admin.progression.promouvoirChampNiveau' => 'New level',
+			'admin.progression.manqueNiveau' => 'The new level is missing: choose it from the list of levels.',
+			'admin.progression.promouvoirEnvoyer' => 'Save',
+			'admin.progression.promouvoirErreur' => ({required Object message}) => 'The change did not go through: ${message}',
+			'admin.progression.champMotif' => 'Reason',
+			'admin.progression.motifRequis' => 'A reason is required, it is written in the audit log.',
+			'admin.progression.journalisation' => 'Each exception set or closed, and each level change, is written in the audit log.',
+			'admin.progression.depuisJours' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(jours, one: '${jours} day', other: '${jours} days', ), 
+			'admin.programmes.titre' => 'Programmes',
+			'admin.programmes.intro' => 'The Rewayah curriculum, versioned: a published version can no longer be changed, any academic change creates a new one.',
+			'admin.programmes.aucuneVersion' => 'No programme version',
+			'admin.programmes.aucuneVersionDetail' => 'Create the first version, still a draft, to start adding levels to it.',
+			'admin.programmes.erreur' => 'The programme could not be read. Try again in a moment.',
+			'admin.programmes.statutBrouillon' => 'Draft',
+			'admin.programmes.statutPubliee' => 'Published',
+			'admin.programmes.statutArchivee' => 'Archived',
+			'admin.programmes.versionNumero' => ({required Object numero}) => 'Version ${numero}',
+			'admin.programmes.creerVersion' => 'Create a version',
+			'admin.programmes.creerVersionVide' => 'Create an empty version',
+			'admin.programmes.enregistrerVersion' => 'Save the version',
+			'admin.programmes.creerVersionDepuisPubliee' => 'Create a new version from this one',
+			'admin.programmes.creerVersionErreur' => ({required Object message}) => 'The creation did not go through: ${message}',
+			'admin.programmes.niveauxTitre' => 'Levels',
+			'admin.programmes.niveauAucun' => 'No level in this version',
+			'admin.programmes.niveauAucunDetail' => 'Add a first level to start building this version.',
+			'admin.programmes.codeTechnique' => ({required Object code}) => 'Code: ${code}',
+			'admin.programmes.ajouterNiveau' => 'Add a level',
+			'admin.programmes.ajouterNiveauTitre' => ({required Object version}) => 'Add a level to ${version}',
+			'admin.programmes.ajouterNiveauEnvoyer' => 'Add',
+			'admin.programmes.ajouterNiveauErreur' => ({required Object message}) => 'The addition of the level was not confirmed: ${message}. The technical code may already exist in this version: change it, then try again.',
+			'admin.programmes.modifierNiveau' => 'Edit',
+			'admin.programmes.modifierNiveauTitre' => ({required Object nom}) => 'Edit ${nom}',
+			'admin.programmes.modifierNiveauEnvoyer' => 'Save',
+			'admin.programmes.modifierNiveauErreur' => ({required Object message}) => 'The change did not go through: ${message}',
+			'admin.programmes.supprimerNiveau' => 'Delete',
+			'admin.programmes.supprimerNiveauTitre' => ({required Object nom}) => 'Delete ${nom}',
+			'admin.programmes.supprimerNiveauEnvoyer' => 'Delete',
+			'admin.programmes.supprimerNiveauErreur' => ({required Object message}) => 'The deletion did not go through: ${message}',
+			'admin.programmes.publierVersion' => 'Publish the version',
+			'admin.programmes.publierVersionTitre' => ({required Object version}) => 'Publish ${version}',
+			'admin.programmes.publierVersionDetail' => 'Once published, this version can no longer be changed. Any academic change will create a new one.',
+			'admin.programmes.publierVersionEnvoyer' => 'Publish',
+			'admin.programmes.publierVersionErreur' => ({required Object message}) => 'The publication did not go through: ${message}',
+			'admin.programmes.champCodeTechnique' => 'Technical code (internal use, never shown to the student)',
+			'admin.programmes.champNomHumain' => 'Displayed name',
+			'admin.programmes.champCycle' => 'Cycle',
+			'admin.programmes.champOrdre' => 'Order',
+			'admin.programmes.nouveauCycle' => 'New cycle',
+			'admin.programmes.champNouveauCycle' => 'Name of the new cycle',
+			'admin.programmes.ordreMoins' => 'Decrease the order by 1',
+			'admin.programmes.ordrePlus' => 'Increase the order by 1',
+			'admin.programmes.ordreDeduit' => 'The proposed order follows the last level of the chosen cycle. Change it if needed.',
+			'admin.programmes.codeGenere' => ({required Object code}) => 'Proposed technical code: ${code}',
+			'admin.programmes.codeModifier' => 'Edit the technical code',
+			'admin.programmes.manqueNom' => 'the displayed name',
+			'admin.programmes.manqueCycle' => 'the cycle',
+			'admin.programmes.manqueOrdre' => 'the order (a whole number)',
+			'admin.programmes.manqueCode' => 'the technical code',
+			'admin.programmes.manque' => ({required Object elements}) => 'Nothing was saved: ${elements} is missing. Complete it, then try again.',
+			'admin.programmes.champDescription' => 'Description (optional)',
+			'admin.programmes.champMotif' => 'Reason',
+			'admin.programmes.motifRequis' => 'A reason is required, it is written in the audit log.',
+			'admin.programmes.journalisation' => 'Each creation, change, deletion and publication is written in the audit log.',
+			'admin.programmes.niveauxSur' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(nombre, one: '${nombre} level', other: '${nombre} levels', ), 
+			'admin.programmes.publierSansNiveau' => 'Add at least one level to be able to publish this version.',
+			'admin.programmes.contenu.colonne' => 'Stage content',
+			'admin.programmes.contenu.pret' => 'Ready to publish',
+			'admin.programmes.contenu.aCompleter' => 'To complete',
+			'admin.programmes.contenu.ouvrir' => 'Goals and lengths',
+			'admin.programmes.contenu.voir' => 'See the goals and lengths',
+			'admin.programmes.contenu.titre' => ({required Object nom}) => 'Goals and lengths: ${nom}',
+			'admin.programmes.contenu.intro' => 'What the student can do at the end of the stage, and the time planned for each age group. The teacher, the family and the management follow progress from this data.',
+			'admin.programmes.contenu.lectureSeule' => 'This version is published: its content can no longer be changed. To change it, create a new version from this one.',
+			'admin.programmes.contenu.objectifsTitre' => 'Stage goals',
+			'admin.programmes.contenu.objectifsAide' => '3 to 5 goals, each written as something the student can do. Leave empty those that are not needed.',
+			'admin.programmes.contenu.objectifNumero' => ({required Object numero}) => 'Goal ${numero}',
+			'admin.programmes.contenu.livreTitre' => 'Stage book',
+			'admin.programmes.contenu.livreAide' => 'The book where the stage is read. The pages are used to measure the class\'s progress.',
+			'admin.programmes.contenu.livreRewayah' => 'Rewayah reading book',
+			'admin.programmes.contenu.livreRewayahDetail' => 'For the stages read before the Mushaf. Its pages are not numbered yet: leave the pages empty.',
+			'admin.programmes.contenu.mushaf' => 'Mushaf',
+			'admin.programmes.contenu.mushafDetail' => 'For the stages read in the Quran, from page 1 to page 604.',
+			'admin.programmes.contenu.pageDebut' => 'First page of the stage (optional)',
+			'admin.programmes.contenu.pageFin' => 'Last page of the stage (optional)',
+			'admin.programmes.contenu.dureesTitre' => 'Planned length and deadline, by age group',
+			'admin.programmes.contenu.dureesAide' => 'In weeks, counted from the student\'s entry into the stage. The deadline is entered: for each group, the sum of the stages must equal that of the level, otherwise the version cannot be published.',
+			'admin.programmes.contenu.tranche69' => '6 to 9 years',
+			'admin.programmes.contenu.tranche1013' => '10 to 13 years',
+			'admin.programmes.contenu.tranche1417' => '14 to 17 years',
+			'admin.programmes.contenu.tranche18' => '18 years and over',
+			'admin.programmes.contenu.dureeTranche' => ({required Object tranche}) => 'Planned length for ${tranche}, in weeks',
+			'admin.programmes.contenu.dureeMoins' => ({required Object tranche}) => 'One week less for ${tranche}',
+			'admin.programmes.contenu.dureePlus' => ({required Object tranche}) => 'One week more for ${tranche}',
+			'admin.programmes.contenu.dureeLecture' => ({required Object tranche, required Object prevue}) => '${tranche}: ${prevue} weeks planned',
+			'admin.programmes.contenu.dateLimite' => ({required Object semaines}) => 'To finish in ${semaines} weeks at most',
+			'admin.programmes.contenu.limiteTranche' => ({required Object tranche}) => 'Stage deadline for ${tranche}, in weeks',
+			'admin.programmes.contenu.limiteMoins' => ({required Object tranche}) => 'One week less in the deadline for ${tranche}',
+			'admin.programmes.contenu.limitePlus' => ({required Object tranche}) => 'One week more in the deadline for ${tranche}',
+			'admin.programmes.contenu.publierIncoherent' => ({required Object niveau}) => 'The publication did not go through: for ${niveau}, the sum of the planned lengths or the stages\' deadlines does not equal that of the level. Correct the stages\' lengths, then publish again.',
+			'admin.programmes.contenu.publierSansBases' => 'The publication did not go through: this version does not have the complete foundation level (its four stages and their lengths). Create the new version from the published version, or pre-fill the foundation in an empty version.',
+			'admin.programmes.contenu.enregistrer' => 'Save the stage',
+			'admin.programmes.contenu.erreur' => ({required Object message}) => 'Saving the stage is not confirmed: ${message}. Check the goals and pages, then try again.',
+			'admin.programmes.contenu.revisionTitre' => 'Student revision',
+			'admin.programmes.contenu.revisionAide' => 'What families read in "Where I stand". Leave "Not set": nothing is shown.',
+			'admin.programmes.contenu.revisionHeures' => 'Revision hours per week',
+			'admin.programmes.contenu.revisionRepetitions' => 'Estimated repetitions',
+			'admin.programmes.contenu.revisionNonRegle' => 'Not set',
+			'admin.programmes.contenu.revisionHeuresValeur' => ({required Object heures}) => '${heures} h',
+			'admin.programmes.contenu.revisionHeuresMoins' => 'Fewer revision hours',
+			'admin.programmes.contenu.revisionHeuresPlus' => 'More revision hours',
+			'admin.programmes.contenu.revisionRepetitionsMoins' => 'Fewer repetitions',
+			'admin.programmes.contenu.revisionRepetitionsPlus' => 'More repetitions',
+			'admin.programmes.contenu.revisionEnregistrer' => 'Save the revision',
+			'admin.programmes.contenu.revisionErreur' => ({required Object message}) => 'The revision could not be saved: ${message}',
+			'admin.programmes.contenu.manquePages' => 'Nothing was saved: pages are written as whole numbers, the last after the first. Correct them, then try again.',
+			'admin.programmes.contenu.proposition' => 'Proposal to be validated by the management',
+			'admin.programmes.contenu.propositionDetail' => 'The goals and lengths in this draft are a proposal, not a rule: the management re-reads and edits them before publishing.',
+			'admin.programmes.contenu.preremplir' => 'Pre-fill the foundation',
+			'admin.programmes.contenu.preremplirDetail' => 'Adds to this version the four foundation stages, with their goals, their subjects and, for each age group, the planned length and the deadline of each stage (settings table). Review each stage before publishing.',
+			'admin.programmes.contenu.preremplirVersionVide' => 'To pre-fill the foundation, create an empty version: the proposal fills only a version with no stage.',
+			'admin.programmes.contenu.preremplirEnvoyer' => 'Add the proposal',
+			'admin.programmes.contenu.preremplirErreur' => ({required Object message}) => 'Adding the proposal is not confirmed: ${message}. Try again in a moment.',
+			'admin.programmes.contenu.publierIncomplet' => ({required Object etape}) => 'The publication did not go through: the stage "${etape}" is not complete. Open its goals and lengths: 3 to 5 goals and a length for each age group are needed.',
+			'admin.journal.titre' => 'Log',
+			'admin.journal.chaineIntacte' => 'Log intact',
 			'agent.titre' => 'Agent entry',
 			'agent.intro' => 'This page opens the app in read-only mode, with the token provided by the academy.',
 			'agent.jeton' => 'Observation token',
@@ -26054,6 +27605,8 @@ extension on TraductionsEn {
 			'parcours.refusAucun' => 'None of these schedules suits me',
 			'parcours.refusPrevenir' => 'Let me know if new schedules open',
 			'parcours.refusEffet' => 'We record that the request exists. This does not create a class, does not look for a teacher and does not promise any future schedule.',
+			_ => null,
+		} ?? switch (path) {
 			'parcours.refusEnregistre' => 'Noted. We will let you know if a matching schedule opens.',
 			'parcours.etatAPersonnaliser' => 'Journey to personalise',
 			'parcours.etatAPersonnaliserDetail' => ({required Object prenom}) => 'A few questions, and we will only show what suits ${prenom}.',
@@ -26181,8 +27734,6 @@ extension on TraductionsEn {
 			'compte.donnees.suppression.confirmerAction' => 'Request deletion',
 			'compte.donnees.suppression.confirmerRester' => 'Keep my account',
 			'compte.donnees.suppression.enCoursTitre' => 'Deletion request in progress',
-			_ => null,
-		} ?? switch (path) {
 			'compte.donnees.suppression.enCoursDetail' => ({required Object demandee, required Object echeance}) => 'Requested on ${demandee}. The management can process it from ${echeance}.',
 			'compte.donnees.suppression.annuler' => 'Cancel my request',
 			'compte.donnees.suppression.demandeEnvoyee' => 'Your request is saved. You can cancel it until it is processed.',
@@ -26568,6 +28119,8 @@ extension on TraductionsEn {
 			'notifications.evenements.seanceDeplaceeQuand' => ({required Object quand}) => 'A session is moved to ${quand}.',
 			'notifications.evenements.enseignanteAbsente' => 'The teacher will be absent from a session. A replacement is being sought.',
 			'notifications.evenements.enseignanteAbsenteQuand' => ({required Object quand}) => 'The teacher will be absent from the session of ${quand}. A replacement is being sought.',
+			_ => null,
+		} ?? switch (path) {
 			'notifications.evenements.remplacementAvertissement' => 'You are not in the room yet. Join quickly: otherwise you lose access to today\'s session.',
 			'notifications.evenements.remplacementAvertissementMinutes' => ({required num minutes}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(minutes, one: 'You are not in the room yet. Join within the minute: otherwise you lose access to today\'s session.', other: 'You are not in the room yet. Join within ${minutes} minutes: otherwise you lose access to today\'s session.', ), 
 			'notifications.evenements.remplacementPreAlerte' => 'A replacement is being prepared: a teacher is not yet in their room. Declare yourself ready in Replacements.',
@@ -26695,8 +28248,6 @@ extension on TraductionsEn {
 			'eleve.coran.reduire' => 'Reduce the text',
 			'eleve.coran.source' => 'Quran text: Tanzil Project',
 			'eleve.coran.sourceLien' => 'tanzil.net',
-			_ => null,
-		} ?? switch (path) {
 			'eleve.coran.edition' => 'Madinah Mushaf, Hafs riwaya',
 			'eleve.suivi.colonneDate' => 'Date',
 			'eleve.suivi.colonneCours' => 'Class',
@@ -27082,6 +28633,8 @@ extension on TraductionsEn {
 			'enseignant.bienvenue.titre' => 'First steps',
 			'enseignant.bienvenue.salutation' => ({required Object prenom}) => 'Welcome, ${prenom}.',
 			'enseignant.bienvenue.salutationSansNom' => 'Welcome.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.bienvenue.dossierValide' => 'Your file is approved.',
 			'enseignant.bienvenue.sousTitre' => 'Prepare your space before your first class.',
 			'enseignant.bienvenue.aCompleter' => 'To complete',
@@ -27209,8 +28762,6 @@ extension on TraductionsEn {
 			'enseignant.journee.absence.etats.recherche' => 'Looking for a replacement',
 			'enseignant.journee.absence.etats.remplacantConfirme' => 'Replacement confirmed',
 			'enseignant.journee.absence.etats.aucunRemplacant' => 'No replacement confirmed',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.journee.absence.etats.seanceAnnulee' => 'Session cancelled',
 			'enseignant.journee.absence.etats.demandeAnnulee' => 'Request cancelled',
 			'enseignant.journee.remplacement.titre' => 'Take this replacement?',
@@ -27596,6 +29147,8 @@ extension on TraductionsEn {
 			'enseignant.revenus.heuresAssureesDetail' => 'The month\'s sessions that earned, at their retained length.',
 			'enseignant.revenus.classesActives' => 'Classes',
 			'enseignant.revenus.heures' => ({required Object heures}) => '${heures} h',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.revenus.heuresMinutes' => ({required Object heures, required Object minutes}) => '${heures} h ${minutes}',
 			'enseignant.revenus.minutes' => ({required Object minutes}) => '${minutes} min',
 			'enseignant.revenus.versement' => 'Pay day',
@@ -27723,8 +29276,6 @@ extension on TraductionsEn {
 			'controleur.complement.envoyePhrase' => 'It appears below the original report, which stays unchanged.',
 			'controleur.complement.revenir' => 'Back to the report',
 			'controleur.compteRendu.titre' => 'Report',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.compteRendu.provisoire' => 'This screen is being prepared.',
 			'controleur.compteRendu.revenir' => 'Back to the review',
 			'controleur.compteRendu.sousTitre' => ({required Object classe, required Object heure}) => '${classe} · ${heure}',
@@ -28110,6 +29661,8 @@ extension on TraductionsEn {
 			'tc.outils.trait.surligneur' => 'Highlight',
 			'tc.outils.trait.gomme' => 'Eraser',
 			'tc.outils.trait.annuler' => 'Undo',
+			_ => null,
+		} ?? switch (path) {
 			'tc.outils.trait.plus' => 'More',
 			'tc.outils.trait.ardoise' => 'Annotation slate, optional: the class stays readable without it',
 			'tc.outils.trait.effacerDernier' => 'Erase my last stroke',
@@ -28237,8 +29790,6 @@ extension on TraductionsEn {
 			'tc.observation.disponibilite.desactivee' => 'The administration has closed observation of this class.',
 			'tc.observation.disponibilite.lienAbsentTitre' => 'None of your children is in this session',
 			'tc.observation.disponibilite.lienAbsent' => 'Observation is reserved for the parents of the session\'s students.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.disponibilite.enfantAbsentTitre' => 'Your child is not in the session',
 			'tc.observation.disponibilite.enfantAbsent' => 'Observation opens when your child is present.',
 			'tc.observation.disponibilite.presenceTitre' => 'Attendance being checked',
@@ -28624,6 +30175,8 @@ extension on TraductionsEn {
 			'adulte.invitation.garder' => 'Keep the invitation',
 			'adulte.invitation.annulationEchecTitre' => 'The cancellation was not confirmed.',
 			'adulte.invitation.annulationEchecPhrase' => 'Check before trying again.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.invitation.valableJusquau' => ({required Object date}) => 'Valid until ${date}',
 			'adulte.invitation.renvoyer' => 'Resend the invitation',
 			'adulte.invitation.renvoyeePhrase' => ({required Object courriel}) => 'The invitation was sent again to ${courriel}, with a new code: the one in the previous email no longer works.',
@@ -28751,8 +30304,6 @@ extension on TraductionsEn {
 			'adulte.demo.titre' => 'Adult student demo',
 			'adulte.demo.mention' => 'The data is fictitious and nothing is sent.',
 			'adulte.demo.intro' => 'Choose a screen, then a situation of the Diallo household.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.demo.ecrans' => 'The screens',
 			'adulte.demo.situations' => 'The household situations',
 			'adulte.demo.variantes' => 'The variants',
@@ -29138,6 +30689,8 @@ extension on TraductionsEn {
 			'argent.transparence.videTitre' => 'The price breakdown is not published yet',
 			'argent.transparence.videPhrase' => 'It will be published with the next version of the prices.',
 			'argent.etat.finance' => 'Funded',
+			_ => null,
+		} ?? switch (path) {
 			'argent.etat.essai' => 'Trial',
 			'argent.etat.essaiCompte' => ({required Object n, required Object max}) => 'Trial: ${n}/${max}',
 			'argent.etat.manque' => 'To fund',
@@ -29265,8 +30818,6 @@ extension on TraductionsEn {
 			'com.socle.lexique.modeFocus' => 'Focus mode',
 			'com.socle.lexique.quitterFocus' => 'Exit focus',
 			'com.socle.lexique.aTraiter' => 'To handle',
-			_ => null,
-		} ?? switch (path) {
 			'com.socle.lexique.actionRequise' => 'Action required',
 			'com.socle.lexique.brouillon' => 'Draft',
 			'com.socle.lexique.elementsEpingles' => 'Pinned items',
@@ -29652,6 +31203,8 @@ extension on TraductionsEn {
 			'com.studio.aujourdhui.indicateurs.titre' => 'Attention indicators',
 			'com.studio.aujourdhui.indicateurs.aTraiter' => _root.com.socle.lexique.aTraiter,
 			'com.studio.aujourdhui.indicateurs.mentions' => 'Mentions and replies',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.aujourdhui.indicateurs.decisions' => 'Decisions pending',
 			'com.studio.aujourdhui.indicateurs.nonLus' => 'Unread',
 			'com.studio.aujourdhui.blocs.aTraiter' => 'To handle today',
@@ -29779,8 +31332,6 @@ extension on TraductionsEn {
 			'com.studio.demo.horsDemo' => ({required Object module}) => 'In the app, this line opens ${module}. The demo stays on this page.',
 			'com.studio.demo.choisir' => 'Choose a situation to try.',
 			'com.studio.demo.normale' => 'The Studio and its channels',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.demo.echec' => 'Sending not confirmed',
 			'com.studio.demo.horsLigne' => 'Offline',
 			'com.studio.demo.canalPrive' => 'Address of a private channel not open to you',
@@ -30166,6 +31717,8 @@ extension on TraductionsEn {
 			'comptable.statuts.rapprochement.conflit' => 'Conflict',
 			'comptable.statuts.rapprochement.sansCorrespondance' => 'No match',
 			'comptable.statuts.rapprochement.doublonPotentiel' => 'Potential duplicate',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.statuts.profil.aucunMoyen' => 'No method',
 			'comptable.statuts.profil.incomplet' => 'Incomplete',
 			'comptable.statuts.profil.enVerification' => 'Being verified',
@@ -30293,8 +31846,6 @@ extension on TraductionsEn {
 			'comptable.paiements.confirmation.prestataires' => 'Providers',
 			'comptable.paiements.confirmation.plafond' => 'Remaining delegation',
 			'comptable.paiements.confirmation.exclusTitre' => 'Excluded from this batch: they will not go out',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.paiements.confirmation.aucunPretTitre' => 'No payment ready',
 			'comptable.paiements.confirmation.aucunPret' => 'Nothing will go out. Open each excluded payment to lift its reason, then run the check again.',
 			'comptable.paiements.confirmation.erreursTitre' => 'Errors returned by the check',
@@ -30680,6 +32231,8 @@ extension on TraductionsEn {
 			'comptable.beneficiaires.recevoir.aucunType' => 'No method type is offered for now. Contact the academy to open one.',
 			'comptable.beneficiaires.recevoir.verificationAnnoncee' => 'Every change is verified before the next payment.',
 			'comptable.beneficiaires.recevoir.ajoutee' => 'Method added: it is being verified.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.beneficiaires.recevoir.remplacee' => 'New method saved: it is being verified.',
 			'comptable.beneficiaires.recevoir.supprimee' => 'Method deleted.',
 			'comptable.beneficiaires.recevoir.prefereeChoisie' => 'Preferred method updated.',
@@ -30807,8 +32360,6 @@ extension on TraductionsEn {
 			'comptable.contractuels.ligneValidation' => ({required Object validation}) => 'Validation: ${validation}',
 			'comptable.contractuels.payerAide' => 'Payment opens in the payment details, with the exact amount.',
 			'comptable.contractuels.approuverAide' => 'After approval, the amount is frozen and the obligation becomes payable.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.contractuels.renvoyerInvitation' => 'Resend the invitation',
 			'comptable.contractuels.invitationAide' => 'This external beneficiary enters their own payment method, from their secure invitation.',
 			'comptable.contractuels.invitationRenvoyee' => 'Invitation resent',
@@ -31194,6 +32745,8 @@ extension on TraductionsEn {
 			'recherche.entree.supports' => 'Search in documents',
 			'recherche.contexte.remplacementOuvert' => 'Replacement to take',
 			'recherche.contexte.remplacementMien' => 'Your replacement',
+			_ => null,
+		} ?? switch (path) {
 			'recherche.contexte.mission' => 'Review mission',
 			'recherche.contexte.missionEnseignant' => ({required Object enseignant}) => 'Review mission · ${enseignant}',
 			'recherche.contexte.eleveDeClasse' => ({required Object classe}) => 'Student of class ${classe}',
@@ -31321,8 +32874,6 @@ extension on TraductionsEn {
 			'avis.admin.actions.publier' => 'Publish',
 			'avis.admin.actions.refuser' => 'Refuse',
 			'avis.admin.actions.retirer' => 'Remove',
-			_ => null,
-		} ?? switch (path) {
 			'avis.admin.publier.question' => ({required Object deNom}) => 'Publish ${deNom}\'s review?',
 			'avis.admin.publier.consequence' => 'The review, display name, country and date will appear on the Rewayah Academy website at the site\'s next update. The text is not edited.',
 			'avis.admin.publier.action' => 'Publish the review',
@@ -31708,6 +33259,8 @@ extension on TraductionsEn {
 			'cahierSourates.retirerLibelle' => ({required Object nom}) => 'Remove ${nom} from the validated surahs',
 			'cahierSourates.retirerQuestion' => ({required Object nom}) => 'Remove ${nom} from the validated surahs?',
 			'cahierSourates.retirerConsequence' => 'It will no longer count as validated for this student.',
+			_ => null,
+		} ?? switch (path) {
 			'cahierSourates.retirerMotif' => 'Reason (optional)',
 			'cahierSourates.retirerFait' => ({required Object nom}) => '${nom} is no longer validated.',
 			'cahierSourates.retirerRefus' => 'The 24-hour delay has passed: only the management can still remove it.',
@@ -31835,8 +33388,6 @@ extension on TraductionsEn {
 			'candidatsFlux.importFormulaires.analyse.reessayer' => 'Try the analysis again',
 			'candidatsFlux.importFormulaires.apercu.question' => 'Is this the right file?',
 			'candidatsFlux.importFormulaires.apercu.explication' => 'Here is what Rewayah read. Nothing is saved yet.',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.apercu.contactsMasques' => 'Contacts are hidden in the preview.',
 			'candidatsFlux.importFormulaires.apercu.lignes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} row read', other: '${n} rows read', ), 
 			'candidatsFlux.importFormulaires.apercu.colonnesReconnues' => ({required Object reconnues, required Object total}) => 'Columns recognized: ${reconnues} of ${total}',
@@ -32222,6 +33773,8 @@ extension on TraductionsEn {
 			'suiviAttente.dit.confirmeeFaitNom' => ({required Object classe}) => 'Your class "${classe}" is confirmed.',
 			'suiviAttente.dit.confirmeeAVenir' => 'The academy confirms the class when its students are brought together.',
 			'suiviAttente.dit.enseignantEnCours' => 'The academy is appointing the class teacher.',
+			_ => null,
+		} ?? switch (path) {
 			'suiviAttente.dit.enseignantEnAttente' => 'Your class is waiting for its teacher. The academy appoints one and lets you know.',
 			'suiviAttente.dit.enseignantFait' => 'Your teacher is known.',
 			'suiviAttente.dit.enseignantFaitSimple' => 'Your teacher is known.',
@@ -32349,8 +33902,6 @@ extension on TraductionsEn {
 			'journalSorties.rapport.resume' => ({required Object nombre, required Object duree}) => '${nombre}, ${duree}',
 			'journalSorties.rapport.ligneEleve' => ({required Object resume}) => 'Exits from the app: ${resume}',
 			'journalSorties.reglages.section' => 'Exits from the app during a session',
-			_ => null,
-		} ?? switch (path) {
 			'journalSorties.reglages.intro' => 'The delay applies to all students. The exits log records nothing without the agreement of the guardian, or of the adult student.',
 			'journalSorties.reglages.journal' => 'Record exits from the app',
 			'journalSorties.reglages.journalDetail' => 'Turn on only after the director has validated the agreement texts. Once on, the guardian and the adult student see the agreement page in their Account.',
