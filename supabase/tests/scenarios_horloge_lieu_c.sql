@@ -181,10 +181,21 @@ BEGIN
 END
 $c$;
 -- L'etape pour les inscrits reste fermee au candidat (porte du routeur) : il passe par sa candidature.
+-- INCIDENT-CANDIDATS (14/11/2026, migration 20261125950000) : la lecture ne
+-- refuse plus (403 en serie) ; elle dit « rien a fournir ».
 SELECT pg_temp.en_tant('d6000000-0000-4000-8000-000000000105', 'teacher');
 SET LOCAL ROLE authenticated;
-SELECT pg_temp.refus($$SELECT public.mon_lieu_a_fournir()$$, '42501', 'lieu non autorise',
-  'l etape pour les inscrits reste fermee a un compte non actif');
+DO $c$
+BEGIN
+  IF (public.mon_lieu_a_fournir() ->> 'requis')::boolean IS DISTINCT FROM false THEN
+    RAISE EXCEPTION 'HLD ROUGE : un compte non actif se voit demander une ville';
+  END IF;
+  IF public.mon_horloge() -> 'moi' <> 'null'::jsonb OR public.mon_horloge() ? 'lieu_choisi' THEN
+    RAISE EXCEPTION 'HLD ROUGE : un compte non actif recoit son fuseau ou son lieu';
+  END IF;
+  RAISE NOTICE 'HLD OK compte non actif : aucune ville a fournir, horloge sans profil';
+END
+$c$;
 RESET ROLE;
 
 -- L'adulte « pour moi » : guardian avec un foyer d'une personne, sans autre tuteur.

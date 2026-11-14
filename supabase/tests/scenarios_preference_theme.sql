@@ -84,6 +84,13 @@ SELECT pg_temp.vrai(pg_temp.lire(pg_temp.p('01')) = 'sombre', 'A garde sombre ap
 -- 5. Sans compte : refuse.
 SELECT pg_temp.vrai(pg_temp.regler(NULL, 'clair') = '42501', 'sans compte : ecriture refusee');
 
+-- 5 bis. INCIDENT-CANDIDATS (14/11/2026) : une session sans profil (candidat
+-- avant son inscription) lit la valeur par defaut, sans 403 ; sans compte,
+-- la lecture reste refusee.
+SELECT pg_temp.vrai(pg_temp.lire('00000000-0000-4000-8000-0000000000ff'::uuid) = 'systeme',
+  'session sans profil : lecture de la valeur par defaut');
+SELECT pg_temp.vrai(pg_temp.lire(NULL) = 'erreur 42501', 'sans compte : lecture refusee');
+
 -- 6. anon : aucun droit d'execution.
 SELECT pg_temp.vrai(
   NOT pg_catalog.has_function_privilege('anon', 'public.ma_preference_theme()'::regprocedure, 'EXECUTE')

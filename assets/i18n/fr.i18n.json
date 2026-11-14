@@ -2788,7 +2788,10 @@
       },
       "reponsesPretes": "Prêtes à envoyer",
       "elementPhoto": "Votre photo",
-      "etatAAjouter": "À ajouter"
+      "etatAAjouter": "À ajouter",
+      "photoRecue": "Votre photo est bien reçue.",
+      "accordAEnvoyer": "Votre photo est bien reçue. Il reste à cocher l'accord de publication, juste avant d'envoyer vos réponses.",
+      "pieceRecue": "Votre pièce est bien reçue. La direction la vérifie."
     },
     "entretien": {
       "titre": "Faisons connaissance",
@@ -9149,7 +9152,8 @@
       "changer": "Changer la photo",
       "alternatif": "Votre photo publique",
       "succes": "La photo est enregistrée.",
-      "echec": "La photo n'a pas pu être envoyée. Rien n'a changé sur le profil.",
+      "echec": "La photo n'est pas confirmée : la connexion a pu se couper pendant l'envoi. Vérifiez votre connexion, puis touchez « Utiliser cette photo » de nouveau.",
+      "enregistree": "Votre photo est enregistrée. Vous pouvez la remplacer à tout moment.",
       "selectionEchec": "La photo n'a pas pu être ouverte. Vérifiez l'accès aux photos de l'appareil, puis réessayez.",
       "horsLigne": "La photo pourra être envoyée quand la connexion reviendra."
     },

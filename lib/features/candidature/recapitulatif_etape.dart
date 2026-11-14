@@ -818,6 +818,14 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
     final String? moi = ref.watch(sessionProvider).profileId;
     if (moi != null) ref.watch(photoPersonneProvider(moi));
     ref.watch(photoPubliqueProvider);
+    // INCIDENT-CANDIDATS (14/11/2026) : une photo envoyee pendant cette
+    // visite efface la phrase « photo requise » posee avant elle ; elle ne
+    // reste jamais sous une photo bien recue.
+    ref.listen<String?>(photoPubliqueProvider, (String? _, String? cle) {
+      if (cle != null && _manque == _Manque.photo) {
+        setState(() => _manque = null);
+      }
+    });
     final String? nomCompte = ref
         .watch(accordPublicationProvider)
         .value

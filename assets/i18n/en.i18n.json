@@ -2788,7 +2788,10 @@
       },
       "reponsesPretes": "Ready to send",
       "elementPhoto": "Your photo",
-      "etatAAjouter": "To add"
+      "etatAAjouter": "To add",
+      "photoRecue": "Your photo has been received.",
+      "accordAEnvoyer": "Your photo has been received. You still need to tick the publication agreement, just before sending your answers.",
+      "pieceRecue": "Your document has been received. The academy management is checking it."
     },
     "entretien": {
       "titre": "Let's get to know each other",
@@ -9158,7 +9161,8 @@
       "changer": "Change the photo",
       "alternatif": "Your public photo",
       "succes": "The photo is saved.",
-      "echec": "The photo could not be sent. Nothing changed on the profile.",
+      "echec": "The photo is not confirmed: the connection may have dropped during sending. Check your connection, then tap “Use this photo” again.",
+      "enregistree": "Your photo is saved. You can replace it at any time.",
       "selectionEchec": "The photo could not be opened. Check access to the device's photos, then try again.",
       "horsLigne": "The photo can be sent when the connection is back."
     },
