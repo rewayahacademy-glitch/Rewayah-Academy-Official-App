@@ -147,19 +147,40 @@ Future<void> _ouvrirOngletMessages(WidgetTester tester) async {
   final Finder ligne = find.byKey(
     const ValueKey<String>('tableau-communications'),
   );
-  await tester.scrollUntilVisible(
-    ligne,
-    200,
-    scrollable: find
-        .descendant(
-          of: find.byType(TableauDeBordPage),
-          matching: find.byType(Scrollable),
-        )
-        .first,
-  );
-  await _stabiliser(tester);
-  await tester.tap(ligne);
-  await _stabiliser(tester);
+  // NAV-SOUS-LIENS (14/11/2026) : sur ordinateur, l'Accueil n'a plus ses
+  // cartes outils ; Communications est un sous-lien d'Operations dans le
+  // panneau.
+  final Finder barre = find.byKey(AdminShell.barreLateraleKey);
+  if (ligne.evaluate().isEmpty && barre.evaluate().isNotEmpty) {
+    await tester.tap(
+      find.descendant(
+        of: barre,
+        matching: find.text(AdminDomaine.operations.libelle),
+      ),
+    );
+    await _stabiliser(tester);
+    await tester.tap(
+      find.descendant(
+        of: barre,
+        matching: find.text(t.com.socle.navigation.communications),
+      ),
+    );
+    await _stabiliser(tester);
+  } else {
+    await tester.scrollUntilVisible(
+      ligne,
+      200,
+      scrollable: find
+          .descendant(
+            of: find.byType(TableauDeBordPage),
+            matching: find.byType(Scrollable),
+          )
+          .first,
+    );
+    await _stabiliser(tester);
+    await tester.tap(ligne);
+    await _stabiliser(tester);
+  }
   // Sur telephone, la sous-navigation est un menu (ONGLETS-1) : il s'ouvre
   // sur la section courante.
   final Finder onglet = find.text(t.com.socle.navigation.ongletMessages);

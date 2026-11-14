@@ -306,7 +306,12 @@ List<({String libelle, String chemin})> ongletsPersonnes() =>
       ),
       // Admission, lot C : les demandes d'admission, en dernier pour ne pas
       // decaler les index des autres onglets.
-      (libelle: t.admissions.titre, chemin: Routes.adminPersonnesAdmissions),
+      // NAV-SOUS-LIENS (point 3) : « Demandes » seul se confondait avec les
+      // demandes des familles d'Operations ; le libelle dit lesquelles.
+      (
+        libelle: t.nav.admin.sousLiens.admissions,
+        chemin: Routes.adminPersonnesAdmissions,
+      ),
     ];
 
 /// Les deux fonctions pairs du domaine Securite et audit : le Journal et
@@ -368,4 +373,134 @@ ongletsOuverts(
           if (i == indexActif || !fermes.contains(i)) o,
       ];
   return (onglets: onglets, indexActif: onglets.indexOf(tous[indexActif]));
+}
+
+/// Un sous-lien du panneau de la direction : une page d'un domaine.
+typedef SousLien = ({String libelle, String chemin});
+
+/// NAV-SOUS-LIENS (14/11/2026, regle 19 des consignes du directeur) : les
+/// trois sections du panneau de la direction, dans l'ordre des domaines.
+/// Des titres de groupe sobres (Apple HIG « Sidebars », Material 3
+/// « Navigation drawer » : en-tetes de section), jamais un neuvieme domaine.
+enum SectionAdmin {
+  /// Accueil, Operations, Personnes.
+  quotidien,
+
+  /// Pedagogie, Finance.
+  academie,
+
+  /// Configuration, Securite et audit, Direction.
+  reglages,
+}
+
+/// Le titre et le contenu d'une section du panneau.
+extension SectionAdminX on SectionAdmin {
+  /// Le titre affiche au-dessus des domaines de la section.
+  String get libelle => switch (this) {
+    SectionAdmin.quotidien => t.nav.admin.sections.quotidien,
+    SectionAdmin.academie => t.nav.admin.sections.academie,
+    SectionAdmin.reglages => t.nav.admin.sections.reglages,
+  };
+}
+
+/// La section d'un domaine. L'ordre des domaines ne change pas : les
+/// sections le decoupent, elles ne le reordonnent pas.
+SectionAdmin sectionDe(AdminDomaine domaine) => switch (domaine) {
+  AdminDomaine.accueil ||
+  AdminDomaine.operations ||
+  AdminDomaine.personnes => SectionAdmin.quotidien,
+  AdminDomaine.pedagogie || AdminDomaine.finance => SectionAdmin.academie,
+  AdminDomaine.configuration ||
+  AdminDomaine.securite ||
+  AdminDomaine.direction => SectionAdmin.reglages,
+};
+
+/// NAV-SOUS-LIENS : les pages de chaque domaine, montrees dans le panneau
+/// sur tablette et ordinateur (le domaine ouvert deplie les siennes, le rail
+/// replie les ouvre en menu). Memes routes et memes droits que la
+/// sous-navigation des pages (`SousNavigationDomaine`) et que les raccourcis
+/// de l'Accueil : rien n'est ajoute, tout est deja atteignable.
+///
+/// Les pages sans serveur ne sont pas montrees (PORTS-DIRECTION) : la
+/// Finance suit les memes interrupteurs que sa page ([vueGlobaleFinance],
+/// [reserveDelegation]) ; Configuration montre la politique KYC seulement a
+/// qui peut la regler ([politiqueRevueKyc]).
+Map<AdminDomaine, List<SousLien>> sousLiensAdmin({
+  bool vueGlobaleFinance = true,
+  bool reserveDelegation = true,
+  bool politiqueRevueKyc = false,
+}) {
+  final List<SousLien> finance = ongletsFinance();
+  return <AdminDomaine, List<SousLien>>{
+    // Les raccourcis de l'Accueil (« Outils ») rejoignent leur domaine :
+    // le travail des classes, puis ce qui parle aux familles.
+    AdminDomaine.operations: <SousLien>[
+      (
+        libelle: t.admin.traitement.titre,
+        chemin: Routes.adminOperationsTraitement,
+      ),
+      (
+        libelle: t.admin.tableau.outilsRegroupements,
+        chemin: Routes.adminOperationsRegroupements,
+      ),
+      (libelle: t.admin.groupes.titre, chemin: Routes.adminOperationsGroupes),
+      (
+        libelle: t.admin.tableau.outilsOffres,
+        chemin: Routes.adminOperationsOffres,
+      ),
+      (
+        libelle: t.admin.tableau.outilsPlanning,
+        chemin: Routes.adminOperationsPlanning,
+      ),
+      (
+        libelle: t.admin.tableau.outilsPilotage,
+        chemin: Routes.adminOperationsPilotage,
+      ),
+      (
+        libelle: t.com.socle.navigation.communications,
+        chemin: Routes.adminOperationsCommunications,
+      ),
+      (
+        libelle: t.courriels.admin.outil,
+        chemin: Routes.adminOperationsCourriels,
+      ),
+      (libelle: t.avis.admin.outil, chemin: Routes.adminOperationsAvis),
+    ],
+    AdminDomaine.personnes: ongletsPersonnes(),
+    AdminDomaine.pedagogie: ongletsPedagogie(),
+    AdminDomaine.finance: <SousLien>[
+      for (final SousLien lien in finance)
+        if ((vueGlobaleFinance || lien.chemin != Routes.adminFinance) &&
+            (reserveDelegation ||
+                lien.chemin != Routes.adminFinanceReserveDelegation))
+          lien,
+    ],
+    AdminDomaine.configuration: ongletsConfiguration(
+      politiqueRevueKyc: politiqueRevueKyc,
+    ),
+    AdminDomaine.securite: <SousLien>[
+      ...ongletsSecurite(),
+      (
+        libelle: t.admin.tableau.outilsAccesAgents,
+        chemin: Routes.adminSecuriteAuditAccesAgents,
+      ),
+    ],
+  };
+}
+
+/// Le sous-lien de [liens] qui correspond a [chemin] : le plus long prefixe
+/// (la vue globale de la Finance, `/admin/finance`, prefixe toutes les
+/// autres pages de la Finance). Nul si aucun.
+SousLien? sousLienCourant(List<SousLien> liens, String? chemin) {
+  if (chemin == null) return null;
+  SousLien? meilleur;
+  for (final SousLien lien in liens) {
+    final bool correspond =
+        chemin == lien.chemin || chemin.startsWith('${lien.chemin}/');
+    if (correspond &&
+        (meilleur == null || lien.chemin.length > meilleur.chemin.length)) {
+      meilleur = lien;
+    }
+  }
+  return meilleur;
 }

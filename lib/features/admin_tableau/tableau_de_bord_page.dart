@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/accueil/signaux_accueils.dart';
 import '../../core/admin/service_admin.dart';
+import '../../core/admin/sous_liens_coquille.dart';
 import '../../core/alertes/alerte.dart';
 import '../../core/alertes/port_alertes.dart';
 import '../../core/capacites/revue_dossiers_depuis_validation.dart';
@@ -298,6 +299,27 @@ class TableauDeBordPage extends ConsumerWidget {
       ],
     );
 
+    // NAV-SOUS-LIENS (14/11/2026, point 2 de la revue) : sur tablette et
+    // ordinateur, quand le panneau montre deja chacun de ces raccourcis en
+    // sous-lien, l'Accueil ne les repete pas. Au telephone, ils restent : le
+    // tiroir n'a pas de sous-liens.
+    final bool raccourcisDansPanneau = SousLiensCoquille.couvre(
+      context,
+      const <String>[
+        Routes.adminOperationsTraitement,
+        Routes.adminOperationsRegroupements,
+        Routes.adminOperationsOffres,
+        Routes.adminOperationsAvis,
+        Routes.adminOperationsCourriels,
+        Routes.adminOperationsPilotage,
+        Routes.adminOperationsPlanning,
+        Routes.adminOperationsGroupes,
+        Routes.adminOperationsCommunications,
+        Routes.adminPersonnesComptes,
+        Routes.adminSecuriteAuditAccesAgents,
+      ],
+    );
+
     final Widget principal = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
@@ -356,8 +378,10 @@ class TableauDeBordPage extends ConsumerWidget {
                     ),
                   ],
                 ),
-                Ecart.vXxxl,
-                raccourcis,
+                if (!raccourcisDansPanneau) ...<Widget>[
+                  Ecart.vXxxl,
+                  raccourcis,
+                ],
               ],
             );
           }
@@ -367,8 +391,7 @@ class TableauDeBordPage extends ConsumerWidget {
               principal,
               Ecart.vXxl,
               const ActiviteRecente(),
-              Ecart.vXxl,
-              raccourcis,
+              if (!raccourcisDansPanneau) ...<Widget>[Ecart.vXxl, raccourcis],
             ],
           );
         },
