@@ -7497,6 +7497,102 @@
         "retraitEchec": "The withdrawal did not go through. Try again in a moment.",
         "conflit": "Someone changed this document in the meantime. Reload before continuing."
       }
+    },
+    "planClasse": {
+      "etapeCle": "Stage",
+      "aucuneEtape": "No stage yet",
+      "sansEtapeMembres": {
+        "one": "{n} student in the class without a stage",
+        "other": "{n} students in the class without a stage"
+      },
+      "donnerEtape": "Give the class a stage",
+      "changerEtape": "Change the class stage",
+      "donnerTitre": "Class stage",
+      "donnerIntro": "Choose the stage the class is at. Students in the class who do not have a stage yet receive it: a beginner starts at stage 1, a student who can already read waits for your placement decision. A student who already has a stage keeps it.",
+      "donnerChamp": "Class stage",
+      "donnerManque": "The stage is missing: choose it from the list.",
+      "donnerEnvoyer": "Give this stage",
+      "donnerErreur": "The class stage is not confirmed: {message}",
+      "aucunProgramme": "No version of the programme is published. Publish it in Pedagogy, Programmes, then come back here.",
+      "programmeErreur": "The stages could not be read. Try again in a moment.",
+      "motifChamp": "Reason",
+      "motifRequis": "A reason is required, it is recorded in the audit log.",
+      "motifs": {
+        "classe": "The class is already at this point",
+        "reprise": "Class taken over mid-course",
+        "correction": "Correction of the class stage"
+      },
+      "dateAction": "Say when they started",
+      "dateTitre": "Start of the stage",
+      "dateIntro": "If this student was already under way before being followed here, say which day they started their stage, even before their account was created. The deadline is counted from that day.",
+      "dateChamp": "Start day",
+      "dateAide": "A past day, up to today (Mecca day).",
+      "dateManque": "The start day is missing: choose it in the calendar.",
+      "dateEnvoyer": "Save the start day",
+      "dateErreur": "The start day is not confirmed: {message}",
+      "dateMotifs": {
+        "avant": "Already under way before the launch",
+        "correction": "Correction of the start day",
+        "confirme": "Day confirmed with the teacher"
+      },
+      "refus": {
+        "dateFuture": "This day has not come yet. Choose today or a past day.",
+        "dateSousPlancher": "This day is too old. The oldest accepted day is {date}. Choose a day from that date onwards.",
+        "eleveSansEtape": "This student does not have a stage yet. Place them first in Pedagogy, Diagnostics.",
+        "niveauNonPublie": "This stage is not in the published version of the programme. Choose a stage from the list.",
+        "classeClose": "This class is closed.",
+        "aucunProgrammePublie": "No version of the programme is published.",
+        "motif": "The reason is missing."
+      },
+      "debutChamp": "Did they start before today?",
+      "debutAide": "Leave empty if the student starts today. Otherwise, choose the day they really started.",
+      "debutRetirer": "They start today",
+      "apercuLimite": "With this start day, the deadline for the stage will be {date}.",
+      "apercuPassee": "With this start day, the deadline for the stage was {date}: it has already passed. The student will appear as late on this stage right away. No message is sent. You can choose a more recent day.",
+      "apercuInconnue": "The deadline cannot be calculated for this student (unknown duration or age group).",
+      "apercuRefus": "This start day cannot be saved (in the future, or older than the oldest accepted day). Choose another day.",
+      "apercuErreur": "The resulting deadline could not be read. The server calculates it when you save.",
+      "jourErreur": "The reference day could not be read. Try again in a moment.",
+      "jourRelire": "Read the day again",
+      "placerAction": "Decide their placement",
+      "placerTitre": "Student placement",
+      "placerIntro": "This student can already read. Choose the stage where they start, after the reading interview. If they were already under way, also say which day they started.",
+      "placerChamp": "Placement stage",
+      "placerManque": "The stage is missing: choose it from the list.",
+      "placerEnvoyer": "Decide the placement",
+      "placerErreur": "The placement is not confirmed: {message}",
+      "sansEtape": {
+        "titre": "Students without a stage",
+        "intro": "These students are already in a class, but do not have a programme stage yet.",
+        "classesTitre": "Classes without a stage",
+        "membres": {
+          "one": "{n} student",
+          "other": "{n} students"
+        },
+        "raisonAucunProgramme": "No version of the programme is published",
+        "raisonAttente": "Can already read: their stage is decided after the reading interview (Decide a placement, below)",
+        "raisonDebutant": "Beginner: they will receive stage 1 when attached",
+        "rattacher": "Attach the beginners and the classes",
+        "rattacherTitre": "Attachment",
+        "rattacherDetail": "Stage 1 of the basics will be given to all open classes without a stage and to the beginner students in the list, starting today. Students who can already read are not affected. You can then say which day each one really started.",
+        "rattacherEnvoyer": "Attach now",
+        "rattacherErreur": "The attachment is not confirmed: {message}",
+        "rattacherFait": "Attachment done: the list is up to date.",
+        "erreurLecture": "The list of students without a stage could not be read. Try again in a moment.",
+        "relire": "Read the list again",
+        "toutPlace": "Every student who is a member of a class has a stage."
+      },
+      "brouillon": {
+        "incomplet": "This draft cannot be published: the stage “{etape}” does not yet have all its objectives and durations. Complete it, or start again from the basics.",
+        "incoherent": "This draft cannot be published: for {niveau}, the stage durations do not add up to the level duration. Correct them, or start again from the basics.",
+        "sansBases": "This draft cannot be published: it does not have the four stages of the basics. Start again from the basics.",
+        "autre": "This draft cannot be published for now. You can start again from the basics.",
+        "repartir": "Start again from the basics",
+        "repartirTitre": "Start again from the basics",
+        "repartirDetail": "Creates a new version with the four stages of the basics, their objectives, their subjects and their durations. This draft is neither changed nor deleted: it stays in the list. Read the new version, then publish it.",
+        "repartirEnvoyer": "Create the version with the basics",
+        "repartirErreur": "The new version is not confirmed: {message}"
+      }
     }
   },
   "agent": {
