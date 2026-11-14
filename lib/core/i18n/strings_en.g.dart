@@ -93,6 +93,7 @@ class TraductionsEn extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$alertes$en alertes = _Traductions$alertes$en._(_root);
 	@override late final _Traductions$argent$en argent = _Traductions$argent$en._(_root);
 	@override late final _Traductions$identiteProfil$en identiteProfil = _Traductions$identiteProfil$en._(_root);
+	@override late final _Traductions$com$en com = _Traductions$com$en._(_root);
 	@override late final _Traductions$presentationTuteur$en presentationTuteur = _Traductions$presentationTuteur$en._(_root);
 	@override late final _Traductions$reprisesAdmin$en reprisesAdmin = _Traductions$reprisesAdmin$en._(_root);
 	@override late final _Traductions$recherche$en recherche = _Traductions$recherche$en._(_root);
@@ -1699,6 +1700,21 @@ class _Traductions$identiteProfil$en extends Traductions$identiteProfil$fr {
 	@override String lecteurEnfant({required Object prenom}) => '${prenom}, child profile';
 	@override String lecteurAdulte({required Object prenom}) => '${prenom}, adult profile';
 	@override String lecteurAvecClasse({required Object profil, required Object classe}) => '${profil}, ${classe}';
+}
+
+// Path: com
+class _Traductions$com$en extends Traductions$com$fr {
+	_Traductions$com$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$com$socle$en socle = _Traductions$com$socle$en._(_root);
+	@override late final _Traductions$com$messages$en messages = _Traductions$com$messages$en._(_root);
+	@override late final _Traductions$com$vocal$en vocal = _Traductions$com$vocal$en._(_root);
+	@override late final _Traductions$com$communaute$en communaute = _Traductions$com$communaute$en._(_root);
+	@override late final _Traductions$com$studio$en studio = _Traductions$com$studio$en._(_root);
+	@override late final _Traductions$com$annonces$en annonces = _Traductions$com$annonces$en._(_root);
 }
 
 // Path: presentationTuteur
@@ -8329,6 +8345,145 @@ class _Traductions$argent$acces$en extends Traductions$argent$acces$fr {
 	@override String get pastilleReactive => 'Reactivated';
 }
 
+// Path: com.socle
+class _Traductions$com$socle$en extends Traductions$com$socle$fr {
+	_Traductions$com$socle$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$com$socle$composants$en composants = _Traductions$com$socle$composants$en._(_root);
+	@override late final _Traductions$com$socle$lexique$en lexique = _Traductions$com$socle$lexique$en._(_root);
+	@override late final _Traductions$com$socle$motifs$en motifs = _Traductions$com$socle$motifs$en._(_root);
+	@override late final _Traductions$com$socle$signalement$en signalement = _Traductions$com$socle$signalement$en._(_root);
+	@override late final _Traductions$com$socle$enregistrement$en enregistrement = _Traductions$com$socle$enregistrement$en._(_root);
+	@override late final _Traductions$com$socle$navigation$en navigation = _Traductions$com$socle$navigation$en._(_root);
+}
+
+// Path: com.messages
+class _Traductions$com$messages$en extends Traductions$com$messages$fr {
+	_Traductions$com$messages$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$com$messages$entree$en entree = _Traductions$com$messages$entree$en._(_root);
+	@override String get videDetail => 'A conversation opens from a class, a student or a file.';
+	@override String get choisirTitre => 'Choose a conversation';
+	@override String get choisir => 'Choose a conversation from the list to read it and reply.';
+	@override late final _Traductions$com$messages$recherche$en recherche = _Traductions$com$messages$recherche$en._(_root);
+	@override late final _Traductions$com$messages$ligne$en ligne = _Traductions$com$messages$ligne$en._(_root);
+	@override late final _Traductions$com$messages$noms$en noms = _Traductions$com$messages$noms$en._(_root);
+	@override late final _Traductions$com$messages$entete$en entete = _Traductions$com$messages$entete$en._(_root);
+	@override late final _Traductions$com$messages$candidature$en candidature = _Traductions$com$messages$candidature$en._(_root);
+	@override late final _Traductions$com$messages$types$en types = _Traductions$com$messages$types$en._(_root);
+	@override late final _Traductions$com$messages$panneau$en panneau = _Traductions$com$messages$panneau$en._(_root);
+	@override late final _Traductions$com$messages$fil$en fil = _Traductions$com$messages$fil$en._(_root);
+	@override late final _Traductions$com$messages$demo$en demo = _Traductions$com$messages$demo$en._(_root);
+	@override String get titre => _root.com.socle.lexique.messagesMetier;
+	@override String get vide => 'No conversation yet.';
+}
+
+// Path: com.vocal
+class _Traductions$com$vocal$en extends Traductions$com$vocal$fr {
+	_Traductions$com$vocal$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$com$vocal$composer$en composer = _Traductions$com$vocal$composer$en._(_root);
+	@override late final _Traductions$com$vocal$lecteur$en lecteur = _Traductions$com$vocal$lecteur$en._(_root);
+	@override late final _Traductions$com$vocal$demo$en demo = _Traductions$com$vocal$demo$en._(_root);
+	@override String get titre => 'Voice message';
+}
+
+// Path: com.communaute
+class _Traductions$com$communaute$en extends Traductions$com$communaute$fr {
+	_Traductions$com$communaute$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$com$communaute$garde$en garde = _Traductions$com$communaute$garde$en._(_root);
+	@override late final _Traductions$com$communaute$lien$en lien = _Traductions$com$communaute$lien$en._(_root);
+	@override String get sousTitre => 'Exchange and mutual help between teachers';
+	@override String get sections => 'Categories of the Teachers community';
+	@override String get toutes => 'All';
+	@override String get videTitre => 'No post';
+	@override String get rechercheVideTitre => 'No result';
+	@override String get rechercheVide => 'No post matches your search. Try another word.';
+	@override String get videToutes => 'No post yet.';
+	@override late final _Traductions$com$communaute$flux$en flux = _Traductions$com$communaute$flux$en._(_root);
+	@override late final _Traductions$com$communaute$recherche$en recherche = _Traductions$com$communaute$recherche$en._(_root);
+	@override late final _Traductions$com$communaute$moment$en moment = _Traductions$com$communaute$moment$en._(_root);
+	@override late final _Traductions$com$communaute$publication$en publication = _Traductions$com$communaute$publication$en._(_root);
+	@override late final _Traductions$com$communaute$reponses$en reponses = _Traductions$com$communaute$reponses$en._(_root);
+	@override late final _Traductions$com$communaute$signalement$en signalement = _Traductions$com$communaute$signalement$en._(_root);
+	@override late final _Traductions$com$communaute$composer$en composer = _Traductions$com$communaute$composer$en._(_root);
+	@override late final _Traductions$com$communaute$regles$en regles = _Traductions$com$communaute$regles$en._(_root);
+	@override late final _Traductions$com$communaute$entree$en entree = _Traductions$com$communaute$entree$en._(_root);
+	@override late final _Traductions$com$communaute$demo$en demo = _Traductions$com$communaute$demo$en._(_root);
+	@override String get titre => _root.com.socle.lexique.communaute;
+	@override String get vide => 'No post in this category.';
+}
+
+// Path: com.studio
+class _Traductions$com$studio$en extends Traductions$com$studio$fr {
+	_Traductions$com$studio$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$com$studio$focus$en focus = _Traductions$com$studio$focus$en._(_root);
+	@override late final _Traductions$com$studio$aujourdhui$en aujourdhui = _Traductions$com$studio$aujourdhui$en._(_root);
+	@override late final _Traductions$com$studio$brouillons$en brouillons = _Traductions$com$studio$brouillons$en._(_root);
+	@override String get sousTitre => 'The team\'s workspace';
+	@override late final _Traductions$com$studio$navigation$en navigation = _Traductions$com$studio$navigation$en._(_root);
+	@override String get choisirTitre => 'Choose a channel';
+	@override String get choisir => 'Choose a channel from the list to read the discussion and write in it.';
+	@override String get aucunCanalTitre => 'No channel yet';
+	@override String get aucunCanal => 'The channels open to you will appear here.';
+	@override late final _Traductions$com$studio$sections$en sections = _Traductions$com$studio$sections$en._(_root);
+	@override late final _Traductions$com$studio$visibilite$en visibilite = _Traductions$com$studio$visibilite$en._(_root);
+	@override late final _Traductions$com$studio$canal$en canal = _Traductions$com$studio$canal$en._(_root);
+	@override late final _Traductions$com$studio$panneau$en panneau = _Traductions$com$studio$panneau$en._(_root);
+	@override late final _Traductions$com$studio$enregistrer$en enregistrer = _Traductions$com$studio$enregistrer$en._(_root);
+	@override late final _Traductions$com$studio$enregistres$en enregistres = _Traductions$com$studio$enregistres$en._(_root);
+	@override late final _Traductions$com$studio$recherche$en recherche = _Traductions$com$studio$recherche$en._(_root);
+	@override late final _Traductions$com$studio$demo$en demo = _Traductions$com$studio$demo$en._(_root);
+	@override String get titre => _root.com.socle.lexique.studio;
+	@override String get vide => 'No activity to handle here.';
+}
+
+// Path: com.annonces
+class _Traductions$com$annonces$en extends Traductions$com$annonces$fr {
+	_Traductions$com$annonces$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get toutesAcademie => 'The whole academy';
+	@override late final _Traductions$com$annonces$publieur$en publieur = _Traductions$com$annonces$publieur$en._(_root);
+	@override late final _Traductions$com$annonces$administration$en administration = _Traductions$com$annonces$administration$en._(_root);
+	@override late final _Traductions$com$annonces$demoPublication$en demoPublication = _Traductions$com$annonces$demoPublication$en._(_root);
+	@override String get section => 'Class announcements';
+	@override String get annonce => 'Announcement';
+	@override String get publier => 'Publish an announcement';
+	@override String get videPublier => 'No announcement for this class. Publish the first one for the whole class.';
+	@override String auteurDate({required Object auteur, required Object date, required Object heure}) => '${auteur}, on ${date} at ${heure}';
+	@override String date({required Object date, required Object heure}) => 'On ${date} at ${heure}';
+	@override String get lire => 'Read the whole announcement';
+	@override String get ouvrirClasse => 'Open the class';
+	@override String ouvrirClasseSemantique({required Object classe}) => 'Open ${classe}';
+	@override String get marquerLue => 'Mark as read';
+	@override String get lue => 'Read';
+	@override String carteSemantique({required Object classe, required Object titre}) => 'Announcement from ${classe}: ${titre}';
+	@override String get introuvableTitre => 'This announcement is no longer available';
+	@override String get introuvablePhrase => 'It may have been withdrawn from the class. Go back to your notifications.';
+	@override late final _Traductions$com$annonces$demo$en demo = _Traductions$com$annonces$demo$en._(_root);
+	@override String get titre => 'Announcements';
+}
+
 // Path: presentationTuteur.accueil
 class _Traductions$presentationTuteur$accueil$en extends Traductions$presentationTuteur$accueil$fr {
 	_Traductions$presentationTuteur$accueil$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -13160,6 +13315,896 @@ class _Traductions$argent$transparence$postes$en extends Traductions$argent$tran
 	@override String get benefice => 'Academy profit';
 }
 
+// Path: com.socle.composants
+class _Traductions$com$socle$composants$en extends Traductions$com$socle$composants$fr {
+	_Traductions$com$socle$composants$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$com$socle$composants$lecture$en lecture = _Traductions$com$socle$composants$lecture$en._(_root);
+	@override late final _Traductions$com$socle$composants$badge$en badge = _Traductions$com$socle$composants$badge$en._(_root);
+	@override late final _Traductions$com$socle$composants$pieceJointe$en pieceJointe = _Traductions$com$socle$composants$pieceJointe$en._(_root);
+	@override late final _Traductions$com$socle$composants$composer$en composer = _Traductions$com$socle$composants$composer$en._(_root);
+	@override late final _Traductions$com$socle$composants$etats$en etats = _Traductions$com$socle$composants$etats$en._(_root);
+	@override late final _Traductions$com$socle$composants$espace$en espace = _Traductions$com$socle$composants$espace$en._(_root);
+}
+
+// Path: com.socle.lexique
+class _Traductions$com$socle$lexique$en extends Traductions$com$socle$lexique$fr {
+	_Traductions$com$socle$lexique$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get messages => 'Messages';
+	@override String get messagesMetier => 'Messages';
+	@override String get communaute => 'Teachers community';
+	@override String get studio => 'The Studio';
+	@override String get aujourdhui => 'Today';
+	@override String get notifications => 'Notifications';
+	@override String get annonce => 'Announcement';
+	@override String get publication => 'Post';
+	@override String get reponse => 'Reply';
+	@override String get enregistrer => 'Save';
+	@override String get signaler => 'Report';
+	@override String get modeFocus => 'Focus mode';
+	@override String get quitterFocus => 'Exit focus';
+	@override String get aTraiter => 'To handle';
+	@override String get actionRequise => 'Action required';
+	@override String get brouillon => 'Draft';
+	@override String get elementsEpingles => 'Pinned items';
+	@override String get fichiersPartages => 'Shared files';
+}
+
+// Path: com.socle.motifs
+class _Traductions$com$socle$motifs$en extends Traductions$com$socle$motifs$fr {
+	_Traductions$com$socle$motifs$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Why are you reporting this content?';
+	@override String get publicite => 'Advertising';
+	@override String get lienAffilie => 'Affiliate link';
+	@override String get venteNonAutorisee => 'Unauthorized sale';
+	@override String get sollicitationCommerciale => 'Commercial solicitation';
+	@override String get horsSujet => 'Content unrelated to the community';
+	@override String get harcelement => 'Harassment or inappropriate language';
+	@override String get donneesPersonnelles => 'Personal data of a student or a family';
+	@override String get autre => 'Other content to review';
+}
+
+// Path: com.socle.signalement
+class _Traductions$com$socle$signalement$en extends Traductions$com$socle$signalement$fr {
+	_Traductions$com$socle$signalement$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Report this content';
+	@override String get precision => 'Optional detail';
+	@override String get envoyer => 'Send the report';
+	@override String get confirme => 'The content has been reported. It will be reviewed.';
+	@override String get erreur => 'The report has not been confirmed yet. Try again in a moment.';
+	@override String get indisponible => 'Reporting is not available here yet.';
+}
+
+// Path: com.socle.enregistrement
+class _Traductions$com$socle$enregistrement$en extends Traductions$com$socle$enregistrement$fr {
+	_Traductions$com$socle$enregistrement$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get enregistrer => _root.com.socle.lexique.enregistrer;
+	@override String get retirer => 'Remove from saved items';
+	@override String get enregistre => 'Saved';
+	@override String get indisponible => 'Saving is not available here yet.';
+}
+
+// Path: com.socle.navigation
+class _Traductions$com$socle$navigation$en extends Traductions$com$socle$navigation$fr {
+	_Traductions$com$socle$navigation$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get notifications => _root.com.socle.lexique.notifications;
+	@override String get ouvrirNotifications => 'Open notifications';
+	@override String get studio => _root.com.socle.lexique.studio;
+	@override String get ouvrirStudio => 'Open The Studio';
+	@override String get quitterStudio => 'Leave The Studio';
+	@override String get messages => _root.com.socle.lexique.messages;
+	@override String get communaute => _root.com.socle.lexique.communaute;
+	@override String get communications => 'Communications';
+	@override String get communicationsDetail => 'Announcements, moderation and class messages';
+	@override String get ongletAnnonces => 'Announcements';
+	@override String get ongletModeration => 'Moderation';
+	@override String get ongletMessages => _root.com.socle.lexique.messages;
+	@override String get bientot => 'Coming soon';
+	@override late final _Traductions$com$socle$navigation$provisoire$en provisoire = _Traductions$com$socle$navigation$provisoire$en._(_root);
+	@override late final _Traductions$com$socle$navigation$demo$en demo = _Traductions$com$socle$navigation$demo$en._(_root);
+}
+
+// Path: com.messages.entree
+class _Traductions$com$messages$entree$en extends Traductions$com$messages$entree$fr {
+	_Traductions$com$messages$entree$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titreClasse => 'Talk about this class';
+	@override String get titreDossier => 'Talk about this file';
+	@override String get titreCandidature => 'Talk about the application';
+	@override String get titreObjet => 'Talk about this';
+	@override String get ecrireFamille => 'Write to the family';
+	@override String get ecrireAdministration => 'Write to the Administration';
+	@override String ecrireA({required Object nom}) => 'Write to ${nom}';
+	@override String conversationAvec({required Object nom}) => 'Conversation with ${nom}';
+	@override String get voirTout => 'See all conversations';
+	@override String get toutes => 'All your conversations';
+	@override String get aLireUne => '1 conversation to read';
+	@override String aLire({required Object nombre}) => '${nombre} conversations to read';
+	@override String get ouverture => 'Opening the conversation';
+	@override String get inaccessibleTitre => 'Conversation inaccessible';
+	@override String get inaccessible => 'This conversation is no longer open to you. Choose another person from the list.';
+	@override String get erreurOuvertureTitre => 'This conversation could not be opened.';
+	@override String get ouvertureEchouee => 'The request may not have reached Rewayah. Try again in a moment.';
+}
+
+// Path: com.messages.recherche
+class _Traductions$com$messages$recherche$en extends Traductions$com$messages$recherche$fr {
+	_Traductions$com$messages$recherche$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get champ => 'Search for a conversation';
+	@override String get aide => 'Name, class or file';
+	@override String get aucunTitre => 'No conversation found';
+	@override String aucun({required Object texte}) => 'No conversation matches "${texte}". Try another name or another class.';
+	@override String get resultatUn => '1 conversation found';
+	@override String resultats({required Object nombre}) => '${nombre} conversations found';
+}
+
+// Path: com.messages.ligne
+class _Traductions$com$messages$ligne$en extends Traductions$com$messages$ligne$fr {
+	_Traductions$com$messages$ligne$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String legende({required Object objet, required Object apercu}) => '${objet} · ${apercu}';
+	@override String get sansApercu => 'No message yet';
+	@override String dateCourte({required Object mois, required Object numero}) => '${mois} ${numero}';
+}
+
+// Path: com.messages.noms
+class _Traductions$com$messages$noms$en extends Traductions$com$messages$noms$fr {
+	_Traductions$com$messages$noms$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String avecFonction({required Object nom, required Object fonction}) => '${nom}, ${fonction}';
+	@override String deux({required Object premier, required Object second}) => '${premier} and ${second}';
+	@override String plusieurs({required Object premier, required Object nombre}) => '${premier} and ${nombre} other people';
+	@override String surObjet({required Object objet}) => 'Conversation about ${objet}';
+	@override String get sansObjet => 'Conversation';
+}
+
+// Path: com.messages.entete
+class _Traductions$com$messages$entete$en extends Traductions$com$messages$entete$fr {
+	_Traductions$com$messages$entete$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String avecAttention({required Object entete, required Object attention}) => '${entete}. ${attention}';
+	@override String deuxObjets({required Object premier, required Object second}) => '${premier} · ${second}';
+	@override String semantique({required Object noms, required Object objets}) => 'Conversation with ${noms}, about ${objets}';
+	@override String semantiqueSansNoms({required Object objets}) => 'Conversation about ${objets}';
+}
+
+// Path: com.messages.candidature
+class _Traductions$com$messages$candidature$en extends Traductions$com$messages$candidature$fr {
+	_Traductions$com$messages$candidature$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get plafond => 'You have reached the limit of 30 messages a day for this conversation. You can write again tomorrow; the management replies here.';
+}
+
+// Path: com.messages.types
+class _Traductions$com$messages$types$en extends Traductions$com$messages$types$fr {
+	_Traductions$com$messages$types$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get classe => 'Class';
+	@override String get eleve => 'Student';
+	@override String get dossier => 'File';
+	@override String get mission => 'Review mission';
+	@override String get remplacement => 'Replacement';
+	@override String get candidature => 'Application';
+	@override String get profilPaiement => 'Payment profile';
+	@override String get autre => 'Other subject';
+}
+
+// Path: com.messages.panneau
+class _Traductions$com$messages$panneau$en extends Traductions$com$messages$panneau$fr {
+	_Traductions$com$messages$panneau$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get objets => 'About';
+	@override String get participants => 'Participants';
+	@override String get fichiers => _root.com.socle.lexique.fichiersPartages;
+	@override String ouvrir({required Object objet}) => 'Open ${objet}';
+	@override String get inaccessible => 'This subject is no longer open to you. The conversation stays readable.';
+	@override String get vous => 'You';
+}
+
+// Path: com.messages.fil
+class _Traductions$com$messages$fil$en extends Traductions$com$messages$fil$fr {
+	_Traductions$com$messages$fil$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get lectureSeule => 'You can read this conversation. Replying is not open to you here.';
+}
+
+// Path: com.messages.demo
+class _Traductions$com$messages$demo$en extends Traductions$com$messages$demo$fr {
+	_Traductions$com$messages$demo$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get choisirRole => 'Choose the point of view for this demo.';
+	@override late final _Traductions$com$messages$demo$roles$en roles = _Traductions$com$messages$demo$roles$en._(_root);
+	@override String get situations => 'Situations to try';
+	@override String get echec => 'Sending not confirmed, seen by the teacher';
+	@override String get horsLigne => 'Offline, seen by the family';
+	@override String get refuse => 'Another family\'s conversation, refused';
+	@override String vue({required Object role}) => 'Point of view: ${role}';
+	@override late final _Traductions$com$messages$demo$f$en f = _Traductions$com$messages$demo$f$en._(_root);
+}
+
+// Path: com.vocal.composer
+class _Traductions$com$vocal$composer$en extends Traductions$com$vocal$composer$fr {
+	_Traductions$com$vocal$composer$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'Voice message';
+	@override String get enregistrer => 'Record a voice message';
+	@override String get indisponible => 'The voice message is not available here yet. Write your message in the field above.';
+	@override String get erreurVerificationTitre => 'The microphone could not be checked.';
+	@override String get erreurVerificationAction => 'Try again';
+	@override String get erreurDemarrage => 'The recording could not start. Check that the microphone is not in use by another app, then try again.';
+	@override String get erreurInterrompu => 'The recording was interrupted. Check the microphone, then start again.';
+	@override String get permissionTitre => 'The microphone is needed';
+	@override String get permissionPhrase => 'Rewayah needs the microphone to record your voice message. Nothing is sent without your agreement.';
+	@override String get autoriser => 'Allow the microphone';
+	@override String get annuler => 'Cancel';
+	@override String get refuse => 'The microphone is not allowed for Rewayah.';
+	@override String get refuseAide => 'To send a voice message, allow the microphone in your device settings, then come back here.';
+	@override String get fermer => 'Close';
+	@override String get enregistrement => 'Recording in progress';
+	@override String get pause => 'Recording paused';
+	@override String get reprise => 'Recording resumed';
+	@override String limiteProche({required Object seuil, required Object max}) => 'Less than ${seuil} before the limit of ${max}';
+	@override String limiteAtteinte({required Object max}) => 'Maximum length reached (${max}). Listen to your message, then send it or delete it.';
+	@override String ecoule({required Object ecoule, required Object max}) => '${ecoule} of ${max}';
+	@override String get preEcoute => 'Preview';
+	@override String get preEcouteAide => 'Listen to your message before sending it. Nothing is sent without your agreement.';
+	@override String duree({required Object duree}) => 'Length: ${duree}';
+	@override String get actionPause => 'Pause';
+	@override String get actionReprendre => 'Resume';
+	@override String get actionArreter => 'Stop';
+	@override String get actionSupprimer => 'Delete';
+	@override String get actionEnvoyer => 'Send';
+	@override String get confirmerTitre => 'Delete this voice message?';
+	@override String get confirmerPhrase => 'It will be erased from this device. This action is final.';
+	@override String get garder => 'Keep';
+	@override String get envoi => 'Sending the voice message';
+	@override String get nonConfirme => 'This voice message has not been confirmed yet.';
+	@override String get nonConfirmeAide => 'It may not have reached Rewayah. The voice message is kept here; try again in a moment.';
+	@override String get reessayer => 'Try again';
+	@override String get envoye => 'Voice message sent.';
+	@override String get horsLigne => 'The voice message is kept here: send it as soon as sending is possible again.';
+}
+
+// Path: com.vocal.lecteur
+class _Traductions$com$vocal$lecteur$en extends Traductions$com$vocal$lecteur$fr {
+	_Traductions$com$vocal$lecteur$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String libelleAuteur({required Object auteur, required Object duree}) => 'Voice message from ${auteur}, ${duree}';
+	@override String libelle({required Object duree}) => 'Voice message, ${duree}';
+	@override String get ecouter => 'Listen';
+	@override String get pause => 'Pause';
+	@override String get reprendre => 'Resume';
+	@override String get reecouter => 'Listen again';
+	@override String get nonEcoute => 'Not listened to yet';
+	@override String get lecture => 'Playing';
+	@override String get enPause => 'Playback paused';
+	@override String get fin => 'Listened to in full';
+	@override String position({required Object position, required Object duree}) => '${position} of ${duree}';
+	@override String get indisponible => 'Playback is not available here yet. The message stays in the conversation: come back later to listen to it.';
+	@override String get erreurLectureTitre => 'This voice message could not be played.';
+	@override String get erreurLectureAction => 'Try again';
+}
+
+// Path: com.vocal.demo
+class _Traductions$com$vocal$demo$en extends Traductions$com$vocal$demo$fr {
+	_Traductions$com$vocal$demo$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get contexte => 'Voice message demo: no real microphone is used, the recording is simulated.';
+	@override String get situations => 'Demo situations';
+	@override String get autorise => 'Microphone allowed';
+	@override String get aDemander => 'To ask';
+	@override String get refuse => 'Microphone refused';
+	@override String get nonConfirme => 'Not confirmed';
+	@override String get indisponible => 'Unavailable';
+	@override String get recu => 'Voice message received';
+	@override String get repondre => 'Reply in the conversation';
+	@override String get envoyes => 'Voice messages sent';
+	@override String get auteurEnseignante => 'Sayyida Mariam, teacher';
+	@override String get auteurParent => 'Ahmed, Adam\'s parent';
+	@override String get messageRecu => 'Hello, here are my remarks on this week\'s recitation.';
+	@override String get horodatage => 'Today, 10:28';
+}
+
+// Path: com.communaute.garde
+class _Traductions$com$communaute$garde$en extends Traductions$com$communaute$garde$fr {
+	_Traductions$com$communaute$garde$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get aide => 'No advertising. No affiliate links. No sales.';
+	@override String get avertissement => 'This post seems to contain a commercial promotion. Remove the link, code or offer before publishing.';
+	@override String get bloqueAffilie => 'Affiliate links are not allowed in the Teachers community.';
+	@override String get bloqueVente => 'Selling products or services is not allowed in this space.';
+	@override String get titreAvertissement => 'Post to review';
+	@override String get titreBlocage => 'Post blocked';
+	@override String motif({required Object motif}) => 'Reason: ${motif}';
+	@override String get liensTitre => 'Post links';
+	@override String get consigneBlocage => 'Edit the post, then publish it again.';
+	@override String get panne => 'The check of this content is not confirmed: the request may not have reached Rewayah. Nothing was published; try again in a moment.';
+	@override late final _Traductions$com$communaute$garde$reponse$en reponse = _Traductions$com$communaute$garde$reponse$en._(_root);
+}
+
+// Path: com.communaute.lien
+class _Traductions$com$communaute$lien$en extends Traductions$com$communaute$lien$fr {
+	_Traductions$com$communaute$lien$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get interne => 'Rewayah internal link';
+	@override String get ressourceExterne => 'External teaching resource';
+	@override String get commercialInterdit => 'Commercial link forbidden';
+	@override String get nonVerifie => 'Unverified link';
+	@override String semantique({required Object adresse, required Object etat}) => '${adresse}, ${etat}';
+}
+
+// Path: com.communaute.flux
+class _Traductions$com$communaute$flux$en extends Traductions$com$communaute$flux$fr {
+	_Traductions$com$communaute$flux$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String ouvrir({required Object titre}) => 'Open the post ${titre}';
+	@override String get reponseUne => '1 reply';
+	@override String reponses({required Object nombre}) => '${nombre} replies';
+	@override String get aucuneReponse => 'No reply';
+	@override String categorie({required Object categorie}) => 'Category ${categorie}';
+}
+
+// Path: com.communaute.recherche
+class _Traductions$com$communaute$recherche$en extends Traductions$com$communaute$recherche$fr {
+	_Traductions$com$communaute$recherche$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get ouvrir => 'Search for a post';
+	@override String get champ => 'Search for a post';
+	@override String get aide => 'A word from the title or the text';
+}
+
+// Path: com.communaute.moment
+class _Traductions$com$communaute$moment$en extends Traductions$com$communaute$moment$fr {
+	_Traductions$com$communaute$moment$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get instant => 'Just now';
+	@override String minutes({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} min ago',
+		other: '${n} min ago',
+	);
+	@override String heures({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} h ago',
+		other: '${n} h ago',
+	);
+	@override String jours({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} d ago',
+		other: '${n} d ago',
+	);
+	@override String date({required Object mois, required Object jour}) => 'On ${mois}/${jour}';
+}
+
+// Path: com.communaute.publication
+class _Traductions$com$communaute$publication$en extends Traductions$com$communaute$publication$fr {
+	_Traductions$com$communaute$publication$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String auteur({required Object fonction, required Object moment}) => '${fonction} · ${moment}';
+	@override String get enregistrer => 'Save the post';
+	@override String get enregistree => 'Post saved';
+	@override String get retirer => 'Remove from saved items';
+	@override String menu({required Object titre}) => 'Actions on the post ${titre}';
+	@override String get signaler => 'Report the post';
+	@override String get signalee => 'The content has been reported to the moderation team.';
+	@override String get choisirTitre => 'No post open';
+	@override String get choisir => 'Choose a post from the list to read it and reply.';
+	@override String get introuvableTitre => 'Post unavailable';
+	@override String get introuvable => 'This post has been withdrawn or is no longer accessible to you. Go back to the posts to choose another.';
+	@override String get revenir => 'Back to the posts';
+}
+
+// Path: com.communaute.reponses
+class _Traductions$com$communaute$reponses$en extends Traductions$com$communaute$reponses$fr {
+	_Traductions$com$communaute$reponses$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String titre({required Object nombre}) => 'Replies (${nombre})';
+	@override String get vide => 'No reply yet.';
+	@override String get erreurTitre => 'The replies could not be loaded.';
+	@override String get champ => 'Your reply';
+	@override String get aide => 'Write a reply';
+	@override String get envoyer => 'Send the reply';
+	@override String get champVide => 'Write a reply to send it.';
+	@override String get enCours => 'Sending';
+	@override String get nonConfirmee => 'This reply is not confirmed yet: it may not have reached Rewayah. Send it again in a moment.';
+	@override String get refusee => 'Refused by the Community policy';
+	@override String get reessayer => 'Send the reply again';
+	@override String get indisponible => 'Replies are not available here yet.';
+	@override String menu({required Object nom}) => 'Actions on ${nom}\'s reply';
+	@override String get signaler => 'Report the reply';
+	@override String get signalee => 'You reported this reply.';
+}
+
+// Path: com.communaute.signalement
+class _Traductions$com$communaute$signalement$en extends Traductions$com$communaute$signalement$fr {
+	_Traductions$com$communaute$signalement$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$com$communaute$signalement$politique$en politique = _Traductions$com$communaute$signalement$politique$en._(_root);
+	@override String get motifManquant => 'Choose a reason to send the report.';
+}
+
+// Path: com.communaute.composer
+class _Traductions$com$communaute$composer$en extends Traductions$com$communaute$composer$fr {
+	_Traductions$com$communaute$composer$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get nouvelle => 'New post';
+	@override String get contexte => 'Share a question, a method or a resource useful for teaching.';
+	@override String get categorie => 'Category';
+	@override String get categorieManquante => 'Choose a category to publish.';
+	@override String get champTitre => 'Title';
+	@override String get aideTitre => 'The subject in a few words';
+	@override String get titreManquant => 'Write a title to publish.';
+	@override String get champTexte => 'Text';
+	@override String get aideTexte => 'Your question or your feedback from experience';
+	@override String get texteManquant => 'Write the text of the post to publish.';
+	@override String get pieces => 'Attachments';
+	@override String get pieceRefusee => 'Remove the refused files before publishing.';
+	@override String get choixIndisponible => 'Choosing a file is not available here yet.';
+	@override String get publier => 'Publish';
+	@override String get fermer => 'Close the new post';
+	@override String get confirmee => 'Your post is online.';
+	@override String get erreurEnvoi => 'Your post is not confirmed yet: it may not have reached Rewayah. Try again in a moment.';
+	@override String get indisponible => 'Posting is not available here yet.';
+}
+
+// Path: com.communaute.regles
+class _Traductions$com$communaute$regles$en extends Traductions$com$communaute$regles$fr {
+	_Traductions$com$communaute$regles$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get panneau => 'Help and rules';
+	@override String get aProposTitre => 'About this space';
+	@override String get aPropos => 'A space for mutual help between teachers to ask questions and share teaching methods and resources.';
+	@override String get titre => 'Teaching sharing only';
+	@override String get corps => 'This community is reserved for professional exchanges between teachers.';
+	@override String get reglesTitre => 'Posting rules';
+	@override String get pasPublicite => 'No advertising';
+	@override String get pasAffilie => 'No affiliate links';
+	@override String get pasVente => 'No sale of products or services';
+	@override String get pasSollicitation => 'No commercial solicitation';
+	@override String get pasDonnees => 'No personal data of a student or a family';
+	@override String get signaler => 'Inappropriate content is reported from the post\'s menu.';
+	@override String get voir => 'See the rules';
+}
+
+// Path: com.communaute.entree
+class _Traductions$com$communaute$entree$en extends Traductions$com$communaute$entree$fr {
+	_Traductions$com$communaute$entree$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get lecteur => 'Open the Teachers community';
+	@override String get detail => 'Questions, methods and resources between teachers';
+}
+
+// Path: com.communaute.demo
+class _Traductions$com$communaute$demo$en extends Traductions$com$communaute$demo$fr {
+	_Traductions$com$communaute$demo$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get avertissement => 'Post to review: advertising';
+	@override String get lienAffilie => 'Affiliate link blocked';
+	@override String get vente => 'Sale blocked';
+	@override String get signalementNonConfirme => 'Report not confirmed';
+	@override String get choisir => 'Choose a situation to try, seen by a teacher.';
+	@override String get aujourdhui => 'Today, with the shortcut';
+	@override String get nominal => 'Six posts';
+	@override String get publication => 'One post open';
+	@override String get vide => 'No post';
+	@override String get lectureEchouee => 'Read failed';
+	@override String get indisponible => 'Service not available yet';
+	@override String get horsLigne => 'Offline';
+	@override String get envoiNonConfirme => 'Sending not confirmed';
+	@override String get moderationIndisponible => 'Moderation unavailable';
+	@override String get lecteurSeul => 'Read-only, no posting';
+	@override late final _Traductions$com$communaute$demo$f$en f = _Traductions$com$communaute$demo$f$en._(_root);
+}
+
+// Path: com.studio.focus
+class _Traductions$com$studio$focus$en extends Traductions$com$studio$focus$fr {
+	_Traductions$com$studio$focus$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get entrer => _root.com.socle.lexique.modeFocus;
+	@override String get quitter => _root.com.socle.lexique.quitterFocus;
+	@override String get actif => 'Focus on';
+	@override String get actifAvecEchap => 'Focus on. Esc to exit.';
+	@override String get aide => 'Hide the secondary panels to concentrate on this discussion.';
+}
+
+// Path: com.studio.aujourdhui
+class _Traductions$com$studio$aujourdhui$en extends Traductions$com$studio$aujourdhui$fr {
+	_Traductions$com$studio$aujourdhui$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => _root.com.socle.lexique.aujourdhui;
+	@override String get sousTitre => 'What deserves your attention in The Studio';
+	@override late final _Traductions$com$studio$aujourdhui$indicateurs$en indicateurs = _Traductions$com$studio$aujourdhui$indicateurs$en._(_root);
+	@override late final _Traductions$com$studio$aujourdhui$blocs$en blocs = _Traductions$com$studio$aujourdhui$blocs$en._(_root);
+	@override late final _Traductions$com$studio$aujourdhui$videsBlocs$en videsBlocs = _Traductions$com$studio$aujourdhui$videsBlocs$en._(_root);
+	@override String get videTitre => 'Nothing to handle for now';
+	@override String dansCanal({required Object nom}) => 'In ${nom}';
+	@override String echeance({required Object date}) => 'Due on ${date}';
+	@override String seTraiteDans({required Object module}) => 'Handled in ${module}';
+	@override String ouvrirDans({required Object module, required Object libelle}) => 'Open in ${module}: ${libelle}';
+	@override late final _Traductions$com$studio$aujourdhui$modules$en modules = _Traductions$com$studio$aujourdhui$modules$en._(_root);
+	@override late final _Traductions$com$studio$aujourdhui$acces$en acces = _Traductions$com$studio$aujourdhui$acces$en._(_root);
+}
+
+// Path: com.studio.brouillons
+class _Traductions$com$studio$brouillons$en extends Traductions$com$studio$brouillons$fr {
+	_Traductions$com$studio$brouillons$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Drafts';
+	@override String get detail => 'Messages started in a channel and not yet sent. They stay on this device for the session, without syncing.';
+	@override String dansCanal({required Object nom}) => 'Draft in ${nom}';
+	@override String get canalInconnu => 'Draft in a channel';
+	@override String get canalIndisponible => 'Draft in a channel that is no longer available';
+	@override String modifie({required Object moment}) => 'Edited ${moment}';
+	@override String reprendre({required Object nom}) => 'Resume the draft in ${nom}';
+	@override String get videTitre => 'No draft';
+	@override String get vide => 'A message started in a channel and not yet sent will appear here.';
+	@override String tous({required Object nombre}) => 'See all drafts (${nombre})';
+	@override String get restaure => 'Draft restored. You can pick up your message.';
+}
+
+// Path: com.studio.navigation
+class _Traductions$com$studio$navigation$en extends Traductions$com$studio$navigation$fr {
+	_Traductions$com$studio$navigation$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get aujourdhui => _root.com.socle.lexique.aujourdhui;
+	@override String get brouillons => 'Drafts';
+	@override String get canaux => 'Channels';
+	@override String get enregistres => 'Saved items';
+}
+
+// Path: com.studio.sections
+class _Traductions$com$studio$sections$en extends Traductions$com$studio$sections$fr {
+	_Traductions$com$studio$sections$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get organisation => 'Organization';
+	@override String get admissionsFamilles => 'Admissions & families';
+	@override String get pedagogieQualite => 'Teaching & quality';
+	@override String get planningRemplacements => 'Planning & replacements';
+	@override String get finance => 'Finance';
+	@override String get support => 'Support';
+	@override String get produitTechnique => 'Product & technical';
+	@override String get direction => 'Management';
+}
+
+// Path: com.studio.visibilite
+class _Traductions$com$studio$visibilite$en extends Traductions$com$studio$visibilite$fr {
+	_Traductions$com$studio$visibilite$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get restreint => 'Restricted';
+	@override String get prive => 'Private';
+	@override String get visibleDetail => 'Open to the whole team.';
+	@override String get restreintDetail => 'Open to part of the team, which you belong to.';
+	@override String get priveDetail => 'Private channel, open to its members only. You belong to it.';
+}
+
+// Path: com.studio.canal
+class _Traductions$com$studio$canal$en extends Traductions$com$studio$canal$fr {
+	_Traductions$com$studio$canal$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get membresUn => '1 member';
+	@override String membres({required Object nombre}) => '${nombre} members';
+	@override String aide({required Object nom}) => 'Write in ${nom}';
+	@override String get lectureSeule => 'You can read this channel. Writing is not open to you here.';
+	@override String get aucunMessageTitre => 'No message yet';
+	@override String get aucunMessage => 'Messages in this channel will appear here as soon as they are posted.';
+	@override String get indisponibleTitre => 'Channel unavailable';
+	@override String get indisponible => 'This channel is not available to you. Choose another channel from the list.';
+}
+
+// Path: com.studio.panneau
+class _Traductions$com$studio$panneau$en extends Traductions$com$studio$panneau$fr {
+	_Traductions$com$studio$panneau$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'About the channel';
+	@override String get aPropos => 'About';
+	@override String get section => 'Section';
+	@override String get visibilite => 'Visibility';
+	@override String get epingles => _root.com.socle.lexique.elementsEpingles;
+	@override String get fichiers => 'Recent files';
+	@override String get liens => 'Useful links';
+	@override String get vous => 'You';
+	@override String get parametres => 'Channel settings';
+	@override String get parametresDetail => 'Changing the settings will arrive with the Studio service.';
+	@override String ouvrir({required Object titre}) => 'Open ${titre}';
+	@override String lienExterne({required Object hote}) => 'External site: ${hote}';
+	@override String get aucunPartageTitre => 'Nothing shared yet';
+	@override String get aucunPartage => 'The pinned items, files and links of this channel will appear here.';
+}
+
+// Path: com.studio.enregistrer
+class _Traductions$com$studio$enregistrer$en extends Traductions$com$studio$enregistrer$fr {
+	_Traductions$com$studio$enregistrer$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get enregistrer => _root.com.socle.lexique.enregistrer;
+	@override String get retirer => 'Remove';
+	@override String semantiqueEnregistrer({required Object titre}) => 'Save ${titre}';
+	@override String semantiqueRetirer({required Object titre}) => 'Remove ${titre} from saved items';
+	@override String ajoute({required Object titre}) => 'Added to saved items: ${titre}.';
+	@override String retire({required Object titre}) => 'Removed from saved items: ${titre}.';
+	@override String get nonConfirme => 'Saving has not been confirmed yet. Try again in a moment.';
+}
+
+// Path: com.studio.enregistres
+class _Traductions$com$studio$enregistres$en extends Traductions$com$studio$enregistres$fr {
+	_Traductions$com$studio$enregistres$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get detail => 'The channels and items you keep at hand. Each opens in its original place.';
+	@override String get videTitre => 'No saved item';
+	@override String get vide => 'Tap Save in a channel\'s panel to find a channel or an item here.';
+	@override String ouvrir({required Object titre}) => 'Open ${titre}';
+	@override String sansDestination({required Object type}) => '${type}, no longer opens from here';
+	@override late final _Traductions$com$studio$enregistres$types$en types = _Traductions$com$studio$enregistres$types$en._(_root);
+}
+
+// Path: com.studio.recherche
+class _Traductions$com$studio$recherche$en extends Traductions$com$studio$recherche$fr {
+	_Traductions$com$studio$recherche$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get champ => 'Search The Studio';
+	@override String get aide => 'Channel, message or file';
+	@override String get aucunTitre => 'No result';
+	@override String aucun({required Object texte}) => 'Nothing matches "${texte}" in your channels. Try another word.';
+	@override String get aucunDansFiltre => 'Nothing of this type matches. Choose All to see the other results.';
+	@override String get resultatUn => '1 result';
+	@override String resultats({required Object nombre}) => '${nombre} results';
+	@override String get filtre => 'Result type';
+	@override String get tout => 'All';
+	@override String get canaux => 'Channels';
+	@override String get messages => 'Messages';
+	@override String get fichiers => 'Files';
+	@override String dansCanal({required Object canal}) => 'In ${canal}';
+	@override String messageDe({required Object auteur, required Object canal}) => '${auteur}, in ${canal}';
+}
+
+// Path: com.studio.demo
+class _Traductions$com$studio$demo$en extends Traductions$com$studio$demo$fr {
+	_Traductions$com$studio$demo$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get focus => 'A channel in focus mode';
+	@override String get aujourdhuiVide => 'Today with no activity';
+	@override String horsDemo({required Object module}) => 'In the app, this line opens ${module}. The demo stays on this page.';
+	@override String get choisir => 'Choose a situation to try.';
+	@override String get normale => 'The Studio and its channels';
+	@override String get echec => 'Sending not confirmed';
+	@override String get horsLigne => 'Offline';
+	@override String get canalPrive => 'Address of a private channel not open to you';
+	@override String get sansCanaux => 'No open channel';
+	@override String vue({required Object situation}) => 'Situation: ${situation}';
+	@override late final _Traductions$com$studio$demo$f$en f = _Traductions$com$studio$demo$f$en._(_root);
+}
+
+// Path: com.annonces.publieur
+class _Traductions$com$annonces$publieur$en extends Traductions$com$annonces$publieur$fr {
+	_Traductions$com$annonces$publieur$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'New announcement';
+	@override late final _Traductions$com$annonces$publieur$etapes$en etapes = _Traductions$com$annonces$publieur$etapes$en._(_root);
+	@override late final _Traductions$com$annonces$publieur$contexte$en contexte = _Traductions$com$annonces$publieur$contexte$en._(_root);
+	@override String get champTitre => 'Announcement title';
+	@override String get champTexte => 'Announcement text';
+	@override late final _Traductions$com$annonces$publieur$nature$en nature = _Traductions$com$annonces$publieur$nature$en._(_root);
+	@override late final _Traductions$com$annonces$publieur$quand$en quand = _Traductions$com$annonces$publieur$quand$en._(_root);
+	@override late final _Traductions$com$annonces$publieur$apercu$en apercu = _Traductions$com$annonces$publieur$apercu$en._(_root);
+	@override String get continuer => 'Continue';
+	@override String get publier => 'Publish the announcement';
+	@override String get programmer => 'Schedule the announcement';
+	@override String get reessayer => 'Try the publication again';
+	@override String get terminer => 'Finish';
+	@override String get manqueContenu => 'Write a title and a text to continue.';
+	@override String get manqueAudience => 'Choose the recipients to continue.';
+	@override String get enCours => 'Publishing in progress. Wait for confirmation.';
+	@override String get publiee => 'Announcement published. The recipients receive it.';
+	@override String planifiee({required Object date, required Object heure}) => 'Announcement scheduled for ${date} at ${heure}.';
+	@override String get nonConfirmee => 'This announcement is not confirmed yet: it may not have reached Rewayah. Try again: it will go out only once.';
+	@override String get horsLigne => 'This announcement is not confirmed yet. Try again as soon as sending is possible again.';
+	@override String get indisponible => 'Publishing announcements is not available yet. Come back later.';
+	@override String get aucuneCibleTitre => 'No recipient open';
+	@override String get aucuneCible => 'You cannot publish for any recipient for now. Ask the management for access.';
+	@override String get classeRefuseeTitre => 'Publishing reserved';
+	@override String get classeRefusee => 'You cannot publish an announcement for this class. Ask the management for access.';
+}
+
+// Path: com.annonces.administration
+class _Traductions$com$annonces$administration$en extends Traductions$com$annonces$administration$fr {
+	_Traductions$com$annonces$administration$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get nouvelle => 'New announcement';
+	@override String get demo => 'Demo';
+	@override String get demoDetail => 'Demo data: no real figures.';
+	@override String get horsLigne => 'You are offline. Announcements cannot be refreshed.';
+	@override late final _Traductions$com$annonces$administration$indicateurs$en indicateurs = _Traductions$com$annonces$administration$indicateurs$en._(_root);
+	@override late final _Traductions$com$annonces$administration$publiees$en publiees = _Traductions$com$annonces$administration$publiees$en._(_root);
+	@override late final _Traductions$com$annonces$administration$planifiees$en planifiees = _Traductions$com$annonces$administration$planifiees$en._(_root);
+	@override late final _Traductions$com$annonces$administration$matrice$en matrice = _Traductions$com$annonces$administration$matrice$en._(_root);
+	@override late final _Traductions$com$annonces$administration$moderation$en moderation = _Traductions$com$annonces$administration$moderation$en._(_root);
+}
+
+// Path: com.annonces.demoPublication
+class _Traductions$com$annonces$demoPublication$en extends Traductions$com$annonces$demoPublication$fr {
+	_Traductions$com$annonces$demoPublication$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get lienAdministration => 'Communications administration (management)';
+	@override String get lienPublier => 'Publish an announcement for a class (teacher)';
+	@override String get toutes => 'The whole academy';
+	@override String get familles => 'Families';
+	@override String get enseignants => 'Teachers';
+	@override String get eleves => 'Students';
+	@override String get controleurs => 'Reviewers';
+	@override String get direction => 'Management';
+	@override String get audiencesDirection => 'The whole academy, an audience or a class';
+	@override String get audiencesEnseignant => 'Its class only';
+	@override String get vacancesTitre => 'Winter holiday calendar';
+	@override String get vacancesTexte => 'Classes stop from 21 December to 5 January. Sessions resume on Monday 6 January at the usual times.';
+	@override String get reunionTitre => 'Thursday teachers\' meeting';
+	@override String get reunionTexte => 'Thursday\'s teaching meeting starts at 6 pm, by video. The agenda is in The Studio.';
+	@override String get recitationTitre => 'End-of-term recitation';
+	@override String get recitationTexte => 'The An-Nour class will present its end-of-term recitation on Saturday at 10 am, by video.';
+	@override String get rentreeTitre => 'Classes resume after the holidays';
+	@override String get rentreeTexte => 'Sessions resume on Monday 6 January at the usual times.';
+	@override String get signalementAffilie => 'Post "Printable tajwid sheets"';
+	@override String get extraitAffilie => 'Find my sheets with this partner link, 20% off with my code.';
+	@override String get signalementVente => 'Post "Private lessons available"';
+	@override String get extraitVente => 'I offer paid private lessons at the weekend, write to me.';
+	@override String get signalementHorsSujet => 'Reply under "Organizing a group revision"';
+}
+
+// Path: com.annonces.demo
+class _Traductions$com$annonces$demo$en extends Traductions$com$annonces$demo$fr {
+	_Traductions$com$annonces$demo$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get detail => 'Demo outside production: fictional data, nothing is sent.';
+	@override String get choisirRole => 'Choose the role to show';
+	@override late final _Traductions$com$annonces$demo$roles$en roles = _Traductions$com$annonces$demo$roles$en._(_root);
+	@override String get classeNour => 'An-Nour class';
+	@override String get classeFajr => 'Al-Fajr class';
+	@override String get enseignante => 'Class teacher';
+	@override late final _Traductions$com$annonces$demo$f$en f = _Traductions$com$annonces$demo$f$en._(_root);
+}
+
 // Path: recherche.etats.vide
 class _Traductions$recherche$etats$vide$en extends Traductions$recherche$etats$vide$fr {
 	_Traductions$recherche$etats$vide$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -15561,6 +16606,678 @@ class _Traductions$adulte$recharge$source$motifs$en extends Traductions$adulte$r
 	@override String get sessionExpiree => 'The payment page expired before payment. Nothing was charged.';
 }
 
+// Path: com.socle.composants.lecture
+class _Traductions$com$socle$composants$lecture$en extends Traductions$com$socle$composants$lecture$fr {
+	_Traductions$com$socle$composants$lecture$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String pieceJointe({required Object nom}) => 'Attachment: ${nom}';
+	@override String vocal({required Object duree}) => 'Voice message of ${duree}';
+	@override String get vocalSansDuree => 'Voice message';
+	@override String horodatage({required Object date, required Object heure}) => '${date}, ${heure}';
+}
+
+// Path: com.socle.composants.badge
+class _Traductions$com$socle$composants$badge$en extends Traductions$com$socle$composants$badge$fr {
+	_Traductions$com$socle$composants$badge$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get nonLuUn => '1 unread';
+	@override String nonLus({required Object nombre}) => '${nombre} unread';
+	@override String nonLusSemantique({required Object nombre}) => '${nombre} unread items';
+	@override String get nonLuUnSemantique => '1 unread item';
+	@override String get information => 'Information';
+	@override String get aLire => 'To read';
+	@override String get actionRequise => _root.com.socle.lexique.actionRequise;
+	@override String get urgent => 'Urgent';
+	@override String get mention => 'Mention';
+	@override String get mentionSemantique => 'A mention concerns you';
+}
+
+// Path: com.socle.composants.pieceJointe
+class _Traductions$com$socle$composants$pieceJointe$en extends Traductions$com$socle$composants$pieceJointe$fr {
+	_Traductions$com$socle$composants$pieceJointe$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get joindre => 'Attach a file';
+	@override String get joindreIndisponible => 'Adding files is not available here yet.';
+	@override String get ouvrir => 'Open';
+	@override String ouvrirLecteur({required Object nom}) => 'Open ${nom}';
+	@override String get retirer => 'Remove';
+	@override String retirerLecteur({required Object nom}) => 'Remove ${nom}';
+	@override String tailleOctets({required Object taille}) => '${taille} bytes';
+	@override String tailleKo({required Object taille}) => '${taille} KB';
+	@override String tailleMo({required Object taille}) => '${taille} MB';
+	@override String get autorisee => 'Ready to send';
+	@override String get tropVolumineuse => 'File too large';
+	@override String get tropVolumineuseDetail => 'This file exceeds the allowed size. Choose a lighter file.';
+	@override String get typeInterdit => 'File type refused';
+	@override String get typeInterditDetail => 'This file type is not accepted here. Choose another format.';
+	@override String get enCours => 'Sending';
+	@override String get envoyee => 'Sent';
+	@override String get echec => 'Not confirmed';
+	@override String get erreurEnvoi => 'The sending of this file has not been confirmed yet. Try again in a moment.';
+	@override String get indisponible => 'Attachment unavailable';
+	@override String get indisponibleDetail => 'This file is no longer available. Ask the person who shared it to send it again.';
+}
+
+// Path: com.socle.composants.composer
+class _Traductions$com$socle$composants$composer$en extends Traductions$com$socle$composants$composer$fr {
+	_Traductions$com$socle$composants$composer$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get message => 'Message';
+	@override String get aide => 'Write a message';
+	@override String get envoyer => 'Send';
+	@override String get champVide => 'Write a message to send it.';
+	@override String get vocal => 'Voice message';
+	@override String get vocalAVenir => 'Voice message coming soon';
+	@override String get enCours => 'Sending';
+	@override String get envoye => 'Sent';
+	@override String get nonConfirme => 'This message has not been confirmed yet.';
+	@override String get reessayer => 'Try again';
+	@override String get auteurSoi => 'You';
+	@override String annonce({required Object auteur, required Object texte}) => 'New message from ${auteur}: ${texte}';
+	@override String get brouillon => _root.com.socle.lexique.brouillon;
+	@override String get brouillonRestaure => 'Draft restored';
+	@override String get enregistrerVocal => _root.com.vocal.composer.enregistrer;
+	@override String get aucunMessageTitre => 'No message yet';
+	@override String get aucunMessage => 'Write the first message of this conversation: it will appear here.';
+}
+
+// Path: com.socle.composants.etats
+class _Traductions$com$socle$composants$etats$en extends Traductions$com$socle$composants$etats$fr {
+	_Traductions$com$socle$composants$etats$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get chargement => 'Loading';
+	@override String get videTitre => 'Nothing here yet';
+	@override String get erreurTitre => 'This content could not be loaded.';
+	@override String get erreur => 'The request may not have reached Rewayah. Try again in a moment.';
+	@override String get reessayer => 'Try again';
+	@override String get horsLigne => 'You are offline. New messages cannot be refreshed.';
+	@override String get horsLigneBloc => 'Try again when the connection returns.';
+	@override String get indisponibleTitre => 'Not available yet';
+	@override String get indisponible => 'This feature is not available here yet. It will open as soon as the service is ready.';
+	@override String get permissionRefusee => 'You do not have access to this content.';
+}
+
+// Path: com.socle.composants.espace
+class _Traductions$com$socle$composants$espace$en extends Traductions$com$socle$composants$espace$fr {
+	_Traductions$com$socle$composants$espace$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get ouvrirPanneau => 'Open the context panel';
+	@override String get fermerPanneau => 'Close the context panel';
+	@override String get panneauContexte => 'Context';
+	@override String get retourListe => 'Back to the list';
+}
+
+// Path: com.socle.navigation.provisoire
+class _Traductions$com$socle$navigation$provisoire$en extends Traductions$com$socle$navigation$provisoire$fr {
+	_Traductions$com$socle$navigation$provisoire$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get messagesTitre => _root.com.socle.lexique.messages;
+	@override String get messagesDetail => 'Messages tied to your classes will arrive soon in this space.';
+	@override String get communauteTitre => _root.com.socle.lexique.communaute;
+	@override String get communauteDetail => 'The space for exchange between teachers will arrive here soon.';
+	@override String get studioTitre => _root.com.socle.lexique.studio;
+	@override String get studioDetail => 'The team\'s workspace will arrive here soon.';
+	@override String get administrationTitre => 'Communications administration';
+	@override String get administrationDetail => 'Announcements, moderation and messages will be managed here soon.';
+	@override String get publierAnnonceTitre => 'Publish an announcement';
+	@override String get publierAnnonceDetail => 'Publishing an announcement for a class will arrive here soon.';
+}
+
+// Path: com.socle.navigation.demo
+class _Traductions$com$socle$navigation$demo$en extends Traductions$com$socle$navigation$demo$fr {
+	_Traductions$com$socle$navigation$demo$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Communications demo';
+	@override String get detail => 'Fictional data, absent from production versions.';
+	@override String get choisir => 'Choose a space to try.';
+}
+
+// Path: com.messages.demo.roles
+class _Traductions$com$messages$demo$roles$en extends Traductions$com$messages$demo$roles$fr {
+	_Traductions$com$messages$demo$roles$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get tuteur => 'Family';
+	@override String get enseignant => 'Teacher';
+	@override String get adulte => 'Adult student';
+	@override String get admin => 'Management';
+	@override String get controleur => 'Reviewer';
+}
+
+// Path: com.messages.demo.f
+class _Traductions$com$messages$demo$f$en extends Traductions$com$messages$demo$f$fr {
+	_Traductions$com$messages$demo$f$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get ahmed => 'Ahmed';
+	@override String get parentAdam => 'Adam\'s parent';
+	@override String get enseignanteNour => 'Teacher of the An-Nour class';
+	@override String get fatima => 'Fatima';
+	@override String get parentYasmine => 'Yasmine\'s parent';
+	@override String get karim => 'Karim';
+	@override String get parentYusuf => 'Yusuf\'s parent';
+	@override String get administration => 'Administration';
+	@override String get directionRewayah => 'Rewayah management';
+	@override String get rachid => 'Mr Rachid';
+	@override String get controleurPedagogique => 'Teaching reviewer';
+	@override String get youssef => 'Youssef';
+	@override String get enseignantFajr => 'Teacher of the Al-Fajr class';
+	@override String get khadija => 'Khadija';
+	@override String get eleveFajr => 'Student of the Al-Fajr class';
+	@override String get adam => 'Adam';
+	@override String get yasmine => 'Yasmine';
+	@override String get yusuf => 'Yusuf';
+	@override String get dossierAdam => 'Adam\'s registration file';
+	@override String get missionNour => 'Review visit, An-Nour class';
+	@override String get pieceDevoir => 'Homework_week_3.pdf';
+	@override String get pieceAttestation => 'Old_certificate.pdf';
+	@override String get pieceVocal => 'voice.m4a';
+	@override String get typeAudio => 'Audio';
+	@override String get adamQuestion => 'Hello, I wanted to know how today\'s session went for Adam. Thank you very much.';
+	@override String get adamReponse => 'Hello, the session went very well. Adam was attentive and took part well.';
+	@override String get adamDevoir => 'Here is next week\'s homework.';
+	@override String get dossierManque => 'Adam\'s level certificate is missing to finalize his registration. Can you place it in his file?';
+	@override String get missionRetard => 'The session started eight minutes late. The report has been filed.';
+	@override String get missionSuite => 'Thank you, we are discussing it with the teacher this week.';
+	@override String get yasmineMerci => 'Thank you very much for these explanations.';
+	@override String get affectation => 'Your An-Nour class moves to Tuesday at 6 pm from next month. Please confirm.';
+	@override String get khadijaRevision => 'Remember to revise surah Al-Mulk for Thursday.';
+}
+
+// Path: com.communaute.garde.reponse
+class _Traductions$com$communaute$garde$reponse$en extends Traductions$com$communaute$garde$reponse$fr {
+	_Traductions$com$communaute$garde$reponse$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get avertissement => 'This reply seems to contain a commercial promotion. Remove the link, code or offer before sending it.';
+	@override String get liensTitre => 'Reply links';
+	@override String get consigneBlocage => 'Edit the reply, then send it again.';
+}
+
+// Path: com.communaute.signalement.politique
+class _Traductions$com$communaute$signalement$politique$en extends Traductions$com$communaute$signalement$politique$fr {
+	_Traductions$com$communaute$signalement$politique$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get publicite => 'Advertising is not allowed in the Teachers community.';
+	@override String get sollicitation => 'Commercial solicitation is not allowed in this space.';
+}
+
+// Path: com.communaute.demo.f
+class _Traductions$com$communaute$demo$f$en extends Traductions$com$communaute$demo$f$fr {
+	_Traductions$com$communaute$demo$f$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get categoriePedagogie => 'Teaching';
+	@override String get categorieRessources => 'Resources';
+	@override String get categorieGestion => 'Management';
+	@override String get fonctionSoi => 'Teacher, Al-Fatiha class';
+	@override String get prenomSoi => 'Ibrahim';
+	@override String get samira => 'Samira Belkacem';
+	@override String get fonctionSamira => 'Teacher, An-Nour class';
+	@override String get nour => 'Nour El Idrissi';
+	@override String get fonctionNour => 'Teacher, Al-Fajr class';
+	@override String get yasmine => 'Yasmine Haddad';
+	@override String get fonctionYasmine => 'Teacher, Al-Badr class';
+	@override String get youssef => 'Youssef Amrani';
+	@override String get fonctionYoussef => 'Teacher, Al-Kawthar class';
+	@override String get mariam => 'Mariam Benali';
+	@override String get fonctionMariam => 'Teacher, An-Nas class';
+	@override String get hamza => 'Hamza Ouali';
+	@override String get fonctionHamza => 'Teacher, Al-Ikhlas class';
+	@override String get memorisationTitre => 'Ideas for memorization?';
+	@override String get memorisationTexte => 'What routines or activities work well to help students memorize surahs? I\'m looking for feedback from experience: games, visual aids, repetition in pairs. Thanks for your ideas!';
+	@override String get cartesTitre => 'Feedback on repetition cards';
+	@override String get cartesTexte => 'I have been using repetition cards since the start of the year and they work very well, even with the youngest. I attach the template I fill in before each session.';
+	@override String get cartesFichier => 'Repetition_cards.pdf';
+	@override String get niveauxTitre => 'Handling different levels?';
+	@override String get niveauxTexte => 'How do you handle a class where levels are very different? I fear the most advanced will drop off while I go back over the basics with the others.';
+	@override String get timidesTitre => 'Getting shy students to recite';
+	@override String get timidesTexte => 'A student refuses to recite in front of the others. I offer to let her recite first, when the class is still calm. Do you have other ideas?';
+	@override String get ficheTitre => 'A revision tracking sheet';
+	@override String get ficheTexte => 'Each week I note the surahs revised and the points to go over again. The sheet fits on one page and helps a lot to prepare the next session.';
+	@override String get heureTitre => 'Starting the session on time';
+	@override String get heureTexte => 'The first minutes are often lost to setting up. I now ask students to prepare their page before the hour. What do you think?';
+	@override String get reponseMariam => 'I use repetition in pairs and visual cards a lot. It really motivates the students.';
+	@override String get reponseYoussef => 'Students listen again to the session\'s recitation at home: it helps a lot between two classes.';
+	@override String get reponseSamira => 'Thank you for the template, I will try it this week.';
+	@override String get reponseHamza => 'I sometimes let a student recite one-to-one at the end of the session, then in front of a single classmate.';
+	@override String get affilieTitre => 'My favourite audio player for revision';
+	@override String affilieTexte({required Object lien}) => 'I use this player to have the surahs listened to again. It is discounted this week with my link: ${lien}';
+	@override String get venteTitre => 'I am selling my memorization sheets';
+	@override String get venteTexte => 'Set of 30 laminated sheets, 25 euros, sent by post. Write to me to order.';
+	@override String get publiciteTitre => 'An app for revision';
+	@override String publiciteTexte({required Object lienOffre, required Object lienInterne, required Object lienRessource}) => 'I recommend this revision app, with the code PROF20 for the subscription: ${lienOffre}. For the text, the Library resource (${lienInterne}) and ${lienRessource} are enough.';
+	@override String reponseAffilie({required Object lien}) => 'For revision, I recommend this player, discounted with my link: ${lien}';
+	@override String get fichierChoisi => 'Session_sheet.pdf';
+}
+
+// Path: com.studio.aujourdhui.indicateurs
+class _Traductions$com$studio$aujourdhui$indicateurs$en extends Traductions$com$studio$aujourdhui$indicateurs$fr {
+	_Traductions$com$studio$aujourdhui$indicateurs$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Attention indicators';
+	@override String get aTraiter => _root.com.socle.lexique.aTraiter;
+	@override String get mentions => 'Mentions and replies';
+	@override String get decisions => 'Decisions pending';
+	@override String get nonLus => 'Unread';
+}
+
+// Path: com.studio.aujourdhui.blocs
+class _Traductions$com$studio$aujourdhui$blocs$en extends Traductions$com$studio$aujourdhui$blocs$fr {
+	_Traductions$com$studio$aujourdhui$blocs$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get aTraiter => 'To handle today';
+	@override String get mentions => 'Mentions and replies';
+	@override String get decisions => 'Decisions pending';
+	@override String get echeances => 'Upcoming deadlines';
+	@override String get activite => 'Recent activity';
+	@override String get brouillons => 'Drafts';
+	@override String get acces => 'Quick access';
+}
+
+// Path: com.studio.aujourdhui.videsBlocs
+class _Traductions$com$studio$aujourdhui$videsBlocs$en extends Traductions$com$studio$aujourdhui$videsBlocs$fr {
+	_Traductions$com$studio$aujourdhui$videsBlocs$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get aTraiter => 'Nothing to handle today.';
+	@override String get mentions => 'No mention or reply pending.';
+	@override String get decisions => 'No decision pending.';
+	@override String get echeances => 'No upcoming deadline.';
+	@override String get activite => 'No recent activity.';
+}
+
+// Path: com.studio.aujourdhui.modules
+class _Traductions$com$studio$aujourdhui$modules$en extends Traductions$com$studio$aujourdhui$modules$fr {
+	_Traductions$com$studio$aujourdhui$modules$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get studio => _root.com.socle.lexique.studio;
+	@override String get finance => 'Finance';
+	@override String get planning => 'Planning';
+	@override String get dossiers => 'Files';
+	@override String get classes => 'Classes';
+	@override String get admissions => 'Admissions';
+	@override String get demandes => 'Requests';
+	@override String get communications => 'Communications administration';
+}
+
+// Path: com.studio.aujourdhui.acces
+class _Traductions$com$studio$aujourdhui$acces$en extends Traductions$com$studio$aujourdhui$acces$fr {
+	_Traductions$com$studio$aujourdhui$acces$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get messages => _root.com.socle.lexique.messagesMetier;
+	@override String get messagesDetail => 'Conversations with families, teachers and reviewers';
+	@override String get annonces => 'Announcements';
+	@override String get annoncesDetail => 'Publish and follow announcements';
+	@override String get dossiers => 'Files to validate';
+	@override String get dossiersDetail => 'Files ready for a decision';
+	@override String get classes => 'Classes';
+	@override String get classesDetail => 'Classes, their schedules and their teachers';
+	@override String get demandes => 'Requests to decide';
+	@override String get demandesDetail => 'Change requests pending';
+}
+
+// Path: com.studio.enregistres.types
+class _Traductions$com$studio$enregistres$types$en extends Traductions$com$studio$enregistres$types$fr {
+	_Traductions$com$studio$enregistres$types$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get canal => 'Channel';
+	@override String get publication => 'Post';
+	@override String get message => 'Message';
+	@override String get element => 'Studio item';
+}
+
+// Path: com.studio.demo.f
+class _Traductions$com$studio$demo$f$en extends Traductions$com$studio$demo$f$fr {
+	_Traductions$com$studio$demo$f$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get nadia => 'Nadia';
+	@override String get fonctionDirection => 'Management';
+	@override String get mariam => 'Mariam';
+	@override String get fonctionCoordination => 'General coordination';
+	@override String get youssef => 'Youssef';
+	@override String get fonctionProduit => 'Product and technical';
+	@override String get amina => 'Amina';
+	@override String get fonctionPedagogie => 'Teaching';
+	@override String get samira => 'Samira';
+	@override String get fonctionAdmissions => 'Admissions';
+	@override String get ibrahim => 'Ibrahim';
+	@override String get fonctionPlanning => 'Planning';
+	@override String get pieceAudio => 'Audio';
+	@override String get fichierPlanning => 'Planning_Q3.pdf';
+	@override String get fichierModeration => 'Moderation_guide.pdf';
+	@override String get fichierVocal => 'voice-youssef.m4a';
+	@override String get fichierCompteRendu => 'Visit_report.pdf';
+	@override String get fichierBudget => 'Confidential_budget.pdf';
+	@override String get canalOrganisation => 'General organization';
+	@override String get canalOrganisationDetail => 'Coordination of the whole team';
+	@override String get canalAdmissions => 'Admissions';
+	@override String get canalAdmissionsDetail => 'Follow-up of registration requests';
+	@override String get canalQualite => 'Quality follow-up';
+	@override String get canalQualiteDetail => 'Feedback from review visits';
+	@override String get canalRemplacements => 'Replacements';
+	@override String get canalRemplacementsDetail => 'Absences and replacements of the week';
+	@override String get canalCloture => 'Month-end closing';
+	@override String get canalClotureDetail => 'Preparation of the monthly closing';
+	@override String get canalDirection => 'Strategic management';
+	@override String get canalDirectionDetail => 'Management directions';
+	@override String get messagePlanning => 'Hello to the whole team. Here is next quarter\'s planning, tell me if anything is wrong.';
+	@override String get messageSupports => 'I\'m updating the level 2 materials and we\'ll review them tomorrow.';
+	@override String get messageMerci => 'Thank you all for the week.';
+	@override String get messageDossiers => 'Three files are waiting for a decision before Friday. Nadia, can you look at the Karim family\'s file?';
+	@override String get messageCompteRendu => 'The month\'s visit report is ready.';
+	@override String get messageRemplacement => 'On Tuesday, the An-Nour class is covered by a replacement. The planning is up to date.';
+	@override String get messageJustificatifs => 'The September supporting documents are gathered.';
+	@override String get messageBudget => 'Confidential budget for the quarter.';
+	@override String get activiteBudget => 'Confidential budget for the quarter';
+	@override String get partagePlanning => 'Planning for the quarter';
+	@override String get partageModeration => 'Moderation guide';
+	@override String epinglePar({required Object nom}) => 'Pinned by ${nom}';
+	@override String partagePar({required Object nom}) => 'Shared by ${nom}';
+	@override String get lienRemplacements => 'Replacements of the week';
+	@override String get lienCharte => 'Team charter';
+	@override String get brouillon => 'Samira, I\'ll look at the Karim family\'s file tonight and tell you tomorrow morning';
+	@override String get activitePaiement => 'September payment not confirmed for the Haddad family';
+	@override String get objetEcheancier => 'Haddad family payment schedule';
+	@override String get activiteDossierKarim => 'Karim family file ready for a decision';
+	@override String get objetDossierKarim => 'Karim family file';
+	@override String get activiteMention => 'Samira mentioned you';
+	@override String get activiteReponse => 'Amina replied to your message';
+	@override String get activiteRemplacant => 'Choose Tuesday\'s replacement for the An-Nour class';
+	@override String get objetRemplacement => 'Tuesday\'s replacement';
+	@override String get activiteOuverture => 'Approve the opening of a Saturday morning class';
+	@override String get objetClasseSamedi => 'Saturday morning class';
+	@override String get activiteCloture => 'September month-end closing';
+	@override String get objetCloture => 'September closing';
+	@override String get activiteBilans => 'Mid-term assessments to review';
+	@override String get objetBilans => 'Mid-term assessments';
+	@override String get activiteMessages => '2 new messages';
+	@override String get activiteAnnonce => 'Announcement published: the academy closes on 1 November';
+	@override String get objetFermeture => 'Closure on 1 November';
+	@override String activiteFichier({required Object nom, required Object fichier}) => '${nom} shared ${fichier}';
+	@override String get activiteInscription => 'New registration request received';
+	@override String get objetDossierBenali => 'Benali family file';
+}
+
+// Path: com.annonces.publieur.etapes
+class _Traductions$com$annonces$publieur$etapes$en extends Traductions$com$annonces$publieur$etapes$fr {
+	_Traductions$com$annonces$publieur$etapes$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get contenu => 'Announcement content';
+	@override String get audience => 'Announcement recipients';
+	@override String get programmation => 'Publication date';
+	@override String get previsualisation => 'Announcement preview';
+	@override String get publication => 'Announcement publication';
+}
+
+// Path: com.annonces.publieur.contexte
+class _Traductions$com$annonces$publieur$contexte$en extends Traductions$com$annonces$publieur$contexte$fr {
+	_Traductions$com$annonces$publieur$contexte$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get contenu => 'Write what the recipients need to know. An announcement goes one way only: no one replies to it.';
+	@override String get audience => 'Choose who receives the announcement. Only the recipients you can reach are offered.';
+	@override String audienceFixee({required Object cible}) => 'This announcement goes to ${cible}. You publish only for your class.';
+	@override String get programmation => 'Choose when the announcement goes out. A scheduled announcement waits for its date.';
+	@override String get previsualisation => 'Here is the announcement as the recipients will read it.';
+	@override String get publication => 'Review the recipients and the date, then publish. Nothing is published before confirmation.';
+}
+
+// Path: com.annonces.publieur.nature
+class _Traductions$com$annonces$publieur$nature$en extends Traductions$com$annonces$publieur$nature$fr {
+	_Traductions$com$annonces$publieur$nature$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get classe => 'Only the families and students of this class receive it.';
+	@override String get public => 'Everyone in this audience receives it.';
+	@override String get toutes => 'The whole academy receives it. Keep it for what concerns everyone.';
+}
+
+// Path: com.annonces.publieur.quand
+class _Traductions$com$annonces$publieur$quand$en extends Traductions$com$annonces$publieur$quand$fr {
+	_Traductions$com$annonces$publieur$quand$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get maintenant => 'As soon as confirmed';
+	@override String get maintenantDetail => 'The announcement goes out as soon as publication is confirmed.';
+	@override String creneau({required Object date, required Object heure}) => 'On ${date} at ${heure}';
+	@override String get creneauDetail => 'The announcement waits for this date. You will find it in the scheduled announcements.';
+}
+
+// Path: com.annonces.publieur.apercu
+class _Traductions$com$annonces$publieur$apercu$en extends Traductions$com$annonces$publieur$apercu$fr {
+	_Traductions$com$annonces$publieur$apercu$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String a({required Object cible}) => 'To: ${cible}';
+	@override String get diffusionMaintenant => 'Release: as soon as confirmed';
+	@override String diffusionLe({required Object date, required Object heure}) => 'Release scheduled for ${date} at ${heure}';
+}
+
+// Path: com.annonces.administration.indicateurs
+class _Traductions$com$annonces$administration$indicateurs$en extends Traductions$com$annonces$administration$indicateurs$fr {
+	_Traductions$com$annonces$administration$indicateurs$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Communications indicators';
+	@override String get publiees => 'Announcements published';
+	@override String get planifiees => 'Announcements scheduled';
+	@override String get moderation => 'Content in moderation';
+	@override String get regles => 'Publishing rights';
+	@override String indisponible({required Object libelle}) => '${libelle}: not available yet';
+	@override String echec({required Object libelle}) => '${libelle}: not loaded. The request may not have reached Rewayah: reload the page.';
+	@override String reserve({required Object libelle}) => '${libelle}: reserved for the people in charge of moderation';
+}
+
+// Path: com.annonces.administration.publiees
+class _Traductions$com$annonces$administration$publiees$en extends Traductions$com$annonces$administration$publiees$fr {
+	_Traductions$com$annonces$administration$publiees$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Announcements published';
+	@override String get vide => 'No announcement published in the period.';
+	@override String get pastille => 'Published';
+	@override String legende({required Object cible, required Object date, required Object heure}) => '${cible} · on ${date} at ${heure}';
+}
+
+// Path: com.annonces.administration.planifiees
+class _Traductions$com$annonces$administration$planifiees$en extends Traductions$com$annonces$administration$planifiees$fr {
+	_Traductions$com$annonces$administration$planifiees$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Announcements scheduled';
+	@override String get vide => 'No announcement scheduled.';
+	@override String get pastille => 'Scheduled';
+	@override String legende({required Object cible, required Object date, required Object heure}) => '${cible} · planned for ${date} at ${heure}';
+}
+
+// Path: com.annonces.administration.matrice
+class _Traductions$com$annonces$administration$matrice$en extends Traductions$com$annonces$administration$matrice$fr {
+	_Traductions$com$annonces$administration$matrice$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Announcement publishing rights';
+	@override String get detail => 'The academy\'s rule, applied to each publication.';
+	@override String get auteurs => 'Who publishes';
+	@override String get peutPublier => 'Can publish';
+	@override String get audiences => 'Recipients';
+	@override String get validation => 'Validation required';
+	@override String get oui => 'Yes';
+	@override String get non => 'No';
+	@override String get aucune => 'None';
+	@override String get vide => 'No publishing right is configured.';
+}
+
+// Path: com.annonces.administration.moderation
+class _Traductions$com$annonces$administration$moderation$en extends Traductions$com$annonces$administration$moderation$fr {
+	_Traductions$com$annonces$administration$moderation$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Moderation queue';
+	@override String legende({required Object date, required Object heure}) => 'Reported on ${date} at ${heure}';
+	@override String motif({required Object motif}) => 'Reason: ${motif}';
+	@override String get extraitTitre => 'Reported content';
+	@override String get extraitAbsent => 'This content\'s excerpt is not provided.';
+	@override String get regle => 'Rule concerned';
+	@override String get approuver => 'Approve after review';
+	@override String get masquer => 'Hide the content';
+	@override String get restaurer => 'Restore the content';
+	@override String get rejeter => 'Dismiss the report';
+	@override String get contexte => 'Open the context';
+	@override String get masque => 'Hidden';
+	@override String get approuve => 'Approved';
+	@override String get rejete => 'Report dismissed';
+	@override String get restaure => 'Restored';
+	@override String get enregistree => 'Decision saved.';
+	@override String get nonConfirmee => 'This decision is not confirmed yet: it may not have reached Rewayah. Try again in a moment.';
+	@override String get horsLigne => 'You are offline. The moderation queue cannot be refreshed.';
+	@override String get indisponible => 'Moderation is not available yet. Come back later.';
+	@override String get videTitre => 'No content to review';
+	@override String get vide => 'Reports from the Teachers community arrive here.';
+	@override String get refuseTitre => 'Queue reserved for moderation';
+	@override String get refuse => 'Only the people in charge of moderation see this queue.';
+	@override String get choisirTitre => 'No report open';
+	@override String get choisir => 'Choose a report from the queue to review it.';
+	@override String get sansAction => 'No moderation action is open to you on this content.';
+	@override String get sansSanction => 'No account sanction is applied automatically.';
+	@override String get politique => 'Anti-promotion policy';
+	@override String ouvrirSemantique({required Object objet, required Object motif}) => 'Review ${objet}, reason ${motif}';
+	@override late final _Traductions$com$annonces$administration$moderation$regleMotif$en regleMotif = _Traductions$com$annonces$administration$moderation$regleMotif$en._(_root);
+	@override late final _Traductions$com$annonces$administration$moderation$regles$en regles = _Traductions$com$annonces$administration$moderation$regles$en._(_root);
+}
+
+// Path: com.annonces.demo.roles
+class _Traductions$com$annonces$demo$roles$en extends Traductions$com$annonces$demo$roles$fr {
+	_Traductions$com$annonces$demo$roles$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get tuteur => 'Family';
+	@override String get enseignant => 'Teacher';
+	@override String get adulte => 'Adult student';
+	@override String get admin => 'Management';
+	@override String get controleur => 'Reviewer';
+}
+
+// Path: com.annonces.demo.f
+class _Traductions$com$annonces$demo$f$en extends Traductions$com$annonces$demo$f$fr {
+	_Traductions$com$annonces$demo$f$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get adminStudioMention => 'Studio: a discussion in the Programmes channel mentions you';
+	@override String get adminStudioReponse => 'Studio: new reply to your message about the spring programme';
+	@override String get adminStudioDecision => 'Studio: a decision is requested on the lesson 4 material';
+	@override String get adminStudioAssigne => 'Studio: the review of the Tajwid material is assigned to you';
+	@override String get adminStudioInterne => 'Internal announcement from the Studio team: team meeting Thursday at 6 pm';
+	@override String get adminStudioContexte => 'Studio: a material is ready for the An-Nour class';
+	@override String get annonceNourTitre => 'End-of-term recitation in front of the families';
+	@override String get annonceNourTexte => 'Dear families, the An-Nour class will present its end-of-term recitation on Saturday 14 December at 10 am, by video. Each student will recite the surah worked on this term. Please plan for a stable connection and a quiet place. Students who wish to may rehearse during the previous Wednesday\'s session. Families may attend in silence, microphone off. A report will be shared after the session.';
+	@override String get annonceFajrTitre => 'Revision before Thursday\'s assessment';
+	@override String get annonceFajrTexte => 'Revise the last ten verses of surah Al-Mulk before Thursday.';
+	@override String get tuteurUrgent => 'Tonight\'s session is cancelled';
+	@override String get tuteurUrgentTexte => 'The teacher is absent tonight. The session is postponed to Thursday, same time. You have nothing to do.';
+	@override String get tuteurReponse => 'Reply expected: agreement for Yasmine\'s recitation';
+	@override String get tuteurReponseTexte => 'The teacher is waiting for your agreement for Yasmine to recite in front of the families. Reply from the Class Space.';
+	@override String get tuteurMessage => 'New message from the teacher of the An-Nour class';
+	@override String get tuteurDossier => 'Your registration file is validated';
+	@override String get adulteSeance => 'Your Tuesday session is moved to 7 pm';
+	@override String get adulteMessage => 'New message from your teacher';
+	@override String get enseignantFamille => 'Message from Yasmine\'s family, An-Nour class';
+	@override String get enseignantDirection => 'Management announcement: winter holiday calendar';
+	@override String get enseignantDirectionTexte => 'Classes stop from 21 December to 5 January. Sessions resume on Monday 6 January at the usual times.';
+	@override String get enseignantPlanning => 'Your planning for next week has changed';
+	@override String get enseignantMention => 'A Community post mentions you';
+	@override String get enseignantReponse => 'New reply to your post';
+	@override String get enseignantAdministration => 'Message from the Administration: documents to provide';
+	@override String get adminDossiers => 'Three registration files are to be handled';
+	@override String get adminSignalement => 'A Community post has been reported';
+	@override String get adminReponse => 'Reply from Bilal\'s family to your message';
+	@override String get adminPlanifiee => 'A scheduled announcement needs checking before publication';
+	@override String get adminOperationnel => 'An-Nour class: full';
+	@override String get controleurMission => 'New mission: visit to the An-Nour class';
+	@override String get controleurChangement => 'Your Thursday mission is moved to 6 pm';
+	@override String get controleurReponse => 'Administration\'s reply to your report';
+}
+
 // Path: avis.admin.liens.etat
 class _Traductions$avis$admin$liens$etat$en extends Traductions$avis$admin$liens$etat$fr {
 	_Traductions$avis$admin$liens$etat$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -16213,6 +17930,36 @@ class _Traductions$recrutement$parcours$q$compteBancaire$options$en extends Trad
 	// Translations
 	@override late final _Traductions$recrutement$parcours$q$compteBancaire$options$oui$en oui = _Traductions$recrutement$parcours$q$compteBancaire$options$oui$en._(_root);
 	@override late final _Traductions$recrutement$parcours$q$compteBancaire$options$non$en non = _Traductions$recrutement$parcours$q$compteBancaire$options$non$en._(_root);
+}
+
+// Path: com.annonces.administration.moderation.regleMotif
+class _Traductions$com$annonces$administration$moderation$regleMotif$en extends Traductions$com$annonces$administration$moderation$regleMotif$fr {
+	_Traductions$com$annonces$administration$moderation$regleMotif$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get publicite => 'Advertising is not allowed in the Teachers community.';
+	@override String get lienAffilie => 'Affiliate links are not allowed in the Teachers community.';
+	@override String get vente => 'Selling products or services is not allowed in this space.';
+	@override String get sollicitation => 'Commercial solicitation is not allowed in this space.';
+}
+
+// Path: com.annonces.administration.moderation.regles
+class _Traductions$com$annonces$administration$moderation$regles$en extends Traductions$com$annonces$administration$moderation$regles$fr {
+	_Traductions$com$annonces$administration$moderation$regles$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Teaching sharing only';
+	@override String get corps => 'The Teachers community is reserved for professional exchanges between teachers.';
+	@override String get reglesTitre => 'Posting rules';
+	@override String get pasPublicite => 'No advertising';
+	@override String get pasAffilie => 'No affiliate links';
+	@override String get pasVente => 'No sale of products or services';
+	@override String get pasSollicitation => 'No commercial solicitation';
+	@override String get pasDonnees => 'No personal data of a student or a family';
 }
 
 // Path: candidatsFlux.importFormulaires.doublons.option.recente
@@ -22986,6 +24733,868 @@ extension on TraductionsEn {
 			'identiteProfil.lecteurEnfant' => ({required Object prenom}) => '${prenom}, child profile',
 			'identiteProfil.lecteurAdulte' => ({required Object prenom}) => '${prenom}, adult profile',
 			'identiteProfil.lecteurAvecClasse' => ({required Object profil, required Object classe}) => '${profil}, ${classe}',
+			'com.socle.composants.lecture.pieceJointe' => ({required Object nom}) => 'Attachment: ${nom}',
+			'com.socle.composants.lecture.vocal' => ({required Object duree}) => 'Voice message of ${duree}',
+			'com.socle.composants.lecture.vocalSansDuree' => 'Voice message',
+			'com.socle.composants.lecture.horodatage' => ({required Object date, required Object heure}) => '${date}, ${heure}',
+			'com.socle.composants.badge.nonLuUn' => '1 unread',
+			'com.socle.composants.badge.nonLus' => ({required Object nombre}) => '${nombre} unread',
+			'com.socle.composants.badge.nonLusSemantique' => ({required Object nombre}) => '${nombre} unread items',
+			'com.socle.composants.badge.nonLuUnSemantique' => '1 unread item',
+			'com.socle.composants.badge.information' => 'Information',
+			'com.socle.composants.badge.aLire' => 'To read',
+			'com.socle.composants.badge.actionRequise' => _root.com.socle.lexique.actionRequise,
+			'com.socle.composants.badge.urgent' => 'Urgent',
+			'com.socle.composants.badge.mention' => 'Mention',
+			'com.socle.composants.badge.mentionSemantique' => 'A mention concerns you',
+			'com.socle.composants.pieceJointe.joindre' => 'Attach a file',
+			'com.socle.composants.pieceJointe.joindreIndisponible' => 'Adding files is not available here yet.',
+			'com.socle.composants.pieceJointe.ouvrir' => 'Open',
+			'com.socle.composants.pieceJointe.ouvrirLecteur' => ({required Object nom}) => 'Open ${nom}',
+			'com.socle.composants.pieceJointe.retirer' => 'Remove',
+			'com.socle.composants.pieceJointe.retirerLecteur' => ({required Object nom}) => 'Remove ${nom}',
+			'com.socle.composants.pieceJointe.tailleOctets' => ({required Object taille}) => '${taille} bytes',
+			'com.socle.composants.pieceJointe.tailleKo' => ({required Object taille}) => '${taille} KB',
+			_ => null,
+		} ?? switch (path) {
+			'com.socle.composants.pieceJointe.tailleMo' => ({required Object taille}) => '${taille} MB',
+			'com.socle.composants.pieceJointe.autorisee' => 'Ready to send',
+			'com.socle.composants.pieceJointe.tropVolumineuse' => 'File too large',
+			'com.socle.composants.pieceJointe.tropVolumineuseDetail' => 'This file exceeds the allowed size. Choose a lighter file.',
+			'com.socle.composants.pieceJointe.typeInterdit' => 'File type refused',
+			'com.socle.composants.pieceJointe.typeInterditDetail' => 'This file type is not accepted here. Choose another format.',
+			'com.socle.composants.pieceJointe.enCours' => 'Sending',
+			'com.socle.composants.pieceJointe.envoyee' => 'Sent',
+			'com.socle.composants.pieceJointe.echec' => 'Not confirmed',
+			'com.socle.composants.pieceJointe.erreurEnvoi' => 'The sending of this file has not been confirmed yet. Try again in a moment.',
+			'com.socle.composants.pieceJointe.indisponible' => 'Attachment unavailable',
+			'com.socle.composants.pieceJointe.indisponibleDetail' => 'This file is no longer available. Ask the person who shared it to send it again.',
+			'com.socle.composants.composer.message' => 'Message',
+			'com.socle.composants.composer.aide' => 'Write a message',
+			'com.socle.composants.composer.envoyer' => 'Send',
+			'com.socle.composants.composer.champVide' => 'Write a message to send it.',
+			'com.socle.composants.composer.vocal' => 'Voice message',
+			'com.socle.composants.composer.vocalAVenir' => 'Voice message coming soon',
+			'com.socle.composants.composer.enCours' => 'Sending',
+			'com.socle.composants.composer.envoye' => 'Sent',
+			'com.socle.composants.composer.nonConfirme' => 'This message has not been confirmed yet.',
+			'com.socle.composants.composer.reessayer' => 'Try again',
+			'com.socle.composants.composer.auteurSoi' => 'You',
+			'com.socle.composants.composer.annonce' => ({required Object auteur, required Object texte}) => 'New message from ${auteur}: ${texte}',
+			'com.socle.composants.composer.brouillon' => _root.com.socle.lexique.brouillon,
+			'com.socle.composants.composer.brouillonRestaure' => 'Draft restored',
+			'com.socle.composants.composer.enregistrerVocal' => _root.com.vocal.composer.enregistrer,
+			'com.socle.composants.composer.aucunMessageTitre' => 'No message yet',
+			'com.socle.composants.composer.aucunMessage' => 'Write the first message of this conversation: it will appear here.',
+			'com.socle.composants.etats.chargement' => 'Loading',
+			'com.socle.composants.etats.videTitre' => 'Nothing here yet',
+			'com.socle.composants.etats.erreurTitre' => 'This content could not be loaded.',
+			'com.socle.composants.etats.erreur' => 'The request may not have reached Rewayah. Try again in a moment.',
+			'com.socle.composants.etats.reessayer' => 'Try again',
+			'com.socle.composants.etats.horsLigne' => 'You are offline. New messages cannot be refreshed.',
+			'com.socle.composants.etats.horsLigneBloc' => 'Try again when the connection returns.',
+			'com.socle.composants.etats.indisponibleTitre' => 'Not available yet',
+			'com.socle.composants.etats.indisponible' => 'This feature is not available here yet. It will open as soon as the service is ready.',
+			'com.socle.composants.etats.permissionRefusee' => 'You do not have access to this content.',
+			'com.socle.composants.espace.ouvrirPanneau' => 'Open the context panel',
+			'com.socle.composants.espace.fermerPanneau' => 'Close the context panel',
+			'com.socle.composants.espace.panneauContexte' => 'Context',
+			'com.socle.composants.espace.retourListe' => 'Back to the list',
+			'com.socle.lexique.messages' => 'Messages',
+			'com.socle.lexique.messagesMetier' => 'Messages',
+			'com.socle.lexique.communaute' => 'Teachers community',
+			'com.socle.lexique.studio' => 'The Studio',
+			'com.socle.lexique.aujourdhui' => 'Today',
+			'com.socle.lexique.notifications' => 'Notifications',
+			'com.socle.lexique.annonce' => 'Announcement',
+			'com.socle.lexique.publication' => 'Post',
+			'com.socle.lexique.reponse' => 'Reply',
+			'com.socle.lexique.enregistrer' => 'Save',
+			'com.socle.lexique.signaler' => 'Report',
+			'com.socle.lexique.modeFocus' => 'Focus mode',
+			'com.socle.lexique.quitterFocus' => 'Exit focus',
+			'com.socle.lexique.aTraiter' => 'To handle',
+			'com.socle.lexique.actionRequise' => 'Action required',
+			'com.socle.lexique.brouillon' => 'Draft',
+			'com.socle.lexique.elementsEpingles' => 'Pinned items',
+			'com.socle.lexique.fichiersPartages' => 'Shared files',
+			'com.socle.motifs.titre' => 'Why are you reporting this content?',
+			'com.socle.motifs.publicite' => 'Advertising',
+			'com.socle.motifs.lienAffilie' => 'Affiliate link',
+			'com.socle.motifs.venteNonAutorisee' => 'Unauthorized sale',
+			'com.socle.motifs.sollicitationCommerciale' => 'Commercial solicitation',
+			'com.socle.motifs.horsSujet' => 'Content unrelated to the community',
+			'com.socle.motifs.harcelement' => 'Harassment or inappropriate language',
+			'com.socle.motifs.donneesPersonnelles' => 'Personal data of a student or a family',
+			'com.socle.motifs.autre' => 'Other content to review',
+			'com.socle.signalement.titre' => 'Report this content',
+			'com.socle.signalement.precision' => 'Optional detail',
+			'com.socle.signalement.envoyer' => 'Send the report',
+			'com.socle.signalement.confirme' => 'The content has been reported. It will be reviewed.',
+			'com.socle.signalement.erreur' => 'The report has not been confirmed yet. Try again in a moment.',
+			'com.socle.signalement.indisponible' => 'Reporting is not available here yet.',
+			'com.socle.enregistrement.enregistrer' => _root.com.socle.lexique.enregistrer,
+			'com.socle.enregistrement.retirer' => 'Remove from saved items',
+			'com.socle.enregistrement.enregistre' => 'Saved',
+			'com.socle.enregistrement.indisponible' => 'Saving is not available here yet.',
+			'com.socle.navigation.notifications' => _root.com.socle.lexique.notifications,
+			'com.socle.navigation.ouvrirNotifications' => 'Open notifications',
+			'com.socle.navigation.studio' => _root.com.socle.lexique.studio,
+			'com.socle.navigation.ouvrirStudio' => 'Open The Studio',
+			'com.socle.navigation.quitterStudio' => 'Leave The Studio',
+			'com.socle.navigation.messages' => _root.com.socle.lexique.messages,
+			'com.socle.navigation.communaute' => _root.com.socle.lexique.communaute,
+			'com.socle.navigation.communications' => 'Communications',
+			'com.socle.navigation.communicationsDetail' => 'Announcements, moderation and class messages',
+			'com.socle.navigation.ongletAnnonces' => 'Announcements',
+			'com.socle.navigation.ongletModeration' => 'Moderation',
+			'com.socle.navigation.ongletMessages' => _root.com.socle.lexique.messages,
+			'com.socle.navigation.bientot' => 'Coming soon',
+			'com.socle.navigation.provisoire.messagesTitre' => _root.com.socle.lexique.messages,
+			'com.socle.navigation.provisoire.messagesDetail' => 'Messages tied to your classes will arrive soon in this space.',
+			'com.socle.navigation.provisoire.communauteTitre' => _root.com.socle.lexique.communaute,
+			'com.socle.navigation.provisoire.communauteDetail' => 'The space for exchange between teachers will arrive here soon.',
+			'com.socle.navigation.provisoire.studioTitre' => _root.com.socle.lexique.studio,
+			'com.socle.navigation.provisoire.studioDetail' => 'The team\'s workspace will arrive here soon.',
+			'com.socle.navigation.provisoire.administrationTitre' => 'Communications administration',
+			'com.socle.navigation.provisoire.administrationDetail' => 'Announcements, moderation and messages will be managed here soon.',
+			'com.socle.navigation.provisoire.publierAnnonceTitre' => 'Publish an announcement',
+			'com.socle.navigation.provisoire.publierAnnonceDetail' => 'Publishing an announcement for a class will arrive here soon.',
+			'com.socle.navigation.demo.titre' => 'Communications demo',
+			'com.socle.navigation.demo.detail' => 'Fictional data, absent from production versions.',
+			'com.socle.navigation.demo.choisir' => 'Choose a space to try.',
+			'com.messages.entree.titreClasse' => 'Talk about this class',
+			'com.messages.entree.titreDossier' => 'Talk about this file',
+			'com.messages.entree.titreCandidature' => 'Talk about the application',
+			'com.messages.entree.titreObjet' => 'Talk about this',
+			'com.messages.entree.ecrireFamille' => 'Write to the family',
+			'com.messages.entree.ecrireAdministration' => 'Write to the Administration',
+			'com.messages.entree.ecrireA' => ({required Object nom}) => 'Write to ${nom}',
+			'com.messages.entree.conversationAvec' => ({required Object nom}) => 'Conversation with ${nom}',
+			'com.messages.entree.voirTout' => 'See all conversations',
+			'com.messages.entree.toutes' => 'All your conversations',
+			'com.messages.entree.aLireUne' => '1 conversation to read',
+			'com.messages.entree.aLire' => ({required Object nombre}) => '${nombre} conversations to read',
+			'com.messages.entree.ouverture' => 'Opening the conversation',
+			'com.messages.entree.inaccessibleTitre' => 'Conversation inaccessible',
+			'com.messages.entree.inaccessible' => 'This conversation is no longer open to you. Choose another person from the list.',
+			'com.messages.entree.erreurOuvertureTitre' => 'This conversation could not be opened.',
+			'com.messages.entree.ouvertureEchouee' => 'The request may not have reached Rewayah. Try again in a moment.',
+			'com.messages.videDetail' => 'A conversation opens from a class, a student or a file.',
+			'com.messages.choisirTitre' => 'Choose a conversation',
+			'com.messages.choisir' => 'Choose a conversation from the list to read it and reply.',
+			'com.messages.recherche.champ' => 'Search for a conversation',
+			'com.messages.recherche.aide' => 'Name, class or file',
+			'com.messages.recherche.aucunTitre' => 'No conversation found',
+			'com.messages.recherche.aucun' => ({required Object texte}) => 'No conversation matches "${texte}". Try another name or another class.',
+			'com.messages.recherche.resultatUn' => '1 conversation found',
+			'com.messages.recherche.resultats' => ({required Object nombre}) => '${nombre} conversations found',
+			'com.messages.ligne.legende' => ({required Object objet, required Object apercu}) => '${objet} · ${apercu}',
+			'com.messages.ligne.sansApercu' => 'No message yet',
+			'com.messages.ligne.dateCourte' => ({required Object mois, required Object numero}) => '${mois} ${numero}',
+			'com.messages.noms.avecFonction' => ({required Object nom, required Object fonction}) => '${nom}, ${fonction}',
+			'com.messages.noms.deux' => ({required Object premier, required Object second}) => '${premier} and ${second}',
+			'com.messages.noms.plusieurs' => ({required Object premier, required Object nombre}) => '${premier} and ${nombre} other people',
+			'com.messages.noms.surObjet' => ({required Object objet}) => 'Conversation about ${objet}',
+			'com.messages.noms.sansObjet' => 'Conversation',
+			'com.messages.entete.avecAttention' => ({required Object entete, required Object attention}) => '${entete}. ${attention}',
+			'com.messages.entete.deuxObjets' => ({required Object premier, required Object second}) => '${premier} · ${second}',
+			'com.messages.entete.semantique' => ({required Object noms, required Object objets}) => 'Conversation with ${noms}, about ${objets}',
+			'com.messages.entete.semantiqueSansNoms' => ({required Object objets}) => 'Conversation about ${objets}',
+			'com.messages.candidature.plafond' => 'You have reached the limit of 30 messages a day for this conversation. You can write again tomorrow; the management replies here.',
+			'com.messages.types.classe' => 'Class',
+			'com.messages.types.eleve' => 'Student',
+			'com.messages.types.dossier' => 'File',
+			'com.messages.types.mission' => 'Review mission',
+			'com.messages.types.remplacement' => 'Replacement',
+			'com.messages.types.candidature' => 'Application',
+			'com.messages.types.profilPaiement' => 'Payment profile',
+			'com.messages.types.autre' => 'Other subject',
+			'com.messages.panneau.objets' => 'About',
+			'com.messages.panneau.participants' => 'Participants',
+			'com.messages.panneau.fichiers' => _root.com.socle.lexique.fichiersPartages,
+			'com.messages.panneau.ouvrir' => ({required Object objet}) => 'Open ${objet}',
+			'com.messages.panneau.inaccessible' => 'This subject is no longer open to you. The conversation stays readable.',
+			'com.messages.panneau.vous' => 'You',
+			'com.messages.fil.lectureSeule' => 'You can read this conversation. Replying is not open to you here.',
+			'com.messages.demo.choisirRole' => 'Choose the point of view for this demo.',
+			'com.messages.demo.roles.tuteur' => 'Family',
+			'com.messages.demo.roles.enseignant' => 'Teacher',
+			'com.messages.demo.roles.adulte' => 'Adult student',
+			'com.messages.demo.roles.admin' => 'Management',
+			'com.messages.demo.roles.controleur' => 'Reviewer',
+			'com.messages.demo.situations' => 'Situations to try',
+			'com.messages.demo.echec' => 'Sending not confirmed, seen by the teacher',
+			'com.messages.demo.horsLigne' => 'Offline, seen by the family',
+			'com.messages.demo.refuse' => 'Another family\'s conversation, refused',
+			'com.messages.demo.vue' => ({required Object role}) => 'Point of view: ${role}',
+			'com.messages.demo.f.ahmed' => 'Ahmed',
+			'com.messages.demo.f.parentAdam' => 'Adam\'s parent',
+			'com.messages.demo.f.enseignanteNour' => 'Teacher of the An-Nour class',
+			'com.messages.demo.f.fatima' => 'Fatima',
+			'com.messages.demo.f.parentYasmine' => 'Yasmine\'s parent',
+			'com.messages.demo.f.karim' => 'Karim',
+			'com.messages.demo.f.parentYusuf' => 'Yusuf\'s parent',
+			'com.messages.demo.f.administration' => 'Administration',
+			'com.messages.demo.f.directionRewayah' => 'Rewayah management',
+			'com.messages.demo.f.rachid' => 'Mr Rachid',
+			'com.messages.demo.f.controleurPedagogique' => 'Teaching reviewer',
+			'com.messages.demo.f.youssef' => 'Youssef',
+			'com.messages.demo.f.enseignantFajr' => 'Teacher of the Al-Fajr class',
+			'com.messages.demo.f.khadija' => 'Khadija',
+			'com.messages.demo.f.eleveFajr' => 'Student of the Al-Fajr class',
+			'com.messages.demo.f.adam' => 'Adam',
+			'com.messages.demo.f.yasmine' => 'Yasmine',
+			'com.messages.demo.f.yusuf' => 'Yusuf',
+			'com.messages.demo.f.dossierAdam' => 'Adam\'s registration file',
+			'com.messages.demo.f.missionNour' => 'Review visit, An-Nour class',
+			'com.messages.demo.f.pieceDevoir' => 'Homework_week_3.pdf',
+			'com.messages.demo.f.pieceAttestation' => 'Old_certificate.pdf',
+			'com.messages.demo.f.pieceVocal' => 'voice.m4a',
+			'com.messages.demo.f.typeAudio' => 'Audio',
+			'com.messages.demo.f.adamQuestion' => 'Hello, I wanted to know how today\'s session went for Adam. Thank you very much.',
+			'com.messages.demo.f.adamReponse' => 'Hello, the session went very well. Adam was attentive and took part well.',
+			'com.messages.demo.f.adamDevoir' => 'Here is next week\'s homework.',
+			'com.messages.demo.f.dossierManque' => 'Adam\'s level certificate is missing to finalize his registration. Can you place it in his file?',
+			'com.messages.demo.f.missionRetard' => 'The session started eight minutes late. The report has been filed.',
+			'com.messages.demo.f.missionSuite' => 'Thank you, we are discussing it with the teacher this week.',
+			'com.messages.demo.f.yasmineMerci' => 'Thank you very much for these explanations.',
+			'com.messages.demo.f.affectation' => 'Your An-Nour class moves to Tuesday at 6 pm from next month. Please confirm.',
+			'com.messages.demo.f.khadijaRevision' => 'Remember to revise surah Al-Mulk for Thursday.',
+			'com.messages.titre' => _root.com.socle.lexique.messagesMetier,
+			'com.messages.vide' => 'No conversation yet.',
+			'com.vocal.composer.libelle' => 'Voice message',
+			'com.vocal.composer.enregistrer' => 'Record a voice message',
+			'com.vocal.composer.indisponible' => 'The voice message is not available here yet. Write your message in the field above.',
+			'com.vocal.composer.erreurVerificationTitre' => 'The microphone could not be checked.',
+			'com.vocal.composer.erreurVerificationAction' => 'Try again',
+			'com.vocal.composer.erreurDemarrage' => 'The recording could not start. Check that the microphone is not in use by another app, then try again.',
+			'com.vocal.composer.erreurInterrompu' => 'The recording was interrupted. Check the microphone, then start again.',
+			'com.vocal.composer.permissionTitre' => 'The microphone is needed',
+			'com.vocal.composer.permissionPhrase' => 'Rewayah needs the microphone to record your voice message. Nothing is sent without your agreement.',
+			'com.vocal.composer.autoriser' => 'Allow the microphone',
+			'com.vocal.composer.annuler' => 'Cancel',
+			'com.vocal.composer.refuse' => 'The microphone is not allowed for Rewayah.',
+			'com.vocal.composer.refuseAide' => 'To send a voice message, allow the microphone in your device settings, then come back here.',
+			'com.vocal.composer.fermer' => 'Close',
+			'com.vocal.composer.enregistrement' => 'Recording in progress',
+			'com.vocal.composer.pause' => 'Recording paused',
+			'com.vocal.composer.reprise' => 'Recording resumed',
+			'com.vocal.composer.limiteProche' => ({required Object seuil, required Object max}) => 'Less than ${seuil} before the limit of ${max}',
+			'com.vocal.composer.limiteAtteinte' => ({required Object max}) => 'Maximum length reached (${max}). Listen to your message, then send it or delete it.',
+			'com.vocal.composer.ecoule' => ({required Object ecoule, required Object max}) => '${ecoule} of ${max}',
+			'com.vocal.composer.preEcoute' => 'Preview',
+			'com.vocal.composer.preEcouteAide' => 'Listen to your message before sending it. Nothing is sent without your agreement.',
+			'com.vocal.composer.duree' => ({required Object duree}) => 'Length: ${duree}',
+			'com.vocal.composer.actionPause' => 'Pause',
+			'com.vocal.composer.actionReprendre' => 'Resume',
+			'com.vocal.composer.actionArreter' => 'Stop',
+			'com.vocal.composer.actionSupprimer' => 'Delete',
+			'com.vocal.composer.actionEnvoyer' => 'Send',
+			'com.vocal.composer.confirmerTitre' => 'Delete this voice message?',
+			'com.vocal.composer.confirmerPhrase' => 'It will be erased from this device. This action is final.',
+			'com.vocal.composer.garder' => 'Keep',
+			'com.vocal.composer.envoi' => 'Sending the voice message',
+			'com.vocal.composer.nonConfirme' => 'This voice message has not been confirmed yet.',
+			'com.vocal.composer.nonConfirmeAide' => 'It may not have reached Rewayah. The voice message is kept here; try again in a moment.',
+			'com.vocal.composer.reessayer' => 'Try again',
+			'com.vocal.composer.envoye' => 'Voice message sent.',
+			'com.vocal.composer.horsLigne' => 'The voice message is kept here: send it as soon as sending is possible again.',
+			'com.vocal.lecteur.libelleAuteur' => ({required Object auteur, required Object duree}) => 'Voice message from ${auteur}, ${duree}',
+			'com.vocal.lecteur.libelle' => ({required Object duree}) => 'Voice message, ${duree}',
+			'com.vocal.lecteur.ecouter' => 'Listen',
+			'com.vocal.lecteur.pause' => 'Pause',
+			'com.vocal.lecteur.reprendre' => 'Resume',
+			'com.vocal.lecteur.reecouter' => 'Listen again',
+			'com.vocal.lecteur.nonEcoute' => 'Not listened to yet',
+			'com.vocal.lecteur.lecture' => 'Playing',
+			'com.vocal.lecteur.enPause' => 'Playback paused',
+			'com.vocal.lecteur.fin' => 'Listened to in full',
+			'com.vocal.lecteur.position' => ({required Object position, required Object duree}) => '${position} of ${duree}',
+			'com.vocal.lecteur.indisponible' => 'Playback is not available here yet. The message stays in the conversation: come back later to listen to it.',
+			'com.vocal.lecteur.erreurLectureTitre' => 'This voice message could not be played.',
+			'com.vocal.lecteur.erreurLectureAction' => 'Try again',
+			'com.vocal.demo.contexte' => 'Voice message demo: no real microphone is used, the recording is simulated.',
+			'com.vocal.demo.situations' => 'Demo situations',
+			'com.vocal.demo.autorise' => 'Microphone allowed',
+			'com.vocal.demo.aDemander' => 'To ask',
+			'com.vocal.demo.refuse' => 'Microphone refused',
+			'com.vocal.demo.nonConfirme' => 'Not confirmed',
+			'com.vocal.demo.indisponible' => 'Unavailable',
+			'com.vocal.demo.recu' => 'Voice message received',
+			'com.vocal.demo.repondre' => 'Reply in the conversation',
+			'com.vocal.demo.envoyes' => 'Voice messages sent',
+			'com.vocal.demo.auteurEnseignante' => 'Sayyida Mariam, teacher',
+			'com.vocal.demo.auteurParent' => 'Ahmed, Adam\'s parent',
+			'com.vocal.demo.messageRecu' => 'Hello, here are my remarks on this week\'s recitation.',
+			'com.vocal.demo.horodatage' => 'Today, 10:28',
+			'com.vocal.titre' => 'Voice message',
+			'com.communaute.garde.aide' => 'No advertising. No affiliate links. No sales.',
+			'com.communaute.garde.avertissement' => 'This post seems to contain a commercial promotion. Remove the link, code or offer before publishing.',
+			'com.communaute.garde.bloqueAffilie' => 'Affiliate links are not allowed in the Teachers community.',
+			'com.communaute.garde.bloqueVente' => 'Selling products or services is not allowed in this space.',
+			'com.communaute.garde.titreAvertissement' => 'Post to review',
+			'com.communaute.garde.titreBlocage' => 'Post blocked',
+			'com.communaute.garde.motif' => ({required Object motif}) => 'Reason: ${motif}',
+			'com.communaute.garde.liensTitre' => 'Post links',
+			'com.communaute.garde.consigneBlocage' => 'Edit the post, then publish it again.',
+			'com.communaute.garde.panne' => 'The check of this content is not confirmed: the request may not have reached Rewayah. Nothing was published; try again in a moment.',
+			'com.communaute.garde.reponse.avertissement' => 'This reply seems to contain a commercial promotion. Remove the link, code or offer before sending it.',
+			'com.communaute.garde.reponse.liensTitre' => 'Reply links',
+			'com.communaute.garde.reponse.consigneBlocage' => 'Edit the reply, then send it again.',
+			'com.communaute.lien.interne' => 'Rewayah internal link',
+			'com.communaute.lien.ressourceExterne' => 'External teaching resource',
+			'com.communaute.lien.commercialInterdit' => 'Commercial link forbidden',
+			'com.communaute.lien.nonVerifie' => 'Unverified link',
+			'com.communaute.lien.semantique' => ({required Object adresse, required Object etat}) => '${adresse}, ${etat}',
+			'com.communaute.sousTitre' => 'Exchange and mutual help between teachers',
+			'com.communaute.sections' => 'Categories of the Teachers community',
+			'com.communaute.toutes' => 'All',
+			'com.communaute.videTitre' => 'No post',
+			'com.communaute.rechercheVideTitre' => 'No result',
+			'com.communaute.rechercheVide' => 'No post matches your search. Try another word.',
+			'com.communaute.videToutes' => 'No post yet.',
+			'com.communaute.flux.ouvrir' => ({required Object titre}) => 'Open the post ${titre}',
+			'com.communaute.flux.reponseUne' => '1 reply',
+			'com.communaute.flux.reponses' => ({required Object nombre}) => '${nombre} replies',
+			'com.communaute.flux.aucuneReponse' => 'No reply',
+			'com.communaute.flux.categorie' => ({required Object categorie}) => 'Category ${categorie}',
+			'com.communaute.recherche.ouvrir' => 'Search for a post',
+			'com.communaute.recherche.champ' => 'Search for a post',
+			'com.communaute.recherche.aide' => 'A word from the title or the text',
+			'com.communaute.moment.instant' => 'Just now',
+			'com.communaute.moment.minutes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} min ago', other: '${n} min ago', ), 
+			'com.communaute.moment.heures' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} h ago', other: '${n} h ago', ), 
+			'com.communaute.moment.jours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} d ago', other: '${n} d ago', ), 
+			'com.communaute.moment.date' => ({required Object mois, required Object jour}) => 'On ${mois}/${jour}',
+			'com.communaute.publication.auteur' => ({required Object fonction, required Object moment}) => '${fonction} · ${moment}',
+			'com.communaute.publication.enregistrer' => 'Save the post',
+			'com.communaute.publication.enregistree' => 'Post saved',
+			'com.communaute.publication.retirer' => 'Remove from saved items',
+			'com.communaute.publication.menu' => ({required Object titre}) => 'Actions on the post ${titre}',
+			'com.communaute.publication.signaler' => 'Report the post',
+			'com.communaute.publication.signalee' => 'The content has been reported to the moderation team.',
+			'com.communaute.publication.choisirTitre' => 'No post open',
+			'com.communaute.publication.choisir' => 'Choose a post from the list to read it and reply.',
+			'com.communaute.publication.introuvableTitre' => 'Post unavailable',
+			'com.communaute.publication.introuvable' => 'This post has been withdrawn or is no longer accessible to you. Go back to the posts to choose another.',
+			'com.communaute.publication.revenir' => 'Back to the posts',
+			'com.communaute.reponses.titre' => ({required Object nombre}) => 'Replies (${nombre})',
+			'com.communaute.reponses.vide' => 'No reply yet.',
+			'com.communaute.reponses.erreurTitre' => 'The replies could not be loaded.',
+			'com.communaute.reponses.champ' => 'Your reply',
+			'com.communaute.reponses.aide' => 'Write a reply',
+			'com.communaute.reponses.envoyer' => 'Send the reply',
+			'com.communaute.reponses.champVide' => 'Write a reply to send it.',
+			'com.communaute.reponses.enCours' => 'Sending',
+			'com.communaute.reponses.nonConfirmee' => 'This reply is not confirmed yet: it may not have reached Rewayah. Send it again in a moment.',
+			'com.communaute.reponses.refusee' => 'Refused by the Community policy',
+			'com.communaute.reponses.reessayer' => 'Send the reply again',
+			'com.communaute.reponses.indisponible' => 'Replies are not available here yet.',
+			'com.communaute.reponses.menu' => ({required Object nom}) => 'Actions on ${nom}\'s reply',
+			'com.communaute.reponses.signaler' => 'Report the reply',
+			'com.communaute.reponses.signalee' => 'You reported this reply.',
+			'com.communaute.signalement.politique.publicite' => 'Advertising is not allowed in the Teachers community.',
+			'com.communaute.signalement.politique.sollicitation' => 'Commercial solicitation is not allowed in this space.',
+			'com.communaute.signalement.motifManquant' => 'Choose a reason to send the report.',
+			'com.communaute.composer.nouvelle' => 'New post',
+			'com.communaute.composer.contexte' => 'Share a question, a method or a resource useful for teaching.',
+			'com.communaute.composer.categorie' => 'Category',
+			'com.communaute.composer.categorieManquante' => 'Choose a category to publish.',
+			'com.communaute.composer.champTitre' => 'Title',
+			'com.communaute.composer.aideTitre' => 'The subject in a few words',
+			'com.communaute.composer.titreManquant' => 'Write a title to publish.',
+			'com.communaute.composer.champTexte' => 'Text',
+			'com.communaute.composer.aideTexte' => 'Your question or your feedback from experience',
+			'com.communaute.composer.texteManquant' => 'Write the text of the post to publish.',
+			'com.communaute.composer.pieces' => 'Attachments',
+			'com.communaute.composer.pieceRefusee' => 'Remove the refused files before publishing.',
+			'com.communaute.composer.choixIndisponible' => 'Choosing a file is not available here yet.',
+			'com.communaute.composer.publier' => 'Publish',
+			'com.communaute.composer.fermer' => 'Close the new post',
+			'com.communaute.composer.confirmee' => 'Your post is online.',
+			'com.communaute.composer.erreurEnvoi' => 'Your post is not confirmed yet: it may not have reached Rewayah. Try again in a moment.',
+			'com.communaute.composer.indisponible' => 'Posting is not available here yet.',
+			'com.communaute.regles.panneau' => 'Help and rules',
+			'com.communaute.regles.aProposTitre' => 'About this space',
+			'com.communaute.regles.aPropos' => 'A space for mutual help between teachers to ask questions and share teaching methods and resources.',
+			'com.communaute.regles.titre' => 'Teaching sharing only',
+			'com.communaute.regles.corps' => 'This community is reserved for professional exchanges between teachers.',
+			'com.communaute.regles.reglesTitre' => 'Posting rules',
+			'com.communaute.regles.pasPublicite' => 'No advertising',
+			'com.communaute.regles.pasAffilie' => 'No affiliate links',
+			'com.communaute.regles.pasVente' => 'No sale of products or services',
+			'com.communaute.regles.pasSollicitation' => 'No commercial solicitation',
+			'com.communaute.regles.pasDonnees' => 'No personal data of a student or a family',
+			'com.communaute.regles.signaler' => 'Inappropriate content is reported from the post\'s menu.',
+			'com.communaute.regles.voir' => 'See the rules',
+			'com.communaute.entree.lecteur' => 'Open the Teachers community',
+			'com.communaute.entree.detail' => 'Questions, methods and resources between teachers',
+			'com.communaute.demo.avertissement' => 'Post to review: advertising',
+			'com.communaute.demo.lienAffilie' => 'Affiliate link blocked',
+			'com.communaute.demo.vente' => 'Sale blocked',
+			'com.communaute.demo.signalementNonConfirme' => 'Report not confirmed',
+			'com.communaute.demo.choisir' => 'Choose a situation to try, seen by a teacher.',
+			'com.communaute.demo.aujourdhui' => 'Today, with the shortcut',
+			'com.communaute.demo.nominal' => 'Six posts',
+			'com.communaute.demo.publication' => 'One post open',
+			'com.communaute.demo.vide' => 'No post',
+			'com.communaute.demo.lectureEchouee' => 'Read failed',
+			'com.communaute.demo.indisponible' => 'Service not available yet',
+			'com.communaute.demo.horsLigne' => 'Offline',
+			'com.communaute.demo.envoiNonConfirme' => 'Sending not confirmed',
+			'com.communaute.demo.moderationIndisponible' => 'Moderation unavailable',
+			'com.communaute.demo.lecteurSeul' => 'Read-only, no posting',
+			'com.communaute.demo.f.categoriePedagogie' => 'Teaching',
+			'com.communaute.demo.f.categorieRessources' => 'Resources',
+			'com.communaute.demo.f.categorieGestion' => 'Management',
+			'com.communaute.demo.f.fonctionSoi' => 'Teacher, Al-Fatiha class',
+			'com.communaute.demo.f.prenomSoi' => 'Ibrahim',
+			'com.communaute.demo.f.samira' => 'Samira Belkacem',
+			'com.communaute.demo.f.fonctionSamira' => 'Teacher, An-Nour class',
+			'com.communaute.demo.f.nour' => 'Nour El Idrissi',
+			'com.communaute.demo.f.fonctionNour' => 'Teacher, Al-Fajr class',
+			'com.communaute.demo.f.yasmine' => 'Yasmine Haddad',
+			'com.communaute.demo.f.fonctionYasmine' => 'Teacher, Al-Badr class',
+			'com.communaute.demo.f.youssef' => 'Youssef Amrani',
+			'com.communaute.demo.f.fonctionYoussef' => 'Teacher, Al-Kawthar class',
+			'com.communaute.demo.f.mariam' => 'Mariam Benali',
+			'com.communaute.demo.f.fonctionMariam' => 'Teacher, An-Nas class',
+			'com.communaute.demo.f.hamza' => 'Hamza Ouali',
+			'com.communaute.demo.f.fonctionHamza' => 'Teacher, Al-Ikhlas class',
+			'com.communaute.demo.f.memorisationTitre' => 'Ideas for memorization?',
+			'com.communaute.demo.f.memorisationTexte' => 'What routines or activities work well to help students memorize surahs? I\'m looking for feedback from experience: games, visual aids, repetition in pairs. Thanks for your ideas!',
+			'com.communaute.demo.f.cartesTitre' => 'Feedback on repetition cards',
+			'com.communaute.demo.f.cartesTexte' => 'I have been using repetition cards since the start of the year and they work very well, even with the youngest. I attach the template I fill in before each session.',
+			'com.communaute.demo.f.cartesFichier' => 'Repetition_cards.pdf',
+			'com.communaute.demo.f.niveauxTitre' => 'Handling different levels?',
+			'com.communaute.demo.f.niveauxTexte' => 'How do you handle a class where levels are very different? I fear the most advanced will drop off while I go back over the basics with the others.',
+			'com.communaute.demo.f.timidesTitre' => 'Getting shy students to recite',
+			'com.communaute.demo.f.timidesTexte' => 'A student refuses to recite in front of the others. I offer to let her recite first, when the class is still calm. Do you have other ideas?',
+			'com.communaute.demo.f.ficheTitre' => 'A revision tracking sheet',
+			'com.communaute.demo.f.ficheTexte' => 'Each week I note the surahs revised and the points to go over again. The sheet fits on one page and helps a lot to prepare the next session.',
+			'com.communaute.demo.f.heureTitre' => 'Starting the session on time',
+			'com.communaute.demo.f.heureTexte' => 'The first minutes are often lost to setting up. I now ask students to prepare their page before the hour. What do you think?',
+			'com.communaute.demo.f.reponseMariam' => 'I use repetition in pairs and visual cards a lot. It really motivates the students.',
+			'com.communaute.demo.f.reponseYoussef' => 'Students listen again to the session\'s recitation at home: it helps a lot between two classes.',
+			'com.communaute.demo.f.reponseSamira' => 'Thank you for the template, I will try it this week.',
+			'com.communaute.demo.f.reponseHamza' => 'I sometimes let a student recite one-to-one at the end of the session, then in front of a single classmate.',
+			'com.communaute.demo.f.affilieTitre' => 'My favourite audio player for revision',
+			'com.communaute.demo.f.affilieTexte' => ({required Object lien}) => 'I use this player to have the surahs listened to again. It is discounted this week with my link: ${lien}',
+			'com.communaute.demo.f.venteTitre' => 'I am selling my memorization sheets',
+			'com.communaute.demo.f.venteTexte' => 'Set of 30 laminated sheets, 25 euros, sent by post. Write to me to order.',
+			'com.communaute.demo.f.publiciteTitre' => 'An app for revision',
+			'com.communaute.demo.f.publiciteTexte' => ({required Object lienOffre, required Object lienInterne, required Object lienRessource}) => 'I recommend this revision app, with the code PROF20 for the subscription: ${lienOffre}. For the text, the Library resource (${lienInterne}) and ${lienRessource} are enough.',
+			'com.communaute.demo.f.reponseAffilie' => ({required Object lien}) => 'For revision, I recommend this player, discounted with my link: ${lien}',
+			'com.communaute.demo.f.fichierChoisi' => 'Session_sheet.pdf',
+			'com.communaute.titre' => _root.com.socle.lexique.communaute,
+			'com.communaute.vide' => 'No post in this category.',
+			'com.studio.focus.entrer' => _root.com.socle.lexique.modeFocus,
+			'com.studio.focus.quitter' => _root.com.socle.lexique.quitterFocus,
+			'com.studio.focus.actif' => 'Focus on',
+			'com.studio.focus.actifAvecEchap' => 'Focus on. Esc to exit.',
+			'com.studio.focus.aide' => 'Hide the secondary panels to concentrate on this discussion.',
+			'com.studio.aujourdhui.titre' => _root.com.socle.lexique.aujourdhui,
+			'com.studio.aujourdhui.sousTitre' => 'What deserves your attention in The Studio',
+			'com.studio.aujourdhui.indicateurs.titre' => 'Attention indicators',
+			'com.studio.aujourdhui.indicateurs.aTraiter' => _root.com.socle.lexique.aTraiter,
+			'com.studio.aujourdhui.indicateurs.mentions' => 'Mentions and replies',
+			'com.studio.aujourdhui.indicateurs.decisions' => 'Decisions pending',
+			'com.studio.aujourdhui.indicateurs.nonLus' => 'Unread',
+			'com.studio.aujourdhui.blocs.aTraiter' => 'To handle today',
+			'com.studio.aujourdhui.blocs.mentions' => 'Mentions and replies',
+			'com.studio.aujourdhui.blocs.decisions' => 'Decisions pending',
+			'com.studio.aujourdhui.blocs.echeances' => 'Upcoming deadlines',
+			'com.studio.aujourdhui.blocs.activite' => 'Recent activity',
+			'com.studio.aujourdhui.blocs.brouillons' => 'Drafts',
+			'com.studio.aujourdhui.blocs.acces' => 'Quick access',
+			'com.studio.aujourdhui.videsBlocs.aTraiter' => 'Nothing to handle today.',
+			'com.studio.aujourdhui.videsBlocs.mentions' => 'No mention or reply pending.',
+			'com.studio.aujourdhui.videsBlocs.decisions' => 'No decision pending.',
+			'com.studio.aujourdhui.videsBlocs.echeances' => 'No upcoming deadline.',
+			'com.studio.aujourdhui.videsBlocs.activite' => 'No recent activity.',
+			'com.studio.aujourdhui.videTitre' => 'Nothing to handle for now',
+			'com.studio.aujourdhui.dansCanal' => ({required Object nom}) => 'In ${nom}',
+			'com.studio.aujourdhui.echeance' => ({required Object date}) => 'Due on ${date}',
+			'com.studio.aujourdhui.seTraiteDans' => ({required Object module}) => 'Handled in ${module}',
+			'com.studio.aujourdhui.ouvrirDans' => ({required Object module, required Object libelle}) => 'Open in ${module}: ${libelle}',
+			'com.studio.aujourdhui.modules.studio' => _root.com.socle.lexique.studio,
+			'com.studio.aujourdhui.modules.finance' => 'Finance',
+			'com.studio.aujourdhui.modules.planning' => 'Planning',
+			'com.studio.aujourdhui.modules.dossiers' => 'Files',
+			'com.studio.aujourdhui.modules.classes' => 'Classes',
+			'com.studio.aujourdhui.modules.admissions' => 'Admissions',
+			'com.studio.aujourdhui.modules.demandes' => 'Requests',
+			'com.studio.aujourdhui.modules.communications' => 'Communications administration',
+			'com.studio.aujourdhui.acces.messages' => _root.com.socle.lexique.messagesMetier,
+			'com.studio.aujourdhui.acces.messagesDetail' => 'Conversations with families, teachers and reviewers',
+			'com.studio.aujourdhui.acces.annonces' => 'Announcements',
+			'com.studio.aujourdhui.acces.annoncesDetail' => 'Publish and follow announcements',
+			'com.studio.aujourdhui.acces.dossiers' => 'Files to validate',
+			'com.studio.aujourdhui.acces.dossiersDetail' => 'Files ready for a decision',
+			'com.studio.aujourdhui.acces.classes' => 'Classes',
+			'com.studio.aujourdhui.acces.classesDetail' => 'Classes, their schedules and their teachers',
+			'com.studio.aujourdhui.acces.demandes' => 'Requests to decide',
+			'com.studio.aujourdhui.acces.demandesDetail' => 'Change requests pending',
+			'com.studio.brouillons.titre' => 'Drafts',
+			'com.studio.brouillons.detail' => 'Messages started in a channel and not yet sent. They stay on this device for the session, without syncing.',
+			'com.studio.brouillons.dansCanal' => ({required Object nom}) => 'Draft in ${nom}',
+			'com.studio.brouillons.canalInconnu' => 'Draft in a channel',
+			'com.studio.brouillons.canalIndisponible' => 'Draft in a channel that is no longer available',
+			'com.studio.brouillons.modifie' => ({required Object moment}) => 'Edited ${moment}',
+			'com.studio.brouillons.reprendre' => ({required Object nom}) => 'Resume the draft in ${nom}',
+			'com.studio.brouillons.videTitre' => 'No draft',
+			'com.studio.brouillons.vide' => 'A message started in a channel and not yet sent will appear here.',
+			'com.studio.brouillons.tous' => ({required Object nombre}) => 'See all drafts (${nombre})',
+			'com.studio.brouillons.restaure' => 'Draft restored. You can pick up your message.',
+			'com.studio.sousTitre' => 'The team\'s workspace',
+			'com.studio.navigation.aujourdhui' => _root.com.socle.lexique.aujourdhui,
+			'com.studio.navigation.brouillons' => 'Drafts',
+			'com.studio.navigation.canaux' => 'Channels',
+			'com.studio.navigation.enregistres' => 'Saved items',
+			'com.studio.choisirTitre' => 'Choose a channel',
+			'com.studio.choisir' => 'Choose a channel from the list to read the discussion and write in it.',
+			'com.studio.aucunCanalTitre' => 'No channel yet',
+			'com.studio.aucunCanal' => 'The channels open to you will appear here.',
+			'com.studio.sections.organisation' => 'Organization',
+			'com.studio.sections.admissionsFamilles' => 'Admissions & families',
+			'com.studio.sections.pedagogieQualite' => 'Teaching & quality',
+			'com.studio.sections.planningRemplacements' => 'Planning & replacements',
+			'com.studio.sections.finance' => 'Finance',
+			'com.studio.sections.support' => 'Support',
+			'com.studio.sections.produitTechnique' => 'Product & technical',
+			'com.studio.sections.direction' => 'Management',
+			'com.studio.visibilite.restreint' => 'Restricted',
+			'com.studio.visibilite.prive' => 'Private',
+			'com.studio.visibilite.visibleDetail' => 'Open to the whole team.',
+			'com.studio.visibilite.restreintDetail' => 'Open to part of the team, which you belong to.',
+			'com.studio.visibilite.priveDetail' => 'Private channel, open to its members only. You belong to it.',
+			_ => null,
+		} ?? switch (path) {
+			'com.studio.canal.membresUn' => '1 member',
+			'com.studio.canal.membres' => ({required Object nombre}) => '${nombre} members',
+			'com.studio.canal.aide' => ({required Object nom}) => 'Write in ${nom}',
+			'com.studio.canal.lectureSeule' => 'You can read this channel. Writing is not open to you here.',
+			'com.studio.canal.aucunMessageTitre' => 'No message yet',
+			'com.studio.canal.aucunMessage' => 'Messages in this channel will appear here as soon as they are posted.',
+			'com.studio.canal.indisponibleTitre' => 'Channel unavailable',
+			'com.studio.canal.indisponible' => 'This channel is not available to you. Choose another channel from the list.',
+			'com.studio.panneau.titre' => 'About the channel',
+			'com.studio.panneau.aPropos' => 'About',
+			'com.studio.panneau.section' => 'Section',
+			'com.studio.panneau.visibilite' => 'Visibility',
+			'com.studio.panneau.epingles' => _root.com.socle.lexique.elementsEpingles,
+			'com.studio.panneau.fichiers' => 'Recent files',
+			'com.studio.panneau.liens' => 'Useful links',
+			'com.studio.panneau.vous' => 'You',
+			'com.studio.panneau.parametres' => 'Channel settings',
+			'com.studio.panneau.parametresDetail' => 'Changing the settings will arrive with the Studio service.',
+			'com.studio.panneau.ouvrir' => ({required Object titre}) => 'Open ${titre}',
+			'com.studio.panneau.lienExterne' => ({required Object hote}) => 'External site: ${hote}',
+			'com.studio.panneau.aucunPartageTitre' => 'Nothing shared yet',
+			'com.studio.panneau.aucunPartage' => 'The pinned items, files and links of this channel will appear here.',
+			'com.studio.enregistrer.enregistrer' => _root.com.socle.lexique.enregistrer,
+			'com.studio.enregistrer.retirer' => 'Remove',
+			'com.studio.enregistrer.semantiqueEnregistrer' => ({required Object titre}) => 'Save ${titre}',
+			'com.studio.enregistrer.semantiqueRetirer' => ({required Object titre}) => 'Remove ${titre} from saved items',
+			'com.studio.enregistrer.ajoute' => ({required Object titre}) => 'Added to saved items: ${titre}.',
+			'com.studio.enregistrer.retire' => ({required Object titre}) => 'Removed from saved items: ${titre}.',
+			'com.studio.enregistrer.nonConfirme' => 'Saving has not been confirmed yet. Try again in a moment.',
+			'com.studio.enregistres.detail' => 'The channels and items you keep at hand. Each opens in its original place.',
+			'com.studio.enregistres.videTitre' => 'No saved item',
+			'com.studio.enregistres.vide' => 'Tap Save in a channel\'s panel to find a channel or an item here.',
+			'com.studio.enregistres.ouvrir' => ({required Object titre}) => 'Open ${titre}',
+			'com.studio.enregistres.sansDestination' => ({required Object type}) => '${type}, no longer opens from here',
+			'com.studio.enregistres.types.canal' => 'Channel',
+			'com.studio.enregistres.types.publication' => 'Post',
+			'com.studio.enregistres.types.message' => 'Message',
+			'com.studio.enregistres.types.element' => 'Studio item',
+			'com.studio.recherche.champ' => 'Search The Studio',
+			'com.studio.recherche.aide' => 'Channel, message or file',
+			'com.studio.recherche.aucunTitre' => 'No result',
+			'com.studio.recherche.aucun' => ({required Object texte}) => 'Nothing matches "${texte}" in your channels. Try another word.',
+			'com.studio.recherche.aucunDansFiltre' => 'Nothing of this type matches. Choose All to see the other results.',
+			'com.studio.recherche.resultatUn' => '1 result',
+			'com.studio.recherche.resultats' => ({required Object nombre}) => '${nombre} results',
+			'com.studio.recherche.filtre' => 'Result type',
+			'com.studio.recherche.tout' => 'All',
+			'com.studio.recherche.canaux' => 'Channels',
+			'com.studio.recherche.messages' => 'Messages',
+			'com.studio.recherche.fichiers' => 'Files',
+			'com.studio.recherche.dansCanal' => ({required Object canal}) => 'In ${canal}',
+			'com.studio.recherche.messageDe' => ({required Object auteur, required Object canal}) => '${auteur}, in ${canal}',
+			'com.studio.demo.focus' => 'A channel in focus mode',
+			'com.studio.demo.aujourdhuiVide' => 'Today with no activity',
+			'com.studio.demo.horsDemo' => ({required Object module}) => 'In the app, this line opens ${module}. The demo stays on this page.',
+			'com.studio.demo.choisir' => 'Choose a situation to try.',
+			'com.studio.demo.normale' => 'The Studio and its channels',
+			'com.studio.demo.echec' => 'Sending not confirmed',
+			'com.studio.demo.horsLigne' => 'Offline',
+			'com.studio.demo.canalPrive' => 'Address of a private channel not open to you',
+			'com.studio.demo.sansCanaux' => 'No open channel',
+			'com.studio.demo.vue' => ({required Object situation}) => 'Situation: ${situation}',
+			'com.studio.demo.f.nadia' => 'Nadia',
+			'com.studio.demo.f.fonctionDirection' => 'Management',
+			'com.studio.demo.f.mariam' => 'Mariam',
+			'com.studio.demo.f.fonctionCoordination' => 'General coordination',
+			'com.studio.demo.f.youssef' => 'Youssef',
+			'com.studio.demo.f.fonctionProduit' => 'Product and technical',
+			'com.studio.demo.f.amina' => 'Amina',
+			'com.studio.demo.f.fonctionPedagogie' => 'Teaching',
+			'com.studio.demo.f.samira' => 'Samira',
+			'com.studio.demo.f.fonctionAdmissions' => 'Admissions',
+			'com.studio.demo.f.ibrahim' => 'Ibrahim',
+			'com.studio.demo.f.fonctionPlanning' => 'Planning',
+			'com.studio.demo.f.pieceAudio' => 'Audio',
+			'com.studio.demo.f.fichierPlanning' => 'Planning_Q3.pdf',
+			'com.studio.demo.f.fichierModeration' => 'Moderation_guide.pdf',
+			'com.studio.demo.f.fichierVocal' => 'voice-youssef.m4a',
+			'com.studio.demo.f.fichierCompteRendu' => 'Visit_report.pdf',
+			'com.studio.demo.f.fichierBudget' => 'Confidential_budget.pdf',
+			'com.studio.demo.f.canalOrganisation' => 'General organization',
+			'com.studio.demo.f.canalOrganisationDetail' => 'Coordination of the whole team',
+			'com.studio.demo.f.canalAdmissions' => 'Admissions',
+			'com.studio.demo.f.canalAdmissionsDetail' => 'Follow-up of registration requests',
+			'com.studio.demo.f.canalQualite' => 'Quality follow-up',
+			'com.studio.demo.f.canalQualiteDetail' => 'Feedback from review visits',
+			'com.studio.demo.f.canalRemplacements' => 'Replacements',
+			'com.studio.demo.f.canalRemplacementsDetail' => 'Absences and replacements of the week',
+			'com.studio.demo.f.canalCloture' => 'Month-end closing',
+			'com.studio.demo.f.canalClotureDetail' => 'Preparation of the monthly closing',
+			'com.studio.demo.f.canalDirection' => 'Strategic management',
+			'com.studio.demo.f.canalDirectionDetail' => 'Management directions',
+			'com.studio.demo.f.messagePlanning' => 'Hello to the whole team. Here is next quarter\'s planning, tell me if anything is wrong.',
+			'com.studio.demo.f.messageSupports' => 'I\'m updating the level 2 materials and we\'ll review them tomorrow.',
+			'com.studio.demo.f.messageMerci' => 'Thank you all for the week.',
+			'com.studio.demo.f.messageDossiers' => 'Three files are waiting for a decision before Friday. Nadia, can you look at the Karim family\'s file?',
+			'com.studio.demo.f.messageCompteRendu' => 'The month\'s visit report is ready.',
+			'com.studio.demo.f.messageRemplacement' => 'On Tuesday, the An-Nour class is covered by a replacement. The planning is up to date.',
+			'com.studio.demo.f.messageJustificatifs' => 'The September supporting documents are gathered.',
+			'com.studio.demo.f.messageBudget' => 'Confidential budget for the quarter.',
+			'com.studio.demo.f.activiteBudget' => 'Confidential budget for the quarter',
+			'com.studio.demo.f.partagePlanning' => 'Planning for the quarter',
+			'com.studio.demo.f.partageModeration' => 'Moderation guide',
+			'com.studio.demo.f.epinglePar' => ({required Object nom}) => 'Pinned by ${nom}',
+			'com.studio.demo.f.partagePar' => ({required Object nom}) => 'Shared by ${nom}',
+			'com.studio.demo.f.lienRemplacements' => 'Replacements of the week',
+			'com.studio.demo.f.lienCharte' => 'Team charter',
+			'com.studio.demo.f.brouillon' => 'Samira, I\'ll look at the Karim family\'s file tonight and tell you tomorrow morning',
+			'com.studio.demo.f.activitePaiement' => 'September payment not confirmed for the Haddad family',
+			'com.studio.demo.f.objetEcheancier' => 'Haddad family payment schedule',
+			'com.studio.demo.f.activiteDossierKarim' => 'Karim family file ready for a decision',
+			'com.studio.demo.f.objetDossierKarim' => 'Karim family file',
+			'com.studio.demo.f.activiteMention' => 'Samira mentioned you',
+			'com.studio.demo.f.activiteReponse' => 'Amina replied to your message',
+			'com.studio.demo.f.activiteRemplacant' => 'Choose Tuesday\'s replacement for the An-Nour class',
+			'com.studio.demo.f.objetRemplacement' => 'Tuesday\'s replacement',
+			'com.studio.demo.f.activiteOuverture' => 'Approve the opening of a Saturday morning class',
+			'com.studio.demo.f.objetClasseSamedi' => 'Saturday morning class',
+			'com.studio.demo.f.activiteCloture' => 'September month-end closing',
+			'com.studio.demo.f.objetCloture' => 'September closing',
+			'com.studio.demo.f.activiteBilans' => 'Mid-term assessments to review',
+			'com.studio.demo.f.objetBilans' => 'Mid-term assessments',
+			'com.studio.demo.f.activiteMessages' => '2 new messages',
+			'com.studio.demo.f.activiteAnnonce' => 'Announcement published: the academy closes on 1 November',
+			'com.studio.demo.f.objetFermeture' => 'Closure on 1 November',
+			'com.studio.demo.f.activiteFichier' => ({required Object nom, required Object fichier}) => '${nom} shared ${fichier}',
+			'com.studio.demo.f.activiteInscription' => 'New registration request received',
+			'com.studio.demo.f.objetDossierBenali' => 'Benali family file',
+			'com.studio.titre' => _root.com.socle.lexique.studio,
+			'com.studio.vide' => 'No activity to handle here.',
+			'com.annonces.toutesAcademie' => 'The whole academy',
+			'com.annonces.publieur.titre' => 'New announcement',
+			'com.annonces.publieur.etapes.contenu' => 'Announcement content',
+			'com.annonces.publieur.etapes.audience' => 'Announcement recipients',
+			'com.annonces.publieur.etapes.programmation' => 'Publication date',
+			'com.annonces.publieur.etapes.previsualisation' => 'Announcement preview',
+			'com.annonces.publieur.etapes.publication' => 'Announcement publication',
+			'com.annonces.publieur.contexte.contenu' => 'Write what the recipients need to know. An announcement goes one way only: no one replies to it.',
+			'com.annonces.publieur.contexte.audience' => 'Choose who receives the announcement. Only the recipients you can reach are offered.',
+			'com.annonces.publieur.contexte.audienceFixee' => ({required Object cible}) => 'This announcement goes to ${cible}. You publish only for your class.',
+			'com.annonces.publieur.contexte.programmation' => 'Choose when the announcement goes out. A scheduled announcement waits for its date.',
+			'com.annonces.publieur.contexte.previsualisation' => 'Here is the announcement as the recipients will read it.',
+			'com.annonces.publieur.contexte.publication' => 'Review the recipients and the date, then publish. Nothing is published before confirmation.',
+			'com.annonces.publieur.champTitre' => 'Announcement title',
+			'com.annonces.publieur.champTexte' => 'Announcement text',
+			'com.annonces.publieur.nature.classe' => 'Only the families and students of this class receive it.',
+			'com.annonces.publieur.nature.public' => 'Everyone in this audience receives it.',
+			'com.annonces.publieur.nature.toutes' => 'The whole academy receives it. Keep it for what concerns everyone.',
+			'com.annonces.publieur.quand.maintenant' => 'As soon as confirmed',
+			'com.annonces.publieur.quand.maintenantDetail' => 'The announcement goes out as soon as publication is confirmed.',
+			'com.annonces.publieur.quand.creneau' => ({required Object date, required Object heure}) => 'On ${date} at ${heure}',
+			'com.annonces.publieur.quand.creneauDetail' => 'The announcement waits for this date. You will find it in the scheduled announcements.',
+			'com.annonces.publieur.apercu.a' => ({required Object cible}) => 'To: ${cible}',
+			'com.annonces.publieur.apercu.diffusionMaintenant' => 'Release: as soon as confirmed',
+			'com.annonces.publieur.apercu.diffusionLe' => ({required Object date, required Object heure}) => 'Release scheduled for ${date} at ${heure}',
+			'com.annonces.publieur.continuer' => 'Continue',
+			'com.annonces.publieur.publier' => 'Publish the announcement',
+			'com.annonces.publieur.programmer' => 'Schedule the announcement',
+			'com.annonces.publieur.reessayer' => 'Try the publication again',
+			'com.annonces.publieur.terminer' => 'Finish',
+			'com.annonces.publieur.manqueContenu' => 'Write a title and a text to continue.',
+			'com.annonces.publieur.manqueAudience' => 'Choose the recipients to continue.',
+			'com.annonces.publieur.enCours' => 'Publishing in progress. Wait for confirmation.',
+			'com.annonces.publieur.publiee' => 'Announcement published. The recipients receive it.',
+			'com.annonces.publieur.planifiee' => ({required Object date, required Object heure}) => 'Announcement scheduled for ${date} at ${heure}.',
+			'com.annonces.publieur.nonConfirmee' => 'This announcement is not confirmed yet: it may not have reached Rewayah. Try again: it will go out only once.',
+			'com.annonces.publieur.horsLigne' => 'This announcement is not confirmed yet. Try again as soon as sending is possible again.',
+			'com.annonces.publieur.indisponible' => 'Publishing announcements is not available yet. Come back later.',
+			'com.annonces.publieur.aucuneCibleTitre' => 'No recipient open',
+			'com.annonces.publieur.aucuneCible' => 'You cannot publish for any recipient for now. Ask the management for access.',
+			'com.annonces.publieur.classeRefuseeTitre' => 'Publishing reserved',
+			'com.annonces.publieur.classeRefusee' => 'You cannot publish an announcement for this class. Ask the management for access.',
+			'com.annonces.administration.nouvelle' => 'New announcement',
+			'com.annonces.administration.demo' => 'Demo',
+			'com.annonces.administration.demoDetail' => 'Demo data: no real figures.',
+			'com.annonces.administration.horsLigne' => 'You are offline. Announcements cannot be refreshed.',
+			'com.annonces.administration.indicateurs.titre' => 'Communications indicators',
+			'com.annonces.administration.indicateurs.publiees' => 'Announcements published',
+			'com.annonces.administration.indicateurs.planifiees' => 'Announcements scheduled',
+			'com.annonces.administration.indicateurs.moderation' => 'Content in moderation',
+			'com.annonces.administration.indicateurs.regles' => 'Publishing rights',
+			'com.annonces.administration.indicateurs.indisponible' => ({required Object libelle}) => '${libelle}: not available yet',
+			'com.annonces.administration.indicateurs.echec' => ({required Object libelle}) => '${libelle}: not loaded. The request may not have reached Rewayah: reload the page.',
+			'com.annonces.administration.indicateurs.reserve' => ({required Object libelle}) => '${libelle}: reserved for the people in charge of moderation',
+			'com.annonces.administration.publiees.titre' => 'Announcements published',
+			'com.annonces.administration.publiees.vide' => 'No announcement published in the period.',
+			'com.annonces.administration.publiees.pastille' => 'Published',
+			'com.annonces.administration.publiees.legende' => ({required Object cible, required Object date, required Object heure}) => '${cible} · on ${date} at ${heure}',
+			'com.annonces.administration.planifiees.titre' => 'Announcements scheduled',
+			'com.annonces.administration.planifiees.vide' => 'No announcement scheduled.',
+			'com.annonces.administration.planifiees.pastille' => 'Scheduled',
+			'com.annonces.administration.planifiees.legende' => ({required Object cible, required Object date, required Object heure}) => '${cible} · planned for ${date} at ${heure}',
+			'com.annonces.administration.matrice.titre' => 'Announcement publishing rights',
+			'com.annonces.administration.matrice.detail' => 'The academy\'s rule, applied to each publication.',
+			'com.annonces.administration.matrice.auteurs' => 'Who publishes',
+			'com.annonces.administration.matrice.peutPublier' => 'Can publish',
+			'com.annonces.administration.matrice.audiences' => 'Recipients',
+			'com.annonces.administration.matrice.validation' => 'Validation required',
+			'com.annonces.administration.matrice.oui' => 'Yes',
+			'com.annonces.administration.matrice.non' => 'No',
+			'com.annonces.administration.matrice.aucune' => 'None',
+			'com.annonces.administration.matrice.vide' => 'No publishing right is configured.',
+			'com.annonces.administration.moderation.titre' => 'Moderation queue',
+			'com.annonces.administration.moderation.legende' => ({required Object date, required Object heure}) => 'Reported on ${date} at ${heure}',
+			'com.annonces.administration.moderation.motif' => ({required Object motif}) => 'Reason: ${motif}',
+			'com.annonces.administration.moderation.extraitTitre' => 'Reported content',
+			'com.annonces.administration.moderation.extraitAbsent' => 'This content\'s excerpt is not provided.',
+			'com.annonces.administration.moderation.regle' => 'Rule concerned',
+			'com.annonces.administration.moderation.approuver' => 'Approve after review',
+			'com.annonces.administration.moderation.masquer' => 'Hide the content',
+			'com.annonces.administration.moderation.restaurer' => 'Restore the content',
+			'com.annonces.administration.moderation.rejeter' => 'Dismiss the report',
+			'com.annonces.administration.moderation.contexte' => 'Open the context',
+			'com.annonces.administration.moderation.masque' => 'Hidden',
+			'com.annonces.administration.moderation.approuve' => 'Approved',
+			'com.annonces.administration.moderation.rejete' => 'Report dismissed',
+			'com.annonces.administration.moderation.restaure' => 'Restored',
+			'com.annonces.administration.moderation.enregistree' => 'Decision saved.',
+			'com.annonces.administration.moderation.nonConfirmee' => 'This decision is not confirmed yet: it may not have reached Rewayah. Try again in a moment.',
+			'com.annonces.administration.moderation.horsLigne' => 'You are offline. The moderation queue cannot be refreshed.',
+			'com.annonces.administration.moderation.indisponible' => 'Moderation is not available yet. Come back later.',
+			'com.annonces.administration.moderation.videTitre' => 'No content to review',
+			'com.annonces.administration.moderation.vide' => 'Reports from the Teachers community arrive here.',
+			'com.annonces.administration.moderation.refuseTitre' => 'Queue reserved for moderation',
+			'com.annonces.administration.moderation.refuse' => 'Only the people in charge of moderation see this queue.',
+			'com.annonces.administration.moderation.choisirTitre' => 'No report open',
+			'com.annonces.administration.moderation.choisir' => 'Choose a report from the queue to review it.',
+			'com.annonces.administration.moderation.sansAction' => 'No moderation action is open to you on this content.',
+			'com.annonces.administration.moderation.sansSanction' => 'No account sanction is applied automatically.',
+			'com.annonces.administration.moderation.politique' => 'Anti-promotion policy',
+			'com.annonces.administration.moderation.ouvrirSemantique' => ({required Object objet, required Object motif}) => 'Review ${objet}, reason ${motif}',
+			'com.annonces.administration.moderation.regleMotif.publicite' => 'Advertising is not allowed in the Teachers community.',
+			'com.annonces.administration.moderation.regleMotif.lienAffilie' => 'Affiliate links are not allowed in the Teachers community.',
+			'com.annonces.administration.moderation.regleMotif.vente' => 'Selling products or services is not allowed in this space.',
+			'com.annonces.administration.moderation.regleMotif.sollicitation' => 'Commercial solicitation is not allowed in this space.',
+			'com.annonces.administration.moderation.regles.titre' => 'Teaching sharing only',
+			'com.annonces.administration.moderation.regles.corps' => 'The Teachers community is reserved for professional exchanges between teachers.',
+			'com.annonces.administration.moderation.regles.reglesTitre' => 'Posting rules',
+			'com.annonces.administration.moderation.regles.pasPublicite' => 'No advertising',
+			'com.annonces.administration.moderation.regles.pasAffilie' => 'No affiliate links',
+			'com.annonces.administration.moderation.regles.pasVente' => 'No sale of products or services',
+			'com.annonces.administration.moderation.regles.pasSollicitation' => 'No commercial solicitation',
+			'com.annonces.administration.moderation.regles.pasDonnees' => 'No personal data of a student or a family',
+			'com.annonces.demoPublication.lienAdministration' => 'Communications administration (management)',
+			'com.annonces.demoPublication.lienPublier' => 'Publish an announcement for a class (teacher)',
+			'com.annonces.demoPublication.toutes' => 'The whole academy',
+			'com.annonces.demoPublication.familles' => 'Families',
+			'com.annonces.demoPublication.enseignants' => 'Teachers',
+			'com.annonces.demoPublication.eleves' => 'Students',
+			'com.annonces.demoPublication.controleurs' => 'Reviewers',
+			'com.annonces.demoPublication.direction' => 'Management',
+			'com.annonces.demoPublication.audiencesDirection' => 'The whole academy, an audience or a class',
+			'com.annonces.demoPublication.audiencesEnseignant' => 'Its class only',
+			'com.annonces.demoPublication.vacancesTitre' => 'Winter holiday calendar',
+			'com.annonces.demoPublication.vacancesTexte' => 'Classes stop from 21 December to 5 January. Sessions resume on Monday 6 January at the usual times.',
+			'com.annonces.demoPublication.reunionTitre' => 'Thursday teachers\' meeting',
+			'com.annonces.demoPublication.reunionTexte' => 'Thursday\'s teaching meeting starts at 6 pm, by video. The agenda is in The Studio.',
+			'com.annonces.demoPublication.recitationTitre' => 'End-of-term recitation',
+			'com.annonces.demoPublication.recitationTexte' => 'The An-Nour class will present its end-of-term recitation on Saturday at 10 am, by video.',
+			'com.annonces.demoPublication.rentreeTitre' => 'Classes resume after the holidays',
+			'com.annonces.demoPublication.rentreeTexte' => 'Sessions resume on Monday 6 January at the usual times.',
+			'com.annonces.demoPublication.signalementAffilie' => 'Post "Printable tajwid sheets"',
+			'com.annonces.demoPublication.extraitAffilie' => 'Find my sheets with this partner link, 20% off with my code.',
+			'com.annonces.demoPublication.signalementVente' => 'Post "Private lessons available"',
+			'com.annonces.demoPublication.extraitVente' => 'I offer paid private lessons at the weekend, write to me.',
+			'com.annonces.demoPublication.signalementHorsSujet' => 'Reply under "Organizing a group revision"',
+			'com.annonces.section' => 'Class announcements',
+			'com.annonces.annonce' => 'Announcement',
+			'com.annonces.publier' => 'Publish an announcement',
+			'com.annonces.videPublier' => 'No announcement for this class. Publish the first one for the whole class.',
+			'com.annonces.auteurDate' => ({required Object auteur, required Object date, required Object heure}) => '${auteur}, on ${date} at ${heure}',
+			'com.annonces.date' => ({required Object date, required Object heure}) => 'On ${date} at ${heure}',
+			'com.annonces.lire' => 'Read the whole announcement',
+			'com.annonces.ouvrirClasse' => 'Open the class',
+			'com.annonces.ouvrirClasseSemantique' => ({required Object classe}) => 'Open ${classe}',
+			'com.annonces.marquerLue' => 'Mark as read',
+			'com.annonces.lue' => 'Read',
+			'com.annonces.carteSemantique' => ({required Object classe, required Object titre}) => 'Announcement from ${classe}: ${titre}',
+			'com.annonces.introuvableTitre' => 'This announcement is no longer available',
+			'com.annonces.introuvablePhrase' => 'It may have been withdrawn from the class. Go back to your notifications.',
+			'com.annonces.demo.detail' => 'Demo outside production: fictional data, nothing is sent.',
+			'com.annonces.demo.choisirRole' => 'Choose the role to show',
+			'com.annonces.demo.roles.tuteur' => 'Family',
+			'com.annonces.demo.roles.enseignant' => 'Teacher',
+			'com.annonces.demo.roles.adulte' => 'Adult student',
+			'com.annonces.demo.roles.admin' => 'Management',
+			'com.annonces.demo.roles.controleur' => 'Reviewer',
+			'com.annonces.demo.classeNour' => 'An-Nour class',
+			'com.annonces.demo.classeFajr' => 'Al-Fajr class',
+			'com.annonces.demo.enseignante' => 'Class teacher',
+			'com.annonces.demo.f.adminStudioMention' => 'Studio: a discussion in the Programmes channel mentions you',
+			'com.annonces.demo.f.adminStudioReponse' => 'Studio: new reply to your message about the spring programme',
+			'com.annonces.demo.f.adminStudioDecision' => 'Studio: a decision is requested on the lesson 4 material',
+			'com.annonces.demo.f.adminStudioAssigne' => 'Studio: the review of the Tajwid material is assigned to you',
+			'com.annonces.demo.f.adminStudioInterne' => 'Internal announcement from the Studio team: team meeting Thursday at 6 pm',
+			'com.annonces.demo.f.adminStudioContexte' => 'Studio: a material is ready for the An-Nour class',
+			'com.annonces.demo.f.annonceNourTitre' => 'End-of-term recitation in front of the families',
+			'com.annonces.demo.f.annonceNourTexte' => 'Dear families, the An-Nour class will present its end-of-term recitation on Saturday 14 December at 10 am, by video. Each student will recite the surah worked on this term. Please plan for a stable connection and a quiet place. Students who wish to may rehearse during the previous Wednesday\'s session. Families may attend in silence, microphone off. A report will be shared after the session.',
+			'com.annonces.demo.f.annonceFajrTitre' => 'Revision before Thursday\'s assessment',
+			'com.annonces.demo.f.annonceFajrTexte' => 'Revise the last ten verses of surah Al-Mulk before Thursday.',
+			'com.annonces.demo.f.tuteurUrgent' => 'Tonight\'s session is cancelled',
+			'com.annonces.demo.f.tuteurUrgentTexte' => 'The teacher is absent tonight. The session is postponed to Thursday, same time. You have nothing to do.',
+			'com.annonces.demo.f.tuteurReponse' => 'Reply expected: agreement for Yasmine\'s recitation',
+			'com.annonces.demo.f.tuteurReponseTexte' => 'The teacher is waiting for your agreement for Yasmine to recite in front of the families. Reply from the Class Space.',
+			'com.annonces.demo.f.tuteurMessage' => 'New message from the teacher of the An-Nour class',
+			'com.annonces.demo.f.tuteurDossier' => 'Your registration file is validated',
+			'com.annonces.demo.f.adulteSeance' => 'Your Tuesday session is moved to 7 pm',
+			'com.annonces.demo.f.adulteMessage' => 'New message from your teacher',
+			'com.annonces.demo.f.enseignantFamille' => 'Message from Yasmine\'s family, An-Nour class',
+			'com.annonces.demo.f.enseignantDirection' => 'Management announcement: winter holiday calendar',
+			'com.annonces.demo.f.enseignantDirectionTexte' => 'Classes stop from 21 December to 5 January. Sessions resume on Monday 6 January at the usual times.',
+			'com.annonces.demo.f.enseignantPlanning' => 'Your planning for next week has changed',
+			'com.annonces.demo.f.enseignantMention' => 'A Community post mentions you',
+			'com.annonces.demo.f.enseignantReponse' => 'New reply to your post',
+			'com.annonces.demo.f.enseignantAdministration' => 'Message from the Administration: documents to provide',
+			'com.annonces.demo.f.adminDossiers' => 'Three registration files are to be handled',
+			'com.annonces.demo.f.adminSignalement' => 'A Community post has been reported',
+			'com.annonces.demo.f.adminReponse' => 'Reply from Bilal\'s family to your message',
+			'com.annonces.demo.f.adminPlanifiee' => 'A scheduled announcement needs checking before publication',
+			'com.annonces.demo.f.adminOperationnel' => 'An-Nour class: full',
+			'com.annonces.demo.f.controleurMission' => 'New mission: visit to the An-Nour class',
+			'com.annonces.demo.f.controleurChangement' => 'Your Thursday mission is moved to 6 pm',
+			'com.annonces.demo.f.controleurReponse' => 'Administration\'s reply to your report',
+			'com.annonces.titre' => 'Announcements',
 			'presentationTuteur.titre' => 'Display requests',
 			'presentationTuteur.contexte' => 'A child in your household is asking for the standard display. You decide.',
 			'presentationTuteur.ligne' => ({required Object prenom}) => '${prenom} is asking for the standard display.',
@@ -23008,8 +25617,6 @@ extension on TraductionsEn {
 			'reprisesAdmin.foyer' => 'Household',
 			'reprisesAdmin.deposeeLe' => 'Submitted on',
 			'reprisesAdmin.etat.aExaminer' => 'To review',
-			_ => null,
-		} ?? switch (path) {
 			'reprisesAdmin.etat.refuseeParTitulaire' => 'Declined by the account holder',
 			'reprisesAdmin.examenLe' => ({required Object date}) => 'Review possible from ${date}.',
 			'reprisesAdmin.refuseeInfo' => 'The account holder declined this request. No decision is expected.',
@@ -23176,6 +25783,8 @@ extension on TraductionsEn {
 			'avis.form.ferme.phrase' => ({required Object courriel}) => 'It is closed, expired, or the planned number of reviews has been reached. To give your feedback, ask the management for a new link: ${courriel}.',
 			'avis.form.envoye.titre' => 'Thank you for your feedback',
 			'avis.form.envoye.phrase' => ({required Object courriel}) => 'The management will read it before publishing it on the website, with your display name, your country and the date. To have it removed, write to ${courriel}.',
+			_ => null,
+		} ?? switch (path) {
 			'avis.form.erreurChargement' => 'The form could not be opened. Try again in a moment.',
 			'avis.form.sansDonnees' => 'The form could not be opened',
 			'avis.form.indisponibleTitre' => 'Feedback unavailable',
@@ -23522,8 +26131,6 @@ extension on TraductionsEn {
 			'd1ter.messages.introSoi' => 'The management has passed on these messages to you.',
 			'd1ter.messages.transmisLe' => ({required Object date}) => 'Passed on on ${date}',
 			'd1ter.messages.erreur' => 'The academy messages could not be read: the request may not have reached Rewayah. Try again in a moment.',
-			_ => null,
-		} ?? switch (path) {
 			'd1ter.notifications.message' => 'The management has passed on a message to you.',
 			'd1ter.notifications.messageEnfant' => ({required Object prenom}) => 'The management has passed on a message about ${prenom}.',
 			'd1ter.notifications.messageSoi' => 'The management has passed on a message to you.',
@@ -23690,6 +26297,8 @@ extension on TraductionsEn {
 			'candidatsFlux.importFormulaires.colonnes.ambigu' => ({required Object champs}) => 'Several columns carry the title of: ${champs}. Tap the one to read, then choose what it contains.',
 			'candidatsFlux.importFormulaires.colonnes.libelles.titre' => 'How answers are read',
 			'candidatsFlux.importFormulaires.colonnes.libelles.texte' => 'Multiple-choice answers (gender, languages, memorization level, possible start) are read using Rewayah\'s table of labels. A label that is not in it is flagged row by row, at the "Errors" step.',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.colonnes.relecture' => 'Your corrections require the file to be read again before continuing.',
 			'candidatsFlux.importFormulaires.doublons.casTitre' => ({required Object nature, required Object n, required Object total}) => '${nature}: case ${n} of ${total}',
 			'candidatsFlux.importFormulaires.doublons.question' => 'Do these rows come from the same person?',
@@ -24036,8 +26645,6 @@ extension on TraductionsEn {
 			'push1.reglages.erreur' => 'Your settings could not be loaded: the connection may have dropped. Try again in a moment.',
 			'push1.reglages.horsLigne' => 'Notification settings can be changed when the connection is back.',
 			'push1.reglages.changementNonConfirme' => 'The change is not yet confirmed: the connection may have dropped. Try again in a moment.',
-			_ => null,
-		} ?? switch (path) {
 			'nouveautes.badge' => 'New',
 			'nouveautes.lu' => 'new',
 			'suiviPedagogique.titreSoi' => 'Where I stand',
@@ -24204,6 +26811,8 @@ extension on TraductionsEn {
 			'journalSorties.texte.parent.quoi' => 'What is recorded: each time your child leaves the app during a session, the time they leave, the time they return, and whether this absence made them leave the room. Nothing else: not what they do elsewhere, not their screen, not their image, not their voice.',
 			'journalSorties.texte.parent.pourquoi' => 'Why: to follow your child\'s attention during class, for you and for their teacher.',
 			'journalSorties.texte.parent.qui' => 'Who can read it: you, your child, the session\'s teacher and the management. Never the other students or their families.',
+			_ => null,
+		} ?? switch (path) {
 			'journalSorties.texte.parent.retrait' => 'You can withdraw your agreement at any time, right here. As soon as you withdraw it, nothing more is recorded.',
 			'journalSorties.texte.parent.sansAccord' => 'Without your agreement, nothing is recorded and nothing changes for the class. A student who stays out of the app too long leaves the room, with or without agreement: that keeps nothing.',
 			'journalSorties.texte.parent.caseAccord' => ({required Object dePrenom}) => 'I agree that ${dePrenom}\'s exits from the app during sessions be recorded.',
