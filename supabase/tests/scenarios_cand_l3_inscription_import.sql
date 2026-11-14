@@ -1726,7 +1726,7 @@ GRANT EXECUTE ON FUNCTION pg_temp.importer(text, text, text, jsonb), pg_temp.nom
 -- proposition ne rend jamais a un cote le nom d'une ligne de l'autre cote.
 SELECT pg_temp.importer(pg_temp.csv(
   pg_temp.l('2026-12-01 10:00:00', 'f', 'Essai Femme Devenue Homme', '+966500000701', '')), 'A9', 'cle-rev-0001');
-SELECT pg_temp.inscrit('f1', 'cand-l3-g1@test.invalid', 'Essai', 'CandidateMg1', 'female', '+966500000701');
+SELECT pg_temp.inscrit('f1', 'cand-l3-g1@test.invalid', 'Essai', 'CandidateMgUn', 'female', '+966500000701');
 SELECT pg_temp.garde('g1_ligne', to_jsonb((pg_temp.rep('A9', '2026-12-01 10:00:00')).id));
 SELECT pg_temp.vrai(
   pg_temp.noms_proposes(pg_temp.p('d2'), 'admin') @> ARRAY['Essai Femme Devenue Homme']
@@ -1753,7 +1753,7 @@ SELECT pg_temp.vrai(
 -- m2 : le telephone d'une ligne corrigee apres une proposition.
 SELECT pg_temp.importer(pg_temp.csv(
   pg_temp.l('2026-12-02 10:00:00', 'f', 'Essai Femme Telephone Change', '+966500000702', '')), 'A10', 'cle-rev-0003');
-SELECT pg_temp.inscrit('f2', 'cand-l3-g2@test.invalid', 'Essai', 'CandidateMg2', 'female', '+966500000702');
+SELECT pg_temp.inscrit('f2', 'cand-l3-g2@test.invalid', 'Essai', 'CandidateMgDeux', 'female', '+966500000702');
 SELECT pg_temp.garde('g2_ligne', to_jsonb((pg_temp.rep('A10', '2026-12-02 10:00:00')).id));
 SELECT pg_temp.garde('g2_cand', to_jsonb(pg_temp.cid('f2')));
 SELECT pg_temp.vrai(pg_temp.noms_proposes(pg_temp.p('d2'), 'admin') @> ARRAY['Essai Femme Telephone Change'],
@@ -1773,7 +1773,7 @@ SELECT pg_temp.vrai(
 SELECT pg_temp.importer(pg_temp.csv(
   pg_temp.l('2026-12-03 10:00:00', 'f', 'Essai Femme Courriel Trois', '+966500000703', 'cand-l3-g3@test.invalid'),
   pg_temp.l('2026-12-03 11:00:00', 'f', 'Essai Femme Telephone Trois', '+966500000704', 'g3autre@test.invalid')), 'A11', 'cle-rev-0005');
-SELECT pg_temp.inscrit('f3', 'cand-l3-g3@test.invalid', 'Essai', 'CandidateMg3', 'female', '+966500000704');
+SELECT pg_temp.inscrit('f3', 'cand-l3-g3@test.invalid', 'Essai', 'CandidateMgTrois', 'female', '+966500000704');
 SELECT pg_temp.vrai(
   (SELECT candidature_id = pg_temp.cid('f3') AND rattachement = 'courriel'
      FROM public.formulaires_reponses WHERE reference_source = pg_temp.ref('A11', '2026-12-03 10:00:00'))
@@ -1782,7 +1782,7 @@ SELECT pg_temp.vrai(
   'm3 : la candidature reliee par son courriel ne recoit aucune proposition pour une autre ligne du meme telephone (elle ne pourrait pas s''appliquer)');
 SELECT pg_temp.importer(pg_temp.csv(
   pg_temp.l('2026-12-05 10:00:00', 'f', 'Essai Femme Proposee Avant', '+966500000715', 'x715@test.invalid')), 'A15', 'cle-rev-0013');
-SELECT pg_temp.inscrit('fa', 'cand-l3-g6@test.invalid', 'Essai', 'CandidateMg6', 'female', '+966500000715');
+SELECT pg_temp.inscrit('fa', 'cand-l3-g6@test.invalid', 'Essai', 'CandidateMgSix', 'female', '+966500000715');
 SELECT pg_temp.garde('g6_cand', to_jsonb(pg_temp.cid('fa')));
 SELECT pg_temp.garde('g6_ligne_x', to_jsonb((pg_temp.rep('A15', '2026-12-05 10:00:00')).id));
 SELECT pg_temp.vrai(
@@ -1813,7 +1813,7 @@ SELECT pg_temp.vrai(
     'Retrait demande par la personne', 1, 'cle-rev-ret-1')$q$, pg_temp.lu('g4_ligne') #>> '{}')) #>> '{candidature,issue}' = 'retiree',
   'm4 : fixture : la ligne gardee pour suivi est retiree par la direction');
 SELECT pg_temp.garde('avant_g4', pg_temp.ecritures());
-SELECT pg_temp.inscrit('f4', 'cand-l3-g4@test.invalid', 'Essai', 'CandidateMg4', 'female', '+966500000706');
+SELECT pg_temp.inscrit('f4', 'cand-l3-g4@test.invalid', 'Essai', 'CandidateMgQuatre', 'female', '+966500000706');
 SELECT pg_temp.vrai(
   pg_temp.cid('f4') IS NOT NULL AND pg_temp.cid('f4') <> (pg_temp.lu('g4_ligne') #>> '{}')::uuid
   AND (SELECT issue = 'retiree' AND profile_id IS NULL AND etape = 'recue'
@@ -1830,7 +1830,7 @@ SELECT pg_temp.garde('f5', to_jsonb(pg_temp.csv(
   pg_temp.l('2026-12-10 10:00:00', 'h', 'Essai Homme Ancien', '+966500000707', 'cand-l3-g5@test.invalid'),
   pg_temp.l('2026-12-11 10:00:00', 'h', 'Essai Homme Recent', '+966500000707', 'g5autre@test.invalid'))));
 SELECT pg_temp.importer(pg_temp.lu('f5') #>> '{}', 'A13', 'cle-rev-0007');
-SELECT pg_temp.inscrit('f5', 'cand-l3-g5@test.invalid', 'Essai', 'CandidatMg5', 'male', '+966500000708');
+SELECT pg_temp.inscrit('f5', 'cand-l3-g5@test.invalid', 'Essai', 'CandidatMgCinq', 'male', '+966500000708');
 SELECT pg_temp.vrai(
   (SELECT etat = 'historique' FROM public.formulaires_reponses WHERE reference_source = pg_temp.ref('A13', '2026-12-10 10:00:00'))
   AND (SELECT candidature_id IS NULL FROM public.formulaires_reponses WHERE reference_source = pg_temp.ref('A13', '2026-12-10 10:00:00'))
@@ -1856,10 +1856,10 @@ SELECT pg_temp.importer(pg_temp.csv(
   pg_temp.l('2026-12-20 10:00:00', 'f', 'Essai Femme Les Deux', '+966500000711', 'cand-l3-h1@test.invalid'),
   pg_temp.l('2026-12-20 11:00:00', 'f', 'Essai Femme Courriel Seul', '+966500000712', 'cand-l3-h2@test.invalid'),
   pg_temp.l('2026-12-20 12:00:00', 'f', 'Essai Femme Telephone Seul', '+966500000713', 'h3autre@test.invalid')), 'A14', 'cle-rev-0009');
-SELECT pg_temp.garde('h_deux', pg_temp.inscrit('f6', 'cand-l3-h1@test.invalid', 'Essai', 'CandidateMh1', 'female', '+966500000711'));
-SELECT pg_temp.garde('h_mail', pg_temp.inscrit('f7', 'cand-l3-h2@test.invalid', 'Essai', 'CandidateMh2', 'female', '+966500000722'));
-SELECT pg_temp.garde('h_tel', pg_temp.inscrit('f8', 'cand-l3-h3@test.invalid', 'Essai', 'CandidateMh3', 'female', '+966500000713'));
-SELECT pg_temp.garde('h_rien', pg_temp.inscrit('f9', 'cand-l3-h4@test.invalid', 'Essai', 'CandidateMh4', 'female', '+966500000744'));
+SELECT pg_temp.garde('h_deux', pg_temp.inscrit('f6', 'cand-l3-h1@test.invalid', 'Essai', 'CandidateMhUn', 'female', '+966500000711'));
+SELECT pg_temp.garde('h_mail', pg_temp.inscrit('f7', 'cand-l3-h2@test.invalid', 'Essai', 'CandidateMhDeux', 'female', '+966500000722'));
+SELECT pg_temp.garde('h_tel', pg_temp.inscrit('f8', 'cand-l3-h3@test.invalid', 'Essai', 'CandidateMhTrois', 'female', '+966500000713'));
+SELECT pg_temp.garde('h_rien', pg_temp.inscrit('f9', 'cand-l3-h4@test.invalid', 'Essai', 'CandidateMhQuatre', 'female', '+966500000744'));
 SELECT pg_temp.vrai(
   pg_temp.lu('h_deux') = '{"resultat": "acceptee"}'::jsonb AND pg_temp.lu('h_mail') = pg_temp.lu('h_deux')
   AND pg_temp.lu('h_tel') = pg_temp.lu('h_deux') AND pg_temp.lu('h_rien') = pg_temp.lu('h_deux'),

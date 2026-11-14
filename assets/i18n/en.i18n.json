@@ -1368,6 +1368,15 @@
     "creer": "Create my account",
     "erreur": "The account could not be created. Try again in a moment.",
     "champRequis": "This answer is needed to continue.",
+    "nomEnLettresPrenom": "Write your first name in letters, without numbers or symbols.",
+    "nomEnLettresNom": "Write your last name in letters, without numbers or symbols.",
+    "commeSurLaPiece": "Write your name exactly as it appears on the ID document you are going to send.",
+    "nomPropre": {
+      "titre": "Your name needs correcting",
+      "explication": "Your first name or last name contains numbers or symbols. Write them in letters to continue.",
+      "enregistrer": "Save my name",
+      "nonConfirme": "Your name is not confirmed: the connection may have dropped. Check your connection, then tap “Save my name” again."
+    },
     "etapeCourte": "{n} of {total}",
     "retourEtape": "Back to the previous step",
     "seDeconnecter": "Sign out",
@@ -1775,6 +1784,7 @@
     "erreurFormat": "This file was not accepted: only JPEG, PNG, HEIC or WebP photos and PDF files are. Choose another photo of your document.",
     "erreurReseau": "The upload did not complete: your request may not have reached Rewayah. Tap \"Send my document\" again in a moment.",
     "contenuNonConforme": "This file does not open as a photo or as a PDF: it may be damaged, or of another type that was renamed. Choose the photo or PDF of your ID document.",
+    "memeNom": "Send a document that bears exactly the name written in your account.",
     "tropVolumineux": "This photo is larger than {taille} MB. Retake it at a lower quality.",
     "manqueType": "First choose the document you are submitting."
   },

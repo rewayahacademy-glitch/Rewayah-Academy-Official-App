@@ -22,6 +22,7 @@ import 'core/theme/app_theme.dart';
 import 'core/version/bandeau_nouvelle_version.dart';
 import 'core/widgets/bandeau_observation.dart';
 import 'core/widgets/selection_racine.dart';
+import 'features/compte/correction_nom.dart';
 import 'features/salle_seance/barre_seance_en_direct.dart';
 import 'features/salle_seance/hors_salle.dart';
 
@@ -144,7 +145,11 @@ class RewayahApp extends ConsumerWidget {
                         // lu une fois ici, pour le fil de chaque `PageShell`.
                         child: ContexteFilAriane(
                           plan: planFilPour(session),
-                          child: rendu ?? const SizedBox.shrink(),
+                          // NOM-PROPRE (14/11/2026) : un nom a corriger
+                          // passe avant tout le reste.
+                          child: GardeNomPropre(
+                            child: rendu ?? const SizedBox.shrink(),
+                          ),
                         ),
                       ),
                     ),

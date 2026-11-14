@@ -70,7 +70,7 @@ SELECT pg_temp.qui('d1800000-0000-4000-8000-000000000101', NULL);
 SET LOCAL ROLE authenticated;
 -- Le genre est exige depuis l'admission (lot B, 29/10/2026) : la demande le
 -- recopie. L'application le demande deja a l'etape « Genre ».
-SELECT public.inscrire_titulaire('moi', 'Amina', 'L5', 'female');
+SELECT public.inscrire_titulaire('moi', 'Amina', 'Lcinq', 'female');
 SELECT set_config('test.etat', public.etat_dossier()::text, true);
 RESET ROLE;
 SELECT pg_temp.vrai((SELECT role = 'guardian' AND account_status = 'pending_kyc' FROM public.profiles
@@ -90,7 +90,7 @@ SELECT pg_temp.vrai(current_setting('test.etat')::jsonb @> '{"usage":"moi","suit
 -- 2. « Famille » sans cours.
 SELECT pg_temp.qui('d1800000-0000-4000-8000-000000000102', NULL);
 SET LOCAL ROLE authenticated;
-SELECT public.inscrire_titulaire('famille', 'Karim', 'L5', 'male', 'Europe/Paris', false);
+SELECT public.inscrire_titulaire('famille', 'Karim', 'Lcinq', 'male', 'Europe/Paris', false);
 SELECT set_config('test.etat', public.etat_dossier()::text, true);
 RESET ROLE;
 SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM public.student_profiles
@@ -102,9 +102,9 @@ SELECT pg_temp.vrai(current_setting('test.etat')::jsonb @> '{"usage":"famille","
 -- 3. « Famille » avec cours.
 SELECT pg_temp.qui('d1800000-0000-4000-8000-000000000103', NULL);
 SET LOCAL ROLE authenticated;
-SELECT public.inscrire_titulaire('famille', 'Sara', 'L5', 'female', 'Europe/Paris', true);
+SELECT public.inscrire_titulaire('famille', 'Sara', 'Lcinq', 'female', 'Europe/Paris', true);
 SELECT set_config('test.etat', public.etat_dossier()::text, true);
-SELECT pg_temp.refus($$SELECT public.inscrire_titulaire('famille','Sara','L5')$$,
+SELECT pg_temp.refus($$SELECT public.inscrire_titulaire('famille','Sara','Lcinq')$$,
   'P0001', 'ce compte a deja un profil', 'second appel refuse');
 RESET ROLE;
 SELECT pg_temp.vrai(current_setting('test.etat')::jsonb @> '{"usage":"famille","suit_des_cours":true}',
@@ -113,9 +113,9 @@ SELECT pg_temp.vrai(current_setting('test.etat')::jsonb @> '{"usage":"famille","
 -- 4. Usage inconnu : rien n'est cree.
 SELECT pg_temp.qui('d1800000-0000-4000-8000-000000000104', NULL);
 SET LOCAL ROLE authenticated;
-SELECT pg_temp.refus($$SELECT public.inscrire_titulaire('enseignant','X','L5')$$,
+SELECT pg_temp.refus($$SELECT public.inscrire_titulaire('enseignant','X','Lcinq')$$,
   '22023', 'usage inconnu : enseignant', 'usage inconnu refuse');
-SELECT pg_temp.refus($$SELECT public.inscrire_titulaire(NULL,'X','L5')$$,
+SELECT pg_temp.refus($$SELECT public.inscrire_titulaire(NULL,'X','Lcinq')$$,
   '22023', 'usage inconnu : <NULL>', 'usage nul refuse');
 RESET ROLE;
 SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM public.profiles WHERE id = 'd1800000-0000-4000-8000-000000000104'),

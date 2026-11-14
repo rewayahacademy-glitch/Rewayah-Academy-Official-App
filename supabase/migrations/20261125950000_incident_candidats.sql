@@ -30,6 +30,19 @@
 --      reste refusee, et un compte inconnu (sans profil) aussi pour l'horloge
 --      et le lieu (scenarios_fuseaux_decalage_apres.sql, point 7).
 --
+--   3. NOM PROPRE (directeur, 14/11/2026, relaye par le pilote) : une
+--      candidate s'est inscrite avec « ٠ » (zero arabe) pour prenom et nom.
+--      Regle : lettres de toutes ecritures, signes diacritiques (les harakat,
+--      que [[:alpha:]] ne couvre pas en production, mesure du 14/11), espace,
+--      trait d'union, apostrophes ; au moins deux lettres ; ni chiffre, ni
+--      symbole, ni emoji. Controlee par un declencheur de `profiles` sur le
+--      seul nom qu'une personne ecrit POUR ELLE-MEME (inscription, correction :
+--      NEW.id = auth.uid()) ; les imports, la direction et l'anonymisation ne
+--      sont pas touches, et aucun profil existant n'est casse (aucune
+--      contrainte de table). `mon_nom_a_corriger()` dit a l'application si le
+--      nom enregistre ne suit pas la regle ; `corriger_mon_nom()` le corrige,
+--      avec une ligne d'audit.
+--
 -- Sans BEGIN ni COMMIT de premier niveau. Aucun mot d'effacement. Rejouable :
 -- CREATE OR REPLACE a signature identique, les droits EXECUTE sont conserves.
 
@@ -280,6 +293,127 @@ BEGIN
   RETURN v_theme;
 END;
 $function$;
+
+-- 3. NOM PROPRE.
+CREATE OR REPLACE FUNCTION private.nom_propre_valide(p text)
+ RETURNS boolean
+ LANGUAGE sql
+ IMMUTABLE
+ SET search_path TO ''
+AS $function$
+  SELECT p IS NOT NULL
+     AND p OPERATOR(pg_catalog.~) '^[[:alpha:]\u0300-\u036f\u0610-\u061a\u064b-\u065f\u0670\u06d6-\u06ed\u200c'' \u2019\u02bc-]+$'
+     -- Les chiffres, nommes un par un : selon la locale, [[:alpha:]] peut
+     -- compter les chiffres arabes-indiens comme des lettres.
+     AND p OPERATOR(pg_catalog.!~) '[0-9\u0660-\u0669\u06f0-\u06f9[:digit:]]'
+     AND pg_catalog.regexp_count(p, '[[:alpha:]]') >= 2;
+$function$;
+REVOKE ALL ON FUNCTION private.nom_propre_valide(text) FROM PUBLIC, anon, authenticated;
+
+CREATE OR REPLACE FUNCTION private.profil_nom_propre_trg()
+ RETURNS trigger
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+BEGIN
+  -- Seul le nom qu'une personne ecrit pour elle-meme est controle.
+  IF auth.uid() IS NULL OR NEW.id IS DISTINCT FROM auth.uid() THEN
+    RETURN NEW;
+  END IF;
+  IF TG_OP = 'UPDATE'
+     AND NEW.first_name IS NOT DISTINCT FROM OLD.first_name
+     AND NEW.last_name IS NOT DISTINCT FROM OLD.last_name THEN
+    RETURN NEW;
+  END IF;
+  IF NOT (private.nom_propre_valide(pg_catalog.btrim(NEW.first_name))
+          AND private.nom_propre_valide(pg_catalog.btrim(NEW.last_name))) THEN
+    RAISE EXCEPTION USING
+      ERRCODE = '22023',
+      MESSAGE = 'nom_non_conforme',
+      DETAIL = 'NOM-PROPRE : prenom et nom en lettres (au moins deux), sans chiffre ni symbole.';
+  END IF;
+  RETURN NEW;
+END;
+$function$;
+REVOKE ALL ON FUNCTION private.profil_nom_propre_trg() FROM PUBLIC, anon, authenticated;
+
+DO $declencheur$
+BEGIN
+  IF NOT EXISTS (SELECT 1 FROM pg_catalog.pg_trigger
+                  WHERE tgrelid = 'public.profiles'::regclass
+                    AND tgname = 'profiles_nom_propre') THEN
+    CREATE TRIGGER profiles_nom_propre
+      BEFORE INSERT OR UPDATE OF first_name, last_name ON public.profiles
+      FOR EACH ROW EXECUTE FUNCTION private.profil_nom_propre_trg();
+  END IF;
+END
+$declencheur$;
+
+CREATE OR REPLACE FUNCTION public.mon_nom_a_corriger()
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ STABLE SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+DECLARE
+  v_prenom text;
+  v_nom text;
+BEGIN
+  IF auth.uid() IS NULL THEN
+    RAISE EXCEPTION 'acces refuse' USING ERRCODE = '42501';
+  END IF;
+  SELECT p.first_name, p.last_name INTO v_prenom, v_nom
+    FROM public.profiles p
+   WHERE p.id = auth.uid() AND p.deleted_at IS NULL;
+  IF NOT FOUND THEN
+    RETURN pg_catalog.jsonb_build_object('a_corriger', false);
+  END IF;
+  RETURN pg_catalog.jsonb_build_object(
+    'a_corriger', NOT (private.nom_propre_valide(pg_catalog.btrim(v_prenom))
+                       AND private.nom_propre_valide(pg_catalog.btrim(v_nom))),
+    'prenom', v_prenom,
+    'nom', v_nom);
+END;
+$function$;
+REVOKE ALL ON FUNCTION public.mon_nom_a_corriger() FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.mon_nom_a_corriger() TO authenticated;
+
+CREATE OR REPLACE FUNCTION public.corriger_mon_nom(p_first_name text, p_last_name text)
+ RETURNS void
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+DECLARE
+  v_prenom text := pg_catalog.btrim(coalesce(p_first_name, ''));
+  v_nom text := pg_catalog.btrim(coalesce(p_last_name, ''));
+  v_avant jsonb;
+BEGIN
+  IF auth.uid() IS NULL OR NOT EXISTS (
+       SELECT 1 FROM public.profiles p
+        WHERE p.id = auth.uid() AND p.deleted_at IS NULL) THEN
+    RAISE EXCEPTION 'acces refuse' USING ERRCODE = '42501';
+  END IF;
+  IF NOT (private.nom_propre_valide(v_prenom) AND private.nom_propre_valide(v_nom)) THEN
+    RAISE EXCEPTION USING
+      ERRCODE = '22023',
+      MESSAGE = 'nom_non_conforme',
+      DETAIL = 'NOM-PROPRE : prenom et nom en lettres (au moins deux), sans chiffre ni symbole.';
+  END IF;
+  SELECT pg_catalog.jsonb_build_object('prenom', p.first_name, 'nom', p.last_name)
+    INTO v_avant
+    FROM public.profiles p WHERE p.id = auth.uid();
+  UPDATE public.profiles
+     SET first_name = v_prenom, last_name = v_nom, updated_at = pg_catalog.now()
+   WHERE id = auth.uid() AND deleted_at IS NULL;
+  PERFORM public.log_sensitive_access('nom_corrige', 'profiles', auth.uid()::text,
+    pg_catalog.jsonb_build_object('avant', v_avant,
+      'apres', pg_catalog.jsonb_build_object('prenom', v_prenom, 'nom', v_nom)));
+END;
+$function$;
+REVOKE ALL ON FUNCTION public.corriger_mon_nom(text, text) FROM PUBLIC, anon;
+GRANT EXECUTE ON FUNCTION public.corriger_mon_nom(text, text) TO authenticated;
 
 -- L'empreinte F86 du commentaire (md5_functiondef=...) suit la nouvelle
 -- definition, pour chaque fonction qui en porte une.

@@ -223,6 +223,16 @@ class _DepotPiecePageState extends ConsumerState<DepotPiecePage> {
           Ecart.vXl,
           // Les explications, sous l'action (KYC-PHOTO-1 : jamais publique,
           // la direction seule).
+          // NOM-PROPRE (INCIDENT-CANDIDATS, 14/11/2026) : la piece porte le
+          // nom du compte ; sous l'action, comme les autres explications,
+          // pour que « Envoyer ma piece » reste sur le premier ecran.
+          TexteSansCoupure(
+            t.kyc.memeNom,
+            style: palette.inkMuted.applyTo(
+              textes.bodyMedium ?? const TextStyle(),
+            ),
+          ),
+          Ecart.vSm,
           TexteSansCoupure(
             t.kyc.intro,
             style: palette.inkMuted.applyTo(

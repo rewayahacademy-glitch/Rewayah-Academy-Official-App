@@ -55,7 +55,7 @@ DO $teacher_first_name$
 DECLARE
   v_count integer;
 BEGIN
-  UPDATE public.profiles SET first_name = 'Test2'
+  UPDATE public.profiles SET first_name = 'Testdeux'
   WHERE id = 'a1070000-0000-0000-0000-000000000001';
   GET DIAGNOSTICS v_count = ROW_COUNT;
   IF v_count <> 1 THEN

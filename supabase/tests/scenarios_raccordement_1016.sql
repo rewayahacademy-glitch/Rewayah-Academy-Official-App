@@ -355,28 +355,28 @@ UPDATE public.invitations_enseignant SET revoquee_le = now(), revoquee_par = 'd1
 -- Une session qui a deja un profil (tuteur) est refusee.
 SELECT pg_temp.qui('d1600000-0000-4000-8000-0000000000d1', NULL);
 SET LOCAL ROLE authenticated;
-SELECT pg_temp.refus($$SELECT public.inscrire_enseignant_invite('ABCD-EFGH-JKMN','Hafsa','R16',NULL)$$,
+SELECT pg_temp.refus($$SELECT public.inscrire_enseignant_invite('ABCD-EFGH-JKMN','Hafsa','Rseize',NULL)$$,
   '42501', 'session avec profil : inscription enseignant invite refusee');
 RESET ROLE;
 -- Aucune session.
 SELECT pg_temp.qui(NULL, NULL);
 SET LOCAL ROLE authenticated;
-SELECT pg_temp.refus($$SELECT public.inscrire_enseignant_invite('ABCD-EFGH-JKMN','Hafsa','R16',NULL)$$,
+SELECT pg_temp.refus($$SELECT public.inscrire_enseignant_invite('ABCD-EFGH-JKMN','Hafsa','Rseize',NULL)$$,
   '42501', 'sans session : inscription enseignant invite refusee');
 RESET ROLE;
 -- Un code emis pour une autre adresse, un code revoque, un code echu.
 SELECT pg_temp.qui('d1600000-0000-4000-8000-000000000103', NULL);
 SET LOCAL ROLE authenticated;
-SELECT pg_temp.vrai(public.inscrire_enseignant_invite('ABCD-EFGH-JKMN','Hafsa','R16',NULL) ->> 'resultat' = 'inconnue',
+SELECT pg_temp.vrai(public.inscrire_enseignant_invite('ABCD-EFGH-JKMN','Hafsa','Rseize',NULL) ->> 'resultat' = 'inconnue',
   'code d''une autre adresse : inconnue, sans fuite');
-SELECT pg_temp.vrai(public.inscrire_enseignant_invite('2345-6789-ABCD','Hafsa','R16',NULL) ->> 'resultat' = 'inconnue',
+SELECT pg_temp.vrai(public.inscrire_enseignant_invite('2345-6789-ABCD','Hafsa','Rseize',NULL) ->> 'resultat' = 'inconnue',
   'code revoque : inconnue');
 RESET ROLE;
 SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM public.profiles WHERE id = 'd1600000-0000-4000-8000-000000000103'),
   'refus : aucun profil cree');
 SELECT pg_temp.qui('d1600000-0000-4000-8000-000000000104', NULL);
 SET LOCAL ROLE authenticated;
-SELECT pg_temp.vrai(public.inscrire_enseignant_invite('PQRS-TUVW-XYZ2','Hafsa','R16',NULL) ->> 'resultat' = 'expiree',
+SELECT pg_temp.vrai(public.inscrire_enseignant_invite('PQRS-TUVW-XYZ2','Hafsa','Rseize',NULL) ->> 'resultat' = 'expiree',
   'code echu : expiree');
 RESET ROLE;
 SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM public.profiles WHERE id = 'd1600000-0000-4000-8000-000000000104'),
@@ -392,7 +392,7 @@ SELECT pg_temp.vrai((SELECT utilisee_le IS NULL FROM public.invitations_enseigna
 -- Le bon candidat : profil enseignant cree ET code consomme, ensemble.
 SELECT pg_temp.qui('d1600000-0000-4000-8000-000000000101', NULL);
 SET LOCAL ROLE authenticated;
-SELECT pg_temp.vrai(public.inscrire_enseignant_invite(' abcd-efgh-jkmn ','Hafsa','R16','female') ->> 'resultat' = 'consommee',
+SELECT pg_temp.vrai(public.inscrire_enseignant_invite(' abcd-efgh-jkmn ','Hafsa','Rseize','female') ->> 'resultat' = 'consommee',
   'candidat invite : code consomme');
 RESET ROLE;
 SELECT pg_temp.vrai((SELECT role = 'teacher' AND account_status = 'pending_kyc' FROM public.profiles
@@ -405,7 +405,7 @@ SELECT pg_temp.vrai((SELECT utilisee_par = 'd1600000-0000-4000-8000-000000000101
   'candidat invite : invitation marquee utilisee par lui');
 SELECT pg_temp.qui('d1600000-0000-4000-8000-000000000101', NULL);
 SET LOCAL ROLE authenticated;
-SELECT pg_temp.refus($$SELECT public.inscrire_enseignant_invite('ABCD-EFGH-JKMN','Hafsa','R16',NULL)$$,
+SELECT pg_temp.refus($$SELECT public.inscrire_enseignant_invite('ABCD-EFGH-JKMN','Hafsa','Rseize',NULL)$$,
   '42501', 'candidat deja inscrit : seconde inscription refusee');
 SELECT pg_temp.vrai(public.verifier_invitation_enseignant('ABCD-EFGH-JKMN') ->> 'resultat' = 'deja_utilisee',
   'verification apres consommation : deja_utilisee');

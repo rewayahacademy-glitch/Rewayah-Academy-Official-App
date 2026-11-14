@@ -104,7 +104,7 @@ RESET ROLE;
 -- 2. Les autres roles sont inchanges.
 SELECT pg_temp.qui('d1700000-0000-4000-8000-000000000103', NULL);
 SET LOCAL ROLE authenticated;
-SELECT pg_temp.vrai((public.creer_profil_inscription('guardian','Fatou','L111','male')).id IS NOT NULL,
+SELECT pg_temp.vrai((public.creer_profil_inscription('guardian','Fatou','Lettres','male')).id IS NOT NULL,
   'tuteur : inscription toujours ouverte');
 RESET ROLE;
 SELECT pg_temp.vrai((SELECT role = 'guardian' AND account_status = 'pending_kyc' AND household_id IS NOT NULL
@@ -112,9 +112,9 @@ SELECT pg_temp.vrai((SELECT role = 'guardian' AND account_status = 'pending_kyc'
   'tuteur : profil en attente avec foyer (admission, 27/10)');
 SELECT pg_temp.qui('d1700000-0000-4000-8000-000000000104', NULL);
 SET LOCAL ROLE authenticated;
-SELECT pg_temp.refus($$SELECT public.creer_profil_inscription('student','Eleve','L111')$$,
+SELECT pg_temp.refus($$SELECT public.creer_profil_inscription('student','Eleve','Lettres')$$,
   'P0001', 'role non ouvert a l''inscription publique : student', 'eleve : toujours refuse, meme message');
-SELECT pg_temp.refus($$SELECT public.creer_profil_inscription('admin','Direction','L111')$$,
+SELECT pg_temp.refus($$SELECT public.creer_profil_inscription('admin','Direction','Lettres')$$,
   'P0001', 'role non ouvert a l''inscription publique : admin', 'admin : toujours refuse, meme message');
 RESET ROLE;
 
@@ -145,7 +145,7 @@ SELECT pg_temp.qui('d1700000-0000-4000-8000-000000000102', NULL);
 SET LOCAL ROLE authenticated;
 SELECT pg_temp.vrai(public.inscrire_enseignant_invite(
     current_setting('test.code'),
-    'Hafsa','L111','female') ->> 'resultat' = 'consommee',
+    'Hafsa','Lettres','female') ->> 'resultat' = 'consommee',
   'candidat invite : inscription par la RPC d''invitation reussie');
 RESET ROLE;
 SELECT pg_temp.vrai((SELECT role = 'teacher' AND account_status = 'pending_kyc' AND household_id IS NULL
@@ -161,7 +161,7 @@ SELECT pg_temp.vrai((SELECT utilisee_par = 'd1700000-0000-4000-8000-000000000102
 -- et le meme candidat deja inscrit, sont refuses.
 SELECT pg_temp.qui('d1700000-0000-4000-8000-000000000102', NULL);
 SET LOCAL ROLE authenticated;
-SELECT pg_temp.refus($$SELECT public.inscrire_enseignant_invite('AAAA-AAAA-AAAA','Hafsa','L111',NULL)$$,
+SELECT pg_temp.refus($$SELECT public.inscrire_enseignant_invite('AAAA-AAAA-AAAA','Hafsa','Lettres',NULL)$$,
   '42501', 'inscription enseignant reservee a une session sans profil',
   'candidat deja inscrit : refuse en 42501');
 RESET ROLE;
@@ -175,7 +175,7 @@ SELECT pg_temp.vrai(
   'corps interne : aucun role client');
 SELECT pg_temp.qui('d1700000-0000-4000-8000-000000000106', NULL);
 SET LOCAL ROLE authenticated;
-SELECT pg_temp.refus($$SELECT private.creer_profil_inscription_interne('teacher','Direct','L111')$$,
+SELECT pg_temp.refus($$SELECT private.creer_profil_inscription_interne('teacher','Direct','Lettres')$$,
   '42501', 'permission denied for schema private', 'corps interne appele en direct : refuse en 42501');
 RESET ROLE;
 
