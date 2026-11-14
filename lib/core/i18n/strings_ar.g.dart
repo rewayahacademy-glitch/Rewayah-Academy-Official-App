@@ -24547,7 +24547,7 @@ class _Traductions$admin$candidatures$entretien$resultat$ar extends Traductions$
 	@override String get retourConcluant => 'مقابلة ناجحة. يمكنك استقباله في الفريق.';
 	@override String get retourNonConcluant => 'مقابلة غير ناجحة. يمكنك عدم استقباله.';
 	@override String get retourARefaire => 'مقابلة تُعاد. يختار الشخص موعدًا جديدًا.';
-	@override String get refusNonParticipant => 'لا يعطي نتيجة المقابلة إلا من أجراها. اطلب منه ذلك من هذا الملف.';
+	@override String get refusNonParticipant => 'لا يعطي نتيجة المقابلة إلا من قادها. اطلب منه ذلك من هذا الملف.';
 	@override String get refusPasCommence => 'لم تبدأ المقابلة بعد. عد في موعد البداية.';
 	@override String get refusDejaConsigne => 'النتيجة مسجّلة بالفعل. أعد تحميل الملف.';
 	@override String get refusAutre => 'لم تُؤكَّد النتيجة بعد. أعد المحاولة بعد لحظة.';
@@ -32090,7 +32090,7 @@ extension on TraductionsAr {
 			'admin.candidatures.entretien.resultat.retourConcluant' => 'مقابلة ناجحة. يمكنك استقباله في الفريق.',
 			'admin.candidatures.entretien.resultat.retourNonConcluant' => 'مقابلة غير ناجحة. يمكنك عدم استقباله.',
 			'admin.candidatures.entretien.resultat.retourARefaire' => 'مقابلة تُعاد. يختار الشخص موعدًا جديدًا.',
-			'admin.candidatures.entretien.resultat.refusNonParticipant' => 'لا يعطي نتيجة المقابلة إلا من أجراها. اطلب منه ذلك من هذا الملف.',
+			'admin.candidatures.entretien.resultat.refusNonParticipant' => 'لا يعطي نتيجة المقابلة إلا من قادها. اطلب منه ذلك من هذا الملف.',
 			'admin.candidatures.entretien.resultat.refusPasCommence' => 'لم تبدأ المقابلة بعد. عد في موعد البداية.',
 			'admin.candidatures.entretien.resultat.refusDejaConsigne' => 'النتيجة مسجّلة بالفعل. أعد تحميل الملف.',
 			'admin.candidatures.entretien.resultat.refusAutre' => 'لم تُؤكَّد النتيجة بعد. أعد المحاولة بعد لحظة.',
