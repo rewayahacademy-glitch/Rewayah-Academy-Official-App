@@ -37,6 +37,7 @@ import '../../core/candidature/modeles_candidature.dart';
 import '../../core/candidature/modeles_candidature_detail.dart';
 import '../../core/candidature/modeles_candidatures_direction.dart';
 import '../../core/candidature/modeles_import_candidatures.dart';
+import '../../core/candidature/piece_candidature.dart';
 import '../../core/candidature/port_candidatures_direction.dart';
 import '../../core/candidature/port_import_candidatures.dart';
 import '../../core/candidature/port_invitations_personnelles.dart';
@@ -64,6 +65,7 @@ import 'feuille_geste.dart';
 import 'feuille_lien_personnel.dart';
 import 'gestes_proposes.dart';
 import 'libelles_candidature.dart';
+import 'piece_sur_place.dart';
 import 'reponses_candidature.dart';
 
 /// L'ecran « Candidature ».
@@ -364,6 +366,14 @@ class _Contenu extends ConsumerWidget {
     final Widget pieceEntretien = BlocPieceEntretien(
       detail: detail,
       onOuvrirDossier: onOuvrirDossier,
+      // SALLE2-FICHE : la piece ouverte et decidee sur place.
+      piece: ref.watch(lirePieceCandidatureProvider) == null
+          ? null
+          : PieceSurPlace(
+              candidatureId: detail.ligne.id,
+              onOuvrirDossier: onOuvrirDossier,
+              onDecision: onEntretien,
+            ),
       entretien: SectionEntretien(
         detail: detail,
         capacites: capacites,
@@ -373,8 +383,10 @@ class _Contenu extends ConsumerWidget {
       ),
     );
     final Widget responsable = BlocResponsable(detail: detail);
-    const Widget affectation = BlocAffectation();
-    const Widget courriels = BlocCourriels();
+    // SALLE2-FICHE (directeur, 14/11/2026) : « rien de vide affiché ».
+    // Affectation et courriels ne sont pas encore servis : leurs blocs ne sont
+    // plus rendus ; les controles seulement quand le serveur les rend.
+    final bool avecControles = detail.controles != null;
     final Widget contact = BlocContact(
       onVoir: capacites.peutVoirContact && !horsLigne
           ? () => ouvrirFeuilleContact(context, candidatureId: detail.ligne.id)
@@ -409,44 +421,45 @@ class _Contenu extends ConsumerWidget {
           return colonne(<Widget>[
             situation,
             photo,
-            blocages,
+            if (avecControles) blocages,
             action,
+            pieceEntretien,
             messages,
             reponses,
             autresCompetences,
-            controles,
-            pieceEntretien,
+            if (avecControles) controles,
             responsable,
-            affectation,
             contact,
-            courriels,
             historique,
           ]);
         }
+        // SALLE2-FICHE (UX_REVIEW_salle2-entretien.md) : sur ordinateur, a
+        // gauche ce que le candidat a declare (lecture seule) ; a droite ce que la direction decide, dans l'ordre du
+        // parcours : la decision, puis la piece et l'entretien, juste dessous.
         return Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Expanded(
+              flex: 1,
               child: colonne(<Widget>[
                 situation,
                 photo,
-                blocages,
-                action,
-                messages,
-                controles,
+                reponses,
+                autresCompetences,
+                responsable,
+                contact,
+                historique,
               ]),
             ),
             Ecart.hXxl,
             Expanded(
+              flex: 1,
               child: colonne(<Widget>[
-                reponses,
-                autresCompetences,
+                if (avecControles) blocages,
+                action,
                 pieceEntretien,
-                responsable,
-                affectation,
-                contact,
-                courriels,
-                historique,
+                if (avecControles) controles,
+                messages,
               ]),
             ),
           ],

@@ -395,6 +395,7 @@ Map<String, Object> filtreEnJson(FiltreCandidatures filtre) => <String, Object>{
   if (filtre.enPause != null) 'enPause': filtre.enPause!,
   if (filtre.paiement != null) 'paiement': filtre.paiement!.valeurSql,
   if (filtre.paysResidence != null) 'paysResidence': filtre.paysResidence!,
+  if (filtre.genre != null) 'genre': filtre.genre!,
   // Autres competences (CAND-07) : un code du catalogue ou une famille, le niveau
   // minimum, la disponibilite exacte, l'accord d'etre contacte.
   if (filtre.competenceDomaine != null)

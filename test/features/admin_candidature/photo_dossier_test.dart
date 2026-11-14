@@ -162,7 +162,7 @@ void main() {
   // Ordre voulu par le pilote (08/11) : on voit d'abord qui est la personne, avant
   // de decider : situation, photo, blocages, action.
   for (final double largeur in <double>[390, 1440]) {
-    testWidgets('la photo vient avant les blocages et l\'action ($largeur)', (
+    testWidgets('la photo vient avant l\'action ($largeur)', (
       WidgetTester tester,
     ) async {
       final _Dossier dossier = _Dossier(
@@ -190,15 +190,24 @@ void main() {
         const ValueKey<String>('candidature-situation'),
       );
       final double photo = y(BlocPhotoDossier.cle);
-      final double blocages = y(const ValueKey<String>('candidature-blocages'));
       final double action = y(const ValueKey<String>('candidature-action'));
       expect(photo, greaterThan(situation));
-      expect(
-        blocages,
-        greaterThan(photo),
-        reason: 'la photo avant les blocages',
-      );
-      expect(action, greaterThan(blocages));
+      // SALLE2-FICHE (14/11/2026) : les blocages non servis ne sont plus
+      // rendus. Sur ordinateur, la decision est en tete de la colonne de
+      // droite ; en une colonne, elle suit la photo.
+      if (largeur < 840) {
+        expect(action, greaterThan(photo), reason: 'la photo avant l\'action');
+      } else {
+        expect(
+          tester
+              .getTopLeft(
+                find.byKey(const ValueKey<String>('candidature-action')),
+              )
+              .dx,
+          greaterThan(tester.getTopLeft(find.byKey(BlocPhotoDossier.cle)).dx),
+          reason: 'la decision dans la colonne de droite',
+        );
+      }
     });
   }
 }

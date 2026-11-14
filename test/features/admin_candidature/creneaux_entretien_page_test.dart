@@ -62,6 +62,7 @@ class _FauxCreneaux implements PortCreneauxDirection {
     required int dureeMinutes,
     required List<String> langues,
     required List<String> participants,
+    DateTime? finPlage,
   }) async {
     if (refusOuvrir != null) throw refusOuvrir!;
     ouverts.add(<String, Object?>{

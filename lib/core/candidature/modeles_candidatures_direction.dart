@@ -219,6 +219,7 @@ class FiltreCandidatures {
     this.enPause,
     this.paiement,
     this.paysResidence,
+    this.genre,
     this.competenceDomaine,
     this.competenceNiveauMin,
     this.competenceDisponibilite,
@@ -247,6 +248,9 @@ class FiltreCandidatures {
 
   /// Le pays de residence declare (code ISO a deux lettres majuscules).
   final String? paysResidence;
+
+  /// SALLE2-GENRE (directeur, 14/11/2026) : `male` ou `female`, ou nul (tous).
+  final String? genre;
 
   /// Autres competences (CAND-07) : un **code du catalogue** ou une **famille**
   /// (tous les codes de cette famille, desactives compris). Chaque cle de
@@ -298,6 +302,7 @@ class FiltreCandidatures {
       enPause == null &&
       paiement == null &&
       paysResidence == null &&
+      genre == null &&
       competenceDomaine == null &&
       competenceNiveauMin == null &&
       competenceDisponibilite == null &&
@@ -312,6 +317,7 @@ class FiltreCandidatures {
       (enPause == null ? 0 : 1) +
       (paiement == null ? 0 : 1) +
       (paysResidence == null ? 0 : 1) +
+      (genre == null ? 0 : 1) +
       (competenceDomaine == null ? 0 : 1) +
       (competenceNiveauMin == null ? 0 : 1) +
       (competenceDisponibilite == null ? 0 : 1) +
@@ -327,6 +333,7 @@ class FiltreCandidatures {
     bool? Function()? enPause,
     EtatVersement? Function()? paiement,
     String? Function()? paysResidence,
+    String? Function()? genre,
     String? Function()? competenceDomaine,
     NiveauCompetence? Function()? competenceNiveauMin,
     DisponibiliteMission? Function()? competenceDisponibilite,
@@ -339,6 +346,7 @@ class FiltreCandidatures {
     enPause: enPause == null ? this.enPause : enPause(),
     paiement: paiement == null ? this.paiement : paiement(),
     paysResidence: paysResidence == null ? this.paysResidence : paysResidence(),
+    genre: genre == null ? this.genre : genre(),
     competenceDomaine: competenceDomaine == null
         ? this.competenceDomaine
         : competenceDomaine(),
@@ -366,6 +374,7 @@ class FiltreCandidatures {
       other.enPause == enPause &&
       other.paiement == paiement &&
       other.paysResidence == paysResidence &&
+      other.genre == genre &&
       other.competenceDomaine == competenceDomaine &&
       other.competenceNiveauMin == competenceNiveauMin &&
       other.competenceDisponibilite == competenceDisponibilite &&
@@ -380,6 +389,7 @@ class FiltreCandidatures {
     enPause,
     paiement,
     paysResidence,
+    genre,
     competenceDomaine,
     competenceNiveauMin,
     competenceDisponibilite,
@@ -440,6 +450,7 @@ class LigneCandidature {
     this.repriseLe,
     this.indisponibleJusquAu,
     this.paysResidence,
+    this.genre,
     this.responsableId,
     this.recueLe,
   });
@@ -478,6 +489,7 @@ class LigneCandidature {
       ),
       paiement: EtatVersement.depuisSql(json['paiement']),
       paysResidence: texte('paysResidence'),
+      genre: texte('genre'),
       responsableId: texte('responsableId'),
       courrielAObtenir: json['courrielAObtenir'] == true,
       indicatifAConfirmer: json['indicatifAConfirmer'] == true,
@@ -529,6 +541,9 @@ class LigneCandidature {
   final EtatVersement paiement;
 
   /// Le pays de residence declare (code ISO), ou `null`.
+  /// SALLE2-GENRE (14/11/2026) : `male`, `female`, ou nul (serveur d'avant).
+  final String? genre;
+
   final String? paysResidence;
 
   /// L'identifiant du responsable, ou `null`. Le serveur ne rend pas son nom

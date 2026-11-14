@@ -8,7 +8,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/candidature/modeles_candidature.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
-import 'package:rewayah_academy/core/widgets/lien_fleche.dart';
 import 'package:rewayah_academy/features/candidature/choix_avec_recherche.dart';
 
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
@@ -82,7 +81,6 @@ Future<void> _parcoursAlternatif(
     await _verifier(tester, 'question $champ');
     if (champ == 'languesExplication') {
       // La recherche propose ses resultats en cartes.
-      await toucherCle(tester, 'choix-recherche-autre');
       await tester.enterText(
         find.byKey(ChoixAvecRecherche.champKey),
         direction == TextDirection.rtl ? 'ال' : 'a',
@@ -93,12 +91,6 @@ Future<void> _parcoursAlternatif(
       await tester.enterText(find.byKey(ChoixAvecRecherche.champKey), '');
       await tester.pumpAndSettle();
       await _verifier(tester, 'recherche de langues, tout le catalogue');
-      // « Revenir aux langues proposees » : a 320 x2 il est hors de la fenetre,
-      // un tap sans defilement le manquait en silence.
-      await tester.ensureVisible(find.byType(LienFleche).first);
-      await tester.pumpAndSettle();
-      await tester.tap(find.byType(LienFleche).first);
-      await tester.pumpAndSettle();
     }
     for (final String cle in touches) {
       await toucherCle(tester, cle);

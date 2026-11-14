@@ -162,7 +162,11 @@ class _IdentiteEtapeState extends ConsumerState<IdentiteEtape> {
       // est le sien, pas celui de l'enfant.
       explication: switch (usage) {
         UsageInscription.enseignant =>
-          '${t.inscription.candidat.accueil} ${t.inscription.identiteRaison}',
+          // CANDIDATURE-UX (directeur, 14/11/2026) : dire des l'accueil que
+          // candidater est gratuit.
+          '${t.inscription.candidat.accueil} '
+              '${t.inscription.candidat.gratuit} '
+              '${t.inscription.identiteRaison}',
         UsageInscription.famille => t.inscription.identiteAideFamille,
         _ => null,
       },

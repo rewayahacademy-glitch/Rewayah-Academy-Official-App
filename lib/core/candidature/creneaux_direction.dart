@@ -99,6 +99,8 @@ const Set<String> refusPropresCreneau = <String>{
   'absente',
   'langues_invalides',
   'hors_portee',
+  'plage_trop_courte',
+  'plage_trop_longue',
 };
 
 /// Le refus d'une ouverture ou d'une annulation (code du serveur).
@@ -123,13 +125,16 @@ abstract interface class PortCreneauxDirection {
   /// 20261119200100). La meme source que le serveur, jamais une liste ici.
   Future<List<String>> langues();
 
-  /// Ouvre un creneau. [RefusCreneau] sur un refus metier.
+  /// Ouvre un creneau. [RefusCreneau] sur un refus metier. Avec [finPlage]
+  /// (SALLE2-ENTRETIEN, 14/11/2026), publie la plage de [debut] a [finPlage],
+  /// decoupee par le serveur en creneaux de [dureeMinutes], tout ou rien.
   Future<void> ouvrir({
     required String cote,
     required DateTime debut,
     required int dureeMinutes,
     required List<String> langues,
     required List<String> participants,
+    DateTime? finPlage,
   });
 
   /// Annule un creneau libre. [RefusCreneau] sur un refus metier.
@@ -210,14 +215,24 @@ class CreneauxDirectionSupabase implements PortCreneauxDirection {
     required int dureeMinutes,
     required List<String> langues,
     required List<String> participants,
+    DateTime? finPlage,
   }) async => _refus(
-    await _appel('ouvrir_creneau_entretien', <String, dynamic>{
-      'p_cote': cote,
-      'p_debut': debut.toUtc().toIso8601String(),
-      'p_duree_minutes': dureeMinutes,
-      'p_langues': langues,
-      'p_participants': participants,
-    }),
+    finPlage == null
+        ? await _appel('ouvrir_creneau_entretien', <String, dynamic>{
+            'p_cote': cote,
+            'p_debut': debut.toUtc().toIso8601String(),
+            'p_duree_minutes': dureeMinutes,
+            'p_langues': langues,
+            'p_participants': participants,
+          })
+        : await _appel('ouvrir_plage_entretien', <String, dynamic>{
+            'p_cote': cote,
+            'p_debut': debut.toUtc().toIso8601String(),
+            'p_fin': finPlage.toUtc().toIso8601String(),
+            'p_duree_minutes': dureeMinutes,
+            'p_langues': langues,
+            'p_participants': participants,
+          }),
   );
 
   @override

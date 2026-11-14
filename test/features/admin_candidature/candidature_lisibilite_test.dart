@@ -263,7 +263,7 @@ Future<void> _ouvrir(WidgetTester tester, GesteCandidature geste) async {
   final Finder bouton = find.byKey(BlocProchaineAction.cleBouton);
   final String libelle = switch (geste) {
     GesteCandidature.admettreVerifications =>
-      t.admin.candidatures.gestes.admettre,
+      t.admin.candidatures.decision.accepter,
     GesteCandidature.confirmerMoyenPaiement =>
       t.admin.candidatures.gestes.confirmerMoyen,
     GesteCandidature.leverPause => t.admin.candidatures.gestes.leverPause,

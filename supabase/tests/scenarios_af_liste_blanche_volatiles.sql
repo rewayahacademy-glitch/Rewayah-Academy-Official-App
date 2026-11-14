@@ -215,6 +215,7 @@ declare
     'ecrire_compte_rendu_entretien(uuid,text,text,text,text,text[],text)',
     -- V1-b (03/11) : la direction ouvre et annule un creneau d'entretien de son cote (super-admin des deux cotes) ; le candidat reserve (moteur des candidatures, auteur candidat : version, cle, journal).
     'ouvrir_creneau_entretien(gender,timestamp with time zone,integer,text[],uuid[])',
+    'ouvrir_plage_entretien(gender,timestamp with time zone,timestamp with time zone,integer,text[],uuid[])',
     'annuler_creneau_entretien(uuid)',
     'reserver_creneau_entretien(uuid,integer,text)',
     -- D1-bis (03/11) : la direction active traite un signalement (examiner, rediger le message pour la famille, clore) ; garde role ET app_account_valid, journal a chaque geste.

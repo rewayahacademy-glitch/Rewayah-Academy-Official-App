@@ -378,14 +378,15 @@ BEGIN
             (SELECT array_agg(x ORDER BY x) FROM unnest(ARRAY['id', 'reference', 'nomComplet', 'type',
               'etape', 'etat', 'issue', 'enPause', 'repriseLe', 'restreinte', 'indisponible',
               'indisponibleJusquAu', 'paiement', 'paysResidence', 'responsableId', 'courrielAObtenir',
-              'indicatifAConfirmer', 'derniereActivite', 'recueLe', 'nomLatin', 'nomLatinAConfirmer']) x)),
-    'chaque ligne porte exactement les vingt et une cles du contrat (CAND-NOM-LATIN : nomLatin, nomLatinAConfirmer)');
+              'indicatifAConfirmer', 'derniereActivite', 'recueLe', 'nomLatin', 'nomLatinAConfirmer',
+              'genre']) x)),
+    'chaque ligne porte exactement les vingt-deux cles du contrat (CAND-NOM-LATIN : nomLatin, nomLatinAConfirmer ; SALLE2-GENRE : genre)');
   PERFORM pg_temp.vrai(NOT EXISTS (
       SELECT 1 FROM jsonb_array_elements(r -> 'lignes') l
-      WHERE l ? 'courriel' OR l ? 'telephone' OR l ? 'genre' OR l ? 'sourceRef')
+      WHERE l ? 'courriel' OR l ? 'telephone' OR l ? 'sourceRef')
     AND strpos(r::text, '@') = 0 AND strpos(r::text, '+33600000001') = 0
     AND strpos(r::text, '0612345678') = 0,
-    'aucune ligne ne porte courriel, telephone (valide ou brut), genre ni reference source');
+    'aucune ligne ne porte courriel, telephone (valide ou brut) ni reference source (SALLE2-GENRE, 14/11/2026 : le genre y entre)');
   PERFORM pg_temp.vrai((SELECT jsonb_object_agg(l ->> 'id', jsonb_build_array(l -> 'courrielAObtenir',
                                  l -> 'indicatifAConfirmer', l -> 'indisponible'))
                         FROM jsonb_array_elements(r -> 'lignes') l) =
@@ -589,9 +590,9 @@ BEGIN
     AND r -> 'reponses' -> 1 ->> 'questionnaireVersion' = 'formulaire-A2'
     AND r -> 'reponses' -> 0 ->> 'soumisLe' ~ 'Z$',
     'reponses versionnees, la plus recente d''abord, instant en UTC');
-  PERFORM pg_temp.vrai(NOT (r ? 'courriel' OR r ? 'telephone' OR r ? 'genre' OR r ? 'sourceRef')
+  PERFORM pg_temp.vrai(NOT (r ? 'courriel' OR r ? 'telephone' OR r ? 'sourceRef')
     AND strpos(r::text, '@') = 0,
-    'le dossier ne porte ni contact, ni genre, ni reference source');
+    'le dossier ne porte ni contact ni reference source (SALLE2-GENRE, 14/11/2026 : le genre y entre)');
   PERFORM pg_temp.vrai(public.lire_candidature('ca1dcccc-0000-0000-0000-00000000dead') = '{"erreur": "absente"}'::jsonb,
     'identifiant inconnu : absente');
 END $lire$;

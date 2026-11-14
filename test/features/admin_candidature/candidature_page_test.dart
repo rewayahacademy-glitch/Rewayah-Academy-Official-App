@@ -256,16 +256,15 @@ void main() {
     ) async {
       await _monter(tester, _port());
       final List<Key> ordre = <Key>[
+        // SALLE2-FICHE (14/11/2026) : la decision, puis la piece et
+        // l'entretien, avant les reponses ; aucun bloc vide (blocages et
+        // controles non servis, affectation, courriels) n'est rendu.
         const ValueKey<String>('candidature-situation'),
-        const ValueKey<String>('candidature-blocages'),
         const ValueKey<String>('candidature-action'),
-        const ValueKey<String>('candidature-reponses'),
-        const ValueKey<String>('candidature-controles'),
         const ValueKey<String>('candidature-piece-entretien'),
+        const ValueKey<String>('candidature-reponses'),
         const ValueKey<String>('candidature-responsable'),
-        const ValueKey<String>('candidature-affectation'),
         const ValueKey<String>('candidature-contact'),
-        const ValueKey<String>('candidature-courriels'),
         const ValueKey<String>('candidature-historique'),
       ];
       double precedent = -1;
@@ -288,18 +287,29 @@ void main() {
       final Offset reponses = tester.getTopLeft(
         find.byKey(const ValueKey<String>('candidature-reponses')),
       );
-      // Reponses a la fin de la ligne, au meme niveau que la situation.
-      expect(reponses.dx, greaterThan(situation.dx + 300));
-      expect((reponses.dy - situation.dy).abs(), lessThan(40));
+      final Offset action = tester.getTopLeft(
+        find.byKey(const ValueKey<String>('candidature-action')),
+      );
+      // SALLE2-FICHE : a gauche ce que le candidat a declare, a droite la
+      // decision, en haut, au niveau de la situation.
+      expect((reponses.dx - situation.dx).abs(), lessThan(1));
+      expect(action.dx, greaterThan(situation.dx + 300));
+      expect((action.dy - situation.dy).abs(), lessThan(40));
       verifierUnSeulBoutonPlein(tester);
     });
 
-    testWidgets('les blocs que le serveur ne sert pas le disent, chacun seul', (
+    testWidgets('rien de vide : un bloc non servi n\'est pas rendu', (
       WidgetTester tester,
     ) async {
       await _monter(tester, _port());
-      // Ce qui bloque, controles, piece, entretien, affectation, courriels.
-      expect(find.text(_branchement), findsNWidgets(6));
+      // SALLE2-FICHE (directeur, 14/11/2026, « rien de vide affiché ») :
+      // blocages, controles, piece, affectation et courriels non servis ne
+      // sont plus rendus. Reste l'entretien, dont le port manque a ce test.
+      expect(find.text(_branchement), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey<String>('candidature-affectation')),
+        findsNothing,
+      );
       // L'historique et les reponses, eux, sont servis.
       expect(
         find.text(t.admin.candidatures.detail.historiqueVide),
@@ -345,28 +355,43 @@ void main() {
         find.text(t.admin.candidatures.detail.controlesFaux),
         findsWidgets,
       );
-      // Plus de « branchement » pour les deux blocs de controles.
-      expect(find.text(_branchement), findsNWidgets(4));
+      // Plus de « branchement » pour les deux blocs de controles ; reste
+      // l'entretien, dont le port manque a ce test (SALLE2-FICHE).
+      expect(find.text(_branchement), findsOneWidget);
       for (final String code in _codesBruts) {
         expect(texte, isNot(contains(code)));
       }
     });
 
-    testWidgets('aucun code brut, aucun contact, aucun genre a l\'ecran', (
+    testWidgets('SALLE2-GENRE : le genre en mots en tete de la fiche', (
       WidgetTester tester,
     ) async {
-      await _monter(tester, _port(detail: detailTest(courrielAObtenir: true)));
+      await _monter(tester, _port(detail: detailTest(genre: 'female')));
       final String texte = _toutLeTexte(tester);
-      for (final String code in _codesBruts) {
-        expect(texte, isNot(contains(code)), reason: code);
-      }
-      expect(texte, isNot(contains('amina.diallo@exemple.org')));
-      expect(texte, isNot(contains('0771234567')));
-      expect(texte, isNot(contains('@')));
-      expect(texte, isNot(contains('+221')));
-      expect(texte.toLowerCase(), isNot(contains('genre')));
-      expect(texte, contains(t.admin.candidatures.ligne.courrielAObtenir));
+      expect(texte, contains(t.admin.candidatures.colonnes.genre));
+      expect(texte, contains(t.admin.candidatures.genres.female));
+      expect(texte, isNot(contains('female')));
     });
+
+    testWidgets(
+      'aucun code brut, aucun contact a l\'ecran ; sans genre lu, rien',
+      (WidgetTester tester) async {
+        await _monter(
+          tester,
+          _port(detail: detailTest(courrielAObtenir: true)),
+        );
+        final String texte = _toutLeTexte(tester);
+        for (final String code in _codesBruts) {
+          expect(texte, isNot(contains(code)), reason: code);
+        }
+        expect(texte, isNot(contains('amina.diallo@exemple.org')));
+        expect(texte, isNot(contains('0771234567')));
+        expect(texte, isNot(contains('@')));
+        expect(texte, isNot(contains('+221')));
+        expect(texte.toLowerCase(), isNot(contains('genre')));
+        expect(texte, contains(t.admin.candidatures.ligne.courrielAObtenir));
+      },
+    );
 
     testWidgets('pause et restriction se disent avec leur cause', (
       WidgetTester tester,
@@ -890,15 +915,20 @@ void main() {
       expect(
         find.descendant(
           of: find.byKey(BlocProchaineAction.cleBouton),
-          matching: find.text(t.admin.candidatures.gestes.admettre),
+          // SALLE2-FICHE : « Accepter », avec « Demander une precision » et
+          // « Refuser » visibles a cote, hors du menu.
+          matching: find.text(t.admin.candidatures.decision.accepter),
         ),
         findsOneWidget,
       );
+      expect(find.text(t.admin.candidatures.decision.preciser), findsOneWidget);
+      expect(find.text(t.admin.candidatures.decision.refuser), findsOneWidget);
       final List<String> autres = await menu(tester);
       expect(
         autres,
         isNot(contains(t.admin.candidatures.gestes.confirmerMoyen)),
       );
+      expect(autres, isNot(contains(t.admin.candidatures.gestes.refuser)));
       expect(autres, contains(t.admin.candidatures.gestes.ecarterMoyen));
     });
 
@@ -1077,7 +1107,7 @@ void main() {
         expect(
           find.descendant(
             of: find.byKey(BlocProchaineAction.cleBouton),
-            matching: find.text(t.admin.candidatures.gestes.admettre),
+            matching: find.text(t.admin.candidatures.decision.accepter),
           ),
           findsOneWidget,
         );
