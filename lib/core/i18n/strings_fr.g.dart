@@ -18265,10 +18265,10 @@ class Traductions$enseignant$revenus$fr {
 	/// fr: 'Une présence en partie est payée comme une présence.'
 	String get partielleNote => 'Une présence en partie est payée comme une présence.';
 
-	/// fr: '(one) {{n} séance est comptée au temps de connexion : sa durée rémunérée n'est pas précisée. Le relevé de l'académie fait foi.} (other) {{n} séances sont comptées au temps de connexion : leur durée rémunérée n'est pas précisée. Le relevé de l'académie fait foi.}'
+	/// fr: '(one) {{n} séance est comptée au temps de connexion : sa durée rémunérée n'est pas précisée. Le relevé de l'académie fait foi.} (other) {{n} séances sont comptées au temps de connexion : leur durée rémunérée n'est pas précisée. Le relevé de l'académie fait foi.}'
 	String sansDureePayee({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
-		one: '${n} séance est comptée au temps de connexion : sa durée rémunérée n\'est pas précisée. Le relevé de l\'académie fait foi.',
-		other: '${n} séances sont comptées au temps de connexion : leur durée rémunérée n\'est pas précisée. Le relevé de l\'académie fait foi.',
+		one: '${n} séance est comptée au temps de connexion : sa durée rémunérée n\'est pas précisée. Le relevé de l\'académie fait foi.',
+		other: '${n} séances sont comptées au temps de connexion : leur durée rémunérée n\'est pas précisée. Le relevé de l\'académie fait foi.',
 	);
 
 	/// fr: 'Aucun montant pour cette séance.'
@@ -59444,7 +59444,7 @@ extension on Traductions {
 			'enseignant.revenus.absent' => 'Absent',
 			'enseignant.revenus.presentPartiel' => 'Présent en partie',
 			'enseignant.revenus.partielleNote' => 'Une présence en partie est payée comme une présence.',
-			'enseignant.revenus.sansDureePayee' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} séance est comptée au temps de connexion : sa durée rémunérée n\'est pas précisée. Le relevé de l\'académie fait foi.', other: '${n} séances sont comptées au temps de connexion : leur durée rémunérée n\'est pas précisée. Le relevé de l\'académie fait foi.', ), 
+			'enseignant.revenus.sansDureePayee' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} séance est comptée au temps de connexion : sa durée rémunérée n\'est pas précisée. Le relevé de l\'académie fait foi.', other: '${n} séances sont comptées au temps de connexion : leur durée rémunérée n\'est pas précisée. Le relevé de l\'académie fait foi.', ), 
 			'enseignant.revenus.aucunMontant' => 'Aucun montant pour cette séance.',
 			'enseignant.revenus.partielle' => '4. Une présence en partie compte',
 			'enseignant.revenus.partielleDetail' => 'Un élève présent pendant une partie de la séance est payé comme un élève présent.',
