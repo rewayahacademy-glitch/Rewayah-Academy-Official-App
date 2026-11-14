@@ -65,6 +65,7 @@ class TraductionsEn extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$eleve$en eleve = _Traductions$eleve$en._(_root);
 	@override late final _Traductions$tuteur$en tuteur = _Traductions$tuteur$en._(_root);
 	@override late final _Traductions$classe$en classe = _Traductions$classe$en._(_root);
+	@override late final _Traductions$enseignant$en enseignant = _Traductions$enseignant$en._(_root);
 	@override late final _Traductions$adulte$en adulte = _Traductions$adulte$en._(_root);
 	@override late final _Traductions$suiviFamille$en suiviFamille = _Traductions$suiviFamille$en._(_root);
 	@override late final _Traductions$suiviDemandes$en suiviDemandes = _Traductions$suiviDemandes$en._(_root);
@@ -975,6 +976,31 @@ class _Traductions$classe$en extends Traductions$classe$fr {
 	@override late final _Traductions$classe$pageRessources$en pageRessources = _Traductions$classe$pageRessources$en._(_root);
 	@override late final _Traductions$classe$pageProgression$en pageProgression = _Traductions$classe$pageProgression$en._(_root);
 	@override late final _Traductions$classe$cartes$en cartes = _Traductions$classe$cartes$en._(_root);
+}
+
+// Path: enseignant
+class _Traductions$enseignant$en extends Traductions$enseignant$fr {
+	_Traductions$enseignant$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$enseignant$pays$en pays = _Traductions$enseignant$pays$en._(_root);
+	@override late final _Traductions$enseignant$classes$en classes = _Traductions$enseignant$classes$en._(_root);
+	@override late final _Traductions$enseignant$eleve$en eleve = _Traductions$enseignant$eleve$en._(_root);
+	@override late final _Traductions$enseignant$signalement$en signalement = _Traductions$enseignant$signalement$en._(_root);
+	@override late final _Traductions$enseignant$demo$en demo = _Traductions$enseignant$demo$en._(_root);
+	@override late final _Traductions$enseignant$bienvenue$en bienvenue = _Traductions$enseignant$bienvenue$en._(_root);
+	@override late final _Traductions$enseignant$photo$en photo = _Traductions$enseignant$photo$en._(_root);
+	@override late final _Traductions$enseignant$journee$en journee = _Traductions$enseignant$journee$en._(_root);
+	@override late final _Traductions$enseignant$remplacements$en remplacements = _Traductions$enseignant$remplacements$en._(_root);
+	@override late final _Traductions$enseignant$salle$en salle = _Traductions$enseignant$salle$en._(_root);
+	@override late final _Traductions$enseignant$cahier$en cahier = _Traductions$enseignant$cahier$en._(_root);
+	@override late final _Traductions$enseignant$profil$en profil = _Traductions$enseignant$profil$en._(_root);
+	@override late final _Traductions$enseignant$creneaux$en creneaux = _Traductions$enseignant$creneaux$en._(_root);
+	@override late final _Traductions$enseignant$ficheGroupe$en ficheGroupe = _Traductions$enseignant$ficheGroupe$en._(_root);
+	@override late final _Traductions$enseignant$revue$en revue = _Traductions$enseignant$revue$en._(_root);
+	@override late final _Traductions$enseignant$revenus$en revenus = _Traductions$enseignant$revenus$en._(_root);
 }
 
 // Path: adulte
@@ -4341,6 +4367,775 @@ class _Traductions$classe$cartes$en extends Traductions$classe$cartes$fr {
 	@override late final _Traductions$classe$cartes$feuille$en feuille = _Traductions$classe$cartes$feuille$en._(_root);
 }
 
+// Path: enseignant.pays
+class _Traductions$enseignant$pays$en extends Traductions$enseignant$pays$fr {
+	_Traductions$enseignant$pays$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String semantique({required Object pays}) => 'Country: ${pays}';
+}
+
+// Path: enseignant.classes
+class _Traductions$enseignant$classes$en extends Traductions$enseignant$classes$fr {
+	_Traductions$enseignant$classes$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Classes';
+	@override String get vide => 'No class assigned';
+	@override String get videDetail => 'Confirmed classes will appear here.';
+	@override String get erreur => 'Your classes could not be loaded. Try again in a moment.';
+	@override String get chargement => 'Loading your classes.';
+	@override String niveau({required Object niveau}) => 'Level ${niveau}';
+	@override String etape({required Object n, required Object nom}) => 'Step ${n} · ${nom}';
+	@override String get eleveUn => '1 student';
+	@override String prochaine({required Object jour, required Object heure}) => 'Next session: ${jour} at ${heure}';
+	@override String get sansProchaine => 'No session planned';
+	@override String quand({required Object jour, required Object heure, required Object reste}) => '${jour} ${heure} · ${reste}';
+	@override late final _Traductions$enseignant$classes$reste$en reste = _Traductions$enseignant$classes$reste$en._(_root);
+	@override String get remplacement => 'Replacement';
+	@override String get rappelCahier => 'A handover notebook remains to be approved';
+	@override String get cahierAValider => 'Handover notebook to approve';
+	@override String eleves({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(nombre,
+		one: '${nombre} student',
+		other: '${nombre} students',
+	);
+}
+
+// Path: enseignant.eleve
+class _Traductions$enseignant$eleve$en extends Traductions$enseignant$eleve$fr {
+	_Traductions$enseignant$eleve$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String titre({required Object dePrenom}) => '${dePrenom}\'s file';
+	@override String get retour => 'Students';
+	@override String identifiant({required Object id}) => 'Academy ID: ${id}';
+	@override String photo({required Object dePrenom}) => '${dePrenom}\'s photo';
+	@override String get niveau => 'Level';
+	@override String get objectif => 'Goal';
+	@override String get presence => 'Recent attendance';
+	@override String get travail => 'Work';
+	@override String travailReprise({required Object page}) => 'Resume at ${page}';
+	@override String get derniereSeance => 'Last session';
+	@override String get nonRenseigne => 'Not provided';
+	@override String get signaler => 'Report a need';
+	@override String get signalerAide => 'A need to pass on to the academy, without copying the context.';
+	@override String get etape => 'Program stage';
+	@override String get objectifsEtape => 'Stage goals';
+	@override String get aFinirAvant => 'To finish before';
+	@override String aFinirAvantDate({required Object mois, required Object numero, required Object annee, required Object prevue}) => '${mois} ${numero}, ${annee}, for ${prevue} planned weeks';
+	@override String aFinirEnSemaines({required Object limite}) => 'In ${limite} weeks at most from the start of the stage';
+	@override String renforcerNotees({required Object mois, required Object numero, required Object annee}) => 'Noted on ${mois} ${numero}, ${annee}';
+	@override String get renforcerAucun => 'Nothing noted to reinforce in this class\'s handover notebooks';
+	@override String get renforcerIllisible => 'The points to reinforce could not be loaded. Try again.';
+	@override String get etapeNonPubliee => 'No stage published yet for this student';
+	@override String get etapeAttenteEntretien => 'Waiting for the reading interview with the management';
+}
+
+// Path: enseignant.signalement
+class _Traductions$enseignant$signalement$en extends Traductions$enseignant$signalement$fr {
+	_Traductions$enseignant$signalement$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Report a need';
+	@override String contexte({required Object prenom, required Object classe}) => 'For ${prenom} · ${classe}';
+	@override String get categorieTitre => 'Category';
+	@override late final _Traductions$enseignant$signalement$categories$en categories = _Traductions$enseignant$signalement$categories$en._(_root);
+	@override String get details => 'Internal details';
+	@override String get detailsAide => 'Read by the academy team only.';
+	@override String get resume => 'Shareable summary';
+	@override String get resumeAide => 'Can be shared with the family by the academy.';
+	@override String get notice => 'Internal details are not automatically sent to the family.';
+	@override String get choisirCategorie => 'Choose a category to continue.';
+	@override String get detailsRequis => 'For "Other", say in a few words what it is about.';
+	@override String get envoyer => 'Send the report';
+	@override String get demoSucces => 'Demo: this report is ready, but nothing was sent.';
+	@override String get demoSuccesDetail => 'In the connected app, it will go to the academy team.';
+	@override String get fermer => 'Close';
+}
+
+// Path: enseignant.demo
+class _Traductions$enseignant$demo$en extends Traductions$enseignant$demo$fr {
+	_Traductions$enseignant$demo$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Teacher demo';
+	@override String get mention => 'Fictitious data, nothing is sent.';
+	@override String get intro => 'Choose a screen of Sayyid Ibrahim.';
+	@override String get ecrans => 'Screens';
+	@override String get etats => 'Situations';
+	@override String get etatNominal => 'Ordinary day';
+	@override String get etatVide => 'No session';
+	@override String get etatHorsLigne => 'Offline';
+}
+
+// Path: enseignant.bienvenue
+class _Traductions$enseignant$bienvenue$en extends Traductions$enseignant$bienvenue$fr {
+	_Traductions$enseignant$bienvenue$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$enseignant$bienvenue$equipe$en equipe = _Traductions$enseignant$bienvenue$equipe$en._(_root);
+	@override String get titre => 'First steps';
+	@override String salutation({required Object prenom}) => 'Welcome, ${prenom}.';
+	@override String get salutationSansNom => 'Welcome.';
+	@override String get dossierValide => 'Your file is approved.';
+	@override String get sousTitre => 'Prepare your space before your first class.';
+	@override String get aCompleter => 'To complete';
+	@override String compteur({required Object fait, required Object total}) => '${fait} of ${total}';
+	@override String get prerequisPhoto => 'Add my professional photo';
+	@override String get prerequisLangues => 'Check my teaching languages';
+	@override String get prerequisFuseau => 'Check my time zone';
+	@override String get ctaPhoto => 'Add my photo';
+	@override String get ctaInformations => 'Check my information';
+	@override String get ctaJournee => 'See my day';
+	@override String get rappels => 'Two things not to discover along the way';
+	@override String get declarer => 'Set my availability';
+	@override String get versJournee => 'Go to my day';
+	@override String get horsLigne => 'Your slots can be saved when the connection is back.';
+	@override String get dossierIncomplet => 'Your file is not approved yet.';
+	@override String get dossierIncompletDetail => 'The waiting page tells you what remains to be provided.';
+	@override String get versAttente => 'See my file';
+	@override String get erreur => 'Your profile could not be loaded. Try again in a moment.';
+}
+
+// Path: enseignant.photo
+class _Traductions$enseignant$photo$en extends Traductions$enseignant$photo$fr {
+	_Traductions$enseignant$photo$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Professional photo';
+	@override String get aide => 'Your photo is required: families do not entrust their children to a stranger on the internet. It is visible to the families of your students.';
+	@override String get obligatoireLecteur => 'Photo required';
+	@override String get voile => 'A photo wearing the niqab is accepted.';
+	@override String get notice => 'Do not use your ID document.';
+	@override String get choisir => 'Choose a photo';
+	@override String get utiliser => 'Use this photo';
+	@override String get remplacer => 'Replace the photo';
+	@override String get autre => 'Choose another photo';
+	@override String get changer => 'Change the photo';
+	@override String get alternatif => 'Your public photo';
+	@override String get succes => 'The photo is saved.';
+	@override String get echec => 'The photo could not be sent. Nothing changed on the profile.';
+	@override String get selectionEchec => 'The photo could not be opened. Check access to the device\'s photos, then try again.';
+	@override String get horsLigne => 'The photo can be sent when the connection is back.';
+}
+
+// Path: enseignant.journee
+class _Traductions$enseignant$journee$en extends Traductions$enseignant$journee$fr {
+	_Traductions$enseignant$journee$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get lancer => 'Start the class';
+	@override String get preflight => 'Check before the class';
+	@override String get titre => 'Today';
+	@override String get prochainCours => 'Next class';
+	@override String get coursEnCours => 'Live session';
+	@override String minuteurHeures({required Object heures, required Object minutes}) => 'In ${heures} h ${minutes}';
+	@override String minuteurMinutes({required Object minutes}) => 'In ${minutes} min';
+	@override String get minuteurImminent => 'Starting';
+	@override String minuteurDemain({required Object heure}) => 'Tomorrow at ${heure}';
+	@override String minuteurJours({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(jours,
+		one: 'In ${jours} day',
+		other: 'In ${jours} days',
+	);
+	@override String jusqua({required Object heure}) => 'Until ${heure}';
+	@override String unAutreJour({required Object jour, required Object heure}) => '${jour}, at ${heure}';
+	@override String get lancementPlusTard => 'Starting opens ten minutes before the class time.';
+	@override String get aucunCours => 'No upcoming class';
+	@override String get aucunCoursDetail => 'Take on a waiting student: that is what fills your day.';
+	@override String get colonne => 'The day';
+	@override String ligneCours({required Object prenom}) => 'Class with ${prenom}';
+	@override String get lignePause => 'Break';
+	@override String plage({required Object debut, required Object fin}) => '${debut} to ${fin}';
+	@override String get rienAujourdhui => 'Nothing planned today';
+	@override String rienAujourdhuiDetail({required Object jour, required Object heure}) => 'Your next class is ${jour} at ${heure}.';
+	@override String journeeTerminee({required Object nombre}) => '${nombre} classes given today.';
+	@override String get journeeTermineeUn => '1 class given today.';
+	@override String get voirCreneaux => 'See my slots';
+	@override String get erreur => 'The day could not be loaded in full. Try again in a moment.';
+	@override String get coursIndividuel => 'Individual class';
+	@override String get effectifUn => '1 student';
+	@override String get preflightOk => 'Microphone ready';
+	@override String get preflightBloque => 'The microphone is blocked by your browser. Allow it to start the class.';
+	@override String get preflightSansMicro => 'No microphone detected. Plug one in to start the class.';
+	@override String get preflightIndisponible => 'The equipment check did not complete. Try again before starting the class.';
+	@override String get lancerHorsLigne => 'The class can be started when the connection is back.';
+	@override String get erreurPartielle => 'Prayer times and your breaks could not be loaded: the request may not have reached Rewayah. Your sessions shown are up to date: they do not depend on it. Try again in a moment.';
+	@override String get erreurPartielleTout => 'Prayer times, your breaks and your handover notebooks to finish could not be loaded: the request may not have reached Rewayah. Your sessions shown are up to date: they do not depend on it. Try again in a moment.';
+	@override String pasEncoreRejoint({required Object eleve}) => '${eleve} has not joined the room yet.';
+	@override String coupureDetectee({required Object eleve}) => '${eleve} lost the connection.';
+	@override String get revenusDetail => 'Your estimated pay for the month, class by class.';
+	@override String get revenusLecteur => 'See your estimated income for the month';
+	@override String coursAnnule({required Object heure}) => 'The ${heure} class is cancelled.';
+	@override String get rapportsTitre => 'Pending reports';
+	@override String rapportLigne({required Object jour, required Object heure}) => 'Class of ${jour} at ${heure}';
+	@override String rapportAttente({required Object heures}) => 'To submit for ${heures} h';
+	@override String rapportRetard({required Object heures}) => 'Late by ${heures} h';
+	@override String get enAttenteTitre => 'Waiting students';
+	@override String get enAttenteLibelle => 'students waiting for your times';
+	@override String get enAttenteLibelleUn => 'student waiting for your times';
+	@override String get prochaineSeance => 'Next session';
+	@override String get maJournee => 'My day';
+	@override String get aTerminer => 'To finish';
+	@override String get aTerminerVide => 'All your handover notebooks are finished.';
+	@override String get aTerminerSansDonnees => 'The handover notebooks to finish could not be loaded.';
+	@override String get aTerminerErreur => 'The handover notebooks to finish could not be loaded. Try again in a moment.';
+	@override String get aTerminerAide => 'The handover notebook helps your students and lets you adjust the next class.';
+	@override String get rappelCahier => 'Handover notebooks are waiting to be finished';
+	@override String cahierLigne({required Object classe}) => 'Handover notebook ${classe}';
+	@override String cahierDetail({required Object jour, required Object mois, required Object numero, required Object heure}) => 'Session of ${jour} ${mois} ${numero} at ${heure}';
+	@override String get alertesUtiles => 'Useful alerts';
+	@override String get alertesVide => 'No useful alerts right now.';
+	@override String get alertesSansDonnees => 'The attendance alerts could not be loaded';
+	@override String get alertesErreur => 'The attendance alerts could not be loaded. Try again in a moment.';
+	@override String get voirAutreAlerte => 'See the other alert';
+	@override String voirAutresAlertes({required Object nombre}) => 'See the ${nombre} other alerts';
+	@override String get remplacementsVide => 'No class from a colleague to take on for now.';
+	@override String voirTousRemplacements({required Object nombre}) => 'See all: the ${nombre} confirmed replacements';
+	@override String get heure => 'Time';
+	@override String get eleves => 'Students';
+	@override String get classe => 'Class';
+	@override String get preparerSeance => 'Prepare the session';
+	@override String preparerSeanceLecteur({required Object classe}) => 'Prepare the session ${classe}';
+	@override String get derniereSeance => 'Last session';
+	@override String get rejoindreSalle => 'Join the room';
+	@override String rejoindreSalleLecteur({required Object classe}) => 'Join the room of class ${classe}';
+	@override String get remplirCahier => 'Fill in the handover notebook';
+	@override String remplirCahierLecteur({required Object classe}) => 'Fill in the handover notebook of class ${classe}';
+	@override String cahierObligatoire({required Object classe}) => 'Required: the handover notebook ${classe} is filled in once a week for each student.';
+	@override String cahierObligatoireSeance({required Object classe}) => 'Required: the handover notebook ${classe} is filled in after each session, for each student.';
+	@override String voirCahier({required Object classe}) => 'See the handover notebook ${classe}';
+	@override String voirCahierLecteur({required Object classe}) => 'See the handover notebook of class ${classe}';
+	@override String get voirClasse => 'See the class';
+	@override String voirClasseLecteur({required Object classe}) => 'See class ${classe}';
+	@override String get aucuneSeance => 'No upcoming session';
+	@override String get aucuneSeanceDetail => 'Your next sessions will appear here.';
+	@override String date({required Object jour, required Object mois, required Object numero}) => '${jour} ${mois} ${numero}';
+	@override late final _Traductions$enseignant$journee$absence$en absence = _Traductions$enseignant$journee$absence$en._(_root);
+	@override late final _Traductions$enseignant$journee$remplacement$en remplacement = _Traductions$enseignant$journee$remplacement$en._(_root);
+	@override String get erreurPartielleCahiers => 'Your handover notebooks to finish could not be loaded: the request may not have reached Rewayah. Your sessions shown are up to date: they do not depend on it. Try again in a moment.';
+	@override String cahiersEnvoyes({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} handover notebook sent',
+		other: '${n} handover notebooks sent',
+	);
+	@override String effectif({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(nombre,
+		one: '${nombre} student',
+		other: '${nombre} students',
+	);
+}
+
+// Path: enseignant.remplacements
+class _Traductions$enseignant$remplacements$en extends Traductions$enseignant$remplacements$fr {
+	_Traductions$enseignant$remplacements$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Replacements';
+	@override String get enTete => 'You are in the lead, confirmation in a few seconds.';
+	@override String get attente => 'A colleague also accepted: confirmation in a few seconds.';
+	@override String secondes({required Object n}) => '${n} s';
+	@override String get contexte => 'Priority goes to a teacher of the same gender as the class, then one who speaks its language; otherwise, the first available, because a replacement is temporary.';
+	@override String urgentTitre({required Object jour, required Object heure}) => 'Urgent replacement: ${jour} ${heure}';
+	@override String get urgentPhrase => 'A teacher is absent. Take this session in their place: you will be paid for it after approval at the end of the month.';
+	@override String get vosRemplacements => 'Your replacements';
+	@override String get prisTitre => 'Already taken by a colleague';
+	@override String get prisPastille => 'Taken by a colleague';
+	@override String get prisAvantVous => 'Another teacher took this class. Thank you. Nothing changed in your schedule.';
+	@override String get refusOccupe => 'You have a class at this time: you cannot take this one.';
+	@override String get refusIncompatible => 'You cannot take this class.';
+	@override String preparationTitre({required Object jour, required Object heure}) => 'Replacement being prepared: ${jour} ${heure}';
+	@override String get preparationPhrase => 'The class teacher is not yet in the room. Declare yourself ready: if they do not arrive in time, the session is entrusted to the teacher selected (same gender as the class, then one who speaks its language).';
+	@override String get jeSuisPret => 'I am ready';
+	@override String get pretTitre => 'You are ready';
+	@override String get pretPastille => 'Selected';
+	@override String get pretPhrase => 'You are selected: if the class teacher does not arrive in time, the session is entrusted to you. Stay available.';
+	@override String get pretCollegue => 'A colleague is ready';
+	@override String get pretAvantVous => 'A colleague was selected for this session. Nothing changed in your schedule.';
+	@override String get preparationClose => 'This preparation is closed: the class teacher has arrived, or the session is already offered to everyone.';
+	@override String get acceptee => 'Confirmed: you are taking this session. It is added to your replacements.';
+	@override String get erreur => 'The replacements to take could not be loaded: the request may not have reached Rewayah. Try again in a moment.';
+	@override String get sansDonnees => 'The replacements to take could not be loaded';
+}
+
+// Path: enseignant.salle
+class _Traductions$enseignant$salle$en extends Traductions$enseignant$salle$fr {
+	_Traductions$enseignant$salle$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String reference({required Object page, required Object total, required Object reference}) => 'Presented: page ${page} of ${total} · ${reference}';
+	@override String get rien => 'Nothing is presented';
+	@override String get rienInvitation => 'Open the Quran to show a page to your class.';
+	@override String get attenteSalle => 'You are not in the room yet';
+	@override String get attenteSalleDetail => 'The presentation controls open as soon as the class is connected.';
+	@override String get lienFaibleDetail => 'the page turn may reach your class late';
+	@override String get presentationConservee => 'the presented page is kept, it will resume when the link is back';
+	@override String get presentationSuspendue => 'presentation suspended';
+	@override String get precedente => 'Present the previous page';
+	@override String get suivante => 'Present the next page';
+	@override String get bibliotheque => 'Choose a surah';
+	@override String presenterSourate({required Object deSourate}) => 'Present the start of ${deSourate}';
+	@override String sourateDetail({required Object numero, required Object versets}) => 'Surah ${numero} · ${versets} verses';
+	@override String get souratesIndisponibles => 'The surah list could not be loaded';
+	@override String get souratesIndisponiblesDetail => 'What your class sees has not changed. Try again.';
+	@override String get pageIndisponible => 'This page could not be loaded';
+	@override String get pageIndisponibleDetail => 'The text did not arrive. Your class still sees the page presented.';
+	@override String get corpusAbsent => 'The Quran text is not installed';
+	@override String get corpusAbsentDetail => 'There is nothing to present.';
+	@override String get echecPresentation => 'This verse could not be located in the mushaf. Nothing was sent to your class.';
+	@override String get sansDroitPresentation => 'Your access to this session does not allow presenting content.';
+}
+
+// Path: enseignant.cahier
+class _Traductions$enseignant$cahier$en extends Traductions$enseignant$cahier$fr {
+	_Traductions$enseignant$cahier$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Handover notebook';
+	@override String get obligatoire => 'Required';
+	@override String get sousTitre => 'Required after each session';
+	@override String get description => 'Note where each student stands (surah, verse, rule worked on). If another teacher replaces you, they pick up exactly where the session stopped.';
+	@override String duree({required Object minutes}) => '${minutes} min of class';
+	@override String dureeEtInterruption({required Object minutes, required Object interruption}) => '${minutes} min of class, including ${interruption} min of interruption';
+	@override String get unEleve => '1 student';
+	@override String get toutEstNominal => 'Everything went as planned.';
+	@override String get toutEstNominalDetail => 'Approve, and your day continues.';
+	@override String get exceptions => 'To look at';
+	@override String get uneException => '1 student needs a look.';
+	@override String get nominaux => 'Nothing to report';
+	@override String get curriculumFige => 'The level and program are the academy\'s: they cannot be changed from the handover notebook.';
+	@override String get valider => 'Approve the handover notebook';
+	@override String get validerTout => 'Everything is in order, approve';
+	@override String get validerSansConstat => 'Submit without the record';
+	@override String get retourJournee => 'Back to my day';
+	@override String get vide => 'The record could not be derived';
+	@override String get videDetail => 'No attendance and no event were recorded for this session. You can still submit the handover notebook.';
+	@override String get introuvable => 'Session not found';
+	@override String get introuvableDetail => 'This session is not one of yours, or the link is incomplete. Go back to your day to choose a session.';
+	@override String get erreur => 'The record could not be loaded.';
+	@override String get erreurDetail => 'Try again, or submit the handover notebook without the record.';
+	@override String get echecEnvoi => 'The sending was not confirmed. Check before trying again.';
+	@override String get dejaDepose => 'The handover notebook of this session is already submitted.';
+	@override String get dejaDeposeDetail => 'A handover notebook is only submitted once, and it cannot be deleted from here.';
+	@override String get depose => 'Handover notebook saved';
+	@override String get deposeDetail => 'The academy received it.';
+	@override String get enFileTitre => 'Waiting to be sent';
+	@override String get enFile => 'The handover notebook will be sent when the connection is back.';
+	@override String get enFileDetail => 'The handover notebook will be sent when the connection is back.';
+	@override String get enFileDetailHorsLigne => 'Without network, the handover notebook stays on this device and goes as soon as the network is back. You can move on to your next class.';
+	@override String ajusterPour({required Object eleve}) => 'Adjust · ${eleve}';
+	@override String get ajusterValider => 'Save for this student';
+	@override String get exceptionConsignee => 'Exception reported';
+	@override String get pointPhonetique => 'Pronunciation point';
+	@override String get pointPhonetiqueDetail => 'A pair, not a summary. Leave empty if there is nothing to say.';
+	@override String get pointPhonetiqueNote => 'Pronunciation point noted';
+	@override String objectif({required Object deEleve}) => '${deEleve}\'s goal';
+	@override String objectifDetail({required Object queEleve}) => 'What ${queEleve} must reach, within the academy\'s program.';
+	@override String travailMaison({required Object deEleve}) => '${deEleve}\'s homework';
+	@override String get travailMaisonDetail => 'Adjust the suggestion, or leave it as it is.';
+	@override String get travailMaisonSaisi => 'You have already noted this homework. Edit it or leave it as it is.';
+	@override String suite({required Object eleve}) => 'What comes next for ${eleve}';
+	@override String get suiteContinuer => 'Continue';
+	@override String get suiteRenforcer => 'Reinforce';
+	@override String get suspendreNouveau => 'Pause the new material';
+	@override String devoirPrecedent({required Object devoir}) => 'Previous homework: ${devoir}';
+	@override String devoirPlage({required Object sourate, required Object debut, required Object fin}) => 'Review surah ${sourate}, verses ${debut} to ${fin}.';
+	@override String get suspendreNouveauDetail => 'Revision continues, nothing new is added for this student.';
+	@override String position({required Object sourate, required Object verset}) => 'Reading: surah ${sourate}, verse ${verset}';
+	@override String get makhrajSinSad => 'Sin / Sad (س / ص)';
+	@override String get makhrajTaTah => 'Ta / Emphatic Ta (ت / ط)';
+	@override String get makhrajDhalZay => 'Dhal / Zay (ذ / ز)';
+	@override String get makhrajHaHah => 'Ha / Ha\' (ه / ح)';
+	@override String get exceptionTitre => 'Report an exception';
+	@override String get exceptionCorriger => 'Correct attendance';
+	@override String get exceptionExcuser => 'Excuse the absence';
+	@override String get exceptionConfirmation => 'Confirm the exception';
+	@override String get exceptionMotif => 'Reason';
+	@override String get exceptionMotifRequis => 'The reason is required.';
+	@override String get exceptionEnCours => 'Saving…';
+	@override String get exceptionSucces => 'Exception recorded. It will go with the handover notebook.';
+	@override String get exceptionErreur => 'The exception could not be recorded.';
+	@override String get exceptionHorsLigne => 'Without network, an exception cannot be confirmed. The handover notebook still goes.';
+	@override String get aValider => 'To approve';
+	@override String statutPresents({required Object nombre}) => 'Present ${nombre}';
+	@override String statutAbsents({required Object nombre}) => 'Absent ${nombre}';
+	@override String statutEnRetard({required Object nombre}) => 'Late ${nombre}';
+	@override String get performance => 'Performance';
+	@override String get faiblesses => 'Weaknesses';
+	@override String get niveauARevoir => 'To reinforce';
+	@override String get niveauEnProgres => 'Improving';
+	@override String get niveauAcquis => 'Achieved';
+	@override String get niveauMaitrise => 'Fully achieved';
+	@override String get faiblesseMakharij => 'Makharij';
+	@override String get faiblesseMadd => 'Madd';
+	@override String get faiblesseGhunna => 'Ghunna';
+	@override String get faiblesseWaqf => 'Waqf';
+	@override String get faiblesseFluidite => 'Fluency';
+	@override String get faiblesseMemorisation => 'Memorisation';
+	@override String get niveauARevoirDetail => 'The lesson is to be taken up again at the next session.';
+	@override String get niveauEnProgresDetail => 'The student is progressing, a few mistakes remain.';
+	@override String get niveauAcquisDetail => 'The lesson is known, with few mistakes.';
+	@override String get niveauMaitriseDetail => 'The lesson is known without a mistake, the student can move on.';
+	@override String get faiblesseMakharijDetail => 'The pronunciation of the letters.';
+	@override String get faiblesseMaddDetail => 'The lengthenings.';
+	@override String get faiblesseGhunnaDetail => 'The nasal sound.';
+	@override String get faiblesseWaqfDetail => 'The stops.';
+	@override String get faiblesseFluiditeDetail => 'Reading without hesitation.';
+	@override String get faiblesseMemorisationDetail => 'Recitation from memory.';
+	@override String get reprise => 'Where the class stopped';
+	@override String get repriseDetail => 'This is the resume position for a replacement.';
+	@override String repriseProposee({required Object sourate, required Object verset}) => 'Surah ${sourate}, verse ${verset}';
+	@override String get repriseRequise => 'Say where the class stopped: a replacement will resume here.';
+	@override String get repriseChoisir => 'Choose the surah and the verse';
+	@override String get repriseConsigne => 'Choose the surah, then the verse where the class stopped.';
+	@override String get repriseRecherche => 'Search for a surah by its name or number';
+	@override String repriseSourate({required Object numero, required Object nom}) => '${numero}. ${nom}';
+	@override String repriseVersets({required Object n}) => '${n} verses';
+	@override String repriseRestantes({required Object n}) => '${n} more surahs: narrow the search.';
+	@override String get repriseVerset => 'Verse';
+	@override String repriseVersetBornes({required Object n}) => 'Between 1 and ${n}';
+	@override String get repriseRetenir => 'Keep this position';
+	@override String get repriseIncomplete => 'Choose the surah then the verse.';
+	@override String get repriseAucune => 'No surah matches';
+	@override String get repriseAucuneDetail => 'Try another name, or its number from 1 to 114.';
+	@override String get repriseSansListe => 'The surah list could not be loaded';
+	@override String get repriseSansListeFeuille => 'Close this sheet: the handover notebook lets you write the position, or try again.';
+	@override String get repriseSansListeDetail => 'The surah list could not be loaded: write the resume position, for example "Surah 18, verse 10".';
+	@override String get integrite => 'What you write here binds your word. People cannot verify it, but Allah sees everything.';
+	@override String get corriger => 'Correct the handover notebook';
+	@override String corrigeLe({required Object date}) => 'Corrected on ${date}';
+	@override String eleves({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(nombre,
+		one: '${nombre} student',
+		other: '${nombre} students',
+	);
+	@override String plusieursExceptions({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(nombre,
+		one: '${nombre} student needs a look.',
+		other: '${nombre} students need a look.',
+	);
+}
+
+// Path: enseignant.profil
+class _Traductions$enseignant$profil$en extends Traductions$enseignant$profil$fr {
+	_Traductions$enseignant$profil$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Profile';
+	@override String get compteValide => 'Teacher account verified';
+	@override String get intro => 'What the academy knows about you, and what you can change.';
+	@override String get identite => 'Professional identity';
+	@override String get pays => 'Country';
+	@override String get langues => 'Languages';
+	@override String get fuseau => 'Time zone of my classes';
+	@override String get fuseauDetail => 'It decides the time of your slots, not this device\'s time.';
+	@override String get plafond => 'Weekly limit';
+	@override String get plafondDetail => 'Set by the academy.';
+	@override String get nonRenseigne => 'Not provided';
+	@override String get statutSection => 'Account status';
+	@override String get statutValideDetail => 'You can teach and declare your hours.';
+	@override String get statutEnAttente => 'File being verified';
+	@override String get statutEnAttenteDetail => 'The academy is checking your documents. You have nothing more to do.';
+	@override String get statutProvisoire => 'Provisional access';
+	@override String get statutProvisoireDetail => 'You already teach. Your file remains to be completed, with no automatic cut-off.';
+	@override String get statutSuspendu => 'Account suspended';
+	@override String get statutSuspenduDetail => 'You can contact the academy to find out what to do.';
+	@override String get statutInconnu => 'Status not available';
+	@override String get statutInconnuDetail => 'We could not load your status.';
+	@override String get statutDivergent => 'This status has just changed. Reopen the app so your access follows.';
+	@override String get verification => 'File verification';
+	@override String get verificationEnAttente => 'Pending';
+	@override String get verificationValidee => 'Approved';
+	@override String get verificationRefusee => 'To redo';
+	@override String get contratSection => 'Contract and acknowledgements';
+	@override String get contratEnseignant => 'Teacher contract';
+	@override String get contratConditions => 'Terms of use';
+	@override String get contratAccuse => 'Audio recording and review visit';
+	@override String get contratCodeConduite => 'Teacher code of conduct';
+	@override String contratDetail({required Object version, required Object date}) => 'Version ${version}, accepted on ${date}';
+	@override String get contratAucun => 'No contract recorded';
+	@override String get contratAucunDetail => 'Your file has not yet gone through signing.';
+	@override String get contratErreur => 'Your contracts could not be loaded.';
+	@override String get contratLectureSeule => 'These documents are read-only.';
+	@override String get personnel => 'My settings';
+	@override String get deconnexionQuestion => 'Sign out of this device?';
+	@override String get deconnexionConfirmer => 'Sign me out now';
+	@override String get deconnexionConsequence => 'Your day, your slots and your handover notebooks stay saved. You will need a new sign-in link to come back.';
+	@override String get erreur => 'Your profile could not be loaded. Try again in a moment.';
+	@override String get vide => 'No teacher profile';
+	@override String get videDetail => 'This account has no teacher profile. Only the academy can create one.';
+	@override String get horsLigne => 'Nothing can be changed here for now.';
+	@override String get modifierPays => 'Change the country';
+	@override String get fuseauAppareil => 'This device\'s time';
+	@override String fuseauValeur({required Object ville, required Object decalage}) => '${ville} · UTC${decalage}';
+	@override String get modifierFuseau => 'Change the time zone';
+	@override String get fuseauConsigne => 'Choose the time zone of the city where you live. Your availability and your sessions are shown in this time.';
+	@override String get fuseauDuPays => 'Time zone of your country';
+	@override String get fuseauExpert => 'Or write the name of the time zone';
+	@override String get fuseauExpertAide => 'For a time zone missing from the list, its international name. For example: Asia/Riyadh';
+	@override String get fuseauRequis => 'Choose a time zone, or write its name.';
+	@override String get fuseauInconnu => 'This time zone name is not recognised. Check how it is written, for example Asia/Riyadh.';
+	@override String get fuseauErreur => 'Saving the time zone is not confirmed. Try again.';
+	@override String get modifierLangues => 'Change the languages';
+	@override String get paysConsigne => 'Choose the country where you live. If it is not in the list, tap "Other".';
+	@override String get paysDuFuseau => 'Based on your time zone';
+	@override String get paysRequis => 'Choose a country, or write it in "Other".';
+	@override String get languesConsigne => 'Tick the languages in which you can teach.';
+	@override String get langueDejaDeclaree => 'Already declared in your profile';
+	@override String get languesRequises => 'Tick at least one language.';
+	@override String get languesErreur => 'The language list could not be loaded';
+	@override String get languesErreurDetail => 'Your current languages do not change. Try again in a moment.';
+	@override String get enregistrer => 'Save';
+	@override String get enregistre => 'Change saved';
+	@override String get editionErreur => 'The change did not go through. Try again in a moment.';
+	@override String get remuneration => 'Pay';
+	@override String get revenus => 'My income';
+	@override String get revenusDetail => 'What your sessions earn you, student by student';
+	@override String get disponibilitesDetail => 'The days and times you can teach';
+	@override String plafondValeur({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(nombre,
+		one: '${nombre} h per week',
+		other: '${nombre} h per week',
+	);
+	@override String revenusHeures({required Object heures, required Object mois}) => '${heures} taught in ${mois}';
+	@override String get publicationDonnee => 'Given';
+	@override String get publicationNonDonnee => 'Not given';
+}
+
+// Path: enseignant.creneaux
+class _Traductions$enseignant$creneaux$en extends Traductions$enseignant$creneaux$fr {
+	_Traductions$enseignant$creneaux$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String heureLibelle({required Object jour, required Object heure}) => '${jour} ${heure}:00';
+	@override String get aucuneHeure => 'You have not offered any time. Without a slot, no class can be offered to you.';
+	@override String heureEnregistree({required Object heure}) => '${heure} saved';
+	@override String heureRetiree({required Object heure}) => '${heure} removed';
+	@override String retraitEngage({required Object heure}) => '${heure} removed. The session already assigned at this time continues: request a reassignment to stop it.';
+	@override String get grilleErreur => 'Your times could not be loaded';
+	@override String get grilleErreurDetail => 'The times you have already set are not lost.';
+	@override String get horsLigneGrille => 'Your times stay available to read. They can be changed when the connection is back.';
+	@override String get fuseauManquant => 'Your time zone is not set. Without it, no availability can be set: set it first.';
+	@override String get reglerFuseau => 'Set my time zone';
+	@override String plagesDansFuseau({required Object villes}) => 'These slots are in the time of ${villes}.';
+	@override String heureEngagee({required Object heures}) => 'You already have a class on ${heures}. Removing this time does not end the session: a reassignment is needed.';
+	@override String heuresEngagees({required Object heures}) => 'You already have a class on ${heures}. Removing these times does not end the sessions: a reassignment is needed.';
+	@override String get feedErreur => 'The waiting families could not be loaded';
+	@override String get feedErreurDetail => 'Nothing is lost: no one was taken, and your times stay set.';
+	@override String get horsLignePrise => 'You will be able to take a student when the connection is back. The requests below stay available to read.';
+	@override String get horsLigneDemande => 'This request can be sent when the connection is back.';
+	@override String get refusDejaPris => 'This student has just been taken by another teacher. The list below is up to date.';
+	@override String get refusDejaSuivi => 'This student already has a teacher. The list below is up to date.';
+	@override String get refusCreneauRetire => 'This family no longer offers this slot. The list below is up to date.';
+	@override String get refusHorsMesHeures => 'This slot is no longer in your times. Set it again in My times to be able to take it.';
+	@override String get refusPlafond => 'You have reached your maximum number of students. Ask for an increase to follow one more.';
+	@override String get mesDisponibilites => 'My availability';
+	@override String get ajouterCreneau => 'Add a slot';
+	@override String heure({required Object heure}) => '${heure}:00';
+	@override String get classesDisponibles => 'Available classes';
+	@override String get etatDisponible => 'Available';
+	@override String get etatEnAttente => 'Pending approval';
+	@override String get etatLimite => 'Load limit reached';
+	@override String get limiteDetail => 'Your current load does not allow booking an additional class.';
+	@override String get aucuneClasse => 'No compatible class for now';
+	@override String get aucuneClasseDetail => 'Change your availability if your schedule has changed.';
+	@override String get reserver => 'Book this class';
+	@override String get demandeTransmise => 'Your request has been passed on.';
+	@override String get demandeTransmiseDetail => 'It will appear in your classes after confirmation.';
+	@override String get confirmerTitre => 'Confirm this class?';
+	@override String get confirmer => 'Confirm this class';
+	@override String get revenir => 'Go back';
+	@override String get cleNiveau => 'Level';
+	@override String get cleLangue => 'Language';
+	@override String get cleRecurrence => 'Recurrence';
+	@override String get cleFuseau => 'Reference time zone';
+	@override String get cleHeureLocale => 'Local time';
+	@override String get cleDuree => 'Duration';
+	@override String get plagesContexte => 'One line per slot. Tap a slot to edit or delete it.';
+	@override String plageDe({required Object heure}) => 'from ${heure}:00';
+	@override String plageA({required Object heure}) => 'to ${heure}:00';
+	@override String get plageAMinuit => 'to midnight';
+	@override String plageEngagee({required Object heures}) => 'Class already committed on ${heures}';
+	@override String get ajouterPlage => 'Add a slot';
+	@override String get feuilleAjouterTitre => 'New availability slot';
+	@override String feuilleModifierTitre({required Object jour}) => 'Edit the slot of ${jour}';
+	@override String get feuilleContexte => 'Choose one or more days, then the start time and the end time. A class can start at every whole hour of the slot.';
+	@override String get raccourcis => 'Shortcuts';
+	@override String get raccourciSoiree => 'Evening 5 pm-11 pm';
+	@override String get raccourciMatinee => 'Morning 8 am-12 pm';
+	@override String get raccourciWeekEnd => 'Weekend';
+	@override String get raccourcisDetail => 'Evening and Morning set the hours. Weekend chooses Saturday and Sunday.';
+	@override String get jours => 'Days';
+	@override String get heures => 'Hours';
+	@override String get menuDe => 'Start time';
+	@override String get menuA => 'End time';
+	@override String get manqueJour => 'No day chosen. Tap at least one day to save the slot.';
+	@override String fusion({required Object jour, required Object de, required Object a}) => '${jour}: this slot overlaps or touches a slot already set. They will be merged into one, ${de} ${a}.';
+	@override String dejaPosee({required Object jour, required Object de, required Object a}) => '${jour}: these hours are already set, in the slot ${de} ${a}. Nothing changes for this day.';
+	@override String get enregistrerPlage => 'Save the slot';
+	@override String get supprimerPlage => 'Delete this slot';
+	@override String plageEnregistree({required Object jours, required Object de, required Object a}) => 'Slot saved: ${jours}, ${de} ${a}.';
+	@override String plageInchangee({required Object jours, required Object de, required Object a}) => 'Nothing to save: ${jours}, ${de} ${a}, already in your availability.';
+	@override String plageSupprimee({required Object jour, required Object de, required Object a}) => 'Slot deleted: ${jour}, ${de} ${a}.';
+	@override String seanceContinue({required Object heures}) => 'The session already assigned on ${heures} continues: request a reassignment to stop it.';
+	@override String confirmerRetraitQuestion({required Object heures}) => 'Remove ${heures} from your availability?';
+	@override String confirmerRetraitConsequence({required Object heures}) => 'A class takes place on ${heures}. Removing this availability does not end the session: it continues until a reassignment.';
+	@override String get confirmerRetraitAction => 'Remove these hours';
+	@override String ajoutNonConfirme({required Object heures}) => 'Addition not confirmed: ${heures}.';
+	@override String retraitNonConfirme({required Object heures}) => 'Removal not confirmed: ${heures}.';
+	@override String get echecCause => 'The request may not have reached Rewayah.';
+	@override String echecQuoiFaire({required Object action}) => 'Tap "${action}" to try again: only these hours will be sent again, after rereading your slots.';
+	@override String get engagementsNonConfirmes => 'Your already committed classes are not confirmed: the request may not have reached Rewayah. A conflict with a slot cannot therefore be reported; tap "Try again".';
+	@override String retraitSansEngagements({required Object heures}) => 'Your already committed classes are not confirmed. If a class takes place on ${heures}, removing this availability does not end the session: it continues until a reassignment.';
+	@override String get horsLigneFeuille => 'This slot cannot be saved now. Your choices stay displayed: come back to save it when sending is possible again.';
+}
+
+// Path: enseignant.ficheGroupe
+class _Traductions$enseignant$ficheGroupe$en extends Traductions$enseignant$ficheGroupe$fr {
+	_Traductions$enseignant$ficheGroupe$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String creneauHebdo({required Object jour, required Object heure}) => '${jour} at ${heure}, every week';
+	@override String get aucunMembre => 'No student in this class';
+	@override String get aucunMembreDetail => 'The administration forms the classes: this one has no student yet.';
+	@override String get erreur => 'This class could not be loaded. Try again in a moment.';
+	@override String get introuvable => 'This class is not one of yours';
+	@override String get introuvableDetail => 'It may have been closed, or it belongs to another teacher.';
+	@override String get revue => 'Open the class review';
+	@override String get elevesTitre => 'Students';
+	@override String get preparationTitre => 'To prepare';
+	@override String get supportPrevu => 'Planned material';
+	@override String get positionReprise => 'Resume position';
+	@override String get objectif => 'Goal';
+	@override String get preparationVide => 'No preparation entered for this session.';
+	@override String get supportsTitre => 'Recent materials';
+	@override String repriseEleve({required Object page}) => 'Resume: ${page}';
+	@override String dernierPoint({required Object texte}) => 'Last point: ${texte}';
+	@override String get chargementClasse => 'Loading the class.';
+	@override String get ressourcesTitre => 'Recent resources';
+	@override String get progressionTitre => 'Class progress';
+	@override late final _Traductions$enseignant$ficheGroupe$pause$en pause = _Traductions$enseignant$ficheGroupe$pause$en._(_root);
+}
+
+// Path: enseignant.revue
+class _Traductions$enseignant$revue$en extends Traductions$enseignant$revue$fr {
+	_Traductions$enseignant$revue$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Class review';
+	@override String titreClasse({required Object classe}) => 'Review of class ${classe}';
+	@override String get aucuneAnomalie => 'Nothing needs your attention.';
+	@override String get erreur => 'The review could not be loaded.';
+	@override String get erreurDetail => 'This class may not be yours, or loading failed.';
+	@override String get pasDeDecision => 'You report, the academy decides: a transfer and a reorientation are not decided from here.';
+	@override String get typeGate => 'Upcoming stage';
+	@override String get typeCorridor => 'Student outside the corridor';
+	@override String get typeTransfert => 'Transfer proposal';
+	@override String get typeReorientation => 'Reorientation proposal';
+}
+
+// Path: enseignant.revenus
+class _Traductions$enseignant$revenus$en extends Traductions$enseignant$revenus$fr {
+	_Traductions$enseignant$revenus$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'My income';
+	@override String get intro => 'What your sessions of the chosen month earn you, student by student.';
+	@override String get introSansChoix => 'What your sessions of the current month earn you, student by student.';
+	@override String get estimation => 'Estimate';
+	@override String periode({required Object mois, required Object annee}) => '${mois} ${annee}';
+	@override String get totalEstime => 'Estimated income for the month';
+	@override String get totalDetail => 'What your sessions earn, excluding other income.';
+	@override String get aRecevoir => 'To receive this month';
+	@override String get aRecevoirDetail => 'Paid sessions, excluding those on hold and other income.';
+	@override String attenteCahierTotal({required Object montant}) => 'Waiting for the handover notebook: ${montant}. Fill in the week\'s handover notebook to release it.';
+	@override String get heuresAssurees => 'Hours taught';
+	@override String get heuresAssureesDetail => 'The month\'s sessions that earned, at their retained length.';
+	@override String get classesActives => 'Classes';
+	@override String heures({required Object heures}) => '${heures} h';
+	@override String heuresMinutes({required Object heures, required Object minutes}) => '${heures} h ${minutes}';
+	@override String minutes({required Object minutes}) => '${minutes} min';
+	@override String get versement => 'Pay day';
+	@override String versementValeur({required Object du, required Object au}) => 'From ${du} to ${au}';
+	@override String versementDetail({required Object mois}) => 'The pay for ${mois} is paid between these two dates.';
+	@override String jourMois({required Object mois, required Object jour}) => '${mois} ${jour}';
+	@override String get classesSection => 'By class';
+	@override String get classesDetail => 'Tap a class to see its sessions and what each student earned.';
+	@override String nombreSeances({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} session',
+		other: '${n} sessions',
+	);
+	@override String classe({required Object nom}) => 'Class ${nom}';
+	@override String get capacite => 'Capacity';
+	@override String capaciteValeur({required Object nombre}) => '${nombre} seats';
+	@override String get taux => 'Effective hourly rate';
+	@override String tauxValeur({required Object montant}) => '${montant} per hour';
+	@override String get type => 'Type';
+	@override String get typeEnfants => 'Children';
+	@override String get typeDebutants => 'Beginner children';
+	@override String get typeAdultes => 'Adults';
+	@override String get remplacement => 'Replacement';
+	@override String get tauxMoyen => 'Average hourly rate';
+	@override String get total => 'Total';
+	@override String seanceDate({required Object date, required Object heure}) => '${date} at ${heure}';
+	@override String get seanceDuree => 'Retained length';
+	@override String get present => 'Present';
+	@override String get absent => 'Absent';
+	@override String get presentPartiel => 'Partly present';
+	@override String get partielleNote => 'A partial attendance is paid as an attendance.';
+	@override String get aucunMontant => 'No amount for this session.';
+	@override String get partielle => '4. A partial attendance counts';
+	@override String get partielleDetail => 'A student present for part of the session is paid as a present student.';
+	@override String get montantSeance => 'Session total';
+	@override String get attenteCahier => 'Waiting for the week\'s handover notebook';
+	@override String get attenteCahierDetail => 'Nothing is paid to you for this session while the week\'s handover notebook is missing. Once this handover notebook is submitted, this amount is paid to you.';
+	@override String get attenteDirection => 'Waiting for the management';
+	@override String get attenteDirectionDetail => 'The management must confirm the length of this session: no amount is set yet.';
+	@override String get seancesVide => 'No session held this month.';
+	@override String get calculSection => 'How it is calculated';
+	@override String get autresSection => 'Other income';
+	@override String get autresDetail => 'Internet allowance, bonuses and missions that the management assigns you for this month, paid with the pay.';
+	@override String get autresVide => 'No Internet allowance, bonus or mission this month.';
+	@override String get autresTotal => 'Total of other income';
+	@override String get autresResume => 'Other income for the month';
+	@override String get releveSection => 'Statement';
+	@override String get releveIndisponibleTitre => 'The statement is not available yet';
+	@override String get releveIndisponiblePhrase => 'The months closed by the academy will appear here as soon as the statement is in service. Until then, only the estimate for the current month is shown.';
+	@override String get indisponibleTitre => 'Your income is not published yet';
+	@override String get indisponiblePhrase => 'Your estimate for the month will appear here as soon as the academy has published it. No amount is calculated on this device.';
+	@override String get releveVide => 'No month closed yet';
+	@override String get releveVideDetail => 'Each month will appear here once closed by the academy.';
+	@override String get mention => 'This amount is an estimate, not a final payment. The statement closed by the academy is authoritative.';
+	@override String get vide => 'No hours taught this month';
+	@override String get videDetail => 'The estimate will appear after your first session taught of the month.';
+}
+
 // Path: adulte.nav
 class _Traductions$adulte$nav$en extends Traductions$adulte$nav$fr {
 	_Traductions$adulte$nav$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -7026,6 +7821,108 @@ class _Traductions$classe$cartes$feuille$en extends Traductions$classe$cartes$fe
 	@override late final _Traductions$classe$cartes$feuille$defauts$en defauts = _Traductions$classe$cartes$feuille$defauts$en._(_root);
 }
 
+// Path: enseignant.classes.reste
+class _Traductions$enseignant$classes$reste$en extends Traductions$enseignant$classes$reste$fr {
+	_Traductions$enseignant$classes$reste$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get imminent => 'now';
+	@override String minutes({required Object minutes}) => 'in ${minutes} min';
+	@override String heures({required Object heures, required Object minutes}) => 'in ${heures} h ${minutes}';
+	@override String get demain => 'tomorrow';
+	@override String jours({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(jours,
+		one: 'in ${jours} day',
+		other: 'in ${jours} days',
+	);
+}
+
+// Path: enseignant.signalement.categories
+class _Traductions$enseignant$signalement$categories$en extends Traductions$enseignant$signalement$categories$fr {
+	_Traductions$enseignant$signalement$categories$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get pedagogique => 'Teaching problem';
+	@override String get presence => 'Attendance';
+	@override String get technique => 'Technical';
+	@override String get changement => 'Change';
+	@override String get autre => 'Other';
+}
+
+// Path: enseignant.bienvenue.equipe
+class _Traductions$enseignant$bienvenue$equipe$en extends Traductions$enseignant$bienvenue$equipe$fr {
+	_Traductions$enseignant$bienvenue$equipe$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Welcome to the team';
+	@override String get intro => 'Your teacher account is open. Here is what remains to set up before your first class.';
+	@override String get aConfigurer => 'What remains to set up';
+	@override String get toutPret => 'Everything is set up. All that is left is to wait for your first class.';
+	@override String get voirPremiersPas => 'See my first steps';
+	@override String get remplacementTitre => 'Replacements';
+	@override String get remplacement => 'When a class needs a teacher, the offer is shown on this page. Visit this page often and reply quickly: the academy must always deliver the promised classes.';
+}
+
+// Path: enseignant.journee.absence
+class _Traductions$enseignant$journee$absence$en extends Traductions$enseignant$journee$absence$fr {
+	_Traductions$enseignant$journee$absence$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get ouvrir => 'Report my absence from this session';
+	@override String get ouvrirContexte => 'A replacement will be sought for your students.';
+	@override String get titre => 'You will not be able to take this session?';
+	@override String get cleDate => 'Date';
+	@override String get notice => 'Your assignment to the class stays unchanged.';
+	@override String get declarer => 'Declare my absence';
+	@override String get echec => 'The request did not go through. Try again in a moment.';
+	@override late final _Traductions$enseignant$journee$absence$etats$en etats = _Traductions$enseignant$journee$absence$etats$en._(_root);
+}
+
+// Path: enseignant.journee.remplacement
+class _Traductions$enseignant$journee$remplacement$en extends Traductions$enseignant$journee$remplacement$fr {
+	_Traductions$enseignant$journee$remplacement$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Take this replacement?';
+	@override String get assurer => 'Take this replacement';
+	@override String get pasCetteFois => 'Not this time';
+}
+
+// Path: enseignant.ficheGroupe.pause
+class _Traductions$enseignant$ficheGroupe$pause$en extends Traductions$enseignant$ficheGroupe$pause$fr {
+	_Traductions$enseignant$ficheGroupe$pause$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Session break';
+	@override String get detail => 'A break scheduled in advance on this class, for example for prayer. It applies to each session, until you change it.';
+	@override String get actif => 'Schedule a break';
+	@override String get etatActif => 'Scheduled';
+	@override String get etatInactif => 'No break';
+	@override String get moment => 'Time of the break';
+	@override String get momentAide => 'Minutes after the start of the session.';
+	@override String get duree => 'Length of the break';
+	@override String resume({required Object duree, required Object moment}) => '${duree} min break, ${moment} min after the start.';
+	@override String get enregistrer => 'Save the break';
+	@override String get enregistree => 'Break saved.';
+	@override String get echec => 'The setting is not confirmed: the request may not have reached Rewayah. Check before trying again.';
+	@override String get obsolete => 'The setting changed in the meantime. It has just been reloaded: check before saving.';
+	@override String get refuse => 'Only the class teacher sets the break.';
+	@override String get indisponibleTitre => 'The scheduled break is not available yet';
+	@override String get indisponiblePhrase => 'It will be offered here as soon as Rewayah serves it.';
+	@override String get illisible => 'The break setting could not be loaded.';
+}
+
 // Path: adulte.recharge.formules
 class _Traductions$adulte$recharge$formules$en extends Traductions$adulte$recharge$formules$fr {
 	_Traductions$adulte$recharge$formules$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -8346,6 +9243,21 @@ class _Traductions$classe$cartes$feuille$defauts$en extends Traductions$classe$c
 	@override String texteLong({required Object max}) => 'The text exceeds ${max} characters. Shorten it or share a link.';
 	@override String get lienInvalide => 'This link is not a full address. Paste an address that starts with https://.';
 	@override String get echeanceManquante => 'Homework needs a due date. Choose the due date.';
+}
+
+// Path: enseignant.journee.absence.etats
+class _Traductions$enseignant$journee$absence$etats$en extends Traductions$enseignant$journee$absence$etats$fr {
+	_Traductions$enseignant$journee$absence$etats$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get enregistree => 'Absence recorded';
+	@override String get recherche => 'Looking for a replacement';
+	@override String get remplacantConfirme => 'Replacement confirmed';
+	@override String get aucunRemplacant => 'No replacement confirmed';
+	@override String get seanceAnnulee => 'Session cancelled';
+	@override String get demandeAnnulee => 'Request cancelled';
 }
 
 // Path: adulte.recharge.source.motifs
@@ -12172,6 +13084,653 @@ extension on TraductionsEn {
 			'classe.cartes.feuille.defauts.texteLong' => ({required Object max}) => 'The text exceeds ${max} characters. Shorten it or share a link.',
 			'classe.cartes.feuille.defauts.lienInvalide' => 'This link is not a full address. Paste an address that starts with https://.',
 			'classe.cartes.feuille.defauts.echeanceManquante' => 'Homework needs a due date. Choose the due date.',
+			'enseignant.pays.semantique' => ({required Object pays}) => 'Country: ${pays}',
+			'enseignant.classes.titre' => 'Classes',
+			'enseignant.classes.vide' => 'No class assigned',
+			'enseignant.classes.videDetail' => 'Confirmed classes will appear here.',
+			'enseignant.classes.erreur' => 'Your classes could not be loaded. Try again in a moment.',
+			'enseignant.classes.chargement' => 'Loading your classes.',
+			'enseignant.classes.niveau' => ({required Object niveau}) => 'Level ${niveau}',
+			'enseignant.classes.etape' => ({required Object n, required Object nom}) => 'Step ${n} · ${nom}',
+			'enseignant.classes.eleveUn' => '1 student',
+			'enseignant.classes.prochaine' => ({required Object jour, required Object heure}) => 'Next session: ${jour} at ${heure}',
+			'enseignant.classes.sansProchaine' => 'No session planned',
+			'enseignant.classes.quand' => ({required Object jour, required Object heure, required Object reste}) => '${jour} ${heure} · ${reste}',
+			'enseignant.classes.reste.imminent' => 'now',
+			'enseignant.classes.reste.minutes' => ({required Object minutes}) => 'in ${minutes} min',
+			'enseignant.classes.reste.heures' => ({required Object heures, required Object minutes}) => 'in ${heures} h ${minutes}',
+			'enseignant.classes.reste.demain' => 'tomorrow',
+			'enseignant.classes.reste.jours' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(jours, one: 'in ${jours} day', other: 'in ${jours} days', ), 
+			'enseignant.classes.remplacement' => 'Replacement',
+			'enseignant.classes.rappelCahier' => 'A handover notebook remains to be approved',
+			'enseignant.classes.cahierAValider' => 'Handover notebook to approve',
+			'enseignant.classes.eleves' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(nombre, one: '${nombre} student', other: '${nombre} students', ), 
+			'enseignant.eleve.titre' => ({required Object dePrenom}) => '${dePrenom}\'s file',
+			'enseignant.eleve.retour' => 'Students',
+			'enseignant.eleve.identifiant' => ({required Object id}) => 'Academy ID: ${id}',
+			'enseignant.eleve.photo' => ({required Object dePrenom}) => '${dePrenom}\'s photo',
+			'enseignant.eleve.niveau' => 'Level',
+			'enseignant.eleve.objectif' => 'Goal',
+			'enseignant.eleve.presence' => 'Recent attendance',
+			'enseignant.eleve.travail' => 'Work',
+			'enseignant.eleve.travailReprise' => ({required Object page}) => 'Resume at ${page}',
+			'enseignant.eleve.derniereSeance' => 'Last session',
+			'enseignant.eleve.nonRenseigne' => 'Not provided',
+			'enseignant.eleve.signaler' => 'Report a need',
+			'enseignant.eleve.signalerAide' => 'A need to pass on to the academy, without copying the context.',
+			'enseignant.eleve.etape' => 'Program stage',
+			'enseignant.eleve.objectifsEtape' => 'Stage goals',
+			'enseignant.eleve.aFinirAvant' => 'To finish before',
+			'enseignant.eleve.aFinirAvantDate' => ({required Object mois, required Object numero, required Object annee, required Object prevue}) => '${mois} ${numero}, ${annee}, for ${prevue} planned weeks',
+			'enseignant.eleve.aFinirEnSemaines' => ({required Object limite}) => 'In ${limite} weeks at most from the start of the stage',
+			'enseignant.eleve.renforcerNotees' => ({required Object mois, required Object numero, required Object annee}) => 'Noted on ${mois} ${numero}, ${annee}',
+			'enseignant.eleve.renforcerAucun' => 'Nothing noted to reinforce in this class\'s handover notebooks',
+			'enseignant.eleve.renforcerIllisible' => 'The points to reinforce could not be loaded. Try again.',
+			'enseignant.eleve.etapeNonPubliee' => 'No stage published yet for this student',
+			'enseignant.eleve.etapeAttenteEntretien' => 'Waiting for the reading interview with the management',
+			'enseignant.signalement.titre' => 'Report a need',
+			'enseignant.signalement.contexte' => ({required Object prenom, required Object classe}) => 'For ${prenom} · ${classe}',
+			'enseignant.signalement.categorieTitre' => 'Category',
+			'enseignant.signalement.categories.pedagogique' => 'Teaching problem',
+			'enseignant.signalement.categories.presence' => 'Attendance',
+			'enseignant.signalement.categories.technique' => 'Technical',
+			'enseignant.signalement.categories.changement' => 'Change',
+			'enseignant.signalement.categories.autre' => 'Other',
+			'enseignant.signalement.details' => 'Internal details',
+			'enseignant.signalement.detailsAide' => 'Read by the academy team only.',
+			'enseignant.signalement.resume' => 'Shareable summary',
+			'enseignant.signalement.resumeAide' => 'Can be shared with the family by the academy.',
+			'enseignant.signalement.notice' => 'Internal details are not automatically sent to the family.',
+			'enseignant.signalement.choisirCategorie' => 'Choose a category to continue.',
+			'enseignant.signalement.detailsRequis' => 'For "Other", say in a few words what it is about.',
+			'enseignant.signalement.envoyer' => 'Send the report',
+			'enseignant.signalement.demoSucces' => 'Demo: this report is ready, but nothing was sent.',
+			'enseignant.signalement.demoSuccesDetail' => 'In the connected app, it will go to the academy team.',
+			'enseignant.signalement.fermer' => 'Close',
+			'enseignant.demo.titre' => 'Teacher demo',
+			'enseignant.demo.mention' => 'Fictitious data, nothing is sent.',
+			'enseignant.demo.intro' => 'Choose a screen of Sayyid Ibrahim.',
+			'enseignant.demo.ecrans' => 'Screens',
+			'enseignant.demo.etats' => 'Situations',
+			'enseignant.demo.etatNominal' => 'Ordinary day',
+			'enseignant.demo.etatVide' => 'No session',
+			'enseignant.demo.etatHorsLigne' => 'Offline',
+			'enseignant.bienvenue.equipe.titre' => 'Welcome to the team',
+			'enseignant.bienvenue.equipe.intro' => 'Your teacher account is open. Here is what remains to set up before your first class.',
+			'enseignant.bienvenue.equipe.aConfigurer' => 'What remains to set up',
+			'enseignant.bienvenue.equipe.toutPret' => 'Everything is set up. All that is left is to wait for your first class.',
+			'enseignant.bienvenue.equipe.voirPremiersPas' => 'See my first steps',
+			'enseignant.bienvenue.equipe.remplacementTitre' => 'Replacements',
+			'enseignant.bienvenue.equipe.remplacement' => 'When a class needs a teacher, the offer is shown on this page. Visit this page often and reply quickly: the academy must always deliver the promised classes.',
+			'enseignant.bienvenue.titre' => 'First steps',
+			'enseignant.bienvenue.salutation' => ({required Object prenom}) => 'Welcome, ${prenom}.',
+			'enseignant.bienvenue.salutationSansNom' => 'Welcome.',
+			'enseignant.bienvenue.dossierValide' => 'Your file is approved.',
+			'enseignant.bienvenue.sousTitre' => 'Prepare your space before your first class.',
+			'enseignant.bienvenue.aCompleter' => 'To complete',
+			'enseignant.bienvenue.compteur' => ({required Object fait, required Object total}) => '${fait} of ${total}',
+			'enseignant.bienvenue.prerequisPhoto' => 'Add my professional photo',
+			'enseignant.bienvenue.prerequisLangues' => 'Check my teaching languages',
+			'enseignant.bienvenue.prerequisFuseau' => 'Check my time zone',
+			'enseignant.bienvenue.ctaPhoto' => 'Add my photo',
+			'enseignant.bienvenue.ctaInformations' => 'Check my information',
+			'enseignant.bienvenue.ctaJournee' => 'See my day',
+			'enseignant.bienvenue.rappels' => 'Two things not to discover along the way',
+			'enseignant.bienvenue.declarer' => 'Set my availability',
+			'enseignant.bienvenue.versJournee' => 'Go to my day',
+			'enseignant.bienvenue.horsLigne' => 'Your slots can be saved when the connection is back.',
+			'enseignant.bienvenue.dossierIncomplet' => 'Your file is not approved yet.',
+			'enseignant.bienvenue.dossierIncompletDetail' => 'The waiting page tells you what remains to be provided.',
+			'enseignant.bienvenue.versAttente' => 'See my file',
+			'enseignant.bienvenue.erreur' => 'Your profile could not be loaded. Try again in a moment.',
+			'enseignant.photo.titre' => 'Professional photo',
+			'enseignant.photo.aide' => 'Your photo is required: families do not entrust their children to a stranger on the internet. It is visible to the families of your students.',
+			'enseignant.photo.obligatoireLecteur' => 'Photo required',
+			'enseignant.photo.voile' => 'A photo wearing the niqab is accepted.',
+			'enseignant.photo.notice' => 'Do not use your ID document.',
+			'enseignant.photo.choisir' => 'Choose a photo',
+			'enseignant.photo.utiliser' => 'Use this photo',
+			'enseignant.photo.remplacer' => 'Replace the photo',
+			'enseignant.photo.autre' => 'Choose another photo',
+			'enseignant.photo.changer' => 'Change the photo',
+			'enseignant.photo.alternatif' => 'Your public photo',
+			'enseignant.photo.succes' => 'The photo is saved.',
+			'enseignant.photo.echec' => 'The photo could not be sent. Nothing changed on the profile.',
+			'enseignant.photo.selectionEchec' => 'The photo could not be opened. Check access to the device\'s photos, then try again.',
+			'enseignant.photo.horsLigne' => 'The photo can be sent when the connection is back.',
+			'enseignant.journee.lancer' => 'Start the class',
+			'enseignant.journee.preflight' => 'Check before the class',
+			'enseignant.journee.titre' => 'Today',
+			'enseignant.journee.prochainCours' => 'Next class',
+			'enseignant.journee.coursEnCours' => 'Live session',
+			'enseignant.journee.minuteurHeures' => ({required Object heures, required Object minutes}) => 'In ${heures} h ${minutes}',
+			'enseignant.journee.minuteurMinutes' => ({required Object minutes}) => 'In ${minutes} min',
+			'enseignant.journee.minuteurImminent' => 'Starting',
+			'enseignant.journee.minuteurDemain' => ({required Object heure}) => 'Tomorrow at ${heure}',
+			'enseignant.journee.minuteurJours' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(jours, one: 'In ${jours} day', other: 'In ${jours} days', ), 
+			'enseignant.journee.jusqua' => ({required Object heure}) => 'Until ${heure}',
+			'enseignant.journee.unAutreJour' => ({required Object jour, required Object heure}) => '${jour}, at ${heure}',
+			'enseignant.journee.lancementPlusTard' => 'Starting opens ten minutes before the class time.',
+			'enseignant.journee.aucunCours' => 'No upcoming class',
+			'enseignant.journee.aucunCoursDetail' => 'Take on a waiting student: that is what fills your day.',
+			'enseignant.journee.colonne' => 'The day',
+			'enseignant.journee.ligneCours' => ({required Object prenom}) => 'Class with ${prenom}',
+			'enseignant.journee.lignePause' => 'Break',
+			'enseignant.journee.plage' => ({required Object debut, required Object fin}) => '${debut} to ${fin}',
+			'enseignant.journee.rienAujourdhui' => 'Nothing planned today',
+			'enseignant.journee.rienAujourdhuiDetail' => ({required Object jour, required Object heure}) => 'Your next class is ${jour} at ${heure}.',
+			'enseignant.journee.journeeTerminee' => ({required Object nombre}) => '${nombre} classes given today.',
+			'enseignant.journee.journeeTermineeUn' => '1 class given today.',
+			'enseignant.journee.voirCreneaux' => 'See my slots',
+			'enseignant.journee.erreur' => 'The day could not be loaded in full. Try again in a moment.',
+			'enseignant.journee.coursIndividuel' => 'Individual class',
+			'enseignant.journee.effectifUn' => '1 student',
+			'enseignant.journee.preflightOk' => 'Microphone ready',
+			'enseignant.journee.preflightBloque' => 'The microphone is blocked by your browser. Allow it to start the class.',
+			'enseignant.journee.preflightSansMicro' => 'No microphone detected. Plug one in to start the class.',
+			'enseignant.journee.preflightIndisponible' => 'The equipment check did not complete. Try again before starting the class.',
+			'enseignant.journee.lancerHorsLigne' => 'The class can be started when the connection is back.',
+			'enseignant.journee.erreurPartielle' => 'Prayer times and your breaks could not be loaded: the request may not have reached Rewayah. Your sessions shown are up to date: they do not depend on it. Try again in a moment.',
+			'enseignant.journee.erreurPartielleTout' => 'Prayer times, your breaks and your handover notebooks to finish could not be loaded: the request may not have reached Rewayah. Your sessions shown are up to date: they do not depend on it. Try again in a moment.',
+			'enseignant.journee.pasEncoreRejoint' => ({required Object eleve}) => '${eleve} has not joined the room yet.',
+			'enseignant.journee.coupureDetectee' => ({required Object eleve}) => '${eleve} lost the connection.',
+			'enseignant.journee.revenusDetail' => 'Your estimated pay for the month, class by class.',
+			'enseignant.journee.revenusLecteur' => 'See your estimated income for the month',
+			'enseignant.journee.coursAnnule' => ({required Object heure}) => 'The ${heure} class is cancelled.',
+			'enseignant.journee.rapportsTitre' => 'Pending reports',
+			'enseignant.journee.rapportLigne' => ({required Object jour, required Object heure}) => 'Class of ${jour} at ${heure}',
+			'enseignant.journee.rapportAttente' => ({required Object heures}) => 'To submit for ${heures} h',
+			'enseignant.journee.rapportRetard' => ({required Object heures}) => 'Late by ${heures} h',
+			'enseignant.journee.enAttenteTitre' => 'Waiting students',
+			'enseignant.journee.enAttenteLibelle' => 'students waiting for your times',
+			'enseignant.journee.enAttenteLibelleUn' => 'student waiting for your times',
+			'enseignant.journee.prochaineSeance' => 'Next session',
+			'enseignant.journee.maJournee' => 'My day',
+			'enseignant.journee.aTerminer' => 'To finish',
+			'enseignant.journee.aTerminerVide' => 'All your handover notebooks are finished.',
+			'enseignant.journee.aTerminerSansDonnees' => 'The handover notebooks to finish could not be loaded.',
+			'enseignant.journee.aTerminerErreur' => 'The handover notebooks to finish could not be loaded. Try again in a moment.',
+			'enseignant.journee.aTerminerAide' => 'The handover notebook helps your students and lets you adjust the next class.',
+			'enseignant.journee.rappelCahier' => 'Handover notebooks are waiting to be finished',
+			'enseignant.journee.cahierLigne' => ({required Object classe}) => 'Handover notebook ${classe}',
+			'enseignant.journee.cahierDetail' => ({required Object jour, required Object mois, required Object numero, required Object heure}) => 'Session of ${jour} ${mois} ${numero} at ${heure}',
+			'enseignant.journee.alertesUtiles' => 'Useful alerts',
+			'enseignant.journee.alertesVide' => 'No useful alerts right now.',
+			'enseignant.journee.alertesSansDonnees' => 'The attendance alerts could not be loaded',
+			'enseignant.journee.alertesErreur' => 'The attendance alerts could not be loaded. Try again in a moment.',
+			'enseignant.journee.voirAutreAlerte' => 'See the other alert',
+			'enseignant.journee.voirAutresAlertes' => ({required Object nombre}) => 'See the ${nombre} other alerts',
+			'enseignant.journee.remplacementsVide' => 'No class from a colleague to take on for now.',
+			'enseignant.journee.voirTousRemplacements' => ({required Object nombre}) => 'See all: the ${nombre} confirmed replacements',
+			'enseignant.journee.heure' => 'Time',
+			'enseignant.journee.eleves' => 'Students',
+			'enseignant.journee.classe' => 'Class',
+			'enseignant.journee.preparerSeance' => 'Prepare the session',
+			'enseignant.journee.preparerSeanceLecteur' => ({required Object classe}) => 'Prepare the session ${classe}',
+			'enseignant.journee.derniereSeance' => 'Last session',
+			'enseignant.journee.rejoindreSalle' => 'Join the room',
+			'enseignant.journee.rejoindreSalleLecteur' => ({required Object classe}) => 'Join the room of class ${classe}',
+			'enseignant.journee.remplirCahier' => 'Fill in the handover notebook',
+			'enseignant.journee.remplirCahierLecteur' => ({required Object classe}) => 'Fill in the handover notebook of class ${classe}',
+			'enseignant.journee.cahierObligatoire' => ({required Object classe}) => 'Required: the handover notebook ${classe} is filled in once a week for each student.',
+			'enseignant.journee.cahierObligatoireSeance' => ({required Object classe}) => 'Required: the handover notebook ${classe} is filled in after each session, for each student.',
+			'enseignant.journee.voirCahier' => ({required Object classe}) => 'See the handover notebook ${classe}',
+			'enseignant.journee.voirCahierLecteur' => ({required Object classe}) => 'See the handover notebook of class ${classe}',
+			'enseignant.journee.voirClasse' => 'See the class',
+			'enseignant.journee.voirClasseLecteur' => ({required Object classe}) => 'See class ${classe}',
+			'enseignant.journee.aucuneSeance' => 'No upcoming session',
+			'enseignant.journee.aucuneSeanceDetail' => 'Your next sessions will appear here.',
+			'enseignant.journee.date' => ({required Object jour, required Object mois, required Object numero}) => '${jour} ${mois} ${numero}',
+			'enseignant.journee.absence.ouvrir' => 'Report my absence from this session',
+			'enseignant.journee.absence.ouvrirContexte' => 'A replacement will be sought for your students.',
+			'enseignant.journee.absence.titre' => 'You will not be able to take this session?',
+			'enseignant.journee.absence.cleDate' => 'Date',
+			'enseignant.journee.absence.notice' => 'Your assignment to the class stays unchanged.',
+			'enseignant.journee.absence.declarer' => 'Declare my absence',
+			'enseignant.journee.absence.echec' => 'The request did not go through. Try again in a moment.',
+			'enseignant.journee.absence.etats.enregistree' => 'Absence recorded',
+			'enseignant.journee.absence.etats.recherche' => 'Looking for a replacement',
+			'enseignant.journee.absence.etats.remplacantConfirme' => 'Replacement confirmed',
+			'enseignant.journee.absence.etats.aucunRemplacant' => 'No replacement confirmed',
+			'enseignant.journee.absence.etats.seanceAnnulee' => 'Session cancelled',
+			'enseignant.journee.absence.etats.demandeAnnulee' => 'Request cancelled',
+			'enseignant.journee.remplacement.titre' => 'Take this replacement?',
+			'enseignant.journee.remplacement.assurer' => 'Take this replacement',
+			'enseignant.journee.remplacement.pasCetteFois' => 'Not this time',
+			'enseignant.journee.erreurPartielleCahiers' => 'Your handover notebooks to finish could not be loaded: the request may not have reached Rewayah. Your sessions shown are up to date: they do not depend on it. Try again in a moment.',
+			'enseignant.journee.cahiersEnvoyes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} handover notebook sent', other: '${n} handover notebooks sent', ), 
+			'enseignant.journee.effectif' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(nombre, one: '${nombre} student', other: '${nombre} students', ), 
+			'enseignant.remplacements.titre' => 'Replacements',
+			'enseignant.remplacements.enTete' => 'You are in the lead, confirmation in a few seconds.',
+			'enseignant.remplacements.attente' => 'A colleague also accepted: confirmation in a few seconds.',
+			'enseignant.remplacements.secondes' => ({required Object n}) => '${n} s',
+			'enseignant.remplacements.contexte' => 'Priority goes to a teacher of the same gender as the class, then one who speaks its language; otherwise, the first available, because a replacement is temporary.',
+			'enseignant.remplacements.urgentTitre' => ({required Object jour, required Object heure}) => 'Urgent replacement: ${jour} ${heure}',
+			'enseignant.remplacements.urgentPhrase' => 'A teacher is absent. Take this session in their place: you will be paid for it after approval at the end of the month.',
+			'enseignant.remplacements.vosRemplacements' => 'Your replacements',
+			'enseignant.remplacements.prisTitre' => 'Already taken by a colleague',
+			'enseignant.remplacements.prisPastille' => 'Taken by a colleague',
+			'enseignant.remplacements.prisAvantVous' => 'Another teacher took this class. Thank you. Nothing changed in your schedule.',
+			'enseignant.remplacements.refusOccupe' => 'You have a class at this time: you cannot take this one.',
+			'enseignant.remplacements.refusIncompatible' => 'You cannot take this class.',
+			'enseignant.remplacements.preparationTitre' => ({required Object jour, required Object heure}) => 'Replacement being prepared: ${jour} ${heure}',
+			'enseignant.remplacements.preparationPhrase' => 'The class teacher is not yet in the room. Declare yourself ready: if they do not arrive in time, the session is entrusted to the teacher selected (same gender as the class, then one who speaks its language).',
+			'enseignant.remplacements.jeSuisPret' => 'I am ready',
+			'enseignant.remplacements.pretTitre' => 'You are ready',
+			'enseignant.remplacements.pretPastille' => 'Selected',
+			'enseignant.remplacements.pretPhrase' => 'You are selected: if the class teacher does not arrive in time, the session is entrusted to you. Stay available.',
+			'enseignant.remplacements.pretCollegue' => 'A colleague is ready',
+			'enseignant.remplacements.pretAvantVous' => 'A colleague was selected for this session. Nothing changed in your schedule.',
+			'enseignant.remplacements.preparationClose' => 'This preparation is closed: the class teacher has arrived, or the session is already offered to everyone.',
+			'enseignant.remplacements.acceptee' => 'Confirmed: you are taking this session. It is added to your replacements.',
+			'enseignant.remplacements.erreur' => 'The replacements to take could not be loaded: the request may not have reached Rewayah. Try again in a moment.',
+			'enseignant.remplacements.sansDonnees' => 'The replacements to take could not be loaded',
+			'enseignant.salle.reference' => ({required Object page, required Object total, required Object reference}) => 'Presented: page ${page} of ${total} · ${reference}',
+			'enseignant.salle.rien' => 'Nothing is presented',
+			'enseignant.salle.rienInvitation' => 'Open the Quran to show a page to your class.',
+			'enseignant.salle.attenteSalle' => 'You are not in the room yet',
+			'enseignant.salle.attenteSalleDetail' => 'The presentation controls open as soon as the class is connected.',
+			'enseignant.salle.lienFaibleDetail' => 'the page turn may reach your class late',
+			'enseignant.salle.presentationConservee' => 'the presented page is kept, it will resume when the link is back',
+			'enseignant.salle.presentationSuspendue' => 'presentation suspended',
+			'enseignant.salle.precedente' => 'Present the previous page',
+			'enseignant.salle.suivante' => 'Present the next page',
+			'enseignant.salle.bibliotheque' => 'Choose a surah',
+			'enseignant.salle.presenterSourate' => ({required Object deSourate}) => 'Present the start of ${deSourate}',
+			'enseignant.salle.sourateDetail' => ({required Object numero, required Object versets}) => 'Surah ${numero} · ${versets} verses',
+			_ => null,
+		} ?? switch (path) {
+			'enseignant.salle.souratesIndisponibles' => 'The surah list could not be loaded',
+			'enseignant.salle.souratesIndisponiblesDetail' => 'What your class sees has not changed. Try again.',
+			'enseignant.salle.pageIndisponible' => 'This page could not be loaded',
+			'enseignant.salle.pageIndisponibleDetail' => 'The text did not arrive. Your class still sees the page presented.',
+			'enseignant.salle.corpusAbsent' => 'The Quran text is not installed',
+			'enseignant.salle.corpusAbsentDetail' => 'There is nothing to present.',
+			'enseignant.salle.echecPresentation' => 'This verse could not be located in the mushaf. Nothing was sent to your class.',
+			'enseignant.salle.sansDroitPresentation' => 'Your access to this session does not allow presenting content.',
+			'enseignant.cahier.titre' => 'Handover notebook',
+			'enseignant.cahier.obligatoire' => 'Required',
+			'enseignant.cahier.sousTitre' => 'Required after each session',
+			'enseignant.cahier.description' => 'Note where each student stands (surah, verse, rule worked on). If another teacher replaces you, they pick up exactly where the session stopped.',
+			'enseignant.cahier.duree' => ({required Object minutes}) => '${minutes} min of class',
+			'enseignant.cahier.dureeEtInterruption' => ({required Object minutes, required Object interruption}) => '${minutes} min of class, including ${interruption} min of interruption',
+			'enseignant.cahier.unEleve' => '1 student',
+			'enseignant.cahier.toutEstNominal' => 'Everything went as planned.',
+			'enseignant.cahier.toutEstNominalDetail' => 'Approve, and your day continues.',
+			'enseignant.cahier.exceptions' => 'To look at',
+			'enseignant.cahier.uneException' => '1 student needs a look.',
+			'enseignant.cahier.nominaux' => 'Nothing to report',
+			'enseignant.cahier.curriculumFige' => 'The level and program are the academy\'s: they cannot be changed from the handover notebook.',
+			'enseignant.cahier.valider' => 'Approve the handover notebook',
+			'enseignant.cahier.validerTout' => 'Everything is in order, approve',
+			'enseignant.cahier.validerSansConstat' => 'Submit without the record',
+			'enseignant.cahier.retourJournee' => 'Back to my day',
+			'enseignant.cahier.vide' => 'The record could not be derived',
+			'enseignant.cahier.videDetail' => 'No attendance and no event were recorded for this session. You can still submit the handover notebook.',
+			'enseignant.cahier.introuvable' => 'Session not found',
+			'enseignant.cahier.introuvableDetail' => 'This session is not one of yours, or the link is incomplete. Go back to your day to choose a session.',
+			'enseignant.cahier.erreur' => 'The record could not be loaded.',
+			'enseignant.cahier.erreurDetail' => 'Try again, or submit the handover notebook without the record.',
+			'enseignant.cahier.echecEnvoi' => 'The sending was not confirmed. Check before trying again.',
+			'enseignant.cahier.dejaDepose' => 'The handover notebook of this session is already submitted.',
+			'enseignant.cahier.dejaDeposeDetail' => 'A handover notebook is only submitted once, and it cannot be deleted from here.',
+			'enseignant.cahier.depose' => 'Handover notebook saved',
+			'enseignant.cahier.deposeDetail' => 'The academy received it.',
+			'enseignant.cahier.enFileTitre' => 'Waiting to be sent',
+			'enseignant.cahier.enFile' => 'The handover notebook will be sent when the connection is back.',
+			'enseignant.cahier.enFileDetail' => 'The handover notebook will be sent when the connection is back.',
+			'enseignant.cahier.enFileDetailHorsLigne' => 'Without network, the handover notebook stays on this device and goes as soon as the network is back. You can move on to your next class.',
+			'enseignant.cahier.ajusterPour' => ({required Object eleve}) => 'Adjust · ${eleve}',
+			'enseignant.cahier.ajusterValider' => 'Save for this student',
+			'enseignant.cahier.exceptionConsignee' => 'Exception reported',
+			'enseignant.cahier.pointPhonetique' => 'Pronunciation point',
+			'enseignant.cahier.pointPhonetiqueDetail' => 'A pair, not a summary. Leave empty if there is nothing to say.',
+			'enseignant.cahier.pointPhonetiqueNote' => 'Pronunciation point noted',
+			'enseignant.cahier.objectif' => ({required Object deEleve}) => '${deEleve}\'s goal',
+			'enseignant.cahier.objectifDetail' => ({required Object queEleve}) => 'What ${queEleve} must reach, within the academy\'s program.',
+			'enseignant.cahier.travailMaison' => ({required Object deEleve}) => '${deEleve}\'s homework',
+			'enseignant.cahier.travailMaisonDetail' => 'Adjust the suggestion, or leave it as it is.',
+			'enseignant.cahier.travailMaisonSaisi' => 'You have already noted this homework. Edit it or leave it as it is.',
+			'enseignant.cahier.suite' => ({required Object eleve}) => 'What comes next for ${eleve}',
+			'enseignant.cahier.suiteContinuer' => 'Continue',
+			'enseignant.cahier.suiteRenforcer' => 'Reinforce',
+			'enseignant.cahier.suspendreNouveau' => 'Pause the new material',
+			'enseignant.cahier.devoirPrecedent' => ({required Object devoir}) => 'Previous homework: ${devoir}',
+			'enseignant.cahier.devoirPlage' => ({required Object sourate, required Object debut, required Object fin}) => 'Review surah ${sourate}, verses ${debut} to ${fin}.',
+			'enseignant.cahier.suspendreNouveauDetail' => 'Revision continues, nothing new is added for this student.',
+			'enseignant.cahier.position' => ({required Object sourate, required Object verset}) => 'Reading: surah ${sourate}, verse ${verset}',
+			'enseignant.cahier.makhrajSinSad' => 'Sin / Sad (س / ص)',
+			'enseignant.cahier.makhrajTaTah' => 'Ta / Emphatic Ta (ت / ط)',
+			'enseignant.cahier.makhrajDhalZay' => 'Dhal / Zay (ذ / ز)',
+			'enseignant.cahier.makhrajHaHah' => 'Ha / Ha\' (ه / ح)',
+			'enseignant.cahier.exceptionTitre' => 'Report an exception',
+			'enseignant.cahier.exceptionCorriger' => 'Correct attendance',
+			'enseignant.cahier.exceptionExcuser' => 'Excuse the absence',
+			'enseignant.cahier.exceptionConfirmation' => 'Confirm the exception',
+			'enseignant.cahier.exceptionMotif' => 'Reason',
+			'enseignant.cahier.exceptionMotifRequis' => 'The reason is required.',
+			'enseignant.cahier.exceptionEnCours' => 'Saving…',
+			'enseignant.cahier.exceptionSucces' => 'Exception recorded. It will go with the handover notebook.',
+			'enseignant.cahier.exceptionErreur' => 'The exception could not be recorded.',
+			'enseignant.cahier.exceptionHorsLigne' => 'Without network, an exception cannot be confirmed. The handover notebook still goes.',
+			'enseignant.cahier.aValider' => 'To approve',
+			'enseignant.cahier.statutPresents' => ({required Object nombre}) => 'Present ${nombre}',
+			'enseignant.cahier.statutAbsents' => ({required Object nombre}) => 'Absent ${nombre}',
+			'enseignant.cahier.statutEnRetard' => ({required Object nombre}) => 'Late ${nombre}',
+			'enseignant.cahier.performance' => 'Performance',
+			'enseignant.cahier.faiblesses' => 'Weaknesses',
+			'enseignant.cahier.niveauARevoir' => 'To reinforce',
+			'enseignant.cahier.niveauEnProgres' => 'Improving',
+			'enseignant.cahier.niveauAcquis' => 'Achieved',
+			'enseignant.cahier.niveauMaitrise' => 'Fully achieved',
+			'enseignant.cahier.faiblesseMakharij' => 'Makharij',
+			'enseignant.cahier.faiblesseMadd' => 'Madd',
+			'enseignant.cahier.faiblesseGhunna' => 'Ghunna',
+			'enseignant.cahier.faiblesseWaqf' => 'Waqf',
+			'enseignant.cahier.faiblesseFluidite' => 'Fluency',
+			'enseignant.cahier.faiblesseMemorisation' => 'Memorisation',
+			'enseignant.cahier.niveauARevoirDetail' => 'The lesson is to be taken up again at the next session.',
+			'enseignant.cahier.niveauEnProgresDetail' => 'The student is progressing, a few mistakes remain.',
+			'enseignant.cahier.niveauAcquisDetail' => 'The lesson is known, with few mistakes.',
+			'enseignant.cahier.niveauMaitriseDetail' => 'The lesson is known without a mistake, the student can move on.',
+			'enseignant.cahier.faiblesseMakharijDetail' => 'The pronunciation of the letters.',
+			'enseignant.cahier.faiblesseMaddDetail' => 'The lengthenings.',
+			'enseignant.cahier.faiblesseGhunnaDetail' => 'The nasal sound.',
+			'enseignant.cahier.faiblesseWaqfDetail' => 'The stops.',
+			'enseignant.cahier.faiblesseFluiditeDetail' => 'Reading without hesitation.',
+			'enseignant.cahier.faiblesseMemorisationDetail' => 'Recitation from memory.',
+			'enseignant.cahier.reprise' => 'Where the class stopped',
+			'enseignant.cahier.repriseDetail' => 'This is the resume position for a replacement.',
+			'enseignant.cahier.repriseProposee' => ({required Object sourate, required Object verset}) => 'Surah ${sourate}, verse ${verset}',
+			'enseignant.cahier.repriseRequise' => 'Say where the class stopped: a replacement will resume here.',
+			'enseignant.cahier.repriseChoisir' => 'Choose the surah and the verse',
+			'enseignant.cahier.repriseConsigne' => 'Choose the surah, then the verse where the class stopped.',
+			'enseignant.cahier.repriseRecherche' => 'Search for a surah by its name or number',
+			'enseignant.cahier.repriseSourate' => ({required Object numero, required Object nom}) => '${numero}. ${nom}',
+			'enseignant.cahier.repriseVersets' => ({required Object n}) => '${n} verses',
+			'enseignant.cahier.repriseRestantes' => ({required Object n}) => '${n} more surahs: narrow the search.',
+			'enseignant.cahier.repriseVerset' => 'Verse',
+			'enseignant.cahier.repriseVersetBornes' => ({required Object n}) => 'Between 1 and ${n}',
+			'enseignant.cahier.repriseRetenir' => 'Keep this position',
+			'enseignant.cahier.repriseIncomplete' => 'Choose the surah then the verse.',
+			'enseignant.cahier.repriseAucune' => 'No surah matches',
+			'enseignant.cahier.repriseAucuneDetail' => 'Try another name, or its number from 1 to 114.',
+			'enseignant.cahier.repriseSansListe' => 'The surah list could not be loaded',
+			'enseignant.cahier.repriseSansListeFeuille' => 'Close this sheet: the handover notebook lets you write the position, or try again.',
+			'enseignant.cahier.repriseSansListeDetail' => 'The surah list could not be loaded: write the resume position, for example "Surah 18, verse 10".',
+			'enseignant.cahier.integrite' => 'What you write here binds your word. People cannot verify it, but Allah sees everything.',
+			'enseignant.cahier.corriger' => 'Correct the handover notebook',
+			'enseignant.cahier.corrigeLe' => ({required Object date}) => 'Corrected on ${date}',
+			'enseignant.cahier.eleves' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(nombre, one: '${nombre} student', other: '${nombre} students', ), 
+			'enseignant.cahier.plusieursExceptions' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(nombre, one: '${nombre} student needs a look.', other: '${nombre} students need a look.', ), 
+			'enseignant.profil.titre' => 'Profile',
+			'enseignant.profil.compteValide' => 'Teacher account verified',
+			'enseignant.profil.intro' => 'What the academy knows about you, and what you can change.',
+			'enseignant.profil.identite' => 'Professional identity',
+			'enseignant.profil.pays' => 'Country',
+			'enseignant.profil.langues' => 'Languages',
+			'enseignant.profil.fuseau' => 'Time zone of my classes',
+			'enseignant.profil.fuseauDetail' => 'It decides the time of your slots, not this device\'s time.',
+			'enseignant.profil.plafond' => 'Weekly limit',
+			'enseignant.profil.plafondDetail' => 'Set by the academy.',
+			'enseignant.profil.nonRenseigne' => 'Not provided',
+			'enseignant.profil.statutSection' => 'Account status',
+			'enseignant.profil.statutValideDetail' => 'You can teach and declare your hours.',
+			'enseignant.profil.statutEnAttente' => 'File being verified',
+			'enseignant.profil.statutEnAttenteDetail' => 'The academy is checking your documents. You have nothing more to do.',
+			'enseignant.profil.statutProvisoire' => 'Provisional access',
+			'enseignant.profil.statutProvisoireDetail' => 'You already teach. Your file remains to be completed, with no automatic cut-off.',
+			'enseignant.profil.statutSuspendu' => 'Account suspended',
+			'enseignant.profil.statutSuspenduDetail' => 'You can contact the academy to find out what to do.',
+			'enseignant.profil.statutInconnu' => 'Status not available',
+			'enseignant.profil.statutInconnuDetail' => 'We could not load your status.',
+			'enseignant.profil.statutDivergent' => 'This status has just changed. Reopen the app so your access follows.',
+			'enseignant.profil.verification' => 'File verification',
+			'enseignant.profil.verificationEnAttente' => 'Pending',
+			'enseignant.profil.verificationValidee' => 'Approved',
+			'enseignant.profil.verificationRefusee' => 'To redo',
+			'enseignant.profil.contratSection' => 'Contract and acknowledgements',
+			'enseignant.profil.contratEnseignant' => 'Teacher contract',
+			'enseignant.profil.contratConditions' => 'Terms of use',
+			'enseignant.profil.contratAccuse' => 'Audio recording and review visit',
+			'enseignant.profil.contratCodeConduite' => 'Teacher code of conduct',
+			'enseignant.profil.contratDetail' => ({required Object version, required Object date}) => 'Version ${version}, accepted on ${date}',
+			'enseignant.profil.contratAucun' => 'No contract recorded',
+			'enseignant.profil.contratAucunDetail' => 'Your file has not yet gone through signing.',
+			'enseignant.profil.contratErreur' => 'Your contracts could not be loaded.',
+			'enseignant.profil.contratLectureSeule' => 'These documents are read-only.',
+			'enseignant.profil.personnel' => 'My settings',
+			'enseignant.profil.deconnexionQuestion' => 'Sign out of this device?',
+			'enseignant.profil.deconnexionConfirmer' => 'Sign me out now',
+			'enseignant.profil.deconnexionConsequence' => 'Your day, your slots and your handover notebooks stay saved. You will need a new sign-in link to come back.',
+			'enseignant.profil.erreur' => 'Your profile could not be loaded. Try again in a moment.',
+			'enseignant.profil.vide' => 'No teacher profile',
+			'enseignant.profil.videDetail' => 'This account has no teacher profile. Only the academy can create one.',
+			'enseignant.profil.horsLigne' => 'Nothing can be changed here for now.',
+			'enseignant.profil.modifierPays' => 'Change the country',
+			'enseignant.profil.fuseauAppareil' => 'This device\'s time',
+			'enseignant.profil.fuseauValeur' => ({required Object ville, required Object decalage}) => '${ville} · UTC${decalage}',
+			'enseignant.profil.modifierFuseau' => 'Change the time zone',
+			'enseignant.profil.fuseauConsigne' => 'Choose the time zone of the city where you live. Your availability and your sessions are shown in this time.',
+			'enseignant.profil.fuseauDuPays' => 'Time zone of your country',
+			'enseignant.profil.fuseauExpert' => 'Or write the name of the time zone',
+			'enseignant.profil.fuseauExpertAide' => 'For a time zone missing from the list, its international name. For example: Asia/Riyadh',
+			'enseignant.profil.fuseauRequis' => 'Choose a time zone, or write its name.',
+			'enseignant.profil.fuseauInconnu' => 'This time zone name is not recognised. Check how it is written, for example Asia/Riyadh.',
+			'enseignant.profil.fuseauErreur' => 'Saving the time zone is not confirmed. Try again.',
+			'enseignant.profil.modifierLangues' => 'Change the languages',
+			'enseignant.profil.paysConsigne' => 'Choose the country where you live. If it is not in the list, tap "Other".',
+			'enseignant.profil.paysDuFuseau' => 'Based on your time zone',
+			'enseignant.profil.paysRequis' => 'Choose a country, or write it in "Other".',
+			'enseignant.profil.languesConsigne' => 'Tick the languages in which you can teach.',
+			'enseignant.profil.langueDejaDeclaree' => 'Already declared in your profile',
+			'enseignant.profil.languesRequises' => 'Tick at least one language.',
+			'enseignant.profil.languesErreur' => 'The language list could not be loaded',
+			'enseignant.profil.languesErreurDetail' => 'Your current languages do not change. Try again in a moment.',
+			'enseignant.profil.enregistrer' => 'Save',
+			'enseignant.profil.enregistre' => 'Change saved',
+			'enseignant.profil.editionErreur' => 'The change did not go through. Try again in a moment.',
+			'enseignant.profil.remuneration' => 'Pay',
+			'enseignant.profil.revenus' => 'My income',
+			'enseignant.profil.revenusDetail' => 'What your sessions earn you, student by student',
+			'enseignant.profil.disponibilitesDetail' => 'The days and times you can teach',
+			'enseignant.profil.plafondValeur' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(nombre, one: '${nombre} h per week', other: '${nombre} h per week', ), 
+			'enseignant.profil.revenusHeures' => ({required Object heures, required Object mois}) => '${heures} taught in ${mois}',
+			'enseignant.profil.publicationDonnee' => 'Given',
+			'enseignant.profil.publicationNonDonnee' => 'Not given',
+			'enseignant.creneaux.heureLibelle' => ({required Object jour, required Object heure}) => '${jour} ${heure}:00',
+			'enseignant.creneaux.aucuneHeure' => 'You have not offered any time. Without a slot, no class can be offered to you.',
+			'enseignant.creneaux.heureEnregistree' => ({required Object heure}) => '${heure} saved',
+			'enseignant.creneaux.heureRetiree' => ({required Object heure}) => '${heure} removed',
+			'enseignant.creneaux.retraitEngage' => ({required Object heure}) => '${heure} removed. The session already assigned at this time continues: request a reassignment to stop it.',
+			'enseignant.creneaux.grilleErreur' => 'Your times could not be loaded',
+			'enseignant.creneaux.grilleErreurDetail' => 'The times you have already set are not lost.',
+			'enseignant.creneaux.horsLigneGrille' => 'Your times stay available to read. They can be changed when the connection is back.',
+			'enseignant.creneaux.fuseauManquant' => 'Your time zone is not set. Without it, no availability can be set: set it first.',
+			'enseignant.creneaux.reglerFuseau' => 'Set my time zone',
+			'enseignant.creneaux.plagesDansFuseau' => ({required Object villes}) => 'These slots are in the time of ${villes}.',
+			'enseignant.creneaux.heureEngagee' => ({required Object heures}) => 'You already have a class on ${heures}. Removing this time does not end the session: a reassignment is needed.',
+			'enseignant.creneaux.heuresEngagees' => ({required Object heures}) => 'You already have a class on ${heures}. Removing these times does not end the sessions: a reassignment is needed.',
+			'enseignant.creneaux.feedErreur' => 'The waiting families could not be loaded',
+			'enseignant.creneaux.feedErreurDetail' => 'Nothing is lost: no one was taken, and your times stay set.',
+			'enseignant.creneaux.horsLignePrise' => 'You will be able to take a student when the connection is back. The requests below stay available to read.',
+			'enseignant.creneaux.horsLigneDemande' => 'This request can be sent when the connection is back.',
+			'enseignant.creneaux.refusDejaPris' => 'This student has just been taken by another teacher. The list below is up to date.',
+			'enseignant.creneaux.refusDejaSuivi' => 'This student already has a teacher. The list below is up to date.',
+			'enseignant.creneaux.refusCreneauRetire' => 'This family no longer offers this slot. The list below is up to date.',
+			'enseignant.creneaux.refusHorsMesHeures' => 'This slot is no longer in your times. Set it again in My times to be able to take it.',
+			'enseignant.creneaux.refusPlafond' => 'You have reached your maximum number of students. Ask for an increase to follow one more.',
+			'enseignant.creneaux.mesDisponibilites' => 'My availability',
+			'enseignant.creneaux.ajouterCreneau' => 'Add a slot',
+			'enseignant.creneaux.heure' => ({required Object heure}) => '${heure}:00',
+			'enseignant.creneaux.classesDisponibles' => 'Available classes',
+			'enseignant.creneaux.etatDisponible' => 'Available',
+			'enseignant.creneaux.etatEnAttente' => 'Pending approval',
+			'enseignant.creneaux.etatLimite' => 'Load limit reached',
+			'enseignant.creneaux.limiteDetail' => 'Your current load does not allow booking an additional class.',
+			'enseignant.creneaux.aucuneClasse' => 'No compatible class for now',
+			'enseignant.creneaux.aucuneClasseDetail' => 'Change your availability if your schedule has changed.',
+			'enseignant.creneaux.reserver' => 'Book this class',
+			'enseignant.creneaux.demandeTransmise' => 'Your request has been passed on.',
+			'enseignant.creneaux.demandeTransmiseDetail' => 'It will appear in your classes after confirmation.',
+			'enseignant.creneaux.confirmerTitre' => 'Confirm this class?',
+			'enseignant.creneaux.confirmer' => 'Confirm this class',
+			'enseignant.creneaux.revenir' => 'Go back',
+			'enseignant.creneaux.cleNiveau' => 'Level',
+			'enseignant.creneaux.cleLangue' => 'Language',
+			'enseignant.creneaux.cleRecurrence' => 'Recurrence',
+			'enseignant.creneaux.cleFuseau' => 'Reference time zone',
+			'enseignant.creneaux.cleHeureLocale' => 'Local time',
+			'enseignant.creneaux.cleDuree' => 'Duration',
+			'enseignant.creneaux.plagesContexte' => 'One line per slot. Tap a slot to edit or delete it.',
+			'enseignant.creneaux.plageDe' => ({required Object heure}) => 'from ${heure}:00',
+			'enseignant.creneaux.plageA' => ({required Object heure}) => 'to ${heure}:00',
+			'enseignant.creneaux.plageAMinuit' => 'to midnight',
+			'enseignant.creneaux.plageEngagee' => ({required Object heures}) => 'Class already committed on ${heures}',
+			'enseignant.creneaux.ajouterPlage' => 'Add a slot',
+			'enseignant.creneaux.feuilleAjouterTitre' => 'New availability slot',
+			'enseignant.creneaux.feuilleModifierTitre' => ({required Object jour}) => 'Edit the slot of ${jour}',
+			'enseignant.creneaux.feuilleContexte' => 'Choose one or more days, then the start time and the end time. A class can start at every whole hour of the slot.',
+			'enseignant.creneaux.raccourcis' => 'Shortcuts',
+			'enseignant.creneaux.raccourciSoiree' => 'Evening 5 pm-11 pm',
+			'enseignant.creneaux.raccourciMatinee' => 'Morning 8 am-12 pm',
+			'enseignant.creneaux.raccourciWeekEnd' => 'Weekend',
+			'enseignant.creneaux.raccourcisDetail' => 'Evening and Morning set the hours. Weekend chooses Saturday and Sunday.',
+			'enseignant.creneaux.jours' => 'Days',
+			'enseignant.creneaux.heures' => 'Hours',
+			'enseignant.creneaux.menuDe' => 'Start time',
+			'enseignant.creneaux.menuA' => 'End time',
+			'enseignant.creneaux.manqueJour' => 'No day chosen. Tap at least one day to save the slot.',
+			'enseignant.creneaux.fusion' => ({required Object jour, required Object de, required Object a}) => '${jour}: this slot overlaps or touches a slot already set. They will be merged into one, ${de} ${a}.',
+			'enseignant.creneaux.dejaPosee' => ({required Object jour, required Object de, required Object a}) => '${jour}: these hours are already set, in the slot ${de} ${a}. Nothing changes for this day.',
+			'enseignant.creneaux.enregistrerPlage' => 'Save the slot',
+			'enseignant.creneaux.supprimerPlage' => 'Delete this slot',
+			'enseignant.creneaux.plageEnregistree' => ({required Object jours, required Object de, required Object a}) => 'Slot saved: ${jours}, ${de} ${a}.',
+			'enseignant.creneaux.plageInchangee' => ({required Object jours, required Object de, required Object a}) => 'Nothing to save: ${jours}, ${de} ${a}, already in your availability.',
+			'enseignant.creneaux.plageSupprimee' => ({required Object jour, required Object de, required Object a}) => 'Slot deleted: ${jour}, ${de} ${a}.',
+			'enseignant.creneaux.seanceContinue' => ({required Object heures}) => 'The session already assigned on ${heures} continues: request a reassignment to stop it.',
+			'enseignant.creneaux.confirmerRetraitQuestion' => ({required Object heures}) => 'Remove ${heures} from your availability?',
+			'enseignant.creneaux.confirmerRetraitConsequence' => ({required Object heures}) => 'A class takes place on ${heures}. Removing this availability does not end the session: it continues until a reassignment.',
+			'enseignant.creneaux.confirmerRetraitAction' => 'Remove these hours',
+			'enseignant.creneaux.ajoutNonConfirme' => ({required Object heures}) => 'Addition not confirmed: ${heures}.',
+			'enseignant.creneaux.retraitNonConfirme' => ({required Object heures}) => 'Removal not confirmed: ${heures}.',
+			'enseignant.creneaux.echecCause' => 'The request may not have reached Rewayah.',
+			'enseignant.creneaux.echecQuoiFaire' => ({required Object action}) => 'Tap "${action}" to try again: only these hours will be sent again, after rereading your slots.',
+			'enseignant.creneaux.engagementsNonConfirmes' => 'Your already committed classes are not confirmed: the request may not have reached Rewayah. A conflict with a slot cannot therefore be reported; tap "Try again".',
+			'enseignant.creneaux.retraitSansEngagements' => ({required Object heures}) => 'Your already committed classes are not confirmed. If a class takes place on ${heures}, removing this availability does not end the session: it continues until a reassignment.',
+			'enseignant.creneaux.horsLigneFeuille' => 'This slot cannot be saved now. Your choices stay displayed: come back to save it when sending is possible again.',
+			'enseignant.ficheGroupe.creneauHebdo' => ({required Object jour, required Object heure}) => '${jour} at ${heure}, every week',
+			'enseignant.ficheGroupe.aucunMembre' => 'No student in this class',
+			'enseignant.ficheGroupe.aucunMembreDetail' => 'The administration forms the classes: this one has no student yet.',
+			'enseignant.ficheGroupe.erreur' => 'This class could not be loaded. Try again in a moment.',
+			'enseignant.ficheGroupe.introuvable' => 'This class is not one of yours',
+			'enseignant.ficheGroupe.introuvableDetail' => 'It may have been closed, or it belongs to another teacher.',
+			'enseignant.ficheGroupe.revue' => 'Open the class review',
+			'enseignant.ficheGroupe.elevesTitre' => 'Students',
+			'enseignant.ficheGroupe.preparationTitre' => 'To prepare',
+			'enseignant.ficheGroupe.supportPrevu' => 'Planned material',
+			'enseignant.ficheGroupe.positionReprise' => 'Resume position',
+			'enseignant.ficheGroupe.objectif' => 'Goal',
+			'enseignant.ficheGroupe.preparationVide' => 'No preparation entered for this session.',
+			'enseignant.ficheGroupe.supportsTitre' => 'Recent materials',
+			'enseignant.ficheGroupe.repriseEleve' => ({required Object page}) => 'Resume: ${page}',
+			'enseignant.ficheGroupe.dernierPoint' => ({required Object texte}) => 'Last point: ${texte}',
+			'enseignant.ficheGroupe.chargementClasse' => 'Loading the class.',
+			'enseignant.ficheGroupe.ressourcesTitre' => 'Recent resources',
+			'enseignant.ficheGroupe.progressionTitre' => 'Class progress',
+			'enseignant.ficheGroupe.pause.titre' => 'Session break',
+			'enseignant.ficheGroupe.pause.detail' => 'A break scheduled in advance on this class, for example for prayer. It applies to each session, until you change it.',
+			'enseignant.ficheGroupe.pause.actif' => 'Schedule a break',
+			'enseignant.ficheGroupe.pause.etatActif' => 'Scheduled',
+			'enseignant.ficheGroupe.pause.etatInactif' => 'No break',
+			'enseignant.ficheGroupe.pause.moment' => 'Time of the break',
+			'enseignant.ficheGroupe.pause.momentAide' => 'Minutes after the start of the session.',
+			'enseignant.ficheGroupe.pause.duree' => 'Length of the break',
+			'enseignant.ficheGroupe.pause.resume' => ({required Object duree, required Object moment}) => '${duree} min break, ${moment} min after the start.',
+			'enseignant.ficheGroupe.pause.enregistrer' => 'Save the break',
+			'enseignant.ficheGroupe.pause.enregistree' => 'Break saved.',
+			'enseignant.ficheGroupe.pause.echec' => 'The setting is not confirmed: the request may not have reached Rewayah. Check before trying again.',
+			'enseignant.ficheGroupe.pause.obsolete' => 'The setting changed in the meantime. It has just been reloaded: check before saving.',
+			'enseignant.ficheGroupe.pause.refuse' => 'Only the class teacher sets the break.',
+			'enseignant.ficheGroupe.pause.indisponibleTitre' => 'The scheduled break is not available yet',
+			'enseignant.ficheGroupe.pause.indisponiblePhrase' => 'It will be offered here as soon as Rewayah serves it.',
+			'enseignant.ficheGroupe.pause.illisible' => 'The break setting could not be loaded.',
+			'enseignant.revue.titre' => 'Class review',
+			'enseignant.revue.titreClasse' => ({required Object classe}) => 'Review of class ${classe}',
+			'enseignant.revue.aucuneAnomalie' => 'Nothing needs your attention.',
+			'enseignant.revue.erreur' => 'The review could not be loaded.',
+			'enseignant.revue.erreurDetail' => 'This class may not be yours, or loading failed.',
+			'enseignant.revue.pasDeDecision' => 'You report, the academy decides: a transfer and a reorientation are not decided from here.',
+			'enseignant.revue.typeGate' => 'Upcoming stage',
+			'enseignant.revue.typeCorridor' => 'Student outside the corridor',
+			'enseignant.revue.typeTransfert' => 'Transfer proposal',
+			'enseignant.revue.typeReorientation' => 'Reorientation proposal',
+			'enseignant.revenus.titre' => 'My income',
+			'enseignant.revenus.intro' => 'What your sessions of the chosen month earn you, student by student.',
+			'enseignant.revenus.introSansChoix' => 'What your sessions of the current month earn you, student by student.',
+			'enseignant.revenus.estimation' => 'Estimate',
+			'enseignant.revenus.periode' => ({required Object mois, required Object annee}) => '${mois} ${annee}',
+			'enseignant.revenus.totalEstime' => 'Estimated income for the month',
+			'enseignant.revenus.totalDetail' => 'What your sessions earn, excluding other income.',
+			'enseignant.revenus.aRecevoir' => 'To receive this month',
+			'enseignant.revenus.aRecevoirDetail' => 'Paid sessions, excluding those on hold and other income.',
+			'enseignant.revenus.attenteCahierTotal' => ({required Object montant}) => 'Waiting for the handover notebook: ${montant}. Fill in the week\'s handover notebook to release it.',
+			'enseignant.revenus.heuresAssurees' => 'Hours taught',
+			'enseignant.revenus.heuresAssureesDetail' => 'The month\'s sessions that earned, at their retained length.',
+			'enseignant.revenus.classesActives' => 'Classes',
+			'enseignant.revenus.heures' => ({required Object heures}) => '${heures} h',
+			'enseignant.revenus.heuresMinutes' => ({required Object heures, required Object minutes}) => '${heures} h ${minutes}',
+			'enseignant.revenus.minutes' => ({required Object minutes}) => '${minutes} min',
+			'enseignant.revenus.versement' => 'Pay day',
+			'enseignant.revenus.versementValeur' => ({required Object du, required Object au}) => 'From ${du} to ${au}',
+			'enseignant.revenus.versementDetail' => ({required Object mois}) => 'The pay for ${mois} is paid between these two dates.',
+			'enseignant.revenus.jourMois' => ({required Object mois, required Object jour}) => '${mois} ${jour}',
+			'enseignant.revenus.classesSection' => 'By class',
+			'enseignant.revenus.classesDetail' => 'Tap a class to see its sessions and what each student earned.',
+			'enseignant.revenus.nombreSeances' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} session', other: '${n} sessions', ), 
+			'enseignant.revenus.classe' => ({required Object nom}) => 'Class ${nom}',
+			'enseignant.revenus.capacite' => 'Capacity',
+			'enseignant.revenus.capaciteValeur' => ({required Object nombre}) => '${nombre} seats',
+			'enseignant.revenus.taux' => 'Effective hourly rate',
+			'enseignant.revenus.tauxValeur' => ({required Object montant}) => '${montant} per hour',
+			'enseignant.revenus.type' => 'Type',
+			'enseignant.revenus.typeEnfants' => 'Children',
+			'enseignant.revenus.typeDebutants' => 'Beginner children',
+			'enseignant.revenus.typeAdultes' => 'Adults',
+			'enseignant.revenus.remplacement' => 'Replacement',
+			'enseignant.revenus.tauxMoyen' => 'Average hourly rate',
+			'enseignant.revenus.total' => 'Total',
+			'enseignant.revenus.seanceDate' => ({required Object date, required Object heure}) => '${date} at ${heure}',
+			'enseignant.revenus.seanceDuree' => 'Retained length',
+			'enseignant.revenus.present' => 'Present',
+			'enseignant.revenus.absent' => 'Absent',
+			'enseignant.revenus.presentPartiel' => 'Partly present',
+			'enseignant.revenus.partielleNote' => 'A partial attendance is paid as an attendance.',
+			'enseignant.revenus.aucunMontant' => 'No amount for this session.',
+			'enseignant.revenus.partielle' => '4. A partial attendance counts',
+			'enseignant.revenus.partielleDetail' => 'A student present for part of the session is paid as a present student.',
+			'enseignant.revenus.montantSeance' => 'Session total',
+			'enseignant.revenus.attenteCahier' => 'Waiting for the week\'s handover notebook',
+			'enseignant.revenus.attenteCahierDetail' => 'Nothing is paid to you for this session while the week\'s handover notebook is missing. Once this handover notebook is submitted, this amount is paid to you.',
+			'enseignant.revenus.attenteDirection' => 'Waiting for the management',
+			'enseignant.revenus.attenteDirectionDetail' => 'The management must confirm the length of this session: no amount is set yet.',
+			'enseignant.revenus.seancesVide' => 'No session held this month.',
+			'enseignant.revenus.calculSection' => 'How it is calculated',
+			'enseignant.revenus.autresSection' => 'Other income',
+			'enseignant.revenus.autresDetail' => 'Internet allowance, bonuses and missions that the management assigns you for this month, paid with the pay.',
+			'enseignant.revenus.autresVide' => 'No Internet allowance, bonus or mission this month.',
+			'enseignant.revenus.autresTotal' => 'Total of other income',
+			'enseignant.revenus.autresResume' => 'Other income for the month',
+			'enseignant.revenus.releveSection' => 'Statement',
+			'enseignant.revenus.releveIndisponibleTitre' => 'The statement is not available yet',
+			'enseignant.revenus.releveIndisponiblePhrase' => 'The months closed by the academy will appear here as soon as the statement is in service. Until then, only the estimate for the current month is shown.',
+			'enseignant.revenus.indisponibleTitre' => 'Your income is not published yet',
+			'enseignant.revenus.indisponiblePhrase' => 'Your estimate for the month will appear here as soon as the academy has published it. No amount is calculated on this device.',
+			'enseignant.revenus.releveVide' => 'No month closed yet',
+			'enseignant.revenus.releveVideDetail' => 'Each month will appear here once closed by the academy.',
+			'enseignant.revenus.mention' => 'This amount is an estimate, not a final payment. The statement closed by the academy is authoritative.',
+			'enseignant.revenus.vide' => 'No hours taught this month',
+			'enseignant.revenus.videDetail' => 'The estimate will appear after your first session taught of the month.',
 			'adulte.nav.accueil' => 'Home',
 			'adulte.nav.maClasse' => 'My class',
 			'adulte.nav.coran' => 'Quran',
@@ -12293,6 +13852,8 @@ extension on TraductionsEn {
 			'adulte.paiements.beneficiaires' => 'Beneficiaries',
 			'adulte.paiements.recharger' => 'Top up',
 			'adulte.paiements.recapitulatif' => ({required Object valeur}) => 'Household summary: ${valeur}. Each balance stays that of its beneficiary.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.paiements.bientotEpuise' => 'Almost used up',
 			'adulte.paiements.inactif' => 'Inactive',
 			'adulte.paiements.historique' => 'Payment history',
@@ -12426,8 +13987,6 @@ extension on TraductionsEn {
 			'adulte.acceptation.sansCompteAction' => 'Sign in or create my account',
 			'adulte.sortie.retirerElle' => 'Remove my spouse',
 			'adulte.sortie.retirerLui' => 'Remove my spouse',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.sortie.retirerQuestionElle' => 'Remove my spouse?',
 			'adulte.sortie.retirerQuestionLui' => 'Remove my spouse?',
 			'adulte.sortie.retirerConsequence' => 'Their account, classes, history and balance will not be deleted.',
@@ -12807,6 +14366,8 @@ extension on TraductionsEn {
 			'avis.form.titreAvis.aide' => 'A short sentence that sums up your feedback. 80 characters at most.',
 			'avis.form.titreAvis.erreur' => 'Fix the title: 80 characters at most.',
 			'avis.form.texte.libelle' => 'Your feedback',
+			_ => null,
+		} ?? switch (path) {
 			'avis.form.texte.aide' => 'What you liked, what you learned, what could be better. At least 20 characters.',
 			'avis.form.texte.compteur' => ({required Object n, required Object max}) => 'Characters: ${n} of ${max}',
 			'avis.form.texte.erreur' => 'Write between 20 and 1500 characters.',
@@ -12940,8 +14501,6 @@ extension on TraductionsEn {
 			'courriels.admin.titre' => 'Emails',
 			'courriels.admin.sousTitre' => 'Write to a person and follow the emails that leave the academy.',
 			'courriels.admin.outil' => 'Emails',
-			_ => null,
-		} ?? switch (path) {
 			'courriels.admin.outilDetail' => 'Write an email, follow the sendings, see the sending addresses',
 			'courriels.admin.sections.libelle' => 'Email sections',
 			'courriels.admin.sections.ecrire' => 'Write',
@@ -13321,6 +14880,8 @@ extension on TraductionsEn {
 			'suiviAttente.ensuite' => ({required Object etape}) => 'Next: ${etape}',
 			'suiviAttente.delai.depasse' => 'Forming your class is taking longer than expected.',
 			'suiviAttente.changement' => ({required Object date}) => 'The class slot changed on ${date}. You received the notice in your notifications.',
+			_ => null,
+		} ?? switch (path) {
 			'suiviAttente.cloture.titreRefusee' => 'Your request was not accepted',
 			'suiviAttente.cloture.titreRetiree' => 'This request is withdrawn',
 			'suiviAttente.cloture.titreClose' => 'This request is closed',
@@ -13454,8 +15015,6 @@ extension on TraductionsEn {
 			'calendrier.dates.notification.levee.une' => ({required Object quand}) => 'The academy\'s closure is removed. The session of ${quand} is restored.',
 			'calendrier.dates.notification.levee.plusieurs' => ({required Object n, required Object quand}) => 'The academy\'s closure is removed. Sessions restored: ${n}, including the one of ${quand}.',
 			'calendrier.dates.notification.levee.abandonUne' => ({required Object quand}) => 'The academy\'s closure is removed, but the session of ${quand} will not take place.',
-			_ => null,
-		} ?? switch (path) {
 			'calendrier.dates.notification.levee.abandonPlusieurs' => ({required Object n, required Object quand}) => 'The academy\'s closure is removed, but some sessions will not take place: ${n}, including the one of ${quand}.',
 			'calendrier.dates.notification.levee.mixte' => ({required Object retablies, required Object abandonnees}) => 'The academy\'s closure is removed. Sessions restored: ${retablies}. Sessions that will not take place: ${abandonnees}. Open the class to see them.',
 			'calendrier.dates.concernees.titre' => 'Sessions concerned',
